@@ -295,11 +295,11 @@ begin
   attrtxt(col.coldialog);
   if spezial then begin
     mwrt(x+3,y+10,getres2(603,1));   { 'Spezial..  ' }
-    mwrt(x+42,y+10,'               ');
+    mwrt(x+39,y+10,'               ');
     end (* 05.02.2000 MH: x+38 -> x+42 *)
   else begin
     mwrt(x+3,y+10,getres2(603,2));   { 'Absenden..' }
-    mwrt(x+42,y+10,getres2(603,3));  { 'Žndern..' }
+    mwrt(x+39,y+10,getres2(603,3));  { 'Žndern..' }
     end;
 end;
 
@@ -1124,6 +1124,10 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.13  2000/04/17 17:24:09  jg
+  - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
+  - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.
+
   Revision 1.12  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

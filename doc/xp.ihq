@@ -1214,6 +1214,13 @@ soll.
         direkt ber die betreffenden Buchstaben aus-
         w„hlen.
 
+<<Emp.>>    Der Empf„nger der Nachricht wird ge„ndert.
+        Wird der aktuelle Eintrag gel”scht, kann mit
+        <F2> zwischen Brett und Usern gew„hlt werden.
+        ACHTUNG ! Bitte berdenken Sie vor dem 
+        Benutzen dieser Funktion, ob Sie damit nicht
+        andere Netzteilnehmer ver„rgern k”nnten. 
+
 <<Betreff>> „ndert den Betreff.
 
 <<Box>>     „ndert die Serverbox, an die die Nachricht
@@ -1297,11 +1304,6 @@ soll.
         /../¯Unversandt eingeschaltet haben, wird die
         Nachricht automatisch geparkt (s.o.).
 
-<</>>       Der Empf„nger der Nachricht wird ge„ndert.
-        Wird der aktuelle Eintrag gel”scht, kann mit
-        <F2> zwischen Brett und Usern gew„hlt werden.
-        ACHTUNG ! Diese Funktion sollte nur von
-        erfahrenen Usern Benutzt werden.
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, daá mehrere Nachrichen-Kopien ber unterschied-

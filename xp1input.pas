@@ -102,11 +102,11 @@ var p,n,p1,i : byte;
     if (yy=y) and (xx>=x) then begin
       _x:=x;
       i:=1;
-      while (i<=n) and (xx>=_x+length(butt[i])+2) do begin
+      while (i<=n) and (xx>=_x+length(butt[i])+2+buttsp[i]) do begin
         inc(_x,length(butt[i])+buttsp[i]+abs+2);
         inc(i);
         end;
-      if (i<=n) and (xx>=_x) then
+      if (i<=n) and (xx>=_x+buttsp[i]) then
         if (t=mausleft) or (t=mauslmoved) then begin
           p:=i; t:=#0; end else
         if t=mausunleft then t:=hot[i];
@@ -417,6 +417,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/17 17:24:09  jg
+  - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
+  - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.
+
   Revision 1.5  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

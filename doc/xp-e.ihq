@@ -975,6 +975,14 @@ decided if and how a message will actually be sent
         always select all functions by their
         hot-key letters.
 
+
+<<To:>>     Changes the recipient of the message.
+        Delete the current entry to choose (with <F2>)
+        between users and newsgroups.
+        ATTENTION! only experienced users should 
+        use this function.       
+
+
 <<Subject>> changes the subject text.
 
 <<Box>>     allows the server box to be selected,
@@ -1041,12 +1049,6 @@ decided if and how a message will actually be sent
         it exists in the <<TEMP directory>> under the
         name <<LASTMSG>> (only as long as no other
         message has been written!).
-
-<</>>       Changes the recipient of the message.
-        Delete the current entry to choose (with <F2>)
-        between users and newsgroups.
-        ATTENTION! only experienced users should 
-        use this function.       
 
 
 If the <<server>> is shown in <<brackets>>, it means that
