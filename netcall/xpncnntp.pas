@@ -62,6 +62,7 @@ uses
   res_getnewsinit       = '%s News holen';
   res_setnewsgroup      = 'Newsgroup %s (%d von %d)';
   res_getposting        = 'Hole Posting %d von %d';
+  res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
 
 function GetServerFilename(boxname: string; var bfile: string): boolean;
 var d: DB;
@@ -126,8 +127,7 @@ begin
     NNTP.DisConnect;
     List.Free;
   except
-    mdelay(2000);
-    trfehler(831,31);
+    POWindow.WriteFmt(mcError,res_noconnect,[0]);
     result:= true;
   end;
   NNTP.Free;
@@ -211,7 +211,7 @@ begin
 
       NNTP.Disconnect;
     except
-      trfehler(831,31);
+      POWindow.WriteFmt(mcError,res_noconnect,[0]);
       result:= false;
     end;
     List.Free;
@@ -339,8 +339,7 @@ begin
     SaveNews;
     NNTP.Disconnect;
   except
-    mdelay(2000);
-    trfehler(831,31);
+    POWindow.WriteFmt(mcError,res_noconnect,[0]);
     result:= false;
   end;
   RCList.SaveToFile(RCFilename);
@@ -354,6 +353,11 @@ end.
 
 {
         $Log$
+        Revision 1.17  2001/04/16 18:13:29  ma
+        - ProgOutWin now pauses a bit on closing
+          (some seconds if an error occured, one second if not)
+        - removed other delays
+
         Revision 1.16  2001/04/16 14:28:25  ma
         - using ProgrOutputWindow now
 

@@ -36,7 +36,7 @@ type
   TProgressOutputWindow = class(TProgressOutput)
 
   protected
-    FVisible,LastMsgUnimportant: Boolean;
+    FVisible,LastMsgUnimportant,ErrorOccurred: Boolean;
     FPosX,FPosY,FWidth,FHeight: Byte;
     FHeadline,LastTime: String;
     FLines: TStringList;
@@ -73,6 +73,7 @@ type
     procedure Display(RefreshContent: Boolean); override;
   public
     constructor CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+//    destructor Destroy; override;
 
     { Write status texts }
     procedure WrtText(x,y:integer;txt:string);
@@ -88,7 +89,7 @@ implementation  { ------------------------------------------------- }
 
 uses
   {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
-  typeform,winxp,xp0,xp1;
+  typeform,winxp,xp0,xp1,inout;
 
 constructor TProgressOutputWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
@@ -96,7 +97,7 @@ begin
   FWidth:=iw; FHeight:=ih;
   FHeadline:=Headline; LastTime:='';
   FLines:=TStringList.Create;
-  LastMsgUnimportant:=False;
+  LastMsgUnimportant:=False; ErrorOccurred:=False;
   FVisible:=False; IsVisible:=Visible;
 end;
 
@@ -153,6 +154,7 @@ begin
     else if FLines.Count >= FHeight then
       FLines.Delete(0);
     LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
+    ErrorOccurred:=ErrorOccurred or(mc>=mcError);
     FLines.Add(s);
     end;
   Display(fmt<>'');
@@ -182,9 +184,12 @@ end;
 
 destructor TProgressOutputWindow.Destroy;
 begin
+  WriteFmt(mcInfo,' ',[0]); // well... just to get off msg "hanging up" :-)
+  if ErrorOccurred then mdelay(4000)else mdelay(1000);
   IsVisible:=false;
   FLines.Free;
   Timer.Done;
+  inherited Destroy;
 end;
 
 {-----------------------------------------------------------------------------}
@@ -271,6 +276,11 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/04/16 18:13:28  ma
+  - ProgOutWin now pauses a bit on closing
+    (some seconds if an error occured, one second if not)
+  - removed other delays
+
   Revision 1.2  2001/04/16 13:50:45  ma
   - last msg will never be overwritten if new message is error msg
 

@@ -33,9 +33,8 @@ var ZModemOkay: Boolean;
 begin
   log(lcStart,'starting mail transfer');
   if hello.h.capabilities and MyCap=0 then begin
-    Output(mcInfo,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
+    Output(mcError,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
     log(lcError,'no common transfer protocol');
-    SleepTime(1000);
     aresult:=EL_nologin;
     exit;
   end;
@@ -60,7 +59,6 @@ begin
       log(lcError,'carrier lost');
     end else
       log(lcError,'transfer aborted');
-    SleepTime(1000);
     aresult:=EL_senderr
   end else
   begin                                        { ZModem empfangen }
@@ -79,6 +77,11 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/04/16 18:13:28  ma
+  - ProgOutWin now pauses a bit on closing
+    (some seconds if an error occured, one second if not)
+  - removed other delays
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

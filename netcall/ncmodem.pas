@@ -350,7 +350,7 @@ begin
   if not FActive then begin
     Output(mcVerbose,'Opening comm channel',[0]);
     result:=Activate;
-    if not result then begin SleepTime(2000); exit end;
+    if not result then exit;
     end;
   if Phonenumbers='' then begin
     Log(lcConnect,'CONNECT');
@@ -484,10 +484,8 @@ begin
       for i:=1 to 4 do if((not FCommObj^.IgnoreCD)and FCommObj^.Carrier)then SleepTime(500);
       SleepTime(100);
     end;
-    if FCommObj^.ReadyToSend(6)then begin
+    if FCommObj^.ReadyToSend(6)then
       FCommObj^.SendString('AT H0'#13,True);
-      SleepTime(1000);
-      end;
     end;
   FConnected:=False;
 end;
@@ -521,6 +519,11 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/04/16 18:13:28  ma
+  - ProgOutWin now pauses a bit on closing
+    (some seconds if an error occured, one second if not)
+  - removed other delays
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

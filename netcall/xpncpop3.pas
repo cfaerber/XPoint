@@ -55,6 +55,7 @@ uses
   res_pop3init          = '%s Mails holen';
   res_mailstat          = '%d Mails in %d Bytes';
   res_getmail           = 'Hole Mail Nr. %d';
+  res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
 
 function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
@@ -116,8 +117,7 @@ begin
 
       SMTP.Disconnect;
     except
-      mdelay(2000);
-      trfehler(831,31);
+      POWindow.WriteFmt(mcError,res_noconnect,[0]);
       result:= false;
     end;
     List.Free;
@@ -205,7 +205,7 @@ begin
 //    SaveMail;
     POP.Disconnect;
   except
-    trfehler(831,31);
+    POWindow.WriteFmt(mcError,res_noconnect,[0]);
     result:= false;
   end;
   List.Free;
@@ -217,6 +217,11 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/04/16 18:13:29  ma
+  - ProgOutWin now pauses a bit on closing
+    (some seconds if an error occured, one second if not)
+  - removed other delays
+
   Revision 1.12  2001/04/16 16:43:26  ml
   - pop3 now only gets new mail
   - added switch in pop3-boxconfig for getting only new mail
