@@ -70,7 +70,8 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$PACKRECORDS Default } { Default: 2 }
-  {$C-,H+,I-,M-,P-,Q-,R-,S-,T-,V-,X+}
+  {$PACKENUM Default }	  { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$B-,H+,I-,P-,T-,V-,X+}
   {$DEFINE Int64 }
 {$ENDIF }
 
@@ -85,8 +86,23 @@
     {$Q+,R+,S+,W+,Optimize-}
   {$ENDIF }
   {$IFDEF FPC }
-    {$Q+,R+,S+}
+    {$IFNDEF Linux }
+      {$S+}		  { Stack Checking }
+    {$ENDIF }
     {$C+}                 { Assertation support }
+    {$D+}
+    {$M+}                 { Typeinfo for RTTI }
+    {$L+}		  { Local Symbols }
+    {$Q+}		  { Overflow-Check }
+    {$R-}		  { Range Check (must be off!) }
+    {$Y+}		  { Browser Informations }
+  {$ENDIF }
+{$ELSE }
+  {$IFDEF FPC }
+    {$IFNDEF Linux }
+      {$S-}		  { Stack Checking }
+    {$ENDIF }
+    {$C-,M-,Q-,R-,Y-}
   {$ENDIF }
 {$ENDIF }
 
@@ -152,6 +168,9 @@
 
 {
   $Log$
+  Revision 1.59  2000/11/06 11:42:12  hd
+  - Stack is global under Linux
+
   Revision 1.58  2000/11/02 00:07:40  mk
   - added // because ' is an illegal character in Virtual Pascal
 

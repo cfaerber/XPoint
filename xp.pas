@@ -22,6 +22,15 @@
   {$M 131072,524288}
 {$ENDIF }
 
+{$IFDEF Linux }
+  {$M 500000,1024000}
+  {$IFDEF Debug }
+    {$S+}
+  {$ELSE }
+    {$S-}
+  {$ENDIF }
+{$ENDIF }
+
 program xp;
 
 uses xpx,
@@ -187,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.38  2000/11/06 11:42:12  hd
+  - Stack is global under Linux
+
   Revision 1.37  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
