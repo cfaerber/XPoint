@@ -123,17 +123,18 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp9sel, xp4o,xp7,xp9,xpauto;
+uses xp4o,xp7,xp9,xp9sel,maske,xpauto;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
 
 procedure prog_call(nr,nn:byte);
-var s      : string;
-    p0     : byte;
-    fn,fn2 : pathstr;
-    brk    : boolean;
-    auto   : boolean;
+var s         : string;
+    s1        : string[127];
+    p0,p1,x,y : byte;
+    fn,fn2    : pathstr;
+    brk       : boolean;
+    auto      : boolean;
 begin
   with fkeys[nr]^[nn] do begin
     s:=prog;
@@ -176,6 +177,21 @@ begin
         fn:=getfilename(nr,nn);
         if (fn='') or not exist(fn) then exit;
         s:=copy(s,1,p0-1)+fn+copy(s,p0+5,120);
+        end;
+      p1:=pos('$ASK',ustr(s));
+      if p1>0 then begin
+        x:=15; y:=11; s1:='';
+        pushhp(449);
+        dialog(length(getres(151))+47,3,'"'+
+          iifs(s>left(s,length(getres(151))+47-6),
+              left(s,length(getres(151))+47-9)+'...',s)+'"',x,y);
+        maddstring(3,2,getres(151),s1,40,
+          127-(p1-1+iif(length(mid(s,p1+4))>0,length(mid(s,p1+4)),0)),'');
+        readmask(brk);
+        enddialog;
+        pophp;
+        if brk then exit
+        else s:=left(s,p1-1)+trim(s1+mid(s,p1+4));
         end;
       if @preextproc<>nil then begin
         preextproc;
@@ -240,6 +256,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.7  2002/03/31 15:53:04  my
+  JG+MY:- Konfigurierbare Funktionstasten (<Shift-F1> etc.) untersttzen
+          jetzt das Makro $ASK, das einen Eingabedialog ausfhrt, mittels
+          dessen dem auszufhrenden Programm einer oder mehrere Parameter
+          bergeben werden k”nnen (z.B. URL aus Lister kopieren und mit
+          Browser starten).
+
   Revision 1.6.2.6  2002/03/08 23:13:35  my
   MK:- Kleine Codeoptimierung/Variableneinsparung.
 
