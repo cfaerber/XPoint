@@ -134,6 +134,7 @@ var
   sp       : scrptr;
 
 begin
+  CloseAblage;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
   getmaus(maussave);
@@ -518,6 +519,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.82  2002/09/09 08:42:33  mk
+  - misc performance improvements
+
   Revision 1.81  2002/07/25 20:43:53  ma
   - updated copyright notices
 

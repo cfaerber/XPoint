@@ -128,8 +128,10 @@ type    proctype  = procedure;
                       ofs      : longint;  { 5 }
                       lasttick : longint;  { 9 }
                       page     : array[0..264*4+10] of byte;
+                      fill:    array[1..968] of byte;
                     end;
         icache    = array[0..maxcache-1] of cachepage;
+        pcachepage = ^cachepage;
         icachep   = ^icache;
 
 
@@ -187,7 +189,6 @@ procedure error(txt:string);
 procedure writeinf(dbp:DB);
 procedure writehd(dpb:DB);
 
-
 implementation
 
 uses Debug;
@@ -236,6 +237,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/09/09 08:42:32  mk
+  - misc performance improvements
+
   Revision 1.20  2002/07/25 20:43:51  ma
   - updated copyright notices
 

@@ -196,12 +196,12 @@ function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
 function  ixdat(s:shortstring):longint;           { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
-function  ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
+function  ixdispdat(const dat:shortstring):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
 
-function  fdat(dat:string):string;             { Z-Datum -> Datum   }
-function  zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
-function  ftime(dat:string):string;            { Z-Datum -> Uhrzeit }
+function  fdat(const dat:string):string;             { Z-Datum -> Datum   }
+function  zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
+function  ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 function  Zdate:string;               { akt. Datum/Zeit im Z-Format }
 function  fuser(const s:string):string;              { Spaces vor/hinter '@' }
 function  aufnahme_string:string;
@@ -261,7 +261,7 @@ procedure InitXP1Unit;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,
+  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt, xp3,
 {$IFDEF Linux }
   {$IFDEF Kylix}
     ncursix,
@@ -1458,13 +1458,33 @@ end;
 
 
 function longdat(l:longint):string;
+var
+  s: String;
+  p: Integer;
+
+  procedure WriteChar(i: Integer);
+  begin
+    Inc(p);
+    s[p] := Char(i div 10 + Byte('0'));
+    Inc(p);
+    s[p] := Char(i mod 10 + Byte('0'));
+  end;
+
 begin
-  longdat:=formi((l shr 24) mod 100,2)+formi((l shr 20) and 15,2)+
+  SetLength(s, 10);
+  p := 0;
+  WriteChar((l shr 24) mod 100);
+  WriteChar((l shr 20) and 15);
+  WriteChar((l shr 15) and 31);
+  WriteChar((l shr 10) and 31);
+  WriteChar((l shr 4) and 63);
+  Result := s;
+{  Result  := formi((l shr 24) mod 100,2)+formi((l shr 20) and 15,2)+
            formi((l shr 15) and 31,2)+formi((l shr 10) and 31,2)+
-           formi((l shr 4) and 63,2);
+           formi((l shr 4) and 63,2); }
 end;
 
-function ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
+function ixdispdat(const dat:shortstring):longint;      { Datum -> Long   }
 begin
   ixdispdat:=ixdat(RightStr(dat,2)+copy(dat,4,2)+LeftStr(dat,2)+'0000');
 end;
@@ -1476,12 +1496,21 @@ begin
 end;
 
 
-function fdat(dat:string):string;             { Z-Datum -> Datum  }
+function fdat(const dat:string):string;             { Z-Datum -> Datum  }
 begin
-  fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+LeftStr(dat,2);
+  SetLength(Result, 8);
+  Result[1] := dat[5];
+  Result[2] := dat[6];
+  Result[3] := '.';
+  Result[4] := dat[3];
+  Result[5] := dat[4];
+  Result[6] := '.';
+  Result[7] := dat[1];
+  Result[8] := dat[2];
+//   fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+LeftStr(dat,2);
 end;
 
-function zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
+function zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
 var j : word;
     d : datetimest;
     n : integer;
@@ -1496,7 +1525,7 @@ begin
 end;
 
 
-function ftime(dat:string):string;            { Z-Datum -> Uhrzeit }
+function ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 begin
   ftime:=copy(dat,7,2)+':'+copy(dat,9,2);
 end;
@@ -2110,6 +2139,9 @@ end;
 
 {
   $Log$
+  Revision 1.160  2002/09/09 08:42:33  mk
+  - misc performance improvements
+
   Revision 1.159  2002/08/03 15:27:16  mk
   - fixed compilation problem without define SNAPSHOT
 

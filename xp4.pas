@@ -420,14 +420,14 @@ var t,lastt: taste;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
         if not dbEOF(mbase) then
-          if dbReadInt(mbase,'gelesen')=0 then
+          if dbReadIntN(mbase, mb_gelesen)=0 then
             dbSkip(mbase,1)
           else begin
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,1);
               if not dbEOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
-            until dbEOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
+            until dbEOF(mbase) or (dbReadIntN(mbase, mb_gelesen)=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
@@ -467,14 +467,14 @@ var t,lastt: taste;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
         if not dbBOF(mbase) then
-          if dbReadInt(mbase,'gelesen')=0 then
+          if dbReadIntN(mbase,mb_gelesen)=0 then
             dbSkip(mbase,-1)
           else begin
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,-1);
               if not dbBOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
-            until dbBOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
+            until dbBOF(mbase) or (dbReadIntN(mbase,mb_gelesen)=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
@@ -2324,6 +2324,9 @@ end;
 
 {
   $Log$
+  Revision 1.128  2002/09/09 08:42:33  mk
+  - misc performance improvements
+
   Revision 1.127  2002/07/26 08:19:24  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

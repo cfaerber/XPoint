@@ -42,7 +42,7 @@ uses
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
 const
-  bufsize = 65535;
+  bufsize = 4096;
 
 type
   TCharArray = array[0..bufsize] of char;
@@ -61,7 +61,6 @@ var i,res : integer;
     id0     : string;
     p    : integer;
     buf     : PCharArray;
-    bufsize : Integer;
     bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
 
@@ -72,8 +71,6 @@ var i,res : integer;
   end;
 
   procedure getline(var s:string);
-  var
-    l: Integer;
 
     procedure IncO;
     begin
@@ -87,23 +84,23 @@ var i,res : integer;
         end;
     end;
 
+  var
+    l: Integer;
   begin
-    l := o;
-    while l < BufAnz do
-    begin
-      if Buf^[l] = #13 then break;
-      inc(l);
-    end;
+    l := o + BufferScan(Buf^[o], BufAnz, #13);
+{   l := o;
+    while (Buf^[l] <> #13) and (l < BufAnz) do
+      inc(l); } 
 
     if l = BufAnz then // das letze Byte war noch kein #13, dann neue Daten holen
     begin
       s := '';
-      while (o<bufanz) and (buf^[o]<>#13) do
+      while (buf^[o]<>#13) and (o< bufanz) do
       begin
         s := s + buf^[o];
         incO;
       end;
-      IncO;
+      IncO;                                            
     end else
     begin
       SetLength(s, l-o);
@@ -325,7 +322,6 @@ var i,res : integer;
 begin
   ok:=true;
   hd.Clear;
-  bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
 
@@ -562,6 +558,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2002/09/09 08:42:34  mk
+  - misc performance improvements
+
   Revision 1.27  2002/07/25 20:43:56  ma
   - updated copyright notices
 

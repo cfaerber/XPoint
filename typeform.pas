@@ -363,7 +363,7 @@ function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren  
 function FileName(var f):string;                { Dateiname Assign             }
 // Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function FirstChar(const s:string):char;
-// Letztes Zeichen eines Strings, wenn nicht vorhanden dann #0
+// Letzctes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function LastChar(const s:string):char;
 function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkuerzen    }
 function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mit 0 auff.  }
@@ -469,11 +469,31 @@ function StringListToString(SL: TStringList): String;
 function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
+// scans Buffer with Len for first occurrence of char c
+function BufferScan(const Buffer; Len: Integer; c: Char): Integer; 
 
 
 { ================= Implementation-Teil ==================  }
 
 implementation
+
+type
+{$IFDEF Delphi }
+  LStrRec = packed record
+    AllocSize : Longint;
+    RefCount  : Longint;
+    Length    : Longint;
+  end;
+{$ELSE }
+  LStrRec = packed record
+    Maxlen,
+    Length,
+    ref   : Longint;
+  end;
+{$ENDIF }
+
+const
+  StrOffset = SizeOf(LStrRec);
 
 function CountChar(const c: char; const s: string): integer;
 const
@@ -487,7 +507,45 @@ begin
   CountChar:= j;
 end;
 
-function CPos(c: char; const s: string): integer; 
+(*
+function CPos(c: char; const s: string): integer; assembler;
+asm
+  push  ebx             { Save registers }
+  push  edi
+
+  or    edx, edx        { Protect against null string }
+  jz    @@NotFound
+
+  xor   edi, edi        { Zero counter }
+  mov   ebx, [edx-StrOffset].LStrRec.Length  { Get input length }
+
+@@Loop:
+  inc   edi             { Increment counter }
+  cmp   [edx], al       { Did we find it? }
+  jz    @@Found
+  inc   edx             { Increment pointer }
+
+  cmp   edi, ebx        { End of string? }
+  jnz   @@Loop          { If not, loop }
+
+@@NotFound:
+  xor   edi, edi
+
+@@Found:
+  mov   eax, edi
+
+@@Done:
+  pop   edi             { Restore registers }
+  pop   ebx
+{$ifdef FPC }
+end ['EAX', 'ECX', 'EDX'];
+{$else}
+end;
+{$endif}
+{$ENDIF }
+*)
+
+function CPos(c: char; const s: string): integer;
 // {$IFDEF NOASM }
 var
   i: Integer;
@@ -643,13 +701,10 @@ end;
 
 
 function FormI(const i:longint; const n:integer):string;
-var
-  st:string;
 begin
-  Str(i,st);
-  while length(st)<n do
-    st:='0'+st;
-  formi:=st;
+  Str(i, Result);
+  while length(Result)<n do
+    Result:='0'+ Result;
 end;
 
 
@@ -1743,8 +1798,25 @@ begin
 end;
 {$ENDIF }
 
+function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
+asm
+        PUSH    EDI
+        MOV     EDI, Buffer
+        MOV     AL, C
+        MOV     ECX, Len
+        MOV     EBX, ECX
+        REPNE   SCASB
+        SUB     EBX, ECX
+        MOV     EAX, EBX
+        DEC     EAX
+@@1:    POP     EDI
+end;
+
 {
   $Log$
+  Revision 1.116  2002/09/09 08:42:32  mk
+  - misc performance improvements
+
   Revision 1.115  2002/07/25 20:43:53  ma
   - updated copyright notices
 
@@ -1907,4 +1979,3 @@ end;
   - Left->LeftStr, Right->RightStr
 }
 end.
-

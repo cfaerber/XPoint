@@ -314,13 +314,21 @@ var    ca,ce       : integer;
 { Bild-Speicheradresse     }
 function memadr(x,y:byte):word;forward;
 
+// time critical
 function ticker:longint;
+{[var
+  h, m, s, millis : smallword; }
 var
-  h, m, s, millis : smallword;
+  Systime: SystemTime;
 begin
-  DecodeTime(Now, h, m, s, millis);
+{  DecodeTime(Now, h, m, s, millis);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
-    (millis / (1000 / TickFreq)));
+    (millis / (1000 / TickFreq))); }
+{$R-}
+  Result := Trunc(Now * 8640000);
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
 end;
 
 { !! Diese Funktion lieft mit and $70 nur CAPSLock zurÅck,
@@ -1667,6 +1675,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2002/09/09 08:42:32  mk
+  - misc performance improvements
+
   Revision 1.93  2002/07/29 07:17:19  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
