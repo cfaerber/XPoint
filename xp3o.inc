@@ -560,7 +560,7 @@ var x,y      : Integer;
                end;
       empfnr : integer;
   begin
-    Debug.DebugLog('xp3o','start Bezugsverkettung',DLInform);
+    Debug.DebugLog('xp3o','start Bezugsverkettung 1',DLInform);
     moff;
     mstr:= getres(332);
     FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
@@ -571,12 +571,14 @@ var x,y      : Integer;
     adr:=0; n:=0;
     dbStopHU(bezbase);
     seek(pfile,0);
+    Debug.DebugLog('xp3o','start Bezugsverkettung 2',DLTrace);
     repeat
       empfnr:=1;
       inc(n);
       repeat
         seek(f,adr);
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
+        Debug.DebugLog('xp3o','Bezugsverkettung MakeHeader finished',DLTrace);
         if (hdp.Empfaenger.Count >maxcrosspost)
         and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then
         begin
@@ -602,11 +604,12 @@ var x,y      : Integer;
       end;
       inc(adr,hdp.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
+    Debug.DebugLog('xp3o','end Bezugsverkettung 1',DLTrace);
     dbRestartHU(bezbase);
     dbFlush(bezbase);
     close(f);
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
-    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
+    Debug.DebugLog('xp3o','end Bezugsverkettung 2',DLTrace);
   end;
 
   procedure wrll(l:longint);
@@ -1264,6 +1267,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/06/03 09:05:07  mk
+  - added more debug logs for Bezugsverkettung
+
   Revision 1.88  2002/05/27 16:07:42  ma
   - fixed: Crosspostings from filtered users were put in /Junk
   - added comments
