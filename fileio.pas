@@ -511,13 +511,6 @@ begin
   s:=dir+name+ext;
 end;
 
-{ Zwei diskfree/disksize-Probleme umgehen:                   }
-{                                                            }
-{ - bei 2..4 GB liefern diskfree und disksize negative Werte }
-{ - bei bestimmten Cluster/Sektorgr”áen-Kombinationen        }
-{   liefern diskfree und disksize falsche Werte              }
-{ Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
-
 function exetype(fn:string):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
@@ -576,6 +569,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/10/17 20:36:13  mk
+  - falschen Kommentar zu Disksize/Diskfree entfernt
+
   Revision 1.54  2000/10/17 17:38:18  mk
   - fixed typo
 

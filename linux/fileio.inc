@@ -414,13 +414,6 @@ procedure WildForm(var s: string);
 begin
 end;
 
-{ Zwei diskfree/disksize-Probleme umgehen:                   }
-{                                                            }
-{ - bei 2..4 GB liefern diskfree und disksize negative Werte }
-{ - bei bestimmten Cluster/Sektorgr”áen-Kombinationen        }
-{   liefern diskfree und disksize falsche Werte              }
-{ Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
-
 function exetype(fn:string):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
@@ -477,6 +470,9 @@ end;
 
 {
         $Log$
+        Revision 1.4  2000/10/17 20:36:26  mk
+        - falschen Kommentar zu Disksize/Diskfree entfernt
+
         Revision 1.3  2000/10/17 12:53:20  mk
         - einige Funktionen auf Sysutils umgestellt
 
