@@ -12,7 +12,7 @@
 
 { Yuppie Mailbase -> Fido-PKT }
 
-uses xpglobal, dos, typeform, fileio, dbase;
+uses xpglobal, dos, typeform, fileio, dbase, sysutils;
 
 
 const NetmailDB = 'NET-MAIL';
@@ -362,6 +362,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/09/09 22:31:55  fe
+  sysutils ergaenzt
+
   Revision 1.7  2000/09/09 22:30:39  fe
   rtlword-Fixes
 

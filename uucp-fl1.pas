@@ -36,6 +36,8 @@ total 193
 
 {$I XPDEFINE.INC }
 
+uses sysutils;
+
 const bufsize = 2048;
 
 var  f1       : file;
@@ -151,6 +153,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.3  2000/09/09 22:31:55  fe
+  sysutils ergaenzt
+
   Revision 1.2  2000/08/08 13:18:14  mk
   - s[Length(s)] durch Lastchar ersetzt
 
