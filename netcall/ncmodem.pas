@@ -374,11 +374,13 @@ begin
                       if CommandInit='' then begin
                         FCommObj.SendString(#13,False); SysDelay(150);
                         FCommObj.SendString(#13,False); SysDelay(300);
-                        SendCommand('AT',1); ProcessKeypresses(false);
-                      end;
-                      if not FTimerObj.Timeout then begin
-                        SendMultCommand(CommandInit,1); StateDialup:=SDSendDial;
-                      end;
+                        SendCommand('AT',1);
+                      end else
+                        SendMultCommand(CommandInit,TimeoutModemInit);
+                      if FTimerObj.Timeout then
+                        StateDialup:=SDNoConnect
+                      else
+                        StateDialup:=SDSendDial;
                     end;
       SDSendDial: begin
                     inc(iDial); FPhonenumber:=GetNextPhonenumber(Phonenumbers);
@@ -524,6 +526,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2002/06/23 10:04:54  ma
+  - cleaned up modem init timeout handling
+
   Revision 1.11  2001/10/27 16:19:00  ma
   - removed unnecessary output
 
