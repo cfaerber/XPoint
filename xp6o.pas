@@ -508,7 +508,7 @@ var fn     : pathstr;
     ua      : boolean;
     add_oe_cc : integer;
     sendflags : word;
-    msgflags  : integer;
+    msgflags  : longint;
 
 label ende,again;
 
@@ -1408,6 +1408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.24  2002/03/31 15:51:41  my
+  JG:- Variable 'msgflags' von integer in longint ge„ndert.
+
   Revision 1.20.2.23  2002/03/17 13:15:41  sv
   - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
     nicht
