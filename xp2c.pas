@@ -99,7 +99,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt;
+  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt, osdepend;
 
 const
   MaxProtocols = 2;
@@ -363,21 +363,19 @@ begin
   maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);        	{ 'Eigene Nachrichten halten' }
   maddbool(3,8 + j,getres2(252,31),haltownPM);        			{ 'Eigene PMs halten' }
   maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   			{ 'Erstellungszeit 00:00' }
+  if not AutomaticTimeZone then
+    mset1func(SetTimezone);
 
-{$IFNDEF Unix }
-{$IFNDEF Win32 }
-  mset1func(SetTimezone);
-{$ENDIF }
-{$ENDIF }
   maddbool(3,10 + j,getres2(252,16),rehochn); mhnr(246);        { 'Re^n verwenden' }
-{$IFNDEF Unix}
-{$IFNDEF Win32 }
-  maddstring(36,8 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
-  mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
-  msetvfunc(testtimezone);
-  if replaceetime then mdisable;
-{$ENDIF }
-{$ENDIF }
+
+  if not AutomaticTimeZone then
+  begin
+    maddstring(35,7 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+    mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
+    msetvfunc(testtimezone);
+    if replaceetime then mdisable;
+  end;
+  
   maddbool(3,12 + j,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /¯Unversandt' }
   maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
@@ -1554,6 +1552,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.9  2003/08/26 05:36:57  mk
+  - added AutomaticTimeZone const and removed $IFDEFs
+
   Revision 1.127.2.8  2003/08/26 04:51:02  mk
   - added automatic TimeZone dectection for Win32
 

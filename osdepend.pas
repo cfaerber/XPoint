@@ -37,6 +37,24 @@ uses
 
 { Consts }
 
+const
+  // true if GetTimeZone is available
+  {$IFDEF BSD }
+    AutomaticTimeZone = false;
+  {$ENDIF }
+  {$IFDEF Dos32 }
+    AutomaticTimeZone = false;
+  {$ENDIF }
+  {$IFDEF OS2 }
+    AutomaticTimeZone = false;
+  {$ENDIF }
+  {$IFDEF Linux }
+    AutomaticTimeZone = true;
+  {$ENDIF }
+  {$IFDEF Win32 }
+    AutomaticTimeZone = true;
+  {$ENDIF }
+
 { Global Vars }
 
 { Functions }
@@ -55,6 +73,9 @@ implementation
 
 {
         $Log$
+        Revision 1.6.2.3  2003/08/26 05:36:57  mk
+        - added AutomaticTimeZone const and removed $IFDEFs
+
         Revision 1.6.2.2  2003/08/26 04:51:02  mk
         - added automatic TimeZone dectection for Win32
 

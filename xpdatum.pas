@@ -216,6 +216,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.3  2003/08/26 05:36:57  mk
+  - added AutomaticTimeZone const and removed $IFDEFs
+
   Revision 1.21.2.2  2003/08/26 04:51:03  mk
   - added automatic TimeZone dectection for Win32
 
@@ -298,8 +301,9 @@ end;
 
 }
 initialization
-  TimeZone := GetTimeZone;
-  if TimeZone = '' then
+  if AutomaticTimeZone then
+    TimeZone := GetTimeZone
+  else
     TimeZone := StandardTimeZone;
 end.
 
