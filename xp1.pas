@@ -1978,7 +1978,7 @@ begin
     msg:=(_filesize(name)>1024*100);
     if msg then rmessage(130);    { 'Lade Datei ...' }
     List.UTF8Mode := utf8;
-    List.ReadFromFile(name,lofs,true);
+    List.ReadFromFile(name,lofs, listwrap);
     if msg then closebox;
     List.HeaderText := header;
     List.OnKeypressed := listExt;
@@ -3297,6 +3297,9 @@ end;
 
 {
   $Log$
+  Revision 1.188  2003/09/14 14:20:32  mk
+  - fixed not working Ctrl-W in Lister
+
   Revision 1.187  2003/09/11 22:30:06  mk
   - added special color for signatures
 
