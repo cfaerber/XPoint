@@ -1500,7 +1500,10 @@ end;
 procedure dbLog(const s:string);
 begin
   if dl then
+  begin
     writeln(dblogfile,s);
+    Flush(dblogfile);
+  end;
   {$IFDEF unix }
   XPDebugLog(s);
   {$ENDIF }
@@ -1585,6 +1588,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.40  2000/11/04 23:12:15  mk
+  - database.log is flushed now after each update
+
   Revision 1.39  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
