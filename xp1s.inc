@@ -164,7 +164,6 @@ begin
   TempOpen;
 end;
 
-{$IFDEF BP }
 Function Dos32CreateEventSem(Name:PChar; Var Handle:LongInt; Attr:Word;
 			      State:Byte):Word; Assembler;
  Asm
@@ -307,7 +306,6 @@ Begin
   r:=Dos32CloseEventSem(SemHandle);
   FreeMem(Semaphore,64);
 End;
-{$ENDIF }
 
 function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
 var p,p0,ml : byte;
@@ -403,9 +401,9 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then m2t:=false;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
+    if listvollbild then m2t:=false;
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
@@ -542,11 +540,8 @@ begin
 end;
 {
   $Log$
-  Revision 1.12  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.11  2000/03/06 05:14:15  jg
-  Schînheitsfix fÅr Lister : Uhr bei riesigen Nachrichten rechtzeitig abschalten
+  Revision 1.10.2.1  2000/04/02 19:12:28  mk
+  JG: - Fix f¸r Abschaltung der Uhr in MIME-Mails
 
   Revision 1.10  2000/03/02 21:19:51  jg
   - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
