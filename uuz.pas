@@ -220,7 +220,6 @@ type  OrgStr  = string[orglen];
                   { 03.09.1999 robo - X-No-Archive Konvertierung }
                   xnoarchive : boolean;
                   Cust1,Cust2: string[custheadlen];
-                  control    : string[150];
 
                 end;
       charr   = array[0..65530] of char;
@@ -926,10 +925,6 @@ begin
     if mime.boundary<>'' then wrs('X-XP-Boundary: '+mime.boundary);
     if gateway<>''    then wrs('X-Gateway: '+gateway);
     if sender<>''     then wrs('U-Sender: '+sender);
-    if control<>''    then begin
-      if lstr(left(control,7))='cancel ' then wrs('STAT: CTL');
-      wrs('CONTROL: '+control);
-    end;
     for i:=1 to ulines do
       wrs(uline^[i]);
     wrs('X-XP-NTP: '+strs(netztyp));
@@ -2119,6 +2114,17 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     ZCtoZdatum(hd.zdatum,hd.datum);
   end;
 
+
+  procedure GetBetreff(control:boolean);
+  begin
+    with hd do
+      if control or (attrib and attrControl=0) then
+        betreff:=s0;
+    if control then
+      hd.attrib:=hd.attrib or attrControl;
+  end;
+
+
   { vollst„ndig RFC-1522-Decodierung }
 
   procedure MimeIsoDecode(var ss:string; maxlen:byte);
@@ -2305,7 +2311,7 @@ begin
         'c': if zz='cc'           then GetKOPs else
              if zz='content-type' then getmime(GetContentType) else
              if zz='content-transfer-encoding' then getmime(GetCTencoding) else
-             if zz='control'      then control:=s0
+             if zz='control'      then GetBetreff(true)
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
@@ -2316,7 +2322,7 @@ begin
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
              else AppUline('U-'+s1);
-        's': if zz='subject'      then betreff:=s0 else
+        's': if zz='subject'      then GetBetreff(false) else
              if zz='sender'       then GetAdr(sender,drealn) else
              if zz='supersedes'   then ersetzt:=GetMsgid else
              if zz='summary'      then GetVar(summary,s0)
@@ -3593,6 +3599,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.10  2000/07/24 11:06:59  mk
+  SV: - Cancelbearbeitung funktioniert wieder
+
   Revision 1.8.2.9  2000/07/12 07:57:34  mk
   RB:- XPBoundary Default in SetMimeData
 
