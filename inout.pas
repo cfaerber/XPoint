@@ -95,7 +95,6 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
 const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        rdedch     : taste    = '';        { ReadEdit Vorgabe f. 1. Zeichen }
        rdedactive : boolean  = false;     { ReadEdit aktiv                 }
-       m2d        : boolean  = false;     { Datumsanzeige Åber multi2      }
        m2t        : boolean  = false;     { Zeitanzeige Åber multi2        }
        canf       : boolean  = true;      { Cursor bei Readedit an Anfang  }
        enlinksre  : boolean  = true;      { ReadEdit enlinks & enrechts    }
@@ -480,9 +479,11 @@ end;
 
 
 procedure disp_DT;
+{$IFNDEF NCRT }
 var h,m,s,s100 : rtlword;
-    y,mo,d,dow : rtlword;
+{$ENDIF }
 begin
+{$IFNDEF NCRT }
   if UseMulti2 then begin
     if m2t then begin
       gettime(h,m,s,s100);
@@ -498,18 +499,8 @@ begin
         if timeflash then __st[3]:=iifc(odd(s),':',' ');
       disphard(timex,timey,' '+__st+' ');
       end;
-    if m2d then begin
-      getdate(y,mo,d,dow);
-      y := y mod 100;                { Jahr-2000-Fix; 4.7.99 }
-      __sd[1]:=chr(d div 10+48);
-      __sd[2]:=chr(d mod 10+48);
-      __sd[4]:=chr(mo div 10+48);
-      __sd[5]:=chr(mo mod 10+48);
-      __sd[7]:=chr(y div 10+48);
-      __sd[8]:=chr(y mod 10+48);
-      disphard(datex,datey,__sd);
-      end;
     end;
+{$ENDIF }
 end;
 
 {&optimize+}
@@ -1863,6 +1854,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2000/05/07 15:56:32  hd
+  Keine Uhr unter Linux
+
   Revision 1.35  2000/05/07 15:19:49  hd
   Interne Linux-Aenderungen
 

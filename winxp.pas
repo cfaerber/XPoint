@@ -1135,11 +1135,10 @@ begin
   mon;
   disphard(1,crline,dup(16,'°')+' (c) by '+pm+' °°°°°° Tel. 02632/48651 '+
            dup(16,'°'));
-  sd:=m2d; st:=m2t;
-  if datey=25 then m2d:=false;
+  st:=m2t;
   if timey=25 then m2t:=false;
   get(z,curoff);
-  m2d:=sd; m2t:=st;
+  m2t:=st;
   Disp_DT;
   moff;
 {$IFDEF BP }
@@ -1231,6 +1230,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/05/07 15:56:32  hd
+  Keine Uhr unter Linux
+
   Revision 1.33  2000/05/07 13:58:07  mk
   - Localscreen laeuft jetzt komplett
 
