@@ -723,10 +723,14 @@ begin
 end;
 
 begin
-  TestShare;
+ { TestShare;  wegen Problemen mit Novell Client 32 }
+  shareda := false;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2000/08/22 17:43:25  mk
+  - Test auf Share entfernt
+
   Revision 1.7.2.3  2000/04/18 20:22:02  mk
   JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
