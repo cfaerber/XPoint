@@ -758,20 +758,27 @@ var sr       : tsearchrec;
     pp_epp   : array[1..maxpp] of pprec;
     ppanz,i,j: integer;
     w        : pprec;
+    FindRes: Integer;
 begin
   ppanz:=0;
-  while (findfirst('*.pp',faAnyFile,sr)=0) and (ppanz<screenlines-10) do repeat      { .PP-Files }
+  FindRes := Findfirst('*.pp',faAnyFile,sr);
+  while (FindRes=0) and (ppanz<screenlines-10) do  { .PP-Files }
+  begin 
     if sr.size>0 then begin
       inc(ppanz);
       pp_epp[ppanz].name:=LeftStr(sr.name,cpos('.',sr.name)-1);
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
     end;
-  until findnext(sr)<>0;
+    FindRes := findnext(sr);
+  end;
   FindClose(sr);
-  while (findfirst('*.epp',faAnyFile,sr)=0) and (ppanz<screenlines-10) do repeat      { .EPP-Files }
+  
+  FindRes := FindFirst('*.epp',faAnyFile,sr);
+  while (FindRes=0) and (ppanz<screenlines-10) do  { .EPP-Files }
+  begin
     if sr.size>0 then begin
-      SetLength(sr.name, cpos('.', sr.name)-1); {truncstr(sr.name,cpos('.',sr.name)-1);}
+      SetLength(sr.name, cpos('.', sr.name)-1); 
       j:=1;
       while (j<=ppanz) and (sr.name<>pp_epp[j].name) do inc(j);
       if j>ppanz then begin
@@ -780,7 +787,8 @@ begin
         end;
       pp_epp[ppanz].esize:=sr.size;
       end;
-  until findnext(sr)<>0;
+    FindRes := FindNext(sr);
+  end;
   FindClose(sr);
   more:=(ppanz>screenlines-11);
   if more then dec(ppanz);
@@ -809,12 +817,12 @@ begin
     moff;
     wrt(x+3,yy,forms(file_box(d,pp_epp[i].name),11));
     if (msgs<0) or (emsgs<0) then
-      write('      ',getres2(2611,4))   { 'fehlerhafte Pufferdatei!!' }
+      Wrt2('      ' + getres2(2611,4))   { 'fehlerhafte Pufferdatei!!' }
     else
       if emsgs=0 then
-        write(msgs:12,strsrnp(pp_epp[i].psize+attsize,15,0))
+        Wrt2(Format('%12d', [msgs]) + strsrnp(pp_epp[i].psize+attsize,15,0))
       else
-        write(msgs:8,' + ',forms(strs(emsgs),5),
+        Wrt2(Format('%8d', [msgs]) +' + ' +forms(strs(emsgs),5) +
               strsrnp(pp_epp[i].psize+attsize+pp_epp[i].esize+eattsize,11,0));
     mon;
     inc(yy);
@@ -1258,6 +1266,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/10/01 22:07:34  mk
+  - fixed UV_Stat
+
   Revision 1.46  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
