@@ -2235,7 +2235,7 @@ begin
   if CommandLine then write('mail: ', fn);
   DeCompress(fn,false);
   if not fileexists(fn) then
-    raise Exception.Create(Format(GetRes2(10700,15),[fn]));
+    raise Exception.Create(Format('Puffer fehlt: %s',[fn]));
   if CommandLine then write(sp(7));
 
   OpenFile(fn);
@@ -2360,7 +2360,10 @@ begin
   if CommandLine then write('news: ', fn);
   DeCompress(fn,true);
   if not fileexists(fn) then
+  begin
     raise Exception.Create(Format(GetRes2(10700,15),[fn]));
+    exit;
+  end;
 
   OpenFile(fn);
   ReadString;
@@ -2571,82 +2574,85 @@ begin
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
   n := 0; RawNews := false;                         
-  sres := findfirst(source, faAnyFile, sr);
+  sres := findfirst(source, faAnyFile-favolumeid-faDirectory, sr);
   while sres = 0 do
   begin
-  try
-    s1 := ExtractFileExt(sr.name);
-    // BAK-Dateien überspringen
-    if s1 = FileUpperCase(ExtBak) then Continue;
-    if not (UpperCase(RightStr(sr.name,4))='.OUT') then
+    try
+      s1 := ExtractFileExt(sr.name);
+      // BAK-Dateien überspringen
+      if s1 = FileUpperCase(ExtBak) then
+      begin
+        sres := findnext(sr);
+        Continue;
+      end;
+      if not (UpperCase(RightStr(sr.name,4))='.OUT') then
 
-    if ExtractFileExt(sr.name) = '.mail' then
-    begin
-      ConvertMailfile(spath + sr.name, '', mails);
-      DeleteFiles.Add(spath + sr.name);
-    end
-    else
-    if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
-    begin
-      RawNews := true;
-      ConvertNewsfile(spath + sr.name, news);
-      DeleteFiles.Add(spath+sr.name);
-    end
-    else
-    if LeftStr(sr.name, 2) = 'X-' then
-    begin
-      ReadXFile;                        { X.-file interpretieren }
-      LoString(typ);
-      if not FileExists(spath + dfile) then
-        raise Exception.Create(Format(GetRes2(10700,15),[spath+dfile]))
-      else begin
+      if ExtractFileExt(sr.name) = '.mail' then
+      begin
+        ConvertMailfile(spath + sr.name, '', mails);
+        DeleteFiles.Add(spath + sr.name);
+      end
+      else
+      if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
+      begin
+        RawNews := true;
+        ConvertNewsfile(spath + sr.name, news);
+        DeleteFiles.Add(spath+sr.name);
+      end
+      else
+      if LeftStr(sr.name, 2) = 'X-' then
+      begin
+        ReadXFile;                        { X.-file interpretieren }
+        LoString(typ);
+        if not FileExists(spath + dfile) then
+          raise Exception.Create(Format('Puffer fehlt: %s',[spath+dfile]))
+        else begin
+          inc(n);
+          if (typ = 'rnews') or (typ = 'crnews') or
+            (typ = 'frnews') or (typ = 'grnews') then
+            ConvertNewsfile(spath + dfile, news)
+          else
+            if typ = 'rmail' then
+            ConvertMailfile(spath + dfile, SetMailuser(mailuser), mails)
+          else
+            if (typ = 'rsmtp') or (typ = 'crsmtp') or (typ = 'rcsmtp') or
+            (typ = 'frsmtp') or (typ = 'rfsmtp') or
+            (typ = 'rzsmtp') or (typ = 'zrsmtp') or
+            (typ = 'rgsmtp') or (typ = 'grsmtp') or
+            (typ = 'rbsmtp') or (typ = 'brsmtp') then
+            ConvertSmtpFile(spath + dfile, mails)
+          else
+            raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
+
+          DeleteFiles.Add(spath+sr.name);
+          DeleteFiles.Add(spath+dfile);
+        end;
+      end
+      else
+      begin
+        case FileType of
+          0, 1, 2: ConvertNewsfile(spath + sr.name, news);
+          3: ConvertSmtpFile(spath + sr.name, mails);
+          4: ConvertMailfile(spath + sr.name, '', mails);
+        else raise Exception.Create(Format(GetRes2(10700,45),[sr.name]));
+        end;
         inc(n);
-        if (typ = 'rnews') or (typ = 'crnews') or
-          (typ = 'frnews') or (typ = 'grnews') then
-          ConvertNewsfile(spath + dfile, news)
-        else
-          if typ = 'rmail' then
-          ConvertMailfile(spath + dfile, SetMailuser(mailuser), mails)
-        else
-          if (typ = 'rsmtp') or (typ = 'crsmtp') or (typ = 'rcsmtp') or
-          (typ = 'frsmtp') or (typ = 'rfsmtp') or
-          (typ = 'rzsmtp') or (typ = 'zrsmtp') or
-          (typ = 'rgsmtp') or (typ = 'grsmtp') or
-          (typ = 'rbsmtp') or (typ = 'brsmtp') then
-          ConvertSmtpFile(spath + dfile, mails)
-        else
-          raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
 
         DeleteFiles.Add(spath+sr.name);
-        DeleteFiles.Add(spath+dfile);
-
-      end;
-    end
-    else
-    begin
-      case FileType of
-        0, 1, 2: ConvertNewsfile(spath + sr.name, news);
-        3: ConvertSmtpFile(spath + sr.name, mails);
-        4: ConvertMailfile(spath + sr.name, '', mails);
-      else raise Exception.Create(Format(GetRes2(10700,45),[sr.name]));
-      end;
-      inc(n);
-
-      DeleteFiles.Add(spath+sr.name);
-  end;
-  except 
-    on Ex:Exception do
-    begin
-      if CommandLine then
-        writeln(ex.message)
-      else
-        tfehler(ex.message,30);
-
-      if (LeftStr(sr.name, 2) = 'X-') and FileExists(spath + dfile) then
-        RenameFile(spath+dfile,BadDir+dfile);        
-      RenameFile(spath+sr.name,BadDir+sr.name);
     end;
-  end; //try
+    except 
+      on Ex:Exception do
+      begin
+        if CommandLine then
+          writeln(ex.message)
+        else
+          tfehler(ex.message,30);
+
+        if (LeftStr(sr.name, 2) = 'X-') and FileExists(spath + dfile) then
+          RenameFile(spath+dfile,BadDir+dfile);        
+        RenameFile(spath+sr.name,BadDir+sr.name);
+      end;
+    end; //try
     sres := findnext(sr);
   end;
   findclose(sr);
@@ -3674,6 +3680,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.17  2002/08/05 09:35:10  mk
+  - fixed several issues and hangs
+
   Revision 1.97.2.16  2002/08/04 18:39:45  mk
   - fixed linux compiliation problems from last patch
 
