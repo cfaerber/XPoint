@@ -155,17 +155,20 @@
     dialog(ival(getres2(913,0)),3,box,x,y);
     maddstring(3,2,getres2(913,1),ntyp,10,10,''); mhnr(660);   { 'Netztyp ' }
     freeres;
-    mappsel(true,ntname(41)); {RFC/Client}
-    for i:=0 to enetztypen-1 do
+    mappsel(true,ntname(nt_uucp_c));  { RFC/Client }
+    mappsel(true,ntname(nt_uucp_u));  { RFC/UUCP   }
+    for i:=1 to enetztypen-1 do
       if (ntnr[i] in ntAllowed) then
         mappsel(true,ntName(ntnr[i]));
     readmask(brk);
     enddialog;
-    if not brk then
-      if lstr(ntyp)=lstr(ntName(41)) then nt:=41
-      else for i:=0 to enetztypen-1 do
+    if not brk then begin
+      if lstr(ntyp)=lstr(ntName(nt_uucp_c)) then nt:=nt_uucp_c
+      else if lstr(ntyp)=lstr(ntName(nt_uucp_u)) then nt:=nt_uucp
+      else for i:=1 to enetztypen-1 do
         if lstr(ntyp)=lstr(ntName(ntnr[i])) then
           nt:=ntnr[i];
+      end;
   end;
 
   procedure unique(var dname:string);    { eindeutigen Dateinamen erzeugen }
@@ -1502,6 +1505,7 @@
           boxpar^._fqdn:=fqdn;
           boxpar^.username:=user;
           boxpar^._domain:=domain;
+          boxpar^.boxname:=name;
           WriteBox(dname,boxpar);
           dbwrite(d,'dateiname',dname);
           dbWrite(d,'pointname',pointname);
@@ -1797,6 +1801,11 @@
 
 {
   $Log$
+  Revision 1.10.2.35  2001/07/11 01:48:57  my
+  JG:- Fix: write server name to .BFG after rename of server
+  JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
+       in Edit User and Edit Message Area dialogues
+
   Revision 1.10.2.34  2001/07/09 22:17:05  my
   - Copying server parameters from an existing server upon creation of a new
     RFC/Client server changed to a useful behaviour
