@@ -347,8 +347,13 @@ begin  { __ Suchmarke }
             wvl:=(unvers and 12) div 4;
             
             if (wvl=0) and (mnt and $4000<>0) then begin 
-              if (flags and 1<>0) then wvl:=5;  { 'S' - 'good' signierte Nachricht }
-              if (flags and 2<>0) then wvl:=4;  { 's' - 'bad' signierte Nachricht }
+              wvl:=5;
+              { Diese Info gibt's bei unversandten Nachrichten gar nicht,
+                daher auskommentiert: }
+              
+              { if (flags and 1<>0) then wvl:=5; }  { 'S' - 'good' signierte Nachricht }
+              { if (flags and 2<>0) then wvl:=4; }  { 's' - 'bad' signierte Nachricht }
+            
             end;
             
             dbReadN(mbase,mb_Halteflags,hflags);
