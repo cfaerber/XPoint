@@ -20,10 +20,10 @@
 
 { mhelpnr=0 -> keine Hilfsseiten }
 
-procedure readHmask(mhelpnr:word; var brk:boolean);
+procedure readHmask(mhelpnr: Integer; var brk:boolean);
 var ax,p,myp  : integer;
     afld      : feldp;
-    helpsave  : word;          { zum Sichern von help_page }
+    helpsave  : Integer;          { zum Sichern von help_page }
     t         : taste;
     newfld    : boolean;
     redisplay : boolean;
@@ -61,7 +61,7 @@ var ax,p,myp  : integer;
 
   procedure ShowFldNames;
   var i : integer;
-      s : string[80];
+      s : string;
   begin
     with amaskp^ do begin
       moff;
@@ -87,7 +87,7 @@ var ax,p,myp  : integer;
 
   procedure FldDisplay;
   var i   : integer;
-      l   : string[1];
+      l   : String[1];
       ua  : boolean;    { Scrollpfeil nach oben }
       da  : boolean;    { Scrollpfeil nach unten }
   begin
@@ -182,13 +182,13 @@ var ax,p,myp  : integer;
   function valid(feld:feldp; entered:boolean):boolean;
   var l   : longint;
       res : integer;
-      s   : string[40];
+      s   : string;
       r   : real;
       p   : selnodep;
       v   : boolean;
 
     function testdate:boolean;
-    var t,m,j : word;
+    var t,m,j : Integer;
     begin
       with feld^ do
         if pempty and (cont=mask) then
@@ -196,7 +196,7 @@ var ax,p,myp  : integer;
         else begin
           if len=8 then
           begin
-            { MK 13.02.2000 Y2K Fix }
+            { Y2K Fix }
             j :=ival(copy(cont,7,2));
             if j < 70 then inc(j, 2000) else inc(j, 1900);
           end else
@@ -209,8 +209,8 @@ var ax,p,myp  : integer;
           end;
     end;
 
-    function testtime(len:byte; t:string):boolean;
-    var h,m,s : word;
+    function testtime(len: Integer; t:string):boolean;
+    var h,m,s : Integer;
     begin
       h:=ival(copy(t,1,2));
       m:=ival(copy(t,4,2));
@@ -319,7 +319,7 @@ var ax,p,myp  : integer;
   procedure select(var brk,fwd:boolean);     { sll = gl ! }
   var p1     : selnodep;
       lines  : integer;
-      width  : byte;
+      width  : Integer;
       i,p,sa : integer;
       t      : taste;
       na     : byte;
@@ -622,7 +622,7 @@ var ax,p,myp  : integer;
   procedure _count_;
   var dat : fdate;
       s   : datetimest;
-      h,m : byte;
+      h,m : Integer;
   begin
     with afld^ do begin
       s:=cont;
@@ -1119,6 +1119,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.39  2001/10/19 23:47:09  mk
+  - corrected definition of ReadHMaske
+  - changed some word to integer
+
   Revision 1.38  2001/09/25 21:05:04  cl
   - allow function added with msetvfunc to change the content or a field
     _before_ is is checked for being a member of a list added with
