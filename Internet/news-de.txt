@@ -1,6 +1,9 @@
 Die letzten News von www.openxp.de...
 
-01. August 2003: OpenXP v3.8.11 Beta verfügbar
+18. August 2003: Management-Wechsel und FLA
+<a href="index.php4?file=news/20030818.html">Weiteres in der Mail von Christian Böttger...</a>
++
+01. August 2003: OpenXP 3.8.11 Beta verfügbar
 <a href="index.php4?file=download32-de.html">Download</a>
 +
 26. Juli 2003: Umbenennung von OpenXP/16
