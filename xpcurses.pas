@@ -445,8 +445,10 @@ begin
   if IsBold(att) then
     atts:= atts or A_BOLD;
   atts := atts and not A_BLINK;
+{ disabled till I get it working:
   if (att and $80) = $80 then
     atts:= atts or A_BLINK;
+}
   CursesAtts:= atts;
 end;
 
@@ -1478,6 +1480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/04/10 16:19:35  ml
+  - disabled shitty blinking-bit till we find another solution
+
   Revision 1.37  2001/04/10 10:03:23  ml
   - keyboard-translation completely rewritten (what a mess)
   - Ctrl-Up/Down now do the job
