@@ -46,7 +46,7 @@ const XPrequest = 'File Request';
       ppassword : string[8] = '';
       xpwindow  : byte = 0;
       LocalINTL : boolean = true;
-      result    : integer = 0;
+      _result   : integer = 0;
       DoRequest : boolean = false;
       DelEmpty  : boolean = false;
       BadDir    : boolean = false;   { BAD\ vorhanden }
@@ -169,8 +169,27 @@ const
         43,250, 44, 32, 32, 65, 69, 65, 69, 69, 73, 73, 73, 73, 79, 79,
         32, 79, 85, 85, 85,105, 94,126, 45, 32,250,248, 44, 34, 44, 32);
 
+
+{ Aufruf von ZFido }
+function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
+                 const ebene    : string;       { Brettebene /FIDO/ }
+                 const _in      : string;       { Eingangsdatei }
+                 const _out     : string;       { Ausgangsdatei }
+                 const _from    : string;       { Von }
+                 const _to      : string;       { An }
+                 const fnet     : integer;      { Fakenet }
+                 const pwd      : string;       { Paket-Password }
+                 const altPC    : string;       { Altern. Product Code }
+                 const li       : boolean;      { Local INTL ? }
+                 const via      : boolean;      { Keep VIA-Kludge? }
+                 const isReq    : boolean;      { Request ? }
+                 const del      : boolean):     { Leere Mails loeschen ? }
+                        integer;
+
+
+
 { Hauptprogramm, wird noch extrahiert }
-procedure ZFidoMain;
+function ZFidoMain: integer;
 
 implementation
 
@@ -1650,7 +1669,7 @@ abbr:
   close(f2);
   if not ok then begin
     writeln('  fehlerhaftes Fido-Paket!'#7); delay(1000);
-    result:=1;
+    _result:=1;
     if baddir then begin
       writeln(sp(length(fn)+length(outfile)+9),
               'Datei wird im Verzeichnis BAD abgelegt.');
@@ -1690,8 +1709,81 @@ begin
   gotoxy(1,y-3);
 end;
 
+function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
+                 const ebene    : string;       { Brettebene /FIDO/ }
+                 const _in      : string;       { Eingangsdatei }
+                 const _out     : string;       { Ausgangsdatei }
+                 const _from    : string;       { Von }
+                 const _to      : string;       { An }
+                 const fnet     : integer;      { Fakenet }
+                 const pwd      : string;       { Paket-Password }
+                 const altPC    : string;       { Altern. Product Code }
+                 const li       : boolean;      { Local INTL ? }
+                 const via      : boolean;      { Keep VIA-Kludge? }
+                 const isReq    : boolean;      { Request ? }
+                 const del      : boolean):     { Leere Mails loeschen ? }
+                        integer;
+var
+  t: text;
+  s: string;
+  p: integer;
+begin
+  direction:= dir;
+  bretter:= ebene;
+  if fnet <> -1 then begin
+    fakenet:= fnet;
+    adr3d:= true;
+  end;
+  if altPC <> '' then
+    prodcode:= hexval(altPC);
+  ppassword:= pwd;
+  LocalIntl:= li;
+  DoRequest:= isReq;
+  DelEmpty:= del;
+  KeepVia:= via;
+  infile:=_in;
+  outfile:=_out;
+  fromadr:=_from;
+  toadr:=_to;
 
-function ZFidoMain;
+  bh_anz:=0;
+  if bretter='' then
+    if not fileexists(cfgfile) then
+      bretter:='/FIDO/'
+    else begin            { kein -h-Parameter -> ZFIDO.CFG auslesen }
+      assign(t,cfgfile);
+      reset(t);
+      while not eof(t) and (bh_anz<maxbretth) do begin
+        readln(t,s);
+        s:=trim(s);
+        if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
+          p:=cpos('=',s);
+          if LowerCase(LeftStr(s,p))='bretter=' then begin
+            s:=trim(mid(s,p+1));
+            p:=blankpos(s);
+            if p>0 then begin
+              inc(bh_anz);
+              bretths[bh_anz].box:=LeftStr(s,p-1);
+              bretths[bh_anz].bh:=trim(mid(s,p+1));
+              end;
+            end;   { bretter= }
+          end;   { s<>'' }
+        end;   { not eof }
+      close(t);
+      end;
+  testfiles;
+  case direction of
+    1: begin
+         testadr;
+         ZFidoProc;
+       end;
+    2: FidoZ;
+  end; { case }
+  result:= _result;
+end;
+
+
+function ZFidoMain: integer;
 begin
   test8086:=0;
   logo;
@@ -1701,11 +1793,15 @@ begin
   if direction=1 then testadr;
   if direction=1 then ZFidoProc
   else FidoZ;
+  result:= _result;
 end;
 
 end.
 {
         $Log$
+        Revision 1.2  2000/11/14 22:19:16  hd
+        - Fido-Modul: Anpassungen an Linux
+
         Revision 1.1  2000/11/14 20:24:03  hd
         - Funktionen in Unit ZFTools ausgelagert
         - exist->FileExists

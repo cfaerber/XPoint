@@ -23,7 +23,7 @@ uses
 {$ELSE}
   crt,
 {$ENDIF }
-  sysutils,xpglobal,dos,typeform,uart,datadef,database,
+  sysutils,xpglobal,typeform,uart,datadef,database,
   fileio,inout,keys,winxp,maske,maus2,montage,lister,zcrfc,debug,
   resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
@@ -60,7 +60,7 @@ var Netcall_connect : boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
+uses dos,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/11/14 22:19:15  hd
+  - Fido-Modul: Anpassungen an Linux
+
   Revision 1.42  2000/11/14 21:36:53  fe
   Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
   So the program is called "uuz" again.

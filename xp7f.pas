@@ -24,6 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+{$ifdef Unix}
+  ZFTools,      { ZFido }
+{$endif}
       dos,typeform,montage,fileio,keys,maus2,
       inout,lister,resource,maske, xpglobal,debug,
       xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
@@ -932,8 +935,8 @@ begin
   {$IFDEF DEBUG }
   {$Q+}
   {$ENDIF}
-  assign(t,arcmaildat);
-  if existf(t) then begin
+  if FileExists(ArcmailDat) then begin
+    assign(t,arcmaildat);
     reset(t);
     while not eof(t) and (length(fn)<12) do begin
       readln(t,s);
@@ -949,6 +952,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/11/14 22:19:16  hd
+  - Fido-Modul: Anpassungen an Linux
+
   Revision 1.34  2000/11/14 15:51:33  mk
   - replaced Exist() with FileExists()
 

@@ -25,6 +25,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+{$ifdef Unix}
+  ZFTools,      { ZFido-Unit }
+{$endif}
   winxp, dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti,debug;
 
@@ -421,6 +424,35 @@ var d         : DB;
     sout      : string;
 
   procedure Convert;
+{$ifdef Unix}
+  const
+    pc: array[false..true] of string = ('', '1A');
+  var
+    fnet: integer;
+    rc  : integer;
+  begin
+    with BoxPar^ do begin
+      if (f4d or alias) then
+        fnet:= fPointNet
+      else
+        fnet:= -1;
+    
+      rc:= DoZFido(1,                           { Richtung ZC->FTS }
+              MagicBrett,                       { Basisebene }
+              source,                           { Quelldatei }
+              sout+dest,                        { Zieldatei }
+              OwnFidoAdr,                       { Absender }
+              boxname,                          { Empfaenger }
+              fnet,                             { FakeNet }
+              passwort,                         { Paketpassword }
+              pc[(f4d or alias) and fTosScan],  { PC aendern wg. TosScan? }
+              LocalINTL,                        { INTL }
+              false,                            { Keep VIA }
+              true,                             { Requests }
+              false);                           { Leere loeschen? }
+    end;
+  end;
+{$else}
   var _2d,pc,pw,nli : string[20];
       f             : boolean;
   begin
@@ -439,8 +471,9 @@ var d         : DB;
       if f then _era(source);
       end;
   end;
+{$endif}
 
-begin
+begin { ZtoFido }
   sout:=Boxpar^.sysopout;
   Convert;
   orgdest:=dest;
@@ -772,6 +805,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/11/14 22:19:16  hd
+  - Fido-Modul: Anpassungen an Linux
+
   Revision 1.37  2000/11/14 15:51:34  mk
   - replaced Exist() with FileExists()
 

@@ -1004,17 +1004,6 @@ var dummy : longint;
     sysutils.findclose(sr);
   end;
 
-{  var sr : searchrec;
-  begin
-    findfirst(BoxPar^.sysopinp+'*.PKT',ffAnyFile,sr);
-    while doserror=0 do begin
-      if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
-        _era(BoxPar^.sysopinp+sr.name);
-      findnext(sr);
-    end;
-    FindClose(sr);
-  end;}
-
   procedure EmptySysin;
   var sr : searchrec;
   begin
@@ -1054,7 +1043,7 @@ var dummy : longint;
       end;
   end;
 
-begin
+begin { FidoSysopTransfer }
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do begin
     if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
@@ -1113,8 +1102,8 @@ begin
           if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
       end;
 
-    if FileExists(SysopInp+'*.*') then begin             { -- Eingangspaket -- }
-      EmptySpool('*.*');
+    if FileExists(SysopInp+WildCard) then begin             { -- Eingangspaket -- }
+      EmptySpool(WildCard);
       CopyPKTs;
       if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
         EmptySysin;
@@ -1443,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2000/11/14 22:19:15  hd
+  - Fido-Modul: Anpassungen an Linux
+
   Revision 1.40  2000/11/14 21:10:27  hd
   - Fix: Unix: auch *.pkt, *.Pkt ... werden kopiert (vorher nur *.PKT)
 

@@ -29,11 +29,13 @@ uses
   dos,typeform,fileio,xpdiff,xpdatum,xpglobal;
 
 begin
-  ZFidoMain;
-  halt(result);
+  halt(ZFidoMain);
 end.
 {
   $Log$
+  Revision 1.43  2000/11/14 22:19:16  hd
+  - Fido-Modul: Anpassungen an Linux
+
   Revision 1.42  2000/11/14 20:24:03  hd
   - Funktionen in Unit ZFTools ausgelagert
   - exist->FileExists
