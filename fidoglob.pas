@@ -69,6 +69,7 @@ type
                 end;
 
         ///////////////////////////////////////////////////////////////////////
+        // Nodelistenverwaltung
         TNodeListItem  = class
         protected
                 fListfile   : string;    { Nodelisten-Datei      }
@@ -106,7 +107,7 @@ type
                 constructor     Create;
                 procedure       LoadConfigFromFile;
                 procedure       SaveConfigToFile;               // NODELST.CFG speichern
-                procedure       Add(NLItem :TNodeListItem);
+                procedure       Add(NLItem :TNodeListItem);     // fÅge NL hinzu und sortiere
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
                 function        GetItem(Index: integer): TNodeListItem;
@@ -132,35 +133,25 @@ implementation
 constructor TNodeList.Create;
 begin
         //fEntries:=TList.Create;
-        fOpen:=false;               // Nodelist(en) vorhanden & geoeffnet
+        fOpen:=false;                   // Nodelist(en) vorhanden & geoeffnet
 end;
-//function TNodeList.GetItem(Index: Integer): TNodeListItem;
-//begin
-//  Result := TNodeListItem(fEntries[Index]);
-//end;
-
-{rocedure TNodeList.PutItem(Index: Integer; const Item:
-TNodeListItem);
-begin
-  fEntries[Index] := Item;
-end;
-}
 procedure TNodeList.LoadConfigFromFile;       { NODELST.CFG laden }
-var t  : text;
-    s  : string;
-    ss : string[20];
-    p  : byte;
-    fa : fidoadr;
-    I: TNodeListItem;
+var t     : text;
+    s     : string;
+    ss    : string[20];
+    p     : byte;
+    fa    : fidoadr;
+    NlItem: TNodeListItem;
 begin
-  create;                               // call first constructor
+  create;                               // standard constructor
   assign(t,NodelistCfg);
   if existf(t) then begin
     reset(t);
     while not eof(t) do
     begin
-      i := TNodeListItem.Create;
-      with I do
+      NlItem := TNodeListItem.Create;   //
+      add(NlItem);
+      with NlItem do
       begin
         repeat
           readln(t,s);
@@ -182,19 +173,18 @@ begin
               fzone:=fa.zone; fnet:=fa.net; fnode:=fa.node;
               end;
             end;
-        until eof(t) or (s='');
-        if (fformat<1) or (fformat>5) then
-        begin
-          Remove(I);
-          I.Free;
+          until eof(t) or (s='');
+        if (fformat<1) or (fformat>5) then begin    // ungueltiges Format
+          Remove(NlItem);       // Element aus der Liste entfernen
+          NlItem.Free;          // und freigeben
+          end;
         end;
-      end;
     end;  { while }
     close(t);
   end;
 end;
 
-procedure TNodeList.SaveConfigToFile;                    { NODELST.CFG speichern }
+procedure TNodeList.SaveConfigToFile;           // NODELST.CFG speichern
 var t : text;
     i : integer;
 begin
@@ -245,7 +235,7 @@ begin
         result:=LeftStr(flistfile,p-1)+formi(fnumber,3)+mid(flistfile,p+3);
     end;
 end;
-
+//FÅge neuen Eintrag hinzu und sortiere nach Grî·e
 procedure TNodeList.Add(NLItem : TNodeListItem);
 var
   i,j : integer;
@@ -322,6 +312,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/01/07 20:03:02  mo
+  no message
+
   Revision 1.10  2001/01/07 12:34:37  mo
   - einig  ƒnderungen an TNodeList
 
