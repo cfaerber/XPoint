@@ -145,6 +145,9 @@ var mmask     : array[1..12] of boolean;
       amodi:=false
     else
       amodi:=sr.time<>ar.lastfd;
+{$IFDEF Ver32}
+    FindClose(sr);
+{$ENDIF}
   end;
 
 begin
@@ -260,7 +263,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (right(ustr(datei),4)='.MSG') and exist(datei) then
+          if (right(fustr(datei),4)=fustr('.msg')) and exist(datei) then
             _era(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -311,6 +314,7 @@ var sr    : searchrec;
     first : boolean;
     ctlEbest,ctlErstDat : boolean;
     mgel  : boolean;       { Save fÅr ParGelesen }
+    fnstart: pathstr;	   { Name der Start.bat }
 
   function find(ext:string):boolean;
   begin
@@ -343,7 +347,7 @@ var sr    : searchrec;
   var box : string[BoxNameLen];
   begin
     MausImport:=false;
-    if not exist('MAGGI.EXE') then
+    if not exist(MaggiBin) then
       trfehler(102,tfs)    { 'MAGGI.EXE fehlt' }
     else begin
       box:=NamePollbox;
@@ -351,7 +355,7 @@ var sr    : searchrec;
         trfehler1(2204,sr.name,tfs)   { 'Kann %s nicht einlesen - ungÅltige Pollbox' }
       else begin
         ReadBoxpar(0,box);
-        shell('MAGGI.EXE -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
+        shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
               AutoxDir+sr.name+' MPUFFER',300,3);
         if errorlevel<>0 then
           trfehler1(2205,sr.name,tfs)   { '%s: Fehler bei Nachrichtenkonvertierung' }
@@ -369,13 +373,13 @@ var sr    : searchrec;
   procedure FidoImport;
   var sr : searchrec;
   begin
-    if not exist('ZFIDO.EXE') then
+    if not exist(ZFidoBin) then
       trfehler(101,tfs)     { 'Netcallkonvertierer ZFIDO.EXE fehlt!' }
     else if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
     else begin
       ReadBoxpar(0,DefFidoBox);
-      shell('ZFIDO.EXE -fz -h'+BoxPar^.MagicBrett+' '+AutoxDir+'*.PKT '+
+      shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+AutoxDir+'*.pkt '+
             'FPUFFER -w:'+strs(screenlines),300,3);
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
@@ -388,12 +392,12 @@ var sr    : searchrec;
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
-          dos.findfirst(AutoxDir+'*.PKT',ffAnyFile,sr);
+          dos.findfirst(AutoxDir+'*.pkt',ffAnyFile,sr);
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
             dos.findnext(sr);
           end;
-          {$IFDEF virtualpascal}
+          {$IFDEF Ver32}
           FindClose(sr);
           {$ENDIF}
         end;
@@ -447,7 +451,7 @@ var sr    : searchrec;
         if hdr='server' then
           box:=trim(mid(s,p+1)) else
         if (hdr='datei') or (hdr='file') then
-          datei:=ustr(trim(mid(s,p+1)));
+          datei:=fustr(trim(mid(s,p+1)));
         end;
       end;
     err:=true;
@@ -460,7 +464,7 @@ var sr    : searchrec;
     if (box<>'') and not IsBox(box) then
       axerr(4,box) else                 { 'ungÅltige Serverbox: %s' }
     if datei<>'' then begin
-      if not multipos(':\',datei) then
+      if not multipos(_MPMask,datei) then
         datei:=SendPath+datei;
       if not exist(datei) then
         axerr(5,ustr(datei)) else       { 'Datei "%s" fehlt' }
@@ -550,51 +554,53 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoExec');
 {$ENDIF }
-  if exist(AutoxDir+'*.*') then begin
+  if exist(AutoxDir+WildCard) then begin
     first:=true;
     ctlEbest:=false; ctlErstDat:=false;
     mgel:=ParGelesen; ParGelesen:=false;
-    while find('CTL') do    { Control-Dateien }
+    while find('ctl') do    { Control-Dateien }
       SetCTL;
-    while find('CTD') do begin
+    while find('ctd') do begin
       SetCTL;
       delfile;
       end;
-    while find('ZER') do     { Z-Puffer einlesen + lîschen }
+    while find('zer') do     { Z-Puffer einlesen + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,ctlEbest,0) then
         delfile;
-    while find('ZEE') do     { Z-Puffer einlesen, EB's versenden + lîschen }
+    while find('zee') do     { Z-Puffer einlesen, EB's versenden + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,true,0) then
         delfile;
-    while find('OUT') do     { Maus-OUTFILE einlesen + lîschen }
+    while find('out') do     { Maus-OUTFILE einlesen + lîschen }
       if MausImport then
         delfile;
-    if exist(AutoxDir+'*.PKT') then    { Fido-Paket(e) einlesen + lîschen }
+    if exist(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
       FidoImport;
 
-    while find('IPS') do     { Puffer versenden }
+    while find('ips') do     { Puffer versenden }
       if SendPuffer then
         delfile;
-    while find('MSG') do     { Nachricht/Datei senden + lîschen }
+    while find('msg') do     { Nachricht/Datei senden + lîschen }
       if SendMsg(false) then
         delfile;
-    while find('MSD') do     { Datei senden + incl. Datei lîschen }
+    while find('msd') do     { Datei senden + incl. Datei lîschen }
       if SendMsg(true) then
         delfile;
-    while find('BAK') do     { BAK-files lîschen }
+    while find('bak') do     { BAK-files lîschen }
       delfile;
 
-    while find('BAT') do     { Batchdateien ausfÅhren }
-      if (left(sr.name,5)<>'START') and (left(sr.name,4)<>'STOP') then begin
+    while find('bat') do     { Batchdateien ausfÅhren }
+      if (left(sr.name,5)<>fustr('start')) and (left(sr.name,4)<>fustr('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
     if startbatch then begin
-      if exist(AutoxDir+'START.BAT') then           { START.BAT }
-        shell(AutoxDir+'START.BAT',500,1);
-      if exist(AutoxDir+'START1.BAT') then begin    { START1.BAT, lîschen }
-        shell(AutoxDir+'START1.BAT',500,1);
-        _era(AutoxDir+'START1.BAT');
+      fnstart:=AutoxDir+fustr('start'+BatchExt);	{ START.BAT }
+      if exist(fnstart) then
+        shell(fnstart,500,1);
+      fnstart:=AutoxDir+fustr('start1'+BatchExt);	{ START1.BAT, lîschen }
+      if exist(fnstart) then begin
+        shell(fnstart,500,1);
+        _era(fnstart);
         end;
       end;
     ParGelesen:=mgel;
@@ -606,15 +612,19 @@ end;
 
 
 procedure AutoStop;
+var
+  fnstop: pathstr;
 begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
 {$ENDIF }
-  if exist(AutoxDir+'STOP.BAT') then           { STOP.BAT }
-    shell(AutoxDir+'STOP.BAT',500,1);
-  if exist(AutoxDir+'STOP1.BAT') then begin    { STOP1.BAT, lîschen }
-    shell(AutoxDir+'STOP1.BAT',500,1);
-    _era(AutoxDir+'STOP1.BAT');
+  fnstop:= AutoxDir+fustr('stop'+BatchExt);	{ STOP.BAT }
+  if exist(fnstop) then
+    shell(fnstop,500,1);
+  fnstop:= AutoxDir+fustr('stop1'+BatchExt);	{ STOP1.BAT, lîschen }
+  if exist(fnstop) then begin
+    shell(fnstop,500,1);
+    _era(fnstop);
     end;
 end;
 
@@ -659,6 +669,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/22 17:06:04  hd
+  - Programmnamen durch Konstanten aus xp0 ersetzt
+  - Fix: Fehlende und falsche FindClose
+  - Batch-Namen angepasst
+
   Revision 1.11  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
