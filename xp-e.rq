@@ -654,7 +654,8 @@ K (c) '93-96 Peter Mandrella
 12   additional sound signals
 13   headline 1
 14   headline 2
-15   swap list entries 
+15   swap entries msg list
+16   swap entries user list
 + 261
 # Window width
 0    50
