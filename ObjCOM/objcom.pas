@@ -15,7 +15,7 @@ unit ObjCOM;
 
 {$I OCDEFINE.INC}
 
-uses Ringbuff
+uses Ringbuff,Classes
      {$IFDEF DOS32},Ports{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux},Linux,Sockets{$ENDIF}
@@ -26,16 +26,25 @@ uses Ringbuff
 
 type SliceProc = procedure;
 
-type tCommObj = Object
+type TCommStream = class(TStream)
+  public
         DontClose  : Boolean;
         IgnoreCD   : Boolean;
         InitFailed : Boolean;
         ErrorStr   : ShortString;
         BlockAll   : Boolean;
 
-        constructor Init;
-        destructor Done; virtual;
+  (* --- TStream interface ----------------------------------------------- *)
+  public
+        constructor Create;
+        destructor Destroy; override;
 
+        function Read(var Buffer; Count: Longint): Longint; override;
+        function Write(const Buffer; Count: Longint): Longint; override;
+        function Seek(Offset: Longint; Origin: Word): Longint; override;
+
+  (* --- CommObj interface ----------------------------------------------- *)
+  public
         procedure OpenQuick(Handle: Longint); virtual;
         function  Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                        Parity: Char; StopBits: Byte): Boolean; virtual; {Initialize and open port}
@@ -71,13 +80,11 @@ type tCommObj = Object
         function  Carrier: Boolean; virtual;
         procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); virtual;
         procedure SetDtr(State: Boolean); virtual;
-     end; { object tCommObj }
-
-Type tpCommObj = ^tCommObj;
+     end; { object TCommStream }
 
 var ErrorStr: String;
 
-function CommInit(S: String; var CommObj: tpCommObj): boolean;
+function CommInit(S: String): TCommStream;
  {Initializes comm object. S may be for example
   "Serial Port:1 Speed:57600"
   "Serial /dev/ttyS1"
@@ -110,7 +117,7 @@ uses Sysutils,Timer,Debug;
 
 const CommandTimeout= 500;
 
-constructor tCommObj.Init;
+constructor TCommStream.Create;
 begin
   DontClose := false;
   IgnoreCD := false;
@@ -121,13 +128,36 @@ end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor tCommObj.Done;
+destructor TCommStream.Destroy;
 begin
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
+function TCommStream.Read(var Buffer; Count: Longint): Longint;
+begin
+  ReadBlock(Buffer,Count,Result);
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TCommStream.Write(const Buffer; Count: Longint): Longint;
+begin
+  SendBlock(Buffer,Count,Result);
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TCommStream.Seek(Offset: Longint; Origin: Word): Longint; 
+begin
+  if not (((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0)) then
+    raise EStreamError.Create('Invalid stream operation');
+  result := -1;
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TCommStream.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                    Parity: Char; StopBits: Byte): Boolean;
 begin
   DebugLog('ObjCOM','Method open not overloaded',1);
@@ -136,69 +166,69 @@ end; { func. Open }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.OpenQuick(Handle: Longint);
+procedure TCommStream.OpenQuick(Handle: Longint);
 begin
   DebugLog('ObjCOM','Method OpenQuick not overloaded',1)
-end; { proc. tCommObj.OpenQuick }
+end; { proc. TCommStream.OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.Close;
+procedure TCommStream.Close;
 begin
   DebugLog('ObjCOM','Method Close not overloaded',1)
-end; { proc. tCommObj.Close }
+end; { proc. TCommStream.Close }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.GetChar: Char;
+function TCommStream.GetChar: Char;
 begin
   DebugLog('ObjCOM','Method GetChar not overloaded',1);
   GetChar:=#0;
-end; { func. tCommObj.GetChar }
+end; { func. TCommStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.SendChar(C: Char): Boolean;
+function TCommStream.SendChar(C: Char): Boolean;
 begin
   DebugLog('ObjCOM','Method SendChar not overloaded',1);
   SendChar:=False;
-end; { proc. tCommObj.SendChar }
+end; { proc. TCommStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TCommStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
   DebugLog('ObjCOM','Method SendBlock not overloaded',1)
-end; { proc. tCommObj.SendBlock }
+end; { proc. TCommStream.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TCommStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
   DebugLog('ObjCOM','Method ReadBlock not overloaded',1)
-end; { proc. tCommObj.ReadBlock }
+end; { proc. TCommStream.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.CharAvail: Boolean;
+function TCommStream.CharAvail: Boolean;
 var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
   GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
   CharAvail:=InUsed<>0;
-end; { func. tCommObj.CharAvail }
+end; { func. TCommStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.CharCount: Integer;
+function TCommStream.CharCount: Integer;
 var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
   GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
   CharCount:=InUsed;
-end; { func. tCommObj.CharCount }
+end; { func. TCommStream.CharCount }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.Carrier: Boolean;
+function TCommStream.Carrier: Boolean;
 begin
   DebugLog('ObjCOM','Method Carrier not overloaded',1);
   Carrier:=False;
@@ -206,75 +236,75 @@ end; { func. Comm_Carrier }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.SetDtr(State: Boolean);
+procedure TCommStream.SetDtr(State: Boolean);
 begin
   DebugLog('ObjCOM','Method SetDTR not overloaded',1)
-end; { proc. tCommObj.SetDtr }
+end; { proc. TCommStream.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.OpenKeep(Comport: Byte): Boolean;
+function TCommStream.OpenKeep(Comport: Byte): Boolean;
 begin
   DebugLog('ObjCOM','Method OpenKeep not overloaded',1);
   OpenKeep:=False;
-end; { func. tCommObj.OpenKeep }
+end; { func. TCommStream.OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.ReadyToSend(BlockLen: Longint): Boolean;
+function TCommStream.ReadyToSend(BlockLen: Longint): Boolean;
 var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
   GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
   ReadyToSend:=OutFree>=BlockLen;
-end; { func. tCommObj.ReadyToSend }
+end; { func. TCommStream.ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.GetModemStatus(var LineStatus, ModemStatus: Byte);
+procedure TCommStream.GetModemStatus(var LineStatus, ModemStatus: Byte);
 begin
   DebugLog('ObjCOM','Method GetModemStatus not overloaded',1)
-end; { proc. tCommObj.GetModemStatus }
+end; { proc. TCommStream.GetModemStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.GetBPSrate: Longint;
+function TCommStream.GetBPSrate: Longint;
 begin
   DebugLog('ObjCOM','Method GetBPSRate not overloaded',1);
   GetBPSRate:=56000;
-end; { func. tCommObj.GetBPSrate }
+end; { func. TCommStream.GetBPSrate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
+function TCommStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 begin
   DebugLog('ObjCOM','Method SetLine not overloaded',1);
   SetLine:=False;
-end; { proc. tCommObj.SetLine }
+end; { proc. TCommStream.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
+procedure TCommStream.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 begin
   DebugLog('ObjCOM','Method GetBufferStatus not overloaded',1)
-end; { proc. tCommObj.GetBufferStatus }
+end; { proc. TCommStream.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.PurgeInBuffer;
+procedure TCommStream.PurgeInBuffer;
 begin
   DebugLog('ObjCOM','Method PurgeInBuffer not overloaded',1)
-end; { proc. tCommObj.PurgeInBuffer }
+end; { proc. TCommStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.PurgeOutBuffer;
+procedure TCommStream.PurgeOutBuffer;
 begin
   DebugLog('ObjCOM','Method PurgeOutBuffer not overloaded',1)
-end; { proc. tCommObj.PurgeOutBuffer }
+end; { proc. TCommStream.PurgeOutBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.GetDriverInfo: String;
+function TCommStream.GetDriverInfo: String;
 begin
   DebugLog('ObjCOM','Method GetDriverInfo not overloaded',1);
   GetDriverInfo:='';
@@ -282,7 +312,7 @@ end; { func. GetDriverInfo }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.GetHandle: Longint;
+function TCommStream.GetHandle: Longint;
 begin
   DebugLog('ObjCOM','Method GetHandle not overloaded',1);
   GetHandle:=-1;
@@ -290,28 +320,28 @@ end; { func. GetHandle }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.PauseCom(CloseCom: Boolean);
+procedure TCommStream.PauseCom(CloseCom: Boolean);
 begin
   DebugLog('ObjCOM','Method PauseCom not overloaded',1)
 end; { proc. PauseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.ResumeCom(OpenCom: Boolean);
+procedure TCommStream.ResumeCom(OpenCom: Boolean);
 begin
   DebugLog('ObjCOM','Method ResumeCom not overloaded',1)
 end; { proc. ResumeCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.InitSucceeded: Boolean;
+function TCommStream.InitSucceeded: Boolean;
 begin
   InitSucceeded := NOT InitFailed;
 end; { func. InitFailed }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.FlushOutBuffer(Slice: SliceProc);
+procedure TCommStream.FlushOutBuffer(Slice: SliceProc);
 var InFree,
     OutFree,
     InUsed,
@@ -334,14 +364,14 @@ end; { proc. FlushOutBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
+procedure TCommStream.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
 begin
   SendBlock(Block, BlockLen, Written);
 end; { proc. SendWait }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.SendString(Temp: String; ExpectEcho: Boolean): Boolean;
+function TCommStream.SendString(Temp: String; ExpectEcho: Boolean): Boolean;
 var Written,ReadBytes,I: Longint; Echo: String;
 begin
   if ExpectEcho then PurgeInBuffer;
@@ -357,14 +387,14 @@ end; { proc. SendString }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.SetFlow(SoftTX, SoftRX, Hard: Boolean);
+procedure TCommStream.SetFlow(SoftTX, SoftRX, Hard: Boolean);
 begin
   DebugLog('ObjCOM','Method SetFlow not overloaded',1)
 end; { proc. Setflow }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function CommInit(S: String; var CommObj: tpCommObj): boolean;
+function CommInit(S: String): TCommStream;
 
   function UpStr(st: String): String;
   var help: String; i: Integer;
@@ -378,7 +408,7 @@ var
  Success: Boolean;
 
 begin
-  ConnType:=CUnknown; Success:=False;
+  ConnType:=CUnknown; Success:=False; Result:=Nil;
   {$IFDEF Fossil} if pos('FOSSIL',UpStr(S))=1 then ConnType:=CFossil; {$ENDIF}
   {$IFDEF TCP} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet;
                if pos('RAWIP',UpStr(S))=1 then ConnType:=CRawIP; {$ENDIF}
@@ -415,22 +445,22 @@ begin
       DebugLog('ObjCOM','P'+SPort+' S'+IntToStr(ISpeed)+' '+IntToStr(IDataBits)+CParity+IntToStr(IStopBits),1);
       if Res=0 then
         begin case ConnType of
-                {$IFDEF TCP} CTelnet: begin CommObj:=New(tpTelnetObj,Init);
-                                            Success:=tpTelnetObj(CommObj)^.Connect(SPort)end;
-                             CRawIP:  begin CommObj:=New(tpRawIPObj,Init);
-                                            Success:=tpRawIPObj(CommObj)^.Connect(SPort)end;{$ENDIF}
-                {$IFDEF Fossil} CFossil: begin CommObj:=New(tpFossilObj,Init);
-                                               Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
-                {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
-                {$ELSE} CSerial: begin CommObj:=New(tpSerialObj,Init);
-                                       Success:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
+                {$IFDEF TCP} CTelnet: begin Result:=TTelnetStream.Create;
+                                            Success:=TTelnetStream(Result).Connect(SPort)end;
+                             CRawIP:  begin Result:=TRawIPStream.Create;
+                                            Success:=TRawIPStream(Result).Connect(SPort)end;{$ENDIF}
+                {$IFDEF Fossil} CFossil: begin Result:=TFossilStream.Create;
+                                               Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
+                {$IFNDEF Linux} CSerial: begin Result:=TSerialStream.Create;
+					       Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
+                {$ELSE} CSerial: begin Result:=TSerialStream.Create;
+                                       Success:=TSerialStream(Result).LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
               end;
-              CommObj^.IgnoreCD:=IgnoreCD;
-              if not Success then begin ErrorStr:=CommObj^.ErrorStr; Dispose(CommObj,Done)end;
+              Result.IgnoreCD:=IgnoreCD;
+              if not Success then begin ErrorStr:=Result.ErrorStr; Result.Free; Result:=Nil end;
         end;
     end
   else ErrorStr:='Unknown connection type specified';
-  CommInit:=Success;
 end;
 
 initialization Initserial;
@@ -441,6 +471,9 @@ end.
 
 {
   $Log$
+  Revision 1.23  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.22  2001/07/31 13:10:37  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

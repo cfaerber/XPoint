@@ -54,7 +54,7 @@ begin
 
   if not ZModemOkay then begin
     Output(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
-    if not FCommObj^.Carrier then begin
+    if not FCommObj.Carrier then begin
       Output(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
       log(lcError,'carrier lost');
     end else
@@ -77,6 +77,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.2  2001/04/16 18:13:28  ma
   - ProgOutWin now pauses a bit on closing
     (some seconds if an error occured, one second if not)

@@ -18,7 +18,7 @@ WSAData:  tWSAData;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor tRawIPObj.Init;
+constructor TRawIPStream.Create;
 begin
   {$IFDEF WIN32}
   if WSAInits<=0 then
@@ -28,12 +28,12 @@ begin
   SBufBeg:=Low(SBuffer);
   SBufEnd:=Low(SBuffer);
   SOpened:=False; Dontclose:=False;
-  IgnoreCD:=True; inherited Init;
+  IgnoreCD:=True; inherited Create;
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor tRawIPObj.Done;
+destructor TRawIPStream.Destroy;
 begin
   {$IFDEF WIN32}
   dec(WSAInits);
@@ -41,33 +41,33 @@ begin
     WSACleanup;
   {$ENDIF}
   if not dontclose then close;
-  inherited done;
+  inherited Destroy;
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TRawIPObj.SetErrorStr(prefix: string);
+procedure TRawIPStream.SetErrorStr(prefix: string);
 begin
   ErrorStr := prefix+' (#'+IntToStr({$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF})+')';
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.GetHandle: Longint;
+function TRawIPStream.GetHandle: Longint;
 begin
   GetHandle:=SHandle;
 end; { func. GetHandle }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.OpenQuick(Handle: Longint);
+procedure TRawIPStream.OpenQuick(Handle: Longint);
 begin
   SHandle:=Handle;
-end; { proc. tRawIPObj.OpenQuick }
+end; { proc. TRawIPStream.OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.OpenKeep(Comport: Byte): Boolean;
+function TRawIPStream.OpenKeep(Comport: Byte): Boolean;
 begin
   OpenKeep:=False;
 end; { func. OpenKeep }
@@ -94,7 +94,7 @@ end; { func. OpenKeep }
   function htons(host:Word): Word; cdecl; external;
 {$ENDIF}
 
-function TRawIPObj.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
+function TRawIPStream.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
 type
     PCardinal  = ^Cardinal;
     PPCardinal = ^PCardinal;
@@ -161,7 +161,7 @@ end; { func. TTelnetObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.Connect(Dest: String): Boolean;
+function TRawIPStream.Connect(Dest: String): Boolean;
 var SHost: String;
     IPort: Integer;
     IPos:  Integer;
@@ -183,14 +183,14 @@ end; { func. TTelnetObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
+function TRawIPStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 begin
   SetLine:=True;
-end; { proc. tRawIPObj.SetLine }
+end; { proc. TRawIPStream.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.Close;
+procedure TRawIPStream.Close;
 begin
   if GetHandle <> INVALID_SOCKET then
   begin
@@ -199,29 +199,29 @@ begin
     SHandle := INVALID_SOCKET;
   end;
   SOpened:=False;
-end; { func. tRawIPObj.CloseCom }
+end; { func. TRawIPStream.CloseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.SendChar(C: Char): Boolean;
+function TRawIPStream.SendChar(C: Char): Boolean;
 var Written:LongInt;
 begin
   SendBlock(C, SizeOf(C), Written);
   SendChar := (Written = SizeOf(c));
-end; { proc. tRawIPObj.SendChar }
+end; { proc. TRawIPStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.GetChar: Char;
+function TRawIPStream.GetChar: Char;
 var Reads: LongInt;
 begin
   ReadBlock(result,sizeof(result),Reads);
   if Reads<=0 then result:=#0;
-end; { func. tRawIPObj.GetChar }
+end; { func. TRawIPStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TRawIPStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),dlDebug+2);
 
@@ -231,11 +231,11 @@ begin
     SetErrorStr('SendBlock');
     DebugLog('ObjCOM','SendBlock error',dlWarning);
   end;
-end; { proc. tRawIPObj.SendBlock }
+end; { proc. TRawIPStream.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TRawIPObj._ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TRawIPStream._ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
   reads := {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.recv(SHandle,Block,Blocklen,0);
   case reads of
@@ -252,7 +252,7 @@ begin
   end;
 end;
 
-procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TRawIPStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 var rr: Longint;
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),dlDebug+2);
@@ -292,21 +292,21 @@ begin
       Reads := Reads + rr;
     end;
   end; {while}
-end; { proc. tRawIPObj.ReadBlock }
+end; { proc. TRawIPStream.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.CharAvail: Boolean;
+function TRawIPStream.CharAvail: Boolean;
 begin
   if SBufBeg<SBufEnd then
     result := true
   else
     result := _CharCount>0;
-end; { func. tRawIPObj.CharAvail }
+end; { func. TRawIPStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj._CharCount: Integer;
+function TRawIPStream._CharCount: Integer;
 var   SSet:  TFDSet;
 const NilTm: TTimeVal = {$IFDEF WIN32}(tv_sec:0;tv_usec:0){$ELSE}(sec:0;usec:0){$ENDIF};
 begin
@@ -327,7 +327,7 @@ begin
   DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlDebug+2);
 end; { func. TTelnetObj.CharAvail }
 
-function tRawIPObj.CharCount: Integer;
+function TRawIPStream.CharCount: Integer;
 var rr,rd: Longint;
 begin
   rr := _CharCount;
@@ -357,7 +357,7 @@ end; { func. TTelnetObj.CharAvail }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {$IFDEF undefined}
-function tRawIPObj.ReadyToRead(BlockLen: Longint): Boolean;
+function TRawIPStream.ReadyToRead(BlockLen: Longint): Boolean;
 var rr,rd: Longint;
 begin
   if (SBufEnd-SBufBeg)<=BlockLen then begin     { enough in buffer      }
@@ -406,38 +406,38 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.Carrier: Boolean;
+function TRawIPStream.Carrier: Boolean;
 begin
   Carrier:=SOpened or (SBufBeg<SBufEnd);
-end; { func. tRawIPObj.Carrier }
+end; { func. TRawIPStream.Carrier }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.GetModemStatus(var LineStatus, ModemStatus: Byte);
+procedure TRawIPStream.GetModemStatus(var LineStatus, ModemStatus: Byte);
 begin
   LineStatus := 00;
   ModemStatus := 08;
 
   if Carrier then ModemStatus := ModemStatus OR (1 SHL 7);
-end; { proc. tRawIPObj.GetModemStatus }
+end; { proc. TRawIPStream.GetModemStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.SetDtr(State: Boolean);
+procedure TRawIPStream.SetDtr(State: Boolean);
 begin
 // if (not State) and SOpened then Close;
-end; { proc. tRawIPObj.SetDtr }
+end; { proc. TRawIPStream.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.GetBpsRate: Longint;
+function TRawIPStream.GetBpsRate: Longint;
 begin
   GetBpsRate := 115200;
-end; { func. tRawIPObj.GetBpsRate }
+end; { func. TRawIPStream.GetBpsRate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
+procedure TRawIPStream.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 var     InFree_size,OutFree_size: Integer;
 begin
   InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
@@ -449,9 +449,8 @@ end; { proc. TTelnetObj.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.PurgeInBuffer;
+procedure TRawIPStream.PurgeInBuffer;
 var rr,r2: LongInt;
-label clearin;
 begin
   SBufBeg:=Low(SBuffer);
   SBufEnd:=Low(SBuffer);
@@ -462,28 +461,28 @@ begin
     rr := rr - r2;
     if rr = 0 then rr := _CharCount;
   end;
-end; { proc. tRawIPObj.PurgeInBuffer }
+end; { proc. TRawIPStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.PurgeOutBuffer;
+procedure TRawIPStream.PurgeOutBuffer;
 begin
-end; { proc. tRawIPObj.PurgeInBuffer }
+end; { proc. TRawIPStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.GetDriverInfo: String;
+function TRawIPStream.GetDriverInfo: String;
 begin
   {$IFDEF WIN32}
   result:='Winsock: '+String(PChar(@(WSAData.szDescription)));
   {$ELSE}
   result:='Generic TCP/IP';
   {$ENDIF}
-end; { proc. tRawIPObj.PurgeInBuffer }
+end; { proc. TRawIPStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.ReadyToSend(BlockLen: Longint): Boolean;
+function TRawIPStream.ReadyToSend(BlockLen: Longint): Boolean;
 begin
   ReadyToSend := SOpened;
 end; { func. ReadyToSend }
@@ -492,6 +491,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.9  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.8  2001/07/31 13:10:37  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

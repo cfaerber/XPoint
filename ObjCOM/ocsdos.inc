@@ -100,7 +100,7 @@ begin
     Port[PIC]:=Port[PIC] or(1 shl IRQNumber);
 end;
 
-function TSerialObj.HOpen(iIOBase,iIRQ: Integer; BaudRate: Longint; DataBits: Byte;
+function TSerialStream.HOpen(iIOBase,iIRQ: Integer; BaudRate: Longint; DataBits: Byte;
                           Parity: Char; StopBits: Byte): Boolean;
 
 Var temp : byte; shelp: String; pSerialObj: tpSerialObj; ppSerialObjLast: ^tpSerialObj;
@@ -166,16 +166,16 @@ Begin
    ResumeCom(True);
 End;
 
-function TSerialObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
+function TSerialStream.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                          Parity: Char; StopBits: Byte): Boolean;
 begin
   Open:=HOpen(ComportResources[Comport].IOBase,ComportResources[Comport].IRQ,Baudrate,Databits,Parity,Stopbits);
 end;
 
-destructor TSerialObj.Done;
+destructor TSerialStream.Done;
 begin if Active then Close end;
 
-function TSerialObj.SetLine(Bpsrate: Longint; Parity: Char; DataBits,StopBits: Byte): Boolean;
+function TSerialStream.SetLine(Bpsrate: Longint; Parity: Char; DataBits,StopBits: Byte): Boolean;
 Const MaxBPSRate      = 115200;  {Maximum baud rate                            }
 Var Divisor: Word;
     lcr    : Byte;
@@ -206,7 +206,7 @@ Begin
    SetLine:=True;
 End;
 
-Procedure TSerialObj.Close;
+Procedure TSerialStream.Close;
 Var
   InUse: Boolean;     {Scratch variable to test for shared interrupt}
   pSerialObj: tpSerialObj;
@@ -254,7 +254,7 @@ Begin
    end;
 End;
 
-Function TSerialObj.GetChar: Char;
+Function TSerialStream.GetChar: Char;
 
 {Waits for a character from the comm port if none are available.  Passes
  back the first character it finds in the receive buffer}
@@ -267,10 +267,10 @@ Begin
   If R_Head > BufferSize Then R_Head:= 0;
 End;
 
-Function TSerialObj.CharAvail: Boolean;
+Function TSerialStream.CharAvail: Boolean;
 Begin CharAvail:=R_Head<>R_Tail End;
 
-Procedure TSerialObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
+Procedure TSerialStream.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 Begin
   if T_Head<=T_Tail then OutUsed:=T_Tail-T_Head else OutUsed:=BufferSize-T_Head+T_Tail+1;
   OutFree:=BufferSize-OutUsed;
@@ -278,7 +278,7 @@ Begin
   InFree:=BufferSize-InUsed;
 End;
 
-Procedure TSerialObj.ResumeCom(OpenCom: Boolean);
+Procedure TSerialStream.ResumeCom(OpenCom: Boolean);
 
 {This should be the third command you run after .INIT and .SETPARAM.  Enable
  and Disable are provided for multi-port use.  If you are using com1 and
@@ -303,10 +303,10 @@ Begin
   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
-Procedure TSerialObj.PauseCom(CloseCom: Boolean);
+Procedure TSerialStream.PauseCom(CloseCom: Boolean);
 
 {Call this procedure only if you are about to enable another port which
- uses the same interrupt, see TSerialObj.Enable for more information}
+ uses the same interrupt, see TSerialStream.Enable for more information}
 
 Begin
    {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
@@ -314,7 +314,7 @@ Begin
    {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
-Function TSerialObj.SendChar(C: Char): Boolean;
+Function TSerialStream.SendChar(C: Char): Boolean;
 {This procedure places a character on the transmit buffer}
 Begin
   while ((T_Tail+1>BufferSize) and (T_Head=0)) or (T_Tail+1=T_Head) do;
@@ -332,7 +332,7 @@ Begin
   SendChar:=True; {* asdf}
 End;
 
-Function TSerialObj.Carrier: Boolean;
+Function TSerialStream.Carrier: Boolean;
 
 {This function returns TRUE if the Modem Status Register indicates a Data
  carrier detect signal.  Note that some modems always return true even when
@@ -346,7 +346,7 @@ Begin
   Carrier := IgnoreCD OR((port[IOBase+PO_MSR] and $80) > 0);
 End;
 
-Procedure TSerialObj.SetDTR(State: Boolean);
+Procedure TSerialStream.SetDTR(State: Boolean);
 
 {This procedure disconects the modem by lowering the DTR signal.  Note that
  some modems may not be affected by this procedure based on their AT
@@ -364,21 +364,21 @@ Begin
     Port[IOBase+PO_MCR]:= Org_MCR or $FE;
 End;
 
-procedure TSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 Var I: Longint;
 Begin
   for I:=0 to BlockLen-1 do SendChar(tCharArray(Block)[I]);
   Written:=BlockLen;
 End;
 
-procedure TSerialObj.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
+procedure TSerialStream.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
 Var I: Longint;
 Begin
   for I:=0 to BlockLen-1 do begin SendChar(tCharArray(Block)[I]); Slice end;
   Written:=BlockLen;
 End;
 
-procedure TSerialObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TSerialStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 Var I: Longint;
 Begin
   while CharCount<BlockLen do SleepTime(1);
@@ -386,14 +386,14 @@ Begin
   Reads:=BlockLen;
 End;
 
-procedure TSerialObj.PurgeInBuffer;
+procedure TSerialStream.PurgeInBuffer;
 Begin
    {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
    R_Head:=R_Tail;
    {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
-procedure TSerialObj.PurgeOutBuffer;
+procedure TSerialStream.PurgeOutBuffer;
 Begin
    {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
    T_Head:=T_Tail;
@@ -416,12 +416,15 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.5  2000/10/28 10:08:19  ma
   - Bugfixes
 
   Revision 1.4  2000/10/28 09:37:12  ma
-  - moved ComData structure to tSerialObj
-  - tSerialObj objects are now organized in a linear list
+  - moved ComData structure to TSerialStream
+  - TSerialStream objects are now organized in a linear list
   - added HOpen function
   - introduced credits.txt
 

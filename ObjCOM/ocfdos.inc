@@ -30,16 +30,16 @@ end; { proc. DosFree }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor TFossilObj.Init;
+constructor TFossilStream.Create;
 begin
-  inherited Init;
+  inherited Create;
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor TFossilObj.Done;
+destructor TFossilStream.Destroy;
 begin
-  inherited Done;
+  inherited Destroy;
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -51,7 +51,7 @@ end; { proc. FossilIntr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
+function TFossilStream.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                              Parity: Char; StopBits: Byte): Boolean;
 begin
   {-------------------------- Open the comport -----------------------------}
@@ -66,11 +66,11 @@ begin
   Open := (Regs.AX = $1954);
   InitFailed := (Regs.AX <> $1954);
   Open := SetLine(BaudRate, Parity, DataBits, StopBits);
-end; { func. TFossilObj.OpenCom }
+end; { func. TFossilStream.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.OpenKeep(Comport: Byte): Boolean;
+function TFossilStream.OpenKeep(Comport: Byte): Boolean;
 begin
   FosPort := (ComPort - 01);
 
@@ -86,7 +86,7 @@ end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.OpenQuick(Handle: Longint);
+procedure TFossilStream.OpenQuick(Handle: Longint);
 begin
   {-------------------------- Open the comport -----------------------------}
   FosPort := (Handle - 01);
@@ -101,7 +101,7 @@ end; { proc. OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
+function TFossilStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 var BPS: Byte;
 begin
   Case BpsRate of
@@ -126,50 +126,50 @@ begin
   Regs.DX := FosPort;
   FossilIntr(Regs);
   SetLine:=True;
-end; { proc. TFossilObj.SetLine }
+end; { proc. TFossilStream.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.GetBPSrate: Longint;
+function TFossilStream.GetBPSrate: Longint;
 begin
   GetBpsRate := 115200;
-end; { func. TFossilObj.GetBpsRate }
+end; { func. TFossilStream.GetBpsRate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.Close;
+procedure TFossilStream.Close;
 begin
   if Dontclose then EXIT;
 
   Regs.AH := $05;
   Regs.DX := FosPort;
   FossilIntr(Regs);
-end; { proc. TFossilObj.Close }
+end; { proc. TFossilStream.Close }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.SendChar(C: Char): Boolean;
+function TFossilStream.SendChar(C: Char): Boolean;
 var Written: Longint;
 begin
   SendWait(C, SizeOf(c), Written, nil);
 
   SendChar := (Written = SizeOf(c));
-end; { proc. TFossilObj.SendChar }
+end; { proc. TFossilStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.GetChar: Char;
+function TFossilStream.GetChar: Char;
 begin
   Regs.AH := $02;
   Regs.DX := FosPort;
   FossilIntr(Regs);
 
   GetChar := Chr(Regs.AL);
-end; { proc. TFossilObj.ReadChar }
+end; { proc. TFossilStream.ReadChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TFossilStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 {$IFDEF GO32V2}
 var Selector,
     Segment   : Word;
@@ -204,11 +204,11 @@ begin
     DosMemGet(Segment, 0, Block, BlockLen);
     DosFree(Selector);
   {$ENDIF}
-end; { proc. TFossilObj.ReadBlock }
+end; { proc. TFossilStream.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TFossilStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 {$IFDEF GO32V2}
 var Selector,
     Segment   : Word;
@@ -243,41 +243,41 @@ begin
     DosMemGet(Segment, 0, Block, BlockLen);
     DosFree(Selector);
   {$ENDIF}
-end; { proc. TFossilObj.SendBlock }
+end; { proc. TFossilStream.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.CharAvail: Boolean;
+function TFossilStream.CharAvail: Boolean;
 begin
   Regs.AH := $03;
   Regs.DX := FosPort;
   FossilIntr(Regs);
 
   CharAvail := (Regs.AH AND 01) <> 00;
-end;  { func. TFossilObj.CharAvail }
+end;  { func. TFossilStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.CharCount: Integer;
+function TFossilStream.CharCount: Integer;
 var infree,outfree,inused,outused: Longint;
 begin
   GetBufferStatus(infree,outfree,inused,outused);
   CharCount:=inused;
-end;  { func. TFossilObj.CharCount }
+end;  { func. TFossilStream.CharCount }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-function  TFossilObj.ReadyToSend(BlockLen: Longint): Boolean;
+function  TFossilStream.ReadyToSend(BlockLen: Longint): Boolean;
 begin
   Regs.AH := $03;
   Regs.DX := FosPort;
   FossilIntr(Regs);
 
   ReadyToSend := (Regs.AH AND $20) = $20;
-end; { func. TFossilObj.ReadyToSend }
+end; { func. TFossilStream.ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.Carrier: Boolean;
+function TFossilStream.Carrier: Boolean;
 begin
   if IgnoreCD then
     Carrier:=True
@@ -285,21 +285,21 @@ begin
     Regs.AH := $03; Regs.DX := FosPort; FossilIntr(Regs);
     Carrier := (Regs.AL AND 128) <> 00;
   end;
-end; { func. TFossilObj.Carrier }
+end; { func. TFossilStream.Carrier }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.SetDtr(State: Boolean);
+procedure TFossilStream.SetDtr(State: Boolean);
 begin
   Regs.AH := $06;
   Regs.AL := Byte(State);
   Regs.DX := Fosport;
   FossilIntr(Regs);
-end; { proc. TFossilObj.SetDtr }
+end; { proc. TFossilStream.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.GetModemStatus(var LineStatus, ModemStatus: Byte);
+procedure TFossilStream.GetModemStatus(var LineStatus, ModemStatus: Byte);
 begin
   Regs.AH := $03;
   Regs.DX := FosPort;
@@ -307,11 +307,11 @@ begin
 
   ModemStatus := Regs.AL;
   LineStatus := Regs.AH;
-end; { proc. TFossilObj.GetModemStatus }
+end; { proc. TFossilStream.GetModemStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
+procedure TFossilStream.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 type
   FosRec = record
     Size      : Word;
@@ -365,11 +365,11 @@ begin
 
   OutFree := Info.OutFree;
   OutUsed := Info.OutSize - Info.OutFree;
-end; { proc. TFossilObj.GetBufferStatus }
+end; { proc. TFossilStream.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.GetDriverInfo: String;
+function TFossilStream.GetDriverInfo: String;
 type
   FosRec = record
     Size      : Word;
@@ -419,38 +419,38 @@ begin
 
   FossilIntr(Regs);
   GetDriverInfo := StrPas(Info.ID);
-end; { proc. TFossilObj.GetDriverInfo }
+end; { proc. TFossilStream.GetDriverInfo }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.PurgeInBuffer;
+procedure TFossilStream.PurgeInBuffer;
 begin
   Regs.AH := $0A;
   Regs.DX := FosPort;
 
   FossilIntr(Regs);
-end; { proc. TFossilObj.PurgeInBuffer }
+end; { proc. TFossilStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.PurgeOutBuffer;
+procedure TFossilStream.PurgeOutBuffer;
 begin
   Regs.AH := $09;
   Regs.DX := FosPort;
 
   FossilIntr(Regs);
-end; { proc. TFossilObj.PurgeOutBuffer }
+end; { proc. TFossilStream.PurgeOutBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TFossilObj.GetHandle: longint;
+function TFossilStream.GetHandle: longint;
 begin
   GetHandle := FosPort;
 end; { func. GetHandle }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
+procedure TFossilStream.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
 var RestLen : Longint;
     Temp    : Array[0..(1024 * 50)] of Char ABSOLUTE Block;
     MaxTries: Longint;
@@ -474,7 +474,7 @@ end; { proc. SendWait }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.SetFlow(SoftTX, SoftRX, Hard: Boolean);
+procedure TFossilStream.SetFlow(SoftTX, SoftRX, Hard: Boolean);
 begin
   Regs.AH := $0F;
 
@@ -499,6 +499,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.4  2000/10/28 09:40:28  ma
   - introduced credits.txt
 

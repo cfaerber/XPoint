@@ -245,7 +245,7 @@ begin
       moff;
       case c of
         'n'     : case ansipar[1] of
-                    6 : CommObj^.SendString(#27'['+strs(wherey)+';'+strs(wherex)+'R',False);
+                    6 : CommObj.SendString(#27'['+strs(wherey)+';'+strs(wherex)+'R',False);
                   end;
         'A'     : begin
                     set1;
@@ -360,8 +360,8 @@ var b : byte;
   end;
 
 begin
-  if CommObj^.CharAvail then begin
-    b:=Ord(CommObj^.GetChar);
+  if CommObj.CharAvail then begin
+    b:=Ord(CommObj.GetChar);
     if ansichar then add_ansi(char(b))
     else
       if ansimode and (b=27) then begin
@@ -443,7 +443,7 @@ begin
   begin
     p:=pos('\\',s);
     if p=0 then p:=length(s)+1;
-    CommObj^.SendString((trim(leftstr(s,p-1)))+#13, false);
+    CommObj.SendString((trim(leftstr(s,p-1)))+#13, false);
     s:=trim(mid(s,p+2));
   end;
 end;
@@ -464,14 +464,15 @@ begin
   IgnCD:=COMn[ComNr].IgCD;
 //  IgnCTS:=COMn[ComNr].IgCTS;
 
-  InitCom:=CommInit('serial port:' + IntToStr(BoxPar^.BPort) + ' speed:' +
-    IntToStr(BoxPar^.Baud),CommObj);
+  CommObj:=CommInit('serial port:' + IntToStr(BoxPar^.BPort) + ' speed:' +
+    IntToStr(BoxPar^.Baud));
   Modem.CommObj:=CommObj;
+  Result:=Assigned(CommObj);
 end;
 
 procedure TermDeactivateCom;
 begin
-  CommObj^.Close; CommObj^.Done;
+  CommObj.Close; CommObj.Free;
   ShellReleased:=true;
 end;
 
@@ -526,8 +527,8 @@ begin
   RestWin;
   if TermStatus<>stat then SwitchStatus;
   if (TermCOM<>boxpar^.bport) or (TermBaud<>boxpar^.baud) or
-     ((TermInit<>init) and not CommObj^.Carrier) then begin
-    if not CommObj^.Carrier then
+     ((TermInit<>init) and not CommObj.Carrier) then begin
+    if not CommObj.Carrier then
       if not ISDN then DropDtr(boxpar^.bport);
     ReleaseCom(boxpar^.bport);
     if not initcom then begin
@@ -568,7 +569,7 @@ begin
 
   if not is_telnet then
   begin
-    CommObj^.SendString(#13, false);
+    CommObj.SendString(#13, false);
     mdelay(200,true);
     if TermInit<>'' then SendMStr(TermInit);
   end;
@@ -591,7 +592,7 @@ begin
   ansihigh:=0;
   ansirev:=false;
   while not ende do begin
-    if connected and not IgnCD and not CommObj^.Carrier then begin
+    if connected and not IgnCD and not CommObj.Carrier then begin
       moff;
       writeln;
       attrtxt(15);
@@ -616,14 +617,14 @@ begin
         end;
         Xmakro(t,64);
         if t=mausleft then t:=copychr(_mausx,_mausy);
-        if t=keycr    then CommObj^.SendString(iifs(is_telnet,#13#10,keycr),False) else
-        if t=keyup    then CommObj^.SendString(ANSI_curup,False) else
-        if t=keydown  then CommObj^.SendString(ANSI_curdown,False) else
-        if t=keyleft  then CommObj^.SendString(ANSI_curleft,False) else
-        if t=keyrght  then CommObj^.SendString(ANSI_curright,False) else
-        if t=keydel   then CommObj^.SendString(#127,False) else
-        if t=keyhome  then CommObj^.SendString(ANSI_home,False) else
-        if t=keyend   then CommObj^.SendString(ANSI_end,False) else
+        if t=keycr    then CommObj.SendString(iifs(is_telnet,#13#10,keycr),False) else
+        if t=keyup    then CommObj.SendString(ANSI_curup,False) else
+        if t=keydown  then CommObj.SendString(ANSI_curdown,False) else
+        if t=keyleft  then CommObj.SendString(ANSI_curleft,False) else
+        if t=keyrght  then CommObj.SendString(ANSI_curright,False) else
+        if t=keydel   then CommObj.SendString(#127,False) else
+        if t=keyhome  then CommObj.SendString(ANSI_home,False) else
+        if t=keyend   then CommObj.SendString(ANSI_end,False) else
         if t=keyaltx  then ende:=true else
         if t=keyalth  then aufhaengen else
         if t=keyaltl  then SwitchLogfile else
@@ -636,7 +637,7 @@ begin
                            end else
         if (t=keyalto) or (t=mausright) then begin
                              Options;
-                             connected:=CommObj^.Carrier;
+                             connected:=CommObj.Carrier;
                            end else
         if t=keyf9    then begin
 {               if not comn[bport].fossil then ReleaseCom(bport);
@@ -656,14 +657,14 @@ begin
             if t[1]>#0 then begin
               if out7e1 then
                 SetParity(byte(t[1]),true);
-              CommObj^.SendChar(t[1])
+              CommObj.SendChar(t[1])
             end;
           FuncExternal:=false;
           PreExtProc:=nil;
         end;
       end;
 
-      if not connected and CommObj^.Carrier then
+      if not connected and CommObj.Carrier then
         connected:=true;
     end;
 
@@ -725,9 +726,11 @@ begin
   is_telnet:=true;
   IgnCD :=false;
 
-  if not CommInit('telnet '+Host+':'+IntToStr(Port),CommObj) then
+  CommObj := CommInit('telnet '+Host+':'+IntToStr(Port));
+
+  if not Assigned(CommObj) then
   begin
-    tfehler(CommObj^.ErrorStr,30); // Das Ger„t kann nicht angesprochen werden!
+    tfehler(ObjCom.ErrorStr,30); // Das Ger„t kann nicht angesprochen werden!
     freeres;
     exit;
   end;
@@ -739,6 +742,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.6  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

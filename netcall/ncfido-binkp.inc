@@ -27,7 +27,7 @@ type
   tFrameType= (M_NUL,M_ADR,M_PWD,M_FILE,M_OK,M_EOB,M_GOT,M_ERR,M_BSY,M_GET,M_SKIP,M_DATA);
   tBinkpFrame= class
     protected
-      FDataSize,DataRead: SmallWord; FCommObj: tpCommObj;
+      FDataSize,DataRead: SmallWord; FCommObj: TCommStream;
       IsOutgoing: Boolean;
       function SFrameType: tFrameType;
       function SDataSize: SmallWord;
@@ -47,7 +47,7 @@ type
       { Returns true is packet is received completely }
       property IsReady: boolean read SIsReady;
 
-      constructor CreateWithCommObj(aCommObj: tpCommObj);
+      constructor CreateWithCommObj(aCommObj: TCommStream);
       { Reads a frame from incoming byte stream. Will block until read entiry if Blocking is true. }
       procedure ReadFromStream(Blocking: Boolean);
       { Sends an outgoing command frame.  }
@@ -89,17 +89,17 @@ var reads,readthistime,avail: longint;
 begin
   result:=false; if IsOutgoing then exit;
   if FDataSize=0 then begin // FDataSize not yet read
-    if FCommObj^.CharCount>=2 then begin
-      FCommObj^.ReadBlock(FDataSize,2,reads); FDataSize:=Swap(FDataSize);
+    if FCommObj.CharCount>=2 then begin
+      FCommObj.ReadBlock(FDataSize,2,reads); FDataSize:=Swap(FDataSize);
       end;
     end else begin // FDataSize already read
     result:=DataRead>=(FDataSize and $7fff);
     if not result then begin
       reads:=(FDataSize and $7fff)-DataRead;
-      avail:=FCommObj^.CharCount; if avail<reads then reads:=avail;
+      avail:=FCommObj.CharCount; if avail<reads then reads:=avail;
       while reads>0 do begin
         if reads>1024 then readthistime:=1024 else readthistime:=reads;
-        FCommObj^.ReadBlock(Data[DataRead+1],readthistime,readthistime);
+        FCommObj.ReadBlock(Data[DataRead+1],readthistime,readthistime);
         dec(reads,readthistime); inc(DataRead,readthistime);
         end;
       result:=DataRead>=(FDataSize and $7fff);
@@ -112,7 +112,7 @@ begin
     end;
 end;
 
-constructor tBinkpFrame.CreateWithCommObj(aCommObj: tpCommObj);
+constructor tBinkpFrame.CreateWithCommObj(aCommObj: TCommStream);
 begin inherited create; FCommObj:=aCommObj; end;
 
 procedure tBinkpFrame.ReadFromStream(Blocking: Boolean);
@@ -138,11 +138,11 @@ var i,written: longint; FrameSize: smallword;
 begin
   if IsOutgoing then begin
     FrameSize:=Swap(FDataSize);
-    FCommObj^.SendBlock(FrameSize,2,written);
+    FCommObj.SendBlock(FrameSize,2,written);
     i:=0;
     while i<(FDataSize and $7fff)do begin
       written:=(FDataSize and $7fff)-i; if written>1024 then written:=1024;
-      FCommObj^.SendBlock(Data[i+1],written,written);
+      FCommObj.SendBlock(Data[i+1],written,written);
       inc(i,written);
       end;
     if FDataSize<=$7fff then
@@ -508,13 +508,13 @@ begin
         if (RxState=RxDone)and(TxState=TxDone)then begin
           Output(mcInfo,'File transfer complete',[0]);
           result:=0; State:=Done;
-          end else if FCommObj^.CharAvail then
+          end else if FCommObj.CharAvail then
             State:=Receive
-          else if FCommObj^.ReadyToSend(1024) or
+          else if FCommObj.ReadyToSend(1024) or
                   // Ensure transmit routine calls ProcessTheQueue - even if connection already down
                   ((TxState=TxWLA)and(TheQueue.Count>0))then
             State:=Transmit
-          else if not FCommObj^.Carrier then
+          else if not FCommObj.Carrier then
             State:=ConnLost;
           //** if timeout...
         end;
@@ -550,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.5  2001/07/28 12:04:19  mk
   - removed crt unit as much as possible
 

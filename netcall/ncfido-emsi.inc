@@ -39,15 +39,15 @@ var OtherData: String;
     OtherData:=''; EMSIString:=''; Timers[ti_EMS1].SetTimeout(secs);
     c:=#0;
     repeat
-      if FCommObj^.CharAvail then begin
-        c:=FCommObj^.GetChar;
+      if FCommObj.CharAvail then begin
+        c:=FCommObj.GetChar;
         if (c>=' ') then
           if(Length(EMSIString)=0)and(c<>'*') then {Nicht-EMSI-Daten gelesen}
             OtherData:=OtherData+c
           else
             EMSIString:=EMSIString+c;
       end;
-    until (c=#13) or (c=#10) or Timers[ti_EMS1].Timeout or not FCommObj^.Carrier;
+    until (c=#13) or (c=#10) or Timers[ti_EMS1].Timeout or not FCommObj.Carrier;
     DebugLog('ncfido','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',DLDebug);
     ReadEMSIString:=EMSIString;
   end;
@@ -91,7 +91,7 @@ var EMSIString,ED,EMSIData,EMSIData2,hex4  : string;
     more      : boolean;
 
 begin
-  Output(mcInfo,'EMSI',[0]); {FCommObj^.SendString(EMSI_INQ+#13);}
+  Output(mcInfo,'EMSI',[0]); {FCommObj.SendString(EMSI_INQ+#13);}
   log(lcInfo,'sType: EMSI');
   EMSIHandshake:=0;
                                                         { EMSI_DAT erzeugen }
@@ -109,26 +109,26 @@ begin
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
     if not more then begin
-      FCommObj^.SendString('**',False);                         { EMSI_DAT senden }
-      FCommObj^.SendBlock(EMSIData[1],Length(EMSIData),Dummy);
-      FCommObj^.PurgeInBuffer;
-      FCommObj^.SendString(hex(CRC16Block(EMSIData[1],Length(EMSIData)),4)+#13,False);
+      FCommObj.SendString('**',False);                         { EMSI_DAT senden }
+      FCommObj.SendBlock(EMSIData[1],Length(EMSIData),Dummy);
+      FCommObj.PurgeInBuffer;
+      FCommObj.SendString(hex(CRC16Block(EMSIData[1],Length(EMSIData)),4)+#13,False);
     end;
     repeat
       EMSIString:=ReadEMSIString(5); { warten auf EMSI_ACK / _NAK }
-      if Timers[ti_EMS1].Timeout then FCommObj^.SendString(EMSI_INQ+#13,False)
+      if Timers[ti_EMS1].Timeout then FCommObj.SendString(EMSI_INQ+#13,False)
       else if EMSIString=EMSI_REQ then begin
         inc(ercount);
-        if ercount>2 then FCommObj^.SendString(EMSI_INQ+#13,False);
+        if ercount>2 then FCommObj.SendString(EMSI_INQ+#13,False);
       end;
     until(EMSIString<>EMSI_REQ)and((EMSIString<>'')or Timers[ti_EMS1].Timeout);
     ok:=(EMSIString=EMSI_ACK);
-    more:=not Timers[ti_EMS1].Timeout and FCommObj^.CharAvail;
+    more:=not Timers[ti_EMS1].Timeout and FCommObj.CharAvail;
     if Timers[ti_EMS1].Timeout then dec(count);
     dec(scount);
     if EMSIString=EMSI_NAK then Output(mcError,getres2(30004,23),[0]);   { 'EMSI_NAK: wiederhole EMSI-Paket' }
-  until ok or(count=0)or(scount=0)or not FCommObj^.Carrier;
-  if not FCommObj^.Carrier then Log(lcError,'carrier lost');
+  until ok or(count=0)or(scount=0)or not FCommObj.Carrier;
+  if not FCommObj.Carrier then Log(lcError,'carrier lost');
   if not ok then goto ende;
 
   count:=10;
@@ -137,7 +137,7 @@ begin
     EMSIString:=ReadEmsiString(7);               { EMSI_DAT empfangen }
     if EMSIString='' then begin
       if Timers[TI_EMS1].Timeout then begin
-        FCommObj^.SendString(EMSI_HBT+#13,False);
+        FCommObj.SendString(EMSI_HBT+#13,False);
         SleepTime(200);
       end;
     end else begin
@@ -151,15 +151,15 @@ begin
         Debug.DebugLog('ncfido','Read CRC: "'+hex4+'"',DLDebug);
         ok:=(hexval(hex4)=CRC16Block(EMSIString[3],Length(EMSIString)-2)); {fuehrende Sternchen von CRC aussparen}
         if not ok then begin
-          FCommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
+          FCommObj.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
           Output(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
-          SleepTime(150); FCommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
+          SleepTime(150); FCommObj.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
       end;
     end;
     dec(count);
-  until ok or (count=0) or not FCommObj^.Carrier;
+  until ok or (count=0) or not FCommObj.Carrier;
 
   if ok then begin                         { Daten auslesen }
     fillchar(hello,sizeof(hello),0);
@@ -199,12 +199,15 @@ begin
       end;
     end;
     EMSIHandshake:=2;
-  end else if not FCommObj^.Carrier then Log(lcError,'carrier lost');
+  end else if not FCommObj.Carrier then Log(lcError,'carrier lost');
 ende:
 end;
 
 {
   $Log$
+  Revision 1.2  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

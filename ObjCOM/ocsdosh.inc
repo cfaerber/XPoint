@@ -4,38 +4,37 @@
 *)
 
 type
- tpSerialObj = ^tSerialObj;
- tSerialObj = Object(TCommObj)
+ tSerialObj = Object(TCommStream);
 {        constructor Init;}
-        destructor Done; virtual;
+        destructor Destroy; override;
 
         function  Open(Comport: Byte; Baudrate: Longint; Databits: Byte;
-                       Parity: Char; Stopbits: Byte): Boolean; virtual; {Uses array ComportResources - see below}
+                       Parity: Char; Stopbits: Byte): Boolean; override; {Uses array ComportResources - see below}
         function HOpen(iIOBase,iIRQ: Integer; Baudrate: Longint; Databits: Byte;
-                       Parity: Char; Stopbits: Byte): Boolean; virtual;
-{        function  OpenKeep(Comport: Byte): Boolean; virtual;}
-        function  GetChar: Char; virtual;
-        function  CharAvail: Boolean; virtual;
-        function  Carrier: Boolean; virtual;
-        function  SendChar(C: Char): Boolean; virtual;
-{        function  GetBPSrate: Longint; virtual;}
-{        function  GetDriverInfo: String; virtual;}
-{        function  GetHandle: longint; virtual;}
+                       Parity: Char; Stopbits: Byte): Boolean; override;
+{        function  OpenKeep(Comport: Byte): Boolean; override;}
+        function  GetChar: Char; override;
+        function  CharAvail: Boolean; override;
+        function  Carrier: Boolean; override;
+        function  SendChar(C: Char): Boolean; override;
+{        function  GetBPSrate: Longint; override;}
+{        function  GetDriverInfo: String; override;}
+{        function  GetHandle: longint; override;}
 
-{        procedure OpenQuick(Handle: Longint); virtual;}
-        procedure Close; virtual;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual;
-        procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); virtual;
-        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
-        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
-        procedure SetDtr(State: Boolean); virtual;
-{        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;}
-        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
-        procedure PurgeInBuffer; virtual;
-        procedure PurgeOutBuffer; virtual;
-{        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); virtual;}
-        procedure PauseCom(CloseCom: Boolean); virtual;
-        procedure ResumeCom(OpenCom: Boolean); virtual;
+{        procedure OpenQuick(Handle: Longint); override;}
+        procedure Close; override;
+        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); override;
+        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
+        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
+        procedure SetDtr(State: Boolean); override;
+{        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); override;}
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; override;
+        procedure PurgeInBuffer; override;
+        procedure PurgeOutBuffer; override;
+{        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); override;}
+        procedure PauseCom(CloseCom: Boolean); override;
+        procedure ResumeCom(OpenCom: Boolean); override;
      private
         Active       : Boolean;
         IOBase       : Word;
@@ -59,6 +58,9 @@ const
 
 {
   $Log$
+  Revision 1.4  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.3  2000/10/28 09:37:12  ma
   - moved ComData structure to tSerialObj
   - tSerialObj objects are now organized in a linear list

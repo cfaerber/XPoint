@@ -38,7 +38,7 @@ var ReceivedUpToNow      : string;   {bisherige Modemantwort auf Befehle}
     TimerObj             : tTimer;   {wird fuer verschiedenes benutzt, nur fuer evtl. Tricks public}
     DisplayProc          : Procedure; {Anzeigeprozedur fuer Dialup}
 
-    CommObj              : tpCommObj;
+    CommObj              : TCommStream;
     {!!! Unbedingt vor Benutzung der Unit passend initialisieren !!!}
 
 procedure ProcessIncoming(idle:boolean);
@@ -90,8 +90,8 @@ implementation
 procedure ProcessIncoming(idle:boolean);
 var c : char;
 begin
-  if CommObj^.CharAvail then begin
-    c:=CommObj^.GetChar;
+  if CommObj.CharAvail then begin
+    c:=CommObj.GetChar;
     if (c=#13) or (c=#10) then begin
       if WaitForAnswer and(ReceivedUpToNow<>'') then begin
         ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
@@ -123,16 +123,16 @@ function SendCommand(s:string): String;
 var p : byte; EchoTimer: tTimer;
 begin
   DebugLog('Modem','SendCommand: "'+s+'"',DLDebug);
-  CommObj^.PurgeInBuffer; s:=trim(s);
+  CommObj.PurgeInBuffer; s:=trim(s);
   if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not CommObj^.SendString(LeftStr(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+LeftStr(s,p-1)+'"',DLWarning);
+        if not CommObj.SendString(LeftStr(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+LeftStr(s,p-1)+'"',DLWarning);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
-    if not CommObj^.SendString(s+#13,True)then DebugLog('Modem','Sending failed, received "'+CommObj^.ErrorStr+'"',DLWarning);
+    if not CommObj.SendString(s+#13,True)then DebugLog('Modem','Sending failed, received "'+CommObj.ErrorStr+'"',DLWarning);
     EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
       ProcessIncoming(true); ProcessKeypresses(false);
@@ -202,8 +202,8 @@ begin
                       DUDState:=StateDialup; DisplayProc; {Ausgabe: 'Modem initialisieren' }
                       TimerObj.SetTimeout(TimeoutModemInit);
                       if ModemInit='' then begin
-                        CommObj^.SendString(#13,False); SleepTime(150);
-                        CommObj^.SendString(#13,False); SleepTime(300);
+                        CommObj.SendString(#13,False); SleepTime(150);
+                        CommObj.SendString(#13,False); SleepTime(300);
                         SendCommand('AT'); ProcessKeypresses(false);
                       end;
                       if not TimerObj.Timeout then begin
@@ -239,16 +239,16 @@ begin
                             DUDState:=SDModemAnswer; DisplayProc; {Ausgabe Modemantwort}
                             SleepTime(200);
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
-                                (CommObj^.Carrier and(not CommObj^.IgnoreCD))then begin {Connect!}
+                                (CommObj.Carrier and(not CommObj.IgnoreCD))then begin {Connect!}
                               StateDialup:=SDConnect; DialUp:=True; Connected:=True;
                               DUDState:=StateDialup; DUDBaud:=BaudDetect(ModemAnswer); DisplayProc; {Ausgabe: Connect}
-                              if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-                              if not CommObj^.Carrier then SleepTime(1000);
+                              if not CommObj.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
+                              if not CommObj.Carrier then SleepTime(1000);
                             end
                           end;
                           if not Connected then begin {Timeout, Userbreak, Busy oder aehnliches}
                             DUDState:=SDNoConnect; DisplayProc; {Ausgabe: Keine Verbindung}
-                            CommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
+                            CommObj.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
                           end;
               end;
@@ -274,20 +274,20 @@ function Hangup: Boolean;
 var i : integer;
 begin
   DebugLog('Modem','Hangup',DLInform);
-  CommObj^.PurgeInBuffer; CommObj^.SetDTR(False);
-  SleepTime(500); for i:=1 to 6 do if(not CommObj^.IgnoreCD)and CommObj^.Carrier then SleepTime(500);
-  CommObj^.SetDTR(True); SleepTime(500);
-  if CommObj^.ReadyToSend(3)then begin
-    CommObj^.SendString('+++',False);
-    for i:=1 to 4 do if((not CommObj^.IgnoreCD)and CommObj^.Carrier)then SleepTime(500);
+  CommObj.PurgeInBuffer; CommObj.SetDTR(False);
+  SleepTime(500); for i:=1 to 6 do if(not CommObj.IgnoreCD)and CommObj.Carrier then SleepTime(500);
+  CommObj.SetDTR(True); SleepTime(500);
+  if CommObj.ReadyToSend(3)then begin
+    CommObj.SendString('+++',False);
+    for i:=1 to 4 do if((not CommObj.IgnoreCD)and CommObj.Carrier)then SleepTime(500);
     SleepTime(100);
   end;
-  if CommObj^.ReadyToSend(6)then begin
-    CommObj^.SendString('AT H0'#13,True);
+  if CommObj.ReadyToSend(6)then begin
+    CommObj.SendString('AT H0'#13,True);
     SleepTime(1000);
   end;
-  if CommObj^.ReadyToSend(3)then
-    result:= CommObj^.SendString('AT'+#13,True)
+  if CommObj.ReadyToSend(3)then
+    result:= CommObj.SendString('AT'+#13,True)
   else
     result:= false;
 end;
@@ -300,6 +300,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.12  2001/07/31 13:10:31  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

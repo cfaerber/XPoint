@@ -116,12 +116,12 @@ type TUUCProtocol = class
   private
     FNetcall: TUUCPNetcall;
     FDialog:  TProgressOutputWindowDialog;
-    FCommObj: TPCommObj;
+    FCommObj: TCommStream;
     FTimerObj:TPTimer;
 
   protected
     property    Netcall:  TUUCPNetcall read FNetcall;
-    property    CommObj:  TPCommObj    read FCommObj;
+    property    CommObj:  TCommStream  read FCommObj;
     property    Dialog:   TProgressOutputWindowDialog read FDialog;
     property    TimerObj: TPTimer      read FTimerObj;
 
@@ -1108,6 +1108,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.10  2001/07/31 13:10:38  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

@@ -18,24 +18,24 @@ const
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor tTelnetObj.Init;
+constructor TTelnetStream.Create;
 begin
-  inherited Init;
+  inherited Create;
   InTemp:=0;
   InBuffer.Init(8192);
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor tTelnetObj.Done;
+destructor TTelnetStream.Destroy;
 begin
-  inherited done;
+  inherited Destroy;
   InBuffer.Done;
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TTelnetObj.ConnectIP(DestHost: String; DestPort: Integer): boolean;
+function TTelnetStream.ConnectIP(DestHost: String; DestPort: Integer): boolean;
 var   success: boolean;
       dummy:   longint;
 (* const options: string = TELNET_IAC + TELNET_WILL + TELNETOPT_SUPPRESS_GA +
@@ -48,7 +48,7 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TTelnetObj.FillBuffer(min_read: Longint);
+procedure TTelnetStream.FillBuffer(min_read: Longint);
 var rd,rd2: LongINT;
     pos:longint;
     beg:longint;
@@ -151,9 +151,9 @@ begin
 
     pos:=pos+1;
   end;
-end; {TTelnetObj.ProcIncoming}
+end; {TTelnetStream.ProcIncoming}
 
-procedure tTelnetObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TTelnetStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 var readc: Longint;
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),dlDebug+2);
@@ -175,7 +175,7 @@ end; { proc. tRawIPObj.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tTelnetObj.SendChar(C: Char): Boolean;
+function TTelnetStream.SendChar(C: Char): Boolean;
 const iac: string= TELNET_IAC+TELNET_IAC;
 var Written: LongInt;
 begin
@@ -183,11 +183,11 @@ begin
     begin inherited SendBlock(iac,2,Written); result:= Written>=2; end
   else
     result:= inherited SendChar(C);
-end; { proc. tTelnetObj.SendChar }
+end; { proc. TTelnetStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tTelnetObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TTelnetStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 var  pos: longint;
      beg: longint;
      wr2: longint;
@@ -216,11 +216,11 @@ begin
 
     pos:=pos+1;
   end;
-end; { proc. tTelnetObj.SendBlock }
+end; { proc. TTelnetStream.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tTelnetObj.GetChar: Char;
+function TTelnetStream.GetChar: Char;
 var ReadC: Char;
 begin
   while Carrier and (InBuffer.BufUsed <= 0) do FillBuffer(1);
@@ -230,23 +230,23 @@ end; { func. tRawIPObj.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tTelnetObj.CharAvail: Boolean;
+function TTelnetStream.CharAvail: Boolean;
 begin
   if InBuffer.BufUsed <= 0 then FillBuffer(0);
   CharAvail:=InBuffer.BufUsed > 0;
-end; { func. tTelnetObj.CharAvail }
+end; { func. TTelnetStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tTelnetObj.CharCount: Integer;
+function TTelnetStream.CharCount: Integer;
 begin
   FillBuffer(0);
   CharCount:=InBuffer.BufUsed;
-end; { func. TTelnetObj.CharAvail }
+end; { func. TTelnetStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tTelnetObj.Carrier: Boolean;
+function TTelnetStream.Carrier: Boolean;
 begin
   Carrier := (InBuffer.BufUsed>0) or inherited Carrier;
 end;
@@ -254,6 +254,9 @@ end;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 {
   $Log$
+  Revision 1.5  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.4  2001/05/10 20:56:25  ma
   - adjusted debug levels
 

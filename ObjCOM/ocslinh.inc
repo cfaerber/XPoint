@@ -3,44 +3,45 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type tSerialObj = Object(TCommObj)
-        constructor Init;
-        destructor Done; virtual;
+type TSerialStream = Object(TCommStream)
+        constructor Create;
+        destructor Destroy; override;
 
         function  LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
                         Parity: Char; StopBits: Byte; Hardware: Boolean): Boolean;
-        function  OpenKeep(Comport: Byte): Boolean; virtual;
-        function  GetChar: Char; virtual;
-        function  Carrier: Boolean; virtual;
-        function  CharAvail: Boolean; virtual;
-        function  CharCount: Integer; virtual;
-        function  SendChar(C: Char): Boolean; virtual;
-        function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
-        function  GetBPSrate: Longint; virtual;
-        function  GetHandle: Longint; virtual;
+        function  OpenKeep(Comport: Byte): Boolean; override;
+        function  GetChar: Char; override;
+        function  Carrier: Boolean; override;
+        function  CharAvail: Boolean; override;
+        function  CharCount: Integer; override;
+        function  SendChar(C: Char): Boolean; override;
+        function  ReadyToSend(BlockLen: Longint): Boolean; override;
+        function  GetBPSrate: Longint; override;
+        function  GetHandle: Longint; override;
 
-        procedure OpenQuick(Handle: Longint); virtual;
-        procedure Close; virtual;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual;
-        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
-        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
-        procedure SetDtr(State: Boolean); virtual;
-        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean; virtual;
-        procedure PurgeInBuffer; virtual;
-        procedure PurgeOutBuffer; virtual;
+        procedure OpenQuick(Handle: Longint); override;
+        procedure Close; override;
+        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
+        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
+        procedure SetDtr(State: Boolean); override;
+        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); override;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean; override;
+        procedure PurgeInBuffer; override;
+        procedure PurgeOutBuffer; override;
 
-        procedure PauseCom(CloseCom: Boolean); virtual;
-        procedure ResumeCom(OpenCom: Boolean); virtual;
+        procedure PauseCom(CloseCom: Boolean); override;
+        procedure ResumeCom(OpenCom: Boolean); override;
         private
          SHandle: Longint; InBuffer: tRingbuffer; fds : fdset;
          procedure ProcIncoming;
-     end; { object TSerialObj }
-
-Type tpSerialObj = ^tSerialObj;
+     end; { object TSerialStream }
 
 {
   $Log$
+  Revision 1.5  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.4  2000/10/28 09:40:28  ma
   - introduced credits.txt
 

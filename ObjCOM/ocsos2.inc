@@ -32,16 +32,16 @@ var ClientHandle  : Longint;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor tSerialObj.Init;
+constructor tSerialObj.Create;
 begin
-  inherited Init;
+  inherited Create;
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor tSerialObj.Done;
+destructor tSerialObj.Destroy;
 begin
-  inherited done;
+  inherited Destroy;
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -670,6 +670,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.6  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.5  2001/05/16 01:59:15  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 

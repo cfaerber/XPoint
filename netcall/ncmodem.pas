@@ -48,7 +48,7 @@ type
   TModemNetcall = class(TNetcall)
 
   protected
-    FCommObj: tpCommObj;
+    FCommObj: TCommStream;
     FTimerObj: tpTimer;
     FConnected,FActive: Boolean;
     FPhonenumbers: String;
@@ -121,8 +121,8 @@ type
     { True if comm channel initialized }
     property Active: Boolean read FActive;
 
-    property CommObj: TPCommObj read FCommObj;
-    property Timer:   TPTimer   read FTimerObj;
+    property CommObj: TCommStream read FCommObj;
+    property Timer:   TPTimer     read FTimerObj;
 
     { True if connected to peer }
     property Connected: Boolean read FConnected;
@@ -137,7 +137,7 @@ type
     constructor CreateWithCommInitAndProgressOutput(const aCommInit: string; aProgressOutput: TProgressOutput);
     { Create with CommObj. Intended for online calls. Active and
       Connected return true after call. }
-    constructor CreateWithCommObjAndProgressOutput(p: tpCommObj; aProgressOutput: TProgressOutput);
+    constructor CreateWithCommObjAndProgressOutput(p: TCommStream; aProgressOutput: TProgressOutput);
     { Disconnects if phonenumbers not empty.
       Disposes CommObj.
       Closes log file.
@@ -208,7 +208,7 @@ begin
   FTimerObj:=new(TPTimer,Init);
 end;
 
-constructor TModemNetcall.CreateWithCommObjAndProgressOutput(p: tpCommObj; aProgressOutput: TProgressOutput);
+constructor TModemNetcall.CreateWithCommObjAndProgressOutput(p: TCommStream; aProgressOutput: TProgressOutput);
 begin
   CreateWithCommInitAndProgressOutput('',aProgressOutput);
   FCommObj:=p; FActive:=True; FConnected:=True;
@@ -217,7 +217,7 @@ end;
 destructor TModemNetcall.Destroy;
 begin
   if FConnected then Disconnect;
-  if FActive then begin FCommObj^.Close; Dispose(FCommObj,Done)end;
+  if FActive then begin FCommObj.Close; FCommObj.Free end;
   if Assigned(FTimerObj) then dispose(FTimerObj,Done);
   Log(lcExit,'exiting');
   if FLogfileOpened then Close(FLogfile);
@@ -239,7 +239,10 @@ end;
 
 function TModemNetcall.Activate: Boolean;
 begin
-  if not FActive then FActive:=CommInit(FCommInit,FCommObj);
+  if not FActive then begin 
+    FCommObj:=CommInit(FCommInit);
+    FActive:=Assigned(FCommObj);
+  end;
   if not FActive then begin
     FErrorMsg:=ObjCOM.ErrorStr;
     Output(mcError,'%s',[FErrorMsg]);
@@ -251,8 +254,8 @@ end;
 procedure TModemNetcall.ProcessIncoming;
 var c : char;
 begin
-  if FCommObj^.CharAvail then begin
-    c:=FCommObj^.GetChar;
+  if FCommObj.CharAvail then begin
+    c:=FCommObj.GetChar;
     if (c=#13) or (c=#10) then begin
       if WaitForAnswer and(ReceivedUpToNow<>'') then begin
         ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
@@ -285,18 +288,18 @@ function TModemNetcall.SendCommand(s: string; TimeoutModemAnswer: real): String;
 var p : byte; EchoTimer: tTimer;
 begin
   DebugLog('ncmodem','SendCommand: "'+s+'"',DLDebug);
-  FCommObj^.PurgeInBuffer; s:=trim(s);
+  FCommObj.PurgeInBuffer; s:=trim(s);
   if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not FCommObj^.SendString(LeftStr(s,p-1),True)then
-          DebugLog('ncmodem','Sending failed, received "'+FCommObj^.ErrorStr+'"',DLWarning);
+        if not FCommObj.SendString(LeftStr(s,p-1),True)then
+          DebugLog('ncmodem','Sending failed, received "'+FCommObj.ErrorStr+'"',DLWarning);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
-    if not FCommObj^.SendString(s+#13,True)then
-      DebugLog('ncmodem','Sending failed, received "'+FCommObj^.ErrorStr+'"',DLWarning);
+    if not FCommObj.SendString(s+#13,True)then
+      DebugLog('ncmodem','Sending failed, received "'+FCommObj.ErrorStr+'"',DLWarning);
     EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
       ProcessIncoming; ProcessKeypresses(false);
@@ -363,10 +366,11 @@ begin
                       Output(mcInfo,'Init modem',[0]);
                       FTimerObj.SetTimeout(TimeoutModemInit);
                       if CommandInit='' then begin
-                        FCommObj^.SendString(#13,False); SleepTime(150);
-                        FCommObj^.SendString(#13,False); SleepTime(300);
+                        FCommObj.SendString(#13,False); SleepTime(150);
+                        FCommObj.SendString(#13,False); SleepTime(300);
                         SendCommand('AT',1); ProcessKeypresses(false);
                       end;
+                      Output(mcInfo,'Init modem 2',[0]);
                       if not FTimerObj.Timeout then begin
                         SendMultCommand(CommandInit,1); StateDialup:=SDSendDial;
                       end;
@@ -402,14 +406,14 @@ begin
                               FConnectString:=ModemAnswer; FConnected:=True;
                               FLineSpeed:=Bauddetect(FConnectString);
                               Log(lcConnect,FConnectString);
-                              if not FCommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-                              if not FCommObj^.Carrier then SleepTime(1000);
+                              if not FCommObj.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
+                              if not FCommObj.Carrier then SleepTime(1000);
                             end
                           end;
                           if not result then begin {Timeout, Userbreak, Busy oder aehnliches}
                             Output(mcInfo,'No connect',[0]);
                             FPhonenumber:='';
-                            FCommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
+                            FCommObj.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
                           end;
               end;
@@ -472,16 +476,16 @@ begin
   if FPhonenumber<>'' then begin
     Output(mcInfo,'Hanging up',[0]);
     DebugLog('ncmodem','Hangup',DLInform);
-    FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
-    SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
-    FCommObj^.SetDTR(True); SleepTime(500);
-    if FCommObj^.ReadyToSend(3)then begin
-      FCommObj^.SendString('+++',False);
-      for i:=1 to 4 do if((not FCommObj^.IgnoreCD)and FCommObj^.Carrier)then SleepTime(500);
+    FCommObj.PurgeInBuffer; FCommObj.SetDTR(False);
+    SleepTime(500); for i:=1 to 6 do if(not FCommObj.IgnoreCD)and FCommObj.Carrier then SleepTime(500);
+    FCommObj.SetDTR(True); SleepTime(500);
+    if FCommObj.ReadyToSend(3)then begin
+      FCommObj.SendString('+++',False);
+      for i:=1 to 4 do if((not FCommObj.IgnoreCD)and FCommObj.Carrier)then SleepTime(500);
       SleepTime(100);
     end;
-    if FCommObj^.ReadyToSend(6)then
-      FCommObj^.SendString('AT H0'#13,True);
+    if FCommObj.ReadyToSend(6)then
+      FCommObj.SendString('AT H0'#13,True);
     end;
   FConnected:=False;
 end;
@@ -489,7 +493,7 @@ end;
 { throws ENetcallHangup on no carrier, ENetcallBreak on user break }
 procedure TModemNetcall.TestBreak;
 begin
-  if not FCommObj^.Carrier then
+  if not FCommObj.Carrier then
     raise ENetcallHangup.Create('carrier lost');
 
   if not FGotUserBreak then
@@ -515,6 +519,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.3  2001/07/31 13:10:38  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

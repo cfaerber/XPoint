@@ -11,37 +11,37 @@ Const DataTimeout    = 20000;                             { Wait max. 20 secs }
       ThreadsInitted : Boolean = false;
 
 
-type TSerialObj = Object(TCommObj)
-        constructor Init;
-        destructor Done; virtual;
+type TSerialStream = Class(TCommStream)
+        constructor Create;
+        destructor Destroy; override;
 
         function  Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
-                           Parity: Char; StopBits: Byte): Boolean; virtual;
-        function  OpenKeep(Comport: Byte): Boolean; virtual;
-        function  GetChar: Char; virtual;
-        function  CharAvail: Boolean; virtual;
-        function  CharCount: Integer; virtual;
-        function  Carrier: Boolean; virtual;
-        function  SendChar(C: Char): Boolean; virtual;
-        function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
-        function  GetBPSrate: Longint; virtual;
-        function  GetHandle: Longint; virtual;
+                           Parity: Char; StopBits: Byte): Boolean; override;
+        function  OpenKeep(Comport: Byte): Boolean; override;
+        function  GetChar: Char; override;
+        function  CharAvail: Boolean; override;
+        function  CharCount: Integer; override;
+        function  Carrier: Boolean; override;
+        function  SendChar(C: Char): Boolean; override;
+        function  ReadyToSend(BlockLen: Longint): Boolean; override;
+        function  GetBPSrate: Longint; override;
+        function  GetHandle: Longint; override;
 
-        procedure OpenQuick(Handle: Longint); virtual;
-        procedure Close; virtual;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual;
-        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
-        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
-        procedure SetDtr(State: Boolean); virtual;
-        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
-        procedure PurgeInBuffer; virtual;
-        procedure PurgeOutBuffer; virtual;
-        procedure FlushOutBuffer(Slice: SliceProc); virtual;
+        procedure OpenQuick(Handle: Longint); override;
+        procedure Close; override;
+        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
+        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
+        procedure SetDtr(State: Boolean); override;
+        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); override;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; override;
+        procedure PurgeInBuffer; override;
+        procedure PurgeOutBuffer; override;
+        procedure FlushOutBuffer(Slice: SliceProc); override;
 
-        procedure PauseCom(CloseCom: Boolean); virtual;
-        procedure ResumeCom(OpenCom: Boolean); virtual;
-        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); virtual;
+        procedure PauseCom(CloseCom: Boolean); override;
+        procedure ResumeCom(OpenCom: Boolean); override;
+        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); override;
 
      private
         DataRequested: Boolean;          { Are the thread(s) up and running? }
@@ -55,12 +55,13 @@ type TSerialObj = Object(TCommObj)
 
         procedure ProcIncoming; virtual;
         procedure InitDelayTimes;
-     end; { object TSerialObj }
-
-type tpSerialObj = ^TSerialObj;
+     end; { object TSerialStream }
 
 {
   $Log$
+  Revision 1.4  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.3  2000/11/17 19:48:23  ma
   - no more threads, working again
 

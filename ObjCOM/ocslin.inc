@@ -5,25 +5,25 @@
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor tSerialObj.Init;
+constructor TSerialStream.Create;
 begin
   SHandle:=0;
   Dontclose:=False;
   InBuffer.Init(8192);
-  inherited Init;
+  inherited Create;
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-destructor tSerialObj.Done;
+destructor TSerialStream.Destroy;
 begin
   InBuffer.Done;
-  inherited done;
+  inherited Destroy;
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
+function TSerialStream.LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
                           Parity: Char; StopBits: Byte; Hardware : Boolean): Boolean;
 begin
   LOpen:=False;
@@ -41,27 +41,27 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.GetHandle: Longint;
+function TSerialStream.GetHandle: Longint;
 begin
   GetHandle:=SHandle;
 end; { func. GetHandle }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.OpenQuick(Handle: Longint);
+procedure TSerialStream.OpenQuick(Handle: Longint);
 begin
-end; { proc. tSerialObj.OpenQuick }
+end; { proc. TSerialStream.OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.OpenKeep(Comport: Byte): Boolean;
+function TSerialStream.OpenKeep(Comport: Byte): Boolean;
 begin
   OpenKeep:=False;
 end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.ProcIncoming;
+procedure TSerialStream.ProcIncoming;
 var
   Buf: Array[1..8192]of Char;
   R  : Longint;
@@ -78,7 +78,7 @@ end;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 { Ungültige Parameter setzen 38.400 8n1 }
-function tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean;
+function TSerialStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean;
 var
   tios: TermIOS;
 begin
@@ -135,11 +135,11 @@ begin
   fdFlush(SHandle);
   tcSetAttr(SHandle, TCSANOW, tios);
   result:= true;
-end; { proc. tSerialObj.SetLine }
+end; { proc. TSerialStream.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.Close;
+procedure TSerialStream.Close;
 begin
   if DontClose then EXIT;
 
@@ -147,84 +147,84 @@ begin
   fdFlush(SHandle);
   fdClose(SHandle);
   SHandle:=0;
-end; { func. tSerialObj.CloseCom }
+end; { func. TSerialStream.CloseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.SendChar(C: Char): Boolean;
+function TSerialStream.SendChar(C: Char): Boolean;
 begin
   Result:= (fdWrite(SHandle,C,sizeof(char))=sizeof(char));
-end; { proc. tSerialObj.SendChar }
+end; { proc. TSerialStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.GetChar: Char;
+function TSerialStream.GetChar: Char;
 var R: Char;
 begin
   ProcIncoming;
   InBuffer.Get(R,SizeOf(R),True); GetChar:=R;
-end; { func. tSerialObj.GetChar }
+end; { func. TSerialStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
   Written:= fdWrite(SHandle,Block,BlockLen);
   if Written<0 then                             { 0 indicates an error }
     Written:= 0;
-end; { proc. tSerialObj.SendBlock }
+end; { proc. TSerialStream.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+procedure TSerialStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
   repeat
     ProcIncoming
   until CharCount>=BlockLen;
   InBuffer.Get(Block,Blocklen,True);
   Reads:=BlockLen;
-end; { proc. tSerialObj.ReadBlock }
+end; { proc. TSerialStream.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.CharAvail: Boolean;
+function TSerialStream.CharAvail: Boolean;
 begin
   ProcIncoming;
   CharAvail:=InBuffer.BufUsed>0;
-end; { func. tSerialObj.CharAvail }
+end; { func. TSerialStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.CharCount: Integer;
+function TSerialStream.CharCount: Integer;
 begin
   ProcIncoming;
   CharCount:=InBuffer.BufUsed;
-end; { func. tSerialObj.CharAvail }
+end; { func. TSerialStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.Carrier: Boolean;
+function TSerialStream.Carrier: Boolean;
 var
   State: longint;
 begin
   ioctl(SHandle, TIOCMGET, @State);
   Carrier:= (State and TIOCM_CD)<>0;
-end; { func. tSerialObj.Carrier }
+end; { func. TSerialStream.Carrier }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.GetModemStatus(var LineStatus, ModemStatus: Byte);
+procedure TSerialStream.GetModemStatus(var LineStatus, ModemStatus: Byte);
 begin
   LineStatus := 00;
   ModemStatus := 08;
 
   if Carrier then
     ModemStatus := ModemStatus OR (1 SHL 7);
-end; { proc. tSerialObj.GetModemStatus }
+end; { proc. TSerialStream.GetModemStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SetDtr(State: Boolean);
+procedure TSerialStream.SetDtr(State: Boolean);
 const
   DTR: longint = TIOCM_DTR;
 begin
@@ -232,11 +232,11 @@ begin
     ioctl(SHandle, TIOCMBIS, @DTR)
   else
     ioctl(SHandle, TIOCMBIC, @DTR);
-end; { proc. tSerialObj.SetDtr }
+end; { proc. TSerialStream.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.GetBpsRate: Longint;
+function TSerialStream.GetBpsRate: Longint;
 var
   tios: TermIOS;
 begin
@@ -263,35 +263,35 @@ begin
   else if ((tios.c_cflag and B460800)<>0) then GetBpsRate:= 460800
 {$endif}
   else GetBpsRate:= 1;
-end; { func. tSerialObj.GetBpsRate }
+end; { func. TSerialStream.GetBpsRate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
+procedure TSerialStream.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 begin
   ProcIncoming;
   InFree:=InBuffer.BufRoom;
   OutFree:=65000;
   InUsed:=InBuffer.BufUsed;
   OutUsed:=0;
-end; { proc. tSerialObj.GetBufferStatus }
+end; { proc. TSerialStream.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.PurgeInBuffer;
+procedure TSerialStream.PurgeInBuffer;
 begin
   ProcIncoming; InBuffer.Clear;
-end; { proc. tSerialObj.PurgeInBuffer }
+end; { proc. TSerialStream.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.PurgeOutBuffer;
+procedure TSerialStream.PurgeOutBuffer;
 begin
-end; { proc. tSerialObj.PurgeOutBuffer }
+end; { proc. TSerialStream.PurgeOutBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tSerialObj.ReadyToSend(BlockLen: Longint): Boolean;
+function TSerialStream.ReadyToSend(BlockLen: Longint): Boolean;
 var
   State: longint;
 begin
@@ -301,13 +301,13 @@ end; { func. ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.PauseCom(CloseCom: Boolean);
+procedure TSerialStream.PauseCom(CloseCom: Boolean);
 begin
 end; { proc. PauseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.ResumeCom(OpenCom: Boolean);
+procedure TSerialStream.ResumeCom(OpenCom: Boolean);
 begin
 end; { proc. ResumeCom }
 
@@ -318,6 +318,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.8  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.7  2001/07/11 20:43:40  mv
    * Small FreeBSD patches
 

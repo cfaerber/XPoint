@@ -147,11 +147,11 @@ var
     Debug.DebugLog('xpnczconnect','Sending serial number',DLInform);
     zsum:=0;
     for i:=1 to 4 do Inc(zsum,ord(BoxPar^.zerbid[i]));
-    GenericMailer.CommObj^.SendString(BoxPar^.zerbid+chr(zsum and 255),False);
+    GenericMailer.CommObj.SendString(BoxPar^.zerbid+chr(zsum and 255),False);
     Timer.Init; Timer.SetTimeout(30); Pass:=False;
     repeat
-      if GenericMailer.CommObj^.CharAvail then
-        case GenericMailer.CommObj^.GetChar of
+      if GenericMailer.CommObj.CharAvail then
+        case GenericMailer.CommObj.GetChar of
           ACK: Pass:=True;
           NACK: begin
                   Pass:=True;
@@ -250,6 +250,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.5  2001/07/31 13:10:38  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

@@ -3,43 +3,44 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type TFossilObj = Object(tCommObj)
-        constructor Init;
-        destructor Done; virtual;
+type TFossilStream = Object(TCommStream)
+        constructor Create;
+        destructor Destroy; override;
 
         function  Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
-                       Parity: Char; StopBits: Byte): Boolean; virtual;
-        function  OpenKeep(Comport: Byte): Boolean; virtual;
-        function  GetChar: Char; virtual;
-        function  CharAvail: Boolean; virtual;
-        function  CharCount: Integer; virtual;
-        function  Carrier: Boolean; virtual;
-        function  SendChar(C: Char): Boolean; virtual;
-        function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
-        function  GetBPSrate: Longint; virtual;
-        function  GetDriverInfo: String; virtual;
-        function  GetHandle: longint; virtual;
+                       Parity: Char; StopBits: Byte): Boolean; override;
+        function  OpenKeep(Comport: Byte): Boolean; override;
+        function  GetChar: Char; override;
+        function  CharAvail: Boolean; override;
+        function  CharCount: Integer; override;
+        function  Carrier: Boolean; override;
+        function  SendChar(C: Char): Boolean; override;
+        function  ReadyToSend(BlockLen: Longint): Boolean; override;
+        function  GetBPSrate: Longint; override;
+        function  GetDriverInfo: String; override;
+        function  GetHandle: longint; override;
 
-        procedure OpenQuick(Handle: Longint); virtual;
-        procedure Close; virtual;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual;
-        procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); virtual;
-        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
-        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
-        procedure SetDtr(State: Boolean); virtual;
-        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
-        procedure PurgeInBuffer; virtual;
-        procedure PurgeOutBuffer; virtual;
-        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); virtual;
-     end; { object TFossilObj }
-
-Type tpFossilObj = ^TFossilObj;
+        procedure OpenQuick(Handle: Longint); override;
+        procedure Close; override;
+        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); override;
+        procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
+        procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
+        procedure SetDtr(State: Boolean); override;
+        procedure GetModemStatus(var LineStatus, ModemStatus: Byte); override;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; override;
+        procedure PurgeInBuffer; override;
+        procedure PurgeOutBuffer; override;
+        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); override;
+     end; { object TFossilStream }
 
 {function FossilDetect: Boolean;}
 
 {
   $Log$
+  Revision 1.4  2001/08/03 11:44:09  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.3  2000/10/28 09:40:28  ma
   - introduced credits.txt
 

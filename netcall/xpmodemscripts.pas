@@ -32,7 +32,7 @@ uses
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2, winxp,
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,ProgressOutput;
 
-function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; ProgressOutput: TProgressOutput;
+function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;
                    online,relogin:boolean):shortint;
 
@@ -41,7 +41,7 @@ implementation
 
 uses  timer,debug;
 
-function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; ProgressOutput: TProgressOutput;
+function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;
                    online,relogin:boolean):shortint;
 
@@ -468,7 +468,7 @@ var ip   : integer;
 
   function timeout:boolean;
   begin
-    timeout:=not (CommObj^.IgnoreCD or CommObj^.Carrier) or (LoginTimer.Timeout);
+    timeout:=not (CommObj.IgnoreCD or CommObj.Carrier) or (LoginTimer.Timeout);
   end;
 
   function GetPar:string;
@@ -518,8 +518,8 @@ var ip   : integer;
 
   procedure ProcessIncoming;
   begin
-    if CommObj^.CharAvail then
-      ReceivedChars:=ReceivedChars+CommObj^.GetChar;
+    if CommObj.CharAvail then
+      ReceivedChars:=ReceivedChars+CommObj.GetChar;
   end;
 
   procedure InterpreteEntry;
@@ -563,7 +563,7 @@ var ip   : integer;
                         end;
           cmdSend     : begin
                           par:=getpar;
-                          CommObj^.SendString(par,False);
+                          CommObj.SendString(par,False);
                           write(runlog,'!SEND '+par+'!');
                         end;
           cmdGoto     : ip:=numpar-1;
@@ -577,7 +577,7 @@ var ip   : integer;
           cmdDisplay  : {**Display:=(numpar=pDispOn)};
           cmdTimer    : UniTimer.SetTimeout(numpar);
           cmdRead     : ProcessIncoming;
-          cmdFlush    : CommObj^.PurgeInbuffer;
+          cmdFlush    : CommObj.PurgeInbuffer;
           cmdCls      : clrscr;
           cmdCall     : if sp=maxstack then begin
                           runerror(5);      { 'StapelÅberlauf' }
@@ -665,6 +665,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.4  2001/07/28 12:04:19  mk
   - removed crt unit as much as possible
 

@@ -133,21 +133,21 @@ begin
             state:=1;
           end;
       1 : begin
-            if Timers[ti_ALL1].Timeout or not FCommObj^.Carrier then begin
-              if not FCommObj^.Carrier then
+            if Timers[ti_ALL1].Timeout or not FCommObj.Carrier then begin
+              if not FCommObj.Carrier then
                 Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','login timeout',DLError);
               state:=99;
               aresult:=EL_nologin;
             end;
-            if FCommObj^.CharAvail then begin
-              c:=FCommObj^.GetChar;
+            if FCommObj.CharAvail then begin
+              c:=FCommObj.GetChar;
               if c=#13 then begin SleepTime(1000); state:=2 end;
             end;
             if Timers[ti_CRs].Timeout then begin
               Timers[ti_CRs].SetTimeout(2);
-              FCommObj^.SendString(' '#13' '#13,False);
+              FCommObj.SendString(' '#13' '#13,False);
             end;
           end;
 
@@ -158,8 +158,8 @@ begin
             state:=3;
           end;
       3 : begin
-            if Timers[ti_Master].Timeout or not FCommObj^.Carrier then begin
-              if not FCommObj^.Carrier then
+            if Timers[ti_Master].Timeout or not FCommObj.Carrier then begin
+              if not FCommObj.Carrier then
                 Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','login timeout',DLError);
@@ -167,20 +167,20 @@ begin
               state:=99;
             end else begin
               if Timers[ti_Sync].Timeout then begin
-                FCommObj^.PurgeInBuffer;
+                FCommObj.PurgeInBuffer;
                 if UseEMSI then begin
-                  FCommObj^.SendString(EMSI_INQ+#13,False); SleepTime(60);      { EMSI INQ   }
+                  FCommObj.SendString(EMSI_INQ+#13,False); SleepTime(60);      { EMSI INQ   }
                 end;
-                FCommObj^.SendChar(YooHoo); SleepTime(60);         { YooHoo INQ }
-                FCommObj^.SendChar(TSync);                      { FTS-1 INQ  }
+                FCommObj.SendChar(YooHoo); SleepTime(60);         { YooHoo INQ }
+                FCommObj.SendChar(TSync);                      { FTS-1 INQ  }
                 Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
               end;
-              if FCommObj^.CharAvail then state:=4;
+              if FCommObj.CharAvail then state:=4;
             end;
           end;
       4 : begin
-            c:=FCommObj^.GetChar;
+            c:=FCommObj.GetChar;
             case c of
               ENQ : begin
                       fmSS:=2; state:=99;   { WaZOO selected }
@@ -230,16 +230,16 @@ begin
   RetryCount:=0;
   repeat
     inc(RetryCount);
-    FCommObj^.SendChar(#$1f);                 { $1f senden }
-    FCommObj^.SendBlock(hello,sizeof(hello),written); { Hello senden }
-    FCommObj^.PurgeInBuffer;
+    FCommObj.SendChar(#$1f);                 { $1f senden }
+    FCommObj.SendBlock(hello,sizeof(hello),written); { Hello senden }
+    FCommObj.PurgeInBuffer;
     crc:=CRC16Block(hello,sizeof(hellor));
-    FCommObj^.SendChar(char(hi(crc)));        { CRC senden }
-    FCommObj^.SendChar(char(lo(crc)));
+    FCommObj.SendChar(char(hi(crc)));        { CRC senden }
+    FCommObj.SendChar(char(lo(crc)));
     Timers[ti_Hello].SetTimeout(40); c:=#0;
     repeat
-      if FCommObj^.CharAvail then c:=FCommObj^.GetChar;
-      if not FCommObj^.Carrier then Timers[ti_Hello].SetTimeout(0);
+      if FCommObj.CharAvail then c:=FCommObj.GetChar;
+      if not FCommObj.Carrier then Timers[ti_Hello].SetTimeout(0);
     until Timers[ti_Hello].Timeout or (c=ACK) or (c='?') or (c=ENQ);
     if c='?' then begin
       Output(mcError,getres2(30004,20)+' #%d',[retrycount]);   { 'Hello-Sendefehler' }
@@ -267,14 +267,14 @@ begin
     case state of
       1 : begin
             Timers[ti_Hello].SetTimeout(70);
-            FCommObj^.SendChar(ENQ);
+            FCommObj.SendChar(ENQ);
             state:=2;
           end;
       2 : begin
-            if Timers[ti_Hello].Timeout or not FCommObj^.Carrier then
+            if Timers[ti_Hello].Timeout or not FCommObj.Carrier then
               state:=99;
-            if FCommObj^.CharAvail then begin
-              b:=Ord(FCommObj^.GetChar);
+            if FCommObj.CharAvail then begin
+              b:=Ord(FCommObj.GetChar);
               case b of
                 $1f : state:=5;
               else begin
@@ -286,22 +286,22 @@ begin
       3 : begin
             if Timers[ti_Hello].Timeout then
               state:=4 else
-            if FCommObj^.CharAvail then begin
-                b:=Ord(FCommObj^.GetChar);
+            if FCommObj.CharAvail then begin
+                b:=Ord(FCommObj.GetChar);
                 if b=$1f then state:=5
               end
             else begin
               SleepTime(50);
-              if not FCommObj^.Carrier then
+              if not FCommObj.Carrier then
                 state:=99
               else
-                if not FCommObj^.CharAvail then
+                if not FCommObj.CharAvail then
                   state:=4;
             end;
           end;
       4 : begin
-            FCommObj^.PurgeInBuffer;
-            FCommObj^.SendChar(ENQ);
+            FCommObj.PurgeInBuffer;
+            FCommObj.SendChar(ENQ);
             state:=2;
           end;
 
@@ -310,10 +310,10 @@ begin
             state:=6;
           end;
       6 : begin
-            if Timers[ti_RH].Timeout or not FCommObj^.Carrier then
+            if Timers[ti_RH].Timeout or not FCommObj.Carrier then
               state:=99;
-            if FCommObj^.CharCount>=sizeof(hello)then begin
-              FCommObj^.ReadBlock(hello,sizeof(hello),readhbytes);
+            if FCommObj.CharCount>=sizeof(hello)then begin
+              FCommObj.ReadBlock(hello,sizeof(hello),readhbytes);
               state:=8;
             end else
               if Timers[ti_RH].SecsToTimeout<20 then
@@ -330,15 +330,15 @@ begin
       9 : begin
             inc(errors);
             if errors<10 then begin
-              FCommObj^.SendChar('?');
+              FCommObj.SendChar('?');
               Output(mcError,getres2(30004,21)+' #%d',[errors]);   { 'Hello-Empfangsfehler' }
               state:=2;
             end else
               state:=99;
           end;
      10 : begin
-            FCommObj^.PurgeInBuffer;
-            FCommObj^.SendChar(ACK);
+            FCommObj.PurgeInBuffer;
+            FCommObj.SendChar(ACK);
             Output(mcInfo,getres2(30004,22),[0]);    { 'Handshake OK' }
             fmRH:=true;
             { if DebugMode then WriteHello; }
@@ -390,16 +390,16 @@ begin
                 end;
           end;
       2 : begin
-            if Timers[ti_Hello].Timeout or not FCommObj^.Carrier then begin
-              if not FCommObj^.Carrier then
+            if Timers[ti_Hello].Timeout or not FCommObj.Carrier then begin
+              if not FCommObj.Carrier then
                 Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','yoohoo hello timeout',DLError);
               fmYS:=0;
               state:=99;
             end;
-            if FCommObj^.CharAvail then begin
-              c:=FCommObj^.GetChar;
+            if FCommObj.CharAvail then begin
+              c:=FCommObj.GetChar;
               if c=YooHoo then
                 state:=3;
             end;
@@ -410,7 +410,7 @@ begin
               LogHelloData;
             end else begin
               DebugLog('ncfido','Error receiving hello packet',DLError);
-              if not FCommObj^.Carrier then
+              if not FCommObj.Carrier then
                 fmYS:=0;
             end;
             state:=99;
@@ -428,6 +428,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.2  2001/04/03 13:21:12  ma
   - disabled some debug logs
 

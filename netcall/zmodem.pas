@@ -32,7 +32,7 @@ type
 
   TZModemObj = class
   public
-    constructor Init(vCommObj: tpCommObj; vProgressOutput: TProgressOutput);
+    constructor Init(vCommObj: TCommStream; vProgressOutput: TProgressOutput);
     destructor Done;
 
     function Receive(path: string; FileList: TStringList): Boolean;
@@ -40,7 +40,7 @@ type
 
   protected
     FProgressOutput: TProgressOutput;
-    FCommObj: tpCommObj;
+    FCommObj: TCommStream;
     ElapsedSec: tTimer;
     MakeCRC32: Boolean;
     RecoverAllow: Boolean;
@@ -558,9 +558,9 @@ var
   time: LONGINT;
 
 begin
-  if FCommObj^.CharAvail then
+  if FCommObj.CharAvail then
   begin
-    c := ORD(FCommObj^.GetChar);
+    c := ORD(FCommObj.GetChar);
     {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
     Z_GetByte := c;
   end                                   (* of IF THEN *)
@@ -568,15 +568,15 @@ begin
   begin
     time := TimeCounter + tenths;
     repeat
-      if not FCommObj^.Carrier then
+      if not FCommObj.Carrier then
       begin
         Z_GetByte := RCDO;              { nobody to talk to }
         Exit;
       end                               (* of IF THEN *)
       else
-        if FCommObj^.CharAvail then
+        if FCommObj.CharAvail then
       begin
-        c := ORD(FCommObj^.GetChar);
+        c := ORD(FCommObj.GetChar);
         {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
         Z_GetByte := c;
         Exit;
@@ -606,9 +606,9 @@ var
   time: LONGINT;
 
 begin
-  if FCommObj^.CharAvail then
+  if FCommObj.CharAvail then
   begin
-    c := ORD(FCommObj^.GetChar);
+    c := ORD(FCommObj.GetChar);
     {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
     Z_qk_read := c;
   end                                   (* of IF THEN *)
@@ -617,20 +617,20 @@ begin
     time := TimeCounter + rxtimeout;
     stop := FALSE;
     repeat
-      if FCommObj^.CharAvail then
+      if FCommObj.CharAvail then
       begin
-        ch := FCommObj^.GetChar;
+        ch := FCommObj.GetChar;
         {$IFDEF VerbDebug}AddLogChar(Char(Ch), False); {$ENDIF}
         stop := TRUE;
       end;                              (* of IF *)
-    until stop or (TimeCounter > time) or not FCommObj^.Carrier;
+    until stop or (TimeCounter > time) or not FCommObj.Carrier;
 
     if (TimeCounter > time) then
     begin
       c := ZTIMEOUT; DebugLog('zmodem', 'qk_read timeout', DLWarning)
     end
     else
-      if not FCommObj^.Carrier then
+      if not FCommObj.Carrier then
       c := RCDO
     else
       c := ORD(ch);
@@ -654,13 +654,13 @@ begin
   time := TimeCounter + rxtimeout;
   stop := FALSE;
   repeat
-    if FCommObj^.CharAvail then
+    if FCommObj.CharAvail then
     begin
-      ch := FCommObj^.GetChar;
+      ch := FCommObj.GetChar;
       {$IFDEF VerbDebug}AddLogChar(Ch, False); {$ENDIF}
       if (ch <> CHR(XON)) and (ch <> CHR(XOFF)) then stop := TRUE;
     end;                                (* of IF *)
-  until stop or (TimeCounter > time) or not FCommObj^.Carrier;
+  until stop or (TimeCounter > time) or not FCommObj.Carrier;
 
   Z_TimedRead := Ord(Ch);
   if (TimeCounter > time) then
@@ -668,7 +668,7 @@ begin
     Z_TimedRead := ZTIMEOUT; DebugLog('zmodem', 'timedread timeout', DLWarning)
   end
   else
-    if not FCommObj^.Carrier then
+    if not FCommObj.Carrier then
     Z_TimedRead := RCDO;
 end;
 
@@ -683,15 +683,15 @@ var
   time: LONGINT;
 
 begin
-  if not (FCommObj^.ReadyToSend(1)) then
+  if not (FCommObj.ReadyToSend(1)) then
   begin
     time := TimeCounter + txtimeout;
     repeat
-    until FCommObj^.ReadyToSend(1) or (TimeCounter > time);
+    until FCommObj.ReadyToSend(1) or (TimeCounter > time);
   end;                                  (* of IF *)
 
   {$IFDEF VerbDebug}AddLogChar(Char(c), True); {$ENDIF}
-  FCommObj^.SendChar(Char(c));
+  FCommObj.SendChar(Char(c));
 end;                                    (* of Z_SendByte *)
 
 (*************************************************************************)
@@ -705,7 +705,7 @@ var
   n: BYTE;
 
 begin
-  FCommObj^.PurgeInBuffer;
+  FCommObj.PurgeInBuffer;
   for n := 1 to 8 do
   begin
     Z_SendByte(CAN);
@@ -1342,7 +1342,7 @@ begin
       else
         begin
           TransferMessage := 'Debris';
-          FCommObj^.PurgeInBuffer;
+          FCommObj.PurgeInBuffer;
           RZ_ReceiveData := c;
         end
       end;                              (* of CASE *)
@@ -1381,7 +1381,7 @@ var
 begin
   Z_PutLongIntoHeader(rxpos);
   n := 4;
-  FCommObj^.PurgeInBuffer;
+  FCommObj.PurgeInBuffer;
   repeat
     Z_SendHexHeader(ZFIN, txhdr);
     case Z_GetByte(2) of
@@ -1389,12 +1389,12 @@ begin
         RCDO: Exit;
       79:
         begin
-          FCommObj^.PurgeInBuffer;
+          FCommObj.PurgeInBuffer;
           n := 0;
         end
     else
       begin
-        FCommObj^.PurgeInBuffer;
+        FCommObj.PurgeInBuffer;
         DEC(n)
       end;
     end;                                (* of CASE *)
@@ -1421,7 +1421,7 @@ begin
 
   while (n > 0) and not (stop) do
   begin
-    if not FCommObj^.Carrier then
+    if not FCommObj.Carrier then
     begin
       TransferMessage := 'Lost carrier';
       RZ_InitReceiver := ZERROR;
@@ -1873,7 +1873,7 @@ begin
   while not (done) do
   begin
 
-    if not FCommObj^.Carrier then
+    if not FCommObj.Carrier then
     begin
       RZ_ReceiveBatch := ZERROR;
       Exit
@@ -2221,7 +2221,7 @@ begin
 
   repeat
     c := Z_GetHeader(rxhdr);
-    FCommObj^.PurgeInBuffer;
+    FCommObj.PurgeInBuffer;
     case c of
       ZTIMEOUT:
         begin
@@ -2318,7 +2318,7 @@ begin
     begin
       if (ch = CHR(XOFF)) or (ch = CHR(XON)) then
       begin
-        ch := FCommObj^.GetChar;
+        ch := FCommObj.GetChar;
       end
       else
         stop := TRUE;
@@ -2329,7 +2329,7 @@ begin
 
   if chflag then
     {$ENDIF}
-    if FCommObj^.CharCount > 1 then // Workaround!!! wg. fehlendem GetLastChar
+    if FCommObj.CharCount > 1 then // Workaround!!! wg. fehlendem GetLastChar
     begin
 
       WaitAck:
@@ -2367,7 +2367,7 @@ begin
         end
       end {case};
 
-      while FCommObj^.CharAvail do
+      while FCommObj.CharAvail do
       begin
         case Z_GetByte(2) of
           CAN,
@@ -2396,7 +2396,7 @@ begin
       end;
     end;                                (* of IF *)
 
-    if not FCommObj^.Carrier then
+    if not FCommObj.Carrier then
     begin
       TransferMessage := 'Carrier lost';
       SZ_SendFileData := ZERROR;
@@ -2442,7 +2442,7 @@ begin
 
     if (e = ZCRCW) then goto waitack;
 
-    while FCommObj^.CharAvail do
+    while FCommObj.CharAvail do
     begin
       case Z_GetByte(2) of
         CAN,
@@ -2519,7 +2519,7 @@ begin
       end;
     end;                                (* of IF *)
 
-    if not FCommObj^.Carrier then
+    if not FCommObj.Carrier then
     begin
       TransferMessage := 'Lost carrier';
       SZ_SendFile := ZERROR;
@@ -2603,7 +2603,7 @@ begin
   TransferMessage := '';
   FileAddition := NewFile;
 
-  if not FCommObj^.Carrier then
+  if not FCommObj.Carrier then
   begin
     TransferMessage := 'Lost carrier';
     AddLogMessage(TransferMessage, DLError);
@@ -2713,7 +2713,7 @@ end;
 
 (*************************************************************************)
 
-constructor TZModemObj.Init(vCommObj: tpCommObj; vProgressOutput: TProgressOutput);
+constructor TZModemObj.Init(vCommObj: TCommStream; vProgressOutput: TProgressOutput);
 begin
   MakeCRC32 := TRUE; RecoverAllow := TRUE; LastSent:=0; ElapsedSec.Init;
   LastErrorCount:=0; FCommObj:=vCommObj; FProgressOutput:=vProgressOutput;
@@ -2731,6 +2731,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/08/03 11:44:10  cl
+  - changed TCommObj = object to TCommStream = class(TStream)
+
   Revision 1.18  2001/07/31 13:10:38  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
