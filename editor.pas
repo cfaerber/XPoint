@@ -1024,7 +1024,6 @@ var  dl         : displp;
      e          : edp;
      tk         : EdToken;
      trennzeich : set of char;     { fÅr Wort links/rechts }
-     tbm        : integer;      { Blockmarker, auf dem der Cursor steht }
 
   procedure showstat;
   begin
@@ -1267,67 +1266,6 @@ var  dl         : displp;
       if EdSave(ed) then Quit;
     end;
 
-    { Block markieren }
-    procedure shift_markieren(moved, up:boolean);
-      var m_pos:position;
-      begin
-        with e^ do begin
-          GetPosition(m_pos);
-          m_pos.offset:=min(m_pos.offset,m_pos.absatz^.size);
-          if not moved then begin
-            if ((PosCoord(m_pos,2)<>PosCoord(block[1].pos,block[1].disp))
-            and (PosCoord(m_pos,2)<>PosCoord(block[2].pos,block[2].disp)))
-            or blockinverse or blockhidden
-            then begin
-              setblockmark(1);
-              setblockmark(2);
-              tbm:=3;
-            end;
-          end
-          else begin
-            if up then begin
-              if (tbm=1) or (tbm=3)
-               then begin
-                 setblockmark(1);
-                 tbm:=1;
-               end
-               else if PosCoord(m_pos,2)<=PosCoord(block[1].pos,block[1].disp)
-                then begin
-                  block[2]:=block[1];
-                  setblockmark(1);
-                  tbm:=1;
-                end
-                else setblockmark(2);
-            end
-            else begin
-              if (tbm=2) or (tbm=3)
-               then begin
-                 setblockmark(2);
-                 tbm:=2;
-               end
-               else if PosCoord(m_pos,2)>=PosCoord(block[2].pos,block[2].disp)
-                then begin
-                  block[1]:=block[2];
-                  setblockmark(2);
-                  tbm:=2;
-                end
-                else setblockmark(1);
-            end
-            ;
-          end;
-        end;
-      end;
-
-    { Block entmarkieren }
-    procedure entmarkieren;
-      begin
-        with e^ do
-         if not blockhidden then begin
-           blockhidden:=true;
-           aufbau:=true;
-         end;
-      end;
-
   begin
     with e^ do begin
       if (tk>=1) and (tk<=29) then GetPosition(lastpos);
@@ -1335,150 +1273,40 @@ var  dl         : displp;
         -1                : CorrectWorkpos;
 
         { Blockoperationen }
-        editfText         : if e^.config.persistentblocks
-                             then ZeichenEinfuegen(false)
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               ZeichenEinfuegen(false);
-                             end;
-        editfBS           : if e^.config.persistentblocks
-                             then BackSpace
-                             else if (blockinverse or blockhidden)
-                              then BackSpace
-                              else BlockLoeschen;
-        editfDEL          : if kb_shift
-                             then BlockClpKopie(true)
-                             else if e^.config.persistentblocks
-                              then DELchar
-                              else if (blockinverse or blockhidden)
-                               then DELchar
-                               else BlockLoeschen;
+        editfText         : ZeichenEinfuegen(false);
+        editfBS           : BackSpace;
+        editfDEL          : DELchar;
         { Blockoperationen }
-        editfNewline      : if e^.config.persistentblocks
-                             then NewLine
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               NewLine;
-                             end;
+        editfNewline      : NewLine;
         editfDelWordRght  : WortRechtsLoeschen;
         editfDelWordLeft  : WortLinksLoeschen;
         editfDelLine      : ZeileLoeschen;
-        editfCtrlPrefix   : if e^.config.persistentblocks
-                             then Steuerzeichen
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               Steuerzeichen;
-                             end;
-        editfTAB          : if e^.config.persistentblocks
-                             then Tabulator
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               Tabulator;
-                             end;
+        editfCtrlPrefix   : Steuerzeichen;
+        editfTAB          : Tabulator;
         editfUndelete     : Undelete;
-        editfParagraph    : if e^.config.persistentblocks
-                             then Paragraph
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               Paragraph;
-                             end;
+        editfParagraph    : Paragraph;
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
 
         { Block markieren }
-        editfBOL          : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Zeilenanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfEOL          : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Zeilenende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfPgUp         : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              SeiteOben(true);
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfPgDn         : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              SeiteUnten;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
+        editfBOL          : Zeilenanfang;
+        editfEOL          : Zeilenende;
+        editfPgUp         : SeiteOben(true);
+        editfPgDn         : SeiteUnten;
         editfScrollUp     : Scroll_Up;
         editfScrollDown   : Scroll_Down;
         { Block markieren }
-        editfUp           : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeileOben then;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfDown         : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeileUnten then;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfLeft         : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeichenLinks then;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfRight        : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              CondZeichenRechts;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfPageTop      : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Seitenanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfPageBottom   : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Seitenende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfTop          : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Textanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfBottom       : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Textende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfWordLeft     : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              WortLinks;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfWordRight    : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              WortRechts;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
+        editfUp           : ZeileOben;
+        editfDown         : ZeileUnten;
+        editfLeft         : ZeichenLinks;
+        editfRight        : CondZeichenRechts;
+        editfPageTop      : Seitenanfang;
+        editfPageBottom   : Seitenende;
+        editfTop          : Textanfang;
+        editfBottom       : Textende;
+        editfWordLeft     : WortLinks;
+        editfWordRight    : WortRechts;
 
         editfLastpos      : GotoPos(lastpos,0);
         editfMark1        : SetMarker(1);
@@ -1500,18 +1328,7 @@ var  dl         : displp;
 
         { shift-ins: Block einfuegen - Zweitbelegung
           ctrl-ins: Block kopieren - Zweitbelegung   }
-        editfChangeInsert : begin
-                              if kb_shift
-                               then if e^.config.persistentblocks
-                                then BlockClpEinfuegen
-                                else begin
-                                  if not (blockinverse or blockhidden)
-                                   then BlockLoeschen;
-                                  BlockClpEinfuegen;
-                                  BlockEinAus;
-                                end
-                                else e^.insertmode:=not e^.insertmode;
-                            end;
+        editfChangeInsert : e^.insertmode:=not e^.insertmode;
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
         editfAbsatzmarke  : SetAbsatzmarke;
         editfWrapOn       : UmbruchEin;
@@ -1535,14 +1352,10 @@ var  dl         : displp;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
         { Blockoperationen }
-        editfPasteBlock   : if e^.config.persistentblocks
-                             then BlockClpEinfuegen
-                             else begin
-                               if not (blockinverse or blockhidden)
-                                then BlockLoeschen;
-                               BlockClpEinfuegen;
-                               BlockEinAus;
-                             end;
+        editfPasteBlock   : begin
+                              BlockClpEinfuegen;
+                              BlockEinAus;
+                            end;
 //        editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
@@ -1870,6 +1683,9 @@ end.
 
 {
   $Log$
+  Revision 1.53  2001/02/26 14:30:26  ma
+  - removed non-GPL code part II
+
   Revision 1.52  2001/02/25 11:34:12  ma
   - removed non-GPL code
 
