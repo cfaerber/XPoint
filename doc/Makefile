@@ -111,7 +111,7 @@ endif
 
 endif
 
-DOCFORMFLAGS ?= 72 1 N
+DOCFORMFLAGS ?= 72 3
 TIDYFLAGS ?= -q -f tidyerr.tmp -m -asxml --doctype strict --show-warnings no --add-xml-decl yes
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
@@ -400,6 +400,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.16  2000/11/03 21:25:28  fe
+# docform params corrected.
+#
 # Revision 1.15  2000/10/29 16:18:58  fe
 # Korrekturen
 #
