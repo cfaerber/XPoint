@@ -2093,7 +2093,7 @@ MY:
 JG+MY:
 - Fixes und nderungen Dateiauswahl-Fenster: Erkennung fr Disketten-
   Laufwerke implementiert und Erkennung von RAM-Disks optimiert (RAM-
-  Disks, die von einem anderen Treiber wie LOADHI.SYS geladen wurden,
+  Disks, die von anderen Treibern wie z.B. LOADHI.SYS geladen wurden,
   wurden bisher fr Festplatten gehalten). Bei Festplatten, RAM-Disks,
   Subst- und Netz-Laufwerken wird jetzt in Kurzform ("300 MB") die freie
   Restkapazit„t angezeigt.
@@ -2193,8 +2193,8 @@ JG:
 +--------------+
 
 MY:
-- Statt auf die Funktion 'ClipAvailable' wird jetzt auf die ohnehin
-  schon in XP2CFG.INC gesetzte Variable 'Clipboard' geprft.
+- Statt die Funktion 'ClipAvailable' aufzurufen, wird jetzt auf die
+  ohnehin schon in XP2CFG.INC gesetzte Variable 'Clipboard' geprft.
   CLIP.PAS
 
 MY:
@@ -2260,8 +2260,8 @@ MY:
 +--------------+
 
 MY:
-- Fix: Viewer-Tempfiles im XP-TEMP-Verzeichnis wurden nicht mehr
-  gel”scht.
+- Fix: Viewer-Tempfiles im XP-TEMP-Verzeichnis werden jetzt wieder
+  korrekt gel”scht (bl”der Bug).
   XP.PAS
 
 
@@ -2316,10 +2316,10 @@ TS [+MY]:
      sichergestellt, daá a) weder fehlende noch b) unzutreffende noch
      c) doppelte Eintr„ge in der Suchergebnisliste auftreten k”nnen.
      Z.B. wurden u.U. Eintr„ge gefunden, die gar nicht den Suchkriterien
-     entsprachen, und im Suchergebnis dann mit falschem Sysop-Namen
-     angezeigt; kam eine AKA in mehreren Listen vor (z.B. POINTS24 und
-     R24PNT), wurde nach dem Zufallsprinzip nur der Eintrag aus einer
-     der Listen (der aber dafr mehrfach) angezeigt.
+     entsprachen, und diese im Suchergebnis dann mit falschem Sysop-
+     Namen angezeigt; kam eine AKA in mehreren Listen vor (z.B. POINTS24
+     und R24PNT), wurde nach dem Zufallsprinzip nur der Eintrag aus
+     einer der Listen (der aber dafr mehrfach) angezeigt.
   4. In allen Suchergebnis-/Auswahllisten steht jetzt hinter dem sicht-
      baren Eintrag der Dateiname sowie die interne Nummer der Liste, aus
      der der jeweilige Eintrag stammt (sichtbar zu machen durch Scrollen
@@ -2383,6 +2383,7 @@ JG:
 
 MW:
 - Groáes Gebhren-Update:
+  ----------------------------------------------------------------------
   1. Es k”nnen jetzt auch Bruchteile von 1/100 W„hrungseinheiten
      sowie ein zus„tzliches festes Verbindungsentgelt eingegeben und bei
      der Berechnung bercksichtigt werden.
@@ -2410,27 +2411,50 @@ MW:
 
 
 +---------------------+
-|  10.01.-08.03.2003  |
+|  10.01.-18.04.2003  |
 +---------------------+
 
 MW [+JM]:
-- Anlegen des Overlaycache (XP.OVR) jetzt auch im XMS m”glich:
-  1. Mit dem neuen Kommandozeilenschalter /xmsovr kann das Overlay jetzt
-     auch im XMS statt im EMS zwischengespeichert werden. Sinnvoll bei
-     Systemen, die kein EMS bereitstellen (k”nnen), oder bei denen man das
-     nicht will, um z.B. mehr Platz in den UMBs fr das Hochladen von
-     Treibern und TSRs zur Verfgung zu haben.
-  2. Ist EMS vorhanden, wird trotz Verwendung von /xmsovr der Overlaycache
-     im EMS angelegt.
-  3. Bei Verwendung der Kommandozeilenschalter /? oder /AV:, oder wenn
-     nicht ausreichend freies XMS oder EMS vorhanden sind, wird der
-     Overlaycache gar nicht im Speicher angelegt, sondern der Zugriff
-     erfolgt ber die Festplatte.
-  4. Wurde der Kommandozeilenschalter /xmsovr verwendet und konnte der
-     Overlaycache erfolgreich im XMS angelegt werden, erh„lt die
-     Versionsbezeichnung den Zusatz "(XMS)".
-  XP0.PAS, XP2.PAS, XP5.PAS, XPDEFINE.INC, XPX.PAS, OVERXMS.ASM,
-  XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+- Anlegen des Overlay-Cache (XP.OVR) im EMS/XMS optimiert/erweitert:
+  ----------------------------------------------------------------------
+  1. Der Overlay-Cache wird jetzt automatisch im XMS angelegt, wenn
+     kein EMS vorhanden ist (bisher konnte ohne EMS berhaupt kein
+     Overlay-Cache eingerichtet werden). In der Entwicklungsphase unter
+     Novell-DOS 7.0 aufgetretene Probleme mit dieser Funktion sind
+     behoben (danke an JM).
+     Relevant bei Systemen, die kein EMS bereitstellen (k”nnen), oder
+     bei denen das nicht gewollt ist, um z.B. durch die Einsparung des
+     EMS-Seitenrahmens von 64KB mehr Platz in den UMBs fr das Hochladen
+     von Treibern und TSRs zur Verfgung zu haben.
+  2. Der Overlay-Cache wird jetzt nur noch dann im EMS/XMS angelegt,
+     wenn ein definiertes Minimum an EMS/XMS zur Verfgung steht
+     (Dateigr”áe der XP.OVR plus der zum Auslagern von XP ins EMS/XMS
+     erforderliche Speicher plus 700 KB). Sinn dieser Maánahme ist,
+     a) dem Lister nicht s„mtlichen zus„tzlichen Speicher zu entziehen,
+     wenn dieser zuf„llig genau so groá ist, daá der Overlay-Cache
+     gerade noch so eben dort hineinpaát, und b) auf jeden Fall
+     sicherzustellen, daá XP beim Aufruf externer Programme noch ins
+     EMS/XMS ausgelagert werden kann.
+     Ist dieses Minimum an EMS/XMS nicht vorhanden, erfolgt der Zugriff
+     auf das Overlay ber die Festplatte (die Ausfhrungsgeschwindigkeit
+     von XP kann sich in Abh„ngigkeit von der verwendeten Hardware
+     dadurch verringern).
+  3. Mit dem neuen Kommandozeilenschalter "/noovrbuf" kann das Anlegen
+     des Overlay-Cache im EMS/XMS unabh„ngig vom verfgbaren Speicher
+     (z.B. um diesen dem Lister zugute kommen zu lassen) ganz unter-
+     bunden und so der Overlay-Zugriff ber die Festplatte erzwungen
+     werden.
+  4. Wenn der Overlay-Cache im EMS/XMS angelegt wurde, erh„lt die
+     Versionsbezeichnung b.a.w. den Zusatz "(EMS)" bzw. "(XMS)". Dies
+     dient einem gezielteren Support, wenn ber Probleme mit mangelndem
+     Speicher im Lister, einer verlangsamten Ausfhrung von XP o.„.
+     berichtet werden sollte.
+  5. Die Speicherstatistik unter X/S/S zeigt jetzt auch den durch das
+     Anlegen des Overlay-Caches im XMS belegten Speicher an (bisher
+     festverdrahtet "0").
+  XP0.PAS, XP2.PAS, XP3EX.PAS, XP5.PAS, XP6.PAS, XP6S.INC, XPDEFINE.INC,
+  XPREG.PAS, XPX.PAS, OVERXMS.ASM, FILEIO.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
 
 
 +---------------------+
@@ -2478,7 +2502,6 @@ MY:
    5. Das Durchsuchen der Node-/Pointlisten mit F/N/D ist jetzt (fast)
       berall in XP auch mit dem Hotkey <AltGr-N> erreichbar (z.B. aus
       dem Lister oder Editor heraus).
-
    6. Im Eingabedialog fr das Durchsuchen von Node-/Pointlisten wird
       jetzt - wie auch seit jeher bei der Nodelist-Abfrage - rechts oben
       die Day-Number der Haupt-Nodeliste angezeigt.
@@ -2604,12 +2627,15 @@ MY:
 +--------------+
 
 CL:
-- Fix: Der Fehler in der immer noch ein Einfrieren des XP-Tasks
-  verursachenden XP_NTVDM.DLL, die u.a. den direkten Clipboardzugriff
-  unter WinNT/2000/XP erm”glicht, ist jetzt unwiderruflich und endgltig
-  behoben. :-)  Man kann jetzt nach Herzenslust das Clipboard benutzen
-  oder andere Dinge tun, OpenXP/16 wird trotz vorhandener XP_NTVDM.DLL
-  nicht mehr einfrieren und/oder das System destabilisieren.
+- Fix: Der Fehler in der XP_NTVDM.DLL, deren Existenz im XP-Verzeichnis
+  immer noch ein Einfrieren des XP-Tasks unter Windows NT/2000/XP
+  verursachen konnte, ist jetzt unwiderruflich und endgltig behoben.
+  :-)  Die Datei erm”glicht den direkten Zugriff auf das Clipboard von
+  Windows NT/2000/XP und ist fr die korrekte Versionserkennung dieser
+  Betriebssysteme zust„ndig. Man kann jetzt nach Herzenslust das
+  Clipboard benutzen oder andere Dinge tun, OpenXP/16 wird trotz
+  vorhandener XP_NTVDM.DLL nicht mehr einfrieren und/oder das System
+  destabilisieren.
   XP_NTVDM.PAS
 
 
@@ -2635,9 +2661,10 @@ MY:
 
 MY:
 - Unversandt-Routine ('ClearUnversandt') optimiert:
-  1. Beim Netztyp RFC/Client findet im Falle von Crosspostings und Mails
-     mit Kopienempf„ngern die Prfung darauf, ob beim aktuellen
-     Durchlauf der Routine eine unversandte Mail aus der Messagebase
+  ----------------------------------------------------------------------
+  1. Beim Netztyp RFC/Client findet im Falle von unversandten Mails mit
+     Kopienempf„ngern und Crosspostings die Prfung darauf, ob beim
+     aktuellen Durchlauf der Routine die Nachricht aus der Messagebase
      in den neuen Pollpuffer extrahiert werden muá, nicht mehr mittels
      Schreiben/Lesen von Message-IDs in/aus der Textdatei "UNSENT.ID2"
      statt, sondern wird anhand einer als Parameter bergebenen
@@ -2649,13 +2676,13 @@ MY:
      wird. Solche Mails k”nnen beim Netztyp RFC/Client aber gar nicht
      entstehen, da der UUZ dort *immer* mit dem Parameter "-SMTP"
      aufgerufen wird.
-  2. Bei Crosspostings und Mails mit Kopienempf„ngern vom Netztyp
+  2. Bei Mails mit Kopienempf„ngern und Crosspostings vom Netztyp
      RFC/Client wird jetzt nur noch beim Durchlauf fr den ersten
      Empf„nger in der Textdatei "UNSENT.ID" nach der Message-ID gesucht
      und das Ergebnis (Nachricht ist versandt bzw. unversandt) in einer
-     Variablen gesichert. Bei den anschlieáenden Durchl„ufen wird auf
-     diese Variable zurckgegriffen statt jedesmal erneut die Datei zu
-     ”ffnen und auszulesen.
+     Variablen abgelegt. Bei den anschlieáenden Durchl„ufen fr die
+     Kopienempf„nger wird auf diese Variable zurckgegriffen statt
+     jedesmal erneut die Datei zu ”ffnen und auszulesen.
   3. Die Fehlermeldung "Interner Fehler: Brett mit unvers. Nachr. nicht
      mehr vorhanden" wrde jetzt beim ersten Brett eines Crosspostings
      ausgegeben werden, wenn es nicht existiert (das erste Brett *muá*
@@ -2667,6 +2694,54 @@ MY:
   problemen auf dem System des Users w„re ein Sicherheitsgewinn durch
   die ge„nderte Routine hypothetisch m”glich.
   XP7O.PAS
+
+
++------------------+
+|  14.-18.04.2003  |
++------------------+
+
+JG+JM:
+- Der max. verfgbare XMS-Speicher (Extended Memory) wird jetzt auch
+  unter Windows 9x korrekt bis 64 Megabyte ermittelt und untersttzt
+  (bisher standen in der DOS-Box von Windows 9x aufgrund eines falsch
+  zurckgegebenen Wertes nur 2 Megabyte XMS zur Verfgung).
+  Damit ist die Zurverfgungstellung von EMS unter Windows 9x nicht mehr
+  zwingend erforderlich (aber weiterhin ratsam); des weiteren kann das
+  "gewonnene" XMS dem Lister zugute kommen (s.u.).
+  XMS.ASM
+
+
++--------------+
+|  18.04.2003  |
++--------------+
+
+JG [+MY]:
+- Lister kann jetzt Dateien/Nachrichten bis 64 Megabyte anzeigen:
+  ----------------------------------------------------------------------
+  1. Konstante 'XmsPagesize' von 4096 auf 32768 Bytes vergr”áert,
+     dadurch bisheriges internes Limit von 4096 Bl”cken   4096 Bytes
+     (= 16 Megabyte) aufgehoben.
+  2. Kalkulation des erforderlichen verfgbaren unteren Speichers zum
+     Anfordern von XMS-Speicher auf sinnvollen Wert angepaát (bisher:
+     2*XmsPagesize, jetzt: XmsPagesize+4096).
+  3. In Verbindung mit der jetzt korrekten Ermittlung des verfgbaren
+     XMS unter Windows 9x (s.o.) kann der Lister damit unter DOS und
+     Windows 9x auf Systemen mit entsprechender Speicherausstattung
+     jetzt Dateien bis max. 64 Megabyte anzeigen, wenn EMS und XMS
+     vorhanden sind. Ist nur XMS vorhanden, liegt der Maximalwert bei
+     ca. 53 Megabyte.
+  4. Damit ist gleichzeitig sichergestellt, daá Brettlisten von Boxen
+     des Netztyps RFC/Client, die vor dem Laden in den Lister eine
+     interne Konvertierung durchlaufen und dadurch h„ufig auf mehr als
+     das Doppelte ihrer eigentlichen Gr”áe anwachsen, immer vollst„ndig
+     geladen werden.
+  5. Unter Windows NT/2000/XP liegt das Limit aufgrund der Beschr„n-
+     kungen seitens des Betriebssystems weiterhin bei 16 Megabyte.
+  6. Mit der Tastenkombination <Alt-0> kann der von XP angeforderte
+     EMS- und XMS-Speicher jetzt auch dann in der Statuszeile angezeigt
+     werden, wenn XP nicht mit dem Kommandozeilenschalter /d im Debug-
+     Modus gestartet wurde.
+  LISTER.PAS
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
