@@ -1,65 +1,131 @@
 {  $Id$
 
-   OpenXP UUCP netcall 'g' protocol include file
+   OpenXP UUCICO 'g'/'G'/'v' protocols
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and 3247
 
    This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
+   it under the terms of the NU eneral Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   NU eneral Public License for more details.
 
-   You should have received a copy of the GNU General Public License
+   You should have received a copy of the NU eneral Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-type
-  TUUCProtocolG = class(TUUCProtocolSimple)
-    public
-      constructor InitProtocol;
-      destructor  ExitProtocol;
+type CP_Buffer = packed array[0..4095] of byte;
+     CP_Header = packed array[0..   5] of byte;
 
-      function SendCommand(s:string):boolean; override;
-      function GetCommand:string; override;
-      function SendFile(fn:string; offset:longint):shortint; override;
-      function RecFile(fn:string):Shortint; override;
+type TUUCProtocolG = class(TUUCProtocolSimple)
+  public
+    constructor Create(caller: tuucpnetcall);
+    destructor  Destroy; override;
 
-    private
-      function  gHeaderChecksum(var header:PacketHeader):byte;
-      procedure g_SendHeader;
-      procedure g_SendControlPacket(xxx,yyy:byte);
-      function  cp_type:byte;
-      procedure g_RecControlPacket(t:word);  { wird auch fuer Datenpakete verwendet }
-      function  g_CheckSum(var buffer:uuBuffer; c:word):word;
-      function  g_PutDataPacket(var data; size:word; noshort:boolean):byte;
-      procedure g_SendDataPacket(nr:byte);
-      function  g_WaitAcknowledge(all:boolean):boolean;
-      procedure g_receive(var s:string);    { Befehl oder Datei empfangen }
+  protected
+    function  InitProtocol:boolean; override;
+    procedure ExitProtocol;         override;
 
-    private
-      gsSeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
-      grSeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
-      grWinSize  : byte;   { eigene Window-Groesse, 1..7 }
-      gsWinSize  : byte;   { Window-Groesse der Gegenseite, 1..7  }
-      gsBufSize1 : byte;   { max. Groesse der ausgehenden Pakete, 0..7 }
-      grBufSize1 : byte;   { max. Groesse der eingehenden Pakete, 0..7 }
-      gsBufSize  : word;   { 32..4096 }
-      grBufSize  : word;   { 32..4096 }
-      gBuffer    : array[0..7] of ^uuBuffer;
-      gHeader    : array[0..7] of PacketHeader;
-      gBufFirst  : shortint; { Window-Nummer des ersten gepufferten Pakets }
-      gBufAnz    : shortint; { Anzahl gepufferte Pakete }
-      gCtlHeader : PacketHeader;
-      gClose     : boolean;  { Close-Packet erhalten }
+    procedure SendCommand(s:string);                override;
+    function  GetCommand: string;                   override;
+    procedure SendFile(var f:file; offset:longint); override;
+    procedure RecFile (var f:file);                 override;
 
-      end;
+  private
+   (* checksum, packet type etc. *)
+    function Checksum(const buffer:CP_Buffer;c:smallword):smallword;
+    function HeaderChecksum(const Header:CP_Header):byte;
 
+   (* send *)
+    procedure SendControlPacket(xxx,yyy:byte);
+    procedure SendDataPacket(nr:byte);
+    function  PutDataPacket(var data; size:word; noshort:boolean):byte;
+    function  WaitAcknowledge(all:boolean):boolean;
+
+   (* receive *)
+    procedure RecControlPacket(var CtlHeader:CP_HEADER;timeout:integer);  { wird auch fuer Datenpakete verwendet }
+    procedure Receive(var f:file;var s:string;command:boolean);    { Befehl oder Datei empfangen }
+
+   (* debug *)
+    procedure DebugCtl(const CtlHeader:CP_Header;send:boolean);
+
+  private
+    Send_SeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
+    Recv_SeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
+    Recv_WinSize  : byte;   { eigene Window-Recv_oesse, 1..7 }
+    Send_WinSize  : byte;   { Window-Recv_oesse der egenseite, 1..7  }
+    Send_BufSize  : word;   { 32..4096 }
+    Recv_BufSize  : word;   { 32..4096 }
+    Send_BufSizeLog2 : byte; { max. Groesse der ausgehenden Pakete, 0..7 }
+    Recv_BufSizeLog2 : byte; { max. Groesse der eingehenden Pakete, 0..7 }
+    Buffer    : array[0..7] of ^CP_Buffer;
+    Header    : array[0..7] of  CP_Header;
+    BufFirst  : shortint; { Window-Nummer des ersten epufferten Pakets }
+    BufAnz    : shortint; { Anzahl epufferte Pakete }
+    Close     : boolean;  { Close-Packet erhalten }
+  end;
+
+{ --- Initialization/Destruction ------------------------------------------ }
+
+constructor TUUCProtocolG.Create(caller: TUUCPNetcall);
+var i : integer;
+begin
+  inherited Create(caller);
+  Close:=false;
+  for i:=0 to 7 do new(Buffer[i]);
+
+  Recv_WinSize:=Caller.MaxWinSize;
+  Recv_BufSize:=Caller.MaxPacketSize;
+  Recv_BufSizeLog2:=Trunc(Log2(Recv_BufSize))-5;
+end;
+
+destructor TUUCProtocolG.Destroy;
+var i:integer;
+begin
+  for i:=0 to 7 do
+    if assigned(Buffer[i]) then
+      dispose(Buffer[i]);
+end;
+
+{ --- checksum, packet type etc. -------------------------------------------- }
+
+function TUUCProtocolG.Checksum(const buffer:CP_Buffer; c:smallword):smallword;
+var ichk1,ichk2 : longint;
+    b,i         : smallword;
+begin
+  i:=0;
+  ichk1:=$ffff;
+  ichk2:=0;
+  repeat
+   (* Rotate ichk1 left.  *)
+    if ichk1 and $8000 = 0 then
+      ichk1:=ichk1 shl 1
+    else
+      ichk1:=ichk1 shl 1 + 1;
+   (* Add the next character to ichk1. *)
+    b:=buffer[i] and $ff; inc(i);
+    inc(ichk1,b);
+   (* Add ichk1 xor the character position in the buffer counting from
+      the back to ichk2. *)
+    inc(ichk2,ichk1 xor c);
+   (* If the character was zero, or adding it to ichk1 caused an
+      overflow, xor ichk2 to ichk1.  *)
+    if (b=0) or (ichk1 and $ffff < b) then
+      ichk1:=ichk1 xor ichk2;
+    dec(c);
+  until c=0;
+  result:=ichk1 and $ffff;
+end;
+
+function TUUCProtocolG.HeaderChecksum(const Header:CP_Header):byte;
+begin
+  HeaderChecksum:=header[1] xor header[2] xor header[3] xor header[4];
+end;
 
 const cp_CLOSE   = 1;      { Verbindung beenden  }
       cp_NAK     = 2;      { fehlerhaftes Paket  }
@@ -68,575 +134,530 @@ const cp_CLOSE   = 1;      { Verbindung beenden  }
       cp_INITB   = 6;      { Init 2 / PacketSize }
       cp_INITA   = 7;      { Init 1 / WinSize    }
 
-type  uuBuffer   = array[0..4095] of byte;
-      PacketHeader = array[0..5] of byte;
-
-function TUUCProtocolG.gHeaderChecksum(var header:PacketHeader):byte;
+function CP_Type(const CtlHeader:CP_Header):byte;
 begin
-  gHeaderChecksum:=header[1] xor header[2] xor header[3] xor header[4];
+  result:=(CtlHeader[4] shr 3) and 7;
 end;
 
-procedure TUUCProtocolG.g_SendHeader;
+{ --- low level protocol implementation ------------------------------------- }
+
+procedure TUUCProtocolG.DebugCtl(const CtlHeader:CP_Header;send:boolean);
+var s:string;
 begin
-  gCtlHeader[5]:=gHeaderChecksum(gCtlHeader);
-  sendblock(gCtlHeader,6);
+  s:=iifs(send,'Send ','Got ');
+  case CtlHeader[1] of
+    9: case ((CtlHEader[4] shr 3) and 7) of
+    cp_CLOSE: DebugLog('uucp-g',s+'CLOSE',dlInform);
+    cp_NAK:   DebugLog('uucp-g',Format(s+'NAK #%d',[CtlHeader[4]and 7]),dlInform);
+    cp_ACK:   DebugLog('uucp-g',Format(s+'ACK #%d',[CtlHeader[4]and 7]),dlInform);
+    cp_INITA: DebugLog('uucp-g',s+'INITA',dlInform);
+    cp_INITB: DebugLog('uucp-g',s+'INITB',dlInform);
+    cp_INITC: DebugLog('uucp-g',s+'INITC',dlInform);
+  end;
+    else DebugLog('uucp-g',Format(s+' DATA #%d (%d bytes)',[CtlHEader[4] and 7,16 shl CtlHeader[1]]),dlInform);
+  end;
 end;
 
-procedure TUUCProtocolG.g_SendControlPacket(xxx,yyy:byte);
+procedure TUUCProtocolG.SendControlPacket(xxx,yyy:byte);
+var CtlHeader: CP_Header;
+    sd       : LongInt;
 begin
-  gCtlHeader[0]:=ord(^P);
-  gCtlHeader[1]:=9;
-  gCtlHeader[4]:=xxx shl 3+yyy;         { control byte }
-  gCtlHeader[2]:=$aa - gCtlHeader[4];   { checksum low }
-  gCtlHeader[3]:=$aa;                   { checksum high }
-  g_SendHeader;
+  CtlHeader[0]:=ord(^P);
+  CtlHeader[1]:=9;
+  CtlHeader[4]:=xxx shl 3+yyy;        { control byte }
+  CtlHeader[2]:=$aa - CtlHeader[4];   { checksum low (only works because [4] always <= $aa) }
+  CtlHeader[3]:=$aa;                  { checksum high }
+  CtlHeader[5]:=HeaderChecksum(CtlHeader);
+  DebugCtl(CtlHeader,true);
+
+  CommObj.SendBlock(CtlHeader,sizeof(CtlHeader),sd);
+// if sd<>sizeof(CtlHeader) then raise ...;
 end;
 
-
-function cp_type:byte;
+procedure TUUCProtocolG.RecControlPacket(var CtlHeader:CP_Header;Timeout:integer);  { wird auch fuer Datenpakete verwendet }
+var i:Longint;
 begin
-  cp_type:=(gCtlHeader[4] shr 3) and 7;
-end;
+  TimerObj.SetTimeout(Timeout);
+  FillChar(CtlHeader,SizeOf(CtlHeader),0);
 
-procedure g_RecControlPacket(t:word);  { wird auch fuer Datenpakete verwendet }
-var i : integer;
-    b : byte;
+ (* wait for ^P start marker *)
+  repeat
+    if CommObj.CharAvail then
+      CtlHeader[0]:=ord(CommObj.GetChar)
+    else begin
+      Netcall.TestTimeout;
+      mdelay(10);
+    end;
+  until CtlHeader[0]=ord(^P);
 
-  function CheckError:boolean;
+ (* wait for full packet *)
+  while CommObj.CharCount < (SizeOf(CtlHeader)-1) do
   begin
-    CheckError:=(gCtlHeader[5]<>gHeaderChecksum(gCtlHeader));
+    Netcall.TestTimeout;
+    mdelay(10);
   end;
 
-begin
-  fillchar(gCtlHeader,sizeof(gCtlHeader),0);
-  time(t);
-  repeat
-    multi2;
-  until (receive(comnr,b) and (b=ord(^P))) or timeout(true) or test_break;
-  if not timeout(true) and not break then begin
-    gCtlHeader[0]:=b;
-    { if ParDebug then write(hex(b,2),' '); }
-    i:=1;
-    repeat
-      multi2;
-      if receive(comnr,b) then begin
-        gCtlHeader[i]:=b;
-        { if ParDebug then write(hex(b,2),' '); }
-        inc(i);
-        end
-      else
-        testbrk;
-    until (i=6) or timeout(true) or break;
-    if timeout(true) or break or CheckError then
-      fillchar(gCtlHeader,sizeof(gCtlHeader),0)
-    else
-      if (gCtlHeader[4] shr 6=0) and (cp_type=cp_CLOSE) then
-        gClose:=true;
-    end;
+  CommObj.ReadBlock(CtlHeader[1],SizeOf(CtlHeader)-1,i);
+
+  if CtlHeader[5] <> HeaderChecksum(CtlHeader) then
+  begin
+    DebugLog('uucp-g','header checksum error',dlInform);
+    for i:=low(CtlHeader) to high(CtlHeader) do
+      CtlHeader[i]:=0;
+  end else
+    DebugCtl(CtlHeader,false);
+
+  if ((CtlHeader[4] shr 6)=0) and (CP_Type(CtlHeader)=cp_CLOSE) then
+    raise EUUCProtocol.Create('Got CLOSE');
 end;
 
+{ --- protocol startup/shutdown --------------------------------------------- }
 
-constructor TUUCProtocolG.InitProtocol;
+function TUUCProtocolG.InitProtocol:boolean;
 var i : integer;
     n : byte;
+    CtlHeader: CP_HEADER;
+    s : string;
 begin
-  g_InitProtocol:=false;
-  gClose:=false;
-  for i:=0 to 7 do new(gBuffer[i]);
-  grBufSize:=MaxPacketSize;
-  grBufSize1:=trunc(log2(grBufSize))-5;
-  grWinSize:=MaxWinSize;
-  sendstr(dup(12,#0));   { keine Ahnung, wozu .. }
-  n:=10;
-  repeat                                             { INITA }
-    g_SendControlPacket(cp_INITA,grWinSize);
-    g_RecControlPacket(InitTimeout);
-    dec(n);
-  until (cp_type=cp_INITA) or (n=0) or NoCarrier or break;
-  if cp_type<>cp_INITA then exit;
-  n:=10;
-  repeat                                             { INITB }
-    g_SendControlPacket(cp_INITB,grBufSize1);
-    g_RecControlPacket(InitTimeout);
-    dec(n);
-  until (cp_type=cp_INITB) or (n=0) or NoCarrier or break;
-  if cp_type<>cp_INITB then exit;
-  gsBufSize1:=gCtlHeader[4] and 7;
-  gsBufSize:=1 shl (gsBufSize1+5);
-  WrLog(' ','UUCP-'+proto+' packet sizes: '+strs(gsBufSize)+'/'+strs(grBufSize));
-  if forcePktSize and (gsBufSize<>grBufSize) then begin
-    gsBufSize:=grBufSize;
-    gsBufSize1:=trunc(log2(gsBufSize))-5;
-    WrLog(' ','forced output packet size: '+strs(gsBufSize));
-    end;
-  ShowPacketSize(gsBufSize,grBufSize);
-  n:=10;
-  repeat                                             { INITC }
-    g_SendControlPacket(cp_INITC,grWinSize);
-    g_RecControlPacket(InitTimeout);
-    dec(n);
-  until (cp_type=cp_INITC) or (n=0) or NoCarrier or break;
-  if cp_type<>cp_INITC then exit;
-  gsWinSize:=gCtlHeader[4] and 7;
-  ShowWinsize(gsWinSize,grWinSize);
-  WrLog(' ','UUCP-'+proto+' window sizes: '+strs(gsWinSize)+'/'+strs(grWinSize));
-  if gsWinSize=0 then begin      { ungueltige Fenstergroesse }
-    rmsg(getres2(2300,8));       { 'illegal window size 0' }
-    logerror('illegal window size');
-    exit;
-    end;
-  grSeqNr:=0; gsSeqNr:=1;
-  gBufFirst:=gsSeqnr; gBufAnz:=0;
-  g_InitProtocol:=true;
+  DebugLog('uucp-g','UUCP-G: InitProtocol',dlInform);
+try
+ (* Synchronization *)
+  CommObj.SendString(dup(12,#0),false);
+
+ (* INITA - window size negitiation *)
+  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITA',[Netcall.UUprotocol]);
+  n:=10; repeat
+  try
+    SendControlPacket(cp_INITA,Recv_WinSize);
+    RecControlPacket(CtlHeader,InitTimeout);
+  except
+    on E:ENetcallTimeout do
+      if n<=1 then raise EUUCProtocol.Create('INITA failed: '+E.Message) else dec(n);
+  end;
+  until cp_type(CtlHeader)=cp_INITA;
+
+ (* INITB - packet size negitiation *)
+  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITB',[Netcall.UUprotocol]);
+  n:=10; repeat
+  try
+    SendControlPacket(cp_INITB,Recv_BufSizeLog2);
+    RecControlPacket(CtlHeader,InitTimeout);
+  except
+    on E:ENetcallTimeout do
+      if n<=1 then raise EUUCProtocol.Create('INITB failed: '+E.Message) else dec(n);
+  end;
+  until cp_type(CtlHeader)=cp_INITB;
+
+  Send_BufSizeLog2:=CtlHeader[4] and 7;
+  Send_BufSize:=1 shl (Send_BufSizeLog2+5);
+
+  Netcall.Log(' ','UUCP-'+Netcall.UUProtocol+' packet sizes: '+strs(Send_BufSize)+'/'+strs(Recv_BufSize));
+
+  if Netcall.ForcePktSize and (Send_BufSize<>Recv_BufSize) then
+  begin
+    Send_BufSize:=Recv_BufSize;
+    Send_BufSizeLog2:=Trunc(log2(Send_BufSize))-5;
+    ShowPacketSize(Send_BufSize,Recv_BufSize,true);
+    Netcall.Log(' ','forced output packet size: '+strs(Send_BufSize));
+  end else
+    ShowPacketSize(Send_BufSize,Recv_BufSize,false);
+
+ (* INITC - window size negitiation *)
+  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITC',[Netcall.UUprotocol]);
+  n:=10; repeat
+  try
+    SendControlPacket(cp_INITC,Recv_WinSize);
+    RecControlPacket(CtlHeader,InitTimeout);
+  except
+    on E:ENetcallTimeout do
+      if n<=1 then raise EUUCProtocol.Create('INITC failed: '+E.Message) else dec(n);
+  end;
+  until cp_type(CtlHeader)=cp_INITC;
+
+  Send_WinSize:=CtlHeader[4] and 7;
+  Netcall.Log(' ','UUCP-'+Netcall.UUprotocol+' window sizes: '+strs(Send_WinSize)+'/'+strs(Recv_WinSize));
+
+  if Send_WinSize=0 then { ungueltige Fenstergroesse }
+    raise EUUCProtocol.Create('illegal window size 0');
+
+  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup complete.',[Netcall.UUprotocol]);
+  result:=true;
+except
+  on E:Exception do begin
+    Netcall.Log(lcError,e.message);
+    result:=false;
+  end;
 end;
 
+  Recv_SeqNr:=0; Send_SeqNr:=1;
+  BufFirst:=Send_Seqnr; BufAnz:=0;
+end;
 
-destructor TUUCProtocolG.ExitProtocol;
+procedure TUUCProtocolG.ExitProtocol;
 var i : integer;
     n : byte;
+    CtlHeader: CP_Header;
+label close_done;
 begin
-  if ParDebug then begin
-    wrdln;
-    wrldebug(getres2(2300,30));   { 'closing uucp connection ...' }
-    end
-  else
-    rmsg(getres2(2300,30));
-  wrlog('+','closing UUCP-'+proto+' connection');
-  n:=5;
-  if not NoCarrier then
-    repeat
-      g_SendControlPacket(cp_CLOSE,0);
-      g_RecControlPacket(ExitTimeout);
-      dec(n);
-    until (cp_type=cp_CLOSE) or gClose or (n=0) or NoCarrier;
-  for i:=0 to 7 do
-    dispose(gBuffer[i]);
-  WrdLn;
+  DebugLog('uucp-g','UUCP-G: ExitProtocol',dlInform);
+  Netcall.WriteIPC(mcVerbose,'UUCP-%s shutdown',[Netcall.UUprotocol]);
+  Netcall.log('+','closing UUCP-'+Netcall.UUprotocol+' connection');
+
+try
+  for n:=5 downto 1 do begin
+    SendControlPacket(cp_CLOSE,0);
+    RecControlPacket(CtlHeader,ExitTimeout);
+    if cp_type(CtlHeader)=cp_CLOSE then goto close_done;
+  end;
+close_done:;
+
+except; (* ignore other errors *)
 end;
 
-
-function TUUCProtocolG.CheckSum(var buffer:uuBuffer; c:word):word;
-var ichk1,ichk2 : longint;
-    b,i         : word;
-begin
-  i:=0;
-  ichk1:=$ffff;
-  ichk2:=0;
-  repeat
-    if ichk1 and $8000 = 0 then
-      ichk1:=ichk1 shl 1
-    else
-      ichk1:=ichk1 shl 1 + 1;
-    b:=buffer[i] and $ff; inc(i);
-    inc(ichk1,b);
-    inc(ichk2,ichk1 xor c);
-    if (b=0) or (ichk1 and $ffff < b) then
-      ichk1:=ichk1 xor ichk2;
-    dec(c);
-  until c=0;
-  g_CheckSum:=ichk1 and $ffff;
 end;
 
-
-{ Datenpaket im Ringpuffer ablegen }
+{ --- ringbuffer to handle error correction --------------------------------- }
 
 function TUUCProtocolG.PutDataPacket(var data; size:word; noshort:boolean):byte;
-var ssize,w : word;
+var ssize,w : smallword;
     short   : boolean;
     ofs     : word;
 begin
-  gHeader[gsSeqNr,0]:=ord(^P);                 { ^P }
-  ssize:=gsBufSize;
-  if VarPacketSize then
+  DebugLog('uucp-g','Queuing data packet #'+Strs(Send_SeqNr),dlInform);
+
+  Header[Send_SeqNr,0]:=ord(^P);                 { ^P }
+  ssize:=Send_BufSize;
+  if Netcall.VarPacketSize then
     while (ssize>64) and (ssize div 2>=size) do
       ssize:=ssize div 2;
-  gHeader[gsSeqNr,1]:=trunc(log2(ssize))-4;        { Laengenbyte k }
+  Header[Send_SeqNr,1]:=trunc(log2(ssize))-4;        { Laengenbyte k }
 
   short:=(size<ssize) and not noshort;        { Dateninhalt erzeugen }
   if short then
     if ssize-size<128 then begin
-      gBuffer[gsSeqNr]^[0]:=ssize-size;
+      Buffer[Send_SeqNr]^[0]:=ssize-size;
       ofs:=1;
       end
     else begin
-      gbuffer[gsSeqNr]^[0]:=((ssize-size) and $7f) + $80;
-      gbuffer[gsSeqNr]^[1]:=(ssize-size) shr 7;
+      buffer[Send_SeqNr]^[0]:=((ssize-size) and $7f) + $80;
+      buffer[Send_SeqNr]^[1]:=(ssize-size) shr 7;
       ofs:=2;
       end
   else
     ofs:=0;
   if size>0 then
-    move(data,gBuffer[gsSeqNr]^[ofs],size);
+    move(data,Buffer[Send_SeqNr]^[ofs],size);
   if ssize-size-ofs>0 then
-    fillchar(gbuffer[gsSeqNr]^[size+ofs],ssize-size-ofs,0);  {mit 0 auffuellen}
+    fillchar(buffer[Send_SeqNr]^[size+ofs],ssize-size-ofs,0);  {mit 0 auffuellen}
 
-  gHeader[gsSeqNr,4]:=iif(short,$c0,$80) + gsSeqNr shl 3 + grSeqNr;
-  w:=g_CheckSum(gbuffer[gsSeqNr]^,ssize);
-  { R-} w:=$aaaa - (w xor gHeader[gsSeqNr,4]); { R+}
-  gHeader[gsSeqNr,2]:=lo(w);    { 2-Byte-Checksumme }
-  gHeader[gsSeqNr,3]:=hi(w);
-  gHeader[gsSeqNr,5]:=gHeaderChecksum(gHeader[gsSeqNr]);
-  g_PutDataPacket:=gsSeqnr;
-  gsSeqNr:=succ(gsSeqNr) mod 8;
-  inc(gBufAnz);
+  Header[Send_SeqNr,4]:=iif(short,$c0,$80) + Send_SeqNr shl 3 + Recv_SeqNr;
+
+  w:=CheckSum(Buffer[Send_SeqNr]^,ssize);
+  w:=$aaaa-(w xor Header[Send_SeqNr,4]);
+  Header[Send_SeqNr,2]:=Lo(w); { 2-Byte-Checksumme }
+  Header[Send_SeqNr,3]:=Hi(w);
+
+  Header[Send_SeqNr,5]:=HeaderChecksum(Header[Send_SeqNr]);
+  result:=Send_Seqnr;
+  Send_SeqNr:=succ(Send_SeqNr) mod 8;
+  inc(BufAnz);
 end;
-
 
 procedure TUUCProtocolG.SendDataPacket(nr:byte);
-var size : word;
+var size,rd : Longint;
 begin
-  if ParDebug then
-    wrdebug('send packet '+strs(nr)+'  ');
-  sendblock(gHeader[nr],6);
-  size:=1 shl (gHeader[nr,1] + 4);
-  transdata.blocksize:=size;
-  sendblock(gBuffer[nr]^,size);
-end;
+  size:=1 shl (Header[nr,1] + 4);
 
+  DebugLog('uucp-g','Sending data packet #'+Strs(nr)+' ('+StrS(size)+' bytes)',dlInform);
+
+  CommObj.SendBlock(Header[nr],6,rd);
+  CommObj.SendBlock(Buffer[nr]^,size,rd);
+end;
 
 function TUUCProtocolG.WaitAcknowledge(all:boolean):boolean;
-var (* AckDa : boolean; *)
-    n,i   : integer;
+var n,i   : integer;
     seqnr : shortint;
     resend: boolean;
+    resends:string;
     pkts  : integer;
+    CtlHeader: CP_Header;
 begin
-  g_WaitAcknowledge:=false;
-  (* AckDa:=false; *)
+  Result:=false;
   n:=20; pkts:=0;
+
   repeat
-    g_RecControlPacket(AckTimeout);         { Ctrl-Paket holen }
-    if NoCarrier or break or gClose then exit;
-    if timeout(true) then begin
-      dec(n);
-      if n=0 then exit;
-      end
-    else
-      n:=20;
+  try
+    DebugLog('uucp-g','Waiting for ACK',dlInform);
+    RecControlPacket(CtlHeader,AckTimeout);    { Ctrl-Paket holen }
     resend:=false;
-    if (cp_type=cp_ACK) or (cp_type=cp_NAK) then begin
+
+    if cp_type(CtlHeader) in [cp_ACK,cp_NAK] then
+    begin
       inc(pkts);
-      seqnr:=gCtlHeader[4] and 7;
-      if ((seqnr>=gBufFirst) and (seqnr<gBufFirst+gBufAnz)) or
-         (seqnr<(gBufFirst+gBufAnz-8)) or
-         ((cp_type=cp_NAK) and (succ(seqnr) mod 8=gBufFirst)) then
+      seqnr:=CtlHeader[4] and 7;
+
+      if ((seqnr>=BufFirst) and (seqnr<BufFirst+BufAnz)) or
+         (seqnr<(BufFirst+BufAnz-8)) or
+         ((cp_type(CtlHEADER)=cp_NAK) and (succ(seqnr) mod 8=BufFirst)) then
       begin    { ACK/NAK fuer eines der gesendeten Pakete }
-        while succ(seqnr) mod 8<>gBufFirst do begin
-          gBufFirst:=succ(gBufFirst) mod 8;  { alles, was dazwischenliegt, }
-          dec(gBufAnz);                      { sehen wir als bestaetigt an  }
-          end;                               { (s. Taylor g-Implementation)}
-        if cp_type=cp_NAK then begin
-          resend:=true;
-          rerrmsg('Got NAK: '+strs(seqnr));
-          end
-        else begin
-          if ParDebug then
-            wrdebug(' ACK: '+strs(seqnr)+' ');
-          if (gBufAnz=0) or (not all and not received(comnr)) then begin
-            g_WaitAcknowledge:=true;            { fertig }
+
+        while succ(seqnr) mod 8<>BufFirst do
+        begin
+          DebugLog('uucp-g','Processing ACK #'+Strs(seqnr),dlInform);
+
+          BufFirst:=succ(BufFirst) mod 8;  { alles, was dazwischenliegt, }
+          dec(BufAnz);                     { sehen wir als bestaetigt an  }
+        end;                               { (s. Taylor -Implementation)}
+
+        if cp_type(CtlHEADER)=cp_NAK then
+        begin
+          resend :=true;
+          resends:='Got NAK: '+StrS(seqnr);
+        end else
+        begin
+          if (BufAnz=0) or (Not all and not CommObj.CharAvail) then
+          begin
+            Result:=true;            { fertig }
             exit;
-            end;
-          (* AckDa:=true; *)
-          pkts:=0;
           end;
-        end
-      else
-        if ParDebug then
-          wrdebug('ignored '+iifs(cp_type=cp_ACK,'ACK ','NAK ')+strs(seqnr));
-      end
-    else
-      if Timeout(false) then begin
-        rerrmsg(getres2(2300,31));     { 'Timeout' }
-        resend:=true;
+          pkts:=0;
         end;
-    if resend then begin                    { Fehler/Timeout -> neu senden }
-      NewError;
-      for i:=0 to gBufAnz-1 do begin
-        if (i>0) and not ParDebug then
-          rmsg(getreps2(2300,39,strs((gBufFirst+i)mod 8)));      { 'resending packet %s' }
-        g_SendDataPacket((gBufFirst+i) mod 8);
-        end;
-      if not ParDebug then rmsg('');
+
       end;
-  until (n=0) or (pkts>50);
-end;
 
-
-function TUUCProtocolG.SendCommand(s:string):boolean;   { Befehl senden }
-var ofs  : byte;
-    size : word;
-begin
-  s:=s+#0;
-  gBufFirst:=gsSeqnr; gBufAnz:=0;
-  ofs:=1;
-  repeat
-    size:=min(length(s)-ofs+1,gsBufSize);
-    g_SendDataPacket(g_PutDataPacket(s[ofs],size,{true}false));
-    inc(ofs,size);
-  until ofs>length(s);
-  g_SendCommand:=g_WaitAcknowledge(true);
-end;
-
-
-function TUUCProtocolG.SendFile(fn:pathstr; offset:longint):shortint;
-var f    : file;
-    buf  : ^uubuffer;
-    size : longint;
-    rr   : word;
-    (* x    : byte; *)
-label ende;
-begin
-  g_SendFile:=fileError;
-  new(buf);
-  assign(f,fn);
-  reset(f,1);
-  seek(f,offset);
-  size:=offset;
-  gBufFirst:=gsSeqnr; gBufAnz:=0;
-  (* x:=wherex; *)
-  WrdLn;
-  filetrans:=true;
-  while not eof(f) do begin
-    if ParDebug then begin
-      write(#13);
-      writeln(deblog^);
-      end;
-    blockread(f,buf^,gsBufSize,rr);
-    g_SendDataPacket(g_PutDataPacket(buf^,rr,false));
-    inc(size,rr);
-    inc(transdata.transferred,rr);
-    inc(transdata.total,rr);
-    if ParDebug then
-      wrdebug(strsn(size,8)+getres(13)+' '#8)
-    else
-      WriteTransfer;
-    if break then goto ende;
-    if gBufanz=gsWinSize then
-      if not g_WaitAcknowledge(false) then begin
-        if ParDebug then
-          wrldebug(getres2(2300,32))    { ' - Fehler' }
-        else
-          rerrmsg(getres2(2300,33));     { 'Fehler!' }
-        goto ende;
-        end;
     end;
-  g_SendDataPacket(g_PutDataPacket(buf^,0,false));  { Dateiende -> Leerpaket }
-  if g_WaitAcknowledge(true) then
-    g_SendFile:=fileOK;
-  filetrans:=false;
-  if ParDebug then
-    wrldebug(' - ok.')
-  else
-    rmsg(getres2(2300,34));    { 'Datei ok.' }
-ende:
-  close(f);
-  dispose(buf);
+  except
+    on E:ENetcallTimeout do begin
+      resend:=true;
+      resends:=E.Message;
+    end;
+  end;
+
+    if Resend then                  { Fehler/Timeout -> neu senden }
+    begin
+      File_Errors:=File_Errors+1;
+      for i:=0 to BufAnz-1 do
+      begin
+        Netcall.WriteIPC(mcVerbose,'%s - resending packet %d',[ResendS,(BufFirst+i)mod 8]);
+        SendDataPacket((BufFirst+i) mod 8);
+      end;
+    end;
+  until (n=0) or (pkts>50);
+  result:=false;
 end;
 
-
-procedure TUUCProtocolG.receive(var s:string);    { Befehl oder Datei empfangen }
-var command,ok   : boolean;             { Dateiname ohne Extension!   }
-    f            : file;
-    n,size,i,j   : integer;
+procedure TUUCProtocolG.Receive(var f:file;var s:string;command:boolean);    { Befehl oder Datei empfangen }
+var n,size,i,j   : integer;
     b            : byte;
-    ende         : boolean;
+    w            : smallword;
     off,sub      : integer;
-    fs           : longint;        { Dateigroesse gesamt }
-    (* x            : byte; *)
-    tflag        : boolean;
     AckEach      : boolean;
     blksize      : word;
     ftyped       : boolean;
-    (* NAKpending   : boolean; *)
-    timeoutcount : integer;
+    timeout      : boolean;
+    timeouts     : integer;
+    CtlHeader    : CP_Header;
 
 label abbruch;
 
   procedure AckBuffer;
   var i : integer;
   begin
-    if gbufanz>0 then begin
-      if not tflag then
-        for i:=gBufFirst to (gBufFirst+gBufAnz-1) do
-          g_SendControlPacket(cp_ACK,i mod 8);
-      tflag:=false;
-      gBufFirst:=(gBufFirst+gBufAnz) mod 8;
-      gBufAnz:=0;
-      end;
+    if bufanz>0 then begin
+      DebugLog('uucp-g',Format('Sending ACK up to #%d (%d Packets)',[BufFirst,BufAnz]),dlInform);
+      for i:=BufFirst to (BufFirst+BufAnz-1) do
+          SendControlPacket(cp_ACK,i mod 8);
+      BufFirst:=(BufFirst+BufAnz) mod 8;
+      BufAnz:=0;
+    end;
   end;
 
 begin
-  command:=(s='');
-  if not command then begin
-    assign(f,s); rewrite(f,1);
-    fs:=0;
-    ftyped:=false;       { Dateityp noch nicht ermittelt }
-    end
-  else
-    ftyped:=true;
-  gBufFirst:=(grSeqnr+1) mod 8; gBufAnz:=0;
-  AckEach:=(grBufSize>=256);
-  (* x:=wherex; *)
-  tflag:=false;
-  (* NAKpending:=false; *)
-  ende:=false;
-  WrdLn;
+  BufFirst:=(Recv_Seqnr+1) mod 8; BufAnz:=0;
+  AckEach:=(Recv_BufSize>=256);
+
   repeat
-    if ParDebug then begin
-      write(#13);
-      writeln(deblog^);
-      end;
-    if keypressed and (readkey='t') then tflag:=true;   { Testflag }
-    n:=50;
-    timeoutcount:=0;
+    n:=10;
     repeat
-      g_RecControlPacket(DataTimeout);   { Timeout: 15s }
-      if timeout(true) then inc(timeoutcount);
-      dec(n);
-      ok:=(gCtlHeader[1]>=1) and (gCtlheader[1]<=8);  { Datenpaket }
-      if not ok and timeout(false) and not NoCarrier and (not odd(n)) then
-        g_SendControlPacket(cp_NAK,grSeqNr);   { 30s Timeout-> Gegenseite aufwecken }
-    until ok or (n=0) or (timeoutcount>10) or break or gClose or NoCarrier;
-    if not ok then goto abbruch;
-    size:=1 shl (gCtlHeader[1]+4);   { Paketgroesse }
-    if ParDebug then
-      wrdebug('PktSize: '+strs(size)+'  ');
-    time(DataTimeout2);
-    j:=(grSeqnr+1) mod 8;     { naechste erwartete SeqNr }
-    i:=0;
-    { R-}
-    ShowTime:=false;
-    repeat                    { Paketinhalt empfangen }
-      while (i<size) and receive(comnr,b) do begin
-        gBuffer[j]^[i]:=b;
-        inc(i);
+      Try
+        DebugLog('uucp-g',Format('Read packet: Header (n=%d)',[n]),dlInform);
+        RecControlPacket(CtlHeader,RecvTimeout);   { Timeout: 15s }
+      except
+        on ENetcallTimeout do
+        begin
+          Netcall.WriteIPC(mcError,'%sTimeout - sending NAK',[iifs(command,'',strs(file_pos)+': ')]);
+          FileError; AckBuffer;
+          dec(n);
+          if not odd(n) then SendControlPacket(cp_NAK,Recv_SeqNr);   { 30s Timeout-> egenseite aufwecken }
+          if n<=0 then raise;
         end;
-      testbrk;
-      multi2;
-    until (i=size) or timeout(true) or break;
-    ShowTime:=true;
-    { R+}
-    if NoCarrier or break then goto abbruch;
-    if ((gCtlHeader[4] shr 3) and 7)<>j then begin  { falsche SeqNr }
-      WrdLn;
-      rmsg(iifs(command,'',strs(fs)+': ')+'out of sequence: '+strs((gCtlheader[4] shr 3) and 7));
-      NewError;
- (*   if not NAKpending then
-        g_SendControlPacket(cp_ACK,(gCtlHeader[4] shr 3) and 7);  { ! } *)
-      { Taylor g-Implementation: falsche SeqNr ignorieren !? }
-      end
-    else
-      if (gCtlHeader[4] shr 6) in [2,3] then         { Datenpaket }
-  { R-} if timeout(false) or
-           ($aaaa-(g_CheckSum(gBuffer[j]^,size) xor gCtlHeader[4]) <>
-           longint(gCtlHeader[3])*256 + gCtlHeader[2]) then begin
-  { R+}   if not timeout(false) then
-            rmsg(iifs(command,'',strs(fs)+': ')+'checksum error')
-          else
-            rmsg(iifs(command,'',strs(fs)+': ')+'Timeout - sent NAK');
-          NewError;
-          AckBuffer;
-          g_SendControlPacket(cp_NAK,grSeqNr);
-          (* NAKpending:=true; *)
-          end
-        else begin         { Paket ok }
-          (* NAKpending:=false; *)
-          inc(gBufAnz);
-          grSeqNr:=(grSeqNr+1) mod 8;   { = j }
-          { gsSeqNr:=(gCtlHeader[4] and 7 + 1) mod 8; }
-          move(gCtlHeader,gHeader[grSeqNr],sizeof(PacketHeader));
-          if ParDebug then
-            wrdebug('got Pkt '+strs(grSeqNr)+'  ');
-          off:=0; sub:=0;
-          if gCtlheader[4] shr 6=3 then begin  { short packet }
-            if gBuffer[grSeqNr]^[0]<128 then begin
-              off:=1; sub:=gBuffer[grSeqNr]^[0];
-              end
-            else begin
-              off:=2;
-              sub:=(integer(gBuffer[grSeqNr]^[1]) shl 7)+(gBuffer[grSeqNr]^[0] and $7f);
-              end;
-            dec(sub,off);
-            wrldebug('short: '+strs(off)+'/'+strs(sub)+'  ');
-            end;
-          if command then begin    { Befehlspaket verarbeiten }
-            i:=off;
-            while (i<size-sub) and (gBuffer[grSeqNr]^[i]<>0) do
-              inc(i);
-            move(gbuffer[grSeqNr]^[off],s[length(s)+1],min(i-off,255-length(s)));
-            setlength(s,min(255,length(s)+i-off));
-            ende:=(i<size);
-            end
-          else begin               { Dateipaket verarbeiten }
-            ende:=(size=off+sub);
-            blksize:=size-sub-off;
-            if not ende then begin
-              blockwrite(f,gbuffer[grSeqNr]^[off],blksize);
-              if not ftyped then begin
-                ShowFtype(gBuffer[grSeqNr]^[off],blksize);
-                ftyped:=true;
-                end;
-              end;
-            inc(fs,blksize);
-            inc(transdata.transferred,blksize);
-            inc(transdata.total,blksize);
-            if ParDebug then
-              wrdebug(strsn(fs,8)+getres(13))
-            else begin
-              transdata.blocksize:=size;
-              WriteTransfer;
-              end;
-            end;
-          if AckEach or (gBufAnz=grWinSize) then
-            AckBuffer;
-          end;
-
-  until ende;
-  AckBuffer;
-  if not command then begin
-    close(f);
-    if ParDebug then begin
-      wrdln;
-      wrldebug(' - ok.');
-      end
-    else
-      rmsg(getres2(2300,34));    { 'Datei ok.' }
-    end;
-  exit;
-abbruch:
-  if not command then begin
-    close(f);
-    if cpos('.',s)=0 then begin
-      i:=1;
-      while FileExists(s+'.'+formi(i,3)) do inc(i);
-      rename(f,s+'.'+formi(i,3));
       end;
-    s:='';
-    if ParDebug then
-      wrldebug(getres2(2300,35))    { ' - abgebrochen' }
-    else
-      rmsg(getres2(2300,36));      { 'Abbruch.' }
+    until (CtlHeader[1]>=1) and (Ctlheader[1]<=8);  { Datenpaket }
+
+    size:=1 shl (CtlHeader[1]+4);   { Paketgroesse }
+    j:=(Recv_Seqnr+1) mod 8;        { naechste erwartete SeqNr }
+
+    DebugLog('uucp-g',Format('Read packet: Data (%d bytes)',[size]),dlInform);
+
+    Try
+      TimerObj.SetTimeout(DataTimeout);
+
+      while CommObj.CharCount < size do
+      begin
+        Netcall.TestTimeout;
+        mdelay(10);
+      end;
+      CommObj.ReadBlock(Buffer[j]^[0],size,i);
+
+    Except // Handle Timeouts for data
+      on ENetcallTimeout do begin
+        Netcall.WriteIPC(mcError,'%sTimeout - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
+        FileError; AckBuffer;
+        SendControlPacket(cp_NAK,Recv_SeqNr);
+        Continue; (* restart repeat loop *)
+      end;
     end;
+
+    if ((CtlHeader[4] shr 3) and 7)<>j then                (* Wrong sequence number *)
+    begin
+      Netcall.WriteIPC(mcError,'%sout of sequence: %d',[iifs(command,'',strs(file_pos)+': '),(Ctlheader[4] shr 3)and 7]);
+      FileError;
+      Continue;
+    end;
+ (*   if not NAKpending then
+        SendControlPacket(cp_ACK,(CtlHeader[4] shr 3) and 7);  { ! } *)
+      { Taylor -Implementation: falsche SeqNr ignorieren !? }
+
+    if not ((CtlHeader[4] shr 6) in [2,3]) then               (* not a data packet           *)
+      Continue;
+
+    if ($aaaa-(CheckSum(Buffer[j]^,size) xor CtlHeader[4]) <>
+        longint(CtlHeader[3])*256 + CtlHeader[2]) then
+    begin
+      Netcall.WriteIPC(mcError,'%sChecksum error - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
+      FileError; 
+      AckBuffer; 
+      SendControlPacket(cp_NAK,Recv_SeqNr);
+      Continue;
+    end;
+
+    inc(BufAnz);
+    Recv_SeqNr:=(Recv_SeqNr+1) mod 8;   { = j }
+    Move(CtlHeader,Header[Recv_SeqNr],sizeof(CP_Header));
+    off:=0; sub:=0;
+
+    if Ctlheader[4] shr 6=3 then                    (* short packet *)
+    begin
+      if Buffer[Recv_SeqNr]^[0]<128 then
+      begin
+        off:=1; sub:=Buffer[Recv_SeqNr]^[0];
+      end
+      else begin
+        off:=2;
+        sub:=(integer(Buffer[Recv_SeqNr]^[1]) shl 7)+(Buffer[Recv_SeqNr]^[0] and $7f);
+      end;
+      dec(sub,off);
+      DebugLog('uucp-g',Format('Short Packet: %d bytes of %d bytes used',[size-sub,size]),dlInform);
+    end else
+      DebugLog('uucp-g',Format('Long Packet: all bytes of %d bytes used',[size])         ,dlInform);
+
+
+    if Command then          { Befehlspaket verarbeiten }
+    begin
+      i:=off;
+      while (i<size-sub) and (Buffer[Recv_SeqNr]^[i]<>0) do
+        inc(i);
+      SetLength(s,length(s)+i-off);
+      Move(Buffer[Recv_SeqNr]^[off],s[length(s)+1-i-off],i-off);
+      if i<size then
+        break; (* done *)
+      Continue;
+    end
+    else begin               { Dateipaket verarbeiten }
+      blksize:=size-sub-off;
+      if BlkSize<=0 then
+        break; (* done *)
+
+      BlockWrite(f,buffer[Recv_SeqNr]^[off],blksize);
+      FileAdvance(buffer[Recv_SeqNr]^[off],blksize);
+      if AckEach or (BufAnz=Recv_WinSize) then AckBuffer;
+      Continue;
+    end;
+
+  until false; (* will be left with break *)
+
+(* done *)
+  AckBuffer;
 end;
 
+{ --- high level protocol implementation ------------------------------------- }
 
-function TUUCProtocolG.getCommand:string;
-var s : string;
+procedure TUUCProtocolG.SendCommand(s:string);   { Befehl senden }
+var ofs  : byte;
+    size : word;
 begin
-  s:='';
-  g_Receive(s);
-  g_getCommand:=s;
+  DebugLog('uucp-g','Sending Command: '+s,dlInform);
+
+  s:=s+#0; BufFirst:=Send_Seqnr; BufAnz:=0; ofs:=1;
+  repeat
+    size:=min(length(s)-ofs+1,Send_BufSize);
+    SendDataPacket(PutDataPacket(s[ofs],size,{false}true));
+    inc(ofs,size);
+  until ofs>length(s);
+
+  DebugLog('uucp-g','Sent Command',dlInform);
+
+  if not WaitAcknowledge(true) then
+    raise EUUCProtFile.Create('error sending command');
 end;
 
-
-function TUUCProtocolG.RecFile(fn:pathstr):shortint;
+function TUUCProtocolG.GetCommand: string;
+var f:file;
 begin
-  g_Receive(fn);
-  RecFile:=iif(fn='',fileError,fileOK);
+  DebugLog('uucp-g','Getting Command',dlInform);
+  Receive(f,result,True);
+  DebugLog('uucp-g','Got Command: '+result,dlInform);
 end;
+
+procedure TUUCProtocolG.SendFile(var f:file; offset:longint);
+var size : longint;
+    rr   : word;
+    buf  : CP_Buffer;
+label ende;
+begin
+  seek(f,offset);
+  size:=offset;
+  BufFirst:=Send_Seqnr; BufAnz:=0;
+
+  DebugLog('uucp-g',Format('Sending File',[0]),dlInform);
+  while not eof(f) do
+  begin
+    BlockRead(f,buf,Send_BufSize,rr);
+    SendDataPacket(PutDataPacket(buf,rr,false));
+    if not WaitAcknowledge(false) then
+      raise EUUCProtFile.Create('error sending file');
+    FileAdvance(buf,rr);
+    Netcall.TestBreak;
+  end;
+
+  SendDataPacket(PutDataPacket(buf,0,false));  { Dateiende -> Leerpaket }
+  if not WaitAcknowledge(true) then
+    raise EUUCProtFile.Create('error sending file');
+end;
+
+procedure TUUCProtocolG.RecFile (var f:file);
+var s:string;
+begin
+  DebugLog('uucp-g',Format('Receiving File',[0]),dlInform);
+  Receive(f,s,false);
+end;
+
 
 {
   $Log$
+  Revision 1.4  2001/03/20 00:26:59  cl
+  - fixed warning with new/dispose
+
   Revision 1.3  2001/03/16 23:02:34  cl
   - transfer statistics
   - fixes

@@ -208,7 +208,7 @@ begin
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
-  FTimerObj:=new(TPTimer);
+  FTimerObj:=new(TPTimer,Init);
 end;
 
 constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
@@ -221,7 +221,7 @@ destructor TModemNetcall.Destroy;
 begin
   if FConnected then Disconnect;
   if FActive then begin FCommObj^.Close; Dispose(FCommObj,Done)end;
-  if Assigned(FTimerObj) then dispose(FTimerObj);
+  if Assigned(FTimerObj) then dispose(FTimerObj,Done);
   Log(lcExit,'exiting');
   if FLogfileOpened then Close(FLogfile);
   inherited destroy;
@@ -520,6 +520,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2001/03/20 00:26:59  cl
+  - fixed warning with new/dispose
+
   Revision 1.21  2001/03/19 12:22:26  cl
   - property Timer:TPTimer ...;
   - procedure TModemNetcall.TestTimer;

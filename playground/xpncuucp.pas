@@ -422,7 +422,9 @@ var
 
     UUCICO.LogFileName   := LogFile;
 
-    if UUCICO.Connect then
+    if not UUCICO.Connect then
+      result:=el_noconn
+    else 
     begin
       UUCICO.WriteIPC(mcInfo,'Login',[0]);
       if RunScript(BoxPar,UUCICO.CommObj,UUCICO.IPC,false,BoxPar^.Script,false,false) = 0 then
@@ -430,6 +432,7 @@ var
         UUCICO.WriteIPC(mcInfo,'Starting UUCICO',[0]);
         result := UUCICO.PerformNetcall;
       end;
+      UUCICO.Disconnect;
     end;
 
     UUCICO.Free;
@@ -485,6 +488,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/03/20 00:26:59  cl
+  - fixed warning with new/dispose
+
   Revision 1.9  2001/03/16 23:02:34  cl
   - transfer statistics
   - fixes

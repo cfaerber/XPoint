@@ -41,15 +41,16 @@ var   block: packed array [0..(bsize-1)] of char;
 begin
   block[bsize-1]:=#0;
   repeat
-    repeat
+    TimerObj.SetTimeout(DataTimeout);
+    while CommObj.CharCount<bsize do
+    begin
       len:=CommObj.CharCount;
-      Netcall.TestBreak;
-      mdelay(0);
-    until len>=bsize;
+      Netcall.TestTimeout;
+    end;
 
-    CommObj.ReadBlock(block,bsize,len);
+    CommObj.ReadBlock(block[low(block)],bsize,len);
     AppendStr(result,block);
-  until block[bsize-1]=#0;
+  until block[high(block)]=#0;
 end;
 
 procedure TUUCProtocolT.SendFile(var f:file; offset:longint);
@@ -75,7 +76,7 @@ begin
 end;
 
 procedure TUUCProtocolT.RecFile(var f:file);
-var rd:  LongInt;
+var rd,r:LongInt;
     len: LongInt;
     dat: packed array[1..1024] of char;
 begin
@@ -86,20 +87,31 @@ begin
     Netcall.TestBreak;
 
     len:=BigEndianToHost32(len);
-    if len=0 then  
+    if len=0 then
       exit else
-    if (len<0) or (len>1024) then 
+    if (len<0) or (len>1024) then
       raise EUUCProtocol.Create('UUCP-t: Illegal block size: '+StrS(Len));
 
-    CommObj.ReadBlock(dat,len,rd);
-    BlockWrite(f,dat,rd);
-    FileAdvance(dat,rd);
-    Netcall.TestBreak;
+    TimerObj.SetTimeout(DataTimeout);
+    while len>=CommObj.CharCount do
+      Netcall.TestTimeout;
+
+//    repeat
+      CommObj.ReadBlock(dat[low(dat)],len,rd);
+      BlockWrite(f,dat,rd);
+      FileAdvance(dat,rd);
+//      len:=len-rd;
+//    until len<=0;
+
+//    Netcall.TestBreak;
   until false;
 end;
 
 {
   $Log$
+  Revision 1.4  2001/03/20 00:26:59  cl
+  - fixed warning with new/dispose
+
   Revision 1.3  2001/03/16 23:02:34  cl
   - transfer statistics
   - fixes

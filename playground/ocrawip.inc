@@ -219,6 +219,7 @@ end; { func. tRawIPObj.GetChar }
 procedure tRawIPObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
+
   Written:=WinSock.send(SHandle,Block,BlockLen,0);
   if not Written > 0 then
   begin
@@ -232,6 +233,7 @@ end; { proc. tRawIPObj.SendBlock }
 procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+
   Reads := WinSock.recv(SHandle,Block,Blocklen,0);
 
   case Reads of
@@ -243,6 +245,7 @@ begin
                     Reads := 0;
                   end;
   end;
+
 end; { proc. tRawIPObj.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -352,6 +355,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.3  2001/03/20 00:26:59  cl
+  - fixed warning with new/dispose
+
   Revision 1.2  2001/02/10 22:18:16  cl
   - fixed bug that made option negotiation fail
 
