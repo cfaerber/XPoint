@@ -238,7 +238,7 @@ begin
       while s <> '.' do
       begin
         SReadln(s);
-        List.Add(s);
+        if s <> '.' then List.Add(s);
       end;
     end else
       exit;
@@ -290,6 +290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/12/26 22:34:16  mk
+  - do not add last point to list
+
   Revision 1.4  2000/08/15 23:04:31  mk
   - Routine zum holen aller Mail hinzugefuegt
 
