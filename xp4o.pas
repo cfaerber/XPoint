@@ -74,7 +74,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
      xp_pgp;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 80;  {JG:06.02.00 wieder auf 80 gesetzt...}
+      suchlen = 73;  {JG:06.02.00 wieder auf 80 gesetzt...}
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.11  2000/11/20 20:43:14  mk
+  - Suchlaenge auf 73 reduziert
+
   Revision 1.47.2.10  2000/10/26 13:05:29  mk
   - Fixed Bug #112798: Lange Dateinamen in Archiven
 
