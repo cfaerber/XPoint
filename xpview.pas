@@ -223,15 +223,17 @@ begin
  
   prog:=viewer.prog;
   orgfn:=iifs(fn1<>'',fn1,fn);
-                                    { Tempdatei mit richtiger Extension versorgen }
 
-  if not fileattach and (ustr(right(orgfn,4))='.TMP') then
+                             {Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen }
+  if not fileattach and ((getenv('DELVTMP')<>'')) then
   Begin
-    parfn:=left(orgfn,length(orgfn)-3);    
-    parfn:=left(parfn,length(parfn)-5)+'TMP-'+right(parfn,5)+viewer.ext; 
-    _rename(orgfn,parfn);
+    parfn:=TempS(_filesize(fn)+5000);      
+    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8)
     end
   else parfn:=orgfn; 
+                              {Korrekte File-extension verwenden}  
+  parfn:=trim(left(parfn,rightpos('.',parfn)-1))+'.'+iifs(viewer.ext='','TMP',viewer.ext);
+  _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
   if p=0 then prog:=prog+' '+parfn
@@ -247,6 +249,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/05 15:35:33  jg
+  - Externe Windows-Viewer: abfangen ungueltiger Abkuerzungen von
+    Lang-Filenamen,  "TMP-" kommt nur noch im aktiven DELVTMP Modus.
+    Temp-File-Extension sollte jetzt nur noch TMP werden wenn kein
+    Viewername angegeben ist.
+
   Revision 1.10  2000/03/05 07:23:23  jg
   - Externe Viewer: nur .TMP Dateien werden noch nach TMP-*.* Umbenannt
 
