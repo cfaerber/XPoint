@@ -29,8 +29,8 @@ uses
      xp0,xp1,xp1o2,xp1help,xp1input,xp5;
 
 
-procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header }
-                                 { 5=Nodelisten, 6=Tarifgruppen             }
+procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
+
 procedure AutoTiming(tnr:integer; callall,crashall:boolean);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
 procedure AppPhoneZones;   { mappsel() fÅr GebÅhrenzonen }
@@ -332,11 +332,11 @@ end;
 { typ: 1=Timing; 2=Makros, 3=GebÅhrenzonen, 4=Nachrichtenkopf, 5=Nodelisten }
 
 procedure loadfile(typ:byte; fn:string);
-var t : text;
-    s : string;
+var t   :text;
+    s   :string;
+    lastIdx :integer;
 begin
   e.Clear;
-  anzahl:=0;
   if exist(fn) then
   begin
     assign(t,fn);
@@ -345,18 +345,19 @@ begin
     begin
       readln(t,s);
       if trim(s)<>'' then
-        if (typ=2) and (FirstChar(s)='!') then
-          if anzahl>0 then
-            e[anzahl-1]:=forms(e[anzahl-1],225)+copy(s,2,24)
+        if (typ=2) and (FirstChar(s)='!') then                          //ein kommentar?
+          if e.count > 0 then
+            e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24)      //Kommentar anhÑngen
           else
         else begin
-          inc(anzahl);
-          e.Add(left(s,filewidth));
+          lastIdx:=e.Add(left(s,filewidth));
         end;
     end;
     close(t);
   end;
+  anzahl:=e.Count;                                                      //globale var setzen :(
 end;
+
 
 procedure savefile(typ:byte; fn:string);
 var t : text;
@@ -365,12 +366,12 @@ begin
   assign(t,fn);
   rewrite(t);
   case typ of
-    1 : for i:=1 to anzahl do
+    1 : for i:=0 to e.Count-1 do
           writeln(t,e[i]);
-    2 : for i:=1 to anzahl do begin
-          writeln(t,trim(left(e[i],225)));
-          if mid(e[i],226)<>'' then
-            writeln(t,'!',mid(e[i],226));
+    2 : for i:=0 to e.Count-1 do begin
+          writeln(t,trim(left(e.Strings[i],225)));
+          if mid(e.Strings[i],226)<>'' then
+            writeln(t,'!',mid(e.Strings[i],226));
           end;
   end;
   close(t);
@@ -520,15 +521,16 @@ end;
 { typ: 1=Timing; 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarife }
 
 procedure UniEdit(typ:byte);
-var brk      : boolean;
-    x,y      : byte;
-    tnr      : integer;
-    t        : taste;
-    nr,bp    : integer;
-    gl,width : byte;
-    buttons  : string;
-    okb,edb  : integer;
-    p,n      : integer;
+var
+    brk, eList : boolean;
+    x,y        : byte;
+    tnr        : integer;
+    t          : taste;
+    nr,bp      : integer;
+    gl,width   : byte;
+    buttons    : string;
+    okb,edb    : integer;
+    CurRow,n   : integer;
     a,ii     : integer;
     modi     : boolean;
     reindex  : boolean;
@@ -541,8 +543,12 @@ var brk      : boolean;
 
   function eanzahl:integer;
   begin
-    if typ=6 then eanzahl:=tables
-    else eanzahl:=anzahl;
+    case typ of
+      2: result:=e.Count;           //Timingliste or TastenMakros
+      5: result:=Nodelist.Count;
+      6: result:=tables;               //Tarif
+      end;
+     eanzahl:= result;
   end;
 
   function daytxt(nr:integer):string;    { Tarife: 'Mo-Fr' etc. }
@@ -574,43 +580,45 @@ var brk      : boolean;
   end;
 
   procedure display;
-  var i,j:  Integer;
+  var i,j, eanz :integer;
       tr     : timerec;
       tt     : string;
       komm   : string;
       bunla  : string;
       s      : string;
   begin
+  { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
     moff;
+    eanz:=eanzahl;
     for i:=1 to gl do begin
-      gotoxy(x+1,y+i);
-      if i=p then attrtxt(col.colsel2bar)
+      gotoxy(x+1,y+i);                                  //alle Zeilen anzeigen
+      if i=CurRow then attrtxt(col.colsel2bar)
       else attrtxt(col.colsel2box);
-      if i+a>eanzahl then
+      if i+a>eanz then                             //kein Eintrag (mehr) vorhanden ->Leerstring
         Wrt2(sp(width))
       else begin
         case typ of
-          1 : begin                           { Timingliste }
-                str2time(e[i+a],tr);
+          1 : begin                               { Timingliste }
+                str2time(e.Strings[i+a-1],tr);    { e.Strings Lesen -1 ba 0 bassierend}
                 with tr do begin
                   write(' ',iifc(active,'+',' '),' ',von,'-',bis,'  ',vond,'-',
-                  bisd,'  ',copy(e[i+a],29,8),'  ',forms(action,33));
+                  bisd,'  ',copy(e.Strings[i+a-1],29,8),'  ',forms(action,33));
                   end;
               end;
           2 : begin                           { Tastenmakros }
-                tt:=left(e[i+a],13);
+                tt:=left(e.Strings[i+a-1],13);
                 case tt[1] of
                   '_' : tt:=copy(tt,2,12)+' ';
                   '^' : tt:='<Ctrl '+tt[2]+'>     ';
                 end;
-                komm:=mid(e[i+a],226);
+                komm:=mid(e.Strings[i+a-1],226);
                 Setlength(bunla, mtypes-1); {bunla[0]:=chr(mtypes-1);}
                 for j:=2 to mtypes do
-                  bunla[j-1]:=iifc(e[i+a][14+j]=' ',' ',_bunla[j]);
-                write(' ',tt,bunla,' ',forms(mid(e[i+a],26),51-length(komm)),
+                  bunla[j-1]:=iifc(e.Strings[i+a-1][14+j]=' ',' ',_bunla[j]);
+                write(' ',tt,bunla,' ',forms(mid(e.Strings[i+a-1],26),51-length(komm)),
                       ' ',komm,' ');
               end;
-          3 : with phones^[i+a] do begin      { GebÅhrenliste }
+          3 : with phones^[i+a] do begin      { GebÅhrenliste Array}
                 s:=' '+forms(komment,25);
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
@@ -618,33 +626,33 @@ var brk      : boolean;
                 Wrt2(forms(s,53));
               end;
           4 : begin
-                s:=getres2(222,xhd[i+a]);
+                s:=getres2(222,xhd[i+a]);                    { header??? }
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
           5 : with PNodeListItem(Nodelist[a+i-1])^ do
-                Wrt2(' '+forms(listfile,14)+
-                      iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+
+                Wrt2(' '+forms(listfile,14)+                                    // NL-Dateiname
+                      iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+   //Nodelistennummer
                       forms(updatefile,14)+forms(updatearc,14)+
                       iifs(dodiff,'Diff  ','      ')+
                       forms(getres2(2128,format),16));
-          6 : with tarif^[a+i] do
-                write(forms(' '+getres2(1022,1)+' '+   { 'Tarifgruppe ' }
+          6 : with tarif^[a+i] do                             { array }
+                write(forms(' '+getres2(1022,1)+' '+          { 'Tarifgruppe ' }
                             strs(a+i)+':   '+daytxt(a+i),53));
-        end;
-        end;
+          end; // case typ of
+        end;   // if i+a>eanz then
       end;
     attrtxt(col.colsel2box);
     wrt(x,y+1,iifc(a=0,'≥',#30));
-    wrt(x,y+gl,iifc(a+gl<eanzahl,#31,'≥'));
+    wrt(x,y+gl,iifc(a+gl<eanz,#31,'≥'));
     mon;
   end;
 
   procedure _insert(s:string; from,len:byte);
   var i : integer;
   begin
-    i:=1;
-    while (i<=anzahl) and (copy(e[i],from,len)<copy(s,from,len)) do
+    i:=0;                       //kleinster index
+    while (i<e.Count) and (copy(e.Strings[i],from,len)<copy(s,from,len)) do
       inc(i);
     e.Insert(i, s);
     inc(anzahl);
@@ -655,7 +663,7 @@ var brk      : boolean;
     E.Sort;
   end;
 
-
+  //
   procedure ReadTiming(edit:boolean; var s:string; var brk:boolean);
   var tr  : TimeRec;
       wot : string;
@@ -729,35 +737,36 @@ var brk      : boolean;
       end;
   end;
 
-  procedure DelEntry;
+  procedure DelEntry( strIdx :integer);
   begin
     if ReadJN(getres(1005),true) then
     begin    { 'Eintrag lîschen' }
-      if a+p<anzahl then
-        e.Delete(a+p);
-      dec(anzahl);
+      if strIdx<e.Count then begin
+        e.Delete(strIdx);
+        dec(anzahl);                           //behalten wir noch volÑufig bei
+      end;
       modi:=true;
     end;
   end;
-
-  procedure EditTiming;
+  //Editieren eines Tieming-Eintrages
+  procedure EditTiming( strIdx :integer);
   var s   : string;
       brk : boolean;
   begin
-    s:=e[a+p];
+    s:=e.Strings[strIdx];
     ReadTiming(true,s,brk);
     if not brk then begin
-      e[a+p]:=s;
+      e.Strings[strIdx]:=s;
       modi:=true;
       end;
   end;
 
-  procedure ChangeActive;
+  procedure ChangeActive(strIdx :integer);
   var tr : TimeRec;
   begin
-    Str2Time(e[a+p],tr);
+    Str2Time(e.Strings[strIdx],tr);
     tr.active:=not tr.active;
-    e[a+p]:=Time2Str(tr);
+    e.Strings[strIdx]:=Time2Str(tr);
     modi:=true;
   end;
 
@@ -933,14 +942,14 @@ var brk      : boolean;
       end;
   end;
 
-  procedure EditMacro;
+  procedure EditMacro(strIdx : integer);
   var x,y  : byte;
       s    : string;
       komm : string;
       brk  : boolean;
   begin
-    s:=trim(copy(e[a+p],26,200));
-    komm:=copy(e[a+p],226,24);
+    s:=trim(copy(e.Strings[strIdx],26,200));
+    komm:=copy(e.Strings[strIdx],226,24);
     dialog(60,5,getres2(1007,1),x,y);   { 'Tastenmakro bearbeiten' }
     maddstring(3,2,getres2(1007,2),s,42,200,range(' ',#255)); mhnr(548);
     Mnotrim;                                         { 'Makro     ' }
@@ -948,9 +957,9 @@ var brk      : boolean;
     readmask(brk);
     enddialog;
     if not brk then begin
-      e[a+p]:=left(e[a+p],25)+s;
+      e.Strings[strIdx]:=left(e.Strings[strIdx],25)+s;
       if komm<>'' then
-        e[a+p]:=forms(e[a+p],225)+komm;
+        e.Strings[strIdx]:=forms(e.Strings[strIdx],225)+komm;
       modi:=true;
       end;
     freeres;
@@ -961,7 +970,7 @@ var brk      : boolean;
       tt,ttt : string;
       ta     : tap;
   begin
-    tt:=left(e[a+p],15);
+    tt:=left(e.Strings[a+CurRow],15);
     diabox(35,5,'',x,y);
     mwrt(x+20,y,' <Shift Esc> ');
     mwrt(x+3,y+2,getres(1008));   { 'neue Taste' }
@@ -974,7 +983,7 @@ var brk      : boolean;
     dispose(ta);
     closebox;
     if tt<>ttt then begin
-      e[a+p]:=forms(tt,15)+mid(e[a+p],16);
+      e.Strings[a+CurRow]:=forms(tt,15)+mid(e.Strings[a+CurRow],16);
       sort_e;
       modi:=true;
       end;
@@ -987,7 +996,7 @@ var brk      : boolean;
       s: String;
   begin
     for i:=1 to mtypes-1 do
-      enable[i]:=(e[a+p][15+i]<>' ');
+      enable[i]:=(e[a+CurRow][15+i]<>' ');
     dialog(24,mtypes+1,getres2(1009,0),x,y);    { 'Makro gÅltig im..' }
     for i:=1 to mtypes-1 do begin
       maddbool(3,1+i,getres2(1009,i),enable[i]); mhnr(589+i);
@@ -998,9 +1007,9 @@ var brk      : boolean;
     if not brk then begin
       for i:=1 to mtypes-1 do
       begin
-        s := e[a+p];
+        s := e.Strings[a+CurRow];
         s[15+i]:=iifc(enable[i],'*',' ');
-        e[a+p] := s;
+        e.Strings[a+CurRow] := s;
       end;
       modi:=true;
       end;
@@ -1136,7 +1145,7 @@ var brk      : boolean;
       if ReadJN(getres(1005),true) then begin   { 'Eintrag lîschen' }
         if phones^[nr].anz>0 then
           freemem(phones^[nr].ph,phones^[nr].anz*sizeof(phone1));
-        if a+p<anzahl then begin
+        if a+CurRow<anzahl then begin
           Move(phones^[nr+1],phones^[nr],(anzahl-nr)*sizeof(phones^[1]));
           for i:=1 to tables do
             for j:=1 to tarif^[i].zeitbereiche do
@@ -1277,7 +1286,7 @@ var brk      : boolean;
       zeitbereich[1].von:='00:00';
       zeitbereich[1].bis:='23:59';
       end;
-    p:=tables-a;    { alle Zeilen passen in 'gl' }
+    CurRow:=tables-a;    { alle Zeilen passen in 'gl' }
     modi:=true;
   end;
 
@@ -1328,8 +1337,8 @@ var brk      : boolean;
         (pos(s,getres2(222,i))+length(s)<length(getres2(222,i))-1)) do
         dec(i);
       inc(anzahl);
-      Move(xhd[p+a],xhd[p+a+1],(anzahl-p-a));
-      xhd[p+a]:=i;
+      Move(xhd[CurRow+a],xhd[CurRow+a+1],(anzahl-CurRow-a));
+      xhd[CurRow+a]:=i;
       modi:=true;
       end;
     closelist;
@@ -1339,11 +1348,11 @@ var brk      : boolean;
   var b : byte;
   begin
     b:=xhd[movefrom];
-    if movefrom<a+p then
-      Move(xhd[movefrom+1],xhd[movefrom],a+p-movefrom)
-    else if movefrom>a+p then
-      Move(xhd[a+p],xhd[a+p+1],movefrom-a-p);
-    xhd[a+p]:=b;
+    if movefrom<a+CurRow then
+      Move(xhd[movefrom+1],xhd[movefrom],a+CurRow-movefrom)
+    else if movefrom>a+CurRow then
+      Move(xhd[a+CurRow],xhd[a+CurRow+1],movefrom-a-CurRow);
+    xhd[a+CurRow]:=b;
     movefrom:=0;
     modi:=true;
   end;
@@ -1354,10 +1363,10 @@ var brk      : boolean;
     if anzahl=1 then
       rfehler(1008)         { 'Es mu· mindestens eine Zeile vorhanden sein.' }
     else begin
-      s:=getres2(222,xhd[a+p]);
+      s:=getres2(222,xhd[a+CurRow]);
       s:=mid(s,blankpos(s)+1);
-      if ReadJN(getreps2(1018,iif(xhd[a+p]=0,6,5),s),true) then begin   { 'Zeile "%s" lîschen' }
-        if a+p<anzahl then Move(xhd[a+p+1],xhd[a+p],anzahl-a-p);   { / 'Trennzeile lîschen' }
+      if ReadJN(getreps2(1018,iif(xhd[a+CurRow]=0,6,5),s),true) then begin   { 'Zeile "%s" lîschen' }
+        if a+CurRow<anzahl then Move(xhd[a+CurRow+1],xhd[a+CurRow],anzahl-a-CurRow);   { / 'Trennzeile lîschen' }
         dec(anzahl);
         modi:=true;
         end;
@@ -1367,21 +1376,21 @@ var brk      : boolean;
 
   { --- Nodelisten ------------------------------------------------ }
 
-  procedure EditNodeEntry;
+  procedure EditNodeEntry(strIdx :integer);
   var nlr : TNodeListItem;
       brk : boolean;
   begin
-    nlr:=PNodeListItem(Nodelist[a+p-1])^;
+    nlr:=PNodeListItem(Nodelist[strIdx])^;
     EditNLentry(nlr,brk);
     if not brk then
     begin
       reindex:=reindex or
-               (nlr.format<>PNodeListItem(nodelist[a+p-1])^.format) or
-               (nlr.zone<>PNodeListItem(nodelist[a+p-1])^.zone) or
+               (nlr.format<>PNodeListItem(nodelist[strIdx])^.format) or
+               (nlr.zone<>PNodeListItem(nodelist[strIdx])^.zone) or
                ((nlr.format=3) and
-                ((nlr.net<> PNodeListItem(nodelist[a+p-1])^.net) or
-                 (nlr.node<> PNodeListItem(nodelist[a+p-1])^.node)));
-      PNodeListItem(Nodelist[a+p-1])^:=nlr;
+                ((nlr.net<> PNodeListItem(nodelist[strIdx])^.net) or
+                 (nlr.node<> PNodeListItem(nodelist[strIdx])^.node)));
+      PNodeListItem(Nodelist[strIdx])^:=nlr;
       modi:=true;
     end;
   end;
@@ -1397,18 +1406,18 @@ var brk      : boolean;
   end;
 
 
-  procedure DelNodeentry;
+  procedure DelNodeentry( strIdx: Integer);
   var brk : boolean;
 
     procedure del_it;
     var
       Item: PNodeListItem;
     begin
-      if a+p<anzahl then
+      if a+CurRow<anzahl then
       begin
-        Item := NodeList[a+p-1];
+        Item := NodeList[strIdx];
         Dispose(Item);
-        NodeList.Delete(a+p-1);
+        NodeList.Delete(strIdx);
         dec(anzahl);
         modi:=true;
         reindex:=true;
@@ -1423,8 +1432,8 @@ var brk      : boolean;
                 1,brk) of
       1 : del_it;
       3 : begin
-            if exist(FidoDir+NLfilename(a+p-1)) then
-              _era(FidoDir+NLfilename(a+p-1));
+            if exist(FidoDir+NLfilename(strIdx)) then
+              _era(FidoDir+NLfilename(strIdx));
             del_it;
           end;
     end;
@@ -1449,7 +1458,7 @@ var brk      : boolean;
     wrt(x+3,y+3,getres2(2129,3));       { 'Bytes' }
     wrt(x+3,y+4,getres2(2129,4));       { 'EintrÑge' }
     attrtxt(col.colmbox);
-    fn:=NLfilename(a+p-1);
+    fn:=NLfilename(a+CurRow-1);
     wrt(x+14,y+2,fn);
     if not exist(FidoDir+fn) then
       wrt(x+14,y+3,' - fehlt -')
@@ -1465,7 +1474,7 @@ var brk      : boolean;
       brk:=false;
       while not eof(t) and not brk do begin
         readln(t,s);
-        if (s<>'') and (s[1]<>';') then inc(n);
+        if (s<>'') and (FirstChar(s)<>';') then inc(n);
         if (n mod 100=0) then begin
           mwrt(x+14,y+4,strs(n));
           testbrk(brk);
@@ -1506,7 +1515,7 @@ var brk      : boolean;
   procedure readbutt;
   begin
     if auswahlcursor then begin
-      rbx:=x+1; rby:=y+p;
+      rbx:=x+1; rby:=y+CurRow;
       end;
     nr:=readbutton(x+2,y+gl+2,2,buttons,bp,false,t);
   end;
@@ -1523,7 +1532,7 @@ var brk      : boolean;
     outside:=not ins1 or (yy>y+gl+2);
     if inside then begin
       if (t=mausleft) or (t=mauslmoved) then
-        if eanzahl>0 then p:=min(eanzahl-a,yy-y) else else
+        if eanzahl>0 then CurRow:=min(eanzahl-a,yy-y) else else //???
       if (t=mausunright) or (t=mausunleft) then
         poutside:=false else
       if (t=mausldouble) and (edb<>0) then
@@ -1537,7 +1546,8 @@ var brk      : boolean;
       end;
   end;
 
-begin
+begin   {procedure UniEdit(typ:byte); }
+  eList := false;                   //kein 0 basierende  TStringList (e)
   case typ of
     1 : begin                       { Timing-Liste }
           filewidth:=TimingWidth;
@@ -1549,6 +1559,7 @@ begin
           okb:=6; edb:=3;
           getboxsel;
           pushhp(510);
+          eList := true;
         end;
     2 : begin                       { Tastenmakros }
           filewidth:=KeymacWidth;
@@ -1559,6 +1570,7 @@ begin
           okb:=7; edb:=3;
           _bunla:='˘'+getres2(1000,0); freeres;
           pushhp(540);
+          eList := true;
         end;
     3,
     6 : begin                       { GebÅhrenzonen; Tarifgruppen }
@@ -1589,16 +1601,16 @@ begin
           reindex:=false;
         end;
   end;
-  gl:=screenlines-fnkeylines-12;
+  gl:=screenlines-fnkeylines-12;      {Anzahl der Schirm Zeilen - Anzahl der Funktionstasten - 12 Leerzeilen }
   bp:=1;
-  selbox(width+2,gl+4,'',x,y,false);
+  selbox(width+2,gl+4,'',x,y,false);  { Rahmen zeichnen }
   attrtxt(col.colsel2rahmen);
   case typ of
     1 : mwrt(x+width-4,y,' '+strs(tnr)+' ');
   end;
   mwrt(x,y+gl+1,'√'+dup(width,'ƒ')+'¥');
   t:='!';    { Buttons nur anzeigen }
-  a:=0; p:=1; movefrom:=0;
+  a:=0; CurRow:=1; movefrom:=0;             { Curser Zeile }
   readbutt;
 
   modi:=false;
@@ -1606,12 +1618,12 @@ begin
   autobremse:=true;
   poutside:=false;
   repeat
-    if p+a>eanzahl then
-      if p>1 then dec(p)
+    if CurRow+a>eanzahl then
+      if CurRow>1 then dec(CurRow)
       else if a>0 then dec(a);
     display;
-    autoupenable:=(a+p>1);
-    autodownenable:=(a+p<eanzahl);
+    autoupenable:=(a+CurRow>1);
+    autodownenable:=(a+CurRow<eanzahl);
     t:='*';
     readbutt;
     if (t>=mausfirstkey) and (t<=mauslastkey) then
@@ -1630,9 +1642,9 @@ begin
       case typ of
         1 : case nr of
               1 : NewTiming;
-              2 : if p+a<=anzahl then DelEntry;
-              3 : if p+a<=anzahl then EditTiming;
-              4 : if p+a<=anzahl then ChangeActive;
+              2 : if CurRow+a<=anzahl then DelEntry(a+CurRow-1);    //a+CurRow-1
+              3 : if CurRow+a<=anzahl then EditTiming(a+CurRow-1);
+              4 : if CurRow+a<=anzahl then ChangeActive(a+CurRow-1);
               5 : begin
                     savefile(1,TimingFile+strs(tnr));
                     modi:=false;
@@ -1641,10 +1653,10 @@ begin
             end;
         2 : case nr of
               1 : NewMacro;
-              2 : if p+a<=anzahl then DelEntry;
-              3 : if p+a<=anzahl then EditMacro;
-              4 : if p+a<=anzahl then MacroKey;
-              5 : if p+a<=anzahl then MacroScope;
+              2 : if CurRow+a<=anzahl then DelEntry(a+CurRow-1);  //EintragLîschen
+              3 : if CurRow+a<=anzahl then EditMacro(a+CurRow-1); //Macro Tastenfolge bearbeiten
+              4 : if CurRow+a<=anzahl then MacroKey;
+              5 : if CurRow+a<=anzahl then MacroScope;
               6 : begin
                     savefile(2,KeydefFile);
                     modi:=false;
@@ -1653,8 +1665,8 @@ begin
             end;
         3 : case nr of
               1 : NewPhone;
-              2 : if a+p<=anzahl then DelPhone(a+p);
-              3 : if a+p<=anzahl then EditPhoneEntry(false,a+p,brk);
+              2 : if a+CurRow<=anzahl then DelPhone(a+CurRow);
+              3 : if a+CurRow<=anzahl then EditPhoneEntry(false,a+CurRow,brk);
               4 : begin
                     SavePhoneZones;
                     modi:=false;
@@ -1666,7 +1678,7 @@ begin
             else
               case nr of
                 1 : InsertHeaderLine;
-                2 : movefrom:=a+p;
+                2 : movefrom:=a+CurRow;
                 3 : DelHeaderLine;
               end;
         5 : case nr of
@@ -1677,23 +1689,23 @@ begin
                     modi:=true;
                     reindex:=true;
                   end;
-              2 : if a+p<=anzahl then EditNodeentry;
-              3 : if a+p<=anzahl then TextEditNodelist(a+p-1);
-              4 : if a+p<=anzahl then DelNodeentry;
-              5 : if a+p<=anzahl then NL_Info;
+              2 : if a+CurRow<=anzahl then EditNodeentry(a+CurRow-1);
+              3 : if a+CurRow<=anzahl then TextEditNodelist(a+CurRow-1);
+              4 : if a+CurRow<=anzahl then DelNodeentry(a+CurRow-1);
+              5 : if a+CurRow<=anzahl then NL_Info;
             end;
         6 : case nr of
               1 : NewTarif;
-              2 : DelTarif(a+p);
+              2 : DelTarif(a+CurRow);
               3 : begin
                     pushhp(806);
                     n:=minisel(x+20,y+5,'',getres2(1022,3),pagepos);
                     pophp;
                     if n<>0 then pagepos:=abs(n);   { 'Seite ^1,Seite ^2,Seite ^3,^Tage' }
                     case n of
-                      1..3 : EditTarif(a+p,n,brk);
+                      1..3 : EditTarif(a+CurRow,n,brk);
 
-                         4 : EditTariftage(a+p,brk);
+                         4 : EditTariftage(a+CurRow,brk);
                     end;
                   end;
               4 : begin
@@ -1705,28 +1717,28 @@ begin
       end;
     if nr<0 then begin
       if t=keyup then
-        if p>1 then dec(p)
+        if CurRow>1 then dec(CurRow)
         else if a>0 then dec(a);
-      if (t=keydown) and (a+p<eanzahl) then
-        if p<gl then inc(p)
+      if (t=keydown) and (a+CurRow<eanzahl) then
+        if CurRow<gl then inc(CurRow)
         else inc(a);
       if t=keypgup then
         if a=0 then t:=keyhome
         else a:=max(0,a-gl);
       if t=keypgdn then begin
-        if a+gl>=eanzahl then p:=eanzahl-a
+        if a+gl>=eanzahl then CurRow:=eanzahl-a
         else inc(a,gl);
-        p:=max(1,min(p,eanzahl-a));
+        CurRow:=max(1,min(CurRow,eanzahl-a));
         end;
       if t=keyhome then begin
-        a:=0; p:=1;
+        a:=0; CurRow:=1;
         end;
       if t=keyend then begin
         a:=max(0,eanzahl-gl);
-        p:=max(1,eanzahl-a);
+        CurRow:=max(1,eanzahl-a);
         end;
-      if t=keychom then p:=1;
-      if t=keycend then p:=minmax(gl,1,eanzahl-a);
+      if t=keychom then CurRow:=1;
+      if t=keycend then CurRow:=minmax(gl,1,eanzahl-a);
       end;
     if (typ=4) and (nr=okb) and modi then begin
       { if ReadJNesc(getres(1019),true,brk) then begin  } { 'énderungen sichern' }
@@ -1781,7 +1793,6 @@ begin
           freeres;
         end;
   end;
-  e.free;
 end;
 
 
@@ -1897,7 +1908,7 @@ var i       : integer;
       end;
   end;
 
-begin
+begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;}
   manz:=anzahl;     { Reentrance aus Timingliste }
   sum:=0;
   LoadPhonezones;
@@ -2024,6 +2035,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.32  2000/08/14 14:45:14  mk
+  MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
+
   Revision 1.31  2000/08/13 10:39:44  mk
   - Fixes fuer Variable e
 

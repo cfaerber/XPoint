@@ -233,11 +233,11 @@ var brk     : boolean;
       crash: boolean;
       d   : DB;
   begin
-    i:=1;
+    i:=0;                               //auch bei der Timingliste beginnen wir bei 0
     while (i<=anzahl) do
       if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin
         crash:=(copy(e[i],37,6)='CRASHS');
-        ss:=left(e[i],36);
+        ss:=left(e.Strings[i],36);
         if i<anzahl then e.Delete(i);
         dec(anzahl);
         assign(t,ReqDat);
@@ -645,6 +645,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/08/14 14:45:14  mk
+  MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
+
   Revision 1.10  2000/08/09 19:51:34  mk
   - verschiedene Fixes fuer Timeingliste
   - Netcall/Alle funktioniert jetzt

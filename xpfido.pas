@@ -1079,8 +1079,8 @@ end;
 
 function MainNodelist:integer;
 begin
-  Result := NodeList.Count - 1;
-  while (Result>0) and (PNodeListItem(nodelist[Result])^.listfile<>'NODELIST.###') do
+  Result := NodeList.Count;
+  while (Result>=0) and (PNodeListItem(nodelist[Result-1])^.listfile<>'NODELIST.###') do
     dec(Result);
 end;
 
@@ -1095,7 +1095,7 @@ var x,y   : byte;
     res   : integer;
 begin
   if not TestNodelist then exit;
-  if MainNodelist=0 then begin
+  if MainNodelist<0 then begin     //bestimmt den index der nodeliste
     rfehler(2125);    { 'Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.' }
     exit;
     end;
@@ -2243,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/08/14 14:45:14  mk
+  MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
+
   Revision 1.26  2000/08/08 18:07:51  mk
   - Test auf Speicher beim Nodelistenindex anlegen rausgenommen
 
