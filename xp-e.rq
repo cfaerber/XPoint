@@ -142,10 +142,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  S A W ^W L E J ^S O H w I E ^G ^E ^W ^R A W
 
 # Keys in User window:
-# Special Mode, Address book switch, Add user, Add Verteiler, Delete user,
-# Edit user, Join, Write message, Send binary file, Send text file,
-# Address book entry, Password, Unmark users, Auto advance, Search,
-# Crossposting
+# Special Mode, Address book switch, Add user, Add distribution group,
+# Delete user, Edit user, Join, Write message, Send binary file,
+# Send text file, Address book entry, Password, Unmark users, Auto advance,
+# Search, Crossposting
 
 2  S A W O L E J w I E B P ^E ^W K W
 
@@ -256,10 +256,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # XP1
 160  Interrupt process
 + 161
-1    A internal databse error has occured. If the error occurs again ~
-2    after restarting XP, probaby a message database file has been   ~
-3    damaged. Then first delete the index files (DEL *.IX1). If that ~
-4    doesn't help, read the hints in the manual.                     ~
+1    An internal database error has occured. If the error occurs again ~
+2    after restarting XP, probably a message database file has been    ~
+3    damaged. Then first delete the index files (DEL *.IX1). If that   ~
+4    doesn't help, read the hints in the manual.                       ~
 -
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
@@ -478,7 +478,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   Archive grps.~
 13   Delete archived messages
 14   Append new message areas at end
-15   Full name/address in Private mail areas
+15   Full name/address in private mail areas
 16   Minimum disk space on drive %s~
 17   MBytes
 18   Use XMS
@@ -512,7 +512,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24   Double click
 25   Leave config menu on <Esc>
 26   Save       ~
-27   Accoustic signal in message/newsgroup/user list
+27   Acoustic signal in message/newsgroup/user list
 # save config
 40   automatic
 41   manual
@@ -536,7 +536,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 18   Send automatic receipts on request
 19   Automatic PM archiving
 23   Time zone
-24   Delete X-postings with more than
+24   Delete X-postings in more than
 25   newsgroups
 26   Send all carbon copies as BCC
 27   at mail as well
@@ -550,11 +550,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 103  Postal address~
 104  Phone         ~
 105  Homepage      ~
-109  Address, phone and homepage in Private messages ONLY!
+109  Address, phone and homepage in private messages ONLY!
 + 253
 1    Net Options
 2    Z-Netz
-3    Lower case User names
+3    Lower case user names
 4    Z-Netz only
 5    Warning!
 6    Lower case names are not allowed in Z-Netz. Do you really want to
@@ -566,7 +566,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   Use MIME for header contents
 13   remove unnessecary header lines
 14   use references
-15   Binary messages as "attachments"
+15   binary messages as "attachments"
 + 254
 1    Netcall Options
 2    Show login screen
@@ -593,11 +593,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    Show reference arrows
 7    Fixed message header display
 8    Convert German ISO Umlauts
-9    *Highlight* words by color
+9    *Highlight* words by colour
 10   Mouse scroll bar
 11   AutoScrolling
-12   Multi color quotes
-13   Leave lister with <Return>
+12   Multi coloured quotes
+13   Exit reader with <Enter>
 #
 20   51
 21   External lister options
@@ -660,7 +660,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Screen-saver (sec.) ~
 2    Scroll out
 3    Password at startup?
-4    Show User-name
+4    Show user name
 5    Cursor in menus and lists
 6    Lock screen-blanker
 7    optical sound signal
@@ -672,7 +672,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   Headline 1
 14   Headline 2
 15   Message-list column order
-16   User-list column order  ~
+16   User list column order  ~
 + 261
 # Window width
 0    50
@@ -820,7 +820,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Extract messages
 2    Extract newsgroup messages
 3    Extract %s marked messages
-4    Extract reply tree
+4    Extract reference tree
 5    wrong file or path name
 6    extracting message...
 7    done.~~
@@ -955,7 +955,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 415  Subject
 416  User
 417  Special
-418  Delete user group %s
+418  Delete distribution group %s
 419  A maximum of %s messages may be marked at the same time!
 420  A maximum of %s Users/Newsgroups may be marked at the same time!
 421  ~%s marked messages
@@ -1054,7 +1054,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4   not enough disk space to pack messagebase file no %s
 5   ~- packing ...     %
 6   One moment please...     %
-7   Nothing to delete ...
+7   nothing to delete
 -
 452  new receive date:
 # 453 und 455 sind MenÅpunkte aus /Nachricht/Unversandt
@@ -1066,7 +1066,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    File not found
 3    Creating newsgroups ...
 11   Read user list
-12   User in Adre·buch eintragen
+12   register user in address book
 13   Create user newsgroups
 -
 + 457
@@ -1139,7 +1139,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 472  Linking references ...     %
 473  ~done.~~
 474  Reading Message-IDs ...     %
-475  Reading reply tree...
+475  Reading reference tree...
 + 476
 1    Original sender:   ~
 2    Forwarding user:   ~
@@ -1328,7 +1328,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Public message
 4    ~(quote)
 5    ~(binary)
-# Subject winwow
+# Subject window
 6    To       ~
 7    Subject ~
 8    Fido-to ~
@@ -1396,7 +1396,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3   Archive %s marked messages
 4   Archive 1 marked message
 + 644
-1   Forward to ...
+1   Copy/Forward to ...
 2   ~^Newsgroup , ^User , ^Direct~
 3   PM is being archived ...
 4   Archiving PMs ...
@@ -1737,8 +1737,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 911
 # Window width
 0    52
-1    Please enter the type of Net, your Server
-2    system and your User name:
+1    Please enter the type of Net, the name of your
+2    Server and your user name:
 3    Type of Net~
 4    Server name~
 5    User name  ~
@@ -1904,9 +1904,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Reply to ~
 9    newsgroup manager~
 10   ... passsword    ~
-11   sysfile subject  ~
 12   Sender User@Point.domain
-13   Sender User@Server.domain
 + 926
 0    42
 1    Fido Options
@@ -2313,7 +2311,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2402 Destination file
 2403 Decode %s marked messages
 2404 Warning: Order of decoded messages may not be correct!
-2405 Warnung: Error in line; decoded file may be corrupted.
+2405 Warning: Error in line; decoded file may be corrupted.
 
 
 # XPIMPEXP
@@ -2347,12 +2345,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 # XPMIME
 + 2440
-1    Vorspann
-2    Nachspann
+1    Prologue
+2    Epilogue
 3    Text
-4    Grafik
+4    Graphics
 5    Video
-6    Ton
+6    Sound
 7    File
 9    Message-Part ƒƒƒƒƒƒƒƒƒƒ Lines ƒƒƒƒƒƒƒƒƒƒƒƒ Filename
 10   Whole Message
@@ -2539,8 +2537,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Comment ~
 3    Server  ~
 -
-2704 Add new user group
-2705 Edit user group
+2704 Add new distribution group
+2705 Edit distribution group
 + 2706
 1    Password
 2    Crypt method      ~
@@ -2710,7 +2708,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6  Not enough memory
 7  Not enough memory for calling external program.
 8  The %s unpacker settings are wrong.
-9  File ist write protected.
+9  File is write protected.
 10 Disk write error
 20 *LIST: File not found!
 21 Unknown function:  %s
@@ -2752,9 +2750,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21 The device '/dev/%s' does not exist!
 
 +  10300
-1  not possible with user groups
+1  not possible with distribution groups
 2  No messages marked!
-3  No reply tree active!
+3  No reference tree active!
 #  Puffer import
 4  File not found!
 5  Messagebase file - please rename!
@@ -2765,7 +2763,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10 Message is DES-crypted, but the user has a QPC passwerd!
 11 Only possible with public messages!
 12 That's not your message!
-13 User groups are not allowed here!
+13 Distribution groups are not allowed here!
 14 Not possible within this net!
 15 Function is not allowed here.
 16 Illegal path or file name.
@@ -2779,9 +2777,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3  Mail archiving is not possible in this newsgroup.
 4  Not allowed with that message
 5  Please send message as PM
-6  Reply tree is already active
+6  Reference tree is already active
 7  not enough memory
-8  no reply tree
+8  no reference tree
 9  This message has no references
 10 Invalid address
 11 File not found
@@ -2790,7 +2788,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 14 Marked messages are already being displayed
 15 No messages marked!
 16 There are still mails in this user's newsgroup!
-17 Not possible with user group!
+17 Not possible with distribution group!
 18 no messages
 19 Newsgroup is not empty
 #  XP4O
@@ -2822,7 +2820,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 45 Mesagebase is bad; use /Re-Org/Pack!
 46 Close this newsgroup and *then* press "W" ...
 47 You can't supersede a unsent message
-48 Not enough RAM to complete reply tree!
+48 Not enough RAM to complete reference tree!
 
 50 Writing to this newsgroup is disabled
 # XP4O3
@@ -2846,7 +2844,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12 Not possible with binary mails.
 13 Not possible with carbon copies.
 14 Receipts only allowed for PMs
-15 Only possible with Private messages!
+15 Only possible with private messages!
 16 File not found
 17 Not enough disk space on temporary drive
 18 Invalid send message!
@@ -2930,7 +2928,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11 File not found.
 12 %s is no file server.
 13 Unknown file list format :-(
-14 User groups are not allowed here.
+14 Distribution groups are not allowed here.
 15 The selected system is NO file server.
 16 There's no file list for %s.
 17 Password needed - enter at /Edit/Systems!
@@ -2981,11 +2979,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
-31 Standard entry cannot be deleted.
+31 Default entry cannot be deleted.
 32 MIME type or file extension required.
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME types or file extensions not allowed!
-35 Standard entry cannot be edited.
+35 Default entry cannot be edited.
 
 +  11000
 1  unknown command
@@ -3047,7 +3045,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7  No primary fido server selected
 8  Error while converting Fido packet
 9  IPS - unknown server: %s
-50 User groups are not allowed here.
+50 Distribution groups are not allowed here.
 51 Invalid address
 
 +  12400
@@ -3082,19 +3080,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 +  12700
 1  Unknown group - select with <F2>
 2  Unknown server system - select with <F2>
-3  This user does already exist!
-4  This user group does already exist!
+3  This user already exists!
+4  This distribution group already exists!
 # User passwords
 5  Not possible with this type of net.
-6  This newsgroup does already exist!
+6  This newsgroup already exists!
 7  %s is an internal newsgroup - group may not be changed!
 8  %s is not empty.
 9  Direct messages are not possible here.
 10 You can move a maximum of 90 newsgroups at the same time.
 11 There are unsent messages - can't change name of newsgroup.
 12 Not possible with internal newsgroups.
-13 Redicection ist not possible - incompatible type of net.
-14 Renaming is not possible - newsgroup does alreadix exist!
+13 Redirection is not possible - incompatible type of net.
+14 Renaming is not possible - newsgroup already exists!
 
 +   12800
 2   File not found
