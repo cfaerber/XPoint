@@ -547,92 +547,70 @@ var
     found, brk: boolean;
     pp: byte;
     i: longint;
-    sline: Integer;
-    sp: longint;
     sw: byte;
     nftxt: atext;
     mi: byte;
   begin
-    (*    with alist^ do begin
-          attrtxt(col.colstatus);
-          sw:=min(40,w-11);
-          nftxt:=typeform.sp(w);
-          mwrt(l,y+gl-1,nftxt);
-          if not rep then begin
-            mi:=invattr; invattr:=$70;
-            rdedtrunc:=false;
-            ld(l,y+gl-1, GetRes2(11,23),suchstr,sw,1,true,brk);
-            rdedtrunc:=true;
-            invattr:=mi;
-            end
-          else begin
-            brk:=false;
-            mwrt(l,y+gl-1,GetRes2(11,24));
-            end;
-          if brk or (suchstr='') then begin
-            slen:=0; spos:=1;
-            display;
-            end
-          else begin
-            sp:=1;
-            if slen>0 then begin
-              sline:=FirstLine;
-              if (suchline>=a+1) and (suchline<=a+gl) then begin
-                inc(spos,slen);
-                for i:=1 to suchline-a-1 do begin
-                  inc(sp); sline:=sline^.next;
-                  end;
-                end
-              else
-                spos:=1;
-              end
-            else begin
-              sline:=first;
-              sp:=1-a;
-              spos:=1;
-              end;
+     attrtxt(col.colstatus);
+     sw:=min(40,w-11);
+     nftxt:=sp(w);
+     mwrt(l,y+DispLines-1,nftxt);
+     if not rep then
+     begin
+       mi:=invattr; invattr:=$70;
+       rdedtrunc:=false;
+       ld(l,y+DispLines-1, GetRes2(11,23),suchstr,sw,1,true,brk);
+       rdedtrunc:=true;
+       invattr:=mi;
+       SuchLine := 0;
+       Slen := 0;
+     end
+     else
+     begin
+       brk:=false;
+       mwrt(l,y+DispLines-1,GetRes2(11,24));
+     end;
 
-            found:=false;
-            while not found and (sline<>nil) do begin
-              if suchcase then
-                pp:=pos(suchstr,mid(sline^.cont,spos))
-              else
-                pp:=pos(UpperCase(suchstr),UpperCase(Mid(sline^.cont,spos)));
-              if pp=0 then begin
-                sline:=sline^.next;
-                inc(sp);
-                spos:=1;
-                end
-              else begin
-                inc(spos,pp-1);
-                slen:=length(suchstr);
-                found:=true;
-                end;
-              end;
-            if not found then begin
-              attrtxt(col.colstatus);
-              mwrt(l,y+gl-1,center(GetRes2(11,25),w-1));
-              dispa:=-1;
-              slen:=0;
-              end
-            else begin
-              pl:=sline;
-              while sp>gl do begin
-                FirstLine:=FirstLine^.next;
-                inc(a); dec(sp);
-                end;
-              while sp<1 do begin
-                FirstLine:=FirstLine^.prev;
-                dec(a); inc(sp);
-                end;
-              p:=sp;
-              suchline:=p+a;
-              while spos<xa do dec(xa,10);
-              while spos+slen>xa+w-1 do inc(xa,10);
-              end;
-            end;
-          end;
-         FreeRes; *)
+     if brk or (suchstr='') then
+     begin
+       slen:=0; spos:=1;
+       display;
+     end
+     else
+     begin
+       found:=false;
+       while not found and (SuchLine<Lines.Count) do
+       begin
+         if suchcase then
+           pp:=pos(suchstr,mid(Lines[SuchLine],spos))
+         else
+           pp:=pos(UpperCase(suchstr),UpperCase(Mid(Lines[SuchLine],spos)));
+         if pp=0 then
+         begin
+           Inc(SuchLine);
+           spos:=1;
+         end else
+         begin
+           inc(spos,pp);
+           slen:=length(suchstr);
+           found:=true;
+         end;
+       end;
+       if not found then
+       begin
+         attrtxt(col.colstatus);
+         mwrt(l,y+DispLines-1,center(GetRes2(11,25),w-1));
+         slen:=0;
+       end
+       else
+       begin
+          if FirstLine + DispLines - 1 < SuchLine then Inc(FirstLine);
+//         if SuchLine > FirstLine + DispLines then FirstLine := SuchLine;
+         while spos<xa do dec(xa,10);
+         while spos+slen>xa+w-1 do inc(xa,10);
+       end;
+    end;
+    FreeRes;
   end;
 
   procedure listrot13;
@@ -1087,6 +1065,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.47  2000/12/26 16:40:27  mk
+  - readded search function
+
   Revision 1.46  2000/12/26 12:10:00  mk
   - fixed a litte bug in pgend
 
