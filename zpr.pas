@@ -47,7 +47,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, fileio, typeform, xpconfigedit, xpglobal;
+  sysutils, fileio, typeform, xpconfigedit, xpglobal, xp0;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -398,7 +398,7 @@ begin
     if fo='' then
       fo := ChangeFileExt(fi, '$$$')
     else
-      makebak(fo,'BAK');
+      makebak(fo,BakExt);
     filemode:=WriteFilemode;
     assign(f2,fo); rewrite(f2,1);
     if ioresult<>0 then error('Kann Tempor„rdatei "'+fo+'" nicht ”ffnen.');
@@ -456,7 +456,7 @@ begin
   if ParRep then begin
     close(f2);
     if RightStr(fo,3)='$$$' then begin
-      makebak(fi,'BAK');
+      makebak(fi,BakExt);
       rename(f2,fi);
       if ioresult<>0 then error('"'+fi+'" konnte nicht berschrieben werden');
       end;
@@ -1274,6 +1274,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/05/05 22:47:20  mk
+  - use correct case for 'bak' extension
+
   Revision 1.48  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
