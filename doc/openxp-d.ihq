@@ -8868,6 +8868,53 @@ F*sche
 "Fsche", falls dieses Wort vorkommen wrde).
 
 @
+8076
+<<Tastenfunktionen in Texteingabe-Feldern
+
+
+   <<<Ctrl-G> >>  wandelt die Eingabe in Groábuch-
+              staben um.
+
+   <<<Ctrl-K> >>  wandelt die Eingabe in Kleinbuch-
+              staben um.
+
+   <<<Ctrl-X> >>  erzeugt eine gemischte Schreibweise:
+              der erste Buchstabe jedes Wortes wird
+              groá geschrieben, der Rest klein.
+
+   <<<Ctrl-T> >>  l”scht den Text ab aktueller Cursor-
+              position bis zum n„chsten Wort. 
+
+   <<<Ctrl-Y> >>  l”scht den gesamten Feldinhalt.
+
+   <<<Ctrl-A> >>  markiert den Feldinhalt. Wird danach
+              ein Zeichen eingegeben, wird der Feld-
+              inhalt berschrieben. Eine Cursorbewe-
+              gung entfernt die Markierung.
+
+   <<<Ctrl-C> >>  oder <<<Ctrl-Ins> >>kopiert den Inhalt
+              des Textfelds in die Zwischenablage
+              (Clipboard).
+
+   <<<Ctrl-V> >>  oder <<<Shift-Ins> >>fgt den Inhalt der
+              Zwischenablage ein. Ein Tonsignal be-
+              deutet, daá der Clipboard-Inhalt zu
+              groá ist oder nicht existiert.
+
+<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
+Zwischenablage verwendet, die das jeweilige Betriebs-
+system (Windows, OS/2 etc.) zur Verfgung stellt.
+Stellt das Betriebssystem keine Zwischenablagefunk-
+tion zur Verfgung (wie z.B. DOS), oder kann die zur
+Verfgung stehende Zwischenablage nicht von XP ge-
+nutzt werden, verwendet CrossPoint eine interne
+Zwischenablage, die nur innerhalb von XP funktioniert
+(die Datei CLIP.TXT).
+
+
+Siehe auch: [Hotkeys]@4
+
+@
 531
 Geben Sie hier die gewnschten Suchoptionen als
 Buchstabenfolge ein:
