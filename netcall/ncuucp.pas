@@ -418,7 +418,7 @@ begin
   for n := 1 to 5 do begin
     s:=GetUUStr;
     if s='' then continue;
-    if s[1]='R' then break;
+    if FirstChar(s)='R' then break;
   end;
 
   if LeftStr(s,3)<>'ROK' then
@@ -455,7 +455,7 @@ begin
 
   for n := 1 to 5 do begin
     s:=GetUUStr; {$IFNDEF Delphi}dec(n); {$ENDIF }// Achtung: Loop-Variable wird verändert
-    if s[1]='P' then break;
+    if FirstChar(s)='P' then break;
   end;
 
   if FirstChar(s)<>'P' then
@@ -495,7 +495,7 @@ function U2DOSfile(s:string;e:boolean):string;
 var i : integer;
     b : byte;
 begin
-  s:=s[1]+'-'+RightStr(s,5);
+  s:=FirstChar(s)+'-'+RightStr(s,5);
   if e then s[1]:='X';
   b:=0;
   for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
@@ -515,7 +515,7 @@ begin
    (* Schreibweise anpassen *)
     fn :=RightStr(fn,5)+'.OUT'; Insert('-',fn,2);
    (* Set file type *)
-    ftype:=iif(fn[1]='D',1,2);
+    ftype:=iif(FirstChar(fn)='D',1,2);
    (* Gleiches Verzeichnis wie CommandFile *)
     fn := ExtractFilePath(Netcall.CommandFile)+fn;
   end
@@ -537,7 +537,7 @@ procedure TUUCProtocol.AssignDown(var f:file;var fn:string;var ftype:integer);
 begin
   if ((LeftStr(fn,2)='D.') or (LeftStr(fn,2)='X.')) and not Multipos('/',fn) then
   begin                                         { NOTE: Unix dir separators only! }
-    ftype:=iif(fn[1]='D',1,2);
+    ftype:=iif(FirstChar(fn)='D',1,2);
     fn:=AddDirSepa(Netcall.DownSpool)+U2DOSfile(fn,false);
     (* Bug: not thread safe *)
     assign(f,fn);
@@ -666,7 +666,7 @@ var cin : text;
 
     SendCommand(s);
 
-    if not r.Parse(RepeatGetCommand(s[1])) { SY/SN or EY/EN } then
+    if not r.Parse(RepeatGetCommand(FirstChar(s))) { SY/SN or EY/EN } then
       raise EUUCProtFile.Create('Remote refused to accept '+src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
 
     RepeatSendFile(f,r.restart);
@@ -1124,6 +1124,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2002/02/14 07:43:42  mk
+  - fixed some range check errors
+
   Revision 1.19  2002/02/13 18:27:26  mk
   - handle only ENetcall-Errors in this unit, all other Exceptions should
     go there normal way to the debuglog.txt
