@@ -291,9 +291,8 @@ end;
 
 
 function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
-const
-  counter       : integer       = 0;    { Fuer die Anzeige }
 var
+  counter       : integer;              { Fuer die Anzeige }
   s             : string;               { group }
   code, i       : integer;              { NNTP-Result, Hilfsvar. }
 begin
@@ -319,29 +318,25 @@ begin
       exit;
     end;
 
+    counter:= 1;
     repeat
-      SReadln(s); Inc(counter);                         { Zeile lesen }
+      SReadln(s);                                       { Zeile lesen }
       if (counter mod 25)=0 then                        { User beruhigen }
         Output(mcVerbose,res_list4, [counter]);
-      code:= ParseResult(s);
-      case code of
-        -1 : begin                                      { Gruppe }
-               s:= Trim(s);
-               i:= pos(#32,s);                          { Leerzeichen/ }
-               if i=0 then                              { Tabulator suchen }
-                 i:= pos(#9,s);
-               if i>0 then                              { Gefunden ? }
-                 SetLength(s,i-1);                      { -> Abschneiden }
-               if s<>'' then
-                 aList.Add(s);
-             end;
-        0  : result:= true;                             { Listenende }
-      else                                              { Fehler }
-        Output(mcError,res_list3,[Host.Name]);
-        Result:= false;
-      end; { case }
-    until code<>-1;                                     { Bis zum Ende lesen }
+      if s<>'.' then begin                              { Gruppe }
+        Inc(counter);
+        s:= Trim(s);
+        i:= pos(#32,s);                                 { Leerzeichen/ }
+        if i=0 then                                     { Tabulator suchen }
+        i:= pos(#9,s);
+        if i>0 then                                     { Gefunden ? }
+          SetLength(s,i-1);                             { -> Abschneiden }
+        if s<>'' then
+          aList.Add(s);
+        end;
+    until s='.';                                        { Bis zum Ende lesen }
     Output(mcVerbose,res_list4, [aList.Count]);
+    result:= true;
 
     { Dieses Unterroutine ist noch sehr ineffizient.
       Es waere sinnvoll, eine zweite Verbindung zum NNTP
@@ -537,6 +532,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/06/08 16:07:05  ma
+  - fixed: Numerical newsgroup names were interpreted as error codes
+
   Revision 1.26  2001/06/04 17:01:14  ma
   - cosmetics
 
