@@ -3029,8 +3029,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
+31 Standard entry can not be deleted
+32 Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME-Types or File-Extensions are not allowed!
+35 Standard entry can not be modified
 
 +  11000
 1  unknown command
@@ -3407,6 +3410,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.108  2000/11/14 10:24:08  mk
+# - display message box in Edit/Viewer when modify */*
+#
 # Revision 1.107  2000/11/11 19:52:27  mk
 # - moved some strings into resources
 #

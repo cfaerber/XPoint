@@ -184,7 +184,7 @@ var
 begin
   testqwkinfiles:=false;
   if s<>'' then begin
-    qd:=GetFileDir(s);
+    qd:=ExtractFilePath(s);
     testqwkinfiles:=testfidodir(qd);
     s:=qd+ExtractFilename(s);
     end;
@@ -1239,6 +1239,11 @@ var d         : DB;
       ext:= dbReadNStr(d,mimeb_extension);
       prog:= dbReadNStr(d,mimeb_programm);
     end;
+    if typ = '*/*' then
+    begin
+      RFehler(935); // 'Standardeintrag kann nicht editiert werden'
+      exit;
+    end;
     readmimetyp(not isNew,typ,ext,prog,brk);
     if not brk then
     begin
@@ -1827,6 +1832,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.43  2000/11/14 10:24:08  mk
+  - display message box in Edit/Viewer when modify */*
+
   Revision 1.42  2000/11/06 00:41:26  mk
   - fixed Bug #116657: crash with servername >15 chars
 

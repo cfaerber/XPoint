@@ -3097,10 +3097,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 #
 29 %s ist keine eingetragene Fido-Serverbox!
 30 Warnung: Ungltige Zeichen im Pointname: %s
-31 Standardeintrag kann nicht gel”scht werden.
+31 Standardeintrag kann nicht gel”scht werden
 32 Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!
 33 "rz" und "sz" mssen installiert sein!
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
+35 Standardeintrag kann nicht editiert werden.
 
 +  11000
 1  unbekannter Befehl
@@ -3513,6 +3514,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.81  2000/11/14 10:24:08  mk
+# - display message box in Edit/Viewer when modify */*
+#
 # Revision 1.80  2000/11/12 22:02:54  my
 # - "Empfaenger waehlen" geaendert in "User waehlen"
 #   (Dialog wird zu mehreren Zwecken genutzt)
