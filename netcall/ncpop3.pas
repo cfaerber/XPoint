@@ -285,7 +285,25 @@ begin
     // +OK 2 320
     s := Copy(s, 5, Length(s)); p := cPos(' ', s);
     FMailCount := StrToInt(Trim(Copy(s, 1, p)));
-    s := Trim(Copy(s, p, Length(s)))+ ' ';
+    s := Trim(Copy(s, p, Length(s)));
+
+    // from RFC 1081:
+    //
+    // In order to simplify parsing, all POP3 servers are
+    // required to use a certain format for drop listings.
+    // The first octets present must indicate the number of
+    // messages in the maildrop.  Following this is the size
+    // of the maildrop in octets.  This memo makes no
+    // requirement on what follows the maildrop size.
+    // Minimal implementations should just end that line of
+    // the response with a CRLF pair.  More advanced
+    // implementations may include other information.
+
+    // this two lines filter all additional ocets after the maildrop size
+    while (s <> '') and not (LastChar(s) in ['0'..'9']) do
+      DeleteLastChar(s);
+
+    s := s + ' ';
     FMailSize := StrToInt(Copy(s, 1, cPos(' ', s)-1));
   end else
     exit;
@@ -418,6 +436,9 @@ end;
 
 {
   $Log$
+  Revision 1.18.2.2  2003/08/03 19:07:13  mk
+  - handle garbage in STAT response with POP3 from pop.firemail.de
+
   Revision 1.18.2.1  2003/04/25 17:30:09  mk
   - use Free instead of Destroy
 
