@@ -14,7 +14,7 @@ unit xpcurses;
 interface
 
 uses
-  xpglobal,
+//  xpglobal,
   linux,
   ncurses,
   xplinux;
@@ -255,15 +255,19 @@ procedure RestoreWindow(var win: TWinDesc);
 implementation
 
 uses
-  strings,
-  inout,
-  typeform;
+{$ifdef Debug}
+  SysUtils,		{ FormatDateTime etc. }
+{$endif}
+  inout,		{ dhpback }
+  typeform;		{ ISOTab }
 
 const
    { standard file descriptors }
    STDIN  = 0;
    STDOUT = 1;
    STDERR = 2;
+
+   __isInit: boolean = false;		{ Curses initialisiert? }
 
 var
    ExitSave : pointer;                  { pointer to original exit proc }
@@ -275,6 +279,12 @@ var
    LastTextAttr: byte;                  { Letzte gesetzte Farbe }
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
+{$ifdef Debug}
+   __F: Text;				{ Log-File }
+
+const
+   __isopen: boolean = false;		{ Log-File }
+{$endif}
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -358,6 +368,7 @@ function CursesAtts(att: byte): longint;
 var
   atts: longint;
 begin
+  if not __isInit then InitXPCurses;
   atts:= COLOR_PAIR(SetColorPair(att));
   if IsBold(att) then
     atts:= atts or A_BOLD;
@@ -372,9 +383,8 @@ begin
 end;
 
 procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
-var
-  p: array[0..258] of char;
 begin
+  if not __isInit then InitXPCurses;
   { Solange ich nicht weiss, ob XP irgendwo die Reihenfolge bei
     wrest nicht analog zu wpull vornimmt, ist diese Sicherung notwendig }
   getmem(win.PrevWin, sizeof(TWinDesc));
@@ -385,19 +395,11 @@ begin
   { Fenster erzeugen }
   win.wHnd:= newwin(win.Rows, win.Cols, win.y, win.x);
 {$IFDEF Debug}
-  if (win.wHnd = nil) then begin
-    WriteLn('Error creating window (XPCurses::MakeWindow)');
-    WriteLn;
-    WriteLn('Paramter');
-    WriteLn('----------');
-    WriteLn('x1 = ',x1);
-    WriteLn('x2 = ',x2);
-    WriteLn('y1 = ',y1);
-    WriteLn('y2 = ',y2);
-    WriteLn;
-    WriteLn('Call failed: newwin(',win.Rows,',',win.Cols,',',win.y,',',win.x,');');
-    halt(1);
+  if __isopen then begin
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' Creating window (XPCurses::MakeWindow)');
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' x1=',x1,', x2=',x2,', y1=',y1,', y2=',y2);
   end;
+  if win.wHnd=nil then halt(1);
 {$ENDIF }
   win.isRel:= false;
   win.isEcho:= false;
@@ -414,7 +416,8 @@ begin
   end;
   { Titel }
   if (Length(s) > 0) then begin
-    mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
+    s:=' '+s+' ';
+    mvwaddstr(win.wHnd, 0, 2, PChar(s));
   end;
   update_panels;
   wrefresh(win.wHnd);
@@ -422,6 +425,7 @@ end;
 
 procedure RestoreWindow(var win: TWinDesc);
 begin
+  if not __isInit then InitXPCurses;
   { PAnel entfernen }
   del_panel(win.pHnd);
   { Window entfernen }
@@ -441,6 +445,10 @@ begin
   update_panels;
   { Refresh erzwingen }
   wrefresh(ActWin.wHnd);
+{$IFDEF Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' RestoreWindow');
+{$ENDIF }
 end;
 
 
@@ -528,6 +536,7 @@ procedure StringOut(s: string);
 var
   i: integer;
 begin
+  if not __isInit then InitXPCurses;
   { Da waddstr auch nur waddch benutzt, duerfte es von der
     PErformance keinen Unterschied geben. }
   for i:= 1 to Length(s) do
@@ -550,6 +559,7 @@ end;
 
 procedure SetEcho(b: boolean);
 begin
+  if not __isInit then InitXPCurses;
   ActWin.IsEcho:= b;
   if (b) then
     echo
@@ -568,6 +578,11 @@ end;
 
 procedure SetTextAttr(attr: byte);
 begin
+{$IFDEF Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' SetTextAttr ',attr,'->',CursesAtts(attr));
+{$ENDIF }
+  if not __isInit then InitXPCurses;
   wattr_set(ActWin.wHnd, CursesAtts(attr));
   TextAttr:= attr;
   LastTextAttr:= attr;
@@ -576,6 +591,7 @@ end;
 { position cursor in a window }
 procedure GotoXY(x, y: integer);
 begin
+  if not __isInit then InitXPCurses;
   if (ActWin.isRel) then
     wmove(ActWin.wHnd, y-1, x-1)
   else
@@ -588,6 +604,7 @@ procedure WhereXY(var x, y: integer);
 var
   x0, y0: longint;
 begin
+  if not __isInit then InitXPCurses;
   getyx(ActWin.wHnd, y0, x0);
   if (ActWin.isRel) then begin          { Relative Koo' aufloesen? }
     x:= x0 + 1;                         { -> Relativ zum Window }
@@ -616,6 +633,7 @@ end;
 
 procedure ClrScr;
 begin
+  if not __isInit then InitXPCurses;
   wbkgd(ActWin.wHnd, CursesAtts(TextAttr));
   touchwin(ActWin.wHnd);
   werase(ActWin.wHnd);
@@ -630,6 +648,7 @@ var
   xb,yb,
   xm,ym: longint;
 begin
+  if not __isInit then InitXPCurses;
   {--------------------------------------------------------
     In order to have the correct color, we must define and
     clear a temporary window. ncurses wclrtoeol() uses the
@@ -651,6 +670,7 @@ end;
 { clear from the cursor to the bottom in a window }
 procedure ClrBot;
 begin
+  if not __isInit then InitXPCurses;
   wclrtobot(ActWin.wHnd);
   wrefresh(ActWin.wHnd);
 end;
@@ -658,6 +678,7 @@ end;
 { insert a line at the cursor line in a window }
 procedure InsLine;
 begin
+  if not __isInit then InitXPCurses;
   winsertln(ActWin.wHnd);
   wrefresh(ActWin.wHnd);
 end;
@@ -665,6 +686,7 @@ end;
 { delete line at the cursor in a window }
 procedure DelLine;
 begin
+  if not __isInit then InitXPCurses;
   wdeleteln(ActWin.wHnd);
   wrefresh(ActWin.wHnd);
 end;
@@ -683,6 +705,7 @@ var
   l: longint;
   xtnded : boolean;
 begin
+  if not __isInit then InitXPCurses;
   b:= IsEcho;
   noecho;
   l:= wgetch(BaseWin.wHnd);
@@ -791,6 +814,7 @@ function CrtWrite(var F: TextRec): integer;
 var
   i: integer;
 begin
+  if not __isInit then InitXPCurses;
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
   i:=0;
@@ -807,6 +831,7 @@ function CrtRead(var F: TextRec): integer;
 var
   i: integer;
 begin
+  if not __isInit then InitXPCurses;
   F.BufEnd:=fdRead(F.Handle, F.BufPtr^, F.BufSize);
 { fix #13 only's -> #10 to overcome terminal setting }
   for i:=1 to F.BufEnd do begin
@@ -834,6 +859,7 @@ function CrtOpen(var F: TextRec): integer;
   Open CRT associated file.
 }
 begin
+  if not __isInit then InitXPCurses;
   if F.Mode=fmOutput then begin
     TextRec(F).InOutFunc:= @CrtWrite;
     TextRec(F).FlushFunc:= @CrtWrite;
@@ -888,6 +914,7 @@ end;
 { Wait for DTime milliseconds }
 procedure Delay(DTime: integer);
 begin
+  if not __isInit then InitXPCurses;
   napms(DTime);
 end;
 
@@ -903,6 +930,7 @@ var
   l : longint;
   fd : fdSet;
 begin
+  if not __isInit then InitXPCurses;
   keypressed := false;
   nodelay(BaseWin.wHnd, bool(true));
   l:= wgetch(BaseWin.wHnd);
@@ -916,6 +944,7 @@ end;
 { a cheap replacement! }
 procedure Sound(hz : word);
 begin
+  if not __isInit then InitXPCurses;
   Beep;
   wrefresh(ActWin.wHnd);
 end;
@@ -926,6 +955,7 @@ end;
 
 procedure TextMode(mode: word);
 begin
+  if not __isInit then InitXPCurses;
   if (ActWin.wHnd <> BaseWin.wHnd) then begin
     if (ActWin.pHnd <> nil) then
       del_panel(ActWin.pHnd);
@@ -939,11 +969,13 @@ begin
       delwin(ActWin.wHnd);
     system.Move(BaseWin, ActWin, sizeof(TWinDesc));
   end;
-  NormVideo;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' TextMode');
+{$endif}
   LastMode := mode;
   DirectVideo := true;
   CheckSnow := true;
-  NormVideo;
   {ClrScr;}
 end;
 
@@ -953,6 +985,7 @@ procedure HorizLine(y: integer);
 var
   sw: PWindow;
 begin
+  if not __isInit then InitXPCurses;
   if (TextAttr<>LastTextAttr) then              { Hat jemand an Attr gefummelt? }
     SetTextAttr(TextAttr);
   sw:= subwin(ActWin.wHnd, 1, MAxCols, y-1, 0); { SubWindow erzeugen }
@@ -966,6 +999,7 @@ end;
 { Schreiben an X/Y, update des Cursors }
 procedure Wrt(const x, y: word; const s: string);
 begin
+  if not __isInit then InitXPCurses;
   if (ActWin.isRel) then
     wmove(ActWin.wHnd, y-1, x-1)
   else
@@ -978,6 +1012,7 @@ procedure Wrt2(const s: string );
 var
   i: integer;
 begin
+  if not __isInit then InitXPCurses;
   { Aenderung bein Textattribut bearbeiten }
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
@@ -996,6 +1031,7 @@ var
   x0, y0: integer;
   i: integer;
 begin
+  if not __isInit then InitXPCurses;
   WhereXY(x0,y0);
   { Hier kein GotoXY, damit der refresh unterbleibt }
   if (ActWin.isRel) then
@@ -1025,10 +1061,11 @@ var
   ta: byte;
   x,y: integer;
 begin
+  if not __isInit then InitXPCurses;
   Sub:= subwin(ActWin.wHnd, u-o+1, r-l+1, o-1, l-1);
   if (Sub=nil) then begin
     XPErrorLog('Can''t create sub window (XPCurses::PaintBox)');
-{$IFDEF Beta }
+{$IFDEF Debug }
     WriteLn('Can''t create sub window (XPCurses::PaintBox)');
     halt(1);
 {$ENDIF }
@@ -1071,19 +1108,26 @@ function panel_hidden(_para1:pPANEL):longint;cdecl; external;
 
 function VideoType: byte;
 begin
+  if not __isInit then InitXPCurses;
   if (has_colors = 0) then
     VideoType:= 7
   else
     VideoType:= 3;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Videotype');
+{$endif}
 end;
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
 procedure Window(x1, y1, x2, y2: integer);
 begin
-{$IFDEF DEBUG }
-  XPLog(LOG_DEBUG, 'procedure window(%d, %d, %d, %d)', [x1, x2, y1, y2]);
-{$ENDIF }
+  if not __isInit then InitXPCurses;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Window(',x1,',',x2,',',y1,',',y2,')');
+{$endif}
   Exit;
   { Aus INOUT.PAS uebernommen }
   mwl:=x1; mwr:=x2;
@@ -1108,67 +1152,111 @@ end;
 procedure disphard(x, y: integer; s: string);
 var
   x0, y0, ta: integer;
-  p: array[0..255] of char;
 begin
+  if not __isInit then InitXPCurses;
   WhereXY(x0, y0);
   ta:= TextAttr;
-  StrPCopy(p, s);
   SetTextAttr(dphback);
-  mvwaddstr(BaseWin.wHnd, y-1, x-1, p);
+  mvwaddstr(BaseWin.wHnd, y-1, x-1, PChar(s));
   wrefresh(BaseWin.wHnd);
   GotoXY(x0, y0);
   SetTextAttr(ta);
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Display Hard');
+{$endif}
 end;
 
 procedure CursorOn;
 begin
+  if not __isInit then InitXPCurses;
   curs_set(1);
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor On');
+{$endif}
 end;
 
 procedure CursorBig;
 begin
+  if not __isInit then InitXPCurses;
   curs_set(2);
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor Big');
+{$endif}
 end;
 
 procedure CursorOff;
 begin
+  if not __isInit then InitXPCurses;
   curs_set(0);
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor Off');
+{$endif}
 end;
 
 procedure mDelay(msec: word);
 begin
+  if not __isInit then InitXPCurses;
   napms(msec);
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Daylay=',msec,' ms');
+{$endif}
 end;
 
 { XPWIN32.PAS-Plagiat -------------------------------------------------- }
 
 function SysGetScreenLines: integer;
 begin
+  if not __isInit then InitXPCurses;
+  getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenLines:= MaxRows;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetScreenLines=',MaxRows);
+{$endif}
 end;
 
 function SysGetScreenCols: integer;
 begin
+  if not __isInit then InitXPCurses;
+  getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenCols:= MaxCols;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetScreenLines=',MaxCols);
+{$endif}
 end;
 
 { Ermittelt die gr”áte Ausdehnung des Screens, die in Abh„ngigkeit
   von Font und Fontgr”áe im Moment m”glich ist }
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 begin
-  { Im Falle einer dynamischen Aenderung der Groesse muss diese
-    Funktion angepasst werden (hd 2000-06-30) }
+  if not __isInit then InitXPCurses;
+  getmaxyx(stdscr,MaxRows,MaxCols);
   Lines:= MaxRows;
   Cols:= MaxCols;
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetMaxScreenSize(Lines=',MaxRows,',Cols=',MaxCols,')');
+{$endif}
 end;
 
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
 begin
+  if not __isInit then InitXPCurses;
 {
   resizeterm(Lines, Cols);
   refresh;
 }
+{$ifdef Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysSetScreenSize(Lines=',Lines,',Cols=',Cols,') (Not implemented)');
+{$endif}
 end;
 
 { Unit-Interna --------------------------------------------------------- }
@@ -1177,6 +1265,14 @@ end;
 procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
+{$ifdef Debug}
+  if __isopen then begin
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' Curses is going down.');
+    WriteLn(__F);
+    CloseFile(__F);
+    __isopen:=false;
+  end;
+{$endif}
   { Noch ein SubWindow vorhanden= }
   if (BaseSub <> nil) then
     delwin(BaseSub);
@@ -1185,7 +1281,10 @@ begin
   { Eventuell nicht ausgefuehrte Aenderungen darstellen }
   wrefresh(ActWin.wHnd);
   { tty restaurieren }
+  resetty;
+  endwin;
   tcSetAttr(STDIN,TCSANOW,tios);
+  __isInit:= false;
 end;
 
 function StartCurses(var win: TWinDesc): Boolean;
@@ -1203,7 +1302,9 @@ begin
     exit;
   end else begin
     StartCurses:= true;
-    start_color;               { Farbe aktivieren }
+    if has_colors<>0 then
+      start_color;              { Farbe aktivieren }
+    savetty;			{ tty sichern }
     cbreak;                    { disable keyboard buffering }
     raw;                       { disable flow control, etc. }
     noecho;                    { do not echo keypresses }
@@ -1238,11 +1339,31 @@ begin
     s:= #27+'-'+#0; define_key(@s[1],501); { alt/- }
     s:= #27+'='+#0; define_key(@s[1],502); { alt/= }
     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
+{$ifdef Debug}
+    AssignFile(__F,'.curses.log');
+    Rewrite(__F);
+    if ioresult=0 then begin
+      __isopen:= true;
+      WriteLn(__F,'------------------- Curses-Init-Log on ',FormatDateTime('dd.mm.yyyy hh:nn:ss', Now));
+      WriteLn(__F,'      NCurses Version ',NCURSES_VERSION_MAJOR,'.',
+              NCURSES_VERSION_MINOR,' Patch ',NCURSES_VERSION_PATCH);
+      WriteLn(__F,'      MaxCols=',MaxCols,', MaxRows=',MaxRows,', MaxColors=',COLORS);
+      WriteLn(__F,'      TabSize=',TABSIZE,', Esc Delay=',ESCDELAY,' Baudrate=',baudrate);
+      WriteLn(__F,'      Has Colors: ',boolean(has_colors));
+    end;
+{$endif}
   end;
 end;
 
 procedure InitXPCurses;
 begin
+{$IFDEF Debug}
+  if __isopen then
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' InitXPCurses (repeated!!!!)');
+{$ENDIF }
+  if __isInit=true then exit;
+  __isInit:= true;		{ Flag setzen }
+  
   { load the color pairs array with color pair indices (0..63) }
   for bg := 0 to 7 do
     for fg := 0 to 7 do cp[bg,fg]:= (bg*8)+fg;
@@ -1250,8 +1371,9 @@ begin
   { initialize ncurses }
   if not StartCurses(BaseWin) then begin
     writeln('Curses cannot be loaded!');
-    halt;
+    halt(1);
   end;
+
 
   { Am Anfang ist die Basis auch Aktuell }
   system.Move(BaseWin, ActWin, sizeof(TWinDesc));
@@ -1278,6 +1400,7 @@ begin
 
   ESCDELAY:= 100;		{ 100 ms }
 
+
   { set the unit exit procedure }
   ExitSave:= ExitProc;
   ExitProc:= @EndXPCurses;
@@ -1286,6 +1409,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/09/10 13:21:20  hd
+  - Propi.-Log-Features
+  - Darstellung temporaer nur schwarz/weiss
+  - Zugriff ohne vorherigen Init verhindert
+
   Revision 1.25  2000/09/10 11:25:10  hd
   - Escape-Delay verkuerzt
 
