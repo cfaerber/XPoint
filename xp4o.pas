@@ -10,6 +10,10 @@
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
+
+{$DEFINE Debugsuche }   { Checkfenster vor dem Start von Suchen anzeigen }
+
+
 {$I XPDEFINE.INC }
 {$IFDEF BP }
   {$O+,F+}
@@ -119,8 +123,8 @@ end;
 
 function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
-                     betr,user,txt : string[SuchLen];
-                     fidoempf,mid  : string[SuchLen];  { JG 22.01.00 mid eingefuegt }
+                     betr,user,txt : string[SuchLen];  { Wird nicht mehr Suchlen verwendet }
+                     fidoempf,mid  : string[SuchLen];  { Auch die Ukonv-Maximallaengen aendern! }
                      vondat,bisdat : datetimest;
                      vonkb,biskb   : longint;
                      status        : string[10];
@@ -157,7 +161,102 @@ var x,y   : byte;
     stata           : array[0..5] of string[10];
     typa            : array[0..4] of string[10];
 
+
+    suchand           : boolean;
+    seeklen,seekstart : array[0..9] of byte; 
+    suchanz           : byte;     
+    seek              : string[suchlen];    
+        
 label ende,happyend;
+
+
+
+{ Check_Seekmode:
+
+  Wenn bei Normalsuche die Suchoptionen "ua&" fuer UND oder "o|" fuer ODER angegeben wurden,
+  werden in den Arrays die Anfangs und End Offsets von bis zu 10 Teilsuchstrings gespeichert,
+  und Suchanz auf die Anzahl der (durch Leerzeichen getrennten, bzw in Anfuehrungszeichen
+  eingefassten) Teilsuchstrings gesetzt. Suchand ist "true" bei UND Verknuepfung und "false" 
+  bei ODER Verknuepfung.  Wurden keine Verknuepfungsoptionen angegeben, wird eine OR 
+  Verknuepfung durchgefuehrt, mit einem einzigen "Teilsuchstring", der die Ganze Laenge 
+  des Suchstring abdeckt 
+}
+  procedure check_seekmode;           
+  var   
+  n,i    : byte;
+  quotes : boolean;
+                                       
+{$IFDEF DebugSuche}                   { Zum Debuggen der Suchstringerkennung} 
+  Procedure Show_Seekstrings;        
+  var n,x,y:byte;
+   begin
+    msgbox(70,19,'Suchstring-Check',x,y);
+    attrtxt(col.colmbox); 
+    wrt(x+1,y+1,'Benutzte Teilstrings: '); write(suchanz);
+    wrt(x+27,y+1,iifs(suchand,'AND','OR'));
+    write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));  
+    wrt(x+1,y+3,'Suchstring: '+chr($af)+iifs(spez,srec^.txt,suchstring)+chr($ae));
+    wrt(x+1,y+4,'sst:        '+chr($af)+sst+chr($ae));
+    for n:=0 to 9 do    
+    begin
+      wrt(x+1,y+6+n,'String'); write(n); write(': ');
+      write(seekstart[n]:3); write(','); write(seeklen[n]:3);
+      write('  '+chr($af)+left(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
+      end;      
+    wrt(x+1,y+17,'Length(sst)='); write(length(sst)); write('  i='); write(i);
+    wait(curoff);  
+    closebox;
+   end;
+{$ENDIF}
+
+  begin
+{$IFDEF DebugSuche}
+      for n:=0 to 9 do
+      begin
+        seekstart[n]:=0;
+        seeklen[n]:=0;
+        end;  
+{$Endif}
+    n:=0;
+    suchand:=cpos('a',lstr(suchopt))>0;                                { AND  }
+    if suchand or (cpos('o',lstr(suchopt))>0) then                        { oder OR ?}
+    begin       
+      seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
+      i:=length(seek);                           
+      while seek[i]='"' do dec(i);                  { Und Ausrufezeichen hinten abschneiden }
+      truncstr(seek,i);         
+      if seek<>'' then begin
+        i:=1;
+        sst:=seek+'"';  
+        while (i<length(sst)) and (n<=9) do
+        begin
+          while sst[i]=' ' do inc(i);                  { Leerzeichen ueberspringen }
+          quotes:=sst[i]='"';                          { Evtl. "- Modus aktivieren....} 
+          while sst[i]='"' do inc(i);                  { weitere " ueberspringen }   
+          seekstart[n]:=i;
+          while (i<length(sst)) and not                { Weiterzaehlen bis Stringende      }                         
+           ((not quotes and (sst[i]=' ')) or           { oder Space das nicht in " ist     }
+            (sst[i]='"')) do inc(i);                   { oder das naechste " gefunden wird }
+          seeklen[n]:=i-seekstart[n];                  
+          quotes:=not quotes and (sst[i]='"');         { -"- Modus umschalten }      
+          if (not quotes) then inc(i);    
+          inc(n);
+          end;
+        if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
+        suchanz:=n;  
+        end;
+      end;
+    if n=0 then begin
+      suchanz:=1; seekstart[0]:=1; seeklen[0]:=length(sst); 
+      end; 
+
+{$IFDEF DebugSuche}
+    if cpos('c',lstr(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
+{$ENDIF}
+
+  end;            
+
+
 
 { R-}
   function InText(var key:string):boolean;
@@ -227,14 +326,37 @@ label ende,happyend;
     end;
   end;
 
-{JG:15.02.00 ganze Prozedur umgekrempelt fuer Umlautverarbeitung 
-             und etwas fuer uebersicht gesorgt.}
+
+{--Einzelne Nachricht mit Sucheingaben vergleichen--}
 
   procedure TestMsg;
   var betr2 : string[BetreffLen];
       user2 : string[AdrLen];
-      realn : string[40];
-      such  : string[81];
+      realn : string[40];          { Bei Aenderung der Stringlaengen }
+      such  : string[81];          { Auch die Maximallaengen bei ukonv anpassen !!! } 
+      found : boolean; 
+          j : byte;
+
+
+{   Volltextcheck:
+
+    Seekstart und Seeklen sind Zeiger auf Anfang und Ende der Teilsuchstrings   
+    innerhalb des Gesamtsuchstrings SST. Suchand ist "true" bei UND-Suche,
+    und "false" bei ODER-Suche Der Textinhalt wird mit den  Teilsuchstrings verglichen,
+    solange Suchand=1 (UND) und Found=0, bzw bis Suchand=0 (OR) und Found=1,
+    Wenn Fuond am Ende 0 ist ist die Suche gescheitert.
+}
+    procedure Volltextcheck;
+    begin
+      j:=0;
+      repeat
+        seek:=left(mid(sst,seekstart[j]),seeklen[j]);
+        found:=Intext(seek);
+        inc(j);
+      until (j=suchanz) or (suchand xor found);
+    end;
+
+
   begin
     inc(n);
     if (n mod 10)=0 then begin
@@ -244,7 +366,7 @@ label ende,happyend;
       mon;
       end;
 
-{Spezialsuche}
+{--Spezialsuche--}
     if spez then with srec^ do
       if DateFit and SizeFit and TypeFit and StatOk then begin
         dbReadN(mbase,mb_betreff,betr2);
@@ -253,7 +375,7 @@ label ende,happyend;
           if length(hdp^.betreff)>40 then
             betr2:=hdp^.betreff;
           end;
-        dbReadN(mbase,mb_absender,user2); if igcase then UpString(user2);
+        dbReadN(mbase,mb_absender,user2); 
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
           dbReadN(mbase,mb_name,realn);
           end
@@ -266,26 +388,31 @@ label ende,happyend;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-          ukonv(betr2);
-          ukonv(realn); 
-          ukonv(hdp^.fido_to);
+          ukonv(betr2,betrefflen);
+          ukonv(user2,adrlen);  
+          ukonv(realn,40); 
+          ukonv(hdp^.fido_to,length(hdp^.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
+          UpString(user2);
           UpString(realn); 
           UpString(hdp^.fido_to);
           end;
+        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) } 
         if ((betr='') or (pos(betr,betr2)>0)) and
            ((user='') or (pos(user,user2)>0) or (pos(user,realn)>0)) and
            ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0)) and
-           ((txt='') or InText(txt)) then begin
+           ((txt='') or found) then begin
           MsgAddmark;
           inc(nf);
           end;
         end
       else
 
-{Normale Suche}
+
+{--Normale Suche--}
+                                                          {Headereintragsuche}
     else if suchfeld<>'' then begin    
       dbRead(mbase,suchfeld,such);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
@@ -299,30 +426,46 @@ label ende,happyend;
         such:=hdp^.msgid;
         end;
 *)
-      if umlaut then ukonv(such);                   {JG:15.02.00}
-      if (igcase and (pos(sst,UStr(such))>0)) or      
-        (not igcase and (pos(sst,such)>0)) then begin
+      if umlaut then ukonv(such,81);
+      j:=0;
+      repeat
+        seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }    
+        found:=((igcase and (pos(seek,UStr(such))>0)) or      
+         (not igcase and (pos(seek,such)>0)));
+        inc(j);
+      until (j=suchanz) or (suchand xor found); 
+      if Found then Begin
         MsgAddmark;
         inc(nf);
-        end else
-      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp)
-        then begin
-        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
-        if umlaut then ukonv(such);              {JG:15.02.00}
-        if (igcase and (pos(sst,Ustr(such))>0)) or
-          (not igcase and (pos(sst,such)>0)) then begin
+        end
+      else                                            
+      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
+      begin
+        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
+        if umlaut then ukonv(such,81);    
+        j:=0;
+        repeat
+          seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }    
+          found:=((igcase and (pos(seek,UStr(such))>0)) or      
+           (not igcase and (pos(seek,such)>0)));
+          inc(j);
+        until (j=suchanz) or (suchand xor found); 
+        if Found then Begin
           MsgAddmark;
           inc(nf);
-          end;
+          end
         end;
       end
-    else
-      if InText(sst) then begin
+                                      
+    else begin                           {Volltextsuche}
+      volltextcheck;
+      if found then Begin
         MsgAddmark;
         inc(nf);
         end;
+      end;
   end;
-{/JG}
+
 
   procedure TestBrett(_brett:string);
   begin
@@ -343,7 +486,10 @@ label ende,happyend;
     else userform:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
   end;
 
-{Suche}
+
+
+{--# Suche #--}
+
 begin
   if suchopt[1]='*' then
   begin                                       {Erste Suche seit Programmstart ?}
@@ -352,8 +498,6 @@ begin
     else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
       suchopt:='i';
   end;                            
- 
-
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -377,7 +521,9 @@ begin
   while (i<=4) and (bretter<>bera[i]) do inc(i);
   if i>4 then bretter:=bera[0];
 
-{Normalsuche}
+
+{-- Eingabemaske Normalsuche --}
+
   if not spez then begin
     add:=0;
 (*  if autosuche='' then begin *)
@@ -419,39 +565,12 @@ begin
 
       else srec^.txt:=suchstring;
       if suchstring='' then goto ende;
-
-{JG: 07.02.00}
-      if suchfeld='MsgID' then begin            {MID-Suche ueber Bezugsverkettung}
-        suche:=false;
-        if not brk then begin                   {JG:08.02.00 ESC-Reaktion wieder drinn...}
-          markanz:=0;  
-          n:=GetBezug(suchstring);                
-          if n<>0 then begin
-            dbGo(mbase,n);
-            MsgAddmark;
-            suche:=true;
-            end
-          else hinweis(getres2(441,18));  { 'keine passenden Nachrichten gefunden' }
-          end;
-        aufbau:=true;  
-        goto happyend;
-        end;
-{/JG}
       dec(x); inc(y);
-(*    end
-    else begin
-      diabox(53,7,getreps2(441,1,anztxt),x,y);
-      suchstring:=autosuche;
-      wrt(x+3,y+2,getres2(441,5));   { 'Suchbegriff:  ' }
-      attrtxt(col.coldiahigh);
-      write(left(suchstring,32));
-      suchopt:='i';
-      bretter:=bera[0];              { 'Alle' }
-      brk:=false;
-      end; *)
     end
 
-{Spezialsuche}  
+
+{--Eingabemaske Spezialsuche--}  
+
   else with srec^ do begin
     add:=iif(ntBrettEmpfUsed,1,0);
     dialog(50,12+add,getreps2(441,1,anztxt),x,y);
@@ -497,6 +616,8 @@ begin
     dec(x);
     end;
 
+{--Eingaben auswerten--}
+
   if not brk then with srec^ do begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
@@ -514,7 +635,8 @@ begin
     if spez then with srec^ do begin
       user:=userform(user);
       if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        Ukonv(betr); Ukonv(user); Ukonv(txt); Ukonv(fidoempf);
+        Ukonv(betr,suchlen); Ukonv(user,suchlen);
+        Ukonv(txt,suchlen); Ukonv(fidoempf,suchlen);
         end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); UpString(txt); UpString(fidoempf);
@@ -530,82 +652,110 @@ begin
       minsize:=vonkb*1024;
       maxsize:=biskb*1024+1023;
       end
-    else
-      if umlaut then ukonv(sst);                        {JG:15.02.00} 
-      if igcase then UpString(sst);
-    mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16));  { 'Suche:         passend:' }
-    if aktdispmode<>11 then markanz:=0;
-    n:=0; nf:=0;
-    new(hdp);
-    attrtxt(col.coldiahigh);
-    psize:=min(maxavail-10000,60000);
-    getmem(p,psize);
-    brk:=false;
-    if aktdispmode=11 then begin    { markiert - Weitersuche }
-      i:=0;
-      while i<markanz do begin
-        dbGo(mbase,marked^[i].recno);
-        msgunmark;
-        TestMsg;
-        if MsgMarked then inc(i);
-        end;
-      aufbau:=true;
-      end
-    else if bereich<3 then begin   { alle/Netz/User }
-      mi:=dbGetIndex(mbase);
-      dbSetIndex(mbase,0);
-      dbGoTop(mbase);
-      brk:=false;
-      while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
-        dbReadN(mbase,mb_brett,_brett);
-        if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
-                          ((bereich=2) and (_brett[1]='U')) then
-          TestMsg;
-        if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
-          dbNext(mbase);            { Satz gel”scht wurde               }
-        testbrk(brk);
-        end;
-      dbSetIndex(mbase,mi);
-      end
     else begin
-      mi:=dbGetIndex(mbase);
-      dbSetIndex(mbase,miBrett);
-      if bereich=3 then begin     { markiert }
-        if aktdispmode<10 then begin
-          i:=0;
-          uu:=(aktdispmode>0);
-          while (i<bmarkanz) and not brk do begin
-            if uu then begin
-              dbGo(ubase,bmarked^[i]);
-              TestBrett(mbrettd('U',ubase));
-              end
-            else begin
-              dbGo(bbase,bmarked^[i]);
-              dbReadN(bbase,bb_brettname,brett);
-              TestBrett(mbrettd(brett[1],bbase));
-              end;
-            inc(i);
-            end;
-          end;
-        end
-      else                   { akt. Brett }
-        case aktdispmode of
-          -1..0 : begin
-                    dbReadN(bbase,bb_brettname,brett);
-                    TestBrett(mbrettd(brett[1],bbase));
-                  end;
-           1..4 : TestBrett(mbrettd('U',ubase));
-             10 : TestBrett(such_brett);
-        else      begin
-                    hinweis(getres2(441,17));   { 'kein Brett gew„hlt' }
-                    me:=false;
-                  end;
-        end;
-      dbSetIndex(mbase,mi);
+      if umlaut then ukonv(sst,suchlen);                        {JG:15.02.00} 
+      if igcase then UpString(sst);
       end;
-    freemem(p,psize);
-    CloseBox;
-    dispose(hdp);
+
+{--Start der Suche--}
+
+    if suchfeld='MsgID' then begin                         {-- Suche: Message-ID  --}
+      suche:=false;
+      if not brk then begin                  
+        markanz:=0;  
+        n:=GetBezug(suchstring);                
+        if n<>0 then begin
+          dbGo(mbase,n);
+          MsgAddmark;
+          end;
+        end;
+      end
+                                             { Anzeige fuer Alle anderen Suchvarianten } 
+    else begin
+      if spez then sst:=txt;   { Bei Spezialsuche nur im Volltext... } 
+      check_seekmode;          { Vorbereiten fuer verknuepfte Suche}
+
+      mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
+      if aktdispmode<>11 then markanz:=0;
+      n:=0; nf:=0;
+      new(hdp);
+      attrtxt(col.coldiahigh);
+      psize:=min(maxavail-10000,60000);
+      getmem(p,psize);
+      brk:=false;
+
+      if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
+        i:=0;
+        while i<markanz do begin
+          dbGo(mbase,marked^[i].recno);
+          msgunmark;
+          TestMsg;
+          if MsgMarked then inc(i);
+          end;
+        aufbau:=true;
+        end
+    
+      else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
+        mi:=dbGetIndex(mbase);
+        dbSetIndex(mbase,0);
+        dbGoTop(mbase);
+        brk:=false;
+        while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
+          dbReadN(mbase,mb_brett,_brett);
+          if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
+                            ((bereich=2) and (_brett[1]='U')) then
+            TestMsg;
+          if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
+            dbNext(mbase);            { Satz gel”scht wurde               }
+          testbrk(brk);
+          end;
+        dbSetIndex(mbase,mi);
+        end
+
+      else begin                                         {-- Suche: aktuelles Brett --}
+        mi:=dbGetIndex(mbase);
+        dbSetIndex(mbase,miBrett);
+        if bereich=3 then begin     { markiert }
+          if aktdispmode<10 then begin
+            i:=0;
+            uu:=(aktdispmode>0);
+            while (i<bmarkanz) and not brk do begin
+              if uu then begin
+                dbGo(ubase,bmarked^[i]);
+                TestBrett(mbrettd('U',ubase));
+                end
+              else begin
+                dbGo(bbase,bmarked^[i]);
+                dbReadN(bbase,bb_brettname,brett);
+                TestBrett(mbrettd(brett[1],bbase));
+                end;
+              inc(i);
+              end;
+            end;
+          end
+        else                                    
+          case aktdispmode of
+            -1..0 : begin
+                      dbReadN(bbase,bb_brettname,brett);
+                      TestBrett(mbrettd(brett[1],bbase));
+                    end;
+             1..4 : TestBrett(mbrettd('U',ubase));
+               10 : TestBrett(such_brett);
+          else      begin
+                      hinweis(getres2(441,17));   { 'kein Brett gew„hlt' }
+                      me:=false;
+                    end;
+          end;
+        dbSetIndex(mbase,mi);
+        end;
+      
+      freemem(p,psize);
+      CloseBox;
+      dispose(hdp);
+      end;
+
+{--Suche beendet--}
+
     if markanz=0 then
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
@@ -618,10 +768,10 @@ begin
       signal;
       end;
     end
+
   else begin   { brk }
 ende:
     suche:=false;
-happyend:             {JG:07.02.00}
     CloseBox;
     end;
   freeres;
@@ -629,10 +779,11 @@ end;
 { R+}
 
 
+
 { Betreff-Direktsuche }
 
 procedure betreffsuche;
-var betr,betr2   : string;
+var betr,betr2   : string;       {Bei Laengenänderung ukonv-Maxlaenge anpassen! }
     brett,_Brett : string[5];
     dummy,ll     : integer;
 
@@ -643,7 +794,7 @@ begin
   dbReadN(mbase,mb_betreff,betr);
   dummy:=ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  ukonv(betr);
+  ukonv(betr,255);
   dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
@@ -652,7 +803,7 @@ begin
     dbReadN(mbase,mb_betreff,betr2);
     dummy:=ReCount(betr2);
     betr2:=trim(betr2);
-    ukonv(betr2);
+    ukonv(betr2,255);
     ll:=min(length(betr),length(betr2));
     if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then
       MsgAddmark;
@@ -2165,6 +2316,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/03/01 08:04:23  jg
+  - UND/ODER Suche mit Suchoptionen "o" + "u"
+    Debug-Checkfenster mit Suchoption "c"
+  - Umlautkonvertierungen beruecksichtigen
+    jetzt Maximalstringlaenge
+
   Revision 1.17  2000/02/29 17:50:40  mk
   OH: - Erkennung der Magics verbessert
 

@@ -169,7 +169,7 @@ function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadre
 {$IFDEF Delphi }
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
-procedure ukonv(var s:string);                { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
+procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 { ================= Implementation-Teil ==================  }
 
@@ -2078,7 +2078,7 @@ end;
 {$ENDIF }
 
 
-procedure ukonv(var s:string);         
+procedure ukonv(var s:string;len:byte);         
 var s2 : string;
   procedure conv(c1,c2:char);
   var p : byte;
@@ -2108,7 +2108,7 @@ begin
   conv('ö','U');
   conv('ê','E');
   conv('Ç','e');
-  s:=left(s2,length(s));   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben } 
+  s:=left(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben } 
 end;
 
 
@@ -2157,6 +2157,12 @@ end;
 end.
 { 
   $Log$
+  Revision 1.14  2000/03/01 08:04:23  jg
+  - UND/ODER Suche mit Suchoptionen "o" + "u"
+    Debug-Checkfenster mit Suchoption "c"
+  - Umlautkonvertierungen beruecksichtigen
+    jetzt Maximalstringlaenge
+
   Revision 1.13  2000/02/29 12:59:16  jg
   - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
     (Wurde akut bei Spezialsuche-Betreff)

@@ -702,36 +702,6 @@ BTW: Ich bin der Meinung, dass man "abort" nur mit einem "b" schreibt.
 MfG
   Stefan
 
-################################################################
-From H.PAKUSCH@LINK-GOE.de Mon Feb 28 18:24:00 2000
-Lines: 16
-Newsgroups: de.comm.software.crosspoint
-Message-ID: <7Zj8gILudmB@pakusch.link-goe.de>
-From: H.PAKUSCH@LINK-GOE.de (Harald Pakusch)
-Path: uni-berlin.de!fu-berlin.de!news.hrz.uni-kassel.de!ud.dinoex.sub.org!link-goe.de!pakusch!not-for-mail
-Subject: Absturz durch "N/S/S/Betreff" (3.20.021)
-Date: Mon, 28 Feb 2000 18:24:00 +0100
-X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A15950
-X-Gateway: ZCONNECT scheune.w12.link-goe.de [UNIX/Connect 0.87]
-X-ZC-PGP-Key-Avail: 
-Xref: uni-berlin.de de.comm.software.crosspoint:39430
-
-
-Hallo!
-
-Folgendes Phaenomen ist mir aufgefallen:
-
-Unter "Nachricht/Suchen/Spezial" kann ich nicht nach "Betreff" suchen.  
-Nach Eingabe des Suchbegriffes laeuft die Suche los, bleibt  
-reproduzierbar bei "Suche: 140" (unten links) stehen und XP  
-verabschiedet sich nach wenigen Sekunden ohne irgendeine Meldung.
-
-Ob dies schon in anderen 3.20er Versionen war weiss ich nicht. Unter  
-3.11 und 3.12d ging's. Nun aber nicht mehr unter 3.20.021.
-
-
-Tschuess, Harald
-
 
 ##########################################################
 From ROBINTON@AMTRASH.comlink.de Mon Feb 28 11:50:00 2000

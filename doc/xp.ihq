@@ -5222,7 +5222,23 @@ Aktionen sind:
 
 @
 530
-Geben Sie den Suchbegriff ein.
+Geben Sie hier die Suchbegriffe ein.
+
+bei AND/OR verknpften Suchen (mit den Such-
+optionen "a" bzw "o") k”nnen sie mehrere Worte 
+in G„nsefsschen (") einschliessen:
+
+"Fischers Fritz" fischt "frische Fische"
+
+sucht dann z.B nach:
+
+"Fischers Fritz"
+"fischt"
+"frische Fische"
+
+
+
+Algemeine Funkionen in Texteingabefeldern:
 
 Mit <<Ctrl V>> oder <<Shift + Ins>> wird das Windows-
 Clipboard eingefuegt. Ein Fehlerton bedeutet, 
@@ -5241,14 +5257,22 @@ geschrieben, der Rest klein.
 
 @
 531
-Geben Sie hier die gewnschten Suchoptionen als Buch-
-stabenfolge ein: 
+Geben Sie hier die gewnschten Suchoptionen
+als Buchstabenfolge ein: 
 
 <<i>>  Groá/Kleinschreibung ignorieren (statt "i"
    kann auch "u" verwendet werden).
 
 <<„>>  Umlaut-sensitive Suche (ae=„, oe=”, usw.) 
    statt "„" kann auch "”" oder "" verwendet werden.
+
+<<a>>  AND-Verknpfung: ALLE im Suchbegriff angegebenen
+   Worte (bzw in "" eingeschlossenen Phrasen) mssen
+   bei der Suche gefunden werden.
+
+<<o>>  OR-Verknpfung: Es gengt wenn ein einziges
+   der angegebenen Worte/Phrasen gefunden wird.   
+
 
 Wenn Sie keine Suchoption wnschen, dann l”schen Sie
 diese, z.B. mit der Leertaste oder <Ctrl Y>.
@@ -5799,6 +5823,13 @@ davon ein, oder lassen Sie das Eingabefeld frei.
 Geben Sie einen Begriff ein, der sich innerhalb der
 gesuchten Texte befinden soll, oder lassen Sie das
 Eingabefeld frei.
+
+bei AND/OR verknpften Text-Suchen (mit den Such-
+optionen "a" bzw "o") k”nnen sie mehrere Worte 
+in G„nsefsschen (") einschliessen:
+
+"Fischers Fritz" fischt "frische Fische"
+
 @
 633
 <<Fido:>>
@@ -5865,6 +5896,17 @@ unterschieden.
 Bei Eingabe von <<„>> wird Umlaut-Sensitiv gesucht,
 d.h. "ae" und "„", "oe" und "”", usw. werden bei der
 suche als gleichwertig angesehen. 
+
+
+Folgende Optionen gelten hier nur fr die Textsuche:
+
+<<a>>  AND-Verknpfung: ALLE im Suchbegriff angegebenen
+   Worte (bzw in "" eingeschlossenen Phrasen) mssen
+   bei der Suche gefunden werden.
+
+<<o>>  OR-Verknpfung: Es gengt wenn ein einziges
+   der angegebenen Worte/Phrasen gefunden wird.   
+
 
 @
 650
