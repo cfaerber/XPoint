@@ -982,7 +982,8 @@ begin   { readmask }
               end;
             end
           else if @custom<>nil then begin
-            new(crec);
+            getmem(crec,sizeof(customrec)); 
+	    system.fillchar(crec^,sizeof(customrec),0);
             with crec^ do begin
               acol:=col;
               x:=xx2; y:=yy;
@@ -996,7 +997,7 @@ begin   { readmask }
                 movefield(+1);
                 end;
               end;
-            dispose(crec);
+            freemem(crec,sizeof(customrec));
             end;
           help_page:=mhelpnr+helpnr;
           maussel:=false;
@@ -1071,6 +1072,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.22  2000/07/19 13:42:48  hd
+  - new/dispose durch get-/freemem ersetzt
+
   Revision 1.21  2000/07/13 17:15:15  mk
   - noch einige ^String-spezifische Probleme beseitigt
 

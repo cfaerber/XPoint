@@ -361,7 +361,8 @@ begin
   inc(masks);
   amask:=masks;
 {  new(mask[amask]);}
-  new(amaskp);
+  getmem(amaskp,sizeof(masktyp));
+  system.fillchar(amaskp^,sizeof(masktyp),0);
   mask[amask] := amaskp;
   with amaskp^ do
   begin
@@ -387,7 +388,7 @@ begin
     while p1<>nil do
     begin       { Selliste freigeben }
       p2:=p1^.next;
-      dispose(p1);
+      freemem(p1,sizeof(selnode));
       p1:=p2;
     end;
     selliste:=nil;
@@ -407,16 +408,17 @@ begin
       with fld[i]^ do begin
         mclearsel(i);
       end;
-      dispose(fld[i]);
+      freemem(fld[i],sizeof(feldrec));
       end;
     t1:=mtxt;
     while t1<>nil do begin           { Textliste freigeben }
       t2:=t1^.next;
-      dispose(t1);
+      freemem(t1,sizeof(textnode));
       t1:=t2;
       end;
     end;
-  dispose(amaskp);
+  freemem(amaskp,sizeof(masktyp));
+  amaskp:=nil;
   dec(masks);
   amask:=masks;
   amaskp:=mask[masks];
@@ -588,7 +590,8 @@ procedure Maddtext(x,y:byte; text:string; att:byte);
 var p : textnodep;
 begin
   with amaskp^ do begin
-    new(p);
+    getmem(p,sizeof(textnode));
+    system.fillchar(p^,sizeof(textnode),0);
     with p^ do begin
       xx:=x+li-1;
       yy:=y;
@@ -617,7 +620,8 @@ begin
       error('no more fields')
     else begin
       inc(felder);
-      new(newfld);
+      getmem(newfld,sizeof(feldrec));
+      system.fillchar(newfld^,sizeof(feldrec),0);
       fld[felder] := newfld;
       lastfld:=fld[felder];
       with lastfld^ do
@@ -959,7 +963,8 @@ var s1 : string[80];
   procedure app(var p:selnodep);
     procedure makenewel;
     begin
-      new(p);
+      getmem(p,sizeof(selnode));
+      system.fillchar(p^,sizeof(selnode),0);
       p^.next:=nil;
       p^.el:=s1;
     end;
@@ -1234,7 +1239,8 @@ end;
 
 begin
   masks:=0; amask:=0;
-  new(mask[0]);
+  getmem(mask[0],sizeof(masktyp));
+  system.fillchar(mask[0]^,sizeof(masktyp),0);
   amaskp:=mask[0];
   with mask[0]^.Stat do
   begin
@@ -1263,6 +1269,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2000/07/19 13:42:48  hd
+  - new/dispose durch get-/freemem ersetzt
+
   Revision 1.15  2000/07/17 13:30:00  mk
   - AnsiString Updates
 
