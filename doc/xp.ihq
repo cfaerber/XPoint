@@ -235,12 +235,16 @@ richten und Bretteinstellungen.
        Wirkung im Lesemodus 'Ungelesen'). Die Be-
        deutung der Symbole ist dann:
 
-       . Brett enth„lt nur zum aktiven Lesemodus
+        Brett enth„lt nur zum aktiven Lesemodus
          passende Nachrichten.
        ¯ Brett enth„lt sowohl zum aktiven Lesemodus
          passende als auch ungelesene Nachrichten.
-       . Brett enh„lt ungelesene, aber keine auf den
+       > Brett enh„lt ungelesene, aber keine auf den
          aktiven Lesemodus passenden Nachrichten.
+         (Anmerkung: das Zeichen ">" symbolisiert
+         einen nach rechts gerichteten dnnen Pfeil,
+         der sich in dieser Hilfe aber leider nicht
+         darstellen l„át.)
 
    +   springt zum n„chsten zutreffenden Brett.
 
@@ -1127,7 +1131,6 @@ durch Halten der rechten Maustaste.
 @
 64
 <<Glossary>>
---------
 
 Mit dieser Funktion k”nnen Sie oft ben”tigte Text-
 bausteine aus einem Men w„hlen oder direkt als
@@ -1143,7 +1146,7 @@ kette), erscheint ein PopUp-Men, aus dem mit den
 Cursortasten ein Textbaustein gew„hlt werden kann.
 
 Um diese Funktion nutzen zu k”nnen, muá eine Datei
-GLOSSARY.CFG im XP-Verzeichnis angelegt werden. In
+GLOSSARY.CFG im XP-Verzeichnis existieren. In
 dieser Datei werden dann die Textbausteine nach
 folgenden Regeln aufgenommen:
 
@@ -1155,9 +1158,15 @@ folgenden Regeln aufgenommen:
 - Alle folgenden Zeilen geh”ren dann zum entspre-
   chenden Textbaustein - bis zur n„chsten Zeile, die
   mit ">" beginnt. Diese Ende-Kennung kann der
-  Beginn des n„chsten Krzels sein, oder nur das
+  Beginn des n„chsten Krzels sein (dann muá ein "<"
+  am Ende derselben Zeile folgen), oder nur das
   Ende des Blocks kennzeichnen oder auch einen
-  Kommentar einleiten.
+  Kommentar einleiten (in den letzten beiden F„llen
+  darf kein "<" am Ende derselben Zeile stehen).
+
+- Leerzeilen auáerhalb eines Textblocks werden
+  ignoriert und dienen nur der besseren šbersicht.
+
 
 Mit <<E>> im PopUp-Men kann die Datei GLOSSARY.CFG
 direkt editiert werden.
@@ -1170,6 +1179,14 @@ ___________________________
 >mfg<
 Mit freundlichen Gráen
 
+
+>Ausgeschnittene Quotebl”cke (incl. Enter)
+>..<
+
+
+[...]
+
+
 >
 
 >--<
@@ -1178,8 +1195,13 @@ Mit freundlichen Gráen
 
 >xp<
 Crosspoint
+
 >oxp<
 OpenXP
+>
+
+>home<
+http://www.openxp.de
 >
 
 >pm<
@@ -4513,10 +4535,10 @@ funktioniert dagegen meist nur Tonwahl.
 295
 Hier werden die Angaben der seriellen Schnittstelle
 eingetragen, die benutzt werden soll. Beispiele
-werden mit F2 angezeigt, sie sollten selbsterkl„rend
-sein. Die Comminit-Angaben werden nur fr die Teile
-von OpenXP benutzt, die bereits auf ObjCOM umgestellt
-sind.
+werden mit <F2> angezeigt, sie sollten selbster-
+kl„rend sein. Die Comminit-Angaben werden nur fr
+die Teile von OpenXP benutzt, die bereits auf ObjCOM
+umgestellt sind.
 @
 296
 Wenn Sie unglcklicher Besitzer eines postzugelasse-
@@ -5629,14 +5651,14 @@ Aktionen sind:
 
 @
 530
-Geben Sie hier den Suchbegriff ein. Mit <F2>
-bekommen Sie eine Auswahl der drei zuletzt
-benutzten Suchbegriffe.
+Geben Sie hier den Suchbegriff ein. Mit <F2> erhal-
+ten Sie eine Auswahl der drei zuletzt benutzten
+Suchbegriffe.
 
-Wenn Sie die Suchoptionen "a" oder "o" nicht ver-
-wenden, wird exakt nach dem Text gesucht, der
-hier eingegeben wurde (natrlich unter Berck-
-sichtigung der Suchoptionen "i" und "„").
+Wenn Sie die Suchoptionen "a" oder "o" nicht verwen-
+den, wird exakt nach dem Text gesucht, der hier ein-
+gegeben wurde (natrlich unter Bercksichtigung der
+Suchoptionen "i" und "„").
 
 
 Bei AND/OR-verknpften Suchl„ufen (mit den Such-
@@ -5665,21 +5687,21 @@ Fritz" noch "fischt" vorkommt.
 
 Allgemeine Funktionen in Texteingabe-Feldern:
 
-<<Ctrl-V>> oder <<Shift-Ins>> fgt die Windows-
-         Zwischenablage (Clipboard) ein. Ein Fehler-
-         ton bedeutet, daá der Clipboard-Inhalt zu
-         groá ist oder nicht existiert.
+<<Ctrl-V>> oder <<Shift-Ins>> fgt die Windows-Zwischenab-
+       lage (Clipboard) ein. Ein Fehlerton bedeutet,
+       daá der Clipboard-Inhalt zu groá ist oder
+       nicht existiert.
 
 <<Ctrl-C>> oder <<Ctrl-Ins>> kopiert den Inhalt des Text-
-         felds in das Clipboard.
+       felds in das Clipboard.
 
 <<Ctrl-G>> wandelt die Eingabe in Groábuchstaben um.
 
 <<Ctrl-K>> wandelt die Eingabe in Kleinbuchstaben um.
 
 <<Ctrl-X>> erzeugt eine gemischte Schreibweise: der
-         erste Buchstabe jedes Wortes wird groá ge-
-         schrieben, der Rest klein.
+       erste Buchstabe jedes Wortes wird groá ge-
+       schrieben, der Rest klein.
 
 @
 531
@@ -7363,8 +7385,8 @@ zum Anzeigen diverser Dateiformate verwenden soll.
 821
 Usenet: Geben sie hier den MIME-Typ ein, fr den
 dieser Eintrag gelten soll. Der MIME-Typ ist die
-MIME-Beschreibung dieser Dateiart im Body (Textteil)
-der Nachricht (z.B. <<image/gif>>).
+MIME-Beschreibung dieses Dateityps im Body (Text-
+teil) der Nachricht (z.B. <<image/gif>>).
 
 Wird eine entsprechende MIME-Nachricht empfangen,
 kann diese mit dem hier eingetragenen Viewer-
@@ -7395,24 +7417,28 @@ erweiterung angeben, da sonst der externe Viewer die
 tempor„re Datei u.U. nicht als HTML-Datei erkennt.
 
 Wenn Sie bei einem Multiformat-MIME-Typ keine Datei-
-erweiterung eintragen, k”nnen Allround-Viewer wie
-"START" unter Windows benutzt werden, um immer auto-
-matisch den passenden Viewer zu verwenden.
+erweiterung eintragen, k”nnen sie unter Windows den
+Befehl "start" verwenden, um immer automatisch die
+Datei an den passenden Viewer zu bergeben (das ist
+der Viewer, der in Windows fr den entsprechenden
+Dateityp registriert ist).
+
+Beispiel: <muá noch erg„nzt werden>
 
 Siehe dazu auch: [Viewer-Sicherheitseinstellungen]@8072
 
 @
 823
 Geben Sie hier an, welches Programm CrossPoint zum
-Anzeigen der angegebenen Dateiart verwenden soll.
+Anzeigen des angegebenen Dateityps verwenden soll.
 
 Das Programm muá sich im aktuellen Verzeichnis
 befinden, ber den DOS-Pfad erreichbar sein, oder
 Sie mssen den vollst„ndigen Zugriffspfad angeben.
 
 Das Programm wird automatisch aktiviert, sobald Sie
-eine Bin„r- oder MIME-Nachricht anw„hlen, die die
-passende Dateiart enth„lt.
+eine Bin„r- oder MIME-Nachricht anw„hlen, die den
+passenden Dateityp enth„lt.
 
 Wenn Sie als Parameter das Makro $FILE verwenden,
 wird es durch den Namen der Datei ersetzt. An-
@@ -7420,8 +7446,8 @@ sonsten setzt XP den Namen der Datei als ersten
 Parameter hinter dem Programmnamen ein.
 
 Falls Sie als Viewer eine Batchdatei eintragen, muá
-der Name der Datei voll ausgeschrieben werden, inkl.
-".BAT".
+der Name der Datei vollst„ndig  ausgeschrieben wer-
+den, inkl. der Erweiterung ".BAT".
 @
 8071
 Wenn unter Windows Dateien mit externen Viewer-
@@ -7445,8 +7471,11 @@ Wenn bei den Einstellungen fr externe Viewer
 (<<Edit/Viewer>>) ein MIME-Typ ohne Dateierweite-
 rung angegeben wurde, k”nnen Nachrichten im MIME-
 Multiformat (z.B. <<Application/octet-stream>>) mit
-einem Allround-Viewer betrachtet werden (unter
-Windows bietet sich hierfr z.B. "START" an).
+einem Allround-Viewer betrachtet werden. Unter
+Windows bietet es sich an, hierfr den Befehl
+"start" zu verwenden, der die Datei automatisch
+an den passenden (fr den fr den jeweiligen Datei-
+typ registrierten) Viewer bergibt.
 
 Allerdings besteht bei dieser Funktion die Gefahr,
 daá Mail-Viren oder andere gef„hrliche Dateien
@@ -9097,8 +9126,8 @@ fachen.
 <<Nachricht / Direkt
 
 Hier k”nnen Sie eine Nachricht direkt an einen User
-oder ein Brett senden. Ohne den Empf„nger vorher in
-Brett oder Userliste anlegen zu mssen.
+oder ein Brett senden, ohne den Empf„nger vorher in
+der Brett- oder Userliste anlegen zu mssen.
 
 <<Server:>>    Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
@@ -10898,6 +10927,25 @@ Der eingebaute Lister von CrossPoint wird zum Anzei-
 gen von Nachrichten, Brettlisten, Dateilisten etc.
 verwendet. Hier finden Sie alle Einstellungen, die
 den internen Lister betreffen.
+@
+12813
+<<Config / Optionen / Editor
+
+Hier k”nnen Sie die (wenigen) Einstellungen fr den
+eingebauten Editor vornehmen. Dieselben Optionen
+erhalten Sie auch im Editor selbst mit <F10>/O bzw.
+mit <Ctrl-O><R>.
+@
+12814
+<<Config / Optionen / Viewer
+
+Hier haben Sie die M”glichkeit, einige Einstellungen
+(vor allem Sicherheitseinstellungen) fr das Be-
+trachten von Bin„r- und MIME-Nachrichten vorzunehmen.
+
+Welcher Viewer fr welchen Dateityp zust„ndig ist,
+k”nnen Sie unter /Edit/Viewer bestimmen.
+
 @
 12804
 <<Config / Optionen / Nachrichten
