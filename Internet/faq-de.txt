@@ -1,0 +1,63 @@
+Allgemeine OpenXP-FAQ
+
+Ich habe vermutlich einen Fehler/Bug entdeckt.
+Es existiert eine Bugliste (siehe Kontakt). Evtl. ist der Fehler dort schon verzeichnet.
+<br>Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe Kontakt). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter.
+<br><font size=-2>2001-01-16</font>
+
+Ich habe einen Vorschlag für ein neues Feature.
+Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden. Ansonsten in die Wunschliste eintragen (beides siehe Kontakt). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
+<br><font size=-2>2001-01-16</font>
+
+Was muß ich bei der Umstellung von XP auf OpenXP beachten?
+Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
+Konfigurationsdateien nichts ;-). Die Datenbank-Indexdateien werden
+automatisch neu aufgebaut, das kann etwas dauern. Bei OpenXP 3.70 ergeben
+sich einige Änderungen, dort in der FAQ nachsehen.
+<br><font size=-2>2001-01-16</font>
+
+Ich habe UKAW/UKA_PPP installiert, seitdem kriege ich wieder eine Registrierungsaufforderung.
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+Was ist der Unterschied zwischen Betaversion, Snapshot und Release Candidate (RC)?
+Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das sich noch in der Entwicklung befindet. Ein Snapshot ist die aktuellste Entwicklerversion und kann sehr instabil sein oder auch Schaden anrichten (!). Ein Release Candidate ist eine Programmversion, die - wie der Name schon sagt :-) - als Kandidat für eine stabile Anwenderversion gehandelt wird.
+<br>Als Anwender sollte man von Snapshots und wenn nicht unbedingt nötig auch von Betaversionen die Finger lassen.
+<br><font size=-2>2001-01-16</font>
+
+Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+Welche Tools werden von OpenXP nicht mehr benötigt?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+Warum gibt es zwei Entwickler-Teams?
+Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe Links) gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.
+<br><font size=-2>2001-01-16</font>
+
+Kann ich problemlos zwischen OpenXP und XP2 wechseln?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+Wie kann ich regelmäßig informiert werden, wenn eine neue (Beta)Version erscheint?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+Wo finde ich eine Version, die noch auf einem 286er läuft?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>
+
+UKAW meldet eventuelle Inkompatibilitäten.
+(Erklärung und Lösung bitte hier eintragen :-).
+<br><font size=-2>2001-01-x</font>
+
+Wie kriege OpenXP mit ISDN zum Laufen?
+Für Dos gibt es nur die Möglichkeit, einen Fossil-Treiber wie cFos (siehe Linkseite) zu installieren und XP den Fossil-Treiber benutzen zu lassen.
+Unter Windows sind CAPI-Hayes-Konverter meistens in den ISDN-Treibern integriert; bei Linux sowieso. Falls sich ein Programmierer mit Ahnung in Sachen CAPI-Programmierung findet, wäre auch eine direkte Unterstützung problemlos einzubauen.
+<br><font size=-2>2001-01-16</font>
+
+Kann ich OpenXP mit ADSL nutzen?
+(nicht beantwortet)
+<br><font size=-2>2001-01-16</font>

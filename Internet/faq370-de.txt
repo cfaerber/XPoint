@@ -7,7 +7,7 @@ Im Moment gehen nur der Fido-(Sysop)-Netcall und UUCP.
 
 SMTP/IMAP/NNTP geht nicht!
 Z.Zt. geht nur POP3 und das Holen der Newsgrouplisten über NNTP.
-Die anderen Protokolle sind z.Zt. noch nicht fertig.
+Die anderen Protokolle sind noch nicht fertig.
 <br><font size=-2>2001-01-16</font>
 
 Die Gebührenberechnung funktioniert nicht.
@@ -33,7 +33,8 @@ Unterstützung von Linux; stabilerer und sauberer Betrieb unter
 Win32; Unterstützung von Remote Modems (Benutzung von Modems,
 die an andere Rechner angeschlossen und über TCP freigegeben
 sind, siehe
-<a href="">Windows-Modem-Sharing-Howto</a>); Unterstützung
+<a href="http://www.linuxdoc.org/HOWTO/mini/Linux-Modem-Sharing.html">
+Linux-Modem-Sharing-Howto</a>); Unterstützung
 von Netcalls over IP (Netcalls über das Internet).
 <br><font size=-2>2001-01-16</font>
 
