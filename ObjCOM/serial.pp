@@ -70,16 +70,20 @@ implementation
 
 function SerOpen(const DeviceName: String): TSerialHandle;
 begin
-  Result := fdOpen(DeviceName, OPEN_RDWR or OPEN_EXCL or OPEN_NOCTTY);
+  Result := fdOpen(DeviceName, OPEN_RDWR or OPEN_EXCL or OPEN_NONBLOCK);
 end;
 
 procedure SerClose(Handle: TSerialHandle);
+var
+  tios: termios;
 begin
+  SerFlush(Handle);
   fdClose(Handle);
 end;
 
 procedure SerFlush(Handle: TSerialHandle);
 begin
+  tcFlush(Handle,TCIOFLUSH);
   fdFlush(Handle);
 end;
 

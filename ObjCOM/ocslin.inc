@@ -24,17 +24,16 @@ end; { destructor Done }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tSerialObj.LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
-                          Parity: Char; StopBits: Byte): Boolean;
+                          Parity: Char; StopBits: Byte; Hardware : Boolean): Boolean;
 begin
-  WriteLn('Opening ',Comport,': ',Baudrate,' ',Databits,Parity,Stopbits);
   LOpen:=False; InitFailed:=True; SHandle:=SerOpen(Comport);
-  if SHandle=0 then begin ErrorStr:='Device not found'; exit end;
-  SetLine(Baudrate,Parity,Databits,Stopbits);
+  if SHandle < 0 then begin ErrorStr:='Device not found'; exit end;
+  SetLine(Baudrate,Parity,Databits,Stopbits,Hardware);
   LOpen:=True; InitFailed:=False;
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
- 
+
 function tSerialObj.GetHandle: Longint;
 begin
   GetHandle:=SHandle;
@@ -58,21 +57,32 @@ end; { func. OpenKeep }
 procedure tSerialObj.ProcIncoming;
 var Buf: Array[1..8192]of Byte; R: Longint;
 begin
-  repeat R:=SerRead(SHandle,Buf,8192); Write(R,'!'); InBuffer.Put(Buf,R) until R<8192;
+   fd_zero(fds);
+   fd_set(SHandle,fds);
+   If Select(SHandle+1,@fds,nil,nil,0) > 0
+   Then Begin
+      R:=SerRead(SHandle,Buf,8192);
+      If r > 0 Then InBuffer.Put(Buf,R);
+   End;
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte);
-var Par: tParityType;
+procedure tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean);
+var
+   Par: tParityType;
+   Flow : tSerialFlags;
 begin
+  Case Hardware of
+     true : Flow := [RtsCtsFlowControl];
+     false : Flow := [];
+  End;
   Case Upcase(Parity) of
     'N': Par:=NoneParity;
     'E': Par:=EvenParity;
     'O': Par:=OddParity;
   end;
-  SerSetParams(SHandle,BpsRate,Databits,Par,Stopbits,[RtsCtsFlowControl]);
-  // Duhhh ;)
+  SerSetParams(SHandle,BpsRate,Databits,Par,Stopbits,Flow);
 end; { proc. tSerialObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -208,6 +218,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.2  2000/10/15 14:54:41  ma
+  - Ken J. Wright: Linux port now working
+
   Revision 1.1  2000/09/29 23:23:03  ma
   - initial release, currently NOT working (since CharAvail blocks)
   - please keep comments in English

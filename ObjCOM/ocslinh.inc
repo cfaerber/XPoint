@@ -11,7 +11,7 @@ type tSerialObj = Object(TCommObj)
         destructor Done; virtual;
 
         function  LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
-                        Parity: Char; StopBits: Byte): Boolean;
+                        Parity: Char; StopBits: Byte; Hardware: Boolean): Boolean;
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  Carrier: Boolean; virtual;
@@ -29,14 +29,14 @@ type tSerialObj = Object(TCommObj)
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte); virtual;
+        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean); virtual;
         procedure PurgeInBuffer; virtual;
         procedure PurgeOutBuffer; virtual;
 
         procedure PauseCom(CloseCom: Boolean); virtual;
         procedure ResumeCom(OpenCom: Boolean); virtual;
         private
-         SHandle: Longint; InBuffer: tRingbuffer;
+         SHandle: Longint; InBuffer: tRingbuffer; fds : fdset;
          procedure ProcIncoming;
      end; { object TSerialObj }
 
@@ -44,6 +44,9 @@ Type tpSerialObj = ^tSerialObj;
 
 {
   $Log$
+  Revision 1.2  2000/10/15 14:54:41  ma
+  - Ken J. Wright: Linux port now working
+
   Revision 1.1  2000/09/29 23:23:03  ma
   - initial release, currently NOT working (since CharAvail blocks)
   - please keep comments in English
