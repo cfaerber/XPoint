@@ -756,6 +756,20 @@ end;
 
 procedure TUUz.WriteHeader;
 var
+  os: TPASCALFileStream;
+begin
+  FlushOutbuf;
+  os := TPascalFileStream.Create(f2);
+  try
+    hd.WriteToStream(os);
+  finally
+    os.Free;
+  end;
+end;
+
+(*
+
+var
   i: integer;
   ml: integer;
   mtype : TMimeContentType;
@@ -841,8 +855,8 @@ begin
             wrs('DISKUSSION-IN: '+Empfaenger[i])
       end
     end;
-    if typ = 'B' then wrs('TYP: BIN'); (* else
-    if typ = 'M' then wrs('TYP: MIME'); *)
+    if typ = 'B' then wrs('TYP: BIN'); ( * else
+    if typ = 'M' then wrs('TYP: MIME'); * )
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     for i := 0 to References.Count -1 do
@@ -919,6 +933,9 @@ begin
     wrs('');
   end;
 end;
+
+*)
+
 
 { Datumsformate:         11 Jan 92 01:02 GMT
                     Mon, 11 Jan 1992 01:02:03 GMT
@@ -3610,6 +3627,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2002/07/20 15:36:41  cl
+  - adaptions for new address handling
+
   Revision 1.105  2002/05/24 06:54:52  mk
   - fixed handling of size parameter for messages
 
