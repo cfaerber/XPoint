@@ -408,7 +408,6 @@ begin
 
     if pm then
     begin
-      { suboptimal }
       if replyto.count>0
         then
           repto:=replyto[0]
@@ -416,9 +415,8 @@ begin
           repto:='';
       reptoanz:=0;
     end
-    { suboptimal }
     else
-      if (followup.count>0) or
+      if (followup.count=0) or
          ((empfanz=1) and (followup.count > 0) and (empfaenger=followup[0])) then repto:=''
          else
          begin
@@ -463,6 +461,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/30 15:59:27  mk
+  - fixed another Bug from Frank Ellert in Get_bezug
+
   Revision 1.32  2000/12/11 11:00:48  mk
   - fixed some of Frank Ellerts header changes
 
