@@ -305,8 +305,10 @@ var i  : integer;
     if _is('menu') then ParMenu:=true else
     if _is('g1')   then ParG1:=true else
     if _is('g2')   then ParG2:=true else
-{$IFDEF Beta } { MK 01/00 keine Beta-Meldung anzeigen }
+{$IFDEF Beta } { Keine Beta-Meldung anzeigen }
     if _is('nb')   then ParNoBeta := true else
+{$ELSE } { nb Åbergehen, auch wenn nicht benîtigt }
+    if _is('nb')   then else
 {$ENDIF }
     if _is('nolock') then ParNolock:=true
     else               begin
@@ -1077,6 +1079,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.11  2000/02/29 17:55:42  mk
+  - /nb wird jetzt in Release-Versionen ignoriert
+
   Revision 1.10  2000/02/28 08:57:05  mk
   - Version auf 3.20 RC1 geandert
 
