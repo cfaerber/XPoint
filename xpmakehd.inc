@@ -106,10 +106,10 @@ var i,res : integer;
   var p : byte;
   begin
     p:=pos(' (',line);
-    if (p=0) or (p<cpos('@',line)) then p:= realnlen
+    if (p=0) or (p<cpos('@',line)) then p:=adrLen
     else
       realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen)));
-    name:=left(line,min(realnlen-1,p-1));
+    name:=left(line,min(adrLen-1,p-1));
   end;
 
   procedure LRead(var s:string; maxlen:byte);
@@ -620,6 +620,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.5  2001/07/01 15:44:33  my
+  SV: - fixed Crash if WAB header was longer than 80 characters
+
   Revision 1.15.2.4  2001/04/28 15:47:37  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
