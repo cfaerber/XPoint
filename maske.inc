@@ -436,14 +436,15 @@ var ax,p,myp  : integer;
   begin
     if afld^.nonedit then xtest1:=false
     else begin
-      if afld^.topcase then begin
-        s:=LowerCase(s);
-        s[1]:=UpCase(s[1]);
-        end;
+      if afld^.topcase then
+      begin
+        s := LowerCase(s);
+        if s<> '' then s[1] := UpCase(s[1]);
+      end;
       x1:=afld^.test1(s);
       if x1 then amaskp^.modified:=true;
       xtest1:=x1;
-      end;
+    end;
   end;
 
   { offs Eingabefelder weiterspringen }
@@ -837,12 +838,11 @@ begin   { readmask }
 
         if (t=^J) and not quitfn(false,modified) then t:='';
         if (t=keyesc) and not quitfn(true,modified) then t:='';
-{JG:03.02.00}
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
-{/JG}
         if (t=keyup) or (t=keystab) then
           if yp>1 then movefield(-1)
-          else if wrapmode=do_wrap then t:=keycpgd;
+          else
+            if wrapmode=do_wrap then t:=keycpgd;
         if (t=keydown) or (t=keytab) or (t=keycr) then
           if yp<felder then movefield(+1)
           else if wrapmode=do_wrap then t:=keycpgu
@@ -977,7 +977,8 @@ begin   { readmask }
               movefield(iif(fwd,+1,0));
               end;
             end
-          else if @custom<>nil then begin
+          else if @custom<>nil then
+          begin
             getmem(crec,sizeof(customrec));
             system.fillchar(crec^,sizeof(customrec),0);
             with crec^ do begin
@@ -1003,7 +1004,8 @@ begin   { readmask }
 
         if (counter>0) and ((t='-') or (t='+')) then
           _count_
-        else if t>=' ' then begin
+        else if t>=' ' then
+        begin
           if replace then
             s:=mask
           else
@@ -1011,20 +1013,28 @@ begin   { readmask }
           if autoup then t[1]:=UpCase(t[1]);
           if autodown then t[1]:=LoCase(t[1]);
           if convcolon and (t[1]=',') then t[1]:='.';
-          if checkbutt and (t=' ') then begin
-            if cont=yesno[1] then s:=yesno[2]
-            else s:=yesno[1];
+          if checkbutt and (t=' ') then
+          begin
+            if cont=yesno[1] then
+              s:=yesno[2]
+            else
+              s:=yesno[1];
             if xtest1(s) then cont:=s;
-            end
-          else begin
-            if allowed='' then valchar:=(pos(t,allchar)>0)
-            else valchar:=(pos(t,allowed)>0);
-            if valchar then begin
-              if (mask='') and (insert_mode or (p+ax>length(s))) then begin
+          end
+          else
+          begin
+            if allowed='' then
+              valchar:=(pos(t,allchar)>0)
+            else
+              valchar:=(pos(t,allowed)>0);
+            if valchar then
+            begin
+              if (mask='') and (insert_mode or (p+ax>length(s))) then
+              begin
                 insert(t,s,p+ax);
                 s:=copy(s,1,maxlen);
-                end
-              else s[p+ax]:=t[1];
+              end else
+                s[p+ax]:=t[1];
               if xtest1(s) then begin
                 cont:=s;
                 rechts;
@@ -1068,6 +1078,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.26  2000/08/06 10:17:27  mk
+  - AnsiString fix
+
   Revision 1.25  2000/07/27 10:12:58  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
