@@ -34,9 +34,6 @@ var uucp : boolean;
   var s    : string;
       ok   : boolean;
       fn   : pathstr;
-      res  : Integer;
-      path : string;
-      x,y  : byte;
   begin
     ChkPPPClientPath:=true;
     with boxpar^ do
@@ -63,7 +60,6 @@ var uucp : boolean;
       dir  : dirstr;
       name : namestr;
       ext  : extstr;
-
   begin
     ChkPPPClient:=true;
     with boxpar^ do
@@ -1523,6 +1519,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.12  2001/07/21 15:15:26  mk
+  - removed some unused variables
+
   Revision 1.24.2.11  2001/07/17 13:23:36  my
   - fixed previous commit: <server>.bfg is now written *before*
     'destdir' is set (UUZ did not use the updated value for

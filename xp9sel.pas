@@ -199,7 +199,6 @@ function PPPClientPathTest(var s:string):boolean;
 var ok   : boolean;
     fn   : pathstr;
     res  : Integer;
-    path : string;
     x,y  : byte;
 begin
   PPPClientPathTest:=true;
@@ -713,6 +712,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.8  2001/07/21 15:15:26  mk
+  - removed some unused variables
+
   Revision 1.1.2.7  2001/06/30 01:01:46  my
   - just changed order of functions "PPPClientTest" and "PPPClientPathTest"
 
