@@ -11,7 +11,6 @@
   open(InFile, "../xpglobal.pas");
   while (<InFile>) {
     if (/mainver.*=.*\'(.*)\.(.*)\'/ig ) { $MAINVER = $1; $SUBVER=$2 }  
-    if (/subver.*=.*\'(.*)\'/ig ) { $SUBVER = $1;  }
   }
   close(InFile);
 
