@@ -438,7 +438,7 @@ var t,lastt: taste;
   procedure Do_XPhilite(wait:boolean);
   const xtxt : string[10] = 'CrossPoint';
   begin
-    if XPdisplayed and (xtxt=xp_xp) and not ParWintime and
+    if XPdisplayed and (xtxt=xp_xp) and (ParWintime=0) and
        (XPhilite<=length(xtxt)) then begin
       repeat
         if ticker<>xphltick then begin

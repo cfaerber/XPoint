@@ -301,7 +301,9 @@ begin
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
-  Int15delay:=ParOS2;
+  if (ParWintime=1) and (ParOS2=0)
+    then Int15delay:=4
+    else Int15delay:=ParOS2;
   if lo(DosVersion)>=20 then OStype:=os_2
   else if lnxversion>0 then OStype:=os_linux
   else if Winversion>0 then OStype:=os_windows
@@ -317,7 +319,7 @@ begin
   screenwidth:=80;
   iomaus:=ParMaus;
   mausfx:=8;
-  UseMulti2:=not ParWintime;
+  UseMulti2:=ParWintime<2;
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
@@ -1588,6 +1590,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/03/01 23:49:02  rb
+  Rechenzeitfreigabe komplett berarbeitet
+
   Revision 1.10  2000/03/01 22:30:21  rb
   Dosemu-Erkennung eingebaut
 

@@ -543,8 +543,11 @@ var c       : char;
   procedure sdelay(n:word);
   begin
     n:=n div system.round(screenlines/2.5);
+    if ParWintime=1 then n:=n div 5;
     while (n>0) and not endss do begin
-      delay(10);
+      if ParWintime=1
+        then mdelay(10)
+        else delay(10);
       dec(n);
       end;
   end;
@@ -558,7 +561,7 @@ var c       : char;
         Move(mem[base:0],mem[base:160],(vlines-1)*160);
 {$ENDIF}
         if i=1 then wrt(1,1,sp(80));
-        delay(10);
+          delay(10);
         end
     else
       clrscr;
@@ -572,7 +575,7 @@ var c       : char;
 {$IFNDEF ver32}
         Move(p^,mem[base:i*160],(vlines-i)*160);
 {$ENDIF}
-        delay(5);
+          delay(5);
         end
     else
 {$IFNDEF ver32}
@@ -1002,6 +1005,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/01 23:49:03  rb
+  Rechenzeitfreigabe komplett Åberarbeitet
+
   Revision 1.7  2000/03/01 22:30:21  rb
   Dosemu-Erkennung eingebaut
 

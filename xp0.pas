@@ -723,8 +723,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string[10] = '';   { Pa·wort }
        ParZeilen  : byte = 0;          { Bildzeilen }
-       ParWintime : boolean = false;   { Rechenleistungs-Freigabe }
-       Partrywin  : boolean = true;    { 0: Rechenleistungs-Freigabe zwingend aus } 
+       ParWintime : byte    = 0;       { Rechenleistungs-Freigabe:
+                                         0=aus, 1=Timeslice, 2=konservativ }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
@@ -1074,6 +1074,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10  2000/03/01 23:49:02  rb
+  Rechenzeitfreigabe komplett Åberarbeitet
+
   Revision 1.9  2000/03/01 22:30:21  rb
   Dosemu-Erkennung eingebaut
 

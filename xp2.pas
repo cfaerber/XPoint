@@ -287,12 +287,18 @@ var i  : integer;
     if isl('pa:') then ParPass:=mid(s,5) else
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
-    if _is('w0')   then Partrywin:=false else                       {/w0 = /w zwingend aus}
-    if _is('w')    then ParWintime:=true else
-    if _is('os2a') then begin ParWintime:=true; ParOS2:=1; end else
-    if _is('os2b') then begin ParWintime:=true; ParOS2:=2; end else
-    if _is('os2c') then begin ParWintime:=true; ParOS2:=3; end else
-    if _is('os2d') then begin ParWintime:=true; ParOs2:=4; end else
+    
+    { Achtung! Folgende Reihenfolge muss bleiben! robo }
+    if _is('w0')   then ParWintime:=0 else
+    if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
+    if _is('os2b') then begin ParWintime:=1; ParOS2:=2; end else
+    if _is('os2c') then begin ParWintime:=1; ParOS2:=3; end else
+    if _is('os2d') then begin ParWintime:=1; ParOs2:=4; end else
+    if _is('w')    then ParWintime:=1 else
+    if _is('w1')   then ParWintime:=1 else
+    if _is('w2')   then ParWintime:=2 else
+    { Reihenfolge bis hier }
+    
     if _is('ss')   then ParSsaver:=true else
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
@@ -329,6 +335,9 @@ var i  : integer;
   end;
 
 begin
+  { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" } 
+  if (winversion>0) or (lo(dosversion)>=20) or (lnxversion>0) 
+    then ParWintime:=1;
   extended:=exist('xtended.15');
   findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
   while doserror=0 do begin
@@ -363,8 +372,6 @@ begin
   ListDebug:=ParDebug;
   if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
     ParAutost:='';
-                         { Unter Win: Default "/w" Rechenzeitfreigabe abschalten mit "/w0" } 
-  Parwintime:=((Winversion>0) or Parwintime) and ((paros2>0) or Partrywin);
 end;                 
 
 
@@ -1079,6 +1086,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.12  2000/03/01 23:49:02  rb
+  Rechenzeitfreigabe komplett Åberarbeitet
+
   Revision 1.11  2000/02/29 17:55:42  mk
   - /nb wird jetzt in Release-Versionen ignoriert
 

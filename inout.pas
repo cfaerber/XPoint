@@ -131,7 +131,7 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        AutodownEnable : boolean = true;
        AutoBremse : boolean  = false;     { eine Zeile pro Tick            }
 
-       Int15Delay : byte     = 0;         { 1=int15, 2=int2f, 3=int28      }
+       Int15Delay : byte     = 0;         { 1=int15, 2=int28, 3=HLT, 4=int2F }
 
 
 var    chml : Array[1..5] of string[230];
@@ -267,7 +267,7 @@ procedure mdelay(msec:word);
 
 IMPLEMENTATION
 
-uses   maus2;
+uses   xp0,maus2;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -608,11 +608,12 @@ begin
                        (moy<=8*mausfy-1) or (moy>=200-8*mausfx)) then begin
             mausiniti;
             mox:=mx; moy:=my;
-            end
+          end
           else begin
             mox:=mausx; moy:=mausy;
-            end;
           end;
+          if ParWintime>0 then mdelay(0);
+        end;
         z:=#255;
         if maus and iomaus and (maust and mausst<>0) then begin
           while maust and mausst and 1=1 do z:=mausl;

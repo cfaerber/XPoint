@@ -58,7 +58,7 @@ again:
   if keypressed {and (forwardkeys='')} then begin
     forward:=(forwardkeys<>'');
     c:=lastcur;
-    if ParWintime then begin
+    if ParWintime>1 then begin
       waitkey:=readkey;
       if waitkey=#0 then waitkey:=waitkey+readkey;
       end
