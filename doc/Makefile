@@ -1,5 +1,5 @@
 #
-# OpenXP Makefile
+# OpenXP doc Makefile
 # <http://www.openxp.de/>
 #
 # $Id$
@@ -7,9 +7,6 @@
 # fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
-# OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
-# Windows 95/98/NT:
-# <ftp://sources.redhat.com/pub/cygwin/latest/make/make-3.79.1-1.tar.gz>
 
 # Das Betriebssystem, fuer das OpenXP uebersetzt werden soll
 # (MUSS gesetzt werden.)
@@ -26,20 +23,10 @@
 #
 #CPU = 386
 
-# Ihr Compiler (nur fpc)
-# (MUSS gesetzt werden.)
-#
-#COMPILER = fpc
-
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
 #
 #prefix = \OXP370
-
-# Compiler-Flags
-# (KANN gesetzt werden.)
-#
-#PFLAGS =
 
 # Soll die Debug-Version erstellt werden?
 # (KANN gesetzt werden.)
@@ -52,7 +39,7 @@
 #
 #contribdir = \CONTRIB
 
-# Flags fuer docform
+# Parameter fuer docform
 # (KANN gesetzt werden.)
 #
 #DOCFORMFLAGS = 72 1 N
@@ -73,10 +60,6 @@ gesetzt werden)
 endif
 
 CPU ?= 386
-
-ifneq ($(COMPILER),fpc)
-$(error Variable "COMPILER" muss auf "fpc" gesetzt werden)
-endif
 
 ifeq (,$(contribdir))
 $(error Variable "contribdir" muss gesetzt werden)
@@ -172,14 +155,20 @@ $(patsubst %,uninstall_%,$(TXT)): uninstall_%: %
 $(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
 	-$(RM) $(datadir)$(SEP)$*
 
-clean:  $(patsubst %,clean_%,$(OLDDOCFILES))
-	-$(RM) *.hlp
+clean:  $(patsubst %,clean_%,$(OLDDOCFILES)) \
+	$(patsubst %,clean_%,$(HELPFILES))
+
+$(patsubst %,clean_%,$(HELPFILES)): clean_%:
+	-$(RM) $*
 
 $(patsubst %,clean_%,$(OLDDOCFILES)): clean_%:
 	-$(RM) $*
 
 #
 # $Log$
+# Revision 1.4  2000/10/05 19:57:20  fe
+# Korrekturen
+#
 # Revision 1.3  2000/09/28 14:21:29  fe
 # Ueberpruefung der Variablen eingebaut.
 # kleinere Korrekturen
