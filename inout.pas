@@ -313,11 +313,11 @@ function memadr(x,y:byte):word;forward;
 
 function ticker:longint;
 var
-  h, m, s, hund : smallword;
+  h, m, s, millis : smallword;
 begin
-  DecodeTime(Now, h, m, s, hund);
+  DecodeTime(Now, h, m, s, millis);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
-    (hund / (100 / TickFreq)));
+    (millis / (1000 / TickFreq)));
 end;
 
 { !! Diese Funktion lieft mit and $70 nur CAPSLock zurÅck,
@@ -1647,6 +1647,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.65  2000/11/19 12:47:49  mk
+  - fixed ticker
+
   Revision 1.64  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 
