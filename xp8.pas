@@ -2093,7 +2093,7 @@ begin
         close(t);
         end
       else begin
-        EditFile(fn,false,false,0,false);
+        EditFile(fn,false,false,false,0,false);
         if _filesize(fn)<=2 then begin
           rfehler(808);   { 'leere Nachricht - nicht abgeschickt' }
           comm:='';
@@ -2189,6 +2189,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.33  2001/10/22 23:12:04  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T)
+
   Revision 1.10.2.32  2001/09/16 20:32:36  my
   JG+MY:- Brettmanager: Text-Markiersuche mit "S" (analog zu Lister),
           Ein-/Ausschalten der markierten Suchbegriffe mit "E", "alte"

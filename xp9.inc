@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
   { --- Bearbeitungs-Routinen fÅr Boxen-Liste -----------------------}
@@ -833,7 +833,7 @@
       begin
         if not exist(cfgfile) then
           if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(cfgfile,false,false,0,false);
+        EditFile(cfgfile,false,false,false,0,false);
         if not exist(cfgfile) then exit;
         if LFNEnabled then cfgfile := GetShortName(cfgfile);
         fsplit(cfgfile,dir,name,ext);
@@ -1860,6 +1860,11 @@
 
 {
   $Log$
+  Revision 1.10.2.49  2001/10/22 23:12:04  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/é/T)
+
   Revision 1.10.2.48  2001/10/16 18:38:39  my
   MY:- Ein paar feste numerische Werte durch globale Variablen ersetzt
 
