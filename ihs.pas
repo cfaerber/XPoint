@@ -10,7 +10,7 @@
 {$I XPDEFINE.INC }
 {$R-,S-}
 
-uses crt,dos,typeform,fileio;
+uses crt,dos,typeform,fileio, xpglobal;
 
 const maxpages = 1200;
       version  = '1.21';
@@ -23,17 +23,17 @@ var  fname,
      f        : file;
      pages    : word;
      pageadr  : array[1..maxpages] of record
-                                        nr  : word;
+                                        nr  : smallword;
                                         adr : longint;
                                       end;
-     qvwused  : array[1..maxpages] of word;
-     qvwun    : word;
+     qvwused  : array[1..maxpages] of smallword;
+     qvwun    : smallword;
      p        : pointer;
 
      gstr     : string;
      xx       : byte;
      obuf     : array[1..obufsize] of byte;
-     obufp    : word;
+     obufp    : smallword;
 
      no_lastnext : boolean;
      leermode : boolean;  { vor jeder Seite eine Leerzeile einfÅgen }
@@ -59,7 +59,7 @@ var  fname,
      blockwrite(f,b,1);
    end;
 
-   procedure blockwfw(w:word);
+   procedure blockwfw(w:smallword);
    begin
      blockwrite(f,w,2);
    end;
@@ -124,7 +124,7 @@ var  fname,
        z             : ^za;
        qvw           : array[1..300] of record
                                           y,x,l : byte;
-                                          nn    : word;
+                                          nn    : smallword;
                                         end;
 
      function nextqvref:word;
@@ -206,7 +206,7 @@ var  fname,
      procedure encode; assembler; {&uses esi}
      asm
 {$IFDEF BP }
-                mov si, offset gs
+                mov si, offset gstr
                 cld
                 lodsb
                 mov cl, al
@@ -421,6 +421,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/04/27 22:59:28  mk
+  - 32 Bit fixes
+
   Revision 1.6  2000/04/26 15:36:44  mk
   - IHS auf 32 Bit portiert
 
