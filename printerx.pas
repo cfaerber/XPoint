@@ -213,7 +213,7 @@ begin
     name[0]:=#0;
   end;
 {$ELSE }
-  Assign(lst, 'lpt1' + Chr(Ord('1')+d));
+  Assign(lst, 'lpt' + Chr(Ord('1')+d));
   if IOResult = 0 then ;
 {$ENDIF}
 end;
@@ -277,6 +277,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/05/13 09:32:56  mk
+  - Crashing Bug unter Win9x und Win32-Version mit FPC behoben
+
   Revision 1.9  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 
