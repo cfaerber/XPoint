@@ -1773,18 +1773,21 @@ fromstart:
 
     if ntZConnect(netztyp) then begin
       if pm then
-        hdp.Empfaenger.Add(empfaenger)            { PM }
+        hdp.FirstEmpfaenger := empfaenger         { PM }
       else if FirstChar(empfaenger)<>'1' then
-        hdp.Empfaenger.Add(mid(empfaenger,2))     { normale AM }
+        hdp.FirstEmpfaenger := mid(empfaenger,2)     { normale AM }
       else
       begin
-        s := mid(empfaenger,3);    { interne PM-Brett-Nachricht }
+        hdp.FirstEmpfaenger:=mid(empfaenger,3);    { interne PM-Brett-Nachricht }
         p:=cpos('/',hdp.FirstEmpfaenger);
         if p=0 then
-          s :=hdp.FirstEmpfaenger+'@'+box
+          hdp.FirstEmpfaenger := hdp.FirstEmpfaenger +'@'+box
         else
-          s[p]:='@';
-        hdp.Empfaenger.Add(s);
+        begin
+          s := hdp.FirstEmpfaenger;
+          s[p] := '@';
+          hdp.FirstEmpfaenger := s;
+        end;
       end;
       if pm then
         hdp.archive:=true;
@@ -1816,7 +1819,7 @@ fromstart:
             hdp.real_box:=box;
           end;
       8 : begin
-            iifs(sData.SenderMail='',username,sData.SenderMail);
+            hdp.absender:=iifs(sData.SenderMail='',username,sData.SenderMail);
             hdp.real_box:=box;
           end;
     end;
@@ -2327,6 +2330,9 @@ finalization
 
 {
   $Log$
+  Revision 1.41  2002/02/06 09:45:02  mk
+  MA:- fixed new empfaenger handling
+
   Revision 1.40  2002/02/01 10:31:55  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList
