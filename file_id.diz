@@ -27,19 +27,19 @@ OpenXP-Team, http://www.openxp.de/
 ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
 º  OpenXP/16 v3.40 RC3            (Update)  º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 21.04.2002       º
+º  Entwickler-Snapshot vom 28.04.2002       º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
 º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
 º mit  weiteren  zahlreichen und  wichtigen º
-º Bugfixes und dem  lange ersehnten Feature º
-º "MIME-Versand":  OpenXP/16 kann jetzt mit º
-º dem   MIME-Standard  konforme  Multipart- º
-º Nachrichten  mit  Datei- und Textanh„ngen º
-º erstellen,  bearbeiten  und  weiterleiten º
-º (RFC/ZConnect). Des weiteren werden jetzt º
-º alle derzeit  bei der  IANA registrierten º
-º Alias-Namen fr die  von XP untersttzten º
-º Zeichens„tze korrekt behandelt.           º
+º Bugfixes, u.a. zum mit  dem letzten Snap- º
+º shot eingefhrten  Feature "MIME-Versand" º
+º und vor allem  zum bisher  v”llig fehler- º
+º haften  Verhalten bei  der Auswahl  einer º
+º anderen  bzw. gemeinsamen  Serverbox ("o" º
+º im Sendefenster). Euro-Untersttzung vor- º
+º bereitet: (<AltGr-E> startet jetzt  nicht º
+º mehr den Editor, sondern erzeugt  bis zur º
+º Fertigstellung das Zeichen #238.          º
 º ----------------------------------------- º
 º Ein Update auf diesen Snapshot wird allen º
 º XP-Usern   dringend  empfohlen,  speziell º
@@ -56,19 +56,19 @@ OpenXP-Team, http://www.openxp.de/
 ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
 º  OpenXP/16 v3.40 RC3     (Komplettpaket)  º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 21.04.2002       º
+º  Entwickler-Snapshot vom 28.04.2002       º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
 º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
 º mit  weiteren  zahlreichen und  wichtigen º
-º Bugfixes und dem  lange ersehnten Feature º
-º "MIME-Versand":  OpenXP/16 kann jetzt mit º
-º dem   MIME-Standard  konforme  Multipart- º
-º Nachrichten  mit  Datei- und Textanh„ngen º
-º erstellen,  bearbeiten  und  weiterleiten º
-º (RFC/ZConnect). Des weiteren werden jetzt º
-º alle derzeit  bei der  IANA registrierten º
-º Alias-Namen fr die  von XP untersttzten º
-º Zeichens„tze korrekt behandelt.           º
+º Bugfixes, u.a. zum mit  dem letzten Snap- º
+º shot eingefhrten  Feature "MIME-Versand" º
+º und vor allem  zum bisher  v”llig fehler- º
+º haften  Verhalten bei  der Auswahl  einer º
+º anderen  bzw. gemeinsamen  Serverbox ("o" º
+º im Sendefenster). Euro-Untersttzung vor- º
+º bereitet: (<AltGr-E> startet jetzt  nicht º
+º mehr den Editor, sondern erzeugt  bis zur º
+º Fertigstellung das Zeichen #238.          º
 º ----------------------------------------- º
 º Ein Update auf diesen Snapshot wird allen º
 º XP-Usern   dringend  empfohlen,  speziell º
