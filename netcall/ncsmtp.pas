@@ -51,7 +51,7 @@ type
 
     { Returns MailEndLine }
     { Parse complete SMTP-Mail }
-    function ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
+    function ParseHeader(Mail: TStringList; StartLine: Integer;
                          Var From, Recip: String): Integer;
 
   public
@@ -270,7 +270,7 @@ end;
 { Parses plain RFC mail buffer. Header should be from StartLine to StopLine.
   Returns end of mail line number. Stores mail body start and end line number
   in globals FromLine and ToLine. }
-function TSMTP.ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
+function TSMTP.ParseHeader(Mail: TStringList; StartLine: Integer;
                            Var From, Recip: String): Integer;
 var
   I: Integer;
@@ -278,41 +278,43 @@ begin
   Recip := '';
   From := '';
   ToLine := Mail.Count - 1;
-  for I := StartLine to StopLine do
+  i := StartLine;
+  while i < Mail.Count do
   begin
     if Pos(SMTPFROMSIGN, Mail[I]) = 1 then
       From := Copy(Mail[I], Length(SMTPFROMSIGN) + 1, Length(Mail[I]));
     if Pos(SMTPTOSIGN, Mail[I]) = 1 then
       Recip := Copy(Mail[I], Length(SMTPTOSIGN) + 1, Length(Mail[I]));
     if Pos(SMTPDATASIGN, Mail[I]) = 1 then
+    begin
       FromLine := I + 1;
+      break;
+    end;
     if Pos(SMTPQUITSIGN, Mail[I]) = 1 then begin
       result := 0;
       exit;
     end;
+    Inc(i);
   end;
-  for I := StopLine to Mail.Count - 1 do
+  for I := i to Mail.Count - 1 do
   begin
     ToLine := I;
-    if (length(Mail[I]) = 1) then
-      if Mail[I][1] = '.' then break;
+    if Mail[I] = '.' then break;
   end;
   Result := ToLine;
   Dec(ToLine);
 end;
 
 procedure TSMTP.PostPlainRFCMails(Mail: TStringList; EnvelopeFrom: String);
-const
-  SMTPHeaderLines = 4;
 var
   From, Recip: String;
   iMail,currLine: Integer;
 begin
-  if Mail.Count < SMTPHeaderLines then exit;
+  if Mail.Count < 4 then exit;
   currLine := 0; iMail := 1;
-  while currLine < Mail.Count - 1 do
+  while currLine < Mail.Count - 2 do
   begin
-    currLine := ParseHeader(Mail, currLine, currLine + SMTPHeaderLines, From, Recip);
+    currLine := ParseHeader(Mail, currLine, From, Recip);
     if currLine = 0 then break;
     Output(mcInfo, res_postmsg, [iMail, ((currLine + 2) / Mail.Count * 100)]);
     PostMail(Mail, iifs(EnvelopeFrom <> '', EnvelopeFrom, From), Recip);
@@ -333,6 +335,10 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/07/23 23:09:08  mk
+  - fixed bug #575458 SMTP: Kopienempfänger gehen nicht
+    more than one RCPT TO: was not correctly handled
+
   Revision 1.19  2002/05/07 15:27:40  ma
   - implemented SMTP AUTH PLAIN and LOGIN
 
