@@ -37,6 +37,7 @@ uses
 
 
 const
+      EdTempFile      = 'TED.TMP';
       EdConfigFile    = 'EDITOR.CFG';
       EdGlossaryFile  = 'GLOSSARY.CFG';
       EdSelcursor     : boolean = false; { Auswahllistencursor }
@@ -48,6 +49,12 @@ type
       charrp   = ^charr;
       EdToken = Byte;
       EdTProc = function(var t:taste):boolean;   { true = beenden }
+
+const
+      laststartline    : longint=0;      { fÅr Z-Anzeige }
+      lastscx          : integer=1; 
+      lastscy          : integer=1;      { Bildschirm (Cursor) }
+      lastxoffset      : integer=0;
 
 
 procedure EdInitDefaults(color:boolean);    { einmal bei Programmstart }
@@ -1843,6 +1850,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.75  2002/01/17 00:09:58  cl
+  - more after-merge fixes
+
   Revision 1.74  2002/01/16 23:48:17  cl
   - after merge fixes
 
