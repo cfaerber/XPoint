@@ -1853,7 +1853,7 @@ rechts |          |  |  |  +--Kai Henningsen
         <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Suchen</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Entmarkieren</GUIMENUITEM></MENUCHOICE> oder
         <KEYCAP MOREINFO="NONE">Ctrl-E</KEYCAP> im Nachrichten-Fenster aufheben.
         Markierte Nachrichten sind an einem vorangestellten
-        <KEYCAP MOREINFO="NONE">&thorn;#254;</KEYCAP> und an einer anderen Farbe zu
+        <KEYCAP MOREINFO="NONE">þ</KEYCAP> und an einer anderen Farbe zu
         erkennen. Auf Wunsch können Sie auch beliebige
         Nachrichten mit <KEYCAP MOREINFO="NONE">Space</KEYCAP> markieren. Die momentan
         markierten Nachrichten können jederzeit mit
@@ -2806,8 +2806,8 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
               in andere Makros einbauen und dadurch eine Art
               <EMPHASIS>Unterprogramme</EMPHASIS> realisieren. Sie
               sollten dazu vorzugsweise Sonderzeichen wie
-              <USERINPUT MOREINFO="NONE">&brvbar;#166;</USERINPUT> oder
-              <USERINPUT MOREINFO="NONE">&iquest;#187;#191;</USERINPUT> verwenden, die Sie
+              <USERINPUT MOREINFO="NONE">¦</USERINPUT> oder
+              <USERINPUT MOREINFO="NONE">¿</USERINPUT> verwenden, die Sie
               normalerweise nicht direkt über die Tastatur
               eingeben werden - dadurch sparen Sie nützliche
               Tasten ein.</PARA></LISTITEM><LISTITEM><PARA>Es wird zwischen Groß- und Kleinschreibung
