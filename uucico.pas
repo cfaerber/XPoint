@@ -1923,37 +1923,12 @@ end.
 
 {
   $Log$
-  Revision 1.9.2.2  2001/08/24 15:52:47  mw
+  Revision 1.9.2.3  2003/01/19 08:26:45  mw
+  MW: - Log-Kosmetik
 
-  - Small Code-Cleanup
+  Revision 1.9.2.2  2001/08/24 15:52:47  mw
+  MW: - Small Code-Cleanup
 
   Revision 1.9.2.1  2001/08/23 11:01:06  mk
   MW:- added missing files
-
-  Revision 1.1.2.9  2001/08/11 13:08:04  mk
-  - compilable again (lfn-changes, added xpovl)
-
-  Revision 1.1.2.8  2001/03/15 07:48:53  mw
-
-
-  - UUCP-Filerequest: LFNs eingebaut.
-
-  Revision 1.1.2.7  2001/01/07 15:40:59  mk
-  - removed last patches (LFN)
-
-  Revision 1.1.2.6  2001/01/07 10:51:03  mk
-  - LFN beim requesten entfernt
-
-  Revision 1.1.2.5  2001/01/01 22:03:03  mk
-  - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
-
-  Revision 1.1.2.4  2001/01/01 12:12:10  mk
-  - verbesserte LFN-UnterstÅtzung
-
-  Revision 1.1.2.3  2000/12/31 11:35:54  mk
-  - fileio.disksize statt lfn.disksize benutzen
-
-  Revision 1.1.2.2  2000/12/30 10:56:45  mk
-  - LFN Unterstuetzung
-
 }

@@ -157,18 +157,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.3  2003/01/19 08:30:56  mw
+  MW: - Log-Kosmetik
+
   Revision 1.5.2.2  2003/01/15 16:02:04  mw
   MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
         bei allen Quelldateien in die Dateien geschrieben.
         Assembler-Quellen nur ID.
-
-  Revision 1.5.2.1  2001/08/23 11:01:06  mk
-  MW:- added missing files
-
-  Revision 1.1.2.1  2001/08/11 22:17:53  mk
-  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
-
-  Revision 1.1  2000/05/11 14:25:02  mk
-  - Utility hinzugefuegt
-
 }
