@@ -176,6 +176,9 @@ function MimeCreateDecoder(encoding:TMIMEEncoding                 ):TMimeTransfe
 function DecodeBase64(const s: String):String;
 function DecodeQuotedPrintable(const s:string):string;
 
+type TSetOfChar = set of char;
+function EncodeQuotedPrintable(const s:string; mustEscape: TSetOfChar): string;
+
 function MimeGetEncodingFromName(const s:string):TMimeEncoding;
 
 { ----------------------------- Charsets ----------------------------- }
@@ -238,7 +241,7 @@ function FidoCharsetToMime(const Name:string):string;
 
 { ----------------------------- RFC 2047 ----------------------------- }
 
-function RFC2047_Decode(ss: string; csTo: TMIMECharsets):String;
+function RFC2047_Decode(const ss: string; csTo: TMIMECharsets):String;
 function RFC2047_Encode(ss: string; csFrom: TMIMECharsets;MaxFirstLen,MaxLen:Integer;EOL:String):String;
 
 { -------------------------- EOL Conversion -------------------------- }
@@ -274,6 +277,7 @@ uses
   crc,
   mime_base64,
   mime_qp,
+  rfc2822,
   utftools,
   typeform;
 
@@ -822,6 +826,20 @@ begin
   result:=DecodeQuotedPrintable_Internal(s,false);
 end;
 
+function EncodeQuotedPrintable(const s:string; mustEscape: Tsetofchar): string;
+var i: integer;
+begin
+  result := '';
+
+  for i:=1 to Length(s) do
+    if s[i] = ' ' then
+      result := result + ' ' else  
+    if s[i] in mustEscape+['_'] then
+      result := result + UpperCase(hex(ord(s[i]),2))
+    else
+      result := result + s[i];
+end;
+
 { ---------------- Content Encoding Helper Functions ----------------- }
 
 function MimeGetEncodingFromName(const s:string):TMimeEncoding;
@@ -1017,10 +1035,13 @@ end;
 
 { ----------------------------- RFC 2047 ----------------------------- }
 
-function RFC2047_Decode(ss: string; csTo: TMimeCharsets):String;
+function RFC2047_Decode(const ss: string; csTo: TMIMECharsets):String;
 var p,q,r: longint;
     e,t:   longint;
     sd:    string;
+
+    qq:    boolean; // in quotes
+    
 label outer;
 
 begin
@@ -1028,10 +1049,20 @@ begin
   q:=1;       { start of data not copied into sd }
   r:=1;       { last non-whitespace char in ss   }
   sd:='';
+
 outer:
   while p<=(length(ss)-9) do { 9 = minimum length for =?c?e?t?= }
   begin
-    if(ss[p]='=')and(ss[p+1]='?')then // start marker
+//  if phrase and(ss[p]='\')then 
+//    inc(p)
+//  else
+//
+//  if phrase and(ss[p]='"')then begin
+//    qq := not qq;
+//    inc(p);
+//  end else
+  
+    if(ss[p]='=')and(ss[p+1]='?') (* and(not(phrase and qq)) *) then // start marker
     begin
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                     ^c          ^e                         ^t  *)
@@ -1084,10 +1115,20 @@ outer:
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                 ^p              ^e           ^e+2          ^t  *)
 
-      if ss[e] in ['B','b'] then { base64 }
-        sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437)
-      else                       { quoted-printable }
-        sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437);
+//    if phrase then 
+//    begin
+//      if ss[e] in ['B','b'] then { base64 }
+//        sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437)
+//      else                       { quoted-printable }
+//         sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437);
+//    end else
+      begin
+        if ss[e] in ['B','b'] then { base64 }
+          sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437)
+        else                       { quoted-printable }
+           sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437);
+      end;
+        
       p:=t+2;
       q:=p;
       Continue;
@@ -1251,6 +1292,10 @@ end;
 
 //
 // $Log$
+// Revision 1.19  2002/04/14 22:11:11  cl
+// - added EncodeQuotedPrintable
+// - fixes for RFC2047_Decode
+//
 // Revision 1.18  2002/03/22 18:22:12  ml
 // - kylix 2 compilable
 //
