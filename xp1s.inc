@@ -401,6 +401,7 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
+    if listvollbild then m2t:=false;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
@@ -427,7 +428,6 @@ begin
         xp1o.ListXHighlight:=ListHighlight;
         end;
       end;
-    if listvollbild then m2t:=false;
     pushhp(39);
     if _maus and listscroller and listvollbild then begin
       attrtxt(col.colliststatus);
@@ -540,6 +540,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/03/06 05:14:15  jg
+  Schînheitsfix fÅr Lister : Uhr bei riesigen Nachrichten rechtzeitig abschalten
+
   Revision 1.10  2000/03/02 21:19:51  jg
   - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
 
