@@ -412,7 +412,7 @@ begin
     writeln(t,'Ausgangsfilter=',aFilter);
     writeln(t,'SysopNetcall=',jnf(sysopnetcall));
     writeln(t,'SysopPacken=',jnf(sysoppack));
-    writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
+    writeln(t,'ReplaceOwn=', jnf(ReplaceOwn));
     writeln(t,'Mailer-Daemon=', jnf(EB_Daemon));
     writeln(t);
     writeln(t,'FidoFakenet=',fpointnet);
@@ -449,7 +449,7 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
-    writeln(t,'Client-Mode=', Jnf(PPPMode));
+    writeln(t,'Client-Mode=', jnf(PPPMode));
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
     writeln(t,'Client-AddServers=', PPPAddServers);
@@ -575,6 +575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.17  2001/06/17 23:56:29  my
+  - minor cosmetics
+
   Revision 1.10.2.16  2001/06/16 15:19:44  my
   - New server configuration parameter "Client-Phone", "Client-Login"
     and "Client-Password"
