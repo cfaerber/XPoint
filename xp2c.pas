@@ -806,34 +806,34 @@ end;
 
 procedure MiscAnzeigeCfg;
 var i,x,y    : Integer;
-    brk,du : boolean;
+	brk,du : boolean;
 begin
 {$IFDEF unix}
   dialog(36,5,'',x,y);
   maddbool(3,2,getres2(260,4),dispusername);  { 'Username anzeigen' }
-  maddstring(3,4,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
-  maddstring(3,5,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
+  maddstring(3,4,getres2(260,13),mheadercustom[1],19,custheadlen,''); mhnr(286); { 'userdef. Kopfzeile 1' }
+  maddstring(3,5,getres2(260,14),mheadercustom[2],19,custheadlen,''); mhnr(287); { 'userdef. Kopfzeile 2' }
 {$ELSE }
   dialog(36,13,'',x,y);
   maddint(3,2,getres2(260,1),scrsaver,5,5,0,10000); mhnr(280);   { 'Screen-Saver (Sek.)  ' }
-    msetvfunc(scstest);
-  maddbool(3,4,getres2(260,2),softsaver);     { 'weich ausblenden' }
-  maddbool(3,5,getres2(260,6),blacksaver);    { 'schwarzschalten' }
-  maddbool(3,7,getres2(260,3),ss_passwort);   { 'Startpa·wort abfragen' }
+	msetvfunc(scstest);
+  maddbool(3,4,getres2(260,2),softsaver); mhnr(281);     { 'weich ausblenden' }
+  maddbool(3,5,getres2(260,6),blacksaver); mhnr(282);   { 'schwarzschalten' }
+  maddbool(3,7,getres2(260,3),ss_passwort); mhnr(284);   { 'Startpa·wort abfragen' }
   du:=dispusername;
-  maddbool(3,9,getres2(260,4),dispusername);  { 'Username anzeigen' }
+  maddbool(3,9,getres2(260,4),dispusername); mhnr(285);  { 'Username anzeigen' }
 
-  maddstring(3,11,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
-  maddstring(3,12,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
+  maddstring(3,11,getres2(260,13),mheadercustom[1],19,custheadlen,''); mhnr(286); { 'userdef. Kopfzeile 1' }
+  maddstring(3,12,getres2(260,14),mheadercustom[2],19,custheadlen,''); mhnr(287); { 'userdef. Kopfzeile 2' }
 {$ENDIF }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
-    scsavetime:=scrsaver;
-    if dispusername<>du then showusername;
+	scsavetime:=scrsaver;
+	if dispusername<>du then showusername;
 
-    for i:=1 to 2 do
-      TrimLastChar(mheadercustom[i], ':');
+	for i:=1 to 2 do
+	  TrimLastChar(mheadercustom[i], ':');
 
     GlobalModified;
   end;
@@ -1548,6 +1548,14 @@ end;
 
 {
   $Log$
+  Revision 1.126  2002/04/05 19:51:09  ms
+  Help ID's for /C/A/D/ corrected:
+
+  - Startpaﬂwort abfragen (284)
+  - Username anzeigen (285)
+  - Kopfzeile 1 (286)
+  - Kopfzeile 2 (287)
+
   Revision 1.125  2002/04/04 21:38:06  ms
   corrected duplicated line after the last check in
 
