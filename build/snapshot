@@ -11,37 +11,46 @@ buildnr=1
 # subversion has to be 12 in this example
 # buildnr has to be 1 in this example
 version="$mainversion"."$subversion"-"$buildnr"
+echo $version
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
+echo $versiondir
 sourcedir="$versiondir"'openxp/'
-scriptdir="$sourcedir"'build/
-#subversion="$1".0
-#cd "$sourcedir"
+echo $sourcedir
+scriptdir="$sourcedir"'build/'
+echo $scriptdir
 #
-#cd ~/openxp/$1/openxp
+echo sourcedir $sourcedir
 cd "$sourcedir"
 pwd
 cvs up -C version.inc
 cd "$scriptdir"
+pwd
+#
 ./inc_build_nr.pl
 eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
 version="$mainversion"."$subversion"-"$buildnr"
+echo $version
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
+echo $versiiondir
 sourcedir="$versiondir"'openxp/'
-scriptdir="$sourcedir"'build/
+echo $sourcedir
+scriptdir="$sourcedir"'build/'
+echo $scriptdir
 cd "$sourcedir"
 echo '- new version: '"$version"' CB'
 commit='- new version: '"$version"' CB'
 commit2='cvs -t ci -m "'"$commit"'" version.inc'
 echo $commit2
-#read a
+pwd
+echo stop
+read a
 #cvs ci -m '- new version: '"$version"' CB' version.inc
 su -c "$commit2" boettger 
-cd "$sourcedir"
 pwd
 #echo $1
 #echo $scriptdir
@@ -49,8 +58,11 @@ pwd
 #sleep 5
 echo $version
 pwd
-#read a
+echo stop
+read a
 echo "building OXP" $version
+echo stop
+read a
 "$scriptdir"buildxp $mainversion
 test -f "openxp" || echo "Ooops, no OXP-Binary"
 test -f "openxp" || exit
