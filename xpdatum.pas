@@ -38,9 +38,17 @@ function TimeZone: string;
 procedure ZtoZCdatum(var datum,zdatum:string);
 procedure ZCtoZdatum(var zdatum, datum:string);
 
+// internal Dateformat:
+// 7.......0  7..43..0  76...210  7..43..0
+// lod(Jahr)  mmmmtttt  thhhhhmm  mmmm0000  }
+
+function LongDateToDateTime(date: LongInt): TDateTime;
+function DateTimeToLongDate(Date: TDateTime): LongInt;
 
 implementation  { ---------------------------------------------------- }
 
+
+uses xp1;
 
 procedure AddD(var datum:s20; hours:shortint);
 var h,min  : integer;
@@ -155,9 +163,29 @@ begin
 end;
 {$ENDIF }
 
+function LongDateToDateTime(date: LongInt): TDateTime;
+begin
+  Result := EncodeDate((date shr 24) mod 100, (date shr 20) and 15, (date shr 15) and 31) +
+    EncodeTime((date shr 10) and 31, (date shr 4) and 63, 0, 0);
+end;
+
+function  DateTimeToLongDate(Date: TDateTime): LongInt;
+var
+  Year, Month, Day: SmallWord;
+  Hour, Min, Sec, MSec: SmallWord;
+begin
+  DecodeDate(Date, Year, Month, Day);
+  DecodeTime(Date, Hour, Min, Sec, MSec);
+  Result := IxDat(Formi(year mod 100,2) +  Formi(month,2)  + Formi(day, 2) +
+    FormI(Hour, 2) + FormI(Min, 2));
+end;
+
 end.
 {
   $Log$
+  Revision 1.15  2000/12/07 19:03:17  mk
+  - added LongDateToDateTime and DateTimeToLongDate
+
   Revision 1.14  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
