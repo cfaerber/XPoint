@@ -8,7 +8,6 @@ Sorry, no help available!
 @
 2
 <<   °°°°°°°°°° = Online Help Contents = °°°°°°°°°°
-                  (Rev. 1.52.2.16)
 
                     [Help on Help]@3
 
@@ -78,105 +77,95 @@ in CrossPoint:
 5
 <<CrossPoint - Support
 
-CrossPoint users get extensive support whenever they
-might be facing problems and/or having questions. It
-doesn't make a difference if you're a registered user
-already (see [Licence Conditions]), or if you're still@6
-testing CrossPoint. If you're facing a problem that
-can't be solved with the online help, please feel
-free to use one of the following channels:
+CrossPoint users can get extensive support whenever
+they might be facing problems and/or have questions.
+It doesn't make any difference if you're a registered
+user (see [Licence Conditions]) or if you're still@6
+evaluating CrossPoint, your questions will still be
+welcome. If you are facing a problem that cannot be
+solved with the online help, please feel free to use
+one of the following channels:
 
 
 þ  Post your question to one of the following support
    forums:
 
-   Z-Netz (*) /DE/COMM/SOFTWARE/CROSSPOINT  (Usenet)
-              /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
-              (both German support forums)
-   FidoNet    XPOINT (International support echo)
-              CROSSPOINT.GER,  CROSSPOINT.EXPERT.GER
-              (both German support echos)
-   MausNet    Maus.Tausch.CrossPoint (German)
-   Usenet     de.comm.software.crosspoint (German)
+   <<FidoNet>>    XPOINT (International support echo)
 
-   Please note that you're welcome if you're posting
-   to even the German forums in English.
+   <<UseNet>>     de.comm.software.crosspoint (German)
 
-  (*) Z-Netz: It is recommended to primarily post to
-              to the Usenet newsgroup, as you will
-              hardly find any active CrossPoint users
-              in the Z-Netz 'board'.
+   Please note that you're welcome to post in English
+   in the German UseNet forum.
 
-   Almost all participants of these forums are expe-
-   rienced XP users; thus you will a solution for
-   almost every problem there. Should your Serverbox
-   not run the respective forum, please contact your
-   SysOp. He can order it for you.
+   Almost all participants in these forums are
+   experienced CrossPoint users, therefore, you
+   should almost certainly find a solution for your
+   problems. Should your Server not carry the
+   respective forum, please contact your SysOp.
+   He/she should be able to get it for you.
 
 
 þ  <<Bug reports>> should be directed as follows
    (in descending priority):
 
    Internet   eMail to: <<dev\@openxp.de>>
-              Here you can directly contact the deve-
-              lopers of the OpenXP team through their
-              mailing list - to which you also can
-              subscribe yourself, if you wish (see
-              <<http://www.openxp.de/>>).
+              Here, you can directly contact the
+              OpenXP developers through their public
+              mailing list. You may subscribe to the
+              list yourself, if you wish.
+              (See <<http://www.openxp.de/>>).
 
    WWW        The OpenXP bug list at SourceForge:
               <<https://sourceforge.net/projects/openxp>>
               This is the starting page of OpenXP at
-              SourceForge. From there you go via the
-              links "<<Bugs>>" and then "<<Submit a Bug>>
-              directly to the input of your bug report.
-              Under "<<Details>>", please leave a mea-
-              ningful and replicable description of
-              the bug as well as your name and eMail
-              address.
+              SourceForge. From there, you go via the
+              links "<<Bugs>>" and then "<<Submit a Bug>>"
+              and then directly to the input of your
+              bug report. Under "<<Details>>", please
+              leave a meaningful and replicable
+              description of the bug, as well as your
+              name and eMail address.
 
    Usenet     Article in: <<de.comm.software.crosspoint>>
 
-   Fido       Echomail in: <<XPDEV.GER>>
-              Via this (unofficial) FidoNet echo you
-              can (via a gate) also post to the
-              OpenXP mailing list: all FidoNet echo-
-              mails which carry a subject starting
-              with "[OpenXP]" are gated to the list.
-              Vice versa, all eMails from the list
-              are gated to this echo.  Please ask
-              your SysOp to get this echo for you.
-              Alternatively, please contact Christian
-              von Busse (<<2:240/2188>>) who is running
-              the gate.
+   Fido       Echomail in: <<XPOINT>>
+              Although not directly linked to the
+              OpenXP development team, the echo
+              moderator is in <<very>> regular contact
+              with them and will pass on your bug
+              reports. The echo is on the R24, R25
+              and Z1 echomail backbones and so you
+              should have no problems getting the
+              echo.
 
 
 <<When you are posting problems and/or questions, you
-<<should ALWAYS indicate your CrossPoint version, if
+<<should ALWAYS indicate your CrossPoint version. If
 <<you have a crash, please ALWAYS give the precise
-<<message you saw when XP crashed.
+<<message you saw when CrossPoint crashed.
 
 
 þ  There are also some interesting homepages about
-   CrossPoint in the Internet:
+   CrossPoint on the Internet:
 
 <<         http://www.openxp.de/
          (official homepage of the OpenXP Project;
-         there you will find also some interesting
-         links to further pages about CrossPoint in
-         the World Wide Web).
+         there you will find some interesting links
+         to further pages about CrossPoint on the
+         World Wide Web).
 
 <<         http://www.crosspoint.de/
-         (official homepage of Peter Mandrella)
+         (official homepage of Peter Mandrella -- the
+         original CrossPoint author).
 
 @
 6
 <<CrossPoint - Licence Conditions
 
 CrossPoint is <<NOT>> free software, it is shareware.
-You may test it without cost for up to 30 days from
-first installation but if you wish to use it after
-that, you must register the programme.
+You may evaluate it without cost for up to 30 days
+from first installation but if you wish to use it
+after that, you must register the programme.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -3715,7 +3704,7 @@ written them (see [message display]).@4015
 <<[ ]>>     They are handled like all other messages
         and are deleted when their time comes.
 @
-244
+245
 Normally the exact date and time of you writing the
 message is stored and displayed publicly with the
 message. However you may not want people to know
@@ -3730,7 +3719,7 @@ The correct date of writing, (assuming your
 computer's date is set correctly), will always be
 recorded.
 @
-245
+246
 CrossPoint will, by default, put one of the forms
 of [Re:] for you onto the subject of messages you@4012
 are replying to.
@@ -3752,7 +3741,7 @@ In Mausnet nothing is added to the subject, in
 UseNet always only a simple single "Re:" is used.
 
 @
-246
+247
 <<ZCONNECT, UUCP/RFC:
 
 You have to set the correct Time Zone here.
@@ -3778,26 +3767,25 @@ Note: if you have the 00:00 switch set, not only does
 this setting have no effect, you don't even see it!
 
 @
-247
+248
 Which types of messages allow CrossPoint to advertise
-itself as the point programme used:
+itself as the Point programme used:
 
 <<always>>  on all messages.
 
-<<AMs>>     only public messages.
+<<AMs>>     only on public messages.
 
-<<PMs>>     only private messages.
+<<PMs>>     only on private messages.
 
 <<never>>   well, never :-(
 
 Note: the "PM" and "never" settings may only be
 changed in the registered version of CrossPoint.
-In MausNet, you can switch it off for PMs only,
-and for FidoNet you find a special setting under
+In MausNet, you can switch it off for PMs only
+and for FidoNet you will find a special setting under
 [Config/Options/Nets].@8104
-
 @
-248
+249
 <<[x]>>     Messages aborted (with <Esc>) at the
         send-window stage will be sent to the news-
         group ¯Unsent (this is the same as if you had
@@ -3815,7 +3803,7 @@ Do not confuse such discarded messages with those
 "outgoing" because they have not been sent yet, but
 are waiting for the next netcall, and are marked "!".
 @
-249
+250
 <<[x]>>     If CrossPoint receives a message with a
         subject beginning with "\##", it sends a
         a confirmation message automatically to the
@@ -3828,7 +3816,7 @@ A receipt confirmation can be easily done by hand,
 with [/Message/Forward/Confirmation].@12106
 
 @
-250
+251
 You may wish to archive PMs that you have sent, for
 future reference.
 
@@ -3838,6 +3826,62 @@ future reference.
 
 
 <<[ ]>>     PMs are not archived, no questions asked.
+@
+252
+<<ZConnect / RFC:
+
+<<[x]>> -> A "blind carbon copy" flag (BCC) is put on
+        all Private messages which have more than one
+        recipient. Therefore, each recipient cannot
+        see who else the message has been sent to.
+
+The BCC flag can be manually enabled/disabled in the
+send-window by pressing <Ctrl+K>.
+
+Please note: In ZConnect, this function is provided
+by the Host software and so this feature is not
+guaranteed to work. If it is important that the CC
+recipients are invisible, it would be better to send
+several separate messages. This does not apply to
+RFC/UUCP and RFC/PPP.
+
+<<All other Nets:>>
+
+Information about carbon copy recipients is not
+transmitted, except if you write it in the message
+text.
+
+@
+253
+<<ZConnect / RFC:
+
+Some authors use a Reply-To header (ZConnect:
+Antwort-an) because they want the reply sent to a
+different address. This is very common in mailing
+lists because it makes answering to the list very
+easy. However, it makes replying to the original
+author quite difficult.
+
+<<[x]>> -> a selection box is displayed where the
+        preferred reply-to address can be chosen
+        (only in connection with Reply-To header).
+
+<<[ ]>> -> the Reply-To address is taken as the
+        recipient.
+@
+256
+The possibility to "crosspost" a message into
+different groups is sometimes abused, to spread
+advertisements. To counter this, CrossPoint can
+delete these copies when there are more recipients
+than specified here.
+
+Hint: If a message is crossposted into more than ten
+groups, it is not worth reading.
+@
+257
+<<[x]>> -> If a Private message has more recipients
+       than specified above, the message is deleted.
 @
 1040
 You can enter a line here which will appear in the
@@ -6752,6 +6796,17 @@ on MagicNET technology. But if you want to try your
 luck now, set this switch ON.
 
 Otherwise leave it OFF.
+@
+8103
+<<[ ]>>  If lines in a Fido message are marked in the
+     message reader and the request function F3 is
+     used, filenames are recognised but magics are
+     <<NOT>>.
+
+<<[x]>>  Magics <<ARE>> recognised.
+
+Magics are short names for often requested files, the
+most common one being FILES.
 @
 8104
 <<[x]>> ->  Echomail tear lines will show the version of
