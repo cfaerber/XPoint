@@ -339,9 +339,9 @@ begin
       otherquotechars:=not otherquotechars;
     end;
 
-  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)   {!}
-     or (t=keyaltb) or (t=keyaltu)) then errsound       {!}
-  else begin                                            {!}
+  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)
+     or (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
+  else begin
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
@@ -986,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/10/11 09:01:31  mk
+  - Resource 136 added
+
   Revision 1.59  2000/10/10 05:10:12  mk
   JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
 
