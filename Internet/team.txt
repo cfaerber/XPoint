@@ -1,7 +1,7 @@
 <a href="http://www.happyarts.de">Markus K&auml;mmerer</a>
 <a href="mailto:mk&#64;openxp.de">mk</a>
-Projektkoordination, Programmierung; Spenden: Konto 268863800, BLZ 38070724, Bank 24
-Project coordination, programming. Donations: Konto 268863800, BLZ 38070724, Bank 24
+Projektkoordination, Programmierung, Spenden per PayPal: <form action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_xclick"><input type="hidden" name="business" value="mk@happyarts.de"><input type="hidden" name="item_name" value="OpenXP"><input type="hidden" name="item_number" value="1"><input type="hidden" name="no_shipping" value="1"><input type="image" src="https://www.paypal.com/images/x-click-but21.gif" border="0" name="submit""></form>
+Project coordination, programming <form action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_xclick"><input type="hidden" name="business" value="mk@happyarts.de"><input type="hidden" name="item_name" value="OpenXP"><input type="hidden" name="item_number" value="1"><input type="hidden" name="no_shipping" value="1"><input type="image" src="https://www.paypal.com/images/x-click-but21.gif" border="0" name="submit"></form>
 
 <a href="http://www.faerber.muc.de/">Claus Färber</a>
 <a href="mailto:cl&#64;openxp.de">cl</a>

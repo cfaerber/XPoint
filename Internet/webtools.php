@@ -125,8 +125,8 @@ function ShowContactTable($tablefile) {
           // Short/mail
           echo("\n<td nowrap=\"nowrap\" align=\"center\">".fgets($ptfile,150)."</td>");
           // Job
-          $job=fgets($ptfile,150);
-          if ($language=="en") { $job=fgets($ptfile,150); } else { fgets($ptfile,150); }
+          $job=fgets($ptfile,750);
+          if ($language=="en") { $job=fgets($ptfile,750); } else { fgets($ptfile,750); }
           echo("\n<td nowrap=\"nowrap\">".$job."</td></tr>");
           // skip empty line
           fgets($ptfile,10);
