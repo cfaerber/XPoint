@@ -298,11 +298,9 @@ var i,res : integer;
       if parname='boundary' then hd.boundary:=left(parval,70) else
       if (parname='name') and (hd.datei='') then hd.datei:=left(parval,40) else
 
-      { 03.02.2000 robo }
       {$ifdef uuzmime}
       if parname='type' then hd.mimereltyp:=left(parval,25) else
       {$endif}
-      { /robo }
 
       if (parname='charset') and (hd.x_charset='') then hd.x_charset:=left(parval,25);
       end;
@@ -543,6 +541,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/07/26 08:18:50  mk
+  - fixes und AnsiString-Updates
+
   Revision 1.28  2000/07/23 14:40:17  mk
   - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
   - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen

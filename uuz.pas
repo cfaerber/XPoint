@@ -139,6 +139,8 @@ var
   RawNews: Boolean;
   eol: Integer;
   TempS: ShortString;
+  // EnthÑlt die eigentliche Nachricht
+  Mail: TStringList;
 
   envemp: string;                       { Envelope-EmpfÑnger }
 
@@ -157,13 +159,16 @@ begin
     s[i] := Char(IBM2ISOTab[byte(s[i])]);
 end;
 
-procedure ISO2IBM(var s: string);
+function ISO2IBM(const s: string): string;
 var
   i: Integer;
 begin
+  SetLength(Result, Length(s));
   for i := 1 to Length(s) do
     if s[i] > #127 then
-      s[i] := Char(ISO2IBMTab[byte(s[i])]);
+      Result[i] := Char(ISO2IBMTab[byte(s[i])])
+    else
+      Result[i] := s[i];
 end;
 
 procedure logo;
@@ -216,7 +221,7 @@ begin
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         if left(switch, 2) = 'w:' then
-          XpWindow := minmax(ival(mid(switch, 3)), 15, 60)
+          XpWindow := minmax(StrToInt(mid(switch, 3)), 15, 60)
         else
           { Envelope-EmpfÑnger aus Received auslesen? }
           if switch = 'graberec' then
@@ -254,7 +259,7 @@ begin
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         if left(switch, 2) = 'w:' then
-          XpWindow := minmax(ival(mid(switch, 3)), 15, 60)
+          XpWindow := minmax(StrToInt(mid(switch, 3)), 15, 60)
         else
           if switch = 's' then
           ParSize := true
@@ -388,6 +393,7 @@ begin
   // zusÑtzliche Headerzeilen einlesen
   AddHd := TStringList.Create;
   EmpfList := TStringList.Create;
+  Mail := TStringList.Create;
 
   Fillchar(hd, sizeof(hd), 0);
   ClearHeader;
@@ -401,6 +407,7 @@ begin
   AddHd.Free;
   EmpfList.Free;
   ULine.Free;
+  Mail.Free;
   freemem(outbuf, bufsize);
 end;
 
@@ -633,13 +640,13 @@ var
     p := cpos(':', zone);
     if p = 0 then
     begin
-      off := minmax(ival(mid(zone, 2)), -13, 13);
+      off := minmax(StrToInt(mid(zone, 2)), -13, 13);
       moff := 0;
     end
     else
     begin
-      off := minmax(ival(copy(zone, 2, p - 2)), -13, 13);
-      moff := minmax(ival(mid(zone, p + 1)), 0, 59);
+      off := minmax(StrToInt(copy(zone, 2, p - 2)), -13, 13);
+      moff := minmax(StrToInt(mid(zone, p + 1)), 0, 59);
     end;
     zone := left(zone, 2) + formi(abs(off), 2) + iifs(moff <> 0, ':' +
       formi(moff, 2), '');
@@ -699,13 +706,13 @@ begin
       s0 := copy(s0, p2 + 1, p - p2 - 1) + ' ' + copy(s0, max(1, p2 - 3), 3) +
         ' ' + trim(mid(s0, p + 1));
     end;
-  t := minmax(ival(getstr), 1, 31);
+  t := minmax(StrToInt(getstr), 1, 31);
   p := pos(LowerCase(getstr), 'janfebmaraprmayjunjulaugsepoctnovdec');
   if p > 0 then
     m := (p + 2) div 3
   else
     m := 1;
-  j := minmax(ival(getstr), 0, 2099);
+  j := minmax(StrToInt(getstr), 0, 2099);
   if j < 100 then
     if j < 70 then
       inc(j, 2000)                      { 2stellige Jahreszahl ergÑnzen }
@@ -1321,7 +1328,8 @@ begin
       mov   ecx, 0
       mov   cl,2
       mov   ebx,offset b64chr
-      mov   edi,offset TempS[1]
+      mov   edi,offset TempS
+      inc   edi
 @@1:  lodsb                       { Byte 1 }
       mov   ah,al
       lodsb                       { Byte 2 }
@@ -1634,7 +1642,7 @@ var
         if ref = '' then
           ref := copy(s0, 2, p - 2)
         else
-          AddRef.Insert(0, copy(s0, 2, p - 2));
+          AddRef.Add(copy(s0, 2, p - 2));
         while (p <= length(s0)) and ((s0[p + 1] = ' ') or (s0[p + 1] = #9)) do
           inc(p);
         delete(s0, 1, p);
@@ -1789,7 +1797,7 @@ var
       end;
     until (p1 = 0) or (p2 = 0);
 
-    ISO2IBM(ss);
+    ss := ISO2IBM(ss);
     for i := 1 to length(ss) do
       if ss[i] < ' ' then ss[i] := ' ';
   end;
@@ -1830,7 +1838,7 @@ var
       begin
         { Zahl 1:1 konvertieren und auf 1..5 begrenzen }
         s0 := left(s0, p - 1);
-        hd.priority := minmax(ival(s0), 1, 5);
+        hd.priority := minmax(StrToInt(s0), 1, 5);
       end;
     end;
   end;
@@ -1935,23 +1943,15 @@ begin
               if zz = 'x-software' then
               programm := s0
             else
-
-              if zz = 'x-z-post' then
+              if (zz = 'x-z-post') or (zz = 'x-zc-post')  then
               postanschrift := s0
             else
-              if zz = 'x-zc-post' then
-              postanschrift := s0
-            else
-              if zz = 'x-z-telefon' then
-              telefon := s0
-            else
-              if zz = 'x-zc-telefon' then
+              if (zz = 'x-z-telefon') or (zz = 'x-zc-telefon') then
               telefon := s0
             else
               if zz = 'x-xp-ctl' then
-              XPointCtl := ival(s0)
+              XPointCtl := StrToInt(s0)
             else
-
               { X-No-Archive Konvertierung }
               if zz = 'x-no-archive' then
             begin
@@ -1959,7 +1959,6 @@ begin
               if LowerCase(s0) = 'yes' then xnoarchive := true;
             end
             else
-
               if zz = 'x-priority' then
               GetPriority
             else
@@ -2000,11 +1999,8 @@ begin
             if zz = 'Followup-to' then
             getFollowup
           else
-            if zz = 'newsreader' then
-            programm := s0
-          else
-            { User-Agent is new in grandson-of-1036 }
-            if zz = 'user-agent' then
+            // User-Agent is new in grandson-of-1036
+            if (zz = 'newsreader') or (zz = 'user-agent') then
             programm := s0
           else
             if zz = 'encrypted' then
@@ -2014,7 +2010,7 @@ begin
             GetPriority
           else
             if zz = 'lines' then
-            Lines := IVal(s0)
+            Lines := StrToInt(s0)
           else
             Uline.Add('U-' + s1);
         end;                          { case }
@@ -2072,10 +2068,8 @@ procedure ConvertMailfile(fn: String; mailuser: string);
 var
   p, p2, p3: Integer;
   i: integer;
-  fp, bp: longint;
   c: char;
   binaer: boolean;
-  TempLines: Integer;
 begin
   write('mail: ', fn);
   inc(mails);
@@ -2164,30 +2158,25 @@ begin
         hd.xempf.Clear;
         hd.xempf.Add(mailuser);
       end;
-      fp := fpos; bp := bufpos;
-      hd.groesse := 0;
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-      TempLines := hd.Lines;
-      while (bufpos < bufanz) and (TempLines > 0) do
+      Mail.Clear;
+      while (bufpos < bufanz) and (hd.Lines > 0) do
       begin
-        ReadString; Dec(TempLines);
+        ReadString; Dec(hd.Lines);
         UnQuotePrintable;
+        if not binaer then s := ISO2IBM(s);
+        Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
-      seek(f1, fp); ReadBuf; bufpos := bp;
       WriteHeader;
     end
     else
       writeln;
-    TempLines := hd.Lines;
-    while (bufpos < bufanz) and (TempLines > 0) do
-    begin
-      ReadString; Dec(TempLines);
-      UnQuotePrintable;
-      if not binaer then ISO2IBM(s);
-      wrfs(s);
-    end;
+
+    // Die komplette Mail nach dem Header schreiben jetzt rausschieben
+    for i := 0 to Mail.Count - 1 do
+      wrfs(Mail[i]);
   end;
   close(f1);
   setfattr(f1, 0);                      { Archivbit abschalten }
@@ -2297,7 +2286,7 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
 
-      if (mempf <> '') and (mempf <> hd.xempf[0]) then
+      if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
       begin
         hd.xoem.Assign(hd.xempf);
         hd.XEmpf.Clear;
@@ -2331,7 +2320,7 @@ begin
           if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
             delfirst(s);
           UnQuotePrintable;             { hÑngt CR/LF an, falls kein Base64 }
-          if not binaer then ISO2IBM(s);
+          if not binaer then s := ISO2IBM(s);
           wrfs(s);
         end;
       end;
@@ -2353,7 +2342,8 @@ end;
 procedure ConvertNewsfile(fn: String);
 var
   f: file;
-  size, ss: longint;
+  i: Integer;
+  size: longint; // Grî·e des Headers in Byte
   fp, bp, n: longint;
   freeze: boolean;
   gzip: boolean;
@@ -2451,10 +2441,7 @@ begin
           inc(n);
           write(#8#8#8#8#8, n: 5);
           inc(news);
-          if RawNews then
-            Size := Bufanz
-          else
-            size := minmax(ival(trim(mid(s, 10))), 0, maxlongint);
+          size := minmax(StrToInt(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
           ReadRFCheader(false, s);
@@ -2463,30 +2450,26 @@ begin
           repeat                        { Header Åberlesen }
             ReadString;
             dec(size, length(s) + eol);
-          until (s = '') and (true or (bufpos >= bufanz));
-          fp := fpos; bp := bufpos;
-          ss := size;
-          while (ss > 0) and (bufpos < bufanz) do
+          until (s = '') or (bufpos >= bufanz);
+          Mail.Clear;
+
+          if hd.Lines = 0 then
+            hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
+
+          while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
           begin                         { Grî·e des Textes berechnen }
-            ReadString;
-            dec(ss, length(s) + eol);
+            ReadString; Dec(hd.lines);
+            dec(Size, length(s) + eol);
             UnQuotePrintable;
+            if not binaer then s := ISO2IBM(s);
+            Mail.Add(s);
             inc(hd.groesse, length(s));
           end;
-          WriteHeader;                  { ZC-Header erzeugen }
-          seek(f1, fp); ReadBuf; bufpos := bp;
-          while (size > 0) and (bufpos < bufanz) do
-          begin                         { ZC-Text anhÑngen }
-            ReadString;
-            dec(size, length(s) + eol);
-            UnQuotePrintable;
-            if not binaer then ISO2IBM(s);
-            wrfs(s);
-          end;
-          { if bufpos < bufanz then
-            ReadString; }
+          WriteHeader;                  { ZC-Header inkl. Grî·enangabe erzeugen }
+          for i := 0 to Mail.Count - 1 do
+            wrfs(Mail[i]);
         end;
-      until (bufpos >= bufanz {-8}) or (s = '');
+      until (bufpos >= bufanz) or (s = '');
       writeln(' - ok');
     end;
   ende:
@@ -2656,7 +2639,55 @@ end;
 
 { --- ZConnect -> UUCP/RFC ------------------------------------------ }
 
-{$I xpfiles.inc}                        { Unix2DOSfile }
+{ fn:         Unix-Dateiname, evtl. incl. Pfad                   }
+{ destdir<>'' -> Namenskollision in diesem Verzeichnis vermeiden }
+
+function Unix2DOSfile(fn,destdir: String): String;
+var p,i     : byte;
+    allowed : set of char;
+    name    : namestr;
+    ext     : extstr;
+    n       : word;
+begin
+  UpString(fn);
+  p:=length(fn);
+  while (fn[p]<>'/') and (p>0) do dec(p);
+  if p>0 then delete(fn,1,p);
+  if fn='~' then fn:='';
+  if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
+    fn:=left(fn,length(fn)-5)+'TAZ';
+  p:=pos(':',fn);
+  if (p>0) and (p<length(fn)) then        { device: entfernen }
+    delete(fn,1,p);
+  p:=length(fn);
+  while (p>0) and (fn[p]<>'.') do dec(p);
+  if p>1 then begin
+    fn:=left(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
+    dec(p);
+    end;
+  allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
+  for i:=1 to p do
+    if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }
+      fn[i]:='-';
+  allowed:=allowed+['.'];
+  for i:=max(1,p) to length(fn) do   { Extension nach DOS konvertieren }
+    if not (fn[i] in allowed) then
+      fn[i]:='-';
+  p:=cpos('.',fn);
+  if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
+    name:=left(fn,8); ext:='';
+    end
+  else begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
+    name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
+    end;
+  if length(ext)=2 then n:=10
+  else n:=1;
+  while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
+    ext:=left(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
+    inc(n);
+    end;
+  Unix2DOSfile:=name+ext;
+end;
 
 function NextUunumber: word;
 begin
@@ -2670,11 +2701,6 @@ end;
 procedure wrs(var f: file; s: string);
 begin
   s := s + #10;
-  blockwrite(f, s[1], length(s));
-end;
-
-procedure wrs_nolf(var f: file; s: string);
-begin
   blockwrite(f, s[1], length(s));
 end;
 
@@ -2737,7 +2763,7 @@ var
   function month(m: string): string;
   begin
     month := copy('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ',
-      ival(m) * 4 - 3, 4);
+      StrToInt(m) * 4 - 3, 4);
   end;
 
   function ZtoRFCdate(date, zdate: string): string;
@@ -2749,9 +2775,9 @@ var
     ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + left(zdate,
       2) +
       left(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
-      copy(zdate, 13, 2) + ' ' + zdate[16] + formi(ival(copy(zdate, 17, p -
+      copy(zdate, 13, 2) + ' ' + zdate[16] + formi(StrToInt(copy(zdate, 17, p -
         17)), 2) +
-      formi(ival(mid(zdate, p + 1)), 2);
+      formi(StrToInt(mid(zdate, p + 1)), 2);
   end;
 
   function formnews(s: string): string;
@@ -3365,7 +3391,7 @@ begin
             MakeXfile('mail');
           end;
         end;
-      if SMTP then copycount := hd.XEmpf.Count;
+      if SMTP then copycount := hd.empfanz;
       inc(copycount);
     until copycount > hd.empfanz;
     inc(adr, hds + hd.groesse);
@@ -3412,6 +3438,9 @@ end.
 
 {
   $Log$
+  Revision 1.51  2000/07/26 08:18:50  mk
+  - fixes und AnsiString-Updates
+
   Revision 1.50  2000/07/23 14:40:16  mk
   - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
   - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen
