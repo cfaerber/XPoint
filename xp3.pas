@@ -39,8 +39,6 @@ const XreadF_error : boolean  = false;
 function  msgmarked:boolean;                 { Nachricht markiert? }
 procedure MsgAddmark;
 procedure MsgUnmark;
-procedure SortMark;
-procedure UnsortMark;
 
 function  ubmarked(rec:longint):boolean;     { User/Brett markiert? }
 procedure UBAddMark(rec:longint);
@@ -475,7 +473,6 @@ var p        : pointer;
     size     : longint;
     adr      : longint;
     berr     : string[40];
-    iso      : boolean;
     hdp      : theader;
     hds      : longint;
     minus    : longint;
@@ -599,28 +596,28 @@ begin
 end;
 
 
-{ R-}
 procedure seekmark(rec:longint; var found:boolean; var x:integer);
-var l,r,m : integer;
+var
+  l,r,m : integer;
 begin
-  if not marksorted then begin
-    l:=-1; r:=markanz;
-    found:=false;
+  found:=false;
+  if not Marked.Sorted then
+  begin
+    l:=-1; r:= Marked.Count;
     while not found and (l+1<r) do begin
       m:=(l+r) div 2;
-      if marked^[m].recno=rec then begin
+      if marked[m].recno=rec then begin
         found:=true; l:=m; end
       else
-        if marked^[m].recno<rec then r:=m
+        if marked[m].recno<rec then r:=m
         else l:=m;
       end;
     x:=l;
     end
   else begin
-    found:=false;
     x:=0;
-    while (x<markanz) and not found do
-      if marked^[x].recno=rec then found:=true
+    while (x< Marked.Count) and not found do
+      if marked[x].recno=rec then found:=true
       else inc(x);
     end;
 end;
@@ -630,12 +627,13 @@ function msgmarked:boolean;
 var found : boolean;
     x     : integer;
 begin
-  if markanz=0 then
+  if Marked.Count =0 then
     msgmarked:=false
-  else begin
+  else
+  begin
     seekmark(dbRecno(mbase),found,x);
     msgmarked:=found;
-    end;
+  end;
 end;
 
 
@@ -648,24 +646,13 @@ begin
   dbReadN(mbase,mb_empfdatum,dat);
   dbRead(mbase,'int_nr',intnr);
   seekmark(dbRecno(mbase),found,x);
-  if not found and (markanz<maxmark) then begin
-    if marksorted then
-      x:=markanz
-    else begin
-      inc(x);
-        if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
-          { ACHTUNG: Hier kein Move wegen berlappenden Speicherbereichen! }
-          { SizeOf(MarkRec) ist 12, die MarkAnz kann bis 5000 sein. Um
-            einen Integer-Ueberlauf nach Multiplikation zu verhindern muss
-            mit Word gerechnet werden, so das mehr als 32kb verschoben werden
-            koennen. Das tritt bei 2731 Nachrichten auf (65536 div 12 div 2) }
-          Move(marked^[x],marked^[x+1],word(sizeof(markrec))*word(markanz-x));
-      end;
-    inc(markanz);
-    marked^[x].recno:=dbRecno(mbase);
-    marked^[x].datum:=dat;
-    marked^[x].intnr:=intnr;
-  end;
+  if not found then
+  begin
+    if Marked.Sorted then
+      Marked.AddWithOptions(dbRecno(mbase), dat, intnr)
+    else
+      Marked.InsertWithOptions(x, dbRecno(mbase), dat, intnr)
+   end;
 end;
 
 
@@ -674,73 +661,9 @@ var found : boolean;
     x     : integer;
 begin
   seekmark(dbRecno(mbase),found,x);
-  if found then begin
-    dec(markanz);
-    if (x<markanz) then
-      Move(marked^[x+1],marked^[x],word(sizeof(markrec))*word((markanz-x)));
-    end;
+  if found then
+    Marked.Delete(x);
 end;
-
-
-procedure SortMark;
-
-  procedure sort(l,r:integer);
-  var i,j : integer;
-      x,y : longint;
-      w   : markrec;
-  begin
-    i:=l; j:=r;
-    x:=marked^[(l+r) div 2].datum;
-    y:=marked^[(l+r) div 2].intnr;
-    repeat
-      while smdl(marked^[i].datum,x) or
-            ((marked^[i].datum=x) and (marked^[i].intnr<y)) do inc(i);
-      while smdl(x,marked^[j].datum) or
-            ((marked^[j].datum=x) and (marked^[j].intnr>y)) do dec(j);
-      if i<=j then begin
-        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-        inc(i); dec(j);
-        end;
-    until i>j;
-    if l<j then sort(l,j);
-    if r>i then sort(i,r);
-  end;
-
-begin
-  if markanz>0 then
-    sort(0,markanz-1);
-  marksorted:=true;
-end;
-
-
-procedure UnsortMark;
-
-  procedure sort(l,r:integer);
-  var i,j : integer;
-      x   : longint;
-      w   : markrec;
-  begin
-    i:=l; j:=r;
-    x:=marked^[(l+r) div 2].recno;
-    repeat
-      while marked^[i].recno>x do inc(i);
-      while marked^[j].recno<x do dec(j);
-      if i<=j then begin
-        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-        inc(i); dec(j);
-        end;
-    until i>j;
-    if l<j then sort(l,j);
-    if r>i then sort(i,r);
-  end;
-
-begin
-  if markanz>0 then
-    sort(0,markanz-1);
-  marksorted:=false;
-end;
-{ R+}
-
 
 procedure seekbmark(_marked:bmarkp; _markanz:integer; rec:longint;
                     var found:boolean; var x:integer);
@@ -1205,6 +1128,10 @@ end;
 
 {
   $Log$
+  Revision 1.84  2002/07/26 08:19:23  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.83  2002/07/25 20:43:54  ma
   - updated copyright notices
 

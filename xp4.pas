@@ -195,15 +195,15 @@ label selende;
               markpos:=0;
               if msgmarked then begin
                 rec:=dbRecno(mbase);
-                while (markpos<markanz) and (marked^[markpos].recno<>rec) do
+                while (markpos<Marked.Count) and (marked[markpos].recno<>rec) do
                   inc(markpos);
-                if markpos=markanz then begin
+                if markpos=Marked.Count then begin
                   write(#7); markpos:=0;
                   end;
                 end
               else
-                if markanz>0 then
-                  dbGo(mbase,marked^[0].recno);
+                if Marked.Count>0 then
+                  dbGo(mbase,marked[0].recno);
             end;
       12 : bezpos:=komofs+pos-1;
     end;
@@ -387,7 +387,7 @@ var t,lastt: taste;
                 end;
               end;
             end;
-      11  : wrongline:=(markanz=0);   { markierte Msgs }
+      11  : wrongline:=(Marked.Count = 0);   { markierte Msgs }
     else { 12, 20 }
       wrongline:=false;
     end;
@@ -403,10 +403,10 @@ var t,lastt: taste;
       _brett : string;
   begin
     case dispmode of
-      11 : if markpos>=markanz-1 then result:=false
+      11 : if markpos>=Marked.Count-1 then result:=false
            else begin
              inc(markpos);
-             dbGo(mbase,marked^[markpos].recno);
+             dbGo(mbase,marked[markpos].recno);
              result:=true;
              end;
       12 : if bezpos>= ReplyTree.Count - 1 then
@@ -455,7 +455,7 @@ var t,lastt: taste;
       11 : if markpos=0 then result:=false
            else begin
              dec(markpos);
-             dbGo(mbase,marked^[markpos].recno);
+             dbGo(mbase,marked[markpos].recno);
              result:=true;
              end;
       12 : if bezpos=0 then result:=false
@@ -595,8 +595,8 @@ var t,lastt: taste;
               end;
         11  : begin
                 markpos:=0;
-                if markanz>0 then
-                  dbGo(dispdat,marked^[0].recno);
+                if Marked.Count>0 then
+                  dbGo(dispdat,marked[0].recno);
               end;
         12  : begin
                 bezpos:=0; komofs:=0; ReplyTreeOfs := 0;
@@ -649,9 +649,9 @@ var t,lastt: taste;
                   dbSkip(dispdat,-1);
               end;
       11    : begin
-                markpos:=markanz-1;
+                markpos:= Marked.Count-1;
                 if MarkPos>= 0 then
-                  dbGo(dispdat,marked^[markpos].recno);
+                  dbGo(dispdat,marked[markpos].recno);
               end;
       12    : begin
                 bezpos:= ReplyTree.Count - 1;
@@ -743,20 +743,21 @@ var t,lastt: taste;
     function multiquote(var brk:boolean):boolean;
     var i : word;
     begin
-      if ReadJNesc(getreps(404,strs(markanz)),true,brk)   { '%s markierte Nachrichten zitieren' }
+      if ReadJNesc(getreps(404,strs(Marked.Count)),true,brk)   { '%s markierte Nachrichten zitieren' }
       and not brk then
       begin
         if force_QuoteMsk = '' then
           Force_QuoteMsk := QuoteSchab(pm);
         mquote:=false;
         multiquote:=true;
-        SortMark;
-        mqfirst:=marked^[0].recno;
-        for i:=0 to markanz-1 do begin
-          dbGo(mbase,marked^[i].recno);
+        Marked.Sort;
+        mqfirst:=marked[0].recno;
+        for i:=0 to Marked.Count - 1 do
+        begin
+          dbGo(mbase,marked[i].recno);
           extract_msg(3,Force_QuoteMsk,fn,true,1);
           end;
-        if not markaktiv then UnsortMark;
+        if not markaktiv then Marked.UnSort;
         GoP;
         end
       else
@@ -882,7 +883,7 @@ var t,lastt: taste;
 
     mquote:=(quote=1); mqfirst:=0;
     if quote=2 then
-      if markanz=0 then
+      if Marked.Count = 0 then
       begin
         quote:=1;
         mquote := true;
@@ -901,8 +902,8 @@ var t,lastt: taste;
       else
         empf:= dbReadStr(dispdat,'username')          { kein Reply.. }
     else begin
-      if (quote=2) and (markanz>0) and not MsgMarked then
-        dbGo(mbase,marked^[0].recno);
+      if (quote=2) and (Marked.Count > 0) and not MsgMarked then
+        dbGo(mbase,marked[0].recno);
       if pm then 
       begin
         if reply and ntReplyToAll(mbNetztyp) then
@@ -1536,7 +1537,7 @@ begin      { --- select --- }
   aktdispmode:=dispmode;
   oldrec:=disprec[1];
   empty:=false;
-  if dispmode=11 then SortMark;
+  if dispmode=11 then Marked.Sort;
   if length(dispspec) > 0 then
     user_msgs:=(dispspec[1]='U')
   else
@@ -1636,7 +1637,7 @@ begin      { --- select --- }
     if p>gl then p:=gl;
     if p0>gl then p0:=gl;
     if (disprec[1]=0) or (aufbau and dbDeleted(dispdat,disprec[1])) or
-       (aufbau and (dispmode=11) and (markpos>=markanz)) then
+       (aufbau and (dispmode=11) and (markpos>=Marked.Count)) then
       if dispmode=12 then begin
         maus_popinside;
         goto selende;
@@ -1698,7 +1699,8 @@ begin      { --- select --- }
       closeflag:=true;
       mauszul:=false; mauszur:=false;
       AktDisprec:=iif(p=0,0,disprec[p]);
-      if suchen then begin
+      if suchen then
+      begin
         if dispmode<1 then
           gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
         else
@@ -1762,9 +1764,9 @@ begin      { --- select --- }
       if dispmode=20 then dbClose(auto);
       enabledisable;
       maus_noinside;
-      if dispmode=11 then UnsortMark;
+      if dispmode=11 then Marked.UnSort;
       menuopt(t);
-      if dispmode=11 then SortMark;
+      if dispmode=11 then Marked.Sort;
       maus_popinside;
       maus_setinside(3,78,4+ya,screenlines-2);  { bei geaenderten Bildzeilen.. }
       if dispmode=20 then dbOpen(auto,AutoFile,1);
@@ -2241,7 +2243,7 @@ begin      { --- select --- }
     -1,3,4 : if empty or (t=keyesc) then selpos:=0
              else selpos:=disprec[p];
         11 : begin
-               UnSortMark;
+               Marked.Unsort;
                MarkUnversandt:=false;
                markaktiv:=false;
                suchergebnis:=false;
@@ -2322,6 +2324,10 @@ end;
 
 {
   $Log$
+  Revision 1.127  2002/07/26 08:19:24  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.126  2002/07/25 20:43:54  ma
   - updated copyright notices
 

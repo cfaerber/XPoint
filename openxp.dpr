@@ -199,6 +199,7 @@ uses
   RegExpr in 'regexpr.pas',
   main in 'main.pas',
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
+  markedlist in 'markedlist.pas',
   mime in 'mime.pas';
 
 {$R *.res}

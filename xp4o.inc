@@ -304,7 +304,8 @@ begin
   brk:=false;
   fillchar(reobuf,sizeof(reobuf),false);
   fillchar(bufsiz,sizeof(bufsiz),0);
-  if repair then markanz:=0;
+  if repair then
+    Marked.Clear;
   while not brk and not dbEOF(bbase) do begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
@@ -333,7 +334,7 @@ begin
   dbSetIndex(bbase,bi);
   if repair then begin
     closebox;
-    if markanz=0 then
+    if Marked.Count =0 then
       hinweis(getres2(448,7))   { 'keine fehlerhaften Nachrichten gefunden' }
     else
       select(11);
@@ -710,11 +711,15 @@ begin
   freeres;
   wrtiming('REORG');
   freemem(p,bsize);
-  markanz:=0;
+  Marked.Clear;
   aufbau:=true; xaufbau:=true;
 end;
 {
   $Log$
+  Revision 1.51  2002/07/26 08:19:24  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.50  2002/07/25 20:43:55  ma
   - updated copyright notices
 

@@ -77,8 +77,8 @@ begin
   setenable(Extrakt,3,dispmode<>11);
   setenable(Extrakt,4,dispmode=12);
   setenable(Extrakt,7,nachrichten);
-  setenable(Suchen,6,markanz<>0);
-  setenable(Suchen,7,markanz<>0);
+  setenable(Suchen,6, Marked.Count<>0);
+  setenable(Suchen,7, Marked.Count<>0);
   setenable(Alle,3,dispmode<>11);
   setenable(Alle,4,dispmode<>11);
 {  setenable(Alle,5,(dispmode<>10) or (rdmode<>1));  /N/A/Lesen }
@@ -226,12 +226,12 @@ begin
             3 : if Suche(getres(416),'Absender','') then select(11); { 'User' }
             4 : if Suche(getres(417),'*','') then select(11);  { 'Spezial' }
             5 : SucheWiedervorlage;
-            6 : if markanz=0 then
+            6 : if Marked.Count =0 then
                   rfehler(415)   { 'Keine Nachrichten markiert!' }
                 else
                   select(11);
             7 : begin
-                  markanz:=0;
+                  Marked.Clear;
                   aufbau:=true;
                 end;
             8 : if Suche(getres(437),'MsgID','') then select(11); { 'MessageID' }
@@ -815,6 +815,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2002/07/26 08:19:24  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.41  2002/07/25 20:43:54  ma
   - updated copyright notices
 

@@ -287,9 +287,6 @@ begin
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
-  maxmark:=5000;
-  getmem(marked,maxmark * sizeof(markrec));
-  markanz:=0; bmarkanz:=0;
   aktdispmode:=0;
 
   fnproc[0,1]:=hilfe;
@@ -1698,6 +1695,10 @@ begin
 
 {
   $Log$
+  Revision 1.149  2002/07/26 08:19:23  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.148  2002/07/25 20:43:54  ma
   - updated copyright notices
 

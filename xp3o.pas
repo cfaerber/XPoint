@@ -620,7 +620,7 @@ var fname   : string;
 
 begin
   XReadF_error:=false;
-  if (art=3) and (markanz=0) then
+  if (art=3) and (Marked.Count = 0) then
     rfehler(302)   { 'Keine Nachrichten markiert!' }
   else if (art=4) and (aktdispmode<>12) then
     rfehler(303)   { 'Kein Kommentarbaum aktiv!' }
@@ -655,7 +655,7 @@ begin
     end;
     if etyp=xTractQuote then schab:=QuoteMsk
     else schab:='';
-    text:=reps(getres2(324,art),strs(markanz));
+    text:=reps(getres2(324,art),strs(Marked.Count));
     pushhp(120);
     useclip:=true;                                                
     ok:=ReadFileName(text,fname,true,useclip);
@@ -716,14 +716,14 @@ begin
                   signal;
                 end;
             3 : begin
-                  SortMark;
+                  Marked.Sort;
                   i:=0;
-                  while (i<markanz) and not XReadF_error do begin
-                    dbGo(mbase,marked^[i].recno);
+                  while (i< Marked.Count) and not XReadF_error do begin
+                    dbGo(mbase,marked[i].recno);
                     readit;
                     inc(i);
                     end;
-                  UnSortMark;
+                  Marked.UnSort;
                   signal;
                 end;
             4 : begin
@@ -795,7 +795,7 @@ begin
     if brk then exit;
     InitPrinter;
     if not checklst then exit;
-    SortMark;
+    Marked.Sort;
     end;
   if art=8 then begin
     fn:='';
@@ -841,7 +841,7 @@ begin
   repeat
     inc(n);
     case aktdispmode of
-      11 : dbGo(mbase,marked^[i].recno);
+      11 : dbGo(mbase,marked[i].recno);
       12 : dbGo(mbase,TReplyTreeItem(ReplyTree[i]^).msgpos);
     end;
     _b := dbReadStrN(mbase,mb_brett);
@@ -904,7 +904,7 @@ begin
     inc(i); inc(ii);
     XP_testbrk(brk);
   until brk or ((aktdispmode=10) and ((_b<>_brett) or dbEOF(mbase) or
-        ((rdmode=1) and xp3o.gelesen))) or ((aktdispmode=11) and (i=markanz))
+        ((rdmode=1) and xp3o.gelesen))) or ((aktdispmode=11) and (i= Marked.Count))
         or ((aktdispmode=12) and (i=ReplyTree.Count));
   dbFlush(mbase);
   if art=8 then
@@ -915,7 +915,7 @@ begin
     end;
   if art=9 then
   begin
-    UnsortMark;
+    Marked.Unsort;
     ExitPrinter;
     end;
   if aktdispmode=10 then begin
@@ -1533,6 +1533,10 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/07/26 08:19:24  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.90  2002/07/25 20:43:54  ma
   - updated copyright notices
 

@@ -1157,12 +1157,11 @@ begin
     else
       UBUnmark(disprec[p]);
     markflag[p]:=0;
-    { Hier kann es zu einer Schutzverletzung kommen, wenn dispbuf = '' }
-    if (dispmode<1) or (dispmode>9) then dispbuf[p][1]:=' ';
+    if (dispmode<1) or (dispmode>9) then if dispbuf[p] <> ''  then dispbuf[p][1]:=' ';
     end
   else
-    if iif(msgs,markanz,bmarkanz)=iif(msgs,maxmark,maxbmark) then
-      fehler(getreps(iif(msgs,419,420),strs(iif(msgs,maxmark,maxbmark))))
+    if bmarkanz=maxbmark then
+      fehler(getreps(iif(msgs,419,420),strs(maxbmark)))
     else begin
       if msgs then
         MsgAddmark
@@ -1181,12 +1180,16 @@ begin
   MsgUnmark;
   aufbau:=true;
   if p=1 then begin
-    if markpos=markanz then begin
+    if markpos = Marked.Count then
+    begin
       markpos:=max(0,markpos-gl);
-      p:=min(gl,markanz);
+      p:=min(gl, Marked.Count);
       end;
-    disprec[1]:=iif(markanz=0,0,marked^[markpos].recno);
-    end;
+    if Marked.Count = 0 then
+      disprec[1]:= 0                                                
+    else
+      disprec[1] := Marked[markpos].recno;
+  end;
 end;
 
 procedure _mark_group;
@@ -1215,7 +1218,7 @@ end;
 
 procedure _unmark_;
 begin
-  if (dispmode>=10) and (dispmode<=19) then markanz:=0
+  if (dispmode>=10) and (dispmode<=19) then Marked.Clear
   else bmarkanz:=0;
   aufbau:=true;
 end;
@@ -1244,7 +1247,7 @@ begin
   brettform(s1,dispflags,false);
   attrtxt(col.colmsgsinfo);
   if dispmode=11 then                                                   { 11=markierte Nachrichten }
-    mwrt(1,4,forms(getreps(421,strs(markanz)),80+ScreenWidth-80))       { ungetestet 'markierte Nachrichten' }
+    mwrt(1,4,forms(getreps(421,strs(Marked.Count)),80+ScreenWidth-80))       { ungetestet 'markierte Nachrichten' }
   else if dispmode=12 then
     mwrt(1,4,forms(getreps(422,bezbetr),80+ScreenWidth-80))             { ' Bezugsnachrichten zu "%s"' }
   else begin
@@ -1312,6 +1315,9 @@ var s       : string;
 
 begin
   newsuch:=suchst;
+  // Wenn Anzeige der '.' eingeschaltet ist, diesen in '/' umwandeln
+  if NewsGroupDisp and (ch = '.') then
+    ch := '/';
   if ch=keybs then
     if ((newsuch='/') and (dispmode<1))
     or (newsuch='') then begin
@@ -1711,15 +1717,15 @@ begin
   GoP;
   write_disp_line(p,0,true);
   bezuege_suchen(brk);
-  if markanz=0 then begin
+  if Marked.Count=0 then begin
     if not brk then errsound;
     end
   else begin
     pp:=0;
     i:=0;
-    while i<markanz do begin
+    while i<Marked.Count do begin
       for j:=1 to gl do
-        if disprec[j]=marked^[i].recno then begin
+        if disprec[j]=marked[i].recno then begin
           pp:=j; goto found;
           end;
       inc(i);
@@ -1728,7 +1734,7 @@ begin
     if pp>0 then p:=pp
     else begin
       if rdmode>0 then all_mode;
-      disprec[1]:=marked^[0].recno; p:=1;
+      disprec[1]:=marked[0].recno; p:=1;
       end;
     end;
   aufbau:=true;
@@ -1781,6 +1787,10 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.104  2002/07/26 08:19:26  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.103  2002/07/25 20:43:55  ma
   - updated copyright notices
 

@@ -86,7 +86,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg,mime,utftools
+ xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg,mime,utftools,markedlist
 {$IFDEF Kylix}
   ,libc
 {$ENDIF}  
@@ -1076,9 +1076,9 @@ end;
 initialization
   ReplyTree := TList.Create;
   BadConfigLinesList := TStringList.Create;
-  New(bmarked);
   GetMem(boxpar, SizeOf(BoxPar^));
-  marked := nil;
+  New(bmarked);
+  Marked := TMarkedList.Create;
   DomainList:= TStringList.Create;
 finalization
   DomainList.Free;
@@ -1087,9 +1087,13 @@ finalization
   Dispose(bmarked);
   FreeMem(Boxpar);
   if AnzHidden > 0 then FreeMem(hidden);
-  if Assigned(Marked) then FreeMem(marked);
+  Marked.Free;
 {
   $Log$
+  Revision 1.146  2002/07/26 08:19:23  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.145  2002/07/25 20:43:54  ma
   - updated copyright notices
 

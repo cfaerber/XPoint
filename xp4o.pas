@@ -114,7 +114,7 @@ Procedure Brettmarksuche;
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp4o2,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,debug,viewer, rfc2822,
+     xp_pgp,debug,viewer, rfc2822, MarkedList,
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
@@ -286,7 +286,7 @@ var x,y   : Integer;
 
     seek            : string;
     found           : boolean;
-    markedback      : marklistp;
+    markedback      : TMarkedList;
     markanzback     : integer;
     check4date      : boolean;
     headersuche     : byte;
@@ -1044,7 +1044,7 @@ restart:
 
 {--Start der Suche--}
 
-    markanzback:=markanz;
+    markanzback:= Marked.Count;
 
     if suchfeld='#' then begin   {Lister-Dummysuche}
       check_seekmode; 
@@ -1055,7 +1055,7 @@ restart:
     if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
       suche:=false;
       if not brk then begin
-        if not holdmarked then markanz:=0;
+        if not holdmarked then Marked.Clear;
         check_seekmode; 
         for i:=0 to suchanz-1 do
         begin
@@ -1086,7 +1086,7 @@ restart:
         end;         
 
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
-      if (aktdispmode<>11) and not holdmarked then markanz:=0;
+      if (aktdispmode<>11) and not holdmarked then Marked.Clear;
       n:=0; nf:=0;
       hdp := THeader.Create;
       attrtxt(col.coldiahigh);
@@ -1096,33 +1096,32 @@ restart:
 
       if aktdispmode=11 then
       begin                       {-- Suche markiert (Weiter suchen) --}
-        getmem(markedback,maxmark * sizeof(markrec));
-        for i:=0 to markanz do markedback^[i]:=marked^[i];
-        markanzback:=markanz;
+        MarkedBack := TMarkedList.Create;
+        MarkedBack.Assign(Marked);
+        markanzback:= Marked.Count;
         i:=0;
-        while i<markanz do begin
-          dbGo(mbase,marked^[i].recno);
+        while i< Marked.Count do begin
+          dbGo(mbase,marked[i].recno);
           msgunmark;
           TestMsg;
           if MsgMarked then inc(i);
           end;
         aufbau:=true;
 
-        if (markanz=0) and (markanzback<>0) then  
+        if (Marked.Count = 0) and (markanzback<>0) then
         begin
           hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-          markanz:=markanzback;
-          for i:=0 to markanz do marked^[i]:=markedback^[i];
-          end;
-        if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));    
-        end
+          Marked.Assign(MarkedBack);
+        end;
+        MarkedBack.Free;
+      end
 
       else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
         brk:=false;
-        while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
+        while not dbEOF(mbase) and not brk do begin
           _brett := dbReadNStr(mbase,mb_brett);
           if (bereich=0) or ((bereich=1) and (FirstChar(_brett)='A')) or
                             ((bereich=2) and (FirstChar(_brett)='U')) then
@@ -1178,7 +1177,7 @@ restart:
 
 {--Suche beendet--}
 
-    if (markanz=0) or (holdmarked and (markanz=markanzback))   { Nichts gefunden }
+    if (Marked.Count =0) or (holdmarked and (Marked.Count=markanzback))   { Nichts gefunden }
     then begin 
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
@@ -1221,7 +1220,7 @@ begin
   brett := dbReadNStr(mbase,mb_brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
-  markanz:=0;
+  Marked.Clear;
   repeat
     betr2 := dbReadNStr(mbase,mb_betreff);
     ReCount(betr2);
@@ -1237,7 +1236,7 @@ begin
   until dbEOF(mbase) or (_brett<>brett);
   closebox;
   signal;
-  if markanz>0 then select(11);
+  if Marked.Count >0 then select(11);
   aufbau:=true;
 end;
 
@@ -1291,7 +1290,7 @@ var x,y,xx : Integer;
   end;
 
 begin
-  markanz:=0;
+  Marked.Clear;
   msgbox(33,5,'',x,y);
   wrt(x+3,y+2,getres(443));   { 'Einen Moment bitte...     %' }
   xx:=wherex-5;
@@ -1303,7 +1302,7 @@ begin
     testbase(bbase);
   CloseBox;
   if not brk then
-    if markanz=0 then
+    if Marked.Count=0 then
       hinweis(getres(444))   { 'keine Wiedervorlage-Nachrichten gefunden' }
     else begin
       signal;
@@ -1849,7 +1848,7 @@ begin
     rc:= findfirst('*.cp',faArchive,sr);
     crashs:=true;
   end;
-  markanz:=0;
+  Marked.Clear;
   moment;
   hdp := THeader.Create;
   while rc=0 do begin
@@ -1949,7 +1948,7 @@ begin
   FindClose(sr);
   Hdp.Free;
   closebox;
-  if markanz=0 then
+  if Marked.Count = 0 then
     hinweis(getres(458))   { 'Keine unversandten Nachrichten vorhanden!' }
   else begin
     MarkUnversandt:=true;
@@ -2505,6 +2504,7 @@ var d     : DB;
     flags : byte;
     log   : text;
     rec,rec2 : longint;
+    brk: boolean;
 
   procedure show;
   begin
@@ -2554,7 +2554,9 @@ begin
   writeln(log,getres2(466,6)+date+getres2(466,7)+time);   { 'DupeKill gestartet am ' / ' um ' }
   last:='';
   dbGoTop(d);
-  while not dbEOF(d) and (dbReadInt(d,'halteflags')=0) do begin
+  brk := false;
+  while not brk and not dbEOF(d) and (dbReadInt(d,'halteflags')=0) do
+  begin
     show;
     repeat
       inc(n);
@@ -2573,9 +2575,10 @@ begin
         end
       else
         dbSkip(d,1);
+      Testbrk(brk);
     until (next<>last) or dbEOF(d);
     last:=next;
-    end;
+  end;
   dbClose(d);
   DeleteFile(MsgFile+dbExt);
   assign(f1,DupeFile+dbExt); rename(f1,MsgFile+dbExt);
@@ -3029,8 +3032,14 @@ begin
       end;
 end;
 
+
+
 {
   $Log$
+  Revision 1.143  2002/07/26 08:19:25  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.142  2002/07/25 20:43:55  ma
   - updated copyright notices
 

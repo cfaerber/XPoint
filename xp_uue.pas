@@ -431,33 +431,34 @@ var tmp,fn   : string;
 
 begin
   dbpos:=dbrecno(mbase);
-  if markanz=0 then
+  if Marked.Count =0 then
     decmark:=false
   else begin
     pushhp(11202);
-    decmark:=ReadJNesc(GetReps(2403,strs(markanz)),true,brk);  { '%s markierte Nachrichten decodieren' }
+    decmark:=ReadJNesc(GetReps(2403,strs(Marked.Count)),true,brk);  { '%s markierte Nachrichten decodieren' }
     pophp;
     if brk then exit;
-    if decmark and (markanz>maxuumark) then begin
+    if decmark and (Marked.Count>maxuumark) then begin
       rfehler1(2404,strs(maxuumark));   { 'Es k”nnen maximal %s markierte Einzelteile decodiert werden.' }
       exit;
       end;
     end;
   if decmark then begin
-    mlanz:=markanz;
+    mlanz:= Marked.Count;
     moment;
     hdp := THeader.Create;
-    sortmark;
-    for i:=1 to mlanz do begin              { Liste der Nachrichten nach }
-      marklist[i].recno:=marked^[i-1].recno;  { Datum sortieren            }
+    Marked.Sort;
+    for i:=1 to mlanz do
+    begin                                    { Liste der Nachrichten nach }
+      marklist[i].recno:=marked[i-1].recno;  { Datum sortieren            }
       dbGo(mbase,marklist[i].recno);
-      ReadHeader(hdp,hds,ok);              { Sekunden dazuaddieren      }
+      ReadHeader(hdp,hds,ok);                { Sekunden dazuaddieren      }
       marklist[i].sortfld[fldDatum]:=(ixdat(hdp.datum) and $ffffff) shl 7 +
                                      ival(copy(hdp.zdatum,13,2));
       marklist[i].sortfld[fldIntnr]:=dbReadInt(mbase,'int_nr');
       marklist[i].sortfld[fldSection]:=0;
-      end;
-    unsortmark;
+    end;
+    Marked.UnSort;
     Hdp.Free;
     GetMsize;
     ReadSections;
@@ -550,6 +551,10 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/07/26 08:19:26  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.33  2002/07/25 20:43:55  ma
   - updated copyright notices
 

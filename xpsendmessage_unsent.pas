@@ -749,13 +749,13 @@ begin
 
   nextwl:=-1;
   msort:=true;
-  if (typ in [1,5,7]) and (markanz>0) then begin
-    s:=getres2(643,iif(typ<>5,iif(markanz>1,1,2),iif(markanz>1,3,4)));
+  if (typ in [1,5,7]) and (Marked.Count>0) then begin
+    s:=getres2(643,iif(typ<>5,iif(Marked.Count>1,1,2),iif(Marked.Count>1,3,4)));
     freeres;
-    if ReadJNesc(reps(s,strs(markanz)),true,brk) then begin    { %s markierte Nachrichten archivieren/weiterleiten }
-      msort:=marksorted;
-      if not msort then SortMark;
-      dbGo(mbase,marked^[0].recno);
+    if ReadJNesc(reps(s,strs(Marked.Count)),true,brk) then begin    { %s markierte Nachrichten archivieren/weiterleiten }
+      msort := Marked.Sorted;
+      if not msort then Marked.Sort;
+      dbGo(mbase,marked[0].recno);
       nextwl:=0;
       end
     else
@@ -1139,13 +1139,14 @@ again:
 
   if nextwl>-1 then begin
     inc(nextwl);
-    if nextwl<markanz then begin
+    if nextwl < Marked.Count then
+    begin
       SafeDeleteFile(fn);
-      dbGo(mbase,marked^[nextwl].recno);
+      dbGo(mbase,marked[nextwl].recno);
       goto again;    { naechste Nachricht wl/arch. }
       end;
     end;
-  if not msort then UnsortMark;
+  if not msort then Marked.UnSort;
 
   if typ<>6 then FlushClose;
 ende:
@@ -1270,18 +1271,18 @@ const mm = 15;
 var i   : integer;
     pms : boolean;
 begin
-  if markanz=0 then
+  if Marked.Count =0 then
     pms_marked:=false
   else begin
-    if markanz>=mm then moment;
+    if Marked.Count >=mm then moment;
     i:=0; pms:=false;
     repeat
-      dbGo(mbase,marked^[i].recno);
+      dbGo(mbase,marked[i].recno);
       if firstchar(dbReadStrN(mbase,mb_brett))='1' then
         pms:=true;
       inc(i);
-    until pms or (i=markanz);
-    if markanz>=mm then closebox;
+    until pms or (i= Marked.Count);
+    if Marked.Count >=mm then closebox;
     pms_marked:=pms;
     end;
 end;
@@ -1322,20 +1323,21 @@ begin
       msgbox(length(getres2(644,4))+13,5,'',x,y);
       mwrt(x+3,y+2,getres2(644,4));    { 'PMs archivieren ...' }
       xx:=wherex+1;
-      for i:=markanz-1 downto 0 do begin
+      for i:= Marked.Count -1 downto 0 do begin
         attrtxt(col.colmboxhigh);
         gotoxy(xx,y+2);
         moff;
         write(i:4);
         mon;
-        dbGo(mbase,marked^[i].recno);
-        if FirstChar(dbReadStrN(mbase,mb_brett))='1' then begin
+        dbGo(mbase,marked[i].recno);
+        if FirstChar(dbReadStrN(mbase,mb_brett))='1' then
+        begin
           MsgUnmark;
           Weiterleit(6,false)
-          end;
         end;
+      end;
     closebox;
-    end;
+  end;
   freeres;
 end;
 
@@ -1343,6 +1345,10 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/07/26 08:19:27  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.24  2002/07/25 20:43:57  ma
   - updated copyright notices
 

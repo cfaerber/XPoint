@@ -195,7 +195,7 @@ var
   end;
 
 begin
-  markanz:=0;
+  Marked.Clear;
   hdp:= THeader.Create;
   ReadHeader(hdp,hds,false);
   ref:=hdp.GetLastReference;
@@ -206,7 +206,7 @@ begin
       MsgAddmark;
       end;
     end;
-  if markanz>0 then
+  if Marked.Count >0 then
   begin
     Hdp.Free;
     exit;
@@ -245,8 +245,7 @@ begin
        dbSkip(mbase,-1);
       end;
   until (_mbrett<>_brett) or dbBOF(mbase) or
-        ((user+ref='') and (markanz>=maxmark)) or
-        ((user+ref<>'') and (markanz>0)) or brk;
+        ((user+ref<>'') and (Marked.Count > 0)) or brk;
   closebox;
 end;
 
@@ -928,6 +927,10 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/07/26 08:19:25  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.56  2002/07/25 20:43:55  ma
   - updated copyright notices
 

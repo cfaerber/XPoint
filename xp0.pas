@@ -27,7 +27,7 @@ unit xp0;
 interface
 
 uses
-  typeform,keys,xpglobal,log,classes,sysutils,fidoglob;
+  typeform,keys,xpglobal,log,classes,sysutils,fidoglob, markedlist;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -49,7 +49,6 @@ const
        menus       = 43;             { Anzahl der Menus (+1 wegen Zusatzmenueerweiterung) }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
-       maxmarklist = 20000;          { Maximale Anzahl markierter Msgs }
        QuoteLen    = 5;              { maximale QuoteChar-Laenge }
        Ablagen     = 20;             { 0..9 }
        maxpmc      = 3;              { installierbare pmCrypt-Verfahren }
@@ -478,14 +477,6 @@ type   textp  = ^text;
        AdrStr      = string;
        CustHeadStr = string;
 
-       markrec  =  packed record
-                     recno : longint;
-                     datum : longint;
-                     intnr : longint;
-                   end;
-
-       marklist = array[0..maxmarklist] of markrec;
-       marklistp= ^marklist;
        bmarklist= array[0..maxbmark-1] of longint;
        bmarkp   = ^bmarklist;
 
@@ -774,7 +765,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ConfigScreenWidth:byte = 80;      { Config-Bildschirmspalten }
        OrgVideomode:word    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
-       marksorted : boolean = false;   { marked^[] sortiert     }
        fidolastseek:string  = '';      { Fido/Fileliste/Suchen  }
        abgelaufen1: boolean = false;   { Betaversion ist abgelaufen }
        abgelaufen2: boolean = false;   {  " }
@@ -1121,9 +1111,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
        domainlist   : TStringList;   { zum Erkennen von Replys auf eigene N. }
 
-       maxmark   : word;             { maximal markierbare Msgs }
-       marked    : marklistp;        { Liste der markierten Msgs     }
-       markanz   : integer;          { Anzahl markierte Msgs         }
+       marked    : TMarkedList;      { Liste der markierten Msgs     }
        bmarked   : bmarkp;           { Liste der markierten Bretter/User }
        bmarkanz  : integer;          { Anzahl markierte Bretter/User }
 
@@ -1223,6 +1211,10 @@ implementation
 
 {
   $Log$
+  Revision 1.167  2002/07/26 08:19:23  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
   Revision 1.166  2002/07/25 20:43:53  ma
   - updated copyright notices
 
