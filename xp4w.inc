@@ -688,7 +688,7 @@ var fn     : pathstr;
   procedure SetKK;
   begin
     if kk then
-      disprec[p]:=dp;
+      disprec[p]:=dpp;
     kk:=false;
     GoP;
   end;
@@ -1608,6 +1608,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.22  2001/05/30 20:47:51  my
+  JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn> and +/-
+       the message that has been entered with the last <Ctrl-Pg*> was replaced in
+       the message window with the message the message reader had entered first.
+
   Revision 1.25.2.21  2001/02/11 20:57:49  mk
   JG:- weiterer Ueberspringen-Bugfix
 
