@@ -1512,6 +1512,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 101 Can't create a new file.
 102 File does not exist.
 103 A message must contain at least one part.
+-
 
 # XP6.INC
 640  Rebuilding message packet...
@@ -3987,6 +3988,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.20  2004/08/26 17:02:01  mf
+# - Fixed "resource missing: 640" bug in debuglog.txt
+#
 # Revision 1.49.2.19  2004/08/26 06:48:54  mf
 # - Cosmetic changes to "Edit/Servers/Edit/Point"
 #
