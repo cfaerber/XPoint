@@ -18,7 +18,7 @@ const {Y_DietIfna = $0001;}   { Capability Flags }
       WaZooFReq  = $8000;
       MyCap      = Zed_Zipper + Zed_Zapper;
 
-      timers     = 5;
+      qTimers     = 5;
 
 type  hellor = record
                  signal         : word;   { = 'o'     }
@@ -43,11 +43,62 @@ var   hello   : record
                   crc : word;
                 end;
       hellopkt: array[0..sizeof(hellor)+1] of char absolute hello;
-      ZedZap  : boolean;
+      ZedZap,LogSending  : boolean;
 
-      _timer : array[0..timers-1] of word;
+      DisplayTimer: tTimer; {Wird zum Ausrechnen der ZModem-Restzeit und zur Anzeige genutzt}
+      Timers : array[0..qTimers-1] of tTimer;
       ENDE   : boolean;
+      Dummy  : LongInt;
 
+{ -- ZModem-Ausgaberoutine -------------------------------}
+
+var LastErrorCount: Integer;
+
+procedure ZModemDispProc;
+var Remain: LongInt;
+begin
+  if(DisplayTimer.Timeout)OR(LastErrorCount<>TransferError)then begin
+    if(DisplayTimer.ElapsedSec<=0)or(TransferBytes<=0)then Remain:=1
+      else Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/DisplayTimer.ElapsedSec)-DisplayTimer.ElapsedSec);
+    if Remain<0 then Remain:=0;
+    DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',False);
+    if LastErrorCount<>TransferError then
+      begin
+        DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,True);
+        LastErrorCount:=TransferError;
+      end;
+    DisplayTimer.SetTimeout(0.5);
+  end;
+end;
+
+procedure ZModemStartProc;
+var I,P: Integer; F: Text;
+const PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
+begin
+  DisplayTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0;
+  if LogSending then
+    DisplayStatus(getres(192)+' '+TransferName+'...',True)
+  else begin
+    DisplayStatus(getres(193)+' '+TransferName+'...',True);
+    {Mailpakete, erkennbar an ihrer Extension, wandern in anderes Verzeichnis als sonstige Dateien.}
+    I:=0; repeat Inc(I); P:=Pos('.'+PKTExtensions[I],TransferName)until(P<>0)or(I>=8);
+    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9']))then
+      TransferPath:=FilePath; {File ist kein Mailpaket}
+  end;
+  DisplayStatus('...',True);
+end;
+
+procedure ZModemEndProc;
+var s: String; t,cps: LongInt;
+begin
+  DispProc:=NIL;
+  if LogSending then s:='Sent ' else S:='Rcvd ';
+  t:=System.Round(DisplayTimer.ElapsedSec); if t<=0 then t:=1; {Verhindere Division by zeros}
+  cps:=TransferBytes DIV t; DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',False);
+  Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '
+           +StrS(t)+'s, '
+           +StrS(cps)+' cps');
+end;
 
 { -- allgemeine Routinen ---------------------------------}
 
@@ -78,40 +129,12 @@ begin
   end;
 end;
 
-procedure StartTimer(nr:word; secs:real);
-begin
-  _timer[nr]:=system.round(secs*TickFreq);
-end;
-
-procedure ProcessTimers;
-const tt   : longint = 0;
-var i      : integer;
-begin
-  if ticker<>tt then begin
-    tt:=ticker;
-    for i:=0 to timers-1 do
-      if _timer[i]>0 then
-        dec(_timer[i]);
-    WrOnlineTime;
-  end;
-end;
-
-function timeout(nr:word):boolean;
-begin
-  timeout:=(_timer[nr]=0);
-end;
-
 {  !!!!!!
   function gettimer(nr:word):word;
   begin
-    gettimer:=_timer[nr]
+    gettimer:=Timers[nr]
   end;
 }
-
-function gettimersec(nr:word):word;
-begin
-  gettimersec:=system.round(_timer[nr]/TickFreq);
-end;
 
 function ProductName(pc:word):string;
 var t : text;
@@ -136,15 +159,6 @@ begin
     close(t);
   end;
 end;
-
-procedure seriellwrite(c:char);
-begin
-  if IgCTS then
-    sendbyte(sh,byte(c))
-  else
-    hsendbyte(sh,byte(c));
-end;
-
 
 { -- Datumsroutinen --------------------------------------}
 
@@ -211,7 +225,7 @@ const ACK        = #$06;     { s. FTS-006, S. 10 }
       YooHoo     = #$f1;
       TSync      = #$ae;
 
-      ti_All1    = 0;
+      ti_ALL1    = 0;
       ti_CRs     = 1;
       ti_Sync    = 0;
       ti_NAK     = 1;
@@ -268,65 +282,65 @@ begin
   fmSS:=0;
   NAKtimer:=false;
   repeat
-    ProcessTimers;
+    DebugLog('XPFM','fmSS state: '+Char(state+48),4);
     case state of
       0 : begin                           { FTS-007 S. 8 }
-            StartTimer(ti_All1,30);
-            StartTimer(ti_CRs,2);
+            Timers[ti_ALL1].SetTimeout(30);
+            Timers[ti_CRs].SetTimeout(2);
             state:=1;
           end;
       1 : begin
-            if timeout(ti_All1) or not Carrier then begin
-              if not carrier then
+            if Timers[ti_ALL1].Timeout or not CommObj^.Carrier then begin
+              if not CommObj^.Carrier then
                 LogCarrier
               else
                 log(ErrChar,'login timeout');
               state:=99;
               aresult:=EL_nologin;
             end;
-            if Receive(sh,byte(c)) and (c=#13) then begin
-              mdelay(1000);
-              state:=2;
+            if CommObj^.CharAvail then begin
+              c:=CommObj^.GetChar;
+              if c=#13 then begin mdelay(1000); state:=2 end;
             end;
-            if timeout(ti_CRs) then begin
-              StartTimer(ti_CRs,2);
-              sendstr(' '#13' '#13);
+            if Timers[ti_CRs].Timeout then begin
+              Timers[ti_CRs].SetTimeout(2);
+              CommObj^.SendString(' '#13' '#13,False);
             end;
           end;
 
       2 : begin                           { FTS-006 S. 12 }
             NAKcount:=0;
-            StartTimer(ti_Master,60);
-            StartTimer(ti_Sync,0);
+            Timers[ti_Master].SetTimeout(60);
+            Timers[ti_Sync].SetTimeout(0);
             state:=3;
           end;
       3 : begin
-            if timeout(ti_Master) or not Carrier then begin
-              if not carrier then
+            if Timers[ti_Master].Timeout or not CommObj^.Carrier then begin
+              if not CommObj^.Carrier then
                 LogCarrier
               else
                 log(ErrChar,'login timeout');
               aresult:=EL_nologin;
               state:=99;
             end else begin
-              if timeout(ti_Sync) then begin
-                flushinput(sh);
+              if Timers[ti_Sync].Timeout then begin
+                CommObj^.PurgeInBuffer;
                 if UseEMSI then begin
-                  SendStr(EMSI_INQ+#13); mdelay(60);      { EMSI INQ   }
+                  CommObj^.SendString(EMSI_INQ+#13,False); mdelay(60);      { EMSI INQ   }
                 end;
-                SeriellWrite(YooHoo); mdelay(60);         { YooHoo INQ }
-                SeriellWrite(TSync);                      { FTS-1 INQ  }
-                StartTimer(ti_Sync,3);
+                CommObj^.SendChar(YooHoo); mdelay(60);         { YooHoo INQ }
+                CommObj^.SendChar(TSync);                      { FTS-1 INQ  }
+                Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
               end;
               state:=4;
             end;
           end;
       4 : begin
-            if not received(sh) then
+            if not CommObj^.CharAvail then
               state:=3
             else begin
-              if receive(sh,byte(c)) then;
+              c:=CommObj^.GetChar;
               case c of
                 ENQ : begin
                         fmSS:=2; state:=99;   { WaZOO selected }
@@ -337,7 +351,7 @@ begin
                         state:=5;
                       end;
                 else begin
-                  StartTimer(ti_NAK,0);
+                  Timers[ti_NAK].SetTimeout(0);
                   NAKtimer:=false;
                   if UseEMSI and TestEmsiReq then begin
                     fmSS:=3; state:=99;
@@ -348,12 +362,12 @@ begin
             end;
           end;
       5 : begin
-            if not timeout(ti_NAK) or not NAKtimer then begin
+            if not Timers[ti_NAK].Timeout or not NAKtimer then begin
               NAKcount:=0;
-              StartTimer(ti_NAK,0.5);
+              Timers[ti_NAK].SetTimeout(0.5);
               state:=3;
             end;
-            if timeout(ti_NAK) then
+            if Timers[ti_NAK].Timeout then
               state:=6;
           end;
       6 : begin
@@ -376,26 +390,24 @@ begin
   RetryCount:=0;
   repeat
     inc(RetryCount);
-    SeriellWrite(#$1f);                 { $1f senden }
+    CommObj^.SendChar(#$1f);                 { $1f senden }
     for i:=0 to sizeof(hellor)-1 do     { Hello senden }
-      SeriellWrite(HelloPkt[i]);
-    flushinput(sh);
+      CommObj^.SendChar(HelloPkt[i]);
+    CommObj^.PurgeInBuffer;
     crc:=CRC16Block(hello,sizeof(hellor));
-    SeriellWrite(char(hi(crc)));        { CRC senden }
-    SeriellWrite(char(lo(crc)));
-    StartTimer(ti_Hello,40);
-    c:=#0;
+    CommObj^.SendChar(char(hi(crc)));        { CRC senden }
+    CommObj^.SendChar(char(lo(crc)));
+    Timers[ti_Hello].SetTimeout(40); c:=#0;
     repeat
-      ProcessTimers;
-      if Receive(sh,byte(c)) then;
-      if not Carrier then StartTimer(ti_Hello,0);
-    until timeout(ti_Hello) or (c=ACK) or (c='?') or (c=ENQ);
+      if CommObj^.CharAvail then c:=CommObj^.GetChar;
+      if not CommObj^.Carrier then Timers[ti_Hello].SetTimeout(0);
+    until Timers[ti_Hello].Timeout or (c=ACK) or (c='?') or (c=ENQ);
     if c='?' then begin
-      WrStatus(getres(180)+' #'+strs(retrycount));   { 'Hello-Sendefehler' }
+      DisplayStatus(getres(180)+' #'+strs(retrycount),True);   { 'Hello-Sendefehler' }
       log(ErrChar,'yoohoo hello send error');
     end;
     mdelay(200);
-  until timeout(ti_Hello) or (c=ACK) or (RetryCount=10);
+  until Timers[ti_Hello].Timeout or (c=ACK) or (RetryCount=10);
   if RetryCount=10 then
     fmSH:=0
   else
@@ -411,61 +423,62 @@ begin
   fmRH:=false;
   errors:=0;
   repeat
-    ProcessTimers;
     case state of
       1 : begin
-            StartTimer(ti_Hello,{120}70);
-            SeriellWrite(ENQ);
+            Timers[ti_Hello].SetTimeout(70);
+            CommObj^.SendChar(ENQ);
             state:=2;
           end;
       2 : begin
-            if timeout(ti_Hello) or not Carrier then
+            if Timers[ti_Hello].Timeout or not CommObj^.Carrier then
               state:=99;
-            if Receive(sh,b) then
+            if CommObj^.CharAvail then begin
+              b:=Ord(CommObj^.GetChar);
               case b of
                 $1f : state:=5;
               else begin
-                StartTimer(ti_RH,10);
+                Timers[ti_RH].SetTimeout(10);
                 state:=3;
-              end;
+              end; end;
             end;
           end;
       3 : begin
-            if timeout(ti_Hello) then
+            if Timers[ti_Hello].Timeout then
               state:=4 else
-            if Receive(sh,b) then
-              if b=$1f then
-                state:=5
-              else
+            if CommObj^.CharAvail then begin
+                b:=Ord(CommObj^.GetChar);
+                if b=$1f then state:=5
+              end
             else begin
               mdelay(50);
-              if not Carrier then
+              if not CommObj^.Carrier then
                 state:=99
               else
-                if not received(sh) then
+                if not CommObj^.CharAvail then
                   state:=4;
             end;
           end;
       4 : begin
-            flushinput(sh);
-            SeriellWrite(ENQ);
+            CommObj^.PurgeInBuffer;
+            CommObj^.SendChar(ENQ);
             state:=2;
           end;
 
       5 : begin
-            StartTimer(ti_RH,30);
+            Timers[ti_RH].SetTimeout(30);
             offset:=0;
             state:=6;
           end;
       6 : begin
-            if timeout(ti_RH) or not Carrier then
+            if Timers[ti_RH].Timeout or not CommObj^.Carrier then
               state:=99;
-            if receive(sh,b) then begin
+            if CommObj^.CharAvail then begin
+              b:=Ord(CommObj^.GetChar);
               hellopkt[offset]:=chr(b);
               inc(offset);
               state:=7;
             end else
-              if GetTimerSec(ti_RH)<20 then
+              if Timers[ti_RH].SecsToTimeout<20 then
                 state:=99;
           end;
       7 : if offset<sizeof(hello) then
@@ -483,16 +496,16 @@ begin
       9 : begin
             inc(errors);
             if errors<10 then begin
-              SeriellWrite('?');
-              WrStatus(getres(181)+' #'+strs(errors));   { 'Hello-Empfangsfehler' }
+              CommObj^.SendChar('?');
+              DisplayStatus(getres(181)+' #'+strs(errors),True);   { 'Hello-Empfangsfehler' }
               state:=2;
             end else
               state:=99;
           end;
      10 : begin
-            flushinput(sh);
-            SeriellWrite(ACK);
-            WrStatus(getres(182));    { 'Handshake OK' }
+            CommObj^.PurgeInBuffer;
+            CommObj^.SendChar(ACK);
+            DisplayStatus(getres(182),True);    { 'Handshake OK' }
             fmRH:=true;
             { if DebugMode then WriteHello; }
             state:=99;
@@ -530,11 +543,10 @@ end;
 function fmYS(state:byte):byte;     { WaZOO: 0=Abbruch, 1=Again, 2=ok }
 var c : char;
 begin
-  WrStatus('YooHoo');
+  DisplayStatus('YooHoo',True);
   log(' ','sType: FTS-0006 (YooHoo)');
   fmYS:=1;
   repeat
-    ProcessTimers;
     case state of
       1 : case fmSH(1) of            { Send Hello }
             0 : begin
@@ -543,22 +555,24 @@ begin
                 end;
             1 : state:=99;
             2 : begin
-                  StartTimer(ti_Hello,30);
+                  Timers[ti_Hello].SetTimeout(30);
                   state:=2;
                 end;
           end;
       2 : begin
-            if timeout(ti_Hello) or not Carrier then begin
-              if not Carrier then
+            if Timers[ti_Hello].Timeout or not CommObj^.Carrier then begin
+              if not CommObj^.Carrier then
                 LogCarrier
               else
                 log(ErrChar,'yoohoo hello timeout');
               fmYS:=0;
               state:=99;
             end;
-            if Receive(sh,byte(c)) then
+            if CommObj^.CharAvail then begin
+              c:=CommObj^.GetChar;
               if c=YooHoo then
                 state:=3;
+            end;
           end;
       3 : begin
             if fmRH(1) then begin          { Receive Hello }
@@ -566,7 +580,7 @@ begin
               LogHelloData;
             end else begin
               log(ErrChar,'Error receiving hello packet');
-              if not Carrier then
+              if not CommObj^.Carrier then
                 fmYS:=0;
             end;
             state:=99;
@@ -625,10 +639,10 @@ label ende;
   begin
     repeat
       s:='';
-      while (length(s)<66) and receive(sh,b) do
-        if b>=32 then s:=s+chr(b);
+      while (length(s)<66) and CommObj^.CharAvail do
+        begin b:=Ord(CommObj^.GetChar); if b>=32 then s:=s+chr(b) end;
       if s<>'' then log('d',s);
-    until not received(sh);
+    until not CommObj^.CharAvail;
   end;
 
   procedure ReadEmsiString(secs,maxlen:word);
@@ -637,19 +651,21 @@ label ende;
   begin
     buflen:=0;
     s0:='';
-    StartTimer(ti_EMS1,secs);
+    Timers[ti_EMS1].SetTimeout(secs);
     c:=#0;
     repeat
-      ProcessTimers;
-      if Receive(sh,byte(c)) and (c>=' ') then
-        if (buflen=0) and (c<>'*') then
-          s0:=s0+c
-        else if buflen<maxemsdat then begin
-          buf^[buflen]:=c;
-          inc(buflen);
-        end;
-    until (c=#13) or (c=#10) or (buflen=maxlen) or timeout(ti_EMS1) or
-          not Carrier;
+      if CommObj^.CharAvail then begin
+        c:=CommObj^.GetChar;
+        if (c>=' ') then
+          if (buflen=0) and (c<>'*') then
+            s0:=s0+c
+          else if buflen<maxemsdat then begin
+            buf^[buflen]:=c;
+            inc(buflen);
+          end;
+      end;
+    until (c=#13) or (c=#10) or (buflen=maxlen) or Timers[ti_EMS1].Timeout or
+          not CommObj^.Carrier;
     if DebugMode and (s0<>'') then
       log('d',s0);
     s[0]:=chr(min(255,buflen));
@@ -689,8 +705,8 @@ label ende;
   end;
 
 begin
-  WrStatus('EMSI');
-{  SendStr(EMSI_INQ+#13); }
+  DisplayStatus('EMSI',True);
+{  CommObj^.SendString(EMSI_INQ+#13); }
   log(' ','sType: EMSI');
   new(buf); getmem(edat,1024);
   EmsiDat:=0;
@@ -716,31 +732,32 @@ begin
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
     if not more then begin
-      SendStr('**');                         { EMSI_DAT senden }
-      SendBlock(edat^,edatlen);
+      CommObj^.SendString('**',False);                         { EMSI_DAT senden }
+      CommObj^.SendBlock(edat^,edatlen,Dummy);
+      ProcessIncoming(False);
       if DebugMode then
         DebugFlush
       else
-        flushinput(sh);
-      SendStr(hex(CRC16Block(edat^,edatlen),4)+#13);
+        CommObj^.PurgeInBuffer;
+      CommObj^.SendString(hex(CRC16Block(edat^,edatlen),4)+#13,False);
     end;
     repeat
       ReadEmsiString(5,length(EMSI_ACK));        { warten auf EMSI_ACK / _NAK }
-      if timeout(ti_EMS1) then
-        SendStr(EMSI_INQ+#13)
+      if Timers[ti_EMS1].Timeout then
+        CommObj^.SendString(EMSI_INQ+#13,False)
       else if s=EMSI_REQ then begin
         inc(ercount);
-        if ercount>2 then SendStr(EMSI_INQ+#13);
+        if ercount>2 then CommObj^.SendString(EMSI_INQ+#13,False);
       end;
-    until (s<>EMSI_REQ) and ((s<>'') or timeout(ti_EMS1));
+    until (s<>EMSI_REQ) and ((s<>'') or Timers[ti_EMS1].Timeout);
     ok:=(s=EMSI_ACK);
-    more:=not timeout(ti_EMS1) and received(sh);
-    if timeout(ti_EMS1) then dec(count);
+    more:=not Timers[ti_EMS1].Timeout and CommObj^.CharAvail;
+    if Timers[ti_EMS1].Timeout then dec(count);
     dec(scount);
     if (s=EMSI_NAK) then
-      WrLog(ErrChar,getres(187));   { 'EMSI_NAK: wiederhole EMSI-Paket' }
-  until ok or (count=0) or (scount=0) or not Carrier;
-  if not Carrier then LogCarrier;
+      DisplayAndLog(ErrChar,getres(187));   { 'EMSI_NAK: wiederhole EMSI-Paket' }
+  until ok or (count=0) or (scount=0) or not CommObj^.Carrier;
+  if not CommObj^.Carrier then LogCarrier;
   if not ok then goto ende;
 
   count:=10;
@@ -748,8 +765,8 @@ begin
   repeat
     ReadEmsiString(7,maxemsdat);               { EMSI_DAT empfangen }
     if (s='') then begin
-      if timeout(TI_EMS1) then begin
-        SendStr(EMSI_HBT+#13);
+      if Timers[TI_EMS1].Timeout then begin
+        CommObj^.SendString(EMSI_HBT+#13,False);
         mdelay(200);
       end;
     end else begin
@@ -765,16 +782,16 @@ begin
         FastMove(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
         ok:=(hexval(hex4)=CRC16Block(buf^[bufpos+2],dl+12));
         if not ok then begin
-          SendStr(EMSI_NAK+#13);       { CRC-Fehler }
-          WrLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
+          CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
+          DisplayAndLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
           mdelay(150);
-          SendStr(EMSI_ACK+#13+EMSI_ACK+#13);    { CRC ok }
+          CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
       end;
     end;
     dec(count);
-  until ok or (count=0) or not Carrier;
+  until ok or (count=0) or not CommObj^.Carrier;
 
   if ok then begin                         { Daten auslesen }
     { bufpos:=0; }
@@ -816,12 +833,12 @@ begin
         timediff:=trx-sec70;
         log('+','correcting time by '+iifs(trx>=sec70,'+','')+
             strs(trx-sec70)+' seconds');
-        WrStatus(getres(182));    { 'korrigiere Uhrzeit' }
+        DisplayStatus(getres(182),True);    { 'korrigiere Uhrzeit' }
       end;
     end;
     EmsiDat:=2;
   end else
-    if not Carrier then LogCarrier;
+    if not CommObj^.Carrier then LogCarrier;
 ende:
   dispose(buf);
   freemem(edat,1024);
@@ -832,7 +849,7 @@ end;
 
 procedure fmS(state:byte);          { FTS-001 / FTS-007 }
 begin
-  WrStatus('FTS-0001 / '+getres(184));    { 'nicht implementiert' }
+  DisplayStatus('FTS-0001 / '+getres(184),True);    { 'nicht implementiert' }
   log(' ','sType: FTS-0001');
   mdelay(2000);
 end;
@@ -845,36 +862,8 @@ var i       : integer;
     zmpar   : string[100];
     zmresult: byte;
     t       : text;
-
-  procedure RunZmodem(par:string);
-  var mx,my : byte;
-  begin
-    if not IgCTS and not GetCTS(sh) then begin
-      time(30);
-      repeat
-        esctime0(false)
-      until GetCTS(sh) or _timeout(true);
-    end;
-    if not GetCTS(sh) then begin
-      WrStatus(getres(116));     { 'kein CTS-Signal' }
-      log('$','CTS low');
-      zmresult:=255;
-    end else begin
-      log('$','ZM.EXE '+zmpar+par+' '+zmoptions);
-      ReleaseCom(sh);
-      PopWindow;
-      mx:=wherex; my:=wherey;
-      swapvectors;
-      exec(zmprog,zmpar+par+' '+zmoptions);
-      swapvectors;
-      gotoxy(mx,my);
-      ActivateCom(sh,8192,true);
-      gotoxy(mx,my);
-      PushWindow;
-      WrStatus('');
-      zmresult:=lo(dosexitcode);
-    end;
-  end;
+    ErrorFlag: Boolean;
+    ErrorWord: System.Word;
 
   procedure ProcessLogfile(send:boolean);
   var s    : string;
@@ -958,7 +947,7 @@ begin
   log('+','starting mail transfer');
   mailing:=true;
   if hello.h.capabilities and MyCap=0 then begin
-    WrStatus(getres(185));    { 'keine šbertragung m”glich :-(' }
+    DisplayStatus(getres(185),True);    { 'keine šbertragung m”glich :-(' }
     log(ErrChar,'no common transfer protocol');
     mdelay(1000);
     aresult:=EL_nologin;
@@ -967,45 +956,23 @@ begin
 
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
 
-  zmpar:='-b'+strs(baud)+' -nologo ';     { nologo, quick-quit }
-  if fossil then zmpar:=zmpar+'-c'+strs(sh)+' -f '
-  else zmpar:=zmpar+'-c'+hex(ModemPort,3)+','+strs(irq)+' ';
-  if tlevel<>8 then zmpar:=zmpar+'-tl'+strs(tlevel)+' ';
-  if IgCD then zmpar:=zmpar+'-d ';
-  if IgCTS then zmpar:=zmpar+'-h ';
-  if UseRTS then zmpar:=zmpar+'-rts ';
-  if OS2time>0 then zmpar:=zmpar+'-os2'+chr(OS2time+ord('a')-1)+' ';
+  {ZModem-Ausgaberoutinen setzen} ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
+  LogSending:=True; DisplayTimer.Init;
+  DisplayStatus(getres(192),True);
+  if sendempty and ZedZap then begin
+    DisplayTimer.Start; ZModemSend(CommObj,'',True,ErrorWord)
+  end else
+    begin
+      i:=1;
+      repeat
+        DisplayTimer.Start; ZModemSend(CommObj,sendfile[i]^,i=sendfiles,ErrorWord); inc(i)
+      until(ErrorWord<>0)or(i>sendfiles)
+    end;
 
-  wrstatus(getres(192));        { 'Senden' }
-  if sendempty and ZedZap then
-    RunZmodem('-w sz')     { leerer Batchtransfer }
-  else begin
-    assign(t,zmtempfile+'.log');
-    erase(t);
-    if ioresult<>0 then;
-    assign(t,zmtempfile+'.par');
-    rewrite(t);
-    writeln(t,'; ',getres(190));    { 'tempor„re Zmodem-Parameterdatei' }
-    writeln(t,'-lz'+zmtempfile+'.log');
-    if MinCps>0 then
-      writeln(t,'-z',MinCps);
-    for i:=1 to sendfiles do
-      writeln(t,sendfile[i]^);
-    close(t);
-    RunZmodem('sz '+iifs(ZedZap,'-82 ','')+'@'+zmtempfile+'.par');
-    erase(t);
-    if ioresult<>0 then;
-    assign(t,zmtempfile+'.log');
-    if existf(t) then
-      ProcessLogfile(true);           { ZM-Logfile -> XP-FM-Logfile }
-  end;
-  if zmresult<>255 then
-    log('$','errorlevel '+strs(zmresult));
-
-  if zmresult<>0 then begin
-    WrStatus(getres(191));            { 'šbertragung abgebrochen' }
-    if not carrier then begin
-      WrStatus(nocarrier);            { 'CARRIER futsch :-( ' }
+  if ErrorWord<>0 then begin
+    DisplayStatus(getres(191)+' '+Char(ErrorWord+48),True);            { 'šbertragung abgebrochen' }
+    if not CommObj^.Carrier then begin
+      DisplayStatus(nocarrier,True);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
     end else
       log(ErrChar,'transfer aborted');
@@ -1013,27 +980,11 @@ begin
     aresult:=EL_senderr
 
   end else begin                                        { ZModem empfangen }
-    assign(t,zmtempfile+'.par');
-    rewrite(t);
-    writeln(t,'; ',getres(190));    { 'tempor„re Zmodem-Parameterdatei' }
-    writeln(t,FilePath);
-    writeln(t,iifs(ExtFnames,'-fmx:','-fm:')+MailPath);
-    writeln(t,'-lz'+zmtempfile+'.log');
-    if MinCps>0 then
-      writeln(t,'-z',MinCps);
-    writeln(t,'-oo');
-    close(t);
-    wrstatus(getres(193));    { 'Empfangen' }
-    RunZmodem('rz -o3 -ti300 @'+zmtempfile+'.par');
-    erase(t);
-    if ioresult<>0 then;
-    assign(t,zmtempfile+'.log');
-    if existf(t) then
-      ProcessLogfile(false);
-    if zmresult<>255 then
-      log('$','errorlevel '+strs(zmresult));
-    if (zmresult<>0) then begin
-      WrStatus(getres(191));            { 'šbertragung abgebrochen' }
+    DisplayStatus(getres(193),True);    { 'Empfangen' }
+    LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
+    ZModemReceive(CommObj,MailPath,ErrorFlag);
+    if (ErrorFlag) then begin
+      DisplayStatus(getres(191),True);            { 'šbertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
   end;
@@ -1043,9 +994,10 @@ end;
 { -- Main ------------------------------------------------ }
 
 procedure YooHooMailer;
+var iTimer: Integer;
 begin
   InitHelloPacket;
-  fillchar(_timer,sizeof(_timer),0);
+  for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
   repeat
     ENDE:=true;
     aresult:=0;
@@ -1069,33 +1021,9 @@ begin
 end;
 {
   $Log$
-  Revision 1.11  2000/06/20 22:22:21  ma
-  - letzte Version des alten Mailers
-
-  Revision 1.10  2000/04/15 12:30:58  mk
-  - Compilierfaehigkeit mit VP wieder hergestellt
-
-  Revision 1.9  2000/03/23 23:59:16  oh
-  Blockstrukturen sauber formatiert
-
-  Revision 1.8  2000/03/21 19:17:49  mk
-  - OOps, mal wieder ein #255 zu viel
-
-  Revision 1.7  2000/03/21 18:59:12  mk
-  - Bug in CRC-Berechnung behoben
-
-  Revision 1.6  2000/03/14 15:15:37  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.4  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
+  Revision 1.12  2000/06/22 17:29:01  mk
+  - sprechendere Variablen- und Prozedurnamen
+  - auf Unit ObjCOM/Timer/Debug umgestellt
+  - viele andere Veraenderungen (SendCommand, TestCarrier, DialUp...)
 
 }
