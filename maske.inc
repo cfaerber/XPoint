@@ -87,7 +87,7 @@ var ax,p,myp  : integer;
 
   procedure FldDisplay;
   var i   : integer;
-      l   : String[1];
+      l   : String;
       ua  : boolean;    { Scrollpfeil nach oben }
       da  : boolean;    { Scrollpfeil nach unten }
       s: String;
@@ -129,9 +129,8 @@ var ax,p,myp  : integer;
                   if stat.mausarrows and hassel then
 		  begin
                     attrtxt(stat.col.colback);
-                    Wrt2(#25);
+                    FWrt(xx2+Length(s)+1, yy-a, #25);
                   end;
-                  FWrt(xx2+Length(s)+1, yy-a, #25);
                 end; { stat.arrowspace and enabled }
               end; { enabled, not checkbutt }
             end; { enabled or (not dispnodisp) } 
@@ -258,7 +257,6 @@ var ax,p,myp  : integer;
           end;
         {cont:=cont+' ';}
         end;
-      v:=v and test2(cont);        
       if (selliste<>nil) and forcesll then begin
         p:=selliste;
         while (p<>nil) and (UpperCase(cont)<>UpperCase(p^.el)) do
@@ -278,8 +276,8 @@ var ax,p,myp  : integer;
         8 : v:=v and testdate;
         9 : v:=v and testtime(len,cont);
       end;
-      valid:=v;
-      end;
+      v:=v and test2(cont);
+    end;
   end;
 
   procedure showfield;
@@ -289,7 +287,6 @@ var ax,p,myp  : integer;
   begin
     with amaskp^ do
       with afld^ do begin
-        gotoxy(xx2,yy-a);
         moff;
         if checkbutt then
         begin
@@ -316,9 +313,8 @@ var ax,p,myp  : integer;
           end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
-            Wrt2(#25);
+            FWrt(x, yy-a, #25);
           end;
-          FWrt(x, yy-a, #25);
         end;
         mon;
         normtxt;
@@ -811,10 +807,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     poutside:=false;
     repeat { main loop }
 
-      if redisplay then 
+      if redisplay then
       begin
         attrtxt(col.ColBack);
-        if rahmentyp=4 then 
+        if rahmentyp=4 then
 	begin
           moff;
           if a>0 then fwrt(rl,ro,'Ö'+dup(rr-rl-1,'Ä')+'·')
@@ -823,24 +819,24 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           else fwrt(rl,ru,'È'+dup(rr-rl-1,'Í')+'¼');
           mon;
         end;
-        if not dontclear then  
+        if not dontclear then
 	  clwin(li,re,ob,un);
         redisplay:=false;
         redispfields:=true;
         redisptext:=true;
       end;
-	
-      if redispfields then 
+
+      if redispfields then
       begin
         ClearFields;
         showfldnames;
         FldDisplay;
-        if @userdisp<>nil then 
+        if @userdisp<>nil then
 	  userdisp;
         redispfields:=false;
       end;
-      
-      if redisptext then 
+
+      if redisptext then
       begin
         textdisplay;
         redisptext:=false;
@@ -1162,6 +1158,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.42  2002/02/03 22:20:19  mk
+  - fixed some display errors
+
   Revision 1.41  2002/01/16 23:48:17  cl
   - after merge fixes
 
