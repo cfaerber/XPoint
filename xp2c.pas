@@ -133,7 +133,7 @@ begin
     mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
   maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
   mhnr(8068);
-  {$IFDEF DPMI}
+  {$IFDEF NOEMS}
     maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   {$ELSE}
     maddbool(32,2,getres2(250,11),SwapToEMS); mhnr(213);  { 'Auslagern in EMS' }
@@ -209,9 +209,14 @@ begin
   maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-MenÅ bei <Esc> vollstÑndig verlassen' }
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und NachrichtenÅbersicht' }
   oldm:=_maus;
+{$IFDEF Linux }
+  maddbool(39,2,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
+  maddbool(39,3,getres2(251,23),MausShInit);      { 'Initialisierung' }
+{$ELSE }
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Maus-Bedienung' }
   maddbool(39,3,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
   maddbool(39,4,getres2(251,23),MausShInit);      { 'Initialisierung' }
+{$ENDIF }
   if MausDblClck>=mausdbl_slow then dbls:=dbl[0] else
   if MausDblClck>=mausdbl_norm then dbls:=dbl[1]
   else dbls:=dbl[2];
@@ -464,6 +469,25 @@ procedure listoptions;
 var brk : boolean;
     x,y : byte;
 begin
+{$IFDEF Linux }
+  dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
+  maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
+    mhnr(232);
+  maddbool(3,3,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
+    mhnr(233);
+  maddbool(3,4,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
+  maddbool(3,5,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
+  maddbool(3,7,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
+  maddbool(3,8,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
+  maddbool(3,9,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
+    mhnr(8060);
+  maddbool(3,11,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
+    mhnr(238);
+  maddbool(3,12,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
+  { 22.01.2000 robo }
+  maddbool(3,14,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
+    mhnr(8061);
+{$ELSE }
   dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
@@ -483,6 +507,7 @@ begin
   { 22.01.2000 robo }
   maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
+{$ENDIF } { Linux }
   { /robo }
   freeres;
   readmask(brk);
@@ -519,7 +544,11 @@ var brk   : boolean;
 begin
   for i:=1 to 3 do
     edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
+{$IFDEF Linux }
+  dialog(ival(getres2(256,0)),10,getres2(256,5),x,y);   { 'Editor' }
+{$ELSE }
   dialog(ival(getres2(256,0)),11,getres2(256,5),x,y);   { 'Editor' }
+{$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
   msetvfunc(testexist);
   maddint(43,2,getres2(256,7),EditorKB,5,3,50,500);   { 'KByte:' }
@@ -531,12 +560,14 @@ begin
   maddbool(3,8,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
 { maddbool(3,9,getres2(256,11),editvollbild);  { 'interner Editor - Vollbild' }
   maddbool(3,9,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
+{$IFNDEF Linux }
   maddbool(3,10,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
+{$ENDIF }
   freeres;
   readmask(brk);
   if not brk then
     for i:=1 to 3 do
-      if ustr(eds)=ustr(edtype[i]) then
+      if fustr(eds)=ustr(edtype[i]) then
         exteditor:=i;
   if not brk and mmodified then
     GlobalModified;
@@ -559,12 +590,18 @@ procedure shelloptions;
 var brk : boolean;
     x,y : byte;
 begin
+{$IFDEF Linux }
+  dialog(ival(getres2(257,0)),4,getres2(257,1),x,y);    { 'Shell' }
+  maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
+  maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
+{$ELSE }
   dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
   maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Grî·e:  ' }
   maddtext(length(getres2(257,3))+11,4,getres(13),0);   { 'Bytes' }
   maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
   maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
+{$ENDIF }
   msetvfunc(testenv);
   freeres;
   readmask(brk);
@@ -682,6 +719,12 @@ procedure MiscAnzeigeCfg;
 var i,x,y    : byte;
     brk,du : boolean;
 begin
+{$IFDEF Linux }
+  dialog(36,5,'',x,y);
+  maddbool(3,2,getres2(260,4),dispusername);  { 'Username anzeigen' }
+  maddstring(3,4,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
+  maddstring(3,5,getres2(260,14),mheadercustom[2],19,19,''); { 'userdef. Kopfzeile 2' }
+{$ELSE }
   dialog(36,13,'',x,y);
   maddint(3,2,getres2(260,1),scrsaver,5,5,0,10000); mhnr(280);   { 'Screen-Saver (Sek.)  ' }
     msetvfunc(scstest);
@@ -695,7 +738,7 @@ begin
 
   maddstring(3,11,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
   maddstring(3,12,getres2(260,14),mheadercustom[2],19,19,''); { 'userdef. Kopfzeile 2' }
-
+{$ENDIF }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1370,6 +1413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/05/08 13:53:43  hd
+  - Einige Aenderungen in den Dialogen
+
   Revision 1.28  2000/05/02 20:51:49  hd
   - Dynamische ZEitzone angepasst
 
