@@ -437,7 +437,7 @@ label xexit,xexit1,xexit2,fromstart,ReadAgain;
 function RFCBrett(s:string; edis:byte):string;
 var i : integer;
 begin
-  if (edis=1) or ((not netztyp in [nt_UUCP,nt_Client]) and not Newsgroupdispall) or not NewsgroupDisp then
+  if (edis=1) or ((not (netztyp in [nt_UUCP,nt_Client])) and not Newsgroupdispall) or not NewsgroupDisp then
     rfcbrett:=mid(s,edis)
   else begin
     delete(s,1,2);
@@ -1644,11 +1644,11 @@ fromstart:
                 rfehler(615);
        20   : EditSdata;
        21   : SendPgpOptions;
-       22   : begin                    { 06.02.2000 MH: RFC-Priority }
-               if not netztyp in [nt_uucp,nt_client] then rfehler(622);
+       22   : if not (netztyp in [nt_uucp,nt_client]) then rfehler(622)
+              else begin
                 getprio;
-               showflags;
-              end
+                showflags;
+              end;
 
       else    if n<0 then begin
                 n:=abs(n);
@@ -2408,6 +2408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.47  2001/12/22 23:42:34  my
+  MY:- Syntax bei RFC-Priorit„t (Sendefenster) gefixt
+
   Revision 1.39.2.46  2001/12/20 23:38:39  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
