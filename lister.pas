@@ -336,11 +336,12 @@ begin
       Breaker.TabWidth := 8;
       Breaker.Sink := Lines;
       Breaker.AddData(Input);      
+      Breaker.FlushData;
     finally
-      Breaker.Destroy;
+      Breaker.Free;
     end;
   finally
-    Input.Destroy;
+    Input.Free;
   end;
 end;
 
@@ -1098,6 +1099,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.81  2003/04/28 20:18:57  cl
+  - CRLF at the end of a text file is now uniformly handled as the start of
+    an additional line.
+
   Revision 1.80  2003/04/03 15:56:00  mk
   - added handling ofs in TLister.ReadFromFile,
     this fixes problem with double header in messages

@@ -255,7 +255,7 @@ begin
 
   ins.Free;
 
-  if (SigData<>'') or (FidoOrigin<>'') then
+  if (Signature<>'') or (FidoOrigin<>'') then
   begin
     if outs is TMimeEolCodecStream then
       UnconnectStream(outs);
@@ -266,11 +266,11 @@ begin
     if DoEncode or not MIMESaveCharsetAsCP437(pa.FileCharset) then
       ConnectStream(outs,TCharsetEncoderStream.Create('IBM437',pa.ContentCharset));
 
-    if SigData<>'' then
-      writeln_s(outs,Signature);
+    if Signature<>'' then
+      write_s(outs,#13#10+Signature);
 
     if FidoOrigin<>'' then
-      writeln_s(outs,FidoOrigin);
+      write_s(outs,#13#10+FidoOrigin);
   end;
 
  finally
@@ -301,6 +301,10 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2003/04/28 20:18:58  cl
+// - CRLF at the end of a text file is now uniformly handled as the start of
+//   an additional line.
+//
 // Revision 1.2  2003/01/13 22:14:28  cl
 // - send window rewrite IIa - cleanups
 //

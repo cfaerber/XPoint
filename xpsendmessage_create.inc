@@ -400,17 +400,16 @@ var FidoOriginSav: string;
               FileCharset:=MimeCharsetCanonicalName(FileCharset);
               ContentCharset:=MimeCharsetCanonicalName(ContentCharset);
             end;
-            writeln_s(s1,'--'+boundary);
+            writeln_s(s1,#13#10'--'+boundary);
             MIMEWriteContentWithHeaders( s1,TSendAttach_Part(parts[i]),
               iifs((i=0) and (IsMessage) and not flOhnesig,SigData,''));
-            writeln_s(s1,'');
             if (hdp.mime.Encoding=MimeEncoding7bit) and (ContentEncoding=MimeEncoding8bit) then
               hdp.mime.Encoding:=MimeEncoding8bit else
             if (hdp.mime.Encoding in [MimeEncoding7bit,MimeEncoding8bit]) and (ContentEncoding=MimeEncodingBinary) then
               hdp.mime.Encoding:=MimeEncodingBinary;
           end; // with
         end; // for
-        writeln_s(s1,'--'+boundary+'--');
+        write_s(s1,#13#10'--'+boundary+'--');
       end;
     end;
 
@@ -1034,6 +1033,10 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.14  2003/04/28 20:18:58  cl
+// - CRLF at the end of a text file is now uniformly handled as the start of
+//   an additional line.
+//
 // Revision 1.13  2003/04/03 13:57:49  mk
 // - ops, typo
 //

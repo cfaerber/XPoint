@@ -153,7 +153,6 @@ type
   public
     property Has_AM: boolean read GetHasAM;
     property Has_PM: boolean read GetHasPM;
-
     property Has_Netz[nc: TNetClass]: Boolean read GetHasNetz;
     property Has[nc:TNetClass; pm: Boolean]: Boolean read GetHasNetzPM;
 
@@ -289,7 +288,24 @@ type
     OEM: TStringList;
     oar,war    : string;
     onetztyp   : eNetz;
-    orghdp     : THeader;
+
+  { -- Original Message(s) ------------------------------------------- }
+  private
+    FParentHdp : THeader;
+    FOrgHdp    : THeader;
+    function GetParentHdp: THeader;
+    function GetOrgHdp: THeader;
+    
+  public
+    { Contains information about the message for which a followup or reply
+      is being sent. }
+    property ParentHdp  : THeader read GetParentHdp write FParentHdp;
+
+    { Contains information about the original message, which is being
+      replaced, superseded, forwared, etc. }    
+    property OrgHdp     : THeader read GetOrgHdp    write FOrgHdp;
+    
+  public
     orgbox     : string;
 
     org_mid    : string;        { X-XP-ORGMID }
@@ -891,6 +907,19 @@ begin result := FHas[nc,false] or FHas[nc,true]; end;
 function TSendUUData.GetHasNetzPM(nc: TNetClass; pm: Boolean): boolean;
 begin result := FHas[nc,pm]; end;
 
+function TSendUUData.GetParentHdp: THeader;
+begin
+  result := FParentHdp;
+  if not assigned(result) then result := FOrgHdp;
+end;
+    
+function TSendUUData.GetOrgHdp: THeader;
+begin
+  result := FOrgHdp;
+  if not assigned(result) then result := FParentHdp;
+end;
+    
+
 { -------------------------------------------------------------------- }
                                                                         
 initialization
@@ -901,6 +930,10 @@ finalization
 
 {
   $Log$
+  Revision 1.72  2003/04/28 20:18:57  cl
+  - CRLF at the end of a text file is now uniformly handled as the start of
+    an additional line.
+
   Revision 1.71  2003/01/13 22:48:51  cl
   - enabled TRopeStream
 

@@ -192,7 +192,7 @@ var bnr,inr : xpWord;
     s       : shortstring;
 begin
   if not getnr(nr,bnr,inr) then begin
-    GetRes:='fehlt: ['+strs(nr)+'] ';
+    Result:='fehlt: ['+strs(nr)+'] ';
     Debug.DebugLog('resource','resource missing: '+strs(nr),dlWarning);
     end
   else
@@ -205,7 +205,7 @@ begin
         FileSeek(FH, fileadr+index[bnr]^[inr,1], 0);
         FileRead(FH,s[1],length(s));
         end;
-      GetRes:=s;
+      Result:=s;
       end;
 end;
 
@@ -235,7 +235,7 @@ label ende;
   end;
 begin
   if not getnr(nr1,bnr,inr) then
-    GetRes2:=fehlt
+    Result:=fehlt
   else
     if index[bnr]^[inr,0] and $8000=0 then
       error('['+strs(nr1)+']: no split page')
@@ -284,7 +284,7 @@ begin
         SetLength(s, size); { s[0]:=chr(size); }
         Move(clcont^[clindex^[i,1]],s[1],size);
       ende:
-        GetRes2:=s;
+        Result:=s;
         clbnr:=bnr; clnr:=inr;
         end;
 end;
@@ -351,6 +351,10 @@ end;
 
 {
   $Log$
+  Revision 1.31  2003/04/28 20:18:57  cl
+  - CRLF at the end of a text file is now uniformly handled as the start of
+    an additional line.
+
   Revision 1.30  2002/12/21 05:37:52  dodi
   - removed questionable references to Word type
 
