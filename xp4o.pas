@@ -3240,7 +3240,7 @@ begin
   List.OnKeypressed := ArcSpecial;
   showkeys(11);
   attrtxt(col.colarcstat);
-  mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
+  mwrt(1,4,forms(getres(464), ScreenWidth));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
   inc(arcbufp);
   with ar do begin
     arctyp_save:=arctyp;
@@ -3842,6 +3842,9 @@ end;
 
 {
   $Log$
+  Revision 1.161  2003/09/17 15:28:06  mk
+  - fixed drawing of status line in archiv viewer for screen width > 80
+
   Revision 1.160  2003/08/28 14:13:01  mk
   - TUniSelType for UniSel instead of numeric constants
 
