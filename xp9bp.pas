@@ -152,24 +152,36 @@ begin
     PPPPhone:= '';
     PPPLogin:= '';
     PPPPass:= '';
+    PPPAskIfConnect:= false;
+    PPPAskIfDisconnect:= false;
+    PPPKeepConnectStatus:= true;
     PPPSpool:= '';
-    PPPExternCfg:= '';
-    PPPMailInSrvr:= 'pop.t-online.de';
+    PPPMailInServer:= '';
+    PPPMailInPort:= '110';
+    PPPMailInProtocol:= 'POP3';
     PPPMailInEnv:= '';
     PPPMailInUser:= '';
     PPPMailInPass:= '';
-    PPPMailInPort:= '110';
-    PPPMailOutSrvr:= 'mailto.t-online.de';
+    PPPMailInUseEnvTo:= false;
+    PPPMailInKeep:= false;
+    PPPMailInAPOP:= false;
+    PPPMailOutServer:= '';
+    PPPMailOutPort:= '25';
     PPPMailFallback:= '';
     PPPMailOutEnv:= '';
     PPPMailOutUser:= '';
     PPPMailOutPass:= '';
-    PPPMailOutPort:= '25';
-    PPPNewsSrvr:= 'news.t-online.de';
+    PPPMailOutSMTPafterPOP:= false;
+    PPPMailOutSMTPLogin:= false;
+    PPPNewsServer:= '';
+    PPPNewsPort:= '119';
     PPPNewsFallback:= '';
     PPPNewsUser:= '';
     PPPNewsPass:= '';
-    PPPNewsPort:= '119';
+    PPPNewsList:= true;
+    PPPNewsMaxLen:= 0;
+    PPPNewsMax:= 0;
+    PPPExternCfg:= '';
     UUprotos:='Ggz';
     efilter:='';
     afilter:='';
@@ -306,31 +318,43 @@ begin
             getx(su,  'UU-SMTP-Client', ClientSmtp) or
             gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
             getx(su,  'Client-Mode', PPPMode) or
-            gets(s,su,'Client-Path', PPPClientPath, 60) or
-            gets(s,su,'Client-Exec', PPPClient, 60) or
+            gets(s,su,'Client-Path', PPPClientPath, MaxLenPathname) or
+            gets(s,su,'Client-Exec', PPPClient, MaxLenPathname) or
             gets(s,su,'Client-AddServers', PPPAddServers, 160) or
             gets(s,su,'Client-DialUp',PPPDialup,60) or
             gets(s,su,'Client-Phone',PPPPhone,60) or
             gets(s,su,'Client-Login',PPPLogin,60) or
             gets(s,su,'Client-Password',PPPPass,20) or
-            gets(s,su,'Client-Spool', PPPSpool, 60) or
-            gets(s,su,'Client-ExternalConfig', PPPExternCfg, 60) or
-            gets(s,su,'Client-MailInServer', PPPMailInSrvr, 160) or
+            getx(su,  'Client-AskIfConnect', PPPAskIfConnect) or
+            getx(su,  'Client-AskIfDisconnect', PPPAskIfDisconnect) or
+            getx(su,  'Client-KeepConnectStatus', PPPKeepConnectStatus) or
+            gets(s,su,'Client-Spool', PPPSpool, MaxLenPathname) or
+            gets(s,su,'Client-MailInServer', PPPMailInServer, 160) or
+            gets(s,su,'Client-MailInPort', PPPMailInPort, 50) or
+            gets(s,su,'Client-MailInProtocol', PPPMailInProtocol, 5) or
             gets(s,su,'Client-MailInEnvelope', PPPMailInEnv, 160) or
             gets(s,su,'Client-MailInUser', PPPMailInUser, 160) or
             gets(s,su,'Client-MailInPassword', PPPMailInPass, 75) or
-            gets(s,su,'Client-MailInPort', PPPMailInPort, 50) or
-            gets(s,su,'Client-MailOutServer', PPPMailOutSrvr, 160) or
+            getx(su,  'Client-MailInUseEnvTo',PPPMailInUseEnvTo) or
+            getx(su,  'Client-MailInKeep',PPPMailInKeep) or
+            getx(su,  'Client-MailInAPOP',PPPMailInAPOP) or
+            gets(s,su,'Client-MailOutServer', PPPMailOutServer, 160) or
+            gets(s,su,'Client-MailOutPort', PPPMailOutPort, 50) or
             gets(s,su,'Client-MailFallback', PPPMailFallback, 8) or
             gets(s,su,'Client-MailOutEnvelope', PPPMailOutEnv, 160) or
             gets(s,su,'Client-MailOutUser', PPPMailOutUser, 160) or
             gets(s,su,'Client-MailOutPassword', PPPMailOutPass, 75) or
-            gets(s,su,'Client-MailOutPort', PPPMailOutPort, 50) or
-            gets(s,su,'Client-NewsServer', PPPNewsSrvr, 160) or
+            getx(su,  'Client-MailOutSMTPafterPOP',PPPMailOutSMTPafterPOP) or
+            getx(su,  'Client-MailOutSMTPLogin',PPPMailOutSMTPLogin) or
+            gets(s,su,'Client-NewsServer', PPPNewsServer, 160) or
+            gets(s,su,'Client-NewsPort', PPPNewsPort, 50) or
             gets(s,su,'Client-NewsFallback', PPPNewsFallback, 8) or
             gets(s,su,'Client-NewsUser', PPPNewsUser, 160) or
             gets(s,su,'Client-NewsPassword', PPPNewsPass, 75) or
-            gets(s,su,'Client-NewsPort', PPPNewsPort, 50) or
+            getx(su,  'Client-NewsList', PPPNewsList) or
+            getl(su,  'Client-NewsMaxLen', PPPNewsMaxLen) or
+            getl(su,  'Client-NewsMax', PPPNewsMax) or
+            gets(s,su,'Client-ExternalConfig', PPPExternCfg, MaxLenPathname) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
@@ -491,29 +515,41 @@ begin
     writeln(t,'Client-Phone=', PPPPhone);
     writeln(t,'Client-Login=', PPPLogin);
     writeln(t,'Client-Password=', PPPPass);
+    writeln(t,'Client-AskIfConnect=', jnf(PPPAskIfConnect));
+    writeln(t,'Client-AskIfDisconnect=', jnf(PPPAskIfDisconnect));
+    writeln(t,'Client-KeepConnectStatus=', jnf(PPPKeepConnectStatus));
     if PPPMode then
     begin
       writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
       MkLongDir(OwnPath + XFerDir + Dateiname, Res);
       if IOResult = 0 then ;
       end;
-    writeln(t,'Client-ExternalConfig=', PPPExternCfg);
-    writeln(t,'Client-MailInServer=', PPPMailInSrvr);
+    writeln(t,'Client-MailInServer=', PPPMailInServer);
+    writeln(t,'Client-MailInPort=', PPPMailInPort);
+    writeln(t,'Client-MailInProtocol=', PPPMailInProtocol);
     writeln(t,'Client-MailInEnvelope=', PPPMailInEnv);
     writeln(t,'Client-MailInUser=', PPPMailInUser);
     writeln(t,'Client-MailInPassword=', PPPMailInPass);
-    writeln(t,'Client-MailInPort=', PPPMailInPort);
-    writeln(t,'Client-MailOutServer=', PPPMailOutSrvr);
+    writeln(t,'Client-MailInUseEnvTo=', jnf(PPPMailInUseEnvTo));
+    writeln(t,'Client-MailInKeep=', jnf(PPPMailInKeep));
+    writeln(t,'Client-MailInAPOP=', jnf(PPPMailInAPOP));
+    writeln(t,'Client-MailOutServer=', PPPMailOutServer);
+    writeln(t,'Client-MailOutPort=', PPPMailOutPort);
     writeln(t,'Client-MailFallback=', PPPMailFallback);
     writeln(t,'Client-MailOutEnvelope=', PPPMailOutEnv);
     writeln(t,'Client-MailOutUser=', PPPMailOutUser);
     writeln(t,'Client-MailOutPassword=', PPPMailOutPass);
-    writeln(t,'Client-MailOutPort=', PPPMailOutPort);
-    writeln(t,'Client-NewsServer=', PPPNewsSrvr);
+    writeln(t,'Client-MailOutSMTPafterPOP=', jnf(PPPMailOutSMTPafterPOP));
+    writeln(t,'Client-MailOutSMTPLogin=', jnf(PPPMailOutSMTPLogin));
+    writeln(t,'Client-NewsServer=', PPPNewsServer);
+    writeln(t,'Client-NewsPort=', PPPNewsPort);
     writeln(t,'Client-NewsFallback=', PPPNewsFallback);
     writeln(t,'Client-NewsUser=', PPPNewsUser);
     writeln(t,'Client-NewsPassword=', PPPNewsPass);
-    writeln(t,'Client-NewsPort=', PPPNewsPort);
+    writeln(t,'Client-NewsList=', jnf(PPPNewsList));
+    writeln(t,'Client-NewsMaxLen=', PPPNewsMaxLen);
+    writeln(t,'Client-NewsMax=', PPPNewsMax);
+    writeln(t,'Client-ExternalConfig=', PPPExternCfg);
   end;
   close(t);
 end;
@@ -626,12 +662,32 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.25  2001/12/11 17:50:55  my
+  MY:- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
+       und erweitert. Neue Einstellungen:
+       - D/B/E/C/Verbindung: RÅckfrage vor Anwahl
+                             RÅckfrage vor Auflegen
+                             Verbindungsstatus halten
+       - D/B/E/N/Mail (In) : Protokoll
+                             Envelope-To auswerten
+                             Mail auf Server belassen
+                             APOP-Authentifizierung
+       - D/B/E/N/Mail (Out): SMTP after POP
+                             SMTP-Login nach RFC 2554
+       - D/B/E/N/News      : Newsgroup-Liste pflegen
+                             Max. Artikelgrî·e (KB)
+                             Max. Artikel je Gruppe
+
+  MY:- Einige Defaults beim Anlegen einer neuen RFC/Client-Box geÑndert.
+
+  MY:- Typos im CVS-Log bereinigt.
+
   Revision 1.10.2.24  2001/11/20 23:23:42  my
   MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
        D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
        siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
        den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
-       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Box(en)
        abgelegt.
 
   Revision 1.10.2.23  2001/09/07 10:52:07  mk
