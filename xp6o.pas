@@ -158,7 +158,7 @@ label ende,nextpp;
   end;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
-  var s  : string;           { s. auch XP3EX.ClipTearline!        }
+  var s  : string;           { s. auch XP3EX.Clip_Tearline!        }
       rr : word;
       p  : byte;
       l  : longint;
@@ -760,9 +760,17 @@ again:
     binaermail:=false;
     end;
   case typ of
-      1 : extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+      1 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+          end;
       7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
-      2 : extract_msg(0,WeiterMsk,fn,false,1);
+      2 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,WeiterMsk,fn,false,1);
+          end;
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
@@ -1031,7 +1039,7 @@ again:
                dbWriteN(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
                dbWriteN(mbase,mb_typ,ntyp);
-               dbReadN(mbase,mb_unversandt,b);   
+               dbReadN(mbase,mb_unversandt,b);
                if (b and 8<>0) then begin        { WV-Flag entfernen }
                  dbReadN(mbase,mb_wvdatum,l);
                  dbWriteN(mbase,mb_empfdatum,l);
