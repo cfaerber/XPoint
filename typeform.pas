@@ -141,7 +141,9 @@ Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
 Function UStr(const s:string):string;              { UpperString                  }
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
+{$IFDEF BP }
 procedure SetLength(var s: String; size: Longint); { L„nge von S setzen }
+{$ENDIF }
 
 Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
 Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
@@ -1684,10 +1686,12 @@ begin
   Without:=s1;
 end;
 
+{$IFDEF BP }
 procedure SetLength(var s: String; size: Longint); { L„nge von S setzen }
 begin
   s[0] := char(size);
 end;
+{$ENDIF }
 
 Function Lastchar(const s:string):char;           { letztes Zeichen eines Str.   }
 begin
@@ -2159,6 +2163,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/04/22 23:35:27  mk
+  - SetLength nur fuer BP implementiert
+
   Revision 1.27  2000/04/22 23:29:55  mk
   - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
   - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
