@@ -10,8 +10,8 @@
 
 { Fido FileScan }
 
-procedure SendFilescan(var fn:pathstr);
-var leer : string[12];
+procedure SendFilescan(var fn:string);
+var leer : string;
 begin
   leer:='';
   forcebox:=boxpar^.boxname;
@@ -46,7 +46,7 @@ end;
 
 function fileechocolfunc(var s:string; line:longint):byte;
 begin
-  if s[1]='*' then
+  if (s<>'') and (s[1]='*') then
     fileechocolfunc:=col.ColMapsBest
   else
     fileechocolfunc:=0;
@@ -61,13 +61,21 @@ begin
 end;
 
 procedure FilescanList(art:shortint);     { 1=bestellen, 2=abbestellen }
-var box : string[BoxNameLen];
+var
+{$ifdef hasHugeString}
+    box : string;
+    fl  : string;
+    ask : string;
+    s   : string;
+{$else}
+    box : string[BoxNameLen];
     fl  : string[12];
-    t   : text;
-    fn  : pathstr;
-    anz : longint;
     ask : string[40];
     s   : string[80];
+{$endif}
+    t   : text;
+    fn  : string;
+    anz : longint;
     brk : boolean;
 label again;
 
@@ -129,14 +137,22 @@ end;
 
 
 procedure RemoveFileechos;
-var echo   : string[80];
+var
+{$ifdef hasHugeString}
+    echo   : string;
+    _brett : string;
+    box    : string;
+    s      : string;
+{$else}
+    echo   : string[80];
     _brett : string[5];
+    box    : string[BoxNameLen];
+    s      : string[80];
+{$endif}
     brk    : boolean;
     d      : DB;
     n,i    : longint;
-    box    : string[BoxNameLen];
-    s      : string[80];
-    fn     : pathstr;
+    fn     : string;
     t      : text;
 begin
   echo:='';
@@ -226,7 +242,11 @@ end;
 
 procedure FilescanReadlist;
 var fa  : FidoAdr;
+{$ifdef hasHugeString}
+    box : string;
+{$else}
     box : string[BoxnameLen];
+{$endif}
 begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
     rfehler(850)     { 'Keine Filescan-Nachricht gew„hlt!' }
@@ -248,11 +268,17 @@ end;
 { Fileecho-Liste aus Datei nach .FBL einlesen }
 
 procedure FilescanReadfile;
-var box     : string[BoxNameLen];
-    fn      : pathstr;
+var
+{$ifdef hasHugeString}
+    box     : string;
+    bfile   : string;
+{$else}
+    box     : string[BoxNameLen];
+    bfile   : string[8];
+{$endif}
+    fn      : string;
     useclip : boolean;
     d       : DB;
-    bfile   : string[8];
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
@@ -277,12 +303,19 @@ end;
 
 
 procedure FilescanCommands(cmd:shortint);
-var box  : string[BoxnameLen];
+var
+{$ifdef hasHugeString}
+    box  : string;
+    comm : string;
+    s    : string;
+{$else}
+    box  : string[BoxnameLen];
     comm : string[20];
     s    : string[12];
+{$endif}
     n,i  : integer;
     brk  : boolean;
-    fn   : pathstr;
+    fn   : string;
     t    : text;
     x,y  : byte;
 begin
@@ -325,6 +358,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/07/05 15:12:15  hd
+  - AnsiString
+
   Revision 1.4  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

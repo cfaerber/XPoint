@@ -30,16 +30,23 @@ end;
 procedure FS_ReadList(msg:boolean);
 const
       tbufs = 2048;
-var absender : string[Adrlen];
+var
+{$ifdef hasHugeString}
+    absender : string;
+    box      : string;   { das ist auf jeden Fall eine Zerberus-Box.. }
+    convert  : string;
+{$else}
+    absender : string[Adrlen];
     box      : string[8];   { das ist auf jeden Fall eine Zerberus-Box.. }
+    convert  : string[100];
+{$endif}
     x,y,p,p2 : byte;
     f        : file;
-    fn       : pathstr;
+    fn       : string;
     t1,t2    : text;
     s,s2     : string;
     useclip  : boolean;
     fstype   : byte;
-    convert  : string[100];
     tbuf     : pointer;
 
   procedure wrl;
@@ -85,7 +92,7 @@ begin
       end;
     end
   else begin
-    fn:=FilePath+'*.*';
+    fn:=FilePath+WildCard;
     useclip:=false;
     if not readfilename(getres(812),fn,true,useclip) then exit;   { 'Fileserver-Liste' }
     if not exist(fn) then begin
@@ -227,12 +234,12 @@ end;
 function UUsendTestSourcefile(var s:string):boolean;
 var f    : file;
     sr   : searchrec;
-    name : pathstr;
+    name : string;
 
    procedure SetDestfile;
    begin
      if getfield(fieldpos+1)='' then
-       setfield(fieldpos+1,LowerCase(getfilename(s)));
+       setfield(fieldpos+1,LowerCase(extractfilename(s)));
    end;
 
 begin
@@ -272,12 +279,19 @@ end;
 
 procedure FS_command(comm:string; request:byte);
 var d     : DB;
+{$ifdef hasHugeString}
+    fs    : string;
+    fname : string;
+    fpass : string;
+    hd    : string;
+{$else}
     fs    : string[BoxNameLen];
     fname : string[30];
     fpass : string[30];
-    w     : smallword;
     hd    : string[12];
-    fn    : pathstr;
+{$endif}
+    w     : smallword;
+    fn    : string;
     t     : text;
     brk   : boolean;
     s     : string;
@@ -286,7 +300,7 @@ var d     : DB;
     enterfiles : boolean;
 
   procedure GetFilelist;
-  var dateien : string[12];
+  var dateien : string;
       anz     : longint;
       s       : string;
   label again;
@@ -312,7 +326,7 @@ var d     : DB;
   end;
 
   procedure GetTransCeiver;
-  var adr : string[AdrLen];
+  var adr : string;
   begin
     select(3);
     if selpos=0 then brk:=true
@@ -332,7 +346,7 @@ var d     : DB;
   end;
 
   procedure readservice;
-  var s   : string[40];
+  var s   : string;
       x,y : byte;
   begin
     diabox(49,5,getres(815),x,y);   { 'Service-Befehl' }
@@ -363,7 +377,7 @@ var d     : DB;
   var x,y    : byte;
       brk    : boolean;
       source,
-      dest   : pathstr;
+      dest   : string;
   begin
     dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
     source:='*.*'; dest:='';
@@ -395,7 +409,7 @@ var d     : DB;
   end;
 
   function UU_directory:string;
-  var s : string[100];
+  var s : string;
       p : byte;
   begin
     s:=prev_line;
@@ -534,6 +548,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/07/05 15:12:15  hd
+  - AnsiString
+
   Revision 1.8  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

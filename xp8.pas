@@ -34,7 +34,7 @@ procedure SendMaps(bef:string; var box,datei:string);
 procedure MapsDelBrett(brett:string);
 procedure MapsReadList;
 procedure MapsReadFile;
-procedure ReadPromafList(fn:pathstr; var bfile:string);
+procedure ReadPromafList(fn:string; var bfile:string);
 procedure MapsBrettliste(art:byte);
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
 procedure GetSysfile;
@@ -62,9 +62,15 @@ implementation  { ------------------------------------------------- }
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt;
 
+{$ifdef hasHugeString}
+const mapsbox : string = '';
+
+var mapsname : string;
+{$else}
 const mapsbox : string[BoxNameLen] = '';
 
 var mapsname : string[20];
+{$endif}
     mapsnt   : byte;
     mapsart  : byte;
 
@@ -121,14 +127,19 @@ begin
 end;
 
 procedure SendMaps(bef:string; var box,datei:string);
-var hf : string[12];
+var
+{$ifdef hasHugeString}
+    hf : string;
+{$else}
+    hf : string[12];
+{$endif}
     mt : byte;
     nt : byte;
 
   procedure AreaBef;
   var t1,t2 : text;
-      tn    : pathstr;
-      s     : string[80];
+      tn    : string;
+      s     : string;
   begin
     if (bef='ADD') or (bef='DEL') then begin
       tn:=TempS(_filesize(datei)*2);
@@ -152,8 +163,8 @@ var hf : string[12];
 
   procedure MafNude(maf,promaf:boolean);
   var t1,t2 : text;
-      tn    : pathstr;
-      s     : string[80];
+      tn    : string;
+      s     : string;
   begin
     ReadBoxpar(0,box);
     if (bef='ADD') or (bef='DEL') then begin
@@ -199,11 +210,16 @@ var hf : string[12];
                 end;
   var t       : text;
       root    : bnodep;
+{$ifdef hasHugeString}
+      sysfile : string;
+      _brett  : string;
+{$else}
       sysfile : string[12];
+      _brett  : string[5];
+{$endif}
       s       : string;
       syspos  : byte;
       first   : boolean;
-      _brett  : string[5];
       d       : DB;
 
     procedure SetBrett(add:boolean; var bn:bnodep);
@@ -320,7 +336,7 @@ var hf : string[12];
   end;
 
   procedure Guppie(typ:byte);   { 1=GUP, 2=AutoSys, 3=Feeder }
-  var tn    : pathstr;
+  var tn    : string;
       t1,t2 : text;
       s     : string[120];
       d     : DB;
@@ -433,13 +449,24 @@ procedure MapsDelBrett(brett:string);
 const maxmaggi = 500;
 
 type maggibrett  = record
+{$ifdef hasHugeString}
+                     code  : string;
+                     name  : string;
+{$else}
                      code  : string[4];
                      name  : string[40];
+{$endif}
                    end;
     ma           = array[1..maxmaggi] of maggibrett;
 var t     : text;
-    fn    : pathstr;
+    fn    : string;
+{$ifdef hasHugeString}
+    box   : string;
+    bfile : string;
+{$else}
     box   : string[20];
+    bfile : string[8];
+{$endif}
     i,nr  : integer;
     d     : DB;
     topen : boolean;
@@ -454,7 +481,6 @@ var t     : text;
     qwk   : boolean;
     map   : ^ma;
     mm    : integer;
-    bfile : string[8];
 
   { s. auch MAGGI.loadbretter! }
 
@@ -685,7 +711,7 @@ end;
 
 { Unterprozeduren fÅr MapsReadList und MapsReadFile }
 
-function ReadMafList(fn:pathstr; var bfile:string):boolean;
+function ReadMafList(fn:string; var bfile:string):boolean;
 var t1,t2 : text;
     s     : string;
     ss    : string[40];
@@ -721,7 +747,7 @@ begin
   close(t1);
 end;
 
-procedure ReadPromafList(fn:pathstr; var bfile:string);
+procedure ReadPromafList(fn:string; var bfile:string);
 var t1,t2 : text;
     s     : string;
 begin
@@ -742,15 +768,23 @@ begin
 end;
 
 procedure MapsReadList;
-var absender : string[Adrlen];
+var
+{$ifdef hasHugeString}
+    absender : string;
+    box      : string;
+    betreff  : string;
+    bfile    : string;
+{$else}
+    absender : string[Adrlen];
     box      : string[BoxNameLen];
     betreff  : string[BetreffLen];
-    d        : DB;
     bfile    : string[8];
+{$endif}
+    d        : DB;
     fido     : boolean;
     turbo    : boolean;
     uucp     : boolean;
-    fn       : pathstr;
+    fn       : string;
     bpsik    : BoxPtr;
 label ende;
 begin
@@ -822,17 +856,23 @@ end;
 { Brettliste aus Datei nach .BL einlesen }
 
 procedure MapsReadFile;
-var box     : string[BoxNameLen];
-    fn      : pathstr;
+var
+{$ifdef hasHugeString}
+    box     : string;
+    bfile   : string;
+{$else}
+    box     : string[BoxNameLen];
+    bfile   : string[8];
+{$endif}
+    fn      : string;
     useclip : boolean;
     d       : DB;
     maggi   : boolean;
     promaf  : boolean;
-    bfile   : string[8];
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
-  fn:='*.*';
+  fn:=Wildcard;
   useclip:=true;
   if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
   maggi:=(mapstype(box)=2);    { MagicNet }
@@ -893,8 +933,18 @@ end;
 
 procedure MapsBrettliste(art:byte);
 var d      : DB;
+{$ifdef hasHugeString}
+    box    : string;
+    ask    : string;
+    bretter: string;
+    lfile  : string;
+{$else}
     box    : string[BoxNameLen];
-    fn     : pathstr;
+    ask    : string[60];
+    bretter: string[15];
+    lfile  : string[12];
+{$endif}
+    fn     : string;
     brk    : boolean;
     t      : text;
     s      : string;
@@ -910,9 +960,6 @@ var d      : DB;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
-    ask    : string[60];
-    bretter: string[15];
-    lfile  : string[12];
     verbose: boolean;
 
 label again;
@@ -935,7 +982,11 @@ label again;
 
   procedure writeform;
   var p  : byte;
+{$ifdef hasHugeString}
+      gr : string;
+{$else}
       gr : string[78];
+{$endif}
   begin
     if maf then
       if s[41]<>' ' then
@@ -991,7 +1042,7 @@ label again;
   procedure BretterAnlegen;
   var x,y : byte;
       n   : longint;
-      s   : string[100];
+      s   : string;
       i   : integer;
   begin
     msgbox(30,5,'',x,y);
@@ -1160,9 +1211,15 @@ end;
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
 var brk     : boolean;
     comm    : string;
+{$ifdef hasHugeString}
+    box     : string;
+    domain  : string;
+{$else}
     box     : string[BoxNameLen];
+    domain  : string[60];
+{$endif}
     t       : text;
-    fn      : pathstr;
+    fn      : string;
     d       : DB;
     area    : boolean;
     request : boolean;
@@ -1180,7 +1237,6 @@ var brk     : boolean;
     promaf  : boolean;
     lines   : byte;
     i       : integer;
-    domain  : string[60];
 
   procedure app(s1,s2:string);
   begin
@@ -1189,7 +1245,7 @@ var brk     : boolean;
 
   procedure rdsystem;
   var x,y : byte;
-      sys : string[BoxNameLen];
+      sys : string;
       brk : boolean;
   begin
     diabox(28,5,getres(808),x,y);   { 'Info <System>' }
@@ -1218,8 +1274,14 @@ var brk     : boolean;
   end;
 
   procedure gruppenuser;
-  var gruppe : string[80];
+  var
+{$ifdef hasHugeString}
+      gruppe : string;
+      user   : string;
+{$else}
+      gruppe : string[80];
       user   : string[80];
+{$endif}
       x,y,p  : byte;
       brk    : boolean;
       aufnehm: boolean;
@@ -1530,7 +1592,7 @@ end;
           shlink.test/!local,all:f:   }
 
 procedure GetSysfile;
-var fn   : pathstr;
+var fn   : string;
     t,t2 : text;
     s    : string;
     p    : byte;
@@ -1588,6 +1650,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/05 15:12:15  hd
+  - AnsiString
+
   Revision 1.14  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
