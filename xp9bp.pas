@@ -20,13 +20,14 @@ interface
 uses typeform,fileio,datadef,database,
      sysutils,xp0,xp1,xp2,xpnt, xpglobal;
 
-
 const bm_changesys = 1;
       bm_GUP       = 2;
       bm_Feeder    = 3;
       bm_AutoSys   = 4;
       bm_postmaster= 5;
 
+const uucp_mode_modem = 1;
+      uucp_mode_tcpip = 2;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
@@ -159,17 +160,21 @@ begin
     BMdomain:=false;
     maxfsize:=0;
 
-    nntp_ip:='localhost';        { Default IP }
+    uucp_mode:=uucp_mode_modem;		{ UUCP: Modus, _modem oder _tcpip }
+    uucp_ip:='uucp';			{ UUCP: IP oder Domain }
+    uucp_port:=540;			{ UUCP: Port }
+
+    nntp_ip:='news';             { Default IP }
     nntp_port:= 119;             { Port }
     nntp_id:= '';                { User-ID }
     nntp_pwd:= '';               { PAssword }
 
-    pop3_ip := 'localhost';             { POP3: IP oder Domain }
+    pop3_ip := 'pop3';                  { POP3: IP oder Domain }
     pop3_id := '';                      { POP3: User-ID, falls noetig }
     pop3_pwd  := '';                    { POP3: Passwort, falls noetig }
     pop3_clear := true;                 { POP3: Nachrichten loeschen }
 
-    SMTP_ip := 'localhost';             { SMTP: IP oder Domain }
+    SMTP_ip := 'smtp';                  { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
     SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
     SmtpAfterPOP := false;              { SMTP: Vorher POP3 Login noetig }
@@ -309,6 +314,9 @@ begin
             getb(su,  'brettmanagertyp',BMtyp) or
             getx(su,  'brettmanagerdomain',BMdomain) or
             getw(su,  'maxfilesize',maxfsize) or
+            getb(su,  'UU-Mode',uucp_mode) or
+            gets(s,su,'UU-Host',uucp_ip,255) or
+            geti(su,  'UU-Port',uucp_port) or
             gets(s,su,'NNTP-Host',nntp_ip,255) or
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
@@ -434,6 +442,14 @@ begin
     if packetpw then writeln(t,'PacketPW=J');
     if ExtPFiles then writeln(t,'ExtFidoFNames=J');
     if loginname<>'' then writeln(t,'LoginName=',loginname);
+    if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
+    writeln(t,'BrettmanagerTyp=',BMtyp);
+    writeln(t,'BrettmanagerDomain=',jnf(BMdomain));
+    if chsysbetr<>'' then writeln(t,'Sysfile=',chsysbetr);
+    writeln(t,'7e1Login=',jnf(uucp7e1));
+    if janusplus then writeln(t,'JanusPlus=J');
+    writeln(t,'DelQWK=',jnf(DelQWK));
+
     if uucpname<>''  then writeln(t,'UUCPname=',uucpname);
     if maxwinsize<>7 then writeln(t,'UU-MaxWinSize=',maxwinsize);
     if maxpacketsize<>64 then writeln(t,'UU-MaxPacketSize=',maxpacketsize);
@@ -442,13 +458,10 @@ begin
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     if uusmtp then writeln(t,'UU-SMTP=',jnf(uusmtp));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
-    if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
-    writeln(t,'BrettmanagerTyp=',BMtyp);
-    writeln(t,'BrettmanagerDomain=',jnf(BMdomain));
-    if chsysbetr<>'' then writeln(t,'Sysfile=',chsysbetr);
-    writeln(t,'7e1Login=',jnf(uucp7e1));
-    if janusplus then writeln(t,'JanusPlus=J');
-    writeln(t,'DelQWK=',jnf(DelQWK));
+
+    writeln(t,'UU-Mode=',uucp_mode);
+    if uucp_ip<>''   then writeln(t,'UU-Host=',uucp_ip);
+    if uucp_port<>-1 then writeln(t,'UU-Port=',nntp_port);
 
     if nntp_ip<>''   then writeln(t,'NNTP-Host=',nntp_ip);
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
@@ -579,6 +592,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/12/28 14:45:03  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.26  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

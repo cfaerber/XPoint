@@ -1805,7 +1805,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    Domain   ~
 10   Serverdom.
 11   FQDN     ~
-12   eMail    ~
+12   E-Mail   ~
 + 913
 0    26
 1    Netztyp~
@@ -1829,7 +1829,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Pointnr. ~
 #
 10   Pointname
-11   Pa·wort ~
+11   Passwort~
 12   Telefon
 13   Ser.Nr.
 # QM
@@ -1837,7 +1837,15 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Fido
 15   Pa·wort
 # UUCP
-16   Login ~
+16   Login   ~
+17   Passwort
+#
+70   Modus   ~
+71   Modem
+72   TCP/IP
+73   Telefon~
+74   Hostname
+75   Port
 #
 20   Upload-Protokoll ~
 21   Download-Protokoll
@@ -3019,7 +3027,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 36 Bitte zuerst Nachrichtenpaket einlesen, um Serverdaten zu ermitteln!
 37 ZQWK-Fehler Nr. %s bei Nachrichtenkonvertierung!
 38 Scriptdatei fÅr Relogin-Anruf erforderlich!
-39 Relogin bei ISDN nicht mîglich
+39 Relogin bei ISDN oder TCP/IP nicht mîglich
 40 ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert
 41 Lîschen Sie das Unterverzeichnis "%s"!
 42 Unbekannter Fido-Node: %s
@@ -3101,6 +3109,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 33 "rz" und "sz" mÅssen installiert sein!
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
+36 Diese Box ist fÅr TCP/IP konfiguriert.
 
 +  11000
 1  unbekannter Befehl
@@ -3577,6 +3586,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.91  2000/12/28 14:45:00  mk
+# CL:- first things for UUCP over IP
+#
 # Revision 1.90  2000/12/26 12:10:24  mk
 # - removed cancel from minisel in nntp-grouplist
 #

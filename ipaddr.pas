@@ -33,7 +33,11 @@ uses
 {$IFDEF Win32 }
   winsock,
 {$ELSE }
+{$IFDEF DOS32 }
+  dossock,
+{$ELSE }
   sockets,
+{$ENDIF }
 {$ENDIF }
   sysutils;
 
@@ -106,9 +110,11 @@ resourcestring
   res_IPNoIPv4Error        = 'This is not an IPv4 address!';
 
 {$ifdef unix}
-
 {$LINKLIB c}
+{$ENDIF}
 
+{$IFNDEF Win32}
+{$IFNDEF DOS32}
 type
   { THostEnt Object }
   THostEnt = record
@@ -121,6 +127,7 @@ type
   PHostEnt = ^THostEnt;
 
 function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+{$endif}
 {$endif}
 
 constructor TIP.Create;
@@ -221,6 +228,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/12/28 14:45:00  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.9  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

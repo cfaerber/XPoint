@@ -167,6 +167,7 @@ procedure setfield(nr:word; newcont:string);
 function  getfield(nr:word):string;
 function  fieldpos:integer;         { akt.FeldNr, auch w„hrend Maskenaufbau! }
 procedure setfieldenable(nr:word; eflag:boolean);   { Feld (de)aktivieren }
+procedure setfieldnodisp(nr:word; dflag:boolean);   { Feld nicht anzeigen }
 function  mask_helpnr:word;
 function  readmask_active:boolean;
 procedure set_chml(nr:word; chml:string);
@@ -1170,6 +1171,16 @@ begin
         end;
 end;
 
+procedure setfieldnodisp(nr:word; dflag:boolean);
+begin
+  testfield(nr);
+  with amaskp^ do
+    with fld[nr]^ do
+      if disnodisp<>dflag then begin
+        disnodisp:=dflag;
+        redispfields:=true;
+        end;
+end;
 
 { Feldbezeichnung „ndern }
 
@@ -1275,6 +1286,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2000/12/28 14:45:00  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.23  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

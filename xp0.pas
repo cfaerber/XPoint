@@ -590,6 +590,10 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigroesse / KB }
+		  uucp_mode : byte;	   { UUCP: 1=Modem, 2=TCP/IP }
+		  uucp_ip   : string;	   { UUCP: IP oder Domain }
+                  uucp_port : integer;	   { UUCP: Port, default: uucp }
+
                   nntp_ip   : string;      { NNTP: IP oder Domain }
                   nntp_port : integer;     { NNTP: Port, default: 119 }
                   nntp_id   : string;      { NNTP: User-ID, falls noetig }
@@ -1137,6 +1141,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.111  2000/12/28 14:45:01  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.110  2000/12/27 22:36:36  mo
   -new class TfidoNodeList
 

@@ -35,7 +35,11 @@ uses
 {$IFDEF Win32 }
   winsock,
 {$ELSE }
+{$IFDEF DOS32 }
+  dossock,
+{$ELSE }
   sockets,
+{$ENDIF }
 {$ENDIF }
   sysutils;
 
@@ -228,7 +232,8 @@ begin
   FAddr.Addr:= Host.Raw;
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
-  if not Sockets.Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
+  if not {$IFDEF DOS32}DOSSock.{$ELSE}Sockets.{$ENDIF} 
+    Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
 {$ENDIF}
   begin
     FConnected:= false;
@@ -377,6 +382,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/12/28 14:45:00  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.16  2000/12/28 00:44:52  ml
   - nntp-posting implemented
   - ReadOnly-flag for nntp-servers

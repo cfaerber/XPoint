@@ -372,6 +372,7 @@
       add    : shortint;
       fido   : boolean;
       uucp   : boolean;
+      _uucp_mode: string;
       pronet : boolean;
       zc     : boolean;
       pnr    : word;     { Fido - Pointnummer }
@@ -379,6 +380,7 @@
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
       Ue,Uz  : boolean;  { UUCP-e }
       Uf     : boolean;  { UUCP-f }
+      uucp_modefld:integer;
       flags  : byte;
       fnode  : boolean;  { Fido-Absender: Nodenummer }
       pp     : byte;
@@ -396,7 +398,7 @@
                      xx:=56; yy:=18;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_UUCP    : yy:=18;
+      nt_UUCP    : yy:=20;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
     end;
@@ -420,18 +422,40 @@
                     maddstring(39,2,getres2(920,7),pname,2,2,'0123456789');  { 'Pointnr.  ' }
                       mhnr(8005);
                   end;
+        nt_UUCP : begin
+                    maddstring(3,2,getres2(920,16),loginname,15,20,'');    { 'Login  ' }
+                      mhnr(8016);
+                    loginfld:=fieldpos;
+	            maddstring(3,3,getres2(920,11),passwort,15,20,'');	   { 'Password' }
+                    maddstring(33,2,getres2(920,10),pname,20,25,'<');
+                      mhnr(140);                                           { 'Pointname' }
+                    mset3proc(uucp_getloginname);
 
+		    _uucp_mode:=iifs((uucp_mode=uucp_mode_modem),
+		      getres2(920,71),getres2(920,72));
+		    maddstring(3,5,getres2(920,70),_uucp_mode,6,6,'');	   { 'Modus   ' }
+		    mappsel(true,getres2(920,71)+'ù'+getres2(920,72));
+		    mset1func(uucp_setmode);
+		      uucp_modefld:=fieldpos;
+
+		    maddstring(23,5,getres2(920,73),telefon,31,60,'');	   { 'Telefon ' }
+		      uucp_telfld:=fieldpos;
+		    maddstring(23,5,getres2(920,74),uucp_ip,18,60,'');	   { 'Hostname' }
+		      uucp_ipfld:=fieldpos;
+		    maddint   (53,5,getres2(920,75),uucp_port,5,5,1,65535);{ 'Port' }
+		      uucp_portfld:=fieldpos;
+		    uucp_setmode(_uucp_mode);
+                  end;
       else        begin
-                    maddstring(3,2,getres2(920,10),pname,20,25,iifc(uucp,'<','>'));
+                    maddstring(33,2,getres2(920,10),pname,20,25,'>');
                       mhnr(140);                             { 'Pointname' }
                     if nt=nt_ZConnect then
                       msetvfunc(testZCpointname);
-                    if uucp then mset3proc(uucp_getloginname);
                     maddstring(3,3,getres2(920,11),passwort,20,20,
                                    iifs(ntGrossPW(nt),'>',''));
                   end;                                       { 'Passwort  ' }
       end;
-      if not pronet then begin
+      if not pronet and not uucp then begin
         maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
                    iif(fido,18,17),60,'');                   { 'Telefon'  }
         mhnr(142);
@@ -452,9 +476,6 @@
         mset3proc(fidotestpasslen);                            { 'Passwort' }
         end;
       if uucp then begin
-        maddstring(38,3,getres2(920,16),loginname,17,20,'');   { 'Login  ' }
-        mhnr(8016);
-        loginfld:=fieldpos;
         end;
 
       add:=iif(nt=nt_Maus,0,1);
@@ -479,7 +500,7 @@
         lhapar:='';
         end
       else begin
-        add:=-2;
+        add:=iif(uucp,0,-2);
         lhapar:=' -m';
         br:=iif(uucp,41,31);
         end;
@@ -519,34 +540,34 @@
           end;
         if not fido then
           if uucp then begin
-            maddint(3,11,getres2(920,30),maxpacketsize,5,4,64,4096);
+            maddint(3,13,getres2(920,30),maxpacketsize,5,4,64,4096);
               mhnr(8010);                           { 'max. UUCP-Paketgroesse ' }
             mappsel(true,'64ù128ù256ù512ù1024ù2048ù4096');
-            maddint(3,12,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergroesse  ' }
-            maddint(3,13,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigroesse   ' }
+            maddint(3,14,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergroesse  ' }
+            maddint(3,15,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigroesse   ' }
               mhnr(8025);
-            maddtext(35,13,'KB',0);
-            maddbool(3,15,getres2(920,32),VarPacketSize);     { 'variable Paketgroesse' }
+            maddtext(35,15,'KB',0);
+            maddbool(3,17,getres2(920,32),VarPacketSize);     { 'variable Paketgroesse' }
               mhnr(8012);
-            maddbool(3,16,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgroesse vorgeben' }
-            maddbool(3,17,getres2(920,35),SizeNego);          { 'Dateigroesse uebertragen' }
-            maddbool(3,18,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
+            maddbool(3,18,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgroesse vorgeben' }
+            maddbool(3,19,getres2(920,35),SizeNego);          { 'Dateigroesse uebertragen' }
+            maddbool(3,20,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
             Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
             Ue:=cpos('e',uuprotos)>0; Uz:=cpos('z',uuprotos)>0;
             Uf:=cpos('f',uuprotos)>0;
-            maddbool(43,11,getres2(920,34),Ug);    { 'g-Protokoll' }
+            maddbool(43,13,getres2(920,34),Ug);    { 'g-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uup1:=fieldpos;
-            maddbool(43,12,getres2(920,33),U_G);    { 'G-Protokoll' }
+            maddbool(43,14,getres2(920,33),U_G);    { 'G-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,13,getres2(920,37),Uz);    { 'z-Protokoll' }
+            maddbool(43,15,getres2(920,37),Uz);    { 'z-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,14,getres2(920,38),Uf);    { 'f-Protokoll' }
+            maddbool(43,16,getres2(920,38),Uf);    { 'f-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,15,getres2(920,39),Ue);    { 'e-Protokoll' }
+            maddbool(43,17,getres2(920,39),Ue);    { 'e-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uupl:=fieldpos;
-            maddbool(43,17,getres2(920,61),uucp7e1);   { 'Login mit 7e1' }
+            maddbool(43,19,getres2(920,61),uucp7e1);   { 'Login mit 7e1' }
             mhnr(8024);
             uparcnr:=0; downarcnr:=0;
             end
@@ -610,6 +631,7 @@
         if Uz then uuprotos:=uuprotos+'z';
         if Uf then uuprotos:=uuprotos+'f';
         if Ue then uuprotos:=uuprotos+'e';
+        uucp_mode:=iif(_uucp_mode=getres2(920,71),uucp_mode_modem,uucp_mode_tcpip);
         end;
       end;
     enddialog;
@@ -619,6 +641,10 @@
   var x,y,add  : byte;
       schnitte : string;
       fido     : boolean;
+  begin
+    if((nt=nt_UUCP) and (boxpar^.uucp_mode=uucp_mode_tcpip)) then
+      rfehler(936)
+    else
   begin
     fido:=(nt=nt_Fido);
     add:=iif(fido,0,1);
@@ -666,6 +692,7 @@
           bport:=ival(RightStr(schnitte,1));
       enddialog;
       end;
+    end;
   end;
 
   procedure Editgebuehren(var brk:boolean);
@@ -1500,8 +1527,8 @@
                    end;
       nt_UUCP:     begin
                      nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
+			 +getres2(927,7)        { ^Modem, }
+//                       +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,28)       { ^UUCP, }
                          +getres2(927,10)       { ^Diverse }
@@ -1700,6 +1727,9 @@
 
 {
   $Log$
+  Revision 1.35  2000/12/28 14:45:02  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.34  2000/12/03 14:19:41  mk
   - Serverdom mit Punkt
 

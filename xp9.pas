@@ -55,6 +55,7 @@ procedure ps_setempf(var s:string);
 function  notempty2(var s:string):boolean;
 function  testreplyto(var s:string):boolean;
 procedure uucp_getloginname(var s:string);
+function  uucp_setmode(var s:string):boolean;
 function  testuucp(var s:string):boolean;
 procedure SetDomain(var s:string);
 procedure testArcExt(var s:string);
@@ -93,6 +94,11 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       gf_fido   : boolean;
       loginfld  : integer;    { UUCP-Loginname }
       uup1,uupl : integer;
+
+      uucp_telfld:integer;
+      uucp_ipfld: integer;
+      uucp_portfld:integer;
+      
       DomainNt  : shortint;   { Netztyp f. setdomain() und testvertreterbox() }
       bDomainNt : byte;                                                { u.a. }
       EditPnt   : byte;       { Netztyp f. EditPointdaten }
@@ -338,6 +344,18 @@ begin
     setfield(loginfld,s);
 end;
 
+function uucp_setmode(var s:string):boolean;
+  var modem: boolean;
+begin
+  modem:=(s=getres2(920,71));
+  setfieldenable(uucp_telfld,     modem);
+  setfieldenable(uucp_ipfld,  not modem);
+  setfieldenable(uucp_portfld,not modem);
+  setfieldnodisp(uucp_telfld, not modem);
+  setfieldnodisp(uucp_ipfld,      modem);
+  setfieldnodisp(uucp_portfld,    modem);
+  uucp_setmode:=true;
+end;
 
 function DefaultMaps(nt:byte):string;
 begin
@@ -1820,6 +1838,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.52  2000/12/28 14:45:03  mk
+  CL:- first things for UUCP over IP
+
   Revision 1.51  2000/12/27 22:36:32  mo
   -new class TfidoNodeList
 
