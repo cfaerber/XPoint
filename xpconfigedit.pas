@@ -1235,13 +1235,15 @@ end;
 
 
 procedure gf_getntyp(var s:string);
-var uucp,client : boolean;
+var uucp,rfc : boolean;
 begin
-  setfieldtext(fieldpos+1,getres2(912,iif(LowerCase(s)=LowerCase(ntName(nt_Client)),13,2)));
+  rfc:=(LowerCase(s)=LowerCase(ntName(nt_Client)))or
+       (LowerCase(s)=LowerCase(ntName(nt_NNTP)))or
+       (LowerCase(s)=LowerCase(ntName(nt_POP3)));
   gf_fido:=(LowerCase(s)=LowerCase(ntName(nt_Fido)));
   uucp:=(LowerCase(s)=LowerCase(ntName(nt_UUCP)));
-  client:=(LowerCase(s)=LowerCase(ntName(nt_Client)));
-  if (LowerCase(s)=LowerCase(ntName(nt_Maus))) or gf_fido or uucp or client then
+  setfieldtext(fieldpos+1,getres2(912,iif(rfc,13,2)));
+  if (LowerCase(s)=LowerCase(ntName(nt_Maus))) or gf_fido or uucp or rfc then
     set_chml(userfield,'')
   else
     set_chml(userfield,'>');
@@ -1249,7 +1251,7 @@ begin
     set_chml(fieldpos+1,'')
   else
     set_chml(fieldpos+1,'>');}
-  setfieldtext(userfield,getres2(912,iif(client,12,3)));
+  setfieldtext(userfield,getres2(912,iif(rfc,12,3)));
 end;
 
 function xp9_testbox(var s:string):boolean;
@@ -1318,11 +1320,11 @@ restart:
   for i:=0 to High(SupportedNetTypes) do
     mappsel(true,ntName(SupportedNetTypes[i]));
   mset3proc(gf_getntyp);
-  maddstring(3,10,getres2(912,13),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
+  maddstring(3,10,getres2(912,13),name,20,20,'"!'+range('#','?')+range('A',#126)+'Ž™š');
     mhnr(680);                                       { 'Server' bzw. 'Boxname' }
   DomainNt:=-1;
   msetvfunc(xp9_testbox);
-  maddstring(3,12,getres2(912,12),user,30,30,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
+  maddstring(3,12,getres2(912,12),user,30,80,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
   userfield:=fieldpos;
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
@@ -2536,6 +2538,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.2  2002/07/13 12:10:28  ma
+  - enabled lowercase for box name in initial box creation
+
   Revision 1.45.2.1  2002/05/25 07:22:06  mk
   - UserName has only 30 characters
 
