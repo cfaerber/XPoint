@@ -671,7 +671,7 @@ dually as files on the disk.
 50
 <<View Mode>>
 
-Generally, you will not want to see all messages in 
+Generally, you will not want to see all messages in
 the message base. There may be too many, some you
 may have already read, others may be old, etc.
 For this reason, CrossPoint allows you to select
@@ -878,7 +878,27 @@ They can be <<recalled with Ctrl-U>>
         marked, the text from the paragraph where
         the cursor is to the next empty line is
         reformatted.
-
+@
+8063
+  The value you enter here determines the
+  line-length. A suggested value would be "70" to
+  allow for displaying multiple quotes correctly.
+@
+8064
+  Press F2 to select the end of line marker. If you
+  do <<NOT>> want to see the end of line marker,
+  cursor down to the bottom of the list and press
+  <enter>.
+@
+8065
+<<[x]>> -> Turns on automatic line indentation.
+@
+8066
+<<[x]>> -> Marked blocks will not be marked again or
+       overwritten.
+@
+8067
+<<[x]>> -> Enable quote-reflow.
 @
 65
 Use the cursor keys to page through years and months.
