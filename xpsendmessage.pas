@@ -1792,19 +1792,24 @@ fromstart:
 
     if ntZConnect(netztyp) then begin
       if pm then
-        hdp.empfaenger:=empfaenger            { PM }
-      else if empfaenger[1]<>'1' then
-        hdp.empfaenger:=mid(empfaenger,2)     { normale AM }
-      else begin
-        hdp.empfaenger:=mid(empfaenger,3);    { interne PM-Brett-Nachricht }
-        p:=cpos('/',hdp.empfaenger);
-        if p=0 then hdp.empfaenger:=hdp.empfaenger+'@'+box
-        else hdp.empfaenger[p]:='@';
-        end;
-      if pm then hdp.archive:=true;
-      end
+        hdp.Empfaenger.Add(empfaenger)            { PM }
+      else if FirstChar(empfaenger)<>'1' then
+        hdp.Empfaenger.Add(mid(empfaenger,2))     { normale AM }
+      else
+      begin
+        s := mid(empfaenger,3);    { interne PM-Brett-Nachricht }
+        p:=cpos('/',hdp.FirstEmpfaenger);
+        if p=0 then
+          s :=hdp.FirstEmpfaenger+'@'+box
+        else
+          s[p]:='@';
+        hdp.Empfaenger.Add(s);
+      end;
+      if pm then
+        hdp.archive:=true;
+    end
     else
-      hdp.empfaenger:=iifs(pm,TO_ID+empfaenger,mid(empfaenger,2));
+      hdp.FirstEmpfaenger:=iifs(pm,TO_ID+empfaenger,mid(empfaenger,2));
     hdp.betreff:=betreff;
     case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
       0 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
@@ -1967,7 +1972,7 @@ fromstart:
     msgCPpos:=0;
 
     for ii:=1 to msgCPanz-1 do
-      EmpfList.Add(cc^[ii]);
+      hdp.Empfaenger.Add(cc^[ii]);
     hdp.References.Assign(sData.References);
 
     hdp.groesse:=s1.Size;
@@ -2144,12 +2149,12 @@ fromstart:
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
 
       for ii:=1 to msgCPanz-1 do
-        Empflist.Add(cc^[ii]);
+        hdp.Empfaenger.Add(cc^[ii]);
 
       if not flCrash or not MayCrash then
         fn2 := boxfile+ExtBoxfile
       else begin
-        fn2 := CrashFile(hdp.empfaenger);
+        fn2 := CrashFile(hdp.FirstEmpfaenger);
         SetCrashInfo;
       end;
 
@@ -2161,7 +2166,7 @@ fromstart:
 
       hdp.groesse := s1.Size;
       hdp.WriteToStream(s2);
-      EmpfList.Clear;
+      hdp.Empfaenger.Clear;
 
       s1.Seek(0,soFromBeginning);
       CopyStream(s1,s2);
@@ -2341,6 +2346,9 @@ finalization
 
 {
   $Log$
+  Revision 1.37  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.36  2002/01/13 15:07:32  mk
   - Big 3.40 Update Part I
 

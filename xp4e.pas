@@ -612,7 +612,7 @@ begin
   if MarkUnversandt and (FirstChar(dbReadStrN(mbase,mb_brett))='U') then begin
     hdp:= THeader.Create;
     readheader(hdp,hds,true);
-    suchname:=hdp.empfaenger;
+    suchname:=hdp.FirstEmpfaenger;
     Hdp.Free;
     if LeftStr(suchname,length(TO_ID))=TO_ID then
       suchname:=mid(suchname,length(TO_ID)+1);
@@ -2492,6 +2492,9 @@ end;
 
 {
   $Log$
+  Revision 1.85  2002/01/13 15:15:52  mk
+  - new "empfaenger"-handling
+
   Revision 1.84  2002/01/13 15:07:29  mk
   - Big 3.40 Update Part I
 

@@ -834,13 +834,13 @@ var t,lastt: taste;
         i : integer;
     begin
       hdp := THeader.Create;
-      readheader(hdp,hds,false);
+      Readheader(hdp,hds,false);
       with hdp do
         for i:=1 to followup.count-1 do begin
           dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
-          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
+          Empfaenger.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
         end;
-      SendEmpfList.Assign(EmpfList); EmpfList.Clear;
+      SendEmpfList.Assign(hdp.Empfaenger);
       Hdp.Free;
     end;
 
@@ -1109,16 +1109,16 @@ var t,lastt: taste;
             end;
           if rt='' then begin
             ReadHeadEmpf:=dbReadInt(mbase,'netztyp') shr 24;
-            if ReadHeadEmpf<>0 then begin
-              ReadEmpfList:=true;          { Crossposting-Empfaenger einlesen }
-              hdp := THeader.Create;
+            if ReadHeadEmpf<>0 then
+            begin
+              hdp := THeader.Create;       { Crossposting-Empfaenger einlesen }
               ReadHeader(hdp,hds,false);
+              SendEmpfList.Assign(hdp.Empfaenger);
               Hdp.Free;
-              SendEmpfList.Assign(EmpfList); EmpfList.Clear;
               SetNobrettServers;
-              end;
             end;
           end;
+        end;
         if (rt<>'') and ((rt<>empf) or (rtanz>1)) then
         begin
           if not adresseAusgewaehlt  or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
@@ -1206,7 +1206,7 @@ var t,lastt: taste;
       begin
         hdp := THeader.Create;
         ReadHeader(hdp,hds,false);
-        dbseek(ubase,uiname,AnsiUpperCase(hdp.empfaenger));
+        dbseek(ubase,uiname,AnsiUpperCase(hdp.FirstEmpfaenger));
         if dbfound then defaultbox := dbReadStrN(ubase,ub_pollbox);
         Hdp.Free;
         end
@@ -1276,8 +1276,7 @@ var t,lastt: taste;
     begin                           { Bei PM ohne Replyto }
       hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp,hds,false);
-      if (hdp.Followup.Count = 0) or ((hdp.empfanz=1) and
-               (hdp.empfaenger=hdp.FollowUp[0])) then
+      if (hdp.Followup.Count = 0) or (hdp.FirstEmpfaenger=hdp.FollowUp[0]) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
@@ -2353,6 +2352,9 @@ end;
 
 {
   $Log$
+  Revision 1.120  2002/01/13 15:15:51  mk
+  - new "empfaenger"-handling
+
   Revision 1.119  2002/01/13 15:07:29  mk
   - Big 3.40 Update Part I
 

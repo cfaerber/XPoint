@@ -43,14 +43,16 @@ type
   end;
 
   THeader = class
+  private
+    function GetFirstEmpfaenger: String;
+    procedure SetFistEmpfaenger(const Value: String);
   public
     netztyp: byte;                      { --- intern ----------------- }
     archive: boolean;                   { archivierte PM               }
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
-    empfaenger: string; { --- allgemein --- Brett / User / TO:User }
+    Empfaenger: TStringList;              { EMP: - Liste }
     Kopien: TStringList;                { KOP: - Liste }
-    empfanz: integer;                   { Anzahl EMP-Zeilen }
     betreff: string;
     absender: string;
     datum: string;                      { Netcall-Format               }
@@ -142,6 +144,7 @@ type
 //  procedure ReadZConnect(stream:TStream);
 //  procedure ReadRFC(stream:TStream);
 
+    property FirstEmpfaenger: String read GetFirstEmpfaenger write SetFistEmpfaenger;
   end;
 
   TSendUUData = class
@@ -181,6 +184,7 @@ uses
 constructor THeader.Create;
 begin
   inherited Create;
+  Empfaenger := TStringList.Create;
   Kopien := TStringList.Create;
   ULine := TStringList.Create;
   XLIne := TStringList.Create;
@@ -203,9 +207,8 @@ begin
   archive := false;
   attrib := 0;
   filterattr := 0;
-  empfaenger := '';
+  Empfaenger.Clear;
   Kopien.Clear;
-  empfanz := 0;
   betreff := '';
   absender := '';
   datum := '';
@@ -295,6 +298,7 @@ end;
 
 destructor THeader.Destroy;
 begin
+  Empfaenger.Free;
   Kopien.Free;
   ULine.Free;
   XLine.Free;
@@ -337,9 +341,8 @@ procedure THeader.WriteZConnect(stream:TStream);
   var
     i: Integer;
   begin
-    Result:=iif(cpos('@',empfaenger)>0,1,0);
-    for i := 0 to EmpfList.Count - 1 do
-      if cpos('@', EmpfList[i])>0 then
+    for i := 0 to Empfaenger.Count - 1 do
+      if cpos('@', Empfaenger[i])>0 then
         Inc(Result);
   end;
 
@@ -359,20 +362,19 @@ procedure THeader.WriteZConnect(stream:TStream);
         else
                   ZtoZCdatum(datum,zdatum);
       gb:=ntGrossBrett(netztyp) or (netztyp=nt_ZConnect);
-      if gb and (cpos('@',empfaenger)=0) and (LeftStr(empfaenger,2)<>'/¯') then
-        UpString(empfaenger);
+      if gb and (cpos('@',FirstEmpfaenger)=0) and (LeftStr(FirstEmpfaenger,2)<>'/¯') then
+        FirstEmpfaenger := UpperCase(Firstempfaenger);
       if nokop and (pmempfanz>1) then
         writeln_s(stream,'STAT: NOKOP');
-      writeln_s(stream,'EMP: '+empfaenger);
 
-      for i := 0 to EmpfList.Count - 1 do
+      for i := 0 to Empfaenger.Count - 1 do
       begin
-        s :=  EmpfList[i];
+        s := Empfaenger[i];
         if gb and (cpos('@', s)=0) then
-          UpString(s);
+          s := UpperCase(s);
         writeln_s(stream,'EMP: '+ s);
       end;
-      EmpfList.Clear;
+      Empfaenger.Clear;
 
 {      if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);}
@@ -547,9 +549,9 @@ procedure THeader.WriteZ38(stream:TStream);
 
 begin
   if netztyp=nt_ZConnect then
-    writeln_s(stream,AddZer(empfaenger))
+    writeln_s(stream,AddZer(Firstempfaenger))
   else
-    writeln_s(stream,empfaenger);
+    writeln_s(stream,Firstempfaenger);
 
   writeln_s(stream,LeftStr(betreff,40));
 
@@ -571,6 +573,22 @@ begin
     WriteZConnect(stream)
   else
     WriteZ38(stream);
+end;
+
+function THeader.GetFirstEmpfaenger: String;
+begin
+  if Empfaenger.Count > 0 then
+    Result := Empfaenger[0]
+  else
+    Result := '';
+end;
+
+procedure THeader.SetFistEmpfaenger(const Value: String);
+begin
+  if Empfaenger.Count = 0 then
+    Empfaenger.Add(Value)
+  else
+    Empfaenger[0] := Value;
 end;
 
 { TSendUUData }
@@ -618,8 +636,12 @@ begin
   RTAHasSetVertreter := false;
   boundary := '';
 end;
+
 {
   $Log$
+  Revision 1.21  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.20  2002/01/05 16:01:10  mk
   - changed TSendUUData from record to class
 

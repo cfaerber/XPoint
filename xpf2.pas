@@ -114,7 +114,7 @@ label ende;
       if p>0 then with hdp,boxpar^ do begin
         feld:=LowerCase(LeftStr(s,p-1));
         s:=trim(mid(s,p));
-        if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
+        if feld='area' then Firstempfaenger:=MagicBrett+'FILES/'+s else
         if feld='origin' then absender:='FileScan@'+s else
         if feld='file' then betreff:=ExpandFilename(ExtractFilePath(fn)+s) else
         if feld='desc' then summary:=s else
@@ -126,7 +126,7 @@ label ende;
     close(t2);
     with hdp do begin
       DeleteLastChar(pfad);
-      if (empfaenger<>'') and (betreff<>'') and FileExists(betreff) then begin
+      if (FirstEmpfaenger<>'') and (betreff<>'') and FileExists(betreff) then begin
         netztyp:=nt_Fido;
         inc(attrib,AttrFile);
         if absender='' then absender:='???';

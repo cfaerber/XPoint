@@ -1863,16 +1863,16 @@ begin
         rfehler1(427,box)   { 'fehlerhaftes Pollpaket:  %s' }
       else with hdp do begin
         _brett:='';
-        if (cpos('@',empfaenger)=0) and
-           ((netztyp<>nt_Netcall) or (FirstChar(empfaenger)='/'))
+        if (cpos('@',Firstempfaenger)=0) and
+           ((netztyp<>nt_Netcall) or (FirstChar(FirstEmpfaenger)='/'))
         then begin
-          dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
+          dbSeek(bbase,biBrett,'A'+UpperCase(Firstempfaenger));
           if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           else _brett:='A'+dbLongStr(dbReadInt(bbase,'int_nr'));
           end
         else begin
-          dbSeek(ubase,uiName,UpperCase(empfaenger+
-                 iifs(cPos('@',empfaenger)>0,'','@'+box+'.ZER')));
+          dbSeek(ubase,uiName,UpperCase(Firstempfaenger+
+                 iifs(cPos('@',Firstempfaenger)>0,'','@'+box+'.ZER')));
           if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
           end;
@@ -1968,18 +1968,19 @@ var hdp   : Theader;
   begin
     ml:=length(getres2(459,30))+8;
     with hdp do begin
-      for i:=1 to empfanz do begin
+      for i:=1 to Empfaenger.Count do
+      begin
         ReadHeadEmpf:=i;
         ReadHeader(hdp,hds,false);
-        ml:=max(ml,length(empfaenger)+6);
-        end;
+        ml:=max(ml,length(Firstempfaenger)+6);
+      end;
       ml:=min(ml,72);
-      i:=min(empfanz,screenlines-8);
+      i:=min(Empfaenger.Count,screenlines-8);
       msgbox(ml,i+4,getres2(459,30),x,y);   { 'Empfaengerliste' }
       for j:=1 to i do begin
         ReadHeadEmpf:=j;
         ReadHeader(hdp,hds,false);
-        mwrt(x+3,y+1+j,LeftStr(empfaenger,72));
+        mwrt(x+3,y+1+j,LeftStr(Firstempfaenger,72));
         end;
       wait(curoff);
       if rlist and (UpperCase(lastkey)='R') then keyboard('R');
@@ -2087,7 +2088,7 @@ begin
   ReadHeader(hdp,hds,true);
   anz:=0;
   with hdp do begin
-    apps(3,empfaenger);
+    apps(3,Firstempfaenger);
     if fido_to<>'' then apps(4,fido_to);
     apps(5,betreff);
     apps(6,LeftStr(absender,53));
@@ -2148,7 +2149,7 @@ begin
     attrtxt(col.colmboxhigh); wrt(x+40,y+anz+3,getres2(459,28));  { 'Ablagedatei  :' }
     attrtxt(col.colmbox);     wrt(x+40+length(getres2(459,28)),y+anz+3,
                                   FileUpperCase('mpuffer.')+IntToStr(dbReadInt(mbase,'ablage')));
-    elist:=(empfanz>1);
+    elist:=(Empfaenger.Count>1);
     rlist:=(References.Count>1);
     if elist then s:=' (E='+getres2(459,30)
     else s:='';
@@ -2967,6 +2968,9 @@ end;
 
 {
   $Log$
+  Revision 1.128  2002/01/13 15:15:52  mk
+  - new "empfaenger"-handling
+
   Revision 1.127  2002/01/13 15:07:30  mk
   - Big 3.40 Update Part I
 

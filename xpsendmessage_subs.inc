@@ -499,16 +499,17 @@ begin
   SetCryptFlag;
   hdp.betreff:=LeftStr(iifs(des,DES_ID,QPC_ID)+hdp.betreff,BetreffLen);
   hdp.archive:=false;
-  hdp.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
+  if hdp.Empfaenger.Count > 0 then
+    hdp.Empfaenger[0] :=iifs(pm, empfaenger,mid(empfaenger,2));
 
   b:=cpos('@',hdp.absender);
 
   if not ntZConnect(netztyp) then begin
     if nobox and (b>0) then
       TruncStr(hdp.absender,b-1);
-     b:=cpos('@',hdp.empfaenger);
-     if (b>0) and (UpperCase(mid(hdp.empfaenger,b+1))=box+'.ZER') then
-     hdp.empfaenger:=LeftStr(hdp.empfaenger,b-1);
+     b:=cpos('@',hdp.FirstEmpfaenger);
+     if (b>0) and (UpperCase(mid(hdp.FirstEmpfaenger,b+1))=box+'.ZER') then
+     hdp.Empfaenger[0]:=LeftStr(hdp.FirstEmpfaenger,b-1);
    end;
 
    if not des then
@@ -555,7 +556,7 @@ begin
   rps(s,'$KEY',passwd);
   rps(s,'$INFILE',fi);
   rps(s,'$OUTFILE',fo);
-  rps(s,'$USER',hdp.empfaenger);
+  rps(s,'$USER',hdp.FirstEmpfaenger);
   shell(s,500,3);                     { Nachricht codieren }
 
   if not FileExists(fo) then
@@ -946,8 +947,8 @@ procedure SetCrashInfo;
 var fa : FidoAdr;
     ni : NodeInfo;
 begin
-  GetNodeinfo(hdp.empfaenger,ni,2);
-  splitfido(hdp.empfaenger,fa,DefaultZone);
+  GetNodeinfo(hdp.FirstEmpfaenger,ni,2);
+  splitfido(hdp.FirstEmpfaenger,fa,DefaultZone);
   fa.ispoint:=ni.ispoint;
   SetCrash(makeFidoAdr(fa,true),true);
 end;
@@ -956,8 +957,8 @@ function CrashAdr:string;
 var fa : FidoAdr;
     ni : NodeInfo;
 begin
-  GetNodeinfo(hdp.empfaenger,ni,2);
-  splitfido(hdp.empfaenger,fa,DefaultZone);
+  GetNodeinfo(hdp.FirstEmpfaenger,ni,2);
+  splitfido(hdp.FirstEmpfaenger,fa,DefaultZone);
   fa.ispoint:=ni.ispoint;
   ShrinkPointToNode(fa,ni);
   CrashAdr:=MakeFidoAdr(fa,true);
@@ -1116,6 +1117,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.15  2002/01/05 16:01:10  mk
   - changed TSendUUData from record to class
 

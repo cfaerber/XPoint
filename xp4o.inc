@@ -431,7 +431,7 @@ var x,y,yy  : Integer;
         enr:=dbReadInt(mbase,'netztyp') shr 24;
         hdp := THeader.Create;
         MakeHeader(true,f2,enr,hds,hdp,ok,true, true);
-        MsgOK:=ok and (size=hds+hdp.groesse) and (hdp.empfanz>=min(2,enr))
+        MsgOK:=ok and (size=hds+hdp.groesse) and (hdp.Empfaenger.Count>=min(2,enr))
                   and (dbReadInt(mbase,'groesse')=hdp.groesse);
         Hdp.Free;
         seek(f2,fs);
@@ -705,6 +705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.46  2002/01/13 15:15:52  mk
+  - new "empfaenger"-handling
+
   Revision 1.45  2001/10/20 17:26:41  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

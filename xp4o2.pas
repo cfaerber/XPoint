@@ -328,7 +328,7 @@ begin
       hd.clear;
       ReadHeader(hd,hds,false);
       if hds>1 then
-        if hd.empfanz=1 then
+        if hd.Empfaenger.Count =1 then
           AddBezug(hd,0)
         else begin
           rec:=dbRecno(mbase);
@@ -928,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/01/13 15:15:53  mk
+  - new "empfaenger"-handling
+
   Revision 1.50  2002/01/12 01:06:47  mk
   - fixed range check error
 

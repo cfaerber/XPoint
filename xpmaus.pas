@@ -210,10 +210,10 @@ begin
                     until not dbFound;
                   end;
               1 : with hdp do begin
-                    if cpos('@',empfaenger)>0 then
-                      empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
+                    if cpos('@',FirstEmpfaenger)>0 then
+                      FirstEmpfaenger:=LeftStr(FirstEmpfaenger,cpos('@',Firstempfaenger)-1);
                     System.write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
-                             '   ',forms(empfaenger,21),'  ',forms(betreff,30),'  ');
+                             '   ',forms(FirstEmpfaenger,21),'  ',forms(betreff,30),'  ');
                     case pm_bstat[1] of
                       'Z' : writeln(t2,'zurckgest.');
                       'B' : writeln(t2,'beantwortet');
@@ -228,7 +228,7 @@ begin
                     end;
                   end;
               2 : with hdp do begin
-                    writeln(t2,'Empf„nger: ',mausname(empfaenger));
+                    writeln(t2,'Empf„nger: ',mausname(FirstEmpfaenger));
                     writeln(t2,'Betreff  : ',betreff);
                     writeln(t2,'Datum    : ',fdat(datum),' ',ftime(datum));
                     writeln(t2,'MessageID: ',msgid);
@@ -819,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.35  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

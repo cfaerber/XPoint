@@ -197,12 +197,13 @@ begin
     xpsendmessage._bezug:=msgid;
     xpsendmessage._orgref:=org_msgid;
     xpsendmessage._beznet:=netztyp;
-    xpsendmessage._pmReply:=pm and (cpos('@',empfaenger)=0);
-    if netztyp=nt_Maus then begin
+    xpsendmessage._pmReply:=pm and (cpos('@', FirstEmpfaenger)=0);
+    if netztyp=nt_Maus then
+    begin
       xpsendmessage._ReplyPath:=pfad;
-      if cpos('@',hd.empfaenger)=0 then
-        sData.ReplyGroup:=empfaenger;
-      end;
+      if cpos('@',hd.FirstEmpfaenger)=0 then
+        sData.ReplyGroup:=FirstEmpfaenger;
+    end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
     if netztyp in (netsRFC + [nt_ZConnect]) then
@@ -224,14 +225,15 @@ begin
       reptoanz := 0;
     end
     else
-      if (followup.count=0) or
-         ((empfanz=1) and (followup.count > 0) and (empfaenger=followup[0])) then repto:=''
-         else
-         begin
-           if Followup.count > 0 then repto:='A'+followup[0]
-             else repto := '';
+      if (Followup.count=0) or ((Empfaenger.Count = 0) and (followup.count > 0) and (FirstEmpfaenger=followup[0])) then
+        repto:=''
+      else
+      begin
+        if Followup.count > 0 then
+          repto:='A'+followup[0]
+        else repto := '';
            reptoanz:=followup.count;
-         end;
+        end;
     if not pm then
       sData.References.Assign(hd.References);
     sData.keywords:=keywords;
@@ -266,6 +268,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/01/13 15:15:51  mk
+  - new "empfaenger"-handling
+
   Revision 1.52  2002/01/05 16:01:08  mk
   - changed TSendUUData from record to class
 

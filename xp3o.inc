@@ -503,7 +503,7 @@ var x,y      : Integer;
         hdp.betreff:=hdp2.betreff;
         hdp.typ:=hdp2.typ;
         orgsize:=hdp.groesse;     hdp.groesse:=filesize(f)-hds2;  { = hdp2^.groesse }
-        orgempf:=hdp.empfaenger;  hdp.empfaenger:=hdp2.empfaenger;
+        orgempf:=hdp.FirstEmpfaenger;  hdp.empfaenger:=hdp2.empfaenger;
         tmp:=TempS(hdp.groesse+2048);
         assign(f2,tmp);
         rewrite(f2,1);
@@ -523,7 +523,7 @@ var x,y      : Integer;
         uvs:=uvs or 4;                        { "c"-Flag }
         dbWriteN(mbase,mb_unversandt,uvs);
         hdp.groesse:=orgsize;
-        hdp.empfaenger:=orgempf;
+        hdp.FirstEmpfaenger:=orgempf;
         end;
       end;
     holen(sp);
@@ -535,15 +535,15 @@ var x,y      : Integer;
   var s : string[AdrLen];
       sp: scrptr;
   begin
-    s:=hdp.empfaenger;
-    hdp.empfaenger:=orgempf;
+    s:=hdp.Firstempfaenger;
+    hdp.Firstempfaenger:=orgempf;
     savecursor;
     sichern(sp);
     LogPGP(getreps2(3002,2,hdp.absender));  { 'decodiere Nachricht von %s' }
     PGP_DecodeMessage(hdp,false);
     holen(sp);
     restcursor;
-    hdp.empfaenger:=s;
+    hdp.Firstempfaenger:=s;
   end;
 
   procedure Bezugsverkettung;
@@ -571,11 +571,12 @@ var x,y      : Integer;
       repeat
         seek(f,adr);
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
-        if (hdp.empfanz>maxcrosspost)
-        and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
-          empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
+        if (hdp.Empfaenger.Count >maxcrosspost)
+        and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then
+        begin
+          empfnr:=hdp.Empfaenger.Count+1;                { Crossposting-Filter }
           continue;
-          end;
+        end;
         blockread(pfile,ll,8);
         if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
         begin
@@ -588,7 +589,7 @@ var x,y      : Integer;
           AddNewBezug(ll.l, c1, c2, ll.dat);
         end;
         inc(empfnr);
-      until empfnr>hdp.empfanz;
+      until empfnr>hdp.Empfaenger.Count;
       if ((n mod 5)=0) then begin
         moff;
         FWrt(x+3+length(mstr),y+5,StrS(n*100 div msgcount)+'%');
@@ -668,8 +669,9 @@ var x,y      : Integer;
     end;
   end;
 
-var OwnMessageReplaced: Boolean;
-
+var
+  OwnMessageReplaced: Boolean;
+  s: String;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag := 255;
@@ -798,22 +800,23 @@ begin
         seek(f,adr);
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
-        orgempf:=hdp.empfaenger;
+        orgempf:=hdp.FirstEmpfaenger;
         { Schalter maildelxpost beachten }
-        if (hdp.empfanz>maxcrosspost)
-        and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
-          empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
+        if (hdp.Empfaenger.Count > maxcrosspost)
+        and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then begin
+          empfnr:=hdp.Empfaenger.Count +1;                { Crossposting-Filter }
           continue;
           end;
-        if junk then begin
-          hdp.empfanz:=1;
-          { Unterscheidung von der Pseudo-Newsgroup junk }
-          hdp.empfaenger:='/¯Nix'
-          end;
-        if grosswandeln and not zconnect then begin
+        if junk then
+        begin
+          hdp.Empfaenger.Clear;
+          hdp.Empfaenger.Add('/¯Nix'); // Unterscheidung von der Pseudo-Newsgroup junk
+        end;
+        if grosswandeln and not zconnect then
+        begin
           UpString(hdp.absender);
-          UpString(hdp.empfaenger);
-          end;
+          hdp.FirstEmpfaenger := UpperCase(hdp.Firstempfaenger);
+        end;
         pm:=false;
         with hdp do begin
           if replace_ed then dat:=datum;
@@ -822,47 +825,49 @@ begin
             dat:=zdate;
             _datum:=today;
             end;
-          tobrett:=archive or (copy(empfaenger,1,TO_len)=TO_ID);
-          atp:=cPos('@',empfaenger);
+          tobrett:=archive or (copy(FirstEmpfaenger,1,TO_len)=TO_ID);
+          atp:=cPos('@',FirstEmpfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
-            if (FirstChar(Empfaenger)<>'/') and (cpos('@',empfaenger)=0) then
-              empfaenger:=empfaenger+'@'+pollbox+'.ZER';
-            if cpos('@',empfaenger)>0 then
+            if (FirstChar(FirstEmpfaenger)<>'/') and (cpos('@',Firstempfaenger)=0) then
+              Firstempfaenger:=Firstempfaenger+'@'+pollbox+'.ZER';
+            if cpos('@',Firstempfaenger)>0 then
               if tobrett then
-                empfaenger:='U'+mid(empfaenger,iif(archive,1,length(TO_ID)+1))
+                Firstempfaenger:='U'+mid(Firstempfaenger,iif(archive,1,length(TO_ID)+1))
               else begin
-                empfaenger:='U'+empfaenger;
+                Firstempfaenger:='U'+Firstempfaenger;
                 tobrett:=true;
                 end
             else
-              empfaenger:='A'+empfaenger;
+              FirstEmpfaenger:='A'+Firstempfaenger;
             end
           else     { not sendbuf }
             if tobrett then
-              if (copy(empfaenger,1,9)<>'/'#0#0#8#8'TO:/') or (atp>0) then
-                empfaenger:='U'+copy(empfaenger,iif(archive,1,9),79)
-              else begin
-                while empfaenger[10]=#255 do  { wg. #255#255'Netzanruf' }
-                  delete(empfaenger,10,1);
-                empfaenger:='$/¯'+Mid(empfaenger,10);
-                end
-            else
-              if (Length(Empfaenger) >= 2) and (empfaenger[2]='¯') then
-                empfaenger:='$'+empfaenger
+              if (copy(Firstempfaenger,1,9)<>'/'#0#0#8#8'TO:/') or (atp>0) then
+                Firstempfaenger:='U'+copy(Firstempfaenger,iif(archive,1,9),79)
               else
-                if (atp=0) and (FirstChar(empfaenger) = '/') then
-                  empfaenger:='A'+empfaenger
+              begin
+                s := FirstEmpfaenger;
+                while s[10]=#255 do  { wg. #255#255'Netzanruf' }
+                  delete(s,10,1);
+                FirstEmpfaenger:='$/¯'+Mid(s,10);
+              end
+            else
+              if (Length(FirstEmpfaenger) >= 2) and (FirstEmpfaenger[2]='¯') then
+                Firstempfaenger:='$'+FirstEmpfaenger
+              else
+                if (atp=0) and (FirstChar(FirstEmpfaenger) = '/') then
+                  FirstEmpfaenger:='A'+FirstEmpfaenger
                 else begin
-                  if atp=0 then empfaenger:='1/'+empfaenger
+                  if atp=0 then FirstEmpfaenger:='1/'+FirstEmpfaenger
                   else
                     if UserBoxname then
-                      empfaenger:='1/'+LeftStr(empfaenger,atp-1)+'/'+mid(empfaenger,atp+1)
+                      Firstempfaenger:='1/'+LeftStr(Firstempfaenger,atp-1)+'/'+mid(Firstempfaenger,atp+1)
                     else
-                      empfaenger:='1/'+LeftStr(empfaenger,atp-1);
+                      Firstempfaenger:='1/'+LeftStr(Firstempfaenger,atp-1);
                   pm:=true;
                   end;
 
-          if ForceRecipient<>'' then empfaenger:= ForceRecipient;
+          if ForceRecipient<>'' then Firstempfaenger:= ForceRecipient;
 
           multi2; initscs;
 
@@ -889,16 +894,17 @@ begin
               dbReadN(ubase,ub_userflags,uflags);
               aufnehmen:=odd(uflags);
               end;
-          if FirstChar(empfaenger)<>'U' then begin
-            dbSeek(bbase,biBrett,UpperCase(empfaenger));
-            if not dbFound then begin
-              if (empfanz>1) or (attrib and AttrControl<>0) then
+          if FirstChar(Firstempfaenger)<>'U' then begin
+            dbSeek(bbase,biBrett,UpperCase(Firstempfaenger));
+            if not dbFound then
+            begin
+              if (Empfaenger.Count>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
 
-                if FirstChar(empfaenger)<>'A' then grnr:=IntGruppe
+                if FirstChar(Firstempfaenger)<>'A' then grnr:=IntGruppe
                 else begin
-                  seekbr:=empfaenger;
+                  seekbr:=Firstempfaenger;
                   p0:=posn('/',seekbr,3);
                   if p0>0 then begin
                     seekbr:=LeftStr(seekbr,p0-1);
@@ -911,7 +917,7 @@ begin
                   else dbReadN(bbase,bb_gruppe,grnr);
                   if grnr=IntGruppe then grnr:=NetzGruppe;
                   end;
-                if FirstChar(empfaenger)='1' then
+                if FirstChar(Firstempfaenger)='1' then
                   haltezeit:=0
                 else 
                 begin
@@ -921,26 +927,26 @@ begin
                   else dbRead(d,'haltezeit',haltezeit);
                   dbClose(d);
                 end;
-                AddNewBrett(Empfaenger,  '', pollbox_str(zconnect,false),
+                AddNewBrett(FirstEmpfaenger,  '', pollbox_str(zconnect,false),
                   Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
                 if newbrettende then
                   SetBrettindexEnde
                 else
                   SetBrettindex;
-                writeln(brettlog,logstr(Mid(empfaenger,2)));
+                writeln(brettlog,logstr(Mid(FirstEmpfaenger,2)));
                 end;   { aufnehmen }
               end    { not dbFound }
             else
               if dbReadInt(bbase,'flags') and 4<>0 then aufnehmen:=true;
             if aufnehmen then
-              _brett:=mbrettd(empfaenger[1],bbase);
+              _brett:=mbrettd(FirstEmpfaenger[1],bbase);
             end;
           { hier kein adrok: TO-User werden immer aufgenommen! }
-          if FirstChar(empfaenger)='U' then begin
-            dbSeek(ubase,uiName,UpperCase(copy(empfaenger,2,80))); {Adreábuch-Eintrag}
+          if FirstChar(FirstEmpfaenger)='U' then begin
+            dbSeek(ubase,uiName,UpperCase(copy(FirstEmpfaenger,2,80))); {Adreábuch-Eintrag}
             if not dbFound then begin
               dbAppend(ubase);
-              name:=copy(empfaenger,2,79);
+              name:=copy(FirstEmpfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
               if cpos('@',name)=0 then name:=LeftStr(name+'@'+pb+'.ZER',79);
               dbWriteNStr(ubase,ub_username,name);
@@ -969,7 +975,7 @@ begin
                      (pflags and pe_gelesen<>0) or (ReplaceOwnHoldFlag < 255);
 
           if aufnehmen then begin
-            if FirstChar(empfaenger)<>'U' then begin
+            if FirstChar(FirstEmpfaenger)<>'U' then begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
               begin
@@ -985,7 +991,7 @@ begin
             if attrib and attrFile<>0 then inc(mnt,$200);
             if pm_reply then inc(mnt,$400);
             if (wab<>'') or (oem.Count > 0) then inc(mnt,$800);
-            if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
+            if Empfaenger.Count >1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(GetLastReference)) or
               (filterattr and fattrHilite<>0)
@@ -1053,13 +1059,13 @@ begin
             dbWriteN(mbase,mb_flags,mbflags);
             wrll(dbRecno(mbase));     { fr Bezugsverkettung merken }
             l:=LongInt(LongWord(ixdat(datum)) and $fffffff0);
-            if empfanz>1 then
+            if Empfaenger.Count >1 then
               inc(l,iif(msgsent,2,1));
             wrll(l);
 
             if UsePGP and (pgpflags and fPGP_haskey<>0) and
-               ((PGP_AutoAM and (firstchar(empfaenger)='A')) or
-                (PGP_AutoPM and (firstchar(empfaenger)='1')))
+               ((PGP_AutoAM and (firstchar(FirstEmpfaenger)='A')) or
+                (PGP_AutoPM and (firstchar(FirstEmpfaenger)='1')))
             then begin
               savecursor;
               sichern(sp);
@@ -1067,10 +1073,10 @@ begin
               holen(sp);
               restcursor;
               end;
-            if (firstchar(empfaenger)='1') and UsePGP and
+            if (firstchar(FirstEmpfaenger)='1') and UsePGP and
                (pgpflags and fPGP_encoded<>0) then
               DecPGP else
-            if (firstchar(empfaenger)='1') and
+            if (firstchar(FirstEmpfaenger)='1') and
                (LeftStr(betreff,length(PMC_ID))=PMC_ID) then
               pmCryptDecode;
 
@@ -1086,8 +1092,9 @@ begin
         if msgsent then
           TestControlMessage;
 
-        if (hdp.empfanz>1) and (empfnr>hdp.empfanz) and not msgsent and
-           not IsCancelMsg then begin
+        if (hdp.Empfaenger.Count>1) and (empfnr>hdp.Empfaenger.Count) and not msgsent and
+           not IsCancelMsg then
+        begin
           { Nachricht nach /Junk }
           junk:=true;
           empfnr:=1;            { kein passendes Brett fr Crossposting }
@@ -1103,7 +1110,7 @@ begin
             seek(pfile,sizeof(pfile));   { 0/0-Eintr„ge fr nicht einsor- }
             end;                         { tierte Xpostings berspringen  } *)
 
-      until (empfnr>hdp.empfanz)or(forcerecipient<>'');
+      until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
 
       Debug.DebugLog('xp3o','ok, next message',DLDebug);
       inc(adr,hdp.groesse+hdsize);
@@ -1227,6 +1234,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
   Revision 1.78  2002/01/13 15:07:28  mk
   - Big 3.40 Update Part I
 

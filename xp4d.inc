@@ -395,10 +395,10 @@ begin  { __ Suchmarke }
               pp:=cpos('.',s);
               if pp>0 then s:=LeftStr(s,pp-1);
               if hd.real_box<>'' then s:=hd.real_box;
-              if LeftStr(hd.empfaenger,length(TO_ID))=TO_ID then
-                s:=forms(mid(hd.empfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
+              if LeftStr(hd.Firstempfaenger,length(TO_ID))=TO_ID then
+                s:=forms(mid(hd.Firstempfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
               else
-                s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
+                s:=forms(hd.Firstempfaenger,ulen-length(s)-1)+' '+s;
               Hd.Free;
             end;
             _brett:= dbReadNStr(mbase,mb_brett);
@@ -616,6 +616,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/01/13 15:15:51  mk
+  - new "empfaenger"-handling
+
   Revision 1.52  2002/01/13 15:07:29  mk
   - Big 3.40 Update Part I
 

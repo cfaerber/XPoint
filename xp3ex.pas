@@ -187,7 +187,6 @@ var size   : longint;
     sizepos : longint;
     mpsize  : longint;
     mehdl, mehds : integer;
-    TempKopien: TStringList;
     QuoteEmptyLines: boolean;
     SourceCS: TMimeCharsets;
     str    : TStream;
@@ -252,7 +251,7 @@ var size   : longint;
         if FirstChar(_brett)<>'U' then
           dbSeek(ubase,uiName,UpperCase(hdp.absender))
         else
-          dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));   { Nachricht in PM-Brett }
+          dbSeek(ubase,uiName,UpperCase(hdp.FirstEmpfaenger));   { Nachricht in PM-Brett }
         if not dbFound or (dbXsize(ubase,'passwort')=0) then begin
           rfehler(308);   { 'Nachricht ist codiert, aber Passwort fehlt!' }
           exit;
@@ -384,8 +383,8 @@ var size   : longint;
         end;
   end;
 
-  function mausname(s:string):string;
-  var p : byte;
+  function mausname(const s:string):string;
+  var p : Integer;
   begin
     p:=cpos('@',s);
     if (p=0) or ((hdp.netztyp<>nt_Maus) and (hdp.netztyp<>nt_Fido)) then
@@ -736,7 +735,6 @@ begin // extract_msg;
   SourceToUTF8:= nil;
   UTF8ToDest  := nil;
   TemplateToUTF8:=nil;
-  TempKopien  := nil;
   MimePart    := nil;
 
  try
@@ -744,7 +742,6 @@ begin // extract_msg;
   ExtUTF8 := (art and xTractUTF8)<>0;
   art := art and xTractModeMask;
   
-  TempKopien := TStringList.Create;
   MimePart := TMimePart.Create;
   if Assigned(ex_MimePart) then 
   begin
@@ -757,7 +754,7 @@ begin // extract_msg;
   if art=xTractPuf then
     Xread(name,append)
   else begin
-    ReadHeadEmpf:=1; ReadKoplist:=true;
+    ReadHeadEmpf:=1; 
     hdp := THeader.Create;
     ReadHeader(hdp,hds,true);
     assign(f,name);
@@ -804,7 +801,7 @@ begin // extract_msg;
       reset(t);
       while not eof(t) do with hdp do begin
         readln(t,s);
-        wempf:=empfaenger;
+        wempf:= FirstEmpfaenger;
         if cpos('¯',wempf)>0 then begin
           delete(wempf,cpos('¯',wempf),1);
           wempf:=wempf+getres2(361,1);   { '  (internes CrossPoint-Brett)' }
@@ -862,29 +859,28 @@ begin // extract_msg;
                  end;
 
     hdf_EMP   :  begin
-                   if hdp.fido_to<>'' then s:=' ('+hdp.fido_to+')'
-                   else s:='';
-                   if hdp.empfanz=1 then
-                     if cpos('@',hdp.empfaenger)>0 then
-                       wrs437(gr(2)+mausname(hdp.empfaenger)+s)   { 'Empfaenger : ' }
+                   if hdp.fido_to<>'' then
+                     s:=' ('+hdp.fido_to+')'
+                   else
+                     s:='';
+                   if hdp.Empfaenger.Count = 1  then
+                     if cpos('@',hdp.FirstEmpfaenger)>0 then
+                       wrs437(gr(2)+mausname(hdp.FirstEmpfaenger)+s)   { 'Empfaenger : ' }
                      else
-                       wrs437(gr(2)+hdp.empfaenger+s)
-                   else begin
-                     s:=gr(2)+hdp.empfaenger;     { 'Empfaenger : ' }
-                     for i:=2 to hdp.empfanz do begin
-                       ReadHeadEmpf:=i;
-                       TempKopien.Clear;
-                       TempKopien.AddStrings(hdp.Kopien);
+                       wrs437(gr(2)+hdp.FirstEmpfaenger+s)
+                   else
+                   begin
+                     s:=gr(2);  { 'Empfaenger : ' }
+                     for i:=0 to hdp.Empfaenger.Count - 1 do
+                     begin
                        ReadHeader(hdp,hds,false);
-                       Hdp.Kopien.Clear;
-                       Hdp.Kopien.AddStrings(TempKopien);
-                       if length(s)+length(hdp.empfaenger)>iif(listscroller,76,77)
-                       then begin
-                         wrs437(s); s:=gr(2{15});
-                         end
-                       else
+                       if length(s)+length(hdp.FirstEmpfaenger)>iif(listscroller,76,77) then
+                       begin
+                         wrs437(s);
+                         s:=gr(2);
+                       end else
                          s:=s+', ';
-                       s:=s+hdp.empfaenger;
+                       s:=s+hdp.FirstEmpfaenger;
                      end;
                      if hdp.fido_to<>'' then s:=s+' ('+hdp.fido_to+')';
                      wrs437(s);
@@ -927,8 +923,7 @@ begin // extract_msg;
                        iifs(hdp.realname<>'','  ('+hdp.realname+')',''));
                  end;
 
-    hdf_OEM    : if (hdp.oem.Count > 0) and (LeftStr(hdp.oem[0],length(hdp.empfaenger))
-                     <>hdp.empfaenger) then
+    hdf_OEM    : if (hdp.oem.Count > 0) and (LeftStr(hdp.oem[0], length(hdp.FirstEmpfaenger)) <> hdp.FirstEmpfaenger) then
                    wrs437(gr(16)+hdp.oem[0]);         { 'Org.-Empf. : ' }
     hdf_OAB    : if hdp.oab<>'' then            { 'Org.-Abs.  : ' }
                    wrs437(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
@@ -1211,7 +1206,6 @@ begin // extract_msg;
  finally
   ExtCliptearline:=true;
   ExtChgtearline:=false;
-  TempKopien.Free;
   MimePart.Free;
   SourceToUTF8.Free;
   UTF8ToDest  .Free;
@@ -1229,6 +1223,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.91  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
   Revision 1.90  2002/01/13 15:07:27  mk
   - Big 3.40 Update Part I
 

@@ -331,9 +331,6 @@ begin
   rh('MAIL.RFC', true);
 
   FDeleteFiles := TStringList.Create;
-
-  xpmakeheader.ReadEmpfList := true;
-  ReadKopList := true;
 end;
 
 destructor TUUZ.Destroy;
@@ -753,10 +750,9 @@ var
   mtype : TMimeContentType;
   mdisp : TMimeDisposition;
 
-  procedure wrs(s: String);
+  procedure wrs(const s: String);
   begin
-    s := s + #13#10;
-    wrfs(s);
+    wrfs(s + #13#10);
   end;
 
   procedure WriteStichworte(keywords: string);
@@ -1560,8 +1556,8 @@ var
     begin
       sto := trim(s0);
       if lastchar(sto) <> ',' then sto := sto + ',';
-      Hd.XEmpf.Clear;
-      EmpfList.Clear;
+      hd.Empfaenger.Clear;
+      hd.XEmpf.Clear;
       repeat
         _quote := false;
         pk := 0;
@@ -2245,7 +2241,7 @@ begin
         hd.wab := GetAdr
       else                              { Envelope-From }
         if UpperCase(LeftStr(s, 7)) = 'RCPT TO' then
-          hd.empfaenger := GetAdr;        { Envelope-To }
+          hd.FirstEmpfaenger := GetAdr;        { Envelope-To }
       ende := (bufpos >= bufanz) {or (s='QUIT')};
     until ende or (s = 'DATA') or (s = 'QUIT');
     if s = 'DATA' then
@@ -2275,7 +2271,7 @@ begin
         nofrom := (LowerCase(LeftStr(s, 5)) <> 'from ') and (LowerCase(LeftStr(s, 5))
           <> '>from');
       until nofrom;
-      mempf := SetMailUser(hd.empfaenger);
+      mempf := SetMailUser(hd.FirstEmpfaenger);
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
@@ -2786,25 +2782,12 @@ var
     tstringlist }
   function newsgroupsline(newsgroups: tstringlist): string;
   var
-    s: string;
     i: integer;
   begin
-    for i:=0 to newsgroups.count-1 do
-      s:=s+formnews(newsgroups[i])+',';
-    setlength(s,length(s)-1);           { delete last ',' }
-    newsgroupsline:=s
-  end;
-
-  procedure WriteNewsgroups;            { Newsgroups nicht folden! }
-  var
-    s: string;
-  begin
-    s := 'Newsgroups: ' + formnews(hd.empfaenger);
-    if empflist.count>0 then
-      s := s + ',' + newsgroupsline(empflist);
-{    for i := 0 to EmpfList.Count - 1 do
-      s := s + ',' + formnews(EmpfList[i]); }
-    Wrs(f, s);
+    Result := '';
+    for i := 0 to Newsgroups.Count-1 do
+      Result := Result + formnews(newsgroups[i])+',';
+    SetLength(Result, length(Result)-1);           { delete last ',' }
   end;
 
   procedure WriteMIME(is_main:Boolean);
@@ -2883,17 +2866,15 @@ begin
           smtpfirst := false;
         end;
         wrs(f, 'MAIL FROM:<' + s + '>');
-        wrs(f, 'RCPT TO:<' + hd.empfaenger + '>');
-
-        for i := 0 to EmpfList.Count - 1 do
-          wrs(f, 'RCPT TO:<' + EmpfList[i] + '>');
+        for i := 0 to Empfaenger.Count - 1 do
+          wrs(f, 'RCPT TO:<' + Empfaenger[i] + '>');
         wrs(f, 'DATA');
       end
       else
         wrs(f, 'From ' + LeftStr(s, p - 1) + ' ' + dat + ' remote from ' + mid(s, p
           + 1));
       if (wab <> '') and (oem.Count > 0) and (cpos('@', oem[0]) > 0) and not smtp { (*1) - s.u. } then
-        rfor := empfaenger
+        rfor := FirstEmpfaenger
       else
         rfor := '';
       wrs(f, 'Received: by ' + mid(s, cpos('@', s) + 1) +
@@ -2921,15 +2902,15 @@ begin
       if (wab <> '') and (oem.count > 0) and (cpos('@', oem[0]) > 0) { s. (*1) } then
         wrs(f, 'To: ' + oem[0])
       else
-        wrs(f, 'To: ' + empfaenger);
+        wrs(f, 'To: ' + FirstEmpfaenger);
 
-      for i := 0 to EmpfList.Count - 1 do
+      for i := 1 to Empfaenger.Count - 1 do
         if not nokop then
-          wrs(f, 'cc: ' + EmpfList[i]);
+          wrs(f, 'cc: ' + Empfaenger[i]);
     end
     else
-      WriteNewsgroups;
-    EmpfList.Clear;
+      Wrs(f, 'Newsgroups: ' + Newsgroupsline(hd.Empfaenger));
+    Empfaenger.Clear;
 
     wrs(f, 'Message-ID: <' + msgid + '>');
 
@@ -3176,7 +3157,7 @@ type rcommand = (rmail,rsmtp,rnews);
 
     case t of
       rsmtp: command := rsmtp_command[ct];
-      rmail: command := 'rmail '+hd.empfaenger;
+      rmail: command := 'rmail '+hd.Firstempfaenger;
       else   command := 'rnews';
     end;
 
@@ -3372,7 +3353,7 @@ begin
       raise Exception.Create('fehlerhafter Eingabepuffer!');
     end;
 //    binmail := (hd.typ <> 'T');
-    if cpos('@', hd.empfaenger) = 0 then { AM }
+    if cpos('@', hd.FirstEmpfaenger) = 0 then { AM }
 //      if binmail and not NewsMIME then
 //      begin
 //        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
@@ -3433,8 +3414,8 @@ begin
       seek(f1, adr);
       ClearHeader;
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
-      if cpos('@', hd.empfaenger) > 0 then
-        if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
+      if cpos('@', hd.FirstEmpfaenger) > 0 then
+        if UpperCase(LeftStr(hd.FirstEmpfaenger, length(server))) = server then
           WrFileserver
         else
         begin   
@@ -3464,9 +3445,10 @@ begin
             QueueCompressfile(rmail);
           end;
         end;
-      if SMTP then copycount := hd.empfanz;
+      if SMTP then
+        copycount := hd.Empfaenger.Count;
       inc(copycount);
-    until copycount > hd.empfanz;
+    until copycount > hd.Empfaenger.Count;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
   if CommandLine then
@@ -3664,6 +3646,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/01/13 15:15:55  mk
+  - new "empfaenger"-handling
+
   Revision 1.88  2002/01/02 15:33:52  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset

@@ -951,9 +951,9 @@ begin
     ReadHeader(hdp,hds,true);
     with hdp do
       if LastChar(name)<>'@' then
-        empfaenger:=name
+        Firstempfaenger:=name
       else                               { PM-Brett }
-        empfaenger:=name+mid(empfaenger,cpos('@',empfaenger)+1);
+        Firstempfaenger:=name+mid(Firstempfaenger,cpos('@',Firstempfaenger)+1);
     fn:=TempS(hds);
     assign(f1,fn);
     rewrite(f1,1);
@@ -1165,7 +1165,7 @@ begin
   else begin
     hdp := THeader.Create;
     ReadHeader(hdp,hds,true);
-    dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));
+    dbSeek(ubase,uiName,UpperCase(hdp.FirstEmpfaenger));
     hdp.Free;
     if not dbFound then exit;
     Box := dbReadNStr(ubase,ub_pollbox);
@@ -1175,7 +1175,6 @@ begin
   if adr='' then exit;
 
   hdp := THeader.Create;
-  ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
   dbReadN(mbase,mb_flags,flags);
@@ -1195,9 +1194,9 @@ begin
                     _beznet:=hdp.netztyp;
                     ControlMsg:=true;
                     dat:=CancelMsk;
-                    empf:=hdp.empfaenger;
-                    SendEmpfList.Assign(EmpfList);
-                    EmpfList.Clear;
+                    empf:=hdp.FirstEmpfaenger;
+                    SendEmpfList.Assign(hdp.Empfaenger);
+                    hdp.Empfaenger.Clear;
                     if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
@@ -1219,9 +1218,9 @@ begin
                     _bezug:=hdp.msgid;
                     _beznet:=hdp.netztyp;
                     dat:=CancelMsk;
-                    empf:=hdp.empfaenger;
-                    SendEmpfList.Assign(EmpfList);
-                    EmpfList.Clear;
+                    empf:=hdp.FirstEmpfaenger;
+                    SendEmpfList.Assign(hdp.Empfaenger);
+                    hdp.Empfaenger.Clear;
                     if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
@@ -1267,7 +1266,7 @@ begin
   else begin
     hdp := THeader.Create;
     ReadHeader(hdp,hds,true);
-    dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));
+    dbSeek(ubase,uiName,UpperCase(hdp.FirstEmpfaenger));
     Hdp.Free;
     if not dbFound then exit;
     box := dbReadNStr(ubase,ub_pollbox);
@@ -1277,7 +1276,6 @@ begin
   if adr='' then exit;
 
   hdp := THeader.Create;
-  ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
   dbReadN(mbase,mb_flags,flags);
@@ -1297,9 +1295,9 @@ begin
   _betreff:=hdp.betreff;
   sdata:= TSendUUData.Create;
   sData.ersetzt:=hdp.msgid;
-  empf:=hdp.empfaenger;
-  SendEmpfList.Assign(EmpfList);
-  EmpfList.Clear;
+  empf:=hdp.FirstEmpfaenger;
+  SendEmpfList.Assign(hdp.Empfaenger);
+  hdp.Empfaenger.Clear;
 
   sFlags:=0;
   sData.orghdp:=hdp;
@@ -1537,6 +1535,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
   Revision 1.82  2002/01/13 15:07:28  mk
   - Big 3.40 Update Part I
 

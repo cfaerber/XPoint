@@ -734,17 +734,17 @@ begin
       while not eof(f) and EnoughSpace do begin
         inc(n);
         MakeHeader(true,f,0,hds,hdp,ok,false,true);
-        empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
-        if empfaenger=lastempf then
+        FirstEmpfaenger:=LeftStr(FirstEmpfaenger,cpos('@',FirstEmpfaenger)-1);
+        if FirstEmpfaenger=lastempf then
           inc(count)
         else begin
           if count>1 then begin stemp:=stemp+format(' (%d)',[count]); count:=1 end;
-          EnoughSpace := length(stemp)+length(empfaenger) < 65;
+          EnoughSpace := length(stemp)+length(FirstEmpfaenger) < 65;
           if EnoughSpace then begin
             if length(stemp)>0 then stemp:=stemp+', ';
-            stemp:=stemp+empfaenger;
-            lastempf:=empfaenger
-            end
+            stemp:=stemp+FirstEmpfaenger;
+            lastempf:=FirstEmpfaenger
+          end
           else
             lastempf:='';
           end;
@@ -894,6 +894,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2002/01/13 15:15:56  mk
+  - new "empfaenger"-handling
+
   Revision 1.28  2001/12/26 01:35:33  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

@@ -191,12 +191,12 @@ var f      : file;
 
     with hdp do begin
       pbox:='!?!';
-      if (cpos('@',empfaenger)=0) and
-         ((netztyp<>nt_Netcall) or (FirstChar(empfaenger)='/'))
+      if (cpos('@',FirstEmpfaenger)=0) and
+         ((netztyp<>nt_Netcall) or (FirstChar(FirstEmpfaenger)='/'))
       then begin
-        dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
+        dbSeek(bbase,biBrett,'A'+UpperCase(FirstEmpfaenger));
         if not dbFound then begin
-          if hdp.empfanz=1 then
+          if hdp.Empfaenger.Count = 1 then
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
           end
         else begin
@@ -205,7 +205,7 @@ var f      : file;
           end;
         end
       else begin
-        dbSeek(ubase,uiName,UpperCase(empfaenger+iifs(cPos('@',empfaenger)=0,'@'+BoxName+'.ZER','')));
+        dbSeek(ubase,uiName,UpperCase(Firstempfaenger+iifs(cPos('@',FirstEmpfaenger)=0,'@'+BoxName+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
@@ -242,7 +242,7 @@ var f      : file;
                   if FormMsgid(OutMsgid) = InMsgID then
                   begin
                     MsgIDFound:=true;
-                    if (hdp.empfanz>1) then
+                    if (hdp.Empfaenger.Count>1) then
                     begin
                       Append(CCFile);
                       Writeln(CCFile, OutMsgid);
@@ -276,7 +276,7 @@ var f      : file;
                 end else
                 begin
                   { String noch in die Resource Åbernehmen }
-                  tFehler('Die Datei ' + hdp.datei + ' an ' + hdp.empfaenger + ' bitte erneut versenden!',30);
+                  tFehler('Die Datei ' + hdp.datei + ' an ' + hdp.FirstEmpfaenger + ' bitte erneut versenden!',30);
                   uvs:=uvs and $fe;
                   dbWriteN(mbase,mb_unversandt,uvs);
                 end;
@@ -315,15 +315,17 @@ begin
       tfehler(puffer+' corrupted!',esec);
       close(f); exit;
       end;
-    if hdp.empfanz=1 then
+    if hdp.Empfaenger.COunt =1 then
       ClrUVS
-    else for i:=1 to hdp.empfanz do begin
+    else
+    for i:=1 to hdp.Empfaenger.Count -1 do
+    begin
       seek(f,adr);
       makeheader(zconnect,f,i,hds,hdp,ok,false,true);
       ClrUVS;
-      end;
-    inc(adr,hdp.groesse+hds);
     end;
+    inc(adr,hdp.groesse+hds);
+  end;
   close(f);
   Erase(CCFile);
   dbSetIndex(mbase,mi);
@@ -1397,6 +1399,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2002/01/13 15:15:57  mk
+  - new "empfaenger"-handling
+
   Revision 1.44  2002/01/03 19:19:14  cl
   - added and improved UTF-8/charset switching support
 

@@ -30,12 +30,6 @@ interface
 uses
   xpglobal, classes, xpheader;
 
-const
-  ReadEmpflist : boolean  = false;
-  ReadKopList  : boolean  = false;
-var
-  EmpfList: TStringList;                     { Empf„ngerliste }
-
 procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
@@ -140,37 +134,17 @@ var i,res : integer;
   end;
 
   procedure GetEmpf;
-  var p : integer;
-      s : string;
+  var
+    p: Integer;
+    s: String;
   begin
-    if readempflist then
+    s := line;
+    if (cpos('@',s)>0) or (FirstChar(s)<>'/') then
     begin
-      s := line;
-      if (cpos('@',s)>0) or (s[1]<>'/') then
-      begin
-        p:=pos(' (',s); if p>0 then SetLength(s, p-1);
-      end;
-      if (hd.empfanz+1=empfnr) or ((empfnr=0) and (hd.empfanz=0)) then
-        hd.empfaenger:=s
-      else
-        Empflist.Add(s);
-    end else
-      if (empfnr=0) or (hd.empfanz<empfnr) then
-      begin
-        hd.empfaenger := Line;
-        if (cpos('@',s)>0) or ((Length(s) > 0) and (s[1]<>'/')) then
-        begin
-          p:=pos(' (',hd.empfaenger);
-          if p>0 then SetLength(hd.empfaenger, p-1);
-        end;
-      end;
-    inc(hd.empfanz);
-  end;
-
-  procedure GetKop;
-  begin
-    if ReadKoplist then
-      hd.Kopien.Add(line);
+      p:=pos(' (',s);
+      if p>0 then SetLength(s, p-1);
+    end;
+    hd.Empfaenger.Add(s);
   end;
 
   procedure GetTyp(var typ,charset:string);
@@ -325,26 +299,22 @@ var i,res : integer;
   end;
 
   procedure CheckEmpfs;          { /Brett@Box.domain -> /Brett }
-    procedure check(var s:string);
+
+    function check(const s:string): String;
     begin
-      if (cpos('@',s)>0) and (s[1]='/') then
-        truncstr(s,cpos('@',s)-1);
+      if (cpos('@',s)>0) and (FirstChar(s)='/') then
+        Result := LeftStr(s, cpos('@',s)-1)
+      else
+        Result := s;
     end;
+
   var
     i: Integer;
-    s: String;
   begin
     with hd do
       if (netztyp=nt_ZConnect) and not archive and PM2AMconv then
-      begin
-        Check(empfaenger);
-        for i := 0 to EmpfList.Count - 1 do
-        begin
-          s := EmpfList[i];
-          Check(s);
-          EmpfList[i] := s;
-        end;
-      end;
+        for i := 0 to Empfaenger.Count - 1 do
+          Empfaenger[i] := Check(Empfaenger[i]);
   end;
 
 begin
@@ -353,9 +323,9 @@ begin
   bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
-  EmpfList.Clear;
   with hd do
-    if ZConnect then begin
+    if ZConnect then
+    begin
       netztyp:=nt_ZConnect;
       archive:=false;
       typ:='T';
@@ -443,7 +413,7 @@ begin
                                end else
             if id = 'LEN'    then val(line,groesse,res) else
             if id = 'KOM'    then val(line,komlen,res) else
-            if id = 'KOP'    then GetKop else
+            if id = 'KOP'    then hd.Kopien.Add(line) else
             if id = 'BEZ'    then begin
                                     if (Line<>'')and(References.IndexOf(Line)=-1) then
                                       References.Add(Line)end else
@@ -562,9 +532,8 @@ begin
       end
     else begin
       Debug.DebugLog('xpmakeheader','buffer type not zconnect?!',dlWarning);
-      getline(empfaenger);
-      empfaenger:= TrimRight(empfaenger);
-      empfanz:=1;
+      GetLine(s);
+      Empfaenger.Add(TrimRight(s));
       getline(betreff);
       Betreff := TrimLeft(Betreff);
       getline(absender);
@@ -585,6 +554,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.21  2001/12/26 01:08:36  cl
   - BUGFIX: "Brett mit unvers. Nachr. nicht mehr vorhanden!"
 

@@ -495,7 +495,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
         hdp2 := THeader.Create;
         try
           ReadHeader (hdp2, hds2, false);
-          dbseek (ubase, uiname, UpperCase(hdp2.empfaenger));
+          dbseek (ubase, uiname, UpperCase(hdp2.FirstEmpfaenger));
            if dbFound then
              Box := dbReadStr(ubase, 'pollbox');
         finally
@@ -867,12 +867,10 @@ begin
   empf := dbReadStr(dispdat,'absender');
   if ntRealName(mbNetztyp) then Realname := dbReadStr (dispdat, 'name');
   hdp := THeader.Create;
-  readkoplist := true;      { KOP-Header auslesen }
-  readempflist := true;     { EMP-Header auslesen }
   readHeadEmpf := 127;
   readheader (hdp, hds, false);
 
-  addList (RTAEmpfList, empfList, 9);
+  addList (RTAEmpfList, hdp.Empfaenger, 9);
   addList (RTAEmpfList, hdp.oem, 8);
   addList (RTAEmpfList, hdp.kopien, 3);
 
@@ -985,6 +983,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
   Revision 1.28  2002/01/13 15:07:24  mk
   - Big 3.40 Update Part I
 

@@ -255,7 +255,7 @@ begin
       dbGo(bbase,bmarked^[i]);
       e:= dbReadNStr(bbase,bb_brettname);
       server:= dbReadNStr(bbase,bb_pollbox);
-      if (e[1]<>'A') or (server='') or (dbReadInt(bbase,'flags')and 8<>0) then
+      if (FirstChar(e)<>'A') or (server='') or (dbReadInt(bbase,'flags')and 8<>0) then
       begin
         rfehler1(482,copy(e,2,40));     { '%s: Schreibzugriff gesperrt!' }
         ok:=false;
@@ -280,40 +280,39 @@ begin
               readln(t,s);                                    { auslesen und anhaengen }
               if (trim(s)<>'') and not ((firstchar(s)='[') and (lastchar(s)=']'))
               then begin
-                EmpfList.Add(s);
+                SendEmpfList.Add(s);
                 inc(n);
-                end;
+              end;
             until eof(t) or ((firstchar(s)='[') and (lastchar(s)=']'));
-            end;
-          close(t);
           end;
-        end
-
-      else begin
-        EmpfList.Add(e);
-        inc(n);
+          close(t);
         end;
+      end else
+      begin
+        SendEmpfList.Add(e);
+        inc(n);
+      end;
     end;
   end; {for }
   dbClose(d);
 
-
-  if EmpfList.Count = 0 then brk:=true;
+  if SendEmpfList.Count = 0 then brk:=true;
 
   if not brk then
   begin
-    empf:=iifs(pm,'','A')+Empflist[0];
-    EmpfList.Delete(0);
-    sendempflist.AddStrings(EmpfList);
+    empf:=iifs(pm,'','A')+SendEmpflist[0];
+    SendEmpfList.Delete(0);
     xpsendmessage.forcebox:='';
   end;
-  EmpfList.Clear;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.35  2002/01/13 15:15:53  mk
+  - new "empfaenger"-handling
+
   Revision 1.34  2002/01/02 11:13:40  mk
   - fixed two Bugs in GetWABReply (prevents Ctrl-P to FIDO PMs)
 

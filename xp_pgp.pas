@@ -339,7 +339,7 @@ var b    : byte;
 
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
-    RemoteUserID:=hd.empfaenger;
+    RemoteUserID:=hd.Firstempfaenger;
   if cPos('/',RemoteUserID)>0 then
     RemoteUserID:='';                           { Empfaenger ist Brett }
 
@@ -552,7 +552,7 @@ var b    : byte;
     fis: TStream;
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
-    RemoteUserID:=hd.empfaenger;
+    RemoteUserID:=hd.FirstEmpfaenger;
 
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+(data.Size div 2)+2000);
@@ -582,7 +582,7 @@ begin
     data.Free;
 
     data := TMemoryStream.Create;
-    MimeNewType(hd,'encrypted','application/pgp-encrypted','',hd.empfaenger);
+    MimeNewType(hd,'encrypted','application/pgp-encrypted','',hd.FirstEmpfaenger);
 
     writeln_s(data,'--'+hd.boundary);
     writeln_s(data,'Content-Type: application/pgp-encrypted');
@@ -736,7 +736,7 @@ begin
 
     data := TMemoryStream.Create;
 
-    MimeNewType(hd,'signed','application/pgp-signature',s,hd.empfaenger);
+    MimeNewType(hd,'signed','application/pgp-signature',s,hd.Firstempfaenger);
 
     writeln_s(data,'--'+hd.boundary);
     fie:=TTemporaryFileStream.Create(fi,fmOpenRead);
@@ -1162,6 +1162,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2002/01/13 15:15:54  mk
+  - new "empfaenger"-handling
+
   Revision 1.60  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

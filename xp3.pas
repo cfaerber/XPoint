@@ -387,10 +387,8 @@ begin
     flags:=2;
     dbWriteN(mbase,mb_halteflags,flags);
     end;
-  if LeftStr(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
-    hd.empfaenger:=Mid(hd.empfaenger,9);
-  ReadEmpflist:=false; 
-  ReadKopList:=false;
+  if LeftStr(hd.FirstEmpfaenger,TO_len)=TO_ID then   { /TO: }
+    hd.Firstempfaenger:=Mid(hd.Firstempfaenger,9);
 end;
 
 
@@ -1180,13 +1178,11 @@ begin
     compmimetyp:=LowerCase(typ);
 end;
 
-initialization
-  EmpfList := TStringList.Create;
-finalization
-  EmpfList.Free;
-
 {
   $Log$
+  Revision 1.77  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
   Revision 1.76  2002/01/13 15:07:27  mk
   - Big 3.40 Update Part I
 
