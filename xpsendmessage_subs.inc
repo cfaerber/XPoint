@@ -79,7 +79,10 @@ procedure MakeSignature;
 var sigsrc: string;
 
 begin
-  if signat<>'' then 
+  if (sendFlags and SendReEdit)<>0 then
+    exit
+  else
+  if (signat<>'')and((sendFlags and Sendreedit)=0) then 
   begin
     sigsrc := signat;
   end else
@@ -1173,6 +1176,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/07/20 15:36:22  cl
+  - BUGFIX: Doppelte Signatur beim nachträglichen Editieren
+
   Revision 1.24  2002/07/09 13:37:20  mk
   - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
 
