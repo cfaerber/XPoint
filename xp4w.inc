@@ -89,6 +89,7 @@ var mhd    : longint;
     p2     : integer;
     bgr    : longint;
     rec    : longint;
+    s      : string[80];
 begin
   GoP;
   rec:=disprec[p];
@@ -105,7 +106,12 @@ begin
   if not kb_ctrl and userweiter and not dbDeleted(ubase,rec) then begin
     dbGo(ubase,rec);
     if Forth then begin
-      p2:=p+1;
+      p2:=p;
+      repeat
+        inc(p2);
+        dbreadN(ubase,ub_username,s);
+        if pos('$/T',s)>0 then if not forth then exit;
+      until pos('$/T',s)=0;
       if not dbEOF(dispdat) then
         if p2<=gl then p:=p2
         else begin
@@ -392,6 +398,7 @@ begin
       disprec[1]:=dbRecno(mbase);
       SetKomOfs1;
       p:=2;
+      if rdmode = 1 then dec(p);
       aufbau:=true;
       end;
 end;
@@ -1236,6 +1243,7 @@ var dat    : longint;
   end;
 
   procedure mw2;
+  var s:string[81];
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag berprfen }
       dbSeek(mbase,miGelesen,_brett+#0);
@@ -1248,7 +1256,29 @@ var dat    : longint;
           end;
         end;
       end;
-    if not kb_ctrl and weiter and Forth then begin
+      if (readmode=0) or (not brettall and wrongline) { BrettModus "A" und Brett passt nicht mehr }
+      then begin                    { dann Cursor nicht weiterschalten }
+        s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
+        p2:=p;
+        repeat
+          inc(p);
+          GoP;
+          if not dbBOF(bbase) then dbReadN(bbase,bb_brettname,s);
+        until dbBOF(bbase) or (left(s,3)<>'$/T');   {keine Trennzeile anspringen }
+        if (readmode>0) then dec(p);
+        if dbBOF(bbase) then
+        begin
+          p:=p2;
+          GoP;
+        end;
+        if p>=gl then begin
+          disprec[1]:=dbrecno(bbase);
+          p:=1;
+          aufbau:=true;
+          end;
+        end
+      else
+      if not (kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1450,6 +1480,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.15  2001/08/05 10:58:36  mk
+  - Jochens Weiterschalt-Fix von 3.40
+
   Revision 1.3.2.14  2001/06/02 22:07:23  mk
   JG:- fixed last commit
 
