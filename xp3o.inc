@@ -115,6 +115,7 @@ var x,y      : byte;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
     cust_header : custheadstr;
+    testl: Integer;
 
   function puffer_ok:boolean;
   var ok : boolean;
@@ -628,9 +629,9 @@ begin
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
   if (zconnect) then
-    msgbox(45,9,getres(333),x,y)        { 'Puffer einlesen' }
+    msgbox(47,10,getres(333),x,y)        { 'Puffer einlesen' }
   else
-    msgbox(45,10,getres(333),x,y);
+    msgbox(47,11,getres(333),x,y);
   attrtxt(col.colmbox);
   assign(f,puffer);
   reset(f,1);
@@ -1084,9 +1085,10 @@ begin
     close(userlog);
     puffereinlesen:=true;
 
-    write(getres(320));   { 'DatumsbezÅge werden Åberarbeitet...     %' }
+    Wrt(x+2,y+7,getres(320)); { 'DatumsbezÅge werden Åberarbeitet...     %' }
     GotoXY(WhereX-5, WhereY);
     BrettDatumSetzen(true);
+    GotoXY(WhereX-2, WhereY);
     moff; Wrt2(getres(321)); mon;  { ' fertig.' }
 
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
@@ -1162,6 +1164,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/11/05 15:23:10  mk
+  - Ansicht der Datumsbezuege korrigiert
+
   Revision 1.33  2000/11/01 11:01:15  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
