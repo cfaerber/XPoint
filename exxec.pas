@@ -44,7 +44,7 @@ begin
 {$ifdef UnixFS}
 {$ifdef Linux}
   { ToDo: Prompt Modifizieren (vielleicht) }
-  ErrorLevel:= Shell(prog);
+  Result := Shell(prog);
 {$else}
   {$error Please implement this function for your OS }
 {$endif}
@@ -75,14 +75,17 @@ begin
   Exec(dpath, para);
   SwapVectors;
   Debug.TempCloseLog(True);
-  Result := DOSExitCode; { Wird nicht sauber belegt, also von Hand machen }
-  DosError :=0;
+  Result := DOSExitCode;
+  DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
 {$ENDIF }
 end;
 
 end.
 {
   $Log$
+  Revision 1.27  2000/08/20 12:22:40  mk
+  - Linux fix
+
   Revision 1.26  2000/08/16 00:38:10  ma
   - Handling der Logdatei fuer die Unit Debug hinzugefuegt
 
