@@ -73,8 +73,7 @@ USES
 {$else}
   Crt,
 {$endif}
-  Dos,
-  Timer,Debug,CRC;
+  SysUtils,Timer,Debug,CRC;
 
   CONST
     DiskBufferSize = $7FFF;
@@ -136,10 +135,12 @@ END; {$I+}
 
 FUNCTION Z_FindFile(pathname: STRING; VAR name: STRING; VAR size, time: LONGINT): BOOLEAN;
 VAR
-   sr: SearchRec;
+   sr: TSearchRec;
+   rc: integer;
 BEGIN {$I-}
-   FindFirst(pathname,Archive,sr);
-   IF (DosError <> 0) OR (IOresult <> 0) THEN BEGIN
+   rc:= FindFirst(pathname,faArchive,sr);
+   FindClose(sr);
+   IF (rc <> 0) OR (IOresult <> 0) THEN BEGIN
       Z_FindFile := FALSE;
       Exit
    END;
@@ -150,10 +151,17 @@ BEGIN {$I-}
 END; {$I+}
 
 PROCEDURE Z_SetFTime(VAR f: FILE; time: LONGINT);
+var
+  pfrec: ^filerec;
+  fh: longint;
 BEGIN {$I-}
-   SetFTime(f,time);
-   IF (IOresult <> 0) THEN
-      {null}
+  pfrec:= @f;
+  fh:= FileOpen(pfrec^.name, fmOpenWrite);
+  if (fh>=0) then begin
+    FileSetDate(fh, time);
+    FileClose(fh);
+  end;
+  // IF (IOresult <> 0) THEN; {null}
 END; {$I+}
 
 CONST
@@ -211,15 +219,21 @@ end; {JulianDNToGregorian}
 
 FUNCTION Z_ToUnixDate(fdate: LONGINT): STRING;
 VAR
-   dt: DateTime;
+   //dt: DateTime;
+   y,m,d : smallword;
+   h,n,s1,s2: smallword;
    secspast, datenum, dayspast: LONGINT;
    s: STRING;
 BEGIN
-   UnpackTime(fdate,dt);
-   GregorianToJulianDN(dt.year,dt.month,dt.day,datenum);
+   decodedate(FileDateToDateTime(fdate),y,m,d);
+   decodetime(FileDateToDateTime(fdate),h,n,s1,s2);
+   //UnpackTime(fdate,dt);
+   //GregorianToJulianDN(dt.year,dt.month,dt.day,datenum);
+   GregorianToJulianDN(y,m,d,datenum);
    dayspast := datenum - c1970;
    secspast := dayspast * 86400;
-   secspast := secspast + dt.hour * 3600 + dt.min * 60 + dt.sec;
+   //secspast := secspast + dt.hour * 3600 + dt.min * 60 + dt.sec;
+   secspast := secspast + h * 3600 + n * 60 + s1;
    s := '';
    WHILE (secspast <> 0) AND (Length(s) < 255) DO
    BEGIN
@@ -232,22 +246,28 @@ END;
 
 FUNCTION Z_FromUnixDate(s: STRING): LONGINT;
 VAR
-   dt: DateTime;
+   //dt: DateTime;
    secspast, datenum: LONGINT;
-   n: smallword;
+   i: smallword;
+   y,m,d,h,n,s1: smallword;
 BEGIN
    secspast := LONGINT(0);
-   FOR n := 1 TO Length(s) DO
-      secspast := (secspast SHL 3) + Ord(s[n]) - $30;
+   FOR i := 1 TO Length(s) DO
+      secspast := (secspast SHL 3) + Ord(s[i]) - $30;
    datenum := (secspast DIV 86400) + c1970;
-   JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
+   //JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
+   JulianDNToGregorian(datenum,y,m,d);
    secspast := secspast MOD 86400;
-   dt.hour := secspast DIV 3600;
+   //dt.hour := secspast DIV 3600;
+   h:= secspast DIV 3600;
    secspast := secspast MOD 3600;
-   dt.min := secspast DIV 60;
-   dt.sec := secspast MOD 60;
-   PackTime(dt,secspast);
-   Z_FromUnixDate := secspast
+   //dt.min := secspast DIV 60;
+   n:= secspast DIV 60;
+   //dt.sec := secspast MOD 60;
+   s1:= secspast MOD 60;
+   //PackTime(dt,secspast);
+   Z_FromUnixDate:= DateTimeToFileDate(EncodeDate(y,m,d)+EncodeTime(h,n,s1,0));
+   //Z_FromUnixDate := secspast
 END;
 
 CONST
@@ -1677,7 +1697,8 @@ FUNCTION RZ_ReceiveBatch : integer16;
     s    : STRING;
     c    : integer16;
     done : BOOLEAN;
-
+    pfrec: ^filerec;
+    fh   : longint;
 BEGIN
    done := FALSE;
 
@@ -1692,11 +1713,18 @@ BEGIN
       IF @endproc<>NIL THEN endproc;
 
       Z_CloseFile (outfile);
-      Reset (outfile);
+      pfrec:= @outfile;
+      fh:= FileOpen(pfrec^.name, fmOpenWrite);
+      if fh>=0 then begin
+        FileSetDate(fh,ftime);
+        FileClose(fh);
+      end;
+
+      {Reset (outfile);
       IF (IOResult = 0) THEN BEGIN
         SetFTime (outfile,ftime);
         Close (outfile);
-      END;  (* of IF *)
+      END;}  (* of IF *)
 
       CASE c OF
          ZEOF,
@@ -2458,6 +2486,9 @@ END.
 
 {
   $Log$
+  Revision 1.7  2000/11/18 15:46:06  hd
+  - Unit DOS entfernt
+
   Revision 1.6  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 

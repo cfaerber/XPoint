@@ -32,7 +32,7 @@ uses xpglobal,
   {$ELSE }
   crt,
   {$ENDIF }
-  sysutils, classes, dos, typeform, fileio, xpdatum, montage;
+  sysutils,classes,typeform,fileio,xpdatum,montage;
 
 type
   TUUZ = class
@@ -541,7 +541,12 @@ end;
 
 procedure shell(prog: string);          { Externer Aufruf }
 begin
-  Exec(prog, '');
+{$ifdef Unix}
+  Linux.Shell(prog);
+{$else}
+  //Exec(prog, '');
+  {$error Need a Exec-Procedure!
+{$endif}
 end;
 
 procedure fmove(var f1, f2: file);
@@ -2281,6 +2286,7 @@ var
   i: integer;
   c: char;
   binaer: boolean;
+  pfrec: ^filerec;
 begin
   write('mail: ', fn);
   inc(mails);
@@ -2389,7 +2395,9 @@ begin
       wrfs(Mail[i]);
   end;
   close(f1);
-  setfattr(f1, 0);                      { Archivbit abschalten }
+  pfrec:= @f1;
+  FileSetAttr(pfrec^.name,0);
+  //setfattr(f1, 0);                      { Archivbit abschalten }
 end;
 
 { SMTP-Mail -> ZCONNECT }
@@ -2406,6 +2414,7 @@ var
   binaer: boolean;
   nofrom: boolean;
   smtpende: boolean;
+  pfrec: ^filerec;
 
   function GetAdr: string;
   var
@@ -2542,7 +2551,9 @@ begin
     end;
   until ende;
   close(f1);
-  setfattr(f1, 0);                      { Archivbit abschalten }
+  pfrec:= @f1;
+  FileSetAttr(pfrec^.name, 0);
+  //setfattr(f1, 0);                      { Archivbit abschalten }
   writeln(' - ok');
 end;
 
@@ -2567,6 +2578,7 @@ var
   newfn: String;
   dir, name, ext: string;
   binaer: boolean;
+  pfrec: ^filerec;
 label
   ende;
 begin
@@ -2697,13 +2709,15 @@ begin
     end;
   ende:
   close(f1);
-  setfattr(f1, 0);                      { Archivbit abschalten }
+  pfrec:= @f1;
+  FileSetAttr(pfrec^.name, 0);
+  //setfattr(f1, 0);                      { Archivbit abschalten }
   if n = 0 then writeln;
 end;
 
 procedure TUUZ.UtoZ;
 var
-  sr: searchrec;
+  sr: tsearchrec;
   spath: String;
   s: string;
   typ: string;                          { 'mail' / 'news'   }
@@ -2809,9 +2823,9 @@ begin
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
   n := 0; RawNews := false;
-  findfirst(source, ffAnyFile, sr);
-  while doserror = 0 do
-  begin
+  ;
+  while findfirst(source, faAnyFile, sr)=0 do
+  repeat
     if ExtractFileExt(sr.name) = '.mail' then
       ConvertMailfile(spath + sr.name, '', mails)
     else
@@ -2854,8 +2868,7 @@ begin
         dec(n);
       end;
     end;
-    findnext(sr);
-  end;
+  until findnext(sr)<>0;
   findclose(sr);
   if n > 0 then writeln;
   writeln('Mails:', mails: 6);
@@ -3671,6 +3684,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.5  2000/11/17 19:35:45  fe
   Followup-To support updated to ZC 3.1.
   Mail-Copies-To support added.

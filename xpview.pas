@@ -17,7 +17,7 @@ unit xpview;
 
 interface
 
-uses xpglobal,sysutils,dos,typeform,fileio,inout,database,xp0,xp1,xpnt;
+uses xpglobal,sysutils,typeform,fileio,inout,database,xp0,xp1,xpnt;
 
 
 type viewinfo = record
@@ -204,12 +204,13 @@ end;
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : Integer;
-    prog      : string;
-    orgfn,fn1,
-    parfn     : string;
-    Dir: DirStr;
-    Name: NameStr;
-    Ext: ExtStr;
+    prog,
+    orgfn,
+    fn1,
+    parfn,
+    Dir,
+    Name,
+    Ext       : string;
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
@@ -252,6 +253,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.27  2000/11/14 15:51:38  mk
   - replaced Exist() with FileExists()
 

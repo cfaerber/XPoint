@@ -19,7 +19,7 @@ interface
 
 uses
   {$IFDEF NCRT }xpcurses,{$ELSE }crt,{$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,datadef,database,maus2,
+  sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,Modem,Debug;
 
 function RunScript(test:boolean; scriptfile:string;
@@ -141,7 +141,7 @@ end;
 procedure openlog(fn:string);
 begin
   savewin;
-  if not multipos(':\',fn) then
+  if not multipos(_MPMask,fn) then
     fn:=logpath+fn;
   if not validfilename(fn) then
     rfehler(2001)
@@ -1461,6 +1461,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.26  2000/11/15 23:00:44  mk
   - updated for sysutils and removed dos a little bit
 

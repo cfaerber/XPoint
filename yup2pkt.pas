@@ -12,7 +12,7 @@
 
 { Yuppie Mailbase -> Fido-PKT }
 
-uses xpglobal, dos, typeform, fileio, dbase, sysutils;
+uses xpglobal,typeform,fileio,dbase,sysutils;
 
 
 const NetmailDB = 'NET-MAIL';
@@ -178,7 +178,7 @@ end;
 
 procedure RewritePKT;                { PKT-Header schreiben }
 var phd       : pheader;
-    y,m,d,dow : rtlword;
+    y,m,d     : rtlword;
     h,s,s100  : rtlword;
 begin
   assign(pkt,outfile);
@@ -187,9 +187,9 @@ begin
   with phd do begin
     OrgNode:=address.node; DestNode:=address.node;
     OrgNet:=address.net; Destnet:=address.net;
-    getdate(y,m,d,dow);
+    decodedate(now,y,m,d);
     year:=y; month:=m; day:=d;
-    gettime(h,m,s,s100);
+    decodetime(now,h,m,s,s100);
     hour:=h; min:=m; sec:=s;
     PktVer:=2;
     PrdCodL:=$1a;   { d'Bridge }
@@ -360,6 +360,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.11  2000/11/14 22:35:05  fe
   Replaced "exist()" by "fileexists()".
 

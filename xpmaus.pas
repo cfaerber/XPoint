@@ -22,8 +22,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
-     xp0,xp1,xp1input,crc,xp_iti, xpglobal;
+  sysutils,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
+  xp0,xp1,xp1input,crc,xp_iti, xpglobal;
 
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.20  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 

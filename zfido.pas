@@ -20,19 +20,17 @@ program ZFido;
 
 uses
   sysutils, classes,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
   ZFTools,
-  dos,xpglobal;
+  xpglobal;
 
 begin
   halt(ZFidoMain);
 end.
 {
   $Log$
+  Revision 1.45  2000/11/18 15:46:06  hd
+  - Unit DOS entfernt
+
   Revision 1.44  2000/11/14 22:33:26  fe
   Dependencies fixed.
 

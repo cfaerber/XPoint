@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,resource,xp0,xp1,xpglobal;
+  typeform,fileio,resource,xp0,xp1,xpglobal;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_parerr  = 1;
@@ -32,7 +32,7 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_senderr = 3;
       uu_recerr  = 4;
 
-function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
+function uucico(CommandFile:string; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 
@@ -43,7 +43,7 @@ const  ConfigFile = 'uucico.cfg';
        ResultFIle = 'UUCICOR.TMP';
 
 
-function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
+function uucico(CommandFile:string; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 var t        : text;
@@ -123,6 +123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.13  2000/11/14 15:51:38  mk
   - replaced Exist() with FileExists()
 

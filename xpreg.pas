@@ -24,9 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,keys,winxp,montage,
-      datadef,database,maus2,maske,clip,resource,printerx,
-      xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
+  typeform,fileio,inout,keys,winxp,montage,
+  datadef,database,maus2,maske,clip,resource,printerx,
+  xp0,xp1,xp1o,xp1o2,xp1input,xpnt,xpglobal;
 
 procedure copyright(wait:boolean);
 procedure BetaMessage;
@@ -1305,11 +1305,11 @@ end;
 procedure TestUnregtime(x,y:byte; var stufe1:boolean);
 var timestamp  : word;
     first,last : word;
-    j,m,d,dow  : rtlword;
+    j,m,d      : rtlword;
     diff       : integer;
 begin
   stufe1:=false;
-  getdate(j,m,d,dow);
+  decodedate(now,j,m,d);
   timestamp:=max(0,(j-1970)*12*30 + (m-1)*30 + d);
   first:=dbReadUserflag(bbase,1);
   last:=dbReadUserflag(mbase,3);
@@ -1576,6 +1576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.22  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 

@@ -17,8 +17,8 @@ unit xpmime;
 
 interface
 
-uses  xpglobal,sysutils,dos,typeform,montage,fileio,keys,lister,database,resource,
-      xp0,xp1,xpkeys, utftools;
+uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,
+      xp0,xp1,xpkeys,utftools;
 
 
 type  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
@@ -763,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.35  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 

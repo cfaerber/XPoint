@@ -15,7 +15,7 @@ unit xpnodes;
 interface
 
 uses
-  typeform, sysutils, dos;
+  typeform,sysutils;
 
 
 const PointNurNode = 0;      { Nur den Nodeteil der Adresse bercksichti-  }
@@ -504,6 +504,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.12  2000/10/17 10:06:00  mk
   - Left->LeftStr, Right->RightStr
 

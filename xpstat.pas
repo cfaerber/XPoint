@@ -23,8 +23,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
-      lister,resource,xp0,xp2,xp1, xpglobal;
+  typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
+  lister,resource,xp0,xp2,xp1, xpglobal;
 
 
 procedure MultiStat(art:byte);
@@ -735,7 +735,7 @@ type pprec  = record
                 psize : longint;
                 esize : longint;
               end;
-var sr       : searchrec;
+var sr       : tsearchrec;
     x,y,yy   : byte;
     msgs     : longint;   { Anzahl Nachrichten in PP-File  }
     emsgs    : longint;   { Anzahl Nachrichten in EPP-File }
@@ -751,20 +751,16 @@ var sr       : searchrec;
     w        : pprec;
 begin
   ppanz:=0;
-  dos.findfirst('*.pp',ffAnyFile,sr);
-  while (doserror=0) and (ppanz<screenlines-10) do begin      { .PP-Files }
+  while (findfirst('*.pp',faAnyFile,sr)=0) and (ppanz<screenlines-10) do repeat      { .PP-Files }
     if sr.size>0 then begin
-
-
-      inc(ppanz); pp_epp[ppanz].name:=LeftStr(sr.name,cpos('.',sr.name)-1);
+      inc(ppanz);
+      pp_epp[ppanz].name:=LeftStr(sr.name,cpos('.',sr.name)-1);
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
-      end;
-    dos.findnext(sr);
-  end;
+    end;
+  until findnext(sr)<>0;
   FindClose(sr);
-  dos.findfirst('*.epp',ffAnyFile,sr);
-  while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
+  while (findfirst('*.epp',faAnyFile,sr)=0) and (ppanz<screenlines-10) do repeat      { .EPP-Files }
     if sr.size>0 then begin
       SetLength(sr.name, cpos('.', sr.name)-1); {truncstr(sr.name,cpos('.',sr.name)-1);}
       j:=1;
@@ -775,8 +771,7 @@ begin
         end;
       pp_epp[ppanz].esize:=sr.size;
       end;
-    dos.findnext(sr);
-  end;
+  until findnext(sr)<>0;
   FindClose(sr);
   more:=(ppanz>screenlines-11);
   if more then dec(ppanz);
@@ -786,6 +781,7 @@ begin
         w:=pp_epp[j]; pp_epp[j]:=pp_epp[j+1]; pp_epp[j+1]:=w;
         end;
 
+  { Kann nicht funktionieren }
   crashs:=FileExists('*.cp');
   if (ppanz=0) and not crashs then begin
     hinweis(getres(2610));   { 'Keine unversandten Nachrichten vorhanden!' }
@@ -816,13 +812,11 @@ begin
     end;
   dbClose(d);
   if crashs then begin
-    dos.findfirst('*.cp',ffAnyFile,sr);
     sumbytes:=0; summsgs:=0;
-    while doserror=0 do begin
+    if findfirst('*.cp',faAnyFile,sr)=0 then repeat
       inc(summsgs,testpuffer(sr.name,false,attsize));
       inc(sumbytes,sr.size+attsize);
-      dos.findnext(sr);
-    end;
+    until findnext(sr)<>0;
     FindClose(sr);
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
     inc(yy);
@@ -1254,6 +1248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/18 15:46:05  hd
+  - Unit DOS entfernt
+
   Revision 1.28  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 
