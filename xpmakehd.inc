@@ -340,7 +340,11 @@ begin
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
+  {$ifdef uuzmime }
+  ClearHeader;
+  {$else }
   ClearHeader(@hd);
+  {$endif }
   bufsize := 32768;
   getmem(buf,bufsize);
   size:=0; Readbuf;
@@ -540,6 +544,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/22 14:41:27  mk
+  - UUZ geht jetzt endlich wieder komplett :-)
+
   Revision 1.26  2000/07/21 17:39:57  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

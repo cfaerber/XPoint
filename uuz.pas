@@ -15,7 +15,7 @@
 {$I XPDEFINE.INC }
 
 {$IFDEF NCRT}
-{$UNDEF NCRT}
+  {$UNDEF NCRT}
 {$ENDIF}
 
 program uuz;
@@ -136,6 +136,7 @@ var
   // Speichert zus„tzliche Headertypen, Object-Pointer speichert Boolean
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
+  RawNews: Boolean;
 
   envemp: string;                       { Envelope-Empf„nger }
 
@@ -324,6 +325,7 @@ begin
     Followup.Free;
   end;
 
+  ULine.Clear;
   Fillchar(hd, sizeof(hd), 0);
 
   with hd do
@@ -1270,13 +1272,16 @@ begin
   while (bufpos < bufanz) and (buffer[bufpos] <> #10) do
   begin
     c := buffer[bufpos];
-    inc(l);
-    // Die ersten MaxSLen Bytes machen wir effizient, danach machen
-    // wir uns ersteinmal keinen gr”áeren Aufwand
-    if l <= MaxSlen then
-      s[l] := c
-    else
-      s := s + c;
+    if c <> #13 then
+    begin
+      inc(l);
+      // Die ersten MaxSLen Bytes machen wir effizient, danach machen
+      // wir uns ersteinmal keinen gr”áeren Aufwand
+      if l <= MaxSlen then
+        s[l] := c
+      else
+        s := s + c;
+    end;
     IncPos;
   end;
   Setlength(s, l);
@@ -1840,9 +1845,12 @@ begin
   hd.mime.ctype := tText;               { Default: Text }
   repeat
     ReadString;
+    // fortgesetzte Zeile zusammenfassen
+    if (s<>'') and ((s[1]=' ') or (s[1]=#9)) then
+      s0:=s0+' '+trim(s)
+    else
     with hd do
     begin
-      s0 := s;
       p := cpos(':', s0);
       if p > 1 then
       begin
@@ -2405,8 +2413,8 @@ begin
     ReadString;
   end;
   n := 0;
-  if left(s, 2) = '#!' then
-    if left(s, 8) <> '#! rnews' then
+  if (left(s, 2) = '#!') or RawNews then
+    if (left(s, 8) <> '#! rnews') and not RawNews then
     begin
       writeln(' - unbekanntes Batchformat');
       goto ende;
@@ -2415,9 +2423,10 @@ begin
     begin
       write(sp(7));
       repeat
+        if not RawNews then
         while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
           (bufpos < bufanz) do
-          ReadString;
+           ReadString;
         if bufpos < bufanz then
         begin
           p := pos('#! rnews', s);
@@ -2425,7 +2434,10 @@ begin
           inc(n);
           write(#8#8#8#8#8, n: 5);
           inc(news);
-          size := minmax(ival(mid(s, 10)), 0, maxlongint);
+          if RawNews then
+            Size := Bufanz
+          else
+            size := minmax(ival(mid(s, 10)), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
           ReadRFCheader(false, s);
@@ -2572,10 +2584,19 @@ begin
   rewrite(f2, 1);
   outbufpos := 0;
   spath := GetFileDir(source);
-  n := 0;
+  n := 0; RawNews := false;
   findfirst(source, ffAnyFile, sr);
   while doserror = 0 do
   begin
+    if ExtractFileExt(sr.name) = '.mail' then
+      ConvertMailfile(spath + sr.name, '')
+    else
+    if ExtractFileExt(sr.name) = '.news' then
+    begin
+      RawNews := true;
+      ConvertNewsfile(spath + sr.name);
+    end
+    else
     if left(sr.name, 2) = 'X-' then
     begin
       ReadXFile;                        { X.-file interpretieren }
@@ -2601,7 +2622,7 @@ begin
     begin
       inc(n);
       case FileType of
-        1, 2: ConvertNewsfile(spath + sr.name);
+        0, 1, 2: ConvertNewsfile(spath + sr.name);
         3: ConvertSmtpFile(spath + sr.name, false);
         4: ConvertMailfile(spath + sr.name, '');
       else
@@ -3375,6 +3396,9 @@ end.
 
 {
   $Log$
+  Revision 1.47  2000/07/22 14:41:26  mk
+  - UUZ geht jetzt endlich wieder komplett :-)
+
   Revision 1.46  2000/07/21 13:23:44  mk
   - Umstellung auf TStringList
 
