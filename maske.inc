@@ -358,7 +358,7 @@ var ax,p,myp  : integer;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
-        width:=max(width,length(p1^.el^));
+        width:=max(width,min(length(p1^.el^),70));
         if ustr(cont^)=ustr(p1^.el^) then p:=lines;
         p1:=p1^.next;
         end;
@@ -1070,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.1  2001/01/04 09:54:18  mk
+  - Breite der Ausgabezeilen auf 70 begrenzen
+
   Revision 1.13  2000/05/06 17:29:20  mk
   - DOS DPMI32 Portierung
 
