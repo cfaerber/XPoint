@@ -22,7 +22,8 @@
 		RC		- Resource-Compiler fuer OpenXP
 		UUZ		- ZConnect-RFC-Konverter
 		XPME		- Menueeditor
-		ZFido		- ZConnect-Fido-Konverter
+		ZFido		- ZConnect-Fido-Konverter, wird fester
+				  Bestandteil von XP.
 
 		Alpha-Status
 		------------
@@ -33,7 +34,8 @@
 		Non-Function-Development
 		------------------------
 
-		XP-ME		- Fido-Mailer fuer OpenXP
+		XP-FM		- Fido-Mailer fuer OpenXP, wird fester
+				  Bestandteil von XP.
 		ZM		- ZModem: wird wohl nichts: sz/gz installieren
 
 	Install	Voraussetzung: FreePascal Compiler ab 1.00 (am besten den
@@ -42,8 +44,7 @@
 
 		su root
 		# Da der Compiler noch einen Bug hat, vorruebergehendend:
-		ppc386 xp8
-		make xp
+		ppc386 xp
 		make install
 		exit
 

@@ -27,8 +27,6 @@ Text                                                Version Prio Autor
   SysSetScreenSize in xp{OS}.pas
 - dosx.pas, alldrives portieren 		    *       1    na
 - Clip.pas, Clip2String, Ansi			    W	    2    na
-- Funktion der Hilfe sicherstellen (geht noch       L       2    na
-  nicht)
 - Modem-Implementation				    *       1    na
 - NNTP						    LOW     1    hd,mk
 - POP3						    LOW     1    hd,mk
