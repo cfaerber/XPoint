@@ -66,7 +66,6 @@ function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 procedure AppPuffer(const Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
-function  getBoxAdresse(const box:string; netztyp:byte):string;
 procedure CancelMessage;
 procedure ErsetzeMessage;
 function  testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
@@ -1091,43 +1090,19 @@ begin
   freeres;
 end;
 
-
-function getBoxAdresse(const box:string; netztyp:byte):string;
-var d         : DB;
-    flags     : byte;
-    username  : string;
-    pointname : string;
-    domain    : string;
-    email     : string;
-    aliaspt   : boolean;
+function getBoxAdresse(const box: string): string;
+var d: DB;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, UpperCase(box));
   if dbFound then
-  begin
-    username := dbReadStr(d, 'username');
-    pointname := dbReadStr(d, 'pointname');
-    dbRead (d, 'script', flags);
-    aliaspt := (flags and 4 <> 0);
-    domain := dbReadStr(d, 'domain');
-    eMail := dbReadStr(d, 'email');
-    case netztyp of
-      nt_Client  : getBoxAdresse:=email;
-      nt_UUCP    : getBoxAdresse:=iifs(email<>'', email, username + '@' +
-                                  iifs (aliaspt, box + ntServerDomain(box),
-                                                 pointname + domain));
-      nt_Maus    : getBoxAdresse:=username + '@' + box;
-      nt_ZConnect: getBoxAdresse:=username + '@' +
-                                  iifs (aliaspt, pointname, box) + domain;
-    end;
-  end
+    result:= ComputeUserAddress(d)
   else begin
     rfehler1(109,box);  { 'Unbekannte Serverbox:' %s }
     getBoxAdresse:='';
   end;
   dbClose(d);
 end;
-
 
 procedure CancelMessage;
 var
@@ -1170,7 +1145,7 @@ begin
     Box := dbReadNStr(ubase,ub_pollbox);
   end;
 
-  adr:=getBoxAdresse(box,mbNetztyp);
+  adr:=getBoxAdresse(box);
   if adr='' then exit;
 
   hdp := THeader.Create;
@@ -1270,7 +1245,7 @@ begin
     box := dbReadNStr(ubase,ub_pollbox);
   end;
 
-  adr:=getBoxAdresse(box,mbNetztyp);
+  adr:=getBoxAdresse(box);
   if adr='' then exit;
 
   hdp := THeader.Create;
@@ -1533,6 +1508,10 @@ end;
 
 {
   $Log$
+  Revision 1.85.2.3  2002/07/31 18:40:40  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.85.2.2  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 

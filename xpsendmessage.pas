@@ -317,6 +317,7 @@ var f,f2     : file;
     boxfile  : string;
     username : string;  { eigener Username                    }
     pointname: string;
+    email    : string;
     _brett   : string;
     mapsname : string;
     senddate : string;  { mit 'D' zeitversetzt absenden       }
@@ -1984,7 +1985,7 @@ fromstart:
             hdp.real_box:=box;
           end;
       8 : begin
-            hdp.absender:=iifs(sData.SenderMail='',username,sData.SenderMail);
+            hdp.absender:=iifs(sData.SenderMail='',email,sData.SenderMail);
             hdp.real_box:=box;
           end;
     end;
@@ -2496,6 +2497,10 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.8  2002/07/31 18:40:41  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.48.2.7  2002/07/29 19:53:18  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

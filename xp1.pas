@@ -252,6 +252,8 @@ function  cm_key:char;
 
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 
+function  ComputeUserAddress(d: DB):string;
+
 procedure InitXP1Unit;
 
 implementation  {-------------------------------------------------------}
@@ -1029,38 +1031,6 @@ var d    : DB;
 {$ENDIF }
   end;
 
-  function def_adresse:string;
-  var trueboxname : string;
-      username    : string;
-      pointname   : string;
-      domain      : string;
-      email       : string;
-      flags       : byte;
-      aliaspt     : boolean;
-  begin
-    trueboxname:=dbReadStr(d,'boxname');
-    username:=dbReadStr(d,'username');
-    pointname:=dbReadStr(d,'pointname');
-    domain:=dbReadStr(d,'domain');
-    email:=dbReadStr(d,'email');
-    dbRead(d,'script', flags);
-    aliaspt:=(flags and 4 <> 0);
-    case nt of
-      nt_Client  : def_adresse:=leftStr(email,cpos('@',email)-1) +
-                                ' @ ' + mid(email,cpos('@',email)+1);
-      nt_UUCP    : def_adresse:=iifs(email<>'', leftStr(email,cpos('@',email)-1) +
-                                ' @ ' + mid(email,cpos('@',email)+1),
-                                username + ' @ ' +
-                                iifs (aliaspt, trueboxname + ntServerDomain(DefaultBox),
-                                      pointname + domain));
-      nt_ZConnect: def_adresse:=username + ' @ ' +
-                                iifs (aliaspt, pointname, trueboxname) + domain;
-    else
-      def_adresse:=username + ' @ ' + trueboxname;
-    end;
-  end;
-
-
 begin
   if dispusername and not startup then begin
     dbOpen(d,BoxenFile,1);
@@ -1069,7 +1039,7 @@ begin
     if dbFound then begin
       nt:=dbReadInt(d,'netztyp');
       realname:=iifs(ntRealname(nt),dbReadStr(d,'realname'),'');
-      user:=leftStr(def_adresse,sizeof(user));
+      user:=ComputeUserAddress(d);
       if (length(user)+length(realname)) <= screenwidth-7 then
         user:=user + iifs(realname<>'',' ('+realname+')','')
       else if length(user) <= screenwidth-10 then
@@ -2058,6 +2028,45 @@ begin
   cursor(curon);
 end;
 
+{ returns user identifier (email address with RFC nets) }
+function ComputeUserAddress(d: DB):string;
+var flags     : byte;
+    netztyp   : byte;
+    boxname   : string;
+    username  : string;
+    pointname : string;
+    domain    : string;
+    email     : string;
+    aliaspt   : boolean;
+begin
+  dbRead(d, 'netztyp', netztyp);
+  boxname := dbReadStr(d, 'boxname');
+  username := dbReadStr(d, 'username');
+  pointname := dbReadStr(d, 'pointname');
+  dbRead (d, 'script', flags);
+  aliaspt := (flags and 4 <> 0);
+  domain := dbReadStr(d, 'domain');
+  eMail := dbReadStr(d, 'email');
+  case netztyp of
+    nt_Maus    : result:=username + '@' + boxname;
+    nt_ZConnect: result:=username + '@' +
+                         iifs (aliaspt, pointname, boxname) + domain;
+    nt_UUCP    : result:=iifs(email<>'', email, username + '@' +
+                              iifs (aliaspt, boxname + ntServerDomain(boxname),
+                                             pointname + domain));
+  else
+    if netztyp in netsRFC then begin
+      if cpos('@',username)<>0 then
+        // old versions stored email address in username db fields
+        result:= username
+      else
+        result:= email;
+      end else
+      // Fido etc.
+      result :=username + ' @ ' + boxname;
+  end;
+end;
+
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
@@ -2097,6 +2106,10 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.9  2002/07/31 18:40:40  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.147.2.8  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 

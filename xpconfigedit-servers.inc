@@ -154,7 +154,7 @@
   end;
 
   // 'Namen' fuer die Internet-Boxentypen
-  procedure InetNameRead(nt:byte; var boxname,komm,email,realname,replyto,fqdn:string;
+  procedure InetNameRead(nt:byte; var boxname,email,komm,realname,replyto,fqdn:string;
     const WindowHeadline: string; var brk:boolean);
   var x,y, bLen  : Integer;
   begin
@@ -360,9 +360,9 @@
                cldup,clphn,cllog,clpas,claskc,claskd,clstat,
                getreps(915,netz_typ(nt_Client)));
       nt_NNTP, nt_POP3, nt_IMAP:
-        INetNameRead(nt,name,komm,user,real,replyto,fqdom,getreps(915,Netz_Typ(nt)),brk)
+        INetNameRead(nt,name,email,komm,real,replyto,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
-        NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
+        NameRead(nt,name,user,komm,maps,real,dom,fqdom,email,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     end;    
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
       dbSeek(d,boiName,UpperCase(name));
@@ -1404,6 +1404,7 @@
   // Edit Namen fuer alle RFC-Boxtypen ausser UUCP
   procedure EditInetName(var brk:boolean);
   var name,user,komm  : string;
+      email           : string;
       dname,old_dname : string;
       replyto         : string;
       realname        : string;
@@ -1426,13 +1427,12 @@
     dbGo(d,drec[p]);
     dbRead(d,'netztyp',nt);
     name:= dbReadStr(d,'boxname');
-    dnAme:= dbReadStr(d,'dateiname');
-    user:= dbReadStr(d,'username'); // hier eMail
+    email:= ComputeUserAddress(d);
     replyto:= dbReadStr(d,'replyto');
     komm:= dbReadStr(d,'kommentar');
     realname:= dbReadStr(d,'realname');
-    fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
-    INetNameRead(nt,name,komm,user,realname,replyto,fqdom,name+', '+user,brk);
+    fqdom:= dbReadStr(d,'fqdn');
+    INetNameRead(nt,name,email,komm,realname,replyto,fqdom,kompname,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
       newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
@@ -1464,20 +1464,19 @@
           end;
         end;
       if not brk then begin
+        user:=LeftStr(email,pos('@',email)-1);
         boxpar^.boxname:=name;
         boxpar^.username:=user;
-        if (nt=nt_Maus) then
-          boxpar^.pointname:=name;
-        // boxpar^._domain:=dom;
-        boxpar^._fqdn:=fqdom;  {16.01.00 HS}
+        boxpar^._fqdn:=fqdom;
         WriteBox(dname,boxpar);
         dbWriteStr(d,'boxname',name);
         dbWriteStr(d,'username',user);
+        dbWriteStr(d,'email',email);
         dbWriteStr(d,'replyto',replyto);
         dbWriteStr(d,'dateiname',dname);
         dbWriteStr(d,'kommentar',komm);
         dbWriteStr(d,'realname',realname);
-        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
+        dbWriteStr(d,'fqdn',fqdom);
         dbFlushClose(d);
         dbGo(d,drec[1]); aufbau:=true;
         end;
@@ -2371,6 +2370,10 @@
 
 {
   $Log$
+  Revision 1.48.2.9  2002/07/31 18:40:40  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.48.2.8  2002/07/29 19:53:18  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

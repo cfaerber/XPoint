@@ -844,6 +844,7 @@ end;
 procedure LoadBoxData(var d: DB);
 var flags : byte;
 begin
+  EMail:= ComputeUserAddress(d);
   if forceabs='' then
     UserName := dbReadStr(d,'username')
   else
@@ -1146,6 +1147,10 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.10  2002/07/31 18:40:41  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.17.2.9  2002/07/29 19:53:19  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

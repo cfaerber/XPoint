@@ -727,9 +727,12 @@ var d         : DB;
       end;
     case typ of
       1 : begin     { Boxen }
-            s2 := dbReadStr(d,'Username');
-            s3 := dbReadStr(d,'Kommentar');
             dbRead(d,'Netztyp',nt);
+            if nt in netsRFC then
+              s2 := ComputeUserAddress(d)
+            else
+              s2 := dbReadStr(d,'Username');
+            s3 := dbReadStr(d,'Kommentar');
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
             {$IFDEF Unix }
@@ -1625,7 +1628,7 @@ begin
     begin
       inc(sel_anz);
       komm:=dbReadStr(d,'Kommentar');
-      if nt=nt_Client then user:=dbReadStr(d,'Email')
+      if nt in netsRFC then user:=dbReadStr(d,'Email')
       else user:=dbReadStr(d,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
@@ -2538,6 +2541,10 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.4  2002/07/31 18:40:41  ma
+  - using "email" db field instead of "user" db field for email address now
+    email may be longer than 30 chars now
+
   Revision 1.45.2.3  2002/07/21 20:14:39  ma
   - changed copyright from 2001 to 2002
 
