@@ -25,7 +25,7 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio,xpdiff,xpdatum,xpglobal;
+  dos,typeform,fileio,xpdiff,xpdatum,xpglobal;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -1788,6 +1788,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/05/03 00:21:24  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.14  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

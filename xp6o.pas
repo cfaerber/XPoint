@@ -38,7 +38,7 @@ function testmausempf(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xpcc,xpnt,xpfido,xp_pgp,
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
      xp6,xp6l;
 
 
@@ -1242,6 +1242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/03 00:21:22  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.12  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 

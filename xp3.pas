@@ -114,7 +114,7 @@ implementation  {-----------------------------------------------------}
                 'A'  ==  Netzbretter
                 'U'  ==  Userbretter (nur in der MBase) }
 
-uses  xp3o,xp3o2,xp3ex,xpnt;
+uses  xp3o,xp3ex,xpnt;
 
 
 {$IFDEF ver32}
@@ -1406,6 +1406,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/05/03 00:21:21  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.21  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 

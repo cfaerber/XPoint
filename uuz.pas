@@ -28,7 +28,7 @@ uses  xpglobal,
 {$IFDEF BP }
   ems,
 {$ENDIF }
-{$IFDEF BP }
+{$IFDEF NCRC }
   xpcurses,
 {$ELSE }
   crt,
@@ -3530,6 +3530,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2000/05/03 00:21:19  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.21  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

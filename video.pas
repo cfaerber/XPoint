@@ -29,7 +29,7 @@ UNIT video;
 interface
 
 uses
-  xpglobal, dos,dosx;
+  xpglobal, dos, dosx;
 
 const DPMS_On       = 0;    { Monitor an }
       DPMS_Standby  = 1;    { Stromsparstufe 1 }
@@ -79,7 +79,7 @@ uses
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
-  inout, fileio;
+   fileio;
 
 var
   vtype   : byte;
@@ -543,6 +543,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/03 00:21:20  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.16  2000/05/02 11:49:34  hd
   Anpassung an Curses (Linux)
 

@@ -174,9 +174,6 @@ procedure writehd(dpb:DB);
 
 implementation
 
-uses database;
-
-
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
@@ -221,6 +218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/03 00:21:19  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.6  2000/03/17 11:16:33  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

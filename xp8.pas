@@ -59,7 +59,7 @@ function fileechocolfunc(var s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpfido,xpnt;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt;
 
 const mapsbox : string[BoxNameLen] = '';
 
@@ -1597,6 +1597,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/03 00:21:23  mk
+  - unbenutzte Units aus uses entfernt
+
   Revision 1.8  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 
