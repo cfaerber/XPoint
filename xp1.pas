@@ -903,7 +903,8 @@ asm
 
 {-----------------------}
 
-@testattr:  mov edx,ecx
+@testattr:  pusha
+            mov edx,ecx
             xor ebx,ebx
 
             {-----------}
@@ -964,8 +965,10 @@ asm
             dec ecx                                { restliche Zeichen }
             jz @addspace
 
-@tacopy2:   mov al,byte ptr charbuf[edi+2]
+@tacopy2:   mov al,byte ptr charbuf[edi+2]         { Zeichen nach links schieben }
             mov byte ptr charbuf[edi],al
+            mov ah,byte ptr attrbuf[edi*2+4]       { Attribute ebenso !!! }
+            mov byte ptr attrbuf[edi*2],ah
             inc edi
             loop @tacopy2
 
@@ -975,6 +978,7 @@ asm
 
 @taende:    pop eax
             mov ecx,edx
+            popa
             ret
 
 {-------------------------}
@@ -2338,6 +2342,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/04/21 15:32:34  jg
+  - XP32 Bugfix: Hervorhebung im Lister,
+    "_" und "*" in einer Zeile gab Probleme
+
   Revision 1.30  2000/04/15 21:44:45  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 
