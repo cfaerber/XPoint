@@ -17,6 +17,13 @@
 		
 		Unter X darf die Groesse der Konsole nach dem
 		Programmstart nicht mehr geaendert werden.
+		
+		Fehler, wie "Kann xxx nicht finden" sind wahrscheinlich auf
+		die Tatsache zurueckzufueren, dass Linux bei Dateinamen
+		zwischen Gross- und Kleinschreibung unterscheidet. Da
+		OpenXP seine DOS-Vergangenheit nicht leugnen kann, sollte
+		man zunaechst versuchen, den Namen in Grossschreibung zu
+		wandeln (gilt nicht fuer die Tools wie ZFido etc.).
 
 	XP	OpenXP ist im absoluten Alpha-Stadium! Jede Verwendung
 		kann nur auf eigene Gefahr und mit der Wahrscheinlichkeit
@@ -54,5 +61,7 @@
 		funktionieren.
 		
 	----------------------------------------------------------------------
-	Changed: 2000-05-15
+	$RCSFile$
+	$Revision$
+	$Date$
 	End of File
