@@ -1182,6 +1182,9 @@ fromstart:
     XpID:=true;
   if pm and (ustr(left(empfaenger,length(mapsname)))=mapsname) then
     XpID:=false;
+  if SendFlags and SendWAB<>0 then XpID:=false;
+  { Bei Nachrichten, die mit N/W/O weitergeleitet wurden, darf keine
+    XpID gesetzt werden, auch nicht in der unregistrierten Version }
   Set_XP_ID;
 
   if (netztyp<>nt_Fido) then
@@ -2219,6 +2222,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/05/17 18:15:51  sv
+  - Auch in nicht registrierten Versionen wird keine XP-ID an mit N/W/O
+    weitergeleiteten Nachrichten angehaengt
+
   Revision 1.31  2000/05/14 07:58:13  mk
   - ContainsUmlaut gefixt
 
