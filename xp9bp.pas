@@ -203,7 +203,7 @@ begin
           p:=pos('=',s);
           if (p=0) or not (
             get_exclude or
-            gets(s,su,'Boxname',boxname,BoxRealLen) or
+            gets(s,su,'Boxname',boxname,BoxNameLen) or
             gets(s,su,'Pointname',pointname,25) or
             gets(s,su,'Username',username,30) or
             gets(s,su,'Domain',dummys,1) or
@@ -528,6 +528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/11/10 05:26:07  mk
+  - - fixed Bug #116657: crash with servername >15 chars
+
   Revision 1.10.2.1  2000/10/10 22:49:46  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 
