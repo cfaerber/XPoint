@@ -73,8 +73,8 @@ uses
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      enetztypen = 11;
-      ntnr   : array[0..enetztypen-1] of byte = (2,0,40,20,30,31,3,4,10,11,90);
+      enetztypen = 10;
+      ntnr   : array[0..enetztypen-1] of byte = (2,0,40,20,30,31,3,4,10,11);
     { ntypes : array[0..enetztypen-1] of string[10] = ('Z-Netz','ZConnect',
                  'RFC/UUCP','MausTausch','Fido','QWK','MagicNET','ProNET',
                  'QuickMail','GS-Mailbox','Turbo-Box'); }
@@ -1778,6 +1778,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.15  2001/01/13 14:07:01  mk
+  - nur noch 10 Netztypen
+
   Revision 1.19.2.14  2001/01/10 17:39:06  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
