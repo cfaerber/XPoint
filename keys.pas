@@ -21,7 +21,7 @@ unit keys;
 
 interface
 
-uses   xpglobal, crt,dos, typeform;
+uses   xpglobal, crt, typeform;
 
 type   taste   = string[2];
 
@@ -75,6 +75,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keychom : taste = #0#119;
        keycend : taste = #0#117;
        keyins  : taste = #0#82;
+       keycins : taste = #0#146;
        keydel  : taste = #0#83;
 
        keyesc  : taste = #27;       { sonstige Tasten }
@@ -152,6 +153,9 @@ const lshift = 2;
 
       highbyte : byte = 0;
 
+      enhKBsupport: boolean = false;
+
+
 procedure func_dummy(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
 end;
@@ -167,24 +171,49 @@ begin
 end;
 
 function readkey:char;
-var regs : registers;
 begin
   if forwardkeys<>'' then begin
     readkey:=forwardkeys[1];
     forwardkeys:=copy(forwardkeys,2,255);
     lastscancode:=0;
-    end
+  end
   else
     if highbyte<>0 then begin
-      readkey:=chr(highbyte); highbyte:=0;
-      end
+      readkey:=chr(highbyte);
+      highbyte:=0;
+    end
     else begin
-      regs.ah:=0;
-      intr($16,regs);
-      if regs.al=0 then highbyte:=regs.ah;
-      readkey:=chr(regs.al);
-      lastscancode:=regs.ah;
+      if enhKBsupport then begin
+        asm
+          mov ah,10h
+          int 16h
+          cmp al,0
+          jz @@is_ekey
+          cmp al,0e0h
+          jne @@isnt_ekey
+          cmp ah,0
+          jz @@isnt_ekey
+        @@is_ekey:
+          mov highbyte,ah
+          mov al,0
+        @@isnt_ekey:
+          mov @result,al
+          mov lastscancode,ah
+        end;
+      end  
+      else begin
+        asm
+          xor ah,ah
+          int 16h
+          cmp al,0
+          jnz @@weiter
+          mov highbyte,ah
+        @@weiter:
+          mov @result,al
+          mov lastscancode,ah
+        end;
       end;
+    end;
 {    readkey:=crt.readkey; }
 end;
 
@@ -354,13 +383,36 @@ begin
   kb_alt:=kbstat and alt<>0;
 end;
 
-
+procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
+  asm
+    mov bh,0fh  { Z„hler }
+  @@loop:  
+    mov ah,5
+    mov cx,0ffffh { in Puffer }
+    int 16h
+    mov ah,10h
+    int 16h
+    cmp ax,0ffffh { richtig gelesen ? }
+    je @@ja
+    dec bh
+    jnz @@loop
+    mov enhKBsupport,false
+    jmp @@nein
+  @@ja:    
+    mov enhKBsupport,true
+  @@nein:
+  end;
+ 
 begin
   forwardkeys:='';
   func_proc:=func_dummy;
+  TestKeyInt;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/29 19:44:38  rb
+  Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

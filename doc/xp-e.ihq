@@ -792,7 +792,6 @@ Keys from the number keypad:
 +  insert Clipboard at cursor position
 
 <Ctrl Ins>   Copies marked block to clipboard
-             (works not yet)
 <Shift Ins>  insert Clipboard at cursor position
 <Shift Del>  Moves marked block to clipboard
 

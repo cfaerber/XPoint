@@ -932,7 +932,6 @@ Tasten auf dem Ziffernblock:
 
 <Ctrl Ins>   kopiert markierten Block in die
              Zwischenablage
-             (funktioniert momentan noch nicht)
 <Shift Ins>  fÅgt Zwischenablage an Cursorposition
              ein
 <Shift Del>  verschiebt markierten Block in die

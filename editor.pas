@@ -1548,10 +1548,7 @@ var  dl         : displp;
                                   BlockClpEinfuegen;
                                   BlockEinAus;
                                 end
-                               else 
-                                if kb_ctrl
-                                 then BlockClpKopie(false)
-                                 else e^.insertmode:=not e^.insertmode;
+                                else e^.insertmode:=not e^.insertmode;
                             end;  
         { /robo }                    
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
@@ -1640,6 +1637,7 @@ var  dl         : displp;
     if t=^Z      then b:=EditfScrollUp    else
     if t=^W      then b:=EditfScrollDown  else
     if t=keyins  then b:=EditfChangeInsert else
+    if t=keycins then b:=editfCCopyBlock  else
     if t=keycr   then b:=EditfNewline     else
     if t=keybs   then b:=EditfBS          else
     if t=keydel  then b:=EditfDEL         else
@@ -1894,6 +1892,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/29 19:44:38  rb
+  Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
+
   Revision 1.7  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 
