@@ -53,6 +53,7 @@ uses
 {$ENDIF }
   database,
   datadef1,
+  xp1,
   debug;
 
 
@@ -432,6 +433,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/07/22 10:21:11  mk
+  - added xp1 unit to uses
+
   Revision 1.19  2002/07/22 10:11:19  mk
   - simplyfied deletion of Index files
 
