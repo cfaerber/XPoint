@@ -122,21 +122,23 @@ begin
     POWindow.WriteFmt(mcInfo, res_mailstat,
                       [IMAP.MailCount, IMAP.NewMailCount]);
 
-    FirstMail := 1; LastMail := IMAP.MailCount;
+    FirstMail := 1;
     if IMAP.OnlyNew then
     begin
-      FirstMail := IMAP.LastRead;
-      LastMail := Min(FirstMail, LastMail);
-    end;
+      FirstMail := IMAP.LastRead;  // = -1 when no new message are available
+      LastMail := Min(FirstMail, IMAP.MailCount);
+    end else
+      LastMail := IMAP.MailCount;
 
-    for i := FirstMail to LastMail do
-    begin
-      POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
-      IMAP.Retr(i, List);
-      if BoxPar^.IMAP_Clear then
-        IMAP.Dele(I);
-      SaveMail;
-    end;
+    if FirstMail >= 0 then // do only if messages available
+      for i := FirstMail to LastMail do
+      begin
+        POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
+        IMAP.Retr(i, List);
+        if BoxPar^.IMAP_Clear then
+          IMAP.Dele(I);
+        SaveMail;
+      end;
 
     IMAP.Expunge;
     IMAP.Disconnect;
@@ -180,6 +182,9 @@ end;
                       
 {
   $Log$
+  Revision 1.4  2003/08/29 19:35:54  mk
+  - if now message is available then do not try to get one
+
   Revision 1.3  2003/08/11 21:28:06  mk
   - fixed IMAP if OnlyNew is switched on and no new mail is waiting
 
