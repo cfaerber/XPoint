@@ -74,8 +74,6 @@ var
                                       {SDWaitForNextCall: Restzeit in DUDTimer}
                                       {SDUserBreak}
 
-procedure InitModemUnit;
-
 implementation
 
 procedure ProcessIncoming(idle:boolean);
@@ -285,16 +283,15 @@ end;
 
 procedure VoidDisplayProc; begin end; {Dummy-Anzeigeprozedur fuer Dialup}
 
-procedure InitModemUnit;
 begin
-  TimerObj.Init;
-  DisplayProc:=VoidDisplayProc
-end;
-
+  TimerObj.Init; DisplayProc:=VoidDisplayProc
 end.
 
 {
   $Log$
+  Revision 1.9  2001/01/04 16:09:18  ma
+  - using initialization again (removed procedure InitXXXUnit)
+
   Revision 1.8  2000/12/27 13:23:33  hd
   - Fix: Modem: if echo requiered function tried to get -1 bytes
   - Fix: DSR not checked

@@ -19,7 +19,7 @@ unit ZModem;
          4 - alle empfangenen/gesendeten Bytes}
 
   {a$DEFINE Log}{ermoeglicht Loglevel 4, verbraucht viel Rechenzeit}
-{$IFDEF FPC} {.$HINTS OFF} {.$NOTES OFF}{$ENDIF}
+{$IFDEF FPC} {$HINTS OFF} {$NOTES OFF}{$ENDIF}
 
 {$I xpdefine.inc}
 
@@ -65,8 +65,6 @@ var
   (*S: Bei Startproc gesetzt*)
 
   FileAddition: (NewFile, RecoverFile, ReplaceFile);
-
-procedure InitZModemUnit;
 
 implementation
 
@@ -2714,17 +2712,17 @@ end;
 
 (*************************************************************************)
 
-procedure InitZModemUnit;
 begin
   TimerObj.Init; LogTimer.Init; MakeCRC32 := TRUE; RecoverAllow := TRUE;
-  DispProc := nil; StartProc := nil; EndProc := nil; LoggedBytesAreOutgoing :=
-    TRUE; LogChars := '';
-end;
-
+  DispProc := nil; StartProc := nil; EndProc := nil;
+  LoggedBytesAreOutgoing := TRUE; LogChars := '';
 end.
 
 {
   $Log$
+  Revision 1.14  2001/01/04 16:09:18  ma
+  - using initialization again (removed procedure InitXXXUnit)
+
   Revision 1.13  2000/12/27 13:23:33  hd
   - Fix: Modem: if echo requiered function tried to get -1 bytes
   - Fix: DSR not checked

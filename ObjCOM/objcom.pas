@@ -92,8 +92,6 @@ function FossilDetect: Boolean;
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
-procedure InitObjComUnit;
-
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -421,25 +419,17 @@ begin
   CommInit:=Success;
 end;
 
-var SavedExitProc: pointer;
+initialization Initserial;
   
-procedure ExitObjComUnit;
-begin
-  ExitProc:= SavedExitProc;
-  Stopserial;
-end;
-
-procedure InitObjComUnit;
-begin
-  Initserial;
-  SavedExitProc:= ExitProc;
-  ExitProc:= @ExitObjComUnit;
-end;
+finalization Stopserial;
 
 end.
 
 {
   $Log$
+  Revision 1.15  2001/01/04 16:09:18  ma
+  - using initialization again (removed procedure InitXXXUnit)
+
   Revision 1.14  2001/01/03 22:28:38  ma
   - replaced Int2Str by IntToStr
   - TCP port working completely now (Win only)
