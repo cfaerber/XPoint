@@ -610,7 +610,7 @@ var ypath : pathstr;
       inc(sum,sr.size);
       Dos.findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     YupMailsize:=sum;
@@ -705,6 +705,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/29 20:21:42  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.12  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

@@ -974,7 +974,7 @@ begin
     _era(XFerDir+sr.name);
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -1001,7 +1001,7 @@ var dummy : longint;
         _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
   end;
@@ -1014,7 +1014,7 @@ var dummy : longint;
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
   end;
@@ -1141,7 +1141,7 @@ var sr     : searchrec;
       inc(sum,sr.size);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     totalsize:=sum;
@@ -1155,7 +1155,7 @@ var sr     : searchrec;
       _era(GetFiledir(files)+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
   end;
@@ -1214,7 +1214,7 @@ begin
             end;
           findnext(sr);
         end;
-        {$IFDEF virtualpascal}
+        {$IFDEF Ver32}
         FindClose(sr);
         {$ENDIF}
       end;
@@ -1442,6 +1442,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/05/29 20:21:41  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.21  2000/05/14 15:04:51  hd
   - Anpassungen Linux
 

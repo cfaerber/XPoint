@@ -1781,7 +1781,7 @@ begin
     fst:=false;
     dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -1810,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/29 20:21:42  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.18  2000/05/28 20:25:17  mk
   - exch_8d laeuft jetzt auch unter 32 Bit
 

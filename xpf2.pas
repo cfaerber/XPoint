@@ -176,7 +176,7 @@ begin
                 _era(FilePath+'TICK\'+sr.name);
                 Dos.findnext(sr);
               end;
-              {$IFDEF virtualpascal}
+              {$IFDEF Ver32}
               FindClose(sr);
               {$ENDIF}
             end;
@@ -194,7 +194,7 @@ ende:
       _era(FilePath+sr.name);
     Dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 

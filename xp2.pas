@@ -918,7 +918,7 @@ begin
     _era(sr.name);
     dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -1138,6 +1138,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/05/29 20:21:41  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.41  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

@@ -766,7 +766,7 @@ begin
       end;
     dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
   dos.findfirst('*.epp',ffAnyFile,sr);
@@ -783,7 +783,7 @@ begin
       end;
     dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
   more:=(ppanz>screenlines-11);
@@ -831,7 +831,7 @@ begin
       inc(sumbytes,sr.size+attsize);
       dos.findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
@@ -1262,6 +1262,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/29 20:21:42  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.12  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

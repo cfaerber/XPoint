@@ -281,7 +281,7 @@ begin
       if crash then DelCrashInf(hdp^.empfaenger);
       end;
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
   closebox;
@@ -1248,6 +1248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/29 20:21:41  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.16  2000/05/21 20:05:58  jg
   - Nachricht/Weiterleiten...Direkt: Text der Fensterueberschrift
     war fest im Programm und nicht in der .RES

@@ -105,7 +105,7 @@ var sr    : searchrec;
       erase(f1^);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
   end;
@@ -155,7 +155,7 @@ var sr    : searchrec;
       inc(sum,sr.size);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     filesum:=sum;
@@ -243,7 +243,7 @@ begin
       inc(spacksize,_filesize(DestDir+sr.name));
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     dispose(f1); dispose(f2);
@@ -318,7 +318,7 @@ begin
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     dispose(f1); dispose(f2);
@@ -331,7 +331,7 @@ begin
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     findfirst(XFerDir+'D*',ffAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
@@ -340,7 +340,7 @@ begin
         MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     EmptySpool('D*.OUT');        { ausgehende Pakete lîschen }
@@ -434,7 +434,7 @@ var dummy : longint;
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
   end;
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/05/29 20:21:42  oh
+  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
+
   Revision 1.10  2000/05/14 15:04:51  hd
   - Anpassungen Linux
 
