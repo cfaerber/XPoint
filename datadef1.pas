@@ -196,11 +196,11 @@ uses Debug;
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
-  if lastioerror<>0 then begin
-    iohandler:=false;
+  if lastioerror<>0 then 
+  begin
     writeln('<DB> I/O-Fehler '+strs(lastioerror));
     halt(1);
-    end;
+  end;
   iohandler:=true;
 end;
 
@@ -235,9 +235,11 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.17  2001/09/06 18:46:31  mk
+  - iohandler: Zuweisen eines Funktionsergebnis vor halt(1) unnoetig
+
   Revision 1.16  2001/07/31 13:10:30  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
@@ -283,3 +285,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+
