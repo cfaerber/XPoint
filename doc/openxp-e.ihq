@@ -3796,6 +3796,62 @@ future reference.
 
 <<[ ]>>     PMs are not archived, no questions asked.
 @
+251
+<<ZConnect / RFC:
+
+<<[x]>> -> A "blind carbon copy" flag (BCC) is put on
+        all Private messages which have more than one
+        recipient. Therefore, each recipient cannot
+        see who else the message has been sent to.
+
+The BCC flag can be manually enabled/disabled in the
+send-window by pressing <Ctrl+K>.
+
+Please note: In ZConnect, this function is provided
+by the Host software and so this feature is not
+guaranteed to work. If it is important that the CC
+recipients are invisible, it would be better to send
+several separate messages. This does not apply to
+RFC/UUCP.
+
+<<All other Nets:>>
+
+Information about carbon copy recipients is not
+transmitted, except if you write it in the message
+text.
+
+@
+252
+<<ZConnect / RFC:
+
+Some authors use a Reply-To header (ZConnect:
+Antwort-an) because they want the reply sent to a
+different address. This is very common in mailing
+lists because it makes answering to the list very
+easy. However, it makes replying to the original
+author quite difficult.
+
+<<[x]>> -> a selection box is displayed where the
+        preferred reply-to address can be chosen
+        (only in connection with Reply-To header).
+
+<<[ ]>> -> the Reply-To address is taken as the
+        recipient.
+@
+255
+The possibility to "crosspost" a message into
+different groups is sometimes abused, to spread
+advertisements. To counter this, CrossPoint can
+delete these copies when there are more recipients
+than specified here.
+
+Hint: If a message is crossposted into more than ten
+groups, it is not worth reading.
+@
+256
+<<[x]>> -> If a Private message has more recipients
+       than specified above, the message is deleted.
+@
 1040
 You can enter a line here which will appear in the
 header of ZCONNECT and UseNet messages. You can use
