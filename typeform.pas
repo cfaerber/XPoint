@@ -870,26 +870,52 @@ function UTF8FormS(const s:string; StartColumn, Columns:integer):string; overloa
 var Position, NewPosition: Integer;
     StartPosition: Integer;
     W: Integer;
+    AddStart, AddEnd: string;
+{$IFDEF DEBUG}
+    SaveColumns : Integer;
+{$ENDIF}
 begin
+{$IFDEF DEBUG}
+  SaveColumns := Columns;
+{$ENDIF}
+
   StartPosition := 1;
-  while (StartColumn > 1) do
+  Dec(StartColumn);
+  while StartPosition <= Length(s) do
   begin
-    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,StartPosition)));
-    if w > StartColumn then break;
+    NewPosition := StartPosition;
+    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition)));
+    if w > StartColumn then
+    begin
+      if StartColumn >= 1 then
+        AddStart := '<';
+      break;
+    end;
     dec(StartColumn,w);
+    StartPosition := NewPosition;
   end;
 
-  Position := 1;
+  Position := StartPosition;
   while Position <= Length(s) do
   begin
     NewPosition := Position;
     w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition)));
-    if w > Columns then break;
+    if w > Columns then
+    begin
+      if Columns >= 1 then
+        AddEnd := '>';
+      Columns := 0;
+      break;
+    end;
     dec(Columns,w);
     Position := NewPosition;
   end;
 
-  Result := Copy(s,StartPosition,Position-StartPosition) + Sp(Columns);
+  Result := AddStart + Copy(s,StartPosition,Position-StartPosition) + AddEnd + Sp(Columns);
+
+{$IFDEF DEBUG}
+  assert(UTF8StringWidth(Result) = SaveColumns);
+{$ENDIF}
 end;
 
 function UTF8FormS(const s:string; Columns:integer):string; overload;
@@ -2062,6 +2088,9 @@ end;
 
 {
   $Log$
+  Revision 1.141  2003/09/28 20:24:21  cl
+  - fixed UTF8FormS
+
   Revision 1.140  2003/09/26 11:45:24  mk
   - added ";" to list of valid urlchars
 
