@@ -173,6 +173,7 @@ var
   empflist: TStringList;
   uline: TStringList;
   xline: TStringList;                    // X-Zeilen, die 'Åbrig' sind
+  TempS: ShortString;
 
 const
   { Wird zum Einlesen der Customizable Headerlines benîtigt }
@@ -1294,7 +1295,6 @@ const
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 var
   b1, b2, b3, p: integer;
-  TempS: ShortString;
 
   function getbyte: byte;
   begin
@@ -3409,6 +3409,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/08/28 18:53:04  mk
+  - FPC-Kompatiblitaets-Fix
+
   Revision 1.57  2000/08/27 10:37:08  mk
   - UUZ ist jetzt intern
 
