@@ -1006,8 +1006,8 @@ begin                  { function Netcall }
 
         ltNNTP: begin
           Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
-          GetNNTPMails(BoxName,Boxpar,IncomingFiles);
           SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
+          GetNNTPMails(BoxName,Boxpar,IncomingFiles);
         end;
 
         else
@@ -1237,6 +1237,10 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/04/27 10:17:32  ma
+  - NNTP: first send, then get new articles
+    (immediate replacement of own articles - as soon as ReplaceOwn works)
+
   Revision 1.16  2001/04/21 13:02:50  ma
   - incoming files are merged now
   - executing incoming filter
