@@ -28,6 +28,7 @@ const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
 
       auto_empfsel_default : byte = 1;         {Flags fuer Autoempfsel in XPCC.PAS}
       autoe_showscr        : boolean = false;
+      sel_verteiler        : boolean = false;  {True = Verteilerauswahl erlauben }     
 
 type charr  = array[0..65530] of char;
      charrp = ^charr;
@@ -120,18 +121,18 @@ begin
     end;
 end;
 
-procedure seluser(var cr:customrec);                 { Brettauswahl }
+procedure seluser(var cr:customrec);                 { Userauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
-    if dbReadInt(ubase,'userflags') and 4<>0 then begin
+    if not sel_verteiler and (dbReadInt(ubase,'userflags') and 4<>0) then begin
       rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
       brk:=true;
       end;
     end;
 end;
 
-procedure selbrett(var cr:customrec);                { Userauswahl }
+procedure selbrett(var cr:customrec);                { Brettauswahl }
 begin
   auto_empfsel_do(cr,false)
 end;
@@ -1367,6 +1368,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/01 17:26:33  jg
+  - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
+    Und Sendefenster-Empfaengeraendern erlaubt
+
   Revision 1.13  2000/04/18 16:17:33  jg
   - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
   - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)

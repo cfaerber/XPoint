@@ -848,10 +848,14 @@ end;
     maddstring(1,1,'',adresse,52,adrlen,'');
     mappcustomsel(scr_auto_empfsel,false);
     msetvfunc(testmailstring);
+    sel_verteiler:=true;
     readmask(brk);
+    sel_verteiler:=false;
     closemask;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
+    if (left(adresse,1)='[') and (right(adresse,1)=']')
+    then adresse:=vert_char+adresse+'@V';     { Verteilernamen anpassen }
     if (adresse<>'') and (cc_testempf(adresse)) then begin
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
@@ -2192,6 +2196,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/05/01 17:26:33  jg
+  - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
+    Und Sendefenster-Empfaengeraendern erlaubt
+
   Revision 1.23  2000/04/29 19:11:51  jg
   - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
     und "Kopien an" + "Empfaenger aendern" im Sendefenster

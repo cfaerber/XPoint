@@ -1316,10 +1316,13 @@ var ok    : boolean;
     oldpb : string[BoxNameLen];
     size  : smallword;
     p     : byte;
+    verteiler : boolean;
+
   function ShrinkEmpf(user,system:string):string;
   begin
     ShrinkEmpf:=left(user,eAdrLen-length(system)-1)+'@'+system;
   end;
+
 begin
   ok:=true;
   oldpb:=pbox;
@@ -1334,6 +1337,7 @@ begin
     if brett then begin
       if left(s,1)<>'/' then s:='/'+s;
       end
+    else if (left(s,1)='[') and (right(s,1)=']') then verteiler:=true
     else begin
       if ustr(s)='SYSOP' then
         s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true))
@@ -1371,7 +1375,7 @@ begin
       else if pos('.',mid(s,cpos('@',s)))=0 then
         s:=left(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
-  if ok then begin
+  if ok and not verteiler then begin
     if cpos('@',s)=0 then dbSeek(bbase,biBrett,ustr(s))
     else dbSeek(ubase,uiName,ustr(s));
     attrtxt(iif(dbFound,col.coldialog,col.coldiahigh));
@@ -1403,7 +1407,12 @@ begin
   p:=cpos('@',s);
   if p>0 then
     s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
-  empftest:=ok and testmailstring(s);
+  if not verteiler then empftest:=OK and testmailstring(s)
+  else begin
+    dbseek(ubase,uiname,ustr(vert_char+s+'@V')); { Nur existierende Verteiler sind erlaubt }
+    empftest:=dbfound;
+    if not dbfound then errsound;
+    end;
 end;
 
 
@@ -1491,12 +1500,16 @@ begin
   maddstring(3,4+pba,getres2(2718,3),betr,40,BetreffLen,'');  { 'Betreff   ' }
   _pmonly:=pmonly;
   freeres;
+  sel_verteiler:=true;
   readmask(brk);
+  sel_verteiler:=false;
   betr:=left(trim(betr),ntBetreffLen(pb_netztyp));
   box:=pbox;
   enddialog;
   if (empf='') or (not brk and (betr='') and not ReadJN(getres(618),false))
     then brk:=true;                     { 'Nachricht ohne Betreff absenden' }
+  if (left(empf,1)='[') and (right(empf,1)=']') then
+    empf:=vert_char+empf+'@V';     { Verteilernamen anpassen }
 end;
 
 procedure msgdirect;
@@ -2318,6 +2331,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/05/01 17:26:33  jg
+  - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
+    Und Sendefenster-Empfaengeraendern erlaubt
+
   Revision 1.20  2000/05/01 08:40:57  jg
   - Addressbuch-Trennzeilen sind jetzt immer vor Verteilern einsortiert.
   - Adressbuchgruppe von Verteilern direkt bestimmbar
