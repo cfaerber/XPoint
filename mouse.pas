@@ -35,7 +35,9 @@ uses
   xpglobal,
   debug,
   sysutils,
+{$IFNDEF Linux}
   strutils,
+{$ENDIF}
   typeform,
   keys;
 
@@ -263,6 +265,9 @@ initialization
 
 {
   $Log$
+  Revision 1.28  2001/09/17 22:26:50  ml
+  - compilable in linux (strutils doesn't exist there)
+
   Revision 1.27  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling
