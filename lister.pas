@@ -1106,23 +1106,18 @@ end;
 
 function TLister.NextLine: string;
 begin
-  if linepos = -1 then
+  if (FLinePos = -1) or (FLinePos >= Lines.Count) then
     Result := #0
   else
   begin
     Result := Lines[FLinePos];
     Inc(FLinepos);
-    if FLinepos = Lines.Count then
-    begin
-      FLinePos := -1;
-      Result := #0;
-    end;
   end;
 end;
 
 function TLister.PrevLine: string;
 begin
-  if linepos >= Lines.Count then
+  if (FLinePos >= Lines.Count) or (FLinePos < 0) then
     Result := #0
   else
   begin
@@ -1162,6 +1157,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.9  2004/01/15 01:32:21  mk
+  - fixed NextLine: Last Line was deleted
+
   Revision 1.69.2.8  2003/09/14 14:18:31  mk
   - fixed 802558: 3.8.x: CTRL-w im Lister
     removed line length limit of 255 chars (now 2 GB)
