@@ -65,6 +65,7 @@ type TConnectableStream = class (TStream)
   private
     FOtherStream: TStream;
     FDestroyOtherStream: boolean;
+    FOtherStreamStartPos: Longint;
     procedure Connect(AnOtherStream:TStream);
 
   public
@@ -305,6 +306,7 @@ constructor TConnectableStream.Create;
 begin
   FOtherStream:=nil;
   FDestroyOtherStream:=false;
+  FOtherStreamStartPos:=0;
 end;
 
 procedure TConnectableStream.Connect(AnOtherStream:TStream);
@@ -319,6 +321,7 @@ begin
 
   FOtherStream:=AnOtherStream;
   FDestroyOtherStream:=false;
+  try FOtherStreamStartPos:=FOtherStream.Position; except FOtherStreamStartPos:=-1; end;
 end;
 
 destructor TConnectableStream.Destroy;
@@ -406,6 +409,13 @@ end;
 function TCODECStream.Seek(Offset: Longint; Origin: System.Word): Longint;
 begin
   Result := FPosition;
+
+  if (Origin = soFromBeginning) and (Offset = 0) then 
+  begin
+    FOtherStream.Seek(soFromBeginning, FOtherStreamStartPos);
+    SetSize(0);
+    Result:=0;    
+  end else 
   if not (
     ((Origin = soFromCurrent  ) and (Offset = 0     )) or
     ((Origin = soFromBeginning) and (Offset = Result)) ) then
