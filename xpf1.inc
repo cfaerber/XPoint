@@ -862,7 +862,7 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
         1 : begin
               _keyboard(adr+keycr);
               dbOpen(d,BoxenFile,0);
-              if dbRecCount(d)>1 then _keyboard(DefFidoBox+keycr);
+              if dbRecCount(d)>1 then _keyboard(keyup+DefFidoBox+keycr);
               dbClose(d);
               msgdirect;
             end;
@@ -884,6 +884,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.7.2.1  2000/08/10 08:31:30  jg
+  - Fix: Fido...Nodelisten abfragen
+    Direkte Nachricht an Suchergebnis schicken funktioniert wieder.
+
   Revision 1.7  2000/04/25 21:19:20  mk
   - 32 Bit: Potentieller Fix fuer Suche nach Points in der Pointliste
 
