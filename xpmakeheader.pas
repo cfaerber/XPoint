@@ -78,6 +78,7 @@ var i,res : integer;
       end else
       begin
         blockread(f,buf^,bufsize,bufanz);
+        Inc(size,o);
         o:=0;
       end;
 
@@ -355,7 +356,7 @@ begin
   ok:=true;
   hd.Clear;
   getmem(buf,bufsize);
-  size:=0; o:=1; BufAnz:=0;
+  size:=0; o:=0; BufAnz:=0;
 
   with hd do
     if ZConnect then
@@ -604,6 +605,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2003/01/11 19:53:13  cl
+  - fixed reading of long headers
+
   Revision 1.33  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To
