@@ -81,7 +81,6 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
       OutFilter(source);
-//    uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
       uu._from := boxpar^.pointname;
@@ -165,7 +164,6 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname+domain;
-//    uu.ClearSourceFiles := true;
       uu.utoz;
     end;
     DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
@@ -277,6 +275,9 @@ end;
                       
 {
   $Log$
+  Revision 1.33  2002/05/03 20:43:53  mk
+  - code cleanup and added comment
+
   Revision 1.32  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 

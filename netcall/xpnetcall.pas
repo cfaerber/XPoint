@@ -817,7 +817,7 @@ begin
 //      else if (netztyp<>ltFido) and not uucp and (trim(uploader)='') then
 //        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
       else if ((netztyp IN [nt_ZConnect,nt_UUCP])and NoScript(script)) then
-        BoxParOk:=getres2(10700,8)
+        BoxParOk:=getres2(10700,8)    //`Scriptdatei für Online-Anruf erforderlich!
       else
         BoxParOk:='';
     end;
@@ -1387,6 +1387,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/05/03 20:43:53  mk
+  - code cleanup and added comment
+
   Revision 1.52  2002/04/06 17:07:49  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux

@@ -169,7 +169,6 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
       OutFilter(source);
-//    uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
       uu._from := boxpar^.pointname;
@@ -256,7 +255,6 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname;
-//    uu.ClearSourceFiles := true;
       uu.NNTPSpoolFormat := true;
       uu.utoz;
     end;
@@ -369,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.40  2002/05/03 20:43:53  mk
+        - code cleanup and added comment
+
         Revision 1.39  2002/03/16 18:22:31  cl
         - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
           already existed.

@@ -59,7 +59,6 @@ function UUCPNetcall(boxname: string;
 var
   UUNum         :word;         { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
   CmdFile       :string;
-//  DeleteFileList:TStringList;
 
   (* Nummer in UUNUMMER.DAT lesen/schreiben *)
 
@@ -340,8 +339,6 @@ var
 
 //    uu.CommandLine := true;
 
-//    uu.ClearSourceFiles := DiskPoll or nDelPuffer;
-//    uu.DeleteFileList:=DeleteFileList;
 
       result:=true;
     end;
@@ -506,6 +503,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.18  2002/05/03 20:43:53  mk
+  - code cleanup and added comment
+
   Revision 1.17  2002/02/21 13:52:36  mk
   - removed 21 hints and 28 warnings
 
