@@ -1953,7 +1953,12 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
         AppUline('KOP: '+a+iifs(r<>'',' ('+r+')',''));
         end;
       s0:=s;
+      if (s = ',') and (i<=manz) then
+      begin
+        s0 := Trim(smore[i]) + ',';
+        inc(i);
       end;
+    end;
   end;
 
   function GetMsgid:string;
@@ -3562,6 +3567,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.17  2001/10/20 18:49:00  mk
+  - lange CC zeilen gefixt
+
   Revision 1.8.2.16  2001/08/05 10:46:26  mk
   - fixed der 3.40 uebernommen
 
