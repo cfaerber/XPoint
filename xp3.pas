@@ -1023,11 +1023,11 @@ begin
   open:=(d<>nil);
   if not open then
     dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiDatei,dname);
+  dbSeek(d,boiDatei,UpperCase(dname));
   if dbFound then
     file_box:=dbReadStr(d,'boxname')
   else begin
-    Debug.DebugLog('xp3','file_box: assigned server name not found: ' + dname + '!', DLWarning);
+    Debug.DebugLog('xp3','file_box: assigned server name not found (' + dname + ')!', DLWarning);
     file_box:=dname;
     end;
   if not open then
@@ -1043,7 +1043,7 @@ begin
   if dbFound then
     box_file:=dbReadStr(d,'dateiname')
   else begin
-    Debug.DebugLog('xp3','box_file: assigned file name not found: ' + box + '!', DLWarning);
+    Debug.DebugLog('xp3','box_file: assigned file name not found (' + box + ')!', DLWarning);
     box_file:=box;
     end;
   dbClose(d);
@@ -1140,8 +1140,13 @@ initialization
   EmpfList := TStringList.Create;
 finalization
   EmpfList.Free;
+
 {
   $Log$
+  Revision 1.71  2001/10/23 22:59:17  ma
+  - fixed: file_box failed with unix file systems
+    (tried to search for lowercase but db index is uppercase)
+
   Revision 1.70  2001/10/20 17:26:40  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
@@ -1161,215 +1166,7 @@ finalization
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
-
-  Revision 1.65  2001/09/07 10:56:00  mk
-  - added GetServerFilename
-
-  Revision 1.64  2001/09/07 08:28:02  mk
-  - added new procedure: AddNewBezug, collects three pieces of code
-
-  Revision 1.63  2001/09/06 19:31:19  mk
-  - removed some hints und warnings
-
-  Revision 1.62  2001/08/31 14:44:37  mk
-  - changed TxtSeek for Delphi/Kylix compatiblity
-
-  Revision 1.61  2001/08/12 11:50:37  mk
-  - replaced dbRead/dbWrite with dbReadN/dbWriteN
-
-  Revision 1.60  2001/08/11 23:06:30  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.59  2001/07/31 13:10:33  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.58  2001/07/28 12:04:11  mk
-  - removed crt unit as much as possible
-
-  Revision 1.57  2001/03/13 19:24:56  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.56  2001/01/14 10:13:33  mk
-  - MakeHeader() integreated in new unit
-
-  Revision 1.55  2001/01/11 13:21:35  mk
-  - fixed chararr-bugs and removed some unnecessary defines
-
-  Revision 1.54  2001/01/04 16:54:21  mk
-  - const-Parameter in isbox() verwenden
-
-  Revision 1.53  2001/01/02 10:05:24  mk
-  - implemented Header.References
-
-  Revision 1.52  2000/12/27 22:36:35  mo
-  -new class TfidoNodeList
-
-  Revision 1.51  2000/12/05 14:58:09  mk
-  - AddNewUser
-
-  Revision 1.50  2000/12/03 12:38:21  mk
-  - Header-Record is no an Object
-
-  Revision 1.49  2000/11/30 14:38:09  mk
-  - fixed NewUserIBM when adding new uesers
-
-  Revision 1.48  2000/11/14 15:51:29  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.47  2000/11/14 11:14:32  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.46  2000/11/09 18:15:11  mk
-  - fixed Bug #116187: header of forwarded mails is stripped down
-
-  Revision 1.45  2000/10/17 10:05:49  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.44  2000/08/20 10:43:46  mk
-  - Clearheader war nicht noetig, entfernt
-
-  Revision 1.43  2000/08/08 00:02:55  mk
-  - TxtSeek auf Shortstring umgestellt
-
-  Revision 1.42  2000/07/26 09:29:37  mk
-  - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
-
-  Revision 1.41  2000/07/23 21:20:47  mk
-  - Bugfix fuer neue makeheader-definition
-
-  Revision 1.40  2000/07/22 14:05:26  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.39  2000/07/21 20:56:23  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.38  2000/07/21 17:39:52  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.37  2000/07/21 13:23:45  mk
-  - Umstellung auf TStringList
-
-  Revision 1.36  2000/07/20 17:03:21  mk
-  - HugeString -> String
-
-  Revision 1.35  2000/07/20 16:49:58  mk
-  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
-
-  Revision 1.34  2000/07/09 08:35:15  mk
-  - AnsiStrings Updates
-
-  Revision 1.33  2000/07/05 15:46:47  hd
-  - AnsiString
-
-  Revision 1.32  2000/07/04 12:04:22  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.31  2000/07/03 16:20:03  hd
-  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
-
-  Revision 1.30  2000/07/03 13:31:40  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.29  2000/07/02 14:24:53  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.28  2000/07/02 14:11:24  mk
-  JG: - Volltextsuche mit Wildcards implementiert
-
-  Revision 1.27  2000/06/29 13:00:55  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.26  2000/06/23 15:59:19  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.25  2000/06/05 16:16:22  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.24  2000/05/26 00:01:10  mk
-  - Assembler-Fixes (32 Bit)
-
-  Revision 1.23  2000/05/04 10:26:03  mk
-  - UUZ teils auf HugeString umgestellt
-
-  Revision 1.22  2000/05/03 00:21:21  mk
-  - unbenutzte Units aus uses entfernt
-
-  Revision 1.21  2000/05/02 19:14:00  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.20  2000/04/29 20:54:07  mk
-  - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
-
-  Revision 1.19  2000/04/15 09:58:00  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.18  2000/04/04 21:01:23  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.17  2000/03/24 15:41:02  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.16  2000/03/19 21:31:51  mk
-  - Fix für 32 Bit TxtSeek
-
-  Revision 1.15  2000/03/17 11:16:34  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.14  2000/03/14 15:15:38  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.13  2000/03/09 23:39:33  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.12  2000/02/20 20:46:17  jg
-  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
-  Todo aktualisiert
-
-  Revision 1.11  2000/02/20 17:22:10  ml
-  Kommentare in MsgAddMark hinzugefuegt
-
-  Revision 1.10  2000/02/20 14:48:21  jg
-  -Bugfix: Nachrichten entmarkieren, wenn viele
-   Nachrichten markiert waren (Msgunmark)
-
-  Revision 1.9  2000/02/19 18:00:24  jg
-  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
-  Umlautunabhaengige Suche kennt jetzt "‚"
-  Mailadressen mit "!" und "=" werden ebenfalls erkannt
-
-  Revision 1.8  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.7  2000/02/18 18:39:04  jg
-  Speichermannagementbugs in Clip.pas entschaerft
-  Prozedur Cliptest in Clip.Pas ausgeklammert
-  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
-  Lister.asm in Lister.pas integriert
-
-  Revision 1.6  2000/02/18 09:13:27  mk
-  JG: * Volltextsuche jettz Sprachabhaengig gestaltet
-      * XP3.ASM in XP3.PAS aufgenommen
-
-  Revision 1.5  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
 }
+
 end.
 
