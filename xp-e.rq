@@ -26,7 +26,7 @@ K (c) '93-96 Peter Mandrella
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036^Forwardù21,-,038News ^managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
-5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055^Wiedervlg.,056^Marked,057U^nmark     ^E,058Message^ID
+5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Head,082!^PrivHead,083!P^ublicQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
@@ -69,7 +69,7 @@ K (c) '93-96 Peter Mandrella
 
 + 11
 1    Error
-2    Hint
+2    Note:
 # Length of Week days:
 3    9
 4    Monday   Tuesday  WednesdayThursday Friday   Saturday Sunday
@@ -1017,7 +1017,7 @@ K (c) '93-96 Peter Mandrella
 25   Find MID-Parts
 -
 443  One moment please...     %
-444  no pending messages found
+444  No marked messages found
 + 445
 1    User
 2    Newsgroups
