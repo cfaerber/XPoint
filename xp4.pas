@@ -1158,17 +1158,18 @@ var t,lastt: taste;
   end;
 
   procedure _brief_senden(c:char);
-  var hdp : Theader;
-      hds : longint;
+  var
+    hdp : Theader;
+    hds : longint;
+    mbrett : string;
   begin
-    // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
-    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
-
-    if (LeftStr(dispspec,1)='1') then
-    begin                           { Bei PM-Brett und Msg ohne Replyto }
+    GoP;
+    mbrett := dbReadNStr(mbase,mb_brett);
+    if (FirstChar(mbrett)='1') or (FirstChar(mbrett)='U')then
+    begin                           { Bei PM ohne Replyto }
       hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp,hds,false);
-      if ((DispMode <> 12) and (hdp.replyto.count=0)) or ((hdp.empfanz=1) and
+      if (hdp.replyto.count=0) or ((hdp.empfanz=1) and
         (hdp.replyto.count > 0) and (hdp.empfaenger=hdp.replyto[0])) then
       begin
         if c=k2_b  then c:=k2_p;
@@ -2168,6 +2169,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.88  2001/06/07 21:46:32  mk
+  JG:- When creating a reply, mapping "B" => "P" now checks for the
+       message status (PM/AM) rather than for the message area status.
+       Thus mapping now also works in the reference tree and in the
+       user database.
+
   Revision 1.87  2001/06/06 18:40:41  mk
   JG:- Fix: When using <Ctrl-B> in a reference tree on a public
     message, XP created a private message if the reference
