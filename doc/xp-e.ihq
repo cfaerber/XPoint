@@ -4,7 +4,7 @@ CrossPoint v3.0
 2 1
 NH TAB 00 LEER NC
 1
-No Help available.
+Sorry, no help available!
 @
 2
 <<     같같같같같같같같같같�   On-line Help: Contents
@@ -134,8 +134,8 @@ English Language package.
 @
 19
 Please move the cursor to the Newsgroup where this
-Message should be forwarded to, or archived. Confirm
-the selection <Enter> or abort with <Esc>.
+message should be forwarded or archived to. Confirm
+the selection <Enter> or abort <Esc>.
 @
 20
 <<Newsgroup (NG) Overview
@@ -357,20 +357,21 @@ forwarded. Confirm <Enter> or abort with <Esc>.
 <<see also>> [  message display  ] (Press <Enter>)@4015
 
 Note: only those messages are actually displayed
-which fit the conditions set by "View", in the News-
-group display. The current mode is shown in the first
-line in the window (after the Newsgroup name).
+which match the conditions set by "View", in the
+Newsgroup display. The current view-mode is shown
+in the first line in the window (after the Newsgroup
+name).
 
 The following functions are available: (see also Menu
 Bar and the Menu under "Other")
 
-<<<Enter> >>displays the text of the current message.
-        where the cursor is.
+<<<Enter> >>displays the text of the current message
+        under the cursor.
 
  <<##>>     shows the [ reference link ]  where@4014
         available.
 
-<<Ctrl-W>>  toggles the automatic jumping to the next
+<<Ctrl-W>>  toggles automatic jumping to the next
         message.
 
 <<<Esc> >>  Go back 1 menu level to the Newsgroup or User
@@ -395,7 +396,7 @@ Bar and the Menu under "Other")
   <<L>>     Puts a message on "release to delete" so it
  <<Del>>    will be removed by the next [Re-Org]@10701
 
-   <<K>>    Kill removes the selected message
+   <<K>>    Kill (removes) the selected message
         <<immediately>> from the Data Base.
 
    <<E>>    finds if possible the first message with the
@@ -7598,15 +7599,15 @@ See also:  [internal Editor]@54
 <<Edit / Templates / Forward
 
 The default template when forwarding messages as
-simple copy ([/message/forward/copy]).@12101
+simple copies ([/Message/Forward/Copy]).@12101
 
 All [macros] can be used.@11650
 
-You can define different headers for each newsgroup
-group with /Edit/Group/Edit/Template, but you have to
+You can define different headers for each Newsgroup
+group with /Edit/Group/Edit/Template but you have to
 give them different names using [/Edit/Templates/Misc].@10814
 
-See also:  [internal Editor]@54
+See also:  [Internal editor]@54
 
 @
 10808
@@ -8625,15 +8626,20 @@ If you get one, enter it under
 @
 12101
 <<Message / Forward / Copy
-A copy of the current message is forwarded to a
-User or Newsgroup. You can select from a list. The
-text showing it has been copied is taken from the
-[template "forward"].You become the sender of the@10807
-copy, replies to the copy come to you, the original
-sender is noted in the header.
+
+A <<COPY>> of the current message is forwarded to
+either a User, a Newsgroup or sent "Direct". You can
+select the recipient from either a list of
+Newsgroups, a list of Users or choose to send the
+message "Direct". The text showing it has been
+copied is taken from the [template "forward"]. You@10807
+become the sender of the copy, replies to the copy
+come to you and the original sender is noted in the
+header.
 @
 12102
 <<Message / Forward / Original
+
 (ZConnect, UseNet and Maus only)
 Forwards the original message to a user or newsgroup.
 You can select the recipient from the lists. The
@@ -8642,25 +8648,26 @@ him/her (but you are noted as forwarder in the
 header). The [template "forward"] is used.@10807
 @
 12103
-<<Message / Forward / EditTo
+<<Message / Forward / Comment
 
 A copy of the current message is forwarded to a
 User or Newsgroup. You can select from a list.
 
-No template is used. The text is presented to you
-in the editor so you can edit the text before
-forwarding it.
+The text is presented to you in the editor so that
+you may add your own comments before forwarding the
+message.
+NOTE: A template is NOT used!
 @
 12104
-<<Message / Forward / QuoteTo
+<<Message / Forward / Quote
 
 A copy of the current message is forwarded to a
 User or Newsgroup. You can select from a list.
 
-The ["Quote to" template] is used and the text is
+The ["Quote to" template] is used and the text is@10806
 presented to you with quote signs (like the normal
-<Ctrl-R> reply) in the editor, so you can edit the
-text before forwarding it.
+<Ctrl-R> reply) in the editor, so that you may add
+your own text before forwarding the message.
 @
 12106
 <<Message / Forward / Confirmation
@@ -11304,9 +11311,9 @@ Order of events at CrossPoint start-up.
 
 @
 4020
-<< Command Line Parameters starting CrossPoint
+<< Command Line Parameters for starting CrossPoint
 
-CrossPoint is started with:
+CrossPoint is started thus:
 
             XP [/Option1 /Option2 ...]
 
