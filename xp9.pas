@@ -1196,7 +1196,7 @@ var d         : DB;
                         var brk:boolean);
   var x,y,add : byte;
 
-    procedure SetV(var viewer:pviewer);
+    procedure SetV(var viewer:sstringp);
     begin
       if viewer<>nil then freemem(viewer,length(viewer^)+1);
       getmem(viewer,length(prog)+1);   { auch bei prog=''! }
@@ -1844,6 +1844,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/07/12 12:57:40  hd
+  - Ansistring
+
   Revision 1.25  2000/07/05 12:47:28  hd
   - AnsiString
 

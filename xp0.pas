@@ -303,7 +303,10 @@ const
        hdf_ersetzt = 33;
        hdf_control = 34;
 
+
 {$I XPHEADER.INC }
+
+type   sstringp		= ^shortstring;	  { Zeiger auf einen ShortString }
 
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
@@ -404,7 +407,6 @@ type   textp  = ^text;
        TeleStr     = string;
        HomepageStr = string;
        CustHeadStr = string;
-       pviewer     = ^string;
 
        refnodep= ^refnode;             { Datentyp fÅr Reference-Liste }
        refnode = record
@@ -900,6 +902,10 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
 
+       DefaultViewer: sstringp = nil;  { Viewer fÅr */* }
+       DefTextViewer: sstringp = nil;  { Viewer fÅr text/* }
+       PtextViewer  : sstringp = nil;  { Viewer fÅr text/plain }
+
        MoreMode   : boolean = true;
        Developer  : boolean = false;
 {$IFDEF UnixFS }
@@ -1292,9 +1298,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
        cfgscrlines  : byte;          { Config-Bildzeilen (wg. /z: }
        domainlist   : DomainNodeP;   { zum Erkennen von Replys auf eigene N. }
-       DefaultViewer: pviewer;       { Viewer fÅr */* }
-       DefTextViewer: pviewer;       { Viewer fÅr text/* }
-       PtextViewer  : pviewer;       { Viewer fÅr text/plain }
 
        maxmark   : word;             { maximal markierbare Msgs }
        marked    : marklistp;        { Liste der markierten Msgs     }
@@ -1409,6 +1412,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.73  2000/07/12 12:57:39  hd
+  - Ansistring
+
   Revision 1.72  2000/07/11 21:39:20  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

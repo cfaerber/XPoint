@@ -1032,13 +1032,14 @@ end;
 
 procedure ReadDefaultViewers;
 
-  procedure SeekViewer(mimetyp:string; var viewer:pviewer);
+  procedure SeekViewer(mimetyp:string; var viewer: sstringp);
   var prog : string;
   begin
+    if viewer<>nil then freemem(viewer);
     dbSeek(mimebase,mtiTyp,UpperCase(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
        stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
-      dbReadN(mimebase,mimeb_programm,prog);
+      prog:= dbReadNStr(mimebase,mimeb_programm);
       getmem(viewer,length(prog)+1);   { auch bei prog=''! }
       viewer^:=prog;
       end
@@ -1076,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/07/12 12:57:39  hd
+  - Ansistring
+
   Revision 1.56  2000/07/11 21:39:21  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

@@ -51,7 +51,7 @@ begin
   if (p>0) and (p<length(fn)) then begin
     dbSeek(mimebase,mtiExt,UpperCase(mid(fn,p+1)));
     if dbFound then begin
-      dbReadN(mimebase,mimeb_programm,viewer.prog);
+      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.typ:='';
       viewer.ext:=UpperCase(mid(fn,p+1));
@@ -90,16 +90,16 @@ begin
     else
   else
     if SeekMime(typ) then begin
-      dbReadN(mimebase,mimeb_programm,viewer.prog);
+      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
       if viewer.prog='' then viewer.prog:='*intern*';
-      dbReadN(mimebase,mimeb_extension,viewer.ext);
+      viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
       end
     else begin
       gt:=left(typ,cposx('/',typ))+'*';
       if SeekMime(gt) then begin
-        dbReadN(mimebase,mimeb_programm,viewer.prog);
+        viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
         if viewer.prog='' then viewer.prog:='*intern*';
-        dbReadN(mimebase,mimeb_extension,viewer.ext);
+        viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
         end;
       end;
   if viewer.prog<>'' then begin
@@ -127,7 +127,7 @@ end;
 
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
 var f       : file;
-    id      : string;
+    id      : string[80];		{ Shortstring ist ausreichend }
     rr      : word;
     betreff : string;
     p       : byte;
@@ -140,23 +140,22 @@ begin
     assign(f,fn);
     if existf(f) then begin
       resetfm(f,0);
-      SetLength(id,80);			{ Init AnsiString }
       blockread(f,id[1],80,rr);
-      SetLength(id,rr);			{ Anpassen an gelesenen Daten }
+      id[0]:= chr(rr);			{ Anpassen an gelesenen Daten }
       close(f);
       end
     else
       id:='';
-    dbReadN(mbase,mb_betreff,betreff);
+    betreff:= dbReadNStr(mbase,mb_betreff);
     if (left(id,3)='GIF') and SeekMime('image/gif') then begin
-      dbReadN(mimebase,mimeb_programm,viewer.prog);
+      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.ext:='gif';
       viewer.typ:='image/gif';
       if betreffname then goto betreff_fn;
       end
     else if (pos('ILMB',id)<=20) and SeekMime('image/iff') then begin
-      dbReadN(mimebase,mimeb_programm,viewer.prog);
+      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.ext:='iff';
       viewer.typ:='image/iff';
@@ -170,9 +169,9 @@ begin
              (pos('.'+LowerCase(dbReadStr(mimebase,'extension')),LowerCase(betreff))=0)) do
         dbNext(mimebase);
       if not dbEOF(mimebase) then begin
-        dbReadN(mimebase,mimeb_programm,viewer.prog);
-        dbReadN(mimebase,mimeb_extension,viewer.ext);
-        dbReadN(mimebase,mimeb_typ,viewer.typ);
+        viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
+        viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
+        viewer.typ:= dbReadNStr(mimebase,mimeb_typ);
         if viewer.prog='' then viewer.prog:='*intern*';
       betreff_fn:
         p:=pos('.'+LowerCase(viewer.ext),LowerCase(betreff));
@@ -189,7 +188,7 @@ begin
 end;
 
 
-Procedure URep(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
+procedure URep(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 var p : byte;
 begin
   p:=pos(UpperCase(s1),UpperCase(s));
@@ -246,6 +245,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/12 12:57:40  hd
+  - Ansistring
+
   Revision 1.19  2000/07/06 08:58:46  hd
   - AnsiString
 
