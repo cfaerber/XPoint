@@ -899,7 +899,7 @@ begin // Show
         if stat.allpgdn then
         begin
           if Lines.Count-DispLines > FirstLine then
-            FirstLine := Min(FirstLine + DispLines, Max(Lines.Count, 0));
+            FirstLine := Min(FirstLine + DispLines - 2, Max(Lines.Count, 0));
         end else
           FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - DispLines, 0));
         FSelLine := Min(FSelLine + DispLines, Max(Lines.Count - 1, 0));
@@ -1104,6 +1104,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.83  2003/05/10 15:44:30  mk
+  - show two more lines when listing messages after PgDown
+
   Revision 1.82  2003/05/01 10:53:59  mk
   - restored correct page down handling, when stat.allpgdn = true
 
