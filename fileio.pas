@@ -605,6 +605,7 @@ begin
   end;
 end;
 
+(*
 procedure TestShare;
 var
   regs : registers;
@@ -618,6 +619,16 @@ begin
     ShareDa := al = $ff;
   end;
 end;
+*)
+
+procedure Testshare; Assembler;
+asm
+      mov ax,1000h
+      int 2fh
+      shr al,7
+      mov [shareda],al
+end;         
+
 
 procedure resetfm(var f:file; fm:byte);
 var fm0 : byte;
@@ -742,6 +753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.14  2001/08/11 17:19:44  my
+  JG:- 'Testshare' now in ASM
+
   Revision 1.41.2.13  2001/08/05 11:42:18  my
   - moved 'DOSEmuVersion' from TYPEFORM.PAS to CLIP.PAS
   - commented out 'erase_all' in FILEIO.PAS (unused)
