@@ -147,7 +147,8 @@ var    func_proc : func_test;
 {$IFNDEF NCRT }
 function  keypressed:boolean;
 function  readkey:char;
-lastscancode : byte;
+var
+  lastscancode : byte;
 {$ENDIF }
 
 procedure keyboard(s:string);        { s and forwardkeys anh„ngen            }
@@ -363,6 +364,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/07/23 18:00:36  mk
+  - fixed compile bug introduced with linux change
+
   Revision 1.34  2001/07/23 15:36:46  ml
   - Editor: Numblock Copy/Paste/Insert works now in linux
 
