@@ -370,7 +370,7 @@ begin
 
   if not AutomaticTimeZone then
   begin
-    maddstring(35,7 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+    maddstring(35,7 + j,getres2(252,23),xpDatum.TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
     mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
     msetvfunc(testtimezone);
     if replaceetime then mdisable;
@@ -1142,7 +1142,7 @@ begin
     finally
       printcap.Free;
     end;
-    lpt := PrinterPort;
+    lpt := PrinterName;
   {$ELSE }
     LPTS[1] := 'LPT1';
     LPTS[2] := 'LPT2';
@@ -1173,7 +1173,7 @@ begin
   if not brk and mmodified then
   begin
     {$IFDEF Unix }
-      PrinterPort := lpt;
+      PrinterName := lpt;
     {$ELSE }
       for i := 1 to MaxLPTs do
         if lpt = lpts[i] then DruckLPT := i;
@@ -1587,6 +1587,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.11  2003/08/30 10:33:05  mk
+  - fixes for printing under Unix
+
   Revision 1.127.2.10  2003/08/29 18:45:27  mk
   - added better printing support for linux
 

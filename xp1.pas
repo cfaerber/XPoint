@@ -951,7 +951,7 @@ begin
   xlatger:=false;
   printlines:=0;
   {$IFDEF Unix }
-    OpenLst(PrinterPort);
+    OpenLst(PrinterName);
   {$ELSE }
     OpenLST(DruckLPT);
   {$ENDIF }
@@ -2125,6 +2125,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.21  2003/08/30 10:33:04  mk
+  - fixes for printing under Unix
+
   Revision 1.147.2.20  2003/08/29 18:45:26  mk
   - added better printing support for linux
 
