@@ -29,7 +29,7 @@ AC_CONFIG_HEADER(config.h)
 # checks for programs
 # ---------------------------------------------------------------------
 AC_LANG_PASCAL
-AC_LANG_COMPILER(ppc386 dcc)
+AC_PROG_PPC(ppc386 dcc)
 
 # ---------------------------------------------------------------------
 # checks for libraries
