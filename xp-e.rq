@@ -1495,6 +1495,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    incomplete packer settings
 5    no uploader setting
 6    unpacker not found
+7    no user id but password
+8    no password but user id
+9    host is missing
 -
 707 <broken in>
 708 Break
@@ -2971,6 +2974,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25 Invalid converter configuration: no $OUTFILE specified
 26 This newsgroup cannot be subsribed.
 27 This newsgroup cannot be unsubscribed.
+# NNTP
+30 Group list not received!
+31 Can't connect to the host!
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
@@ -3173,6 +3179,23 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1 protokoll startet
 2 downloaden
 3 **B
+-
+
+# --- NNTP ------------------------------------------------------------
+
++ 30010
+# Groups
+1 ^All groups,^New groups,^Cancel
+2 This takes a while. Are you sure
+3 ~ - Fetch Group List
+4 Action.......:
+5 NNTP-State...:
+6 Host.........:
+7 Server.......:
+8 Connecting...
+9 Unknown
+10 Fetch list...
+11 Save list (%d groups)
 -
 
 # --- Texte in der Konfiguration --------------------------------------
