@@ -883,7 +883,7 @@ var f,f2     : file;
 
 procedure editbetreff;                             { Betreff editieren }
 var        ii : integer;
-      oldbetr : string[betrefflen];
+      oldbetr : string;
 begin
   if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
   if binary then typ:=typ+getres2(611,5);   { ' (Bin„r)' }
@@ -2336,6 +2336,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.2  2002/06/13 23:38:12  mk
+  - removed BetreffLen Limit
+
   Revision 1.48.2.1  2002/05/12 17:30:17  ma
   - fixed: editing Reply-To on unsent messages was broken
   - fixed: Reply-To handling was broken if real name specified in Reply-To

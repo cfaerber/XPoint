@@ -286,7 +286,7 @@ var brett  : string[5];
     x,y    : Integer;
     rec    : longint;
     maus   : string[BoxNameLen];
-    betreff: string[BetreffLen];
+    betreff: string;
     abs    : string[AdrLen];
     loesch : byte;
     n      : longint;
@@ -819,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.1  2002/06/13 23:38:12  mk
+  - removed BetreffLen Limit
+
   Revision 1.37  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 

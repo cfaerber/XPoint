@@ -73,7 +73,7 @@ const
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 70;
+       BetreffLen  = MaxInt;
        DateLen     = 11;
        midlen      = 160;
        AKAlen      = 127;
@@ -1231,6 +1231,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.4  2002/06/13 23:38:12  mk
+  - removed BetreffLen Limit
+
   Revision 1.158.2.3  2002/05/23 08:37:50  mk
   - added WildCardCh
 

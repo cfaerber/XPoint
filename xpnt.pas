@@ -90,7 +90,7 @@ function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
 function ntCancel(nt:byte):boolean;           { Cancel-Messages m”glich }
 function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM m”glich }
 function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt m”glich }
-function ntBetreffLen(nt:byte):byte;          { max. Betreffl„nge }
+function ntBetreffLen(nt:byte): Integer;      { max. Betreffl„nge }
 function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
 function ntFollowup(nt:byte):boolean;         { Followup-To m”glich }
 function ntCrossAM(nt:byte):boolean;          { AM-Crosspostings m”glich }
@@ -563,7 +563,7 @@ begin
   ntErsetzen:=nt in [nt_UUCP,nt_ZConnect,nt_NNTP,nt_POP3, nt_Client];
 end;
 
-function ntBetreffLen(nt:byte):byte;          { max. Betreffl„nge }
+function ntBetreffLen(nt:byte): Integer;          { max. Betreffl„nge }
 begin
   case nt of
     nt_Netcall : ntBetreffLen:=40;
@@ -748,6 +748,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43.2.3  2002/06/13 23:38:12  mk
+  - removed BetreffLen Limit
+
   Revision 1.43.2.2  2002/05/08 09:10:11  ma
   - added Fido default domain
 
