@@ -87,7 +87,7 @@ var  checklst,xlatger : boolean;
 
 procedure OpenLst(Port: Integer);
 procedure CloseLst;
-function  PrintString(s:string):string;
+function  PrintString(const s:string):string;
 
 implementation
 
@@ -96,7 +96,11 @@ uses
 
 procedure OpenLst(Port: Integer);
 begin
+{$IFDEF unix }
+  Assign(lst, '/dev/lp' + IntToStr(Port));
+{$ELSE }
   Assign(lst, 'lpt' + IntToStr(Port));
+{$ENDIF }
   ReWrite(lst);
   if IOResult = 0 then ;
 end;
@@ -109,7 +113,7 @@ end;
 
 { ^X in Steuerzeichen umsetzen;  ^0 -> ^ }
 
-function PrintString(s:string):string;
+function PrintString(const s:string):string;
 var i,j,p : byte;
     r: string;
 begin
@@ -144,6 +148,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2001/10/15 08:31:39  mk
+  - allow printing on unix platforms
+
   Revision 1.20  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
