@@ -92,7 +92,24 @@ procedure IsdnConfig;
 
 implementation  {----------------------------------------------------}
 
-uses xp1o,xp2,xp4o2,xp9bp;
+uses
+{$IFDEF Linux}
+  {$IFDEF FPC}
+  serial,
+  {$ELSE}
+  {$FATALERROR Check if you have an unit called 'serial' }
+  {$ENDIF}
+{$ENDIF} 
+  xp1o,
+  xp2,
+  xp4o2,
+  xp9bp;
+
+const 
+  MaxProtocols = 2;
+  Protocols: array[1..MaxProtocols] of string = (
+    'http://',
+    'https://');
 
 var hayes     : boolean;
     small     : boolean;
@@ -359,8 +376,27 @@ begin
 end;
 
 function testurl(var s:string):boolean;
-begin
-  if (s<>'') and (lstr(left(s,7))<>'http://') then begin
+
+  function NoProtocol: boolean;
+  var
+    i,p: integer;
+    protocol: string;
+  begin
+    p:= CPos(':',s);
+    if p>0 then
+      protocol:= lstr(copy(s,1,p+2))
+    else
+      protocol:= '';
+    for i:= 1 to MaxProtocols do
+      if (protocol=protocols[i]) then begin
+	NoProtocol:= false;
+	exit;
+      end;
+    NoProtocol:= true;
+  end;
+
+begin { testurl }
+  if (s<>'') and (NoProtocol) then begin
     rfehler(220);    { 'Geben Sie die vollst„ndige URL (http://do.main/...) an!' }
     testurl:=false;
     end
@@ -1330,9 +1366,46 @@ begin
 end;
 
 procedure TerminalOptions;
+{$ifdef Linux}
 var x,y : byte;
     brk : boolean;
-    com : string[6];
+    ok  : boolean;
+    dev : string;
+begin
+  dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
+  dev:= TermDevice;
+  maddstring(3,2,getres2(270,2),dev,6,6,'');  { 'Schnittstelle    ' }
+  mhnr(990);
+  mappsel(false,'modemùttys0ùttys1ùttys2ùttys3ùttyI0ùttyI1ùttyI2ùttyI3'); { aus: XP9.INC }
+  maddint(3,3,getres2(270,3),TermBaud,6,6,150,115200);  { 'šbertragungsrate ' }
+  mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200ù230400');
+  maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
+  maddstring(3,5,getres2(270,5),TermInit,16,40,'');     { 'Modem-Init       ' }
+  mappsel(false,'ATZùATùATZ\\ATX3');
+  maddbool(3,7,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
+  maddbool(3,8,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
+  maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
+  repeat    
+    readmask(brk);
+    if not brk then 
+      ok:= exist('/dev/'+dev);
+    if not ok then begin
+      rfehler1(221,TermDevice);	{ Das Device '/dev/%s' existiert nicht }
+      dev:= TermDevice;		{ Alte Vorgabe wiederholen }
+    end;
+    if not brk and mmodified and ok then begin
+      TermDevice:= dev;
+      GlobalModified;
+    end;
+  until ok or brk;
+  enddialog;
+  freeres;
+  menurestart:=brk;
+end;
+{$else} { Linux }
+var x,y : byte;
+    brk : boolean;
+    com : string[20];
     d   : DB;
     fn  : string[8];
 begin
@@ -1349,7 +1422,7 @@ begin
   com:='COM'+strs(minmax(TermCOM,1,5));
    if TermCom=5 then com:='ISDN';
   maddstring(3,2,getres2(270,2),com,6,6,'');  { 'Schnittstelle    ' }
-    mhnr(990);
+  mhnr(990);
 {$IFDEF CAPI }
   mappsel(true,'COM1ùCOM2ùCOM3ùCOM4ùISDN');      { aus: XP9.INC    }
 {$ELSE }
@@ -1380,6 +1453,7 @@ begin
   freeres;
   menurestart:=brk;
 end;
+{$endif} { Linix }
 
 function testpgpexe(var s:string):boolean;
 begin
@@ -1481,6 +1555,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/06/20 18:18:45  hd
+  - https bei der URL ergaenzt. In dem Array 'protocols' koennen jetzt
+    beliebig viele weitere Protokolle definiert werden (MaxProtocols
+    nicht vergessen). Evtl. waere es auch noch sinnvoll gopher:// und
+    ftp:// zuzulassen.
+  - uses serial unter Linux hinzugefuegt (RTL-Unit von FPC)
+  - TerminalOptions an Linux angepasst
+
   Revision 1.38  2000/06/04 16:57:25  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)
