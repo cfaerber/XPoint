@@ -74,9 +74,9 @@ var
     madr     : longint;         { Adresse in Ablage }
     crc      : string[4];
     nt       : longint;
-  abs  : string[AdrLen];
-      bbox : string[BoxNameLen+10];
-      p    : byte;
+    abs  : string[AdrLen];
+    bbox : string[BoxNameLen+10];
+    p    : byte;
 
 label ende,nextpp;
 
@@ -508,6 +508,7 @@ var fn     : pathstr;
     ua      : boolean;
     add_oe_cc : integer;
     sendflags : word;
+    msgflags  : integer;
 
 label ende,again;
 
@@ -837,7 +838,7 @@ again:
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
-      5 : binaermail:=IsBinary;
+      5 : binaermail:=IsBinary;          { 5: In Archivbrett archivieren }
       6 : begin                          { 6: Im PM-Brett des Users archivieren }
             name := hdp^.empfaenger;
             readKopList := true;
@@ -846,15 +847,17 @@ again:
             readHeadEmpf := 127;
             ReadHeader (hdp^, hds, false);
             hdp^.empfaenger := name;
+            dbReadN(mbase,mb_flags,msgflags);
             binaermail:=IsBinary;
             dbReadN(mbase,mb_absender,name);
             dbSeek(ubase,uiName,ustr(name));
-            if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
+            if dbFound and (dbXsize(ubase,'adresse')<>0) then
+            begin
               size:=0;
               dbReadX(ubase,'adresse',size,name);
               if name<>'' then dbSeek(ubase,uiName,ustr(name))
               else dbReadN(mbase,mb_absender,name);
-              end;
+            end;
             write_archiv(true);
             if ntZConnect(hdp^.netztyp) then begin
               hdp^.empfaenger:=name;
@@ -1132,6 +1135,7 @@ again:
                dbWriteN(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
                dbWriteN(mbase,mb_typ,ntyp);
+               dbWriteN(mbase,mb_flags,msgflags);
                dbReadN(mbase,mb_unversandt,b);
                if (b and 8<>0) then begin        { WV-Flag entfernen }
                  dbReadN(mbase,mb_wvdatum,l);
@@ -1346,6 +1350,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.22  2002/03/08 23:05:59  my
+  JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+       (Priorit„t, PGP-signiert usw.) jetzt erhalten.
+
   Revision 1.20.2.21  2002/01/10 22:24:36  mk
   - Bugfix: Alt-A auf Brett mit Vertreter und Schreibsperre verschluckte
     die zu archivierende Nachricht
