@@ -704,9 +704,10 @@ var x,y : byte;
 begin
   dialog(41,8,getres2(260,11),x,y);
   maddbool(3,2,getres2(260,5),auswahlcursor);{ 'Auswahlcursor in Mens/Listen' }
-    mhnr(1030);
+  mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   maddbool(3,4,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
+  mhnr(1034);
   maddbool(3,5,getres2(260,12),tonsignal);   { 'zus„tzliches Tonsignal' }
   maddbool(3,7,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
   freeres;
