@@ -310,7 +310,7 @@ begin
 
   if fido_origin<>'' then StripOrigin;
   if PGPVersion=PGP2 then
-    t:=iifs(hd.typ='T','t',' +textmode=off')
+    t:=iifs(hd.typ='T','-t',' +textmode=off')
   else
     t:=iifs(hd.typ='T','-t','');
 
@@ -783,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.7  2000/05/07 17:41:35  mk
+  OH: - PGP 2.6.3 nutzte t statt -t als Parameter
+
   Revision 1.6.2.6  2000/05/07 17:37:40  mk
   - Limits fuer Pfadnamen auf 255 Zeichen erhoeht
 
