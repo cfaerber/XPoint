@@ -1380,7 +1380,7 @@ end;
 
 function FidoFilename(var fa:FidoAdr):string;
 begin
-  FidoFilename:=hex(fa.net,4)+hex(fa.node,4);
+  FidoFilename:=UStr(hex(fa.net,4)+hex(fa.node,4));
 end;
 
 function FidoAppendRequestfile(var fa:FidoAdr):string;
@@ -2260,6 +2260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.4  2001/06/07 15:43:39  mk
+  - FidoFileName: Dateinamen gross geschrieben
+
   Revision 1.15.2.3  2000/12/12 14:03:57  mk
   - weitere lfn-fixes
 
