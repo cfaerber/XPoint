@@ -1129,6 +1129,7 @@ var t,lastt: taste;
         dbseek(bbase,biIntnr,mid(_empf,2));
         if dbfound then dbread(bbase,'pollbox',defaultbox);
         end;
+      ReplaceVertreterbox(defaultbox,true);
       brk:=not CC_testempf(empf);
       defaultbox:=origdb;
       if brk then goto ende;
@@ -2184,6 +2185,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.42  2001/07/22 22:07:46  my
+  JG:- when bringing up a 'create user' dialogue (e.g. upon <Ctrl-P>),
+       default server will be the reply server (if any).
+
   Revision 1.26.2.41  2001/07/09 22:15:00  my
   JG:- Fix (of an extremely ancient and annoying behaviour): When
        creating an (e.g. Reply-To) user upon replying to a message
