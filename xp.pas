@@ -46,7 +46,7 @@ uses xpx,
 {$IFDEF OS2 }
      os2base,
 {$ENDIF }
-     dos,typeform,uart,keys,fileio,inout,help,datadef,
+     typeform,uart,keys,fileio,inout,help,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpglobal,
@@ -196,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.40  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.39  2000/11/14 21:36:53  fe
   Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
   So the program is called "uuz" again.

@@ -17,8 +17,13 @@ unit database;
 
 interface
 
-uses xpglobal,
-  sysutils, dos, typeform,datadef, inout;
+uses
+  xpglobal,
+  sysutils,
+  fileio,
+  typeform,
+  datadef,
+  inout;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -31,7 +36,7 @@ procedure dbSetindexcache(pages:word);     { 1..MaxCache }
 procedure dbReleasecache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
-procedure dbOpenLog(fn:pathstr);
+procedure dbOpenLog(const fn: string);
 {$IFDEF Debug }
 procedure dbLog(const s:string);
 {$ENDIF }
@@ -1489,7 +1494,7 @@ end;
 
 { --- Logging --------------------------------------------------------}
 
-procedure dbOpenLog(fn:pathstr);
+procedure dbOpenLog(const fn: string);
 begin
   assign(dblogfile,fn);
   rewrite(dblogfile);
@@ -1588,6 +1593,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.41  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.40  2000/11/04 23:12:15  mk
   - database.log is flushed now after each update
 

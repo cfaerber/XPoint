@@ -29,7 +29,6 @@ interface
 {$ENDIF }
 
 uses
-  dos,
   linux,
   strings,
   sysutils,
@@ -298,8 +297,7 @@ begin
     close(f);
     GetShortVersion:= copy(s,1,cpos('(',s)-2);
   end else
-    GetShortVersion:= 'Linux Kernel '+strs((DosVersion and $ff00) shr 8)+'.'
-              +strs((DosVersion and $ff));
+    GetShortVersion:= '?.??';
 end;
 
 { SysLog-Interface ----------------------------------------------------- }
@@ -417,6 +415,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.20  2000/11/11 19:28:13  ml
   - bugfix TestAccess (rwx are modes, not uids
 

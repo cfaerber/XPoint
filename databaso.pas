@@ -16,7 +16,11 @@ unit databaso;
 
 interface
 
-uses xpglobal,typeform,datadef;
+uses
+  xpglobal,
+  typeform,
+  datadef,
+  SysUtils;
 
 
 procedure dbCreate(filename:dbFileName; flp:dbFLP);
@@ -67,7 +71,7 @@ end;
 
 { .EB1-Datei anlegen }
 
-procedure MakeXbase(filename:pathstr; var ehd:dbdheader; var f:file);
+procedure MakeXbase(const filename: string; var ehd:dbdheader; var f:file);
 begin
   with ehd do begin
     fillchar(ehd,sizeof(ehd),0);
@@ -430,6 +434,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/11/15 18:06:19  hd
+  - Unit DOS entfernt
+
   Revision 1.12  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 

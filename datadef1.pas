@@ -17,7 +17,7 @@ unit datadef1;
 
 interface
 
-uses dos, typeform,datadef, xpglobal;
+uses typeform,datadef, xpglobal;
 
 const
 {$IFNDEF VP }
@@ -225,6 +225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.11  2000/08/29 21:03:39  mk
   - temporaere Workarounds fuer FPC Compiler/RTL-Bug
 

@@ -15,13 +15,17 @@
 
 {$I XPDEFINE.INC }
 
-uses dos,typeform,fileio,xpglobal, sysutils;
+uses
+  typeform,
+  fileio,
+  xpglobal,
+  sysutils;
 
 const
         l_ver = '1.03'; {TJ030200 - naja, der schnelleren Uebersicht wegen}
 
 
-var infile,outfile : pathstr;
+var infile,outfile : string;
     rand,breite    : integer;
     NoMark         : boolean;   { keine "|"-Markierungen }
 
@@ -199,6 +203,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/11/15 18:09:32  hd
+  - Unit DOS entfernt
+
   Revision 1.10  2000/11/14 22:35:05  fe
   Replaced "exist()" by "fileexists()".
 

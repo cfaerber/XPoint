@@ -18,7 +18,7 @@ unit xp0;
 interface
 
 uses
-  dos,typeform,keys,xpglobal, classes,sysutils;
+  typeform,keys,xpglobal,classes,sysutils;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -1170,6 +1170,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.100  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.99  2000/11/12 11:34:04  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

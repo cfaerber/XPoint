@@ -11,9 +11,9 @@
 procedure OpenIndex(dbp:DB);   { intern }
 var icr : dbIndexCRec;
     i,j : integer;
-    _d  : dirstr;
-    _n  : namestr;
-    _e  : extstr;
+    _d,
+    _n,
+    _e  : string;
     mfm : byte;
 
   procedure CreateIndex(dbp:DB);
@@ -239,6 +239,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.8  2000/10/02 03:13:23  mk
   - AnsiString-Fixes
 

@@ -17,9 +17,6 @@ unit typeform;
 interface
 
 uses
-{$IFNDEF unix}
-  dos, // wird fÅr den filerecord in filename() benîtigt
-{$ENDIF }
   xpglobal, sysutils;
 
 {$IFNDEF DPMI}
@@ -1287,6 +1284,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.71  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
