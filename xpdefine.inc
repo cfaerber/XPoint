@@ -132,11 +132,14 @@
 {$ENDIF }
 
 {$IFDEF Linux }
-  {$DEF UseLocalScreen } { Unter Linux mÅssen wir den LocalScreen verwenden }
+  {$DEFINE UseLocalScreen } { Unter Linux mÅssen wir den LocalScreen verwenden }
 {$ENDIF }
 
 {
   $Log$
+  Revision 1.20  2000/04/23 15:46:53  mk
+  - Typo fuer Linux LocalScreen beseitigt
+
   Revision 1.19  2000/04/23 07:58:54  mk
   - OS/2-Portierung
 
