@@ -7586,41 +7586,40 @@ fields when editing an entry (press "E" to edit..)
 10701
 <<Re-Org / Messages
 
-Deletes all messages which are scheduled for
-deletion, either by being marked by you or because
-they have reached the set time limit. The time is
-measured from the <<"date received">>.
+Deletes all messages which have been marked for 
+deletion either by you or because they have reached 
+the set time limit. The time is calculated from the 
+<<"date received">>.
 
-Note that extra disk space is needed during the
-reorganisation. As a general rule; about one tenth of
-the space used by CrossPoint in total. The more the
-better.
+Note that extra disk space is required during the
+reorganisation. As a general rule, about one tenth of
+the space used by CrossPoint is required. The more 
+the better.
 
 The reorganisation can take a long time on a large
-data base, but can be interrupted with <Esc>.
+data base but can be interrupted with <Esc>.
 @
 10702
 <<Re-Org / Pack
 
 During the message reorganisation, "holes" are left
 in the index database; about 200 Bytes per message.
-These holes are gradually reused by new messages, but
+These holes are gradually re-used by new messages but
 in the event of a major clean-up deleting a lot of
 messages, a lot of wasted space could exist for a
-while. "Pack" eliminated this wasted space all at
+while. "Pack" eliminates this wasted space all at
 once.
 
-Packing is even slower than the message Re-Org, but
+Packing is even slower than the message Re-Org but
 that should not be a problem, since it is seldom
 needed.
 @
 10703
 <<Re-Org / Newsgroups
 
-Deletes newsgroups which have not got any messages in
-them. You can choose whether to delete all empty
-newsgroups, or confirm the deletion of each one in
-turn.
+Deletes Newsgroups which have no messages in them. 
+You can choose whether to delete all empty Newsgroups
+or confirm the deletion of each one in turn.
 
 @
 10704
@@ -7628,9 +7627,9 @@ turn.
 
 Deletes Users who:
 
-þ have no messages in their Archive newsgroups,
+þ have no messages in their Archive newsgroups
 
-þ are not included in the address book and
+þ are not included in the address book
 
 þ who do not have an active message filter.
 @
@@ -7638,8 +7637,8 @@ Deletes Users who:
 <<Re-Org / Address Book
 
 Removes Users with no messages in their archive
-newsgroups from the address book. They remain in the
-User list.
+newsgroups from the address book but they remain in 
+the User list.
 
 @
 10706
@@ -7650,7 +7649,7 @@ All dupes (duplicate messages) are set to delete.
 Dupes can only be recognised as having the same
 message ID and the same send date (i.e. the text
 cannot be evaluated). Normally these should not occur
-anyway, but due to errors in net transport they do
+anyway but due to errors in net transport, they do
 occur (or if you read in your netcall puffer more
 than once by mistake).
 
@@ -7681,13 +7680,12 @@ Miscellaneous functions which you normally do not
 need. Each has its own on-line help.
 @
 10801
-<<Edit / Templates / Header
+<<Edit / Templates / Header (Pub)
 
-The header template is the default header for use
-when writing in public newsgroups. You can define
-different header ones for each newsgroup group with
-/Edit/Group/Edit/Template, but you have to give them
-different names using [/Edit/Templates/Misc].@10814
+Default header for <<Public>> messages. You can
+define different headers for each newsgroup-group
+with /Edit/Group/Edit/Template but you have to give
+them different names using [/Edit/Templates/Misc].@10814
 
 You can use the [macros] $TAG $TAG2 (day) $DATUM $DATE@11650
 (date) and $UHRZEIT(time)
@@ -7695,31 +7693,31 @@ You can use the [macros] $TAG $TAG2 (day) $DATUM $DATE@11650
 See also:  [internal Editor]@54
 @
 10802
-<<Edit / Templates / PrivKopf
+<<Edit / Templates / Header (Priv)
 
-Default header for your PMs.
-You can define different header ones for each
-newsgroup group with /Edit/Group/Edit/Template, but
-you have to give them different names using
-[/Edit/Templates/Misc].@10814
+Default header for <<Private>> messages. You can
+define different headers for each Newsgroup-group
+with /Edit/Group/Edit/Template but you have to give
+them different names using [/Edit/Templates/Misc].@10814
 The following [macros] may be used:@11650
 
 $DATUM, $DATE, $UHRZEIT, $TAG, $TAG2, $USER, $MUSER,
 $TUSER, $PSEUDO, $VPSEUDO,
 
-and in Nets with Realnames also $VORNAME.
+In Nets where Realnames are used (e.g. FidoNet),
+you can also use $VORNAME.
 
 See also:  [internal Editor]@54
 @
 10803
-<<Edit / Templates / PublicQuote
+<<Edit / Templates / Quote (Pub)
 
-Default template for replies using quotes to messages
-in newsgroups. Also used when extracting messages
+Default template for quote-replying to <<Public>>
+messages. Also used when extracting messages
 (option in [/Message/Extract]) in quote form.@10302
 
-You can define different headers for each newsgroup
-group with /Edit/Group/Edit/Template, but you have to
+You can define different headers for each Newsgroup-
+group with /Edit/Group/Edit/Template but you have to
 give them different names using [/Edit/Templates/Misc].@10814
 
 All [macros] can be used.@11650
@@ -7727,26 +7725,26 @@ All [macros] can be used.@11650
 See also:  [internal Editor]@54
 @
 10804
-<<Edit / Templates / PrivQuote
+<<Edit / Templates / Quote (Pub > Priv)
 
-Default header when quoting from public messages in
-PM replies. All [macros] can be used.@11650
+Default header when quote-replying to public messages
+in private. All [macros] can be used.@11650
 
-You can define different headers for each newsgroup
-group with /Edit/Group/Edit/Template, but you have to
+You can define different headers for each newsgroup-
+group with /Edit/Group/Edit/Template but you have to
 give them different names using [/Edit/Templates/Misc].@10814
 
 See also:  [internal Editor]@54
 
 @
 10805
-<<Edit / Templates / PrivPMquote
+<<Edit / Templates / Quote (Priv)
 
-Default header when quoting from PMs in replies.
-All [macros] can be used except $FIDOEMPF.@11650
+Default header for quote-replying to <<Private>>
+messages. All [macros] can be used except $FIDOEMPF.@11650
 
-You can define different headers for each newsgroup
-group with /Edit/Group/Edit/Template, but you have to
+You can define different headers for each Newsgroup-
+group with /Edit/Group/Edit/Template but you have to
 give them different names using [/Edit/Templates/Misc].@10814
 
 @
