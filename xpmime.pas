@@ -100,13 +100,19 @@ begin
   if ReadFilename(getres(2441),fn,true,useclip) then
   begin
     if not multipos(':\',fn) then fn:=ExtractPath+fn;
-    if exist(fn) then begin
-      if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
-      o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
-      end
-    else o:=true;
+    if not UseClip then
+    begin
+      if exist(fn) then
+      begin
+        if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
+        o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
+      end else
+        o:=true;
+    end;
     if not exist(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
+    if UseClip then
+      WriteClipfile(fn);
   end;
 end;
 
@@ -759,6 +765,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.10  2000/12/15 00:25:15  mk
+  - Extract von Multipartteilen mit X in Clipboard geht jetzt
+
   Revision 1.12.2.9  2000/11/18 23:30:57  mk
   - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
 
