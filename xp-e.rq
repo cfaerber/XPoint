@@ -2528,9 +2528,9 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 # --- XPE -------------------------------------------------------------
 
 + 2500
-1    File was changed.
+1    File has been changed ...
 2    ~^Save , ^Don't save , ^Cancel~
-3    Message was changed.
+3    Message has been changed ...
 4    ~^Save , ^Don't save , P^ark , ^Cancel~
 + 2501
 0    Note
@@ -3130,12 +3130,12 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 
 +  10800
 1  This server offers no automatic subscribing functions.
-2  This newsgroup has no server!
-3  Unknown server: %s
-4  Unknown server (%s) - newsgroup list was NOT imported
+2  No Server for this newsgroup!
+3  Unknown Server: %s
+4  Unknown Server (%s) - newsgroup list was NOT imported
 5  Invalid sender address
 6  BOXEN.IX1 is bad - please delete file!
-7  There's no newsgroup list for this server!
+7  No newsgroup or echo list for this Server!
 8  Empty message - not sent
 9  Bad sender address!?
 10 The system %s is not configured as fileserver (Edit/Systems).
