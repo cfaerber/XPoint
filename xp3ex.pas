@@ -144,9 +144,11 @@ end;
 
 procedure ExtractSetMimePart(MimePart: TMimePart);
 begin
-  if ex_MimePart = nil then 
+  if Assigned(MimePart) and not Assigned(ex_MimePart) then
+  begin
     ex_MimePart := TMimePart.Create;
-  ex_MimePart.Assign(MimePart);
+    ex_MimePart.Assign(MimePart);
+  end;
 end;
 
 
@@ -1112,6 +1114,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.84  2001/12/09 16:13:39  ml
+  - mime-Assign with nil-bugfix, clean create constructor
+
   Revision 1.83  2001/12/08 09:23:02  mk
   - create list of MIME parts dynamically
 

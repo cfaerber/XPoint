@@ -43,6 +43,7 @@ type  TMimePart = class { Teil einer Multipart-Nachricht }
         part,parts : integer;
         alternative: boolean;
         Charset    : TMimeCharsets;
+        constructor create;
         procedure Clear;
         procedure Assign(Source: TMIMEPart);
       end;
@@ -725,7 +726,7 @@ begin
 end;
 
 procedure mimedecode;    { Nachricht/Extract/MIME-Decode }
-var 
+var
   MimePart: TMimePart;
   brk: boolean;
 begin
@@ -744,6 +745,7 @@ end;
 
 procedure TMIMEPart.Assign(Source: TMIMEPart);
 begin
+  if not Assigned(Source) then exit;
   StartLine := Source.startline;
   lines := Source.Lines;
   code := Source.Code;
@@ -773,6 +775,23 @@ begin
   Charset := csUnknown;
 end;
 
+constructor TMimePart.create;
+begin
+  inherited create;
+  startline  := 0;
+  lines      := 0;
+  code       := MimeEncoding7Bit;
+  typ        := '';
+  subtyp     := '';
+  level      := 1;
+  fname      := '';
+  ddatum     := '';
+  part       := 1;
+  parts      := 1;
+  alternative:= false;
+  Charset    := csUTF8;
+end;
+
 initialization
   PartsList := TList.Create;
 finalization
@@ -781,6 +800,9 @@ finalization
 
 {
   $Log$
+  Revision 1.53  2001/12/09 16:13:39  ml
+  - mime-Assign with nil-bugfix, clean create constructor
+
   Revision 1.52  2001/12/08 09:23:02  mk
   - create list of MIME parts dynamically
 
