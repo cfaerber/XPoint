@@ -1208,10 +1208,10 @@ begin
     set_chml(userfield,'')
   else
     set_chml(userfield,'>');
-  if uucp or client then
+  {if uucp or client then
     set_chml(fieldpos+1,'')
   else
-    set_chml(fieldpos+1,'>');
+    set_chml(fieldpos+1,'>');}
   setfieldtext(userfield,getres2(912,iif(client,12,3)));
 end;
 
@@ -1621,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2001/12/24 11:45:37  mk
+  - fixed last committ
+
   Revision 1.31  2001/12/23 13:06:16  mk
   - fixed gf_getnettype for ClientMode
 
