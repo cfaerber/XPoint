@@ -159,23 +159,6 @@ $(DOC_PDF) : $(DOC_SRC)
 
 # --- Debian packages -------------------------------------------------	
 
-include debian/Makefile.version
-
-debian/Makefile.version : debian/Makefile.PL \
- debian/control debian/changelog.in \
- xpglobal.pas xpdefine.inc
-	(cd debian; make)
-
-debian: debian-is-a-directory
-
-debian-is-a-directory: debian/changelog
-	(cd debian ; rm Makefile.version changelog ; make)
-	if [ `pwd|xargs basename` != openxp-$(DEB_UPSTREAM_VERSION) ]; then \
-	  ( ln -nfs `pwd|xargs basename` \
-	   ../openxp-$(DEB_UPSTREAM_VERSION) ) ; \
-	fi
-	cd ../openxp-$(DEB_UPSTREAM_VERSION) && dpkg-buildpackage -rfakeroot
-
 # --- files list ------------------------------------------------------
 
 MANIFEST.snap:
@@ -211,6 +194,9 @@ ${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.16  2003/10/18 23:26:14  cl
+# - removed old build system for Debian
+#
 # Revision 1.15  2003/09/04 12:52:53  cl
 # - fixed make debian
 #
