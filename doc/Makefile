@@ -64,10 +64,11 @@
 #
 #contribdir = 
 
-# Parameter fuer docform
-# (KANN gesetzt werden.)
+# Sollen unter Linux bei "make install" Softlinks nach /usr/bin und
+# /usr/lib gesetzt werden?
+# (KANN gesetzt werden.  Voreingestellt auf yes.)
 #
-#DOCFORMFLAGS = 72 1 N
+#SETLINKS = yes
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
@@ -87,6 +88,7 @@ gesetzt werden)
 endif
 
 CPU ?= 386
+SETLINKS ?= yes
 
 ifeq ($(MAKEHB),yes)
 
@@ -109,7 +111,6 @@ endif
 endif
 
 DOCFORMFLAGS ?= 72 1 N
-H2TFLAGS ?= -dump -cols 72
 TIDYFLAGS ?= -q -f tidyerr.tmp -m -asxml --doctype strict --show-warnings no --add-xml-decl yes
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
@@ -168,6 +169,16 @@ INSTALL_DATA ?= install -b -V existing -p -m 644
 DOCFORM ?= ../docform
 IHS ?= ../ihs
 
+endif
+
+ifeq ($(H2T),links)
+H2TFLAGS ?= -dump
+endif
+ifeq ($(H2T),lynx)
+H2TFLAGS ?= -dump -width=72
+endif
+ifeq ($(H2T),w3m)
+H2TFLAGS ?= -dump -cols 72
 endif
 
 HELP = xp xp-e
@@ -258,9 +269,14 @@ install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,install_%,$(HELPFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(HELPFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 else
 $(patsubst %,install_%,$(HELPFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
@@ -290,9 +306,14 @@ $(patsubst %,uninstall_%,$(TXT)): uninstall_%: %
 	-$(RM) $(docdir)$(SEP)$*
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
 	-$(RM) $(datalinkdir)$(SEP)$*
 	-$(RM) $(datadir)$(SEP)$*
+else
+$(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
+	-$(RM) $(datadir)$(SEP)$*
+endif
 else
 $(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
 	-$(RM) $(datadir)$(SEP)$*
@@ -323,6 +344,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.13  2000/10/19 19:37:57  fe
+# Parameter fuer links und lynx eingetragen.
+#
 # Revision 1.12  2000/10/19 18:17:12  fe
 # SHELL-Variable wird nur noch bei Linux gesetzt.  (wegen Cygwin make)
 # Variablen W3M und W3MPARMS in H2T und H2TPARMS umbenannt.
