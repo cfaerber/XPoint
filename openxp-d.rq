@@ -32,7 +32,7 @@ N Deutsch
 + 10
 # Do NOT change the first word in each of the following lines!
 0   Main,001Open^XPù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2,009^?ù41
-1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016S^hell      F9,-,018^Beenden
+1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Te^lnet,016S^hell      F9,-,018^Beenden
 # Zusatz-Men hier nur fr XPME (s.u.) :
 2   Zusatz,021^Kalender,022^Archiv-Viewer
 3   Nachricht,031^Suchenù5,032E^xtraktù12,033^Unversandtù4,034^Alleù14,035^ndernù22,036^Weiterleitenù21,-,038Brett^managerù19,039^Fileserverù20,03aP^GPù40,03b^Direkt
@@ -4128,6 +4128,9 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.77  2003/08/26 22:45:27  mk
+# - fixed shortcut for /OpenXP/Telnet
+#
 # Revision 1.76  2003/08/25 17:56:41  mk
 # - fixed documentation for RFC/Client
 #
