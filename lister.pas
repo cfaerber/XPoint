@@ -60,7 +60,7 @@ type
   TLister = class;
 
   TListerConvertEvent = procedure(var buf; Size: word) of object; { fÅr Zeichensatzkonvert. }
-  TListerTestMarkEvent = function(var s: string; block: boolean): boolean;
+  TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
   TListerKeyPressedEvent = procedure(Self: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
@@ -122,19 +122,21 @@ type
     FSelLine: Integer;                  // actual selected line
     FSelCount: Integer;                 // Number of selected lines
     FLinePos: integer;
+    FLines: TStringList;
 
     arrows: listarr;
     l, o, w,
     Height: Integer;                    // Height including status line
     markpos: integer;
     // test if line Index is marked
-    function Marked(Index: Integer): boolean;
+    function GetMarked(Index: Integer): boolean;
+    procedure SetMarked(Index: Integer; NewValue: boolean);
     procedure SetHeaderText(s: String);
     function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte): Integer;
   public
     col: listcol;
     stat: liststat;
-    Lines: TStringList;
+
     constructor Create;
     constructor CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
     destructor Destroy; override;
@@ -167,6 +169,8 @@ type
     property OnShowLines: TListerShowLinesEvent read FOnShowLines write FOnShowLines;
     property OnDisplayLine: TListerDisplayLineEvent read FOnDisplayline write FOnDisplayLine;
     property OnColor: TListerColorEvent read FOnColor write FOnColor;
+    property Lines: TStringList read FLines;
+    property Marked[Index:Integer]: Boolean read GetMarked write SetMarked;
   end;
 
 var
@@ -176,7 +180,7 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  GPLTools;
+  GPLTools,xp0;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -262,7 +266,7 @@ begin
   FOnDisplayLine := nil;
   FOnColor := nil;
 
-  Lines := TStringList.Create;
+  FLines := TStringList.Create;
 end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -295,9 +299,23 @@ begin
   inherited destroy;
 end;
 
-function TLister.Marked(Index: Integer): boolean;
+function TLister.GetMarked(Index: Integer): boolean;
 begin
-  Result := Lines.Objects[Index] <> Pointer(0);
+  Result := Assigned(Lines.Objects[Index]);
+end;
+
+procedure TLister.SetMarked(Index: Integer; NewValue: boolean);
+begin
+  if NewValue then 
+  begin 
+    if Assigned(FOnTestMark) then
+    begin
+      if FOnTestMark(Lines[index], false) then
+        Lines.Objects[Index] := self
+    end else
+      Lines.Objects[Index] := self;
+  end else
+    Lines.Objects[Index] := nil;
 end;
 
 procedure TLister.SetSize(_l, _r, _o, _u: byte);
@@ -319,7 +337,7 @@ begin
     p := pos(#9, Line);
   end;
   // add one line, not marked
-  Lines.AddObject(Line, pointer(0));
+  Lines.AddObject(Line, nil);
 end;
 
 procedure TLister.ReadFromFile(const Filename: string; ofs: Integer);
@@ -383,10 +401,12 @@ var
   vstart,
     vstop: integer;                     { Scrollbutton-Position }
   _unit: longint;
-  // scrolling: boolean;
-  // scrolladd: integer;
-  // scrollpos: integer;
-  // mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
+  scrolling: boolean;
+  scrollpos: integer;
+  scroll1st: integer;
+  mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
+  oldmark : boolean;
+  oldselb : boolean;
 
   procedure showstat;
   begin
@@ -435,12 +455,12 @@ var
     begin
       s := Lines[FirstLine + i];
       if selbar and (FirstLine + i = FSelLine) then
-        if marked(FirstLine + i) then
+        if marked[FirstLine + i] then
           attrtxt(col.colmarkbar)
         else
           attrtxt(col.colselbar)
       else
-        if marked(FirstLine + i) then
+        if marked[FirstLine + i] then
         attrtxt(col.colmarkline)
       else
         if Assigned(FOnColor) then
@@ -516,7 +536,7 @@ var
     i: Integer;
   begin
     for i := 0 to Lines.Count - 1 do
-      Lines.Objects[i] := Pointer(0);
+      Lines.Objects[i] := nil;
     FSelCount := 0;
   end;
 
@@ -531,9 +551,9 @@ var
       s := Lines[n];
       if Assigned(FOnTestMark) then
         if FOnTestMark(s, true) then
-          Lines.Objects[n] := Pointer(1)
+          Lines.Objects[n] := self
       else
-        Lines.Objects[n] := Pointer(1)
+        Lines.Objects[n] := self
     end;
     FSelCount := f8p - f7p;
   end;
@@ -616,135 +636,124 @@ var
     for i := 0 to Lines.Count - 1 do
       Lines[i] := DecodeRot13String(Lines[i]);
   end;
+ 
 
   procedure Maus_bearbeiten;
-  begin
-    if t=mausunright then
-      t:=keyesc;
-  end;
-
-  (*  procedure Maus_bearbeiten;
-    const plm : boolean = true;
     var xx,yy,i : integer;
         inside  : boolean;
         nope    : boolean;
-        oldmark : boolean;
+        new1st  : integer;
+       
+  begin
+    maus_gettext(xx,yy);
+    inside:=(xx>=l) and (xx<l+w) and (yy>=y) and (yy<y+DispLines);
 
-      procedure back;
-      begin
-        if FirstLine^.prev<>nil then begin
-          FirstLine:=FirstLine^.prev; pl:=pl^.prev;
-          dec(a);
-          end
-        else
-          nope:=true;
-      end;
-
-      procedure forth;
-      begin
-        if pl^.next<>nil then begin
-          inc(a);
-          FirstLine:=FirstLine^.next; pl:=pl^.next;
-          end
-        else
-          nope:=true;
-      end;
-
-      procedure scroll;
-      var _start,_stop  : integer;
-          i,dummy       : longint;
-          up,down,_down : boolean;
-          ma            : word;
-      begin
-        _down:=(yy>scrollpos);
-        yy:=minmax(yy,y+scrolladd,y+gl-1-(vstop-vstart-scrolladd));
-        ma:=a;
-        while yy<scrollpos do begin
-          for i:=1 to _unit do back;
-          dec(scrollpos);
-          end;
-        while yy>scrollpos do begin
-          for i:=1 to _unit do forth;
-          inc(scrollpos);
-          end;
-        repeat
-          maus_showVscroller(false,false,0,y,y+gl-1,alist^.lines+1,a+1,gl,
-                             _start,_stop,dummy);
-          nope:=false;
-          up:=(yy<_start+scrolladd) or ((yy-scrolladd=y) and (FirstLine^.prev<>nil));
-          down:=(yy>_start+scrolladd);
-          if up then back
-          else if down then forth;
-        until not (up or down) or nope;
-        if _down and (a=ma) then    { Korrektur am Textende }
-          while a+gl<alist^.lines do begin
-            FirstLine:=FirstLine^.next; pl:=pl^.next;
-            inc(a);
-            end;
-      end;
-
+    if scrolling then
     begin
-      maus_gettext(xx,yy);
-      with alist^ do
-        if scrolling then begin
-          if t=mausunleft then
-            scrolling:=false
-          else if t=mauslmoved then
-            Scroll;
-          end
-        else begin
-          inside:=(xx>=l) and (xx<l+w) and (yy>=y) and (yy<y+gl);
-          if t=mausmoved then begin
-            if stat.autoscroll and (lines>gl) and
-               (not stat.vscroll or (stat.scrollx<>xx)) then
-              if yy<=y then AutoUp:=true
-              else if yy>=y+gl-1 then AutoDown:=true;
-            end
-          else if t=mausunright then
-            t:=keyesc
-          else if (t=mausleft) or (t=mausldouble) or (t=mauslmoved) then begin
-            if inside and (stat.markswitch or selbar) then begin
-              mausdown:=true;
-              if not selbar then begin
-                selbar:=true; stat.markable:=true;
-                end;
-              pl:=FirstLine;
-              p:=1;
-              for i:=1 to yy-y do
-                if pl^.next<>nil then begin
-                  pl:=pl^.next; inc(p);
-                  end;
-              if stat.markable and testmark(pl^.cont,false) then begin
-                oldmark:=pl^.marked;
-                if t=mauslmoved then
-                  pl^.marked:=plm
-                else begin
-                  pl^.marked:=not pl^.marked;
-                  plm:=pl^.marked;
-                  end;
-                if oldmark and not pl^.marked then dec(markanz) else
-                if not oldmark and pl^.marked then inc(markanz);
-                end;
-              end
-            else if ((t=mausleft) or (t=mausldouble)) and
-                    (xx=stat.scrollx) and (yy>=y) and (yy<=y+gl) then
-              if yy<vstart then
-                t:=keypgup
-              else if yy>vstop then
-                t:=keypgdn
-              else begin
-                scrolling:=true;
-                scrolladd:=yy-vstart;
-                scrollpos:=yy;
-                end;
-            end
-          else if (t=mausunleft) and inside then begin
-            if stat.directmaus and mausdown then
-              t:=keycr;
-              mausdown:=false;
-              end;
-          end;
-    end; *)
+      if t=mausunleft then 
+        scrolling:=false
+      else if yy<>scrollpos then
+      begin
+        if SelBar then
+        begin
+          New1st:=Scroll1st+(yy-ScrollPos)*
+            System.Round(1.0*Lines.Count/(Height-vstop+vstart));
+          
+          FSelLine  := MinMax(New1St,0,Lines.Count-1);
+
+          if FSelLine<FirstLine then FirstLine:=FSelLine;
+          if FSelLine>=FirstLine+DispLines then FirstLine:=FSelLine-DispLines+1;
+        end else // !SelBar
+        begin
+          New1st:=Scroll1st+(yy-ScrollPos)*_unit;
+          FirstLine := MinMax(New1St,0,Lines.Count-DispLines);
+        end; // !SelBar
+      end; // yy<>scrollpos
+    end else // !scrolling
+    if t=mauswheelup then
+    begin
+      if SelBar then
+      begin
+        FSelLine  := MinMax(FSelLine-MausWheelStep,0,Max(0,Lines.Count-1));
+        if FSelLine<FirstLine then FirstLine:=FSelLine;
+      end else
+        FirstLine := MinMax(FirstLine-MausWheelStep,0,Max(0,Lines.Count-DispLines));
+    end else 
+    if t=mauswheeldn then
+    begin
+      if SelBar then
+      begin
+        FSelLine  := MinMax(FSelLine+MausWheelStep,0,Max(0,Lines.Count-1));
+        if FSelLine>=FirstLine+DispLines then FirstLine:=FSelLine-DispLines+1;
+      end else
+        FirstLine := MinMax(FirstLine+MausWheelStep,0,Max(0,Lines.Count-DispLines));
+    end else    
+    if t=mausunright then
+      t:=keyesc 
+    else 
+    if (t=mausleft) or (t=mausldouble) or (t=mauslmoved) or
+       (not inside and mausdown and ((t=keyup) or (t=keydown))) then 
+    begin
+      if (inside or (mausdown and ((t=keyup) or (t=keydown)) )) and 
+         (stat.markswitch or selbar) then 
+      begin
+        if t=keyup then   FirstLine:=Max(FirstLine-1,0) else
+        if t=keydown then FirstLine:=Min(FirstLine+1,Max(0,Lines.Count-1));
+
+        FSelLine:=MinMax(MinMax(yy-y+FirstLine,FirstLine,FirstLine+DispLines-1),0,Max(0,Lines.Count-1));
+  
+        if not SelBar then begin
+          oldselb:=false;
+          FSelbar:=true; 
+          Stat.markable:=true;
+        end;
+        
+        if not mausdown then 
+        begin
+          if not (yy-y+FirstLine) in [0..Lines.Count-1] then exit;
+          mausdown:=true;
+          oldmark := Marked[FSelLine];
+          Marked[FSelLine]:=not oldmark;
+          scrollpos:=FSelLine;
+        end;
+
+        if ScrollPos<FSelLine then
+          for i:=ScrollPos+1 to FSelLine do
+            Marked[i]:=not oldmark
+        else if ScrollPos>FSelLine then
+          for i:=ScrollPos-1 downto FSelLine do
+            Marked[i]:=not oldmark;
+          
+        scrollpos:=FSelLine;
+      end else 
+      if ((t=mausleft) or (t=mausldouble)) and
+          (xx=stat.scrollx) and (yy>=y) and (yy<y+Height-1) then
+      begin
+        if yy<vstart then
+          t:=keypgup
+        else 
+        if yy>vstop then
+          t:=keypgdn
+        else 
+        begin
+          scrolling:=true;
+          scrollpos:=yy;
+          scroll1st:=iif(SelBar,FSelLine,FirstLine);
+        end;
+      end;
+    end else 
+    if (t=mausunleft) then 
+    begin
+      if stat.directmaus and mausdown and inside then
+        t:=keycr;
+      if mausdown then 
+      begin
+        FSelBar:=OldSelb;
+        OldSelB:=true;
+        mausdown:=false;
+      end;
+    end;
+  end;
 
 begin
   startpos := minmax(startpos, 0, Lines.Count - 1);
@@ -775,7 +784,10 @@ begin
   // mausdown := false;
   maus_pushinside(l, l + w - 2, y + 1, y + DispLines - 2);
   mb := InOut.AutoBremse; AutoBremse := true;
-  // scrolling := false;
+  scrolling := false;
+  mausdown := false;
+  oldselb := true; {!}
+  
   repeat
     display;
     showstat;
@@ -796,8 +808,8 @@ begin
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
-    if (t>=mausfirstkey) and (t<=mauslastkey) then
-             Maus_bearbeiten;
+    if ((t>=mausfirstkey) and (t<=mauslastkey)) or mausdown then
+      Maus_bearbeiten;
     if Assigned(FonKeyPressed) then FOnKeyPressed(Self, t);
 
     if Lines.Count > 0 then
@@ -806,13 +818,13 @@ begin
       if stat.markable and (t = ' ') and
          (not Assigned(FOnTestMark) or FOnTestMark(s, false)) then
       begin
-        if Marked(FSelLine) then
+        if Marked[FSelLine] then
         begin
-          Lines.Objects[FSelLine] := Pointer(0);
+          Lines.Objects[FSelLine] := nil;
           Dec(FSelCount)
         end else
         begin
-          Lines.Objects[FSelLine] := Pointer(1);
+          Lines.Objects[FSelLine] := self;
           Inc(FSelCount);
         end;
         t := keydown;
@@ -831,7 +843,7 @@ begin
         suchen(true);
 
       // key up
-      if t = keyup then
+      if (t = keyup) and not mausdown then
         if SelBar then
         begin
           if FSelLine > 0 then Dec(FSelLine);
@@ -842,7 +854,7 @@ begin
             Dec(FirstLine);
 
       // key down
-      if t = keydown then
+      if (t = keydown) and not mausdown then
         if selbar then
         begin
           if FSelLine < Lines.Count - 1 then Inc(FSelLine);
@@ -972,7 +984,7 @@ begin
     Result := GetSelection
   else
   begin
-    while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
+    while (MarkPos < Lines.Count) and (not Marked[MarkPos]) do
       Inc(MarkPos);
     if MarkPos = Lines.Count then
       Result := #0
@@ -985,7 +997,7 @@ end;
 
 function TLister.NextMarked: string;
 begin
-  while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
+  while (MarkPos < Lines.Count) and (not Marked[MarkPos]) do
     Inc(MarkPos);
   if MarkPos = Lines.Count then
     Result := #0
@@ -1045,7 +1057,7 @@ end;
 
 procedure TLister.UnmarkLine;
 begin
-  Lines.Objects[LinePos] := Pointer(0);
+  Lines.Objects[LinePos] := nil;
   Dec(FSelCount);
 end;
 
@@ -1072,6 +1084,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.58  2001/09/20 18:28:23  cl
+  - mouse support in message lister
+
   Revision 1.57  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 

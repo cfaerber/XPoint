@@ -212,7 +212,7 @@ begin
       else
         if ((dwButtonState and 1)<>0) then
         begin
-          if (istack>0) and was_inside and not auto_move then
+          if (istack>0) and not (was_inside and auto_move) then
             put(mauslmoved);
         end else
         if ((dwButtonState and 2)<>0) then
@@ -263,7 +263,7 @@ begin
   begin
     if (Buttons and 1)<>0 then
     begin
-      if (istack>0) and was_inside and not auto_move then
+      if (istack>0) and not (was_inside and auto_move) then
         put(mauslmoved);
     end else
     if (Buttons and 2)<>0 then
@@ -566,6 +566,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2001/09/20 18:28:23  cl
+  - mouse support in message lister
+
   Revision 1.35  2001/09/19 15:59:12  cl
   - maus_tasten_an/aus now sets Win32 console mode
 
