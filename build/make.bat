@@ -1,0 +1,5 @@
+@echo off
+MD DISTRI
+CD XPDIR
+PKZIP -rp ..\DISTRI\OXP340.ZIP *.*
+CD ..
