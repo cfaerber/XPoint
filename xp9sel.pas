@@ -207,6 +207,8 @@ begin
   PPPClientTest:=true;
   fn:=trim(s);
   if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /wai ', lstr(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
+  if Pos('start /wa ', lstr(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
   if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') then
@@ -220,7 +222,7 @@ begin
     if not ok then
     begin
       rfehler1(936, UStr(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
-      PPPClientTest := false;
+      PPPClientTest:=false;
     end else
     begin
       exchange(fn, '$CLPATH+', s1);
@@ -232,6 +234,10 @@ begin
           (fsearch(fn+'.bat',ownpath)<>'');
       if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
     end;
+  end else
+    begin
+    PPPClientTest:=false;
+    errsound;
   end;
 end;
 
@@ -253,7 +259,6 @@ begin
       and (Length(fn) > 0) and (fn[length(fn)] <> '.');
     if not ok then
     begin
-{      rfehler1(938, UStr(s));} { 'Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!' }
       msgbox(62,6,_fehler_,x,y);
       mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe mu· RELATIV sein und auf ein Verzeichnis EINE' }
       mwrt(x+3,y+3,getres2(10900,38));   { 'Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!' }
@@ -343,7 +348,7 @@ var p : byte;
 begin
   if s='' then
     testreplyto:=true
-  else begin                            { Wenns keine gueltige Adresse ist...}
+  else begin                            { Wenn's keine gueltige Adresse ist...}
     p:=cpos('@',s);
     if (p=0) or (pos('.',mid(s,p))=0) then
     begin
@@ -351,10 +356,10 @@ begin
       dbSeek(d,piKurzname,ustr(s));
       if dbFound then
       begin
-        dbRead(d,'Langname',s);         { ists ein Kurzname ? }
+        dbRead(d,'Langname',s);         { ist's ein Kurzname ? }
         dbclose(d);
         testreplyto:=true;
-        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+        if pos(' ',s)<>0 then           { Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
