@@ -24,6 +24,9 @@ uses
 {$IFDEF Win32 }
   windows, strings,
 {$ENDIF }
+{$IFDEF Linux }
+  xplinux, ncurses, strings,
+{$ENDIF }
   crt,dos,keys,inout,maus2,typeform, xpglobal;
 
 const maxpull = 30;
@@ -79,7 +82,9 @@ procedure FWrt(const x,y:word; const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht ver„ndert }
 procedure SDisp(const x,y:word; const s:string);
+{$IFDEF Win32 }
 procedure consolewrite(x,y:word; num:dword);
+{$ENDIF }
 {$ENDIF }
 
 {$IFDEF Ver32 }
@@ -221,6 +226,19 @@ asm
          stosw
 end;
 {$ELSE }
+{$IFDEF Linux }
+procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
+var
+  win : pWINDOW;
+begin
+  win:= newwin (u-o+1,r-l+1,o-1,l);
+//  wbkgd(win, COLOR_PAIR(1));
+  init_pair(1,(attr and $8f),(attr and $7f) shr 4);
+  wattr_set(win, COLOR_PAIR(1));
+  box(win, ACS_VLINE, ACS_HLINE);
+  wrefresh(win);
+end;
+{$ELSE }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
 var
   i: integer;
@@ -240,6 +258,7 @@ begin
   end;
   TextAttr := SaveAttr;
 end;
+{$ENDIF }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -296,6 +315,11 @@ asm
 @nors:   call  mon
 end;
 {$ELSE }
+{$IFDEF Linux }
+procedure wshadow(li,re,ob,un:word);
+begin
+end;
+{$ELSE }
 procedure wshadow(li,re,ob,un:word);
 var
   i: Integer;
@@ -327,6 +351,7 @@ begin
   textattr := save;
   mon;
 end;
+{$ENDIF }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -376,16 +401,28 @@ end;
 {$ENDIF }
 
 procedure Wrt(const x,y:word; const s:string);
+{$IFDEF Linux }
+var p : PChar;
 begin
+   p := StrAlloc(length(s)+1);
+   StrPCopy (p, StrDosToLinux(s));
+   mvaddstr(y-1, x, p);
+   refresh;
+   StrDispose(p);
+{$ELSE }
 {$IFDEF BP }
+begin
   gotoxy(x,y);
   write(s);
-{$ELSE }
+{$ELSE }   
+begin
   FWrt(x, y, s);
   GotoXY(x+Length(s), y);
 {$ENDIF }
-end;
+{$ENDIF }
+end; { Wrt }
 
+   
 {$IFDEF BP }
 procedure FWrt(const x,y:word; const s:string); assembler;
 asm
@@ -412,6 +449,23 @@ asm
 @nowrt:  pop ds
 end;
 {$ELSE }
+{$IFDEF Linux }
+procedure FWrt(const x,y:word; const s:string);
+//  GotoXY(x, y);
+//  Write(s);
+var p : PChar;
+begin
+//  GotoXY(x, y);
+//  Write(s);
+//   exit;
+   p := StrAlloc(length(s)+1);
+   StrPCopy (p, StrDosToLinux(s));
+   mvaddstr(y-1, x, p);
+   setsyx(y-1,x);
+   refresh;
+   StrDispose(p);
+end;   
+{$ELSE}
 procedure FWrt(const x,y:word; const s:string);
 var
 {$IFNDEF Win32 }
@@ -450,9 +504,10 @@ begin
    end;
 {$ENDIF }
 end;
+{$ENDIF}
 {$ENDIF }
 
-{$IFDEF Ver32}
+{$IFDEF Win32}
 procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
 var                                           { Attribute in xp0.attrbuf (Array of smallword)}
   WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
@@ -545,6 +600,17 @@ begin
 end;
 
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
+{$IFDEF Linux }
+var
+   p : PChar;
+begin
+   p := StrAlloc(Count+1);
+   StrPCopy (p, Dup(Count, Chr));
+   mvaddstr(y-1, x, p);
+   refresh;
+   StrDispose(p);
+end;   
+{$ELSE }
 {$IFDEF Win32 }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
@@ -566,6 +632,7 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
     GotoXY(x, y);
     Write(Dup(Count, Chr));
   end;
+{$ENDIF }
 {$ENDIF }
 
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
@@ -617,6 +684,20 @@ end;
 {$ENDIF Ver32 }
 
 procedure Wrt2(const s:string);
+{$IFDEF Linux }
+var
+   p : PChar;
+   x, y: longint;
+begin
+//Write(s);
+// exit;
+// bkgdset(TextAttr);
+   p := StrAlloc(length(s)+1);
+   StrPCopy (p, StrDosToLinux(s));
+   addstr(p);
+   refresh;
+   StrDispose(p);
+{$ELSE }
 {$IFNDEF Win32 }
 var
   i, Count: Integer;
@@ -639,6 +720,7 @@ begin
   {$ENDIF }
 {$ELSE }
   Write(s);
+{$ENDIF }
 {$ENDIF }
 end;
 { attr1 = Rahmen/Background; attr2 = Kopf }
@@ -1117,6 +1199,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/04/09 13:27:06  ml
+  Diverse Änderungen zu Bildschirmausgabe unter linux (XPME)
+
   Revision 1.19  2000/04/09 06:51:56  jg
   - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
   - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)

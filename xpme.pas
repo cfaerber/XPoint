@@ -12,7 +12,7 @@
 
 uses
 {$IFDEF Linux }
-  xplinux,
+  xplinux, ncurses,
 {$ENDIF }
   winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
@@ -74,7 +74,11 @@ end;
 procedure error(txt:string);
 begin
   wrlogo;
-  writeln('Fehler: ',txt,#7);
+{$IFDEF Linux }
+   writeln('Fehler: ',StrDosToLinux(txt),#7);
+{$ELSE }
+   writeln('Fehler: ',txt,#7);
+{$ENDIF }   
   if ropen then CloseResource;
   halt;
 end;
@@ -114,11 +118,7 @@ begin
   OpenResource(s,10000);
   ropen:=true;
   if ival(getres(6))<11 then
-{$IFDEF Linux }
-  error(StrDosToLinux('Es wird CrossPoint Version 3.11 oder h”her ben”tigt!'));
-{$ELSE }
   error('Es wird CrossPoint Version 3.11 oder h”her ben”tigt!');
-{$ENDIF }
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
     getmem(menu[i],length(s)+1);
@@ -249,7 +249,7 @@ begin
       dec(i);
     if (i>anzhidden) or (hidden[i]<>nr) then begin
       if i<=anzhidden then
-        Move(hidden[i],hidden[i+1],(anzhidden+1-i)*sizeof(hidden[1]));
+	 System.Move(hidden[i],hidden[i+1],(anzhidden+1-i)*sizeof(hidden[1]));
       hidden[i]:=nr;
       inc(anzhidden);
       click;
@@ -266,7 +266,7 @@ begin
     inc(i);
   if i<=anzhidden then begin
     if (i<anzhidden) then
-      Move(hidden[i+1],hidden[i],(anzhidden-i)*sizeof(hidden[1]));
+       System.Move(hidden[i+1],hidden[i],(anzhidden-i)*sizeof(hidden[1]));
     dec(anzhidden);
     click;
     end;
@@ -342,6 +342,9 @@ procedure showmain(nr:shortint);
 var i      : integer;
     s      : string[20];
 begin
+{$IFDEF Linux }
+  setsyx(0,1);
+{$ENDIF }       
   if mainmenu=nil then begin
     new(mainmenu);
     splitmenu(0,mainmenu,main_n);
@@ -349,7 +352,11 @@ begin
   gotoxy(2,1);
   for i:=1 to main_n do
     with mainmenu^[i] do begin
+{$IFDEF Linux }
+      hmpos[i]:=ncurses.getcurx(stdscr)+1;
+{$ELSE }
       hmpos[i]:=wherex+1;
+{$ENDIF }       
       if enabled then begin
         if nr=i then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
@@ -367,7 +374,7 @@ begin
       else begin
         if nr=i then attrtxt(col.colmenuseldis[0])
         else attrtxt(col.colmenudis[0]);
-        Wrt2(' '+mstr+' ');
+	 Wrt2(' '+mstr+' ');
         end;
       end;
 end;
@@ -663,7 +670,7 @@ begin
       c:='N';
       end;
     close(f);
-    if c='J' then erase(f);
+     if c='J' then system.erase(f);
     end;
 end;
 
@@ -723,9 +730,15 @@ begin
   clrscr;
   wrlogo;
   if saved then writeln('Žnderungen wurden gesichert.'#10);
+{$IFDEF Linux }
+   DoneNCurses;
+{$ENDIF }   
 end.
 {
   $Log$
+  Revision 1.11  2000/04/09 13:27:07  ml
+  Diverse Änderungen zu Bildschirmausgabe unter linux (XPME)
+
   Revision 1.10  2000/03/27 16:34:23  ml
   lauffähig unter linux
 

@@ -19,8 +19,12 @@ unit xplinux;
 interface
 
 function StrDostoLinux(const InStr : String): String;
+procedure InitNCurses;
+procedure DoneNCurses;
 
 implementation
+uses
+  ncurses;
 
 function StrDostoLinux(const InStr : String): String;
 const
@@ -41,9 +45,35 @@ begin
    StrDostoLinux := Res;
 end;
 
+procedure InitNCurses;
+begin
+  if initscr=Nil then halt(1);
+  start_color;
+//  init_pair(1,COLOR_WHITE,COLOR_BLUE);
+//  wbkgd(win, COLOR_PAIR(1));
+  erase;
+  refresh;
+//  box(win, ACS_VLINE, ACS_HLINE);
+//  wrefresh(win);
+//  mvwaddstr(win,1,1,'Press any key to continue !');
+//  wrefresh(win);
+//  raw;
+//  wgetch(win);
+end;
+
+procedure DoneNCurses;
+begin
+   endwin;
+end;
+   
+begin
+   InitNCurses;
 end.
 {
   $Log$
+  Revision 1.4  2000/04/09 13:27:07  ml
+  Diverse Änderungen zu Bildschirmausgabe unter linux (XPME)
+
   Revision 1.3  2000/03/26 11:04:10  ml
   zpr-Anzeige in linux geht jetzt
 
