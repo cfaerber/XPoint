@@ -166,7 +166,7 @@ function DialUp(Phonenumbers,ModemInit,ModemDial: string;
   begin
     p:=1;
     while(p<=length(ConnectString))and((ConnectString[p]<'0')or(ConnectString[p]>'9'))do inc(p);
-    delete(ModemAnswer,1,p-1);
+    delete(ConnectString,1,p-1);
     p:=1;
     while(p<=length(ConnectString))and(ConnectString[p]>='0')and(ConnectString[p]<='9')do inc(p);
     b:=ival(LeftStr(ConnectString,p-1));
@@ -280,6 +280,9 @@ begin TimerObj.Init; DisplayProc:=VoidDisplayProc end.
 
 {
   $Log$
+  Revision 1.5  2000/10/28 09:19:17  ma
+  - Bauddetect Fix
+
   Revision 1.4  2000/10/17 10:05:42  mk
   - Left->LeftStr, Right->RightStr
 
