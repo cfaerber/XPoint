@@ -89,6 +89,10 @@ Lister
   XP0.PAS, XP1O.PAS, XP1S.INC, XP2C.PAS, XP2CFG.INC, XP4O.PAS,
   XPKEYS.PAS, XP.IHQ, XP-E.IHQ
 
+- Der Lister zeigt den KOM-Header jetzt korrekt an, wenn die Nachricht 
+  keine Binärnachricht ist. Vorher wurde in diesem Fall der Header garnicht
+  beachtet. (MK)
+  XP3EX.PAS, XP4W.INC
 
 
 Editor
