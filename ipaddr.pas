@@ -51,7 +51,7 @@ type
     FAutoResolve: boolean;      { Automatisches aufloesen? }
 
     function  GAsString: string;
-    function  GAtom(i: integer): integer;
+    function  GAtom(Index: integer): integer;
 
     procedure SAutoResolve(b: boolean);
     procedure SName(s: string);
@@ -63,7 +63,7 @@ type
 
 
     { Atom gibt einen Teil der IP zurueck (i = 1..4) }
-    property Atom[i: integer]: integer read GAtom;
+    property Atom[Index: integer]: integer read GAtom;
 
     { Name gibt den Namen zurueck }
     property Name: string read FName write SName;
@@ -83,7 +83,7 @@ type
 
     { Loeschen vorhandener Daten }
     procedure Clear; virtual;
-    
+
     { Jetzt aufloesen }
     procedure Resolve;
 
@@ -95,6 +95,11 @@ implementation
 uses
   WinSock;
 {$endif}
+
+resourcestring
+  res_IPRangeError         = 'Index value %d must be in 1-4!';
+  res_IPAddrTypeError      = 'Unknown address typ: %d, expected %d!';
+  res_IPNoIPv4Error        = 'This is not an IPv4 address!';
 
 {$ifdef Linux}
 
@@ -126,15 +131,15 @@ begin
   FResolved:= false;
 end;
 
-function TIP.GAtom(i: integer): integer;
+function TIP.GAtom(Index: integer): integer;
 begin
-  case i of
+  case Index of
     1: Result:= (FIP and $000000ff);
     2: Result:= (FIP and $0000ff00) shr 8;
     3: Result:= (FIP and $00ff0000) shr 16;
     4: Result:= (FIP and $ff000000) shr 24;
   else
-    raise EIPRangeError.Create('i must be in 1-4 ('+IntToStr(i)+')!');
+    raise EIPRangeError.Create(Format(res_IPRangeError, [Index]));
   end;
 end;
 
@@ -150,11 +155,10 @@ begin
     with hostinfo^ do
     begin
       if (h_AddrType<>AF_INET) then
-        raise EIPAddrTyp.Create('Unknown address typ: '+IntToStr(h_AddrType)
-              +', expected '+IntToStr(AF_INET)+'!');
+        raise EIPAddrTyp.Create(Format(res_IPAddrTypeError, [h_AddrType, AF_INET]));
       FIP:= 0;
       if (h_Length<>4) then
-        raise EIPNoIPv4.Create('This is not an IPv4 address!');
+        raise EIPNoIPv4.Create(res_IPNoIPv4Error);
       Move(h_Addr_list^^,FIP,h_Length);
       FName:= Name;
       FResolved:= true;
@@ -211,14 +215,17 @@ end;
 
 end.
 {
-        $Log$
-        Revision 1.3  2000/07/24 08:15:12  hd
-        - Resolve, AutoResolve
+  $Log$
+  Revision 1.4  2000/07/24 17:19:00  mk
+  - Updated to use resourcestrings instead of hard coded strings
 
-        Revision 1.2  2000/07/23 22:00:57  mk
-        - modified variable names THostEnt to work as well under Win32
+  Revision 1.3  2000/07/24 08:15:12  hd
+  - Resolve, AutoResolve
 
-        Revision 1.1  2000/07/23 17:09:32  hd
-        - Neue Klasse: TIP
+  Revision 1.2  2000/07/23 22:00:57  mk
+  - modified variable names THostEnt to work as well under Win32
+
+  Revision 1.1  2000/07/23 17:09:32  hd
+  - Neue Klasse: TIP
 
 }
