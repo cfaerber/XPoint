@@ -467,7 +467,7 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-        while (p<length(s)) and (s[p+1]=' ') do inc(p);
+       { while (p<length(s)) and (s[p+1]=' ') do inc(p); } { Leerzeichen nicht dazu zaehlen }
         end;
       GetQCpos:=p;
     end;
@@ -1031,6 +1031,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/30 05:48:48  jg
+  - Bugfix Leerzeichen NACH dem Quotezeichen bleiben erhalten
+
   Revision 1.13  2000/04/29 14:01:31  jg
   - Zconnect-Prioritaet erscheint jetzt im Lister-Header
 
