@@ -167,7 +167,7 @@ Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Paritaet setzen  }
 Procedure TruncStr(var s:string; n:integer);    { String kuerzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
-procedure UkonvStr(var s:string;len:integer);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
+procedure UkonvStr(var s:string;len:integer);     { Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
@@ -1417,6 +1417,10 @@ end;
 
 {
   $Log$
+  Revision 1.105  2002/01/28 20:32:24  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.104  2001/10/26 11:20:38  ma
   - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
     with Unix)

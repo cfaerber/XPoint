@@ -139,8 +139,8 @@ begin
     readcolors;
     SetColors;
     showscreen(true);
-    ExErase('NETCALL.ALL');
-    ExErase('NETCALL.END');
+    DeleteFile('NETCALL.ALL');
+    DeleteFile('NETCALL.END');
     DelTmpfiles('*.$$$');
 
     // !!if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
@@ -236,6 +236,10 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/01/28 20:32:24  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.12  2002/01/13 15:07:22  mk
   - Big 3.40 Update Part I
 

@@ -55,12 +55,12 @@ end;
 
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 var s       : string;
-    p,p2,p3 : byte;
+    p,p2,p3 : Integer;
 label again;
 begin
   n:=0;
 again:
-  s:=menu[nr]^;
+  s:=menu[nr];
   repeat
     p:=cPos(',',s);
     if p>0 then begin
@@ -255,7 +255,7 @@ begin
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
     end;
-    EditFile(s,false,false,0,false);
+    EditFile(s,false,false,false,0,false);
   end;
 end;
 
@@ -624,6 +624,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2002/01/28 20:32:24  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.38  2002/01/13 15:07:26  mk
   - Big 3.40 Update Part I
 

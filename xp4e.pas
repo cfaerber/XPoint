@@ -1739,7 +1739,7 @@ begin
             d:=longdat(readdate);
             if (Aktdispmode>=10) and not empty
               then getdate:=true else getdate:=false;
-            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,brk);   { 'Lesen ab Datum:' }
+            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,getdate,brk);   { 'Lesen ab Datum:' }
             if not brk then begin
               if getdate then d:=longdat(dbreadint(mbase,'empfdatum'));
               readdate:=ixdat(d);
@@ -2494,6 +2494,10 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/01/28 20:32:25  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.87  2002/01/22 19:15:29  mk
   - after 3.40 merge fixes
 

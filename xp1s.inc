@@ -458,7 +458,7 @@ end;
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurÅckwandeln                 }
 
-procedure editfile(name:pathstr; nachricht,reedit,senden:boolean;
+procedure editfile(name: string; nachricht,reedit,senden:boolean;
                    keeplines:byte;ed_ukonv:boolean);
 var
     bak : string;
@@ -525,6 +525,10 @@ begin
     end;
 {
   $Log$
+  Revision 1.74  2002/01/28 20:32:25  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.73  2002/01/22 19:15:29  mk
   - after 3.40 merge fixes
 

@@ -124,7 +124,7 @@ type arcbuf = record
               end;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = '*';  { Flag fr erste Suche seit Programmstart }
+      suchopt : string = '*';  { Flag fr erste Suche seit Programmstart }
 
     history : array[0..histmax] of String[Suchlen]=
      ('','','','','','','','','','','','','','','');
@@ -248,6 +248,7 @@ type  suchrec    = record
                    end;
 
 const srec       : ^suchrec = nil;
+      opthist : array[0..opthmax] of String[8]=('','','','','');
       history0   : string='';
       history1   : string='';
       history2   : string='';
@@ -882,10 +883,10 @@ restart:
     add:=iif(ntBrettEmpfUsed,1,0);
     dialog(53,12+add,getreps2(441,1,anztxt),x,y);
     i:=4;
-    while (i>0) and (ustr(typ)<>ustr(typa[i])) do dec(i);
+    while (i>0) and (UpperCase(typ)<>UpperCase(typa[i])) do dec(i);
     typ:=typa[i];
     i:=5;
-    while (i>0) and (ustr(status)<>ustr(stata[i])) do dec(i);
+    while (i>0) and (UpperCase(status)<>UpperCase(stata[i])) do dec(i);
     status:=stata[i];
     maddstring(3,2,getres2(441,6),user,30,SuchLen,'');  mhnr(630);   { 'Absender  ' }
     maddstring(3,3,getres2(441,7),betr,30,SuchLen,'');    { 'Betreff   ' }
@@ -964,17 +965,17 @@ restart:
       end;
 
     sst:=suchstring;
-    igcase:=multipos('iu',lstr(suchopt));
-    umlaut:=multipos('„”u',lstr(suchopt)); {JG: 15.02.00 Umlautschalter}
+    igcase:=multipos('iu', LowerCase(suchopt));
+    umlaut:=multipos('„”u', LowerCase(suchopt)); { Umlautschalter}
     if umlaut and not igcase then 
     begin
       suchopt:=suchopt+'i';
       igcase:=true;
       end;
-    check4date:=cpos('l',lstr(suchopt))>0;  { Suchen ab aktuellem Lesedatum }
-    HoldMarked:=cpos('m',lstr(suchopt))>0;  { Alte Markierungen beibehalten } 
+    check4date:=cpos('l', LowerCase(suchopt))>0;  { Suchen ab aktuellem Lesedatum }
+    HoldMarked:=cpos('m', LowerCase(suchopt))>0;  { Alte Markierungen beibehalten } 
 
-    i:=cpos('s',lstr(suchopt));             { Such-History loeschen }
+    i:=cpos('s', LowerCase(suchopt));             { Such-History loeschen }
     if i>0  then                   
     begin 
       delete(suchopt,i,1); 
@@ -984,7 +985,7 @@ restart:
       goto restart;
       end;
 
-    i:=cpos('k',lstr(suchopt));             { Such-History loeschen }
+    i:=cpos('k', LowerCase(suchopt));             { Such-History loeschen }
     if i>0  then                   
     begin
       delete(suchopt,i,1); 
@@ -998,34 +999,34 @@ restart:
       end; 
 
     headersuche:=0;                                     { Volltextsuche }
-    if cpos('h',lstr(Suchopt))>0 then headersuche:=1;   { Headersuche   }       
-    if cpos('g',lstr(suchopt))>0 then headersuche:=2;   { Volltext+Headersuche } 
+    if cpos('h', LowerCase(Suchopt))>0 then headersuche:=1;   { Headersuche   }
+    if cpos('g', LowerCase(suchopt))>0 then headersuche:=2;   { Volltext+Headersuche } 
 
     bereich:=0;
     for i:=1 to 4 do
-      if ustr(bretter)=ustr(bera[i]) then bereich:=i;
+      if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i;
     statb:=0;
     for i:=1 to 5 do
-      if ustr(status)=ustr(stata[i]) then statb:=i;
+      if UpperCase(status)=UpperCase(stata[i]) then statb:=i;
     me:=true;
     attrtxt(col.coldialog);
 
     if spez then with srec^ do begin
       sst:=txt;
       user:=userform(user);
-      if umlaut then begin                              { JG: 15.02.00 Umlaute konvertieren }
-        UkonvStr(betr,high(betr)); UkonvStr(user,high(user));
-       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,high(fidoempf));
-        end;                                            { /JG }
+      if umlaut then begin                              { Umlaute konvertieren }
+        UkonvStr(betr, Length(betr)); UkonvStr(user, Length(user));
+       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,Length(fidoempf));
+        end;
       if igcase then begin
         UpString(betr); UpString(user); {UpString(txt);} UpString(fidoempf);
         end;
       scantilde(betr,nbetr); scantilde(user,nuser);
       scantilde(fidoempf,nfidoempf);
-      if ustr(typ)=ustr(typa[1]) then typc:='T'
-      else if ustr(typ)=ustr(typa[2]) then typc:='B'
-      else if ustr(typ)=ustr(typa[3]) then typc:='F'
-      else if ustr(typ)=ustr(typa[4]) then typc:='M'
+      if UpperCase(typ)=UpperCase(typa[1]) then typc:='T'
+      else if UpperCase(typ)=UpperCase(typa[2]) then typc:='B'
+      else if UpperCase(typ)=UpperCase(typa[3]) then typc:='F'
+      else if UpperCase(typ)=UpperCase(typa[4]) then typc:='M'
       else typc:=' ';
       _vondat:=ixdat(copy(vondat,7,2)+copy(vondat,4,2)+copy(vondat,1,2)+'0000');
       _bisdat:=ixdat(copy(bisdat,7,2)+copy(bisdat,4,2)+copy(bisdat,1,2)+'2359');
@@ -1034,7 +1035,7 @@ restart:
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00}
+      if umlaut then UkonvStr(sst, Length(sst));                        { 15.02.00}
       if igcase then UpString(sst);
     {  end;}
 
@@ -1084,21 +1085,17 @@ restart:
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
       if (aktdispmode<>11) and not holdmarked then markanz:=0;
       n:=0; nf:=0;
-      new(hdp);
+      hdp := THeader.Create;
       attrtxt(col.coldiahigh);
-      psize:=min(maxavail-10000,60000);
+      psize:=65536;
       getmem(p,psize);
       brk:=false;
 
       if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
         markanzback:=0; 
-        if maxavail>maxmark * sizeof(markrec) then           { Wenn genug Speicher da ist }
-        begin                                                { Markierte Nachrichten merken }
-          getmem(markedback,maxmark * sizeof(markrec));      
-          for i:=0 to markanz do markedback^[i]:=marked^[i];
-          markanzback:=markanz;
-          end;
-
+        getmem(markedback,maxmark * sizeof(markrec));
+        for i:=0 to markanz do markedback^[i]:=marked^[i];
+        markanzback:=markanz;
         i:=0;
         while i<markanz do begin
           dbGo(mbase,marked^[i].recno);
@@ -1173,7 +1170,7 @@ restart:
 
       freemem(p,psize);
       CloseBox;
-      dispose(hdp);
+      hdp.Free;
       end;
 
 {--Suche beendet--}
@@ -1218,7 +1215,7 @@ begin
   dbReadN(mbase,mb_betreff,betr);
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  UkonvStr(betr,high(betr));
+  UkonvStr(betr, Length(betr));
   dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
@@ -1227,10 +1224,10 @@ begin
     dbReadN(mbase,mb_betreff,betr2);
     ReCount(betr2);
     betr2:=trim(betr2);
-    UkonvStr(betr2,high(betr2));
+    UkonvStr(betr2, Length(betr2));
  (*  ll:=min(length(betr),length(betr2));
-    if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then *)
-   if ustr(betr)=ustr(betr2) then 
+    if (ll>0) and (UpperCase(left(betr,ll))=UpperCase(left(betr2,ll))) then *)
+   if UpperCase(betr)=UpperCase(betr2) then 
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
@@ -1645,10 +1642,10 @@ begin
 end;
 
 procedure ExportUB(user:boolean);
-var fname   : pathstr;
+var fname   : String;
     t       : text;
     d       : DB;
-    x,y,xx  : byte;
+    x,y,xx  : Integer;
     cnt,n   : longint;
     exkom   : boolean;
     brk     : boolean;
@@ -1766,7 +1763,7 @@ begin
           ab:=dbreadint(ubase,'adrbuch');
           sa:=dbreadstr(ubase,'pollbox');
           if (dbReadInt(ubase,'userflags') and 4=0) AND       { keine Verteiler }
-           (left(s,4)<>#0+'$/T') AND                          { keine Trennzeile }
+           (LeftStr(s,4)<>#0+'$/T') AND                          { keine Trennzeile }
           not (onlyadress and (ab=0))                         { Evtl. nur Adressbuch-User }
           then begin
             if sortadress and (ab<>ab1) then begin
@@ -1784,7 +1781,7 @@ begin
           if sort=2 then ab:=dbreadint(bbase,'gruppe')
           else ab:=-1;
           s:=dbReadStr(bbase,'brettname');
-          if left(s,3)='$/T'           { keine Trennzeile }
+          if LeftStr(s,3)='$/T'           { keine Trennzeile }
           then begin
            if sort=1 then writeln(t,dup(40,s[4]));
            end
@@ -2450,7 +2447,7 @@ begin
       lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
       repeat
-        if listfile(fn,fn,true,false,0) = -4 then ende:=false
+        if listfile(fn,fn,true,false,false, 0) = -4 then ende:=false
         else ende:=true;                                { und File einfach nur anzeigen }
       until ende;
       listmakros:=lm;
@@ -2602,7 +2599,7 @@ end;
 
 Procedure Brettmarksuche;
 const suchst  : string[40] = '';
-var   x,y     : byte;
+var   x,y     : Integer;
       brk     : boolean;
       nn,n,nf : longint;
       bname   : string[BrettLen];
@@ -2621,35 +2618,40 @@ begin
   nn:=dbRecCount(bbase); n:=0; nf:=0;
   dbGoTop(bbase);
   attrtxt(col.coldiahigh);
-  while not dbEOF(bbase) and not brk do begin
+  while not dbEOF(bbase) and not brk do
+  begin
     inc(n);
     gotoxy(x+13,y+4); write(n*100 div nn:3);
     gotoxy(x+35,y+4); write(nf:4);
     dbReadN(bbase,bb_brettname,bname);
     j:=0;
     repeat
-      suchst:=left(copy(sst,seekstart[j],seeklen[j]),40);
-      found:=((igcase and (pos(suchst,ustr(bname))>0)) or
+      suchst:= LeftStr(copy(sst,seekstart[j],seeklen[j]),40);
+      found:=((igcase and (pos(suchst,UpperCase(bname))>0)) or
        (not igcase and (pos(suchst,bname)>0)));
       found_not:=found and seeknot[j];
       if suchand and not found and seeknot[j] then found:=true;
       inc(j);
     until (j=suchanz) or (suchand xor found) or found_not;
     if found_not then found:=false;
-    if found then begin
+    if found then
+    begin
       UBAddmark(dbRecno(bbase));
       dbreadN(bbase,bb_index,m2);
-      if m2<m1 then begin
+      if m2<m1 then
+      begin
         m1:=m2;
         spos:=dbRecno(bbase);
-        end;
-      inc(nf);
       end;
+      inc(nf);
+    end;
     dbNext(bbase);
     if n mod 16=0 then testbrk(brk);
-    end;
-  if m1=maxlongint then dbGo(bbase,rec)
-    else dbGo(bbase,spos);
+  end;
+  if m1=maxlongint then
+    dbGo(bbase,rec)
+  else
+    dbGo(bbase,spos);
   aufbau:=true;
   closebox;
   if not brk and (nf=0) then fehler(getres2(467,6));  { 'keine passenden User gefunden' }
@@ -2679,51 +2681,49 @@ begin
   diabox(52,7,getres2(467,1),x,y);   { 'User-(markier)-Suche' }
   brk:=false;
   sname:=#255;
+  attrtxt(col.coldialog);
+  wrt(x+3,y+4,getres2(467,3));   { 'Suchen...     %        gefunden:' }
+  nn:=dbRecCount(ubase); n:=0; nf:=0;
+  mi:=dbGetIndex(ubase); dbSetIndex(ubase,0);
+  dbGoTop(ubase);
+  attrtxt(col.coldiahigh);
+  while not dbEOF(ubase) and not brk do
   begin
-    attrtxt(col.coldialog);
-    wrt(x+3,y+4,getres2(467,3));   { 'Suchen...     %        gefunden:' }
-    nn:=dbRecCount(ubase); n:=0; nf:=0;
-    mi:=dbGetIndex(ubase); dbSetIndex(ubase,0);
-    dbGoTop(ubase);
-    attrtxt(col.coldiahigh);
-    while not dbEOF(ubase) and not brk do
+    inc(n);
+    Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
+    Wrt(x+35, y+4, Format('%4d', [nf]));
+    UName := dbReadNStr(ubase,ub_username);
+    j:=0;
+    repeat
+      suchst:= LeftStr(copy(sst,seekstart[j],seeklen[j]),40);
+      found:=((igcase and (pos(suchst,UpperCase(uname))>0)) or
+       (not igcase and (pos(suchst,uname)>0)));
+      found_not:=found and seeknot[j];
+      if suchand and not found and seeknot[j] then found:=true;
+      inc(j);
+    until (j=suchanz) or (suchand xor found) or found_not;
+    if found_not then found:=false;
+    if found then
     begin
-      inc(n);
-      Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
-      Wrt(x+35, y+4, Format('%4d', [nf]));
-      UName := dbReadNStr(ubase,ub_username);
-      j:=0;
-      repeat
-        suchst:=left(copy(sst,seekstart[j],seeklen[j]),40);
-        found:=((igcase and (pos(suchst,ustr(uname))>0)) or
-         (not igcase and (pos(suchst,uname)>0)));
-        found_not:=found and seeknot[j];
-        if suchand and not found and seeknot[j] then found:=true;
-        inc(j);
-      until (j=suchanz) or (suchand xor found) or found_not;
-      if found_not then found:=false;
-      if found then begin
+      UBAddmark(dbRecno(ubase));
+      if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
+        UserMarkSuche:=true;
+      if uname<sname then
       begin
-        UBAddmark(dbRecno(ubase));
-        if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
-          UserMarkSuche:=true;
-        if uname<sname then 
-        begin
-          sname:=uname;
-          spos:=dbRecno(ubase);
-        end;
-        inc(nf);
+        sname:=uname;
+        spos:=dbRecno(ubase);
       end;
-      dbNext(ubase);
-      if n mod 16=0 then testbrk(brk);
+      inc(nf);
     end;
-    dbSetIndex(ubase,mi);
-    if sname<>#255 then  // irgnore warning, sname is correctly initialized
-      dbGo(ubase,spos)
-    else 
-      dbGo(ubase,rec);
-    aufbau:=true;
-    end;
+    dbNext(ubase);
+    if n mod 16=0 then testbrk(brk);
+  end;
+  dbSetIndex(ubase,mi);
+  if sname<>#255 then  // irgnore warning, sname is correctly initialized
+    dbGo(ubase,spos)
+  else
+    dbGo(ubase,rec);
+  aufbau:=true;
   closebox;
   if not brk and (nf=0) then fehler(getres2(467,4));  { 'keine passenden User gefunden' }
   freeres;
@@ -2970,6 +2970,10 @@ end;
 
 {
   $Log$
+  Revision 1.130  2002/01/28 20:32:25  mk
+  - completed 3.40 merge, source is compilable for dos and win
+    linux is still untested
+
   Revision 1.129  2002/01/22 19:15:29  mk
   - after 3.40 merge fixes
 
