@@ -293,7 +293,7 @@ begin
       dialog(45,8,'',x,y);                     { Pollbox einlesen }
       maddtext(3,2,getres2(2421,1),0);         { 'Pufferdatei' }
       maddtext(4+length(getres2(2421,1)),2,fitpath(fn,28),col.coldiahigh);    { 'Ursprungsbox ' }
-      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxRealLen,'>'); mhnr(760);
+      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxNameLen,'>'); mhnr(760);
       mappcustomsel(BoxSelproc,false);
       msetvfunc(imptestpollbox); impnt:=nt;
       red:=false; eb:=false;
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/06 00:41:26  mk
+  - fixed Bug #116657: crash with servername >15 chars
+
   Revision 1.25  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

@@ -1068,7 +1068,7 @@ var d         : DB;
     maddstring(3,4,getres2(905,4),lang,35,79,iifs(ntZonly and not smallnames,'>',''));   { 'Brett/User ' }
     mappcustomsel(Auto_Empfsel,false);
     mset3proc(ps_setempf);
-    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxRealLen,'>');   { 'Server     ' }
+    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxNameLen,'>');   { 'Server     ' }
     mappcustomsel(BoxSelProc,false);
     freeres;
     readmask(brk);
@@ -1827,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.42  2000/11/06 00:41:26  mk
+  - fixed Bug #116657: crash with servername >15 chars
+
   Revision 1.41  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

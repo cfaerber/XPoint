@@ -314,7 +314,7 @@ begin
   if LeftStr(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
-    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
+    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(423);
     pb_field:=fieldpos;                     { 'Server   ' }
     mappcustomsel(BoxSelProc,false);
     mset0proc(pb_wrntyp);
@@ -461,7 +461,7 @@ begin
   maddstring(3,2,getres2(2703,1),name,40,40,without(allchar,'@')); mhnr(610);
   msetvfunc(test_verteiler);                     { 'Name     ' }
   maddstring(3,4,getres2(2703,2),komm,30,30,''); mhnr(422);  { 'Kommentar' }
-  maddstring(3,6,getres2(2703,3),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(612);
+  maddstring(3,6,getres2(2703,3),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(612);
   mappcustomsel(BoxSelProc,false);               { 'Server   ' }
   msetvfunc(vtestpollbox);
   maddint(35,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);       { 'Adressbuchgruppe' }
@@ -762,7 +762,7 @@ begin
     brtyp := ' ';
   if not trenn then begin
     if askloc or ParXX then begin
-      maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxRealLen,'>'); mhnr(402);
+      maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxNameLen,'>'); mhnr(402);
       mappcustomsel(BoxSelProc,false);       { 'Server    ' }
       msetvfunc(testpollbox);
       mset0proc(pb_wrntyp);
@@ -1180,7 +1180,7 @@ else begin
           mhnr(iif(user,422,401));
         end;
     2 : begin
-          maddstring(3,2,getres2(2715,6),s,BoxRealLen,BoxRealLen,'>');  { 'Server   ' }
+          maddstring(3,2,getres2(2715,6),s,BoxRealLen,BoxNameLen,'>');  { 'Server   ' }
           mappcustomsel(BoxSelProc,false);
           ntyp_y:=0;
           brettfld:=-1; userfld:=-1; adrfieldpos:=-1;
@@ -1549,7 +1549,7 @@ begin
   empfx:=x+2; empfy:=y+1+pba;
   rdforcebox:=false;
   if pb then begin
-    maddstring(3,2,getres2(2718,1),box,BoxRealLen,BoxRealLen,'>');
+    maddstring(3,2,getres2(2718,1),box,BoxRealLen,BoxNameLen,'>');
     mappcustomsel(BoxSelproc,false);     { 'Server    ' }
     mset0proc(dnotepollbox);
     msetvfunc(dtestpollbox);
@@ -2326,10 +2326,10 @@ begin
   oldbox:=''; newbox:='';
   user:=true; bretter:=true; localuser:=true;
   autov:=true; pseudos:=true;
-  maddstring(3,2,getres2(2734,2),oldbox,BoxRealLen,BoxRealLen,'>'); mhnr(780);
+  maddstring(3,2,getres2(2734,2),oldbox,BoxRealLen,BoxNameLen,'>'); mhnr(780);
   mappcustomsel(BoxSelProc,false);                { 'alte Serverbox ' }
   msetvfunc(notempty);
-  maddstring(3,3,getres2(2734,3),newbox,BoxRealLen,BoxRealLen,'>');
+  maddstring(3,3,getres2(2734,3),newbox,BoxRealLen,BoxNameLen,'>');
   mappcustomsel(BoxSelProc,false);                { 'neue Serverbox ' }
   msetvfunc(vtestpollbox);
   maddbool(3,5,getres2(2734,4),bretter);          { 'Bretter bearbeiten' }
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/11/06 00:41:25  mk
+  - fixed Bug #116657: crash with servername >15 chars
+
   Revision 1.46  2000/10/19 20:52:22  mk
   - removed Unit dosx.pas
 
