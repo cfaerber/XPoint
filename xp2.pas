@@ -400,9 +400,7 @@ begin
   _fehler_:=getres2(11,1);
   _hinweis_:=getres2(11,2);
   _daylen_:=ival(getres2(11,3));
-  s:=getres2(11,4);
-  getmem(_days_,length(s)+1);
-  _days_^:=s;
+  _days_:=getres2(11,4);
   statbrett:=intbrett+getres2(11,5);
   unvbrett:=intbrett+getres2(11,6);
   netbrett:=intbrett+getres2(11,7);
@@ -451,7 +449,6 @@ end;
 
 procedure FreeResdata;
 begin
-  freemem(_days_,length(_days_^)+1);
 end;
 
 
@@ -1077,6 +1074,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/07/06 09:23:08  mk
+  - _days_ in String umgewandelt
+
   Revision 1.52  2000/07/06 08:58:44  hd
   - AnsiString
 

@@ -1533,7 +1533,7 @@ begin
   schalt(j);
   d:=fdat(dat);
   n:=_daylen_;
-  zdow:=trim(copy(_days_^,dow(copy(d,1,6)+strs(j))*n+1-n,n));
+  zdow:=trim(copy(_days_,dow(copy(d,1,6)+strs(j))*n+1-n,n));
   { 'Montag    Dienstag  Mittwoch  DonnerstagFreitag   Samstag   Sonntag' }
 end;
 
@@ -2023,6 +2023,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/07/06 09:23:07  mk
+  - _days_ in String umgewandelt
+
   Revision 1.56  2000/07/06 08:58:44  hd
   - AnsiString
 

@@ -519,7 +519,7 @@ begin
     if fieldpos>7 then
       rfehler1(1015,getres2(1022,8)+' '+strs(fieldpos-7))   { 'Feiertag' }
     else
-      rfehler1(1015,trim(copy(_days_^,(fieldpos-1)*_daylen_+1,_daylen_)));
+      rfehler1(1015,trim(copy(_days_,(fieldpos-1)*_daylen_+1,_daylen_)));
     CheckDay:=false; { '%s ist bereits durch eine andere Tarifgruppe belegt.' }
     end
   else
@@ -1243,7 +1243,7 @@ var brk      : boolean;
     dialog(ival(getres2(1022,9)),9,getreps2(1022,7,strs(nr)),x,y);
     with tarif^[nr] do begin      { 'GÅltigkeitsbereich der Tarifgruppe %s' }
       for i:=1 to 7 do begin
-        maddbool(3,i+1,copy(_days_^,(i-1)*_daylen_+1,_daylen_),wochentag[i]);
+        maddbool(3,i+1,copy(_days_,(i-1)*_daylen_+1,_daylen_),wochentag[i]);
         mset1func(CheckDay);
         mhnr(809);
         end;
@@ -2035,6 +2035,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/06 09:23:08  mk
+  - _days_ in String umgewandelt
+
   Revision 1.15  2000/07/05 17:58:26  hd
   - Ansistring
 

@@ -91,7 +91,7 @@ const
        PMC_ID      = '*crypted*';
        XPMC_ID     = '*Xcrypted*';
        TO_ID       = '/'#0#0#8#8'TO:';
-       TO_len	   = 8;			{ lenght() kann schiefgehen bei AnsiStrings! }
+       TO_len      = 8;                 { lenght() kann schiefgehen bei AnsiStrings! }
        vert_char   = #4;             { Verteiler-Kennung }
        MausinfoBrett= '$/¯Mausinfo';
        uuserver    = 'UUCP-Fileserver';
@@ -420,7 +420,7 @@ type   textp  = ^text;
        refnode = record
                    next  : refnodep;
 {$ifdef hasHugeString}
-		   ref   : string;
+                   ref   : string;
 {$else}
                    ref   : string[midlen];
 {$endif}
@@ -429,7 +429,7 @@ type   textp  = ^text;
        empfnode= record
                    next   : empfnodep;
 {$ifdef hasHugeString}
-		   empf   : string;
+                   empf   : string;
 {$else}
                    empf   : AdrStr;
 {$endif}
@@ -1249,7 +1249,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        XP_ID_AMs    : boolean;
        UserSlash    : boolean;
 {$ifdef hasHugeString}
-       BAKext	    : string;
+       BAKext       : string;
 {$else}
        BAKext       : string[3];
 {$endif}
@@ -1446,7 +1446,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettweiter  : boolean;
        userweiter   : boolean;
 {$ifdef hasHugeString}
-       qchar	    : string;        { zuletzt verwendeter Quote-String }
+       qchar        : string;        { zuletzt verwendeter Quote-String }
 {$else}
        qchar        : string[20];    { zuletzt verwendeter Quote-String }
 {$endif}
@@ -1541,33 +1541,18 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        komanz      : word;           { Anzahl Eintr„ge }
        maxebene    : shortint;
        komwidth    : shortint;       { Anzeigeabstand zwischen Ebenen }
-{$ifdef hasHugeString}
        kombrett    : string;      { Brettcode der Ausgangsnachricht }
 
        languageopt : boolean;        { /Config/Optionen/Sprachen }
        _fehler_    : string;
        _hinweis_   : string;
-       _days_      : ^string;        { 'Monatag Dienstag ... ' }
+       _days_      : string;        { 'Monatag Dienstag ... ' }
        _daylen_    : word;
        StatBrett,                    { /¯Statistik  }
        UnvBrett,                     { /¯Unversandt }
        NetBrett    : string;     { /¯Netzanruf  }
        _wotag_     : string;     { 'MoDiMiDoFrSaSo' }
        _jn_        : string;      { 'JN' }
-{$else}
-       kombrett    : string[5];      { Brettcode der Ausgangsnachricht }
-
-       languageopt : boolean;        { /Config/Optionen/Sprachen }
-       _fehler_    : string[12];
-       _hinweis_   : string[12];
-       _days_      : ^string;        { 'Monatag Dienstag ... ' }
-       _daylen_    : word;
-       StatBrett,                    { /¯Statistik  }
-       UnvBrett,                     { /¯Unversandt }
-       NetBrett    : string[15];     { /¯Netzanruf  }
-       _wotag_     : string[14];     { 'MoDiMiDoFrSaSo' }
-       _jn_        : string[2];      { 'JN' }
-{$endif}
 
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
@@ -1585,6 +1570,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.66  2000/07/06 09:23:07  mk
+  - _days_ in String umgewandelt
+
   Revision 1.65  2000/07/06 08:58:43  hd
   - AnsiString
 
