@@ -10493,24 +10493,24 @@ or type in a new filename.
 ^^11206
 @
 11401
-<<Messages / All / Hold
+<<Message / All / Hold
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions, or even marked@50
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode, or even on marked@50
 messages, eg. ones just located by a search.
-Puts the messages to "permanent hold" (see  also
-[message reading window]) so that they won't be removed@30
-by [Re-Org] when the normal time expires.@10701
+Places the messages on "permanent hold" (see also
+[Message reading window]) so that they can never be@30
+removed by a [Re-Org].@10701
 
 @
 11402
 <<Message / All / Delete
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions, or even marked@50
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode, or even on marked@50
 messages, eg. ones just located by a search.
-Puts the messages to "delete" (see  also
-[message reading window]) so that they will be@30
+Marks the messages for deletion (see also
+[Message reading window]) so that they will be@30
 removed by the next [Re-Org].@10701
 
 However, if the list to be deleted should contain
@@ -10519,51 +10519,52 @@ CrossPoint will ask if you are sure you want to
 delete them.
 @
 11403
-<<Messages / All / marked
+<<Message / All / Mark
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-Sets them all to "marked".
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. Needless to say,@50
+this option marks all messages.
 @
 11404
-<<Messages / All / normal
+<<Message / All / Normal
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-Sets them all to unmarked and not on hold or delete.
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. This option unmarks@50
+all messages, takes messages off hold and any 
+messages marked for deletion are unmarked.
 @
 11405
 <<Message / All / Read
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-Sets them all as having been read.
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. Marks all messages@50
+as having been read.
 @
 11406
 <<Message / All / Unread
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-Sets them all as having been unread.
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. Marks all messages@50
+as unread.
 @
 11407
 <<Message / All / Kill
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-It actually removes them from the message base, as
-opposed to setting them to delete for the next [Re-Org].@10701
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. Messages are@50
+actually <<removed>> from the message base as opposed to
+marking them for deletion at the next [Re-Org].@10701
 
-Messages in the display on hold or "outgoing" (shown
-by a "!") are not "killed".
+Messages in the display which are on hold or which
+are "unsent" (shown by a "!") will not be "killed".
 @
 11408
 <<Message / All / Print
 
-This operates on all messages <<being displayed>>, i.e.
-subject to your ["View"] conditions.@50
-Messages are printed. The printer settings under
-/Config/Printer are used.
+This works on all messages being displayed, i.e.
+dependant upon your ["View"] mode. All messages are@50
+printed. The printer settings under /Config/Printer
+are used.
 @
 11501
 <<Netcall / Single
