@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 {----------------------------- MAIN --------------------------}
@@ -288,9 +289,10 @@ var ax,p,myp  : integer;
   var p1     : selnodep;
       lines  : integer;
       width  : byte;
+      longest: byte;
       i,p,sa : integer;
       t      : taste;
-      na     : byte;
+      na,x   : byte;
       insmaus: boolean;   { Taste wurde 'inside' gedrÅckt }
 
     procedure display;
@@ -304,12 +306,14 @@ var ax,p,myp  : integer;
         for i:=1 to sll do begin
           if i=p then attrtxt(stat.col.ColSelBar);
           if p1=nil then wrt(slx+1,sly+i,sp(width+2))
-          else wrt(slx+1,sly+i,' '+forms(p1^.el^,width+1));
+          else wrt(slx+1,sly+i,' '+forms(mid(p1^.el^,x),width+1));
           normtxt;
           if p1<>nil then p1:=p1^.next;
           end;
         wrt(slx,sly+1,iifc(sa>0,#30,'≥'));
         wrt(slx,sly+sll,iifc(sa+sll<lines,#31,'≥'));
+        wrt(slx+1,sly,iifc(x>0,#17,'ƒ'));
+        wrt(slx+width+2,sly,iifc(x+width<longest,#16,'ƒ'));
         mon;
         end;
     end;
@@ -352,12 +356,13 @@ var ax,p,myp  : integer;
   begin
     brk:=false;
     with amaskp^,afld^ do begin
-      width:=4; lines:=0;       { Minimale Breite: 4 }
+      width:=4; lines:=0; x:=0; { Minimale Breite: 4 }
       p1:=selliste;
-      p:=1; sa:=0;
+      p:=1; sa:=0; longest:=0;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
+        longest:=max(longest,length(p1^.el^));
         width:=max(width,min(length(p1^.el^),70));
         if ustr(cont^)=ustr(p1^.el^) then p:=lines;
         p1:=p1^.next;
@@ -398,6 +403,8 @@ var ax,p,myp  : integer;
           maus_bearbeiten;
         if t=keyup then oben;
         if t=keydown then unten;
+        if t=keyleft then if x>1 then dec(x,10);
+        if t=keyrght then if x+width<longest then inc(x,10);
         if t=keyhome then begin
           p:=1; sa:=0;
           end;
@@ -915,28 +922,39 @@ begin   { readmask }
             cont^:=TopAllStr(ustr(cont^)); replace:=false; end
             else
                                                               { JG: Clipboard fuer Menues }
+          if t=^A then replace:=true;
 
-          if (t=^C) or (t=keycins) then string2clip(cont^);   { STRG+C / STRG+INS = kopieren }
+          if (t=^C) or (t=keycins) then string2clip(cont^);   { Ctrl-C / Ctrl-Ins = kopieren }
 
-          if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
+          if (t=^V) or ((t=keyins) and kb_shift)              { Ctrl-V / Shift-Ins }
+             or ((maskseekmenu>=yp) and (t=keySF2)) then begin
             if replace then
             begin                                             { Ersetzen }
-              s^:=clip2string(maxlen,1);
+              if (t=keySF2) then begin
+                help_page:=ShiftF2Help;
+                ShiftF2proc(s^); 
+                end
+              else s^:=clip2string(maxlen,1);
               i:=length(s^);
               p:=1; ax:=0; replace:=false;
               end
             else begin                                        { Einfuegen }
-              s^:=clip2string(maxlen-length(cont^),1);
+              if t=keySF2 then begin
+                help_page:=ShiftF2Help;
+                ShiftF2proc(s^);
+                truncstr(s^,maxlen-length(cont^));
+                end
+              else s^:=clip2string(maxlen-length(cont^),1);
               i:=length(s^);
               s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
               end;
-            p:=p+i;                                           {Cursorposition aktualisieren}
+            p:=p+i;                                           { Cursorposition aktualisieren }
             if p>=len then
             begin
               ax:=ax+p-len;
               p:=len;
               end;
-            if xtest1(s^) then cont^:=s^;
+            if xtest1(s^) then if s^<>'' then cont^:=s^;
             end;
 
         if (t=keypgup) then
@@ -1070,6 +1088,61 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.3  2001/09/16 20:38:15  my
+  JG+MY:- Neue Nachrichten-Suchfunktionen:
+
+          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier kˆnnen oft
+            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgew‰hlt
+            werden.
+
+          - Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
+            Suchbegriffe angezeigt und stehen beim n‰chsten Programmstart
+            wieder zur Verf¸gung (SEEK.TXT)
+
+          - Optionen-History: Mit <F2> werden die letzten 5 benutzten
+            Options-Kombinationen angezeigt und stehen beim n‰chsten
+            Programmstart wieder zur Verf¸gung (OPTIONS.TXT)
+
+          - Neue Such-Optionen:
+            l = sucht nur in Nachrichten, die dem aktuellen Lesemodus
+                entsprechen
+            m = h‰ngt die gefundenen Nachrichten an die Liste bereits
+                markierter Nachrichten an, statt diese vorher zu ent-
+                markieren
+            h = Volltextsuche nur im Header
+            g = Volltextsuche in Header und Text
+            s = lˆscht die Eintr‰ge in der Suchbegriff-History
+            k = kopiert den aktuellen Suchbegriff in die Suchbegriffs-
+                Bibliothek
+
+          - Spezial-Suche: Optionale ODER-Verkn¸pfung von Absender,
+            Betreff, Fido-Empf‰nger und Text. <F2>-History f¸r Feld "Text"
+            und "Optionen" eingebaut.
+
+          - Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
+            gleichem Betreff und nicht mehr die Nachrichten, bei denen im
+            Vergleichspaar der k¸rzere Betreff mit dem Anfang des l‰ngeren
+            ¸bereinstimmt (z.B. "toll" und "toller Betreff")
+
+          - Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
+
+          - Message-ID-Suche: Suchoptionen sind wieder verf¸gbar
+
+          - max. Anzahl der Teil-Suchbegriffe auf 20 erhˆht
+
+          - max. L‰nge des Suchbegriffs auf 160 Zeichen erhˆht
+
+  JG+MY:- <F2>-Auswahl unterst¸tzt jetzt Links-/Rechts-Scrolling
+          (angezeigt durch Hinweispfeile)
+
+  JG+MY:- Neue Tastenfunktion in Texteingabe-Feldern: <Ctrl-A> markiert
+          das gesamte Eingabefeld
+
+  JG+MY:- Select-Routine (mappsel) st¸rzt nicht mehr ab, wenn String
+          grˆﬂer als Bildschirmbreite ist (akut in Suchbegriff-History)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.13.2.2  2001/08/11 22:17:51  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
