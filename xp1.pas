@@ -1925,9 +1925,19 @@ begin
 end;
 
 procedure set_checkdate;
+{$IFDEF FPC }
+var
+  Handle: Integer;
+begin
+  Handle := FileOpen(NewDateFile, fmOpenReadWrite);
+  FileSetDate(Handle, DateTimeToFileDate(Now));
+  FileClose(Handle);
+end;
+{$ELSE }
 begin
   FileSetDate(NewDateFile, DateTimeToFileDate(Now));
 end;
+{$ENDIF }
 
 
 procedure XP_testbrk(var brk:boolean);
@@ -2104,6 +2114,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.14  2003/01/08 00:11:18  mk
+  - fixed last checkin
+
   Revision 1.147.2.13  2003/01/07 11:18:48  mk
   - use cross platform FileSetDate
 
