@@ -2093,7 +2093,8 @@ fromstart:
         inc(msgCPpos);
       if msgCPpos<msgCPanz then begin
         repeat
-          if ccm^[msgCPpos].ccpm then begin
+          if ccm^[msgCPpos].ccpm then 
+          begin
             dbSeek(ubase,uiName,ustr(cc^[msgCPpos]));
             if dbFound then
             begin
@@ -2101,7 +2102,7 @@ fromstart:
               if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
             end;
-            end
+          end
           else begin
             dbSeek(bbase,biBrett,'A'+ustr(cc^[msgCPpos]));
             if dbFound then begin
@@ -2377,6 +2378,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.37  2001/08/23 11:04:04  mk
+  - little code optimization (const parameter, MWrt)
+
   Revision 1.39.2.36  2001/08/12 11:20:35  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

@@ -10,7 +10,7 @@
 
 { Unterroutinen fÅr XP6.PAS }
 
-
+                                                                                                 
 { Signatur-Shuffler / Signatur-Makro-Ersetzer }
 
 procedure MakeSignature(var signat, sigfile:pathstr; var sigtemp:boolean);
@@ -1151,6 +1151,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.18.2.9  2001/08/23 11:04:05  mk
+  - little code optimization (const parameter, MWrt)
+
   Revision 1.18.2.8  2001/08/11 22:43:55  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 

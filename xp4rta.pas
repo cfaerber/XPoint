@@ -492,8 +492,7 @@ var RTAEmpfList :RTAEmpfaengerP;
         {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
         removeFromList (list, vor, lauf)
       else begin
-        if eigeneAdresse (eigeneAdressenbaum, lauf^.empf) then lauf^.RTAEmpf := false
-        else lauf^.RTAEmpf := true;
+        lauf^.RTAEmpf := not eigeneAdresse (eigeneAdressenbaum, lauf^.empf);
         lauf^.userUnbekannt := userUnbekannt (lauf^.empf);
         inc (anzahl);
         vor := lauf;
@@ -636,7 +635,7 @@ var RTAEmpfList :RTAEmpfaengerP;
 
     { Allen neuen Usern wird der gleiche Server zugewiesen }
 
-    procedure pollBoxZuweisen (box :string);
+    procedure pollBoxZuweisen (const box :string);
     var lauf :RTAEmpfaengerP;
     begin
       lauf := unbekannteUser;
@@ -673,9 +672,7 @@ var RTAEmpfList :RTAEmpfaengerP;
         s := reps (getreps2 (2740, 0, box), formI (anz, 0));
         breite := length (s) + 4;
         msgBox (breite, 5, '', x, y);
-        moff;
-        wrt (x + 2, y + 1, s); { 'Allen unbekannten Usern (%s) als Serverbox "%s" zuweisen' }
-        mon;
+        Mwrt (x + 2, y + 1, s); { 'Allen unbekannten Usern (%s) als Serverbox "%s" zuweisen' }
         auswahl := readButton (x + 2, y + 3, 2, '' + getres2 (2740,1), 1, true, z);
 {        ReadJNesc (reps (getreps (2740, formi (anz, 0)), box), true, brk);}
         closeBox;
@@ -1060,6 +1057,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.8  2001/08/23 11:04:04  mk
+  - little code optimization (const parameter, MWrt)
+
   Revision 1.1.2.7  2001/08/12 11:20:34  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
