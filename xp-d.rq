@@ -62,7 +62,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 39  Tarifzonen,271^Zonen,272^Tarife,273^Feiertage,274^Sonstiges
 40  PGP,281Key ^anfordern,282Key ^einlesen,283Nachricht ^decodieren,284^Signatur testen,-,286^Key editieren,287^User-ID entfernen
 41  ?,291^Aktuell             F1,292^Vorheriges Thema   @F1,-,293Hilfe-^Inhalt      2*F1,294^Hilfe zur Hilfe,-,295XP-^Bedienung,296Aktuelle ^Makros     F6,-,297^Spezielle Themen..ù42,-,298^šber OpenXP/16
-42  Spezial,2a1^PGP-Verschlsselung,2a2XP und ^Mailinglisten,2a3Netztyp ^RFC/Client,2a4XP als ^Windows-Mailer
+42  Spezial,2a1MIME-Multipart-^Anh„nge,2a2^PGP-Verschlsselung,2a3XP und ^Mailinglisten,2a4Netztyp ^RFC/Client,2a5XP als ^Windows-Mailer
 # max. Mennummer = 99 (s. XPME.PAS)
 # Zusatz-Men
 100 021^Kalender

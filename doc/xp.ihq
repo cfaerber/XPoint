@@ -2731,6 +2731,10 @@ Alternativtasten:
    <<<Space> >> Markieren/Verschieben
    <<<Enter> >> Men verlassen
 
+
+Weitere Informationen siehe auch:
+[Versand/Weiterleitung von MIME-Multipart-Nachrichten]@8079
+
 @
 8078
 Der Textanhang, den Sie bearbeiten wollen, liegt in
@@ -2752,6 +2756,192 @@ Zeichen bei diesem bestimmten Zeichensatz entspricht.
 
 Vermeiden Sie daher am besten die Eingabe von
 Sonderzeichen.
+
+@
+8079
+<<Versand/Weiterleitung von MIME-Multipart-Nachrichten
+(RFC und ZConnect)
+
+Diese im April 2002 in OpenXP/16 v3.40 neu implemen-
+tierte Funktion behebt ein jahrelanges Manko von
+CrossPoint: Zwar war es seit v3.20 endlich m”glich,
+MIME-Multipart-Nachrichten komfortabel zu lesen und
+Dateianh„nge mit externen Viewern zu betrachten, das
+Erstellen eigener Nachrichten mit Datei- oder Text-
+anh„ngen nach dem MIME-Standard oder die Weiterlei-
+tung solcher Nachrichten erlaubte XP jedoch nicht.
+Genauer gesagt, es erzeugte dabei Nachrichten, die
+in vielerlei Hinsicht (MIME-Kennzeichnung, Zeichen-
+satz) ungltig und/oder falsch bzw. fr den Empf„nger
+unlesbar waren.
+
+CrossPoint kann jetzt ...
+
+- neue MIME-Multipart-Nachrichten mit Datei- und/oder
+  Textanh„ngen <<erstellen>> und vor dem Versand nach-
+  bearbeiten (N/U/E),
+
+- erhaltene MIME-Multipart-Nachrichten als Kopie
+  (N/W/K) oder Original (N/W/O) sowie mittels N/W/E
+  (EditTo) und N/W/R (Erneut) <<weiterleiten>>, und
+
+- in beiden F„llen die Reihenfolge bereits angeh„ng-
+  ter Nachrichtenteile vertauschen.
+
+Dabei werden die vielen unterschiedlichen Zeichen-
+s„tze, die im Internet Verwendung finden, korrekt
+behandelt und untersttzt. Derzeit noch nicht fr
+MIME-Multipart-Nachrichten implementiert ist das
+Weiterleiten mittels N/W/Q (QuoteTo) sowie das ndern
+des Textes einer Nachricht mittels N//T. Ebenfalls
+noch nachgerstet werden soll die M”glichkeit, ein-
+zelne Teile einer MIME-Multipart-Nachricht entfernen
+zu k”nnen, um die Nachrichten-Datenbank nicht unn”tig
+mit groáen Datei-Anh„ngen aufbl„hen zu mssen.
+
+
+Nachfolgend einige Detail- und technische Hinter-
+grundinformationen zum Versand von MIME-Multipart-
+Nachrichten mit CrossPoint:
+
+
+ş  Das <<Anh„ngen>> von Dateien oder Textteilen an eine
+   Nachricht kann auf zweierlei Wegen erfolgen: Mit
+   der Taste "<<A>>" im Sendefenster oder (und das ist
+   die sinnvollere Methode) mit der Taste <<<Alt-A> >>im
+   Editor. Alternativ steht dort - speziell fr User,
+   die XP mit der Maus bedienen - im Kontextmen, das
+   mit Rechtsklick oder <<<F10> >>aufgerufen wird, die
+   Auswahl "M<<I>>ME-Anhang" zur Verfgung.
+
+   Durch die M”glichkeit, Dateien/Texte schon w„hrend
+   des Editierens der Nachricht anh„ngen zu k”nnen,
+   sinkt die Wahrscheinlichkeit, daá man den meist im
+   Text angekndigten Anhang nach Fertigstellung der
+   Nachricht anschlieáend im Sendefenster vergiát
+   auch wirklich anzuh„ngen. ;-)
+
+   Welcher Weg auch immer gew„hlt wird - es erscheint
+   zun„chst ein Dateinamen-Eingabefeld, in dem das
+   Sende-Verzeichnis von XP voreingestellt ist. Hier
+   kann entweder direkt der Pfad-/Dateiname der anzu-
+   h„ngenden Datei eingegeben werden, oder es wird
+   mittels <<<Enter> >>das Datei-Auswahlfenster von XP
+   aufgerufen, aus dem die anzuh„ngende Datei ausge-
+   w„hlt werden kann (ggf. kann vorher ein anderer
+   Pfad eingegeben werden).
+
+   Will man statt einer Datei einen reinen Textteil
+   anh„ngen, quittiert man das Eingabefeld mit <<<Esc> >>
+   und befindet sich dann im MIME-Sendemen; dort
+   erstellt man mit "<<T>>" oder <<<Shift-T> >>(siehe Hilfe
+   zum [MIME-Sendemen]) einen neuen Textanhang.@8077
+
+
+ş  Die <<Anzahl>> der Datei- oder Textanh„nge ist prinzi-
+   piell unbegrenzt. Aber so ganz stimmt das nicht,
+   es gibt zwei Limits:
+
+   - Die absolute Anzahl ist begrenzt auf 9999 Nach-
+     richtenteile inkl. des eigentlichen Nachrichten-
+     textes. Der Grund hierfr liegt in der Benennung
+     der Tempor„rdateien, die XP fr jeden MIME-Nach-
+     richtenteil anlegt (MIMExxxx.TMP, wobei xxxx
+     eine Zahl von 0001 bis 9999 ist). In der Praxis
+     drfte das aber mehr als genug sein. :-)
+
+   - Die Tempor„rdateien werden im Tempor„r-Verzeich-
+     nis von XP angelegt. Beim Erstellen einer neuen
+     oder der Nachbearbeitung einer existierenden
+     Nachricht prft XP, ob der Platz im Tempor„r-
+     Verzeichnis fr die ggf. bereits existierenden
+     MIME-Nachrichtenteile zzgl. 1 MB fr etwaige
+     weitere Anh„nge ausreicht. Ist das nicht der
+     Fall, werden die Tempor„rdateien im XP-Verzeich-
+     nis erzeugt. Bei extrem groáen Anh„ngen kann es
+     also theoretisch passieren, daá XP je nach Gr”áe
+     des Anhangs und des verfgbaren Platzes im
+     Tempor„rverzeichnis das Anh„ngen mit einer
+     Fehlermeldung quittiert.
+
+
+ş  <<Zeichens„tze, Codierungen und MIME-Boundaries:
+
+   Der Nachrichtentext sowie alle Textanh„nge werden
+   beim Absenden der Nachricht vom <<IBM-Zeichensatz>>,
+   mit dem CrossPoint intern arbeitet, in den im
+   Internet blichen Zeichensatz <<ISO-8859-1>> konver-
+   tiert. Dies sollte bei der Erstellung von Texten
+   bercksichtigt werden, denn dadurch gehen (wie bei
+   allen RFC-Nachrichten) z.B. die IBM-typischen
+   Rahmenzeichen verloren, die berwiegend durch
+   Bindestriche u.„. ersetzt werden.
+
+   Dateianh„nge (auch Textdateien) hingegen werden
+   immer einer <<base64-Codierung>> unterzogen. Nur so
+   ist sichergestellt, daá die Datei im unver„nderten
+   Originalzustand den Empf„nger erreicht.
+
+   Dies gilt prinzipiell auch fr <<weitergeleitete>>
+   Nachrichten, wobei hier einige Besonderheiten und
+   Regeln zu beachten sind:
+
+   - base64-codierte Dateianh„nge werden unver„ndert
+     bernommen und weitergeleitet.
+
+   - Bei Textanh„ngen wertet CrossPoint die Zeichen-
+     satzdeklaration im Content-Type-Header des je-
+     weiligen Nachrichtenteils der weiterzuleitenden
+     Nachricht aus. Hier sind mehrere F„lle zu unter-
+     scheiden:
+
+     a) Handelt es sich um einen Zeichensatz der
+        ISO-8859-Familie, wird dieser in den IBM-
+        Zeichensatz konvertiert und kann daher
+        problemlos im Editor bearbeitet werden. Falls
+        der Text quoted-printable-codiert war, wird
+        er vorher decodiert. Beim Absenden der Nach-
+        richt im Sendefenster wird der Text in den
+        ISO-Zeichensatz re-konvertiert und mit der
+        Original-Zeichensatzdeklaration versandt.
+
+     b) Nachrichtenteile in einem IBM-Zeichensatz
+        werden nicht konvertiert (weil unn”tig) und
+        k”nnen ebenfalls im Editor bearbeitet werden.
+        Im Unterschied zu Fall a) erfolgt hier jedoch
+        auch beim Absenden keine Konvertierung in den
+        ISO-Zeichensatz, sondern der Anhang wird im
+        unkonvertierten Zustand und mit der ursprng-
+        lichen IBM-Zeichensatzdeklaration versandt.
+
+     c) Bei Zeichens„tzen, die von XP fr ausgehende
+        Nachrichten nicht untersttzt werden (selbst
+        wenn dies - wie bei Windows-1252 - fr ein-
+        gehende Nachrichten der Fall ist), erfolgt
+        keine Konvertierung in den IBM-Zeichensatz.
+        Soll ein solcher Nachrichtenteil im Editor
+        bearbeitet werden, l„át CrossPoint dies nach
+        Rckfrage zu, jedoch sollte man hier die
+        nderung oder Eingabe von Sonderzeichen
+        vermeiden.
+
+   - Bei weitergeleiteten Nachrichten werden die
+     MIME-Boundaries (Erkennungszeilen fr die ein-
+     zelnen Nachrichtenteile) der Originalnachricht
+     immer gegen das XP-eigene Boundary ausgetauscht.
+
+   - Der erste Textteil einer weitergeleiteten Nach-
+     richt wird von XP immer als der eigentliche
+     Nachrichtentext betrachtet und an den Anfang der
+     Nachricht gesetzt. Dieser Teil kann mit N/U/E
+     oder "T" im Sendefenster wie jede andere Nach-
+     richt auch bearbeitet werden.
+
+     Enth„lt die weitergeleitete Nachricht keinen
+     Textteil oder wird der Zeichensatz von XP fr
+     ausgehende Nachrichten nicht untersttzt, dann
+     setzt CrossPoint einen Dummy-Textteil an den
+     Anfang der Nachricht.
 
 @
 69

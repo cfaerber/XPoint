@@ -1395,6 +1395,10 @@ Alternative keys:
    <<<Space> >> Mark/Move
    <<<Enter> >> Leave menu
 
+
+Further information see also:
+[Sending/Forwarding of MIME multipart messages]@8079
+
 @
 8078
 The text part that you wish to edit has a character
@@ -1417,6 +1421,12 @@ character set.
 Thus it is recommended not to use Hi-ASCII characters
 when editing this text part.
 
+@
+8079
+<<Sending/Forwarding of MIME multipart messages
+(RFC and ZConnect)
+
+ToDo: comprehensive explanation, \@8079
 @
 69
 <<Yes>>  -> CrossPoint attaches the attribute VERBOSE

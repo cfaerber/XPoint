@@ -502,10 +502,11 @@ begin
           end;
      42 : begin                    { Spezielle Themen }
             case m1 of  
-              1 : do_help(1010);   { PGP-VerschlÅsselung }
-              2 : do_help(12);     { CrossPoint und Mailinglisten }
-              3 : do_help(30100);  { RFC/Client - Allgemeines }
-              4 : do_help(11);     { CrossPoint als Standard-Mailer in Windows }
+              1 : do_help(8079);   { MIME-Multipart-AnhÑnge }
+              2 : do_help(1010);   { PGP-VerschlÅsselung }
+              3 : do_help(12);     { XP und Mailinglisten }
+              4 : do_help(30100);  { Netztyp RFC/Client }
+              5 : do_help(11);     { XP als Windows-Mailer }
             end;
             menurestart:=true;
           end;
@@ -781,6 +782,9 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.11  2002/04/21 13:54:34  my
+  MY:- Neuer MenÅpunkt ?/S/MIME-Multipart-AnhÑnge
+
   Revision 1.14.2.10  2002/03/31 15:49:40  my
   JG+MY:- Durch den Ausbau von 'Do_XPHilite' ÅberflÅssig gewordene
           Variablen und Anweisungen eliminiert.

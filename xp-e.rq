@@ -64,7 +64,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 39  Tarifzonen,271^Zones,272^Fees,273^Holidays,274^Misc
 40  PGP,281^Request key,282^Import key,283^Decode message,284^Test signature,-,286^Edit key,287^Remove UserID
 41  ?,291^Current           F1,292^Previous Topic   @F1,-,293Help Con^tents   2*F1,294^Help on Help,-,295XP ^Usage,296Current ^Macros    F6,-,297^Special Topics..ù42,-,298^About OpenXP/16
-42  Spezial,2a1^PGP Encryption,2a2XP and ^Mailing lists,2a3Net type ^RFC/Client,2a4XP as ^Windows Mailer
+42  Spezial,2a1MIME Multipart ^Attaches,2a2^PGP Encryption,2a3XP and ^Mailing lists,2a4Net type ^RFC/Client,2a5XP as ^Windows Mailer
 # Tools Menu
 100 021^Calendar
 101 022^Archive Viewer
