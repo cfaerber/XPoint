@@ -100,8 +100,8 @@ begin
     prototyp  := 'Z';
     uparcer   := 'pkzip $UPFILE $PUFFER';
     downarcer := 'pkunzip $DOWNFILE';
-    uparcext  := 'ZIP';
-    downarcext:= 'ZIP';
+    uparcext  := fustr('zip');
+    downarcext:= fustr('zip');
     connwait  := 45;
     loginwait := 60;
     redialwait:= 240;
@@ -526,6 +526,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/22 18:07:40  hd
+  - Kleinschreibungen (UnixFS)
+
   Revision 1.9  2000/05/15 05:24:05  mw
 
   - Default angepasst: - UUCP-Paketsize jetzt 1024
