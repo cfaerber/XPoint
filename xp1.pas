@@ -122,6 +122,9 @@ procedure pushhp(nr:word);
 procedure pophp;
 procedure freehelp;
 
+function  AllocHeaderMem: headerp;
+procedure FreeHeaderMem(var hdp: headerp);
+
 procedure setenable(mnu,nr:byte; flag:boolean);
 procedure setmenup(mnu:string; nr:byte; anew:string);
 procedure setmenupos(mnu:string; newpos:byte);
@@ -2002,6 +2005,24 @@ end;
 
 {$I xp1cm.inc}
 
+function AllocHeaderMem: headerp;
+const
+  hdp: headerp = nil;
+begin
+  getmem(hdp, sizeof(header));
+  if hdp=nil then
+    trfehler(6,30);
+  AllocHeaderMem:= hdp;
+end;
+
+procedure FreeHeaderMem(var hdp: headerp);
+begin
+  if hdp<>nil then begin
+    freemem(hdp, sizeof(header));
+    hdp:= nil;
+  end;
+end;
+
 initialization
 finalization
   if ioresult= 0 then ;
@@ -2011,6 +2032,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.61  2000/07/10 14:28:12  hd
+  neu: AllocHeaderMem/FreeHEaderMem
+
   Revision 1.60  2000/07/09 09:09:55  mk
   - Newexit in Initialization/Finalization umgewandelt
 
