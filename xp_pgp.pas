@@ -67,7 +67,7 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$IFDEF Kylix}
   libc,
   {$ENDIF}
-  xpcc,xpnt,Mime;
+  xpcc,xpnt,mime,mime_base64;
 
 const
   savekey : string = '';
@@ -604,12 +604,21 @@ begin
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
 end;
 
+const PGP_HashAlgos: array[1..7] of string = (
+  'MD5','SHA1','RIPEMD160','','MD2','TIGER192','HAVAL-5-160' );
+
 procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
 var b: byte;
     OwnUserID  : string;
     fi,fo: string;
     fis,fie: TStream;
     s: string;
+
+    a8:    Byte;
+    a16:   Integer16;
+    a32:   Integer32;
+    abl:   array[1..16] of Byte;
+
 begin
   if PGP_UserID<>'' then
     OwnUserID:=' -u '+IDform(PGP_UserID)
@@ -640,7 +649,6 @@ begin
   begin
     data.Free;
 
-    fie:=TTemporaryFileStream.Create(fi,fmOpenRead);
     fis:=TTemporaryFileStream.Create(fo,fmOpenRead);
 
     try
@@ -648,6 +656,7 @@ begin
         s:=Trim(readln_s(fis));
       until s='-----BEGIN PGP SIGNATURE-----';
 
+      // Try to find and interpret a Hash: header
       repeat
         s:=Trim(readln_s(fis));
         if UpperCase(LeftStr(s,5))='HASH:' then
@@ -659,9 +668,65 @@ begin
         end;
       until s='';
 
+      // OK, there's no Hash: header, so read it directly from data
+      fie := TBase64DecoderStream.Create;
+      try
+        TBase64DecoderStream(fie).OtherStream := fis;
+        TBase64DecoderStream(fie).DestroyOtherStream := false;
 
+        fie.ReadBuffer(a8,1);           // read packet type
 
+        if (a8 and $80) = 0 then
+          raise Exception.Create('');   // not an OpenPGP packet
 
+        if (a8 and $40) = 0 then        // old packet type
+        begin
+          if ((a8 and $3F) shr 2)<>2 then
+            raise Exception.Create(''); // not a signature packet
+
+          case a8 and $3 of             // skip length... (uh, oh)
+            0: fie.ReadBuffer(a8,1);
+            1: fie.ReadBuffer(a16,2);
+            2: fie.ReadBuffer(a32,4);
+            3: ;
+          end;
+        end else                        // new packet type
+        begin
+          if (a8 and $3F)<>2 then
+            raise Exception.Create(''); // not a signature packet
+
+          fie.ReadBuffer(a8,1);         // read packet length
+
+          if Byte(a8) = $FF then
+            fie.ReadBuffer(a32,4)       // five-octet length
+          else if Byte(a8) in [192..223] then
+            fie.ReadBuffer(a8,1)        // two-octet length
+          else if Byte(a8) in [224..254] then
+            raise Exception.Create('')  // partial length (we just hope that these don't occur)
+          else
+            ; // one-octet-length
+        end;
+
+        fie.ReadBuffer(a8,1);           // read signature version
+
+        if Byte(a8)=3 then              // version 3 signature
+        begin
+          fie.ReadBuffer(abl[1],16);
+          if (abl[1]<>5) or not (abl[16] in [1..3,5..7]) then
+            raise Exception.Create('');
+          s := PGP_HashAlgos[abl[16]];
+        end else
+        if Byte(a8)=4 then              // version 4 signature
+        begin
+          fie.ReadBuffer(abl[1],3);
+          if not (abl[3] in [1..3,5..7]) then
+            raise Exception.Create('');
+          s := PGP_HashAlgos[abl[3]];
+        end else
+          raise Exception.Create('');
+      finally
+        fie.Free;
+      end;
     except
       s:='';
     end;
@@ -669,9 +734,10 @@ begin
 
     data := TMemoryStream.Create;
 
-    MimeNewType(hd,'signed','application/pgp-signature',iifs(s='','md5',s),hd.empfaenger);
+    MimeNewType(hd,'signed','application/pgp-signature',s,hd.empfaenger);
 
     writeln_s(data,'--'+hd.boundary);
+    fie:=TTemporaryFileStream.Create(fi,fmOpenRead);
     CopyStream(fie,data);
     writeln_s(data,'');
     writeln_s(data,'--'+hd.boundary);
@@ -1082,6 +1148,10 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/09/11 14:23:15  cl
+  - PGP/MIME application/signed: micalg is now read directly from signature
+    file created by PGP.
+
   Revision 1.52  2001/09/10 17:26:46  cl
   - imporved detection of HASH method used
 
