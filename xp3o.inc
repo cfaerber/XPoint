@@ -997,7 +997,8 @@ begin
             OwnMessageReplaced:= KillSameMsgId;
             if BoxPar^.ReplaceDupes and MsgIdsRead.Find(msgid,dummy)then begin
               // this msg already showed up in this buffer
-              aufnehmen:=false;
+              aufnehmen:=false;  // prevent sorting in message
+              msgsent:=true;     // prevent putting this message to /Nix
               debug.debuglog('xp3o','dupe (multiple times in buffer)',dltrace);
               end;
             end
@@ -1278,6 +1279,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.10  2002/08/12 12:11:32  ma
+  - fix: filtered crosspostings caused creation of "/Nix" area
+
   Revision 1.83.2.9  2002/08/10 10:31:17  ma
   - dupekill when sorting in messages detects dupes in same buffer now
     (really kills crossposting dupes :-)
