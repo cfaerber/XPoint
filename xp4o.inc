@@ -309,7 +309,8 @@ begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
     disp := dbReadNStr(bbase,bb_brettname);
-    if LeftStr(disp,3)<>'$/T' then begin
+    if (disp <> '') and (LeftStr(disp,3)<>'$/T') then
+    begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(disp,2),40));
       testdel(mbrettd(disp[1],bbase));
@@ -714,6 +715,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.49  2002/07/17 02:51:37  mk
+  - fixed range check error (see <8SzX+ZICkZB@doebe.li>)
+
   Revision 1.48  2002/04/14 22:25:09  cl
   - added Wartung/Komplett
 
