@@ -124,7 +124,7 @@ var ss : string;
 
 begin
   attrtxt(col.coldiahigh);
-  gotoxy(x+13,y+8);
+  gotoxy(x+13,y+6);
   moff;
   if cc_anz=0 then
     if forcebox = '' then Wrt2(forms(' '+box,BoxNameLen+5))
@@ -1146,6 +1146,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.6  2002/07/17 16:15:37  ma
+  - fixed: server box not displayed in "send" dialog
+
   Revision 1.17.2.5  2002/07/09 13:26:41  mk
   - merged forcebox-fixes from OpenXP/16 (sv+my)
 
