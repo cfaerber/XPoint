@@ -212,7 +212,7 @@ var hf : string[12];
 
     begin
       if bn=nil then
-        if add then begin   { ADD - Brett hinzufÅgen }
+        if add then begin     { ADD - Brett hinzufÅgen }
           new(bn);
           bn^.l:=nil; bn^.r:=nil; bn^.del:=false;
           getmem(bn^.c,length(s)+1);
@@ -444,7 +444,7 @@ var t1,t2         : text;
 begin
   moment;
   ReadBox(0,box,boxpar);
-  rcfile:=BoxPar^.pppclientpath + ustr(boxfilename(box))+'.RC';
+  rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
   Assign(t1,rcfile);       { BOX.RC }
   if not (exist(rcfile)) then
   begin
@@ -452,7 +452,7 @@ begin
     Close(t1);
   end;
  
-    blfile:={BoxPar^.pppclientpath + }ustr(boxfilename(box))+'.BL';
+    blfile:={BoxPar^.PPPClientPath + }ustr(boxfilename(box))+'.BL';
     if not exist(rcfile) or not exist(blfile) then exit;
     Assign(t2,blfile);
     Reset(t2);
@@ -470,7 +470,8 @@ begin
       begin
         Readln(t2, Line2);
         if line2[1]<>'!' then begin
-          line2:='  '+left(line2,min(cposx('˚',line2),cposx(' ',line2))-1);
+          line2:='  '+left(line2,min(cposx('˚',line2),
+            min(cposx(' ',line2),cposx('*',line2)))-1);
   
           line := first_line;
           while line <> #0 do
@@ -503,6 +504,18 @@ begin
 end;
 
 
+function Get_BL_Name(box:string):string;
+var
+  s1 : string;
+begin
+  ReadBox(0,box,boxpar);
+  s1:=ustr(boxfilename(box));
+  if not exist(s1+'.BL')                               { Brettliste im XP-Verzeichnis }
+    then s1:=Boxpar^.PPPClientPath+s1;
+  Get_BL_Name:=s1+iifs(exist(s1+'.BL'),'.BL','.GR');   { oder .BL/.GR im Client-Verz. }
+end;
+
+
 { RFC/Client: RC-File anhand der im Lister markierten Bretter manipulieren }
 { Im Lister muss ein durch Read_RC_File erzeugtes BL-File sein.            }
 
@@ -523,16 +536,13 @@ begin
   moment;
   MakeRc:=true;
   ReadBox(0,box,boxpar);
-  rcfile:=BoxPar^.pppclientpath + ustr(boxfilename(box))+'.RC';
-  blfile:=ustr(boxfilename(box));
-  if not exist(blfile+'.BL')                             { Brettliste im XP-Verzeichnis }
-    then blfile:=BoxPar^.pppclientpath+blfile;
-  blfile:=blfile+iifs(exist(blfile+'.BL'),'.BL','.GR');  { oder .BL/.GR im Client-Verz. }
+  rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
+  blfile:=Get_BL_Name(box);
   if not exist(rcfile) or not exist(blfile) then 
   begin
     rfehler(807);
     exit;
-    end;    
+    end;
   Assign(t1,rcfile);
   if not (exist(rcfile)) then
   begin
@@ -542,8 +552,9 @@ begin
   Assign(f1,blfile);
   Reset(f1);
 
-  if bestellen then                         { Neue Bretter an RC-File anhaengen }
-  begin    c:='*';
+  if bestellen then                        { Neue Bretter an RC-File anhaengen }
+  begin
+    c:='*';
     Articles := '10';
     dialog(30,3,'Newsgroups bestellen',x,y);
     maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
@@ -556,55 +567,55 @@ begin
       goto MakeRCEnd;
       end;
     Append(t1);
-    line := first_marked;                     { Im Lister sind markierte neue Bretter...}
+    line := first_marked;                  { Im Lister sind markierte neue Bretter...}
     articles:=' -'+Articles;
     while line<>#0 do
     begin
-      if line[1]='*' then List_unmark         { Bereits bestellte Bretter demarkieren }
+      if line[1]='*' then List_unmark      { Bereits bestellte Bretter entmarkieren }
       else begin
-        writeln(t1,rtrim(copy(Line,3,78)),Articles);    { Ansonsten am RC aAnhaengen }
+        writeln(t1,rtrim(copy(Line,3,78)),Articles);    { ansonsten an .RC anhaengen }
         fileofs:=ival(mid(line,80));
-        seek(f1,fileofs);                     { Offset ins BL-File wurde von READ_BL_FILE }  
-        write(f1,c);                          { an die Listerzeile angehaengt. Jetzt wird }
-        end;                                  { an den Zeilenanfang ein "*" geschrieben,  }
-      line := next_marked;                    { der ab jetzt das Bestellt-Flag darstellt  } 
+        seek(f1,fileofs);                  { Offset ins BL-File wurde von READ_BL_FILE }  
+        write(f1,c);                       { an die Listerzeile angehaengt. Jetzt wird }
+        end;                               { an den Zeilenanfang ein "*" geschrieben,  }
+      line := next_marked;                 { der ab jetzt das Bestellt-Flag darstellt  } 
       end;
     Close(t1);
     close(f1);
     end 
 
-  else begin                                 { Bestellte Bretter aus RC entfernen }
+  else begin                               { Bestellte Bretter aus RC entfernen }
     line:=first_line;
     c:=' ';
     MakeRc:=false;
     Assign(t2,TempFile(''));
-    ReWrite(t2);                                  { T2 = Temp-File: RC-Kopie (text) }
+    ReWrite(t2);                           { T2 = Temp-File: RC-Kopie (text) }
     reset(t1); 
     while not eof(t1) do
     begin
-      readln(t1,line2);                           { Zeile aus RC lesen }
+      readln(t1,line2);                    { Zeile aus RC lesen }
       brk:=true;      
-      line := first_marked;                       { Im Lister sind Bretter zum  }
-      while line<>#0 do                           { Abbestellen markiert...     }
+      line := first_marked;                { Im Lister sind Bretter zum  }
+      while line<>#0 do                    { Abbestellen markiert...     }
       begin   
-        fileofs:=ival(mid(line,80));              { Offset aus READ_BL_FILE (s.o.) }
+        fileofs:=ival(mid(line,80));       { Offset aus READ_BL_FILE (s.o.) }
         line:=rtrim(copy(Line,3,78)); 
         if line=left(line2,cposx(' ',line2)-1)
         then begin
-          seek(f1,fileofs);                       { Abzubestellendes Brett gefunden... }
-          write(f1,c);                            { im BL-File "Bestellt"-'*' loeschen }
-          list_unmark;                            { abbestelltes Brett demarkieren     }
-          brk:=false;                             { und nicht in RC-Kopie uebernehmen  }
+          seek(f1,fileofs);                { Abzubestellendes Brett gefunden... }
+          write(f1,c);                     { im BL-File "Bestellt"-'*' loeschen }
+          list_unmark;                     { abbestelltes Brett demarkieren     }
+          brk:=false;                      { und nicht in RC-Kopie uebernehmen  }
           end;
         line:=next_marked;
         end;
-      if brk then writeln(t2,line2);              { Nicht abbestellte Zeilen kopieren  }
+      if brk then writeln(t2,line2);       { Nicht abbestellte Zeilen kopieren  }
       end;
     close(f1);
     Close(t1);
     Close(t2);
     Erase(t1);
-    Rename(t2,rcfile);                            { RC-File loeschen, TEMP-Kopie -> RC }
+    Rename(t2,rcfile);                     { RC-File loeschen, TEMP-Kopie -> RC }
     end;
 
 makercend:
@@ -615,7 +626,7 @@ end;
 
 
 
-{ RFC/Client: Brettliste in Lister Lesen, Vorbereitung fuer MakeRC-Aktionen }
+{ RFC/Client: Brettliste in Lister laden, Vorbereitung fuer MakeRC-Aktionen }
 
 procedure Read_BL_File(s:string;bestellen:boolean);
 var t1,t2    : text;
@@ -629,16 +640,16 @@ var t1,t2    : text;
         lds si,s                 { Uebergabe an den Lister ins XP-Format bringen    } 
         xor ax,ax                { und Offsetanpassung fuer Bestellt-Flag ermitteln }
 	cmp byte ptr [si+2],' '
-        je @end                     { Abbruch wenn's eine Liste im XP-Format ist... }
+        je @end                  { Abbruch wenn's eine Liste im XP-Format ist... }
 	push si
        	lodsb 
  	mov cx,ax
 	mov bl,0
 	mov dx,' *'
-  @1:	lodsb                       { Brettnamenende suchen }
+  @1:   lodsb                    { Brettnamenende suchen }
 	cmp al,dh
 	je @2
-	cmp al,'˚'                  { ˚ und * werden als Bestellt-Flag akzeptiert }
+        cmp al,'˚'               { ˚ und * werden als Bestellt-Flag akzeptiert }
 	je @3
  	cmp al,dl
 	je @3
@@ -650,12 +661,12 @@ var t1,t2    : text;
 	pop si
  	mov cl,bl
         add bl,2
-	push bx                     { Offset zum Flag in UKA-Brettliste sichern } 
+        push bx                  { Offset zum Flag in UKA-Brettliste sichern } 
 	mov byte ptr [si],bl
         add si,cx
         lea di,[si+2]
         std
-	rep movsb                   { s:='* '+s }
+        rep movsb                { s:='* '+s }
         dec di
         mov ax,dx
         stosw        
@@ -665,6 +676,7 @@ var t1,t2    : text;
   end;
 
 begin
+  moment;
   assign(t1,s);
   reset(t1);
   tname:=TempFile('');
@@ -679,43 +691,41 @@ begin
     readln(t1,s1);
     m:=length(s1)+2;
     n:=reformat_UKA_Brett(s1);
-    if bestellen or (s1[1]='*') then      { File-Offset des Strings wird angehaengt   }
-     writeln(t2,forms(s1,80)+strs(i+n));  { damit MakeRC schnellen Zugriff hat,um im  }
-    inc(i,m);                             { BL-File den '*' zu setzen bzw zu loeschen }
+    if bestellen or (s1[1]='*') then       { File-Offset des Strings wird angehaengt,  }
+     writeln(t2,forms(s1,80)+strs(i+n));   { damit MakeRC schnellen Zugriff hat, um im }
+    inc(i,m);                              { BL-File den '*' zu setzen bzw zu loeschen }
     end;
   close(t1);
   close(t2);
-  list_readfile(tname,0);           { App_L kann hier nicht verwendet werden, weil es }
-  listheader(s);                    { zu verschwenderisch mit den EMS-Handles umgeht. }
+  list_readfile(tname,0);        { App_L kann hier nicht verwendet werden, weil es }
+  listheader(s);                 { zu verschwenderisch mit den EMS-Handles umgeht. }
   _era(tname);
+  closebox;
 end;
 
 
 { RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
 
-procedure File_abbestellen(s,f:string);
+procedure File_abbestellen(box,f:string);
 var t1,t2 : text;
     s1,s2 : string;
     brk   : boolean;
 begin
-  s1:=ustr(boxfilename(s));
-  if not exist(s1+'.BL')                    { Brettliste im XP-Verzeichnis }
-    then s1:=Boxpar^.sysopout+s1;
-  s1:=s1+iifs(exist(s1+'.BL'),'.BL','.GR'); { oder .BL/.GR im Client-Verz. }
+  s1:=Get_BL_Name(box);
   if not exist(s1) then
   begin
     rfehler(807);
     exit;
-    end;
-  OpenList(1,1,80,1,-1,'/M/SB/S/');               { Dummy-Lister (ausserhalb des Screen } 
-  read_BL_File(ustr(boxfilename(s))+'.BL',false); { Bestellt-Liste in Lister laden }
-  pushkey(^A);                                    { Ctrl+A = Alles Markieren  }
-  pushkey(keycr);                                 { Enter  = Lister verlassen }
-  list(brk);                                      { Dummy-Lister starten      } 
+    end;      
+  OpenList(1,1,80,1,-1,'/M/SB/S/');        { Dummy-Lister (ausserhalb des Screen } 
+  read_BL_File(s1,false);                  { Bestellt-Liste in Lister laden }
+  pushkey(^A);                             { Ctrl+A = Alles markieren  }
+  pushkey(keyesc);                         { Esc    = Lister verlassen }
+  list(brk);                               { Dummy-Lister starten      } 
 
   assign(t1,f);
-  s1:=first_marked;                               { Liste der bestellten Bretter     }
-  while s1<>#0 do                                 { Mit Abbestell-File vergleichen   }
+  s1:=first_marked;                        { Liste der bestellten Bretter     }
+  while s1<>#0 do                          { Mit Abbestell-File vergleichen   }
   begin 
     brk:=true;
     reset(t1);
@@ -723,19 +733,104 @@ begin
     begin
       readln(t1,s2);
       if s2=rtrim(copy(s1,3,78)) 
-        then brk:=false;                          { Bretter, die abzubestellen sind }
+        then brk:=false;                   { Bretter, die abzubestellen sind }
       end;
     close(t1);
-    if brk then list_unmark;                      { werden NICHT entmarkiert        }
+    if brk then list_unmark;               { werden NICHT entmarkiert        }
     s1:=next_marked;
     end;
-  makeRC(false,s);                                { (Noch) markierte Bretter abbestellen }
+  makeRC(false,box);                       { (Noch) markierte Bretter abbestellen }
 end;
 
 
+Procedure ClientBl_Abgleich(box:string);
+var t1    : text;
+    f1    : file of char;
+    c     : char;
+    s1,s2 : string;
+    brk   : boolean;
+    fileofs : longint;
+begin
 
-{ bbase-aktuelles Brett abbstellen   }
+  ReadBox(0,box,boxpar);
+  s1:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
+  Assign(t1,s1);       { BOX.RC }
+  if not (exist(s1)) then
+  begin
+    Rewrite(t1);                           { T1 = RC-FILE (Text)         }
+    Close(t1);
+    end;
+  s1:=get_BL_Name(box);
+  if not exist(s1) then 
+  begin
+    rfehler(807);
+    exit;
+    end;   
+  if not ReadJN(getreps2(810,92,ustr(s1)),true) then exit;  { 'Abgleich RC-Datei mit %s' }
+
+  moment;   
+  OpenList(1,1,80,1,-1,'/M/SB/S/');        { Dummy-Lister (ausserhalb des Screen }
+  read_BL_File(s1,true);                   { Bestellt-Liste in Lister laden }
+  pushkey(^A);                             { Ctrl+A = Alles markieren  }
+  pushkey(keyesc);                         { Esc    = Lister verlassen }
+  list(brk);                               { Dummy-Lister starten      } 
+  assign(f1,s1);
+  reset(f1);
+  s1:=first_marked;                        { Brettliste mit .RC vergleichen }
+  while s1<>#0 do
+  begin 
+    brk:=false;
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1,s2);
+      if left(s2,cposx(' ',s2)-1)=rtrim(copy(s1,3,78)) 
+        then brk:=true;
+      end;
+    close(t1);
+    if (s1[1]='*') xor brk
+    then begin    
+      fileofs:=ival(mid(s1,80)); 
+      c:=iifc(brk,'*',' ');
+      seek(f1,fileofs);
+      write(f1,c);
+      end;
+    s1:=next_marked;
+    end;
+  close(f1);
+  CloseList;
+  closebox;
+end;
+
+Procedure ClientBL_Sort(box:string);
+var s1: string;
+begin
+  s1:=get_BL_Name(Box);
+  if not exist(s1) then 
+  begin
+    rfehler(807);
+    exit;
+    end;  
+  shell('sort <'+s1+' >sort.tmp',640,0);
+  if exist('sort.tmp') then 
+  begin
+    copyfile('sort.tmp',s1);
+    _era('sort.tmp');
+    end;
+end;
+
+Procedure ClientBL_Del(box:string);
+var s1: string;
+begin
+  s1:=get_BL_Name(Box);
+  truncstr(s1,60);
+  if ReadJN(getreps2(810,93,ustr(s1)),false) then _era(s1);  { '%s wirklich lîschen' }
+end;
+
+
+{ bbase-aktuelles Brett abbestellen  }
 { brett='' -> markierte Bretter abb. }
+
 
 procedure MapsDelBrett(brett:string);
 const maxmaggi = 500;
@@ -1161,8 +1256,8 @@ begin
   ReadBox(0,bfile,boxpar);
   if not boxpar^.pppMode then fn:='*.*' else
   begin
-    fn:=BoxPar^.PPPCLientpath + ustr(boxfilename(box));
-    fn:=fn+ iifs(exist(fn+'.BL'),'.BL',iifs(exist(fn+'.GR'),'.GR','.BL'));
+    fn:=BoxPar^.PPPClientPath + ustr(boxfilename(box));
+    fn:=fn+iifs(exist(fn+'.BL'),'.BL',iifs(exist(fn+'.GR'),'.GR','.BL'));
     end;
   useclip:=true;
   if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
@@ -1185,8 +1280,8 @@ begin
     ExpandTabs(fn,bfile+'.BL');
     closebox;
     end;
-  if boxpar^.pppmode then makebl(box) 
-  else if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
+  if boxpar^.pppmode then makebl(box);
+  (*else*) if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
     _era(fn);
 end;
 
@@ -1228,7 +1323,7 @@ end;
 
 procedure MapsKeys(var t:taste);
 begin
- {if t=^S then if Suche(getres(438),'#','') then begin
+  {if t=^S then if Suche(getres(438),'#','') then begin
     ListShowSeek:=true;
     pushkey(keyctab);
     end;}
@@ -1435,7 +1530,7 @@ begin
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
       ppp := BoxPar^.PPPMode;
-      {if BoxPar^.SysopInp+BoxPar^.pppclientpath<>'' then ppp := false;}
+      {if BoxPar^.SysopInp+BoxPar^.PPPClientPath<>'' then ppp := false;}
     end else
       ppp := false;
     qwk:=(netztyp=nt_QWK);
@@ -1453,16 +1548,16 @@ begin
     Exit;
   end;
 
-  {if ppp then fn := BoxPar^.pppclientpath + fn;}
+  {if ppp then fn := BoxPar^.PPPClientPath + fn;}
   if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
     lfile:=fn+'.BBL' else
  { if ppp and (art=1) then
-    lfile:=BoxPar^.pppclientpath+fn+'.RC'
+    lfile:=BoxPar^.PPPClientPath+fn+'.RC'
   else}
 
   if ppp then begin
     if not exist(fn+'.BL')
-      then fn:=Boxpar^.sysopout+fn;
+      then fn:=Boxpar^.PPPClientPath+fn;
     lfile:=fn+iifs(exist(fn+'.BL'),'.BL','.GR');
     end
   else lfile:=fn+'.BL';
@@ -1474,7 +1569,7 @@ begin
   end;
   if fido or maus or qwk then
     ReadBoxpar(netztyp,box);
-  OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,4,'/M/SB/S/{NLR/}'+
+  OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,4,'/M/SB/S/NLR/'+
              'APGD/'+iifs(_maus,'VSC:080/',''));
 
   if ppp then Read_BL_File(lfile,art=0)
@@ -1585,7 +1680,7 @@ var brk     : boolean;
     maf     : boolean;
     maus    : boolean;
     info    : MausInfAP;
-    ppp: Boolean;
+    ppp     : Boolean;
     infos   : integer;
     fido    : boolean;
     gs      : boolean;
@@ -1597,6 +1692,7 @@ var brk     : boolean;
     lines   : byte;
     i       : integer;
     domain  : string[60];
+    var x,y : byte;
 
   procedure app(s1,s2:string);
   begin
@@ -1711,7 +1807,7 @@ begin
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
     ppp := BoxPar^.PPPMode;
-    {if BoxPar^.SysopInp+BoxPar^.pppclientpath<>'' then ppp := false;}
+    {if BoxPar^.SysopInp+BoxPar^.PPPClientPath<>'' then ppp := false;}
   end else
     ppp := false;
 
@@ -1722,14 +1818,18 @@ begin
           rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
           exit;
           end;
-          if ppp then begin
-          rfehler(854);     { 'Diese Funktion wird im Client-Modus nicht unterstÅtzt.' }
-          exit;
-          end;
         end;
     1 : if ppp then
         begin
-          hinweis(getres2(10800,28)); { 'Client-Modus - Newsgroup-Liste bitte Åber externen Client anfordern!' }
+          msgbox(63,8,_hinweis_,x,y);
+          mwrt(x+3,y+2,getres2(10800,32));   { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
+          mwrt(x+3,y+3,getres2(10800,33));   { 'Liste mu· die entsprechende Funktion beim externen Client' }
+          mwrt(x+3,y+4,getres2(10800,34));   { 'aktiviert sein und die bisherige Newsgroup-Liste gelîscht' }
+          mwrt(x+3,y+5,getres2(10800,35));   { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+          errsound;
+          wait(curoff);
+          closebox;
+          freeres;
           exit;
         end else
        if not ntMapsBrettliste(nt) then begin
@@ -1749,6 +1849,7 @@ begin
     if gup then lines:=3
     else if autosys then lines:=5
     else if feeder then lines:=5
+    else if ppp then lines:=3
     else lines:=4
   else lines:=18;
   if maus then begin
@@ -1771,8 +1872,9 @@ begin
     brk:=false;
     end
   else begin
-    listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
-            +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box);
+    listbox(iif(maus,45,60),lines,iifs(ppp,'RFC/Client: '+getres2(810,85),
+      getres2(810,0)+mapsname+   { 'Nachricht an ' }
+            +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box));
     if fido then begin
       app('List',getres2(810,40));      { 'Liste der verfÅgbaren Bretter' }
       app('Query',getres2(810,41));     { 'Liste der bestellten Bretter' }
@@ -1807,6 +1909,11 @@ begin
       app('BRETT +','Bretter bestellen');
       app('BRETT -','Bretter abbestellen');
       end
+    else if ppp then begin
+      app(getres2(810,86),getres2(810,87));  { 'Newsgroup-Liste alphabetisch sortieren'     }
+      app(getres2(810,88),getres2(810,89));  { 'Newsgroup-Liste mit RC-Datei abgleichen'    }
+      app(getres2(810,90),getres2(810,91));  { 'Newsgroup-Liste lîschen (= Neuanforderung)' }
+      end
     else if uucp then
       if gup then begin
         app('help',getres2(810,70));      { 'Hilfe zu Gup anfordern' }
@@ -1821,11 +1928,11 @@ begin
         app('show',getres2(810,71));        { 'Liste der bestellten Bretter' }
         end
       else if feeder then begin
-        app('@help',getres2(810,80));        { 'Hilfe zu Feeder anfordern' }
-        app('@active',getres2(810,72));      { 'Liste der verfÅgbaren Bretter' }
-        app('@get',getres2(810,71));         { 'Liste der bestellten Bretter' }
-        app('@suspend',getres2(810,81));     { 'alle Bretter vorÅbergehend abbestellen' }
-        app('@resume',getres2(810,82));      { 'alle Bretter reaktivieren' }
+        app('@help',getres2(810,80));       { 'Hilfe zu Feeder anfordern' }
+        app('@active',getres2(810,72));     { 'Liste der verfÅgbaren Bretter' }
+        app('@get',getres2(810,71));        { 'Liste der bestellten Bretter' }
+        app('@suspend',getres2(810,81));    { 'alle Bretter vorÅbergehend abbestellen' }
+        app('@resume',getres2(810,82));     { 'alle Bretter reaktivieren' }
         end
       else begin
         app('getgroups',getres2(810,60));
@@ -1834,35 +1941,46 @@ begin
         app('help',getres2(810,61));
         end
     else begin
-      app('HILFE *',getres2(810,1));          { 'Hilfe zu allen MAPS-Befehlen' }
-      app('HILFE <Thema>',getres2(810,2));    { 'Hilfe zu einem Befehl' }
-      app('HILFE THEMEN',getres2(810,3));     { 'Themen-öbersicht' }
-      app('HOLD ON',getres2(810,21));         { 'Bretter vorÅbergehend abbestellen (Urlaub)' }
-      app('HOLD OFF',getres2(810,22));        { 'Bretter wieder aktivieren' }
-      app('INHALT',getres2(810,4));           { 'Brettinhalt' }
-      app('INFO',getres2(810,5));             { 'Infos zum eigenen System' }
-      app('INFO *',getres2(810,6));           { 'Infos zu allen Systemen' }
-      app('INFO <System>',getres2(810,7));    { 'Infos zu einem bestimmten System' }
-      app('LIST ALL',getres2(810,8));         { 'User-, Brett- und Systemliste' }
-      app('LIST BRETTER',getres2(810,9));     { 'Brettliste' }
+      app('HILFE *',getres2(810,1));        { 'Hilfe zu allen MAPS-Befehlen' }
+      app('HILFE <Thema>',getres2(810,2));  { 'Hilfe zu einem Befehl' }
+      app('HILFE THEMEN',getres2(810,3));   { 'Themen-öbersicht' }
+      app('HOLD ON',getres2(810,21));       { 'Bretter vorÅbergehend abbestellen (Urlaub)' }
+      app('HOLD OFF',getres2(810,22));      { 'Bretter wieder aktivieren' }
+      app('INHALT',getres2(810,4));         { 'Brettinhalt' }
+      app('INFO',getres2(810,5));           { 'Infos zum eigenen System' }
+      app('INFO *',getres2(810,6));         { 'Infos zu allen Systemen' }
+      app('INFO <System>',getres2(810,7));  { 'Infos zu einem bestimmten System' }
+      app('LIST ALL',getres2(810,8));       { 'User-, Brett- und Systemliste' }
+      app('LIST BRETTER',getres2(810,9));   { 'Brettliste' }
       end;
     if not (maf or maus or fido or gs or uucp) then begin
       if not request then app('LIST USER',getres2(810,11));   { 'Userliste' }
       app('LIST MY BRETTER',getres2(810,12));   { 'bestellte Bretter' }
       if not request then app('LIST OTHER BRETTER',getres2(810,13));   { 'nicht bestellte Bretter' }
       if not (area or request) then begin
-        app('PM LOESCHEN',getres2(810,14));   { 'Postfachinhalt in *Mailbox* lîschen' }
-        app('STATUS',getres2(810,18));   { 'Eigenen Userstatus abfragen' }
+        app('PM LOESCHEN',getres2(810,14)); { 'Postfachinhalt in *Mailbox* lîschen' }
+        app('STATUS',getres2(810,18));      { 'Eigenen Userstatus abfragen' }
         end;
-      app('ADD',getres2(810,16));        { 'Bretter bestellen' }
-      app('DEL',getres2(810,17));        { 'Bretter abbestellen' }
+      app('ADD',getres2(810,16));           { 'Bretter bestellen' }
+      app('DEL',getres2(810,17));           { 'Bretter abbestellen' }
       end;
     freeres;
     list(brk);
     closebox;
     if not brk then
+    begin
       comm:=trim(left(first_marked,iif(maus,9,iif(fido or uucp,16,21))));
+      if ppp then
+      begin
+        brk:=true;
+        if comm=getres2(810,86) then ClientBL_Sort(box);
+        if comm=getres2(810,88) then ClientBL_Abgleich(box);
+        if comm=getres2(810,90) then ClientBL_Del(box);
+        end;
+      end;
     end;
+
+
   if not brk then begin
     if comm='BRETT +' then comm:='ADD'
     else if comm='BRETT -' then comm:='DEL';
@@ -2019,6 +2137,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.19  2001/06/17 23:51:02  my
+  - RFC/Client: new commands under Message/Message_Area_Manager/Others:
+    Sort/Sync/Delete
+
   Revision 1.10.2.18  2001/06/13 01:37:42  my
   JG:- message area manager update: UKA_PPP support (.GR) implemented, some
        logic changed, more to come (work in progress)

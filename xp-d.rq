@@ -1702,6 +1702,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 80   Hilfe zu Feeder anfordern
 81   alle Bretter vorbergehend abbestellen
 82   alle Bretter wieder reaktivieren
+# RFC/Client
+85 Funktionen fr Newsgroup-Listen
+86 Sortieren
+87 Newsgroup-Liste alphabetisch sortieren
+88 Abgleich
+89 Newsgroup-Liste mit RC-Datei abgleichen
+90 L”schen
+91 Newsgroup-Liste l”schen (= Neuanforderung)
+92 Abgleich RC-Datei mit %s
+93 %s wirklich l”schen
 -
 811  Sind Sie sicher, daá das eine Fileliste ist
 812  Fileserver-Liste
@@ -3089,15 +3099,18 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 25 Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt
 26 Dieses Brett kann nicht bestellt werden.
 27 Dieses Brett kann nicht abbestellt werden.
-28 Client-Modus - Newsgroup-Liste bitte ber externen Client anfordern!
 30 %s kann nicht bestellt werden
 31 %s wurde bereits bestellt
+32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
+33 Liste muá die entsprechende Funktion beim externen Client
+34 aktiviert sein und die bisherige Newsgroup-Liste gel”scht
+35 werden (siehe Nachricht/Brettmanager/Sonstiges).
 # XP8.INC
 50 Keine Filescan-Nachricht gew„hlt!
 51 %s ist kein eingetragener Fido-Server!
 52 %s ist keine Fido-Box!
 53 Keine Fileecho-Liste fr %s vorhanden!
-54 Diese Funktion wird im Client-Modus nicht untersttzt.
+54 Diese Funktion wird beim Netztyp RFC/Client nicht untersttzt.
 
 
 +  10900

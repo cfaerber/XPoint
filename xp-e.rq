@@ -1660,6 +1660,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 80   feeder instructions
 81   suspend all newsgroups
 82   resume all newsgroups
+# RFC/Client
+85 Functions for newsgroup lists
+86 Sort
+87 Sort newsgroup list alphabetically
+88 Sync
+89 Synchronize newsgroup list with RC file
+90 Delete
+91 Delete newsgroup list (= get new list)
+92 Synchronize RC file with %s
+93 Do you really want to delete %s
 -
 811  Are you sure that this is a file list
 812  Fileserver list
@@ -1802,7 +1812,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10   Server dom.~
 11   FQDN       ~
 12   eMail addr.~
-5    Server name~
+13    Server name~
 + 913
 0    30
 1    Type of net~
@@ -3042,14 +3052,18 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25 Invalid converter configuration: no $OUTFILE specified
 26 This newsgroup cannot be subscribed.
 27 This newsgroup cannot be unsubscribed.
-28 Client mode - please order newsgroup list via external client!
 30 %s cannot be subscribed
 31 %s is subscribed already
+32 Net type RFC/Client: To get a new newsgroup list, the
+33 appropriate function of the external client must be acti-
+34 vated and the previous newsgroup list has to be deleted
+35 (see Message/Message_Area_Manager/Others).
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
 52 %s is no Fido server!
 53 There is no file echo list for %s.
+54 This function is not supported with net type RFC/Client.
 
 +  10900
 1  Invalid server configuration line: %s
