@@ -161,7 +161,7 @@ var CtlHeader: CP_Header;
 begin
   CtlHeader[0]:=ord(^P);
   CtlHeader[1]:=9;
-  CtlHeader[4]:=xxx shl 3+yyy;        { control byte }
+  CtlHeader[4]:=(xxx shl 3) or (yyy and 7); { control byte }
   CtlHeader[2]:=$aa - CtlHeader[4];   { checksum low (only works because [4] always <= $aa) }
   CtlHeader[3]:=$aa;                  { checksum high }
   CtlHeader[5]:=HeaderChecksum(CtlHeader);
@@ -174,7 +174,7 @@ end;
 procedure TUUCProtocolG.RecControlPacket(var CtlHeader:CP_Header;Timeout:integer);  { wird auch fuer Datenpakete verwendet }
 var i:Longint;
 begin
-  TimerObj.SetTimeout(Timeout);
+  TimerObj.SetTimeout(3);
   FillChar(CtlHeader,SizeOf(CtlHeader),0);
 
  (* wait for ^P start marker *)
@@ -187,7 +187,7 @@ begin
     end;
   until CtlHeader[0]=ord(^P);
 
- (* wait for full packet *)
+ (* wait for full packet/header *)
   while CommObj.CharCount < (SizeOf(CtlHeader)-1) do
   begin
     Netcall.TestTimeout;
@@ -452,22 +452,25 @@ var n,size,i,j   : integer;
     AckEach      : boolean;
     blksize      : word;
     CtlHeader    : CP_Header;
+    LastAck      : integer;
 
-  procedure AckBuffer;
-  var i : integer;
+  procedure SendACK(nr: integer);
   begin
-    if bufanz>0 then begin
-      DebugLog('uucp-g',Format('Sending ACK up to #%d (%d Packets)',[BufFirst,BufAnz]),dlInform);
-      for i:=BufFirst to (BufFirst+BufAnz-1) do
-          SendControlPacket(cp_ACK,i mod 8);
-      BufFirst:=(BufFirst+BufAnz) mod 8;
-      BufAnz:=0;
-    end;
+    SendControlPacket(cp_ACK,nr);
+    LastAck := nr;
+  end;
+
+  procedure SendNAK(nr: integer);
+  begin
+    if (LastAck<>((nr+7)mod 8)) then 
+      SendACK((nr+7)mod 8);
+    SendControlPacket(cp_NAK,nr);
   end;
 
 begin
-  BufFirst:=(Recv_Seqnr+1) mod 8; BufAnz:=0;
   AckEach:=(Recv_BufSize>=256);
+  LastAck := Recv_SeqNr;
+  if Command then SetLength(s,0);
 
   repeat
     n:=10;
@@ -479,9 +482,11 @@ begin
         on ENetcallTimeout do
         begin
           Netcall.Output(mcError,'%sTimeout - sending NAK',[iifs(command,'',strs(file_pos)+': ')]);
-          FileError; AckBuffer;
+          FileError; 
           dec(n);
-          if not odd(n) then SendControlPacket(cp_NAK,Recv_SeqNr);   { 30s Timeout-> egenseite aufwecken }
+          if not odd(n) then  { 30s Timeout-> Gegenseite aufwecken }
+            SendNAK((Recv_SeqNr+1)mod 8);
+
           if n<=0 then raise;
         end;
       end;
@@ -505,8 +510,8 @@ begin
     Except // Handle Timeouts for data
       on ENetcallTimeout do begin
         Netcall.Output(mcError,'%sTimeout - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
-        FileError; AckBuffer;
-        SendControlPacket(cp_NAK,Recv_SeqNr);
+        FileError; 
+        SendNAK(j);
         Continue; (* restart repeat loop *)
       end;
     end;
@@ -532,13 +537,14 @@ begin
       Netcall.Output(mcInfo,'%sChecksum error (header %04x, data %04x) - sent NAK',[iifs(command,'',strs(file_pos)+': '),
         (SmallWord(CtlHeader[3])shl 8 + SmallWord(CtlHeader[2])),w]);
       FileError;
-      AckBuffer;
-      SendControlPacket(cp_NAK,Recv_SeqNr);
+      SendNAK(j);
       Continue;
     end;
 
-    inc(BufAnz);
     Recv_SeqNr:=(Recv_SeqNr+1) mod 8;   { = j }
+    if AckEach or (((Recv_WinSize - LastAck + 8) mod 8) >= (Recv_WinSize div 2)) then
+      SendACK(Recv_SeqNr);
+
     Move(CtlHeader,Header[Recv_SeqNr],sizeof(CP_Header));
     off:=0; sub:=0;
 
@@ -557,16 +563,23 @@ begin
     end else
       DebugLog('uucp-g',Format('Long Packet: all bytes of %d bytes used',[size])         ,dlInform);
 
-
     if Command then          { Befehlspaket verarbeiten }
     begin
-      i:=off;
-      while (i<size-sub) and (Buffer[Recv_SeqNr,i]<>0) do
-        inc(i);
-      SetLength(s,length(s)+i-off);
-      if i-off > 0 then
-        Move(Buffer[Recv_SeqNr,off],s[length(s)+1-i-off],i-off);
-      if i<size then
+      blksize := size-sub-off;
+
+      for i:=0 to blksize-1 do 
+        if Buffer[Recv_SeqNr,i]=0 then begin
+          blksize := i;
+          break;
+        end;
+      
+      if BlkSize<=0 then
+        break;
+    
+      SetLength(s,length(s)+blksize);
+      Move(Buffer[Recv_SeqNr,off],s[1+length(s)-blksize],blksize);
+
+      if blksize<size-sub-off then
         break; (* done *)
       Continue;
     end
@@ -577,14 +590,15 @@ begin
 
       BlockWrite(f,buffer[Recv_SeqNr,off],blksize);
       FileAdvance(buffer[Recv_SeqNr,off],blksize);
-      if AckEach or (BufAnz=Recv_WinSize) then AckBuffer;
+
       Continue;
     end;
 
   until false; (* will be left with break *)
 
+  if LastAck<>Recv_SeqNr then SendAck(Recv_SeqNr);
+
 (* done *)
-  AckBuffer;
 end;
 
 { --- high level protocol implementation ------------------------------------- }
@@ -645,6 +659,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/03/05 19:14:44  cl
+  - optimized UUCP-g flow control
+
   Revision 1.9  2002/03/05 13:14:50  mk
   - fixed range check error (<xpbm3327500@dirk.deimeke.net>)
 
