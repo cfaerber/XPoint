@@ -206,6 +206,7 @@ end;
  to file dir) files in FilesToProcess. FilesToProcess will contain
  uncompressed ZC buffer filenames only when finished.}
 procedure ProcessIncomingFiles(FilesToProcess: TStringList;
+                       IncomingRequestedFiles: TStringList;
                        const DirWhereToProcess,RequestedFilesDir: String;
                        const Decompressor: String;
                        boxpar: boxptr);
@@ -257,6 +258,7 @@ begin
         if Pos('.PKT',UpperCase(aFile))=0 then begin
           Debug.DebugLog('xpncfido',aFile+' is a requested file',DLDebug);
           RenameFile(aFile,RequestedFilesDir+ExtractFileName(aFile));
+          IncomingRequestedFiles.Add(aFile);
           FilesToProcess.Delete(iFile);
           end
         else begin
@@ -324,7 +326,7 @@ var i        : integer;
     fa       : fidoadr;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
-    OutgoingFiles,ConvertedFiles: TStringList;
+    OutgoingFiles,ConvertedFiles,IncomingRequestedFiles: TStringList;
     Fidomailer: TFidomailer;
 
   procedure ProcessFileAttachments(const puffer:string);
@@ -403,7 +405,8 @@ var i        : integer;
     end; { while }
   end;
 
-  procedure ProcessRequestResult(fa:string);   { Requests zurckstellen }
+  procedure ProcessRequestResult(fa:string; IncomingRequestedFiles: TStringList);
+  { Requests zurckstellen }
 
     function match(wfn,fn:string):boolean;
     var
@@ -451,8 +454,8 @@ var i        : integer;
           truncstr(fname,p-1);
           if cpos('.',fname)=0 then
             fname:='';                 { Magic Name -> l"schen }
-          for iFile:=0 to IncomingFiles.Count-1 do
-            if match(fname,IncomingFiles[iFile]) then
+          for iFile:=0 to IncomingRequestedFiles.Count-1 do
+            if match(fname,IncomingRequestedFiles[iFile]) then
               fname:='';
           if fname<>'' then begin
             nfiles:=nfiles+' '+fname;
@@ -554,6 +557,7 @@ begin { FidoNetcall }
 
   ConvertedFiles:=TStringList.Create;
   OutgoingFiles:=TStringList.Create;
+  IncomingRequestedFiles:=TStringList.Create;
   AKABoxes.BoxName:=TStringList.Create;
   AKABoxes.ReqFile:=TStringList.Create;
   AKABoxes.PPFile:=TStringList.Create;
@@ -644,7 +648,8 @@ begin { FidoNetcall }
           end;
       end;
 
-    ProcessIncomingFiles(IncomingFiles,XFerDir,xp0.Filepath,boxpar^.downarcer,boxpar);
+    ProcessIncomingFiles(IncomingFiles,IncomingRequestedFiles,XFerDir,
+                         xp0.Filepath,boxpar^.downarcer,boxpar);
 
     if result IN [el_ok,el_recerr] then begin
       if AutoDiff then
@@ -661,12 +666,14 @@ begin { FidoNetcall }
   DeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
     if AKABoxes.ReqFile[i]<>'' then begin
-      ProcessRequestResult(AKABoxes.BoxName[i]);
+      ProcessRequestResult(AKABoxes.BoxName[i], IncomingRequestedFiles);
       DeleteFile(AKABoxes.ReqFile[i]);
       end;
   for i:=0 to ConvertedFiles.Count-1 do
     DeleteFile(ConvertedFiles[i]);
-  ConvertedFiles.Destroy; OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+
+  ConvertedFiles.Destroy; OutgoingFiles.Destroy; IncomingRequestedFiles.Destroy;
+  AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
 end;
 
 
@@ -886,6 +893,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2001/10/30 09:54:24  ma
+  - fixed requested file processing once again
+
   Revision 1.25  2001/10/21 13:09:06  ml
   - removed some more warnings (only 130 yet...)
 
