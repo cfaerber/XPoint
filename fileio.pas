@@ -645,7 +645,7 @@ end;
 
 procedure TestShare;
 {$IFDEF Ver32 }
-begin { muss noch portiert werden }
+begin
 end;
 {$ELSE}
 var regs : registers;
@@ -660,6 +660,15 @@ begin
       msdos(regs);
     end;
     ShareDa:=(ax<>1);
+  end;
+  { Weiterer Installcheck fÅr Share, um Probleme mit einem Plain
+    DR-DOS zu umgehen }
+  with regs do
+  begin
+    ax:=$1000;
+    intr($2f, regs);
+    writeln(shareda);
+    if al <> $ff then ShareDa := false;
   end;
 end;
 {$ENDIF}
@@ -787,6 +796,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/03/26 09:41:12  mk
+  - erweiterte Share-Erkennung
+
   Revision 1.17  2000/03/25 23:20:30  mk
   - LockFile geht unter Win9x nicht, wohl aber unter NT. Ausgeklammert
 
