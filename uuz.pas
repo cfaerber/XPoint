@@ -359,7 +359,7 @@ var
           if cpos(':', s) < 3 then
             writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
           else
-            AddHd.AddObject(s, Pointer(mail));
+            AddHd.AddObject(s, Pointer(longint(mail)));
       end;
       close(t);
     end;
@@ -2997,7 +2997,7 @@ begin
     if not mail then
       wrs(f, 'Lines: ' + strs(lines + iif(attrib and AttrMPbin <> 0, 16, 0)));
     for i := 0 to AddHd.Count - 1 do
-      if AddHd.Objects[i] = Pointer(mail) then
+      if AddHd.Objects[i] = Pointer(longint(mail)) then
         wrs(f, addhd[i]);
     wrs(f, '');
     if attrib and AttrMPbin <> 0 then
@@ -3398,6 +3398,9 @@ end.
 
 {
   $Log$
+  Revision 1.49  2000/07/23 10:38:49  mk
+  - Kompatiblilitaet mit FPC erhoeht (AddObject)
+
   Revision 1.48  2000/07/22 17:25:46  mk
   - misc Bugfixes
 
