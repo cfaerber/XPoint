@@ -190,10 +190,10 @@ begin
   begin                                         { Setting RTANotEigeneAdressen }
     s := RTANoOwnAddresses^;                    { verwerten                    }
     repeat
-      if pos (' ', s) <> 0 then
+      if cpos (' ', s) <> 0 then
       begin
-        adresse := trim (copy (s, 1, pos (' ', s)));
-        delete (s, 1, pos (' ', s));
+        adresse := trim (copy (s, 1, cpos (' ', s)));
+        delete (s, 1, cpos (' ', s));
       end else
       begin
         adresse := s;
@@ -237,10 +237,10 @@ begin
   begin                                 { RTAEigeneAdressen verwerten     }
     s := RTAOwnAddresses^;
     repeat
-      if pos (' ', s) <> 0 then
+      if cpos (' ', s) <> 0 then
       begin
-        adresse := trim (copy (s, 1, pos (' ', s)));
-        delete (s, 1, pos (' ', s));
+        adresse := trim (copy (s, 1, cpos (' ', s)));
+        delete (s, 1, cpos (' ', s));
       end else
       begin
         adresse := s;
@@ -481,7 +481,7 @@ var RTAEmpfList :RTAEmpfaengerP;
     vor := nil;
     while assigned (lauf) do
     begin
-      if pos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, pos (' ', lauf^.empf), 255);
+      if cpos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, cpos (' ', lauf^.empf), 255);
       { ^^ Realname entfernen }
       uEmpf := uStr (lauf^.empf);
       if (uEmpf = uStr (hdp^.absender)) or (cpos ('@', lauf^.empf) = 0)
@@ -869,7 +869,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       markierteAdressen := nil;  { Liste der markierten Adressen aufbauen }
       s := first_marked;
       repeat
-        if pos ('@', s) > 0 then
+        if cpos ('@', s) > 0 then
           addToRTAList (markierteAdressen, uStr (getAdresse (trim (s))), true, false, false, 3);
         s := next_marked;
       until s = #0;
@@ -974,15 +974,14 @@ again:
           auswahlMarkierte := true;
           disposeRTAEmpfList (RTAEmpfList);
           abs := getAdresse (trim (first_marked));
-          if pos ('@', abs) = 0 then abs := '';
-          s := next_marked;
+          if cpos ('@', abs) = 0 then abs := '';
           repeat
-            if pos ('@', s) > 0 then  { MenÅzeilen filtern }
+            s := next_marked;
+            if cpos ('@', s) > 0 then  { MenÅzeilen filtern }
               if abs = '' then
                 abs := getAdresse (trim (s))
               else
                 addToRTAList (RTAEmpfList, getAdresse (trim (s)), true, false, false, 3);
-            s := next_marked;
           until s = #0;
           if assigned (RTAEmpfList) then RTA := true;
         end;
@@ -1061,6 +1060,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.6  2001/08/11 21:30:03  mk
+  - use cpos() when possible
+  - fixed bug (next_marked was accessed twice at and of list)
+
   Revision 1.1.2.5  2001/08/11 10:15:46  mk
   - removed unused variables and comments
 
