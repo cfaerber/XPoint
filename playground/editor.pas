@@ -1,0 +1,1592 @@
+{   $Id$
+
+    OpenXP editor unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus Faerber
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
+
+{$I XPDEFINE.INC}
+
+{ OpenXP editor unit }
+unit editor;
+
+interface
+
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  sysutils,
+  keys,clip,mouse,eddef, encoder, Lister;
+
+
+const EdTempFile  : string  = 'TED.TMP';
+      EdConfigFile: string[14] = 'EDITOR.CFG';
+      EdSelcursor : boolean = false;    { Auswahllistencursor }
+
+type  EdToken = byte;
+      EdTProc = function(var t:taste):boolean;   { true = beenden }
+
+
+procedure EdInitDefaults(color:boolean);    { einmal bei Programmstart }
+procedure EdSetScreenwidth(w:byte);         { globale Einstellungen }
+
+function  EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
+                NeuerAbsatzUmbruch:byte; iOtherQuoteChars:boolean):ECB;
+function  EdLoadFile(ed:ECB; fn:string ; sbreaks:boolean; umbruch:byte):boolean;
+function  EdEdit(ed:ECB):EdToken;
+function  EdSave(ed:ECB):boolean;
+procedure EdExit(var ed:ECB);               { Release }
+
+procedure EdSetTproc(ed:ECB; tp:EdTProc);   { lokale Einstellungen }
+procedure EdGetProcs(var p:EdProcs);
+procedure EdSetProcs(p:EdProcs);
+procedure EdSetLanguage(ld:LangData);
+procedure EdSetColors(col:EdColrec);
+procedure EdSetForcecr(newcr:boolean);
+procedure EdPointswitch(yuppieon:boolean);
+procedure EdGetConfig(var cf:EdConfig);
+procedure EdSetConfig(cf:EdConfig);
+procedure EdSetUkonv(umlaute_konvertieren:boolean);
+procedure EdAutoSave;
+
+function  EdModified(ed:ECB):boolean;       { externer Zugriff }
+function  EdFilename(ed:ECB):string ;
+procedure EdAddToken(ed:ECB; t:EdToken);
+
+
+function  EddefQuitfunc(ed:ECB):taste;
+function  EddefOverwrite(ed:ECB; fn:string ):taste;
+procedure EddefMsgproc(txt:string; error:boolean);
+procedure EddefFileproc(ed:ECB; var fn:string ; save,uuenc:boolean);
+function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
+function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
+
+
+implementation  { ------------------------------------------------ }
+
+uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2;
+
+const maxgl     = 60;
+      minfree   = 12000;             { min. freier Heap }
+      asize     = 16;                { sizeof(absatzt)-sizeof(absatzt.cont) }
+      maxtokens = 128;
+      maxabslen = 16363;
+
+      screenwidth : byte = 80;
+      message   : string[40] = '';
+      ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
+      findstr   : string[maxfindlen] = '';
+      replaceby : string[maxfindlen] = '';
+      findigcase: boolean = true;
+      replaceask: boolean = true;
+
+(*!! TODO: sollte auf (ansi)string umgestellt werden *)
+type  charr    = array[0..65500] of char;
+      charrp   = ^charr;
+
+      absatzp  = ^absatzt;
+      absatzt  = record
+                   next,prev  : absatzp;
+                   size,msize : word;       { msize = allokierte Grî·e }
+                   umbruch    : boolean;
+                   fill       : array[1..3] of byte;
+                   cont       : charr;
+                 end;
+      position = record
+                   absatz     : absatzp;
+                   offset     : integer;
+                 end;
+      edp      = ^EdData;
+      EdData   = record                       { je aktivem Editorobjekt }
+                   lastakted  : edp;
+                   x,y,w,h,gl : byte;         { --- Startup }
+                   edfile     : string ;
+                   showfile   : string[40];
+                   savesoftbreak : boolean;      { beim Speichern }
+                   tproc      : EdTProc;
+                   Procs      : EdProcs;
+                   root       : absatzp;
+                   firstpar   : absatzp;      { --- akt.Pos.: 1. Absatz auf Schirm }
+                   firstline  : integer;      { Zeile innerhalb dieses Absatzes }
+                   startline  : longint;      { fÅr Z-Anzeige }
+                   scx,scy    : integer;      { Bildschirm (Cursor) }
+                   xoffset    : integer;      { x-Anzeigeoffset }
+                   col        : EdColRec;     { --- Daten/Status }
+                   insertmode : boolean;
+                   modified   : boolean;
+                   rrand      : byte;         { rechter Umbruch-Rand }
+                   tokenfifo  : array[0..maxtokens-1] of EdToken;  { --- Befehle }
+                   tnextin    : byte;
+                   tnextout   : byte;
+                   absatzende : char;
+                   lastpos    : position;     { fÅr Ctrl-Q-P }
+
+         { disp: 1 = Markierung oberhalb Bildausschnitt, 2=in, 3=unterhalb }
+
+                   block      : array[1..7] of record    { 3..7 = Marker }
+                                                 pos  : position;
+                                                 disp : byte;
+                                               end;
+                   blockinverse : boolean;  { Endmarkierung vor Anfangsmark. }
+                   blockhidden  : boolean;  { Blockmarkierung ausgeschaltet  }
+                   na_umbruch   : byte;
+                   forcecr      : boolean;  { CR am Textende beim Speichern }
+                   pointswitch  : boolean;  { XPoint-Editor }
+                   Config       : EdConfig;
+                   ukonv        : boolean;
+                   autosave     : boolean;
+                 end;
+
+      delnodep = ^delnode;
+      delnode  = record
+                   absatz : absatzp;
+                   next   : delnodep;
+                 end;
+
+      modiproc = procedure(var data; size:word);
+
+
+var   Defaults : edp;
+      language : ldataptr;
+      memerrfl : boolean;
+      akted    : edp;
+      delroot  : delnodep;         { Liste gelîschter Blîcke }
+      ClipBoard: absatzp;
+
+
+{ ------------------------------------------------ externe Routinen }
+
+function SeekStr(var data; len:word;
+                 var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
+
+  { -1 = nicht gefunden, sonst Position }
+asm
+        jmp    @start
+  @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
+               db    'å','ç','é','è','ê','í','í','ì','ô'
+  @start:
+         mov    esi,data
+         push   esi
+         mov    edi,s
+         mov    ecx,len
+         mov    al,[edi]              { ax:=length(s) - < 127! }
+         cbw
+         inc   ecx
+         sub   ecx,eax
+         jbe   @nfound
+         mov   dh,igcase
+
+  @sblp1:
+         xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
+         mov   dl,[edi]                { Key-LÑnge }
+  @sblp2:
+         mov   al,[esi+ebx]
+         or    dh,dh                   { ignore case (gro·wandeln) ? }
+         jz    @noupper
+         cmp   al,'a'
+         jb    @noupper
+         cmp   al,'z'
+         ja    @umtest
+         and   al,0dfh
+         jmp   @noupper                { kein Sonderzeichen }
+  @umtest:
+         cmp   al,128
+         jb    @noupper
+         cmp   al,148
+         ja    @noupper
+         push  ebx
+         mov   ebx,offset @uppertab-128
+         segcs
+         xlat
+         pop   ebx
+  @noupper:
+         cmp   al,[edi+ebx+1]
+         jnz   @nextb
+         inc   ebx
+         dec   dl
+         jz    @found
+         jmp   @sblp2
+  @nextb:
+         inc   esi
+         loop  @sblp1
+
+  @nfound:
+         pop   esi
+         mov   eax,-1
+         jmp   @sende
+  @found:
+         mov   eax,esi
+         pop   esi
+         sub   eax,esi
+  @sende:
+{$IFDEF FPC }
+end ['EBX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
+
+
+function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
+  { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
+asm
+            mov   esi,data
+            mov   ebx,zlen
+            test  ebx, ebx
+            jz    @ufound
+  @floop:
+            mov   al,[esi+ebx]
+            cmp   al,' '               { ' ' -> unbedingter Umbruch }
+            jz    @ufound
+
+            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
+            jnz   @testslash           {        Zeichen folgt: }
+            mov   al,[esi+ebx+1]
+            cmp   al,'0'               { '0'..'9' }
+            jb    @fnext
+            cmp   al,'9'
+            jbe   @ufound
+            cmp   al,'A'               { 'A'..'Z' }
+            jb    @fnext
+            cmp   al,'Z'
+            jbe   @ufound
+            cmp   al,'a'               { 'a'..'z' }
+            jb    @fnext
+            cmp   al,'z'
+            jbe   @ufound
+            cmp   al,'Ä'               { 'Ä'..'•' }
+            jb    @fnext
+            cmp   al,'•'
+            jbe   @ufound
+            jmp   @fnext
+
+  @testslash:
+            cmp   ebx,1
+            ja    @testslash2
+            mov   ebx,0
+            jmp   @ufound
+  @testslash2:
+            cmp   al,'/'               { '/' -> Umbruch, falls kein }
+            jnz   @fnext               {        Trennzeichen vorausgeht }
+            cmp   byte ptr [esi+ebx-1],' '
+            jz    @fnext
+            cmp   byte ptr [esi+ebx-1],'-'
+            jnz   @ufound
+
+  @fnext:
+            dec   ebx
+            jnz   @floop
+  @ufound:
+            mov   eax,ebx
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
+
+procedure FlipCase(var data; size:word);
+var cdata : charr absolute data;
+    i     : integer;
+begin
+  if size>0 then
+    for i:=0 to size-1 do
+      if UpCase(cdata[i])=cdata[i] then
+        cdata[i]:=LoCase(cdata[i])
+      else
+        cdata[i]:=UpCase(cdata[i]);
+end;
+
+
+{ --------------------------------------------------- Einstellungen }
+
+procedure errsound;
+begin
+  write(#7);
+end;
+
+function AskJN(ed:ECB; nr:byte; default:char):taste;
+var t,tt : taste;
+    txt  : string[80];
+begin
+  with edp(ed)^ do begin
+    case nr of
+      1 : txt:=language^.askquit;
+      2 : txt:=language^.askoverwrite;
+    end;
+    attrtxt(col.colstatus);
+    wrt(x,y,forms(txt,w));
+    t:=default;
+    repeat
+      mwrt(x+length(txt),y,t+#8);
+      get(tt,curon);
+      tt:=UpperCase(tt);
+      if tt=#13 then t:=default
+      else if tt=keyesc then t:=keyesc
+      else if tt>' ' then t:=tt;
+    until (tt=language^.ja) or (tt=language^.nein) or (tt=keyesc) or (tt=keycr);
+    AskJN:=t;
+    end;
+end;
+
+function EddefQuitfunc(ed:ECB):taste;
+begin
+  EddefQuitfunc:=AskJN(ed,1,language^.ja);
+end;
+
+function EddefOverwrite(ed:ECB; fn:string ):taste;
+begin
+  EddefOverwrite:=AskJN(ed,2,language^.ja);
+end;
+
+
+procedure EddefMsgproc(txt:string; error:boolean);
+begin
+  message:=txt;
+  errsound;
+end;
+
+procedure EddefFileproc(ed:ECB; var fn:string ; save,uuenc:boolean);
+var brk : boolean;
+    mf  : char;
+begin
+  with edp(ed)^ do begin
+    attrtxt(col.colstatus);
+    wrt(x,y,sp(w));
+    fn:='';
+    mf:=fchar; fchar:=' ';
+    bd(x,y,'Block '+iifs(save,'speichern','laden')+': ',fn,min(w-20,70),1,brk);
+    fchar:=mf;
+    if brk then fn:='';
+    end;
+end;
+
+function EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
+begin
+  errsound;
+  EddefFindfunc:=false;
+end;
+
+function EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
+var brk : boolean;
+begin
+  errsound;
+  EddefReplFunc:=false;
+end;
+
+
+procedure EdInitDefaults(color:boolean);
+var t : text;
+    s : string;
+    p : byte;
+    i : integer;
+begin
+  new(Defaults);
+  akted:=Defaults;
+  fillchar(Defaults^,sizeof(Defaults^),0);
+  with Defaults^ do begin
+    with col do
+      if color then begin
+        coltext:=$7; colstatus:=$c; colmarked:=$17;
+        colendmark:=3;
+        for i:=1 to 9 do colquote[i]:=3;
+        colmenu:=$71; colmenuhi:=$74; colmenuinv:=$17; colmenuhiinv:=$17;
+        end
+      else begin
+        coltext:=7; colstatus:=$f; colmarked:=$70;
+        colmenu:=$70; colmenuhi:=$f; colmenuinv:=7; colmenuhiinv:=7;
+        end;
+    insertmode:=true;
+    Procs.QuitFunc:=EddefQuitfunc;
+    Procs.Overwrite:=EddefOverwrite;
+    Procs.MsgProc:=EddefMsgProc;
+    Procs.FileProc:=EddefFileProc;
+    Procs.FindFunc:=EddefFindFunc;
+    Procs.ReplFunc:=EddefReplFunc;
+    forcecr:=true;
+    config.absatzendezeichen:='˙';
+    config.rechter_rand:=74;
+    config.AutoIndent:=true;
+    assign(t,EdConfigFile);
+    if existf(t) then begin
+      reset(t);
+      while not eof(t) do begin
+        readln(t,s);
+        LoString(s);
+        p:=cpos('=',s);
+        if p>0 then
+          if LeftStr(s,p-1)='rechterrand' then
+            config.rechter_rand:=ival(mid(s,p+1))
+          else if LeftStr(s,p-1)='absatzende' then
+            config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
+          else if LeftStr(s,p-1)='autoindent' then
+            config.AutoIndent:=(mid(s,p+1)<>'n');
+        end;
+      close(t);
+      end;
+    end;
+  new(language);
+  with language^ do begin
+    zeile:='Ze'; spalte:='Sp';
+    ja:='J'; nein:='N';
+    errors[1]:='zu wenig freier Speicher';
+    errors[2]:='Absatz zu gro·';
+    errors[3]:='Fehler beim Laden des Textes';
+    errors[4]:='Fehler beim Speichern';
+    errors[5]:='Fehler: Datei nicht vorhanden';
+    errors[6]:='Text wurde nicht gefunden.';
+    askquit:='Text speichern (j/n) ';
+    askoverwrite:='Datei existiert schon - Åberschreiben (j/n) ';
+    askreplace:='Text ersetzen (Ja/Nein/Alle/Esc)';
+    replacechr:='JNA';
+    ersetzt:=' Textstellen ersetzt';
+    drucken:='Drucken ...';
+    menue[0]:='Block';
+    menue[1]:='^Kopieren       *';
+    menue[2]:='^Ausschneiden   -';
+    menue[3]:='^EinfÅgen       +';
+    menue[4]:='^Laden        ^KR';
+    menue[5]:='^Speichern    ^KW';
+    menue[6]:='-';
+    menue[7]:='^Umbruch aus   F3';
+    menue[8]:='U^mbruch ein   F4';
+    menue[9]:='-';
+    menue[10]:='^Optionen';
+    { menue[11]:='.. s^ichern'; }
+    end;
+  delroot:=nil;
+  Clipboard:=nil;
+end;
+
+procedure EdSetLanguage(ld:LangData);
+begin
+  language^:=ld;
+end;
+
+procedure EdSetScreenwidth(w:byte);
+begin
+  screenwidth:=w;
+end;
+
+procedure EdSetColors(col:EdColrec);
+begin
+  akted^.col:=col;
+end;
+
+procedure EdGetProcs(var p:EdProcs);
+begin
+  p:=akted^.Procs;
+end;
+
+procedure EdSetProcs(p:EdProcs);
+begin
+  akted^.Procs:=p;
+end;
+
+procedure EdSetForcecr(newcr:boolean);
+begin
+  akted^.forcecr:=newcr;
+end;
+
+procedure EdPointswitch(yuppieon:boolean);
+begin
+  akted^.pointswitch:=yuppieon;
+end;
+
+procedure EdGetConfig(var cf:EdConfig);
+begin
+  cf:=akted^.config;
+end;
+
+procedure EdSetConfig(cf:EdConfig);
+begin
+  akted^.config:=cf;
+end;
+
+procedure EdSetUkonv(umlaute_konvertieren:boolean);
+begin
+  akted^.ukonv:=umlaute_konvertieren;
+end;
+
+procedure EdAutoSave;
+begin
+  akted^.autosave:=true;
+end;
+
+
+{ ------------------------------------------------ externer Zugriff }
+
+function EdModified(ed:ECB):boolean;
+begin
+  EdModified:=edp(ed)^.modified;
+end;
+
+function EdFilename(ed:ECB):string ;
+begin
+  EdFilename:=edp(ed)^.edfile;
+end;
+
+procedure EdAddToken(ed:ECB; t:EdToken);
+var tnext : integer;
+begin
+  with edp(ed)^ do begin
+    tnext:=tnextin+1;
+    if tnext=maxtokens then tnext:=0;
+    if tnext<>tnextout then begin
+      tokenfifo[tnextin]:=t;
+      tnextin:=tnext;
+      end;
+    end;
+end;
+
+
+{ ------------------------------- Liste gelîschter Blîcke verwalten }
+
+procedure AddDelEntry(ap:absatzp);
+var dnp : delnodep;
+begin
+  new(dnp);
+  dnp^.absatz:=ap;
+  dnp^.next:=delroot;
+  delroot:=dnp;
+end;
+
+function GetDelEntry:absatzp;
+var dnp : delnodep;
+begin
+  if delroot=nil then
+    GetDelEntry:=nil
+  else begin
+    GetDelEntry:=delroot^.absatz;
+    dnp:=delroot^.next;
+    dispose(delroot);
+    delroot:=dnp;
+    end;
+end;
+
+procedure freeblock(var ap:absatzp); forward;
+
+procedure FreeLastDelEntry;
+  procedure freelast(var dnp:delnodep);
+  begin
+    if dnp^.next=nil then begin
+      FreeBlock(dnp^.absatz);
+      dispose(dnp);
+      dnp:=nil;
+      end
+    else
+      freelast(dnp^.next);
+  end;
+begin
+  if assigned(DelRoot) then
+    freelast(delroot);
+end;
+
+procedure FreeDellist;             { Liste gelîschter Blîcke freigeben }
+var ap : absatzp;
+begin
+  repeat
+    ap:=GetDelEntry;
+    freeblock(ap);
+  until delroot=nil;
+end;
+
+{ -------------------------------------------------------- Speicher }
+
+procedure error(nr:integer);
+var txt : string[80];
+begin
+  txt:=language^.errors[nr];
+  akted^.Procs.MsgProc(txt,true);
+end;
+
+function memtest(size:longint):boolean;
+  function memfull:boolean;
+  begin
+    memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
+  end;
+begin
+  while assigned(delroot) and memfull do
+    FreeLastDelEntry;
+  if memfull and assigned(Clipboard) then
+    FreeBlock(Clipboard);
+  if memfull then begin
+    if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
+    memerrfl:=true;
+    memtest:=false;
+    end
+  else
+    memtest:=true;
+end;
+
+function allocabsatz(size:integer):absatzp;
+var p  : absatzp;
+    ms : integer;
+begin
+  ms:=(size+15) and (not 15);
+(*
+  ms:=(size+15) and $fff0;        { auf 16 Bytes aufrunden }
+*)  
+  getmem(p,asize+ms);
+(*!!TODO: Na... *)
+  fillchar(p^,asize,0); { next, prev implizit auf NIL setzen, Rest auf 0 }
+  p^.size:=size;
+  p^.msize:=ms;
+  p^.umbruch:=true;
+  allocabsatz:=p;
+end;
+
+procedure freeabsatz(p:absatzp);
+begin
+  if assigned(p) then
+    freemem(p {,asize+p^.msize} );
+end;
+
+function vap(p:absatzp):absatzp;     { virtuellen Speicher einblenden }
+begin
+  vap:=p;
+end;
+
+function vap2(p:absatzp):absatzp;   { Absatz parallel einblenden }
+begin
+  vap2:=p;
+end;
+
+{ ------------------------------------------------------------ Edit }
+
+{ Block freigeben }
+
+procedure FreeBlock(var ap:absatzp);
+var p : absatzp;
+begin
+  while assigned(ap) do begin        { Text freigeben }
+    p:=ap^.next;
+    freeabsatz(ap);
+    ap:=p;
+  end;
+end;
+
+{ sbreaks:  Softbreaks auflîsen                                     }
+{ umbruch:  0 = alles ohne Umbruch laden                            }
+{           1 = nur lange Zeilen ohne Softbreak ohne Umbruch laden  }
+{           2 = alles mit Umbruch laden                             }
+
+function LoadBlock(fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
+var mfm   : byte;
+    s     : string;
+    t     : text;
+    p     : absatzp;
+    tail  : absatzp;
+    tbuf  : charrp;
+    ibuf  : charrp;
+    isize : word;
+    sbrk  : boolean;
+    root  : absatzp;
+    endcr : boolean;          { CR am Dateiende }
+    endlf : boolean;          { LF am Zeilenende }
+    srest : boolean;
+    pp    : byte;
+
+  procedure AppP;
+  begin
+    if root=nil then begin
+      root:=p; tail:=p;
+      end
+    else begin
+      p^.prev:=tail;
+      tail^.next:=p;
+      tail:=p;
+      end;
+  end;
+
+begin
+  root:=nil;
+  memerrfl:=false;
+  if FileExists(fn) then begin
+    getmem(ibuf,maxabslen);
+    getmem(tbuf,4096);
+    mfm:=filemode; filemode:=0;
+    { $I-}
+    assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
+    filemode:=mfm;
+    p:=
+{$IFDEF VP }
+    ptr(1);
+{$ELSE }
+{$IFDEF FPC }
+{$IFDEF VER1_1 }
+    pointer(1);
+{$ELSE}
+    ptr(1,1);
+{$ENDIF }
+{$ENDIF }
+{$ENDIF } tail:=nil;
+    endcr:=false;
+    srest:=false;
+    while (srest or not eof(t)) and (assigned(p)) do begin
+      isize:=0;
+      sbrk:=false;
+      endlf:=false;
+      while (srest and (isize=0) or not (eoln(t) or endlf))
+            and (isize<maxabslen-255) do begin
+        if not srest then read(t,s)
+        else srest:=false;
+        pp:=cpos(#10,s);
+        if pp>0 then begin
+          endlf:=(pp=length(s));
+          Move(s[1],ibuf^[isize],pp-1);
+          inc(isize,pp-1);
+          delete(s,1,pp);
+          srest:=true;
+          end
+        else begin
+          if (length(s)>40) and sbreaks and eoln(t) and (LastChar(s)=' ')
+             and not eof(t)
+          then begin
+            (* dec(byte(s[0])); *)
+	    DelLast(s);
+            sbrk:=true;
+            readln(t);
+            end;
+          move(s[1],ibuf^[isize],length(s));
+          inc(isize,length(s));
+          end;
+        end;
+      if eoln(t) and not srest then begin
+        endcr:=not eof(t);
+        readln(t);
+        end;
+      p:=AllocAbsatz(isize);
+      if assigned(p) then begin
+        p^.umbruch:=(rrand>0) and
+                    ((umbruch=2) or
+                     ((umbruch=1) and ((isize<rrand-15) or sbrk)));
+        move(ibuf^,p^.cont,isize);
+        AppP;
+        end;
+      end;
+    close(t);
+    freemem(tbuf);
+    freemem(ibuf);
+    if endcr then begin
+      p:=AllocAbsatz(0);
+      p^.umbruch:=(umbruch<>0);
+      AppP;
+    end;
+    if ioresult<>0 then error(3);
+    end;
+  LoadBlock:=root;
+end;
+
+
+
+function EdLoadFile(ed:ECB; fn:string ; sbreaks:boolean; umbruch:byte):boolean;
+begin
+  with edp(ed)^ do begin
+    edfile:=ExpandFileName(fn);
+    showfile:='  '+fitpath(edfile,max(14,w-40));
+    if assigned(root) then FreeBlock(root);
+    EdLoadFile:=false;
+    root:=LoadBlock(fn,sbreaks,umbruch,rrand);
+    if root=nil then
+      root:=AllocAbsatz(0);
+    firstpar:=root; firstline:=1;     { Anzeigeposition setzen }
+    scx:=1; scy:=1;
+    block[1].pos.absatz:=nil;
+    block[1].disp:=3;                 { Anfangsmarkierung am Ende }
+    block[2].pos.absatz:=root;
+    block[2].disp:=1;                 { Endmarkierung am Anfang }
+    blockinverse:=true;
+    end;
+end;
+
+
+{ NeuerAbsatzUmbruch:  0=nein, 1=Kopie, 2=ja }
+
+function  EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
+                 NeuerAbsatzUmbruch:byte; iOtherQuoteChars:boolean):ECB;
+var ed : edp;
+begin
+  new(ed);
+  move(Defaults^,ed^,sizeof(Defaults^));
+  ed^.lastakted:=akted;
+  akted:=ed;
+  with ed^ do begin
+    x:=l; w:=r-l+1;
+    y:=o; h:=min(u-o+1,maxgl+1);
+    gl:=h-1;
+    if rand<>0 then rrand:=rand
+    else rrand:=Config.rechter_rand;
+    absatzende:=Config.absatzendezeichen;
+    savesoftbreak:=savesoftbreaks;
+    na_Umbruch:=NeuerAbsatzUmbruch;
+    end;
+  inc(ecbopen);
+  EdInit:=ed;
+end;
+
+procedure EdSetTproc(ed:ECB; tp:EdTProc);
+begin
+  edp(ed)^.tproc:=tp;
+end;
+
+{ Positionszeiger in Absatz auf nÑchsten Zeilenbeginn bewegen }
+{ Offset mu· auf Zeilenanfang zeigen!                         }
+
+function Advance(ap:absatzp; offset,rand:word):integer;
+var zlen : integer;   { ZeilenlÑnge }
+begin
+  with vap(ap)^ do
+    if not umbruch or (size-offset<=rand) then
+      Advance:=size
+    else begin
+      zlen:=min(rand,size-offset-1);
+      zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
+    { while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
+        dec(zlen); }
+      if zlen=0 then
+        Advance:=offset+rand
+      else
+        Advance:=offset+zlen+1;
+      end;
+end;
+
+
+{ Block von pstart bis pende in Datei schreiben }
+
+function SaveBlock(pstart,pende:position; fn:string ; rand:integer;
+                   softbreak,overwrite,forcecr:boolean):boolean;
+const crlf : string[2] = #13#10;
+      spc  : string[3] = ' '#13#10;
+var ap  : pointer;
+    f   : file;
+    s   : string;
+    ofs : integer;
+    nxo : integer;
+    ofs0,ofse : integer;
+    cr  : boolean;
+begin
+  if overwrite then MakeBak(fn,'BAK');
+  {$I-}
+  assign(f,fn);
+  if not overwrite then begin
+    reset(f,1); seek(f,filesize(f)); end;
+  if overwrite or (ioresult<>0) then
+    rewrite(f,1);
+  ap:=pstart.absatz;
+  ofs0:=pstart.offset;
+  ofse:=maxint;
+  cr:=true;
+  while assigned(ap) do begin
+    if ap=pende.absatz then ofse:=pende.offset;
+    with vap(ap)^ do
+      if softbreak then begin
+        ofs:=0;
+        while (size>0) and (cont[size-1]=' ') do dec(size);
+        while (ofs<min(size,ofse)) do begin
+          nxo:=Advance(ap,ofs,rand);
+          blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
+          if nxo<min(size,ofse) then begin
+            blockwrite(f,spc[1],3); cr:=true; end
+          else
+            cr:=false;
+          ofs:=nxo;
+          end;
+        end
+      else begin
+        blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
+        cr:=false;
+        ofs0:=0;
+        end;
+    if ap=pende.absatz then ap:=nil
+    else ap:=vap(ap)^.next;
+    if assigned(ap) and (ofse=maxint) then begin
+      blockwrite(f,crlf[1],2); cr:=true;
+      end;
+    end;
+  if {not cr and} forcecr then
+    blockwrite(f,crlf[1],2);
+  close(f);
+  {$I+}
+  if ioresult<>0 then begin
+    error(4);     { 'Fehler beim Speichern' }
+    SaveBlock:=false;
+    end
+  else
+    SaveBlock:=true;
+end;
+
+
+function EdSave(ed:ECB):boolean;
+var p1,p2 : position;
+begin
+  EdSave:=false;
+  with edp(ed)^ do begin
+    p1.absatz:=root; p1.offset:=0;
+    p2.absatz:=nil;  p2.offset:=maxint;
+    if SaveBlock(p1,p2,edfile,rrand,savesoftbreak,true,forcecr) then begin
+      modified:=false;
+      EdSave:=true;
+      end;
+    end;
+end;
+
+
+function EdEdit(ed:ECB):EdToken;
+const dispnoshow : boolean = false;
+type displist   = array[1..maxgl] of record
+                                       absatz : absatzp;
+                                       offset : integer;  { innerhalb des Abs. }
+                                       zeile  : integer;
+                                     end;
+     displp     = ^displist;
+var  dl         : displp;
+     t          : taste;
+     aufbau     : boolean;
+     ende       : boolean;
+     e          : edp;
+     tk         : EdToken;
+     trennzeich : set of char;     { fÅr Wort links/rechts }
+
+  procedure showstat;
+  begin
+    with e^ do begin
+      attrtxt(col.colstatus);
+      gotoxy(x,y);
+      moff;
+      write(' ',language^.zeile,' ',forms(strs(startline+scy),7),
+                language^.spalte,' ',forms(strs(xoffset+scx),7));
+      if xoffset=0 then write(sp(8))
+      else write(forms('+'+strs(xoffset),8));
+      write(memavail);
+      if message='' then begin
+        showfile[1]:=iifc(modified,'˛',' ');
+        write(sp(w-wherex-length(showfile)),showfile,' ');
+        end
+      else begin
+        write(sp(w-wherex-length(message)),message,' ');
+        message:='';
+        end;
+      mon;
+      end;
+  end;
+
+  function GetPrefixChar(p:char; igcase:boolean):char;
+  var t : taste;
+  begin
+    with e^ do begin
+      attrtxt(col.colstatus);
+      mwrt(x,y,'^'+p+'       ');
+      gotoxy(x+2,y);
+      get(t,curon);
+      if igcase then
+        GetPrefixChar:=iifc(t<' ',chr(ord(t[1])+64),UpCase(t[1]))
+      else
+        GetPrefixChar:=t[1];
+      ShowStat;
+      end;
+  end;
+
+  function alines(ap:absatzp):integer;     { # Zeilen eines Absatzes }
+  var o,n : integer;
+  begin
+    ap:=vap(ap);
+    if not ap^.umbruch then
+      alines:=1
+    else begin
+      o:=0; n:=0;
+      repeat
+        o:=Advance(ap,o,e^.rrand);
+        inc(n);
+      until o=ap^.size;
+      alines:=n;
+      end;
+  end;
+
+  procedure display;
+  const bemax = 16384;
+  var i        : integer;
+      ap       : absatzp;
+      dofs,nxo : integer;
+      s,s2     : string;
+      line     : integer;
+      absende  : boolean;
+      acol     : byte;
+      blockstat: byte;   { 0=kommt noch, 1=mittendrin, 2=vorbei }
+      banfang,bende : integer;
+      banf2,bende2  : integer;
+
+    procedure SetAbsCol;
+    var p,p0 : byte;
+        s    : word;
+        qn   : integer;
+        pdiff: integer;
+    begin
+      p0:=0;
+      s:=vap(ap)^.size;
+      while (p0<15) and (p0<s) and (vap(ap)^.cont[p0]<=' ') do inc(p0);
+      p:=p0;
+      qn:=0;
+      repeat
+        while (p-p0<6) and (p<s) and (vap(ap)^.cont[p]<>'>') do inc(p);
+        pdiff:=p-p0;
+        if (p<s) and (vap(ap)^.cont[p]='>') then begin
+          inc(qn);
+          p0:=p;
+          end;
+        inc(p);
+      until (p>=s) or (pdiff=6);
+      if qn<1 then acol:=e^.col.coltext
+      else acol:=e^.col.colquote[min(qn,9)];
+    end;
+
+  begin
+    with e^ do begin
+      if blockinverse or blockhidden or (block[1].disp=3) or (block[2].disp=1)
+      then
+        blockstat:=2
+      else if (block[1].disp=1) and (block[2].disp>=2) then blockstat:=1
+      else blockstat:=0;
+      banfang:=0; bende:=bemax;
+      ap:=firstpar; dofs:=0;
+      for i:=1 to firstline-1 do
+        dofs:=Advance(ap,dofs,rrand);
+      SetAbscol;
+      i:=0;
+      line:=firstline-1;
+      inc(windmax,$100);
+      attrtxt(acol);
+      if not dispnoshow then moff;
+      repeat
+        inc(i); inc(line);
+        dl^[i].absatz:=ap;
+        dl^[i].offset:=dofs;
+        dl^[i].zeile:=line;
+        nxo:=Advance(ap,dofs,rrand);
+        absende:=(nxo=vap(ap)^.size);
+        if not dispnoshow then begin
+          if blockstat=0 then begin
+            if (ap=block[1].pos.absatz) and (block[1].pos.offset<=nxo) then begin
+              blockstat:=1;
+              banfang:=block[1].pos.offset-dofs;
+              if (ap=block[2].pos.absatz) and (nxo>=block[2].pos.offset) then
+                bende:=block[2].pos.offset-dofs
+              else
+                bende:=bemax;
+              end;
+            end
+          else if blockstat=1 then begin
+            banfang:=0;
+            if (ap=block[2].pos.absatz) and (nxo>=block[2].pos.offset) then
+              bende:=block[2].pos.offset-dofs;
+            end;
+          SetLength(s,minmax(nxo-dofs-xoffset,0,w));
+          if s<>'' then move(vap(ap)^.cont[dofs+xoffset],s[1],length(s));
+          if length(s)<w then
+          begin
+            if (s<>'') and absende then
+              s:= s+absatzende;          { Absatzende-Marke }
+            if length(s)<w then
+              s := s + Sp(w-Length(s)); { mit Space auffÅllen }
+          end;
+(*	  
+          if length(s)<w then begin
+            if (s<>'') and absende then begin               { Absatzende-Marke }
+	      s:=s+absatzende;	      
+              s[length(s)+1]:=absatzende;
+              inc(byte(s[0]));
+              end;
+            if length(s)<w then begin           { mit Space auffÅllen }
+              fillchar(s[length(s)+1],w-length(s),32);
+              s[0]:=chr(w);
+              end;
+            end;
+*)	   
+          attrtxt(acol);              { Zeile anzeigen }
+          if blockstat<>1 then
+            fwrt(x,y+i,s)
+          else begin
+            banf2:=minmax(banfang-xoffset+1,1,250);
+            bende2:=minmax(bende-xoffset+1,banf2,255);
+            s2:=LeftStr(s,banf2-1);
+            fwrt(x,y+i,s2);
+            attrtxt(col.colmarked);
+            s2:=copy(s,banf2,max(0,bende2-banf2));
+            fwrt(x+banf2-1,y+i,s2);
+            attrtxt(acol);
+            s2:=mid(s,bende2);
+            fwrt(x+bende2-1,y+i,s2);
+            end;
+          if bende<bemax then blockstat:=2;
+          end;
+        if absende then begin
+          ap:=vap(ap)^.next;
+          if assigned(ap) then SetAbsCol;
+          dofs:=0; line:=0;
+          end
+        else
+          dofs:=nxo;
+      until (i=gl) or (ap=nil);
+      if i<gl then begin
+        scy:=min(scy,i);
+        fillchar(dl^[i+1],sizeof(dl^[1])*(gl-i),0);
+        if not dispnoshow then begin
+          if xoffset=0 then begin
+            attrtxt(col.colendmark);
+            wrt(x,y+i+1,#4);
+            end;
+          attrtxt(acol);
+          wrt(x+1-sgn(xoffset),y+i+1,sp(w-1+sgn(xoffset)));
+          (* wrt(x,y+i+1,forms(mid(#4{#4#4},xoffset+1),w)); *)
+          inc(i);
+          if i<gl then begin
+            attrtxt(col.coltext);
+            clwin(x,x+w-1,y+i+1,y+gl+1);
+            end;
+          end;
+        end;
+      if not dispnoshow then mon;
+      dec(windmax,$100);
+      end;
+    if dispnoshow then dispnoshow:=false
+    else aufbau:=false;
+  end;
+
+  procedure NoDisplay;
+  begin
+    dispnoshow:=true;
+    Display;
+  end;
+
+
+  {$I EDITOR.INC}
+
+  procedure InterpreteToken(tk:integer);
+
+    { --------------------------------------------------- Steuerung }
+
+    procedure Quit;
+    var t : taste;
+    begin
+      with e^ do
+        if not modified then
+          ende:=true
+        else
+          if autosave then begin
+            if EdSave(e) then;
+            ende:=true;
+            end
+          else begin
+            t:=Procs.QuitFunc(e);
+            if t=language^.ja then ende:=EdSave(e)
+            else ende:=(t=language^.nein);
+            end;
+    end;
+
+    procedure SpeichernEnde;
+    begin
+      if EdSave(ed) then Quit;
+    end;
+
+  begin
+    with e^ do begin
+      if (tk>=1) and (tk<=29) then GetPosition(lastpos);
+      case tk of
+        -1                : CorrectWorkpos;
+
+        editfText         : ZeichenEinfuegen(false);
+        editfBS           : BackSpace;
+        editfDEL          : DELchar;
+        editfNewline      : NewLine;
+        editfDelWordRght  : WortRechtsLoeschen;
+        editfDelWordLeft  : WortLinksLoeschen;
+        editfDelLine      : ZeileLoeschen;
+        editfCtrlPrefix   : Steuerzeichen;
+        editfTAB          : Tabulator;
+        editfUndelete     : Undelete;
+        editfParagraph    : Paragraph;
+        editfRot13        : BlockRot13;
+        editfChangeCase   : CaseWechseln;
+        editfPrint        : BlockDrucken;
+
+        editfBOL          : Zeilenanfang;
+        editfEOL          : Zeilenende;
+        editfPgUp         : SeiteOben(true);
+        editfPgDn         : SeiteUnten;
+        editfScrollUp     : Scroll_Up;
+        editfScrollDown   : Scroll_Down;
+        editfUp           : if ZeileOben then;
+        editfDown         : if ZeileUnten then;
+        editfLeft         : if ZeichenLinks then;
+        editfRight        : CondZeichenRechts;
+        editfPageTop      : Seitenanfang;
+        editfPageBottom   : Seitenende;
+        editfTop          : Textanfang;
+        editfBottom       : Textende;
+        editfWordLeft     : WortLinks;
+        editfWordRight    : WortRechts;
+
+        editfLastpos      : GotoPos(lastpos,0);
+        editfMark1        : SetMarker(1);
+        editfMark2        : SetMarker(2);
+        editfMark3        : SetMarker(3);
+        editfMark4        : SetMarker(4);
+        editfMark5        : SetMarker(5);
+        editfGoto1        : GotoMarker(1);
+        editfGoto2        : GotoMarker(2);
+        editfGoto3        : GotoMarker(3);
+        editfGoto4        : GotoMarker(4);
+        editfGoto5        : GotoMarker(5);
+        editfGotoBStart   : GotoPos(e^.block[1].pos,0);
+        editfGotoBEnd     : GotoPos(e^.block[2].pos,0);
+
+        editfFind         : Suchen(false,false);
+        editfFindReplace  : Suchen(false,true);
+        editfFindRepeat   : Suchen(true,false);
+
+        editfChangeInsert : e^.insertmode:=not e^.insertmode;
+        editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
+        editfAbsatzmarke  : SetAbsatzmarke;
+        editfWrapOn       : UmbruchEin;
+        editfWrapOff      : UmbruchAus;
+        editfAllwrapOn    : UmbruchKomplettEin;
+        editfAllwrapOff   : UmbruchKomplettAus;
+
+        editfBlockBegin   : SetBlockMark(1);
+        editfBlockEnd     : SetBlockMark(2);
+        editfMarkWord     : WortMarkieren;
+        editfMarkLine     : ZeileMarkieren;
+        editfMarkPara     : AbsatzMarkieren;
+        editfMarkAll      : KomplettMarkieren;
+        editfCopyBlock    : BlockKopieren;
+        editfHideBlock    : BlockEinAus;
+        editfDelBlock     : BlockLoeschen;
+        editfMoveBlock    : BlockVerschieben;
+        editfReadBlock    : BlockEinlesen;
+        editfWriteBlock   : BlockSpeichern;
+        editfCCopyBlock   : BlockClpKopie(false);
+        editfCutBlock     : BlockClpKopie(true);
+        editfPasteBlock   : BlockClpEinfuegen;
+        editfDelToEOF     : RestLoeschen;
+        editfDeltoEnd     : AbsatzRechtsLoeschen;
+
+        editfMenu         : InterpreteToken(LocalMenu);
+        editfSetup        : Einstellungen;
+        editfSaveSetup    : EinstellungenSichern;
+        editfSave         : if EdSave(ed) then;
+        editfSaveQuit     : SpeichernEnde;
+        editfBreak        : Quit;
+
+      end;
+    end;
+  end;
+
+
+  procedure InterpreteKey(t:taste);   { provisorisch }
+  var b : EdToken;
+  begin
+    if t=#127    then b:=EditfDelWordLeft else
+    if lastscancode=GreyMult  then b:=EditfCCopyBlock else
+    if lastscancode=GreyMinus then b:=EditfCutBlock   else
+    if lastscancode=GreyPlus  then b:=EditfPasteBlock else
+    if t>=' '    then b:=EditfText        else
+
+    if t=keyesc  then b:=EditfBreak       else
+    if t=keyaltx then b:=EditfBreak       else
+    if t=keyleft then b:=EditfLeft        else
+    if t=^S      then b:=EditfLeft        else    { WS-Zweitbelegung }
+    if t=keyrght then b:=EditfRight       else
+    if t=^D      then b:=EditfRight       else    { WS-Zweitbelegung }
+    if t=keyup   then b:=EditfUp          else    
+    if t=^E      then b:=EditfUp          else    { WS-Zweitbelegung }
+    if t=keydown then b:=EditfDown        else
+    if t=^X      then b:=EditfDown        else    { WS-Zweitbelegung }
+    if t=keypgup then b:=EditfPgUp        else
+    if t=^R      then b:=EditfPgUp        else    { WS-Zweitbelegung }
+    if t=keypgdn then b:=EditfPgDn        else
+    if t=^C      then b:=EditfPgDn        else    { WS-Zweitbelegung }
+    if t=keyclft then b:=EditfWordLeft    else
+    if t=^A      then b:=EditfWordLeft    else    { WS-Zweitbelegung }
+    if t=keycrgt then b:=EditfWordRight   else
+    if t=^F      then b:=EditfWordRight   else    { WS-Zweitbelegung }
+    if t=keycpgu then b:=EditfTop         else
+    if t=keycpgd then b:=EditfBottom      else
+    if t=keychom then b:=EditfPageTop     else
+    if t=keycend then b:=EditfPageBottom  else
+    if t=keyend  then b:=EditfEOL         else
+    if t=keyhome then b:=EditfBOL         else
+    if t=^Z      then b:=EditfScrollUp    else
+    if t=^W      then b:=EditfScrollDown  else
+    if t=keyins  then b:=EditfChangeInsert else
+    if t=keycr   then b:=EditfNewline     else
+    if t=keybs   then b:=EditfBS          else
+    if t=keydel  then b:=EditfDEL         else
+    if t=^G      then b:=EditfDEL         else    { WS-Zweitbelegung }
+    if t=keyf5   then b:=EditfAbsatzmarke else
+    if t=^T      then b:=EditfDelWordRght else
+    if t=^Y      then b:=EditfDelLine     else
+    if t=^P      then b:=EditfCtrlPrefix  else
+    if t=keyf3   then b:=EditfWrapOff     else
+    if t=keyf4   then b:=EditfWrapOn      else
+    if t=keysf3  then b:=EditfAllwrapOff  else
+    if t=keysf4  then b:=EditfAllwrapOn   else
+    if t=keytab  then b:=EditfTAB         else
+    if t=^U      then if kb_shift then b:=EditfParagraph
+                                  else b:=EditfUndelete else
+    if t=keyalty then b:=EditfDelToEOF    else
+    if t=^L      then b:=EditfFindRepeat  else
+    if t=keyalt3 then b:=EditfChangeCase  else
+
+    if t=keysf5  then b:=EditfHideBlock   else
+    if t=keyf7   then b:=EditfBlockBegin  else
+    if t=keyf8   then b:=EditfBlockEnd    else
+    if t=keysf7  then b:=EditfMarkWord    else
+    if t=keysf8  then b:=EditfMarkPara    else
+    if t=keysf9  then b:=EditfMarkLine    else
+    if t=keysf10 then b:=EditfMarkAll     else
+
+    if t=keyf2   then b:=EditfSave        else
+    if t=keysf2  then b:=EditfSaveQuit    else
+    if t=keyf10  then b:=EditfMenu        else
+
+    if t=^Q      then case GetPrefixChar('Q',true) of
+                        'P' : b:=EditfLastpos;
+                        'L' : b:=EditfRestorePara;
+                        '1' : b:=EditfGoto1;
+                        '2' : b:=EditfGoto2;
+                        '3' : b:=EditfGoto3;
+                        '4' : b:=EditfGoto4;
+                        '5' : b:=EditfGoto5;
+                        'B' : b:=EditfGotoBStart;
+                        'K' : b:=EditfGotoBEnd;
+                        'F' : b:=EditfFind;
+                        'A' : b:=EditfFindReplace;
+                        'I' : b:=EditfChangeIndent;
+                        'Y' : b:=EditfDeltoEnd;
+                        'S' : b:=EditfBOL;
+                        'D' : b:=EditfEOL;
+                        'R' : b:=EditfTop;
+                        'C' : b:=EditfBottom;
+                      end else
+
+    if t=^K      then case GetPrefixChar('K',true) of
+                        '1' : b:=EditfMark1;
+                        '2' : b:=EditfMark2;
+                        '3' : b:=EditfMark3;
+                        '4' : b:=EditfMark4;
+                        '5' : b:=EditfMark5;
+                        'C' : b:=EditfCopyBlock;
+                        'V' : b:=EditfMoveBlock;
+                        'Y' : b:=EditfDelBlock;
+                        'H' : b:=EditfHideBlock;
+                        'B' : b:=EditfBlockBegin;
+                        'K' : b:=EditfBlockEnd;
+                        'R' : b:=EditfReadBlock;
+                        'W' : b:=EditfWriteBlock;
+                        'O' : b:=EditfRot13;
+                        'T' : b:=EditfMarkWord;
+                        'P' : b:=EditfPrint;
+                        'D' : b:=EditfBreak;
+                        'S' : b:=EditfChangeCase;
+                      end else
+
+    if t=^O      then case GetPrefixChar('O',true) of
+                        'R' : b:=EditfSetup;
+                      { 'S' : b:=EditfSaveSetup; }
+                      end else
+
+    b:=0;
+    if b<>0 then EdAddToken(ed,b);
+  end;
+
+  function PosCoord(pos:position; disp:byte):longint;
+  var i : integer;
+  begin
+    with e^ do
+      case disp of
+        1 : PosCoord:=-1;
+        2 : begin
+              i:=1;
+              while (i<=gl) and (dl^[i].absatz<>pos.absatz) do inc(i);
+              if i>gl then PosCoord:=maxlongint { !? }
+              else PosCoord:=$10000*i + pos.offset;
+            end;
+        3 : PosCoord:=maxlongint;
+      end;
+  end;
+
+  procedure maus_bearbeiten;
+  var xx,yy : integer;
+      ax,ay : integer;
+      nx,ny : integer;
+      lx,ly : integer;
+      mbm   : byte;        { Blockmarker, auf dem sich die Maus befindet }
+      up    : boolean;
+      apos  : position;
+      tc    : longint;
+
+    procedure KorrScy;
+    begin
+      with e^ do
+        if dl^[scy].absatz=nil then begin
+          while dl^[scy].absatz=nil do dec(scy);
+          scx:=vap(dl^[scy].absatz)^.size-dl^[scy].offset+1;
+          end;
+    end;
+
+    procedure setscx(xx:integer);
+    var nxx : integer;
+    begin
+      with e^ do begin
+        nxx:=Advance(dl^[scy].absatz,dl^[scy].offset,rrand);
+        if nxx=vActAbs^.size then scx:=xx
+        else scx:=minmax(xx,1,nxx-dl^[scy].offset);
+        end;
+    end;
+
+  begin
+    maus_gettext(xx,yy);
+    with e^ do
+      if (xx>=x) and (xx<x+w) and (yy>=y) and (yy<=y+h) then
+        if yy>=y then
+          if t=mausldouble then
+            WortMarkieren
+          else if t=mausright then begin
+            InterpreteToken(LocalMenu);
+            t:='';
+            end
+          else if t=mausleft then begin
+            lx:=xx; ly:=yy;
+            TruncAbs;
+            scy:=max(1,yy-y);
+            KorrScy;
+            Setscx(xx);
+            SetBlockMark(1);
+            SetBlockMark(2);
+            display;
+            mbm:=3;     { beide }
+            repeat                { Blockmarkierschleife }
+              repeat
+                gotoxy(x+scx-1,y+scy);
+                get(t,curon);
+                if t=mauslmoved then begin
+                  maus_gettext(ax,ay);
+                  nx:=minmax(ax,x,x+w-1);
+                  ny:=minmax(ay,y+1,y+h);
+                  if (nx<>lx) or (ny<>ly) then begin
+                    lx:=nx; ly:=ny;
+                    scy:=ny-y;
+                    KorrScy;
+                    Setscx(nx);
+                    up:=(ny<yy) or ((ny=yy) and (nx<xx));
+                    GetPosition(apos);
+                    if up then
+                      case mbm of
+                        1,3 : begin SetBlockmark(1); mbm:=1; end;
+                        2   : if PosCoord(apos,2)>=PosCoord(block[1].pos,block[1].disp) then
+                                SetBlockmark(2)
+                              else begin
+                                block[2]:=block[1];
+                                SetBlockmark(1);
+                                mbm:=1;
+                                end;
+                      end
+                    else
+                      case mbm of
+                        1   : if PosCoord(apos,2)<=PosCoord(block[2].pos,block[2].disp) then
+                                SetBlockmark(1)
+                              else begin
+                                block[1]:=block[2];
+                                SetBlockmark(2);
+                                mbm:=2;
+                                end;
+                        2,3 : begin SetBlockmark(2); mbm:=2; end;
+                      end;
+                    aufbau:=true;
+                    end;
+                  if ((ay<=y) and ScrolLDown) or      { AutoScrolling }
+                     ((ay>=y+h-1) and (assigned(dl^[gl].absatz)) and ScrollUp) then begin
+                    tc:=ticker;
+                    keyboard(mauslmoved); inc(ly); display; showstat;
+                    repeat until tc<>ticker;
+                    end;
+                  end;
+              until not keypressed or (t=mausunleft);
+              if aufbau then begin
+                display; showstat; end;
+            until t=mausunleft;
+            end;
+  end;
+
+begin
+  e:=edp(ed);
+  with e^ do begin
+    new(dl);
+    trennzeich:=[#0..#31,' ','!','('..'/',':'..'?','['..'^',
+                 '''','"','{'..#127,#255];
+    aufbau:=true; ende:=false;
+    tk:=0;
+    repeat
+      memerrfl:=false;
+      if aufbau then display;
+      showstat;
+      InterpreteToken(-1);         { CorrectWorkpos }
+      gotoxy(x+scx-1,y+scy);
+      if insertmode then get(t,curon)
+      else get(t,cureinf);
+      if assigned(TProc) then
+        if TProc(t) then EdAddToken(e,EditfBreak);
+      if (t>=mausfirstkey) and (t<=mauslastkey) then
+        maus_bearbeiten;
+      InterpreteKey(t);
+      while tnextout<>tnextin do begin
+        tk:=tokenfifo[tnextout];
+        InterpreteToken(tk);
+        inc(tnextout);
+        if tnextout=maxtokens then
+          tnextout:=0;
+        end;
+    until ende;
+    dispose(dl);
+    end;
+  EdEdit:=tk;
+end;
+
+
+procedure EdExit(var ed:ECB);      { Release }
+begin
+  if assigned(ed) then begin
+    FreeBlock(edp(ed)^.root);
+    akted:=edp(ed)^.lastakted;
+    dispose(edp(ed));
+    ed:=nil;
+    dec(ecbopen);
+    if ecbopen=0 then begin
+      FreeDellist;
+      FreeBlock(Clipboard);
+      end;
+    end;
+end;
+
+
+end.
+
+{
+  $Log:
+}

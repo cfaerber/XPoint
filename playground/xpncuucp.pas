@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall routines
-   (C) 2001 OpenXP team (www.openxp.de), M.Kiesel and C.F"arber
+   (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,13 +51,11 @@ function UUCPNetcall(boxname: string;
                      diskpoll: boolean;
                      Logfile: String;
                      IncomingFiles: TStringList):shortint;
-var
+var 
 (*
-    UUCICO:     TUUCPNetcall;
-*)
-
-  uunum : word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
-
+  UUCICO: TUUCPNetcall;
+*)  
+  UUNum:  word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
 
   (* Nummer in UUNUMMER.DAT lesen/schreiben *)
 
@@ -223,9 +221,9 @@ var
 
               { now, try .OUT => .X/.XX }
               if (compression<>bzip) and (not existf(f1^)) then case compression of
-	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'F');
-	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'GZ');
-		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'Z');
+	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'F');
+	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'GZ');
+		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'Z');
 	      end; 
 
 	      { finally, try .OUT => .OUT.X/.OUT.XX }
@@ -379,14 +377,6 @@ function UUCPNetcall(boxname: string;
 begin {function UUCPNetcall}
   Debug.DebugLog('xpncuucp','uucp netcall starting',DLInform);
   result:=el_noconn;
-  {
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
-            EL_noconn : begin Netcall_connect:=false; end;
-            EL_recerr,
-            EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-            EL_break  : begin  Netcall:=false; end;
-  }	    
   
   ReadUU;
 
@@ -410,6 +400,14 @@ begin {function UUCPNetcall}
   else begin
     result:=el_noconn; 
     Debug.DebugLog('xpncucp','not implemented',DLInform);
+(*    
+    if ProcessOutgoingFiles then begin
+      UUCICO:=TUUCPNetcall.Create      
+    
+      ProcessIncomingFiles;
+    end else
+      result:=el_noconn; 
+*)
   end; {!diskpoll}
   
   if result IN [el_recerr,el_ok] then begin
@@ -424,6 +422,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/26 12:30:59  cl
+  - reverted to PM's version + initial ports
+
   Revision 1.4  2001/02/22 17:14:34  cl
   - UUCP sysop netcalls working
 

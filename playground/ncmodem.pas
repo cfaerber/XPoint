@@ -83,6 +83,12 @@ type
      SendCommand for details.}
     function SendMultCommand(s:string; TimeoutModemAnswer: real): String;
 
+    { Connects (= initializes comm channel and dials if necessary) }
+(*
+    function ConnectModem: boolean; virtual;
+    function ConnectIP: boolean; virtual;
+*)
+
     {Logs a transmitted/received file.}
     procedure LogTxRxFile(fn: string; outgoing: boolean);
 
@@ -94,6 +100,14 @@ type
     CommandInit: String;
     {Modem dial prefix string}
     CommandDial: String;
+    {IP Address/Hostname}
+(*    
+    IPHost: String;
+*)
+    {IP Port}
+(*    
+    IPPort: word; 
+*)
     {Max dial attempts}
     MaxDialAttempts: Integer;
     {Time to wait between dial attempts}
@@ -312,6 +326,22 @@ begin
 end;
 
 function TModemNetcall.Connect: boolean;
+(*
+begin
+  if TypeOf(FCommObj) is TypeOf(TPRawIPObj) then
+    result := ConnectIP
+  else
+    result := ConnectModem; 
+end;
+
+function TModemNetcall.ConnectIP: boolean;
+begin
+  TPRawIPObj(FCommObj)^.ConnectIP(IPHost,IPPort);
+  result:=FCommObj^.Carrier;
+end;
+
+function TModemNetcall.ConnectModem: boolean;
+*)
 
   function Bauddetect(ConnectString: String): Longint;
   var p: byte; b: longint;
@@ -482,6 +512,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/02/26 12:30:59  cl
+  - reverted to PM's version + initial ports
+
   Revision 1.17  2001/02/23 13:57:14  ma
   - fixed small time logging bug
 

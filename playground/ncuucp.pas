@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall class
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"aerber
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -30,24 +30,27 @@ uses ncmodem,timer,fidoglob,xpglobal,classes;
 
 type
   TUUCPNetcall = class(TModemNetcall)
+  private
+    function FFilePath: string;
 
   protected
     function InitHandshake(var waittime:integer):char;
+    function 
   
   public
     function PerformNetcall: Integer;
 
-    UUprotos	  : string;
+    property UUprotos      : string;
     
-    MaxWinSize    : byte;
-    MaxPacketSize : word;
-    VarPacketSize : boolean;
-    ForcePktSize  : boolean;
+    property FilePath      : string read FFilePath;
+    property CommandFile   : string;
+    
+    property MaxWinSize    : byte;
+    property MaxPacketSize : word;
+    property VarPacketSize : boolean;
+    property ForcePktSize  : boolean;
 
-    SizeNego      : boolean;
-    
-    FilePath      : string;
-    commandfile   : string;
+    property SizeNego      : boolean;
   end;
 
 implementation
@@ -57,7 +60,10 @@ xpdiff, objcom, fileio, inout, keys;
 
 type 
 
+
 (*
+  UUCP protocol implementation
+
   planned class hierarchy:
 
   TUUCProtocol
@@ -78,13 +84,26 @@ type
 *)	 
 
   TUUCProtocol = class
-    protected
-      Netcall: 	  TUUCPNetcall; 
+    private
+      FNetcall: TUUCPNetcall; 
+      function FCommObj: TPCommObj;
+      function TestBRK: Boolean;
+
+    protected  
+      property	  Netcall: TUUCPNetcall read FNetcall; 
+      property	  CommObj: TPCommObj read FCommObj;
+      property    UserBrk: boolean read TestBRK;
+
+
     public
       constructor InitProtocol(caller: tuucpnetcall);
       destructor  ExitProtocol; virtual;
       function    RunProtocol: integer; virtual; abstract;
+
   end;
+  
+  function TUUCProtocol FCommObj:TPCommObj;
+  begin if FNetcall<>nil then result:=FNetcall.CommObj else result:=nil; end;
 
   TUUCProtocolSimple = class(TUUCProtocol)
     public
@@ -109,11 +128,14 @@ type
       procedure ResetTransdat(blksize:word);
       procedure StartFile(send:boolean; fn:string; size:longint);
       procedure ShowFtype(var data; len:word);
-      procedure TestBRK;
+
 
     (* high level protocol functions *)
-      function SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
-      function RecFiles(var rectime:longint):boolean;
+      (* master: process command file *)
+      function Master:boolean;
+      (* slave: receive commands *)
+      function Slave:boolean;
+      (* change role *)
       function GetSlave(var ok:boolean):boolean;
 
     (* global vars *)
@@ -135,7 +157,6 @@ type
       resopen       : boolean;
       dlogopen      : boolean;
       ulogopen      : boolean;
-      break         : boolean;      { <Esc> gedrueckt }
       filetrans     : boolean;      { fuer rerrmsg }
       ShowTime      : boolean;
       FileStarted   : boolean;
@@ -155,10 +176,85 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       fileRepeat    =   1;    { Datei wiederholen }
       fileError     =   2;    { Datei - Abbruch   }
 
-type 
-      TUUCProtocolG = class(TUUCProtocolSimple)
+{ --- UUCP command parser ------------------------------------- }
 
-      end;
+TUUCPCommand = object (* class is too much *)
+public
+  cmd, src, dest, user, opts, temp, ntfy, exec: string;
+  mode: integer; size,restart: longint; 
+  constructor Parse(s:string);
+end;
+
+(* S from to user -options temp mode notify size *)
+(* R from to user -options size *)
+(* X from to user -options *)
+(* E from to user -options temp mode notify size command *)
+
+constructor TUUCPCommand.Parse(s:string);
+var tmp: string;
+
+  function NextToken:string; 
+  begin 
+    result:=GetToken(s,' '#9#10); 
+  end;
+  
+  function ModeVal(s:string):integer;
+  begin 
+    result:=CVal(s); 
+    if result > 511 {==0666 okt} then 
+      result:=Val(s); 
+  end;
+  
+  function FPosVal(s:string):LongInt; 
+  begin 
+    if  then result:=CVal(s)
+    else result:=-1;
+  end;
+
+
+begin
+  cmd  := ''; src  := ''; dest := ''; user := ''; opts := ''; 
+  temp := ''; ntfy := ''; exec := '';
+  mode :=  0; size := -1; restart := -1
+
+  cmd  := NextToken;
+
+  if cmd<>'S' and cmd<>'R' and cmd<>'X' and 
+     cmd<>'E' and cmd<>'H' then exit; (* not supported *)
+  
+  src  := NextToken;
+  dest := NextToken;
+  user := NextToken;
+
+  opts := NextToken;
+
+  if LeftStr(opts,1)='-' then opts:=mid(opts,2);
+  else begin opts:=''; exit; end;     (* illegal options *)
+
+  (* R from to user -options size [Taylor UUCP] *)
+  (* R from to user -options dummy mode owner temp restart [SRV4] *)
+  if cmd='R' then 
+  begin
+    tmp := NextToken;
+
+    if tmp <> 'dummy' then 
+    begin (* SRV4 *) 
+      mode := ModeVal(NextToken);
+      ntfy := NextToken;
+      temp := NextToken
+      restart := FPosVal(NextToken);
+    end else
+      size := FPosVal(NextToken);
+  end else
+  if cmd='S' or cmd='E' then 
+  begin
+
+    if cmd='E' then 
+      exec := NextToken;    
+  end;
+end;
+
+{ --- Individual protocol implementations --------------------- }
 
 { $I ncuucp-g.inc}
 { $I ncuucp-e.inc}
@@ -171,7 +267,7 @@ destructor  TUUCProtocol.ExitProtocol; begin end;
 
 { --- UUCP-Verteiler ------------------------------------------------ }
 
-constructor TUUCProtocolSimple.InitProtocol(caller: tuucpnetcall); 
+constructor TUUCProtocolSimple.InitProtocol(caller: TUUCPNetcall); 
 begin 
   inherited InitProtocol(caller);
 
@@ -215,7 +311,7 @@ begin
     if (s<>'') and (LeftStr(s,1)<>c) then
       Netcall.Log(lcError,'unexpected command: '+s);
     dec(n);
-  until (LeftStr(s,1)=c) or (n=0) or (not Netcall.CommObj.Carrier);
+  until (LeftStr(s,1)=c) or (n=0) or (not CommObj.Carrier);
   RepeatGetcommand:=s;
 end;
 
@@ -253,6 +349,15 @@ end;
 procedure TUUCProtocolSimple.StartFile(send:boolean; fn:string; size:longint);
 begin
   inc(transdata.files);
+
+  if send then begin
+    Netcall.LogTxFile(fn)
+    Netcall.WriteIPC(mcVerbose,'Sending %s (%d bytes)',fn,size);
+  end else begin
+    Netcall.LogRxFile(fn)
+    Netcall.WriteIPC(mcVerbose,'Receiving %s (%d bytes)',fn,size);
+  end;
+  
 // if ParDebug then begin
 //    if send then 
    //  Netcall.WriteIPC('Sending '+fn);
@@ -290,6 +395,7 @@ begin
 //    filestart:=ticker;
 //    WriteTransfer;
 //    end;
+
   FileStarted:=true;
 end;
 
@@ -358,6 +464,14 @@ end;
 procedure TUUCProtocolSimple.WriteTransfer;
 var sec,cps : longint;
 begin
+  if send then begin
+    Netcall.LogTxFile(fn)
+    Netcall.WriteIPC(mcInfo,'Sent %s (%d bytes)',fn,size);
+  end else begin
+    Netcall.LogRxFile(fn)
+    Netcall.WriteIPC(mcInfo,'Received %s (%d bytes)',fn,size);
+  end;
+
 (* if ParDebug then exit; *)
 //  attrtxt(col.colmailerhi);
 //  with transdata do begin
@@ -393,17 +507,19 @@ begin
 //          dup(min(lwdt-3,system.round((lwdt-3)*(transferred/filesize))),'±'));
 //    end;
 //  WriteOnline;
-  testbrk;
+
+  TestBRK;
 end;
 
-procedure TUUCProtocolSimple.testbrk;
+function TUUCProtocol.TestBRK: Boolean;
 begin
   if keypressed and (readkey=#27) then begin
-    break:=true;
+    result:=true;
 (* rmsg(getres2(2300,51)); *)
     Netcall.Log(lcExit,'User break.');
-    Sleeptime(500);
-    end;
+    Netcall.WriteIPC(lcInfo,'User break - aborting...');
+  end else
+    result:=false;
 end;
 
 { --- TUUCPNetcall ------------------------------------------------------ }
@@ -430,9 +546,11 @@ begin
 
   case InitHandshake(5000) of
     'g','G','v': pprot := TUUCProtocolG.InitProtocol(self);
-(*  'e':         pprot := TUUCProtocolE.InitProtocol(self);
+(*   
+    'e':         pprot := TUUCProtocolE.InitProtocol(self);
     'f':         pprot := TUUCProtocolFZ.InitProtocol(self,true);
-    'z':	 pprot := TUUCProtocolFZ.InitProtocol(self,false); *)
+    'z':	 pprot := TUUCProtocolFZ.InitProtocol(self,false); 
+*)
   else exit end;
 
   (* if not pprot.ok then
@@ -467,7 +585,7 @@ begin
   mdelay(500);
 
   CommObj.PurgeInBuffer;
-  CommObj.SendString( ^P'S'+pointname+iifs(SizeN,' -N','')+#0);
+  CommObj.SendString( ^P'S'+pointname+iifs(SizeNego,' -N','')+#0);
 
   for n := 1 to 5 do begin
     s:=GetUUStr;
@@ -486,8 +604,8 @@ begin
     end;
   Log(lcInfo,'UUCP connection established');
 
-  SizeN:=(s='ROKN');         { size negotiation }
-  if SizeN then begin
+  SizeNego:=(s='ROKN');         { size negotiation }
+  if SizeNego then begin
     rmsg(getres2(2300,38));  { 'Using size negotiation' }
     log(lcInfo,'using size negotiation');
     end;
@@ -505,7 +623,7 @@ begin
     end;
     
   delete(s,1,1);
-  WrLog('~','remote protocols: '+s);
+  Log('~','remote protocols: '+s);
   if not multipos(uuprotos,s) then begin
     CommObj.SendString(^P'UN'#0);
     rmsg(getreps2(2300,37,s));    { 'no common protocol (remote supports %s)' }
@@ -547,9 +665,9 @@ end;
 function RunProtocol(Caller:^TUUCPNetcall: integer; 
 var fuucico: integer
 begin
-  if not SendFiles(CommandFile,sendtime,rectime) then
+  if not SendFiles then
     fuucico:= uu_senderr
-  else if not RecFiles(rectime) then
+  else if not RecFiles then
     fuucico:= uu_recerr
   else
     fuucico:=uu_ok;
@@ -557,8 +675,88 @@ begin
   RunProtocol:=fuucico;
 end
 
+{----- TUUCProtocolSimple.Master: send files and file requests ------------------------- }
 
-function TUUCProtocolSimple.SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
+function TUUCProtocolSimple.Master:Boolean;
+var t   : ^text;
+    s	: string; { unparsed UUCP command }
+  
+  function LocalFile(src:string):string;
+  var p: integer;
+  begin
+    if not multipos(_MPMask,src) then 
+      (* kein Pfad => gleiches Verzeichnis wie CommandFile *)
+      src := FilePath+src;
+    {$IFNDEF UnixFS}
+    else
+      (* nur unter DOS: Pfadseparatoren wieder anpassen *)
+      for p:=1 to length(fn) do
+        if src[p]='/' then src[p]:='\';
+    {$ENDIF}
+    result:=src;
+  end;
+ 
+  procedure PutFile(s2:string);
+  var src: string;
+      size:integer;
+  begin
+    src:=LocalFile(GetToken(s2,' '#9#10));
+
+    if SizeNego then begin
+      GetToken(s,' '#9#10); (* dest -- unneeded *)
+      GetToken(s,' '#9#10); (* user -- unneeded *)
+      GetToken(s,' '#9#10); (* opts -- unneeded *)
+      if LeftStr(s,1)='-' then (* otherwise wrong options *)
+      begin
+        GetToken(s,' '#9#10); (* temp -- unneeded *)
+        GetToken(s,' '#9#10); (* mode -- unneeded *)
+        GetToken(s,' '#9#10); (* notify- unneeded *)
+	size := CVal(GetToken(s,' '#9#10)); (* size -- finally *)
+      end; 
+    end else 
+      size := -1;
+ 
+    if not fileexists(src) then 
+    begin
+      Netcall.Log(lcError,'File not found: '+src);
+      Netcall.WriteIPC(mcError,'File not found: %s',src); 
+      exit;
+    end;
+
+  end;
+  
+  procedure GetFile(s2:string);
+  begin
+
+  end;
+
+begin { TUUCProtocolSimple.Master:Boolean; }
+  oops:=false;
+
+  new(t); assign(t^,CommandFile); reset(t^);
+
+  while (not oops) and (not eof(t^)) begin
+    if not CommObj.Carrier then begin oops:=true; continue; end;
+    if     UserBrk         then begin oops:=true; continue; end; 
+   
+    readln(t^,s);
+
+    if LeftStr(s,2)='S ' then PutFile(mid(s,2)) else
+    if LeftStr(s,2)='R ' then GetFile(mid(s,2)) else 
+    begin
+      { no reason to kill connection, rather kill UUZ programmer }
+      Netcall.Log(lcError,'Unknown UUCP command: '+s);
+      Netcall.WriteIPC(mcError,'Unknown UUCP command: %s',s); 
+    end;
+
+  end; { while not eof(^t) }
+
+  close(t^); dispose(t);
+  result:=not oops;
+end
+
+{$IF 0}
+function TUUCProtocolSimple_SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
     s2  : string;
@@ -619,7 +817,7 @@ begin
       else
         fn:=XFerDir+fn[length(fn)-4]+'-'+RightStr(fn,4)+'.OUT';
       if fileexists(fn) then begin
-        if not SizeN and (pos('""',s)>0) then
+        if not SizeNego and (pos('""',s)>0) then
           s:=trim(LeftStr(s,pos('""',s)-1));
         netcall.Log('+','sending '+fn+' as '+sf);
         if not SendCommand(s) then begin
@@ -696,7 +894,7 @@ begin
             fn:=LeftStr(fn,length(fn)-1)+strs(ival(RightStr(fn,1))+1);
         end;
       ti:=ticker;
-      if SizeN then
+      if SizeNego then
         s:=s+' '+strs(diskfree(ord(FilePath[1])-64) div 3);
       netcall.log('+','requesting file: '+sf);
       if not SendCommand(s) then begin
@@ -730,7 +928,7 @@ ende:
   close(t^);
   dispose(t);
 end;
-
+{$ENDIF}
 
 function TUUCProtocolSimple.GetSlave(var ok:boolean):boolean;
 var s : string[20];
@@ -838,7 +1036,7 @@ begin
                   s:=trim(mid(s,p));
                   p:=blankpos(s);
                   if p>0 then begin
-                    if SizeN then getFilesize;
+                    if SizeNego then getFilesize;
                     s:=LeftStr(s,p-1);
                     end;
                   end;
@@ -894,7 +1092,7 @@ end;
 // function fuucico(start:longint; var ende:boolean;
 //                 var waittime:integer; var sendtime,rectime:longint):integer;
 // begin
-//   SizeN:=sizenego;
+//   SizeNego:=sizenego;
 //   fillchar(transdata,sizeof(transdata),0);
 //   transdata.connstart:=start;
 //   InitInterface;
@@ -942,8 +1140,18 @@ end;
 //   ende:=_ende;
 // end;
 
+{ --- TUUCPNEtcall properties ------------------------------------ }
+    
+function FFilePath: string;
+begin
+  result:=ExtractFilePath(CommandFile);
+end;
+
 {
   $Log$
+  Revision 1.3  2001/02/26 12:30:59  cl
+  - reverted to PM's version + initial ports
+
   Revision 1.2  2001/02/21 17:45:53  cl
   - first things for TUUCPNetcall
 

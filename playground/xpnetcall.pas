@@ -33,7 +33,7 @@ uses
   sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
   maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
   xp1input,xp2c,xp3o2,xp6,xpdiff,xpuu,zftools,fidoglob,
-  classes,archive,xp3ex,xpterminal;
+  classes,archive,xp3ex,xpterminal,xpncuucp;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
 
@@ -790,7 +790,7 @@ begin                  { function Netcall }
   msgids:=(dbReadInt(d,'script') and 8=0);
   dbClose(d);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_UUCP])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
     end;
@@ -906,11 +906,24 @@ begin                  { function Netcall }
           SendNetzanruf(NetcallLogFile);
           end; {case ltZConnect}
 
-        ltPOP3: begin
-          Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
-          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
-          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          end; {case ltPOP3}
+        ltUUCP: begin
+          Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
+          case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+            EL_noconn : begin Netcall_connect:=false; end;
+            EL_recerr,
+            EL_senderr,
+            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+            EL_break  : begin  Netcall:=false; end;
+          else begin Netcall:=true end;
+            end; {case}
+          end; {case ltUUCP}
+
+//        ltPOP3: begin
+//          Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
+//          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+//          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+//          end; {case ltPOP3}
 
         else
           Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
@@ -1137,6 +1150,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/02/26 12:30:59  cl
+  - reverted to PM's version + initial ports
+
   Revision 1.13  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)
