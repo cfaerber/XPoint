@@ -5,7 +5,8 @@
 # 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
 Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
-%define version 3.8.0-1
+%define version 3.8.0
+%define release 1
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
 # -CX for Releases only
@@ -19,10 +20,10 @@ Name: openxp
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 Version: %{version}
-Release: 1
+Release: %{release}
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team under GPL
-Source: /usr/src/packages/SOURCES/openxp-%{version}.tar.gz
+Source: /usr/src/packages/SOURCES/openxp-%{version}-%{release}.tar.gz
 BuildRoot: /tmp/openxp-root
 # Following are optional fields
 URL: http://www.openxp.de
@@ -144,6 +145,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{filelist}
 
 %changelog
+* Thu Oct 9 2003 Christian Boettger <cb@openxp.de>
+- changes for new release numbering system
 * Sun Jan 6 2002 Matthias Leonhardt <i7lema@rz.uni-jena.de>
 - compilerupdate
 - range-check-fixes
