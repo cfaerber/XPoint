@@ -952,43 +952,52 @@ end;
 
 
 begin      {-------- of DoSend ---------}
-{$Q-,R-,I-}
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
-  if memavail<20000 then begin
+  {$IFDEF BP }
+  if memavail<20000 then
+  begin
     rfehler(605);   { 'zu wenig freier Speicher zum Absenden der Nachricht' }
     goto xexit2;
-    end;
+  end;
+  {$ENDIF }
   new(f); new(f2);
   new(fn); new(fn2); new(fn3);
   assign(f^,datei);
-  if sendFlags and sendQuote<>0 then begin
+
+  sdNope:=(sdata=nil);
+  if sdNope then
+  begin
+    new(sData);
+    fillchar(sData^,sizeof(sdata^),0);
+  end;
+
+  if sendFlags and sendQuote<>0 then
+  begin
     ExtractSetMpdata(qmpdata);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
                 datei,false,1);
     sdata^.quotestr:=qchar;
     get_xref;
-    end
-  else begin
-    if not exist(datei) then begin       { leere Datei anlegen }
+  end else
+  begin
+    if not exist(datei) then
+    begin       { leere Datei anlegen }
       rewrite(f^); close(f^);
-      end;
-    OrigBox:='';
     end;
+    OrigBox:='';
+  end;
 
-  if not pm and betreffbox and (left(empfaenger,1)<>'A') then begin
+  if not pm and betreffbox and (left(empfaenger,1)<>'A') then
+  begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht m”glich!' }
     goto xexit1;
-    end;
+  end;
+
   new(passwd);
   new(hdp);
-  sdNope:=(sdata=nil);
-  if sdNope then begin
-    new(sData);
-    fillchar(sData^,sizeof(sdata^),0);
-    end;
 
   MakeSignature(signat,sigfile,sigtemp);
 
@@ -2103,7 +2112,6 @@ fromstart:
   { es muá jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
-  if sdNope then dispose(sdata);
   dispose(ccm);
   dispose(cc);
   dispose(passwd);
@@ -2113,6 +2121,7 @@ xexit:
 xexit1:
   dispose(f); dispose(f2);
   dispose(fn); dispose(fn2); dispose(fn3);
+  if sdNope then dispose(sdata);
 xexit2:
   forcebox:=''; forceabs:='';
   sendfilename:=''; sendfiledate:='';
@@ -2126,12 +2135,11 @@ xexit2:
   NoCrash:=false;
   FileAttach:=false; EditAttach:=true;
   msgprio:=0;
-  rfcprio:=0; { MH 07.02.2000 }
+  rfcprio:=0;
   ControlMsg:=false;
   DisposeReflist(_ref6list);
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
-
 end; {------ of DoSend -------}
 
 
@@ -2235,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/06/05 16:41:04  mk
+  - Zugriff auf uninitialisiertes sdata verhindert
+
   Revision 1.35  2000/06/01 21:18:40  mk
   - Resource 611,11 enthaelt jetzt Hotkey
 
