@@ -30,6 +30,11 @@ interface
 
 uses
   xpglobal,             { Nur wegen der Typendefinition }
+{$IFDEF Win32 }
+  winsock,
+{$ELSE }
+  sockets,
+{$ENDIF }
   sysutils;
 
 
@@ -90,11 +95,6 @@ type
   end;
 
 implementation
-
-{$ifdef Win32}
-uses
-  WinSock;
-{$endif}
 
 {$IFDEF VP }
 const
@@ -221,6 +221,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/08/01 22:55:19  mk
+  - Sockets fuer Linux wieder hinzugefuegt
+
   Revision 1.7  2000/08/01 20:42:41  mk
   - Unit Sockets entfernt
 
