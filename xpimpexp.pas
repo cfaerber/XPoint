@@ -575,7 +575,7 @@ begin
     if not mfehler(ntBoxNetztyp(box)=nt_Maus,box+' ist keine MausNet-Box') and
        not mfehler(IsPath(mtpath),'ungÅltiges Verzeichnis') then begin
       if not exist(mtpath+mdaten) and IsPath(mtpath+'daten') then
-        mtpath:=mtpath+FUStr('daten')+DirSepa;
+        mtpath:=mtpath+'DATEN'+DirSepa;
       if not mfehler(exist(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
          not mfehler(exist(mtpath+mindex),mtpath+mindex+' fehlt') and
          not mfehler(fileio.diskfree(0)>2.5*_filesize(mtpath+mdaten),
@@ -646,8 +646,8 @@ begin
     if brk or (ypath='') then exit;
     ypath:=AddDirSepa(ypath);
     if not mfehler(IsPath(ypath),'ungÅltiges Verzeichnis') then begin
-      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+FUStr('mailbase')) then
-        ypath:=ypath+FUStr('mailbase')+DirSepa;
+      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+'MAILBASE') then
+        ypath:=ypath+'MAILBASE'+DirSepa;
       { Gibt es Yuppi unter Linux? Wenn ja, sind die Dateinamen 
         klein oder gross geschrieben? }
       if not mfehler(exist(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
@@ -704,6 +704,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.5  2001/08/02 22:31:35  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.15.2.4  2000/12/31 11:35:56  mk
   - fileio.disksize statt lfn.disksize benutzen
 

@@ -624,7 +624,7 @@ begin
   readmask(brk);
   if not brk then
     for i:=1 to 3 do
-      if fustr(eds)=ustr(edtype[i]) then
+      if ustr(eds)=ustr(edtype[i]) then
         exteditor:=i;
   if not brk and mmodified then
     GlobalModified;
@@ -1014,7 +1014,7 @@ function formpath(var s:string):boolean;
 var
     res : integer;
 begin
-  s:=fustr(FExpand(s));
+  s:=ustr(FExpand(s));
   if (s<>'') and (right(s,1)<>DirSepa) then
     s:=s+DirSepa;
   if not validfilename(s+'1$2$3.xxx') then
@@ -1506,6 +1506,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.22  2001/08/02 22:31:33  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.39.2.21  2001/08/02 21:34:03  mk
   - add lfn-unit to uses
 

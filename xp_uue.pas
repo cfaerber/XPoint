@@ -360,7 +360,7 @@ begin
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
-  else fn:=FUStr(trim(mid(s,p)));
+  else fn:=UStr(trim(mid(s,p)));
   openinfile:=found and (fn<>'');
   if EOFinput then exit;
 end;
@@ -668,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.2  2001/08/02 22:31:34  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.13.2.1  2000/07/16 15:55:22  jg
   - UUE-Decoding auch bei mehreren Files in einer Nachricht moeglich
 

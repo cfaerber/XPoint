@@ -817,14 +817,14 @@ begin
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
   if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
-    if fustr(temppath)<>fustr(ownpath+'TEMP\') then     { FUStr wie UStr, wenn nicht UnixFS }
+    if ustr(temppath)<>ustr(ownpath+'TEMP\') then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
     if sendpath<>'' then
       writeln(t,'SendfileDir=',sendpath);
     writeln(t,'LogDir=',logpath);
-    if fustr(filepath)<>ownpath+InfileDir then
+    if ustr(filepath)<>ownpath+InfileDir then
       writeln(t,'FileDir=',filepath);
   end;
   writeln(t,'ShowLogin=',jnf(ShowLogin));
@@ -1061,7 +1061,7 @@ begin
   assign(t,ownpath+cfg2file);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler1(107,fustr(cfg2file));  { 'Fehler beim Schreiben von %s' }
+    rfehler1(107,ustr(cfg2file));  { 'Fehler beim Schreiben von %s' }
     exit;
     end;
   writeln(t,'## ',getres2(214,1));
@@ -1751,6 +1751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.24  2001/08/02 22:31:33  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.62.2.23  2001/07/20 15:51:48  my
   - corrected some typos
 

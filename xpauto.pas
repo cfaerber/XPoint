@@ -267,7 +267,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (right(fustr(datei),4)=fustr('.msg')) and exist(datei) then
+          if (right(ustr(datei),4)='.MSG') and exist(datei) then
             _era(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -458,7 +458,7 @@ var sr    : searchrec;
         if hdr='server' then
           box:=trim(mid(s,p+1)) else
         if (hdr='datei') or (hdr='file') then
-          datei:=fustr(trim(mid(s,p+1)));
+          datei:=ustr(trim(mid(s,p+1)));
         end;
       end;
     err:=true;
@@ -596,16 +596,16 @@ begin
       delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
-      if (left(fustr(sr.name),5)<>fustr('start')) and
-        (left(fustr(sr.name),4)<>fustr('stop')) then begin
+      if (left(ustr(sr.name),5)<>'START') and
+        (left(ustr(sr.name),4)<>'STOP') then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
     if startbatch then begin
-      fnstart:=AutoxDir+fustr('start'+BatchExt);        { START.BAT }
+      fnstart:=AutoxDir+'START'+BatchExt;        { START.BAT }
       if exist(fnstart) then
         shell(fnstart,500,1);
-      fnstart:=AutoxDir+fustr('start1'+BatchExt);       { START1.BAT, lîschen }
+      fnstart:=AutoxDir+'START1'+BatchExt;       { START1.BAT, lîschen }
       if exist(fnstart) then begin
         shell(fnstart,500,1);
         _era(fnstart);
@@ -626,10 +626,10 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
 {$ENDIF }
-  fnstop:= AutoxDir+fustr('stop'+BatchExt);     { STOP.BAT }
+  fnstop:= AutoxDir+'STOP'+BatchExt;     { STOP.BAT }
   if exist(fnstop) then
     shell(fnstop,500,1);
-  fnstop:= AutoxDir+fustr('stop1'+BatchExt);    { STOP1.BAT, lîschen }
+  fnstop:= AutoxDir+'STOP1'+BatchExt;    { STOP1.BAT, lîschen }
   if exist(fnstop) then begin
     shell(fnstop,500,1);
     _era(fnstop);
@@ -677,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.8  2001/08/02 22:31:35  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.13.2.7  2001/01/22 22:41:38  mk
   - Boxname mit Grosschreibung in der Datenbank suchen
 

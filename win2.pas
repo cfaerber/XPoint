@@ -438,7 +438,7 @@ begin
       end;
     end;
 
-  vorgabe:=fustr(vorgabe);
+  vorgabe:=ustr(vorgabe);
   t:=#0#0;
   wpushed:=false;
   height:=iif(fsb_info,12,10);
@@ -531,7 +531,7 @@ begin
         end;
 
       p:=1; add:=0;
-      while (p<=fn) and (FUstr(f^[p]^)<>vorgabe) do inc(p);
+      while (p<=fn) and (Ustr(f^[p]^)<>vorgabe) do inc(p);
       if p>fn then p:=1
       else add:=max(p-36,add);
       p:=p-add;
@@ -1117,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.9  2001/08/02 22:31:33  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.16.2.8  2000/12/14 10:37:14  mk
   - Char-Upcase bei Suche nach Dateien in FSBox
 

@@ -100,8 +100,8 @@ begin
     prototyp  := 'Z';
     uparcer   := 'pkzip $UPFILE $PUFFER';
     downarcer := 'pkunzip $DOWNFILE';
-    uparcext  := fustr('zip');
-    downarcext:= fustr('zip');
+    uparcext  := 'ZIP';
+    downarcext:= 'ZIP';
     connwait  := 45;
     loginwait := 60;
     redialwait:= 240;
@@ -620,6 +620,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.20  2001/08/02 22:31:34  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.10.2.19  2001/07/31 15:33:15  my
   - RFC/Client: implemented "External Settings" under
     Edit/Servers/Edit/... (load external config file)

@@ -172,8 +172,6 @@ Function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
 Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
 function UStr(const s:String):String;              { UpperString                  }
-{ Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
-Function FUStr(const s:string):string;
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
 procedure SetLength(var s: String; size: Longint); { LÑnge von S setzen }
 
@@ -824,15 +822,6 @@ end;
 
 {$ENDIF}
 
-
-function FUStr(const s:string):string;
-begin
-{$IFDEF UnixFS }
-  FUStr := s;
-{$ELSE }
-  FUStr := UStr(s);
-{$ENDIF }
-end;
 
 {$ifdef noasm}
 
@@ -2294,6 +2283,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.19  2001/08/02 22:31:32  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.37.2.18  2001/07/02 23:41:09  mk
   - defect base64 lines are'nt decoded anymore (readded this fix)
 

@@ -53,7 +53,7 @@ procedure makefeld(var lfeld:dbFeldTyp; var fld:dbfeld);
 begin
   fillchar(fld,sizeof(fld),0);
   with lfeld,fld do begin
-    name:=FUStr(fname);
+    name:=UStr(fname);
     feldtyp:=ftyp;
     case ftyp of
       1,2,5 : feldsize:=fsize;
@@ -433,6 +433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2001/08/02 22:31:32  mk
+  - removed function FUStr, only usefull in 3.70
+
   Revision 1.7.2.2  2001/07/28 19:24:12  mk
   - added some const parameters
 
