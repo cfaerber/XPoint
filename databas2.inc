@@ -53,7 +53,7 @@ var icr : dbIndexCRec;
           icr.indexnr:=i;
           ICP(icr);
           feldanz:=0;
-          if icr.indexstr[1]='!' then begin
+          if FirstChar(icr.indexstr)='!' then begin
             keysize:=icr.indexsize;
             ifunc:=icr.indexfunc;
             if_flag:=true;
@@ -67,7 +67,7 @@ var icr : dbIndexCRec;
             fn:=copy(icr.indexstr,1,p-1);
             icr.indexstr:=copy(icr.indexstr,p+1,255);
             upflag:=0;
-            if fn[1]='+' then begin
+            if FirstChar(fn)='+' then begin
               upflag:=$8000; delete(fn,1,1); end;
             fnr:=dbGetFeldNr(dbp,fn);
             if fnr<0 then error('Ungltiges Index-Feld: '+fn);
@@ -239,6 +239,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/10/02 03:13:23  mk
+  - AnsiString-Fixes
+
   Revision 1.7  2000/08/22 09:27:50  mk
   - Allgemeine Performance erhoeht
 
