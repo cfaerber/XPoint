@@ -71,7 +71,7 @@ implementation
 
 uses
   {$IFDEF Linux}Linux,{$ELSE}Dos,{$ENDIF }
-  SysUtils;
+  SysUtils,TypeForm;
 
 const
   qLogbadges = 50;
@@ -122,7 +122,7 @@ begin
     begin
       if LogCount>0 then
       begin
-        WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message occurred ',LogCount,' times');
+        WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message repeated ',LogCount,' times');
         LogCount:=0;
       end;
       LogLast:=Badge+#0+Message;
@@ -166,7 +166,7 @@ begin
       Rew := True;
     end;
     {$I-}
-    Filename:=ExpandFilename(Filename);
+    Filename:=FileUpperCase(ExpandFilename(Filename));
     if Rew and (not App) then
     begin
       Assign(Logfile, Filename);
@@ -198,7 +198,7 @@ begin
   if LogCount>0 then
   begin
     GetTime(H, M, S, S100);
-    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message occurred ',LogCount,' times');
+    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message repeated ',LogCount,' times');
     LogLast:='';
     LogCount:=0;
   end;
@@ -227,6 +227,10 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/04/22 11:30:42  ma
+  - fixed file name case
+  - changed "last msg occurred" to "last msg repeated" (unix syslog style)
+
   Revision 1.14  2001/03/20 14:35:51  cl
   - repeated identical messages are only printed once w/ count
   - changed code to prevent logfile wandering to a cleaner solution
