@@ -1228,6 +1228,8 @@ begin
     _era(TempPath+swapfilename);
   if exist(TempPath+MsgTempFile) then
     _era(TempPath+MsgTempFile);
+  if exist(TempPath+'header.hdr') then
+    _era(TempPath+'header.hdr');
 end;
 
 
@@ -2403,6 +2405,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/05/17 10:23:14  oh
+  -header.hdr wird bei Programmende geloescht
+
   Revision 1.43  2000/05/13 08:42:41  mk
   - Kleinere Portierungen
 
