@@ -857,6 +857,8 @@ end;
       else adresse:=uucpbrett(empfaenger,2);
     if pm and (left(adresse,1)=vert_char)
       then adresse:=copy(adresse,2,length(adresse)-3);
+    attrtxt(col.coldiarahmen);
+    mwrt(x+70,y+12,' [F2] ');
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
@@ -2222,6 +2224,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/05/21 07:21:17  jg
+  - Empfaenger aendern: [F2] wird jetzt reingemalt
+
   Revision 1.32  2000/05/17 18:15:51  sv
   - Auch in nicht registrierten Versionen wird keine XP-ID an mit N/W/O
     weitergeleiteten Nachrichten angehaengt
