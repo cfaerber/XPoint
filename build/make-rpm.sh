@@ -52,5 +52,7 @@ sleep 5
 popd
 echo "$scriptdir"openxp-"$version".spec
 pwd
+# for older rpm (or new with /etc/popt )
 rpm -ba "$scriptdir"openxp-"$version".spec
-#rpmbuild -ba openxp.spec
+# for rpm >= 4.1.1
+rpmbuild -ba "$scriptdir"openxp-"$version".spec
