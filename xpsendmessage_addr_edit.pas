@@ -251,6 +251,11 @@ var
     result := true;
   end;
 
+  procedure SelectAddress(var cr:customrec);
+  begin
+
+  end;
+
   function CheckAddress(var inhalt:string):boolean;
 
     procedure ParseAddresses(const inhalt: string; list: TAddressList);
@@ -484,23 +489,7 @@ var
         
       inc(j);
     end;
-(*
-    // TODO: Sortieren und Leerfelder einfügen
-  
-    for j:= 0 to nl.Count-1 do
-    while j < i do
-    begin
-      if lg>=0 then 
-        if List[ii+j].Group<0 then 
-          List[ii+j].Group := Lg
-        else 
-          lg := -1; // Letzte erreicht (war ja sortiert); nicht mehr prüfen
-      if (List[ii+j].PM) then
-        List[ii+j].AddressType := Lt
-      else
-        List[ii+j].AddressType := atNewsgroup;
-    end;
-*)
+
     if (List.Count<=0) or (not List[List.Count-1].Empty)
                        or (List[List.Count-1].Group>=0) then 
     begin
@@ -548,8 +537,33 @@ procedure EditEmpfaengerList(
 );
 
   procedure ComposeEditableList;
+  var i: Integer;
+     lg: integer;
   begin
-    List.Assign(EmpfList);
+    List.Clear;  
+    List.Capacity := EmpfList.Count+1;
+    Lg := -1;
+  
+    for i:=0 to EmpfList.Count-1 do
+    begin
+      if (EmpfList[i].Group<>LG) then
+        if(LG>0) then
+          List.AddNew.Group := LG;
+    
+      with List.AddNew do 
+      begin
+        Assign(EmpfList[i]);
+        if(EmpfList[i].Group<0) then 
+          LG := -1
+        else begin
+          if (EmpfList[i].Group<>LG) then
+            LG := List.GroupNames.Add(EmpfList.GroupNames[EmpfList[i].Group]);
+          Group  := LG;
+        end;
+        LG := Group;
+      end;
+    end;
+    
     List.AddNew.Group := -1;
   end;
 
@@ -1030,6 +1044,9 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2002/05/09 15:17:45  cl
+// - fixed creation of editable list
+//
 // Revision 1.2  2002/04/17 19:35:03  mk
 // - added xpdefine.inc
 //
