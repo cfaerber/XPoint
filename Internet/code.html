@@ -71,22 +71,25 @@ werden, und dabei vermeiden, da&szlig einem ein anderer Entwickler in die Quere
 kommt, die jeweilige Datei mit cvs edit (datei) als "wird gerade bearbeitet"
 kennzeichnen. Dieses Flag wird gel&ouml;scht, sobald ein unedit oder commit
 gemacht wird. Bis dahin ist die Datei f&uuml;r alle Leute, die nicht auch ein
-cvs edit gemacht haben read-only.
-<li>rw: Nach cvs watch (datei) bekommt man bei jeder &Auml;nderung der jeweiligen
-Datei eine Mail.
-<li>Mit cvs watchers (datei) kann man sich eine Liste der "zusehenden"
-Entwickler anzeigen lassen. Sinnvoll f&uuml;r Entwickler, die einen speziellen
+cvs edit gemacht haben read-only. <i>ACHTUNG:</i> Auf keinen Fall die Angabe
+des Dateinamens vergessen!
+<li>rw: Nach cvs watch add (datei) bekommt man bei jeder &Auml;nderung der
+jeweiligen Datei eine Mail.
+<li>Mit cvs watchers kann man sich eine Liste der "zusehenden" Entwickler
+anzeigen lassen. Sinnvoll f&uuml;r Entwickler, die einen speziellen
 Teil des Projekts maintainen und &uuml;ber jede &Auml;nderung, die daran nicht
 von ihnen gemacht wird, explizit informiert werden wollen - und nat&uuml;rlich
 praktisch, falls man wissen will, welcher Entwickler f&uuml;r die Datei
-haupts&auml;chlich zust&auml;ndig ist.
+haupts&auml;chlich zust&auml;ndig ist. Das Format der Anzeige ist (Datei)
+(Entwickerk&uuml;rzel) (Benachrichtigung bei welchen Ereignissen?).
 </ul>
 
 <h3>Coding Standard</h3>
 Dinge, die man als Entwickler wissen und beachten sollte:
 <ul>
 <li>Dateien, die man sich kurz ansehen sollte: XPDefine.inc (f&uuml;r $IFDEFs),
-Typeform (die unvermeidlichen Typumformungen, Integer to String etc.), Debug.
+Typeform (die unvermeidlichen Typumformungen, Integer to String etc.), XPGlobal
+(u.a. plattformunabh&auml;ngige Typdefinitionen), Debug.
 <li>Es werden Ansistrings benutzt (wird per $H+ in XPDefine.inc eingeschaltet).
 Kurzabri&szlig; dazu: Statt eines Array of Char mit der L&auml;nge des Strings
 in Arr[0] wird ein Pointer gespeichert, der auf den (nullterminierten) String
