@@ -1241,7 +1241,8 @@ begin
   end;
   readmask(brk);
   enddialog;
-  if not brk then begin
+  if not brk then 
+  begin
     if n=2 then RFCNetFlag:=iif(ntBoxNetztyp(s) in netsRFC,16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
@@ -1372,7 +1373,7 @@ end;
 
 
 function empftest(var s:string):boolean;
-var ok    : boolean;
+var 
     brett : boolean;
     d     : DB;
     _pbox : string;
@@ -1388,7 +1389,7 @@ var ok    : boolean;
   end;
 
 begin
-  ok:=true;
+  result:=true;
   oldpb:=pbox;
   verteiler:=false;
   newbrett:=false;
@@ -1397,7 +1398,7 @@ begin
     exit
   else if brett and _pmonly then begin
     rfehler(2709);    { 'Direktnachricht an ein Brett ist NICHT m”glich' }
-    ok:=false;
+    result:=false;
     end
   else
     if brett then begin
@@ -1441,7 +1442,7 @@ begin
       else if cPos('.',mid(s,cpos('@',s)))=0 then
         s:=LeftStr(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
-  if ok and not verteiler then begin
+  if result and not verteiler then begin
     if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(UpperCase(s),1)) {ohne "/"}
     else dbSeek(ubase,uiName,UpperCase(s));
     attrtxt(iif(dbFound,col.coldialog,col.coldiahigh));
@@ -1454,10 +1455,10 @@ begin
       if dbfound or (s='/') then
       begin
         errsound;
-        ok:=false;
+        result:=false;
         end
-      else ok:=cc_testempf(s);
-      if ok then newbrett:=true;
+      else result:=cc_testempf(s);
+      if result then newbrett:=true;
       end;
 
     if dbfound or newbrett then
@@ -1488,7 +1489,7 @@ begin
   if p>0 then
     s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
   testmailstring_nt:=pb_netztyp;
-  if not verteiler then empftest:=OK and testmailstring(s)
+  if not verteiler then empftest:=result and testmailstring(s)
   else begin
     dbseek(ubase,uiname,UpperCase(vert_char+s+'@V')); { Nur existierende Verteiler sind erlaubt }
     empftest:=dbfound;
@@ -2433,6 +2434,9 @@ end;
 
 {
   $Log$
+  Revision 1.73  2001/09/07 02:07:44  mk
+  - use IsMailAddress when possilbe, removed duplicate code
+
   Revision 1.72  2001/09/05 23:17:30  mk
   - EditUser: renamed AdrbuchDef to OldAdr; OldAdr is now always valid
 

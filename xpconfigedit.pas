@@ -1374,15 +1374,13 @@ begin
     errsound;
     exit;
   end;
-  b:=cpos('@',s);
-  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
-    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
-    or (s <> MailString(s, false)) then
+  if not IsMailAddress(s) then
   begin
      rfehler(908);
      exit;
   end;
   Result :=true;
+  b := cpos('@', s);
   s1:=s; s1[b]:='.';
   for u:=cposx('_',s1) to length(s1) do
     if s1[u]='_' then s1[u]:='-';
@@ -1499,7 +1497,7 @@ begin
 end;
 
 function multi_Mailstring(var s:string):boolean;
-var n,b   : Integer;
+var n   : Integer;
     s1,s2 : string;
 begin
   multi_Mailstring:=true;
@@ -1512,15 +1510,12 @@ begin
       s2:= LeftStr(s1,n-1);
       s1:=trim(mid(s1,n+1));
       end;
-    b:=cpos('@',s2);
-    if (b<=1) or (cpos('@',mid(s2,b+1))<>0)
-      or (cpos('.',mid(s2,b+1))=0)
-      or (s2<>mailstring(s2,false))
-    then begin
+    if not IsMailAddress(s) then
+    begin
       multi_mailstring:=false;
       fehler(Getres2(10900,8)+': ' +s2); { 'Ung_ltige Adresse: 's2 }
       exit;
-      end;
+    end;
   until n=0;
 end;
 
@@ -1531,7 +1526,7 @@ begin
   b:=cpos('@',s);
   if (b<=1) or (cpos('@',mid(s,b+1))<>0)
     or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
-    or (s<>mailstring(s,false)) then
+    or (s <> MailString(s, false)) then
     Result :=false;
 end;
 
@@ -1620,6 +1615,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2001/09/07 02:07:44  mk
+  - use IsMailAddress when possilbe, removed duplicate code
+
   Revision 1.19  2001/09/06 22:01:14  mk
   - client mode updates
 

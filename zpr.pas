@@ -47,7 +47,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, typeform, xpglobal;
+  sysutils, typeform, xpconfigedit, xpglobal;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -729,7 +729,7 @@ var i,j  : integer;
       min2,sec2     : shortint;
       res    : integer;
       res2   : integer;
-      p      : byte;
+      p      : Integer;
       zh,zm  : longint;
   begin
     zone:=copy(cont,15,20);
@@ -773,7 +773,7 @@ var i,j  : integer;
   end;
 
   procedure AdrCheck(_xpnt:boolean);     { Useradresse berprfen }
-  var p1,p2 : byte;
+  var p1: integer;
   begin
     p1:=pos(' (',cont);
     if (p1>1) and (cont[p1-1]=' ') then begin   { zuviele Leerz. vor Realname }
@@ -782,11 +782,11 @@ var i,j  : integer;
       with hd0 do
         fld[i]:=LeftStr(fld[i],contpos[i]-1)+trim(LeftStr(cont,p1-1))+mid(cont,p1);
       end;
-    if not _xpnt then begin
+    if not _xpnt then 
+    begin
       if p1>0 then TruncStr(cont,p1-1);
-      p1:=cpos('@',cont);
-      p2:=cPos('.',mid(cont,p1+1));
-      if (p1<=1) or (p2<=1) or (lastchar(cont)='.') then begin
+      if not IsMailAddress(cont) then
+      begin
         warnung('Fehler in '+headerindex[hd0.fldtype[i]].name);
         wrehd(i);
         end;
@@ -850,7 +850,7 @@ var i,j  : integer;
   end;
 
   procedure MidCheck(msgid:boolean);     { MID/BEZ berprfen }
-  var p1,p2 : byte;
+  var p1,p2 : Integer;
   begin
     p1:=cpos('@',cont);
     p2:=cPos('.',mid(cont,p1+1));
@@ -861,7 +861,7 @@ var i,j  : integer;
   end;
 
   procedure FileCheck;                   { FILE berprfen }
-  var p : byte;
+  var p : Integer;
   begin
     if multipos('\/:',cont) then begin
       p:=length(cont);
@@ -894,7 +894,7 @@ var i,j  : integer;
   end;
 
   procedure TeleCheck;                   { TELEFON berprfen }
-  var p,j : byte;
+  var p,j : Integer;
       nr  : string;
       tok : boolean;
   begin
@@ -1155,8 +1155,8 @@ end;
 function SeekHeader(adr:longint):longint;
 var ok       : boolean;
     hdlc,i   : integer;    { Zeilenz„hler }
-    minpos,p : byte;
-    minfld   : byte;
+    minpos,p : Integer;
+    minfld   : Integer;
 begin
   repeat
     wrproz(adr);
@@ -1298,6 +1298,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/09/07 02:07:44  mk
+  - use IsMailAddress when possilbe, removed duplicate code
+
   Revision 1.37  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
