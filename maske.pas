@@ -21,7 +21,9 @@ unit  maske;
 interface
 
 uses
-  xpglobal,crt, typeform,keys,inout,maus2,winxp,montage,clip;
+  xpglobal,crt,typeform,keys,inout,maus2,winxp,montage,clip;
+
+var exit_mask : boolean;  { = true, sobald Maske verlassen wird }
 
 const digits       : string[12] = '-0123456789 ';
       MaskSeekMenu : Byte = 0;
@@ -290,7 +292,7 @@ type  stringp  = ^string;
                    yp,a        : integer;     { akt. Feldnr./Offset }
                    modified    : boolean;     { Inhalt ge„ndert }
                    editing     : boolean;     { Editieren aktiv }
-                   uda         : udarec;     { Pfeile bei scrollbaren Masken }
+                   uda         : udarec;      { Pfeile bei scrollbaren Masken }
                  end;
       maskp    = ^masktyp;
 
@@ -1304,6 +1306,14 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.5  2001/10/16 18:34:02  my
+  MY:- Variable 'exit_mask' eingefhrt (immer true, wenn eine Maske
+       verlassen wird). Durch Abfragen dieser Variable k”nnen l„stige
+       und/oder berflssige Doppelprfungen beim Verlassen vermieden
+       werden, die bereits von Funktionen/Prozeduren durchgefhrt wurden,
+       die von mset0proc, mset1func, msetvfunc oder mset3proc aufgerufen
+       wurden ('Programm "bla" existiert nicht').
+
   Revision 1.8.2.4  2001/09/16 20:37:39  my
   JG+MY:- Neue Nachrichten-Suchfunktionen:
 

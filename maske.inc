@@ -740,6 +740,7 @@ begin   { readmask }
   insert_mode:=true;
   new(s);
   helpsave:=help_page;
+  exit_mask:=false;
 
   with amaskp^,amaskp^.stat do begin
     if felder=0 then error('no fields!');
@@ -1060,6 +1061,7 @@ begin   { readmask }
           replace:=false;
           end;
         if ((t=^J) or ((t=keyesc) and keeponesc)) then begin
+          exit_mask:=true;
           myp:=yp;
           yp:=1;
           while (yp<=felder) and
@@ -1088,6 +1090,14 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.4  2001/10/16 18:34:02  my
+  MY:- Variable 'exit_mask' eingefhrt (immer true, wenn eine Maske
+       verlassen wird). Durch Abfragen dieser Variable k”nnen l„stige
+       und/oder berflssige Doppelprfungen beim Verlassen vermieden
+       werden, die bereits von Funktionen/Prozeduren durchgefhrt wurden,
+       die von mset0proc, mset1func, msetvfunc oder mset3proc aufgerufen
+       wurden ('Programm "bla" existiert nicht').
+
   Revision 1.13.2.3  2001/09/16 20:38:15  my
   JG+MY:- Neue Nachrichten-Suchfunktionen:
 
