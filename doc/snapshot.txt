@@ -1943,7 +1943,7 @@ SV+MY:
     richt noch ein zweites Mal (z.B. durch N/U/) durch das Sendefenster
     lief, wurden die Nachrichten "gesplittet" (= zwei physikalische
     Nachrichten erstellt).
-  - Beim ndern des Empf„ngers mit "m" wurde eine erzwungene gemeinsame
+  - Beim ndern des Empf„ngers mit "m" wurde eine erzwungene/gemeinsame
     Serverbox zurckgesetzt.
   - Bei der Best„tigung des Kopien-Dialogs wurde eine erzwungene
     Serverbox zurckgesetzt.
@@ -2009,7 +2009,7 @@ MY:
   schalter aktiviert) wird in der Farbe fr den Mentext, kleines "w"
   (= Weiterschalter deaktiviert) wird in der Farbe fr deaktivierten
   Mentext dargestellt. Bei Best„tigung des Config-Mens C/O/B wird die
-  Anzeige entfernt, da dann wieder die Menoptionen gelten.
+  Anzeige entfernt, da dann wieder die Menoptionen aktiv sind.
   XP2C.PAS, XP4W.INC
 
 
@@ -2018,7 +2018,7 @@ MY:
 +------------------+
 
 MY:
-- Fix: Beim Message-IDs mit Kommentaren ("added by ...") wurde nach dem
+- Fix: Bei Message-IDs mit Kommentaren "(added by ...)" wurde nach dem
   Entfernen des Kommentars die schlieáende spitze Klammer nicht
   entfernt, weil die Message-ID mit einem Leerzeichen statt mit ">"
   endete.
@@ -2085,25 +2085,248 @@ MY:
   Untersttzung ist damit aber noch noch nicht komplett erledigt).
   UUZ.PAS
 
+
++--------------+        +----------------------------------------------+
+|  01.05.2002  |        |  ab hier Snapshot vom xx.01.2003, xx:xx Uhr  |
++--------------+        +----------------------------------------------+
+
+JG+MY:
+- Fixes und nderungen Dateiauswahl-Fenster: Erkennung fr Disketten-
+  Laufwerke implementiert und Erkennung von RAM-Disks optimiert (RAM-
+  Disks, die von einem anderen Treiber wie LOADHI.SYS geladen wurden,
+  wurden bisher fr Festplatten gehalten). Bei Festplatten, RAM-Disks,
+  Subst- und Netz-Laufwerken wird jetzt in Kurzform ("300 MB") die freie
+  Restkapazit„t angezeigt.
+  DOSX.PAS, WIN2.PAS, XP-D.RQ, XP-E.RQ
+
+
++------------------+
+|  06.-08.05.2002  |
++------------------+
+
+MY:
+- Fix: Singlepart-Nachrichten mit einem anderen Zeichensatz als
+  ISO-8859-1 (z.B. ISO-8859-15) im X-Charset-Header und ohne ZConnect-
+  Charset-Header "ISOx" (x=1-15) wurden nach der Konvertierung durch UUZ
+  h„ufig dennoch mit der Zeichensatzdeklaration ISO-8859-1 versandt.
+  Variable 'convibm' wurde in "SetMimeData" geprft, bevor sie gesetzt
+  wurde und hatte dadurch einen zuf„lligen Wert - als Folge dieses Fixes
+  muáte das Setzen der Variable 'mpart' bei ausgehenden Nachrichten nach
+  "SetMimeData" verlegt werden, weil ansonsten Multipart-Nachrichten
+  einer Zeichensatzkonvertierung unterzogen worden w„ren.
+  UUZ.PAS
+
+MY:
+- Vorbereitung fr zuknftige Zeichensatzerweiterungen unter ZConnect:
+  Beim Betrieb eines externen Clients in einer ZConnect-Box wird bei
+  der UUZ-Konvertierung von ISO-Nachrichten jetzt nicht mehr stur der
+  Zeichensatz ISO-8859-1 deklariert, sondern die Deklaration richtet
+  sich nach der jeweiligen Bezeichnung im ZConnect-Charset-Header
+  ("ISO15" wird zu "ISO-8859-15"). Die Existenz eines ZConnect-Headers
+  "CHARSET: ISOx" (x=1-15) verhindert nach wie vor eine Zeichensatzkon-
+  vertierung.
+  UUZ.PAS
+
+JG:
+- Fix: Bei MIME-Multipart-Nachrichten in ein Brett mit Einstellung
+  "ASCII" oder an einen User mit deaktiviertem Umlaut-Schalter fand
+  keine Zeichensatzkonvertierung IBM=>ISO statt, weil XP f„lschlicher-
+  weise davon ausging, daá die Nachricht aufgrund der Einstellung keine
+  Sonderzeichen enthalten k”nne. Da XP aber gleichzeitig vers„umt hat,
+  8bit-Zeichen, die durch Quoten oder durch Einfgen des Clipboard-
+  Inhalts in den Nachrichtentext gelangen konnten, in ASCII-Zeichen zu
+  wandeln, konnte es passieren, daá eine MIME-Multipart-Nachricht mit
+  Sonderzeichen im IBM-Zeichensatz, aber mit ISO-Zeichensatzdeklaration
+  versandt wurde. Es erfolgt jetzt immer eine IBM=>ISO-Konvertierung,
+  eine Konvertierroutine IBM=>ASCII wird folgen.
+  XP6S.INC
+
+
++--------------+
+|  25.05.2002  |
++--------------+
+
+MY:
+- Die Headerzeile "X-XP-BOX" wird bei den Netztypen ZConnect und Fido
+  jetzt nur noch in der Nachrichten-Datenbank (MPUFFER.*) erzeugt,
+  jedoch nicht mehr im Pollpaket (<Box>.PP). Damit ist speziell bei
+  ZConnect sichergestellt, daá der Header nicht mehr ins Netz gelangt
+  (bei Fido wurde er ohnehin durch ZFIDO.EXE entfernt).
+  XP6.PAS
+
+MY:
+- Fix: Die Funktion 'ClipAvailable' (Clipboard verfgbar?) liefert jetzt
+  wieder nur noch dann 'true' zurck, wenn wirklich ein Windows(NT)-
+  Clipboard verfgbar ist.
+  CLIP.PAS
+
+JG+MY:
+- Fix: Das Windows-Clipboard wird jetzt nach Benutzung immer geschlossen
+  (anderenfalls konnte es passieren, daá das Clipboard zwar noch in XP,
+  jedoch nicht mehr in Windows benutzt werden konnte).
+  CLIP.PAS
+
+MY:
+- Fix: Das interne Clipboard (Datei "CLIP.TXT") funktioniert speziell im
+  Editor jetzt auch unter Linux DOS-Emu (dort strzte XP bisher ab) und
+  unter Windows NT/2000/XP (dort wurde der Clipboard-Inhalt im Editor
+  bisher nicht eingefgt, sondern gel”scht). Ursache: XP berschrieb die
+  Datei "CLIP.TXT" mit sich selbst, das scheint nur unter DOS zu
+  funktionieren und war darber hinaus unn”tig.
+  CLIP.PAS, EDITOR.INC
+
+
++--------------+
+|  26.05.2002  |
++--------------+
+
+JG:
+- Fix: Wildcardzeichen ("?", "*") sind bei Verzeichnisangaben keine
+  erlaubten Zeichen mehr. Im einzigen Fall, wo sie tats„chlich gestattet
+  sind (Eingangspakete und Ausgangsverzeichnis bei QWK), werden sie
+  jetzt explizit zugelassen.
+  XP0.PAS, XP9.INC
+
+
++--------------+
+|  28.05.2002  |
++--------------+
+
+MY:
+- Statt auf die Funktion 'ClipAvailable' wird jetzt auf die ohnehin
+  schon in XP2CFG.INC gesetzte Variable 'Clipboard' geprft.
+  CLIP.PAS
+
+MY:
+- Fix: Einige IOResult/close()-Routinen sauberer gestaltet (Datei wird
+  nur geschlossen, wenn kein I/O-Fehler aufgetreten ist).
+  XP10.PAS, CLIP.PAS
+
+
++------------------+
+|  29./30.05.2002  |
++------------------+
+
+JG:
+- Beim einzeiligen Einfgen des Clipboard-Inhalts (z.B. in Eingabe-
+  felder) werden jetzt alle Steuerzeichen entfernt statt in Leerzeichen
+  umgewandelt zu werden.
+  CLIP.PAS
+
+JG:
+- 'function dup' in ASM-Fassung eingebaut.
+  TYPEFORM.PAS
+
+JG:
+- Fix: Das Verhindern des Weiterschaltens zum n„chsten User beim
+  Verlassen eines User-Bretts mit <Shift-Esc> funktioniert jetzt.
+  XP4W.INC
+
+
++--------------+
+|  03.06.2002  |
++--------------+
+
+MY:
+- Fix: Die Menfunktion XPoint/Export/Brettinhalt rief stattdessen
+  Nachricht/Alle/Entfernen auf. :-(
+  XP4.INC
+
+
++--------------+
+|  08.06.2002  |
++--------------+
+
+MY:
+- Fix: IOResult/close() in 'ReadServersDat' sauberer gestaltet.
+  XP9.INC
+
+
++--------------+
+|  10.06.2002  |
++--------------+
+
+MY:
+- Fix: Wenn die max. zul„ssige Betreffl„nge von 250 Zeichen ausgenutzt
+  wurde, wurde der Betreff in XP auf 248 und im UUZ auf 245 Zeichen
+  gekrzt. Max. Betreffl„nge daher auf 245 Zeichen reduziert (mehr passt
+  nun mal nicht eine max. 255 Zeichen lange Zeile, wenn noch die
+  Headerbezeichnung "Subject: " und das abschlieáende LF hinzukommen).
+  XP0.PAS, MAGGI.PAS, PMCONV.PAS, UUZ.PAS
+
+
++--------------+
+|  03.07.2002  |
++--------------+
+
+MY:
+- Fix: Viewer-Tempfiles im XP-TEMP-Verzeichnis wurden nicht mehr
+  gel”scht.
+
+
++--------------+
+|  02.08.2002  |
++--------------+
+
+MA:
+- Fix: Nodelisten-Abfrage mit <Alt-N> funktionierte bei Pointlisten im
+  FD-Format nicht immer (speziell nicht bei den Points des jeweils
+  ersten Nodes eines Netzes). Bei FD-Listen wird jetzt ein ge„nderter
+  Index geschrieben, damit ist jetzt auch die neue Standard-Pointliste
+  fr R24 (R24PNT) mit XP voll nutzbar.
+  XPFIDO.PAS
+
+JG:
+- Fix: Das einzeilige Einfgen des Clipboard-Inhalts in Eingabefelder
+  funktionierte bei Strings mit mehr als 223 Zeichen nicht und wurde mit
+  einem Tonsignal quittiert. Max. Einfgel„nge ist jetzt identisch mit
+  max. Stringl„nge (255 Zeichen).
+  CLIP.PAS
+
+JG:
+- Fix: Nach dem einzeiligen Einfgen des Clipboard-Inhalts in Eingabe-
+  felder konnte es vorkommen, daá das Clipboard danach fr Windows
+  blockiert war. Clipboard wird jetzt auch hier immer geschlossen
+  (bisher passierte das nur, wenn XP der Meinung war, es auch selbst
+  ge”ffnet zu haben).
+  CLIP.PAS
+
+
++--------------+
+|  09.10.2002  |
++--------------+
+
+JG:
+- Fix: Bei erstmaliger Benutzung des User-Anlegedialogs nach Programm-
+  start strzte XP mit einem RTE ab, wenn sich der Cursor noch im Feld
+  "Server" befand und mit der Maus der Pfeil rechts neben "Adresse"
+  angeklickt wurde. Nach Verlassen der anschlieáend erscheinenden
+  Userliste mit <Esc> oder <Enter> fhrte jede weitere Taste zum Absturz
+  (Variable 'adp^' war nicht initialisiert).
+
+
 +----------------------+
 |  08./09./10.01.2003  |
 +----------------------+
 
 MW:
-- Grosses Gebuehrenupdate:
-  1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
-  2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
-  3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
-                            werden Geldbetraege als rechnerische Minutenpreise gewertet und
-                            nicht mehr als Preis einer Tarifeinheit.
-                            Bei inaktivem Schalter gelten Geldbetraege weiterhin als
-                            Preis einer Tarifeinheit.
-  4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
-  5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
-                  der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
-  6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
-
-  Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+- Groáes Gebhren-Update:
+  1. Es k”nnen jetzt auch Bruchteile von 1/100 W„hrungseinheiten
+     sowie ein zus„tzliches festes Verbindungsentgelt eingegeben und bei
+     der Berechnung bercksichtigt werden.
+  2. Neues Gebhrenmodell: Bei aktivem Schalter unter Config/Optionen/
+                           Gebhren/Sonstiges werden Geldbetr„ge als
+                           rechnerische Minutenpreise gewertet und nicht
+                           mehr als Preis einer Tarifeinheit. Bei
+                           inaktivem Schalter gelten Geldbetr„ge
+                           weiterhin als Preis einer Tarifeinheit.
+  3. Neue Default-W„hrung fuer die Gebhrenberechnung ist nun EUR.
+  4. Neue Tarife: Die Default-Tariftabelle enth„lt nun alle aktuellen
+     nationalen Privatkunden-Tarife der DTAG fuer Festnetz zu Festnetz
+     sowie den Tarif "Normaltarif" von 3U.
+  5. Wenn die Default-Tariftabelle geschrieben wird, wird dabei das
+     verwendete Gebhrenmodell bercksichtigt.
+  6. XPOINT.LOG enth„lt jetzt alle Kostenangaben mit 4 Nachkommastellen.
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
