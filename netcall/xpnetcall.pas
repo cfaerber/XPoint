@@ -1167,7 +1167,8 @@ begin                  { function Netcall }
       Debug.DebugLog('xpnetcall','renaming incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
       begin
-        SafeMakeBak(DeleteSpoolFiles[i],'BAK');        
+        // should be SafeMakeBak, changed for debugging
+        MakeBak(DeleteSpoolFiles[i],'bak');
         Debug.DebugLog('xpnetcall','renamed '+(DeleteSpoolFiles[i]),DLInform);
       end;
     end;
@@ -1386,6 +1387,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/03/19 20:52:27  mk
+  - changed safemakebak to makebak for debugging
+
   Revision 1.48  2002/02/13 18:19:54  mk
   - improvements for THeader and ClrUVS
 
