@@ -274,6 +274,7 @@ asm
          inc   si
          dec   dx
          jnz   @c12lp
+         pop ds
 end;
 
 procedure make11; assembler;
@@ -517,6 +518,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/25 19:04:00  jg
+  - Bugfix: RTE 204 beim einstellen von 33 Zeilen
+
   Revision 1.9  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 
