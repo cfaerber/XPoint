@@ -51,6 +51,9 @@ asm
 end;
 {$ELSE }
 asm
+     push ebx
+     push esi
+     push edi
      xor ebx, ebx      { CRC mit 0 initialisieren }
      mov edx, ebx
      mov edi, block
@@ -69,7 +72,10 @@ asm
      jnz @u3
      mov CRC_reg_lo, bx
      mov CRC_reg_hi, dx
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+     pop edi
+     pop esi
+     pop ebx
+end;
 {$ENDIF }
 
 function CRC32(st : string) : longint;
@@ -126,6 +132,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.4  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

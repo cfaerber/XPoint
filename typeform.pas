@@ -28,7 +28,7 @@ UNIT typeform;
 INTERFACE
 
 uses
-  dos, xpglobal;
+  xpglobal, dos;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -449,14 +449,14 @@ end;
 
 
 Function Time:DateTimeSt;
-VAR stu,min,sec,du : smallword;
+VAR stu,min,sec,du :word;
 begin
   gettime(stu,min,sec,du);
   time:=formi(stu,2)+':'+formi(min,2)+':'+formi(sec,2);
 end;
 
 Function Date:DateTimeSt;
-VAR  ta,mo,ja,wt : smallword;
+VAR  ta,mo,ja,wt :word;
 begin
   getdate(ja,mo,ta,wt);
   date:=formi(ta,2)+'.'+formi(mo,2)+'.'+strs(ja);
@@ -1240,6 +1240,8 @@ end;
 { 01.02.2000 robo - 32 Bit}
 function Mid(const s:string; const n:byte): string; assembler;
 asm
+        push    esi
+        push    edi
         cld
         mov     edi, @result
         mov     esi, s
@@ -1264,8 +1266,9 @@ asm
         sub     edx, ecx
         add     esi, edx
         rep     movsb
-@2:
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+@2:     pop     edi
+        pop     esi
+end;
 { /robo }
 {$else}
 function Mid(const s:string; const n:byte): string; assembler;
@@ -1906,16 +1909,16 @@ begin
   i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
-    while (s[i] > ' ') and (s[i] < chr(128)) and 
+    while (s[i] > ' ') and (s[i] < chr(128)) and
      not (s[i] in forbiddenChar) and ( i > 0) do dec(i);   { Anfang suchen... }
-    repeat                                                 
+    repeat
       inc(i);
     until not (s[i] in WrongChar);            { '.-_' sind am Anfang ungueltig }
 
     j := i;
     while (s[j] > ' ') and (s[j] < chr(128)) and
      not (s[j] in forbiddenChar) and (j <= length(s)) do Inc(j);  {Ende suchen...}
-    repeat                                                        
+    repeat
       dec(j);
     until not (s[j] in WrongChar);                    {.-_ sind am Ende ungueltig}
 
@@ -2049,13 +2052,13 @@ var s2 : string;
       p:=cpos(c1,s2);
       if p>0 then begin
         s2[p]:=c2;
-        if (c2<>'e') and (c2<>'E') then   {bei 'Ç' nur ein Zeichen ersetzen} 
-        begin           
+        if (c2<>'e') and (c2<>'E') then   {bei 'Ç' nur ein Zeichen ersetzen}
+        begin
           if c2='s' then c3:=c2        {Ansonsten: ae,ue,oe,ss}
           else c3:='e';
           insert(c3,s2,p+1);
           end;
-        end; 
+        end;
     until p=0;
   end;
 begin
@@ -2069,7 +2072,7 @@ begin
   conv('ö','U');
   conv('ê','E');
   conv('Ç','e');
-  s:=left(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben } 
+  s:=left(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben }
 end;
 
 
@@ -2080,6 +2083,7 @@ asm
          les   di,data
          mov   cx,size
 {$ELSE }
+         push  edi
          mov   edi, data
          mov   ecx, size
 {$ENDIF }
@@ -2113,6 +2117,9 @@ asm
          stosb
          loop  @rotlp
   @ende:
+{$ifndef BP }
+         pop   edi
+{$endif}
 end;
 
 {$IFDEF BP }
@@ -2136,6 +2143,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.22  2000/03/21 18:45:04  jg
   - Mailstring: RFC-Konforme(re) Erkennung
 

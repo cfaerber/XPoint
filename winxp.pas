@@ -409,7 +409,7 @@ asm
 @nowrt:  pop ds
 end;
 {$ELSE }
-procedure FWrt(x,y:word; const s:string);
+procedure FWrt(const x,y:word; const s:string);
 var
 {$IFNDEF Win32 }
   i, Count: Integer;
@@ -483,7 +483,7 @@ begin
 {$ENDIF }
 end;
 
-procedure GetScreenLine(x, y: Integer; var Buffer; Count: Integer);
+procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
 {$IFDEF Win32 }
 var
   ReadPos: TCoord;                       { Upper-left cell to Read from }
@@ -1065,6 +1065,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.13  2000/03/20 11:26:21  mk
   - SDisp-Routine teilweise nach Win32 portiert
 

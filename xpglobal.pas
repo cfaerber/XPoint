@@ -84,7 +84,7 @@ type
       integer32 =  longint;
       { Unter FPC ist ein Integer standardmÑ·ig 16 Bit gro· }
 {     integer =    longint; }
-      word =       longint; { = signed }
+{     word =       longint; } { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
     {$endif}
@@ -111,6 +111,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.15  2000/03/22 18:18:44  mk
   - Versionsinfo auf 3.21.23 geaendert
 

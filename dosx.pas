@@ -178,6 +178,11 @@ end;
 function alldrives:string;
 
   function GetMaxDrive:char;
+  {$ifdef ver32 }
+  begin
+    GetMaxDrive:='C'; { muss noch portiert werden }
+  end;
+  {$else}
   var regs : registers;
   begin
     with regs do begin
@@ -188,6 +193,7 @@ function alldrives:string;
       GetMaxDrive:=chr(al+64);
       end;
   end;
+  {$endif}
 
 var b : byte;
     s : string;
@@ -355,6 +361,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.8  2000/03/14 15:15:35  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

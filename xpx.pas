@@ -193,7 +193,7 @@ end;
 
 procedure TestCD;
 var f    : file;
-    attr : smallword;
+    attr : word;
 begin
   assign(f,paramstr(0));
   getfattr(f,attr);
@@ -271,6 +271,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/24 00:03:39  rb
+  erste Anpassungen fr die portierung mit VP
+
   Revision 1.7  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

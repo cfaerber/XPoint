@@ -18,14 +18,29 @@ unit fileio;
 interface
 
 uses
+  xpglobal,
 {$IFDEF Ver32 }
   sysutils,
 {$ENDIF }
-{$IFDEF Win32 }
+{$ifdef vp }
+  vpusrlow,
+{$else}
+ {$IFDEF Win32 }
   windows,
-{$ENDIF }
-  dos, xpglobal, typeform;
+ {$ENDIF }
+{$endif}
+  dos, typeform;
 
+{$ifdef vp }
+const FMRead       = fmOpenRead;     { Konstanten fÅr Filemode }
+      FMWrite      = fmOpenWrite;
+      FMRW         = fmOpenReadWrite;
+      FMDenyNone   = fmShareDenyNone;
+      FMDenyRead   = fmShareDenyRead;
+      FMDenyWrite  = fmShareDenyWrite;
+      FMDenyBoth   = fmShareExclusive;
+      FMCompatible = fmShareCompat;
+{$else}
 const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMWrite      = $01;
       FMRW         = $02;
@@ -34,6 +49,7 @@ const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMDenyWrite  = $20;
       FMDenyBoth   = $10;
       FMCompatible = $00;
+{$endif}
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32);
@@ -60,7 +76,9 @@ Function  ReadOnlyHidden(name:PathStr):boolean; { Datei Read Only ?       }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
+(*
 function  textfilesize(var t:text):longint;     { Grî·e v. offener Textdatei }
+*)
 {$IFDEF BP }
 function  diskfree(drive:byte):longint;         { 2-GB-Problem umgehen    }
 {$ENDIF }
@@ -125,7 +143,7 @@ end;
 
 
 Function existrf(var f):Boolean;
-var a : smallword;
+var a : word;
     e : boolean;
 begin
   getfattr(f,a);
@@ -183,7 +201,7 @@ function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
 var bufs,rr:word;
     buf:pointer;
     f1,f2:file;
-begin    
+begin
   bufs:=min(maxavail,65520);
   getmem(buf,bufs);
   assign(f1,srcfn);
@@ -252,7 +270,7 @@ end;
 
 Function ReadOnlyHidden(name:PathStr):boolean;
 var f    : file;
-    attr : smallword;
+    attr : word;
 begin
   assign(f,name);
   if not existf(f) then ReadOnlyHidden:=false
@@ -523,10 +541,17 @@ end;
 {$ENDIF }
 
 function lock(var datei:file; from,size:longint):boolean;
-{$IFDEF Win32 }
+{$IFDEF ver32 }
+ {$ifdef vp }
+begin
+  lock:=SysLockFile(datei,from,size)=0;
+ {$else}
+  {$ifdef win32}
 begin
   Lock := Windows.LockFile(FileRec(Datei).Handle,
     Lo(From), Hi(From), Lo(Size), Hi(Size));
+  {$endif}
+ {$endif}
 {$ELSE }
 var regs : registers;
 begin
@@ -544,10 +569,17 @@ begin
 end;
 
 procedure unlock(var datei:file; from,size:longint);
-{$IFDEF Win32 }
+{$IFDEF ver32 }
+ {$ifdef vp }
+begin
+  if SysUnLockFile(datei,from,size)=0 then ;
+ {$else}
+  {$ifdef win32}
 begin
   Windows.UnLockFile(FileRec(Datei).Handle,
     Lo(From), Hi(From), Lo(Size), Hi(Size));
+  {$endif}
+ {$endif}
 {$ELSE }
 var regs : registers;
 begin
@@ -609,7 +641,7 @@ end;
 
 
 { t mu· eine geîffnete Textdatei sein }
-
+(*
 function textfilesize(var t:text):longint;
 var regs  : registers;
     fplow : word;           { alter Filepointer }
@@ -630,7 +662,7 @@ begin
     msdos(regs);
   end;
 end;
-
+*)
 procedure WildForm(var s: pathstr);
 var dir : dirstr;
     name: namestr;
@@ -721,6 +753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.11  2000/03/16 19:25:10  mk
   - fileio.lock/unlock nach Win32 portiert
   - Bug in unlockfile behoben

@@ -30,7 +30,11 @@ UNIT inout;
 INTERFACE
 
 uses
-  xpglobal, dos, crt,keys,typeform,mouse, xp0;
+  xpglobal,
+{$ifdef vp }
+  vpsyslow,
+{$endif}
+  dos, crt, keys, typeform, mouse, xp0;
 
 const  lastkey   : taste = '';
 
@@ -296,7 +300,7 @@ var    ca,ce,ii,jj : byte;
 function ticker:longint;
 {$IFDEF Ver32 }
 var
-  h, m, s, hund : smallword;
+  h, m, s, hund : word;
 {$ENDIF }
 begin
 {$IFDEF Ver32 }
@@ -429,8 +433,8 @@ end;
 
 
 procedure disp_DT;
-var h,m,s,s100 : smallword;
-    y,mo,d,dow : smallword;
+var h,m,s,s100 : word;
+    y,mo,d,dow : word;
 begin
   if UseMulti2 then begin
     if m2t then begin
@@ -463,7 +467,7 @@ end;
 
 
 Procedure multi2;
-var h,m,s,s100 : smallword;
+var h,m,s,s100 : word;
     i          : integer;
     l          : longint;
 begin
@@ -764,10 +768,14 @@ end;
 
 
 Procedure clrscr;
+{$ifndef ver32}
 var regs : registers;
+{$endif}
 begin
+  {$ifndef ver32}
   regs.ax:=$500;      { Video-Seite 0 setzen }
   intr($10,regs);
+  {$endif}
   crt.clrscr;
 end;
 
@@ -1691,6 +1699,11 @@ end;
 { msec = 0 -> laufende Timeslice freigeben }
 
 procedure mdelay(msec:word);   { genaues Delay }
+{$ifdef vp }
+begin
+  SysCtrlSleep(max(1,msec));
+end;
+{$else}
 var t      : longint;
     i,n    : word;
     regs   : registers;
@@ -1736,6 +1749,7 @@ begin
       end;
     end;
 end;
+{$endif}
 
 procedure IoVideoInit;
 begin
@@ -1781,6 +1795,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.19  2000/03/23 15:47:23  jg
   - Uhr im Vollbildlister aktiv
     (belegt jetzt 7 Byte (leerzeichen vorne und hinten)

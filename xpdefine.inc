@@ -71,6 +71,7 @@
 {$ENDIF }
 
 {$IFDEF VirtualPascal }  { Virtual Pascal ab 2.0 }
+  {$DEFINE VP }
   {$DEFINE Ver32 }
   {$AlignCode+,AlignData+,AlignRec-,B-,D-,Delphi+,H-,I-,J+,Optimize+,P+,Speed+,V-,X+}
 {$ENDIF }
@@ -112,6 +113,9 @@
 
 {
   $Log$
+  Revision 1.13  2000/03/24 00:03:39  rb
+  erste Anpassungen fÅr die portierung mit VP
+
   Revision 1.12  2000/03/07 00:48:22  mk
   in FPC Goto On und Beta-Warnung eingeschaltet
 
