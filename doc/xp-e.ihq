@@ -949,58 +949,57 @@ recalled to unpack several files.
 
 @
 68
-This is the <<Send-Window>> in CrossPoint. Here is
-decided if and how a message will actually be sent
+This is the <<Send-Window>> in CrossPoint. It is
+decided here, if and how a message will actually be 
+sent.
 
-<<Yes>>     The Message is sent as it is.
+<<Yes>>      The Message is sent "as is".
 
-<<No>>      The Message is not sent and discarded. It
-        can however still be found in the file
-        called LASTMSG in the temp. directory.
-        as long as no other mail is written.
+<<No>>       The Message is discarded and NOT sent. 
+        It can, however, still be found in the file
+        called LASTMSG in the temp. directory, as
+        long as no other message is written.
 
-<<Internal>> The message is not sent out , but sent to
+<<Internal>> The message is not sent out but sent to
          the Newsgroup it was written to (also
          PM Newsgroups) for storage.
 
 <<Special>> Shows some extra functions. You can
-        always select all functions by their
-        hot-key letters.
+        select functions by their hot-key letters.
 
-<<Subject>> changes the subject text.
+<<Subject>> Changes the subject of the message.
 
-<<Box>>     allows the server box to be selected,
-        that the message should go to.
+<<Box>>     Allows a different Server to be selected.
 
 <<Code>>    Changes the encoding of the message. PMs
-        can only be changed, when the recipient
-        has a password entered
+        can only be changed when the recipient has
+        entered a password.
 
-<<Text>>    Return to the Editor to edit further.
+<<Text>>    Return to the Editor to make changes to
+        the message text.
         (Not with binary messages).
 
-<<Copies>>  Up to 50 recipients (Users and News-
-        groups) can be set to receive copies.
+<<Copies>>  Up to 50 recipients (Users and 
+        Newsgroups) can be set to receive copies.
         Note however, it is frowned upon to send
         the same message to several Newsgroups
         in the same net!
 
 <<Special-Functions:
 
-<<Park>>    The message is parked in the Newsgroup
-        /¯unsent (will be created if it does not
-        exist). From there you can re-edit it or
-        send it on with Message/Forward/Repost
-        (Alt-R)
+<<Park>>    The message is "parked" in the /¯Unsent
+        area. The area will be created if it doesn't
+        exist. From there, you can re-edit and/or
+        send it by pressing (Alt-R).
 
 <<Date>>    Puts the message in the Autosend List
-        (Edit/AutoSend); it can be sent at a
-        programmed time.
+        (Edit/AutoSend) and it will be sent at a
+        predetermined time.
 
-<<RRQ>> Requests an (automatic) confirmation of
+<<RRQ>>     Requests an (automatic) confirmation of
         receipt from the recipient to be sent back.
         Note advice about "Request Confirmation"
-        in XPOINT.DOC.
+        in XPOINT.TXT.
 
 <<withoutSig>> Leaves off the automatic signature.
 
@@ -1011,7 +1010,7 @@ decided if and how a message will actually be sent
 <<Crash>>   (Fido). The message is readied for a
         direct call [/Fido/Crash].@13104
 
-<<Prio>>    (ZConnect) sets how the message in will
+<<Prio>>    (ZConnect) sets how the message will be
         sent, [Direct Mail] or [Express Mail].@4004
         Beware! Both will likely cost money!
 
@@ -1027,7 +1026,7 @@ decided if and how a message will actually be sent
         local Server.
 
 <<<Esc> >>  The message is discarded. If the option
-      <</Config/Options/Messages/../¯Unsent>> is
+        <</Config/Options/Messages/../¯Unsent>> is
         enabled, the message is <<parked>> (see above).
         Even if not, the message can be retrieved,
         it exists in the <<TEMP directory>> under the
@@ -1051,9 +1050,9 @@ several copies of the message will be sent over
         to the request.
 @
 70
-You can either type in the name of the target 
-Newsgroup or you can select it by pressing <F2>. 
-All messages in the source Newsgroup will be moved 
+You can either type in the name of the target
+Newsgroup or you can select it by pressing <F2>.
+All messages in the source Newsgroup will be moved
 into the target Newsgroup, EXCEPT unsent messages.
 @
 71
@@ -1415,7 +1414,7 @@ numbers a la FIDO at the top.
 
 @
 139
-Dial the selected Server or abort off with <Esc>.
+Dial the selected Server or abort by pressing <Esc>.
 @
 140
 <<Pointname>>, ("Nodename") that you have agreed with
@@ -3561,6 +3560,28 @@ mini-disk based Mailbox.
 The numbers will be sent in the header of all
 ZConnect messages, and can be seen publicly using
 suitable software.
+
+@
+1043
+<<ZCONNECT / RFC:>>
+
+If you have a Homepage on the Internet, you can put
+the "URL" here, e.g.
+
+    http://my.domain.uk/~my_homepage.html
+
+This line will be put in the message header.
+
+In /Config/Display/Header, you can configure the
+message reader to display other user's Homepages.
+@
+1044
+<<[x]>> -> Your address, phone and Homepage details
+       will only be written to private messages.
+
+<<[ ]>> -> Your address, phone and Homepage details
+       will be written to private <<AND public>> 
+       messages.
 
 @
 260
@@ -8172,7 +8193,7 @@ Messages are printed. The printer settings under
 <<Netcall / Single
 
 Makes a <<Netcall>> to one of your Servers. A list of
-those you have defined (under /Edit/Servers) is
+those that you have defined (under /Edit/Servers) is
 displayed so that you can pick the one to call.
 Select the Server you wish to call and press <Enter>.
 
@@ -8180,7 +8201,7 @@ Note: does not enable an on-line Login.
 
 If it doesn't work, make sure all the details
 required for a Point netcall are properly entered
-under /Edit/Servers/..., and that all supplementary
+under /Edit/Servers and that all supplementary
 programs (packers, transfer protocol etc.) are
 properly defined and that CrossPoint can find them.
 @
@@ -8188,7 +8209,7 @@ properly defined and that CrossPoint can find them.
 <<Netcall / All
 
 This makes a netcall to all of the servers for which
-under /Edit/Servers/Edit/Misc. the box marked
+under /Edit/Servers/Edit/Misc. The box marked
 Netcall All is switched on.
 
 A command line showing all the boxes to be called
