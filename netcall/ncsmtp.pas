@@ -239,11 +239,11 @@ begin
   ToLine := Mail.Count - 1;
   for I := StartLine to StopLine do
   begin
-    if Pos(SMTPFROMSIGN, Mail[I]) <> 0 then
+    if Pos(SMTPFROMSIGN, Mail[I]) = 1 then
       From := Copy(Mail[I], Length(SMTPFROMSIGN) + 1, Length(Mail[I]));
-    if Pos(SMTPTOSIGN, Mail[I]) <> 0 then
+    if Pos(SMTPTOSIGN, Mail[I]) = 1 then
       Recip := Copy(Mail[I], Length(SMTPTOSIGN) + 1, Length(Mail[I]));
-    if Pos(SMTPDATASIGN, Mail[I]) <> 0 then
+    if Pos(SMTPDATASIGN, Mail[I]) = 1 then
       FromLine := I + 1;
   end;
   for I := StopLine to Mail.Count - 1 do
@@ -251,7 +251,7 @@ begin
     ToLine := I;
     if (length(Mail[I]) = 1) then
       if Mail[I][1] = '.' then break;
-    if Pos(SMTPQUITSIGN, Mail[I]) <> 0 then break;
+    if Pos(SMTPQUITSIGN, Mail[I]) = 1 then break;
   end;
   Result := ToLine;
   Dec(ToLine);
@@ -291,6 +291,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2001/10/21 10:58:53  ma
+  - fixed message boundary recognition
+
   Revision 1.15  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
