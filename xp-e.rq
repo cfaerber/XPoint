@@ -1893,6 +1893,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Reply servers
 17   for News  ~
 18   for Mails ~
+19   Call
 + 925
 1    Net Options
 2    Message IDs
@@ -1925,8 +1926,32 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    ^Point,^Modem,^Charges,
 2    ^Names,%sM^isc.
 3    ,^Sysop Mode
-#
 4    ,^Transfer
+5    ^Point,
+6    A^ccess,
+7    ^Modem,
+8    C^harges,
+9    ^Names,
+10   ^Misc
+11   ,^Sysop Mode
+12   ,^Locale Mode
+13   empty
+14   empty
+15   empty
+16   empty
+17   empty
+18   empty
+19   empty
+20   Netcall ^3.8,
+21   ^ZConnect,
+22   M^aus,
+23   M^agicNET,
+24   P^ronet,
+25   ^FTS,
+26   NNT^P,
+27   ^POP3/SMTP,
+28   ^UUCP,
+29   ^QWK,
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -1975,6 +2000,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    MIME-Type       ~
 4    File extension  ~
 5    Viewer-Program  ~
+-
++ 950
+# NNTP
+0    45
+1    Host     ~
+2    Port     ~
+3    User ID  ~
+4    Password ~
 -
 
 

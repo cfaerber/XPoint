@@ -430,7 +430,7 @@ begin
     nt_NNTP	: ntName:='NNTP';
     nt_POP3	: ntName:='POP3/SMTP';
   else
-    ntName:='???';
+    ntName:='? '+IntToStr(nt);
   end;
 end;
 
@@ -760,6 +760,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/07/23 13:24:12  hd
+  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
+
   Revision 1.12  2000/07/22 15:28:49  hd
   - Neue Netztypen: nt_NNTP und nt_POP3
 

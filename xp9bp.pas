@@ -80,6 +80,14 @@ begin
                    pointname:='01';
                    downloader:='gsz.exe portx $ADDRESS,$IRQ rz';
                  end;
+      nt_NNTP:   begin
+		   nntp_ip:='127.0.0.1';	{ Default IP }
+		   nntp_port:= 119;		{ Port }
+		   nntp_id:= '';		{ User-ID }
+		   nntp_pwd:= '';		{ PAssword }
+		 end;
+      nt_POP3:   begin
+                 end;
     end;
 end;
 
@@ -287,7 +295,11 @@ begin
             getx(su,  'delqwk',DelQWK) or
             getb(su,  'brettmanagertyp',BMtyp) or
             getx(su,  'brettmanagerdomain',BMdomain) or
-            getw(su,  'maxfilesize',maxfsize)
+            getw(su,  'maxfilesize',maxfsize) or
+	    gets(s,su,'NNTP-Host',nntp_ip,255) or
+	    geti(su,  'NNTP-Port',nntp_port) or
+	    gets(s,su,'NNTP-ID',nntp_id,255) or
+	    gets(s,su,'NNTP-Password',nntp_pwd,255)
           ) then
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
           end;
@@ -412,6 +424,10 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
+    if nntp_ip<>'' then writeln(t,'NNTP-Host=',nntp_ip);
+    if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
+    if nntp_id<>'' then writeln(t,'NNTP-ID=',nntp_id);
+    if nntp_pwd<>'' then writeln(t,'NNTP-Password=',nntp_pwd);
     end;
   close(t);
 end;
@@ -524,6 +540,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/23 13:24:12  hd
+  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
+
   Revision 1.17  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

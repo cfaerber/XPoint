@@ -3148,7 +3148,10 @@ erreichbar ist.
 Im Normalfall ist dieses der Port 119.
 @
 30004
-SMTP
+Wenn Sie Zugangsdaten fuer die Nutzung des NNTP-Dienstes
+erhalten haben, so tragen Sie diese hier ein. Werden
+diese Daten nicht benoetigt, so koennen Sie die Felder
+leer lassen.
 @
 30005
 POP3

@@ -81,8 +81,8 @@ uses
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      enetztypen = 11;
-      ntnr   : array[0..enetztypen-1] of byte = (2,0,40,20,30,31,3,4,10,11,90);
+      enetztypen = 12;
+      ntnr   : array[0..enetztypen-1] of byte = (2,0,40,20,30,31,3,4,10,11,50,51);
     { ntypes : array[0..enetztypen-1] of string[10] = ('Z-Netz','ZConnect',
                  'RFC/UUCP','MausTausch','Fido','QWK','MagicNET','ProNET',
                  'QuickMail','GS-Mailbox','Turbo-Box'); }
@@ -1751,6 +1751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/07/23 13:24:12  hd
+  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
+
   Revision 1.33  2000/07/22 14:05:28  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

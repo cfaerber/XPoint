@@ -525,6 +525,10 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigr”áe / KB }
+		  nntp_ip   : string;	{ NNTP: IP oder Domain }
+		  nntp_port : integer;	{ NNTP: Port, default: 119 }
+		  nntp_id   : string;	{ NNTP: User-ID, falls noetig }
+		  nntp_pwd  : string;	{ NNTP: Password, wenn noetig }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -1086,6 +1090,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.79  2000/07/23 13:24:12  hd
+  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
+
   Revision 1.78  2000/07/21 21:17:44  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

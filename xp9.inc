@@ -25,12 +25,12 @@
       yy   : byte;
   begin
     DomainNt:=nt;
-    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
-    dom:=(nt=nt_ZConnect) or (nt=nt_Magic) or (nt=nt_Pronet) or (nt=nt_Fido) or (nt=nt_UUCP);
-    fqdom:=(nt=nt_ZConnect) or (nt=nt_UUCP);  {Eingabe fÅr FQDN nur bei ZConnect und UUCP}
+    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3];
+    dom:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3];
+    {Eingabe fuer FQDN nur bei ZC und RFC }
+    fqdom:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3];
     bdom:=(nt=nt_UUCP);
-    map:=(nt<>nt_Maus) and (nt<>nt_Fido) and (nt<>nt_UUCP)
-         and (nt<>nt_QWK);
+    map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3,nt_QWK]);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
            iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);  {16.01.00 HS}
@@ -650,6 +650,39 @@
       end;
   end;
 
+  procedure EditNNTP(var brk:boolean);
+  var x,y   : byte;
+  begin
+    dialog(ival(getres2(950,0)),11,'NNTP',x,y);
+    with boxpar^ do begin
+      maddstring(3,3,getres2(950,1),nntp_ip,25,255,		{ 'Host     ~' }
+          range('0','9')+range('A','Z')+range('a','z')+'.');
+      mhnr(30002);
+      maddint(3,5,getres2(950,2),nntp_port,4,5,0,65535);	{ 'Port     ~' }
+      mhnr(30003);
+      maddstring(3,7,getres2(950,3),nntp_id,25,255,'');		{ 'User-ID  ~' }
+      maddstring(3,9,getres2(950,4),nntp_pwd,25,255,'');	{ 'Kennwort ~' }
+      mhnr(30004);
+      freeres;
+      readmask(brk);
+      enddialog;
+      end;
+  end;
+
+  procedure EditPOP3(var brk:boolean);
+  var x,y   : byte;
+      s     : string;
+  begin
+    dialog(ival(getres2(951,0)),11,'POP3/SMTP',x,y);
+    with boxpar^ do begin
+      maddtext(3,2,'NICHT IMPLEMENTIERT!!!!', 0);
+      maddstring(3,3,getres2(951,3),s,25,255,''); 	{ 'Host ~' }
+      freeres;
+      readmask(brk);
+      enddialog;
+      end;
+  end;
+
   procedure EditName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
@@ -864,6 +897,64 @@
       msetvfunc(testvertreterbox);
       maddtext(3,12+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
       maddbool(20,12+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      freeres;
+      readmask(brk);
+      enddialog;
+      if not brk then begin
+        flags:=flags and $fd+iif(nall,0,2);
+        dbWrite(d,'script',flags);
+        dbWriteStr(d,'AVertreter',av);
+        dbWriteStr(d,'PVertreter',pv);
+        for i:=1 to excludes do
+          if pos(' ',exclude[i,1]+exclude[i,2])>0 then begin
+            exclude[i,1]:='  :  '; exclude[i,2]:='  :  ';
+            end;
+        if ntOnePW(nt) then passwort:=o_passwort;
+        end;
+      end;
+  end;
+
+  procedure EditNNTPMisc(nt:byte; var brk:boolean);
+  var x,y,i : byte;
+      flags : byte;
+      nall  : boolean;
+      x2    : byte;
+      add   : shortint;
+      av,pv : string;
+  begin
+    add:=0;
+    dialog(ival(getres2(924,0)),12+excludes,getres2(924,1),x,y);
+    dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
+    av:= dbReadStr(d,'AVertreter');
+    pv:= dbReadStr(d,'PVertreter');
+    nall:=(flags and 2=0);
+    with boxpar^ do begin
+      maddtext(3,2,getres2(924,19),col.coldiahigh);		{ 'Aufruf' }
+      maddstring(20,2,getres2(924,4),o_logfile,25,60,''); 	{ 'Logfile ' }
+      msetvfunc(testlogfile);
+      maddtext(3,4,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
+      maddtext(20,4,getres2(924,14),0);               { 'Ausschlu·-' }
+      maddtext(20,5,getres2(924,15),0);               { 'zeiten:'    }
+      x2:=42+length(getres2(924,6));
+      for i:=1 to excludes do begin
+        maddtime(32,3+i,getres2(924,6),exclude[i,1],false); mhnr(189);  { 'von' }
+        maddtime(x2,3+i,getres2(924,7),exclude[i,2],false); mhnr(189);  { 'bis' }
+      end;
+      inc(add,excludes);
+      maddtext(3,5+add,getres2(924,8),col.coldiahigh);  { 'Filter' }
+      maddstring(20,5+add,getres2(924,9),eFilter,25,60,''); mhnr(199);  { 'Eingang' }
+      maddstring(20,6+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
+      maddtext(3,8+add,getres2(924,16),col.coldiahigh);   { 'Vertretersystem' }
+      DomainNt:=nt;
+      maddstring(20,8+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fÅr AMs' }
+      amvfield:=fieldpos;
+      mappcustomsel(boxselproc,false);
+      msetvfunc(testvertreterbox);
+      maddstring(20,9+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fÅr PMs' }
+      mappcustomsel(boxselproc,false);
+      msetvfunc(testvertreterbox);
+      maddtext(3,11+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
+      maddbool(20,11+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1197,41 +1288,187 @@
     dbRead(d,'netztyp',nt);
     pushhp(131);
     nts:=''; nts2:=getres2(927,3);   { ',^SysopMode' }
-    nts0:=getres2(927,1);
+
+
     case nt of
-      nt_Netcall : nts:='^Z-Netz,';
-      nt_ZConnect: nts:='^ZConnect,';
-      nt_Maus    : nts:='M^aus,';
-      nt_Magic   : nts:='M^agicNET,';
-      nt_Pronet  : nts:='P^ronet,';
-      nt_Fido    : nts:='^Fido,';
-      nt_UUCP    : begin nts:='^RFC/UUCP,'; { nts2:=''; } end;
-      nt_QWK     : begin
-                     nts:='^QWK,'; nts0:=''; nts2:=getres2(927,4);  { ',^Transfer' }
+      nt_Netcall : begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,20)	{ Netcall ^3.8, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
                    end;
-    end;
-    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+getreps2(927,2,nts)+nts2,edb_pos);
+      nt_ZConnect: begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,21)	{ ^ZConnect, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_Maus:     begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,22)	{ M^ausTausch, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_Magic:    begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,23)	{ M^aigNet, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_Pronet:   begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,24)	{ P^ronet, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_Fido:     begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,25)	{ ^FTS, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_QWK:      begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,29)	{ ^QWK, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,4);	{ ,^Transfer }
+                   end;
+      nt_UUCP:     begin
+                     nts:=getres2(927,5)	{ ^Point, }
+		         +getres2(927,7)	{ ^Modem, }
+			 +getres2(927,8)	{ ^Gebuehren, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,28)	{ ^UUCP, }
+			 +getres2(927,10)	{ ^Diverse }
+			 +getres2(927,11);	{ ,^Sysop-Mode }
+                   end;
+      nt_NNTP:     begin
+                     nts:=getres2(927,26)	{ NNT^P, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,10);	{ ^Diverses }
+                   end;
+      nt_POP3:     begin
+                     nts:=getres2(927,6)	{ ^Zugang, }
+			 +getres2(927,9)	{ ^Namen, }
+			 +getres2(927,27)	{ ^POP3/SMTP, }
+			 +getres2(927,10);	{ ^Diverses }
+                   end;
+    end; { case nt }
+    {n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+getreps2(927,2,nts)+nts2,edb_pos);}
                  { '^Point,^Modem,^GebÅhren,^Namen,'+nts+'^Diverses'+nts2 }
+    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
     freeres;
     if n<>0 then edb_pos:=abs(n);
     if n>0 then begin
       ReadBox(nt,fn,boxpar);
-      if (nts='') and (n>=5) then inc(n);
-      if nts0='' then inc(n,3);
-      case n of
-        1 : EditPointdaten(nt,brk);
-        2 : EditModemdaten(nt,brk);
-        3 : EditGebuehren(brk);
-        4 : EditName(brk);
-        5 : case nt of
-              nt_Fido : EditFido(brk);
-              nt_QWK  : EditQWK(fn,brk);
-              nt_UUCP : EditUUCP(brk);
-              else      EditNet(brk);
-            end;
-        6 : EditDiverses(nt,brk);
-        7 : EditSysopdaten(nt,brk);
-      end;
+      {if (nts='') and (n>=5) then inc(n);
+      if nts0='' then inc(n,3);}
+      case nt of
+        nt_Netcall  : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditNet(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_ZConnect : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditNet(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_Maus     : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditNet(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_Magic    : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditNet(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_Pronet   : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditNet(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_Fido     : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditFido(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_QWK      : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditQWK(fn,brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_UUCP     : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditModemdaten(nt,brk);
+			3: EditGebuehren(brk);
+			4: EditName(brk);
+			5: EditUUCP(brk);
+			6: EditDiverses(nt,brk);
+			7: EditSysopdaten(nt,brk);
+	              end;
+        nt_NNTP     : case n of
+			1: EditNNTP(brk);
+			2: EditName(brk);
+			3: EditNNTPMisc(nt,brk);
+	              end;
+        nt_POP3     : case n of
+	                1: EditPointdaten(nt,brk);
+			2: EditPOP3(brk);
+			3: EditNet(brk);
+			4: EditDiverses(nt,brk);
+	              end;
+      end; { case nt }
       if not brk then
         WriteBox(fn,boxpar);
       brk:=reg_hinweis;

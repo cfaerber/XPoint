@@ -1936,6 +1936,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Vertretersystem
 17   fÅr AMs~
 18   fÅr PMs~
+19   Aufruf
 + 925
 1    netzspezifische Einstellungen
 2    Message-IDs
@@ -1966,8 +1967,32 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    ^Point,^Modem,^GebÅhren,
 2    ^Namen,%s^Diverses
 3    ,^SysopMode
-# QWK
 4    ,^Transfer
+5    ^Point,
+6    ^Zugang,
+7    ^Modem,
+8    ^GebÅhren,
+9    ^Namen,
+10   ^Diverses
+11   ,^Sysop-Mode
+12   ,^Lokaler Modus
+13   empty
+14   empty
+15   empty
+16   empty
+17   empty
+18   empty
+19   empty
+20   Netcall ^3.8,
+21   ^ZConnect,
+22   M^ausTausch,
+23   M^agicNET,
+24   P^ronet,
+25   ^FTS,
+26   NNT^P,
+27   ^POP3/SMTP,
+28   ^UUCP,
+29   ^QWK,
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -2020,6 +2045,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    Dateierweiterung~
 5    Viewer-Programm ~
 -
++ 950
+# NNTP
+0    45
+1    Host     ~
+2    Port     ~
+3    User-ID  ~
+4    Kennwort ~
+-
+
 
 # --- XP10 ------------------------------------------------------------
 

@@ -128,11 +128,13 @@ var pa    : phoneap;
   end;
 
 begin
-  new(phones);
+  getmem(phones,sizeof(phonea2));
+  fillchar(phones^,sizeof(phonea2),0);
   assign(t,ParGebdat);
   anzahl:=0;
   if existf(t) then begin
-    new(pa);
+    getmem(pa,sizeof(phonea2));
+    fillchar(pa^,sizeof(phonea2),0);
     reset(t);
     while not eof(t) do begin
       repeat                         { Kopf berlesen }
@@ -185,7 +187,7 @@ begin
         end;
       end;
     close(t);
-    dispose(pa);
+    freemem(pa);
     loadt:=exist(ParGebdat2);
     end
 
@@ -222,7 +224,7 @@ begin
     x7(31); x7(32); x(886); x(966); x(971); x(98);
     loadt:=false;
     end;
-  new(tarif);
+  getmem(tarif,sizeof(tarifarr));
   fillchar(tarif^,sizeof(tarif^),0);
   tables:=0;
   if loadt then begin
@@ -312,12 +314,15 @@ begin
   for i:=1 to anzahl do
     if phones^[i].anz>0 then
       freemem(phones^[i].ph,phones^[i].anz*sizeof(phone1));
-  dispose(phones);
+  freemem(phones); phones:= nil;
   anzahl:=0;
-  dispose(tarif);
+  freemem(tarif); tarif:= nil;
 end;
 {
   $Log$
+  Revision 1.8  2000/07/23 13:24:12  hd
+  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
+
   Revision 1.7  2000/07/05 17:58:26  hd
   - Ansistring
 
