@@ -250,7 +250,9 @@ procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
+{$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
+{$ENDIF}
 
 function  ComputeUserAddress(d: DB):string;
 
@@ -2106,6 +2108,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.10  2002/08/03 15:27:00  mk
+  - fixed compilation problem without define SNAPSHOT
+
   Revision 1.147.2.9  2002/07/31 18:40:40  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now
