@@ -93,18 +93,12 @@ config.inc: config.h
 ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 	cd ${srcdir} && autoconf
 
-config.h: config.h.in config.status
-	./config.status
-
-Makefile: Makefile.in config.status
-	./config.status
-
-config.status: configure
-	./config.status --recheck
-
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.2  2002/01/13 22:50:15  cl
+# - update
+#
 # Revision 1.1  2002/01/13 21:52:16  cl
 # - added a start for autoconf configuration
 #
