@@ -153,7 +153,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
 # multiquote reply, PM, Quote PM, Multiquote PM, Paáwort-Edit, indir. Quote
 
-3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S R ^N # A b ^B B p ^P P ^T ^Q
 
 # Tasten im AutoVersand-Fenster
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
