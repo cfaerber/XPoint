@@ -1399,6 +1399,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 16   Normal~
 17   Niedrig~
 18   Niedrigste~
+19   MIME~
 -
 605  DES-Codierung...     %
 + 606
@@ -1450,6 +1451,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Gr붳e
 15   Code:
 16   Kopien:
+17   Anh꼗ge:
 # Fido
 20   ^Parken,^Datum, ^EB ,o^hneSig,l^봲chen,C^rash,P^GP,^Zur갷k
 # Maus
@@ -1526,6 +1528,15 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 2   Nachricht signieren
 3   Public Key anfordern
 4   eigenen Key verschicken
++ 647
+1   Anhang-Typ 컴컴컴컴컴컴컴컴컴 Gr붳e 컴컴 Dateiname
+2   ~< >eu 컴컴 < >ext 컴컴 < >봲chen 컴컴 < >os 컴컴 <   >~
+3   NTLP
+4   Dateianhang entfernen
+5   Datei an Nachricht anh꼗gen
+6   Nicht unterst걎zter Zeichensatz. Trotzdem bearbeiten
+7   ~Textanhang bearbeiten
+8   (Textanhang)
 -
 
 
@@ -2606,6 +2617,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Fehler beim Speichern
 15   Fehler: Datei nicht vorhanden
 16   Text wurde nicht gefunden.
+17   MIME-Anh꼗ge nur bei ZConnect- und RFC-Nachrichten m봥lich
 20   Text ersetzen (Ja/Nein/Alle/Esc)
 21   JNA
 22   ~Textstellen ersetzt
@@ -2619,7 +2631,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 35   La^den UUE    ^KU
 36   ^Speichern    ^KW
 37   -
-38   S^uchen       ^QF
+38   Su^chen       ^QF
 39   E^rsetzen     ^QA
 40   ^Weitersuchen  ^L
 41   -
@@ -2628,7 +2640,9 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 44   -
 45   ^Optionen     ^OR
 46   -
-47   ^Beenden      Esc
+47   M^IME-Anhang   @A
+48   -
+49   ^Beenden      Esc
 -
 2504 Block speichern
 2505 Block laden
@@ -3127,6 +3141,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 36 Bin꼛nachrichten sind in diesem Netz nicht m봥lich.
 37 Server꼗derung nicht m봥lich - abweichende Brettebene!
 38 Als 'Original' weitergeleitete Nachrichen d걊fen nicht ge꼗dert werden!
+39 Bei MIME-Multipart-Nachrichten nicht m봥lich.
 
 +  10700
 1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!

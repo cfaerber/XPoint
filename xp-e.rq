@@ -1365,6 +1365,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 16   Normal~
 17   Low~
 18   Lowest~
+19   MIME~
 -
 605  Crypting message...     %
 + 606
@@ -1416,15 +1417,16 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Size
 15   Code:
 16   Copies:
-20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
-21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
-22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-24   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^Back
+17   Attaches:
+20   Par^k,^Date,R^ecConf,^withoutSig,De^lete,Cras^h,P^GP,^Back
+21   Par^k,^Date,R^ecConf,^withoutSig,De^lete,^MausNet,^Local,^Back
+22   Par^k,^Date,R^ecConf,^w/o Sig,De^lete,P^rio,^More,P^GP,^Back
+23   Par^k,^Date,R^ecConf,^w/o Sig,De^lete,P^rio,^More,P^GP,^Back
+24   Par^k,^Date,R^ecConf,^withoutSig,De^lete,^Back
 25   YNIùSVOT
 28   ^Yes,^No,^Internal,S^pecial,ù4To^:,^Subj.,Ser^ver,C^ode
 29   ,^Text
-30   ADEWLHùLMG
+30   KDEWLHùLMG
 # Editor Header
 40   Message to ~
 41   Message in ~
@@ -1486,6 +1488,15 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 2   Sign message
 3   Request public key
 4   send own key
++ 647
+1   Content-Type ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Size ÄÄÄÄ File name
+2   ~< >ew ÄÄÄÄ < >ext ÄÄÄÄ < >elete ÄÄÄÄ < >os ÄÄÄÄ <   >~
+3   NTDP
+4   Remove File Attach
+5   Append file to message
+6   Unsupported character set. Edit, anyway
+7   ~Edit text part
+8   (Text part)
 -
 
 
@@ -2535,7 +2546,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 1    File has been changed ...
 2    ~^Save , ^Don't save , ^Cancel~
 3    Message has been changed ...
-4    ~^Save , ^Don't save , P^ark , ^Cancel~
+4    ~^Save , ^Don't save , Par^k , ^Cancel~
 + 2501
 0    Note
 # Number of text lines:
@@ -2557,6 +2568,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Error saving text
 15   Error: file not found
 16   Text not found.
+17   MIME Attaches only possible with ZConnect and RFC messages
 20   Replace text (Yes/No/All/Esc)
 21   YNA
 22   ~ replacements
@@ -2579,7 +2591,9 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 44   -
 45   ^Options     ^OR
 46   -
-47   ^Quit        Esc
+47   MIME ^Attach  @A
+48   -
+49   ^Quit        Esc
 -
 2504 Save block
 2505 Read block
@@ -3078,6 +3092,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 36 Binary mails are not possible here.
 37 Cannot change server - different newsgroup names!
 38 You are not allowed to change this message!
+39 Not possible with MIME multipart messages.
 
 +  10700
 1  Internal error: Newsgroup with unsent message not found!
