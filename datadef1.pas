@@ -191,6 +191,8 @@ procedure writehd(dpb:DB);
 
 implementation
 
+uses Debug;
+
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
@@ -209,6 +211,7 @@ procedure error(txt:string);
 begin
   writeln;
   writeln('<DB> interner Fehler: ',txt);
+  Debug.DebugLog('datadef1','DB Error: '+txt,dlError);
   if dbInterrProc<>nil then
     proctype(dbInterrProc);
   halt(1);
@@ -235,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/06/05 21:22:15  ma
+  - added debug logs
+
   Revision 1.14  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
