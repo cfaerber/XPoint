@@ -812,33 +812,36 @@ The selected colour is accepted with <Enter>, <Esc>
 breaks off without changing.
 @
 54
-Using the editor, a brief overview:
+Considering the complexity of the editor, the online
+help has had to be broken up into the following
+sections:
 
-       [Status Line]@55
-       [Function Keys]@56
-       [Block-Functions]@57
-       [Search/Replace]@58
-       [Marking Text]@59
-       [Deleting]@60
-       [Other]@61
+         [Status Line]@55
+         [Function Keys]@56
+         [Block Functions]@57
+         [Search/Replace]@58
+         [Marking]@59
+         [Deleting]@60
+         [Glossary Function]@64
+         [Other]@61
 
-The important Editor Functions:
+Commonly used editor functions:
 
-    <F2>        Save message
+    <F2>        Save message (stay in editor)
     <Esc>       Exit editor
     <Shift F2>  Save message and exit editor
     <F10>       Menu
 @
 55
 
-The status line shows, well, the current status:
+The status line shows, well, the current status!
 From left to right:
 
-  - Row: Current line number
-  - Col: Current column number
+  - Row(x): Current line number
+  - Col(x): Current column number
   - free memory
   - þ = Text has been changed
-  - File Name
+  - Filename
 @
 56
 <F1>        : Online help
@@ -881,13 +884,11 @@ From left to right:
 <Ctrl Q><B> : Set Cursor at Block begin
 <Ctrl Q><K> : Set Cursor at Block end
 
-<Ctrl+Enter>: Invokes the [Glossary] function@64
-
 Keys from the number keypad:
 
 *  Copies marked block to clipboard
 -  Moves marked block to clipboard
-+  insert Clipboard at cursor position
++  Insert clipboard contents at cursor position
 
 <Ctrl Ins>   Copies marked block to clipboard
 <Shift Ins>  insert Clipboard at cursor position
