@@ -465,7 +465,10 @@ begin
 
   EditCfgFunc(config,brk);         { Menue aufrufen }
 
-  if not brk then begin            { und Aenderungen speichern }
+  if not brk then
+  begin            { und Aenderungen speichern }
+    edCfg := Config;
+    EdSetConfig(edCfg);
     rewrite(t);
     with Config do begin
       writeln(t,'RechterRand=',rechter_rand);
@@ -482,6 +485,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.1  2000/11/24 15:23:47  mk
+  - Edit/Config uebernimmt Optionen jetzt immer
+
   Revision 1.16  2000/05/22 16:12:11  hd
   - Anpassung an UnixFS (Filesystem)
   - screenwidth statt 80 (Screen)
