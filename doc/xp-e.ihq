@@ -9576,7 +9576,7 @@ same thing.
 <<Netcall / Special
 
 Makes a netcall to these servers in that order as
-being listed in the file <<NETCALL.LST>> in the XP
+being listed in the file <<NETCALL.DAT>> in the XP
 directory.
 
 (This function will be enhanced)

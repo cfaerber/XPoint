@@ -14627,7 +14627,7 @@ Der Menpunkt Netcall/Alle entspricht dem
 
 Mit diesem Menpunkt wird ein Netcall fr die Boxen
 in der Reihenfolge ausgefhrt, wie sie in der Datei
-<<NETCALL.LST>> im XP-Verzeichnis aufgefhrt sind.
+<<NETCALL.DAT>> im XP-Verzeichnis aufgefhrt sind.
 
 (Diese Funktion wird noch ausgebaut)
 @
