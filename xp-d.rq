@@ -2448,6 +2448,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   Senden:  ~
 12   Empfangen:
 
+# UUCP-G
+
+20   Paketgr”áe:
+21   (erzw.)
+
+
+# file types
+
 60   ungepacktes Newspaket
 61   gepacktes Newspaket (compress)
 62   gepacktes Newspaket (freeze)
@@ -2464,6 +2472,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 81   gepackte Datei (freeze)
 82   gepackte Datei (gzip)
 83   gepackte Datei (bzip2)
+
+# UUCP errors
 
 102 Zugriff verweigert oder Dateifehler
 104 Tempor„re Datei konnte nicht erstellt werden
@@ -3641,6 +3651,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.102  2001/03/19 12:20:53  cl
+# - more UUCICO ressources (UUCP-gGv)
+#
 # Revision 1.101  2001/03/16 23:03:21  cl
 # - UUCICO ressource strings
 #

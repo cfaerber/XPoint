@@ -2388,6 +2388,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Receive: ~
 12   Transmit:~
 
+# UUCP-G
+
+20   Paket size:
+21   (forced)
+
 60   plain news batch
 61   compressed news batch (compress)
 62   compressed news batch (freeze)
@@ -3667,6 +3672,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.127  2001/03/19 12:20:53  cl
+# - more UUCICO ressources (UUCP-gGv)
+#
 # Revision 1.126  2001/03/16 23:03:21  cl
 # - UUCICO ressource strings
 #
