@@ -892,23 +892,6 @@ begin
     umlaute:=0;
 end;
 
-procedure SetEBkennung;
-var haseb : boolean;
-begin
-  haseb:=(LeftStr(betreff,length(empfbkennung))=empfbkennung);
-  if not ntEmpfBest(netztyp) then begin
-    if flEB then begin
-      if not haseb then betreff:=empfbkennung+betreff;
-      end
-    else
-      if haseb then
-        betreff:=trim(mid(betreff,length(empfbkennung)+1));
-    end
-  else
-    if haseb then
-      betreff:=trim(mid(betreff,length(empfbkennung)+1));
-end;
-
 procedure SetLocalPM;
 var l : byte;
 begin
@@ -1176,6 +1159,10 @@ end;
 
 {
   $Log$
+  Revision 1.27  2002/07/28 11:31:46  cl
+  - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
+  - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer
+
   Revision 1.26  2002/07/25 20:43:57  ma
   - updated copyright notices
 

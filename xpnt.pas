@@ -106,7 +106,6 @@ function ntRfcCompatibleID(nt:byte):boolean;  { RFC-Msgid             }
 function ntMIDCompatible(n1,n2:byte):boolean; { austauschbare MsgIDs  }
 function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
 function ntAdrCompatible(n1,n2:byte):boolean; { umleitbare PM-Adresse }
-function ntEmpfBest(nt:byte):boolean;         { EB-Flag im Header     }
 function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
 function ntNameSpace(nt:byte):boolean;        { Leerzeichen in Usernamen }
 function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
@@ -525,12 +524,6 @@ begin
                     (n2 in ([nt_Maus, nt_ZConnect]+netsRFC));
 end;
 
-function ntEmpfBest(nt:byte):boolean;
-begin
-  ntEmpfBest:= nt in [nt_Fido,nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
-end;
-
-
 function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
 begin
   ntMsg0:=nt in ([nt_ZConnect,nt_Fido]+netsRFC);
@@ -782,6 +775,10 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.49  2002/07/28 11:31:46  cl
+  - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
+  - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer
+
   Revision 1.48  2002/07/25 20:43:57  ma
   - updated copyright notices
 

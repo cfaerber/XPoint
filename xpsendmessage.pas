@@ -837,10 +837,6 @@ begin
     pophp;
     if brk then exit;
   end;
-  if pm and not ntEmpfBest(netztyp) then begin
-    flEB:=(leftstr(betreff,length(EmpfBkennung))=EmpfBkennung);
-    SetEBkennung;
-  end;
 end;
 
 procedure EditRecipients;
@@ -1179,14 +1175,10 @@ fromstart:
                 if DateSend then senden:=4;     { zeitversetzt absenden }
 //              n:=1;
                 end;
-       13   : if not pm then
+       13   : if not sData.has_pm then
                 rfehler(614)   { 'Empfangsbestaetigung nur bei PMs moeglich' }
-              else begin
+              else
                 flEB:=not flEB;
-                if not ntEmpfbest(netztyp) then
-                  SetEBkennung;
-                showbetreff;
-                end;
        14   : begin
                 flOhnesig:=not flOhnesig;
 
@@ -1453,6 +1445,10 @@ finalization
 
 {
   $Log$
+  Revision 1.61  2002/07/28 11:31:46  cl
+  - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
+  - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer
+
   Revision 1.60  2002/07/25 20:43:57  ma
   - updated copyright notices
 
