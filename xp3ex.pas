@@ -873,14 +873,13 @@ begin // extract_msg;
                      s:=gr(2);  { 'Empfaenger : ' }
                      for i:=0 to hdp.Empfaenger.Count - 1 do
                      begin
-                       ReadHeader(hdp,hds,false);
-                       if length(s)+length(hdp.FirstEmpfaenger)>iif(listscroller,76,77) then
+                       if length(s)+length(hdp.Empfaenger[i])-ScreenWidth+4 > iif(listscroller,0,1) then
                        begin
                          wrs437(s);
                          s:=gr(2);
                        end else
-                         s:=s+', ';
-                       s:=s+hdp.FirstEmpfaenger;
+                         if s<>gr(2) then s:=s+', ';
+                       s:=s+hdp.Empfaenger[i];
                      end;
                      if hdp.fido_to<>'' then s:=s+' ('+hdp.fido_to+')';
                      wrs437(s);
@@ -1223,6 +1222,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.93  2002/02/09 12:00:51  ma
+  - fixed display of recipients in message viewer
+
   Revision 1.92  2002/01/19 14:17:02  mk
   - Big 3.40 update part IV
 
