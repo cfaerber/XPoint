@@ -81,6 +81,7 @@ function  testhaltetyp(var s:string):boolean;
 function  mbshowtext(var s:string):boolean;
 procedure mbshowtxt0(var s:string);
 procedure mbsetvertreter(var s:string);
+function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
 
 implementation  { --------------------------------------------------- }
@@ -788,6 +789,18 @@ begin
       s:='/'+s;
 end;
 
+
+function testnoverteiler(var s:string):boolean;
+begin
+  testnoverteiler:=true;
+  if (s[1]='[') and (s[length(s)]=']') then 
+  begin
+    rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
+    testnoverteiler:=false;  
+    end;
+end;
+
+
 function modibrett2:boolean;
 var x,y,wdt  : byte;
     brk      : boolean;
@@ -816,7 +829,7 @@ begin
   pb_netztyp:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
   maddstring(3,2,getres2(2735,2),adresse,36,eAdrLen,'');   { 'Vertreter-Adresse' }
   mappcustomsel(auto_empfsel,false);  mhnr(860);
-  msetvfunc(testReplyTo);
+  msetvfunc(testnoverteiler);                       { nur Verteileradressen sind Ungueltig }
   mset1func(mbshowtext); mset0proc(mbshowtxt0);
   mset3proc(mbsetvertreter);
   maddbool(3,4,getres2(2735,3),gesperrt);    { 'Schreibsperre' }
@@ -2184,6 +2197,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/27 10:08:42  jg
+  - Bei Brettvertreteradresse (Spezial..zUgriff) ist jetzt
+    alles ausser Verteilerlisten erlaubt.
+
   Revision 1.8  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
