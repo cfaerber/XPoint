@@ -884,6 +884,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     poutside:=false;
     repeat { main loop }
 
+      if not done then
+      begin
+
       if redisplay or (new_a<>a) then
       begin
         attrtxt(col.ColBack);
@@ -930,7 +933,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           newfld := false;
           if not typ=120 then test0(cont);
           if newfld then continue;
-          
+
           if autoup then UpString(cont)
           else if autodown then LoString(cont);
           showfield;
@@ -955,18 +958,11 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         end                            {-----------------------------------}
         else
           showfield;
-          
+
         setcur;
         mauszuo:=yp>1;
         mauszuu:=yp<felder;
 
-        if done then begin
-          if return < 0 then 
-            t:=KeyESC 
-          else 
-            t:=^J;
-        end else
-        
         if maussel then
           t:=selboxkey
         else
@@ -1279,8 +1275,24 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           replace:=false;
           end;
 
-        if (t=^J) and not quitfn(false,modified) then t:='';
-        if (t=keyesc) and not quitfn(true,modified) then t:='';
+      end; // with afld
+
+      end // if not done
+      else
+        if return < 0 then 
+          t:=KeyESC
+        else
+          t:=^J;
+
+        if (t=^J) or (t=keyesc) then
+          if not QuitFn(t=keyesc,modified) then begin
+            t:=''; done := false;
+          end else
+          // Return Code Could have been set in QuitFn
+          if amaskp^.return < 0 then
+            t := keyesc
+          else
+            t := ^J;
 
         if ((t=^J) or ((t=keyesc) and keeponesc)) then begin
           exit_mask:=true;
@@ -1291,8 +1303,8 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           i:=yp; yp:=myp;
           if i<=felder then begin
             t:='';
+            done := false;
             movefield(i-yp);
-            end;
           end;
         end;
     until (t=keyesc) or (t=^J); { main loop }
@@ -1312,11 +1324,14 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
   inout.hotkeys := old_hotky;
   inout.hotkey_f1 := old_hotkyf1;
- end;   
-
+ end;
+  result := amaskp^.return;
 end;   { readHmask }
 {
   $Log$
+  Revision 1.54  2003/09/07 14:41:28  cl
+  - allow setting return code in quitfn
+
   Revision 1.53  2003/09/06 22:59:25  cl
   - added return value from read[h]mask to identify pressed button or value
     passed to MQuit (instead of boolean brk)
