@@ -1461,7 +1461,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Betreff  ~
 8    An       ~
 # Sendefenster
-10   Empf„nger~
+10   E^mpf„nger~
 11   ^An
 12   Betreff
 13   Server
@@ -3997,6 +3997,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.9  2002/08/19 22:54:02  cl
+# - FIX: [ 497544 ] Sendefenster: Empfänger ändern (32bit):
+#   "M"-Taste im Sendefenster wieder aktiviert. Ausserdem wird
+#   jetzt das "m" von "Empfaenger" hervorgehoben.
+#
 # Revision 1.57.2.8  2002/08/02 13:24:07  cl
 # - backport from 3.9.x:
 #

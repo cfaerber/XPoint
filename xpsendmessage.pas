@@ -331,6 +331,7 @@ var f,f2     : file;
     sendbutt : string;
     kopkey   : string;   { (K)opien }
     fidokey  : string;   { (A)n     }
+    empfkey  : string;   { E(m)pfaenger }
     pgpkey   : string;
     oldbetr  : string;
     d        : DB;
@@ -895,7 +896,16 @@ end;
   begin
     diabox(78,13+fadd,typ,x,y);
     moff;
-    wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
+
+    ToStr := GetRes2(611,10);
+    ToPos := CPos('^',ToStr);
+    empfkey := copy(ToStr, ToPos+1, 1);
+    Delete(ToStr, ToPos, 1);
+    
+    wrt(x+3,y+2,ToStr+ch);   { 'Empfaenger ' }
+    attrtxt(col.coldiahigh);
+    wrt(x+3+ToPos-1,y+2,empfkey);
+    attrtxt(col.coldialog);
 
     ToStr := getres2(611,11); { '^An' }
     ToPos := cpos('^', ToStr);
@@ -1459,7 +1469,7 @@ fromstart:
           goto ReadAgain;
           end;
 
-        if { (n=5) or } (t='/') then    { Empfaenger aendern? }
+        if (UpperCase(t)=Uppercase(EmpfKey)) or (t='/') then    { Empfaenger aendern? }
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
@@ -1682,7 +1692,7 @@ fromstart:
                   showcc;
                   showbox;   { evtl. in Klammern }
                   end;
-                if echomail and (UpperCase(t)=fidokey) then begin
+                if echomail and (UpperCase(t)=UpperCase(fidokey)) then begin
                   readstring(x+13,y+2,'',fidoto,35,35,'',brk);
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
@@ -2497,6 +2507,11 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.10  2002/08/19 22:54:02  cl
+  - FIX: [ 497544 ] Sendefenster: Empfänger ändern (32bit):
+    "M"-Taste im Sendefenster wieder aktiviert. Ausserdem wird
+    jetzt das "m" von "Empfaenger" hervorgehoben.
+
   Revision 1.48.2.9  2002/08/04 14:58:32  mk
   - fixed AV after N/W/R, Adr[1] was accessed directly
 
