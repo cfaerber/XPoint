@@ -3668,8 +3668,8 @@ newsgroup, when a new user is entered through "new'
 in the User Editing mode.
 @
 243
-Decides whether public messages written by yourself
-should be put on "hold" (ie. with "+" sign) when you
+Decides whether public messages, written by yourself,
+should be put on "hold" (ie. with "+" sign) after you
 have written them (see [message display]).@4015
 
 <<[x]>>     Are put on hold directly after writing,
@@ -3679,16 +3679,16 @@ have written them (see [message display]).@4015
         and are deleted when their time comes.
 @
 244
-Decides whether private messages written by yourself
-should be put on "hold" (ie. with "+" sign) when you
-have written them (see [message display]).@4015
+Decides whether private messages, written by
+yourself, should be put on "hold" (ie. with "+" sign)
+after you have written them (see [message display]).@4015
 
 <<[x]>>     Are put on hold directly after writing.
 
-        If you want to archive mails that have been
-        sent to a certain user only you should leave
-        this switch disabled and set hold time for
-        this user to zero.
+        If you want to archive messages that have
+	been sent to a certain user only, you should
+	leave this switch disabled and set the hold
+	time for this user to zero.
 
 <<[ ]>>     They are handled like all other messages
         and are deleted when their time comes.
@@ -3709,20 +3709,18 @@ computer's date is set correctly), will always be
 recorded.
 @
 246
-CrossPoint will, by default, put one of the forms
-of [Re:] for you onto the subject of messages you@4012
-are replying to.
+CrossPoint will, by default, add a [Re:] in front of@4012
+the subject of messages you are replying to.
 
-Here you can decide for the default setting between a
-simple "[Re:]" always being added, or gathering the@4012
-["Re:"s together].@4012
+Here, you can choose as the default, either a simple 
+"[Re:]" being added or to gather the ["Re:"s together].@4012
 
 See also under /Edit/Groups/Edit, where the Re:
-can be set individually for newsgroup groups, and
-even switched off (not possible here).
+can be set individually for newsgroup groups and even 
+switched off (not possible here).
 
 <<[x]>>     (switch with <space>), make Re^n
-<<[ ]>>     just a simple Re: on the front of whatever
+<<[ ]>>     just a simple Re: at the front of whatever
         is there.
 
 Note: This setting does not affect UseNet or Mausnet.
@@ -3739,18 +3737,18 @@ For Germany this would be:
     <<W+1>>   for Winter time
     <<S+2>>   for Summer time
 
-For New York it would be:
-    <<W-5>>   for Winter time
-    <<S-6>>   for Summer time
+For London it would be:
+    <<W+0>>   for Winter time
+    <<S+1>>   for Summer time
 
 So when you change your system clock, don't forget
-to change this setting, to ensure your postings
-appear with the correct time stamp.
+to change this setting to ensure your messages appear
+with the correct time stamp.
 
-W or S stands for Winter time or Summer time, and the
-number is the number of hours from GMT (Greenwich
-Mean Time), the + or - showing whether in front or
-behind.
+W stands for Winter time, whereas S stands for Summer
+time. The number is the number of hours difference
+from GMT (Greenwich Mean Time), the + or - indicating
+whether in front of or behind GMT.
 
 Note: if you have the 00:00 switch set, not only does
 this setting have no effect, you don't even see it!
@@ -3871,20 +3869,20 @@ message reader to display other user's Homepages.
 
 @
 260
-The directory where CrossPoint should put the
-temporary files which it uses.
+The directory where CrossPoint should put its
+temporary files.
 
 CrossPoint uses many temporary files; when writing
 messages in the editor, when displaying messages in
-the lister, and so on. These are all immediately
-erased after use, but must be somewhere while in use.
+the reader, and so on. These are all erased 
+immediately after use.
 
-It is a good idea to use a RAM Disk for this if you
-can, it makes it a lot quicker.
+It is a good idea to use a RAM Disk for this, if you
+can. It makes it a lot quicker.
 
-You <<must>> make certain, that there is enough space
-on the drive given for the temporary files. It should
-be at least 200-300KB, more if you send long
+You <<must>> make certain that there is enough space
+on the drive allocated for the temporary files. It 
+should be at least 200-300KB, more if you send long
 messages.
 
 If nothing is specified, CrossPoint uses the same
