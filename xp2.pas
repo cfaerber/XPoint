@@ -17,31 +17,16 @@ unit xp2;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-{$IFDEF unix}
-  xplinux,
-{$ENDIF}
-{$IFDEF Win32 }
-  xpwin32,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-{$IFDEF OS2 }
-  xpos2,
-{$ENDIF }
+  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF }
+  {$IFDEF unix} xplinux,{$ENDIF}
+  {$IFDEF Win32} xpwin32, {$ENDIF }
+  {$IFDEF DOS32} xpdos32, {$ENDIF }
+  {$IFDEF OS2} xpos2, {$ENDIF }
+  {$IFDEF XPEasy} xpeasy, {$ENDIF }
   sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,resource,montage,
-  xpglobal, debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
-{$IFDEF XPEasy }
-  xpeasy,
-{$ENDIF }
+  xpglobal,debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
   classes;
-
 
 procedure zusatz_menue;
 procedure setaltfkeys;
@@ -73,9 +58,9 @@ procedure test_systeme;
 procedure testdiskspace;
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
-{$ifdef FPC}
+{$ifndef Debug}{$ifdef FPC}
   {$HINT Soll denn nun die Check-Date-Geschichte ganz raus, oder NTP-Variante? }
-{$endif}
+{$endif}{$endif}
 {$ifndef unix}
 procedure check_date;
 {$endif}
@@ -87,11 +72,9 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 implementation  {-----------------------------------------------------}
 
-uses log,xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,
-{$IFDEF UnixFS}
-  xpx,
-{$ENDIF}
-  xpreg;
+uses
+ xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg
+ {$IFDEF UnixFS},xpx{$ENDIF};
 
 var   zaehlx,zaehly : byte;
 
@@ -707,7 +690,6 @@ end;
 
 
 procedure test_pfade;
-var   res  : integer;
 
   procedure TestDir(d: string; substOwn: Boolean);
   var
@@ -749,8 +731,7 @@ begin
   TestDir(AutoxDir, True);
   TestDir(BadDir, True);
   if not IsPath(filepath) then begin
-    MkLongdir(filepath,res);
-    if res<>0 then begin
+    if not CreateDir(filepath) then begin
       filepath:=OwnPath+InfileDir;
       TestDir(InfileDir, True);
     end;
@@ -1059,8 +1040,6 @@ end;
 procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
 var
-    days : longint;
-    dow  : rtlword;
     ddiff: longint;
     wdt  : byte;
     x,y  : byte;
@@ -1185,6 +1164,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.99  2001/01/06 16:14:10  ma
+  - replaced mklongdir by CreateDir
+
   Revision 1.98  2000/12/28 19:16:07  mk
   - removed editpathname variables
 
