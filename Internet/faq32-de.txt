@@ -72,7 +72,7 @@ Was ist bei den Netcalls zu beachten?&nbsp;&nbsp;<small>2001-09-16</small>
 </ul>
 <big>ZConnect:</big>
 <ul>
-<li>Es <b>muﬂ</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein (siehe Beispielskripte im "beispiel"-Verzeichnis bzw. <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi/~checkout~/beispiel/zcjanusp.scr">diese</a> Datei, Login cvs/cvs).</li>
+<li>Es <b>muﬂ</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein (siehe Beispielskripte im "beispiel"-Verzeichnis bzw. <a href="http://openxpcvs.dyndns.org/cvs/cvsweb.cgi/~checkout~/beispiel/zcjanusp.scr">diese</a> Datei, Login cvs/cvs).</li>
 </ul>
 <big>Allgemein:</big>
 <ul>

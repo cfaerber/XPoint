@@ -66,7 +66,7 @@ $Menu = array(
 		"sub"	=> true),
 	14 => array("de"	=> "CVSWeb",
 		"en" 	=> "CVSWeb",
-		"url"	=> "http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi/openxp/",
+		"url"	=> "http://openxpcvs.dyndns.org/cvs/cvsweb.cgi/openxp/",
 		"sub"	=> true),
 	15 => array("de"	=> "CVS Log",
 		"en" 	=> "CVS log",
