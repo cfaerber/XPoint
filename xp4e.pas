@@ -371,7 +371,7 @@ begin
   if not brk then
   begin
     if (adrbuchdef<>0) and (byte(adr)=0) then
-     if not readJN('User aus Adreábuch entfernen',false) then
+     if not readJN(GetRes(2738),false) then
        adr:=adrbuchdef;
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
@@ -2421,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/10/05 23:10:54  mk
+  - Resource 2738 angelegt
+
   Revision 1.42  2000/10/03 16:02:11  mk
   JG:- Beim Editieren von Usern mit Adressbuchgruppe "0" bleibt
     diese erhalten und wird nicht in "1" geaendert"

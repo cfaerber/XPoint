@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas. }
@@ -135,6 +135,9 @@
 
 {
   $Log$
+  Revision 1.54  2000/10/05 23:10:54  mk
+  - Resource 2738 angelegt
+
   Revision 1.53  2000/09/28 03:03:19  mk
   - Debug-Schalter auch fuer FreePascal
 
