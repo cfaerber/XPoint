@@ -589,7 +589,8 @@ begin
       delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
-      if (left(sr.name,5)<>fustr('start')) and (left(sr.name,4)<>fustr('stop')) then begin
+      if (left(fustr(sr.name),5)<>fustr('start')) and
+        (left(fustr(sr.name),4)<>fustr('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
@@ -669,6 +670,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.2  2000/09/30 16:27:22  mk
+  - LFN-Bugfix
+
   Revision 1.13.2.1  2000/08/28 23:35:56  mk
   - LFN in uses hinzugefuegt
 
