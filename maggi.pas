@@ -38,7 +38,7 @@ uses dos,
 {$IFDEF BP }
   xms,
 {$ENDIF }
-  crt, typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+  typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect=2;
       OrgLen    = 80;
@@ -214,7 +214,6 @@ var
     i      : integer;
 begin
   writeln('Fehler: ',txt);
-  delay(1000);
   halt(1);
 end;
 
@@ -1828,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/30 21:03:35  mk
+  - kein crt noetig
+
   Revision 1.9  2000/04/29 20:54:06  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 

@@ -23,14 +23,9 @@
 
 uses
 {$IFDEF Linux }
-   XPLinux,
+  XPLinux,
 {$ENDIF }
-{$IFNDEF Delphi }
-  dos,
-{$ELSE }
-  sysutils,
-{$ENDIF }
-  xpglobal, typeform, dosx;
+  dos, typeform, dosx, xpglobal;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -1372,6 +1367,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/04/30 21:03:35  mk
+  - kein crt noetig
+
   Revision 1.11  2000/04/13 12:48:42  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
