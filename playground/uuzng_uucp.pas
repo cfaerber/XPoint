@@ -1,0 +1,65 @@
+{ $Id$
+
+  UUZNG_UUCP - OpenXP Message Converter -- UUCP module
+
+  This file is part of OpenXP.
+
+  Copyright (C) 2003 OpenXP/32 Team <www.openxp.de>
+  see CVS log below for authors
+
+  This file is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2, or (at your option) any later
+  version.
+
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  more details.
+
+  You should have received a copy of the GNU General Public License along with
+  this library; see the file COPYING.  If not, write to the Free Software
+  Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+}
+
+unit uuzng_uucp;
+
+interface
+
+uses uuzng;
+
+type
+  TUUCPCompression = (
+    compress_none,        { uncompressed }
+    compress_gzip,        { gzip'ed      }
+    compress_bzip2,       { bzip2'ed     }
+    compress_compress,    { compressed   }
+    compress_freeze );    { frozen       }
+
+  TUUCPSpool = class(TNetcallSpoolDir, IUUZMessageSink, IUUZMessageSource)
+  public
+    procedure PutMessage(msg:TMessage);
+    function GetMessage: TMessage;
+  public
+    constructor Create;
+    constructor CreateFromServer(box: TXPServer);
+  private
+    FOutMailCompression: TUUCPCompression;
+    FOutNewsCompression: TUUCPCompression;
+    FOutBSMTP: boolean;
+  public
+    property OutMailCompression: TUUCPCompression
+      read FOutMailCompression write FOutMailCompression;
+    property OutNewsCompression: TUUCPCompression
+      read FOutNewsCompression write FOutNewsCompression;
+    property OutBSMTP: boolean read FOutBSMTP write FOutBSMTP;
+  end;
+
+implementation
+
+//
+// $Log$
+// Revision 1.1  2003/08/26 22:34:32  cl
+// - skeleton for UUZ Next Generation
+//
+end.
