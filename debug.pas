@@ -85,7 +85,7 @@ procedure OpenLogfile(App: Boolean; Filename: string);
 implementation
 
 uses
-  {$IFDEF Linux}
+  {$IFDEF Unix}
   {$IFDEF Kylix}
   libc,
   {$ELSE} {fpc}
@@ -311,6 +311,9 @@ finalization
 
 {
   $Log$
+  Revision 1.35  2003/01/01 16:19:44  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.34  2002/12/12 11:58:39  dodi
   - set $WRITEABLECONT OFF
 

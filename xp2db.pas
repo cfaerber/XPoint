@@ -35,7 +35,7 @@ implementation  { --------------------------------------------------- }
 
 uses
   sysutils,
-{$IFDEF Linux }
+{$IFDEF Unix }
 {$IFDEF Kylix }
   xplinux,
 {$ENDIF }
@@ -1539,6 +1539,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2003/01/01 16:19:45  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.51  2002/12/22 10:24:33  dodi
   - redesigned database initialization
 

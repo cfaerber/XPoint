@@ -81,7 +81,7 @@ end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$IFDEF Linux}
+{$IFDEF Unix}
 {$IFDEF fpc}
   type THostEnt = record
     h_Name     : pchar;   { Official name }
@@ -180,7 +180,7 @@ begin
     begin
       SOpened:=True;
       IDummy:=Sizeof(LocalAddr);
-{$IFNDEF Linux}
+{$IFNDEF Unix}
       getsockname(SHandle,LocalAddr, IDummy);
 {$ELSE}
       getsocketname(SHandle,LocalAddr, IDummy);
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2003/01/01 16:19:45  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.16  2002/12/12 11:58:56  dodi
   - set $WRITEABLECONT OFF
 

@@ -90,7 +90,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-{$IFDEF Linux }
+{$IFDEF Unix }
  {$IFNDEF Kylix}
   printer,
  {$ELSE}
@@ -172,6 +172,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2003/01/01 16:19:44  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.25  2002/12/04 16:57:00  dodi
   - updated uses, comments and todos
 

@@ -29,7 +29,7 @@ interface
 uses
   classes,
   sysutils,
-{$IFDEF linux }
+{$IFDEF Unix }
 {$IFDEF Kylix}
   libc,
   xplinux,
@@ -262,7 +262,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-{$IFDEF Linux }
+{$IFDEF NCRT }
   {$IFDEF Kylix}
     ncursix,
   {$ELSE}
@@ -2126,7 +2126,7 @@ begin
   SysSetScreenSize(ScreenLines, ScreenWidth);
   screenlines := SysGetScreenLines;
   screenwidth := SysGetScreenCols;
-  {$IFDEF Linux}xpcurses.{$ENDIF}window(1,1,screenwidth,screenlines);
+  {$IFDEF NCRT}xpcurses.{$ENDIF}window(1,1,screenwidth,screenlines);
   cursor(curoff);
 
   getmem(ma,sizeof(menuarray));
@@ -3258,6 +3258,9 @@ end;
 
 {
   $Log$
+  Revision 1.171  2003/01/01 16:19:44  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.170  2002/12/28 20:11:04  dodi
   - start keyboard input redesign
 

@@ -201,7 +201,6 @@
                             Linux. Maybe some non POSIX values for
                             flag-parameters aren't allowed}
     {$DEFINE Unix }        { FreeBSD is a Unix Platform }
-    {$DEFINE Linux }       { this is not realy correct, but now linux.pp will be included }
   {$ELSE}
     // !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
   {$ENDIF}
@@ -244,6 +243,9 @@
 
 {
   $Log$
+  Revision 1.89  2003/01/01 16:19:45  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.88  2002/12/29 22:41:06  mk
   - added define Linux for FreeBsd
     -> should be removed, if all references to uses linux are modified to

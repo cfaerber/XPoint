@@ -99,8 +99,15 @@
   {$DEFINE TCP }
 {$ENDIF }
 
+{$IFDEF BSD }
+  {$DEFINE TCP }
+{$ENDIF }
+
 {
   $Log$
+  Revision 1.10  2003/01/01 16:19:45  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.9  2002/11/23 23:52:14  mk
   - fixed comment in last committ
 

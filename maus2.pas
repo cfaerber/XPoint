@@ -243,7 +243,7 @@ var rr: taste;
     if rr='' then
       rr:=NewKey
     else
-      Forwardkeys:=Forwardkeys+NewKey;
+      PushKey(NewKey);
   end;
 
 begin
@@ -539,6 +539,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2003/01/01 16:19:44  mk
+  - changes to made FreeBSD-Version compilable
+
   Revision 1.53  2002/12/28 20:11:03  dodi
   - start keyboard input redesign
 

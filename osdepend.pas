@@ -45,11 +45,14 @@ implementation
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
-{$ifdef Unix}  {$i osdlinux.inc} {$endif}
+{$ifdef Linux} {$i osdlinux.inc} {$endif}
 {$ifdef Win32} {$i osdwin32.inc} {$endif}
 
 {
         $Log$
+        Revision 1.9  2003/01/01 16:19:44  mk
+        - changes to made FreeBSD-Version compilable
+
         Revision 1.8  2002/12/06 14:27:27  dodi
         - updated uses, comments and todos
 
