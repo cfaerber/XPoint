@@ -576,6 +576,7 @@ type   textp  = ^text;
                   PPPLogin  : string[60];  { PPP Login                 }
                   PPPPass   : string[20];  { PPP Passwort              }
                   PPPSpool  : string[60];  { PPP Spool-Verzeichnis     }
+                  PPPExternCfg: string[60];   { PPP externe Config     }
                   PPPMailInSrvr  : string[160];  { PPP Mail-Server   incoming }
                   PPPMailInEnv   : string[160];  { PPP Mail-Envelope incoming }
                   PPPMailInUser  : string[160];  { PPP Mail-User     incoming }
@@ -1207,6 +1208,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.40  2001/07/31 15:33:14  my
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.54.2.39  2001/07/18 17:20:27  my
   - removed switch and netcall routine
     "update date entries after netcall"

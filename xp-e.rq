@@ -1346,7 +1346,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 609
 # Address errors:
 1    "@" is missing!
-2    Warnung: Space in address! Send it, anyway
+2    Warning: Space in address! Send it, anyway
 3    .ZER is missing! Send it, anyway
 4    Fido net number is missing!
 5    Domain is missing!
@@ -1701,7 +1701,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 822  Import file-area list
 
 832  Still to process:
-833  fertig
+833  done
 
 # XP8.INC
 
@@ -2019,7 +2019,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # QWK
 7    ,^Transfer
 # RFC/Client
-8 Mail/^News Server,
+8    Mail/^News Servers,
+9    E^xternal Settings,
+10   Load external configuration file
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3087,8 +3089,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3  The serial number must have a length of 4 digits.
 4  Invalid file name
 5  Directory must be different from XP working directory
-6  Can't creare directory!
-7  Warnung: Programm "%s" not found!
+6  Can't create directory!
+7  Warning: Program "%s" not found!
 8  Invalid address
 9  At least one protocol must be enabled.
 10 This group already exists.
@@ -3132,6 +3134,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 45 which would then have to be entered in an external confi-
 46 guration file in the client directory.
 47 Please consult the client documentation for more details.
+48 Client directory "%s" not found!
+49 Directory "%s" not found!
 
 +  11000
 1  unknown command

@@ -1625,6 +1625,10 @@ numbers a la FIDO at the top.
         address, client directory and the command
         line that runs the client.
 
+<<External Settings>>  If your client supports additional
+        settings in an external configuration file,
+        you can specify these parameters here.
+
 <<Mail/News Server>>  The basic parameters of the Mail
         and News servers CrossPoint shall connect to
         when doing a netcall for this server. These
@@ -3529,6 +3533,41 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsPort=>>" in your
 server configuration file <server>.BFG.
+
+@
+30129
+Enter the name (and path, if necessary) of the confi-
+guration file that holds additional settings for your
+external client. The file will then be loaded in the
+internal editor for editing. The name of the edited
+file is stored every time you edit it and will be
+automatically presented next time. Thus you don't
+always need to search for it upon the next edit (but
+you can always select a different one, of course).
+
+If no directory is specified, XP uses the Client
+directory specified under [Edit/Servers/Edit/Client]@30107
+by default. Relative paths are always related to this
+directory as well.
+
+If the file name contains wildcards (<<*>> or <<?>>) or the
+file name is empty you get a file selection box where
+you can search for the file to be edited.
+
+<<<F2> >>gives you a list of typical configuration files
+of the common external clients (*.CFG, *.BFG, *.BFE,
+*.$CF) that actually exist in the current directory.
+
+<<Note:>> XP does not make sure that the external client
+really uses the specified file but just provides a
+comfortable way of editing it without forcing you to
+shell out to DOS. Please consult the documentation of
+your client or client kit if additional settings in
+an external configuration file are supported and
+which name and location of this file the external
+client expects. Usually the client or client kit
+provides a sample configuration file itself.
+
 @
 30130
 CrossPoint waits this many seconds after sending the

@@ -2051,7 +2051,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   Name      ~
 11   Paáwort   ~
 12   d'Bridge-Areafix
-+    927
++ 927
 1    ^Point,
 2    ^Modem,
 3    ^Gebhren,
@@ -2062,6 +2062,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    ,^Transfer
 # RFC/Client
 8    Mail-/^News-Server,
+9    E^xterne Einstellungen,
+10   Externe Konfigurationsdatei laden
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3181,6 +3183,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 45 weitere Einstellungen, die Sie in einer externen Konfigu-
 46 rationsdatei im Client-Verzeichnis vornehmen mssen.
 47 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
+48 Client-Verzeichnis "%s" ist nicht vorhanden!
+49 Verzeichnis "%s" ist nicht vorhanden!
 
 +  11000
 1  unbekannter Befehl

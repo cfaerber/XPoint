@@ -153,6 +153,7 @@ begin
     PPPLogin:= '';
     PPPPass:= '';
     PPPSpool:= '';
+    PPPExternCfg:= '';
     PPPMailInSrvr:= 'pop.t-online.de';
     PPPMailInEnv:= '';
     PPPMailInUser:= '';
@@ -311,6 +312,7 @@ begin
             gets(s,su,'Client-Login',PPPLogin,60) or
             gets(s,su,'Client-Password',PPPPass,20) or
             gets(s,su,'Client-Spool', PPPSpool, 60) or
+            gets(s,su,'Client-ExternalConfig', PPPExternCfg, 60) or
             gets(s,su,'Client-MailInServer', PPPMailInSrvr, 160) or
             gets(s,su,'Client-MailInEnvelope', PPPMailInEnv, 160) or
             gets(s,su,'Client-MailInUser', PPPMailInUser, 160) or
@@ -491,6 +493,7 @@ begin
       MkLongDir(OwnPath + XFerDir + Dateiname, Res);
       if IOResult = 0 then ;
       end;
+    writeln(t,'Client-ExternalConfig=', PPPExternCfg);
     writeln(t,'Client-MailInServer=', PPPMailInSrvr);
     writeln(t,'Client-MailInEnvelope=', PPPMailInEnv);
     writeln(t,'Client-MailInUser=', PPPMailInUser);
@@ -617,6 +620,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.19  2001/07/31 15:33:15  my
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.10.2.18  2001/06/29 01:24:56  my
   - RFC/Client: implemented Mail/News server configuration
 

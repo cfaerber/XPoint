@@ -2826,6 +2826,11 @@ Reihenfolge.
         das [Client-Verzeichnis] und der [Aufrufbefehl]@30107 30108
         zum Starten des Clients.
 
+<<Externe Einstellungen>>  Wenn Ihr Client zus„tzliche
+        Parameter in einer externen Konfigurations-
+        datei untersttzt, k”nnen Sie diese hier
+        einstellen.
+
 <<Mail-/News-Server>>  Basisparameter der Mail- und News-
         Server, die bei Netcalls dieser Serverbox an-
         gesprochen werden sollen. Diese Einstellungen
@@ -5302,6 +5307,44 @@ mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-NewsPort=>>" gespeichert.
+
+@
+30129
+Geben Sie hier Name und ggf. Pfad der Konfigurations-
+datei an, die zus„tzliche Einstellungen fr Ihren
+externen Client enth„lt. Die Datei wird anschlieáend
+in den internen Editor geladen und kann dort bearbeitet
+werden. Der Dateiname wird bei jeder Bearbeitung von
+XP gespeichert und bei zuknftigen Bearbeitungen
+automatisch wieder vorgeschlagen, so daá er nicht
+jedes Mal neu ausgew„hlt werden muá (aber kann).
+
+Falls kein Pfad angegeben wird, verwendet XP das
+unter [Edit/Boxen/Edit/Client/Client-Verzeichnis] ein-@30107
+gestellte Verzeichnis. Auch relative Pfade sind immer
+auf dieses Verzeichnis bezogen.
+
+Wenn der Dateiname Platzhalter (<<*>> oder <<?>>) enth„lt
+oder leer ist, gelangen Sie in eine Datei-Auswahlbox,
+in der Sie nach der zu editierenden Datei suchen
+k”nnen.
+
+Mit <<<F2> >>erhalten Sie eine Liste typischer Konfigu-
+rationsdateien der g„ngigen externen Clients (*.CFG,
+*.BFG, *.BFE, *.$CF), die augenblicklich im aktuellen
+Verzeichnis existieren.
+
+<<Hinweis:>> XP sorgt nicht dafr, daá der externe Client
+die von Ihnen angegebene Datei tats„chlich verwendet,
+sondern stellt hiermit lediglich eine komfortable
+Funktion zur Verfgung, diese Datei bearbeiten zu
+k”nnen, ohne XP verlassen zu mssen. Bitte entnehmen
+Sie der Dokumentation Ihres Clients oder Client-Kits,
+ob zus„tzliche Einstellungen in einer externen Datei
+untersttzt werden und welcher Name und Speicherort
+fr die Konfigurationsdatei erwartet wird. šblicher-
+weise liegt dem Client oder Client-Kit eine entspre-
+chende Musterdatei bei.
 
 @
 30130
