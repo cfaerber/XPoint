@@ -1,2 +1,5 @@
-2001-01-20:
-New website is online!
+Latest news on www.openxp.com...
+
+2001-01-XX: New website is online!
+What's new: FAQs for the different versions of OpenXP, feature
+overwiev and much more...

@@ -1,0 +1,15 @@
+FAQ zu OpenXP 3.40
+
+Was muß ich bei der Umstellung von XP auf OpenXP beachten?
+Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
+Konfigurationsdateien nichts ;-). Die Datenbank-Indexdateien werden
+automatisch neu aufgebaut, das kann etwas dauern.
+<br><font size=-2>2001-01-16</font>
+
+Wie gehe ich mit den Usergruppen im Adreßbuch um?
+(eintragen...)
+<br><font size=-2>2001-01-x</font>
+
+UKAW meckert über eventuelle Inkompatibilitäten.
+(Erklärung und Lösung bitte hier eintragen :-).
+<br><font size=-2>2001-01-x</font>

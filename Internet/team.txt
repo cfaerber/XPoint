@@ -45,18 +45,13 @@ Misc, Assembler
 
 <a href="http://come.to/schnoerkel/"><b>Malte Kiesel</b></a>
 <a href="mailto:ma@openxp.de">ma</a>
-Fidomailer, Modemroutinen, ObjCOM
-Fidomailer, modem routines, ObjCOM
+Fidomailer, Netcall-Routinen, ObjCOM
+Fidomailer, netcall functions, ObjCOM
 
 Flups Baumann
 <a href="mailto:fb@openxp.de">fb</a>
 Maggi
 Maggi
-
-Christian Faulhammer
-<a href="mailto:cf@openxp.de">cf</a>
-Dokumentation, Übersetzung
-Documentation, translation
 
 <a href="http://www.faerber.muc.de/"><b>Claus Färber</b></a>
 <a href="mailto:cl@openxp.de">cl</a>
@@ -92,3 +87,8 @@ Heiko Schoenfeld
 <a href="mailto:mw@openxp.de">mw</a>
 &nbsp;
 &nbsp;
+
+Christian Faulhammer
+<a href="mailto:cf@openxp.de">cf</a>
+Dokumentation, Übersetzung; jetzt bei XP2
+Documentation, translation. With XP2 now

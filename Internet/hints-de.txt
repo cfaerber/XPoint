@@ -1,3 +1,5 @@
+Hinweise für Entwickler
+
 Infos zu CVS
 <ul><li>Logeintr&auml;ge: Bitte darauf achten, da&szlig; die Logs auch im Kontext
 Sinn ergeben. Also lieber mehrere einzelne Commits als ein gro&szlig;es, bei dem

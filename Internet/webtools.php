@@ -16,7 +16,7 @@ function GetFileSize($fn) {
 
 // inserts header (including navigation menu)
 function ShowHeader($title) {
-	global $language, $Menu, $Links;
+	global $language, $Menu;
 	
 	// it's enough HTML 3.2
 	echo("<!doctype html public \"-//W3C//DTD HTML 3.2 Final//EN\">\n");
@@ -25,13 +25,13 @@ function ShowHeader($title) {
 	// set the right lanuage
 	echo("<meta http-equiv='Content-Language' content='" . $language . "'>\n");
     	echo("<meta http-equiv='expires' content='0'>\n");
-    	echo("<meta name='copyright' content='Copyright by OpenXP-Team, &copy; 1999-" . date("Y") . ", all rights reserved!'>\n");
+    	echo("<meta name='copyright' content='Copyright by OpenXP team, &copy; 1999-" . date("Y") . ", all rights reserved!'>\n");
 	// depends on the language
 	if ($language == "de") {
     		echo("<meta name='description' content='Information zu einem Point-Programm'>\n");
 		echo("<meta name='Keywords' content='mail,news,email,point,fido,zconnect,maus,rfc,mua,newsreader'>\n");
 	} else {
-    		echo("<meta name='description' content='Informations for a Point-Program'>\n");
+    		echo("<meta name='description' content='Information on a point program'>\n");
 		echo("<meta name='Keywords' content='mail,news,email,point,fido,zconnect,maus,rfc,mua,newsreader'>\n");
 	};
 	// we like robots because of the web-directories
@@ -56,24 +56,25 @@ function ShowHeader($title) {
 	// now opening the main table
 	echo("<table width='100%' border=0 cellspacing=0 cellpadding=5>\n");
 	// <!-- Selection Part -->
-	echo("<tr><td align='left' valign='top' width=200>\n");
+	echo("<tr><td align='left' valign='top' width=140>\n");
 	// now underlaying a blue table and then set the header
 	echo("<table width='100%' border=0 cellpadding=0 bgcolor='Blue'><tr><td><table width='100%' border=0 cellpadding=4>\n");
 	echo("<tr bgcolor='Yellow'><th align='center'>Site Map</th></tr><tr bgcolor='White'><td align='left'>\n");
 	// it's open, so we have to set up the menu
-	echo("<dl>"); // first element should not be a sub-element!
+	echo("<dl>"); // start definition list
 	$InSub = false;
 	reset($Menu);
 	do {
 		$Item = current($Menu);
-		// trigger dd or dt
+		// item: dt, subitem: dd
 		if ($Item["sub"]) {
 			if (!$InSub) {
 				$InSub = true;
-				echo("<dd><small>");
+				echo("<small>");
 			} else {
 				if (!isset($Item["first"])) echo(",");
 			};
+			echo("<dd>");
 		} else {
 			if ($InSub) {
 				$InSub = false;
@@ -90,24 +91,9 @@ function ShowHeader($title) {
 		echo("\n");
 		// fetch next element
 	} while (next($Menu) != false);
-	// that was the menu
-	echo("</dl></td></tr></table></td></tr></table>&nbsp;<br>\n");
-	// Now very simular for the links
-	echo("<table width='100%' border=0 cellpadding=0 bgcolor='Blue'><tr><td><table width='100%' border=0 cellpadding=4>\n");
-	echo("<tr bgcolor='Yellow'><th align='center'>Links</th></tr><tr bgcolor='White'><td align='left'>\n");
-	// it's open, so we have to set up the menu
-	$Item = reset($Links);
-	while ($Item != false) {
-		if (isset($Item["url"])) {
-			echo("<a href='" . $Item["url"] . "'>" . $Item["name"] . "</a><br>\n");
-		} else {
-			echo("<i>" . $Item["name"] . "</i><br>\n");
-		};
-		$Item = next($Links);
-	};
-	// that's it. now closing that left cell and go to main part
-	echo("</td></tr></table></td></tr></table></td><td align='left' valign='top'>\n");
-	// Document ist prepared now
+	// that's it. now close left cell and go to main part
+	echo("</dl></td></tr></table></table></td><td align='left' valign='top'>\n");
+	// Document is prepared now
 }; // ShowHeader
 
 
@@ -122,7 +108,7 @@ function ShowFooter() {
 		echo("<a href='#top'>Top</a>\n");
 	};
 	echo("</td><td align='right'>");
-	echo("<small>Published by the <a href='mailto:info@openxp.de'>OpenXP-Team</a></small>\n");
+	echo("<small>Published by the <a href='mailto:info@openxp.de'>OpenXP team</a></small>\n");
 	// close the doc
 	echo("</td></tr></table></body>\n</html>\n");
 };
@@ -193,11 +179,15 @@ function ShowFeatureList($tablefile) {
 
 // generates a news page from a file
 function ShowNews($newsfile,$genindex) {
+	// show overall headline
+	$pnfile = fopen($newsfile,"r");
+	if ($pnfile==false) return 0;
+	echo("<h2>".fgets($pnfile,200)."</h2>");
+	fgets($pnfile,10);
+
 	// generate index if necessary
 	if ($genindex==1) {
 	  $iarticle = 0;
-	  $pnfile = fopen($newsfile,"r");
-	  if ($pnfile==false) return 0;
 	  echo("<ul>");
 	  while (!feof($pnfile)) {
 	    $iarticle++;
@@ -207,14 +197,14 @@ function ShowNews($newsfile,$genindex) {
 	      $headline=fgets($pnfile,1000);
 	    } while((trim($headline)!="")and(!feof($pnfile)));
 	  }
-	  fclose($pnfile);
+	  echo("<hr>");
+	  rewind($pnfile);
+	  fgets($pnfile,200); fgets($pnfile,10);
 	  echo("</ul>");
 	}
 	
 	// show articles
 	$iarticle = 0;
-	$pnfile = fopen($newsfile,"r");
-	if ($pnfile==false) return 0;
 	while (!feof($pnfile)) {
 	  $iarticle++;
 	  $headline=fgets($pnfile,200);
@@ -231,12 +221,14 @@ function ShowNews($newsfile,$genindex) {
 function InsertLatestNews($newsfile) {
 	$pnfile = fopen($newsfile,"r");
 	if ($pnfile==false) return 0;
-	echo("<b>".fgets($pnfile,200)."</b>&nbsp;");
+	fgets($pnfile,200); fgets($pnfile,10); // skip headline
+	echo("<font size=+2>".fgets($pnfile,200)."</font><br><font size=-1>");
 	do {
 	  $news=fgets($pnfile,1000);
 	  echo($news);
 	} while((trim($news)!="")and(!feof($pnfile)));
 	fclose($pnfile);
+	echo("</font>");
 }
 
 // show download table
