@@ -82,7 +82,8 @@ begin
     SetLength(result,(FDataSize and $7fff)-1);
     if length(result)>0 then
       move(Data[2],result[1],length(result));
-    result:=trim(result);
+    if LastChar(result)=#0 then
+      SetLength(result, length(result)-1);
     end else result:='';
 end;
 
@@ -585,6 +586,10 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/07/21 19:11:25  ma
+  - fixed Argus again (difference in "trim" behaviour: Delphi treats #0 as
+    whitespace, FPC does not)
+
   Revision 1.12  2002/07/07 10:26:13  ma
   - fixed null terminated string handling (Argus)
   - fixed handling of zero byte files
