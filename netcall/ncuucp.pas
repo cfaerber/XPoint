@@ -348,14 +348,14 @@ begin
     if Phonenumber<>'' then
     begin
       Log('=','Connected with: '+Phonenumber);
-      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+Phonenumber+')'
+      TProgressOutputWindow(ProgressOutput).Headline:=UURemote+' ('+Phonenumber+')'
     end
 {$IFDEF Sockets}
     else if CommObj is TRawIPStream then
     begin
       ip := TIP.Create;
       ip.Raw := LongWord(TRawIPStream(CommObj).RemoteIP);
-      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+
+      TProgressOutputWindow(ProgressOutput).Headline:=UURemote+' ('+
 	ip.AsString+':'+StrS(TRawIPStream(CommObj).RemotePort)+')';
       Log('=','Connected with: '+
 	ip.AsString+', Port: '+StrS(TRawIPStream(CommObj).RemotePort));
@@ -1132,6 +1132,9 @@ end;
 
 {
   $Log$
+  Revision 1.33  2003/08/28 18:54:29  cl
+  - BUGFIX: netcall window shows remote system instead of local system
+
   Revision 1.32  2003/08/25 07:05:52  mk
   - added OS/2 support
 
