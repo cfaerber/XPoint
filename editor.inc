@@ -1829,7 +1829,7 @@ var ap : absatzp;
   function ScanGlossary(si:string):boolean;
   var t,t1 : text;
       s,s2 : String;
-      lsi  : byte;
+      lsi  : integer;
       brk  : boolean;
       List: TLister;
   begin
@@ -2214,6 +2214,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/12/09 13:14:09  mk
+  - fixed range check error
+
   Revision 1.47  2001/09/08 09:51:31  mk
   - quote reflow reimplmented
 
