@@ -9,9 +9,9 @@ It is SHAREWARE and you must register after a 30 day evaluation
 period.
 
 This document describes the registration procedure for users of the
-English CrossPoint release outside of Germany, Switzerland and 
-Austria. If you are using CrossPoint within Germany, Switzerland or 
-Austria, please refer to the file LIZENZ.DOC which is enclosed 
+English CrossPoint release outside of Germany, Switzerland and
+Austria. If you are using CrossPoint within Germany, Switzerland or
+Austria, please refer to the file LIZENZ.DOC which is enclosed
 within the German CrossPoint distribution.
 
 The registration is valid for all CrossPoint releases up to the
@@ -31,7 +31,7 @@ were such free updates) but we do not promise that.
 
 You may register CrossPoint for RFC/UUCP only, non-RFC/UUCP only
 or the full package. The following prices apply to private persons
-only. Commercial, government and other non-private users must 
+only. Commercial, government and other non-private users must
 contact us for further information.
 
 
@@ -45,92 +45,9 @@ Prices          RFC/UUCP      Non-RFC/UUCP     Full Package
 
 
 
---------------------------------------------------------------------
-                                             Registration/Order Form
---------------------------------------------------------------------
+====================================================================
 
-Please mail this form to     ZERBERUS GmbH
-                             Marktstr. 18
-                             D-33602 Bielefeld
-                             Germany
+Please contact Jochen Herz by email at joherz@codev.de for the
+current prices and registration procedure.
 
-or fax it to                 +49-521-61172
-
-or E-mail it to              padeluun@bionic.zer.sub.org
-
-                             (PGP public key available on request)
-
-
-
----------------------------------------------- >8 cut here -------
-
-  [  ]   I would like to receive the registration key via E-mail.
-
-  [  ]   Please send me the registration key via postal mail,
-         including the newest program release on disk.
-
-         Disk size   [  ]  3 1/2"      [  ]  5 1/4"
-
-
-
-  Qty.  Item                                                Amount
-
-  ___   CrossPoint full package registration      US$ ___   $_____
-
-  ___   CrossPoint RFC/UUCP-only registration     US$ ___   $_____
-
-  ___   CrossPoint non-RFC/UUCP registration      US$ ___   $_____
-
-  ___   Upgrade to full package (please note      US$  40   $_____
-        your serial numbers below)
-
-        Shipping and handling for non-E-mail      US$   8   $_____
-        registrations
-
-                                                  Total     $_____
-
-
-  [  ]  Money order in U.S. funds or Deutsche Mark at the current
-        exchange rate
-
-  [  ]  VISA Card      [  ]  MasterCard     [  ]  American Express
-
-        Credit card number ______________________   Exp date _____
-
-  [  ]  Bank transfer to    Bank name    Sparkasse Bielefeld
-                            BLZ          480 501 61
-                            Account no   2132371
-                            SWIFT        SPBI DE 3 B
-
-
-
-
-  If you are upgrading to the full package, please note your serial
-  number(s) here:
-
-             _____________________________________________________
-
-             _____________________________________________________
-
-
-
-  Name       _____________________________________________________
-
-  Address    _____________________________________________________
-
-             _____________________________________________________
-
-  Country    _____________________________________________________
-
-  Phone      __________________________   Fax ____________________
-
-  E-Mail     _____________________________________________________
-
-
-
-  Comments   _____________________________________________________
-
-             _____________________________________________________
-
-------------------------------------------------------------------
-
+====================================================================
