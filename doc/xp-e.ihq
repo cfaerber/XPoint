@@ -1852,11 +1852,13 @@ numbers a la FIDO at the top.
 <<Misc.>>   Various settings, e.g. for online
         operations.
 
-<<SysopMode>> Tells CrossPoint to put the poll packet
-        onto the local hard disk, rather than doing a
-        netcall (it can then be read into some other
-        application manually).
-
+<<SysopMode>>
+        CrossPoint will read/write poll packets
+        from/to the local hard disk instead of doing
+        a modem Netcall. This feature is of
+        particular interest to FidoNet SysOps wishing
+        to use their Node number instead of a Point
+        number.
 @
 132
 <<Client>>  All mandatory settings for the operation with
@@ -3031,29 +3033,27 @@ when a "netcall" is made.
 
 @
 183
-These are settings if you do not want XP to transfer
-the data by modem, but to put or take the prepared
-files to or from some place on your hard disk.
+<<[x]>> ->  Enables Sysop Mode.
 
-<<[x]>> ->  Enables Sysop Mode. Afterwards please enter
-        the following data (or check the existent
-        values):
+        Enter the following data:
 
 <<Inbound directory>>
 This is the directory from which CrossPoint will
-read incoming message packets. It imports all packed
-or unpacked packets from here and deletes *all* the
-contents of this directory afterwards.
+read incoming compressed mail bundles or uncompressed
+mail packets and import the messages contained
+therein into the message base. Once mail has been
+imported, <<ALL>> the contents of this directory will be
+deleted.
 
 <<Outbound directory>>
-CrossPoint puts all outgoing PKT files in this
-directory. If you set the "pack output data" switch
-the packets will be packed (amazing!). You can
-transfer these packets to this mailbox by some other
-method, or do anything else you want.
-<<Note:>> CrossPoint will not delete these files
-so make sure they are deleted as necessary!
+CrossPoint puts all outgoing .PKT files in this
+directory. If the "Pack outbound mail" switch is "on",
+the packets will be compressed. These mail packets
+may then be transferred to this Server by whatever
+method you choose.
 
+<<Note:>> CrossPoint will not delete these files, so 
+make sure they are manually deleted as necessary!
 @
 8035
 <<[x]>> ->  Enables QWK Transfer. Afterwards please
@@ -3105,24 +3105,22 @@ See also the chapter "Sysop Mode" in UUCP.DOC.
 
 @
 8037
-
 <<Start program>>
-You can enter here the name of a program or
-DOS command which will be started at the beginning
-of every Sysop-Mode netcall. This is important if
-the files to be imported have to be prepared
-in some way (eg. several copied together).
+The name of a program or DOS command may be entered
+here which will be started at the beginning of every
+Sysop Mode netcall. This is important if the files to
+be imported have to be prepared in some way
+(eg. several copied together).
 
 <<End program>>
-
 This program is analogous to the above but started,
-surprise surprise, at the end of a Sysop-Mode netcall
+surprise surprise, at the end of a Sysop Mode netcall
 for dealing with those cleaning up tasks.
 @
 184
-<<[x]>> ->  A report about the netcall will be
-        put in the newsgroup /¯NetCall, as usual
-        for "normal" netcalls.
+<<[x]>> ->  A report about the netcall will be put in the
+        /¯NetCall folder, just as for "normal"
+        netcalls.
 
 <<[ ]>> ->  No report will be generated.
 @
@@ -3137,11 +3135,11 @@ for dealing with those cleaning up tasks.
         is added.
 @
 186
-<<[x]>> ->  Outgoing Mail Packets will be packed with
-        the Packer entered under ../Edit/Point.
+<<[x]>> ->  Outgoing mail packets will be packed with
+        the packer entered under ../Edit/Point.
 
-<<[ ]>> ->  Outgoing Mail packets not be packed, but
-         left as unpacked PKT files.
+<<[ ]>> ->  Outgoing mail packets will not be packed
+        but left as unpacked .PKT files.
 @
 187
 <<MausNet:>>
