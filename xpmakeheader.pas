@@ -344,8 +344,6 @@ var i,res : integer;
       end;
   end;
 
-var DummyInt: Integer;
-
 begin
   ok:=true;
   hd.Clear;
@@ -432,7 +430,7 @@ begin
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
             if id = 'BEZ'    then begin
-                                    if (Line<>'')and(not References.Find(Line,DummyInt)) then
+                                    if (Line<>'')and(References.IndexOf(Line)=-1) then
                                       References.Add(Line)end else
             if id = 'MAILER' then programm := line else
             if id = 'ORG'    then organisation := line else
@@ -573,6 +571,10 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/04/18 11:02:13  ma
+  - using StrgList.IndexOf instead of Find, Find only works on sorted
+    Strglists.
+
   Revision 1.6  2001/04/18 10:31:12  ma
   - this should prevent doubled references in every case BUT there
     seems to be an error in TStrglist.Find :-(

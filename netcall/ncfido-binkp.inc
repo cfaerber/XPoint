@@ -365,13 +365,15 @@ var
           FileClose(TxFileHandle);
           Output(mcError,'Remote refused file %s',[TxFilename]);
           TxState:=TxGNF;
-          end else
-          if PendingFiles.Find(s,iPending)then begin
+          end else begin
+          iPending:=PendingFiles.IndexOf(s);
+          if iPending<>-1 then begin
             LogTxFile(PendingFilesWithPath[iPending]);
             PendingFiles.Delete(iPending);
             PendingFilesWithPath.Delete(iPending);
             Output(mcInfo,'sent %s',[s]);
             end;
+          end;
         end;
       M_SKIP: begin
         s:=QBpF.CommandPar; s:=GetPar(s);
@@ -510,6 +512,10 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/04/18 11:02:13  ma
+  - using StrgList.IndexOf instead of Find, Find only works on sorted
+    Strglists.
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

@@ -830,8 +830,6 @@ var f,f2     : file;
     close(f);
   end;
 
-var Dummy: Integer;
-
 begin      //-------- of DoSend ---------
   DoSend:=false;
   parken:=false;
@@ -1628,7 +1626,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     sData^.msgid:=hdp.msgid;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-      if not sData^.References.Find(_bezug,Dummy)then
+      if sData^.References.IndexOf(_bezug)=-1 then
         sData^.References.Add(_bezug);
 
     if (_beznet>=0) then  // bugfix fÅr VP
@@ -2102,6 +2100,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.109  2001/04/18 11:02:13  ma
+  - using StrgList.IndexOf instead of Find, Find only works on sorted
+    Strglists.
+
   Revision 1.108  2001/04/18 10:12:37  ma
   - fixed: references got doubled
 
