@@ -2302,6 +2302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.31  2001/12/11 17:47:43  my
+  MY:- ANSI-Mll und Typos im CVS-Log bereinigt.
+
   Revision 1.48.2.30  2001/12/07 17:53:02  my
   MY:- Fix: Farben fr Statuszeile und Suchergebnis in Select-Box
        initialisiert (relevant fr Suchbegriffs-Bibliothek).
@@ -2311,7 +2314,7 @@ end.
        D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert, Details
        siehe Mens und Hilfe; umfangreiche Auswahl- und Testroutinen. In
        den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
-       editierten Box jedoch die BFG-Namen der ausgew„hlten Boxen(en)
+       editierten Box jedoch die BFG-Namen der ausgew„hlten Box(en)
        abgelegt.
 
   Revision 1.48.2.28  2001/10/30 11:15:02  mk
@@ -2330,28 +2333,28 @@ end.
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          <Tab> springt der Cursorbalken die n„chste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
-          Suchoptionen (z.B. umlautunabhängige Suche), Suchbegriff-History
-          und Suchbegriffs-Bibliothek verfügbar. "Alte" Suchfunktionen
-          jetzt über <Ctrl-S> (früher "S") bzw. wie bisher über <Shift-S>
+          Suchoptionen (z.B. umlautunabh„ngige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfgbar. "Alte" Suchfunktionen
+          jetzt ber <Ctrl-S> (frher "S") bzw. wie bisher ber <Shift-S>
           erreichbar.
 
-  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
-          zeilen stehen nur die ersten 19 zur Verfügung).
+  JG+MY:- Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfgung).
 
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   JG+MY:- Brettmanager: Text-Markiersuche mit "S" (analog zu Lister),
           Ein-/Ausschalten der markierten Suchbegriffe mit "E", "alte"
-          Suchfunktionen jetzt über <Ctrl-S> (früher "S") bzw. wie bisher
-          über <Shift-S> erreichbar.
+          Suchfunktionen jetzt ber <Ctrl-S> (frher "S") bzw. wie bisher
+          ber <Shift-S> erreichbar.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
