@@ -5,6 +5,7 @@ REM Programme und Resourcen
 
 SET TARGET=.\BUILD\XPDIR
 SET COMP=D:\PROGRA~1\BP\BIN\BPC -CD -B -E%TARGET%
+SET TOUCH=D:\PROGRA~1\BP\BIN\TOUCH
 
 SET IHS=IHS
 SET RC=RC
@@ -125,11 +126,30 @@ MOVE *.hlp ..\Build\XPDIR\
 @COPY *.EXE Build\XPDIR\
 @COPY FIDO.PC Build\XPDIR\
 @COPY *.ICO Build\XPDIR\
+@CD Build
+@CD XPDIR
+%TOUCH% *.*
+@CD DOC
+%TOUCH% *.*
+@CD ..
+@CD Beispiel
+%TOUCH% *.*
+@CD ..
+@CD Samples
+%TOUCH% *.*
+@CD ..
+@CD ..
 :FEHLER
 @ECHO OFF
 GOTO ENDE
 {
   $Log$
+  Revision 1.1.2.4  2003/04/10 21:13:00  mw
+  MW: - Alle Dateien werden jetzt am Schlu· des Builds getoucht, um auf jeden
+        Fall gleiches Dataum zu tragen.
+
+      - Dokumentation des Buildsystems angefÅgt
+
   Revision 1.1.2.3  2003/04/08 22:31:54  mw
   Mw: - Build-System vervollstÑndigt
 
