@@ -95,10 +95,10 @@ end;
 procedure MultiStat(art:byte);
 
 const
-  maxrec = 4500; { MK 01/00 von 3500 auf 4500 erh”ht }
+  maxrec = 5000;
 
 type statrec = record
-                 name   : string;
+                 name   : string[255];
                  bytes  : longint;
                  msgs   : longint;
                  hz     : integer;    { Haltezeit }
@@ -130,18 +130,18 @@ var brk       : boolean;
     msum,bsum : longint;
 
   procedure count(sys:string; size:longint; hz:integer);
-  var p     : byte;
-      l,r,m : integer;
+  var
+      p, i, l,r,m : integer;
       found : boolean;
       usys  : string;
   begin
     if art=0 then begin
       p:=cpos('.',sys);
       if right(sys,4)='.ZER' then
-        Delete(sys,length(sys)+1-4,4) {dec(byte(sys[0]),4)}
+        Delete(sys,length(sys)+1-4,4)
       else if (dbReadInt(mbase,'netztyp') and $ff)=nt_Fido then
         if p>0 then
-          SetLength(sys, p-1); {sys[0]:=chr(p-1);}
+          SetLength(sys, p-1);
       end;
     usys:=UpperCase(sys);
     l:=0; r:=snum+1;
@@ -161,18 +161,20 @@ var brk       : boolean;
         exit;
         end;
       inc(l);
-      if l<=snum then Move(st^[l],st^[l+1],(snum-l+1)*sizeof(statrec));
-      with st^[l] do begin
+      if l<=snum then Move(st^[l],st^[l+1],(snum-l)*sizeof(statrec));
+      with st^[l] do
+      begin
         name:=sys;
         bytes:=0; msgs:=0;
-        end;
+      end;
       inc(snum);
       st^[l].hz:=hz;
-      end;
-    with st^[l] do begin
+    end;
+    with st^[l] do
+    begin
       inc(bytes,size);
       inc(msgs);
-      end;
+    end;
   end;
 
   procedure sortsys;
@@ -261,7 +263,7 @@ begin
   maddstring(3,8,getres2(2603,10),sortby,6,6,'');   { 'sortiert nach  ' }
   mappsel(true,sortbya[0]);
   mappsel(true,sortbya[1]);
-  { MK 01/00 Maximal anzeigen }
+  { Maximal anzeigen }
   maddint(3,9,getres2(2603,11), sysmax, 4, 5, 10, maxrec);
   readmask(brk);
   enddialog;
@@ -423,7 +425,7 @@ end;
 
 
 procedure GruppenStat;
-const maxgr = 500;
+const maxgr = 1000;
 type statrec = record
                  grnr : longint;
                  msgs : longint;
@@ -1251,6 +1253,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/22 21:49:27  mk
+  - Record auf Shortstring umgestellt, jetzt kein Crash mehr ;-)
+
   Revision 1.21  2000/07/20 16:50:00  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
