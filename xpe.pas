@@ -345,7 +345,7 @@ var x,y : Integer;
     brk : boolean;
 begin
   if edbetreff='' then exit;
-  dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
+  dialog(min(55+length(getres(2507)),70),3,'',x,y);
   maddstring(3,2,getres(2507),edbetreff,min(edbmaxlen,48),edbmaxlen,'');
   msetvfunc(xpsendmessage.umlauttest); mhnr(88);
   readmask(brk);
@@ -502,6 +502,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/08/26 15:29:26  mk
+  - fixed incorrect calculation of with of EditBetreff dialog box
+
   Revision 1.37  2002/07/25 20:43:56  ma
   - updated copyright notices
 
