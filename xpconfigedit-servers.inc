@@ -458,6 +458,7 @@
         dbWriteStr(d,'email',email);
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fido);
+        dbWriteStr(d,'replyto',replyto);
         if (name='99:99/99') or (name='99:99/98') then begin  { Fido-Crashbox }
           b:=2;   { kein /Netcall/Alle }
           dbWrite(d,'script',b);
@@ -2373,6 +2374,14 @@
 
 {
   $Log$
+  Revision 1.48.2.12  2002/08/09 23:20:49  cl
+  - Fixed [ 587622 ] 3.9: Fehler bei Box anlegen
+    (merge from MAIN branch)
+
+
+  Revision 1.61  2002/08/09 23:09:25  cl
+  - Fixed [ 587622 ] 3.9: Fehler bei Box anlegen
+
   Revision 1.48.2.11  2002/07/31 19:30:36  ma
   - new feature: kill/prevent dupes when sorting in messages
     (in fact a replaceown variant)
