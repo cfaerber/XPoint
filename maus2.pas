@@ -101,12 +101,12 @@ var
   begin
     if length(forwardkeys)>20 then
       if forwardkeys[length(forwardkeys)-1]=#0 then
-        dec(byte(forwardkeys[0]),2)
+        SetLength(forwardkeys, Length(forwardkeys)-2)
       else
-        dec(byte(forwardkeys[0]),1);
+        SetLength(forwardkeys, Length(forwardkeys)-1);
     forwardkeys[length(forwardkeys)+1]:=#0;
     forwardkeys[length(forwardkeys)+2]:=char(b);
-    inc(byte(forwardkeys[0]),2);
+    SetLength(forwardkeys, Length(forwardkeys)+2);
 {$ifdef NCRT}
     if not usemulti2 and not keypressed then begin
 {$else}
@@ -331,6 +331,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/05 08:19:02  hd
+  - Ansistring-Anpassung
+
   Revision 1.16  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
