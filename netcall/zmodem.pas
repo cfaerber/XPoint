@@ -246,7 +246,6 @@ begin
 end;
 
 const
-  C1970 = 2440588;
   D0 = 1461;
   D1 = 146097;
   D2 = 1721119;
@@ -273,22 +272,18 @@ begin                                   {GregorianToJulianDN}
 end;                                    {GregorianToJulianDN}
 
 function TZModemObj.Z_ToUnixDate(fdate: LONGINT): string;
+const
+  C1970 = 2440588;
 var
-  //dt: DateTime;
-  y, m, d: smallword;
-  h, n, s1, s2: smallword;
-  secspast, datenum, dayspast: LONGINT;
+  y, m, d, h, n, s1, s2: smallword;
+  secspast, datenum: integer32;
   s: string;
 begin
   decodedate(FileDateToDateTime(fdate), y, m, d);
   decodetime(FileDateToDateTime(fdate), h, n, s1, s2);
-  //UnpackTime(fdate,dt);
-  //GregorianToJulianDN(dt.year,dt.month,dt.day,datenum);
   GregorianToJulianDN(y, m, d, datenum);
-  dayspast := datenum - c1970;
-  secspast := dayspast * 86400;
-  //secspast := secspast + dt.hour * 3600 + dt.min * 60 + dt.sec;
-  secspast := secspast + h * 3600 + n * 60 + s1;
+  secspast := ((datenum - c1970) * 86400) +
+              integer32(h) * 3600 + integer32(n) * 60 + s1;
   s := '';
   while (secspast <> 0) and (Length(s) < 255) do
   begin
@@ -320,8 +315,7 @@ function TZModemObj.Z_FromUnixDate(s: string): LONGINT;
 const tagsec = 24*60*60;
 var
   dt: TDateTime;
-  secs: Integer;
-  year, month, day: Integer;
+  secs, year, month, day: Integer;
 begin
   secs := OctVal(s);
   year:=1970;
@@ -2729,6 +2723,9 @@ begin
 
 {
   $Log$
+  Revision 1.28  2001/11/11 12:06:44  ma
+  - fixed some potential range check errors
+
   Revision 1.27  2001/10/28 23:01:43  ma
   - fixed some range check errors
 
