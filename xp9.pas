@@ -1158,6 +1158,7 @@ restart:
       goto restart;
       end
     else begin
+      b := cpos('@', eMail);
       user:=left(email,b-1);
       dom:=mid(email,b);
       if cpos('.',dom)=0 then dom:=''
@@ -1218,6 +1219,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.35  2001/09/06 18:43:44  mk
+  - fixed big bug in get_first_box: variable b was not initialized
+
   Revision 1.19.2.34  2001/09/03 19:19:54  mw
 
   - Small Cleanup
