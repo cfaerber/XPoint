@@ -353,6 +353,7 @@ var f,f2     : ^file;
     fo       : ^string;
     flags    : longint;
     force_absender : string;
+    firststart :boolean;
 
 label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
@@ -483,8 +484,52 @@ begin
 end;
 
 
-procedure TestXpostings(all:boolean);  { Crossposting-Informationen zusammenstellen }
+function getForceBoxNT :byte;
+var d :DB;
+    res :byte;
+begin
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(forcebox));
+  if dbFound then
+    dbRead(d, 'netztyp', res);
+  getForceBoxNT := res;
+  dbClose (d);
+end;
+
+
+function getUserNT :byte;
+var server :string[boxNameLen];
+    nt :byte;
+    d :DB;
+begin
+  dbReadN(ubase,ub_pollbox,server);
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(server));
+  if dbFound then
+    dbRead(d,'netztyp',nt);
+  dbClose(d);
+  getUserNT := nt;
+end;
+
+
+function getBrettNT :byte;
+var server :string[boxNameLen];
+    nt :byte;
+    d :DB;
+begin
+  dbReadN(bbase,bb_pollbox,server);
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(server));
+  if dbFound then
+    dbRead(d,'netztyp',nt);
+  dbClose(d);
+  getBrettNT := nt;
+end;
+
+
+procedure TestXpostings(all,forcedbox:boolean);  { Crossposting-Informationen zusammenstellen }
 var i,first : integer;
+    nt_ForceBox :byte;
 
   procedure GetInf(n:integer; var adr:string);
   var p : byte;
@@ -506,7 +551,10 @@ var i,first : integer;
             begin
 {              if dbreadint(ubase,'adrbuch')=0 then   }   { CC-Empfaenger ins Adressbuch aufnehmen }
 {                dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);}
-              dbReadN(ubase,ub_pollbox,server);
+              if (forcebox <> '') and forcedbox and ntAdrCompatible (nt_ForceBox, getUserNT) then
+                server := forcebox
+              else
+                dbReadN(ubase,ub_pollbox,server);
               if (dbReadInt(ubase,'userflags') and 2<>0) and
                  (dbReadInt(ubase,'codierer')<>0) then
                 encode:=true;
@@ -515,7 +563,10 @@ var i,first : integer;
           begin
 {            if dbreadint(ubase,'adrbuch')=0 then    }  { CC-Empfaenger ins Adressbuch aufnehmen }
 {              dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);}
-            dbReadN(ubase,ub_pollbox,server);
+            if (forcebox <> '') and forcedbox and ntAdrCompatible (nt_ForceBox, getUserNT) then
+              server := forcebox
+            else
+              dbReadN(ubase,ub_pollbox,server);
             if (dbReadInt(ubase,'userflags') and 2<>0) and
                (dbReadInt(ubase,'codierer')<>0) then
               encode:=true;
@@ -531,7 +582,11 @@ var i,first : integer;
         else begin
           if adr[1]='/' then dbSeek(bbase,biBrett,'A'+ustr(adr))
           else dbSeek(bbase,biBrett,ustr(adr));
-          if dbFound then dbReadN(bbase,bb_pollbox,server)
+          if dbFound then
+            if (CrosspostBox <> '') and (forcebox <> '') and forcedbox and ntAdrCompatible (nt_ForceBox, getBrettNT) then
+              server := forcebox
+            else
+              dbReadN(bbase,bb_pollbox,server)
           else if CrosspostBox<>'' then begin
             adr:='+'+CrosspostBox+':'+adr;
             server:=ustr(CrosspostBox);
@@ -655,6 +710,7 @@ var i,first : integer;
   end;
 
 begin
+  nt_forcebox := getForceBoxNT;
   if all then begin
     if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
     fillchar(ccm^,sizeof(ccm^),0);
@@ -669,6 +725,7 @@ begin
     if cc_anz>10 then closebox;
     end
   else begin                       { Nach Pollbox-Wechsel }
+    first := 1;
     for i:=0 to cc_anz do
       ccm^[i].cpanz:=0;
     first:=1;
@@ -692,7 +749,7 @@ begin
     sendempflist:=p;
     end;
   SortCCs(cc,cc_anz);
-  TestXpostings(true);
+  TestXpostings(true, false);
 end;
 
 
@@ -736,16 +793,18 @@ begin
       cc^[i]:='+'+newbox+mid(cc^[i],cpos(':',cc^[i]));
       modi:=true;
       end
-    else if ccm^[i].ccnt=newnt then begin
+    else if ntAdrCompatible (ccm^[i].ccnt, newnt) then begin
       ccm^[i].server:=ustr(newbox);
       modi:=true;
       end;
-  if modi then TestXpostings(false);
+  if modi then TestXpostings(false, true);
 end;
 
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   var kb_s: boolean;
+      oldNT, newNT :byte;
   begin
+    oldNT := netztyp;
     _UserAutoCreate:=false;
     kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
@@ -779,6 +838,19 @@ end;
       empfaenger:=adresse;
       end;
     pm:=cpos('@',empfaenger)>0;
+    if forcebox <> '' then
+    begin
+      if pm then
+        dbSeek (ubase, uiName, uStr (empfaenger))
+      else
+        dbSeek (bbase, biBrett, uStr (empfaenger));
+      if (not dbFound) or (not ntAdrCompatible (oldNT, iif (pm, getUserNT, getBrettNT))) then
+      begin
+        hinweis (getres (623)); { 'Inkompatible Netztypen - Serverbox-énderungen werden zurÅckgesetzt.' }
+        forceBox := ''
+      end;
+    end;
+    TestXPostings (true, true);
     sel_verteiler:=false;
     end;
 
@@ -1053,6 +1125,7 @@ end;
 
 procedure DoSendInit1;
 begin
+  firststart := true;
   force_absender:='';
   Mime_Temppath:=iifs(_filesize(datei)+1024*1024>tempfree,ownpath,temppath);
   Max_Mime_Parts:=0;
@@ -1116,6 +1189,40 @@ begin
   new(fo); fo^:='';
 end;
 
+function sameserver (const box :string) :boolean;
+var empfBox :string[boxNameLen];
+    i :integer;
+begin
+  empfBox := '';
+  sameServer := false;
+  dbSeek (ubase, uiName, ustr (empfaenger));
+  if dbFound then
+    dbRead (ubase, 'pollbox', empfBox)
+  else
+  begin
+    dbSeek (bbase, biBrett, ustr (empfaenger));
+    if dbfound then
+      dbRead (bbase, 'pollbox', empfBox)
+  end;
+  if box = empfBox then
+  begin
+    sameServer := true;
+    for i := 1 to cc_anz do
+      if uStr (ccm^[i].server) <> uStr (empfBox) then
+        SameServer:=false;
+  end;
+end;
+
+procedure checkForceBox;
+begin
+  if (forcebox <> '') and firststart then
+  begin
+    testXPostings (true, false);
+    if sameServer (forcebox) then forceBox := '';
+    testXPostings (true, true);
+  end;
+end;
+
 procedure DoSendInit4;
 begin
   passwd^:='';         { Betreffbox true = Betreff nochmal eintippen           }
@@ -1133,7 +1240,7 @@ begin
       if verteiler then begin  { Verteiler }
         cancode:=0;
         read_verteiler(vert_name(empfaenger),cc,cc_anz);
-        TestXpostings(true);
+        TestXpostings(true, false);
         if box='' then box:=ccm^[1].server
         else forcebox:=box;
         ch:='';
@@ -1216,6 +1323,7 @@ begin
           end;
       end;
     if forcebox<>'' then box:=forcebox;
+    checkForcebox;
     edis:=1;
     intern:=false;
     fidoname:='';
@@ -1249,6 +1357,7 @@ begin
     intern:=(grnr=IntGruppe) or (box='');
     if box='' then box:=DefaultBox;
     if forcebox<>'' then box:=forcebox;
+    checkForceBox;
     if binary or not dbFound then umlaute:=0
     else dbRead(d,'umlaute',umlaute);
     if (fidoname='') and dbFound then
@@ -1261,12 +1370,41 @@ begin
     edis:=2;
     if not binary then cancode:=-1;  { Rot13 mîglich }
   end;   { of not pm }
+  firststart := false;
+end;
+
+procedure checkIncompatibleNT;
+var i, nt :integer;
+    compatible :boolean;
+begin
+  if (forcebox <> '') and (cc_anz > 0) then
+  begin
+    compatible := true;
+    nt := ccm^[0].ccnt;
+    for i := 1 to cc_anz do
+      if not ntAdrCompatible (nt, ccm^[i].ccnt) then
+        compatible := false;
+    if not compatible then
+    begin
+      forcebox := '';
+      if pm then SetLocalPM;
+      testXPostings (true, true);
+      box := ccm^[0].server;
+      if cc_anz = 0 then fillchar(ccm^,sizeof(ccm^),0);
+      dbOpen(d,BoxenFile,1);
+      dbSeek(d,boiName,ustr(box));
+      if dbFound then
+        dbRead(d,'boxname',box);  { -> korrekte Schreibweise des Systemnamens }
+      loadBoxData;
+      dbClose(d);
+    end;
+  end;
 end;
 
 begin      {-------- of DoSend ---------}
   DoSendInit1;
   {$IFDEF BP }
-  if memavail<20000 then
+  if maxavail<20000 then
   begin
     rfehler(605);   { 'zu wenig freier Speicher zum Absenden der Nachricht' }
     goto xexit2;
@@ -1364,7 +1502,7 @@ fromstart:
 
   if betreffbox then begin
     editbetreff;
-    if brk then goto xexit; 
+    if brk then goto xexit;
     end;
 
   orgftime:=filetime(datei);
@@ -1449,7 +1587,7 @@ fromstart:
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
-          SendDefault:=senden; forcebox:='';
+          SendDefault:=senden;
           pophp;
           closebox;
           goto fromstart;
@@ -1497,23 +1635,22 @@ fromstart:
         6   : if intern then
                 rfehler(611)   { 'nicht mîglich - interne Nachricht' }
               else if IncompatibleNTs then
-                rfehler(629)   { 'nicht mîglich - unterschiedliche Netztypen' }
+                rfehler(629)   { 'énderung der Serverbox nicht mîglich - inkompatible Netztypen.' }
               else begin                        { neue Pollbox }
                 newbox:=UniSel(1,false,box);
                 if newbox<>'' then
+                begin
                   if not pm and (cc_anz=0) and ntBrettebene(netztyp) and
                      ntBrettebene(ntBoxNetztyp(newbox)) and
                      not stricmp(BoxBrettebene(box),BoxBrettebene(newbox)) then
-                    rfehler(637)   { 'ServerÑnderung nicht mîglich - abweichende Brettebene!' }
+                    rfehler(637)    { 'ServerÑnderung nicht mîglich - abweichende Brettebene!' }
                   else begin
                     dbOpen(d,BoxenFile,1);
                     dbSeek(d,boiName,ustr(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
-                    else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp')) and
-                     (not ((netztyp in [nt_UUCP,nt_Client]) and (dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client])))) or
-                     not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
-                      rfehler(629)   { 'nicht mîglich - unterschiedliche Netztypen' }
+                    else if not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp')) then
+                      rfehler(629)  { 'énderung der Serverbox nicht mîglich - inkompatible Netztypen.' }
                     else begin
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
@@ -1524,7 +1661,7 @@ fromstart:
                         senden:=5;
                       if pm then SetLocalPM;
                       showsize;
-                      if cc_anz>0 then forcebox:=box;
+                      forcebox:=box;
                       showbox;
                       if netztyp<>nt_Fido then
                         flCrash:=false;
@@ -1533,6 +1670,25 @@ fromstart:
                       end;
                   dbClose(d);
                   end;
+                end else
+                begin
+                  if forcebox <> '' then
+                  begin
+                    forcebox := '';
+                    if pm then SetLocalPM;
+                    testXPostings (true, true);
+                    box := ccm^[0].server;
+                    if cc_anz = 0 then fillchar(ccm^,sizeof(ccm^),0);
+                    dbOpen(d,BoxenFile,1);
+                    dbSeek(d,boiName,ustr(box));
+                    if dbFound then
+                      dbRead(d,'boxname',box);  { -> korrekte Schreibweise des Systemnamens }
+                    loadBoxData;
+                    dbClose(d);
+                    showsize;
+                    showbox;
+                  end;
+                end;
                 n:=1;
               end;
         7   : if cancode<>0 then begin          { Codierung Ñndern }
@@ -1623,10 +1779,12 @@ fromstart:
                 if ustr(t)=kopkey then begin
                   old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
+                  cc_NT := netztyp;
+                  xpcc.pm:=pm;
                   edit_cc(cc,cc_anz,brk);
                   sel_verteiler:=false;
-                  if (old_cca=0) and (cc_anz>0) then forcebox:='';
-                  if cc_anz>0 then TestXpostings(true);
+                  if cc_anz>0 then TestXpostings(true, true);
+                  checkIncompatibleNT;
                   showcc;
                   showbox;   { evtl. in Klammern }
                   end;
@@ -1748,7 +1906,7 @@ fromstart:
     else
       fn^:=TempS(system.round((_filesize(datei)+addsize+2000+mime_size)*1.5));
     assign(f2^,datei);
-    iso:=not binary and (mime_attach or 
+    iso:=not binary and (mime_attach or
      (ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe)));
     if not binary then begin
       assign(f2^,fn^);
@@ -2402,6 +2560,39 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.56  2002/04/24 19:12:31  sv
+  SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
+            mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
+            ZConnect. Zuviele Bugs, um alle zu beschreiben, Auswahl:
+            - Wenn fuer zwei RFC- oder ZConnect-Empfaenger mit unterschied-
+              licher Serverbox eine gemeinsame Serverbox erzwungen wurde
+              und die Nachricht noch ein zweites Mal (z.B. durch N/U/Ae)
+              durch das Sendefenster lief, wurden die Mails "gesplittet"
+              (= zwei physikalische Mails erstellt).
+            - Beim Aendern des Empfaengers mit "m" wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Bei der Bestaetigung des Kopien-Dialogs wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Es konnte eine Serverbox mit inkompatiblem Netztyp erzwungen
+              werden (Mail an RFC-User und Fido-Box mit "o" auswaehlen).
+            - Bei "Mischbetrieb" (Mail, Kopie an User und an Newsgroup)
+              wurden Mails manchmal gesplittet (speziell ZConnect).
+            - Bei N/W/R aus Unversandt-Brett wurde eine erzwungene Box
+              nicht beachtet.
+            Generell gilt jetzt: Mails an RFC- und ZConnect-User, die ueber
+            dieselbe Serverbox versendet werden, werden immer "zusammen-
+            gehalten". RFC und ZConnect werden durchgaengig als kompatible
+            Netztypen behandelt. Sobald ein inkompatibler Netztyp in der
+            Empfaengerliste vorkommt, werden alle Serverbox-Aenderungen
+            rueckgaengig gemacht und die Nachricht wird ueber die Serverboxen
+            versendet, die den jeweiligen Empfaengern zugewiesen sind. Ein
+            manuelles Ruecksetzen einer erzwungenen Serverbox erfolgt
+            mittels "o" und anschliessendem <Esc> in der Serverbox-Auswahl.
+            Wenn eine Serverbox erzwungen wurde, wird dies jetzt durch ein
+            "(*)" hinter dem Boxnamen kenntlich gemacht. Wird eine Nach-
+            richt ueber mehrere Serverboxen versandt, wird der Boxname wie
+            bisher eingeklammert (bei leicht verbesserter Darstellung).
+
   Revision 1.39.2.55  2002/04/21 20:10:12  my
   MY:- Einige Funktionen von xp6 nach xp6o verlagert, um etwas Platz
        im Codesegment fÅr die kommenden forcebox-Fixes zu schaffen.

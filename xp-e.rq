@@ -1459,6 +1459,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
 622  No function in this net
+623  Net types incompatible - server changes will be resetted.
 
 # XP6.INC
 640  Rebuilding message packet...
@@ -3082,7 +3083,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 26 Invalid original recipient line!
 27 Not possible in this type of net.
 28 In MausNet only possible with PMs.
-29 Not possible - net types are incompatible.
+29 Change of server not possible - net types are incompatible.
 30 Invalid archive newsgroup configuration
 31 Function is not allowed here
 32 A maximum of %s newsgroups per server is allowed.

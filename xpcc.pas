@@ -23,12 +23,14 @@ uses  typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 126;
-      ccte_nobrett    : boolean = false;
+      ccte_nobrett : boolean = false;
+      cc_NT :byte = 0;
       _UserAutoCreate : boolean = false;  { User ohne R…kfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
       ccp   = ^ccl;
 
+var pm :boolean;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
@@ -43,13 +45,14 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt,xpovl, 
+uses xp3,xp3o2,xp3o,xp4e,xpnt,xp6l,xpovl,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
   winxp;
 
 const CCtemp = 'verteil.$$$';
+      hinweisGegeben :boolean = true;
 
 var ccused   : array[1..maxcc] of boolean;
 
@@ -92,6 +95,43 @@ var p,p2 : byte;
     n    : longint;
     d    : DB;
     s2   : String;
+
+  procedure checkAdressNTIsValid;
+  var res :boolean;
+      server :string[boxNameLen];
+      i :integer;
+      nt :byte;
+  begin
+    res := true; server := '';
+    dbSeek(ubase, uiName, ustr (s));
+    if dbFound then
+      dbReadN (ubase, ub_pollbox, server)
+    else begin
+      dbSeek(bbase, biBrett, 'A' + uStr (s));
+      if dbFound then
+        dbReadN (bbase, bb_pollbox, server);
+    end;
+    if server <> '' then
+    begin
+      dbOpen (d, BoxenFile, 1);
+      dbSeek (d, boiName, uStr (server));
+      if dbFound then
+      begin
+        dbRead(d, 'netztyp', nt);
+        if not ntAdrCompatible (nt, cc_NT) then res := false;
+        for i := 0 to cc_anz do
+          if (ccm^[i].server <> '') and (not ntAdrCompatible (nt, ccm^[i].ccnt)) then res := false;
+      end;
+      dbClose (d);
+    end;
+    if not res then
+    begin
+      if not hinweisGegeben then hinweis (getres (623));
+              { 'Inkompatible Netztypen - Serverbox-始derungen werden zur…kgesetzt.' }
+      hinweisGegeben := true;
+    end;
+  end;
+
 begin
   if trim(s)='' then begin
     if ccte_nobrett then errsound;
@@ -206,6 +246,8 @@ begin
         end
         else
           cc_testempf:=false;
+        if xp6.forcebox <> '' then
+          checkAdressNTIsValid
       end;
   freeres;
 end;
@@ -219,7 +261,7 @@ var i,j  : shortint;
   begin
     if cc1[1]='+' then cc1[1]:=#255;
     if cc2[1]='+' then cc2[1]:=#255;
-    ccsmaller:=(cc1<cc2);
+    ccsmaller:=(iifs(pm and (cc1[1]='/'),#255+cc1,cc1)<iifs(pm and (cc2[1]='/'),#255+cc2,cc2));
   end;
 
 begin
@@ -232,7 +274,7 @@ begin
         xchg:=true;
         end;
     dec(j);
-  until not xchg or (j=1);
+  until not xchg or (j=0);
 end;
 
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
@@ -243,6 +285,7 @@ var x,y   : byte;
     t     : text;
     s     : string;
 begin
+  hinweisGegeben := false;
   h:=minmax(cc_anz+2,6,screenlines-13);
   _UserAutoCreate:=false;
   diabox(62,h+4,getres(2201),x,y);    { 'Kopien an:' }
@@ -299,24 +342,26 @@ begin
             repeat
               readln(t,s);                                     { auslesen und anhaengen }
               if (trim(s)<>'') and not is_vname(s) then
-              begin       
+              begin
                 inc(cc_anz);
                 cc^[cc_anz]:=left(s,79);
                 end;
             until eof(t) or is_vname(s) or (cc_anz>=maxcc-1);
             cc^[i]:=cc^[cc_anz];                               { Verteilernamen durch }
             dec(cc_anz);                                       { letzten Eintrag ersetzen }
-            end; 
+            end;
           close(t);
           end;
         end;
       until i=cc_anz;
       end;
- 
+
     for i:=cc_anz+1 to maxcc do
       cc^[i]:='';
     SortCCs(cc,cc_anz);
     end;
+  hinweisGegeben := true;
+  cc_NT := 0;
 end;
 
 
@@ -414,6 +459,39 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.10  2002/04/24 19:12:32  sv
+  SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
+            mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
+            ZConnect. Zuviele Bugs, um alle zu beschreiben, Auswahl:
+            - Wenn fuer zwei RFC- oder ZConnect-Empfaenger mit unterschied-
+              licher Serverbox eine gemeinsame Serverbox erzwungen wurde
+              und die Nachricht noch ein zweites Mal (z.B. durch N/U/Ae)
+              durch das Sendefenster lief, wurden die Mails "gesplittet"
+              (= zwei physikalische Mails erstellt).
+            - Beim Aendern des Empfaengers mit "m" wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Bei der Bestaetigung des Kopien-Dialogs wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Es konnte eine Serverbox mit inkompatiblem Netztyp erzwungen
+              werden (Mail an RFC-User und Fido-Box mit "o" auswaehlen).
+            - Bei "Mischbetrieb" (Mail, Kopie an User und an Newsgroup)
+              wurden Mails manchmal gesplittet (speziell ZConnect).
+            - Bei N/W/R aus Unversandt-Brett wurde eine erzwungene Box
+              nicht beachtet.
+            Generell gilt jetzt: Mails an RFC- und ZConnect-User, die ueber
+            dieselbe Serverbox versendet werden, werden immer "zusammen-
+            gehalten". RFC und ZConnect werden durchgaengig als kompatible
+            Netztypen behandelt. Sobald ein inkompatibler Netztyp in der
+            Empfaengerliste vorkommt, werden alle Serverbox-Aenderungen
+            rueckgaengig gemacht und die Nachricht wird ueber die Serverboxen
+            versendet, die den jeweiligen Empfaengern zugewiesen sind. Ein
+            manuelles Ruecksetzen einer erzwungenen Serverbox erfolgt
+            mittels "o" und anschliessendem <Esc> in der Serverbox-Auswahl.
+            Wenn eine Serverbox erzwungen wurde, wird dies jetzt durch ein
+            "(*)" hinter dem Boxnamen kenntlich gemacht. Wird eine Nach-
+            richt ueber mehrere Serverboxen versandt, wird der Boxname wie
+            bisher eingeklammert (bei leicht verbesserter Darstellung).
+
   Revision 1.15.2.9  2002/03/08 23:13:06  my
   JG+MY:- Fix: Beim 始dern des Empf�ngers im Sendefenster konnte es zu
           Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu

@@ -1499,6 +1499,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 620  Teste auf Crosspostings...
 621  Origin-Datei fehlt: %s
 622  In diesem Netz nicht mîglich
+623  Inkompatible Netztypen - Serverbox-énderungen werden zurÅckgesetzt.
 
 # XP6.INC
 640  Puffer Åberarbeiten...
@@ -3131,7 +3132,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 26 UngÅltige OriginalempfÑnger-Zeile!
 27 In diesem Netz nicht mîglich.
 28 Im MausNet nur bei PMs mîglich.
-29 Nicht mîglich - unterschiedliche Netztypen.
+29 énderung der Serverbox nicht mîglich - inkompatible Netztypen.
 30 UngÅltige Archivbrett-Einstellung
 31 Nur in der NachrichtenÅbersicht mîglich!
 32 Es sind maximal %s BrettempfÑnger pro Server mîglich.

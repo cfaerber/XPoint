@@ -1201,6 +1201,7 @@ again:
                xp6._replyPath:=hdp^.replypath;
                xp6._pmReply:=(hdp^.attrib and attrPmReply<>0);
                xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
+               forcebox:=hdp^.real_box;
                new(sData);
                fillchar(sdata^,sizeof(sdata^),0);
                with sData^ do begin
@@ -1516,6 +1517,39 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.28  2002/04/24 19:12:31  sv
+  SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
+            mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
+            ZConnect. Zuviele Bugs, um alle zu beschreiben, Auswahl:
+            - Wenn fuer zwei RFC- oder ZConnect-Empfaenger mit unterschied-
+              licher Serverbox eine gemeinsame Serverbox erzwungen wurde
+              und die Nachricht noch ein zweites Mal (z.B. durch N/U/Ae)
+              durch das Sendefenster lief, wurden die Mails "gesplittet"
+              (= zwei physikalische Mails erstellt).
+            - Beim Aendern des Empfaengers mit "m" wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Bei der Bestaetigung des Kopien-Dialogs wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Es konnte eine Serverbox mit inkompatiblem Netztyp erzwungen
+              werden (Mail an RFC-User und Fido-Box mit "o" auswaehlen).
+            - Bei "Mischbetrieb" (Mail, Kopie an User und an Newsgroup)
+              wurden Mails manchmal gesplittet (speziell ZConnect).
+            - Bei N/W/R aus Unversandt-Brett wurde eine erzwungene Box
+              nicht beachtet.
+            Generell gilt jetzt: Mails an RFC- und ZConnect-User, die ueber
+            dieselbe Serverbox versendet werden, werden immer "zusammen-
+            gehalten". RFC und ZConnect werden durchgaengig als kompatible
+            Netztypen behandelt. Sobald ein inkompatibler Netztyp in der
+            Empfaengerliste vorkommt, werden alle Serverbox-Aenderungen
+            rueckgaengig gemacht und die Nachricht wird ueber die Serverboxen
+            versendet, die den jeweiligen Empfaengern zugewiesen sind. Ein
+            manuelles Ruecksetzen einer erzwungenen Serverbox erfolgt
+            mittels "o" und anschliessendem <Esc> in der Serverbox-Auswahl.
+            Wenn eine Serverbox erzwungen wurde, wird dies jetzt durch ein
+            "(*)" hinter dem Boxnamen kenntlich gemacht. Wird eine Nach-
+            richt ueber mehrere Serverboxen versandt, wird der Boxname wie
+            bisher eingeklammert (bei leicht verbesserter Darstellung).
+
   Revision 1.20.2.27  2002/04/21 20:10:13  my
   MY:- Einige Funktionen von xp6 nach xp6o verlagert, um etwas Platz
        im Codesegment fÅr die kommenden forcebox-Fixes zu schaffen.

@@ -84,13 +84,14 @@ begin
 end;
 
 procedure showabsender;
-begin 
+begin
   attrtxt(col.coldiahigh);
-  wrt(x+14,y+2-fadd,forms(force_absender,62)); 
+  wrt(x+14,y+2-fadd,forms(force_absender,62));
 end;
 
 procedure showbox;
 var ss : string[BoxNameLen];
+    d :DB;
 
    function SameServer:boolean;
    var i : integer;
@@ -101,17 +102,47 @@ var ss : string[BoxNameLen];
        if ccm^[i].server<>ss then begin
          ss:=''; SameServer:=false;
          end;
+     dbOpen(d,BoxenFile,1);
+     dbSeek(d,boiName,ustr(ss));
+     if dbFound then
+       dbRead(d,'boxname',ss);  { -> korrekte Schreibweise des Systemnamens }
+     dbClose(d);
    end;
 
 begin
   attrtxt(col.coldiahigh);
-  gotoxy(x+14,y+8);
+  gotoxy(x+13,y+8);
   moff;
-  if cc_anz=0 then Wrt2(forms(box,17))
+  if cc_anz=0 then
+    if forcebox = '' then Wrt2(forms(' '+box,BoxNameLen+5))
+    else begin
+      Wrt2(' '+forcebox);
+      attrtxt(col.coldialog);
+      Wrt2(' (');
+      attrtxt(col.coldiahigh);
+      Wrt2('*');
+      attrtxt(col.coldialog);
+      Wrt2(forms(')',(BoxNameLen+1)-length(forcebox)));
+    end
   else if forcebox='' then
-          if SameServer then Wrt2(forms(ss,17))
-          else Wrt2(forms('('+box+')',17))
-       else Wrt2(forms(forcebox,17));
+          if SameServer then Wrt2(forms(' '+ss,BoxNameLen+5))
+          else begin
+            attrtxt(col.coldialog);
+            Wrt2('(');
+            attrtxt(col.coldiahigh);
+            Wrt2(box);
+            attrtxt(col.coldialog);
+            Wrt2(forms(')',(BoxNameLen+4)-length(box)));
+          end
+       else begin
+         Wrt2(' '+forcebox);
+         attrtxt(col.coldialog);
+         Wrt2(' (');
+         attrtxt(col.coldiahigh);
+         Wrt2('*');
+         attrtxt(col.coldialog);
+        Wrt2(forms(')',(BoxNameLen+1)-length(forcebox)));
+       end;
   mon;
 end;
 
@@ -1170,6 +1201,39 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.16  2002/04/24 19:12:32  sv
+  SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
+            mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
+            ZConnect. Zuviele Bugs, um alle zu beschreiben, Auswahl:
+            - Wenn fuer zwei RFC- oder ZConnect-Empfaenger mit unterschied-
+              licher Serverbox eine gemeinsame Serverbox erzwungen wurde
+              und die Nachricht noch ein zweites Mal (z.B. durch N/U/Ae)
+              durch das Sendefenster lief, wurden die Mails "gesplittet"
+              (= zwei physikalische Mails erstellt).
+            - Beim Aendern des Empfaengers mit "m" wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Bei der Bestaetigung des Kopien-Dialogs wurde eine erzwungene
+              Serverbox zurueckgesetzt.
+            - Es konnte eine Serverbox mit inkompatiblem Netztyp erzwungen
+              werden (Mail an RFC-User und Fido-Box mit "o" auswaehlen).
+            - Bei "Mischbetrieb" (Mail, Kopie an User und an Newsgroup)
+              wurden Mails manchmal gesplittet (speziell ZConnect).
+            - Bei N/W/R aus Unversandt-Brett wurde eine erzwungene Box
+              nicht beachtet.
+            Generell gilt jetzt: Mails an RFC- und ZConnect-User, die ueber
+            dieselbe Serverbox versendet werden, werden immer "zusammen-
+            gehalten". RFC und ZConnect werden durchgaengig als kompatible
+            Netztypen behandelt. Sobald ein inkompatibler Netztyp in der
+            Empfaengerliste vorkommt, werden alle Serverbox-Aenderungen
+            rueckgaengig gemacht und die Nachricht wird ueber die Serverboxen
+            versendet, die den jeweiligen Empfaengern zugewiesen sind. Ein
+            manuelles Ruecksetzen einer erzwungenen Serverbox erfolgt
+            mittels "o" und anschliessendem <Esc> in der Serverbox-Auswahl.
+            Wenn eine Serverbox erzwungen wurde, wird dies jetzt durch ein
+            "(*)" hinter dem Boxnamen kenntlich gemacht. Wird eine Nach-
+            richt ueber mehrere Serverboxen versandt, wird der Boxname wie
+            bisher eingeklammert (bei leicht verbesserter Darstellung).
+
   Revision 1.18.2.15  2002/04/19 16:38:06  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
