@@ -9668,37 +9668,42 @@ Sie das Feld frei.
 <<[ ]>> -> Der Auswahlbalken bleibt immer auf der glei-
        chen Nachricht stehen.
 
-Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
+Diese Einstellung kann jederzeit mit <<<Ctrl-W> >>im
+Nachrichten-Lesefenster nicht-permanent umgeschaltet
+werden.
+
+Im Einzelfall kann das Weiterspringen auch durch
+Verlassen der Nachricht mit <<<Backspace> >>verhindert
+werden.
 @
 551
-<<[x]>> -> Bei der Rckkehr in die Brettliste springt
-       der Auswahlbalken auf das n„chste Brett, in
-       dem auf den gew„hlten Lese-Mode zutreffende
-       Nachrichten sind.
+<<[x]>> -> Bei der Rckkehr aus einem Brett in die Brett-
+       šbersicht springt der Auswahlbalken auf das
+       n„chste Brett, in dem sich auf den aktiven
+       Lesemodus zutreffende Nachrichten befinden.
 
 <<[ ]>> -> Der Auswahlbalken springt immer auf das nach-
        folgende Brett.
 
-Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
+Diese Einstellung kann jederzeit mit <<<Ctrl-W> >>in der
+Brett-šbersicht nicht-permanent umgeschaltet werden.
 
-Im Einzelfall kann das Weiterspringen durch Verlassen
-des Bretts mit <<<Shift-Esc> >verhindert werden.
+Im Einzelfall kann das Weiterspringen auch durch Ver-
+lassen des Bretts mit <<<Shift-Esc> >>verhindert werden.
 @
 552
-<<[x]>> -> Bei der Rckkehr in die Userliste springt
-       der Auswahlbalken immer auf den n„chsten
-       User.
+<<[x]>> -> Bei der Rckkehr aus einem User-Brett in die
+       User-šbersicht springt der Auswahlbalken immer
+       auf den n„chsten User.
 
 <<[ ]>> -> Der Auswahlbalken bleibt auf dem gleichen
        User stehen.
 
-Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
+Diese Einstellung kann jederzeit mit <<<Ctrl-W> >>in der
+User-šbersicht nicht-permanent umgeschaltet werden.
 
-Im Einzelfall kann das Weiterspringen durch Verlassen
-des Bretts mit <<<Shift-Esc> >verhindert werden.
+Im Einzelfall kann das Weiterspringen auch durch Ver-
+lassen des Bretts mit <<<Shift-Esc> >>verhindert werden.
 @
 554
 Hier wird festgelegt, welcher [Lesemodus] bei Pro-@50
