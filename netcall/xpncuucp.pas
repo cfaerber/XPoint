@@ -428,8 +428,8 @@ var
     else
     begin
       UUCICO.Output(mcInfo,'Login',[0]);
-      if RunScript(BoxPar,UUCICO.CommObj,UUCICO.ProgressOutput,false,BoxPar^.Script,false,false) != 0 then
-        result := el_login
+      if RunScript(BoxPar,UUCICO.CommObj,UUCICO.ProgressOutput,false,BoxPar^.Script,false,false) <> 0 then
+        result := el_nologin
       else begin
         UUCICO.Output(mcInfo,'Starting UUCICO',[0]);
         result := UUCICO.PerformNetcall;
@@ -498,6 +498,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/07/29 17:16:38  cl
+  - FIX: unsent messages marked as sent although login failed II
+
   Revision 1.9  2001/07/29 17:10:02  cl
   - FIX: unsent messages marked as sent although login failed
 
