@@ -2100,8 +2100,8 @@ fromstart:
     if ntPmReply(netztyp) then
       if _pmReply then inc(hdp.attrib,AttrPmReply);
     if ControlMsg then inc(hdp.attrib,AttrControl);
-    if ((hdp.typ='B') and (netztyp in netsRFC) and multipartbin) or
-       ((hdp.typ='B') and (netztyp=nt_Maus) and mausmpbin) then
+    if (((hdp.typ = 'B') or (hdp.typ = 'M')) and (netztyp in netsRFC) and multipartbin) or
+       (((hdp.typ = 'B') or (hdp.typ = 'M')) and (netztyp=nt_Maus) and mausmpbin) then
       inc(hdp.attrib,AttrMPbin);
     if flPGPkey then
       inc(hdp.pgpflags,fPGP_haskey);
@@ -2214,6 +2214,10 @@ fromstart:
         4 : flags:=flags or 24;                      { niedrig }
         5 : flags:=flags or 32;                      { niedrigste }
         end;
+
+      // mark message as Multipart (M in message lister) if parts >=2
+      if Parts.Count > 1 then
+        flags := flags or 4;
 
       dbwriteN(mbase,mb_flags,flags);
 
@@ -2514,6 +2518,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.23  2004/01/18 19:21:48  mk
+  - fixed bug #815945: MultiPart unter N/U/Z
+
   Revision 1.48.2.22  2004/01/18 14:44:07  mk
   - fixed Bug #845234: Fido 'T'ext im Absendefenster geht nicht
 
