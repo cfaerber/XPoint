@@ -111,7 +111,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -257,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.14  2003/01/25 14:33:21  mk
+  - J+ (Writable Const) on for Kylix
+
   Revision 1.78.2.13  2003/01/22 21:42:59  mk
   - Snapshot off
 
