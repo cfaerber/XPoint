@@ -870,7 +870,7 @@ var f1,f2   : file;
         wrs(^A'FLAGS '+xflags);
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
-      if charset<>'' then
+      if x_charset<>'' then
         wrs(^A'CHRS: '+MimeCharsetToFido(charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
@@ -1634,9 +1634,9 @@ begin
         end;
 
       if not DelEmpty or (hd.groesse>0) then begin
-        if LeftStr(UpperCase(hd.x_charset),7)='ISO-8859-1' then
+        if LeftStr(UpperCase(hd.x_charset),10)='ISO-8859-1' then
           cxlate:=1
-        else if LeftStr(UpperCase(hd.x_charset),3)='macintosh' then
+        else if LeftStr(UpperCase(hd.x_charset),9)='MACINTOSH' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1804,6 +1804,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.30  2002/07/20 12:27:19  ma
+        - fixed charset issues with fido messages
+
         Revision 1.29  2001/12/08 14:21:58  mk
         - implemented zfido command line
 
