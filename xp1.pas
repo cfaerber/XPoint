@@ -34,7 +34,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  dos,typeform,montage,keys,fileio,inout,winxp,win2,
+  typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,crc,xpglobal, classes,debug;
 
@@ -1513,12 +1513,13 @@ end;
 { Datum in Z-Format abfragen }
 
 function Zdate:string;
-var t,m,j,dow,h,mm,s,s100 : rtlword;
+{var t,m,j,dow,h,mm,s,s100 : rtlword;}
 begin
-  getdate(j,m,t,dow);
+  result:= FormatDateTime('YYMMDDhhmm',Now);
+{  getdate(j,m,t,dow);
   gettime(h,mm,s,s100);
   while h>23 do dec(h,24);
-  Zdate:=formi(j mod 100,2)+formi(m,2)+formi(t,2)+formi(h,2)+formi(mm,2);
+  Zdate:=formi(j mod 100,2)+formi(m,2)+formi(t,2)+formi(h,2)+formi(mm,2);}
 end;
 
 
@@ -1915,9 +1916,6 @@ begin
 end;
 
 procedure set_checkdate;
-var dt    : datetime;
-    dummy : rtlword;
-    pdt   : longint;
 begin
   { !!
   fillchar(dt,sizeof(dt),0);
@@ -2018,6 +2016,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.88  2000/11/16 14:01:43  hd
+  - Unit DOS entfernt
+
   Revision 1.87  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 
