@@ -840,11 +840,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        FidoPath     : string;       { OwnPath+FidoDir }
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
-       EditLogpath  : pathptr;
-       EditTemppath : pathptr;
-       EditExtpath  : pathptr;
-       EditSendpath : pathptr;
-
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
@@ -1153,6 +1148,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.24  2000/12/28 19:15:37  mk
+  - falsche Pfade konnten nicht editiert werden
+
   Revision 1.54.2.23  2000/12/20 18:46:59  mk
   - Schalter Binaernachrichten fuer ZC entfernt
 

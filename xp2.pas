@@ -605,7 +605,6 @@ var   res  : integer;
   end;
 
 begin
-  EditLogpath:=nil;
   TestDir2(logpath);
   TestDir2(temppath);
   TestDir2(extractpath);
@@ -616,34 +615,27 @@ begin
     begin
       logpath:=ownpath;
       trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
-      SetPath(EditLogpath,logpath);
     end;
-  EditTemppath:=nil;
   if temppath='' then temppath:=ownpath
   else
     if not IsPath(temppath) then
     begin
       temppath:=ownpath;
       trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
-      SetPath(EditTemppath,temppath);
       end;
-  EditExtpath:=nil;
   if extractpath='' then extractpath:=OwnPath
   else
     if not IsPath(extractpath) then
     begin
       extractpath:=OwnPath;
       trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
-      SetPath(EditExtpath,extractpath);
       end;
-  EditSendpath:=nil;
   if sendpath='' then sendpath:=ownpath
   else
     if not IsPath(sendpath) then
     begin
       sendpath:=ownpath;
       trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
-      SetPath(EditSendpath,sendpath);
       end;
   editname:=sendpath+WildCard;
   TestDir(XFerDir);
@@ -1102,6 +1094,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.15  2000/12/28 19:15:37  mk
+  - falsche Pfade konnten nicht editiert werden
+
   Revision 1.45.2.14  2000/12/12 11:30:27  mk
   - FindClose hinzugefuegt
 

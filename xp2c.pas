@@ -993,31 +993,18 @@ begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
   maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'Tempor„r-Verzeichnis ' }
-  if Assigned(EditTemppath) then
-    setfield(fieldpos,EditTemppath^);
   msetVfunc(formpath);
   maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
-  if Assigned(EditExtpath) then
-    setfield(fieldpos,EditExtpath^);
   msetVfunc(formpath);
   maddstring(3,6,getres2(262,4),sendpath,31,MaxLenPathname,'');   { 'Sende-Verzeichnis    ' }
-  if Assigned(EditSendpath) then
-    setfield(fieldpos,EditSendpath^);
   msetVfunc(formpath);
   maddstring(3,8,getres2(262,5),logpath,31,MAxLenPathname,'');    { 'Logfile-Verzeichnis  ' }
-  if Assigned(EditLogpath) then
-    setfield(fieldpos,EditLogpath^);
   msetVfunc(formpath);
   maddstring(3,10,getres2(262,6),filepath,31,MaxLenPathname,'');  { 'FileReq-Verzeichnis  ' }
   msetVfunc(formpath);
   readmask(brk);
-  if not brk and mmodified then begin
+  if not brk and mmodified then
     GlobalModified;
-    freepath(EditTemppath);
-    freepath(EditExtpath);
-    freepath(EditSendpath);
-    freepath(EditLogpath);
-    end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1460,6 +1447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.14  2000/12/28 19:15:38  mk
+  - falsche Pfade konnten nicht editiert werden
+
   Revision 1.39.2.13  2000/12/20 18:46:59  mk
   - Schalter Binaernachrichten fuer ZC entfernt
 
