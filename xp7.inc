@@ -47,7 +47,7 @@ begin
         // Hier evtl. n”tige Tests der Parameter einstellen
       else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
-         (telefon='') or (telefon='08-15') then
+        ((not SysopMode and (telefon='') or (telefon='08-15'))) then
         BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
       else if (((not (_fido or uucp) or (UpArcer<>'')) and
                 ((not uucp and (pos('$UPFILE',UpperCase(UpArcer))=0)) or
@@ -1385,6 +1385,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.46  2000/11/24 21:34:42  mk
+  - Telefonnummer wird im Sysopmodus nicht mehr gecheckt
+
   Revision 1.45  2000/11/19 17:53:34  ma
   - renamed existBin to ExecutableExists
 
