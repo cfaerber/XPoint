@@ -120,7 +120,7 @@ uses
   typeform,fileio,inout,
   maske,datadef,database,
   archive,maus2,winxp,printerx,resource,osdepend,
-  xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp3,xp3o,xp3o2,xp3ex,xp4,xp4o2,
+  xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp3,xp3o,xp3o2,xp3ex,xp4,xp4o2,xp9bp,
   xpkeys,xpnt,xpfido,xpmaus,xpheader, xpmakeheader,
   xp_pgp,debug,viewer, MarkedList, regexpr, xpconfigedit,
   xprope,
@@ -789,7 +789,8 @@ msg_ok: MsgAddmark;
       BoxName := UniSel(usBoxes, false, DefaultBox);
       if BoxName <> '' then
       begin
-        Filename := OwnPath + GetServerFileName(Boxname, extMid);
+        ReadboxPar(0, Boxname); 
+        Filename := OwnPath + BoxPar.ClientPath + GetServerFilename(Boxname, extMid);
         IDLIst := TStringList.Create;
         try
           with IDList do
@@ -3842,6 +3843,10 @@ end;
 
 {
   $Log$
+  Revision 1.162  2003/09/29 18:26:17  mk
+  - create .mid in client directory
+    fixes #810685: Message-ID suchen (ALT+M)
+
   Revision 1.161  2003/09/17 15:28:06  mk
   - fixed drawing of status line in archiv viewer for screen width > 80
 
