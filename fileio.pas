@@ -480,13 +480,19 @@ begin
 end;
 
 function IsPath(const fname:string):boolean;
+{$IFNDEF Delphi }
 var
   curdir: string;
+{$ENDIF }
 begin
+{$IFDEF Delphi }
+  Result := DirectoryExists(fname);
+{$ELSE }
   if fname='' then begin result:=true; exit end;
   curdir:= GetCurrentDir;
   result:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
+{$ENDIF }
 end;
 
 function copyfile(srcfn, destfn:string):boolean;
@@ -730,6 +736,10 @@ end;
 
 {
   $Log$
+  Revision 1.120  2002/07/22 10:08:21  mk
+  - use system function DirectoryExists in IsPath instead of own function
+    with Delphi
+
   Revision 1.119  2002/05/30 13:28:33  mk
   - added automatic UTF-8 detection to lister
 
