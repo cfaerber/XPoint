@@ -781,11 +781,11 @@ Procedure ReadEdit(x,y: Byte; txt: atext; VAR s:string; ml:Byte;
 
 const trennz  = [' ','&','('..'/',':'..'?','['..'`','{'..#127];
 
-VAR   p: byte; { MK 02/00 Spart Vergleiche signed/unsigned }
+VAR   p: integer;
       fnkn  : shortint;
       a       : taste;
       inss    : string[80];
-      ste     : string;
+      ste     : shortstring;
       mlm,mrm : boolean;
       r1      : taste;
       autogr  : boolean;
@@ -804,7 +804,7 @@ begin
   x:=x+length(txt);
   IF art=editread then s:='' ELSE s:=Copy(s,1,ml);
   if art<>edittabelle then
-    WHILE s[length(s)]=' ' DO dellast(s);
+    s := TrimRight(s);
   p:=min(px,length(s));
   if not canf then
     IF art<>edittabelle THEN p:=p+length(s);
@@ -930,8 +930,12 @@ begin
                      if right(fndef[fnkn],1)=';' then
                        a:=keycr;
                      end;
-                 end else begin
-      ste:=s; ste[succ(p)]:=' ';
+                 end else
+    begin
+      ste:=s;
+      // das ist eine groáe Schweinerei, aber man msste die ganze
+      // Routine umschreiben, um das wieder gerade zubiegen
+      ste[succ(p)]:=' ';
       if autogr then a:=UpperCase(a);
       IF (POS(a,li)>0) AND (p<ml) AND
          (NOT ((li=chml[2]) AND (p>0) AND (a='-'))) AND
@@ -1652,6 +1656,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.52  2000/08/08 00:00:40  mk
+  - AnsiString-Bug beseitigt
+
   Revision 1.51  2000/08/03 15:26:31  mk
   - Zeitschleifenfreigabe unter OS/2 implementiert
 
