@@ -1776,7 +1776,10 @@ begin      { --- select --- }
                    end;
 
                  if not empty then
+                 begin
+                   if c=k1_U then User_suche;                   { 'U' }
                    testsuche(t);
+                 end;
                end;
       10..12 : begin
                  if t=keyf6 then Makroliste(3);
@@ -2127,6 +2130,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.22  2000/12/08 01:08:40  mk
+  MH:- Usersuche bei Auswahl ueber F2 moeglich
+
   Revision 1.26.2.21  2000/12/06 21:34:06  mk
   - removed false fix for Bug #117117
 

@@ -229,6 +229,7 @@ begin
         end;
     8 : begin             { User-Weiterleitfenster }
           ks(getres2(20,10));    { '^Alle' }
+          ks(getres2(20,22));
           kscr(getres2(20,9));   { 'best„tigen' }
           ksesc;
         end;
@@ -414,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/12/08 01:08:40  mk
+  MH:- Usersuche bei Auswahl ueber F2 moeglich
+
   Revision 1.7  2000/05/08 13:05:45  hd
   Anpassung an variable Screen-Breite
 
