@@ -286,15 +286,15 @@ end;
 {$ENDIF }
 
 procedure FlipCase(var data; size: word);
-var cdata : charr absolute data;
-    i     : integer;
+var
+  i: integer;
 begin
   if size>0 then
     for i:=0 to size-1 do
-      if UpCase(cdata[i])=cdata[i] then
-        cdata[i]:=LoCase(cdata[i])
+      if UpCase(TCharArray(data)[i])=TCharArray(data)[i] then
+        TCharArray(data)[i]:=LoCase(TCharArray(data)[i])
       else
-        cdata[i]:=UpCase(cdata[i]);
+        TCharArray(data)[i]:=UpCase(TCharArray(data)[i]);
 end;
 
 
@@ -1834,6 +1834,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/07/20 17:08:50  mk
+  - Notwendigkeit von Absolute entfernt
+
   Revision 1.36  2000/07/20 10:54:36  mk
   - AnsiString Update, Editor funktioniert jetzt wieder
 
