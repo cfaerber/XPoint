@@ -17,21 +17,26 @@ Patrick Hunlock
 
 Malte Kiesel, m.kiesel@iname.com, come.to/schnoerkel
   2000: Integration and improvement of Patrick's ASYNC, ocsdos
-  2000: Linux port (wrapper for Sebastian's serial.pas), ocslin
-  2000: Rewrote (very simple) TCP port, octwin
+  2000: Linux port [1,4] ([1] wrapper for Sebastian's serial.pas), ocslin
+  2000: Rewrote TCP port (outgoing), octwin
   2000: Renamed this EleCOM version to ObjCOM in agreement with Maarten to
         avoid confusion
   2000: CommInit and single-uses-statement changes, objcom
+  2000: Threadless Win port, ocswin
         ...many other small changes
 
+Hinrich Donner, hd@tiro.de
+  2000: Linux port [3], ocslin
+
 Sebastian Guenther, sg@freepascal.org
-  2000: Linux serial port unit, serial.pas
+  2000: Linux serial port unit [1], serial.pas
+        (made obsolete by Hinrich's work)
 
 Markus Kaemmerer, mk@happyarts.de, www.happyarts.de
   2000: Compiler define file, ocdefine
 
 Ken J. Wright
-  2000: Linux port bugfix, serial.pas ocslin
+  2000: Linux port bugfix [2], serial.pas ocslin
 
 Hristo Chilingirov, hgch@usa.net
   2000: Bugfixing and new functions in Patrick's ASYNC, ocsdos

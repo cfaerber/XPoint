@@ -1,20 +1,37 @@
 FAQ zu OpenXP 3.70
 
-Warum ist die Win32-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-01-17</small>
-Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
-sehr schlecht. Es kann helfen, etwas an Config/Anzeige/Zeilen
-zu spielen und vor allem den Vollbildmodus zu meiden;
-unter WinNT/2000 ist die Win32-Version angemessen schnell,
-dort werden Konsolenprogramme nicht so stiefmütterlich
-behandelt.
 
-Netcalls gehen nicht mehr!&nbsp;&nbsp;<small>2001-02-18</small>
-Der Netcall-Teil von OpenXP 3.70 wird z.Zt. stark überarbeitet.
-<br />Im aktuellen Snapshot geht nur der Fido-Netcall, POP3 und das Holen der Liste der verfügbaren Newsgroups via NNTP.
-<br />Funktionierende ZConnect- und Fido/BinkP-Unterstützung existiert schon als GPL-Code, der eingebracht wird, sobald
-es die Lizenzlage zulässt. In ein paar Wochen ist zusätzlich mit SMTP und komplettem NNTP zu rechnen. Bei Bedarf kann
-auch das MausNetz neu implementiert werden.
-<br />An dieser Stelle nochmal der Hinweis: <i>Benutzung von Snapshots auf eigene Gefahr!</i>
+Warum ist die Win32-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
+Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
+sehr schlecht (bekanntes Problem, nachzulesen auch z.B. in der <a href="http://www.vim.org/html/os_win32.html#win32-problems">FAQ zu Vim</a>).
+Es hilft, Config/Anzeige/Zeilen auf nicht-DOS-Werte zu stellen (also <i>nicht</i> 80 Spalten)
+und vor allem den Vollbildmodus zu meiden; unter WinNT/2000 ist die Win32-Version immer angemessen schnell,
+dort werden Konsolenprogramme nicht so stiefmütterlich behandelt.
+<br />Der Vollbildmodus bringt auf größeren Monitoren gegenüber OpenXP im Fenster mit großer Zeilen-/Spaltenzahl aber auch
+keinen Vorteil. Einmal paßt weniger auf den Monitor (da man bei Vollbild auf Standardtextauflösungen beschränkt ist); zum anderen
+stört auf größeren Monitoren im Vollbildmodus die geringe Scanlinezahl der Textmodi (was sich in schwarzen horizontalen dünnen
+Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor kennen ;-).
+<br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
+übersichtliches, schnelles OpenXP :-).
+
+Was ist bei dem neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-03-20</small>
+<big>Fido:</big>
+<ul>
+<li>Bei Edit/Boxen/Edit/Point darf unter "AKAs" die eigene Adresse <b>nicht</b> mehr eingetragen werden.</li>
+<li>Beim Mitsenden von Paketen müssen die "Slave"-Boxen bei den Einstellungen zur 4D-Adressierung usw. richtige Werte enthalten.</li>
+<li>Bei der Verbindungsart "TCP/IP" wird automatisch das BinkP-Protokoll benutzt; beim Netcall muß das DFÜ-Netzwerk verbunden sein. BinkP steht nur unter OpenXP/Win32 zur Verfügung. Linux folgt, sobald jemand die paar Zeilen in ObjCOM fixt ;-).</li>
+<li>Fido-Crashanrufe gehen z.Zt. nicht.</li>
+</ul>
+<big>ZConnect:</big>
+<ul>
+<li>Es <b>muß</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein. Für JanusPlus-Boxen kann man dort zcjp.scr benutzen.</li>
+</ul>
+<big>Allgemein:</big>
+<ul>
+<li>Es wird als Transferprotokoll immer das interne ZModem benutzt.</li>
+<li>Die Statistik funktioniert nicht; das Netcall-Logging ist nur rudimentär implementiert.</li>
+</ul>
+Da die Netcall-Implementationen noch recht neu sind, ist mit Fehlern zu rechnen. Insbesondere die Fido-Netcalls sind nicht ganz trivial und bisher nur im "Standardbetrieb" <i>etwas</i> getestet. Bei Fehlern bitte Mail an <a href="mail:ma@openxp.de">Malte</a>, am besten gleich das letzte Debuglog (debuglog.txt im OpenXP-Verzeichnis) beilegen.
 
 Was bringen die Umstellungen im Netcall-Bereich?&nbsp;&nbsp;<small>2001-02-11</small>
 Unterstützung von Linux; stabilerer und sauberer Betrieb unter Win32; Unterstützung von Remote Modems (Benutzung von Modems,

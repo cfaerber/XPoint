@@ -1,5 +1,5 @@
 ObjCOM is protected by the BSD license (basically this means ObjCOM
-is freeware in the common sense but it's copyright notices may not
+is freeware in the common sense but its copyright notices may not
 be deleted). The BSD license is GPL compatible. This means you
 can use ObjCOM in GNU GPL projects without problems :-).
 

@@ -43,6 +43,9 @@ ISDN-Karten stellen CAPI zur Verfügung, manchmal auch eine Win-Comport-Emulation
 <br />Bei OpenXP/Win32 entfallen diese umständlichen Basteleien, da es direkt auf die Win-Comports zugreifen kann. Im Idealfall (der ISDN-Treiber bringt eine Comport-Emulation mit) braucht man also überhaupt keine Zusatzsoftware.
 <br />Unter Linux wird eine ISDN-Karte über /dev/ttyIx sowieso immer exakt wie ein Modem angesprochen, auch hier entfällt also die ganze Problematik.
 
+Ich habe ein USB-Modem und weiß nicht, was ich als IRQ und Portadresse in XP eintragen soll.&nbsp;&nbsp;<small>2001-03-07</small>
+Der Treiber des USB-Modems stellt - genau wie die Treiber einer ISDN-Karte - einen Win-Comport zur Verfügung. Also gibt es die gleichen Möglichkeiten: WinFossil installieren und XP per Fossil auf das Modem zugreifen lassen oder OpenXP/Win32 benutzen, das direkt auf den Win-Comport zugreifen kann.
+
 Kann ich OpenXP mit ADSL nutzen?&nbsp;&nbsp;<small>2001-01-16</small>
 Ja. ;-)
 <br />

@@ -1,10 +1,9 @@
 ObjCOM todo list
 
-- testing, bugfixing (lots of work... ;-)
-- TCP connection part is not working properly yet (seems to be an FPC issue)
-- allow multiple instances of comm objects in ocsos2
-- use timeouts where appropriate
-- improve error handling and error messages
+- add incoming TCP connection functionality
 - perhaps add CAPI port
+- improve error handling and error messages
+- use timeouts where appropriate
+- allow multiple instances of comm objects in ocsos2
 
 [EoF]
