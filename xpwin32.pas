@@ -58,7 +58,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  SysUtils, windows, winxp;
+  SysUtils, Math, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -172,7 +172,7 @@ var
   SI: TStartupInfo;
   PI: TProcessInformation;
   Proc : THandle;
-  l    : Longint;
+  l: Integer;
   AppPath,
   AppParam : array[0..255] of char;
   DosError : Integer;
@@ -196,10 +196,12 @@ begin
    DosError:=0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
+{$IFNDEF Delphi }
   if WaitForSingleObject(Proc, Infinite) <> $ffffffff then
     GetExitCodeProcess(Proc,l)
   else
-    l:=-1;
+    l :=-1;
+{$ENDIF }
   CloseHandle(Proc);
 //!  LastDosExitCode:=l;
 end;
@@ -231,6 +233,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/07/28 12:54:44  mk
+  - added some defines for Delphi compatibility
+
   Revision 1.16  2001/07/28 12:38:33  mk
   - removed unit dos, uses SysExec from Freepascal RTL
 

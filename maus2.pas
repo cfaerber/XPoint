@@ -31,7 +31,7 @@ uses
   xplinux,
   xpcurses,
 {$ELSE }
-  crt,
+{$IFNDEF Delphi }  crt,{$ENDIF }
 {$endif}
   typeform, mouse,keys, xpglobal;
 
@@ -120,7 +120,10 @@ var
       {$ifdef NCRT}
         if not usemulti2 and not keypressed then begin
       {$else}
-        if not usemulti2 and not crt.keypressed then begin
+        {$IFNDEF Delphi }
+        if not usemulti2 and not crt.keypressed then
+        {$ENDIF }
+      begin
       {$endif}
       t := #31;
       pushkeyv(t);
@@ -341,6 +344,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/07/28 12:54:44  mk
+  - added some defines for Delphi compatibility
+
   Revision 1.24  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

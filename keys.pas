@@ -31,7 +31,9 @@ uses
 {$ifdef NCRT}
   xpcurses,
 {$else}
+  {$IFNDEF Delphi }
   crt,
+  {$ENDIF }
 {$endif}
 {$IFDEF DOS32 }
   go32,
@@ -197,16 +199,20 @@ end;
 {$IFNDEF NCRT }
 function keypressed:boolean;
 begin
+{$IFNDEF Delphi }
   keypressed:=(forwardkeys<>'') or crt.keypressed;
+{$ENDIF }
 end;
 
 function readkey:char;
 begin
+{$IFNDEF Delphi }
   if forwardkeys<>'' then begin
     readkey:=forwardkeys[1];
     forwardkeys:=copy(forwardkeys,2,255);
   end else
     readkey:=crt.readkey;
+{$ENDIF }
 
   // Scan Numeric Block keys *, - and +
   Lastscancode:=0;
@@ -364,6 +370,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/07/28 12:54:44  mk
+  - added some defines for Delphi compatibility
+
   Revision 1.35  2001/07/23 18:00:36  mk
   - fixed compile bug introduced with linux change
 
