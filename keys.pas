@@ -105,6 +105,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyctn  = #14;               { Control-Sequenzen }
        keyctt  = #20;
        keycty  = #25;
+       keyctcr = #10;
 
        keyalta = #0#30;       keyaltn = #0#49;     { Alt-Sequenzen }
        keyaltb = #0#48;       keyalto = #0#24;
@@ -448,6 +449,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.1  2000/07/21 17:32:27  jg
+  - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
+
   Revision 1.21  2000/06/04 22:02:02  mk
   - Shift-Keys in DOS32 und OS/2 Version implementiert
 

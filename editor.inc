@@ -1999,6 +1999,105 @@ begin
   end;
 end;
 
+
+{ Markierten Block als String zurueckgeben }
+
+function Marked2String:string;
+Var len : byte;
+     s  : string;
+begin
+  with e^ do 
+  begin 
+    if block[2].pos.offset-block[1].pos.offset > 255 then len:=255
+     else len:=block[2].pos.offset-block[1].pos.offset;
+    s[0]:=chr(len);
+    fastmove(block[1].pos.absatz^.cont[block[1].pos.offset],s[1],len);
+    marked2string:=s;
+    end;
+end;
+
+
+{ Glossary Funktion (Kuerzel mit STRG+Enter Uebersetzen) }
+
+Procedure Glossary;
+var ap : absatzp;
+     p : position;                 		
+
+  function ScanGlossary(si:string):boolean;
+  var t,t1 : text;
+      s,s2 : String; 
+      lsi  : byte;
+      brk  : boolean;
+      x,y  : byte;
+  begin
+    ScanGlossary:=false;  
+    assign(t,'glossary.cfg');
+    reset(t);
+    if IoResult<>0 then errsound  { Keine Glossary Datei? }
+    else begin
+      brk:=false;
+      lsi:=length(si)+2;    
+      repeat
+        Readln(t,s);     
+      until EOF(t) or (ustr(left(s,lsi))=ustr('>'+si+'<'));
+
+      if EOF(t) then 
+      begin                           { Wort nicht gefunden - Kuerzelliste als Auswahlmenue }
+        reset(t);
+        listbox(45,7,'Glossary');
+        app_l(' >- ESC -<');
+        repeat
+   	  readln(t,s);
+          if (s[1]='>') and (cpos('<',s)>0) then
+          begin
+            readln(t,s2);
+            if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,26))
+            end;
+        until eof(t);
+        list(brk);
+        s2:=mid(get_selection,2);
+        s2:=left(s2,cpos('<',s2));
+        if s2='>- ESC -<' then brk:=true;
+        closelist;
+        closebox;
+        if not brk then begin
+          reset(t);
+          repeat readln(t,s); until s=s2;         
+          end;
+        setcolors;
+        end;
+       
+      if not brk then 
+      begin
+        assign(t1,'glossary.tmp');     { Kuerzel gefunden, Text kopieren }
+        rewrite(t1);
+        Readln(t,s);
+        Repeat        
+          Writeln(t1,s);
+          Readln(t,s);
+        Until Eof(t) or (s[1]='>');  
+        close(t1);
+        ScanGlossary:=true;
+        end;
+      close(t);
+      end;
+    end;
+
+begin
+  Wortmarkieren;
+  if scanglossary(marked2string) then
+  with e^ do begin
+    if not (blockinverse or blockhidden)  { Markierung loeschen }
+    then begin
+      gotopos(block[1].pos,0);
+      BlockLoeschen;
+      end; 
+    ap:=LoadBlock('glossary.tmp',true,2,rrand);
+    Insert(ap,p);
+    gotopos(p,0);
+    end;
+end; 
+
 { ---------------------------------------------- Suchfunktionen }
 
 procedure Suchen(again,ersetzen:boolean);
@@ -2290,6 +2389,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.1  2000/07/21 17:32:26  jg
+  - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
+
   Revision 1.19  2000/05/06 17:29:19  mk
   - DOS DPMI32 Portierung
 

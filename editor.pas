@@ -79,7 +79,7 @@ function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolea
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx;
+uses  typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -1724,6 +1724,7 @@ var  dl         : displp;
         editfSave         : if EdSave(ed) then;
         editfSaveQuit     : SpeichernEnde;
         editfBreak        : Quit;
+        editfGlossary     : Glossary;
 
       end;
     end;
@@ -1800,6 +1801,9 @@ var  dl         : displp;
     if t=keyf2   then b:=EditfSave        else
     if t=keysf2  then b:=EditfSaveQuit    else
     if t=keyf10  then b:=EditfMenu        else
+
+    if (t=keyctcr) or (t=keyaltG)
+      then b:=EditfGlossary else 
 
     if t=^Q      then case GetPrefixChar('Q',true) of
                         'P' : b:=EditfLastpos;
@@ -2025,6 +2029,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.1  2000/07/21 17:32:27  jg
+  - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
+
   Revision 1.25  2000/05/06 17:29:19  mk
   - DOS DPMI32 Portierung
 

@@ -110,6 +110,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfSave        = 123;        { Speichern                      }
        EditfBreak       = 124;        { Abbruch                        }
        EditfSaveQuit    = 125;        { Speichern + Ende               }
+       EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
 
        MaxFindLen       = 30;
        EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - ge„ndert auf 11 }
@@ -178,6 +179,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/07/21 17:32:26  jg
+  - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
+
   Revision 1.5  2000/03/17 21:22:10  rb
   vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
 
