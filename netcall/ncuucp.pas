@@ -454,7 +454,7 @@ begin
                   iifs(SizeNego,' w/ size negotiation',       ''             )),[0]);
 
   for n := 1 to 5 do begin
-    s:=GetUUStr; {$IFNDEF Delphi}dec(n); {$ENDIF }// Achtung: Loop-Variable wird verändert
+    s:=GetUUStr;
     if FirstChar(s)='P' then break;
   end;
 
@@ -1124,6 +1124,10 @@ end.
 
 {
   $Log$
+  Revision 1.21  2002/02/14 11:30:08  cl
+  - fixed broken loop code
+    see <mid:8Ip3sW0ZcDB@3247.org>
+
   Revision 1.20  2002/02/14 07:43:42  mk
   - fixed some range check errors
 
