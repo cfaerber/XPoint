@@ -112,6 +112,8 @@ procedure saveList (list :RTAEmpfaengerP; var sList :RTAEmpfaengerP);
 function userUnbekannt (const user :string) :boolean;
 procedure vertausche (var s1, s2 :RTAEmpfaengerT);
 procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
+procedure exchangeByte (var i, j :byte);
+function getVertreter (var adr :AdrStr) :boolean;
 
 implementation  { --------------------------------------------------- }
 
@@ -2813,24 +2815,57 @@ begin
   s2.userUnbekannt := h.userUnbekannt;
 end;
 
-      procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
-      begin
-        if assigned (vor) then
-        begin
-          vor^.next := lauf^.next;
-          dispose (lauf);
-          lauf := vor^.next;
-        end else
-        begin
-          list := lauf^.next;
-          dispose (lauf);
-          lauf := list;
-        end;
-      end;
+procedure exchangeByte (var i, j :byte);
+var h :byte;
+begin
+  h := i;
+  i := j;
+  j := h;
+end;
+
+procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
+begin
+  if assigned (vor) then
+  begin
+    vor^.next := lauf^.next;
+    dispose (lauf);
+    lauf := vor^.next;
+  end else
+  begin
+    list := lauf^.next;
+    dispose (lauf);
+    lauf := list;
+  end;
+end;
+
+{ die Åbergebene Adresse wird durch die Vertreteradresse ersetzt,
+  sofern vorhanden. Es wird 'true' zurÅckgeben, wenn Vertreter
+  vorhanden. }
+
+function getVertreter (var adr :adrStr) :boolean;
+var size :word;
+begin
+  dbSeek (ubase, uiName, uStr (adr));
+  if dbFound then
+  begin
+    size := 0;
+    if dbXsize (ubase, 'adresse') <> 0 then
+    begin
+      dbReadX (ubase, 'adresse', size, adr);
+      getVertreter := true;
+    end else
+      getVertreter := false;
+  end else
+    getVertreter := false;
+end;
 
 end.
 {
   $Log$
+  Revision 1.25.2.13  2001/04/29 13:16:11  sv
+  - sender won't be displayed, if reply-to exists und sender = reply-to
+  - fixed bug if sender has a stand-in address
+
   Revision 1.25.2.12  2001/04/28 15:47:34  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

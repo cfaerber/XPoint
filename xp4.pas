@@ -848,15 +848,6 @@ var t,lastt: taste;
       procedure checklist (var list :RTAEmpfaengerP);
       var lauf, vor :RTAEmpfaengerP;
           anzahl, i :word;
-
-        procedure exchangeByte (var i, j :byte);
-        var h :byte;
-        begin
-          h := i;
-          i := j;
-          j := h;
-        end;
-
       begin
         anzahl := 0;
         lauf := list;
@@ -865,7 +856,7 @@ var t,lastt: taste;
         begin
           if pos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, pos (' ', lauf^.empf), 255);
           { ^^ Realname entfernen }
-          if (uStr (lauf^.empf) = uStr (empf)) or (cpos ('@', lauf^.empf) = 0)
+          if (uStr (lauf^.empf) = uStr (hdp^.absender)) or (cpos ('@', lauf^.empf) = 0)
             or (uStr (lauf^.empf) = uStr (hdp^.pmReplyTo))
             or (not adrOkay (lauf^.empf))
             {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
@@ -913,27 +904,6 @@ var t,lastt: taste;
         end;
       end;
 
-      { die Åbergebene Adresse wird durch die Vertreteradresse ersetzt,
-        sofern vorhanden. Es wird 'true' zurÅckgeben, wenn Vertreter
-        vorhanden. }
-
-      function getVertreter (var adr :str90) :boolean;
-      var size :word;
-      begin
-        dbSeek (ubase, uiName, uStr (adr));
-        if dbFound then
-        begin
-          size := 0;
-          if dbXsize (ubase, 'adresse') <> 0 then
-          begin
-            dbReadX (ubase, 'adresse', size, adr);
-            getVertreter := true;
-          end else
-            getVertreter := false;
-        end else
-          getVertreter := false;
-      end;
-
       { Alle Adressen werden durch Vertreteradressen ersetzt (sofern
         vorhanden). Die ersetzten Adressen werden markiert, damit im
         Auswahl-Dialog durch ein Sternchen (*) angezeigt werden kann,
@@ -958,8 +928,6 @@ var t,lastt: taste;
 
         wabHasVertreter := getVertreter (hdp^.wab);
         wabIsUnknown := userUnbekannt (hdp^.wab);
-
-{        getVertreter (empf);}
       end;
 
       { Es wird ÅberprÅft, ob die gewÑhlten EmpfÑnger in der Userdatenbank
@@ -1215,12 +1183,13 @@ var t,lastt: taste;
           if hdp^.pmReplyTo <> '' then                   { 'Reply-To-EmpfÑnger :' }
             add (hdp^.pmReplyTo, 7, not eigeneAdresse (eigeneAdressenbaum, hdp^.pmReplyTo),
                  pmReplyToHasVertreter, pmReplyToIsUnknown);
-          if hdp^.wab <> '' then                         { 'Original-Absender  :' }
-            add (hdp^.absender, 1, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
-                 absenderHasVertreter, absenderIsUnknown)
-          else                                           { 'Absender           :' }
-            add (hdp^.absender, 5, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
-              absenderHasVertreter, absenderIsUnknown);
+          if uStr (hdp^.pmReplyTo) <> uStr (hdp^.absender) then
+            if hdp^.wab <> '' then                       { 'Original-Absender  :' }
+              add (hdp^.absender, 1, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
+                   absenderHasVertreter, absenderIsUnknown)
+            else                                         { 'Absender           :' }
+              add (hdp^.absender, 5, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
+                absenderHasVertreter, absenderIsUnknown);
           if AdrOkay (hdp^.wab) then                     { 'Weiterleit-Absender:' }
             add (hdp^.wab, 2, false, wabHasVertreter, wabIsUnknown);
           addLists; { EmpfÑnger, Original-EmpfÑnger und Kopien-Empfaenger }
@@ -1424,7 +1393,7 @@ again:
 
       checkList (RTAEmpfList);
 
-      if ((hdp^.pmReplyTo <> '') and (RTAMode and 2 = 2) and (uStr (hdp^.pmReplyTo) <> uStr (empf))
+      if ((hdp^.pmReplyTo <> '') and (RTAMode and 2 = 2) and (uStr (hdp^.pmReplyTo) <> uStr (hdp^.absender))
            and adrOkay (hdp^.pmReplyTo)
          or (hdp^.wab <> '') and adrOkay (hdp^.wab) and (RTAMode and 1 = 1)
          or RTAEmpfVorhanden (true) and (RTAMode and 4 = 4)
@@ -2772,6 +2741,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.29  2001/04/29 13:16:11  sv
+  - sender won't be displayed, if reply-to exists und sender = reply-to
+  - fixed bug if sender has a stand-in address
+
   Revision 1.26.2.28  2001/04/28 17:11:33  sv
   - fixed bug that occured, if user had disabled RTA
 
