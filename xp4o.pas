@@ -1664,14 +1664,15 @@ begin
       wrt(x+3+p,y+i+1,mid(xxs[i],p+1));
       end;
     attrtxt(col.colmboxhigh); wrt(x+3,y+anz+3,getres2(459,26));  { 'Groesse des Kopfes: ' }
-    attrtxt(col.colmbox);     write(hds,getres(13));
+    attrtxt(col.colmbox);     wrt(x+3+length(getres2(459,26)),y+anz+3,IntToStr(hds)+getres(13));
     dat:=longdat(dbReadInt(mbase,'empfdatum'));
     if smdl(IxDat('2712300000'),IxDat(dat)) then
       dat:=longdat(dbReadInt(mbase,'wvdatum'));
     attrtxt(col.colmboxhigh); wrt(x+40,y+anz+2,getres2(459,27));  { 'Empfangsdatum: ' }
-    attrtxt(col.colmbox);     write(fdat(dat));
+    attrtxt(col.colmbox);     wrt(x+40+length(getres2(459,27)),y+anz+2,fdat(dat));
     attrtxt(col.colmboxhigh); wrt(x+40,y+anz+3,getres2(459,28));  { 'Ablagedatei  :' }
-    attrtxt(col.colmbox);     write('MPUFFER.',dbReadInt(mbase,'ablage'));
+    attrtxt(col.colmbox);     wrt(x+40+length(getres2(459,28)),y+anz+3,
+                                  FileUpperCase('mpuffer.')+IntToStr(dbReadInt(mbase,'ablage')));
     elist:=(empfanz>1);
     rlist:=(References.Count>1);
     if elist then s:=' (E='+getres2(459,30)
@@ -2413,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.99  2001/07/30 08:41:24  ma
+  - fixed: Mail header info box was displayed incorrectly
+
   Revision 1.98  2001/07/28 12:04:13  mk
   - removed crt unit as much as possible
 
