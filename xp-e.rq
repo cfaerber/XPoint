@@ -320,7 +320,7 @@ K (c) '93-96 Peter Mandrella
 33   ~          /ipe:PUF  import puffer file with receive date = creation date
 34   ~          /g        sets /ip and /ips messages to status 'read'
 35   ~          /eb       return receipts (for /ip..)
-36   ~          /r        start messagebase reorganization
+36   ~          /r        start messagebase reorganisation
 37   ~          /pack     do /Reorg/Pack
 38   ~          /t:n      start timing list no. n
 39
@@ -903,7 +903,7 @@ K (c) '93-96 Peter Mandrella
 27   Reply to: ~
 28   CC:       ~
 29   PGP staus:~
-30   Fido To:  ~
+30   Fido-To:  ~
 31   Distrib.: ~
 32   Homepage: ~
 35   Priority: ~
@@ -1031,10 +1031,10 @@ K (c) '93-96 Peter Mandrella
 9    delete %s from address book
 10   delete %s
 -
-446  Stop reorganization
+446  Stop reorganisation
 447  Stop
 + 448
-1    Messagebase Reorganization
+1    Messagebase Reorganisation
 2    Nessagebase Test
 3    Messagebase Statistics
 # die L„nge von Feld Nr. 4 bestimmt die Fensterbreite:
@@ -1046,7 +1046,7 @@ K (c) '93-96 Peter Mandrella
 449  Stop at the end of file
 450  ~Stop at the end of file.
 + 451
-1   Reorganization
+1   Reorganisation
 2   File No %s
 3   ~- not enough disk space!
 4   not enough disk space to pack messagebase file no %s
@@ -1079,14 +1079,14 @@ K (c) '93-96 Peter Mandrella
 + 459
 1    ~ (Text)
 2    ~ (binary)
-3    To        :
-4    Fido-to   :
+3    Msg. Area :
+4    To        :
 5    Subject   :
 6    Sender    :
 7    Realname  :
 8    Organizat.:
 9    Reply to  :
-10   Date code :
+10   Date      :
 11   Path      :
 12   ~         ~
 13   MessageID :
@@ -2059,7 +2059,7 @@ K (c) '93-96 Peter Mandrella
 4  ~^Yes ,  ^No  , with ^File~
 10 Add new Node or Pointlist
 -
-1020 activate nodediff / pointdiff
+1020 Update nodediff/pointdiff
 1021 phone fees
 + 1022
 1    Phone fee group
@@ -2553,10 +2553,10 @@ K (c) '93-96 Peter Mandrella
 12   Group    ~
 13   Origin   ~
 -
-2709 User not in database - create new user
+2709 User not in database - create new User?
 2710 Edit User
 2711 No Server - create internal newsgroup
-2712 Unknown server - add newsgroup, anyway
+2712 Unknown Server - add newsgroup anyway?
 2713 Name of newsgroup has changed - adjust message headers
 2714 One moment please ...
 + 2715
