@@ -39,7 +39,11 @@ unit md5;
 interface
   uses SysUtils,XPGlobal,Typeform;
 
+  { upper case hex encoded output }
   function CRAM_MD5(Key,Text: string): string;
+  { binary output }
+  function MD5_Plain(sPlainText: string): string;
+  { upper case hex encoded output }
   function MD5_Digest(sPlainText: string): string;
 
 implementation
@@ -384,12 +388,16 @@ implementation
       pad:=s;
     end;
   begin
+    if length(key)>64 then key:=md5_plain(key);
     result:=md5_digest(pad(key,$5c)+md5_plain(pad(key,$36)+text));
   end;
 
 
 {
   $Log$
+  Revision 1.8  2002/05/12 17:58:22  ma
+  - bugfix: keys > 64 bytes should be hashed
+
   Revision 1.7  2001/10/21 11:02:34  ma
   - disabled range checking (due to FPC crashes)
 
