@@ -1284,6 +1284,7 @@ fromstart:
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
+                      sData^.pmreplyto:='';
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -2060,6 +2061,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.8  2000/11/19 11:11:42  mk
+  - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
+
   Revision 1.7.2.7  2000/11/17 22:34:37  mk
   - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
 
