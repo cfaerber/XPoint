@@ -1876,12 +1876,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9    Head        ~
 10   Quote       ~
 11   Signature   ~
+12   QuoteTo     ~
+13   Public:
 15   Default
 16   Re^n:
 17   Re:
 18   none
 20   Replies ~
 21   ^General,^RFC,^Fido
+30   Quote char~
+50   PrivHead~
+51   PrivQuote
+52   PrivSig~
+55   Private:
 + 902
 1    Fido settings
 2    Origin~
@@ -4046,6 +4053,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.60  2003/02/05 18:08:04  mf
+# 901.12, .13, .30, .50, .51, .52, .55 added
+#
 # Revision 1.59  2003/02/05 17:27:28  mf
 # 610.10, 20, 21, 22, 25, 26, 30, 31, 32, 33, 35, 36, 40, 41, 50, 81, 86, 87, 90, 91, 92 added. 10.0 changed, 10,7 corrected. Corrected spelling mistakes in 520.2, .4, .9
 #
