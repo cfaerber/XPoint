@@ -306,32 +306,36 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 15   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
 16   ~          /lfn     Untersttzung langer Dateinamen erzwingen (fr Win2000)
 17   ~          /312     XP 3.12 Kompatibilit„tsmodus (X-XP-FTO statt F-TO)
-18
-19   ~          /k:X     Taste X bergeben (fr Tastenmakro)
-20   ~          /pw:xx   Startpaáwort xx bergeben
-21   ~          /z:nn    stellt nn Bildschirmzeilen ein
-22   ~          /l:X     Sprache w„hlen (z.B. /l:D fr deutsch)
-23
-24   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
-25   ~          /n:*             Netcall bei allen Boxen
-26   ~          /nr:BOX          Relogin-Netcall bei BOX
-27   ~          /user:BOX:NAME   Username bei BOX setzen
-28   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-29   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-30
-31   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-32   ~          /f:<Datei>       Schriftdatei laden
-33   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
-34
-35   ~          /ip:PUF   liest die angegebene Pufferdatei ein
-36   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
-37   ~          /g        tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein.
-38   ~          /eb       Empfangsbest„tigungen (Zusatzschalter fr /ip..)
-39   ~          /r        Nachrichten-Reorganisation durchfhren
-40   ~          /pack     /Wartung/Packen durchfhren
-41   ~          /t:n      Timing-Liste Nr. n ausfhren
-42
-43   ~          /x        Programm beenden
+18   ~          /maus    Pseudo-Maus aktivieren
+19
+20   ~          /k:xxx   Tasten xxx bergeben (fr Tastenmakro)
+21   ~          /pw:xx   Startpaáwort xx bergeben
+22   ~          /z:nn    stellt nn Bildschirmzeilen ein
+23   ~          /l:X     Sprache w„hlen (z.B. /l:D fr deutsch)
+24
+25   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
+26   ~          /n:*             Netcall bei allen Boxen
+27   ~          /nr:BOX          Relogin-Netcall bei BOX
+28   ~          /user:BOX:NAME   Username bei BOX setzen
+29   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+30   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+31   ~          /mailto:user@name?subject=betreff;serverbox
+32   ~                           Nachrichtendialog nach Start ”ffnen
+33
+34   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+35   ~          /f:<Datei>       Schriftdatei laden
+36   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
+37
+38   ~          /ip:PUF   liest die angegebene Pufferdatei ein
+39   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
+40   ~          /g        tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein.
+41   ~          /eb       Empfangsbest„tigungen (Zusatzschalter fr /ip..)
+42   ~          /r        Nachrichten-Reorganisation durchfhren
+43   ~          /pack     /Wartung/Packen durchfhren
+44   ~          /xpack    Automatisches Packen durchfhren
+45   ~          /t:n      Timing-Liste Nr. n ausfhren
+46
+47   ~          /x        Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
