@@ -106,6 +106,17 @@ type
     dword =      Cardinal; { = signed }
     rtlword =    system.word; { 16 Bit bei FPC }
   {$endif}
+  {$IFDEF Delphi }
+    { Delphi, 32 Bit }
+    integer8 =   shortint;
+    integer16 =  system.smallint;
+    integer32 =  longint;
+    integer =    longint;
+    word =       longint;  { = signed }
+    smallword =  system.word;
+    dword =      Cardinal; { = signed }
+    rtlword =    system.word; { 16 Bit bei FPC }
+  {$endif}
 
 const
 {$IFDEF UnixFS }
@@ -135,9 +146,9 @@ const
 
 type
   PCharArray = ^TCharArray;
-  TCharArray = array[0..MaxInt] of Char;
+  TCharArray = array[0..MaxInt div 2] of Char;
   PByteArray = ^TByteArray;
-  TByteArray = array[0..MaxInt] of Byte;
+  TByteArray = array[0..MaxInt div 2] of Byte;
 
 implementation
 
@@ -153,6 +164,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.45  2000/11/11 20:13:54  mk
+  - first delphi compilation support
+
   Revision 1.44  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
 

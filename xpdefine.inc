@@ -46,9 +46,15 @@
 
 { --- ab hier sind keine énderungen nîtig --- }
 
+{$IFDEF VER130 }
+  {$DEFINE Delphi }
+{$ENDIF }
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
-    !! Im Moment wird nur FreePascal und Virtual Pascal unterstÅtzt
+     {$IFNDEF Delphi }
+        !! Only Freepascal, Delphi and Virtual Pascal is supported
+     {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 
@@ -72,6 +78,12 @@
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }	  { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,P-,T-,V-,X+}
+  {$DEFINE Int64 }
+{$ENDIF }
+
+{$IFDEF Delphi }
+  {$APPTYPE CONSOLE }
+  {$DEFINE Ver32 }
   {$DEFINE Int64 }
 {$ENDIF }
 
@@ -168,6 +180,9 @@
 
 {
   $Log$
+  Revision 1.61  2000/11/11 20:13:53  mk
+  - first delphi compilation support
+
   Revision 1.60  2000/11/07 13:06:20  hd
   - $B entfernt, da unter FPC nicht supported
 
