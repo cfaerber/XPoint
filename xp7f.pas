@@ -601,7 +601,7 @@ begin
     end;
 
   window(1,1,80,25);
-  findfirst(XFerDir+'*.*',AnyFile,sr);            { SPOOL leeren }
+  findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
     UpString(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
@@ -936,6 +936,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/15 14:18:21  mk
+  - Fix fuer FindFirst mit Diretories
+
   Revision 1.6  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -974,7 +974,7 @@ end;
 procedure EmptySpool(filemask:string);
 var sr : searchrec;
 begin
-  findfirst(XFerDir+filemask,AnyFile,sr);
+  findfirst(XFerDir+filemask,AnyFile-Directory,sr);
   while doserror=0 do begin
     _era(XFerDir+sr.name);
     findnext(sr);
@@ -1447,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/04/15 14:18:21  mk
+  - Fix fuer FindFirst mit Diretories
+
   Revision 1.13  2000/04/15 09:05:13  mk
   JG: - Fix fuer Ausgangsfilter bei ZConnect
 

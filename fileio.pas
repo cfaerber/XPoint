@@ -505,7 +505,7 @@ begin
   res:=0;
   if lastchar(dest)<>'\' then
     dest:=dest+'\';
-  findfirst(source,AnyFile,sr);
+  findfirst(source,AnyFile-Directory,sr);
   while doserror=0 do begin
     if not _rename(getfiledir(source)+sr.name,dest+sr.name) then
       inc(res);
@@ -795,6 +795,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/04/15 14:18:21  mk
+  - Fix fuer FindFirst mit Diretories
+
   Revision 1.20  2000/04/13 12:48:31  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
