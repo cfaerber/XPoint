@@ -422,8 +422,8 @@ begin
       close(netlog^);
       logopen:=false;
     end;
-    if TempPPPMode and exist(LogPath + ClientLog) then
-      ClientLogFile := LogPath + ClientLog;
+{    if TempPPPMode and exist(LogPath + ClientLog) then
+      ClientLogFile := LogPath + ClientLog; }
     if (_maus and exist(mauslogfile)) or
        ((_fido or _uucp) and exist(fidologfile)) or
        (TempPPPMode and exist(ClientLogFile)) then
@@ -851,6 +851,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.25  2001/10/18 17:24:34  mk
+  - letzten checkin wieder rückgängig gemacht
+
   Revision 1.13.2.24  2001/09/29 10:11:49  mk
   - ClientLog wird jetzt zusätzlich auch im Logpfad beachtet
 
