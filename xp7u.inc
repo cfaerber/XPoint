@@ -63,21 +63,21 @@ end;
 
 procedure NoUUZ;
 begin
-  {window(1,1,80,25);}
+  {window(1,1,screenwidth,screenlines);}
   trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
   twin;
 end;
 
 procedure NoUUCICO;
 begin
-  {window(1,1,80,25);}
+  {window(1,1,screenwidth,screenlines);}
   trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
   twin;
 end;
 
 procedure PackFehler;
 begin
-  {window(1,1,80,25);}
+  {window(1,1,screenwidth,screenlines);}
   trfehler(713,30);    { 'Fehler beim Packen!' }
   twin;
 end;
@@ -376,7 +376,7 @@ begin
   if not existBin(UUZBin) then begin
     nouuz; exit;
     end;
-  {window(1,1,80,25);}
+  {window(1,1,screenwidth,screenlines);}
   if (res=uu_ok) or (res=uu_recerr) then begin
     NC^.sendbuf:=spufsize;
     NC^.sendpack:=spacksize;
@@ -442,7 +442,7 @@ begin
       twin;
       cursor(curoff);
       ZtoRFC(false,ppfile,SysopOut);
-      {window(1,1,80,25);}
+      {window(1,1,screenwidth,screenlines);}
       WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
@@ -461,6 +461,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/07/30 08:49:54  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.17  2000/07/22 10:10:25  hd
   - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
 

@@ -327,7 +327,7 @@ begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
   crt.window(l,o,r,min(u,25));
-  if (l=1) and (o=1) and (r=80) and (u=25) then
+  if (l=1) and (o=1) and (r=screenwidth) and (u=screenlines) then
     crt.windmax:=ScreenWidth-1 {crt.windmax and $ff} + 256*ScreenLines
   else
     crt.windmax:=crt.windmax and $ff + 256*(u-1);
@@ -544,7 +544,7 @@ VAR c       : Char;
        (not fnpactive[state,nr]) then begin
       fnpactive[state,nr]:=true;
       savecursor;
-      window(1,1,80,25);
+      window(1,1,screenwidth,screenlines);
       r1:=retonfn; retonfn:='';
       p;
       retonfn:=r1;
@@ -565,7 +565,7 @@ VAR c       : Char;
     p:=altproc[istack[istackp]].funktion;
     altproc[istack[istackp]].aktiv:=true;
     savecursor;
-    window(1,1,80,25);
+    window(1,1,screenwidth,screenlines);
     r1:=retonfn; retonfn:='';
     p;
     retonfn:=r1;
@@ -1654,7 +1654,7 @@ initialization
   memerror:=dummyFN;
   fillchar(zaehler,sizeof(zaehler),0);
   fillchar(zaehlproc,sizeof(zaehlproc),0);
-  mwl:=1; mwo:=1; mwr:=80; mwu:=25;
+  mwl:=1; mwo:=1; mwr:=screenwidth; mwu:=screenlines;
 finalization
 {$IFNDEF NCRT }
   cursor(curon);
@@ -1663,6 +1663,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.50  2000/07/30 08:49:52  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.49  2000/07/27 10:12:58  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

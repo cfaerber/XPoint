@@ -385,7 +385,7 @@ begin
     if inwin then begin
       SaveCursor;
       cursor(curoff);
-      window(1,1,80,25);
+      window(1,1,screenwidth,screenlines);
     end;
     hd:='';
     InternBox:=box;
@@ -396,7 +396,7 @@ begin
               false,false,false,false,false,nil,hd,hd,sendIntern+sendShow) then
       SetUngelesen;
     if inwin then begin
-      window(1,4,80,screenlines-2);
+      window(1,4,screenwidth,screenlines-2);
       RestCursor;
       end;
     end;
@@ -408,7 +408,7 @@ begin
   { Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
   if AutoDatumsBezuege then begin
-    window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
+    window(1,1,screenwidth,screenlines); {Screenfenster vorher korrigieren!}
     bd_setzen(true);
     end;
   { /oh }
@@ -779,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/30 08:49:53  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.24  2000/07/22 10:10:25  hd
   - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
 

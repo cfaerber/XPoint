@@ -85,7 +85,7 @@ var fn   : string;
   procedure w0;
   begin
     savecursor;
-    window(1,1,80,25);
+    window(1,1,screenwidth,screenlines);
   end;
 
   procedure w1;
@@ -197,7 +197,7 @@ begin
   mon;
   errsound; errsound;
   wkey(2,false);
-  window(1,1,80,25);
+  window(1,1,screenwidth,screenlines);
   closebox;
   aufbau:=true;
 end;
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/30 08:49:54  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.21  2000/07/22 14:05:28  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

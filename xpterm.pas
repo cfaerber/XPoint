@@ -103,19 +103,19 @@ end;
 procedure termscr;
 begin
   attrtxt(7);
-  window(1,1,80,25);
+  window(1,1,screenwidth,screenlines);
   moff;
   clrscr;
   mon;
   if TermStatus then begin
     termlines:=screenlines-1;
     ShowTermstatus;
-    window(1,2,80,termlines+1);
+    window(1,2,screenwidth,termlines+1);
     end
   else begin
     termlines:=screenlines;
     m2t:=false;
-    window(1,1,80,termlines);
+    window(1,1,screenwidth,termlines); 
     windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
@@ -131,7 +131,7 @@ begin
   savecursor;
   mx:=wherex; my:=wherey;
   inout.cursor(curoff);
-  window(1,1,80,screenlines);
+  window(1,1,screenwidth,screenlines);
   gotoxy(mx,my+iif(TermStatus,1,0));
   la:=lastattr;
 end;
@@ -139,9 +139,9 @@ end;
 procedure restwin;
 begin
   if TermStatus then
-    window(1,2,80,termlines+1)
+    window(1,2,screenwidth,termlines+1)
   else
-    window(1,1,80,termlines);
+    window(1,1,screenwidth,termlines);
   restcursor;
   windmax:=ScreenWidth-1+256*(screenlines-1);
   attrtxt(la);
@@ -1610,6 +1610,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/30 08:49:54  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.19  2000/07/27 10:13:05  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

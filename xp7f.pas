@@ -227,7 +227,7 @@ begin
     Dos.findfirst(ImportDir+'*.*',ffAnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
-      window(1,1,80,25); attrtxt(7);
+      window(1,1,screenwidth,screenlines); attrtxt(7);
       end;
     while doserror=0 do begin
       if isPacket(sr.name) then begin
@@ -251,7 +251,7 @@ begin
         shell('ZFIDO.EXE -fz '+iifs(FidoDelEmpty,'-d ','')+via+
               iifs(addpkts,'','-h'+MagicBrett)+' '+
               XFerDir+'*.PKT '+fpuffer+' -w:'+strs(screenlines),300,1);
-      window(1,1,80,25);
+      window(1,1,screenwidth,screenlines);
       if errorlevel<>0 then
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
@@ -340,7 +340,7 @@ label fn_ende,fn_ende0;
           MakeHeader(true,f,0,0,hds,hd^,ok,false);
           if (hd^.attrib and attrFile<>0) then
             if not exist(hd^.betreff) then begin
-              window(1,1,80,25);
+              window(1,1,screenwidth,screenlines);
               tfehler(hd^.betreff+' fehlt!',15);
               twin;
               end
@@ -603,7 +603,7 @@ begin
       _era(addpkts^.addpkt[i]);
     end;
 
-  window(1,1,80,25);
+  window(1,1,screenwidth,screenlines);
   Dos.findfirst(XFerDir+WildCard,AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
     sr.name:= UpperCase(sr.name);
@@ -619,7 +619,7 @@ begin
   aresult:=errorlevel;
 {  if carrier(comnr) and not comn[comnr].IgCD then
     aufhaengen; }
-  window(1,1,80,25);
+  window(1,1,screenwidth,screenlines);
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
     DropAllCarrier;
@@ -681,7 +681,7 @@ begin
   fn_ende0:
     WriteFidoNC(fidologfile,iifs(crash,DefFidoBox,Boxpar^.boxname),crash);
     if true {!! (result=EL_ok) or (result=EL_recerr)} then begin
-      window(1,1,80,25);
+      window(1,1,screenwidth,screenlines);
       if AutoDiff then
         if DoDiffs(FilePath+'*.*',true)=0 then;
       if AutoTIC then
@@ -938,6 +938,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/07/30 08:49:53  mk
+  MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
+
   Revision 1.26  2000/07/27 13:41:50  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 
