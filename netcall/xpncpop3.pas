@@ -33,8 +33,8 @@ uses
   SysUtils,
   Classes;
 
-function GetPOP3Mails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
-function SendSMTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
+function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
 
@@ -52,7 +52,7 @@ uses
   xpnetcall,
   zcrfc;
 
-function SendSMTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
   const RFCFile= 'SMTPTEMP';
 
@@ -106,7 +106,7 @@ begin
       SMTP.Password:= bp^.smtp_pwd;
     end;
     { Fenster oeffnen }
-    diabox(70,11,box+' SMTP Mails verschicken',x,y);
+    diabox(70,11,BoxName+' SMTP Mails verschicken',x,y);
     Inc(x,3);
     MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
     MWrt(x,y+4,getres2(30010,5));                 { 'SMTP-Status..: ' }
@@ -140,7 +140,7 @@ begin
     List.Free;
     SMTP.Free;
     if result then begin
-      ClearUnversandt(PPFile,BoxFile);
+      ClearUnversandt(PPFile,BoxName);
       if FileExists(PPFile)then _era(PPFile);
       if FileExists(RFCFile)then _era(RFCFile);
     end;
@@ -149,7 +149,7 @@ begin
 end;
 
 
-function GetPOP3Mails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
+function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
 var
   List          : TStringList;
   aFile         : string;
@@ -197,7 +197,7 @@ begin
     POP.Password:= bp^.pop3_pwd;
   end;
   { Fenster oeffnen }
-  diabox(70,11,box+' POP3 Mails holen',x,y);
+  diabox(70,11,BoxName+' POP3 Mails holen',x,y);
   Inc(x,3);
   MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
   MWrt(x,y+4,getres2(30010,5));                 { 'POP3-Status..: ' }
@@ -247,6 +247,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/04/13 00:14:40  ma
+  - ClrUnversandt parameters fixed (ppfile, box*name*)
+
   Revision 1.8  2001/04/06 15:21:15  ml
   - smtpsenden komplett überarbeitet
 

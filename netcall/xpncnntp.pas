@@ -33,9 +33,9 @@ uses
   Classes,
   SysUtils;
 
-function GetNNTPList(box: string; bp: BoxPtr): boolean;
-function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
-function SendNNTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function GetNNTPList(BoxName: string; bp: BoxPtr): boolean;
+function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
+function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
 
@@ -72,7 +72,7 @@ begin
   result:=true;
 end;
 
-function GetAllGroups(box: string; bp: BoxPtr): boolean;
+function GetAllGroups(BoxName: string; bp: BoxPtr): boolean;
 var
   NNTP          : TNNTP;                { Socket }
   ProgressOutputXY: TProgressOutputXY;  { ProgressOutput }
@@ -101,7 +101,7 @@ begin
     NNTP.Password:= bp^.nntp_pwd;
   end;
   { Fenster oeffnen }
-  diabox(70,11,box+getres2(30010,3),x,y);       { box+' - Gruppenliste holen' }
+  diabox(70,11,BoxName+getres2(30010,3),x,y);       { BoxName+' - Gruppenliste holen' }
   Inc(x,3);
   MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
   MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
@@ -122,7 +122,7 @@ begin
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
-    if GetServerFilename(box,bfile) and NNTP.List(List,false) then begin
+    if GetServerFilename(BoxName,bfile) and NNTP.List(List,false) then begin
       MWrt(x+15,y+2,Format(getres2(30010,11),[List.Count])); { Liste speichern (%d Gruppen) }
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
@@ -146,25 +146,25 @@ begin
   closebox;
 end;
 
-function GetNewGroups(box: string; bp: BoxPtr): boolean;
+function GetNewGroups(BoxName: string; bp: BoxPtr): boolean;
 begin
   result:= false;
 end;
 
-function GetNNTPList(box: string; bp: BoxPtr): boolean;
+function GetNNTPList(BoxName: string; bp: BoxPtr): boolean;
 var
   n             : integer;
 begin
-  n:= minisel(0,0,box,getres2(30010,1),1); { '^Alle Gruppen, ^Neue Gruppen' }
+  n:= minisel(0,0,BoxName,getres2(30010,1),1); { '^Alle Gruppen, ^Neue Gruppen' }
   case n of
-    1: result:= GetAllGroups(box, bp);
-    2: result:= GetNewGroups(box, bp);
+    1: result:= GetAllGroups(BoxName, bp);
+    2: result:= GetNewGroups(BoxName, bp);
     else result:= true;
   end; { case }
   freeres;
 end;
 
-function SendNNTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
   const RFCFile= 'NNTPTEMP';
 
@@ -218,7 +218,7 @@ begin
       NNTP.Password:= bp^.NNTP_pwd;
     end;
     { Fenster oeffnen }
-    diabox(70,11,box+' NNTP Mails verschicken',x,y);
+    diabox(70,11,BoxName+' NNTP Mails verschicken',x,y);
     Inc(x,3);
     MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
     MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
@@ -251,7 +251,7 @@ begin
     List.Free;
     NNTP.Free;
     if result then begin
-      ClearUnversandt(PPFile,BoxFile);
+      ClearUnversandt(PPFile,BoxName);
       if FileExists(PPFile)then _era(PPFile);
       if FileExists(RFCFileDummy)then _era(RFCFileDummy);
       RFCFileDummy := RFCFile + 'X-0002.OUT';
@@ -264,7 +264,7 @@ begin
 end;
 
 
-function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
+function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
 var
   List          : TStringList;
   Group: String;
@@ -326,7 +326,7 @@ begin
     NNTP.Password:= bp^.NNTP_pwd;
   end;
   { Fenster oeffnen }
-  diabox(70,11,box+' NNTP Mails holen',x,y);
+  diabox(70,11,BoxName+' NNTP Mails holen',x,y);
   Inc(x,3);
   MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
   MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
@@ -336,7 +336,7 @@ begin
   MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
   MWrt(x+15,y+6,bp^.NNTP_ip);
 
-  GetServerFilename(box,RCFilename); // add error handling
+  GetServerFilename(BoxName,RCFilename); // add error handling
   RCFilename:=FileUpperCase(RCFilename+'.rc');
 
   { ProgressOutputXY einrichten }
@@ -409,6 +409,9 @@ end.
 
 {
         $Log$
+        Revision 1.14  2001/04/13 00:14:40  ma
+        - ClrUnversandt parameters fixed (ppfile, box*name*)
+
         Revision 1.13  2001/04/12 13:59:30  ml
         - better view at groupstatus
 
