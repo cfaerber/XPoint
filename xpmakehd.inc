@@ -398,7 +398,11 @@ begin
     DisposeReflist(reflist);
   {$endif}
   fillchar(hd,sizeof(hd),0);
-  bufsize:=min(maxavail-500,iif(zconnect,1000,400));
+  {$IFDEF BP }
+    bufsize:=min(maxavail-500,iif(zconnect,1024,512));
+  {$ELSE }
+    bufsize := 1024;
+  {$ENDIF }
   getmem(buf,bufsize);
   size:=0; Readbuf;
   with hd do
@@ -597,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/06/04 15:13:32  mk
+  - Speichercheck in 32 Bit Version korrigiert
+
   Revision 1.12  2000/05/10 07:47:15  mk
   RB: X-* -> U-X-*
 
