@@ -815,7 +815,7 @@ begin
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.FirstEmpfaenger;
-        Debug.DebugLog('xp3o','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
+        Debug.DebugLog('xp3o.inc','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
 
         { Schalter maildelxpost beachten }
         if (hdp.Empfaenger.Count > maxcrosspost)
@@ -830,11 +830,13 @@ begin
         end;
         if grosswandeln and not zconnect then
         begin
-          UpString(hdp.absender);
+          hdp.Absender := UpperCase(hdp.absender);
           hdp.FirstEmpfaenger := UpperCase(hdp.Firstempfaenger);
         end;
         pm:=false;
-        with hdp do begin
+
+        with hdp do
+        begin
           if replace_ed then dat:=datum;
           _datum:=ixdat(dat);
           if replace_ed and smdl(today,_datum) then begin
@@ -863,7 +865,7 @@ begin
               else
               begin
                 s := FirstEmpfaenger;
-                while s[10]=#255 do  { wg. #255#255'Netzanruf' }
+                while (length(s) >= 10) and (s[10]=#255) do  { wg. #255#255'Netzanruf' }
                   delete(s,10,1);
                 FirstEmpfaenger:='$/¯'+Mid(s,10);
               end
@@ -886,6 +888,8 @@ begin
           if ForceRecipient<>'' then Firstempfaenger:= ForceRecipient;
 
           multi2; initscs;
+
+          Debug.DebugLog('xp3o.inc', 'point multi2', DLDebug);
 
           truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
           dbSeek(ubase,uiName,UpperCase(absender));
@@ -1012,7 +1016,10 @@ begin
                      (filterattr and fattrGelesen<>0) or
                      (pflags and pe_gelesen<>0) or (ReplaceOwnHoldFlag < 255);
 
-          if aufnehmen then begin
+          Debug.DebugLog('xp3o.inc', 'vor aufnehmen=' + iifs(Aufnehmen, 'true', 'false'), DLDebug);
+
+          if aufnehmen then
+          begin
             if FirstChar(FirstEmpfaenger)<>'U' then begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
@@ -1091,18 +1098,22 @@ begin
               else mbflags:=8                            { hoechste }
             else mbflags:=0;
 
+            // set  HeaderOnly flags
+            if (UpperCase(hdp.XPMode) = 'HDRONLY') and (hdp.Groesse=0) then
+              mbflags:=mbflags or 64;
+
             mbflags:=mbflags or iif(boundary<>'',4,0);
             { this message replaces an old own message; mark it as an own }
             { message again. Necessary for cancels. }
             if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
 
-	    if ntKomKette(hdp.netztyp) then 
-	    begin
+            if ntKomKette(hdp.netztyp) then 
+            begin
               l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
               if Empfaenger.Count >1 then inc(l,iif(msgsent,2,1));
-	      AddNewBezug(dbRecno(mbase),hdp.MsgId,hdp.GetLastReference,l);
-	    end;
+              AddNewBezug(dbRecno(mbase),hdp.MsgId,hdp.GetLastReference,l);
+            end;
 
             if UsePGP and (pgpflags and fPGP_haskey<>0) and
                ((PGP_AutoAM and (firstchar(FirstEmpfaenger)='A')) or
@@ -1122,14 +1133,15 @@ begin
               pmCryptDecode;
 
             msgsent:=true;
-            end;
+          end;
           (* else begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
             end; *)
 
           inc(empfnr); // iterate through recipients
-          end;           { with hdp }
+        end;           { with hdp }
+        
         if msgsent then
           TestControlMessage;
 
@@ -1146,7 +1158,7 @@ begin
         { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
         { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
           llanz:=max(0,llanz-2*hdp.empfanz); }
-          end;
+        end;
     (*  else
           if junk then begin
             FlushLL;
@@ -1283,6 +1295,10 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.14  2003/04/25 20:52:23  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.83.2.13  2003/01/26 09:18:28  cl
   - fixed problem with empfnr
 

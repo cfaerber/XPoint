@@ -237,12 +237,13 @@ end;
 
 function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles, DeleteSpoolFiles: TStringList): boolean;
 var
-  List          : TStringList;
+  List, MIDList : TStringList;
   Group         : String;
   ArticleIndex,
   iNewsFile,
   RCIndex       : Integer;
   RCList        : TStringList;          { .rc-File }
+  HeaderOnly: Boolean;
 
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
   var
@@ -264,7 +265,7 @@ var
     uu.free;
    end;
 
-   procedure SaveNews;
+   procedure SaveNews(UpdateRCList: Boolean);
    var
      aFile: string;
    begin
@@ -273,7 +274,8 @@ var
      IncomingFiles.Add(aFile);
      inc(iNewsFile);
      List.Clear;
-     RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
+     if UpdateRCLIst then
+       RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex) + iifs(HeaderOnly, ' HdrOnly', '');
    end;
 
 var
@@ -281,8 +283,9 @@ var
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   p             : integer;              { -----"------- }
   RCFilename    : String;
+  MIDFilename   : String;
   oArticle      : integer;
-
+  s, MsgId: String;
 begin
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getnewsinit,[BoxName]),True);
@@ -297,6 +300,7 @@ begin
   end;
 
   RCFilename:=GetServerFilename(BoxName, extRc);
+  MIDFilename := ChangeFileExt(RCFilename, extMid);
 
   { Verbinden }
   try
@@ -305,19 +309,28 @@ begin
     RCList := TStringList.Create;
     if FileExists(RCFilename) then RCList.LoadFromFile(RCFilename);
     iNewsFile:= 0;
-    
+
     if NNTP.Connect then
+    begin
       for RCIndex := 0 to RCList.Count - 1 do
       begin
         Group := RCList[RCIndex];
         // skip Lines special lines in .rc
         if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
 
+        HeaderOnly := false;
         p := cPos(' ', Group);
         if p > 0  then
         begin
-          ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
+          s := Trim(Mid(Group, p + 1)); // "123213 HdrOnly"
           Group := LeftStr(Group, p-1);
+          p := cPos(' ', s);
+          if p > 0 then
+            ArticleIndex := StrToIntDef(LeftStr(s, p-1), 0)
+          else
+            ArticleIndex := StrToIntDef(s, 0);
+          if UpperCase(RightStr(s, 7)) = 'HDRONLY' then
+            HeaderOnly := true;
         end else
          ArticleIndex := -bp^.nntp_initialnewscount;
 
@@ -341,12 +354,44 @@ begin
           Inc(ArticleIndex);
           POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
 
-          NNTP.GetMessage(ArticleIndex, List);
+          NNTP.GetMessage(IntToStr(ArticleIndex), List, HeaderOnly);
+          if HeaderOnly then
+          begin
+            List.Insert(List.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
+            List.Insert(List.Count-1, ''); // empty line to break up headers
+          end;
           if List.Count > 10000 then
-            SaveNews;
+            SaveNews(true);
         end;
-        if List.Count > 0 then SaveNews;
+        if List.Count > 0 then SaveNews(true);
       end;
+
+      List.Clear;
+      if FileExists(MidFilename) then
+      begin
+        MIDList := TStringList.Create;
+        try
+          MIDList.LoadFromFile(MidFilename);
+          while MidList.Count > 0 do
+          begin
+            MsgId := MidList[0];
+            if MsgId <> '' then
+            begin
+              if FirstChar(MsgId) <> '<' then
+                MsgId := '<' + MsgId;
+              if LastChar(MsgId) <> '>' then
+                MsgId := MsgId + '>';
+              NNTP.GetMessage(MsgId, List, false);
+            end;
+            MidList.Delete(0);
+          end;
+          MidList.SaveToFile(MidFilename);
+          if List.Count > 0 then SaveNews(false);
+        finally
+          MidList.Free;
+        end;
+      end;
+    end;
   except
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
@@ -369,6 +414,10 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.4  2003/04/25 20:52:29  mk
+        - added Headeronly and MessageID request
+          toggle with "m" in message view
+
         Revision 1.39.2.3  2002/08/03 16:31:45  mk
         - fixed unsendt-handling in client-mode
 

@@ -456,6 +456,15 @@ Bar and the Menu under "Other")
         reference. If more than one seems plausible,
         all will be marked.
 
+   <<M>>   Komplette Nachricht zu einer Headeronly-Nachricht
+       anfordern oder Anforderung rückgängig machen.
+       Der Nachrichtenkopf wird durch die vollständige Nachricht
+       ersetzt. Der Status dieser Nachrichten wird
+       mit einem 'R' oder 'H' gekennzeichnet.
+
+       (Diese Funktion steht nur dem RFC/Client und RFC/NNTP
+       zur Verfügung)
+
    <<R>>    Write a message. The Subject of the current
         message will be offered; the [reference link]@4014
         can be kept, but you write a new text. The

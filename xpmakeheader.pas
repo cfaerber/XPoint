@@ -479,6 +479,7 @@ begin
               if id = 'X-XP-BOUNDARY' then LRead(boundary) else
               if id = 'X-XP-CTL' then XpointCtl:=ival(line) else
               if id = 'X-XP-ARC' then archive:=true else
+              if id = 'X-XP-MODE' then LRead(XPMode) else
 
               if tc=' ' then
                 if id = 'X-XP_F'   then filterattr:=minmax(ival(line),0,65535);
@@ -560,6 +561,10 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.3  2003/04/25 20:52:26  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.24.2.2  2002/07/21 20:14:40  ma
   - changed copyright from 2001 to 2002
 

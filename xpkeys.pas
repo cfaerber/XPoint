@@ -111,6 +111,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
       k2_SP : char = 'P';      { Multiquote-PM        }
       k2_cT : char = ^T;       { User-Paáwort-Edit    }
       k2_cQ : char = ^Q;       { indirekter Fido-Quote}
+      k2_M  : char = 'M';      { MessageID-Request    }
 
       k3_H  : char = 'H';      { neuer AV-Eintrag     }
       k3_E  : char = 'E';      { AutoVersand Edit     }
@@ -248,6 +249,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.24.2.3  2003/04/25 20:52:26  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.24.2.2  2002/07/21 20:14:40  ma
   - changed copyright from 2001 to 2002
 

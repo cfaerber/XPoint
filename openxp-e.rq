@@ -164,8 +164,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # in reference tree, Show address (marked messages), Auto Advance, Show Date
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
 # multiquote reply, PM, Quote PM, Multiquote PM, Edit password, indirect quote
+# MessageID-Request
 
-3  O ^X ^H I ^O H L K ^U V ^E U ^F ^I E ^A A S ^W ^D ^T ^N # A r ^R R p ^P P ^S ^Q
+3  O ^X ^H I ^O H L K ^U V ^E U ^F ^I E ^A A S ^W ^D ^T ^N # A r ^R R p ^P P ^S ^Q M
 
 # Keys in AutoSend window
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
@@ -1014,6 +1015,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 436  no newsgroups with unread messages
 437  MessageID
 438  (mark) Text
+439  Function is supported only for RFC/Client and RFC/NNTP
 
 # XP4O
 + 441
@@ -1753,6 +1755,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 80   feeder instructions
 81   suspend all newsgroups
 82   resume all newsgroups
+83   order Newsgroups
+84   Order only headers
+85   Articlecount
+86   0ù10ù25ù50ù100ù150ù200ù250ù500ù1000ù2500ù5000ù10000
 -
 811  Are you sure that this is a file list
 812  Fileserver list
@@ -3983,6 +3989,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.8  2003/04/25 20:52:21  mk
+# - added Headeronly and MessageID request
+#   toggle with "m" in message view
+#
 # Revision 1.49.2.7  2003/04/12 08:05:52  mk
 # - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 #

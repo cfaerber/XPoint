@@ -141,6 +141,7 @@ const
        extFbl      = '.fbl';
        extBl       = '.bl';
        extRc       = '.rc';
+       extMid      = '.mid';
        extFl       = '.fl';
        extGr       = '.gr';
        extInf      = '.inf';
@@ -182,6 +183,7 @@ const
        extFbl      = '.FBL';
        extBl       = '.BL';
        extRc       = '.RC';
+       extMid      = '.MID';
        extFl       = '.FL';
        extGr       = '.GR';
        extInf      = '.INF';
@@ -1232,6 +1234,10 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.11  2003/04/25 20:52:22  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.158.2.10  2003/04/12 08:05:52  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 

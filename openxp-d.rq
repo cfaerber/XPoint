@@ -164,8 +164,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # in reference tree, Show address (marked messages), Auto Advance, Show Date
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
 # multiquote reply, PM, Quote PM, Multiquote PM, Paáwort-Edit, indir. Quote
+# MessageID-Request
 
-3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q M
 
 # Tasten im AutoVersand-Fenster
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
@@ -1025,6 +1026,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 436  keine Bretter mit ungelesenen Nachrichten vorhanden
 437  Message-ID
 438  Text-Markier
+439  Funktion wird nur für RFC/Client und RFC/NNTP unterstützt
 
 # XP4O
 + 441
@@ -1834,6 +1836,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 80   Hilfe zu Feeder anfordern
 81   alle Bretter vorbergehend abbestellen
 82   alle Bretter wieder reaktivieren
+83   Newsgroups bestellen
+84   Nur Header bestellen
+85   Anzahl der Artikel
+86   0ù10ù25ù50ù100ù150ù200ù250ù500ù1000ù2500ù5000ù10000
 -
 811  Sind Sie sicher, daá das eine Fileliste ist
 812  Fileserver-Liste
@@ -3993,6 +3999,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.11  2003/04/25 20:52:21  mk
+# - added Headeronly and MessageID request
+#   toggle with "m" in message view
+#
 # Revision 1.57.2.10  2003/04/12 08:05:52  mk
 # - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 #

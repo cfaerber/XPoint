@@ -151,6 +151,7 @@ type
     sender: string;
     lines: longint;                     { "Lines:" }
     envemp: string;
+    XPMode: string;
 
     constructor Create;
     destructor Destroy; override;
@@ -818,6 +819,10 @@ end;
 
 {
   $Log$
+  Revision 1.26.2.2  2003/04/25 20:52:25  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.26.2.1  2002/05/12 17:30:17  ma
   - fixed: editing Reply-To on unsent messages was broken
   - fixed: Reply-To handling was broken if real name specified in Reply-To
