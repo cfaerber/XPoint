@@ -158,7 +158,7 @@ var size   : longint;
     s      : string;
     hs     : string[25];
     i,hdln : integer;
-    p      : byte;
+    p,ln,lr: byte;
     _brett : string[5];
     extpos : longint;
     wempf  : string;
@@ -1123,6 +1123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.17  2001/08/07 13:28:45  my
+  - completed previous commit (compiles again)
+
   Revision 1.17.2.16  2001/08/07 13:19:13  my
   JG:- 'Summary' header is wrapped now
 
