@@ -2923,25 +2923,47 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 2738 User aus Adreábuch entfernen
 2739 Vertreter nicht in der Datenbank - neu anlegen
 +2740
-0 Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
-1 ~^Ja , ^Nein , Anderer ^Server , ^Zurck~
+0    Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
+1    ~^Ja , ^Nein , Anderer ^Server , ^Zurck~
 -
 2741 Die Eingabe ist %s Zeichen zu lang
-+2750
++ 2750
 # Zeilenzahl
 0 11
-1 CrossPoint stellt fr ZConnect-  und  RFC-Serverboxen eine
-2 erweiterte Antwortfunktion ("*Reply-To-All*") zur Verfgung,
-3 mit der  Sie die  Antwort auf eine  Nachricht mit mehreren
-4 Empf„ngern automatisch an den Absender  und alle Empf„nger
-5 einer Mail gleichzeitig senden k”nnen  (N„heres dazu siehe
-6 Online-Hilfe zu *C*onfig/*O*pt./*N*achr./Empf„nger-Auswahl).
+1    CrossPoint stellt fr ZConnect-  und  RFC-Serverboxen eine
+2    erweiterte Antwortfunktion ("*Reply-To-All*") zur Verfgung,
+3    mit der  Sie die  Antwort auf eine  Nachricht mit mehreren
+4    Empf„ngern automatisch an den Absender  und alle Empf„nger
+5    einer Mail gleichzeitig senden k”nnen  (N„heres dazu siehe
+6    Online-Hilfe zu *C*onfig/*O*pt./*N*achr./Empf„nger-Auswahl).
 7
-8 Diese Funktion ist in Ihrer bisherigen Konfiguration nicht
-9 vorhanden bzw. nicht aktiviert.
+8    Diese Funktion ist in Ihrer bisherigen Konfiguration nicht
+9    vorhanden bzw. nicht aktiviert.
 10
-11 Wollen Sie "*Reply-To-All*" aktivieren?
-20 ~^Ja , ^Nein~
+11   Wollen Sie "*Reply-To-All*" aktivieren?
+20   ~^Ja , ^Nein~
+
+
+# --- WIN2 ------------------------------------------------------------
+
++ 2800
+1    Festplatte/Diskette
+2    RAM-Disk
+3    Subst-Laufwerk
+4    Ger„tetreiber
+5    Netz-Laufwerk
+6    CD-ROM-Laufwerk
+7    Laufwerk %s
+8    zu viele Dateien
+9    keine Dateien
+10   Datei existiert nicht
+11   einen Moment bitte ...
+12   Name:
+13   Fehler
+14   Speichermangel! Max. verfgbar: %s
+15   ungltiger Name - Taste drcken
+16   Anlegen nicht m”glich - Taste drcken
+17   L”schen nicht m”glich - Taste drcken
 -
 
 # --- XPREG -----------------------------------------------------------

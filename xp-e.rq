@@ -2874,25 +2874,47 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 2738 Delete User from address book
 2739 Forward address not in database - create new user
 +2740
-0 Assign Server "%s" to all unknown users (%s)?
-1 ~^Yes , ^No , Change ^Server , ^Back~
+0    Assign Server "%s" to all unknown users (%s)?
+1    ~^Yes , ^No , Change ^Server , ^Back~
 -
 2741 Input has %s characters more then allowed
-+2750
++ 2750
 # number of lines
 0 11
-1 For  ZConnect  and  RFC Servers,  CrossPoint  provides  an
-2 enhanced reply function ("*Reply-To-All*").  With this reply
-3 function, a reply to a message with several recipients can
-4 simultaneously be sent to the sender and to all recipients
-5 of the replied  message automatically  (details see online
-6 help under *C*onfig/*O*ptions/M*e*ssages/User_selection_list).
+1    For  ZConnect  and  RFC Servers,  CrossPoint  provides  an
+2    enhanced reply function ("*Reply-To-All*").  With this reply
+3    function, a reply to a message with several recipients can
+4    simultaneously be sent to the sender and to all recipients
+5    of the replied  message automatically  (details see online
+6    help under *C*onfig/*O*ptions/M*e*ssages/User_selection_list).
 7
-8 This function  is not existent  respectively not activated
-9 in your current configuration.
+8    This function  is not existent  respectively not activated
+9    in your current configuration.
 10
-11 Do you want to activate "*Reply-To-All*"?
-20 ~^Yes , ^No~
+11   Do you want to activate "*Reply-To-All*"?
+20   ~^Yes , ^No~
+
+
+# --- WIN2 ------------------------------------------------------------
+
++ 2800
+1    Hard Disk/Diskette
+2    RAM Disk
+3    Subst Drive
+4    Device driven
+5    Network Drive
+6    CD-ROM Drive
+7    Drive %s
+8    too many files
+9    no files
+10   File doesn't exist
+11   one moment please ...
+12   Name:
+13   Error
+14   Not enough memory! Max. available: %s
+15   invalid name - press key
+16   Can't create - press key
+17   Can't delete - press key
 -
 
 # --- XPREG -----------------------------------------------------------
