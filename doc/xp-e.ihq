@@ -452,7 +452,7 @@ Bar and the Menu under "Other")
         Among other things, the message path, ie. how
         it got to you.
 
-<<O>>       Shows the hidden kludges.
+<<Ctrl-O>>  Shows the hidden kludges.
 
 
 <<Ctrl-X>>  Decodes a message in Rot 13 code
@@ -504,70 +504,91 @@ normal [Newsgroup Window], with the same functions@30
 39
 <<Message Reader
 
-Use the Arrow keys, Page-up/down, Home or End
-keys to move about in the text. In long lines, use
-the right/left arrow keys to move sideways.
-You can also use <space> instead of PgDn
+Use the Arrow keys, Page-up/down, Home or End keys
+to move about in the text. In long lines, use the
+right/left arrow keys to move sideways. You can
+also use <space> instead of PgDn
 
-   <<S>>    asks for a word or phrase to search for.
-        Case is ignored. <Tab> continues the search.
 
-<<<shift-S> >>As <<S>>, but case sensitive.
+Replying to messages:
+---------------------
 
-   <<M>>    toggles the line-marker on and off. With
+   <<P>>    Reply to a Private message without
+        quoting the original message.
+
+<<Ctrl-P>>  Reply to a Private message, quoting the
+        original message.
+
+   <<R>>    Reply to a Public message without quoting
+        the original message.
+
+<<Ctrl-R>>  Reply to a Public message, quoting the
+        original message.
+
+<<Ctrl-Q>>  Reply to the <<RECIPIENT>> of a Public
+        message, quoting the original message.
+
+---------------------
+
+   <<S>>    Asks for a word or phrase to search for,
+        case is ignored. <Tab> continues the search.
+
+<<<Shift-S> >>As <<S>> but case sensitive.
+
+   <<M>>    Toggles the line-marker on or off. With
         <space> or F7/F8, whole blocks may be marked
-        for printing
+        for printing.
 
-   <<D>>    prints the marked lines. If nothing is
-        marked the whole text is printed.
+   <<D>>    Prints the marked lines. If nothing is
+        marked, the whole text is printed.
 
-   <<W>>     Writes the marked lines (or whole text if
+   <<W>>    Writes the marked lines (or whole text if
         nothing is marked) to a file (asks for name).
 
-<<Ctrl-A>>  marks all lines;
+<<Ctrl-A>>  Marks all lines.
 
-<<Ctrl-E>>  unmarks everything.
+<<Ctrl-E>>  Unmarks everything.
 
 <<<Esc> >>  Exits the message reader.
 
- <<I>>    shows the information in the message header.
+   <<I>>    Shows the information in the message header.
 
-<<O>>     Shows the hidden kludges.
+   <<O>>    Shows the hidden kludges.
 
- <<G>>    jumps to the preceding message. (Like <<->>)
+   <<G>>    Jumps to the preceding message. (Like <<->>)
 
-<<ALT M>>  Starts the search for a MessageID.
-       The first marked textline is used as
-       search-string. If there is a "<news:"-Tag
-       in the marked line, only the MessagID
-       shows up as search-string.
+<<ALT M>>   Starts the search for a MessageID.
+        The first marked textline is used as
+        search-string. If there is a "<news:"-Tag
+        in the marked line, only the MessagID
+        shows up as search-string.
 
-       If the search was successful, you see a
-       list of the found message(s) and can read
-       them. (ESC) in the message-list jumps back
-       to the Main-Lister, showing the message
-       where you started the search.
+        If the search was successful, you see a
+        list of the found message(s) and can read
+        them. (ESC) in the message-list jumps back
+        to the Main-Lister, showing the message
+        where you started the search.
 
-<<ALT V>>  like <<ALT M>> but searching for text
+<<ALT V>>   like <<ALT M>> but searches for text.
 
-<<ALT U>>  User-search. If a Textline is marked
-       it will be used as search-string, else
-       Crosspoint will search for the author
-       of the shown message.
+<<ALT U>>   User-search. If a Textline is marked,
+        it will be used as search-string, else
+        Crosspoint will search for the author
+        of the shown message.
 
-<<ALT B>>  Topic-search. search-string is the first
-       marked textline, or the topic of the
-       shown message.
+<<ALT B>>   Topic-search. Search-string is the first
+        marked textline or the topic of the shown
+        message.
 
- <<L>>      sets the displayed message to delete
+   <<L>>    "Marks" the displayed message for deletion
         and exits.
 
-<<Ctrl-L>>  sets the displayed message to delete
+<<Ctrl-L>>  "Marks" the displayed message for deletion
         and stays in the message.
 
- <<H>>      sets the displayed message to permanent hold.
+   <<H>>    Sets the displayed message to permanent hold.
 
-<<<Backspace> >>exits reader without jumping to the next
+<<<Backspace> >>Exits reader without jumping to the next
         message, independent of /Config/Opt/Settings.
 
 <<<F3> >>   Fido-Request. In Fido Messages, will attempt
@@ -575,37 +596,33 @@ You can also use <space> instead of PgDn
         line (marked with <Space>) to request from
         the Node (Box) from which the message comes.
 
- <<C>>      toggles coloured <<bold>> Text on/off.
+   <<C>>    Toggles coloured <<bold>> Text on/off.
         (see [/Config/External/Lister])@237
-
-With <<P>>, <<Ctrl-P>>, <<R>> and <<Ctrl-R>> you can
-       answer directly to messages from inside the
-       message reader.
 
 <<When>> [reference links] <<available@4014
 <<(Maus, Fido):
 
-<<+>>       go to the next message in the
+<<+>>       Go to the next message in the
         [reference link] (if any)@4014
 
-<<->>       go to the original message in the
+<<->>       Go to the original message in the
         reference link (as long as it's still in the
         data base).
 
-<<Ctrl-PgUp>>  jumps to the chronologically preceding
+<<Ctrl-PgUp>>  Jumps to the chronologically preceding
         message in the same Newsgroup.
 
-<<Ctrl PgDn>>  jumps to the chronologically following
+<<Ctrl PgDn>>  Jumps to the chronologically following
         message in the same Newsgroup.
 
-<<Cursor-left>> and <<Cursor-right>> toggles between
+<<Cursor-left>> and <<Cursor-right>> Toggles between
         messages in the same reference link.
 
 <<For non-ref. linking nets (e.g. Z-Netz):
 
-<<+>>       jumps to the following message.
+<<+>>          Jumps to the following message.
 
-<<->>       jumps to the preceding message.
+<<->>          Jumps to the preceding message.
 
 
 In addition, with /Config/Keys/Macros, new key-
