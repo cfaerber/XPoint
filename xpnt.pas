@@ -293,7 +293,7 @@ begin
     p := cPosX('@',msgid)+1;
     while p<=length(msgid) do
     begin
-      msgid[p] := System.UpCase(msgid[p]);
+      msgid[p] := UpCase(msgid[p]);
       inc(p)
     end;
     Result := dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
@@ -782,6 +782,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.45  2002/04/22 10:04:22  mk
+  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
+
   Revision 1.44  2002/04/14 22:29:46  cl
   - added types TNetClass, TAttachMode, TAddressType
           consts mid* (message id type), netsFTN

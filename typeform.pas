@@ -538,6 +538,9 @@ const
    'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ';
 {$ENDIF}
 asm
+{$IFDEF Delphi }
+    push ebx
+{$ENDIF }
     xor ebx,ebx
     mov   bl, c
     cmp   bl, 'a'                         { erst ab 'a'... }
@@ -547,6 +550,9 @@ asm
 @noupcase:
     mov al,bl
 @Upcase_end:
+{$IFDEF Delphi }
+    pop ebx 
+{$ENDIF Delphi }
 end;
 {$endif}
 
@@ -1449,6 +1455,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2002/04/22 10:04:22  mk
+  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
+
   Revision 1.110  2002/04/19 16:52:20  cl
   - fix for last commit: pathdelim is '/' for UnixFS
 
