@@ -35,6 +35,7 @@ const         {Loglevels proposed are}
   DLWarning = 2;
   DLInform = 3;
   DLDebug = 4;
+  DLTrace = 5;
 
   DLDefault: Integer = {$IFDEF Debug} DLDebug {$ELSE} DLWarning {$ENDIF};
 
@@ -230,6 +231,9 @@ finalization
 
 {
   $Log$
+  Revision 1.23  2001/09/15 19:52:14  cl
+  - added DLTrace=DLDebug+1
+
   Revision 1.22  2001/09/13 13:28:18  ma
   - showing seconds in logs again
 
