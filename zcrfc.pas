@@ -3279,6 +3279,7 @@ type rcommand = (rmail,rsmtp,rnews);
     begin
       { queue execution file }
       nr := hex(NextUunumber, 4);
+      FreeAndNil(f2);
       f2 := TFileStream.Create(dest + 'X-' + nr + '.OUT',fmCreate);
     try
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
@@ -3289,7 +3290,7 @@ type rcommand = (rmail,rsmtp,rnews);
 
       fs := f2.Size;
     finally
-      f2.Free; f2:=nil;
+      FreeAndNil(f2);
     end;
 
       name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
@@ -3502,13 +3503,13 @@ begin
 
       f.Free; f := nil;
       f0.Free; f0 := nil;
-      if client then begin F2.Free; f2 := nil; end;
+      if client then begin FreeAndNil(f2); end;
     end;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
 
   if not Client then begin
-    f2.Free; f2:=nil;
+    FreeAndNil(f2);
   end;
 
   if n = 0 then begin
@@ -3766,6 +3767,9 @@ end;
 
 {
   $Log$
+  Revision 1.140  2003/08/28 18:48:33  cl
+  - fixed memory leak
+
   Revision 1.139  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 
