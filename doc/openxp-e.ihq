@@ -973,12 +973,12 @@ be imported directly into the editor. For this to
 work, a file named <<GLOSSARY.CFG>> must be present in
 the OpenXP HOME directory.
 
-By pressing Ctl-Enter whilst in the message editor, a
+By pressing Alt-G whilst in the message editor, a
 pick-list will appear, allowing the user to import
 any of the pre-written text "modules" found in
 GLOSSARY.CFG into the message editor. The text
 "module" will be inserted at the cursor position so
-be very careful because if the cursor is positioned
+be very careful, because if the cursor is positioned
 on a word, that word will be <<replaced>> by the imported
 text "module".
 
@@ -1003,8 +1003,8 @@ Regards,
 Fred
 >
 
-Upon pressing Ctl-Enter in the message editor and
-then by hitting <return> over ">Sig<" in the
+Upon pressing Alt-G in the message editor and
+then by hitting <Enter> over ">Sig<" in the
 pick-list, "Regards,
             Fred"
 will be imported at the cursor position.
@@ -1020,8 +1020,8 @@ Fred
 === Cut ===
 >
 
-Upon pressing Ctl-Enter in the message editor and
-then by hitting <return> over ">Cut<" in the
+Upon pressing Alt-G in the message editor and
+then by hitting <Enter> over ">Cut<" in the
 pick-list, "=== Cut ===" will be imported at the
 cursor position.
 
