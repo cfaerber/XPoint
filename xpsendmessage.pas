@@ -362,7 +362,7 @@ type
     procedure AddFilePart(datei:string;temp:boolean);
     procedure EditNachricht(pushpgdn:boolean);
     procedure MIMEDecompose;
-    procedure AddMessagePart(datei:string;temp,is_orig:boolean);
+    procedure AddMessagePart(const datei:string;temp,is_orig:boolean);
   end;
 
 { -------------------------------------------------------------------- }  
@@ -763,7 +763,7 @@ end;
 {$INCLUDE xpsendmessage_create.inc}
 {$INCLUDE xpsendmessage_uri.inc}
 
-procedure TSendUUData.AddMessagePart(datei:string;temp,is_orig:boolean);
+procedure TSendUUData.AddMessagePart(const datei:string;temp,is_orig:boolean);
 var pa     : TSendAttach_Part;
 begin
   pa := TSendAttach_Part.Create;
@@ -930,6 +930,9 @@ finalization
 
 {
   $Log$
+  Revision 1.73  2003/05/01 10:06:18  mk
+  - added const parameter to AddMessagePart
+
   Revision 1.72  2003/04/28 20:18:57  cl
   - CRLF at the end of a text file is now uniformly handled as the start of
     an additional line.
