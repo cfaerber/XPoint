@@ -3233,6 +3233,13 @@ See also: [Net type RFC/Client - General]@30100
 
 (ToDo: comprehensive explanation, \@30109).
 @
+31109
+<<Net type RFC/Client - Multiserver operation
+
+(Configuration for "Additional servers")
+
+(ToDo: comprehensive explanation, \@301091).
+@
 30110
 Here you can enter a name for your Dial-Up account
 (for instance the name of your Dial-Up Network (DUN)
@@ -3397,6 +3404,33 @@ is written to the keyname "<<Client-MailOutServer=>>" in
 your server configuration file <server>.BFG.
 @
 30121
+Should something not work when sending mail (for
+instance if the mail server is down or not available
+due to some reason) there is generally a chance to
+try it with a different mail server ("Fallback").
+
+Enter here the name of the server in XP whose SMTP
+server for outgoing mail shall be used as a fallback
+server. With <<<F2> >>you get a list of all availabe
+servers that are of the net type RFC/Client.
+
+<<ATTENTION:>> Sending mail to a different mail server
+is normally only possible if this mail server supports
+"relaying".  Relay servers accept mail also if the
+sender's address comes from a different domain and
+they usually require you to be registered. If you
+enter a server here please make sure that the SMTP
+server for outgoing mail that this XP Server uses
+supports relaying and can thus be used as a "fallback
+server".
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailFallback=>>" in
+your server configuration file <server>.BFG.
+@
+30122
 The 'envelope address' for outgoing messages. If you
 leave this field empty, it will be created from the
 From: header of your messages. There are cases where
@@ -3430,7 +3464,7 @@ is written to the keyname "<<Client-MailOutEnvelope=>>"
 in your server configuration file <server>.BFG.
 
 @
-30122
+30123
 Your user name, which is used for SMTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3449,7 +3483,7 @@ is written to the keyname "<<Client-MailOutUser=>>" in
 your server configuration file <server>.BFG.
 
 @
-30123
+30124
 Your password, which is used for SMTP Server
 authentication (if authentication is required and
 supported by both the mail server and the client).
@@ -3468,7 +3502,7 @@ is written to the keyname "<<Client-MailOutPassword=>>"
 in your server configuration file <server>.BFG.
 
 @
-30124
+30125
 Port number (on the Server) for outgoing mail. The
 standard port for the SMTP protocol is 25.
 
@@ -3487,7 +3521,7 @@ is written to the keyname "<<Client-MailOutPort=>>" in
 your server configuration file <server>.BFG.
 
 @
-30125
+30126
 Name of the Server for public Newsgroups. Often
 referred to as a NNTP Server.
 
@@ -3497,7 +3531,28 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsServer=>>" in
 your server configuration file <server>.BFG.
 @
-30126
+30127
+Should something not work when sending or receiving
+news (for instance if the news server is down or not
+available) there is generally a chance to try it
+with a different news server ("Fallback").
+
+Enter here the name of the server in XP whose news
+server shall be used as a fallback server. With <<<F2> >>
+you get a list of all availabe servers that are of
+the net type RFC/Client.
+
+<<ATTENTION:>> Posting news to a different news server
+does not necessarily work. Please contact your news
+provider for further details.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsFallback=>>" in
+your server configuration file <server>.BFG.
+@
+30128
 Your user name, which is used for NNTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3508,7 +3563,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsUser=>>" in your
 server configuration file <server>.BFG.
 @
-30127
+30129
 Your password, which is used for NNTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3519,7 +3574,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsPass=>>" in your
 server configuration file <server>.BFG.
 @
-30128
+30130
 Port number (on the Server) for incoming/outgoing
 news (articles, postings). The standard port for the
 NNTP protocol is 119.
@@ -3535,7 +3590,7 @@ is written to the keyname "<<Client-NewsPort=>>" in your
 server configuration file <server>.BFG.
 
 @
-30129
+30138
 Enter the name (and path, if necessary) of the confi-
 guration file that holds additional settings for your
 external client. The file will then be loaded in the
@@ -3569,7 +3624,7 @@ client expects. Usually the client or client kit
 provides a sample configuration file itself.
 
 @
-30130
+30139
 CrossPoint waits this many seconds after sending the
 command to dial to receive a "connect" answer. After
 this time CrossPoint breaks off, and starts waiting
@@ -3588,7 +3643,7 @@ is written to the keyname "<<ConnWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30131
+30140
 CrossPoint waits this many seconds after the
 "connect" message, to obtain a successful Login.
 
@@ -3597,7 +3652,7 @@ next try.
 
 This might cost money, since the other side answered
 the phone! You can set the number of these attempts
-separately in another box here, [Max. Connects], to@30135
+separately in another box here, [Max. Connects], to@30144
 limit costs.
 
 <<Note:>> Your client has to make sure to interpret this
@@ -3607,7 +3662,7 @@ is written to the keyname "<<LoginWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30132
+30141
 CrossPoint waits this many seconds after an aborted
 netcall attempt, before trying again.
 
@@ -3617,7 +3672,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<RedialWait=>>" in your
 server configuration file <server>.BFG.
 @
-30133
+30142
 This sets the number of times CrossPoint will try to
 call a number if it does not achieve a successful
 netcall, at intervals set by Dial Pause.
@@ -3643,7 +3698,7 @@ is written to the keyname "<<RedialMax=>>" in your server
 configuration file <server>.BFG.
 
 @
-30134
+30143
 This limits the number of attempts <<during one connect>>
 that CrossPoint will make to log on. Not to be con-
 fused with the setting for "max. connects".
@@ -3670,7 +3725,7 @@ is written to the keyname "<<RetryLogin=>>" in your
 server configuration file <server>.BFG.
 
 @
-30135
+30144
 Limits the number of tries where a connect happens
 but goes wrong.
 
@@ -3705,7 +3760,7 @@ is written to the keyname "<<ConnectMax=>>" in your
 server configuration file <server>.BFG.
 
 @
-30136
+30145
 You can enter a default setting for resetting
 your modem (see modem handbook about resetting,
 or initialising) under the menu /Config/Modem.
@@ -3735,7 +3790,7 @@ is written to the keyname "<<ModemInit=>>" in your server
 configuration file <server>.BFG.
 
 @
-30137
+30146
 The COM Port number to which the modem to be used
 for dialling the selected box is connected.
 Ports COM1 to COM4 are supported.
@@ -3756,7 +3811,7 @@ is written to the keyname "<<Port=>>" in your server
 configuration file <server>.BFG.
 
 @
-30138
+30147
 This is for setting the port speed, "baud rate"
 "DTE speed" or "DTE rate", the bit rate for data
 transfer between modem and computer. This speed can,
@@ -3812,7 +3867,7 @@ is written to the keyname "<<Baud=>>" in your server
 configuration file <server>.BFG.
 
 @
-30140
+30149
 Select the phone fee zone for this server by pressing
 <F2>.
 
@@ -3826,7 +3881,7 @@ is written to the keyname "<<Tarifzone=>>" in your
 server configuration file <server>.BFG.
 
 @
-30141
+30150
 Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
@@ -3848,7 +3903,7 @@ is written to the keyname "<<ConnectTime=>>" in your
 server configuration file <server>.BFG.
 
 @
-30150
+30160
 These are settings if you do not want XP to transfer
 the data via your client, but to put or take the
 prepared files to or from some place on your hard
@@ -6160,19 +6215,27 @@ chart. 1 gives sufficient detail if you have just a
 few units per day.
 @
 508
-<<Edit box/server list for /Netcall/Special
+<<Edit server list for /Netcall/Special
 
-Enter all boxes/servers (or select them with <F2>)
-which shall be called upon a /Netcall/Special using
-this list entry.
+Enter all servers here that shall be called upon a
+/Netcall/Special selecting this list entry.
 
-<Esc> aborts the procedure at any time. Confirm the
-entries when finished with <Ctrl-Enter> (or <Enter>
-in the last (empty) line).
+<<Insert>>  inserts a new server. Please note that the
+        new server is inserted <<behind>> the selected
+        server. You can add servers as long as the
+        total length of their names (incl. separating
+        blanks) does not exceed a limit of 249
+        characters.
 
-You can enter as many boxes/servers as their names
-(incl. separating blanks) do not exceed a total
-length limit of 255 characters.
+<<Move>>    moves the current line to another position.
+        Move the cursor (after pressing M) to the
+        position you want the line to appear, and
+        press <Enter>. <Esc> aborts.
+
+<<Delete>>  deletes the selected server.
+
+Confirm your changes with <<OK>>. With <<Esc>> >you can
+undo all changes.
 
 @
 510
@@ -8086,21 +8149,20 @@ ordered. Separate multiple file names with spaces.
 You can display the message header in the lister as
 you wish:
 
-
-<<Insert>>  inserts a line not presently displayed.
+<<Insert>>  inserts a line not presently displayed
         (except dividing lines, which can occur any
-        time.
+        time).
 
-<<Move>>    Moves the current line to another
-        position. Move the cursor (after pressing M)
-        to the position you want the line to appear,
-        and press <Enter>.
-        <Esc> aborts.
+<<Move>>    moves the current line to another position.
+        Move the cursor (after pressing M) to the
+        position you want the line to appear, and
+        press <Enter>. <Esc> aborts.
 
-<<Delete>>   Does not display the selected line any
+<<Delete>>  does not display the selected line any
          more.
 
-<<OK>>       Confirm changes and exit.
+Confirm your changes with <<OK>>. With <<Esc>> >you can
+undo all changes.
 
 
 The lines Sender, Recipient, Subject, Date and Size
@@ -9767,7 +9829,7 @@ XP directory. You can also edit this file with an
 external editor, but then you have to consider the
 following:
 
-- The maximum line length is 255 characters;
+- The maximum line length is 249 characters;
 - The server names have to be separated with
   a single space.
 - All entries from line 21 on will be ignored;
