@@ -91,11 +91,11 @@ cp -a openxp-e.res openxp-e.res-$version
 cp -a doc/openxp-d.hlp doc/openxp-d.hlp-$version
 cp -a doc/openxp-e.hlp doc/openxp-e.hlp-$version
 cp -a openxp-kylix openxp-kylix-$version
-tar cvIf "$versiondir"openxp-"$version"-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
-test -f openxp-freebsd && tar cvIf "$versiondir"openxp-"$version"-freebsd-`date -I`.tar.bz2 openxp-freebsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
-test -f openxp-netbsd && tar cvIf "$versiondir"openxp-"$version"-netbsd-`date -I`.tar.bz2 openxp-netbsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
-test -f openxp-os2.exe && zip -9-r "$versiondir"openxp-"$version"-os2-`date -I`.zip openxp-os2.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
-test -f openxp-dos.exe && zip -9-r "$versiondir"openxp-"$version"-dos-`date -I`.zip openxp-dos.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
-test -f openxp-win.exe &&  zip -9 -r "$versiondir"openxp-"$version"-win32-`date -I`.zip openxp-win.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+tar cvIf "$versiondir"openxp-"$version"-linux.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+test -f openxp-freebsd && tar cvIf "$versiondir"openxp-"$version"-freebsd.tar.bz2 openxp-freebsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-netbsd && tar cvIf "$versiondir"openxp-"$version"-netbsd.tar.bz2 openxp-netbsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-os2.exe && zip -9-r "$versiondir"openxp-"$version"-os2.zip openxp-os2.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-dos.exe && zip -9-r "$versiondir"openxp-"$version"-dos.zip openxp-dos.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-win.exe &&  zip -9 -r "$versiondir"openxp-"$version"-win32.zip openxp-win.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
 #
 echo "Finished $0"
