@@ -1554,31 +1554,31 @@ end;
 { === Parser-Routinen ============================ }
 
 { parse a configuration line.
-  search for conf key in s, return true if found, pos of '=' in p.
-  multiple keys may be separated by '|'.
-  example: scomp('test2=dummy','test1|test2',p) => true, p=6 }
+  search for conf key in s (has to be uppercase), return true if found,
+  pos of '=' in p. multiple keys may be separated by '|'.
+  example: scomp('TEST2=DUMMY','test1|test2',p) => true, p=6
 
-// Really performance critical. 
+  Optimized for performance. Called often upon program start. }
+
 function scomp(const s, Keys: string; var p: integer):boolean;
 var
   p0: Integer;
-  NewKeys, ConfKey: String;
+  ConfKey, UpperKeys: String;
 begin
+  UpperKeys := UpperCase(Keys);
   p := cpos('=', s);
   ConfKey := LeftStr(s, p-1);
-  p0 := cpos('|', Keys);
+  p0 := cpos('|', UpperKeys);
   if p0 = 0 then
   begin
-    Result := UpperCase(Keys) = ConfKey
+    Result := UpperKeys = ConfKey
   end else
   begin
-    NewKeys := Keys;
     repeat
-      Result:= Trim(Copy(NewKeys, 1, p0-1)) = ConfKey;
-      Delete(NewKeys, 1, p0);
-      p0 := cpos('|', NewKeys);
-      if p0 = 0 then Exit;
-    until true;
+      Result:= Trim(Copy(UpperKeys, 1, p0-1)) = ConfKey;
+      Delete(UpperKeys, 1, p0);
+      p0 := cpos('|', UpperKeys);
+    until p0 = 0;
   end;
 end;
 
@@ -2093,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.147  2002/04/13 16:10:16  ma
+  - fixed scomp: Scanning for multiple configuration keys did not work
+
   Revision 1.146  2002/04/09 08:51:33  mk
   - fixed potential ansistring-crash in TempS
 
