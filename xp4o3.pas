@@ -194,21 +194,21 @@ var hdp : THeader;
 begin
   hdp:= THeader.Create;
   ReadHeader(hdp,hds,false);
-  if (hdp.replyto <> '') and not askreplyto then
-    abs:=hdp.replyto
+  if (hdp.AntwortAn.Count >= 1) and not askreplyto then
+    abs:=hdp.AntwortAn[0]
   else begin
     wabok:=(cPos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
-    if (hds=1) or ((hdp.wab='') and (hdp.oem.Count = 0) and (hdp.replyto <> '')) or
-                  ((hdp.wab='') and (hdp.oem.count > 0) and (hdp.oem[0]=hdp.vertreter) and (hdp.replyto <> '')) or
-                  (not wabok and (hdp.oem.count = 0) and (hdp.replyto = ''))
+    if (hds=1) or ((hdp.wab='') and (hdp.oem.Count = 0) and (hdp.AntwortAn.Count>=1) or
+                  ((hdp.wab='') and (hdp.oem.count > 0) and (hdp.oem[0]=hdp.vertreter) and (hdp.AntwortAn.Count>=1)) or
+                  (not wabok and (hdp.oem.count = 0) and (hdp.AntwortAn.Count>=1)))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp.realname;
       end
     else begin
       anz:=0;
-      if hdp.replyto <> '' then
-        appadr(hdp.replyto,7);                   {'Reply-To-Empfaenger :' }
+      if hdp.AntwortAn.Count>=1 then
+        appadr(hdp.AntwortAn[0],7);                   {'Reply-To-Empfaenger :' }
       if hdp.wab<>'' then appadr(hdp.absender,1)    { 'Original-Absender  :' }
       else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
@@ -314,6 +314,19 @@ end;
 
 {
   $Log$
+  Revision 1.43  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.42  2002/12/12 11:58:47  dodi
   - set $WRITEABLECONT OFF
 

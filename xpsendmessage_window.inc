@@ -33,6 +33,7 @@ procedure CheckEmpfaengerList(
 
 var
   TypStr: array [TAddressListType] of String;
+  
   List: TAddressList;
   x,y,w1: integer; 
   max_h,new_h,h: 1..20;
@@ -54,19 +55,20 @@ var
   var show_type : boolean;
       show_grp  : boolean;
       show_grp_start : boolean;
-      show_grp_stop  : boolean;
+//    show_grp_stop  : boolean;
   begin
     if Offset+i<List.Count then
     begin
       show_grp       := (List[i+Offset].Group>=0);
       show_grp_start := Show_Grp and ((i+Offset<=0)or(List[i+Offset].Group<>List[i+Offset-1].Group));
-      show_grp_stop  := Show_Grp and ((i+Offset>=List.Count-1)or(List[i+Offset].Group<>List[i+Offset+1].Group));
-      show_type      := (List[i+Offset].PM or List[i+Offset].Empty) and (show_grp_start or not show_grp);
+//    show_grp_stop  := Show_Grp and ((i+Offset>=List.Count-1)or(List[i+Offset].Group<>List[i+Offset+1].Group));
+      show_type      := show_grp_start or not show_grp;
 
       setfield(F+0,iifs(List[i+Offset].AddressType=atUnused,TypStr[atTo],TypStr[List[i+Offset].AddressType]));
       setfieldenable(F+0,    show_type);
       setfieldnodisp(F+0,not show_type);
-      settexttext(AddrText[1,i],iifs(not(List[i+Offset].PM or List[i+Offset].Empty or show_grp),TypStr[atNewsgroup],''));
+
+//    settexttext(AddrText[1,i],iifs(not(List[i+Offset].PM or List[i+Offset].Empty or show_grp),TypStr[atNewsgroup],''));
 
       if show_grp then setfield(F+1,List.GroupNames[List[i+Offset].Group])
       else             setfield(f+1,'');
@@ -167,23 +169,64 @@ var
     if result >= List.Count then result := List.Count-1;
     if result < 0 then result := 0;
   end;
-  
+
+(*  
   function CurFieldStart: Integer;
   begin 
     result := FieldPos - ((FieldPos - Field1st) mod FieldInc); 
   end;
+*)
+
+  procedure SelectType(var cr:customrec);
+  var ii: Integer;
+      ls: TLister;
+  begin
+    ii := IndexPos;
+    ls := TLister.CreateWithOptions(0,0,0,0,0,'/NS/SB/NLR/DM/');
+    try
+      if List[ii].PM or List[ii].Empty then
+      begin
+        ls.AddLine(' '+TypStr[atTo          ]);
+        ls.AddLine(' '+TypStr[atCC          ]);
+        ls.AddLine(' '+TypStr[atBCC         ]);
+      end;
+
+      if List[ii].PM or List[ii].Empty then
+      begin
+        ls.AddLine(' '+TypStr[atReplyTo     ]);
+      end;
+      
+      if (not List[ii].PM) or List[ii].Empty then
+      begin
+        ls.AddLine(' '+TypStr[atNewsgroup   ]);
+      end;
+        ls.AddLine(' '+TypStr[atFollowupTo  ]);
+        
+      ls.SetSize(cr.x+1,cr.x+2+w1,cr.y+2,cr.y+1+ls.Lines.Count);
+      openboxat(w1+4,ls.Lines.Count+2,'',cr.x,cr.y+1,
+          cr.acol.ColSelBox,cr.acol.ColSelBox);
+      try
+        cr.brk := Ls.Show;
+      finally
+        closebox;
+      end;
+      cr.s   := Trim(Ls.GetSelection);
+    finally
+    ls.Free;
+    end;
+  end;
 
   function CheckType(var inhalt:string):boolean;
-  var at: TAddressListType;
+  var at,a2: TAddressListType;
       mg: integer;
       ii: Integer;
   begin
-    if inhalt=TypStr[atTo] then 
-      at := atTo else
-    if inhalt=TypStr[atCC] then 
-      at := atCC 
-    else
-      at := atBCC;
+    at := atBCC;
+    for a2 := Low(TAddressListType) to High(TAddressListType) do
+      if Inhalt=TypStr[a2] then begin
+        at := a2;
+        break;
+      end;
 
     ii := IndexPos;
     mg := List[ii].Group;
@@ -219,9 +262,240 @@ var
     result := true;
   end;
 
-  procedure SelectAddress(var cr:customrec);
+  function SelectAddress_OnTestMark(const s: string; block: boolean): boolean;
   begin
+    result := FirstChar(s)<>'=';
+  end;
 
+  function SelectAddress_OnTestSelbar(const s: string; down: boolean): boolean;
+  begin
+    result := (FirstChar(s)<>'=') or ((Length(s)>=2)and(s[2]<>'-'));
+  end;
+
+  procedure SelectAddress_OnDisplay(x, y: xpWord; var s: string);
+  var i: Integer;
+  begin
+    i := CPos('=',s);
+
+    if (i=1) and (Length(s)>=2) then
+    begin
+      if s[2] = '-' then
+      begin
+        attrtxt(Col.ColSelRahmen);
+        s[1]:='-'; s[2]:=' ';          
+        for i := Length(s) downto 2 do
+          if (i=2)or(s[i-1]=' ') then s[i]:='-' else break;
+        FWrt(x,y,s);
+      end else
+      begin
+        i:=CPos('^',s);
+        if i>0 then begin
+          FWrt(x+i-1,y,Mid(s,i+2)+'  ');
+          FWrt(x,y,' '+Copy(s,3,i-3));
+          if (LastAttr = Col.ColSelBar) then attrtxt(Col.ColSelBarHigh)
+          else                               attrtxt(Col.ColSelHigh);
+          FWrt(x+i-2,y,s[i+1]);
+        end else
+          FWrt(x,y,' '+Mid(s,3)+' ');
+      end;
+    end else
+    begin
+      FWrt(x,y,' '+LeftStr(s,i-1)+Mid(s,i+1));
+    end;
+  end;
+
+  procedure CheckAddressSetAddressList(nl: TAddressList; AutoAdd: boolean); forward;
+
+  procedure SelectAddress(var cr:customrec);
+  var ii,i,j: Integer;
+      Lister: TLister;
+      DontAdd: TStringList;
+      NewList: TAddressList;
+      TypeWidth: Integer;
+      AddrWidth: Integer;
+  var x1,x2,y1,y2: Integer;
+      res: Integer;
+
+    procedure rm(const AddrSpec: String);
+    begin
+      DontAdd.Add(UpperCase(AddrSpec));
+    end;
+
+    procedure add(const AddrSpec, DisplayString: String; AddressType: String); overload;
+    var dummy: Integer;
+    begin
+      if DontAdd.Find(UpperCase(AddrSpec),dummy) then exit;
+      if res>0 then begin Lister.AddLine('=-'+GetRes2(610,res)); res := -1; end;
+      AddrWidth := Max(Length(DisplayString),AddrWidth);
+      Lister.AddLine(FormS(AddressType,TypeWidth)+'='+DisplayString);
+      rm(AddrSpec);
+    end;
+
+    procedure addz(const zc_header: string; AddressTypeMail, AddressTypeNews: String); overload;
+    var AddressType: String;
+    begin
+      if zc_header='' then exit;    
+      if (AddressTypeMail <> AddressTypeNews) and (CPos('@',zc_header)>0) then 
+        AddressType := AddressTypeMail 
+      else 
+        AddressType := AddressTypeNews;
+      add(RFCRemoveComments(zc_header),zc_header,AddressType);
+    end;
+
+    procedure addz(const zc_header: TStrings; AddressTypeMail, AddressTypeNews: String); overload;
+    var i: Integer;
+    begin
+      for i := 0 to zc_header.Count -1 do 
+        addz(zc_header[i],AddressTypeMail, AddressTypeNews);
+    end;
+
+    procedure addu(const uucp_header: String; const AddressType: String);
+    var List: TAddressList;
+        i: Integer;
+    begin
+      List := TAddressList.Create;
+      try
+        RFCReadAddressList(uucp_header, List, nil);
+        for i := 0 to List.Count -1 do
+          add(List[i].AddrSpec,List[i].DisplayString,AddressType); 
+      finally
+        List.Free;
+      end;
+    end;
+
+  begin
+    ii := IndexPos;
+    TypeWidth := Length(GetRes2(610,83))+1;
+    AddrWidth := 0;
+
+    Lister := TLister.CreateWithOptions(0,0,0,0,0,'/NS/SB/NLR/DM/M/');
+    try
+      Lister.OnDisplayLine := SelectAddress_OnDisplay;
+      Lister.OnTestMark := SelectAddress_OnTestMark;
+      Lister.OnTestSelect := SelectAddress_OnTestSelbar;
+      
+      DontAdd := TStringList.Create;
+      try
+        DontAdd.Sorted := true;
+        DontAdd.Duplicates := dupIgnore;
+
+        // --- addresses from current message ----------------------------
+        res := 80;
+        for i := 0 to List.Count-1 do
+          if i<>ii then begin
+            if ((List[ii].AddressType in [atTo,atCC,atBCC]) and (List[i].AddressType in [atReplyTo,atMailFollowupTo,atFrom,atSender,atFollowupTo])) or
+               ((List[ii].AddressType in [atReplyTo]) and (List[i].AddressType in [atTo,atCC,atBCC,atMailFollowupTo,atFrom,atSender,atFollowupTo])) or
+               ((List[ii].AddressType in [atMailFollowupTo]) and (List[i].AddressType in [atTo,atCC,atBCC,atReplyTo,atFrom,atSender,atNewsgroup])) or
+               ((List[ii].AddressType in [atFrom,atSender]) and (List[i].AddressType in [atTo,atCC,atBCC,atReplyTo,atMailFollowupTo])) or
+               ((List[ii].AddressType in [atNewsgroup]) and (List[i].AddressType in [atFollowupTo,atMailFollowupTo,atFrom,atSender])) or
+               ((List[ii].AddressType in [atFollowupTo]) and (List[i].AddressType in [atNewsgroup,atTo,atCC,atBCC,atReplyTo,atFrom,atSender])) 
+            then
+              add(List[i].AddrSpec,List[i].DisplayString,TypStr[List[i].AddressType])
+            else
+              rm(List[i].AddrSpec);
+          end;
+
+        // --- addresses from provious message ---------------------------
+        if assigned(gsData) and assigned(gsData.OrgHdp) then
+        with gsData.OrgHdp do
+        begin
+          res := 81;
+          addz(AbSender,      TypStr[atFrom  ],       TypStr[atFrom  ]);
+          addz(Sender,        TypStr[atSender],       TypStr[atSender]); 
+          addz(wab,           GetRes2(610,87),         GetRes2(610,87)); 
+   
+          if (UTo<>'') or (CC<>'') or (BCC<>'') then
+          begin
+            if UTo<>'' then addu(UTo,  TypStr[atTo]);
+            if CC <>'' then addu(CC,   TypStr[atCC]);
+            if BCC<>'' then addu(BCC,  TypStr[atBCC]);
+            addz(Empfaenger,  GetRes2(610,84),TypStr[atNewsgroup]);
+            addz(Kopien,      GetRes2(610,84),TypStr[atNewsgroup]);
+          end else
+          begin
+            addz(Empfaenger,  TypStr[atTo]   ,TypStr[atNewsgroup]);
+            addz(Kopien,      TypStr[atTo]   ,TypStr[atNewsgroup]);
+          end;
+          addz(oab,           GetRes2(610,85), GetRes2(610,85)); 
+          addz(oem,           GetRes2(610,86), GetRes2(610,86));
+       
+          if UMailReplyTo   <>'' then addu(UMailReplyTo,   TypStr[atReplyTo]) else
+          if UReplyTo       <>'' then addu(UReplyTo,       TypStr[atReplyTo]);
+          if UMailFollowupTo<>'' then addu(UMailFollowupTo,TypStr[atFollowupTo]);
+        
+          addz(DiskussionIn,  TypStr[atMailFollowupTo],TypStr[atFollowupTo]);
+          addz(AntwortAn,     TypStr[atReplyTo],       TypStr[atReplyTo]);
+
+//        res := 82;
+//        TODO: U-Resent-* headers
+        end;      
+
+      finally
+        Dontadd.Free;
+      end;
+
+      // --- add other entries in list ---------------------------------
+      if Lister.Lines.Count>0 then begin
+        Lister.AddLine('=-');
+        Lister.AddLine('=*'+GetRes2(610,92));
+      end;
+      Lister.AddLine('=*'+GetRes2(610,90));
+      Lister.AddLine('=*'+GetRes2(610,91));
+
+      x1 := cr.x;   x2 := cr.x+4+Max(50,TypeWidth+AddrWidth);
+      y1 := cr.y+1; y2 := cr.y+2+Lister.Lines.Count;
+
+      if y2 > ScreenLines then begin y1 := Max(1,y1-(y2-ScreenLines)); y2:= ScreenLines; end;
+      if x2 > ScreenWidth then begin x1 := Max(1,x1-(x2-ScreenWidth)); x2:= ScreenWidth; end;
+        
+      Lister.SetSize(x1+1,x2-1,y1+1,y2-1);
+      openboxat(x2-x1+1,y2-y1+1,'',x1,y1,cr.acol.ColSelBox,cr.acol.ColSelBox);
+      try
+        cr.brk := Lister.Show;
+        if cr.brk then exit;
+      finally
+        closebox;
+      end;
+
+      NewList := TAddressList.Create;
+      try
+        case Lister.Lines.Count - Lister.SelLine of
+        1: (* select user *)
+          begin
+            wpush(1,ScreenWidth,1,ScreenLines,'-');
+            xp4.ArchivWeiterleiten := false;
+            xp4.select(3);
+            wpop;
+            if xp4.SelPos <= 0 then exit;
+            dbGo(ubase,selpos);
+            NewList.AddNew.ZCAddress := dbReadNStr(ubase,ub_username);
+          end;
+        2: (* select group *)
+          begin
+            wpush(1,ScreenWidth,1,ScreenLines,'-');
+            xp4.ArchivWeiterleiten := false;
+            xp4.select(-1);
+            wpop;
+            if xp4.SelPos <= 0 then exit;
+            dbGo(bbase,selpos);
+            NewList.AddNew.XPAddress := dbReadNStr(bbase,bb_brettname);
+          end;
+        else (* use marked addresses *)
+          for j := 0 to Lister.Lines.Count-1-3 do
+            if Lister.Marked[j] or (Lister.Selline = j) then
+              NewList.AddNew.DisplayString := Mid(Lister.Lines[j],TypeWidth+2);
+        end; // case
+        
+        CheckAddressSetAddressList(NewList,true);
+        cr.s := List[ii].DisplayString;
+
+      finally
+        NewList.Free;
+      end;
+      
+    finally
+      Lister.Free;
+    end;
   end;
 
   function CheckAddress(var inhalt:string):boolean;
@@ -370,14 +644,8 @@ var
 
  {function CheckAddress(var inhalt:string):boolean;}
   var ii: integer;
-      j: integer;
       nl: TAddressList;
-      lg: integer;
-      lp: integer;
-      lt: TAddressListType;      
-      ch: boolean;
   begin
-    ch := false;
     ii := IndexPos;
 
     Inhalt := Trim(Inhalt);
@@ -409,17 +677,49 @@ var
 
   //-- Liste erzeugen --------------------------------------------------
     nl := TAddressList.Create;
-  try
-    ParseAddresses(inhalt,nl);
-    CheckEmpfaengerList(nl,true,false,nil);
+    try
+      ParseAddresses(inhalt,nl);
+      CheckAddressSetAddressList(nl,false);
+      inhalt := List[ii].DisplayString;
+    finally
+      nl.Free;
+    end;
+    result := true;
+  end;
 
+
+  procedure CheckAddressSetAddressList(nl: TAddressList; AutoAdd: boolean);
+  var ii,j: Integer;
+      lg: integer;
+      lp: integer;
+      pm_type,am_type: TAddressListType;      
+      ch: boolean;
+  begin    
+    ch := false;
+    ii := IndexPos;
+  
     lg := List[ii].Group;
-    lt := List[ii].AddressType;
+    
+    pm_type := List[ii].AddressType;
+    am_type := pm_type;
+
+    if am_type in [atTo,atCC,atBCC] then am_type := atNewsgroup;
+    if am_type in [atReplyto,atMailFollowupTo] then am_type := atFollowupTo;
+
+    if pm_type in [atNewsgroup] then pm_type := atTo;
+    if pm_type in [atFollowupTo] then pm_type := atMailFollowupTo;
+
+  // -- Read data from database ----------------------------------------
+    
+    CheckEmpfaengerList(nl,not AutoAdd,false,nil);
 
   // -- Neue Adresse(n) einfügen ---------------------------------------
 
     for j := 0 to nl.Count-1 do 
-       nl[j].AddressType := lt;
+      if nl[j].pm then
+        nl[j].AddressType := pm_type
+      else
+        nl[j].AddressType := am_type;
 
     if nl.Count<>1 then 
     begin
@@ -494,17 +794,10 @@ var
       ch := true;
     end;
 
-    inhalt := List[ii].DisplayString;
-    
     if (nl.Count<>1) or ch then 
       ScrollDone
     else
       ScrollDone2(ii-Offset,(ii-Offset)*FieldInc+Field1st);
-      
-  finally
-    nl.Free;
-  end;  
-    result := true;
   end;
 
 // ---------------------------------------------------------------------
@@ -580,9 +873,9 @@ begin
   TypStr[atCC          ] := GetRes2(610,32); {'CC:'}
   TypStr[atBCC         ] := GetRes2(610,33); {'BCC:'}
   
-  TypStr[atFollowupTo  ] := GetRes2(610,35); {'Antw.-An:'}
-  TypStr[atReplyTo     ] := GetRes2(610,36); {'Disk.-In:'}
-  TypStr[atMailCopiesTo] := GetRes2(610,37); {'Disk.-In:'}
+  TypStr[atFollowupTo  ] := GetRes2(610,36); {'Antw.-An:'}
+  TypStr[atReplyTo     ] := GetRes2(610,35); {'Disk.-In:'}
+  TypStr[atMailFollowupTo]:=GetRes2(610,36); {'Disk.-In:'}
 
   TypStr[atFrom        ] := GetRes2(610,40); {'Autor:'}
   TypStr[atSender      ] := GetRes2(610,41); {'Sender:'}
@@ -595,8 +888,7 @@ begin
         Max(Length(TypStr[atFrom        ]),
         Max(Length(TypStr[atSender      ]),
         Max(Length(TypStr[atFollowupTo  ]),
-        Max(Length(TypStr[atReplyTo     ]),
-            Length(TypStr[atMailCopiesTo]) )))))))));
+            Length(TypStr[atReplyTo     ]) ))))))));
 
   SendWindowInitGlobals_Done := true;
 end;
@@ -646,7 +938,11 @@ begin
 
         MaddText  (2,      1+i,'',col.coldiahigh); AddrText[1,i] := MTextPos;
         Maddstring(2,      1+i,'',AddrCont[0,i],w1,      MAXINT,'');
-        MappSel   (true,TypStr[atTo]+'ù'+TypStr[atCC]+'ù'+TypStr[atBCC]);
+//      MappSel   (true,TypStr[atTo]+'ù'+TypStr[atCC]+'ù'+TypStr[atBCC]+'ù'+
+//                      TypStr[atReplyTo]+'ù'+(* TypStr[atMailFollowupTo]+'ù'+ *)
+//                      TypStr[atFollowupTo]);
+        MAppCustomSel(@SelectType,true);
+                        
         MSetVFunc(CheckType);
         
         Maddstring(2+w1+4, 1+i,'',AddrCont[1,i],10,      MAXINT,'');
@@ -655,9 +951,10 @@ begin
         
         Maddstring(2+w1+18,1+i,'',AddrCont[2,i],76-w1-22,MAXINT,'');
         MSetVFunc(CheckAddress);
-
+        MAppCustomSel(@SelectAddress,false);
         Maddstring(2+w1+4, 1+i,'',AddrCont[2,i],76-w1-8, MAXINT,'');
         MSetVFunc(CheckAddress);
+        MAppCustomSel(@SelectAddress,false);
                 
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
@@ -760,7 +1057,10 @@ begin
 
         MaddText  (2,      1+i,'',col.coldiahigh); AddrText[1,i] := MTextPos;
         Maddstring(2,      1+i,'',AddrCont[0,i],w1,      MAXINT,'');
-        MappSel   (true,TypStr[atTo]+'ù'+TypStr[atCC]+'ù'+TypStr[atBCC]);
+//      MappSel   (true,TypStr[atTo]+'ù'+TypStr[atCC]+'ù'+TypStr[atBCC]+'ù'+
+//                      TypStr[atReplyTo]+'ù'+(* TypStr[atMailFollowupTo]+'ù'+ *)
+//                      TypStr[atFollowupTo]);
+        MAppCustomSel(@SelectType,true);
         MSetVFunc(CheckType);
         
         Maddstring(2+w1+4, 1+i,'',AddrCont[1,i],10,      MAXINT,'');
@@ -769,8 +1069,10 @@ begin
         
         Maddstring(2+w1+18,1+i,'',AddrCont[2,i],76-w1-4-18,MAXINT,'');
         MSetVFunc(CheckAddress);
+        MAppCustomSel(@SelectAddress,false);
         Maddstring(2+w1+4, 1+i,'',AddrCont[2,i],76-w1-4-4 ,MAXINT,'');
         MSetVFunc(CheckAddress);
+        MAppCustomSel(@SelectAddress,false);
                 
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
@@ -1071,7 +1373,10 @@ var Index: integer;
         List[Index].Charsets.CommaText := 'IBM437';
 
     if List[Index].AddressType in [atNewsgroup] then
-      List[Index].AddressType := atTo;
+      List[Index].AddressType := atTo else
+    if List[Index].AddressType in [atFollowupTo] then
+      List[Index].AddressType := atMailFollowupTo;
+      
 
     if assigned(sData) then
     begin
@@ -1215,7 +1520,7 @@ var Index: integer;
 
     if List[Index].AddressType in [atTo,atCC,atBCC] then
       List[Index].AddressType := atNewsgroup else
-    if List[Index].AddressType in [atReplyTo] then
+    if List[Index].AddressType in [atReplyTo,atMailFollowupTo] then
       List[Index].AddressType := atFollowupTo;
 
     Inc(Index);
@@ -1239,6 +1544,19 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2003/01/07 00:56:47  cl
+// - send window rewrite -- part II:
+//   . added support for Reply-To/(Mail-)Followup-To
+//   . added support to add addresses from quoted message/group list/user list
+//
+// - new address handling -- part II:
+//   . added support for extended Reply-To syntax (multiple addresses and group syntax)
+//   . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+//
+// - changed "reply-to-all":
+//   . different default for Ctrl-P and Ctrl-B
+//   . more addresses can be added directly from send window
+//
 // Revision 1.3  2002/12/14 07:31:40  dodi
 // - using new types
 //

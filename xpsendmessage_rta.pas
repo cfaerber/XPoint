@@ -25,41 +25,76 @@
 
 {----------------------------} interface {-----------------------------} 
 
-uses addresslist;
+uses classes;
 
+{
+  Reads own email addresses from box configurations
+
+  All addresses are converted to upper case; full domains are written as
+  "@<domain>".
+
+  Parameters
+    Dest => Add addresses to this list.
+}
+procedure FindOwnAddresses(Dest: TStrings);
+
+{
+  Test if a address is an own address
+
+  Parameters:
+    address => address to test
+
+  Return Value: 
+    true => address is an own address
+}
 function IsOwnAddress(const address: string):boolean;
-
-procedure RemoveDuplicateAddresses(List:TAddressList);
-//procedure RemoveOwnAddresses(List:TAddressList);
-procedure SelectAddresses(List:TAddressList;Other:Boolean);
 
 {--------------------------} implementation {--------------------------} 
 
-uses database,datadef,addresses,sysutils,typeform,xp0,xpnt;
+uses
+  sysutils,
+  xpserver,
+  datadef,
+  database,
+  typeform,  
+  xp0,
+  xpglobal;
 
-procedure RemoveDuplicateAddresses(List:TAddressList);
+// ---------------------------------------------------------------------
+// Build Own Address List
+// ---------------------------------------------------------------------
+
+procedure FindOwnAddresses(Dest: TStrings);
+var   d: DB;
+    box: TXPServer;
+      s: String;
+
+  procedure add(addr: string);
+  begin
+    addr := Trim(addr);
+    if addr<>'' then Dest.Add(UpperCase(addr));
+  end;
+
 begin
+  assert(assigned(Dest));
 
-end;
-
-{ Select Addresses from a list                                         
-
-  INPUT:
-    List:   Addresses to select from; AddressType must be default usage
-            of this address.
-    Other:  Allow to select addresses from BRETTER or USER.
-
-  OUTPUT:
-    List:   List of Addresses selected.
-}
-procedure SelectAddresses(List:TAddressList;Other:Boolean);
-var i: integer;
-begin
-  assert(assigned(List));
-
-  for i:= List.Count-1 downto 0 do
-    if not(List[i].AddressType in [atCC,atBCC,atTo,atNewsgroup]) then
-      List.Delete(i);
+  dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
+  try
+    while not dbEof (d) do
+    begin
+      box := TXPServer.CreateByDB(d);
+      try
+        s := box.UserDomain;
+        if s<>'' then add('@'+s) else add(box.AbsAddr);
+        add(box.EMail);
+      finally
+        box.Free;
+      end;
+      dbNext (d);
+    end;
+  finally
+    dbClose (d);
+  end;
 end;
 
 // ---------------------------------------------------------------------
@@ -67,77 +102,50 @@ end;
 // ---------------------------------------------------------------------
 
 function IsOwnAddress(const address: string):boolean;
-var      d: DB;
-      addr: TEmailAddress;
-       dom: boolean;
-       ftn: boolean;
-      uadd: string; // Upper case address
-      udom: string; // Upper case domain part of address
-
-        nt: eNetz;
-     alpnt: boolean;
-   z,n,f,p: integer;
-
-  function username: string; begin result := dbReadStr(d,'username'); end;
-  function pointname: string; begin result := dbReadStr(d,'pointname'); end;
-  function boxname: string; begin result := dbReadStr(d,'boxname'); end;
-  function domain: string; begin result := dbReadStr(d,'domain'); end;
+var   d: DB;
+    box: TXPServer;
+    s,uaddress: String;
 
 begin
-  addr := nil;
-  result := true; // allows quick exit if address found
-  if CPos('@',address)<=0 then begin result := false; exit; end;
+  UAddress := UpperCase(Address);
+  Result := true;
 
-  dbOpen(d,BoxenFile,1);  
-  try 
-    addr := TEmailAddress.Create(address);
-    dom  := addr is TDomainEmailAddress;
-    ftn  := addr is TFTNEMailAddress;
-
-    if dom then begin 
-      uadd := UpperCase(TDomainEmailAddress(addr).AddrSpec);
-      udom := UpperCase(TDomainEmailAddress(addr).HostName);
-    end;
-    
-    while not dbEOF(d) do
+  dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
+  try
+    while not dbEof (d) do
     begin
-      nt := dbNetztyp(d);
-
-      if (not (nt in netsFTN)) and (UpperCase(dbReadStr(d,'email')) = UAdd) then exit;
-      alpnt := dbReadByte(d,'script') and 4<>0;
-
-      case ntDomainType(nt) of
-//        0: { Netcall }
-//        1: { Magic }
-//        2: { Quick, GS }
-          3: { Maus, QWK }  if UAdd = UpperCase(username+'@'+boxname) then exit;
-          4: { FTN }        if ftn and FTNParse(boxname,z,n,f,p) then begin
-                              if alpnt then f := IVal(pointname) else p := IVal(pointname);
-                              if (TFTNEmailAddress(addr).Zone=z) and 
-                                 (TFTNEMailAddress(addr).Node=n) and 
-                                 (TFTNEMailAddress(addr).Net=f) and 
-                                 (TFTNEMailAddress(addr).Point=p) then exit;
-                            end;
-          5: { ZConnect }   if alpnt and (UDom = UpperCase(pointname+domain)) then exit else
-                            if (not alpnt) and (UAdd = UpperCase(username+'@'+boxname+domain)) then exit;
-          6: { UUCP }       if alpnt and (UAdd = UpperCase(username+'@'+boxname+domain)) then exit else
-                            if (not alpnt) and (UDom = UpperCase(pointname+domain)) then exit;
-//        7: { Pronet }
+      box := TXPServer.CreateByDB(d);
+      try
+        s := box.UserDomain;
+        if ((s<>'')and(UpperCase(s) = Mid(UAddress,1+RightPos('@',UAddress)))) or
+           (UpperCase(box.AbsAddr) = UAddress) or
+           (UpperCase(box.EMail) = UAddress) then exit;
+      finally
+        box.Free;
       end;
-
-      dbNext(d);
+      dbNext (d);
     end;
-    
   finally
-    dbClose(d);
-    addr.Free;
+    dbClose (d);
   end;
-
-  result := false;
+  Result := false;
 end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.4  2003/01/07 00:56:47  cl
+// - send window rewrite -- part II:
+//   . added support for Reply-To/(Mail-)Followup-To
+//   . added support to add addresses from quoted message/group list/user list
+//
+// - new address handling -- part II:
+//   . added support for extended Reply-To syntax (multiple addresses and group syntax)
+//   . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+//
+// - changed "reply-to-all":
+//   . different default for Ctrl-P and Ctrl-B
+//   . more addresses can be added directly from send window
+//
 // Revision 1.3  2002/12/14 07:31:40  dodi
 // - using new types
 //

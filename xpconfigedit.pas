@@ -118,7 +118,7 @@ uses
   {$IFDEF unix}xplinux,{$ENDIF}
   fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
   xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,
-  xpmodemscripts, replytoall,
+  xpmodemscripts,
   xpglobal;
 
 const umtyp : array[0..5] of string[5] =
@@ -1719,8 +1719,8 @@ begin { --- UniSel --- }
     miscbase:=nil;
     end;
   closebox;
-  if (typ = 1) and edit then
-    askRTA (false);
+//if (typ = 1) and edit then
+//  askRTA (false);
 end;
 
 
@@ -3129,6 +3129,19 @@ end;
 
 {
   $Log$
+  Revision 1.59  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.58  2002/12/21 05:38:00  dodi
   - removed questionable references to Word type
 

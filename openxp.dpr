@@ -53,7 +53,6 @@ uses
   ZFTools in 'zftools.pas',
   printerx in 'printerx.pas',
   ProgressOutput in 'progressoutput.pas',
-  replytoall in 'replytoall.pas',
   resource in 'resource.pas',
   stack in 'stack.pas',
   StringTools in 'stringtools.pas',

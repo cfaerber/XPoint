@@ -49,12 +49,17 @@ type
     function GetTypChar: Char;
 
   public // TODO: should be private when makeheader is made a method!
-    FTo,FCC,FBCC: string;        
+    FTo,FCC,FBCC: string;   
+    FReplyTo,FMailFollowupTo: string;
+    FMailReplyTo: string;
   private
-    function GetTo: string;         procedure SetTo(s:string);
-    function GetCC: string;         procedure SetCC(s:string);
-    function GetBCC: string;        procedure SetBCC(s:string);
+//  function GetTo: string;         procedure SetTo(s:string);
+//  function GetCC: string;         procedure SetCC(s:string);
+//  function GetBCC: string;        procedure SetBCC(s:string);
+//  function GetReplyto: string;    procedure SetReplyTo(s:string);
+//  function GetMailFollowupTo: string; procedure SetMailFollowupTo(s:string);
     function GetNewsgroups: string; procedure SetNewsgroups(s:string);
+    function GetFollowupTo: string; procedure SetFollowupTo(s:string);
 
   public
     netztyp: eNetz; //byte;             { --- intern ----------------- }
@@ -62,20 +67,28 @@ type
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
 
-  { -- Envelope-Empfänger -------------------------------------------- }
-    Empfaenger: TStringList;            { EMP:                         }
-    Kopien:     TStringList;            { KOP: = bereits versendet     }
+  { -- Envelope-Empfänger/ZConnect-Header ---------------------------- }
+    Empfaenger:   TStringList;          { EMP:                         }
+    Kopien:       TStringList;          { KOP: = bereits versendet     }
+    
+    DiskussionIn: TStringList;          { Diskussion-In:               }
+    AntwortAn:    TStringList;          { Antwort-An:                  }
 
-  { -- Informative Empfänger ----------------------------------------- }
-    property UTo: string read GetTo  write SetTo;
-    property CC:  string read GetCC  write SetCC;
-    property BCC: string read GetBCC write SetBCC;
+  { -- Informative Empfänger (RFC) ----------------------------------- }
+    property UTo: string read FTo  write FTo;
+    property CC:  string read FCC  write FCC;
+    property BCC: string read FBCC write FBCC;
+    
+    property UReplyTo: string read FReplyTo write FReplyTo;
+    property UMailReplyTo: string read FMailReplyTo write FMailReplyTo;
+    property UMailFollowupTo: string read FMailFollowupTo write FMailFollowupTo;
+    
     property Newsgroups: string read GetNewsgroups write SetNewsgroups;
-
-
+    property FollowupTo: string read GetFollowupTo write SetFollowupto;
 
   { -- ReconstructEnvelope ------------------------------------------- }
-    procedure ReconstructEnvelope;
+    procedure MakeEnvelopeFromRFCHeaders;
+    procedure MakeRFCHeadersFromEnvelope;
 
   public
     betreff: string;
@@ -103,8 +116,6 @@ type
     postanschrift: string;
     telefon: string;
     homepage: string;
-    ReplyTo: String;                    { Antwort-An, "Reply-To:'    }
-    followup: tstringlist;              { Diskussion-In }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     datei: string;                      { Dateiname                  }
     ddatum: string;                     { Dateidatum, jjjjmmtthhmmss }
@@ -145,7 +156,6 @@ type
     fline: TStringList;
     nokop: boolean;
     References: TStringList;            // references:
-    mailcopies: tstringlist;
     MIME: mimedata;
     gateway: string;
     sender: string;
@@ -187,8 +197,7 @@ type
 implementation
 
 uses
-  SysUtils,Typeform,xp0,xpdatum,xp_pgp,xpmakeheader,xpstreams,
-  rfc2822, addresses;
+  SysUtils,Typeform,xp0,xpdatum,xp_pgp,xpmakeheader,xpstreams;
 
 constructor THeader.Create;
 begin
@@ -201,9 +210,10 @@ begin
   XLIne := TStringList.Create;
   fLine := TStringList.Create;
   zLIne := TStringList.Create;
-  Followup := TStringList.Create;
-  MailCopies := TStringList.Create;
-  MailCopies.Duplicates := dupIgnore;
+  DiskussionIn := TStringList.Create;
+  AntwortAn    := TStringList.Create;
+//MailCopies := TStringList.Create;
+//MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
   References.Duplicates := dupIgnore;
 // XEmpf := TStringList.Create;
@@ -225,6 +235,11 @@ begin
   FTo := '';
   FCC := '';
   FBCC:= '';
+
+  FReplyTo := '';
+  FMailReplyTo := '';
+  FMailFollowupTo := '';
+  
   Nokop := false;
 
   betreff := '';
@@ -251,8 +266,8 @@ begin
   postanschrift:= '';
   telefon:= '';
   homepage:= '';
-  ReplyTo := '';
-  followup.clear;;
+  DiskussionIn.Clear;;
+  AntwortAn.Clear;
   komlen := 0;
   datei:= '';                      { Dateiname                  }
   ddatum:= '';                     { Dateidatum, jjjjmmtthhmmss }
@@ -297,7 +312,7 @@ begin
   fline.clear;
   References.Clear;
 // xempf.clear;
-  mailcopies.clear;
+//mailcopies.clear;
 // xoem.clear;
   gateway:= '';
   sender:= '';
@@ -331,8 +346,8 @@ begin
   XLine.Free;
   fLine.Free;
   zLine.Free;
-  Followup.Free;
-  Mailcopies.free;
+  DiskussionIn.Free;
+  AntwortAn.free;
   References.Free;
 // XEmpf.Free;
   OEM.Free;
@@ -376,7 +391,6 @@ procedure THeader.WriteZConnect(stream:TStream);
 
 //  procedure WriteZheader;
   var
-    p1 : byte;
     i: Integer;
     s: String;
     gb : boolean;
@@ -406,8 +420,6 @@ procedure THeader.WriteZConnect(stream:TStream);
 
 {      if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);}
-      for i:=0 to followup.count-1 do
-        writeln_s(stream,'DISKUSSION-IN: '+followup[i]);
       for i := 0 to OEM.Count - 1 do
         writeln_s(stream,'OEM: '+ OEM[i]);
       for i := 0 to Kopien.Count - 1 do
@@ -418,6 +430,15 @@ procedure THeader.WriteZConnect(stream:TStream);
 
       if fto<>'' then writeln_s(stream,'U-TO: '+fto);
       if fcc<>'' then writeln_s(stream,'U-CC: '+fcc);
+
+      for i:=0 to AntwortAn.Count-1 do
+        writeln_s(stream,'ANTWORT-AN: '+AntwortAn[i]);
+      for i:=0 to DiskussionIn.Count-1 do
+        writeln_s(stream,'DISKUSSION-IN: '+DiskussionIn[i]);
+
+      if FReplyTo       <>'' then writeln_s(stream,'U-REPLY-TO: '        +FReplyTo);
+      if FMailReplyTo   <>'' then writeln_s(stream,'U-MAIL-REPLY-TO: '   +FMailReplyTo);
+      if FMailFollowupTo<>'' then writeln_s(stream,'U-MAIL-FOLLOWUP-TO: '+FMailFollowupTo);
       
       writeln_s(stream,'BET: '+betreff);
       writeln_s(stream,'EDA: '+zdatum);
@@ -435,11 +456,6 @@ procedure THeader.WriteZConnect(stream:TStream);
       end;
       writeln_s(stream,'ROT: '+pfad);
 
-      p1:=cpos(' ', ReplyTo);
-      if p1>0 then { evtl. ueberfluessige Leerzeichen entfernen }
-        ReplyTo := LeftStr(ReplyTo, p1-1) + ' ' + trim(mid(ReplyTo,p1+1));
-      if (ReplyTo <> '') and (LeftStr(ReplyTo,Length(absender)) <> absender) then
-        writeln_s(stream,'ANTWORT-AN: '+ ReplyTo);
       if typ='B'       then writeln_s(stream,'TYP: BIN') else
       if (typ='M')and(netztyp in [nt_ZConnect]) then writeln_s(stream,'TYP: MIME');
       if datei<>''     then writeln_s(stream,'FILE: ' +LowerCase(datei));
@@ -449,9 +465,9 @@ procedure THeader.WriteZConnect(stream:TStream);
       if prio<>0       then writeln_s(stream,'PRIO: '  +strs(prio));
       if organisation<>'' then writeln_s(stream,'ORG: '+organisation);
       if attrib and attrReqEB<>0 then
-        if wab <> ''     then writeln_s(stream,'EB: ' + wab) else
-        if ReplyTo <> '' then writeln_s(stream,'EB: ' + replyto)
-        else
+//      if wab <> ''     then writeln_s(stream,'EB: ' + wab) else
+//      if ReplyTo <> '' then writeln_s(stream,'EB: ' + replyto)
+//      else
           writeln_s(stream,'EB:');
       if attrib and attrIsEB<>0  then writeln_s(stream,'STAT: EB');
       if pm_reply                then writeln_s(stream,'STAT: PM-REPLY');
@@ -647,75 +663,6 @@ begin
   Result := FormMsgId(MsgId);
 end;
 
-function THeader.GetTo: string;
-var i: integer;
-begin
-  { -- if we have non-envelope information, use it ------------------- }
-  if (Length(FTo)>0) or (Length(FCC)>0) or (Length(FBCC)>0) then
-    result := FTo else
-    
-  { -- construct to out of EMP if STAT: BCC is not set --------------- }
-  if nokop then
-    result := '' else
-  begin
-    result := '';
-    for i:=0 to Empfaenger.Count-1 do
-      if cpos('@',Empfaenger[i])<>0 then
-        result:=result+Empfaenger[i]+',';
-    for i:=0 to Kopien.Count-1 do
-      if cpos('@',Kopien[i])<>0 then
-        result:=result+Kopien[i]+',';
-    SetLength(result,Length(result)-1);
-  end;
-end;
-
-procedure THeader.SetTo(s:string);
-begin
-  FTo := S;
-end;
-
-function THeader.GetCC: string;
-begin
-  if (Length(FTo)>0) or (Length(FCC)>0) then
-    result := FCC
-  else
-    result := '';
-end;
-
-procedure THeader.SetCC(s:string);
-begin
-  FCC := S;
-end;
-
-function THeader.GetBCC: string;
-var i: integer;
-begin
-  { -- if we have non-envelope information, use it ------------------- }
-  if (Length(FTo)>0) or (Length(FCC)>0) or (Length(FBCC)>0) then
-    result := FBCC else
-    
-  { -- construct BCC out of EMP if STAT: BCC is set ------------------ }
-  if not nokop then
-    result := '' else
-  begin
-    result := '';
-    for i:=0 to EMPfaenger.Count-1 do
-      if cpos('@',EMPfaenger[i])<>0 then
-        result:=result+EMPfaenger[i]+',';
-    for i:=0 to KOPien.Count-1 do
-      if cpos('@',KOPien[i])<>0 then
-        result:=result+KOPien[i]+',';
-    SetLength(result,Length(result)-1);
-  end;
-end;
-
-procedure THeader.SetBCC(s:string);
-begin
-  FBCC := S;
-end;
-
-function THeader.GetNewsgroups: string;
-
   function ZCBrettToRFC(const source:string):string;
   var i: integer;
   begin
@@ -728,6 +675,16 @@ function THeader.GetNewsgroups: string;
         Result[i]:='.';
   end;
 
+  function RFCBrettToZC(const source:string):string;
+  var i: integer;
+  begin
+    Result := '/'+Source;
+    for i := 2 to Length(Result) do
+      if Result[i]='.' then
+        Result[i]:='/';
+  end;
+
+function THeader.GetNewsgroups: string;
 var i: integer;
 begin
   { -- Construct Newsgroups out of EMP/KOP --------------------------- }
@@ -741,17 +698,24 @@ begin
   SetLength(result,Length(result)-1);
 end;
 
-procedure THeader.SetNewsgroups(s:string);
-
-  function RFCBrettToZC(const source:string):string;
-  var i: integer;
-  begin
-    Result := '/'+Source;
-    for i := 2 to Length(Result) do
-      if Result[i]='.' then
-        Result[i]:='/';
+function THeader.GetFollowupTo: string;
+var i: integer;
+begin
+  if pm_reply then begin
+    result := 'poster';
+    exit;
   end;
 
+  { -- Construct Newsgroups out of EMP/KOP --------------------------- }
+  result := '';
+  for i:=0 to DiskussionIn.Count-1 do
+    if cpos('@',EMPfaenger[i])=0 then
+      result:=result+ZCBrettToRFC(DiskussionIn[i])+',';
+  SetLength(result,Length(result)-1);
+end;
+
+
+procedure THeader.SetNewsgroups(s:string);
 var n:   TSTringList;
     i,j: integer;
 begin
@@ -789,43 +753,151 @@ begin
  end;
 end;
 
-procedure THeader.ReconstructEnvelope;
-var n:   TStringList;
+procedure THeader.SetFollowupTo(s:string);
+var n:   TSTringList;
     i,j: integer;
 begin
   n := TStringList.Create;
  try
+  pm_reply := (LowerCase(s) = 'poster');
 
   { -- Build list of Newsgroups -------------------------------------- } 
   n.Sorted := true;
 
-  RFCReadAddressList(FTo, n,nil);
-  RFCReadAddressList(FCC, n,nil);
-  RFCReadAddressList(FBCC,n,nil);
+  if not pm_reply then while Length(s)>0 do
+  begin
+    i:=RightPos(',',s);
+    n.Add(RFCBrettToZC(Mid(s,i+1)));
+    SetLength(s,max(0,i-1));
+  end;
 
-  { -- Walk KOP ------------------------------------------------------ } 
-  for i:=KOPien.Count-1 downto 0 do
-    if cpos('@',KOPien[i])=0 then      // ignore mail addreses
-      if N.Find(KOPien[i],j) then          
-        N.Delete(j)                     // no need to add
+  { -- Walk DiskussionIn --------------------------------------------- } 
+  for i:=DiskussionIn.Count-1 downto 0 do
+    if cpos('@',DiskussionIn[i])<=0 then      // ignore mail addreses
+      if N.Find(DiskussionIn[i],j) then          
+        N.Delete(j)                           // no need to add
       else
-        Kopien.Delete(i);               // no longer in Newsgroups
+        DiskussionIn.Delete(i);               // no longer in Newsgroups
       
-  { -- Walk EMP ------------------------------------------------------ }
-  for i:=EMPfaenger.Count-1 downto 0 do
-    if cpos('@',EMPfaenger[i])<>0 then  
-      EMPfaenger.Delete(i);             // delete all Newsgroups
-
   { -- Add new Newsgroups to EMP ------------------------------------- }
-  EMPfaenger.AddStrings(N);
+  DiskussionIn.AddStrings(N);
 
  finally
   n.Free;
  end;
 end;
 
+procedure THeader.MakeEnvelopeFromRFCHeaders;
+var n:   TStringList;
+    i,j: integer;
+begin
+  if (FTo<>'')or(FCC<>'')or(FBCC<>'') then
+  begin
+    n := TStringList.Create;
+    try
+      { -- Build list of Recipients ---------------------------------- } 
+      n.Sorted := true;
+      RFCReadAddressList(FTo, n,nil);
+      RFCReadAddressList(FCC, n,nil);
+      RFCReadAddressList(FBCC,n,nil);
+      { -- Walk KOP -------------------------------------------------- } 
+      for i:=KOPien.Count-1 downto 0 do
+        if cpos('@',KOPien[i])=0 then      // ignore mail addreses
+          if N.Find(KOPien[i],j) then          
+            N.Delete(j)                     // no need to add
+        else
+          Kopien.Delete(i);               // no longer in Recipients
+      { -- Walk EMP -------------------------------------------------- }
+      for i:=EMPfaenger.Count-1 downto 0 do
+        if cpos('@',EMPfaenger[i])<>0 then  
+          EMPfaenger.Delete(i);             // delete all Mail Addresses
+      { -- Add new Recipients to EMP --------------------------------- }
+        EMPfaenger.AddStrings(N);
+    finally
+      n.Free;
+    end;
+  end;
+
+  { -- Same with Antwort-An ------------------------------------------ }
+  if (FMailReplyTo<>'')or(FReplyTo<>'')or(FMailFollowupTo<>'') then 
+  begin
+    AntwortAn.Clear;
+    if FMailReplyTo<>'' then  
+      RFCReadAddressList(FMailReplyto,AntwortAn,nil) 
+    else
+      RFCReadAddressList(FReplyto,    AntwortAn,nil);
+  { -- Same with Diskussion-In --------------------------------------- }
+    for i:=DiskussionIn.Count-1 downto 0 do
+      if cpos('@',DiskussionIn[i])<>0 then  
+        DiskussionIn.Delete(i);             // delete all Mail Addresses
+    RFCReadAddressList(FMailFollowupTo,DiskussionIn,nil);
+  end;
+end;
+
+procedure THeader.MakeRFCHeadersFromEnvelope;
+var i: integer;
+begin
+  if (Length(FTo)<=0) and (Length(FCC)<=0) and (Length(FBCC)<=0) then
+  begin
+    FTo := '';
+    FBCC := '';
+
+  { -- construct To out of EMP if STAT: BCC is not set --------------- }
+  { -- construct BCC out of EMP if STAT: BCC is set ------------------ }
+    if nokop then
+    begin
+      for i:=0 to EMPfaenger.Count-1 do
+        if cpos('@',EMPfaenger[i])<>0 then
+          FBCC:=FBCC+EMPfaenger[i]+',';
+      for i:=0 to KOPien.Count-1 do
+        if cpos('@',KOPien[i])<>0 then
+          FBCC:=FBCC+KOPien[i]+',';
+      SetLength(FBCC,Length(FBCC)-1);
+    end else
+    begin
+      for i:=0 to Empfaenger.Count-1 do
+        if cpos('@',Empfaenger[i])<>0 then
+          FTo:=FTo+Empfaenger[i]+',';
+      for i:=0 to Kopien.Count-1 do
+        if cpos('@',Kopien[i])<>0 then
+          FTo:=FTo+Kopien[i]+',';
+      SetLength(FTo,Length(FTo)-1);
+    end;
+  end;
+
+  { -- construct Reply-To out of ANTWORT-AN -------------------------- }
+  if FReplyto = '' then begin
+    for i:=0 to AntwortAn.Count-1 do
+      if cpos('@',AntwortAn[i])<>0 then
+        FReplyto:=FReplyto+AntwortAn[i]+',';
+    SetLength(FReplyto,Length(FReplyto)-1);
+  end;
+
+  { -- construct Mail-Followup-To out of DISKUSSION-IN --------------- }
+  if FMailReplyTo = '' then begin
+    for i:=0 to DiskussionIn.Count-1 do
+      if cpos('@',DiskussionIn[i])<>0 then
+        FMailReplyTo:=FMailReplyTo+DiskussionIn[i]+',';
+    SetLength(FMailReplyTo,Length(FMailReplyTo)-1);
+  end;
+end;
+
+
 {
   $Log$
+  Revision 1.36  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.35  2002/12/14 07:31:37  dodi
   - using new types
 

@@ -279,7 +279,7 @@ type
     property Empf1RealName : string read GetEmpf1RealName write SetEmpf1RealName;
 
   public  
-    followup   : TStringlist;
+//  followup   : TStringlist;
     References : TStringList;
     keywords   : string;
     summary    : string;
@@ -368,10 +368,11 @@ function pgpo_keytest(var s:string):boolean;
 implementation  { --------------------------------------------------- }
 
 uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
-  xp3ex, xp3o, xp3o2, xp4e, xp9bp, xpcc, xpconfigedit, xpfido, xpmakeheader,
+  xp3ex, xp3o2, xp4e, xpcc, xpfido, xpmakeheader,
   xpsendmessage_internal, xpstreams, addresses, 
-  xpserver;
+  xpserver, xp4;
 
+(*
 procedure ukonv(typ:byte; var data; var bytes:integer); assembler; {&uses ebx, esi, edi}
 asm
          xor   edx, edx
@@ -471,6 +472,7 @@ begin
            s[i]:=chr(isotab[ord(s[i])]); }
   end;
 end;
+*)
 
 function umlauttest(var s:string):boolean;
 var i : integer;
@@ -1634,7 +1636,7 @@ constructor TSendUUData.Create;
 var n: TNetClass;
 begin
   EmpfList := TAddressList.Create;
-  Followup := TStringlist.Create;
+//Followup := TStringlist.Create;
   References := TStringList.Create;
   OEM := TStringList.Create;
 
@@ -1654,7 +1656,7 @@ destructor TSendUUData.Destroy;
 var n: TNetClass;
 begin
   EmpfList.Free;
-  FollowUp.Free;
+//FollowUp.Free;
   REferences.Free;
   OEM.Free;
 
@@ -1693,7 +1695,7 @@ begin
   partsex := false;
  
   Replyto := '';
-  followup.Clear;
+//followup.Clear;
   References.Clear;
   keywords := '';
   summary := '';
@@ -2032,6 +2034,19 @@ finalization
 
 {
   $Log$
+  Revision 1.69  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.68  2002/12/21 05:38:02  dodi
   - removed questionable references to Word type
 

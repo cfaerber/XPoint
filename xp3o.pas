@@ -1083,7 +1083,7 @@ begin
   if FirstChar(_br)='A' then sData.flpmReply:=true;
   empf:=hdp.empfbestto;
   { suboptimal }
-  if empf='' then empf:=hdp.replyto;
+//if empf='' then empf:=hdp.replyto;
   if empf='' then empf:=hdp.wab;
   if (empf='') or (cpos('@',empf)=0) or (cPos('.',mid(empf,cpos('@',empf)))=0)
   then
@@ -1178,7 +1178,7 @@ begin
 
   if hds<=1 then exit;  // Oops
   
-  if not( IsOwnAddress(hdp.absender) or 
+  if not(IsOwnAddress(hdp.absender) or 
      IsOwnAddress(hdp.oab) or 
      IsOwnAddress(hdp.wab) ) then
   begin
@@ -1559,6 +1559,19 @@ end;
 
 {
   $Log$
+  Revision 1.101  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.100  2002/12/21 05:37:56  dodi
   - removed questionable references to Word type
 

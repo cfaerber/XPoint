@@ -188,10 +188,7 @@ function TSendUUData.GetHeadData: string;
 var TmplFile: string;
     t       : text;
     s       : string;
-(*    num,n   : xpWord; *)
     Buf: array[0..4095] of Char;
-const
-    sigsep = '-*-';
 
 begin
   TmplFile := HeadTemplate;
@@ -201,44 +198,12 @@ begin
     assign(t,TmplFile);
     SetTextBuf(t,buf);
     reset(t);
-(*
-    readln(t,s);
-
-    if s=sigsep then
-    begin
-      num:=0;
-      while not eof(t) do
-      begin
-        readln(t,s);
-        if s=sigsep then inc(num);
-      end;
-      n:=random(num)+1;    { zuf„llige Signatur ausw„hlen }
-    end
-    else
-      n:=0;
-    close(t);
-    reset(t);
-
-    while n>0 do
-    begin     { ausgew„hlte Signatur suchen }
-      repeat
-        readln(t,s);
-      until s=sigsep;
-      dec(n);
-    end;
-
-    FHeadData := '';
-
-    s:='';
-*)
-    while not eof(t) (* and (s<>sigsep) *) do
+    
+    while not eof(t) do
     begin
       readln(t,s);
-(*    if (EmpfList.Count>0) and EmpfList[0].PM then rpsuser(s,Empf1Address,Empf1RealName); *)
-
       rpsdate(s);
-(*    if s<>sigsep then *)
-        FHEadData := FHeadData+s+#13#10;
+      FHEadData := FHeadData+s+#13#10;
     end;
     close(t);
 
@@ -248,7 +213,7 @@ begin
   Result := FHeadData;
 end;
 
-{-- La la la --------------------------------------------------------- }
+{--------------------------------------------------------------------- }
 
 function TSendUUData.GetReplyTo: string;
 begin
@@ -1304,6 +1269,19 @@ end;
 
 {
   $Log$
+  Revision 1.33  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.32  2002/12/21 05:38:02  dodi
   - removed questionable references to Word type
 

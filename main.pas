@@ -51,7 +51,6 @@ uses
      xpfidonl, { Nodelist-Config    }
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
-     replytoall,  { askRTA }
      zftools,     { ZFido }
 {$IFDEF Win32}
      windows,
@@ -189,8 +188,8 @@ begin
         end;
       end;
 {$ENDIF }
-      if parTiming = 0 then
-        askRTA (true);     { Bei neuer Version RTA-Konfiguration abfragen }
+//    if parTiming = 0 then
+//      askRTA (true);     { Bei neuer Version RTA-Konfiguration abfragen }
       test_defaultgruppen;
       test_systeme;
       testtelefon(telefonnr);
@@ -235,6 +234,19 @@ end;
 
 {
   $Log$
+  Revision 1.24  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.23  2002/12/28 20:11:03  dodi
   - start keyboard input redesign
 

@@ -38,7 +38,7 @@ var FidoOriginSav: string;
     Server : TXPServer;
     EMP,KOP: TStringList;
     PM,BCC : Boolean;
-    Encrypt: Integer;
+//  Encrypt: Integer;
     const EncrPwd: string );
 
     {-- CreateSingleMessage ------------------------------------------ }
@@ -199,7 +199,7 @@ var FidoOriginSav: string;
     procedure pmEncryptMessage(var data:TStream);
     var fi,fo:string;
         fs:TStream;
-       e,s:string;
+         s:string;
       anal:TMimeAnalyzer;
     begin
       if pmcrypt[docode-2].binary and not ntBinary(server.netztyp) then 
@@ -208,8 +208,6 @@ var FidoOriginSav: string;
         exit;
       end;
 
-      if EMP.Count>0 then e := EMP[0] else exit;
-      
       fi:=temppath+uncryptedfile;
       fo:=temppath+cryptedfile;
 
@@ -424,7 +422,7 @@ var FidoOriginSav: string;
       end;
     end;
 
-    { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
+    { --- 2. Schritt: Headerdaten erzeugen --------------------------- }
 
 (*    
     if intern then
@@ -433,47 +431,42 @@ var FidoOriginSav: string;
       hdp.archive := false;
     end else
 *)
-    begin
-      hdp.Empfaenger.Assign(EMP);
-      hdp.Kopien    .Assign(KOP);
 
+    //-- Envelope-Empfänger und ZConnect-Header ---------------------- }
+
+    hdp.Empfaenger.Assign(EMP);
+    hdp.Kopien    .Assign(KOP);
+
+    hdp.DiskussionIn.Clear;
+    hdp.AntwortAn.Clear;
+    
+    for i:=0 to EmpfList.Count-1 do
+      case EmpfList[i].AddressType of
+        atReplyTo:    hdp.AntwortAn.Add(EmpfList[i].ZcAddress);
+        atFollowupTo: hdp.DiskussionIn.Add(EmpfList[i].ZcAddress);
+      end;
+      
+    //-- RFC-Header -------------------------------------------------- }
+    
+    if Server.IsRFC then begin
       hdp.UTo := RFCWriteAddressList(EmpfList,nil,[atTo]);
       hdp.CC  := RFCWriteAddressList(EmpfList,nil,[atCC]);
       hdp.BCC := RFCWriteAddressList(EmpfList,nil,[atBCC]);
 
-      hdp.archive := PM;
+      // Write U-REPLY-TO only if there's information that can't be
+      // represented with ANTWORT-AN headers (i.e. if it has groups)      
+      for i:= 0 to EmpfList.Count-1 do 
+        if (EmpfList[i].AddressType = atReplyTo) and (EmpfList[i].Group >= 0) then begin
+          hdp.UReplyTo := RFCWriteAddressList(EmpfList,nil,[atReplyTo]);
+          break; end;
+      hdp.UMailFollowupTo := RFCWriteAddressList(EmpfList,nil,[atMailFollowupTo]);
     end;
 
+    hdp.archive := PM;
     hdp.betreff:=Subject;
 
-    case ntDomainType(Server.netztyp) of    { s. auch XP3O.CancelMessage! }
-      0 : hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.pointname,Server.Name)+'.ZER';
-      1 : begin
-            hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.Name,Server.pointname);
-            if not Server.AliasPoint then hdp.real_box:=Server.Name;
-          end;
-      2 : hdp.absender:=Server.username+'@'+Server.pointname;
-      3 : hdp.absender:=Server.username+'@'+Server.Name;
-      4 : hdp.absender:=Server.username+'@'+Server.FidoAbsAddr;
-      5 : begin
-            hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.pointname,Server.Name)+Server.domain;
-            hdp.real_box:=Server.Name;  { Test: 'X-XP-BOX' auch bei ZConnect }
-          end;
-      6 : begin
-            hdp.absender:=iifs(SenderMail='',
-                               Server.username+'@'+iifs(Server.AliasPoint,Server.Name+ntServerDomain(Server.Name),Server.pointname+Server.domain),
-                               SenderMail);
-            hdp.real_box:=Server.Name;
-          end;
-      7 : begin
-            hdp.absender:=Server.username+'@'+Server.Name+';'+Server.pointname;
-            hdp.real_box:=Server.Name;
-          end;
-      8 : begin
-            hdp.absender:=iifs(SenderMail='',Server.email,SenderMail);
-            hdp.real_box:=Server.Name;
-          end;
-    end;
+    hdp.absender := Server.AbsAddr;
+    if not Server.AliasPoint then hdp.real_box:=Server.Name;
     hdp.realname:=iifs(SenderRealname='',Server.Realname,SenderRealname);
     
     if flWAB and ntAdrCompatible(onetztyp,Server.netztyp)
@@ -485,9 +478,7 @@ var FidoOriginSav: string;
 
     if Server.netztyp=nt_Magic then
       hdp.hd_point:=Server.pointname;
-    hdp.replyto := iifs(Replyto<>'',Replyto,Server.Replyto);
-    if (not pm) and (followup.count>0) then
-      hdp.followup.assign(followup);
+    
     hdp.Keywords:=keywords;
     hdp.Summary:=summary;
     if  ntAdrCompatible(onetztyp,Server.netztyp)
@@ -625,7 +616,6 @@ var FidoOriginSav: string;
       with orghdp do begin
         { hdp.zdatum:=zdatum; hdp.orgdate:=true;  !! Unversandt/* !! }
         hdp.organisation:=organisation;
-        hdp.ReplyTo := ReplyTo;
         hdp.datei:=datei; hdp.ddatum:=ddatum;
         end;
 //  if _sendmaps then
@@ -865,7 +855,7 @@ var FidoOriginSav: string;
     EMP,KOP: TStringList;
     PM,BCC : Boolean );
   begin
-    CreateSingleMessageEncrypted(Server,EMP,KOP,PM,BCC,0,'');
+    CreateSingleMessageEncrypted(Server,EMP,KOP,PM,BCC,'');
   end;
 
 
@@ -989,7 +979,7 @@ var FidoOriginSav: string;
       EMP := TStringList.Create;
       KOP := TStringList.Create;
       EMP.Add(iifs(EmpfList.Count>0,EmpfList[0].ZCAddress,'$/'#$AF'Nix'));
-      Server := TXPServer.CreatebyName(DefaultBox);
+      Server := TXPServer.CreatebyName(Box);
       CreateSingleMessage(Server,EMP,KOP,false,false);
     finally
       Server.Free;
@@ -1056,6 +1046,19 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.9  2003/01/07 00:56:47  cl
+// - send window rewrite -- part II:
+//   . added support for Reply-To/(Mail-)Followup-To
+//   . added support to add addresses from quoted message/group list/user list
+//
+// - new address handling -- part II:
+//   . added support for extended Reply-To syntax (multiple addresses and group syntax)
+//   . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+//
+// - changed "reply-to-all":
+//   . different default for Ctrl-P and Ctrl-B
+//   . more addresses can be added directly from send window
+//
 // Revision 1.8  2002/12/14 07:31:40  dodi
 // - using new types
 //

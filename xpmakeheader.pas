@@ -404,6 +404,10 @@ begin
             if id = 'U-CONTENT-DISPOSITION' then ParseDisposition(hd) else
             if id = 'U-CONTENT-ID'   then Mime.CID := line else
 
+            if id = 'U-REPLY-TO'     then FReplyTo := line else
+            if id = 'U-MAIL-REPLY-TO' then FMailReplyTo := line else
+            if id = 'U-MAIL-FOLLOWUP-TO' then FMailFollowupTo := line else
+
             if id = 'U-LIST-ID' then ListID := RFCRemoveComments(line) else 
             if id = 'U-LIST-POST' then ListPost := RFCRemoveComments(line) else 
             if id = 'U-LIST-SUBSCRIBE' then ListSubscribe := RFCRemoveComments(line) else 
@@ -425,10 +429,7 @@ begin
             { suboptimal, eigentlich sollten alle Mail-Copies-To-
               Zeilen eingelesen werden, damit es auch hinter
               Gateways, die MCT nicht umwandeln, funktioniert     }
-            if (id='U-MAIL-COPIES-TO') and ((lowercase(line)='nobody')
-              or (lowercase(line)='never')) then
-              mailcopies.add(line)
-            else
+//          if (id='U-MAIL-COPIES-TO') then UMailCopiesTo := line;
 
             { Mime-Version wegschmeissen - wird neu erzeugt}
             if id = 'U-MIME-VERSION' then
@@ -478,14 +479,8 @@ begin
             if id = 'STAT'   then GetStat else
             if id = 'CHARSET'then GetCharset(hd.charset) else
             if id = 'ERR'    then error := line else
-            if id = 'ANTWORT-AN' then GetName(ReplyTo,dummy) else
-{            if id = 'DISKUSSION-IN' then GetFollowup else }
-            if id = 'DISKUSSION-IN' then begin
-              if cpos('@',line) = 0 then
-                  followup.add(line)
-                else
-                  mailcopies.add(line)
-            end else
+            if id = 'ANTWORT-AN' then AntwortAn.Add(Line) else
+            if id = 'DISKUSSION-IN' then DiskussionIn.add(line) else
             if id = 'STICHWORT' then GetStichwort else
             if id = 'ZUSAMMENFASSUNG' then Summary  := Line  else
             if id = 'QUOTE-STRING' then GetQStr else
@@ -576,10 +571,12 @@ begin
             ok:=(groesse=0);          { letzte Msg hat Laenge 0 }
       until (line='') or not ok;
       { "DISKUSSION-IN: foo@bar.example.org" <-> "Followup-To: poster" }
+(*      
       if (mailcopies.count>0) and (followup.count=0) and
         (lowercase(mailcopies[0])<>'nobody') and
         (lowercase(mailcopies[0])<>'never') then
         pm_reply:=true;
+*)        
       if ok and (attrib and attrQPC<>0) and (UpperCase(LeftStr(betreff,4))<>'QPC:') then
         betreff:='QPC:'+betreff;
       end
@@ -607,6 +604,19 @@ end;
 
 {
   $Log$
+  Revision 1.33  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.32  2002/12/14 07:31:38  dodi
   - using new types
 

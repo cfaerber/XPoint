@@ -43,7 +43,7 @@ function testmausempf(var s:string):boolean;
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
-     xpsendmessage,xpsendmessage_internal,addresslist;
+     xpsendmessage,addresslist;
 
 var  
   mauswlbox : string = '';
@@ -374,14 +374,28 @@ begin
           if PM then AddressType := dt else AddressType := atNewsgroup;
         end;    
 
+    RFCReadAddressList(hdp0.UReplyTo,sData.EmpfList,nil,atReplyTo);
+
+    for i:=0 to hdp0.DiskussionIn.Count-1 do
+      if sData.EmpfList.findZC(hdp0.DiskussionIn[i]) < 0 then
+        with sData.EmpfList.AddNew do begin
+          ZCAddress := hdp0.DiskussionIn[i];
+          if PM then AddressType := atMailFollowupTo else AddressType := atFollowupTo;
+        end;    
+
+    for i:=0 to hdp0.AntwortAn.Count-1 do
+      if sData.EmpfList.findZC(hdp0.AntwortAn[i]) < 0 then
+        with sData.EmpfList.AddNew do begin
+          ZCAddress := hdp0.AntwortAn[i];
+          if PM then AddressType := atReplyTo else AddressType := atFollowupTo;
+        end;    
+
     sData.Subject := hdp0.Betreff;
 
     with sData do
     begin
       flControlMsg:=(hdp.attrib and attrControl<>0);
 
-      followup.assign(hdp.followup);
-      ReplyTo := Hdp.replyto;
       References.Assign(hdp.References);
       Keywords:=hdp.Keywords;
       Summary:=hdp.Summary;
@@ -1032,7 +1046,7 @@ again:
                   end;
                  { suboptimal }
                   if ((typ in [1..3,7]) and (not pm)) then
-                    sData.followup.add (am_replyto);
+                    with sData.EmpfList.AddNew do begin zcaddress:=am_replyto; addresstype := atFollowupTo; end;
                   if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
                   if typ=7 then sData.orghdp:=hdp;
                   if typ in [1,2,7] then
@@ -1112,8 +1126,10 @@ again:
                 //forcebox:=hdp.real_box;
                 with sData do begin
                   sdata.flControlMsg:=(hdp.attrib and attrControl<>0);
-                  followup.assign(hdp.followup);
-                  ReplyTo := Hdp.ReplyTo;
+                  
+//                followup.assign(hdp.followup);
+//                ReplyTo := Hdp.ReplyTo;
+
                   References.Assign(Hdp.References);
                   Keywords:=hdp.Keywords;
                   Summary:=hdp.Summary;
@@ -1141,7 +1157,11 @@ again:
                          false,false,sData,leer,sendflags) and unpark then SetDel;
 *)
                 sData.Subject := betr;
-                sData.EmpfList.AddNewXP(pm,empf,'');
+
+                if PM then
+                  sData.EmpfList.AddNew.ZCAddress := Empf
+                else
+                  sData.EmpfList.AddNew.XPAddress := Empf;
 
                 if sData.DoIt(GetRes2(610,100+Integer(typ)),false,false,sendbox) and UnPark then SetDel;
               end;
@@ -1410,6 +1430,19 @@ end;
 
 {
   $Log$
+  Revision 1.4  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.3  2002/12/14 07:31:40  dodi
   - using new types
 

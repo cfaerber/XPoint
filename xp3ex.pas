@@ -911,8 +911,8 @@ begin // extract_msg;
                   wrs437(s);
                 end;
 
-    hdf_DISK  :  for i:=0 to hdp.followup.count-1 do
-                   wrs437(gr(3)+hdp.followup[i]);           { 'Antwort in : ' }
+    hdf_DISK  :  for i:=0 to hdp.DiskussionIn.count-1 do
+                   wrs437(gr(3)+hdp.DiskussionIn[i]);        { 'Antwort in : ' }
 
     hdf_ABS   :  begin
                    if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
@@ -938,9 +938,8 @@ begin // extract_msg;
                    wrs437(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
     hdf_WAB    : if hdp.wab<>'' then            { 'Weiterleit.: ' }
                    wrs437(gr(17)+hdp.wab+iifs(hdp.war<>'','  ('+hdp.war+')',''));
-    hdf_ANTW  : if (hdp.ReplyTo<>'') and
-                  ((UpperCase(Hdp.ReplyTo) <> UpperCase(hdp.absender))) then   { 'Antwort an : ' }
-                   wrs437(gr(27)+hdp.ReplyTo);
+    hdf_ANTW  :  for i:=0 to hdp.AntwortAn.count-1 do
+                   wrs437(gr(3)+hdp.AntwortAn[i]);      { 'Antwort an : ' }
 
     hdf_BET    : begin
                    tmp:=TempS(2000+dbReadInt(mbase,'msgsize')
@@ -1232,6 +1231,19 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.103  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.102  2002/12/21 05:37:55  dodi
   - removed questionable references to Word type
 

@@ -2839,7 +2839,7 @@ begin
     apps(6,LeftStr(absender,53));
     if realname<>'' then apps(7,realname);
     if organisation<>'' then apps(8,LeftStr(organisation,53));
-    if Replyto <> '' then apps(9,LeftStr(replyto,53));
+//  if Replyto <> '' then apps(9,LeftStr(replyto,53));
     apps(10,iifs(ntZDatum(netztyp),zdatum,datum)+
          iifs(datum<>'','  ('+fdat(datum)+', '+ftime(datum)+
          iifs(ntSec(netztyp),':'+copy(zdatum,13,2),'')+')',''));
@@ -3738,6 +3738,19 @@ end;
 
 {
   $Log$
+  Revision 1.154  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.153  2002/12/28 20:11:05  dodi
   - start keyboard input redesign
 

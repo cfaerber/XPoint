@@ -71,7 +71,8 @@ uses
   xpe,xpconfigedit,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2,
   xp4o3,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,
   mime,debug,
-  addresses, addresslist, xpsendmessage_rta, xpstreams,
+  addresses, addresslist, xpstreams,
+  xpsendmessage_rta,
   xpglobal;
 
 const suchch    = #254;
@@ -726,7 +727,6 @@ var t,lastt: taste;
       QuoteString: string;
       QuoteOld : string;
       gflags : byte;
-      rta    : boolean;
       news   : boolean;
       fn     : string;
       stream : TStream;
@@ -735,7 +735,7 @@ var t,lastt: taste;
 
     procedure AddAddress(const addr,realname: string; typ: TAddressListType);
     begin
-      if addr='' then exit;
+      if addr='' then exit; if typ=atUnused then exit;
       with sData.EmpfList.AddNew do begin
         ZCAddress := Addr;
         AddressType := Typ;
@@ -747,7 +747,7 @@ var t,lastt: taste;
     procedure AddAddressList(const addr: string; typ: TAddressListType); overload;
     var s,i: integer;
     begin
-      if addr='' then exit;
+      if addr='' then exit; if typ=atUnused then exit;
       s := sData.EmpfList.Count;
       RFCReadAddressList(addr,sData.EmpfList,nil);
       for i := s+1 to sData.EmpfList.Count-1 do
@@ -756,14 +756,20 @@ var t,lastt: taste;
 
     procedure AddAddressList(sl: TStringList; pm_typ, am_typ: TAddressListType); overload;
     var i: integer;
+       at: TAddressListType;
     begin
       if sl.Count<=0 then exit;
       for i := 0 to sl.Count-1 do
-        with sData.EmpfList.AddNew do begin
-          ZCAddress := sl[i];
-          if CPos('@',sl[i])>0 then AddressType := pm_typ 
-          else                      AddressType := am_typ;
-        end;
+      begin
+        if CPos('@',sl[i])>0 then at := pm_typ 
+        else                      at := am_typ;
+        if at<>atUnused then
+          with sData.EmpfList.AddNew do 
+          begin
+            ZCAddress := sl[i];
+            AddressType := at;
+          end;
+      end;
     end;
 
     procedure AddURIAddresses(const uris: string);
@@ -776,6 +782,33 @@ var t,lastt: taste;
         if q=0 then exit;
         sData.AddURI(Copy(uris,p+1,q-p-1));
         p := q+1;
+      end;
+    end;
+
+    procedure RemoveDuplicateAndOwnAddresses;
+    var myList: TStringList; 
+        Dummy,I: Integer;
+        S: String;
+    begin
+      myList := TStringList.Create;
+      try
+        myList.Sorted := true;
+        myList.Duplicates := dupIgnore;
+        FindOwnAddresses(myList);      
+        i := 0;
+        while i<sData.EmpfList.Count do
+        begin
+          S := UpperCase(sData.EmpfList[i].AddrSpec);
+          if myList.Find(S,Dummy) or   
+             myList.Find(Mid(S,1+RightPos('@',S)),Dummy) then
+            sData.EmpfList.Delete(i)
+          else begin
+            mylist.Add(s);
+            inc(i);
+          end;
+        end;
+      finally
+        myList.Free
       end;
     end;
 
@@ -815,7 +848,6 @@ var t,lastt: taste;
     QuoteString:= '';
 
     gflags := 0;
-    rta := false;
     news := false;
     
     try
@@ -873,80 +905,75 @@ var t,lastt: taste;
 
         // == Adressen hinzufügen ======================================
 
-        // -- Mailinglisten --------------------------------------------
-        if (not pm) and (OrgHdp.ListID<>'') and (OrgHdp.ListPost<>'') then
-        begin
-          if Uppercase(OrgHdp.ListPost) = 'NO' then begin
-            rfehler(452);   { '51 An diese Mailing-Liste k\x94nnen keine Nachrichten gesandt werden.' }
-            exit;
-          end;
-          AddURIAddresses(OrgHdp.ListPost);          
-        end;
-        
         // -- Private Antwort ------------------------------------------
         if pm then begin
-          if OrgHdp.ReplyTo <> '' then begin
-            AddAddress(orghdp.ReplyTo,'',atTo);
-            AddAddress(orghdp.Absender,orghdp.Realname,atUnused); end
-          else
-            AddAddress(orghdp.Absender,orghdp.Realname,atTo);
-
-          AddAddressList(orghdp.UTo,atUnused);
-          AddAddressList(orghdp.CC,atUnused);
-          AddAddressList(orghdp.BCC,atUnused);
-
-          AddAddressList(orghdp.Empfaenger,atUnused,atUnused);
-          AddAddressList(orghdp.Kopien,atUnused,atUnused);
-          
-          AddAddressList(orghdp.Oem,atUnused,atUnused);
-          AddAddress(orghdp.Oab,orghdp.oar,atUnused);
-          AddAddress(orghdp.Wab,orghdp.war,atUnused);
-            
-          rta := true;
+          //-- Mail-Reply-To overwrites Reply-To -----------------------
+          if orghdp.UMailReplyTo<>'' then 
+          begin
+            AddAddressList(orghdp.UMailReplyTo,   atTo);
+          end else
+          begin
+            AddAddressList(orghdp.UReplyTo       ,atTo);
+            if sData.EmpfList.Count<=0 then
+              AddAddress(orghdp.Absender,orghdp.Realname,atTo);
+          end;
         end else
-        if sData.EmpfList.Count<=0 then begin
         // -- Oeffentliche Antwort auf Brettnachricht ------------------
         if news then
         begin
-          if OrgHdp.Followup.Count>0 then begin
-            AddAddressList(orghdp.Followup,atCC,atNewsgroup);
-            AddAddressList(orghdp.Empfaenger,atUnused,atUnused);
-            AddAddressList(orghdp.Kopien,atUnused,atUnused);
+          if OrgHdp.DiskussionIn.Count>0 then begin
+            AddAddressList(orghdp.DiskussionIn,atCC,atNewsgroup);
           end else
           begin
             AddAddressList(orghdp.Empfaenger,atUnused,atNewsgroup);
             AddAddressList(orghdp.Kopien,atUnused,atNewsgroup);
           end;
-          rta := false;
         end
         // -- Oeffentliche Antwort auf private Nachricht ---------------
         else
         begin
-          if OrgHdp.ReplyTo <> '' then begin
-            AddAddress(orghdp.ReplyTo,'',atTo);
-            AddAddress(orghdp.Absender,orghdp.Realname,atUnused); end
+          // -- Mailinglisten --------------------------------------------
+          if (OrgHdp.ListID<>'') and (OrgHdp.ListPost<>'') then
+          begin
+            if Uppercase(OrgHdp.ListPost) = 'NO' then begin
+              rfehler(452);   { '51 An diese Mailing-Liste k\x94nnen keine Nachrichten gesandt werden.' }
+              exit;
+            end;
+            AddURIAddresses(OrgHdp.ListPost);          
+          end else
+          if orghdp.UMailFollowupTo<>'' then 
+            // If there's a Mail-Followup-To header, use only this header
+            AddAddressList(orghdp.UMailFollowupTo,atTo)
           else
-            AddAddress(orghdp.Absender,orghdp.Realname,atTo);
+          begin
+            AddAddressList(orghdp.UReplyTo       ,atTo);
 
-          AddAddressList(orghdp.UTo,atCC);
-          AddAddressList(orghdp.CC,atCC);
-          AddAddressList(orghdp.BCC,atCC);
+            // If Reply-To contains more than 2 addresses, assume that
+            // it's a full list for public replies and don't add more
+            if sData.EmpfList.Count<=1 then
+            begin
+              // If it's exactly one address, assume it's a replacement
+              // for the From field
+              if sData.EmpfList.Count<=0 then
+                AddAddress(orghdp.Absender,orghdp.Realname,atTo);
 
-          AddAddressList(orghdp.Empfaenger,atUnused,atCC);
-          AddAddressList(orghdp.Kopien,atUnused,atCC);
-          
-          AddAddressList(orghdp.Oem,atUnused,atCC);
-          AddAddress(orghdp.Oab,orghdp.oar,atCC);
-          AddAddress(orghdp.Wab,orghdp.war,atCC);
+              AddAddressList(orghdp.UTo,atCC);
+              AddAddressList(orghdp.CC,atCC);
+              AddAddressList(orghdp.BCC,atCC);
 
-          rta := true;
-        end;
+              AddAddressList(orghdp.Oem,atUnused,atCC);
+              AddAddress(orghdp.Oab,orghdp.oar,atCC);
+              AddAddress(orghdp.Wab,orghdp.war,atCC);
+            end;
+          end;
         end;
 
         // -- Ggf. Adressen wählen -------------------------------------
 
-        if rta and (sData.EmpfList.Count>1) then 
-          SelectAddresses(sData.EmpfList,false);
+        RemoveDuplicateAndOwnAddresses;
+
+//      if rta and (sData.EmpfList.Count>1) then 
+//        SelectAddresses(sData.EmpfList,false);
 
         // -- Betreff setzen -------------------------------------------
 
@@ -2757,6 +2784,19 @@ end;
 
 {
   $Log$
+  Revision 1.136  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.135  2002/12/21 05:37:56  dodi
   - removed questionable references to Word type
 

@@ -260,7 +260,11 @@ begin
       if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,sendShow) then begin
 *)
-      sData.EmpfList.AddNewXP(pm,empf,'');
+      if PM then
+        sData.EmpfList.AddNew.ZCAddress := Empf
+      else
+        sData.EmpfList.AddNew.XPAddress := Empf;
+
       sData.Subject := betreff;
       sData.flShow := true;
       if typ='B' then
@@ -541,7 +545,8 @@ var sr    : tsearchrec;
     else
       sData.AddText(datei,temp or delfile);
 
-    sData.EmpfList.AddNewXP(pm,iifs(pm,'','A')+empf,'');
+    sData.EmpfList.AddNew.ZCAddress := Empf;
+    
     sData.Subject := betr;
     sData.flShow := true;
 
@@ -698,6 +703,19 @@ end;
 
 {
   $Log$
+  Revision 1.63  2003/01/07 00:56:46  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.62  2002/12/21 05:37:59  dodi
   - removed questionable references to Word type
 

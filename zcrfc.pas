@@ -227,8 +227,6 @@ var
   // Enthaelt die eigentliche Nachricht
   Mail: TStringList;
   TempS: ShortString;
-  t: tstringlist;
-
 
 // Frischen Header erzeugen
 procedure ClearHeader;
@@ -1495,7 +1493,6 @@ var
   p, i: integer;
   s1: string;
   zz: String;
-  TempS: String;
 
   drealn: string;
 
@@ -1604,30 +1601,28 @@ var
     end
   end;
 
-
-  procedure GetCC;
+  function GetAddrListWithCopy(CopyList: TStrings; Overwrite, DontMerge: Boolean): String;
   var List: TAddressList;
   begin
     List := TAddressList.Create;
     try
-      RFCReadAddressList(s0,List,DecodePhrase);  
-      hd.CC := RFCWriteAddressList(List,nil,[atCC]);
+      RFCReadAddressList(s0,List,DecodePhrase,atUnused);
+      result := RFCWriteAddressList(List,nil,AddressListTypeAll);
+      if assigned(Copylist) then begin
+        if Overwrite then CopyList.Clear();
+        if (CopyList.Count<=0) or (not DontMerge) then 
+          List.AddToStrings(CopyList);
+      end;
     finally
       List.Free;
     end;
   end;
 
-  procedure GetTo;
-  var List: TAddressList;
+  function GetAddrList: String;
   begin
-    List := TAddressList.Create;
-    try
-      RFCReadAddressList(s0,List,DecodePhrase);  
-      hd.UTo := RFCWriteAddressList(List,nil,[atTo]);
-    finally
-      List.Free;
-    end;
+    result := GetAddrListWithCopy(nil,false,false);
   end;
+
 
   function GetMsgid: string;
   begin
@@ -1787,7 +1782,7 @@ begin
         case zz[1] of
           'c':
             if zz = 'cc' then
-              GetCC
+              hd.CC := GetAddrList
             else
               if zz = 'content-type' then
               GetContentType(RFCRemoveComments(s0))
@@ -1818,7 +1813,7 @@ begin
               GetReceived
             else
               if zz = 'reply-to' then
-                RFCReadAddress(s0, ReplyTo,drealn,DecodePhrase)
+                UReplyTo := GetAddrListWithCopy(AntwortAn,false,true)
             else
               if zz = 'return-receipt-to' then
               RFCReadAddress(s0,EmpfBestTo,drealn,DecodePhrase)
@@ -1887,7 +1882,7 @@ begin
             RFCReadAddress(s0,absender,realname,DecodePhrase)
           end else
             if zz = 'to' then
-            GetTo
+            uTo := GetAddrList
           else
             if zz = 'message-id' then
             msgid := GetMsgid
@@ -1908,16 +1903,22 @@ begin
             if zz = 'mime-version' then
             Hd.Mime.mversion:=RFCRemoveComments(s0)
           else
-            { suboptimal }
-            if zz = 'mail-copies-to' then begin
-              if (s0='nobody') or (s0='never') then
-                mailcopies.add(s0)
-              else begin
-                RFCReadAddress(s0,TempS,drealn,DecodePhrase);
-                mailcopies.add(TempS)
-              end
-            end
+            if zz = 'mail-reply-to' then
+              UMailReplyTo := GetAddrListWithCopy(AntwortAn,true,false)
+              // overwrite Antwort-An set by Reply-To
           else
+            if zz = 'mail-followup-to' then
+              UMailFollowupTo := GetAddrListWithCopy(DiskussionIn,false,false)
+              // merge with Followup-To
+          else
+            { suboptimal }
+//            if zz = 'mail-copies-to' then begin
+//              if (s0='nobody') or (s0='never') then
+//                UMailCopiesTo := s0
+//              else 
+//                UMailCopiesTo := GetAddrList
+//          end
+//        else
             if zz = 'keywords' then
             keywords := s0
           else
@@ -1925,7 +1926,7 @@ begin
             GetInReplyto(s0,hd,uline)
           else
             if zz = 'followup-to' then
-            getfollowup(s0,followup,pm_reply)
+            FollowupTo := s0
           else
             // User-Agent is new in grandson-of-1036
             if (zz = 'newsreader') or (zz = 'user-agent') then
@@ -2003,14 +2004,14 @@ begin
       ULine[i] := s;
     end;
 
-    if pm_reply then
-      if replyto <> '' then
-        MailCopies.Add(ReplyTo)
-      else
-        Mailcopies.Add(Absender);
+//  if pm_reply then
+//    if replyto <> '' then
+//      MailCopies.Add(ReplyTo)
+//    else
+//      Mailcopies.Add(Absender);
 
-    if (Empfaenger.Count = 1) and (Followup.Count = 1) and (Empfaenger[0] = Followup[0]) then
-      Followup.Clear;
+    if (Empfaenger.Count = 1) and (DiskussionIn.Count = 1) and (Empfaenger[0] = DiskussionIn[0]) then
+      DiskussionIn.Clear;
     MimeAuswerten;
   end;
 end;
@@ -2132,7 +2133,7 @@ begin
 
   // -- No envelope recipients so far; fake them -----------------------      
       if hd.Empfaenger.Count<=0 then
-        hd.ReconstructEnvelope;      
+        hd.MakeEnvelopeFromRFCHeaders;
 
       // hd.Lines>=0 here if line count was given in RFC header.
       // If not, assume mbox format: Recognize 'crlfFrom ' as beginning
@@ -2870,7 +2871,7 @@ var
       end;
     end;
 
-  function WriteAddressList(const header: string; var content:string):string;
+  procedure WriteAddressList(const header: string; content:string);
   var al: TAddressList;
       m1,ml: integer;
   begin
@@ -2888,23 +2889,33 @@ var
       al.Free;
     end;
     Wrs(f,header+': '+content);
-  end;  
+  end;
+
+  procedure WriteHeader(const Name, Content: string);
+  begin
+    if Content<>'' then Wrs(f,Name+': '+Content);
+  end;
 
   procedure WriteRecipients;
   var
-    UTo,UCC,UBCC,UNewsgroups: string;
+    UTo,UCC: string;
   begin
+    hd.MakeRFCHeadersFromEnvelope;
+  
     UTo         := hd.UTo;
     UCC         := hd.CC;
-    UBCC        := hd.BCC;
-    UNewsgroups := hd.Newsgroups;
 
-    if UNewsgroups<>'' then Wrs(f,'Newsgroups: '+UNewsgroups);
+    WriteHeader('Newsgroups',hd.Newsgroups);
+    WriteHeader('Followup-To',hd.FollowupTo);
+    
     WriteAddressList('To',UTo);
     WriteAddressList('CC',UCC);
-
-  // see http://cr.yp.to/immhf/recip.html ------------------------------  
     if Mail and (UTo='') and (UCC='') then Wrs(f,'CC: recipient list not shown: ;');
+    // ^^^ see http://cr.yp.to/immhf/recip.html ^^^
+
+    WriteAddressList('Reply-To',hd.UReplyTo);
+    WriteAddressList('Mail-Reply-To', hd.UMailReplyTo);
+    WriteAddressList('Mail-Followup-To', hd.UMailFollowupTo);
   end;
 
 begin
@@ -3075,6 +3086,7 @@ begin
       if not mail and (AmReplyTo <> '') then
       wrs(f, 'Followup-To: ' + formnews(AmReplyTo)); }
 
+(*     
     if pm_reply then
     begin
       t:=tstringlist.create;
@@ -3092,15 +3104,16 @@ begin
       if replyto <> '' then
         wrs(f, 'Reply-To: ' + replyto);
       if followup.count>0 then
-        wrs(f, 'Followup-To: '+newsgroupsline(followup));
+        wrs(f, 'Followup-To: '+newsgroupsline(FollowupTo));
       if mailcopies.count>0 then
         wrs(f, 'Mail-Copies-To: '+newsgroupsline(mailcopies))
     end;
+*)    
 
-    if mail and (attrib and attrReqEB <> 0) then
-      wrs(f, 'Return-Receipt-To: ' + iifs(empfbestto <> '', empfbestto,
-        iifs(wab <> '', wab, iifs(replyto = '', absender,
-          replyto))));
+//  if mail and (attrib and attrReqEB <> 0) then
+//    wrs(f, 'Return-Receipt-To: ' + iifs(empfbestto <> '', empfbestto,
+//      iifs(wab <> '', wab, iifs(replyto = '', absender,
+//        replyto))));
     if mail and (pgpflags and fPGP_encoded <> 0) then
       wrs(f, 'Encrypted: PGP');
     if postanschrift <> '' then
@@ -3745,6 +3758,19 @@ end;
 
 {
   $Log$
+  Revision 1.128  2003/01/07 00:56:47  cl
+  - send window rewrite -- part II:
+    . added support for Reply-To/(Mail-)Followup-To
+    . added support to add addresses from quoted message/group list/user list
+
+  - new address handling -- part II:
+    . added support for extended Reply-To syntax (multiple addresses and group syntax)
+    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+
+  - changed "reply-to-all":
+    . different default for Ctrl-P and Ctrl-B
+    . more addresses can be added directly from send window
+
   Revision 1.127  2002/12/22 13:28:31  mk
   - use common Shell command (from xp1.pas) with linux, too
 

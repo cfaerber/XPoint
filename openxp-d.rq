@@ -1484,6 +1484,20 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 55   B^ox:       ~
 56   (verschiedene)
 
+80   Aktuelle Nachricht:   
+81   Bezugsnachricht:
+82   Bezugsnachricht (Weiterleitung):
+
+83   Env.-Abs.: ~
+84   Env.-Empf.:~
+85   Orig.-Abs.:~
+86   Orig.-Empf.:
+87   Wtr.-Abs.: ~
+
+92   Markierte Adressen
+90   ^Brett(er) oder Gruppe(n)
+91   Ben^utzer oder Verteiler
+
 101  Nachricht weiterleiten (Kopie)
 102  Nachricht weiterleiten (EditTo)
 103  Nachricht weiterleiten (QuoteTo)
@@ -4073,6 +4087,19 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.68  2003/01/07 00:56:46  cl
+# - send window rewrite -- part II:
+#   . added support for Reply-To/(Mail-)Followup-To
+#   . added support to add addresses from quoted message/group list/user list
+#
+# - new address handling -- part II:
+#   . added support for extended Reply-To syntax (multiple addresses and group syntax)
+#   . added support for Mail-Followup-To, Mail-Reply-To (incoming)
+#
+# - changed "reply-to-all":
+#   . different default for Ctrl-P and Ctrl-B
+#   . more addresses can be added directly from send window
+#
 # Revision 1.67  2002/11/14 21:06:12  cl
 # - DoSend/send window rewrite -- part I
 #
