@@ -842,7 +842,7 @@ procedure DisplaySendbox;
 var
   ToStr: String;
   ToPos: Integer;
-begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
+begin
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
@@ -860,13 +860,13 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
   wrt(x+3,y+8,getres2(611,14));      { 'Grî·e'   }
   wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
-  showcode; { 05.02.2000 MH: 38 > 42 }
+  showcode;
   attrtxt(col.coldialog);
   wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
-  showcc; { 05.02.2000 MH: x+39 -> x+43 }
+  showcc;
   attrtxt(col.coldiahigh);
   kopkey:=left(getres2(611,16),1);
-  wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
+  wrt(x+42,y+8,kopkey);
   if empfaenger[1]=vert_char then
     wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
   else
@@ -884,6 +884,10 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   showbox;
   showsize;
   mon;
+  senden:=-1;
+  n:=1;                                { SendBox-Abfrage }
+  pushhp(68);
+  spezial:=false;
 end;
 
 
@@ -1252,10 +1256,6 @@ fromstart:
     echomail:=ntEditBrettempf(netztyp) and not pm;
     fadd:=iif(echomail,2,0);
     DisplaySendbox;                         { SendBox aufbauen }
-    senden:=-1;
-    n:=1;                                { SendBox-Abfrage }
-    pushhp(68);
-    spezial:=false;
     repeat
       if pm then intern:=false
       else intern:=(grnr=IntGruppe);
@@ -2197,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.11  2000/10/05 23:13:20  mk
+  - zu grossen Prozedurrumpf verkleinert
+
   Revision 1.39.2.10  2000/10/05 20:29:49  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
