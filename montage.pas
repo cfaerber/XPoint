@@ -55,7 +55,7 @@ procedure incd(var d);
 procedure decd(var d);
 function  prevd(d:datetimest):datetimest;
 function  nextd(d:datetimest):datetimest;
-function  sommer(d:datetimest):boolean;   { Sommerzeit? }
+function  sommer(const d,z:datetimest):boolean;   { Sommerzeit? }
 
 implementation
 
@@ -180,15 +180,27 @@ end;
 
 function sommer(d:datetimest):boolean;
 var t,m : byte;
-    res : integer;
+    res,d1 : integer;
 begin
   val(copy(d,1,2),t,res);
   val(copy(d,4,2),m,res);
-  sommer:=((m>3) and (m<9)) or ((m=3) and (t>=21)) or ((m=9) and (t<=23));
+  d1:=dow('01'+mid(d,3));                     { 1. Tag des aktuellen Monats }
+  if d1>4 then d1:=-7+d1;
+  if ((m>3) and (m<10)) or                    { April bis September                       }
+     ((m=3) and (t>29-d1)) or                 { Letzter Sonntag im M„rz schon vorbei?     }
+     ((m=3) and (t=29-d1) and                 { Letzter Sonntag im M„rz nach 01:59 Uhr?   }
+      (ival(copy(z,1,2)+copy(z,4,2)) > 159)) or
+     ((m=10) and (t<29-d1)) or                { Letzter Sonntag im Oktober noch nicht da? }
+     ((m=10) and (t=29-d1) and                { Letzter Sonntag im Oktober vor 03:00 Uhr? }
+      (ival(copy(z,1,2)+copy(z,4,2)) < 300))
+     then sommer:=true else sommer:=false;
 end;
 
 {
   $Log$
+  Revision 1.11  2002/01/13 15:07:23  mk
+  - Big 3.40 Update Part I
+
   Revision 1.10  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

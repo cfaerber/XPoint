@@ -46,7 +46,7 @@ uses
 
 const
        LangVersion = '13';           { Version des Sprachmoduls }
-       menus       = 40;             { Anzahl der Menus }
+       menus       = 43;             { Anzahl der Menus (+1 wegen Zusatzmenueerweiterung) }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
        maxmarklist = 20000;          { Maximale Anzahl markierter Msgs }
@@ -88,6 +88,7 @@ const
        realnlen = 120;               { Laenge der Realnames }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
+          FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
        xp_xp       : string = 'OpenXP/32';
        xp_origin   : string = '--- OpenXP/32';
@@ -556,6 +557,7 @@ type   textp  = ^text;
                   params    : string;
                   baud      : longint;
                   gebzone   : string;
+                  SysopMode : boolean;
                   SysopInp  : string;  { Eingabe-Puffer fuer SysMode }
                   SysopOut  : string;  { Zieldatei fuer Sysop-Mode  }
                   SysopStart: string;
@@ -727,13 +729,13 @@ type   textp  = ^text;
 
 const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-                                            1,1,1,1,1,1,1);
+                                            1,1,1,1,1,1,1,1,1,1);
        menable : array[0..menus] of word = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                            0,0,0,0,0,0,0);
+                                            0,0,0,0,0,0,0,0,0,0);
        checker : array[0..menus] of byte = (0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                            0,0,0,0,0,0,0);
+                                            0,0,0,0,0,0,0,0,0,0);
 
        OStype : (os_dos,os_linux,os_windows,os_2) = os_dos;
 
@@ -783,6 +785,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParNetcall : string  = '';  { autom. Netcall }
        ParNCtime  : string  = '';    { Uhrzeit f. autom. Netcall }
        ParRelogin : boolean = false;   { Relogin-Netcall        }
+       ParNSpecial: boolean = false;   { Netcall/Spezial        }
        ParReorg   : boolean = false;   { autom. Reorganisation  }
        ParSpecial : boolean = false;   { Spezial-Reorg - Puffer-reparieren }
        ParPack    : boolean = false;   { autom. Packen          }
@@ -855,9 +858,11 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
-       showungelesen : boolean = false;   { Bretter mit ungel. Nachrichten auch markieren }
+       showungelesen : boolean = true;   { Bretter mit ungel. Nachrichten auch markieren }
 
        ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
+       UserAutoCreate  : boolean = false; { Unbekannte User beim Beantworten und }
+                                          { Archivieren ohne RÅckfrage anlegen   }
 
        Boundary_Counter: Word = 0;
 
@@ -929,7 +934,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ListUhr      : Boolean;       { Uhr bei Vollbildlister }
        ListEndCR    : boolean;       { internen Lister mit <cr> beenden }
        ListWrap     : boolean;
-       FKeys        : array[0..3] of fkeyp;
+       FKeys        : array[0..4] of fkeyp;
        Unpacker     : ^UnpackRec;
        EditVollbild : boolean;
        ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=grosse Files }
@@ -1006,7 +1011,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ZC_ISO       : boolean;       { ISO-8859-1 verwenden }
        ZC_MIME      : boolean;       { MIME f¸r ZConnect verwenden }
        leaveconfig  : boolean;       { /Config-Menue bei <Esc> ganz verlassen }
-       NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" }
+       NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" (nur RFC) }
+       NewsgroupDispAll: boolean;    { fÅr alle Gruppen }
        NetcallLogfile:boolean;       { Logfile ueber Netcalls fuehren }
        ShrinkUheaders : boolean;     { UUZ-Schalter -r }
        ListHighlight: boolean;       { ** und __ auswerten }
@@ -1036,6 +1042,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusaetzliches Tonsignal nach Reorg u.a. }
+       MsgNewFirst  : boolean;       { Nachrichtenanzeige umgekehrt: neue oben }
        MsgFeldTausch   : string;     { fuer blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, koennen
                                        in der Brettliste Felder vertauscht werden }
@@ -1043,7 +1050,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                                        die sich Ausgaben vorlesen lassen, koennen
                                        in der Userliste Felder vertauscht werden }
        UsrFeldPos1  : Byte;          { Spezialmodus Position der Usernamen (FeldTausch) }
-       UsrFeldPos2  : Byte;          { Normalmodus Position der Uusernamen (FeldTausch) }
+       UsrFeldPos2  : Byte;          { Normalmodus Position der Usernamen (FeldTausch) }
        Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
        brettkomm    : boolean;       { Kommentar aus Brettliste uebernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
@@ -1118,7 +1125,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
        macrodef    : array[1..maxkeys] of string;
-       shortkey    : array[1..maxskeys] of KeyRec;
+       shortkey    : array[1..maxskeys+1] of KeyRec;
        shortkeys   : shortint;
        AutoCrash   : string;     { Crash automatisch starten; *.. -> normaler Netcall }
        extheadersize : integer;      { groesse des Kopfes bei xp3.extract_msg() }
@@ -1206,6 +1213,9 @@ implementation
 
 {
   $Log$
+  Revision 1.153  2002/01/13 15:07:25  mk
+  - Big 3.40 Update Part I
+
   Revision 1.152  2002/01/09 02:16:59  mk
   MY: - Ctrl-W toggles word wrap in message lister
 

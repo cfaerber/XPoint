@@ -38,7 +38,7 @@
 {                  tnr=1 -> nur Crashs/Requests aus CRASH.TMP           }
 
 
-procedure AutoTiming(tnr:integer; callall,crashall:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
     anz,i   : integer;
@@ -53,6 +53,10 @@ var brk     : boolean;
     lastbusy: array[1..MaxCom] of string;
     _anz    : integer;
     lsec    : string;
+    f       : file;
+
+const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
+      NetcallEndeFlag = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
@@ -180,34 +184,116 @@ var brk     : boolean;
   end;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
-  var d   : DB;
-      fn  : string;
-      t   : text;
-      ti  : string;
-      all : string;
-      x,y : Integer;
-      p   : Integer;
-      box : string;
+  var d          : DB;
+      fn         : pathstr;
+      t          : text;
+      ti         : string;
+      all        : string;
+      clientbox  : string;
+      currentbox : string;
+      box        : string;
+      x,y        : byte;
+      i,p,nt     : byte;
+      datDa      : boolean;
+
+    procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
+    var i          : byte;
+        netcalldat : text;
+    begin
+      if not exist(ownpath+NetcallSpecialDat) then
+      begin
+        datDa:=false;
+        if auto then
+        begin
+          trfehler(1016,60);   { 'Datei NETCALL.DAT nicht vorhanden' }
+          exit;
+        end;
+        if not ReadJN(getres2(11000,16)+' '+getres2(11000,17),true) then exit;
+                               { 'Datei NETCALL.DAT nicht vorhanden - neu anlegen' }
+        EditNetcallDat;
+        exit;
+      end;
+      datDa:=true;
+      ReadNetcallSpecialData;
+    end;
+
   begin
     all:='';
+    clientbox:='';
+    currentbox:='';
+    if special then
+    begin
+      InitNetcallSpecial;
+      if not datDa then exit;
+    end;
     dbOpen(d,BoxenFile,1);
-    while not dbEOF(d) do begin
-      if dbReadInt(d,'script') and 2=0 then
-        all:=all+' '+dbReadStr(d,'boxname');
-      dbNext(d);
+    if special then
+    begin
+      if auto then   { /nsp:1..20 (automatisch) }
+      begin
+        i:=datLine;
+        if trim(NetcallSpecialList[i]) = '' then
+        begin
+          trfehler1(1019,strs(i),60);  { 'NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!' }
+          dbClose(d);
+          exit;
+        end;
+      end
+      else begin     { Netcall/Spezial (manuell) }
+      { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
+        i:=1;
+        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax) do
+          inc(i);
+        if trim(NetcallSpecialList[i]) = '' then
+        begin
+          rfehler(1018);  { 'NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!' }
+          dbClose(d);
+          exit;
+        end;
       end;
-    all:=trim(all);
+      all:=iifs(i>9,'',' ')+strs(i)+':  '+trim(NetcallSpecialList[i]);
+    end
+    else
+      while not dbEOF(d) do
+      begin
+        if dbReadInt(d,'script') and 2=0 then
+        begin
+          currentbox := dbReadStr(d,'boxname');
+          dbRead(d,'Netztyp',nt);
+          ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+          if nt=nt_Client then          { RFC/Client? }
+          begin
+            clientbox := clientbox+' '+currentbox;
+            currentbox := '';
+          end;
+          if currentbox <> '' then all:=all+' '+currentbox;
+        end;
+        dbNext(d);
+      end;
+
+    if not special then all:=trim(all + clientbox);
     if all='' then brk:=true
     else begin
       if auto then
         brk:=false
       else begin
-        dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
-        maddstring(3,2,'',all,66,255,'>');
+        if special then
+          dialog(72,3,getres2(1024,1),x,y)     { 'Spezial-Netcall bei:' }
+        else
+         dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
+        maddstring(3,2,'',all,66,255,'');
+        if special then
+          for i:=1 to NetcallSpecialMax do
+            if trim(NetcallSpecialList[i]) <> '' then  { nur EintrÑge anzeigen, die nicht leer sind }
+              mappsel(false,iifs(i>9,'',' ')+strs(i)+':  '+
+                      trim(NetcallSpecialList[i]));
         readmask(brk);
         enddialog;
         end;
-      all:=UpperCase(trim(all))+' ';
+      if special and (cpos(':',all)=3) then
+        all:=ustr(trim(Mid(all,4)))+' '
+      else
+        all:=ustr(trim(all))+' ';
 
       if not brk then begin
         fn:=TempS(1000+dbRecCount(d)*200);
@@ -521,6 +607,7 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
     trfehler(iif(callall,1005,1006),60);   { 'keine zutreffenden Boxen' / 'leere Timing-Liste' }
     exit;
     end;
+  if callall then MakeFile(ownpath+NetcallAlleFlag);
   gl:=screenlines-fnkeylines-12;
   startdat:=ZDate;
   netcalls:=false;
@@ -558,6 +645,8 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
       multi2;
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
+        if (anz=1) and (callall) and (exist(ownpath+NetcallAlleFlag)) then
+          _rename(ownpath+NetcallAlleFlag,ownpath+NetcallEndeFlag);
         execute1;
         initscs;
         end;
@@ -584,6 +673,10 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
   until ende;
   freeres;
   releaseliste;
+  if callall then begin
+    ExErase(ownpath+NetcallAlleFlag);
+    ExErase(ownpath+NetcallEndeFlag);
+  end;
 end;
 
 
@@ -656,6 +749,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2002/01/13 15:07:25  mk
+  - Big 3.40 Update Part I
+
   Revision 1.18  2001/09/26 23:34:19  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

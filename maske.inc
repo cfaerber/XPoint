@@ -78,7 +78,7 @@ var ax,p,myp  : integer;
                 s:=sp(length(s));  { einige Herc-Bildschirme kînnen gleiches }
               end;                 { Vorder- und Hintergrundattribut nicht   }
             if (yy0>=a+1) and (yy<=a+un) then                  { darstellen  }
-              wrt(xx,yy-a,txt);
+              fwrt(xx,yy-a,txt);
             end;
       mon;
       end;
@@ -90,6 +90,7 @@ var ax,p,myp  : integer;
       l   : String[1];
       ua  : boolean;    { Scrollpfeil nach oben }
       da  : boolean;    { Scrollpfeil nach unten }
+      s: String;
   begin
     with amaskp^ do begin
       attrtxt(stat.col.ColFeldInput);
@@ -103,35 +104,34 @@ var ax,p,myp  : integer;
               if not enabled then { not enabled }
 	      begin
                 attrtxt(stat.col.ColBack);
-                wrt(xx2,yy-a,l+sp(len)+l);
-                if stat.mausarrows and hassel then 
-		  Wrt2(' ')
-                else 
-		if checkbutt then 
-		  Wrt2('  ');
+                s := l+sp(len)+l;
+                if stat.mausarrows and hassel then s := s + (' ')
+                else if checkbutt then s := s + '  ';
+                fwrt(xx2,yy-a,s);
                 attrtxt(stat.col.ColFeldInput);
               end { not enabled }
               else if checkbutt then begin { enabled, checkbutt }
                 attrtxt(stat.col.colbuttons);
-                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1],'x',' ')+'] ');
+                fwrt(xx2,yy-a,' ['+iifc(cont=yesno[1],'x',' ')+'] ');
               end { enabled, checkbutt }
               else begin { enabled, not checkbutt }
                 attrtxt(stat.col.colfeldinput);
-                wrt(xx2,yy-a,l+forms(cont,len));
-                if stat.arrowspace and enabled then 
-		begin
-                  if length(cont)>len then 
-		  begin
+                s := l+forms(cont^,len);
+                fwrt(xx2,yy-a,s);
+                if stat.arrowspace and enabled then
+                begin
+                  if length(cont^)>len then
+                  begin
                     attrtxt(stat.col.ColArrows);
-                    Wrt2(#16);
-                  end
-                  else
-                    Wrt2(' ');
-                  if stat.mausarrows and hassel then 
+                    FWrt(xx2+Length(s), yy-a, #16);
+                  end else
+                    FWrt(xx2+Length(s), yy-a, ' ');
+                  if stat.mausarrows and hassel then
 		  begin
                     attrtxt(stat.col.colback);
                     Wrt2(#25);
                   end;
+                  FWrt(xx2+Length(s)+1, yy-a, #25);
                 end; { stat.arrowspace and enabled }
               end; { enabled, not checkbutt }
             end; { enabled or (not dispnodisp) } 
@@ -140,8 +140,8 @@ var ax,p,myp  : integer;
             if yy0<a+1 then ua:=true
             else da:=true;
       attrtxt(uda.color);
-      if uda.x1>0 then wrt(uda.x1,uda.y1,iifc(ua,#30,uda.fillc));
-      if uda.x2>0 then wrt(uda.x2,uda.y2,iifc(da,#31,uda.fillc));
+      if uda.x1>0 then fwrt(uda.x1,uda.y1,iifc(ua,#30,uda.fillc));
+      if uda.x2>0 then fwrt(uda.x2,uda.y2,iifc(da,#31,uda.fillc));
       mon;
       end;
     normtxt;
@@ -162,7 +162,7 @@ var ax,p,myp  : integer;
             moretext:=true
           else if yy>=a+1 then begin
             attrtxt(attr);
-            wrt(xx,yy+ob-1-a,txt);
+            fwrt(xx,yy+ob-1-a,txt);
             end;
           end;
         p:=p^.next;
@@ -209,7 +209,7 @@ var ax,p,myp  : integer;
           end;
     end;
 
-    function testtime(len: Integer; t:string):boolean;
+    function testtime(len: Integer; const t:string):boolean;
     var h,m,s : Integer;
     begin
       h:=ival(copy(t,1,2));
@@ -283,34 +283,43 @@ var ax,p,myp  : integer;
   end;
 
   procedure showfield;
+  var
+    x: Byte;
+    s: String;
   begin
     with amaskp^ do
       with afld^ do begin
         gotoxy(xx2,yy-a);
         moff;
-        if checkbutt then begin
+        if checkbutt then
+        begin
           attrtxt(stat.col.colbuttons);
-          Wrt2(' [' + iifc(cont=yesno[1],'x',' ') + '] ');
-          end
-        else begin
-          if stat.arrowspace then begin
+          FWrt(xx2, yy-a, ' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
+        end else
+        begin
+          x := xx2;
+          if stat.arrowspace then
+          begin
             attrtxt(stat.col.colarrows);
-            Wrt2(iifc(ax>0,#17,' '));
-            end;
+            FWrt(x, yy-a, iifc(ax>0,#17,' ')); Inc(x);
+          end;
           attrtxt(stat.col.ColFeldActive);
           if replace then attrtxt(stat.col.ColFeldMarked);
-          Wrt2(copy(cont,ax+1,len));
+          s := copy(cont^,ax+1,len);
+          FWrt(x, yy-a, s); Inc(x, Length(s));
           attrtxt(stat.col.ColFeldActive);
-          Wrt2(dup(len-length(cont)+ax,stat.fillchar));
+          s := dup(len-length(cont^)+ax,stat.fillchar);
+          FWrt(x, yy-a, s); Inc(x, Length(s));
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            Wrt2(iifc(length(cont)-ax>len,#16,' '));
-            end;
+            FWrt(x, yy-a, (iifc(length(cont^)-ax>len,#16,' '))); Inc(x);
+          end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
             Wrt2(#25);
-            end;
           end;
+          FWrt(x, yy-a, #25);
+        end;
         mon;
         normtxt;
         end;
@@ -320,9 +329,10 @@ var ax,p,myp  : integer;
   var p1     : selnodep;
       lines  : integer;
       width  : Integer;
+      longest: Integer;
       i,p,sa : integer;
       t      : taste;
-      na     : byte;
+      na,x   : byte;
       insmaus: boolean;   { Taste wurde 'inside' gedrÅckt }
 
     procedure display;
@@ -335,13 +345,15 @@ var ax,p,myp  : integer;
         moff;
         for i:=1 to sll do begin
           if i=p then attrtxt(stat.col.ColSelBar);
-          if p1=nil then wrt(slx+1,sly+i,sp(width+2))
-          else wrt(slx+1,sly+i,' '+forms(p1^.el,width+1));
+          if p1=nil then fwrt(slx+1,sly+i,sp(width+2))
+          else fwrt(slx+1,sly+i,' '+forms(mid(p1^.el^,x),width+1));
           normtxt;
           if p1<>nil then p1:=p1^.next;
           end;
-        wrt(slx,sly+1,iifc(sa>0,#30,'≥'));
-        wrt(slx,sly+sll,iifc(sa+sll<lines,#31,'≥'));
+        fwrt(slx,sly+1,iifc(sa>0,#30,'≥'));
+        fwrt(slx,sly+sll,iifc(sa+sll<lines,#31,'≥'));
+        fwrt(slx+1,sly,iifc(x>0,#17,'ƒ'));
+        fwrt(slx+width+2,sly,iifc(x+width<longest,#16,'ƒ'));
         mon;
         end;
     end;
@@ -384,12 +396,13 @@ var ax,p,myp  : integer;
   begin { procedure select }
     brk:=false;
     with amaskp^,afld^ do begin
-      width:=4; lines:=0;       { Minimale Breite: 4 }
+      width:=4; lines:=0; x:= 0;      { Minimale Breite: 4 }
       p1:=selliste;
-      p:=1; sa:=0;
+      p:=1; sa:=0; longest := 0;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
+        longest:=max(longest,length(p1^.el^));
         width:=max(width,min(length(p1^.el), ScreenWidth-10));
         if UpperCase(cont)=UpperCase(p1^.el) then p:=lines;
         p1:=p1^.next;
@@ -430,6 +443,8 @@ var ax,p,myp  : integer;
           maus_bearbeiten;
         if t=keyup then oben;
         if t=keydown then unten;
+        if t=keyleft then if x>1 then dec(x,10);
+        if t=keyrght then if x+width<longest then inc(x,10);
         if t=keyhome then begin
           p:=1; sa:=0;
           end;
@@ -765,6 +780,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   mauszul:=true; mauszur:=true;
   insert_mode:=true;
   helpsave:=help_page;
+  exit_mask:=false;
 
   with amaskp^,amaskp^.stat do begin
     if felder=0 then error('no fields!');
@@ -801,10 +817,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if rahmentyp=4 then 
 	begin
           moff;
-          if a>0 then wrt(rl,ro,'÷'+dup(rr-rl-1,'ƒ')+'∑')
-          else wrt(rl,ro,'…'+dup(rr-rl-1,'Õ')+'ª');
-          if maxyy0-a>un-ob+1 then wrt(rl,ru,'”'+dup(rr-rl-1,'ƒ')+'Ω')
-          else wrt(rl,ru,'»'+dup(rr-rl-1,'Õ')+'º');
+          if a>0 then fwrt(rl,ro,'÷'+dup(rr-rl-1,'ƒ')+'∑')
+          else fwrt(rl,ro,'…'+dup(rr-rl-1,'Õ')+'ª');
+          if maxyy0-a>un-ob+1 then fwrt(rl,ru,'”'+dup(rr-rl-1,'ƒ')+'Ω')
+          else fwrt(rl,ru,'»'+dup(rr-rl-1,'Õ')+'º');
           mon;
         end;
         if not dontclear then  
@@ -953,18 +969,35 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             cont:=TopAllStr(UpperCase(cont)); replace:=false; end
             else
                                                               { JG: Clipboard fuer Menues }
+          if t=^A then replace:=true;
 
-          if (t=^C) or (t=keycins) then string2clip(cont);   { STRG+C / STRG+INS = kopieren }
+          if (t=^C) or (t=keycins) then string2clip(cont);    { Ctrl-C / Ctrl-Ins = kopieren }
 
-          if (t=^V) or ((t=keyins) and kb_shift) then
+          if ((t=^V) or ((t=keyins) and kb_shift)             { Ctrl-V / Shift-Ins }
+             or ((maskseekmenu>=yp) and (t=keySF2)))
+             and may_insert_clip then
+          begin
           begin   { STRG+V / SHIFT+INS }
             s:= Clip2String;
             i := length(s);
             if replace then
             begin                                             { Ersetzen }
+              if (t=keySF2) then begin
+                help_page:=ShiftF2Help;
+                ShiftF2proc(s^);
+                end
+              else s^:=clip2string(maxlen,1);
               p:=1; ax:=0; replace:=false;
             end else
+            begin
+              if t=keySF2 then begin
+                help_page:=ShiftF2Help;
+                ShiftF2proc(s);
+                truncstr(s^,maxlen-length(cont));
+                end
+              else s :=clip2string(maxlen-length(cont),1);
               s:=LeftStr(cont,p+ax-1)+s+mid(cont,p+ax);
+            end;
 
             p:=p+i;                                           {Cursorposition aktualisieren}
             if p>=len then
@@ -974,6 +1007,16 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
               end;
             if xtest1(s) then cont:=s;
             end;
+
+          if (delete_on_cDel) and (t=keycdel)                 { MY: <Ctrl-Del> in MenÅs erlauben }
+          then begin                                          {     (auch wenn Feld gesperrt)    }
+            cont^:=mask;
+            if xtest1(cont^) then;    { leer ist immer zulÑssig! }
+            p:=1; ax:=0;
+            replace:=false;
+            cDel_pressed:=true;
+            if leave_on_cDel then t:=keyesc;
+          end;
 
         if (t=keypgup) then
           if yp>1 then begin
@@ -1093,6 +1136,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if (t=keyesc) and not quitfn(true,modified) then t:='';
 
         if ((t=^J) or ((t=keyesc) and keeponesc)) then begin
+          exit_mask:=true;
           myp:=yp;
           yp:=1;
           while (yp<=felder) and
@@ -1119,6 +1163,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.40  2002/01/13 15:07:23  mk
+  - Big 3.40 Update Part I
+
   Revision 1.39  2001/10/19 23:47:09  mk
   - corrected definition of ReadHMaske
   - changed some word to integer

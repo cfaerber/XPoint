@@ -226,26 +226,13 @@ asm
          dec dl                         { Naechstes Suchkey-Zeichen laden }
          jz @found                      { Kommt keines mehr, Suche erfolgreich }
 
-@2:      mov al,[esi+ebx]               { im Text Nach Anfang des rests suchen }
+@2:      mov al,[esi+ebx]               { im Text Nach Anfang des Rests suchen }
          cmp al,[edi+ebp+1]
-         je @3
+         je @ulgood
          cmp al,' '                     { Abbruch bei Wortende }
-         jbe @nextb
+         jb @nextb
          inc ebx
          jmp @2
-
-@3:      inc ebx                        {Weitervergleichen bis naechster * oder Suchkeyende }
-         inc ebp
-         dec dl
-         jz @found                      { Bei Suchkeyende ist Suche erfolgreich }
-         mov al,[edi+ebp+1]
-         cmp al,[esi+ebx]               { weiter im Text solange er passt }
-         je @3
-         cmp al,'?'                     { ...oder "?" - Wildcard greift }
-         je @3
-         cmp al,'*'                     { bei neuem * - Wildcard diesen ueberspringen }
-         je @1
-         jmp @2                         { Textanfang erneut suchen }
 
                                         {--------------}
 @ultst:  cmp dh,0                       { UMLAUTSUCHE }
@@ -1200,6 +1187,9 @@ finalization
 
 {
   $Log$
+  Revision 1.76  2002/01/13 15:07:27  mk
+  - Big 3.40 Update Part I
+
   Revision 1.75  2002/01/03 19:15:00  cl
   - added XreadS (similar to XReadF, but reads message from database into TStream)
 

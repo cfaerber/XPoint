@@ -1080,6 +1080,7 @@ again:
                sData.Free;
              end;
          6 : begin
+               _UserAutoCreate:=UserAutoCreate;
                dbSeek(ubase,uiName,UpperCase(name));
                if not dbFound then
                begin   { User noch nicht vorhanden }
@@ -1168,6 +1169,7 @@ var
     hdp    : THeader;
     hds    : longint;
 begin
+  _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
@@ -1332,6 +1334,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/01/13 15:07:32  mk
+  - Big 3.40 Update Part I
+
   Revision 1.15  2002/01/06 16:13:19  mk
   - second fix for last checkin
 

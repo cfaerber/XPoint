@@ -22,6 +22,8 @@
 
 {$I xpdefine.inc }
 
+{.$DEFINE sDebug}
+
 unit xp4o;
 
 interface
@@ -38,6 +40,27 @@ uses
 
 var  such_brett  : string;    { fuer Suche im gewaehlten Brett }
      FMsgReqnode : string;    { F3 - Request - Nodenr. }
+
+const max_arc = 3;    { maximale verschachtelte Archivdateien }
+      suchlen = 160;  { Maximallaenge der Suchbegriffe }
+      histmax = 14;   { Anzahl Eintraege in Suchbegriff-History}
+      opthmax = 4;    { Anzahl Eintraege in Optionen-History }
+      suchmax = 20;   { Anzahl AND/OR Teilstrings im Suchbegriff }
+
+var seeklen   : array[0..suchmax-1] of byte;
+    seekstart : array[0..suchmax-1] of byte;
+    seeknot   : array[0..suchmax-1] of boolean;
+    suchand   : boolean;
+    suchanz   : byte;
+    sst       : string[suchlen];
+    igcase    : boolean;
+    umlaut    : boolean;
+
+Const
+    historyFile = 'SEEK.TXT';
+    libraryFile = 'SEEKLIB.TXT';
+    optionsFile = 'OPTIONS.TXT';
+    Suchergebnis : boolean = false;
 
 procedure msg_info;          { interpretierten Header anzeigen }
 procedure ShowHeader;        { Original-Header anzeigen        }
@@ -79,6 +102,12 @@ function  _killit(ask:boolean):boolean;
 function  testbrettscope(var s:string):boolean;
 procedure seek_cutspace(var s:string);
 
+procedure seekmenu(var s:string);
+procedure OldSEEK_ed(var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
+
+function Bool_BrettGruppe(var s:string):boolean;
+function Bool_Brettindex(var s:string):boolean;
+Procedure Brettmarksuche;
 
 implementation  {-----------------------------------------------------}
 
@@ -98,14 +127,17 @@ type arcbuf = record
               end;
 
 const arcbufp : byte = 0;
-      suchopt : string = 'au';
+      suchopt : string[8] = '*';  { Flag fÅr erste Suche seit Programmstart }
+
+    history : array[0..histmax] of String[Suchlen]=
+     ('','','','','','','','','','','','','','','');
+    history_changed   : boolean = false;
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Groesse nach Reorg }
      abuf   : array[1..max_arc+1] of arcbuf;
      exdir  : string;
      arctyp_save : shortint;
-     mid_options       : byte;
      mid_bretter       : byte;
      Mid_teilstring    : boolean;
 
@@ -129,10 +161,75 @@ end;
 
 function mid_suchoption(var s:string):boolean;
 begin
-  setfieldenable(mid_options,s='J');
   if aktdispmode <> 11 then setfieldenable(mid_bretter,s='J');
   mid_suchoption:=true;
 end;
+
+procedure OldSEEK_ed(var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
+begin
+  if (ustr(t)='E') then begin
+    EditFile(libraryFile,false,false,false,0,false);
+    t:=keyesc;
+    pushkey(keysf2);
+    end;
+end;
+
+procedure seekmenu(var s:string);
+  var t    : text;
+      brk  : boolean;
+      x,y  : byte;
+
+const height = 10;
+      width  = 70;
+begin
+      assign(t,libraryFile);
+      reset(t);
+      s:='';
+      if ioresult<>0 then exit;
+      selbox(width+2,height+2,getres2(441,21),x,y,true);
+      openlist(x+1,x+width,y+1,y+height,0,'/NS/SB/DM/S/M/');
+      ListboxCol;
+      listarrows(x+width+1,y+1,y+height,col.colselrahmen,col.colselrahmen,'≥');
+      while not eof(t) do
+      begin
+        readln(t,s);
+        app_L(left(s,suchlen));
+        end;
+      listtp(oldseek_ed);
+      list(brk);
+      if list_markanz=0 then begin
+        s:=get_selection;
+        if s[1]=' ' then brk:=true;
+        end
+      else if not brk then begin
+        s:=first_marked;
+        x:=0;
+        repeat
+          if (s<>#0) and (s<>'') and (s[1]<>' ')
+          then inc(x);
+          s:=next_marked;
+        until (s=#0) or (x=histmax);
+        for y:=histmax downto x do history[y]:=history[y-x];
+        s:=first_marked;
+        y:=0;
+        repeat
+          if (s<>#0) and (s<>'') and (s[1]<>' ')
+          then begin
+            history[y]:=s;
+            inc(y);
+            end;
+          s:=next_marked;
+        until (y>x) or (s=#0);
+        s:=history[0];
+        history_changed:=true;
+        pushkey(keyctcr);
+        end;
+      closelist;
+      closebox;
+      close(t);
+      if brk then s:='';
+end;
+
 
 { Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }
 
@@ -142,6 +239,9 @@ type  suchrec    = record
                      fidoempf,mid  : string;
                      nbetr,nuser   : Boolean;
                      nfidoempf     : Boolean;
+                     or_betr       : Boolean;
+                     or_user       : Boolean;
+                     or_fidoempf   : Boolean;
                      vondat,bisdat : string;
                      vonkb,biskb   : longint;
                      status        : string;
@@ -166,14 +266,13 @@ var x,y   : Integer;
     hdp   : Theader;
     hds   : longint;
     bretter : string;
+    t               : text;
 
     suchstring      : string;
     typc          : char;
     statb           : byte;
     _vondat,_bisdat : longint;
     minsize,maxsize : longint;
-    igcase          : boolean;
-    umlaut          : boolean;          // Schalter zum Umlaute ignorieren
     regex           : boolean;          // regexpressions zulassen?
     bereich         : shortint;
     _brett          : string;
@@ -183,17 +282,16 @@ var x,y   : Integer;
     typa            : array[0..4] of string;
     RegExpr: TRegExpr;
 
+    seek            : string[suchlen];
+    found           : boolean;
+    markedback      : marklistp;
+    markanzback     : integer;
+    check4date      : boolean;
+    headersuche     : byte;
+    andmask,ormask  : byte;
+    holdmarked      : boolean;
 
-    suchand           : boolean;
-    seeklen,seekstart : array[0..9] of byte;
-    seeknot           : array[0..9] of boolean;
-    suchanz           : byte;
-    seek              : string;
-    found             : boolean;
-    markedback        : marklistp;
-    markanzback       : integer;
-
-label ende;
+label ende, restart;
 
 
 { Check_Seekmode:
@@ -211,50 +309,64 @@ label ende;
   m,n,i   : Integer;
   quotes  : boolean;
 
-{$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung}
+{$IFDEF sDebug}                      { Zum Debuggen der Suchstringerkennung}
+
   Procedure Show_Seekstrings;
-  var
-    n,x,y: Integer;
-   begin
-    if spez then x:=23 else x:=19;
-    msgbox(70,x,'Suchstring-Check',x,y);
-    attrtxt(col.colmbox);
-    wrt(x+1,y+1,'Benutzte Teilstrings: '+StrS(suchanz));
-    wrt(x+27,y+1,iifs(suchand,'AND','OR'));
-    write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));
-    write(iifs(spez,'    SPEZIAL',''));
-    wrt(x+1,y+3,'Suchstring: '+chr($af)+iifs(spez,srec^.txt,suchstring)+chr($ae));
-    wrt(x+1,y+4,'sst:        '+chr($af)+sst+chr($ae));
-    for n:=0 to 9 do
+  var n,x,y: byte;
+  const width=75; height=20;
+  begin
+    selbox(width+2,height+2,'Suchstring-Check',x,y,true);
+    openlist(x+1,x+width,y+1,y+height,0,'/NS/CR/');
+    ListboxCol;
+    listarrows(width+3,y+1,y+height,col.colselrahmen,col.colselrahmen,'≥');
+    app_L('');
+    app_L(' Benutzte Teilstrings: '+StrS(suchanz)+iifs(suchand,'  AND','  OR')+
+      '   Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0')+
+      iifs(spez,'    SPEZIAL',''));
+    app_L('');
+    app_l(' Suchstring: '+chr($af)+iifs(spez,srec^.txt,suchstring)+chr($ae));
+    app_l(' sst:        '+chr($af)+sst+chr($ae));
+    app_l('');
+    for n:=0 to iif(suchanz<10,10,suchanz-1) do
     begin
-      wrt(x+1,y+6+n,'String'); write(n); write(': ');
-      write(seekstart[n]:2); write(','); write(seeklen[n]:2);
-      write(iifs(seeknot[n],' NOT ','     ')+chr($af)+LeftStr(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
-      end;
-    wrt(x+1,y+17,'Length(sst)='); write(length(sst)); write('  i='); write(i);
+      app_l(' String'+rforms(strs(n),2)+': '+rforms(strs(seekstart[n]),3)+','+
+        rforms(strs(seeklen[n]),3)+
+        iifs(seeknot[n],' NOT ','     ')+chr($af)+
+        left(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
+    end;
+    app_l(''); 
+    app_l(' Length(sst)='+strs(length(sst))+'  i='+(strs(i)));
     if spez then with srec^do
     begin
-      wrt(x+1,y+19,'Betr:     '+iifs(nbetr,' NOT ','     ')+chr($af)+betr+chr($ae));
-      wrt(x+1,y+20,'User:     '+iifs(nuser,' NOT ','     ')+chr($af)+user+chr($ae));
-      wrt(x+1,y+21,'Fidoempf: '+iifs(nfidoempf,' NOT ','     ')+chr($af)+fidoempf+chr($ae));
-      end;
-    wait(curoff);
+      app_l('');
+      app_l(dup(30,'-'));
+      app_l(' AND-Maske: '+bin(andmask,3)+'   OR-Maske: '+bin(ormask,3));
+      app_l('');
+      app_l(' User:     '+iifs(or_user,' OR','   ')
+           +iifs(nuser,' NOT ','     ')+chr($af)+user+chr($ae));
+      app_l(' Betr:     '+iifs(or_betr,' OR','   ')
+           +iifs(nbetr,' NOT ','     ')+chr($af)+betr+chr($ae));
+      app_l(' Fidoempf: '+iifs(or_fidoempf,' OR','   ')
+           +iifs(nfidoempf,' NOT ','     ')+chr($af)+fidoempf+chr($ae));
+    end;
+    list(brk);
+    closelist;
     closebox;
    end;
 {$ENDIF}
 
   begin
-{$IFDEF Debug}
-      for n:=0 to 9 do
+{$IFDEF sDebug}
+      for n:=0 to suchmax-1 do
       begin
         seekstart[n]:=0;
         seeklen[n]:=0;
         seeknot[n]:=false;
         end;
-{$Endif}
-    suchand:=cpos('o',LowerCase(suchopt))=0;                           { OR }
-    if not suchand or (cpos('a',LowerCase(suchopt))>0)                 { oder AND ?}
-     and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
+{$ENDIF}
+    suchand:=cpos('o',lstr(suchopt))=0;             { OR }
+    if not suchand or (cpos('a',lstr(suchopt))>0)   { oder AND ?}
+     and not (trim(sst)='') then                    { und nicht Leertext (Suche-Spezial) }
     begin
       n:=0;
       seek:=trim(sst);                                 { Leerzeichen vorne und hinten, }
@@ -264,7 +376,7 @@ label ende;
       if seek<>'' then begin
         i:=1;
         sst:=seek+'"';  quotes:=false;
-        while (i<length(sst)) and (n<=9) do
+        while (i<length(sst)) and (n<suchmax) do
         begin
           while sst[i]=' ' do inc(i);                  { Leerzeichen ueberspringen }
           if not quotes then
@@ -310,8 +422,8 @@ label ende;
       seeknot[0]:=false;
       end;
 
-{$IFDEF Debug}
-    if cpos('c',LowerCase(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
+{$IFDEF sDebug}
+    if cpos('c',lstr(suchopt))>0 then show_seekstrings; { "Writeln ist der beste Debugger..." }
 {$ENDIF}
 
   end;
@@ -331,7 +443,14 @@ label ende;
     else begin
       wsize:=min(size,psize);
       ofs:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
-      if (ofs>0) and (ofs<wsize+1+length(key)) then 
+
+      if headersuche=1 then begin           { nur Header durchsuchen }
+        wsize:=ofs;
+        ofs:=0;
+        end
+      else if headersuche=2 then ofs:=0;    { Header und Text durchsuchen }
+
+      if (ofs>=0) and (ofs<wsize+1+length(key)) then begin
       begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
@@ -424,6 +543,9 @@ label ende;
       such  : string;
           j : byte;
       found_not : boolean;
+      foundmask : byte;
+
+  label msg_ok;
 
 {   Volltextcheck:
 
@@ -492,71 +614,69 @@ label ende;
           UpString(realn);
           UpString(hdp.fido_to);
           end;
-        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) }
-        if ((betr='') or (pos(betr,betr2)>0) xor nbetr) and
-           ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser) and
-           ((fidoempf='') or (pos(fidoempf,hdp.fido_to)>0) xor nfidoempf) and
-           ((txt='') or found) then begin
-          MsgAddmark;
-          inc(nf);
+
+        if andmask<>0 then begin
+          foundmask:=0;
+          if ((betr='') or (pos(betr,betr2)>0) xor nbetr)
+            then inc(foundmask,2);
+          if ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser)
+            then inc(foundmask,4);
+          if ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf)
+            then inc(foundmask);
+          if foundmask and ormask <> 0 then goto msg_ok;
+          if (foundmask and andmask) <> (andmask and not ormask) then exit;
           end;
-        end
-      else
 
+        if txt<>'' then begin
+          volltextcheck;
+          if not found then exit;
+          end;
 
-{--Normale Suche--}
-                                                          {Headereintragsuche}
-    else if suchfeld<>'' then begin
-      such:= dbReadStr(mbase,suchfeld);
-      if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
-        ReadHeader(hdp,hds,false);
-        if length(hdp.betreff)>40 then
-          such:=hdp.betreff;
-        end;
-       if suchfeld='MsgID' then begin
-        ReadHeader(hdp,hds,false);
-        such:=hdp.msgid;
-        end;
-      if umlaut then UkonvStr(such,Length(such));
-
-      j:=0;
-      repeat
-        seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
-        if RegEx then 
-        begin 
-          RegExpr.Expression := Seek;
-          Found := RegExpr.Exec(Such);
-        end else
-          found:=((igcase and (pos(seek,UpperCase(such))>0)) or
-           (not igcase and (pos(seek,such)>0)));
-        found_not:=found and seeknot[j];
-        if suchand and not found and seeknot[j] then found:=true;
-        inc(j);
-      until (j=suchanz) or (suchand xor found) or found_not;
-      if found_not then found:=false;
-
-      if Found then Begin
-        MsgAddmark;
+msg_ok: MsgAddmark;
         inc(nf);
         end
-      else
-      if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
-      begin
-        such:= dbReadNStr(mbase,mb_name);             {Bei Usersuche auch Realname ansehen...}
-        if umlaut then UkonvStr(such,Length(such));
+    end
+
+    else begin
+
+      if check4date and (readmode >0) then 
+      begin                                     { Suchen im akt. Lesemodus }
+        if readmode=1 then begin
+          dbReadN(mbase,mb_gelesen,b);    
+          if b>0 then exit;
+          end
+        else if aktdispmode <> 10 then begin
+          dbReadN(mbase,mb_empfdatum,d);
+          if smdl(d,readdate) then exit; 
+          end;
+        end;
+                                                { Headereintrag-Suche }
+      if suchfeld<>'' then begin
+        dbRead(mbase,suchfeld,such);
+ 
+        if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp)
+        then begin
+          dbReadN(mbase,mb_name,seek);          { Bei Usersuche auch Realname ansehen... }
+          such:=such+seek;
+          end;
+ 
+        if stricmp(suchfeld,'betreff') and (length(such)=40) 
+        then begin
+          ReadHeader(hdp^,hds,false);
+          if length(hdp^.betreff)>40 then
+            such:=hdp^.betreff;
+          end;
+         if suchfeld='MsgID' then begin
+          ReadHeader(hdp^,hds,false);
+          such:=hdp^.msgid;
+          end;
+        if umlaut then UkonvStr(such,high(such));
 
         j:=0;
         repeat
-          seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
-
-          if RegEx then
-          begin 
-            RegExpr.Expression := Seek;
-            Found := RegExpr.Exec(Such);
-          end else
-            found:=((igcase and (pos(seek,UpperCase(such))>0)) or
-             (not igcase and (pos(seek,such)>0)));
-
+          seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
+          found:=((igcase and (pos(seek,UStr(such))>0)) or
+           (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
           if suchand and not found and seeknot[j] then found:=true;
           inc(j);
@@ -566,23 +686,27 @@ label ende;
         if Found then Begin
           MsgAddmark;
           inc(nf);
-          end
-        end;
+          end;
       end
 
-    else begin                           {Volltextsuche}
-      volltextcheck;
-      if found then Begin
-        MsgAddmark;
-        inc(nf);
+      else begin                           { Volltextsuche }
+        volltextcheck;
+        if found then Begin
+          MsgAddmark;
+          inc(nf);
+          end;
         end;
       end;
   end;
 
 
+
   procedure TestBrett(const _brett:string);
   begin
-    dbSeek(mbase,miBrett,_brett);
+    if check4date {and (aktdispmode<=10) } and (readmode>0)
+      then if Readmode>1 then dbSeek(mbase,miBrett,_brett+dbLongStr(readdate))
+                         else dbSeek(mbase,miGelesen,_brett+#0)
+    else dbSeek(mbase,miBrett,_brett);
     while not dbEof(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and not brk do
     begin
       TestMsg;
@@ -600,6 +724,48 @@ label ende;
   end;
 
 
+  procedure InitHistory;        { Such-History beim Programmstart aus Datei laden }
+  var i : byte;
+  var t : text;
+  begin
+    assign(t,historyFile);
+    reset(t);
+    if ioresult<>0 then exit;
+    for i:=0 to histmax do readln(t,history[i]);
+    close(t);
+    assign(t,optionsFile);
+    reset(t);
+    if ioresult<>0 then exit;
+    for i:=0 to opthmax do readln(t,opthist[i]);
+    close(t);
+  end;
+
+  procedure CheckHistory;       { Such-History Aktualisieren und in Datei speichern }
+  var i,h: byte;
+  var t  : text;
+  begin
+    if (suchstring='') or history_changed then exit;
+    h:=histmax;
+    for i:=0 to histmax do if history[i]=suchstring then h:=i;
+    for i:=h downto 1 do history[i]:=history[i-1];
+    history[0]:=suchstring;
+
+    h:=opthmax;
+    for i:=0 to opthmax do if opthist[i]=suchopt then h:=i;
+    for i:=h downto 1 do opthist[i]:=opthist[i-1];
+    opthist[0]:=suchopt;
+
+    assign(t,historyFile);
+    rewrite(t);
+    for i:=0 to histmax do writeln(t,history[i]);
+    close(t);
+
+    assign(t,optionsFile);
+    rewrite(t);
+    for i:=0 to opthmax do writeln(t,opthist[i]);
+    close(t);
+
+  end;
 
 {--# Suche #--}
 
@@ -608,6 +774,11 @@ begin
   for i:=0 to 4 do bera[i]:=getres2(442,i);
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
+  if suchopt[1]='*' then
+  begin                                       { Erste Suche seit Programmstart? }
+    suchopt:='au';
+    InitHistory;
+  end;
 
   if srec=nil then begin
     new(srec);
@@ -632,6 +803,11 @@ begin
 
 {-- Eingabemaske Normalsuche --}
 
+  MaskShiftF2(seekmenu,534);
+
+restart:
+
+  MaskSeekMenu:=iif(spez,4,1);
   if not spez then begin
     add:=0;
 (*  if autosuche='' then begin *)
@@ -642,27 +818,24 @@ begin
       else if suchfeld='MsgID' then suchstring:=srec^.mid       { MID Suche aus Menue  }
 
       else suchstring:=srec^.txt;
-      seek:=suchstring;
       maddstring(3,2,getres2(441,2),suchstring,32,SuchLen,range(' ',#255));
       mnotrim;
-      if history0 <> '' then  { Bei Leerer Suchhistory kein Auswahlpfeil... }
-      begin
-        mappsel(false,history0);
-        mappsel(false,history1);
-        mappsel(false,history2);
-        end;
+      if history[0] <> '' then  { Bei Leerer Suchhistory kein Auswahlpfeil... }
+        for i:=0 to histmax do mappsel(false,history[i]);
       mset3proc(seek_cutspace);
       mhnr(530);                                       { 'Suchbegriff ' }
       maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
-      mid_options:=fieldpos;
-      if aktdispmode<>11 then
-      begin
-        maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
-        mid_bretter:=fieldpos;
+      if opthist[0] <>'' then
+        for i:=0 to opthmax do mappsel(false,opthist[i]);
+      maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
+      mid_bretter:=fieldpos;
+      if (aktdispmode=11) or (suchfeld='#') then
+        MDisable
+      else begin
         for i:=0 to 4 do
-          mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gewaehlt }
+          mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gewÑhlt }
         mset1func(testbrettscope);
-      end;
+        end;
       if autosuche<>'' then _keyboard(keypgdn);
 
       if suchfeld='MsgID' then
@@ -671,19 +844,13 @@ begin
         Maddbool(3,6,getres2(442,25),Mid_teilstring);
         MSet1func(Mid_suchoption);
         if mid_suchoption(suchfeld) then;
-        end;
+      end;
 
       readmask(brk);
+      MaskSeekMenu:=0;
       closemask;
-      if suchstring <> seek then
-      begin
-        if  (seek<>history0) and (seek<>history1) and (seek<>history2) then
-        begin
-          history2:=history1;
-          history1:=history0;
-          history0:=seek;
-          end;
-        end;
+      CheckHistory;
+
       if suchfeld='Betreff' then begin
         i:=ReCount(suchstring);         // Re's wegschneiden 
         srec^.betr:=suchstring
@@ -705,37 +872,48 @@ begin
 {--Eingabemaske Spezialsuche--}
 
   else with srec^ do begin
+                                     { Spezial: NOT-Flags wieder an Suchstrings setzen }
+    if nbetr and (betr[1]<>'~') then betr:='~'+betr; 
+    if nuser and (user[1]<>'~') then user:='~'+user;
+    if nfidoempf and (fidoempf[1]<>'~') then fidoempf:='~'+fidoempf;
+  
     add:=iif(ntBrettEmpfUsed,1,0);
-    dialog(50,12+add,getreps2(441,1,anztxt),x,y);
+    dialog(53,12+add,getreps2(441,1,anztxt),x,y);
     i:=4;
-    while (i>0) and (UpperCase(typ)<>UpperCase(typa[i])) do dec(i);
+    while (i>0) and (ustr(typ)<>ustr(typa[i])) do dec(i);
     typ:=typa[i];
     i:=5;
-    while (i>0) and (UpperCase(status)<>UpperCase(stata[i])) do dec(i);
+    while (i>0) and (ustr(status)<>ustr(stata[i])) do dec(i);
     status:=stata[i];
-    maddstring(3,2,getres2(441,6),user,32,SuchLen,'');  mhnr(630);   { 'Absender  ' }
-    maddstring(3,3,getres2(441,7),betr,32,SuchLen,'');    { 'Betreff   ' }
-    mnotrim;
-    mset3proc(seek_cutspace);
-    maddstring(3,4,getres2(441,8),txt,32,SuchLen,'');     { 'Text      ' }
+    maddstring(3,2,getres2(441,6),user,30,SuchLen,'');  mhnr(630);   { 'Absender  ' }
+    maddstring(3,3,getres2(441,7),betr,30,SuchLen,'');    { 'Betreff   ' }
     mnotrim;
     mset3proc(seek_cutspace);
     if ntBrettEmpfUsed then
-      maddstring(3,5,getres2(441,9),fidoempf,32,SuchLen,'');    { 'Fido-Empf.' }
+      maddstring(3,4,getres2(441,9),fidoempf,30,SuchLen,'');    { 'Fido-Empf.' }
+    maddstring(3,4+add,getres2(441,8),txt,35,SuchLen,'');     { 'Text      ' }
+    if history[0] <> '' then  { Bei leerer Suchhistory kein Auswahlpfeil... }
+      for i:=0 to histmax do mappsel(false,history[i]);
+    mnotrim;
+    mset3proc(seek_cutspace);
+    maddtext(48,1,'OR',0);
+    maddbool(46,2,'',or_user);mhnr(640); 
+    maddbool(46,3,'',or_betr);
+    if ntBrettEmpfUsed then maddbool(46,4,'',or_fidoempf);  
     madddate(3,6+add,getres2(441,10),vondat,false,false); mhnr(634); { 'von Datum ' }
     madddate(3,7+add,getres2(441,11),bisdat,false,false); mhnr(634); { 'bis Datum ' }
-    maddint(27,6+add,getres2(441,19),vonkb,6,5,0,99999);  mhnr(635); { 'von ' }
-      maddtext(42,6+add,getres(14),0);   { 'KBytes' }
+    maddint(30,6+add,getres2(441,19),vonkb,6,5,0,99999);  mhnr(635); { 'von ' }
+      maddtext(45,6+add,getres(14),0);   { 'KBytes' }
     biskb:=min(biskb,99999);
-    maddint(27,7+add,getres2(441,20),biskb,6,5,0,99999);  mhnr(635); { 'bis ' }
-      maddtext(42,7+add,getres(14),0);   { 'KBytes' }
-    maddstring(3,9+add,getres2(441,12),typ,8,9,'');        { 'Typ       ' }
+    maddint(30,7+add,getres2(441,20),biskb,6,5,0,99999);  mhnr(635); { 'bis ' }
+      maddtext(45,7+add,getres(14),0);   { 'KBytes' }
+    maddstring(3,9+add,getres2(441,12),typ,8,9,'');         { 'Typ       ' }
     for i:=0 to 4 do
       mappsel(true,typa[i]);
     maddstring(3,10+add,getres2(441,13),status,8,8,'');     { 'Status    ' }
     for i:=0 to 5 do
       mappsel(true,stata[i]);
-    maddstring(27,9+add,getres2(441,14),bretter,8,8,'');   { 'Bretter   ' }
+    maddstring(30,9+add,getres2(441,14),bretter,8,8,'');    { 'Bretter   ' }
     if aktdispmode=11 then
       MDisable
     else begin
@@ -743,44 +921,109 @@ begin
         mappsel(true,bera[i]);
       mset1func(testbrettscope);
       end;
-    maddstring(27,10+add,getres2(441,15),suchopt,8,8,'');   { 'Optionen  ' }
+    maddstring(30,10+add,getres2(441,15),suchopt,8,8,'');   { 'Optionen  ' }
+    if opthist[0] <>'' then
+      for i:=0 to opthmax do mappsel(false,opthist[i]);
     readmask(brk);
+    MaskSeekMenu:=0;
     closemask;
     dec(x);
+    suchstring:=txt;
+    CheckHistory;
     end;
 
 {--Eingaben auswerten--}
 
   if not brk then with srec^ do begin
+
+    if spez then begin
+      andmask:=0; ormask:=0;
+      if user='' then or_user:=false else andmask:=4;
+      if betr='' then or_betr:=false else inc(andmask,2);
+      if fidoempf='' then or_fidoempf:=false else inc(andmask); 
+      if or_user then ormask:=4;
+      if or_betr then inc(ormask,2);
+      if or_fidoempf then inc(ormask);   
+      if txt='' then
+        asm
+             mov al,ormask  { verhindern, dass alle Suchbegriffe auf OR stehen }
+             or al,al 
+             je @2 
+             cmp al,andmask
+             jne @2
+             mov cl,0
+         @1: inc cx 
+             shr al,1
+             jnc @1
+             shl al,cl
+             mov ormask,al
+         @2: 
+        end; 
+      end;
+
     sst:=suchstring;
-    igcase:=multipos('iu',LowerCase(suchopt));
-    umlaut:=multipos('ÑîÅu',LowerCase(suchopt));
-    regex := cpos('r', LowerCase(suchopt)) <> 0;
-    bereich:=0;                                                 // default = Alles ( 0)
+    igcase:=multipos('iu',lstr(suchopt));
+    umlaut:=multipos('ÑîÅu',lstr(suchopt)); {JG: 15.02.00 Umlautschalter}
+    if umlaut and not igcase then 
+    begin
+      suchopt:=suchopt+'i';
+      igcase:=true;
+      end;
+    check4date:=cpos('l',lstr(suchopt))>0;  { Suchen ab aktuellem Lesedatum }
+    HoldMarked:=cpos('m',lstr(suchopt))>0;  { Alte Markierungen beibehalten } 
+
+    i:=cpos('s',lstr(suchopt));             { Such-History loeschen }
+    if i>0  then                   
+    begin 
+      delete(suchopt,i,1); 
+      for i:=1 to histmax do history[i]:='';
+      CheckHistory;
+      closebox;
+      goto restart;
+      end;
+
+    i:=cpos('k',lstr(suchopt));             { Such-History loeschen }
+    if i>0  then                   
+    begin
+      delete(suchopt,i,1); 
+      assign(t,libraryFile);
+      append(t);
+      if ioresult<>0 then rewrite(t);
+      if trim(suchstring)<>'' then writeln(t,suchstring);
+      close(t);
+      closebox;
+      goto restart;
+      end; 
+
+    headersuche:=0;                                     { Volltextsuche }
+    if cpos('h',lstr(Suchopt))>0 then headersuche:=1;   { Headersuche   }       
+    if cpos('g',lstr(suchopt))>0 then headersuche:=2;   { Volltext+Headersuche } 
+
+    bereich:=0;
     for i:=1 to 4 do
-      if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i; // 0='Alle' 1='Netz' 'User' 'markiert' 'gewÑhlt'
+      if ustr(bretter)=ustr(bera[i]) then bereich:=i;
     statb:=0;
     for i:=1 to 5 do
-      if UpperCase(status)=UpperCase(stata[i]) then statb:=i;   //'Alles' 'halten' 'lîschen' 'h o. l' 'ungelesen' 'gelesen'
+      if ustr(status)=ustr(stata[i]) then statb:=i;
     me:=true;
     attrtxt(col.coldialog);
 
     if spez then with srec^ do begin
       sst:=txt;
       user:=userform(user);
-      if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        UkonvStr(betr,Length(betr)); UkonvStr(user,Length(user));
-       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,Length(fidoempf));
-        end;                                            {/JG}
+      if umlaut then begin                              { JG: 15.02.00 Umlaute konvertieren }
+        UkonvStr(betr,high(betr)); UkonvStr(user,high(user));
+       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,high(fidoempf));
+        end;                                            { /JG }
       if igcase then begin
         UpString(betr); UpString(user); {UpString(txt);} UpString(fidoempf);
         end;
       scantilde(betr,nbetr); scantilde(user,nuser);
       scantilde(fidoempf,nfidoempf);
-      if UpperCase(typ)=UpperCase(typa[1]) then typc:='T'
-      else if UpperCase(typ)=UpperCase(typa[2]) then typc:='B'
-      else if UpperCase(typ)=UpperCase(typa[3]) then typc:='F'
-      else if UpperCase(typ)=UpperCase(typa[4]) then typc:='M'
+      if ustr(typ)=ustr(typa[1]) then typc:='T'
+      else if ustr(typ)=ustr(typa[2]) then typc:='B'
+      else if ustr(typ)=ustr(typa[3]) then typc:='F'
+      else if ustr(typ)=ustr(typa[4]) then typc:='M'
       else typc:=' ';
       _vondat:=ixdat(copy(vondat,7,2)+copy(vondat,4,2)+copy(vondat,1,2)+'0000');
       _bisdat:=ixdat(copy(bisdat,7,2)+copy(bisdat,4,2)+copy(bisdat,1,2)+'2359');
@@ -789,18 +1032,25 @@ begin
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then UkonvStr(sst,Length(sst));                      
+      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00}
       if igcase then UpString(sst);
     {  end;}
 
 {--Start der Suche--}
 
-    if (suchfeld='MsgID') and NOT MID_teilstring then 
-    begin                                             {-- Suche: Message-ID  --}
+    markanzback:=markanz;
+
+    if suchfeld='#' then begin   {Lister-Dummysuche}
+      check_seekmode; 
+      CloseBox;
+      exit;
+      end;
+
+    if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
       suche:=false;
       if not brk then begin
-        markanz:=0;
-        check_seekmode;
+        if not holdmarked then markanz:=0;
+        check_seekmode; 
         for i:=0 to suchanz-1 do
         begin
           seek:=copy(suchstring,seekstart[i],seeklen[i]);
@@ -812,26 +1062,41 @@ begin
           end;
         end;
       end
-                                             { Anzeige fuer Alle anderen Suchvarianten }
+                                             { Anzeige fuer alle anderen Suchvarianten }
     else begin
       {if spez then sst:=txt;  } { Bei Spezialsuche nur im Volltext... }
-      check_seekmode;          { Vorbereiten fuer verknuepfte Suche}
       if brk then goto ende;
+      
+      if history_changed then begin
+        history_changed:=false;
+        closebox;
+        goto restart;
+        end;
+
+      check_seekmode;          { Vorbereiten fuer verknuepfte Suche}
+      if brk then begin
+        closebox;
+        goto restart;
+        end;         
 
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
-      if aktdispmode<>11 then markanz:=0;
+      if (aktdispmode<>11) and not holdmarked then markanz:=0;
       n:=0; nf:=0;
-      hdp := THeader.Create;
+      new(hdp);
       attrtxt(col.coldiahigh);
-      psize:=65536;
+      psize:=min(maxavail-10000,60000);
       getmem(p,psize);
       brk:=false;
 
-      if aktdispmode=11 then            //11-Suchergebnis
-      begin                             {-- Suche markiert (Weiter suchen) --}
-        getmem(markedback,maxmark * sizeof(markrec));
-        for i:=0 to markanz do markedback^[i]:=marked^[i];
-        markanzback:=markanz;
+      if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
+        markanzback:=0; 
+        if maxavail>maxmark * sizeof(markrec) then           { Wenn genug Speicher da ist }
+        begin                                                { Markierte Nachrichten merken }
+          getmem(markedback,maxmark * sizeof(markrec));      
+          for i:=0 to markanz do markedback^[i]:=marked^[i];
+          markanzback:=markanz;
+          end;
+
         i:=0;
         while i<markanz do begin
           dbGo(mbase,marked^[i].recno);
@@ -841,94 +1106,87 @@ begin
           end;
         aufbau:=true;
 
-        if (markanz=0) and (markanzback<>0) then
+        if (markanz=0) and (markanzback<>0) then  
         begin
           hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
           markanz:=markanzback;
           for i:=0 to markanz do marked^[i]:=markedback^[i];
           end;
-        if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
+        if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));    
         end
-      else if bereich<3 then begin      //'Alle'=0 'Netz'=1 'User'=2 'markiert'=3 'gewÑhlt'=4
+
+      else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
         brk:=false;
-        while not dbEOF(mbase) and (markanz<maxmark) and not brk do
-        begin
-          _brett := dbReadNStr(mbase,mb_brett);
-          if (bereich=0) or ((bereich=1) and (FirstChar(_brett)='A')) or
-                            ((bereich=2) and (FirstChar(_brett)='U')) then
+        while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
+          dbReadN(mbase,mb_brett,_brett);
+          if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
+                            ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
-          if not dbEOF(mbase) then      { kann passieren, wenn fehlerhafter }
-            dbNext(mbase);              { Satz geloescht wurde               }
+          if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
+            dbNext(mbase);            { Satz gelîscht wurde               }
           testbrk(brk);
           end;
         dbSetIndex(mbase,mi);
         end
 
-      else begin                        // Suche: Bereich markiert, gewÑhlt
+      else begin                                         {-- Suche: aktuelles Brett --}
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,miBrett);
-        if bereich=3 then begin                         // markiert
-          if aktdispmode<11 then
-          begin                                         // Nachrichten oder UserÅbersicht
+        if bereich=3 then begin                          { bzw. markierte Bretter  }
+          if aktdispmode<11 then begin
             i:=0;
-            uu:=(aktdispmode>0) and (aktdispmode<10);   // nicht in BrettÅbersicht
+            uu:=((aktdispmode>0) and (aktdispmode<10));
             while (i<bmarkanz) and not brk do begin
-              if uu then begin                          // in UserÅbersicht
+              if uu then begin
                 dbGo(ubase,bmarked^[i]);
                 TestBrett(mbrettd('U',ubase));
                 end
-              else begin                                // in Brettuebersicht
+              else begin
                 dbGo(bbase,bmarked^[i]);
-                brett := dbReadNStr(bbase,bb_brettname);
+                dbReadN(bbase,bb_brettname,brett);
                 TestBrett(mbrettd(brett[1],bbase));
                 end;
               inc(i);
-              end;      // while (i<bmarkanz) and not brk do begin
-            end;        // if aktdispmode<10 then begin
+              end;
+            end;
           end
         else
           case aktdispmode of
             -1..0 : begin
-                      brett := dbReadNStr(bbase,bb_brettname);
+                      dbReadN(bbase,bb_brettname,brett);
                       TestBrett(mbrettd(brett[1],bbase));
                     end;
              1..4 : TestBrett(mbrettd('U',ubase));
                10 : TestBrett(such_brett);
           else      begin
-                      hinweis(getres2(441,17));   { 'kein Brett gewaehlt' }
+                      hinweis(getres2(441,17));   { 'kein Brett gewÑhlt' }
                       me:=false;
                     end;
           end;
         dbSetIndex(mbase,mi);
         end;
 
-      if spez then with srec^ do
-      begin                                {Spezial: NOT-Flags wieder an Suchstrings setzen}
-        if nbetr then betr:='~'+betr;
-        if nuser then user:='~'+user;
-        if nfidoempf then fidoempf:='~'+fidoempf;
-        end;
-
       freemem(p,psize);
       CloseBox;
-      Hdp.Free;
+      dispose(hdp);
       end;
 
 {--Suche beendet--}
 
-    if markanz=0 then               { Nichts gefunden }
-    begin
+    if (markanz=0) or (holdmarked and (markanz=markanzback))   { Nichts gefunden }
+    then begin 
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-        aufbau:=true;               { wg. geloeschter Markierung! }
-        end;
-      goto ende;                    { Fenster wiedeherstellen...}
+        aufbau:=true;               { wg. gelîschter Markierung! }
+        end; 
+      goto ende;                    { Fenster wiedeherstellen...} 
       end
-
+      
     else begin
+      Suchergebnis:=true;
       suche:=true;                  { Suche erfolgreich }
       signal;
       end;
@@ -939,8 +1197,7 @@ begin
 ende:                               { Suche gescheitert/abgebrochen }
     suche:=false;
     CloseBox;
-  end;
-  RegExpr.Free;
+    end;
   freeres;
 end;
 { R+}
@@ -951,35 +1208,35 @@ end;
 
 procedure betreffsuche;
 var betr,betr2   : string;
-    brett,_Brett : string;
-    ll     : integer;
+    brett,_Brett : string[5];
+ (*       ll     : integer; *) 
 
 begin
   moment;
-  Betr := dbReadNStr(mbase,mb_betreff);
+  dbReadN(mbase,mb_betreff,betr);
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  UkonvStr(betr,Length(betr));
-  Brett := dbReadNStr(mbase,mb_brett);
+  UkonvStr(betr,high(betr));
+  dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
   markanz:=0;
   repeat
-    Betr2 := dbReadNStr(mbase,mb_betreff);
+    dbReadN(mbase,mb_betreff,betr2);
     ReCount(betr2);
     betr2:=trim(betr2);
-    UkonvStr(betr2,Length(betr2));
-    ll:=min(length(betr),length(betr2));
-    if (ll>0) and (UpperCase(LeftStr(betr,ll))=UpperCase(LeftStr(betr2,ll))) then
+    UkonvStr(betr2,high(betr2));
+ (*  ll:=min(length(betr),length(betr2));
+    if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then *)
+   if ustr(betr)=ustr(betr2) then 
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
-      _Brett := dbReadNStr(mbase,mb_brett);
+      dbReadN(mbase,mb_brett,_brett);
   until dbEOF(mbase) or (_brett<>brett);
   closebox;
   signal;
-  if markanz>0 then
-    select(11);
+  if markanz>0 then select(11);
   aufbau:=true;
 end;
 
@@ -992,40 +1249,56 @@ var x,y,xx : Integer;
     dat    : string;
     n,nn   : longint;
     bi     : shortint;
+
+  procedure testbase(xbase:pointer);
+  begin
+    bi:=dbGetIndex(xbase);
+    if xbase=bbase then begin
+      dbSetIndex(xbase,bibrett);
+      dbGoTop(xbase);
+      end
+    else begin
+      dbsetindex(xbase,uiadrbuch);
+      dbseek(xbase,uiadrbuch,#1);
+      end;
+    dat:=dbLongStr(ixDat('2712310000'));
+
+    brk:=false;
+    dbSetIndex(mbase,miBrett);
+    while not dbEOF(xbase) and not brk do begin
+      inc(n);
+      gotoxy(xx,y+2); attrtxt(col.colmboxhigh);
+      write(n*100 div nn:3);
+      if (xbase=ubase) or (not smdl(dbReadInt(xbase,'ldatum'),ixDat('2712310000')))
+      then begin
+        if xbase=ubase then _brett:='U' else
+        _brett:=copy(dbReadStr(xbase,'brettname'),1,1);
+        _brett:=_brett+dbLongStr(dbReadInt(xbase,'int_nr'));
+        dbSeek(mbase,miBrett,_brett+dat);
+        mbrett:=_brett;
+        while not dbEOF(mbase) and (mbrett=_brett) do begin
+          dbReadN(mbase,mb_brett,mbrett);
+          if mbrett=_brett then MsgAddmark;
+          dbSkip(mbase,1);
+          end;
+        end;
+      dbSkip(xbase,1);
+      testbrk(brk);
+      end;
+    dbSetIndex(xbase,bi);
+  end;
+
 begin
   markanz:=0;
   msgbox(33,5,'',x,y);
   wrt(x+3,y+2,getres(443));   { 'Einen Moment bitte...     %' }
   xx:=wherex-5;
-  bi:=dbGetIndex(bbase);
-  dbSetIndex(bbase,bibrett);
-  dbGoTop(bbase);
-  dat:=dbLongStr(ixDat('2712310000'));
   n:=0;
-  nn:=dbRecCount(bbase);
-  brk:=false;
-  dbSetIndex(mbase,miBrett);
-  while not dbEOF(bbase) and not brk do begin
-    inc(n);
-    attrtxt(col.colmboxhigh);
-    Wrt(xx, y+2, Format('%3d', [n*100 div nn]));
+  nn:=dbRecCount(bbase)+dbreccount(ubase);
 
-    if not smdl(dbReadInt(bbase,'ldatum'),ixDat('2712310000')) then begin
-      _brett:=copy(dbReadStrN(bbase,bb_brettname),1,1)+
-              dbLongStr(dbReadInt(bbase,'int_nr'));
-      dbSeek(mbase,miBrett,_brett+dat);
-      mbrett:=_brett;
-      while not dbEOF(mbase) and (mbrett=_brett) do begin
-        mbrett := dbReadNStr(mbase,mb_brett);
-        if mbrett=_brett then MsgAddmark;
-        dbSkip(mbase,1);
-        end;
-      end;
-    dbSkip(bbase,1);
-    testbrk(brk);
-    end;
-  closebox;
-  dbSetIndex(bbase,bi);
+  testbase(ubase);
+  if not brk then
+    testbase(bbase);
   if not brk then
     if markanz=0 then
       hinweis(getres(444))   { 'keine Wiedervorlage-Nachrichten gefunden' }
@@ -1042,12 +1315,15 @@ end;
 procedure ModiEmpfDatum;
 var d   : datetimest;
     brk : boolean;
+   getdate: boolean;
     l   : longint;
 begin
-  d:=fdat(longdat(dbReadInt(mbase,'empfdatum')));
-  EditDate(15,11+(screenlines-25)div 2,getres(452),d,brk);   { 'neues Empfangsdatum:' }
+  getdate:=true;
+  d:=longdat(dbReadInt(mbase,'empfdatum'));
+  EditDate(15,11+(screenlines-25)div 2,getres2(452,1),d,getdate,brk);   { 'neues Empfangsdatum:' }
   if not brk then begin
-    l:=ixdat(copy(d,7,2)+copy(d,4,2)+copy(d,1,2)+'0000');
+    if getdate then d:=longdat(dbreadint(mbase,'origdatum'));
+    l:=ixdat(d);
     dbWriteN(mbase,mb_empfdatum,l);
     aufbau:=true;
     end;
@@ -1137,7 +1413,7 @@ begin
     XReadIsoDecode:=true;
     XreadF(hds,f);                { Nachrichtentext in Tempfile.. }
     close(f);
-    editfile(fn,true,false,0,false);          { ..editieren.. }
+    editfile(fn,true,false,false,0,false);    { ..editieren.. }
     fn2:=TempS(_filesize(fn)+2000);
     assign(f2,fn2);
     rewrite(f2,1);
@@ -1354,15 +1630,35 @@ end;
 
 { User-/Brettliste exportieren }
 
+function Bool_BrettGruppe(var s:string):boolean;
+begin
+  if s=_jn_[2] then exit;
+  setfield(2,_jn_[2]);
+end;
+
+function Bool_Brettindex(var s:string):boolean;
+begin
+  if s=_jn_[2] then exit;
+  setfield(1,_jn_[2]);
+end;
+
 procedure ExportUB(user:boolean);
-var fname : string;
-    t     : text;
-    d     : DB;
-    x,y,xx: Integer;
-    cnt,n : longint;
-    exkom : boolean;
-    brk   : boolean;
-    useclip: boolean;
+var fname   : pathstr;
+    t       : text;
+    d       : DB;
+    x,y,xx  : byte;
+    cnt,n   : longint;
+    exkom   : boolean;
+    brk     : boolean;
+    useclip : boolean;
+    onlyadress : boolean;
+    sortadress : boolean;
+    sortbox    : boolean;
+    sort      : byte;
+    ab,ab1     : longint;
+    dbindex    : word;
+    s          : string[80];
+    sa,sa1     : string [20];
 
 label ende;
 
@@ -1376,6 +1672,34 @@ label ende;
       komform:=s;
   end;
 
+
+  procedure getbrettinfos;
+  var x1,y1 : Integer;
+  begin
+    sortadress:=false; sortbox:=Usersortbox;  exkom:=falsE;
+    dialog(50,5,getres2(457,2),x1,y1);        { 'Brettliste erzeugen' }
+    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen sortieren'}
+    MSet1Func(bool_brettgruppe);
+    maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus Bret¸bersicht beibehalten'}
+    MSet1Func(bool_brettindex);
+    maddbool(2,5,getres2(457,4),exkom);       { 'auch Kommentare exportieren' }
+    readmask(brk);
+    enddialog;
+  end;
+
+  procedure getuserinfos;
+  var x1,y1 : Integer;
+  begin
+    sortadress:=true; sortbox:=Usersortbox; Onlyadress:=true; exkom:=falsE;
+    dialog(43,6,getres2(457,1),x1,y1);        { 'Userliste erzeugen' }
+    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Adressbuchgruppen sortieren'}
+    maddbool(2,3,getres2(457,8),SortBox);     { 'nach Serverbox sortieren'}
+    maddbool(2,4,getres2(457,9),OnlyAdress);  { 'Nur User im Adressbuch exportieren' }
+    maddbool(2,6,getres2(457,4),exkom);       { 'auch Kommentare exportieren' }
+    readmask(brk);
+    enddialog;
+  end;
+  
 begin
   fname:='';
   useclip:=true;
@@ -1384,17 +1708,42 @@ begin
     if not ValidFileName(fname) then
       fehler(getres2(457,3))   { 'ungueltiger Dateiname' }
     else begin
-      exkom:=ReadJNesc(getres2(457,4),false,brk);  { 'auch Kommentare exportieren' }
+      if user then getuserinfos 
+        else getbrettinfos;
       if brk then begin
         if useclip then _era(fname);
         goto ende;
-        end;
+      end;   
+      sort:=0;
+      if sortadress then sort:=sort or 2;
+      if sortbox then sort:=sort or 1;
       if user then begin
-        dbSetIndex(ubase,uiName);
+        dbindex:=dbgetindex(ubase);
+        case Sort of
+          1 : dbSetIndex(ubase,uiBoxName);
+          2 : dbSetIndex(ubase,uiAdrbuch);
+          3 : dbSetIndex(ubase,uiBoxAdrbuch);
+         else dbSetIndex(ubase,uiName);
+         end;
         d:=ubase;
-        end
+        dbGoTop(ubase);
+      end
       else begin
-        dbSetIndex(bbase,biBrett);
+        dbindex:=dbgetindex(mbase);
+        case sort of
+          2 : begin
+                dbsetindex(bbase,biGruppe);
+                dbgotop(bbase);
+                end;
+          1 : begin
+                dbsetindex(bbase,biIndex);
+                dbgotop(bbase);
+                end;
+         else begin
+                dbsetindex(bbase,biBrett);
+                dbSeek(bbase,biBrett,'A');
+                end;
+         end;
         d:=bbase;
         end;
       msgbox(34,5,'',x,y);
@@ -1403,23 +1752,53 @@ begin
       if not multipos(':\',fname) then fname:=ExtractPath+fname;
       assign(t,fname);
       rewrite(t);
-      if not user then dbSeek(d,biBrett,'A')
-      else dbGoTop(d);
-      cnt:=dbRecCount(d); n:=0;
-      while not dbEOF(d) do begin
+      cnt:=dbRecCount(d); n:=0; ab1:=-1; sa1:='';
+      while not dbEOF(d) do
+      begin
         attrtxt(col.colmboxhigh);
 
         Wrt(xx, y+2, Format('%3d', [n*100 div cnt]));
         if user then
-          if dbReadInt(ubase,'userflags') and 4=0 then  { keine Verteiler }
-            writeln(t,komform(ubase,dbReadStrN(ubase,ub_username)))
-          else
-        else
-          writeln(t,komform(bbase,copy(dbReadStrN(bbase,bb_brettname),2,80)));
+        begin
+          s:=dbReadStr(ubase,'username');
+          ab:=dbreadint(ubase,'adrbuch');
+          sa:=dbreadstr(ubase,'pollbox');
+          if (dbReadInt(ubase,'userflags') and 4=0) AND       { keine Verteiler }
+           (left(s,4)<>#0+'$/T') AND                          { keine Trennzeile }
+          not (onlyadress and (ab=0))                         { Evtl. nur Adressbuch-User }
+          then begin
+            if sortadress and (ab<>ab1) then begin
+              ab1:=ab;
+              writeln(t,sp(60),'('+Getres2(2715,11),ab,')');  {Gruppe}
+              end;
+            if (sort=1) and (sa<>sa1) then begin
+              sa1:=sa;
+              writeln(t,sp(60),sa);
+              end;
+            writeln(t,komform(ubase,s))
+            end
+          end
+        else begin
+          if sort=2 then ab:=dbreadint(bbase,'gruppe')
+          else ab:=-1;
+          s:=dbReadStr(bbase,'brettname');
+          if left(s,3)='$/T'           { keine Trennzeile }
+          then begin
+           if sort=1 then writeln(t,dup(40,s[4]));
+           end
+          else begin
+            if ab1<>ab then begin
+              ab1:=ab;
+              writeln(t,sp(60),'('+Getres2(2715,11),ab,')');  {Gruppe}
+              end;
+            writeln(t,komform(bbase,copy(s,2,80)));
+            end;
+          end;
         dbNext(d);
         inc(n);
         end;
       close(t);
+      dbsetindex(d,dbindex); 
       if useclip then WriteClipfile(fname);
       closebox;
       end;
@@ -2052,6 +2431,7 @@ procedure FileArcViewer(fn:string);
 var useclip : boolean;
     arc     : shortint;
     lm      : byte;
+    ende    : boolean;
 begin
   if (fn='') or multipos('?*',fn) then begin
     if fn='' then fn:=WildCard;
@@ -2066,7 +2446,10 @@ begin
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
       lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
-      if listfile(fn,fn,true,false,false,0)=0 then;           { und File einfach nur anzeigen }
+      repeat
+        if listfile(fn,fn,true,false,0) = -4 then ende:=false
+        else ende:=true;                                { und File einfach nur anzeigen }
+      until ende;
       listmakros:=lm;
       end
       { rfehler(434)  } { 'keine Archivdatei' }
@@ -2214,6 +2597,65 @@ begin
 end;
 
 
+Procedure Brettmarksuche;
+const suchst  : string[40] = '';
+var   x,y     : byte;
+      brk     : boolean;
+      nn,n,nf : longint;
+      bname   : string[BrettLen];
+      spos    : longint;
+      rec     : longint;
+      m1,m2,j : longint;
+      found, found_not : boolean;
+begin
+  rec:=dbRecno(bbase);
+  if not Suche(getres2(467,5),'#','') then exit;
+  diabox(52,7,getres2(467,5),x,y);   { 'Brett-(markier)-Suche' }
+  brk:=false;
+  m1:=maxlongint;
+  attrtxt(col.coldialog);
+  wrt(x+3,y+4,getres2(467,3));   { 'Suchen...     %        gefunden:' }
+  nn:=dbRecCount(bbase); n:=0; nf:=0;
+  dbGoTop(bbase);
+  attrtxt(col.coldiahigh);
+  while not dbEOF(bbase) and not brk do begin
+    inc(n);
+    gotoxy(x+13,y+4); write(n*100 div nn:3);
+    gotoxy(x+35,y+4); write(nf:4);
+    dbReadN(bbase,bb_brettname,bname);
+    j:=0;
+    repeat
+      suchst:=left(copy(sst,seekstart[j],seeklen[j]),40);
+      found:=((igcase and (pos(suchst,ustr(bname))>0)) or
+       (not igcase and (pos(suchst,bname)>0)));
+      found_not:=found and seeknot[j];
+      if suchand and not found and seeknot[j] then found:=true;
+      inc(j);
+    until (j=suchanz) or (suchand xor found) or found_not;
+    if found_not then found:=false;
+    if found then begin
+      UBAddmark(dbRecno(bbase));
+      dbreadN(bbase,bb_index,m2);
+      if m2<m1 then begin
+        m1:=m2;
+        spos:=dbRecno(bbase);
+        end;
+      inc(nf);
+      end;
+    dbNext(bbase);
+    if n mod 16=0 then testbrk(brk);
+    end;
+  if m1=maxlongint then dbGo(bbase,rec)
+    else dbGo(bbase,spos);
+  aufbau:=true;
+  closebox;
+  if not brk and (nf=0) then fehler(getres2(467,6));  { 'keine passenden User gefunden' }
+  freeres;
+end;
+
+
+
+
 { Ausgabe true -> UserMode umschalten }
 
 function UserMarkSuche(allmode:boolean):boolean;
@@ -2225,19 +2667,19 @@ var   x,y     : Integer;
       sname   : string;
       spos    : longint;
       rec     : longint;
-      mi      : shortint;
+      mi,j    : shortint;
+      found, found_not : boolean;
 begin
   UserMarkSuche:=false;
   rec:=dbRecno(ubase);
+  if not Suche(getres2(467,1),'#','') then exit;
   diabox(52,7,getres2(467,1),x,y);   { 'User-(markier)-Suche' }
-  pushhp(73);
-  readstring(x+3,y+2,getres2(467,2),suchst,30,40,'>',brk);  { 'Suchbegriff:' }
-  pophp;
-  if not brk then begin
+  brk:=false;
+  sname:=#255;
+  begin
     attrtxt(col.coldialog);
     wrt(x+3,y+4,getres2(467,3));   { 'Suchen...     %        gefunden:' }
     nn:=dbRecCount(ubase); n:=0; nf:=0;
-    sname:=#255;
     mi:=dbGetIndex(ubase); dbSetIndex(ubase,0);
     dbGoTop(ubase);
     attrtxt(col.coldiahigh);
@@ -2247,7 +2689,17 @@ begin
       Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
       Wrt(x+35, y+4, Format('%4d', [nf]));
       UName := dbReadNStr(ubase,ub_username);
-      if pos(suchst,UpperCase(uname))>0 then 
+      j:=0;
+      repeat
+        suchst:=left(copy(sst,seekstart[j],seeklen[j]),40);
+        found:=((igcase and (pos(suchst,ustr(uname))>0)) or
+         (not igcase and (pos(suchst,uname)>0)));
+        found_not:=found and seeknot[j];
+        if suchand and not found and seeknot[j] then found:=true;
+        inc(j);
+      until (j=suchanz) or (suchand xor found) or found_not;
+      if found_not then found:=false;
+      if found then begin
       begin
         UBAddmark(dbRecno(ubase));
         if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
@@ -2515,6 +2967,9 @@ end;
 
 {
   $Log$
+  Revision 1.127  2002/01/13 15:07:30  mk
+  - Big 3.40 Update Part I
+
   Revision 1.126  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

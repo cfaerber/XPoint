@@ -200,8 +200,8 @@ begin
   dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
   while not dbEof (d) do
   begin
-    if ntReplyToAll (dbReadInt (d, 'netztyp') and $FF) then { nur ZConnect und RFC/* }
-    begin                                           { Boxen berÅcksichtigen     }
+    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/* }
+    begin                                           { Boxen berÅcksichtigen  }
       Username := dbReadStr (d, 'username');
       PointName := dbReadStr (d, 'pointname');
       dbRead (d, 'script', flags);
@@ -985,6 +985,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2002/01/13 15:07:24  mk
+  - Big 3.40 Update Part I
+
   Revision 1.27  2001/12/24 23:07:04  mk
   - updates for nt_Client
 

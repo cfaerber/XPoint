@@ -139,6 +139,8 @@ begin
     readcolors;
     SetColors;
     showscreen(true);
+    ExErase('NETCALL.ALL');
+    ExErase('NETCALL.END');
     DelTmpfiles('*.$$$');
 
     // !!if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
@@ -234,6 +236,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/01/13 15:07:22  mk
+  - Big 3.40 Update Part I
+
   Revision 1.11  2002/01/12 14:42:13  cl
   - Kylix 2 compile fixes
 

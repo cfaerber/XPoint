@@ -529,7 +529,7 @@ begin
         KorrBlockScrolled(false);
         NoDisplay;
       end
-      else 
+      else
         if (dl^[gl].absatz=nil) or (dl^[gl].absatz^.next=nil) then
           exit
       else 
@@ -850,7 +850,12 @@ begin
       if not kb_shift then 
       begin
         QuoteChars := GetQuote(ap);
-        if (QuoteChars <>'') and (wp>= Length(TrimRight(QuoteChars))) then 
+        if (wp>0) and (quotec<>'') and (length(quotec)>wp) then
+        begin
+          wp:=length(quotec);
+          copysize:=max(0,ap^.size-wp);
+        end;
+        if (QuoteChars <>'') and (wp>= Length(TrimRight(QuoteChars))) then
         begin
           delsp:=wp;
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
@@ -2153,10 +2158,13 @@ sok:  case p of
         4 : LocalMenu:=EditfReadBlock;
         5 : LocalMenu:=EditfReadUUeBlock;
         6 : LocalMenu:=EditfWriteBlock;
-        8 : LocalMenu:=EditfWrapOff;
-        9 : LocalMenu:=EditfWrapOn;
-       11 : LocalMenu:=EditfSetup;
-       { 12 : LocalMenu:=EditfSaveSetup; }
+        8 : LocalMenu:=EditfFind;
+        9 : LocalMenu:=EditfFindReplace;
+       10 : LocalMenu:=editfFindRepeat;
+       12 : LocalMenu:=EditfWrapOff;
+       13 : LocalMenu:=EditfWrapOn;
+       15 : LocalMenu:=EditfSetup;
+       17 : LocalMenu:=EditfBreak;
       else  LocalMenu:=0;
       end;
     wpop;
@@ -2214,6 +2222,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/01/13 15:07:21  mk
+  - Big 3.40 Update Part I
+
   Revision 1.48  2001/12/09 13:14:09  mk
   - fixed range check error
 

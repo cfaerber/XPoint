@@ -144,7 +144,8 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
           {_pm:=cPos('@',s)>0;}
           if cPos('@',s)=0 then begin
             pollbox := dbReadNStr(bbase,bb_pollbox);
-            if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_fido,nt_ZConnect])) then begin
+            if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_fido,nt_ZConnect])) then
+            begin
               { _AmReplyTo:=s; }
               s := dbReadNStr(bbase,bb_brettname);
             end;
@@ -748,10 +749,10 @@ begin
 end;
 
 
-{ Alle angezeigten Msgs im aktuellen Msg-Fenster bearbeiten }
-{ art: 1=halten, 2=loeschen, 3=markieren, 4=normal, 5=lesen }
-{      6=entfernen, 7=Liste erzeugen, 8=drucken             }
-{ Aufruf bei dispmode in [10..19]                           }
+{ Alle angezeigten Msgs im aktuellen Msg-Fenster bearbeiten  }
+{ art: 1=halten, 2=l”schen, 3=markieren, 4=normal, 5=gelesen }
+{      6=ungelesen, 7=entfernen, 8=Liste erzeugen, 9=drucken }
+{ Aufruf bei dispmode in [10..19]                            }
 
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 var i,ii     : longint;
@@ -786,15 +787,16 @@ begin
     rfehler(315);      { 'Nur in der Nachrichtenuebersicht moeglich.' }
     exit;
     end;
-  if (art=6) and not ReadJN(getres(iif(aktdispmode=10,325,326)),false) then exit;
-  if art=8 then begin
+  if (art=7) and not ReadJN(getres(iif(aktdispmode=10,325,326)),false) then exit;
+  if art=9 then
+  begin
     ff:=ReadJNesc(getres(342),false,brk);   { 'Seitenvorschub nach jeder Nachricht' }
     if brk then exit;
     InitPrinter;
     if not checklst then exit;
     SortMark;
     end;
-  if art=7 then begin
+  if art=8 then begin
     fn:='';
     useclip:=true;
     ok:=ReadFileName(getres(327),fn,true,useclip);   { 'Nachrichten-Liste' }
@@ -831,6 +833,7 @@ begin
     1,2 : attr:=art;
     4   : attr:=0;
     5   : gelesen:=1;
+    6   : gelesen:=0;
   end;
   lhalt:=0; n:=0;
   brk:=false;
@@ -848,7 +851,7 @@ begin
       Wrt(x+24,y+2, Format('%4d', [ii+1]));
       mon;
       case art of
-        5 : begin   { Lesen }
+        5..6 : begin   { Gelesen/Ungelesen }
               if rdmode=1 then begin
                 rec2:=dbRecno(mbase);
                 dbSkip(mbase,1);
@@ -859,14 +862,14 @@ begin
               if rdmode=1 then
                 dbGo(mbase,rec);
             end;
-        7 :          { Liste erzeugen }
+        8 :          { Liste erzeugen }
              writeln(t,i+1:4,dbReadInt(mbase,'groesse'):8,'  ',
                        msgtyp,'  ',
                        fdat(longdat(dbReadInt(mbase,'origdatum'))),'  ',
                        forms(dbReadStrN(mbase,mb_absender),25),' ',
                        LeftStr(dbReadStrN(mbase,mb_betreff),25));
 
-        8 : if checklst then begin
+        9 : if checklst then begin
               if n>1 then
                 if ff then PrintPage
                 else write(lst,#13#10#13#10#13#10);
@@ -883,7 +886,7 @@ begin
           dbWriteN(mbase,mb_HalteFlags,attr);
         if art=3 then msgAddMark
         else if art=4 then msgUnmark;
-        if (art=6) and (isflags<>1) and not odd(dbReadInt(mbase,'unversandt'))
+        if (art=7) and (isflags<>1) and not odd(dbReadInt(mbase,'unversandt'))
         then begin
           msgUnmark;
           wrKilled;
@@ -903,12 +906,14 @@ begin
         ((rdmode=1) and xp3o.gelesen))) or ((aktdispmode=11) and (i=markanz))
         or ((aktdispmode=12) and (i=ReplyTree.Count));
   dbFlush(mbase);
-  if art=7 then begin
+  if art=8 then
+  begin
     writeln(t);
     close(t);
     if useclip then WriteClipfile(fn);
     end;
-  if art=8 then begin
+  if art=9 then
+  begin
     UnsortMark;
     ExitPrinter;
     end;
@@ -917,7 +922,7 @@ begin
     if art>4 then RereadUngelesen(_brett);
     if rdmode=1 then _keyboard(keyhome);
     end;
-  if (art=6) and (aktdispmode=12) then
+  if (art=7) and (aktdispmode=12) then
   begin
     ClearReplyTree;
     keyboard(keyesc);
@@ -925,7 +930,7 @@ begin
   CloseBox;
   signal;
   aufbau:=true;
-  if art=6 then xaufbau:=true;
+  if art=7 then xaufbau:=true;
 end;
 
 
@@ -1164,7 +1169,7 @@ begin
     hdp.Free;
     if not dbFound then exit;
     Box := dbReadNStr(ubase,ub_pollbox);
-    end;
+  end;
 
   adr:=getBoxAdresse(box,mbNetztyp);
   if adr='' then exit;
@@ -1532,6 +1537,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2002/01/13 15:07:28  mk
+  - Big 3.40 Update Part I
+
   Revision 1.81  2002/01/05 16:01:08  mk
   - changed TSendUUData from record to class
 

@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-const cfs : array[0..3] of string = ('Z','Shift','Ctrl','Alt');
+const cfs  : array[0..4] of string[5] = ('Z','Shift','Ctrl','Alt','#Z');
 
 procedure defaultcolors;
 var i : integer;
@@ -292,10 +292,8 @@ begin
   maxmark:=5000;
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
-  new(fkeys[0]);
-  new(fkeys[1]);
-  new(fkeys[2]);
-  new(fkeys[3]);
+  for i:=0 to 4 do
+     new(fkeys[i]);
   aktdispmode:=0;
 
   fnproc[0,1]:=hilfe;
@@ -493,7 +491,8 @@ begin
   maildelxpost:=false;
   askreplyto:=false;
 
-  for i:=0 to 3 do begin
+  for i:=0 to 4 do
+  begin
     fillchar(fkeys[i]^,sizeof(fkeys[0]^),0);
     for j:=1 to 10 do
       fkeys[i]^[j].vollbild:=true;
@@ -547,7 +546,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
-  haltownpm:=false;
+  haltownPM :=false;
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -603,6 +602,7 @@ begin
   NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true;
+  multipartbin:=true;
   NoArchive:=false;
   RFCAppendOldSubject:=false;
   FidoDelEmpty:=false;
@@ -618,6 +618,7 @@ begin
   ZC_Mime:=false;
   leaveconfig:=false;
   NewsgroupDisp:=false;
+  NewsgroupDispAll:=false;
   NetcallLogfile:=false;
   pointlist4d:=false;
   ShrinkUheaders:=false;
@@ -636,7 +637,6 @@ begin
   newuseribm:=true;
   _usersortbox:=false;
   NeuUserGruppe:=1;
-  multipartbin:=true;
   mausmpbin:=false;
 
   AutoUpload:=true;
@@ -658,7 +658,7 @@ begin
   tonsignal:=false;
 
   MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
-  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
+  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/Adreábuchgruppe/Adresse/Verteiler/Kommentar }
   Magics:=false;
 
   UsePGP:=false;
@@ -751,7 +751,7 @@ begin
   writeln(t,'Enable-UTF8=',jnf(Enable_UTF8));
   writeln(t,'ExtraktTyp=',defExtraktTyp);
   writeln(t,'Brettanzeige=',brettanzeige);
-  writeln(t,'Showungelesen=',jnf(showungelesen));
+  writeln(t,'ShowUngelesen=',jnf(showungelesen));
   writeln(t,'ShowMsgDatum=',jnf(showmsgdatum));
   writeln(t,'Lister=',VarLister);
   writeln(t,'ListVollbild=',jnf(listvollbild));
@@ -894,6 +894,7 @@ begin
   writeln(t,'PGP-GPGEncodingOptions=',PGP_GPGEncodingOptions);
   writeln(t,'PGP-MIME=',jnf(PGP_Mime));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
+  writeln(t,'UserAutoCreate=',jnf(UserAutoCreate));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
   writeln(t,'DefaultNokop=',jnf(defaultnokop));
@@ -941,6 +942,7 @@ begin
   writeln(t,'NoArchive=',jnf(NoArchive));
   writeln(t,'RFCAppendOldSubject=',jnf(RFCAppendOldSubject));
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
+  writeln(t,'NewsgroupAnzeigeAlle=',jnf(newsgroupdispall));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
   wrhd(7);                                             { Fido }
@@ -957,7 +959,7 @@ begin
 { writeln(t,'Fido-PGP=',jnf(PGP_Fido)); }
 
   wrhd(8);                                             { Funktionstasten }
-  for i:=0 to 3 do
+  for i:=0 to 4 do
     for j:=1 to 10 do
       with fkeys[i]^[j] do
         if menue+prog<>'' then
@@ -1161,7 +1163,7 @@ var t       : text;
     else begin
       getfkeys:=true;
       nr:=-1;
-      for i:=0 to 3 do
+      for i:=0 to 4 do
         if copy(su,6,length(cfs[i]))=UpperCase(cfs[i]) then
           nr:=i;
       if nr>-1 then begin
@@ -1330,7 +1332,7 @@ begin
           getx(su,  'Enable-UTf8',Enable_UTF8) or
           getb(su,  'Brettanzeige',brettanzeige) or
           getx(su,  'ShowUngelesen',showungelesen) or
-          getx(su,  'ShowMsgdatum',showmsgdatum) or
+          getx(su,  'ShowMsgDatum',showmsgdatum) or
           xp1.gets(s,su,'lister',varlister) or
           xp1.getw(su,  'listerkb',dummyi) or
           getx(su,  'listwrap',listwrap) or
@@ -1472,6 +1474,7 @@ begin
           getx(su,  'ZCrossPostings',dummyb) or
           getx(su,  'LeaveConfig',leaveconfig) or
           getx(su,  'NewsgroupAnzeige',newsgroupdisp) or
+          getx(su,  'NewsgroupAnzeigeAlle',newsgroupdispall) or
           getx(su,  'NetcallLogfile',netcalllogfile) or
           getx(su,  '4D-Pointlist',pointlist4d) or
           getx(su,  'IgnoreCancel',dummyb) or
@@ -1545,6 +1548,7 @@ begin
           getx(su,  'binmime',mausmpbin) or
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel) or
+          getx(su,  'UserAutoCreate',UserAutoCreate) or
           getb(su,  'RTA-Mode', RTAMode) or
           getx(su,  'askreplyto',askreplyto) or
           getx(su,  'RTA-Standard', RTAStandard) or
@@ -1573,25 +1577,6 @@ begin
       if (length(mheadercustom[i])>0) and (LastChar(mheadercustom[i])=':') then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
-    MsgFeldTausch:=UpperCase(MsgFeldTausch);
-    { (F)lags mssen immer vorne stehen }
-    i:=cPos('F',MsgFeldTausch); if (i>1) then begin
-      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
-    end;
-    { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
-    p:=0;
-    for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
-    if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-
-    UsrFeldTausch:=UpperCase(UsrFeldTausch);
-    { (F)lags mssen immer vorne stehen }
-    i:=cPos('F',UsrFeldTausch); if (i>1) then begin
-      delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
-    end;
-    { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
-    p:=0;
-    for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
-    if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
     GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
@@ -1720,6 +1705,9 @@ begin
 
 {
   $Log$
+  Revision 1.137  2002/01/13 15:07:27  mk
+  - Big 3.40 Update Part I
+
   Revision 1.136  2002/01/09 02:17:00  mk
   MY: - Ctrl-W toggles word wrap in message lister
 

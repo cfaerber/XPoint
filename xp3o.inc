@@ -921,7 +921,7 @@ begin
                   else dbRead(d,'haltezeit',haltezeit);
                   dbClose(d);
                 end;
-                AddNewBrett(Empfaenger,  '', pollbox_str(zconnect,false), 
+                AddNewBrett(Empfaenger,  '', pollbox_str(zconnect,false),
                   Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
                 if newbrettende then
                   SetBrettindexEnde
@@ -1227,6 +1227,9 @@ end;
 
 {
   $Log$
+  Revision 1.78  2002/01/13 15:07:28  mk
+  - Big 3.40 Update Part I
+
   Revision 1.77  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

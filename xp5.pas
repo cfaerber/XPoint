@@ -57,11 +57,56 @@ procedure EditPassword;
 function  Password:boolean;
 procedure InitPWsystem;
 
+function reorgdate:datetimest;
+function timingdate(s1:string):datetimest;
 
 implementation  {-----------------------------------------------------}
 {$IFDEF Kylix}
   uses libc;
 {$ENDIF}
+
+function timingdate(s1:string):datetimest;
+var t   : text;
+    s   : string;
+    fnd : boolean;
+begin
+  timingdate:='';
+  fnd:=false;
+  assign(t,timingdat);
+  reset(t);
+  if ioresult<>0 then exit;
+  repeat
+    readln(t,s);
+    if pos(s1,s)>0 then fnd:=true;
+  until eof(t) or fnd;
+  close(t);
+  if fnd then
+  asm
+    xor si,si
+@1: inc si
+    cmp byte ptr s[si],'='
+    jne @1
+    les di,@result
+    mov al,10
+    stosb
+    mov ax,word ptr s[si+7]
+    stosw
+    mov ax,word ptr s[si+4]
+    stosw
+    mov ax,word ptr s[si+1]
+    stosw
+    mov ax,word ptr s[si+10]
+    stosw
+    mov ax,word ptr s[si+13]
+    stosw
+    end;
+end;
+
+
+function reorgdate:datetimest;
+begin
+  reorgdate:=timingdate('REORG=');
+end;
 
 
 procedure kalender;
@@ -940,6 +985,9 @@ end.
 
 {
   $Log$
+  Revision 1.62  2002/01/13 15:07:31  mk
+  - Big 3.40 Update Part I
+
   Revision 1.61  2001/09/18 13:57:45  ma
   - small mouse cursor related fixes
 

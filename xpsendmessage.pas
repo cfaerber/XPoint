@@ -430,16 +430,16 @@ var f,f2     : file;
 {$I xpsendmessage_subs.inc}
 {$I xpsendmessage_subs_mime.inc}
 
-  function uucpbrett(s:string; edis:byte):string;
+  function RFCBrett(s:string; edis:byte):string;
   var i : integer;
   begin
-    if (edis=1) or (not (netztyp in netsRFC)) or not NewsgroupDisp then
-      uucpbrett:=mid(s,edis)
+    if (edis=1) or ((not (netztyp in netsRFC)) and not Newsgroupdispall) or not NewsgroupDisp then
+      rfcbrett:=mid(s,edis)
     else begin
       delete(s,1,2);
       for i:=1 to length(s) do if s[i]='/' then s[i]:='.';
-      uucpbrett:=s;
-      end;
+      RFCBrett:=s;
+    end;
   end;
 
   procedure AddMessagePart(datei:string;temp,is_orig:boolean);
@@ -792,6 +792,7 @@ var f,f2     : file;
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   var kb_s: boolean;
   begin
+    _UserAutoCreate:=false;
     kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
@@ -801,6 +802,8 @@ var f,f2     : file;
     attrtxt(col.coldiarahmen);
     mwrt(x+70,y+12,' [F2] ');
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
+    attrtxt(col.coldiarahmen);
+    mwrt(x+70,y+14,' [F2] ');
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
@@ -893,6 +896,75 @@ var f,f2     : file;
     writeln(f,'BETREFF: ',betreff);
     close(f);
   end;
+
+
+procedure editbetreff;                             { Betreff editieren }
+var        ii : integer;
+      oldbetr : string[betrefflen];
+begin
+  if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
+  if binary then typ:=typ+getres2(611,5);   { ' (Bin„r)' }
+  fidoam:=ntEditBrettempf(netztyp) and not pm;
+  bboxwid:=min(betrlen,54);
+  showempfs:=min(cc_anz,15);
+  diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
+  mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'Empf„nger  ' }
+  attrtxt(col.coldiahigh);
+  moff;
+  if empfaenger[1]=vert_char then
+    Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
+  else
+    Wrt2(left(rfcbrett(empfaenger,edis),bboxwid));
+    for ii:=1 to min(showempfs,14) do
+    if ccm^[ii].ccpm then
+      wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
+    else
+      wrt(x+3+length(getres2(611,6)),y+2+ii,left(rfcbrett(ohnebox(ii),2),bboxwid));
+  if showempfs=15 then
+    wrt(x+3+length(getres2(611,6)),y+17,'(...)');
+  mon;
+  openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
+  oldbetr:=betreff;
+  maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
+  msetvfunc(umlauttest); mhnr(86);
+  if fidoam then begin
+    maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
+    mhnr(90);
+  end;
+  readmask(brk);
+  closemask;
+  closebox;
+  betreff:=trim(betreff);
+  if brk then exit;                  { --> Abbruch bei Betreffmaske }
+  if betreff='' then begin
+    brk:=true;
+    if not pm then rfehler(635);  { 'Nachricht muá einen Betreff haben' }
+    if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
+       not pm then exit;
+    brk:=false;
+  end;
+  if (_bezug<>'') and ntKomkette(netztyp) and
+                  (ustr(betreff)<>ustr(oldbetr)) then begin
+    pushhp(1501);
+    if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
+           ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
+    begin
+      _bezug:='';
+      _orgref:='';
+      DisposeReflist(_ref6list);
+    end else
+      if RFC_AddOldBetreff and (netztyp in [nt_UUCP,nt_Client]) then begin
+        ReCount(Oldbetr);
+        betreff:=left(betreff+' (was: '+oldbetr,betrlen-1)+')';
+        end;
+    pophp;
+    if brk then exit;
+  end;
+  if pm and not ntEmpfBest(netztyp) then begin
+    flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
+    SetEBkennung;
+  end;
+end;
 
 begin      //-------- of DoSend ---------
   DoSend:=false;
@@ -1171,68 +1243,10 @@ fromstart:
   typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / 'oeffentliche Nachricht' }
 
   betreff:=LeftStr(betreff,betrlen);
-  if betreffbox then begin         { Betreff editieren }
-    if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
-    if binary then typ:=typ+getres2(611,5);   { ' (Binaer)' }
-    fidoam:=ntEditBrettempf(netztyp) and not pm;
-    bboxwid:=min(betrlen,54);
-    showempfs:=min(cc_anz,15);
-    diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
-    mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'Empf„nger  ' }
-    attrtxt(col.coldiahigh);
-    moff;
-    if FirstChar(empfaenger)=vert_char then
-      Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
-    else
-      Wrt2(LeftStr(uucpbrett(empfaenger,edis),bboxwid));
-    for ii:=1 to min(showempfs,14) do
-      if ccm^[ii].ccpm then
-        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(cc^[ii],bboxwid))
-      else
-        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(uucpbrett(ohnebox(ii),2),bboxwid));
-    if showempfs=15 then
-      wrt(x+3+length(getres2(611,6)),y+17,'(...)');
-    mon;
-    openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
-    oldbetr:=LeftStr(betreff,20);
-    maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
-    msetvfunc(umlauttest); mhnr(86);
-    if fidoam then begin
-      maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
-      mhnr(90);
-    end;
-    readmask(brk);
-    closemask;
-    closebox;
-    betreff:=trim(betreff);
-    if brk then goto xexit;            { --> Abbruch bei Betreffmaske }
-    if betreff='' then begin
-      if not pm then rfehler(635);  { 'Nachricht muss einen Betreff haben' }
-      if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
-         not pm then goto xexit;
-    end;
-    if (_bezug<>'') and ntKomkette(netztyp) and
-                    (UpperCase(LeftStr(betreff,20))<>UpperCase(oldbetr)) then begin
-      pushhp(1501);
-      if not
-ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff geaendert - Verkettung beibehalten' }
-             ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
-      begin
-        _bezug:='';
-        _orgref:='';
-        sData.References.Clear;
-      end else
-      if RFCAppendOldSubject and (netztyp in netsRFC) then begin
-        ReCount(Oldbetr);
-        betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')';
-        end;
-      pophp;
-      if brk then goto xexit;
-    end;
-    if pm and not ntEmpfBest(netztyp) then begin
-      flEB:=(LeftStr(betreff,length(EmpfBkennung))=EmpfBkennung);
-      SetEBkennung;
-    end;
+
+  if betreffbox then begin
+    editbetreff;
+    if brk then goto xexit;
   end;
 
   orgftime:=filetime(datei);
@@ -1801,7 +1815,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       2 : hdp.absender:=username+'@'+pointname;
       3 : hdp.absender:=username+'@'+box;
       4 : hdp.absender:=username+'@'+FidoAbsAdr;
-      5 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
+      5 : begin
+            hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
+            hdp.real_box:=box;  { Test: 'X-XP-BOX' auch bei ZConnect }
+          end;
       6 : begin
             hdp.absender:=iifs(sData.SenderMail='',
                                username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
@@ -1812,7 +1829,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             hdp.absender:=username+'@'+box+';'+pointname;
             hdp.real_box:=box;
           end;
-      8 : hdp.absender:=iifs(sData.SenderMail='',username,sData.SenderMail);
+      8 : begin
+            hdp.absender:=email;
+            hdp.real_box:=box;
+          end;
     end;
     hdp.realname:=realname;
     if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData.onetztyp,netztyp)
@@ -2321,6 +2341,9 @@ finalization
 
 {
   $Log$
+  Revision 1.36  2002/01/13 15:07:32  mk
+  - Big 3.40 Update Part I
+
   Revision 1.35  2002/01/06 19:41:18  ma
   - changed variable name
 

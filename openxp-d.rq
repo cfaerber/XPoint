@@ -38,8 +38,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Dummy fÅr XPME:
 12  Extrakt,0c1^Nachricht,0c2^UUdecode,0c7M^IME-Decode,0c3^Brett,0c4^Kommentarbaum,0c5^Markiert,0c6!^Als..     T.o.Kopf˘13
 13  Als,0d1Text ^ohne Kopf,0d2Text ^mit Kopf,0d3^Puffer,0d4^Quote
-14  Alle,0e1^Halten,0e2^Lîschen,0e3^Markieren,0e4^Normal,0e5L^esen,0e6Ent^fernen,0e7^Drucken
-15  Netcall,0f1^Einzeln,0f2^Alle,0f3^Letzte Anrufe,0f4^Uhrzeit,0f5^Relogin,0f6^Online,-,0f8^Bereitschaft,0f9^Timing-Liste
+14  Alle,0e1^Halten,0e2^Lîschen,0e3^Markieren,0e4^Normal,0e5^Gelesen,0e6^Ungelesen,0e7Ent^fernen,0e8^Drucken
+15  Netcall,0f1^Einzeln,0f2^Alle,0f3^Letzte Anrufe,0f4^Uhrzeit,0f5^Relogin,0f6^Online,-,0f8^Spezial,0f9S^pezial-Liste,-,0fb^Bereitschaft,0fc^Timing-Liste
 16  Edit,101^Schablonen˘8,102^Boxen,103^Gruppen,104S^ysteme,105^Kurznamen,106^AutoVersand,108^Viewer,107^Textdatei   @E
 17  Status,111^Speicher,112^Nachrichten,113^Datenbank,11a^Fragmente,-,115^Gruppen,116S^Ysteme,117^Bretter,-,119G^ebÅhren˘26
 18
@@ -66,6 +66,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 38  Filescan,261^Bestellen,262^Abbestellen,263^Liste anfordern,264Liste ^einlesen,265^Datei einlesen,266^Sonstiges
 39  Tarifzonen,271^Zonen,272^Tarife,273^Feiertage,274^Sonstiges
 40  PGP,281Key ^anfordern,282Key ^einlesen,283Nachricht ^decodieren,284^Signatur testen,-,286^Key editieren,287^User-ID entfernen
+41  ?,291^Aktuell             F1,292^Vorheriges Thema   @F1,-,293Hilfe-^Inhalt      2*F1,294^Hilfe zur Hilfe,-,295XP-^Bedienung,296Aktuelle ^Makros     F6,-,297^Spezielle Themen..˘42,-,298^öber OpenXP
+42  Spezial,2a1^PGP-VerschlÅsselung,2a2XP und ^Mailinglisten,2a3Netztyp ^RFC/Client,2a4XP als ^Windows-Mailer
 # max. MenÅnummer = 99 (s. XPME.PAS)
 # Zusatz-MenÅ
 100 021^Kalender
@@ -112,7 +114,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 20
 0    markieren
 # Bretter, User, Bretter/Spezial, User/Spezial
-1    ^Alle ^Brief T^extfile B^inÑr ^Spezial ^Lesen:
+1    ^Alle ^Brief T^ext B^in ^Spez. S^uche ^Lesen:
 2    ^Alle S^ort ^Brief T^ext B^in ^Spez. S^uche Ad^re·buch ^Pa·wort
 3    ^Hinzuf. ^Lîschen ^Edit Z^ugriff ^VerknÅpfen ^Pos. ~Trenn. ^Spezial
 4    ^Alle S^ort ^Hinzu. ^Vert. ^Lîschen ^Edit ^Spez. Ad^re·b. ^PW
@@ -136,7 +138,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20   Anruf starten
 # Fileserver
 21   bestellen
-22 S^uche
+22   S^uche
 
 + 22
 # Tasten im Brettfenster:
@@ -163,7 +165,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
 # multiquote reply, PM, Quote PM, Multiquote PM, Pa·wort-Edit, indir. Quote
 
-3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S R ^N # A b ^B B p ^P P ^T ^Q
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q
 
 # Tasten im AutoVersand-Fenster
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
@@ -540,13 +542,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 17   unversandte Nachrichten nach /ØUnversandt
 18   autom. EmpfangsbestÑtigungen versenden
 19   automatische PM-Archivierung
-23   Zeitzone~
+23   Zeitzone ~
 24   Crosspostings mit Åber
 25   EmpfÑngern lîschen
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
-28   fragen bei Antwort-an
-29   News-Archivierung im Netz verhindern
+29   User bei PM-Antwort automatisch anlegen
 30   Cancel- und Ersetzt-Nachrichten ignorieren
 31   Eigene PMs halten
 39   EmpfÑnger-Auswahlliste: ~
@@ -556,6 +557,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 43   Antwort-an
 44   nie
 50   benutzerdefiniert
+51   Umstellung
+52   manuell
+53   Datum
+54   TZ-Var.
+55   TZ/Datum
+56   Automatische Zeitzonen-Umstellung aktiviert.
+57   Bitte Einstellung unter /Config/Optionen/Nachrichten
+58   ÅberprÅfen und ggf. korrigieren bzw. Ñndern.
+59   Die Zeitzone wurde auf "%s" geÑndert
+60   Umgebungsvariable "TZ" (Zeitzone) ist ungÅltig!
 #
 100  68
 101  Adre·einstellungen (ZConnect / RFC)
@@ -655,7 +666,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 258
 # Brett/Useranzeige
 # Fensterbreite
-0    37
+0    39
 1    normal
 2    spezial
 3    klein
@@ -665,6 +676,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 8    Brettanzeige        ~
 9    Usenet-Gruppen mit "."
 10   Trennzeilenkommentar~
+11   ... gilt fÅr alle Bretter
+12   kombinierter Ungelesen-Modus
 21   links
 22   Mitte
 23   rechts
@@ -1015,6 +1028,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 435  keine Bretter mit neuen Nachrichten vorhanden
 436  keine Bretter mit ungelesenen Nachrichten vorhanden
 437  Message-ID
+438  Text-Markier
 
 # XP4O
 + 441
@@ -1038,6 +1052,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 18   keine passenden Nachrichten gefunden
 19   ~von~
 20   ~bis~
+21   Suchbegriffs-Bibliothek
 -
 + 442
 0    Alle
@@ -1095,7 +1110,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Einen Moment noch...     %
 7    nix zu lîschen
 -
-452  neues Empfangsdatum:
++ 452
+# 452,1 mu· mit "N" beginnen!
+1    Neues Empfangsdatum:
+2    Erstelldatum Åbernehmen
+-
 # 453 und 455 sind MenÅpunkte aus /Nachricht/Unversandt
 453  éndern
 454  neuer Betreff:
@@ -1194,10 +1213,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    ~um~
 -
 + 467
-1    User-(markier)-Suche
+1    User-(markier)
 2    Suchbegriff:
 3    Suchen...     %        gefunden:
 4    keine passenden User gefunden
+5    Brett-(markier)
+6    keine passenden Bretter gefunden
 -
 468  Brettindex-Nr.
 469  Netztyp:~
@@ -1222,6 +1243,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # XP4E: s. 2700
+
+# XP4W
++ 480
+1    Adre·buchgruppe:
 
 
 # --- XP5 -------------------------------------------------------------
@@ -1681,6 +1706,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 8    Eintrag "Client-Verzeichnis" nicht OK
 9    Eintrag "Client-Aufruf" fehlt
 10   Eintrag "Client-Aufruf" nicht OK
+11   Eintrag "ZusÑtzliche Server" nicht OK
+12   Eintrag "Envelope-Adresse" fehlt
 -
 707  <abgebrochen>
 708  Abbruch
@@ -2110,10 +2137,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    Ausgangspakete packen
 # Position von 923.8
 10   34
+11   Sysop-Mode aktivieren
 # QWK
 12   Eingangspakete     ~
 13   Ausgangsverzeichnis~
 14   Transfer
+15   QWK-Transfer aktivieren
 #
 20   Startprogramm  ~
 21   Endprogramm    ~
@@ -2254,6 +2283,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    MIME-Typ        ~
 4    Dateierweiterung~
 5    Viewer-Programm ~
++ 936
+# Fensterbreite /Edit/Boxen/Edit/Client/ZusÑtzliche_Server/<F2>
+#           und /Netcall/Spezial-Liste/2x<Enter>
+1    52
+2    ~^EinfÅgen , ^Verschieben , ^Lîschen , ^OK~
+3    Serverboxen (Netztyp %s)
+4    Serverbox "%s" lîschen
 -
 + 950
 # NNTP
@@ -2404,6 +2440,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    WÑhrung~
 4    GebÅhrenÅbernahme von cFos
 5    deutsche Feiertage berÅcksichtigen
+# Netcall/Spezial
++ 1024
+1    Spezial-Netcall bei:
+2    Serverboxen-Liste fÅr
+3    /Netcall/Spezial
+4    Nr.  Serverboxen
+5    bei:
 -
 
 # --- XPTERM ----------------------------------------------------------
@@ -2744,6 +2787,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 2500
 1    Datei wurde geÑndert.
 2    ~^Sichern , ^Nicht sichern , ^ZurÅck~
+3    Nachricht wurde geÑndert.
+4    ~^Sichern , ^Nicht sichern , ^Parken , ^ZurÅck~
 + 2501
 0    Hinweis
 # Anzahl der Textzeilen:
@@ -2778,10 +2823,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 35   La^den UUE    ^KU
 36   ^Speichern    ^KW
 37   -
-38   ^Umbruch aus   F3
-39   U^mbruch ein   F4
-40   -
-41   ^Optionen     ^OR
+38   S^uchen       ^QF
+39   E^rsetzen     ^QA
+40   ^Weitersuchen  ^L
+41   -
+42   ^Umbruch aus   F3
+43   U^mbruch ein   F4
+44   -
+45   ^Optionen     ^OR
+46   -
+47   ^Beenden      Esc
 -
 2504 Block speichern
 2505 Block laden
@@ -2791,7 +2842,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Text ~
 3    Schreibweise ignorieren
 10   50
-11   Suchen/ersetzen
+11   Suchen/Ersetzen
 12   suchen nach   ~
 13   ersetzen durch~
 -
@@ -2951,7 +3002,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2713 Brettname geÑndert - Nachrichtenkîpfe anpassen
 2714 Einen Moment bitte...
 + 2715
-1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter,^Gruppe
+1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter,^Gruppe,^PrioritÑt,^Empfangsbest.,^Vertreteradr.,^Lîschen
 2    ^Kommentar,^Serverbox,^Haltezeit,^Gruppe,^Filter,^Zugriff
 3    %s markierte User bearbeiten
 4    %s markierte Bretter bearbeiten
@@ -2959,7 +3010,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Server  ~
 7    Nachr.
 8    Tage
-9    Haltezeit:~
+9    Haltezeit~
 10   IBM-Umlaute verwenden
 11   Gruppe ~
 12   Nachrichtenfilter
@@ -2974,10 +3025,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 2719 private Nachricht
 + 2720
-1    ^Alles,^Ungelesen,^Neues,^Heute,^Datum,^Zeit
+1    ^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit
 2    ,^Sichern
+# 2720,3 darf nicht mit "N" beginnen!
 3    Lesen ab Datum:
-4    Lesen ab Uhrzeit:
+4    Uhrzeit:
+5    aus Nachricht Åbernehmen
 + 2721
 1    EmpfÑnger:
 2    ~^Brett , ^User~
@@ -3105,7 +3158,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # --- Fehlermeldungen -------------------------------------------------
 
 +  10000
-1  Die Hilfsdatei %s fehlt!
+1  Die Hilfedatei %s fehlt!
 2  Dateierweiterung mu· .XPS sein!
 3  UngÅltiger Pfad- oder Dateiname!
 4  Kann %s nicht lîschen!?
@@ -3307,7 +3360,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 32 Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber
 33 UngÅltiger AKA-Eintrag: %s ist keine Serverbox!
 34 UngÅltiger AKA-Eintrag: kein zu %s passender Server vorhanden!
-35 Netzanruf QWK-Boxen ist nicht mîglich - Sysop-Mode verwenden!
+35 Netzanruf QWK-Boxen ist nicht mîglich - "Transfer" verwenden!
 36 Bitte zuerst Nachrichtenpaket einlesen, um Serverdaten zu ermitteln!
 37 ZQWK-Fehler Nr. %s bei Nachrichtenkonvertierung!
 38 Scriptdatei fÅr Relogin-Anruf erforderlich!
@@ -3437,6 +3490,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 13 Alle Wochen-/Feiertage sind bereits belegt.
 14 Tarifgruppe 1 kann nicht gelîscht werden.
 15 %s ist bereits durch eine andere Tarifgruppe belegt.
+16 Datei NETCALL.DAT nicht vorhanden
+17 - neu anlegen
+18 NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!
+19 /nsp: NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!
 
 +  12000
 1  ungÅltiger Logfile-Name
@@ -3896,6 +3953,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49  2002/01/13 15:07:23  mk
+# - Big 3.40 Update Part I
+#
 # Revision 1.48  2002/01/06 16:33:24  ma
 # - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
 #   (config name has been changed, setting will not be kept from OpenXP/16)

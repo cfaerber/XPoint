@@ -35,7 +35,8 @@ uses
   typinfo, xp0,
   typeform,keys,inout,maus2,winxp,montage, clip, osdepend;
 
-const digits : string{[12]} = '-0123456789 ';
+const digits : string = '-0123456789 ';
+      MaskSeekMenu : Byte = 0;
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
                 'Z[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–'+
                 '—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯àáâãäåæçèéêëìíîïğñòóôõö÷øùúûüış';
@@ -47,6 +48,10 @@ const digits : string{[12]} = '-0123456789 ';
       mtInteger  = 4;
       mtWord     = 5;
       mtLongint  = 6;
+
+      exit_mask    : boolean = false; { = true, sobald Maske verlassen wird   }
+      cDel_pressed : boolean = false; { = true, wenn <Ctrl-Del> erkannt wird  }
+                                               { und delete_on_cDel true ist  }
 
 type  colrec   =  record              { 0 = keine spezielle Farbe }
                     ColBack,          { Hintergrund & Rahmen  }
@@ -98,6 +103,8 @@ procedure masklanguage(const _yesno:string);        { 'JN'              }
 procedure mdummyp(var inhalt:string);               { Dummy fr Test0   }
 function  mdummyf(var inhalt:string):boolean;       { Dummy fr Test1/2 }
 function  qdummyf(brk,modif:boolean):boolean;       { Dummy fr QuitFN  }
+
+procedure maskShiftF2(p:testproc;helpnr:word);
 
 
 {--------------- Masken-Einstellungen -------------}
@@ -314,10 +321,19 @@ var   mask    : array[0..maxmask] of maskp;
       redispfields : boolean;
       redisptext   : boolean;
 
+      ShiftF2Proc : testProc;
+      ShiftF2Help : word;
+
 
 { Feldtypen:   1=String, 2=Short, 3=Byte, 4=Integer, 5=Word, 6=Long,
                7=Real, 8=Datum (tt.mm.jj oder tt.mm.jjjj),
                9=Uhrzeit (hh:mm oder hh:mm:ss), 10=Boolean (J/N)  }
+
+procedure maskShiftF2(p:testproc;helpnr:word);
+begin
+    ShiftF2Proc:=p;
+    ShiftF2help:=helpnr;
+end;
 
 
 procedure error(const txt:string);
@@ -1291,6 +1307,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.37  2002/01/13 15:07:23  mk
+  - Big 3.40 Update Part I
+
   Revision 1.36  2001/12/09 14:36:40  mk
   - implemented SysBeep and error sounds
 

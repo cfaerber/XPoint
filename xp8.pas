@@ -657,6 +657,7 @@ begin
     exit;
     end;
   List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
+  listTp(Mapskeys); 
   read_BL_File(s1,false, List);            { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
@@ -1257,6 +1258,38 @@ begin
   end;
 end;
 
+procedure MapsKeys(var t:taste);
+begin
+
+  if t=keytab then t:=keyctab
+  else if (t=keyctab) or (t=keystab) then t:=keytab;
+
+  if t=^S then t:='s'
+  else if t='s' then
+  begin
+    t:='';
+    if Suche(getres(438),'#','') then
+    begin
+      ListShowSeek:=true;
+      t:=keyctab;
+      end;
+    end;
+
+{  if t=^S then if Suche(getres(438),'#','') then begin
+    ListShowSeek:=true;
+    pushkey(keyctab);
+    end; }
+
+  if ustr(t)='E' then ListShowSeek:=not Listshowseek;
+
+  if t[1]=^H then begin
+    pushkey('S');
+    pushkey('* ');
+    pushkey(keycr);
+  end;
+
+end;
+
 { art: 0=bestellen, 1=abbestellen, 2=Bretter anlegen, 3=Inhalt (EM), 4=Rescan }
 
 procedure MapsBrettliste(art:byte);
@@ -1800,11 +1833,15 @@ begin
           end;
     1 : if ppp then
         begin
-          msgbox(63,8,_hinweis_,x,y);
-          mwrt(x+3,y+2,getres2(10800,32));   { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
-          mwrt(x+3,y+3,getres2(10800,33));   { 'Liste muá die entsprechende Funktion beim externen Client' }
-          mwrt(x+3,y+4,getres2(10800,34));   { 'aktiviert sein und die bisherige Newsgroup-Liste gel”scht' }
-          mwrt(x+3,y+5,getres2(10800,35));   { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+          msgbox(63,10,_hinweis_,x,y);
+          for j := 2 to 7 do
+            { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
+            { 'Liste muá die entsprechende Funktion beim externen Client' }
+            { 'aktiviert sein (siehe auch "Newsgroup-Liste pflegen" bei'  }
+            { '/Edit/Boxen/Edit/Mail-/News-Server) und die bisherige'     }
+            { 'Newsgroup-Liste gel”scht werden (siehe /Nachricht/Brett-'  }
+            { 'manager/Sonstiges/L”schen).'                               }
+            mwrt(x+3,y+j,getres2(10800,30+j));
           errsound;
           wait(curoff);
           closebox;
@@ -2107,6 +2144,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2002/01/13 15:07:31  mk
+  - Big 3.40 Update Part I
+
   Revision 1.64  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

@@ -82,7 +82,8 @@ function SetTimezone(var s:string):boolean;
 function testexecutable(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
-function testfilename( var s:string):boolean;
+function ngdispChanged(var s:string):boolean;
+function ngdispaChanged(var s:string):boolean;
 function testvalidcharset(var s:string):boolean;
 
 procedure setvorwahl(var s:string);
@@ -108,7 +109,7 @@ const
 var hayes     : boolean;
     small     : boolean;
     zcmime_old: boolean;
-    tzfeld    : shortint;
+    tzfeld,tzfeld1: shortint;
     GPGEncodingOptionsField: integer;
 
 function testbrett(var s:string):boolean;
@@ -138,10 +139,10 @@ begin
   mnotrim; mhnr(210);
   maddint(3,3,getres2(250,3),QuoteBreak,3,5,40,119);  { 'Zeilenumbruch ' }
   ua:=aufnahme_string;
-  maddstring(3,5,getres2(250,4),ua,7,7,'');           { 'User-Aufnahme ' }
-  for i:=5 to 7 do
-    mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
-  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
+  maddstring(3,5,getres2(250,4),ua,7,7,'');               { 'User-Aufnahme ' }
+  for i:=0 to 3 do
+    mappsel(true,getres2(108,i));    { 'Alle˘Z-Netz˘Keine˘PMs' }
+  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);    { 'Standard-Usergruppe' }
   mhnr(8068);
   maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
@@ -163,11 +164,12 @@ begin
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
-    if UpperCase(ua)=UpperCase(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
-    else if UpperCase(ua)=UpperCase(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
-    else if UpperCase(ua)=UpperCase(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
-    { else UserAufnahme:=2;  keine - gibt's nicht mehr }
+    if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'Alle'   }
+    else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-Netz' }
+    else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3  { 'PMs'    }
+    else UserAufnahme:=2;                                       { 'Keine'  }
     Usersortbox:=_usersortbox;
+    otherqcback:=OtherQuoteChars;
     GlobalModified;
     end;
   enddialog;
@@ -284,6 +286,7 @@ end;
 function SetTimezone(var s:string):boolean;
 begin
   setfieldenable(tzfeld,s=_jn_[2]);
+  setfieldenable(tzfeld1,s=_jn_[2]);
   settimezone:=true;
 end;
 
@@ -294,7 +297,7 @@ var x,y : Integer;
     i,j: Integer;
     RTAStrings :array[0..4] of string;
     RTAErg :string;
-    UUCP_ZConnectUsed :boolean;
+    RFC_ZConnectUsed :boolean;
 
   function getRTAMode : String;
   begin
@@ -329,13 +332,13 @@ var x,y : Integer;
   end;
 
 begin
-  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
+  RFC_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
     ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0;
 
-  if UUCP_ZConnectUsed then
+  if RFC_ZConnectUsed then
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
-  j := iif (UUCP_ZConnectUsed, 1, 0);
+  j := iif (RFC_ZConnectUsed, 1, 0);
 
   dialog(57,21 + j,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
@@ -345,7 +348,7 @@ begin
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
 
-  if UUCP_ZConnectUsed then
+  if RFC_ZConnectUsed then
   begin
     RTAErg := getRTAMode;
     maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
@@ -581,7 +584,10 @@ begin
   freeres;
   readmask(brk);
   if not brk and mmodified then
++  begin
++    ListWrapBack:=listwrap;
     GlobalModified;
+  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -689,6 +695,19 @@ end;
 
 { Brettanzeige }
 
+function ngdispChanged(var s:string):boolean;
+begin
+  if s=_jn_[1] then exit;
+  setfield(4,s);
+end;
+
+function ngdispaChanged(var s:string):boolean;
+begin
+  if s=_jn_[2] then exit;
+  setfield(3,s);
+end;
+
+
 procedure brett_config;
 var x,y   : Integer;
     brk   : boolean;
@@ -707,15 +726,19 @@ var x,y   : Integer;
   end;
 
 begin
-  dialog(ival(getres2(258,0)),8,getres2(258,5),x,y);   { 'Brettanzeige' }
-  maddbool(3,2,getres2(258,6),UserSlash); mhnr(270);   { '"/" bei PM-Brettern' }
-  maddbool(3,3,getres2(258,7),trennall);   { 'Trennzeilen bei "Alle"' }
-  maddbool(3,4,getres2(258,9),NewsgroupDisp); mhnr(273);
-  brett:=btyp(brettanzeige);
-  maddstring(3,6,getres2(258,8),brett,7,7,'<'); mhnr(272);   { 'Brettanzeige ' }
+  dialog(ival(getres2(258,0)),10,getres2(258,5),x,y);        { 'Brettanzeige'                 }
+  maddbool(3,2,getres2(258,6),UserSlash); mhnr(270);         { '"/" bei PM-Brettern'          }
+  maddbool(3,3,getres2(258,7),trennall);                     { 'Trennzeilen bei "Alle"'       }
+  maddbool(3,4,getres2(258,9),NewsgroupDisp); mhnr(273);     { 'Usenetgruppen mit "."'        }
+  MSet1Func(ngdispChanged);
+  maddbool(3,5,getres2(258,11),NewsgroupDispall); mhnr(275); { '... gilt fÅr alle Bretter     }
+  MSet1Func(ngdispaChanged);
+  maddbool(3,6,getres2(258,12),ShowUngelesen);
+  brett:=btyp(brettanzeige);                                 { 'kombinierter Ungelesen-Modus' }
+  maddstring(3,8,getres2(258,8),brett,7,7,'<'); mhnr(272);   { 'Brettanzeige '                }
   for i:=0 to 2 do mappsel(true,btyp(i));
   tks:=tk(trennkomm);
-  maddstring(3,7,getres2(258,10),tks,7,10,''); mhnr(274);  { 'Trennzeilenkommentar' }
+  maddstring(3,9,getres2(258,10),tks,7,10,''); mhnr(274);    { 'Trennzeilenkommentar'         }
   for i:=1 to 3 do mappsel(true,tk(i));
   freeres;
   readmask(brk);
@@ -746,7 +769,7 @@ var x,y   : Integer;
   end;                         { 'Splt./klein'                         }
 
 begin
-  dialog(65,8,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
+  dialog(65,10,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
   maddbool(3,2,getres2(259,11),ShowMsgDatum); mhnr(840);   { 'Nachrichten-Datum' }
   sabs:=abstyp(sabsender);
   maddstring(35,2,getres2(259,12),sabs,11,11,'');    { 'Absendernamen ' }
@@ -755,6 +778,10 @@ begin
   maddbool(3,5,getres2(259,14),showrealnames);   { 'Realname anzeigen, falls vorhanden' }
   maddbool(3,6,getres2(259,15),showfidoempf);    { 'EmpfÑnger von Fido-Brettnachrichten anzeigen' }
   maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
+  { 'Feldtausch Nachrichten-Lesefenster': }
+  maddstring(3,9,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
+             '>'+MsgFeldDef+LStr(MsgFeldDef)); mhnr(1035);
+  mappsel(false,MsgFeldDef);
 { maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
   if not brk and mmodified then begin
@@ -854,26 +881,18 @@ begin
       EdSelcursor:=false;
     end;
     aufbau:=true;
-    GlobalModified;
-    { Alle Buchstaben fÅr den MsgFeldTausch vorhanden? }
-    j:=0;
+(*
+    if cpos('D',MsgFeldTausch)=0 then MsgFeldTausch:='D'+MsgFeldTausch;
+    if cpos('G',MsgFeldTausch)=0 then MsgFeldTausch:='G'+MsgFeldTausch;
+    if cpos('F',MsgFeldTausch)=0 then MsgFeldTausch:='F'+MsgFeldTausch;
+
     { (F)lags mÅssen immer vorne stehen }
-    i:=cPos('F',MsgFeldTausch); if (i>1) then begin
-      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
-    end;
-    for i := 1 to length(MsgFeldDef) do
-      if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
-    if (j<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-    { Alle Buchstaben fÅr den UsrFeldTausch vorhanden? }
-    j:=0;
-    { (F)lags mÅssen immer vorne stehen }
-    i:=cPos('F',UsrFeldTausch); if (i>1) then begin
+    i:=pos('F',UsrFeldTausch); if (i<>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
-    for i := 1 to length(UsrFeldDef) do
-     if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
-    if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
+*)
     GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
+    GlobalModified;
     end;
   enddialog;
   menurestart:=brk;
@@ -1274,7 +1293,7 @@ var x,y   : Integer;
     case nr of
       1 : sname:='Z-Netz';
       2 : sname:='Fido';
-      3 : sname:='RFC/UUCP';
+      3 : sname:='RFC';
       4 : sname:='MausTausch';
       5 : sname:='MagicNET';
       6 : sname:='QM/GS';
@@ -1536,6 +1555,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2002/01/13 15:07:26  mk
+  - Big 3.40 Update Part I
+
   Revision 1.117  2002/01/06 19:31:43  ma
   - getX now supports searching for multiple keys
     (provides backwards compatibility in case of changed key names)

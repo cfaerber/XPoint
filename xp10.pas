@@ -39,7 +39,7 @@ uses
 
 procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=Gebhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
 
-procedure AutoTiming(tnr:integer; callall,crashall:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
 procedure AppPhoneZones;   { mappsel() fr Gebhrenzonen }
 function  CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
@@ -56,6 +56,8 @@ function testaction(var s:string):boolean;
 procedure MakSelKeys(LSelf: TLister; var t:taste);
 function checkday(var s:string):boolean;
 function _getmacro(s:string):string;
+
+procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
@@ -88,6 +90,9 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
                   ('Mo','Di','Mi','Do','Fr','Sa','So','F1','F2','F3');
       pagepos   : byte = 1;
       gpagepos  : byte = 1;
+
+      NetcallSpecialDat = 'NETCALL.DAT';  { Textdatei fr /Netcall/Spezial }
+      NetcallSpecialMax = 20;
 
 type  TimeRec   = record
                     active    : boolean;
@@ -144,6 +149,10 @@ var   e         : TStringList;
       tables    : integer;    { Anzahl Tarif-Tabellen }
       dayused   : wt_array;   { fr CheckDay() }
 
+
+      netcalldat : text;
+      NetcallSpecialList : array[1..NetcallSpecialMax] of String;
+                          { Array fr Zeileninhalt NETCALL.DAT }
 
 function mtyp(nr:byte):string;
 begin
@@ -659,8 +668,8 @@ var
         end;   // if i+a>eanz then
       end;
     attrtxt(col.colsel2box);
-    wrt(x,y+1,iifc(a=0,'³',#30));
-    wrt(x,y+gl,iifc(a+gl<eanz,#31,'³'));
+    fwrt(x,y+1,iifc(a=0,'³',#30));
+    fwrt(x,y+gl,iifc(a+gl<eanz,#31,'³'));
     mon;
   end;
 
@@ -830,10 +839,7 @@ var
       else
         tt:='<'+ta^[ord(t2[2])]+'>';
     attrtxt(col.coldiahigh);
-    gotoxy(x,y);
-    moff;
-    Wrt2(' ' + gett +' ');
-    mon;
+    mwrt(x, y, ' ' + gett + ' ');
   end;
 
   procedure ReadMacro(var s:string; var brk:boolean);
@@ -2058,6 +2064,116 @@ begin
   if ParG2 then gtest2;
 end;
 
+
+procedure ReadNetcallSpecialData;
+var i : byte;
+begin
+  for i:=1 to NetcallSpecialMax do NetcallSpecialList[i] := '';
+  if exist(ownpath+NetcallSpecialDat) then
+  begin
+    i:=1;
+    assign(netcalldat,ownpath+NetcallSpecialDat);
+    reset(netcalldat);
+    if IOResult=0 then
+      while (not eof(netcalldat)) and (i <= NetcallSpecialMax) do
+      begin
+        readln(netcalldat, NetcallSpecialList[i]);
+        inc(i);
+      end;
+    close(netcalldat);
+  end;
+end;
+
+
+procedure EditNetcallDat;
+var x,y,p,i    : byte;
+    t          : taste;
+
+const lines  = NetcallSpecialMax;
+
+  procedure edit(p:byte);
+  var boxline : customrec;
+            i : byte;
+  begin
+    own_Name:='';      { Flag fr EditAddServersList }
+    showErrors:=true;  { Flag fr EditAddServersList }
+    boxline.s:=NetcallSpecialList[p];
+    boxline.y:=p; { wir miábrauchen customrec zur Speicherung der Position }
+    EditAddServersList(boxline);
+    NetcallSpecialList[p]:=trim(boxline.s);          { Array aktualisieren }
+    assign(netcalldat,ownpath+NetcallSpecialDat);
+    rewrite(netcalldat);
+    for i:=1 to NetcallSpecialMax do         { NETCALL.DAT immer schreiben }
+      writeln(netcalldat,NetcallSpecialList[i]);
+    close(netcalldat);
+  end;
+
+  procedure maus_bearbeiten;
+  var xx,yy  : integer;
+      inside : boolean;
+      outside: boolean;
+  begin
+    maus_gettext(xx,yy);
+    inside:=(xx>x) and (xx<x+72) and (yy>y+1) and (yy<=y+lines+1);
+    outside:=(xx<x) or (xx>x+72) or (yy<y) or (yy>y+lines+2);
+    if inside then
+      if (t=mausleft) or (t=mauslmoved) then
+        p:=yy-y-1
+      else if (t=mausunleft) or (t=mausldouble) then
+        t:=keycr
+      else
+        t:=#0
+    else if outside then
+      if (t=mausunleft) or (t=mausunright) then
+        t:=keyesc
+      else
+        t:=#0
+    else
+      t:=#0;
+  end;
+
+begin  { --- of EditNetcallDat --- }
+  selbox(73,NetcallSpecialMax+3,getres2(1024,2)+' '+getres2(1024,3)+' ('+
+         NetcallSpecialDat+')',x,y,false);
+                  { 'Serverboxen-Liste fr /Netcall/Spezial (NETCALL.DAT)' }
+  attrtxt(col.colsel2high);
+  mwrt(x+1,y+1,' '+getres2(1024,4));     { 'Nr.  Serverboxen' }
+  p:=1;
+
+  ReadNetcallSpecialData;
+
+  repeat
+    moff;
+
+    for i:=1 to NetcallSpecialMax do
+    begin
+      if i=p then attrtxt(col.colsel2bar)
+      else attrtxt(col.colsel2box);
+      fwrt(x+1,y+1+i,iifs(i>9,' ','  ')+strs(i)+
+        ':  '+forms(trim(NetcallSpecialList[i]),65));
+    end;
+    mon;
+    repeat
+      if auswahlcursor then begin
+        gotoxy(x+1,y+1+p);
+        get(t,curon);
+        end
+      else
+        get(t,curoff);
+      if (t>=mausfirstkey) and (t<=mauslastkey) then
+        maus_bearbeiten;
+    until t<>#0;
+    if (t=keyup) and (p>1) then dec(p);
+    if (t=keydown) and (p<lines) then inc(p);
+    if (t=keyhome) or (t=keypgup) then p:=1;
+    if (t=keyend) or (t=keypgdn) then p:=lines;
+    if (t=keycr) or (ustr(t)='E') then edit(p);
+  until t=keyesc;
+  closebox;
+  freeres;
+end;
+
+
 {$I xp10.inc}    { Timinglisten-Interpreter }
 
 initialization
@@ -2067,6 +2183,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.66  2002/01/13 15:07:25  mk
+  - Big 3.40 Update Part I
+
   Revision 1.65  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

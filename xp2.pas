@@ -101,21 +101,41 @@ begin
 end;
 
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
-var s    : string;
-    i,ml : byte;
-begin
+var s       : string;
+    i,ml    : byte;
+    n       : byte;
+    m1empty : boolean;
+  begin
+  freemem(menu[2],length(menu[2]^)+1);
+  freemem(menu[menus],length(menu[menus]^)+1);
   s:=''; ml:=14;
-  for i:=1 to 10 do
+  n:=0;
+
+  for i:=1 to 10 do                                  { Zusatzmenue 1-10 }
     with fkeys[0]^[i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
+        inc(n);
         end;
-  if s<>'' then s:=',-'+s;
+  m1empty:=false;
+  if s<>'' then s:=',-'+s else m1empty:=true;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
-  menu[2]:=s;
-end;
+  getmem(menu[2],length(s)+1);
+  menu[2]^:=s;
 
+  s:='';
+  for i:=1 to iif(screenlines=25,9,10) do            { Zusatzmenue 11-20 }
+    with fkeys[4]^[i] do
+      if menue<>'' then begin
+        s:=s+','+hex(i+$24,3)+menue;
+        ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
+        inc(n);
+        end;
+  if m1empty and (s<>'') then s:=',-'+s; 
+  getmem(menu[menus],length(s)+1);
+  menu[menus]^:=s;
+end;
 
 procedure setmenus;
 var i : integer;
@@ -445,6 +465,10 @@ var i  : integer;
                          NetPar(UpperCase(mid(s,5)));
                          ParRelogin:=true;
                        end else
+    if isl('nsp:') then begin
+                          NetPar(ustr(mid(s,6)));
+                          ParNSpecial:=true;
+                        end else
     if _is('r')    then ParReorg:=true else
     if _is('rp')   then ParTestres:=false else
     if _is('pack') then ParPack:=true else
@@ -1049,7 +1073,7 @@ begin
     if ntDomainReply(dbReadInt(d,'netztyp')) then
     begin
       new(p);
-      if dbReadInt(d,'netztyp')=nt_UUCP then begin
+      if dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client] then begin
         dom:=LowerCase(dbReadStr(d,'fqdn'));
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
@@ -1102,6 +1126,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.131  2002/01/13 15:07:26  mk
+  - Big 3.40 Update Part I
+
   Revision 1.130  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

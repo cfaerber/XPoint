@@ -1220,9 +1220,16 @@ begin
 end;
 
 procedure show_info;
-var s : string;
-    b : byte;
+var s     : string;
+    s1    : string;
+    b     : byte;
+    flags : boolean;
+
+const len : byte = 80;
+
 begin
+  s1:=dispspec;
+  brettform(s1,dispflags,false);
   attrtxt(col.colmsgsinfo);
   if dispmode=11 then                                                   { 11=markierte Nachrichten }
     mwrt(1,4,forms(getreps(421,strs(markanz)),80+ScreenWidth-80))       { ungetestet 'markierte Nachrichten' }
@@ -1232,15 +1239,15 @@ begin
     case rdmode of
       0 : s:='';
       1 : s:='  -  '+getres(423);   { 'ungelesene Nachrichten' }
-      2 : s:=iifs(length(dispspec)<38,'  -  ',' - ')+getres(424);
+      2 : s:=iifs(length(s1)<38,'  -  ',' - ')+getres(424);
                                { 'Nachrichten seit dem letzten Netcall' }
     else
       s:='  -  '+getreps(425,fdat(longdat(readdate)));  { 'Nachrichten seit dem %s' }
     end;
-    if UserSlash or (FirstChar(dispspec)>='A') or (copy(dispspec,2,1)<>'/') then
-      b:=2
+    if newsgroupdispall or UserSlash or (left(s1,1)>='A') or (copy(dispspec,2,1)<>'/')
+    then b:=2
     else b:=3;
-    mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
+    mwrt(1,4,' '+forms(copy(s1,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
   end;
 end;
 
@@ -1294,7 +1301,8 @@ var s       : string;
 begin
   newsuch:=suchst;
   if ch=keybs then
-    if newsuch='' then begin
+    if ((newsuch='/') and (dispmode<1))
+    or (newsuch='') then begin
       errsound; exit; end
     else DeleteLastChar(newsuch)
   else
@@ -1306,31 +1314,38 @@ begin
 
   if (dispmode<1) then begin
     dbSeek(bbase,biBrett,'A'+UpperCase(newsuch));
-    if not dbEOF(bbase) then begin
+    if dbEOF(bbase) then exit;
+    s := dbReadNStr(bbase,bb_brettname);
+    delfirst(s);
+    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+    begin
+      dbSeek(bbase,biBrett,'1'+ustr(newsuch));
+      if dbEOF(bbase) then exit;
       s:= dbReadNStr(bbase,bb_brettname);
       DeleteFirstChar(s);
-      if UpperCase(LeftStr(s,length(newsuch)))<>UpperCase(newsuch) then
-        errsound
-      else if ch<>'/' then
-        suchok
-      else begin
-        pp:=cPos('/',mid(s,length(newsuch)+1));
-        if pp=0 then begin
-          dbSeek(bbase,biBrett,'A'+UpperCase(s)+'/');
-          if not dbEOF(bbase) and (LeftStr(dbReadStrN(bbase,bb_brettname),length(s)+2)='A'+s+'/')
-          then begin
-            newsuch:=s+'/';
-            suchok;
-            end
-          else
-            errsound;
-          end
-        else begin
-          newsuch:=LeftStr(s,pp+length(newsuch));
+    end;
+    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+      errsound
+    else if ch<>'/' then
+      suchok
+    else begin
+      pp:=pos('/',mid(s,length(newsuch)+1));
+      if pp=0 then begin
+        dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
+      {  if dbEOF(bbase) then dbSeek(bbase,biBrett,'1'+ustr(s)+'/');}
+        if not dbEOF(bbase) and
+          (mid(left(dbReadStr(bbase,'brettname'),length(s)+2),1)=s+'/')
+        then begin
+          newsuch:=s+'/';
           suchok;
-          end;
-        end
+          end
+        else
+          errsound;
       end
+      else begin
+        newsuch:=left(s,pp+length(newsuch));
+        suchok;
+      end;
     end
   else begin
 
@@ -1343,7 +1358,7 @@ begin
         dbsetindex(ubase,uiname);              { Nach Namen sortieren }
         repeat
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
-          if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
+          if adrb<AdrbTop then dbnext(ubase);  { den naechsten Eintrag holen }
           if dbEOF(ubase) then
           begin
             dbsetindex(ubase,indx);            { EOF: wieder nach Adressbuch sortieren}
@@ -1351,7 +1366,7 @@ begin
             exit;
           end;
           s:= dbReadNStr(ubase,ub_username);
-        until (adrb<>0) or (LeftStr(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
+        until (adrb>=adrbtop) or (LeftStr(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
         end
       else s:= dbReadNStr(ubase,ub_username);
@@ -1678,6 +1693,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.90  2002/01/13 15:07:30  mk
+  - Big 3.40 Update Part I
+
   Revision 1.89  2002/01/09 02:29:30  mk
   MY:- '#' from lister, Part I
 

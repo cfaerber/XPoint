@@ -220,6 +220,10 @@ var   fb     : string;
       drives : string[80];
       doppelpunkt : boolean;  { bei Novell liefert FF/FN kein ".." ... }
 
+ mausscroll : boolean;
+ aue,ade,au,ad,ab :boolean;
+
+
   procedure iit;
   begin
     if invers then invtxt else normtxt;
@@ -290,6 +294,12 @@ var   fb     : string;
     dispfile(CposY);
     xx:=wherex; yy:=wherey;   { fr Cursor-Anzeige }
     iit;
+
+    Wrt(9,y+1,iifc(p+add>4,#30,'³'));
+    Wrt(71,y+1,iifc(p+add>4,#30,'³'));
+    Wrt(9,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
+    Wrt(71,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
+
     if fsb_info then begin
       s:=f[add+CposY];
       gotoxy(3,y+height-1);
@@ -351,9 +361,13 @@ var   fb     : string;
   procedure maus_bearbeiten(var t:taste);
   var xx,yy  : integer;
       inside : boolean;
+      mausbut : byte;
+      down   : boolean;
   begin
     maus_gettext(xx,yy);
     inside:=(xx>10) and (xx<71) and (yy>y) and (yy<y+height-2);
+    down:=yy>=y+height div 2;
+
     if inside then begin
       if (t=mausleft) or (t=mauslmoved) then
         if vert then
@@ -361,17 +375,55 @@ var   fb     : string;
         else
           CposY:=(xx-11)div 15+1 + ((yy-y-1)*4);
       if t=mausldouble then
-        t:=keycr;
-      end
-    else
-      if t=mausunleft then
-        t:=keycr
-      else if t=mausunright then
-        t:=keyesc;
-     CposY:=min(CposY,f.count);
+       t:=keycr;
+     end
+    else if (t=mausleft) and not mausscroll
+    then begin
+      mausscroll:=true;
+      aue:=autoupenable;
+      ade:=autodownenable;
+      au:=autoup;
+      ad:=autodown;
+      ab:=autobremse;
+      autobremse:=true;
+      if down then begin
+        autodownenable:=true;
+        autodown:=true;
+        end
+      else begin
+        autoupenable:=true;
+        autoup:=true;
+        end;
+      end;
+
+    if mausscroll then begin
+    (*  asm
+          mov ax,3                       { Beim Scrollen Maustaste abfragen }
+          int 33h
+          and bl,3
+          mov mausbut,bl
+      end; *)
+      if mausswapped then mausbut:=mausbut shr 1;
+      if (mausbut and 1 = 0) then begin  { Rechte Taste nicht gedrueckt: Scrollen aus }
+        autoupenable:=aue;
+        autodownenable:=ade;
+        autoup:=au;
+        autodown:=ad;
+        autobremse:=ab;
+        mausscroll:=false;
+        end
+      else if inside then t:=''
+        else if down then t:=keydown     { Rechte Taste gedrueckt gehalten: scrollen }
+                     else t:=keyup;
+      end;
+
+      if not mausscroll and (t=mausunright) then t:=keyesc;
+
+    p:=min(p,fn);
    end;
 
 begin
+  mausscroll:=false;
   f := TStringList.Create;
   path:=trim(path); pathx:=trim(pathx);
   if path='' then path:=WildCard;
@@ -1093,6 +1145,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2002/01/13 15:07:24  mk
+  - Big 3.40 Update Part I
+
   Revision 1.46  2001/10/28 20:40:56  mk
   - fixed RTE in fsbox while selecting a drive
   - changed some byte to integer

@@ -201,55 +201,74 @@
           nt:= SupportedNetTypes[i];
   end;
 
-  procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
-                     PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; const Titel:String);
-  var
-    x,y: Integer;
+  procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,
+                     fqdn,PPPClientPath,PPPClient,PPPAddServers,PPPDialUp,
+                     PPPPhone,PPPLogin,PPPPass:string; PPPAskIfConnect,
+                     PPPAskIfDisconnect,PPPKeepConnectStatus:boolean;
+                     const Titel:String);
+  var x,y,b       : byte;
+      serverNames : string;
   begin
-    dialog(66,20,Titel,x,y);   { 'Client-Einstellungen' }
+    dialog(66,20,Titel,x,y);                                { 'Client-Einstellungen' }
 
-    maddstring(3,2,getres2(920,81),name,20,20,              { 'Server' }
-             '"!'+range('#','?')+range('A',#126)+'éôö');
-              { ^^ wegen "!" = TopCase }
+    maddtext(3,2,getres2(920,81),col.coldiahigh);           { 'Server' }
+    maddstring(3,3,getres2(920,82),name,20,BoxNameLen,      { 'Name' }
+             '"!'+range('#','?')+range('A',#126)+'ƒ÷‹');
+            { ^^ wegen "!" = TopCase }
     mhnr(30101);
     gf_fido:=false;
-    msetvfunc(xp9_testbox);
+      msetvfunc(xp9_testbox);
+    maddstring(34,3,getres2(920,83),komm,19,30,'');         { 'Kommentar' }
 
-    maddstring(36,2,getres2(920,82),komm,17,30,'');         { 'Kommentar' }
-
-    maddstring(3,4,getres2(920,83),email,46,AdrLen,'');         { 'eMail-Adresse' }
-    msetvfunc(xp9_setclientFQDN);
-
-    maddstring(3,6,getres2(920,84),realname,46,40,'');      { 'Realname' }
-
-    maddstring(3,8,getres2(920,85),replyto,46,eAdrLen,'');  { 'Vertreter' }
-    msetvfunc(testreplyto);
-
-    maddstring(3,10,getres2(920,86),fqdn,46,60,             { 'FQDN' }
+    maddtext(3,5,getres2(920,84),col.coldiahigh);           { 'User' }
+    maddstring(3,6,getres2(920,85),email,46,eAdrLen,'');    { 'eMail-Adresse' }
+      msetvfunc(xp9_setclientFQDN);
+    maddstring(3,7,getres2(920,86),realname,46,40,'');      { 'Realname' }
+    maddstring(3,8,getres2(920,87),replyto,46,eAdrLen,'');  { 'Vertreter' }
+      msetvfunc(testreplyto);
+    maddstring(3,9,getres2(920,88),fqdn,46,60,              { 'FQDN' }
      'A'+without(range('!','~'),' @<>/_'));
-    msetvfunc(xp9_FQDNTest);
+      msetvfunc(xp9_FQDNTest);
 
-    maddstring(3,12,getres2(920,87),PPPClientPath,41,60,ValidDirCh);   { 'Client-Verzeichnis' }
-    mappsel(false,'UKAD\˘UKAW\˘UKAX\˘UKA_PPP\˘XPNEWS\');
-    msetvfunc(PPPClientpathTest);
+    maddtext(3,11,getres2(920,89),col.coldiahigh);          { 'Client' }
+    maddstring(3,12,getres2(920,90),PPPClientPath,41,
+      MaxLenPathname,ValidDirCh);                           { 'Client-Verzeichnis' }
+      mappsel(false,'UKAD\®UKAW\®UKAX\®UKA_PPP\®XPNEWS\');
+      msetvfunc(PPPClientpathTest);
+    maddstring(3,13,getres2(920,91),PPPClient,41,
+      MaxLenPathname,'');                                   { Client-Aufruf }
+      mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG®UKAW.BAT /M $CLPATH $CONFIG®UKAX.BAT /M $CLPATH $CONFIG®' +
+       'UKA_PPP.BAT /M $CLPATH $CONFIG®start /w $CLPATH+XPNEWS.EXE $CONFIG®$CLPATH+XPNEWS.EXE $CONFIG');
+      msetvfunc(pppclienttest);
+    serverNames:=BfgToBox(PPPAddServers);
+    maddstring(3,14,getres2(920,92),serverNames,41,255,     { 'Zus‰tzliche Server' }
+             '"!'+range('#','?')+range('A',#126)+'ƒ÷‹ ');   { Eingabel‰nge 255 ist korrekt! }
+            { ^^ wegen "!" = TopCase }
+      mappcustomsel(EditAddServersList,true); mselhnr(31109);
+      mset0proc(set_AddServers_Allowances);  { Lˆschen mit <Ctrl-Del> erlauben }
+      msetvfunc(addServersTest);
+      mset3proc(reset_Allowances);           { Lˆschen mit <Ctrl-Del> aufheben }
 
-    maddstring(3,14,getres2(920,88),PPPClient,41,60,'');    { Client-Aufruf }
-    mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG˘UKAW.BAT /M $CLPATH $CONFIG˘UKAX.BAT /M $CLPATH $CONFIG˘' +
-     'UKA_PPP.BAT /M $CLPATH $CONFIG˘$CLPATH+XPNEWS.EXE $CONFIG');
-    msetvfunc(pppclienttest);
+    maddtext(3,16,getres2(920,93),col.coldiahigh);          { 'Verbindung/Login' }
+    maddstring(3,17,getres2(920,94),PPPDialUp,18,60,'');    { 'Name' }
+    maddstring(3,18,getres2(920,95),PPPPhone,18,60,'');     { 'Telefon' }
+    maddstring(3,19,getres2(920,96),PPPLogin,18,60,'');     { 'Login' }
+    maddstring(3,20,getres2(920,97),PPPPass,18,20,'');      { 'Paﬂwort' }
+    maddbool(35,17,'',PPPAskIfConnect); 
+    maddtext(41,17,getres2(920,98),0);                      { 'R¸ckfrage vor Anwahl' }
+    maddbool(35,18,'',PPPAskIfDisconnect);
+    maddtext(41,18,getres2(920,99),0);                      { 'R¸ckfrage vor Auflegen' }
+    maddbool(35,19,'',PPPKeepConnectStatus);
+    maddtext(41,19,getres2(920,100),0);                     { 'Verbindungsstatus halten' }
 
-    maddstring(3,16,getres2(920,89),PPPAddServers,41,60,ValidDirCh);   { 'ZusÑtzliche Server' }
-    maddstring(3,18,getres2(920,90),PPPDialUp,18,60,'');    { 'Zugang' }
-    maddstring(3,20,getres2(920,91),PPPPhone,18,60,'');     { 'Telefon' }
-    maddstring(36,18,getres2(920,92),PPPLogin,18,60,'');    { 'Login' }
-    maddstring(36,20,getres2(920,93),PPPPass,18,20,'');     { 'Pa·wort' }
-    maddtext(0,3,'√'+dup(66,'ƒ')+'¥', 0);  { Linie }
-    maddtext(0,11,'√'+dup(66,'ƒ')+'¥', 0); { Linie }
-    maddtext(0,17,'√'+dup(66,'ƒ')+'¥', 0); { Linie }
+    maddtext(0,4,'+'+dup(66,'-')+'¶', 0);  { Linie }
+    maddtext(0,10,'+'+dup(66,'-')+'¶', 0); { Linie }
+    maddtext(0,15,'+'+dup(66,'-')+'¶', 0); { Linie }
 
     freeres;
     readmask(brk);
     enddialog;
+    PPPAddServers:=BoxToBfg(serverNames);
   end;
 
   procedure NewBox;
@@ -260,7 +279,9 @@
       nt,i : byte;
       b    : byte;
       pc,pp,ps,cldup,clphn,cllog,clpas : string;
-  begin                
+
+      claskc,claskd,clstat : boolean;
+  begin
     dbGo(d,drec[p]);
     fn := dbReadStr(d,'dateiname');
     ReadBox(0, fn, boxpar);
@@ -280,6 +301,9 @@
       clphn:='';
       cllog:='';
       clpas:='';
+      claskc:=false;
+      claskd:=false;
+      clstat:=true;
       boxpar^.ClientMailInServer := '';
       boxpar^.ClientMailInPort:='';
       boxpar^.ClientMailOutServer:='';
@@ -295,6 +319,9 @@
       clphn:=boxpar^.ClientPhone;
       cllog:=boxpar^.ClientLogin;
       clpas:=boxpar^.ClientPass;
+      claskc:=boxpar^.ClientAskIfConnect;
+      claskd:=boxpar^.ClientAskIfDisconnect;
+      clstat:=boxpar^.ClientKeepConnectStatus;
     end;
 
     name:=''; user:=''; komm:=''; fido:='';
@@ -307,16 +334,29 @@
     boxpar^.ClientMailInEnv:='';
     boxpar^.ClientMailInUser:='';
     boxpar^.ClientMailInPass:='';
+    boxpar^.PPPMailInUseEnvTo:=false;
+    boxpar^.PPPMailInKeep:=false;
+    boxpar^.PPPMailInAPOP:=false;
+    boxpar^.PPPMailFallback:='';
     boxpar^.ClientMailOutEnv:='';
     boxpar^.ClientMailOutUser:='';
     boxpar^.ClientMailOutPass:='';
+    boxpar^.PPPMailOutSMTPafterPOP:=false;
+    boxpar^.PPPMailOutSMTPLogin:=false;
+    boxpar^.PPPNewsFallback:='';
     boxpar^.ClientNewsUser:='';
     boxpar^.ClientNewsPass:='';
+    boxpar^.PPPNewsList:=true;
+    boxpar^.PPPNewsMaxLen:=0;
+    boxpar^.PPPNewsMax:=0;
+    boxpar^.PPPExternCfg:='';
 
     case nt of
       nt_Client:
-        _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_Client)));
-      nt_NNTP, nt_POP3, nt_IMAP: 
+        _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,
+               cldup,clphn,cllog,clpas,claskc,claskd,clstat,
+               getreps(915,netz_typ(nt_Client)))
+      nt_NNTP, nt_POP3, nt_IMAP:
         INetNameRead(nt,name,user,komm,real,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
         NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
@@ -341,6 +381,9 @@
         boxpar^.ClientPhone:=clphn;
         boxpar^.ClientLogin:=cllog;
         boxpar^.ClientPass:=clpas;
+        boxpar^.PPPAskIfConnect:=claskc;
+        boxpar^.PPPAskIfDisconnect:=claskd;
+        boxpar^.PPPKeepConnectStatus:=clstat;
         boxpar^.boxname:=name;
         boxpar^.username:=user;
         boxpar^._domain:=dom;
@@ -351,6 +394,7 @@
         nt_bpar(nt,boxpar^);
         if boxpar^.prototyp='' then
           boxpar^.prototyp:='Z';
+        boxpar^.sysopmode:=false;
         boxpar^.sysopinp:=''; boxpar^.sysopout:='';
         boxpar^.sysopstart:=''; boxpar^.sysopend:='';
         if nt=nt_Pronet then boxpar^.pointname:='01'
@@ -415,6 +459,11 @@
           b:=2;   { kein /Netcall/Alle }
           dbWrite(d,'script',b);
           end;
+        if nt=nt_Client then
+        begin
+          b:=0;
+          dbWrite(d,'script',b);
+        end;
         dbFlushClose(d);
         inc(ntused[nt]);
         dbGo(d,drec[1]);
@@ -822,115 +871,295 @@
   end;
 
   procedure EditExtern(const bfg:string; var brk:boolean);
-  var cfgfile       : String;
-      fullClientDir : String;
-      Dir, Name, Ext: String;
+  var extcfg_file   : string[MaxLenPathname];
+      s1,s2,prg     : string[MaxLenPathname];
+      p             : byte;
+      fullClientDir : dirstr;
+      dir           : dirstr;
+      name          : namestr;
+      ext,uext      : extstr;
+      DOSExec       : boolean;
+      WinExec       : boolean;
+  label restart;
+
+    procedure save_boxpar;
+    begin
+      with boxpar^ do begin
+        if not (ustr(extcfg_file) = ustr(pppExternCfg)) then
+        begin
+          pppExternCfg := extcfg_file;
+          WriteBox(bfg,boxpar);
+        end;
+      end;
+    end;
+
   begin
+    s1:=''; s2:='';
     with boxpar^ do
     begin
-      fullClientDir := ExpandFileName(ClientPath);
+      fullClientDir := FExpand(pppClientPath);
       if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
       begin
-        rfehler1(948, fullClientDir);  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
+        rfehler1(951,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
         pushkey('e'); pushkey('c');
         exit;
       end;
-      fullClientDir := IncludeTrailingPathDelimiter(fullClientDir);
-      cfgfile := trim(ClientExternalConfig);
+      if not (right(fullClientDir,1) = DirSepa) then
+        fullClientDir := fullClientDir + DirSepa;
+      if LFNEnabled then fullClientDir := GetLongName(fullClientDir);
+      extcfg_file := trim(pppExternCfg);
 
-      { Hier wird nur der Wert ClientExternalConfig aus <Boxname>.BFG string- }
-      { technisch aufbereitet und an ReadExtCfgFilename in xpconfigedit.pas   }
-      { Åbergeben. Die eigentlichen PrÅfungen finden dann dort statt.         }
+      { Hier wird nur der Wert pppExternCfg aus <Boxname>.BFG string-  }
+      { technisch aufbereitet und an ReadExtCfgFilename in xp9sel.pas  }
+      { ¸bergeben. Die eigentlichen Pr¸fungen finden dann dort statt.  }
 
       { Dateinamen im oder unterhalb des XP-Verzeichnisses werden in   }
       { der <Boxname>.BFG mit dem vorangestellten String "<XP>\",      }
       { Dateinamen im Client-Verzeichnis ohne Pfad abgelegt. Dies hat  }
-      { den Zweck, die Datei auch dann finden zu kînnen, wenn sich das }
-      { XP-Verzeichnis und/oder -Laufwerk geÑndert haben sollte. Die   }
-      { gesamte Routine verhÑlt sich so, als sei das Client-Verzeich-  }
-      { nis das aktuelle Verzeichnis, d.h. auch (hÑndisch in die .BFG  }
+      { den Zweck, die Datei auch dann finden zu kˆnnen, wenn sich das }
+      { XP-Verzeichnis und/oder -Laufwerk ge‰ndert haben sollte. Die   }
+      { gesamte Routine verh‰lt sich so, als sei das Client-Verzeich-  }
+      { nis das aktuelle Verzeichnis, d.h. auch (h‰ndisch in die .BFG  }
       { hinter "Client-ExternConfig=" eingeflickte) Angaben ohne voll- }
-      { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
+      { st‰ndigen Pfad oder ohne f¸hrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if UpperCase(LeftStr(cfgfile, 5)) = ('<XP>' + DirSepa) then
-        cfgfile := OwnPath + MID(cfgfile, 6);
-      pushhp(30129);
+      if ustr(left(extcfg_file,5))='<XP>' + DirSepa then
+        extcfg_file:= ownpath + Mid(extcfg_file,6);
+      { Wenn Datei ohne Pfad im XP- *und* im Client-Verzeichnis vorhanden }
+      { sein sollte, w¸rde 'GetLongName' immer das XP-Verzeichnis als     }
+      { Pfad ermitteln. Deshalb f¸gen wir vor 'GetLongName' das Client-   }
+      { Verzeichnis hinzu und entfernen es nach 'GetLongName' wieder.     }
+      if not ((cpos(':',extcfg_file) = 2) or (cpos(DirSepa, extcfg_file) = 1)) then
+        extcfg_file:= fullClientDir + extcfg_file;
+      if LFNEnabled then extcfg_file := GetLongName(extcfg_file);
+      fsplit(extcfg_file,dir,name,ext);
+      if dir=fullClientDir then extcfg_file := name + ext;
+      pushhp(30180);
       { 'Externe Konfigurationsdatei laden' }
-      if ReadExtCfgFilename(getres2(927,42),cfgfile,fullClientDir,true) then
+{*}   restart:
+      WinExec:=false; DOSExec:=false;
+      if ReadExtCfgFilename(getres2(927,10),extcfg_file,fullClientDir,true) then
       begin
-        if not FileExists(cfgfile) then
-          if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(cfgfile,false,false,0,false);
-        fsplit(cfgfile,dir,name,ext);
-        if UpperCase(dir) = Uppercase(fullClientDir) then
-          cfgfile := name + ext
-        else
-        if FileUpperCase(LeftStr(dir, Length(ownpath))) = FileUpperCase(ownpath) then
-          cfgfile := '<XP>' + Copy(cfgfile, Length(ownpath), Length(cfgfile)-Length(ownpath)+1);
-        if not (FileUppercase(cfgfile) = Uppercase(ClientExternalConfig)) then
+        if extcfg_file = '' then   { Feld mit <Ctrl-Del> gelˆscht }
         begin
-          ClientExternalConfig := cfgfile;
-          WriteBox(bfg,boxpar);
+          save_boxpar;
+          goto restart;
         end;
+        if Pos('start ', lstr(extcfg_file)) = 1 then
+        begin
+          WinExec:=true;
+          s2:=extcfg_file;
+        end
+        else begin
+          p:=blankpos(extcfg_file);  { Auf Leerzeichen pr¸fen }
+          if p=0 then s2:=extcfg_file
+          else begin
+            s2:=left(extcfg_file,p-1);
+            s1:=trim(mid(extcfg_file,p));
+          end;
+          fsplit(s2,dir,name,ext);
+          uext:=ustr(ext);
+          if (uext='.EXE') or (uext='.COM') or (uext='.BAT') then
+          begin
+            DOSExec:=true;
+            if not exist(s2) then
+            begin
+              rfehler1(907,s2);  { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+              goto restart;
+            end
+          end;
+        end;
+        If WinExec or DOSExec then
+        begin
+          prg:=extcfg_file;
+          exchange(prg,'$CONFIG',bfg);
+          shell(prg,600,1);
+        end
+        else begin
+          if not exist(extcfg_file) then
+            if not ReadJN(getres(2725),false) then  { 'Datei nicht vorhanden - neu anlegen' }
+              goto restart;
+          EditFile(extcfg_file,false,false,false,0,false);
+        end;
+        if not WinExec then
+        begin
+          if not DOSExec then s2:=extcfg_file;
+          if not exist(s2) then exit;
+          if LFNEnabled then s2 := GetShortName(s2);
+          if ustr(dir) = ustr(fullClientDir) then
+            s2 := name + ext
+          else
+          if ustr(left(dir, Length(ownpath))) = ustr(ownpath) then
+            s2 := '<XP>' + mid(s2, Length(ownpath));
+          if DOSExec then s2 := s2+' '+s1;
+        end;
+        extcfg_file:=trim(s2);
+        save_boxpar;
       end;
       freeres;
       pophp;
     end;
   end;
 
-  procedure EditTransport(nt:byte; var brk:boolean);
-  var x,y : Integer;
-  begin
-    dialog(58,20,kompname,x,y);
-    with boxpar^ do begin
-      maddtext(3,2,getres2(920,100),col.coldiahigh);
-      maddstring(3,4,getres2(920,106),ClientMailInServer,35,160,'');   { 'Servername  ' }
-        mappsel(false,getres2(920,101));
-        mhnr(30115);
-      maddstring(3,5,getres2(920,107),ClientMailInEnv,35,160,'');    { 'Envelope-Adresse' }
-      msetvfunc(Multi_Mailstring);
-      maddstring(3,6,getres2(920,108),ClientMailInUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,7,getres2(920,109),ClientMailInPass,18,75,'');    { 'Pa·wort     ' }
-      maddstring(43,7,getres2(920,110),ClientMailInPort,7,50,'0123456789 ');  { 'Port' }
-        mappsel(false,'110˙25˙143˙585˙993');
-      maddtext(3,9,getres2(920,102),col.coldiahigh);
-      maddstring(3,11,getres2(920,106),ClientMailOutServer,35,160,'');  { 'Servername  ' }
-        mappsel(false,getres2(920,103));
-      maddstring(3,12,getres2(920,107),ClientMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
-      msetvfunc(Multi_Mailstring);
-      maddstring(3,13,getres2(920,108),ClientMailOutUser,35,160,'');  { 'Benutzername' }
-      maddstring(3,14,getres2(920,109),ClientMailOutPass,18,75,'');   { 'Pa·wort     ' }
-      maddstring(43,14,getres2(920,110),ClientMailOutPort,7,50,'0123456789 '); { 'Port' }
-        mappsel(false,'25');
-      maddtext(3,16,getres2(920,104),col.coldiahigh);
-      maddstring(3,18,getres2(920,106),ClientNewsServer,35,160,'');   { 'Servername  ' }
-        mappsel(false,getres2(920,105));
-      maddstring(3,19,getres2(920,108),ClientNewsUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,20,getres2(920,109),ClientNewsPass,18,75,'');    { 'Pa·wort     ' }
-      maddstring(43,20,getres2(920,110),ClientNewsPort,7,50,'0123456789 ');  { 'Port' }
-        mappsel(false,'119');
 
-      maddtext(0,8,'√'+dup(58,'ƒ')+'¥', 0);  { Linie }
-      maddtext(0,15,'√'+dup(58,'ƒ')+'¥', 0); { Linie }
+  procedure EditTransport(nt:byte; var brk:boolean);
+  const ServersMax = 20;        { max. Grˆﬂe des Arrays 'ServersList' }
+        ServersDat = 'SERVERS.DAT'; { Datei f¸r POP3/SMTP/NNTP-Server }
+  var   x,y,j                : byte;
+        MailFallbackName     : string[BoxNameLen];
+        NewsFallbackName     : string[BoxNameLen];
+        NewsMaxLenKB         : longint;
+        ServersList          : array[1..ServersMax] of string;
+                              { Array f¸r Dateiinhalt SERVERS.DAT }
+
+    procedure ReadServersDat(const section:string);
+    var i       : byte;
+        s,s1,s2 : string;
+        t       : text;
+    begin
+      for i:=1 to ServersMax do ServersList[i] := '';
+      if exist(ownpath+ServersDat) then
+      begin
+        i:=1;
+        s:=''; s1:=''; s2:='';
+        assign(t,ownpath+ServersDat);
+        reset(t);
+        if IOResult=0 then
+        begin
+          while (not eof(t)) do
+          begin
+            readln(t,s);     { Beginn der Section ([POP3,[SMTP,[NNTP) suchen }
+            s1:=ustr(left(trim(s),length(section)+1));
+            s2:=ustr('['+section);
+            if s1 = s2 then break;                        { Section gefunden }
+          end;
+          if s1 <> s2 then                          { Section nicht gefunden }
+          begin
+            close(t);
+            exit;
+          end;
+          s:='';
+          while (not eof(t)) and (i <= ServersMax) and (memavail>10000) do
+          begin
+            readln(t,s);
+            s:=trim(s);
+            if (s='') or (s[1]='#') or (s[1]=';') then continue; { Kommentar }
+            if s[1] = '[' then break;                         { neue Section }
+            ServersList[i]:=s;
+            inc(i);
+          end;
+        end;
+        close(t);
+      end;
+    end;
+
+  begin
+    dialog(76,20,kompname,x,y);
+    with boxpar^ do begin
+
+      maddtext(3,2,getres2(920,110),col.coldiahigh);
+   { 'Mail-Server f¸r eingehende Mail (POP3/SMTP/IMAP)' }
+      maddstring(3,3,getres2(920,113),PPPMailInServer,19,160,''); { 'Servername  ' }
+        ReadServersDat('POP3');             { SERVERS.DAT lesen      }
+        for j:=1 to ServersMax do
+          if ServersList[j] <> '' then      { nur Eintr‰ge anzeigen, }
+            mappsel(false,ServersList[j]);  { die nicht leer sind    }
+        mhnr(30130);
+        MailInServerFld:=fieldpos;
+      maddstring(44,3,getres2(920,114),PPPMailInPort,6,50,'0123456789 ');
+        mappsel(false,'110®25®143®585®993');                      { 'Port' }
+      maddstring(60,3,getres2(920,115),PPPMailInProtocol,5,5,''); { 'Protok.' }
+        mappsel(false,'POP3®SMTP®IMAP4');
+      maddstring(3,4,getres2(920,117),PPPMailInEnv,19,160,'');    { 'Envelope-Adresse' }
+        msetvfunc(check_envelope);
+      maddstring(3,5,getres2(920,118),PPPMailInUser,19,160,'');   { 'Benutzername' }
+      maddstring(3,6,getres2(920,119),PPPMailInPass,19,75,'');    { 'Paﬂwort     ' }
+      maddtext(44,4,getres2(920,120),0);                          { 'Envelope-To auswerten' }
+      maddbool(70,4,'',PPPMailInUseEnvTo);
+      maddtext(44,5,getres2(920,121),0);                          { 'Mail auf Server belassen' }
+      maddbool(70,5,'',PPPMailInKeep);
+      maddtext(44,6,getres2(920,122),0);                          { 'APOP-Authentifizierung' }
+      maddbool(70,6,'',PPPMailInAPOP);
+
+      maddtext(3,8,getres2(920,111),col.coldiahigh);
+   { 'Mail-Server f¸r ausgehende Mail (SMTP)' }
+      maddstring(3,9,getres2(920,113),PPPMailOutServer,19,160,''); { 'Servername  ' }
+        ReadServersDat('SMTP');             { SERVERS.DAT lesen      }
+        for j:=1 to ServersMax do
+          if ServersList[j] <> '' then      { nur Eintr‰ge anzeigen, }
+            mappsel(false,ServersList[j]);  { die nicht leer sind    }
+        mhnr(30150);
+      maddstring(44,9,getres2(920,114),PPPMailOutPort,6,50,'0123456789 ');
+        mappsel(false,'25');                                      { 'Port' }
+      MailFallbackName:=BfgToBox(PPPMailFallback);
+      maddstring(3,10,getres2(920,116),MailFallbackName,19,BoxNameLen,
+                 '"!'+range('#','?')+range('A',#126)+'ƒ÷‹');
+                { ^^ wegen "!" = TopCase }
+        mappcustomsel(SingleServerSel,false);                     { 'Fallback-Server' }
+        msetvfunc(addServersTest);
+      maddstring(3,11,getres2(920,117),PPPMailOutEnv,19,160,'');  { 'Envelope-Adresse' }
+        msetvfunc(Multi_Mailstring);
+      maddstring(3,12,getres2(920,118),PPPMailOutUser,19,160,''); { 'Benutzername' }
+      maddstring(3,13,getres2(920,119),PPPMailOutPass,19,75,'');  { 'Paﬂwort     ' }
+      maddtext(44,12,getres2(920,123),0);                         { 'SMTP after POP' }
+      maddbool(70,12,'',PPPMailOutSMTPafterPOP);
+      maddtext(44,13,getres2(920,124),0);                         { 'SMTP-Login nach RFC 2554' }
+      maddbool(70,13,'',PPPMailOutSMTPLogin);
+
+      maddtext(3,15,getres2(920,112),col.coldiahigh);
+   { 'News-Server (NNTP)' }
+      maddstring(3,16,getres2(920,113),PPPNewsServer,19,160,'');  { 'Servername  ' }
+        ReadServersDat('NNTP');             { SERVERS.DAT lesen      }
+        for j:=1 to ServersMax do
+          if ServersList[j] <> '' then      { nur Eintr‰ge anzeigen, }
+            mappsel(false,ServersList[j]);  { die nicht leer sind    }
+        mhnr(30170);
+      maddstring(44,16,getres2(920,114),PPPNewsPort,6,50,'0123456789 ');
+        mappsel(false,'119');                                     { 'Port' }
+      NewsFallbackName:=BfgToBox(PPPNewsFallback);
+      maddstring(3,17,getres2(920,116),NewsFallbackName,19,BoxNameLen,
+                 '"!'+range('#','?')+range('A',#126)+'ƒ÷‹');
+                { ^^ wegen "!" = TopCase }
+        mappcustomsel(SingleServerSel,false);                     { 'Fallback-Server' }
+        msetvfunc(addServersTest);
+      maddstring(3,18,getres2(920,118),PPPNewsUser,19,160,'');    { 'Benutzername' }
+      maddstring(3,19,getres2(920,119),PPPNewsPass,19,75,'');     { 'Paﬂwort     ' }
+      maddtext(44,17,getres2(920,125),0);                         { 'Newsgroup-Liste pflegen' }
+      maddbool(70,17,'',PPPNewsList);
+      NewsMaxLenKB:=(PPPNewsMaxLen div 1024);
+      maddint(44,18,getres2(920,126),NewsMaxLenKB,6,3,0,999);     { 'Max. Artikelgrˆﬂe (KB)' }
+        mappsel(false,'0®5®10®20®50®100®200®500®999');
+      maddint(44,19,getres2(920,127),PPPNewsMax,6,5,0,99999);     { 'Max. Artikel pro Newsgroup' }
+        mappsel(false,'0®10®100®200®500®1000®2000®5000®10000®20000®50000®99999');
+
+      maddtext(0,7,'+'+dup(76,'-')+'¶', 0);  { Linie }
+      maddtext(0,14,'+'+dup(76,'-')+'¶', 0); { Linie }
 
       readmask(brk);
       if not brk then
       begin
-        msgbox(63,12,_hinweis_,x,y);
-        mwrt(x+3,y+2,getres2(10900,41));   { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
-        mwrt(x+3,y+3,getres2(10900,42));   { 'Client oder Client-Kit ausgewertet werden.             '   }
-        mwrt(x+3,y+4,getres2(10900,43));
-        mwrt(x+3,y+5,getres2(10900,44));   { 'Ihr Client unterstÅtzt und/oder erfordert mîglicherweise'  }
-        mwrt(x+3,y+6,getres2(10900,45));   { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
-        mwrt(x+3,y+7,getres2(10900,46));   { 'rationsdatei vornehmen mÅssen.'                            }
-        mwrt(x+3,y+8,getres2(10900,43));
-        mwrt(x+3,y+9,getres2(10900,47));   { 'NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
+        msgbox(63,14,_hinweis_,x,y);
+
+        { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
+        { 'Client oder Client-Kit ausgewertet werden.             '   }
+        { 'Ihr Client unterst¸tzt und/oder erfordert mˆglicherweise'  }
+        { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
+        { 'rationsdatei im Client-Verzeichnis oder mittels eines      }
+        { 'externen Konfigurationsprogramms vornehmen m¸ssen (siehe'  }
+        { '/Edit/Boxen/Edit/Externe Einstellungen).'                  }
+        { 'N‰heres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
+        for j := 2 to 11 do
+          mwrt(x+3,y+j,getres2(10900,39+j));
+
         errsound;
         wait(curoff);
         closebox;
         end;
       enddialog;
+      PPPMailFallback:=BoxToBfg(MailFallbackName);
+      PPPNewsFallback:=BoxToBfg(NewsFallbackName);
+      PPPNewsMaxLen:=(NewsMaxLenKB*1024);
       freeres;
       exit;
       end;
@@ -1252,76 +1481,113 @@
       end;
   end;
 
+
   procedure EditSysopdaten(nt:byte; var brk:boolean);
-  var x,y   : Integer;
+  var x,y   : byte;
       flags : byte;
       nobox : boolean;
-      fl,el : byte;      { 923.fl = eines der Eingabefelder (fuer Laengenermittlung) }
+      fl,el : byte;      { 923.fl = eines der Eingabefelder (f¸r L‰ngenermittlung) }
+  label restart;
   begin
-    dialog(ival(getres2(923,iif(nt in [nt_Fido,nt_UUCP],0,1))),
-           iif(nt=nt_QWK,12,11),
-           getres2(923,iif(nt=nt_QWK,14,2)),x,y);
-    dbRead(d,'script',flags);                             { 'Sysop-Mode' }
+    restart:
+    dialog(ival(getres2(923,iif(nt in [nt_Fido,nt_UUCP,nt_Client],0,1))),
+           iif(nt=nt_QWK,14,13),
+           getres2(923,iif(nt=nt_QWK,14,2)),x,y); { 'Sysop-Mode' / 'Transfer' }
+    dbRead(d,'script',flags);
     nobox:=(flags and 16<>0);
-    with boxpar^ do begin
-      if (nt=nt_Fido) or (nt=nt_UUCP) then begin
+    with boxpar^ do begin    { 'Sysop-Mode aktivieren'/ 'QWK-Transfer aktivieren' }
+      maddbool(3,2,getres2(923,iif(nt=nt_QWK,15,11)),SysopMode);
+        case nt of
+          nt_Fido  : mhnr(183);
+          nt_QWK   : mhnr(8035);
+          nt_UUCP  : mhnr(8036);
+          nt_Client: mhnr(30220);
+        else
+          mhnr(182);
+        end;
+        mset1func(toggleSysop);
+      if nt in [nt_Fido,nt_UUCP,nt_Client] then
+      begin
         fl:=3; el:=35;
-        maddstring(3,2,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
-        case nt of
-          nt_UUCP: mhnr(8036);
-          nt_Client: mhnr(30150);
-        else
-          mhnr(183);
-        end;
-        msetvfunc(testfidodir);
-
-        maddstring(3,4,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
-        case nt of
-          nt_UUCP: mhnr(8036);
-          nt_Client: mhnr(30150);
-        else
-          mhnr(183);
-        end;
-        msetvfunc(testfidodir);
+        maddstring(3,4,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
+          case nt of
+            nt_UUCP: mhnr(8036);
+            nt_Client: mhnr(30220);
+          else
+            mhnr(183);
+          end;
+          msetvfunc(testfidodir);
+          if not SysopMode then mdisable;
+        maddstring(3,6,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
+          case nt of
+            nt_UUCP: mhnr(8036);
+            nt_Client: mhnr(30220);
+          else
+            mhnr(183);
+          end;
+          msetvfunc(testfidodir);
+          if not SysopMode then mdisable;
       end
-      else if nt=nt_QWK then begin
+      else if nt=nt_QWK then
+      begin
         fl:=12; el:=33;
-        maddstring(3,2,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
-        msetvfunc(testqwkinfiles);
-        maddstring(3,4,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
-        msetvfunc(testfidodir);
-        end
+        maddstring(3,4,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
+          msetvfunc(testqwkinfiles);
+          if not SysopMode then mdisable;
+        maddstring(3,6,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
+          msetvfunc(testfidodir);
+          if not SysopMode then mdisable;
+      end
       else begin
         fl:=5; el:=37;
-        maddstring(3,2,getres2(923,5),sysopinp,el,MaxLenPathname,ValidDirCh);  mhnr(182);  { 'Eingangspuffer  ' }
-        msetvfunc(validfile);
-        maddstring(3,4,getres2(923,6),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(182);   { 'Ausgangspuffer  ' }
-        msetvfunc(validfile);
-        end;
+        maddstring(3,4,getres2(923,5),sysopinp,el,MaxLenPathname,ValidDirCh);  mhnr(182);  { 'Eingangspuffer  ' }
+          msetvfunc(validfile);
+          if not SysopMode then mdisable;
+        maddstring(3,6,getres2(923,6),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(182);   { 'Ausgangspuffer  ' }
+          msetvfunc(validfile);
+          if not SysopMode then mdisable;
+      end;
       fl:=length(getres2(923,fl));
-      maddstring(3,6,forms(getres2(923,20),fl),sysopstart,el,MaxLenPathname,''); mhnr(8037);
+      maddstring(3,8,forms(getres2(923,20),fl),sysopstart,el,MaxLenPathname,''); mhnr(8037);
           { 'Startprogramm ' }
-      maddstring(3,8,forms(getres2(923,21),fl),sysopend,el,MaxLenPathname,''); mhnr(8037);
+        msetvfunc(progtest);
+        if not SysopMode then mdisable;
+      maddstring(3,10,forms(getres2(923,21),fl),sysopend,el,MaxLenPathname,''); mhnr(8037);
           { 'Endprogramm   ' }
+        msetvfunc(progtest);
+        if not SysopMode then mdisable;
       if nt=nt_QWK then begin
-        maddbool(3,10,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung loeschen' }
-        mhnr(8039);
-        end;
-      maddbool(3,iif(nt=nt_QWK,11,10),getres2(923,7),SysopNetcall); mhnr(184);
-          { '/>>Netzanruf-Bericht' }
-      if nt=nt_Netcall then begin  { s. auch XP6 - Absender-Erzeugung f. PP }
-        maddbool(ival(getres2(923,10)),10,getres2(923,8),nobox); mhnr(185);
-        end;                                      { 'Username ohne @BOX' }
-      if nt=nt_Fido then begin
-        maddbool(34,10,getres2(923,9),sysoppack); mhnr(186);  { 'Ausgangspakete packen' }
-        end;
+        maddbool(3,12,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung lˆschen' }
+          mhnr(8039);
+          if not SysopMode then mdisable;
+      end;
+      maddbool(3,iif(nt=nt_QWK,13,12),getres2(923,7),SysopNetcall); mhnr(184);
+          { '/ªNetzanruf-Bericht' }
+        if not SysopMode then mdisable;
+      if nt=nt_Netcall then     { s. auch XP6 - Absender-Erzeugung f. PP }
+      begin
+        maddbool(ival(getres2(923,10)),12,getres2(923,8),nobox); mhnr(185);
+          if not SysopMode then mdisable;
+      end;                                        { 'Username ohne @BOX' }
+      if nt=nt_Fido then
+      begin
+        maddbool(34,12,getres2(923,9),sysoppack); mhnr(186);  { 'Ausgangspakete packen' }
+          if not SysopMode then mdisable;
+      end;
       freeres;
       readmask(brk);
-      enddialog;
-      if not brk then begin
+      if not brk then
+      begin
+        if sysopmode and ((sysopinp='') or (sysopout='')) then
+        begin
+          rfehler(971);
+          enddialog;
+          goto restart;
+        end;
         flags:=flags and (not 16) + iif(nobox,16,0);
         dbWrite(d,'script',flags);
-        end;
+      end;
+      enddialog;
       end;
   end;
 
@@ -2095,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.42  2002/01/13 15:07:31  mk
+  - Big 3.40 Update Part I
+
   Revision 1.41  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

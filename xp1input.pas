@@ -75,7 +75,7 @@ var p,n,p1,i : Integer;
 
   procedure display;
   var
-    i, bx: Integer;
+    i,bx : Integer;
   begin
     bx := x;
     attrtxt(col.colbutton);
@@ -417,6 +417,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/01/13 15:07:26  mk
+  - Big 3.40 Update Part I
+
   Revision 1.25  2001/12/18 13:51:05  mk
   - Speed up screen drawing routines
 

@@ -36,12 +36,17 @@ uses
   keys,clip,mouse,eddef, encoder, Lister;
 
 
-const EdTempFile  : string = 'TED.TMP';
-      EdConfigFile: string[14] = 'EDITOR.CFG';
-      EdSelcursor : boolean = false;    { Auswahllistencursor }
+const
+      EdConfigFile    = 'EDITOR.CFG';
+      EdGlossaryFile  = 'GLOSSARY.CFG';
+      EdSelcursor     : boolean = false; { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
+      EditResetoldpos : boolean = false;
 
-type  EdToken = Byte;
+type
+      charr    = array[0..65500] of char;
+      charrp   = ^charr;
+      EdToken = Byte;
       EdTProc = function(var t:taste):boolean;   { true = beenden }
 
 
@@ -165,6 +170,7 @@ var   Defaults : edp;
       akted    : edp;
       delroot  : delnodep;         { Liste gel”schter Bl”cke }
       ClipBoard: absatzp;
+      NoCursorsave : boolean;
 
 
 { ------------------------------------------------ externe Routinen }
@@ -478,12 +484,17 @@ begin
     menue[5]:='La^den UUE    ^KU';
     menue[6]:='^Speichern    ^KW';
     menue[7]:='-';
-    menue[8]:='^Umbruch aus   F3';
-    menue[9]:='U^mbruch ein   F4';
-    menue[10]:='-';
-    menue[11]:='^Optionen';
-    { menue[12]:='.. s^ichern'; }
-    end;
+    menue[8]:='S^uchen       ^QF';
+    menue[9]:='E^rsetzen     ^QL';
+    menue[10]:='Weitersuchen   ^L';
+    menue[11]:='-';
+    menue[12]:='^Umbruch aus   F3';
+    menue[13]:='U^mbruch ein   F4';
+    menue[14]:='-';
+    menue[15]:='^Optionen';
+    menue[16]:='-';
+    menue[17]:='Beenden       ESC';
+  end;
   delroot:=nil;
   Clipboard:=nil;
 end;
@@ -1755,6 +1766,13 @@ begin
     aufbau:=true; ende:=false;
     cursor(curon);
     tk:=0;
+    if EditResetoldpos then Begin
+      EditResetoldpos:=false;
+      scx:=minmax(Lastscx,1,80); xoffset:=Lastxoffset;
+      display;
+      for ShiftBlockMarker:=1 to (laststartline+gl-1) do ZeileUnten;
+      scy:=minmax(Lastscy,1,gl);
+      end;
     repeat
       if aufbau then display;
       showstat;
@@ -1775,6 +1793,10 @@ begin
           tnextout:=0;
         end;
     until ende;
+    if EditNachricht and not NoCursorsave then begin
+      Lastscx:=scx; Lastxoffset:=xoffset;
+      Lastscy:=scy; Laststartline:=startline;
+    end;
     dispose(dl);
     end;
   EdEdit:=tk;
@@ -1799,11 +1821,15 @@ end;
 procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 const 
   locked:boolean=false;
+var
+  en:boolean;
 begin
   if (UpperCase(t)='E') and not locked then 
   begin
     locked:=true;
+    en:=EditNachricht;
     EditFile(FileUpperCase('glossary.cfg'),false,false,0,false);
+    EditNachricht:=En;
     locked:=false;
     t:=keyesc;
     pushkey(keyctcr);
@@ -1816,6 +1842,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.73  2002/01/13 15:07:22  mk
+  - Big 3.40 Update Part I
+
   Revision 1.72  2001/12/22 22:16:31  mk
   - fix for Delphi
 

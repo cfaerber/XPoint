@@ -284,13 +284,14 @@ label laden;
    procedure checkASCIIs (var s :string);
    var p :integer;
    begin
-     if (pos ('{', s) = 0) or (pos ('}', s) = 0) then exit;
-     for p:=1 to length(s)-4 do
-       if (s[p]='{') and (s[p+4]='}') and (ival(copy(s,p+1,3)) in [0..255])
-       then begin
-         s[p]:=chr(ival(copy(s,p+1,3)));
-         delete(s,p+1,4);
-       end;
+    repeat 
+      p:=cpos('{',s);
+      if (p>0) and (s[p+4]='}') and (ival(copy(s,p+1,3))>0)
+        then begin
+          s[p]:=chr(ival(copy(s,p+1,3)));
+          delete(s,p+1,4);
+        end;
+    until p=0;
    end;
 
 begin
@@ -432,11 +433,11 @@ begin
     if (last=0) and (_a=0) then
       wrt(x-3,y-1,'É'+dup(wdt+3,'Í')+'»')
     else
-      wrt(x-3,y-1,'Ö'+dup(wdt+3,'Ä')+'·');
+      wrt(x-3,y-1,{'Ö'}#30+dup(wdt+3,'Ä')+#30{'·'});
     if (next=0) and (_a+hgh>=_lines) then
       wrt(x-3,y+hgh+iif(noheader,0,3),'È'+dup(wdt+3,'Í')+'¼')
     else
-      wrt(x-3,y+hgh+iif(noheader,0,3),'Ó'+dup(wdt+3,'Ä')+'½');
+      wrt(x-3,y+hgh+iif(noheader,0,3),{'Ó'}#31+dup(wdt+3,'Ä')+{'½'}#31);
     end
   else begin
     if (last=0) and (_a=0) then
@@ -773,6 +774,9 @@ finalization
   ReleaseHelp;
 {
   $Log$
+  Revision 1.43  2002/01/13 15:07:22  mk
+  - Big 3.40 Update Part I
+
   Revision 1.42  2001/10/20 17:26:39  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

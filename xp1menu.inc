@@ -56,9 +56,11 @@ end;
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 var s       : string;
     p,p2,p3 : byte;
+label again;
 begin
-  s:=menu[nr];
   n:=0;
+again:
+  s:=menu[nr]^;
   repeat
     p:=cPos(',',s);
     if p>0 then begin
@@ -111,6 +113,10 @@ begin
   until p=0;
   while (n>0) and (ma^[n].mstr='-') do    { Separatoren am Ende entfernen }
     dec(n);
+  if nr=2 then begin
+    nr:=menus;
+    goto again;
+    end;
 end;
 
 
@@ -282,18 +288,18 @@ begin
             mon;
             end;
           case m1 of           { Schablonen }
-            1 : editfile(headerfile,false,false,1,false);
-            2 : editfile(headerpriv,false,false,1,false);
-            3 : editfile(quotemsk,false,false,1,false);
-            4 : editfile(quotepriv,false,false,1,false);
-            5 : editfile(quotepmpriv,false,false,1,false);
-            6 : editfile(quotetomsk,false,false,1,false);
-            7 : editfile(weitermsk,false,false,1,false);
-            8 : editfile(erneutmsk,false,false,1,false);
+            1 : editfile(headerfile,false,false,false,1,false);
+            2 : editfile(headerpriv,false,false,false,1,false);
+            3 : editfile(quotemsk,false,false,false,1,false);
+            4 : editfile(quotepriv,false,false,false,1,false);
+            5 : editfile(quotepmpriv,false,false,false,1,false);
+            6 : editfile(quotetomsk,false,false,false,1,false);
+            7 : editfile(weitermsk,false,false,false,1,false);
+            8 : editfile(erneutmsk,false,false,false,1,false);
            10 : sigedit(signatfile);
            11 : sigedit(privsignat);
-           12 : editfile(EB_msk,false,false,1,false);
-           13 : editfile(CancelMsk,false,false,1,false);
+           12 : editfile(EB_msk,false,false,false,1,false);
+           13 : editfile(CancelMsk,false,false,false,1,false);
            14 : miscschab;
           end;
           if wp then wpop;
@@ -327,12 +333,14 @@ var ma    : map;
     dead  : boolean;   { alle disabled }
     has_checker : boolean;
     mausback : boolean;
+    longmenu : boolean; {Menue mit mehr als 13 Menuepunkten (Zusatz)}
 
   procedure display;
   var i,hp  : byte;
       s     : string;
       check : char;
-  begin
+
+      begin
     if nr=0 then showmain(p)
     else begin
       moff;
@@ -420,6 +428,15 @@ var ma    : map;
       else
         if t=mausright then
           t:=keyesc;
+  end;
+
+  function Zusatz_II:byte;  { Benutzte Punkte in den ersten 10 Zusatzmenue-  }
+  var i,n:byte;             { eintraegen zaehlen (ergibt die korrekte Grenze }
+  begin                     { fuer Uebergang von Fkeys[0] zu Fkeys[4])       }
+    n:=0;
+    for i:=1 to 10 do
+      if Fkeys[0]^[i].menue<>'' then inc(n);
+    Zusatz_II:=n;
   end;
 
 begin
@@ -538,6 +555,8 @@ begin
         end;
 
       get2:=0;
+      if (nr<>2) or (p<Zusatz_II+4) then longmenu:=false
+        else longmenu:=true;
       if t=keycr then
         if ma^[p].enabled then
           if ma^[p].chain>0 then begin
@@ -594,13 +613,20 @@ begin
   freemem(ma,sizeof(menuarray));
 
   if t=keyesc then getmenu:=0
-  else if t=keycr then getmenu:=get2
+  else if t=keycr then
+  begin
+    if longmenu then get2:=get2+$1000-4;
+    getmenu:=get2;
+    end
   else if t=keyleft then getmenu:=-1
   else if mausback then getmenu:=-3
   else getmenu:=-2;
 end;
 {
   $Log$
+  Revision 1.38  2002/01/13 15:07:26  mk
+  - Big 3.40 Update Part I
+
   Revision 1.37  2001/12/18 13:51:05  mk
   - Speed up screen drawing routines
 

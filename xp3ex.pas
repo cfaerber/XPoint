@@ -1056,10 +1056,10 @@ begin // extract_msg;
                         gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
-                    wrs437(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
+                    wrs437(ohfill(mheadercustom[1],length(getres2(361,2))-2)+': '+hdp^.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
-                    wrs437(ohfill(mheadercustom[2],11)+': '+hdp.Cust2);
+                    wrs437(ohfill(mheadercustom[2],length(getres2(361,2))-2)+': '+hdp^.Cust2);
                   end;
 
   { Prioritaet im Listenkopf anzeigen:                                    }
@@ -1109,8 +1109,7 @@ begin // extract_msg;
             false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
               ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
           end;
-//        XreadF(hds+iif(hdp.typ='B',hdp.komlen,0),f);
-          XReadS(hds+iif(hdp.typ='B',hdp.komlen,0),str);      
+          XreadF(hds+hdp^.komlen,str);
         finally
           str.Free;
         end;
@@ -1230,6 +1229,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.90  2002/01/13 15:07:27  mk
+  - Big 3.40 Update Part I
+
   Revision 1.89  2002/01/11 16:14:06  cl
   - fixed quoting
 

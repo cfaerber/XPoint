@@ -122,7 +122,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditCorrectWorkpos = 127;      { CorrectWorkpos aufrufen }
 
        MaxFindLen       = 30;
-       EditMenuMps      = 11;
+       EditMenuMps      = 17;
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
@@ -183,6 +183,9 @@ implementation
 
 {
   $Log$
+  Revision 1.17  2002/01/13 15:07:21  mk
+  - Big 3.40 Update Part I
+
   Revision 1.16  2001/10/17 09:39:14  mk
   - added EditCorrectWorkPos
 

@@ -49,8 +49,6 @@ function  modibrett2:boolean;           { Zugriff }
 procedure _multiedit(user:boolean);
 procedure _multiloesch(user:boolean);
 
-procedure EditTime(x,y: Integer; txt:atext; var d:datetimest; var brk:boolean);
-
 procedure ReadDirect(txt:atext; var empf,betr,box:string; pmonly:boolean;
                      var brk:boolean);
 procedure msgdirect;
@@ -310,6 +308,25 @@ begin
 end;
 
 
+Procedure Select_Gruppen;
+var i      : byte;
+    oldrec : longint;
+begin
+  oldrec:=dbrecno(ubase);
+  i:=0;
+  repeat
+    inc(i);
+    dbseek(ubase,uiAdrbuch,chr(i));
+    if not dbEOF(ubase) then
+    begin
+      dbreadN(ubase,ub_adrbuch,i);
+      mappsel(false,strs(i));
+      end;
+    until (i=99) or dbEOF(ubase);
+    dbgo(ubase,oldrec);
+end;
+
+
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
                    var halten: Integer16; var adr:byte; var flags:byte; edit:boolean;
                    var brk:boolean);
@@ -366,6 +383,7 @@ begin
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
+    Select_Gruppen;
     mhnr(8069);
     end
 
@@ -1027,6 +1045,7 @@ var
     d     : DB;
 begin
   newbrett:=false;
+  _UserAutoCreate:=true;
   brett:=''; komm:=''; box:=DefaultBox; origin:='';
   halten:=stdhaltezeit;
   gruppe:=NetzGruppe;
@@ -1171,21 +1190,33 @@ var n,w    : shortint;
     flags  : byte;
     RFCNetFlag   : byte;
     sperre : boolean;    { Brett - Schreibsperre }
+    oldbmarkanz : integer;
+
 begin
   if user then dispdat:=ubase
   else dispdat:=bbase;
   pushhp(iif(user,429,409));
   n:=MiniSel(34,10+(screenlines-25)div 2,'',getres2(2715,iif(user,1,2)),nn);
-  if n<>0 then nn:=abs(n);       { ^Kommentar,^Serverbox,^Haltezeit,^Gruppe^Umlaute/^Filter }
+  if n<>0 then nn:=abs(n);
+  { ^Kommentar,^Serverbox,^Haltezeit,Umlaute,^Filter,^Gruppe^,^Priorit„t,^Empfangsbest.,^Vertreteradr.,^L”schen }
+  if n<>0 then nn:=abs(n);
   pophp;
   case n of
-    1   : w:=49;    { Kommentar }
+    1,9 : w:=49;    { Kommentar }
     2,3 : w:=37;    { Pollbox, Haltezeit }
     4   : if user then w:=40
           else w:=46;   { Gruppe }
     5   : w:=37;
-    6   : if user then w:=46
-          else w:=37;
+    6,7,8 : if user then w:=46
+            else w:=37;
+
+    10 : begin
+           _multiloesch(user);
+           freeres;
+           aufbau:=true;
+           exit;
+           end;
+
    else begin
     freeres;
     exit;
@@ -1215,11 +1246,12 @@ begin
           if hzahl then
             htyp:=iifs(odd(dbReadInt(bbase,'flags')),na,tg);
           maddint(3,2,getres2(2715,9),halten,4,4,0,9999); mhnr(iif(user,430,411));
-          if hzahl then begin                 { 'Haltezeit: ' }
+          if hzahl then begin                 { 'Haltezeit ' }
             maddstring(23,2,'',htyp,6,6,''); mhnr(411);
             mappsel(true,na+'ù'+tg);
             mset1func(testhaltetyp);
-            end;
+          end else
+            maddtext(21,2,getres2(2715,8),col.coldialog);   { 'Tage' }
         end;
     4 : if user then begin
           umlaut:=true;
@@ -1248,13 +1280,38 @@ begin
         else begin
           adr:=NeuUserGruppe;
           maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);
+          Select_Gruppen;
           end;
+    7 : begin
+          flags:=0;
+          maddint(3,2,getres2(272,8),flags,2,2,0,5);       { ' Prioritaet ' }
+          mhnr(8075);
+          end;
+    8 : begin
+          filter:=false;
+          maddbool(3,2,getres2(2701,10),filter);   { 'Empfangsbest„tigungen' }
+          mhnr(426);
+          end;
+    9 : begin
+          oldbmarkanz:=bmarkanz;
+          maddstring(3,2,getres2(2701,4),s,30,eAdrLen,'');   { 'Adresse  ' }
+          mhnr(421);
+          mappcustomsel(seluser,false);
+          {msetvfunc(usertest);}
+          end;
+
   end;
   readmask(brk);
   enddialog;
-  if not brk then 
+  if not brk then
   begin
-    if n=2 then RFCNetFlag:=iif(ntBoxNetztyp(s) in netsRFC,16,0);
+    if n=9 then bmarkanz:=oldbmarkanz;
+
+    if n=7 then begin
+      if flags=3 then Flags:=0;
+      if flags>3 then dec(flags);
+      end;
+    if n=2 then rfc:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
@@ -1311,11 +1368,26 @@ begin
             else begin
               dbwrite(dispdat,'adrbuch',adr);
               end;
+        7 : if not vert then
+            begin
+              dbReadN(ubase,ub_userflags,b);
+              b:=(b and not $E0) or (flags shl 5);
+              dbWriteN(ubase,ub_userflags,b);
+            end;
 
+        8 : if not vert then
+            begin
+              dbreadN(ubase,ub_userflags,flags);
+              if filter then flags:=flags or 16
+                 else flags:=flags and (not 16);
+              dbWriteN(ubase,ub_userflags,flags);
+            end;
+
+        9 : if not vert then dbWriteX(ubase,'adresse',iif(s='',0,length(s)+1),s);
       end;
-      end;
-    aufbau:=true;
     end;
+    aufbau:=true;
+  end;
   freeres;
 end;
 
@@ -1362,27 +1434,6 @@ begin
     end;
 end;
 
-
-procedure EditTime(x,y: Integer; txt:atext; var d:datetimest; var brk:boolean);
-var width,height : byte;
-begin
-  width:=length(txt)+14; height:=3;
-  if x=0 then getpos(width,height,x,y);
-  blindon(true);
-  attrtxt(col.coldiarahmen);
-  forcecolor:=true;
-  wpushs(x,x+width-1,y,y+height-1,'');
-  forcecolor:=false;
-  openmask(x+1,x+length(txt)+10,y+1,y+1,false);
-  maskrahmen(0,0,0,0,0);
-  maddtime(3,1,txt,d,false);
-  readmask(brk);
-  closemask;
-  wpop;
-  blindoff;
-end;
-
-
 function empftest(var s:string):boolean;
 var 
     brett : boolean;
@@ -1393,6 +1444,7 @@ var
     p     : byte;
     verteiler : boolean;
     newbrett  : boolean;
+  _UserAutoCreate:=true;
 
   function ShrinkEmpf(user,system:string):string;
   begin
@@ -1660,6 +1712,7 @@ function get_lesemode(var showtime:boolean):shortint;
 var n   : shortint;
     d   : string;
     brk : boolean;
+    getdate: boolean;
     sich: string;
     x,y: Integer;
 begin
@@ -1668,7 +1721,7 @@ begin
   sich:=iifs(readmode>=2,getres2(2720,2),'');    { ',^Sichern' }
   x:=iif(mauskey,40,20);
   y:=iif(mauskey,4,10+(screenlines-25)div 2);
-  n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Datum,^Zeit' }
+  n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit' }
              -(readmode+1));
   if (n>0) and ((readmode>=4) or (n<>readmode+1)) then begin
     showtime:=false;
@@ -1676,18 +1729,20 @@ begin
     case n of
       3 : readdate:=NewDate;
       4 : readdate:=ixdat(LeftStr(Zdate,6)+'0000');
-      5 : begin
-            d:=fdat(longdat(readdate));
-            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,brk);   { 'Lesen ab Datum:' }
-            if not brk then readdate:=ixdat(copy(d,7,2)+copy(d,4,2)+copy(d,1,2)+'0000');
-          end;
+      5:  begin
+            d:=reorgdate;
+            if d<>'' then readdate:=ixdat(d);
+            if right(d,4)<>'0000' then showtime:=true;
       6 : begin
-            d:=ftime(longdat(readdate));
-            EditTime(15,11+(screenlines-25)div 2,getres2(2720,4),d,brk);   { 'Lesen ab Uhrzeit:' }
+            d:=longdat(readdate);
+            if (Aktdispmode>=10) and not empty
+              then getdate:=true else getdate:=false;
+            EditDatee(15,11+(screenlines-25)div 2,getres2(2720,3),d,getdate,brk);   { 'Lesen ab Datum:' }
             if not brk then begin
-              readdate:=ixdat(LeftStr(longdat(readdate),6)+copy(d,1,2)+copy(d,4,2));
-              showtime:=true;
-              end;
+              if getdate then d:=longdat(dbreadint(mbase,'empfdatum'));
+              readdate:=ixdat(d);
+              if right(d,4)<>'0000' then showtime:=true;
+            end;
           end;
       7 : begin
             write_lastcall(longdat(readdate));
@@ -1845,7 +1900,7 @@ begin
     adddir(fn,sendpath);
     if not FileExists(fn) then begin
       if ReadJN(getres(2725),true) then    { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(fn,false,false,0,false);
+        EditFile(fn,false,false,false,0,false);
       AutoExistfile:=FileExists(fn);
       end
     else
@@ -2437,6 +2492,9 @@ end;
 
 {
   $Log$
+  Revision 1.84  2002/01/13 15:07:29  mk
+  - Big 3.40 Update Part I
+
   Revision 1.83  2002/01/05 16:01:09  mk
   - changed TSendUUData from record to class
 

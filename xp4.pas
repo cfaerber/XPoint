@@ -50,6 +50,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
       wltrenn : boolean;   { Trennzeilen als Ziel moeglich       }
       mauskey : boolean;
+      empty   : boolean;
 
       ArchivWeiterleiten : boolean;  { wird bei select(-1|3|4) verwendet }
       MarkUnversandt     : boolean;  { fuer select(11)                   }
@@ -90,6 +91,7 @@ var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
       dispspec  : string;      { Filter/Bereich fuer Anzeige }
       _dispspec : string;
+      dispflags : byte;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
       xphltick  : longint;
@@ -175,7 +177,6 @@ const autokey : taste = '';
 var gl      : shortint;
     rdmode  : byte;        { Readmode fuer das aktuelle Brett }
     p       : shortint;
-    empty   : boolean;
     markpos : integer;
     bezpos  : integer;
     komofs  : integer;     { Offset vom disprec[1] im Komm-Baum (0..) }
@@ -206,6 +207,7 @@ label selende;
             end;
       12 : bezpos:=komofs+pos-1;
     end;
+    if dbbof(dispdat) or dbEOF(dispdat) then dBGotop(dispdat);
   end;
 
   procedure GoP;
@@ -223,10 +225,10 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-         if (DispMode<>12) and (FirstChar(dbReadStrN(mbase,mb_brett))<>'1') then
+        if (DispMode<>12) and (FirstChar(dbReadStrN(mbase,mb_brett))<>'1') then
           disprec[1]:=0;
-        end
-      else
+        RereadBrettdatum(_brett);
+      end else
         GoP;
       end;
   end;
@@ -365,7 +367,7 @@ var t,lastt: taste;
               wrongline:=dbEOF(bbase) or dbBOF(bbase) or not brettok(true);
       1,3 : begin                { User/Adressbuch }
               dbReadN(ubase,ub_adrbuch,adrb);
-              wrongline:=(adrb=0);
+              wrongline:=(adrb<AdrbTop);    { Adressbuchgruppe 0 evtl. erlauben }
             end;
       2,4 : begin                              { alle User      }
              s:= dbReadNStr(ubase,ub_username);
@@ -602,8 +604,8 @@ var t,lastt: taste;
                   dbSkip(dispdat,1);
               end;
 
-         1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,#1)   { Userfenster Adressbuch }
-                else dbseek(ubase,uiBoxAdrBuch,#1);
+         1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(AdrbTop)) {Adressbuch }
+                else dbseek(ubase,uiBoxAdrBuch,chr(AdrbTop));
 
          2,4  : if not usersortbox then dbSeek(ubase,uiName,#1)      { Userfenster Alle User }
                   else dbSeek(ubase,uiBoxName,#1);
@@ -880,6 +882,7 @@ var t,lastt: taste;
   begin
     saveDispRec := nil; { Auf keinen Fall entfernen! }
     adresseAusgewaehlt := false;
+    _UserAutoCreate:=UserAutoCreate;
     fn:=TempS(2000);
     GoP;
     if reply then netztyp:=mbNetztyp
@@ -1231,11 +1234,13 @@ var t,lastt: taste;
         else GoP;
         if not dbEof (mbase) and not dbBOF (mbase) and (FirstChar(dbReadStrN(mbase, mb_brett))='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
-          pm_archiv(true);
+        begin
+            pm_archiv(true);
+            GoP;
         end;
+      end;
       briefsent:=true;
-      end
-    else
+    end else
       SikMsg;
 
 {*} if assigned (saveDispRec) then begin { Falls kein Reply... }
@@ -1408,7 +1413,7 @@ var t,lastt: taste;
       if typ='B' then
         rfehler(413)   { 'nicht moeglich - Binaerdatei' }
       else
-        EditFile(fn,true,true,0,false);
+        EditFile(fn,true,true,false,0,false);
       end;
   end;
 
@@ -1486,9 +1491,22 @@ var t,lastt: taste;
     aufbau:=true;
   end;
 
+  procedure brett_suche;
+  var su  : boolean;
+      rec : longint;
+  begin
+    GoPos(1);
+    BrettMarkSuche;
+    rec:=dbRecno(bbase);
+    if wrongline and not brettall then ChangeBrettall;
+    disprec[1]:=rec;
+  end;
+
+
   procedure set_lesemode;
   var rm : shortint;
   begin
+    GoP;
     rm:=get_lesemode(showtime);
     if rm>=0 then begin
       readmode:=rm;
@@ -1698,6 +1716,8 @@ begin      { --- select --- }
       end;
       end;
 
+    autobremse:=true;
+
     if AutoCrash='' then begin           { Tastaturabfrage }
       zaehler[1]:=3;   { nach 3 Sekunden automatisch Dateien schliessen }
       closeflag:=true;
@@ -1705,7 +1725,7 @@ begin      { --- select --- }
       AktDisprec:=iif(p=0,0,disprec[p]);
       if suchen then begin
         if dispmode<1 then
-          gotoxy(iif(dispext,26,4)+length(suchst),p+ya+3)
+          gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
         else
           gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
         Do_XPhilite(true);
@@ -1788,6 +1808,7 @@ begin      { --- select --- }
         0    : begin         { Brettliste }
                  if t=keyf6 then Makroliste(1);
                  if c=^Y then Trennzeilensuche;
+                 if not dispext and (c=k1_U) then Brett_suche;
                  if (t=keytab) or (t=keystab) then begin
                    _unmark_;
                    selcall(UserDispmode,gl);
@@ -1819,13 +1840,13 @@ begin      { --- select --- }
                  else begin
                    if c=k0_A then              { 'A' }
                      ChangeBrettall;
-                   if c='U' then               { 'U' }
+                   (*if c='U' then               { 'U' }
                    begin
                      Showungelesen:=not showungelesen;
                      GlobalModified;
                      aufbau:=true;
-                     end;
-                   if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
+                     end;*)
+                   if (c=k0_Le) or (t=keyaltl) then set_lesemode;     { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
                      if t[1]=k0_SB then brief_senden(false,false,true,0);  { 'B' }
@@ -1858,7 +1879,7 @@ begin      { --- select --- }
                  if dispmode=1 then
                  begin
                    if c='#'then Jump_Adressbuch;
-                   if c=^\ then Next_Adrbuch;      { Ctrl-# }
+                   if (c=^\) or (t=keyaltg) then Next_Adrbuch;        { Ctrl-# }
                  end;
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
@@ -1867,6 +1888,8 @@ begin      { --- select --- }
                    usersortbox:=not usersortbox;
                    setall; aufbau:=true;
                    end;
+                 if (dispmode=1) and (t=keyalta) then
+                   AdrbTop:=AdrbTop xor 1;
 
                  if c=k1_S then begin              { 'S' }
                    dispext:=not dispext;
@@ -1924,18 +1947,19 @@ begin      { --- select --- }
                    testsuche(t);
                    end;
                end;
-         3,4 : begin                              { Weiterleiten an User }
-                 if dispmode=3 then
-                 begin
+         3,4 : begin                                   { Weiterleiten an User }
+                 if dispmode=3 then begin
                    if c='#'then Jump_Adressbuch;
-                   if c=^\ then Next_Adrbuch;          { Strg+# }
-                 end;
-                 if c=k1_A then UserSwitch;       {'A'}
+                   if c=^\ then Next_Adrbuch;                         { Ctrl-# }
+                   end;
+                 if c=k1_A then UserSwitch;                           { 'A' }
                  if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin
                    usersortbox:=not usersortbox;  {'O'}
                    setall; aufbau:=true;
                    end;
+                 if (dispmode=3) and (t=keyalta) then                 { Alt-A }
+                   AdrbTop:=AdrbTop xor 1;
 
                  if not empty then
                  begin
@@ -2024,7 +2048,10 @@ begin      { --- select --- }
                      weiterleit(5,false);  { archivieren }
                      setall;
                      end;
-                   if c=k2_R then begin GoP; print_msg(true); end;  { 'R' }
+                   if (c=k2_R) or (deutsch and (c='R')) then
+                   begin
+                     GoP; print_msg(true);
+                   end;                                             { ^D / 'R' }
                    if (c=k2_cN) then begin                          { ^N }
                      ShowRealos:=not ShowRealos; aufbau:=true; end;
                    if c=k2_BB then Bezugsbaum;                      { '#' }
@@ -2244,6 +2271,7 @@ begin      { --- select --- }
                UnSortMark;
                MarkUnversandt:=false;
                markaktiv:=false;
+               suchergebnis:=false;
              end;
         20 : begin
                dbClose(auto);
@@ -2325,6 +2353,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2002/01/13 15:07:29  mk
+  - Big 3.40 Update Part I
+
   Revision 1.118  2002/01/09 02:29:30  mk
   MY:- '#' from lister, Part I
 

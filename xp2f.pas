@@ -54,7 +54,7 @@ var anzahl  : Integer;
       s     : string;
       brk   : boolean;
   begin
-    with fkeys[typ]^[p] do begin
+    with fkeys[iif(p>10,4,typ)]^[iif(p>10,p-10,p)] do begin
       dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Men' }
       maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menanzeige  ' }
       maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
@@ -110,7 +110,7 @@ var anzahl  : Integer;
   end;
 
 begin
-  if typ=0 then anzahl:={9}10
+  if typ=0 then anzahl:=iif(screenlines=25,19,20)
   else anzahl:=10;
   case typ of
     0 : txt:='';
@@ -120,7 +120,8 @@ begin
   end;
   selbox(73+length(txt),anzahl+3,getres2(240,iif(typ=0,1,2)),x,y,false);
   attrtxt(col.colsel2high);            { 'Zusatz-Men' / 'Funktionstasten' }
-  mwrt(x+6+length(txt),y+1,getres2(240,3));   { 'Men           Programm                   $FILE      B W L A  Mem' }
+  mwrt(x+1,y+1,forms(sp(5+length(txt))+getres2(240,3),73+length(txt)-2));
+               { 'Men           Programm                   $FILE      B W L A  Mem' }
   p:=1;
   modi:=false;
   repeat
@@ -131,7 +132,7 @@ begin
 	attrtxt(col.colsel2bar)
       else
 	attrtxt(col.colsel2box);
-      with fkeys[typ]^[i] do
+      with fkeys[iif(i>10,4,typ)]^[iif(i>10,i-10,i)] do
       begin
         wrt(x+1,y+1+i,' '+forms(txt+strs(i),length(txt)+3));
         if menue+prog='' then
@@ -1166,6 +1167,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2002/01/13 15:07:27  mk
+  - Big 3.40 Update Part I
+
   Revision 1.29  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
