@@ -1,4 +1,4 @@
-OpenXP/32 v3.70
+OpenXP/32 v3.8.x
 15 6
 53 19
 2 1
@@ -7611,11 +7611,13 @@ Diese Einstellung gilt auch fr die User-Anzeige.
        Usenet blichen Punktschreibweise angezeigt.
 
 <<[ ]>> -> Alle Bretter werden in der Z-Netz-Schreibweise
-       mit "/" als Trennzeichen angezeigt.
+       mit "<</>>" als Trennzeichen angezeigt.
 
-Bitte beachten Sie, daá diese Einstellung NUR die An-
-zeige betrifft; bei der Eingabe von Brettnamen mssen
-Sie immer die Z-Netz-Schreibweise verwenden.
+Bitte beachten Sie, daá diese Einstellung NUR die
+Anzeige betrifft; bei der Eingabe von Brettnamen und
+bei der Schnellsuche ("<</>>" oder "<<.>>" in der Brett-
+šbersicht) mssen Sie immer die ZConnect-Schreibweise
+verwenden.
 @
 274
 <<links>>  -> Der Kommentar von Brett-Trennzeilen wird
@@ -7626,6 +7628,72 @@ Sie immer die Z-Netz-Schreibweise verwenden.
 
 <<rechts>> -> Der Kommentar von Brett-Trennzeilen wird
           rechtsbndig angezeigt.
+@
+275
+Diese Einstellung ist eine Erweiterung der vorherigen
+und kann nur mit ihr zusammen aktiviert werden:
+
+<<[x]>> -> Es wird eine fr alle Bretter gltige Brett-
+       schreibweise aktiviert: 
+
+       - Die ZConnect-blichen "<</>>" werden durch
+         Punkte ersetzt, fhrende "<</>>" entfallen.
+
+       - In PM-Brettern wird der erste "<</>>" durch "<<\@>>"
+         ersetzt.
+
+Bitte beachten Sie, daá diese Einstellung NUR die An-
+zeige betrifft; bei der Eingabe von Brettnamen und
+der Schnellsuche (einzuleiten mit "<</>>" oder "<<.>>" in
+der Brett-šbersicht) mssen Sie immer die ZConnect-
+Schreibweise verwenden.
+@
+276
+<<[x]>> -> Es wird eine Kombination aus dem jeweilig
+       aktiven Lesemodus und dem Ungelesen-Modus
+       erzeugt. Es gibt dann drei Varianten von
+       Brettmarkierungen:
+
+       <<>>  Brett enth„lt auf den aktiven Lesemodus
+          passende Nachrichten, die aber bereits
+          alle gelesen sind.
+
+       <<¯>>  Brett enth„lt ...
+
+          - Nachrichten, die sowohl auf den aktiven
+            Lesemodus passen als auch ungelesen sind,
+
+          - <<und/oder>> es enth„lt sowohl ungelesene
+            Nachrichten (unabh„ngig davon, ob sie auf
+            den aktiven Lesemodus passen oder nicht)
+            als auch Nachrichten, die auf den aktiven
+            Lesemodus passen (unabh„ngig davon, ob
+            sie gelesen sind oder nicht).
+
+       <<{026}>>  Brett enth„lt ungelesene, aber keine
+          auf den aktiven Lesemodus passenden
+          Nachrichten.
+
+       <<*>>  Brett enth„lt Wiedervorlage-Nachrichten,
+          jedoch weder ungelesene noch auf den
+          aktiven Lesemodus passende Nachrichten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+       Bretter mit ungelesenen Nachrichten werden je-
+       doch weiterhin mit der Markierung <<¯>> versehen.
+       Im kombinierten Ungelesen-Modus sind also die
+       Lesemodi "Alles" und "Ungelesen" identisch.
+
+<<[ ]>> -> XP versieht nur die Bretter mit einer Mar-
+       kierung (<<>>), die auf den aktiven Lesemodus
+       passende Nachrichten enthalten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+
 @
 840
 <<[x]>> -> Bei der Nachrichten-šbersicht wird das Er-
