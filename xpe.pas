@@ -44,7 +44,7 @@ procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
-procedure Editoptions;
+procedure Editor_options;
 
 
 implementation  {--------------------------------------------------------}
@@ -171,17 +171,13 @@ begin
     mhnr(8063);
     ec:=absatzendezeichen;
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
-    mhnr(8064);
     mappsel(false,'˙˘'#20'˘˛˘Æ˘'#17'˘ ');
     maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrÅcken' }
-    mhnr(8065);
     { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Blîcke' }
-    mhnr(8066);
     { /oh }
     { 10.02.2000 robo }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
-    mhnr(8067);
     { /robo }
     readmask(brk);
     enddialog;
@@ -407,7 +403,7 @@ begin
   attrtxt(ma);
 end;
 
-procedure Editoptions;  { EditorOptionen Extern aendern }
+procedure Editor_options;  { EditorOptionen Extern aendern }
 var config : Edconfig;
     brk    : boolean;
     t      : text;
@@ -457,6 +453,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/14 14:55:35  jg
+  - Bugfix: es gab zwei Routinen namens Editoptions...
+
   Revision 1.10  2000/04/13 12:48:40  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

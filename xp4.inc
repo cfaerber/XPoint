@@ -368,7 +368,7 @@ begin
             1 : options;
             2 : UI_options;
             3 : ListOptions;
-           13 : Editoptions;   
+           13 : Editor_options;   
             4 : msgoptions;
            12 : adroptions;
             6 : netcalloptions;
@@ -578,6 +578,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.12  2000/04/14 14:55:35  jg
+  - Bugfix: es gab zwei Routinen namens Editoptions...
+
   Revision 1.11  2000/04/11 16:38:42  jg
   - Config/Optionen/Editor
   - Hilfe der Editoroptionen jetzt kontextsensitiv
