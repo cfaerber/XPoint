@@ -311,32 +311,49 @@ Mîgliche Optionen sind:
       CrossPoint mehrfach gleichzeitig starten kînnen
       mîchten, verwenden Sie bitte diesen Schalter.
 
-      Dieses Verhindern eines Mehrfachstarts von XP
-      funktioniert auch unter reinem DOS (fÅr den
-      Fall, da· Sie XP - versehentlich - aus einer
-      XP-DOS-Shell heraus nochmals starten wollen)
-      - vorausgesetzt, sie haben das DOS-Programm
-      SHARE.EXE geladen. Ist das nicht der Fall,
-      versucht XP quasi als letzte Rettung, am DOS-
-      Prompt (genauer: am <<[XP]>> am Anfang des DOS-
-      Prompts) zu erkennen, ob es bereits aktiv ist.
+      Unter Singletask-Betriebssystemen wie MS-DOS
+      funktioniert dieser Schutz gegen Mehrfachstarts
+      (z.B. in Netzwerken) von XP nur, wenn Sie das
+      Programm SHARE.EXE (bzw. ein Ñquivalentes Pro-
+      gramm) geladen haben.
 
-      Daraus folgt: Wenn Sie SHARE.EXE *nicht* laden
-      *und* wenn Sie aus einer XP-DOS-Shell heraus
-      XP Åber eine Batchdatei starten, die die Umge-
-      bungsvariable PROMPT verÑndert, hat CrossPoint
-      unter reinem DOS keine Mîglichkeit mehr, sich
-      erfolgreich gegen einen Mehrfachstart zur Wehr
-      zu setzen und wird ein weiteres Mal starten -
-      auch ohne aktivierten <</nolock>>-Schalter.
+      Ein Mehrfachstart von XP *ohne* geladene
+      SHARE.EXE aus der XP-eigenen DOS-Shell (<<<F9> >>
+      in CrossPoint) unter Singletask-Betriebssys-
+      temen hingegen wird durch zwei andere Ma·nahmen
+      verhindert:
 
-      Umgekehrt hei·t das aber auch: wenn Sie (warum
-      auch immer, vielleicht sind Ihre Initialen zu-
-      fÑllig "XP") Ihren Standard-DOS-Prompt so ver-
-      Ñndern, da· er mit <<[XP]>> beginnt, werden Sie
-      CrossPoint nicht starten kînnen. Vermeiden Sie
-      also, Ihren DOS-Prompt mit <<[XP]>> beginnen zu
-      lassen.
+      a) eine PrÅfung des Prompts: erkennt CrossPoint
+         am Anfang des Prompts die Zeichenkette <<[XP]>>,
+         wird XP nicht (nochmals) starten.
+
+      b) eine öberprÅfung der MCBs (memory control
+         blocks): findet CrossPoint dort seinen
+         eigenen Namen (also normalerweise <<XP>>, falls
+         Sie XP.EXE nicht umbenannt haben), wird XP
+         ebenfalls nicht (nochmals) starten.
+
+      Diese beiden Schutzmechanismen lassen sich
+      *nicht* mit dem <</nolock>>-Schalter deaktivieren.
+
+      Sie lassen sich aber natÅrlich mutwillig aus-
+      hebeln: Wenn Sie in der XP-DOS-Shell (manuell
+      oder Åber eine Batchdatei) die ausfÅhrbare
+      Datei (i.d.R. <<XP.EXE>>) umbenennen <<und>> wenn Sie
+      die Umgebungsvariable PROMPT verÑndern, werden
+      Sie so XP mehrmals starten kînnen.
+
+      Und umgekehrt hei·t das: wenn Sie (warum auch
+      immer, vielleicht sind Ihre Initialen zufÑllig
+      "XP") Ihren Standard-DOS-Prompt so verÑndern,
+      da· er mit <<[XP]>> beginnt, <<oder>> wenn Sie ein
+      anderes Programm (z.B. TSR) geladen haben, das
+      denselben Namen hat wie die ausfÅhrbare Datei
+      von XP (i.d.R. <<XP.EXE>>), werden Sie XP gar nicht
+      starten kînnen. Vermeiden Sie es deshalb, Ihren
+      Standard-DOS-Prompt mit <<[XP]>> beginnen zu lassen
+      oder ein Programm zu laden, das denselben Namen
+      hat wie die ausfÅhrbare Datei von CrossPoint.
 
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
       mentierten OS/2-Funktionen zur Rechenzeit-
