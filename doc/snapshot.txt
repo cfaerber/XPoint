@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 02.12.2001 (letzter Update)
+DÅsseldorf, den 05.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -84,9 +84,10 @@ Lister
   Anzeige damit auch sprachunabhÑngig.
   XP3EX.PAS
 
-- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+- Im internen Lister kann der Wortumbruch in Spalte 80 jetzt mit
   <Ctrl-W> nicht-permanent umgeschaltet werden.
-  XP0.PAS, XP1O.PAS, XP1S.INC, XP2CFG.INC, XP.IHQ, XP-E.IHQ
+  XP0.PAS, XP1O.PAS, XP1S.INC, XP2C.PAS, XP2CFG.INC, XP4O.PAS,
+  XPKEYS.PAS, XP.IHQ, XP-E.IHQ
 
 
 
@@ -492,8 +493,12 @@ Bugfixes
   XP1O.PAS
 
 - DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
-  Lister heraus behoben (<Alt-B> oder <Alt-U>)
+  Lister heraus behoben (<Alt-B> oder <Alt-U>).
   XP1O.PAS
+
+- Umschaltung Quotezeichen und Wortumbruch im Lister wird jetzt auch
+  dann auf den korrekten Wert zurÅckgesetzt, wenn der User vorher die
+  Config (C/O/A bzw. C/O/L) geÑndert, aber noch nicht gesichert hatte.
 
 
 

@@ -1724,6 +1724,9 @@ werden.
 Mit <<<Ctrl-A> >>werden alle Zeilen markiert;
 mit <<<Ctrl-E> >>werden alle Markierungen gelîscht.
 
+<<<Ctrl-W> >>schaltet den Wortumbruch ein/aus (siehe auch
+  [/Config/Optionen/Lister/Wortumbruch_in_Spalte_80]).@233
+
 Der Lister wird mit <<<Esc> >>verlassen.
 
 
@@ -1735,9 +1738,6 @@ Der Lister wird mit <<<Esc> >>verlassen.
 
 <<U>> decodiert evtl. enthaltene UUE-Blîcke
   (siehe auch [/Nachricht/Extrakt/UUdecode]).@11202
-
-<<<Ctrl-W> >>schaltet den Wortumbruch ein/aus (siehe auch
-  [/Config/Optionen/Lister/Wortumbruch_in_Spalte_80]).@233
 
 
 <<<Alt-M> >>startet die Suche nach einer Message-ID. Wenn
@@ -7098,8 +7098,7 @@ VerfÅgung zu stellen.
        umbrochen.
 
 Diese Einstellung kann jederzeit mit <<<Ctrl-W> >>im
-Nachrichten-Lister nicht-permanent umgeschaltet
-werden.
+internen Lister nicht-permanent umgeschaltet werden.
 @
 234
 <<[x]>> -> Bei kommentarverketteten Nachrichten wird in

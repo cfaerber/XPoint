@@ -648,6 +648,9 @@ Replying to messages:
 
 <<Ctrl-E>>  Unmarks everything.
 
+<<Ctrl-W>>  Toggles line wrapping (On/Off). See also
+        [/Config/Options/Message_Reader/Line_break...].@233
+
 <<<Esc> >>  Exits the message reader.
 
    <<I>>    Shows the information in the message header.
@@ -655,9 +658,6 @@ Replying to messages:
    <<O>>    Shows the hidden kludges.
 
    <<G>>    Jumps to the preceding message. (Like <<->>)
-
-<<Ctrl-W>>  Toggles line wrapping (On/Off). See also
-        [/Config/Options/Message_Reader/Line_break...].@233
 
 <<Alt-M>>   Starts the search for a MessageID.
         The first marked textline is used as
@@ -4441,7 +4441,7 @@ full-screen mode is always used.
         255.
 
 This setting can be changed non-permanently with
-<<<Ctrl-W> >>in the message reader.
+<<<Ctrl-W> >>in the internal message reader.
 @
 234
 <<[x]>>     Messages with [reference] links are indicated@4014
