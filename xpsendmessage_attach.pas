@@ -849,6 +849,7 @@ begin
   attrtxt(col.colsel2rahmen);
   mwrt(x,y+gl+1,'Ã'+dup(width,'Ä')+'´');
   t:='!';    { Buttons nur anzeigen }
+  bp := 1;   { select first button }
   readbutt;
 
   p:=0; p0:=p;
@@ -881,7 +882,6 @@ begin
 
     t:='*';
     readbutt;
-    bp:=abs(rb);
 
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
@@ -889,7 +889,7 @@ begin
 //    c:=UpCase(t[1]);
 
   try
-    if (rb=3) and (Parts.Count<=1) then
+    if ((rb=3) and (Parts.Count<=1)) or (rb = 0) then
       rb:=okb;
 
     case rb of
