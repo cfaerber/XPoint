@@ -452,6 +452,7 @@ var size   : longint;
       { 03.02.2000 robo }
       qc         : char;
       { /robo }
+      QuoteOffset: byte;
 
     procedure FlushStmp;
     begin
@@ -474,7 +475,9 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-       { while (p<length(s)) and (s[p+1]=' ') do inc(p); } { Leerzeichen nicht dazu zaehlen }
+        q:=p;         
+        while (q<length(s)) and (s[q+1]=' ') do inc(q);  { Textanfang suchen }
+        QuoteOffset:=q-p;                  { Leerzeichen zwischen letztem ">" und Textanfang }
         end;
       GetQCpos:=p;
     end;
@@ -555,6 +558,7 @@ var size   : longint;
           end
           else inc(q);
         end;
+        p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if left(s,length(lastqc))=lastqc then
             insert(stmp,s,p+1)               { einfÅgen }
@@ -1038,6 +1042,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/08 18:21:32  jg
+  - Bugfix: Leerzeichen nach Quotezeichen auch beim Zeilenumbruch beachten
+
   Revision 1.15  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
