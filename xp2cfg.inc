@@ -1276,8 +1276,9 @@ var t       : text;
   end;
 
   function getfkeys:boolean;
-  var i,j,nr,p0 : shortint;
-      ss        : string[200];
+  var i,j,nr : shortint;
+      p0     : integer;
+      ss     : string[220];
   begin
     if left(su,5)<>'FKEY-' then
       getfkeys:=false
@@ -1294,11 +1295,11 @@ var t       : text;
       if (nr<0) or (j<1) or (j>10) then
         tfehler(getres(218)+left(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
       else begin
-        ss:=copy(s,p+3,200);     { 'P' Åberlesen }
+        ss:=copy(s,p+3,220);     { 'P' Åberlesen }
         p0:=cpos('~',ss);
         if p0>0 then with fkeys[nr]^[j] do begin
           menue:=left(ss,p0-1);         { MenÅ-Anzeige }
-          ss:=copy(ss,p0+1,200);
+          ss:=copy(ss,p0+1,220);
           p0:=cpos('~',ss);
           while (p0>0) and (cpos('\',mid(ss,p0))>0) and
                 (cpos('~',mid(ss,p0+1))>0) do
@@ -1834,6 +1835,23 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.35  2002/03/08 22:55:35  my
+  MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+       kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
+       - Beim Netztyp RFC/Client mu·, bei RFC/UUCP kann eine gÅltige und
+         vollstÑndige eMail-Adresse statt des Usernamens Åbergeben werden;
+       - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+       - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+         wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope
+         nicht leer sein (= gelîscht werden);
+       - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+         Zeichen vergrî·ert (bei externen Befehlen sind max. 127 Zeichen
+         zulÑssig);
+       - Hinweismeldung "Username: <neuer Username>" am Schlu· der Routine
+         zeigt jetzt komplette Adresse an und berÅcksichtigt Alias-Points
+         (RFC/UUCP und ZConnect).
+       Weitere Details siehe Hilfe.
+
   Revision 1.62.2.34  2001/12/20 23:38:38  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein

@@ -662,7 +662,7 @@ type   textp  = ^text;
 
        fkeyt  = array[1..10] of record
                                   menue    : string[20];
-                                  prog     : string[60];
+                                  prog     : string[200];
                                   warten   : boolean;
                                   bname    : boolean;  { $FILE aus Betreff }
                                   ntyp     : byte;   { xp3.extract_msg.typ }
@@ -1228,6 +1228,23 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.49  2002/03/08 22:55:35  my
+  MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+       kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
+       - Beim Netztyp RFC/Client mu·, bei RFC/UUCP kann eine gÅltige und
+         vollstÑndige eMail-Adresse statt des Usernamens Åbergeben werden;
+       - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+       - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+         wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope
+         nicht leer sein (= gelîscht werden);
+       - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+         Zeichen vergrî·ert (bei externen Befehlen sind max. 127 Zeichen
+         zulÑssig);
+       - Hinweismeldung "Username: <neuer Username>" am Schlu· der Routine
+         zeigt jetzt komplette Adresse an und berÅcksichtigt Alias-Points
+         (RFC/UUCP und ZConnect).
+       Weitere Details siehe Hilfe.
+
   Revision 1.54.2.48  2001/12/20 23:38:38  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein

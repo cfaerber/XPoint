@@ -62,6 +62,9 @@ function  JanusSwitch(var s:string):boolean;
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
 function  is_mailaddress(const s:string):boolean;
+function  check_mailaddress(var s:string):boolean;
+function  check_notempty_mailaddress(var s:string):boolean;
+function  check_username(var s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
 function  check_envelope(var s:string):boolean;
 function  ReadExtCfgFilename(const txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
@@ -1044,8 +1047,9 @@ restart:
   reset_Allowances(s1);
 end;
 
+
 function is_mailaddress(const s:string):boolean;
-var b: byte;
+var b : byte;
 begin
   is_mailaddress:=true;
   b:=cpos('@',s);
@@ -1053,6 +1057,39 @@ begin
     or (cpos('.',mid(s,b+1))=0) or (blankpos(s)<>0)
     or (s<>mailstring(s,false))
   then is_mailaddress:=false;
+end;
+
+
+function check_mailaddress(var s:string):boolean;
+begin
+  check_mailaddress:=true;
+  if not is_mailaddress(s) then
+  begin
+    check_mailaddress:=false;
+    rfehler(908);                  { 'UngÅltige Adresse' }
+  end;
+end;
+
+
+function check_notempty_mailaddress(var s:string):boolean;
+begin
+  check_notempty_mailaddress:=true;
+  if (s<>'') and (not is_mailaddress(s)) then
+  begin
+    check_notempty_mailaddress:=false;
+    rfehler(908);                  { 'UngÅltige Adresse' }
+  end;
+end;
+
+
+function check_username(var s:string):boolean;
+begin
+  check_username:=true;
+  if (s='') or (is_mailaddress(s)) then
+  begin
+    check_username:=false;
+    rfehler(973);                  { 'UngÅltiger Username' }
+  end;
 end;
 
 
@@ -1073,7 +1110,7 @@ begin
     if not is_mailaddress(s2) then
     begin
       multi_mailstring:=false;
-      fehler(Getres2(10900,8)+': ' +s2); { 'UngÅltige Adresse: 's2 }
+      fehler(getres2(10900,8)+': ' +s2); { 'UngÅltige Adresse: %s' }
       end;
   until n=0;
 end;
@@ -1396,12 +1433,12 @@ begin
         testreplyto:=true;
         if cpos(' ',s)<>0 then          { Langname jetzt gueltig ? }
           begin
-            rfehler(908);               { 'ungÅltige Adresse' }
+            rfehler(908);               { 'UngÅltige Adresse' }
             testreplyto:=false;
             end;
         end
       else begin
-        rfehler(908);     { 'ungÅltige Adresse' }
+        rfehler(908);     { 'UngÅltige Adresse' }
         dbclose(d);
         testreplyto:=false;
         end;
@@ -1706,7 +1743,7 @@ begin
   b:=cpos('@',s);
   if not is_mailaddress(s)
   then begin
-    rfehler(908);
+    rfehler(908);                  { 'UngÅltige Adresse' }
     exit;
     end;
   xp9_setclientFQDN:=true;
@@ -1733,7 +1770,7 @@ begin
    while (s1[1]='.') and (s1[0]<>#0) do
      delete(s1,1,1);
    if s1<>s then begin
-     errsound;
+     hinweis(getres2(10900,72)+': '+s1);
      xp9_FQDNTest:=false;
      end;
    s:=s1;
@@ -1749,81 +1786,303 @@ begin
     end;
 end;
 
-{ s = '<BOX> <USERNAME> [/ Realname]'}
+{ s = '<Box> <User/eMail>[,<FQDN>,<POP3-Envelope>,<SMTP-Envelope>] [(Realname)]'}
 
 procedure SetUsername(s:string);
-var x,y  : byte;
-    brk  : boolean;
-    user : string[50];
-    real : string[40];
-    p    : byte;
-    d    : DB;
-    box  : string[BoxNameLen];
-    gross   : boolean;
-    hasreal : boolean;
+var x,y       : byte;
+    brk       : boolean;
+    user      : string[eAdrLen];
+    real      : string[40];
+    username  : string[30];
+    pointname : string[25];
+    domain    : string[60];
+    fqdn      : string[60];
+    pop3Env   : string[eAdrLen];
+    smtpEnv   : string[eAdrLen];
+    nt,p      : byte;
+    d         : DB;
+    box       : string[BoxNameLen];
+    dname     : string[8];
+    _dialog   : boolean;
+    gross     : boolean;
+    hasreal   : boolean;
+    hasemail  : boolean;
+    param_err : boolean;
+    add       : byte;
+
+  function adresse:string;
+  var aliaspt     : boolean;
+      trueboxname : string[BoxNameLen];
+  begin
+    aliaspt:=(dbReadInt(d,'script') and 4<>0);
+    pointname:=dbReadStr(d,'pointname');
+    trueboxname:=dbReadStr(d,'boxname');
+    domain:=dbReadStr(d,'domain');
+    case nt of
+      nt_Client  : adresse:=left(user,cpos('@',user)-1) +
+                            ' @ ' + mid(user,cpos('@',user)+1);
+      nt_UUCP    : adresse:=iifs(hasemail, user, user + ' @ ' +
+                            iifs (aliaspt, trueboxname + ntServerDomain(box),
+                                  pointname + domain));
+      nt_ZConnect: adresse:=user + ' @ ' +
+                            iifs (aliaspt, pointname, trueboxname) + domain;
+    else
+      adresse:=user + ' @ ' + trueboxname;
+    end;
+  end;
+
 begin
-  s:=trim(s);
+  s:=trim(s); _dialog:=false; param_err:=false;
   if s='' then
     rfehler(916)      { 'SETUSER - Parameter fehlen' }
   else begin
-    p:=cpos(' ',s);
-    if p=0 then begin
-      box:=UStr(s); user:=''; real:='';
-      end
+    box:=''; user:=''; fqdn:=''; pop3Env:=''; smtpEnv:=''; real:='';
+    p:=blankpos(s);                             { Box }
+    if p=0 then
+    begin
+      box:=ustr(s);
+      s:='';
+    end
     else begin
       box:=ustr(left(s,p-1));
-      user:=trim(mid(s,p+1));
-      p:=pos(' (',user);
+      s:=trim(mid(s,p+1));
+      p:=pos(' (',s);                           { Realname }
       if p=0 then real:=''
       else begin
-        real:=copy(user,p+2,length(user)-p-2);
-        user:=trim(left(user,p-1));
-        end;
+        real:=copy(s,p+2,length(s)-p-iif(right(s,1)=')',2,1));
+        s:=trim(left(s,p-1));
       end;
+    end;
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,box);
     if not dbFound then
-      rfehler1(918,box)   { 'SETUSER - Box "%s" unbekannt!' }
+      rfehler1(918,box)    { 'SETUSER - Box "%s" unbekannt!' }
     else begin
-      hasreal:=ntRealname(dbReadInt(d,'netztyp'));
-      if user='' then begin
-        user:=dbReadStr(d,'username');
+      nt:=dbReadInt(d,'netztyp');
+      dname:=dbReadStr(d,'dateiname');
+      ReadBox(nt,dname,boxpar);
+      hasreal:=ntRealname(nt);
+      hasemail:=(nt=nt_Client) or ((nt=nt_UUCP) and (dbReadStr(d,'email')<>''));
+      p:=cpos(',',s);                           { User }
+      if p=0 then user:=s
+      else begin
+        user:=trim(left(s,p-1));
+        s:=trim(mid(s,p+1));
+      end;
+      if user='' then
+      begin
+        _dialog:=true;
+        add:=0;
+        if hasemail then
+          user:=dbReadStr(d,'email')
+        else
+          user:=dbReadStr(d,'username');
+        fqdn:=dbReadStr(d,'fqdn');
+        pop3Env:=boxpar^.PPPMailInEnv;
+        smtpEnv:=boxpar^.PPPMailOutEnv;
         real:=dbReadStr(d,'realname');
-        dialog(length(getres(930))+length(box)+35,iif(hasreal,5,3),'',x,y);
-        gross:=ntGrossUser(dbReadInt(d,'netztyp'));
-        maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fÅr %s:' }
-        mhnr(1502);
+        dialog(length(getres2(930,iif(hasemail,iif(nt=nt_Client,4,2),1)))+37,
+               iif(hasreal,5,3)+iif(nt in [nt_ZConnect,nt_UUCP],2,0)+
+               iif(nt=nt_Client,6,0),'SETUSER: '+box,x,y);
+        gross:=ntGrossUser(nt);
+        maddstring(3,2,forms(getres2(930,iif(hasemail,2,1)), { 'Neuer Username'/'Neue  eMail-Adresse'}
+                   length(getres2(930,iif(hasemail,iif(nt=nt_Client,4,2),1)))),
+                   user,30,iif(hasemail,eAdrLen,30),iifs(gross,'>',''));
+        if hasemail then
+        begin
+          msetvfunc(check_mailaddress);
+          mhnr(1503);
+        end
+        else begin
+          msetvfunc(check_username);
+          mhnr(1502);
+        end;
+        if nt in [nt_ZConnect,nt_UUCP,nt_Client] then
+        begin
+          maddstring(3,4,forms(getres2(930,3),length(getres2(930, { 'Neuer FQDN' }
+                     iif(hasemail,iif(nt=nt_Client,4,2),1)))),fqdn,30,60,'');
+          msetvfunc(xp9_FQDNTest);
+          if nt=nt_Client then mhnr(1505) else mhnr(1504);
+          inc(add,2);
+        end;
+        if nt=nt_Client then
+        begin
+          maddstring(3,6,getres2(930,4),pop3Env,30,eAdrLen,''); { 'Neue  POP3-Envelope-Adresse' }
+            if boxpar^.PPPMailInServer <> '' then
+              msetvfunc(check_mailaddress)
+            else
+              msetvfunc(check_notempty_mailaddress);
+            mhnr(1506);
+          maddstring(3,8,getres2(930,5),smtpEnv,30,eAdrLen,''); { 'Neue  SMTP-Envelope-Adresse' }
+            msetvfunc(check_notempty_mailaddress);
+            mhnr(1507);
+          inc(add,4);
+        end;
         if hasreal then
-          maddstring(3,4,forms(getreps(931,box),length(getreps(930,box))),real,30,40,'');  { 'Neuer Realname:' }
+        begin
+          maddstring(3,4+add,forms(getres2(930,6),length(getres2(930, { 'Neuer Realname' }
+                     iif(hasemail,iif(nt=nt_Client,4,2),1)))),real,30,40,'');
+          if nt=nt_Client then mhnr(1509) else mhnr(1508);
+        end;
         readmask(brk);
         enddialog;
-        end
-      else
-        brk:=false;
-      if not brk then begin
-        dbWrite(d,'username',user);
-        if hasreal { and (real<>'') 29.07.96 } then dbWrite(d,'realname',real);
-        if box=DefFidoBox then begin
-          HighlightName:=ustr(user);
-          aufbau:=true;
+      end
+      else begin
+        if p=0 then
+        begin
+          if (nt in [nt_ZConnect,nt_UUCP,nt_Client]) then
+          begin
+            param_err:=true;
+            rfehler(974);      { 'SETUSER - Parameter "FDQN" nicht angegeben!' }
           end;
-        if not dispusername then begin
-          message(getres(910)+user+' @ '+box+iifs(real='','',' ('+real+')'));    { 'Username: ' }
-          mdelay(1000);
-          closebox;
+        end
+        else begin
+          p:=cpos(',',s);                     { FQDN }
+          if p=0 then
+          begin
+            fqdn:=s;
+            if nt=nt_Client then
+            begin
+              param_err:=true;
+              rfehler(975);    { 'SETUSER - Parameter "POP3-Envelope-Adresse" nicht angegeben!' }
+            end;
+          end
+          else begin
+            fqdn:=trim(left(s,p-1));
+            s:=trim(mid(s,p+1));
+            p:=cpos(',',s);                   { POP3-/SMTP-Envelope }
+            if p=0 then
+            begin
+              pop3Env:=s;
+              if nt=nt_Client then
+              begin
+                param_err:=true;
+                rfehler(976);  { 'SETUSER - Parameter "SMTP-Envelope-Adresse" nicht angegeben!' }
+              end;
+            end
+            else begin
+              pop3Env:=trim(left(s,p-1));
+              smtpEnv:=trim(mid(s,p+1));
+            end;
           end;
         end;
+        if hasemail then
+        begin
+          if not is_mailaddress(user) then
+          begin
+            param_err:=true;
+            fehler('SETUSER - '+getres2(10900,8)+' (eMail): ' +user); { 'UngÅltige Adresse: %s' }
+          end;
+        end
+        else if is_mailaddress(user) then   { not hasemail }
+        begin
+          param_err:=true;
+          fehler('SETUSER - '+getres2(10900,73)+': ' +user); { 'UngÅltiger Username: %s' }
+        end;
+        if nt=nt_Client then
+        begin
+          if (pop3Env<>'') and (pop3Env<>'*') and (not is_mailaddress(pop3Env)) then
+          begin
+            param_err:=true;
+            fehler('SETUSER - '+getres2(10900,8)+' (POP3): ' +pop3Env); { 'UngÅltige Adresse: %s' }
+          end
+          else if (pop3Env='') and (boxpar^.PPPMailInServer<>'') then   { POP3-Envelope darf nicht leer sein! }
+          begin
+            param_err:=true;
+            rfehler(975);      { 'SETUSER - Parameter "POP3-Envelope-Adresse" nicht angegeben!' }
+          end;
+          if (smtpEnv<>'') and (smtpEnv<>'*') and (not is_mailaddress(smtpEnv)) then
+          begin
+            param_err:=true;
+            fehler('SETUSER - '+getres2(10900,8)+' (SMTP): ' +smtpEnv); { 'UngÅltige Adresse: %s' }
+          end;
+        end;
+        if param_err then
+        begin
+          dbClose(d);
+          exit;
+        end;
+        if (nt in [nt_ZConnect,nt_UUCP,nt_Client]) and (fqdn<>'*') then
+          if not xp9_FQDNTest(fqdn) then ;
+        brk:=false;
       end;
+      if not brk then
+      begin
+        if nt in [nt_ZConnect,nt_UUCP,nt_Client] then
+          if _dialog or (not _dialog and (fqdn <> '*')) then
+          begin
+            dbWrite(d,'fqdn',fqdn);              { FQDN schreiben }
+            boxpar^._fqdn:=fqdn;
+          end;
+        if hasemail then
+        begin
+          dbWrite(d,'email',user);
+          if nt=nt_Client then
+          begin
+            p:=cpos('@',user);
+            username:=left(user,p-1);
+            domain:=mid(user,p);
+            domain:=mid(domain,cpos('.',domain));
+            pointname:=mid(user,p+1);
+            truncstr(pointname,min(25,cposx('.',pointname)-1));
+            boxpar^.username:=username;
+            boxpar^._domain:=domain;
+            boxpar^.pointname:=pointname;
+            dbWrite(d,'username',username);
+            dbWrite(d,'pointname',pointname);
+            dbWrite(d,'domain',domain);
+            if _dialog or (not _dialog and (pop3Env <> '*')) then
+              boxpar^.PPPMailInEnv:=pop3Env;
+            if _dialog or (not _dialog and (smtpEnv <> '*')) then
+              boxpar^.PPPMailOutEnv:=smtpEnv;
+          end;
+        end
+        else begin
+          boxpar^.username:=user;
+          dbWrite(d,'username',user);
+        end;
+        if hasreal and (real<>'*') then dbWrite(d,'realname',real);
+        WriteBox(dname,boxpar);
+        if box=DefFidoBox then
+        begin
+          HighlightName:=ustr(user);
+          aufbau:=true;
+        end;
+        if not dispusername then
+        begin
+          message(getres(910) + adresse +
+                  iifs(real='','',' ('+real+')'));              { 'Username: ' }
+          mdelay(1000);
+          closebox;
+        end;
+      end;
+    end;
     dbClose(d);
     showusername;
-    end;
+  end;
 end;
-
 
 end.
 
 {
   $Log$
+  Revision 1.1.2.28  2002/03/08 22:55:36  my
+  MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+       kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
+       - Beim Netztyp RFC/Client mu·, bei RFC/UUCP kann eine gÅltige und
+         vollstÑndige eMail-Adresse statt des Usernamens Åbergeben werden;
+       - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+       - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+         wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope
+         nicht leer sein (= gelîscht werden);
+       - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+         Zeichen vergrî·ert (bei externen Befehlen sind max. 127 Zeichen
+         zulÑssig);
+       - Hinweismeldung "Username: <neuer Username>" am Schlu· der Routine
+         zeigt jetzt komplette Adresse an und berÅcksichtigt Alias-Points
+         (RFC/UUCP und ZConnect).
+       Weitere Details siehe Hilfe.
+
   Revision 1.1.2.27  2002/01/02 23:15:50  my
   MY:- Es kann jetzt bei D/B/E/X auch der Windows-Befehl "start [/w]"
        verwendet werden (es findet dann keine weitere PrÅfung auf Existenz
