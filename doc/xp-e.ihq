@@ -179,10 +179,11 @@ the Newsgroup moved to. Confirm the selection with
                <<Message Areas Overview
                <<======================
 
-The [Message Areas] window is one of the main windows@4001
-in CrossPoint. From here, you can access all messages
-and by means of the "Special" command, you may edit
-and/or configure the Message Area settings.
+The [Message Areas] window (this is where you are now)@4001
+is one of the main windows in CrossPoint. From here,
+you can access all messages and by means of the
+"Special" command, you may edit the Message Area
+settings or manually configure new Message Areas.
 
 Message areas fall into four main categories:
 
@@ -3694,15 +3695,23 @@ newsgroup, when a new user is entered through "new'
 in the User Editing mode.
 @
 243
-Decides whether messages written by yourself should
-be put on "hold" (ie. with "+" sign) when you have
-written them (see [message display]).@4015
+<<[x]>> -> <<Public>> messages (Echomail/Newsgroups) written
+       by yourself will be automatically set to
+       "Hold" and will <<not>> be deleted when doing a
+       Re-Org. (The so-called EGO Archive!)
 
-<<[x]>>     Are put on hold directly after writing,
-        the so-called Ego-Archive.
+<<[ ]>> -> <<Public>> messages (Echomail/Newsgroups) written
+       by yourself <<will>> be deleted as per your
+       "Hold time" settings.
+@
+244
+<<[x]>> -> <<Private>> messages (Netmail/eMail) written by
+       yourself will be automatically set to "Hold"
+       and will <<not>> be deleted when doing a Re-Org.
 
-<<[ ]>>     They are handled like all other messages
-        and are deleted when their time comes.
+<<[ ]>> -> <<Private>> messages (Netmail/eMail) written
+       by yourself <<will>> be deleted as per your
+       "Hold time" settings.
 @
 245
 Normally the exact date and time of you writing the
