@@ -30,6 +30,7 @@ const
   llWarning     = 2;    { 1 + Warnungen }
   llInform      = 3;    { 2 + Infos }
   llDebug       = 4;    { 3 + Alles }
+  newline=#13#10;
 
 type
   TLog = class
@@ -219,6 +220,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2000/11/19 17:52:13  ma
+        - added newline declaration missing (Win32)
+
         Revision 1.4  2000/11/19 16:56:47  hd
         - Little Change
         - TLogModul: Adds a modul name to the log string
