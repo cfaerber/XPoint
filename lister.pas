@@ -69,7 +69,7 @@ type  liste   = pointer;
 
 procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
 procedure SetListsize(_l,_r,_o,_u:byte);
-procedure app_l(ltxt:shortstring);           { Zeile anhÑngen }
+procedure app_l(ltxt:string);             { Zeile anhÑngen }
 procedure list_convert(cp:listConvert);
 procedure list_readfile(fn:string; ofs:word);
 procedure ListSetStartpos(sp:longint);
@@ -109,6 +109,7 @@ implementation  { ------------------------------------------------ }
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       MinListMem : word = 15000;   { min. Bytes fÅr app_l        }
+      ListerBufferCount = 16383;
 
 type  lnodep  = ^listnode;
       listnode= record
@@ -168,6 +169,8 @@ type  liststat= record
                 end;
       lrp     = ^listrec;
 
+      ListerCharArray = array[0..ListerBufferCount] of Char;
+
 
 const inited  : boolean = false;
 var
@@ -189,110 +192,42 @@ var   lstack  : array[0..maxlst] of record
 
 
 
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler; {&uses all}
+function make_list(var buf: ListerCharArray; BufLen: Integer; wrap:byte): Integer;
 var
-  bxsave,cxsave : dword;
-asm
-         mov    esi, buf
-         inc    esi
-         mov    ecx,rr
-         jecxz  @ende
-         mov    ebx,1
-         mov    dh,0
-         mov    ah,wrap                { Wrap-Spalte }
-         or     ah,ah
-         jnz    @llp
-         mov    ah,255
-
-@llp:    mov    edx,0                   { StringlÑngen-ZÑhler }
-         mov    ebx,0
-@llp2:   mov    edi,0
-         cmp    byte ptr [esi+ebx],13 { CR ? }
-         jz     @crlf
-         cmp    byte ptr [esi+ebx],10 { LF ? }
-         jnz    @nocr
-         mov    edi,1                   { Kennung fÅr LF -> nÑchstes Zeichen }
-                                       { NICHT Åberlesen }
-@crlf:   or     edi,edi
-         jnz    @islf
-         cmp    ecx,1                   { CR ist letztes Byte         }
-         jz     @noapp                 { -> keine Leerzeile erzeugen }
-@islf:   mov    [esi-1],dl           { LÑngenbyte davorschreiben   }
-         call   @appcall
-@noapp:  inc    edx
-         dec    ecx
-         jz     @nocrlf                { Block endete mit CR oder LF }
-         add    esi,edx
-         cmp    edi,1
-         jz     @llp
-         cmp    byte ptr [esi],10    { LF ? }
-         jnz    @llp                   { nein, dann nÑchste Zeile lesen }
-         inc    esi                     { LF Åberlesen }
-         dec    ecx
-         jnz    @llp                   { endet Zeile nicht auf LF ? }
-
-@ende:   mov    dword ptr [rp],1
-         jmp @the_end
-
-@nocr:   inc    edx                     { ein Zeichen weiter }
-         inc    ebx
-         dec    ecx
-         jnz    @no0
-@nocrlf: cmp    edi,1                   { endete Block auf LF ? }
-         jz     @ende
-         mov    ecx,edx                 { unvollstÑndige Zeile kopieren }
-         jecxz  @norest
-         mov    edi, buf
-         inc    edi
-@cloop:  mov    al, [esi]
-         mov    [edi],al
-         inc    esi
-         inc    edi
-         loop   @cloop
-@norest: inc    edx
-         mov    dword ptr [rp],edx               { Offset fÅr nÑchsten Block }
-         jmp @the_end
-
-@no0:    cmp    dl,ah                  { max. LÑnge erreicht? }
-         jb     @llp2
-         cmp    byte ptr [esi+ebx],13 { folgt ein CR? }
-         jz     @llp2
-
-         mov    dh,dl
-         mov    bxsave,ebx
-         mov    cxsave,ecx
-@cutlp:  cmp    byte ptr [esi+ebx-1],' '   { Trennzeichen? }
-         jz     @clok
-         dec    dl
-         dec    ebx
-         inc    ecx
-         cmp    dl,20
-         ja     @cutlp
-         mov    dl,dh
-         mov    ebx,bxsave
-         mov    ecx,cxsave
-
-@clok:   mov    dh, 0
-         mov    [esi-1],dl           { LÑngenbyte = wrap }
-         call   @appcall
-         add    esi,edx
-         jmp    @llp
-
-@appcall:
-         pushad
-         pushfd
-         dec    esi                    { Adresse des Strings auf den Stack }
-         push   esi
-         call   app_l                  { Zeile an Liste anhÑngen }
-         popfd
-         popad
-         ret
-@the_end:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+  i, j: Integer;
+  s: String;
+begin
+  if BufLen = 0 then exit;
+  if wrap = 0 then wrap := 255;
+  j := 0;
+  while j < BufLen do
+  begin
+    i := 0;
+    // solange, bis entweder Zeilenende oder Wrap-Bereich Åberschritten
+    while (buf[i+j] <> #13) and (buf[i+j] <> #10) and (i < wrap) and (i+j < BufLen) do
+      inc(i);
+    // Spezialbehandlung, wenn Zeile umgebrochen werden mu·
+    if i = wrap then
+    begin
+      for i := wrap downto 20 do
+        if Buf[i+j] = ' ' then break;
+      // wenn keine Umbruchstelle gefunden wurde, Wrap-LÑnge Åbernehmen
+      // ansonsten Leerzeichen Åberspringen
+      if i = 20 then
+        i := wrap
+      else
+        inc(i);
+    end;
+    SetLength(s, i);
+    Move(Buf[j], S[1], i);
+    App_l(s);
+    // CRLF Åberlesen
+    if Buf[i+j] = #13 then inc(i);
+    if Buf[i+j] = #10 then inc(i);
+    inc(j, i);
+  end;
+  Result := BufLen-j;
 end;
-{$ENDIF }
 
 {$IFDEF FPC }
   {$HINTS OFF }
@@ -437,8 +372,7 @@ end;
 
 { Zeile anhÑngen }
 
-{ ACHTUNG: Muss shortstring sein, da direkt aus 'make_list' aufgerufen }
-procedure app_l(ltxt:shortstring);
+procedure app_l(ltxt:string);
 const TAB = #9;
 var p  : byte;
 
@@ -516,10 +450,9 @@ end;
 
 
 procedure list_readfile(fn:string; ofs:word);
-type barr = array[0..65000] of byte;
 var f  : file;
     s     : string;
-    p     : ^barr;
+    p     : ^ListerCharArray;
     ps    : word;
     rp : word;
     rr: word;
@@ -532,24 +465,21 @@ begin
     fm:=filemode; filemode:=0;
     reset(f,1);
     filemode:=fm;
-    // ps:=16384;
-    // !! TemporÑrer Fix fuer AbstÅrze mit FPC
-    ps := FileSize(f);
+    ps:=ListerBufferCount;
     getmem(p,ps);
-    rp:=1;
+    rp:=0;
     if ioresult=0 then
     begin
       seek(f,ofs);
       repeat
         blockread(f,p^[rp],ps-rp,rr);
         if (@ConvProc<>nil) and (rr>0) then ConvProc(p^[rp],rr);
-        make_list(p^,rp,rr+rp-1,stat.wrappos);
+        rp := make_list(p^,rr+rp,stat.wrappos);
       until eof(f);
       close(f);
       if rp>1 then begin     { den Rest der letzten Zeile noch anhÑngen.. }
         SetLength(s, rp-1);
         Move(p^[1],s[1],rp-1);
-        {s[0]:=chr(rp-1); }
         app_l(s);
         end;
       end;
@@ -1376,6 +1306,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/09/27 17:05:48  mk
+  - Make_list auf Pascal portiert
+
   Revision 1.31  2000/09/24 04:47:58  mk
   - temp. fix fuer list_readfile
 
