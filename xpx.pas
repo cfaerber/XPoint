@@ -26,7 +26,7 @@ implementation
         MinVerStr  = '3.3';
         MaxHandles = 31;
   {$ELSE}
-  uses  overlay;
+  uses  overlay, clip, lfn;
   const MinVersion = $300;
         MinVerStr  = '3.0';
         MaxHandles = 30;
@@ -278,6 +278,8 @@ begin
     OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
+  if WinVersion = 5 then
+    EnableLFN;
 
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
@@ -293,6 +295,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.7  2001/06/23 19:14:53  mk
+  - LFN bei Win2000 automatisch einschalten
+
   Revision 1.18.2.6  2001/01/10 17:39:07  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
