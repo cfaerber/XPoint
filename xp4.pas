@@ -36,6 +36,8 @@ const
   maxgl   = 60;
 {$ENDIF }
 
+      showungelesen : boolean = false;  { Bretter mit ungel. Nachrichten auch markieren }
+
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
       wltrenn : boolean;   { Trennzeilen als Ziel mîglich        }
@@ -1604,6 +1606,11 @@ begin      { --- select --- }
                  else begin
                    if c=k0_A then              { 'A' }
                      ChangeBrettall;
+                   if c='U' then               { 'U' }
+                   begin
+                     Showungelesen:=not showungelesen;
+                     aufbau:=true;
+                     end;  
                    if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
@@ -2038,6 +2045,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/06/03 08:39:55  jg
+  - Nachrichtenfenster "U" zeigt ungelesene Nachrichten
+
   Revision 1.21  2000/05/30 17:19:31  jg
   - Fixes fÅrs umschalten mit "A" zwischen Adressbuch und allen Usern
 

@@ -122,10 +122,12 @@ begin  { __ Suchmarke }
               if not UserSlash and (s[1]<'A') then delete(s,2,1);
               if not dispext then begin
                 case readmode of     { s. auch XP4.BRETTOK() }
-                  0 : c:=markc+'  ';
+                  0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
                   1 : c:=markc+iifs(flags and 2<>0,#16' ','  ');
                 else
-                  c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
+                  if showungelesen and (flags and 2<>0) 
+                    then c:=markc+iifs(not smdl(dat,readdate),#$af' ',#$1a' ')
+                    else c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
                 end;
                 if length(s)>43 then
                   if length(s)>70 then

@@ -219,6 +219,19 @@ richten und Bretteinstellungen.
        Anzeige der Bretter, die auf den Lese-Modus
        zutreffen, um.
 
+   U   schaltet die zus„tzliche Anzeige der Bretter 
+       mit ungelesenen Nachrichten Ein/Aus:
+
+        steht dann fr "Nur gelesene, zum Lesemodus
+       passende Nachrichten". 
+       Sind sowohl ungelesene Nachrichten im Brett,
+       als auch welche die zum Lesemodus passen
+       (oder beides gleichzeitig), steht ein ¯
+       am linken Brettrand. 
+       Trifft der Lesemodus nicht auf das Brett zu,
+       aber es enth„lt ungelesene Nachrichten,
+       steht ein dnner Pfeil davor.
+
    +   springt zum n„chsten zutreffenden Brett
 
    -   springt zum vorigen zutreffenden Brett
