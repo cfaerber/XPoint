@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 21.11.2001 (letzter Update)
+DÅsseldorf, den 01.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -83,6 +83,10 @@ Lister
   Ressource definierten LÑnge der Åbrigen Headerzeilen (Res. 361,2).
   Anzeige damit auch sprachunabhÑngig.
   XP3EX.PAS
+
+- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+  <Ctrl-W> nicht-permanent umgeschaltet werden.
+  XP0.PAS, XP1O.PAS, XP1S.INC, XP2CFG.INC, XP.IHQ, XP-E.IHQ
 
 
 
@@ -483,6 +487,10 @@ Bugfixes
 
 - Crash bei <F2>-Auswahl (mappsel) und Strings > 254 Zeichen behoben.
   MASKE.PAS
+
+- Komma zur Liste der fÅr URLs zulÑssigen Zeichen hinzugefÅgt.
+  XP1O.PAS
+
 
 
 Interne énderungen
