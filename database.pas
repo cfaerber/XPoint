@@ -364,8 +364,8 @@ asm
          db 66h
          mov dx,[di+9]
          db 66h
-         cmp ax,dx                    { cache^[i].lasttick < s ? }
-         jnb @nexti
+         cmp dx,ax                    { cache^[i].lasttick < s ? }
+         jae @nexti
          db 66h
          mov ax,dx                    { s:=cache^[i].lasttick }
          mov bx,cx                    { sp:=i; }
@@ -1843,6 +1843,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/05/25 16:50:19  jg
+  Denkfehler (cmp ax,cx statt cmp cx,ax) beseitigt
+
   Revision 1.19  2000/05/24 21:23:54  mk
   JG: 32 Bit Optimierungen, Fixes fuer 16+32 Bit Version
 
