@@ -345,7 +345,7 @@ begin
   if LeftStr(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
-    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(423);
+    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,''); mhnr(423);
     pb_field:=fieldpos;                     { 'Server   ' }
     mappcustomsel(BoxSelProc,false);
     mset0proc(pb_wrntyp);
@@ -2509,6 +2509,11 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/05/01 17:31:05  mk
+  MY:- Beim Editieren von Usern/Brettern wird der Name im Eingabefeld
+       "Server" in der Schreibweise dargestellt, in der er in der
+       Datenbank abgelegt ist.
+
   Revision 1.90  2002/04/18 21:14:19  mk
   - fixed Bug #500563
 
