@@ -1486,9 +1486,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_QWK:      begin
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+                     nts:=+getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,29)       { ^QWK, }
                          +getres2(927,10)       { ^Diverse }
@@ -1580,13 +1578,11 @@
                         7: EditSysopdaten(nt,brk);
                       end;
         nt_QWK      : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditQWK(fn,brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+                        1: EditGebuehren(brk);
+                        2: EditName(brk);
+                        3: EditQWK(fn,brk);
+                        4: EditDiverses(nt,brk);
+                        5: EditSysopdaten(nt,brk);
                       end;
         nt_UUCP     : case n of
                         1: EditPointdaten(nt,brk);
@@ -1698,6 +1694,9 @@
 
 {
   $Log$
+  Revision 1.26  2000/10/10 05:53:45  mk
+  - Edit QWK braucht kein Point und Modem-Eintrag
+
   Revision 1.25  2000/09/29 11:30:38  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
