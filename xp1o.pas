@@ -161,7 +161,15 @@ begin
       begin
         s:=mid(s,y);
         y:=1;
-        while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+        while (y<=length(s)) and (s[y] in urlchars) do
+        begin
+          // "," is a valid url char, but test for things like
+          // "see on http:///www.openxp.de, where" ...
+          // in this case, "," does not belong to the url
+          if (s[y] = ',') and (y<Length(s)) and (not (s[y+1] in urlchars)) then
+            break;
+          inc(y); {Ende der URL suchen...}
+        end;
         s:=leftStr(s,y-1);
       end;
       string2clip(s);
@@ -1073,6 +1081,9 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.7  2003/09/07 18:41:00  mk
+  - added special handling of "," while detecting URLs
+
   Revision 1.110.2.6  2003/08/25 06:43:51  mk
   - added OS/2 support
 
