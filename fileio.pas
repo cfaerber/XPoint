@@ -62,9 +62,11 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
 
+function  AddDirSepa(p: pathstr): pathstr;	{ Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
+function  existBin(fn: pathstr): boolean;	{ Datei vorhanden (PATH)  }
 Function  ValidFileName(name:PathStr):boolean;  { gÅltiger Dateiname ?    }
 Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
 function  TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen      }
@@ -113,12 +115,96 @@ uses
 {$endif}
   xp0;
 
+const
+{$IFDEF UnixFS}
+  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
+{$ELSE}
+  PathSepaChar          = ';';
+{$ENDIF}
+
 {$IFDEF BP }
 var
   ShareDa : boolean;
 {$ENDIF }
 
+{ Haengt einen fehlenden Verzeichnisseparator an.
+  Loest dabei C: auf (nur Nicht-Unix }
+function  AddDirSepa(p: pathstr): pathstr;
+{$IFNDEF UnixFS}
+var
+  cwd: pathstr;
+{$ENDIF}
+begin
+  if p='' then
+    AddDirSepa:= ''
+  else begin
+    if LastChar(p)<>DirSepa then
+{$IFDEF UnixFS}
+      AddDirSepa:= p+DirSepa
+{$ELSE}
+    begin
+      if length(p)=2 and p[2]=':' then begin	{ Nur C: ? }
+        p:= UStr(p);
+        getdir(Ord(p[1])-64,cwd);		{ -> Akt. Verz. ermitteln }
+	AddDirSepa:= AddDirSepa(cwd);
+      end else
+        AddDirSepa:= p+DirSepa;
+    end;
+{$ENDIF}
+    else
+      AddDirSepa:= p;
+  end;
+end;
+
+{ Sucht die Datei 'fn' in folgender Reihenfolge:
+  - Aktuelle Verzeichnis
+  - Startverzeichnis der aktuellen Programmdatei
+  - Environment-Var PATH 
+}
+function  existBin(fn: pathstr): boolean;
+var
+  envpath, filename, path: PathStr;
+  i, j, k: integer;
+begin
+  filename:= GetFileName(fn);		{ Evtl. Pfad ignorieren }
+  if exist(fn) then begin		{ -> Aktuelles Verzeichnis }
+    existBin:= true;
+    exit;
+  end;
+  path:= ProgPath;			{ -> Startverzeichnis }
+  if path<>'' then begin
+    if exist(AddDirSepa(path)+filename) then begin
+      existBin:= true;
+      exit;
+    end;
+  end;
+{$IFDEF Ver32}
+  envpath:= StrPas(getenv('PATH'));	{ -> Pfad abarbeiten }
+{$ELSE}
+  envpath:= getenv('PATH');
+{$ENDIF}
+  j:= CountChar(PathSepaChar,envpath);
+  for i:= 1 to j do begin
+    k:= CPos(PathSepaChar, envpath);
+    path:= copy(envpath,1,k-1);
+    delete(envpath,1,k);
+    if path<>'' then
+      if exist(AddDirSepa(path)+filename) then begin
+        existBin:= true;
+	exit;
+      end;
+  end;
+  if envpath<>'' then begin		{ Noch was ueber ? }
+    if exist(AddDirSepa(envpath)+filename) then
+      existBin:= true
+    else
+      existBin:= false;
+  end else
+    existBin:= false;
+end;
+
 { !!UnixFS noch bearbeiten einfÅgen !! }
+{ ^^^^^^^^ Nicht noetig, sollte funktionieren (hd 2000/6/16) }
 function exist(n:string):boolean;
 var
   sr : searchrec;
@@ -881,6 +967,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/06/16 14:50:43  hd
+  - Neue Funktion: existBin: Sucht eine Datei auch in PATH
+  - Neue Funktion: AddDirSepa: Haengt Slash/Backslash an, wenn er fehlt
+
   Revision 1.37  2000/06/05 16:16:20  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
