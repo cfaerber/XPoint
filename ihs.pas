@@ -17,7 +17,7 @@ uses
   crt,
 {$ENDIF }
   dos,
-  typeform,fileio, xpglobal;
+  typeform,fileio, xpglobal,sysutils;
 
 const maxpages = 1200;
       version  = '1.21';
@@ -355,7 +355,7 @@ begin
   write('Source File: ');
   fname:=paramstr(1);
   if fname='' then readln(fname)
-  else writeln(fname);
+  else writeln(fname+'.ihq');
 
   if not exist(fname+'.ihq') then begin
     writeln; writeln('Error: File not found.');
@@ -414,6 +414,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2000/07/13 11:01:37  ma
+  - wieder kompilierbar; Sysutils hinzugefuegt
+
   Revision 1.12  2000/07/04 12:04:16  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
