@@ -351,7 +351,7 @@ II   Installation und Bedienung
 
 Dieser Abschnitt enthÑlt Informationen, die speziell die Installation und
 Nutzung von CrossPoint im FidoNet betreffen. AusfÅhrlichere Informationen zu
-Installation und Benutzung finden Sie in XPOINT.DOC.
+Installation und Benutzung finden Sie in XPOINT.TXT.
 
 
 
@@ -368,7 +368,7 @@ Zum Einsatz von CrossPoint im FidoNet benîtigen Sie drei Dinge:
 Packer und Entpacker kînnen auch in einem Programm enthalten sein, z.B. LHA
 oder ARJ. Welchen Packer Sie verwenden, mÅssen Sie mit Ihrem Sysop absprechen.
 DarÅber hinaus werden *keine* weiteren Programme benîtigt - kein sogenannter
-"Fossil-Treiber" (vgl. auch Anhang F von XPOINT.DOC), kein "Tosser" oder
+"Fossil-Treiber" (vgl. auch Anhang F von XPOINT.TXT), kein "Tosser" oder
 "Scanner" und auch kein NodeDiff-Bearbeiter. Alle diese Dinge sind bereits im
 CrossPoint-Paket enthalten.
 
@@ -377,7 +377,7 @@ Wenn Sie CrossPoint zum ersten Mal starten, fragt es drei Eingaben ab:
 ˛  den Netztyp Ihrer Stammbox: Geben Sie "Fido" ein.
 
 --3 ˛  den Namen der Box: Geben Sie hier die vollstÑndige Nodeadresse der Box
-in der Form Zone:Netz/Node ein, z.B. 2:2454/97.
+in der Form Zone:Netz/Node ein, z.B. 2:2452/125.
 
 --3 ˛  den Usernamen: Im FidoNet sind keine Pseudonyme zugelassen, d.h. an
 dieser Stelle ist Ihr "Realname" in normaler Gro·-/Kleinschreibweise einzugeben.
@@ -441,7 +441,7 @@ unter der Nodenummer 89 schreiben, dann lautet Ihre Adresse 12:345/89.
 Wenn alle Daten korrekt eingegeben sind, kînnen Sie Netzanrufe bei Ihrem
 Bossnode durchfÅhren. Verwenden Sie dazu den MenÅpunkt /Netcall/Einzeln. Wenn
 der Netzanruf nicht funktioniert, lesen Sie bitte zunÑchst in Kapitel 3.1
-von XPOINT.DOC nach; dort sind die hÑufigsten, allgemeinen Fehlerursachen
+von XPOINT.TXT nach; dort sind die hÑufigsten, allgemeinen Fehlerursachen
 beschrieben. Evtl. kann auch die Datei XPFIDO.LOG Aufschlu· geben, in der der
 Fido-Mailer (Netcall-Modul) von CrossPoint ein genaues Protokoll des Anrufs
 aufzeichnet.
@@ -468,12 +468,12 @@ ist.
 Nachrichten verschicken.
 
 >>|
---9 Ursache: Ein Fehler im Zmodem des Fido-Mailers vomn CrossPoint (bis
+--9 Ursache: Ein Fehler im Zmodem des Fido-Mailers von CrossPoint (bis
 Version 3.12d) im Zusammenspiel mit dem fehlerintoleranten Verhalten vieler
 anderer Fido-Mailer.
 
 --11Lîsung:  Das Problem sollte bei Version 3.2 nicht mehr auftreten, aber aktivieren
-Sie unter Edit/Boxen/Edit/Point den Punkt "leeres Paket senden".
+Sie sicherheitshalber unter Edit/Boxen/Edit/Point den Punkt "leeres Paket senden".
 <<|
 
 --9 Problem: Es tauchen gelegentlich Nachrichten auf, die ausschlie·lich aus
@@ -499,7 +499,7 @@ Anwahl mîglich.
 --9 Ursache: Bei der öbertragung Ihrer Daten (Pointnumer, Pa·wort etc.) zur
 Mailbox, oder bei der öbertragung der Mailboxdaten zu Ihnen, sind Fehler
 aufgetreten. Mîglicherweise sind einzelne Zeichen an der seriellen Schnittstelle
-verloren gegangen (s. XPOINT.DOC, Anhang F). XP wird versuchen, die öbertragung
+verloren gegangen (s. XPOINT.TXT, Anhang F). XP wird versuchen, die öbertragung
 zu wiederholen.
 
 
@@ -513,7 +513,7 @@ zunÑchst die betreffenden Echos (=Bretter) bei Ihrem Bossnode bestellen. Zu
 diesem Zweck gibt es innerhalb der Box einen Pseudouser, der meist "Areafix"
 oder "Areamgr" hei·t, und an den Sie Ihre BrettwÅnsche senden.
 
-Innerhalb von XP mÅssen Sie diese Steuernachrichten nicht von Hand eingeben.
+Innerhalb von XP brauchen Sie diese Steuernachrichten nicht von Hand eingeben.
 Statt dessen mÅssen Sie dem Programm nur einmal unter /Edit/Boxen/Edit/Fido
 verschiedene Angaben zum Area-Manager mitteilen; danach kann die Brettverwaltung
 bequem Åber das MenÅ /Nachricht/Brettmanager erfolgen. Folgende vier Angaben
@@ -557,12 +557,12 @@ anschlie·end auswÑhlen und mit /Nachricht/Brettmanager/Liste_einlesen aktivieren
 
 SpÑter sollten Sie in regelmÑ·igen AbstÑnden eine neue Liste anfordern, um
 immer den aktuellen Brettbestand der Box zu kennen. Dies lÑ·t sich auch Åber
-die AutoVersand-Funktion automatisieren (s. XPOINT.DOC, Kap. 5.10).
+die AutoVersand-Funktion automatisieren (s. XPOINT.TXT, Kap. 5.10).
 
 
 ˛ Bestellen/Abbestellen und Verwalten von Brettern
 
-s. XPOINT.DOC, Kap. 3.2
+s. XPOINT.TXT, Kap. 3.2
 
 
 ˛ Probleme mit d'Bridge
@@ -616,7 +616,7 @@ erhÑltlich sind.
 2.4  Brettgruppen: Umlaute, Origins und Echo-AKAs
 ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
 
-In Kapitel 4.1 von XPOINT.DOC ist die Verwendung von Brettgruppen beschrieben.
+In Kapitel 4.1 von XPOINT.TXT ist die Verwendung von Brettgruppen beschrieben.
 öber diese Brettgruppen werden verschiedene Dinge eingestellt, die fÅr die
 Verwendung von XP im FidoNet mehr oder weniger wichtig sind, insbesondere die
 Umlautwandlung, Origin-Zeilen und Echo-AKA-Adressen.
@@ -689,8 +689,8 @@ angeben - oder umgekehrt.
 Im Z-Netz ist es Åblich, bei mehrfachen Replies auf eine Nachricht dem Betreff
 ein Re^2, Re^3 etc. voranzustellen. Im FidoNet dagegen ist dies unerwÅnscht.
 Sie mÅssen daher in der Fido-Gruppe die Einstellung im Feld "Replies" auf
-"Re:" oder auf "nein" setzen. Falls Sie CrossPoint nur im FidoNet verwenden,
-sollten Sie auch die "Re^n"-Option bei /Config/Optionen/Nachrichten abschalten.
+"nein" setzen. Falls Sie CrossPoint nur im FidoNet verwenden, sollten Sie auch
+die "Re^n"-Option bei /Config/Optionen/Nachrichten abschalten.
 
 
 ˛ Grî·enlimit
@@ -749,11 +749,11 @@ fÅr jede AKA getrennt pollen.
 
 ˛ Schritt 2: AKA-Adressen eintragen
 
-Da Sie der Telekom natÅrlich nicht mehr GebÅhreneinheiten schenken mîchten als
-unbedingt nîtig, sollte XP die Nachrichten fÅr alle AKAs mit einem Anruf
-verschicken und abholen. Nehmen wir an, Sie mîchten Netcalls immer bei 2:245/567
-durchfÅhren, wobei alle Mails fÅr 9:.. und 987:.. mit Åbertragen werden sollen.
-Tragen Sie dazu bei /Edit/Boxen/Edit/Point Folgendes ein:
+Da Sie Ihrer Telefongesellschaft natÅrlich nicht mehr GebÅhreneinheiten schenken
+mîchten als unbedingt nîtig, sollte XP die Nachrichten fÅr alle AKAs mit einem
+Anruf verschicken und abholen. Nehmen wir an, Sie mîchten Netcalls immer bei
+2:245/567 durchfÅhren, wobei alle Mails fÅr 9:.. und 987:.. mit Åbertragen werden 
+sollen. Tragen Sie dazu bei /Edit/Boxen/Edit/Point Folgendes ein:
 
 AKAs:              9:111/222.15 987:1/15
 Pakete mitsenden:  9:111/222 987:1/0
@@ -920,7 +920,7 @@ Dateiinhalt angezeigt.
 ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
 
 Zwischen dem FidoNet und dem Usenet/Internet bestehen zahlreiche Verbindungen
-Åber Gateways. Wie in Kapitel 1.3 von XPOINT.DOC beschrieben ist, werden
+Åber Gateways. Wie in Kapitel 1.3 von XPOINT.TXT beschrieben ist, werden
 die Useradressen der Nachrichten beim öbergang am Gateway in ein fÅr das
 jeweilige Netz vertrÑgliches Format umgewandelt. Bei Gateways zwischen
 FidoNet und Internet/Usenet (also Netzen mit sogenannter "Domainadressierung")
@@ -949,7 +949,7 @@ sie als EmpfÑnger.
 
 Wenn Sie mit CrossPoint arbeiten, mÅssen Sie sich um das Umwandeln von
 "From"- in "To"-Zeile nicht kÅmmern. Die Absenderadresse wird beim Einlesen
-der Nachricht aus der ersten Textzeile Åbernommen, soda· Sie es innerhalb
+der Nachricht aus der ersten Textzeile Åbernommen, so da· Sie es innerhalb
 von XP immer nur mit einer einzeiligen, vollstÑndigen Adresse in folgendem
 Format zu tun haben:
 
@@ -975,7 +975,7 @@ Es sind drei Eingaben erforderlich:
 
 --2 ˛ Das Eingangsverzeichnis, Åber das eingehende Nachrichtenpakete an XP
 Åbergeben werden. XP liest alle gepackten oder ungepackten Pakete aus dem
-angegebenen Verzeichnis ein und lîscht anschlie·end den gesamten Verzeichinhalt.
+angegebenen Verzeichnis ein und lîscht anschlie·end den gesamten Verzeichnisinhalt.
 Voraussetzung fÅr das Einlesen gepackter Pakete ist, da· Sie bei Edit/Point
 den korrekten Entpacker eingetragen haben.
 
@@ -1018,21 +1018,25 @@ Node/Pointliste aktiviert" oder "eine oder mehrere Nodeliste und/oder Pointliste
 aktiviert". Der erste von beiden ist der Grundzustand. Um CrossPoint in den
 zweiten Zustand zu ÅberfÅhren, mÅssen Sie sich zunÑchst bei Ihrem Bossnode
 eine aktuelle Nodeliste besorgen und diese im Programm einbinden.
+>>|
+Meistens kînnen Sie die aktuelle Åber NODELIST oder NODELIST.ZIP requesten
+(s. Kapitel 3.3).
+<<|
 
 WÑhlen Sie dazu unter /Fido/Nodelisten/Verwalten den Schalter "Neu" und
 geben Sie den Name der Datei an, oder wÑhlen ihn aus der Dateiliste. Falls
 die Datei gepackt ist, versucht CrossPoint zunÑchst, sie zu entpacken. Dazu
-mu· der passende Entpacker Åber einen DOS-Pfad erreichbar und bei /Config/Extern/Entpacker
-eingetragen sein. Als NÑchstes kopiert CrossPoint die Datei in das Verzeichnis
-FIDO unterhalb des XP-Verzeichnisses und trÑgt sie in die Nodelisten-öbersicht
-ein. FÅr diese und andere Nodelisten-Operationen sollte immer genÅgend freier
-Festplattenplatz vorhanden sein - meist mu· XP eine temporÑre Kopie der
-Nodeliste anlegen. Faustregel: Es sollte mindestens das Doppelte der Nodelistengrî·e an
-freiem Platz vorhanden sein.
+mu· der passende Entpacker (zumeist ARC) Åber einen DOS-Pfad erreichbar und bei 
+/Config/Extern/Entpacker eingetragen sein. Als NÑchstes kopiert CrossPoint die 
+Datei in das Verzeichnis FIDO unterhalb des XP-Verzeichnisses und trÑgt sie in 
+die Nodelisten-öbersicht ein. FÅr diese und andere Nodelisten-Operationen sollte 
+immer genÅgend freier Festplattenplatz vorhanden sein - meist mu· XP eine temporÑre 
+Kopie der Nodeliste anlegen. Faustregel: Es sollte mindestens das Doppelte der 
+Nodelistengrî·e an freiem Platz vorhanden sein.
 
 Wenn die Operation erfolgreich war und es sich bei der eingebundenen Liste
 um die Haupt-FidoNet-Nodeliste handelt, besitzen Sie ein Verzeichnis sÑmtlicher
-Fido-Nodes weltweit - das sind z.Zt. ca. 35.000 -, die Sie nach Name oder
+Fido-Nodes weltweit - das sind z.Zt. ca. 20.000 -, die Sie nach Name oder
 Nodenummer abfragen kînnen.
 
 
@@ -1098,7 +1102,7 @@ sie ein.
 
 --2 - automatisch per Timing-Liste: Falls Ihnen das Einbinden und Neuindizieren
 nach dem Netzanruf zu lange dauert, und Ihr Rechner eh nachts mit dem Abarbeiten
-einer Timing-Liste (s. XPOINT.DOC, Kap. 5.3) beschÑftigt ist, empfiehlt sich
+einer Timing-Liste (s. XPOINT.TXT, Kap. 5.3) beschÑftigt ist, empfiehlt sich
 die Update-Bearbeitung durch durch die Timing-Liste. Verwenden Sie dazu den
 Timing-Befehl "NODEDIFFS", und deaktivieren Sie den oben erwÑhnten Schalter
 "Updates automatisch einbinden".
@@ -1108,7 +1112,7 @@ Timing-Befehl "NODEDIFFS", und deaktivieren Sie den oben erwÑhnten Schalter
 
 ˛ Abfrage von Nodedaten
 
-öber den MenÅpunkt /Fido/Nodelist/abfragen oder mit der Taste <Alt N>
+öber den MenÅpunkt /Fido/Nodelist/Abfragen oder mit der Taste <Alt N>
 kînnen Sie jederzeit auf alle Informationen aus allen eingebundenen Node- und
 Pointlisten zugreifen. Angenommen, Sie mîchten wissen, unter welcher Adresse
 Sie Herrn MÅller aus Fidodorf (den Vornamen haben Sie leider vergessen) im
@@ -1173,7 +1177,7 @@ gesucht werden.
 Wenn Sie zu den Computer-Anwendern mit chronischem Plattenplatzmangel gehîren,
 werden Sie mit der Nodelisteneinbindung vermutlich nicht vîllig glÅcklich
 sein, weil die Nodeliste einfach furchtbar gro· ist - die aktuelle Nodelist
-belegt zusammen mit Indexdateien Åber 4MB. Und eigentlich hatten Sie auch gar
+belegt zusammen mit Indexdateien Åber 2MB. Und eigentlich hatten Sie auch gar
 nicht vor, Nachrichten an Ming Chyi in HsinChu zu schreiben. Daher bietet
 CrossPoint unter /Fido/Nodelist/EinschrÑnken die Mîglichkeit, die FidoNet-Nodelist
 auf bestimmte Zonen und/oder Regionen einzuschrÑnken, z.B. auf alle europÑischen
@@ -1275,9 +1279,9 @@ mit dem Request verschickt.
 ˛ magische Namen
 
 Viele Fido-Boxen bieten neben "echten" Dateinamen auch sogenannte "Magic Names"
-an, die bestellt werden kînnen. Dies wird gerne genutzt, um die jeweils neueste
-Version eines Programms bereitzustellen - so erhalten Sie z.B. bei 2:2454/97
-unter dem Namen "XP" immer die jeweils aktuelle CrossPoint-Version.
+oder kurz "Magics" and an, die bestellt werden kînnen. Dies wird gerne genutzt, 
+um die jeweils neueste Version eines Programms bereitzustellen - so erhalten Sie 
+z.B. bei 2:2454/97 unter dem Namen "XP" immer die jeweils aktuelle CrossPoint-Version.
 
 
 ˛ Request-Anforderung bearbeiten/lîschen
@@ -1296,14 +1300,14 @@ Dateien angekommen sind. Wenn eine oder mehrere Dateien fehlen, bleibt die
 Request-Anforderung bestehen und kann - wie oben beschrieben - Åber /Fido/Crash
 erneut gestartet, bearbeitet oder gelîscht werden. Solche zurÅckgestellten
 File Requests sind bei /Fido/Crash mit einem kleinen "r" markiert. Sie werden
-bei automatischen Requests Åber den Timinglisten-Befehl CRASHS (s. XPOINT.DOC,
+bei automatischen Requests Åber den Timinglisten-Befehl CRASHS (s. XPOINT.TXT,
 Kap. 5.3) ignoriert, soda· bei unbeaufsichtigten Betrieb nicht immer wieder
 die gleiche Datei angefordert wird.
 
-Achtung: Wenn Sie Dateien Åber "Magic Names" bestellen, kann XP nach dem
+Achtung: Wenn Sie Dateien Åber Magics bestellen, kann XP nach dem
 Anruf nicht ÅberprÅfen, ob die gewÅnschten Dateien tatsÑchlich angekommen sind,
 weil der Magic Name nicht mit dem Dateiname Åbereinstimmt. Die einzige halbwegs
-zuverlÑssige Methode, um Magic Names von normalen Dateien zu unterscheiden, ist
+zuverlÑssige Methode, um Magics von normalen Dateien zu unterscheiden, ist
 das Fehlen einer Dateierweiterung. Daher stellt XP Requests ohne Dateierweiterung
 grundsÑtzlich nicht zurÅck.
 
@@ -1368,7 +1372,7 @@ an Ihren Bossnode gerichtet sind, *mÅssen* daher per Crash abgeschickt werden;
 andernfalls wird CrossPoint sie vor dem Absenden gnadenlos vernichten.
 
 Das interessante an Request-Mails ist die Tatsache, da· Sie sie als ganz
-normale AutoVersand-Nachrichten (s. XPOINT.DOC, Kap. 5.10) verschicken lassen
+normale AutoVersand-Nachrichten (s. XPOINT.TXT, Kap. 5.10) verschicken lassen
 kînnen; vergessen Sie dabei nicht den Server "*CRASH*" fÅr Requests, die nicht
 an Ihren Bossnode gehen (siehe nachfolgendes Kapitel: "Crash Mails per
 Autoversamd"). FÅr die öbergabe von Pa·wîrtern gilt das gleiche wie fÅr "normale"
@@ -1406,8 +1410,8 @@ die folgenden Aufbau hat:
 ;A FidoNet Nodelist -- Day number 000 : 00000
 ;
 Zone,2,Europe
-Host,243,
-,97,Klystron-Box,Koblenz,Max_Raabe,49-261-55739,9600,XX
+Host,2452,
+,125,Last_Outpost,Herzogenrath,Stefan_Savelsberg,49-2406-93132,9600,XA,CM,V34,X75,U,ENC,CDP
 
 In der Zeile "Host,.." mÅssen Sie die Netznummer der Box eintragen und in der
 darauffolgenden Zeile die Nodenummer der Box, den Namen, Standort, Name des
@@ -1431,9 +1435,14 @@ internationalen Vorwahlen mu· nur der LÑndercode, gefolgt von einem "-"
 und optional einer Vorwahl, angegeben werden. Genaueres zur Tarifzonen-Eingabe
 finden Sie in der Online-Hilfe.
 
-Damit Sie nicht alle Vorwahlen aus der Telekom-Preisinformation abtippen mÅssen,
-werden z.Zt. CrossPoint-GebÅhrendateien fÅr alle Vorwahlbereich erstellt, die
-bis spÑtestens Mitte '96 in der CrossPoint-Supportbox verfÅgbar sein werden.
+>>|
+Durch die Liberalisierung des Telefonmarktes ist eine GebÅhrenerfassung durch
+CrossPoint alleine sehr schwierig. Es gibt aber ein Tool namens XPCbC von Jan
+Neumann, das die Auswahl anderer Anbieter vor jedem Netcall zulÑsst und auch
+sehr komfortabel Statistiken erstellt. Fragen Sie in den Support-Echos nach
+und erkundigen Sie sich gleichzeitig nach einer Vorwahldatei fÅr ihren Bereich,
+um die Tarifzone korrekt ermitteln zu kînnen.
+<<|
 
 
 
@@ -1446,7 +1455,7 @@ und kînnen mit /Fido/Crash einzeln gestartet werden. Vergi·t man aber, die
 Anrufe auszufÅhren, bleiben die Anforderungen liegen - das ist vor allem dann
 Ñrgerlich, wenn man eine eilige Nachrichten als Crash absenden wollte. Au·erdem
 ist es recht unpraktisch, jeden Anruf einzeln starten zu mÅssen. Daher gibt es
-eigene Timinglisten-Befehle (nÑheres zu Timing-Listen: s. XPOINT.DOC, Kap. 5.3),
+eigene Timinglisten-Befehle (nÑheres zu Timing-Listen: s. XPOINT.TXT, Kap. 5.3),
 um alle noch ausstehenden Crash Mails oder File Requests abzusenden.
 
 
@@ -1487,7 +1496,7 @@ Nodeadresse noch das SchlÅsselwort "ZEIT" anhÑngen, also z.B.
 
 Crash Mails lassen sich nicht nur automatisch verschicken, sondern auch automatisch
 erzeugen. Legen Sie dazu einfach eine AutoVersand-Nachricht an und tragen Sie
-als Serverbox "*CRASH*" ein. NÑheres zu AutoVersand-Nachrichten ist in XPOINT.DOC,
+als Serverbox "*CRASH*" ein. NÑheres zu AutoVersand-Nachrichten ist in XPOINT.TXT,
 Kap. 5.10 beschrieben.
 
 Auf Ñhnlichem Wege kînnen Sie auch File Requests bei beliebigen Boxen automatisch
@@ -1507,7 +1516,7 @@ Wenn Sie sich fÅr die technischen Grundlagen des FidoNets interessieren,
 sollten Sie sich die sogenannten FTS- und FSC-Texte (FidoNet Technical Standards
 / FidoNet Standard Committee) besorgen. CrossPoint berÅcksichtigt z.Zt. die
 folgenden Standards:
-
+::Und?
     FTS-0001:  das grundlegende Fido-Nachrichtenformat (PKT-Dateien)
     FTS-0004:  der Aufbau von Echomail
     FTS-0005:  Aufbau von Nodelist und NodeDiffs
@@ -1615,6 +1624,7 @@ Arten sind:
 
 Bei EMSI-Verbindungen trÑgt XP-FM auch die "Compatibility Codes" des angerufenen
 Systems ein. Diese Codes signalisieren dem Anrufer, welche öbertragungsverfahren
+::Aktuell?
 unterstÅtzt werden. Eine genaue Beschreibung der Codes finden Sie in FSC-0056.
 
 
@@ -1638,8 +1648,8 @@ Programmierer, die XP-FM fÅr eigene Zwecke einsetzen mîchten. Es sei ausdrÅcklic
 darauf hingewiesen, da· XP-FM im Gegensatz zu NDIFF *KEINE* freie Software
 ist, sondern Teil des Shareware-Paketes CrossPoint. Wer XP-FM fÅr andere Zwecke
 einsetzen mîchte, mu· registrierter XP-User sein. Wer XP-FM in eigenen Programmen
-weitergeben mîchte, mu· sich zwecks Lizenzvereinbarung mit mir in Verbindung
-setzen.
+weitergeben mîchte, mu· sich zwecks Lizenzvereinbarung mit Peter Mandrella in 
+Verbindung setzen.
 
 
 Beim Aufruf von XP-FM wird als einziger Parameter der Name einer Kommando- und
@@ -1673,7 +1683,7 @@ Folgende Angaben sind optional:
                   Namen XPFM-l.RES vorhanden sein, wobei "l" fÅr das
                   Sprachkennzeichen steht, z.B. XPFM-D.RES.
     Colors        Farben fÅr Text, öbertragungsdaten und Systemname;
-                  Format wie in XPOINT.COL (s. XPOINT.DOC, Kap. 7.2)
+                  Format wie in XPOINT.COL (s. XPOINT.TXT, Kap. 7.2)
     LogFile       Name des Logfiles, an das Logdaten angehÑngt wer-
                   den sollen
     LogNew        Name des Logfiles, das Åberschrieben werden soll
@@ -1770,7 +1780,7 @@ A.  Dateien im CrossPoint/Fido-Paket
   XPFM-D.RES     deutsche Sprachdatei fÅr Fido-Mailer
   ZFIDO.EXE      ZCONNECT <-> Fido-PKT - Konvertierer
   NDIFF.EXE      NodeDiff-Bearbeiter
-  FIDO.DOC       Fido-Dokumentation
+  FIDO.TXT       Fido-Dokumentation
   FIDO.PC        Productcode-Liste fÅr Mailer
   YUP2PKT.EXE    Yuppie->PKT-Konvertierer fÅr /X/Import/Yuppie
 
@@ -1780,6 +1790,7 @@ A.  Dateien im CrossPoint/Fido-Paket
 B.  XP-ToolNET
 ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
 
+::Existiert es noch, Anfrage lÑuft
 Das XP-ToolNet besteht aus mehreren File Echos, Åber die CrossPoint-Tools
 und -Updates im FidoNet verbreitet werden. Falls Sie Fido-Sysop sind und am
 XP-ToolNET teilnehmen mîchten, oder falls Sie eine XP-ToolNET-Box in Ihrer
@@ -1794,12 +1805,16 @@ C.  Glossar
 ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
 
 Der folgende Text beschreibt die am hÑufigsten im FidoNet verwendeten
-AbkÅrzungen und Begriffe. Er stammt von Andy Kreuzer @ 2:2480/60 und wird
-regelmÑ·ig im Echo FIDOGUIDE.GER verîffentlicht.
+AbkÅrzungen und Begriffe. Er stammt von Andy Kreuzer @ 2:2480/60, zusÑtzliche
+>>|
+UnterstÅtzung zum Fido-Netz allgemein finden Sie im Echo FIDOGUIDE.GER.
+<<|
 
 
 [rev.19, apr 95]
-
+>>|
+[correctection by Christian Faulhammer, mar 2000]
+<<|
 
 *C
 --
@@ -1967,7 +1982,7 @@ beherrscht.
 
 FAQ
 ---
-Frequently asked questions. Fragen, die immer wieder gestellt werden, werden
+frequently asked questions. Fragen, die immer wieder gestellt werden, werden
 mit den Antworten in einem Text zusammengefasst. Dieser wird dann regelmaessig
 veroeffentlicht.
 
@@ -1975,13 +1990,15 @@ veroeffentlicht.
 Fido-ABC
 --------
 Infos ueber's FidoNet (nicht nur) fuer Einsteiger. Ist als FIDO-ABC.ARJ bei
-2:2480/60 und vielen anderen Systemen per Download / FileRequest erhaeltlich.
-[Anmerkung: Auch in der XP-Supportbox erhÑltlich. - P.M.]
+>>|
+vielen Systemen per Download/FileRequest oder auf Anfrage auch in FIDOGUIDE.GER
+erhaeltlich.
+<<|
 
 
 FidoNet
 -------
-ein Zusammenschluss von derzeit etwa 30.000 Nodes, die untereinander meist in
+ein Zusammenschluss von derzeit etwa 20.000 Nodes, die untereinander meist in
 hierarchischer Topologie Netmail und Echomail austauschen und dadurch weltweit
 Kontakte und Informationsaustausch zwischen Usern ermoeglichen. Die Zahl der
 ueber FidoNet erreichbaren User ist nicht einmal annaeherungsweise schaetzbar,
@@ -2000,7 +2017,7 @@ Fileecho
 --------
 Eine (abstrakte) 'Area', in der anstelle von Echomail Files verteilt werden.
 Steht mit Fido nur insofern in Zusammenhang, als dass viele Fido-Nodes auch
-Fileechos anbieten. Im Gegensatz zu Echoareas werden Files in Fileechos i.d.r.
+Fileechos anbieten. Im Gegensatz zu Echoareas werden Files in Fileechos i.d.R.
 nur von bestimmten Stellen aus eingespeist. (vom Konzept her also eher an
 Groupmail angelehnt).
 
@@ -2024,6 +2041,10 @@ FOSSIL
 Fido/Opus/SEAdog Standard Interface Layer; Low-Level Treiber fuer die serielle
 Schnittstelle. Wird von nahezu allen (DOS-)Mailern benoetigt. Gaengige Fossils:
 X00.SYS und BNU.COM
+>>|
+Aber auch ein Begriff fÅr ein Programm, das einer Software (z.B. CrossPoint)
+die ISDN-Karte als Modem vorspielt. Beliebt und bekannt ist vor allem cFos.
+<<|
 
 
 FSC
@@ -2093,7 +2114,7 @@ oder auch 'in my honest opinion' (meiner ehrlichen meinung nach).
 
 Kludgelines (Kludges)
 ----------------------
-Optionale Steuer-/Verarbeitungsanweisungen im Messagetext, die noetig wurden,
+optionale Steuer-/Verarbeitungsanweisungen im Messagetext, die noetig wurden,
 um neue Moeglichkeiten nutzen zu koennen, die im urspruenglichen Format einer
 Message nicht beruecksichtigt waren. (z.B. FMPT, TOPT, CHRS, ...)
 
@@ -2115,12 +2136,12 @@ Mailer
 ein Mailer ist ein Programm, das es dem Benutzer ermoeglicht, mit anderen
 Mailern automatisch Verbindung aufzunehmen und Nachrichten und/oder Files
 auszutauschen. Gaengige Mailer sind zur Zeit: Binkley Term, FrontDoor,
-D'Bridge, Trapdoor, Yuppie.
+Xenia, T-Mail.
 
 
 Mailprocessor (Echomailprocessor, Tosser)
 -----------------------------------------
-Sortiert die neu angekommenen Messages in die Messagebase (tossen) und
+sortiert die neu angekommenen Messages in die Messagebase (tossen) und
 bereitet die eigenen Messages zum Versenden vor (scannen). Derzeit verbreitete
 Tosser: Scantoss, Tosscan, Imail, Fmail, Fastecho, u.v.a.
 
@@ -2134,7 +2155,7 @@ deshalb zwecklos.
 
 Moderator
 ---------
-Achtet darauf, dass in 'seiner' Echomail-Area die Rules eingehalten werden.
+achtet darauf, dass in 'seiner' Echomail-Area die Rules eingehalten werden.
 Bei Verstoessen kann er den Ausschluss des betreffenden Nodes von der Area
 veranlassen.
 
@@ -2151,7 +2172,7 @@ Network (Net)
 ein Network ist ein Zusammenschluss von Nodes. Gemaess Policy sollte ein
 Network einen bestimmten geographischen Bereich abdecken. Jedes Network
 besteht aus einem Host, Hubs je nach Bedarf, und einer unterschiedlichen
-Anzahl von Nodes. In Deutschland gibt es derzeit (Maerz 95) etwa 30 Networks.
+Anzahl von Nodes. In Deutschland gibt es derzeit (Maerz 2000) etwa 30 Networks.
 
 
 Node
@@ -2179,6 +2200,9 @@ Mai  93 ~24.400
 Jan. 94 ~29.000
 Nov. 94 ~35.000
 Mar. 95 ~38.000
+>>|
+Mar. 2000 ~20.000
+<<|
 
 
 Offline Reader (QWK-Reader)
@@ -2190,7 +2214,7 @@ Vorteil: Installations eines Points ist nicht noetig.
 Nachteil: laengere Onlinezeit, Messages sind evtl. unvollstaendig
 
 
-Off Topic
+Off Topic (ot)
 ---------
 eine Nachricht oder ein Teil einer Nachricht, die vom Thema her nicht in die
 Area passt, in die sie geschrieben wurde.
@@ -2243,7 +2267,7 @@ erlauben, was nicht bei allen Systemen der Fall ist.
 
 ROTFL (ROFL)
 ------------
-Abk. fuer 'rolling on the floor, laughing'. (Sich vor Lachen auf dem Bodem
+Abk. fuer 'rolling on the floor, laughing' (Sich vor Lachen auf dem Bodem
 waelzen). Gibt's in den verschiedensten Abwandlungen, bis hin zu 'ROTFBMHOTWALMAO'
 und aehnlichem.
 
@@ -2377,7 +2401,7 @@ nur die Originaladressen verwendet werden.
 Es gab in den vergangenen Monaten einige Hinweise darauf, da· die RÅckkonvertierung
 der Adressen in einzelnen FÑllen nicht funktioniert. Es ist nicht klar, ob dabei
 mit einer alten, fehlerhaften XP-Version gearbeitet wurde, oder ob tatsÑchlich
-noch ein Bug vorhanden ist. Falls dieser Fehler auftritt, brÑuchte ich die
+noch ein Bug vorhanden ist. Falls dieser Fehler auftritt, brÑuchten wir die
 folgenden Informationen, um die Ursache herauszufinden:
 
 - vom Gateway-Betreiber die PKT-Datei, die die fehlerhafte Netmail
@@ -2473,7 +2497,7 @@ o  Parameter /ips: und /user:
 2.14  (18.06.93)
 o  ZFIDO Åberspringt fehlerhafte Nachrichten in defekten PKT-Dateien
 o  FOSSIL-Treiber-UnterstÅtzung fÅr Mailer (s. /Config/Modem/...)
-   [provisorisch: Aktivierung durch Datei "FOSSIL"; s. UPDATE.DOC]
+   [provisorisch: Aktivierung durch Datei "FOSSIL"; s. UPDATE.TXT]
 o  Verarbeitung erweiterter Nachrichtenpakete (Buchstabe statt Zif-
    fer als letztes Zeichen)
 o  Dateien mit gleichem Namen werden nicht mehr Åberschrieben, son-
@@ -2492,7 +2516,7 @@ o  Areafix-Befehle "Unlinked" und "Help"
 o  Diffs werden auch beim manuellen Einbinden automatisch entpackt
 o  Farbeinstellung fÅr Mailer
 o  /Fido/Crash zeigt zusÑtzliche Informationen an
-o  4D-Pointlisten (s. /Fido/Optionen und FIDO.DOC)
+o  4D-Pointlisten (s. /Fido/Optionen und FIDO.TXT)
 o  /Edit/Boxen/Edit/Point/Erw.Paketdateinamen
 o  optionale Domainangabe bei Edit/Boxen/Edit/Namen
 o  Crash-Boxkonfiguration (s. Kap. 3.2)
@@ -2638,7 +2662,7 @@ o  Wartezeit fÅr empfangene Dateien von 1,5 auf 3 Minuten verdop-
 +  bei der Anzeige der Ergebnisse des Nodelistbrowsers 
    (Fido/Nodelisten/Durchsuchen) kann man Åber "Info" die Nodeinfo
    (entspricht <Alt N>) anzeigen lassen
-+  Suchwîrter fÅr Filelisten kînnen jetzt auch als ganze Wîrter,
-   nicht nur als Teil betrachtet werden
++  Suchwîrter fÅr Filelisten werden jetzt auch als ganze Wîrter,
+   nicht nur als Teil betrachtet
 <<|
 

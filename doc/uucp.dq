@@ -487,7 +487,7 @@ jedem UUCP-System untersttzt. Die Qualit„t der einzelnen Implementationen
 ist sehr unterschiedlich. Schlechte uucicos bertragen die Daten in sehr
 kleinen Bl”cken von z.B. 64 Bytes; dies ist in etwa mit dem XModem-Protokoll
 vergleichbar. Gute Implementationen verarbeiten auch groáe Bl”cke von z.B. 1024
-Bytes und erreichen damit Geschwindigkeiten, die ungef„hr denen von ZModem
+Bytes und erreichen damit Geschwindigkeiten, die ungef„hr denen von Zmodem
 entsprechen.
 
 --8         CrossPoint untersttzt alle m”glichen UUCP-g-Blockgr”áen von 32
@@ -536,13 +536,11 @@ schwieriger gestalten als die Suche nach einer Z-Netz- oder Fido-Mailbox -
 Ballungsgebiet wohnen, werden Sie meist in die Regional- oder Fernzone
 ausweichen mssen.
 
-Die beiliegende Datei UUCP_PUB.DOC beinhaltet eine Liste von ”ffentlichen
-UUCP-Systemen in Deutschland und deren Ansprechpartnern. Beachten Sie, daá
-st„ndig neue Systeme dazukommen und alte wegfallen; auch Telefonnummern haben
-in der DFš-Szene die Eigenschaft, sich gelegentlich zu „ndern. Es ist also
-durchaus m”glich, daá viele Eintr„ge in der Liste bereits veraltet sind.
-Eine aktuelle Version der Liste wird gelegentlich in der Gruppe de.etc.lists
-ver”ffentlicht.
+>>|
+UUCP sind in der heutigen Zeit eher rar ges„t und sicher findet man solch
+einen Zugang nur bei den Mitgliedern des IN e.V., Infos gibt es unter 
+http://www.individual.net
+<<|
 
 
 þ Postmeister und Wurzeln
@@ -1352,9 +1350,7 @@ mit einpackt!
 
 Dies ist nicht etwa eine anonyme Gruppe von UUCP-Gesch„digten, sondern vielmehr
 die M”glichkeit, bei einem UUCP-System Dateien zu bestellen oder abzuliefern,
-ohne dort als "Point" eingetragen zu sein. Eine Liste mit deutschen Anonymous-UUCP-Sites
-finden Sie am Ende von UUCP_PUB.DOC; eine aktuelle Version der Liste wird
-regelm„áig in de.admin.archiv ver”ffentlicht.
+ohne dort als "Point" eingetragen zu sein. 
 
 Ein Anonymous-UUCP-System muá genau wie jeder andere Fileserver zun„chst bei
 /Edit/Boxen erfaát werden. Loginname und Paáwort sind blicherweise "nuucp".
@@ -1387,9 +1383,6 @@ Hilfstext sind dann alle weiteren Befehle erl„utert. Mit dem Befehl INDEX
 erhalten Sie eine Liste der vorhandenen Dateien. Achtung: Diese Liste kann
 mehrere hundert KByte groá sein! Nachrichten an Mail-Server k”nnen auch
 mehrere Befehle enthalten, jeweils ein Befehl pro Zeile.
-
-Eine Liste einiger deutscher Mail Server und deren Befehlssyntax finden Sie
-in der beiliegenden Datei UUCP_PUB.DOC.
 
 
 
@@ -1748,7 +1741,6 @@ freeze.exe     Packer/Entpacker
 gzip.exe       GNU ZIP - Packer/Entpacker
 copying        Copyright-Informationen zu gzip
 tar.exe        Unix-kompatibles Archivprogramm
-uucp_pub.doc   Liste von ”ffentlichen, deutschen UUCP-Systemen
 uucp.scr       Standard-UUCP-Loginscript
 uucp-fl*.exe   UUCP-Dateilisten-Konvertierer
 uucp-fl*.pas   Quelltexte der Dateilisten-Konvertierer
@@ -1998,5 +1990,6 @@ UUZ 3.11e  (Bugfix vom 22.12.96)
 *  Kurznamen jetzt auch hier benutzbar:
      Sendefenster Zusatz/PM-Antworten_An
      Edit/Boxen/RFC/UUCP/Vertreter
++  FQDN auch bei UUCP-Boxen m”glich
 <<|
 
