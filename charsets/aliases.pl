@@ -18,48 +18,68 @@
 $name=undef;
 @alias=();
 
-print "(* \$ID: \$ *)\n";
-print "(* generated from IANA charset list -- do not edit *)\n\n";
+use LWP::UserAgent;
+use HTTP::Request;
 
-open ZC,"<aliases.zc"; while(<ZC>) { 
-  /(.*[^ ]) *(.*[^ ])/; $zc{$2}=$1; } close ZC; 
+$data = undef;
+$started = undef;
 
-print "function MimeCharsetCanonicalName(Name: String): String;\nbegin\n";
-print "  Name:=UpperCase(Name);\n";
+print STDERR "Connecting www.iana.org:80...\n";
 
-while(<>) {
-  chomp;
-  if(/^Name: *([^ ]*)/) {
-    print "\n";
-    printf "  if name=%-63s else\n",
-      sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'" 
-      foreach @alias;
+$UserAgent = LWP::UserAgent->new;
+$Request = HTTP::Request->new('GET', 'http://www.iana.org/assignments/character-sets');
+$UserAgent->request($Request,sub {
 
-    $db($name)=\@alias;
-    
-    $name=$1;
-    @alias=($name);
-  } elsif(/^Alias: *([^ ]+) \(.*preferred MIME.*\)/) {
-    $name=$1;
-    push @alias,$name;
-  } elsif(/^Alias: *([^ ]+)/) {
-    push @alias,$1 unless lc($1) eq "none";
-  } elsif(/^REFERENCES[ \t]*$/) {
-    print "\n  result:=name;\nend;\n";
+  unless ($started){
+    print STDERR "Retrieving data...\n";
+    open STDOUT,">aliases.inc";
+    print "(* \$Id$ *)\n";
+    print "(* generated from IANA charset list -- do not edit *)\n\n";
+    print "function MimeCharsetCanonicalName(Name: String): String;\nbegin\n";
+    print "  Name:=UpperCase(Name);";
+    $started=1;
   }
- 
-  s/\(\*/( */g; 
-  s/\*\)/* )/g;
-  1 while s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e;
+
+  $data.=shift;
+  while($data=~s/^([^\r\n]*)\r?\n//s) {
+    $_=$1;
   
-  if(/^ *$/) {
-    print "\n";
-  } else {
-    printf "\n(* %-74s *)",$_ unless /^ *$/;
+    if (/^Name: *([^ ]*)/) 
+    {
+      printf STDERR $name.(($#alias>0)?(" (".($#alias)." aliases)\n"):"\n");
+      print "\n";
+      foreach (@alias) {
+        printf "  if name=%-63s else\n",
+          sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'";
+      };
+  
+      $name=$1;
+      @alias=($name);
+    } elsif(/^Alias: *([^ ]+) \(.*preferred MIME.*\)/) {
+      $name=$1;
+      push @alias,$name;
+    } elsif(/^Alias: *([^ ]+)/) {
+      push @alias,$1 unless lc($1) eq "none";
+    } elsif(/^REFERENCES[ \t]*$/) {
+      print "\n  result:=name;\nend;\n";
+    }
+   
+    s/\(\*/( */g; 
+    s/\*\)/* )/g;
+    1 while s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e;
+    
+    if(/^ *$/) {
+      print "\n";
+    } else {
+      printf "\n(* %-74s *)",$_ unless /^ *$/;
+    }
   }
-}
+} );
 
 # $Log$
+# Revision 1.3  2001/09/10 18:48:18  cl
+# - retrieve charset list directly from iana web server
+#
 # Revision 1.2  2001/09/08 14:55:27  cl
 # - More uniform naming of MIME functions/types/consts
 # - MimeCharsetCanonicalName now does also canonicalize case
@@ -71,5 +91,4 @@ while(<>) {
 # - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
 # - utftools.pas: Optimized Charset recoders
 # - utftools.pas: added charset aliases from IANA database
-#
 #
