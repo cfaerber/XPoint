@@ -371,6 +371,7 @@ var tmp,fn   : string;
     hds      : longint;
     o        : boolean;
     Filenr   : byte;
+    dBpos    : longint;
 
   procedure SortFor(fld:integer);
   var i,j : integer;
@@ -429,11 +430,13 @@ var tmp,fn   : string;
   end;
 
 begin
-  if not testmem(30000,false) then exit;
+  dbpos:=dbrecno(mbase);
   if markanz=0 then
     decmark:=false
   else begin
+    pushhp(11202);
     decmark:=ReadJNesc(GetReps(2403,strs(markanz)),true,brk);  { '%s markierte Nachrichten decodieren' }
+    pophp;
     if brk then exit;
     if decmark and (markanz>maxuumark) then begin
       rfehler1(2404,strs(maxuumark));   { 'Es k”nnen maximal %s markierte Einzelteile decodiert werden.' }
@@ -521,6 +524,7 @@ begin
   _era(tmp);
   freemem(outbuf,obufsize);
   freemem(inbuf,ibufsize);
+  dbgo(mbase,dbpos);
 end;
 
 
@@ -546,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/01/19 13:46:09  mk
+  - Big 3.40 udpate part III
+
   Revision 1.31  2001/10/20 17:26:42  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

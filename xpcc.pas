@@ -30,7 +30,8 @@ uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 50;
-      ccte_nobrett : boolean = false;
+      ccte_nobrett    : boolean = false;
+      _UserAutoCreate : boolean = false;  { User ohne RÅckfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
       ccp   = ^ccl;
@@ -181,11 +182,12 @@ begin
           cc_testempf:=true;
           if p=0 then begin
             MakeBrett(mid(s,2),n,DefaultBox,ntBoxNetztyp(DefaultBox),false);
-            if not modibrett then
-            begin
-              dbseek(bbase,bibrett,'A'+UpperCase(s));
-              if dbfound then dbDelete(bbase);
-              cc_testempf:=false;
+            if not _UserAutoCreate then
+              if not modiuser(false) then
+              begin
+                dbseek(ubase,uiname,ustr(s));
+                if dbfound then dbDelete(ubase);
+                cc_testempf:=false;
               end;
             end
           else begin
@@ -239,6 +241,7 @@ var x,y   : Integer;
     s     : string;
 begin
   h:=minmax(cc_anz+2,6,screenlines-13);
+  _UserAutoCreate:=false;
   diabox(62,h+4,getres(2201),x,y);    { 'Kopien an:' }
   inc(x); inc(y);
   openmask(x,x+59,y+1,y+h,false);
@@ -405,6 +408,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/01/19 13:46:09  mk
+  - Big 3.40 udpate part III
+
   Revision 1.30  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

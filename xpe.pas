@@ -36,7 +36,12 @@ uses
 
 const EditXkeyfunc : EdTProc = nil;
 
-procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+Var   EditNachricht : boolean;
+      SendNachricht : boolean;
+      Skip4parken   : boolean;
+
+procedure TED(const fn:string; reedit:boolean; keeplines:byte;
+              ukonv,nachricht,senden:boolean);
 procedure SigEdit(datei:string);
 procedure EditText;
 procedure Notepad;
@@ -61,6 +66,7 @@ uses  xp1,xpsendmessage;
 
 const
       doautosave: boolean = false;
+      inited        : boolean = false;
 
 var
       edbetreff : string;
@@ -96,11 +102,26 @@ end;
 function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 var brk : boolean;
 begin
-  case ReadIt(length(getres2(2500,2))+9,getres2(2500,1),getres2(2500,2),1,brk) of
-    0 : EditQuitFunc:=keyesc;
-    1 : EditQuitFunc:=_jn_[1];
-    2 : EditQuitFunc:=_jn_[2];
-  end;
+  if EditNachricht and SendNachricht then
+  begin
+     {skip4parken:=false; }
+     case ReadIt(length(getres2(2500,4))+11,getres2(2500,3),getres2(2500,4),1,brk) of
+       0,4 : EditQuitFunc:=keyesc;
+       1   : EditQuitFunc:=_jn_[1];
+       2   : EditQuitFunc:=_jn_[2];
+       3   : begin
+               skip4parken:=true;
+               EditQuitFunc:=_jn_[1];
+               end;
+       end;
+     end
+   else begin
+     case ReadIt(length(getres2(2500,2))+9,iifs(EditNachricht,getres2(2500,3),getres2(2500,1)),getres2(2500,2),1,brk) of
+       0,3 : EditQuitFunc:=keyesc;
+       1   : EditQuitFunc:=_jn_[1];
+       2   : EditQuitFunc:=_jn_[2];
+       end;
+     end;
   freeres;
 end;
 
@@ -179,7 +200,7 @@ begin
     maddint(3,2,getres2(2508,2),rechter_rand,5,2,60,77);  { 'rechter Rand  ' }
     mhnr(8063);
     ec:=absatzendezeichen;
-    maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
+    maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Absatzendezeichen' }
     mappsel(false,'úù'#20'ùþù®ù'#17'ù ');
     maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrcken' }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bl”cke' }
@@ -249,7 +270,8 @@ begin
 end;
 
 
-procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte;
+              ukonv,nachricht,senden:boolean);
 const inited : boolean = false;
       EditFusszeile = false;
 var   ed     : ECB;
@@ -266,9 +288,11 @@ begin
     EdSetConfig(EdCfg);
     end;
   EditSetLangData;
+  EditNachricht:=Nachricht;
+  SendNachricht:=Senden;
   mt:=m2t;
   if keeplines>0 then begin
-    mb:=dphback; dphback:=col.coledithead;
+    mb:=dphback; if Nachricht then dphback:=col.coledithead;
     m2t:=true;
     Disp_DT;
     end
@@ -292,6 +316,13 @@ begin
   m2t:=mt;
   holen(p);
   EdExit(ed);
+  if Nachricht and Skip4parken then
+  begin
+    if deutsch then
+      Pushkey('p')
+    else
+      Pushkey('a');
+  end;
 end;
 
 
@@ -340,7 +371,7 @@ var ok   : boolean;
     t    : text;
 begin
   repeat
-    editfile(datei,false,false,1,false);    { in XP1 }
+    editfile(datei,false,false,false,1,false);    { in XP1 }
     if _filesize(datei)<=MaxSigsize then
       ok:=true
     else begin
@@ -386,9 +417,9 @@ begin
 {$ENDIF }
       then s:=sendpath+s;
     editname:=s;
-    EditFile(s,false,false,0,false);
+    EditFile(s,false,false,false,0,false);
     if useclip then WriteClipfile(s);
-    end;
+  end;
   pophp;
 end;
 
@@ -402,7 +433,7 @@ begin
   ma:=lastattr;
   savecursor;
   pushhp(54);
-  EditFile(s,false,false,0,false);
+  EditFile(s,false,false,false,0,false);
   pophp;
   restcursor;
   attrtxt(ma);
@@ -472,6 +503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2002/01/19 13:46:10  mk
+  - Big 3.40 udpate part III
+
   Revision 1.31  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

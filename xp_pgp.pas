@@ -771,6 +771,7 @@ var user : string;
     ok   : boolean;
     nt   : byte;
 begin
+  _UserAutoCreate:=false;
   case aktdispmode of
     1..4   : if dbEOF(ubase) or dbBOF(ubase) then
                user:=''
@@ -1162,6 +1163,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2002/01/19 13:46:09  mk
+  - Big 3.40 udpate part III
+
   Revision 1.61  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 

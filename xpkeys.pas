@@ -142,6 +142,7 @@ var s      : string;
     fn,fn2 : string;
     brk    : boolean;
     auto   : boolean;
+    ende   : boolean;
 begin
   with fkeys[nr]^[nn] do begin
     s:=prog;
@@ -169,7 +170,7 @@ begin
       else if copy(s,2,4)='EDIT' then begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
-          editfile(fn,false,false,0,false)
+          EditFile(fn,false,false,false,0,false)
         else
           rfehler(23)    { '*EDIT: Datei nicht vorhanden!' }
         end
@@ -248,6 +249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2002/01/19 13:46:10  mk
+  - Big 3.40 udpate part III
+
   Revision 1.21  2002/01/09 02:17:00  mk
   MY: - Ctrl-W toggles word wrap in message lister
 
