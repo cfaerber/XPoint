@@ -801,9 +801,10 @@ procedure NewLine;              { Enter - Absatz einfÅgen }
 var ap,ap2   : absatzp;
     wp       : integer;
     copysize : integer;
+    delsp    : integer;
     spaces   : integer;
-    quotes   : integer;  { 10.02.2000 robo - Anzahl Quotezeichen }
-    quotec   : string;   { 10.02.2000 robo - Quotezeichen }
+    quotes   : integer;  { Anzahl Quotezeichen }
+    quotec   : string;   { Quotezeichen }
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -820,10 +821,17 @@ begin
       wp:=workpos;
       copysize:=max(0,ap^.size-wp);
       spaces:=0;
-      { 10.02.2000 robo - Quote-Reflow }
-      if config.QuoteReflow xor kb_shift
-        then quotec:=GetQuote(ap)
-        else quotec:='';
+      delsp:=0;
+      { Quote-Reflow }
+      if config.QuoteReflow xor kb_shift then begin
+        quotec:=GetQuote(ap);
+        if quotec<>'' then begin
+          delsp:=wp;
+          while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
+          dec(delsp,wp);
+        end;
+      end
+      else quotec:='';
       quotes:=length(quotec);
       if wp>=ap^.size
         then quotes:=0; { kein Reflow bei Zeilenende }
@@ -844,17 +852,15 @@ begin
         ap2^.next:=ap^.next;
         ap^.next:=ap2;
         ap2^.prev:=ap;
-        blockabssplit(ap,ap,ap2,wp,spaces+quotes);
+        blockabssplit(ap,ap,ap2,wp,spaces+quotes-delsp);
         ap:=AbsDelete(ap,wp,copysize,false,false);
         su(ap);
         su(ap2);
         KorrBlockScrolled(false);
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
-        { 14.02.2000 robo - Quote-Reflow }
-         moveworkpos(spaces,actabs);          { JG: 27.04.00 Cursor an Zeilenanfang }
+        moveworkpos(spaces,actabs);           { JG: 27.04.00 Cursor an Zeilenanfang }
         {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
-        { /robo }
         modified:=true;
         aufbau:=true;
         end;
@@ -884,6 +890,7 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
+        if (addspaces=0) and (ap^.size>0) then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu gro·' }
@@ -2281,6 +2288,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/31 22:05:04  mk
+  RB:- Quotereflow verfeinert
+
   Revision 1.26  2000/07/21 21:17:42  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
