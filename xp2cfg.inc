@@ -800,12 +800,6 @@ begin
 { writeln(t,'EditVollbild=',jnf(editvollbild)); }
   writeln(t,'ExtEditor=',exteditor);
   writeln(t,'AutoCPgDn=',jnf(autocpgd));
-  writeln(t,'GifViewer=',viewers^[1].prog);
-  writeln(t,'LbmViewer=',viewers^[2].prog);
-  writeln(t,'PcxViewer=',viewers^[3].prog);
-  for i:=defviewers+1 to maxviewers do
-    if viewers^[i].ext<>'' then
-      writeln(t,'Viewer',i-defviewers,'=',viewers^[i].ext,',',viewers^[i].prog);
   writeln(t,'StdHaltezeit=',stdhaltezeit);
   writeln(t,'StdUserHaltezeit=',stduhaltezeit);
   writeln(t,'QuoteBreak=',quotebreak);
@@ -1544,7 +1538,7 @@ begin
           getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin) or
-          getx(su,  'delviewtmp',delviewtmp)) 
+          getx(su,  'delviewtmp',delviewtmp))
         then
           tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
@@ -1667,6 +1661,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/05/02 12:36:48  sv
+  - Ueberbleibsel der alten Viewerkonfiguration beseitigt
+    Viewer werden nicht mehr in die Config-Datei geschrieben
+
   Revision 1.39  2000/05/02 04:18:15  jg
   - XPoint.cfg Schalter DelViewTmp
     macht dasselbe wie die Umgebungsvariable DELVTMP

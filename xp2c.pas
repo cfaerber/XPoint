@@ -44,7 +44,6 @@ procedure path_config;
 procedure ArcOptions;
 procedure DruckConfig;
 procedure pmcOptions;
-procedure ViewerOptions;
 procedure FidoOptions;
 procedure NetOptions;
 procedure SizeOptions;
@@ -1111,30 +1110,6 @@ begin
   menurestart:=brk;
 end;
 
-procedure ViewerOptions;
-var x,y : byte;
-    brk : boolean;
-    i   : integer;
-begin
-  dialog(58,2*maxviewers+1,getres(266),x,y);   { 'Anzeige-Programme fr ...' }
-  maddstring(3,2,'GIF       ',viewers^[1].prog,40,40,''); mhnr(820);
-  mappsel(false,'VPIC.EXE $FILEùPICEM.EXE $FILE');
-  maddstring(3,4,'IFF/ILMB  ',viewers^[2].prog,40,40,'');
-  mappsel(false,'VPIC.EXE $FILE');
-  maddstring(3,6,'PCX       ',viewers^[3].prog,40,40,'');
-  mappsel(false,'VPIC.EXE $FILEùPICEM.EXE $FILE');
-  for i:=defviewers+1 to maxviewers do begin
-    maddstring(3,i*2,'',viewers^[i].ext,3,3,'>'+range('A','Z')+'_-$!~0123456789');
-    mhnr(820);
-    maddstring(14,i*2,'',viewers^[i].prog,40,40,''); mhnr(820);
-    end;
-  readmask(brk);
-  if not brk and mmodified then
-    GlobalModified;
-  enddialog;
-  menurestart:=brk;
-end;
-
 
 procedure setvorwahl(var s:string);
 begin
@@ -1387,6 +1362,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/05/02 12:36:49  sv
+  - Ueberbleibsel der alten Viewerkonfiguration beseitigt
+    Viewer werden nicht mehr in die Config-Datei geschrieben
+
   Revision 1.25  2000/05/01 10:25:21  sv
   - Schalter in 'News nicht archivieren lassen' umbenannt
     und nach C/O/N verschoben
