@@ -28,11 +28,6 @@ begin
   ActAbs:=dl^[e^.scy].absatz;
 end;
 
-function vActAbs:absatzp;
-begin
-  vActAbs:=dl^[e^.scy].absatz;
-end;
-
 procedure GetPosition(var p:position);
 begin
   with e^ do begin
@@ -44,12 +39,11 @@ end;
 function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
          forward;
 
-procedure TruncAbs;
+procedure TruncAbs(ap:absatzp);
 var
   p: word;
-  ap: absatzp; { .robo }
 begin
-  with vActAbs^ do
+  with ap^ do
   begin
     p:=size;
     { KH+MK 01/00 Signaturtrenner nicht erfassen }
@@ -60,7 +54,6 @@ begin
         dec(p);
       if p<size then
       begin
-        ap:=ActAbs; { .robo }
         if AbsDelete(ap,p,size-p,false,true)<>nil then; { .robo }
         aufbau:=true;
       end;
@@ -128,7 +121,7 @@ begin
           if from<pos.offset then begin
             pos.offset:=max(from,pos.offset-len);
             if (i=1) or (i=2) then BlockAbsCut:=true;
-            if from>=oldabs^.size-len then
+            if from>{=}oldabs^.size{-len} then
               case i of
                 1,3..7 : if assigned(nxt) then begin
                            pos.absatz:=nxt; pos.offset:=0; end;
@@ -156,7 +149,7 @@ end;
 
 { Korrektur nach Aufspalten eines Absatzes }
 
-procedure BlockAbsSplit(old,new1,new2:absatzp; split:integer);
+procedure BlockAbsSplit(old,new1,new2:absatzp; split,insert_:integer);
 var i : integer;
 begin
   with e^ do
@@ -168,7 +161,8 @@ begin
           else begin
             pos.absatz:=new2;
             dec(pos.offset,split);
-            end;
+            inc(pos.offset,insert_);
+          end;
 end;
 
 
@@ -210,7 +204,7 @@ procedure SeiteOben(korrblock:boolean);
 var i  : integer;
     ap : absatzp;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do
     if (dl^[1].zeile=1) and (dl^[1].absatz^.prev=nil) then
       scy:=1
@@ -232,7 +226,7 @@ end;
 procedure SeiteUnten;
 var i : integer;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do begin
     i:=gl;
     while dl^[i].absatz=nil do dec(i);
@@ -248,7 +242,7 @@ function ScrollUp:boolean;
 begin
   with e^ do
     if assigned(dl^[2].absatz) then begin
-      if scy=1 then TruncAbs;
+      if scy=1 then TruncAbs(ActAbs);
       firstpar:=dl^[2].absatz;
       firstline:=dl^[2].zeile;
       inc(startline);
@@ -265,7 +259,7 @@ var ap : pointer;
 begin
   ScrollDown:=true;
   with e^ do begin
-    if scy=gl then TruncAbs;
+    if scy=gl then TruncAbs(ActAbs);
     if dl^[1].zeile>1 then begin
       dec(firstline); dec(startline);
       aufbau:=true;
@@ -288,7 +282,7 @@ end;
 function ZeileOben:boolean;
 begin
   ZeileOben:=true;
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do
     if scy>1 then dec(scy)
     else ZeileOben:=ScrollDown;
@@ -298,8 +292,8 @@ function ZeileUnten:boolean;
 begin
   ZeileUnten:=true;
   with e^ do begin
-    if Advance(ActAbs,dl^[scy].offset,rrand)>=vActAbs^.size then
-      TruncAbs;    { bei Absatzwechsel Leerzeichen am Ende abschneiden }
+    if Advance(ActAbs,dl^[scy].offset,rrand)>=ActAbs^.size then
+      TruncAbs(ActAbs);    { bei Absatzwechsel Leerzeichen am Ende abschneiden }
     if scy=gl then ZeileUnten:=ScrollUp
     else
       if assigned(dl^[scy+1].absatz) then inc(scy)
@@ -337,7 +331,7 @@ var ll,ladd : integer;
 begin
   with e^ do begin
     ll:=LineLength;
-    ladd:=iif(dl^[scy].offset+ll>=vActAbs^.size,1,0);
+    ladd:=iif(dl^[scy].offset+ll>=ActAbs^.size,1,0);
     if scx+xoffset<iif(overline,maxabslen+1,LineLength+ladd) then begin
       if scx<w then inc(scx)
       else begin
@@ -351,19 +345,19 @@ end;
 procedure CondZeichenRechts;
 begin
   with e^ do
-    ZeichenRechts(not vActAbs^.umbruch or
+    ZeichenRechts(not ActAbs^.umbruch or
                   (dl^[scy].zeile=alines(ActAbs)));
 end;
 
 procedure Seitenanfang;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   e^.scy:=1;
 end;
 
 procedure Seitenende;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do
     while (scy<gl) and assigned(dl^[scy+1].absatz) do
       inc(scy);
@@ -371,7 +365,7 @@ end;
 
 procedure Textanfang;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do begin
     firstpar:=root;
     firstline:=1;
@@ -388,7 +382,7 @@ end;
 procedure Textende;
 var ap,p : absatzp;
 begin
-  TruncAbs;
+  TruncAbs(ActAbs);
   with e^ do
     if (dl^[gl].absatz=nil) or
        ((dl^[gl].absatz^.next=nil) and (dl^[gl].zeile=alines(dl^[gl].absatz)))
@@ -423,7 +417,7 @@ var wo  : integer;
 begin
   with e^ do begin
     wo:=WorkPos;
-    abs:=vActAbs;
+    abs:=ActAbs;
     IsWhitespace:=(wo>=abs^.size) or (abs^.cont[wo] in trennzeich);
     end;
 end;
@@ -448,7 +442,7 @@ procedure WortRechts;
   function RStop:boolean;
   begin
     with e^ do
-      RStop:=(vActAbs^.next=nil) and (workpos>=vActAbs^.size);
+      RStop:=(ActAbs^.next=nil) and (workpos>=ActAbs^.size);
   end;
 begin
   while not IsWhitespace and not RStop do begin
@@ -468,7 +462,7 @@ var p0      : position;
     touch2  : boolean;   { zweite Blockmarkierung gesehen    }
 begin
   if p.absatz=nil then exit;
-  TruncAbs;
+  TruncAbs(ActAbs);
   NoDisplay;
   with e^ do begin
     GetPosition(p0);
@@ -596,9 +590,9 @@ var ap    : absatzp;
 begin
   with e^ do begin
     wpos.absatz:=ActAbs;
-    wpos.offset:=min(workpos,vActAbs^.size);
+    wpos.offset:=min(workpos,ActAbs^.size);
     if blockinverse or blockhidden or not InBlock then
-      vActAbs^.umbruch:=true
+      ActAbs^.umbruch:=true
     else begin
       fpmet:=false;
       ap:=block[1].pos.absatz;
@@ -754,13 +748,13 @@ procedure moveworkpos(newwp:integer; wpa:absatzp);
 begin
   NoDisplay;
   if assigned(wpa) then begin
-    if ActAbs<>wpa then TruncAbs;
+    if ActAbs<>wpa then TruncAbs(ActAbs);
     while (ActAbs<>wpa) and ZeichenLinks do
       if aufbau then Display;
     end;
   with e^ do
     if (scx+xoffset>linelength) and (linelength>1) then begin
-      while (dl^[scy].offset>=vActAbs^.size) and ZeileOben do NoDisplay;
+      while (dl^[scy].offset>=ActAbs^.size) and ZeileOben do NoDisplay;
       ZeilenEnde;
       end;
   while workpos>newwp do
@@ -846,7 +840,7 @@ begin
         ap2^.next:=ap^.next;
         ap^.next:=ap2;
         ap2^.prev:=ap;
-        blockabssplit(ap,ap,ap2,wp);
+        blockabssplit(ap,ap,ap2,wp,spaces+quotes);
         ap:=AbsDelete(ap,wp,copysize,false,false);
         su(ap);
         su(ap2);
@@ -895,13 +889,10 @@ begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
             quotes:=length(quotec1);
-            if (quotes>0) and (length(quotec2)>quotes) then
-              while (length(quotec2)>quotes)
-              and (lastchar(quotec2)=' ') do dellast(quotec2);
-            if (quotes>0) and (quotec1=quotec2) then begin
+            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
               ap2:=ap^.next;
-              wpa:=AbsDelete(ap2,0,quotes,false,true);
-              dec(ss,quotes);
+              wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
+              dec(ss,length(quotec2));
             end;
           end;
           { /robo }
@@ -910,7 +901,7 @@ begin
           copyflags(ap,apnew);
           ap2:=ap^.next;
           blockabsinsert(ap,apnew,maxint,maxint);
-          blockabsinsert(ap2,apnew,0,ap^.size);
+          blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
           if assigned(ap^.prev) then begin
             apnew^.prev:=ap^.prev;
             ap^.prev^.next:=apnew;
@@ -955,14 +946,14 @@ procedure WortRechtsLoeschen;   { Wort rechts l”schen }
 var wp,wpnew,size : integer;
     wpa,ap        : absatzp; { .robo }
 begin
-  size:=vActAbs^.size;
+  size:=ActAbs^.size;
   if workpos>=size then
     DELchar
   else with e^ do begin
     wpa:=ActAbs;
     wp:=workpos;
     wpnew:=workpos;
-    while (wpnew<size) and not (vActAbs^.cont[wpnew] in TrennZeich) do
+    while (wpnew<size) and not (ActAbs^.cont[wpnew] in TrennZeich) do
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
@@ -979,14 +970,14 @@ var wp,wpnew{,size }: word;
 begin
   if workpos=0 then
     BackSpace
-  else if workpos>vActAbs^.size then
+  else if workpos>ActAbs^.size then
     zeilenende
   else with e^ do begin
     wpa:=ActAbs;
-{    size:=vActAbs^.size;    MK 06.02.00 Zuweisung unn”tig  }
+{    size:=ActAbs^.size;    MK 06.02.00 Zuweisung unn”tig  }
     wp:=workpos;
     wpnew:=workpos;
-    while (wpnew>0) and not (vActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
+    while (wpnew>0) and not (ActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
     if wpnew=workpos then dec(wpnew);
     ap:=ActAbs; { .robo }
@@ -1001,20 +992,20 @@ var apd,ap : absatzp; { .robo }
     bc     : boolean;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
-    if (vActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
+    if (ActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
       ap:=ActAbs; { .robo }
       AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
     end
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz l”schen }
-      absatzwechsel(ActAbs,vActAbs^.next,false);
-      bc:=BlockAbsCut(ActAbs,nil,0,vActAbs^.size);
-      if assigned(vActAbs^.prev) then
-        vActAbs^.prev^.next:=vActAbs^.next;
-      vActAbs^.next^.prev:=vActAbs^.prev;
+      absatzwechsel(ActAbs,ActAbs^.next,false);
+      bc:=BlockAbsCut(ActAbs,nil,0,ActAbs^.size);
+      if assigned(ActAbs^.prev) then
+        ActAbs^.prev^.next:=ActAbs^.next;
+      ActAbs^.next^.prev:=ActAbs^.prev;
       if memavail-asize-16>minfree then begin    { Dellisten-Eintrag }
         apd:=AllocAbsatz(0);
         copyflags(ActAbs,apd);
-        vActAbs^.next:=apd; vActAbs^.prev:=nil;  { leeren Absatz anh„ngen }
+        ActAbs^.next:=apd; ActAbs^.prev:=nil;  { leeren Absatz anh„ngen }
         apd^.prev:=ActAbs;
         AddDelEntry(ActAbs);
       end
@@ -1038,7 +1029,7 @@ var
   wp,size : integer;
   ap      : absatzp; { .robo }
 begin
-  size:=vActAbs^.size;
+  size:=ActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
     ap:=ActAbs; { .robo }
@@ -1198,8 +1189,8 @@ procedure CaseWechseln;
 begin
   with e^ do
     if blockhidden or blockinverse then
-      if workpos<vActAbs^.size then begin
-        FlipCase(vActAbs^.cont[workpos],1);
+      if workpos<ActAbs^.size then begin
+        FlipCase(ActAbs^.cont[workpos],1);
         modified:=true;
         aufbau:=true;
         end
@@ -1234,19 +1225,19 @@ procedure WortMarkieren;
 var wp,sp,sp0 : integer;
   function IsTrennz(p:integer):boolean;
   begin
-    IsTrennz:=(vActAbs^.cont[p] in trennzeich);
+    IsTrennz:=(ActAbs^.cont[p] in trennzeich);
   end;
 begin
   with e^ do begin
     wp:=workpos; sp:=-1;
-    if (wp<vActAbs^.size) and not IsTrennz(wp) then
+    if (wp<ActAbs^.size) and not IsTrennz(wp) then
       sp:=wp
-    else if (wp>0) and (wp<=vActAbs^.size) and not IsTrennz(wp-1) then
+    else if (wp>0) and (wp<=ActAbs^.size) and not IsTrennz(wp-1) then
       sp:=wp-1;
     if sp>-1 then begin
       sp0:=sp;
       while (sp0>0) and not IsTrennz(sp0-1) do dec(sp0);
-      while (sp<vActAbs^.size) and not IsTrennz(sp) do inc(sp);
+      while (sp<ActAbs^.size) and not IsTrennz(sp) do inc(sp);
       SetBlock(1,ActAbs,sp0,2);
       KorrBlockScrolled(true);
       SetBlock(2,ActAbs,sp,2);
@@ -1269,10 +1260,10 @@ begin
   with e^ do begin
     SetBlock(1,ActAbs,0,2);
     KorrBlockScrolled(true);
-    if vActAbs^.next=nil then
-      SetBlock(2,ActAbs,vActAbs^.size,2)
+    if ActAbs^.next=nil then
+      SetBlock(2,ActAbs,ActAbs^.size,2)
     else
-      SetBlock(2,vActAbs^.next,0,2);
+      SetBlock(2,ActAbs^.next,0,2);
     KorrBlockScrolled(false);
     end;
 end;
@@ -1308,7 +1299,7 @@ begin
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu groá }
-    else if memtest(ss) 
+    else if memtest(ss)
     and assigned(blk) { .robo }
     then begin
       ap2:=AllocAbsatz(ss);
@@ -1360,7 +1351,7 @@ begin
         ap3^.next:=ap^.next;      { Text herstellen          }
         ap3^.next^.prev:=ap3;
       end;
-      blockabssplit(ap,ap2,ap3,wp);
+      blockabssplit(ap,ap2,ap3,wp,0);
       absatzwechsel(ap,ap2,false);
       endpos.absatz:=ap3;
       endpos.offset:=apn^.size;
@@ -1809,6 +1800,194 @@ begin
 end;
 
 
+{ Block reformatieren }
+
+procedure BlockFormatieren; { by Robo }
+var ap,ap2    : absatzp;
+    apnew     : absatzp;
+    fp        : integer;
+    copysize  : integer;
+    ss,size1  : word;
+    addspaces : integer;
+    spaces    : integer;
+    quotes    : integer;
+    quotec1   : string;
+    quotec2   : string;
+    saveumbr  : boolean;
+
+  procedure su(ap:absatzp);    { Umbruch einstellen }
+  begin
+    with e^ do
+      if ap^.size<rrand-10 then
+        if na_umbruch=0 then ap^.umbruch:=false
+        else if na_umbruch=2 then ap^.umbruch:=true;
+  end;
+
+begin
+  with e^ do begin
+    if blockinverse or blockhidden then begin
+      { kein Block markiert oder Blockmarkierung ausgeschaltet:
+        ActAbs bis Leerzeile formatieren }
+      SetBlock(1,ActAbs,0,2);
+      ap:=ActAbs;
+      if config.QuoteReflow and assigned(ap^.next)
+        then quotec1:=getquote(ap^.next)
+        else quotec1:='';
+      while assigned(ap^.next) and (ap^.next^.size>length(quotec1)) do begin
+        ap:=ap^.next;
+        if config.QuoteReflow and assigned(ap^.next)
+          then quotec1:=getquote(ap^.next)
+          else quotec1:='';
+      end;
+      SetBlock(2,ap,ap^.size,3);
+    end
+    else begin
+      { Blockmarkierung auf Absatzanfang und Absatzende ausdehnen }
+      with block[1].pos do
+        if offset>0 then offset:=0;
+      bskorr(1,1);
+      with block[2].pos do
+        if offset=0
+          then SetBlock(2,absatz^.prev,absatz^.prev^.size,block[2].disp)
+          else
+            if offset<absatz^.size then offset:=absatz^.size;
+      bskorr(2,3);
+    end;
+    { Cursor auf Blockanfang setzen }
+    gotopos(block[1].pos,0);
+    ap:=ActAbs;
+    saveumbr:=ap^.umbruch;
+    ap^.umbruch:=true;
+    repeat
+      fp:=advance(ap,0,rrand);
+      if fp<ap^.size then begin  { Absatz umbrechen }
+        spaces:=0;
+        if config.QuoteReflow
+          then quotec1:=GetQuote(ap)
+          else quotec1:='';
+        quotes:=length(quotec1);
+        if quotes>rrand div 2 then begin
+          quotec1:=rtrim(quotec1);
+          quotes:=length(quotec1);
+          if quotes>rrand div 2 then quotes:=0;
+        end;
+        if config.autoindent and (quotes=0) then begin
+          while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
+            inc(spaces);
+          if spaces>rrand div 2 then spaces:=0;
+        end;
+        if (fp<=quotes) or (fp<=spaces) then begin { Absatz kann nicht umgebrochen werden }
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
+          errsound;
+          break;
+        end;
+        copysize:=max(0,ap^.size-fp);
+        if memtest(ap^.size)
+        and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
+        then begin
+          if spaces>0 then
+            fillchar(ap2^.cont,spaces,' ')
+          else if quotes>0 then
+            fastmove(quotec1[1],ap2^.cont[0],quotes);
+          if assigned(ap^.next) then
+            ap^.next^.prev:=ap2;
+          ap2^.next:=ap^.next;
+          ap^.next:=ap2;
+          ap2^.prev:=ap;
+          blockabssplit(ap,ap,ap2,fp,spaces+quotes);
+          ap:=AbsDelete(ap,fp,copysize,false,false);
+          su(ap);
+          su(ap2);
+          KorrBlockScrolled(false);
+          TruncAbs(ap);
+          ap:=ap2;
+        end
+        else begin
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
+          errsound;
+          break;
+        end;
+      end
+      else
+      if assigned(ap^.next)
+      and (ap<>block[2].pos.absatz)
+      then begin  { Abs„tze ggf. zusammenfgen }
+        addspaces:=1;
+        ss:=ap^.size + ap^.next^.size + addspaces;
+        if ss>maxabslen then
+          error(2)    { 'Absatz zu groá' }
+        else if memtest(ss) then begin
+          spaces:=0;
+          if config.QuoteReflow then begin
+            quotec1:=getquote(ap);
+            quotec2:=getquote(ap^.next);
+            quotes:=length(quotec1);
+          end
+          else begin
+            quotec1:='';
+            quotec2:='';
+            quotes:=0;
+          end;
+          if config.autoindent and (quotes=0) and (length(quotec2)=0) then
+          begin
+            while (spaces<ap^.next^.size) and (ap^.next^.cont[spaces]=' ') do
+              inc(spaces);
+            if spaces>rrand div 2 then spaces:=0;
+          end;
+          TruncAbs(ap);
+          TruncAbs(ap^.next);
+          if (ap^.size>length(quotec1))
+          and (ap^.next^.size>length(quotec2))  { Leerzeile belassen }
+          and (trim(quotec1)=trim(quotec2))  { nur bei ident. QuoteCh zusammenf. }
+          then begin
+            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
+              ap2:=ap^.next;
+              AbsDelete(ap2,0,length(quotec2),false,true);
+              dec(ss,length(quotec2));
+            end
+            else if spaces>0 then begin
+              ap2:=ap^.next;
+              AbsDelete(ap2,0,spaces,false,true);
+              dec(ss,spaces);
+            end;
+            apnew:=AllocAbsatz(ss);
+            apnew^.umbruch:=true;
+            ap2:=ap^.next;
+            blockabsinsert(ap,apnew,maxint,maxint);
+            blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
+            if assigned(ap^.prev) then begin
+              apnew^.prev:=ap^.prev;
+              ap^.prev^.next:=apnew;
+            end;
+            if assigned(ap2^.next) then begin
+              apnew^.next:=ap2^.next;
+              ap2^.next^.prev:=apnew;
+            end;
+            size1:=ap^.size;
+            FastMove(ap^.cont,apnew^.cont,size1);
+            fillchar(apnew^.cont[size1],addspaces,32);
+            Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
+            absatzwechsel(ap,apnew,false);
+            FreeAbsatz(ap);
+            FreeAbsatz(ap2);
+            KorrBlockScrolled(true);
+            ap:=apnew;
+          end
+          else ap:=ap^.next;
+        end
+        else begin
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
+          errsound;
+          break;
+        end;
+      end
+      else ap:=ap^.next;
+    until ap=block[2].pos.absatz^.next;
+    modified:=true;
+    aufbau:=true;
+  end;
+end;
+
 { ---------------------------------------------- Suchfunktionen }
 
 procedure Suchen(again,ersetzen:boolean);
@@ -1845,7 +2024,7 @@ begin
     brk:=false; repall:=false;
     count:=0;
     repeat
-      sofs:=min(workpos+1,vActAbs^.size-dl^[scy].offset);
+      sofs:=min(workpos+1,ActAbs^.size-dl^[scy].offset);
       ap:=ActAbs;
       repeat
         spos:=SeekStr(ap^.cont[sofs],ap^.size-sofs,stxt,igcase);
@@ -2096,6 +2275,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.1  2000/04/06 07:50:12  mk
+  - Bloecke formatieren im Editor uebernommen
+
   Revision 1.10  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
 

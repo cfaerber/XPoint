@@ -163,19 +163,16 @@ var   Defaults : edp;
 
 { ------------------------------------------------ externe Routinen }
 
-{$IFDEF ver32}
-function SeekStr(var data; len:word; var s:string; igcase:boolean):integer; begin end;
-function FindUmbruch(var data; zlen:integer):integer; begin end;
-{$ELSE}
-
 function SeekStr(var data; len:word;
-                 var s:string; igcase:boolean):integer; assembler;
+                 var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
+
   { -1 = nicht gefunden, sonst Position }
 asm
         jmp    @start
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
                db    'å','ç','é','è','ê','í','í','ì','ô'
   @start:
+{$IFDEF BP }
          push  ds
          lds   si,data
          push  si     { robo }
@@ -234,16 +231,78 @@ asm
   @sende:
          pop   ds
 end;
+{$ELSE }
+         mov    esi,data
+         push   esi     { robo }
+         mov    edi,s
+         mov    ecx,len
+         mov    al,[edi]              { ax:=length(s) - < 127! }
+         cbw
+         inc   ecx
+         sub   ecx,eax
+         jbe   @nfound
+         mov   dh,igcase
+
+  @sblp1:
+         xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
+         mov   dl,[edi]                { Key-LÑnge }
+  @sblp2:
+         mov   al,[esi+ebx]
+         or    dh,dh                   { ignore case (gro·wandeln) ? }
+         jz    @noupper
+         cmp   al,'a'
+         jb    @noupper
+         cmp   al,'z'
+         ja    @umtest
+         and   al,0dfh
+         jmp   @noupper                { kein Sonderzeichen }
+  @umtest:
+         cmp   al,128
+         jb    @noupper
+         cmp   al,148
+         ja    @noupper
+         push  ebx
+         mov   ebx,offset @uppertab-128
+         segcs
+         xlat
+         pop   ebx
+  @noupper:
+         cmp   al,[edi+ebx+1]
+         jnz   @nextb
+         inc   ebx
+         dec   dl
+         jz    @found
+         jmp   @sblp2
+  @nextb:
+         inc   esi
+         loop  @sblp1
+
+  @nfound:
+         pop   esi     { robo }
+         mov   eax,-1
+         jmp   @sende
+  @found:
+         mov   eax,esi
+         pop   esi
+         sub   eax,esi
+  @sende:
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
+{$ENDIF }
 
 
-function FindUmbruch(var data; zlen:integer):integer; assembler;
+function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi, edi}
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
+{$IFDEF BP }
             push  ds
             lds   si,data
             mov   bx,zlen
 
-  @floop:      
+  @floop:
             mov   al,[si+bx]
             cmp   al,' '               { ' ' -> unbedingter Umbruch }
             jz    @ufound
@@ -269,12 +328,12 @@ asm
             jbe   @ufound
             jmp   @fnext
 
-  @testslash:  
+  @testslash:
             cmp   bx,1
             ja    @testslash2
             mov   bx,0
             jmp   @ufound
-  @testslash2: 
+  @testslash2:
             cmp   al,'/'               { '/' -> Umbruch, falls kein }
             jnz   @fnext               {        Trennzeichen vorausgeht }
             cmp   byte ptr [di+bx-1],' '
@@ -285,14 +344,62 @@ asm
   @fnext:
             dec   bx
             jnz   @floop
-  @ufound:     
+  @ufound:
             mov   ax,bx
             pop ds
-end;
+{$ELSE }
+            mov   esi,data
+            movzx ebx,zlen
+  @floop:
+            mov   al,[esi+ebx]
+            cmp   al,' '               { ' ' -> unbedingter Umbruch }
+            jz    @ufound
 
-{ /robo }  
-  
-{$ENDIF}
+            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
+            jnz   @testslash           {        Zeichen folgt: }
+            mov   al,[esi+ebx+1]
+            cmp   al,'0'               { '0'..'9' }
+            jb    @fnext
+            cmp   al,'9'
+            jbe   @ufound
+            cmp   al,'A'               { 'A'..'Z' }
+            jb    @fnext
+            cmp   al,'Z'
+            jbe   @ufound
+            cmp   al,'a'               { 'a'..'z' }
+            jb    @fnext
+            cmp   al,'z'
+            jbe   @ufound
+            cmp   al,'Ä'               { 'Ä'..'•' }
+            jb    @fnext
+            cmp   al,'•'
+            jbe   @ufound
+            jmp   @fnext
+
+  @testslash:
+            cmp   ebx,1
+            ja    @testslash2
+            mov   ebx,0
+            jmp   @ufound
+  @testslash2:
+            cmp   al,'/'               { '/' -> Umbruch, falls kein }
+            jnz   @fnext               {        Trennzeichen vorausgeht }
+            cmp   byte ptr [edi+ebx-1],' '
+            jz    @fnext
+            cmp   byte ptr [edi+ebx-1],'-'
+            jnz   @ufound
+
+  @fnext:
+            dec   ebx
+            jnz   @floop
+  @ufound:
+            mov   eax,ebx
+{$ENDIF }
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
@@ -338,6 +445,10 @@ begin
     end;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 function EddefQuitfunc(ed:ECB):taste;
 begin
   EddefQuitfunc:=AskJN(ed,1,language^.ja);
@@ -348,12 +459,28 @@ begin
   EddefOverwrite:=AskJN(ed,2,language^.ja);
 end;
 
+function EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
+begin
+  errsound;
+  EddefFindfunc:=false;
+end;
+
+function EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
+begin
+  errsound;
+  EddefReplFunc:=false;
+end;
+
 
 procedure EddefMsgproc(txt:string; error:boolean);
 begin
   message:=txt;
   errsound;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 { 04.02.2000 robo }
 { procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
@@ -375,18 +502,6 @@ begin
     fchar:=mf;
     if brk then fn:='';
     end;
-end;
-
-function EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
-begin
-  errsound;
-  EddefFindfunc:=false;
-end;
-
-function EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-begin
-  errsound;
-  EddefReplFunc:=false;
 end;
 
 
@@ -594,7 +709,7 @@ begin
     dispose(delroot);
     delroot:=dnp;
     end;
-end;
+        end;
 
 procedure freeblock(var ap:absatzp); forward;
 
@@ -611,7 +726,7 @@ procedure FreeLastDelEntry;
   end;
 begin
   if assigned(DelRoot) then
-    freelast(delroot);
+      freelast(delroot);
 end;
 
 procedure FreeDellist;             { Liste gelîschter Blîcke freigeben }
@@ -633,11 +748,19 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 function memtest(size:longint):boolean;
 
   function memfull:boolean;
   begin
+{$IFDEF BP }
     memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
+{$ELSE }
+    memfull:=false;
+{$ENDIF }
   end;
 
 begin
@@ -649,10 +772,13 @@ begin
     if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
     memerrfl:=true;
     memtest:=false;
-  end
-  else
+  end else
     memtest:=true;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function allocabsatz(size:integer):absatzp;
 var p  : absatzp;
@@ -735,9 +861,11 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
     filemode:=mfm;
-{$IFNDEF ver32}
+{$IFDEF VP }
+    p := ptr(1);
+{$ELSE }
     p:=ptr(1,1);
-{$ENDIF}
+{$ENDIF }
     tail:=nil;
 {    endcr:=false; }
     srest:=false;
@@ -827,9 +955,11 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); reset(t,1);
     filemode:=mfm;
-{$IFNDEF ver32}
+{$IFDEF VP }
+    p := ptr(1);
+{$ELSE }
     p:=ptr(1,1);
-{$ENDIF}
+{$ENDIF }
     tail:=nil;
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
     while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
@@ -847,7 +977,7 @@ begin
         AppP;
       end;
       s:='';
-      
+
       if eof(t) then for b_read:=1 to 3 do begin
         if b_read=1 then s:='`'
         else if b_read=2 then s:='end'
@@ -859,7 +989,7 @@ begin
           AppP;
         end;
       end;
-      
+
     end;
     close(t);
     freemem(ibuf,sizeof(tbytestream));
@@ -954,7 +1084,7 @@ var ap  : pointer;
     ofs : integer;
     nxo : integer;
     ofs0,ofse : integer;
-    cr  : boolean;
+{    cr  : boolean; }
 begin
   if overwrite then MakeBak(fn,'BAK');
   assign(f,fn);
@@ -965,7 +1095,7 @@ begin
   ap:=pstart.absatz;
   ofs0:=pstart.offset;
   ofse:=maxint;
-  cr:=true;
+{  cr:=true; }
   while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
     with absatzp(ap)^ do
@@ -982,21 +1112,21 @@ begin
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
           if nxo<min(size,ofse) then
           begin
-            blockwrite(f,spc[1],3); cr:=true;
-          end else
-            cr:=false;
-            ofs:=nxo;
-          end;
-        end
-      else begin
-        blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
-        cr:=false;
-        ofs0:=0;
+            blockwrite(f,spc[1],3); { cr:=true;}
+          end; {else
+            cr:=false; }
+          ofs:=nxo;
         end;
+      end else
+      begin
+        blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
+        { cr:=false;}
+        ofs0:=0;
+      end;
     if ap=pende.absatz then ap:=nil
     else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
-      blockwrite(f,crlf[1],2); cr:=true;
+      blockwrite(f,crlf[1],2); {cr:=true; }
       end;
     end;
   if {not cr and} forcecr then
@@ -1116,7 +1246,7 @@ var  dl         : displp;
         s    : word;
         qn   : integer;
         pdiff: integer;
-    begin     
+    begin
       p0:=0;
       s:=ap^.size;
       while (p0<15) and (p0<s) and (ap^.cont[p0]<=' ') do inc(p0);
@@ -1255,7 +1385,7 @@ var  dl         : displp;
 
 
   {$I EDITOR.INC}
-  
+
   { 14.01.2000 robo }
   function PosCoord(pos:position; disp:byte):longint; forward;
   { /robo }
@@ -1302,7 +1432,7 @@ var  dl         : displp;
               setblockmark(1);
               setblockmark(2);
               tbm:=3;
-            end; 
+            end;
           end
           else begin
             if up then begin
@@ -1332,17 +1462,17 @@ var  dl         : displp;
                   tbm:=2;
                 end
                 else setblockmark(1);
-            end 
+            end
             ;
           end;
-        end;  
+        end;
       end;
     { /robo }
-    
+
     { 17.01.2000 robo - Block entmarkieren }
     procedure entmarkieren;
       begin
-        with e^ do 
+        with e^ do
          if not blockhidden then begin
            blockhidden:=true;
            aufbau:=true;
@@ -1364,19 +1494,19 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                ZeichenEinfuegen(false);
                              end;
-        editfBS           : if e^.config.persistentblocks 
+        editfBS           : if e^.config.persistentblocks
                              then BackSpace
                              else if (blockinverse or blockhidden)
                               then BackSpace
-                              else BlockLoeschen; 
-        editfDEL          : if kb_shift 
+                              else BlockLoeschen;
+        editfDEL          : if kb_shift
                              then BlockClpKopie(true)
                              else if e^.config.persistentblocks
                               then DELchar
                               else if (blockinverse or blockhidden)
                                then DELchar
-                               else BlockLoeschen; 
-        { /robo }                    
+                               else BlockLoeschen;
+        { /robo }
         { 01.02.2000 robo - Blockoperationen }
         editfNewline      : if e^.config.persistentblocks
                              then NewLine
@@ -1410,7 +1540,7 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                Paragraph;
                              end;
-        { /robo }                    
+        { /robo }
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
@@ -1440,7 +1570,7 @@ var  dl         : displp;
                               SeiteUnten;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }                    
+        { /robo }
         editfScrollUp     : Scroll_Up;
         editfScrollDown   : Scroll_Down;
         { 17.01.2000 robo - Block markieren }
@@ -1449,25 +1579,25 @@ var  dl         : displp;
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeileOben then;
                               if kb_shift then shift_markieren(true,true);
-                            end;  
+                            end;
         editfDown         : begin
                               if kb_shift then shift_markieren(false,false)
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeileUnten then;
                               if kb_shift then shift_markieren(true,false);
-                            end;  
+                            end;
         editfLeft         : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeichenLinks then;
                               if kb_shift then shift_markieren(true,true);
-                            end;  
+                            end;
         editfRight        : begin
                               if kb_shift then shift_markieren(false,false)
                               else if not e^.config.persistentblocks then entmarkieren;
                               CondZeichenRechts;
                               if kb_shift then shift_markieren(true,false);
-                            end;  
+                            end;
         editfPageTop      : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
@@ -1504,7 +1634,7 @@ var  dl         : displp;
                               WortRechts;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }                    
+        { /robo }
 
         editfLastpos      : GotoPos(lastpos,0);
         editfMark1        : SetMarker(1);
@@ -1526,10 +1656,10 @@ var  dl         : displp;
 
         { 17.01.2000 robo - shift-ins: Block einfuegen - Zweitbelegung
                             ctrl-ins: Block kopieren - Zweitbelegung   }
-        editfChangeInsert : begin 
-                              if kb_shift 
+        editfChangeInsert : begin
+                              if kb_shift
                                then if e^.config.persistentblocks
-                                then BlockClpEinfuegen 
+                                then BlockClpEinfuegen
                                 else begin
                                   if not (blockinverse or blockhidden)
                                    then BlockLoeschen;
@@ -1537,8 +1667,8 @@ var  dl         : displp;
                                   BlockEinAus;
                                 end
                                 else e^.insertmode:=not e^.insertmode;
-                            end;  
-        { /robo }                    
+                            end;
+        { /robo }
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
         editfAbsatzmarke  : SetAbsatzmarke;
         editfWrapOn       : UmbruchEin;
@@ -1559,7 +1689,7 @@ var  dl         : displp;
         editfReadBlock    : BlockEinlesen;
         { 17.01.2000 robo }
         editfReadUUeBlock : BlockUUeEinlesen;
-        { /robo }                    
+        { /robo }
         editfWriteBlock   : BlockSpeichern;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
@@ -1572,7 +1702,8 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-        { /robo }                    
+        { /robo }
+        editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
 
@@ -1653,6 +1784,7 @@ var  dl         : displp;
     if t=keysf8  then b:=EditfMarkPara    else
     if t=keysf9  then b:=EditfMarkLine    else
     if t=keysf10 then b:=EditfMarkAll     else
+    if t=^B      then b:=EditfFormatBlock else
 
     if t=keyf2   then b:=EditfSave        else
     if t=keysf2  then b:=EditfSaveQuit    else
@@ -1749,7 +1881,7 @@ var  dl         : displp;
     begin
       with e^ do begin
         nxx:=Advance(dl^[scy].absatz,dl^[scy].offset,rrand);
-        if nxx=vActAbs^.size then scx:=xx
+        if nxx=ActAbs^.size then scx:=xx
         else scx:=minmax(xx,1,nxx-dl^[scy].offset);
         end;
     end;
@@ -1767,7 +1899,7 @@ var  dl         : displp;
             end
           else if t=mausleft then begin
             lx:=xx; ly:=yy;
-            TruncAbs;
+            TruncAbs(ActAbs);
             scy:=max(1,yy-y);
             KorrScy;
             Setscx(xx);
@@ -1835,6 +1967,7 @@ begin
     trennzeich:=[#0..#31,' ','!','('..'/',':'..'?','['..'^',
                  '''','"','{'..#127,#255];
     aufbau:=true; ende:=false;
+    cursor(curon);
     tk:=0;
     repeat
       memerrfl:=false;
@@ -1881,15 +2014,25 @@ end;
 end.
 {
   $Log$
-  Revision 1.9.2.2  2000/03/25 15:28:10  mk
-  - URL-Erkennung im Lister erkennt jetzt auch
-    einen String der mit WWW. beginnt als URL an.
-  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
-    ZConnect und Sysoppoll aufgerufen
-  - PGP Bugs behoben (bis 1.10)
-  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
-  - <Ctrl Del>: Wort rechts loeschen
-  - Persistene Bloecke sind im Editor jetzt default
+  Revision 1.9.2.3  2000/04/06 07:50:12  mk
+  - Bloecke formatieren im Editor uebernommen
+
+  Revision 1.13  2000/03/17 11:16:33  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
+  Revision 1.12  2000/03/15 21:49:47  mk
+  - kleiner Bugfix fuer Editor (im letzten Patch eingebaut)
+
+  Revision 1.11  2000/03/14 15:15:35  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
+  Revision 1.10  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.9  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
