@@ -107,7 +107,8 @@ OpenXP 3.20 -> OpenXP 3.30.x
 - UUE-Dekodierung direkt aus Lister mit <U>
 - User-Men: Einstellbare Priorit„tsfarbe fr jeden User
 - Zus„tzliche Tags $RNAME2, $(RNAME2)
-
+- Untersttzung von langen Dateinamen unter Windows 9x und 2000
+- Merklich schnellere Datenbankroutinen unter anderen durch Index-Cache
 
 OpenXP 3.30.x -> OpenXP 3.70.x
 
