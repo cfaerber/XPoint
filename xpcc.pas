@@ -126,8 +126,12 @@ var p,p2 : byte;
     end;
     if not res then
     begin
-      if not hinweisGegeben then hinweis (getres (623));
-              { 'Inkompatible Netztypen - Serverbox-始derungen werden zur…kgesetzt.' }
+      if not hinweisGegeben then
+      begin
+        pushhp(8091);
+        hinweis (getres (623));  { 'Inkompatible Netztypen - Serverbox-始derungen werden zur…kgesetzt.' }
+        pophp;      
+      end;
       hinweisGegeben := true;
     end;
   end;
@@ -459,6 +463,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.11  2002/04/27 14:05:23  my
+  MY:- Eigene Hilfe-Items f〉 forcebox-Hinweise und -Fehlermeldungen
+       implementiert.
+
   Revision 1.15.2.10  2002/04/24 19:12:32  sv
   SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
             mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und

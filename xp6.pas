@@ -846,7 +846,9 @@ end;
         dbSeek (bbase, biBrett, uStr (empfaenger));
       if (not dbFound) or (not ntAdrCompatible (oldNT, iif (pm, getUserNT, getBrettNT))) then
       begin
+        pushhp(8090);
         hinweis (getres (623)); { 'Inkompatible Netztypen - Serverbox-énderungen werden zurÅckgesetzt.' }
+        pophp;
         forceBox := ''
       end;
     end;
@@ -2563,6 +2565,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.59  2002/04/27 14:05:23  my
+  MY:- Eigene Hilfe-Items fÅr forcebox-Hinweise und -Fehlermeldungen
+       implementiert.
+
   Revision 1.39.2.58  2002/04/25 22:15:20  my
   MY:- Fix: Bei BinÑrnachrichten ("i" auf User-Brett) MIME-Multipart-
        Versand im Sendefenster deaktiviert.
