@@ -67,8 +67,10 @@ implementation  {-----------------------------------------------------}
 uses
   xp2b, xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
 
-var   zaehlx,zaehly : byte;
-
+var
+  zaehlx,zaehly : byte;
+  { First start of XP2? }
+  XPFirstStart: Boolean;
 
 procedure setmenu(nr:byte; s:string);
 begin
@@ -580,7 +582,7 @@ end;
 procedure test_pfade;
 var   res  : integer;
 
-  procedure TestDir(d:dirstr);
+  procedure TestDir(d:string);
   begin
     if not IsPath(ownpath+d) then begin
       mkdir(ownpath+left(d,length(d)-1));
@@ -589,14 +591,15 @@ var   res  : integer;
       end;
   end;
 
-(*  procedure TestDir2(d:dirstr);
+  procedure TestDir2(d:string);
   begin
-    if not IsPath(d) then begin
+    if not IsPath(d) and XPFirstStart then
+    begin
       mkdir(left(d,length(d)-1));
       if ioresult<>0 then
         interr(reps(getres(203),left(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
       end;
-  end; *)
+  end;
 
   procedure SetPath(var pathp:pathptr; var oldpath:pathstr);
   begin
@@ -607,34 +610,42 @@ var   res  : integer;
 
 begin
   EditLogpath:=nil;
-(*  TestDir2(logpath);
+  TestDir2(logpath);
   TestDir2(temppath);
   TestDir2(extractpath);
-  TestDir2(sendpath); *)
+  TestDir2(sendpath);
   if logpath='' then logpath:=ownpath
   else
-    if not IsPath(logpath) then begin
+    if not IsPath(logpath) then
+    begin
+      logpath:=ownpath;
       trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
-       SetPath(EditLogpath,logpath);
-      end;
+      SetPath(EditLogpath,logpath);
+    end;
   EditTemppath:=nil;
   if temppath='' then temppath:=ownpath
   else
-    if not IsPath(temppath) then begin
+    if not IsPath(temppath) then
+    begin
+      temppath:=ownpath;
       trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
       SetPath(EditTemppath,temppath);
       end;
   EditExtpath:=nil;
   if extractpath='' then extractpath:=OwnPath
   else
-    if not IsPath(extractpath) then begin
+    if not IsPath(extractpath) then
+    begin
+      extractpath:=OwnPath;
       trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
       SetPath(EditExtpath,extractpath);
       end;
   EditSendpath:=nil;
   if sendpath='' then sendpath:=ownpath
   else
-    if not IsPath(sendpath) then begin
+    if not IsPath(sendpath) then
+    begin
+      sendpath:=ownpath;
       trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
       SetPath(EditSendpath,sendpath);
       end;
@@ -976,7 +987,7 @@ begin
     madddate(3,4,getres2(225,3),dat,false,false);   { 'Bitte bestÑtigen Sie das Datum: ' }
       mhnr(92);
     zaehler[1]:=30; zaehlx:=x+wdt-6; zaehly:=y-1;
-    m3s:=multi3;
+     m3s:=multi3;
     multi3:=ShowDateZaehler; hotkeys:=false;
     readmask(brk);
     multi3:=m3s; hotkeys:=true;
@@ -1095,6 +1106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.12  2000/12/07 13:10:04  mk
+  - Pfade nur beim ersten Start anlegen
+
   Revision 1.45.2.11  2000/12/06 11:19:00  mk
   - TestPfad2 entfernt
 

@@ -1310,7 +1310,9 @@ begin
   SetDefault;
   aaa:=''; mheader:='';
   assign(t,ownpath+CfgFile);
-  if existf(t) then begin
+  if existf(t) then
+  begin
+    XPFirstStart := false;
     settextbuf(t,buf);
     reset(t);
     { Zwischenspeichern, da Integer16 nicht als var-Parameter funktioniert }
@@ -1619,10 +1621,12 @@ begin
     EditVollbild:=false;
     if right(date,4)<'1996' then ZC_ISO:=false;
     end
-  else begin
+  else
+  begin
+    XPFirstStart := true;
     SetDefaultHeader;
     SaveConfig;
-    end;
+  end;
   ListUseXms:=SwapToXms;
   trennkomm:=minmax(trennkomm,1,3);
 
@@ -1691,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.8  2000/12/07 13:10:05  mk
+  - Pfade nur beim ersten Start anlegen
+
   Revision 1.62.2.7  2000/11/20 19:55:00  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 
