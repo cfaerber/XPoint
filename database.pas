@@ -30,6 +30,8 @@ procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
 procedure dbSetindexcache(pages:word);     { 1..61 }
 procedure dbReleasecache;
+procedure dbEnableIndexCache;
+procedure dbDisableIndexCache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
 procedure dbOpenLog(fn:pathstr);
@@ -1716,6 +1718,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.7  2000/11/01 10:37:08  mk
+  - dbEnableIndexCache und dbDisableIndexCache hinzugefuegt
+
   Revision 1.22.2.6  2000/10/15 09:28:05  mk
   - LFN fixes
 

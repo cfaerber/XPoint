@@ -164,6 +164,7 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
         bb        : byte;             { lokal dbReadN/dbWriteN     }
         dblogfile : text;             { DB-Logfile                 }
         oldexit   : pointer;
+        oldcacheanz : word;
 
 
 function  iohandler:boolean;
@@ -218,6 +219,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/11/01 10:36:36  mk
+  - dbEnableIndexCache und dbDisableIndexCache hinzugefuegt
+
   Revision 1.7.2.1  2000/08/25 22:28:46  mk
   - IndexCache aktiviert
 

@@ -45,6 +45,17 @@ begin
   cacheanz:=0;
 end;
 
+procedure dbEnableIndexCache;
+begin
+  dbSetIndexCache(OldCacheAnz);
+end;
+
+procedure dbDisableIndexCache;
+begin
+  OldCacheAnz := CacheAnz;
+  dbReleaseCache;
+end;
+
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var
   i,sp : integer;
@@ -261,6 +272,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.3  2000/11/01 10:36:01  mk
+  - dbEnableIndexCache und dbDisableIndexCache hinzugefuegt
+
   Revision 1.10.2.2  2000/08/25 22:28:45  mk
   - IndexCache aktiviert
 
