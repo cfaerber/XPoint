@@ -3064,20 +3064,17 @@ Ctrl-U.
 
 @
 8068
-New Users will be placed in this
-[Addressbook group]@8069
+New Users will be placed in this [Usergroup]@8069
 
 @
 8069
-Addressbook groups:
+Here, you can organise Users into groups. This allows 
+the User-window to be sorted alphabetically into 
+Groups. Groups with lower numbers will not be sorted, 
+whilst Groups with higher numbers will be placed at 
+the end of the User-list.
 
-This allows the User-window to be sorted
-alphabetically into Groups. Groups with lower
-numbers will not be sorted, whilst Groups with
-higher numbers will be placed at the end of the
-User-list.
-
-Valid numbers are in the range 1 - 99
+Valid Usergroup numbers are in the range 1 - 99
 
 @
 213
@@ -4275,56 +4272,73 @@ have CrossPoint get the rest from the NodeList. A
 Node List must of course be active for this.
 @
 421
-Enter a Stand-In address for a user. If for example
-you get mail from Smith@BoxA.sb.sub.de, and also from
-the same user John@BoxB.zer.der, but always wish
-replies to go to BoxA, enter Smith@BoxA.sb.sub.de as
-stand-in address for John@BoxB.zer.de.
+Enter a "Reply-to" address for this User. If, for 
+example, you get mail from Smith\@BoxA.sb.sub.de and 
+also get mail from the same user John\@BoxB.zer.de 
+but always wish replies to go to BoxA, enter 
+Smith\@BoxA.sb.sub.de as "Reply-to" address for 
+John\@BoxB.zer.de. Confused? :-)
 
-The stand-in address must be a complete and valid
+The "Reply-to" address must be a complete and valid
 address.
 @
 422
-You can enter some comment about the user for your
-own benefit, or, for users (not cc groups) you can
+You can enter some comment about the User for your
+own benefit or, for users (not cc groups), you can
 enter a pseudonym in the form:
       <<P:Name>>
 If, when CrossPoint is putting in a template, it
 finds the macro $PSEUDO, it will look to see if a
-name is defined here, and put it in here if it is.
+name is defined here and put it in, if it is.
 
-This enables you to put somebody's real name in, if
+This enables you to put somebody's real name in if
 XP cannot deduce it from their user name.
 (Otherwise XP will use it as if it were $TUSER).
 
-$VPSEUDO works the same, but XP puts $VORNAME in
+$VPSEUDO works the same but XP puts $VORNAME in
 instead of $TUSER if there is no entry.
 @
 423
 Messages to the selected User(s) will be sent to this
-server. Use <F2> to get the list of your servers to
+Server. Use <F2> to show the list of Servers to
 select from.
 
-Note: if you have entered an address in another net
-type as stand-in address for this user, you must
-enter the server for that net here.
+Note: if you have entered an address in another
+Net-type as "Reply-to" address for this User, you
+must enter the Server for that Net here.
 @
 424
-This users messages will be held this many days. All
-older messages not specially set to hold with "H",
-will be set to delete ready for the next Re-Org.
-Counted from the receipt date for the message.
-
-0 sets the hold time to unlimited.
+<<[X]>>     Umlauts (written by you) will be 
+        converted automatically (to ae, oe etc.) for
+        this User.
+@
 425
-<<[ ]>>     Umlauts written by you to this user will
-        be converted automatically (to ae, oe etc.)
+<<[x]>>     Public messages from this User will <<NOT>>
+        be imported into the message-base. This is
+        what's commonly known as a "Twit" filter and
+        is extremely useful for "twitting out"
+        certain individuals whose messages, for
+        whatever reason, you don't want to read!
+
+        Private messages are <<NOT>> affected by this
+        setting.
 @
 426
-<<[x]>>     Public messages from this person will be
-        left out when reading in the Puffer (Dumb
-        User Filter). PMs are NOT affected by this
-        setting.
+<<[X]>>     A "Return Receipt Request" (RRQ) will be
+        automatically sent to this User whenever you
+        write a message to him/her.
+
+<<[ ]>>     A "RRQ" will <<not>> be automatically
+        sent to this User.
+@
+427
+This Users messages will be held this many days. All
+older messages, apart from those set to hold with
+"H", will be marked for deletion ready for the next
+Re-Org. Counted from the receipt date of the message.
+
+0 sets the hold time to unlimited.
+
 @
 429
 You have marked several users. Changes made now will
@@ -8792,7 +8806,7 @@ you may add your own comments before forwarding the
 message.
 
 NOTE: The "Forward" template is used but the
-      "Signature ((Pub)/(Priv))" template is <<NOT>> 
+      "Signature ((Pub)/(Priv))" template is <<NOT>>
       used. In other words, your signature will <<NOT>> 
       be added to the end of the forwarded message 
       and so therefore, if you would like your 
