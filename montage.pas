@@ -28,8 +28,7 @@ INTERFACE
 
 uses   typeform;
 
-const  maxmonlen = 9;
-
+const
        monat : Array[1..12] of record
                                  tag : String[9];
                                  zahl: Byte;
@@ -46,8 +45,6 @@ type fdate = record
                t,m : byte;
                j   : word;
              end;
-
-var  adow  : byte;
 
 
 function  schaltj(jahr:integer):boolean;
@@ -195,12 +192,12 @@ begin
   sommer:=((m>3) and (m<9)) or ((m=3) and (t>=21)) or ((m=9) and (t<=23));
 end;
 
-
-begin
-  adow:=dow(date);
 end.
 {
   $Log$
+  Revision 1.3.2.1  2000/04/30 15:50:05  mk
+  - unbenutze globale Variable adow entfernt
+
   Revision 1.3  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
