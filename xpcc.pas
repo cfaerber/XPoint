@@ -42,7 +42,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, 
+uses xp3,xp3o2,xp3o,xp4e,xpnt,xpovl, 
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
@@ -400,6 +400,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.4  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.15.2.3  2001/07/09 22:17:37  my
   JG:- Fix: Cancelling the automatic creation (e.g. of an Reply-To)
        user with <Esc> does *not* create the user anymore :-)

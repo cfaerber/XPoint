@@ -28,7 +28,7 @@ procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }
 
 implementation   { -------------------------------------------------- }
 
-uses xpnt,xp3o2;
+uses xpnt,xp3o2,xpovl;
 
 (*
 function UNIX2Zdate(secs:longint):string;

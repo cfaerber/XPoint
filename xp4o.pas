@@ -71,7 +71,7 @@ procedure seek_cutspace(var s:string);
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
-     xp_pgp;
+     xp_pgp,xpovl;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
       suchlen = 120;
@@ -2448,6 +2448,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.25  2001/08/05 11:45:35  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.47.2.24  2001/07/10 07:59:16  mk
   JG:- added search Option "u"
 

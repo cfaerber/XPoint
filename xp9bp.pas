@@ -42,7 +42,7 @@ procedure WriteQFG(dateiname:pathstr; qrec:QfgRec);
 implementation  { ------------------------------------------------- }
 
 uses
-  xp2b;
+  xp2b,xpovl;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 var i : integer;
@@ -620,6 +620,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.21  2001/08/05 11:45:36  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.10.2.20  2001/08/02 22:31:34  mk
   - removed function FUStr, only usefull in 3.70
 

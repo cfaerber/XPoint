@@ -64,7 +64,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
 implementation
 
-uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
+uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue,xpovl;
 
 
 function getline:string;                          { Eine Zeile vom Lister uebernehmen }
@@ -980,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.16  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.40.2.15  2001/07/31 16:20:20  mk
   - added const parameter
 

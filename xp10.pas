@@ -51,7 +51,7 @@ function _getmacro(s:string):string;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9bp,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9bp,xpauto,xpfido,xpfidonl,xpovl;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -2033,6 +2033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.5  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.10.2.4  2000/12/14 20:08:38  mw
 
 

@@ -260,7 +260,7 @@ IMPLEMENTATION
 
 
 uses
-  maus2, winxp;
+  maus2, winxp, xpovl;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.6  2001/08/05 11:45:31  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.38.2.5  2001/02/24 14:37:52  mk
   - letzetn Checkin rueckgaengig gemacht
 

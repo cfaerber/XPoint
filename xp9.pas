@@ -55,7 +55,7 @@ procedure GruppenSelproc(var cr:customrec);
 implementation  {---------------------------------------------------}
 
 uses
-  xp2b, xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,xpnt,xpterm;
+  xp2b, xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,xpnt,xpterm,xpovl;
 
 
 {$IFDEF FPC }
@@ -1289,6 +1289,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.31  2001/08/05 11:45:36  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.19.2.30  2001/07/31 15:33:58  my
   - implemented is_emailaddress in get_first_box
 

@@ -40,7 +40,7 @@ procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o;
+uses xp1o,xpovl;
 
 
 { anhand der Dateierweiterung passenden Viewer aus MIMETYP.DB1 suchen }
@@ -254,6 +254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.3  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.16.2.2  2000/10/16 08:29:59  mk
   - Bugfix fuer ViewFile, wenn File ohne Extension
 

@@ -36,7 +36,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl, winxp;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl,xpovl,winxp;
 
 var  statbrett : boolean;
 
@@ -1259,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.3  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.14.2.2  2000/12/12 11:30:32  mk
   - FindClose hinzugefuegt
 

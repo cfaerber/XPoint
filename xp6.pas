@@ -113,7 +113,7 @@ function pgpo_keytest(var s:string):boolean;
 implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
-     xp_pgp,xp6l,xms;
+     xp_pgp,xp6l,xms,xpovl;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
@@ -2377,6 +2377,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.34  2001/08/05 11:45:35  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.39.2.33  2001/07/23 18:40:09  mk
   - removed nested comments
 

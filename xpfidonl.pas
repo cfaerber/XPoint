@@ -39,7 +39,7 @@ function  setfnlenable(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xpfido;
+uses xpfido,xpovl;
 
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
@@ -744,6 +744,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.2  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.8.2.1  2000/12/31 11:35:56  mk
   - fileio.disksize statt lfn.disksize benutzen
 

@@ -17,7 +17,7 @@
 {$I XPDEFINE.INC }
 {$M 16384,80000,110000}
 
-uses crt, dos,typeform,fileio,xpdiff,xpdatum,xpglobal, lfn;
+uses crt,dos,typeform,fileio,xpdiff,xpdatum,xpglobal,xpovl,lfn;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -1811,6 +1811,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.8  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.21.2.7  2000/12/12 11:30:32  mk
   - FindClose hinzugefuegt
 

@@ -35,6 +35,8 @@ procedure CfgColors;
 
 implementation  { -------------------------------------------------- }
 
+uses xpovl;
+
 { wie windows.fwrt(), allerdings bleibt der TextBackground unver„ndert }
 {$IFDEF BP }
 procedure sdisp(x,y:word; var s:string); assembler;
@@ -1188,6 +1190,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.2  2001/08/05 11:45:34  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.12.2.1  2000/07/01 09:22:57  mk
   - Mailerstringanpassungen
 

@@ -108,7 +108,7 @@ implementation  {-----------------------------------------------------}
                 'A'  ==  Netzbretter
                 'U'  ==  Userbretter (nur in der MBase) }
 
-uses  xp3o,xp3ex,xpnt;
+uses  xp3o,xp3ex,xpnt,xpovl;
 
 const
   GlobalAblageOpen: Boolean = false;
@@ -1278,6 +1278,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.11  2001/08/05 11:45:34  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.25.2.10  2001/04/28 15:47:33  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

@@ -98,7 +98,8 @@ function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido,
+      xpovl;
 
 var   adp         : ^atext;
       wcy         : byte;          { fÅr writecode() }
@@ -2416,6 +2417,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.15  2001/08/05 11:45:35  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.25.2.14  2001/07/01 15:43:34  my
   SV:- moved RTA code to new unit xp4rta.pas
 

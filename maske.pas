@@ -26,7 +26,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
+  typeform,keys,inout,maus2,winxp,montage,clip;
 
 const digits : string[12] = '-0123456789 ';
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
@@ -179,6 +179,8 @@ procedure mappendsel(nr:word; force:boolean; s:string);
 
 
 implementation  {---------------------------------------------------------}
+
+uses xpovl;
 
 const maxmask   = 10;                { max. gleichzeitig offene Masken }
       maxfields = 140;               { max. Felder pro Maske           }
@@ -1296,6 +1298,9 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.1  2001/08/05 11:45:32  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.8  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

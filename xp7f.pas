@@ -39,7 +39,7 @@ procedure ShowRQ(s:string);
 
 implementation   { -------------------------------------------------- }
 
-uses xp3,xp3o;
+uses xp3,xp3o,xpovl;
 
 
 procedure SaveArcname(var box,name:string);
@@ -933,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.4  2001/08/05 11:45:36  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.13.2.3  2001/08/01 13:07:15  mk
   - IsPacket erkennt jetzt kleingeschriebene Dateinamen
 

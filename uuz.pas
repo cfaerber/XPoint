@@ -18,8 +18,7 @@
 
 program uuz;
 
-uses  xpglobal, ems, crt, dos,typeform,fileio, xpdatum,montage, lfn,
-  clip;
+uses  xpglobal,ems,crt,dos,typeform,xpovl,fileio,xpdatum,montage,clip,lfn;
 
 const
       midlen      = 160;
@@ -3441,6 +3440,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.46  2001/08/05 11:45:32  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.35.2.45  2001/07/08 21:34:01  my
   JG:- Fix: if sender<>'' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender)
        (prevents creation of wrong ABS headers when doing N/W/O with News)

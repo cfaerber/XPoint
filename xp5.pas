@@ -40,6 +40,7 @@ procedure InitPWsystem;
 
 implementation  {-----------------------------------------------------}
 
+uses xpovl;
 
 procedure kalender;
 
@@ -1009,6 +1010,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.11  2001/08/05 11:45:35  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.27.2.10  2001/07/02 18:40:31  cl
   - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
   - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)

@@ -49,7 +49,7 @@ function  testupdates(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses  xp6,xp9bp,xpauto;
+uses  xp6,xp9bp,xpauto,xpovl;
 
 const regfile  = 'REGDATA.CFG';
 
@@ -1577,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.7  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.10.2.6  2000/12/28 14:46:34  mk
   - nochmal optische korrektur fuer Copyright-Dialog
 

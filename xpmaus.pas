@@ -40,7 +40,7 @@ procedure MausGetInfs(box:string; logfile:pathstr);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
+uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9,xpovl,winxp;
 
 
 { art=0 : ZurÅckgelieferte Maus-MessageIDs aus Logfile in  }
@@ -822,6 +822,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.1  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.8  2000/06/19 20:22:32  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -118,7 +118,7 @@ procedure NodeSelProc(var cr:customrec);
 
 implementation
 
-uses  xpnt,xp2,xp3,xp4e,xpfidonl;
+uses  xpnt,xp2,xp3,xp4e,xpfidonl,xpovl;
 
 
 { --- Nodelisten ----------------------------------------------------- }
@@ -2260,6 +2260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.5  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.15.2.4  2001/06/07 15:43:39  mk
   - FidoFileName: Dateinamen gross geschrieben
 

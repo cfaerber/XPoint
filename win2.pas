@@ -32,7 +32,7 @@ uses
 {$else}
   crt,
 {$endif}
-  dos,dosx,keys,inout,maus2,typeform,winxp, lfn;
+  dos,dosx,keys,inout,maus2,typeform,winxp,lfn;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategr”áe/Datum anzeigen }
@@ -68,7 +68,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  FileIO;
+  FileIO,xpovl;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -1117,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.10  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.16.2.9  2001/08/02 22:31:33  mk
   - removed function FUStr, only usefull in 3.70
 

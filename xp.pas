@@ -92,10 +92,10 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpuu}    {$O xp8}     {$O xp9}      {$O xp9bp}    {$O xp10}    {$O xpe}
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
-{$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts} {$O XPGLOBAL }
-{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
+{$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}  {$O xpglobal }
+{$O xpnt}    {$O xpdatum} {$O xp3}      {$O xpeasy}   {$O crc }
 {$O xp_des}  {$O xpkeys}  {$O xpdiff}   {$O eddef}    {$O stack}
-{$O montage}
+{$O montage} {$O xpovl}
 
 {$IFDEF CAPI }
 {$O capi }
@@ -204,6 +204,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.16  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.29.2.15  2001/07/02 18:40:31  cl
   - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
   - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)

@@ -46,7 +46,7 @@ procedure extract_msg(art:byte; schablone:pathstr; name:pathstr;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmime;
+uses xp1o,xp3,xp_des,xpnt,xpfido,xpmime,xpovl;
 
 var  ex_mpdata : pmpdata;
 
@@ -1112,6 +1112,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.15  2001/08/05 11:45:34  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.17.2.14  2001/04/28 15:47:33  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

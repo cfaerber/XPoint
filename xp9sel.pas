@@ -66,7 +66,7 @@ function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:bo
 implementation
 
 uses
-  xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm;
+  xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm,xpovl;
 
 
 function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
@@ -830,6 +830,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.14  2001/08/05 11:45:36  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.1.2.13  2001/08/02 14:35:02  my
   JG:- ReadExtCfgFilename: optimized suboptimal (but working) code
 

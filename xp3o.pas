@@ -74,7 +74,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xpovl;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -1507,6 +1507,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.9  2001/08/05 11:45:34  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.21.2.8  2001/01/18 23:59:58  mk
   - verschiedene Aenderungen fuer PPP-Modus
 

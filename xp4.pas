@@ -45,9 +45,10 @@ const
 
 implementation  {----------------------------------------------------}
 
-uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
-      xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister,xp4rta;
+uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,
+      xp8,xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2,
+      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister,
+      xp4rta,xpovl;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -2185,6 +2186,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.43  2001/08/05 11:45:34  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.26.2.42  2001/07/22 22:07:46  my
   JG:- when bringing up a 'create user' dialogue (e.g. upon <Ctrl-P>),
        default server will be the reply server (if any).

@@ -37,7 +37,7 @@ function uudecfile(infile,outpath:pathstr; wait:boolean):boolean;
 
 implementation
 
-uses xp3,xp3ex;
+uses xp3,xp3ex,xpovl;
 
 const obufsize = 12288; { MK 07.02.00 Auf 32 Byte Gr”áen angepasst }
       ibufsize = 16384;
@@ -668,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.3  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.13.2.2  2001/08/02 22:31:34  mk
   - removed function FUStr, only usefull in 3.70
 

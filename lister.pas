@@ -107,6 +107,8 @@ procedure list_dummydp(s:string);
 
 implementation  { ------------------------------------------------ }
 
+uses xpovl;
+
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       MinListMem : word = 40000;   { min. Bytes fÅr app_l        }
       XmsPagesize = 4096;          { min. 1024 Bytes             }
@@ -1512,6 +1514,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.9  2001/08/05 11:45:31  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.19.2.8  2001/06/13 01:37:41  my
   JG:- message area manager update: UKA_PPP support (.GR) implemented, some
        logic changed, more to come (work in progress)

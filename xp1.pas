@@ -249,7 +249,7 @@ function  cm_key:char;
 implementation  {-------------------------------------------------------}
 
 uses
-  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings, xp3;
+  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings,xp3,xpovl;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.18  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.48.2.17  2001/01/10 17:39:02  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

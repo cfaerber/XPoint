@@ -30,7 +30,7 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,uart,resource,fileio,xpdiff,crc,
-  xpglobal, montage, inout, winxp;
+  xpglobal, montage, inout, xpovl, winxp;
 
 const aresult    : byte = 0;
       brk_result: byte = EL_break;
@@ -1030,6 +1030,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.2  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.14.2.1  2000/07/02 10:42:59  mk
   - pformstr entfernt
 

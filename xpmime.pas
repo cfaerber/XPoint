@@ -52,7 +52,7 @@ function typname(typ,subtyp:string):string;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3ex;
+uses xp1o,xp3,xp3o,xp3ex,xpovl;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }
@@ -718,6 +718,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.15  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.12.2.14  2001/07/01 23:04:17  mk
   - Fehler Base64-Dekodierung beseitigt
   - Routine DecodeBase64 von xpmime und uuz in typeform verlegt

@@ -34,7 +34,7 @@
   {$M 20000,50000,655360}
 {$ENDIF }
 
-uses dos, xms, typeform,fileio,montage,xpdatum,xp_iti, xpglobal, lfn;
+uses dos,xms,typeform,xpovl,fileio,montage,xpdatum,xp_iti,xpglobal,lfn;
 
 const nt_ZConnect=2;
       OrgLen    = 80;
@@ -1834,6 +1834,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.9  2001/08/05 11:45:32  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.15.2.8  2001/06/09 07:44:08  mk
   - Betreffzeile verlaengert
 

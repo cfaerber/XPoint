@@ -26,7 +26,7 @@ implementation
         MinVerStr  = '3.3';
         MaxHandles = 31;
   {$ELSE}
-  uses  overlay, clip, lfn;
+  uses  overlay, clip, xpovl, lfn;
   const MinVersion = $300;
         MinVerStr  = '3.0';
         MaxHandles = 30;
@@ -299,6 +299,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.9  2001/08/05 11:45:37  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.18.2.8  2001/07/02 18:40:31  cl
   - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
   - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)

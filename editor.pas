@@ -68,7 +68,7 @@ procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion
 
 implementation  { ------------------------------------------------ }
 
-uses  xp2b, typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister;
+uses  xp2b,typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister,xpovl;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -1880,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.13  2001/08/05 11:45:31  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.25.2.12  2001/02/23 12:39:05  mk
   - Uhr im Lister mit /w abschalten
 

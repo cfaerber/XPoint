@@ -44,7 +44,7 @@ procedure AponetNews;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
+uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex,xpovl;
 
 
 procedure ttwin;
@@ -848,6 +848,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.20  2001/08/05 11:45:36  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.13.2.19  2001/07/21 14:15:02  mk
   - added some const-parameters
 

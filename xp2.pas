@@ -68,7 +68,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
-  xp2b, xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
+  xp2b,xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg,xpovl;
 
 var
   zaehlx,zaehly : byte;
@@ -1095,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.20  2001/08/05 11:45:33  my
+  - added new unit XPOVL.PAS ('uses')
+
   Revision 1.45.2.19  2001/07/01 15:43:34  my
   SV:- moved RTA code to new unit xp4rta.pas
 
