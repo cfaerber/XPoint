@@ -124,7 +124,7 @@ function ntNoMaps(nt:byte):boolean;           { kein Maps-Service     }
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
 
-function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
+function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
 
 function formmsgid(msgid:string):string;
 function grosschar(b:boolean):string;
@@ -719,7 +719,7 @@ begin
   ntFilename := (nt in [nt_ZConnect,nt_UUCP]);
 end;
 
-function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
+function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
 begin
   ntReplyToAll := (nt in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
 end;
@@ -739,6 +739,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.36  2001/10/17 22:11:25  ml
+  - removed some range-check Errors
+
   Revision 1.35  2001/09/25 21:07:45  cl
   - added UI for non-RFC network charset selection
 

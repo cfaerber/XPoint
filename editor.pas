@@ -738,8 +738,11 @@ begin
             sbrk:=true;
             readln(t);
           end;
+          if (s <> '') then
+          begin
           Move(s[1],ibuf^[isize],length(s));
           inc(isize,length(s));
+          end;
         end;
       end;
       if eoln(t) and not srest then
@@ -1770,6 +1773,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.70  2001/10/17 22:11:25  ml
+  - removed some range-check Errors
+
   Revision 1.69  2001/10/17 20:56:24  mk
   - fixed AVs in exit parts of unit
 

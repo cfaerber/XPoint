@@ -1198,7 +1198,8 @@ begin
                     if bb>fsize then bb:=fsize;
                     move(recbuf^[fofs],data,bb);
                   end;
-        2,3,4,5 : move(recbuf^[fofs],data,fsize);
+        2,3,4,5 : if (fsize > 0) then
+                    move(recbuf^[fofs],data,fsize);
       end;
     end;
 end;
@@ -1620,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/10/17 22:11:25  ml
+  - removed some range-check Errors
+
   Revision 1.49  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
