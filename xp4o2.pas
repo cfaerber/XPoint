@@ -857,7 +857,7 @@ var s  : string;
     deutsch:=(ParLanguage='d');
     CloseResource;           { alte Ressourcendatei schlie·en }
     freehelp;                { Online-Hilfe schlie·en         }
-    OpenResource(sa[nr],ResMinmem);
+    OpenResource(LibDir + sa[nr],ResMinmem);
     GetResdata;              { neue Resourcendatei îffnen     }
     freemenus;               { MenÅs neu belegen              }
     setmenus;
@@ -932,6 +932,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.8  2003/10/01 19:01:37  mk
+  - fixed #814904 3.8.12: Sprachumschaltung
+
   Revision 1.52.2.7  2003/08/31 20:49:43  cl
   - backport of small fixes from MAIN branch:
 
