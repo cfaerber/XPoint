@@ -1016,7 +1016,20 @@ var d   : DB;
         InsertIntoList(dl^.right);
   end;
 
+  procedure freeDomainList(var DomainList:DomainNodeP);
+  var lauf : DomainNodeP;
+  begin
+    if Assigned(Domainlist) then begin
+      freeDomainList(DomainList^.left);
+      lauf:=DomainList^.right;
+      Dispose(DomainList);
+      freeDomainList(lauf);
+    end;
+  end;
+
 begin
+  freeDomainList(DomainList);
+  DomainList:=nil;
   dbOpen(d,BoxenFile,0);
   while not dbEOF(d) do
   begin
@@ -1097,6 +1110,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/05/10 12:55:52  sv
+  - Veraenderte Boxeneinstellungen wurden ohne XP-Neustart nicht
+    uebernommen
+
   Revision 1.34  2000/05/04 10:32:57  mk
   - unbenutzer TurboBox Code entfernt
 

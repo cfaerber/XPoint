@@ -1243,6 +1243,7 @@
       end;
       if not brk then
         WriteBox(fn,boxpar);
+      ReadDomainList;
       end;
     pophp;
   end;
