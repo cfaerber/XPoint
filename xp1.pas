@@ -1781,7 +1781,7 @@ var x,y   : Integer;
   procedure show(n:longint);
   begin
     inc(fpos,n);
-    if box then mwrt(x+3,y+2,dup(system.round(fpos*50 div fsize),'²'));
+    if box then mwrt(x+3,y+2,dup(system.round(fpos * 50.0  / fsize),'²'));
   end;
 
 begin
@@ -2043,6 +2043,9 @@ end;
 
 {
   $Log$
+  Revision 1.140  2002/02/18 00:57:16  mk
+  - fixed Arithmetic overflow in Show() from fmove
+
   Revision 1.139  2002/01/30 22:58:12  mk
   - test for empty FileName in SafeDeleFilename and _era
 
