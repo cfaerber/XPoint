@@ -30,99 +30,52 @@ interface
 
 uses xp0,classes;
 
-function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): ShortInt;
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles, DeleteSpoolFiles: TStringList): ShortInt;
 
 implementation  { ------------------------------------------------- }
 
-uses fileio,xp1, xp3o, typeform, sysutils;
+uses fileio,xp1, xp3o, typeform, sysutils, zcrfc, xpnetcall;
 
-function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): ShortInt;
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles, DeleteSpoolFiles: TStringList): ShortInt;
 var
   dummy : longint;
   s: String;
-  Error: Boolean;
-  Outmsgs, Outemsgs: Integer;
 
-  procedure EmptyDir(const Dir, Mask: String);
+  procedure ZtoRFC(boxpar: boxptr; source: String; const dest: string);
   var
-    sr : TSearchRec;
-    rs: Integer;
+    uu: TUUZ;
   begin
-    if not IsPath(Dir) then exit;
-    rs := findfirst(Dir+Mask,ffAnyFile,sr);
-    while rs=0 do
+    MakeMimetypCfg;
+    with boxpar^ do
     begin
-      _era(Dir+sr.name);
-      rs := findnext(sr);
-    end;
-    FindClose(sr);
-  end;
-
-  { ermitteln, welche Nachrichten nicht versand wurden }
-  procedure GetUnversandMessages;
-  var
-    MsgFile: file;
-    IDFile: text;
-    s: String;
-    sr: TSearchRec;
-    p: byte;
-    Found: boolean;
-    c : char;
-    rs: Integer;
-  begin
-    Error := false;
-    with BoxPar^ do
-    begin
-      Assign(IDFile, 'UNSENT.ID');
-      ReWrite(IDFile);
-      rs := FindFirst(ClientSpool+'*.OUT', ffAnyFile, sr);
-      while rs=0 do
-      begin
-        Assign(MsgFile, ClientSpool+sr.name);
-        Reset(MsgFile, 1);
-        Found := false;
-        while (not eof(MsgFile)) and (not Found) do
-        begin
-          s := '';
-          repeat
-            BlockRead(MsgFile, c, 1);
-            if c >= ' ' then s := s + c;
-          until (c = #10) or EOF(MsgFile);
-          if pos('Message-ID:', s) <> 0 then Found := true;
-        end;
-        close(MsgFile);
-
-        if Found then
-        begin
-          p := cpos('<', s);
-          Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
-          Error := true;
-        end;
-        RS := Findnext(sr);
-      end;
-      FindClose(sr);
-      Close(IDFile);
+      uu := TUUZ.Create;
+      uu.PPP := true;
+      uu.SMTP := true;
+      uu.Client := true;
+      if NewsMIME then uu.NewsMime := true;
+      if MIMEqp then uu.MakeQP := true;
+      if RFC1522 then uu.RFC1522 := true;
+      uu.MailUser := BoxPar^.UserName;
+      uu.NewsUser := BoxPar^.UserName;
+      uu.FileUser := BoxPar^.UserName;
+      OutFilter(source);
+      uu.Source := source;
+      uu.Dest := dest;
+      uu._from := boxpar^.pointname;
+      uu._to := boxpar^.boxname;
+      uu.ztou;
+      uu.Free;
     end;
   end;
 
-  procedure RenameFiles;
-  var
-    sr  : Tsearchrec;
-    rs: Integer;
-  begin
-    RS := findfirst(BoxPar^.ClientSpool + '*.MSG',ffAnyFile,sr);
-    while RS =0 do
-    begin
-      RenameFile(BoxPar^.ClientSpool + sr.name, BoxPar^.ClientSpool + GetBareFileName(sr.name) + '.IN');
-      RS := findnext(sr);
-    end;
-    FindClose(sr);
-  end;
 
-  var res: integer;
-
+const
+  ClientPuffer = 'client.pp';
+var
+  uu: TUUZ;
+  ExtLogFile: String;
 begin
-  outmsgs:=0; outemsgs:=0; result:=0;
+  result:=0;
   with boxpar^ do
   begin
     CreateDir(ClientSpool);
@@ -130,67 +83,54 @@ begin
       trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
       exit;
     end;
-    EmptyDir(ClientSpool, '*.IN');
-    EmptyDir(ClientSpool, '*.OUT');
+    Erase_Mask(ClientSpool + '*.IN');
+    Erase_Mask(ClientSpool + '*.OUT');    // ExtOut verwenden
 
-//    NC^.Sendbuf := _filesize(ppfile);
     if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
     begin
-      outmsgs:=testpuffer(ppfile,false,dummy);
-
-      // !=!=
-      //  ZtoRFC(false,ppfile,iifs(TempPPPMode, ClientSpool, SysopOut));
+      testpuffer(ppfile,false,dummy);
+      ZtoRFC(BoxPar,PPFile,ClientSpool);
     end;
 
-//    NC^.Sendbuf:= filesum(ClientSpool+'*.OUT');
-{!!    s := ClientExec;
-    exchange(s, '$CONFIG', bfile);
-    exchange(s, '$CLPATH+', PPPClientpath);
-    exchange(s, '$CLPATH', PPPClientpath);
-    exchange(s, '$CLPATH', PPPClientpath);
-    exchange(s, '$CLSPOOL', ClientSpool);
-    attrtxt(col.colkeys);                 }
-//    if XPdisplayed then
-//        FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
+    s := ClientExec;
+    exchange(s, '$CONFIG', BoxFile);
+    exchange(s, '$CLPATH+', Clientpath);
+    exchange(s, '$CLPATH', Clientpath);
+    exchange(s, '$CLPATH', Clientpath);
+    exchange(s, '$CLSPOOL', ClientSpool); 
     shell(s,600,3);
     showscreen(false);
 
-(*    if filesum(ClientSpool+'*.OUT')>0 then                     { -- Ausgabepaket -- }
-    begin
-      WriteUUnummer(uunum);
-      Moment;
-      OutMsgs := 0;
-      GetUnversandMessages;
-      ClearUnversandt(ppfile,box);
-      _era(ppfile);
-      if Exist('UNSENT.PP') then
-       if filecopy('UNSENT.PP', ownpath+ppfile) then
-         _era('UNSENT.PP');
-      _era('UNSENT.ID');
-      EmptyDir(ClientSpool, '*.OUT'); { nicht verschickte N. löschen }
-      if Error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
-      Closebox;
-    end;
+    ClearUnversandt(PPFile,BoxName);
+    SafeDeleteFile(PPFile);
 
-    if exist(ClientSpool+'*.MSG') then
-    begin
-//      NC^.Recbuf := filesum(ClientSpool+'*.MSG');
-//      if (NC^.RecBuf + NC^.SendBuf) > 0 then
-        wrtiming('NETCALL ' + boxname);
-      shell(UUZBin+' -uz -w:'+strs(screenlines)+' '+ClientSpool+'*.MSG '+OwnPath + dpuffer,600,3);
-      if nDelPuffer and (errorlevel=0) and
-        (testpuffer(dpuffer,false,dummy)>=0) then
-          EmptyDir(ClientSpool, '*.MSG'); { entpackte Dateien löschen }
-    end;
- 
-    if _filesize(dpuffer)>0 then
-      IncomingFiles.Add(dpuffer); *)
+    uu := TUUZ.Create;
+    uu.source := clientspool + FileUpperCase('*.msg');
+    uu.dest := ClientPuffer;
+    uu.utoz;
+    DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
+    uu.free;
+    if _FileSize(ClientPuffer) > 0 then
+      IncomingFiles.Add(ClientPuffer);
+    Erase_Mask(ClientSpool + '*.OUT'); { nicht verschickte N. löschen } // ExtOut verwenden
 
-  end; 
+    ExtLogFile:=LogPath+'XP-PPP.LOG';
+    if FileExists(ExtLogFile) then
+    begin
+      copyfile(ExtLogFile, ClientSpool+'XPCLIENT.LOG');
+      _era(ExtLogFile);
+    end;
+  end
 end;
 
 {
   $Log$
+  Revision 1.3  2002/05/12 20:42:49  mk
+  - first version of client netcall hack
+
+  Revision 1.2.2.1  2002/05/06 17:58:53  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.2  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 

@@ -954,7 +954,7 @@ begin                  { function Netcall }
   dbClose(d);
   Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_UUCP])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_UUCP, nt_Client])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
     end;
@@ -1092,7 +1092,7 @@ begin                  { function Netcall }
 
       nt_Client: begin
         Debug.DebugLog('xpnetcall','netcall: client',DLInform);
-        case ClientNetcall(BoxName,BFile,Boxpar,ppfile,NetcallLogfile,IncomingFiles) of
+        case ClientNetcall(BoxName,BFile,Boxpar,ppfile,NetcallLogfile,IncomingFiles, DeleteSpoolFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1101,7 +1101,7 @@ begin                  { function Netcall }
           EL_break  : begin  result:=false; end;
         else begin result:=true end;
           end; {case}
-        SendNetzanruf(NetcallLogFile);
+        SendNetzanruf(BoxPar^.ClientSpool + 'XPCLIENT.LOG');
         end; {case nt_Client}
 
       nt_POP3: begin
@@ -1387,6 +1387,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/05/12 20:42:49  mk
+  - first version of client netcall hack
+
   Revision 1.54  2002/05/05 22:47:21  mk
   - use correct case for 'bak' extension
 
