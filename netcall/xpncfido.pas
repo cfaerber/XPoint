@@ -141,7 +141,7 @@ var t    : text;
   end;
 
 begin
-  DebugLog('xpncfido','WriteFidoNetcallLog file "'+logfile+'", box "'+_box+'"',4);
+  DebugLog('xpncfido','WriteFidoNetcallLog file "'+logfile+'", box "'+_box+'"',DLInform);
   if not FileExists(logfile) then exit;
   wahlcnt:=0;
   with NC^ do begin
@@ -215,8 +215,7 @@ begin
 end;
 
 
-{ gepackte Daten aus ImportDir + PKT-Files aus SpoolDir einlesen }
-
+// process incoming compressed AND uncompressed fido packets from ImportDir
 function FidoImport(ImportDir:string; var box:string):boolean;
 const fpuffer = 'FPUFFER';
 var p       : byte;
@@ -242,14 +241,13 @@ begin
       if isCompressedPacket(dir.name[i]) then begin
         Debug.DebugLog('xpncfido','is compressed packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
-        ImportDir:=ExpandFilename(ImportDir);
-        Debug.DebugLog('xpncfido','chdir to "'+OwnPath+XFerDir+'"',DLDebug);
-        SetCurrentDir(OwnPath+XFerDir);
+        Debug.DebugLog('xpncfido','chdir to "'+ImportDir+'"',DLDebug);
+        SetCurrentDir(ImportDir);
         shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
         // shell chdirs back to program directory automatically
         if errorlevel<>0 then begin
           Debug.DebugLog('xpncfido','error calling downarcer',DLError);
-          MoveToBad(OwnPath+ImportDir+dir.name[i]);
+          MoveToBad(ImportDir+dir.name[i]);
           end
         else begin
           Debug.DebugLog('xpncfido','decompressed ok, deleting archive',DLDebug);
@@ -261,9 +259,8 @@ begin
     dir.Free;
     closebox;
 
-    { Read only files }
-    Debug.DebugLog('xpncfido','looking for packets: "'+OwnPath+XFerDir+'*.PKT"',DLInform);
-    dir:=TDirectory.Create(OwnPath+XFerDir+'*.PKT',faAnyFile-faDirectory,true);
+    Debug.DebugLog('xpncfido','looking for packets: "'+ImportDir+'*.PKT"',DLInform);
+    dir:=TDirectory.Create(ImportDir+'*.PKT',faAnyFile-faDirectory,true);
     if not(dir.isEmpty) then begin
       msgbox(70,10,GetRes2(30003,10),x,y);
       for i:=0 to dir.Count-1 do begin
@@ -301,12 +298,12 @@ begin
                           iif(length(trim(boxpar^.akas))>0,
                           pe_ForcePfadbox or pe_Bad,pe_Bad))
         then begin
-          Debug.DebugLog('xpncfido','buffer imported OK, deleting "'+fpuffer+'"',DLInform);
+          Debug.DebugLog('xpncfido','buffer imported OK, deleting',DLInform);
           _era(fpuffer);
           FidoImport:=true;
         end;
     end else begin
-      Debug.DebugLog('xpncfido','Xferdir was empty',DLInform);
+      Debug.DebugLog('xpncfido','importdir was empty',DLInform);
       if FileExists(fpuffer) then _era(fpuffer);
       CallFilter(true,fpuffer);
     end;
@@ -512,7 +509,7 @@ label fn_ende,fn_ende0;
       begin
         readln(t,s);
         LoString(s);
-        DebugLog('xpncfido','BuildIncoming "'+s+'"',4);
+//        DebugLog('xpncfido','BuildIncoming "'+s+'"',DLDebug);
         if (Copy(s,1,1)='*') and
            ((pos('rcvd',s)>0) or (pos('skipped',s)>0)) and
            (pos(', error',s)=0) then begin
@@ -526,7 +523,7 @@ label fn_ende,fn_ende0;
           new(fp);
           fp^.next:=rflist;
           fp^.fn:=UpperCase(extractfilename(LeftStr(s,p-1)));
-          DebugLog('xpncfido','BuildIncoming file found: "'+fp^.fn+'"',4);
+          DebugLog('xpncfido','rcvd file found: "'+fp^.fn+'"',DLDebug);
           rflist:=fp;
           end;
         end;
@@ -975,6 +972,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/01/16 22:59:42  ma
+  - FidoImport works entirely on importdir now (NOT importdir AND spool)
+
   Revision 1.5  2001/01/14 10:13:36  mk
   - MakeHeader() integreated in new unit
 
