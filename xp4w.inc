@@ -1763,7 +1763,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.40  2002/04/13 08:50:06  my
+  MY:- Log des letzten Commits komplettiert.
+
   Revision 1.25.2.39  2002/04/12 14:32:47  my
+  MY:- Fix: Das Erzwingen des internen XP-Listers statt des eingetragenen
+       MIME-Viewers mit <Ctrl-Enter> oder <Space> im MIME-Auswahlmen
+       funktionierte nicht, wenn eine Dateierweiterung eingetragen war.
+
   MY:- Logik bei der Anzeige des manuell mit <Ctrl-W> bet„tigten
        Nachrichten-Weiterschalters ge„ndert: Groáes "W" steht fr
        "Weiterschalter aktiviert", kleines "w" steht fr "Weiterschalter
