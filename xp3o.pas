@@ -123,7 +123,8 @@ procedure seluser(var cr:customrec);                 { Brettauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
-    if dbReadInt(ubase,'userflags') and 4<>0 then begin
+    if (not cr.brk) and (dbReadInt(ubase,'userflags') and 4<>0) then
+    begin
       rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
       brk:=true;
       end;
@@ -1368,6 +1369,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.7  2000/12/30 12:44:07  mk
+  - fixed crash in seluser
+
   Revision 1.7.2.6  2000/08/05 17:33:46  mk
   JG: - Bugfix: Fix fuer Internal Error bei Nachricht/Extrakt/Brett
     sabotierte Nachricht/Extrakt/Nachricht
