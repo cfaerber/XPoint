@@ -779,7 +779,6 @@ Procedure AttrTxt(attr:byte);
 begin
   if forcecolor then exit;
 {$IFDEF NCRT }
-  SetColorPair(attr);
   SetTextAttr(attr);
   lastattr:= attr;
 {$ELSE }
@@ -1854,6 +1853,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.37  2000/05/10 10:30:22  hd
+  - AttrTxt setzte die Farbe zweimal
+
   Revision 1.36  2000/05/07 15:56:32  hd
   Keine Uhr unter Linux
 
