@@ -49,6 +49,7 @@ implementation
 uses
   SysUtils, 
   typeform, inout, ncmodem, progressoutput, debug,
+  {$IFDEF Unix}xpcurses, {$ENDIF}
   xpglobal;
 
 constructor TUUCProtocolFZ.Create(caller: TUUCPNetcall;use_fprot:boolean);
@@ -287,6 +288,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2002/12/27 08:45:17  mk
+  - added missing xpncurses
+
   Revision 1.2  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

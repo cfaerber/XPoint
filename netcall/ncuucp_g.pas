@@ -84,6 +84,7 @@ implementation
 
 uses
   SysUtils, Math,
+  {$IFDEF Unix}xpcurses, {$ENDIF}
   typeform, inout, netcall, ncmodem, progressoutput, debug;
   
 { --- Initialization/Destruction ------------------------------------------ }
@@ -666,6 +667,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2002/12/27 08:45:17  mk
+  - added missing xpncurses
+
   Revision 1.3  2002/12/21 05:38:06  dodi
   - removed questionable references to Word type
 
