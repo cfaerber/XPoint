@@ -44,7 +44,26 @@
   Konfiguration mittels EASY-Mode verfuegbar }
 {.$DEFINE EASY }
 
-{ --- ab hier sind keine Aenderungen noetig --- }
+{ --- User Inteface Type (set one) ----------------------------------- }
+{.DEFINE TextMode     } { textmode interface (default)                 }
+{.DEFINE GUIMode      } { graphical user interface                     }
+
+{ --- Textmode API (set one) ----------------------------------------- }
+{.DEFINE Win32Console } { Win32: console (default for Win32)           }
+{.DEFINE Win32Window  } { Win32: own text window                       }
+{.DEFINE NCURSES      } { NCurses (default for *ix)                    }
+{.DEFINE CRT          } { PASCAL RTL unit CRT (default for DOS32/OS2)  }
+
+{ --- GUI API (set one) ---------------------------------------------- }
+{.DEFINE GTK          } { GIMP Toolkit                                 }
+{.DEFINE Win32GUI     } { Win32 API                                    }
+{.DEFINE QtGUI        } { Trolltech Qt (X11 only)                      }
+{.DEFINE CLX          } { Borland FreeCLX (X11 only)/Lazarus CL        }
+
+{ --- ab hier sind keine Aenderungen noetig -------------------------- }
+{ --- no user-serviceable parts below -------------------------------- }
+
+{ --- 1. compiler and platform detection ----------------------------- }
 
 {$IFDEF VER130 }          { Delphi 5.0 }
   {$DEFINE Delphi }
@@ -116,13 +135,6 @@
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
-{$DEFINE i386}
-{$IFDEF i386}
-  {$DEFINE LittleEndian} 
-{$ELSE}
-  !! Only i386 platform supported
-{$ENDIF}
-
 {$IFDEF DebugInfo }
   {$IFDEF Delphi }
     {$D+}                 { Debug-Informationen }
@@ -164,48 +176,100 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF DOS32 }
-  {.$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
-{$ENDIF }
+{$IFDEF Linux}{$DEFINE Unix}{$ENDIF}
+{$IFDEF FreeBSD}{$DEFINE Unix}{$DEFINE BSD}{$ENDIF}
+{$IFDEF NetBSD}{$DEFINE Unix}{$DEFINE BSD}{$ENDIF}
 
-{$IFDEF Win32 }
-  {$DEFINE Sockets }     { Sockets vorhanden }
-  {$IFDEF GUI }
-    {$DEFINE Win32GUI }
-    {$DEFINE LocalScreen }
-  {$ELSE }
-    {$DEFINE Win32Console }
-  {$ENDIF }
-{$ENDIF }
+{$DEFINE i386}
+{$IFDEF i386}
+  {$DEFINE LittleEndian} 
+{$ELSE}
+  !! Only i386 platform supported
+{$ENDIF}
 
 {$IFDEF OS2 }
   {$M 131072,524288}
 {$ENDIF }
 
 {$IFDEF Linux }
-  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
   {$DEFINE Sockets }     { Sockets vorhanden }
-  {$DEFINE Unix }        { Linux is a Unix Platform }
   {$M 500000,1024000}
-  {$IFNDEF FPC}
-  {$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }
-  {$ENDIF}
+  {$IFNDEF FPC}{$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }{$ENDIF}
 {$ENDIF }
 
-{$IFDEF BSD}
-  {$IFDEF FreeBSD }        { FPC >= 1.0.2, FreeBSD >=4.0 }
-    {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-    {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-    {$DEFINE Sockets}      { Sockets for FreeBSD are near the same as for
-                            Linux. Maybe some non POSIX values for
-                            flag-parameters aren't allowed}
-    {$DEFINE Unix }        { FreeBSD is a Unix Platform }
-  {$ELSE}
-    // !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
-  {$ENDIF}
+{ --- 2. File System and other system features ----------------------- }
+
+{ UnixFS: POSIXoid file system: uses '/' as a path separator and is    }
+{         case-sensitive                                               }
+{$IFDEF Unix}
+  {$DEFINE UnixFS}
 {$ENDIF}
 
+{ Sockets: Socket API available                                        }
+{$IFNDEF DOS32}
+  {$DEFINE Sockets}
+{$ENDIF}
+
+{ --- 3. FileMode/TextMode ------------------------------------------- }
+
+{ TextMode: terminal-orientated user interface, includes built-in      }
+{           windowed terminal emulations                               }
+{ GUIMode:  graphical user interface                                   }
+{$IFDEF GUIMode}
+  {$UNDEF TextMode}
+{$ELSE}
+  {$DEFINE TextMode}
+{$ENDIF}
+
+{ --- 4. TextMode API used ------------------------------------------- }
+
+{$IFNDEF Win32}                 { Win32 APIs only on Windows }
+  {$UNDEF Win32Window}
+  {$UNDEF Win32Console}  
+{$ENDIF}
+
+{$IFDEF NCURSES}
+  {$UNDEF Win32Window }
+  {$UNDEF Win32Console }
+  {$UNDEF CRT }
+{$ELSE}
+{$IFDEF Win32Window}
+  {$UNDEF Win32Console }
+  {$UNDEF CRT }
+{$ELSE}  
+{$IFDEF Win32Console}
+  {$UNDEF CRT }
+{$ELSE}  
+{$IFDEF CRT}
+{$ELSE}
+  {$IFDEF Win32}
+    {$DEFINE Win32Console}
+  {$ELSE}
+  {$IFDEF Unix}
+    {$DEFINE NCURSES}
+  {$ELSE}
+    {$DEFINE CRT}
+  {$ENDIF}      
+  {$ENDIF}      
+{$ENDIF}
+{$ENDIF}
+{$ENDIF}
+{$ENDIF}
+
+{ Compatibility with previous versions of xpdefine.inc                 }
+{$IFDEF Win32Window}{$DEFINE LocalScreen}{$ENDIF}
+{$IFDEF NCURSES}{$DEFINE NCRT}{$ENDIF}
+
+{ --- 5. GUIMode API used -------------------------------------------- }
+    
+{$IFDEF GUIMode}
+  !!!! GUIMode not supported yet.
+{$ELSE}
+  {$UNDEF GTK }
+  {$UNDEF Win32GUI }
+  {$UNDEF QtGUI }
+  {$UNDEF CLX }
+{$ENDIF}
 
 { --- Erklaerungen der selbst gesetzen Defines --- }
 
@@ -240,9 +304,11 @@
   Gibt an, ob es sich um eine Little- oder Big-Endian-System handelt.
 }
 
-
 {
   $Log$
+  Revision 1.90  2003/01/07 00:26:02  cl
+  - new, more logical structure of defines
+
   Revision 1.89  2003/01/01 16:19:45  mk
   - changes to made FreeBSD-Version compilable
 
