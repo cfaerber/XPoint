@@ -19,7 +19,7 @@ uses crt, xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
      resource,montage, xpglobal, xp0,xp1,xp10,xp1o2,xp1input,
-     xp1help,xp5,xpdatum,xpeasy, lfn;
+     xp1help,xp5,xpdatum,lfn;
 
 procedure testlock;
 procedure DelTmpfiles(const fn:string);

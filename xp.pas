@@ -92,7 +92,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}  {$O xpglobal }
-{$O xpnt}    {$O xpdatum} {$O xp3}      {$O xpeasy}   {$O crc }
+{$O xpnt}    {$O xpdatum} {$O xp3}      {$O crc }
 {$O xp_des}  {$O xpkeys}  {$O xpdiff}   {$O eddef}    {$O stack}
 {$O montage} {$O xpovl}   {$O xp9sel }  {$O xp1 }     {$O xpcfg }
 
@@ -203,6 +203,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.21  2001/08/12 09:05:39  mk
+  - removed xpeasy
+
   Revision 1.29.2.20  2001/08/12 08:46:35  mk
   - moved to overlay
 

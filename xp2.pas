@@ -23,7 +23,7 @@ uses crt, xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
      resource,montage, xpglobal, xp0,xp1,xp10,xp1o2,xp1input,
-     xp1help,xp5,xpdatum,xpeasy, lfn;
+     xp1help,xp5,xpdatum,lfn;
 
 var
   { First start of XP2? }
@@ -1003,6 +1003,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.22  2001/08/12 09:05:39  mk
+  - removed xpeasy
+
   Revision 1.45.2.21  2001/08/11 10:58:35  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit
