@@ -1954,6 +1954,7 @@ fromstart:
         if msgCPpos<msgCPanz then
           dbAppend(mbase);
         end;
+      SendFlags:=SendFlags and not SendHalt;
     until msgCPpos>=msgCPanz;
 
   { if not pm then dbFlushClose(bbase); }
@@ -2216,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.24  2000/12/31 11:54:12  mk
+  JG:- eigene PMs halten fix
+
   Revision 1.39.2.23  2000/12/24 16:51:57  mk
   - header.hdr grosss geschrieben
 
