@@ -166,7 +166,8 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname+domain;
-//    uu.ClearSourceFiles := true;
+      uu.NoCharsetRecode := not (BoxPar^.UUZCharsetRecode);
+      //    uu.ClearSourceFiles := true;
       uu.utoz;
     end;
     DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
@@ -286,6 +287,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.8  2004/07/20 21:52:28  mk
+  - set charset recode for nntp and pop3, too
+
   Revision 1.32.2.7  2003/08/11 22:28:26  mk
   - removed Edit/netze/verschiedens/mime in news
 

@@ -256,6 +256,7 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname;
+      uu.NoCharsetRecode := not (BoxPar^.UUZCharsetRecode);
 //    uu.ClearSourceFiles := true;
       uu.utoz;
     end;
@@ -423,6 +424,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.16  2004/07/20 21:52:28  mk
+        - set charset recode for nntp and pop3, too
+
         Revision 1.39.2.15  2003/10/21 13:55:01  mk
         - get custom port number for nntp from BoxPar
 
