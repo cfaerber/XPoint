@@ -667,7 +667,10 @@ var x,y      : Integer;
            (boxpar^.ReplaceDupes) then
         begin
           debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
-          dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+          if not dbBOF(mBase) and not dbEOF(mbase) then
+            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag)
+          else
+            ReplaceOwnHoldFlag := 0;
           wrkilled; { Ablage auf jeden Fall reorganisieren }
           DelBezug;
           dbDelete(mbase);
@@ -1295,6 +1298,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.17  2003/11/30 23:11:44  mk
+  - prevent database error in KillSameMsgId
+
   Revision 1.83.2.16  2003/10/06 11:07:17  mk
   - added some const parameter
 
