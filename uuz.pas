@@ -1825,9 +1825,10 @@ var p,i   : integer; { byte -> integer }
   procedure GetRef(s0:string);
   var p : byte;
   begin
-    while (s0<>'') and (s0[1]='<') do with hd do begin
+    while (s0<>'') and (s0[1]='<') do with hd do
+    begin
       p:=cpos('>',s0);
-      if p<3 then p:=length(s0)+1;
+      if p<3 then p:=min(length(s0)+1, 254);
       if ref='' then
         ref:=copy(s0,2,p-2)
       else begin
@@ -3445,6 +3446,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.51  2001/09/09 03:01:04  mk
+  - fixed crash in uuz with bad reference lines
+
   Revision 1.35.2.50  2001/08/11 22:43:51  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
