@@ -1115,8 +1115,9 @@ begin                  { function Netcall }
           EL_break  : begin  result:=false; end;
         else begin result:=true end;
           end; {case}
-        SendNetzanruf(BoxPar^.ClientSpool + 'XPCLIENT.LOG');
-        end; {case nt_Client}
+        SendNetzanruf(BoxPar^.ClientPath + 'XPCLIENT.LOG');
+        SafeDeleteFile(BoxPar^.ClientPath + 'XPCLIENT.LOG');
+      end; {case nt_Client}
 
       nt_POP3: begin
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
@@ -1399,6 +1400,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.15  2003/09/07 19:09:13  mk
+  - added missing netcall log for client systems
+
   Revision 1.52.2.14  2003/09/03 00:43:40  mk
   - added multiserver client netcall
 
