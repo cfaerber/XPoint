@@ -927,6 +927,7 @@ var brk      : boolean;
             if t1='>' then ms:=ms+'<>>'
             else if t1='<' then ms:=ms+'<<>'
             else if t1='^' then ms:=ms+'<^>'
+            else if t1=' ' then ms:=ms+'< >'
             else if t1>=' ' then ms:=ms+t1
             else if t1>=#1 then ms:=ms+'^'+chr(ord(t1[1])+64)
             else ms:=ms+'<'+ta^[ord(t1[2])]+'>';
@@ -2152,6 +2153,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.12  2002/03/29 22:47:37  my
+  JG:- Fix: Leertasten beim Anlegen von Tastaturmakros werden jetzt als
+       "< >" ins Makro geschrieben.
+
   Revision 1.10.2.11  2001/12/18 18:57:19  mk
   - einige FWrt() statt Wrt() benutzt
 
