@@ -889,13 +889,10 @@ begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
             quotes:=length(quotec1);
-            if (quotes>0) and (length(quotec2)>quotes) then
-              while (length(quotec2)>quotes)
-              and (lastchar(quotec2)=' ') do dellast(quotec2);
-            if (quotes>0) and (quotec1=quotec2) then begin
+            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
               ap2:=ap^.next;
-              wpa:=AbsDelete(ap2,0,quotes,false,true);
-              dec(ss,quotes);
+              wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
+              dec(ss,length(quotec2));
             end;
           end;
           { /robo }
@@ -904,7 +901,7 @@ begin
           copyflags(ap,apnew);
           ap2:=ap^.next;
           blockabsinsert(ap,apnew,maxint,maxint);
-          blockabsinsert(ap2,apnew,0,ap^.size);
+          blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
           if assigned(ap^.prev) then begin
             apnew^.prev:=ap^.prev;
             ap^.prev^.next:=apnew;
@@ -1302,7 +1299,7 @@ begin
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu groá }
-    else if memtest(ss) 
+    else if memtest(ss)
     and assigned(blk) { .robo }
     then begin
       ap2:=AllocAbsatz(ss);
@@ -1826,10 +1823,24 @@ var ap,ap2    : absatzp;
   end;
 
 begin
-  with e^ do
-    if blockinverse or blockhidden then
-      errsound  { kein Block markiert oder Blockmarkierung abgeschaltet }
-    else with e^ do begin
+  with e^ do begin
+    if blockinverse or blockhidden then begin
+      { kein Block markiert oder Blockmarkierung ausgeschaltet:
+        ActAbs bis Leerzeile formatieren }
+      SetBlock(1,ActAbs,0,2);
+      ap:=ActAbs;
+      if config.QuoteReflow and assigned(ap^.next)
+        then quotec1:=getquote(ap^.next)
+        else quotec1:='';
+      while assigned(ap^.next) and (ap^.next^.size>length(quotec1)) do begin
+        ap:=ap^.next;
+        if config.QuoteReflow and assigned(ap^.next)
+          then quotec1:=getquote(ap^.next)
+          else quotec1:='';
+      end;
+      SetBlock(2,ap,ap^.size,3);
+    end
+    else begin
       { Blockmarkierung auf Absatzanfang und Absatzende ausdehnen }
       with block[1].pos do
         if offset>0 then offset:=0;
@@ -1840,117 +1851,114 @@ begin
           else
             if offset<absatz^.size then offset:=absatz^.size;
       bskorr(2,3);
-      { Cursor auf Blockanfang setzen }
-      with block[1].pos do
-        moveworkpos(offset,absatz);
-      ap:=ActAbs;
-      ap^.umbruch:=true;
-      repeat
-        fp:=advance(ap,0,rrand);
-        if fp<ap^.size then begin  { Absatz umbrechen }
-          spaces:=0;
-          if config.QuoteReflow
-            then quotec1:=GetQuote(ap)
-            else quotec1:='';
-          quotes:=length(quotec1);
-          if config.autoindent and (quotes=0) then
-            while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
-              inc(spaces);
-          copysize:=max(0,ap^.size-fp);
-          if memtest(ap^.size)
-          and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
-          then begin
-            if spaces>0 then
-              fillchar(ap2^.cont,spaces,' ')
-            else if quotes>0 then
-              fastmove(quotec1[1],ap2^.cont[0],quotes);
-            if assigned(ap^.next) then
-              ap^.next^.prev:=ap2;
-            ap2^.next:=ap^.next;
-            ap^.next:=ap2;
-            ap2^.prev:=ap;
-            blockabssplit(ap,ap,ap2,fp,spaces+quotes);
-            ap:=AbsDelete(ap,fp,copysize,false,false);
-            su(ap);
-            su(ap2);
-            KorrBlockScrolled(false);
-            TruncAbs(ap);
-            ap:=ap2;
-          end
-          else begin
-            errsound;
-            exit;
-          end;
-        end
-        else
-        if assigned(ap^.next)
-        and (ap<>block[2].pos.absatz)
-        then begin  { Abs„tze ggf. zusammenfgen }
-          addspaces:=1;
-          ss:=ap^.size + ap^.next^.size + addspaces;
-          if ss>maxabslen then
-            error(2)    { 'Absatz zu groá' }
-          else if memtest(ss) then begin
-            if config.QuoteReflow then begin
-              quotec1:=getquote(ap);
-              quotec2:=getquote(ap^.next);
-              quotes:=length(quotec1);
-              if (quotes>0) and (length(quotec2)>quotes) then
-                while (length(quotec2)>quotes)
-                and (lastchar(quotec2)=' ') do dellast(quotec2);
-            end
-            else begin
-              quotec1:='';
-              quotec2:='';
-              quotes:=0;
-            end;
-            TruncAbs(ap);
-            TruncAbs(ap^.next);
-            if (ap^.size>length(quotec1))
-            and (ap^.next^.size>length(quotec2))  { Leerzeile belassen }
-            and (quotec1=quotec2)  { nur bei ident. QuoteCh zusammenf. }
-            then begin
-              if (quotes>0) and (quotec1=quotec2) then begin
-                ap2:=ap^.next;
-                wpa:=AbsDelete(ap2,0,quotes,false,true);
-                dec(ss,quotes);
-              end;
-              apnew:=AllocAbsatz(ss);
-              wpa:=apnew;
-              apnew^.umbruch:=true;
-              ap2:=ap^.next;
-              blockabsinsert(ap,apnew,maxint,maxint);
-              blockabsinsert(ap2,apnew,0,ap^.size);
-              if assigned(ap^.prev) then begin
-                apnew^.prev:=ap^.prev;
-                ap^.prev^.next:=apnew;
-              end;
-              if assigned(ap2^.next) then begin
-                apnew^.next:=ap2^.next;
-                ap2^.next^.prev:=apnew;
-              end;
-              size1:=ap^.size;
-              FastMove(ap^.cont,apnew^.cont,size1);
-              fillchar(apnew^.cont[size1],addspaces,32);
-              Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
-              absatzwechsel(ap,apnew,false);
-              FreeAbsatz(ap);
-              FreeAbsatz(ap2);
-              KorrBlockScrolled(true);
-              ap:=apnew;
-            end
-            else ap:=ap^.next;
-          end
-          else begin
-            errsound;
-            exit;
-          end;
-        end
-        else ap:=ap^.next;
-      until ap=block[2].pos.absatz^.next;
-      modified:=true;
-      aufbau:=true;
     end;
+    { Cursor auf Blockanfang setzen }
+    gotopos(block[1].pos,0);
+    ap:=ActAbs;
+    ap^.umbruch:=true;
+    repeat
+      fp:=advance(ap,0,rrand);
+      if fp<ap^.size then begin  { Absatz umbrechen }
+        spaces:=0;
+        if config.QuoteReflow
+          then quotec1:=GetQuote(ap)
+          else quotec1:='';
+        quotes:=length(quotec1);
+        if config.autoindent and (quotes=0) then
+          while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
+            inc(spaces);
+        copysize:=max(0,ap^.size-fp);
+        if memtest(ap^.size)
+        and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
+        then begin
+          if spaces>0 then
+            fillchar(ap2^.cont,spaces,' ')
+          else if quotes>0 then
+            fastmove(quotec1[1],ap2^.cont[0],quotes);
+          if assigned(ap^.next) then
+            ap^.next^.prev:=ap2;
+          ap2^.next:=ap^.next;
+          ap^.next:=ap2;
+          ap2^.prev:=ap;
+          blockabssplit(ap,ap,ap2,fp,spaces+quotes);
+          ap:=AbsDelete(ap,fp,copysize,false,false);
+          su(ap);
+          su(ap2);
+          KorrBlockScrolled(false);
+          TruncAbs(ap);
+          ap:=ap2;
+        end
+        else begin
+          errsound;
+          exit;
+        end;
+      end
+      else
+      if assigned(ap^.next)
+      and (ap<>block[2].pos.absatz)
+      then begin  { Abs„tze ggf. zusammenfgen }
+        addspaces:=1;
+        ss:=ap^.size + ap^.next^.size + addspaces;
+        if ss>maxabslen then
+          error(2)    { 'Absatz zu groá' }
+        else if memtest(ss) then begin
+          if config.QuoteReflow then begin
+            quotec1:=getquote(ap);
+            quotec2:=getquote(ap^.next);
+            quotes:=length(quotec1);
+          end
+          else begin
+            quotec1:='';
+            quotec2:='';
+            quotes:=0;
+          end;
+          TruncAbs(ap);
+          TruncAbs(ap^.next);
+          if (ap^.size>length(quotec1))
+          and (ap^.next^.size>length(quotec2))  { Leerzeile belassen }
+          and (trim(quotec1)=trim(quotec2))  { nur bei ident. QuoteCh zusammenf. }
+          then begin
+            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
+              ap2:=ap^.next;
+              wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
+              dec(ss,length(quotec2));
+            end;
+            apnew:=AllocAbsatz(ss);
+            wpa:=apnew;
+            apnew^.umbruch:=true;
+            ap2:=ap^.next;
+            blockabsinsert(ap,apnew,maxint,maxint);
+            blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
+            if assigned(ap^.prev) then begin
+              apnew^.prev:=ap^.prev;
+              ap^.prev^.next:=apnew;
+            end;
+            if assigned(ap2^.next) then begin
+              apnew^.next:=ap2^.next;
+              ap2^.next^.prev:=apnew;
+            end;
+            size1:=ap^.size;
+            FastMove(ap^.cont,apnew^.cont,size1);
+            fillchar(apnew^.cont[size1],addspaces,32);
+            Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
+            absatzwechsel(ap,apnew,false);
+            FreeAbsatz(ap);
+            FreeAbsatz(ap2);
+            KorrBlockScrolled(true);
+            ap:=apnew;
+          end
+          else ap:=ap^.next;
+        end
+        else begin
+          errsound;
+          exit;
+        end;
+      end
+      else ap:=ap^.next;
+    until ap=block[2].pos.absatz^.next;
+    modified:=true;
+    aufbau:=true;
+  end;
 end;
 
 { ---------------------------------------------- Suchfunktionen }
@@ -2240,6 +2248,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/03/21 01:01:55  rb
+  'Block reformatieren' verbessert, weiterer kleiner Bugfix
+
   Revision 1.12  2000/03/17 23:10:27  rb
   'Block reformatieren' fertiggestellt
 
