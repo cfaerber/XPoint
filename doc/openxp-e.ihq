@@ -7031,17 +7031,16 @@ Enter the type of Network your main Server belongs
 to. You can press <F2> to call up a pick-list to
 select from. Possible entries are:
 
-<<RFC/UUCP>>    UseNet
+<<RFC/Client>>  Third party internet mail/news client
+<<POP3/SMTP>>   Built-in Mail Server
+<<NNTP>>        Built-in News Server
+<<RFC/UUCP>>    UseNet Server
 <<Fido>>        Fido and compatible Networks
-<<QWK>>         QWK Network
 <<ZConnect>>    ZERBERUS-5.0 systems
-<<MausTausch>>
-<<NNTP>>        News Server
-<<POP3/SMTP>>   Mail Server
 @
 682
-Your Username for this Server. This will usually be
-your <<OWN>> name.
+Your Username for this Server. For <<FidoNet>>, this will
+usually be your <<OWN>> name.
 
 For <<POP3/SMTP>> and <<NNTP>> Servers this <<MUST>> be your
 eMail address.

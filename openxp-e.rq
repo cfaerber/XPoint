@@ -1869,7 +1869,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9    Domain     ~
 10   Server dom.~
 11   FQDN       ~
-12   E-Mail     ~
+12   Identity   ~
+13   Server name~
 + 913
 0    30
 1    Type of net~
@@ -3886,6 +3887,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.39  2001/12/22 19:13:30  mf
+# Initial installation cleaned up.
+#
 # Revision 1.38  2001/11/22 10:39:57  mk
 # - NDIFF is intern, removed test for ndiff.exe
 #
