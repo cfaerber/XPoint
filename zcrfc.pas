@@ -106,6 +106,7 @@ type
     NewsMIME: boolean ;
     ppp: boolean;
     SMTP: boolean;
+    NNTPSpoolFormat: Boolean;    { if true, message boundaries are marked by a '.' line }
 
     { only used in non-cmdline mode }
     uparcer_news: string;
@@ -293,6 +294,7 @@ begin
 //bSMTP:= false;               { BZIP2'ed SMTP    }
   NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
+  NNTPSpoolFormat:= false;
   MailUser:= 'mail';        { fuer U-Zeile im X-File }
   NewsUser:= 'news';
   FileUser:= 'root';
@@ -2377,7 +2379,6 @@ var
   pfrec: ^filerec;
 begin
   if CommandLine then write('mail: ', fn);
-  inc(mails);
   OpenFile(fn);
   while bufpos < bufanz do
   begin
@@ -2448,9 +2449,10 @@ begin
     until ((p > 0) and (s[p - 1] = ':')) or (bufpos = bufanz);
     if bufpos < bufanz then
     begin
-      if CommandLine then writeln(' from ', hd.wab);
+      if CommandLine and(hd.wab<>'')then writeln(' from ', hd.wab);
       s[1] := c; hd.Lines:=-1;
       ReadRFCheader(true, s);
+      inc(mails);
       binaer := (hd.typ = 'B');
 
       if (mailuser='') and (hd.envemp<>'') then
@@ -2726,13 +2728,23 @@ begin
       //** clean up: ignore size if line count is given
       while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
-        ReadString; Dec(hd.lines);
+        ReadString;
+        if NNTPSpoolFormat then begin
+          if s='.' then
+            hd.lines:=0
+          else
+            if FirstChar(s)='.' then DelFirst(s)
+          end
+        else // standard format
+          Dec(hd.lines);
         dec(Size, length(s) + eol);
         DecodeLine;
         if (not binaer)and(hd.mime.ctype<>tMultipart)
           then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
-        Mail.Add(s);
-        inc(hd.groesse, length(s));
+        if not(NNTPSpoolFormat and(hd.lines=0))then begin // skip last '.' if NNTP spool format
+          Mail.Add(s);
+          inc(hd.groesse, length(s));
+          end;
       end;
       WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
       for i := 0 to Mail.Count - 1 do
@@ -3815,6 +3827,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/04/27 10:16:02  ma
+  - added "point quoted" NNTP spool format
+  - cosmetics
+
   Revision 1.54  2001/04/18 20:00:59  ma
   - fixed: last lines of long postings showed up at the bottom of following
     shorter postings
