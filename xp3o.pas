@@ -858,7 +858,7 @@ begin
     end;
   if aktdispmode=10 then begin
     RereadBrettdatum(_brett);
-    RereadUngelesen(_brett);
+    if art>4 then RereadUngelesen(_brett);
     if rdmode=1 then _keyboard(keyhome);
     end;
   if (art=6) and (aktdispmode=12) then begin
@@ -1367,6 +1367,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2000/07/29 22:09:47  mk
+  JG: - Brett-Gelesen-Bug bei Nachricht/Alle behoben
+
   Revision 1.7.2.3  2000/06/03 09:16:48  mk
   - Hart kodierten String in Resource 344 uebernommen
 
