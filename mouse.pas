@@ -256,7 +256,6 @@ begin
   end;
 end;
 
-{$IFDEF BP }
 function mausx:word; assembler;
 asm
   xor ax,ax
@@ -281,6 +280,7 @@ end;
 
 function maust:word; assembler;
 asm
+  xor ax,ax
   cmp maus,false
   je @1
   mov ax,3
@@ -299,55 +299,8 @@ asm
 @1:
 end;
 
-{$ELSE }
-
-function mausx:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
-begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     mausx := event.smepos.x * 8;
-  {$ELSE }
-    Mausx := 0;
-  {$ENDIF }
-end;
-
-function mausy:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
-begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     mausy := event.smepos.y * 8;
-  {$ELSE }
-    Mausy := 0;
-  {$ENDIF }
-end;
-
-function maust:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
-begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     maust := event.smebuttons;
-  {$ELSE }
-    Maust := 0;
-  {$ENDIF }
-end;
-
-{$ENDIF }
-
 procedure setmaus(x,y: integer16); assembler;
 asm
-{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,4
@@ -355,13 +308,11 @@ asm
   mov dx,y
   int mausint
 @1:
-{$ENDIF }
 end;
 
 
 procedure setmauswindow(xmin,xmax,ymin,ymax:integer16); assembler;
 asm
-{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,7
@@ -373,10 +324,8 @@ asm
   mov dx,ymax
   int mausint
 @1:
-{$ENDIF }
 end;
 
-{$IFDEF BP }
 { Interrupt-Routine setzen                        }
 { intmask: Interrupt-Maske; siehe intX-Konstanten }
 { intproc: aufzurufender Interrupt-Handler        }
@@ -418,9 +367,7 @@ begin
     SetMausInt(0,dummyproc,0);
   intset:=false;
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 procedure testmaus; assembler;
 asm
   mov ah,035h
@@ -446,7 +393,6 @@ asm
   mov maus,al
 @3:
 end;
-{$ENDIF }
 
 {$S-}
 procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
@@ -554,6 +500,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13.2.1  2000/12/27 20:04:58  mk
+  - maust auf 0 setzen, wenn keine maus da
+
   Revision 1.13  2000/06/01 16:03:04  mk
   - Verschiedene Aufraeumarbeiten
 
