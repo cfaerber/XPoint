@@ -1,0 +1,52 @@
+#/bin/bash
+echo "Starting $0 $*"
+scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$1"/
+sourcedir="$versiondir"openxp/
+subversion="$1".0
+cd "$sourcedir"
+#echo $scriptdir
+#echo $versiondir
+#echo $sourcedir
+#echo $subversion
+pwd
+#sleep 5
+# baue Beta 
+echo "Build version $1 in $sourcedir"
+case "$1" in
+   3.8)
+      echo "Updating CVS for $1 "
+      cvs up -r branch_3_7_8
+      ;;
+   3.9)
+      echo "Updating CVS for $1 "
+      cvs up -A
+      ;;
+    *)
+        echo "Usage: $0 {3.8|3.9}"
+        exit 1
+        ;;
+esac
+find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" -o -name "openxp" | xargs -t rm
+rm "$versiondir"output/* "$versiondir"kylixout/*
+rm compile*.log compile*.err 
+"$scriptdir"makexp $1 
+datum=`date`
+subject="OXP/32 v"$1": Fatal compiler errors fpc/Linux "$datum"."
+subjectkylix="OXP/32 v"$1": Fatal compiler errors Kylix2 "$datum"."
+test -s fatal-kylix-"$subversion".log && echo "buildxp: Ooops, Kylix had fatal errors"; cat error-kylix-"$subversion".log fatal-kylix-"$subversion".log > kylix-error-"$subversion".log; elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < kylix-error-"$subversion".log 
+test -f "openxp" || echo "buildxp: Ooops, no openxp binary"; elm -s "$subject" openxp-cvs@lists.sourceforge.net < error-"$subversion".log ; exit
+./rc openxp-d.rq
+./rc openxp-e.rq
+./ihs doc/openxp-d.ihq
+./ihs doc/openxp-e.ihq
+cp -a "$versiondir"kylixout/openxp openxp-kylix
+cp -a openxp openxp-$subversion
+cp -a openxp-d.res openxp-d.res-$subversion
+cp -a openxp-e.res openxp-e.res-$subversion
+cp -a doc/openxp-d.hlp doc/openxp-d.hlp-$subversion
+cp -a doc/openxp-e.hlp doc/openxp-e.hlp-$subversion
+cp -a openxp-kylix openxp-kylix-$subversion
+tar cvIf "$versiondir"openxp-"$subversion"-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+#
+echo "Finished $0"
