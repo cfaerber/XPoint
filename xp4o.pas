@@ -89,7 +89,7 @@ type arcbuf = record
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = 'i„';              {JG:15.02.00 Umlaut ignorieren Standard} 
+      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch} 
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Gr”áe nach Reorg }
@@ -180,7 +180,8 @@ label ende,happyend;
       if (ofs>0) and (ofs<wsize+1+length(key)) then begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
-        Intext:=TxtSeek(p,wsize,key,igcase);
+        if umlaut then upstring(key);          { Umlaut-Suche automatisch Case_insensitiv }
+        Intext:=TxtSeek(p,wsize,key,igcase,umlaut);
         end
       else
         Intext:=false;
@@ -346,7 +347,12 @@ label ende,happyend;
     else userform:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
   end;
 
+{Suche}
 begin
+  if suchopt[1]='*' then begin                {Erste Suche seit Programmstart ?}
+    if getres(1)='XP-E.HLP' then 
+      suchopt:='i' else suchopt:='i„'; end;   {Dann Suchoptionen auf Deutsch/Englisch anpassen }
+
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -515,7 +521,7 @@ begin
     if spez then with srec^ do begin
       user:=userform(user);
       if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        Ukonv(betr); Ukonv(user); Ukonv(fidoempf);
+        Ukonv(betr); Ukonv(user); Ukonv(txt); Ukonv(fidoempf);
         end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); UpString(txt); UpString(fidoempf);
@@ -2140,6 +2146,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/18 09:13:27  mk
+  JG: * Volltextsuche jettz Sprachabhaengig gestaltet
+      * XP3.ASM in XP3.PAS aufgenommen
+
   Revision 1.7  2000/02/16 15:25:32  mk
   OH: Schalter magics in FidoMsgRequest auf true gesetzt
 

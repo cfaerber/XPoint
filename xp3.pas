@@ -67,7 +67,7 @@ procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:word);
 procedure Iso1ToIBM(var data; size:word);
 procedure IBMToIso1(var data; size:word);
-function  TxtSeek(adr:pointer; size:word; var key:string; igcase:boolean):boolean;
+function  TxtSeek(adr:pointer; size:word; var key:string; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
@@ -109,26 +109,6 @@ implementation  {-----------------------------------------------------}
 
 uses  xp3o,xp3o2,xp3ex,xpnt;
 
-{$IFDEF ver32}
-procedure Rot13(var data; size:word); begin end;
-procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:word); begin end;
-function TxtSeek(adr:pointer; size:word; var key:string;igcase:boolean):
-         boolean; begin end;
-procedure Iso1ToIBM(var data; size:word); begin end;
-procedure IBMToIso1(var data; size:word); begin end;
-{$ELSE}
-{$L xp3.obj}
-procedure Rot13(var data; size:word); external;
-procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:word); external;
-function TxtSeek(adr:pointer; size:word; var key:string;igcase:boolean):
-         boolean; external;
-procedure Iso1ToIBM(var data; size:word); external;
-procedure IBMToIso1(var data; size:word); external;
-{$ENDIF}
-
-
 const IBM2ISOtab : array[0..255] of byte =
       ( 32, 32, 32, 32, 32, 32, 32, 32, 32,  9, 10, 32, 12, 13, 32, 42,
         62, 60, 32, 33, 32,167, 95, 32, 32, 32, 32, 32, 32, 32, 32, 32,
@@ -157,6 +137,237 @@ const IBM2ISOtab : array[0..255] of byte =
         68,165,149,162,147,111,153,120,237,151,163,150,154,121, 80,225,
        133,160,131, 97,132,134,145,135,138,130,136,137,141,161,140,139,
        100,164,149,162,147,111,148,246,237,151,163,150,129,121,112,152);
+
+
+{$IFDEF ver32}
+procedure Rot13(var data; size:word); begin end;
+procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
+              var passpos:word); begin end;
+function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
+         boolean; begin end;
+procedure Iso1ToIBM(var data; size:word); begin end;
+procedure IBMToIso1(var data; size:word); begin end;
+
+{$ELSE}
+{dont $L xp3.obj}
+
+{ JG:17.02.00 Prozeduren aus XP3.ASM integriert }
+procedure Rot13(var data; size:word); assembler;
+asm
+         les   di,data
+         mov   cx,size
+         jcxz  @ende
+         cld
+  @rotlp:
+         mov   al,es:[di]
+         cmp   al,'A'
+         jb    @rot
+         cmp   al,'Z'
+         ja    @noupcase
+         add   al,13
+         cmp   al,'Z'
+         jbe   @rot
+         sub   al,26
+         jmp   @rot
+  @noupcase:
+         cmp   al,'a'
+         jb    @rot
+         cmp   al,'z'
+         ja    @rot
+         add   al,13
+         cmp   al,'z'
+         jbe   @rot
+         sub   al,26
+  @rot:     
+         stosb
+         loop  @rotlp
+  @ende:    
+end;
+
+
+procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
+              var passpos:word); assembler;
+
+{ decode:  TRUE -> dekodieren, FALSE -> codierem                  }
+{ data:    Zeiger auf Datenblock                                  }
+{ size:    Anzahl zu codierender Bytes                            } 
+{ passwd:  Zeiger auf Paáwort (Pascal-String, max. 255 Zeichen)   }
+{ passpos: aktueller Index im Paáwort; Startwert 1                } 
+
+asm 
+         push ds 
+         les   di,passpos
+         mov   bx,es:[di]
+         les   di,data
+         mov   dx,size
+         lds   si,passwd
+         mov   ch,[si]                 { Paáwort-L„nge }
+         mov   cl,4                    { zum Nibble-Tauschen }
+         mov   ah,decode
+         cld
+
+@QPClp:  mov   al,es:[di]              { Original-Byte holen }
+         or    ah,ah                   { decodieren ? }
+         jnz   @code1
+         rol   al,cl                   { Nibbles vertauschen }
+@code1:  xor   al,[si+bx]              { Byte codieren }
+         inc   bl
+         cmp   bl,ch                   { am PW-Ende angekommen? }
+         jbe   @pwok
+         mov   bl,1                    { PW-Index auf 1 zurcksetzen }
+@pwok:   or    ah,ah                   { codieren? }
+         jz    @code2
+         rol   al,cl                   { Nibbles vertauschen }
+@code2:  stosb
+         dec   dx                      { n„chstes Byte }
+         jnz   @QPClp
+
+         les   di,passpos              { neuen PW-Index speichern }
+         mov   es:[di],bx
+         pop ds
+end;
+
+
+
+
+function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
+         boolean; assembler;
+
+{ Bei "Umlautsensitiver" Suche (ae=„) muss der Key-String im AE/OE... Format und Upcase sein }
+
+asm
+         push ds
+         push bp
+         cld
+         lds   si,adr
+         mov   cx,size
+         mov   dh,umlaut
+         cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
+         jne   @icase
+         cmp   igcase,0               { ignore case? }
+         jz    @case
+
+@icase:  push  cx
+         push  si
+
+@cloop:  lodsb                        {  den kompletten Puffer in }
+         cmp   al,'„'
+         jnz   @no_ae
+         mov   al,'Ž'
+         jmp   @xl
+@no_ae:  cmp   al,'”'
+         jnz   @no_oe
+         mov   al,'™'
+         jmp   @xl
+@no_oe:  cmp   al,''
+         jnz   @no_ue
+         mov   al,'š'
+         jmp   @xl
+@no_ue:  cmp   al,'a'                 {  UpperCase umwandeln }
+         jb    @noc
+         cmp   al,'z'
+         ja    @noc
+         sub   al,32
+@xl:     mov   [si-1],al
+@noc:    loop  @cloop
+         pop   si
+         pop   cx
+
+
+@case:   les   di,key
+         sub   cl,es:[di]
+         sbb   ch,0
+         jc    @nfound                 { key >= L„nge }
+         inc   cx
+
+@sblp1:  xor   bx,bx                   { Suchpuffer- u. String-Offset }
+         xor   bp,bp
+         mov   dl,es:[di]              { Key-L„nge }
+@sblp2:  mov   al,[si+bx]
+         cmp   al,es:[di+bp+1]
+         jnz   @testul                           
+@ulgood: inc   bx                      { Hier gehts weiter nach Erfolgreichem Umlautvergleich }
+         inc   bp
+         dec   dl
+         jz    @found
+         jmp   @sblp2
+
+                                        {--------------}
+@testul: cmp dh,0                       { UMLAUTSUCHE }
+         je @nextb                       { Aber nur wenn erwuenscht... }
+
+         mov ah,'E'                                        
+
+         cmp al,'Ž'                     { Wenn "Ž" im Puffer ist, }                           
+         jne @@1
+         mov al,'A'
+@ultest: cmp ax,es:[di+bp+1]            { Dann auf "AE" Testen. }
+         jne @nextb
+         inc bp                         { Wenn gefunden: Zeiger im Suchbegriff }
+         dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
+         jmp @ulgood                    { und oben weitermachen. }
+
+@@1:     cmp al,'™'
+         jne @@2
+         mov al,'O'                     { "OE"... }
+         jmp @ultest
+
+@@2:     cmp al,'š'
+         jne @@3
+         mov al,'U'                     { "UE"... }
+         jmp @ultest
+
+@@3:     cmp al,'á'
+         jne @@4
+         mov ax,'SS'                    { und "SS"... }
+         jmp @ultest
+@@4:                                    {--------------}
+
+
+@nextb:  inc   si                       { Weitersuchen... }
+         loop  @sblp1
+@nfound: xor   ax,ax
+         jmp   @ende
+@found:  mov   ax,1
+@ende:   pop bp
+         pop ds
+end;
+
+
+
+procedure Iso1ToIBM(var data; size:word); assembler;
+asm
+          mov    cx,size
+          jcxz   @noconv1
+          les    di,data
+          mov    bx,offset ISO2IBMtab - 128
+          cld
+@isolp1:  mov    al,es:[di]
+          or     al,al
+          jns    @ii1
+          xlat
+@ii1:     stosb
+          loop   @isolp1
+@noconv1:
+end;
+
+
+
+procedure IBMToIso1(var data; size:word); assembler;
+asm
+          mov    cx,size
+          jcxz   @noconv2
+          les    di,data
+          mov    bx,offset IBM2ISOtab
+          cld
+@isolp2:  mov    al,es:[di]
+          xlat
+          stosb
+          loop   @isolp2
+@noconv2: 
+end;
+
+{$ENDIF}
 
 
 { Datum des letzten Puffer-Einlesens ermitteln }
@@ -1075,6 +1286,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/18 09:13:27  mk
+  JG: * Volltextsuche jettz Sprachabhaengig gestaltet
+      * XP3.ASM in XP3.PAS aufgenommen
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
