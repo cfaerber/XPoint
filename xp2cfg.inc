@@ -1498,7 +1498,8 @@ begin
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
           getx(su,  'binmultipart',multipartbin) or
-          getx(su,  'binmime',mausmpbin))
+          getx(su,  'binmime',mausmpbin) or
+          getx(su,  'delviewtmp',delviewtmp)) 
         then
           tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
@@ -1605,6 +1606,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.2  2000/05/02 04:19:00  jg
+  - XPoint.cfg Schalter DelViewTmp
+    macht dasselbe wie die Umgebungsvariable DELVTMP
+
   Revision 1.13.2.1  2000/03/25 21:47:47  mk
   - Statistik/Systeme: Nummer auf 4 Stellen angepasst
   - Funktion zur DOSEmu-Erkennung gefixt

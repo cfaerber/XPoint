@@ -133,8 +133,8 @@ begin
     end;
     showscreen(true);
     DelTmpfiles('*.$$$');
-    if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
-      Delviewtmp:=true;
+    if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
+    if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}     
       DelTmpfiles('TMP-????.*');
       chdir(temppath);
       DelTmpfiles('TMP-????.*');
@@ -196,6 +196,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.9.2.2  2000/05/02 04:19:00  jg
+  - XPoint.cfg Schalter DelViewTmp
+    macht dasselbe wie die Umgebungsvariable DELVTMP
+
   Revision 1.9.2.1  2000/04/23 14:48:45  jg
   Aenderungen fuer externe Viewer:
 
