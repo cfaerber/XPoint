@@ -170,7 +170,7 @@ begin
   dispose(f1);
   spacksize:=0;
   spufsize:=0;
-  if not exist('UUZ.EXE') then begin
+  if not existBin(UUZBin) then begin
     NoUUZ; exit;
     end;
   MakeMimetypCfg;
@@ -187,7 +187,7 @@ begin
     if RFC1522 then opt:=opt+'-1522 ';
     opt:=opt+'-u'+BoxPar^.username+' ';
     f:=OutFilter(source);
-    shell('UUZ.EXE -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
+    shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
           boxpar^.boxname+' '+copy(caller,3,4),400,0);
     if f then _era(source);
     end;
@@ -324,7 +324,7 @@ begin
     dispose(f1); dispose(f2);
     clrscr;
     {window(1,1,80,25);}
-    shell('UUZ.EXE -uz -w:'+strs(screenlines)+
+    shell(UUZBin+' -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
@@ -368,7 +368,7 @@ begin
   recs:='';
   netcall_connect:=true;
   fidologfile:=TempFile('');
-  if not exist('uucico.exe') then begin
+  if not existBin(UUCICOBin) then begin
     NoUUCICO;
     res:=uu_parerr;
     end
@@ -387,7 +387,7 @@ begin
     WriteUUnummer(uunum);
   UUCPnetcall:=(res=uu_ok);
   cursor(curoff);
-  if not exist('UUZ.EXE') then begin
+  if not existBin(UUZBin) then begin
     nouuz; exit;
     end;
   {window(1,1,80,25);}
@@ -430,7 +430,7 @@ var dummy : longint;
   var sr : searchrec;
   begin
     if not IsPath(BoxPar^.SysopInp) then exit;
-    findfirst(BoxPar^.sysopinp+'*.*',ffAnyFile,sr);
+    findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
@@ -469,7 +469,7 @@ begin
       if exist(eppfile) then _era(eppfile);
       end;
 
-    if exist(SysopInp+'*.*') then                   { -- Eingangspaket -- }
+    if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
       if ImportUUCPfromSpool(SysopInp) then
         EmptySysin;
     Netcall_connect:=true;
@@ -477,6 +477,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/06/20 18:20:08  hd
+  - Anpassungen an Linux
+
   Revision 1.12  2000/05/30 17:17:06  jg
   - UUCP Sysoptransfer mehr Sicherheit bei DEL *.*
 
