@@ -39,7 +39,7 @@ uses
     xplinux,
     xpcurses, 
   {$ENDIF }
-  OsDepend,
+  osdepend,
   keys,
   inout,
   maus2,
@@ -1475,6 +1475,9 @@ end;
 
 {
   $Log$
+  Revision 1.76  2002/01/12 14:13:17  cl
+  - Kylix 2 compile fix
+
   Revision 1.75  2002/01/12 11:10:12  mk
   - Win32 GUI Part I
 

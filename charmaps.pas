@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit charmaps;
 
@@ -110,6 +110,9 @@ end.
 
 //
 // $Log$
+// Revision 1.5  2002/01/12 14:13:17  cl
+// - Kylix 2 compile fix
+//
 // Revision 1.4  2002/01/04 23:24:24  cl
 // - added MS-DOS Codepage 857 (Multilingual Latin 5)
 //
