@@ -187,7 +187,7 @@ begin
   WriteIPC(mcInfo,res_disconnect,[0]);
   if Connected then
   begin
-    WriteFmt('QUIT',[0]);
+    SWriteln('QUIT');
     SReadln(s);
     Error:=ParseResult(s);
   end;
@@ -257,6 +257,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.4  2000/08/01 18:06:18  mk
+        - WriteFMT in SWriteln geaendert
+
         Revision 1.3  2000/08/01 16:34:35  mk
         - Sockets laufen unter Win32 !!!
 
