@@ -709,7 +709,8 @@ var
 
         if not mausdown then
         begin
-          if not ((yy-y+FirstLine) in [0..Lines.Count-1]) then exit;
+          if (yy-y+FirstLine<0) or
+             (yy-y+FirstLine>Lines.Count-1) then exit;
           mausdown:=true;
           oldmark := Marked[FSelLine];
           Marked[FSelLine]:=not oldmark;
@@ -1083,6 +1084,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.63  2001/10/22 21:55:46  cl
+  - killed more range check errors
+
   Revision 1.62  2001/10/20 17:26:39  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

@@ -1052,7 +1052,7 @@ begin
             if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
             wrll(dbRecno(mbase));     { fr Bezugsverkettung merken }
-            l:=ixdat(datum) and $fffffff0;
+            l:=LongInt(LongWord(ixdat(datum)) and $fffffff0);
             if empfanz>1 then
               inc(l,iif(msgsent,2,1));
             wrll(l);
@@ -1227,6 +1227,9 @@ end;
 
 {
   $Log$
+  Revision 1.76  2001/10/22 21:55:46  cl
+  - killed more range check errors
+
   Revision 1.75  2001/10/20 17:26:40  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
