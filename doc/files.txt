@@ -213,6 +213,25 @@ dosx?.inc	Systemabhaengige Includes
 fileio.inc      ???
 fileioh.inc     ???
 
+Verzeichnis "beispiel"
+----------------------
+glossary.cfg    Beispieldatei fuer Glossary-Funktion (Editor)
+gsbox.scr       Login-Script fuer GSMail
+madness.scr     Login-Script fuer Madness-Boxen
+magic.scr       Login-Script fuer MagicNET
+maus.scr        Login-Script fuer MAUS-Boxen
+o-magic.scr     Login-Script fuer MagicNET (Online)
+oz-netz.scr     Login-Script fuer Z-Netz (Online)
+pcsysop.scr     Login-Script fuer NetLand und PCNet
+privhead.xps    Schablone fuer ???
+qbrett.xps      Schablone fuer ???
+qpmpriv.xps     Schablone fuer ???
+qpriv.xps       Schablone fuer ???
+quark.scr       Login-Script fuer QUARK-Boxen
+quoteto.xps     Schablone fuer ???
+uucp.scr        Login-Script fuer UUCP
+z-netz.scr      Login-Script fuer Z-Netz
+
 Die folgenden Tools liegen nur im Source vor und koennen mit allen
 unterstuetzen Compilern aktualisiert werden:
 
