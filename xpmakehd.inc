@@ -32,6 +32,7 @@ var i,res : integer;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
+    test : Integer;
 
   procedure ReadBuf;
   begin
@@ -203,22 +204,20 @@ var i,res : integer;
   {$endif}
 
   procedure GetKop;
-  var
-    Node: EmpfNodeP;
+    procedure AddKop(var node:empfnodep);
+    begin
+      if node=nil then begin
+        new(node);
+        LRead(node^.empf,AdrLen);
+        inc(test); writeln(test);
+        node^.next:=nil;
+        end
+      else
+        AddKop(node^.next);
+    end;
   begin
     if ReadKoplist then
-    begin
-      { Wir mÅssen einen neuen EmpfÑnger anlegen }
-      New(Node);
-
-      if Assigned(Hd.Kopien) then
-        Hd.Kopien^.Next := Node
-      else { Wir sind der erste Knoten }
-        HD.Kopien := Node;
-
-      Node^.Next := nil;
-      LRead(Node^.Empf,AdrLen);
-    end;
+      AddKop(hd.kopien);
   end;
 
   procedure GetTyp(var typ,charset:string);
@@ -404,7 +403,7 @@ var i,res : integer;
   {$ENDIF}
 
 begin
-  ok:=true;
+  ok:=true; test := 0;
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
@@ -610,6 +609,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/05/04 11:00:17  mk
+  - Memory-Leak in GetKOP beseitigt
+
   Revision 1.8  2000/05/04 10:26:03  mk
   - UUZ teils auf HugeString umgestellt
 
