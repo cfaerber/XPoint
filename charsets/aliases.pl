@@ -73,7 +73,7 @@ sub write_name {
   foreach my $alias (keys %more_aliases) {
     unless (grep { uc $alias eq uc $_ } @alias ) {
       if (grep { uc $more_aliases{$alias} eq uc $_ } @alias ) {
-        printf "$nl  (* additioanal alias: %-51s *)\n", $alias;
+        printf "$nl  (* additional alias: %-51s *)\n", $alias;
 	add_name($alias);
 	$nl = '';
       }
@@ -142,6 +142,9 @@ $UserAgent->request($Request,sub {
 
 
 # $Log$
+# Revision 1.7  2003/09/27 00:43:00  cl
+# Fixed aliases for Latin-7..10/ISO-8859-13..16
+#
 # Revision 1.6  2003/08/24 19:11:51  cl
 # - better aliases for charsets
 # - additional aliases for charsets not registered w/ IANA (e.g. x-mac-roman)

@@ -1,4 +1,4 @@
-(* $Id$ *)
+(* $Id: aliases.pl,v 1.6 2003/08/24 19:11:51 cl Exp )
 (* generated from IANA charset list -- do not edit *)
 
 function MimeCharsetCanonicalName(Const Name: String): String;
@@ -9,7 +9,7 @@ begin
 (* ===================================================================        *)
 (* CHARACTER SETS                                                             *)
 
-(* (last updated 2002-09-30)                                                  *)
+(* (last updated 2003-09-19)                                                  *)
 
 (* These are the official names for character sets that may be used in        *)
 (* the Internet and may be referred to in Internet documentation.  These      *)
@@ -209,8 +209,8 @@ begin
 (* Alias: se                                                                  *)
 (* Alias: csISO10Swedish                                                      *)
 
-  (* additioanal alias: SWEDISH                                             *)
-  (* additioanal alias: FINNISH                                             *)
+  (* additional alias: SWEDISH                                             *)
+  (* additional alias: FINNISH                                             *)
   (* overridden preference for MIME: ISO646-SE                              *)
 
   if UName='SEN_850200_B'            then result :='ISO646-SE'             else
@@ -342,7 +342,7 @@ begin
 (* Alias: ISO646-IT                                                           *)
 (* Alias: csISO15Italian                                                      *)
 
-  (* additioanal alias: ITALIAN                                             *)
+  (* additional alias: ITALIAN                                             *)
   (* overridden preference for MIME: ISO646-IT                              *)
 
   if UName='IT'                      then result :='ISO646-IT'             else
@@ -358,7 +358,7 @@ begin
 (* Alias: ISO646-PT                                                           *)
 (* Alias: csISO16Portuguese                                                   *)
 
-  (* additioanal alias: PORTU                                               *)
+  (* additional alias: PORTU                                               *)
   (* overridden preference for MIME: ISO646-PT                              *)
 
   if UName='PT'                      then result :='ISO646-PT'             else
@@ -374,7 +374,7 @@ begin
 (* Alias: ISO646-ES                                                           *)
 (* Alias: csISO17Spanish                                                      *)
 
-  (* additioanal alias: SPANISH                                             *)
+  (* additional alias: SPANISH                                             *)
   (* overridden preference for MIME: ISO646-ES                              *)
 
   if UName='ES'                      then result :='ISO646-ES'             else
@@ -415,7 +415,7 @@ begin
 (* Alias: ISO646-DE                                                           *)
 (* Alias: csISO21German                                                       *)
 
-  (* additioanal alias: GERMAN                                              *)
+  (* additional alias: GERMAN                                              *)
   (* overridden preference for MIME: ISO646-DE                              *)
 
   if UName='DIN_66003'               then result :='ISO646-DE'             else
@@ -586,7 +586,7 @@ begin
 (* Alias: csISO60DanishNorwegian                                              *)
 (* Alias: csISO60Norwegian1                                                   *)
 
-  (* additioanal alias: NORWEG                                              *)
+  (* additional alias: NORWEG                                              *)
   (* overridden preference for MIME: ISO646-NO                              *)
 
   if UName='NS_4551-1'               then result :='ISO646-NO'             else
@@ -621,7 +621,7 @@ begin
 (* Alias: fr                                                                  *)
 (* Alias: csISO69French                                                       *)
 
-  (* additioanal alias: FRENCH                                              *)
+  (* additional alias: FRENCH                                              *)
   (* overridden preference for MIME: ISO646-FR                              *)
 
   if UName='NF_Z_62-010'             then result :='ISO646-FR'             else
@@ -867,8 +867,8 @@ begin
 (* Alias: CP819                                                               *)
 (* Alias: csISOLatin1                                                         *)
 
-  (* additioanal alias: LATIN-1                                             *)
-  (* additioanal alias: ISO1                                                *)
+  (* additional alias: LATIN-1                                             *)
+  (* additional alias: ISO1                                                *)
 
   if UName='ISO_8859-1:1987'         then result :='ISO-8859-1'            else
   if UName='ISO-IR-100'              then result :='ISO-8859-1'            else
@@ -892,8 +892,8 @@ begin
 (* Alias: l2                                                                  *)
 (* Alias: csISOLatin2                                                         *)
 
-  (* additioanal alias: LATIN-2                                             *)
-  (* additioanal alias: ISO2                                                *)
+  (* additional alias: LATIN-2                                             *)
+  (* additional alias: ISO2                                                *)
 
   if UName='ISO_8859-2:1987'         then result :='ISO-8859-2'            else
   if UName='ISO-IR-101'              then result :='ISO-8859-2'            else
@@ -941,8 +941,8 @@ begin
 (* Alias: l3                                                                  *)
 (* Alias: csISOLatin3                                                         *)
 
-  (* additioanal alias: LATIN-3                                             *)
-  (* additioanal alias: ISO3                                                *)
+  (* additional alias: LATIN-3                                             *)
+  (* additional alias: ISO3                                                *)
 
   if UName='ISO_8859-3:1988'         then result :='ISO-8859-3'            else
   if UName='ISO-IR-109'              then result :='ISO-8859-3'            else
@@ -964,8 +964,8 @@ begin
 (* Alias: l4                                                                  *)
 (* Alias: csISOLatin4                                                         *)
 
-  (* additioanal alias: LATIN-4                                             *)
-  (* additioanal alias: ISO4                                                *)
+  (* additional alias: LATIN-4                                             *)
+  (* additional alias: ISO4                                                *)
 
   if UName='ISO_8859-4:1988'         then result :='ISO-8859-4'            else
   if UName='ISO-IR-110'              then result :='ISO-8859-4'            else
@@ -998,7 +998,7 @@ begin
 (* Alias: ca                                                                  *)
 (* Alias: csISO121Canadian1                                                   *)
 
-  (* additioanal alias: CANADIAN                                            *)
+  (* additional alias: CANADIAN                                            *)
   (* overridden preference for MIME: ISO646-CA                              *)
 
   if UName='CSA_Z243.4-1985-1'       then result :='ISO646-CA'             else
@@ -1048,7 +1048,7 @@ begin
 (* Alias: arabic                                                              *)
 (* Alias: csISOLatinArabic                                                    *)
 
-  (* additioanal alias: ISO6                                                *)
+  (* additional alias: ISO6                                                *)
 
   if UName='ISO_8859-6:1987'         then result :='ISO-8859-6'            else
   if UName='ISO-IR-127'              then result :='ISO-8859-6'            else
@@ -1092,7 +1092,7 @@ begin
 (* Alias: greek8                                                              *)
 (* Alias: csISOLatinGreek                                                     *)
 
-  (* additioanal alias: ISO7                                                *)
+  (* additional alias: ISO7                                                *)
 
   if UName='ISO_8859-7:1987'         then result :='ISO-8859-7'            else
   if UName='ISO-IR-126'              then result :='ISO-8859-7'            else
@@ -1126,7 +1126,7 @@ begin
 (* Alias: hebrew                                                              *)
 (* Alias: csISOLatinHebrew                                                    *)
 
-  (* additioanal alias: ISO8                                                *)
+  (* additional alias: ISO8                                                *)
 
   if UName='ISO_8859-8:1988'         then result :='ISO-8859-8'            else
   if UName='ISO-IR-138'              then result :='ISO-8859-8'            else
@@ -1219,7 +1219,7 @@ begin
 (* Alias: cyrillic                                                            *)
 (* Alias: csISOLatinCyrillic                                                  *)
 
-  (* additioanal alias: ISO5                                                *)
+  (* additional alias: ISO5                                                *)
 
   if UName='ISO_8859-5:1988'         then result :='ISO-8859-5'            else
   if UName='ISO-IR-144'              then result :='ISO-8859-5'            else
@@ -1267,8 +1267,8 @@ begin
 (* Alias: l5                                                                  *)
 (* Alias: csISOLatin5                                                         *)
 
-  (* additioanal alias: ISO9                                                *)
-  (* additioanal alias: LATIN-5                                             *)
+  (* additional alias: ISO9                                                *)
+  (* additional alias: LATIN-5                                             *)
 
   if UName='ISO_8859-9:1989'         then result :='ISO-8859-9'            else
   if UName='ISO-IR-148'              then result :='ISO-8859-9'            else
@@ -1371,8 +1371,8 @@ begin
 (* Alias: csISOLatin6                                                         *)
 (* Alias: latin6                                                              *)
 
-  (* additioanal alias: ISO10                                               *)
-  (* additioanal alias: LATIN-6                                             *)
+  (* additional alias: ISO10                                               *)
+  (* additional alias: LATIN-6                                             *)
   (* overridden preference for MIME: ISO-8859-10                            *)
 
   if UName='ISO-8859-10'             then result :='ISO-8859-10'           else
@@ -1450,7 +1450,7 @@ begin
 (* Alias: X0201                                                               *)
 (* Alias: csHalfWidthKatakana                                                 *)
 
-  (* additioanal alias: KATAKANA                                            *)
+  (* additional alias: KATAKANA                                            *)
 
   if UName='JIS_X0201'               then result :='JIS_X0201'             else
   if UName='X0201'                   then result :='JIS_X0201'             else
@@ -1517,7 +1517,7 @@ begin
 (* Alias: mac                                                                 *)
 (* Alias: csMacintosh                                                         *)
 
-  (* additioanal alias: X-MAC-ROMAN                                         *)
+  (* additional alias: X-MAC-ROMAN                                         *)
 
   if UName='MACINTOSH'               then result :='macintosh'             else
   if UName='MAC'                     then result :='macintosh'             else
@@ -1730,7 +1730,7 @@ begin
 (* Alias: 437                                                                 *)
 (* Alias: csPC8CodePage437                                                    *)
 
-  (* additioanal alias: IBMPC                                               *)
+  (* additional alias: IBMPC                                               *)
 
   if UName='IBM437'                  then result :='IBM437'                else
   if UName='CP437'                   then result :='IBM437'                else
@@ -2217,8 +2217,8 @@ begin
 (* Alias: CP00858                                                             *)
 (* Alias: PC-Multilingual-850+euro                                            *)
 
-  (* additioanal alias: CP858                                               *)
-  (* additioanal alias: IBM858                                              *)
+  (* additional alias: CP858                                               *)
+  (* additional alias: IBM858                                              *)
   (* overridden preference for MIME: PC-Multilingual-850+euro               *)
 
   if UName='IBM00858'                then result :='PC-Multilingual-850+euro' else
@@ -2417,7 +2417,7 @@ begin
 (* MIBenum: 1013                                                              *)
 (* Source: RFC 2781                                                           *)
 
-  (* additioanal alias: UNICODEFFFE                                         *)
+  (* additional alias: UNICODEFFFE                                         *)
 
   if UName='UTF-16BE'                then result :='UTF-16BE'              else
   if UName='UNICODEFFFE'             then result :='UTF-16BE'              else
@@ -2432,7 +2432,7 @@ begin
 (* MIBenum: 1015                                                              *)
 (* Source: RFC 2781                                                           *)
 
-  (* additioanal alias: UNICODE                                             *)
+  (* additional alias: UNICODE                                             *)
 
   if UName='UTF-16'                  then result :='UTF-16'                else
   if UName='UNICODE'                 then result :='UTF-16'                else
@@ -2479,9 +2479,9 @@ begin
   if UName='UNICODE-1-1-UTF-7'       then result :='UNICODE-1-1-UTF-7'     else
   if UName='CSUNICODE11UTF7'         then result :='UNICODE-1-1-UTF-7'     else
 
-(* Name: UTF-8                                                    [RFC2279]   *)
+(* Name: UTF-8                                                    [RFC-draft-yergeau-rfc2279bis-05.txt] *)
 (* MIBenum: 106                                                               *)
-(* Source: RFC 2279                                                           *)
+(* Source: RFC draft-yergeau-rfc2279bis-05.txt                                *)
 
   if UName='UTF-8'                   then result :='UTF-8'                 else
 
@@ -2489,11 +2489,17 @@ begin
 (* MIBenum: 109                                                               *)
 (* Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-13)[Tumasonis]  *)
 
-  (* additioanal alias: ISO13                                               *)
+  (* additional alias: LATIN-7                                             *)
+  (* additional alias: ISO13                                               *)
+  (* additional alias: LATIN7                                              *)
+  (* additional alias: L7                                                  *)
   (* overridden preference for MIME: ISO-8859-13                            *)
 
   if UName='ISO-8859-13'             then result :='ISO-8859-13'           else
+  if UName='LATIN-7'                 then result :='ISO-8859-13'           else
   if UName='ISO13'                   then result :='ISO-8859-13'           else
+  if UName='LATIN7'                  then result :='ISO-8859-13'           else
+  if UName='L7'                      then result :='ISO-8859-13'           else
 
 (* Name: ISO-8859-14                                                          *)
 (* MIBenum: 110                                                               *)
@@ -2505,10 +2511,8 @@ begin
 (* Alias: iso-celtic                                                          *)
 (* Alias: l8                                                                  *)
 
-  (* additioanal alias: LATIN-7                                             *)
-  (* additioanal alias: ISO14                                               *)
-  (* additioanal alias: LATIN7                                              *)
-  (* additioanal alias: L7                                                  *)
+  (* additional alias: LATIN-8                                             *)
+  (* additional alias: ISO14                                               *)
   (* overridden preference for MIME: ISO-8859-14                            *)
 
   if UName='ISO-8859-14'             then result :='ISO-8859-14'           else
@@ -2518,10 +2522,8 @@ begin
   if UName='LATIN8'                  then result :='ISO-8859-14'           else
   if UName='ISO-CELTIC'              then result :='ISO-8859-14'           else
   if UName='L8'                      then result :='ISO-8859-14'           else
-  if UName='LATIN-7'                 then result :='ISO-8859-14'           else
+  if UName='LATIN-8'                 then result :='ISO-8859-14'           else
   if UName='ISO14'                   then result :='ISO-8859-14'           else
-  if UName='LATIN7'                  then result :='ISO-8859-14'           else
-  if UName='L7'                      then result :='ISO-8859-14'           else
 
 (* Name: ISO-8859-15                                                          *)
 (* MIBenum: 111                                                               *)
@@ -2530,21 +2532,15 @@ begin
 (* Alias: ISO_8859-15                                                         *)
 (* Alias: Latin-9                                                             *)
 
-  (* additioanal alias: LATIN-8                                             *)
-  (* additioanal alias: L9                                                  *)
-  (* additioanal alias: LATIN8                                              *)
-  (* additioanal alias: LATIN9                                              *)
-  (* additioanal alias: L8                                                  *)
+  (* additional alias: L9                                                  *)
+  (* additional alias: LATIN9                                              *)
   (* overridden preference for MIME: ISO-8859-15                            *)
 
   if UName='ISO-8859-15'             then result :='ISO-8859-15'           else
   if UName='ISO_8859-15'             then result :='ISO-8859-15'           else
   if UName='LATIN-9'                 then result :='ISO-8859-15'           else
-  if UName='LATIN-8'                 then result :='ISO-8859-15'           else
   if UName='L9'                      then result :='ISO-8859-15'           else
-  if UName='LATIN8'                  then result :='ISO-8859-15'           else
   if UName='LATIN9'                  then result :='ISO-8859-15'           else
-  if UName='L8'                      then result :='ISO-8859-15'           else
 
 (* Name: ISO-8859-16                                                          *)
 (* MIBenum: 112                                                               *)
@@ -2555,9 +2551,7 @@ begin
 (* Alias: latin10                                                             *)
 (* Alias: l10                                                                 *)
 
-  (* additioanal alias: ISO16                                               *)
-  (* additioanal alias: LATIN-9                                             *)
-  (* additioanal alias: LATIN9                                              *)
+  (* additional alias: ISO16                                               *)
   (* overridden preference for MIME: ISO-8859-16                            *)
 
   if UName='ISO-8859-16'             then result :='ISO-8859-16'           else
@@ -2567,8 +2561,6 @@ begin
   if UName='LATIN10'                 then result :='ISO-8859-16'           else
   if UName='L10'                     then result :='ISO-8859-16'           else
   if UName='ISO16'                   then result :='ISO-8859-16'           else
-  if UName='LATIN-9'                 then result :='ISO-8859-16'           else
-  if UName='LATIN9'                  then result :='ISO-8859-16'           else
 
 (* Name: GBK                                                                  *)
 (* MIBenum: 113                                                               *)
@@ -2610,8 +2602,8 @@ begin
 (* Alias: MS_Kanji                                                            *)
 (* Alias: csShiftJIS                                                          *)
 
-  (* additioanal alias: SHIFT-JIS                                           *)
-  (* additioanal alias: X-SJIS                                              *)
+  (* additional alias: SHIFT-JIS                                           *)
+  (* additional alias: X-SJIS                                              *)
 
   if UName='SHIFT_JIS'               then result :='Shift_JIS'             else
   if UName='MS_KANJI'                then result :='Shift_JIS'             else
@@ -2919,7 +2911,7 @@ begin
 (*         PCL Symbol Set Id: 18C                                             *)
 (* Alias: csGB2312                                                            *)
 
-  (* additioanal alias: HANZI                                               *)
+  (* additional alias: HANZI                                               *)
 
   if UName='GB2312'                  then result :='GB2312'                else
   if UName='CSGB2312'                then result :='GB2312'                else
@@ -2931,8 +2923,8 @@ begin
 (*         PCL Symbol Set Id: 18T                                             *)
 (* Alias: csBig5                                                              *)
 
-  (* additioanal alias: X-BIG5                                              *)
-  (* additioanal alias: X-X-BIG5                                            *)
+  (* additional alias: X-BIG5                                              *)
+  (* additional alias: X-X-BIG5                                            *)
 
   if UName='BIG5'                    then result :='Big5'                  else
   if UName='CSBIG5'                  then result :='Big5'                  else
