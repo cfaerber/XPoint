@@ -412,7 +412,6 @@ begin
       writeln(t);
       writeln(t,getres2(700,41));    { Logfile }
       writeln(t);
-      flush(netlog^);
       close(netlog^);
       reset(netlog^);
       while not eof(netlog^) do begin
@@ -448,7 +447,6 @@ begin
         end;
       close(log);
       end;
-    flush(t);
     close(t);
     inwin:=windmin>0;
     if inwin then begin
@@ -848,6 +846,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.16  2001/06/22 18:15:02  my
+  - removed unnecessary flush() commands
+
   Revision 1.13.2.15  2001/06/19 01:27:44  my
   - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
     netcall report if found in the client directory
