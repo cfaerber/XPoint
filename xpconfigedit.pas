@@ -885,6 +885,7 @@ var d         : DB;
   end;
 
 begin { --- UniSel --- }
+  UniSel := '';
   if typ>5 then exit;
   case typ of
     1 : begin     { Boxen }
@@ -1633,6 +1634,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2001/10/21 13:09:05  ml
+  - removed some more warnings (only 130 yet...)
+
   Revision 1.26  2001/10/11 11:18:39  ma
   - changed server file name creation strategy
 

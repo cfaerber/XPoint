@@ -632,6 +632,7 @@ const unxxxing : array [compress_gzip..compress_freeze] of string = (
 label again;
 
 begin
+  spos := 0;
   dest := AddDirSepa(ExtractFilePath(fn));
   fn   := ExtractFileName(fn);
 
@@ -2054,6 +2055,7 @@ begin
     FirstLineHasBeenRead:=False;
     repeat                                { Envelope einlesen }
       p := 0;
+      c := 'x';
       if not FirstLineHasBeenRead then
         ReadString
       else
@@ -3636,6 +3638,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2001/10/21 13:09:05  ml
+  - removed some more warnings (only 130 yet...)
+
   Revision 1.80  2001/10/20 17:26:43  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

@@ -552,12 +552,12 @@ begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting: '+boxname,DLInform);
   result:=el_noconn;
 
+  ConvertedFiles:=TStringList.Create;
+  OutgoingFiles:=TStringList.Create;
+  AKABoxes.BoxName:=TStringList.Create;
+  AKABoxes.ReqFile:=TStringList.Create;
+  AKABoxes.PPFile:=TStringList.Create;
   try
-    ConvertedFiles:=TStringList.Create;
-    OutgoingFiles:=TStringList.Create;
-    AKABoxes.BoxName:=TStringList.Create;
-    AKABoxes.ReqFile:=TStringList.Create;
-    AKABoxes.PPFile:=TStringList.Create;
 
     // Convert outgoing buffers
     if Crash then
@@ -886,6 +886,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2001/10/21 13:09:06  ml
+  - removed some more warnings (only 130 yet...)
+
   Revision 1.24  2001/10/17 01:04:05  ma
   - fixed: Outgoing archive name computed wrong with Delphi
 

@@ -728,18 +728,23 @@ end;
 function ntValidAddress(nt:byte;const addr:string):boolean;
 begin
 //  if nt in netsRFC then result:=RFC2822ValidAdress(addr) else
+  Debug.DebugLog('xpnt','Unimplemented function called (ntValidAddress)',dlWarning);
   result:=false;
 end;
 
 function ntNormalizeAddress(nt:byte;var addr:string):boolean;
 begin
-
+  Debug.DebugLog('xpnt','Unimplemented function called (ntNormalizeAddress)',dlWarning);
+  result := false;
 end;
 
 begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.38  2001/10/21 13:09:05  ml
+  - removed some more warnings (only 130 yet...)
+
   Revision 1.37  2001/10/18 10:57:52  mk
   - fixed bug in ntReplyToAll introduced with last commit from ML
 
