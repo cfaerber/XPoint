@@ -321,8 +321,8 @@ begin
   hd := THeader.Create;
   ClearHeader;
 
-  rh('NEWS.RFC', false);
-  rh('MAIL.RFC', true);
+  rh(FileUpperCase('news.rfc'), false);
+  rh(FileUpperCase('mail.rfc'), true);
 
   FDeleteFiles := TStringList.Create;
 end;
@@ -3710,6 +3710,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.29  2003/09/09 16:03:08  mk
+  - use lowercase mail.rfc and news.rfc for Unix, uppercase for Dos+Win
+
   Revision 1.97.2.28  2003/09/09 14:21:25  mk
   - fixed reading of news.rfc and mail.rfc, is now working again
 
