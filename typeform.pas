@@ -37,14 +37,274 @@ uses
 
 const
   ISO2IBMTab : array[128..255] of byte =
-  (128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
-   144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-    32,173,155,156,120,157,124, 21, 34, 67,166,174,170, 45, 82,223,
-   248,241,253,252, 39,230,227,249, 44, 49,167,175,172,171, 47,168,
-   133,160,131, 65,142,143,146,128,138,144,136,137,141,161,140,139,
-    68,165,149,162,147,111,153,120,237,151,163,150,154,121, 80,225,
-   133,160,131, 97,132,134,145,135,138,130,136,137,141,161,140,139,
-   100,164,149,162,147,111,148,246,237,151,163,150,129,121,112,152);
+{128}  (128,177,177,177,177,177,177,177,177,177,177,177,177,177,177,177,
+{144}   177,177,177,177,177,177,177,177,177,177,177,177,177,177,177,177,
+{160}    32,173,155,156,177,157,124, 21, 34, 67,166,174,170, 45, 82,196,
+{176}   248,241,253, 51, 39,230, 21,250, 44, 49,167,175,172,171,177,168,
+{192}    65, 65, 65, 65,142,143,146,128, 69,144, 69, 69, 73, 73, 73, 73,
+{208}    84,165, 79, 79, 79, 79,153,120, 79, 85, 85, 85,154, 89, 84,225,
+{224}   133,160,131, 97,132,134,145,135,138,130,136,137,141,161,140,139,
+{240}   116,164,149,162,147,111,148,246,111,151,163,150,129,121,116,152);
+
+{
+  From: my@openxp16.de (Michael Heydekamp)
+  Newsgroups: crosspoint.openxp16.pub.developer
+  Date: 30 Jun 2002 23:52:00 +0200
+  Message-ID: <8RqQgycppwB@my.openxp16.de> auf news.kannofant.de
+
+  [...]
+
+  Grundsätzlich werden in CP437 nicht darstellbare Zeichen jetzt in das
+  "Nicht-konvertierbar-Zeichen" gewandelt.  Dazu verwende ich das IBM- 
+  Grafikzeichen #177 (Jochen hat das mal so eingeführt und ich find's  
+  deutlich besser und eindeutiger als das Fragezeichen).
+
+  Bisher wurden nicht darstellbare Zeichen jedenfalls oft einfach 1:1  
+  durchgereicht, so daß dann da z.B. bei einem Promillezeichen (#137 in  
+  Windows-1252) ein "ë" (eben #137 in CP437) dargestellt wurde, was nicht  
+  sehr sinnvoll ist.  Jetzt erkennt man wenigstens, daß da irgendein nicht  
+  konvertierbares Zeichen gestanden hat und eben kein "ë".
+
+  Es gibt einige Zeichen, die sich theoretisch durch mehrere andere  
+  Zeichen darstellen ließen (Multichar-Konvertierung), z.B. das  
+  Warenzeichen auf ISO #174 als "(R)". Bei ausgehenden Nachrichten ist das  
+  bereits realisiert, bei eingehenden jedoch noch nicht (und bei der  
+  ISO=>IBM-Konvertierung geht es nur um eingehende Nachrichten).  Das ist  
+  auch nicht so ohne, weil der UUZ eine reine String-Konvertierung macht  
+  und man sich da wegen der 255-Zeichen-Begrenzung irgendwas einfallen  
+  lassen muß.  In XP selbst (z.B. bei der Darstellung von MIME-Multiparts)  
+  sollte das ähnlich zu realisieren sein wie für ausgehende Nachrichten,  
+  muß aber auch erstmal gemacht werden.
+
+
+  Bei den Überlegungen, in welches einzelne Zeichen man konvertiert und ob  
+  überhaupt, habe ich mich danach gerichtet, wie der Buchstabe  
+  ausgesprochen wird bzw. welche Bedeutung ein Symbol hat (und habe dazu  
+  notfalls etwas Recherche betrieben, z.B. bei den Buchstaben "Eth" und  
+  "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im  
+  Unterschied zu den alten Tabellen) eher kein Kriterium.
+
+
+  Hier also die Änderungen.  Zunächst die, die bei allen direkt  
+  unterstützten Zeichensätzen (ISO1, ISO15 und Windows-1252) identisch  
+  sind:
+
+
+  Alle Zeichensätze
+  =================
+
+
+  ISO #175 => IBM #196
+  --------------------
+  Ein langer hochstehender Strich ("Macron"), wurde früher in das  
+  Blockgrafikzeichen #223 (?!) konvertiert, jetzt in den etwas längeren
+  Grafikstrich #196. Kann man drüber streiten, ist eigentlich nicht nach  
+  CP437 konvertierbar.
+
+
+  ISO #179 => IBM #51 ("3")
+  -------------------------
+  Da hat Peter wohl CP437 und CP850 durcheinandergeworfen: Die  
+  hochgestellte "3" wurde früher nach IBM #252 konvertiert, das ist aber  
+  in CP437 ein "^n" (<= an dieser Stelle wird man BTW die neue Multichar-
+  Konvertierung in XP bemerken, ich habe im Editor <Alt-252> getippt und  
+  sehe dort jetzt auch ein hochgestelltes "n", aber weil's das in ISO1/ 
+  ISO15 nicht gibt, wird XP es gleich nach "^n" wandeln). Jedenfalls ist  
+  "3" für "hoch-3" passender als "hoch-n".  Wäre auch ein Kandidat für  
+  Multichar-Konvertierung bei eingehenden Nachrichten.
+
+
+  ISO #182 => IBM #21 ("§")
+  -------------------------
+  Das ist das sog. "Pilcrow sign" (oder auch "Paragraph sign" oder  
+  "Section sign"), das häufig als Absatzzeichen in Editoren verwendet  
+  wird.  Dieses im englischen Sprachraum (aber auch da nur sehr selten)  
+  benutzte Zeichen entspricht vom Sinn her am ehesten dem im deutschen  
+  Sprachraum benutzten Paragraphenzeichen "§" und wird deshalb jetzt auch  
+  dorthin konvertiert (statt wie früher nach IBM #227, also einem kleinen  
+  griechischen "pi" - grmpf).
+  Quellen: http://www.daube.ch/docu/glossary/signs.html
+           http://ppewww.ph.gla.ac.uk/~flavell/iso8859/digress.html
+
+
+  ISO #183 => IBM #250 ("·")
+  --------------------------
+  Schlicht ein Fehler in den alten Tabellen, dieser "middle dot" (Unicode  
+  00B7) existiert sowohl im ISO- wie auch im IBM-Zeichensatz, wurde aber  
+  stattdessen bisher nach #249 ("bullet operator") konvertiert.
+
+
+  ISO #192/#193/#194 => IBM #65 ("A")
+  -----------------------------------
+  Das sind große "A" mit Akzent, die jetzt eben in ein großes "A"  
+  konvertiert werden (und früher in kleine à, á, oder â).
+
+
+  ISO #200/#202/#203 => IBM #69 ("E")
+  -----------------------------------
+  Analog dasselbe für große "E" mit Akzentzeichen (früher è, ê, ë).
+
+
+  ISO #204/205/206/207 => IBM #73 ("I")
+  -------------------------------------
+  Analog dasselbe für große "I" mit Akzentzeichen (früher ì, í, î, ï).
+
+
+  ISO #208 => IBM #84 ("T") bzw. ISO #240 => IBM #116 ("t")
+  ---------------------------------------------------------
+  Das ist z.B. so 'n Klopfer: Das sind die Buchstaben "Eth" (groß und  
+  klein), aber weil die so ähnlich aussehen wie ein "D" bzw. "d", wurden  
+  sie bisher eben in ein "D" bzw. "d" konvertiert.  Ausgesprochen wird  
+  "Eth" aber wie ein "Th" in "That", das wäre also z.B. auch ein Kandidat  
+  für 'ne Multicharkonvertierung. Da es die noch nicht gibt, wird "Eth"  
+  vorerst in ein "T" bzw. "t" konvertiert.
+  Quelle: http://briem.ismennt.is/2/2.1a/2.1.1.thorn.and.eth.htm
+
+
+  ISO #210/#211/#212/#213/#216 => IBM #79 ("O")
+  ---------------------------------------------
+  Große "O" mit Akzentzeichen jetzt nach "O" statt ò, ó, ô, o, ph
+  (#216 war BTW auch 'n Klopfer: Da wurde ein durchgestrichenes großes "O"  
+  in ein kleines griechisches "phi" (IBM #237) konvertiert, wohl weil's  
+  halt halbwegs ähnlich aussieht, wenn man nicht so genau hinguckt.)
+
+
+  ISO #217/#218/#219 => IBM #85 ("U")
+  -----------------------------------
+  Analog dasselbe für große "U" mit Akzentzeichen (früher ù, ú, û).
+
+
+  ISO #221 => IBM #89 ("Y")
+  -------------------------
+  Analog dasselbe für großes "Y" mit Akzentzeichen (früher *kleines* "y",  
+  ohne Akzent, warum?!).
+
+
+  ISO #222 => IBM #84 ("T") bzw. ISO #254 => IBM #116 ("t")
+  ---------------------------------------------------------
+  Das sind die Buchstaben "Thorn" (groß und klein), es gilt analog  
+  dasselbe wie schon bei "Eth" - wird gesprochen wie ein "Th" in "Thing"  
+  und deshalb fürs erste nach "T" bzw. "t" konvertiert.
+  Die bisherige Konvertierung war ganz klasse: "Thorn" wurde einfach in  
+  ein "P" bzw. "p" konvertiert... argh.
+
+
+
+  Jetzt noch ein paar zeichensatzspezifische Änderungen:
+
+
+  ISO1 und ISO15
+  ==============
+
+
+  ISO #128-#159 => IBM #177 (unkonvertierbar)
+  -------------------------------------------
+  Alles irgendwelche nicht darstellbaren Steuerzeichen, wurden bisher 1:1  
+  durchgereicht (falls sie überhaupt vorkommen konnten).  Sonderfall: Zu  
+  ISO #128 bei ISO1 (Euro) siehe unten.
+
+
+
+  ISO1 und Windows-1252
+  =====================
+
+
+  ISO #128 => IBM #238 ("€" = Epsilon)
+  ------------------------------------
+  Euro-Support in XP (auf Wunsch als echtes Euro-Symbol statt als Epsilon
+  darstellbar). Wurde bisher 1:1 durchgereicht, ergo wurde das Euro-Symbol  
+  als "Ç" dargestellt.
+
+
+  ISO #164 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Das rätselhafte "currency sign", würde früher nach #120 ("x")  
+  konvertiert (?!) und wird jetzt als unkonvertierbar behandelt.
+
+
+  ISO #190 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Das Zeichen "3/4" wurde früher nach #47 ("/") konvertiert - toll. ;)  
+  Auch ein Multichar-Kandidat.
+
+
+
+  ISO15 only
+  ==========
+
+
+  ISO #164 => IBM #238 ("€" = Epsilon)
+  ------------------------------------
+  Euro-Support in XP (auf Wunsch als echtes Euro-Symbol statt als Epsilon  
+  darstellbar). Wurde bisher 1:1 durchgereicht, ergo wurde das Euro-Symbol  
+  als "ñ" dargestellt.
+
+
+
+  Windows-1252 only
+  =================
+
+
+  ISO #129 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Zeichen ist nicht belegt, wurde bisher 1:1 durchgereicht (ü).
+
+
+  ISO #130 => IBM #44 (",")
+  -------------------------
+  Einfaches Anführungszeichen unten, jetzt Komma in CP437, früher  
+  Apostroph (aka Hochkomma, "'").
+
+
+  ISO #133/#134/#135 => IBM #177 (unkonvertierbar)
+  ------------------------------------------------
+  "Horizontal Ellipsis", "Dagger" und "Double Dagger" - irgendwelche  
+  selten benutzten Zeichen aus der Mathematik/Physik AFAIK.  Wurden früher  
+  1:1 durchgereicht (à, å, ç), werden jetzt als unkonvertierbar behandelt.
+
+
+  ISO #137 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Promillezeichen, nicht in CP437 darstellbar, wurde früher 1:1
+  durchgereicht ("ë").  Wird vorerst als unkonvertierbar behandelt,
+  Kandidat für Multichar-Konvertierung.
+
+
+  ISO #140 => IBM #79 ("O") bzw. ISO #156 => IBM #111 ("o")
+  ---------------------------------------------------------
+  Große/kleine Ligatur "OE", werden jetzt als "O" bzw. "o" dargestellt
+  (vorerst, ebenfalls Kandidaten für Multichar-Konvertierung).  Wurden
+  bisher 1:1 durchgereicht und demzufolge als "î" bzw. "£" dargestellt -
+  seltsam und inkonsequent eigentlich, denn dieselben Zeichen wurden bei
+  ISO15 (dort #188 und #189) schon immer zu einem "O" bzw. "o"
+  konvertiert...
+
+
+  ISO #141/#143/#144 => IBM #177 (unkonvertierbar)
+  ------------------------------------------------
+  Zeichen sind nicht belegt, wurden bisher 1:1 durchgereicht (ì, Å, É).
+
+
+  ISO #150/#151 => IBM #196
+  -------------------------
+  Etwas längere Bindestriche ("n-Dash", "m-Dash"), werden jetzt in das
+  längere IBM-Grafikzeichen #196 konvertiert.  Bisher #45 (normaler
+  Bindestrich).
+
+
+  ISO #153 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Trademark-Symbol, in CP437 nicht darstellbar (daher Kandidat für
+  Multichar-Konvertierung "(tm)").  Wurde bisher 1:1 durchgereicht und
+  daher als "Ö" dargestellt.
+
+
+  ISO #157 => IBM #177 (unkonvertierbar)
+  --------------------------------------
+  Zeichen ist nicht belegt, wurde bisher 1:1 durchgereicht (¥).
+
+  [...]
+}
 
   IBM2ISOTab : array[0..255] of byte =
   ( 32, 32, 32, 32, 32, 32, 32, 32, 32,  9, 10, 32, 12, 13, 32, 42,
@@ -1485,6 +1745,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2002/07/01 11:59:41  mk
+  MY: Neue ISO->IBM-Tabelle
+
   Revision 1.113  2002/05/13 07:59:05  mk
   - asm version of cpos has problems with FPC, removed temporary
 
