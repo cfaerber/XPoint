@@ -251,7 +251,7 @@ begin
     res:=0;
     exit;
   end;
-  if right(path,1)<>DirSepa then path:=path+DirSepa;
+  if rightstr(path,1)<>DirSepa then path:=path+DirSepa;
   if validfilename(path+testfile) then
     res:=0
   else
@@ -264,8 +264,8 @@ begin
       res:=0;
       while (p<=length(path)) do begin
         while (p<=length(path)) and (path[p]<>DirSepa) do inc(p);
-        if not IsPath(left(path,p)) then begin
-          mkdir(left(path,p-1));
+        if not IsPath(leftstr(path,p)) then begin
+          mkdir(leftstr(path,p-1));
           if inoutres<>0 then begin
             res:=-ioresult;
             exit;
@@ -470,6 +470,9 @@ end;
 
 {
         $Log$
+        Revision 1.5  2000/10/18 12:21:34  hd
+        - Unter Linux wieder compilierbar
+
         Revision 1.4  2000/10/17 20:36:26  mk
         - falschen Kommentar zu Disksize/Diskfree entfernt
 

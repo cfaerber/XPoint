@@ -24,6 +24,9 @@ uses
 {$IFDEF DOS32}
   Ports,
 {$ENDIF}
+{$ifdef Linux}
+  Linux, { Type fdSet }
+{$endif}
   Ringbuff;
 
 type SliceProc = procedure;
@@ -78,7 +81,7 @@ type tCommObj = Object
 Type tpCommObj = ^tCommObj;
 
 {$IFDEF Win32} {$I OCSWinh.inc} {$ENDIF}
-{$IFDEF Linux} { $I OCSLinh.inc }{$ENDIF}
+{$IFDEF Linux} {$I OCSLinh.inc } {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32 } {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 { !?!?!?!? }
@@ -100,7 +103,7 @@ function FossilDetect: Boolean;
 
 uses Sysutils,Dos,Strings,Timer,Debug
 {$IFDEF Win32},OCThread,Windows{$ENDIF}
-{$IFDEF Linux},Serial,Linux{$ENDIF}
+{$IFDEF Linux},Serial{$ENDIF}
 {$IFDEF OS2},OCThread,OS2Base{$ENDIF}
 {$IFDEF Go32V2},Go32{$ENDIF}
 {$IFDEF TCP},Sockets{$ENDIF}
@@ -443,6 +446,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/10/18 12:21:33  hd
+  - Unter Linux wieder compilierbar
+
   Revision 1.8  2000/10/16 20:46:34  mk
   - fixes Typo
 

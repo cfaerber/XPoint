@@ -1,10 +1,11 @@
-(*
+{ $Id$ }
+{
 **
 ** ObjCOM linux serial communication implementation header file
 ** [serial.pp wrapper, serial.pp by Sebastian Guenther]
 **
 ** Written by M.Kiesel 2000
-*)
+}
 
 type tSerialObj = Object(TCommObj)
         constructor Init;
@@ -44,6 +45,9 @@ Type tpSerialObj = ^tSerialObj;
 
 {
   $Log$
+  Revision 1.3  2000/10/18 12:21:33  hd
+  - Unter Linux wieder compilierbar
+
   Revision 1.2  2000/10/15 14:54:41  ma
   - Ken J. Wright: Linux port now working
 
