@@ -1185,19 +1185,19 @@ K (c) '93-96 Peter Mandrella
 1    Thank you for using CrossPoint.  Please note that  CrossPoint is
 2    NOT free software. It is shareware and you must register after a
 3    30-day evaluation period. For further information including pri-
-4    ces and a registration form read the file *REGISTER.DOC*.
+4    ces and a registration form read the file *BESTELL.DOC*.
 5
 6    If you have any questions, problems or suggestions concerning XP
 7    feel free to contact the CrossPoint support hotline.  E-Mail ad-
-8    dresses are listed in *README.TXT*.
+8    dresses are listed in *XPOINT.TXT*.
 19   License No:~
 #
 20   Choose "Continue" if you agree to these terms of license.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^REGISTER.DOC , ^Enter Key , ^Continue , ^Quit~
-32   ~^REGISTER.DOC , ^Enter Key~
-40   REGISTER.DOC
+30   ~^BESTELL.DOC , ^Enter Key , ^Continue , ^Quit~
+32   ~^RESTELL.DOC , ^Enter Key~
+40   BESTELL.DOC
 41   %s not found!
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
