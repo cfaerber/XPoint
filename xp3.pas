@@ -216,9 +216,44 @@ asm
          dec   dl
          jz    @found
          jmp   @sblp2
+
+@testul:                                { WILDCARDS }
+         mov ah,[edi+ebp+1]
+         cmp ah,'?'                     { ? = Ein Zeichen beliebig }
+         je @ulgood                     {--------------------------}
+
+
+         cmp ah,'*'                     { * = mehrere Zeichen beliebig }
+         jne @ultst                     { ---------------------------- }
+
+@1:      inc ebp
+         dec dl                         { Naechstes Suchkey-Zeichen laden }
+         jz @found                      { Kommt keines mehr, Suche erfolgreich }
+
+@2:      mov al,[esi+ebx]               { im Text Nach Anfang des rests suchen }
+         cmp al,[edi+ebp+1]
+         je @3
+         cmp al,' '                     { Abbruch bei Wortende }
+         jbe @nextb
+         inc ebx
+         jmp @2
+
+@3:      inc ebx                        {Weitervergleichen bis naechster * oder Suchkeyende }
+         inc ebp
+         dec dl
+         jz @found                      { Bei Suchkeyende ist Suche erfolgreich }
+         mov al,[edi+ebp+1]
+         cmp al,[esi+ebx]               { weiter im Text solange er passt }
+         je @3
+         cmp al,'?'                     { ...oder "?" - Wildcard greift }
+         je @3
+         cmp al,'*'                     { bei neuem * - Wildcard diesen ueberspringen }
+         je @1
+         jmp @2                         { Textanfang erneut suchen }
+
                                         {--------------}
-@testul: cmp dh,0                       { UMLAUTSUCHE }
-         je @nextb                       { Aber nur wenn erwuenscht... }
+@ultst:  cmp dh,0                       { UMLAUTSUCHE }
+         je @nextb                      { Aber nur wenn erwuenscht... }
 
          mov ah,'E'
 
@@ -248,7 +283,8 @@ asm
 @@4:                                    {--------------}
 
 @nextb:  inc   esi                       { Weitersuchen... }
-         loop  @sblp1
+         dec   ecx
+         jne @sblp1
 @nfound: xor   eax,eax
          jmp   @ende
 @found:  mov   eax,1
@@ -1204,6 +1240,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/02 14:11:24  mk
+  JG: - Volltextsuche mit Wildcards implementiert
+
   Revision 1.27  2000/06/29 13:00:55  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
