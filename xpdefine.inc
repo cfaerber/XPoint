@@ -19,6 +19,10 @@
    This software is part of the OpenXP project (www.openxp.de).
 
    Global compiler directives for OpenXP und Tools
+
+   Set conditional defines
+     NoDebug to switch of Debug
+     NoSnapshot to switch of Snapshot 
 }
 
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefuehrt
@@ -62,6 +66,16 @@
 
 { --- ab hier sind keine Aenderungen noetig -------------------------- }
 { --- no user-serviceable parts below -------------------------------- }
+
+{ --- 0. Some UnDefs ------------------------------------------------- }
+
+{$IFDEF NoDebug }
+  {$UNDEF Debug }
+{$ENDIF }
+
+{$IFDEF NoSnapshot }
+  {$UNDEF Snapshot }
+{$ENDIF }
 
 { --- 1. compiler and platform detection ----------------------------- }
 
@@ -225,7 +239,7 @@
 
 {$IFNDEF Win32}                 { Win32 APIs only on Windows }
   {$UNDEF Win32Window}
-  {$UNDEF Win32Console}  
+  {$UNDEF Win32Console}
 {$ENDIF}
 
 {$IFDEF NCURSES}
@@ -306,6 +320,9 @@
 
 {
   $Log$
+  Revision 1.91  2003/01/08 22:05:26  mk
+  - added handling for new switches NoDebug and NoSnapshot
+
   Revision 1.90  2003/01/07 00:26:02  cl
   - new, more logical structure of defines
 
