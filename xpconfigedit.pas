@@ -28,12 +28,13 @@ interface
 
 uses
   typeform, //atext
-  maske,  //customrec
+  maske,    //customrec
+  xpnt,     //types
   datadef;  //DB
 
 const
     maxboxen = 127;         { max. Groesse des Arrays 'boxlist' }
-var  own_Nt    : byte = 255;
+var  own_Nt    : eNetz = nt_Any; // byte = 255; ???
         { Netztyp f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
       own_Name  : string = '';
         { Boxname f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
@@ -48,7 +49,7 @@ var  own_Nt    : byte = 255;
       leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
       may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfuegen }
 
-function  Netz_Typ(nt:byte):string;
+function  Netz_Typ(nt:eNetz):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure BoxSelProc(var cr:customrec);
 procedure GruppenSelproc(var cr:customrec);
@@ -116,19 +117,19 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   {$IFDEF unix}xplinux,{$ENDIF}
   fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
-  xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,xpnt,
-  xpmodemscripts, replytoall, 
+  xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,
+  xpmodemscripts, replytoall,
   xpglobal;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
 {$IFNDEF DOS32}
-      SupportedNetTypes: array[0..5] of byte =
-        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..6] of eNetz =
+        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect, nt_Maus);
 {$ELSE}
-      SupportedNetTypes: array[0..3] of byte =
-        (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..4] of eNetz =
+        (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect, nt_Maus);
 {$ENDIF}
 
 var   UpArcnr   : integer;    { fuer EditPointdaten }
@@ -156,17 +157,19 @@ var   UpArcnr   : integer;    { fuer EditPointdaten }
       UUCP_gForFld:integer;   { UUCP: field of packet size      }
       UUCP_MaxSizeFld:integer;{ UUCP: field of max. file size   }
 
-      DomainNt  : shortint;   { Netztyp f. setdomain() und testvertreterbox() }
-      bDomainNt : byte;                                                { u.a. }
-      EditPnt   : byte;       { Netztyp f. EditPointdaten }
+//todo: remove dupes?
+      DomainNt  : eNetz;  //shortint;   { Netztyp f. setdomain() und testvertreterbox() }
+      bDomainNt : eNetz;  //byte;                                                { u.a. }
+      EditPnt   : eNetz;       { Netztyp f. EditPointdaten }
+      
       EMSIfield : integer;
       pp_da     : boolean;    { unversandte Nachrichten vorhanden }
       amvfield  : integer;    { EditDiverses }
-      downprotnr: integer;    { Edit/Point - Download-Protokoll }
       MailInServerFld : integer; { Name MailInServer RFC/Client }
+      SDB_nn : shortint = 1;  //static in SetDefaultBox
 
 
-function CreateServerFilename(d: db; nt:byte; const boxname:string):string;
+function CreateServerFilename(d: db; nt:eNetz; const boxname:string):string;
 var fa : fidoadr; i: integer;
 begin
   if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(_MPMask,boxname)) then begin
@@ -432,7 +435,7 @@ begin
   result:=true;
 end;
 
-function DefaultMaps(nt:byte):string;
+function DefaultMaps(nt:eNetz):string;
 begin
   case nt of
     nt_Netcall,
@@ -482,7 +485,7 @@ begin
     else begin
       if FirstChar(s)<>'.' then
          s:='.'+s;
-      if (bDomainNt<>0) and (getfield(fieldpos+1)='') then
+      if (bDomainNt<>nt_Netcall) and (getfield(fieldpos+1)='') then
         setfield(fieldpos+1,s);                                                   
       end;
 end;
@@ -557,7 +560,7 @@ end;
 
 function testvertreterbox(var s:string):boolean;
 var d  : DB;
-    nt : ShortInt;
+    nt : eNetz;
 begin
   if s='' then  
     testvertreterbox:=true
@@ -568,7 +571,7 @@ begin
     if dbFound then 
     begin
       s:= dbReadStr(d,'boxname');
-      nt:=dbReadInt(d,'netztyp');
+      nt:=dbNetztyp(d);
       if fieldpos=amvfield then    { AM-Vertreterbox }
         Result :=(DomainNt=nt)
       else                         { PM-Vertreterbox }
@@ -694,7 +697,8 @@ var d         : DB;
       w          : smallword;
       hd,sig,qt  : char;
       qm         : string[8];
-      nt,b       : byte;
+      nt        : eNetz;
+      b         : byte;
       dc         : string[2];
       adr        : string;
   begin
@@ -1497,7 +1501,7 @@ var d         : DB;
   end;
 
 begin { --- UniSel --- }
-  UniSel := '';
+  Result := '';
   if typ>5 then exit;
   case typ of
     1 : begin     { Boxen }
@@ -1545,6 +1549,7 @@ begin { --- UniSel --- }
           pushhp(820);
           nameofs:=2;
         end;
+    else  nameofs := 0; //prevent warning "nameofs not initialized"
   end;
   if typ<>5 then miscbase:=d;
   drec[1]:=0;
@@ -1724,7 +1729,7 @@ end;
 { fuer maske.CustomSel }
 
 
-function Netz_Typ(nt:byte):string;
+function Netz_Typ(nt:eNetz):string;
 begin
   Result := ntName(nt);
 end;
@@ -1785,12 +1790,12 @@ begin
     if not dbFound then
       rfehler1(918,box)   { 'SETUSER - Box "%s" unbekannt!' }
     else begin
-      hasreal:=ntRealname(dbReadInt(d,'netztyp'));
+      hasreal:=ntRealname(dbNetztyp(d));
       if user='' then begin
         user:=dbReadStr(d,'username');
         real:=dbReadStr(d,'realname');
         dialog(length(getres(930))+length(box)+35,iif(hasreal,5,3),'',x,y);
-        gross:=ntGrossUser(dbReadInt(d,'netztyp'));
+        gross:=ntGrossUser(dbNetztyp(d));
         maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fuer %s:' }
         mhnr(1502);
         if hasreal then
@@ -1851,7 +1856,7 @@ begin
     if gf_fido then
       xp9_testbox:=testbossnode(s)
     else begin
-      if DomainNt<0 then nt:=LowerCase(getfield(1))   { Netztyp als String }
+      if DomainNt = nt_Any {<0} then nt:=LowerCase(getfield(1))   { Netztyp als String }
       else nt:=LowerCase(ntName(DomainNt));
       if nt=LowerCase(ntName(nt_Maus)) then begin
         if (length(s)>4) and (UpperCase(LeftStr(s,4))='MAUS') then
@@ -1890,7 +1895,7 @@ var x,y  : Integer;
     fqdom: string;
     email: string;
     ntyp : string;
-    nt   : byte;
+    nt   : eNetz;
     i,b : integer;
 label restart;
 begin
@@ -1908,7 +1913,7 @@ restart:
   mset3proc(gf_getntyp);
   maddstring(3,10,getres2(912,13),name,20,20,'"!'+range('#','?')+range('A',#126)+'Ž™š');
     mhnr(680);                                       { 'Server' bzw. 'Boxname' }
-  DomainNt:=-1;
+  DomainNt:=nt_Any;  //-1;
   msetvfunc(xp9_testbox);
   maddstring(3,12,getres2(912,12),user,30,80,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
   userfield:=fieldpos;
@@ -1923,7 +1928,7 @@ restart:
   email:='';
 
   dom:=ntDefaultDomain(nt);
-  if nt = nt_Client then 
+  if nt = nt_Client then
   begin
     email:=user;
     if not IsMailaddress(email) then
@@ -1964,7 +1969,7 @@ restart:
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
-    else      if not nt = nt_Client then boxpar^.pointname:=''
+    else      if nt <> nt_Client then boxpar^.pointname:=''
               else 
               begin
                 b := cpos('@', eMail);
@@ -2182,7 +2187,7 @@ function BoxSelect(const entries:byte; boxlist:box_array; colsel2:boolean):strin
 const width = 51+BoxNameLen;
 var   d          : DB;
       brk        : boolean;
-      nt         : Byte;
+      nt         : eNetz;
       x,y,height,
       i, sel_anz : integer;     { Anzahl der auszuwaehlenden Boxen }
       box        : string;      { Name der aktuellen Box          }
@@ -2198,6 +2203,7 @@ begin
   if screenlines>40 then dec(height,2);
   dbOpen(d,BoxenFile,1);
   sel_anz:=0;
+  list := nil;  //prevent warning "list not initialized"
   while not dbEOF(d) do
   begin
     box:=dbReadStr(d,'Boxname');
@@ -2215,25 +2221,20 @@ begin
       else user:=dbReadStr(d,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
-      if sel_anz=1 then      { bei erster gefundener Box Dialog aufbauen }
-      begin
-        if own_name <> '' then
-        begin
-          if colsel2 then
-          begin                             { 'Serverboxen (Netztyp %s)' }
+      if sel_anz=1 then begin     { bei erster gefundener Box Dialog aufbauen }
+        if own_name <> '' then begin
+          if colsel2 then begin   { 'Serverboxen (Netztyp %s)' }
             selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,false);
             list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
             Listboxcol(list);
             list.setarrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'³');
-          end
-          else begin                        { 'Serverboxen (Netztyp %s)' }
+          end else begin                        { 'Serverboxen (Netztyp %s)' }
             selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,true);
             list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
             Listboxcol(list);
             list.setarrows(x,y+1,y+height+2,col.colselrahmen,col.colselrahmen,'³');
           end;
-        end
-        else begin                             { '/Netcall/Spezial bei:' }
+        end else begin                          { '/Netcall/Spezial bei:' }
           selbox(width+2,height+4,getres2(1024,3)+' '+getres2(1024,5),
           x,y,false);
           list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
@@ -2263,7 +2264,8 @@ end;
 
 procedure EditAddServersList(var cr:customrec);
 var   d          : DB;
-      x,y,nt     : integer;
+      x,y     : integer;
+      nt: eNetz;  //integer?
       t          : taste;
       nr,bp      : shortint;
       gl,width   : Integer;
@@ -2638,8 +2640,9 @@ end;
 
 
 function addServersTest(var s:string):boolean;
-var   p,nt,i,j,
+var   p,i,j,
       box_anz    : byte;
+      nt        : eNetz;
       boxlen,
       bfglen     : word;
       s1         : string;
@@ -2765,7 +2768,7 @@ begin
         end;
       end
       else begin
-        dbRead(d,'Netztyp',nt);
+        nt := dbNetztyp(d);
         if nt <> own_Nt then
         begin
           addServersTest:=false;
@@ -3128,6 +3131,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2002/12/14 07:25:51  dodi
+  - added MausNet support
+
   Revision 1.55  2002/12/12 11:58:49  dodi
   - set $WRITEABLECONT OFF
 
