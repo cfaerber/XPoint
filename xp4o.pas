@@ -2357,6 +2357,7 @@ procedure FileArcViewer(fn:pathstr);
 var useclip : boolean;
     arc     : shortint;
     lm      : byte;
+    ende    : boolean;
 begin
   if (fn='') or multipos('?*',fn) then begin
     if fn='' then fn:='*.*';
@@ -2371,7 +2372,10 @@ begin
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
       lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
-      if listfile(fn,fn,true,false,0)=0 then;           { und File einfach nur anzeigen }
+      repeat
+        if listfile(fn,fn,true,false,0) = -4 then ende:=false
+        else ende:=true;                                { und File einfach nur anzeigen }
+      until ende;
       listmakros:=lm;
       end
       { rfehler(434)   { 'keine Archivdatei' }
@@ -2891,6 +2895,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.32  2001/12/05 19:29:05  my
+  MY:- Wortumbruch kann jetzt auch im Archiv-Viewer mit <Ctrl-W>
+       umgeschaltet werden (Zusatz/Archiv-Viewer)
+
   Revision 1.47.2.31  2001/11/20 23:17:52  my
   MY:- Variablen 'historyFile', 'libraryFile' und 'optionsFile'
        => Konstanten
