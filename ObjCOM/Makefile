@@ -185,7 +185,7 @@ objcom$(UNITEXT): objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc \
 endif
 ifeq ($(OS),linux)
 objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc octhread$(UNITEXT) \
-	octwinh.inc ringbuff$(UNITEXT)
+	octwinh.inc ringbuff$(UNITEXT) serial$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),os2)
@@ -203,6 +203,9 @@ octhread$(UNITEXT): octhread.pas
 	$(PC) $(PFLAGS) $<
 
 ringbuff$(UNITEXT): ringbuff.pas
+	$(PC) $(PFLAGS) $<
+
+serial$(UNITEXT): serial.pas
 	$(PC) $(PFLAGS) $<
 
 example$(EXEEXT): example.pas objcom$(UNITEXT)
@@ -228,6 +231,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.9  2000/10/16 11:54:20  fe
+# serial.pas ergaenzt.
+#
 # Revision 1.8  2000/10/12 20:44:46  fe
 # Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
 #
