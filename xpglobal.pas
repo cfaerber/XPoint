@@ -28,7 +28,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.70.2';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.70.3';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -135,6 +135,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/10/07 17:46:02  mk
+  - Versionsnummer auf 3.70.3 geaendert
+
   Revision 1.37  2000/07/23 22:01:23  mk
   - Units unter die GPL gestellt
 
