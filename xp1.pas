@@ -1709,6 +1709,7 @@ procedure write_lastcall(const dat:string);
 var t : text;
     s : shortstring;
 begin
+  Debug.DebugLog('xp1',Format('Writeing %s %s as Lastcall-Date in %s', [fdat(Dat), ftime(dat), OwnPath+NewDateFile]),DLDebug);
   assign(t,ownpath+NewDateFile);
   rewrite(t);
   writeln(t,dat);
@@ -2128,6 +2129,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.24  2003/09/28 22:52:53  mk
+  - added debug log info to write_lastcall
+
   Revision 1.147.2.23  2003/09/05 18:37:56  mk
   - fixed compile problem on linux (removed const Parameter in PrintLine)
 
