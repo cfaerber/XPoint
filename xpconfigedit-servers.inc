@@ -1933,7 +1933,7 @@
 
   procedure EditClient(var brk:boolean);
   var
-      b,nt         : byte;
+      b            : byte;
       replyto      : string;
       email        : string;
       domain,fqdn  : string;
@@ -1944,7 +1944,7 @@
       dname,
       old_dname    : string;
   begin
-    with boxpar^ do 
+    with boxpar^ do
     begin
       dbGo(d,drec[p]);
       eMail := dbreadStr(d,'email');
@@ -1960,7 +1960,7 @@
 
       _EditClient(brk,name,komm,email,realname,replyto,fqdn, ClientPath,
         ClientExec, ClientAddServers, ClientDialUp, ClientPhone,
-        ClientLogin, ClientPass, ClientAskIfConnect, 
+        ClientLogin, ClientPass, ClientAskIfConnect,
         ClientAskIfDisconnect, ClientKeepConnectStatus,getres2(920,80));
 
       if not brk then begin
@@ -1990,7 +1990,7 @@
             old_dname:=dname;
             dname:='';
             dbWriteStr(d,'dateiname',dname);   { ! }
-            dname:=CreateServerFilename(d,nt,name); { ver„ndert pos(d)! }
+            dname:=CreateServerFilename(d,nt_Client,name); { ver„ndert pos(d)! }
             dbGo(d,drec[p]);
             dbWriteStr(d,'dateiname',dname);
             if dname<>old_dname then  { kann bei Fido evtl. gleich sein! }
@@ -2365,6 +2365,9 @@
 
 {
   $Log$
+  Revision 1.48.2.2  2002/05/20 01:11:29  ma
+  - fixed uninitialized variable
+
   Revision 1.48.2.1  2002/05/20 01:02:04  ma
   - fix: own_nt was not set
 
