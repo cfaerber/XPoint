@@ -178,7 +178,7 @@ Procedure TruncStr(var s:string; n:integer);    { String kuerzen                
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
-procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
+procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
@@ -1308,7 +1308,7 @@ begin
 end;
 
 { ROT13 Kodierung }
-procedure Rot13(var data; size: word); {&uses edi} assembler;
+procedure Rot13(var data; Size: Integer); {&uses edi} assembler;
 asm
          mov   edi, data
          mov   ecx, size
@@ -1427,6 +1427,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2001/10/17 07:33:26  mk
+  - Word to Integer in Rot13
+
   Revision 1.101  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling
