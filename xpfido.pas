@@ -1347,8 +1347,10 @@ begin
       if modem='' then modem:=strs(baud);
       maddtext(12,4,modem,col.coldiahigh); }
 
-      maddtext(12,4,fflags,col.coldiahigh);
-      maddtext(12,5,status,col.coldiahigh);
+
+      { Fix: Flagzeile zu lang: gekürzt und E-Mail rausschneiden }  
+      maddtext(12, 4, copy(MailString(FFlags, True), 1, 50), col.coldiahigh);
+      maddtext(12, 5, status, col.coldiahigh);
 
       end;
     end;
@@ -2252,6 +2254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/04 23:34:53  mk
+  MH: Flagzeile kuerzen, falls zu lang
+
   Revision 1.8  2000/03/03 18:14:46  mk
   MO: - fileseek fidofilelist, Quelltext renoviert und Suche nach ganzen Woertern eingeführt
 
