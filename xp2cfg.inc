@@ -502,16 +502,16 @@ begin
   temppath:='/tmp/';                        {alt: temppath:=ownpath;}
   extractpath:=ownpath+'files/';            {alt: extractpath:='';}
   sendpath:=ownpath+'send/';                {alt: sendpath:='';}
-  logpath:=OwnPath+'log/';                  {alt: logpath:=OwnPath;}
+  logpath:=ownPath+'log/';                  {alt: logpath:=OwnPath;}
 {$ELSE }
   temppath:=ownpath+'TEMP\';                {alt: temppath:=ownpath;}
   extractpath:=ownpath+'FILES\';            {alt: extractpath:='';}
   sendpath:=ownpath+'SEND\';                {alt: sendpath:='';}
-  logpath:=OwnPath+'LOG\';                  {alt: logpath:=OwnPath;}
+  logpath:=ownPath+'LOG\';                  {alt: logpath:=OwnPath;}
 {$ENDIF }
-  {Änderungen durch MW 04/2000}
-  filepath:=Ownpath+InFileDir;
-  fidopath:=OwnPath+FidoDir;   { fest }
+  {Žnderungen durch MW 04/2000}
+  filepath:=ownpath+InFileDir;
+  fidopath:=ownPath+FidoDir;   { fest }
   DefaultBox:='';
   DefFidoBox:='';
   ScrSaver:=300;
@@ -1779,7 +1779,7 @@ begin
     SaveConfig2;
     end;
 
-  { NEue Konfigurationsdatei bearbeiten }
+  { Neue Konfigurationsdatei bearbeiten }
   if (UseNewCfg) then begin
     if not (OpenCfg(ownpath+cfg3file)) then begin
       writeln('Interner Fehler: open(',ownpath+cfg3file,')');
@@ -1808,6 +1808,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.58  2000/05/29 15:13:29  oh
+  -Vertipper korrigiert
+
   Revision 1.57  2000/05/24 09:16:48  mk
   - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
 
