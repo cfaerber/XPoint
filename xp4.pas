@@ -133,12 +133,13 @@ begin
 end;
 
 procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
-var b     : byte;                              { wenn keine ungelesenen Nachrichten }
+var b    : byte;                               { wenn keine ungelesenen Nachrichten }
+    nope : boolean;
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
-  if not dbEOF(mbase) and
-    ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
-  then begin
+  if dbEOF(mbase) then nope:=true
+    else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
+  if nope then begin
     dbSeek(bbase,biIntnr,mid(brett,2));
     if dbFound then begin
       dbReadN(bbase,bb_flags,b);
@@ -2053,6 +2054,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/08/12 18:32:57  mk
+  JG: - Ungelesen-Workarround Setbrettgelesen funktioniert jetzt auch
+    Wenn Msgbase keine Nachricht mehr fuer dieses mehr Brett enthaelt.
+
   Revision 1.43  2000/08/08 13:18:15  mk
   - s[Length(s)] durch Lastchar ersetzt
 
