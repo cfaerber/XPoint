@@ -29,6 +29,9 @@ unit xpdos32;
 
 interface
 
+uses
+  UTFTools;
+
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;
 function SysGetScreenCols: Integer;
@@ -42,6 +45,8 @@ procedure SysSetBackIntensity;
 { Ermittelt letztes belegtes Laufwerk }
 function SysGetMaxDrive:char;
 function SysGetDriveType(drive:char):byte;
+// Returns the used Codepage in form of the Unicode charset
+function SysGetConsoleCodepage: TUnicodeCharsets;
 
 implementation
 
@@ -655,10 +660,18 @@ begin
   end;
 end;
 
+function SysGetConsoleCodepage: TUnicodeCharsets;
+begin
+  Result := csCP437;
+end;
+
 
 end.
 {
   $Log$
+  Revision 1.7  2000/10/10 12:15:23  mk
+  - SysGetConsoleCodepage added
+
   Revision 1.6  2000/10/03 15:45:07  mk
   - DOS32-Implementation von DriveType und AllDrives
 

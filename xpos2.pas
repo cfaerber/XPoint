@@ -21,6 +21,7 @@
 
 unit xpos2;
 
+
 {$I XPDEFINE.INC }
 
 {$IFNDEF OS2 }
@@ -28,6 +29,9 @@ unit xpos2;
 {$ENDIF }
 
 interface
+
+uses
+  UTFTools;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;
@@ -39,6 +43,8 @@ procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 procedure SysSetScreenSize(const Lines, Cols: Integer);
 { Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
 procedure SysSetBackIntensity;
+// Returns the used Codepage in form of the Unicode charset
+function SysGetConsoleCodepage: TUnicodeCharsets;
 
 implementation
 
@@ -130,9 +136,17 @@ begin
   VioSetState(State, 0);
 end;
 
+function SysGetConsoleCodepage: TUnicodeCharsets;
+begin
+  Result := csCP437;
+end;
+
 end.
 {
   $Log$
+  Revision 1.5  2000/10/10 12:15:24  mk
+  - SysGetConsoleCodepage added
+
   Revision 1.4  2000/09/30 16:34:50  mk
   - SysSetBackIntensity
 

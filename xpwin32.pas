@@ -29,6 +29,9 @@ unit xpwin32;
 
 interface
 
+uses
+  UTFTools;
+
 { Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
 function SysGetScreenLines: Integer;
 function SysGetScreenCols: Integer;
@@ -40,6 +43,8 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 { Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
 procedure SysSetBackIntensity;
 procedure RegisterMailClient;
+// Returns the used Codepage in form of the Unicode charset
+function SysGetConsoleCodepage: TUnicodeCharsets;
 
 implementation
 
@@ -111,9 +116,25 @@ begin
   RegCloseKey(Key); }
 end;
 
+function SysGetConsoleCodepage: TUnicodeCharsets;
+begin
+  case GetConsoleOutputCP of
+    437: Result := csCP437;
+    866: Result := csCP866;
+    1251: Result := csCP1251;
+    1252: Result := csCP1252;
+    1255: Result := csCP1255;
+  else
+    Result := csCP437;
+  end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.8  2000/10/10 12:15:23  mk
+  - SysGetConsoleCodepage added
+
   Revision 1.7  2000/09/30 16:34:50  mk
   - SysSetBackIntensity
 
