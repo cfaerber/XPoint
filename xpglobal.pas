@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.70.3';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.7.4';  { Versionnr. - steht nur an dieser Stelle }
 {$ifdef Linux}
   betastr     = ' alpha';
 {$else}
@@ -194,6 +194,9 @@ begin
 
 {
   $Log$
+  Revision 1.59  2001/10/21 11:45:46  mk
+  - Beta 3.7.4
+
   Revision 1.58  2001/10/20 17:26:42  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

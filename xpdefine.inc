@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -38,7 +38,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{$DEFINE Snapshot}
+{.$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -239,6 +239,9 @@
 
 {
   $Log$
+  Revision 1.74  2001/10/21 11:45:46  mk
+  - Beta 3.7.4
+
   Revision 1.73  2001/10/17 04:06:12  mk
   - fine tuned delphi compiler settings
   - enabled Range Check again in debug version
