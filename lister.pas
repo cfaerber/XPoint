@@ -84,7 +84,7 @@ type
     markable: boolean;                  { markieren m”glich   }
     endoncr: boolean;                   { Ende mit <cr>       }
     helpinfo: boolean;                  { F1=Hilfe            }
-    wrappos: byte;
+    wrappos: Integer;
     noshift: boolean;                   { kein links/rechts-Scrolling }
     markswitch: boolean;                { SelBar umschaltbar  }
     maysearch: boolean;                 { Suchen m”glich      }
@@ -135,7 +135,7 @@ type
     function GetMarked(Index: Integer): boolean;
     procedure SetMarked(Index: Integer; NewValue: boolean);
     procedure SetHeaderText(s: String);
-    function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte): Integer;
+    function make_list(var buf: ListerCharArray; BufLen, Wrap: Integer): Integer;
 
   private
     FIsUTF8: boolean;
@@ -196,7 +196,7 @@ uses
 
 // Zerlegen des Buffers in einzelne Zeilen
 
-function TLister.make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte):
+function TLister.make_list(var buf: ListerCharArray; BufLen, Wrap: Integer):
   Integer;
 var
   i, j: Integer;
@@ -206,8 +206,7 @@ var
 begin
   Result := 0;
   if BufLen = 0 then exit;
-  if wrap = 0 then wrap := 255;
-  Wrap := Min(Wrap, 255); // Begrenzung der Zeilenl„nge auf 255 Zeichen
+  if wrap = 0 then wrap := MaxInt div 2; // Überlauf vermeiden
   j := 0;
   while j < BufLen do
   begin
@@ -1163,6 +1162,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.8  2003/09/14 14:18:31  mk
+  - fixed 802558: 3.8.x: CTRL-w im Lister
+    removed line length limit of 255 chars (now 2 GB)
+
   Revision 1.69.2.7  2003/09/11 22:28:54  mk
   - added special color for signatures
 
