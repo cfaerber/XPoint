@@ -195,6 +195,7 @@ var
   // Liste der Empfaenger
   empflist: TStringList;
   TempS: ShortString;
+  t: tstringlist;
 
 const
   { Wird zum Einlesen der Customizable Headerlines benoetigt }
@@ -212,7 +213,9 @@ begin
     AddRef.Free;
     XEmpf.Free;
     XOEM.Free;
-    Followup.Free;
+    replyto.free;
+    followup.free;
+    mailcopies.free;
     ULine.Free;
     XLine.Free;
     ZLine.Free;
@@ -228,7 +231,9 @@ begin
     AddRef := TStringList.Create;
     XEmpf := TStringList.Create;
     XOEM := TStringList.Create;
-    Followup := TStringList.Create;
+    replyto := tstringlist.create;
+    followup := tstringlist.create;
+    mailcopies := tstringlist.create;
     ULine := TStringlist.Create;
     XLine := TStringList.Create;
     ZLine := TStringlist.Create;
@@ -287,6 +292,23 @@ begin
     if hd.mime.ctype <> tMultipart then Result := ISOToIBM(s) else
     Result := s;
   end;
+end;
+
+{ addiert einen tstringlists an einen zweiten }
+procedure tstringlistadd(var a: tstringlist;b: tstringlist);
+var
+  i,j: integer;
+  ina: boolean;
+begin
+  for i:=0 to b.count-1 do begin
+    ina:=false;
+    for j:=0 to a.count-1 do
+      if a[j]=b[i] then begin
+        ina:=true;
+        break
+      end;
+    if not ina then a.add(b[i])
+  end
 end;
 
 constructor TUUZ.create;
@@ -424,6 +446,11 @@ begin
           if switch = 'smtp' then
           SMTP := true
         else
+          if switch = 'bsmtp' then
+        begin
+          SMTP := true; bSMTP := true;
+        end
+        else
           if switch = 'csmtp' then
         begin
           SMTP := true; cSMTP := true;
@@ -434,14 +461,14 @@ begin
           SMTP := true; fSMTP := true;
         end
         else
-          if switch = 'zsmtp' then
+          if switch = 'gsmtp' then
         begin
           SMTP := true; zSMTP := true;
         end
         else
-          if switch = 'bsmtp' then
+          if switch = 'zsmtp' then
         begin
-          SMTP := true; bSMTP := true;
+          SMTP := true; zSMTP := true;
         end
         else
           if switch = 'mime' then
@@ -611,10 +638,45 @@ begin
     wrs('MID: ' + msgid);
     wrs('EDA: ' + zdatum);
     wrs('LEN: ' + strs(groesse));
-    if (PmReplyTo <> '') and (PmReplyTo <> absender) then
-      wrs('Antwort-an: ' + PmReplyTo);
-    for i := 0 to Followup.Count - 1 do
-      wrs('Diskussion-in: ' + Followup[i]);
+
+{   if (PmReplyTo <> '') and (PmReplyTo <> absender) then
+      wrs('ANTWORT-AN: ' + PmReplyTo); }
+
+    for i:=0 to replyto.count-1 do
+      wrs('ANTWORT-AN: '+replyto[i]);
+    if pm_reply then begin
+      wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }
+      if mailcopies.count>0 then
+        if (mailcopies.count=1) and ((lowercase(mailcopies[0])='nobody') or
+          (lowercase(mailcopies[0])='never')) then begin
+          wrs('U-Mail-Copies-To: '+mailcopies[0]);
+          if replyto.count>0 then
+	    for i:=0 to replyto.count-1 do
+              wrs('DISKUSSION-IN: '+replyto[i])
+          else
+            wrs('DISKUSSION-IN: '+absender)
+        end else
+	  for i:=0 to mailcopies.count-1 do
+            wrs('DISKUSSION-IN: '+mailcopies[i])
+      else if replyto.count>0 then
+	for i:=0 to replyto.count-1 do
+          wrs('DISKUSSION-IN: '+replyto[i])
+      else
+        wrs('DISKUSSION-IN: '+absender)
+    end else begin
+      for i:=0 to followup.count-1 do
+        wrs('DISKUSSION-IN: '+followup[i]);
+      if (mailcopies.count=1) and ((lowercase(mailcopies[0])='nobody')
+        or (lowercase(mailcopies[0])='never')) then
+        wrs('U-Mail-Copies-To: '+mailcopies[0])
+      else begin
+        for i:=0 to mailcopies.count-1 do
+          wrs('DISKUSSION-IN: '+mailcopies[i]);
+	if (mailcopies.count>0) and (followup.count=0) then
+          for i:=0 to xempf.count-1 do
+            wrs('DISKUSSION-IN: '+xempf[i])
+      end
+    end;
     if typ = 'B' then wrs('TYP: BIN');
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
@@ -635,10 +697,9 @@ begin
     if EmpfBestTo <> '' then
       wrs('EB: ' + iifs(empfbestto <> absender, empfbestto, ''));
     if attrib and attrIsEB <> 0 then wrs('STAT: EB');
-    if pm_reply then wrs('STAT: PM-REPLY');
     if pgpflags and fPGP_encoded <> 0 then wrs('CRYPT: PGP');
     if keywords <> '' then WriteStichworte(keywords);
-    if summary <> '' then wrs('Zusammenfassung: ' + summary);
+    if summary <> '' then wrs('ZUSAMMENFASSUNG: ' + summary);
     if distribution <> '' then wrs('U-Distribution: ' + distribution);
     if mime.boundary <> '' then wrs('X-XP-Boundary: ' + mime.boundary);
     if gateway <> '' then wrs('X-Gateway: ' + gateway);
@@ -1507,62 +1568,100 @@ var
     end;
   end;
 
-  procedure GetAdr(var adr, realname: string);
+  procedure getadr(line: string;var adr, realname: string);
   var
-    p, p2: Integer;
+    p, p2: integer;
   begin
     realname := '';
-    s0 := trim(s0);
-    if (firstchar(s0) = '"') and (cpos('<', s0) > 5) then
+    line := trim(line);
+    if (firstchar(line) = '"') and (cpos('<', line) > 5) then
     begin                               { neu in 3.11 }
-      p := pos('"', mid(s0, 2));
+      p := pos('"', mid(line, 2));
 
       { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
-      while s0[p] = '\' do
+      while line[p] = '\' do
       begin
-        delete(s0, p, 1);
-        p := pos('"', mid(s0, p + 1)) + p - 1;
+        delete(line, p, 1);
+        p := pos('"', mid(line, p + 1)) + p - 1;
       end;
 
       if p > 0 then
       begin
-        realname := copy(s0, 2, p - 1);
-        s0 := trim(mid(s0, p + 2));
+        realname := copy(line, 2, p - 1);
+        line := trim(mid(line, p + 2));
       end;
     end;                                { ... bis hier }
-    p := cpos('(', s0);
-    p2 := cpos('<', s0); { Klammer im Realname beachten }
-    if (p > 0) and ((p2 = 0) or (p2 > cpos('>', s0))) then
+    p := cpos('(', line);
+    p2 := cpos('<', line); { Klammer im Realname beachten }
+    if (p > 0) and ((p2 = 0) or (p2 > cpos('>', line))) then
     begin
-      realname := copy(s0, p + 1, length(s0) - p - 1);
-      s0 := trim(LeftStr(s0, p - 1));
+      realname := copy(line, p + 1, length(line) - p - 1);
+      line := trim(LeftStr(line, p - 1));
       p := pos('),', realname);         { mehrerer ","-getrennte Adressen }
       if p > 0 then truncstr(realname, p - 1);
     end;
-    p := cpos('<', s0);
+    p := cpos('<', line);
     if p > 0 then
     begin
-      p2 := cpos('>', s0);
+      p2 := cpos('>', line);
       if p2 < p then
-        adr := mid(s0, p + 1)
+        adr := mid(line, p + 1)
       else
       begin
-        adr := copy(s0, p + 1, p2 - p - 1);
+        adr := copy(line, p + 1, p2 - p - 1);
         if realname = '' then
           if p = 1 then
-            realname := trim(mid(s0, p2 + 1))
+            realname := trim(mid(line, p2 + 1))
           else
-            realname := trim(LeftStr(s0, p - 1));
+            realname := trim(LeftStr(line, p - 1));
       end;
     end
     else
-      adr := s0;
+      adr := line;
     if (FirstChar(adr) = '@') and (cpos(':', adr) > 0) then
     begin
       delete(adr, 1, cpos(':', adr));   { Route-Adresse nach RFC-822 aufloesen }
-      if cpos('@', adr) = 0 then adr := adr + '@nowhere';
+      if cpos('@', adr) = 0 then adr := adr + '@invalid';
     end;
     if FirstChar(realname) = '"' then UnQuote(realname);
+  end;
+
+  { uebersetzt einen RFC Forumnamen in einen ZC Forumnamen }
+  function forumn_rfc2zc(zcforumn: string): string;
+  var
+    p: integer;
+    s: string;
+  begin
+    s:=zcforumn;
+    repeat
+      p:=cpos('.',s);
+      if p>0 then s[p]:='/';
+    until p=0;
+    result:='/'+s
+  end;
+
+  { liesst eine Newsgroups-Zeile in einen tstring }
+  procedure getnewsgroupsline(line: string;var list: tstringlist);
+  var
+    i,p: integer;
+    ng: tstringlist;
+  begin
+    ng:=tstringlist.create;
+    rfcremovecomment(line);
+    line:=trim(line);
+    if line<>'' then begin
+      if rightstr(line,1)<>',' then line:=line+',';
+      while cpos(',',line)>0 do begin
+        p:=cpos(',',line);
+	ng.add(forumn_rfc2zc(leftstr(line,p-1)));
+        line:=trim(mid(line,p+1))
+      end
+    end;
+    for i:=0 to list.count-1 do
+      list.delete(i);
+    for i:=0 to ng.count-1 do
+      list.add(ng[i]);
+    ng.free
   end;
 
   procedure GetEmpf;
@@ -1612,72 +1711,70 @@ var
           if (p > 0) and (p < cpos('@', s0)) then
             s0 := mid(s0, p + 1);
         end;
-        GetAdr(s, drealn);
+        GetAdr(s0,s,drealn);
         hd.xempf.Add(s);
       until (sto = '');
     end;
   end;
 
-  procedure GetFollowup;
+  { liesst eine Followup-To-Zeile }
+  procedure getfollowup(line: string; var followup: tstringlist;
+    var poster: boolean);
   var
-    p: integer;
+    i,j: integer;
+    f: tstringlist;
+    lposter: boolean;
   begin
-    if mail or (cpos('@', s0) > 0) then exit;
-    RFCRemoveComment(s0);
-    s0 := trim(s0);
-    if s0 <> '' then
-      with hd do
-      begin
-        repeat
-          p := cpos('.', s0);
-          if p > 0 then s0[p] := '/';   { '.' -> '/' }
-        until p = 0;
-        if RightStr(s0, 1) <> ',' then s0 := s0 + ',';
-        while cpos(',', s0) > 0 do
-        begin
-          p := cpos(',', s0);
-          if LowerCase(LeftStr(s0, p - 1)) = 'poster' then
-            pm_reply := true
-          else
-            if p > 5 then
-          begin
-            Followup.Add('/' + LeftStr(s0, p - 1));
-          end;
-          s0 := trim(mid(s0, p + 1));
+    f:=tstringlist.create;
+    lposter:=false;
+    if cpos('@',line)=0 then begin
+      getnewsgroupsline(line,f);
+      for i:=0 to f.count-1 do
+        if lowercase(f[i])='/poster' then begin
+          lposter:=true;
+          for j:=0 to f.count-1 do
+            f.delete(j);
+          break
         end;
-      end;
+      poster:=lposter;
+      for i:=0 to followup.count-1 do
+        followup.delete(i);
+      for i:=0 to f.count-1 do
+        followup.add(f[i]);
+      f.free
+    end
   end;
 
-  procedure GetNewsgroups;
-  var
-    p: integer;
-
-    procedure replslash(var s0: string);
-    var
-      p: integer;
-    begin
-      repeat
-        p := cpos('.', s0);
-        if p > 0 then s0[p] := '/';     { '.' -> '/' }
-      until p = 0;
-    end;
-
-  begin
-    if mail then exit;
-    RFCRemoveComment(s0);
-    s0 := trim(s0);
-    replslash(s0);
-    i := 1;
-    while s0 <> '' do
-      with hd do
-      begin
-        p := cpos(',', s0);
-        if p = 0 then p := length(s0) + 1;
-        if p > 2 then
-          XEmpf.Add('/' + LeftStr(s0, p - 1));
-        s0 := trim(mid(s0, p + 1));
-      end;
-  end;
+//  procedure GetNewsgroups;
+//  var
+//    p: integer;
+//
+//    procedure replslash(var s0: string);
+//    var
+//      p: integer;
+//    begin
+//      repeat
+//        p := cpos('.', s0);
+//        if p > 0 then s0[p] := '/';     { '.' -> '/' }
+//      until p = 0;
+//    end;
+//
+//  begin
+//    if mail then exit;
+//    RFCRemoveComment(s0);
+//    s0 := trim(s0);
+//    replslash(s0);
+//    i := 1;
+//    while s0 <> '' do
+//      with hd do
+//      begin
+//        p := cpos(',', s0);
+//        if p = 0 then p := length(s0) + 1;
+//        if p > 2 then
+//          XEmpf.Add('/' + LeftStr(s0, p - 1));
+//        s0 := trim(mid(s0, p + 1));
+//      end;
+//  end;
 
   procedure GetKOPs;
   var
@@ -1692,7 +1789,7 @@ var
       if p > 2 then
       begin
         truncstr(s0, p - 1);
-        GetAdr(a, r);
+        GetAdr(s0,a,r);
         hd.Uline.Add('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
       end;
       s0 := s;
@@ -1970,7 +2067,7 @@ begin
               GetDate {argl!}
             else
               if zz = 'disposition-notification-to' then
-              GetAdr(EmpfBestTo, drealn)
+              GetAdr(s0,EmpfBestTo,drealn)
             else
               if zz = 'distribution' then
               GetVar(distribution, s0)
@@ -1983,11 +2080,14 @@ begin
               if zz = 'received' then
               GetReceived
             else
-              if zz = 'reply-to' then
-              GetAdr(PmReplyTo, drealn)
+	      { suboptimal }
+              if zz = 'reply-to' then begin
+                GetAdr(s0,s,drealn);
+		replyto.add(s)
+	      end
             else
               if zz = 'return-receipt-to' then
-              GetAdr(EmpfBestTo, drealn)
+              GetAdr(s0,EmpfBestTo,drealn)
             else
               Uline.Add('U-' + s1);
           's':
@@ -1995,7 +2095,7 @@ begin
               betreff := s0
             else
               if zz = 'sender' then
-              GetAdr(sender, drealn)
+              GetAdr(s0,sender,drealn)
             else
               if zz = 'supersedes' then
               ersetzt := GetMsgid
@@ -2050,7 +2150,7 @@ begin
               Uline.Add(s1);
         else
           if zz = 'from' then
-            GetAdr(absender, realname)
+            GetAdr(s0,absender,realname)
           else
             if zz = 'to' then
             GetEmpf
@@ -2062,13 +2162,23 @@ begin
             organisation := s0
           else
             if zz = 'newsgroups' then
-            getnewsgroups
+            getnewsgroupsline(s0,xempf)
           else
             if zz = 'path' then
             pfad := s0
           else
             if zz = 'mime-version' then
             getmime(GetMimeVersion)
+          else
+	    { suboptimal }
+            if zz = 'mail-copies-to' then begin
+              if (s0='nobody') or (s0='never') then
+	        mailcopies.add(s0)
+	      else begin
+	        GetAdr(s0,s,drealn);
+		mailcopies.add(s)
+	      end
+            end
           else
             if zz = 'keywords' then
             keywords := s0
@@ -2077,7 +2187,7 @@ begin
             GetInReplyto
           else
             if zz = 'followup-to' then
-            getFollowup
+            getfollowup(s0,followup,pm_reply)
           else
             // User-Agent is new in grandson-of-1036
             if (zz = 'newsreader') or (zz = 'user-agent') then
@@ -2133,6 +2243,12 @@ begin
       MimeIsoDecode(s);
       ULine[i] := s;
     end;
+    
+    if pm_reply then
+      if replyto.count>0 then
+        tstringlistadd(mailcopies,replyto)
+      else
+        mailcopies.add(absender);
 
     if (XEmpf.Count = 1) and (Followup.Count = 1) and (xempf[0] = Followup[0]) then
       Followup.Clear;
@@ -2847,6 +2963,7 @@ var
       formi(IVal(mid(zdate, p + 1)), 2);
   end;
 
+  { uebersetzt einen ZC Forumnamen in einen RFC Forumnamen }
   function formnews(s: string): string;
   var
     p: integer;
@@ -2866,14 +2983,28 @@ var
       formnews := LowerCase(s);
   end;
 
+  { erzeugt eine Newsgroups-Zeile ohne 'Newsgroups: ' aus einer
+    tstringlist }
+  function newsgroupsline(newsgroups: tstringlist): string;
+  var
+    s: string;
+    i: integer;
+  begin
+    for i:=0 to newsgroups.count-1 do
+      s:=s+formnews(newsgroups[i])+',';
+    setlength(s,length(s)-1);           { delete last ',' }
+    newsgroupsline:=s
+  end;
+
   procedure WriteNewsgroups;            { Newsgroups nicht folden! }
   var
     s: string;
-    i: Integer;
   begin
     s := 'Newsgroups: ' + formnews(hd.empfaenger);
-    for i := 0 to EmpfList.Count - 1 do
-      s := s + ',' + formnews(EmpfList[i]);
+    if empflist.count>0 then
+      s := s + ',' + newsgroupsline(empflist);
+{    for i := 0 to EmpfList.Count - 1 do
+      s := s + ',' + formnews(EmpfList[i]); }
     Wrs(f, s);
   end;
 
@@ -3074,26 +3205,47 @@ begin
       RFC1522form;
       wrs(f, 'Organization: ' + zcrfc.s);
     end;
-    if PmReplyTo <> '' then
+{    if PmReplyTo <> '' then
       wrs(f, 'Reply-To: ' + pmreplyto);
     if pm_reply then
       wrs(f, 'Followup-To: poster')
     else
       if not mail and (AmReplyTo <> '') then
-      wrs(f, 'Followup-To: ' + formnews(AmReplyTo));
+      wrs(f, 'Followup-To: ' + formnews(AmReplyTo)); }
+
+    if pm_reply then begin
+      t:=tstringlist.create;
+      tstringlistadd(t,mailcopies);
+      if replyto.count>0 then
+        tstringlistadd(t,replyto)
+      else
+        t.add(absender);
+      wrs(f, 'Reply-To: '+newsgroupsline(t));
+      wrs(f, 'Followup-To: poster');
+      t.free
+    end else begin
+      if replyto.count>0 then
+        wrs(f, 'Reply-To: '+newsgroupsline(replyto));
+      if followup.count>0 then
+        wrs(f, 'Followup-To: '+newsgroupsline(followup));
+      if mailcopies.count>0 then
+        wrs(f, 'Mail-Copies-To: '+newsgroupsline(mailcopies))
+    end;
+
     if mail and (attrib and attrReqEB <> 0) then
       wrs(f, 'Return-Receipt-To: ' + iifs(empfbestto <> '', empfbestto,
-        iifs(wab <> '', wab, iifs(pmReplyTo = '', absender, pmReplyTo))));
+        iifs(wab <> '', wab, iifs(replyto.count = 0, absender,
+          newsgroupsline(replyto)))));
     if mail and (pgpflags and fPGP_encoded <> 0) then
       wrs(f, 'Encrypted: PGP');
     if postanschrift <> '' then
     begin
       zcrfc.s := IbmToIso(postanschrift);
       RFC1522form;
-      wrs(f, 'X-ZC-Post: ' + zcrfc.s);
+      wrs(f, 'X-ZC-POST: ' + zcrfc.s);
     end;
     if telefon <> '' then
-      wrs(f, 'X-ZC-Telefon: ' + telefon);
+      wrs(f, 'X-ZC-TELEFON: ' + telefon);
     if homepage <> '' then
       wrs(f, 'X-Homepage: ' + homepage);
     if XPointCtl <> 0 then
@@ -3427,7 +3579,7 @@ begin
           end;
         flushoutbuf(f);
         WriteRfcTrailer(f);
-        truncate(f);
+        { truncate(f); }
         if not ppp then wrs(f2, '#! rnews ' + strs(filesize(f)));
         seek(f, 0);
         fmove(f, f2);
@@ -3519,6 +3671,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/11/17 19:35:45  fe
+  Followup-To support updated to ZC 3.1.
+  Mail-Copies-To support added.
+
   Revision 1.4  2000/11/17 00:25:36  mk
   - removed duplicate Unix2DOSFile()
 
@@ -3783,4 +3939,3 @@ end.
   RB: * Verbesserte X-Priority Konvertierung
 
 }
-k

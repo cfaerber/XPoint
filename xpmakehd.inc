@@ -207,14 +207,14 @@ var i,res : integer;
     until p=0;
   end;
 
-  procedure GetFollowup;
+{  procedure GetFollowup;
   begin
     if cpos('@',line)>0 then exit;
     if ((disknr>0) and (hd.amrepanz<disknr)) or (hd.amrepanz=0) then
       hd.AmReplyTo := line;
     if hd.amrepanz<127 then
       inc(hd.amrepanz);
-  end;
+  end; }
 
   procedure GetStichwort;
   var s : string;
@@ -409,6 +409,14 @@ begin
               if i<>0 then priority:=minmax(i,1,5)
             end else
 
+            { suboptimal, eigentlich sollten alle Mail-Copies-To-
+	      Zeilen eingelesen werden, damit es auch hinter
+	      Gateways, die MCT nicht umwandeln, funktioniert     }
+            if (id='U-MAIL-COPIES-TO') and ((lowercase(line)='nobody')
+	      or (lowercase(line)='never')) then
+	      mailcopies.add(line)
+	    else
+
             { Mime-Version wegschmeissen - wird neu erzeugt}
             if id = 'U-MIME-VERSION' then else
 
@@ -452,8 +460,15 @@ begin
             if id = 'STAT'   then GetStat else
             if id = 'CHARSET'then GetCharset(hd.charset) else
             if id = 'ERR'    then error := line else
-            if id = 'ANTWORT-AN' then GetName(PmReplyTo,dummy) else
-            if id = 'DISKUSSION-IN' then GetFollowup else
+{            if id = 'ANTWORT-AN' then GetName(PmReplyTo,dummy) else }
+            if id = 'ANTWORT-AN' then replyto.add(line) else
+{            if id = 'DISKUSSION-IN' then GetFollowup else }
+            if id = 'DISKUSSION-IN' then begin
+	      if cpos('@',line) = 0 then
+	          followup.add(line)
+	        else
+	          mailcopies.add(line)
+	    end else
             if id = 'STICHWORT' then GetStichwort else
             if id = 'ZUSAMMENFASSUNG' then Summary  := Line  else
             if id = 'QUOTE-STRING' then GetQStr else
@@ -542,6 +557,11 @@ begin
           if not ok and eof(f) then
             ok:=(groesse=0);          { letzte Msg hat Laenge 0 }
       until (line='') or not ok;
+      { "DISKUSSION-IN: foo@bar.example.org" <-> "Followup-To: poster" }
+      if (mailcopies.count>0) and (followup.count=0) and
+        (lowercase(mailcopies[0])<>'nobody') and
+        (lowercase(mailcopies[0])<>'never') then
+        pm_reply:=true;
       if ok and (attrib and attrQPC<>0) and (UpperCase(LeftStr(betreff,4))<>'QPC:') then
         betreff:='QPC:'+betreff;
       end
@@ -569,6 +589,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/11/17 19:35:45  fe
+  Followup-To support updated to ZC 3.1.
+  Mail-Copies-To support added.
+
   Revision 1.38  2000/11/05 20:14:13  fe
   Added LDA/Expires.
 

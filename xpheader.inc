@@ -51,9 +51,9 @@ type
     postanschrift: string;
     telefon: string;
     homepage: string;
-    PmReplyTo: string;                  { Antwort-An    }
-    AmReplyTo: string;                  { Diskussiom-In }
-    amrepanz: integer;                  { Anzahl Diskussion-in's }
+{    PmReplyTo: string; }                 { Antwort-An    }
+{    AmReplyTo: string; }                 { Diskussion-In }
+{    amrepanz: integer; }                 { Anzahl Diskussion-in's }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     ckomlen: longint;                   { Crypt-Content-KOM }
     datei: string;                      { Dateiname                  }
@@ -102,7 +102,9 @@ type
     mimereltyp: string;
     xempf: TStringList;
     xoem: TStringList;
-    followup: TStringList;
+    replyto: tstringlist;
+    followup: tstringlist;
+    mailcopies: tstringlist;
     MIME: mimedata;
     gateway: string;
     sender: string;
@@ -113,6 +115,10 @@ type
 
 {
   $Log$
+  Revision 1.7  2000/11/17 19:35:45  fe
+  Followup-To support updated to ZC 3.1.
+  Mail-Copies-To support added.
+
   Revision 1.6  2000/11/09 18:15:12  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 
