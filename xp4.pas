@@ -52,6 +52,8 @@ procedure select(dispmode:shortint);
 procedure mainwindow;
 procedure SetBrettGelesen(brett:string);
 
+const
+  markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
 
 implementation  {----------------------------------------------------}
 
@@ -61,7 +63,6 @@ uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
-      markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
       closeflag : boolean = false; { TClose -> Dateien schlieáen     }
       nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
 
@@ -2069,6 +2070,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/10/10 05:10:12  mk
+  JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
+
   Revision 1.45  2000/08/25 22:33:59  mk
   JG:- In PM-Brettern ist "P" gleichwertig zu "B"
     falls die beantwortete Nachricht keinen Reply-To Header enthaelt.

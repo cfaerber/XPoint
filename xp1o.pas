@@ -339,7 +339,7 @@ begin
       otherquotechars:=not otherquotechars;
     end;
 
-  if (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)   {!}
+  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)   {!}
      or (t=keyaltb) or (t=keyaltu)) then errsound       {!}
   else begin                                            {!}
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
@@ -986,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/10/10 05:10:12  mk
+  JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
+
   Revision 1.58  2000/10/09 16:26:04  mk
   JG:- Verschiedene Tasten im Kommentarbaum abgeschaltet
 
