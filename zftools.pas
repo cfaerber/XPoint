@@ -1643,9 +1643,9 @@ begin
         end;
 
       if not DelEmpty or (hd.groesse>0) then begin
-        if LeftStr(UpperCase(hd.x_charset),10)='ISO-8859-1' then
+        if FidoCharsetToMime(hd.x_charset)='ISO-8859-1' then
           cxlate:=1
-        else if LeftStr(UpperCase(hd.x_charset),9)='MACINTOSH' then
+        else if FidoCharsetToMime(hd.x_charset)='macintosh' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1811,6 +1811,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.36  2003/09/17 00:38:41  cl
+        - BUGFIX: charset for incoming messages evaluated incorrectly.
+
         Revision 1.35  2002/12/21 05:38:04  dodi
         - removed questionable references to Word type
 
