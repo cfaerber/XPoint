@@ -80,7 +80,9 @@ XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunkti
  - xp4.inc       Hauptmenueabfrage
  - xp4d.inc      Zeilenanzeigeroutine fuer N/B/U-Fenster
  - xp4e.pas      Editierfunktionen fuer N/B/U-Fenster  
- - xp4p.pas      Suchfunktionen
+ - xp4o.pas      Suchfunktionen, Dupekill 
+ - xp4o.inc      Reorganisation
+ - xp4o2.inc     DB-Packen, Kommentarbaum
  - xp4w.inc      Auswahl und Aufruf von Lister bzw. externem Viewer 
  ...
 XP5.PAS         Kalender, Screen Saver, Paáwort u.a.
