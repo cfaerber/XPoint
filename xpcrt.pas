@@ -185,7 +185,9 @@ begin
               if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0)
               or (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0) then begin
                 if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode = $1C then // Num-Block-Enter
-                  ScanCode := #13
+                  ScanCode := #13 else
+                if (Buf.{$IFNDEF FPC_OLD}Event.{$ENDIF}KeyEvent.wVirtualScanCode = 16) and AltKey and CtrlKeyState then // Ctrl+Alt+Q in @ umwandeln
+                  ScanCode := '@'
                 else begin
                   SpecialKey := TRUE;
                   ScanCode := Chr(RemapScanCode(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode, Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState,
@@ -270,6 +272,9 @@ initialization
 
 {
   $Log$
+  Revision 1.26  2003/08/29 17:32:54  mk
+  - added conversion of Alt+Ctrl+Q to @ (now the same as AltGR+Q)
+
   Revision 1.25  2002/12/28 20:11:06  dodi
   - start keyboard input redesign
 
