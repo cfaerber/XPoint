@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { UUCP/RFC <-> ZConnect }
 { PM 10/92              }
@@ -2220,7 +2221,13 @@ begin
              { /robo }
 
              { 07.02.2000 robo - X-Priority Konvertierung }
-             if zz='x-priority'   then priority:=minmax(ival(s0),1,5) else
+             if zz='x-priority'   then begin
+               p:=1;
+               while (s0[p] in ['0'..'9']) and (p<=length(s0)) do inc(p);
+               if p<=length(s) then s0:=left(s0,p-1);
+               priority:=minmax(ival(s0),1,5);
+             end
+             else
              { /robo }
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
@@ -3052,7 +3059,7 @@ begin
     if xnoarchive then wrs(f,'X-No-Archive: yes');
     { /robo }
 
-    { 07.02.2000 robo - X-No-Archive Konvertierung }
+    { 07.02.2000 robo - X-Priority Konvertierung }
     if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
     { /robo }
 
@@ -3469,3 +3476,9 @@ begin
   donevar;   
 { /robo }  
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/16 22:49:36  mk
+  RB: * Verbesserte X-Priority Konvertierung
+
+}
