@@ -4426,20 +4426,6 @@ This option is only functional for EGA and VGA
 display adapters.
 @
 311
-<<[x]>> ->  when returning from a DOS Shell (<F9> or
-        [/XPoint/DOS], CrossPoint resets the screen@10106
-        mode to the state that was active before
-        calling the DOS Shell.
-
-<<[ ]>> ->  CrossPoint takes over the screen mode of the
-        DOS Shell upon returning from it.
-
-Normally you should always leave this option
-enabled - otherwise you might run into severe
-display problems. Especially if you use(d) programmes
-in the DOS Shell which set their own screen mode.
-@
-312
 Tell CrossPoint to make extra memory for the
 environment available (tech. note: uses the /E switch
 when calling COMMAND.COM).

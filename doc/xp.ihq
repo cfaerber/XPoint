@@ -495,12 +495,12 @@ gedacht:
 
 <</df:1>>    Zeigt bei jedem externen Programmaufruf den
          genauen Aufrufbefehl an. Entspricht dem
-         Schalter [Parameterzeile anzeigen] bei@313
+         Schalter [Parameterzeile anzeigen] bei@312
          /Config/Extern/Shell.
 
 <</df:2>>    Wartet nach jedem externen Programmaufruf
          auf einen Tastendruck. Entspricht dem Schal-
-         ter [auf Tastendruck warten] bei /Config/@314
+         ter [auf Tastendruck warten] bei /Config/@313
          Extern/Shell.
 
 
@@ -5737,21 +5737,6 @@ Diese Option ist nur bei EGA- und VGA-Karten von
 Bedeutung.
 @
 311
-<<[x]>> -> nach RÅckkehr aus der DOS-Shell (<<<F9> >>oder
-       [/XPoint/DOS] setzt CrossPoint den Videomodus@10106
-       in den Zustand zurÅck, den es bei Aufruf der
-       DOS-Shell hatte.
-
-<<[ ]>> -> CrossPoint Åbernimmt bei RÅckkehr aus der DOS-
-       Shell deren Videomodus.
-
-Diese Option sollten Sie normalerweise immer akti-
-viert lassen - Anzeigefehler in XP kînnten sonst die
-Folge sein. Insbesondere dann, wenn Sie in der DOS-
-Shell Programme verwenden, die einen eigenen Video-
-modus setzen.
-@
-312
 Hier kînnen Sie festlegen, ob CrossPoint beim Aufruf
 der DOS-Shell zusÑtzlichen Environment-(Umgebungs-)
 Speicher zur VerfÅgung stellen soll; dazu wird der
@@ -5767,14 +5752,14 @@ von z.B. 1024 (ein KByte) eingeben.
 Genauere ErlÑuterungen zum Environment-Speicher
 finden Sie in Ihrem DOS-Handbuch.
 @
-313
+312
 <<[x]>> -> Vor dem Aufruf externer Programme zeigt XP
        ein Fenster mit der genauen Aufruf-Befehls-
        zeile an.
 
 Dieser Schalter ist zu Diagnosezwecken gedacht.
 @
-314
+313
 <<[x]>> -> Nach dem Aufruf externer Programme wartet XP
        auf einen Tastendruck.
 
