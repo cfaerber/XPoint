@@ -2124,7 +2124,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    Commands as subject
 7    Misc.
 8    Newsgroups~
-9    FileScan
+9    AllFix
 10   Name      ~
 11   Password  ~
 12   d'Bridge Areafix
@@ -3988,6 +3988,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.11  2003/08/27 16:54:50  mf
+# - One minor change.
+#
 # Revision 1.49.2.10  2003/08/24 14:17:17  mf
 # - Fixed long-standing bug in message reader colour config (201.16)
 #
