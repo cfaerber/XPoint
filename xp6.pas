@@ -857,6 +857,7 @@ begin      //-------- of DoSend ---------
   if not pm and betreffbox and (LeftStr(empfaenger,1)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
+    SendEmpfList.Clear; { clear list of CC recipients }
     goto xexit1;
   end;
 
@@ -2105,6 +2106,12 @@ finalization
 end.
 {
   $Log$
+  Revision 1.115  2001/06/06 18:44:01  mk
+  JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
+         ("Internal newsgroup - writing not allowed!"). Ancient bug
+         that could lead to "ghost CC recipients", but that did not
+         occur anymore - obviously due to some RTA code somewhere.
+
   Revision 1.114  2001/06/04 17:31:37  ma
   - implemented role feature
 
