@@ -76,7 +76,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  FileIO;
+  Classes, FileIO;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -182,25 +182,28 @@ end;
   invers  : inverse Anzeige
   vert    : vertikale Anzeige }
 
+
+function OwnStringListCompare(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  Result := CompareText(List[Index1], List[Index2]);
+end;
+
 function fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
 
 const
-  maxf   = 8192;
   maxs   = 5;
 type
-  ft     = array[1..maxf+36] of string;
   txst   = string[70];
 var   fb     : string;
-      f      : ^ft;
+      f      : TStringList;
       sr     : tsearchrec;
+      s: String;
       rc     : integer;
-      fn,p,
-      i,ma,
+      p,i,ma,
       add,x  : integer;
       disp   : boolean;
       t      : taste;
       dir, name, ext: string;
-      xtext  : string[20];
       paths  : array[1..maxs] of string;
       pathn  : byte;
       dpath  : string;    { Display-Path }
@@ -216,7 +219,7 @@ var   fb     : string;
     if invers then invtxt else normtxt;
   end;
 
-  procedure rahmen1(li,re,ob,un:byte; txt,xtext:txst);
+  procedure rahmen1(li,re,ob,un:byte; txt:txst);
   var i : byte;
   begin
     moff;
@@ -233,40 +236,13 @@ var   fb     : string;
       Wrt(re, i, '≥');
     end;
     gotoxy(li,un); Wrt2('¿' + dup(re-li-1,'ƒ') + 'Ÿ');
-    if xtext<>'' then
-      Wrt((re+li+1)div 2-length(xtext)div 2-1,un, ' ' + xtext + ' ');
     mon;
   end;
 
   function fname(n:integer):string;
   begin
     fsplit(path,dir,name,ext);
-    fname:=dir+f^[n];
-  end;
-
-  procedure qsort;
-
-    procedure sort(l,r:integer);
-    var i,j : integer;
-        x,w : String;
-    begin
-      i:=l; j:=r;
-      x := Uppercase(f^[(l+r) div 2]);
-      repeat
-        while Uppercase(f^[i]) < x do inc(i);
-        while Uppercase(f^[j]) > x do dec(j);
-        if i<=j then
-        begin
-          w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
-          inc(i); dec(j);
-        end;
-      until i > j;
-      if l < j then sort(l, j);
-      if r > i then sort(i, r);
-    end;
-
-  begin
-    sort(1,fn);
+    fname:=dir+f[n];
   end;
 
   procedure clfswin;
@@ -276,17 +252,17 @@ var   fb     : string;
   end;
 
   procedure dispfile(n:integer);
-  var s : string[30];
+  var s : string;
   begin
     moff;
     if not vert then
-      gotoxy(((n-1) mod 4)*15+11,((n-1) div 4)+y+1)
+      gotoxy((n mod 4)*15+11,(n div 4)+y+1)
     else
-      gotoxy(((n-1) div 9)*15+11,(n-1) mod 9+y+1);
-    if n+add>fn then
+      gotoxy((n div 9)*15+11,n mod 9+y+1);
+    if n+add>f.Count-1 then
       Wrt2(sp(14))
     else begin
-      s:=f^[n+add];
+      s:=f[n+add];
       Wrt2(' ' + forms(ConvertFileName(s), 12) + ' ');
     end;
     mon;
@@ -295,7 +271,7 @@ var   fb     : string;
   procedure display;
   var i : integer;
   begin
-    for i:=1 to 36 do
+    for i:=0 to 35 do
       dispfile(i);
   end;
 
@@ -309,7 +285,7 @@ var   fb     : string;
     xx:=wherex; yy:=wherey;   { fÅr Cursor-Anzeige }
     iit;
     if fsb_info then begin
-      s:=f^[add+p];
+      s:=f[add+p];
       gotoxy(12,y+height-1);
       moff;
 {$IFNDEF UnixFS }
@@ -332,7 +308,7 @@ var   fb     : string;
           Wrt2(sp(59))
         else begin
           s2 := Trim(strsrnp(sr.size,12,0));
-          Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
+          Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + ' ' +
             DateToStr(FileDateToDateTime(sr.time)));
             {formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)}
         end;
@@ -347,12 +323,12 @@ var   fb     : string;
   var i : integer;
   begin
     i:=p+add+1;
-    while (i<=fn) and (f^[i][1]<>ab) do inc(i);
-    if i>fn then begin
+    while (i<=f.Count) and (f[i][1]<>ab) do inc(i);
+    if i>f.Count then begin
       i:=1;
-      while (i<=p+add) and (f^[i][1]<>ab) do inc(i);
+      while (i<=p+add) and (f[i][1]<>ab) do inc(i);
       end;
-    if (f^[i] <> '') and (f^[i][1]=ab) then begin
+    if (f[i] <> '') and (f[i][1]=ab) then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -385,16 +361,11 @@ var   fb     : string;
         t:=keycr
       else if t=mausunright then
         t:=keyesc;
-     p:=min(p,fn);
+     p:=min(p,f.count);
    end;
 
 begin
-  new(f);
-  if f=nil then begin
-    fsbox:='';
-    memerror;
-    exit;
-    end;
+  f := TStringList.Create;
   path:=trim(path); pathx:=trim(pathx);
   if path='' then path:=WildCard;
   path:=ExpandFileName(path);
@@ -426,46 +397,42 @@ begin
 {$ENDIF }
   maus_pushinside(10,70,y+1,y+height-3);
   repeat
-    fn:=0;
-    fillchar(f^,sizeof(ft),0);
+    f.Clear;
     fsplit(path,dir,name,ext);
     if xdir then begin
       doppelpunkt:=false;
       rc:= findfirst(dir+WildCard,faDirectory+faArchive,sr);
-      while (rc=0) and (fn<maxf) do begin
-        if (sr.name<>'.') and ((sr.attr and faDirectory)<>0) then begin
-          inc(fn);
-          f^[fn]:=#253+sr.name;
-          if f^[fn][2]='.' then begin
-            f^[fn][1]:=#255; doppelpunkt:=true;
+      while rc=0 do
+      begin
+        if (sr.name<>'.') and ((sr.attr and faDirectory)<>0) then
+        begin
+          s := #125+sr.name;
+          if s[2]='.' then
+          begin
+            s[1]:=#127; doppelpunkt:=true;
           end;
+          f.Add(s);
         end;
         rc:= findnext(sr);
       end; { while }
       findclose(sr);
-      if (fn<maxf) and not doppelpunkt and (length(dir)>3) then begin
-        inc(fn);
-        f^[fn]:=#255+'..';
-      end;
+      if not doppelpunkt and (length(dir)>3) then
+        f.Add(#127+'..');
+
       for i:=1 to length(drives) do
-        if fn<maxf then begin
-          inc(fn);
-          f^[fn]:=#254'['+drives[i]+':]';
-        end;
+          f.Add(#126'['+drives[i]+':]');
+
     end; { if xdir }
     for x:=1 to pathn do begin
       rc:= findfirst(paths[x],faReadOnly+faArchive,sr);
-      while (rc=0) and (fn<maxf) do begin
-        if sr.name<>'.' then begin
-          inc(fn);
-          f^[fn]:=sr.name;
-        end;
+      while rc=0 do
+      begin
+        if sr.name<>'.' then
+          f.Add(sr.name);
         rc:= findnext(sr);
       end; { while }
       findclose(sr);
     end;
-    if fn=maxf then xtext:='zu viele Dateien'
-    else xtext:='';
 
     if not wpushed then begin
       setrahmen(0);
@@ -483,13 +450,14 @@ begin
       else normattr:=fsb_rcolor;
       end;
     iit;
-    rahmen1(9,71,y,y+height,ConvertFileName(dpath),xtext);
+    rahmen1(9,71,y,y+height,ConvertFileName(dpath));
     if fsb_info then
       mwrt(9,y+height-2,'√'+dup(61,'ƒ')+'¥');
     normattr:=na; invattr:=ia;
     iit;
     clfswin;
-    if fn=0 then begin
+    if F.Count = 0 then
+    begin
       fb:='';
       iit;
       clfswin;
@@ -497,19 +465,20 @@ begin
       get(t,curoff);
       chgdrive:=xdir and (t>=^A) and (t<=^Z) and
                 (cpos(chr(ord(t[1])+64),drives)>0);
-      end
+    end
     else begin
-      qsort;
-      for i:=1 to fn do
-        if f^[i][1]>=#253 then begin
-          delete(f^[i],1,1);
-          if f^[i,1]<>'[' then
-            f^[i]:=f^[i]+DirSepa;
-          end;
+      F.CustomSort(OwnStringListCompare);
+      for i:=0 to F.Count - 1 do
+        if f[i][1]>=#125 then
+        begin
+          f[i] := Mid(f[i],2);
+          if f[i][1]<>'[' then
+            f[i]:=f[i]+DirSepa;
+        end;
 
-      p:=1; add:=0;
-      while (p<=fn) and (f^[p]<>vorgabe) do inc(p);
-      if p>fn then p:=1
+      p:=0; add:=0;
+      while (p<f.count) and (FileUpperCase(f[p])<>vorgabe) do inc(p);
+      if p=f.count then p:=0
       else add:=max(p-36,add);
       p:=p-add;
 
@@ -531,60 +500,75 @@ begin
         ma:=add;
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten(t);
-        if not vert then begin
-          if t=keyup then begin
-            if p>4 then dec(p,4)
-            else if add>0 then dec(add,4);
-            end;
-          if t=keydown then begin
-            if p+add<=fn-4 then
-              if p<33 then inc(p,4)
-              else inc(add,4);
+        if not vert then
+        begin
+          if t=keyup then
+          begin
+            if p>=4 then
+              dec(p,4)
+            else
+              if add>0 then dec(add,4);
+          end;
+          if t=keydown then
+          begin
+            if p+add<f.count-4 then
+              if p<31 then
+                inc(p,4)
+              else
+                inc(add,4);
             end;
           if t=keyleft then begin
-            if p>1 then dec(p,1)
+            if p>0 then
+              dec(p,1)
             else
-              if add>0 then begin
+              if add>0 then
+              begin
                 dec(add,4); p:=3;
-                end;
+              end;
             end;
           if t=keyrght then begin
-            if p+add<fn then
-              if p<36 then inc(p,1)
-              else begin
-                inc(add,4); p:=33;
-                end;
+            if p+add<f.count-1 then
+              if p<35 then inc(p,1)
+              else
+              begin
+                inc(add,4); p:=32;
+              end;
             end;
-          if t=keyhome then begin
-            p:=1; add:=0;
-            end;
-          if t=keyend then begin
-            if fn-add<=36 then
-              p:=fn-add
+          if t=keyhome then
+          begin
+            p:=0; add:=0;
+          end;
+          if t=keyend then
+          begin
+            if f.count-add<=36 then
+              p:=f.count-add-1
             else begin
-              p:=fn; add:=0;
-              while p>36 do begin
+              p:=f.count-1; add:=0;
+              while p>=36 do
+              begin
                 dec(p,4); inc(add,4);
-                end;
               end;
             end;
+          end;
           if t=keypgup then begin
-            if add>36 then dec(add,36)
+            if add>=36 then dec(add,36)
             else begin
-              add:=0; p:=(pred(p) mod 4)+1;
+              add:=0; p:=p mod 4;
               end;
             end;
-          if t=keypgdn then begin
-            if fn-add>36 then begin
+          if t=keypgdn then
+          begin
+            if f.count-add>=36 then
+            begin
               inc(add,36);
-              if p+add>fn then
-                if fn-add>4 then
-                  repeat dec(p,4) until p+add<=fn
+              if p+add>f.count-1 then
+                if f.count-add>=4 then
+                  repeat dec(p,4) until p+add<f.count
                 else
-                  repeat dec(p) until p+add<=fn;
+                  repeat dec(p) until p+add<f.count;
               end
             else
-              while p+add<=fn-4 do inc(p,4);
+              while p+add<f.count-4 do inc(p,4);
             end;
           end
         else begin    { vertikal }
@@ -593,7 +577,7 @@ begin
             else if add>0 then dec(add);
             end;
           if t=keydown then begin
-            if p+add<fn then
+            if p+add<f.count then
               if p<36 then inc(p)
               else inc(add);
             end;
@@ -604,21 +588,21 @@ begin
                 add:=max(0,add-9);
             end;
           if t=keyrght then begin
-            if p+add<fn then
-              if p<28 then p:=iif(p+9<=fn-add,p+9,p)
+            if p+add<f.count then
+              if p<28 then p:=iif(p+9<=f.count-add,p+9,p)
               else
-                if add+9+p<=fn then
+                if add+9+p<=f.count then
                   inc(add,9);
             end;
           if t=keyhome then begin
             p:=1; add:=0;
             end;
           if t=keyend then begin
-            if fn<=36 then begin
-              add:=0; p:=fn;
+            if f.count<=36 then begin
+              add:=0; p:=f.count;
               end
             else begin
-              add:=fn-36; p:=36;
+              add:=f.count-36; p:=36;
               end;
             end;
           if t=keypgup then begin
@@ -629,11 +613,11 @@ begin
               end;
             end;
           if t=keypgdn then begin
-            if fn-add<=36 then p:=fn-add
+            if f.count-add<=36 then p:=f.count-add
             else begin
               inc(p,35);
               if p>36 then begin
-                add:=min(fn-36,add+(p-36));
+                add:=min(f.count-36,add+(p-36));
                 p:=36;
                 end;
               end;
@@ -641,14 +625,14 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (f^[p+add,1]='[') then
-          t:=chr(ord(f^[p+add,2])-64);
+        if (t=keycr) and (f[p+add][1]='[') then
+          t:=chr(ord(f[p+add][2])-64);
         chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
                   (cpos(chr(ord(t[1])+64),drives)>0);
         if chgdrive then begin    { Balken auf [LW:] positionieren }
           i:=1;
-          while (i<=fn) and (f^[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
-          if (i<=fn) and (i<>p+add) then begin
+          while (i<=f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+          if (i<=f.count) and (i<>p+add) then begin
             while i-add<1 do dec(add,iif(vert,9,4));
             while i-add>36 do inc(add,iif(vert,9,4));
             p:=i-add;
@@ -658,19 +642,19 @@ begin
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((fn>0) and (t=keycr) and (RightStr(f^[p+add],1)=DirSepa)) or chgdrive then
+    if ((f.count>0) and (t=keycr) and (RightStr(f[p+add],1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
-          if f^[p+add]='..'+DirSepa then begin
+          if f[p+add]='..'+DirSepa then begin
             delete(dir,length(dir),1);
             while (dir<>'') and (dir[length(dir)]<>DirSepa) do
               delete(dir,length(dir),1);
             if dir<>'' then path:=dir+name+ext;
             end
           else
-            path:=dir+f^[p+add]+name+ext
+            path:=dir+f[p+add]+name+ext
         else
         begin                        { Laufwerkswechsel }
           GetDir(Ord(t[1]), Path);
@@ -689,7 +673,7 @@ begin
     end;
   if t=keycr then fb:=fname(p+add)
   else fb:='';
-  dispose(f);
+  F.Free;
   fsbox:=fb;
 end;
 
@@ -1103,6 +1087,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/26 12:17:39  mk
+  - FSBox now uses TStringList
+
   Revision 1.28  2000/11/16 14:46:10  hd
   - Unit DOS entfernt
 
