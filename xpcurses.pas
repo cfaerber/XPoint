@@ -106,7 +106,6 @@ Const
    KEY_ALTMINUS = 502; { alt/= }
    KEY_ALTTAB   = 503; { alt/tab }
 
-
 type
   { Fuer den internen Gebrauch }
   PPanel = ^TPanel;
@@ -260,6 +259,8 @@ type
   End;
 {==========================================================================}
 
+
+
 procedure Window(x1, y1, x2, y2: integer);
 begin
   { Erstmal sehen, ob die Funktion benoetigt wird }
@@ -315,6 +316,7 @@ begin
   if (Length(s) > 0) then begin
     mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
   end;
+  update_panels;
   touchwin(win.wHnd);
   wrefresh(win.wHnd);
 end;
@@ -342,12 +344,77 @@ begin
   wrefresh(ActWin.wHnd);
 end;
 
+
+{ Die Funktion erwartet einen Char aus der CodePage 437 und 
+  gibt einen ISO-Char bzw. den TTY-Code zurueck. Eignet sich
+  nur fuer Bildschirmausgaben! Setzt einen ISO-Zeichensatz
+  ISO-8859-1 an der Konsole voraus (was in D ueblich ist). }
+function CvtToISOConsole(ch: char): longint;
+begin
+  if (ch in [#0..#255]) then begin
+    case ch of
+      #24, #30: 
+          CvtToISOConsole:= ACS_UARROW;
+      #25, #31: 
+          CvtToISOConsole:= ACS_DARROW;
+      #26, #16: 
+          CvtToISOConsole:= ACS_RARROW;
+      #27, #17: 
+          CvtToISOConsole:= ACS_LARROW;
+      #176, #177, #178: 
+          CvtToISOConsole:= ACS_CKBOARD;
+      #180, #181, #182, #185: 
+          CvtToISOConsole:= ACS_RTEE;
+      #183, #184, #187, #191: 
+          CvtToISOConsole:= ACS_URCORNER;
+      #188, #189, #190, #217: 
+          CvtToISOConsole:= ACS_LRCORNER;
+      #192, #200, #211, #212: 
+          CvtToISOConsole:= ACS_LLCORNER;
+      #193, #202, #207, #208: 
+          CvtToISOConsole:= ACS_BTEE;
+      #194, #203, #209, #210: 
+          CvtToISOConsole:= ACS_TTEE;
+      #195, #198, #199, #204: 
+          CvtToISOConsole:= ACS_LTEE;
+      #196, #205: 
+          CvtToISOConsole:= ACS_HLINE;
+      #197, #206, #215, #216: 
+          CvtToISOConsole:= ACS_PLUS;
+      #201, #213, #214, #218: 
+          CvtToISOConsole:= ACS_ULCORNER;
+      #227:
+	  CvtToISOConsole:= ACS_PI;
+      #241: 
+          CvtToISOConsole:= ACS_PLMINUS;
+      #242:
+          CvtToISOConsole:= ACS_GEQUAL;
+      #243:
+          CvtToISOConsole:= ACS_LEQUAL;
+      #248: 
+          CvtToISOConsole:= ACS_DEGREE;
+      #249: 
+          CvtToISOConsole:= ACS_BULLET;
+      #254:
+          CvtToISOConsole:= ACS_BLOCK;
+    else
+      CvtToISOConsole:= IBM2ISOTab[Ord(ch)]{ or A_ALTCHARSET };
+    end;
+  end else
+    CvtToISOConsole:= Ord(ch);
+end;
+
+
 procedure StringOut(s: string);
 var
-  p: array[0..255] of char;
+  i: integer;
 begin
-  { hier Zeichen umcodieren }
-  waddstr(ActWin.wHnd, StrPCopy(p, s));
+  { Da waddstr auch nur waddch benutzt, duerfte es von der 
+    PErformance keinen Unterschied geben. }
+  for i:= 1 to Length(s) do
+    { ToDo: Andere Consolen unterstuetzen }
+    waddch(ActWin.wHnd, CvtToISOConsole(s[i]));
+  { Erst jetzt Fenster aktualisieren }
   wrefresh(ActWin.wHnd);
 end;
 
@@ -556,7 +623,7 @@ var
 begin
   b:= IsEcho;
   noecho;
-  l:= wgetch(ActWin.wHnd);
+  l:= wgetch(BaseWin.wHnd);
   { if it's an extended key, then map to the IBM values }
   if l > 255 then begin
     xtnded := true;
@@ -663,8 +730,9 @@ procedure DoWrite(temp: string);
 begin
   if TextAttr <> LastTextAttr then
     SetTextAttr(TextAttr);
-  waddstr(ActWin.wHnd, StrPCopy(ps, temp));
-  wrefresh(ActWin.wHnd);
+  StringOut(temp);
+{  waddstr(ActWin.wHnd, StrPCopy(ps, temp));
+  wrefresh(ActWin.wHnd);}
 end;
 
 Function CrtWrite(Var F: TextRec): Integer;
@@ -807,13 +875,13 @@ var
   fd : fdSet;
 begin
   keypressed := false;
-  nodelay(ActWin.wHnd, bool(true));
-  l:= wgetch(ActWin.wHnd);
+  nodelay(BaseWin.wHnd, bool(true));
+  l:= wgetch(BaseWin.wHnd);
   if l <> ERR then begin { ERR = -(1) from unit ncurses }
     ungetch(l);
     Keypressed := true;
   end;
-  nodelay(ActWin.wHnd, bool(false));
+  nodelay(BaseWin.wHnd, bool(false));
 end;
 
 { a cheap replacement! }
@@ -954,6 +1022,9 @@ Begin
 end.
 {
   $Log$
+  Revision 1.5  2000/05/02 14:22:05  hd
+  Zeichenkonvertierung eingebaut
+
   Revision 1.4  2000/05/02 11:49:34  hd
   Anpassung an Curses (Linux)
 
