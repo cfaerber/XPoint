@@ -1964,7 +1964,7 @@ var
       s0:=LeftStr(s0,p-1); p:=IVal(s0);
       if p>5 then p:=5 else if p<1 then p:=1;
       hd.priority:=p;
-      end else // plain text priority
+      end else if p=1 then // plain text priority
       hd.priority:=((pos(UpperCase(LeftStr(s0,3)),
                          'HIGURGNOR   LOW')-1)div 6)*2+1;
   end;
@@ -3697,6 +3697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/02/28 23:56:21  ma
+  fix ;-)
+
   Revision 1.31  2001/02/28 23:06:58  ma
   - replaced some non-GPL'd code
 
