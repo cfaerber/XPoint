@@ -300,7 +300,7 @@ end;
 
 function ArcType(fn:arcpath):shortint;
 var f    : file;
-    idr  : record
+    idr  : packed record
              case integer of
                0 : (l : longint);
                1 : (w,w2 : smallword);
@@ -313,11 +313,11 @@ var f    : file;
                5 : (buf: array[0..$7f] of char);    { Anfang tar-Record }
              end;
     rr   : Integer;
-    fs   : record
+    fs   : packed record 
              case integer of
                0 : (b    : byte;
-                    ofs  : word;   { L„nge MOD 512 }
-                    secs : word);  { L„nge DIV 512 + 1 }
+                    ofs  : Smallword;   { L„nge MOD 512 }
+                    secs : Smallword);  { L„nge DIV 512 + 1 }
                1 : (s:shortstring);
            end;
     typ  : longint;
@@ -484,7 +484,7 @@ end;
 
 
 procedure OpenArchive(fn:arcpath; atyp:shortint; var ar:ArchRec);  { 0=detect }
-var zoohd : record
+var zoohd : packed record
               txt     : array[0..19] of char;
               id      : longint;
               firsthd : longint;
@@ -492,17 +492,17 @@ var zoohd : record
               version : byte;
               xver    : byte;
             end;
-    arjhd : record
+    arjhd : packed record
               id     : smallword;  { $EA60 }
               hdsize : smallword;  { + 8   }
             end;
-    fs    : record
-              ofs  : word;   { L„nge MOD 512 }
-              secs : word;   { L„nge DIV 512 + 1 }
+    fs    : packed record
+              ofs  : Smallword;   { L„nge MOD 512 }
+              secs : smallword;   { L„nge DIV 512 + 1 }
             end;
     sfxofs: longint;
     dwh   : dwchd;
-    fm    : word;
+    fm    : byte;
     l     : longint;
 
 begin
@@ -939,6 +939,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/02/11 15:53:34  mk
+  - fixed some packed record and variable size bugs
+
   Revision 1.30  2001/10/20 17:26:38  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
