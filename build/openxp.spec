@@ -9,7 +9,7 @@ Name: openxp
 %define release %release%
 %define compopts %compopts%
 
-%define ppcopts -FU. -FuObjCOM -Funetcall -Fuxplib -Fubuild -Fl.
+%define ppcopts -FU. -FuObjCOM -Funetcall -Fuxplib -Fubuild -Fibuild -Fl.
 
 #%define helpdir /home/boettger/openxp/openxp/contrib
 %define filelist /tmp/filelist.lst
