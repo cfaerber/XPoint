@@ -78,7 +78,11 @@ type  perrfunc  = function:boolean;
 var  checklst,xlatger : boolean;
      lst             : text;
 
+{$IFDEF Unix }
+procedure OpenLst(Port: String);
+{$ELSE }
 procedure OpenLst(Port: Integer);
+{$ENDIF }
 procedure CloseLst;
 function  PrintString(const s:string):string;
 
@@ -106,21 +110,26 @@ var LstFile:String;
  {$ENDIF}
 {$ENDIF}
 
-procedure OpenLst(Port: Integer);
+{$IFDEF Unix }
+procedure OpenLst(Port: String);
 begin
-{$IFDEF unix }
  {$IFNDEF Kylix}
-  AssignLst(lst, '|/usr/bin/lpr -m');
+  AssignLst(lst, '|/usr/bin/lpr -P ' + Port);
  {$ELSE}
   LstFile:=TempS(10000);
   Assign(lst, LstFile);
  {$ENDIF}
-{$ELSE }
-  Assign(lst, 'lpt' + IntToStr(Port));
-{$ENDIF }
   ReWrite(lst);
   if IOResult = 0 then ;
 end;
+{$ELSE }
+procedure OpenLst(Port: Integer);
+begin
+  Assign(lst, 'lpt' + IntToStr(Port));
+  ReWrite(lst);
+  if IOResult = 0 then ;
+end;
+{$ENDIF }
 
 
 procedure CloseLst;
@@ -167,11 +176,17 @@ begin
     inc(i);
     end;
   SetLength(r, j);
+  {$IFDEF Unix }
+    r := IBMToISO(r);
+  {$ENDIF }
   PrintString:= r;
 end;
 
 {
   $Log$
+  Revision 1.27  2003/09/01 16:17:12  mk
+  - added printing support for linux
+
   Revision 1.26  2003/01/01 16:19:44  mk
   - changes to made FreeBSD-Version compilable
 

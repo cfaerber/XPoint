@@ -1191,6 +1191,7 @@ begin
   DruckExit:='^L';
   DruckFormlen:=65;
   DruckLPT:=1;
+  PrinterName := 'lp';
   DruckFF:='^L';
   DruckLira:=0;
   autocpgd:=true;
@@ -1548,6 +1549,7 @@ begin
     writeln(t,'UnRAR=',unrar);
   end;
   writeln(t,'LPT=',DruckLPT);
+  writeln(t,'PrinterName=', PrinterName);
   writeln(t,'DruckerInit=',druckinit);
   writeln(t,'DruckerExit=',druckexit);
   writeln(t,'Seitenlaenge=',druckformlen);
@@ -2141,7 +2143,7 @@ begin
                     getx(su,  'ListVollbild',listvollbild) or
                     getx(su,  'ListUhr',listuhr) or
                     getx(su,  'ListEndCR',listendcr) or
-                    xp1.getw(su,  'LPT',DruckLPT) or
+                    getl(su,  'LPT',DruckLPT) or
                     getx(su,  'ListScroller',listscroller) or
                     getx(su,  'ListAutoScroll',listautoscroll) or
                     getx(su,  'LeseBestaetigung',mauslesebest) or
@@ -2186,6 +2188,7 @@ begin
                     xp1.gets(s,su,'Pointdiff',pointdiffn) or
                     xp1.gets(s,su,'Post',postadresse) or
                     getx(su,  'PufferLoeschen',nDelPuffer) or
+                    xp1.gets(s,su,'PrinterName', PrinterName) or
                     getx(su,  'pgp-batchmode',PGPbatchmode) or
                     xp1.gets(s,su,'pgp-userid',PGP_UserID) or
                     getx(su,  'pgp-autoam',PGP_AutoAM) or
@@ -2794,6 +2797,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.168  2003/09/01 16:17:13  mk
+  - added printing support for linux
+
   Revision 1.167  2003/08/30 23:51:46  mk
   - renamed Timezone to XpTimezone, avoids problems with linux
     function with the same name (kylix)

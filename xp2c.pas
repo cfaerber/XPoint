@@ -76,7 +76,7 @@ function testvalidcharset(var s:string):boolean;
 
 procedure setvorwahl(var s:string);
 procedure DispArcs;
-procedure TestQC(var s:string);
+procedure TestQC(var s:string);    
 
 implementation  {----------------------------------------------------}
 
@@ -97,7 +97,7 @@ uses
   xp1o,xp2,xp4o2,xp9bp,xpnt,
   typeform,fileio,inout,winxp,win2,keys,maske,
   mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,xp_pgp,
-  mime,utftools, osdepend,
+  mime,utftools, osdepend, classes,
   xpglobal;
 
 const
@@ -1115,39 +1115,72 @@ end;
 
 
 procedure DruckConfig;
-const
-{  lpts : array[1..5] of string[4] = ('LPT1','LPT2','LPT3','COM1','COM2');  }
-  { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstuetzt }
-  lpts : array[1..3] of string = ('LPT1','LPT2','LPT3');
 var x,y : Integer;
     brk : boolean;
-    lpt : string;
-    i   : integer;
+    s, lpt : string;
+    i: integer;
     allc: string;
+    printcap, PrinterList: TStringList;
 begin
-  dialog(ival(getres2(264,0)),11,getres2(264,1),x,y);   { 'Drucker-Optionen' }
-  lpt:=lpts[DruckLPT];
-  maddstring(3,2,getres2(264,2),lpt,4,4,'>'); mhnr(470);  { 'Schnittstelle ' }
-  for i:=1 to high(lpts) do
-    mappsel(true,lpts[i]);
-  allc:=range(' ',#255);
-  maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'Seitenlaenge  ' }
-  maddstring(3,4,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
-  maddstring(3,6,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
-  maddstring(3,8,getres2(264,6),DruckFF,30,80,allc);      { 'Seitenvorschub' }
-  maddint(3,10,getres2(264,7),Drucklira,3,2,0,50);        { 'linker Rand:  ' }
-  maddtext(length(getres2(264,7))+10,10,getres2(264,8),col.coldialog);  { 'Zeichen' }
-  freeres;
-  readmask(brk);
-  if not brk and mmodified then
-  begin
-    { COM-Drucker wurden nicht selektiert }
-    for i := 1 to high(lpts) do
-      if lpt = lpts[i] then DruckLPT := i;
-    GlobalModified;
+  PrinterList := TStringList.Create;
+  try
+    {$IFDEF Unix }
+      printcap := TStringList.Create;
+      try
+        printcap.LoadFromFile('/etc/printcap');
+        for i := 0 to printcap.Count - 1 do
+          if FirstChar(printcap[i]) <> '#' then
+          begin
+            s := LeftStr(printcap[i], Pos('|', printcap[i])-1);
+            if s <> '' then
+              PrinterList.Add(s);
+          end;
+      finally
+        printcap.Free;
+      end;
+      lpt := PrinterName;
+    {$ELSE }
+      PrinterList.Add('LPT1');
+      PrinterList.Add('LPT2');
+      PrinterList.Add('LPT3');
+      if DruckLPT > 0 then
+        lpt:=PrinterList[DruckLPT-1];
+    {$ENDIF }
+
+    dialog(ival(getres2(264,0)),11,getres2(264,1),x,y);   { 'Drucker-Optionen' }
+    {$IFDEF Unix }
+      maddstring(3,2,getres2(264,2),lpt,9,255,''); mhnr(470);  { 'Schnittstelle ' }
+    {$ELSE }
+      maddstring(3,2,getres2(264,2),lpt,4,4,'>'); mhnr(470);  { 'Schnittstelle ' }
+    {$ENDIF }
+
+    PrinterList.Sort;
+    for i:=0  to PrinterList.Count - 1 do
+      mappsel(true, PrinterList[i]);
+    allc:=range(' ',#255);
+    maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'Seitenl„nge  ' }
+    maddstring(3,4,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
+    maddstring(3,6,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
+    maddstring(3,8,getres2(264,6),DruckFF,30,80,allc);      { 'Seitenvorschub' }
+    maddint(3,10,getres2(264,7),Drucklira,3,2,0,50);        { 'linker Rand:  ' }
+    maddtext(length(getres2(264,7))+10,10,getres2(264,8),col.coldialog);  { 'Zeichen' }
+    freeres;
+    readmask(brk);
+    if not brk and mmodified then
+    begin
+      {$IFDEF Unix }
+        PrinterName := lpt;
+      {$ELSE }
+        PrinterList.Find(lpt, DruckLPT);
+        Inc(DruckLPT); // be compatible with old versions
+      {$ENDIF }
+      GlobalModified;
+    end;
+    enddialog;
+    menurestart:=brk;
+  finally
+    PrinterList.Free;
   end;
-  enddialog;
-  menurestart:=brk;
 end;
 
 
@@ -1553,6 +1586,9 @@ end;
 
 {
   $Log$
+  Revision 1.143  2003/09/01 16:17:14  mk
+  - added printing support for linux
+
   Revision 1.142  2003/08/30 23:51:47  mk
   - renamed Timezone to XpTimezone, avoids problems with linux
     function with the same name (kylix)

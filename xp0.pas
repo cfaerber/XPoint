@@ -957,7 +957,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ShowMsgPath  : boolean;
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
-       DruckLPT     : smallword;          { 1-5: LPT1-3, COM1-2 }
+       DruckLPT     : Integer;     { 1-5: LPT1-3, COM1-2 }
+       PrinterName  : string;        { for Unix: name of the printing port }
        DruckInit    : string;
        DruckExit    : string;
        DruckFormlen : byte;          { Seitenlaenge; 0 = kein autom. Vorschub }
@@ -1225,6 +1226,9 @@ implementation
 
 {
   $Log$
+  Revision 1.183  2003/09/01 16:17:12  mk
+  - added printing support for linux
+
   Revision 1.182  2003/08/26 22:41:24  cl
   - better compatibility with OpenXP-16/FreeXP with config files:
     - don't overwrite line number settings with incompatible values

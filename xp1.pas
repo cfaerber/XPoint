@@ -1578,7 +1578,11 @@ begin
   checklst:=true;
   xlatger:=false;
   printlines:=0;
-  OpenLst(DruckLPT);
+  {$IFDEF Unix }
+    OpenLst(PrinterName);
+  {$ELSE }
+    OpenLST(DruckLPT);
+  {$ENDIF }
   write(lst,PrintString(DruckInit));
 end;
 
@@ -3290,6 +3294,9 @@ end;
 
 {
   $Log$
+  Revision 1.184  2003/09/01 16:17:12  mk
+  - added printing support for linux
+
   Revision 1.183  2003/08/25 17:39:27  mk
   - added support for german umlaut keys in menu
 
