@@ -112,7 +112,7 @@ Procedure Brettmarksuche;
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,debug,viewer, xpconfigedit, classes,
+     xp_pgp,debug,viewer, xpconfigedit, classes, xp9bp,
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
@@ -780,7 +780,8 @@ msg_ok: MsgAddmark;
       BoxName := UniSel(1, false, DefaultBox);
       if BoxName <> '' then
       begin
-        Filename := OwnPath + GetServerFileName(Boxname, extMid);
+        ReadboxPar(0, Boxname); 
+        Filename := OwnPath + BoxPar.ClientPath + GetServerFilename(Boxname, extMid);
         IDLIst := TStringList.Create;
         try
           with IDList do
@@ -3017,6 +3018,10 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.10  2003/09/29 18:24:56  mk
+  - create .mid in client directory
+    fixes #810685: Message-ID suchen (ALT+M)
+
   Revision 1.138.2.9  2003/09/17 15:27:49  mk
   - fixed drawing of status line in archiv viewer for screen width > 80
 
