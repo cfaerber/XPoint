@@ -37,9 +37,10 @@ uses sysutils,
   xplinux,xpglobal,typeform;
 {$else }
 uses sysutils,xpglobal,typeform
-  {$ifdef vp} ,vpusrlow {$endif}
   {$ifdef Win32} ,xpwin32, windows {$endif}
-  {$ifdef Dos32} ,xpdos32 {$endif};
+  {$ifdef Dos32} ,xpdos32 {$endif}
+  {$ifdef Os2}   ,xpos2 {$endif}
+  ;
 {$endif}
 
 const
@@ -690,6 +691,9 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.6  2003/08/25 06:43:50  mk
+  - added OS/2 support
+
   Revision 1.116.2.5  2003/08/24 21:35:33  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems

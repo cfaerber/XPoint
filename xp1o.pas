@@ -90,6 +90,7 @@ implementation
 
 uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF OS2} xpos2, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   debug,
   stringtools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
@@ -1072,6 +1073,9 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.6  2003/08/25 06:43:51  mk
+  - added OS/2 support
+
   Revision 1.110.2.5  2003/08/24 21:35:34  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems

@@ -130,6 +130,7 @@ uses
   {$IFDEF Unix} xpcurses, xplinux, {$ENDIF}
   {$IFDEF Win32} xpcrt, {$ENDIF}
   {$IFDEF DOS32} crt, {$ENDIF}
+  {$IFDEF OS2} crt, {$ENDIF}
   SysUtils, Debug, CRC, fileio;
 
 var TimerObj: tTimer;
@@ -2725,6 +2726,9 @@ begin
 
 {
   $Log$
+  Revision 1.28.2.2  2003/08/25 06:43:53  mk
+  - added OS/2 support
+
   Revision 1.28.2.1  2002/12/10 20:53:22  ma
   - restrict outgoing ZModem block len to 512 bytes
     (problems with bigger block sizes reported)

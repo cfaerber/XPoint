@@ -65,6 +65,7 @@ uses typeform, zmodem, progressoutput, resource, sysutils, debug,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr, xp0 
 {$IFDEF Unix} ,xpcurses {$ENDIF}
 {$IFDEF Win32} ,xpwin32 {$ENDIF}
+{$IFDEF Os2} ,xpos2 {$ENDIF}
 {$IFDEF DOS32} ,xpdos32 {$ENDIF};
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
@@ -1122,6 +1123,9 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.5  2003/08/25 06:43:52  mk
+  - added OS/2 support
+
   Revision 1.24.2.4  2003/08/24 21:35:37  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems

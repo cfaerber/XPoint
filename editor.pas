@@ -1,3 +1,4 @@
+
 {   $Id$
 
     OpenXP editor unit
@@ -1836,6 +1837,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.82.2.6  2003/08/25 06:43:50  mk
+  - added OS/2 support
+
   Revision 1.82.2.5  2003/08/24 21:35:33  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems

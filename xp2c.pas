@@ -94,6 +94,7 @@ implementation  {----------------------------------------------------}
 
 uses
   {$ifdef Win32} xpwin32, {$endif}
+  {$ifdef os2} xpos2, {$endif}
   {$ifdef Dos32} xpdos32, {$endif}
 {$IFDEF Kylix}
   libc,
@@ -1549,6 +1550,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.7  2003/08/25 06:43:51  mk
+  - added OS/2 support
+
   Revision 1.127.2.6  2003/08/24 12:04:25  mf
   - Help ID 7988 added.
 

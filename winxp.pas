@@ -318,7 +318,11 @@ begin
     FillScreenLine(l, i, ' ', r-l+1);
 end;
 
-{$IFDEF DOS32}
+{$IFDEF DOS32 }
+type TCoord= record x,y: integer end;
+{$ENDIF}
+
+{$IFDEF os2 }
 type TCoord= record x,y: integer end;
 {$ENDIF}
 
@@ -1522,6 +1526,9 @@ end;
 
 {
   $Log$
+  Revision 1.84.2.4  2003/08/25 06:43:51  mk
+  - added OS/2 support
+
   Revision 1.84.2.3  2003/08/11 22:28:20  mk
   - removed Edit/netze/verschiedens/mime in news
 

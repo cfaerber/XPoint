@@ -31,7 +31,7 @@ uses
   {$ifdef NCRT} xpcurses, {$endif}
   {$ifdef Win32} xpcrt, {$endif}
   {$IFDEF DOS32} go32, crt, {$ENDIF}
-  {$IFDEF VP} vpsyslow, {$ENDIF}
+  {$IFDEF OS2} crt, {$ENDIF}
   typeform;
 
 type   taste   = string[2];
@@ -388,6 +388,9 @@ end;
 
 {
   $Log$
+  Revision 1.49.2.2  2003/08/25 06:43:50  mk
+  - added OS/2 support
+
   Revision 1.49.2.1  2002/07/21 20:14:32  ma
   - changed copyright from 2001 to 2002
 
