@@ -923,8 +923,11 @@ begin
          3: wrs(gr(35) + GetRes2(272, 3));     { 'Priorit„t  : Normal'    }
          4: wrs(gr(35) + GetRes2(272, 4));     { 'Priorit„t  : Niedrig'   }
          5: wrs(gr(35) + GetRes2(272, 5));     { 'Priorit„t  : Niedrigste'}
-       end;
-
+       end
+       else if hdp^.Prio>0 then                                 { und fuer Zconnect ....  }
+         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }      
+                          else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }  
+    
   { /Priorit„t im Listenkopf anzeigen                                     }
 
   end;
@@ -1028,6 +1031,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/29 14:01:31  jg
+  - Zconnect-Prioritaet erscheint jetzt im Lister-Header
+
   Revision 1.12  2000/04/04 21:01:23  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
