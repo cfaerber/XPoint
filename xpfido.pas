@@ -1883,50 +1883,60 @@ end;
   Suchbegriffen  }
 function FidoSeekfile:string;
   const
-    seekfile = 'fileseek.dat';
-    maxbuf   = 20;
+    seekfile         = 'fileseek.dat';
+    maxbuf           = 20;
     SearchStr_maxIdx = 4;
-    icase  : boolean = true;
-    sfirst : boolean = true;
-    lbrk   : boolean = false;
-    _sep    = '/&';                 { der Seperator 2-Beyte }
+    iCase : boolean = true;                 { Groá-Kleinschreibung  }
+    wCase : boolean = true;                 { Suche nur ganze Worte }
+    _sep             = '/&';                { der Seperator 2-Beyte }
 
   var
-    seek, oldseek: string[40];
-    x,y    : byte;
-    brk    : boolean;
-    t1,t2  : ^text;
-    t3     : ^text;
-    s,ss,s3 : string[100];
-    p,i    : byte;
-    nn,
-    anz_FileFound     : longint;
-    tb     : pointer;
-     scp    : scrptr;
-     tbs    : word;
-     ni     : ^nodeinfo;
-     files  : ^string;
-     len    : byte;
-     datei  : string[12];
-     sa     : array[0..maxbuf] of string[80];
-     apos   : integer;
-     searchStr: array[0..SearchStr_maxIdx] of string[40];
-     anz_searchStr : integer;    { Anzahl der besetzten Suchstrings }
-     lastStr  : integer;
-     beginSafe : boolean;
-  label
-    ende,ende2;
+    seek, oldseek    : string[40];
+    x,y              : byte;
+    brk              : boolean;
+    pFileListCfg     : ^text;
+    pOutput          : ^text;
+    pFileListe       : ^text;
+    sNodInf,sZeile   : string[100];
 
-  procedure test_writeln(s:string);
+    anz_FileFound, p : longint;
+    tb               : pointer;
+    scp              : scrptr;
+    tbs              : word;
+    ni               : ^nodeinfo;
+    files            : ^string;
+    len              : byte;
+    sFlistName       : string[12];
+    sa               : array[0..maxbuf] of string[80];
+    searchStr        : array[0..SearchStr_maxIdx] of string[40];
+    anz_searchStr    : integer;    { Anzahl der besetzten Suchstrings }
+    label
+       ende;
+
+ {true, wenn der Substring in dem zu durchsuchenden String vollst„ndig enthalten ist }
+ { _pos= die Startposition des Vorhandenen SubStrings!!! }
+  function fInStr( var SubStr: string; var s : string; var _pos: integer) :boolean;
   begin
-    writeln(t2^,s);
+    fInStr:=false;                      { Funktionswert false initialisieren }
+    if  _pos > 1  then                  { String nicht zu Beginn des Suchstringes und }
+      if s[ _pos-1] <>' '  then exit;   { Zeichen vor dem Stringbegin <> space}
+
+    if _pos+length(Substr) <= length(s) then  { Suchbegriff nicht am Ende des Stringes }
+      if (s[_pos+length(Substr)] <> ' ') then exit;
+
+    { Alle Tests bestanden }
+    fInStr:=true;
+  end;
+  procedure pTestWriteln(s:string);
+  begin
+    writeln(pOutput^,s);
     if IOResult<>0 then begin
       fehler(ioerror(ioresult,getres2(2120,1)));   { 'Schreibfehler' }
       brk:=true;
      end;
   end;
 
-  procedure tabexpand(var ss:string);
+  procedure pTabExpand(var ss:string);
    const TAB = #9;
    var p : byte;
   begin
@@ -1934,11 +1944,11 @@ function FidoSeekfile:string;
     while p>0 do begin
       delete(ss,p,1);
       insert(sp(8-(p-1) mod 8),ss,p);
-      p:=cpos(TAB,s);
+      p:=cpos(TAB,sNodInf);
       end;
   end;
-  { MO: teste den String auf Korrektheit}
-  procedure test_seekStr( var fidolastseek: string );
+  {teste den Suchstring auf Korrektheit}
+  procedure pTestSeekStr( var fidolastseek: string );
     var
      _pos    :integer;
      testStr : string;
@@ -1949,8 +1959,8 @@ function FidoSeekfile:string;
     end;
   end;
 
-  { MO: zerlege Suchstring************************************** }
-  procedure init_searchStr;
+  {zerlege Suchstring }
+  procedure pInitSearchStr;
   var
     _pos    : integer;
     tempStr : string[50];
@@ -1959,202 +1969,230 @@ function FidoSeekfile:string;
     tempStr:=seek;
     while ( tempStr <> '') and ( anz_searchStr <= SearchStr_maxIdx) Do
     begin
-      searchStr[anz_searchStr]:=tempStr;
-      inc(anz_searchStr);
+      searchStr[anz_searchStr]:=tempStr;   { (Rest)-String -> Suchbegiff }
+      inc(anz_searchStr);                  { noch ein Suchbegriff }
       _pos:=pos(_sep, tempStr);
-      if _pos=0 then exit;
+      if _pos=0 then exit;                 { kein Seperator mehr gefunden -> raus}
       searchStr[anz_searchStr-1]:=copy(searchStr[anz_searchStr-1],1,_pos-1); {String abschneiden}
       tempStr:=copy(tempStr,_pos+length(_sep),500); {String abschneiden}
     end;
   end;
 
-  {MO: sind die Suchbegriffe in dem Block vorhanden }
-  function testBlock :boolean;
-    var n, n2  : integer;
-    test : boolean;
+  {sind die Suchbegriffe im Dateibeschreibungsblock vorhanden }
+  procedure pTestBlock( BlockLength :integer );
+    var
+      n, nn, n2, _pos  : integer;
+      test : boolean;
+      sZeile           : string[80];
+      sSub             : string [40];
   begin
-    testBlock:=true;
     for n2:=0 to anz_searchStr - 1 Do     { nach alle Begriffen durchsuchen }
     begin
       n:=0;
       test:=false;
+      if  icase  then  sSub:=ustr(searchStr[n2])
+      else             sSub:=searchStr[n2];
       { alle Zeilen auf ein Suchbegriff durchsuchen durchtesten }
-      while ( n < apos) and (test=false)  do
-      begin  {case????}
-        if (    icase and ( pos( searchStr[n2],ustr(sa[n])) > 0 ) ) or
-           (not icase and ( pos( searchStr[n2], sa[n] )     > 0  )     )  then
-        begin
-          test:=true;  { Begriff gefunden Suche positiv abbrechen }
-        end;
-        inc(n);
-      end; {while ( n < apos)   do  { alle Zeilen durchtesten }
-      if test = false then
+      while ( n < BlockLength ) and (test=false)  do
       begin
-        testBlock:=false;
-        exit;
-      end;
+        if  icase then sZeile:=ustr(sa[n])
+        else           sZeile:=sa[n];
+        _pos:=pos( sSub, sZeile );
+        if _pos  > 0 then   { SubSting in der Beschreibung vorhanden}
+        begin
+          if wCase = false then  test:=true         { ignore, Ganzes Wort}
+          else test:=fInStr( sSub, sZeile, _pos );  { noch auf ganzes Wort testen }
+        end;
+        inc(n);                                     { n„chste Zeile }
+      end; { while ( n < apos)   do  { alle Zeilen durchtesten }
+      {Begriff im Bolck nicht gefunden, dann raus }
+      if test =false then exit;
     end;    { for n2:=0 to anz_searchStr - 1 Do }
+
+    if test = true then
+    begin
+      { schreibe 1. Zeile und die node Nummer }
+      pTestWriteln(forms(sa[0],80)+left(sNodInf,p-1));
+      nn:=1;
+      while ( nn < BlockLength) and ( brk = false )   do
+      begin
+        pTestWriteln(sa[nn] ); {Zeile des Blockes speichern }
+        inc(nn);
+      end;
+      inc(anz_FileFound);      {Erh”he Anzahl der gefunden  }
+      mwrt(x+13,y+3,strsn(anz_FileFound,5));
+    end;
+    if KeyPressed then
+       brk:= ReadKey = #27;
   end;      { function testBlock :boolean;}
+
+  procedure pBearbeiteFileListe;
+  var
+     nn             : longint;
+     apos           : integer;
+     beginSafe      : boolean;
+  begin
+    attrtxt(col.colmboxhigh);
+    mwrt(x+13,y+2,forms(mid(sNodInf,p+1),12));  { Dateiname anzeigen }
+    getNodeinfo(left(sNodInf,p-1),ni^,1);
+    settextbuf(pFileListe^,tb^,tbs);
+    reset(pFileListe^);
+    begin                                  { write header}
+      sNodInf:=left(sNodInf,p-1)+' ';      { s:= 2:244/1278 }
+      if ni^.found then sNodInf:=sNodInf+'('+ni^.boxname+', '+ni^.standort+', '+sFlistName  +')'
+      else sNodInf:=sNodInf+'(??, '+sFlistName  +')';         { s:= 2:244/1278 (C-Box, Frankfurt, 02441278.FL}
+      writeln(pOutput^,' ',' '+sNodInf);
+      writeln(pOutput^,' ',' '+dup(length(sNodInf),'Ä'));
+      writeln(pOutput^);
+    end;
+    apos:=0;                                    { Zeilenz„hler ungltig setzen}
+    beginSafe:=false;
+    while not eof(pFileListe^) and (not brk) do               {'FIDO\22441278.fl'}
+    begin
+      readln(pFileListe^,sZeile);               {lese Zeile aus der Fileliste }
+      pTabExpand(sZeile);
+      { ist gelesene Zeile eine headerzeile }
+      if ( FirstChar(sZeile) >' ') and( sZeile <> '') and (( FirstChar(sZeile) <#176)or( FirstChar( sZeile) >#223)) then
+      begin
+        beginSafe:=true;
+        if( apos > 0 ) then { wurde ein Block bereits zwischengespeichert?}
+        begin
+          { Block testen und ggf. speichern }
+          pTestBlock( apos );
+          apos:=0;  { setze ZeilenZ„hler auf Start }
+        end;
+      end; { if (ss[1]>' ') and ( (ss[1]<#176)or( ss[1]>#223) ) then }
+      if ( apos <= maxbuf) and  ( beginSafe ) then { im gltigen Bereich}
+      begin
+        sa[apos]:=sZeile;  { speicher String in Array }
+        inc(apos);
+      end;
+    end; { while not eof(pFileListe^) do begin {'FIDO\22441278.fl'}
+    close(pFileListe^);
+  end;
+
+
 begin       { FidoSeekfile:string;************************ }
 
   FidoSeekfile:='';
-  anz_FileFound:=0;      {Anzahl der gefunden Dateien =0 }
-  if not exist(FileLists) or not exist(FidoDir+'*.FL') then begin
+  anz_FileFound:=0;                     { Anzahl der gefunden Dateien =0 }
+  if not exist(FileLists) or not exist(FidoDir+'*.FL') then
+  begin
     fehler(getres2(2120,2));            { 'keine Filelisten vorhanden' }
-    goto ende2;
+    goto ende;
   end;
-  { MO: Anzeige initilisieren                                           }
-  dialog(57,5,getres2(2120,3),x,y);    { 'Dateien suchen' }
-  oldseek:=fidolastseek;                { MO: icase+letzten Suchstring  }
-  fidolastseek:=mid(fidolastseek,3);    { MO: icase extrahieren }
+  oldseek:=fidolastseek;                { icase+letzten Suchstring  }
+  fidolastseek:=mid(fidolastseek,3);    { icase extrahieren }
+  iCase:=(left(oldseek,1)='J');         { icase     }
+  wCase:=(copy(oldseek,2,1)='J');       { Wcase     }
+  {Anzeige initilisieren }
+  dialog(57,6,getres2(2120,3),x,y);     { 'Dateien suchen' }
+  if fidolastseek[length(fidolastseek)] = #27 then
+     fidolastseek:=left(fidolastseek, length(fidolastseek)-1);
   maddstring(3,2,getres2(2120,4),fidolastseek,40,40,'');   { 'Suchbegriff ' }
-  if sfirst then begin                  { MO: erster Durchlauf seit Programmstart ??}
-    icase:=(left(oldseek,1)='J');       { MO: icase setzen }
-    sfirst:=false;                      { MO: wird nicht mehr aufgerufen}
-  end;
-
-  maddbool(3,4,getres2(2120,5),icase);   { 'Schreibweise ignorieren' }
-  readmask(brk);                         { MO: Dialog anzeigen/ausfhren }
+  maddbool(3,4,getres2(2120, 5),iCase); { 'Schreibweise ignorieren' }
+  maddbool(3,5,getres2(2120,11),wCase); { 'Nur ganze W”rter suchen }
+  readmask(brk);                        {  Dialog anzeigen/ausfhren }
   enddialog;
-  test_seekStr( fidolastseek);           {teste den String auf Korrektheit}
-  fidolastseek:=iifc(icase,'J','N')+' '+fidolastseek; {MK Ja or Nein + Suchbegriff }
-  if brk or (fidolastseek='') then goto ende2;
+  pTestSeekStr( fidolastseek);           {teste den String auf Korrektheit}
+  fidolastseek:=iifc(icase,'J','N')+iifc(Wcase,'J','N')+fidolastseek; {Ja or Nein + Suchbegriff }
+
+  if brk or (fidolastseek='') then goto ende;
+
   if icase then seek:=ustr(mid(fidolastseek,3)) {seek, enth„lt nun den suchstring}
-  else seek:=mid(fidolastseek,3);
-  init_searchStr;                       { MO: zerlege Suchstring}
+  else          seek:=mid(fidolastseek,3);
+  pInitSearchStr;                       { zerlege Suchstring}
 
-  if (fidolastseek<>oldseek) or lbrk then begin
-  lbrk:=false;
-  msgbox(30,6,getres2(2120,6),x,y);   { 'Suchen ..' }
-  mwrt(x+3,y+2,getres2(2120,7));      { 'Datei' }
-  mwrt(x+3,y+3,getres2(2120,8));      { 'gefunden' }
-  nn:=0;
-  new(t1); new(t2); new(t3);
-  new(ni);
-  tbs:=min(maxavail-5000,16384);
-  getmem(tb,tbs);
-  assign(t2^,seekfile); rewrite(t2^);
-  len:=length(getres2(2120,9))+3;
-  writeln(t2^,' ',dup(len+length(seek),'Í'));
-  writeln(t2^,' ',getres2(2120,9),' "',mid(fidolastseek,3),'"');   { 'Dateisuche nach' .. }
-  writeln(t2^,' ',dup(len+length(seek),'Í'));
-  writeln(t2^);
-  assign(t1^,FileLists);
-  reset(t1^);
-  while not eof(t1^) do begin                  {noch Eintr„ge in der cfg.datei}
-    readln(t1^,s); s:=trim(s);
-    p:=cpos('=',s);
-    if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
-      datei:=ustr(mid(s,p+1));                { MO: Name der Fileliste z.B: 22441278.fl}
-      assign(t3^,FidoDir+datei);              { MO: t3='FIDO\22441278.fl'}
-      if existf(t3^) then begin
-        attrtxt(col.colmboxhigh);
-        mwrt(x+13,y+2,forms(mid(s,p+1),12));  { Dateiname anzeigen }
-        getNodeinfo(left(s,p-1),ni^,1);
-        settextbuf(t3^,tb^,tbs);
-        reset(t3^);
-        apos:=0;                               { MO Zeilenz„hler ungltigsetzen}
-        beginSafe:=false;
-        begin                                  { write header}
-          s3:=left(s,p-1)+' ';
-          if ni^.found then s3:=s3+'('+ni^.boxname+', '+ni^.standort+', '+datei+')'
-          else s3:=s3+'(??, '+datei+')';
-          writeln(t2^,' ',s3);
-          writeln(t2^,' ',dup(length(s3),'Ä'));
-          writeln(t2^);
-        end;
-        while not eof(t3^) do begin             { MO: 'FIDO\22441278.fl'}
-          testbrk(brk);                         { MO: vermute hier wir auf abbruch getestet }
-          if brk then begin
-            brk:=false; lbrk:=true;
-            close(t3^);
-            goto ende;
-          end;
-          readln(t3^,ss);                        { MO: lese Zeile aus der Fileliste }
-          tabexpand(ss);
-          { ist gelesene Zeile eine headerzeile }
-          if (ss[1]>' ') and ( ss <> '') and ( (ss[1]<#176)or( ss[1]>#223) ) then
-          begin
-            beginSafe:=true;
-            if(apos > 0 ) then { wurde ein Block bereits zwischen gespeichert?}
-            begin
-              { alten Block testen und ggf. speichern }
-              if testBlock = true then begin
-                 { schreibe 1. Zeile und die node Nummer }
-                 test_writeln(forms(sa[0],80)+left(s,p-1));
-                 nn:=1;
-                 while ( nn < apos )   do
-                 begin
-                   test_writeln(sa[nn] ); {Zeile des Blockes speichern }
-                   inc(nn);
-                 end;
-                 inc(anz_FileFound);      {Erh”he Anzahl der gefunden  }
-                 attrtxt(col.colmboxhigh);
-                 mwrt(x+13,y+3,strsn(anz_FileFound,5));
-               end;      { if testBlock = true then begin }
-               apos:=0;  { setze ZeilenZ„hler auf Start wenn Block geschrieben
-                            oder Suchbegriff nicht gefunden  }
-            end;
-          end; { if (ss[1]>' ') and ( (ss[1]<#176)or( ss[1]>#223) ) then }
-          if ( apos <= maxbuf) and  ( beginSafe ) then { im gltigen Bereich}
-          begin
-            sa[apos]:=ss;
-            inc(apos);
-          end;
-        end; { while not eof(t3^) do begin { MO: 'FIDO\22441278.fl'}
-        close(t3^);
+  if fidolastseek <> oldseek  then
+  begin
+    msgbox(30,6,getres2(2120,6),x,y);   { 'Suchen ..' }
+    mwrt(x+3,y+2,getres2(2120,7));      { 'Datei' }
+    mwrt(x+3,y+3,getres2(2120,8));      { 'gefunden' }
+    new(pFileListCfg);
+    new(pOutput);
+    new(pFileListe);
+    new(ni);
+    tbs:=min(maxavail-5000,16384);
+    getmem(tb,tbs);
+    assign(pOutput^,seekfile);
+    rewrite(pOutput^);
+    len:=length(getres2(2120,9))+3;
+    writeln(pOutput^,' ',' '+dup(len+length(seek),'Í'));
+    writeln(pOutput^,' ',' '+getres2(2120,9),' "',mid(fidolastseek,3),'"');   { 'Dateisuche nach' .. }
+    writeln(pOutput^,' ',' '+dup(len+length(seek),'Í'));
+    writeln(pOutput^);
+    assign(pFileListCfg^,FileLists);
+    reset(pFileListCfg^);
+    while ( not eof(pFileListCfg^)) and (not brk) do       {noch Eintr„ge in der cfg.datei}
+    begin
+      readln(pFileListCfg^,sNodInf); sNodInf:=trim(sNodInf);
+      p:=cpos('=',sNodInf);
+      if (sNodInf<>'') and (FirstChar(sNodInf)<>'#') and (FirstChar(sNodInf) <>';') and (p>0) then
+      begin
+        sFlistName:= ustr(mid(sNodInf,p+1));        { Name der Fileliste z.B: 22441278.fl}
+        assign(pFileListe^,FidoDir+sFlistName  );    { pFileListe='FIDO\22441278.fl'}
+        if existf(pFileListe^) then
+          pBearbeiteFileListe;
       end;
-    end;{ MO: ab hier wieder PM originalcode }
-  end;
-  saveconfig2;
-  signal;
-  ende:
-  {I-}
-  close(t1^);
-  close(t2^);
-  if brk then erase(t2^);
-  if IoResult<>0 then;
- {I+}
-  closebox;
-  freemem(tb,tbs);
-  dispose(ni);
-  dispose(t3); dispose(t2); dispose(t1);
-  if brk then goto ende2;
-  end;    { fidolastseek<>oldseek }
-
-  OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
-  list_readfile(seekfile,0);
-  listVmark(fstestmark);
-  listTp(listext);                { 'D' + 'W' }
-  llh:=false; listmakros:=0;
-  sichern(scp);
-  pushhp(83);
-  list(brk);
-  pophp;
-  holen(scp);
-  if not brk then begin
+    end;
+    saveconfig2;
+    signal;
+{I-}
+    close(pFileListCfg^);
+    close(pOutput^);
+    if brk then
+    begin
+      erase(pOutput^);
+      fidolastseek:=fidolastseek+#27;
+    end;
+    if IoResult<>0 then;
+{I+}
+    closebox;
+    freemem(tb,tbs);
+    dispose(ni);
+    dispose(pFileListe);
+    dispose(pOutput);
+    dispose(pFileListCfg);
+  end;               { fidolastseek<>oldseek }
+  if not brk then    { gefundene Dateien Listen und ggf. requesten }
+  begin
+    OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
+    list_readfile(seekfile,0);
+    listVmark(fstestmark);
+    listTp(listext);                { 'D' + 'W' }
+    llh:=false; listmakros:=0;
+    sichern(scp);
+    pushhp(83);
+    list(brk);
+    pophp;
+    holen(scp);
     new(files);
     files^:='';
-    s:=mid(first_marked,81);
-    ss:=first_marked;
-    while (ss<>#0) and not brk do
-      if mid(ss,81)<>s then begin
-        fehler(getres2(2120,10));  { 'kein gleichzeitiger Request bei mehreren Boxen m”glich' }
-        brk:=true;
-        end
-      else begin
-        files^:=files^+' '+trim(left(ss,12));
-        ss:=next_marked;
-        end;
-    files^:=trim(files^);
-    if files^<>'' then begin
-      keyboard(keycr);
-      FidoSeekfile:=FidoRequest(s,files^);
+    sNodInf:= mid(first_marked,81);;
+    sZeile:=first_marked;
+    while (sZeile<>#0) do
+    begin
+      if mid(sZeile,81)<>sNodInf then  { Request bei zwei Boxen! }
+      begin
+        fehler(getres2(2120,10));      { 'kein gleichzeitiger Request bei mehreren Boxen m”glich' }
+        sZeile:=#0;                    { Schleife abbrechen }
+      end
+      else
+      begin
+       files^:=files^+' '+trim(left(sZeile,12));
+       sZeile:=next_marked;
       end;
-    dispose(files);
     end;
-  closelist;
-ende2:
+    files^:=trim(files^);
+    if files^<>'' then
+    begin
+      keyboard(keycr);
+      FidoSeekfile:=FidoRequest(sNodInf,files^);
+    end;
+    dispose(files);
+    closelist;
+  end;
+ende:
   freeres;
 end;
 
@@ -2214,6 +2252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/03 18:14:46  mk
+  MO: - fileseek fidofilelist, Quelltext renoviert und Suche nach ganzen Woertern eingeführt
+
   Revision 1.7  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
 
