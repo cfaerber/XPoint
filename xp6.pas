@@ -380,10 +380,10 @@ var f,f2     : file;
     fn,fn2,
     fn3      : string;
     b        : byte;
-    si0      : smallword;
+    si0      : integer;
     hdp      : headerp;
 
-    size     : smallword;
+    size     : integer;
     empfneu  : boolean;
     cancode  : shortint;    { -1=Rot13, 0=kein PW, 1=QPC, 2=DES, 9=PGP }
     docode   : shortint;    { gew„hlte Codierung                  }
@@ -2126,6 +2126,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.62  2000/08/23 13:55:14  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.61  2000/08/23 07:49:20  mo
   - Betreffzeile im editor für screenwidth > 80 angepasst
 

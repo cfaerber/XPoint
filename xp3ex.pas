@@ -198,7 +198,7 @@ var size   : longint;
       fp    : longint;
       pw    : string;
       coder : byte;
-      siz0  : smallword;
+      siz0  : integer;
       passpos : smallword;
       show  : boolean;
       x,y   : byte;
@@ -1060,6 +1060,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/08/23 13:55:13  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.43  2000/08/17 12:10:14  mk
   MO: Headerzeilenlaenge fuer Screen > 80 Zeichen angepasst
 

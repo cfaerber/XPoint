@@ -433,7 +433,7 @@ var x,y      : byte;
 
   procedure pmCryptDecode;
   var passwd,s : string;
-      size     : smallword;
+      size     : integer;
       codierer : byte;
       f,f2     : file;
       tmp      : string;
@@ -1158,6 +1158,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/08/23 13:55:13  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.30  2000/07/22 14:05:26  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

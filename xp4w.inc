@@ -327,7 +327,7 @@ var s      : string;
     _oldds : string;
     mhd    : longint;
     halten : integer16;
-    size   : smallword;
+    size   : integer;
     hdp    : headerp;
     hds    : longint;
 begin
@@ -755,14 +755,14 @@ begin
                                                        {Einteilige nicht text/plain Message }
       if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
          and (left(mimetyp,9)<>'multipart') then
-      begin                                       
+      begin
         multipart:=false;
-        pushhp(94);    
+        pushhp(94);
         listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
-        app_l(forms(' ' 
+        app_l(forms(' '
          + typname(left(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),25)
          + '       ' + forms(mpdata.fname,23) + ' 1');
-        app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '} 
+        app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
         listTp(SSP_Keys);
         ListSetStartpos(1);
         list(brk);
@@ -1530,6 +1530,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/08/23 13:55:14  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.39  2000/08/05 17:28:24  mk
   JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 

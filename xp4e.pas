@@ -599,7 +599,7 @@ var pw    : string;
     cod   : string;
     name  : string;
     adr   : string;
-    size  : smallword;
+    size  : integer;
     x,y   : byte;
     brk   : boolean;
     adrb  : byte;
@@ -936,7 +936,7 @@ var
     user,adresse : string;
     komm         : string;
     pollbox      : string;
-    size         : smallword;
+    size         : integer;
     halten,adr   : integer16;
     flags        : byte;
     brk          : boolean;
@@ -1361,7 +1361,7 @@ var ok    : boolean;
     d     : DB;
     _pbox : string;
     oldpb : string;
-    size  : smallword;
+    size  : integer;
     p     : byte;
     verteiler : boolean;
     newbrett  : boolean;
@@ -2416,6 +2416,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/08/23 13:55:13  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.40  2000/08/18 07:49:49  mk
   JG: - beim Neuanlegen von Usern mit Strg+U wird jetzt
     die Standard-Addressbuchgruppe benutzt

@@ -87,7 +87,7 @@ function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 
 function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
-procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:smallword; var data);
+procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:integer; var data);
 procedure dbReadXX (dbp:DB; const feld:dbFeldStr; var size:longint; const datei:string;
                     append:boolean);
 procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
@@ -105,7 +105,7 @@ procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 { NEue Funktionen wg. AnsiString }
 
 function  dbReadNStr(dbp:DB; feldnr: integer): string;
-function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: smallword): string;
+function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
 
 procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
@@ -1298,24 +1298,24 @@ end;
 { Size = 0 -> Alles Lesen, >0 max. 'size' bytes lesen }
 { size MUSS angegeben sein!!                          }
 
-procedure dbReadX(dbp:DB; const feld:dbFeldStr; var size:smallword; var data);
+procedure dbReadX(dbp:DB; const feld:dbFeldStr; var size:integer; var data);
 var l : longint;
 begin
   with dp(dbp)^ do begin
     feseek(dbp,feld,l);
-    if (size=0) and (l>65535) then
-      error('Feld zu groá fr direktes Einlesen!');
+    { if (size=0) and (l>65535) then
+      error('Feld zu groá fr direktes Einlesen!'); }
     if size=0 then size:=l
     else size:=min(size,l);
     if size>0 then blockread(fe,data,size);
     end;
 end;
 
-function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: smallword): string;
+function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
 var
   s: shortstring;
 begin
-  if (size <> 0) and (size > 255) then size:= 255; { An ShortString anpassen }
+  if size > 255 then size:= 255; { An ShortString anpassen }
   dbReadX(dbp, feld, size, s);
   dbReadXStr:= s;
 end;
@@ -1343,10 +1343,10 @@ begin
       rewrite(f,1);
     if l>0 then
     begin
-      s:=65536;
+      s:=min(131702, l); // maximal 128kb, aber nicht mehr als n”tig
       getmem(p,s);
       repeat
-        blockread(fe,p^,min(s,l),rr);
+        blockread(fe,p^,s,rr);
         blockwrite(f,p^,rr);
         dec(l,rr);
       until l=0;
@@ -1373,10 +1373,10 @@ begin
     size:=l;
     if l>0 then
     begin
-      s:=65536;
+      s:=min(131072, l); // maximal 128kb, aber nicht mehr als n”tig
       getmem(p,s);
       repeat
-        blockread(fe,p^,min(s,l),rr);
+        blockread(fe,p^,s,rr);
         blockwrite(datei,p^,rr);
         dec(l,rr);
       until l=0;
@@ -1458,10 +1458,10 @@ begin
     if size>0 then begin
       seek(fe,adr+1);
       blockwrite(fe,size,4);
-      s:=65536;
+      s:=min(131072, size);
       getmem(p,s);
       repeat
-        blockread(f,p^,min(s,size),rr);
+        blockread(f,p^,s,rr);
         blockwrite(fe,p^,rr);
         dec(size,rr);
       until size=0;
@@ -1582,6 +1582,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.35  2000/08/23 13:55:13  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.34  2000/08/22 09:27:50  mk
   - Allgemeine Performance erhoeht
 

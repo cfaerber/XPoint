@@ -468,7 +468,7 @@ var
     rec    : longint;
     t      : text;
     f      : file;
-    size   : smallword;
+    size   : integer;
 
     ntyp    : char;
     newsize : longint;
@@ -1248,6 +1248,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/08/23 13:55:14  mk
+  - Datenbankfunktionen mit Const-Parametern wo moeglich
+  - dbReadX und Co auf 32 Bit angepasst
+
   Revision 1.33  2000/07/22 14:05:28  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
