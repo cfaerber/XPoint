@@ -4018,10 +4018,15 @@ end;
     procedure KorrScy;
     begin
       with e^ do
+      begin
+        scy := Max(Scy,Low(dl^));
+        scy := Min(Scy,High(dl^));
+
         if dl^[scy].absatz=nil then begin
           while dl^[scy].absatz=nil do dec(scy);
           scx:=dl^[scy].absatz^.size-dl^[scy].offset+1;
           end;
+      end;
     end;
 
     procedure setscx(xx:integer);
@@ -4197,6 +4202,10 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.99  2003/08/29 21:25:00  cl
+  - BUGFIX: in the editor component, when selecting text using the mouse moving
+    the mouse out of the window caused an range check error.
+
   Revision 1.98  2003/08/24 21:43:36  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems
