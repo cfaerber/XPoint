@@ -33,7 +33,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
+uses xp3,xp3o,xp4, xpnt,xpdatum,xp_pgp;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -448,6 +448,8 @@ begin
   dbWriteN(mbase,mb_gelesen,b);
   RereadBrettdatum(dbReadStr(mbase,'brett'));
   dbGo(mbase,rec);
+  setbrettgelesen(dbReadStr(mbase,'brett'));
+  dbGo(mbase,rec);
 end;
 
 
@@ -464,6 +466,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.7  2001/05/23 10:29:47  mk
+  JG:- ungelesen-fix
+
   Revision 1.9.2.6  2001/04/28 15:47:33  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

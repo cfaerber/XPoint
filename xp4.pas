@@ -136,15 +136,14 @@ var b    : byte;                               { wenn keine ungelesenen Nachrich
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
   if dbEOF(mbase) then nope:=true
-    else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
-  if nope then begin
+    else nope:=((dbReadStr(mbase,'brett')<>brett)
+      or (dbReadInt(mbase,'gelesen')<>0));
     dbSeek(bbase,biIntnr,mid(brett,2));
-    if dbFound then begin
-      dbReadN(bbase,bb_flags,b);
-      b:=b and (not 2);   { keine ungelesenen Nachrichten mehr }
-      dbWriteN(bbase,bb_flags,b);
-      end;
-    end;
+  if dbFound then begin
+    dbReadN(bbase,bb_flags,b);
+    if nope then b:=b and (not 2) else b:=b or 2;
+    dbWriteN(bbase,bb_flags,b);
+  end
 end;
 
 { ----- HauptmenÅ ---------------------------------------------------- }
@@ -2741,6 +2740,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.32  2001/05/23 10:29:47  mk
+  JG:- ungelesen-fix
+
   Revision 1.26.2.31  2001/05/18 09:11:52  mk
   - maxgl auf 55 gestellt
 
