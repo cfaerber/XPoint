@@ -1,16 +1,13 @@
-{$h-}
 (*
 **
-** ObjCOM telnet communication implementation header file
-** Incomplete, untested
+** ObjCOM tcp communication implementation header file
 **
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
+** Written by M.Kiesel 2000
 *)
 
 type tTelnetObj = Object(TCommObj)
         constructor Init;
-        destructor Done;
+        destructor Done; virtual;
 
         function  Connect(Dest: String): Boolean; virtual;
         function  OpenKeep(Comport: Byte): Boolean; virtual;
@@ -45,6 +42,9 @@ Type tpTelnetObj = ^TTelnetObj;
 
 {
   $Log$
+  Revision 1.3  2000/09/29 23:21:43  ma
+  - Done virual
+
   Revision 1.2  2000/09/11 23:00:13  ma
   - provisional outgoing TCP support added
 
