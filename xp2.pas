@@ -25,6 +25,9 @@ uses crt, xpcfg,
      resource,montage, xpglobal, xp0,xp1,xp10,xp1o2,xp1input,
      xp1help,xp5,xpdatum,xpeasy, lfn;
 
+var
+  { First start of XP2? }
+  XPFirstStart: Boolean;
 
 procedure zusatz_menue;
 procedure setaltfkeys;
@@ -69,8 +72,6 @@ uses
 
 var
   zaehlx,zaehly : byte;
-  { First start of XP2? }
-  XPFirstStart: Boolean;
 
 procedure setmenu(nr:byte; s:string);
 begin
@@ -1094,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.19  2001/07/01 15:43:34  my
+  SV:- moved RTA code to new unit xp4rta.pas
+
   Revision 1.45.2.18  2001/01/10 17:39:03  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

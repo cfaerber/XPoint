@@ -52,6 +52,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      xp4o,
      xp4o2,    { BezÅge, packen     }
      xp4o3,
+     xp4rta,   { Reply-To-All       }
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
      xpreg,    { Registrierung      }
@@ -84,7 +85,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
 {$O xp1help} {$O xp2b}
 {$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
-{$O xp3o}    {$O xp3o2}   {$O xp3ex}
+{$O xp3o}    {$O xp3o2}   {$O xp3ex}    {$O xp4rta}
 {$O xp4}     {$O xp4e}    {$O xp4o}     {$O xp4o2}    {$O xp4o3}
 {$O xpauto}  {$O xp5}     {$O xpreg}    {$O xp6}      {$o xp6o}
 {$O xp7}     {$O xp7o}    {$O xp7f}
@@ -93,6 +94,9 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts} {$O XPGLOBAL }
 {$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
+{$O xp_des}  {$O xpkeys}  {$O xpdiff}   {$O eddef}    {$O stack}
+{$O montage}
+
 {$IFDEF CAPI }
 {$O capi }
 {$ENDIF }
@@ -199,6 +203,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.14  2001/07/01 15:43:34  my
+  SV:- moved RTA code to new unit xp4rta.pas
+
   Revision 1.29.2.13  2001/04/28 15:47:31  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

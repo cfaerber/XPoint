@@ -56,7 +56,7 @@ procedure GruppenSelproc(var cr:customrec);
 implementation  {---------------------------------------------------}
 
 uses
-  xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9sel,xp10,xpnt,xpterm;
+  xp2b, xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,xpnt,xpterm;
 
 
 {$IFDEF FPC }
@@ -1284,6 +1284,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.27  2001/07/01 15:43:34  my
+  SV:- moved RTA code to new unit xp4rta.pas
+
   Revision 1.19.2.26  2001/06/16 15:22:40  my
   - New field description "Servername" for first_box if RFC/Client
 
