@@ -139,7 +139,7 @@ end;
 procedure TZModemObj.dispproc;
 var Remain: LongInt;
 begin
-  FIPC.WriteFmt(mcVerbose,'*%d',[System.Round(ElapsedSec.ElapsedSec)]);
+  FIPC.WriteFmt(mcVerbose,'',[0]);
   if(ElapsedSec.ElapsedSec<=0)or(TransferBytes<=0) then
     Remain:=1
   else
@@ -2728,6 +2728,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.2  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now

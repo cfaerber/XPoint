@@ -167,7 +167,7 @@ implementation
 
 uses
   {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
-  xpglobal,sysutils,typeform,debug,ipcclass;
+  xpglobal,sysutils,typeform,debug,ipcclass,xpmessagewindow;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
@@ -371,18 +371,23 @@ begin
                   end;
       SDWaitForConnect: begin
                           FTimerObj.SetTimeout(TimeoutConnectionEstablish);
+                          TXPMessageWindow(IPC).TimerDisplay:=mwTimeout;
+                          TXPMessageWindow(IPC).TimerToUse:=@FTimerObj;
                           repeat
                             ProcessIncoming; ProcessKeypresses(false);
-                            WriteIPC(mcVerbose,'*%d',[System.Round(FTimerObj.SecsToTimeout)]);
+                            WriteIPC(mcVerbose,'',[0]);
                           until FTimerObj.Timeout or(not WaitForAnswer);
+                          TXPMessageWindow(IPC).TimerDisplay:=mwElapsedTime;
+                          TXPMessageWindow(IPC).TimerToUse:=@TXPMessageWindow(IPC).Timer;
                           result:=False;
                           if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
                             if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             WriteIPC(mcInfo,'%s',[ModemAnswer]);
                             SleepTime(200);
-                            if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
-                                (FCommObj^.Carrier and(not FCommObj^.IgnoreCD))then begin {Connect!}
+                            if (pos('CONNECT',UpperCase(ModemAnswer))>0) or (Pos('CARRIER',UpperCase(ModemAnswer))>0) then begin
+                              {Connect!}
+                              TXPMessageWindow(IPC).Timer.Start;
                               StateDialup:=SDConnect; result:=True;
                               FConnectString:=ModemAnswer; FConnected:=True;
                               FLineSpeed:=Bauddetect(FConnectString);
@@ -401,13 +406,17 @@ begin
                            FTimerObj.SetTimeout(RedialWaitTime);
                            WriteIPC(mcInfo,'Wait for next dial attempt',[0]);
                            if iDial<MaxDialAttempts then begin
+                             TXPMessageWindow(IPC).TimerDisplay:=mwTimeout;
+                             TXPMessageWindow(IPC).TimerToUse:=@FTimerObj;
                              repeat
-                               WriteIPC(mcVerbose,'*%d',[System.Round(FTimerObj.SecsToTimeout)]);
+                               WriteIPC(mcVerbose,'',[0]);
                                ProcessIncoming; ProcessKeypresses(true);
                                if Pos('RING',ModemAnswer)<>0 then begin
                                  WriteIPC(mcInfo,'Ring detected',[0]);
                                  WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWaitTime);
                                end;
+                             TXPMessageWindow(IPC).TimerDisplay:=mwElapsedTime;
+                             TXPMessageWindow(IPC).TimerToUse:=@TXPMessageWindow(IPC).Timer;
                              until FTimerObj.Timeout;
                              StateDialup:=SDInitialize;
                            end else StateDialup:=SDNoConnect;
@@ -452,6 +461,10 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.8  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

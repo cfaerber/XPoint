@@ -210,7 +210,6 @@ begin
   SplitFido(OwnAddr,FA,2);
   InitHelloPacket;
   repeat
-    WriteIPC(mcVerbose,'*%d',[System.Round(TimerObj.ElapsedSec)]);
     Ende:=true; aresult:=0;
     case fmSS(0) of            { YooHoo  }
       1 : fmS;              { FTS-001 }
@@ -238,6 +237,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.10  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

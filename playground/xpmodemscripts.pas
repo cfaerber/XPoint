@@ -1,3 +1,4 @@
+
 {  $Id$
 
    OpenXP modem script unit
@@ -657,6 +658,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.3  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

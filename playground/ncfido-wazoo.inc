@@ -68,13 +68,17 @@ begin
     if (not ZModemOkay) then begin
       WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
-    end;
+    end else aresult:=el_ok;
   end;
   ZModemObj.Done;
 end;
 
 {
   $Log$
+  Revision 1.6  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.5  2001/02/04 18:33:03  ma
   - moved ZtoFido to xpncfido
   - fido netcall tracking files with StringLists now

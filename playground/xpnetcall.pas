@@ -525,8 +525,6 @@ var
     noconnstr  : string;
     rz         : string;
     prodir     : string;
-    OwnFidoAdr : string;    { eigene z:n/n.p, fuer PKT-Header und ArcMail }
-    CrashPhone : string;
     scrfile    : string;
     domain     : string;
     olddpuffer : string;
@@ -556,8 +554,6 @@ var
 
     janusp     : boolean;
     msgids     : boolean;         { fuer MagicNET }
-    alias      : boolean;         { Fido: Node- statt Pointadresse     }
-    CrashBox   : FidoAdr;
     ldummy     : longint;
     NumCount   : byte;            { Anzahl Telefonnummern der BoxName }
     NumPos     : byte;            { gerade gewaehlte Nummer        }
@@ -687,17 +683,6 @@ begin
     end;
 end;
 
-function CrashPassword(var CrashBox:string):string;
-var d : DB;
-begin
-  CrashPassword:='';
-  dbOpen(d,'systeme',1);
-  dbSeek(d,siName,UpperCase(CrashBox));
-  if dbFound and (dbReadStr(d,'fs-passwd')<>'') then
-    CrashPassword:=dbReadStr(d,'fs-passwd');
-  dbClose(d);
-end;
-
   procedure RemoveEPP;
   var f : file;
   begin
@@ -709,32 +694,6 @@ end;
       epp_apppos:=-1;
       end;
   end;
-
-{------------- start mail conversion routines --------------}
-
-procedure ZtoMaus(source,dest:string; screen:byte);
-var opt : string[10];
-    f   : boolean;
-begin
-//** Makemimetypcfg;
-  f:=OutFilter(source);
-  if MausPSA then opt:=''
-  else opt:='-psa ';
-  if not boxpar^.Brettmails then opt:=opt+'-on ';
-  with BoxPar^ do
-    shell('MAGGI.EXE -zs '+opt+'-b'+boxname+' -h'+MagicBrett+' -i -it '+
-          iifs(maxmaus,'-mm ','')+source+' '+dest,300,screen);
-  if f then _era(source);
-end;
-
-procedure MausToZ(source,dest:string; screen:byte);
-begin
-  with BoxPar^ do
-    shell('MAGGI.EXE -sz -b'+boxname+' -h'+MagicBrett+' -it '+source+' '+dest,
-          600,screen);
-end;
-
-{------------- end mail conversion routines --------------}
 
   procedure AppendNetlog;
   const bs = 4096;
@@ -789,29 +748,15 @@ end;
 
 var NetcallLogfile: String;
 
+tempboxpar: boxptr;
+
 begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','function Netcall',DLInform);
   netcall:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
 
-  if crash then
-    if not isbox(DefFidoBox) then begin
-      rfehler(705); exit;   { 'keine Fido-Stammbox gewaehlt' }
-      end
-    else if not Nodelist.Open then begin
-      rfehler(706); exit;   { 'keine Nodeliste aktiviert' }
-      end
-    else begin
-      if BoxName='' then BoxName:=GetCrashbox;
-      if (BoxName=' alle ') or (BoxName=CrashTemp) then begin
-        AutoCrash:=BoxName; exit; end;
-      if BoxName='' then exit;
-      if IsBox(BoxName) then
-        crash:=false              { Crash beim Bossnode - normaler Anruf }
-      else begin
-        SplitFido(BoxName,CrashBox,DefaultZone);
-        BoxName:=DefFidoBox;
-        end;
-      end;
+  new(tempboxpar);
+  dispose(tempboxpar);
+
   if not crash then begin
     if BoxName='' then
       BoxName:=UniSel(1,false,DefaultBox);         { zu pollende BoxName abfragen }
@@ -834,7 +779,6 @@ begin                  { function Netcall }
   komment := dbReadStr(d,'kommentar');
   domain := dbReadStr(d,'domain');
   msgids:=(dbReadInt(d,'script') and 8=0);
-  alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
 
   Debug.DebugLog('xpnetcall','get BoxName parameters',DLInform);
@@ -857,34 +801,6 @@ begin                  { function Netcall }
     if FileExists(mausstlog) then _era(mausstlog);
     end;
 
-  with BoxPar^ do
-    if alias then OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
-    else OwnFidoAdr:=boxname+'.'+pointname;
-  Debug.DebugLog('xpnetcall','got fido addr: "'+OwnFidoAdr+'"',DLInform);
-  if crash then begin
-    ppfile:=FidoFilename(CrashBox)+'.cp';
-    eppfile:=FidoFilename(CrashBox)+'.ecp';
-//**     if FidoIsISDN(CrashBox) and IsBox('99:99/98') then
-{      FidoGetCrashboxData('99:99/98')
-    else
-      if IsBox('99:99/99') then
-        FidoGetCrashboxData('99:99/99');}
-    with boxpar^ do begin
-      boxname:=MakeFidoAdr(CrashBox,true);
-      uparcer:='';
-      SendAKAs:='';
-      telefon:=FidoPhone(CrashBox,CrashPhone);
-      GetPhoneGebdata(crashphone);
-      passwort:='';
-      SysopInp:=''; SysopOut:='';
-      f4D:=true;
-      fillchar(exclude,sizeof(exclude),0);
-      GetTime:=CrashGettime;
-      if not IsBox(boxpar^.boxname) then
-        Passwort:=CrashPassword(Boxpar^.boxname);
-      end;
-    end;
-
   Debug.DebugLog('xpnetcall','testing buffers',DLInform);
   if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
     trfehler1(710,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
@@ -904,6 +820,8 @@ begin                  { function Netcall }
       end;
     end;
 
+  new(tempboxpar);
+  dispose(tempboxpar);
   NumCount:=CountPhonenumbers(boxpar^.telefon); NumPos:=1;
   FlushClose;
 
@@ -931,6 +849,8 @@ begin                  { function Netcall }
     Sichern(ScreenPtr);
 
 //**    AppendEPP;
+  new(tempboxpar);
+  dispose(tempboxpar);
 
     netcalling:=true;
     showkeys(0);
@@ -940,18 +860,21 @@ begin                  { function Netcall }
 
     {------------------------- call appropriate mailer ------------------------}
     Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
+  new(tempboxpar);
+  dispose(tempboxpar);
 
     if PerformDial then begin
       if not fileexists(ppfile)then makepuf(ppfile,false);
+      NetcallLogfile:=TempFile('');
+      inmsgs:=0; outmsgs:=0; outemsgs:=0;
+      cursor(curoff);
+      inc(wahlcnt);
+  new(tempboxpar);
+  dispose(tempboxpar);
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-          NetcallLogfile:=TempFile('');
-          inmsgs:=0; outmsgs:=0; outemsgs:=0;
-          cursor(curoff);
-          inc(wahlcnt);
-          case FidoNetcall(BoxName,Boxpar,ppfile,crash,alias,domain,NetcallLogfile,
-                           OwnFidoAdr,IncomingFiles) of
+          case FidoNetcall(BoxName,Boxpar,crash,domain,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -964,10 +887,6 @@ begin                  { function Netcall }
 
         ltZConnect: begin
           Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
-          NetcallLogfile:=TempFile('');
-          inmsgs:=0; outmsgs:=0; outemsgs:=0;
-          cursor(curoff);
-          inc(wahlcnt);
           case ZConnectNetcall(BoxName,Boxpar,ppfile,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
@@ -1218,6 +1137,10 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.6  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

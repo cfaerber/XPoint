@@ -28,9 +28,11 @@ unit XPMessageWindow;
 
 interface
 
-uses IPCClass,Classes,SysUtils;
+uses IPCClass,Classes,SysUtils,Timer;
 
 type
+  tpTimer= ^tTimer;
+
   TXPMessageWindow = class(TIPC)
 
   protected
@@ -42,6 +44,13 @@ type
     procedure SVisible(nVisible: Boolean);
 
   public
+    { Timer displayed in right top of window, initialized upon class creation }
+    Timer: tTimer;
+    { which timer to display? }
+    TimerToUse: tpTimer;
+    { display which time? }
+    TimerDisplay: (mwElapsedTime,mwTimeout,mwNone);
+
     { True if visible, used also for hiding/restoring window }
     property IsVisible: Boolean read FVisible write SVisible;
 
@@ -61,6 +70,7 @@ uses
 
 constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
+  Timer.Init; TimerToUse:=@Timer;
   FWidth:=iw; FHeight:=ih;
   FHeadline:=Headline;
   FLines:=TStringList.Create;
@@ -82,9 +92,17 @@ begin
 end;
 
 procedure TXPMessageWindow.Display;
-var iLine: Integer;
+var iLine: Integer; s: string;
 begin
   if not IsVisible then exit;
+  case TimerDisplay of
+    mwElapsedTime: s:=FormatDateTime('hh":"nn":"ss',
+                      TimerToUse^.ElapsedSec/60/60/24);
+    mwTimeout: s:=FormatDateTime('hh":"nn":"ss',
+                      TimerToUse^.SecsToTimeout/60/60/24);
+    mwNone: s:='';
+  end;
+  if s<>'' then MWrt(FPosX+2+FWidth-9,FPosY,FormS(s,8));
   for iLine:=0 to FHeight-1 do
     if iLine>=FLines.Count then
       MWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth))
@@ -92,38 +110,39 @@ begin
       MWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine],FWidth));
 end;
 
+{ fmt='': only update timer }
 procedure TXPMessageWindow.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
 var s: String;
 begin
   s:=Format(fmt,args);
 
-  if copy(s,1,1)='*' then begin
-    delete(s,1,1);
-    if IsVisible then MWrt(FPosX+2+FWidth-5,FPosY,FormS(s,3));
-    end
-  else begin
+  if fmt<>'' then begin
     // if last message was "not important", it may be overwritten
     if LastMsgUnimportant then
       FLines.Delete(FLines.Count-1)
     else
       if FLines.Count>=FHeight then FLines.Delete(0);
-
     LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
     FLines.Add(s);
-    Display;
     end;
+  Display;
 end;
 
 destructor TXPMessageWindow.Destroy;
 begin
   IsVisible:=false;
   FLines.Free;
+  Timer.Done;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.4  2001/02/09 17:31:07  ma
+  - added timer to xpmessagewindow
+  - did some work on AKA handling in xpncfido
+
   Revision 1.3  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 
