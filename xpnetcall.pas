@@ -122,7 +122,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,
-     xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
+     xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader, xpmakeheader,
      xpfido,xpfidonl,xpmaus,xpncfido,xpncpop3;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -295,12 +295,12 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,0,hds,hdp,ok,false);    { MUSS ok sein! }
+    makeheader(zconnect,f,0,0,hds,hdp,ok,false, true);    { MUSS ok sein! }
     if hdp.empfanz=1 then
       ClrUVS
     else for i:=1 to hdp.empfanz do begin
       seek(f,adr);
-      makeheader(zconnect,f,i,0,hds,hdp,ok,false);
+      makeheader(zconnect,f,i,0,hds,hdp,ok,false, true);
       ClrUVS;
       end;
     inc(adr,hdp.groesse+hds);
@@ -2319,6 +2319,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/01/14 10:13:36  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.4  2001/01/06 21:13:37  mo
   - Änderung an TnodeListItem
 

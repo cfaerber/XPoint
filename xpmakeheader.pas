@@ -12,14 +12,44 @@
 { beliebig grossen Netcall- oder ZConnect-Header auswerten }
 { wird in XP3, MAGGI und XPCHECK included                 }
 
+{$I XPDEFINE.INC }
+
+unit xpmakeheader;
+
+interface
+
+uses
+  classes, xpheader;
+
+const
+  ReadEmpflist : boolean  = false;
+  ReadKopList  : boolean  = false;
+var
+  EmpfList: TStringList;                     { Empf„ngerliste }
+
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
+                     var size:longint; var hd:Theader; var ok:boolean;
+                     PM2AMconv:boolean; ConvBrettEmpf: Boolean);
+
+implementation
+
+uses
+  xpdatum, xpnt, xp3, Xp0, SysUtils, Typeform;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
+
+const
+  bufsize = 65535;
+
+type
+  TCharArray = array[0..bufsize] of char;
+  PCharArray = ^TCharArray;
 
 var line : string;
 
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
                      var size:longint; var hd:Theader; var ok:boolean;
-                     PM2AMconv:boolean);
+                     PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
     o: word; { Offset im Lesepuffer }
     s       : string;
@@ -276,17 +306,11 @@ var i,res : integer;
       line:=trim(mid(line,p+1));
       if parname='boundary' then hd.boundary:=LeftStr(parval,70) else
       if (parname='name') and (hd.datei='') then hd.datei:=LeftStr(parval,40) else
-
-      {$ifdef uuzmime}
       if parname='type' then hd.mimereltyp:=LeftStr(parval,25) else
-      {$endif}
-
       if (parname='charset') and (hd.x_charset='') then hd.x_charset:=LeftStr(parval,25);
       end;
   end;
 
-
-  {$IFDEF ConvBrettempf}
 
   procedure CheckEmpfs;          { /Brett@Box.domain -> /Brett }
     procedure check(var s:string);
@@ -310,8 +334,6 @@ var i,res : integer;
         end;
       end;
   end;
-
-  {$ENDIF}
 
 begin
   ok:=true;
@@ -528,144 +550,17 @@ begin
     end;
   freemem(buf,bufsize);
   CheckBetreff;
-  {$IFDEF ConvBrettempf}             { /Brett@Box.domain -> /Brett }
-    CheckEmpfs;
-  {$ENDIF}
+  if ConvBrettEmpf then
+    CheckEmpfs;                      { /Brett@Box.domain -> /Brett }
   inc(size,o);
   if res<>0 then ok:=false;
 end;
+
+end.
+
 {
   $Log$
-  Revision 1.44  2001/01/11 13:21:35  mk
-  - fixed chararr-bugs and removed some unnecessary defines
-
-  Revision 1.43  2001/01/05 09:33:11  mk
-  - removed THeader.Ref
-
-  Revision 1.42  2001/01/02 10:05:27  mk
-  - implemented Header.References
-
-  Revision 1.41  2000/12/30 17:47:41  mk
-  - renamed AddRef to References
-
-  Revision 1.40  2000/12/03 12:38:26  mk
-  - Header-Record is no an Object
-
-  Revision 1.39  2000/11/17 19:35:45  fe
-  Followup-To support updated to ZC 3.1.
-  Mail-Copies-To support added.
-
-  Revision 1.38  2000/11/05 20:14:13  fe
-  Added LDA/Expires.
-
-  Revision 1.36  2000/10/17 10:05:59  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.35  2000/09/28 03:11:01  mk
-  - Move mit Laenge 0 verhindert
-
-  Revision 1.34  2000/08/22 01:00:17  mk
-  - Getline deutlich beschleunigt
-
-  Revision 1.33  2000/08/20 10:44:34  mk
-  - Performance-Verbesserungen
-
-  Revision 1.32  2000/08/10 13:14:23  mk
-  - Pruefung ob Header vor dem Doppelpunkt eine ID enthaelt eingebaut
-
-  Revision 1.31  2000/08/03 15:29:35  mk
-  - XLines werden jetzt nur noch kopiert, wenn die Zeile kein CustomHeader ist
-
-  Revision 1.30  2000/08/03 15:26:50  mk
-  - XLines-Handling hinzugefuegt
-
-  Revision 1.29  2000/07/26 08:18:50  mk
-  - fixes und AnsiString-Updates
-
-  Revision 1.28  2000/07/23 14:40:17  mk
-  - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
-  - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen
-
-  Revision 1.27  2000/07/22 14:41:27  mk
-  - UUZ geht jetzt endlich wieder komplett :-)
-
-  Revision 1.26  2000/07/21 17:39:57  mk
-  - Umstellung auf THeader.Create/FreeHeaderMem
-
-  Revision 1.25  2000/07/21 13:23:48  mk
-  - Umstellung auf TStringList
-
-  Revision 1.24  2000/07/18 14:30:28  hd
-  - Fix: Ansistring
-
-  Revision 1.23  2000/07/12 14:43:48  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.22  2000/07/11 21:39:23  mk
-  - 16 Bit Teile entfernt
-  - AnsiStrings Updates
-  - ein paar ASM-Routinen entfernt
-
-  Revision 1.21  2000/07/06 22:52:45  mk
-  - Ansistring Updates
-
-  Revision 1.20  2000/07/06 16:04:18  mk
-  - AnsiString Updates
-
-  Revision 1.19  2000/07/05 15:46:47  hd
-  - AnsiString
-
-  Revision 1.18  2000/07/04 21:23:07  mk
-  - erste AnsiString-Anpassungen
-
-  Revision 1.17  2000/07/04 12:04:30  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.16  2000/07/03 16:20:04  hd
-  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
-
-  Revision 1.15  2000/06/04 18:10:28  sv
-  - Maggi wieder kompilierbar
-
-  Revision 1.14  2000/06/04 16:57:26  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.13  2000/06/04 15:13:32  mk
-  - Speichercheck in 32 Bit Version korrigiert
-
-  Revision 1.12  2000/05/10 07:47:15  mk
-  RB: X-* -> U-X-*
-
-  Revision 1.11  2000/05/05 18:13:00  mk
-  - einige Limits beseitigt
-
-  Revision 1.10  2000/05/04 11:02:18  mk
-  - jetzt auch noch den Debug-Code entfernt
-
-  Revision 1.9  2000/05/04 11:00:17  mk
-  - Memory-Leak in GetKOP beseitigt
-
-  Revision 1.8  2000/05/04 10:26:03  mk
-  - UUZ teils auf HugeString umgestellt
-
-  Revision 1.7  2000/04/13 12:48:41  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+  Revision 1.1  2001/01/14 10:13:36  mk
+  - MakeHeader() integreated in new unit
 
 }

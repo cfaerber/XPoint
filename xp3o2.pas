@@ -33,7 +33,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
+uses xp3,xp3o,xpnt,xpdatum,xp_pgp, xpmakeheader;
 
 
 procedure WriteHeader(var hd:theader; var f:file);
@@ -446,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/01/14 10:13:34  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.35  2001/01/05 09:33:09  mk
   - removed THeader.Ref
 

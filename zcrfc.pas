@@ -105,7 +105,7 @@ procedure StartCommandlineUUZ;
 implementation
 
 uses
-  xpheader, unicode, UTFTools;
+  xpheader, unicode, UTFTools, xpmakeheader;
 
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -184,7 +184,6 @@ const
 
 type
   mimeproc = procedure(var s: string);
-
   TCharArray = array[0..bufsize] of char;
   PCharArray = ^TCharArray;
 
@@ -588,12 +587,6 @@ end;
 
 const
   ReadKoplist = false;
-
-  {$DEFINE uuzrefs}
-
-  {$DEFINE uuzmime }
-
-  {$I xpmakehd.inc}
 
 procedure TUUZ.FlushOutbuf;
 begin
@@ -3520,7 +3513,7 @@ begin
   repeat
     seek(f1, adr);
     Clearheader;
-    makeheader(true, f1, 1, 0, hds, hd, ok, false);
+    makeheader(true, f1, 1, 0, hds, hd, ok, false, false);
     if not ok then
     begin
       close(f1);
@@ -3594,7 +3587,7 @@ begin
     repeat
       seek(f1, adr);
       ClearHeader;
-      makeheader(true, f1, copycount, 0, hds, hd, ok, false);
+      makeheader(true, f1, copycount, 0, hds, hd, ok, false, false);
       binmail := (hd.typ = 'B');
       if cpos('@', hd.empfaenger) > 0 then
         if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
@@ -3717,6 +3710,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/01/14 10:13:37  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.25  2001/01/11 13:21:35  mk
   - fixed chararr-bugs and removed some unnecessary defines
 

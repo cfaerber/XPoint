@@ -34,7 +34,7 @@ function testmausempf(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
      xp6,xp6l;
 
 const
@@ -251,7 +251,7 @@ begin
     fsize:=filesize(f);
     while not found and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,empfnr,0,hds,hdp,ok,false);
+      makeheader(zconnect,f,empfnr,0,hds,hdp,ok,false, true);
       if not ok then begin
         rfehler1(621,sr.name);    { 'fehlerhaftes Pollpaket:  %s' }
         goto nextpp;   { zum naechsten Puffer weiterspringen }
@@ -368,8 +368,8 @@ begin
     if empfnr>0 then begin
       ReadHeadEmpf:=empfnr; ReadEmpflist:=true;
       ReadHeader(hdp,hds,true);
-      sendempflist.Assign(Xp3.empflist);
-      xp3.empflist.Clear;
+      sendempflist.Assign(xpmakeheader.empflist);
+      xpmakeheader.empflist.Clear;
       CrosspostBox:=box;
       end;
     if hdp.pgpflags and fPGP_haskey<>0 then
@@ -982,8 +982,8 @@ again:
                  readln(t,empf);
                  if IsOempf(empf) and not eof(t) then begin
                    GetOEmpflist;
-                   SendEmpflist.Assign(xp3.empflist);
-                   xp3.empflist.Clear;
+                   SendEmpflist.Assign(xpmakeheader.empflist);
+                   xpmakeheader.empflist.Clear;
                    end;
                  end;
                close(t);
@@ -1279,6 +1279,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/01/14 10:13:35  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.54  2001/01/05 09:33:10  mk
   - removed THeader.Ref
 

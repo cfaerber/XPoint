@@ -141,7 +141,7 @@ var x,y      : byte;
         mon;
       end;
       seek(f,adr);
-      makeheader(zconnect,f,0,0,hdsize,hdp,ok,true);
+      makeheader(zconnect,f,0,0,hdsize,hdp,ok,true, true);
       inc(adr,hdsize+hdp.groesse);
     until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zus„tzliche }
     if (MsgCount>0) then begin
@@ -484,7 +484,7 @@ var x,y      : byte;
     else begin
       assign(f,uncfile);
       reset(f,1);
-      makeheader(false,f,0,0,hds2,hdp2,ok,false);
+      makeheader(false,f,0,0,hds2,hdp2,ok,false, true);
       close(f);
       if not ok then
         trfehler(306,5)       { 'Fehler beim Decodieren' }
@@ -560,7 +560,7 @@ var x,y      : byte;
       inc(n);
       repeat
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
+        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
@@ -756,10 +756,9 @@ begin
       msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
+        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
         orgempf:=hdp.empfaenger;
-        { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp.empfanz>maxcrosspost then begin }
+        { Schalter maildelxpost beachten }
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
         { /robo }
@@ -1184,6 +1183,9 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.45  2001/01/10 19:36:52  ma
   - added verbose message import debug logs
   - added GPL header

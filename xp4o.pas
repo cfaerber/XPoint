@@ -75,7 +75,7 @@ procedure seek_cutspace(var s:string);
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader,
+uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
      xp_pgp, viewer;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
@@ -838,11 +838,12 @@ begin
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,miBrett);
         if bereich=3 then begin                         // markiert
-          if aktdispmode<10 then begin                  // Nachrichten oder Userbersicht
+          if aktdispmode<11 then
+          begin                                         // Nachrichten oder Userbersicht
             i:=0;
-            uu:=(aktdispmode>0);                        // nicht in Brettbersicht
+            uu:=(aktdispmode>0) or (aktdispmode<10);    // nicht in Brettbersicht
             while (i<bmarkanz) and not brk do begin
-              if uu then begin                         // in Userbersicht
+              if uu then begin                          // in Userbersicht
                 dbGo(ubase,bmarked^[i]);
                 TestBrett(mbrettd('U',ubase));
                 end
@@ -1439,7 +1440,7 @@ begin
     ok:=true;
     while ok and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,1,0,hds,hdp,ok,false);
+      makeheader(zconnect,f,1,0,hds,hdp,ok,false, true);
       if not ok then
         rfehler1(427,box)   { 'fehlerhaftes Pollpaket:  %s' }
       else with hdp do begin
@@ -2407,6 +2408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.93  2001/01/14 10:13:34  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.92  2001/01/05 16:07:58  mo
   -suchlen von 1000 auf 255, type byte
 

@@ -47,7 +47,7 @@ procedure ShowRQ(s:string);
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,xpfm,xpheader,xp3,xp3o;
+  direct,xpfm,xpheader,xp3,xp3o, xpmakeheader;
 
 
 procedure SaveArcname(var box,name:string);
@@ -366,7 +366,7 @@ label fn_ende,fn_ende0;
         adr:=0; ok:=true;
         while ok and (adr<filesize(f)) do begin
           seek(f,adr);
-          MakeHeader(true,f,0,0,hds,hd,ok,false);
+          MakeHeader(true,f,0,0,hds,hd,ok,false, true);
           if (hd.attrib and attrFile<>0) then
             if not FileExists(hd.betreff) then begin
               tfehler(hd.betreff+' fehlt!',15);
@@ -790,7 +790,7 @@ begin
       moff;
       while not eof(f) and sh do begin
         inc(n);
-        MakeHeader(true,f,0,0,hds,hdp,ok,false);
+        MakeHeader(true,f,0,0,hds,hdp,ok,false, true);
         empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
         if empfaenger=lastempf then
           inc(count)
@@ -975,6 +975,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/01/14 10:13:36  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.4  2001/01/06 18:21:49  ma
   - tried to make *both* fidonetcall and sysopcall work
 

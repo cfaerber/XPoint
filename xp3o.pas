@@ -72,7 +72,8 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+  xpmakeheader;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -1339,7 +1340,7 @@ begin
         if show then begin
           moff; write(MsgCount:6,#8#8#8#8#8#8); mon; end;
         seek(f,adr);
-        makeheader(zconnect,f,0,0,hds,hdp,ok,true);
+        makeheader(zconnect,f,0,0,hds,hdp,ok,true, true);
         if hdp.attrib and attrFile<>0 then
           inc(fattaches,_filesize(hdp.betreff));
         inc(adr,hds+hdp.groesse);
@@ -1497,6 +1498,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.49  2001/01/05 09:33:09  mk
   - removed THeader.Ref
 

@@ -45,7 +45,7 @@ procedure extract_msg(art:byte; schablone:string; name:string;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmime;
+uses xp1o,xp3,xp_des,xpnt,xpfido,xpmime, xpmakeheader;
 
 var  ex_mpdata : pmpdata;
 
@@ -1085,6 +1085,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.61  2001/01/06 21:13:35  mo
   - Änderung an TnodeListItem
 

@@ -28,7 +28,7 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xpheader, xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
+uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -310,6 +310,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/01/14 10:13:35  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.20  2000/12/03 12:38:23  mk
   - Header-Record is no an Object
 

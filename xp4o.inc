@@ -422,7 +422,7 @@ var x,y,yy  : byte;
         seek(f2,adr);
         enr:=dbReadInt(mbase,'netztyp') shr 24;
         hdp := THeader.Create;
-        MakeHeader(true,f2,enr,0,hds,hdp,ok,true);
+        MakeHeader(true,f2,enr,0,hds,hdp,ok,true, true);
         MsgOK:=ok and (size=hds+hdp.groesse) and (hdp.empfanz>=min(2,enr))
                   and (dbReadInt(mbase,'groesse')=hdp.groesse);
         Hdp.Free;
@@ -626,12 +626,14 @@ begin
           count:=dbRecCount(mbase);
           n:=1;
           errflag:=false;
-          while not dbEOF(mbase) do begin
+          while not dbEOF(mbase) do
+          begin
             if n>count then
               errflag:=true;
             if n mod 10=0 then show;
             dbReadN(mbase,mb_ablage,ablage);
-            if ablage=abl then begin
+            if ablage=abl then
+            begin
               dbReadN(mbase,mb_halteflags,hflags);
               dbReadN(mbase,mb_unversandt,uflags);
               if (hflags<>2) or odd(uflags) then
@@ -639,15 +641,15 @@ begin
               else begin
                 DelBezug;
                 dbDelete(mbase);
-                end;
-              end
+              end;
+            end
             else
               if ablage>=ablagen then
                 dbDelete(mbase)
               else
                 dbSkip(mbase,1);
             inc(n);
-            end;
+          end;
           if n<=count then errflag:=true;
           flushbufs;
           if count>0 then show;
@@ -694,6 +696,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2001/01/14 10:13:34  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.29  2000/12/03 12:38:22  mk
   - Header-Record is no an Object
 

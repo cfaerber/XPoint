@@ -1347,7 +1347,7 @@ var dummy : longint;
       adr:=0; ok:=true;
       while ok and (adr<filesize(f)) do begin
         seek(f,adr);
-        MakeHeader(true,f,0,0,hds,hd,ok,false);
+        MakeHeader(true,f,0,0,hds,hd,ok,false, true);
         if (hd.attrib and attrFile<>0) then
           if not FileExists(hd.betreff) then
             trfehler1(725,hd.betreff,15)   { '%s fehlt!' }
@@ -1719,6 +1719,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/01/14 10:13:36  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.2  2001/01/06 18:23:42  ma
   - cleaned up
   - added debug logs to fidosysopcall

@@ -569,7 +569,7 @@ begin
   assign(f,fn);
   fm_ro; reset(f,1); fm_rw;
   hdp := THeader.Create;
-  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp,ok,false);
+  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp,ok,false, true);
   oemp:=hdp.empfaenger;
   if hdp.netztyp=nt_ZConnect then with hdp do begin
     AddZer(absender);
@@ -1161,6 +1161,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.47  2001/01/14 10:13:36  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.46  2001/01/07 10:03:16  mo
   -Aenderungen an ccmore und ccmorea zurückgenommen
 

@@ -97,7 +97,7 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
      xp_pgp,xp6l;
 var
   i: integer;
@@ -2095,6 +2095,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.95  2001/01/14 10:13:35  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.94  2001/01/07 10:03:52  mo
   -Aenderungen an ccmore und ccmorea zurückgenommen
 

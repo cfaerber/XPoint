@@ -31,12 +31,6 @@ const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
       ReadHeadDisk : shortint = 0;           { Diskussion-In }
-      ReadEmpflist : boolean  = false;
-      ReadKopList  : boolean  = false;
-      NoPM2AMconv  : boolean  = false;
-
-var
-  EmpfList: TStringList;                     { Empf„ngerliste }
 
 
 function  msgmarked:boolean;                 { Nachricht markiert? }
@@ -60,9 +54,6 @@ procedure ReplyText(var betr:string; rehochn:boolean);
 
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr: integer;
-                     var size:longint; var hd:Theader; var ok:boolean;
-                     PM2AMconv:boolean);
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
@@ -107,7 +98,7 @@ implementation  {-----------------------------------------------------}
                 'A'  ==  Netzbretter
                 'U'  ==  Userbretter (nur in der MBase) }
 
-uses  xp3o,xp3ex,xpnt;
+uses  xp3o,xp3ex,xpnt, xpmakeheader;
 
 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
@@ -348,10 +339,6 @@ begin
     end;
 end;
 
-{$define convbrettempf}
-{$I xpmakehd.inc}           { MakeHeader() }
-
-
 { in dieser Prozedur kein ReadN/WriteN verwenden, wegen }
 { XP2.NewFieldMessageID !                               }
 
@@ -392,7 +379,7 @@ begin
       empfnr:=ReadHeadEmpf; ReadHeadEmpf:=0;
       end;
     if ok then makeheader(ntZCablage(ablg),puffer,empfnr,ReadHeadDisk,hds,hd,
-                          ok,not NoPM2AMconv);
+                          ok,true, true);
     if not nopuffer then
       close(puffer);
     errstr:='';
@@ -410,7 +397,6 @@ begin
     hd.empfaenger:=Mid(hd.empfaenger,9);
   ReadEmpflist:=false; ReadHeadDisk:=0;
   ReadKopList:=false;
-  NoPM2AMconv:=false;
 end;
 
 
@@ -1145,6 +1131,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.56  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.55  2001/01/11 13:21:35  mk
   - fixed chararr-bugs and removed some unnecessary defines
 

@@ -344,7 +344,7 @@ begin
 {$ELSE}
   FErrorCode := SocketError;
 {$ENDIF}
-  raise ESocketError.CreateFMT('WSASocketError %d', [FErrorCode]);
+  raise ESocketError.CreateFMT('SocketError %d', [FErrorCode]);
 end;
 
 procedure TSocketNetcall.SWriteln(s: String);
@@ -385,6 +385,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
   Revision 1.18  2001/01/03 18:01:56  mk
   - added WSACleanup in destroy
 
