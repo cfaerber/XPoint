@@ -1411,7 +1411,7 @@ begin
   fn:=trim(s);
   if (fn<>'') then
   begin
-    if RightStr(s,1)<>DirSepa then s:=s+DirSepa;
+    s := AddDirSepa(s);
     if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
     if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
     ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
@@ -1492,6 +1492,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/07/27 18:14:40  mk
+  - use AddDirSepa instead of own function
+
   Revision 1.7  2001/07/27 18:10:14  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again
