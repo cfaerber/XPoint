@@ -88,7 +88,7 @@ procedure mausinit;
 begin
 {$IFDEF VP}
   {$IFDEF Win32 }
-    mausda := true;
+    mausda := false;
   {$ELSE }
     mausda := false;
    {$ENDIF }
@@ -104,7 +104,7 @@ begin
       SysTVShowMouse;
     {$ENDIF }
   {$ENDIF }
-  mausda := true;
+  mausda := false;
 end;
 
 procedure mausaus;
@@ -288,6 +288,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/12/27 19:49:17  mk
+  - disabled mousesupport completly
+
   Revision 1.21  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 
