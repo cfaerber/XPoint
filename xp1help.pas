@@ -185,10 +185,11 @@ begin
   shortkeys:=0;
   gotoxy(1,2);
   attrtxt(col.colkeys);
+  FWrt(1,2,sp(screenwidth)); { Q&D fuer durchgehende Menuzeile }
   moff;
   Wrt2('  ');
   case abs(nr) of
-    0 : Wrt2(sp(78));
+    0 : Wrt2(sp(screenwidth-2));
     1 : begin       { Brettfenster }
           kstr(1);  { ^Alle ^Brief T^extfile B^in„r ^Spezial ^Lesen: }
           lesemodepos:=wherex-1;
@@ -396,14 +397,14 @@ begin
       for j:=1 to 10 do
         with fkeys[i]^[j] do
           if menue<>'' then
-            if (wherex+length(menue)+3<=81) and (wherey=screenlines) then
+            if (wherex+length(menue)+3<=screenwidth+1) and (wherey=screenlines) then
               wf(fs[i]+strs(j)+'-'+menue);
   attrtxt(col.colkeys);
-  XPdisplayed:=(wherey=screenlines) and (wherex<=70);
+  XPdisplayed:=(wherey=screenlines) and (wherex<=screenwidth-10);
   if XPdisplayed then
-    Wrt2(sp(81-length(xp_xp)-wherex) + xp_xp)   { 'CrossPoint' }
+    Wrt2(sp(screenwidth+1-length(xp_xp)-wherex) + xp_xp)   { 'CrossPoint' }
   else
-    if wherey=screenlines then Wrt2(sp(81-wherex));
+    if wherey=screenlines then Wrt2(sp(screenwidth+1-wherex));
   mon;
   dec(windmax,$100);
   fnkeylines:=1;
@@ -413,6 +414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/08 13:05:45  hd
+  Anpassung an variable Screen-Breite
+
   Revision 1.6  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 
