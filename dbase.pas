@@ -23,19 +23,19 @@ unit dbase;
 interface  {------------------------------------------------}
 
 
-uses dos, typeform;
+uses dos, typeform, xpglobal;
 
 const  MaxFelder  = 50;                   { max Felder pro Datei          }
        memoblock  = 512;
 
 type   FeldStr    = string[10];
        memobuf    = array[0..memoblock-1] of char;
-       DbFeld     = record
+       DbFeld     = packed record
                       name : FeldStr;     { Feldname (Groábuchstaben!)  }
                       typ  : char;        { Feldtyp: C=String, N=Zahl   }
       { Feldl„nge }   size : byte;        {  D=Datum, L=Boolean, M=Memo }
                       nk   : byte;        { Nachkommastellen bei Zahlen }
-                      off  : word;
+                      off  : smallword;
                     end;
        DbStruktur = record
                       felder : word;      { Anzahl Fehler         }
@@ -83,14 +83,14 @@ implementation  {-------------------------------------------}
 
 type   xa     = array[0..$ff00] of byte;
 
-var    Header : record
+var    Header : packed record
                   ID,j,m,t     : byte;
                   recs         : longint;
-                  hdsize,rsize : word;
+                  hdsize,rsize : smallword;
                   dummy        : array[1..20] of byte;
                 end;
 
-       XFeld  : record
+       XFeld  : packed record
                   name         : array[1..10] of char;
                   dummy1       : byte;
                   typ          : char;
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/03/17 13:12:09  mk
+  - Anpassung der Records an 32 Bit
+
   Revision 1.4  2000/03/03 13:24:45  mk
   YUP2PKT compilierbar gemacht und in Distribution aufgenommen
 
