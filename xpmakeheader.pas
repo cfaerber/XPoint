@@ -372,13 +372,13 @@ begin
             if id = 'U-CONTENT-DISPOSITION' then ParseDisposition(hd) else
             if id = 'U-CONTENT-ID'   then Mime.CID := line else
 
-            if id = 'U-LIST-ID' then ListID := RFCRemoveComments(line); 
-            if id = 'U-LIST-POST' then ListPost := RFCRemoveComments(line); 
-            if id = 'U-LIST-SUBSCRIBE' then ListSubscribe := RFCRemoveComments(line); 
-            if id = 'U-LIST-UNSUBSCRIBE' then ListUnSubscribe := RFCRemoveComments(line); 
-            if id = 'U-LIST-HELP' then ListHelp := RFCRemoveComments(line); 
-            if id = 'U-LIST-OWNER' then ListOwner := RFCRemoveComments(line); 
-            if id = 'U-LIST-ARCHIVE' then ListArchive := RFCRemoveComments(line); 
+            if id = 'U-LIST-ID' then ListID := RFCRemoveComments(line) else 
+            if id = 'U-LIST-POST' then ListPost := RFCRemoveComments(line) else 
+            if id = 'U-LIST-SUBSCRIBE' then ListSubscribe := RFCRemoveComments(line) else 
+            if id = 'U-LIST-UNSUBSCRIBE' then ListUnSubscribe := RFCRemoveComments(line) else 
+            if id = 'U-LIST-HELP' then ListHelp := RFCRemoveComments(line) else 
+            if id = 'U-LIST-OWNER' then ListOwner := RFCRemoveComments(line) else 
+            if id = 'U-LIST-ARCHIVE' then ListArchive := RFCRemoveComments(line) else 
 
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
@@ -567,6 +567,10 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/10/01 15:38:48  cl
+  - BUGFIX <m3elba8iwo.fsf@stell.crashmail.de>: "Doppelte Headerzeilen"
+    (Duplicate header fields)
+
   Revision 1.29  2002/09/13 11:56:11  cl
   - fixed range check error
 
