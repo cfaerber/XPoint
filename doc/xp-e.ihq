@@ -656,7 +656,10 @@ Replying to messages:
 
    <<G>>    Jumps to the preceding message. (Like <<->>)
 
-<<ALT M>>   Starts the search for a MessageID.
+<<Ctrl-W>>  Toggles line wrapping (On/Off). See also
+        [/Config/Options/Message_Reader/Line_break...].@233
+
+<<Alt-M>>   Starts the search for a MessageID.
         The first marked textline is used as
         search-string. If there is a "<news:"-Tag
         in the marked line, only the MessagID
@@ -664,18 +667,18 @@ Replying to messages:
 
         If the search was successful, you see a
         list of the found message(s) and can read
-        them. (ESC) in the message-list jumps back
+        them. <Esc> in the message-list jumps back
         to the Main-Lister, showing the message
         where you started the search.
 
-<<ALT V>>   like <<ALT M>> but searches for text.
+<<Alt-V>>   like <<Alt-M>> but searches for text.
 
-<<ALT U>>   User-search. If a Textline is marked,
+<<Alt-U>>   User-search. If a Textline is marked,
         it will be used as search-string, else
         Crosspoint will search for the author
         of the shown message.
 
-<<ALT B>>   Topic-search. Search-string is the first
+<<Alt-B>>   Topic-search. Search-string is the first
         marked textline or the topic of the shown
         message.
 
@@ -695,8 +698,8 @@ Replying to messages:
         line (marked with <Space>) to request from
         the Node (Box) from which the message comes.
 
-   <<C>>    Toggles coloured <<bold>> Text on/off.
-        (see [/Config/External/Lister])@237
+   <<C>>    Toggles coloured <<bold>> Text on/off
+        (see [/Config/External/Lister]).@237
 
 <<When>> [reference links] <<available@4014
 <<(Maus, Fido):
@@ -4426,8 +4429,8 @@ full-screen mode is always used.
         reading.
 @
 233
-<<[x]>>     Lines longer than 80 characters will be 
-        wrapped for display into lines of 80 
+<<[x]>>     Lines longer than 80 characters will be
+        wrapped for display into lines of 80
         characters.
 
         However, since this splitting occurs before
@@ -4436,6 +4439,9 @@ full-screen mode is always used.
 
 <<[ ]>>     Lines will not be wrapped until column
         255.
+
+This setting can be changed non-permanently with
+<<<Ctrl-W> >>in the message reader.
 @
 234
 <<[x]>>     Messages with [reference] links are indicated@4014
