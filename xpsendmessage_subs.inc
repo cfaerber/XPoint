@@ -996,7 +996,6 @@ begin
       if ntGrossBrett(netztyp) then sml:='>'
       else if ntKleinBrett(netztyp) then sml:='<'
       else sml:='';
-      { suboptimal }
       if followup.count>0 then
         tmpFollowUp := followup[0]
       else
@@ -1026,7 +1025,10 @@ begin
   readmask(brk);
   if not brk then
   with sData do
-    if FollowUp.Count > 0 then FollowUp[0] := tmpFollowUp;
+    if FollowUp.Count > 0 then
+      FollowUp[0] := tmpFollowUp
+    else
+      if tmpFollowUp <> '' then FollowUp.Add(tmpFollowUp);
   enddialog;
 end;
 
@@ -1118,6 +1120,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/04/30 08:53:37  mk
+  - fixed bug: f'ups where not saved in EditSdata
+
   Revision 1.18  2002/04/14 22:33:10  cl
   - New address handling, supports To, CC, and BCC
   - Nearly complete rewrite of DoSend's message creation
