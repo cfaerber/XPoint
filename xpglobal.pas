@@ -70,6 +70,7 @@ type
     word =       longint; { = signed }
     dword =      longint; { = signed }
     rtlword =    longint;     { 32 Bit bei VP }
+    variant =    pointer; // Naja....
   {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
@@ -119,6 +120,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2000/07/22 13:26:20  mk
+  - variant-typ fuer vp
+
   Revision 1.35  2000/07/20 17:10:10  mk
   - Zeiger auf neue Array-Typen hinzugefuegt
 
