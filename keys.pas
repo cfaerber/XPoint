@@ -204,9 +204,18 @@ function readkey:char;
 begin
   if forwardkeys<>'' then begin
     readkey:=forwardkeys[1];
-    forwardkeys:=copy(forwardkeys,2,255);
+    forwardkeys:=Mid(forwardkeys,2);
   end else
     readkey:=crt.readkey;
+  if (Result = #9) and (GetAsyncKeyState(VK_SHIFT) < 0) then
+  begin
+    ReadKey := #0;
+    {$IFDEF FPC }
+      _Keyboard(#148);
+    {$ELSE }
+      _Keyboard(#15);
+    {$ENDIF }
+  end;
 {$IFDEF Win32 }
   // Scan Numeric Block keys *, - and +
   Lastscancode:=0;
@@ -363,6 +372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/10 17:41:26  mk
+  - added support for Shift-Tab in Win NT/2000/XP
+
   Revision 1.39  2001/08/10 16:38:06  mk
   - delphi version supports keyboard ;)
 
