@@ -166,7 +166,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # multiquote reply, PM, Quote PM, Multiquote PM, Paáwort-Edit, indir. Quote
 # MessageID-Request
 
-3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q M
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q m
 
 # Tasten im AutoVersand-Fenster
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
@@ -3991,6 +3991,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.20  2004/07/16 22:53:54  mk
+# - fixed headeronly for NNTP
+#
 # Revision 1.57.2.19  2003/09/21 16:08:44  mk
 # - rewrote addServersTest
 #

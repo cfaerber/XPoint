@@ -482,8 +482,8 @@ begin
 
       if HeaderOnly then
       begin
-        Message.Insert(Message.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
-        Message.Insert(Message.Count-1, ''); // empty line to break up headers
+        Message.Insert(Message.Count, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
+        Message.Insert(Message.Count, ''); // empty line to break up headers
       end;
     end;
     Timer.Done;
@@ -609,6 +609,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.9  2004/07/16 22:53:56  mk
+  - fixed headeronly for NNTP
+
   Revision 1.37.2.8  2003/12/06 14:35:57  mk
   - corrected spelling error
 
