@@ -396,7 +396,10 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { 01/2000 oh: Nach dem Netcall Datumsbezge setzen, damit
     /¯Netzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then bd_setzen(true);
+  if AutoDatumsBezuege then begin 
+    window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
+    bd_setzen(true);
+    end; 
   { /oh }
 end;
 
@@ -771,6 +774,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/20 04:15:14  jg
+  - xp7o.pas: Schoenheitsfix Datumsbezuege aktualisieren
+
   Revision 1.7  2000/04/18 11:23:50  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
