@@ -2035,30 +2035,34 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 950
 # NNTP
 0    45
-1    Host     ~
-2    Port     ~
-3    User ID  ~
-4    Password ~
-5    Number of messages to get
+1    NNTP settings
+2    Host     ~
+3    Port     ~
+4    User ID  ~
+5    Password ~
+6    Number of messages to get
 -
 
 + 951
 # POP3
 0    45
-1    Server    ~
-2    Login name~
-3    Password  ~
-4    Delete messages on Server
-5    Encrypt passwords (APOP)
-6    Get new mail only
+1    POP3 settings
+2    Server    ~
+3    Login name~
+4    Password  ~
+5    Delete messages on Server
+6    Encrypt passwords (APOP)
+7    Get new mail only
+8    Put all mails in one message area
 -
 + 952
 # SMTP
 0    45
-1    Server    ~
-2    Login name~
-3    Password  ~
-4    Vor SMTP einen POP3 Login ausfÅhren
+1    SMTP settings
+2    Server    ~
+3    Login name~
+4    Password  ~
+5    SMTP-after-POP
 
 -
 
@@ -3701,6 +3705,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.18  2001/06/09 10:58:53  ma
+# - added ForceOneArea feature (for POP3 server type)
+#
 # Revision 1.17  2001/06/04 17:23:06  ma
 # - made changes necessary for role feature
 #

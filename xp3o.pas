@@ -39,6 +39,11 @@ const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
       pe_gelesen      = 4;     { Nachrichten auf "gelesen" setzen }
 
+      { Force a certain recipient. Used by PufferEinlesen and with POP3 }
+      { servers in order to prevent creation of numerous message areas. }
+      { Use "1/[name]" for mail areas, "A/[name]" for public areas. }
+      ForceRecipient  : string = '';
+
       auto_empfsel_default : byte = 1;         {Flags fuer Autoempfsel in XPCC.PAS}
       autoe_showscr        : boolean = false;
       sel_verteiler        : boolean = false;  {True = Verteilerauswahl erlauben }
@@ -1520,6 +1525,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.57  2001/06/08 21:09:15  ma
   - fixed: Supersedes did not work with NNTP
 

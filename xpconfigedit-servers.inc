@@ -734,16 +734,16 @@
   procedure EditNNTP(var brk:boolean);
   var x,y   : byte;
   begin
-    dialog(ival(getres2(950,0)),11,'NNTP-Einstellungen',x,y);
+    dialog(ival(getres2(950,0)),11,GetRes2(950,1),x,y);         { 'NNTP-Einstellungen' }
     with boxpar^ do begin
-      maddstring(3,2,getres2(950,1),nntp_ip,25,255,             { 'Server    ~' }
+      maddstring(3,2,getres2(950,2),nntp_ip,25,255,             { 'Server    ~' }
           range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
       mhnr(30002);
-      maddint(3,4,getres2(950,2),nntp_port,4,5,0,65535);        { 'Port      ~' }
+      maddint(3,4,getres2(950,3),nntp_port,4,5,0,65535);        { 'Port      ~' }
       mhnr(30003);
-      maddstring(3,6,getres2(950,3),nntp_id,25,255,'');         { 'Loginname ~' }
-      maddstring(3,8,getres2(950,4),nntp_pwd,25,255,'');        { 'Passwort  ~' }
-      maddint(3,10,getres2(950,5),nntp_maxnews,4,5,0,1000000);     { 'letzten X Nachrichten ' }
+      maddstring(3,6,getres2(950,4),nntp_id,25,255,'');         { 'Loginname ~' }
+      maddstring(3,8,getres2(950,5),nntp_pwd,25,255,'');        { 'Passwort  ~' }
+      maddint(3,10,getres2(950,6),nntp_maxnews,4,5,0,1000000);  { 'letzten X Nachrichten ' }
       mhnr(30008);
       freeres;
       readmask(brk);
@@ -754,16 +754,17 @@
   procedure EditPOP3(var brk:boolean);
   var x,y   : byte;
   begin
-    dialog(ival(getres2(951,0)),11,'POP3-Einstellungen',x,y);
+    dialog(ival(getres2(951,0)),13,GetRes2(951,1),x,y);         { 'POP3-Einstellungen' }
     with boxpar^ do
     begin
-      maddstring(3,2,GetRes2(951,1),pop3_ip,25,255,            { 'Server    ~' }
+      maddstring(3,2,GetRes2(951,2),pop3_ip,25,255,             { 'Server    ~' }
       range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
-      maddstring(3,4,GetRes2(951,2), pop3_id,25,255,'');        { 'Loginname ~' }
-      maddstring(3,6,GetRes2(951,3), pop3_pwd,25,255,'');       { 'Passwort  ~' }
-      maddbool(3,8, GetRes2(951,4), pop3_clear);                { 'Abgeholte Mails loeschen' }
-      maddbool(3,9, GetRes2(951,5), pop3_APOP);                 { 'APOP benutzen' }
-      maddbool(3,10, GetRes2(951,6), pop3_OnlyNew);             { 'nur neue Mails' }
+      maddstring(3,4,GetRes2(951,3), pop3_id,25,255,'');        { 'Loginname ~' }
+      maddstring(3,6,GetRes2(951,4), pop3_pwd,25,255,'');       { 'Passwort  ~' }
+      maddbool(3,8, GetRes2(951,5), pop3_clear);                { 'Abgeholte Mails loeschen' }
+      maddbool(3,9, GetRes2(951,6), pop3_APOP);                 { 'APOP benutzen' }
+      maddbool(3,10, GetRes2(951,7), pop3_OnlyNew);             { 'Nur neue Mails' }
+      maddbool(3,12, GetRes2(951,8), pop3_ForceOneArea);        { 'Alle Mails in ein Brett einordnen' }
       freeres;
       readmask(brk);
       enddialog;
@@ -773,14 +774,14 @@
   procedure EditSMTP(var brk:boolean);
   var x,y   : byte;
   begin
-    dialog(ival(getres2(952,0)),9,'SMTP-Einstellungen',x,y);
+    dialog(ival(getres2(952,0)),9,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
     with boxpar^ do
     begin
-      maddstring(3,2,GetRes2(952,1),smtp_ip,25,255,            { 'Server    ~' }
+      maddstring(3,2,GetRes2(952,2),smtp_ip,25,255,             { 'Server    ~' }
         range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
-      maddstring(3,4,GetRes2(952,2),smtp_id,25,255,'');      { 'Loginname ~' }
-      maddstring(3,6,GetRes2(952,3), smtp_pwd,25,255,'');    { 'Passwort  ~' }
-      maddbool(3,8,GetRes2(952,4), smtpafterpop); { 'Vor SMTP einen POP3 Login ausfuehren' }
+      maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
+      maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
+      maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'Vor SMTP einen POP3 Login ausfuehren' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1745,6 +1746,9 @@
 
 {
   $Log$
+  Revision 1.2  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.1  2001/06/04 17:41:12  ma
   - renamed, was xp9
 

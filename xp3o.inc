@@ -859,6 +859,8 @@ begin
                   pm:=true;
                   end;
 
+          if ForceRecipient<>'' then empfaenger:= ForceRecipient;
+
           multi2; initscs;
 
           dbSeek(ubase,uiName,UpperCase(absender));
@@ -1228,6 +1230,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.53  2001/06/04 22:01:41  ma
   - messages replaced by ReplaceOwn feature are flagged as own again.
     This flag is used for deciding whether cancelling is valid

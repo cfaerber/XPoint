@@ -598,6 +598,7 @@ type   textp  = ^text;
                   pop3_clear: boolean;     { POP3: Nachrichten loeschen }
                   pop3_APOP : boolean;     { POP3: APOP (encrypted passwd) verwenden }
                   pop3_OnlyNew : boolean;  { POP3: nur neue Mails holen }
+                  pop3_ForceOneArea : boolean; { POP3: put all messages into *one* group }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
@@ -1122,6 +1123,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.128  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.127  2001/05/19 16:17:51  ma
   - removed XP_ID (shareware notice)
   - changed program id:

@@ -48,7 +48,8 @@ uses
   InOut,
   xp1,                          { dialoge }
   xpnetcall,
-  zcrfc;
+  zcrfc,
+  xp3o;                         { ForceRecipient }
 
 {$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
   res_smtpinit          = '%s Mails verschicken';
@@ -258,12 +259,23 @@ begin
   List.Free;
   POP.Free;
   ProcessIncomingFiles(IncomingFiles);
+
+  if BoxPar^.POP3_ForceOneArea then begin
+    // tell xp3o.PufferEinlesen to put all messages to standard mail area
+    xp3o.ForceRecipient:= '1/' + BoxPar^.username;
+    i:= Pos('@',xp3o.ForceRecipient);
+    if i>0 then
+      xp3o.ForceRecipient:= LeftStr(xp3o.ForceRecipient, i - 1);
+    end;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.18  2001/06/09 10:58:54  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.17  2001/05/27 14:27:22  ma
   - cleaned up exceptions (beware, there seem to be bugs in VP, use FPC
     instead)

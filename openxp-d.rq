@@ -2075,30 +2075,34 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 950
 # NNTP
 0    45
-1    Server    ~
-2    Port      ~
-3    Loginname ~
-4    Pa·wort   ~
-5    maximal abzuholende Nachrichten
+1    NNTP-Einstellungen
+2    Server    ~
+3    Port      ~
+4    Loginname ~
+5    Pa·wort   ~
+6    maximal abzuholende Nachrichten
 -
 
 + 951
 # POP3
 0    45
-1    Server    ~
-2    Loginname ~
-3    Pa·wort   ~
-4    Abgeholte Mails auf Server lîschen
-5    Passwîrter verschlÅsseln (APOP)
-6    nur neue Mail abholen
+1    POP3-Einstellungen
+2    Server    ~
+3    Loginname ~
+4    Pa·wort   ~
+5    Abgeholte Mails auf Server lîschen
+6    Passwîrter verschlÅsseln (APOP)
+7    Nur neue Mail abholen
+8    Alle Mails in ein Brett einordnen
 -
 + 952
 # SMTP
 0    45
-1    Server    ~
-2    Loginname ~
-3    Pa·wort   ~
-4    Vor SMTP einen POP3 Login ausfÅhren
+1    SMTP-Einstellungen
+2    Server    ~
+3    Loginname ~
+4    Pa·wort   ~
+5    SMTP-after-POP
 
 -
 # --- XP10 ------------------------------------------------------------
@@ -3661,6 +3665,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.14  2001/06/09 10:58:53  ma
+# - added ForceOneArea feature (for POP3 server type)
+#
 # Revision 1.13  2001/06/04 17:23:06  ma
 # - made changes necessary for role feature
 #

@@ -188,6 +188,7 @@ begin
     pop3_clear := true;                 { POP3: Nachrichten loeschen }
     pop3_APOP := true;                  { POP3: APOP benutzen }
     pop3_OnlyNew := true;               { POP3: nur neue Mail holen }
+    pop3_ForceOneArea := false;         { POP3: put all messages into *one* area }
 
     SMTP_ip := 'mail.domain.de';        { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
@@ -346,6 +347,7 @@ begin
             getx(su,  'POP3Clear', pop3_clear) or
             getx(su,  'POP3APOP', pop3_APOP) or
             getx(su,  'POP3OnlyNew', pop3_OnlyNew) or
+            getx(su,  'POP3ForceOneArea', pop3_ForceOneArea) or
             gets(s,su,'SMTP-IP', smtp_ip, 255) or
             gets(s,su,'SMTP-ID', smtp_id, 255) or
             gets(s,su,'SMTP-Password', smtp_pwd, 255) or
@@ -496,6 +498,7 @@ begin
     writeln(t,'POP3Clear=',jnf(pop3_clear));
     writeln(t,'POP3APOP=',jnf(pop3_APOP));
     writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
+    writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
 
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
@@ -616,6 +619,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
   Revision 1.41  2001/05/31 11:32:35  ma
   - fixed typo
 
