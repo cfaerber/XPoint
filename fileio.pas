@@ -22,6 +22,9 @@ uses
 {$IFDEF Ver32 }
   sysutils,
 {$ENDIF }
+{$ifdef Linux }
+  xplinux,
+{$endif }
 {$ifdef vp }
   vpusrlow,
 {$else}
@@ -56,7 +59,7 @@ const
   ffAnyFile = $20;
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
-                  ET_OS2_16, ET_OS2_32);
+                  ET_OS2_16, ET_OS2_32, ET_ELF);
 
 
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
@@ -167,7 +170,11 @@ end;
 Function ValidFileName(name:PathStr):boolean;
 var f : file;
 begin
+{$IFDEF UnixFS }
+  if (name='') or multipos('*?&',name) then
+{$ELSE }
   if (name='') or multipos('*?/',name) then  { Fehler in DR-DOS 5.0 umgehen }
+{$ENDIF }
     ValidFileName:=false
   else begin
     assign(f,name);
@@ -189,6 +196,16 @@ begin
   if multipos('?*',name) or (trim(name)='') then
     IsPath:=false
   else begin
+{$IFDEF UnixFS }
+    { Laufwerksbuchstaben gibt es nicht, aber immer das
+      Wurzelverzeichnis }
+    if (name='/') then
+      IsPath:= true
+    else if (name[length(name)]='/') then
+      dellast(name);
+    findfirst(name,Directory,sr);
+    IsPath:=(doserror=0) and (sr.attr and directory<>0);    
+{$ELSE }
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
       findfirst(name+'*.*',ffAnyFile,sr);
@@ -203,9 +220,10 @@ begin
       findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
-    {$ifdef ver32 }
+{$ENDIF }
+{$ifdef ver32 }
     findclose(sr);
-    {$endif}
+{$endif}
   end;
 end;
 
@@ -253,18 +271,26 @@ begin
   {$ENDIF}
 end;
 
-{ path: Pfad mit '\' am Ende! }
+{ path: Pfad mit '\' bzw. '/' am Ende! }
 
 procedure erase_all(path:pathstr);
 var sr : searchrec;
     f  : file;
 begin
+{$IFDEF UnixFS }
+  findfirst(path+'*',anyfile-VolumeID,sr);
+{$ELSE }
   findfirst(path+'*.*',anyfile-VolumeID,sr);
+{$ENDIF }
   while doserror=0 do begin
     with sr do
       if (name[1]<>'.') then
         if attr and Directory<>0 then
+{$IFDEF UnixFS }
+	  erase_all(path+name+'/')
+{$ELSE }
           erase_all(path+name+'\')
+{$ENDIF }
         else begin
           assign(f,path+name);
           if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
@@ -275,7 +301,11 @@ begin
   {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
+{$IFDEF UnixFS }
+  if pos('/',path)<length(path) then begin
+{$ELSE }
   if pos('\',path)<length(path) then begin
+{$ENDIF }
     dellast(path);
     rmdir(path);
   end;
@@ -356,19 +386,35 @@ begin
     res:=0;
     exit;
   end;
+{$IFDEF UnixFS }
+  if right(path,1)<>'/' then path:=path+'/';
+{$ELSE }
   if right(path,1)<>'\' then path:=path+'\';
+{$ENDIF }
   if validfilename(path+testfile) then
     res:=0
   else
+{$IFDEF UnixFS }
+    if pos('/',path)<=1 then begin
+{$ELSE }
     if pos('\',path)<=1 then begin
+{$ENDIF }
       mkdir(path);
       res:=-ioresult;
     end
     else begin
+{$IFDEF UnixFS }
+      p:=iif(path[1]='/',2,1);
+{$ELSE }
       p:=iif(path[1]='\',2,1);
+{$ENDIF }
       res:=0;
       while (p<=length(path)) do begin
+{$IFDEF UnixFS }
+        while (p<=length(path)) and (path[p]<>'/') do inc(p);
+{$ELSE }
         while (p<=length(path)) and (path[p]<>'\') do inc(p);
+{$ENDIF }
         if not IsPath(left(path,p)) then begin
           mkdir(left(path,p-1));
           if inoutres<>0 then begin
@@ -507,8 +553,13 @@ procedure move_mask(source,dest:pathstr; var res:integer);
 var sr : searchrec;
 begin
   res:=0;
+{$IFDEF UnixFS }
+  if lastchar(dest)<>'/' then
+    dest:=dest+'/';
+{$ELSE }
   if lastchar(dest)<>'\' then
     dest:=dest+'\';
+{$ENDIF }
   findfirst(source,AnyFile-Directory,sr);
   while doserror=0 do begin
     if not _rename(getfiledir(source)+sr.name,dest+sr.name) then
@@ -540,7 +591,11 @@ var _dir : dirstr;
 begin
   fsplit(fn,_dir,name,ext);
   if _dir='' then begin
+{$IFDEF UnixFS }
+    if dir[length(dir)]<>'/' then dir:=dir+'/';
+{$ELSE }
     if dir[length(dir)]<>'\' then dir:=dir+'\';
+{$ENDIF }
     insert(dir,fn,1);
   end;
 end;
@@ -755,6 +810,7 @@ end;
 function exetype(fn:pathstr):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
+    magic2  : array[0..2] of char;
     hdadr   : longint;
     version : byte;
 begin
@@ -763,8 +819,18 @@ begin
   blockread(f,magic,2);
   seek(f,60);
   blockread(f,hdadr,4);
-  if (ioresult<>0) or (magic<>'MZ') then
+  if (ioresult<>0) then
     exetype:=ET_Unknown
+  else if (magic<>'MZ') then
+    begin
+      seek(f, 1);                    { ELF }
+      blockread(f,magic2,3);         { IOResult braucht nicht abgefragt }
+      if (magic2='ELF') then         { zu werden, da bereits ein hoehrer }
+        exetype:=ET_ELF              { Offset verwandt wurde }
+      { Fuer andere Suchen }
+      else
+        exetype:=ET_Unknown;
+    end
   else if odd(hdadr) then
     exetype:=ET_DOS
   else
@@ -799,6 +865,13 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/04/28 16:23:53  hd
+  Linux-Anpassungen (UnixFS):
+   - Backslash -> Slash
+   - *.* -> *
+   - Neuer Exe-Typ: ET_ELF
+   - ACHTUNG: Flags fehlen noch.
+
   Revision 1.23  2000/04/18 11:23:47  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
