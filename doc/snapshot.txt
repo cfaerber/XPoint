@@ -5,14 +5,15 @@
 ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
 
 
-Vorwort:  Die Weiterentwicklung der 16-bit-Version von OpenXP wurde
-========  aufgrund einer einvernehmlichen Absprache zwischen allen
-          Beteiligten restrukturiert und wird seit Januar 2002 unter dem
-          Namen "OpenXP/16" und der verantwortlichen Leitung von Michael
-          Heydekamp fortgefhrt. OpenXP/16 ist damit organisatorisch vom
-          OpenXP-Team, das nur noch die 32-bit-Version (OpenXP/32)
-          entwickelt, getrennt und unter eigenen Kontakten (s.u.)
-          erreichbar.
+Vorwort:  Die Weiterentwicklung der 16-bit-Version von OpenXP, die bis
+          Ende 2001 zusammen mit der 32-bit-Version innerhalb des
+          OpenXP-Teams stattgefunden hat, wurde aufgrund einer
+          einvernehmlichen Absprache zwischen allen Beteiligten
+          restrukturiert: Sie wird seit Januar 2002 unter dem Namen
+          "OpenXP/16" und der Koordination von Michael Heydekamp
+          fortgefhrt. OpenXP/16 ist damit organisatorisch vom OpenXP-
+          Team, das nur noch die 32-bit-Version (OpenXP/32) entwickelt,
+          getrennt und unter eigenen Kontakten (s.u.) erreichbar.
 
           OpenXP/16 ist kein "Team" und kein "Projekt", sondern versteht
           sich als lose und projektbergreifende Kooperation einzelner
@@ -37,13 +38,6 @@ Vorwort:  Die Weiterentwicklung der 16-bit-Version von OpenXP wurde
 OpenXP/16 - Kontakte
 ====================
 
-Mailingliste:  openxp16-list@kruemel.org
--------------  (Die Liste muá per eMail bei listserver@kruemel.org
-                bestellt werden, im Nachrichtentext (nicht im Betreff!)
-                ist der Befehl "subscribe openxp16-list" anzugeben.
-                Keine Anrede oder andere Einleitungen voranstellen!)
-
-
 Newsgroups:    crosspoint.openxp16.pub.allgemein
 -----------    (Spezifische Newsgroup fr OpenXP/16, zu beziehen ber
                 news.kannofant.de oder news.t-online.de, beide Port 119)
@@ -56,14 +50,21 @@ Newsgroups:    crosspoint.openxp16.pub.allgemein
                (Allgemeine CrossPoint-Gruppe fr alle XP-Versionen)
 
 
+Mailingliste:  openxp16-list@kruemel.org
+-------------  (Die Liste muá per eMail bei listserver@kruemel.org
+                bestellt werden, im Nachrichtentext (nicht im Betreff!)
+                ist der Befehl "subscribe openxp16-list" anzugeben.
+                Keine Anrede oder andere Einleitungen voranstellen!)
+
+
 eMail:         support@openxp16.de
 ------         (Wird an Mailingliste weitergeleitet)
 
 
-Internet:      http://www.openxp16.de
+Internet:      http://www.openxp16.de/
 ---------
 
-FTP:           ftp://ftp.openxp16.de
+FTP:           ftp://ftp.openxp16.de/
 ----
 
 FidoNet:       CROSSPOINT.OPENXP16.GER
@@ -758,9 +759,9 @@ Interne nderungen
 ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ OpenXP/16 ÄÙ
 
 
-+---------------------+----------------------------------------------+
-|  01.01.-08.03.2002  |  ab hier Snapshot vom 09.03.2002, 00:00 Uhr  |
-+---------------------+----------------------------------------------+
++---------------------+ +----------------------------------------------+
+|  01.01.-08.03.2002  | |  ab hier Snapshot vom 09.03.2002, 00:00 Uhr  |
++---------------------+ +----------------------------------------------+
 
 MY:
 - RFC/Client: Multiserver-Netcall implementiert. Die aus- und
@@ -1125,7 +1126,7 @@ RB:
 
 JG:
 - Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
-  (Priorit„t, PGP-signiert usw.) jetzt erhalten.
+  (Priorit„t, PGP-signiert, MIME-Multipart usw.) jetzt erhalten.
   XP6O.PAS
 
 
@@ -1261,9 +1262,9 @@ MY:
   README.TXT
 
 
-+--------------+----------------------------------------------+
-|  09.03.2002  |  ab hier Snapshot vom 09.03.2002, 23:26 Uhr  |
-+--------------+----------------------------------------------+
++--------------+        +----------------------------------------------+
+|  09.03.2002  |        |  ab hier Snapshot vom 09.03.2002, 23:26 Uhr  |
++--------------+        +----------------------------------------------+
 
 MY:
 - Versionsstrings korrigiert/ge„ndert:
@@ -1294,9 +1295,9 @@ JG:
   XP4O.PAS, ARCHIVE.PAS
 
 
-+--------------+----------------------------------------------+
-|  10.03.2002  |  ab hier Snapshot vom 31.03.2002, 21:49 Uhr  |
-+--------------+----------------------------------------------+
++--------------+        +----------------------------------------------+
+|  10.03.2002  |        |  ab hier Snapshot vom 31.03.2002, 21:49 Uhr  |
++--------------+        +----------------------------------------------+
 
 MY:
 - H”he/Breite von /Config/Anzeige/Diverses korrigiert und an englische
@@ -1681,6 +1682,247 @@ JG+MY:
   XPKEYS.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
++--------------+        +----------------------------------------------+
+|  07.04.2002  |        |  ab hier Snapshot vom 21.04.2002, 17:17 Uhr  |
++--------------+        +----------------------------------------------+
+
+CL:
+- Fix: Fehler behoben, der Ausl”ser fr die Abstrze unter Windows
+  NT/2000/XP gewesen sein k”nnte, wenn die XP_NTVDM.DLL verwendet wird.
+  [Nachtrag: Es treten weiterhin durch XP_NTVDM.DLL verursachte Abstrze
+   auf, Datei nur zu Testzwecken ins XP-Verzeichnis kopieren!]
+  XP_NTVDM.PAS
+
+
++--------------+
+|  08.04.2002  |
++--------------+
+
+MY:
+- Der 983. Nachrichten-Weiterschalter-Fix: Wenn bei einer MIME-
+  Multipart-Nachricht der Lister mit <Backspace> verlassen wurde, war
+  ein aktivierter Nachrichten-Weiterschalter fr den Rest der XP-Sitzung
+  deaktiviert (wenn er nicht anschlieáend mit <Ctrl-W> wieder aktiviert
+  wurde). Der Schalter beh„lt jetzt seinen Status fr die nachfolgenden
+  Nachrichten bei, beim Verlassen eines MIME-Auswahlmens kommt es
+  hinsichtlich des Weiterschaltens zur n„chsten Nachricht darauf an, wie
+  der Lister beim zuletzt betrachteten Nachrichtenteil verlassen wurde
+  (<Backspace> => nicht weiterschalten, <Esc> => weiterschalten).
+  XP4W.INC
+
+MY:
+- Anzeige des manuell mit <Ctrl-W> deaktivierten Nachrichten-
+  Weiterschalters ("W") in oberer Menleiste wieder eingebaut.
+  XP4.PAS, XP4W.INC
+
+SV:
+- Fix: Speicherleck bei Laufwerks-/Verzeichniswechsel in Dateiauswahl-
+  Fenster (fsbox) beseitigt: Bisher wurde nur der fr das jeweils
+  zuletzt angezeigte Verzeichnis ben”tigte Speicher wieder freigegeben,
+  und XP konnte aufgrund des dadurch hervorgerufenen Speichermangels
+  ohne Vorwarnung mit einem RTE 203 abstrzen (Bug existent seit dem
+  26.11.2000).
+  WIN2.PAS
+
+JG[+MY]:
+- Sicherheits-Fix: Bei der Reservierung des Speichers fr den Dateinamen
+  im Dateiauswahl-Fenster wird jetzt sicherheitshalber vorher geprft,
+  ob der angeforderte Speicher berhaupt verfgbar ist und ggf.
+  abgebrochen.
+  WIN2.PAS
+
+
++--------------+
+|  09.04.2002  |
++--------------+
+
+JG:
+- Fixes Brett-Weiterschalter:
+  1) Wenn im Anzeigemodus "Nur Bretter anzeigen, die auf den aktiven
+     Lesemodus passen" alle Nachrichten eines Bretts gelesen waren und
+     das Brett verlassen wurde, sprang der Brett-Weiterschalter im
+     Ungelesen-Modus ein Brett zu weit (weil das Brett jetzt nicht mehr
+     auf den Lesemodus paáte und daher aus der Anzeige verschwand).
+  2) Wenn in derselben Konstellation auf das verlassene Brett eine
+     Trennzeile folgte, und zwischen dieser und der n„chsten Trennzeile
+     sich nur Bretter befanden, die nicht auf den aktiven Lesemodus
+     passten, landete der Cursor auf der n„chsten Trennzeile (genauer:
+     auf der Stelle, an der in der Komplettanzeige ("A") das n„chste
+     Brett liegen wrde).
+  XP4W.INC
+
+JG:
+- Fix Archiv-Viewer: Bei Dateinamen, die keinen Punkt enthielten,
+  wurden innerhalb eines Archivs nur die ersten vier Stellen angezeigt.
+  XP4O.PAS
+
+JG:
+- Beim Kopieren von Text in die Zwischenablage wird das Zeichen ASCII #0
+  jetzt in ein Leerzeichen (#20) umgewandelt statt den String an dieser
+  Stelle abzuschneiden.
+  CLIP.PAS
+
+MY[+JG]:
+- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach RFC 1522,
+  *bevor* er in 'GetAdr' in Adresse und Realname zerlegt wird (vorher
+  wurde ein Header wie 'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?=
+  <...>' nicht korrekt decodiert).
+  UUZ.PAS
+
+MY:
+- Anzahl der erforderlichen UUZ-Parameter bei ausgehenden Nachrichten
+  auf 3 (vorher 4) reduziert. Routine erfllt ohnehin nicht ihren
+  vermutlichen Zweck (n„mlich die Angabe von <fromSite> und <toSite> zu
+  erzwingen) und máte mal komplett erneuert werden.
+  UUZ.PAS
+
+
++--------------+
+|  12.04.2002  |
++--------------+
+
+MY:
+- Fix: Das Erzwingen des internen XP-Listers statt des eingetragenen
+  MIME-Viewers mit <Ctrl-Enter> oder <Space> im MIME-Auswahlmen
+  funktionierte nicht, wenn eine Dateierweiterung eingetragen war.
+  XP4W.INC
+
+MY:
+- Logik bei der Anzeige des manuell mit <Ctrl-W> bet„tigten Nachrichten-
+  Weiterschalters ge„ndert: Groáes "W" steht fr "Weiterschalter
+  aktiviert", kleines "w" steht fr "Weiterschalter deaktiviert".
+  XP4W.INC
+
+JG+MY:
+- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett umgebaut:
+  Die Repeat-Schleife wird jetzt direkt in xp1s.listfile durchlaufen
+  statt explizit bei jedem Routinenaufruf von listfile angegeben werden
+  zu mssen.
+  XP0.PAS, XP1O.PAS, XP1S.INC, XP2C.PAS, XP2CFG.INC, XP4O.PAS, XP4W.INC,
+  XPKEYS.PAS
+
+CL:
+- Fix: Das Kopieren aus dem Lister mittels Auswahl "Clipboard (URL)"
+  bzw. "Clipboard (Mail)" ins Clipboard von Windows NT/2000/XP ber die
+  direkte XP-Schnittstelle XP_NTVDM.DLL funktioniert jetzt, fhrt aber
+  dadurch m”glicherweise auch zu weiteren Abstrzen, wenn diese
+  Funktionen benutzt werden. XP_NTVDM.DLL nur zu Testzwecken ins XP-
+  Verzeichnis kopieren!
+  XP_NTVDM.PAS
+
+
++--------------+
+|  13.04.2002  |
++--------------+
+
+RB[+JG+MY]:
+- MIME-Decodierung nach RFC 1522 an RFC 2822/2047 (whitespace zwischen
+  "multiple 'encoded word's", auch bei Folding) angepaát und Erkennung
+  von 'encoded word's verbessert. Korrekt decodiert werden jetzt z.B.:
+
+  Subject: =?iso-8859-1?Q?=5BNoten=5D_=5BBuffy=5D_5abb18_=22Der_Zorn_der_G=F6t?=
+          =?iso-8859-1?Q?tin=22_=28Intervention=29?=
+
+  Subject: Test =? RFC 1522 =?ISO-8859-1?Q?=E4=F6=FC?= hehe ?=
+  Subject: Test ?Q? =?ISO-8859-1?Q?=E4=F6=FC?= hoho
+
+  Pascal-Variante von RB bernommen (alternativ steht ASM-Variante von
+  JG zur Verfgung). Toleranz-Fix fr VSOUP und Konsorten vom 27.03.2002
+  damit automatisch eliminiert, bei Leerzeichen im codierten String wird
+  wieder abgebrochen.
+  MIMEDEC.PAS
+
+SV:
+- Interne nderung: Code in fsbox (Dateiauswahl-Box) optimiert, um den
+  verfgbaren Platz auf dem Stack zu erh”hen.
+  WIN2.PAS
+
+SV:
+- Bisherige Routine (qsort) zum Sortieren von Dateien in Dateiauswahl-
+  Box ersetzt durch stackschonendere Routine (shellsort). Damit Problem
+  behoben, daá XP bei der Dateiauswahl unter bestimmten Umst„nden
+  (wenig Stackplatz (z.B. Sendefenster), Verzeichnis mit vielen Dateien,
+  h„ufiger rekursiver Aufruf von qsort) abstrzen und den Rechner
+  einfrieren konnte.
+  WIN2.PAS
+
+SV:
+- Fix: Spitze Klammern in der Message-ID wurden bei eingehenden Cancel-
+  Nachrichten nicht korrekt entfernt (wirkte sich bei der Verarbeitung
+  aber nicht negativ aus).
+  UUZ.PAS
+
+MY[+SV]:
+- Sortierung in der Dateiauswahl-Box ge„ndert: Erst Verzeichnisse, dann
+  Dateien, dann Laufwerke.
+  WIN2.PAS
+
+MY:
+- Unit 'mimedec' ins Overlay verschoben, dadurch 3 KB in XP.EXE gespart.
+  XP.PAS
+
+MY:
+- Ressourcen fr erweiterte User- und Brett-Exportfunktionen (die
+  offenbar schon seit l„ngerem implementiert waren) erg„nzt und Breite
+  der Dialogboxen an Ressourcen angepaát.
+  XP4O.PAS, XP-D.RQ, XP-E.RQ
+
+
++-------------------------------+
+|  18.04.2002 [und 20.04.2002]  |
++-------------------------------+
+
+JG+RB+MY:
+- Untersttzung aller derzeit bei der IANA registrierten Alias-Namen
+  fr die von XP bei eingehenden Nachrichten untersttzten Zeichens„tze
+  (US-ASCII, ISO-8859-x und Windows-1252) implementiert.
+  MIMEDEC.PAS, UUZ.PAS
+
+
++------------------+
+|  19.-21.04.2002  |
++------------------+
+
+JG[+MY]:
+- MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+  OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrichten
+  erzeugen und versenden. Es k”nnen sowohl im Sendefenster als auch
+  direkt im Editor (!) Dateien und Textteile beliebiger Anzahl und Gr”áe
+  an die aktuelle Nachricht angeh„ngt werden. Die nderung der Reihen-
+  folge bereits angeh„ngter Nachrichtenteile ist m”glich, das Weiter-
+  leiten von MIME-Multipart-Nachrichten mittels N/W/K, N/W/O, N/W/E und
+  N/W/R wird jetzt ebenfalls untersttzt. Weitere Details siehe Hilfe
+  (?/S/A).
+  Kompletter Sourcecode fr XP entwickelt von JG, Anpassungen an und
+  Einbau in OpenXP/16 durch MY.
+  Spezieller Dank an HH fr die Vorarbeit im Rahmen der Entwicklung des
+  XP-Tools XPBMIME, dessen Arbeitsweise teilweise als Anstoá und Vorlage
+  fr die aktuelle XP-Implementation diente, sowie an JM fr seine
+  Mitarbeit daran, speziell im Bereich Zeichensatzbehandlung und
+  ZConnect-Konformit„t.
+  XP2F.PAS, XP4.INC, XP6.PAS, [XP6M.INC], XP6O.PAS, XP6S.INC, XPE.PAS,
+  EDDEF.PAS, EDITOR.PAS, EDITOR.INC, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+JG:
+- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+  (Priorit„t, PGP-signiert, MIME-Multipart usw.) jetzt auch dann
+  erhalten, wenn die Archivierung aus einem AM-Brett heraus erfolgt.
+  XP6O.PAS
+
+OG+MY:
+- Beim Kopieren eines URL aus dem Lister ins Clipboard mittels
+  <F2>-Auswahl "Clipboard (URL)" wird jetzt aus einer Mail-Adresse der
+  Homepage-URL erraten ("xx@openxp16.de" => "http://www.openxp16.de").
+  XP1O.PAS, XP.IHQ, XP-E.IHQ
+
+MY:
+- Fix: Im Ungelesen-Modus wurde bei MIME-Multipart-Nachrichten trotz
+  aktiviertem Nachrichten-Weiterschalter nicht zur n„chsten Nachricht
+  weitergeschaltet (f„lschlicherweise von JG bernommenen Codeteil
+  entfernt).
+  XP4W.INC
+
+
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 
@@ -1688,39 +1930,48 @@ OpenXP/16: Entwickler und weitere aktiv Mitwirkende
 ===================================================
 
 MY: Michael Heydekamp      (Koordination, Entwicklung, Online-Hilfe,
-                            User/Tester, Bugfinder, Ideengeber)
-JG: Jochen Gehring         (Entwicklung, Beratung [jgXP])
-SV: Stefan Vinke           (Entwicklung, Beratung)
-RB: Robert B”ck            (Entwicklung, Beratung, Webseite [XP2-Team])
-MH: Martin Max Huckenbeck  (Entwicklung, Beratung [XP2-Team])
-OH: Oliver Hertel          (Entwicklung, Beratung [XP2-Team])
-MM: Maik Mller            (Entwicklung, Beratung [XP2-Team])
-HH: Heiko Hamann           (Webseite, User/Tester, Bugfinder,
-                            Ideengeber, evtl. gelegentliche
-                            Entwicklung)
-JM: Joachim Merkel         (User/Tester, Bugfinder, Ideengeber,
-                            evtl. gelegentliche Entwicklung,
-                            ZC/RFC-Konformit„t)
+                            User/Tester, Bugfinder, Ideengeber, Website)
+JG: Jochen Gehring         (Entwicklung, Beratung, Bugfinder, Ideengeber
+                            [jgXP])
+SV: Stefan Vinke           (Entwicklung, Beratung, Bugfinder,
+                            Ideengeber)
+RB: Robert B”ck            (Entwicklung, Beratung, Website, Bugfinder,
+                            Ideengeber [XP2-Team])
+MH: Martin Max Huckenbeck  (Entwicklung, Beratung, Bugfinder, Ideengeber
+                            [XP2-Team])
+OH: Oliver Hertel          (Entwicklung, Beratung, Bugfinder, Ideengeber
+                            [XP2-Team])
+MM: Maik Mller            (Entwicklung, Beratung, Bugfinder, Ideengeber
+                            [XP2-Team])
+HH: Heiko Hamann           (User/Tester, Bugfinder, Ideengeber, Website,
+                            evtl. gelegentliche Entwicklung)
+JM: Joachim Merkel         (User/Tester, Bugfinder, Ideengeber, evtl.
+                            gelegentliche Entwicklung, ZC-Konformit„t)
 MW: Martin Wodrich         (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
+OG: Oliver Gampe           (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
+AB: Andreas Bauer          (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
+RJ: Rolf Jentsch           (User/Tester, Bugfinder, Ideengeber,
                             evtl. gelegentliche Entwicklung)
 AS: Andreas Seybold        (User/Tester, Bugfinder, Ideengeber,
                             evtl. gelegentliche Entwicklung)
 MF: Martin Foster          (User/Tester, Bugfinder, Ideengeber,
-                            engl. Ressourcen und Online-Hilfe)
+                            engl. Ressourcen und Online-Hilfe,
+                            engl. OpenXP/16-Website)
+SF: Stefan Frank           (User/Tester, Bugfinder, Ideengeber)
 HG: Harald Gerber          (User/Tester, Bugfinder, Ideengeber)
 JP: Jan Peters             (User/Tester, Bugfinder, Ideengeber)
 JS: Jan Selmer             (User/Tester, Bugfinder, Ideengeber)
-HG: Helmut Guetschow       (User/Tester, Bugfinder, Ideengeber)
-SF: Stefan Frank           (User/Tester, Bugfinder, Ideengeber)
-JA: Johann Addicks         (User/Tester, Bugfinder, Ideengeber)
-AA: Andreas Andre          (User/Tester, Bugfinder, Ideengeber)
-TJ: Thomas Jacoby          (User/Tester, Bugfinder, Ideengeber)
+AL: Alfred Schroeder       (User/Tester, Bugfinder, Ideengeber)
+HW: Helmut Guetschow       (User/Tester, Bugfinder, Ideengeber)
 FH: Frank Hennig           (User/Tester, Bugfinder, Ideengeber)
+AA: Andreas Andre          (User/Tester, Bugfinder, Ideengeber)
+JA: Johann Addicks         (User/Tester, Bugfinder, Ideengeber)
+TJ: Thomas Jacoby          (User/Tester, Bugfinder, Ideengeber)
 KK: Klaus-Peter Kleinsimon (User/Tester, Bugfinder, Ideengeber)
-AB: Andreas Bauer          (User/Tester, Bugfinder, Ideengeber,
-                            evtl. gelegentliche Entwicklung)
-AS: Alfred Schroeder       (User/Tester, Bugfinder, Ideengeber)
 HT: Hans-Jrgen T„nzer     (User/Tester, Bugfinder, Ideengeber)
 MK: Markus K„mmerer        (Gelegentliche Bugfixes [OpenXP/32])
 MA: Malte Kiesel           (Gelegentliche Bugfixes [OpenXP/32])
-CF: Claus F„rber           (Gelegentliche Bugfixes [OpenXP/32])
+CL: Claus F„rber           (Gelegentliche Bugfixes [OpenXP/32])
