@@ -70,9 +70,10 @@ procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
 function  GetFileDir(const p:pathstr):dirstr;
 function  GetFileName(const p:pathstr):string;
-function  GetBareFileName(const p:pathstr):string;    { Filename ohne .ext }
+function  GetBareFileName(const p:pathstr):string;    { Filename ohne .ext und ohne Pfad}
 function  GetFileExt(const p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
+function ChangeFileExt(const Filename, Ext: string): string;
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 procedure WriteBatch(const s:string);                 { Batchfile erstellen     }
@@ -729,11 +730,21 @@ begin
   RenameDir := IOResult = 0;
 end;
 
+function ChangeFileExt(const Filename, Ext: string): string;
+var d, n, e: String;
+begin
+  fsplit(Filename,d,n,e);
+  ChangeFileExt := d + n + Ext;
+end;
+
 begin
   TestShare;
 end.
 {
   $Log$
+  Revision 1.41.2.11  2001/07/31 16:31:16  mk
+  - added function ChangeFileExt(const Filename, Ext: String): String;
+
   Revision 1.41.2.10  2001/04/28 13:38:54  mk
   - Client-Boxen umbenennen implementiert
 
