@@ -109,7 +109,10 @@ const  {$IFDEF DPMI}
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
-       BaseDir	   = 'openxp/';	     { Basisverzeichnis }
+       BaseDir	   = '.openxp/';     { Basisverzeichnis }
+       ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
+{$ELSE}
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;='
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1159,6 +1162,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.48  2000/05/14 12:22:22  hd
+  - BaseDir auf .openxp geaendert
+  - ValidDirCh: Zeichen, die in einem Dir moeglich sind (Maddstring)
+
   Revision 1.47  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 
