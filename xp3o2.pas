@@ -346,7 +346,7 @@ begin
       dbWriteN(bbase,bb_gruppe,NetzGruppe);
       if brettkomm then
         dbWriteNStr(bbase,bb_kommentar,komm);
-      flags:=iif(netztyp=nt_UUCP,16,0);
+      flags:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
       dbWriteN(bbase,bb_flags,flags);
       if order_ende and NewbrettEnde then
         SetBrettindexEnde
@@ -446,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/07/29 12:58:16  ma
+  - fixed setting of NNTP area db flags
+
   Revision 1.42  2001/07/27 18:10:12  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

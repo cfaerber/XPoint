@@ -1036,7 +1036,7 @@ begin
   if origin<>'' then
     dbWriteNStr(bbase,bb_adresse,origin);
   flags:=flags and (not 16);
-  if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
+  if ntBoxNetztyp(box) IN [nt_UUCP,nt_NNTP] then inc(flags,16);
   dbWriteN(bbase,bb_flags,flags);
   SetBrettindex;
   newbrett:=true;
@@ -1079,7 +1079,7 @@ begin
     dbWriteNStr(bbase,bb_pollbox,box);
     dbWriteN(bbase,bb_haltezeit,halten);
     flags:=flags and (not 16);
-    if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
+    if ntBoxNetztyp(box) IN [nt_UUCP,nt_NNTP] then inc(flags,16);
     dbWriteN(bbase,bb_flags,flags);
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/07/29 12:58:16  ma
+  - fixed setting of NNTP area db flags
+
   Revision 1.61  2001/07/28 12:04:12  mk
   - removed crt unit as much as possible
 
