@@ -1539,9 +1539,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    unvollst„ndige Packer-Angaben
 5    fehlende UpLoader-Angabe
 6    Entpacker fehlt
-7    User-ID fehlt, da Kennwort vorhanden
-8    Kennwort fehlt, da User-ID vorhanden
-9    Host fehlt
+7    Eintrag "Client-Verzeichnis" fehlt
+8    Eintrag "Client-Verzeichnis" nicht OK
+9    Eintrag "Client-Aufruf" fehlt
+10   Eintrag "Client-Aufruf" nicht OK
 -
 707  <abgebrochen>
 708  Abbruch
@@ -1793,11 +1794,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 910  Username:~
 + 911
 0    50
-1    Bitte geben Sie den Namen Ihrer Stammbox, den
-2    Netztyp der Box und Ihren Usernamen ein:
-3    Netztyp  ~
-4    Boxname  ~
-5    Username ~
+1    Bitte geben Sie Netztyp und Name Ihrer Stamm-
+2    box sowie Username bzw. eMail-Adresse ein.
+3    Bei Einsatz des Netztyps RFC/Client ben”tigen
+4    Sie einen externen Mail-/News-Client.
+5    Netztyp  ~
+6    Boxname  ~
+7    Username ~
 + 912
 0    47
 1    Nodenummer
@@ -1811,7 +1814,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    Domain   ~
 10   Serverdom.
 11   FQDN     ~
-12   E-Mail   ~
+12   eMail-Adr.
+13   Servername
 + 913
 0    26
 1    Netztyp~
@@ -1825,8 +1829,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Maus-Paáwort
 1    Paáwort ~
 # Fido
-2    Pointnr.~
-3    Pointnetz
+2    Pointnummer
+3    Pointnetz ~
 # Turbobox-PW
 4    Paáwort
 # Pronet
@@ -1872,6 +1876,35 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 32   variable UUCP-g-Paketgr”áe
 60   Ausgangspaketgr”áe vorgeben
 61   Login mit 7/E/1
+# RFC/Client
+80   Client-Einstellungen
+81   Server
+82   Kommentar
+83   eMail-Adresse
+84   Realname    ~
+85   Vertreter   ~
+86   FQDN        ~
+87   Client-Verzeichnis
+88   Client-Aufruf    ~
+89   Zus„tzliche Server
+90   Zugang ~
+91   Telefon~
+92   Login  ~
+93   Paáwort~
+100  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
+101  pop.t-online.deúpop.gmx.netúpop3.nexgo.deúmail.epost.deúpop3.epost.deúpop3.web.deúpop.compuserve.deúpop.mail.yahoo.deúpop.addcom.deúpop.tiscalinet.deúpop.worldonline.deúpop3.planetinternet.deúpop.kundenserver.deúmail.komtel.net
+102  Mail-Server fr ausgehende Mail (SMTP)
+103  mailto.t-online.deúsmtprelay.t-online.deúmail.gmx.netúmail.nexgo.deúpostman.nexgo.deúmail.epost.deúsmtp.web.deúsmtp.compuserve.deúsmtp.mail.yahoo.deúsmtp.addcom.deúsmtp.tiscalinet.deúsmtp.worldonline.deúmailhost.planetinternet.deúsmtp.kundenserver.de
+
+
+úmail.komtel.net
+104  News-Server (NNTP)
+105  news.t-online.deúnews.cis.dfn.deúnews.nexgo.deúxnews.nexgo.deúnews.compuserve.deúnews.tiscali.deúnews.worldonline.deúnews.planetinternet.deúnews.komtel.net
+106  Servername     ~
+107  Envelope-Adresse
+108  Benutzername   ~
+109  Paáwort        ~
+110  Port
 33   G-Protokoll
 34   g-Protokoll
 35   Dateigr”áe bertragen
@@ -3146,10 +3179,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 25 Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt
 26 Dieses Brett kann nicht bestellt werden.
 27 Dieses Brett kann nicht abbestellt werden.
+30 %s kann nicht bestellt werden
+31 %s wurde bereits bestellt
+# Der String in den folgenden vier Zeilen darf max. 57 Zeichen lang sein:
+32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
+33 Liste muá die entsprechende Funktion beim externen Client
+34 aktiviert sein und die bisherige Newsgroup-Liste gel”scht
+35 werden (siehe Nachricht/Brettmanager/Sonstiges).
+36 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
 # NNTP
-30 Gruppenliste konnte nicht bertragen werden.
-31 Kann keine Verbindung zum Server herstellen.
-32 Die Newsgroup %s ist bereits bestellt
+40 Gruppenliste konnte nicht bertragen werden.
 # XP8.INC
 50 Keine Filescan-Nachricht gew„hlt!
 51 %s ist kein eingetragener Fido-Server!
@@ -3193,6 +3232,21 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
 36 Diese Box ist fr TCP/IP konfiguriert.
+# Der String in den folgenden zwei Zeilen darf max. 56 Zeichen lang sein:
+37 Pfadangabe muá RELATIV sein und auf ein Verzeichnis EINE
+38 Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!
+#
+39 Pfad darf nicht leer sein!
+40 Es muá ein Username oder eine eMail-Adresse angegeben werden!
+# Der String in den folgenden sieben Zeilen darf max. 57 Zeichen lang sein:
+41 Diese Einstellungen sind nur wirksam, wenn sie von Ihrem
+42 Client oder Client-Kit ausgewertet werden.
+# Leerzeile 10900,43 nicht entfernen!
+43
+44 Ihr Client untersttzt und/oder erfordert m”glicherweise
+45 weitere Einstellungen, die Sie in einer externen Konfigu-
+46 rationsdatei im Client-Verzeichnis vornehmen mssen.
+47 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
 
 +  11000
 1  unbekannter Befehl
@@ -3669,6 +3723,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.18  2001/07/21 16:02:09  mk
+# - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+#
 # Revision 1.17  2001/07/18 17:27:03  my
 # - removed resource 254,16 ("update date entries after netcall")
 #

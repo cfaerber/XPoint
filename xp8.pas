@@ -439,6 +439,344 @@ begin
   freeres;
 end;
 
+function Get_BL_Name(const box:string):string;
+var
+  s1 : string;
+begin
+  ReadBox(0,box,boxpar);
+  s1:=UpperCase(boxfilename(box));
+  if not FileExists(s1+'.BL')                               { Brettliste im XP-Verzeichnis }
+    then s1:=Boxpar^.ClientPath+s1;
+  Get_BL_Name:=s1+iifs(FileExists(s1+'.BL'),'.BL','.GR');   { oder .BL/.GR im Client-Verz. }
+end;
+
+{ RFC/Client: RC-File anhand der im Lister markierten Bretter manipulieren }
+{ Im Lister muss ein durch Read_RC_File erzeugtes BL-File sein.            }
+
+function MakeRC(bestellen: boolean; const box: string; List: TLister):boolean;
+var t1,t2         : text;
+    f1            : file of char;
+    rcfile,blfile : string;
+    line          : string;
+    Line2         : string;
+    Articles      : String;
+    fileofs       : Longint;
+    x,y           : byte;
+    c             : char;
+    brk           : boolean;
+label makercend;
+
+begin
+  moment;
+  MakeRc:=true;
+  ReadBox(0,box,boxpar);
+  rcfile:=BoxPar^.ClientPath + UpperCase(boxfilename(box))+'.RC';
+  blfile:=Get_BL_Name(box);
+  if not FileExists(blfile) then
+  begin
+    rfehler(807);
+    exit;
+    end;
+  Assign(t1,rcfile);
+  if not (FileExists(rcfile)) then
+  begin
+    Rewrite(t1);                           { T1 = RC-FILE (Text)         }
+    Close(t1);
+    end;                                   { F1 = BL-FILE (File of Char) }
+  Assign(f1,blfile);
+  Reset(f1);
+
+  if bestellen then                        { Neue Bretter an RC-File anhaengen }
+  begin
+    c:='*';
+    Articles := '10';
+    dialog(30,3,'Newsgroups bestellen',x,y);
+    maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
+    mhnr(11910);
+    readmask(brk);
+    enddialog;
+    if brk then
+    begin
+      MakeRc:=false;
+      goto MakeRCEnd;
+      end;
+    Append(t1);
+    line := List.FirstMarked;                  { Im Lister sind markierte neue Bretter...}
+    articles:=' -'+Articles;
+    while line<>#0 do
+    begin
+      if line[1]='*' then List.UnMarkLine  { Bereits bestellte Bretter entmarkieren }
+      else begin
+        writeln(t1, TrimRight(copy(Line,3,78)),Articles);    { ansonsten an .RC anhaengen }
+        fileofs:=ival(mid(line,80));
+        seek(f1,fileofs);                  { Offset ins BL-File wurde von READ_BL_FILE }
+        write(f1,c);                       { an die Listerzeile angehaengt. Jetzt wird }
+        end;                               { an den Zeilenanfang ein "*" geschrieben,  }
+      line := List.NextMarked;             { der ab jetzt das Bestellt-Flag darstellt  }
+      end;
+    Close(t1);
+    close(f1);
+    end
+
+  else begin                               { Bestellte Bretter aus RC entfernen }
+    line:= List.FirstLine;
+    c:=' ';
+    MakeRc:=false;
+    Assign(t2,TempFile(''));
+    ReWrite(t2);                           { T2 = Temp-File: RC-Kopie (text) }
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1,line2);                    { Zeile aus RC lesen }
+      brk:=true;
+      line := List.FirstMarked;                { Im Lister sind Bretter zum  }
+      while line<>#0 do                    { Abbestellen markiert...     }
+      begin
+        fileofs:=ival(mid(line,80));       { Offset aus READ_BL_FILE (s.o.) }
+        line:= TrimRight(copy(Line,3,78));
+        if line=LeftStr(line2,cposx(' ',line2)-1)
+        then begin
+          seek(f1,fileofs);                { Abzubestellendes Brett gefunden... }
+          write(f1,c);                     { im BL-File "Bestellt"-'*' loeschen }
+          List.UnMarkLine;                 { abbestelltes Brett demarkieren     }
+          brk:=false;                      { und nicht in RC-Kopie uebernehmen  }
+          end;
+        line:= List.NextMarked;
+        end;
+      if brk then writeln(t2,line2);       { Nicht abbestellte Zeilen kopieren  }
+      end;
+    close(f1);
+    Close(t1);
+    Close(t2);
+    Erase(t1);
+    Rename(t2,rcfile);                     { RC-File loeschen, TEMP-Kopie -> RC }
+    end;
+
+makercend:
+  List.Free;
+  InOutRes:=0;
+  closebox;
+end;
+
+
+
+{ RFC/Client: Brettliste in Lister laden, Vorbereitung fuer MakeRC-Aktionen }
+
+procedure Read_BL_File(s:string;bestellen:boolean; List: TLister);
+var t1,t2    : text;
+    s1: ShortString;
+    tname : string;
+    i        : longint;
+    n,m      : byte;
+
+  { //!! ToDo: In Pascal umschreiben
+  { Brettlisten-Zeilen im UKA* Format vor der        }
+  { Uebergabe an den Lister ins XP-Format bringen    }
+  { und Offsetanpassung fuer Bestellt-Flag ermitteln }
+  Function Reformat_UKA_Brett(Var s:Shortstring):byte; Assembler;
+  asm
+        mov esi,s
+        xor eax,eax
+        cmp byte ptr [esi+2],' '
+        je @end                  { Abbruch wenn's eine Liste im XP-Format ist... }
+        push esi
+        lodsb
+        mov ecx, eax
+        mov ebx, eax
+        mov dx,' *'
+  @1:   lodsb                    { Brettnamenende suchen }
+        cmp al,dh
+        je @2
+        cmp al,'v'               { v und * werden als Bestellt-Flag akzeptiert }
+        je @3
+        cmp al,dl
+        je @3
+        inc ebx
+        loop @1
+  @2:   mov dl,' '
+  @3:   pop esi
+        mov cl,bl
+        add bl,2
+        push ebx                 { Offset zum Flag in UKA-Brettliste sichern }
+        mov byte ptr [esi],bl
+        add esi,ecx
+        lea di,[esi+2]
+        std
+        rep movsb                { s:='* '+s }
+        dec edi
+        mov ax, dx
+        stosw
+        cld
+        pop eax
+  @end:
+  end;
+
+begin
+  moment;
+  assign(t1,s);
+  reset(t1);
+  tname:=TempFile('');
+  assign(t2,tname);
+  Rewrite(t2);
+  i:=0;
+  readln(t1,s1);
+  if s1[1]='!' then i:=length(s1)
+   else reset(t1);
+  while not eof(t1) do
+  begin
+    readln(t1,s1);
+    m:=length(s1)+2;
+    n:=reformat_UKA_Brett(s1);
+    if bestellen or (s1[1]='*') then       { File-Offset des Strings wird angehaengt,  }
+     writeln(t2,forms(s1,80)+strs(i+n));   { damit MakeRC schnellen Zugriff hat, um im }
+    inc(i,m);                              { BL-File den '*' zu setzen bzw zu loeschen }
+    end;
+  close(t1);
+  close(t2);
+  List.ReadFromFile(tname,0);
+  List.HeaderText := s;
+  _era(tname);
+  closebox;
+end;
+
+
+{ RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
+
+procedure File_abbestellen(box,f:string);
+var t1,t2 : text;
+    s1,s2 : string;
+    brk   : boolean;
+    List: TLister;
+begin
+  s1:=Get_BL_Name(box);
+  if not fileExists(s1) then
+  begin
+    rfehler(807);
+    exit;
+    end;
+  List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
+  read_BL_File(s1,false, List);            { Bestellt-Liste in Lister laden }
+  pushkey(^A);                             { Ctrl+A = Alles markieren  }
+  pushkey(keyesc);                         { Esc    = Lister verlassen }
+  brk := List.Show;                        { Dummy-Lister starten      }
+
+  assign(t1,f);
+  s1:= List.FirstMarked;                   { Liste der bestellten Bretter     }
+  while s1<>#0 do                          { Mit Abbestell-File vergleichen   }
+  begin
+    brk:=true;
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1,s2);
+      if s2= TrimRight(copy(s1,3,78))
+        then brk:=false;                   { Bretter, die abzubestellen sind }
+      end;
+    close(t1);
+    if brk then List.UnMarkLine;               { werden NICHT entmarkiert        }
+    s1:= List.NextMarked;
+    end;
+  makeRC(false,box, List);                { (Noch) markierte Bretter abbestellen }
+  aufbau:=true;
+end;
+
+
+Procedure ClientBl_Abgleich(box:string);
+var t1    : text;
+    f1    : file of char;
+    c     : char;
+    s1,s2 : string;
+    brk   : boolean;
+    fileofs : longint;
+    List: TLister;
+begin
+
+  ReadBox(0,box,boxpar);
+  s1:=BoxPar^.ClientPath + UpperCase(boxfilename(box))+'.RC';
+  Assign(t1,s1);       { BOX.RC }
+  if not (FileExists(s1)) then
+  begin
+    Rewrite(t1);                           { T1 = RC-FILE (Text)         }
+    Close(t1);
+    end;
+  s1:=get_BL_Name(box);
+  if not FileExists(s1) then
+  begin
+    rfehler(807);
+    exit;
+    end;
+  if not ReadJN(getreps2(810,92, UpperCase(s1)),true) then exit;  { 'Abgleich RC-Datei mit %s' }
+
+  moment;
+  List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
+  read_BL_File(s1,true, List);             { Bestellt-Liste in Lister laden }
+  pushkey(^A);                             { Ctrl+A = Alles markieren  }
+  pushkey(keyesc);                         { Esc    = Lister verlassen }
+  List.Show;                               { Dummy-Lister starten      }
+  assign(f1,s1);
+  reset(f1);
+  s1:= List.FirstMarked;                   { Brettliste mit .RC vergleichen }
+  while s1<>#0 do
+  begin
+    brk:=false;
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1,s2);
+      if LeftStr(s2,cposx(' ',s2)-1)= TrimRight(copy(s1,3,78))
+        then brk:=true;
+      end;
+    close(t1);
+    if (s1[1]='*') xor brk
+    then begin
+      fileofs:=ival(mid(s1,80));
+      c:=iifc(brk,'*',' ');
+      seek(f1,fileofs);
+      write(f1,c);
+      end;
+    s1:= List.NextMarked;
+    end;
+  close(f1);
+  List.Free;
+  closebox;
+  aufbau:=true;
+end;
+
+Procedure ClientBL_Sort(box:string);
+var
+  TempBl, blfile: String;
+  List: TStringList;
+begin
+  blfile:=get_BL_Name(Box);
+  if not FileExists(blfile) then
+  begin
+    rfehler(807);         { Keine Brettliste fÅr diese Box vorhanden! }
+    exit;
+  end;
+  moment;
+  List := TStringList.Create;
+  try
+    try
+      List.LoadFromFile(blfile);
+      List.Sort;
+      List.SaveToFile(blFile);
+    except
+      rfehler(836);      { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
+    end;
+  finally
+    List.Free;
+  end;
+  Closebox;
+end;
+
+Procedure ClientBL_Del(box:string);
+var s1: string;
+begin
+  s1:=get_BL_Name(Box);
+  truncstr(s1,60);
+  if ReadJN(getreps2(810,93, UpperCase(s1)),false) then _era(s1);  { '%s wirklich lîschen' }
+end;
+
 
 { bbase-aktuelles Brett abbstellen   }
 { brett='' -> markierte Bretter abb. }
@@ -926,8 +1264,7 @@ var d      : DB;
     maus   : boolean;
     fido   : boolean;
     gs     : boolean;
-    uucp   : boolean;
-    nntp: boolean;
+    uucp, ppp, nntp: boolean;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
@@ -1047,6 +1384,33 @@ label again;
     aufbau:=true;
   end;
 
+  procedure BretterAnlegen2;
+  var x,y : byte;
+      n   : longint;
+      s   : string;
+      i   : integer;
+      t1: text;
+  begin
+    msgbox(30,5,'',x,y);
+    mwrt(x+3,y+2,getres2(807,10));   { 'Bretter anlegen ...' }
+    n:=0;
+    assign(t1, fn);
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1, s);
+      for i:=1 to length(s) do
+        if s[i]='.' then s[i]:='/';
+      if s[1]='*' then s[1]:=' ';
+      makebrett(trim(s),n,box,netztyp,true);
+      moff;
+      gotoxy(x+22,y+2); write(n:5);
+      mon;
+    end;
+    Close(t1);
+    closebox;
+    dbFlushClose(bbase);
+  end;
   procedure HandleNNTP;
   var
     RCList: TStringList;
@@ -1139,7 +1503,9 @@ begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
-      end;
+      ppp := BoxPar^.ClientMode;
+    end else
+      ppp := false;
     qwk:=(netztyp=nt_QWK);
     end
   else begin
@@ -1178,11 +1544,14 @@ begin
     again:
       List.OnTestMark := BrettMark;
       mapsnt:=netztyp; mapsart:=art;
+      if ppp then mapsnt:=nt_uucp_c;
       if maus then LColType:=2 else
       if fido then lcoltype:=4 else
       if maf or quick then LColType:=0 else
       if promaf then lcoltype:=3
       else LColType:=1;
+      if ppp and (art=0) then lcoltype:=5 else
+        LColType:=1;
       List.OnColor := MapsListcolor;
       brk := List.Show;
       if not brk then begin
@@ -1198,6 +1567,12 @@ begin
             goto again;
             end;
           end;
+        if ppp and (anz=1) and (art=0) and
+          (Firstchar(List.FirstMarked)='!') then
+        begin
+          rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
+          goto again;
+        end;
         bretter:=getres2(807,iif(anz=1,1,2));
         case art of
             0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
@@ -1227,17 +1602,21 @@ begin
               end;
             if fido then writeln(t,'---');
             close(t);
-            if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+            if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
               BretterAnlegen;
             List.Free;
             if art=3 then
               verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
+            if not ppp then
               case art of
                 0 : sendmaps('ADD',box,fn);
                 1 : sendmaps('DEL',box,fn);
                 3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
                 4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
               end;
+            if ppp and (art in [0,1]) then
+              if MakeRC(art=0,box, List) then
+                BretterAnlegen2;
 
             erase(t);
           end;
@@ -1269,6 +1648,7 @@ var brk     : boolean;
     maf     : boolean;
     maus    : boolean;
     nntp    : boolean;
+    ppp     : Boolean;
     info    : MausInfAP;
     infos   : integer;
     fido    : boolean;
@@ -1281,6 +1661,7 @@ var brk     : boolean;
     lines   : byte;
     i       : integer;
     List: TLister;
+    x, y: Byte;
 
   procedure app(s1,s2:string);
   begin
@@ -1396,22 +1777,38 @@ begin
     autosys:=(boxpar^.BMtyp=bm_autosys);
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
-    end;
+    ppp := BoxPar^.ClientMode;
+  end else
+    ppp := false;
   promaf:=ntProMaf(nt);
   case defcom of
-    0 : if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
+    0 : if (not ppp) and (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
           rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
           exit;
           end;
-    1 : if not ntMapsBrettliste(nt) then begin
-          rfehler(818);
+    1 : if ppp then
+        begin
+          msgbox(63,8,_hinweis_,x,y);
+          mwrt(x+3,y+2,getres2(10800,32));   { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
+          mwrt(x+3,y+3,getres2(10800,33));   { 'Liste mu· die entsprechende Funktion beim externen Client' }
+          mwrt(x+3,y+4,getres2(10800,34));   { 'aktiviert sein und die bisherige Newsgroup-Liste gelîscht' }
+          mwrt(x+3,y+5,getres2(10800,35));   { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+          errsound;
+          wait(curoff);
+          closebox;
+          freeres;
           exit;
+        end else
+          if not ntMapsBrettliste(nt) then
+          begin
+            rfehler(818);
+            exit;
           end;
   end;
 {$IFDEF Sockets }
   if nntp then begin
     if not GetNNTPList(box,boxpar) then
-      rfehler(830); { 'Gruppenliste konnte nicht uebertragen werden' }
+      rfehler(840); { 'Gruppenliste konnte nicht uebertragen werden' }
     exit;
   end;
 {$ENDIF }
@@ -1697,6 +2094,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/07/21 16:02:11  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.45  2001/07/21 08:27:31  mk
   - do not wait for enter in sendmaps with nntp
 

@@ -604,6 +604,30 @@ type   textp  = ^text;
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
+                  // Client Mode
+                  ClientMode: Boolean;              { RFC/Client switch             }
+                  ClientPath: string;               { Client Client-Pfad            }
+                  ClientExec: string;               { Client Client-Aufruf          }
+                  ClientAddServers: string;         { Client Add Servers            }
+                  ClientDialUp : string;            { Client Zugang/Dial-Up         }
+                  ClientPhone  : string;            { Client Telefon                }
+                  ClientLogin  : string;            { Client Login                  }
+                  ClientPass   : string;            { Client Passwort               }
+                  ClientSpool  : string;            { Client Spool-Verzeichnis      }
+                  ClientMailInServer : string;      { Client Mail-Server   incoming }
+                  ClientMailInEnv    : string;      { Client Mail-Envelope incoming }
+                  ClientMailInUser   : string;      { Client Mail-User     incoming }
+                  ClientMailInPass   : string;      { Client Mail-Passwort incoming }
+                  ClientMailInPort   : string;      { Client Mail-Port     incoming }
+                  ClientMailOutServer: string;      { Client Mail-Server   outgoing }
+                  ClientMailOutEnv   : string;      { Client Mail-Envelope outgoing }
+                  ClientMailOutUser  : string;      { Client Mail-User     outgoing }
+                  ClientMailOutPass  : string;      { Client Mail-Passwort outgoing }
+                  ClientMailOutPort  : string;      { Client Mail-Port     outgoing }
+                  ClientNewsServer   : string;      { Client News-Server            }
+                  ClientNewsUser     : string;      { Client News-User              }
+                  ClientNewsPass     : string;      { Client News-Passwort          }
+                  ClientNewsPort     : string;      { Client News-Port              }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -1125,6 +1149,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.130  2001/07/21 16:02:10  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.129  2001/06/11 22:23:26  ma
   - added GnuPG support
 

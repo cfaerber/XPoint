@@ -1217,7 +1217,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    This program is distributed in the hope that it will be useful,
 6    but without any warranty; without even the implied warranty of
 7    merchantibility or fitness for a particular purpose.
-8 
+8
 9    See the GNU General Public License for more details.
 #
 20   Choose "Continue" if you agree to these terms of license.
@@ -1501,9 +1501,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    incomplete packer settings
 5    no uploader setting
 6    unpacker not found
-7    no user id but password
-8    no password but user id
-9    host is missing
+7    Entry "Client directory" is missing
+8    Entry "Client directory" not OK
+9    Entry "Client call" is missing
+10   Entry "Client call" not OK
 -
 707 <broken in>
 708 Break
@@ -1754,11 +1755,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 911
 # Window width
 0    52
-1    Please enter the type of Net, your Server
-2    system and your User name:
-3    Type of Net~
-4    Server name~
-5    User name  ~
+1    Please enter the type of Net, the name of your
+2    Server and your user name or eMail address.
+3    The use of a RFC/Client Server requires a
+4    third-party Mail/News client.
+5    Type of Net~
+6    Server name~
+7    User name  ~
 + 912
 0    49
 1    Node number~
@@ -1831,6 +1834,32 @@ K (c) '2000 OpenXP Team, www.openxp.de
 31   max. UUCP-g window size    ~
 62   maximum file size       ~
 32   variable UUCP-g packet size
+# RFC/Client
+80   Client settings
+81   Server
+82   Comment ~
+83   eMail address
+84   Real name   ~
+85   Reply to    ~
+86   FQDN        ~
+87   Client directory ~
+88   Client call      ~
+89   Additional servers
+90   Dial-Up~
+91   Phone  ~
+92   Login  ~
+93   Password
+100  Mail server for incoming mail (POP3/SMTP/IMAP)
+101  mail.btinternet.com
+102  Mail server for outgoing mail (SMTP)
+103  mail.btinternet.com
+104  News server (NNTP)
+105  news.btinternet.com
+106  Server name    ~
+107  Envelope address
+108  User name      ~
+109  Password       ~
+110  Port
 60   force send packet size
 61   7/E/1 login
 33   G protocol
@@ -3094,9 +3123,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25 Invalid converter configuration: no $OUTFILE specified
 26 This newsgroup cannot be subsribed.
 27 This newsgroup cannot be unsubscribed.
+30 %s cannot be subscribed
+31 %s is subscribed already
+# The string in the following four lines must not exceed 57 characters:
+32 Net type RFC/Client: To get a new newsgroup list, the
+33 appropriate function of the external client must be acti-
+34 vated and the previous newsgroup list has to be deleted
+35 (see Message/Message_Area_Manager/Others).
+36 Sort of newsgroup list was not successful!
 # NNTP
-30 Group list not received!
-31 Can't connect to the host!
+40 Group list not received!
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
@@ -3140,6 +3176,20 @@ K (c) '2000 OpenXP Team, www.openxp.de
 34 Duplicate MIME-Types or File-Extensions are not allowed!
 35 Standard entry can not be modified
 36 This box is configured for TCP/IP.
+# The string in the following two lines must not exceed 56 characters:
+37 Path must be RELATIVE and point to a directory ONE level
+38 DIRECTLY below the XP directory!
+39 This path must not be empty!
+40 User name or eMail address required!
+# The string in the following seven lines must not exceed 57 characters:
+41 These settings only take effect if they are interpreted
+42 by your client or client kit.
+# do not delete blank line in 10900,43!
+43
+44 Your client may support and/or require further settings,
+45 which would then have to be entered in an external confi-
+46 guration file in the client directory.
+47 Please consult the client documentation for more details.
 
 +  11000
 1  unknown command
@@ -3708,6 +3758,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.22  2001/07/21 16:02:10  mk
+# - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+#
 # Revision 1.21  2001/07/18 17:27:03  my
 # - removed resource 254,16 ("update date entries after netcall")
 #

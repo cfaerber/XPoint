@@ -57,7 +57,7 @@ function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
-function  BoxFilename(var box:string):string;
+function  BoxFilename(const box:string):string;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
@@ -757,7 +757,7 @@ begin
 end;
 
 
-function BoxFilename(var box:string):string;
+function BoxFilename(const box:string):string;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
@@ -1018,6 +1018,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2001/07/21 16:02:10  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.80  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -48,7 +48,7 @@ procedure CallFilter(input:boolean; fn:string);
 function  OutFilter(var ppfile:string):boolean;
 procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anh‰ngen }
 
-procedure ClearUnversandt(puffer,BoxName:string);
+procedure ClearUnversandt(const puffer,BoxName:string);
 procedure MakeMimetypCfg;
 //**procedure LogNetcall(secs:word; FidoCrash:boolean);
 procedure SendNetzanruf(logfile: string);
@@ -64,6 +64,7 @@ procedure AponetNews; {?!}
 
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
+    TempPPPMode     : boolean;
 
 const esec        = 30;    { Sekunden warten bei Fehler }
       MaggiFehler = 1;
@@ -170,7 +171,7 @@ begin
 end;
 
 
-procedure ClearUnversandt(puffer,boxname:string);
+procedure ClearUnversandt(const puffer,boxname:string);
 var f      : file;
     adr,fs : longint;
     hdp    : THeader;
@@ -182,12 +183,23 @@ var f      : file;
     zconnect: boolean;
     i      : integer;
     ldummy : longint;
+    CCFile: Text;
+    InMsgID: String;
 
   procedure ClrUVS;
   var pbox : string;
       uvl  : boolean;
       uvs  : byte;
+      IDFile: text;
+      HaveIDFile: boolean;
+      MsgIDFound : boolean;
+      Outmsgid   : string[MidLen];
+      CCs: Byte;
   begin
+    HaveIDFile := FileExists('UNSENT.ID') and TempPPPMode;
+    if HaveIDFile then
+      Assign(IDFile, 'UNSENT.ID');
+
     with hdp do begin
       pbox:='!?!';
       if (cpos('@',empfaenger)=0) and
@@ -212,36 +224,93 @@ var f      : file;
           pbox := dbReadNStr(ubase,ub_pollbox);
           end;
         end;
-      if pbox<>'!?!' then begin
+      if pbox<>'!?!' then
+      begin
         dbSeek(mbase,miBrett,_brett+#255);
         uvl:=false;
-        if dbEOF(mbase) then dbGoEnd(mbase)
-        else dbSkip(mbase,-1);
+        if dbEOF(mbase) then
+          dbGoEnd(mbase)
+        else
+          dbSkip(mbase,-1);
         if not dbEOF(mbase) and not dbBOF(mbase) then
-          repeat
-            _MBrett := dbReadNStr(mbase,mb_brett);
-            if _mbrett=_brett then begin
-              dbReadN(mbase,mb_unversandt,uvs);
-              if (uvs and 1=1) and EQ_betreff(hdp.betreff) and
-                 (FormMsgid(hdp.msgid)=dbReadStr(mbase,'msgid'))
-              then begin
-                uvs:=uvs and $fe;
-                dbWriteN(mbase,mb_unversandt,uvs);
-                uvl:=true;
-                end;
+        repeat
+          _MBrett := dbReadNStr(mbase,mb_brett);
+          if _mbrett=_brett then
+          begin
+            dbReadN(mbase,mb_unversandt,uvs);
+            InMsgID := dbReadStr(mbase,'msgid');
+            if (uvs and 1=1) and EQ_betreff(hdp.betreff) and
+               (FormMsgid(hdp.msgid)=InMsgId) then
+            begin
+              MsgIDFound := false;
+              CCs := 0;
+              { Check, ob MsgID in unversandten Nachrichten enthalten ist }
+              if HaveIDFile then
+              begin
+                Reset(IDFile); { von vorn starten }
+                repeat
+                  Readln(IDFile, OutMsgid);
+                  if FormMsgid(OutMsgid) = InMsgID then
+                  begin
+                    MsgIDFound:=true;
+                    if (hdp.empfanz>1) then
+                    begin
+                      Append(CCFile);
+                      Writeln(CCFile, OutMsgid);
+                      Close(CCFile);
+                      Reset(CCFile);
+                      repeat
+                        readln(CCFile, OutMsgid);
+                        if FormMsgid(OutMsgid)=InMsgId then
+                          inc(CCs);
+                      until eof(CCFile) or (CCs > 1);
+                      Close(CCFile);
+                    end;
+                  end;
+                until eof(IDFile) or MsgIDFound;
               end;
-            dbSkip(mbase,-1);
-          until uvl or dbBOF(mbase) or (_brett<>_mbrett);
+              if not MsgIDFound then
+              begin
+                uvs:=uvs and $fe;
+                dbWriteN(mbase, mb_unversandt, uvs);
+              end else
+              if CCs <= 1 then
+              begin
+                if not ((hdp.typ='B') and (maxbinsave>0) and
+                  (hdp.groesse > maxbinsave*1024)) then
+                begin
+                  if FileExists('UNSENT.PP') then
+                    extract_msg(2,'','UNSENT.PP',true,1)
+                  else
+                    extract_msg(2,'','UNSENT.PP',false,1);
+                  Dec(OutMsgs);
+                end else
+                begin
+                  { String noch in die Resource Åbernehmen }
+                  tFehler('Die Datei ' + hdp.datei + ' an ' + hdp.empfaenger + ' bitte erneut versenden!',30);
+                  uvs:=uvs and $fe;
+                  dbWriteN(mbase,mb_unversandt,uvs);
+                end;
+              end; { MsgIDFound }
+              uvl:=true;
+            end;
+          end;
+          dbSkip(mbase,-1);
+        until uvl or dbBOF(mbase) or (_brett<>_mbrett);
         if not uvl then
           trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
-        end;
       end;
+    end;
+    if HaveIDFile then
+      Close(IDFile);
   end;
 
 begin
   Debug.Debuglog('xpnetcall','Clearunversandt, puffer '+puffer+', box '+boxname,DLInform);
   assign(f,puffer);
   if not existf(f) then exit;
+  Assign(CCFile, 'UNSENT.ID2');
+  ReWrite(CCFile); Close(CCFile); { Anlegen fÅr Append }
   hdp := THeader.Create;
   zconnect:=ntZConnect(ntBoxNetztyp(BoxName));
   reset(f,1);
@@ -252,7 +321,7 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,0,hds,hdp,ok,false,true);
+    makeheader(zconnect,f,0,0,hds,hdp,ok,false,true); { MUSS ok sein! }
     if not ok then begin
       tfehler(puffer+' corrupted!',esec);
       close(f); exit;
@@ -267,6 +336,7 @@ begin
     inc(adr,hdp.groesse+hds);
     end;
   close(f);
+  Erase(CCFile);
   dbSetIndex(mbase,mi);
   Hdp.Free;
   inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+EBoxFileExt,false,ldummy));
@@ -671,21 +741,101 @@ begin
   NoScript:=((script='') or not FileExists(script));
 end;
 
-function BoxParOk:string;
+function BoxParOk: string;
 
-var uucp : boolean;
+  function ChkPPPClientPath:boolean;
+  var fn, s: string;
+      ok   : boolean;
+  begin
+    ChkPPPClientPath:=true;
+    with boxpar^ do
+    begin
+      s:=ClientPath;
+      fn:=trim(s);
+      if (fn<>'') then
+      begin
+        if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
+        if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+        ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+          and (Length(fn) > 0) and (fn[length(fn)] <> '.');
+        if (not ok) or (not IsPath(s)) or (RightStr(s,1)<>DirSepa) then
+          ChkPPPClientPath := false;
+        end;
+      end;
+    end;
+
+  function ChkPPPClient:boolean;
+  var s, fn, dir, name, ext: string;
+      s1   : string;
+      ok   : boolean;
+  begin
+    ChkPPPClient:=true;
+    with boxpar^ do
+    begin
+      s :=  ClientExec;
+      s1 := ClientPath;
+      fn:=trim(s);
+      if Pos('start /wait ', LowerCase(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+      if Pos('start /wai ', LowerCase(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
+      if Pos('start /wa ', LowerCase(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
+      if Pos('start /w ', LowerCase(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+      if cpos(' ',fn)>0 then fn:=LeftStr(fn,cpos(' ',fn)-1);
+      if (fn<>'') then
+      begin
+        fsplit(fn,dir,name,ext);
+        ok := dir = '';
+        if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+        { if ustr(s1) =  ustr(Dir) then Ok := true; }
+        if Dir = '$CLPATH+' then ok := true;
+        if not ok then
+          ChkPPPClient:=false
+        else
+        begin
+          exchange(fn, '$CLPATH+', s1);
+          if ext<>'' then
+            ok:= FileSearch(fn,ownpath)<>''
+          else
+            ok:=(FileSearch(fn+'.exe',ownpath)<>'') or
+              (FileSearch(fn+'.com',ownpath)<>'') or
+              (FileSearch(fn+'.bat',ownpath)<>'');
+          if not ok then ChkPPPClient:=false;
+          end;
+        end;
+      end;
+    end;
+var
+  uucp : boolean;
 begin
   uucp:=(logintyp=ltUUCP);
-  with BoxPar^ do begin
+  with BoxPar^ do
+  begin
+    TempPPPMode := ClientMode;
+    if SysopInp+SysopOut<>'' then TempPPPMode := false;
     SysopMode:=(SysopInp+SysopOut<>'');
     if SysopMode then
-      if sysopinp='' then
-        BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
-      else if sysopout='' then
-        BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
-      else
-        BoxParOk:=''
-    else
+    begin
+      if TempPPPMode then
+      begin
+        if (ClientPath = '') then
+          BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
+        else if not ChkPPPClientPath then
+          BoxParOK := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
+        else if (ClientExec = '') then
+          BoxParOK := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
+        else if not ChkPPPClient then
+          BoxParOK := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
+        else
+          BoxParOK := '';
+      end else
+      begin
+        if sysopinp='' then
+          BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
+        else if sysopout='' then
+          BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
+       else
+          BoxParOk:=''
+      end;
+    end else
       if LoginTyp IN [ltNNTP, ltPOP3] then
         // Hier evtl. n"tige Tests der Parameter einstellen
       else
@@ -979,7 +1129,7 @@ begin                  { function Netcall }
         begin
           netcall_connect:= GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile) or netcall_connect;
-                            
+
         end
         else begin
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
@@ -1223,6 +1373,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2001/07/21 16:02:13  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.23  2001/06/10 18:08:27  cl
   - UUCP now uses an own spool directory for each box.
 

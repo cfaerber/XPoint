@@ -34,7 +34,7 @@ uses
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
-		     boxfile: string;
+                     boxfile: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
@@ -48,7 +48,7 @@ uses
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
-		     boxfile: string;
+                     boxfile: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
@@ -106,7 +106,7 @@ var
       if boxpar^.SizeNego then uu.parsize := true;
 
       uu.SMTP     := BoxPar^.UUsmtp;
-      
+
       uu.uparcer_smtp := BoxPar^.UpArcer;
       uu.uparcer_news := BoxPar^.UpArcer;
 
@@ -425,7 +425,7 @@ var
 
     if not UUCICO.Connect then
       result:=el_noconn
-    else 
+    else
     begin
       UUCICO.Output(mcInfo,'Login',[0]);
       if RunScript(BoxPar,UUCICO.CommObj,UUCICO.ProgressOutput,false,BoxPar^.Script,false,false) = 0 then
@@ -455,23 +455,23 @@ begin {function UUCPNetcall}
 
   if diskpoll then
   begin
-    if boxpar^.sysopstart<>'' then 
+    if (boxpar^.sysopstart<>'') and (not TempPPPMode)  then
     begin
       SetCurrentDir(boxpar^.sysopinp);
       Shell(boxpar^.sysopstart,500,1);
       SetCurrentDir(OwnPath);
     end;
-    if ((errorlevel=0) or (boxpar^.sysopstart<>'')) 
+    if ((errorlevel=0) or (boxpar^.sysopstart<>''))
     and ProcessIncomingFiles then
       if ProcessOutgoingFiles then begin
-        if boxpar^.sysopend<>'' then 
-	begin
+        if (boxpar^.sysopend<>'') and (not TempPPPMode) then
+        begin
           SetCurrentDir(boxpar^.sysopout);
           Shell(boxpar^.sysopend,500,1);
           SetCurrentDir(OwnPath);
           if errorlevel=0 then result:=el_ok else result:=el_recerr;
-	end else
-	  result:=el_ok;
+        end else
+          result:=el_ok;
       end
       else {!ProcessOutgoingFiles}
         result:=el_senderr
@@ -497,6 +497,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/07/21 16:02:13  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.6  2001/06/10 18:08:27  cl
   - UUCP now uses an own spool directory for each box.
 

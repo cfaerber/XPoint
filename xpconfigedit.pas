@@ -54,6 +54,8 @@ function  testbaud(var s:string):boolean;
 function  testbossnode(var s:string):boolean;
 procedure setfidoadr(var s:string);
 function  xp9_testbox(var s:string):boolean;
+function  xp9_setclientFQDN(var s:string):boolean;
+function  xp9_FQDNTest(var s:string):boolean;
 procedure ps_setempf(var s:string);
 function  notempty2(var s:string):boolean;
 function  testreplyto(var s:string):boolean;
@@ -75,6 +77,9 @@ function  testlogfile(var s:string):boolean;
 function  TestAKAservers(var s:string):boolean;
 function  testZCpointname(var s:string):boolean;
 function  JanusSwitch(var s:string):boolean;
+
+function  PPPClientPathTest(var s:string):boolean;
+function  PPPClientTest(var s:string):boolean;
 
 
 implementation  {---------------------------------------------------}
@@ -647,6 +652,8 @@ var d         : DB;
   var i : integer;
   begin
     Netz_Typ:=ntName(nt_Netcall);
+    if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
+    else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U);
     for i:=0 to enetztypen-1 do
       if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
   end;
@@ -1234,34 +1241,68 @@ var x,y  : byte;
     maps : string;
     dom  : string;
     fqdom: string;  {16.01.00 HS}
+    email: string[80];
     ntyp : string;
     nt   : byte;
-    i    : integer;
+    i, b : integer;
+    pppm : boolean;
+label restart;
 begin
-  dialog(ival(getres2(911,0)),10,'',x,y);
-  maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie den Namen Ihrer Stammbox, den' }
-  maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'Netztyp der Box und Ihren Usernamen ein:' }
+restart:
+  dialog(ival(getres2(911,0)),13,'',x,y);
+  maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie Netztyp und Name Ihrer Stamm-' }
+  maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'box sowie Username bzw. eMail-Adresse ein.' }
+  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client ben”tigen' }
+  maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
-  ntyp:=ntName(nt_ZCONNECT); nt:=nt_ZCONNECT;
-  maddstring(3,5,getres2(911,3),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
-  for i:=0 to enetztypen-1 do
+  ntyp:=ntName(nt_UUCP_C); nt:=nt_UUCP_C;
+  maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
+  mappsel(true,ntname(41));
+  mappsel(true,ntname(42));
+  for i:=1 to enetztypen-1 do
     if (ntnr[i] in ntAllowed) then
       mappsel(true,ntName(ntnr[i]));
   mset3proc(gf_getntyp);
-  maddstring(3,7,getres2(911,4),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
-    mhnr(680);                                       { 'Boxname   ' }
+  maddstring(3,10,getres2(912,13),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
+    mhnr(680);                                       { 'Server' bzw. 'Boxname' }
   DomainNt:=-1;
   msetvfunc(xp9_testbox);
-  maddstring(3,9,getres2(911,5),user,30,30,'>'); mhnr(682);   { 'Username  ' }
+  maddstring(3,12,getres2(912,12),user,30,80,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
   userfield:=fieldpos;
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
+  pppm:=false;
+  if LowerCase(ntyp)=LowerCase(ntName(41)) then
+  begin
+    ntyp:=ntName(40);
+    pppm:=true;
+  end;
   for i:=0 to enetztypen-1 do
     if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
       nt:=ntnr[i];
   closemask;
   closebox;
+  email:='';
+
+  dom:=ntDefaultDomain(nt);
+  if pppm then begin
+    email:=user;
+    b:=cpos('@',email);
+    if b=0 then begin
+      hinweis(Getres2(10900,8));
+      goto restart;
+      end
+    else begin
+      user:=LeftStr(email,b-1);
+      dom:=mid(email,b);
+      if cpos('.',dom)=0 then dom:=''
+        else dom:=mid(dom,cpos('.',dom));
+      end;
+    end;
+
+  user:=LeftStr(user,30);
+
   if not ntNameSpace(nt) then
     for i:=1 to length(user) do    { Leerzeichen aus Username -> "_" }
       if user[i]=' ' then user[i]:='_';
@@ -1274,19 +1315,25 @@ begin
   dbWriteStr(d,'dateiname',dname);
   maps:=DefaultMaps(nt);
   dbWriteStr(d,'NameOMaps',maps);
-  dom:=ntDefaultDomain(nt);
+
   dbWriteStr(d,'Domain',dom);
-  fqdom:='';
-  dbWriteStr(d,'FQDN',fqdom);  {17.01.00 HS}
+  fqdom:=''; dbWriteStr(d,'FQDN',fqdom);
+  dbWriteStr(d,'EMail',email);
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
-    else        boxpar^.pointname:='';
+    else      if not pppm then boxpar^.pointname:=''
+              else begin
+                boxpar^.pointname:=mid(email,b+1);
+                truncstr(boxpar^.pointname,min(25,cposx('.',boxpar^.pointname)-1));
+                end;
   end;
   dbWriteStr(d,'Pointname',boxpar^.pointname);
   dbFlushClose(d);
   boxpar^.boxname:=name;
   boxpar^.username:=user;
+  boxpar^.ClientMode:=pppm;
+  boxpar^._Domain:=dom;
   if (nt=nt_UUCP) and FileExists('UUCP.SCR') then
     boxpar^.script:='UUCP.SCR';
   WriteBox(dname,boxpar);
@@ -1301,10 +1348,153 @@ begin
     SaveConfig;
     end;
   end;
+
+
+function xp9_setclientFQDN(var s:string):boolean;
+var
+  s1: string;
+  b, u: Integer;
+begin
+  Result := false;
+  mclearsel(6);                    { FQDN = Feld 6 !!! }
+  if s='' then
+  begin
+    errsound;
+    exit;
+  end;
+  b:=cpos('@',s);
+  if (b=0) or (cpos('@',mid(s,b+1))<>0)
+    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+   then
+  begin
+     rfehler(908);
+     exit;
+  end;
+  Result :=true;
+  s1:=s; s1[b]:='.';
+  for u:=cposx('_',s1) to length(s1) do
+    if s1[u]='_' then s1[u]:='-';
+  if Lowercase(mid(s1,b))='.t-online.de'
+    then insert('.dialin',s1,b);
+  mappendsel(6,false,s1);          { FQDN = Feld 6 !!! }
+end;
+
+function xp9_FQDNTest(var s:string): boolean;
+var
+  s1 : string;
+  b: Integer;
+begin
+  Result :=true;
+  s1:=mailstring(s,false);
+  for b:=1 to length(s1) do
+    case s1[b] of
+      '@'  :  s1[b]:='.';
+      '_'  :  s1[b]:='-';
+      end;
+  while FirstChar(s1) = '.' do
+    delete(s1,1,1);
+  if s1<>s then
+  begin
+    errsound;
+    Result := false;
+  end;
+  s:=s1;
+end;
+
+function PPPClientPathTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : String;
+    path : string;
+    x,y  : byte;
+begin
+  PPPClientPathTest:=true;
+  fn:=trim(s);
+  if (fn<>'') then
+  begin
+    if RightStr(s,1)<>DirSepa then s:=s+DirSepa;
+    if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
+    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+      and (Length(fn) > 0) and (fn[length(fn)] <> '.');
+    if not ok then
+    begin
+      msgbox(62,6,_fehler_,x,y);
+      mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe muá RELATIV sein und auf ein Verzeichnis EINE' }
+      mwrt(x+3,y+3,getres2(10900,38));   { 'Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!' }
+      errsound;
+      wait(curoff);
+      closebox;
+      freeres;
+      PPPClientPathTest := false;
+      Exit;
+    end;
+    if not IsPath(s) then
+      if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
+      begin
+        if CreateMultipleDirectories(s) = '' then
+        begin
+          PPPClientPathTest:=false;
+          rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
+        end;
+      end else
+        PPPClientPathTest:=false;
+  end else
+  begin
+    PPPClientPathTest:=false;
+    rfehler(939)           { 'Dieser Pfad darf nicht leer sein!' }
+  end;
+end;
+
+function PPPClientTest(var s:string):boolean;
+var ok   : boolean;
+    fn, dir, name, ext: String;
+    s1   : String;
+begin
+  PPPClientTest:=true;
+  fn:=trim(s);
+  if Pos('start /wait ', LowerCase(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /wai ', LowerCase(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
+  if Pos('start /wa ', LowerCase(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
+  if Pos('start /w ', LowerCase(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+  if cpos(' ',fn)>0 then fn:= LeftStr(fn,cpos(' ',fn)-1);
+  if (fn<>'') then
+  begin
+    fsplit(fn,dir,name,ext);
+    ok := dir = '';
+    s1 := GetField(fieldpos-1);
+    if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+    { if ustr(s1) =  ustr(Dir) then Ok := true; }
+    if Dir = '$CLPATH+' then ok := true;
+    if not ok then
+    begin
+      rfehler1(936, UpperCase(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
+      PPPClientTest:=false;
+    end else
+    begin
+      exchange(fn, '$CLPATH+', s1);
+      if ext<>'' then
+        ok:= FileSearch(fn,ownpath)<>''
+      else
+        ok:=(FileSearch(fn+'.exe',ownpath)<>'') or
+          (FileSearch(fn+'.com',ownpath)<>'') or
+          (FileSearch(fn+'.bat',ownpath)<>'');
+      if not ok then rfehler1(907, UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+    end;
+  end else
+    begin
+    PPPClientTest:=false;
+    errsound;
+  end;
+end;
+
+
 end.
 
 {
   $Log$
+  Revision 1.3  2001/07/21 16:02:11  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.2  2001/07/20 21:29:22  mk
   - Vertreterauswahl doesn't change System settings anymore,
     TempRec saves global BoxPar in procedure BoxSelProc

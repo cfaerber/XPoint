@@ -194,6 +194,31 @@ begin
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
     SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
     SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
+
+    // Client Mode
+    ClientMode:= false;
+    ClientPath:= '';
+    ClientExec := '';
+    ClientAddServers:= '';
+    ClientDialUp:= '';
+    ClientPhone:= '';
+    ClientLogin:= '';
+    ClientPass:= '';
+    ClientSpool:= '';
+    ClientMailInServer:= 'pop.t-online.de';
+    ClientMailInEnv:= '';
+    ClientMailInUser:= '';
+    ClientMailInPass:= '';
+    ClientMailInPort:= '110';
+    ClientMailOutServer:= 'mailto.t-online.de';
+    ClientMailOutEnv:= '';
+    ClientMailOutUser:= '';
+    ClientMailOutPass:= '';
+    ClientMailOutPort:= '25';
+    ClientNewsServer:= 'news.t-online.de';
+    ClientNewsUser:= '';
+    ClientNewsPass:= '';
+    ClientNewsPort:= '119';
   end;
   nt_bpar(nt,bp^);
 end;
@@ -352,7 +377,33 @@ begin
             gets(s,su,'SMTP-ID', smtp_id, 255) or
             gets(s,su,'SMTP-Password', smtp_pwd, 255) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
-            getr(su,  'Letzte Verbindung',LastCall)
+            getr(su,  'Letzte Verbindung',LastCall) or
+
+            // Client Mode
+            getx(su,  'Client-Mode', ClientMode) or
+            gets(s,su,'Client-Path', ClientPath, 60) or
+            gets(s,su,'Client-Exec', ClientExec, 60) or
+            gets(s,su,'Client-AddServers', ClientAddServers, 60) or
+            gets(s,su,'Client-DialUp',ClientDialup,60) or
+            gets(s,su,'Client-Phone',ClientPhone,60) or
+            gets(s,su,'Client-Login',ClientLogin,60) or
+            gets(s,su,'Client-Password',ClientPass,20) or
+            gets(s,su,'Client-Spool', ClientSpool, 60) or
+            gets(s,su,'Client-MailInServer', ClientMailInServer, 160) or
+            gets(s,su,'Client-MailInEnvelope', ClientMailInEnv, 160) or
+            gets(s,su,'Client-MailInUser', ClientMailInUser, 160) or
+            gets(s,su,'Client-MailInPassword', ClientMailInPass, 75) or
+            gets(s,su,'Client-MailInPort', ClientMailInPort, 50) or
+            gets(s,su,'Client-MailOutServer', ClientMailOutServer, 160) or
+            gets(s,su,'Client-MailOutEnvelope', ClientMailOutEnv, 160) or
+            gets(s,su,'Client-MailOutUser', ClientMailOutUser, 160) or
+            gets(s,su,'Client-MailOutPassword', ClientMailOutPass, 75) or
+            gets(s,su,'Client-MailOutPort', ClientMailOutPort, 50) or
+            gets(s,su,'Client-NewsServer', ClientNewsServer, 160) or
+            gets(s,su,'Client-NewsUser', ClientNewsUser, 160) or
+            gets(s,su,'Client-NewsPassword', ClientNewsPass, 75) or
+            gets(s,su,'Client-NewsPort', ClientNewsPort, 50)
+
           ) then
             debug.debuglog('xp9bp','Invalid server config line: '+s,DLWarning);
           end;
@@ -505,9 +556,34 @@ begin
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
     writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
     ///////////////////////////////////////////
-    if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall
-    );
-    end;
+    if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
+
+    writeln(t,'Client-Mode=', jnf(ClientMode));
+    writeln(t,'Client-Path=', ClientPath);
+    writeln(t,'Client-Exec=', ClientExec);
+    writeln(t,'Client-AddServers=', ClientAddServers);
+    writeln(t,'Client-DialUp=', ClientDialUp);
+    writeln(t,'Client-Phone=', ClientPhone);
+    writeln(t,'Client-Login=', ClientLogin);
+    writeln(t,'Client-Password=', ClientPass);
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    if ClientMode then
+      CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
+    writeln(t,'Client-MailInServer=', ClientMailInServer);
+    writeln(t,'Client-MailInEnvelope=', ClientMailInEnv);
+    writeln(t,'Client-MailInUser=', ClientMailInUser);
+    writeln(t,'Client-MailInPassword=', ClientMailInPass);
+    writeln(t,'Client-MailInPort=', ClientMailInPort);
+    writeln(t,'Client-MailOutServer=', ClientMailOutServer);
+    writeln(t,'Client-MailOutEnvelope=', ClientMailOutEnv);
+    writeln(t,'Client-MailOutUser=', ClientMailOutUser);
+    writeln(t,'Client-MailOutPassword=', ClientMailOutPass);
+    writeln(t,'Client-MailOutPort=', ClientMailOutPort);
+    writeln(t,'Client-NewsServer=', ClientNewsServer);
+    writeln(t,'Client-NewsUser=', ClientNewsUser);
+    writeln(t,'Client-NewsPassword=', ClientNewsPass);
+    writeln(t,'Client-NewsPort=', ClientNewsPort);
+  end;
   close(t);
 end;
 
@@ -619,6 +695,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/07/21 16:02:11  mk
+  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
+
   Revision 1.42  2001/06/09 10:58:53  ma
   - added ForceOneArea feature (for POP3 server type)
 
