@@ -1,32 +1,32 @@
-*OpenXP v3.8.x Beta (Anwenderzweig)<br /><small>nur noch Fixes und ggf. Backports von getesteten Features aus der v3.9.x</small>
-OpenXP v3.8.x Beta (user branch)<br /><small>fixes and backports of well-tested v3.9.x features</small>
-/openxp/oxp32win.rar
+*OpenXP v3.8.11 Beta (Anwenderzweig)<br /><small>nur noch Fixes und ggf. Backports von getesteten Features aus der v3.9.x</small>
+OpenXP v3.8.11 Beta (user branch)<br /><small>fixes and backports of well-tested v3.9.x features</small>
+/openxp/openxp-3.8.11-win.rar
 Win32-Version [RAR]
 Win32 version [RAR]
 
-/openxp/oxp32win.zip
+/openxp/openxp-3.8.11-win.zip
 Win32-Version [ZIP]
 Win32 version [ZIP]
 
-/openxp/openxp-3.8.1.i386.rpm
+/openxp/openxp-3.8.11-linux.rpm
 Linux-Version [rpm]
 Linux version [rpm]
 
-/openxp/snapshot/openxp-3.8.0-linux-<Date>.tar.bz2
+/openxp/openxp-3.8.11-linux.tar.bz2
 Linux-Version [tar.bz2]
 Linux version [tar.bz2]
 
-/openxp/oxp32dos.rar
+/openxp/openxp-3.8.11-dos.rar
 DOS-Version [RAR]
 DOS version [RAR]
 
-/openxp/oxp32src.rar
+/openxp/openxp-3.8.11-src.rar
 Quelltexte
 Source code
 
-*OpenXP v3.9.x Snapshot (Entwicklerzweig)<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!</small>
-OpenXP v3.9.x snapshot (developer branch)<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
-/openxp/snapshot/oxp32win.rar
+*OpenXP v3.9.7 Snapshot (Entwicklerzweig)<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!</small>
+OpenXP v3.9.7 snapshot (developer branch)<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
+/openxp/snapshot/openxp-3.9.x-win.rar
 Win32-Version
 Win32 version
 
@@ -38,10 +38,10 @@ Linux version [rpm]
 Linux-Version [tar.bz2]
 Linux version [tar.bz2]
 
-/openxp/snapshot/oxp32dos.rar
+/openxp/snapshot/openxp-3.9.x-dos.rar
 DOS-Version
 DOS version
 
-/openxp/snapshot/oxp32src.rar
+/openxp/snapshot/openxp-3.9.x-src.rar
 Quelltexte
 Source code
