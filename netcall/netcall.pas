@@ -1,0 +1,81 @@
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+  
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
+
+{ Abstrakte Klasse TNetcall }
+
+{$I XPDEFINE.INC}
+
+unit NetCall;
+
+interface
+
+uses
+  xpglobal,		{ Nur wegen der Typendefinition }
+  IPCClass,		{ TIPC }
+  sysutils;
+
+type
+  ENetcall 		= class(Exception);	{ Allgemein (und Vorfahr) }
+
+type
+  TNetcall = class
+  
+  protected
+    
+  public
+
+    IPC		: TIPC;
+
+    constructor Create;
+
+    procedure Free; virtual;
+    
+    procedure WriteIPC(mc: TMsgClass; fmt: string; args: array of const); virtual;
+  
+  end;
+
+implementation
+
+constructor TNetcall.Create;
+begin
+  inherited Create;
+  IPC:= nil;
+end;
+
+procedure TNetcall.WriteIPC(mc: TMsgClass; fmt: string; args: array of const);
+begin
+  if IPC<>nil then
+    IPC.WriteFmt(mc,fmt,args);
+end;
+
+procedure TNetcall.Free;
+begin
+  if IPC<>nil then
+    IPC.Free;
+end;
+
+end.
+{
+	$Log$
+	Revision 1.1  2000/07/25 12:52:24  hd
+	- Init
+
+}
