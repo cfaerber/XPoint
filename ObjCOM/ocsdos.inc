@@ -12,6 +12,7 @@
 ** Free Pascal support added by Hristo Chilingirov
 ** New functions added by Hristo Chilingirov
 ** Bug fixed by Hristo Chilingirov hgch@usa.net
+** FIFO and HighIRQ support by M.Kiesel 2000
 **
 *)
 
@@ -31,16 +32,7 @@
   {$B-} {Allow short circuit boolean evaluations}
   {$T-} {Turn off typed @ operators}
 {$ELSE}
-  {$MODE TP}
-  {$R-} {Disable range checking}
-  {$S-} {Disable Stack Checking}
-  {$I-} {Disable IO Checking}
-  {$Q-} {Disable Overflow Checking}
-  {$D-} {Turn off debugging - use only if you modify this unit and get a bug}
-  {$L-} {Turn off local symbols - again this unit has been thouroughly debuged}
-  {$V-} {Turn off strict VAR strings}
-  {$B-} {Allow short circuit boolean evaluations}
-  {$T-} {Turn off typed @ operators}
+  {$WARNINGS OFF}{$MODE TP}{$WARNINGS ON}
 {$ENDIF}
 
 Const
@@ -61,11 +53,11 @@ Type
 
    ComBufferType = Record
                       Active       : Boolean;  {True if this buffer is active}
-                      R_Buffer     : ^BufType; {Recieve buffer pointer       }
+                      R_Buffer     : ^BufType; {receive buffer pointer       }
                       R_Head,R_Tail: Word;     {Buffer Head and Buffer Tail  }
                                                {Head: Next byte to return    }
                                                {Tail: Last byte received     }
-                      R_Size       : Word;     {Size of the recieve buffer   }
+                      R_Size       : Word;     {Size of the receive buffer   }
                       T_Buffer     : ^BufTYpe; {Transmit Buffer Pointer      }
                       T_Head,T_Tail: Word;     {Transmit Buffer Head & Tail  }
                                                {Head: Next byte to transmit  }
@@ -123,7 +115,7 @@ Begin
                         Inc(T_Head);
                         If T_Head > T_Size Then T_Head:= 0;
                      End;
-                  2,6: repeat                  {Recieve buffer}
+                  2,6: repeat                  {receive buffer}
                         R_Buffer^[R_Tail]:= Char(Port[Uart_Data]);
                         Inc(R_Tail);
                         If R_Tail > R_Size Then R_Tail:= 0;
@@ -219,20 +211,13 @@ Begin
    else
      Bufs[ComPort].Fifo:=True;
 
-   {This next section sees if there is already an interrupt vector set for
-    a shared interrupt com port.  For instance COM1 and COM3 both use
-    interrupt 4 and COM2 and COM4 use interrupt 3.  If we are setting up
-    COM1, but COM3 is already up and running we don't need to do anything
-    since the interrupt service routine (Procedure COM_ISR) will
-    automatically check the com ports on it's interrupt}
-
+   {Test if IRQ is handled already by COM_ISR}
    InUse:= False;
    For Ktr:= 1 to qComports Do
-      If (ComportResources[Ktr].IRQ = ComportResources[ComPort].IRQ) And Bufs[Ktr].Active Then
+      If (ComportResources[Ktr].IRQ = Bufs[CPort].IRQ) And Bufs[Ktr].Active Then
          InUse:= True;
 
-   {This next section is run if, and only if a shared interrupt is not
-    currently running.}
+   {Setup IRQ handling routine COM_ISR only if IRQ is not already been handled.}
    {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
    temp:=port[Bufs[ComPort].UART_DATA];
    If Not InUse Then Begin
@@ -255,7 +240,7 @@ Begin
 
    Bufs[ComPort].Old_MCR:= Port[Bufs[ComPort].UART_MCR]; {Store MCR        }
    Port[Bufs[ComPort].UART_LCR]:= 3; {No parity, no break, 1 stop bit, 8 data bits}
-   PORT[Bufs[ComPort].UART_IER]:= 1; {Enable data recieved interrupts      }
+   PORT[Bufs[ComPort].UART_IER]:= 1; {Enable data received interrupts      }
 
    {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 
@@ -316,17 +301,21 @@ Var InUse: Boolean;     {Scratch variable to test for shared interrupt}
 
 Begin
    {Check for shared interrupt usage}
+   Bufs[CPort].Active:= False;
    InUse:= False;
    For Ktr:= 1 to qComports Do
-      If (ComportResources[Ktr].IRQ = ComportResources[CPort].IRQ) And Bufs[Ktr].Active Then
+      If (ComportResources[Ktr].IRQ = Bufs[CPort].IRQ) And Bufs[Ktr].Active Then
          InUse:= True;
+
+   if InUse then DebugLog('ObjCOM','SDos Close: IRQ in use, not closed.',2);
 
    {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
 
-   {Restore the old Modem Control Register and disable incomming data
+   {Restore the old Modem Control Register and disable incoming data
     interrupts}
    Port[Bufs[CPort].UART_MCR] := Bufs[CPort].Old_MCR;
    Port[Bufs[CPort].UART_IER] := 0;
+   port[Bufs[CPort].UART_IIR]:=0; {FIFO off}
 
    If Not InUse Then Begin
       {Remove the interrupt only if another object is not using it}
@@ -345,14 +334,13 @@ Begin
    {Release the buffer memory and set the active flag to false}
    Freemem(Bufs[CPort].R_Buffer,Bufs[CPort].R_Size+1);
    Freemem(Bufs[CPort].T_Buffer,Bufs[CPort].T_Size+1);
-   Bufs[CPort].Active:= False;
    CPort:= 0;                {Set CPort variable to 0     }
 End;
 
 Function TSerialObj.GetChar: Char;
 
 {Waits for a character from the comm port if none are available.  Passes
- back the first character it finds in the recieve buffer}
+ back the first character it finds in the receive buffer}
 {* add timeout}
 
  Begin
@@ -391,7 +379,7 @@ Procedure TSerialObj.ResumeCom(OpenCom: Boolean);
  extrodinarilly compitent packages) could not handle shared interrupts.
  This unit can, but it cheats by allowing you to "suspend" one of the ports
  on the shared interrupt.  While a port is suspended (disabled) you can not
- send or recieve data from that port.  Other considerations - a mouse on
+ send or receive data from that port.  Other considerations - a mouse on
  com1 will not work with this package when you use com3, likewise a mouse
  on com2 will not work when you run com4 this is because this package
  installs it's own interrupts - overwriting the mouse ports (although the
@@ -532,6 +520,11 @@ end;
 
 {
   $Log$
+  Revision 1.3  2000/09/29 23:20:02  ma
+  - cleaned up compiler directives
+  - spell checking ;-)
+  - fixed IRQ handler release routine
+
   Revision 1.2  2000/09/11 23:00:58  ma
   - FIFO and HighIRQ support added
 
