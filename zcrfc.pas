@@ -492,15 +492,7 @@ begin
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z and not ppp then
   begin
-    {$IFDEF UnixFS}
-    if (RightStr(dest, 1) <> DirSepa) then
-      dest := ResolvePathname(dest + DirSepa)
-    else
-      dest := ResolvePathname(dest);
-    {$ELSE}
-    if (RightStr(dest, 1) <> ':') and (RightStr(dest, 1) <> '\') then
-      dest := dest + '\';
-    {$ENDIF}
+    Dest := IncludeTrailingPathDelimiter(Dest);
     if not IsPath(dest) then
       raise Exception.Create('ungÅltiges Zielverzeichnis: ' + dest);
   end;
@@ -3649,6 +3641,10 @@ end;
 
 {
   $Log$
+  Revision 1.95  2002/04/06 17:07:48  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.94  2002/03/24 11:51:25  mk
   - fixed bug: hd.lines is parsed 0 if lines header line contains white spaces
 

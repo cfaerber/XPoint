@@ -305,10 +305,12 @@ begin
     ok:=ReadFileName(getres(120),fname,true,useclip);  { 'Text in Datei schreiben' }
     pophp;
     if ok then begin
-      if (cPos('\',fname)=0) and (cPos(':',fname)=0) then
+      if ExtractFilePath(fname) = '' then
         fname:=extractpath+fname;
+      {$IFNDEF UnixFS }
       while cpos('/',fname)>0 do
         fname[cpos('/',fname)]:='\';
+      {$ENDIF }
       if not validfilename(fname) then begin
         rfehler(316);   { 'UngÅltiger Pfad- oder Dateiname!' }
         exit;
@@ -1058,6 +1060,10 @@ end;
 
 {
   $Log$
+  Revision 1.110  2002/04/06 17:07:47  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.109  2002/03/25 22:03:08  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse

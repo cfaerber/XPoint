@@ -582,11 +582,7 @@ var pold,name,ext,i: string;
 {$IFDEF DOS32} eext: string; {$ENDIF}
     j,mlen: integer;
 begin
-{$IFDEF VP}
-  s := Mid(s,max(1,1+max(RightPos('/',s),RightPos('\',s))));
-{$ELSE}
   s := ExtractFileName(s); (* replace path *)
-{$ENDIF}
   path:= AddDirSepa(path);
 
   if s='' then s:='NONAME';
@@ -725,7 +721,7 @@ function BoxParOk: string;
       if (fn<>'') then
       begin
         if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
-        if LastChar(fn) = '\' then DeleteLastChar(fn);
+        fn := ExcludeTrailingPathDelimiter(fn);
         ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
           and (Length(fn) > 0) and (fn[length(fn)] <> '.');
         if (not ok) or (not IsPath(s)) or (LastChar(s)<>DirSepa) then
@@ -1369,7 +1365,7 @@ begin
       PackAll(parxpack);
   if ParAV<>'' then begin
     if not multipos('\:',parav) then begin
-      if LastChar(shellpath)<>'\' then ParAV:='\'+ParAV;
+      if LastChar(shellpath)<>PathDelim then ParAV:= PathDelim + ParAV;
       ParAV:=ShellPath+ParAV;
       end;
     if not FileExists(ParAV) then
@@ -1391,6 +1387,10 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/04/06 17:07:49  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.51  2002/04/03 22:57:43  mk
   - fixed handling of /nsp:xx
 

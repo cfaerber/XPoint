@@ -617,7 +617,7 @@ label again;
       SetLength(s, b);
       Move(fname,s[1],b);
       p:=cPos('/',s);
-      if p=0 then p:=cPos('\',s);
+      if p=0 then p:= cPos('\',s);
       if p=0 then begin
         p:=cPos(':',s);
         if p=0 then begin
@@ -939,6 +939,10 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/04/06 17:07:46  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.31  2002/02/11 15:53:34  mk
   - fixed some packed record and variable size bugs
 

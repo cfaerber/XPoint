@@ -753,10 +753,10 @@ begin
   while p>1 do begin
     x:=cPos('Ã',pa^[p]);
     if x=0 then x:=cPos('À',pa^[p]);
-    path:=copy(pa^[p],x+3,80)+'\'+path;
+    path:=copy(pa^[p],x+3,80)+PathDelim+path;
     while pa^[p][x] in ['³','Ã','À'] do dec(p);
     end;
-  pname:='\'+trim(path);
+  pname:=PathDelim+trim(path);
 end;
 
 
@@ -1145,6 +1145,10 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/04/06 17:07:47  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.49  2002/02/04 16:26:54  mk
   - more after merge fixes
 

@@ -121,7 +121,7 @@ function MinMax(const x,min,max:longint):longint;  { x -> [min,max]             
 function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
 function MinR(const a,b:real):real;                { Minimum Real                 }
 function MinS(const a,b:string):string;            { Minimum String               }
-function MultiPos (s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
 function NaN:Double;
 function OctVal(s:string):longint;           { Oktalstring -> Logint        }
 function PosN(const s1,s2:string; n:integer):integer;    { POS ab Stelle n              }
@@ -189,6 +189,10 @@ function HostToBigEndian32(host:    dword):    dword;
 function BigEndianToHost32(host:    dword):    dword;
 
 function StringListToString(SL: TStringList): String;
+{$IFDEF FPC }
+function ExcludeTrailingPathDelimiter(const s: String): String;
+function IsPathDelimiter(const S: string; Index: Integer): Boolean;
+{$ENDIF }
 
 
 { ================= Implementation-Teil ==================  }
@@ -1415,8 +1419,26 @@ begin
   DeleteLastChar(result);
 end;
 
+{$IFDEF FPC }
+function ExcludeTrailingPathDelimiter(const s: String): String;
+begin
+  Result := S;
+  if IsPathDelimiter(Result, Length(Result)) then
+    SetLength(Result, Length(Result)-1);
+end;
+
+function IsPathDelimiter(const S: string; Index: Integer): Boolean;
+begin
+  Result := (Index > 0) and (Index <= Length(S)) and (S[Index] = PathDelim);
+end;
+{$ENDIF }
+
 {
   $Log$
+  Revision 1.107  2002/04/06 17:07:47  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.106  2002/03/23 15:12:51  mk
   - removed compiler warnings
 

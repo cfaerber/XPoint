@@ -124,7 +124,7 @@ begin
     path:=getenv('PGPPATH');
     if path<>'' then 
     begin
-      TrimLastChar(path, '\');
+      Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
@@ -160,8 +160,9 @@ begin
   exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
   {$endif}
   path:=getenv('PGPPATH');
-  if path<>'' then begin
-    TrimLastChar(path, '\');
+  if path<>'' then
+  begin
+    Path := ExcludeTrailingPathDelimiter(Path);
     path:=filesearch(exe,path);
   end;
   if path='' then
@@ -204,7 +205,7 @@ begin
   else begin
     path:=getenv('PGPPATH');
     if path<>'' then begin
-      TrimLastChar(path, '\');
+      Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
@@ -1167,6 +1168,10 @@ end;
 
 {
   $Log$
+  Revision 1.65  2002/04/06 17:07:48  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.64  2002/02/21 13:52:33  mk
   - removed 21 hints and 28 warnings
 

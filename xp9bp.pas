@@ -607,7 +607,7 @@ begin
     writeln(t,'Client-AskIfConnect=', jnf(ClientAskIfConnect));
     writeln(t,'Client-AskIfDisconnect=', jnf(ClientAskIfDisconnect));
     writeln(t,'Client-KeepConnectStatus=', jnf(ClientKeepConnectStatus));
-    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + PathDelim);
     if Trim(XFerDir) <> '' then CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
     writeln(t,'Client-MailInServer=', ClientMailInServer);
     writeln(t,'Client-MailInPort=', ClientMailInPort);
@@ -739,6 +739,10 @@ end;
 
 {
   $Log$
+  Revision 1.61  2002/04/06 17:07:48  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.60  2002/01/19 14:17:02  mk
   - Big 3.40 update part IV
 

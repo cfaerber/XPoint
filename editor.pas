@@ -785,8 +785,7 @@ begin
 {$ENDIF }
 {$ENDIF }
     tail:=nil;
-    while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
-    while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
+    fn := ExtractFileName(fn);
     s:='begin 644 '+fn;
     while not eof(t) and assigned(p) do begin
       if s='' then begin
@@ -1803,6 +1802,10 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.82  2002/04/06 17:07:47  mk
+  - fixed some hard coded '\' to PathDelim and other functions
+    should resolve misc problems with linux
+
   Revision 1.81  2002/02/24 21:00:37  ma
   - don't know how this ')' got lost ;-)
 
