@@ -387,8 +387,7 @@ var p   : byte;
     bak : string;
     ms  : boolean;
 begin
-  if ((exteditor=3) or ((exteditor=2) and nachricht) or
-     (_filesize(name)*1.2>memavail-16383)) and (VarEditor<>'')
+  if ((exteditor=3) or ((exteditor=2) and nachricht)) and (VarEditor<>'')
      and (VarEditor[1]<>'*') then begin
     ms:=shell25; shell25:=edit25;
     shell(repfile(VarEditor,name),EditorKB,-1);
@@ -454,6 +453,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/07/23 10:01:00  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.29  2000/07/06 08:58:44  hd
   - AnsiString
 

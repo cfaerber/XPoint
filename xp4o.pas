@@ -1799,9 +1799,10 @@ begin
             ListFile(TempPath+datei,datei,true,false,0);
           end
         else
-          if memavail<20000 then
-            rfehler(431)   { 'zu wenig Speicher!' }
-          else if arcbufp=max_arc then
+          // if memavail<20000 then
+          //  rfehler(431)   { 'zu wenig Speicher!' }
+          // else
+          if arcbufp=max_arc then
             rfehler(432)   { 'Maximal 3 verschachtelte Archive m”glich!' }
           else begin
             decomp:=TempPath+datei;  { Stack sparen ... }
@@ -2420,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/07/23 10:01:01  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.57  2000/07/22 21:59:43  mk
   - Zugriff auf nicht initialisierten String beseitigt
 

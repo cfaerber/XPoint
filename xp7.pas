@@ -402,10 +402,10 @@ begin                  { of Netcall }
   netcall:=true;
   Netcall_connect:=false;
   logopen:=false; netlog:=nil;
-  if net and (memavail<50000) then begin
+  (* if net and (memavail<50000) then begin
     trfehler(704,esec);   { 'Zu wenig freier Speicher fr Netcall!' }
     exit;
-    end;
+  end; *)
 
   if crash then
     if not isbox(DefFidoBox) then begin
@@ -1559,6 +1559,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/23 10:01:02  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.24  2000/07/21 21:17:46  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

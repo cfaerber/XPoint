@@ -110,20 +110,17 @@ var node : string;
     p    : scrptr;
     rec  : longint;
 begin
-  if memavail<60000 then
-    rfehler(402)    { 'zu wenig freier Arbeitsspeicher' }
-  else begin
-    fidomsgrequest(node);
-    if node<>'' then begin
-      sichern(p);
-      showscreen(false);
-      rec:=dbRecno(mbase);
-      if netcall(true,node,false,false,true) then;
-      dbGo(mbase,rec);
-      m2t:=false;
-      holen(p);
-      end;
-    end;
+  fidomsgrequest(node);
+  if node<>'' then
+  begin
+    sichern(p);
+    showscreen(false);
+    rec:=dbRecno(mbase);
+    if netcall(true,node,false,false,true) then;
+    dbGo(mbase,rec);
+    m2t:=false;
+    holen(p);
+  end;
 end;
 
 procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
@@ -2043,6 +2040,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/07/23 10:01:01  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.36  2000/07/21 13:23:46  mk
   - Umstellung auf TStringList
 

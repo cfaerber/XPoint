@@ -482,9 +482,11 @@ label fn_ende,fn_ende0;
     rflist:=nil;
     assign(t,logfile);
     settextbuf(t,buf);
-    if existf(t) then begin
+    if existf(t) then
+    begin
       reset(t);
-      while not eof(t) and (memavail>8192) do begin
+      while not eof(t) do
+      begin
         readln(t,s);
         LoString(s);
         if (s[1]='*') and
@@ -936,6 +938,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/23 10:01:02  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.24  2000/07/21 21:17:47  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

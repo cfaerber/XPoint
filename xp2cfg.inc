@@ -299,7 +299,7 @@ begin
   fsb_shadow:=true;
   fsb_info:=true;
   new(bmarked);
-  maxmark:=2000+min(3000,max(0,memavail-250000) div sizeof(markrec));
+  maxmark:=5000;
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
   GetMem(boxpar, SizeOf(BoxPar^));
@@ -1695,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.80  2000/07/23 10:01:00  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.79  2000/07/22 13:29:30  mk
   JG: - Bugfix: Viewer-Beschraenkungen, an Config-Strings wurden u.U. zuviele Punkte angehaengt
 

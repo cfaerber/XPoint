@@ -397,7 +397,6 @@ var hdp    : headerp;
     mi,n   : shortint;
     brett  : string;
     nullid : longint;
-    realmaxkom : word;
     kb2    : komlistp;
 
   procedure RecurBez(ebene:shortint; rec,spuren:longint; last:boolean;
@@ -497,8 +496,9 @@ var hdp    : headerp;
     end;
 
   begin
-    if (ebene<emax) and (komanz<realmaxkom) and
-       (rec<>0) and not dbDeleted(mbase,rec) then begin
+    if (ebene<emax) and (komanz<maxkomm) and
+       (rec<>0) and not dbDeleted(mbase,rec) then
+    begin
       if ebene>maxebene then inc(maxebene);
       {getmem(newbetr,BetreffLen+1);}
       new(ba);
@@ -541,8 +541,7 @@ begin
   if kombaum<>nil then
     freemem(kombaum,komanz*sizeof(komrec));
   hdp:= AllocHEaderMEm;
-  realmaxkom:=min(maxkomm,(memavail-10000) div 2 div sizeof(komrec));
-  getmem(kombaum,realmaxkom*sizeof(komrec));
+  getmem(kombaum,maxkomm*sizeof(komrec));
   n:=0;
   nullid:=0;
   repeat
@@ -566,7 +565,7 @@ begin
   dbSetIndex(bezbase,mi);
   getmem(kb2,komanz*sizeof(komrec));
   Move(kombaum^,kb2^,komanz*sizeof(komrec));
-  freemem(kombaum,realmaxkom*sizeof(komrec));
+  freemem(kombaum);
   kombaum:=kb2;
   FreeHeaderMem(hdp);
   closebox;
@@ -888,6 +887,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/23 10:01:02  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.20  2000/07/22 14:05:27  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

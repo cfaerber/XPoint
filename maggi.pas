@@ -27,7 +27,7 @@
 
 {$I XPDEFINE.INC }
 
-uses dos, sysutils,
+uses dos, sysutils, classes,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect=2;
@@ -230,8 +230,6 @@ begin
         inc(bretter);
         if bretter>maxbrett then
           berror('zu viele Eintr„ge in Brettdatei!');
-        if memavail<100 then
-          berror('zu wenig Speicher');
         new(brettp[bretter]);
         if pronet then begin
           brettp[bretter]^.code:=left(s,4);
@@ -1610,6 +1608,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/07/23 10:00:59  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.21  2000/07/14 12:39:07  ma
   - jetzt wieder kompilierbar (Ansistrings)
 

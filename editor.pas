@@ -1021,7 +1021,7 @@ var  dl         : displp;
         Wrt2(sp(8))
       else
         Wrt2(forms('+'+strs(xoffset),8));
-      Write(memavail);
+      // Write(memavail);  Unter 32 Bit nicht sehr sinnvoll
       if message='' then
       begin
         showfile[1]:=iifc(modified,'þ',' ');
@@ -1834,6 +1834,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/07/23 10:00:59  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.37  2000/07/20 17:08:50  mk
   - Notwendigkeit von Absolute entfernt
 

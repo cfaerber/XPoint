@@ -227,7 +227,7 @@ var size   : longint;
         pw:= dbReadXStr(ubase,'passwort',siz0);
         end;
 
-      ps:=(min(memavail-10000,20000) shr 3) shl 3;  { abrunden wg. DES }
+      ps := 32768;
       getmem(p,ps);
       seek(decf,ofs);
       passpos:=1;
@@ -1058,6 +1058,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/07/23 10:01:01  mk
+  - memavail wo moeglich rausgenommen
+
   Revision 1.35  2000/07/22 14:05:26  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
