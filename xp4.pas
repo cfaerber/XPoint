@@ -195,19 +195,20 @@ label selende;
   end;
 
   procedure pm_archiv(einzel:boolean);
-  var _brett : string[5];
+  var
+    _brett : string[5];
   begin
     dbReadN(mbase,mb_brett,_brett);
     if (_brett[1]<>'1') and (_brett[1]<>'A') then
       rfehler(403)     { 'PM-Archiv in diesem Brett nicht m”glich' }
     else begin
       PmArchiv(einzel);
-      if _brett[1]='1' then begin
+      if _brett[1]='1' then
+      begin
         dbGo(mbase,disprec[1]);
-        if left(dbReadStr(mbase,'brett'),1)<>'1' then
-          disprec[1]:=0;
-        end
-      else
+{!!        if left(dbReadStr(mbase,'brett'),1)<>'1' then
+          disprec[1]:=0; }
+      end else
         GoP;
       end;
   end;
@@ -2125,6 +2126,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.19  2000/11/15 12:21:45  mk
+  - fixed bug with Alt-P in reply trees
+
   Revision 1.26.2.18  2000/11/11 09:59:41  mk
   - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
   - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich
