@@ -1,39 +1,44 @@
 program Example;
 
-{$I OCDEFINE.INC }
+{A very simple terminal}
+
+{$I OCDefine.inc}
+
 uses ObjCOM,CRT;
 
-var ComObj    : tpCommObj;
-    ComOpen,Pass  : Boolean;
-    C    : Char; IS: String;
+var CommObj: tpCommObj;
+    CommOpen,Pass: Boolean;
+    C: Char;
+    SInit: String;
+    I: Integer;
 
 begin
-  WriteLn('Default init string: Serial Port:2 Speed:57600');
-  Write('Enter init string: '); ReadLn(IS);
-  IF IS='' THEN IS:='Serial Port:2 Speed:57600';
-  IF NOT CommInit(IS,ComObj) THEN BEGIN WriteLn('Error opening port.'); Halt(1)END;
+  WriteLn('Default init string: Serial Port:2 Speed:57600'); Write('Enter init string: '); ReadLn(SInit);
+  if SInit='' then SInit:='Serial Port:2 Speed:57600';
+  if not CommInit(SInit,CommObj)then begin WriteLn('Error opening port: ',ErrorStr); Halt(1)end;
 
-  WriteLn('F1 to temporary close comport; F2 to quit; F10 to display status');
-  ComOpen:=True; Pass:=False;
+  WriteLn('Special functions (press # to use):');
+  WriteLn('Q: Quit  S/P: SendStr/PauseCom test  D: Display carrier');
+
+  CommOpen:=True; Pass:=False;
   repeat
-    if KeyPressed then
+    while KeyPressed do
      begin
       c:=ReadKey;
-      case c of
-       #0: begin
-            case ReadKey of
-             #59: begin ComOpen:=NOT ComOpen; if ComOpen then ComObj^.ResumeCom(False) else ComObj^.PauseCom(True)end;
-             #60: pass:=True;
-             #61: begin WriteLn(ComObj^.SendString('ATZ'+#13,True)); WriteLn('ATZ answer: '+ComObj^.ErrorStr)end;
-             #62: ComObj^.SendString('ATD010301985718947',False);
-             #68: begin writeln; writeln('Carrier: ',ComObj^.Carrier); writeLn('ComOpen: ',ComOpen)end;
-            end;
-           end;
-      else ComObj^.SendChar(c)
-      end;
+      if c='#' then case UpCase(ReadKey)of
+        'Q': pass:=True; {CTRL-Q}
+        'S': begin WriteLn('SendStr result: ',CommObj^.SendString('ATZ'+#13,True)); Write(CommObj^.ErrorStr)end; {CTRL-S}
+        'P': begin CommOpen:=not CommOpen; WriteLn('CommOpen: ',CommOpen);
+                   if CommOpen then CommObj^.ResumeCom(False) else CommObj^.PauseCom(True)end; {CTRL-P}
+        'D': WriteLn('Carrier: ',CommObj^.Carrier); {CTRL-D}
+      end else CommObj^.SendChar(c);
      end;
-    if ComObj^.CharAvail then write(ComObj^.GetChar);
+    I:=500; while CommObj^.CharAvail and(I>1)do begin Dec(I); Write(CommObj^.GetChar)end;
+    Delay(10);
   until Pass;
 
-  ComObj^.Close; Dispose(ComObj, Done);                  { Dispose the communications object }
-end. { EXAMPLE }
+  CommObj^.Close; Dispose(CommObj, Done);
+end.
+
+
+
