@@ -6,7 +6,7 @@
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 
-<!ENTITY xpname "<application>CrossPoint</application>">
+<!ENTITY xpname "<application>OpenXP</application>">
 <!ENTITY xpversion "4.0">
 
 <!ENTITY maggibinfilename "<filename>maggi.exe</filename>">
@@ -21732,7 +21732,8 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
             <entry><filename>doc\gpl.txt</filename></entry>
 
             <entry>GNU General Public License (f&uuml;r
-              <command>gzip</command> und <command>bzip2</command></entry>
+              <command>gzip</command> und
+              <command>bzip2</command>)</entry>
 
           </row>
 
@@ -25016,6 +25017,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.10  2000/11/21 14:08:46  fe
+Renamed XP to "OpenXP".
+
 Revision 1.9  2000/11/19 17:19:07  fe
 Made XP-name and binary filenames configurable.
 
