@@ -781,41 +781,23 @@ end;
   and read(ln).
  =========================================================================}
 
-{ used by CrtWrite }
-procedure DoWrite(temp: string);
+function CrtWrite(Var F: TextRec): Integer;
+{ Write  }
+var
+  Temp: string;
+  idx: longint;
 begin
-  if TextAttr <> LastTextAttr then
+  if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
-  StringOut(temp);
-{  waddstr(ActWin.wHnd, StrPCopy(ps, temp));
-  wrefresh(ActWin.wHnd);}
-end;
-
-Function CrtWrite(Var F: TextRec): Integer;
-{
-  Top level write function for CRT
-}
-Var
-  Temp : String;
-  idx,i : Longint;
-{  oldflush : boolean;}
-Begin
-{  oldflush:=ttySetFlush(Flushing);}
   idx:=0;
-  while (F.BufPos>0) do
-   begin
-     i:=F.BufPos;
-     if i>255 then
-      i:=255;
-     system.Move(F.BufPTR^[idx],Temp[1],F.BufPos);
-     Temp[0]:=Chr(i);
-     DoWrite(Temp);
-     dec(F.BufPos,i);
-     inc(idx,i);
-   end;
-{  ttySetFlush(oldFLush);}
+  while (F.BufPos>0) do begin
+    waddch(ActWin.wHnd, CvtToISOConsole(F.BufPTR^[idx]));
+    dec(F.BufPos);
+    inc(idx);
+  end;
+  wrefresh(ActWin.wHnd);
   CrtWrite:=0;
-End;
+end;
 
 Function CrtRead(Var F: TextRec): Integer;
 {
@@ -1297,6 +1279,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/10 10:31:54  hd
+  - Fix: CrtWrite vergass die Farbe
+
   Revision 1.12  2000/05/08 13:17:11  hd
   - HorizLine: Stellt eine horizontale Linie dar
 
