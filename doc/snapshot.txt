@@ -1,0 +1,460 @@
+ÚÄ Hinweise ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                       ³
+³  An die Benutzer dieses OpenXP-Snapshots (v3.40 RC3)  ³
+³                                                       ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+Die nachfolgend aufgelisteten Features, Funktionen, Fixes und nderungen  
+sind erst seit kurzer Zeit in OpenXP enthalten - bitte intensiv testen.  
+Es handelt sich zum gr”áten Teil um Features, die Jochen Gehring im  
+Laufe der letzten 1 1/2 Jahre entwickelt hat.
+
+Bitte auch testen, ob die brigen XP-Funktionen weiterhin problemlos
+funktionieren!
+
+Der Einbau weiterer Features, die ich zun„chst zurckgestellt habe, ist
+geplant. Je nach verfgbarer Zeit reiche ich diese bei Gelegenheit nach.
+
+Bugreports, Kommentare und Vorschl„ge fr diese Version bitte in die
+OpenXP-Mailingliste, nach de.comm.software.crosspoint, CROSSPOINT.GER  
+oder CROSSPOINT.EXPERT.GER, oder an mich per Mail.
+
+Michael Heydekamp    <my@openxp.de>
+                     <michael.heydekamp@t-online.de>
+                     2:2433/460
+                     2:2433/401.460
+
+OpenXP-Mailingliste: <dev@openxp.de> (fr Nicht-Abonnenten)
+
+
+Dsseldorf, den 19.09.2001 (letzter Update)
+
+
+------------------------------------------------------------------------
+
+
+Neue/ge„nderte Features und Funktionen
+======================================
+
+
+Lister
+------
+
+- Markierung der bei der letzten Nachrichten-Suche verwendeten
+  Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung): Nach
+  Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit <Tab>
+  springt der Cursorbalken die n„chste Zeile mit einem markierten
+  Suchbegriff an.
+  XP1.PAS, XP1O.PAS, XP1S.INC, XP4.PAS, XP4O.PAS, LISTER.PAS, XP.IHQ
+
+- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
+  Suchoptionen (z.B. umlautunabh„ngige Suche), Suchbegriff-History und
+  Suchbegriffs-Bibliothek verfgbar. "Alte" Suchfunktionen jetzt ber
+  <Ctrl-S> (frher "S") bzw. wie bisher ber <Shift-S> erreichbar.
+  XP1.PAS, XP1S.INC, KEYS.PAS, LISTER.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut werden.
+  Nach Beendigung des Kommentarbaums kehrt XP zur aktuellen Nachricht
+  zurck.
+  XP1O.PAS, XP4W.INC, XP4.PAS, XP.IHQ
+
+- <Alt-M> (Message-ID-Suche) schneidet in der markierten Zeile '/' ab
+  XP1O.PAS
+
+- Die Header Betreff, Message-ID und Zusammenfassung werden jetzt
+  umbrochen, wenn l„nger als 78 Zeichen
+  XP3EX.PAS
+
+- Bei Nachrichten mit ungltigem Datum (i.d.R. Spam) wird nun "N/A"
+  angezeigt statt einer leeren Datum-/Zeitmaske ("..,:").
+  XP3EX.PAS
+
+- Betreff-Header wird (wenn m”glich) aus MPUFFER ausgelesen und kann
+  jetzt bis zu 255 Zeichen lang sein.
+  XP3EX.PAS
+
+- Hex-Dump (<Ctrl-H>/<Backspace>) zeigt jetzt auch Nachrichten >64k an
+  und ist im HIEW-Stil gehalten.
+  XP3EX.PAS
+
+- Kleiner Optikfix: Userdefinierte Header werden nicht mehr fest mit 11
+  Stellen angezeigt, sondern die L„nge richtet sich nach der in der
+  Ressource definierten L„nge der brigen Headerzeilen (Res. 361,2).
+  Anzeige damit auch sprachunabh„ngig.
+  XP3EX.PAS
+
+
+Editor
+------
+
+- Beim Editieren von Nachrichten gibt es im "nderungen speichern?"-
+  Dialog die Option "Parken", die direkt ein "P" ans Sendefenster
+  weiterleitet.
+  XPE.PAS, XP1S.INC, XP-D.RQ, XP-E.RQ
+
+- <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
+  Einfgen)
+  EDITOR.PAS, XP.IHQ
+
+- Editor-Men (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen" und
+  "Beenden" hinzugefgt
+  EDITOR.PAS, EDITOR.INC, EDDEF.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Suche im Editor markiert jetzt die aktuell gefundene Stelle
+  EDITOR.INC
+
+- Quotereflow verfeinert (<Enter> mitten in Quotezeichen entspricht
+  <Enter> am Ende von Quotezeichen)
+  EDITOR.INC
+
+- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
+  Windows-Clipboard nicht verfgbar ist. Altes Editor-RAM-Clipboard
+  deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
+  CLIP.PAS, EDITOR.PAS, EDITOR.INC, XP.IHQ
+
+
+
+Nachrichten-Suchfunktionen (Lister-Suchfunktionen siehe unter Lister)
+--------------------------
+
+- Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier k”nnen oft benutzte
+  Suchbegriffe abgelegt und mit <Shift-F2> ausgew„hlt werden.
+
+- Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
+  Suchbegriffe angezeigt und stehen beim n„chsten Programmstart wieder
+  zur Verfgung (SEEK.TXT)
+
+- Optionen-History: Mit <F2> werden die letzten 5 benutzten Options-
+  Kombinationen angezeigt und stehen beim n„chsten Programmstart wieder
+  zur Verfgung (OPTIONS.TXT)
+
+- Neue Such-Optionen:
+  l = sucht nur in Nachrichten, die dem aktuellen Lesemodus entsprechen
+  m = h„ngt die gefundenen Nachrichten an die Liste bereits markierter
+      Nachrichten an, statt diese vorher zu ent-markieren
+  h = Volltextsuche nur im Header
+  g = Volltextsuche in Header und Text
+  s = l”scht die Eintr„ge in der Suchbegriff-History
+  k = kopiert den aktuellen Suchbegriff in die Suchbegriffs-Bibliothek
+
+- Spezial-Suche: Optionale ODER-Verknpfung von Absender, Betreff, Fido-
+  Empf„nger und Text. <F2>-History fr Feld "Text" und "Optionen"
+  eingebaut.
+
+- Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
+  gleichem Betreff und nicht mehr die Nachrichten, bei denen im
+  Vergleichspaar der krzere Betreff mit dem Anfang des l„ngeren
+  bereinstimmt (z.B. "toll" und "toller Betreff")
+
+- Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
+
+- Message-ID-Suche: Suchoptionen sind wieder verfgbar
+
+- max. Anzahl der Teil-Suchbegriffe auf 20 erh”ht
+
+- max. L„nge des Suchbegriffs auf 160 Zeichen erh”ht
+
+XP4O.PAS, XP4O.INC, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Wildcard-Volltextsuche "*" bezieht sich nicht mehr auf einzelne Worte,
+  sondern auf den gesamten String (Suche nach "d*t" findet auch "das
+  is'n Test"). Logik damit identisch mit Markiersuche im Lister.
+  XP3.PAS
+
+
+
+Brett-šbersicht
+---------------
+
+- Neuer Menpunkt "kombinierter Ungelesen-Modus" unter Config/Anzeige/
+  Bretter, bisherige Taste "U" fr diese Funktion ist jetzt Brett-
+  Markiersuche (s.u.). Ge„nderte Anzeigelogik (siehe Hilfe).
+  XP2C.PAS, XP4.PAS, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Verbesserte Brettanzeige (zus„tzlicher Schalter unter Config/Anzeige/
+  Bretter): Es k”nnen jetzt alle Bretter in Punktschreibweise
+  dargestellt werden, der einleitende "/" wird entfernt, bei PM-Brettern
+  wird der erste "/" durch "@" ersetzt.
+  XP0.PAS, XP4.PAS, XP4W.INC, XP4D.INC, XP2C.PAS, XP2CFG.INC,
+      XP6.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Brett-(markier)-Suche ("U") analog zu User-Markiersuche implementiert.
+  XP4.PAS, XP4O.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Brett-Schnellsuche ("/" oder ".") findet jetzt auch PM-Bretter.
+  XP4W.INC
+
+
+
+Nachrichten-Lesefenster
+-----------------------
+
+- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte unten)
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ,
+      XP-E.IHQ
+
+- Feldtausch ge„ndert/verbessert: Jedes Feld kann weggelassen werden,
+  bei Weglassen groáer Felder werden die brigen Felder verbreitert.
+  Option jetzt zus„tzlich ber /Config/Anzeige/Nachrichten erreichbar.
+  /Config/Anzeige/Hilfen bersichtlicher gestaltet.
+  XP2C.PAS, XP2CFG.INC, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+- Beim Umschalten auf Realname mit <Ctrl-N> wird der Absender um 5
+  Zeichen verkrzt und der Betreff um 5 Zeichen verl„ngert
+  XP4D.INC
+
+- Verbesserung fr blinde XP-User: Wenn unter Config/Anzeige/Hilfen die
+  Optionen "Auswahlcursor" und "Fensterhintergrund ausblenden" aktiviert
+  sind, ist das Zeichen fr "Haltezeit berschritten" ein normaler Punkt
+  "." statt eines mittelstehenden Punkts "ù" (249d) und ist daher jetzt
+  von der Sprachausgabe auswertbar.
+  XP4D.INC
+
+- Neuer Menpunkt Nachricht/Alle/Ungelesen setzt alle angezeigten
+  Nachrichten auf Ungelesen. Nachricht/Alle/Lesen umbenannt in
+  Nachricht/Alle/Gelesen und Hotkey in 'G' ge„ndert.
+  XP3O.PAS, XP4.INC, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+
+
+User-šbersicht
+--------------
+
+- User-Markiersuche ("U") benutzt jetzt Standard-Suchstringeingabe,
+  dadurch mehrere Suchbegriffe, <F2>-Auswahl, AND/OR/NOT-Verknpfung
+  und Umlautunabh„ngigkeit m”glich
+  XP4O.PAS, XP.IHQ
+
+- Mit '#' kann in der User-šbersicht eine Adreábuchgruppe angegeben
+  werden, die angesprungen werden soll. Mit <Ctrl-#> wird die n„chste
+  Adreábuchgruppe angesprungen.
+  XP4.PAS, XP4W.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Adreábuch: <Alt-A> schaltet Zugang zu Adreábuchgruppe 0 frei.
+  XP4.PAS, XP.IHQ
+
+- User editieren: bei "Adreábuchgruppe" <F2>-Auswahl aus den aktuell
+  bereits verwendeten Adreábuchgruppen m”glich.
+  XP4E.PAS, XP.IHQ
+
+- Neue Menpunkte beim Editieren markierter User:
+  Priorit„t / Empfangsbest„tigung / Vertreteradresse / L”schen
+  XP4E.PAS, XP-D.RQ, XP-E.RQ
+
+- Feldtausch ge„ndert/verbessert: Default jetzt FHBGAK, jedes Feld kann
+  weggelassen werden, bei Weglassen groáer Felder werden die brigen
+  Felder verbreitert. /Config/Anzeige/Hilfen bersichtlicher gestaltet.
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ,
+      XP-E.IHQ
+
+
+
+Mausbedienung
+-------------
+
+- Online-Hilfe untersttzt jetzt Maussteuerung
+  HELP.PAS, XP.IHQ
+
+- Untere Funktionstasten-Leiste ist jetzt mausbedienbar. Linksklick auf
+  "CrossPoint/OpenXP" fhrt das Makro <Alt-C> aus, Rechtsklick bringt
+  About-Dialog ("šber OpenXP").
+  XP4.INC
+
+- Mittlere Maustaste l”st Doppelklick aus
+  MAUS2.PAS, XP.IHQ
+
+- Scrolling in Datei-Auswahlbox jetzt auch mit Maus m”glich
+  WIN2.PAS
+
+- Bei Maus-Scrolling in Brett-/User-/Nachrichtenfenster "Autobremse"
+  fr schnellere PCs gesetzt
+  XP4.PAS
+
+
+
+Allgemeine Bedienung und Sonstiges
+----------------------------------
+
+- RFC: Neuer Schalter "Alten Betreff anh„ngen" unter Config/Optionen/
+  Netze.  Wenn aktiviert, wird bei nderung des Betreffs der alte
+  Betreff in der Form "(was: <alter Betreff>)" automatisch angeh„ngt.
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP6.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirmzeilen
+  stehen nur die ersten 19 zur Verfgung).
+  XP0.PAS, XP1.PAS, XP1MENU.INC, XP2.PAS, XP2CFG.INC, XP2F.PAS,
+      XP4.INC, XP.IHQ
+
+- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr ntzliche
+  und/oder in der Hilfe ansonsten nur schwer auffindbare Informationen.
+  Untermen "šber OpenXP" zeigt Versions- und Snapshotnummer sowie
+  OpenXP-Kontakte an. Beta- und Registrierungsfenster optisch angepaát.
+  XP0.PAS, XP1.PAS, XP1HELP.PAS, XP2.PAS, XP4.INC, XP6.PAS,
+      XPREG.PAS, XPGLOBAL.PAS, XPX.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- 'Editdate' nimmt jetzt Datums- und Uhrzeitangaben an
+  XP1INPUT.PAS
+
+- Bei Nachricht/ndern/Empfangsdatum jetzt Eingabe von Datum und Uhrzeit
+  sowie šbernahme des Erstelldatums der markierten Nachricht m”glich.
+  XP4O.PAS, XP.IHQ
+
+- Lesemodi "Datum" und "Zeit" zusammengefaát zu Lesemodus "Datum/Zeit"
+  (kombinierte Datums-/Zeiteingabe). Steht der Markierbalken auf einer
+  Nachricht, kann direkt das Eingangsdatum aus der Nachricht bernommen
+  werden.
+  XP4.PAS, XP4E.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)
+  XP4E.PAS, XP5.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+
+- Brettmanager: Text-Markiersuche mit "S" (analog zu Lister),
+  Ein-/Ausschalten der markierten Suchbegriffe mit "E", "alte"
+  Suchfunktionen jetzt ber <Ctrl-S> (frher "S") bzw. wie bisher ber
+  <Shift-S> erreichbar.
+  XP1.PAS, XP8.PAS, XP.IHQ
+
+- Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
+  verfgbar
+  XP2C.PAS, XP2CFG.INC, XP.IHQ
+
+- Dateinamenabfrage: Letzter benutzter Pfad (ohne Dateinamen) wird
+  gespeichert und erscheint im <F2>-Auswahldialog. Letzte benutzte Datei
+  oder "Clipboard" ist Default. Eingaben mit Wildcards werden
+  gespeichert auch wenn keine Datei ausgew„hlt wurde, bei Pfad„nderungen
+  in der Datei-Auswahlbox und anschlieáender Dateiauswahl werden Pfad
+  und Wildcard fr die n„chste <F2>-Auswahl gespeichert.
+  XP1O.PAS
+
+- <F2>-Auswahl untersttzt jetzt Links-/Rechts-Scrolling (angezeigt
+  durch Hinweispfeile)
+  MASKE.INC
+
+- Datei-Auswahlbox zeigt Scroll-M”glichkeit durch Hinweispfeile an
+  WIN2.PAS
+
+- Online-Hilfe zeigt Scroll-M”glichkeit durch Hinweispfeile an
+  HELP.PAS
+
+- Neue Tastenfunktion in Texteingabe-Feldern: <Ctrl-A> markiert das
+  gesamte Eingabefeld
+  MASKE.INC, XP.IHQ
+
+- UUDECODE: Richtiges Hilfe-Fenster auch aus Lister heraus; Hilfe
+  berarbeitet; Bugfix fr Aufruf aus Lister: Datenbank am Ende auf
+  alte Nachricht zurcksetzen
+  XP_UUE.PAS, XP.IHQ
+
+- Uhr im Archiv-Viewer aktiviert
+  XP1S.INC
+
+- ASCII-Code-Auswertung in der Hilfe beschleunigt
+  HELP.PAS
+
+- String "CrossPoint" statt "CrossPoint/OpenXP" wird bei RFC/Client-
+  Netcalls nur noch dann rechts unten angezeigt, wenn dort vorher auch
+  "CrossPoint/OpenXP" stand und nicht durch Funktionstasten ausgeblendet
+  war.
+  XP7U.INC
+
+- Verbesserungen an Displayroutinen (u.a. Feldtausch, rund 1k weniger
+  Speicherverbrauch)
+  XP4D.INC
+
+- Online-Hilfe an die neuen Features und Funktionen angepaát, weitere
+  Hilfepunkte ge„ndert/korrigiert/vervollst„ndigt.
+  XP.IHQ
+
+- Bei Netcall/Alle und /n:* wird eine Semaphore NETCALL.ALL im
+  XP-Verzeichnis erzeugt (und nach Abarbeitung der Netcall-Liste
+  wieder gel”scht), die von Netcall-Batches ausgewertet werden kann
+  (z.B. um zwischen den Netcalls mehrerer Boxen die Verbindung *nicht*
+  zu trennen). Beim Netcall der letzten Box in der Netcall-Liste wird
+  die Datei in NETCALL.END umbenannt.
+  XP.PAS, XP10.INC
+
+- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
+  erzeugt.
+  XP3O2.PAS, XP6.PAS
+
+
+Bugfixes
+========
+
+- Nach Aufruf der User-Auswahl mit <F2> (z.B. Weiterleiten/User oder
+  Nachricht/Direkt) und Umschalten auf Alle ("A") war nach Absenden der
+  Nachricht und Wechsel in die User-šbersicht mit <Tab> die User-Anzeige
+  verstmmelt
+  XP4.PAS
+
+- Select-Routine (mappsel) strzt nicht mehr ab, wenn String gr”áer als
+  Bildschirmbreite ist (akut in Suchbegriff-History)
+  MASKE.INC
+
+- <Ctrl-D> (Drucken) in Nachrichten-šbersicht war zwar dokumentiert,
+  funktionierte aber nicht. Drucken mit "R" geht auch noch, weil in 2.
+  Menzeile der User-šbersicht so dokumentiert
+  XP4.PAS, XP-D.RQ
+
+- "O" nach <Ctrl-PgUp/PgDn> im Lister berschrieb den Bildschirm-
+  eintrag, auf den der Cursorbalken in der Nachrichtenbersicht
+  gebl„ttert wurde, mit der Nachricht, bei der der Lister gestartet
+  wurde.
+  XP4W.INC, XP1O.PAS
+
+- Wenn im Editor der Suchbegriff ab der zweiten Zeile eines Absatzes
+  auftauchte, hing die Suche an dieser Fundstelle fest
+  EDITOR.INC
+
+- Wenn in Pos1 einer eingerckten Zeile <Enter> gedrckt wird, bleibt
+  die Einrckung jetzt erhalten.
+  EDITOR.INC
+
+- Wenn in Pos1 einer eingerckten Quote-Zeile <Backspace> gedrckt
+  wurde, wurde kein Leerzeichen hinzugefgt.
+  EDITOR.INC
+
+- Beim Einlesen von Nachrichten mit Absendern l„nger als 80 Zeichen
+  wurden die Userflags (Priorit„t, Filter, Empfbest.) des letzten DB-
+  Eintrags verwendet (dBSeek ging ins Leere, weil der Eintrag gr”áer 80
+  Zeichen nicht gefunden werden kann). Adresse wird jetzt auf eAdrLen
+  (79 Zeichen) gekrzt.
+  XP3O.INC
+
+- Undokumentierte Funktion <Alt-A> im Sendefenster (Absender „ndern)
+  bernahm den Absender nicht korrekt, wenn bei einer Fido-Nachricht mit
+  <F2> ein anderer Absender ausgew„hlt wurde.
+  XP6.PAS
+
+- Wildcard-Volltextsuche "*" hat Nachrichten gefunden, die nicht h„tten
+  gefunden werden drfen (es wurde nur das erste Zeichen hinter dem "*"
+  verglichen, wenn das Ende des berprften Worts nicht vor dem Ende des
+  Suchbegriffs kam -"b*el" fand "Bier" und "Birnen", aber nicht
+  "Birne").
+  XP3.PAS
+
+
+
+Interne nderungen
+==================
+
+- šbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+  XP1S.INC, LISTER.PAS
+
+- DoSend: Betreffabfrage ausgelagert als "EditBetreff"
+  (Prozedurrumpfgr”áe)
+  XP6.PAS
+
+- DOSEmuVersion nach CLIP.PAS verlagert (Overlay)
+  TYPEFORM.PAS, CLIP.PAS
+
+- Einige Funktionen nach ASM umgeschrieben (Trim, Range, Hex, Sgn, Min,
+  Max, Minmax, Blankpos, Firstchar, Lastchar)
+  TYPEFORM.PAS
+
+- Selten benutzte Routinen von TYPEFORM nach XPOVL verlagert
+  (damit ca. 4k von EXE/Speicher ins Overlay verfrachtet).
+  TYPEFORM.PAS, [XPOVL.PAS], *.* ('uses xpovl')
+
+- 'Testshare' jetzt in ASM
+  FILEIO.PAS
