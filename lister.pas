@@ -1181,7 +1181,7 @@ begin
     if stat.statline then begin
       attrtxt(col.colstatus);
       mwrt(l,o,sp(w));
-      mwrt(l+w-length(txt)-iif(listuhr and (o=1),7,0),o,txt);
+      mwrt(l+(screenwidth-1)-length(txt)-iif(listuhr and (o=1),7,0),o,txt);
       end;
     attrtxt(col.coltext);
     clwin(l,l+w-1,y,y+gl-1);
@@ -1613,6 +1613,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.13  2002/03/27 19:47:54  my
+  MY:- Bei der Anzeige von Dateien im internen Lister wird der Dateiname
+       in der Kopfzeile jetzt immer an derselben Stelle angezeigt.
+       (Unabh„ngig von der Einstellung C/O/L/Rollbalken_bei_Mausbedienung)
+
   Revision 1.19.2.12  2002/03/08 23:16:02  my
   JG:- Wenn im Brettmanager eine Markiersuche mit "s" durchgefhrt wurde
        und die eingestellte Farbe fr Zeilen- und Wortmarkierung identisch
