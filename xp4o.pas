@@ -74,7 +74,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
      xp_pgp;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 73;  {JG:06.02.00 wieder auf 80 gesetzt...}
+      suchlen = 120;
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -2455,6 +2455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.22  2001/01/04 09:57:23  mk
+  - Suchlaenge auf 120 Zeichen erhoeht
+
   Revision 1.47.2.21  2001/01/01 20:17:01  mo
   -Spezialsuche in markierten Brettern -lter Satnd wieder hergesetllt
 
