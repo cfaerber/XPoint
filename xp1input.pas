@@ -176,6 +176,32 @@ begin
           end
         else
           repeat get(t,curoff) until t<>#0#0;
+      if t = keyalta then t := 'a' else
+      if t = keyaltb then t := 'b' else
+      if t = keyaltc then t := 'c' else
+      if t = keyaltd then t := 'd' else
+      if t = keyalte then t := 'e' else
+      if t = keyaltf then t := 'f' else
+      if t = keyaltg then t := 'g' else
+      if t = keyalth then t := 'h' else
+      if t = keyalti then t := 'i' else
+      if t = keyaltj then t := 'j' else
+      if t = keyaltk then t := 'k' else
+      if t = keyaltl then t := 'l' else
+      if t = keyaltm then t := 'm' else
+      if t = keyaltn then t := 'n' else
+      if t = keyalto then t := 'o' else
+      if t = keyaltp then t := 'p' else
+      if t = keyaltq then t := 'q' else
+      if t = keyaltr then t := 'r' else
+      if t = keyalts then t := 's' else
+      if t = keyaltt then t := 't' else
+      if t = keyaltu then t := 'u' else
+      if t = keyaltv then t := 'v' else
+      if t = keyaltw then t := 'w' else
+      if t = keyaltx then t := 'x' else
+      if t = keyalty then t := 'y' else
+      if t = keyaltz then t := 'z';
       stop:=false;
       if (t>=mausfirstkey) and (t<=mauslastkey) then
         maus_bearbeiten;
@@ -441,6 +467,9 @@ end;
 
 {
   $Log$
+  Revision 1.33  2003/08/24 23:56:46  cl
+  - added ALT+[A..Z] as alternative to [A..Z]
+
   Revision 1.32  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
