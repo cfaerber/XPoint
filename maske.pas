@@ -119,18 +119,18 @@ procedure maskUpDownArrows(x1,y1,x2,y2:byte; fill:char; col:byte);
 
 { Integer-Typen: 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
-procedure Maddtext(x,y:byte; text:string; att:byte);   { Anzeigetext anfÅgen }
-procedure Maddstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
+procedure Maddtext(x,y:integer; text:string; att:byte);   { Anzeigetext anfÅgen }
+procedure Maddstring(x,y:integer; text:string; var s:string; displ,maxl:integer;
                      chml:string);
-procedure Maddint(x,y:byte; text:string; var int; ityp,displ:byte;
+procedure Maddint(x,y: integer; text:string; var int; ityp,displ:integer;
                      imin,imax:longint);
-procedure Maddreal(x,y:byte; text:string; var r:real; displ,rnk : byte;
+procedure Maddreal(x,y: integer; text:string; var r:real; displ,rnk : integer;
                      rmin,rmax : real);
-procedure Maddbool(x,y:byte; text:string; var b:boolean);
-procedure Maddform(x,y:byte; text:string; var s:string; form,chml:string);
-procedure Madddate(x,y:byte; text:string; var d:string; long,mbempty:boolean);
-procedure Maddtime(x,y:byte; text:string; var t:string; long:boolean);
-procedure Maddcustomsel(x,y:byte; text:string; var s:string; displ:byte;
+procedure Maddbool(x,y:integer; text:string; var b:boolean);
+procedure Maddform(x,y:integer; text:string; var s:string; form,chml:string);
+procedure Madddate(x,y:integer; text:string; var d:string; long,mbempty:boolean);
+procedure Maddtime(x,y:integer; text:string; var t:string; long:boolean);
+procedure Maddcustomsel(x,y:integer; text:string; var s:string; displ:integer;
                         cp:customsel);
 
 
@@ -590,7 +590,7 @@ end;
 { reinen Anzeigetext anfÅgen }
 { attr=0 -> ColFeldName      }
 
-procedure Maddtext(x,y:byte; text:string; att:byte);
+procedure Maddtext(x,y:integer; text:string; att:byte);
 var p : textnodep;
 begin
   with amaskp^ do begin
@@ -678,7 +678,7 @@ end;
 { '<'  ->  automatische Umwandlung in Kleinbuchstaben     }
 { '!'  ->  automatische Gro·schreibung des 1. Buchstabens }
 
-procedure Maddstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
+procedure Maddstring(x,y:integer; text:string; var s:string; displ,maxl:integer;
                      chml:string);
 var p : byte;
 begin
@@ -702,7 +702,7 @@ end;
 { Integer AnfÅgen
   Typ 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
-procedure Maddint(x,y:byte; text:string; var int; ityp,displ:byte;
+procedure Maddint(x,y:integer; text:string; var int; ityp,displ:integer;
                   imin,imax:longint);
 var l : longint;
     s : s40;
@@ -734,7 +734,7 @@ end;
 
 { Real anfÅgen }
 
-procedure Maddreal(x,y:byte; text:string; var r:real; displ,rnk : byte;
+procedure Maddreal(x,y:integer; text:string; var r:real; displ,rnk :integer;
                    rmin,rmax : real);
 var s : s40;
 begin
@@ -756,7 +756,7 @@ end;
 
 { Bool-Wert anfÅgen }
 
-procedure Maddbool(x,y:byte; text:string; var b:boolean);
+procedure Maddbool(x,y:integer; text:string; var b:boolean);
 begin
   if amaskp^.stat.checkbutts then begin
     text:=trimright(text);
@@ -785,7 +785,7 @@ end;
 { Alle anderen Stellen werden aus dem Format Åbernommen.    }
 { Wenn s='', dann wird s:=form gesetzt.                     }
 
-procedure Maddform(x,y:byte; text:string; var s:string; form,chml:string);
+procedure Maddform(x,y:integer; text:string; var s:string; form,chml:string);
 begin
   if s='' then s:=form;
   MAddString(x,y,text,s,length(form),length(form),chml);
@@ -801,7 +801,7 @@ end;
 { long -> langes Datumsformat }
 { mbempty -> may be empty     }
 
-procedure Madddate(x,y:byte; text:string; var d:string; long,mbempty:boolean);
+procedure Madddate(x,y:integer; text:string; var d:string; long,mbempty:boolean);
 begin
   Maddform(x,y,text,d,iifs(long,'  .  .    ','  .  .  '),' 0123456789');
   with lastfld^ do begin
@@ -814,7 +814,7 @@ end;
 
 { Uhrzeit anfÅgen }
 
-procedure Maddtime(x,y:byte; text:string; var t:string; long:boolean);
+procedure Maddtime(x,y:integer; text:string; var t:string; long:boolean);
 begin
   Maddform(x,y,text,t,iifs(long,'  :  :  ','  :  '),'0123456789');
   lastfld^.typ:=9;
@@ -827,7 +827,7 @@ end;
 { displ : Anzeige-LÑnge (wg. forms)                   }
 { Das Feld ist nicht mehr editierbar!                 }
 
-procedure Maddcustomsel(x,y:byte; text:string; var s:string; displ:byte;
+procedure Maddcustomsel(x,y:integer; text:string; var s:string; displ:integer;
                         cp:customsel);
 begin
   Maddstring(x,y,text,s,displ,displ,'');
@@ -1286,6 +1286,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2001/01/04 10:10:47  mk
+  - changed some byte to integer
+
   Revision 1.24  2000/12/28 14:45:00  mk
   CL:- first things for UUCP over IP
 
