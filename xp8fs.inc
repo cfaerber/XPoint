@@ -249,10 +249,8 @@ end;
 
 
 function UUsendTestSourcefile(var s:string):boolean;
-var{ f    : file;
-    sr   : tsearchrec;
-    rc   : integer;}
-    name : string;
+var
+  name : string;
 
    procedure SetDestfile;
    begin
@@ -262,14 +260,12 @@ var{ f    : file;
 
 begin
   s:=ExpandFileName(s);
-  {assign(f,s); reset(f,1); close(f);
-  if ioresult=0 then begin // Na toll }
   if FileExists(s) and not isPath(s) then begin
     SetDestfile;
     UUSendTestSourcefile:=true;
   end else begin                        { Datei fehlt }
-    if not multipos('*?',s) then begin
-      { rc:= findfirst(s,faAnyFile,sr); } { Sie wird wohl kaum jetzt da sein! }
+    if not multipos('*?',s) then
+    begin
       if (LastChar(s)<>DirSepa) {and (rc<>0)} then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
@@ -560,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2002/04/08 23:02:47  mk
+  - changed some AddDirSepa in IncludeTrailingPathDelimiter
+
   Revision 1.29  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

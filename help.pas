@@ -171,7 +171,8 @@ function inithelp(name:string; xh,yh:byte;
 var ixadr : longint;
     fm      : byte;
 begin
-  if cPos('.',ExtractFileName(name))=0 then name:=name + extHelp;
+  if ExtractFileExt(name) = '' then
+    Name := ChangeFileExt(Name, extHelp);
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
@@ -779,6 +780,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45  2002/04/08 23:02:47  mk
+  - changed some AddDirSepa in IncludeTrailingPathDelimiter
+
   Revision 1.44  2002/03/20 23:44:35  ma
   - number of page is displayed now if help page missing
 

@@ -512,7 +512,7 @@ var
   sr : TSearchrec;
 begin
   if SysUtils.FindFirst(s, faAnyfile, sr) = 0 then repeat
-    sysutils.DeleteFile(AddDirSepa(ExtractFilePath(s))+sr.name);
+    sysutils.DeleteFile(IncludeTrailingPathDelimiter(ExtractFilePath(s))+sr.name);
   until SysUtils.FindNext(sr) <> 0;
   sysutils.FindClose(sr);
 end;
@@ -574,8 +574,8 @@ begin
   if not IsPath(path)then exit;
   repeat
     n:=formi(random(10000),4)+'.tmp'
-  until not FileExists(AddDirSepa(path)+n);
-  result:=AddDirSepa(path)+n;
+  until not FileExists(IncludeTrailingPathDelimiter(path)+n);
+  result:= IncludeTrailingPathDelimiter(path)+n;
 end;
 
 function TempExtFile(path,startnamewith,ext:string):string;
@@ -719,6 +719,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2002/04/08 23:02:47  mk
+  - changed some AddDirSepa in IncludeTrailingPathDelimiter
+
   Revision 1.113  2002/03/23 09:48:31  mk
   - remove debuginfo from MakeBak
   - MakeBak returns true on success, instead of false
