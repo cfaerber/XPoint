@@ -180,7 +180,7 @@ begin
   partsex := true;
 end;
 
-procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String);
+procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String;FidoOrigin:String);
 var ins,outs:TStream;
 begin
   // The stream passed must not be destroyed!
@@ -188,7 +188,7 @@ begin
  try
   TNullCodecStream(outs).OtherStream := s1;
   TNullCodecStream(outs).DestroyOtherStream := false;
- 
+
   if FileExists(pa.FileName) then
     ins := TFileStream.Create(pa.FileName,fmOpenRead)
   else
@@ -228,7 +228,7 @@ begin
 
   ins.Free;
 
-  if (SigFile<>'') and FileExists(SigFile) then
+  if ((SigFile<>'') and FileExists(SigFile)) or (FidoOrigin<>'') then
   begin
     if outs is TMimeEolCodecStream then
       UnconnectStream(outs);
@@ -239,12 +239,18 @@ begin
     if DoEncode or not MIMESaveCharsetAsCP437(pa.FileCharset) then
       ConnectStream(outs,TCharsetEncoderStream.Create('IBM437',pa.ContentCharset));
 
-    ins := TFileStream.Create(sigfile,fmOpenRead);
-    try
-      CopyStream(ins,outs);
-    except
-    end;
+    if ((SigFile<>'') and FileExists(SigFile)) then
+    begin
+      ins := TFileStream.Create(sigfile,fmOpenRead);
+      try
+        CopyStream(ins,outs);
+      except
+      end;
       ins.Free;
+    end;
+
+    if FidoOrigin<>'' then
+      writeln_s(outs,FidoOrigin);
   end;
 
  finally
@@ -270,11 +276,32 @@ begin
       writeln_s(s1,'Content-Description: ' + ContentDescription);
     writeln_s(s1,'');
   end;
-  MIMEWriteContent(s,pa,true,sigfile);
+  MIMEWriteContent(s,pa,true,sigfile,'');
 end;
+
+{$IFDEF 0}
+procedure UUEncodeWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String;FidoOrigin:String);
+var ins,outs:TStream;
+begin
+  // The stream passed must not be destroyed!
+  outs := TNullCodecStream.Create;
+  try
+
+
+
+
+  finally
+    assert(pointer(outs)<>pointer(s1));
+    outs.Free; // will not destroy s1!
+  end;
+end;
+{$ENDIF}
 
 //
 // $Log$
+// Revision 1.5  2001/09/16 23:01:20  cl
+// - BUGFIX: Fido tearline now added
+//
 // Revision 1.4  2001/09/10 17:25:50  cl
 // - BUGFIX: crash on line end conversion
 //

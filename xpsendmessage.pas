@@ -1669,15 +1669,48 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
              ContentCharset:=MimeCharsetCanonicalName(ContentCharset);
            end;
 
-           // Determine whether we can use the file unchanged:
+{$IFDEF 0}
+           if ntBinEncode(netztyp) and (hdp.typ='B') then
+           begin
+             hdp.typ='T';
+             hdp.charset:='IBM437';
+             hdp.x_charset:='';
 
-           if (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
+             s1 := TMemoryStream.Create;
+
+             writeln_s(s1,'Diese Nachricht beinhaltet eine uu-codierte Bin„rdatei. Verwenden Sie');
+             writeln_s(s1,'das Programm uudecode zum Decodieren.');
+             writeln_s(s1,'');
+             writeln_s(s1,'This message contains an uu-encoded binary file. Use uudecode to obtain');
+             writeln_s(s1,'the original file.');
+
+             UUEncodeWriteContent(s1,TSendAttach_Part(parts[0]));
+
+             if not flOhnesig and (sigfile<>'') then
+             try
+               s2 := TFileStream.Create(sigfile,fmOpenRead);
+               try
+                 CopyStream(s2,s1);
+               finally
+                 s2.Free;
+               end;
+             except
+             end;
+
+             if netztyp in [nt_Fido] then
+               writeln_s(s1,fido_origin);
+
+           end else
+{$ENDIF}           
+           // Determine whether we can use the file unchanged:
+           if (netztyp=nt_Fido) or (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
               ((IsMessage) and not flOhnesig and (sigfile<>'')) or
               (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) then
            begin
              s1 := TMemoryStream.Create;
              MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
-               iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''));
+               iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''),
+               fido_origin);
              if ContentType.NeedCharset then begin
                hdp.charset:=MimeCharsetToZC(FileCharset);
                hdp.x_charset:=ContentCharset;
@@ -1690,6 +1723,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                hdp.x_charset:=ContentCharset;
              end;
            end;
+
          end; // with
       else
       begin
@@ -1721,7 +1755,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             writeln_s(s1,'--'+boundary);
             MIMEWriteContentWithHeaders( s1,TSendAttach_Part(parts[i]),
               iifs((i=0) and (IsMessage) and
-                not flOhnesig and (sigfile<>''),SigFile,'') );
+                not flOhnesig and (sigfile<>''),SigFile,''));
             writeln_s(s1,'');
             if (hdp.mime.Encoding=MimeEncoding7bit) and (ContentEncoding=MimeEncoding8bit) then
               hdp.mime.Encoding:=MimeEncoding8bit else
@@ -2070,7 +2104,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           s1.Free; s1:=TMemoryStream.Create;
           with TSendAttach_Part(parts[0]) do
             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
-              iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''));
+              iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''),
+              fido_origin);
           hdp.typ:='M';
         end;
 
@@ -2079,10 +2114,6 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
         if (docode in [8,9]) then
           XP_PGP.PGP_MimeEncodeStream(s1,hdp,passwd);
-
-        begin
-          // encrypt as multipart/encrypted
-        end;
       end;
 
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
@@ -2282,6 +2313,9 @@ finalization
 
 {
   $Log$
+  Revision 1.16  2001/09/16 23:01:20  cl
+  - BUGFIX: Fido tearline now added
+
   Revision 1.15  2001/09/16 18:01:40  ma
   - removed bin_msg (seems to be some relic, caused error messages with fido)
 

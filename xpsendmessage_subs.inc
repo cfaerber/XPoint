@@ -183,7 +183,7 @@ begin
     end;
 end;
 
-function fido_origin(withcr:boolean):string;
+function fido_origin:string;
 var s : string;
 begin
   if netztyp<>nt_fido then
@@ -201,8 +201,6 @@ begin
         fidoname:=OriShuffle(trim(mid(fidoname,9)));
       s:=s+#13#10' * Origin: '+fidoname+' ('+FidoAbsAdr+')';
       end;
-    if withcr then
-      s:=s+#13#10;
     fido_origin:=s;
     end;
 end;
@@ -212,7 +210,7 @@ begin
   addsize:=0;
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
-  inc(addsize,length(fido_origin(true)));
+  inc(addsize,length(fido_origin));
 { if flMnet then inc(addsize,length(MausNet)+2);
   if flMloc then inc(addsize,length(MausLoc)+2); }
 end;
@@ -1106,6 +1104,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2001/09/16 23:01:20  cl
+  - BUGFIX: Fido tearline now added
+
   Revision 1.9  2001/09/12 21:22:12  cl
   - added flag PGP/MIME-Sig
 
