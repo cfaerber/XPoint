@@ -484,7 +484,7 @@ begin
   { /oh }
   Screenlines:=25;
 {$IFDEF UnixFS }
-  temppath:=ownpath+'temp/';                {alt: temppath:=ownpath;}
+  temppath:='/var/tmp/';                    {alt: temppath:=ownpath;}
   extractpath:=ownpath+'files/';            {alt: extractpath:='';}
   sendpath:=ownpath+'send/';                {alt: sendpath:='';}
   logpath:=OwnPath+'log/';                  {alt: logpath:=OwnPath;}
@@ -1716,6 +1716,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.50  2000/05/08 18:34:45  hd
+  - /var/tmp unter Linux als Default
+
   Revision 1.49  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog
