@@ -61,7 +61,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  FileIO,xpovl,mouse;
+  xp1,FileIO,xpovl,mouse;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -107,7 +107,7 @@ begin
 
   for i:=1 to slan do
   begin
-    findfirst(slas[i],archive,sr);
+    findfirst(slas[i],dos.archive,sr);
     while doserror=0 do begin
       if lnum<500 then begin
         inc(lnum);
@@ -201,8 +201,15 @@ var   fb     : pathstr;
  mausscroll : boolean;
  aue,ade,au,ad,ab :boolean;
 
-  procedure AddFnItem(s: String);
+  function AddFnItem(s: String):boolean;
   begin
+    AddFnItem:=false;
+    if maxavail<length(s) then
+    begin
+      hinweis('Speichermangel! maxavail = '+strs(maxavail));
+      exit;
+    end;
+    AddFnItem:=true;
     Inc(fn);
     GetMem(f^[fn], Length(s)+1);
     FastMove(s, f^[fn]^, Length(s)+1);
@@ -494,10 +501,10 @@ begin
     fsplit(path,dir,name,ext);
     if xdir then begin
       doppelpunkt:=false;
-      findfirst(dir+WildCard,directory+archive,sr);
+      findfirst(dir+WildCard,dos.directory+dos.archive,sr);
       while (doserror=0) and (fn<maxf) do begin
-        if (sr.name<>'.') and ((sr.attr and directory)<>0) then begin
-          AddFnItem(#253+sr.name);
+        if (sr.name<>'.') and ((sr.attr and dos.directory)<>0) then begin
+          if not AddFnItem(#253+sr.name) then break;
           if f^[fn]^[2]='.' then begin
             f^[fn]^[1]:=#255; doppelpunkt:=true;
             end;
@@ -506,18 +513,18 @@ begin
       end;
       Findclose(sr);
       if (fn<maxf) and not doppelpunkt and (length(dir)>3) then
-        AddFnItem(#255+'..');
+        if not AddFnItem(#255+'..') then break;
       for i:=1 to length(drives) do
         if fn<maxf then
-          AddFnItem(#254'['+drives[i]+':]');
+          if not AddFnItem(#254'['+drives[i]+':]') then break;
       end;
     for x:=1 to pathn do
     begin
-      findfirst(paths[x],readonly+archive,sr);
+      findfirst(paths[x],dos.readonly+dos.archive,sr);
       while (doserror=0) and (fn<maxf) do
       begin
         if sr.name<>'.' then
-          AddFnItem(sr.name);
+          if not AddFnItem(sr.name) then break;
         findnext(sr);
       end;
       Findclose(sr);
@@ -865,14 +872,14 @@ var   i,j     : integer;
       { n1   : word;  MK 14.02.2000 Variable wird nicht benutzt }
       de   : integer;
   begin
-    findfirst(p+'*.*',directory+hidden+readonly+sysfile,sr);
+    findfirst(p+'*.*',dos.directory+dos.hidden+dos.readonly+dos.sysfile,sr);
     de:=doserror;
     with sr do
-      while (de=0) and (((attr and directory)=0) or (name[1]='.')) do begin
+      while (de=0) and (((attr and dos.directory)=0) or (name[1]='.')) do begin
         testbrk(brk); if brk then exit;
         findnext(sr);
         de:=doserror;
-        if (de=0) and (attr and (directory+volumeid)=0) then begin
+        if (de=0) and (attr and (dos.directory+dos.volumeid)=0) then begin
           inc(dsfiles);
           inc(dsb,size);
           end;
@@ -886,11 +893,11 @@ var   i,j     : integer;
         repeat
           testbrk(brk); if brk then exit;
           findnext(sr);
-          if (doserror=0) and (attr and (directory+volumeid)=0) then begin
+          if (doserror=0) and (attr and (dos.directory+dos.volumeid)=0) then begin
             inc(dsfiles);
             inc(dsb,size);
             end;
-        until (doserror<>0) or (((attr and directory)<>0) and (name[1]<>'.'));
+        until (doserror<>0) or (((attr and dos.directory)<>0) and (name[1]<>'.'));
       Findclose(sr);
       de:=doserror;
       if de=0 then econt:=econt+[succ(ebene)]
@@ -1160,6 +1167,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.15  2002/04/07 22:40:01  my
+  SV:- Fix: Speicherleck bei Laufwerks-/Verzeichniswechsel in
+       Dateiauswahl-Fenster (fsbox) beseitigt (es wurde nur der Speicher
+       des jeweils zuletzt angezeigten Verzeichnisses wieder freigegeben).
+
+  JG[+MY]:- Sicherheits-Fix: Bei der Reservierung des Speichers fÅr den
+            Dateinamen im Dateiauswahl-Fenster wird jetzt sicherheits-
+            halber vorher geprÅft, ob der angeforderte Speicher Åberhaupt
+            verfÅgbar ist und ggf. abgebrochen.
+
   Revision 1.16.2.14  2002/04/07 20:35:20  sv
   - Speicherleck in fsbox bei Laufwerks-/Verzeichniswechsel beseitigt
 
