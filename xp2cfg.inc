@@ -314,6 +314,8 @@ begin
   inc(longint(rp));
   rp^:=false;
 
+  BadConfigLinesList := TStringList.Create;
+
   fnproc[0,1]:=hilfe;
   fnproc[3,1]:=hilfealt;
   fnproc[0,9]:=dosshell;
@@ -884,25 +886,19 @@ begin
   writeln(t,'ListFixedHead=',jnf(listfixedhead));
   writeln(t,'MaggiVerkettung=',jnf(MaggiVerkettung));
   writeheaderlines;
-  { 01/2000 oh }
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
-  { /oh }
   writeln(t,'TimeZone=',timezone);
   writeln(t,'SaveType=',savetype);
   writeln(t,'Maxcrosspost=',maxcrosspost);
-  { 20.01.2000 robo }
   writeln(t,'MailDelXPost=',jnf(maildelxpost));
-  { /robo }
   writeln(t,'Waehrung=',waehrung);
   writeln(t,'GebNoconn=',gebnoconn);
   writeln(t,'GebCfos=',jnf(GebCfos));
   writeln(t,'Feiertage=',jnf(autofeier));
   writeln(t,'Shell-Showpar=',jnf(ShellShowpar));
   writeln(t,'Shell-Waitkey=',jnf(ShellWaitkey));
-  { 03.02.2000 robo }
   writeln(t,'AskReplyTo=',jnf(askreplyto));
-  { /robo }
   writeln(t,'UsePGP=',jnf(UsePGP));
   writeln(t,'PGP-Batchmode=',jnf(PGPbatchmode));
   writeln(t,'PGP-UserID=',PGP_UserID);
@@ -911,10 +907,8 @@ begin
   writeln(t,'PGP-WaitKey=',jnf(PGP_WaitKey));
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
-  { 01/2000 oh }
   writeln(t,'PGP-Version=',PGPVersion);
   writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
-  { /oh }
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -928,6 +922,11 @@ begin
   writeln(t,'UsrFeldTausch=',UsrFeldTausch);
   writeln(t,'Magics=',jnf(Magics));
   writeln(t,'Brettkommentar=',jnf(brettkomm));
+
+  // Alle nicht erkannten Zeilen werden jetzt wieder eingefÅgt
+  for i := 0 to BadConfigLinesList.Count -1  do
+    Writeln(t, BadConfigLinesList[i]);
+
   wrhd(4);                                             { Z-Netz }
   writeln(t,'Kleinschreibung=',jnf(smallnames));
   writeln(t,'InterruptLogin=',jnf(BreakLogin));
@@ -1532,7 +1531,13 @@ begin
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel))
         then
-          tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
+          // Zeile wurde nicht erkannt und wird fÅr das spÑtere
+          // Neuschreiben der Config aufgehoben
+          // Evtl. weitere Fehlerbehandlung/Logfile
+          if Pos('=', s) > 0 then
+            BadConfigLinesList.Add(s)
+          else
+            TFehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
       end;
     close(t);
@@ -1690,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.78  2000/07/20 18:11:55  mk
+  - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
+
   Revision 1.77  2000/07/20 16:49:57  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

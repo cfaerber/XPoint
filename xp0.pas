@@ -17,7 +17,8 @@ unit xp0;
 
 interface
 
-uses  dos,typeform,keys,xpglobal;
+uses
+  dos,typeform,keys,xpglobal, classes;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -1178,11 +1179,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        maxcrosspost : byte;          { Filter fÅr Massen-Crosspostings }
        maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? }
        KeepRequests : boolean;       { Requests zurÅckstellen }
-{$ifdef hasHugeString}
        waehrung     : string;
-{$else}
-       waehrung     : string[5];
-{$endif}
        gebnoconn    : longint;       { GebÅhren fÅr nicht zustandegek. Verb. }
        gebCfos      : boolean;       { GebÅhrenÅbernahme von cFos }
        autofeier    : boolean;       { Feiertage bei GebÅhren berÅcksichtigen }
@@ -1354,11 +1351,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Nodelist    : NL_ap;          { Node-/Pointlisten }
        NL_anz      : byte;           { Anzahl " }
        NodeOpen    : boolean;        { Nodelist(en) vorhanden & geîffnet }
-{$ifdef hasHugeString}
        ShrinkNodes : string;    { Nodeliste einschrÑnken }
-{$else}
-       ShrinkNodes : string[100];    { Nodeliste einschrÑnken }
-{$endif}
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
        KomShowadr  : boolean;        { <-> BaumAdresse }
        gAKAs       : string;        { globale AKA-Adressliste }
@@ -1366,13 +1359,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Postadresse : String;
        TelefonNr   : String;
        wwwHomepage : String;
-{$ifdef hasHugeString}
        BrettAlle   : string;     { StandardempfÑnger fÅr Brettnachrichten }
        fidoto      : string;     { XP6: EmpfÑngername bei Brettnachr.     }
-{$else}
-       BrettAlle   : string[20];     { StandardempfÑnger fÅr Brettnachrichten }
-       fidoto      : string[35];     { XP6: EmpfÑngername bei Brettnachr.     }
-{$endif}
        FidoDelEmpty: boolean;        { 0-Byte-Nachrichten lîschen }
        KeepVia     : boolean;        { ZFIDO: Option -via }
 
@@ -1404,11 +1392,18 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
 {$ENDIF}
 
+  // Speichert alle Zeilen in der Konfiguration, die nicht
+  // erkannt und ausgewertet wurden, siehe xp2cfg.inc
+  BadConfigLinesList: TStringList;
+
 implementation
 
 end.
 {
   $Log$
+  Revision 1.76  2000/07/20 18:11:55  mk
+  - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
+
   Revision 1.75  2000/07/12 16:49:42  ma
   - Comminit-String-Konfigurationseintrag hinzugefuegt
 

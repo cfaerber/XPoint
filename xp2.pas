@@ -28,7 +28,7 @@ uses
   sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
-  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
+  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy, classes;
 
 
 procedure zusatz_menue;
@@ -1071,6 +1071,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/07/20 18:11:55  mk
+  - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
+
   Revision 1.59  2000/07/12 15:27:01  hd
   - Ansistring
 
