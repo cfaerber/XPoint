@@ -43,6 +43,9 @@ begin
   writeln;
   writeln(txt);
   runerror:=false;
+{$IFDEF Unix}
+   readln;         { better debuggin with readable Messages... }
+{$ENDIF}   
   halt(1);
 end;
 
@@ -167,6 +170,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.32  2000/11/04 13:56:33  ml
+  - Error-Messages are now readable in linux (stop-Procedure)
+
   Revision 1.31  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
