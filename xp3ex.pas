@@ -371,7 +371,7 @@ var size   : longint;
     blockread(f,s[1],200,rr);
     if rr<>200 then SetLength(s,rr);
     p:=max(0,length(s)-20);
-    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+    while (p>0) and (copy(s,p,5)<>#13#10'---') and (copy(s,p,4)<>#13'---') do
       dec(p);
     if p>0 then begin
       seek(f,l+p-1);
@@ -392,14 +392,18 @@ var size   : longint;
     blockread(f,s[1],200,rr);
     if rr <> 200 then setlength(s, rr);
     p:=max(0,length(s)-20);
-    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+    while (p>0) and (copy(s,p,5)<>#13#10'---') and (copy(s,p,4)<>#13'---') do
       dec(p);
-    if p>0 then begin
+    if p>0 then
+    begin
+      if s[p+4] <> '-' then dec(p);
       seek(f,l+p+2);
       blockwrite(f,splus[1],1);
-      while (p<length(s)-11) and (copy(s,p,13)<>#13#10' * Origin: ') do
+      while (p<length(s)-11) and (copy(s,p,13)<>#13#10' * Origin: ')
+        and (copy(s,p,12)<>#13' * Origin: ') do
         inc(p);
-      if p<length(s)-13 then begin
+      if p<length(s)-12 then
+      begin
         seek(f,l+p+2);
         blockwrite(f,splus[1],1);
       end;
@@ -1081,6 +1085,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/12/31 11:08:08  mk
+  - Chg_Tearline und Clip_Tearline verarbeiten jetzt auch #13---
+
   Revision 1.57  2000/12/29 10:32:26  mk
   - fixed Bug #109282: Fido: N/W/K
 
