@@ -420,7 +420,6 @@ var sr    : tsearchrec;
 
   function SendMsg(delfile:boolean):boolean;
   var t1,t2 : text;
-      buf   : pointer;  //buffer for t1
       p     : byte;
       empf  : string;
       betr  : string;
@@ -444,116 +443,110 @@ var sr    : tsearchrec;
 
 
   begin
-    sData := nil;
-   try
-
-    SendMsg:=false;
-    empf:=''; betr:='';
-    box:=''; datei:='';
-    attach := False;
-    bs := 8192;
-    getmem(buf,bs);
-    assign(t1,AutoxDir+sr.name);
-    settextbuf(t1,buf^,bs);
-    reset(t1);
-    s:='*';
-    while not eof(t1) and (s<>'') do begin
-      readln(t1,s);
-      p:=cpos(':',s);
-      if p>0 then begin
-        hdr:=LowerCase(LeftStr(s,p-1));
-        if (hdr='empfaenger') or (hdr='empf„nger') or (hdr='to') then
-          empf:=trim(mid(s,p+1)) else
-        if (hdr='betreff') or (hdr='subject') then
-          betr:=trim(mid(s,p+1)) else
-        if hdr='server' then
-          box:=trim(mid(s,p+1)) else
-        if (hdr='datei') or (hdr='file') then
-          datei:=FileUpperCase(trim(mid(s,p+1)));
+    sData := TSendUUData.Create;
+    try
+      SendMsg:=false;
+      empf:=''; betr:='';
+      box:=''; datei:='';
+      attach := False;
+      assign(t1,AutoxDir+sr.name);
+      reset(t1);
+      s:='*';
+      while not eof(t1) and (s<>'') do begin
+        readln(t1,s);
+        p:=cpos(':',s);
+        if p>0 then begin
+          hdr:=LowerCase(LeftStr(s,p-1));
+          if (hdr='empfaenger') or (hdr='empf„nger') or (hdr='to') then
+            empf:=trim(mid(s,p+1)) else
+          if (hdr='betreff') or (hdr='subject') then
+            betr:=trim(mid(s,p+1)) else
+          if hdr='server' then
+            box:=trim(mid(s,p+1)) else
+          if (hdr='datei') or (hdr='file') then
+            datei:=FileUpperCase(trim(mid(s,p+1)));
+        end;
       end;
-    end;
-    err:=true;
-    if (box='') or not IsBox(box) then
-      axerr(4,box)                  { 'ungueltige Serverbox: %s' }
-    else begin
-      nt:=ntBoxNetztyp(box);
-      attach:= (datei<>'') and
-              ((nt=nt_Fido) or
-               (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
-      if empf='' then axerr(2,'')     { 'Empfaenger fehlt' }
-      else if betr='' then axerr(3,'')     { 'Betreff fehlt'   }
-      else if datei<>'' then begin
-        if not multipos(_MPMask,datei) then
-          datei:=SendPath+datei;
-        if not FileExists(datei) then
-          axerr(5,UpperCase(datei))        { 'Datei "%s" fehlt' }
-        else if attach and (cpos('@',empf)=0) then
-          axerr(6,'')    { 'File Attaches koennen nur als PM verschicht werden!' }
-        else if attach and (length(datei)>BetreffLen) then
-          axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
-        else
+      err:=true;
+      if (box='') or not IsBox(box) then
+        axerr(4,box)                  { 'ungueltige Serverbox: %s' }
+      else begin
+        nt:=ntBoxNetztyp(box);
+        attach:= (datei<>'') and
+                ((nt=nt_Fido) or
+                 (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
+        if empf='' then axerr(2,'')     { 'Empfaenger fehlt' }
+        else if betr='' then axerr(3,'')     { 'Betreff fehlt'   }
+        else if datei<>'' then begin
+          if not multipos(_MPMask,datei) then
+            datei:=SendPath+datei;
+          if not FileExists(datei) then
+            axerr(5,UpperCase(datei))        { 'Datei "%s" fehlt' }
+          else if attach and (cpos('@',empf)=0) then
+            axerr(6,'')    { 'File Attaches koennen nur als PM verschicht werden!' }
+          else if attach and (length(datei)>BetreffLen) then
+            axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
+          else
+            err:=false;
+        end else
           err:=false;
-      end else
-        err:=false;
-    end;
-    if err then begin
-      close(t1);
-      freemem(buf,bs);
-      exit;
-    end;
-
-    if attach then begin
-      betr:=datei;
-      datei:='';
-//    EditAttach:=false;    { ab hier kein EXIT mehr! }
-    end;
-
-    if datei='' then begin
-      datei:=TempS(_filesize(AutoxDir+sr.name));
-      temp:=true;
-      assign(t2,datei); rewrite(t2);
-      while not eof(t1) do begin
-        repeat
-          read(t1,s); write(t2,s);
-        until eoln(t1);
-        readln(t1); writeln(t2);
       end;
-      close(t2);
-    end else begin
-      temp:=false;
-      sData.SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
-      sData.SendFiledate:=zcfiletime(datei);
+      if err then begin
+        close(t1);
+        exit;
+      end;
+
+      if attach then begin
+        betr:=datei;
+        datei:='';
+    //    EditAttach:=false;    { ab hier kein EXIT mehr! }
+      end;
+
+      if datei='' then begin
+        datei:=TempS(_filesize(AutoxDir+sr.name));
+        temp:=true;
+        assign(t2,datei); rewrite(t2);
+        while not eof(t1) do begin
+          repeat
+            Readln(t1, s);
+            Writeln(t2, s);
+          until eoln(t1);
+        end;
+        close(t2);
+      end else begin
+        temp:=false;
+        sData.SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
+        sData.SendFiledate:=zcfiletime(datei);
+      end;
+      close(t1);
+      s:='';
+      sData.forcebox:=box;
+      empf:=vert_long(empf);
+      p:=cpos('@',empf);
+      pm:=(p>0);
+      if pm then
+        empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
+      else if FirstChar(empf)<>'/' then empf:='/'+empf;
+    //  EditAttach:=false;
+    (*
+      if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
+                false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
+    *)
+
+      if attach or not temp then
+        sData.AddFile(datei,temp or delfile,'')
+      else
+        sData.AddText(datei,temp or delfile);
+
+      sData.EmpfList.AddNew.ZCAddress := Empf;
+
+      sData.Subject := betr;
+      sData.flShow := true;
+
+      result := sData.DoIt('',false,false,false);
+    finally
+      sData.Free;
     end;
-    close(t1);
-    freemem(buf,bs);
-    s:='';
-    sData.forcebox:=box;
-    empf:=vert_long(empf);
-    p:=cpos('@',empf);
-    pm:=(p>0);
-    if pm then
-      empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
-    else if FirstChar(empf)<>'/' then empf:='/'+empf;
-//  EditAttach:=false;
-(*
-    if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
-              false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
-*)
-
-    if attach or not temp then
-      sData.AddFile(datei,temp or delfile,'')
-    else
-      sData.AddText(datei,temp or delfile);
-
-    sData.EmpfList.AddNew.ZCAddress := Empf;
-    
-    sData.Subject := betr;
-    sData.flShow := true;
-
-    result := sData.DoIt('',false,false,false);
-   finally
-    sData.Free;
-   end;
   end;
 
   function SendPuffer:boolean;
@@ -703,6 +696,10 @@ end;
 
 {
   $Log$
+  Revision 1.64  2003/04/16 20:51:11  mk
+  - fixed crash in SendMsg (initialized sData)
+  - use AnsiString to copy text from file to message
+
   Revision 1.63  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To
