@@ -1151,9 +1151,9 @@ var d         : DB;
       dbWriteN(d,mimeb_extension,ext);
       dbWriteN(d,mimeb_programm,prog);
       dbFlushClose(d);
-      dbGo(d,drec[1]);       
+      dbGo(d,drec[1]);
       dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-      aufbau:=true; 
+      aufbau:=true;
       end;
   end;
 
@@ -1725,9 +1725,24 @@ end;
 end.
 {
   $Log$
-  Revision 1.10  2000/03/05 19:46:12  jg
-  - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
-  - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
+  Revision 1.9.2.1  2000/04/23 14:48:46  jg
+  Aenderungen fuer externe Viewer:
+
+  - xpview.pas, xp1o.pas: Routinen aus Version 3.21.023 uebernommen:
+    Fido-File-Attaches werden beachtet; "Start" als Viewer ist erlaubt;
+    File-Extensions bei erstellten Tempfiles werden korrekt gesetzt;
+    Filenamen mit langen Pfaden werden nicht mehr abgeschnitten;
+    Dateien mit Leerzeichen im Filenamen koennen angezeigt werden;
+    Unterstuetzung von Multiformat-Typen (z.B Application/octet-stream)
+    (Dateiendung aus Mail wird verwendet wemm keine beim Mimetyp steht);
+    Alternative Tempfile-Behandlung mit gesetzter Umgebungsvariable DELVTMP
+    (keine Loesch-Warte-Batch, sondern Loeschen erst beim naechsten XP-Start).
+
+  - xp0.pas, xp1.pas: Aenderungen fuer die DELVTMP Funktion aus 3.21.023
+
+  - xp4o.pas, xp4w.inc: Uebergabe des Fido-Fileattach-Flags an xpview.viewfile
+
+  - xp9.pas: Mimetyp */* nicht mehr erstellbar
 
   Revision 1.9  2000/02/24 20:27:54  jg
   -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen

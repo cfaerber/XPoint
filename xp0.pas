@@ -17,7 +17,7 @@ unit xp0;
 
 interface
 
-uses   dos,typeform,keys,xpglobal;
+uses   dos,typeform,keys,database, xpglobal;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -747,6 +747,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MoreMode   : boolean = true;
        Developer  : boolean = false;
        SupportCfg : string[12] = 'SUPPORT.CFG';
+       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
        
        { 01/2000 oh }
        
@@ -1074,8 +1075,24 @@ implementation
 end.
 {
   $Log$
-  Revision 1.11  2000/03/04 22:41:37  mk
-  LocalScreen fuer xpme komplett implementiert
+  Revision 1.10.2.1  2000/04/23 14:48:45  jg
+  Aenderungen fuer externe Viewer:
+
+  - xpview.pas, xp1o.pas: Routinen aus Version 3.21.023 uebernommen:
+    Fido-File-Attaches werden beachtet; "Start" als Viewer ist erlaubt;
+    File-Extensions bei erstellten Tempfiles werden korrekt gesetzt;
+    Filenamen mit langen Pfaden werden nicht mehr abgeschnitten;
+    Dateien mit Leerzeichen im Filenamen koennen angezeigt werden;
+    Unterstuetzung von Multiformat-Typen (z.B Application/octet-stream)
+    (Dateiendung aus Mail wird verwendet wemm keine beim Mimetyp steht);
+    Alternative Tempfile-Behandlung mit gesetzter Umgebungsvariable DELVTMP
+    (keine Loesch-Warte-Batch, sondern Loeschen erst beim naechsten XP-Start).
+
+  - xp0.pas, xp1.pas: Aenderungen fuer die DELVTMP Funktion aus 3.21.023
+
+  - xp4o.pas, xp4w.inc: Uebergabe des Fido-Fileattach-Flags an xpview.viewfile
+
+  - xp9.pas: Mimetyp */* nicht mehr erstellbar
 
   Revision 1.10  2000/03/01 23:49:02  rb
   Rechenzeitfreigabe komplett Åberarbeitet

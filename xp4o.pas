@@ -1764,7 +1764,7 @@ begin
           GetExtViewer(datei,viewer);
           if viewer.prog='' then TestGifLbmEtc(datei,false,viewer);
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
-            ViewFile(TempPath+datei,viewer)
+            ViewFile(TempPath+datei,viewer,false)
           else
             dummy:=ListFile(TempPath+datei,datei,true,false,0);
           end

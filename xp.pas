@@ -134,7 +134,9 @@ begin
     showscreen(true);
     DelTmpfiles('*.$$$');
     if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
-      chdir(temppath); 
+      Delviewtmp:=true;
+      DelTmpfiles('TMP-????.*');
+      chdir(temppath);
       DelTmpfiles('TMP-????.*');
       chdir(ownpath);
       end;
@@ -194,9 +196,24 @@ ende:
 end.
 {
   $Log$
-  Revision 1.10  2000/03/04 12:39:36  jg
-  - weitere Aenderungen fuer externe Windowsviewer
-    Umgebungsvariable DELVTMP
+  Revision 1.9.2.1  2000/04/23 14:48:45  jg
+  Aenderungen fuer externe Viewer:
+
+  - xpview.pas, xp1o.pas: Routinen aus Version 3.21.023 uebernommen:
+    Fido-File-Attaches werden beachtet; "Start" als Viewer ist erlaubt;
+    File-Extensions bei erstellten Tempfiles werden korrekt gesetzt;
+    Filenamen mit langen Pfaden werden nicht mehr abgeschnitten;
+    Dateien mit Leerzeichen im Filenamen koennen angezeigt werden;
+    Unterstuetzung von Multiformat-Typen (z.B Application/octet-stream)
+    (Dateiendung aus Mail wird verwendet wemm keine beim Mimetyp steht);
+    Alternative Tempfile-Behandlung mit gesetzter Umgebungsvariable DELVTMP
+    (keine Loesch-Warte-Batch, sondern Loeschen erst beim naechsten XP-Start).
+
+  - xp0.pas, xp1.pas: Aenderungen fuer die DELVTMP Funktion aus 3.21.023
+
+  - xp4o.pas, xp4w.inc: Uebergabe des Fido-Fileattach-Flags an xpview.viewfile
+
+  - xp9.pas: Mimetyp */* nicht mehr erstellbar
 
   Revision 1.9  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt

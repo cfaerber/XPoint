@@ -59,7 +59,8 @@ function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
 {$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+function XPWinShell(prog:string; parfn:pathstr; space:word;
+                    cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 {$ENDIF}
 
@@ -875,18 +876,17 @@ end;
 { Bei Windows-Programmen wird direkt Åber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
-{$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+function XPWinShell(prog:string; parfn:pathstr; space:word;
+                    cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
-var w1,w2: word;
 
   function PrepareExe:integer;    { Stack sparen }
-  { 
+  {
   RÅckgabewert: -1 Fehler
                  0 DOS-Programm
                  1 Windows-Programm
                  2 OS/2-Programm
-  }                 
+  }
   var ext     : string[3];
       exepath,
       batfile : pathstr;
@@ -910,22 +910,30 @@ var w1,w2: word;
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
     if win then begin
-      batfile:=TempExtFile('','wrun','.bat');
-      assign(t,batfile);
-      rewrite(t);
-      writeln(t,'@echo off');
-      writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
-      writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
-      writeln(t);
-      writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
-      writeln(t,'echo.');
-      writeln(t,'start /wait '+prog);
-      writeln(t,'del '+parfn);
-      writeln(t,'del '+batfile);
-      close(t);
-      if winnt then
-        prog:='cmd /c start cmd /c '+batfile
-        else prog:='start command /c '+batfile;
+
+      if Delviewtmp then
+      begin
+        if ustr(left(prog,5))<>'START' then prog:='start '+prog;
+        end
+      else begin
+        if ustr(left(prog,6))='START ' then prog:=mid(prog,7);
+        batfile:=TempExtFile(temppath,'wrun','.bat');
+        assign(t,batfile);
+        rewrite(t);
+        writeln(t,'@echo off');
+        writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
+        writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
+        writeln(t);
+        writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
+        writeln(t,'echo.');
+        writeln(t,'start '+iifs(fileattach,'','/wait ')+prog);
+        if not fileattach then writeln(t,'del '+parfn);
+        writeln(t,'del '+batfile);
+        close(t);
+        if winnt then
+          prog:='cmd /c start cmd /c '+batfile
+          else prog:='start command /c '+batfile
+        end;
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -944,7 +952,7 @@ var w1,w2: word;
       close(t);
       prog:=batfile;
       PrepareExe:=2;
-    end;  
+    end;
   end;
 
 begin
@@ -953,16 +961,36 @@ begin
      0 : begin                      { DOS-Programm aufrufen }
            shell(prog,space,cls);
            XPWinShell:=false;
-         end;  
+         end;
      1 : shell(prog,space,0);       { Windows-Programm aufrufen }
+  {$IFDEF BP }
      2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
+  {$ENDIF }
   end;
 end;
-{$ENDIF}
 
 end.
 {
   $Log$
+  Revision 1.19.2.4  2000/04/23 14:48:45  jg
+  Aenderungen fuer externe Viewer:
+
+  - xpview.pas, xp1o.pas: Routinen aus Version 3.21.023 uebernommen:
+    Fido-File-Attaches werden beachtet; "Start" als Viewer ist erlaubt;
+    File-Extensions bei erstellten Tempfiles werden korrekt gesetzt;
+    Filenamen mit langen Pfaden werden nicht mehr abgeschnitten;
+    Dateien mit Leerzeichen im Filenamen koennen angezeigt werden;
+    Unterstuetzung von Multiformat-Typen (z.B Application/octet-stream)
+    (Dateiendung aus Mail wird verwendet wemm keine beim Mimetyp steht);
+    Alternative Tempfile-Behandlung mit gesetzter Umgebungsvariable DELVTMP
+    (keine Loesch-Warte-Batch, sondern Loeschen erst beim naechsten XP-Start).
+
+  - xp0.pas, xp1.pas: Aenderungen fuer die DELVTMP Funktion aus 3.21.023
+
+  - xp4o.pas, xp4w.inc: Uebergabe des Fido-Fileattach-Flags an xpview.viewfile
+
+  - xp9.pas: Mimetyp */* nicht mehr erstellbar
+
   Revision 1.19.2.3  2000/04/21 20:57:37  mk
   JG: - verschiedene kleinere Bugfixes
 

@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 { CrossPoint - Bin„rfile-Viewer }
 
@@ -35,7 +34,7 @@ procedure GetMimeViewer(typ:string; var viewer:viewinfo);
 procedure GetDefaultViewer(typ:string; var viewer:viewinfo);
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
 
-procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
+procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 
 
 implementation  { ---------------------------------------------------- }
@@ -206,7 +205,6 @@ var p         : byte;
     prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)} 
     orgfn,fn1,
     parfn     : pathstr;
-    f         : file; 
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
@@ -216,7 +214,7 @@ begin
 
   if not fileattach then 
   begin
-  if stricmp(fn,orgfn) or not ValidFileName(orgfn)
+  if stricmp(fn,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
     then orgfn:=TempS(_filesize(fn)+5000);                              
     if copyfile(fn,orgfn) then fn1:=orgfn;
     end;
@@ -225,14 +223,15 @@ begin
   orgfn:=iifs(fn1<>'',fn1,fn);
 
                              {Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen }
-  if not fileattach and ((getenv('DELVTMP')<>'')) then
+  if not fileattach and delviewtmp then
   Begin
     parfn:=TempS(_filesize(fn)+5000);      
-    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8)
+    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8);
     end
   else parfn:=orgfn; 
                               {Korrekte File-extension verwenden}  
-  parfn:=trim(left(parfn,rightpos('.',parfn)-1))+'.'+iifs(viewer.ext='','TMP',viewer.ext);
+  parfn:=left(parfn,rightpos('.',parfn))+
+    iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
@@ -240,33 +239,10 @@ begin
   else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
-{$IFNDEF Delphi5}
   if not XPWinShell(prog,parfn,600,1,fileattach) then
-{$ENDIF }
   if not fileattach and (fn1<>'') then era(parfn);
 end;
 
+
 end.
-{
-  $Log$
-  Revision 1.12  2000/03/05 19:46:12  jg
-  - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
-  - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
 
-  Revision 1.11  2000/03/05 15:35:33  jg
-  - Externe Windows-Viewer: abfangen ungueltiger Abkuerzungen von
-    Lang-Filenamen,  "TMP-" kommt nur noch im aktiven DELVTMP Modus.
-    Temp-File-Extension sollte jetzt nur noch TMP werden wenn kein
-    Viewername angegeben ist.
-
-  Revision 1.10  2000/03/05 07:23:23  jg
-  - Externe Viewer: nur .TMP Dateien werden noch nach TMP-*.* Umbenannt
-
-  Revision 1.9  2000/03/04 18:34:18  jg
-  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
-    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
-
-  Revision 1.8  2000/03/04 11:55:28  mk
-  Loginfo hinzugefuegt
-
-}

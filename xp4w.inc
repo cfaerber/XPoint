@@ -764,7 +764,7 @@ begin
         CopyMsg;
         end;
       if (viewer.fn='') then viewer.fn:=GetMsgFilename;
-      ViewFile(fn2,viewer);
+      ViewFile(fn2,viewer,fileattach);
       lres:=0;
       end
     else
