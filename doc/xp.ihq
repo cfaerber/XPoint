@@ -4836,6 +4836,7 @@ Die Einstellung wird bei allen Netztypen untersttzt,
 ist i.d.R. aber nicht bei allen Netztypen gleich
 sinnvoll, da es in manchen Netzen (z.B. Fido) i.d.R.
 gar keine "Rckl„ufer" gibt.
+
 @
 190
 Dies ist der Name der Serverbox; genauer gesagt: der
@@ -10738,7 +10739,8 @@ diese nicht mehr finden kann und die Decodierung
 somit fehlschl„gt.
 
 Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
-Version <<2.6.3in>> vom <<07.10.2000>> verwenden.
+Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
+verwenden.
 
 Siehe auch: [PGP - Versions- und Detailinformationen]@1010
 
