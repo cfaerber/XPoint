@@ -648,6 +648,7 @@ end;
 
 
 begin     { of RunScript }
+  Debug.DebugLog('xpmodemscripts','Starting script '+scriptfile,DLInform);
   if not LoadScript then
     RunScriptRes:=pEndSyntax
   else
@@ -656,6 +657,7 @@ begin     { of RunScript }
     else
       RunScriptRes:=pEndOK;
   RunScript := RunScriptRes;
+  Debug.DebugLog('xpmodemscripts','Script finished '+IntToStr(RunScriptRes),DLInform);
   ReleaseScript;
 end;
 
@@ -663,6 +665,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/04/22 16:45:01  ma
+  - added debug logs
+
   Revision 1.2  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
