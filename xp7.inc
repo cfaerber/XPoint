@@ -41,8 +41,9 @@ begin
     begin
       if TempPPPMode then
       begin
-        if PPPClient + PPPSpool + PPPCLientPath = '' then
-          BoxParOK := getres2(706,2)    { 'unvollst„ndige Client-Modus Angaben' }
+        if (PPPClient = '') or (PPPSpool = '')
+          or (PPPCLientPath = '') then
+          BoxParOK := getres2(706,7)    { 'unvollst„ndige Client-Modus Angaben' }
         else
           BoxParOK := '';
       end else
@@ -1447,6 +1448,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.7  2001/02/11 12:32:03  mk
+  - Client-Modus Updates
+
   Revision 1.24.2.6  2001/01/30 10:01:22  mk
   - weitere arbeiten am Client-Modus
 

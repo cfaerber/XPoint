@@ -547,6 +547,7 @@ begin
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
       exchange(s, '$CLPATH', PPPClientpath);
+      exchange(s, '$CLSPOOL', PPPSpool);
       shell(s,600,3);
     end;
 
@@ -571,7 +572,7 @@ begin
            _era('UNSENT.PP');
         _era('UNSENT.ID');
         EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. l”schen }
-        if Error then trFehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
+        if Error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       end;
       Closebox;
     end;
@@ -608,6 +609,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.9  2001/02/11 12:32:03  mk
+  - Client-Modus Updates
+
   Revision 1.13.2.8  2001/01/30 10:01:23  mk
   - weitere arbeiten am Client-Modus
 

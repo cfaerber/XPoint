@@ -1273,7 +1273,12 @@ begin
         repeat
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
-          if dbEOF(ubase) then Exit;
+          if dbEOF(ubase) then
+          begin
+            dbsetindex(ubase, indx);
+            errsound;
+            Exit;
+          end;
           dbReadN(ubase,ub_username,s);
         until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
@@ -1602,6 +1607,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.20  2001/02/11 12:32:03  mk
+  - Client-Modus Updates
+
   Revision 1.25.2.19  2001/01/22 14:48:18  mk
   JG:- Brettweiterschalt-Fix, Teil 3
 

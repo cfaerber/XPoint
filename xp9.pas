@@ -307,9 +307,10 @@ begin
   if (fn<>'') then
   begin
     if right(s,1)<>DirSepa then s:=s+DirSepa;
-    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
     if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
-    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0);
+    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+      and (Length(fn) > 0) and (fn[length(fn)] <> '.');
     if not ok then
     begin
       rfehler1(938, UStr(s)); { 'Dieser Pfad muá darf nur eine relative Verzeichnisebene enthalten!' }
@@ -1855,6 +1856,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.17  2001/02/11 12:32:04  mk
+  - Client-Modus Updates
+
   Revision 1.19.2.16  2001/01/30 10:01:23  mk
   - weitere arbeiten am Client-Modus
 

@@ -576,6 +576,7 @@ begin
   ISDN_int:=$f1;
   ISDN_EAZ:='0';
   ISDN_Controller:=0;
+  ISDN_incoming := ''; ISDN_outgoing := '';
 
   fillchar(pmcrypt,sizeof(pmcrypt),0);
   with pmcrypt[1] do begin
@@ -1004,13 +1005,13 @@ begin
       writeln(t,'COM',i,'-TriggerLevel=',tlevel);
       writeln(t,'COM',i,'-Waehlsperre=',jnf(postsperre));
       if i<4 then writeln(t);
-    end; { 04.02.2000 MH: ISDN-Daten sichern: aktiviert! }
+    end;
   Writeln(t);
   writeln(t,'ISDN1-Int=$',hex(ISDN_Int,2));
   writeln(t,'ISDN1-EAZ=',ISDN_EAZ);
   writeln(t,'ISDN1-Controller=',ISDN_controller);
-  writeln(t,'ISDN1-MSN-Incoming',ISDN_Incoming);
-  writeln(t,'ISDN1-MSN-Outgoing',ISDN_Outgoing);
+  writeln(t,'ISDN1-MSN-Incoming=',ISDN_Incoming);
+  writeln(t,'ISDN1-MSN-Outgoing=',ISDN_Outgoing);
 
   wrhd(10);
   writeln(t,'AutoUpload=',jnf(AutoUpload));
@@ -1495,8 +1496,8 @@ begin
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
-          gets(s,su,'isdn1-MSN-incoming',ISDN_outgoing, 30) or
-          gets(s,su, 'isdn1-msn-outgoing', isdn_incoming, 30) or
+          gets(s,su,'isdn1-MSN-incoming',ISDN_outgoing, 10) or
+          gets(s,su, 'isdn1-msn-outgoing', isdn_incoming, 10) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
           getx(su,  'maildelxpost',maildelxpost) or
@@ -1706,6 +1707,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.18  2001/02/11 12:32:03  mk
+  - Client-Modus Updates
+
   Revision 1.62.2.17  2001/01/30 10:01:22  mk
   - weitere arbeiten am Client-Modus
 
