@@ -3081,18 +3081,18 @@ ben”tigt, fr Janus Plus dagegen <<$DOWNPATH>>.
 8020
 Mit diesem Programm werden alle zum Server geschick-
 ten Nachrichten gepackt. W„hlen Sie mit <F2> die
-Einstellungen fr <<compress>>, <<freeze>> oder <<gzip>>, oder
-lassen Sie das Feld leer, falls die Daten ungepackt
-bertragen werden sollen.
+Einstellungen fr <<compress>>, <<freeze>>, <<gzip>> oder
+<<bzip2>>, oder lassen Sie das Feld leer, falls die
+Daten ungepackt bertragen werden sollen.
 
 Compress wird praktisch von jedem UUCP-Server unter-
-sttzt, gzip (GNU Zip) von den meisten Servern.
-Freeze wurde eine Zeit lang recht h„ufig verwendet,
-ist inzwischen aber fast vollst„ndig durch gzip ver-
-dr„ngt worden. Im Zweifelsfall fragen Sie bitte den
-Systembetreiber. Werden verschiedene Packverfahren
-angeboten, so k”nnen Sie i.d.R. ohne weitere Abspra-
-chen mit dem Server den Packer wechseln.
+sttzt, gzip (GNU Zip) von den meisten Servern,
+bzip2 von einigen Servern. Freeze ist inzwischen fast
+vollst„ndig verdr„ngt worden. Im Zweifelsfall
+fragen Sie bitte den Systembetreiber. Werden
+verschiedene Packverfahren angeboten, so k”nnen Sie
+i.d.R. ohne weitere Absprachen mit dem Server den
+Packer wechseln.
 
 Bei compress haben Sie zus„tzlich die M”glichkeit,
 zwischen 12-Bit (Parameter -b12, geringe Packrate)
@@ -3100,8 +3100,8 @@ und 16-Bit (Parameter -b16, h”here Packrate) zu
 w„hlen. Auch hier sollten Sie sich mit dem Server
 absprechen.
 
-Hier noch eine kurze Gegenberstellung (+ = gut,
-o = mittelm„áig, - = schlecht):
+Hier noch eine kurze Gegenberstellung (++ = sehr
+gut, + = gut, o = mittelm„áig, - = schlecht):
 
                 ³ Geschwindigkeit ³ Packrate
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
@@ -3109,6 +3109,7 @@ compress 12-Bit ³       +         ³     -
 compress 16-Bit ³       +         ³     o
 freeze          ³       -         ³     +
 gzip            ³       o         ³     +
+bzip2           ³       -         ³     ++
 
 @
 8021
@@ -3130,6 +3131,14 @@ durch den Namen der zu entpackenden Datei ersetzt.
 8023
 Mit diesem Programm entpackt CrossPoint Nachrichten,
 die mit 'gzip' gepackt sind. Diese Einstellung soll-
+ten Sie normalerweise nicht „ndern.
+
+$DOWNFILE muá immer angegeben sein und wird jeweils
+durch den Namen der zu entpackenden Datei ersetzt.
+@
+8026
+Mit diesem Programm entpackt CrossPoint Nachrichten,
+die mit 'bzip2' gepackt sind. Diese Einstellung soll-
 ten Sie normalerweise nicht „ndern.
 
 $DOWNFILE muá immer angegeben sein und wird jeweils

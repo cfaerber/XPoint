@@ -2208,13 +2208,14 @@ ask your systems operator.
 8020
 With this programme, all messages going to the server
 are [packed], or compressed. You select the settings@4006
-for <<compress>>, <<freeze>>, or <<gzip>> by press-
-ing F2. If you prefer to transfer [unpacked], you can@4006
+for <<compress>>, <<freeze>>, <<gzip>> or <<bzip2>> by pressing
+F2. If you prefer to transfer [unpacked], you can@4006
 leave this field empty.
 
 Compress is supported by nearly all UUCP-servers,
-Freeze by most; gzip (Gnu ZIP) is pretty new but
-getting popular fast. If in doubt ask your systems
+gzip (Gnu ZIP) is supported by most UUCP-servers,
+bzip2 by some. Freeze has been displaced nearly
+completely nowadays. If in doubt ask your systems
 operator. If several packers are on offer, you can
 mostly change without special agreement with the
 server.
@@ -2225,7 +2226,7 @@ Compress offers extra possibilities, a choice between
 consult your system operator if in doubt.
 
 Here some quick guidance:
-(+ = good, o = medium, - = bad)
+(++ = very good, + = good, o = medium, - = bad)
 
                 ³     Speed       ³ Compression
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
@@ -2233,6 +2234,7 @@ compress 12-Bit ³       +         ³     -
 compress 16-Bit ³       +         ³     o
 freeze          ³       -         ³     +
 gzip            ³       o         ³     +
+bzip2           ³       -         ³     ++
 
 @
 8021
@@ -2258,6 +2260,16 @@ to be unpacked.
 8023
 With this programme CrossPoint UNpacks messages which
 have been packed with 'gzip'. These settings do
+not normally need to be changed.
+
+$DOWNFILE must be entered as a stand-in for the
+received file name, and CrossPoint replaces it at
+the right time with the real name of the file
+to be unpacked.
+@
+8026
+With this programme CrossPoint UNpacks messages which
+have been packed with 'bzip2'. These settings do
 not normally need to be changed.
 
 $DOWNFILE must be entered as a stand-in for the
