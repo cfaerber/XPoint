@@ -1,4 +1,4 @@
-{$F+,I-,O-,R-,S-,V-,G+,N+,X+}
+{$F+,I-,O-,R-,S-,V-,G+,N-,X+}
 {$IFDEF Ver70}
 {$T-}                                                                  {!!.10}
 {$ENDIF}
@@ -2227,7 +2227,8 @@ type
     {-Liefert die Grî·e des freien Speicherplatzes auf einem Laufwerk zurÅck.}
   var
     ED : ExtendedDisk;
-    Size : Comp;
+    Size :
+    {$IFDEF DFSReturnComp} Comp ; {$ELSE} LongInt; {$ENDIF}
   begin
     if not Call7303(Drive, ED) then
     {$IFDEF UseDos}
@@ -2257,7 +2258,8 @@ type
     {-Liefert die GesamtkapazitÑt eines Laufwerks zurÅck.}
   var
     ED : ExtendedDisk;
-    Size : Comp;
+    Size :
+    {$IFDEF DFSReturnComp} Comp ; {$ELSE} LongInt; {$ENDIF}
   begin
     if not Call7303(Drive, ED) then
     {$IFDEF UseDos}
