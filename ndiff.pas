@@ -12,6 +12,14 @@
 
 {$I XPDEFINE.INC }
 
+unit ndiff;
+
+interface
+
+procedure StartCommandLineNdiff;
+
+implementation
+
 uses
   dos, sysutils, typeform, fileio, xpglobal;
 
@@ -80,14 +88,14 @@ var
   end;
 
 begin
-  if paramcount < 2 then helppage;
-  shrink := LowerCase(paramstr(1)) = '-s';
+  if paramcount < 3 then helppage;
+  shrink := LowerCase(paramstr(2)) = '-s';
   if shrink then
   begin
-    if paramcount < 3 then helppage;
-    nd_file := paramstr(2);
+    if paramcount < 4 then helppage;
+    nd_file := paramstr(3);
     regs := paramcount - 2;
-    for i := 1 to regs do
+    for i := 2 to regs do
     begin
       s := paramstr(i + 2);
       p := cpos(':', s);
@@ -108,8 +116,8 @@ begin
   end
   else
   begin                                 { not shrink }
-    nl_file := paramstr(1);
-    nd_file := paramstr(2);
+    nl_file := paramstr(2);
+    nd_file := paramstr(3);
     TestEx(nl_file);
   end;
   TestEx(nd_file);
@@ -312,6 +320,7 @@ begin
   freemem(buf, bs);
 end;
 
+procedure StartCommandLineNdiff;
 begin
   logo;
   getpar;
@@ -323,9 +332,14 @@ begin
     processlist;
   end;
   KillIndex;
+end;
+
 end.
 {
   $Log$
+  Revision 1.13  2000/12/31 13:01:40  mk
+  - integrated ndiff
+
   Revision 1.12  2000/11/15 23:37:34  fe
   Corrected some string things.
 

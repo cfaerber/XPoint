@@ -100,6 +100,7 @@ uses xpx,
      xpmime,   { Multipart-Decode   }
      xpimpexp, { Import/Export      }
      zpr,      { zc buffer repair   }
+     ndiff,    { nodelist diff      }
      zcrfc;    { RFC<->ZConnect     }
 
 
@@ -114,6 +115,9 @@ begin
   else
   if Prog = 'ZPR' then
     StartCommandlineZPR
+  else
+  if Prog = 'NDIFF' then
+    StartCommandLineNDIFF
   else
     Result := false;
 end;
@@ -231,6 +235,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.49  2000/12/31 13:01:40  mk
+  - integrated ndiff
+
   Revision 1.48  2000/12/31 12:49:08  mk
   - integrated zpr in openxp
 
