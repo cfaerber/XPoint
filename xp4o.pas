@@ -2250,7 +2250,8 @@ var files    : string;
     p1,s,s1,t,u : string[80];
     v        : char;
     node     : string[20];
-    mark,
+    secondtry,
+    mark,     
     lMagics  : boolean;
     dir      : dirstr;
     name     : namestr;
@@ -2260,151 +2261,155 @@ begin
   nnode := '';
   if not list_selbar and (list_markanz=0) then begin
     rfehler(438);   { 'keine Dateien markiert' }
-    exit;
+    exit
   end;
   if not TestNodelist or not TestDefbox then exit;
   s := FMsgReqnode;
   p := cpos('.',s);
-  if p>0 then node:=left(s,p-1)
-  else node:=s;
+  if (p>0) then node:=left(s,p-1)
+    else node:=s;
   files := '';
   u := ''; t := '';
-  s := first_marked;
   lMagics := Magics;
-  while s<>#0 do begin
-    { --- komplett neu:oh (aus MultiReq uebernommen) --->> }
-    if (s='') then lMagics:=false;
+  secondtry:=false;
+  s := first_marked;
+  repeat
+    { Von Anfang an leer oder Liste komplett durchlaufen und nichts gefunden,
+      dann probieren wir's nochmal mit MAGICS }
+    if (s=#0) then begin
+      secondtry:=true;
+      s := first_marked;
+      lMagics:=true;
+    end;
+    while (s<>#0) do begin
+      { --- komplett neu:oh (aus MultiReq uebernommen) --->> }
+{     if (s='') then lMagics:=false; }
 
-    { Usernamen vor Quotes killen }
-    k:=pos('>',s);
-    if (k>0) then if (k<6) then delete(s,1,k);
+      { Usernamen vor Quotes killen }
+      k:=pos('>',s);
+      if (k>0) then if (k<6) then delete(s,1,k);
 
-    k:=0;
-    if (s<>'') then
-    while (k<byte(s[0])) do begin
-      t:=''; v:=#0;
-      { Nach dem ersten erlaubten Zeichen suchen }
-      while (byte(s[0])>0)
-      and not (s[1] in ['a'..'z','A'..'Z','0'..'9','@','!','$','^']) do begin
-          v:=s[1];
-          delete(s,1,1);
-        continue
-      end;
-      { Vor dem Dateinamen muá ein Trennzeichen stehen }
-      if (v<>#0) then if not (v in [#32,'"','<','>','¯','®','(','[','{',',',';',':','_','*']) then begin
+      k:=0;
+      if (s<>'') then
+      while (k<byte(s[0])) do begin
+        t:=''; v:=#0;
+        { Nach dem ersten erlaubten Zeichen suchen }
         while (byte(s[0])>0)
-        and not (s[1] in [#32,'"','<','>','¯','®','(','[','{','_','*']) do begin
-          delete(s,1,1);
+        and not (s[1] in ['a'..'z','A'..'Z','0'..'9','@','!','$','^']) do begin
+            v:=s[1];
+            delete(s,1,1);
           continue
         end;
-        continue
-      end;
-      mark:=false;
-      if (v<>#0) then if (v='*') or (v='_') then mark:=true;
-      k:=1; { erstes Zeichen ist schon ok, also Rest testen }
-      while (k<Length(s))
-      and (s[k+1] in ['a'..'z','A'..'Z','0'..'9','_','@','.','!','/','?','*',
-                      '$','%','-']) do inc(k);
-      t:=copy(s,1,k);
-      u:=UStr(t);
-      delete(s,1,byte(t[0]));
-      { Auf den Dateinamen muá ein Trennzeichen folgen }
-      if (s<>'') then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
-
-      if (mark and (t[byte(t[0])] in ['_','*'])) then dec(byte(t[0]));
-
-      while (byte(t[0])>0) and (t[byte(t[0])] in ['.','!','?','/']) do dec(byte(t[0]));
-      if (byte(t[0])<2) then continue;
-      k:=0;
-      for ic:=1 to byte(t[0]) do if t[ic]='.' then inc(k);
-      if (k>1) then continue;
-      if (pos('**',t)>0) then continue;
-      if (pos('.-',t)>0) then continue;
-      if (pos('-.',t)>0) then continue;
-      if not magics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
-
-      { Magic mode? }
-      if (u='MAGIC') or (u='MAGICS') or (u='REQUEST') then begin
-        Magics:=true; continue
-      end;
-
-      { Passwort suchen, erkennen und speichern }
-      p1:='';
-      ic:=pos('/',t); if (ic>0) then begin
-        p1:=copy(t,ic,20); delete(t,ic,99)
-      end;
-
-      u:=UStr(t);
-      if (length(u)<2) then continue;
-      s1:=u;
-      if (s1='S0') or (s1='XP') then continue;
-      if (s1='ZMH') or (s1='NMH') then continue;
-      if (s1='V.FC') or (s1='VFC') then continue;
-      if (s1='ISDN') or (s1='USR') then continue;
-      if (s1='FQDN') or (s1='INC') then continue;
-      if (s1='IMHO') or (s1='YMMV') then continue;
-      if (s1='ORG') or (s1='PGP') then continue;
-      if (s1='FAQ') or (s1='OS') then continue;
-      if (s1='DOS') then continue;
-      if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
-      ic:=pos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
-
-      { Auf Beschreibungs-Datei testen }
-      FSplit(u,dir,name,ext);
-      if (ext='.ORG') then continue;
-      if (ext='.DIZ') then continue;
-      if (name='FILES') or (name='FILE_ID') or (name='00GLOBAL')
-        or (name='DESCRIPT') then continue;
-
-      { Ist der String eine Versionsnummer? V42.3, 1.0, X75, V34B etc. }
-      if (byte(t[0])<8) then begin
-        u:=t;
-        if (UStr(copy(u,1,3))='VOL') then delete(u,1,3);
-        if (UpCase(u[1]) in ['V','X']) then delete(u,1,1);
-        id:=0;
-        for ic:=1 to length(u) do if not (UpCase(u[ic]) in ['0'..'9','.','A','B','G']) then id:=1;
-        if (id=0) then continue
-      end;
-
-      { Ist der String eine Baudrate oder Dateigroesse? xx.xK, x in  [0..9] }
-      if (length(t)<10) then begin
-        u:=UStr(t);
-        { Zahl }
-        while ((u<>'') and (u[1] in ['0'..'9'])) do delete(u,1,1);
-        { . }
-        if (u<>'') then if (u[1]='.') then begin
-          delete(u,1,1);
-          { Zahl }
-          while (u<>'') and (u[1] in ['0'..'9']) do delete(u,1,1);
+        { Vor dem Dateinamen muá ein Trennzeichen stehen }
+        if (v<>#0) then if not (v in [#32,'"','<','>','¯','®','(','[','{',',',';',':','_','*']) then begin
+          while (byte(s[0])>0)
+          and not (s[1] in [#32,'"','<','>','¯','®','(','[','{','_','*']) do begin
+            delete(s,1,1);
+            continue
+          end;
+          continue
         end;
-        if (u='K') or (u='KB')
-          or (u='M') or (u='MB')
-          or (u='B') or (u='BYTES')
-        then continue;
-      end;
+        mark:=false;
+        if (v<>#0) then if (v='*') or (v='_') then mark:=true;
+        k:=1; { erstes Zeichen ist schon ok, also Rest testen }
+        while (k<Length(s))
+        and (s[k+1] in ['a'..'z','A'..'Z','0'..'9','_','@','.','!','/','?','*',
+                        '$','%','-']) do inc(k);
+        t:=copy(s,1,k);
+        u:=UStr(t);
+        delete(s,1,byte(t[0]));
+        { Auf den Dateinamen muá ein Trennzeichen folgen }
+        if (byte(s[0])>0) then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
 
-      { Telefonnummern ausblenden }
-      id:=0;
-      for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/','+','(',')']) then id:=1;
-      if (id=0) then continue;
+        if (mark and (t[byte(t[0])] in ['_','*'])) then dec(byte(t[0]));
 
-      if lMagics then if (UStr(t)=t) then begin
-        files:=files+' '+t;
-        continue;
-      end;
-      u := UStr(t);
-      ic := pos('.',u); if not (ic in [2..9]) then continue;
-      if (length(u)<4) then continue;
-      if (length(u)-ic>3) then continue;
-      if (p1<>'') then u:=u+p1; p1:='';
-      files:=files+' '+u;
-      continue
-    end; { while (k<byte(s[0])) }
-    { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
-    s:=next_marked;
-  end; { while s<>#0 do begin }
-  files:=trim(files);
-  if files='' then
+        while (byte(t[0])>0) and (t[byte(t[0])] in ['.','!','?','/']) do dec(byte(t[0]));
+        if (byte(t[0])<2) then continue;
+        k:=0;
+        for ic:=1 to byte(t[0]) do if t[ic]='.' then inc(k);
+        if (k>1) then continue;
+        if (pos('**',t)>0) then continue;
+        if not lMagics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
+
+        { Passwort suchen, erkennen und speichern }
+        p1:='';
+        ic:=pos('/',t); if (ic>0) then begin
+          p1:=copy(t,ic,20); delete(t,ic,99)
+        end;
+
+        u:=UStr(t);
+        if (length(u)<2) then continue;
+        s1:=u;
+        if (s1='S0') or (s1='XP') then continue;
+        if (s1='ZMH') or (s1='NMH') then continue;
+        if (s1='V.FC') or (s1='VFC') then continue;
+        if (s1='ISDN') or (s1='USR') then continue;
+        if (s1='FQDN') or (s1='INC') then continue;
+        if (s1='IMHO') or (s1='YMMV') then continue;
+        if (s1='ORG') or (s1='PGP') then continue;
+        if (s1='FAQ') or (s1='OS') then continue;
+        if (s1='DOS') then continue;
+        if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
+        ic:=pos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
+
+        { Auf Beschreibungs-Datei testen }
+        FSplit(u,dir,name,ext);
+        if (ext='.DIZ') then continue;
+        if (name='FILES') or (name='FILE_ID') or (name='00GLOBAL')
+          or (name='DESCRIPT') then continue;
+        
+        { Ist der String eine Versionsnummer? V42.3, 1.0, X75, V34B etc. }
+        if (byte(t[0])<8) then begin
+          u:=t;
+          if (UStr(copy(u,1,3))='VOL') then delete(u,1,3);
+          if (UpCase(u[1]) in ['V','X']) then delete(u,1,1);
+          id:=0;
+          for ic:=1 to length(u) do if not (UpCase(u[ic]) in ['0'..'9','.','A','B','G']) then id:=1;
+          if (id=0) then continue
+        end;
+
+        { Ist der String eine Baudrate oder Dateigroesse? xx.xK, x in  [0..9] }
+        if (length(t)<10) then begin
+          u:=UStr(t);
+          { Zahl }
+          while ((u<>'') and (u[1] in ['0'..'9'])) do delete(u,1,1);
+          { . }
+          if (u<>'') then if (u[1]='.') then begin
+            delete(u,1,1);
+            { Zahl }
+            while (u<>'') and (u[1] in ['0'..'9']) do delete(u,1,1);
+          end;
+          if (u='K') or (u='KB')
+            or (u='M') or (u='MB')
+            or (u='B') or (u='BYTES')
+          then continue;
+        end;
+
+        { Telefonnummern ausblenden }
+        id:=0;
+        for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/','+','(',')']) then id:=1;
+        if (id=0) then continue;
+
+        if (lMagics) then if (UStr(t)=t) then begin
+          files:=files+' '+t;
+          continue
+        end;
+        u := UStr(t);
+        ic := pos('.',u); if not (ic in [2..9]) then continue;
+        if (length(u)<4) then continue;
+        if (length(u)-ic>3) then continue;
+        if (p1<>'') then u:=u+p1; p1:='';
+        files:=files+' '+u;
+        continue
+      end; { while (k<byte(s[0])) }
+      { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
+      s:=next_marked;  
+    end; { while (s<>#0) do begin }
+    files:=trim(files);
+    { Abbrechen, wenn was gefunden, oder zweiter Durchlauf oder schon beim
+      ersten mal MAGICS an waren und ein zweiter Durchlauf unnoetig ist }
+  until ((files<>'') or secondtry or lmagics);
+  if (files='') then
     rfehler(438)    { 'keine Dateien markiert' }
   else
     nnode:=FidoRequest(node,files);
@@ -2440,6 +2445,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.6  2000/08/27 20:45:52  mk
+  OH:- F3-Request, ist die automatische Magic-Erkennung abgeschaltet,
+    werden sie trotzdem erkannt, und zwar dann, wenn keine
+    normalen Dateinamen gefunden wurden
+
   Revision 1.47.2.5  2000/08/22 19:46:09  mk
   - unnoetige Umlautkonvertierung entfernt
 
