@@ -19,10 +19,10 @@ interface
 
 uses dos, typeform,datadef, xpglobal;
 
-const   db_magic  = 'DB1'^Z;
-        eb_magic  = 'EB1'^Z;
-        ix_magic  = 'IX1'^Z;
-        nomagic   = #0#0#0#0;
+const   db_magic: ShortString  = 'DB1'^Z;
+        eb_magic: ShortString  = 'EB1'^Z;
+        ix_magic: ShortString  = 'IX1'^Z;
+        nomagic: ShortString   = #0#0#0#0;
 
         rflagDeleted = 1;     { Datensatz-Flag fÅr gelîschten Satz }
 
@@ -217,6 +217,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/08/29 19:43:54  ml
+  - workaround f¸r ƒnderung im fpc: Vergleich von array of char und
+    Ansistring funktioniert nicht
+
   Revision 1.9  2000/08/25 22:40:31  mk
   - Datenbank Indexcache freigeschaltet
 
