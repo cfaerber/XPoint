@@ -111,7 +111,8 @@ type
     RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
     NewsMIME: boolean;
-    ppp: boolean;
+    ppp: boolean;                // internel PPP Mode
+    client: boolean;             // Client-Mode
     SMTP: boolean;
     NNTPSpoolFormat: Boolean;    { if true, message boundaries are marked by a '.' line }
     NoCharsetRecode: boolean;
@@ -264,6 +265,7 @@ begin
   addpath := '';
   MakeQP := false;
   ppp := false;
+  client := false;
   CopyXLines := false;         { Alle X-Lines nach RFC zurueckkopieren }
   RFC1522 := false;             { Headerzeilen gem. RFC1522 codieren }
   getrecenvemp := false; { Envelope-Empfaenger aus Received auslesen? }
@@ -3265,9 +3267,12 @@ type rcommand = (rmail,rsmtp,rnews);
 
   procedure CreateNewfile;
   begin
-    fn := 'D-' + hex(NextUunumber, 4);
+    if client then
+      fn := 'M' + hex(NextUunumber, 4)
+    else
+      fn := 'D-' + hex(NextUunumber, 4);
 
-    if ppp then
+    if ppp and not client then
       f2 := TFileStream.Create(dest,fmCreate)
     else
       f2 := TFileStream.Create(dest + fn + ExtOut,fmCreate);
@@ -3310,7 +3315,7 @@ begin
   adr := 0; n := 0;
   smtpfirst := true;
 
-  if not ppp then
+  if not ppp  then
   begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + ExtOut);
     assign(fc, CommandFile); { "C."-File }
@@ -3384,7 +3389,7 @@ begin
   f2.Free; f2:=nil;
 
   if n = 0 then
-    _era(iifs(ppp,dest,dest+fn+ExtOut))
+     _era(iifs(ppp and not client,dest,dest+fn+ExtOut))
   else
   begin
     if not ppp then QueueCompressFile(rnews);
@@ -3630,6 +3635,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.6  2002/05/19 13:08:12  mk
+  - backported client netcall
+
   Revision 1.97.2.5  2002/05/08 10:59:55  mk
   - UtoZ: Close(F2) only if not ppp
 
