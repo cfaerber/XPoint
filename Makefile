@@ -1786,7 +1786,7 @@ xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) fileio$(UNITEXT) \
 	xp3o$(UNITEXT) xp7$(UNITEXT) xp7l$(UNITEXT) xp7o$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
 	xpf2$(UNITEXT) xpfido$(UNITEXT) xpfidonl$(UNITEXT) \
-	xpglobal$(UNITEXT)
+	xpglobal$(UNITEXT) zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
@@ -1816,7 +1816,7 @@ xp7o$(UNITEXT): xp7o.pas archive$(UNITEXT) database$(UNITEXT) \
 	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) \
 	xp6$(UNITEXT) xp7$(UNITEXT) xp7l$(UNITEXT) xp9bp$(UNITEXT) \
 	xp_iti$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpnt$(UNITEXT)
+	xpglobal$(UNITEXT) xpnt$(UNITEXT) zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
@@ -2625,6 +2625,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.42  2000/11/15 00:08:08  fe
+# Dependencies fixed.
+#
 # Revision 1.41  2000/11/14 22:33:25  fe
 # Dependencies fixed.
 #
