@@ -719,7 +719,7 @@ asm
             mov al,' '                     { Abgrenzung links }
             mov [bx],ax
             add bx,2
-            
+
 @dcopylp:   mov al,es:[di]
             inc di
             mov [bx],ax
@@ -735,8 +735,8 @@ asm
             call @testattr                 { sichert cx }
             mov al,'_'
             call @testattr
-{            mov   al,'/' 
-             call  @testattr 
+{            mov   al,'/'
+             call  @testattr
 }
 
 @nodh:      mov ax,base                   { dispbuffer -> Bildschirm }
@@ -753,23 +753,23 @@ asm
             mov si,offset dispbuf[2]
             rep movsw
 
-            jmp @ende 
+            jmp @ende
 
 
 {-----------------------}
 
 @testattr:  mov dx,cx
-            xor bx,bx 
+            xor bx,bx
 
             {-----------}
-@ta1:       push ax 
+@ta1:       push ax
             mov cx,dx
-            xor si,si 
+            xor si,si
 
-@talp1:     cmp al,byte ptr dispbuf[si]            { Startzeichen checken }                                 
+@talp1:     cmp al,byte ptr dispbuf[si]            { Startzeichen checken }
             jne @tanext1
 
-             mov bl,byte ptr dispbuf[si-2] 
+             mov bl,byte ptr dispbuf[si-2]
              test byte ptr delimiters[bx],1        { Byte vor Startzeichen ok? }
              jz @tanext1
              mov bl,byte ptr dispbuf[si+2]
@@ -782,7 +782,7 @@ asm
 
             {-----------}
 
-@tastart:   mov di,si                              { Di = Byte nach Startzeichen }                           
+@tastart:   mov di,si                              { Di = Byte nach Startzeichen }
             dec cx
             jz @taende
             dec cx                                 { min. ein Zeichen Abstand }
@@ -795,16 +795,16 @@ asm
              mov bl,byte ptr dispbuf[si-2]
              test byte ptr delimiters[bx],4        { Byte vor Endzeichen ok? }
              jz @tanext2
-             mov bl,byte ptr dispbuf[si+2] 
+             mov bl,byte ptr dispbuf[si+2]
              test byte ptr delimiters[bx],8       { Byte nach Endzeichen ok? }
              jnz @tafound2                        { Endzeichen gefunden }
 
 @tanext2:   add si,2
-            loop @talp2                            
+            loop @talp2
             jmp @taende
 
             {------------}
-             
+
 @tafound2:  push cx
             mov cx,si
             sub cx,di
@@ -842,9 +842,9 @@ end; { of Listdisplay }
 
 
 
-{$ELSE}  
+{$ELSE}
 
-{ --- 32-Bit --- }           
+{ --- 32-Bit --- }
 
 { Variable in XP0.PAS: }
 { charbuf     : string[82];                  {82 Zeichen}
@@ -853,14 +853,14 @@ end; { of Listdisplay }
 { Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
 { mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
 
-procedure MakeListDisplay(const s:string); assembler;
+procedure MakeListDisplay(const s:string); assembler; {&uses ebx, esi, edi}
 
 asm
             mov edi,s
             cld
-            xor ecx,ecx 
+            xor ecx,ecx
             mov cl,[edi]
-            inc edi            
+            inc edi
             push ecx
 
             xor ebx,ebx                    { s + color -> dispbuf }
@@ -869,17 +869,17 @@ asm
             mov dl,textattr
             mov al,' '                     { Abgrenzung links }
             mov byte ptr charbuf[ebx],al
-            mov byte ptr attrbuf[ebx*2],dx
-            inc ebx 
-            
+            mov word ptr attrbuf[ebx*2],dx
+            inc ebx
+
 @dcopylp:   mov al,[edi]
-            mov byte ptr charbuf[ebx],al             
+            mov byte ptr charbuf[ebx],al
             mov word ptr attrbuf[ebx*2],dx
             inc edi
-            inc ebx            
+            inc ebx
             loop @dcopylp
 
-            mov al,' '                     { Abgrenzung rechts }    
+            mov al,' '                     { Abgrenzung rechts }
             mov byte ptr charbuf[ebx],al
             mov word ptr attrbuf[ebx*2],dx
             pop ecx
@@ -890,29 +890,29 @@ asm
             call @testattr                 { sichert cx }
             mov al,'_'
             call @testattr
-{            mov   al,'/'          
+{            mov   al,'/'
              call  @testattr
 }
 @nodh:      mov byte ptr charbuf[0],cl
             add ecx,ecx
-            mov byte ptr attrbuf[0],cx
-            jmp @ende 
+            mov word ptr attrbuf[0],cx
+            jmp @ende
 
 
 {-----------------------}
 
 @testattr:  mov edx,ecx
-            xor ebx,ebx 
+            xor ebx,ebx
 
             {-----------}
-@ta1:       push eax 
+@ta1:       push eax
             mov ecx,edx
-            xor esi,esi   
+            xor esi,esi
 
-@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }                                 
+@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }
             jne @tanext1
 
-             mov bl,byte ptr charbuf[esi-1] 
+             mov bl,byte ptr charbuf[esi-1]
              test byte ptr delimiters[ebx],1      { Byte vor Startzeichen ok? }
              jz @tanext1
              mov bl,byte ptr charbuf[esi+1]
@@ -925,8 +925,8 @@ asm
 
             {-----------}
 
-@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }                           
-            dec ecx                                
+@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }
+            dec ecx
             jz @taende                             { Mindestens 1 Zeichen abstand }
             inc si                                 { dann Endzeichen Checken }
 
@@ -936,16 +936,16 @@ asm
              mov bl,byte ptr charbuf[esi-1]
              test byte ptr delimiters[ebx],4     { Byte vor Endzeichen ok? }
              jz @tanext2
-             mov bl,byte ptr charbuf[esi+1] 
+             mov bl,byte ptr charbuf[esi+1]
              test byte ptr delimiters[ebx],8     { Byte nach Endzeichen ok? }
              jnz @tafound2                        { Endzeichen gefunden }
 
 @tanext2:   inc esi
-            loop @talp2                            
+            loop @talp2
             jmp @taende
 
             {------------}
-             
+
 @tafound2:  push ecx
             mov ecx,esi
             sub ecx,edi
@@ -960,8 +960,8 @@ asm
 
             pop ecx
             dec ecx                                { restliche Zeichen }
-            jz @addspace             
-            
+            jz @addspace
+
 @tacopy2:   mov al,byte ptr charbuf[edi+2]
             mov byte ptr charbuf[edi],al
             inc edi
@@ -1290,8 +1290,9 @@ begin
   setscreensize(newmode);
   lines(screenlines,1);
   clrscr;
+  if (videotype>1) and not ParMono then
+    setbackintensity(true);
 {$IFDEF BP }
-  if (videotype>1) and not ParMono then setbackintensity(true);
   SetXPborder;
 {$ENDIF }
   with col do begin
@@ -2317,6 +2318,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/04/09 19:47:22  mk
+  - Benutze Register fuer ListDisplay und VP angegeben
+
   Revision 1.25  2000/04/09 06:51:56  jg
   - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
   - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
