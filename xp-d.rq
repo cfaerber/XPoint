@@ -6,7 +6,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Online-Hilfe, Tastenmakros
 1 XP.HLP
 2 KEYDEF.CFG
-5 Lade Sprachmodul ...
+5 Lade Sprachmodul...
 
 # Dateiversion
 6 13
@@ -98,7 +98,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 24   Suchen...
 25   *nicht gefunden*
 -
-12   Taste drcken ...
+12   Taste drcken...
 13   ~Bytes
 14   KBytes
 
@@ -192,7 +192,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
   2  8
   3  T.o.KopfT.m.Kopf  Puffer   Quote
 -
-105  Einen Moment bitte ...
+105  Einen Moment bitte...
 106  Dateiname:~
 107  ~~^Ja  , ^Nein~
 # Useraufnahme
@@ -228,8 +228,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 128  %s wird gepackt
 129  %s wird berarbeitet
 
-130  Lade Datei ...
-131  Leere Smartdrive-Schreibcache ...
+130  Lade Datei...
+131  Leere Smartdrive-Schreibcache...
 + 132
 1    Kopfschablone fr neue, ”ffentliche Nachrichten
 2    Kopfschablone fr neue, private Nachrichten
@@ -246,7 +246,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 14
 -
 133  Men
-134  %s wird kopiert ...
+134  %s wird kopiert...
 
 # XP1O
 135  warte auf Beendigung des externen Viewers ...
@@ -372,7 +372,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   Terminal
 -
 216  interne Einstellungen
-217  Einstellungen sichern ...
+217  Einstellungen sichern...
 218  ungltige FKey-Config-Zeile: ~
 # 219 darf auf keinen Fall verl„ngert werden!
 219  ungltige Konfigurationszeile: ~
@@ -797,14 +797,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 307  Fehler beim Schreiben in Datei
 
 # XP3O
-320  Datumsbezge werden berarbeitet...     %
+320  Datumsbezge berarbeiten...     %
 321  ~fertig.
 + 322
 1    Nachrichten in anderes Brett verlagern
 2    Quellbrett
 3    Zielbrett~~
 4    Nachrichtenkopf anpassen?
-5    Einen Moment bitte ...
+5    Einen Moment bitte...
 6    Brett nicht vorhanden
 -
 + 323
@@ -812,7 +812,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    von User
 3    nach User~~
 4    User nicht vorhanden
-5    Einen Moment bitte ...
+5    Einen Moment bitte...
 -
 + 324
 1    Nachricht extrahieren
@@ -861,8 +861,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 338  Puffer berprfen...     ~
 339  Brettindex wird angelegt...     %
-340  Brettindex berarbeiten ...     %
-341  Cancel-Nachrichten bearbeiten ...~
+340  Brettindex berarbeiten...     %
+341  Cancel-Nachrichten bearbeiten...~
 342  Seitenvorschub nach jeder Nachricht
 343  <kein Betreff>
 344  Auch gehaltene Nachrichten l”schen
@@ -962,11 +962,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 425  Nachrichten seit dem %s
 426  ~Archivbrett w„hlen:
 427  ~Zielbrett w„hlen
-428  ~Empf„nger w„hlen
+428  ~User w„hlen
 429  Satznummer:~
 430  Dateiinhalt anzeigen
 431  Der Absender wnscht eine PM-Antwort - trotzdem ”ffentlich antworten
-432  Suche n„chsten markierten User ...
+432  Suche n„chsten markierten User...
 433  Kommentar anzeigen
 #
 435  keine Bretter mit neuen Nachrichten vorhanden
@@ -1047,7 +1047,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Ablage Nr. %s
 3    ~- kein Platz!!!
 4    zu wenig Platz, um Ablage %s zu reorganisieren
-5    ~packen ...     %
+5    ~packen...     %
 6    Einen Moment noch...     %
 7    nix zu l”schen
 -
@@ -1059,10 +1059,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 456
 1    Brettliste einlesen
 2    Datei nicht vorhanden!
-3    Bretter anlegen ...
+3    Bretter anlegen...
 11   Userliste einlesen
 12   User in Adreábuch eintragen
-13   Userbretter anlegen ...
+13   Userbretter anlegen...
 -
 + 457
 1    Userliste erzeugen
@@ -1130,7 +1130,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 469  Netztyp:~
 470  Nachricht l”schen
 471  ~(unterbricht Bezugsverkettung)
-472  Bezge herstellen ...     %
+472  Bezge herstellen...     %
 473  ~fertig.
 474  Message-IDs einlesen...     %
 475  Kommentarbaum einlesen...
@@ -1138,7 +1138,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1    Original-Absender  :~
 2    Weiterleit-Absender:~
 3    Original-Empf„nger :~
-4    Empf„nger w„hlen ...
+4    Empf„nger w„hlen...
 5    Absender           :~
 6    Vertreter          :~
 7    Reply-To-Empf„nger :~
@@ -1404,7 +1404,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 617  Betreff ge„ndert - Verkettung beibehalten
 618  Nachricht ohne Betreff absenden
 619  war
-620  Teste auf Crosspostings ...
+620  Teste auf Crosspostings...
 621  Origin-Datei fehlt: %s
 622  In diesem Netz nicht m”glich
 
@@ -1422,10 +1422,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3   %s markierte Nachrichten archivieren
 4   1 markierte Nachricht archivieren
 + 644
-1   Weiterleiten an ...
+1   Weiterleiten an...
 2   ~^Brett , ^User , ^Direkt~
 3   PM wird archiviert...
-4   PMs archivieren ...
+4   PMs archivieren...
 5   Alle markierten PMs archivieren
 6   Nachricht von %s archivieren
 7   Nachricht wird archiviert
@@ -1509,7 +1509,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Fido-Crash
 1    andere
 2    alle
-3    Anruf bei ...
+3    Anruf bei...
 4    Node/Name~
 5    markierte
 + 706
@@ -1583,7 +1583,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 803  %s markierte Bretter abbestellen
 804  %s abbestellen
 805  Sind Sie sicher, daá das eine Brettliste ist
-806  Brettliste fr %s wird eingelesen ...
+806  Brettliste fr %s wird eingelesen...
 + 807
 1    Brett
 2    Bretter
@@ -1592,7 +1592,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    %s %s bei %s abbestellen
 5    %s %s anlegen
 6    Inhalt der gew„hlten Bretter anfordern
-10   Bretter anlegen ...
+10   Bretter anlegen...
 -
 # MAPS-Befehl INFO
 808  Info <System>
@@ -1649,7 +1649,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 811  Sind Sie sicher, daá das eine Fileliste ist
 812  Fileserver-Liste
-813  File-Liste fr %s wird eingelesen ...
+813  File-Liste fr %s wird eingelesen...
 + 814
 1    Datei
 2    Dateien
@@ -1669,13 +1669,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 12   Dateien ~
 -
 819  Anruf sofort starten
-820  Lese Sysfile-Eintrag ...
+820  Lese Sysfile-Eintrag...
 821  Brettliste einlesen
 822  Fileecho-Liste einlesen
-823  Filecho-Liste fr %s wird eingelesen ...
+823  Filecho-Liste fr %s wird eingelesen...
 
 # XP8.INC
-850  Fileecho-Liste fr %s wird eingelesen ...
+850  Fileecho-Liste fr %s wird eingelesen...
 + 851
 # Fensterbreite
 0    54
@@ -2079,7 +2079,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    Netcall-Automatik
 + 1017
 1    keine Tastenmakros fr dieses Fenster definiert
-2    Makro w„hlen ...
+2    Makro w„hlen...
 3    keine Tastenmakros definiert
 + 1018
 # Fensterbreite /Config/Anzeige/Kopf
@@ -2128,8 +2128,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1    Hilfe
 2    Einstellungen
 -
-2001 ™ffne LogFile ...
-2002 Schlieáe Logfile ...
+2001 ™ffne LogFile...
+2002 Schlieáe Logfile...
 2003 Logfile schlieáen
 2004 trenne Verbindung
 2005 Mini-Terminal - Ende mit <Alt-X>
@@ -2183,9 +2183,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Datei
 3    Netz
 4    User
-5    Netzindex sortieren ...
-6    Userindex sortieren ...
-7    Userindex packen ...      %
+5    Netzindex sortieren...
+6    Userindex sortieren...
+7    Userindex packen...      %
 -
 2102 Nodelisten-Konfiguration - s. FIDO.TXT
 2103 Pointliste kopieren
@@ -2205,13 +2205,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    Flags
 4    Status
 -
-2110 Lade Fileliste ...
+2110 Lade Fileliste...
 2111 File-Request
 + 2112
 1    Dateien~
 2    ~sofort starten
-3    Request-Anforderung l”schen ...
-4    Request-Anforderung speichern ...
+3    Request-Anforderung l”schen...
+4    Request-Anforderung speichern...
 -
 2113 ~bereits vorhanden - berschreiben
 2114 zu wenig Platz
@@ -2230,7 +2230,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   L”sche %s ...
 -
 2118 Fileliste fr %s l”schen
-2119 L”sche Fileliste ...
+2119 L”sche Fileliste...
 # /Fido/Fileliste/Suchen
 + 2120
 1    Schreibfehler
@@ -2387,7 +2387,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   gesamte Nachricht
 -
 2441 Nachrichtenteil extrahieren
-2442 decodiere Bin„rdatei ...
+2442 decodiere Bin„rdatei...
 
 # --- XPE -------------------------------------------------------------
 
@@ -2533,7 +2533,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 22   "Down"-Nodes mitz„hlen
 23   Anzahl gr”áter Netze~
 24   Flags anzeigen ab   ~
-25   Statistik wird berechnet ...
+25   Statistik wird berechnet...
 26   CrossPoint-Nodelistenstatistik vom %s
 27   Nodelisten
 + 2614
@@ -2598,7 +2598,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2711 Keine Box angegeben - internes Brett anlegen
 2712 Unbekannte Serverbox - Brett trotzdem anlegen
 2713 Brettname ge„ndert - Nachrichtenk”pfe anpassen
-2714 Einen Moment bitte ...
+2714 Einen Moment bitte...
 + 2715
 1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter
 2    ^Kommentar,^Serverbox,^Haltezeit,^Gruppe,^Filter,^Zugriff
@@ -2717,7 +2717,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2  Der Header dieser Nachricht enth„lt den angeforderten PGP-Public-Key.
 3  Diese Nachricht wurde automatisch erzeugt.
 +  3001
-1  PGP-Key anfordern bei ...
+1  PGP-Key anfordern bei...
 2  PGP-Keyanforderung
 3  Falls Ihre Software PGP nach dem ZCONNECT-Standard untersttzt,
 4  sollte sie auf diese Nachricht mit dem Verschicken Ihres PGP
