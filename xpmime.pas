@@ -630,51 +630,6 @@ var   input,t : text;
      else Iso1ToIBM(s[1],length(s));
   end;
 
-  procedure DecodeBase64;    { aus UUZ.PAS }
-  const b64tab : array[0..127] of byte =
-                 ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,63, 0, 0, 0,64,
-                  53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
-                   0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-                  16,17,18,19,20,21,22,23,24,25,26, 0, 0, 0, 0, 0,
-                   0,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
-                  42,43,44,45,46,47,48,49,50,51,52, 0, 0, 0, 0, 0);
-  var b1,b2,b3,b4 : byte;
-      p1,p2,pad   : byte;
-
-    function nextbyte:byte;
-    var p : byte;
-    begin
-      repeat
-        if s[p1]>#127 then p:=0
-        else p:=b64tab[byte(s[p1])];
-        inc(p1);
-      until (p>0) or (p1>length(s));
-      if p>0 then dec(p);
-      nextbyte:=p;
-    end;
-
-  begin
-    if (length(s)<4) or ((Length(Trim(s)) mod 4) <> 0) then Exit
-    else
-    begin
-      if s[length(s)]='=' then
-        if s[length(s)-1]='=' then pad:=2
-        else pad:=1
-      else pad:=0;
-      p1:=1; p2:=1;
-      while p1<=length(s) do begin
-        b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
-        s[p2]:=chr(b1 shl 2 + b2 shr 4);
-        s[p2+1]:=chr((b2 and 15) shl 4 + b3 shr 2);
-        s[p2+2]:=chr((b3 and 3) shl 6 + b4);
-        inc(p2,3);
-        end;
-        SetLength(s, p2-1-pad);
-      end;
-  end;
-
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
   extract_msg(0,'',tmp,false,0);
@@ -730,8 +685,8 @@ begin
       for i:=1 to lines do
       begin
         readln(input,s);
-        DecodeBase64;
-        blockwrite(f,s[1],length(s));
+        s := DecodeBase64(s);
+        if s <> '' then blockwrite(f,s[1],length(s));
       end;
 
       if lines>500 then closebox;
@@ -763,6 +718,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.14  2001/07/01 23:04:17  mk
+  - Fehler Base64-Dekodierung beseitigt
+  - Routine DecodeBase64 von xpmime und uuz in typeform verlegt
+
   Revision 1.12.2.13  2001/05/30 20:19:26  my
   JG:- MIME multipart messages with lines longer than 255 chars are
        extracted correctly now (before they were truncated at pos 255)

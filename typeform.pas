@@ -206,6 +206,7 @@ function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
   der tats„chlich allocierte Speicher }
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 procedure UTF82IBM(var s: String);
+function DecodeBase64(const s: String):String;
 
 { ================= Implementation-Teil ==================  }
 
@@ -2224,9 +2225,72 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
     end;
   end;
 
+{ RFC 1521, see www.rfc.net }
+function DecodeBase64(const s: String):String;
+const
+  b64tab: array[0..127] of shortint =
+  (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
+var
+  b1, b2, b3, b4: byte;
+  p1, pad: byte;
+  res: String;
+
+  function nextbyte: byte;
+  var p: integer;
+  begin
+    nextbyte:=0;
+    if p1>length(s)then exit;
+    repeat
+      if s[p1] > #127 then
+        p := -1
+      else
+        p := b64tab[byte(s[p1])];
+      inc(p1);
+    until (p >= 0) or (p1 > length(s));
+    if p>=0 then nextbyte:=p;
+  end;
+
+begin
+  Res := '';
+  if length(s) >= 3 then
+  begin
+    if LastChar(s) = '=' then
+    begin
+      if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
+        pad := 2
+      else
+        pad := 1;
+      if Length(s) mod 4 <> 0 then Pad := 3;
+    end else
+      pad := 0;
+
+    p1 := 1;
+    while p1 <= length(s) do
+    begin
+      b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
+      Res := Res + chr(b1 shl 2 + b2 shr 4);
+      Res := Res + chr((b2 and 15) shl 4 + b3 shr 2);
+      Res := res + chr((b3 and 3) shl 6 + b4);
+    end;
+    Res[0] := Char(Byte(Res[0])-pad);
+  end;
+  Decodebase64 := Res;
+end;
+
 end.
 {
   $Log$
+  Revision 1.37.2.17  2001/07/01 23:04:16  mk
+  - Fehler Base64-Dekodierung beseitigt
+  - Routine DecodeBase64 von xpmime und uuz in typeform verlegt
+
   Revision 1.37.2.16  2001/04/28 13:38:55  mk
   - Client-Boxen umbenennen implementiert
 
