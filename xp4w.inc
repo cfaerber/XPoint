@@ -555,13 +555,16 @@ var fn     : pathstr;
     dispbuf[p]^[2]:=' ';
   end;
 
+{ JG:24.04.00 Ausgeklammerte Stellen sorgen dafuer das durch blaettern im Lister
+             die einzelnen Teile einer Mulpart-Messi direkt angesehen werden. }
+
   procedure GoMsgBack;    { '-' -> zurck }
   begin
     SetGelesen;
-    if multipart and not mpdata.alternative and (mpart_nr>1) then begin
+(*    if multipart and not mpdata.alternative and (mpart_nr>1) then begin
       dec(mpart_nr); ende:=false;
       end
-    else
+    else *)
       if p>1 then begin
         dec(p); ende:=false; mpart_nr:=maxint; end
       else begin
@@ -571,24 +574,25 @@ var fn     : pathstr;
           disprec[1]:=dbRecno(dispdat);
           write_disp_line(1,p,false);
           if dispmode=12 then dec(komofs);
-          mpart_nr:=maxint;
+        (*  mpart_nr:=maxint; *)
           ende:=false;
           end;
         end;
     {aufbau:=true;}
     mdisplay:=true;
+    mpselect:=true;
   end;
 
   procedure GoMsgForth;       { '+' -> vorw„rts }
   begin
     SetGelesen;
-    if multipart and not mpdata.alternative and
+(*    if multipart and not mpdata.alternative and
        (mpart_nr>0) and (mpart_nr<mpdata.parts)
     then begin
       inc(mpart_nr);
       ende:=false;
       end
-    else
+    else *)
       if (p<gl) then
         if disprec[p+1]<>0 then begin
           inc(p); ende:=false; mpart_nr:=1;
@@ -601,12 +605,13 @@ var fn     : pathstr;
           disprec[gl]:=dbRecno(dispdat);
           write_disp_line(gl,p,false);
           if dispmode=12 then inc(komofs);
-          mpart_nr:=1;
+          (* mpart_nr:=1; *)
           ende:=false;
           end;
         end;
     {aufbau:=true;}
     mdisplay:=true;
+    mpselect:=true;
   end;
 
   procedure SetKK;
@@ -882,13 +887,13 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack; dpp:=dbRecno(mbase);
-                 GoP;
+                 SetKK; GoMsgBack; 
+                 GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth; dpp:=dbRecno(mbase);
-                 GoP;
+                 SetKK; GoMsgForth; 
+                 GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
         end;

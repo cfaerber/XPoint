@@ -30,7 +30,7 @@ const ListHelpStr : string[8] = 'Hilfe';
       ListDebug   : boolean   = false;
       Listunvers  : byte      = 0;
       Listhalten  : byte      = 0;
-      Listflags   : integer   = 0; 
+      Listflags   : longint   = 0; 
 
 type  liste   = pointer;
 
@@ -1649,6 +1649,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/24 17:26:45  jg
+  - Bugfix: Variable Lister.Listflag muss Longint sein, nicht Integer.
+
+  - wenn Mime-Messis aus dem Lister heraus mit +/- oder STRG+PgUP/PGDN
+    gewaehlt werden, erscheint jetzt das MIME-Auswahl Menue
+    (frueher wurde zwischen den Multipartteilen geblaettert)
+
   Revision 1.14  2000/04/24 13:17:39  jg
   - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
   - "H" im Lister kann jetzt das Halteflag auch ausschalten
