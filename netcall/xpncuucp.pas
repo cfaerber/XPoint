@@ -20,7 +20,7 @@
 
 { OpenXP UUCP netcall unit }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpncuucp;
 
@@ -500,6 +500,10 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.12  2001/09/08 20:21:06  cl
   - replaced CreateMultipleDirs with CreateDirs
 

@@ -19,7 +19,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc}
 
 { OpenXP fido netcall unit }
 unit xpncfido;
@@ -889,6 +889,10 @@ end;
 
 {
   $Log$
+  Revision 1.23  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.22  2001/10/14 21:22:40  ma
   - fixed: Request result processing
 

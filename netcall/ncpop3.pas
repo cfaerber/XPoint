@@ -21,7 +21,7 @@
 
 { Klasse TPOP3 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit ncpop3;
 
@@ -420,6 +420,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.16  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 

@@ -21,7 +21,7 @@
 
 { Klasse TNNTP }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit ncnntp;
 
@@ -539,6 +539,10 @@ end.
 
 {
   $Log$
+  Revision 1.32  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.31  2001/10/08 21:17:45  ma
   - better error messages
 

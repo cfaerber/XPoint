@@ -18,7 +18,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 { OpenXP ZConnect netcall unit }
 unit xpnczconnect;
@@ -251,6 +251,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/10/15 13:12:26  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.10  2001/10/01 19:35:02  ma
   - compiles again (DOS32)
 

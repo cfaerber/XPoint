@@ -18,7 +18,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP netcall unit }
 { Here all preparations for a netcall are done (compressing packets...),
@@ -1355,6 +1355,10 @@ end;
 
 {
   $Log$
+  Revision 1.37  2001/10/15 13:12:26  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.36  2001/10/01 19:35:02  ma
   - compiles again (DOS32)
 

@@ -21,7 +21,7 @@
 
 { Abstrakte Klasse TNetcall }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit netcall;
 
@@ -95,9 +95,13 @@ end.
 
 {
 	$Log$
+	Revision 1.6  2001/10/15 13:12:25  mk
+	/bin/bash: ?: command not found
+	/bin/bash: q: command not found
+
 	Revision 1.5  2001/09/07 23:24:57  ml
 	- Kylix compatibility stage II
-
+	
 	Revision 1.4  2001/04/16 18:13:28  ma
 	- ProgOutWin now pauses a bit on closing
 	  (some seconds if an error occured, one second if not)

@@ -20,7 +20,7 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP generic mailer unit }
 unit ncgeneric;
@@ -80,6 +80,10 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

@@ -20,7 +20,7 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP NNTP netcall unit }
 unit xpncnntp;
@@ -367,6 +367,10 @@ end;
 
 {
         $Log$
+        Revision 1.30  2001/10/15 13:12:25  mk
+        /bin/bash: ?: command not found
+        /bin/bash: q: command not found
+
         Revision 1.29  2001/10/10 20:24:50  mk
         - avoid exception if rc file is not found
 

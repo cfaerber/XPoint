@@ -21,7 +21,7 @@
 
 { Klasse TSMTP }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit ncsmtp;
 
@@ -291,6 +291,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.14  2001/10/08 21:17:45  ma
   - better error messages
 

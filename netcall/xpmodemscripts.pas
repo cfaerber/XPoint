@@ -20,7 +20,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP modem script unit }
 unit xpmodemscripts;
@@ -664,6 +664,10 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.6  2001/09/08 16:29:45  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -20,7 +20,7 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP POP3 netcall unit }
 unit xpncpop3;
@@ -272,6 +272,10 @@ end;
                       
 {
   $Log$
+  Revision 1.26  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.25  2001/10/10 20:57:47  mk
   - function result for SendSMTPMails and GetOP3Mails is now always defined
 

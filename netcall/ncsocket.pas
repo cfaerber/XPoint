@@ -22,7 +22,7 @@
 
 { Abstrakte Klasse TSoketNetcall }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit ncsocket;
 
@@ -435,6 +435,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
   Revision 1.28  2001/09/19 11:20:09  ma
   - implemented simple user break handling code
 
