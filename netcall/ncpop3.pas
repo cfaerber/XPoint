@@ -72,6 +72,8 @@ type
     function Stat: boolean;
     // Empf„ngt eine Nachricht
     function Retr(ID: Integer; List: TStringList): boolean;
+    // Empf„ngt alle Nachrichten
+    function RetrAll(List: TStringList): boolean;
     // L”scht die angegebene Nachricht
     function Dele(ID: Integer): boolean;
     // L”scht High-Watermark und als gel”scht markierte Nachrichten
@@ -260,6 +262,14 @@ begin
   end;
 end;
 
+function TPOP3.RetrAll(List: TStringList): boolean;
+var
+  i: Integer;
+begin
+  for i := 1 to FMailCount do
+    Retr(i, List)
+end;
+
 function TPOP3.RSet: boolean;
 var
   s: String;
@@ -280,6 +290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/08/15 23:04:31  mk
+  - Routine zum holen aller Mail hinzugefuegt
+
   Revision 1.3  2000/08/15 15:08:10  mk
   - FPort wird jetzt auch bei Create initialisiert
 
