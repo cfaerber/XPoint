@@ -1350,6 +1350,7 @@ var dat    : longint;
   end;
 
   procedure mw2;
+  var s:string;
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag ueberpruefen }
       dbSeek(mbase,miGelesen,_brett+#0);
@@ -1362,9 +1363,23 @@ var dat    : longint;
           end;
         end;
       end;
-    if not brettall and wrongline  { BrettModus "A" und Brett passt nicht mehr }
-      then nobrettweiter:=true;    { dann Cursor nicht weiterschalten }
-    if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
+      if not brettall and wrongline { BrettModus "A" und Brett passt nicht mehr }
+      then begin                    { dann Cursor nicht weiterschalten }
+        s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
+        repeat
+          inc(p);
+          GoP;
+          if not dbBOF(bbase) then s := dbReadNStr(bbase,bb_brettname);
+        until dbBOF(bbase) or (leftStr(s,3)<>'$/T');   {keine Trennzeile anspringen }
+        dec(p);
+        if p>=gl then begin
+          disprec[1]:=dbrecno(bbase);
+          p:=1;
+          aufbau:=true;
+          end;
+        end
+      else
+      if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1568,6 +1583,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.66  2001/01/15 22:24:52  mk
+  JG:- Brettweiterschalt-Fix, Teil 2
+
   Revision 1.65  2001/01/10 11:16:46  mk
   JG:- fix for mail/news mode A (MK)
 
