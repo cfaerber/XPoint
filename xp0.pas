@@ -567,11 +567,14 @@ type   textp  = ^text;
                   UUsmtp    : boolean;     { UUCP: SMTP/UUCP           }
                   ClientSmtp: boolean;     { UUCP: SMTP/Client         }
                   PPPMode   : Boolean;     { RFC/Client switch         }
-                  PPPClient : string[60];  { PPP Client                }
-                  PPPClientPath: string[60];  { PPP Client Path        }
+                  PPPClientPath: string[60];  { PPP Client-Pfad        }
+                  PPPClient : string[60];  { PPP Client-Aufruf         }
                   PPPAddServers: string[200]; { Pakete mitsenden       }
-                  PPPDialUp : string[60];  { PPP Dial-Up               }
-                  PPPSpool  : string[60];  { PPP Spool                 }
+                  PPPDialUp : string[60];  { PPP Zugang/Dial-Up        }
+                  PPPPhone  : string[60];  { PPP Telefon               }
+                  PPPLogin  : string[60];  { PPP Login                 }
+                  PPPPass   : string[20];  { PPP Passwort              }
+                  PPPSpool  : string[60];  { PPP Spool-Verzeichnis     }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -1189,6 +1192,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.34  2001/06/16 15:19:43  my
+  - New server configuration parameter "Client-Phone", "Client-Login"
+    and "Client-Password"
+
   Revision 1.54.2.33  2001/06/16 02:11:41  my
   - New server configuration parameter "Client-DialUp="
 

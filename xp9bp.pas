@@ -149,6 +149,9 @@ begin
     PPPClient := '';
     PPPAddServers := '';
     PPPDialUp := '';
+    PPPPhone := '';
+    PPPLogin := '';
+    PPPPass := '';
     PPPSpool := '';
     UUprotos:='Ggz';
     efilter:='';
@@ -290,6 +293,9 @@ begin
             gets(s,su,'Client-Exec', PPPClient, 60) or
             gets(s,su,'Client-AddServers', PPPAddServers, 60) or
             gets(s,su,'Client-DialUp',PPPDialup,60) or
+            gets(s,su,'Client-Phone',PPPPhone,60) or
+            gets(s,su,'Client-Login',PPPLogin,60) or
+            gets(s,su,'Client-Password',PPPPass,20) or
             gets(s,su,'Client-Spool', PPPSpool, 60) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
@@ -435,17 +441,6 @@ begin
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     writeln(t,'UU-SMTP=',jnf(uusmtp));
     writeln(t,'UU-SMTP-Client=', jnf(ClientSmtp));
-    writeln(t,'Client-Mode=', Jnf(PPPMode));
-    writeln(t,'Client-Path=', PPPClientPath);
-    writeln(t,'Client-Exec=', PPPClient);
-    writeln(t,'Client-AddServers=', PPPAddServers);
-    writeln(t,'Client-DialUp=', PPPDialUp);
-    if PPPMode then
-    begin
-      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
-      MkLongDir(OwnPath + XFerDir + Dateiname, Res);
-      if IOResult = 0 then ;
-      end;
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
     writeln(t,'BrettmanagerTyp=',BMtyp);
@@ -454,6 +449,20 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
+    writeln(t,'Client-Mode=', Jnf(PPPMode));
+    writeln(t,'Client-Path=', PPPClientPath);
+    writeln(t,'Client-Exec=', PPPClient);
+    writeln(t,'Client-AddServers=', PPPAddServers);
+    writeln(t,'Client-DialUp=', PPPDialUp);
+    writeln(t,'Client-Phone=', PPPPhone);
+    writeln(t,'Client-Login=', PPPLogin);
+    writeln(t,'Client-Password=', PPPPass);
+    if PPPMode then
+    begin
+      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+      MkLongDir(OwnPath + XFerDir + Dateiname, Res);
+      if IOResult = 0 then ;
+      end;
   end;
   close(t);
 end;
@@ -566,6 +575,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.16  2001/06/16 15:19:44  my
+  - New server configuration parameter "Client-Phone", "Client-Login"
+    and "Client-Password"
+
   Revision 1.10.2.15  2001/06/16 02:11:42  my
   - New server configuration parameter "Client-DialUp="
 
