@@ -90,6 +90,7 @@ XPCRC32.PAS     CRC-32 berechnen
 XPDATUM.PAS     Datumsumwandlungen
 XPDEF.INC       globale Compiler-Definitionen
 XPDIFF.PAS      Definitionen fÅr XP, XP-FM und ZFIDO
+XPEASY.PAS      Einfache Erstkonfiguration
 XPE.PAS         Aufruf des internen Editors
 XPFIDO.PAS, XPF1.INC,
 XPF2.PAS        Fido-Funktionen
