@@ -140,6 +140,8 @@ begin
   C := FindBadge(Badge);
   if C >= 0 then
   begin
+    TrimLastChar(Message, #10);
+    TrimLastChar(Message, #13);
     WriteToLog := Integer(Logbadges.Objects[C]) >= Level;
     if WriteToLog and (LogLast=Badge+#0+Message) then begin
       LogCount:=LogCount+1;
@@ -312,6 +314,9 @@ finalization
 
 {
   $Log$
+  Revision 1.37  2003/09/05 18:21:33  mk
+  - trim #13#10 from debug messages
+
   Revision 1.36  2003/08/25 07:05:50  mk
   - added OS/2 support
 
