@@ -1164,6 +1164,66 @@ var d         : DB;
     typ:=compmimetyp(typ);
   end;
 
+  procedure SortMIMETypes;
+
+  var
+    typ, typ2: string;
+    ext, ext2: string;
+    prog, prog2: string;
+    bExchanged: boolean;
+
+    procedure ReadValues;
+    begin
+      typ:= dbReadNStr(d,mimeb_typ);
+      ext:= dbReadNStr(d,mimeb_extension);
+      prog:= dbReadNStr(d,mimeb_programm);
+    end;
+
+    procedure ReadValues2;
+    begin
+      typ2 := dbReadNStr(d,mimeb_typ);
+      ext2 := dbReadNStr(d,mimeb_extension);
+      prog2 := dbReadNStr(d,mimeb_programm);
+    end;
+
+    procedure ExchangeAndWriteValues;
+    begin
+      dbWriteNStr(d,mimeb_typ,typ2);
+      dbWriteNStr(d,mimeb_extension,ext2);
+      dbWriteNStr(d,mimeb_programm,prog2);
+      dbSkip(d, -1);
+      dbWriteNStr(d,mimeb_typ,typ);
+      dbWriteNStr(d,mimeb_extension,ext);
+      dbWriteNStr(d,mimeb_programm,prog);
+      dbSkip(d, 1);
+      bExchanged := true; // at least one item was excanged
+    end;
+
+  var
+    i: Integer;
+  begin
+    if dbRecCount(d) < 2 then Exit;
+    repeat
+      bExchanged := false;
+      dbGoTop(d);
+      while not dbEOF(d) do
+      begin
+        ReadValues;
+        dbNext(d); if dbEOF(d) then break;
+        ReadValues2;
+        // todo: add checks and watch for deadlocks!
+        if ((Ext > Ext2) and (Typ +Typ2 = '')) or    // sort Extension without Type
+          ((Typ > Typ2) and (Ext + Ext2 = '')) or    // sort Types without Extensions
+          ((Ext > Ext2) and (Typ <> '') and (Typ2 <> '')) then
+        begin
+          ExchangeAndWriteValues;
+          continue;
+        end;
+      end;
+    until not bExchanged;
+    dbFlushClose(d);
+  end;
+
   { 'NeuerMimetyp' ist hier jetzt drin hd/2000-07-21 }
   procedure EditMimetyp(isNew: boolean);
   var typ  : string;
@@ -1172,6 +1232,9 @@ var d         : DB;
       brk  : boolean;
       isValid: boolean;
   begin
+    // !! dbSetIndex(d, 0);
+    // !! SortMIMETypes;
+
     if isNew then begin
       typ:= ''; ext:= ''; prog:= '';
     end else begin
@@ -1213,6 +1276,7 @@ var d         : DB;
       end else
         RFehler(934); //  Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
     end;
+    // !!SortMIMETypes;
   end;
 
   procedure DelMimetyp;
@@ -1761,6 +1825,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/10/19 16:12:46  mk
+  - added SortMIMETypes, attention: full of bugs!
+
   Revision 1.37  2000/10/19 15:25:06  mk
   - sstringp in AnsiString umgewandelt
 
