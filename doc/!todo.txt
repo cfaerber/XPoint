@@ -1,7 +1,6 @@
 $Id$
-$Log$
-Revision 1.3  2000/02/15 20:43:37  mk
-MK: Aktualisierung auf Stand 15.02.2000
+
+
 
 
 
@@ -654,5 +653,467 @@ die Konvertierung des ganzen Paketes abgebrochen werden.
 --
   die technische XP-FAQ:
   http://www.IN-Berlin.de/User/flatta/index.html
+
+
+--------------------------------------------------------------------------------------
+From robo@munich.netsurf.de Wed Feb 09 01:00:00 2000
+Return-path: <robo@munich.netsurf.de>
+Envelope-to: mk@happyarts.de
+Delivery-date: Wed, 9 Feb 2000 23:47:25 +0100
+Received: from [194.64.166.1] (helo=laurin.munich.netsurf.de)
+	by mx03.kundenserver.de with esmtp (Exim 2.12 #2)
+	id 12IftM-0000og-00
+	for mk@happyarts.de; Wed, 9 Feb 2000 23:47:24 +0100
+Received: from ns1094.munich.netsurf.de (ns1094.munich.netsurf.de [195.180.235.94])
+	by laurin.munich.netsurf.de (8.9.3/8.9.3) with SMTP id XAA03595
+	for <mk@happyarts.de>; Wed, 9 Feb 2000 23:47:22 +0100 (MET)
+X-Authentication-Warning: laurin.munich.netsurf.de: ns1094.munich.netsurf.de [195.180.235.94] didn't use HELO protocol
+Received: by munich.netsurf.de (CrossPoint v3.12d R/C8758);
+	  09 Feb 2000 23:47:20 +0000
+Date: 09 Feb 2000 00:00:00 +0000
+From: robo@munich.netsurf.de (Robert Boeck)
+To: mk@happyarts.de
+Message-ID: <7YZyme3$sTB@robo.munich.netsurf.de>
+In-Reply-To: <eda1as8gchdgv4ppdbhh22pofeddgmjnab@4ax.com>
+Subject: Re: ?
+X-Mailer: CrossPoint v3.12d R/C8758
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by laurin.munich.netsurf.de id XAA03595
+
+Hallo Markus,
+
+Du schriebst am 09.02.00 um 00:55 Uhr
+an mich zum Thema '?':
+
+> die Routine GetErrorlevel in UUZ.PAS ist eigentlich sinnlos, weil sie
+> kein Ergebnis macht, was ausgewertet wird. Rausnehmen?
+
+Nun mal langsam ... vielleicht ist es ja ein Bug, dass das Ergebnis nicht=
+ =20
+ausgewertet wird ... ausserdem habe ich festgestellt, dass jemand aus der=
+ =20
+globalen Variable errorlevel eine lokale Variable gemacht hat, ohne es zu=
+ =20
+dokumentieren.
+
+> Ab Zeile 1490 wird OK zwar deklariert, aber eigentlich nicht
+> verwendet. Was machen wir damit?
+
+Momentan nichts, weil ich mich momentan dem Editor widme. Wenn ich an zu =
+=20
+vielen Baustellen gleichzeitig baue, k=F6nnte sich das negativ auswirken =
+...
+
+cu/4 Robo :)
+
+_FidoNet:_ 2:2480/8057.37   _GerNet:_ 21:493/2091.37
+_E-Mail:_ Robert.Boeck@munich.netsurf.de  _PGP-Key per EB_
+_Homepage:_ http://homepages.fbmev.de/bm612973/
+
+## CrossPoint v3.12d R ##
+
+
+--------------------------------------------------------------------------------------
+From j.merkel@tbx.berlinet.de Tue Feb 15 12:34:00 2000
+X-Mailer: CrossPoint v3.20.015 DOS/16 beta R/C1664
+Message-ID: <7YtMvTw$btB@tbx-j.merkel.tbx.berlinet.de>
+X-Gateway: ZCONNECT UU tbx.berlinet.de [DUUCP BETA vom 23.05.1999]
+References: <7Ym7uWTZ5dB@basicguru.com> <7YqCJiBJ5dB@basicguru.com> <nk5ias84vorgog84b2fea59lb3pgrprfr0@4ax.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+From: j.merkel@tbx.berlinet.de (Joachim Merkel)
+Subject: Re: Bugs im neuen UUZ Beta 18
+Date: 15 Feb 2000 12:34:00 +0100
+Path: uni-berlin.de!fu-berlin.de!newserv!crowly.berlinet.de!tbx.berlinet.de!j.merkel
+Newsgroups: de.comm.software.crosspoint
+Distribution: world
+Lines: 14
+Xref: uni-berlin.de de.comm.software.crosspoint:38874
+
+Markus Kaemmerer  (mk@openxp.de) schreibt:
+
+> [...] Ich weiß auch, das wir uns Mühe geben, mit
+> jedem Problem so gut wie möglich fertig zu werden und so viel
+> wie es geht die User von XP und natürlich die Entwickler von
+> Tools in den Prozeß einbinden wollen.
+
+Ändert auch mal die Voreinstellung beim Extrahieren
+von Mime-Nachrichten von Überschreiben nach Anhängen oder
+ist das ein unüberwindbares Problem ? ;-))
+
+-- 
+Salut
+ _)oachim
+
+--------------------------------------------------------------------------------------
+From listen@jpberlin.de Wed Feb 16 19:45:00 2000
+Return-path: <sentto-398616-1831-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Wed, 16 Feb 2000 20:55:54 +0100
+Received: from [208.48.218.18] (helo=fl.egroups.com)
+	by mx00.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12LAY4-0006Xn-00
+	for mk@happyarts.de; Wed, 16 Feb 2000 20:55:44 +0100
+X-eGroups-Return: sentto-398616-1831-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.36] by fl.egroups.com with NNFMP; 16 Feb 2000 19:55:39 -0000
+Received: (qmail 18280 invoked from network); 16 Feb 2000 19:55:35 -0000
+Received: from unknown (10.1.10.27) by 10.1.10.36 with QMQP; 16 Feb 2000 19:55:35 -0000
+Received: from unknown (HELO spree.nando.de) (212.41.160.42) by 10.1.10.27 with SMTP; 16 Feb 2000 19:55:35 -0000
+Received: from mxnx.jpberlin.de (root@plumsklo.jpberlin.de [212.41.162.130]) by spree.nando.de (8.8.8/990525/wpv/CA-3) with SMTP id UAA19728 for <xpdeveloper@onelist.com>; Wed, 16 Feb 2000 20:55:33 +0100 (MET)
+Received: from jpberlin.de (1610 bytes) by mxnx.jpberlin.de via rmail with P:uucp/R:smart_host/T:smtp (sender: <jpberlin.de!listen>)  id <m12LAXr-001tWfC@mxnx.jpberlin.de> for xpdeveloper@onelist.com; Wed, 16 Feb 2000 20:55:31 +0100 (CET) (Smail-3.2.0.101 1997-Dec-17 #29 built 1999-Apr-20)
+Received: by jpberlin.de (DUUCP vom 23.05.1999) with ZConnect; 16 Feb 2000 19:45:00 +0100
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A15225
+Message-ID: <7Y-eFimzzbB@jpberlin-m.wege.jpberlin.de>
+X-Gateway: ZCONNECT UU jpberlin.de [DUUCP BETA vom 23.05.1999]
+To: xpdeveloper@onelist.com
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
+Date: 16 Feb 2000 19:45:00 +0100
+From: listen@jpberlin.de (Mark Wege)
+Reply-to: xpdeveloper@onelist.com
+Subject: [XPDev] Noch kleine Unschoenheiten
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+
+From: listen@jpberlin.de (Mark Wege)
+
+                                                      Stedorf, den 16.02.00
+Hi xpdeveloper!
+
+... die mir aufgefallen sind:
+- In Feldern, in denen eMailadressen eingeben werden können  
+(Nachricht-Direkt oder im Absendefenster, wenn der Absender  
+geändert wird) besteht die Möglichkeit Zeichen zu verwenden, die  
+nicht in eMailadressen bzw. in Brettern erlaubt sind. Soweit ich  
+weiß sind doch die in eMailadressen und Brettern erlaubten  
+Zeichen klar definiert, so daß es doch möglich sein müßte eine  
+Plausibilitätsprüfung durchzuführen.
+- Im Absendefenster gibt es unter wenn U für Zusatz drückt die  
+Möglichkeit ein "Antwort-An" zu setzen. Leider können hier die  
+Kurznamen nicht verwendet werden. Das wäre ziemlich praktisch  
+wenn das ginge, würde das wechseln zwischen verschiedenen Antwort- 
+Ans erleichtern.
+
+
+Mark
+
+-- 
+Du bist nicht auf der Welt, um so zu sein, wie andere Dich haben möchten.
+## CrossPoint v3.20.021 R ##
+
+--------------------------------------------------------------------------------------
+From outpost.one@BTINTERNET.com Sun Feb 13 17:05:00 2000
+Path: uni-berlin.de!fu-berlin.de!newsfeed.nacamar.de!newsfeed.icl.net!news.freedom2surf.net!btnet-peer!btnet!mendelevium.btinternet.com!not-for-mail
+From: outpost.one@BTINTERNET.com (Martin Foster)
+Newsgroups: de.comm.software.crosspoint
+Subject: [ENGLISH] Beta 019 - English installation
+Date: 13 Feb 2000 17:05:00 +0100
+Organization: The XProject!
+Lines: 19
+Message-ID: <7YnJRc81JyB@outpost.one.btinternet.com>
+NNTP-Posting-Host: host62-6-79-151.btinternet.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Newsreader: CrossPoint v3.12d R/C24108
+X-Mailer: UKA_PPP 1.7x1
+Xref: uni-berlin.de de.comm.software.crosspoint:38762
+
+Hi Folks!
+
+To do a fresh installation, I've unzipped the beta019 files into a new  
+directory, copied XP-E.RES and XP-E.HLP into the same directory and started  
+XP with the /l:E switch. XP does NOT start up in English, it starts up in  
+German. However, once the initial installation has been completed and XP is  
+shut down and re-started with the /l:E switch, it DOES start up in English.  
+Can somebody please correct this or maybe I did something wrong?
+
+In addition, XPFM-E.RES and XPUU-E.RES are not included with the English  
+resources. Without these files, it is impossible to do a Netcall -- can  
+somebody please attend to this also.
+
+Regards,
+Martin
+
+*** CrossPoint Support (UK) ***
+***    2:250/333@fidonet    ***
+
+-------------------------------------------------------------------------------------
+Empfaenger : Markus Kaemmerer @ 2:248/2004.1
+Absender   : Tobias Gaertner @ 2:249/560.4  (Die Kleine Naumburger, Naumburg)
+Betreff    : Vorschlag
+Datum      : Mo 07.02.00, 17:05  (erhalten: 11.02.00)
+Groesse    : 416 Bytes     
+----------------------------------------------------------------------
+## Diese Nachricht, erstellt am 18.01.00, wurde ERNEUT gesendet.
+
+Hallo,
+
+Kleiner Verbesserungsvorschlag fuer XP: Crash loeschen
+
+Ist etwas dumm zu beschreiben: Wenn man mehrere Requests bei
+Fido/Crash eingetragen hat und spaeter einen loeschen moechte, muss man
+immer den Crash editieren und alle Dateien loeschen... Das ginge doch
+viel einfacher mit der Taste Entf(ernen) in der Auswahlliste.
+
+
+Ciao, TG
+--------------------------------------------------------------------------------------
+From kuddelsoft@gmx.de Thu Feb 17 02:09:00 2000
+Return-path: <sentto-398616-1865-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Thu, 17 Feb 2000 06:41:02 +0100
+Received: from [208.48.218.20] (helo=c3.egroups.com)
+	by mx02.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12LJgR-00037z-00
+	for mk@happyarts.de; Thu, 17 Feb 2000 06:41:00 +0100
+X-eGroups-Return: sentto-398616-1865-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.36] by c3.egroups.com with NNFMP; 17 Feb 2000 05:40:58 -0000
+Received: (qmail 3460 invoked from network); 17 Feb 2000 05:40:58 -0000
+Received: from unknown (10.1.10.26) by 10.1.10.36 with QMQP; 17 Feb 2000 05:40:58 -0000
+Received: from unknown (HELO mail1.gmx.net) (194.221.183.61) by mta1.onelist.com with SMTP; 17 Feb 2000 05:40:57 -0000
+Received: (qmail 2889 invoked by uid 0); 17 Feb 2000 05:40:56 -0000
+Received: from pc19f44c5.dip.t-dialin.net (HELO gmx.de) (193.159.68.197) by mail1.gmx.net with SMTP; 17 Feb 2000 05:40:56 -0000
+Received: by gmx.de (CrossPoint v3.20.021beta DOS/16 R/C3899); 17 Feb 2000 06:38:08 +0100
+To: xpdeveloper@onelist.com
+Message-ID: <7Z3EJQTnr0B@gmx.de>
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/C3899, via SMTP (UKAW v1.72g)
+Organization: KUddELSoFT is watching you ?¿?
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
+Date: 17 Feb 2000 02:09:00 +0100
+From: kuddelsoft@gmx.de (Frank Mollenhauer)
+Reply-to: xpdeveloper@onelist.com
+Subject: [XPDev] BUG !!! in Beta 21!
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+
+From: kuddelsoft@gmx.de (Frank Mollenhauer)
+
+Moin Moin xpdeveloper,
+
+ich habe gerade einen heftigen Bug gefunden, der auch schon in der Beta 20
+war.
+Bei Beta 19 tritt er bei mir dann nicht mehr auf.
+Soweit habe ich es ausprobiert.
+
+So koennt Ihr ihn nachvollziehen:
+
+Aus einer Mail ein paar Zeilen in die Zwischenablage kopieren.
+Also 'W/F2/Windows Clipboard'
+
+Dann ne neue Mail schreiben
+Den Text aus der Zwischenablage wieder einfuegen.
+
+Soweit funktioniert es jetzt noch.
+
+Jetzt mit dem Cursor an den Zeilen Anfang dieser gerade eingefuegten
+Zeilen gehen und Zeichen entfernen mit 'Entf'
+Nach kurzer Zeit stehen nicht nur die paar Zeilen aus der Zwischenablage
+in der Mail, sondern sehr sehr viele kryptische Zeichen.
+Beim nach unten scollen stuerzt CrossPoint dann mit dieser Meldung ab:
+
+Fehler_ <interner Fehler>
+Runtime error 201 at 0B64:5F93
+
+Ich hoffe ich konnte es einigermassen beschreiben.
+
+
+--------------------------------------------------------------------------------------
+From listen@jpberlin.de Wed Feb 16 21:29:00 2000
+Return-path: <sentto-398616-1840-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Wed, 16 Feb 2000 22:32:40 +0100
+Received: from [208.48.218.13] (helo=hk.egroups.com)
+	by mx01.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12LC3V-0001vr-00
+	for mk@happyarts.de; Wed, 16 Feb 2000 22:32:18 +0100
+X-eGroups-Return: sentto-398616-1840-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.35] by hk.egroups.com with NNFMP; 16 Feb 2000 21:32:15 -0000
+Received: (qmail 10902 invoked from network); 16 Feb 2000 21:32:11 -0000
+Received: from unknown (10.1.10.27) by 10.1.10.35 with QMQP; 16 Feb 2000 21:32:11 -0000
+Received: from unknown (HELO spree.nando.de) (212.41.160.42) by 10.1.10.27 with SMTP; 16 Feb 2000 21:32:10 -0000
+Received: from mxnx.jpberlin.de (root@plumsklo.jpberlin.de [212.41.162.130]) by spree.nando.de (8.8.8/990525/wpv/CA-3) with SMTP id WAA20176 for <xpdeveloper@onelist.com>; Wed, 16 Feb 2000 22:32:06 +0100 (MET)
+Received: from jpberlin.de (2362 bytes) by mxnx.jpberlin.de via rmail with P:uucp/R:smart_host/T:smtp (sender: <jpberlin.de!listen>)  id <m12LC3C-001tXvC@mxnx.jpberlin.de> for xpdeveloper@onelist.com; Wed, 16 Feb 2000 22:31:58 +0100 (CET) (Smail-3.2.0.101 1997-Dec-17 #29 built 1999-Apr-20)
+Received: by jpberlin.de (DUUCP vom 23.05.1999) with ZConnect; 16 Feb 2000 21:29:00 +0100
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A15225
+Message-ID: <7Y-eSWEjzbB@jpberlin-m.wege.jpberlin.de>
+X-Gateway: ZCONNECT UU jpberlin.de [DUUCP BETA vom 23.05.1999]
+To: xpdeveloper@onelist.com
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
+Date: 16 Feb 2000 21:29:00 +0100
+From: listen@jpberlin.de (Mark Wege)
+Reply-to: xpdeveloper@onelist.com
+Subject: [XPDev] Noch eine kleine Unschoenheit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+
+From: listen@jpberlin.de (Mark Wege)
+
+                                                      Stedorf, den 16.02.00
+Hi xpdeveloper!
+
+hier noch eine kleine Unschönheit: Ist vermutlich Geschmacksache,  
+aber ich will es trotzdem mal vorschlagen. XP kennzeichnet ja  
+alle MIME-Mails mit M. Das XP mit Mime umgehen kann finde ich  
+ziemlich gut, nur zeigt XP jetzt auch Mails, die es bisher ohne  
+Probleme anzeigen kann auch mit einem M davor an, weil diese im  
+Header "Multipart/mixed" stehen haben. Ich finde das M vor  
+Nachrichten, die XP ohne Probleme sofort anzeigt eher ziemlich  
+irritierend. Die Kennung assoziere ich auch mit der Kennung b für  
+binäre Dateien, soll heißen das ist eine Nachricht, die ich  
+irgendwie besonders behandeln muß und die hebe ich mir bis zum  
+Schluß auf. Ich fände es gut, wenn das Handling so geändert wird,  
+daß nur Nachrichten, die irgendwie anders, als mehrteilig, html  
+oder was auch immer (ich kenne mich mit den MIME-Typen nicht aus)  
+ein M als Kennung bekommen.
+
+Dann noch ein evtl. Bug und Unschönheit
+Nachricht-Suchen-Spezial-Typ-Multipart: In der Onlinehilfe ist  
+nicht erläutert, welche Nachrichten hier gesucht werden.  
+Eigentlich hatte ich vermutet, daß hier alle Nachrichten, die ein  
+M haben sucht. Dies ist aber offensichtlich nicht der Fall. Es  
+wird nur ungefähr ein Drittel der Nachrichten aus meienr  
+Datenbank, die ein M haben gefunden. Worin der Unterschied  
+besteht, habe ich noch nicht herausgefunden. Vielleicht kann ja  
+jemand versuchen, dies nachzuvollziehen.
+
+
+
+Mark
+
+-- 
+
+--------------------------------------------------------------------------------------
+From kuddelsoft@gmx.de Thu Feb 17 01:56:00 2000
+Return-path: <sentto-398616-1863-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Thu, 17 Feb 2000 06:40:54 +0100
+Received: from [208.48.218.18] (helo=fl.egroups.com)
+	by mx03.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12LJgK-0000Cr-00
+	for mk@happyarts.de; Thu, 17 Feb 2000 06:40:52 +0100
+X-eGroups-Return: sentto-398616-1863-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.38] by fl.egroups.com with NNFMP; 17 Feb 2000 05:40:50 -0000
+Received: (qmail 10340 invoked from network); 17 Feb 2000 05:40:50 -0000
+Received: from unknown (10.1.10.27) by 10.1.10.38 with QMQP; 17 Feb 2000 05:40:50 -0000
+Received: from unknown (HELO mail1.gmx.net) (194.221.183.61) by 10.1.10.27 with SMTP; 17 Feb 2000 05:40:50 -0000
+Received: (qmail 2858 invoked by uid 0); 17 Feb 2000 05:40:48 -0000
+Received: from pc19f44c5.dip.t-dialin.net (HELO gmx.de) (193.159.68.197) by mail1.gmx.net with SMTP; 17 Feb 2000 05:40:48 -0000
+Received: by gmx.de (CrossPoint v3.20.021beta DOS/16 R/C3899); 17 Feb 2000 06:38:08 +0100
+To: xpdeveloper@onelist.com
+Message-ID: <7Z3EIXhIr0B@gmx.de>
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/C3899, via SMTP (UKAW v1.72g)
+Organization: KUddELSoFT is watching you ?¿?
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
+Date: 17 Feb 2000 01:56:00 +0100
+From: kuddelsoft@gmx.de (Frank Mollenhauer)
+Reply-to: xpdeveloper@onelist.com
+Subject: [XPDev] BUG in der 'Suchen' Funktion
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+
+From: kuddelsoft@gmx.de (Frank Mollenhauer)
+
+Hallihallo xpdeveloper,
+
+ein kleiner Optischer Bug ist in der 'Suchen' Funktion.
+
+Als Beispiel mal die User Suche.
+Aber auch woanders tritt der Fehler auf:
+
+             +- User-Suche --------------------------------------+
+             |                                                   |
+             |  Suchbegriff   test@test.de                       |
+             |                                                   |
+             |  Optionen      iae            Bretter   gewaehlt  |
+             |                                                   |
+             |                                                   |
+             |                                                   |
+             +---------------------------------------------------+
+Wie ihr seht, steht unter 'Optionen' auch ein 'ae' Umlaut drin.
+Der gehoert da sicher nicht mit rein, oder?
+Sorry, dass er bei Euch gewandelt ankommt (also als 'AE')
+Angezeigt wird ein richtiger Umlaut mit Doppelpunkten drauf ;-)
+
+-- 
+Goodbye,                                          \||/
+   Frank        
+From listen@jpberlin.de Thu Feb 17 20:00:00 2000
+Return-path: <sentto-398616-1917-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Thu, 17 Feb 2000 21:02:19 +0100
+Received: from [208.48.218.17] (helo=fk.egroups.com)
+	by mx00.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12LX7t-0002Vw-00
+	for mk@happyarts.de; Thu, 17 Feb 2000 21:02:13 +0100
+X-eGroups-Return: sentto-398616-1917-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.38] by fk.egroups.com with NNFMP; 17 Feb 2000 20:02:11 -0000
+Received: (qmail 29045 invoked from network); 17 Feb 2000 20:02:10 -0000
+Received: from unknown (10.1.10.27) by 10.1.10.38 with QMQP; 17 Feb 2000 20:02:10 -0000
+Received: from unknown (HELO spree.nando.de) (212.41.160.42) by 10.1.10.27 with SMTP; 17 Feb 2000 20:02:09 -0000
+Received: from mxnx.jpberlin.de (root@plumsklo.jpberlin.de [212.41.162.130]) by spree.nando.de (8.8.8/990525/wpv/CA-3) with SMTP id VAA28869 for <xpdeveloper@onelist.com>; Thu, 17 Feb 2000 21:02:07 +0100 (MET)
+Received: from jpberlin.de (1167 bytes) by mxnx.jpberlin.de via rmail with P:uucp/R:smart_host/T:smtp (sender: <jpberlin.de!listen>)  id <m12LX7m-001tulC@mxnx.jpberlin.de> for xpdeveloper@onelist.com; Thu, 17 Feb 2000 21:02:06 +0100 (CET) (Smail-3.2.0.101 1997-Dec-17 #29 built 1999-Apr-20)
+Received: by jpberlin.de (DUUCP vom 23.05.1999) with ZConnect; 17 Feb 2000 20:00:00 +0100
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A15225
+Message-ID: <7Z3gRyAEzbB@jpberlin-m.wege.jpberlin.de>
+X-Gateway: ZCONNECT UU jpberlin.de [DUUCP BETA vom 23.05.1999]
+To: xpdeveloper@onelist.com
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
+Date: 17 Feb 2000 20:00:00 +0100
+From: listen@jpberlin.de (Mark Wege)
+Reply-to: xpdeveloper@onelist.com
+Subject: [XPDev] Kleiner Fehler
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+
+From: listen@jpberlin.de (Mark Wege)
+
+                                                      Stedorf, den 17.02.00
+Hi xpdeveloper!
+
+ich habe noch einen kleinen Fehler entdeckt. Wenn man eine  
+binärdatei verschicken will, die gerade geöffnet ist, dann  
+verschickt XP eine leere Nachricht. Das ist besser als früher (Xp  
+stürzte gnadenlos ab). Schön wäre es, wenn dies durch eine  
+Fehlermeldung abgefangen werden könnte.
+
+
+Mark
+
+-- 
+Kritiker haben wir genug - was unsere Zeit braucht, sind Menschen, die
+ermutigen.
+## CrossPoint v3.20.021 R ##
+
+--------------------------- ONElist Sponsor ----------------------------
+
+GET A NEXTCARD VISA, in 30 seconds.  Get rates as low as 0.0 percent 
+Intro APR and no hidden fees.  Apply NOW.
+<a href=" http://clickme.onelist.com/ad/NextcardCreative7 ">Click Here</a>
+
+------------------------------------------------------------------------
+
 
 

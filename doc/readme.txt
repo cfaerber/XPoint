@@ -13,7 +13,7 @@
      Åber die énderungen sowie Hinweise fÅr Entwickler, die sich an dem 
      Projekt beteiligen wollen.
 
-     In diesem Archiv sind alle Dateien von XP 3.20 und dem UUCP sowie
+     In diesem Archiv sind alle Dateien von XP 3.20 und dem UUCP- sowie
      dem FIDO-Modul enthalten, das QWK-Modul der 3.12 kann weiterhin
      extra verwendet werden.
 
