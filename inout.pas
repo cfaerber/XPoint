@@ -372,12 +372,13 @@ begin
       end;
 
     {$ELSE }
-      case t of
+      Debug.DebugLog('inout','Unimplemented function called (Cursor)',dlWarning);
+(*      case t of
         curnorm : Cursoron;
         cureinf : CursorBig;
         curnone,
         curoff  : CursorOff;
-      end;
+      end; *)
     {$ENDIF }
   {$ENDIF }
   {$IFDEF VP }
@@ -1676,6 +1677,10 @@ end;
 
 {
   $Log$
+  Revision 1.82  2001/10/01 19:43:01  ma
+  - compiles again (DOS32)
+  - function Cursor is not yet implemented (DOS32)
+
   Revision 1.81  2001/09/26 23:19:15  mk
   - reimplemented testbrk
 
