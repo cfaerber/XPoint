@@ -341,7 +341,7 @@ begin
     if upcase(c) = k2_O then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
-      ex(5);
+      ex(-4);
       end;
 
     if upcase(c) = 'Q' then                                   {'Q' Quotechars |: aktivieren}
@@ -1011,6 +1011,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.91  2001/08/29 22:58:17  mk
+  JG:- Fix: Showing message header with 'O' in message reader after
+       <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
+       bar had been moved to with the message the lister was started with
+       (new exit code -4)
+
   Revision 1.90  2001/08/12 11:50:36  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

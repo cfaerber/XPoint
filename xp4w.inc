@@ -1022,12 +1022,12 @@ begin
 
         if lres<6 then
           if not ende then begin
-            {GrabP} kk:=true; disprec[p]:=dbRecno(mbase);
+            {GrabP;} kk:=true; disprec[p]:=dbRecno(mbase);
             mpart_nr:=1;
             if u_read then aufbau:=true;
             end
           else begin
-            errsound; ende:=false;
+            if lres <> -4 then errsound; ende:=false; {-4 (Sub-) Listerende ohne Aktion }
             end;
         end
       else
@@ -1613,6 +1613,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.78  2001/08/29 22:58:17  mk
+  JG:- Fix: Showing message header with 'O' in message reader after
+       <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
+       bar had been moved to with the message the lister was started with
+       (new exit code -4)
+
   Revision 1.77  2001/08/23 11:15:03  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
