@@ -229,9 +229,9 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
       else begin     { Netcall/Spezial (manuell) }
       { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
         i:=1;
-        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax) do
+        while (i <= NetcallSpecialMax) and (trim(NetcallSpecialList[i]) = '') do
           inc(i);
-        if trim(NetcallSpecialList[i]) = '' then
+        if (i > NetcallSpecialMax) then
         begin
           rfehler(1018);  { 'NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!' }
           dbClose(d);
@@ -738,6 +738,11 @@ end;
 
 {
   $Log$
+  Revision 1.4.2.9  2002/03/08 23:12:31  my
+  MA:- Fix: Theoretisch mîglichen Crash bei /Netcall/Spezial und
+       NETCALL.DAT mit 20 oder mehr Leerzeilen behoben (gefunden durch
+       Range Check...).
+
   Revision 1.4.2.8  2001/12/20 15:22:12  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
