@@ -519,19 +519,19 @@ begin
       findfirst(dir+WildCard,dos.directory+dos.archive,sr);
       while (doserror=0) and (fn<maxf) do begin
         if (sr.name<>'.') and ((sr.attr and dos.directory)<>0) then begin
-          if not AddFnItem(#253+sr.name) then break;
+          if not AddFnItem(#1+sr.name) then break;
           if f^[fn]^[2]='.' then begin
-            f^[fn]^[1]:=#255; doppelpunkt:=true;
+            f^[fn]^[1]:=#0; doppelpunkt:=true;
             end;
           end;
         findnext(sr);
       end;
       Findclose(sr);
       if (fn<maxf) and not doppelpunkt and (length(dir)>3) then
-        if not AddFnItem(#255+'..') then break;
+        if not AddFnItem(#0+'..') then break;
       for i:=1 to length(drives) do
         if fn<maxf then
-          if not AddFnItem(#254'['+drives[i]+':]') then break;
+          if not AddFnItem(#255'['+drives[i]+':]') then break;
       end;
     for x:=1 to pathn do
     begin
@@ -581,7 +581,7 @@ begin
     else begin
       shellsort;
       for i:=1 to fn do
-        if f^[i]^[1]>=#253 then
+        if f^[i]^[1] in [#0,#1,#255] then
         begin
           s := f^[i]^;
           delete(s,1,1);
@@ -1184,6 +1184,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.18  2002/04/13 15:58:48  my
+  MY[+SV]:- Sortierung in der Dateiauswahl-Box ge„ndert: Erst
+            Verzeichnisse, dann Dateien, dann Laufwerke.
+
   Revision 1.16.2.17  2002/04/13 14:37:13  sv
   - etwas Stack in fsbox gespart
   - Shellsort statt Quicksort eingesetzt, um Stack zu sparen
