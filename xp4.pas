@@ -152,16 +152,19 @@ end;
 procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
 var b    : byte;                               { wenn keine ungelesenen Nachrichten }
     nope : boolean;
+    rec  : longint;
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
   if dbEOF(mbase) then nope:=true
     else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
+  rec:=dbrecno(bbase);
   dbSeek(bbase,biIntnr,mid(brett,2));
   if dbFound then begin
     dbReadN(bbase,bb_flags,b);
     if nope then b:=b and (not 2) else b:=b or 2;
     dbWriteN(bbase,bb_flags,b);
-  end
+  end;
+  dbgo(bbase,rec);
 end;
 
 { ----- Hauptmenue ---------------------------------------------------- }
@@ -2177,6 +2180,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.91  2001/06/10 14:34:02  mk
+  JG:- Fixed SetBrettgelesen (Index Gruppe nicht gefunden)
+
   Revision 1.90  2001/06/09 16:41:30  mk
   JG:- Fix: eliminated extreme hard disk activity when changing read
        mode in the message reading window with <Alt-L>
