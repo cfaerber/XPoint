@@ -69,7 +69,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 11
 1    Error
-2    Note:
+2    Attention!
 # Length of Week days:
 3    9
 4    Monday   Tuesday  WednesdayThursday Friday   Saturday Sunday
@@ -2471,7 +2471,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 15   Phone fee
 16   Phone charges for %s
 -
-2610 There are no unsent messages!
+2610 NO unsent messages found ...
 + 2611
 1    unsent messages
 2    Server           Messages         Bytes

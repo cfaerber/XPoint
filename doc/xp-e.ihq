@@ -7,7 +7,7 @@ NH TAB 00 LEER NC
 Sorry, no help available!
 @
 2
-<<     °°°°°°°°°°°°°°°°°°°°°   On-line Help: Contents
+<<     °°°°°°°°°°°°°°°°°°°°°   Online Help: Contents
 
 
      [Help on Help]@3
@@ -24,9 +24,9 @@ Back <<<Alt F1> >>...
 <Tab> to [cross-references]@7000
 @
 3
-<<°°°°°°°°°°°°°°°°°°°°°°°°  Using On-line Help
+<<°°°°°°°°°°°°°°°°°°°°°°°°  Using Online Help
 
-Starting On-line Help:
+Starting Online Help:
 
 <<F1>>      Shows context sensitive help
 
@@ -737,7 +737,7 @@ breaks off without changing.
 54
 
 Full details for using the editor are in the docu-
-mentation XPOINT.DOC. The on-line help gives a brief
+mentation XPOINT.DOC. The online help gives a brief
 overview.
 
        [Status Line]@55
@@ -767,7 +767,7 @@ From left to right:
   - File Name
 @
 56
-<F1>        : On-line-Help
+<F1>        : Online Help
 <F2>        : Save Text
 <F3>        : disable line wrap (current para)
 <F4>        : enable line wrap  (current para)
@@ -1423,7 +1423,7 @@ numbers a la FIDO at the top.
 <<"Net">>   The net type is shown here. Settings
         specific to that net.
 
-<<Misc.>>   Various settings, e.g. for On-line
+<<Misc.>>   Various settings, e.g. for online
         operations.
 
 <<SysopMode>> Tells CrossPoint to put the poll
@@ -1651,7 +1651,7 @@ Sysop!
 <<Unpacked Transfer (Z-Netz)
 It may be worthwhile sending unpacked data, if your
 modem can pack it (MNP5 or V42bis). This saves above
-all on-line time, because the server only packs when
+all online time, because the server only packs when
 you call, and you have to wait while it packs.
 
 MNP5 or V42bis are not so good as packers, so it
@@ -1748,7 +1748,7 @@ Sysop!
 <<Unpacked Transfer (Z-Netz)
 It may be worthwhile transferring unpacked data, if
 your modem can pack it (MNP5 or V42bis). This saves
-above all on-line time, because the server only packs
+above all online time, because the server only packs
 when you call, and you have to wait while it packs.
 
 MNP5 or V42bis are not so good as packers, so it
@@ -2368,7 +2368,7 @@ Also make sure that the port settings, to be found
 under menu /Config/Modem/Com(x), are correct.
 Especially using COM3 and COM4 can be tricky, and
 proper IRQ numbers and port addresses are essential
-(see On-Line Help there).
+(see online help there).
 @
 170
 This is for setting the port speed, "baud rate"
@@ -2586,7 +2586,7 @@ to log on by hand.
 @
 188
 You can decide a name for the log file that logs
-proceedings on-line, that CrossTerm opens auto-
+proceedings online, that CrossTerm opens auto-
 matically. Otherwise the Log File must be opened
 - if desired - by hand with <Alt-L>.
 
@@ -2645,7 +2645,7 @@ Notes:
 @
 8030
 Enter the name of a script file that will be started
-automatically for an on-line session ([Netcall/Online])@11505
+automatically for an online session ([Netcall/Online])@11505
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
@@ -6269,7 +6269,7 @@ same net type, or select one with <F2>.
      statistics.
 
 "Down" Nodes are temporarily not reachable.
-They must go on-line again within 14 days or they are
+They must go online again within 14 days or they are
 removed from the node list.
 @
 772
@@ -7220,7 +7220,7 @@ reachable with hot-keys.
 <<Netcall Menu
 Here you will find an exhaustive selection of methods
 of making a netcall. For more details, select one and
-call on-line-help (<F1>) again.
+call online help (<F1>) again.
 @
 10005
 <<Fido Menu
@@ -7285,7 +7285,7 @@ This is (provisionally) a rather primitive terminal
 programme. Really, it is only of use for sending
 commands to the modem and displaying the modem
 responses. But it does work, without frills, and you
-can operate on-line in a box with it. Due to a bug,
+can operate online in a box with it. Due to a bug,
 you cannot, as indicated, exit the terminal programme
 and leave the telephone line open. It always hangs
 up.
@@ -7344,7 +7344,7 @@ appropriate unpacker available under:
 <<Tools-Men
 
 You and you alone have defined what is available
-under this menu entry. On-Line help cannot help
+under this menu entry. Online help cannot help
 you. :-] Yer'r on yer own, pal..
 
 (In case you have forgotten, you defined it under
@@ -7627,7 +7627,7 @@ Message-ID. This option searches for the MIDs
 <<Config / Options
 
 These sub-menus are for various configuration
-options. See the on-line help for the individual
+options. See the online help for the individual
 sub-menus for details.
 @
 10602
@@ -7843,7 +7843,7 @@ more.
 <<Re-Org / Misc..
 
 Miscellaneous functions which you normally do not
-need. Each has its own on-line help.
+need. Each has its own online help.
 @
 10801
 <<Edit / Templates / Header (Pub)
@@ -8361,7 +8361,7 @@ those that you have defined (under /Edit/Servers) is
 displayed so that you can pick the one to call.
 Select the Server you wish to call and press <Enter>.
 
-Note: does not enable an on-line Login.
+Note: does not enable an online Login.
 
 If it doesn't work, make sure all the details
 required for a Point netcall are properly entered
@@ -8416,16 +8416,16 @@ FIDO does nor permit Relogin for technical reasons.
 
 A simple terminal programme. It is not meant to be a
 full-fledged terminal programme but rather for a
-quick on-line call for a look or some simple task
+quick online call for a look or some simple task
 (or maybe testing the modem).
 
 Enter dialling commands by hand ("ATDP5554321 etc.")
 
-If you have a password (your on-line password of
+If you have a password (your online password of
 course) entered under /Edit/Servers/Edit/Misc, it
 will do  a Login for you (not FIDO, UUCP or GS-Box).
 
-A simple on-line help is available with <F1>.
+A simple online help is available with <F1>.
 
 Exit with <Alt-X>.
 
@@ -8459,7 +8459,7 @@ Toggle a line in the list active or not with "A"
 not be executed when the timing list runs.
 
 When starting for the first time, press "N" (New) and
-use the on-line help under each entry.
+use the online help under each entry.
 
 Once set up, these programmes can be used under the
 menu entry [/Netcall/Automatic].@11506
@@ -10387,7 +10387,7 @@ See also FIDO.DOC.
 20707
 A relogin is not possible with this box; the box
 software cannot change to the point mailer from an
-on-line login.
+online login.
 @
 20708
 There is no standard login procedure for this type of
@@ -10558,7 +10558,7 @@ You can use the news manager command HILFE to get
 help about the command SCRIPT.
 @
 20810
-See On-Line-Help under the Fileserver menus,
+See online help under the Fileserver menus,
 Message/Fileserver/...
 @
 20812
@@ -10673,7 +10673,7 @@ rename all connected newsgroups afterwards.
 @
 21001
 The timing list contains an invalid command. There is
-a list of valid commands in the On-Line-Help and in
+a list of valid commands in the online help and in
 XPOINT.DOC. Note that the command PACKEN was changed
 to PACK after Ver. 2.9.
 @
@@ -10711,7 +10711,7 @@ Rebuild the index (/Fido/Nodelist/Rebuild Index)
 22102
 An active node list is necessary to carry out the
 selected function. Either activate a node list, or
-get one and activate it. See On-line Help under
+get one and activate it. See online help under
 /Fido/Nodelist/....
 
 You can set up a mini-NodeList just for your server,
@@ -11089,7 +11089,7 @@ a Cray supercomputer, no matter how fast it is.
 4008
 Point Password, as agreed with your sysop.
 Do not confuse your [Point] password@140
-with your normal User Password for on-line calls.
+with your normal User Password for online calls.
 Your Point Password accesses the pigeonhole for
 your point in the server.
 You can use the same password for both (but it's not
