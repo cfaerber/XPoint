@@ -376,7 +376,7 @@ var f,f2     : file;
     old_cca  : integer;     { vor (K)opien            }
     FidoBin  : boolean;     { File Attach }
     cc_count : integer;
-    betrlen  : byte;        { max. Betrefflaenge }
+    betrlen  : Integer;     { max. Betrefflaenge }
     bboxwid  : byte;
 
     spezial  : boolean;
@@ -2496,6 +2496,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.6  2002/07/27 09:09:18  mk
+  - fixed range check error (BetrLen byte->integer)
+
   Revision 1.48.2.5  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 
