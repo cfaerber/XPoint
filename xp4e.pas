@@ -501,7 +501,8 @@ begin
     dbSeek(ubase,uiName,UpperCase(name));
     if dbFound then
       rfehler(2704)   { 'Dieser Verteiler ist bereits vorhanden!' }
-    else begin
+    else 
+    begin
       dbAppend(ubase);
       dbWriteNStr(ubase,ub_username,name);
       dbWriteNStr(ubase,ub_kommentar,komm);
@@ -2434,6 +2435,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2001/09/07 08:28:02  mk
+  - added new procedure: AddNewBezug, collects three pieces of code
+
   Revision 1.73  2001/09/07 02:07:44  mk
   - use IsMailAddress when possilbe, removed duplicate code
 

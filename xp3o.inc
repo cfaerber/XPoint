@@ -587,11 +587,7 @@ var x,y      : Integer;
             c2:=0
           else
             c2:=MsgidIndex(hdp.GetLastReference);
-          dbAppend(bezbase);
-          dbWriteN(bezbase,bezb_msgpos,ll.l);
-          dbWriteN(bezbase,bezb_msgid,c1);
-          dbWriteN(bezbase,bezb_ref,c2);
-          dbWriteN(bezbase,bezb_datum,ll.dat);
+          AddNewBezug(ll.l, c1, c2, ll.dat);
         end;
         inc(empfnr);
       until empfnr>hdp.empfanz;
@@ -1238,6 +1234,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2001/09/07 08:28:02  mk
+  - added new procedure: AddNewBezug, collects three pieces of code
+
   Revision 1.64  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 

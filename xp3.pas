@@ -824,7 +824,6 @@ begin
   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
   b := 1 + iif(newuseribm,0,8);
   dbWriteN(ubase,ub_userflags, b);
-  dbFlushClose(ubase);
 end;
 
 
@@ -1136,6 +1135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.64  2001/09/07 08:28:02  mk
+  - added new procedure: AddNewBezug, collects three pieces of code
+
   Revision 1.63  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 

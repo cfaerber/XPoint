@@ -61,6 +61,7 @@ function  BoxFilename(const box:string):string;
 procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
 function  GetBezug(const ref:string):longint;
+procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(const fn:string):string;   { ZC-Dateidatum }
@@ -580,6 +581,14 @@ begin
     UniExtract:=true;
 end;
 
+procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
+begin
+  dbAppend(bezbase);           
+  dbWriteN(bezbase,bezb_msgpos, MsgPos);
+  dbWriteN(bezbase,bezb_msgid, MsgId);
+  dbWriteN(bezbase,bezb_ref, Ref);
+  dbWriteN(bezbase,bezb_datum, Datum);
+end;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
 var c1,c2 : longint;
@@ -593,11 +602,8 @@ begin
       c2:=0
     else
       c2:=MsgidIndex(hd.GetLastReference);
-    dbAppend(bezbase);           { s. auch XP3O.Bezugsverkettung }
+    { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
-    dbWriteN(bezbase,bezb_msgpos,satz);
-    dbWriteN(bezbase,bezb_msgid,c1);
-    dbWriteN(bezbase,bezb_ref,c2);
     dbReadN(mbase,mb_origdatum,datum);
     datum:=datum and $fffffff0;  { Bit 0-3 l”schen }
     if dateadd>0 then
@@ -607,8 +613,8 @@ begin
       if empfnr>0 then
         inc(datum,iif(empfnr=1,1,2));
       end;
-    dbWriteN(bezbase,bezb_datum,datum);
-    end;
+    AddNewBezug(satz, c1, c2, Datum);
+  end;
 end;
 
 
@@ -1011,6 +1017,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.92  2001/09/07 08:28:02  mk
+  - added new procedure: AddNewBezug, collects three pieces of code
+
   Revision 1.91  2001/08/29 22:58:17  mk
   JG:- Fix: Showing message header with 'O' in message reader after
        <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
