@@ -71,7 +71,7 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
 
 implementation
 
-uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
+uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
 
 
 function getline:string;                          { Eine Zeile vom Lister uebernehmen } 
@@ -327,6 +327,8 @@ begin
   begin
 
     if upcase(c) = k2_I then msg_info;                         { 'I' fuer Lister }
+
+    if upcase(c) = 'U' then uudecode;                          { 'U' = UUDecode }
 
     if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
@@ -990,6 +992,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.1  2000/07/16 15:55:00  jg
+  - UUE-Decoding direkt aus Lister mit "U"
+
   Revision 1.40  2000/06/19 20:19:12  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 
