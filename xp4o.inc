@@ -90,7 +90,8 @@ begin
         dbwriteN(ubase,ub_username,brett);
         end;
  
-      if leer and (left(brett,4)<>#0+'$/T') then 
+      if leer and ((user and (left(brett,4)<>#0+'$/T')) or
+        (not user and (left(brett,3)<>'$/T'))) then 
       begin
         dbReadN(d,nfeld,loesch);
         if not user then loesch:=copy(loesch,2,80);
@@ -716,6 +717,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/05/03 04:39:21  jg
+  - Bugfix Bretreorg verschont jetzt wieder Trennzeilen
+
   Revision 1.11  2000/05/01 08:40:57  jg
   - Addressbuch-Trennzeilen sind jetzt immer vor Verteilern einsortiert.
   - Adressbuchgruppe von Verteilern direkt bestimmbar
