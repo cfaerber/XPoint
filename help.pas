@@ -322,7 +322,8 @@ laden:
       nn:=blockrw;
       xout:=x;
       end;
-  lines:=1; fillchar(z^,sizeof(z^),0);
+  lines:=1;
+  for i := 1 to MaxLines do z^[i] := '';
   getmem(buf,size);
   blockread(f,buf^,size);
   testio;
@@ -447,13 +448,10 @@ begin
     s:=z^[i+add];
     p:=pos('<<',s);
     yy:=y+i+iif(NoHeader,-1,2);
-    if p=0 then begin
-      SetLength(s, length(s)+1);
-      fillchar(s[length(s)+1],80,32);
-      SetLength(s, wdt);
-      fwrt(x,yy,s);
-  end
-    else begin
+    if p=0 then
+      fwrt(x,yy,FormS(s, wdt))
+    else
+    begin
       gotoxy(x,yy);
       while p>0 do begin
         Wrt2(left(s,p-1));
@@ -741,8 +739,6 @@ begin     { of IHS }
       end;
   until t=keyesc;
   mauszul:=ml; mauszur:=mr; mauszuo:=mo; mauszuu:=mu;
-  for i:=1 to lines do
-    z^[i]:=''; {freemem(z^[i],zlen[i]);}
   loaded:=false;
   dispose(z); dispose(qvw);
 end;
@@ -758,6 +754,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/17 13:29:51  mk
+  - AnsiString-Updates, Hilfe geht jetzt
+
   Revision 1.20  2000/07/16 16:59:28  mk
   - AnsiString Updates
 
