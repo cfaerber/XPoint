@@ -1174,7 +1174,7 @@ begin
     writeln(t);
     close(t);
     end;
-  extract_msg(0,'',fn,true,1);
+  extract_msg(xTractMsg,'',fn,true,1);
   if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
 
   dbSeek(ubase,uiName,UpperCase(hdp.absender));
@@ -1321,6 +1321,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/12/15 09:44:36  mk
+  - added some comments
+
   Revision 1.10  2001/12/09 14:01:32  mk
   - fixed compiler warning
 

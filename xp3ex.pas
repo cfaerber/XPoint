@@ -718,7 +718,7 @@ begin
     hdp := THeader.Create;
     ReadHeader(hdp,hds,true);
     assign(f,name);
-    if hds=1 then begin
+    if hds=1 then begin // hds = 1: fehler im Header
       rewrite(f,1);
       close(f);
       Hdp.Free;
@@ -1114,6 +1114,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.85  2001/12/15 09:44:36  mk
+  - added some comments
+
   Revision 1.84  2001/12/09 16:13:39  ml
   - mime-Assign with nil-bugfix, clean create constructor
 
