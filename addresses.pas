@@ -40,8 +40,10 @@ type
     function GetZCAddress: string; virtual; abstract;
     function GetXPAddress: string; virtual; abstract;
     function GetRFCAddress: string; virtual; abstract;
-    
-  //-- pseudo-constructors ---------------------------------------------
+
+  protected
+    constructor _internal_Create;
+  
   public
     class function Create(const addr: string): TAddress; overload;
     class function Create(CopyFrom: TAddress): TAddress; overload;
@@ -101,6 +103,9 @@ type
     function GetUsername: string; virtual; abstract;
     procedure SetUsername(const NewValue: string); virtual; abstract;
 
+  protected
+    constructor _internal_Create;
+
   public
     class function Create(const Addr: string): TEmailAddress; overload;
     class function Create(const Addr, Name: string): TEmailAddress; overload;
@@ -122,6 +127,7 @@ type
     procedure _internal_MkAddrReal;
     procedure _internal_MkFRFC;
     procedure _internal_MkFZC;
+  
   protected
     function GetZCAddress: string; override;
     function GetXPAddress: string; override;
@@ -137,6 +143,7 @@ type
     function GetRealName: string; 
     procedure SetRealName(const NewValue: string); 
 
+  private
     constructor _Create(const addr,real: string); overload;
     constructor _Create(CopyFrom: TDomainEmailAddress); overload;
     constructor _CreateZC(const addr: string);
@@ -200,6 +207,11 @@ uses
 
 // -- TAddress ---------------------------------------------------------
 
+constructor TAddress._internal_Create;
+begin
+  inherited Create;
+end;
+    
 class function TAddress.Create(const addr: string): TAddress;
 begin
   if CPos('@',addr)>0 then
@@ -287,7 +299,7 @@ end;
 
 class function TVerteiler.Create(const name: string): TVerteiler;
 begin
-  result := _Create(name);
+  result := TVerteiler._Create(name);
 end;
 
 constructor TVerteiler._Create(CopyFrom: TVerteiler);
@@ -297,7 +309,7 @@ end;
 
 class function TVerteiler.Create(CopyFrom: TVerteiler): TVerteiler;
 begin
-  result := _Create(CopyFrom);
+  result := TVerteiler._Create(CopyFrom);
 end;
 
 // -- TNewsgroupAddress ------------------------------------------------
@@ -340,11 +352,11 @@ begin
 end;
 
 class function TNewsgroupAddress.Create(const addr: string): TNewsgroupAddress;
-begin result := _Create(addr); end;
+begin result := TNewsgroupAddress._Create(addr); end;
 
 constructor TNewsgroupAddress._Create(const addr: string);
 begin
-  inherited Create;
+  inherited _internal_Create;
 
   if CPos('/',addr)>0 then
     FZC := addr
@@ -353,7 +365,7 @@ begin
 end;
 
 class function TNewsgroupAddress.Create(CopyFrom: TNewsgroupAddress): TNewsgroupAddress;
-begin result := _Create(CopyFrom); end;
+begin result := TNewsgroupAddress._Create(CopyFrom); end;
 
 constructor TNewsgroupAddress._Create(CopyFrom: TNewsgroupAddress);
 begin
@@ -362,30 +374,30 @@ begin
 end;
 
 class function TNewsgroupAddress.CreateZC(const addr: string): TNewsgroupAddress;
-begin result := _CreateZC(addr); end;
+begin result := TNewsgroupAddress._CreateZC(addr); end;
 
 constructor TNewsgroupAddress._CreateZC(const addr: string);
 begin
-  inherited Create;
+  inherited _internal_Create;
   FZC := addr;
 end;
 
 class function TNewsgroupAddress.CreateRFC(const addr: string): TNewsgroupAddress;
-begin result := _CreateRFC(addr); end;
+begin result := TNewsgroupAddress._CreateRFC(addr); end;
 
 constructor TNewsgroupAddress._CreateRFC(const addr: string);
 begin
-  inherited Create;
+  inherited _internal_Create;
   FZC := '';
   FRFC:= addr;
 end;
 
 class function TNewsgroupAddress.CreateXP(const addr: string): TNewsgroupAddress;
-begin result := _CreateXP(addr); end;
+begin result := TNewsgroupAddress._CreateXP(addr); end;
 
 constructor TNewsgroupAddress._CreateXP(const addr: string);
 begin
-  inherited Create;
+  inherited _internal_Create;
   assert(FirstChar(addr)='A');
   FZC := Mid(addr,2);
 end;
@@ -451,6 +463,11 @@ begin
   result := true;
 end;
 
+constructor TEMailAddress._internal_Create;
+begin
+  inherited _internal_Create;
+end;
+    
 class function TEmailAddress.Create(const addr: string):  TEmailAddress;
 var i,z,n,f,p: integer;
    _a,_n: string;
@@ -619,7 +636,7 @@ begin
 end;
 
 class function TDomainEmailAddress.Create(const addr,real: string):TDomainEMailAddress;
-begin result := _Create(addr,real); end;
+begin result := TDomainEmailAddress._Create(addr,real); end;
     
 constructor TDomainEmailAddress._Create(const addr,real: string);
 begin
@@ -628,7 +645,7 @@ begin
 end;
 
 class function TDomainEmailAddress.Create(CopyFrom: TDomainEmailAddress):TDomainEMailAddress;
-begin result := _Create(CopyFrom); end;
+begin result := TDomainEmailAddress._Create(CopyFrom); end;
 
 constructor TDomainEmailAddress._Create(CopyFrom: TDomainEmailAddress);
 begin
@@ -639,7 +656,7 @@ begin
 end;
 
 class function TDomainEmailAddress.CreateZC(const addr: string):TDomainEMailAddress;
-begin result := _CreateZC(addr); end;
+begin result := TDomainEmailAddress._CreateZC(addr); end;
 
 constructor TDomainEmailAddress._CreateZC(const addr: string);
 begin
@@ -647,7 +664,7 @@ begin
 end;
 
 class function TDomainEmailAddress.CreateRFC(const addr: string):TDomainEMailAddress;
-begin result := _CreateRFC(addr); end;
+begin result := TDomainEmailAddress._CreateRFC(addr); end;
 
 constructor TDomainEmailAddress._CreateRFC(const addr: string);
 begin
@@ -761,7 +778,7 @@ begin
 end;
 
 class function TFTNEmailAddress.Create(const addr: string): TFTNEMailAddress;
-begin result := _Create(addr); end;
+begin result := TFTNEmailAddress._Create(addr); end;
 
 constructor TFTNEmailAddress._Create(const addr: string);
 begin
@@ -769,7 +786,7 @@ begin
 end;
 
 class function TFTNEmailAddress.Create(CopyFrom: TFTNEmailAddress): TFTNEMailAddress;
-begin result := _Create(CopyFrom); end;
+begin result := TFTNEmailAddress._Create(CopyFrom); end;
 
 constructor TFTNEmailAddress._Create(CopyFrom: TFTNEmailAddress);
 begin
@@ -798,6 +815,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.3  2002/04/19 16:51:43  cl
+// - fix for FPC
+//
 // Revision 1.2  2002/04/17 20:22:47  mk
 // - removed unit strutils, not needed with delhpi6 and not available with fpc
 //

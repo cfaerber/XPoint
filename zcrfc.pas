@@ -1470,7 +1470,7 @@ var
   end;
 
   { liesst eine Newsgroups-Zeile in einen tstring }
-  procedure GetNewsgroups(line: string; List: TStringlist);
+  procedure GetNewsgroupsLine(line: string; List: TStringlist);
   var
     p: integer;
   begin
@@ -1548,7 +1548,7 @@ var
     lposter:=false;
     if cpos('@',line)=0 then
     begin
-      getnewsgroups(line,FollowUp);
+      getnewsgroupsline(line,FollowUp);
       for i:=0 to FollowUp.count-1 do
         if lowercase(Followup[i])='/poster' then
         begin
@@ -1853,9 +1853,9 @@ begin
           else
             if zz = 'newsgroups' then begin
               if mail then
-                GetNewsGroups(s0,hd.Kopien)
+                GetNewsGroupsline(s0,hd.Kopien)
               else 
-                GetNewsGroups(s0,hd.Empfaenger);
+                GetNewsGroupsline(s0,hd.Empfaenger);
             end
           else
             if zz = 'path' then
@@ -3567,6 +3567,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2002/04/19 16:51:43  cl
+  - fix for FPC
+
   Revision 1.98  2002/04/14 22:30:26  cl
   - changes for new address handling
   - fixed GetAdr
