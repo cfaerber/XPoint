@@ -2129,12 +2129,12 @@ ___________________________
 
 @
 8063
-  Geben Sie hier die Spalte ein, in der der Text
-  automatisch umbrochen werden soll.
+Geben Sie hier die Spalte ein, in der der Text auto-
+matisch umbrochen werden soll.
 @
 8064
-  W„hlen Sie mit <<<F2> >>das Zeichen aus, mit dem das
-  Absatzende markiert werden soll.
+W„hlen Sie mit <<<F2> >>das Zeichen aus, mit dem das
+Absatzende markiert werden soll.
 @
 8065
 <<[x]>> -> Beim Drcken von <<<Enter> >>wird die
@@ -2274,16 +2274,18 @@ soll.
 <<Emp.>>     Der Empf„nger der Nachricht wird ge„ndert.
          Wird der aktuelle Eintrag gel”scht, kann mit
          <<<F2> >>zwischen Brettern und Usern gew„hlt
-         werden.
-         Achtung! Bitte berdenken Sie vor der Benut-
-         zung dieser Funktion, ob Sie damit nicht
-         andere Netzteilnehmer ver„rgern k”nnten.
-        
+         werden. Statt der kompletten Adresse k”nnen
+         Sie auch ein unter [/Edit/Kurznamen] definier-@11605
+         tes Krzel eingeben.
+
          Normalerweise werden auch "Kopien-an"-Ein-
          tr„ge durch diese Funktion gel”scht. Ist
          das nicht erwnscht, muá die Taste <<<Shift> >>
          gehalten werden, wenn der Schalter bet„tigt
          wird (also <<<Shift-M> >>oder Shift-Mausklick).
+
+         ACHTUNG! Diese Funktion sollte nur von erfah-
+         renen Anwendern benutzt werden!
 
 <<Betreff>>  „ndert den Betreff.
 
@@ -10665,7 +10667,7 @@ Hier k”nnen Sie eine Nachricht direkt an einen User
 oder ein Brett senden, ohne den Empf„nger vorher in
 der Brett- oder Userliste anlegen zu mssen.
 
-<<Server:>>    Die Box, ber die die Nachricht abge-
+<<Server>>     Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
            erscheint nur, wenn mehr als eine Server-
            box erfaát ist. Es gengt, den Anfangs-
