@@ -1971,7 +1971,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       dbWriteNStr(mbase,mb_brett,_brett);
       dbWriteNStr(mbase,mb_betreff,hdp.betreff);
       dbWriteNStr(mbase,mb_absender,hdp.absender);
-      dbWriteNStr(mbase,mb_mimetyp,LowerCase(Trim(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1)))));
+      dbWriteNStr(mbase,mb_mimetyp,LowerCase(Trim(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1))));
       l:=ixdat(hdp.datum);
       dbWriteN(mbase,mb_origdatum,l);
       dbWriteN(mbase,mb_empfdatum,sendedat);
@@ -2309,6 +2309,9 @@ finalization
 
 {
   $Log$
+  Revision 1.11  2001/09/08 23:30:58  cl
+  - fixed last fix
+
   Revision 1.10  2001/09/08 21:07:16  cl
   - MIME typ now always written to database in lower case and without paramters
 
