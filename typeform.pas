@@ -440,8 +440,8 @@ procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Ende d
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
 function UTF8Mid(const s:string; n:integer):string;       { Rest des Strings ab Pos.    }
-function UTF8FormS(const s:string; n:integer):string; { String auf n Stellen mit ' ' }
-
+function UTF8FormS(const s:string; StartColumn,Columns:integer):string; overload; { String auf n Stellen mit ' ' }
+function UTF8FormS(const s:string; Columns:integer):string; overload; { String auf n Stellen mit ' ' }
 { Lo/Upcase-String fuer Files, abhaengig von UnixFS }
 function FileUpperCase(const s:string):string;
 function Without(const s1,s2:string):string;       { Strings "subtrahieren"       }
@@ -866,23 +866,36 @@ begin
     Result[i]:=' ';
 end;
 
-function UTF8FormS(const s:string; n:integer):string; overload;
+function UTF8FormS(const s:string; StartColumn, Columns:integer):string; overload;
 var Position, NewPosition: Integer;
+    StartPosition: Integer;
     W: Integer;
+    C: TUniCodeChar;
 begin
+  StartPosition := 1;
+  while (StartColumn > 1) do
+  begin
+    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,StartPosition)));
+    if w > StartColumn then break;
+    dec(StartColumn,w);
+  end;
+
   Position := 1;
-  Result := '';
   while Position <= Length(s) do
   begin
     NewPosition := Position;
-    w := UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition));
-    if w < 0 then w := 0;
-    if w > n then break;
-    dec(n,w);
+    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition)));
+    if w > Columns then break;
+    dec(Columns,w);
     Position := NewPosition;
   end;
 
-  Result := LeftStr(s,Position) + Sp(n);
+  Result := Copy(s,StartPosition,Position-StartPosition) + Sp(Columns);
+end;
+
+function UTF8FormS(const s:string; Columns:integer):string; overload;
+begin
+  result := UTF8FormS(S,1,Columns);
 end;
 
 function StrS(const l:longint):string;
@@ -2050,6 +2063,10 @@ end;
 
 {
   $Log$
+  Revision 1.139  2003/09/25 20:27:39  cl
+  - BUGFIX: UTF8Mid works with characters, not columns => use extended version
+    of UTF8FormS for lister.
+
   Revision 1.138  2003/09/22 11:25:07  cl
   - Fixed UTF8FormS: Use of Position-1 with UTF_8 strings
 

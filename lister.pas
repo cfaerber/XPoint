@@ -459,12 +459,8 @@ var
           attrtxt(col.coltext);
 
       if FUTF8Mode then
-      begin
-        if xa = 1 then 
-          s := UTF8FormS(s,w)
-        else
-          s := UTF8FormS(UTF8Mid(s,xa),w);
-      end else
+        s := UTF8FormS(s,xa,w)
+      else
       begin
         if xa = 1 then
           s := forms(s, w)
@@ -1115,6 +1111,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.91  2003/09/25 20:27:39  cl
+  - BUGFIX: UTF8Mid works with characters, not columns => use extended version
+    of UTF8FormS for lister.
+
   Revision 1.90  2003/09/21 20:17:39  mk
   - rewrite of Listdisplay:
     removed Assemlber function MakeListDisplay, now
