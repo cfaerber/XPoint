@@ -70,45 +70,50 @@ type
 
         ///////////////////////////////////////////////////////////////////////
         TNodeListItem  = class
-        private
+        protected
                 fListfile   : string;    { Nodelisten-Datei      }
                 fnumber     : integer;   { akt. Nummer           }
                 fzone,fnet,fnode : word;
-                fsort       : longint;   // Temporaerfeld
+                fsort       : longint;  // Temporaerfeld
 
-         public
-                fformat     : byte; { NL, P24, 3=PVT, 4=4D, 5=FD }
+        public
+                fformat     : byte;     // NL, P24, 3=PVT, 4=4D, 5=FD }
                 fDelUpdate  : boolean;   { Diff loeschen }
                 fupdatefile : string;    { Diff/Update-Datei     }
                 fprocessor  : string;    { externer Bearbeiter   }
                 fupdatearc  : string;    { gepackte Update-Datei }
                 fDoDiff     : boolean;
-                property updatefile: string  read fupdatefile write fupdatefile;
-                property listfile  : string  read fListfile   write fListfile;
-                property updatearc : string  read fupdatearc  write fupdatearc;
-                property processor : string  read fprocessor  write fprocessor;
-                property number    : integer read fnumber     write fnumber;
-                property DoDiff    : boolean read fDoDiff     write fDoDiff;
-                property DelUpdate : boolean read fDelUpdate  write fDelUpdate;
-                property format    : byte    read fformat     write fformat;
-                property zone      : word    read fzone       write fzone;
-                property net       : word    read fnet        write fnet;
-                property node      : word    read fnode       write fnode;
-                property sort      : longint read fsort      write fsort;
-              end;
-
+        public
+                property  Listfile    :string   read fListfile   write fListfile;
+                property  number      :integer  read fnumber     write fnumber;
+                property  format      :byte     read fformat     write fformat;
+                property  zone        :word     read fzone       write fzone;
+                property  net         :word     read fnet        write fnet;
+                property  node        :word     read fnode       write fnode;
+                property  updatefile  : string  read fupdatefile write fupdatefile;
+                property  processor   : string  read fprocessor  write fprocessor;
+                property  updatearc   : string  read fupdatearc  write fupdatearc;
+                property  DoDiff      : boolean read fDoDiff     write fDoDiff;
+          end;
         ///////////////////////////////////////////////////////////////////////
         //Nodelisten Verwaltung
-        TNodeList  = class
+        TNodeList  = class(TList)
+        private
+                fOpen           :boolean;
+        protected
+
         public
-                Entries         :TList;                 //die einzelnen Listen
-                Open           :boolean;
                 constructor     Create;
                 procedure       LoadConfigFromFile;
                 procedure       SaveConfigToFile;               // NODELST.CFG speichern
-                procedure       AddEntry(NLItem :TNodeListItem);
+                procedure       Add(NLItem :TNodeListItem);
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
+                function        GetItem(Index: integer): TNodeListItem;
+
+
+                property        Open  : boolean read fOpen   write fOpen;
+
               end;
         ///////////////////////////////////////////////////////////////////////
 
@@ -126,17 +131,27 @@ implementation
 
 constructor TNodeList.Create;
 begin
-        Entries:=TList.Create;
-        Open:=false;               // Nodelist(en) vorhanden & geoeffnet
+        //fEntries:=TList.Create;
+        fOpen:=false;               // Nodelist(en) vorhanden & geoeffnet
 end;
+//function TNodeList.GetItem(Index: Integer): TNodeListItem;
+//begin
+//  Result := TNodeListItem(fEntries[Index]);
+//end;
 
+{rocedure TNodeList.PutItem(Index: Integer; const Item:
+TNodeListItem);
+begin
+  fEntries[Index] := Item;
+end;
+}
 procedure TNodeList.LoadConfigFromFile;       { NODELST.CFG laden }
 var t  : text;
     s  : string;
     ss : string[20];
     p  : byte;
     fa : fidoadr;
-    Item: TNodeListItem;
+    I: TNodeListItem;
 begin
   create;                               // call first constructor
   assign(t,NodelistCfg);
@@ -144,9 +159,8 @@ begin
     reset(t);
     while not eof(t) do
     begin
-      item := TNodeListItem.Create;
-      Entries.Add(Item);
-      with Item do
+      i := TNodeListItem.Create;
+      with I do
       begin
         repeat
           readln(t,s);
@@ -154,27 +168,27 @@ begin
           if p>0 then begin
             ss:=LowerCase(LeftStr(s,p-1));
             s:=mid(s,p+1);
-            if ss='listfile'       then listfile:=s else
-            if ss='number'         then number:=minmax(ival(s),0,999) else
-            if ss='updatefile'     then updatefile:=s else
-            if ss='delupdate'      then delupdate:=(UpperCase(s)='J') else
-            if ss='updatearchive'  then updatearc:=s else
-            if ss='process-by'     then Processor :=s else
-            if ss='dodiff'         then dodiff:=(UpperCase(s)='J') else
-            if ss='format'         then format:=minmax(ival(s),0,6) else
-            if ss='zone'           then zone:=minmax(ival(s),0,32767) else
+            if ss='listfile'       then flistfile:=s else
+            if ss='number'         then fnumber:=minmax(ival(s),0,999) else
+            if ss='updatefile'     then fupdatefile:=s else
+            if ss='delupdate'      then fdelupdate:=(UpperCase(s)='J') else
+            if ss='updatearchive'  then fupdatearc:=s else
+            if ss='process-by'     then fProcessor :=s else
+            if ss='dodiff'         then fdodiff:=(UpperCase(s)='J') else
+            if ss='format'         then fformat:=minmax(ival(s),0,6) else
+            if ss='zone'           then fzone:=minmax(ival(s),0,32767) else
             if ss='address'        then begin
               SplitFido(s,fa,2);
-              zone:=fa.zone; net:=fa.net; node:=fa.node;
+              fzone:=fa.zone; fnet:=fa.net; fnode:=fa.node;
               end;
             end;
         until eof(t) or (s='');
-        if (format<1) or (format>5) then
+        if (fformat<1) or (fformat>5) then
         begin
-          Entries.Remove(Item);
-          Item.Free;
+          Remove(I);
+          I.Free;
         end;
-      end;  { with }
+      end;
     end;  { while }
     close(t);
   end;
@@ -186,23 +200,23 @@ var t : text;
 begin
   assign(t,NodelistCfg);
   rewrite(t);
-  for i:=0 to Entries.Count - 1 do
-  with TNodeListItem(Entries[i]) do
+  for i:=0 to Count - 1 do
+  with TNodeListItem(Items[i]) do
   begin
-    writeln(t,'Listfile=',listfile);
-    if pos('###',listfile)>0 then
-      writeln(t,'Number=',number);
-    if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
-    if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
-    if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
-    if processor<>'' then writeln(t,'process-by=',processor);
-    writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
-    writeln(t,'Format=',byte(format));
-    case format of
-      nlNodelist     : if zone>0 then writeln(t,'zone=',zone);
+    writeln(t,'Listfile=',flistfile);
+    if pos('###',flistfile)>0 then
+      writeln(t,'Number=',fnumber);
+    if fupdatefile<>'' then writeln(t,'UpdateFile=',fupdatefile);
+    if fupdatearc<>''  then writeln(t,'UpdateArchive=',fupdatearc);
+    if fupdatefile<>'' then writeln(t,'DelUpdate=',iifc(fdelupdate,'J','N'));
+    if fprocessor<>'' then writeln(t,'process-by=',fprocessor);
+    writeln(t,'DoDiff=',iifc(fdodiff,'J','N'));
+    writeln(t,'Format=',byte(fformat));
+    case fformat of
+      nlNodelist     : if fzone>0 then writeln(t,'zone=',fzone);
       nlPoints24,
-      nl4DPointlist  : writeln(t,'zone=',zone);
-      nlNode         : writeln(t,'address=',zone,':',net,'/',node);
+      nl4DPointlist  : writeln(t,'zone=',fzone);
+      nlNode         : writeln(t,'address=',fzone,':',fnet,'/',fnode);
     end;
     writeln(t);
     end;
@@ -211,42 +225,45 @@ end;
 
 function TNodeList.GetMainNodelist: integer;
 begin
-  Result:=Entries.Count-1;
-  while (Result>=0) and ( TNodeListItem(Entries[Result]).listfile <>'NODELIST.###') do
+  Result:=Count-1;
+  while (Result>=0) and ( TNodeListItem(Items[Result]).flistfile <>'NODELIST.###') do
     dec(Result);
 end;
 
 function  TNodeList.GetFileName(n:integer):string;
 var p : byte;
 begin
-  if n>=Entries.Count then
+  if n>=Count then
     result:=''
   else
-    with TNodeListItem(Entries[n]) do
+    with TNodeListItem(Items[n]) do
     begin
-      p:=pos('###',listfile);
+      p:=pos('###',flistfile);
       if p=0 then
-        result:=listfile
+        result:=flistfile
       else
-        result:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
+        result:=LeftStr(flistfile,p-1)+formi(fnumber,3)+mid(flistfile,p+3);
     end;
 end;
 
-procedure TNodeList.AddEntry(NLItem : TNodeListItem);       //
+procedure TNodeList.Add(NLItem : TNodeListItem);
 var
   i,j : integer;
 begin
 
-  Entries.Add(NLItem);                         // merge entry
+  inherited Add(NLItem);
 
-  for i:=0 to Entries.Count - 1 do              // and sort Dateigr”áe sortieren
-    TNodeListItem(Entries[i]).sort:=_filesize(FidoDir+ GetFilename(i));
-  for i:=0 to Entries.Count - 1 do
-    for j:=Entries.Count - 1 downto 1 do
-      if TNodeListItem(Entries[j]).sort>TNodeListItem(Entries[j-1]).sort then
-        Entries.Exchange(j, j-1);
+  for i:=0 to Count - 1 do              // and sort Dateigr”áe sortieren
+    TNodeListItem(Items[i]).fsort:=_filesize(FidoDir+ GetFilename(i));
+  for i:=0 to Count - 1 do
+    for j:=Count - 1 downto 1 do
+      if TNodeListItem(Items[j]).fsort>TNodeListItem(Items[j-1]).fsort then
+        Exchange(j, j-1);
 end;
-
+function  TNodeList.GetItem(Index: integer): TNodeListItem;
+begin
+  result:=Items[index];
+end;
 //end TNodeList
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -305,6 +322,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/01/07 12:34:37  mo
+  - einig  Änderungen an TNodeList
+
   Revision 1.9  2001/01/06 21:13:35  mo
   - Änderung an TnodeListItem
 

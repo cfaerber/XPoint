@@ -81,7 +81,7 @@ var s  : string;
 
 begin           { begin procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo) };
   ni.found:=false;                                              //war (nfile<1)
-  if (nfile<0) or (nfile>NodeList.Entries.Count-1) then exit;
+  if (nfile<0) or (nfile>NodeList.Count-1) then exit;
         new(nodelf);                                            //es kann ein nodelisten index von
   assign(nodelf^,FidoDir+NodeList.GetFilename(nfile));
   resetfm(nodelf^,fmRead);
@@ -410,7 +410,7 @@ begin
 { MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if NodeList.GetMainNodelist>0 then begin
-    NlItem:=nodelist.Entries[NodeList.GetMainNodelist];
+    NlItem:=nodelist.Items[NodeList.GetMainNodelist];
     attrtxt(col.coldiarahmen);
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
@@ -746,11 +746,11 @@ again:
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
   List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
-  for i:=0 to NodeList.Entries.Count - 1 do
-    with TNodeListItem(Nodelist.Entries[i]),NB_Data^ do
+  for i:=0 to NodeList.Count - 1 do
+    with TNodeListItem(Nodelist.Items[i]),NB_Data^ do
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
-          (pl and (format<>nlNodelist))) and
+          (pl and (fformat<>nlNodelist))) and
          FileExists(FidoDir+NodeList.GetFilename(i))
       then begin
         attrtxt(col.coldiahigh);
@@ -761,7 +761,7 @@ again:
         if zone<>0 then azone:=zone   { Start-Nodeadresse setzen }
         else azone:=DefaultZone;
         apoint:=0;
-        if format=nlNode then begin
+        if fformat=nlNode then begin
           anet:=net; anode:=node;
           end
         else begin
@@ -781,7 +781,7 @@ again:
               nn:=minmax(ival(LeftStr(ss,p-1)),0,65535);
               delete(ss,1,p);
               end;
-            GetAddress(format,skip);     { akt. Adresse ermitteln }
+            GetAddress(fformat,skip);     { akt. Adresse ermitteln }
             if anet<>lastnet then
               mwrt(x+10,y+15,forms(strs(azone)+':'+strs(anet),15));
             lastnet:=anet;
@@ -893,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.29  2001/01/07 12:34:36  mo
+  - einig  Änderungen an TNodeList
+
   Revision 1.28  2001/01/06 21:13:36  mo
   - Änderung an TnodeListItem
 

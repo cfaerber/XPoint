@@ -557,7 +557,7 @@ var
       2: result:=e.Count;                       //TastenMakros
       3: result:=anzahl;                        //Gebhren
       4: result:=xhd.anz+1;                     //Header
-      5: result:=Nodelist.Entries.Count;        //nodeliste
+      5: result:=Nodelist.Count;                //nodeliste
       6: result:=tables;                        //Tarif
     else
       result:=anzahl;
@@ -643,12 +643,12 @@ var
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
-          5 : with TNodeListItem(Nodelist.Entries[a+i-1]) do
+          5 : with TNodeListItem(Nodelist.Items[a+i-1]) do
                 Wrt2(' '+forms(listfile,14)+                                    // NL-Dateiname
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+   //Nodelistennummer
-                      forms(updatefile,14)+forms(updatearc,14)+
-                      iifs(dodiff,'Diff  ','      ')+
-                      forms(getres2(2128,format),16));
+                      forms(fupdatefile,14)+forms(fupdatearc,14)+
+                      iifs(fdodiff,'Diff  ','      ')+
+                      forms(getres2(2128,fformat),16));
           6 : with tarif^[a+i] do                             { array }
                 write(forms(' '+getres2(1022,1)+' '+          { 'Tarifgruppe ' }
                             strs(a+i)+':   '+daytxt(a+i),53));
@@ -1397,17 +1397,17 @@ var
   var nlr : TNodeListItem;
       brk : boolean;
   begin
-    nlr:=TNodeListItem(Nodelist.Entries[strIdx]);
+    nlr:=TNodeListItem(Nodelist.Items[strIdx]);
     EditNLentry(nlr,brk);
     if not brk then
     begin
       reindex:=reindex or
-               (nlr.format<>TNodeListItem(nodelist.Entries[strIdx]).format) or
-               (nlr.zone<>TNodeListItem(nodelist.Entries[strIdx]).zone) or
+               (nlr.fformat<>TNodeListItem(nodelist.Items[strIdx]).fformat) or
+               (nlr.zone<>TNodeListItem(nodelist.Items[strIdx]).zone) or
                ((nlr.format=3) and
-                ((nlr.net<> TNodeListItem(nodelist.Entries[strIdx]).net) or
-                 (nlr.node<> TNodeListItem(nodelist.Entries[strIdx]).node)));
-      Nodelist.Entries[strIdx] :=nlr;
+                ((nlr.net<> TNodeListItem(nodelist.Items[strIdx]).net) or
+                 (nlr.node<> TNodeListItem(nodelist.Items[strIdx]).node)));
+      Nodelist.Items[strIdx] :=nlr;
       modi:=true;
     end;
   end;
@@ -1432,9 +1432,9 @@ var
     begin
       if a+CurRow-1<anzahl then
       begin
-        Item := NodeList.Entries[strIdx];
+        Item := NodeList.Items[strIdx];
         Item.Free;
-        NodeList.Entries.Delete(strIdx);
+        NodeList.Delete(strIdx);
         dec(anzahl);
         modi:=true;
         reindex:=true;
@@ -1611,7 +1611,7 @@ begin   {procedure UniEdit(typ:byte); }
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
           filewidth:=255;
-          anzahl:=NodeList.Entries.Count;
+          anzahl:=NodeList.Count;
           width:=70;
           buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info , ^OK ' }
           okb:=6; edb:=2;
@@ -1702,7 +1702,7 @@ begin   {procedure UniEdit(typ:byte); }
         5 : case nr of
               1 : if NewNodeentry then
                   begin
-                    Anzahl := NodeList.Entries.Count;
+                    Anzahl := NodeList.Count;
                     modi:=true;
                     reindex:=true;
                   end;
@@ -1790,7 +1790,7 @@ begin   {procedure UniEdit(typ:byte); }
           begin
             KeepNodeindexClosed;
             if Nodelist.Open then CloseNodeIndex;
-            if NodeList.Entries.Count=0 then
+            if NodeList.Count=0 then
             begin
               DeleteFile(NodeIndexF);
               DeleteFile(UserIndexF);
@@ -2051,6 +2051,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.53  2001/01/07 12:34:37  mo
+  - einig  Änderungen an TNodeList
+
   Revision 1.52  2001/01/06 21:13:35  mo
   - Änderung an TnodeListItem
 

@@ -68,10 +68,10 @@ begin           //procedure InitNodelist;
   NodeList.LoadConfigFromFile;          { Nodelist-Konfiguration im neuen Format laden }
   indexflag:=false;                     { altes Format wird nicht mehr untersttzt                    }
 
-  for i:=0 to NodeList.Entries.Count - 1 do
+  for i:=0 to NodeList.Count - 1 do
     if not FileExists(FidoDir+NodeList.GetFilename(i)) then
       trfehler1(214,FidoDir+NodeList.GetFilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
-  if NodeList.Entries.Count > 0 then
+  if NodeList.Count > 0 then
   begin
     xni:=FileExists(NodeIndexF);                //exists 'FIDO\NODELIST.IDX'
     if xni then NL_Datecheck;
@@ -116,19 +116,19 @@ begin
   begin
     filechar:='>'+range('#','~')+'!';
     maddtext(3,2,getres2(2127,5),0);                    // 'Listenname      '
-    maddtext(21,2,NLItem.listfile,col.coldiahigh);
+    maddtext(21,2,listfile,col.coldiahigh);
     maddtext(39,2,getres2(2127,6),0);                   // 'Nummer '
-    maddtext(47,2,formi(NLItem.number,3),col.coldiahigh);
-    lform:=getres2(2128,NLItem.format);
+    maddtext(47,2,formi(number,3),col.coldiahigh);
+    lform:=getres2(2128,format);
     maddstring(3,4,getres2(2127,7),lform,15,20,'');     // 'Listenformat
     mhnr(940);
     for i:=1 to res2anz(2128) do
       mappsel(true,getres2(2128,i));
-    case NLItem.format of
-      1     : if NLItem.zone=0 then adresse:=''
-              else adresse:=strs(NLItem.zone);
-      2,4   : adresse:=strs(NLItem.zone);
-      3     : adresse:=strs(NLItem.zone)+':'+strs(NLItem.net)+'/'+strs(NLItem.node);
+    case format of
+      1     : if zone=0 then adresse:=''
+              else adresse:=strs(zone);
+      2,4   : adresse:=strs(zone);
+      3     : adresse:=strs(zone)+':'+strs(net)+'/'+strs(node);
       5     : adresse:='';
       end;
     maddstring(3,5,getres2(2127,8),adresse,15,15,'0123456789:/');
@@ -136,12 +136,12 @@ begin
     mset1func(setfnlenable);
     maddstring(3,8,getres2(2127,10),fupdatearc,12,12,filechar);          // 'Update-Archiv  ' }
     maddstring(3,10,getres2(2127,11),fprocessor,28,40,'');               // 'bearbeiten durch' }
-      if updatefile='' then mdisable;
+      if fupdatefile='' then mdisable;
       fne_first:=fieldpos;
     maddbool(3,12,getres2(2127,12),fdodiff);                             // 'Update als Diff einbinden'
-      if updatefile='' then mdisable;
+      if fupdatefile='' then mdisable;
     maddbool(3,13,getres2(2127,13),fdelupdate); { 'Update nach Einbinden l”schen' }
-      if updatefile='' then mdisable;
+      if fupdatefile='' then mdisable;
     readmask(brk);
     if not brk then
     begin
@@ -154,7 +154,7 @@ begin
         Splitfido(adresse,fa,defaultzone);
         zone:=fa.zone; net:=fa.net; node:=fa.node;
         end;
-      if updatefile='' then DoDiff:=false;
+      if fupdatefile='' then fDoDiff:=false;
       end;
     end;
   enddialog;
@@ -221,9 +221,9 @@ begin   //function NewNodeEntry:boolean;
       else
         ffn:=ExtractFileName(fn); {getfilename(fn);}
       i:=0;
-      while (i<NodeList.Entries.Count) and (ffn<>NodeList.GetFilename(i)) do
+      while (i<NodeList.Count) and (ffn<>NodeList.GetFilename(i)) do
         inc(i);
-      if i<NodeList.Entries.Count then
+      if i<NodeList.Count then
         rfehler(1009)   { 'Diese Node-/Pointliste ist bereits eingebunden' }
       else
       with NLItem do
@@ -236,30 +236,30 @@ begin   //function NewNodeEntry:boolean;
           if (p>0) and isnum(mid(listfile,p+1)) then begin
             number:=ival(mid(listfile,p+1));
             listfile:=LeftStr(listfile,p)+'###';
-            DoDiff:=true;
+            fDoDiff:=true;
             end;
           format:=nlNodelist;                           { Nodelist }
           detect:=false;
           if listfile='NODELIST.###' then begin         { Typvorgabe 'Nodeliste' }
-            updatefile:='NODEDIFF.###';
-            updatearc:='NODEDIFF.A##';
+            fupdatefile:='NODEDIFF.###';
+            fupdatearc:='NODEDIFF.A##';
             detect:=true;
             end
           else if listfile='POINTS24.###' then begin    { Typvorgabe 'Points24' }
-            updatefile:='PR24DIFF.###';
-            updatearc:='PR24DIFF.A##';
+            fupdatefile:='PR24DIFF.###';
+            fupdatearc:='PR24DIFF.A##';
             zone:=2;
             format:=2;
             detect:=true;
             end
           else if ExtractFileExt(listfile)='.PVT' then begin { Typvorgabe 'PVT-Liste' }
-            updatefile:=listfile;
+            fupdatefile:=listfile;
             format:=3;
             if FindFidoAddress(fn,fa) then begin
               zone:=fa.zone; net:=fa.net; node:=fa.node;
               detect:=true;
               end;
-            DelUpdate:=true;
+            fDelUpdate:=true;
             end
           else
             PL_FormatDetect(fn,fformat);
@@ -271,7 +271,7 @@ begin   //function NewNodeEntry:boolean;
             if (ExtractFilePath(fn)=OwnPath+FidoDir) or
                filecopy(fn,FidoDir+Extractfilename(fn)) then
             begin
-              NodeList.AddEntry(NLItem);
+              NodeList.Add(NLItem);
               if listfile='NODELIST.###' then
                 ShrinkNodelist(false);
               NewNodeEntry:=true;
@@ -433,8 +433,8 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   diffdir:=ExtractFilePath(files);
   diffnames:=extractfilename(files);
 
-  for i:=0 to NodeList.Entries.Count - 1 do
-  with TNodeListItem(Nodelist.Entries[i]) do
+  for i:=0 to NodeList.Count - 1 do
+  with TNodeListItem(Nodelist.Items[i]) do
   begin
     ucount:=5;
     nextnr:=number;
@@ -442,8 +442,8 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       done:=false;
       nextnr:=NextNumber(nextnr);
       newlist:=FidoDir+ReplNr(listfile,nextnr);   { Dateinamen expandieren }
-      uarchive:=ReplNr(updatearc,nextnr);
-      ufile:=ReplNr(updatefile,nextnr);
+      uarchive:=ReplNr(fupdatearc,nextnr);
+      ufile:=ReplNr(fupdatefile,nextnr);
       ExpandFilePath(uarchive);
       unarcflag:=false;                           { Update-Archiv auspacken }
       if (uarchive<>'') and passend(uarchive) then begin
@@ -456,15 +456,15 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         end;
       ExpandFilePath(ufile);
       if FileExists(ufile) and passend(ufile) then begin
-        if processor<>'' then ExecProcessor(processor);
-        if DoDiff and UDiff then begin       { Update diffen }
+        if fprocessor<>'' then ExecProcessor(fprocessor);
+        if fDoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
           NodeList.SaveConfigToFile;
           done:=true;
           if listfile='NODELIST.###' then
             ShrinkNodelist(false);
           end;
-        if not DoDiff and CopyUpdateFile then
+        if not fDoDiff and CopyUpdateFile then
         begin    { Update kopieren }
           if pos('##',listfile)>0 then begin
             _era(FidoDir+NodeList.GetFilename(i));      { alte Liste l”schen }
@@ -477,7 +477,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         if unarcflag then _era(ufile);
         end;
       if done then begin
-        if auto and DelUpdate then begin    { evtl. Update-Files l”schen }
+        if auto and fDelUpdate then begin    { evtl. Update-Files l”schen }
           if FileExists(uarchive) then _era(uarchive);
           if FileExists(ufile) then _era(ufile);
           end;
@@ -485,7 +485,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         end;
       if done then DoDiffs:=0;
       dec(ucount);
-    until (pos('##',listfile)=0) or (not done and (dodiff or (ucount=0)));
+    until (pos('##',listfile)=0) or (not done and (fdodiff or (ucount=0)));
     end;
 
   freeres;
@@ -517,6 +517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/01/07 12:34:36  mo
+  - einig  Änderungen an TNodeList
+
   Revision 1.32  2001/01/06 21:13:37  mo
   - Änderung an TnodeListItem
 
