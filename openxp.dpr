@@ -145,7 +145,7 @@ uses
   zcrfc in 'zcrfc.pas',
   OSDepend in 'osdepend.pas',
   SysUtils,
-{$IFDEF Kylix}
+{$IFNDEF Kylix}
   ZModem in 'netcall\zmodem.pas',
   ncgeneric in 'netcall\ncgeneric.pas',
   NCModem in 'netcall\ncmodem.pas',
