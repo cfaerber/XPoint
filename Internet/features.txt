@@ -25,7 +25,7 @@ o
 Erweiterte Reply-Funktion<br /><small>Reply-To-All, an markierte User antworten etc.</small>
 Enhanced reply<br /><small>Reply-to-all, reply to marked users only, ...</small>
 -
-o
+x
 o
 
 Verbesserter Support v. ext. Viewern
@@ -76,8 +76,8 @@ ReplaceOwn
 x
 x
 
-Client-Modus
-Client mode
+Client-Modus<br /><small>universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
+Client mode<br /><small>universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
 -
 o
 o
@@ -98,7 +98,7 @@ Integrierter NNTP/SMTP/POP3-Support
 Integrated NNTP/SMTP/POP3 support
 -
 -
-o
+x
 
 Integriertes ZFido/UUZ
 Integrated ZFido/UUZ

@@ -1,5 +1,11 @@
 Die letzten News von www.openxp.de...
 
+1. Mai 2001: "Reply-To-All" in OpenXP v3.40
+OpenXP v3.40 bietet jetzt die Möglichkeit, eine Mail mit mehreren
+Empfängern an den Absender <i>und</i> alle übrigen Empfänger automatisch und
+mit einem Tastendruck beantworten zu können (sog. "Reply-To-All").
+<br /><a href="index.php4?file=news/20010501-rta.html">Weiteres dazu...</a>
++
 29. März 2001: UUCP in OpenXP 3.70
 UUCP ist jetzt fertig integriert. Neu ist die Unterstützung von
 UUCP über TCP/IP; hierzu wurde auch UUCP-t eingebaut. 

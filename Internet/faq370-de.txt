@@ -13,12 +13,13 @@ Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor ke
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
-OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-04-16</small>
+OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-04-22</small>
 Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version bietet <i>keine</i> graphische Oberfläche, also nicht wundern. Im folgenden die Einschränkungen der einzelnen Versionen:
 <ul>
 <li>DOS: Die integrierten Mail/Newsclients (NNTP/POP3/SMTP) funktionieren hier nicht, ebenso wie BinkP (Fido over IP). Die Bildschirmgröße läßt sich nicht völlig frei ändern, es werden nur die unter DOS üblichen Textmodi unterstützt. Für den Modemzugriff stehen die gewohnten Möglichkeiten zur Verfügung (also direkter Zugriff auf die Hardware und Fossil).</li>
 <li>Windows: Modemzugriff direkt über die Windows-ComPorts. Siehe FAQ/Allgemein: Man braucht bei USB-Modems etc. keine Umwege über Fossil machen. Fossil steht dementsprechend auch gar nicht zur Verfügung.</li>
-<li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX. ISDN-Karten werden über /dev/ttyIx wie normale Modems angesprochen, in ISDN4Linux ist ein AT-Emulator integriert.</li>
+<li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX. ISDN-Karten werden über /dev/ttyIx wie normale Modems angesprochen, in ISDN4Linux ist ein AT-Emulator integriert. In der Boxenkonfiguration bedeutet "COM1" bei "Schnittstelle", daß die Konfiguration von "Gerät 1" unter Config/Modem... benutzt wird. Wie gesagt, demnächst wird in dieser Richtung aufgeräumt.
+<br /><i>Vorsicht: Es scheint Probleme zu geben, wenn OpenXP (Linux) auf einem FAT16-Laufwerk liegt (seltsame Abstürze).</i> Das Homeverzeichnis des OpenXP-Users sollte also das ext2-Dateisystem benutzen.</li>
 </ul>
 Noch allgemein zum Modemzugriff:<br />
 Mit der Umstellung im Netcall-Bereich wurden die alten Modemeinstellungen abgeschafft. Stattdessen gibt man
@@ -26,13 +27,14 @@ jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F
 wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
 aus den XP-Konfigurationsdateien auslesen. Änderungen am Config/Modem-Dialog sind in der Planung.
 
-Was ist bei den neuen Netcalls zu beachten?&nbsp;&nbsp;<small>2001-04-16</small>
+Was ist bei den neuen Netcalls zu beachten?&nbsp;&nbsp;<small>2001-04-21</small>
 <big>NNTP/SMTP/POP3:</big>
 <ul>
 <li>Diese Netcalltypen funktionieren nur unter Windows bzw. Linux.</li>
 <li>Die Internetverbindung muß mit Betriebssystemmethoden (DFÜ-Netzwerk/pppd etc.) vor dem OpenXP-Netcall aufgebaut werden.</li>
 <li>POP3: Defaultmäßig wird zur Authentifizierung APOP benutzt (so gehen die Paßwörter nicht im Klartext über das Netz). Die Mailserver diverser Provider sagen zwar, daß sie APOP können, APOP funktioniert aber trotzdem nicht. In diesem Falle das Feature unter Edit/Boxen/Edit ausstellen und am besten dem Provider noch eine böse Mail schreiben.</li>
-<li>NNTP: Zum Beziehen von Newsgroups muß - wie ganz normal bei Mailboxen auch - erstmal eine Newsgroupliste bestellt und Newsgroups abonniert werden (Nachricht/Brettmanager/Liste anfordern bzw. Bestellen).</li>
+<li>SMTP: Einige Server lehnen Mails auch beim SMTP after POP mit "relaying denied" ab, wenn in der Mail als Absender nicht die E-Mail-Adresse eingetragen ist, die man auch tatsächlich bei diesem Provider hat.</li>
+<li>NNTP: Zum Beziehen von Newsgroups muß - wie ganz normal bei Mailboxen auch - erstmal eine Newsgroupliste bestellt und Newsgroups abonniert werden (Nachricht/Brettmanager/Liste anfordern bzw. Bestellen). In Newsgroups muß im Moment zum Verschicken von Replies per Mail (STRG-P) in Edit/Boxen/Edit/Diverses ein POP3/SMTP-Server als Vertretersystem für PMs angegeben sein.</li>
 <li><i>Bitte vorerst nur in Test-Newsgroups posten!</i>- Die Funktionalität ist bisher wenig getestet.</li>
 </ul>
 <big>Fido:</big>

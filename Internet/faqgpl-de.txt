@@ -23,6 +23,11 @@ CrossPoint und verwandte Programme genutzt werden.</li>
 <li>Die GPL ist unter Programmierern bekannt und anerkannt.</li>
 </ul>
 
+Warum wurde OpenXP/16 nicht auch unter die GPL gestellt?
+Das war mit Peter so ausgemacht. Es ist auch als kleiner Dank
+für sein Entgegenkommen gedacht, schließlich bleibt OpenXP/16
+so registrierungspflichtig (mit den für Peter angenehmen Nebeneffekten ;-).
+
 Was ist das Besondere an der GPL?
 Die GPL räumt dem Lizenznehmer Rechte ein und nimmt sie ihm
 nicht weg (im Gegensatz zu anderen Lizenzen, die z.B. bestimmen,

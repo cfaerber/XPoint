@@ -1,6 +1,29 @@
 <? ShowDownloadTable("download.txt"); ?>
 
-<hr />
+<h3>32 bit snapshot<br /><small>3.70 "alpha"
+
+<?	$fh = ftp_connect('ftp.openxp.de');
+	if ($fh) {
+		if (ftp_login($fh,"anonymous","webmaster@openxp.de")) {
+			$timestamp = ftp_mdtm($fh, "openxp/snapshot/oxp32win.rar");
+			if($timestamp>0) echo("(" . date("Y-m-d",$timestamp) . ")");
+		};
+		ftp_quit($fh);
+	};
+?>
+
+</small></h3>
+
+...is located in the <a href="ftp://ftp.openxp.de/openxp/snapshot">snapshot</a> directory of the OpenXP ftp server (see _index.txt).
+<br />Caution: <i>Use it at your own risk!</i>.
+
+<p><small>Please check the following points before posting v3.70 bug reports:
+<br />- use latest snapshot
+<br />- check <a href="https://sourceforge.net/bugs/?group_id=3766">bug list</a> and <a href="http://www.geocrawler.com/lists/3/SourceForge/2476/0/">OpenXP-Dev archive</a>
+<br />...and, finally, please include <i>debuglog.txt</i> whenever you submit bug reports.
+</small></p>
+
+<hr noshade="noshade" size="1" />
 
 <p>Updates consist of online help files and executables. Complete versions include documentation also. 
 <br />Complete versions are compressed using zip (see <a href="http://www.winzip.com">WinZip.com</a>), all other packages are compressed with rar (<a href="ftp://ftp.openxp.de/openxp/tools/unrar.exe">unrar.exe</a>, 32kb). 
