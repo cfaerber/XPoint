@@ -175,7 +175,8 @@ begin
   Wrt2(getres(321));   { ' fertig.' }
   mon;
   if sig then signal;
-  wkey(1,false);
+  { wkey(1,false); // damit wird jedes Makro gestoppt }
+  delay(500);
   closebox;
 end;
 
@@ -1479,6 +1480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.4  2000/09/25 18:58:35  mk
+  - Tastaturbuffer bei Datumsbezuege anpassen wird nicht mehr geloescht
+
   Revision 1.21.2.3  2000/08/05 14:59:44  jg
   - Bugfix: Fix fuer Internal Error bei Nachricht/Extrakt/Brett
     sabotierte Nachricht/Extrakt/Nachricht
