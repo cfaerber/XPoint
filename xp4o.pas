@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
@@ -506,8 +505,8 @@ label ende,happyend;
         MsgAddmark;
         inc(nf);
         end
-      else                                            
-      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
+      else
+      if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
         if umlaut then ukonv(such,high(such));    
@@ -2417,86 +2416,3 @@ end;
 
 
 end.
-{
-  $Log$
-  Revision 1.20.2.1  2000/03/25 10:43:08  mk
-  - Flagzeile kuerzen
-  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
-  - Suche: Pfeil fuer Historyauswahl kommt nur noch
-    wenn auch was gewaehlt werden kann.
-  - text/html wird jetzt mit ISO-Zeichensatz exportiert
-  - Mailstring: RFC-Konforme(re) Erkennung
-  - Bug beim Erzeugen des Received-Headers behoben
-  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
-    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
-  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
-  - Mime-Extrakt: Bugfixes:
-    Makepartlist: kein INC(N) mehr beim Block mit EOF
-    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
-
-  Revision 1.20  2000/03/02 20:09:31  jg
-  - NOT Operator (~) fuer Suchstrings und Such-History eingebaut
-
-  Revision 1.19  2000/03/01 13:17:41  jg
-  - Ukonv Aufrufe benutzen jetzt High() fuer Maxlaenge
-  - STRG + INS funktioniert in Texteingabefeldern wie STRG+C
-
-  Revision 1.18  2000/03/01 08:04:23  jg
-  - UND/ODER Suche mit Suchoptionen "o" + "u"
-    Debug-Checkfenster mit Suchoption "c"
-  - Umlautkonvertierungen beruecksichtigen
-    jetzt Maximalstringlaenge
-
-  Revision 1.17  2000/02/29 17:50:40  mk
-  OH: - Erkennung der Magics verbessert
-
-  Revision 1.16  2000/02/29 12:59:16  jg
-  - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
-    (Wurde akut bei Spezialsuche-Betreff)
-
-  Revision 1.15  2000/02/29 10:46:28  jg
-  -Bugfix Spezialsuche - Betreff
-
-  Revision 1.14  2000/02/23 19:11:04  jg
-  -Suchfunktionen im Lister benutzen Autosuche,
-   "Global_Suchstring" und dessen auswertung entfernt.
-  -!Todo.txt aktualisiiert
-
-  Revision 1.13  2000/02/22 15:51:20  jg
-  Bugfix fÅr "O" im Lister/Archivviewer
-  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
-  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
-  Archivviewer-Macros gÅltig im MIME-Popup
-
-  Revision 1.12  2000/02/19 18:00:24  jg
-  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
-  Umlautunabhaengige Suche kennt jetzt "Ç"
-  Mailadressen mit "!" und "=" werden ebenfalls erkannt
-
-  Revision 1.11  2000/02/19 10:12:13  jg
-  Bugfix Gelesenstatus aendern per F4 im ungelesen Modus
-
-  Revision 1.10  2000/02/18 17:28:08  mk
-  AF: Kommandozeilenoption Dupekill hinzugefuegt
-
-  Revision 1.9  2000/02/18 15:54:52  jg
-  Suchoptionen-Laenderabfrage verbessert
-
-  Revision 1.8  2000/02/18 09:13:27  mk
-  JG: * Volltextsuche jettz Sprachabhaengig gestaltet
-      * XP3.ASM in XP3.PAS aufgenommen
-
-  Revision 1.7  2000/02/16 15:25:32  mk
-  OH: Schalter magics in FidoMsgRequest auf true gesetzt
-
-  Revision 1.6  2000/02/15 21:19:24  mk
-  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
-      * wenn man eine markierte Nachricht liest, wird beim Verlassen
-        der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
-        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
-
-  Revision 1.5  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
-}
