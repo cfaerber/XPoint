@@ -350,7 +350,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 54   ~         /df:1    show command call of external programs
 55   ~         /df:2    wait for key press after external program calls
 56
-57   ~         /noovrbuf  Do not use overlay buffering in EMS/XMS
+57   ~         /noovrbuf  do not use EMS/XMS overlay buffering
 58
 59   ~         /x       quit program
 -
