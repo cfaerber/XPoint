@@ -135,7 +135,7 @@ var
   err: integer;
 begin
   if Logging then Exit;
-  {a$IFDEF Debug}if Filename = '' then Filename := 'debuglog.txt'; {$ENDIF}
+  {$IFDEF aDebug}if Filename = '' then Filename := 'debuglog.txt'; {$ENDIF}
   Logfilename := Filename;
   Logging := True;
   Rew := False;
@@ -192,6 +192,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/11/22 08:02:37  mk
+  - made compilable
+
   Revision 1.8  2000/11/21 10:08:11  ma
   - not logging by default in snapshots anymore
 
