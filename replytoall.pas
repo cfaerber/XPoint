@@ -592,7 +592,6 @@ var RTAEmpfList : TRTAEmpfaengerList;
   var
     i, anz: Integer;
   begin
-    i := 0;
     anz := 0;
     for i:=0 to RTAEmpfList.Count-1 do
       if RTAEmpfList[i].RTAEmpf then
@@ -968,6 +967,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2001/09/09 09:25:53  mk
+  - completed last fix
+
   Revision 1.18  2001/09/09 09:12:04  cl
   - BUGFIX: crash on CTRL-B/P with certain mail messages
 
