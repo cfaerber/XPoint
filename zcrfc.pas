@@ -228,6 +228,45 @@ begin
   UTFDecoder.Free;
 end;
 
+procedure UTF7ToIBM(var s: String); { by robo; nach RFC 2152 }
+const b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+var i,j:integer;
+    s1:string;
+    ucs:smallword;
+begin
+  i:=1;
+  j:=posn('+',s,i);
+  while j<>0 do begin
+    i:=j;
+    inc(j);
+    while (j<=length(s)) and (pos(s[j],b64alphabet)<>0) do inc(j);
+    if (j<=length(s)) and (s[j]='-') then inc(j);
+    s1:=copy(s,i,j-i);
+    delete(s,i,j-i);
+    if s1='+-' then s1:='+'
+    else begin
+      if firstchar(s1)='+' then delfirst(s1);
+      if lastchar(s1)='-' then dellast(s1);
+      while (length(s1) mod 4<>0) do s1:=s1+'=';
+      DecodeBase64(s1);
+      if odd(length(s1)) then dellast(s1);
+      j:=1;
+      while length(s1)>j do begin
+        ucs:=word(s1[j]) shl 8+word(s1[j+1]);
+        if (ucs<$00000080)
+          then s1[j]:=char(ucs)
+          else if (ucs>$000000ff) { nur Latin-1 }
+            then s1[j]:='?'
+            else s1[j]:=char(iso2ibmtab[byte(ucs)]);
+        inc(j);
+        delete(s1,j,1);
+      end;
+    end;
+    insert(s1,s,i);
+    j:=posn('+',s,i+length(s1));
+  end;
+end;
+
 function RecodeString(s: String; TransTable: T8BitTable): String;
 var
   Encoder: TUTF8Encoder;
@@ -266,6 +305,7 @@ begin
     if charset='windows-1252' then Result := RecodeString(s, CP1252Transtable) else
     if charset='windows-1255' then Result := RecodeString(s, CP1255Transtable) else
     if charset='utf-8' then Result := UTF8ToIBM(s) else
+    if charset='utf-7' then UTF7ToIBM(s) else
     if hd.mime.ctype <> tMultipart then Result := ISOToIBM(s) else
     Result := s;
   end;
@@ -1107,59 +1147,6 @@ var
     s := s + #13#10;
   end;
 
-  procedure DecodeBase64;
-  const
-    b64tab: array[0..127] of byte =
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 64,
-      53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 0, 0, 0, 0, 0, 0,
-      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-      16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 0, 0, 0, 0, 0,
-      0, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-      42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 0, 0, 0, 0, 0);
-  var
-    b1, b2, b3, b4: byte;
-    p1, p2, pad: integer;
-
-    function nextbyte: byte;
-    var
-      p: integer;
-    begin
-      repeat
-        if s[p1] > #127 then
-          p := 0
-        else
-          p := b64tab[byte(s[p1])];
-        inc(p1);
-      until (p > 0) or (p1 > length(s));
-      if p > 0 then dec(p);
-      nextbyte := p;
-    end;
-  begin
-    if length(s) < 4 then
-      s := ''
-    else
-    begin
-      if LastChar(s) = '=' then
-        if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
-          pad := 2
-        else
-          pad := 1
-      else
-        pad := 0;
-      p1 := 1; p2 := 1;
-      while p1 <= length(s) do
-      begin
-        b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
-        s[p2] := chr(b1 shl 2 + b2 shr 4);
-        s[p2 + 1] := chr((b2 and 15) shl 4 + b3 shr 2);
-        s[p2 + 2] := chr((b3 and 3) shl 6 + b4);
-        inc(p2, 3);
-      end;
-      SetLength(s, p2 - 1 - pad);
-    end;
-  end;
 
 begin
   if qprint then
@@ -1186,7 +1173,7 @@ begin
   end
   else
     if b64 then
-    DecodeBase64
+    DecodeBase64(s)
   else
     AddCrlf;
 end;
@@ -3662,6 +3649,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/12/04 14:20:56  mk
+  RB:- UTF-7 Support added
+
   Revision 1.12  2000/12/04 08:58:27  mk
   - test destination file
 

@@ -33,15 +33,15 @@ type
   TUnicodeCharsets = (csUnicode, csCP437, csCP866, csCP1251, csCP1252, csCP1255,
     csISO8859_1, csISO8859_2, csISO8859_3, csISO8859_4, csISO8859_5,
     csISO8859_6, csISO8859_7, csISO8859_8, csISO8859_9, csISO8859_10,
-    csISO8859_13, csISO8859_14, csISO8859_15, csUnknown);
+    csISO8859_13, csISO8859_14, csISO8859_15, csUTF7, csUnknown);
 
 const
-  KnownCharsetCount = 18;
+  KnownCharsetCount = 19;
   KnownCharsetNames: array[0..KnownCharsetCount] of String = (
     'UTF-8', 'windows-437', 'windows-866',  'windows-1251',  'windows-1252',  'windows-1255',
     'iso-8859-1', 'iso-8859-2', 'iso-8859-3', 'iso-8859-4', 'iso-8859-5',
     'iso-8859-6', 'iso-8859-7', 'iso-8859-8', 'iso-8859-9', 'iso-8859-10',
-    'iso-8859-13', 'iso-8859-14', 'iso-8859-15');
+    'iso-8859-13', 'iso-8859-14', 'iso-8859-15', 'UTF-7');
 
 function IsKnownCharset(Charset: String): Boolean;
 function GetCharsetFromName(Charset: String): TUnicodeCharsets;
