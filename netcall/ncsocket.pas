@@ -101,7 +101,7 @@ type
     { Ermittelt den Result-Code z.B. 200 OK }
     function ParseResult(s: string): integer;
     { Ermittelt den Result-Code z.B. +OK oder -ERR }
-    function ParseError(s: String): boolean;
+    function ParseError(const s: String): boolean;
 
 
     { Liest so viel Daten in den Buffer, wie Platz ist und Daten da sind }
@@ -323,10 +323,10 @@ begin
     FErrorMsg:= s;
 end;
 
-function TSocketNetcall.ParseError(s: string): Boolean;
+function TSocketNetcall.ParseError(const s: string): Boolean;
 begin
   Result := Copy(s, 1, 3) <> '+OK';
-  if not Result then FErrorMsg:= Mid(s, iif(cPos(' ',s)>0,cPos(' ',s)+1,1));
+  if Result then FErrorMsg:= Mid(s, iif(cPos(' ',s)>0,cPos(' ',s)+1,1));
 end;
 
 procedure TSocketNetcall.ReadBuffer;
@@ -432,9 +432,11 @@ begin
   Debug.DebugLog('ncsocket','SReadln '+s,DLTrace);
 end;
 
-end.
 {
   $Log$
+  Revision 1.30  2001/10/19 00:23:48  mk
+  - fixed ParseError: FErrorMsg was not updated in case of error
+
   Revision 1.29  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
@@ -526,3 +528,5 @@ end.
   - Init
 
 }
+end.
+
