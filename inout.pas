@@ -493,6 +493,7 @@ Procedure Get(VAR z:taste; cur:curtype);
 VAR c       : Char;
     i       : byte;
     mox,moy : integer;
+const euro = #238;
 
   procedure dofunc(state,nr:byte);
   var p  : procedure;
@@ -535,6 +536,40 @@ VAR c       : Char;
     dec(istackp);
     z:=retonfn;
     if z='' then z:='!!';
+  end;
+
+  function Specialchar:char;assembler;
+  asm
+        mov dl,0       { Testen ob INT16/AH=12 funktioniert }
+        mov ah,2
+        int 16h        {     BH                BL                  }
+        mov cl,al      { $80 SysReq        $80 (Insert Aktiv)      }
+        mov ax,$12FF   { $40 CapsLock      $40 (CapsLock Aktiv)    }
+        int 16h        { $20 NumLock       $20 (NumLock Aktiv)     }
+        cmp al,cl      { $10 ScrollLock    $10 (ScrollLock Aktiv)  }
+        jne @end       { $08 AltGr         $08 AnyAlt              }
+        mov bx,ax      { $04 Ctrl-R        $04 AnyCtrl             }
+        mov ah,$11     { $02 Alt           $02 Shift-L             }
+        int 16h        { $01 Ctrl-L        $01 Shift-R             }
+
+        cmp ah,$12     { "E" }
+        jne @01
+        mov dl,euro
+        test bl,3      { Not (Shift-L or Shift-R) ?}
+        jne @01
+        test bh,8      { AltGr ?}
+        jne @ok
+        test bh,2      { or (Alt and AnyCtrl) ? }
+        je @01
+        test bl,4
+        jne @ok
+
+  @01:  mov dl,0
+        jmp @end
+
+  @ok:  mov ah,0
+        int 16h
+  @end: mov al,dl
   end;
 
 begin
@@ -611,7 +646,8 @@ begin
       end
     else
       key_pressed:=true;
-    c:=readkey;
+    c:=specialchar;
+    if c=#0 then c:=readkey;
     if c=#31 then
       z:='!!'   { s. MAUS2.mint }
     else begin
@@ -1657,6 +1693,15 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.9  2002/04/28 17:38:33  my
+  JG:- Vorbereitung fÅr Euro-UnterstÅtzung: Routine 'Specialchar'
+       implementiert, die auch bei neueren Tastaturen zwischen <Alt-E>
+       (Editor starten) und <AltGr-E> (Euro-Zeichen) unterscheiden kann.
+       Da beide Tastenkombinationen denselben Scancode liefern, wurde
+       bisher auch bei <AltGr-E> der Editor gestartet. Bis zur endgÅltigen
+       Fertigstellung der Euro-UnterstÅtzung liefert <AltGr-E> im Editor
+       zu Testzwecken das Zeichen #238 ("Ó").
+
   Revision 1.38.2.8  2002/03/27 19:49:39  my
   JG+MY:- Wenn der ASCII-Wert #245 (= Paragraphen-Zeichen unter Codepage
           850) Åber die Tastatur eingegeben wird, dann wird dieser auf den
