@@ -172,7 +172,7 @@ begin
                 goto ende;
                 end;
               end;
-            if UniExtract(s,FilePath+'TICK\','*.*') and
+            if UniExtract(s,FilePath+'TICK\', WildCard) and
                FileExists(FilePath+'TICK\'+name1) then begin
               DeleteFile(s);
               while FindFirst(FilePath+'TICK\*.TIC',faAnyFile,sr)=0 do repeat       { .TIC-Files verarbeiten }

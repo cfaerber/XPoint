@@ -1592,7 +1592,7 @@ var fn  : string;
     n   : longint;
     useclip: boolean;
 begin
-  fn:='*.*';
+  fn:= WildCard;
   useclip:=true;
   if ReadFilename(getres2(456,1),fn,true,useclip) then   { 'Brettliste einlesen' }
     if not FileExists(fn) then
@@ -1632,7 +1632,7 @@ var fn  : string;
     useclip: boolean;
     b   : byte;
 begin
-  fn:='*.*';
+  fn:= WildCard;
   useclip:=true;
   if ReadFilename(getres2(456,11),fn,true,useclip) then   { 'Userliste einlesen' }
     if not FileExists(fn) then
@@ -3018,6 +3018,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.11  2004/01/18 15:07:08  mk
+  - use WildCard instead of * or *.*
+
   Revision 1.138.2.10  2003/09/29 18:24:56  mk
   - create .mid in client directory
     fixes #810685: Message-ID suchen (ALT+M)

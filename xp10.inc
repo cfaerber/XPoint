@@ -530,7 +530,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
             end;
         7 : AutoExec(false);
        10 : ende:=true;          { END }
-       11 : if DoDiffs(FilePath+'*.*',true)=0 then;     { NODEDIFFS }
+       11 : if DoDiffs(FilePath+WildCard,true)=0 then;     { NODEDIFFS }
       end;
     if ok or (tl[1]^.bis<leftStr(time,5)) then begin
       dispose(tl[1]);
@@ -751,6 +751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.2  2004/01/18 15:07:08  mk
+  - use WildCard instead of * or *.*
+
   Revision 1.24.2.1  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 

@@ -372,9 +372,9 @@ var diffdir  : string;
         s:='';
   end;
 
-  function passend(fn:string):boolean;
+  function passend(const fn:string):boolean;
   begin
-    passend:=(diffnames='*.*') or (extractfilename(fn)=diffnames);
+    passend:=(diffnames=WildCard) or (extractfilename(fn)=diffnames);
   end;
 
   procedure ExecProcessor(processor:string);
@@ -516,7 +516,7 @@ procedure ManualDiff;
 var fn      : string;
     useclip : boolean;
 begin
-  fn:=FilePath+'*.*';
+  fn:=FilePath + WildCard;
   useclip:=false;
   if ReadFilename(getres(1020),fn,true,useclip) then   { 'Node-/Pointlist-Update einbinden' }
     if not FileExists(fn) then
@@ -539,6 +539,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45.2.5  2004/01/18 15:07:09  mk
+  - use WildCard instead of * or *.*
+
   Revision 1.45.2.4  2003/09/21 16:26:53  mk
   - added const parameter for log()
 

@@ -663,7 +663,7 @@ begin { FidoNetcall }
 
     if result IN [el_ok,el_recerr] then begin
       if AutoDiff then
-        if DoDiffs(FilePath+'*.*',true)=0 then;
+        if DoDiffs(FilePath+ WildCard,true)=0 then;
       if AutoTIC and FileExists(Logfile)then
         TestTICfiles(Logfile);
       end;
@@ -904,6 +904,9 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.6  2004/01/18 15:07:09  mk
+  - use WildCard instead of * or *.*
+
   Revision 1.32.2.5  2003/11/23 13:44:41  mk
   - call Match() only with bare Filename, not with full path,
     this prevents false match results

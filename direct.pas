@@ -292,18 +292,12 @@ begin {start MatcMAsk}
 end;
 
 function TDirectory.Read: integer;
-const
-{$ifdef Unix}
-  cSM = '*';
-{$else}
-  cSM = '*.*';
-{$endif}
 var
   sr  : TSearchRec;
   fn  : TDirEntry;
 begin
   Clear;
-  if FindFirst(VDir+cSM,VAttr,sr)=0 then repeat
+  if FindFirst(VDir+WildCard,VAttr,sr)=0 then repeat
     if MatchMask(sr.name) then begin
       fn:= TDirEntry.Create(sr);
       VEntries.Add(fn);
@@ -315,6 +309,9 @@ end;
 
 {
         $Log$
+        Revision 1.6.2.1  2004/01/18 15:07:07  mk
+        - use WildCard instead of * or *.*
+
         Revision 1.6  2002/02/21 13:52:30  mk
         - removed 21 hints and 28 warnings
 
