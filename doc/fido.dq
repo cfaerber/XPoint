@@ -1411,7 +1411,8 @@ die folgenden Aufbau hat:
 ;
 Zone,2,Europe
 Host,2452,
-,125,Last_Outpost,Herzogenrath,Stefan_Savelsberg,49-2406-93132,9600,XA,CM,V34,X75,U,ENC,CDP
+,125,Boxname,Ort,Maik_Test,49-89-12345,9600,XA,CM,V34,X75,U,ENC,CDP
+
 
 In der Zeile "Host,.." mÅssen Sie die Netznummer der Box eintragen und in der
 darauffolgenden Zeile die Nodenummer der Box, den Namen, Standort, Name des
