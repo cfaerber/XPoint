@@ -8631,11 +8631,14 @@ A <<COPY>> of the current message is forwarded to
 either a User, a Newsgroup or sent "Direct". You can
 select the recipient from either a list of
 Newsgroups, a list of Users or choose to send the
-message "Direct". The text showing it has been
-copied is taken from the [template "forward"]. You@10807
+message "Direct". The [Template/Forward] is used@10807
+to indicate that the message has been copied. You
 become the sender of the copy, replies to the copy
 come to you and the original sender is noted in the
-header.
+message header.
+
+NOTE: Neither a signature nor an origin are appended
+      to the end of the copied message!
 @
 12102
 <<Message / Forward / Original
