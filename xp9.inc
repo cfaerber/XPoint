@@ -399,8 +399,11 @@
                   end;
 
       else        begin
-                    maddstring(3,2,getres2(920,10),pname,20,25,iifc(uucp,'<','>'));
-                      mhnr(140);                             { 'Pointname' }
+                    if uucp then
+                      maddstring(3,2,getres2(920,10),pname,20,25,'')
+                    else
+                      maddstring(3,2,getres2(920,10),pname,20,25,'>');
+                    mhnr(140);                             { 'Pointname' }
                     if nt=nt_ZConnect then
                       msetvfunc(testZCpointname);
                     if uucp then mset3proc(uucp_getloginname);
@@ -1333,6 +1336,9 @@
 
 {
   $Log$
+  Revision 1.10.2.5  2000/12/19 18:58:35  mk
+  - Pointname unter UUCP jetzt auch kleingeschrieben erlaubt
+
   Revision 1.10.2.4  2000/12/03 14:06:58  mk
   - Serverdom mit Punkt
 
