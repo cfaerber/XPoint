@@ -84,6 +84,8 @@ type  colrec   =  record              { 0 = keine spezielle Farbe }
       quitfunc    = function(brk,modif:boolean):boolean;
       userdproc   = procedure;
 
+      scrollfunc  = function(offset: integer):boolean;
+
       wrapmodes   = (dont_wrap,do_wrap,endonlast);
 
 
@@ -106,7 +108,6 @@ function  qdummyf(brk,modif:boolean):boolean;       { Dummy fÅr QuitFN  }
 
 procedure maskShiftF2(p:testproc;helpnr:word);
 
-
 {--------------- Masken-Einstellungen -------------}
 { beziehen sich auf die jeweils aktuelle Maske und }
 { werden in amaskp^.stat abgelegt                  }
@@ -120,6 +121,7 @@ procedure masksetfninfo(x,y: Integer; const text:string; fillc:char);
 procedure masksetwrapmode(wm:wrapmodes);
 procedure masksetautojump(aj: Integer);     { Sprungweite bei cr am unteren Rand }
 procedure masksetqfunc(qfunc:quitfunc);
+procedure masksetscrollfunc(scrollfn:scrollfunc);
 procedure masksetarrowspace(aas:boolean);
 procedure masksetmausarrows(ma:boolean);
 procedure masksetautohigh(ah:boolean);  { Felder automatisch selektieren }
@@ -127,7 +129,6 @@ procedure maskdontclear;
 procedure maskcheckbuttons;
 procedure maskselcursor(cur:curtype);
 procedure maskUpDownArrows(x1,y1,x2,y2: Integer; fill:char; col:byte);
-
 
 {------------ Felder anlegen ------------}
 { werden an die aktuelle Maske angehÑngt }
@@ -172,8 +173,6 @@ procedure Malltrim;                           { rtrim/ltrim }
 procedure Mspecialcol(attr:byte);             { spez. Farbe fÅr Feldname }
 procedure MSetAutoHigh(ah:boolean);           { automat. selektieren }
 
-
-
 {----------------- Externe Funktionen --------------}
 { dienen zum Zugriff von externen (Test-)Funktionen }
 { auf Inhalte der momentan editierten Maske         }
@@ -181,6 +180,7 @@ procedure MSetAutoHigh(ah:boolean);           { automat. selektieren }
 procedure setfield(nr: Integer; const newcont:string);
 function  getfield(nr: Integer):string;
 function  fieldpos:integer;         { akt.FeldNr, auch wÑhrend Maskenaufbau! }
+procedure setfieldpos(nr: Integer);
 procedure setfieldenable(nr: Integer; eflag:boolean);   { Feld (de)aktivieren }
 procedure setfieldnodisp(nr: Integer; dflag:boolean);   { Feld nicht anzeigen }
 function  mask_helpnr: Integer;
@@ -192,6 +192,8 @@ procedure settexttext(p:pointer; const newtxt:string);
 procedure mclearsel(nr: Integer);
 procedure mappendsel(nr: Integer; force:boolean; const s:string);
 
+procedure mscroll(distance: Integer);
+procedure mquit(brk: boolean);
 
 procedure InitMaskeUnit;
 
@@ -224,6 +226,7 @@ type
                    wrapmode    : wrapmodes;
                    autojump    : Integer;  { Zeilensprung bei verl.d.Fensters }
                    quitfn      : quitfunc;
+                   scrollfn    : scrollfunc;
                    arrowspace  : boolean;  { Leerzeichen vor/hinter Feld }
                    mausarrows  : boolean;
                    fautohigh   : boolean;  { Felder automat. selektieren }
@@ -308,6 +311,12 @@ type
                    modified    : boolean;     { Inhalt geÑndert }
                    editing     : boolean;     { Editieren aktiv }
                    uda         : udarec;     { Pfeile bei scrollbaren Masken }
+
+                   newfld      : boolean;
+                   redisplay   : boolean;
+
+                   done        : boolean;
+                   donebrk     : boolean;
                  end;
       maskp    = ^masktyp;
 
@@ -580,6 +589,10 @@ begin
   amaskp^.stat.quitfn:=qfunc;
 end;
 
+procedure masksetscrollfunc(scrollfn:scrollfunc);
+begin
+  amaskp^.stat.scrollfn := scrollfn;
+end;
 
 { Anzeige eines Leezeichens vor/hinter den Eingabefeldern ein/ausschalten }
 
@@ -635,16 +648,16 @@ end;
 
 procedure setall(const text:string; x,y:byte; addblank:boolean);
 var
-   newfld : feldp;
+   newfld2 : feldp;
 begin
   with amaskp^ do
     if felder=maxfields then
       error('no more fields')
     else begin
       inc(felder);
-      getmem(newfld,sizeof(feldrec));
-      system.fillchar(newfld^,sizeof(feldrec),0);
-      fld[felder] := newfld;
+      getmem(newfld2,sizeof(feldrec));
+      system.fillchar(newfld2^,sizeof(feldrec),0);
+      fld[felder] := newfld2;
       lastfld:=fld[felder];
       with lastfld^ do
       begin
@@ -1177,6 +1190,17 @@ begin
     else fieldpos:=yp;
 end;
 
+procedure setfieldpos(nr: Integer);
+var i: integer;
+begin 
+  amaskp^.newfld := true;    { Kennzeichen: zur Zeit kein aktives Feld; }
+                             {              Feld yp ist zu aktivieren   }
+  for i := nr to amaskp^.felder do 
+    if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
+  for i := nr-1 downto 1 do 
+    if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
+  amaskp^.yp := nr;  
+end;
 
 { Feld aktivieren/deaktivieren }
 
@@ -1266,6 +1290,26 @@ begin
   yesno:=_yesno;
 end;
 
+procedure mscroll(distance: Integer);
+begin
+  with amaskp^ do begin
+    if assigned(stat.scrollfn) then begin
+      if stat.scrollfn(distance) then
+      begin
+        redisplay := true;
+        newfld := true;
+      end;
+    end;
+
+    redispfields := true;    
+  end;  
+end;
+
+procedure mquit(brk: boolean);
+begin
+  amaskp^.done    := true;
+  amaskp^.donebrk := brk;
+end;
 
 { Der Status der nullten Maske dient als Prototyp fÅr alle }
 { weiteren Masken. Er kann daher zu Beginn - amask=0 -     }
@@ -1307,6 +1351,14 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.38  2002/04/14 22:10:12  cl
+  - added:
+      procedure masksetscrollfunc(scrollfn:scrollfunc);
+      procedure setfieldpos(nr: Integer);
+      procedure mscroll(distance: Integer);
+      procedure mquit(brk: boolean);
+    for better external control of masks
+
   Revision 1.37  2002/01/13 15:07:23  mk
   - Big 3.40 Update Part I
 
