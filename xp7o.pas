@@ -517,7 +517,7 @@ var d         : DB;
   end;
 
 begin
-  sout:=Boxpar^.sysopout;
+  if Boxpar^.sysopmode then sout:=Boxpar^.sysopout else sout:='';
   Convert;
   orgdest:=dest;
   akas:=Boxpar^.SendAKAs;
@@ -849,6 +849,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.27  2002/03/08 23:08:41  my
+  MY:- Fix: Fehler bei Fido-Netcalls behoben. Wenn der SysopMode
+       deaktiviert, im Feld "Ausgangsverzeichnis" aber noch ein
+       Verzeichnisname eingetragen war, dann wurde dieses Verzeichnis auch
+       bei Netcalls verwendet, die nicht im SysopMode durchgefÅhrt wurden
+       (Folge der EinfÅhrung des neuen SysopMode-Schalters).
+
   Revision 1.13.2.26  2001/12/20 15:07:18  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
