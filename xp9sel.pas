@@ -6,7 +6,8 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $ID$ }
+{ $Id$ }
+
 
 { CrossPoint - UniSel: Select/Test-Routinen fuer Unisel-Menues    }
 
@@ -713,6 +714,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.6  2001/06/19 17:09:57  my
+  - tried to add correct CVS $Id string, works hopefully
+
   Revision 1.1.2.5  2001/06/19 17:02:49  my
   - *really* added CVS log infos :-)
 
