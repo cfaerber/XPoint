@@ -743,13 +743,12 @@ begin
   if modi then TestXpostings(false);
 end;
 
-{JG:06.02.00}
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   begin                 
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger  
       else adresse:=uucpbrett(empfaenger,2);    
-    if not pm and (Netztyp=nt_fido) then y:=y-2;           {Zeile fuer Fidoempf beachten}
+    if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
@@ -764,7 +763,6 @@ end;
       end;  
     pm:=cpos('@',empfaenger)>0;
     end;
-{/JG}
 
 { ausgelagert, weil Prozedurrumpf zu gro·: }
 
@@ -811,7 +809,7 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
 end;
 
 
-begin
+begin      {-------- of DoSend ---------}
 {$Q-,R-,I-}
   DoSend:=false;
   parken:=false;
@@ -865,17 +863,18 @@ begin
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
   new(fo); fo^:='';
 
-fromstart:
-  passwd^:='';
-  empfneu:=false;
-  docode:=0;
-  fidoname:='';
-
-  ch:=' ';
+{ Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }          
+fromstart:   
+          
+  passwd^:='';         { Betreffbox true = Betreff nochmal eintippen           }
+  empfneu:=false;      { Edit       true = Editor Starten                      }
+  docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
+  fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
+  ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
   if pm then begin
     fidoto:='';
-    dbSeek(ubase,uiName,ustr(empfaenger));
-    if dbFound then begin
+    dbSeek(ubase,uiName,ustr(empfaenger));  
+    if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
       dbRead(ubase,'pollbox',box);
@@ -921,7 +920,7 @@ fromstart:
           end;
         end;
       end
-    else begin    { EmpfÑnger unbekannt }
+    else begin                                                 { EmpfÑnger unbekannt }
     { 14.02.2000 MH: IBM=0, ASCII=1, ISO=2 }
     if newuseribm then umlaute:=0 { MH: NewUserIBM berÅcksichtigen }
      else umlaute:=1;
@@ -965,6 +964,7 @@ fromstart:
     fidoname:='';
     AltAdr:='';
     end
+
   else begin   { not pm }
     ch:='';
     verteiler:=false;
@@ -1370,9 +1370,8 @@ fromstart:
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
                   end;
-
-                {JG:06.02.00}                         { Empfaenger nachtraeglich aendern }
-                if t='/' then begin
+                                     
+                if t='/' then begin             { Empfaenger nachtraeglich aendern }
                    Changeempf;
                    betreffbox:=false; edit:=false; sendbox:=true;
                    SendDefault:=senden; forcebox:='';
@@ -1380,8 +1379,7 @@ fromstart:
                    closebox;
                    goto fromstart;
                    end;
-                {/JG}
-
+              
                 end;
       end;
     until senden>=0;
@@ -1969,7 +1967,8 @@ xexit2:
   DisposeReflist(_ref6list);
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
-end;
+
+end; {------ of DoSend -------}
 
 
 procedure send_file(pm,binary:boolean);
@@ -1984,6 +1983,17 @@ var empf,repto : string[AdrLen];
     ext        : extstr;
     useclip    : boolean;
     sData      : SendUUptr;
+
+  function FileOK:boolean; 
+  var f : file;
+  begin
+    fileok:=true; 
+    assign(f,fn);
+    reset(f);
+    if ioresult>0 then fileok:=false
+    else close(f);
+  end;
+
 begin
   betr:='';
   case aktdispmode of
@@ -2008,6 +2018,7 @@ begin
       if not multipos('\:',fn) then fn:=sendpath+fn else
       fn:=FExpand(fn);
       if not exist(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
+      else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
       else (* if _filesize(fn)+MaxHdsize>TempFree then
         rfehler(617)   { 'zu wenig Platz auf TemporÑr-Laufwerk' }
       else *) begin
@@ -2060,6 +2071,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/07 20:36:03  jg
+  - Bugfix: Versand von bereits r/w geoeffneten Dateien fehlermeldung
+    statt 0-byte Mails bei Binaerfiles bzw. RTE 200 bei Textfiles
+  - DoSend etwas kommentiert
+
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
