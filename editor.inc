@@ -46,7 +46,7 @@ begin
   with ap^ do
   begin
     p:=size;
-    { KH+MK 01/00 Signaturtrenner nicht erfassen }
+    { Signaturtrenner nicht erfassen }
     if (p=3) and (cont[0]='-') and (cont[1]='-') and (cont[2]=' ') then
     { Signaturtrenner, nicht anfassen }
     else begin
@@ -2208,7 +2208,7 @@ begin
           if t=keyend then p:=editmenumps;
           if (t=keyesc) or (t=keyf10) then p:=0;
           t := UpperCase(t);
-          if (t[1]>='A') and (t[1]<='Z') then
+          if (FirstChar(t)>='A') and (FirstChar(t)<='Z') then
             for i:=1 to editmenumps do
               if t[1]=UpCase(menue[i,highp[i]]) then begin
                 p:=i; t:=keycr; end;
@@ -2288,6 +2288,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/10/01 15:50:22  mk
+  - AnsiString-Fixes
+
   Revision 1.29  2000/09/30 16:31:40  mk
   - AnsiString-Bugfix
 

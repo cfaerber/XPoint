@@ -1029,7 +1029,7 @@ begin
   _beznet:=hdp^.netztyp;
   if hdp^.netztyp=nt_Maus then
     _replypath:=hdp^.pfad;
-  if _br[1]='A' then _pmReply:=true;
+  if FirstChar(_br)='A' then _pmReply:=true;
   empf:=hdp^.empfbestto;
   if empf='' then empf:=hdp^.pmreplyto;
   if empf='' then empf:=hdp^.wab;
@@ -1467,6 +1467,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/10/01 15:50:23  mk
+  - AnsiString-Fixes
+
   Revision 1.33  2000/09/25 18:55:13  mk
   - Tastaturbuffer bei Datumsbezuege anpassen wird nicht mehr geloescht
 

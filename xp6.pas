@@ -508,7 +508,10 @@ var i,first : integer;
       ccpm:=(cpos('@',adr)>0);
       if ccpm then begin
         dbSeek(ubase,uiName,UpperCase(adr));
-        if dbFound then begin
+        if dbFound then
+        begin
+          if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+            dbwrite(ubase,'adrbuch',NeuUserGruppe);
           Server := dbReadNStr(ubase,ub_pollbox);
           if (dbReadInt(ubase,'userflags') and 2<>0) and
              (dbReadInt(ubase,'codierer')<>0) then
@@ -1599,7 +1602,7 @@ fromstart:
       5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
             hdp^.absender:=username+'@'+
-	      iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
+              iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
             hdp^.real_box:=box;
           end;
       7 : begin
@@ -2129,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.66  2000/10/01 15:50:23  mk
+  - AnsiString-Fixes
+
   Revision 1.65  2000/09/29 11:30:38  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".

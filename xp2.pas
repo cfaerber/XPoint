@@ -848,7 +848,7 @@ begin
       end;
     p:=cpos('-',s);
     if p>0 then begin
-      if s[1] in ['A','B','C'] then begin
+      if FirstChar(s) in ['A','B','C'] then begin
         registriert.tc:=s[1]; delete(s,1,1); dec(p);
         end
       else
@@ -1111,6 +1111,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/10/01 15:50:23  mk
+  - AnsiString-Fixes
+
   Revision 1.69  2000/09/29 11:27:43  fe
   Ungenutzte, lokale Variablen entfernt.
 
