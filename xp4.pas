@@ -1123,7 +1123,7 @@ var t,lastt: taste;
 {*}   savePos := p;
 {*} end;
 
-    if pm and (empf[1]<>vert_char) then
+    if (dispmode<>1) and (dispmode<>2) and pm and (empf[1]<>vert_char) then
     begin
       origdb:=defaultbox;
       dbreadn(mbase,mb_brett,_empf);
@@ -2239,6 +2239,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.56  2001/12/31 13:24:31  my
+  JG:- Fix: DB-Crash bei leerer Nachrichten-Datenbank und Nachricht an
+       User behoben
+
   Revision 1.26.2.55  2001/12/20 23:38:38  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
@@ -2269,20 +2273,20 @@ end.
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          <Tab> springt der Cursorbalken die n„chste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
           werden. Nach Beendigung des Kommentarbaums kehrt XP zur
-          aktuellen Nachricht zurück.
+          aktuellen Nachricht zurck.
 
-  JG+MY:- Neuer Menüpunkt "kombinierter Ungelesen-Modus" unter
-          Config/Anzeige/Bretter, bisherige Taste "U" für diese Funktion
-          ist jetzt Brett-Markiersuche. Geänderte Anzeigelogik (siehe
+  JG+MY:- Neuer Menpunkt "kombinierter Ungelesen-Modus" unter
+          Config/Anzeige/Bretter, bisherige Taste "U" fr diese Funktion
+          ist jetzt Brett-Markiersuche. Ge„nderte Anzeigelogik (siehe
           Hilfe).
 
-  JG+MY:- Verbesserte Brettanzeige (zusätzlicher Schalter unter
-          Config/Anzeige/Bretter): Es können jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zus„tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es k”nnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
@@ -2292,23 +2296,23 @@ end.
   JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
           unten)
 
-  JG+MY:- Mit '#' kann in der User-Übersicht eine Adreßbuchgruppe
+  JG+MY:- Mit '#' kann in der User-šbersicht eine Adreábuchgruppe
           angegeben werden, die angesprungen werden soll. Mit <Ctrl-#>
-          wird die nächste Adreßbuchgruppe angesprungen.
+          wird die n„chste Adreábuchgruppe angesprungen.
 
-  JG+MY:- Adreßbuch: <Alt-A> schaltet Zugang zu Adreßbuchgruppe 0 frei.
+  JG+MY:- Adreábuch: <Alt-A> schaltet Zugang zu Adreßbuchgruppe 0 frei.
 
   JG+MY:- Bei Maus-Scrolling in Brett-/User-/Nachrichtenfenster
-          "Autobremse" für schnellere PCs gesetzt.
+          "Autobremse" fr schnellere PCs gesetzt.
 
-  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaßt zu Lesemodus
+  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaát zu Lesemodus
           "Datum/Zeit" (kombinierte Datums-/Zeiteingabe). Steht der
           Markierbalken auf einer Nachricht, kann direkt das Eingangsdatum
           aus der Nachricht übernommen werden.
 
-  JG+MY:- <Ctrl-D> (Drucken) in Nachrichten-Übersicht war zwar
+  JG+MY:- <Ctrl-D> (Drucken) in Nachrichten-šbersicht war zwar
           dokumentiert, funktionierte aber nicht. Drucken mit "R" geht
-          auch noch, weil in 2. Menüzeile der User-Übersicht so
+          auch noch, weil in 2. Menzeile der User-šbersicht so
           dokumentiert
 
   MY:- Copyright-/Lizenz-Header aktualisiert
