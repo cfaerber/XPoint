@@ -18,6 +18,10 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
+{$IFDEF FPC }
+  {$R ICONS.RES }
+{$ENDIF }
+
 {$IFDEF BP }
   {$F+}
   {$M 32768,150000,655360}
@@ -196,6 +200,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.12  2000/03/09 13:12:00  mk
+  - Icons in 32 Bit EXE hinzugefuegt
+
   Revision 1.11  2000/03/07 17:45:11  jg
   - Viewer: Bei Dateien mit Leerzeichen im Namen wird
     grundsaetzlich ein .tmp File erzeugt
