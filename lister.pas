@@ -360,7 +360,7 @@ begin
       AddLine(s);
     end;
     // Sonderbehandlung fr die letzte Leerzeile
-    if p^[rr + TempRP - 1] = #10 then AddLine('');
+//    if p^[rr + TempRP - 1] = #10 then AddLine('');
   end;
   freemem(p, ps);
 end;
@@ -400,28 +400,28 @@ var
       attrtxt(col.colstatus);
       gotoxy(l, o);
 (*      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
-        FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3); *)
+        FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);*)
 
       Write(FirstLine+1:5,lines.count-1:6);
-      if xa=1 then write('     ')
-      else write(RightStr('     +'+strs(xa-1),5));
-      write('  ');
+      if xa=1 then
+        Wrt2('        ')
+      else
+        Wrt2(RightStr('     +'+strs(xa-1),5)+'   ');
 {    if (a=0) and more then write(#31)
       else if (a+gl>=lines.count) and (a>0) then write(#30)
       else write(' '); }
-      write (' ');
-      write (iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
-      if (listunvers=0) and (listflags=0) then write('  ')
+      Wrt2(iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
+      if (listunvers=0) and (listflags=0) then Wrt2('  ')
       else begin
         if listunvers and 16 = 0
-          then write (iifs(listunvers and 1 = 0,' ','!'))
-          else write (iifs(listunvers and 1 = 0,'*',''));
-        if listflags and 3=1 then write('S')
-        else if listflags and 3=2 then Write('s')
+          then Wrt2(iifs(listunvers and 1 = 0,' ','!'))
+          else Wrt2(iifs(listunvers and 1 = 0,'*',''));
+        if listflags and 3=1 then Wrt2('S')
+        else if listflags and 3=2 then Wrt2('s')
         else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
         end;
-      if SelCount>0 then write('  ['+forms(strs(SelCount)+']',7))
-      else if stat.helpinfo then write(' F1-',ListHelpStr);
+      if SelCount>0 then Wrt2('  ['+forms(strs(SelCount)+']',7))
+      else if stat.helpinfo then Wrt2(' F1-' + ListHelpStr);
       mon;
     end;
     disp_DT;
@@ -468,7 +468,7 @@ var
         FOnDisplayLine(l, y + i, s)
       else
         FWrt(l, y + i, s);
-      if (i + FirstLine = suchline) and (slen > 0) and (spos >= xa) and (spos
+      if (FirstLine + i = suchline) and (slen > 0) and (spos >= xa) and (spos
         <= xa + w - slen) then
       begin
         attrtxt(col.colfound);
@@ -479,7 +479,7 @@ var
     attrtxt(col.coltext);
 
     // clear rest of screen if not enough lines to display
-    if i < DispLines then clwin(l, l + w - 1, y + i - 1, y + DispLines - 1);
+    if i < DispLines then clwin(l, l + w - 1, y + i, y + DispLines - 1);
     mon;
 
     if stat.vscroll then
@@ -869,7 +869,7 @@ begin
           if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
         end
         else
-          if FirstLine + DispLines < Lines.Count - 1 then
+          if FirstLine + DispLines < Lines.Count then
             Inc(FirstLine);
 
       // goto first line of text
@@ -895,8 +895,7 @@ begin
 
       if t = keypgdn then
       begin
-        FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - 1 -
-          DispLines, 0));
+        FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - DispLines, 0));
         FSelLine := Min(FSelLine + DispLines, Max(Lines.Count - 1, 0));
       end;
 
@@ -1088,6 +1087,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.45  2000/12/26 09:44:48  mk
+  - fixed some more bugs
+
   Revision 1.44  2000/12/25 22:50:45  mk
   - MarkPos in FirstMarked should be 0
 
