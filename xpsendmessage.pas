@@ -381,7 +381,7 @@ var f,f2     : file;
 //  old_cca  : integer;     { vor (K)opien            }
 //  FidoBin  : boolean;     { File Attach }
 //  cc_count : integer;
-    betrlen  : byte;        { max. Betrefflaenge }
+    betrlen  : Integer;     { max. Betrefflaenge }
     bboxwid  : byte;
 
     spezial  : boolean;
@@ -1427,6 +1427,9 @@ finalization
 
 {
   $Log$
+  Revision 1.55  2002/06/15 08:55:34  mk
+  - fixed range check error: betreflen is now integer instead of byte
+
   Revision 1.54  2002/06/13 17:09:23  mk
   - reraise exceptions in DoSend to give debug info with line information
 
