@@ -564,7 +564,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 25   Empf„ngern l”schen
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
-29   News-Archivierung im Netz verhindern
+29   User bei Beantwortung automatisch anlegen
 30   Cancel- und Ersetzt-Nachrichten ignorieren
 31   Eigene PMs halten
 39   Empf„nger-Auswahlliste: ~
@@ -607,9 +607,10 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
 15   Bin„rnachrichten als "Attachments"
-16   Alten Betreff anh„ngen
-17   Magics im <F3>-Request
-18   OpenXP-Version in Tearline schreiben
+16   News-Archivierung verhindern
+17   Alten Betreff anh„ngen
+18   Magics im <F3>-Request
+19   OpenXP-Version in Tearline schreiben
 + 254
 1    Netcall-Optionen
 2    Login-Bild zeigen

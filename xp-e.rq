@@ -495,7 +495,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 20   Enable special characters for new users
 21   Enable alternative quote characters
 22   Sort User-window by Server name
-23   Default Usergroup
+23   Default Usergroup ~
 24   Create an archive-note
 25   Minimum disk space            ~
 + 251
@@ -553,8 +553,8 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 25   newsgroups
 26   Send all carbon copies as BCC
 27   in mail as well
-29   don't archive news
-30   ignore cancels/supersedes
+29   Create users automatically upon reply
+30   Ignore cancels/supersedes
 31   Hold own PMs
 39   User selection list:    ~
 40   always
@@ -594,12 +594,13 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 10   ZCONNECT: ISO charset
 11   MIME: quoted-printable
 12   Use MIME for header contents
-13   remove unnessecary header lines
-14   use references
-15   binary messages as "attachments"
-16   Append old subject
-17   Magics in <F3> file request
-18   OpenXP version in tear line
+13   Remove unnecessary header lines
+14   Use references
+15   Binary messages as "attachments"
+16   Don't archive news
+17   Append old subject
+18   Magics in <F3> file request
+19   OpenXP version in tear line
 + 254
 1    Netcall Options
 2    Show login screen

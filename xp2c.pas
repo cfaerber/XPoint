@@ -378,7 +378,7 @@ begin
   maddbool(3,13 + j,getres2(252,18),EmpfBest);        { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);      { 'automatische PM-Archivierung' }
   maddbool(3,15 + j,getres2(252,26),DefaultNokop);    { 'ZCONNECT: NOKOP' }
-  maddbool(3,16 + j,getres2(252,29),NoArchive);       { 'News nicht archivieren lassen' }
+  maddbool(3,16 + j,getres2(252,29),UserAutoCreate);  { 'User automatisch anlegen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
 
   maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
@@ -1262,7 +1262,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(58,iif(deutsch,20,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(58,iif(deutsch,21,14),getres2(253,1),x,y);      { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1283,18 +1283,21 @@ begin
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,8+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
-  maddbool(14,9+add,getres2(253,16),RFC_AddOldBetreff); mhnr(7990); { 'Alten Betreff anhÑngen' }
+  maddbool(14,9+add,getres2(253,16),NoArchive);  { 'News-Archivierung verhindern' }
+    mhnr(7990);
+  maddbool(14,10+add,getres2(253,17),RFC_AddOldBetreff); { 'Alten Betreff anhÑngen' }
+    mhnr(7991);
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,11+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,12+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,12+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
   end;
-  maddtext(3,11+add,'Fido',col.coldiahigh);
-  maddbool(14,11+add,getres2(253,17),Magics); mhnr(8103);
-  maddbool(14,12+add,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
+  maddtext(3,12+add,'Fido',col.coldiahigh);
+  maddbool(14,12+add,getres2(253,18),Magics); mhnr(8103);
+  maddbool(14,13+add,getres2(253,19),XP_Tearline); { Werbung in der Tearline }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1518,6 +1521,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.30  2001/12/20 23:26:16  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
+  MY:- Schalter "News-Archivierung verhindern" wieder bei Config/Optionen/
+       Netze untergebracht.
+
   Revision 1.39.2.29  2001/12/05 19:29:57  my
   MY:- Umschaltung Quotezeichen und Wortumbruch im Lister wird jetzt auch
        dann auf den korrekten Wert zurÅckgesetzt, wenn der User vorher die
@@ -1528,32 +1541,32 @@ end.
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
 
   Revision 1.39.2.27  2001/09/16 20:22:27  my
-  JG+MY:- Neuer Men¸punkt "kombinierter Ungelesen-Modus" unter
-          Config/Anzeige/Bretter, bisherige Taste "U" f¸r diese Funktion
-          ist jetzt Brett-Markiersuche. Ge‰nderte Anzeigelogik (siehe
+  JG+MY:- Neuer MenÅpunkt "kombinierter Ungelesen-Modus" unter
+          Config/Anzeige/Bretter, bisherige Taste "U" fÅr diese Funktion
+          ist jetzt Brett-Markiersuche. GeÑnderte Anzeigelogik (siehe
           Hilfe).
 
-  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
-          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zusÑtzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kînnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
   JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
           unten)
 
-  JG+MY:- Feldtausch ge‰ndert/verbessert: Default bei Usern jetzt FHBGAK,
-          jedes Feld kann weggelassen werden, bei Weglassen groﬂer Felder
-          werden die ¸brigen Felder verbreitert. Option f¸r Nachrichten-
-          Feldtausch jetzt zus‰tzlich ¸ber /Config/Anzeige/Nachrichten
-          erreichbar. /Config/Anzeige/Hilfen ¸bersichtlicher gestaltet.
+  JG+MY:- Feldtausch geÑndert/verbessert: Default bei Usern jetzt FHBGAK,
+          jedes Feld kann weggelassen werden, bei Weglassen gro·er Felder
+          werden die Åbrigen Felder verbreitert. Option fÅr Nachrichten-
+          Feldtausch jetzt zusÑtzlich Åber /Config/Anzeige/Nachrichten
+          erreichbar. /Config/Anzeige/Hilfen Åbersichtlicher gestaltet.
 
-  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh‰ngen" unter
-          Config/Optionen/Netze. Wenn aktiviert, wird bei ƒnderung des
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anhÑngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei énderung des
           Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
-          automatisch angeh‰ngt.
+          automatisch angehÑngt.
 
   JG+MY:- Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
-          verf¸gbar
+          verfÅgbar
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
