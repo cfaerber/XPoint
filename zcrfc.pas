@@ -379,7 +379,7 @@ begin
   OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
   ClearSourceFiles := false;
-  CommandLine := true;
+  CommandLine := false;
   nomailer:= false;
   uunumber:= 0;
   source := '';
@@ -3720,6 +3720,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/12/28 00:29:56  mk
+  - CommandLine is default false
+
   Revision 1.17  2000/12/27 12:42:55  mk
   - uuz can now started with xp uuz
 
