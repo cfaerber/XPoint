@@ -178,6 +178,7 @@ end;
   {$S+}
 {$ENDIF }
 
+{.$define mcbdebug}
 
 procedure TestCD;
 var f    : file;
@@ -208,6 +209,14 @@ var mcb:mcbp;
     s:string;
 begin
   xpshell:=false;
+
+{$ifdef mcbdebug}
+  writeln;
+  writeln('PSP  Env. Typ    Gr”áe  Prog.   Prog. (Environment)');
+  writeln('Seg. Seg.               (MCB)');
+  writeln('------------------------------------------------------------------------');
+{$endif}
+
   mcb:=firstmcb;
   repeat
     s:=getmcbprog(mcb);
@@ -217,9 +226,38 @@ begin
   es 100%ig funktioniert.
 }
     if (ustr(shortp(paramstr(0)))=ustr(s)) and (mcb^.psp_seg<>prefixseg)
+       and (mcb^.size*16>20480)
       then xpshell:=true;
+
+{$ifdef mcbdebug}
+    write(hex(mcb^.psp_seg,4),' ',
+          hex(getmcbenvseg(mcb),4),' ');
+    if ispsp(mcb) then write('PSP   ') else case mcb^.psp_seg of
+      $0000: write('frei  ');
+      $0008: write('DOS   ');
+      $0006: write('DRDOS ');
+      $0007: write('DRDOS ');
+      $FFF7: write('386MAX');
+      $FFFA: write('386MAX');
+      $FFFD: write('386MAX');
+      $FFFE: write('386MAX');
+      $FFFF: write('386MAX');
+      else write('?     ');
+    end;
+    write(mcb^.size*16:6,
+          getmcbprog(mcb):9,' ',
+          getmcbenvprog(getmcbenvseg(mcb)));
+    writeln;
+{$endif}
+
     mcb:=nextmcb(mcb);
   until mcb^.id='Z';
+
+{$ifdef mcbdebug}
+  write(#13#10'-> Enter');
+  readln;
+{$endif}
+
 end;
 
 begin
@@ -270,6 +308,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.4  2000/11/26 10:18:18  mk
+  RB:- MCB-Test jetzt mit Groesse der Datei
+
   Revision 1.18.2.3  2000/11/21 22:40:37  mk
   - MCB-Code von XP2 (Robert Boeck) hinzugefuegt um auf schon geladenes XP zu testen
 
