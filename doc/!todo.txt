@@ -702,3 +702,72 @@ BTW: Ich bin der Meinung, dass man "abort" nur mit einem "b" schreibt.
 MfG
   Stefan
 
+################################################################
+From H.PAKUSCH@LINK-GOE.de Mon Feb 28 18:24:00 2000
+Lines: 16
+Newsgroups: de.comm.software.crosspoint
+Message-ID: <7Zj8gILudmB@pakusch.link-goe.de>
+From: H.PAKUSCH@LINK-GOE.de (Harald Pakusch)
+Path: uni-berlin.de!fu-berlin.de!news.hrz.uni-kassel.de!ud.dinoex.sub.org!link-goe.de!pakusch!not-for-mail
+Subject: Absturz durch "N/S/S/Betreff" (3.20.021)
+Date: Mon, 28 Feb 2000 18:24:00 +0100
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A15950
+X-Gateway: ZCONNECT scheune.w12.link-goe.de [UNIX/Connect 0.87]
+X-ZC-PGP-Key-Avail: 
+Xref: uni-berlin.de de.comm.software.crosspoint:39430
+
+
+Hallo!
+
+Folgendes Phaenomen ist mir aufgefallen:
+
+Unter "Nachricht/Suchen/Spezial" kann ich nicht nach "Betreff" suchen.  
+Nach Eingabe des Suchbegriffes laeuft die Suche los, bleibt  
+reproduzierbar bei "Suche: 140" (unten links) stehen und XP  
+verabschiedet sich nach wenigen Sekunden ohne irgendeine Meldung.
+
+Ob dies schon in anderen 3.20er Versionen war weiss ich nicht. Unter  
+3.11 und 3.12d ging's. Nun aber nicht mehr unter 3.20.021.
+
+
+Tschuess, Harald
+
+
+##########################################################
+From ROBINTON@AMTRASH.comlink.de Mon Feb 28 11:50:00 2000
+Subject: beta21 - mime/msgid-suche
+Message-ID: <7ZikQN$6VSB@robinton.amtrash.comlink.de>
+X-Mailer: CrossPoint v3.12d R/A9564
+X-ZC-PGP-KEY-AVAIL: 
+X-NO-ARCHIVE: yes
+X-NO-ARCHIVE: yes
+Newsgroups: de.comm.software.crosspoint
+Path: uni-berlin.de!fu-berlin.de!newsfeed.ision.net!ision!news.shlink.de!nshift.de!amtrash.comlink.de
+From: ROBINTON@AMTRASH.comlink.de (Soeren Ziehe)
+Date: Mon, 28 Feb 2000 11:50:00 +0100
+X-Gateway: ZCONNECT NSHIFT.de [UUWORLD RFC/ZC V2.2 SER#B4583517]
+Lines: 21
+Xref: uni-berlin.de de.comm.software.crosspoint:39444
+
+Hallo,
+
+ein Bug??? und ein Wunsch zur beta21:
+
+- wenn ich mir Abschnitte von MIME-Nachrichten ansehe, dann habe ich  
+teilweise Muell (wirre Zeichen) am Ende des jeweiligen Abschnittes.
+
+Es schien meist bei Nachrichten mit teilw. base64-Codierung aufzutreten.
+Ich bin dem aber noch nicht weiter nachgegangen.
+Ob's dann beim Export was ausmacht, habe ich auch noch nicht probiert.
+
+- die MID-Suche ist rasant schnell :-)
+Ich wuerd mir aber noch alternativ eine langsame Teilstringsuche  
+wuenschen.
+BTW die Optionen bewirken ja nichts, kann/sollte man sie ausblenden?
+
+Robinton
+
+
+--
+Jetzt kommen die sieben mageren Jahre, dann hoert die gute Zeit auf.
+

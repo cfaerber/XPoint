@@ -2060,14 +2060,21 @@ begin
       end;
 
       u:=UStr(t);
-      s1:=UStr(u);
-      if (s1='S0') then continue;
+      if (length(u)<2) then continue;
+      s1:=u;
+      if (s1='S0') or (s1='XP') then continue;
       if (s1='ZMH') or (s1='NMH') then continue;
       if (s1='V.FC') or (s1='VFC') then continue;
       if (s1='ISDN') or (s1='USR') then continue;
+      if (s1='FQDN') or (s1='INC') then continue;
+      if (s1='IMHO') or (s1='YMMV') then continue;
+      if (s1='ORG') or (s1='PGP') then continue;
       if (s1='FAQ') or (s1='OS') then continue;
+      if (s1='DOS') then continue;
+      if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
       ic:=pos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
 
+      { Auf Beschreibungs-Datei testen }
       FSplit(u,dir,name,ext);
       if (ext='.ORG') then continue;
       if (ext='.DIZ') then continue;
@@ -2084,21 +2091,26 @@ begin
         if (id=0) then continue
       end;
 
-      { Ist der String eine Baudrate? xx.xK, x in  [0..9] }
-      if (byte(t[0])<8) then begin
-        u:=t;
-        if (upcase(u[Byte(u[0])])='K') then if (Pos('.',u)>1) then begin
-          id:=0;
-          dec(Byte(u[0]));
-          for ic:=1 to Pos('.',u)-1 do if not (u[ic] in ['0'..'9']) then id:=1;
-          for ic:=Pos('.',u)+1 to Byte(u[0]) do if not (u[ic] in ['0'..'9']) then id:=1;
-          if (id=0) then continue
+      { Ist der String eine Baudrate oder Dateigroesse? xx.xK, x in  [0..9] }
+      if (length(t)<10) then begin
+        u:=UStr(t);
+        { Zahl }
+        while ((u<>'') and (u[1] in ['0'..'9'])) do delete(u,1,1);
+        { . }
+        if (u<>'') then if (u[1]='.') then begin
+          delete(u,1,1);
+          { Zahl }
+          while (u<>'') and (u[1] in ['0'..'9']) do delete(u,1,1);
         end;
+        if (u='K') or (u='KB')
+          or (u='M') or (u='MB')
+          or (u='B') or (u='BYTES')
+        then continue;
       end;
 
       { Telefonnummern ausblenden }
       id:=0;
-      for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/']) then id:=1;
+      for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/','+','(',')']) then id:=1;
       if (id=0) then continue;
 
       if magics then if (UStr(t)=t) then begin
@@ -2107,8 +2119,8 @@ begin
       end;
       u := UStr(t);
       ic := pos('.',u); if not (ic in [2..9]) then continue;
-      if (byte(u[0])<4) then continue;
-      if (byte(u[0])-ic>3) then continue;
+      if (length(u)<4) then continue;
+      if (length(u)-ic>3) then continue;
       if (p1<>'') then u:=u+p1; p1:='';
       files:=files+' '+u;
       continue
@@ -2153,6 +2165,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/02/29 17:50:40  mk
+  OH: - Erkennung der Magics verbessert
+
   Revision 1.16  2000/02/29 12:59:16  jg
   - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
     (Wurde akut bei Spezialsuche-Betreff)
