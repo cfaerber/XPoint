@@ -466,7 +466,8 @@ var
           if TxFileHandle>0 then begin       // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
-            TxTime:=FileGetDate(TxFileHandle);
+            // unixtime (seconds since 1970-01-01 00:00)
+            TxTime:=System.Round((FileDateToDateTime(FileGetDate(TxFileHandle))-25569)*24*60*60);
             OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
             TxState:=TxTryR; result:=Continue;
             end else begin                   // failed to open
@@ -586,6 +587,9 @@ end;
 
 {
   $Log$
+  Revision 1.11.2.3  2003/05/10 20:58:35  ma
+  - fixed: Files were sent with wrong timestamp
+
   Revision 1.11.2.2  2002/07/21 19:10:50  ma
   - fixed Argus again (difference in "trim" behaviour: Delphi treats #0 as
     whitespace, FPC does not)
