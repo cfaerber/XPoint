@@ -732,7 +732,7 @@ end;
 procedure UV_stat;
 const maxpp = 40;
 type pprec  = record
-                name  : string;
+                name  : string[8];
                 psize : longint;
                 esize : longint;
               end;
@@ -852,21 +852,21 @@ const maxzones = 250;
       maxlnets = 100;
 
 type  zonerec  = record
-                   nr,regs,nets : word;
+                   nr,regs,nets : smallword;
                    nodes        : longint;
                    nodelist     : byte;
-                   name         : string;
+                   name         : string[20];
                  end;
       zonea    = array[0..maxzones] of zonerec;
       flagrec  = record
-                   name : string;
+                   name : string[11];
                    anz  : longint;
                  end;
       flaga    = array[1..maxflags] of flagrec;
       lnetrec  = record
-                   name : string;
-                   netz : string;
-                   nodes: word;
+                   name : string[30];
+                   netz : string[15];
+                   nodes: smallword;
                  end;
       lneta    = array[1..maxlnets] of lnetrec;
 
@@ -904,7 +904,8 @@ var   zone     : ^zonea;
       if i<=LargestNets then begin
         if i<LargestNets then
           Move(lnet^[i],lnet^[i+1],(LargestNets-i)*sizeof(lnetrec));
-        with lnet^[i] do begin
+        with lnet^[i] do
+        begin
           name:=hostname;
           netz:=strs(_z)+':'+strs(_n);
           nodes:=_nodes;
@@ -927,7 +928,7 @@ var   zone     : ^zonea;
     while not eof(nl) and not ende and not brk do begin
       readln(nl,s);
       p:=cpos(',',s);
-      if (s<>'') and (s[1]<>';') and (p>0) then begin
+      if (s<>'') and (FirstChar(s)<>';') and (p>0) then begin
         k:=LowerCase(left(s,p-1));
         if k='zone' then
           if zones=maxzones then ende:=true
@@ -1254,6 +1255,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/08/08 20:08:18  mk
+  - Nodeliststatistik funktioniert jetzt auch
+
   Revision 1.23  2000/08/01 08:40:42  mk
   - einige String-Parameter auf const geaendert
 
