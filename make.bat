@@ -1,7 +1,9 @@
 @echo off
 rem OpenXP "make" Batchdatei: Kompiliert alle fuer XP relevanten
-rem Programme und Resourcen
+rem Programme und Resourcen.
 rem Compiler ggf. als Kommandozeilenparameter uebergeben.
+rem Es muss ein separates Verzeichnis fuer die Kompilate
+rem angegeben sein (bei FPC: -fU[pfad]).
 if "%comp%"=="" set comp=%1
 if "%comp%"=="" set comp=ppc386
 %comp% xp
@@ -12,6 +14,14 @@ if errorlevel 1 goto Fehler
 if errorlevel 1 goto Fehler
 %comp% uuz
 if errorlevel 1 goto Fehler
+rem %comp% maggi
+rem if errorlevel 1 goto Fehler
+rem %comp% pmconv
+rem if errorlevel 1 goto Fehler
+rem %comp% uucp-fl1
+rem if errorlevel 1 goto Fehler
+rem %comp% yup2pkt
+rem if errorlevel 1 goto Fehler
 %comp% ndiff
 if errorlevel 1 goto Fehler
 %comp% rc
