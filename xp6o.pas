@@ -218,6 +218,12 @@ begin
   new(hdp0);
   new(hdp);
   ReadHeader(hdp0^,hds,true);
+
+  if (hdp0^.wab<>'') and edit and modi then begin
+    rfehler(638); { 'Als 'Original' weitergeleitete Nachrichen dÅrfen nicht geÑndert werden!' }
+    goto ende;
+  end;
+
   dbReadN(mbase,mb_brett,_brett);
   betr:=hdp0^.betreff;
   dbReadN(mbase,mb_origdatum,_date);
@@ -329,6 +335,7 @@ begin
     { xp6.NoCrash:=true; }
     xp6.FileAttach:=(hdp0^.attrib and attrFile<>0);
     xp6.msgprio:=hdp0^.prio;
+    xp6.rfcprio:=hdp0^.priority;
     xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
     sendfilename:=hdp0^.datei;
     sendfiledate:=hdp0^.ddatum;
@@ -1226,4 +1233,3 @@ end;
 
 
 end.
-
