@@ -265,7 +265,7 @@ end;
 function ReadKey: char;
 begin
   while not KeyPressed do
-    WaitForMultipleObjects(1,{$IFNDEF FPC}@{$ENDIF}StdInputHandle,true,INFINITE);
+    WaitForMultipleObjects(1,@StdInputHandle,true,INFINITE);
 
   if SpecialKey then begin
     Result := #0;
@@ -297,6 +297,9 @@ initialization
 
 {
   $Log$
+  Revision 1.21  2002/02/26 08:46:54  mk
+  - reverted last fix. please update to newest fpc version
+
   Revision 1.20  2002/02/22 18:21:10  cl
   - FPC compile fix
 
