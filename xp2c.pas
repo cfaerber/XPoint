@@ -996,16 +996,16 @@ begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
   maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'Tempor„r-Verzeichnis ' }
-  setfield(fieldpos,EditTemppath);
+  if EditTempPath <> '' then setfield(fieldpos,EditTemppath);
   msetVfunc(formpath);
   maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
-  setfield(fieldpos,EditExtpath);
+  if EditExtpath <> '' then setfield(fieldpos,EditExtpath);
   msetVfunc(formpath);
   maddstring(3,6,getres2(262,4),sendpath,31,MaxLenPathname,'');   { 'Sende-Verzeichnis    ' }
-  setfield(fieldpos,EditSendpath);
+  if EditSendPath <> '' then setfield(fieldpos,EditSendpath);
   msetVfunc(formpath);
   maddstring(3,8,getres2(262,5),logpath,31,MAxLenPathname,'');    { 'Logfile-Verzeichnis  ' }
-  setfield(fieldpos,EditLogpath);
+  if EditLogPath <> '' then setfield(fieldpos,EditLogpath);
   msetVfunc(formpath);
   maddstring(3,10,getres2(262,6),filepath,31,MaxLenPathname,'');  { 'FileReq-Verzeichnis  ' }
   msetVfunc(formpath);
@@ -1494,6 +1494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/08/07 09:23:23  mk
+  - Bug in PathConfig behoben
+
   Revision 1.49  2000/07/27 10:13:00  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
