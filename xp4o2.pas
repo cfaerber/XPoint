@@ -19,7 +19,7 @@ interface
 
 uses
   crt, dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
-      resource,help,xp0,xp1,xp1input,xpnt,crc, xpglobal, lfn;
+  resource,help,xp0,xp1,xp10,xp2,xp1input,xpnt,crc, xpglobal, lfn;
 
 { Deklaration des Kommentarbaums in XP0 }
 
@@ -38,7 +38,7 @@ function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
 function  BaumBlatt(ofs,len:byte; bezpos:word; var s,s1:string):string;
 
-(* procedure SetLanguage; *)
+procedure SetLanguage;
 
 
 implementation  { ---------------------------------------------------- }
@@ -828,23 +828,6 @@ begin
 end;
 
 
-(*
-{
-Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
-
-wenn XP mit Englischen Resourcen geladen wurde
-(ob aus XP.RES oder per Parameter /l:e ist egal)
-gibt es bei der ausfuehrung von "Freemain" einen RTE 204.
-ist kein EMS vorhanden gibt es unter Win98 einen GPF.
-Beim Start mit deutschen Resourcen funktioniert Die Routine
-einwandfrei (auch mehrmaliger Wechsel zwischen D und E...)
-ob die Deutschen Resourcen XP-E.RES oder XP.D.RES heissen ist egal.
-Der Wechsel zwischen zwei deutschen Resourcen klappt einwandfrei.
--> Filegroessen/Speicher Problem oder Fehler in XP-E.RES ?
-
-Siehe auch xp2.pas und xp4.inc
-}
-
 procedure SetLanguage;
 const maxs = 20;
 var s  : string;
@@ -937,11 +920,13 @@ begin
       menurestart:=true;
     end;
 end;
-*)
 
 end.
 {
   $Log$
+  Revision 1.11.2.6  2000/12/09 16:41:07  mk
+  - Sprachumschaltung aktiviert
+
   Revision 1.11.2.5  2000/12/05 13:09:42  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
 

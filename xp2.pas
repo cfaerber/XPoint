@@ -542,14 +542,13 @@ begin { loadresource }
         end;
       end;
     end;
-(*
+
   if doserror=0 then begin
     findnext(sr);
-    languageopt:=doserror=0);                 { Sprachaenderung aus Menue ausgeschalten }
+    languageopt:=doserror=0;                  { Sprachaenderung aus Menue ausgeschalten }
   end                                         { siehe auch xp4o2.pas und xp4.inc }
   else
     languageopt:=false;
-*)
 
   {$IFDEF Ver32 }
   FindClose(sr);
@@ -1106,6 +1105,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.13  2000/12/09 16:41:07  mk
+  - Sprachumschaltung aktiviert
+
   Revision 1.45.2.12  2000/12/07 13:10:04  mk
   - Pfade nur beim ersten Start anlegen
 

@@ -105,13 +105,12 @@ begin
   aufbau:=true;
 end;
 
-(*                       { Ausgeklammert, siehe auch xp4o2.pas und xp2.pas }
+                         { Ausgeklammert, siehe auch xp4o2.pas und xp2.pas }
 procedure _SetLanguage;
 begin
   SetLanguage;
   setmainkeys(dispmode);
 end;
-*)
 
 procedure menuopt(t:taste);
 const
@@ -375,7 +374,7 @@ begin
            12 : adroptions;
             6 : netcalloptions;
             9 : EditPassword;
-        (* 10 : _SetLanguage; *)
+           10 : _SetLanguage;
            11 : TerminalOptions;
           end;
 
@@ -580,6 +579,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.14.2.1  2000/12/09 16:41:07  mk
+  - Sprachumschaltung aktiviert
+
   Revision 1.14  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
