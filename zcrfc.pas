@@ -107,7 +107,7 @@ type
     FileUser: string;
     RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
-    NewsMIME: boolean ;
+    NewsMIME: boolean;
     ppp: boolean;
     SMTP: boolean;
     NNTPSpoolFormat: Boolean;    { if true, message boundaries are marked by a '.' line }
@@ -172,7 +172,7 @@ type TDotEscapeStream = class(TStream)
 implementation
 
 uses
-  xpheader, UTFTools, xpmakeheader, resource;
+  xpheader, UTFTools, xpmakeheader, resource, Debug;
 
 const
   cr: char = #13;
@@ -2344,6 +2344,7 @@ var
 label
   ende;
 begin
+  n := 0;
   if CommandLine then write('news: ', fn);
   DeCompress(fn,true);
   if not fileexists(fn) then
@@ -2360,7 +2361,6 @@ begin
     end;
 
   if CommandLine then write(sp(7));
-  n := 0;
   repeat
     Size := 0;
     if not RawNews then
@@ -2432,7 +2432,7 @@ begin
   until (bufpos >= bufanz) or (s = '');
   if CommandLine then writeln(' - ok');
 
-  ende:
+ende:
   close(f1);
   pfrec:= @f1;
 {$IFNDEF UnixFS}
@@ -2547,6 +2547,8 @@ var
 var
   s1: String;
 begin
+  Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s', 
+    [Source, Dest, _From, _To]), DLDebug);
   assign(f2,dest);
   rewrite(f2,1);
   outbufpos := 0;
@@ -3208,16 +3210,16 @@ type rcommand = (rmail,rsmtp,rnews);
     transfer: boolean;
     tfiles: integer;
 
-    function slashs(fn: String): String;
+    function slashs(const fn: String): String;
     var
       i: integer;
     begin
+      Result := fn; 
       for i := 1 to length(fn) do
-        if fn[i] = '\' then fn[i] := '/';
-      slashs := fn;
+        if Result[i] = '\' then Result[i] := '/';
     end;
 
-    procedure WriteTransfer(s: string);
+    procedure WriteTransfer(const s: string);
     begin
       writeln(fc, 'S ', slashs(fromfile), ' ', s, ' ', FileUser, ' - ',
         ExtractFilename(fromfile), ' 0666' +
@@ -3235,8 +3237,8 @@ type rcommand = (rmail,rsmtp,rnews);
         if CommandLine then writeln(' warning: ', fromfile, ' not found!');
         exit;
       end;
-      tfiles := 0;
     end;
+    tfiles := 0;
     seek(f1, adr + hds);
     ReadBuf;
     while fpos + bufpos < adr + hds + hd.groesse do
@@ -3293,7 +3295,8 @@ type rcommand = (rmail,rsmtp,rnews);
   end;
 
   procedure CopyEncodeMail(outs_safe:TStream;Count:Longint);
-  var outs,ins:TStream;
+  var 
+    outs: TStream;
   begin
     // The stream passed must not be destroyed!
     outs := TNullCodecStream.Create;
@@ -3321,6 +3324,8 @@ type rcommand = (rmail,rsmtp,rnews);
   end;
 
 begin
+  Debug.DebugLog('uuz', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s', 
+    [Source, Dest, _From, _To]), DLDebug);
   assign(f1, source);
   reset(f1, 1);
   adr := 0; n := 0;
@@ -3641,9 +3646,12 @@ begin
     raise EStreamError.Create('Invalid stream operation');
 end;
 
-end.
 {
   $Log$
+  Revision 1.85  2001/12/05 11:18:54  mk
+  - added some debug logs
+  - removed some hints and warnings
+
   Revision 1.84  2001/11/11 15:46:21  mk
   - prevent range check error in ConvertMailFile
 
