@@ -2207,7 +2207,7 @@ var
   end;
 
 begin
-  zz := '';
+  zz := ''; s0 := '';
   hd.mime.ctype := tText;               { Default: Text }
   repeat
     ReadString;
@@ -2759,11 +2759,15 @@ begin
         if bufpos < bufanz then
         begin
           p := pos('#! rnews', s);
-          if p > 1 then delete(s, 1, p - 1);
+          if p > 1 then begin
+            delete(s, 1, p - 1);
+            size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
+            end else begin
+            size := 0;
+            end;
           inc(n);
           if CommandLine then write(#8#8#8#8#8, n: 5);
           inc(news);
-          size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
           hd.netztyp:=nt_RFC;
@@ -2772,12 +2776,14 @@ begin
           seek(f1, fp); ReadBuf; bufpos := bp;
           repeat                        { Header ueberlesen }
             ReadString;
+            //** clean up: ignore size if line count is given
             dec(size, length(s) + eol);
           until (s = '') or (bufpos >= bufanz);
 
           if hd.Lines = 0 then
             hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
 
+          //** clean up: ignore size if line count is given
           while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
           begin                         { Groesse des Textes berechnen }
             ReadString; Dec(hd.lines);
@@ -3864,6 +3870,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/04/08 23:04:58  ma
+  - fixed: sometimes the last line of a posting showed up in the next
+    posting's header
+  - fixed: first line was sometimes interpreted as posting's size
+
   Revision 1.45  2001/04/05 14:12:30  ml
   - working on smtp
 
