@@ -3020,6 +3020,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21 Unknown function:  %s
 22 File not found!
 23 *EDIT: File not found!
+24 Can't rename %s !?
 
 +  10100
 2  Netcall converter MAGGI.EXE not found!
@@ -3887,6 +3888,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.40  2002/01/01 12:00:32  mk
+# - fixed 10000,24
+#
 # Revision 1.39  2001/12/22 19:13:30  mf
 # Initial installation cleaned up.
 #

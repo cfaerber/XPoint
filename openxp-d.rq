@@ -3107,7 +3107,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2  Dateierweiterung mu· .XPS sein!
 3  UngÅltiger Pfad- oder Dateiname!
 4  Kann %s nicht lîschen!?
-24  Kann %s nicht umbenennen.
 5  ungÅltiges Verzeichnis: %s
 6  zu wenig freier Speicher
 7  Zu wenig freier Speicher fÅr externen Programmaufruf!
@@ -3118,6 +3117,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 21 UngÅltige Funktion:  %s
 22 Datei ist nicht vorhanden!
 23 *EDIT: Datei nicht vorhanden!
+24 Kann %s nicht umbenennen.
 
 +  10100
 2  Netcallkonvertierer MAGGI.EXE fehlt!
@@ -3894,6 +3894,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.46  2002/01/01 12:00:32  mk
+# - fixed 10000,24
+#
 # Revision 1.45  2001/12/26 00:45:18  cl
 # - added error string "Kann %s nicht umbenennen."
 #
