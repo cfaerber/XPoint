@@ -152,7 +152,7 @@ begin
 {$ENDIF}
 {$ENDIF}
   Result := 0;
-  DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
+  // DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
 end;
 
 function mausy:word;
@@ -169,7 +169,7 @@ begin
 {$ENDIF}
 {$ENDIF}
     Result := 0;
-  DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
+  // DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
 end;
 
 function maust:word;
@@ -265,6 +265,11 @@ initialization
 
 {
   $Log$
+  Revision 1.33.2.2  2003/10/28 21:49:07  mk
+  - disabled debug log for mausx and mausy because because of polling
+    from the DOS32 version to this both functions; this caused heavy
+    debug log activity in idle state
+
   Revision 1.33.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 
