@@ -9,7 +9,6 @@
 { $Id$ }
 
 { CrossPoint - Deklarationen }
-{ 06.02.2000 MH: X-Priority  }
 
 {$I XPDEFINE.INC}
 
@@ -144,6 +143,7 @@ const  {$IFDEF DPMI}
        QfgExt      = '.qfg';           { QWK-Config-File   }
        SwapExt     = '.swp';
 
+{$IFDEF UnixFS }
        MsgFile     = 'msgs';           { DB1-Dateinamen }
        BrettFile   = 'bretter';
        UserFile    = 'user';
@@ -155,6 +155,19 @@ const  {$IFDEF DPMI}
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
        MimetFile   = 'mimetyp';
+{$ELSE }
+       MsgFile     = 'MSGS';           { DB1-Dateinamen }
+       BrettFile   = 'BRETTER';
+       UserFile    = 'USER';
+       BoxenFile   = 'BOXEN';
+       GruppenFile = 'GRUPPEN';
+       SystemFile  = 'SYSTEME';
+       DupeFile    = 'DUPEKILL';       { tempor„r in XP4O.DupeKill }
+       AutoFile    = 'AUTOMSG';
+       PseudoFile  = 'PSEUDOS';
+       BezugFile   = 'BEZUEGE';
+       MimetFile   = 'MIMETYP';
+{$ENDIF }
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
@@ -1119,6 +1132,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.33  2000/04/29 07:59:04  mk
+  - Funktion FUStr fuer Filenamen Up/Locase eingebaut
+
   Revision 1.32  2000/04/28 14:52:51  jg
   - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
     Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !

@@ -410,7 +410,7 @@ begin
       end;
     if flindex then Fastmove(recbuf^,orecbuf^,hd.recsize);
     if testdel and (recbuf^[0] and 1 <>0) then
-      write(#7'Fehlerhafte Indexdatei:  '+ustr(fname)+dbIxExt+#7);
+      write(#7'Fehlerhafte Indexdatei:  '+fustr(fname)+dbIxExt+#7);
     end;
 end;
 
@@ -768,7 +768,7 @@ begin
   fillchar(dp(dbp)^,sizeof(dbrec),0);
   with dp(dbp)^ do begin
     tempclosed:=false;
-    fname:=UStr(name);
+    fname:=fUStr(name);
     hdupdate:=true;
     assign(f1,name+dbExt);
     mfm:=filemode; filemode:=$42;
@@ -1724,6 +1724,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/04/29 07:59:03  mk
+  - Funktion FUStr fuer Filenamen Up/Locase eingebaut
+
   Revision 1.16  2000/04/04 21:01:20  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

@@ -44,7 +44,7 @@ procedure makefeld(var lfeld:dbFeldTyp; var fld:dbfeld);
 begin
   fillchar(fld,sizeof(fld),0);
   with lfeld,fld do begin
-    name:=UStr(fname);
+    name:=FUStr(fname);
     feldtyp:=ftyp;
     case ftyp of
       1,2,5 : feldsize:=fsize;
@@ -409,6 +409,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/29 07:59:03  mk
+  - Funktion FUStr fuer Filenamen Up/Locase eingebaut
+
   Revision 1.5  2000/02/15 20:43:35  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

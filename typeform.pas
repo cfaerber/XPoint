@@ -140,6 +140,8 @@ Function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
 Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
 Function UStr(const s:string):string;              { UpperString                  }
+{ Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
+Function FUStr(const s:string):string;
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
 {$IFDEF BP }
 procedure SetLength(var s: String; size: Longint); { LÑnge von S setzen }
@@ -779,9 +781,15 @@ end;
 
 {$ENDIF}
 
-{/JG}
 
-{ 27.01.2000 robo - LoString etc. in ASM }
+function FUStr(const s:string):string;
+begin
+{$IFDEF UnixFS }
+  FUStr := LStr(s);
+{$ELSE }
+  FUStr := UStr(s);
+{$ENDIF }
+end;
 
 {$ifdef noasm}
 
@@ -2163,6 +2171,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/04/29 07:59:03  mk
+  - Funktion FUStr fuer Filenamen Up/Locase eingebaut
+
   Revision 1.28  2000/04/22 23:35:27  mk
   - SetLength nur fuer BP implementiert
 
