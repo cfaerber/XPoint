@@ -1,0 +1,27 @@
+
+	Hinweise fuer die Benutzung von OpenXP unter Linux
+	----------------------------------------------------------------------
+	
+	ACHTUNG: OpenXP ist als Linux-Portierung zur Zeit eher
+	         als Alpha- denn als Beta-Version zu verstehen.
+		 Wer aber die hier aufgefuehrten Hinweise beachtet,
+		 kann gerne die Tools ausprobieren.
+	
+	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
+		einen ISO-8859-1-konfomren Zeichensatz.
+		
+		Es kann zwar eine Bildschirmaufloesung von mehr
+		als 80x25 verwendet werden, aber es kann zur Zeit
+		nicht garantiert werden, dass diese auch genutzt
+		wird.
+		
+		Unter X darf die Groesse der Konsole nach dem
+		Programmstart nicht mehr geaendert werden.
+	
+	XPME	Bis auf die dargestellten Schwierigkeiten bei der
+	        Ausgabe von Schriftzeichen bei Konsolen/Fonts, die
+		nicht ISO-8859-1-kompatibel sind, sollte das Tool
+		funktionieren.
+		
+	----------------------------------------------------------------------
+	End of File
