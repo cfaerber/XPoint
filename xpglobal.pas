@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.21.023';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.21.024';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
 {$IFDEF VER32 }
@@ -130,6 +130,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/04/24 08:10:11  mk
+  - Versionsinfo auf 3.21.024 angepasst
+
   Revision 1.22  2000/04/23 07:58:54  mk
   - OS/2-Portierung
 
