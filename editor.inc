@@ -778,8 +778,7 @@ var p,q : byte;
 begin
   p:=min(ap^.size,80);
   SetLength(s,p);
-  Move(ap^.cont,s[1],p);
-  {s[0]:=char(p);}
+  if p > 0 then Move(ap^.cont,s[1],p);
   p:=cpos('>',s);
   if p>5 then p:=0
   else if p>0 then begin
@@ -2289,6 +2288,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/09/30 16:31:40  mk
+  - AnsiString-Bugfix
+
   Revision 1.28  2000/08/12 11:20:48  mk
   JG:- Quotereflow Fix
 

@@ -352,6 +352,7 @@ laden:
         end
       else begin
         inc(sl);
+        if Length(s) < sl then SetLength(s, sl);
         s[sl]:=char(buf^[p]);
         end;
     inc(p);
@@ -754,6 +755,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/09/30 16:31:40  mk
+  - AnsiString-Bugfix
+
   Revision 1.22  2000/08/08 13:18:13  mk
   - s[Length(s)] durch Lastchar ersetzt
 
