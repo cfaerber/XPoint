@@ -49,7 +49,7 @@ function testaction(var s:string):boolean;
 
 procedure MakSelKeys(var t:taste);
 function checkday(var s:string):boolean;
-
+function _getmacro(s:string):string;
 
 implementation  { ---------------------------------------------------- }
 
@@ -266,7 +266,7 @@ begin
       '<' : begin
               delete(s,1,1);
               if s<>'' then
-                if (s[1]='<') or (s[1]='>') or (s[1]='^') then begin
+                if (s[1]='<') or (s[1]='>') or (s[1]='^') or (s[1]=' ') then begin
                   m:=m+s[1];
                   delete(s,1,2);
                   end
@@ -326,6 +326,14 @@ begin
     close(t);
     dispose(ta);
     end;
+end;
+
+function _getmacro(s:string):string;
+var ta  : tap;
+begin
+  settap(ta);
+  _getmacro:=getmacro(s,ta);
+  dispose(ta);
 end;
 
 { -------------------------------------------------------------------- }
@@ -2027,6 +2035,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/08/25 19:22:52  jg
+  - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
+    XP10.PAS
+  - Parameter -K verarbeitet jetzt ganze Zeichenketten. Benoetigt
+    Anfuehrungszeichenauswertung damit Tasten wie <Enter> funktionieren !
+    XP10.PAS,XP2.PAS
+  - Neuer Parameter -mailto: dem direkt ein Mailto-Link uebergeben wird
+    Subjects mit Leerzeichen benoetigen Anfuehrungszeichenauswertung !
+    XP2.PAS
+
   Revision 1.10.2.1  2000/08/01 08:42:16  mk
   - Nodelistenanzahl falsch nach fehlerhaften Einfuegen neuer Nodeliste
 
