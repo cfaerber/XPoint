@@ -40,6 +40,8 @@ var i,res : integer;
   end;
 
   procedure getline(var s:string);
+  var
+    l: Integer;
 
     procedure IncO;
     begin
@@ -54,15 +56,23 @@ var i,res : integer;
     end;
 
   begin
-    s := '';
+    s := ''; Setlength(s, 256); l := 0;
     while (o<bufanz) and (buf^[o]<>#13) do
     begin
-      // !! Das sollte noch optimiert werden
-      s := s + buf^[o];
+      inc(l);
+      if l <= 256 then
+        s[l] := buf^[o]
+      else
+        s := s + buf^[o];
       incO;
     end;
-    IncO;
+    IncO; Setlength(s, l);
     if ok and (buf^[o]=#10) then IncO;
+  end;
+
+  procedure LRead(var s:string);
+  begin
+    s:=line;
   end;
 
   procedure GetName(var name,realname:string);
@@ -78,18 +88,13 @@ var i,res : integer;
     end;
   end;
 
-  { bei diesen Strings gibt es keine L„ngenbeschr„nkung }
-  procedure LRead(var s:string);
-  begin
-    s:=line;
-  end;
-
   procedure GetEmpf;
   var p : integer;
       s : string;
   begin
-    if readempflist then begin
-      LRead(s);
+    if readempflist then
+    begin
+      s := line;
       if (cpos('@',s)>0) or (s[1]<>'/') then
       begin
         p:=pos(' (',s); if p>0 then SetLength(s, p-1);
@@ -101,7 +106,7 @@ var i,res : integer;
     end else
       if (empfnr=0) or (hd.empfanz<empfnr) then
       begin
-        LRead(hd.empfaenger);
+        hd.empfaenger := Line;
         if (cpos('@',s)>0) or ((Length(s) > 0) and (s[1]<>'/')) then
         begin
           p:=pos(' (',hd.empfaenger);
@@ -118,7 +123,7 @@ var i,res : integer;
     with hd do begin            { reflist^.ref, die davor in reflist^.next^ }
       if ref<>'' then           { .ref etc.                                 }
         AddToReflist(ref);
-      LRead(ref);
+      ref := line;
       inc(refanz);
     end;
   end;
@@ -192,7 +197,7 @@ var i,res : integer;
   begin
     if cpos('@',line)>0 then exit;
     if ((disknr>0) and (hd.amrepanz<disknr)) or (hd.amrepanz=0) then
-      LRead(hd.AmReplyTo);
+      hd.AmReplyTo := line;
     if hd.amrepanz<127 then
       inc(hd.amrepanz);
   end;
@@ -200,7 +205,7 @@ var i,res : integer;
   procedure GetStichwort;
   var s : string;
   begin
-    LRead(s);
+    s := line;
     if hd.keywords<>'' then hd.keywords:=hd.keywords+',';
     hd.keywords:=hd.keywords+s;
   end;
@@ -208,8 +213,7 @@ var i,res : integer;
   procedure GetCrypt;
   var s : string;
   begin
-    LRead(s);
-    UpString(s);
+    s := Uppercase(line);
     if s='QPC' then inc(hd.attrib,attrQPC)
     {$IFDEF PGP}
       else if s='PGP' then inc(hd.pgpflags,fPGP_encoded)
@@ -221,17 +225,14 @@ var i,res : integer;
     procedure GetSigned;
     var s : string;
     begin
-      LRead(s);
-      UpString(s);
-      if s='PGP' then inc(hd.pgpflags,fPGP_signed) else
+      s := UpperCase(line);      if s='PGP' then inc(hd.pgpflags,fPGP_signed) else
       if s='PGPCLEAR' then inc(hd.pgpflags,fPGP_clearsig);
     end;
 
     procedure GetPGP;
     var s : string;
     begin
-      lread(s);
-      UpString(s);
+      s := UpperCase(line);
       if s='PLEASE' then inc(hd.attrib,fPGP_please) else
       if s='REQUEST' then inc(hd.pgpflags,fPGP_request);
     end;
@@ -240,7 +241,7 @@ var i,res : integer;
     var s : string;
         p : integer;
     begin
-      lread(s);
+      s := line;
       p:=cpos('<',s);
       if (p>0) and (lastchar(s)='>') then begin
         delete(s,1,p);
@@ -252,8 +253,7 @@ var i,res : integer;
     procedure GetXPpgp;
     var s : string;
     begin
-      LRead(s);
-      LoString(s);
+      s := LowerCase(Line);
       if s='sigok'    then hd.pgpflags := hd.pgpflags or fPGP_sigok else
       if s='sigerror' then hd.pgpflags := hd.pgpflags or fPGP_sigerr;
     end;
@@ -262,18 +262,16 @@ var i,res : integer;
   procedure GetQStr;
   begin
     with hd do begin
-      LRead(QuoteString);
-      if quotestring[1]='"' then delfirst(quotestring);
-      if quotestring[length(quotestring)]='"' then dellast(quotestring);
+      QuoteString := Line;
+      if FirstChar(quotestring)='"' then delfirst(quotestring);
+      if LastChar(quotestring)='"' then dellast(quotestring);
       end;
   end;
 
   procedure GetCharset(var charset:string);
   begin
-    if charset='' then begin
-      LRead(charset);
-      LoString(charset);
-      end;
+    if charset='' then
+      Charset := LowerCase(Line)
   end;
 
   procedure ParseContentType(var hd:header);
@@ -344,7 +342,7 @@ begin
   {$else }
   ClearHeader(@hd);
   {$endif }
-  bufsize := 32768;
+  bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
   with hd do
@@ -378,14 +376,14 @@ begin
 
             { Auskommentiert, damit die CustomHeaders mit U-* tun }
             if FirstChar(id)='U' then                      { RFC }
-            if id = 'U-KEYWORDS'     then LRead(Keywords) else
-            if id = 'U-SUMMARY'      then LRead(Summary) else
-            if id = 'U-DISTRIBUTION' then LRead(Distribution) else
-            if id = 'U-X-NEWSREADER' then LRead(Programm) else
-            if id = 'U-X-MAILER'     then LRead(Programm) else
+            if id = 'U-KEYWORDS'     then Keywords := Line else
+            if id = 'U-SUMMARY'      then Summary := line else
+            if id = 'U-DISTRIBUTION' then Distribution:= line else
+            if id = 'U-X-NEWSREADER' then Programm:= line else
+            if id = 'U-X-MAILER'     then Programm := line else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
-            if id = 'U-X-HOMEPAGE'   then LRead(homepage) else
+            if id = 'U-X-HOMEPAGE'   then homepage := Line else
 
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
@@ -410,13 +408,13 @@ begin
 
             if id = 'EMP' then GetEmpf else             { ZConnect 3.0 }
             if id = 'ABS' then GetName(absender,realname) else
-            if id = 'BET' then LRead(betreff) else
+            if id = 'BET' then betreff := Line else
             if id = 'ROT' then pfad:=line else
             if id = 'O-ROT' then if pfad='' then pfad:=line
                                  else pfad:=pfad+'!'+line else
-            if id = 'MID' then LRead(MsgID) else
+            if id = 'MID' then MsgID := line else
             if id = 'EDA' then begin
-                                 LRead(zdatum);
+                                 zdatum := line;
                                  ZCtoZdatum(zdatum,datum);
                                {  if tc=' ' then xpmail:=true; }
                                end else
@@ -424,13 +422,13 @@ begin
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
             if id = 'BEZ'    then GetRef else
-            if id = 'MAILER' then LRead(programm) else
-            if id = 'ORG'    then LRead(organisation) else
+            if id = 'MAILER' then programm := line else
+            if id = 'ORG'    then organisation := line else
             if id = 'OEM'    then GetName(oem,dummy) else
             if id = 'OAB'    then GetName(oab,oar) else
             if id = 'WAB'    then GetName(wab,war) else
-            if id = 'FILE'   then LRead(datei) else
-            if id = 'DDA'    then LRead(ddatum) else
+            if id = 'FILE'   then datei := line else
+            if id = 'DDA'    then ddatum := line else
             if id = 'TYP'    then GetTyp(hd.typ,hd.charset) else
             if id = 'PRIO'   then prio:=minmax(ival(line),0,20) else
             if id = 'EB'     then begin
@@ -439,20 +437,20 @@ begin
                                   end else
             if id = 'STAT'   then GetStat else
             if id = 'CHARSET'then GetCharset(hd.charset) else
-            if id = 'ERR'    then LRead(error) else
+            if id = 'ERR'    then error := line else
             if id = 'ANTWORT-AN' then GetName(PmReplyTo,dummy) else
             if id = 'DISKUSSION-IN' then GetFollowup else
             if id = 'STICHWORT' then GetStichwort else
-            if id = 'ZUSAMMENFASSUNG' then LRead(Summary) else
+            if id = 'ZUSAMMENFASSUNG' then Summary  := Line  else
             if id = 'QUOTE-STRING' then GetQStr else
-            if id = 'POST'   then LRead(postanschrift) else
-            if id = 'TELEFON' then LRead(telefon) else
-            if id = 'HOMEPAGE' then LRead(homepage) else
+            if id = 'POST'   then postanschrift  := Line  else
+            if id = 'TELEFON' then telefon := Line  else
+            if id = 'HOMEPAGE' then homepage := Line  else
 {            if id = 'X_C'    then xpmail:=true else }
-            if id = 'F-TO'   then LRead(fido_to) else
+            if id = 'F-TO'   then fido_to := Line  else
             if id = 'VER'    then GetName(vertreter,dummy) else
-            if id = 'CONTROL' then LRead(control) else
-            if id = 'ERSETZT' then LRead(ersetzt) else
+            if id = 'CONTROL' then control := Line  else
+            if id = 'ERSETZT' then ersetzt := Line else
 
             if FirstChar(id)='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset) else
@@ -503,9 +501,9 @@ begin
             if id = 'MAL' then LRead(programm);
 
             { Customizable Headerlines }
-            if id = UpperCase(mheadercustom[1]) then LRead(Cust1)
+            if id = UpperCase(mheadercustom[1]) then Cust1 := line
             else
-            if id = UpperCase(mheadercustom[2]) then LRead(Cust2)
+            if id = UpperCase(mheadercustom[2]) then Cust2 := line
 
             {$ifdef ulines}
             else
@@ -531,8 +529,7 @@ begin
       empfaenger:= TrimRight(empfaenger);
       empfanz:=1;
       getline(betreff);
-      while (betreff<>'') and (betreff[1]<=' ') do
-        delete(betreff,1,1);
+      Betreff := TrimLeft(Betreff);
       getline(absender);
       getline(datum);
       getline(pfad);
@@ -551,6 +548,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/08/20 10:44:34  mk
+  - Performance-Verbesserungen
+
   Revision 1.32  2000/08/10 13:14:23  mk
   - Pruefung ob Header vor dem Doppelpunkt eine ID enthaelt eingebaut
 
