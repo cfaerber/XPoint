@@ -1489,7 +1489,9 @@ again:
   n:=ReadButton(x+3,sely,2,'*'+sels,n,true,z);
   pophp;
 {$IFDEF UnixFS }
-  s:='doc/' + getres2(520,40);   { Muss noch an die Grundstruktur angepasst werden }
+  s := getres2(520,40);
+  lostring(s);
+  s:=docdir + s;
 {$ELSE }
   s:='DOC\' + getres2(520,40);   { 'LIZENZ.DOC' }
 {$ENDIF }
@@ -1574,6 +1576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/11/13 09:32:36  ml
+  - lizenz.doc will now be found in doc-dir
+
   Revision 1.20  2000/10/17 10:06:00  mk
   - Left->LeftStr, Right->RightStr
 
