@@ -2561,8 +2561,7 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          Sie auch ein unter [/Edit/Kurznamen] definier-@11605
          tes Krzel eingeben.
 
-         Normalerweise werden auch "Kopien-an"-Ein-
-         tr„ge durch diese Funktion gel”scht. Ist
+         Diese Funktion entfernt Kopienempf„nger! Ist
          das nicht erwnscht, muá die Taste <<<Shift> >>
          gehalten werden, wenn der Schalter bet„tigt
          wird (also <<<Shift-M> >>oder Shift-Mausklick).
@@ -2573,7 +2572,40 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 <<Betreff>>  „ndert den Betreff.
 
 <<Box>>      „ndert die Serverbox, an die die Nachricht
-         abgesetzt wird.
+         abgesetzt wird, oder erzwingt das Senden an
+         mehrere Empf„nger ber dieselbe Serverbox.
+         Letzteres ist nur m”glich, wenn alle Empf„n-
+         ger demselben oder einem kompatiblen Netztyp
+         angeh”ren. Die unterschiedlichen Darstel-
+         lungsweisen des Serverboxnamens bedeuten:
+
+          <<Serverbox>>     -> Die Nachricht hat entweder
+                           nur einen Empf„nger, oder
+                           alle Empf„nger geh”ren
+                           derselben Serverbox an.
+
+          <<Serverbox>> (<<*>>) -> Die Nachricht hat mehrere
+                           Empf„nger mit unterschied-
+                           lichen Serverboxen, der
+                           Versand ber eine gemein-
+                           same Box wurde erzwungen.
+
+         (<<Serverbox>>)    -> Die Nachricht hat mehrere
+                           Empf„nger mit unterschied-
+                           lichen Serverboxen, der
+                           Versand erfolgt ber die
+                           verschiedenen Serverboxen,
+                           denen die Empf„nger ange-
+                           h”ren.
+
+         Das Erzwingen des Versands an mehrere Emp-
+         f„nger ber eine gemeinsame Serverbox kann
+         insbesondere bei den Netztypen ZConnect und
+         RFC sinnvoll sein, um nur eine physikalische
+         Nachricht statt mehrerer Duplikate versenden
+         zu mssen. Eine einmal erzwungene gemeinsame
+         Serverbox kann durch <<<Esc> >>im Boxauswahl-
+         Fenster rckg„ngig gemacht werden.
 
 <<Code>>     „ndert die Codierung der Nachricht. Bei PMs
          geht dies nur, wenn fr den Empf„nger ein
@@ -2672,11 +2704,6 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          zeichnis. Wenn Sie /Config/Opt/Nachrichten
          /../¯Unversandt eingeschaltet haben, wird
          die Nachricht automatisch geparkt (s.o.).
-
-
-Wenn der Server in Klammern angezeigt wird, bedeutet
-dies, daá mehrere Nachrichten-Kopien ber unter-
-schiedliche Server verschickt werden.
 
 @
 8077

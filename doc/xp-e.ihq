@@ -1227,7 +1227,7 @@ recalled to unpack several files.
 
 @
 68
-This is the <<Send-Window>> in CrossPoint. It is
+This is the <<Send-Window>> of CrossPoint. It is
 decided here, if and how a message will actually be
 sent.
 
@@ -1257,7 +1257,37 @@ or <</>>     Delete the current entry to choose with <F2>
 
 <<Subject>>  Changes the subject of the message.
 
-<<Server>>   Allows a different Server to be selected.
+<<Server>>   changes the Server the message will be sent
+         to, or forces a message with multiple reci-
+         pients to be sent to the same Server. The
+         latter is possible only if all recipients
+         belong to the same or a compatible net type.
+         The several ways of displaying the server
+         name have the following meaning:
+
+          <<Server>>     -> The message either has just
+                        one recipient, or all reci-
+                        pients belong to the same
+                        Server anyway.
+
+          <<Server>> (<<*>>) -> The message has multiple
+                        recipients with different
+                        Servers, sending to a common
+                        Server has been forced.
+
+         (<<Server>>)    -> The message has multiple
+                        recipients with different
+                        Servers and will be sent to
+                        those different Servers the
+                        recipients belong to.
+
+         Forcing a message with multiple recipients
+         to be sent to a common Server can make sense
+         especially with the net types ZConnect and
+         RFC, in order to send just one physical copy
+         of the message rather than several copies.
+         A forced common Server may be cancelled by
+         pressing <<<Esc> >>in the Server pick list.
 
 <<Code>>     Changes the encoding of the message. PMs
          can only be changed when the recipient has
@@ -1337,11 +1367,6 @@ or <</>>     Delete the current entry to choose with <F2>
          it exists in the <<TEMP directory>> under the
          name <<LASTMSG>> (only as long as no other
          message has been written!).
-
-
-If the <<server>> is shown in <<brackets>>, it means that
-several copies of the message will be sent over
-<<different servers>>.
 
 @
 8077
