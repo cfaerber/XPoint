@@ -2838,18 +2838,20 @@ Message-ID).
 
 @
 30002
-Here you have to insert the address of your NNTP
-host. This can be an IP number or a domain.
+Here you have to enter the address of your NNTP host. 
+This can be an IP number or a domain.
 
 (Default: 127.0.0.1, example: news.shlink.de).
 @
 30003
-The NNTP service usally uses the port number 119.
-If not so on your provider, you can set up here the
-value you needed.
+The NNTP server usally uses port 119. If this is not
+the case with your ISP, you can enter the correct
+port here.
 @
 30004
-SMTP
+If a password is required to access your NNTP server,
+you can enter it here. If a password is not required,
+you can leave this field blank.
 @
 30005
 POP3
