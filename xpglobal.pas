@@ -29,7 +29,11 @@ interface
 
 const
   verstr      = 'v3.70.3';  { Versionnr. - steht nur an dieser Stelle }
+{$ifdef Linux}
+  betastr     = ' alpha';
+{$else}
   betastr     = ' beta';      { ' ' oder ' beta' }
+{$endif}
 
   {$IFDEF Win32 }
   pformstr    = ' Win/32';    { 32 Bit Windows mit FPC oder VP }
@@ -51,7 +55,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000';
+  x_copyright = '(c) 2000-2001';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -179,6 +183,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.51  2000/12/27 13:34:23  hd
+  - Set Linux version to alpha state
+  - Increased copyright (a little bit to early)
+
   Revision 1.50  2000/12/11 10:59:36  mk
   - fixed comment of betastr
 
