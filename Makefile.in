@@ -111,6 +111,20 @@ openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 	$(IHS) $<
 	cp doc/openxp-$*.hlp $@
 
+# --- documentation ---------------------------------------------------	
+
+doc: html-doc pdf-doc text-doc
+
+html-doc: doc/xpoint/book1.html
+pdf-doc: doc/xpoint.pdf
+text-doc:
+
+doc/xpoint/book1.html : doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
+        ( cd doc; sgmltools --backend=html xpoint.sgm )
+
+doc/xpoint.pdf : doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
+        ( cd doc; sgmltools --backend=pdf xpoint.sgm )
+
 # --- files list ------------------------------------------------------
 
 MANIFEST.snap:
@@ -146,8 +160,8 @@ ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
-# Revision 1.1  2003/02/21 19:20:05  cl
-# - moved Makefile.in to Makefile.am
+# Revision 1.10  2003/02/21 19:32:13  cl
+# - Moved configure.in to configure.ac
 #
 # Revision 1.8  2003/01/13 23:34:25  cl
 # - autoconf update
