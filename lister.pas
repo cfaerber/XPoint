@@ -797,7 +797,8 @@ begin // Show
       FirstLine := Max(FirstLine, 0);
     end else
     begin
-      FirstLine := MinMax(FirstLine,0, Lines.Count - 1);
+      FirstLine := Min(FirstLine,Lines.Count-1);
+      FirstLine := Max(FirstLine,0);
     end;
 
     display;
@@ -1095,6 +1096,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.86  2003/08/20 20:39:21  cl
+  - fixed one more "list index out of bounds" error
+
   Revision 1.85  2003/08/20 18:24:21  cl
   - fixed several off-by-one errors in lister component
 
