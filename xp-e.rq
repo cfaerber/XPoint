@@ -28,10 +28,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038Message Area ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
-6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
+6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save        @S
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
-9   Anzeige,091^Colours,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-Zmodem
+9   Anzeige,091^Colours,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-ZModem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
 11  Zeilen,0b125
@@ -561,7 +561,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    activate this option?
 8    ~^Yes ,  ^No ~
 9    Use MIME for news
-10   ZCONNECT: ISO charset
+10   ZConnect: ISO charset
 11   MIME: quoted-printable
 12   Use MIME for header contents
 13   remove unnessecary header lines
@@ -614,7 +614,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    KBytes:
 8    Backup file extension   ~
 9    Use external editor for ~
-10   Automatic <Ctrl PgDn>
+10   Automatic <Ctrl-PgDn>
 11   Internal editor - full screen
 12   Keep filename of Edit/Text
 13   25 screen lines for ext. editor
@@ -756,13 +756,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Speed     ~
 4    bps
 5    Modem init~
-6    Zmodem AutoDownload
-7    Zmodem AutoUpload
+6    ZModem AutoDownload
+7    ZModem AutoUpload
 8    Status line
 + 271
 0    49
 1    PGP settings
-2    ZCONNECT: PGP support
+2    ZConnect: PGP support
 3    Batch mode
 4    Wait for key after PGP call
 5    Automatic key import from Mails
@@ -1795,7 +1795,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25   Uncompress       ~
 26   Unfreeze         ~
 27   GNU-unzipper     ~
-28   Zmodem options   ~
+28   ZModem options   ~
 # UUCP
 30   max. UUCP-g packet size ~
 31   max. UUCP-g window size    ~
@@ -1858,20 +1858,20 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Sysop Mode
 3    Inbound directory ~
 4    Outbound directory~
-5    Input file  ~
-6    Output file ~
+5    Input file    ~
+6    Output file   ~
 7    /¯Netcall report
 8    Name without @BOX
 9    Pack outbound mail
 # Position of 923.8
 10   31
 # QWK
-12   Inbound packets  ~
+12   Inbound packets   ~
 13   Outbound directory~
 14   Transfer
 #
-20   Start programme
-21   End programme ~
+20   Start programme ~
+21   End programme   ~
 + 924
 0    58
 1    Miscellaneous Options
@@ -1890,8 +1890,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 14   Exclude
 15   times
 16   Reply servers
-17   for News  ~
-18   for Mails ~
+17   for News
+18   for Mail
 + 925
 1    Net Options
 2    Message IDs
@@ -1902,8 +1902,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    Sender User@Point.ZER
 8    Reply to ~
 9    newsgroup manager~
-10   ... passsword    ~
-12   Sender User@Point.domain
+10   ... password     ~
+12   Sender User@Point.Domain
 + 926
 0    42
 1    Fido Options
@@ -1933,7 +1933,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    Password~
 7    Complete domain
 8    Sysfile subject~
-9    Sender = user@server.domain
+9    Sender = User@Server.Domain
 + 929
 # [!MF!]
 1    There is an unsent mail packet (%s.PP) for this
@@ -2684,7 +2684,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 +  3001
 1  Request PGP Key from ...
 2  PGP key request
-3  If your software does support ZCONNECT-PGP then it should
+3  If your software does support ZConnect-PGP then it should
 4  answer this message by sending your PGP public key.
 5
 6  - message was created automatically -
@@ -2742,7 +2742,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 14 Nodelist/Pointlist %s not found
 16 Not possible with monochrome graphics adapter.
 17 PGP not found.
-18 First enable ZCONNECT PGP support!
+18 First enable ZConnect PGP support!
 19 Your graphics adapter does not support VESA DPMS.
 20 Please enter the full URL (http://do.main/...).
 21 The device '/dev/%s' does not exist!
