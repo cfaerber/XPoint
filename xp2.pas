@@ -361,8 +361,8 @@ begin
   ListDebug:=ParDebug;
   if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
     ParAutost:='';
-                           { Unter Win: Default "/w" Rechenzeitfreigabe abschalten mit "/w0" } 
-  Parwintime:=((Winversion>0) or Parwintime) and Partrywin;
+                         { Unter Win: Default "/w" Rechenzeitfreigabe abschalten mit "/w0" } 
+  Parwintime:=((Winversion>0) or Parwintime) and ((paros2>0) or Partrywin);
 end;                 
 
 
@@ -1077,10 +1077,8 @@ end;
 end.
 { 
   $Log$
-  Revision 1.7  2000/02/19 14:46:39  jg
-  Automatische Rechenzeitfreigabe unter Win (/W Default an)
-  Parameter /W0 um Rechenzeitfreigabe auszuschalten
-  Bugfix fuer allerersten Start: Parameter /L wird ausgewertet
+  Revision 1.8  2000/02/19 14:59:36  jg
+  Parameter /w0 hat keine wirkung mehr, wenn /osx definiert ist.
 
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
