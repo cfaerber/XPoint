@@ -247,6 +247,10 @@ begin
     on E: Exception do begin
       POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
       result:= false;
+      {$IFDEF DEBUG } 
+        // crash in Debug-Versions to give line information
+        raise; 
+      {$ENDIF }        
       end; 
   end;
   POP.Disconnect;
@@ -272,6 +276,9 @@ end;
                       
 {
   $Log$
+  Revision 1.28  2001/10/19 21:31:41  mk
+  - reraise unknown exceptions in debug version to give line information
+
   Revision 1.27  2001/10/19 00:38:52  mk
   - display more information in case of internal error
 
