@@ -1059,6 +1059,7 @@ label again;
     s, s1: String;
     RCFilename: String;
     Index: Integer;
+    AlreadySubscribed: Boolean;
   begin
     Moment;
     RCList := TStringList.Create;
@@ -1080,8 +1081,11 @@ label again;
 
         try
           case Art of
-            0: begin // connect
-                 if RCList.IndexOf(s1) <> -1 then
+            0: begin // subscribe
+                 AlreadySubscribed := false;
+                 for Index := 0 to RCList.Count-1 do
+                   AlreadySubscribed := AlreadySubscribed or(LeftStr(RCList[Index],Length(s1))=s1);
+                 if AlreadySubscribed then
                    rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
                  else
                  begin
@@ -1089,7 +1093,7 @@ label again;
                    List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
                  end;
                end;
-            1: begin // disconnect
+            1: begin // unsubscribe
                  List.Lines.Delete(List.Lines.IndexOf(s));
                  Index := RCList.IndexOf(s1 + ' *');
                  if Index = -1 then Index := RCList.IndexOf(s1);
@@ -1699,6 +1703,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/05/02 23:37:31  ma
+  - fixed: newsgroups could be subscribed multiple times
+
   Revision 1.41  2001/04/23 06:57:44  ml
   - NNTP-BoxPar for getting last X Mails
 
