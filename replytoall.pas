@@ -224,13 +224,13 @@ begin
   begin
     if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/UUCP }
     begin                                           { Boxen berÅcksichtigen     }
-      dbRead (d, 'username', username);
-      dbRead (d, 'pointname', pointname);
+      Username := dbReadStr (d, 'username');
+      PointName := dbReadStr (d, 'pointname');
       dbRead (d, 'script', flags);
       aliaspt := (flags and 4 <> 0);
-      dbRead (d, 'domain', domain);
-      dbRead (d, 'boxname', box);
-      dbRead (d, 'email', email);
+      Domain := dbReadStr (d, 'domain');
+      Box := dbReadStr (d, 'boxname');
+      eMail := dbReadStr (d, 'email');
       case ntDomainType (dbReadInt (d, 'netztyp')) of
         5: adresse := username + '@' + iifs (aliaspt, pointname, box) + domain;
         6: if email <> '' then adresse := email
@@ -240,7 +240,7 @@ begin
       end;
       if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
         insertnode (eigeneAdressenBaum, UpperCase(adresse));
-      dbRead (d, 'replyto', adresse);
+      Adresse := dbReadStr (d, 'replyto');
       if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
         insertnode (eigeneAdressenBaum, UpperCase(adresse));
     end;
@@ -303,8 +303,8 @@ var x,y,i       : Integer;
     res         :boolean;
     s           :string;
 begin
-  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) {and
-    (not XPFirstStart) } then
+(*  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) {and
+     (not XPFirstStart) } then *)
   begin
     msglines := ival (getres2 (2750, 0));
     msgbox (64, msglines + 5, '', x, y);
@@ -315,11 +315,11 @@ begin
       gotoxy(x + 3, y + 1 + i);
       repeat
         p := cposx ('*', s);
-        write (LeftStr(s, p-1));
+        Wrt2(LeftStr(s, p-1));
         delete (s, 1, p);
         p := cposx ('*', s);
         attrtxt (col.colmboxhigh);
-        write (LeftStr(s, p - 1));
+        Wrt2(LeftStr(s, p - 1));
         attrtxt (col.colmbox);
         delete (s, 1, p);
       until s = '';
@@ -337,7 +337,7 @@ begin
       saveConfig
     else
       globalModified;
-  end else
+  end;{ else }
 {  if XPFirstStart then RTAMode := 13; }
 end;
 
@@ -437,7 +437,7 @@ begin
     size := 0;
     if dbXsize (ubase, 'adresse') <> 0 then
     begin
-      dbReadX (ubase, 'adresse', size, adr);
+      adr := dbReadXStr (ubase, 'adresse', size);
       getVertreter := true;
     end else
       getVertreter := false;
@@ -589,12 +589,12 @@ var RTAEmpfList :RTAEmpfaengerP;
     procedure getPollBox;
     begin
       box := '';
-      dbRead (mbase, 'brett', brett);
+      brett := dbReadStr (mbase, 'brett');
       if brett[1] in ['1', 'A'] then         { Brett }
       begin
         dbSeek (bbase, biIntNr, copy (brett, 2, 4));
         if dbBOF (bbase) or dbEOF (bbase) then box := ''
-        else dbRead (bbase, 'pollbox', box);
+        else Box := dbReadStr (bbase, 'pollbox');
       end;
       if not isBox (box) then box := DefaultBox;
     end;
@@ -616,13 +616,13 @@ var RTAEmpfList :RTAEmpfaengerP;
     { Die User werden mit Standardeinstellungen und Adressbuchgruppe 0
       angelegt }
 
-    procedure userAnlegen (user, box :string);
+    procedure userAnlegen (const user, box :string);
     var halten :integer16;
         b :byte;
     begin
       dbAppend(ubase);                        { neuen User anlegen }
-      dbWrite(ubase,'username',user);
-      dbWrite(ubase,'pollbox',box);
+      dbWriteStr(ubase,'username',user);
+      dbWriteStr(ubase,'pollbox',box);
       halten:=stduhaltezeit;
       dbWrite(ubase,'haltezeit',halten);
       b:= 1+iif(newuseribm,0,8);
@@ -1016,8 +1016,8 @@ begin
   RTAEmpfList := nil;
   getEigeneAdressen (eigeneAdressenBaum);
   brk := false;
-  dbRead(dispdat,'absender',empf);
-  if ntRealName(mbNetztyp) then dbRead (dispdat, 'name', realname);
+  empf := dbReadStr(dispdat,'absender');
+  if ntRealName(mbNetztyp) then Realname := dbReadStr (dispdat, 'name');
   hdp := THeader.Create;
   readkoplist := true;      { KOP-Header auslesen }
   readempflist := true;     { EMP-Header auslesen }
@@ -1059,6 +1059,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/07/28 18:13:56  mk
+  - fixed AnsiString database read/write
+  - fixed use of crt.write to Wrt2
+
   Revision 1.2  2001/07/27 22:51:29  mk
   - fixed some Freepascal compile problems
 
