@@ -5911,7 +5911,7 @@ correct, or your sysop says so.
      Username\@Pointname.domain
 
 <<[x]>>  Your messages are given the sender address.
-     Username\@Servername.Domain.
+     Username\@Servername.Serverdomain.
      This form is very unusual. If you have it, using
      this switch saves you from having to specify a
      stand-in address.
