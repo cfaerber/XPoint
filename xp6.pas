@@ -671,6 +671,8 @@ begin
   else begin                       { Nach Pollbox-Wechsel }
     for i:=0 to cc_anz do
       ccm^[i].cpanz:=0;
+    first:=1;
+    if not verteiler then CollectFirstServer;   { nach Server sortieren }
     SortForServer_PM;
     FindXposts;
     end;
@@ -2067,6 +2069,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.17  2002/03/24 13:32:36  my
+  JG:- Fix fr Uralt-Bug: Das Eintragen eines Kopienempf„ngers ("k" im
+       Sendefenster) mit einer anderen Serverbox als der des Empf„ngers
+       sowie anschlieáendes Erzwingen des Versendens ber eine gemeinsame
+       Serverbox ("o" im Sendefenster) konnte zu abenteuerlichen Effekten
+       fhren (Absturz, H„nger, duplizierte Nachrichten). Variable "First"
+       war nicht initialisiert.
+
   Revision 1.7.2.16  2001/06/26 23:43:22  mk
   JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
        an RFC recipient and then select a Fido server in the send window.
