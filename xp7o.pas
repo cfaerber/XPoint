@@ -24,21 +24,21 @@ uses
 
 procedure ttwin;
 procedure twin;
-procedure CallFilter(input:boolean; fn:pathstr);
+procedure CallFilter(input:boolean; const fn:pathstr);
 function  OutFilter(var ppfile:string):boolean;
-procedure AppLog(var logfile:string; dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
+procedure AppLog(var logfile:string; const dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
 
-procedure ClearUnversandt(puffer,box:string);
+procedure ClearUnversandt(const puffer,box:string);
 procedure LogNetcall(secs:word; crash:boolean);
 procedure SendNetzanruf(once,crash:boolean);
 procedure SendFilereqReport;
-procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
+procedure MovePuffers(const fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 procedure MoveRequestFiles(var packetsize:longint);
 procedure MoveLastFileIfBad;
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
-procedure FidoGetCrashboxdata(box:string);
+procedure FidoGetCrashboxdata(const box:string);
 procedure AponetNews;
 
 
@@ -63,7 +63,7 @@ begin
 end;
 
 
-procedure CallFilter(input:boolean; fn:pathstr);
+procedure CallFilter(input:boolean; const fn:pathstr);
 var nope : boolean;
     fp   : pathstr;
 begin
@@ -93,7 +93,7 @@ begin
 end;
 
 
-procedure AppLog(var logfile:string; dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
+procedure AppLog(var logfile:string; const dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
 var f1,f2 : text;
     s     : string;
 begin
@@ -115,7 +115,7 @@ begin
 end;
 
 
-procedure ClearUnversandt(puffer,box:string);
+procedure ClearUnversandt(const puffer,box:string);
 var f      : file;
     adr,fs : longint;
     hdp    : headerp;
@@ -583,7 +583,7 @@ begin
 end;
 
 
-procedure FidoGetCrashboxdata(box:string);
+procedure FidoGetCrashboxdata(const box:string);
 var bp : BoxPtr;
     d  : DB;
 begin
@@ -723,7 +723,7 @@ begin
 end;
 
 
-procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
+procedure MovePuffers(const fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 var f1,f2 : file;
     sr    : searchrec;
     df    : longint;
@@ -848,6 +848,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.19  2001/07/21 14:15:02  mk
+  - added some const-parameters
+
   Revision 1.13.2.18  2001/07/18 17:20:28  my
   - removed switch and netcall routine
     "update date entries after netcall"
