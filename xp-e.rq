@@ -1813,7 +1813,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10   Server dom.~
 11   FQDN       ~
 12   eMail addr.~
-13    Server name~
+13   Server name~
 + 913
 0    30
 1    Type of net~
@@ -1886,6 +1886,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 91   Phone  ~
 92   Login  ~
 93   Password
+100  Mail server for incoming mail (POP3/SMTP/IMAP)
+101  Mail server for outgoing mail (SMTP)
+102  News server (NNTP)
+103  Server name    ~
+104  Envelope address
+105  User name      ~
+106  Password       ~
+107  Port
 #
 40   UpPack extension ~
 41   DownPack ext.~
@@ -1907,7 +1915,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Turbo
 55   Get news
 56   Serial no
-66   쳐컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴캑
 + 921
 0    59
 1    Wait for connection ~
@@ -2004,8 +2011,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    ^Names,
 5    M^isc.
 6    ,^SysopMode
-#
+# QWK
 7    ,^Transfer
+# RFC/Client
+8 Mail/^News Server,
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3055,6 +3064,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 27 This newsgroup cannot be unsubscribed.
 30 %s cannot be subscribed
 31 %s is subscribed already
+# The string in the following four lines must not exceed 57 characters:
 32 Net type RFC/Client: To get a new newsgroup list, the
 33 appropriate function of the external client must be acti-
 34 vated and the previous newsgroup list has to be deleted
@@ -3108,6 +3118,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 38 DIRECTLY below the XP directory!
 39 This path must not be empty!
 40 User name or eMail address required!
+# The string in the following seven lines must not exceed 57 characters:
+41 These settings only take effect if they are interpreted
+42 by your client or client kit.
+# do not delete blank line in 10900,43!
+43
+44 Your client may support and/or require further settings,
+45 which would then have to be entered in an external confi-
+46 guration file in the client directory.
+47 Please consult the client documentation for more details.
 
 +  11000
 1  unknown command

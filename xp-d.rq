@@ -1927,6 +1927,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 91   Telefon~
 92   Login  ~
 93   Pa·wort~
+100  Mail-Server fÅr eingehende Mail (POP3/SMTP/IMAP)
+101  Mail-Server fÅr ausgehende Mail (SMTP)
+102  News-Server (NNTP)
+103  Servername     ~
+104  Envelope-Adresse
+105  Benutzername   ~
+106  Pa·wort        ~
+107  Port
 #
 40   Packer-Extension ~
 # ProNet:
@@ -2047,6 +2055,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    ,^SysopMode
 # QWK
 7    ,^Transfer
+# RFC/Client
+8    Mail-/^News-Server,
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3102,6 +3112,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 27 Dieses Brett kann nicht abbestellt werden.
 30 %s kann nicht bestellt werden
 31 %s wurde bereits bestellt
+# Der String in den folgenden vier Zeilen darf max. 57 Zeichen lang sein:
 32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
 33 Liste mu· die entsprechende Funktion beim externen Client
 34 aktiviert sein und die bisherige Newsgroup-Liste gelîscht
@@ -3157,6 +3168,15 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 #
 39 Pfad darf nicht leer sein!
 40 Es mu· ein Username oder eine eMail-Adresse angegeben werden!
+# Der String in den folgenden sieben Zeilen darf max. 57 Zeichen lang sein:
+41 Diese Einstellungen sind nur wirksam, wenn sie von Ihrem
+42 Client oder Client-Kit ausgewertet werden.
+# Leerzeile 10900,43 nicht entfernen!
+43
+44 Ihr Client unterstÅtzt und/oder erfordert mîglicherweise
+45 weitere Einstellungen, die Sie in einer externen Konfigu-
+46 rationsdatei im Client-Verzeichnis vornehmen mÅssen.
+47 NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.
 
 +  11000
 1  unbekannter Befehl

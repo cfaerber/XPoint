@@ -143,16 +143,30 @@ begin
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
-    ClientSmtp := false;
-    PPPMode := false;
-    PPPClientPath := '';
-    PPPClient := '';
-    PPPAddServers := '';
-    PPPDialUp := '';
-    PPPPhone := '';
-    PPPLogin := '';
-    PPPPass := '';
-    PPPSpool := '';
+    ClientSmtp:= false;
+    PPPMode:= false;
+    PPPClientPath:= '';
+    PPPClient:= '';
+    PPPAddServers:= '';
+    PPPDialUp:= '';
+    PPPPhone:= '';
+    PPPLogin:= '';
+    PPPPass:= '';
+    PPPSpool:= '';
+    PPPMailInSrvr:= 'pop.t-online.de';
+    PPPMailInEnv:= '';
+    PPPMailInUser:= '';
+    PPPMailInPass:= '';
+    PPPMailInPort:= '110';
+    PPPMailOutSrvr:= 'mailto.t-online.de';
+    PPPMailOutEnv:= '';
+    PPPMailOutUser:= '';
+    PPPMailOutPass:= '';
+    PPPMailOutPort:= '25';
+    PPPNewsSrvr:= 'news.t-online.de';
+    PPPNewsUser:= '';
+    PPPNewsPass:= '';
+    PPPNewsPort:= '119';
     UUprotos:='Ggz';
     efilter:='';
     afilter:='';
@@ -297,6 +311,20 @@ begin
             gets(s,su,'Client-Login',PPPLogin,60) or
             gets(s,su,'Client-Password',PPPPass,20) or
             gets(s,su,'Client-Spool', PPPSpool, 60) or
+            gets(s,su,'Client-MailInServer', PPPMailInSrvr, 160) or
+            gets(s,su,'Client-MailInEnvelope', PPPMailInEnv, 160) or
+            gets(s,su,'Client-MailInUser', PPPMailInUser, 160) or
+            gets(s,su,'Client-MailInPassword', PPPMailInPass, 75) or
+            gets(s,su,'Client-MailInPort', PPPMailInPort, 50) or
+            gets(s,su,'Client-MailOutServer', PPPMailOutSrvr, 160) or
+            gets(s,su,'Client-MailOutEnvelope', PPPMailOutEnv, 160) or
+            gets(s,su,'Client-MailOutUser', PPPMailOutUser, 160) or
+            gets(s,su,'Client-MailOutPassword', PPPMailOutPass, 75) or
+            gets(s,su,'Client-MailOutPort', PPPMailOutPort, 50) or
+            gets(s,su,'Client-NewsServer', PPPNewsSrvr, 160) or
+            gets(s,su,'Client-NewsUser', PPPNewsUser, 160) or
+            gets(s,su,'Client-NewsPassword', PPPNewsPass, 75) or
+            gets(s,su,'Client-NewsPort', PPPNewsPort, 50) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
@@ -463,6 +491,20 @@ begin
       MkLongDir(OwnPath + XFerDir + Dateiname, Res);
       if IOResult = 0 then ;
       end;
+    writeln(t,'Client-MailInServer=', PPPMailInSrvr);
+    writeln(t,'Client-MailInEnvelope=', PPPMailInEnv);
+    writeln(t,'Client-MailInUser=', PPPMailInUser);
+    writeln(t,'Client-MailInPassword=', PPPMailInPass);
+    writeln(t,'Client-MailInPort=', PPPMailInPort);
+    writeln(t,'Client-MailOutServer=', PPPMailOutSrvr);
+    writeln(t,'Client-MailOutEnvelope=', PPPMailOutEnv);
+    writeln(t,'Client-MailOutUser=', PPPMailOutUser);
+    writeln(t,'Client-MailOutPassword=', PPPMailOutPass);
+    writeln(t,'Client-MailOutPort=', PPPMailOutPort);
+    writeln(t,'Client-NewsServer=', PPPNewsSrvr);
+    writeln(t,'Client-NewsUser=', PPPNewsUser);
+    writeln(t,'Client-NewsPassword=', PPPNewsPass);
+    writeln(t,'Client-NewsPort=', PPPNewsPort);
   end;
   close(t);
 end;
@@ -575,6 +617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.18  2001/06/29 01:24:56  my
+  - RFC/Client: implemented Mail/News server configuration
+
   Revision 1.10.2.17  2001/06/17 23:56:29  my
   - minor cosmetics
 

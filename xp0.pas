@@ -576,6 +576,20 @@ type   textp  = ^text;
                   PPPLogin  : string[60];  { PPP Login                 }
                   PPPPass   : string[20];  { PPP Passwort              }
                   PPPSpool  : string[60];  { PPP Spool-Verzeichnis     }
+                  PPPMailInSrvr  : string[160];  { PPP Mail-Server   incoming }
+                  PPPMailInEnv   : string[160];  { PPP Mail-Envelope incoming }
+                  PPPMailInUser  : string[160];  { PPP Mail-User     incoming }
+                  PPPMailInPass  : string[75];   { PPP Mail-Passwort incoming }
+                  PPPMailInPort  : string[50];   { PPP Mail-Port     incoming }
+                  PPPMailOutSrvr : string[160];  { PPP Mail-Server   outgoing }
+                  PPPMailOutEnv  : string[160];  { PPP Mail-Envelope outgoing }
+                  PPPMailOutUser : string[160];  { PPP Mail-User     outgoing }
+                  PPPMailOutPass : string[75];   { PPP Mail-Passwort outgoing }
+                  PPPMailOutPort : string[50];   { PPP Mail-Port     outgoing }
+                  PPPNewsSrvr    : string[160];  { PPP News-Server            }
+                  PPPNewsUser    : string[160];  { PPP News-User              }
+                  PPPNewsPass    : string[160];  { PPP News-Passwort          }
+                  PPPNewsPort    : string[50];   { PPP News-Port              }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -1193,6 +1207,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.36  2001/06/29 01:24:55  my
+  - RFC/Client: implemented Mail/News server configuration
+
   Revision 1.54.2.35  2001/06/19 01:27:44  my
   - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
     netcall report if found in the client directory
