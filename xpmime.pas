@@ -632,9 +632,11 @@ var   input,t : text;
     if length(s)<4 then s:=''
     else begin
       if s[length(s)]='=' then
+      begin
         if s[length(s)-1]='=' then pad:=2
-        else pad:=1
-      else pad:=0;
+        else pad:=1;
+        if Length(s) mod 4 <> 0 then Pad := 3;
+      end else pad:=0;
       p1:=1; p2:=1;
       while p1<=length(s) do begin
         b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
@@ -735,6 +737,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.12  2001/07/01 23:08:14  mk
+  - Fehler in Base64 Dekodierung beseitigt
+
   Revision 1.7.2.11  2001/06/09 18:18:44  mk
   JG:- MIME multipart messages with lines longer than 255 chars are
        extracted correctly now (before they were truncated at pos 255)

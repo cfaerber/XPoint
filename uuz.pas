@@ -1247,9 +1247,11 @@ var p,b     : byte;
     if length(s)<4 then s:=''
     else begin
       if s[length(s)]='=' then
+      begin
         if s[length(s)-1]='=' then pad:=2
-        else pad:=1
-      else pad:=0;
+        else pad:=1;
+        if Length(s) mod 4 <> 0 then Pad := 3;
+      end else pad:=0;
       p1:=1; p2:=1;
       while p1<=length(s) do begin
         b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
@@ -3556,6 +3558,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.14  2001/07/01 23:08:13  mk
+  - Fehler in Base64 Dekodierung beseitigt
+
   Revision 1.8.2.13  2001/06/09 18:29:42  mk
   JG:- Header longer than 255 characters are splitted correctly now
        (at the last " ", "," or ";" before pos 255 rather than exactly
