@@ -32,6 +32,7 @@ var   Listunvers  : byte;
       Listflags   : longint;
       Listtyp     : char;
       Listnetztyp : longint;
+      ListFoundTab: Array [1..60] of boolean;
 
 type  liste   = pointer;
 
@@ -652,7 +653,7 @@ begin
   end;
   with alist^ do
   begin
-    txt:=fitpath(ustr(fn),40);
+    txt:=fitpath(ustr(fn),iif(listuhr and (o=1),33,40));
     ps:=min(10000,memavail-10000);
     getmem(p,ps);
     assign(f,fn);
@@ -758,6 +759,7 @@ var gl,p,y    : shortint;
       s  : string[100];
       b  : byte;
   begin
+    for i:=1 to 60 do ListFoundTab[i]:=false;    {Suchbegriff-Tabelle lîschen}
     with alist^ do begin
       pp:=EmsPtr(actl);
       i:=1;
@@ -875,32 +877,14 @@ var gl,p,y    : shortint;
       old_actl,
       old_pl   : lnodep;
      
-    function Dispseek(p,y:byte):byte; Assembler;
-    asm
-         push 0b800h
-         pop es
-         mov al,screenlines
-         mov bl,160
-         mul bl
-         mov dx,ax                {DX=Maximum}
-         mov al,p
-         add al,y
-         dec al
-         mul bl
-         mov di,ax                {DI=Startposition}
-         mov al,col.collistfound
-     @1: inc di
-         cmp di,dx
-         jnb @end
-         scasb 
-         jne @1
-         mov ax,di
-         div bl
-         add al,2
-         sub al,y
-      @end:
-     end;
-
+    function Dispseek(p,y:byte):byte;
+    var i : byte; 
+    begin
+      i:=p+y+1; 
+      While not ((i>gl+p+y) or ListfoundTab[i]) do inc(i);
+      if i>gl+y-1 then Dispseek:=$ff else Dispseek:=i-y;
+    end;
+    
   begin
   with alist^ do begin 
     old_a:=a; old_p:=p; 
@@ -909,9 +893,9 @@ var gl,p,y    : shortint;
 
     repeat
       display;
-      p1:=dispseek(p,y);                    { Gefunden-Farbe Im aktuellen Screen suchen }
-      if p1=xp0.col.collistfound 
-      then begin                               { Nicht gefunden:}
+      p1:=dispseek(p,y);                    { Gefunden-Farbe im aktuellen Screen suchen }
+      if p1=$ff 
+      then begin                            { Nicht gefunden:}
         if not more then begin
           a:=old_a; p:=old_p;                                { Msg-Ende: Abbruch }
           actl:=old_actl; pl:=old_pl;
@@ -929,7 +913,7 @@ var gl,p,y    : shortint;
           end;
         p:=0;
         end;
-    until p1<>xp0.col.collistfound;
+    until p1<>$ff;
                     
     if (p1<1) or (p1>gl) then exit;            { Gefunden: Balken setzen }
     selbar:=true;
@@ -1197,7 +1181,7 @@ begin
     if stat.statline then begin
       attrtxt(col.colstatus);
       mwrt(l,o,sp(w));
-      mwrt(l+w-length(txt),o,txt);
+      mwrt(l+w-length(txt)-iif(listuhr and (o=1),7,0),o,txt);
       end;
     attrtxt(col.coltext);
     clwin(l,l+w-1,y,y+gl-1);
@@ -1629,6 +1613,19 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.12  2002/03/08 23:16:02  my
+  JG:- Wenn im Brettmanager eine Markiersuche mit "s" durchgefÅhrt wurde
+       und die eingestellte Farbe fÅr Zeilen- und Wortmarkierung identisch
+       war, dann blieb der Cursorbalken nach DrÅcken von <Tab> nicht nur
+       auf den markierten Suchergebnissen, sondern auch auf bestellten
+       Brettern stehen.
+
+  JG:- Uhr im Archiv-Viewer wird jetzt in der Statuszeile statt in der
+       ersten Textzeile angezeigt und bei der Anzeige von Dateien, die
+       sich *in* einem Archiv befinden, wird jetzt auch die richtige Uhr
+       des Archiv-Viewers (statt der falschen des Nachrichten-Listers)
+       benutzt.
+
   Revision 1.19.2.11  2001/09/16 20:33:10  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
