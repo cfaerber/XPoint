@@ -1843,6 +1843,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         if msgCPpos<msgCPanz then
           dbAppend(mbase);
         end;
+      SendFlags:=SendFlags and not SendHalt;
     until msgCPpos>=msgCPanz;
 
   { if not pm then dbFlushClose(bbase); }
@@ -2100,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.86  2000/12/31 11:51:50  mk
+  JG:- eigene PMs halten fix
+
   Revision 1.85  2000/12/27 22:36:34  mo
   -new class TfidoNodeList
 
