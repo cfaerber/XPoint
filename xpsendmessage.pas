@@ -1763,7 +1763,7 @@ fromstart:
         b:=iif(netztyp in netsRFC,16,0);
         dbWriteN(bbase,bb_flags,b);
         SetBrettindex;
-        _brett:=mbrettd(empfaenger[1],bbase);
+        _brett:=mbrettd(FirstChar(empfaenger),bbase);
         end
     else
       if pm then begin
@@ -2496,6 +2496,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.4  2002/07/18 01:00:50  mk
+  - fixed potential AV with mbrettd calls
+
   Revision 1.48.2.3  2002/07/09 13:26:41  mk
   - merged forcebox-fixes from OpenXP/16 (sv+my)
 

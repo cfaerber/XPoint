@@ -253,7 +253,7 @@ begin
       end;
     dbReadN(bbase,bb_ldatum,d1);
     brett := dbReadNStr(bbase,bb_brettname);
-    _brett:=mbrettd(brett[1],bbase);
+    _brett:=mbrettd(FirstChar(brett),bbase);
 
     dbSeek(mbase,miBrett,_brett+#255);  { erste Msg im naechsten Brett suchen: }
     if dbEOF(mbase) then
@@ -431,10 +431,10 @@ begin
     if not dbFound then
       fehler(getres2(322,6))   { 'Brett nicht vorhanden' }
     else begin
-      _newbrett:=mbrettd(newbrett[1],bbase);
+      _newbrett:=mbrettd(FirstChar(newbrett),bbase);
       dbGo(bbase,rec);
       oldbrett := dbReadStrN(bbase,bb_brettname);
-      _oldbrett:=mbrettd(oldbrett[1],bbase);
+      _oldbrett:=mbrettd(FirstChar(oldbrett),bbase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
       dbSeek(mbase,miBrett,_oldbrett);
@@ -703,7 +703,7 @@ begin
                     end
                   else begin
                     brett := dbReadStrN(bbase,bb_brettname);
-                    _brett:=mbrettd(brett[1],bbase);
+                    _brett:=mbrettd(FirstChar(brett),bbase);
                     dbSeek(mbase,miBrett,_brett);
                     end;
                   repeat
@@ -1235,6 +1235,7 @@ var
     box    : string;
     adr    : string;
     leer   : string;
+    empf   : string;
     hdp    : Theader;
     hds    : longint;
     flags  : longint;
@@ -1292,8 +1293,8 @@ begin
   _betreff:=hdp.betreff;
   sdata:= TSendUUData.Create;
   sData.ersetzt:=hdp.msgid;
-
-  sData.EmpfList.AddStrings(hdp.Empfaenger);
+  empf:=hdp.FirstEmpfaenger;
+  SendEmpfList.Assign(hdp.Empfaenger);
   hdp.Empfaenger.Clear;
 
   sFlags:=0;
@@ -1301,7 +1302,7 @@ begin
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
     sFlags:=sFlags or SendMPart;
 
-  DoSend(false,fn,false,false,'',_betreff,
+  DoSend(false,fn,false,false,'A'+empf,_betreff,
     true,false,true,false,true,sData,leer, sFlags);
   Hdp.Free;
   sData.Free;
@@ -1532,8 +1533,8 @@ end;
 
 {
   $Log$
-  Revision 1.86  2002/04/14 22:26:56  cl
-  - changes for new address handling
+  Revision 1.85.2.1  2002/07/18 01:00:48  mk
+  - fixed potential AV with mbrettd calls
 
   Revision 1.85  2002/03/25 22:03:09  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert

@@ -1452,7 +1452,7 @@ var dat    : longint;
   procedure mw1;   { Aufteilung zum Stack-Platz-sparen }
   begin
     dispspec:= dbReadNStr(bbase,bb_brettname);
-    if (length(dispspec)>0) then _brett:=mbrettd(dispspec[1],bbase)
+    if (length(dispspec)>0) then _brett:=mbrettd(FirstChar(dispspec),bbase)
     else _brett:= ''; { eventuell Fehler-Dialog notwendig }
     _dispspec:=_brett;
     mhd:=abhdatum;
@@ -1642,7 +1642,7 @@ var brett          : string;
 begin
   GoP;
   brett:= dbReadStrN(bbase,bb_brettname);
-  _brett:=mbrettd(brett[1],bbase);
+  _brett:=mbrettd(FirstChar(brett),bbase);
   dbSeek(mbase,miBrett,_brett);
   if not dbEOF(mbase) then
     _brett2:= dbReadStrN(mbase,mb_brett);
@@ -1774,6 +1774,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.99.2.2  2002/07/18 01:00:49  mk
+  - fixed potential AV with mbrettd calls
+
   Revision 1.99.2.1  2002/05/01 17:12:20  mk
   JG:- Fix: Die Unterdr?ckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
        <Shift-Esc> funktionierte nicht im Lesemodus "Alles".

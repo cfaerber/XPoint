@@ -3,7 +3,7 @@ program openxp;
 {$I xpdefine.inc }
 
 {%File 'xpmecol.inc'}
-{%File 'databas2.inc'}
+{%File 'databas2.inc'}                           
 {%File 'database.inc'}
 {%File 'editor.inc'}
 {%File 'maske.inc'}

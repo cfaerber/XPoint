@@ -77,10 +77,6 @@ function  writecode(var s:string):boolean;
 function  testgruppe(var s:string):boolean;
 function  empftest(var s:string):boolean;
 
-procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten: Integer16; var adr:byte; var flags:byte; edit:boolean;
-                   var brk:boolean);
-
 procedure AutoFilename(var cr:CustomRec);
 function  auto_testempf(var s:string):boolean;
 procedure testwot(var s:string);
@@ -1102,7 +1098,7 @@ label ende;
 begin
   modibrett:=false;
   brett:= dbReadNStr(bbase,bb_brettname);
-  _brett:=mbrettd(brett[1],bbase);
+  _brett:=mbrettd(FirstChar(brett),bbase);
   komm:= dbReadNStr(bbase,bb_kommentar);
   box:= dbReadNStr(bbase,bb_pollbox);
   dbReadN(bbase,bb_haltezeit,halten);
@@ -1416,7 +1412,7 @@ begin
         if user then _brett:=mbrettd('U',ubase)
         else begin
           brett:= dbReadStrN(bbase,bb_brettname);
-          _brett:=mbrettd(brett[1],bbase);
+          _brett:=mbrettd(FirstChar(brett),bbase);
           end;
         dbSeek(mbase,miBrett,_brett);
         if not dbEOF(mbase) then
@@ -1705,16 +1701,8 @@ begin
   if autocpgd then pgdown:=true;
   forcebox:=box;
   sdata:= TSendUUData.Create;
-// sdata.empfrealname:=real;
-//  with sData.EmpfList.AddNew do begin
-//    Address := empf;
-//    RealName := real;
-//  ed;
-  with sData do begin
-    sData.Empf1Address := empf;
-    sData.Empf1RealName := real;
-    DoSend(pm,fn,true,false,'',betr,true,false,true,false,true,sdata,sigf,0);
-  end;
+  sdata.empfrealname:=real;
+  DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0);
   sData.Free;
   pgdown:=false;
   if FileExists(fn) then DeleteFile(fn);
@@ -1736,10 +1724,7 @@ begin
   y:=iif(mauskey,4,10+(screenlines-25)div 2);
   n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit' }
              -(readmode+1));
-
-  if (n>0) and ((readmode>=4) or (n<>readmode+1)) or
-    (readmode = 3) then // allow to change readmode 'heute', see #500563
-  begin
+  if (n>0) and ((readmode>=4) or (n<>readmode+1)) then begin
     showtime:=false;
     brk:=false;
     case n of
@@ -2509,11 +2494,8 @@ end;
 
 {
   $Log$
-  Revision 1.90  2002/04/18 21:14:19  mk
-  - fixed Bug #500563
-
-  Revision 1.89  2002/04/14 22:26:56  cl
-  - changes for new address handling
+  Revision 1.88.2.1  2002/07/18 01:00:48  mk
+  - fixed potential AV with mbrettd calls
 
   Revision 1.88  2002/01/28 20:32:25  mk
   - completed 3.40 merge, source is compilable for dos and win
