@@ -5245,7 +5245,7 @@ UseNet always only a simple single "Re:" is used.
 247
 <<ZConnect / RFC:
 
-You have to set the correct Time Zone here.
+The correct Time Zone should be set here.
 
 For Great Britain this would be:
     <<W+0>>   for Winter time
@@ -5260,13 +5260,13 @@ For New York it would be:
     <<S-6>>   for Summer time
 
 CrossPoint changes the time zone automatically if you
-choose one of respective options under "[Changeover]".@248
-But if you should use the option <<manual>>, don't forget
+choose one of respective options under "[Changeover]"@248
+but if you should use the <<manual>> option, don't forget
 to change this setting at the same time you change
 your system clock, to ensure your postings appear
 with the correct time stamp.
 
-<<W>> or <<S>> stands for Winter time or Summer time, and the
+<<W>> or <<S>> stands for Winter time or Summer time and the
 number is the number of hours from GMT (Greenwich
 Mean Time), the + or - showing whether in front or
 behind.
@@ -5278,18 +5278,61 @@ this setting have no effect, you don't even see it!
 248
 ToDo: explanation Time Zone Changeover options (\@248).
 
-see also: [The TZ variable]@2481
+See also: [The TZ variable]@2481
 @
 2481
 <<The TZ variable
 
-ToDo: comprehensive explanation TZ variable (\@2481).
+This may be set in either your AUTOEXEC.BAT file or
+the batch file which calls CrossPoint.
 
-The correct TZ variable for Great Britain is:
+For London, the correct syntax of the variable is:
 
-<<set TZ=WET0WEST,3,-1,0,7200,10,-1,0,10800,3600
+<<SET TZ=GMT0BST,3,-1,0,3600,10,-1,0,3600,3600>>
 
-see also: [Time Zones]@2482
+Explanation of the various fields:
+
+  <<GMT>>: Greenwich Mean Time (Winter time)
+
+    <<0>>: 0 hours East/West of the Greenwich Meridian.
+       Note: a negative value here denotes a time
+       zone <<EAST>> of the Greenwich Meridian, whilst
+       a positive value denotes a time zone <<WEST>> of
+       the Greenwich Meridian.
+
+  <<BST>>: British Summer Time (Summer time)
+
+    <<3>>: Third month = March
+
+   <<-1>>: Last week
+       Note: A negative value here denotes the week
+       starting from the <<END>> of the month, whilst
+       a positive value denotes the week starting
+       from the <<BEGINNING>> of the month.
+       e.g. -1 = the last week of the month
+            -2 = the next to the last week of the
+                 month.
+             1 = the first week of the month.
+             2 = the second week of the month.
+
+    <<0>>: Sunday (0=Sunday through 6=Saturday)
+
+ <<3600>>: Summer time begins 3600 seconds after
+       midnight, (= 01:00 (1AM))
+
+   <<10>>: October
+
+   <<-1>>: Last week
+       See note above!
+
+    <<0>>: Sunday
+
+ <<3600>>: Winter time begins 3600 seconds after
+       midnight, (= 01:00 (1AM))
+
+ <<3600>>: Time adjustment is 3600 seconds = 1 hour
+
+See also: [Time Zones]@2482
 @
 2482
 <<Time Zones
