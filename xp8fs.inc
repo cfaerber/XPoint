@@ -24,6 +24,16 @@ begin
   IsServer:=dbFound and (flags and 1<>0);
 end;
 
+{ Erstellt aus einem Boxnamen (bis 20 Zeichen) einen Filenamen, der nur
+  8+3 Zeichen lang ist }
+
+function MangleBoxName(const s: String): String;
+begin
+  if Length(s) <= 8 then
+    MangleBoxName := s
+  else
+    MangleBoxName := Left(s, 4) + Hex(CRC32Str(UStr(s)), 4);
+end;
 
 { msg => aktuelle Nachricht wird eingelesen }
 
@@ -65,15 +75,6 @@ var absender : string[Adrlen];
     dbRead(d,'ZBV1',convert);
     dbClose(d);
   end;
-
-  function MangleBoxName(const s: String): String;
-  begin
-    if Length(s) <= 8 then
-      MangleBoxName := s
-    else
-      MangleBoxName := Left(s, 4) + Hex(CRC32Str(s), 4);
-  end;
-
 
 begin
   if msg then begin
@@ -142,6 +143,7 @@ begin
     fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',lstr(s))>0,2,0));
     WriteFST(fstype);
     end;
+  KorrBoxName(box); { Groá- und Kleinschreibung korrigieren }
   makebak(MangleBoxName(box)+'.FL','BAK');
   case fstype of
     0 : begin      { SendZMsg }
@@ -302,7 +304,7 @@ var d     : DB;
   begin
     showkeys(10);
     OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
-    list_readfile(fs+'.fl',0);
+    list_readfile(MangleBoxName(fs)+'.fl',0);
     listVmark(testmark);
   again:
     list(brk);
@@ -444,7 +446,7 @@ begin
     dbRead(d,'flags',w);
     dbRead(d,'fs-typ',fstyp);
     dbClose(d);
-    enterfiles:=not exist(fs+'.fl');
+    enterfiles:=not exist(MangleBoxName(fs)+'.fl');
     if w and 1=0 then
       rfehler(815)      { 'Das gew„hlte System ist kein Fileserver!' }
     else if (request>0) and (fstyp<>3) and enterfiles then
@@ -543,6 +545,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.2  2000/11/22 18:53:35  mk
+  - Probleme mit Fileservern und langen Dateinamen behoben
+
   Revision 1.6.2.1  2000/11/18 22:09:50  mk
   - Bugfixes fuer die Fileserver
 
