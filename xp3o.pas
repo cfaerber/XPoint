@@ -820,7 +820,7 @@ begin
       else begin
         dbReadN(mbase,mb_halteflags,isflags);
         if (art=2) and (isflags=1) and (lhalt=0) then
-          lhalt:=iif(ReadJNesc('Auch gehaltene Nachrichten l”schen',false,brk),1,2);
+          lhalt:=iif(ReadJNesc(GetRes(344),false,brk),1,2);
         wvl:=(dbReadInt(mbase,'unversandt') and 8)<>0;
         if (art=1) or ((art=2) and not wvl and ((isflags<>1) or (lhalt<>2))) or
            (art=4) then
@@ -1367,6 +1367,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2000/06/03 09:16:48  mk
+  - Hart kodierten String in Resource 344 uebernommen
+
   Revision 1.7.2.2  2000/05/06 17:48:19  mk
   - Fix fuer msgall, wenn keine Nachricht im Brett ist
 
