@@ -99,7 +99,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt, osdepend;
+  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt, osdepend, classes;
 
 const
   MaxProtocols = 2;
@@ -1114,20 +1114,52 @@ end;
 
 
 procedure DruckConfig;
-const
-{  lpts : array[1..5] of string[4] = ('LPT1','LPT2','LPT3','COM1','COM2');  }
-  { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstÅtzt }
-  lpts : array[1..3] of string = ('LPT1','LPT2','LPT3');
 var x,y : Integer;
     brk : boolean;
-    lpt : string;
-    i   : integer;
+    s, lpt : string;
+    i: integer;
     allc: string;
+    MaxLPTs: Integer;
+    lpts: array[1..8] of string;
+    printcap: TStringList;
 begin
+  {$IFDEF Unix }
+    printcap := TStringList.Create;
+    try
+      MaxLPTs := 1;
+      printcap.LoadFromFile('/etc/printcap');
+      for i := 0 to printcap.Count - 1 do
+        if FirstChar(printcap[i]) <> '#' then
+        begin
+          s := LeftStr(printcap[i], Pos('|', printcap[i])-1);
+          if s <> '' then
+          begin
+            LPTs[MaxLPTs] := s;
+            Inc(MaxLPTs);
+            if MaxLPTs > 8 then break;
+          end;
+        end;
+    finally
+      printcap.Free;
+    end;
+    lpt := PrinterPort;
+  {$ELSE }
+    LPTS[1] := 'LPT1';
+    LPTS[2] := 'LPT2';
+    LPTS[3] := 'LPT3';
+    MaxLpts := 3;
+    if DruckLPT > 0 then
+      lpt:=lpts[DruckLPT];
+  {$ENDIF }
+
   dialog(ival(getres2(264,0)),11,getres2(264,1),x,y);   { 'Drucker-Optionen' }
-  lpt:=lpts[DruckLPT];
-  maddstring(3,2,getres2(264,2),lpt,4,4,'>'); mhnr(470);  { 'Schnittstelle ' }
-  for i:=1 to high(lpts) do
+  {$IFDEF Unix }
+    maddstring(3,2,getres2(264,2),lpt,9,255,''); mhnr(470);  { 'Schnittstelle ' }
+  {$ELSE }
+    maddstring(3,2,getres2(264,2),lpt,4,4,'>'); mhnr(470);  { 'Schnittstelle ' }
+  {$ENDIF }
+
+  for i:=1 to MaxLPTs do
     mappsel(true,lpts[i]);
   allc:=range(' ',#255);
   maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'SeitenlÑnge  ' }
@@ -1140,9 +1172,12 @@ begin
   readmask(brk);
   if not brk and mmodified then
   begin
-    { COM-Drucker wurden nicht selektiert }
-    for i := 1 to high(lpts) do
-      if lpt = lpts[i] then DruckLPT := i;
+    {$IFDEF Unix }
+      PrinterPort := lpt;
+    {$ELSE }
+      for i := 1 to MaxLPTs do
+        if lpt = lpts[i] then DruckLPT := i;
+    {$ENDIF }
     GlobalModified;
   end;
   enddialog;
@@ -1552,6 +1587,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.10  2003/08/29 18:45:27  mk
+  - added better printing support for linux
+
   Revision 1.127.2.9  2003/08/26 05:36:57  mk
   - added AutomaticTimeZone const and removed $IFDEFs
 

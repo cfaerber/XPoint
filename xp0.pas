@@ -965,6 +965,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
        DruckLPT     : smallword;          { 1-5: LPT1-3, COM1-2 }
+       PrinterName  : string;        { for Unix: name of the printing port }
        DruckInit    : string;
        DruckExit    : string;
        DruckFormlen : byte;          { Seitenlaenge; 0 = kein autom. Vorschub }
@@ -1233,6 +1234,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.15  2003/08/29 18:45:25  mk
+  - added better printing support for linux
+
   Revision 1.158.2.14  2003/08/11 22:09:51  mk
   - removed Edit/netze/verschiedens/mime in news
   - changed OpenXP/32 to OpenXP

@@ -950,7 +950,11 @@ begin
   checklst:=true;
   xlatger:=false;
   printlines:=0;
-  OpenLst(DruckLPT);
+  {$IFDEF Unix }
+    OpenLst(PrinterPort);
+  {$ELSE }
+    OpenLST(DruckLPT);
+  {$ENDIF }
   write(lst,PrintString(DruckInit));
 end;
 
@@ -2121,6 +2125,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.20  2003/08/29 18:45:26  mk
+  - added better printing support for linux
+
   Revision 1.147.2.19  2003/08/15 21:30:32  mk
   - fixed #733047: Bad User-Agent header syntax
 

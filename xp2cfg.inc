@@ -458,6 +458,7 @@ begin
   DruckExit:='^L';
   DruckFormlen:=65;
   DruckLPT:=1;
+  PrinterName := 'lp';
   DruckFF:='^L';
   DruckLira:=0;
   autocpgd:=true;
@@ -811,6 +812,7 @@ begin
     writeln(t,'UnRAR=',unrar);
   end;
   writeln(t,'LPT=',DruckLPT);
+  writeln(t,'PrinterName=', PrinterName);
   writeln(t,'DruckerInit=',druckinit);
   writeln(t,'DruckerExit=',druckexit);
   writeln(t,'Seitenlaenge=',druckformlen);
@@ -1453,6 +1455,7 @@ begin
                     xp1.gets(s,su,'Pointdiff',pointdiffn) or
                     xp1.gets(s,su,'Post',postadresse) or
                     getx(su,  'PufferLoeschen',nDelPuffer) or
+                    xp1.gets(s,su,'PrinterName', PrinterName) or
                     getx(su,  'pgp-batchmode',PGPbatchmode) or
                     xp1.gets(s,su,'pgp-userid',PGP_UserID) or
                     getx(su,  'pgp-autoam',PGP_AutoAM) or
@@ -1702,6 +1705,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.11  2003/08/29 18:45:27  mk
+  - added better printing support for linux
+
   Revision 1.144.2.10  2003/08/26 05:36:57  mk
   - added AutomaticTimeZone const and removed $IFDEFs
 
