@@ -1935,16 +1935,16 @@ end;
 
 
 
-{JG 11.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }
-{MK 11.02.00  Ein wenig eleganter geschrieben }
-function mailstring(s: String; Reverse: boolean): string;
+{ Mailadresse (mit @ in der Mitte) in einem String erkennen und ausschneiden }
+{ Ist Reverse = true, dann wird aus s die Mailadresse ausgeschnitten }
+function mailstring(s: String; Reverse: Boolean): string;
 const
   MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@','=','!'];
   WrongChar: set of Char = ['.', '_', '-'];
 var
-  i,j  : byte;
+  i, j: Byte;
 begin
-  i:=cpos('@',s);                              {Ists ne Mailadresse ?}
+  i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
     while (s[i] in MailChar) and ( i > 0) do dec(i); { Anfang suchen... }
@@ -1958,12 +1958,12 @@ begin
       dec(j);
     until not (s[j] in WrongChar);
 
-      if Reverse then begin                   { eMail aus s loeschen }
-        delete(s, i, j-i+1);
-        MailString := s;
-      end else
-
-    MailString := copy(s, i, j-i+1);
+    if Reverse then
+    begin
+      Delete(s, i, j-i + 1); { eMail aus s loeschen }
+      MailString := s;
+    end else
+      MailString := copy(s, i, j-i+1);
   end else
     MailString:=s;
 end;
@@ -2152,6 +2152,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.11  2000/02/21 18:51:47  mk
+  MH: Nachrichten mit Prioritaet ab High hervorheben
+
   Revision 1.10  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
 

@@ -935,7 +935,8 @@ begin
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
                 IsOwnDomain(ref)) or
-               (filterattr and fattrHilite<>0)
+               (filterattr and fattrHilite<>0) or (hdp^.Priority<3)
+       { ab Priority High Nachricht hevorheben ^^^^^^^^^^^^^^^^^^^^ }
             then begin
               attrtxt(col.colmboxhigh);
               showbetreff;
@@ -1144,6 +1145,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/02/21 18:51:47  mk
+  MH: Nachrichten mit Prioritaet ab High hervorheben
+
   Revision 1.3  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
