@@ -65,7 +65,7 @@ procedure maus_popinside;
 
 procedure mon;                         { Maus vor Textausgabe abschalten   }
 procedure moff;                        { Maus nach Textausgabe einschalten }
-procedure mwrt(x,y:byte; txt:string);  { Maus vor/nach Ausgabe umschalten  }
+procedure mwrt(x,y: Integer; const txt:string);  { Maus vor/nach Ausgabe umschalten  }
 function  _mausx:integer;              { Textkoordinaten }
 function  _mausy:integer;
 
@@ -238,7 +238,7 @@ begin
   if maus_cursor then mausaus;
 end;
 
-procedure mwrt(x,y:byte; txt:string);
+procedure mwrt(x,y: Integer; const txt:string);
 begin
   if maus_cursor then
   begin
@@ -249,7 +249,7 @@ begin
     Wrt(x, y, txt);
 end;
 
-procedure interr(txt:string);
+procedure interr(const txt:string);
 begin
   moff;
   writeln('<MAUS> ',txt);
@@ -345,6 +345,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/08/10 16:56:15  mk
+  - const parameter for mwrt()
+
   Revision 1.26  2001/07/28 14:34:15  ma
   - added some debug logs
 
