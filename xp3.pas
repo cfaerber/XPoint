@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Verarbeitung von Pointdaten }
@@ -276,11 +277,11 @@ asm
          dec dl                         { Naechstes Suchkey-Zeichen laden }
          jz @found                      { Kommt keines mehr, Suche erfolgreich }  
 
-@2:      mov al,[si+bx]                 { im Text Nach Anfang des rests suchen }
+@2:      mov al,[si+bx]                 { im Text nach Anfang des Rests suchen }
          cmp al,es:[di+bp+1]
          je @3 
          cmp al,' '                     { Abbruch bei Wortende }        
-         jbe @nextb
+         jb @nextb
          inc bx
          jmp @2
         
@@ -1278,6 +1279,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.14  2001/09/18 13:46:00  my
+  JG:- Wildcard-Volltextsuche "*" bezieht sich nicht mehr auf einzelne
+       Worte, sondern auf den gesamten String (Suche nach "d*t" findet
+       auch "das is'n Test"). Logik damit identisch mit Markiersuche im
+       Lister.
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.25.2.13  2001/08/12 11:20:29  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
