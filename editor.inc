@@ -824,8 +824,8 @@ begin
         then quotec:=GetQuote(ap)
         else quotec:='';
       quotes:=length(quotec);
-      if quotes=vap(ap)^.size
-        then quotes:=0; { kein Reflow bei gequoteten Leerzeilen }
+      if wp>=vap(ap)^.size
+        then quotes:=0; { kein Reflow bei Zeilenende }
       if quotes>wp then quotes:=0;
       if config.autoindent and (quotes=0) then begin
         while (spaces<vap(ap)^.size) and (vap(ap)^.cont[spaces]=' ') do
@@ -2102,6 +2102,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/02/17 08:34:51  mk
+  RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts in die neue Zeile
+        umgebrochen wird
+
   Revision 1.6  2000/02/15 22:22:04  mk
   RB: * Quote-Reflow jetzt vollstaendig implementiert
 
