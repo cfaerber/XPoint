@@ -73,6 +73,7 @@ var sm2t     : boolean;
   end;
 
 begin
+  CloseAblage;
   de:=0;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
@@ -511,6 +512,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.3  2001/01/10 17:39:03  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.24.2.2  2000/12/29 02:22:20  mk
   - palette sichern verbessert
 

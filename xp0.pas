@@ -88,8 +88,6 @@ const  {$IFDEF DPMI}
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-       xp_xp       : string[17] = 'CrossPoint/OpenXP';
-       xp_origin   : string[21] = '--- CrossPoint/OpenXP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -557,7 +555,12 @@ type   textp  = ^text;
                   UUprotos  : string[10];  { UUCP: mîgl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
-                  SmtpPPP   : Boolean;     { UUCP: SMTP eine Datei pro Mail }
+                  PPPSmtp   : boolean;     { UUCP: SMTP PPP Mode       }
+                  PPPMode   : Boolean;     { PPP Mode Switch           }
+                  PPPClient : string[60];  { PPP Client                }
+                  PPPSpool  : string[60];  { PPP Spool                 }
+                  PPPClientPaths: string[60]; { PPP Client Paths       }
+                  ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
@@ -1146,6 +1149,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.27  2001/01/10 17:39:02  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.54.2.26  2001/01/03 22:46:47  mk
   - Parameter /Pal hinzugefuegt
 

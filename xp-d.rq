@@ -697,6 +697,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 14   Kopfzeile 2
 15   Feldtausch Nachrichtenliste
 16   Feldtausch Userliste      ~
+17   VGA-Palette sichern
 + 261
 # Fensterbreite
 0    50
@@ -1874,8 +1875,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 33   G-Protokoll
 34   g-Protokoll
 35   Dateigr”áe bertragen
-36   Batched SMTP / PPP-Modus
-57   PPP-Modus: eine Datei je PM
+36   Batched SMTP (UUCP-Style)
+58   Batched SMTP (PPP-Style)
+57   PPP-Modus (externe Clients)
+59   PPP-Client-Aufruf ~
+63   Spool-Verzeichnis ~
 37   z-Protokoll
 38   f-Protokoll
 39   e-Protokoll
@@ -1901,6 +1905,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Turbo + Maus(55)
 55   Brettnachrichten anfordern
 56   Seriennr.~
+64   Batched SMTP-Modus~
+65   ausùSMTP/UUCPùSMTP/PPP
+66   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
 + 921
 0    59
 1    Warten auf Verbindung
@@ -1962,6 +1969,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Vertretersystem
 17   fr AMs~
 18   fr PMs~
+19   lokale Kopien ersetzen
 + 925
 1    netzspezifische Einstellungen
 2    Message-IDs
@@ -2994,6 +3002,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 41 L”schen Sie das Unterverzeichnis "%s"!
 42 Unbekannter Fido-Node: %s
 43 Keine Eintr„ge markiert!
+44 ungltiges Spoolverzeichnis
 
 +  10800
 1  Diese Box untersttzt keine Brettbestell-Funktionen.

@@ -346,7 +346,6 @@ var i  : integer;
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
     if isl('lfn') then EnableLFN else
-    if isl('pal') then ParSavePal := true else
     if isl('312') then OldXPComp := true else
     if _is('nolock') then ParNolock:=true
     else               begin
@@ -1095,6 +1094,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.18  2001/01/10 17:39:03  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.45.2.17  2001/01/09 14:36:56  sv
   - reply-detection improved
 

@@ -597,6 +597,7 @@ var x,y,yy  : byte;
   end;
 
 begin
+  CloseAblage;
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
   {$IFDEF BP }
     bsize:=min(maxavail-10000,50000);
@@ -720,6 +721,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14.2.3  2001/01/10 17:39:05  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.14.2.2  2000/12/31 11:35:55  mk
   - fileio.disksize statt lfn.disksize benutzen
 

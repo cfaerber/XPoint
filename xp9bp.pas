@@ -11,9 +11,7 @@
 { CrossPoint - BoxPar verwalten }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp9bp;
 
@@ -145,7 +143,12 @@ begin
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
-    SmtpPPp := false;
+    PPPSmtp := false;
+    PPPMode := false;
+    PPPClient := '';
+    PPPSpool := '';
+    PPPClientPaths := '';
+    ReplaceOwn := false;
     UUprotos:='Ggz';
     efilter:='';
     afilter:='';
@@ -277,7 +280,13 @@ begin
             getx(su,  'UU-ForcePacketSize',forcepacketsize) or
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
-            getx(su,  'UU-SMTP-OneFilePerMsg', SmtpPPP) or
+            getx(su,  'UU-SMTP-PPP', PPPSmtp) or
+            gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
+            getx(su,  'PPP-Mode', PPPMode) or
+            gets(s,su,'PPP-Client', PPPClient, 60) or
+            gets(s,su,'PPP-Spool', PPPSpool, 60) or
+            gets(s,su,'PPP-Client-Paths', PPPClientPaths, 60) or
+            getx(su,  'ReplaceOwn', ReplaceOwn) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
@@ -326,16 +335,18 @@ var t : text;
 begin
   assign(t,OwnPath+dateiname+BfgExt);
   rewrite(t);
-  if ioresult<>0 then begin
+  if ioresult<>0 then
+  begin
     rfehler(902);     { 'ungÅltiger Boxname!' }
     exit;
-    end;
-  with bp^ do begin
+  end;
+  with bp^ do
+  begin
     writeln(t,'Boxname=',boxname);
     writeln(t,'Pointname=',pointname);
     writeln(t,'Username=',username);
     writeln(t,'Domain=',_domain);
-    writeln(t,'FQDN=',_fqdn);  {16.01.00 HS}
+    writeln(t,'FQDN=',_fqdn);
     writeln(t,'Passwort=',passwort);
     writeln(t,'Telefon=',telefon);
     writeln(t,'ZerbID=',zerbid);
@@ -410,7 +421,12 @@ begin
     writeln(t,'UU-ForcePacketSize=',jnf(forcepacketsize));
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     writeln(t,'UU-SMTP=',jnf(uusmtp));
-    writeln(t,'UU-SMTP-OneFilePerMsg=', Jnf(SmtpPPP));
+    writeln(t,'UU-SMTP-PPP=', jnf(PPPSmtp));
+    writeln(t,'PPP-Mode=', Jnf(PPPMode));
+    writeln(t,'PPP-Client=', PPPClient);
+    writeln(t,'PPP-Spool=', PPPSpool);
+    writeln(t,'PPP-Client-Paths=', PPPClientPaths);
+    writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
     writeln(t,'BrettmanagerTyp=',BMtyp);
@@ -531,6 +547,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.5  2001/01/10 17:39:07  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.10.2.4  2000/12/21 21:49:22  mk
   - Smtp-Schalter immer in Config
 

@@ -1369,6 +1369,7 @@ var dat    : longint;
           end;
         end;
       end;
+    if not brettall and wrongline then nobrettweiter := true;
     if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
@@ -1573,6 +1574,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.17  2001/01/10 17:39:05  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.25.2.16  2000/12/10 02:57:16  mk
   - fix fuer Anzeige nach User aendern
 

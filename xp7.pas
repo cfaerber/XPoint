@@ -163,6 +163,7 @@ var bfile      : string[14];
     isdn       : boolean;
     orgfossil  : boolean;
     jperror    : boolean;
+    TempPPPMode: boolean;
 
 label abbruch,ende0;
 
@@ -274,7 +275,7 @@ label abbruch,ende0;
                        caller:='C-'+hex(uu_nummer,4)+'.OUT';
                        called:='uudummy';
                        upuffer:='UPUFFER';
-                       dpuffer:='UPUFFER';
+                       dpuffer:=iifs(TempPPPMode, '3PPUFFER', 'UPUFFER');
                      end;
       end;
       if logintyp<>ltUUCP then begin
@@ -428,13 +429,8 @@ begin                  { of Netcall }
     exit;
     end;
   dbRead(d,'dateiname',bfile);
-{$IFDEF UnixFS}
-  ppfile:=bfile+'.pp';
-  eppfile:=bfile+'.epp';
-{$ELSE}
-  ppfile:=bfile+'.PP';       { muá ohne Pfad bleiben, wg. XPU.INC.ZtoRFC! }
-  eppfile:=bfile+'.EPP';
-{$ENDIF}
+  ppfile:=ustr(bfile)+'.PP';       { muá ohne Pfad bleiben, wg. XPU.INC.ZtoRFC! }
+  eppfile:=ustr(bfile)+'.EPP';
   dbRead(d,'username',user);
   dbRead(d,'netztyp',netztyp);
   dbRead(d,'kommentar',komment);
@@ -556,7 +552,7 @@ begin                  { of Netcall }
       if SysopMode then begin
         NC^.datum:=ZDate;
         NC^.box:=box;
-        if SysopStart<>'' then shell(SysopStart,600,1);
+        if (SysopStart<>'') and (not TempPPPMode) then shell(SysopStart,600,1);
         AppendEPP;
         case netztyp of
           nt_Fido : begin
@@ -571,7 +567,7 @@ begin                  { of Netcall }
           else      SysopTransfer;
         end;
         RemoveEPP;
-        if SysopEnd<>'' then shell(SysopEnd,600,1);
+        if (SysopEnd<>'') and (not TempPPPMode) then shell(SysopEnd,600,1);
         if SysopNetcall then   { in BoxPar }
           sendnetzanruf(false,false);
         dispose(NC);
@@ -1548,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.6  2001/01/10 17:39:05  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.16.2.5  2000/12/20 15:04:48  mk
   - Temp-Fix fuer LFN Rename Problem wieder entfernt
 

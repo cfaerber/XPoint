@@ -83,6 +83,19 @@ begin
 end;
 
 
+  function filesum(fmask:string):longint;
+  var sum : longint;
+      sr  : searchrec;
+  begin
+    sum:=0;
+    findfirst(fmask,ffAnyFile,sr);
+    while doserror=0 do begin
+      inc(sum,sr.size);
+      findnext(sr);
+    end;
+    FindClose(sr);
+    filesum:=sum;
+  end;
 { Puffer in RFC-Files konvertieren }
 
 procedure ZtoRFC(cleardir:boolean; source,destdir:pathstr);
@@ -143,20 +156,6 @@ var sr    : searchrec;
       end;
   end;
 
-  function filesum(fmask:string):longint;
-  var sum : longint;
-      sr  : searchrec;
-  begin
-    sum:=0;
-    findfirst(fmask,ffAnyFile,sr);
-    while doserror=0 do begin
-      inc(sum,sr.size);
-      findnext(sr);
-    end;
-    FindClose(sr);
-    filesum:=sum;
-  end;
-
 begin
   new(f1);                        { Spool r„umen }
   if cleardir then begin
@@ -170,26 +169,38 @@ begin
     NoUUZ; exit;
     end;
   MakeMimetypCfg;
-  with boxpar^ do begin
-    if SizeNego then opt:='-s '
-    else opt:='';
-    if UUsmtp then
-      if UpArcer='' then opt:=opt+'-SMTP '
-      else if pos('freeze',lstr(uparcer))>0 then opt:=opt+'-fSMTP '
-      else if pos('gzip',lstr(uparcer))>0 then opt:=opt+'-zSMTP '
-      else opt:=opt+'-cSMTP ';
-    if UUSmtp and SmtpPPP then opt := opt+'-ppp ';
+  with boxpar^ do
+  begin
+    opt := '';
+    if not TempPPPMode then
+    begin
+      if SizeNego then opt:='-s ';
+      if UUSmtp or PPPSmtp then
+        if UpArcer='' then opt:=opt+'-SMTP '
+        else if pos('freeze',lstr(uparcer))>0 then opt:=opt+'-fSMTP '
+        else if pos('gzip',lstr(uparcer))>0 then opt:=opt+'-zSMTP '
+        else opt:=opt+'-cSMTP ';
+      opt:=opt+'-u'+BoxPar^.username+' ';
+    end else
+    begin
+      opt := opt + '-SMTP '
+    end;
+    if PPPSmtp or TempPPPMode then opt := opt+'-ppp ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
-    opt:=opt+'-u'+BoxPar^.username+' ';
     f:=OutFilter(source);
-    shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
+    if TempPPPMode then
+      shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
+          boxpar^.boxname,400,0)
+    else
+      shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
           boxpar^.boxname+' '+copy(caller,3,4),400,0);
     if f then _era(source);
-    end;
+  end;
   if errorlevel<>0 then exit;
-  if BoxPar^.uparcer='' then begin             { Mail/News nicht packen }
+  if (BoxPar^.uparcer='') or TempPPPMode then
+  begin             { Mail/News nicht packen }
     spufsize:=filesum(DestDir+'D*.OUT');
     spacksize:=spufsize;
     end
@@ -279,13 +290,15 @@ var sr      : searchrec;
 begin
   ImportUUCPfromSpool:=false;
   findfirst(XFerDir+'D*.',ffAnyFile,sr);   { Datenfiles - ohne Extension }
-  if doserror=0 then begin
+  if doserror=0 then
+  begin
     twin;
     clrscr;
     uncompy:=2;
     cursor(curoff);
     new(f1); new(f2);
-    while doserror=0 do begin
+    while doserror=0 do
+    begin
       inc(NC^.recpack,sr.size);
       assign(f1^,XFerDir+sr.name);
       reset(f1^,1);
@@ -318,7 +331,7 @@ begin
     clrscr;
     window(1,1,80,25);
     shell(UUZBin+' -uz -w:'+strs(screenlines)+
-          ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
+        ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
@@ -339,11 +352,12 @@ begin
       EmptySpool('*.*');         { entpackte Dateien l”schen }
     CallFilter(true,dpuffer);
     if _filesize(dpuffer)>0 then
-      if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then begin
+      if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
+      begin
         _era(dpuffer);
         ImportUUCPfromSpool:=true;
-        end;
-    end
+      end;
+  end
   else
     CallFilter(true,dpuffer);
 end;
@@ -413,57 +427,161 @@ end;
 
 
 procedure UUCPSysopTransfer;
-var dummy : longint;
+var
+  dummy : longint;
+  s: String;
 
-  procedure EmptySysin;
-  var sr : searchrec;
+  procedure EmptyDir(const Dir, Mask: String);
+  var
+    sr : searchrec;
   begin
-    if not IsPath(BoxPar^.SysopInp) then exit;
-    findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile,sr);
-    while doserror=0 do begin
-      _era(BoxPar^.sysopinp+sr.name);
+    if not IsPath(Dir) then exit;
+    findfirst(Dir+Mask,ffAnyFile,sr);
+    while doserror=0 do
+    begin
+      _era(Dir+sr.name);
       findnext(sr);
     end;
     FindClose(sr);
   end;
 
+  { ermitteln, welche Nachrichten nicht versand wurden }
+  procedure GetUnversandMessages;
+  var
+    MsgFile: file;
+    IDFile: text;
+    s: String;
+    sr: SearchRec;
+    p: byte;
+    Found: boolean;
+    c : char;
+  begin
+    with BoxPar^ do
+    begin
+      Assign(IDFile, 'UNVERS.ID');
+      ReWrite(IDFile);
+      FindFirst(PPPSpool+'*.OUT', ffAnyFile, sr);
+      while doserror=0 do
+      begin
+        Assign(MsgFile, PPPSpool+sr.name);
+        Reset(MsgFile, 1);
+        Found := false;
+        while (not eof(MsgFile)) and (not Found) do
+        begin
+          s := '';
+          repeat
+            BlockRead(MsgFile, c, 1);
+            if c >= ' ' then s := s + c;
+          until (c = #10) or EOF(MsgFile);
+          if pos('Message-ID:', s) <> 0 then Found := true;
+        end;
+        close(MsgFile);
+
+        if Found then
+        begin
+          p := pos('<', s);
+          Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
+        end;
+        Findnext(sr);
+      end;
+      FindClose(sr);
+      Close(IDFile);
+      if IOResult = 0 then ;
+    end;
+  end;
+
 begin
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
-  with boxpar^ do begin
-    if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
-      trfehler(727,30);   { 'ungltiges Eingabeverzeichnis' }
-      exit;
+  with boxpar^ do
+  begin
+    if not TempPPPMode then
+    begin
+      if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
+        trfehler(727,30);   { 'ungltiges Eingabeverzeichnis' }
+        exit;
       end;
-    if not IsPath(SysopOut) then begin
-      trfehler(728,30);   { 'ungltiges Ausgabeverzeichnis' }
-      exit;
+      if not IsPath(SysopOut) then begin
+        trfehler(728,30);   { 'ungltiges Ausgabeverzeichnis' }
+        exit;
       end;
+    end else
+    begin
+      if not IsPath(PPPSpool) then begin
+        trfehler(728,44);   { 'ungltiges Spoolverzeichnis' }
+        exit;
+      end;
+      EmptyDir(PPPSpool, '*.MSG');
+      EmptyDir(PPPSpool, '*.OUT');
+    end;
 
     NC^.sendbuf:=_filesize(ppfile);
-    if NC^.sendbuf>0 then begin               { -- Ausgabepaket -- }
+    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
+    begin
       outmsgs:=testpuffer(ppfile,false,dummy);
       twin;
       cursor(curoff);
-      ZtoRFC(false,ppfile,SysopOut);
+
+      ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
+    end;
+
+    if TempPPPMode then
+    begin
+      s := PPPClient;
+      exchange(s, '$CONFIG', bfile);
+      exchange(s, '$CLPATHS', PPPClientpaths);
+      shell(s,600,3);
+    end;
+
+    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
+    begin
       window(1,1,80,25);
       WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
-      outmsgs:=0;
+      if TempPPPMode then GetUnversandMessages;
       ClearUnversandt(ppfile,box);
-      closebox;
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
+      if TempPPPMode then
+      begin
+        if Exist('UNVERS.PP') then
+         if filecopy('UNVERS.PP', ownpath+ppfile) then
+           _era('UNVERS.PP');
+        _era('UNVERS.ID');
+        EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. l”schen }
       end;
-
-    if exist(SysopInp+WildCard) or SmtpPPP then                   { -- Eingangspaket -- }
-      if ImportUUCPfromSpool(SysopInp) then
-        EmptySysin;
-    Netcall_connect:=true;
+      Closebox;
     end;
+
+    if TempPPPMode then
+    begin
+      if exist(PPPSpool+'*.MSG') then
+      begin
+        shell(UUZBin+' -uz -w:'+strs(screenlines)+
+          ' '+PPPSpool+'*.MSG '+dpuffer+' '+boxpar^.pointname+domain,600,3);
+        if nDelPuffer and (errorlevel=0) and
+          (testpuffer(dpuffer,false,dummy)>=0) then
+            EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien l”schen }
+
+        NC^.recbuf := filesum(PPPSpool+'*.MSG');
+        CallFilter(true,dpuffer);
+      end;
+      if _filesize(dpuffer)>0 then
+        if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
+          _era(dpuffer);
+    end else
+      if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
+        if ImportUUCPfromSpool(SysopInp) then
+          EmptyDir(BoxPar^.SysopInp, Wildcard);
+
+    Netcall_connect:=true;
+  end;
 end;
 {
   $Log$
+  Revision 1.13.2.5  2001/01/10 17:39:06  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.13.2.4  2001/01/02 17:06:15  mk
   - bei UUCP den Eingangsfilter auch anwerfen wenn kein Pollpaket vorhanden und PPP Option eingeschaltet ist
 

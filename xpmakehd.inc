@@ -558,11 +558,12 @@ begin
             if id = 'BIN' then typ:='B' else
             if id = 'MAL' then LRead2(programm);
 
-            { 01/2000 oh - Customizable Headerlines }
-            if id = UStr(mheadercustom[1]) then LRead(Cust1,CustHeadLen)
+            { Customizable Headerlines }
+            if id = UStr(mheadercustom[1]) then
+              LRead(Cust1,CustHeadLen)
             else
-            if id = UStr(mheadercustom[2]) then LRead(Cust2,CustHeadLen);
-            { /oh }
+              if id = UStr(mheadercustom[2]) then
+                LRead(Cust2,CustHeadLen);
 
             line:='*';
             end;
@@ -600,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.3  2001/01/10 17:39:07  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.15.2.2  2000/08/20 10:42:51  mk
   - kleine Performanceverbesserungen
 

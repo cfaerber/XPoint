@@ -249,7 +249,7 @@ function  cm_key:char;
 implementation  {-------------------------------------------------------}
 
 uses
-  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
+  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings, xp3;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.17  2001/01/10 17:39:02  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.48.2.16  2001/01/03 22:46:48  mk
   - Parameter /Pal hinzugefuegt
 

@@ -11,21 +11,14 @@
 { XP7 - zusÑtzlicher Overlay-Teil }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp7o;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
+uses
+      xpglobal, crt,
       dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti, lfn;
 
@@ -88,7 +81,7 @@ end;
 { Ausgangs-PP-Datei kopieren und filtern }
 
 function OutFilter(var ppfile:string):boolean;
-const FilterPuffer = '_puffer';
+const FilterPuffer = '_PUFFER';
 begin
   if (boxpar^.aFilter<>'') and filecopy(ppfile,FilterPuffer) then begin
     ppfile:=FilterPuffer;
@@ -139,7 +132,15 @@ var f      : file;
   var pbox : string[20];
       uvl  : boolean;
       uvs  : byte;
+      IDFile: text;
+      HaveIDFile: boolean;
+      MsgIDFound : boolean;
+      Outmsgid   : string[MidLen];
   begin
+    HaveIDFile := Exist('UNVERS.ID');
+    if HaveIDFile then
+      Assign(IDFile, 'UNVERS.ID');
+
     with hdp^ do begin
       pbox:='!?!';
       if (cpos('@',empfaenger)=0) and
@@ -162,32 +163,68 @@ var f      : file;
         else begin
           _brett:=mbrettd('U',ubase);
           dbReadN(ubase,ub_pollbox,pbox);
-          end;
-        end;
-      if pbox<>'!?!' then begin
-        dbSeek(mbase,miBrett,_brett+#255);
-        uvl:=false;
-        if dbEOF(mbase) then dbGoEnd(mbase)
-        else dbSkip(mbase,-1);
-        if not dbEOF(mbase) and not dbBOF(mbase) then
-          repeat
-            dbReadN(mbase,mb_brett,_mbrett);
-            if _mbrett=_brett then begin
-              dbReadN(mbase,mb_unversandt,uvs);
-              if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
-                 (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid'))
-              then begin
-                uvs:=uvs and $fe;
-                dbWriteN(mbase,mb_unversandt,uvs);
-                uvl:=true;
-                end;
-              end;
-            dbSkip(mbase,-1);
-          until uvl or dbBOF(mbase) or (_brett<>_mbrett);
-        if not uvl then
-          trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
         end;
       end;
+      if pbox<>'!?!' then
+      begin
+        dbSeek(mbase,miBrett,_brett+#255);
+        uvl:=false;
+        if dbEOF(mbase) then
+          dbGoEnd(mbase)
+        else
+          dbSkip(mbase,-1);
+        if not dbEOF(mbase) and not dbBOF(mbase) then
+        repeat
+          dbReadN(mbase,mb_brett,_mbrett);
+          if _mbrett = _brett then
+          begin
+            dbReadN(mbase,mb_unversandt,uvs);
+            if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
+               (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid')) then
+            begin
+              MsgIDFound := false;
+              { Check, ob MsgID in unversandten Nachrichten enthalten ist }
+              if HaveIDFile then
+              begin
+                Reset(IDFile); { von vorn starten }
+                repeat
+                  Readln(IDFile, OutMsgid);
+                  if FormMsgid(OutMsgid) = dbReadStr(mbase,'msgid') then
+                    MsgIDFound:=true;
+                until eof(IDFile) or MsgIDFound;
+              end;
+              if not MsgIDFound then
+              begin
+                uvs:=uvs and $fe;
+                dbWriteN(mbase, mb_unversandt, uvs);
+              end else
+              begin
+                if not ((hdp^.typ='B') and (maxbinsave>0) and
+                  (hdp^.groesse > maxbinsave*1024)) then
+                begin
+                  if exist('UNVERS.PP') then
+                    extract_msg(2,'','UNVERS.PP',true,1)
+                  else
+                    extract_msg(2,'','UNVERS.PP',false,1);
+                end else
+                begin
+                  { String noch in die Resource Åbernehmen }
+                  tFehler('Die Datei ' + hdp^.datei + ' an ' + hdp^.empfaenger + ' bitte erneut versenden!',30);
+                  uvs:=uvs and $fe;
+                  dbWriteN(mbase,mb_unversandt,uvs);
+                end;
+              end; { MsgIDFound }
+              uvl:=true;
+            end;
+          end;
+          dbSkip(mbase,-1);
+        until uvl or dbBOF(mbase) or (_brett<>_mbrett);
+        if not uvl then
+          trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
+      end;
+    end;
+    if HaveIDFile then
+      Close(IDFile);
   end;
 
 begin
@@ -774,6 +811,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.12  2001/01/10 17:39:06  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.13.2.11  2000/12/31 11:35:55  mk
   - fileio.disksize statt lfn.disksize benutzen
 

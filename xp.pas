@@ -90,7 +90,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpuu}    {$O xp8}     {$O xp9}      {$O xp9bp}    {$O xp10}    {$O xpe}
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
-{$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
+{$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts} {$O XPGLOBAL }
 {$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
 {$IFDEF CAPI }
 {$O capi }
@@ -196,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.10  2001/01/10 17:39:02  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.29.2.9  2000/12/30 16:06:10  mk
   - bei Parameter /t:x keinen Betahinweis zeigen
 

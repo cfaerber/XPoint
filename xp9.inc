@@ -361,6 +361,7 @@
       flags  : byte;
       fnode  : boolean;  { Fido-Absender: Nodenummer }
       pp     : byte;
+      TempSmtp: String;
   begin
     dbGo(d,drec[p]);
     dbRead(d,'pointname',pname);
@@ -369,18 +370,22 @@
     uucp:=(nt=nt_UUCP);
     pronet:=(nt=nt_Pronet);
     zc:=(nt=nt_ZConnect);
-    xx:=66; yy:=11;
+    xx:=iif(uucp, 76, 66); yy:=11;
     case nt of
       nt_Fido    : begin
                      xx:=56; yy:=18;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_UUCP    : yy:=19;
+      nt_UUCP    : yy:=18;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
     end;
     dialog(xx,yy,kompname,x,y);
-    with boxpar^ do begin
+    with boxpar^ do
+    begin
+      if UUSmtp then TempSmtp := 'SMTP/UUCP'
+        else if PPPSmtp then TempSmtp := 'SMTP/PPP'
+        else TempSmtp := Copy(getres2(920,65), 1, Pos('˘', Getres2(920,65))-1);
       case nt of
         nt_Maus : begin
                     dbRead(d,'boxname',pname);
@@ -401,7 +406,7 @@
 
       else        begin
                     if uucp then
-                      maddstring(3,2,getres2(920,10),pname,20,25,'<')
+                      maddstring(3,2,getres2(920,10),pname,25,25,'<')
                     else
                       maddstring(3,2,getres2(920,10),pname,20,25,'>');
                     mhnr(140);                             { 'Pointname' }
@@ -412,12 +417,16 @@
                                    iifs(ntGrossPW(nt),'>',''));
                   end;                                       { 'Pa·wort  ' }
       end;
-      if not pronet then begin
-        maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
+      if not pronet then
+      begin
+        if uucp then
+          maddstring(45,2,getres2(920,12),telefon,20,60,'')  { 'Telefon'  }
+        else
+          maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
                    iif(fido,18,17),60,'');                   { 'Telefon'  }
         mhnr(142);
         malltrim;
-        end;
+      end;
       if nt in [nt_Netcall,nt_ZConnect,nt_Magic,nt_Pronet] then begin
         maddstring(iif(pronet,39,38),3,getres2(920,13)+iifs(pronet,' ',''),zerbid,4,4,'>');
         msetvfunc(zidtest); mhnr(143);                         { 'Ser.Nr.' }
@@ -431,15 +440,17 @@
       if fido then begin
         maddstring(27,3,getres2(920,15),passwort,18,18,''); mhnr(153);
         mset3proc(fidotestpasslen);                            { 'Pa·wort' }
-        end;
-      if uucp then begin
-        maddstring(38,3,getres2(920,16),loginname,17,20,'');   { 'Login  ' }
+      end;
+      if uucp then
+      begin
+        maddstring(45,3,getres2(920,16),loginname,20,20,'');   { 'Login  ' }
         mhnr(8016);
         loginfld:=fieldpos;
-        end;
+      end;
 
       add:=iif(nt=nt_Maus,0,1);
-      if not (fido or uucp) then begin
+      if not (fido or uucp) then
+      begin
         br:=iif(pronet,30,41);
         maddstring(3,4+add,getres2(920,20),uploader,br,100,''); mhnr(144);
           mappsel(false,'Zmodem˘gsz.exe portx $ADDRESS,$IRQ sz $UPFILE˘'+
@@ -458,42 +469,45 @@
           end;
         add:=1;
         lhapar:='';
-        end
-      else begin
+      end
+      else
+      begin
         add:=-2;
         lhapar:=' -m';
         br:=iif(uucp,41,31);
-        end;
+      end;
 
       begin
-        maddstring(3,7+add,getres2(920,23),uparcer,br,60,''); mhnr(146);
-          if uucp then begin                        { 'Upload-Packer     ' }
-            mappsel(false,'compress -vf -b12 $PUFFER˘compress -vf -b16 $PUFFER˘freeze -vif $PUFFER˘gzip -vf $PUFFER');
-            mhnr(8020);
-            end
-          else
-            mappsel(false,'pkarc a $UPFILE $PUFFER˘pkpak a $UPFILE $PUFFER˘lharc a'+lhapar+' $UPFILE $PUFFER˘'+
-                          'lha a'+lhapar+' $UPFILE $PUFFER˘pkzip $UPFILE $PUFFER˘arj a $UPFILE $PUFFER˘'+
+        maddstring(3,7+add,getres2(920,23),uparcer,iif(uucp, 26, br),60,''); mhnr(146);
+        if uucp then
+        begin                        { 'Upload-Packer     ' }
+          mappsel(false,'compress -vf -b12 $PUFFER˘compress -vf -b16 $PUFFER˘freeze -vif $PUFFER˘gzip -vf $PUFFER');
+          mhnr(8020);
+        end
+        else
+          mappsel(false,'pkarc a $UPFILE $PUFFER˘pkpak a $UPFILE $PUFFER˘lharc a'+lhapar+' $UPFILE $PUFFER˘'+
+                        'lha a'+lhapar+' $UPFILE $PUFFER˘pkzip $UPFILE $PUFFER˘arj a $UPFILE $PUFFER˘'+
                           'rar -std a $UPFILE $PUFFER˘copy $PUFFER $UPFILE');
-          msetvfunc(progtest);
-          mset3proc(set_uparcext);
-        maddstring(3,8+add,getres2(920,iif(uucp,25,24)),downarcer,br,60,'');
-          if uucp then                              { 'Download-Entpacker' }
-            mappsel(false,'compress -vdf $DOWNFILE˘gzip -vdf $DOWNFILE')
-          else
-            mappsel(false,'pkxarc $DOWNFILE˘pkunpak $DOWNFILE˘lharc e $DOWNFILE˘lha e $DOWNFILE˘'+
-                          'pkunzip $DOWNFILE˘arj e $DOWNFILE˘copy $DOWNFILE $PUFFER˘'+
-                          'rar -std e $DOWNFILE');
-          msetvfunc(progtest);
-          mset3proc(set_downarcext);
-        if uucp then begin
-          maddstring(3,9+add,getres2(920,26),unfreezer,br,40,'');  { 'Freeze-Entpacker' }
+        msetvfunc(progtest);
+        mset3proc(set_uparcext);
+        maddstring(3,8+add,getres2(920,25),downarcer,iif(uucp, 26, br),60,'');
+        if uucp then                              { 'Download-Entpacker' }
+          mappsel(false,'compress -vdf $DOWNFILE˘gzip -vdf $DOWNFILE')
+        else
+          mappsel(false,'pkxarc $DOWNFILE˘pkunpak $DOWNFILE˘lharc e $DOWNFILE˘lha e $DOWNFILE˘'+
+                        'pkunzip $DOWNFILE˘arj e $DOWNFILE˘copy $DOWNFILE $PUFFER˘'+
+                        'rar -std e $DOWNFILE');
+        msetvfunc(progtest);
+        mset3proc(set_downarcext);
+        if uucp then
+        begin
+          maddstring(3,9+add,getres2(920,26),unfreezer,iif(uucp, 26, br),40,'');  { 'Freeze-Entpacker' }
           mappsel(false,'freeze -vdif $DOWNFILE');
           msetvfunc(progtest);
-          maddstring(3,10+add,getres2(920,27),ungzipper,br,40,''); { 'GNU-ZIP-Entpacker' }
+          maddstring(3,10+add,getres2(920,27),ungzipper,iif(uucp, 26, br),40,''); { 'GNU-ZIP-Entpacker' }
           mappsel(false,'gzip -vdf $DOWNFILE');
           msetvfunc(progtest);
-          end;
+        end;
         if not fido then
           if uucp then begin
             maddint(3,10,getres2(920,30),maxpacketsize,5,4,64,4096);
@@ -503,31 +517,39 @@
             maddint(3,12,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigrî·e   ' }
               mhnr(8025);
             maddtext(35,12,'KB',0);
-            maddbool(3,14,getres2(920,32),VarPacketSize);     { 'variable Paketgrî·e' }
-              mhnr(8012);
-            maddbool(3,15,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgrî·e vorgeben' }
-            maddbool(3,16,getres2(920,35),SizeNego);          { 'Dateigrî·e Åbertragen' }
-            maddbool(3,17,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
-            mset1func(SetSmtp);
-            maddbool(3,18,getres2(920,57), SmtpPPP);
-            if not UUSmtp then mdisable;
+
+            maddstring(3,13,getres2(920,64),TempSmtp,9,9,'');
+            mappsel(true,getres2(920,65)); mhnr(8017);
+
             Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
             Ue:=cpos('e',uuprotos)>0; Uz:=cpos('z',uuprotos)>0;
             Uf:=cpos('f',uuprotos)>0;
-            maddbool(43,10,getres2(920,34),Ug);    { 'g-Protokoll' }
+            maddbool(53,5,getres2(920,34),Ug);    { 'g-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uup1:=fieldpos;
-            maddbool(43,11,getres2(920,33),U_G);    { 'G-Protokoll' }
+            maddbool(53,6,getres2(920,33),U_G);    { 'G-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,12,getres2(920,37),Uz);    { 'z-Protokoll' }
+            maddbool(53,7,getres2(920,37),Uz);    { 'z-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,13,getres2(920,38),Uf);    { 'f-Protokoll' }
+            maddbool(53,8,getres2(920,38),Uf);    { 'f-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,14,getres2(920,39),Ue);    { 'e-Protokoll' }
+            maddbool(53,9,getres2(920,39),Ue);    { 'e-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uupl:=fieldpos;
-            maddbool(43,16,getres2(920,61),uucp7e1);   { 'Login mit 7e1' }
+            maddbool(41,10,getres2(920,32),VarPacketSize);     { 'variable Paketgrî·e' }
+              mhnr(8012);
+            maddbool(41,11,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgrî·e vorgeben' }
+            maddbool(41,12,getres2(920,35),SizeNego);          { 'Dateigrî·e Åbertragen' }
+            maddbool(41,13,getres2(920,61), uucp7e1);   { 'Login mit 7e1' }
             mhnr(8024);
+
+            maddtext(0,14,getres2(920,66), 0); { Linie }
+            maddbool(3,15,getres2(920,57), PPPMode); { 'PPP-Modus (externe Clients)' }
+            mhnr(8026);
+            maddstring(3,17,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
+            maddstring(3,18,getres2(920,63),PPPSpool,40,60,ValidDirCh);   { 'Spool-Verzeichnis' }
+            msetvfunc(testfidodir);
+
             uparcnr:=0; downarcnr:=0;
             end
           else begin
@@ -571,8 +593,10 @@
     freeres;
     EditPnt:=nt;
     readmask(brk);
-    if not brk then begin
-      if fido then with boxpar^ do begin
+    if not brk then
+    begin
+      if fido then with boxpar^ do
+      begin
         flags:=flags and (not 4) + iif(fnode,4,0);
         dbWrite(d,'script',flags);
         pname:=strs(pnr);
@@ -583,15 +607,19 @@
       dbWrite(d,'pointname',pname);
       boxpar^.pointname:=pname;
       if ntOnePW(nt) then boxpar^.o_passwort:=boxpar^.passwort;
-      if uucp then with boxpar^ do begin
+      if uucp then with boxpar^ do
+      begin
         uuprotos:='';
         if Ug then uuprotos:=uuprotos+'g';
         if U_G then uuprotos:=uuprotos+'G';
         if Uz then uuprotos:=uuprotos+'z';
         if Uf then uuprotos:=uuprotos+'f';
         if Ue then uuprotos:=uuprotos+'e';
-        end;
+        UUSmtp := false; PPPSmtp := false;
+        if TempSmtp = 'SMTP/UUCP' then UUSmtp := true else
+        if TempSmtp = 'SMTP/PPP' then PPPSmtp := true;
       end;
+    end;
     enddialog;
   end;
 
@@ -838,7 +866,7 @@
   begin
     add:=0;
     dialog(ival(getres2(924,0)),
-           13+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
+           14+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     dbRead(d,'AVertreter',av);
     dbRead(d,'PVertreter',pv);
@@ -881,7 +909,8 @@
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,12+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
-      maddbool(20,12+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      maddbool(20,12+add,getres2(924,19),ReplaceOwn); mhnr(8051);  { 'lokale Kopien ersetzen' }
+      maddbool(20,13+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1340,6 +1369,9 @@
 
 {
   $Log$
+  Revision 1.10.2.10  2001/01/10 17:39:06  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.10.2.9  2000/12/23 12:07:58  mk
   - fixed last commit
 

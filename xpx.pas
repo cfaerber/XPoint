@@ -46,24 +46,6 @@ begin
   halt(1);
 end;
 
-{ Diese Funktion und deren Aufruf dÅrfen nicht verÑndert werden }
-{ (siehe LIZENZ.TXT).                                           }
-procedure logo;
-var t : text;
-begin
-  assign(t,'');
-  rewrite(t);
-  writeln(t);
-  write(t,xp_xp);
-  if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,betastr,' ',x_copyright,
-            ' by ',author_name,' (',author_mail,')');
-  writeln(t);
-  writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
-  writeln(t);
-  close(t);
-end;
-
 
 procedure readname;
 var t    : text;
@@ -260,6 +242,9 @@ begin
 
 end;
 
+const
+  Open: String = 'Open';
+
 begin
   checkbreak:=false;
   if swap(dosversion)<MinVersion then
@@ -275,12 +260,11 @@ begin
   oldexit:=exitproc;
   exitproc:=@setpath;
   mausunit_init;
-  logo;
   {$IFNDEF NO386 }      { Die XT Version darf hier nicht testen }
   if Test8086 < 2 then
   begin
-    Writeln('OpenXP lÑuft in dieser Version erst ab 386er CPUs mit CoProzessor.');
-    Writeln('Eine XT-Version kann von der Homepage http://www.openxp.de bezogen werden.');
+    Writeln(Open+'XP lÑuft in dieser Version erst ab 386er CPUs mit CoProzessor.');
+    Writeln('Eine XT-Version kann von der Homepage http://www.' + Open+ 'xp.de bezogen werden.');
     runerror := false;
     Halt(1);
   end;
@@ -293,6 +277,7 @@ begin
       OvrInitEMS;
     OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
+  logo;
 
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
@@ -308,6 +293,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.6  2001/01/10 17:39:07  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.18.2.5  2000/12/05 13:09:42  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
 

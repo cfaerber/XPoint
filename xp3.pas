@@ -97,6 +97,7 @@ function  brettok(trenn:boolean):boolean;
 
 function  extmimetyp(typ:string):string;
 function  compmimetyp(typ:string):string;
+procedure CloseAblage;
 
 
 implementation  {-----------------------------------------------------}
@@ -108,6 +109,40 @@ implementation  {-----------------------------------------------------}
 
 uses  xp3o,xp3ex,xpnt;
 
+const
+  GlobalAblageOpen: Boolean = false;
+var
+  GlobalPuffer: file;
+  GlobalLastPuffer: Byte;
+
+procedure CloseAblage;
+begin
+  if IOResult = 0 then;
+  if GlobalAblageOpen then
+  begin
+    Close(GlobalPuffer);
+    if IOResult = 0 then ;
+    GlobalAblageOpen := false;
+  end;
+end;
+
+procedure OpenAblage(Ablage: Byte);
+var
+  OldFileMode: Byte;
+begin
+  if (GlobalLastPuffer <> Ablage) or not GlobalAblageOpen then
+  begin
+    CloseAblage;
+    OldFileMode := FileMode;
+    FileMode := 0 + fmDenyNone;
+    Assign(GlobalPuffer,aFile(Ablage));
+    Reset(GlobalPuffer, 1);
+    GlobalLastPuffer := Ablage;
+    FileMode := OldFileMode;
+    GlobalAblageOpen := true;
+    if IOResult = 0 then ;
+  end;
+end;
 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword); assembler;
@@ -403,54 +438,53 @@ end;
 {$define pgp}
 {$I xpmakehd.inc}           { MakeHeader() }
 
-
 { in dieser Prozedur kein ReadN/WriteN verwenden, wegen }
 { XP2.NewFieldMessageID !                               }
 
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);
 var ok     : boolean;
-    puffer : file;
     ablg   : byte;
     flags  : byte;
     errstr : string[30];
-    empfnr : smallword; { MK 06.02.00 }
+    empfnr : smallword;
     nopuffer: boolean;
 begin
-  {  fillchar(hd,sizeof(hd),0); Wird von makeheader nochmal gemacht }
   ok:=true;
   dbRead(mbase,'ablage',ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
-  if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then begin
+  if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then
+  begin
     ok:=false;
     errstr:=getres(300);  { '; falsche Gr”áenangaben' }
-    end
-  else begin
-    assign(puffer,aFile(ablg));
-    reset(puffer,1);
+  end
+  else
+  begin
+    OpenAblage(Ablg);
     nopuffer:=(ioresult<>0);
     if nopuffer then begin
       ok:=false;
       errstr:=getres(301);  { '; Ablage fehlt' }
-      end
-    else begin
-      seek(puffer,dbReadInt(mbase,'adresse'));
-      if eof(puffer) then begin
+    end
+    else
+    begin
+      seek(GlobalPuffer,dbReadInt(mbase,'adresse'));
+      if IOResult <> 0 {eof(puffer) }then
+      begin
         ok:=false;
         errstr:=getres(302)  { '; Adreáindex fehlerhaft' }
-        end;
       end;
+    end;
     if ReadHeadEmpf=0 then
       empfnr:=dbReadInt(mbase,'netztyp') shr 24
     else begin
       empfnr:=ReadHeadEmpf; ReadHeadEmpf:=0;
       end;
-    if ok then makeheader(ntZCablage(ablg),puffer,empfnr,ReadHeadDisk,hds,hd,
+    if ok then makeheader(ntZCablage(ablg),GlobalPuffer,empfnr,ReadHeadDisk,hds,hd,
                           ok,not NoPM2AMconv);
-    if not nopuffer then
-      close(puffer);
     errstr:='';
-    end;
-  if not ok then begin
+  end;
+  if not ok then
+  begin
     hds:=1;
     if hderr then begin
       fehler(getres(303)+strs(ablg)+errstr+')');  { 'Nachricht ist besch„digt  (Ablage ' }
@@ -458,7 +492,7 @@ begin
       end;
     flags:=2;
     dbWrite(mbase,'halteflags',flags);
-    end;
+  end;
   if left(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=copy(hd.empfaenger,9,255);
   ReadEmpflist:=false; ReadHeadDisk:=0;
@@ -476,7 +510,6 @@ end;
 procedure XreadF(ofs:longint; var f:file);
 var p        : pointer;
     bufs,rr  : word;
-    puffer   : file;
     ablage   : byte;
     size     : longint;
     adr      : longint;
@@ -489,14 +522,13 @@ var p        : pointer;
 label ende;
 begin
   dbReadN(mbase,mb_ablage,ablage);
-  assign(puffer,aFile(ablage));
-  reset(puffer,1);
+  OpenAblage(ablage);
   if ioresult<>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     XReadIsoDecode:=false;
     exit;
     end;
-  Bufs := GetMaxMem(p, 2048, 32768);
+  Bufs := GetMaxMem(p, 2048, 16384);
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
   if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
@@ -506,18 +538,19 @@ begin
       minus:=hdp^.komlen;
     dispose(hdp);
     end;
-  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
+  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(GlobalPuffer) then
+  begin
     berr:=buferr(ablage);
     blockwrite(f,berr[1],length(berr));
     end
   else begin
-    seek(puffer,adr+ofs);
+    seek(GlobalPuffer,adr+ofs);
     dbReadN(mbase,mb_msgsize,size);
     dec(size,ofs);
     iso:=XReadIsoDecode and (dbReadInt(mbase,'typ')=ord('T')) and
          (dbReadInt(mbase,'netztyp') and $2000<>0);
     while size>0 do begin
-      blockread(puffer,p^,min(bufs,size),rr);
+      blockread(GlobalPuffer,p^,min(bufs,size),rr);
       if inoutres<>0 then begin
         tfehler('XReadF: '+ioerror(ioresult,getreps(306,strs(ablage))),30);  { 'Fehler beim Lesen aus Ablage %s' }
         goto ende;
@@ -530,12 +563,11 @@ begin
         goto ende;
         end;
       dec(size,rr);
-      if (size>0) and eof(puffer) then
+      if (size>0) and eof(GlobalPuffer) then
         size:=0;
       end;
     end;
 ende:
-  close(puffer);
   if ioresult = 0 then ;
   freemem(p,bufs);
   XReadIsoDecode:=false;
@@ -558,18 +590,17 @@ end;
 
 
 procedure XmemRead(ofs:word; var size:word; var data);
-var puffer   : file;
-    ablage   : byte;
+var
+  ablage   : byte;
 begin
-  if ofs<dbReadInt(mbase,'msgsize') then begin
+  if ofs<dbReadInt(mbase,'msgsize') then
+  begin
     dbReadN(mbase,mb_ablage,ablage);
-    assign(puffer,aFile(ablage));
-    reset(puffer,1);
-    seek(puffer,dbReadInt(mbase,'adresse')+ofs);
-    blockread(puffer,data,size,size);
+    OpenAblage(Ablage);
+    seek(GlobalPuffer,dbReadInt(mbase,'adresse')+ofs);
+    blockread(GlobalPuffer,data,size,size);
     if ioresult = 0 then ;
-    close(puffer);
-    end
+  end
   else
     fillchar(data,size,0);
 end;
@@ -584,6 +615,7 @@ var f,puffer : file;
     p        : pointer;
     bs,rr    : word;
 begin
+  CloseAblage;
   bs := GetMaxMem(p, 1024, 32768);
   dbReadN(mbase,mb_ablage,ablage);
   dbReadN(mbase,mb_msgsize,oldsize);
@@ -975,15 +1007,17 @@ var  f  : file;
      b  : ba;
      abl : byte;
 begin
-  if not dbEOF(mbase) and not dbBOF(mbase) then begin
+  if not dbEOF(mbase) and not dbBOF(mbase) then
+  begin
+    CloseAblage;
     dbReadN(mbase,mb_ablage,abl);
     if abl<ablagen then begin
       fillchar(b,sizeof(b),false);
       assign(f,killedDat);
-      if existf(f) then begin
+      if existf(f) then
+      begin
         reset(f,1); blockread(f,b,ablagen,rr); seek(f,0);
-        end
-      else
+      end else
         rewrite(f,1);
       if not b[abl] then begin
         b[abl]:=true;
@@ -1004,6 +1038,7 @@ end;
 procedure getablsizes;
 var i : byte;
 begin
+  CloseAblage;
   for i:=0 to ablagen-1 do
     ablsize[i]:=_filesize(AblagenFile+strs(i));
 end;
@@ -1239,6 +1274,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.8  2001/01/10 17:39:04  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.25.2.7  2001/01/04 16:53:07  mk
   - const-Parameter in isbox() verwenden
 

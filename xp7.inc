@@ -32,12 +32,15 @@ var uucp : boolean;
 
 begin
   uucp:=(logintyp=ltUUCP);
-  with BoxPar^ do begin
-    SysopMode:=(SysopInp+SysopOut<>'');
+  with BoxPar^ do
+  begin
+    TempPPPMode := PPPMode;
+    if SysopInp+SysopOut<>'' then TempPPPMode := false;
+    SysopMode:=(SysopInp+SysopOut<>'') or TempPPPMode;
     if SysopMode then
-      if sysopinp='' then
+      if (sysopinp='') and (not TempPPPMode) then
         BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
-      else if sysopout='' then
+      else if (sysopout='') and (not TempPPPMode) then
         BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
       else
         BoxParOk:=''
@@ -1433,6 +1436,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.4  2001/01/10 17:39:05  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.24.2.3  2000/12/12 11:30:29  mk
   - FindClose hinzugefuegt
 

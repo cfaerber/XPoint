@@ -66,7 +66,7 @@ var x,y,fm   : byte;
     ablage   : byte;
     abadd    : byte;
     p        : charrp;
-    adr,fs,l : longint;
+    adr,fs,l,msgpos : longint;
     hdp      : headerp;
     i        : integer;
     hdsize   : longint;
@@ -77,12 +77,12 @@ var x,y,fm   : byte;
     ok       : boolean;
     name     : string[AdrLen];
     adrbuch  : byte;
-    flags,atp: byte;
+    atp      : byte;
     pb       : string[20];
     grnr     : longint;
     _brett   : string[5];
     ld       : longint;
-    uflags   : byte;
+    uflags,b : byte;
     aufnehmen: boolean;
     diff     : integer;
     d        : DB;
@@ -113,6 +113,7 @@ var x,y,fm   : byte;
     orgempf  : string[AdrLen];
     mbflags  : longint;
     cust_header : custheadstr;
+    flags : longint;
 
   function puffer_ok:boolean;
   var ok : boolean;
@@ -678,6 +679,7 @@ begin
 
   getmem(p,bufsize);
   new(hdp);
+  dbSetIndex(bezbase,beiMsgID);
   if check and puffer_ok then begin
     abadd:=iif(zconnect,10,0);
     l:=ablsize[1+abadd]; ablage:=1+abadd;   { 0/10 = PM-Ablage }
@@ -839,8 +841,9 @@ begin
 
           attrtxt(col.colmboxhigh);
           dbSeek(ubase,uiName,ustr(absender));
-          uflags:=0; 
-          if not dbFound then begin          { neuen User anlegen }
+          uflags:=0;
+          if not dbFound and (Length(Absender)<=80) then
+          begin          { neuen User anlegen }
             if adrok(absender) then begin
               mwrt(29,wherey,forms(absender,22));
               dbAppend(ubase);
@@ -857,14 +860,12 @@ begin
           else
             if empfaenger[1]<>'A' then
               aufnehmen:=true
-                         { not developer or
-                         ((pos('@mips.pfalz.de',absender)=0) and
-                          (pos('news@pythia.lunetix.de',absender)=0) and
-                          (pos('news@dfki.uni-sb.de',absender)=0)) }
-            else begin
+            else
+            begin
               dbReadN(ubase,ub_userflags,uflags);
+              { Nachrichtenfilter beachten }
               aufnehmen:=odd(uflags);
-              end;
+            end;
           if left(empfaenger,1)<>'U' then begin
             dbSeek(bbase,biBrett,ustr(empfaenger));
             if not dbFound then begin
@@ -950,7 +951,33 @@ begin
                      (filterattr and fattrGelesen<>0) or
                      (pflags and pe_gelesen<>0);
 
-          if aufnehmen then begin
+          { Nach RÅcklÑufern suchen }
+          if BoxPar^.ReplaceOwn and Aufnehmen then
+          begin
+            dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(msgid)));
+            if dbFound then
+            begin { RÅcklÑufer gefunden }
+              msgpos := dbReadInt(bezbase,'msgpos');
+              if not dbDeleted(mbase, msgpos) then
+              begin
+                dbGo(mbase, msgpos);
+                dbReadN(mbase,mb_flags,flags); { Flags holen }
+                if flags and 256 <> 0 then
+                begin
+                  (* b := 1; { Nachricht auf gelesen setzen }
+                  dbWriteN(mbase,mb_gelesen,b);
+                  b := 2; { Nachricht auf gelîscht setzen }
+                  dbWriteN(mbase,mb_halteflags,b); *)
+                  wrkilled; { Ablage auf jeden Fall reorganisieren }
+                  DelBezug;
+                  dbDelete(mbase);
+                end;
+              end;
+            end;
+          end;
+
+          if aufnehmen then
+          begin
             if left(empfaenger,1)<>'U' then begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
@@ -1066,10 +1093,10 @@ begin
             wrll(0);
             wrll(0);
             gotoxy(wherex,wherey-1);
-            end;
+          end;
 
           inc(empfnr);
-          end;           { with hdp^ }
+        end;           { with hdp^ }
         if msgsent then begin
           attrtxt(col.colmboxhigh);
           TestControlMessage;
@@ -1123,12 +1150,7 @@ begin
     close(brettlog);
     close(userlog);
     puffereinlesen:=true;
-(*
-    write(getres(320));   { 'DatumsbezÅge werden Åberarbeitet...     %' }
-    GotoXY(WhereX-5, WhereY);
-    BrettDatumSetzen(true);
-    moff; Wrt2(getres(321)); mon;  { ' fertig.' }
-*)
+
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
   end   { if Puffer_ok }
 
@@ -1202,6 +1224,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.7  2001/01/10 17:39:04  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.21.2.6  2000/11/30 14:10:36  mk
   - fixed NewUserIBM when adding new uesers
 

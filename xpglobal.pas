@@ -6,18 +6,21 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
+{$I XPDEFINE.INC }
+{$F+,O+}
+
 unit xpglobal;
 
 interface
 
-{$I XPDEFINE.INC }
-
 const
   verstr      = 'v3.40';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' RC3';      { '' oder ' beta' }
-
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
+
+       xp_xp       : string[17] = 'CrossPoint/OpenXP';
+       xp_origin   : string[21] = '--- CrossPoint/OpenXP';
   x_copyright = '(c) 2000';
 
 type
@@ -71,18 +74,32 @@ const
   MaxLenFilename = 13;
   MaxLenPathname = 79;
 
+procedure logo;
+
 implementation
 
+procedure logo;
+var t : text;
 begin
-  {$IFDEF Beta }
-    {$IFDEF FPC }
-       Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
-        ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
-    {$ENDIF }
-  {$ENDIF }
+  assign(t,'');
+  rewrite(t);
+  writeln(t);
+  write(t,xp_xp);
+  if (xp_xp='CrossPoint') then write(t,'(R)');
+  writeln(t,' ',verstr,betastr,' ',x_copyright,
+            ' by ',author_name,' (',author_mail,')');
+  writeln(t);
+  writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
+  writeln(t);
+  close(t);
+end;
+
 end.
 {
   $Log$
+  Revision 1.29.2.13  2001/01/10 17:39:07  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.29.2.12  2001/01/02 11:43:17  mk
   - Versionnummer auf RC3 geaendert
 

@@ -687,6 +687,7 @@ begin
   blind:=false;
   quotecolors:=true;
   trennkomm:=3;
+  parsavepal:= false;
   vesa_dpms:=false;
   termbios:=false;
   tonsignal:=false;
@@ -799,6 +800,7 @@ begin
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
   writeln(t,'BlackSaver=',jnf(blacksaver));
+  writeln(t,'SaveVGAPal=',jnf(ParSavePal));
   writeln(t,'VESA-DPMS=',jnf(vesa_dpms));
   writeln(t,'Useraufnahme=',Uaufnahme_string);
   writeln(t,'NeuUserGruppe=',NeuUsergruppe);
@@ -1525,6 +1527,7 @@ begin
           getx(su,  'blindensupport',blind) or
           getx(su,  'quotecolors',quotecolors) or
           getb(su,  'trennkommentar',trennkomm) or
+          getx(su,  'SaveVGAPal', parsavepal) or
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
@@ -1698,6 +1701,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.16  2001/01/10 17:39:04  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.62.2.15  2000/12/31 14:46:13  mk
   - Tearlineschalter in Config/Optionen/Netze
 

@@ -239,6 +239,7 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       addhd         : array[1..maxaddhds] of string;
       addhdmail     : array[1..maxaddhds] of boolean;
       addhds        : integer;
+      convibm: boolean;
 
 const
       { Wird zum Einlesen der Customizable Headerlines ben”tigt }
@@ -1237,7 +1238,7 @@ end;
 
 
 procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
-var p : byte;
+var p : word;
 begin
   if not MakeQP or (hd.mime.encoding<>encQP) then exit;
   p:=1;
@@ -1368,6 +1369,7 @@ begin
 { /robo }
 
       charset:=iifs(x_charset='','us-ascii',x_charset);
+      if convibm = false then charset:='iso-8859-1';
       end
     else if attrib and AttrMPbin <> 0 then begin
       ctype:=tMultipart;
@@ -2792,7 +2794,7 @@ var dat    : string[30];
   var p,r,ml : byte;
   begin
     uuz.s:=ss;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     ss:=uuz.s;
     ml:=iif(rfc1522,60,78);
     r:=ml+1-length(txt);
@@ -2888,7 +2890,9 @@ var dat    : string[30];
 
 
 begin
-  with hd do begin
+  with hd do
+  begin
+    convibm := lstr(hd.charset) <> 'iso1';
     dat:=ZtoRFCdate(datum,zdatum);
     if mail then begin
       if wab='' then s:=absender          { Envelope erzeugen }
@@ -2923,12 +2927,12 @@ begin
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
     uuz.s:=realname;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     RFC1522form;
     wrs(f,'From: '+absender+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     if wab<>'' then begin
       uuz.s:=war;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     end;
@@ -2990,12 +2994,12 @@ begin
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     RFC1522form;
     wrs(f,'Subject: '+uuz.s);
     if keywords<>'' then begin
       uuz.s:=keywords;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
     end;
@@ -3051,7 +3055,7 @@ begin
       wrs(f,'Distribution: '+distribution);
     if organisation<>'' then begin
       uuz.s:=organisation;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
     end;
@@ -3077,7 +3081,7 @@ begin
       wrs(f,'X-Comment-To: '+fido_to);
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,uuz.s);
     end;
@@ -3340,7 +3344,7 @@ begin
           while fpos+bufpos<gs do begin
             ReadString(true);
             if fpos+bufpos>gs then ShortS;
-            IBM2ISO;
+            if convibm then IBM2ISO;
             if NewsMIME then MakeQuotedPrintable;
             wrbuf(f);
           end;
@@ -3403,7 +3407,7 @@ begin
               ReadString(true);
               if fpos+bufpos>gs then ShortS;
               if SMTP and (s<>'') and (s[1]='.') then s:='.'+s;
-              IBM2ISO;
+              if convibm then IBM2ISO;
               MakeQuotedPrintable;
               wrbuf(f2);
             end;
@@ -3466,6 +3470,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.33  2001/01/10 17:39:01  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.35.2.32  2001/01/07 15:41:00  mk
   - removed last patches (LFN)
 

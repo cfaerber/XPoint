@@ -718,14 +718,15 @@ begin
     msetvfunc(scstest);
   maddbool(3,4,getres2(260,2),softsaver);     { 'weich ausblenden' }
   maddbool(3,5,getres2(260,6),blacksaver);    { 'schwarzschalten' }
-  maddbool(3,6,getres2(260,9),vesa_dpms);     { 'Stromsparmodus' }
+  maddbool(3,6,getres2(260,17),ParSavePal);       { 'VGA-Palette sichern' }
+  maddbool(3,7,getres2(260,9),vesa_dpms);     { 'Stromsparmodus' }
     mset1func(dpmstest);
-  maddbool(3,7,getres2(260,3),ss_passwort);   { 'Startpaáwort abfragen' }
+  maddbool(3,8,getres2(260,3),ss_passwort);   { 'Startpaáwort abfragen' }
   du:=dispusername;
-  maddbool(3,9,getres2(260,4),dispusername);  { 'Username anzeigen' }
+  maddbool(3,10,getres2(260,4),dispusername);  { 'Username anzeigen' }
 
-  maddstring(3,11,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
-  maddstring(3,12,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
+  maddstring(3,12,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
+  maddstring(3,13,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1448,6 +1449,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.16  2001/01/10 17:39:03  mk
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+
   Revision 1.39.2.15  2000/12/31 14:46:13  mk
   - Tearlineschalter in Config/Optionen/Netze
 
