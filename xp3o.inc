@@ -421,7 +421,10 @@ var x,y      : byte;
         writeln(cmessagefile,'supersedes');
         writeln(cmessagefile,ersetzt);
         writeln(cmessagefile,absender);
-        writeln(cmessagefile,cust1);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
         inc(num_cmessages);
       end;
 
@@ -430,7 +433,10 @@ var x,y      : byte;
         writeln(cmessagefile,dbRecno(mbase));
         writeln(cmessagefile,trim(mid(control,8)));
         writeln(cmessagefile,absender);
-        writeln(cmessagefile,cust1);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
         inc(num_cmessages);
       end;
 
@@ -1232,6 +1238,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/07/11 20:30:47  mk
+  SV:- cancel processing fixed (WAB-Header may authorize sender (ZConnect))
+
   Revision 1.55  2001/06/19 06:47:16  mk
   JG:- fixed possible Crash in replace own when searching for messages without
        a valid message id.
