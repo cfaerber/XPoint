@@ -1,102 +1,59 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{ $Id$
 
-{   Cross\\//        }
-{        //\\point   }
+   OpenXP main source file
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 1991-1999 Peter Mandrella (www.mandrella.de)
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Win32 }
-  {$R ICONS.RES }
-{$ENDIF }
+{$ifdef Win32 }{$R ICONS.RES }{$endif}
 
-{$IFDEF OS2 }
-  {$M 131072,524288}
-{$ENDIF }
-
-{$IFDEF Linux }
-  {$M 500000,1024000}
-  {$IFDEF Debug }
-    {$S+}
-  {$ELSE }
-    {$S-}
-  {$ENDIF }
-{$ENDIF }
-
+{ OpenXP main source file }
 program xp;
 
-uses xpx,
-{$IFDEF unix}
-     linux,
-     xplinux,
-{$ENDIF }
-{$IFDEF NCRT }
-     xpcurses,
-{$ELSE }
-     crt,
-{$ENDIF }
-{$IFDEF OS2 }
-     os2base,
-{$ENDIF }
-     typeform,keys,fileio,inout,help,datadef,
-     database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
-     printerx,crc,resource,stack,clip,eddef,editor,feiertag,objcom,modem,
-     zmodem, Sysutils,
-     xpdiff,xpdatum,xpglobal,
+uses
+  {$IFDEF unix} linux,xplinux, {$ENDIF }
+  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF }
+  {$IFDEF OS2} os2base,{$ENDIF}
+  xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
+  modem,zmodem,Sysutils,xpglobal,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
      xp1o,
-     xp1o2,
-     xp1help,  { Online-Hilfe u.a.  }
-     xp1input, { Eingabefunktionen  }
      xpnt,     { Netztypen          }
-     xp_des,   { DES-Codierung      }
-     xp_pgp,   { PGP-Codierung      }
-     xpkeys,   { F-Tasten/Makros    }
      xp_uue,   { UUencode/UUdecode  }
      xp2,      { Startup            }
      xp2db,    { Database-Startup   }
-     xp2c,     { Konfiguration      }
-     xp2f,     { Farben & F-Keys    }
      xp3,      { Datenbearbeitung   }
-     xp3o,
-     xp3o2,
-     xp3ex,    { Msg. extrahieren   }
      xp4,      { Hauptmodul         }
      xp4e,
      xp4o,
-     xp4o2,    { Bezuege, packen     }
-     xp4o3,
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
      xpreg,    { Registrierung      }
      xp6,      { Nachrichten senden }
-     xp6o,     { Unversandt, Weiterleiten }
      xpnetcall,
-     xpuu,     { ucico              }
      xp8,      { 'maps & Filesercer }
-     xp9,      { UniSel (B/G/S/K)   }
      xp10,     { Timing-Lst./Makros }
      xpe,      { Editor             }
-     xpstat,   { Statistik          }
      xpterminal,{ CrossTerm          }
-     xpcc,     { Verteiler          }
      xpfido,   { Nodelist u.a.      }
      xpfidonl, { Nodelist-Config    }
-     xpf2,
-     xpmaus,   { Maus-Funktionen    }
-     xp_iti,   { Maus-ITI-Infofile  }
-     xpview,   { Binfile-Viewer     }
-     xpmime,   { Multipart-Decode   }
-     xpimpexp, { Import/Export      }
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
      zcrfc;    { RFC<->ZConnect     }
@@ -228,8 +185,14 @@ ende:
   runerror:=false;
   halt(errlevel);
 end.
+
 {
   $Log$
+  Revision 1.51  2001/01/06 17:23:16  ma
+  - added GPL header
+  - moved some compiler directives to xpdefine
+  - removed unused units from uses statement
+
   Revision 1.50  2001/01/04 16:09:47  ma
   - adjusted unit names in "uses" statement
   - removed obsolete unit initialization calls
@@ -270,113 +233,4 @@ end.
 
   Revision 1.38  2000/11/06 11:42:12  hd
   - Stack is global under Linux
-
-  Revision 1.37  2000/11/01 22:59:23  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.36  2000/08/27 10:37:09  mk
-  - UUZ ist jetzt intern
-
-  Revision 1.35  2000/07/27 10:12:59  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.34  2000/07/12 14:43:43  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.33  2000/07/11 21:39:20  mk
-  - 16 Bit Teile entfernt
-  - AnsiStrings Updates
-  - ein paar ASM-Routinen entfernt
-
-  Revision 1.32  2000/07/03 15:54:14  hd
-  - Linux: Check_Date entfernt
-
-  Revision 1.31  2000/06/23 15:59:15  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.30  2000/06/22 19:53:29  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.29  2000/06/19 23:14:47  mk
-  - CRCFile rausgenommen, verschiedenes
-
-  Revision 1.28  2000/06/19 20:17:42  ma
-  - von CRC16/XPCRC32 auf Unit CRC umgestellt
-
-  Revision 1.27  2000/05/10 16:37:25  mk
-  - Filehandles fuer OS/2 setzen
-
-  Revision 1.26  2000/05/06 15:57:04  hd
-  - Diverse Anpassungen fuer Linux
-  - DBLog schreibt jetzt auch in syslog
-  - Window-Funktion implementiert
-  - ScreenLines/ScreenWidth werden beim Start gesetzt
-  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
-  - Keine CAPI bei Linux
-
-  Revision 1.25  2000/05/04 10:32:57  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.24  2000/05/02 19:13:59  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.23  2000/05/02 04:18:15  jg
-  - XPoint.cfg Schalter DelViewTmp
-    macht dasselbe wie die Umgebungsvariable DELVTMP
-
-  Revision 1.22  2000/05/01 08:47:05  mk
-  - Stackspace unter OS/2 vergroessert, wegen QSort
-
-  Revision 1.21  2000/04/30 23:22:10  mk
-  - Stackgroesse wird jetzt auch unter OS/2 gesetzt
-
-  Revision 1.20  2000/04/29 16:10:40  mk
-  - CRC16 als Overlay definiert
-
-  Revision 1.19  2000/04/29 11:54:09  mw
-
-  - MIME in News voreingestellt
-  - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf veraendert
-
-  Revision 1.18  2000/04/04 21:01:22  mk
-  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.17  2000/04/04 10:33:56  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.16  2000/04/03 00:27:33  oh
-  - Startpasswort: drei Versuche statt nur einem.
-
-  Revision 1.15  2000/03/25 20:22:20  mk
-  - kleinere Anpassungen fuer Linux
-
-  Revision 1.14  2000/03/14 15:15:37  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.13  2000/03/09 23:39:32  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.11  2000/03/07 17:45:11  jg
-  - Viewer: Bei Dateien mit Leerzeichen im Namen wird
-    grundsaetzlich ein .tmp File erzeugt
-  - Env.Variable DELVTMP setzt jetzt nur noch beim Start
-    die Globale Variable DELVIEWTMP
-
-  Revision 1.10  2000/03/04 12:39:36  jg
-  - weitere Aenderungen fuer externe Windowsviewer
-    Umgebungsvariable DELVTMP
-
-  Revision 1.9  2000/03/02 18:32:24  mk
-  - Code ein wenig aufgeraeumt
-
 }
