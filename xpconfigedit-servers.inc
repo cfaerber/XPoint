@@ -371,7 +371,8 @@
       begin
         b:=cpos('@',email);
         if user='' then user:= leftStr(email,b-1);
-        if dom='' then
+        // only change domain name if necessary for this box type (= default domain <> '')
+        if (dom='') and (ntDefaultDomain(nt) <> '') then
         begin
           dom:=mid(email,b);
           if cpos('.',dom)=0 then dom:=''
@@ -2377,6 +2378,9 @@
 
 {
   $Log$
+  Revision 1.48.2.14  2003/08/28 06:19:47  mk
+  - add no default domain for boxes they don't need one
+
   Revision 1.48.2.13  2002/11/01 13:35:28  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers
