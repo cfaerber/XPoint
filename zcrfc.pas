@@ -1691,9 +1691,10 @@ var
           if p < 3 then p := length(line) + 1;
 
           s := copy(line, 2,p - 2);
-          // do not add duplicates
-          if References.IndexOf(s) = -1 then
-            References.Add(s);
+
+          if References.IndexOf(s) >= 0 then
+            References.Delete(References.IndexOf(s));
+          References.Add(s);
 
           while (p < length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
             inc(p);
@@ -3700,6 +3701,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.35  2004/07/21 23:57:04  mk
+  - fixed duplicate referencies
+
   Revision 1.97.2.34  2004/07/21 10:49:48  mk
   - fixed references
 
