@@ -3,26 +3,49 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-{$IFDEF Win32}Const WSAInits: Integer= 0; {$ENDIF}
+Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
+      ReadTimeOut    = 20000;                   { General event, 20 secs max }
+
+{$IFDEF WIN32}
+WSAInits: Integer= 0;
+var
+WSAData:  tWSAData;
+{$ENDIF}
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 constructor tRawIPObj.Init;
 begin
-  {$IFDEF Win32} inc(WSAInits); if WSAInits=1 then WSAStartup(2,WSAData); {$ENDIF}
+  {$IFDEF WIN32}
+  if WSAInits<=0 then
+    WSAStartup($0101,WSAData);
+  inc(WSAInits);
+  {$ENDIF}
+  SBufBeg:=Low(SBuffer);
+  SBufEnd:=Low(SBuffer);
   SOpened:=False; Dontclose:=False;
-  InBuffer.Init(32768); IgnoreCD:=True;
-  inherited Init;
+  IgnoreCD:=True; inherited Init;
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 destructor tRawIPObj.Done;
 begin
-  InBuffer.Done;
-  {$IFDEF Win32} dec(WSAInits); if WSAInits=0 then WSACleanup; {$ENDIF}
+  {$IFDEF WIN32}
+  dec(WSAInits);
+  if WSAInits=0 then
+    WSACleanup;
+  {$ENDIF}
+  if not dontclose then close;
   inherited done;
 end; { destructor Done }
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+procedure TRawIPObj.SetErrorStr(prefix: string);
+begin
+  ErrorStr := prefix+' (#'+IntToStr({$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF})+')';
+end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -35,6 +58,7 @@ end; { func. GetHandle }
 
 procedure tRawIPObj.OpenQuick(Handle: Longint);
 begin
+  SHandle:=Handle;
 end; { proc. tRawIPObj.OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -46,68 +70,58 @@ end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.ProcIncoming;
-var Size: DWord;
-begin
-  repeat
-    {$IFNDEF Win32}
-    if Socket(SHandle, FIONREAD, Size) < 0 then begin
-      ErrorStr:='Socket error'; SOpened:=False;
-      DebugLog('objcom','ProcIncoming read error',DLError); Exit;
-    end;
-    {$ELSE}
-    if IOCTLSocket(SHandle, FIONREAD, @Size) < 0 then begin
-      ErrorStr:='Socket error'; SOpened:=False; Exit;
-      DebugLog('objcom','ProcIncoming read error',DLError); Exit;
-    end;
-    {$ENDIF}
-    if Size > 0 then
-    begin
-      if Size>InBuffer.BufRoom then Size:=InBuffer.BufRoom;
-      Size:=recv(SHandle,InBuffer.TmpBuf^,Size,0);
-      InBuffer.Put(InBuffer.TmpBuf^,Size);
-    end;
-  until Size<=0;
-end;
+{$IFDEF Linux}
+  type THostEnt = record
+    h_Name     : pchar;   { Official name }
+    h_Aliases  : ppchar;  { Null-terminated list of aliases}
+    h_Addrtype : longint; { Host address type }
+    h_Length   : longint; { Length of address }
+    h_Addr_list: ppchar;  { null-terminated list of adresses }
+  end;
+  PHostEnt = ^THostEnt;
 
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+  const INADDR_NONE    = $FFFFFFFF;
+        SOCKET_ERROR   = -1;
+        INVALID_SOCKET = -1;
 
-function tRawIPObj.Connect(Dest: String): Boolean;
-{$IFDEF Win32}
+  {$LINKLIB c}
+  function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+  function inet_addr(Name:PChar): Cardinal; cdecl; external;
+  function htons(host:Word): Word; cdecl; external;
+{$ENDIF}
+
+function TRawIPObj.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
 type
     PCardinal  = ^Cardinal;
     PPCardinal = ^PCardinal;
 var
+{$IFDEF WIN32}
     Addr:     TSockAddrIn;
+{$ELSE}
+    Addr:     TInetSockAddr;
+{$ENDIF}
     DestHE:   PHostEnt;
     DestHEP:  PPCardinal; { really }
     DestIP:   array [0..15] of Cardinal;
     DestIPnr: Integer;
-    DestPort: Integer;
-    C,IPos:   Integer;
+    C:        Integer;
 begin
-  result:=False; SOpened:=False;
+  ConnectIP:=False;
+  SOpened:=False;
 
-  // Get port number from Dest
-  IPos:=Pos(':',Dest);
-  if IPos=0 then IPos:=length(Dest)+1;
-
-  Val(Copy(Dest,IPos+1,Length(Dest)-IPos),DestPort,C);
-  Delete(Dest,IPos,Length(Dest)-IPos+1);
-  if DestPort=0 then DestPort:=23;            { Telnet default port; Port 0 is illegal with TCP/IP }
-
-  // Resolve
   { TODO: IPv6 support }
+
   DestIPnr  := 0;
-  DestIP[DestIPNr] := inet_addr(PChar(Dest));
+  DestIP[DestIPNr] := inet_addr(PChar(DestHost));
+
   if DestIP[DestIPNr] <> INADDR_NONE then
     DestIPnr := 1
   else begin
-    DestHE:=GetHostByName(PChar(Dest));
-    if DestHE = nil then begin ErrorStr:='Host not found'; exit; end;
+    DestHE:={$IFDEF WIN32}WinSock.{$ENDIF}GetHostByName(PChar(DestHost));
+    if DestHE = nil then begin SetErrorStr('Host not found'); exit; end;
     with DestHE^ do begin
       if (h_addrtype<>AF_INET) or (h_length<>sizeof(Cardinal)) then
-      begin ErrorStr:='Host address type unknown'; exit; end;
+      begin SetErrorStr('Host address type unknown'); exit; end;
       DestHEP:=PPCardinal(h_addr_list);
     end;
     if DestHEP<>nil then
@@ -115,68 +129,52 @@ begin
       DestIP[DestIPNr] := DestHEP^^;
       Inc(DestHEP); Inc(DestIPNr);
     end;
-    if DestIPNr=0 then begin ErrorStr:='Host has no address'; exit; end;
+    if DestIPNr=0 then begin SetErrorStr('Host has no address'); exit; end;
   end;
 
-  // Connect
-  SHandle:=WinSock.Socket(AF_INET,SOCK_STREAM,0);
-  if WinSock.WSAGetLastError<>0 then begin ErrorStr:='Error obtaining socket'; exit; end;
+  SHandle:={$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.Socket(AF_INET,SOCK_STREAM,0);
+  if {$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF} <>0 then
+  begin
+    SetErrorStr('Error obtaining socket');
+    exit;
+  end;
 
-  Addr.sin_family      := AF_INET;
-  Addr.sin_port        := htons(DestPort);
+  addr.{$IFDEF WIN32}sin_family{$ELSE}family{$ENDIF} := AF_INET;
+  addr.{$IFDEF WIN32}sin_port  {$ELSE}port  {$ENDIF} := htons(DestPort);
 
   for c:=0 to DestIPNr-1 do
   begin
-    Addr.sin_addr.s_addr := DestIP[c];
+    addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c];
 
-    if 0=WinSock.Connect(SHandle,Addr,SizeOf(Addr)) then
-    begin SOpened:=True; result:=True; exit; end
+    if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
+    begin SOpened:=True; ConnectIP:=True; exit; end
   end;
 
   { Could not connect to any of the addresses :-( }
-  ErrorStr:='Error connecting socket';
-  result:=false;
-end; { func. tRawIPObj.OpenCom }
-
-{$ELSE}
-
-var
-  SAddr: TInetSockAddr;
-  Hostinfo: PHostent;
-  Temp,Res: Integer;
-
-begin
-  Connect:=False; 
-  FillChar(SAddr,SizeOf(SAddr),0);
-
-  // Resolve host
-  Temp:=Pos(':',Dest);
-  if Temp<=0 then begin ErrorStr:='No port specified'; exit; end;
-  Val(Copy(Dest,Temp+1,Length(Dest)-Temp),SAddr.Port,Res);
-  SAddr.Port:=((SAddr.Port and $ff00)shr 8)or((SAddr.Port and $00ff)shl 8);
-  if Res<>0 then begin ErrorStr:='Port has to be a number'; exit; end;
-  Delete(Dest,Temp,Length(Dest)-Temp+1);
-  Hostinfo:=GetHostByName(PChar(Dest));
-  if Hostinfo<>nil then
-    with Hostinfo^ do begin
-      if(h_AddrType<>AF_INET)then begin ErrorStr:='Unsupported address type'; exit; end;
-      if(h_Length<>4)then begin ErrorStr:='Address type not IPv4'; exit; end;
-      Move(h_Addr_list^^,SAddr.addr,h_Length);
-    end
-  else begin ErrorStr:='Error resolving host name'; exit; end;
-
-  // Open socket
-  SHandle:=Socket(AF_INET,SOCK_STREAM,0);
-  if SHandle<=0 then begin ErrorStr:='Error opening socket'; exit end;
-
-  // Connect socket
-  SAddr.Family:=AF_INET;
-  if not Sockets.Connect(SHandle,SAddr,SizeOf(SAddr)) then
-    begin ErrorStr:='Error connecting socket'; exit end;
-
-  SOpened:=True; Connect:=True;
+  SetErrorStr('Error connecting socket');
+  ConnectIP:=false;
 end; { func. TTelnetObj.OpenCom }
-{$ENDIF}
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function tRawIPObj.Connect(Dest: String): Boolean;
+var SHost: String;
+    IPort: Integer;
+    IPos:  Integer;
+    D:     word;
+begin
+  { TODO: IPv6 support }
+
+  IPos:=Pos(':',Dest);
+  if IPos=0 then IPos:=length(Dest)+1;
+
+  SHost := Copy(Dest,1,IPos-1);
+  Val(Copy(Dest,IPos+1,Length(Dest)-IPos),IPort,D);
+
+  if IPort=0 then IPort:=23;            { Telnet default port; Port 0 is illegal with TCP/IP }
+
+  Connect := ConnectIP(SHost,IPort);
+end; { func. TTelnetObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -189,89 +187,223 @@ end; { proc. tRawIPObj.SetLine }
 
 procedure tRawIPObj.Close;
 begin
-  if DontClose then EXIT;
-  shutdown(SHandle,2);
-  {$IFDEF Win32}closesocket(SHandle);{$ENDIF}
+  if GetHandle <> INVALID_SOCKET then
+  begin
+    {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.ShutDown(SHandle,2);
+    {$IFDEF WIN32}WinSock.CloseSocket(SHandle);{$ENDIF}
+    SHandle := INVALID_SOCKET;
+  end;
   SOpened:=False;
 end; { func. tRawIPObj.CloseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRawIPObj.SendChar(C: Char): Boolean;
-var Written: Longint;
+var Written:LongInt;
 begin
-  SendBlock(C,SizeOf(C),Written);
-  SendChar:=(Written=SizeOf(C));
+  SendBlock(C, SizeOf(C), Written);
+  SendChar := (Written = SizeOf(c));
 end; { proc. tRawIPObj.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRawIPObj.GetChar: Char;
-var R: Char;
+var Reads: LongInt;
 begin
-  while (not CharAvail)and SOpened do (* ProcIncoming *);;
-  if SOpened then
-    InBuffer.Get(R,SizeOf(R),True)
-  else begin
-    R:=#0;
-    DebugLog('objcom','GetChar read error',DLError);
-    end;
-  GetChar:=R;
+  ReadBlock(result,sizeof(result),Reads);
+  if Reads<=0 then result:=#0;
 end; { func. tRawIPObj.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tRawIPObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
-var Res: Longint;
 begin
-  Written:=0;
-  while(Written<BlockLen)and(SOpened)do begin
-    ProcIncoming;
-    Res:=send(SHandle,tCharArray(Block)[Written],BlockLen-Written,0);
-    if Res>=0 then
-      Inc(Written,Res)
-    else begin
-      SOpened:=False;
-      DebugLog('objcom','SendBlock send error',DLError);
-      end;
-    end;
+  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
+
+  Written:={$IFDEF WIN32}WinSock{$ELSE}Sockets{$ENDIF}.send(SHandle,Block,BlockLen,0);
+  if not Written > 0 then
+  begin
+    SetErrorStr('SendBlock');
+    DebugLog('ObjCOM','SendBlock error',1);
+  end;
 end; { proc. tRawIPObj.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
-var ReadUpTo: Longint;
+procedure TRawIPObj._ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
-  Reads:=0;
-  while(Reads<BlockLen)and(SOpened)do begin
-    ProcIncoming;
-    ReadUpTo:=CharCount+Reads;
-    if ReadUpTo>BlockLen then ReadUpTo:=BlockLen;
-    InBuffer.Get(tCharArray(Block)[Reads],ReadUpTo-Reads,True);
-    Reads:=ReadUpTo;
+  reads := {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.recv(SHandle,Block,Blocklen,0);
+  case reads of
+    0:            begin
+                    SOpened:=false;
+                    reads:=0;
+                  end;
+    SOCKET_ERROR: begin
+                    SetErrorStr('SendBlock');
+                    DebugLog('ObjCOM','ReadBlock error',1);
+                    SOpened:=false;
+                    reads:=0;
+                  end;
+  end;
+end;
+
+procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+var rr: Longint;
+begin
+  DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  reads:=0;
+
+  while (reads<blocklen) and (SOpened or (SBufBeg<SBufEnd)) do
+  begin
+
+    if SBufBeg<SBufEnd then             { get chars in buffer }
+    begin
+      rr := SBufEnd-SBufBeg; { >0 }
+      if rr > (Blocklen-Reads) then rr := Blocklen-Reads;
+      Move(SBuffer[SBufBeg],(PChar(@Block)+Reads)^,rr);
+      SBufBeg := SBufBeg + rr;
+      Reads := Reads+ rr;
+    end else
+    if (Blocklen-Reads) < 512 then      { small block size    }
+    begin
+      rr := _CharCount;                 { chars available     }
+
+      if rr <= (Blocklen-Reads) then    { smaller than block => directly }
+      begin
+         _ReadBlock((PChar(@Block)+Reads)^,Blocklen-Reads,rr);
+         Reads := Reads + rr;
+      end else
+      begin                             { more available      }
+        SBufBeg := Low(SBuffer);        { => into buffer      }
+        SBufEnd := Low(SBuffer);
+        if rr > Sizeof(SBuffer) then
+           rr := Sizeof(SBuffer);
+        _ReadBlock(SBuffer,rr,rr);
+        SBufEnd := SBufEnd + rr;
+      end;
+    end else
+    begin                               { large blocks => directly }
+      _ReadBlock((PChar(@Block)+Reads)^,Blocklen-Reads,rr);
+      Reads := Reads + rr;
     end;
+  end; {while}
 end; { proc. tRawIPObj.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRawIPObj.CharAvail: Boolean;
 begin
-  if InBuffer.BufUsed<=0 then ProcIncoming; 
-  CharAvail:=InBuffer.BufUsed>0;
+  if SBufBeg<SBufEnd then
+    result := true
+  else
+    result := _CharCount>0;
 end; { func. tRawIPObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRawIPObj.CharCount: Integer;
+function tRawIPObj._CharCount: Integer;
+var   SSet:  TFDSet;
+const NilTm: TTimeVal = {$IFDEF WIN32}(tv_sec:0;tv_usec:0){$ELSE}(sec:0;usec:0){$ENDIF};
 begin
-  ProcIncoming; CharCount:=InBuffer.BufUsed;
-end; { func. tRawIPObj.CharAvail }
+{$IFNDEF VP} { - VPascal has crippled Winsock - }
+  FD_ZERO(SSet); FD_SET (SHandle,SSet);
+{$ELSE}
+  SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
+{$ENDIF}
+
+  case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
+    0:            begin Result:=0; end;
+    SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
+  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,@Result)<>0
+                     {$ELSE}not ioctl(SHandle,FIONREAD,@Result){$ENDIF} then
+                    begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
+                  else if Result=0 then SOpened:=false; (* select said readable *)
+  end;
+  DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlInform);
+end; { func. TTelnetObj.CharAvail }
+
+function tRawIPObj.CharCount: Integer;
+var rr,rd: Longint;
+begin
+  rr := _CharCount;
+
+  while (rr > 0) and                            { data is pending and   }
+    ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) do    { room in buffer        }
+  begin
+    if(SBufBeg > Low(SBuffer)) and              { data not at start and }
+      ((SBufEnd+rr)>(High(SBuffer)+1)) then     { not enough room at end}
+    begin
+      Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
+      SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
+      SBufBeg :=                     Low(SBuffer);
+    end;
+
+    rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
+      rd := (Sizeof(SBuffer)-(SBufEnd-SBufBeg));
+    _ReadBlock(SBuffer[SBufEnd],rd,rd);         { read data into buffer }
+    SBufEnd := SBufEnd + rd;                    { adjust buffer size    }
+    rr := _CharCount;                           { and pending data amnt.}
+  end;
+
+  result := SBufEnd-SBufBeg + rr;
+  DebugLog('ObjCOM','CharCount: '+IntToStr(result)+' bytes',dlInform);
+end; { func. TTelnetObj.CharAvail }
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+{$IFDEF undefined}
+function tRawIPObj.ReadyToRead(BlockLen: Longint): Boolean;
+var rr,rd: Longint;
+begin
+  if (SBufEnd-SBufBeg)<=BlockLen then begin     { enough in buffer      }
+    DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+    result:=true; exit;                         { => just return        }
+  end;
+
+  repeat
+    if (rr+(SBufEnd-SBufBeg)>=Blocklen) then begin { enough data        }
+      DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+      result:=true; exit;
+    end
+
+    rr := _CharCount;
+
+    if(rr>0) and                                { data pending          }
+      ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) do  { room in buffer        }
+    begin
+      if(SBufBeg > Low(SBuffer)) and            { data not at start and }
+        ((SBufEnd+rr)>(High(SBuffer)+1)) then   { not enough room at end}
+      begin
+        rd := BlockLen-(SBufEnd-SBufBeg)-rr;    { minimum read          }
+
+        if ((SBufEnd+rd)>(High(SBuffer)+1)) then{ still not enough room }
+        begin
+          Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data   }
+          SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
+          SBufBeg :=                     Low(SBuffer);
+        end else
+          rr := rd;                             { only read as much data}
+      end;
+
+      rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
+        rd := (Sizeof(SBuffer)-(SBufEnd-SBufBeg));
+      _ReadBlock(SBuffer[SBufEnd],rd,rd);       { read data into buffer }
+      SBufEnd := SBufEnd + rd;                  { adjust buffer size    }
+    end else
+      break;
+  until false;
+
+  DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes but only '+
+    IntToStr(SBufEnd-SBufBeg + rr)+' bytes available' ,dlInform);
+  result := false;
+end;
+{$ENDIF}
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRawIPObj.Carrier: Boolean;
 begin
-  Carrier:=SOpened;
+  Carrier:=SOpened or (SBufBeg<SBufEnd);
 end; { func. tRawIPObj.Carrier }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -288,8 +420,7 @@ end; { proc. tRawIPObj.GetModemStatus }
 
 procedure tRawIPObj.SetDtr(State: Boolean);
 begin
-  // connection is closed by Close, NOT here
-  // (remote modem functionality requires this)
+// if (not State) and SOpened then Close;
 end; { proc. tRawIPObj.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -302,20 +433,30 @@ end; { func. tRawIPObj.GetBpsRate }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tRawIPObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
-{$IFDEF Win32}var OutFreeSize: Integer;{$ENDIF}
+var     InFree_size,OutFree_size: Integer;
 begin
-  InFree:=InBuffer.BufRoom; OutFree:=65000; InUsed:=InBuffer.BufRoom; OutUsed:=0;
-  {$IFDEF Win32}
-  OutFree:=maxLongInt; OutFreeSize:=SizeOf(OutFree);
-  WinSock.getsockopt(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFreeSize);
-  {$ENDIF}
-end; { proc. tRawIPObj.GetBufferStatus }
+  InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
+  OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFDEF VP}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  InFree :=InFree+Sizeof(SBuffer)-(SBufEnd-SBufBeg)
+end; { proc. TTelnetObj.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tRawIPObj.PurgeInBuffer;
+var rr,r2: LongInt;
+label clearin;
 begin
-  InBuffer.Clear;
+  SBufBeg:=Low(SBuffer);
+  SBufEnd:=Low(SBuffer);
+
+  rr := _CharCount;
+  while rr>0 do begin
+    _ReadBlock(SBuffer,Sizeof(SBuffer),r2);
+    rr := rr - r2;
+    if rr = 0 then rr := _CharCount;
+  end;
 end; { proc. tRawIPObj.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -326,29 +467,29 @@ end; { proc. tRawIPObj.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+function tRawIPObj.GetDriverInfo: String;
+begin
+  {$IFDEF WIN32}
+  result:='Winsock: '+String(PChar(@(WSAData.szDescription)));
+  {$ELSE}
+  result:='Generic TCP/IP';
+  {$ENDIF}
+end; { proc. tRawIPObj.PurgeInBuffer }
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
 function tRawIPObj.ReadyToSend(BlockLen: Longint): Boolean;
-var ifree,ofree,iused,oused: Longint;
 begin
-  GetBufferStatus(ifree,ofree,iused,oused);
-  ReadyToSend := SOpened and(ofree>=BlockLen);
+  ReadyToSend := SOpened;
 end; { func. ReadyToSend }
-
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-
-procedure tRawIPObj.PauseCom(CloseCom: Boolean);
-begin
-end; { proc. PauseCom }
-
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-
-procedure tRawIPObj.ResumeCom(OpenCom: Boolean);
-begin
-end; { proc. ResumeCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {
   $Log$
+  Revision 1.5  2001/05/09 22:10:08  cl
+  - moved new TCP/IP implementation from playground to main directory
+
   Revision 1.4  2001/03/25 17:30:54  cl
   - better performance for GetChar
 
@@ -361,10 +502,10 @@ end; { proc. ResumeCom }
 
   Revision 1.2  2001/01/31 20:18:19  cl
   - improved Win32 rawip implementation:
-  - no own ringbuffer
-  - detection of remote connection close
+    - no own ringbuffer
+    - detection of remote connection close
 
- Revision 1.1  2001/01/28 18:04:59  ma
+  Revision 1.1  2001/01/28 18:04:59  ma
   - raw ip functionality moved from oct*.inc to ocrawip*.inc
   - compiling under Win32 as well as Unix
 
