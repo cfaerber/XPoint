@@ -74,7 +74,9 @@ const
 
   mailing   : boolean   = false;    { Transfer gestartet }
   timediff  : longint   = 0;
-  resopen   : boolean   = false;
+  //resopen   : boolean   = false;
+
+  FilesToSend : String  = '';
 
 function DoXPFM: integer;
 
@@ -88,7 +90,7 @@ uses
 {$ENDIF}
   sysutils,typeform,resource,fileio,xpdiff,xpglobal,
   montage,inout,winxp,crc,ObjCOM,Modem,ZModem,Timer,Debug,
-  xp1;
+  xp0,xp1;
 
 const aresult    : byte = 0;
       brk_result : byte = EL_Break;
@@ -103,14 +105,14 @@ type  FidoAdr   = record
                     node,point : word;
                   end;
 
-var   FilesToSend  : String;
+var   
       FA        : FidoAdr;
       logf      : text;
       nocarrier : string;   { Carrier futsch }
 
-      ColText   : byte;     { Bildschirm }
+      //ColText   : byte;     { Bildschirm }
       //ColStatus : byte;
-      ColXfer   : byte;
+      //ColXfer   : byte;
       DisplayWinX,DisplayWinY   : Byte;     { linke obere Fensterecke }
       lastdispline  : string;
       disppos   : byte;
@@ -161,7 +163,6 @@ begin
 end;
 
 procedure TestConfig;
-var perr: string;
 begin
   if FilePath='' then
     trfehler1(2399,getres2(30004,80),30);       { 'InPath missing' }
@@ -261,7 +262,7 @@ procedure DisplayTime(const l: longint);
 begin
   if l<0 then
     exit;
-  TextAttr:=ColText;
+  TextAttr:=col.colmailer;
   fwrt(DisplayWinX+DisplayTextWidth-6,DisplayWinY,formi(l div 3600,2)+':'+formi((l mod 3600) div 60,2)+':'+formi(l mod 60,2));
 end;
 
@@ -270,14 +271,14 @@ begin
   Debuglog('XPFM','Display: '+S,2);
   if s<>'' then begin
     if UseNewLine and(lastdispline<>'')then begin
-      TextAttr:=ColText;
+      TextAttr:=col.colmailer;
       fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth));
       disppos:=(disppos mod DisplayTextHeight)+1;
     end;
     lastdispline:=time+'  '+s;
-    TextAttr:=ColXFer;
+    TextAttr:=col.colmailerhigh;
     fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth));
-    TextAttr:=ColText;
+    TextAttr:=col.colmailer;
   end;
 end;
 
@@ -325,7 +326,7 @@ begin
     exit;
   end;
   Modem.CommObj:=CommObj;
-  TextAttr:=ColText;
+  TextAttr:=col.colmailer;
   rahmen2(DisplayWinX,DisplayWinX+DisplayTextWidth+4,DisplayWinY,DisplayWinY+DisplayTextHeight+4,'Fidomailer'); { Open a window :-) }
   DisplayStatus(GetRepS2(30004,1,DestAddr),True);   { 'Anruf bei %s' }
   if addtxt<>'' then
@@ -370,6 +371,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.2  2000/12/14 16:28:33  hd
+        - Fido netcall as unit
+          - does not work proper now, just to the CONNECT :-(
+          - display is not beautified now
+
         Revision 1.1  2000/12/14 14:12:40  hd
         - Init: Unit XPFM
           - token from XP-FM.PAS

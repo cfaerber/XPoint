@@ -46,7 +46,12 @@ procedure ShowRQ(s:string);
 
 implementation   { -------------------------------------------------- }
 
-uses direct,xpheader,xp3,xp3o;
+uses
+  direct,
+{$ifdef Develop}
+  xpfm,
+{$endif}
+  xpheader,xp3,xp3o;
 
 
 procedure SaveArcname(var box,name:string);
@@ -394,9 +399,11 @@ type rfnodep     = ^reqfilenode;
                      next : rfnodep;
                    end;
 
-var t        : text;
-    sr       : tsearchrec;
+var sr       : tsearchrec;
     rc       : integer;
+{$ifndef Develop}
+    t        : text;
+{$endif}
     aresult   : integer;
     i      : byte;
     request  : string;
@@ -412,6 +419,45 @@ label fn_ende,fn_ende0;
   procedure WriteFidoCfg;
   var i : integer;
 
+{$ifdef Develop}
+    procedure AddFile(const s: string);
+    begin
+      if xpfm.FilesToSend='' then
+        xpfm.FilesToSend:= s
+      else
+        xpfm.FilesToSend:= xpfm.FilesToSend+#9+s;
+    end;
+
+    procedure WriteAttach(const puffer:string);
+      
+    var hd  : THeader;
+        hds : longint;
+        adr : longint;
+        f   : file;
+        ok  : boolean;
+    begin
+      if _filesize(puffer)>0 then begin
+        hd:=THeader.Create;
+        assign(f,puffer);
+        reset(f,1);
+        adr:=0; ok:=true;
+        while ok and (adr<filesize(f)) do begin
+          seek(f,adr);
+          MakeHeader(true,f,0,0,hds,hd,ok,false);
+          if (hd.attrib and attrFile<>0) then
+            if not FileExists(hd.betreff) then begin
+              tfehler(hd.betreff+' fehlt!',15);
+            end else begin
+              AddFile(FileUpperCase(hd.betreff));
+              inc(fileatts);
+            end;
+          inc(adr,hds+hd.groesse);
+          end;
+        close(f);
+        Hd.Free;
+      end;
+    end;
+{$else}
     procedure WriteAttach(var t:text; puffer:string);
     var hd  : THeader;
         hds : longint;
@@ -443,6 +489,7 @@ label fn_ende,fn_ende0;
         Hd.Free;
         end;
     end;
+{$endif} { Develop }
 
     procedure WrAKAs;
     var aka : string;
@@ -456,7 +503,11 @@ label fn_ende,fn_ende0;
         delete(aka,p,1);
         end;
       if aka<>'' then
+{$ifdef Develop}
+        xpfm.AKAs:= aka;
+{$else}
         writeln(t,'AKA=',aka);
+{$endif}
     end;
 
     function EmptyPKTs:boolean;
@@ -470,6 +521,94 @@ label fn_ende,fn_ende0;
 
   begin   { WriteFidoCFG - vgl. auch XPREG.OnlineReg()! }
     with BoxPar^,ComN[comnr] do begin
+{$ifdef Develop}
+      { set up unit's parameter }
+      if fidologfile<>'' then begin
+        xpfm.logfile:= fidologfile;
+        xpfm.lognew:= true;
+      end;
+      xpfm.Username:= username;
+      if alias then
+        xpfm.OwnAddr:=LeftStr(box,cpos('/',box))+pointname
+      else if f4d then
+        xpfm.OwnAddr:=box+'.'+pointname
+      else
+        xpfm.OwnAddr:=IntToStr(fa.zone)+':'+IntToStr(fpointnet)+'/'+pointname;
+      if domain<>'' then
+        xpfm.OwnDomain:= domain;
+      xpfm.DestAddr:= boxname;
+      xpfm.Password:= passwort;
+      if orga<>'' then
+        xpfm.SysName:= orga;
+      xpfm.DebugMode:= ParDebug;
+      xpfm.SerNr:= 'SN=OpenXP';
+      xpfm.CommInitString:= MCommInit;
+      if hayescomm and (ModemInit+MInit<>'') then begin
+        if (ModemInit<>'') and (minit<>'') then
+          xpfm.ModemInit:= minit+'\\'+ModemInit
+        else
+          xpfm.ModemInit:= minit+ModemInit;
+      end;
+      xpfm.IgCTS:= IgCTS;
+      xpfm.UseRTS:= UseRTS;
+      xpfm.ModemLine:= comnr;
+      xpfm.Fossil:= fossil;
+      if not fossil then begin
+        xpfm.ModemPort:= Cport;
+        xpfm.IRQ:= Cirq;
+        xpfm.tlevel:= tlevel;
+      end;
+      xpfm.Baud:= baud;
+      if hayescomm then begin
+        xpfm.CommandModemDial:= MDial;
+        xpfm.Phone:= telefon;
+      end;
+      xpfm.TimeoutConnectionEstablish:= connwait;
+      xpfm.RedialWait:= redialwait;
+      if postsperre then
+        xpfm.ReDWait2:= redialwait;
+      xpfm.RedialMax:= redialmax;
+      xpfm.MaxConn:= connectmax;
+      xpfm.FilePath:= xp0.FilePath;
+      xpfm.MailPath:= ownpath+XFerDir;
+      xpfm.ExtFNames:= ExtPFiles;
+
+      fileatts:=0;
+      WriteAttach(ppfile);
+      for i:=1 to addpkts^.anzahl do
+        WriteAttach(addpkts^.abfile[i]+BoxFileExt);
+      if (request='') and (FileAtts=0) and (_filesize(upuffer)<=60) and
+         (addpkts^.anzahl=0) and not NotSEmpty then
+        xpfm.sendempty:= true;
+      if ((request='') and (FileAtts=0)) or not EmptyPKTs then
+        if packmail then
+          AddFile(sendfile)
+        else begin
+          AddFile(upuffer);
+          for i:=1 to addpkts^.anzahl do
+            AddFile(addpkts^.addpkt[i]);
+        end;
+      if request<>'' then
+        AddFile(request);
+      for i:=1 to addpkts^.akanz do
+        if addpkts^.reqfile[i]<>'' then
+          AddFile(addpkts^.reqfile[i]);
+      if ZMoptions<>'' then
+        xpfm.ZMOptions:= ZMoptions;
+      if komment='' then
+        xpfm.txt:= 'Netcall  -  '+boxname
+    { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
+      else
+        xpfm.txt:= komment;
+      xpfm.UseEMSI:= EMSIenable;
+      xpfm.SetTime:= gettime;
+      xpfm.SendTrx:= SendTrx;
+      xpfm.os2time:= ParOS2;
+      xpfm.MinCPS:= MinCPS;
+      if crash then
+        xpfm.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
+      WrAKAs;
+{$else}
       assign(t,FidoCfg);
       rewrite(t);
       writeln(t,'# ',getres(717));
@@ -558,7 +697,8 @@ label fn_ende,fn_ende0;
         writeln(t,'Show=',getres(727),boxpar^.gebzone);   { 'Tarifzone' }
       WrAKAs;
       close(t);
-      end;
+{$endif} { Develop }
+      end; { while }
   end;
 
   procedure BuildIncomingFilelist(logfile:string);
@@ -704,6 +844,7 @@ begin { FidoNetcall }
 {$ifndef Develop}
   window(1,1,screenwidth,screenlines);
 {$endif}
+
   { Spool/ leeren }
   dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
   for i:= 0 to dir.Count-1 do
@@ -714,14 +855,22 @@ begin { FidoNetcall }
 {$ifndef Develop}
   ttwin;
 {$endif}
+
   FidoNetcall:=EL_noconn;
 
-  shell(XPFMBin+' '+FidoCfg,300,4);         { --- Anruf --- }
+{$ifdef Develop}
 
+  aresult:= DoXPFM;
+
+{$else}
+
+  shell(XPFMBin+' '+FidoCfg,300,4);         { --- Anruf --- }
   aresult:=errorlevel;
 {  if carrier(comnr) and not comn[comnr].IgCD then
     aufhaengen; }
   window(1,1,screenwidth,screenlines);
+
+{$endif} { Develop }
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
     // DropAllCarrier;
@@ -1038,6 +1187,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/12/14 16:28:33  hd
+  - Fido netcall as unit
+    - does not work proper now, just to the CONNECT :-(
+    - display is not beautified now
+
   Revision 1.42  2000/12/13 14:14:46  hd
   - some changes on the fido-sysop-poll
     - a little state window
