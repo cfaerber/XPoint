@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { --- Timing-Listen-Interpreter --------------------------------------- }
@@ -43,6 +44,10 @@ var brk     : boolean;
     lastbusy: array[1..MaxCom] of datetimest;
     _anz    : integer;
     lsec    : string[2];
+    f       : file;
+
+const NetcallAlleFlag: string[12] = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei RFC/Client }
+const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fr Batchauswertung bei RFC/Client }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefhrt wurde.                                    }
@@ -512,6 +517,7 @@ begin
     trfehler(iif(callall,1005,1006),60);   { 'keine zutreffenden Boxen' / 'leere Timing-Liste' }
     exit;
     end;
+  if callall then MakeFile(ownpath+NetcallAlleFlag);
   gl:=screenlines-fnkeylines-12;
   startdat:=ZDate;
   netcalls:=false;
@@ -549,6 +555,11 @@ begin
       multi2;
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
+        if (anz=1) and (callall) and (exist(ownpath+NetcallAlleFlag)) then
+        begin
+          assign(f,ownpath+NetcallAlleFlag);
+          rename(f,ownpath+NetcallEndeFlag);
+        end;
         execute1;
         initscs;
         end;
@@ -575,6 +586,10 @@ begin
   until ende;
   freeres;
   releaseliste;
+  if callall then begin
+    ExErase(ownpath+NetcallAlleFlag);
+    ExErase(ownpath+NetcallEndeFlag);
+  end;
 end;
 
 
@@ -644,6 +659,15 @@ begin
 end;
 {
   $Log$
+  Revision 1.4.2.1  2001/09/18 13:50:06  my
+  MY:- Bei Netcall/Alle und /n:* wird eine Semaphore NETCALL.ALL im XP-
+       Verzeichnis erzeugt (und nach Abarbeitung der Netcall-Liste wieder
+       geloescht), die von Netcall-Batches ausgewertet werden kann (z.B.
+       um zwischen den Netcalls mehrerer Boxen die Verbindung *nicht* zu
+       trennen). Beim Netcall der letzten Box in der Netcall-Liste wird
+       die Datei in NETCALL.END umbenannt.
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.4  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

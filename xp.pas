@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 {   Cross\\//        }
@@ -130,6 +130,8 @@ begin
       SetColors;
     end;
     showscreen(true);
+    ExErase('NETCALL.ALL');
+    ExErase('NETCALL.END');
     DelTmpfiles('*.$$$');
     if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
     if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
@@ -203,6 +205,15 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.22  2001/09/18 13:50:06  my
+  MY:- Bei Netcall/Alle und /n:* wird eine Semaphore NETCALL.ALL im XP-
+       Verzeichnis erzeugt (und nach Abarbeitung der Netcall-Liste wieder
+       geloescht), die von Netcall-Batches ausgewertet werden kann (z.B.
+       um zwischen den Netcalls mehrerer Boxen die Verbindung *nicht* zu
+       trennen). Beim Netcall der letzten Box in der Netcall-Liste wird
+       die Datei in NETCALL.END umbenannt.
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.29.2.21  2001/08/12 09:05:39  mk
   - removed xpeasy
 
