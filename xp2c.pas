@@ -133,7 +133,7 @@ begin
     mappsel(true,getres2(250,i));    { 'AlleùZ-NetzùPMs' }
   maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
   mhnr(8068);
-  {$IFDEF NOEMS}
+  {$IFNDEF BP}
     maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   {$ELSE}
     maddbool(32,2,getres2(250,11),SwapToEMS); mhnr(213);  { 'Auslagern in EMS' }
@@ -1413,6 +1413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/05/08 18:40:47  hd
+  - NOEMS wieder entfernt
+
   Revision 1.30  2000/05/08 18:32:08  hd
   - Fix: Display-Bug in c/o/n (florian)
 

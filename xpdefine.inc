@@ -123,11 +123,6 @@
 
 {$IFDEF Ver32 }
   {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
-  {$DEFINE NOEMS } { Kein EMS/XMS-Speicher vorhanden (hd) }
-{$ENDIF }
-
-{$IFDEF DPMI }
-  {$DEFINE NOEMS }	 { Kein EMS vorhanden }
 {$ENDIF }
 
 {$IFDEF DOS32 }
@@ -149,12 +144,6 @@
 { --- ErklÑrungen der selbst gesetzen Defines --- }
 
 {
-  NOEMS
-  
-  Soll an den Stellen verwendet werden, an denen heute eine doppelte
-  Abfrage (DPMI/Ver32) notwendig waere. Wird automatisch gesetzt, wenn
-  DPMI bzw. Ver32 definiert ist (hd)
-  
   LocalSceeen
 
   Jede Routine, die in den Bildschirmspeicher schreibt, aktualisiert einen
@@ -181,6 +170,9 @@
 
 {
   $Log$
+  Revision 1.27  2000/05/08 18:40:48  hd
+  - NOEMS wieder entfernt
+
   Revision 1.26  2000/05/08 13:32:00  hd
   - Neues Symbol: NOEMS. Wird bei Ver32 und bei DPMI gesetzt
 
