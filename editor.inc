@@ -888,7 +888,8 @@ begin
         addspaces:=EndSpaces;
         if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
           then if not (ap^.cont[ap^.size-1] in ['-','/'])
-                  and (ap^.next^.cont[0]<>' ') then addspaces:=1;
+           and ((ap^.next^.cont[0]<>' ')
+            or (getquote(ap^.next)<>'')) then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
@@ -2305,6 +2306,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.10  2001/08/28 21:42:43  my
+  RB:- Fix: When pressing <Backspace> in Pos1 of a quoted line where the
+       quote signs are indented, no space was added.
+
   Revision 1.10.2.9  2001/08/23 22:09:30  my
   JG:- Search in Editor now marks the found term
   JG:- If the search term was found in the second or any subsequent line
