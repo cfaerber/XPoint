@@ -504,10 +504,11 @@ begin {function UUCPNetcall}
 
 end; { function UUCPNetcall}
 
-end.
-
 {
   $Log$
+  Revision 1.17  2002/02/21 13:52:36  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.16  2002/01/02 15:33:52  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset
@@ -572,3 +573,5 @@ end.
 
   --- import from playground
 }
+end.
+

@@ -611,6 +611,7 @@ var d      : DB;
     p,p2   : byte;
     fsname : string;
 begin
+  Result := false;
   p:=cpos('@',adresse);
   if p=0 then exit;
   p2:=p+cPos('.',Mid(adresse,p+1));
@@ -1117,6 +1118,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.16  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 

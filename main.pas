@@ -101,7 +101,7 @@ label ende;
 var
   pwcnt:byte;
   pwrc:boolean;
-{$IFDEF Win32}
+{$IFDEF Win32Gui}
   AMessage: TMsg;
 {$ENDIF }
 begin
@@ -236,6 +236,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/02/21 13:52:30  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.14  2002/01/30 22:08:49  mk
   - parameter validation for SetConsoleCursorPosition
 

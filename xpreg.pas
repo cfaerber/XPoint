@@ -50,7 +50,6 @@ var x,y,i : Integer;
     msglines    : byte;
 
     sely  : byte;
-    n     : shortint;
     z     : taste;
 begin
   msglines:=ival(getres2(520,0));
@@ -82,7 +81,7 @@ begin
   mwrt(x+3,sely,sp(65));
   z:='';
   pushhp(1550);
-  n:=ReadButton(x+3,sely,2,'*'+getres2(520,30),1, true,z);
+  ReadButton(x+3,sely,2,'*'+getres2(520,30),1, true,z);
   pophp;
   closebox;
   freeres;
@@ -168,10 +167,11 @@ begin
   freeres;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.35  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.34  2002/01/22 19:15:32  mk
   - after 3.40 merge fixes
 
@@ -279,3 +279,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

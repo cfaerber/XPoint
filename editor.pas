@@ -1847,9 +1847,13 @@ end;
 initialization
   AktEd := nil;
 finalization
+  Dispose(Defaults);
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.78  2002/02/21 13:52:30  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.77  2002/01/22 19:15:27  mk
   - after 3.40 merge fixes
 

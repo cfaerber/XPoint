@@ -845,7 +845,7 @@ end;
 { UnterstÅtzung fÅr seh-/hîrbehinderte Anwender }
 
 procedure AccessibilityOptions;
-var x,y,i,j : Integer;
+var x,y: Integer;
     brk : boolean;
 begin
   dialog(41,11,getres2(260,11),x,y);
@@ -881,16 +881,7 @@ begin
       EdSelcursor:=false;
     end;
     aufbau:=true;
-(*
-    if cpos('D',MsgFeldTausch)=0 then MsgFeldTausch:='D'+MsgFeldTausch;
-    if cpos('G',MsgFeldTausch)=0 then MsgFeldTausch:='G'+MsgFeldTausch;
-    if cpos('F',MsgFeldTausch)=0 then MsgFeldTausch:='F'+MsgFeldTausch;
 
-    { (F)lags mÅssen immer vorne stehen }
-    i:=pos('F',UsrFeldTausch); if (i<>1) then begin
-      delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
-    end;
-*)
     GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
     GlobalModified;
     end;
@@ -1557,6 +1548,9 @@ end;
 
 {
   $Log$
+  Revision 1.121  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.120  2002/01/30 22:36:03  mk
   - made viewers and unpackers static
 

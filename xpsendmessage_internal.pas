@@ -58,10 +58,12 @@ var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
 implementation
 
 
-end.
 
 {
   $Log$
+  Revision 1.4  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.3  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -73,3 +75,5 @@ end.
   Revision 1.1  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 }
+end.
+

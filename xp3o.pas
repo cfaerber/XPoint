@@ -973,8 +973,8 @@ end;
 
 
 procedure AppPuffer(const Box,fn:string);
-var d     : DB;
-    f1,f2 : file;
+var 
+  f1,f2 : file;
 begin
   assign(f1,fn);
   reset(f1,1);
@@ -1139,7 +1139,6 @@ var
     empf   : string;
     hdp    : Theader;
     hds    : longint;
-    d      : DB;
     fn     : string;
     t      : text;
     flags  : longint;
@@ -1149,7 +1148,7 @@ begin
     exit;
     end;
   _Brett := dbReadNStr(mbase,mb_brett);
-  if (_brett[1]<>'A') and not ntCancelPM(mbNetztyp) then begin
+  if (FirstChar(_brett)<>'A') and not ntCancelPM(mbNetztyp) then begin
     rfehler(311);     { 'Nur bei oeffentlichen Nachrichten moeglich!' }
     exit;
     end;
@@ -1157,7 +1156,7 @@ begin
     rfehler(314);     { 'In diesem Netz nicht moeglich!' }
     exit;
     end;
-  if _brett[1]<>'U' then begin
+  if FirstChar(_brett)<>'U' then begin
     dbSeek(bbase,biIntnr,copy(_brett,2,4));
     if not dbFound then exit;
     Box := dbReadNStr(bbase,bb_pollbox);
@@ -1240,7 +1239,6 @@ var
     hdp    : Theader;
     hds    : longint;
     flags  : longint;
-    d      : DB;
     fn     : string;
     sData  : TSendUUData;
     sFlags : Word;
@@ -1250,7 +1248,7 @@ begin
     exit;
     end;
   _Brett := dbReadNStr(mbase,mb_brett);
-  if (_brett[1]<>'A') then begin
+  if (FirstChar(_brett)<>'A') then begin
     rfehler(317);     { 'Nur bei oeffentlichen Nachrichten moeglich!' }
     exit;
     end;
@@ -1258,7 +1256,7 @@ begin
     rfehler(318);     { 'In diesem Netz nicht moeglich!' }
     exit;
     end;
-  if _brett[1]<>'U' then begin
+  if FirstChar(_brett)<>'U' then begin
     dbSeek(bbase,biIntnr,copy(_brett,2,4));
     if not dbFound then exit;
     box := dbReadNStr(bbase,bb_pollbox);
@@ -1535,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.84  2002/02/21 13:52:32  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.83  2002/01/13 15:15:50  mk
   - new "empfaenger"-handling
 

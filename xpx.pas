@@ -173,9 +173,11 @@ begin
   ExitProc:= @ExitXPXUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.50  2002/02/21 13:52:35  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.49  2002/01/30 22:28:58  mk
   - corrected dir handling (progpath is not availble at call time in xpx.pas)
 
@@ -318,3 +320,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

@@ -500,9 +500,11 @@ begin
   menurestart:=brk;
 end;
 
-end.
 {
   $Log$
+  Revision 1.35  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.34  2002/01/22 19:15:32  mk
   - after 3.40 merge fixes
 
@@ -596,3 +598,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

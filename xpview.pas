@@ -114,10 +114,11 @@ end;
 
 *)
 
-
-end.
 {
   $Log$
+  Revision 1.35  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.34  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 
@@ -224,3 +225,5 @@ end.
   Loginfo hinzugefuegt
 
 }
+end.
+

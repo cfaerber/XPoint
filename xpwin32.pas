@@ -109,9 +109,9 @@ begin
 end;
 
 procedure RegisterMailClient;
-var
-  Key: HKey;
-  Disposition: Integer;
+// var
+//  Key: HKey;
+//  Disposition: Integer;
 
   procedure SetKey(DataType: Integer; Name, Value: String);
   begin
@@ -244,6 +244,9 @@ finalization
 
 {
   $Log$
+  Revision 1.26  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.25  2002/01/30 22:23:28  mk
   - corrected handle for ENABLE_MOUSE_INPUT
 

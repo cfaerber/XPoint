@@ -142,7 +142,6 @@ var s      : string;
     fn,fn2 : string;
     brk    : boolean;
     auto   : boolean;
-    ende   : boolean;
 begin
   with fkeys[nr][nn] do begin
     s:=prog;
@@ -249,6 +248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.23  2002/01/30 17:18:14  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with

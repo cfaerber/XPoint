@@ -276,10 +276,11 @@ end;
 
 {-----------------------------------------------------------------------------}
 
-end.
-
 {
   $Log$
+  Revision 1.9  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.8  2001/10/11 15:27:02  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 
@@ -310,3 +311,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

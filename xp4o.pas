@@ -51,7 +51,7 @@ var seeklen   : array[0..suchmax-1] of byte;
     seekstart : array[0..suchmax-1] of byte;
     seeknot   : array[0..suchmax-1] of boolean;
     suchand   : boolean;
-    suchanz   : byte;
+    suchanz   : Integer;
     sst       : string[suchlen];
     igcase    : boolean;
     umlaut    : boolean;
@@ -2978,6 +2978,9 @@ end;
 
 {
   $Log$
+  Revision 1.136  2002/02/21 13:52:32  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.135  2002/02/18 16:59:40  cl
   - TYP: MIME no longer used for RFC and not written into database
 

@@ -293,9 +293,11 @@ begin
     Result := '';
 end;
 
-end.
 {
   $Log$
+  Revision 1.18  2002/02/21 13:52:35  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.17  2001/10/24 10:06:15  ma
   - fixed message end recognition
     ("QUIT" line was misinterpreted as body end)
@@ -357,3 +359,5 @@ end.
   - Mail versenden funktioniert schon
 
 }
+end.
+

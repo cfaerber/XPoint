@@ -1120,10 +1120,11 @@ end;
 
 { ------------------------------------------------------------------------------ }
 
-end.
-
 {
   $Log$
+  Revision 1.22  2002/02/21 13:52:35  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.21  2002/02/14 11:30:08  cl
   - fixed broken loop code
     see <mid:8Ip3sW0ZcDB@3247.org>
@@ -1202,3 +1203,5 @@ end.
   Revision 1.4  2000/11/02 21:27:04  fe
   bzip2 support added.
 }
+end.
+

@@ -313,9 +313,11 @@ begin
   result:= VEntries.Count;
 end;
 
-end.
 {
         $Log$
+        Revision 1.6  2002/02/21 13:52:30  mk
+        - removed 21 hints and 28 warnings
+
         Revision 1.5  2001/09/07 23:24:53  ml
         - Kylix compatibility stage II
 
@@ -338,3 +340,5 @@ end.
           - Still not finished but works
 
 }
+end.
+

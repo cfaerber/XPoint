@@ -2186,9 +2186,11 @@ initialization
   e := TStringList.Create;
 finalization
   e.free;
-end.
 {
   $Log$
+  Revision 1.71  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.70  2002/02/10 13:32:26  mk
   - fixed some display problems with Netcall/Special
 
@@ -2410,3 +2412,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

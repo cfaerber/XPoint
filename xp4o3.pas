@@ -306,10 +306,11 @@ begin
   end;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.37  2002/02/21 13:52:32  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.36  2002/01/30 17:18:14  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with
@@ -425,3 +426,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

@@ -250,8 +250,6 @@ end;
 
 
 procedure initvar;
-var
-  i: Integer;
 begin
   {$IFDEF unix }
     OSType := os_Linux;
@@ -328,8 +326,6 @@ begin
   wwwHomepage:='';
   fidobin:=FileExists('fido-bin');
   Clipboard:=ClipAvailable;
-
-  DomainList:= TStringList.Create;
 end;
 
 
@@ -1706,6 +1702,9 @@ begin
 
 {
   $Log$
+  Revision 1.142  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.141  2002/02/01 10:31:54  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList

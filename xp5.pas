@@ -968,10 +968,12 @@ begin
   closebox;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.64  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.63  2002/01/16 23:48:17  cl
   - after merge fixes
 
@@ -1002,3 +1004,5 @@ end.
   - removed some hints and warnings
   - fixed some minior bugs
 }
+end.
+

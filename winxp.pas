@@ -1201,7 +1201,7 @@ begin
   
     OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
       Length(s),nil,0);
-    if OutRes = 0 then Exit;
+    if OutRes = 0 then begin Result := 0; Exit; end;
     SetLength(s2,OutRes*2);
     OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
       Length(s),@(s2[1]),Length(s2) div 2);
@@ -1489,6 +1489,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.81  2002/02/20 22:28:24  cl
   - added all known charsets to known codepages
 

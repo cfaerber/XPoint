@@ -275,9 +275,8 @@ var
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
-  p, i          : integer;              { -----"------- }
+  p             : integer;              { -----"------- }
   RCFilename    : String;
-  FillStr       : String;
   oArticle      : integer;
 
 begin
@@ -320,10 +319,6 @@ begin
 
         POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
         NNTP.SelectGroup(Group);
-
-        FillStr := '';
-        For i := 0 to 40 - length(Group) do
-          FillStr := FillStr + ' ';
 
         if ArticleIndex<0 then // "-n": fetch n articles
           Inc(ArticleIndex,NNTP.LastMessage)
@@ -370,6 +365,9 @@ end;
 
 {
         $Log$
+        Revision 1.38  2002/02/21 13:52:36  mk
+        - removed 21 hints and 28 warnings
+
         Revision 1.37  2002/02/21 09:29:19  mk
         - more nntp fixes
 

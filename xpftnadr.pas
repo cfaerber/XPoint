@@ -236,9 +236,11 @@ begin { --- SAsString --- }
   end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.5  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.4  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
@@ -256,3 +258,5 @@ end.
     FTN-Adressen zur Verfuegung. Sie soll den Record 'FidoAdr' abloesen.
 
 }
+end.
+

@@ -98,22 +98,19 @@ var   zaehlx,zaehly : byte;
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
 var s       : string;
     i,ml    : byte;
-    n       : byte;
     m1empty : boolean;
 
 begin
   menu[2] := '';
   menu[menus] := '';
   s:=''; ml:=14;
-  n:=0;
 
   for i:=1 to 10 do                                  { Zusatzmenue 1-10 }
     with fkeys[0][i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
-        inc(n);
-        end;
+      end;
   m1empty:=false;
   if s<>'' then s:=',-'+s else m1empty:=true;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
@@ -122,11 +119,11 @@ begin
   s:='';
   for i:=1 to iif(screenlines=25,9,10) do            { Zusatzmenue 11-20 }
     with fkeys[4][i] do
-      if menue<>'' then begin
+      if menue<>'' then
+      begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
-        inc(n);
-        end;
+      end;
   if m1empty and (s<>'') then s:=',-'+s; 
   menu[menus]:=s;
 end;
@@ -1092,7 +1089,9 @@ initialization
   New(bmarked);
   GetMem(boxpar, SizeOf(BoxPar^));
   marked := nil;
+  DomainList:= TStringList.Create;
 finalization
+  DomainList.Free;
   ReplyTree.Free;
   BadConfigLinesList.Free;
   Dispose(bmarked);
@@ -1100,6 +1099,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.138  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.137  2002/02/13 18:17:46  mk
   - fixed report of missing resource 10.43
 

@@ -71,10 +71,11 @@ begin
   end;
 end;
 
-end.
-
 {
 	$Log$
+	Revision 1.3  2002/02/21 13:52:34  mk
+	- removed 21 hints and 28 warnings
+
 	Revision 1.2  2001/09/10 15:58:04  ml
 	- Kylix-compatibility (xpdefines written small)
 	- removed div. hints and warnings
@@ -82,7 +83,9 @@ end.
 	Revision 1.1  2001/03/21 19:17:08  ma
 	- using new netcall routines now
 	- renamed IPC to Progr.Output
-	
+
 	Revision 1.1  2000/07/25 18:02:19  hd
 	- NNTP-Unterstuetzung (Anfang)
 }
+end.
+

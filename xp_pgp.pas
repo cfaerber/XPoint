@@ -913,7 +913,8 @@ begin
         trfehler(3006,30)   { 'Ueberpruefung der Signatur ist fehlgeschlagen' }
     end else
       trfehler(3004,30);    { 'Decodierung ist fehlgeschlagen.' }
-  end else begin { Ausgabedatei korrekt geschrieben: }
+  end else
+  begin { Ausgabedatei korrekt geschrieben: }
     if not SigTest then begin
       PGP_BeginSavekey;
       orgsize:=hdp.groesse;
@@ -961,7 +962,6 @@ begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                          { "c"-Flag }
       dbWriteN(mbase,mb_unversandt,b);
-
 
       hdp.groesse:=orgsize;
       PGP_EndSavekey;
@@ -1167,6 +1167,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.63  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 

@@ -673,9 +673,11 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.48  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.47  2002/01/05 16:01:09  mk
   - changed TSendUUData from record to class
 
@@ -828,3 +830,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

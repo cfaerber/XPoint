@@ -79,9 +79,11 @@ function NeuBenutzergruss:boolean;
     closebox;
 
   end;
-end.
 {
   $Log$
+  Revision 1.17  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.16  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
@@ -152,3 +154,5 @@ end.
   - EASY-Mode Teil 2 begonnen
 
 }
+end.
+

@@ -431,15 +431,13 @@ end;
 
 
 procedure disp_DT;
-{$IFNDEF NCRT }
-var h,m,s,s100 : Integer;
-{$ENDIF }
+var
+  h, m, s, s100: SmallWord;
 begin
-{$IFDEF OOPS }
   if UseMulti2 then begin
     if m2t then
     begin
-      gettime(h,m,s,s100);
+      DecodeTime(now, h, m, s, s100);
       __st[1]:=chr(h div 10+48);
       __st[2]:=chr(h mod 10+48);
       __st[4]:=chr(m div 10+48);
@@ -453,7 +451,6 @@ begin
       disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
       end;
     end;
-{$ENDIF }
 end;
 
 Procedure multi2;
@@ -1669,6 +1666,9 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/02/21 13:52:30  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.87  2001/12/24 16:49:53  mk
   - implemented Cursor for DOS32
 

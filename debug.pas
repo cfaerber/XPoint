@@ -107,7 +107,6 @@ var
 function FindBadge(Badge: string): Integer;
 var
   I,L: Integer;
-  Temp: LongInt;
   S: string;
 begin
   Badge := UpperCase(Badge);
@@ -202,10 +201,7 @@ end;
 
 procedure OpenLogfile(App: Boolean; Filename: string); {Appends if App True}
 var
-  SR: TSearchRec;
   Rew: Boolean;
-  err: integer;
-
 begin
   if Logging then Exit;
 
@@ -220,7 +216,6 @@ begin
       Delete(Filename, 1, 1);
       Rew := True;
     end;
-    {$I-}
     Filename:=FileUpperCase(ExpandFilename(Filename));
     Logfilename:=Filename;
     if Rew and (not App) then
@@ -231,15 +226,12 @@ begin
     else
     begin
       Assign(Logfile, Filename);
-      err := FindFirst(Filename, faArchive, SR);
-      if err = 0 then
+      if FileExists(Filename) then
         Append(Logfile)
       else
         ReWrite(Logfile);
-      FindClose(SR);
     end;
     if IOResult <> 0 then Logging := False;
-    {$I+}
   end
   else
     Logging := False;
@@ -308,6 +300,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29  2002/02/21 13:52:30  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.28  2002/02/13 16:55:01  ma
   - added SetLoglevel log
 

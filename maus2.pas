@@ -104,7 +104,9 @@ const  maxinside = 25;
 {$ENDIF Win32}
 
 var
+{$IFDEF NCRT }
   kx,ky  : integer;           { Koordinaten der letzten Aktion }
+{$ENDIF }
   inside : array[1..maxinside,0..3] of byte;
   insen  : array[1..maxinside,0..2] of boolean;
 
@@ -555,6 +557,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2002/02/21 13:52:31  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.44  2001/10/28 15:39:26  ma
   - old behaviour in has_moved
 

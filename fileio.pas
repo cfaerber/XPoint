@@ -518,17 +518,22 @@ begin
 end;
 
 function MakeBak(const n,newext:string): boolean;
-var bakname : string;
+var
+  bakname : string;
 begin
   result:=false;
   if not FileExists(n) then exit;
   BakName := ChangeFileExt(n, '.' + FileUpperCase(NewExt));
   if FileExists(BakName) then
   begin
+    {$IFNDEF UnixFS }
     if FileSetAttr(BakName,faArchive)=-1 then exit;
+    {$ENDIF }
     if not SysUtils.DeleteFile(Bakname)then exit;
   end;
+  {$IFNDEF UnixFS }
   if FileSetAttr(n, faArchive)=-1 then exit;
+  {$ENDIF }
   if not RenameFile(n, bakname)then exit;
   result:=true;
 end;
@@ -704,6 +709,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2002/02/21 13:52:30  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.110  2002/01/21 22:45:48  cl
   - fixes after 3.40 merge
 

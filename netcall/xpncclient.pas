@@ -108,7 +108,6 @@ var
   procedure RenameFiles;
   var
     sr  : Tsearchrec;
-    f: File;
     rs: Integer;
   begin
     RS := findfirst(BoxPar^.ClientSpool + '*.MSG',ffAnyFile,sr);
@@ -149,7 +148,7 @@ begin
     exchange(s, '$CLPATH+', PPPClientpath);
     exchange(s, '$CLPATH', PPPClientpath);
     exchange(s, '$CLPATH', PPPClientpath);
-    exchange(s, '$CLSPOOL', ClientSpool); 
+    exchange(s, '$CLSPOOL', ClientSpool);
     attrtxt(col.colkeys);                 }
 //    if XPdisplayed then
 //        FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
@@ -190,10 +189,11 @@ begin
   end; 
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.2  2002/02/21 13:52:35  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.1  2001/12/04 10:34:22  mk
   - made client mode compilable
 
@@ -204,3 +204,4 @@ end.
   - starting porting of RFC/Client
 
 }
+end.

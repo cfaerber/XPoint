@@ -52,9 +52,11 @@ const prodcode : byte = $e9;
 
 implementation
 
-end.
 {
   $Log$
+  Revision 1.9  2002/02/21 13:52:33  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.8  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -78,3 +80,4 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.

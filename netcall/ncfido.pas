@@ -237,10 +237,11 @@ begin
   result:=aresult;
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.9  2002/02/21 13:52:35  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.8  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
@@ -269,3 +270,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

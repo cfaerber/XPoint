@@ -2207,7 +2207,7 @@ fromstart:
   { es muss jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
-  dispose(cc);
+  dispose(cc); dispose(ccm);
   Hdp.Free;
   if sigtemp then _era(sigfile);
 xexit1:
@@ -2332,6 +2332,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45  2002/02/21 13:52:34  mk
+  - removed 21 hints and 28 warnings
+
   Revision 1.44  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 
