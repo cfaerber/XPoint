@@ -1513,13 +1513,8 @@ end;
 { Datum in Z-Format abfragen }
 
 function Zdate:string;
-{var t,m,j,dow,h,mm,s,s100 : rtlword;}
 begin
   result:= FormatDateTime('YYMMDDhhmm',Now);
-{  getdate(j,m,t,dow);
-  gettime(h,mm,s,s100);
-  while h>23 do dec(h,24);
-  Zdate:=formi(j mod 100,2)+formi(m,2)+formi(t,2)+formi(h,2)+formi(mm,2);}
 end;
 
 
@@ -2016,6 +2011,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.89  2000/11/16 14:04:48  hd
+  - Unit DOS entfernt
+
   Revision 1.88  2000/11/16 14:01:43  hd
   - Unit DOS entfernt
 

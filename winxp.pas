@@ -33,7 +33,7 @@ uses
 {$else}
   crt,
 {$endif}
-  dos,keys,inout,maus2,typeform, xpglobal;
+  keys,inout,maus2,typeform, xpglobal;
 
 const
 {$IFDEF NCRT }
@@ -912,6 +912,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.51  2000/11/16 14:04:48  hd
+  - Unit DOS entfernt
+
   Revision 1.50  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
