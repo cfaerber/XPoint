@@ -181,7 +181,7 @@ begin
         end;
       end;
     close(t);
-    freemem(pa);
+    pa.free;
     loadt:=exist(ParGebdat2);
     end
 
@@ -313,6 +313,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/10/11 15:48:10  mk
+  - Bugfix
+
   Revision 1.9  2000/10/11 14:44:49  mk
   - Gebuehrenabrechnung sehr notduerftig und nicht funktionsfaehig portiert
 
