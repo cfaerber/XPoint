@@ -103,7 +103,6 @@ var printlines : longint;
 procedure sound(hz:word);
 {$ENDIF }
 procedure XpIdle;
-function  plevelstr:string;           { Patchlevel }
 
 procedure showscreen(newmode:boolean);
 procedure showusername;
@@ -2000,16 +1999,6 @@ begin
   writeln;
 end;
 
-
-function plevelstr:string;           { Patchlevel }
-begin
-  if lastchar(patchlevel)='0' then
-    plevelstr:=''
-  else
-    plevelstr:=' pl'+lastchar(patchlevel);
-end;
-
-
 { rechten Teil der ID in LowerCase umwandeln und CRC32 bilden }
 
 function MsgidIndex(mid:string):longint;
@@ -2029,6 +2018,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/06/30 08:21:22  mk
+  - nicht benutzte Funktion plevel entfernt
+
   Revision 1.51  2000/06/29 13:00:52  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

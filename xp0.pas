@@ -87,7 +87,6 @@ const  {$IFDEF DPMI}
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-       patchlevel  : string[13] = '*patchlevel*0';
        xp_xp       : string[10] = 'OpenXP';
        xp_name     : string[30] = '## OpenXP '+verstr+betastr;  { fÅr ZConnect-Header }
        xp_origin   : string[15] = '--- OpenXP';
@@ -1174,6 +1173,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.59  2000/06/30 08:21:22  mk
+  - nicht benutzte Funktion plevel entfernt
+
   Revision 1.58  2000/06/29 13:00:52  mk
   - 16 Bit Teile entfernt
   - OS/2 Version l‰uft wieder
