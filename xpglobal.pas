@@ -122,9 +122,11 @@ const
 {$IFDEF UnixFS }
   DirSepa  = '/';
   WildCard = '*';
+  _MPMask  = '/';	{ Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
 {$ELSE }
   DirSepa  = '\';
   WildCard = '*.*';
+  _MPMask  = ':\';
 {$ENDIF }
 
 const
@@ -148,6 +150,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/05/22 16:30:22  hd
+  - _MPMask fuer den Ersatz bei multipos(':\',path)
+
   Revision 1.27  2000/05/14 09:19:22  mk
   - Debuginfos eingeschaltet und Beta 25 eingetragen
 
