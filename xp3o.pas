@@ -1250,8 +1250,7 @@ begin
   sendempflist:=empflist;
   empflist:=nil;
   if DoSend(false,fn,'A'+empf,_betreff,
-            true,false,true,false,true,sData,leer,leer,
-            0) then;
+    true,false,true,false,true,sData,leer,leer, 0) then;
   dispose(hdp);
   dispose(sData);
 end;
@@ -1480,6 +1479,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.5  2000/10/10 13:04:54  mk
+  RB:- Supersedes in Autoversand
+
   Revision 1.21.2.4  2000/09/25 18:58:35  mk
   - Tastaturbuffer bei Datumsbezuege anpassen wird nicht mehr geloescht
 

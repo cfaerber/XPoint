@@ -34,9 +34,10 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : smallword;           { 1=aktiv, 2=l”schen }
+                  flags   : word; { 1=aktiv, 2=l”schen, 4=Žnderung, 8=ersetzt }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
+                  lastmid : string[120];
                 end;
 
 
@@ -71,7 +72,8 @@ begin
     dbRead(auto,'flags',flags);
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
-    end;
+    dbRead(auto,'lastmsgid',lastmid);
+  end;
 end;
 
 procedure AutoWrite(var ar:AutoRec);
@@ -88,7 +90,7 @@ begin
     dbWrite(auto,'datum1',datum1);
     dbWrite(auto,'datum2',datum2);
     dbWrite(auto,'flags',flags);
-    end;
+  end;
 end;
 
 
@@ -207,6 +209,7 @@ var tmp  : boolean;
     tt   : longint;
     b    : byte;
     muvs : boolean;
+    sData: SendUUptr;
 begin
   postfile:=false;
   with ar do begin
@@ -244,12 +247,16 @@ begin
       if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
+      new(sData);
+      fillchar(sData^,sizeof(sData^),0);
+      if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
       if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
-                nil,leer,leer,sendShow) then begin
+                sData,leer,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
+        dbWrite(auto,'lastmsgid',sData^.msgid);
         assign(t,datei);
         reset(t); getftime(t,tt); close(t);
         dbWrite(auto,'lastfdate',tt);
@@ -269,6 +276,7 @@ begin
           aufbau:=true;
           end;
         end;
+      dispose(sData);
       SaveUVS:=muvs;
       if tmp and exist(datei) then
         _era(datei);
@@ -670,6 +678,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.3  2000/10/10 13:04:55  mk
+  RB:- Supersedes in Autoversand
+
   Revision 1.13.2.2  2000/09/30 16:27:22  mk
   - LFN-Bugfix
 

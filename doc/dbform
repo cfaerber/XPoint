@@ -185,8 +185,10 @@ AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
  9. Datum1      Longint          einzelnes Datum
 10. Datum2      Longint          dito
 11. Flags       Word             1=aktiv, 2=AutoL”schen, 4=nur ge„nderte Dat.
+                                 ab 3.30: 8=ersetzen (Supersede)
 12. LastDate    Longint          letztes Sendedatum
 13. LastFdate   Longint          Dateidatum beim letzten Absenden
+14. LastMsgID   String(120)      ab 3.30: MessageID beim letzten Absenden
 
 Indizes:
 

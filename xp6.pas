@@ -86,7 +86,7 @@ type  SendUUdata = record
                      quotestr   : string[20];
                      UV_edit    : boolean;        { <Esc> -> "J" }
                      empfrealname : string[40];
-                     ersetzt    : string[MidLen];
+                     msgid, ersetzt    : string[MidLen];
                    end;
       SendUUptr   = ^SendUUdata;
 
@@ -843,6 +843,8 @@ var
   ToStr: String;
   ToPos: Integer;
 begin
+  echomail:=ntEditBrettempf(netztyp) and not pm;
+  fadd:=iif(echomail,2,0);
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
@@ -1253,8 +1255,6 @@ fromstart:
 
   if sendbox then
   repeat
-    echomail:=ntEditBrettempf(netztyp) and not pm;
-    fadd:=iif(echomail,2,0);
     DisplaySendbox;                         { SendBox aufbauen }
     repeat
       if pm then intern:=false
@@ -1719,6 +1719,7 @@ fromstart:
     end;
     dbAppend(mbase);            { neue mbase.INT_NR fÅr MessageID }
     hdp^.msgid:=MessageID;
+    sData^.msgid:=hdp^.msgid;
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
       hdp^.ref:=_bezug;
     if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
@@ -1726,8 +1727,6 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      { MK 01/00 VerkÅrzte Anzeige der Versionstypen/nummern }
-      { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
       hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
                      +iifs(registriert.r2,' '+KomOrgReg+'R/'+
@@ -2197,6 +2196,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.12  2000/10/10 13:04:55  mk
+  RB:- Supersedes in Autoversand
+
   Revision 1.39.2.11  2000/10/05 23:13:20  mk
   - zu grossen Prozedurrumpf verkleinert
 
