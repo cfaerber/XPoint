@@ -134,6 +134,7 @@ begin
   s := 1;
   q := false;
   c := 0;
+  p := -1;
   result := source;
 
   while s <= length(result) do

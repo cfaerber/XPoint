@@ -106,8 +106,9 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xpconfigedit,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
-     xp_pgp,xpsendmessage_internal,mime,mime_analyze,rfc2822,xpdatum,StringTools,xpstreams,utftools;
+uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
+  xp3ex, xp3o, xp3o2, xp4e, xp9bp, xpcc, xpconfigedit, xpfido, xpmakeheader,
+  xpnt, xpsendmessage_internal, xpstreams;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -174,31 +175,6 @@ asm
          add   [edi],edx
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-function  testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
-asm
-         mov   ecx,rr
-         mov   esi,bdata
-         cld
-@tbloop: lodsb
-         cmp   al,9
-         jb    @is_bin                  { Binaerzeichen 0..8 }
-         cmp   al,127
-         jae   @is_bin                  { "binae"zeichen 127..255 }
-         cmp   al,32
-         jae   @no_bin                  { ASCII-Zeichen 32..126 }
-         cmp   al,13
-         jbe   @no_bin                  { erlaubte Zeichen 9,10,12,13 }
-@is_bin: mov   eax,1                    { TRUE: Binaerzeichen gefunden }
-         jmp   @tbend
-@no_bin: loop  @tbloop
-         mov   eax,ecx                  { FALSE: nix gefunden }
-@tbend:
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
@@ -926,7 +902,7 @@ begin      //-------- of DoSend ---------
   assign(f,datei);
   parts := TList.Create;
   partsex := false;
-  s1:=nil;s2:=nil;s3:=nil;s4:=nil;s5:=nil;
+  s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
 
   sdNope:=(sdata=nil);
   if sdNope then sdata:=allocsenduudatamem;
@@ -1270,7 +1246,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     fadd:=iif(echomail,2,0);
     DisplaySendbox;                         { SendBox aufbauen }
     senden:=-1;
-    n:=1;                                { SendBox-Abfrage }
+//  n:=1;                                { SendBox-Abfrage }
     pushhp(68);
     spezial:=false;
     repeat
@@ -1395,7 +1371,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                 betreff:=trim(betreff);
                 if umlauttest(betreff) then;
                 showbetreff;
-                n:=1;
+//              n:=1;
               end;
         6   : if intern then
                 rfehler(611)   { 'nicht moeglich - interne Nachricht' }
@@ -1433,7 +1409,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                       end;
                   dbClose(d);
                   end;
-                n:=1;
+//              n:=1;
               end;
         7   : if cancode<>0 then
               begin                                { Codierung aendern }
@@ -1446,7 +1422,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                 then
                   docode:=8;                       // use PGP/MIME instead of PGP for multiparts
                 showcode;
-                n:=1;
+//              n:=1;
               end;
         9   : if not binary and (sendflags and sendWAB=0) then begin
                 editnachricht(false);              { zurueck zum Editor }
@@ -1454,7 +1430,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                   closebox; goto xexit; end;    { -> Nachrichtengroesse 0 }
                 showbetreff;
                 showsize;
-                n:=1;
+//              n:=1;
               end;
        11   : if binary then rfehler(612)   { 'Bei Binaernachrichten nicht moeglich.' }
               else
@@ -1464,7 +1440,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                 rfehler(613)
               else begin
                 if DateSend then senden:=4;     { zeitversetzt absenden }
-                n:=1;
+//              n:=1;
                 end;
        13   : if not pm then
                 rfehler(614)   { 'Empfangsbestaetigung nur bei PMs moeglich' }
@@ -1533,7 +1509,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
               end;
 
       else    if n<0 then begin
-                n:=abs(n);
+//              n:=abs(n);
                 if UpperCase(t)=kopkey then begin
                   old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
@@ -1969,7 +1945,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.WriteToStream(s2);      // Header erzeugen
     CopyStream(s1,s2);  // Body anhängen
 
-    s2.Free; s2:=nil;
+    s2.Free; {s2:=nil;}
 
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
@@ -2160,7 +2136,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
       s1.Seek(0,soFromBeginning);
       CopyStream(s1,s2);
-      s2.Free; s2:=nil;
+      s2.Free; {s2:=nil;}
 
       if uvs_active and (aktdispmode=11) and (cc_count=0) and
          (msgCPanz<=1) then
@@ -2333,6 +2309,9 @@ finalization
 
 {
   $Log$
+  Revision 1.9  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
   Revision 1.8  2001/09/08 16:29:40  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

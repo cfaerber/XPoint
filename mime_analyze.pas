@@ -381,7 +381,7 @@ begin
   if not HasNonISO then
     result:='ISO-8859-1'
   else
-  if not HasNonMS and ((ISOChars*2/3)>_8BitChars) then
+  if not HasNonMS and (((ISOChars*2) div 3)>_8BitChars) then
     result:='Windows-1252'
   else
     result:='IBM437';
@@ -401,7 +401,7 @@ begin
   if not HasNonISO then
     result:='ISO-8859-1'
   else
-  if not HasNonMS and ((ISOChars*2/3)>_8BitChars) then
+  if not HasNonMS and (((ISOChars*2) div 3)>_8BitChars) then
     result:='UTF-8'     // Encode Windows-1252 as UTF-8
   else
   if not HasCP437NonIso then
@@ -476,7 +476,7 @@ begin
     MimeEncodingBase64,MimeEncodingQuotedPrintable: result:=true;
     MimeEncoding7Bit: result:=(not IsBinary) and (not (_8BitChars>0));
     MimeEncoding8Bit: result:=(not IsBinary) and (not (_8BitChars=0));
-    MimeEncodingBinary: result:=false;
+    else result:=false;
   end;
 end;
 
@@ -487,6 +487,7 @@ begin
     MimeEolCR:   result:=(FCrCount>0)and(FCrCount>FCrLfCount);
     MimeEolLF:   result:=(FLfCount>0)and(FLfCount>FCrLfCount);
     MimeEolNone: result:=IsBinary or IsAmbigousEOL;
+    else result:=false;
   end;
 end;
 
@@ -512,6 +513,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.1  2001/09/08 15:03:18  cl
 // - Moved MIME functions/types/consts to mime.pas
 //

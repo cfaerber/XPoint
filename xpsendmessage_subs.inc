@@ -208,7 +208,6 @@ begin
 end;
 
 procedure calc_hdsize;
-var f : file;
 begin
   addsize:=0;
   if not flOhnesig and (sigfile<>'') then
@@ -428,54 +427,6 @@ begin
     end;
 end;
 
-procedure wrs(s:string);
-begin
-  s:=s+#13#10;
-  blockwrite(f2,s[1],length(s));
-end;
-
-procedure write_s(st:TStream;s:string);
-begin
-  st.WriteBuffer(s[1],length(s));
-end;
-
-procedure writeln_s(st:TStream;s:string);
-begin
-  s:=s+#13#10;
-  st.WriteBuffer(s[1],length(s));
-end;
-
-{ Datei aus f (geschlossen) an f2 (offen) anhÑngen }
-{ code<>0 -> mit passwd^ codieren                  }
-
-procedure AppendFile(code:shortint; ofs:longint; iso:boolean);
-type barr = array[0..65000] of byte;
-const siz= 32768;
-var p     : ^barr;
-    rr: word;
-    rr0   : word;
-begin
-  getmem(p,siz);
-  fm_ro; reset(f,1); fm_rw;
-  seek(f,ofs);
-  while not eof(f) do begin
-    if ((umlaute<>1) and (umlaute<>2)) or newbin then begin
-      blockread(f,p^,siz,rr);
-      if iso then IbmToIso1(p^,rr);
-      end
-    else begin
-      blockread(f,p^[1500],siz-1500,rr);  { Platz fÅr Umlaut-Konvertierung }
-      rr0:=rr;
-      ukonv(umlaute,p^,rr);   { verÑndert evtl. rr }
-      inc(fs,rr-rr0);
-      end;
-    if code=-1 then Rot13(p^,rr);
-    blockwrite(f2,p^,rr);
-    end;
-  close(f);
-  freemem(p,siz);
-end;
-
 procedure SetCryptFlag;
 var flag : byte;
 begin
@@ -497,8 +448,11 @@ begin
     message(getres(605));    { 'DES-Codierung...     %' }
     x:=wherex-5; y:=wherey;
     end
-  else
+  else begin
     x:=0;
+    y:=0;
+  end;
+
   pos:=0;
 
   if data is TMemoryStream then
@@ -562,7 +516,6 @@ procedure pmEncryptMessage(var data:TStream);
 var fi,fo:string;
     fs:TStream;
     s:string;
-    oldtyp:byte;
     anal:TMimeAnalyzer;
 begin
   if pmcrypt[docode-2].binary and not ntBinary(netztyp) then begin
@@ -579,8 +532,6 @@ begin
   hdp.WriteZ38(fs);
   CopyStream(data,fs);
   fs.Free;
-
-  anal:=TMimeAnalyzer.Create;
 
   s:=pmcrypt[docode-2].encode;
   rps(s,'$KEY',passwd);
@@ -1063,27 +1014,6 @@ begin
   MayCrash:=(netztyp=nt_Fido) and pm;
 end;
 
-function FileContainsUmlaut:boolean;
-var t     : text;
-    buf   : array[0..2047] of byte;
-    s     : string;
-begin
-  FileContainsUmlaut:=false;
-  assign(t,datei);
-  settextbuf(t,buf);
-  if not existf(t) then exit;
-  fm_ro; reset(t); fm_rw;
-  while not eof(t) do begin
-    readln(t,s);
-    if ContainsUmlaut(s) then begin
-      close(t);
-      FileContainsUmlaut:=true;
-      exit;
-      end;
-    end;
-  close(t);
-end;
-
 procedure SendPGPOptions;
 var brk : boolean;
     x,y: Integer;
@@ -1167,6 +1097,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
   Revision 1.7  2001/09/08 14:42:09  cl
   - added Multipart-MIME support
   - added PGP/MIME support

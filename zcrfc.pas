@@ -172,7 +172,7 @@ type TDotEscapeStream = class(TStream)
 implementation
 
 uses
-  xpheader, unicode, UTFTools, xpmakeheader,resource;
+  xpheader, UTFTools, xpmakeheader, resource;
 
 const
   cr: char = #13;
@@ -181,38 +181,9 @@ const
   readEmpfList = true;
   xpboundary: string = '-';
 
-  attrFile = $0010;                     { File Attach }
-  AttrMPbin = $0040;                    { Multipart-Binary }
-  attrReqEB = $1000;                    { EB anfordern }
-  attrIsEB = $2000;                     { EB }
-  AttrPmReply = $0100;                  { PM-Reply auf AM (Maus/RFC) }
-  AttrControl = $0020;                  { Cancel-Nachricht }
-  AttrQPC = $0001;
-
-  fPGP_encoded = $0001;                 { Nachricht ist PGP-codiert  }
-  fPGP_avail = $0002;                   { PGP-Key vorhanden          }
-  fPGP_signed = $0004;                  { Nachricht ist mit PGP sign.}
-  fPGP_clearsig = $0008;                { Clear-Signatur             }
-  fPGP_sigok = $0010;                   { Signatur war ok            }
-  fPGP_sigerr = $0020;                  { Signatur war fehlerhaft    }
-
-  fPGP_please = $0040;                  { Verifikations-Anforderung  }
-  fPGP_request = $0080;                 { Key-Request                }
-  fPGP_haskey = $0100;                  { Nachricht enthaelt PGP-Key  }
-  fPGP_comprom = $0200;                 { Nachricht enthaelt compromise }
-
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
   tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
-
-  tText = 1;                            { Content-Types: plain, richtext       }
-  tMultipart = 2;                       { mixed, parallel, alternative, digest }
-  tMessage = 3;                         { rfc822, partial, external-body       }
-  tApplication = 4;                     { octet-stream, postscript, oda        }
-  tImage = 5;                           { gif, jpeg                            }
-  tAudio = 6;                           { basic                                }
-  tVideo = 7;                           { mpeg                                 }
-  tModel = 8;                           { model                                }
 
   rsmtp_command: array[TCompression] of string = (
     'rsmtp',
@@ -228,7 +199,6 @@ const
     '#! funbatch'#10);
 
 type
-  mimeproc = procedure(var s: string);
   TCharArray = array[0..bufsize] of char;
   PCharArray = ^TCharArray;
 
@@ -254,8 +224,6 @@ var
 
 const
   { Wird zum Einlesen der Customizable Headerlines benoetigt }
-  mheadercustom: array[1..2] of string = ('', '');
-
   // S wird Standardmaessig mit dieser Laenge allociert
   MaxSLen = 4096;
 
@@ -742,17 +710,6 @@ end;
 
 { --- ZConnect-Header verarbeiten ----------------------------------- }
 
-function compmimetyp(typ: string): string;
-begin
-  if LeftStr(typ, 12) = 'application/' then
-    compmimetyp := LowerCase(mid(typ, 12))
-  else
-    compmimetyp := LowerCase(typ);
-end;
-
-const
-  ReadKoplist = false;
-
 procedure TUUZ.FlushOutbuf;
 begin
   if outbufpos > 0 then
@@ -1149,29 +1106,6 @@ begin
     if s[p] = '\' then delete(s, p, 1);
     inc(p);
   end;
-end;
-
-procedure QuoteStr(var s: string; qspace: boolean); { Quoting erzeugen }
-var
-  p: integer;
-begin
-  if (qspace and multipos(tspecials2, s)) or
-    (not qspace and multipos(tspecials, s)) then
-  begin
-    for p := length(s) downto 1 do
-      if s[p] in ['"', '\'] then insert('\', s, p);
-    s := '"' + s + '"';
-  end;
-end;
-
-procedure GetMimeVersion(var s: string);
-begin
-  hd.mime.mversion := s;
-end;
-
-procedure GetCTencoding(var s: string);
-begin
-  hd.MIME.encoding:=MimeGetEncodingFromName(s);
 end;
 
 procedure GetContentType(const s: string);
@@ -1578,7 +1512,7 @@ var
   { liesst eine Newsgroups-Zeile in einen tstring }
   procedure getnewsgroupsline(line: string; List: TStringlist);
   var
-    i,p: integer;
+    p: integer;
   begin
     List.Clear;
     line:=trim(rfcremovecomments(line));
@@ -2732,7 +2666,6 @@ var
   s,rfor: string;
   first: boolean;
   i, j: integer;
-  xdate: boolean;
 
   procedure wrref;
   begin
@@ -3610,7 +3543,7 @@ begin
 end;
 
 function TCRLFtoLFStream.Write(const Buffer; Count: Longint): Longint;
-var I,Pos:Longint;
+var I:Longint;
 begin
   Result := 0;
 
@@ -3683,7 +3616,7 @@ begin
 end;
 
 function TDotEscapeStream.Write(const Buffer; Count: Longint): Longint;
-var I,Pos,Beg:Longint;
+var I,Beg:Longint;
 begin
   Result := 0;
   Beg := 0;
@@ -3718,6 +3651,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
   Revision 1.72  2001/09/08 16:29:41  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

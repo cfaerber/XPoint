@@ -37,10 +37,8 @@ uses
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
-  classes, database, fileio, inout, keys, lister, maus2, resource, typeform,
-  winxp, xp0, xp1, xp1input, xp1o, xp3, xp3o, xp4e, xpe, xpglobal, xpnt, maske,
+  classes, database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
   sysutils, windows, xpstreams;
-
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;
@@ -83,7 +81,7 @@ begin
     end;
     if reg_res = ERROR_SUCCESS then
     begin
-      SetLength(value_data,value_size+iif(value_data[value_size]=#0,-1,0));
+      SetLength(value_data,Longint(value_size)+iif(value_data[value_size]=#0,-1,0));
       Result:=value_data;
     end;
   end;
@@ -102,6 +100,9 @@ begin
   if not FileExists(pa.FileName) then
     exit;
 
+  f:=nil;
+  f1:=nil;
+
   try
     pa.Analyzed.Size := 0;
 
@@ -115,7 +116,6 @@ begin
     if pa.FileEncoding in [MimeEncodingQuotedPrintable,MimeEncodingBase64] then
       f1 := MimeCreateDecoder(pa.FileEncoding,f)
     else begin
-      f1 := f;
       f := nil;
     end;
 

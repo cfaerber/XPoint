@@ -292,9 +292,6 @@ begin
 end;
 
 function TQuotedPrintableDecodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
-var
-  ipos: LongInt;
-  endbytes: array[0..1] of Char;
 begin
   if ((Origin = soFromCurrent)   and (Offset = 0)) or
      ((Origin = soFromBeginning) and (Offset = BytesRead)) then
@@ -306,6 +303,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.1  2001/09/08 15:06:14  cl
 // - Moved MIME functions/types/consts to mime*.pas
 //

@@ -92,9 +92,12 @@ uses
 {$IFDEF Win32}
   windows,
 {$ENDIF}
+{$IFDEF Delphi}
+  dateutils,
+{$ENDIF}
   fileio, inout, keys, lister, maus2, resource, typeform, winxp, xp0, xp1,
-  xp1input, xp1o, xp3, xp3o, xp4e, xpe, xpglobal, xpnt,
-  xpsendmessage_attach_analyze, maske, xpdatum, xpstreams;
+  xp1input, xp1o, xp4e, xpglobal, xpnt, xpsendmessage_attach_analyze, maske,
+  xpdatum, xpstreams;
 
 constructor TSendAttach_Part.Create;
 begin
@@ -198,17 +201,13 @@ const width = 68;
       okb   = 6;
 var p,p0      : integer;        (* current line                 *)
     q,q0      : integer;        (* current start of window      *)
-      c0      : integer;
     gl        : integer;        (* max number of lines          *)
     x,y       : Integer;        (* position of dialogue         *)
     poutside  : boolean;
-    startmkey : boolean;   { beim Start war Maustaste gedrÅckt }
     t         : taste;
     bp,rb     : shortint;
-    c         : char;
     buttons   : string;
     buttons2  : string;
-    done      : boolean;
 
   function docode:byte;
   begin
@@ -223,7 +222,6 @@ var p,p0      : integer;        (* current line                 *)
   var
     s1,s2,s3    : string;
     pa          : TSendAttach_Part;
-    j           : Integer;
   begin
     pa:=TSendAttach_Part(parts[i]);
 
@@ -361,7 +359,7 @@ begin { SendAttach }
   p:=0; p0:=p;
   q:=0; q0:=-1;
 
-  done:=false;
+//  done:=false;
 
   repeat
     if p<0 then p:=0 else
@@ -393,7 +391,7 @@ begin { SendAttach }
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
 
-    c:=UpCase(t[1]);
+//    c:=UpCase(t[1]);
 
   try
     case rb of
@@ -653,7 +651,6 @@ end;
 procedure SendAttach_Delete(parts:TList;n:Integer);
 var pa: TSendAttach_Part;
     dummy:Boolean;
-    fn: string;
 begin
   pa := TSendAttach_Part(parts[n]);
 
@@ -864,8 +861,6 @@ end;
 procedure SendAttach_EditMeta(pa:TSendAttach_Part);
 var x,y  : Integer;
     brk  : Boolean;
-    s    : String;
-    IsTxt: Boolean;
 
     ContentDisposition: string;
     ContentDescription: string;
@@ -878,7 +873,14 @@ var x,y  : Integer;
   function strd(const dt:string):TDateTime;
   begin
     try
-
+      result := EncodeDate(
+        IVal(Copy(dt,7,4)),
+        IVal(Copy(dt,4,2)),
+        IVal(Copy(dt,1,2)) ) + 
+	EncodeTime(
+        IVal(Copy(dt,12,2)),
+        IVal(Copy(dt,15,2)),
+        IVal(Copy(dt,17,2)),0 )
     except
       result := NaN;
     end;
@@ -923,6 +925,11 @@ begin
   if (ContentDisposition=GetRes2(624,25)) then
     pa.ContentDisposition.DispoType := mimedispositioninline else
     pa.ContentDisposition.DispoType := mimedispositionattach;
+
+  pa.FileCreate := strd(DateCreate);
+  pa.FileModify := strd(DateModify);
+  pa.FileAccess := strd(DateRead);
+    
 end;
 
 procedure SendAttach_Edit(Parts:TList;n:Integer;x,y:integer;Umlaute:Boolean;SigFile:String;docode:Byte;pgpsig:boolean);

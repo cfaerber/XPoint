@@ -284,8 +284,8 @@ initialization
 {$ENDIF }
   if Longint(Windows.GetVersion)>=0 then // WinNT
   begin
-    SetConsoleOutputCP(437);
     SetConsoleCP(437);
+    SetConsoleOutputCP(437);
   end;
 end.
 

@@ -427,7 +427,6 @@ var pos: Integer;
     par: TMimeParam;
 begin
   pos := FParam.IndexOf(Name);
-  par := TMimeParam.Create('','','');
 
   if pos<0 then begin
     par := TMimeParam.Create('','','');
@@ -494,7 +493,7 @@ end;
 function TMimeContentType.MayEncodeParam(const name:string):boolean;
 var name_lc: string;
 begin
-  name_lc := LowerCase(name_lc);
+  name_lc := LowerCase(name);
   Result :=
     (name_lc<>'boundary') and
     (name_lc<>'charset');
@@ -1122,12 +1121,11 @@ var pos:   integer; // current scan position
     enc:   boolean;
     ds: string;     // recoded string
     csTo:  TMimeCharsets;
-    mlen,dlen:  Integer;
-    inec: boolean;
+    dlen:  Integer;
 
   procedure psq(x:string);
   begin
-    if Length(ss)-dlen+Length(x)>mlen-2 then
+    if Length(ss)-dlen+Length(x)>MaxLen-2 then
     begin
       Result:='?='+EOL+' =?'+MimeCharsetNames[csTo]+'?Q?';
       dlen:=Length(ss);
@@ -1173,7 +1171,7 @@ begin
     if MaxLen>75 then MaxLen:=76;
     if MaxFirstLen>75 then MaxFirstLen:=75;
 
-    MLen:=MaxFirstLen;
+    MaxLen:=MaxFirstLen;
     DLen:=0;
 
     Result:='=?'+MimeCharsetNames[csTo]+'?Q?';
@@ -1253,6 +1251,8 @@ begin
     end;
 
   WriteTo(Count-1);
+
+  Result:=Start;
 end;
 
 constructor TMimeCRtoCRLFStream.Create(AnOtherStream: TStream);
@@ -1276,6 +1276,9 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.2  2001/09/08 16:29:30  mk
 // - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
 // - some AnsiString fixes

@@ -530,7 +530,7 @@ var
     bread: integer;
 
 begin
-  crc := $FFFFFFFF;
+  crc := Longint($FFFFFFFF);
   Seek(f, 0);
   if (IOresult <> 0) then
     {null};
@@ -1062,7 +1062,7 @@ begin
     crc := UpdCRC32(Lo(c), crc)
   end;
 
-  if (crc <> $DEBB20E3) then
+  if (Longint(crc) <> Longint($DEBB20E3)) then
   begin                                 {this is the polynomial value}
     INC(TransferError);
     Z_GetBinaryHead32 := ZERROR;
@@ -1253,7 +1253,7 @@ var
 begin
   if (rxframeind = ZBIN32) then
   begin
-    crc32 := $FFFFFFFF;
+    crc32 := Longint($FFFFFFFF);
     uses32crc := TRUE;
     TransferCheck := 'CRC-32';
   end                                   (* of IF THEN *)
@@ -1301,7 +1301,7 @@ begin
                 if (Hi(c) <> 0) then goto crcfoo;
                 crc32 := UpdCRC32(Lo(c), crc32)
               end;
-              badcrc := (crc32 <> $DEBB20E3);
+              badcrc := (Longint(crc32) <> Longint($DEBB20E3));
             end                         (* of IF THEN *)
             else
             begin
@@ -2075,7 +2075,7 @@ var
 begin
   if send32crc then
   begin
-    crc32 := $FFFFFFFF;
+    crc32 := Longint($FFFFFFFF);
 
     for t := 0 to (blength - 1) do
     begin
@@ -2731,6 +2731,9 @@ begin
 
 {
   $Log$
+  Revision 1.24  2001/09/08 18:46:44  cl
+  - small bug/compiler warning fixes
+
   Revision 1.23  2001/09/08 16:29:46  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -549,17 +549,12 @@ end;
 
 procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
 var b    : byte;
-    OwnUserID  : string;
     fi,fo: string;
-    fis,fie: TStream;
+    fis: TStream;
     t: string;
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
     RemoteUserID:=hd.empfaenger;
-  if PGP_UserID<>'' then
-    OwnUserID:=' -u '+IDform(PGP_UserID)
-  else
-    OwnUserID:='';
 
   // no textmode for MIME!
   if PGPVersion=PGP2 then
@@ -1088,6 +1083,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
   Revision 1.46  2001/09/08 16:29:37  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

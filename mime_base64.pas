@@ -260,6 +260,7 @@ end;
 
 function TBase64DecodingStream.Write(const Buffer; Count: Longint): Longint;
 begin
+  raise EStreamError.Create('Invalid stream operation');
 end;
 
 function TBase64DecodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
@@ -276,6 +277,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.1  2001/09/08 15:06:14  cl
 // - Moved MIME functions/types/consts to mime*.pas
 //

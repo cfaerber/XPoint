@@ -43,7 +43,7 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
 implementation
 
 uses
-  xpdatum, xpnt, xp3, Xp0, SysUtils, Typeform, mime, xpmime;
+  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
@@ -584,6 +584,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
   Revision 1.14  2001/09/08 16:29:40  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -49,7 +49,7 @@ var s: TStream;
 
   procedure ReadParts;
   var pa: TSendAttach_Part;
-      d,d3:TStream;
+      d:TStream;
       t,t2:string;
       h,n: string;
       i: Integer;
@@ -183,7 +183,7 @@ end;
 procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String);
 var s2,s3,s4,s5,s0: TStream;
 begin
-  s2:=nil; s3:=nil; s4:=nil; s5:=nil; s0:=nil;
+  s2:=nil; s3:=nil; s4:=nil; {s5:=nil;} s0:=nil;
 
   with pa do
   begin
@@ -228,9 +228,9 @@ begin
     CopyStream(s5,s1);
 
     s5.Free; s5:=nil;
-    s0.Free; s0:=nil;
+    s0.Free; {s0:=nil;}
 
-    if assigned(s4) then begin s1.Free; s1:=s4; s4:=nil; end;
+    if assigned(s4) then begin s1.Free; s1:=s4; {s4:=nil;} end;
     if assigned(s3) then begin s1.Free; s1:=s3; s3:=nil; end;
 
     if (SigFile<>'') and FileExists(SigFile) then
@@ -245,11 +245,11 @@ begin
       CopyStream(s5,s1);
     except
     end;
-      s5.Free; s5:=nil;
-      if assigned(s3) then begin s1.Free; s1:=s3; s3:=nil; end;
+      s5.Free; {s5:=nil;}
+      if assigned(s3) then begin s1.Free; s1:=s3; {s3:=nil;} end;
     end;
 
-    if assigned(s2) then begin s1.Free; s1:=s2; s2:=nil; end;
+    if assigned(s2) then begin s1.Free; {s1:=s2; s2:=nil;} end;
   end; // with
 end;
 
@@ -275,6 +275,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.1  2001/09/08 14:42:09  cl
 // - added Multipart-MIME support
 // - added PGP/MIME support

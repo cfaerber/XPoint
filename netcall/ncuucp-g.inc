@@ -381,7 +381,7 @@ var n,i   : integer;
     pkts  : integer;
     CtlHeader: CP_Header;
 begin
-  Result:=false;
+//Result:=false;
   n:=20; pkts:=0;
 
   repeat
@@ -644,6 +644,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/09/08 18:46:44  cl
+  - small bug/compiler warning fixes
+
   Revision 1.6  2001/04/12 06:34:06  mk
   - FPC Bug is fixed now, removed workaround
 

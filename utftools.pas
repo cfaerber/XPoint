@@ -235,24 +235,35 @@ begin
   Result := UTF8_Decoders[CharSet].Decode(PUTF8Char(str));
 end;
 
+procedure do_initialization;
 var cs:TMimeCharsets;
-
-initialization
+begin
   for cs := low(UTF8_Encoders) to high(UTF8_Encoders) do
   begin
     UTF8_Encoders[cs]:=nil;
     UTF8_Decoders[cs]:=nil;
   end;
+end;
 
-finalization
+procedure do_finalization;
+var cs:TMimeCharsets;
+begin
   for cs := low(UTF8_Encoders) to high(UTF8_Encoders) do
   begin
     if assigned(UTF8_Encoders[cs]) then UTF8_Encoders[cs].Free;
     if assigned(UTF8_Decoders[cs]) then UTF8_Decoders[cs].Free;
   end;
+end;
+
+initialization do_initialization;
+finalization   do_finalization;
+
 end.
 
 // $Log$
+// Revision 1.6  2001/09/08 18:46:43  cl
+// - small bug/compiler warning fixes
+//
 // Revision 1.5  2001/09/08 14:23:27  cl
 // - Moved MIME functions to mime.pas
 // - More uniform naming of MIME functions/types/consts

@@ -214,7 +214,7 @@ begin
   if DontClose then EXIT;
 
   DataRequested:=False;
-  if GetHandle <> INVALID_HANDLE_VALUE then
+  if Longint(GetHandle) <> Longint(INVALID_HANDLE_VALUE) then
     begin
       CloseHandle(GetHandle);
 
@@ -412,6 +412,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.8  2001/09/08 18:46:44  cl
+  - small bug/compiler warning fixes
+
   Revision 1.7  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 
