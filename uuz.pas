@@ -426,6 +426,7 @@ var t : text;
   end;
 
 begin
+  if Win95_Aktiv then UseLFN := true;
   mails:=0; news:=0;
   uunumber:=0;
   new(uline);
@@ -3467,6 +3468,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.29  2001/01/01 22:03:03  mk
+  - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
+
   Revision 1.35.2.28  2001/01/01 21:01:15  mk
   - auf dest.bak pruefen
 

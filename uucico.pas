@@ -118,6 +118,7 @@ end;
 
 procedure InitVar;
 begin
+  if Win95_Aktiv then UseLFN := true;
   uulog:=nil; deblog:=nil;
   with col do
     if color then begin
@@ -1925,6 +1926,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.5  2001/01/01 22:03:03  mk
+  - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
+
   Revision 1.1.2.4  2001/01/01 12:12:10  mk
   - verbesserte LFN-UnterstÅtzung
 
