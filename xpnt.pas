@@ -247,7 +247,7 @@ end;
 
 
 function formmsgid(msgid:string):string;
-var p : byte;
+var p : integer;
 begin
   if msgid='' then
     formmsgid:=''
@@ -255,7 +255,7 @@ begin
     p:=cposx('@',msgid)+1;
     while p<=length(msgid) do begin
       msgid[p]:=system.upcase(msgid[p]);
-      inc(p);
+      inc(p)
       end;
     formmsgid:=dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
     end;
@@ -742,6 +742,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.39  2001/12/02 12:11:21  cl
+  - got two range check errors
+
   Revision 1.38  2001/10/21 13:09:05  ml
   - removed some more warnings (only 130 yet...)
 

@@ -752,7 +752,7 @@ begin
 
     inc(hd.pgpflags,fPGP_encoded);
     dbReadN(mbase,mb_netztyp,nt);
-    nt:=nt or $4000;                         { 's'-Kennzeichnung }
+    nt:=nt or Longint($4000);                         { 's'-Kennzeichnung }
     dbWriteN(mbase,mb_netztyp,nt);
   end else
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
@@ -1162,6 +1162,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2001/12/02 12:11:21  cl
+  - got two range check errors
+
   Revision 1.58  2001/10/21 19:31:45  ma
   - fixed range check error
 
