@@ -569,7 +569,8 @@ var fn     : pathstr;
           mwrt(x+2,y+2,getres(2444));
           t:='';
           case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
-            0,2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
+              2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
+              0 : viewer.Prog:='*intern*';
             end;
           closebox;
           end;
@@ -791,7 +792,7 @@ begin
 
   repeat                { +/- - Schleife }
     nw:=NachWeiter;     { kann vom Lister verÑndert werden }
-    _down:=NachWeiter;
+    _down:=NachWeiter and not ((rdmode=1) and (dispmode=10));
     ende:=true;
     GoP;
     aktdisprec:=dbRecno(mbase);
@@ -870,9 +871,14 @@ begin
         closebox;
         pophp;
         if brk then goto nextmsg;
+        if kb_ctrl then begin
+          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { Ctrl evtl. kÅnstlich "gedrÅckt" }
+          viewer.prog:='*intern*';
+        { GetDefaultViewer('text/plain', Viewer); }
+          end; 
         if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
-          then { viewer.prog:='*intern*'; }
-            GetDefaultViewer('text/plain', Viewer);
+          then viewer.prog:='*intern*';
+          { GetDefaultViewer('text/plain', Viewer); }
         Testviralextension;
       end else
       begin
@@ -889,6 +895,10 @@ begin
           holen(pt); sichern(pt);
           end;
         SelectMultiPart(mpselect,mpart_nr,mp=2,mpdata,brk);
+        if kb_ctrl then begin
+          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { Ctrl evtl. kÅnstlich "gedrÅckt" }
+          mpdata.typ:='text'; mpdata.subtyp:='plain'; mimetyp:='text/plain';
+          end; 
         pophp;
         if brk then goto nextmsg;
         mpart_nr:=mpdata.part;
@@ -909,10 +919,13 @@ begin
       else begin
         fillchar(mpdata,sizeof(mpdata),0);
         mpart_nr:=1;
-        GetExtViewer(getmsgfilename,viewer);     { Dateiendung hat }
-        if viewer.prog='' then                   { Vorrang vor dem Mimetyp }
-        GetMimeViewer(mimetyp,viewer);
-        Testviralextension;                      { Schutz vor Mail-Viren }
+        if viewer.prog='*intern*' then viewer.prog:=''
+        else begin 
+          GetExtViewer(getmsgfilename,viewer);   { Dateiendung hat bei Viewerauswahl }
+          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+          GetMimeViewer(mimetyp,viewer);
+          Testviralextension;                    { Schutz vor Mail-Viren } 
+          end;
       end;
 
       poppush:=true;
@@ -922,7 +935,7 @@ begin
         typ:='B';
 
       if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
-       and ((viewer.prog='') or (viewer.prog='*intern*')) then begin
+       and ((viewer.prog='') or (viewer.prog='*intern*')) then begin { keine BinÑr-Versandmeldung }
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
         GetExtViewer(GetMsgFilename,viewer);
@@ -949,7 +962,7 @@ begin
       end;      { of not FileAttach }
     { Nachricht anzeigen }
 
-    nw:=NachWeiter;   { kann vom Lister verÑndert werden }
+  { nw:=NachWeiter; } { kann vom Lister verÑndert werden }
     netztyp:=dbReadInt(mbase,'netztyp') and $ff;
     if viewer.prog='*intern*' then
     begin
@@ -1338,15 +1351,14 @@ begin
     if length(newsuch)=maxsuch then begin
       errsound; exit; end
     else
-      if (dispmode>0) or (ch<>'/') then
+   (* if (dispmode>0) or (ch<>'/') then *)
         newsuch:=newsuch+UpCase(ch);
 
   if (dispmode<1) then begin
     dbgotop(bbase);
     dbreadN(bbase,bb_brettname,s);
     delfirst(s);
-    while not dbeof(bbase) and
-     (ustr(left(s,length(newsuch)))<>ustr(newsuch)) do
+    while not dbeof(bbase) and (ustr(left(s,length(newsuch)))<>ustr(newsuch)) do
     begin
       dbnext(bbase);
       if not dbeof(bbase) then begin
@@ -1357,8 +1369,9 @@ begin
       end;
     if dbeof(bbase) then
       errsound
-    else if ch<>'/' then
+    else (* if ch<>'/' then *)
       suchok
+(*
     else begin
       pp:=cpos('/',mid(s,length(newsuch)+1));
       if pp=0 then begin
@@ -1378,6 +1391,7 @@ begin
         suchok;
         end;
       end
+*)
     end
   else begin
 
@@ -1731,6 +1745,25 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.36  2002/03/31 15:50:54  my
+  JG:- Im MIME-AuswahlmenÅ kann jetzt mit <Ctrl-Enter> oder <Space>
+       (Leertaste) die Anzeige mit dem XP-Lister statt mit dem
+       eingetragenen MIME-Viewer erzwungen werden.
+
+  JG:- Fix MIME-Viewer: <Esc> in der Mailviren-Warnabfrage lÑdt die
+       Nachricht jetzt in den internen Lister und nicht mehr ins "Viewer-
+       Programm fÅr verdÑchtige Dateien" (C/O/V).
+
+  JG:- Fix Nachrichtenweiterschalter: Funktion des Schalters war bei MIME-
+       Multipart-Nachrichten oftmals vom Zufall abhÑngig.
+
+  JG:- Schnellsuche Brett-öbersicht: Funktion der abgekÅrzten Suche
+       (Sprung zur nÑchsten Ebene der Bretthierarchie) mittels "/"
+       deaktiviert. Feature erfÅllte seinen Zweck nicht wirklich und
+       blockierte normale Suchen (z.B. kam man nie auf "crosspoint/
+       openxp16/pub/allgemein", wenn vorher "CROSSPOINT.GER" angesprungen
+       worden war).
+
   Revision 1.25.2.35  2002/03/16 00:22:49  my
   JG:- Fix fÅr vorherigen Commit: Bei einer Schnellsuche nach
        Brettern, die mit "T" anfangen, wurden auch Trennzeilen
