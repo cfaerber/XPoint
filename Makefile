@@ -424,11 +424,7 @@ ifneq (,$(findstring $(OS),dos32 win32))
 EXAMPLES += xpmailto.reg
 endif
 
-ifeq ($(OS),win32)
 RST = ipaddr ncnntp ncpop3 ncsmtp
-else
-RST =
-endif
 
 BINFILES = $(patsubst %,%$(EXEEXT),$(BIN))
 COMPBINFILES = $(patsubst %,%$(EXEEXT),$(COMPBIN))
@@ -2577,6 +2573,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.32  2000/10/26 19:22:07  fe
+# RST-Dateien werden nicht nur unter Windows erzeugt.
+#
 # Revision 1.31  2000/10/25 17:32:11  fe
 # Abhaengigkeitsprobleme (hoffentlich) beseitigt.
 #
