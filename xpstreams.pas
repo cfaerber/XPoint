@@ -448,23 +448,27 @@ begin
 end;
 
 function readln_s(stream:TStream):string;
-
-  function GetByte:Char;
-  begin
-    stream.ReadBuffer(result,1);
-  end;
-
+const
+  DefaultLength = 16;
+var
+  i: Integer;
 begin
-  result:='';
-  repeat
-    try
-      result:=result+GetByte;
-    except
-      if result='' then raise;
-      exit;
+  SetLength(Result, DefaultLength);
+  try
+    Stream.ReadBuffer(Result[1], 2);
+    i := 2;
+    while (Result[i] <> #10) and (Result[i-1] <> #13) do
+    begin
+      Inc(i);
+      stream.ReadBuffer(Result[i], 1);
+      if (i mod DefaultLength)=0 then
+        SetLength(Result, ((i div DefaultLength) + 1) * DefaultLength);
     end;
-  until RightStr(result,2)=#13#10;
-  SetLength(Result,Length(Result)-2);
+  except
+    if result='' then raise;
+    exit;
+  end;
+  SetLength(Result,i-2);
 end;
 
 procedure CopyStream(InStream,OutStream:TStream);
