@@ -299,21 +299,26 @@ end;
 
 
 procedure DecodeBase64(var s:string);
-const b64tab : array[0..127] of byte =
-               ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,63, 0, 0, 0,64,
-                53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
-                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-                16,17,18,19,20,21,22,23,24,25,26, 0, 0, 0, 0, 0,
-                 0,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
-                42,43,44,45,46,47,48,49,50,51,52, 0, 0, 0, 0, 0);
+const
+  b64tab : array[0..127] of byte =
+           ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,63, 0, 0, 0,64,
+            53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
+             0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
+            16,17,18,19,20,21,22,23,24,25,26, 0, 0, 0, 0, 0,
+             0,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
+            42,43,44,45,46,47,48,49,50,51,52, 0, 0, 0, 0, 0);
+  b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 var b1,b2,b3,b4 : byte;
     p1,p2,pad   : byte;
+    i: integer;
 
   function nextbyte:byte;
   var p : byte;
   begin
+    nextbyte:=0;
+    if p1>length(s) then exit;
     repeat
       if s[p1]>#127 then p:=0
       else p:=b64tab[byte(s[p1])];
@@ -326,14 +331,13 @@ var b1,b2,b3,b4 : byte;
 begin
   if length(s)<4 then s:=''
   else begin
-    if lastchar(s)='=' then
+    for i:=1 to length(s) do if cpos(s[i],b64alphabet)=0 then exit;
+    if s[length(s)]='=' then begin
       if s[length(s)-1]='=' then pad:=2
-      else pad:=1
-    else begin
-      if length(trim(s)) mod 4 <> 0 then
-        exit   { kein gltiger base64-String }
-      else pad:=0;
-    end;
+      else pad:=1;
+      if length(s) mod 4<>0 then pad:=3;
+    end
+    else pad:=0;
     p1:=1; p2:=1;
     while p1<=length(s) do begin
       b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
@@ -477,6 +481,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.4  2002/03/22 20:14:37  my
+  RB:- base64-Decodierung korrigiert und optimiert.
+
   Revision 1.1.2.3  2002/03/15 12:39:28  my
   MY:- Ungltige base64-Strings werden nicht mehr decodiert, dadurch
        z.B. PktXCode-Meldungen wieder lesbar (Fix re-implementiert).
