@@ -692,6 +692,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 17   RTS verwenden
 18   ... Triggerlevel
 19   Comminit  ~
+20   GerÑt Nummer %s Konfigurieren
 + 262
 # Fensterbreite
 0    59
@@ -3020,6 +3021,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 41 Lîschen Sie das Unterverzeichnis "%s"!
 42 Unbekannter Fido-Node: %s
 43 Keine EintrÑge markiert!
+44 Das GerÑt kann nicht angesprochen werden!
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!
 
@@ -3302,6 +3304,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1 Schnitstellen
 2 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4)
 3 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4),^ISDN (CAPI)
+4 GerÑte
+5 Device ^1,Device ^2,Device ^3,Device ^4
 -
 
 # --- NNTP-UnterstÅtzung
@@ -3505,6 +3509,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.77  2000/11/10 19:21:31  hd
+# - Erste Vorbereitungen fuer das Terminal unter Linux
+#   - Funktioniert prinzipiell, aber noch nicht wirklich
+#
 # Revision 1.76  2000/11/10 13:20:45  hd
 # - COM-Ports aus dem Menu extrahiert
 #

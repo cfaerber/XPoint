@@ -682,6 +682,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 17   Use RTS
 18   ...trigger level
 19   Comminit  ~
+20   Configure Device Number %s
 + 262
 # Window width
 0    58
@@ -2953,6 +2954,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 41 Delete the subdirectory "%s"!
 42 Unknown node: %s
 43 No entries marked!
+44 Can't talk to the device!
 # Not available
 99 Function not implemented yet!
 
@@ -3195,8 +3197,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # --- Changes on the basic menu structure
 + 30001
 1 Choose COM-Port
-2 Serial ^1 (COM1),Serial ^2 (COM2), Serial ^3 (COM3), Serial ^4 (COM4)
-3 Serial ^1 (COM1),Serial ^2 (COM2), Serial ^3 (COM3), Serial ^4 (COM4),^ISDN
+2 Serial ^1 (COM1),Serial ^2 (COM2),Serial ^3 (COM3),Serial ^4 (COM4)
+3 Serial ^1 (COM1),Serial ^2 (COM2),Serial ^3 (COM3),Serial ^4 (COM4),^ISDN
+4 Devices
+5 Device ^1,Device ^2,Device ^3,Device ^4
 -
 
 # --- NNTP ------------------------------------------------------------
@@ -3400,6 +3404,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.105  2000/11/10 19:21:31  hd
+# - Erste Vorbereitungen fuer das Terminal unter Linux
+#   - Funktioniert prinzipiell, aber noch nicht wirklich
+#
 # Revision 1.104  2000/11/10 13:20:45  hd
 # - COM-Ports aus dem Menu extrahiert
 #

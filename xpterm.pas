@@ -371,6 +371,9 @@ var b : byte;
 begin
   if CommObj^.CharAvail then begin
     b:=Ord(CommObj^.GetChar);
+{$ifdef Debug}
+    DebugLog('XPTerm','Received char: "'+chr(b)+'"',9);
+{$endif}
     if ansichar then add_ansi(char(b))
     else
       if ansimode and (b=27) then begin
@@ -541,6 +544,171 @@ end;
 
 { direct = /XPoint/Terminal }
 
+{$ifdef Unix}
+
+procedure terminal(direct:boolean);
+var
+  ende          : boolean;
+  connected     : boolean;
+  t             : taste;
+  p             : pointer;
+  rest          : boolean;
+  nr            : integer;      { Welches Gerät }
+  s             : string;
+  win           : TWinDesc;     { Fenster }
+begin
+  Debug.DebugLog('XPFM','Terminal called',1);
+  connected:= not direct;
+  ende:= false;
+  if not (direct) then begin
+    trfehler(799,30);
+    exit;
+  end;
+{$ifdef Debug}
+  nr:= minisel(0,0,'Logging','Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9',9);
+  SetLogLevel('ObjCOM',nr);
+  SetLogLevel('XPTerm',nr);
+{$endif}
+  { Gerät wählen }
+  s:= '^1 "'+COMn[1].MCommInit
+        +'",^2 "'+COMn[2].MCommInit
+        +'",^3 "'+COMn[3].MCommInit
+        +'",^4 "'+COMn[4].MCommInit+'"';
+  nr:= minisel(0,0,getres2(30001,4),s,1);
+  if nr<0 then begin
+    freeres;
+    menurestart:= true;
+    exit;
+  end;
+  if not CommInit(COMn[nr].MCommInit,CommObj) then begin
+    trfehler(744,30);
+    freeres;
+    exit;
+  end;
+  Modem.CommObj:=CommObj;
+  MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
+  attrtxt(15); 
+  writeln('OpenXP ', verstr, betastr, pformstr);
+  writeln('Terminal Emulation Ready');
+  attrtxt(7);
+  writeln;
+  open_log:=false;
+  log:=false;
+  in7e1:=false;
+  out7e1:=false;
+  display:=true;
+  ansimode:=true;
+  IgnCD:=COMn[nr].IgCD;
+  IgnCTS:=COMn[nr].IgCTS;
+  recs:='';
+  lrecs:='';
+  inout.cursor(curon);
+  display:=true;
+  pushhp(66);
+  p:=@fnproc[0,9];
+  fnproc[0,9]:=DummyFN;
+  ansichar:=false;
+  ansifg:=7; ansibg:=0;
+  ansihigh:=0;
+  ansirev:=false;
+{$ifdef Debug}
+  DebugLog('XPTerm','Ignore CD...: '+iifs(IgnCD,'Ja','Nein'),5);
+  DebugLog('XPTerm','Ignore CTS..: '+iifs(IgnCTS,'Ja','Nein'),5);
+  DebugLog('XPTerm','Handle......: '+IntToStr(CommObj^.GetHandle),5);
+  DebugLog('XPTerm','Speed.......: '+IntToStr(CommObj^.GetBpsRate),5);
+  DebugLog('XPTerm','Enter main loop',5);
+{$endif}
+  while not ende do begin
+    if connected and not IgnCD and not CommObj^.Carrier then begin
+      moff;
+      writeln;
+      attrtxt(15);
+      write(getres(2006));
+      attrtxt(7);   { 'Verbindung getrennt - Ende mit <Alt X>' }
+      writeln;
+      mon;
+      connected:=false;
+      end
+    else begin
+      multi2;
+      testbyte;
+      if AutoDownload and (pos('*'^X'B00',recs)>0) then
+        UpDown(true,true)
+      else if AutoUpload and (pos('*'^X'B01',recs)>0) then
+        UpDown(true,false);
+      if keypressed then begin
+        get(t,curon);
+        inout.cursor(curon);
+        if t=keyf6 then begin
+          savewin;
+          Makroliste(7);
+          restwin;
+        end;
+        Xmakro(t,64);
+        if t=mausleft then t:=copychr(_mausx,_mausy);
+        if t=keyup    then CommObj^.SendString(ANSI_curup,False) else
+        if t=keydown  then CommObj^.SendString(ANSI_curdown,False) else
+        if t=keyleft  then CommObj^.SendString(ANSI_curleft,False) else
+        if t=keyrght  then CommObj^.SendString(ANSI_curright,False) else
+        if t=keydel   then CommObj^.SendString(#127,False) else
+        if t=keyhome  then CommObj^.SendString(ANSI_home,False) else
+        if t=keyend   then CommObj^.SendString(ANSI_end,False) else
+        if t=keyaltx  then ende:=true else
+        if t=keyalth  then aufhaengen else
+        if t=keyaltl  then SwitchLogfile else
+        if t=keychom  then begin moff; clrscr; mon; end else
+        if t=keypgup  then UpDown(false,false) else
+        if t=keypgdn  then UpDown(false,true) else
+        if t=keyaltd  then begin
+                             TermStatus:=not TermStatus;
+                             SwitchStatus;
+                           end else
+        if (t=keyalto) or (t=mausright) then begin
+                             Options;
+                             connected:=CommObj^.Carrier;
+                           end else
+        if t=keyf9    then begin
+{               if not comn[bport].fossil then ReleaseCom(bport);
+            savewin;
+            dosshell;
+            restwin;
+            if not comn[bport].fossil then Activate;
+            SetRTS(comnr);}
+                      end
+        else begin
+          FuncExternal:=true;     { nur externe F-Tasten zugelassen }
+          PreExtProc:=TermDeactivateCom;
+          getfilename:=TermGetfilename;
+          if test_fkeys(t) then begin
+            if shellreleased then Activate;
+            shellreleased:=false;
+          end else
+            if t[1]>#0 then begin
+              if out7e1 then
+                SetParity(byte(t[1]),true);
+              CommObj^.SendChar(t[1])
+            end;
+          FuncExternal:=false;
+          PreExtProc:=nil;
+        end;
+      end;
+
+      if not connected and CommObj^.Carrier then
+        connected:=true;
+    end;
+
+  end; { while }
+  RestoreWindow(win);
+  @fnproc[0,9]:=p;
+  pophp;
+  m2t:=true;
+  rest:=not CommObj^.Carrier;
+  TermDeactivateCom;
+  showscreen(true);
+end;
+
+{$else}
+
 procedure terminal(direct:boolean);
 var
   t    : taste;
@@ -672,6 +840,7 @@ begin
     end;
 end;
 
+{$endif}
 
 { --- Scripts ------------------------------------------------------- }
 
@@ -1302,6 +1471,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/10 19:21:31  hd
+  - Erste Vorbereitungen fuer das Terminal unter Linux
+    - Funktioniert prinzipiell, aber noch nicht wirklich
+
   Revision 1.22  2000/10/17 10:06:01  mk
   - Left->LeftStr, Right->RightStr
 

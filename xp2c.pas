@@ -832,12 +832,6 @@ begin
   menurestart:=brk;
 end;
 
-{$ifdef Unix}
-procedure ModemConfig;
-begin
-
-end;
-{$else}
 function testfossil(var s:string):boolean;
 var p : scrptr;
     b : boolean;
@@ -879,21 +873,47 @@ end;
 
 procedure ModemConfig;
 const
+{$ifdef Unix}
+  ttl_nr  = 4;                  { 'Geraete' }
+  txt_nr  = 5;                  { 'Device ^1,...' }
+{$else} { Unix }
+  ttl_nr  = 1;                  { 'Schnittstellen' }
 {$ifdef CAPI}
-  txt_nr = 3;
-{$else}
-  txt_nr = 2;
-{$endif}
+  txt_nr  = 3;                  { txt_2 + ',^ISDN' }
+{$else} { CAPI }
+  txt_nr  = 2;                  { 'Seriell ^1 (COM1), ...' }
+{$endif} { CAPI }
+{$endif} { Unix }
 var brk  : boolean;
     x,y  : byte;
     pstr : string;
     nr   : integer; { Number of Com-Port }
 begin
-  nr:= minisel(0,0,
-        getres2(30001,1),         { 'Schnittstellen }
-        getres2(30001,txt_nr),1); { 'Seriell ^1 (COM1),...' }
-  if nr=-1 then exit;
+  { Schnittstelle abfragen }
+  nr:= minisel(0,0,getres2(30001,ttl_nr),getres2(30001,txt_nr),1);
+  if nr=-1 then begin
+    menurestart:=false;
+    exit;
+  end;
   with COMn[nr] do begin
+{$ifdef Unix }
+    dialog(ival(getres2(261,0)),10,getreps2(261,20,strs(nr)),x,y);{ 'Ger„t Nummer %s Konfigurieren' }
+    maddstring(3,2,getres2(261,4),MInit,32,200,'');     { 'Modem-Init ' }
+    mappsel(false,'ATZùATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1ùATZ\\ATX3ùAT&F');
+    {Weitere Optionen eingefuegt MW 04/2000}
+    maddstring(3,3,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
+    mappsel(false,'ATZùAT&F');
+    maddstring(3,4,getres2(261,15),MDial,32,100,'');    { 'W„hlbefehl ' }
+    mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
+    maddstring(3,5,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
+    mappsel(false,'Serial /dev/modem Speed:115200ùSerial /dev/ttyS0 Speed:115200ùSerial /dev/ttyI0 Speed:115200');
+    maddbool (3,7,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
+    maddbool (3,8,getres2(261,8),IgCD);             { 'CD ignorieren' }
+    maddbool (3,9,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
+    maddbool (28,8,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
+    maddbool (28,9,getres2(261,10),Ring);            { 'RING-Erkennung' }
+
+{$else}
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
     if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
     if not fossildetect then fossil:=false;
@@ -928,6 +948,7 @@ begin
     maddint (28,14,getres2(261,18),tlevel,3,2,2,14); { 'FIFO-Triggerlevel' }
     mappsel(true,'2ù4ù8ù14');
     if fossil or not u16550 then MDisable;
+{$endif}
     readmask(brk);
     if not brk and mmodified then
     begin
@@ -940,7 +961,6 @@ begin
     end;
   menurestart:=brk;
 end;
-{$endif} { Unix }
 
 {$IFDEF CAPI }
 procedure TestCapiInt(var s:string);
@@ -1515,6 +1535,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/11/10 19:21:31  hd
+  - Erste Vorbereitungen fuer das Terminal unter Linux
+    - Funktioniert prinzipiell, aber noch nicht wirklich
+
   Revision 1.60  2000/11/10 13:20:45  hd
   - COM-Ports aus dem Menu extrahiert
 
