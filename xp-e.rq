@@ -2,6 +2,7 @@ K CrossPoint v3.40 resource file
 K English
 K (c) 1993-99 Peter Mandrella
 K (c) 2000-01 OpenXP-Team, http://www.openxp.de
+K (c) 2002    OpenXP/16, http://www.openxp16.de
 
 # Online Help File, Key Macros
 1 XP-E.HLP
@@ -62,7 +63,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 38  Filescan,261^Subscribe,262^Unsubscribe,263^Get list,264^Import list,265Import ^File,266^Others
 39  Tarifzonen,271^Zones,272^Fees,273^Holidays,274^Misc
 40  PGP,281^Request key,282^Import key,283^Decode message,284^Test signature,-,286^Edit key,287^Remove UserID
-41  ?,291^Current           F1,292^Previous Topic   @F1,-,293Help Con^tents   2*F1,294^Help on Help,-,295XP ^Usage,296Current ^Macros    F6,-,297^Special Topics..ù42,-,298^About OpenXP
+41  ?,291^Current           F1,292^Previous Topic   @F1,-,293Help Con^tents   2*F1,294^Help on Help,-,295XP ^Usage,296Current ^Macros    F6,-,297^Special Topics..ù42,-,298^About OpenXP/16
 42  Spezial,2a1^PGP Encryption,2a2XP and ^Mailing lists,2a3Net type ^RFC/Client,2a4XP as ^Windows Mailer
 # Tools Menu
 100 021^Calendar
@@ -308,46 +309,47 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 14   ~         /os2x    kind of freeing of free unused system resources (time)
 15   ~                  under OS/2 (x ranges from a to d)
 16   ~         /nolock  no check for multiple program launch
-17   ~         /LFN     force support of long file names (under Win2000)
-18   ~         /312     XP 3.12 compatibility mode (X-XP-FTO instead of F-TO)
-19   ~         /maus    activates a cursor-mouse emulation
-20
-21   ~         /k:xxx   send (special) key(s) xxx (for key macros)
-22   ~         /mailto:[user@do.main][?subject:"xxx"][\BOX]
-23   ~                  do /Message/Direct after program start
-24   ~                  and pass /mailto: parameters to dialogue
-25   ~         /pw:xxx  passes start password xxx
-26   ~         /nb      disable warning message of beta versions
-27   ~         /z:nn    set nn screen lines
-28   ~         /l:X     set language (e.g. /l:E for English)
-29
-30   ~         /autostart:...   start program by time range
-31   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
-32   ~         /ip:PUFFER       import puffer file
-33   ~         /ipe:PUFFER      import puffer file with receive date = creation date
-34   ~         /ips:BOX:PUFFER  import and send puffer file
-35   ~         /eb              return receipts (sub-switch for /ip..)
-36   ~         /g               sets /ip and /ips messages to status 'read'
-37   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
-38   ~         /n:*             netcall to all Servers
-39   ~         /nr:BOX          relogin netcall to Server (BOX)
-40   ~         /nsp:1..20       special netcall (line number of NETCALL.DAT)
-41   ~         /t:n             start timing list no. n
-42
-43   ~         /r               start message base reorganisation
-44   ~         /pack            do /Re-Org/Pack
-45   ~         /xpack           pack message base in 'automatic' mode
-46   ~         /ss              start screen saver at once
-47
-48   ~         /av:<File>       view archive file
-49   ~         /f:<File>        load font file
-50   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
-51
-52   ~         /d       start program in debug mode
-53   ~         /df:1    show command call of external programs
-54   ~         /df:2    wait for key press after external program calls
-55
-56   ~         /x       quit program
+17   ~         /nomem   no check for free hard disk capacity
+18   ~         /LFN     force support of long file names (under Win2000)
+19   ~         /312     XP 3.12 compatibility mode (X-XP-FTO instead of F-TO)
+20   ~         /maus    activates a cursor-mouse emulation
+21
+22   ~         /k:xxx   send (special) key(s) xxx (for key macros)
+23   ~         /mailto:[user@do.main][?subject:"xxx"][\BOX]
+24   ~                  do /Message/Direct after program start
+25   ~                  and pass /mailto: parameters to dialogue
+26   ~         /pw:xxx  passes start password xxx
+27   ~         /nb      disable warning message of beta versions
+28   ~         /z:nn    set nn screen lines
+29   ~         /l:X     set language (e.g. /l:E for English)
+30
+31   ~         /autostart:...   start program by time range
+32   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
+33   ~         /ip:PUFFER       import puffer file
+34   ~         /ipe:PUFFER      import puffer file with receive date = creation date
+35   ~         /ips:BOX:PUFFER  import and send puffer file
+36   ~         /eb              return receipts (sub-switch for /ip..)
+37   ~         /g               sets /ip and /ips messages to status 'read'
+38   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
+39   ~         /n:*             netcall to all Servers
+40   ~         /nr:BOX          relogin netcall to Server (BOX)
+41   ~         /nsp:1..20       special netcall (line number of NETCALL.DAT)
+42   ~         /t:n             start timing list no. n
+43
+44   ~         /r               start message base reorganisation
+45   ~         /pack            do /Re-Org/Pack
+46   ~         /xpack           pack message base in 'automatic' mode
+47   ~         /ss              start screen saver at once
+48
+49   ~         /av:<File>       view archive file
+50   ~         /f:<File>        load font file
+51   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
+52
+53   ~         /d       start program in debug mode
+54   ~         /df:1    show command call of external programs
+55   ~         /df:2    wait for key press after external program calls
+56
+57   ~         /x       quit program
 -
 
 203  Error: Can't create directory %s !
@@ -374,7 +376,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 212  Program stopped.
 213  illegal color configuration: ~
 + 214
-1    CrossPoint/OpenXP - Configuration file
+1    CrossPoint [OpenXP/16] - Configuration file
 2    User setup
 3    miscellaneous
 4    Z-Netz (German version only)
@@ -600,7 +602,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 16   Don't archive news
 17   Append old subject
 18   Magics in <F3> file request
-19   OpenXP version in tear line
+19   OpenXP/16 Version in tear line
 + 254
 1    Netcall Options
 2    Show login screen
@@ -697,7 +699,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 1    Screen-saver (sec.) ~
 2    Scroll out
 3    Password at startup?
-4    Show user name
+4    Show address of primary server
 5    Cursor in menus and lists
 6    Lock screen-blanker
 7    optical sound signal
@@ -1303,16 +1305,16 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 + 530
 # Zeilenanzahl
 0    12
-1    This is a *beta* version of CrossPoint, created by the OpenXP
-2    Development Team. Please note that there may still be bugs in
+1    This is a *beta* version of CrossPoint, created by the OpenXP/16
+2    developers.  Please note that  there may still  be bugs in
 3    this beta version, which could corrupt your database or cause
 4    problems if you use this version of CrossPoint in public. If you
 5    use this version, you are solely responsible for all damage you
 6    may cause with it. If you can't agree to these terms, please use
 7    an official release version of CrossPoint. If you have questions
-8    about the OpenXP project or wish to make suggestions, please
-9    feel free to send a message to one of the addresses listed
-10   in the online help (press *<F1>*, *<F1>*, *S*, *<Enter>* within XP).
+8    about OpenXP/16 or wish to make suggestions, please feel free to
+9    send a message to one of the addresses listed in the online help
+10   (press *<F1>*, *<F1>*, *S*, *<Enter>* within XP).
 11
 12   Choose "Continue", to use this beta version.
 30   ~^Continue , ^Cancel~
@@ -2087,10 +2089,14 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # [..]
 4
 5    Do you really want to change the net type of %s
--
 # *SETUSER
-930  New user name for %s ~
-931  New real name
++ 930
+1    New user name~
+2    New eMail address~
+3    New FQDN
+4    New POP3 envelope address~
+5    New SMTP envelope address~
+6    New real name
 + 932
 1    Please note that Janus Plus needs other download protocol
 2    settings than Janus. For Janus Plus, the download file
@@ -2920,6 +2926,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9  Unknown server: %s
 10 UUCICO.EXE not found!
 11 ZQWK.EXE not found!
+12 Clipboard contents is too large
 
 +  10200
 1  wrong temp directory setting
@@ -2941,6 +2948,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 19 Your graphics adapter does not support VESA DPMS.
 20 Please enter the full URL (http://do.main/...).
 21 The device '/dev/%s' does not exist!
+22 External program - max. input length 127 characters
 
 +  10300
 1  not possible with distribution groups
@@ -2987,8 +2995,8 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 #  XP4O
 20 Messagebase is empty!
 21 Warning: Messagebase file %s is missing!
-22 Pleas use Mail/Unsent/%s
-23 Not possible with binary messages
+22 Please use Mail/Unsent/%s
+23 Not possible with binary messages.
 24 Message is bad  (messagebase file %s)
 25 Not possible with unsent messages.
 26 Message not found in database!
@@ -3012,8 +3020,9 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 44 User is not present in XP's user list.
 45 Mesagebase is bad; use /Re-Org/Pack!
 46 Close this newsgroup and *then* press "W" ...
-47 You can't supersede a unsent message
+47 You can't supersede an unsent message
 48 Not enough RAM to complete reference tree!
+49 Not possible with MIME multipart messages.
 
 50 Writing to this newsgroup is disabled
 # XP4O3
@@ -3235,6 +3244,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 69 Invalid Server name: "%s"
 70 Envelope address must be specified!
 71 Input/Output data incomplete!
+72 FQDN corrected
+73 Invalid user name
+74 SETUSER - Parameter "FDQN" not specified!
+75 SETUSER - Parameter "POP3 envelope address" not specified!
+76 SETUSER - Parameter "SMTP envelope address" not specified!
 
 +  11000
 1  unknown command

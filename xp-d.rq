@@ -2,6 +2,7 @@ K CrossPoint v3.40 resource file
 K Deutsch
 K (c) 1993-99 Peter Mandrella
 K (c) 2000-01 OpenXP-Team, http://www.openxp.de
+K (c) 2002    OpenXP/16, http://www.openxp16.de
 
 # Online-Hilfe, Tastenmakros
 1 XP.HLP
@@ -60,7 +61,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 38  Filescan,261^Bestellen,262^Abbestellen,263^Liste anfordern,264Liste ^einlesen,265^Datei einlesen,266^Sonstiges
 39  Tarifzonen,271^Zonen,272^Tarife,273^Feiertage,274^Sonstiges
 40  PGP,281Key ^anfordern,282Key ^einlesen,283Nachricht ^decodieren,284^Signatur testen,-,286^Key editieren,287^User-ID entfernen
-41  ?,291^Aktuell             F1,292^Vorheriges Thema   @F1,-,293Hilfe-^Inhalt      2*F1,294^Hilfe zur Hilfe,-,295XP-^Bedienung,296Aktuelle ^Makros     F6,-,297^Spezielle Themen..ù42,-,298^šber OpenXP
+41  ?,291^Aktuell             F1,292^Vorheriges Thema   @F1,-,293Hilfe-^Inhalt      2*F1,294^Hilfe zur Hilfe,-,295XP-^Bedienung,296Aktuelle ^Makros     F6,-,297^Spezielle Themen..ù42,-,298^šber OpenXP/16
 42  Spezial,2a1^PGP-Verschlsselung,2a2XP und ^Mailinglisten,2a3Netztyp ^RFC/Client,2a4XP als ^Windows-Mailer
 # max. Mennummer = 99 (s. XPME.PAS)
 # Zusatz-Men
@@ -310,47 +311,48 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 13   ~          /w2      Windows- und OS/2-Rechenzeit-Freigabe (konservativ)
 14   ~          /os2x    Art der Rechenzeit-Freigabe unter OS/2 (x = a bis d)
 15   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
-16   ~          /LFN     Untersttzung langer Dateinamen erzwingen (fr Win2000)
-17   ~          /312     XP 3.12-Kompatibilit„tsmodus (X-XP-FTO statt F-TO)
-18   ~          /maus    aktiviert eine Cursor-Maus-Emulation
-19
-20   ~          /k:xxx   (Sonder-)Taste(n) xxx bergeben (fr Tastenmakro)
-21   ~          /mailto:[user@do.main][?subject:"xxx"][\BOX]
-22   ~                   /Nachricht/Direkt nach Start ausfhren
-23   ~                   und /mailto:-Parameter an Dialog bergeben
-24   ~          /pw:xxx  Startpaáwort xxx bergeben
-25   ~          /nb      Warnhinweis bei Beta-Versionen abschalten
-26   ~          /z:nn    stellt nn Bildschirmzeilen ein
-27   ~          /menu    mit XPME gesperrte Menpunkte vorbergehend einblenden
-28   ~          /l:X     Sprache w„hlen (z.B. /l:D fr Deutsch)
-29
-30   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-31   ~          /user:BOX:NAME   Username bei BOX setzen
-32   ~          /ip:PUFFER       liest den angegebenen Puffer ein
-33   ~          /ipe:PUFFER      liest Puffer mit Empfangsdatum = Erstelldatum ein
-34   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-35   ~          /eb              Empfangsbest„tigungen (Zusatzschalter fr /ip..)
-36   ~          /g               tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein
-37   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
-38   ~          /n:*             Netcall bei allen Boxen
-39   ~          /nr:BOX          Relogin-Netcall bei BOX
-40   ~          /nsp:1..20       Spezial-Netcall (Zeilennummer von NETCALL.DAT)
-41   ~          /t:n             Timing-Liste Nr. n ausfhren
-42
-43   ~          /r               Nachrichten-Reorganisation durchfhren
-44   ~          /pack            /Wartung/Packen durchfhren
-45   ~          /xpack           Automatisches Packen durchfhren
-46   ~          /ss              Screensaver aktivieren
-47
-48   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-49   ~          /f:<Datei>       Schriftdatei laden
-50   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
-51
-52   ~          /d       Programm im Debug-Mode starten
-53   ~          /df:1    Externe Aufrufbefehle anzeigen
-54   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
-55
-56   ~          /x       Programm beenden
+16   ~          /nomem   keine šberprfung auf freie Festplattenkapazit„t
+17   ~          /LFN     Untersttzung langer Dateinamen erzwingen (fr Win2000)
+18   ~          /312     XP 3.12-Kompatibilit„tsmodus (X-XP-FTO statt F-TO)
+19   ~          /maus    aktiviert eine Cursor-Maus-Emulation
+20
+21   ~          /k:xxx   (Sonder-)Taste(n) xxx bergeben (fr Tastenmakro)
+22   ~          /mailto:[user@do.main][?subject:"xxx"][\BOX]
+23   ~                   /Nachricht/Direkt nach Start ausfhren
+24   ~                   und /mailto:-Parameter an Dialog bergeben
+25   ~          /pw:xxx  Startpaáwort xxx bergeben
+26   ~          /nb      Warnhinweis bei Beta-Versionen abschalten
+27   ~          /z:nn    stellt nn Bildschirmzeilen ein
+28   ~          /menu    mit XPME gesperrte Menpunkte vorbergehend einblenden
+29   ~          /l:X     Sprache w„hlen (z.B. /l:D fr Deutsch)
+30
+31   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+32   ~          /user:BOX:NAME   Username bei BOX setzen
+33   ~          /ip:PUFFER       liest den angegebenen Puffer ein
+34   ~          /ipe:PUFFER      liest Puffer mit Empfangsdatum = Erstelldatum ein
+35   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+36   ~          /eb              Empfangsbest„tigungen (Zusatzschalter fr /ip..)
+37   ~          /g               tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein
+38   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
+39   ~          /n:*             Netcall bei allen Boxen
+40   ~          /nr:BOX          Relogin-Netcall bei BOX
+41   ~          /nsp:1..20       Spezial-Netcall (Zeilennummer von NETCALL.DAT)
+42   ~          /t:n             Timing-Liste Nr. n ausfhren
+43
+44   ~          /r               Nachrichten-Reorganisation durchfhren
+45   ~          /pack            /Wartung/Packen durchfhren
+46   ~          /xpack           Automatisches Packen durchfhren
+47   ~          /ss              Screensaver aktivieren
+48
+49   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+50   ~          /f:<Datei>       Schriftdatei laden
+51   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
+52
+53   ~          /d       Programm im Debug-Mode starten
+54   ~          /df:1    Externe Aufrufbefehle anzeigen
+55   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
+56
+57   ~          /x       Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
@@ -378,7 +380,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 212  Programmabbruch.
 213  ungltige Farbkonfiguration: ~
 + 214
-1    CrossPoint/OpenXP - Konfigurationsdatei
+1    CrossPoint [OpenXP/16] - Konfigurationsdatei
 2    Benutzereinstellungen
 3    allgemeine Einstellungen
 4    Z-Netz
@@ -610,7 +612,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 16   News-Archivierung verhindern
 17   Alten Betreff anh„ngen
 18   Magics im <F3>-Request
-19   OpenXP-Version in Tearline schreiben
+19   OpenXP/16-Version in Tearline schreiben
 + 254
 1    Netcall-Optionen
 2    Login-Bild zeigen
@@ -707,7 +709,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 1    Screen-Saver (Sek.) ~
 2    weich ausblenden
 3    Startpaáwort abfragen
-4    Username anzeigen
+4    Stammbox-Adresse anzeigen
 5    Auswahlcursor in Mens/Listen
 6    schwarzschalten
 7    optisches Tonsignal
@@ -1336,15 +1338,15 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 + 530
 # Zeilenanzahl
 0    13
-1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
-2    des OpenXP-Projekts erstellt wurde.  Bitte beachten Sie, daá diese
+1    Sie nutzen eine  Betaversion von  CrossPoint,  die von Entwicklern
+2    bei  OpenXP/16  erstellt  wurde.  Bitte  beachten  Sie, daá  diese
 3    Betaversion m”glicherweise Fehler enth„lt, die Probleme in ”ffent-
 4    lichen Netzen  nach sich  ziehen oder  Ihre  Datenbank besch„digen
 5    k”nnen.  Wenn Sie diese Version nutzen,  sind Sie fr alle  Folgen
 6    selbst verantwortlich. Sollten Sie nicht damit einverstanden sein,
 7    nutzen Sie eine der offiziellen  Release-Versionen von CrossPoint.
-8    Bei Fragen zum  OpenXP-Projekt,  Problemen oder  Anregungen wenden
-9    Sie sich bitte an  das OpenXP-Team in den  entsprechenden Support-
+8    Bei Fragen zu OpenXP/16, Problemen oder Anregungen wenden Sie sich
+9    bitte an die  OpenXP/16-Entwickler in den  entsprechenden Support-
 10   Foren der jeweiligen Netze. Eine Liste der aktuellen Adressen fin-
 11   den Sie in der Online-Hilfe  (drcken Sie *<F1>*, *<F1>*, *S*, *<Enter>*).
 12
@@ -2128,10 +2130,14 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 3    l”schen Sie bitte zuerst die unversandten Nachrichten
 4    fr diese Box!
 5    M”chten Sie den Netztyp fr %s wirklich „ndern
--
 # *SETUSER
-930  Neuer Username fr %s ~
-931  Neuer Realname
++ 930
+1    Neuer Username~
+2    Neue  eMail-Adresse~
+3    Neuer FQDN
+4    Neue  POP3-Envelope-Adresse~
+5    Neue  SMTP-Envelope-Adresse~
+6    Neuer Realname
 + 932
 1    Beachten Sie, daá bei der Umstellung zwischen Janus und
 2    Janus Plus auch die Download-Protokoll-Einstellung fr
@@ -2969,6 +2975,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9  Unbekannte Serverbox: %s
 10 UUCICO.EXE fehlt!
 11 ZQWK.EXE fehlt!
+12 Clipboard-Inhalt ist zu groá
 
 +  10200
 1  ungltiges Tempor„r-Verzeichnis eingestellt
@@ -2990,6 +2997,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 19 Ihre Grafikkarte untersttzt kein VESA-DPMS.
 20 Geben Sie die vollst„ndige URL (http://do.main/...) an!
 21 Das Device '/dev/%s' existiert nicht!
+22 Externes Programm - max. Eingabel„nge 127 Zeichen
 
 +  10300
 1  bei Verteilern nicht m”glich
@@ -3064,6 +3072,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 46 Verlassen Sie das Brett und drcken Sie *dann* "B" ...
 47 Unversandte Nachrichten k”nnen nicht ersetzt werden.
 48 Zu wenig freier Speicher, um Kommentarbaum komplett anzuzeigen!
+49 Bei MIME-Multipart-Nachrichten nicht m”glich.
 
 50 Der Schreibzugriff auf dieses Brett ist gesperrt.
 # XP4O3
@@ -3210,13 +3219,13 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 
 +  10900
 1  Ungltige Box-Config-Angabe: %s
-2  ungltiger Boxname!
+2  Ungltiger Boxname!
 3  Die Seriennummer muá 4 Zeichen lang sein.
-4  ungltiger Dateiname
+4  Ungltiger Dateiname
 5  Verzeichnis darf nicht gleich dem XP-Verzeichnis sein!
 6  Verzeichnis kann nicht angelegt werden!
 7  Achtung: Das Programm "%s" ist nicht vorhanden!
-8  ungltige Adresse
+8  Ungltige Adresse
 9  Mindestens ein Protokoll muá eingeschaltet sein!
 10 Eine Gruppe mit diesem Namen existiert bereits.
 11 Gruppe kann nicht gel”scht werden!
@@ -3285,6 +3294,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 69 Ungltiger Serverbox-Name: "%s"
 70 Envelope-Adresse muá angegeben werden!
 71 Angaben Eingang/Ausgang unvollst„ndig!
+72 FQDN korrigiert
+73 Ungltiger Username
+74 SETUSER - Parameter "FDQN" nicht angegeben!
+75 SETUSER - Parameter "POP3-Envelope-Adresse" nicht angegeben!
+76 SETUSER - Parameter "SMTP-Envelope-Adresse" nicht angegeben!
 
 +  11000
 1  unbekannter Befehl
