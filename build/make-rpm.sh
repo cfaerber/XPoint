@@ -24,6 +24,7 @@ mkdir /tmp/xp-source-$mainversion
 cd /tmp/xp-source-$mainversion
 # remote
 echo version $version
+#exit 1
 case "$mainversion" in
     3.8)
       echo "Checking out CVS for version $version "
@@ -44,10 +45,12 @@ cd openxp
 tar czf "$versiondir"openxp-src-"$version".tar.gz *
 mv "$versiondir"openxp-src-"$version".tar.gz /usr/src/packages/SOURCES/openxp-"$version".tar.gz
 rm -fr /tmp/xp-source-$mainversion
-#echo now making rpm
+echo now making rpm
 sleep 5
 # echo press [enter] to continue
 # read
 popd
+echo "$scriptdir"openxp-"$version".spec
+pwd
 rpm -ba "$scriptdir"openxp-"$version".spec
 #rpmbuild -ba openxp.spec
