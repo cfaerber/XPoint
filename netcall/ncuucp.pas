@@ -319,7 +319,7 @@ begin
   if reason in [2,4..10] then
     result:=GetRes2(2300,100+reason)
   else
-    result:='unknown error';
+    result:=GetRes2(2300,100);
 end;
 
 { --- Individual protocol implementations ----------------------------------- }
@@ -327,7 +327,7 @@ end;
 {$I ncuucp-t.inc}
 {$I ncuucp-g.inc}
 {$I ncuucp-e.inc}
-{ $I ncuucp-fz.inc}
+{.I ncuucp-fz.inc}
 
 { --- TUUCPNetcall -------------------------------------------------------- }
 
@@ -462,7 +462,7 @@ end;
 function U2DOSfile(var s:string):string;
 var i : integer;
     b : byte;
-begin (* FIXME: What happens if length(s)<6 ? *)
+begin
   s:=s[1]+'-'+RightStr(s,5);
   b:=0;
   for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
@@ -1043,39 +1043,11 @@ end.
 
 {
   $Log$
-  Revision 1.9  2001/03/21 19:17:10  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
+  Revision 1.1  2001/03/24 22:55:29  cl
+  - moved from playground to main
 
-  Revision 1.8  2001/03/20 00:26:59  cl
-  - fixed warning with new/dispose
-
-  Revision 1.7  2001/03/16 23:02:34  cl
-  - transfer statistics
-  - fixes
-
-  Revision 1.6  2001/03/13 00:23:05  cl
-  - fixes for UUCP netcalls (first working version)
-
-  Revision 1.5  2001/02/28 22:35:32  cl
-  - UUCP connection, login and initial handshake working
-
-  Revision 1.2  2001/02/21 17:45:53  cl
-  - first things for TUUCPNetcall
-
-  Revision 1.1  2001/01/19 18:00:00  ma
-  - added TUUCPNetcall sources (from uucico)
-
-  ----- moved to playground, was uucico.pas
-  Revision 1.6  2000/11/18 14:07:48  fe
-  Replaced exist() with fileexists().
-
-  Revision 1.5  2000/11/14 11:14:31  mk
-  - removed unit dos from fileio and others as far as possible
+  --- import from playground
 
   Revision 1.4  2000/11/02 21:27:04  fe
   bzip2 support added.
-
-  Revision 1.3  2000/10/27 16:14:29  fe
-  uucico notduerftig uebersetzbar gemacht.
 }

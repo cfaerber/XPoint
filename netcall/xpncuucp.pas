@@ -52,8 +52,9 @@ function UUCPNetcall(boxname: string;
                      Logfile: String;
                      IncomingFiles: TStringList):shortint;
 var
-  UUNum:  word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
-  CmdFile:string;
+  UUNum         :word;         { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
+  CmdFile       :string;
+//  DeleteFileList:TStringList;
 
   (* Nummer in UUNUMMER.DAT lesen/schreiben *)
 
@@ -322,11 +323,17 @@ var
 
       {!! uncompressing programmes are defined in box config but compiled into unit zcrfc}
 
+      uu.uncompress  := BoxPar^.downarcer;
+      uu.unfreeze    := BoxPar^.unfreezer;
+      uu.ungzip      := BoxPar^.ungzipper;
+      uu.unbzip      := BoxPar^.unbzipper;
+
       uu.OwnSite  := BoxPar^.pointname+BoxPar^._domain;
       uu.Source   := source;
       uu.Dest     := dest;
 
       uu.ClearSourceFiles := DiskPoll or nDelPuffer;
+//    uu.DeleteFileList:=DeleteFileList;
 
       result:=true;
     end;
@@ -488,46 +495,8 @@ end.
 
 {
   $Log$
-  Revision 1.11  2001/03/21 19:17:10  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
+  Revision 1.1  2001/03/24 22:55:29  cl
+  - moved from playground to main
 
-  Revision 1.10  2001/03/20 00:26:59  cl
-  - fixed warning with new/dispose
-
-  Revision 1.9  2001/03/16 23:02:34  cl
-  - transfer statistics
-  - fixes
-
-  Revision 1.8  2001/03/13 00:23:05  cl
-  - fixes for UUCP netcalls (first working version)
-
-  Revision 1.7  2001/02/28 22:35:32  cl
-  - UUCP connection, login and initial handshake working
-
-  Revision 1.4  2001/02/22 17:14:34  cl
-  - UUCP sysop netcalls working
-
-  Revision 1.3  2001/02/21 17:45:53  cl
-  - first things for TUUCPNetcall
-
-  Revision 1.2  2001/02/01 21:20:27  ma
-  - compiling!
-  - only Fido: UUCP/POP3/... routines are temporarily commented out
-  - untested
-
-  Revision 1.1  2001/01/10 16:32:19  ma
-  - todo: general cleanup
-
-  --- moved to playground
-  Revision 1.2  2001/01/06 18:23:42  ma
-  - cleaned up
-  - added debug logs to fidosysopcall
-  - some error checks in fidosysopcall added
-  - todo: move non-uucp routines out of this file
-
-  Revision 1.1  2001/01/04 16:04:13  ma
-  - renamed, was xp7u.inc
-  - todo: split, simplify, merge with uucico and change to unit
-
+  --- import from playground
 }

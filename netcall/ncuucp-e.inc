@@ -106,8 +106,8 @@ end;
 
 {
   $Log$
-  Revision 1.2  2001/03/16 23:02:34  cl
-  - transfer statistics
-  - fixes
+  Revision 1.1  2001/03/24 22:55:29  cl
+  - moved from playground to main
 
+  ---- import from playground
 }

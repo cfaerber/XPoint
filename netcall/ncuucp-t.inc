@@ -109,16 +109,8 @@ end;
 
 {
   $Log$
-  Revision 1.4  2001/03/20 00:26:59  cl
-  - fixed warning with new/dispose
+  Revision 1.1  2001/03/24 22:55:29  cl
+  - moved from playground to main
 
-  Revision 1.3  2001/03/16 23:02:34  cl
-  - transfer statistics
-  - fixes
-
-  Revision 1.2  2001/03/13 00:21:49  cl
-  - first working UUCP-t version
-
-  Revision 1.1  2001/02/28 22:33:38  cl
-  - first things for UUCP-t protocol
+  --- import from playground
 }

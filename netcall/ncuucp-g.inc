@@ -662,30 +662,8 @@ end;
 
 {
   $Log$
-  Revision 1.7  2001/03/23 11:49:43  cl
-  - fixed rounding errors w/ packet size
-  - some minor changes
+  Revision 1.1  2001/03/24 22:55:29  cl
+  - moved from playground to main
 
-  Revision 1.6  2001/03/22 00:03:24  cl
-  - resolved some conflicts
-
-
-  Revision 1.5  2001/03/21 19:17:10  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-  Revision 1.4  2001/03/20 00:26:59  cl
-  - fixed warning with new/dispose
-
-  Revision 1.3  2001/03/16 23:02:34  cl
-  - transfer statistics
-  - fixes
-
-  Revision 1.2  2001/02/21 17:45:53  cl
-  - first things for TUUCPNetcall
-
-  Revision 1.1  2001/01/19 18:00:00  ma
-  - added TUUCPNetcall sources (from uucico)
-
-  ----- moved to playground
+  --- import from playground
 }
