@@ -187,7 +187,9 @@ const
       (Sequenz: #27#91#55#94;    ncCode: 428; DosCode : #0#119), { Ctrl-Home }
       (Sequenz: #27#91#56#94;    ncCode: 429; DosCode : #0#117), { Ctrl-End }
       (Sequenz: #27#91#54#59#53#126;    ncCode: 430; DosCode : #0#118), { Ctrl-PgDn }
-      (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132) { Ctrl-PgUp }
+      (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132), { Ctrl-PgUp }
+      (Sequenz: #27#79#72;       ncCode: 432; DosCode : #0#71),  { Home on NetBSD }
+      (Sequenz: #27#79#70;       ncCode: 433; DosCode : #0#79)   { End on NetBSD }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -1542,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.9  2003/09/01 21:15:27  mk
+  - added codes for Home and End from NetBSD
+
   Revision 1.64.2.8  2003/04/12 16:57:56  mk
   - fixed last commit
 
