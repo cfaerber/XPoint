@@ -1,15 +1,23 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ CrossPoint - allg. Routinen }
+    OpenXP - generic routines
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
@@ -67,37 +75,6 @@ type mprec     = record
                  end;
 {$ENDIF }
      ahidden   = array[1..maxhidden] of integer;
-
-{TAINTED}
-Type TStartData = record
-                    Length:        Word; { Must be 0x18,0x1E,0x20,0x32, or 0x3C }
-                    Related:       Word; { 00 independent, 01 child }
-                    FgBg:          Word; { 00 foreground, 01 background }
-                    TraceOpt:      Word; { 00-02, 00 = no trace }
-                    PgmTitle:      PChar; { max 62 chars or 0000:0000 }
-                    PgmName:       PChar; { max 128 chars or 0000:0000 }
-                    PgmInputs:     PChar; { max 144 chars or 0000:0000 }
-                    TermQ:         PChar; { reserved, must be 00000000 }
-                    Environment:   PChar; { max 486 bytes or 0000:0000 }
-                    InheritOpt:    Word;  { 00 or 01 }
-                    SessionType:   Word;  { 00 OS/2 session manager determines type (default)
-                                            01 OS/2 full-screen
-                                            02 OS/2 window
-                                            03 PM
-                                            04 VDM full-screen
-                                            07 VDM window }
-                    IconFile:      PChar; { max 128 chars or 0000:0000 }
-                    PgmHandle:     LongInt; { reserved, must be 00000000 }
-                    PgmControl:    Word;
-                    InitXPos:      Word;
-                    InitYPos:      Word;
-                    InitXSize:     Word;
-                    InitYSize:     Word;
-                    Reserved:      Word; { 0x00 }
-                    ObjectBuffer:  PChar; { reserved, must be 00000000 }
-                    ObjectBuffLen: LongInt; { reserved, must be 00000000 }
-  End;
-{/TAINTED}  
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -268,12 +245,7 @@ procedure InitXP1Unit;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,
-{$ifndef unix}
-  xp2,
-  strings,
-{$endif}
-  xpe,xpnt;
+  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -1743,9 +1715,6 @@ end;
 
 function notempty(var s:string):boolean;
 begin
-{$IFDEF FPC }
-{$hint Seiteneffekt. Waere zu eleminieren }
-{$ENDIF }
   if trim(s)='' then errsound;
   notempty:=(trim(s)<>'');
 end;
@@ -2080,6 +2049,10 @@ end.
 
 {
   $Log$
+  Revision 1.102  2001/02/25 15:25:22  ma
+  - added GPL headers
+  - cosmetics
+
   Revision 1.101  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
