@@ -554,6 +554,7 @@ var fn     : string;
     MimeType: string;
     MultiPartType: TMultiPartType;
     MimeViewer: TMessageViewer;
+  nw_mp : boolean;
   List: TLister;
   s: String;
                                            { Mailviren-Schutz }
@@ -805,9 +806,12 @@ begin
   poppush:=true;
   MimeViewer := TMessageViewer.Create;
   mpart_nr := 1;
+  nw_mp:=NachWeiter;
   MimePart := TMimePart.Create;
 
   repeat                { +/- - Schleife }
+     nw:=NachWeiter;     { kann vom Lister verändert werden }
+    _down:=NachWeiter and nw_mp and not ((rdmode=1) and (dispmode=10));
     ende:=true;
     MimeType := '';
     MimePart.Clear;
@@ -1105,6 +1109,8 @@ begin
                   inc(mpart_nr);
                 mpselect:=true;
                 ende:=false;
+                nw_mp:=NachWeiter;
+                NachWeiter:=nw;
                 end
               else begin
                 SetGelesen;
@@ -1765,6 +1771,18 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.98  2002/04/08 23:02:16  mk
+  MY:- Der 983. Nachrichten-Weiterschalter-Fix: Wenn bei einer MIME-
+       Multipart-Nachricht der Lister mit <Backspace> verlassen wurde, war
+       ein aktivierter Nachrichten-Weiterschalter f?r den Rest der XP-
+       Sitzung deaktiviert, wenn er nicht ausdr?cklich mit <Ctrl-W> wieder
+       aktiviert wurde. Der Schalter beh„lt jetzt seinen Status f?r die
+       nachfolgenden Nachrichten bei, beim Verlassen des MIME-Auswahlmen?s
+       kommt es hinsichtlich des Weiterschaltens zur n„chsten Nachricht
+       darauf an, wie der Lister beim zuletzt betrachteten Nachrichtenteil
+       verlassen wurde (<Backspace> => nicht weiterschalten, <Esc> =>
+       weiterschalten).
+
   Revision 1.97  2002/03/20 15:23:10  mk
   - fixed crash in _mark_group (Ctrl-G in Userwindow)
 
