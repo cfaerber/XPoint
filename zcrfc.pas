@@ -2474,7 +2474,7 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
 
-      if (mempf <> '') and (hd.xempf.count = 0) or ((hd.xempf.count > 0) and (mempf <> hd.xempf[0])) then
+      if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
       begin
         hd.xoem.Assign(hd.xempf);
         hd.XEmpf.Clear;
@@ -3710,6 +3710,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/01/28 08:50:59  mk
+  - fixed bug in envelope handling
+
   Revision 1.26  2001/01/14 10:13:37  mk
   - MakeHeader() integreated in new unit
 
