@@ -954,7 +954,7 @@ begin
     if viewer.prog='*intern*' then
     begin
       viewer.prog:='';
-      if fn2='' then begin
+      if (fn2='') and (viewer.fn<>'') then begin
         Fn2:=temppath+viewer.fn;
         CopyMsg;
         end;
@@ -1728,6 +1728,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.33  2002/03/09 21:51:07  my
+  JG:- Fix: Wenn unter /Edit/Viewer der MIME-Typ "text/plain" angelegt und
+       kein externer Viewer eingetragen war, fÅhrte dies beim ôffnen einer
+       Nachricht, die keinen U-Content-Type-Header trug, zu der (falschen
+       und harmlosen) Fehlermeldung "Fehler beim Dateizugriff :-(".
+
   Revision 1.25.2.32  2002/03/08 23:04:14  my
   MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
        funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
