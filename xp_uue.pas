@@ -35,6 +35,11 @@ uses
   typeform,fileio,inout,database,maus2,resource,
   winxp, xp0,xp1,xp1o,xp1o2,xp1input, xpglobal;
 
+type
+  TByteStream=array[0..63] of byte;
+
+function  encode_UU(var bytestream:TByteStream; len: integer): string;
+
 
 procedure uudecode;            { aktuelle Nachricht decodieren }
 
@@ -64,6 +69,37 @@ var   s        : string;
       EOFinput : boolean;
       IO_Error : boolean;
 
+
+//procedure encode_UU(var bytestream:tbytestream;len:word;var encoded:str90);
+function  encode_UU(var bytestream:TByteStream; len: integer): string;
+var i,k,l:  integer;
+begin
+  if len=0 then begin
+    Result := '';
+    exit;
+  end;
+
+//pad out the input
+  for i:=len to sizeof(tbytestream)-1 do bytestream[i]:=0;
+//init output
+  l := (len-1) div 3;
+  SetLength(Result, (l + 1)*4 + 1);
+  Result[1] := char(len+32);
+//fill in converted chars
+  k := 2; //first char
+  for i:=0 to l do begin
+    Result[k]:=char(((bytestream[i*3] and $fc) shr 2) + 32);
+    inc(k);
+    Result[k]:=char(((bytestream[i*3] and $03) shl 4)
+          or ((bytestream[i*3+1] and $f0) shr 4) + 32);
+    inc(k);
+    Result[k]:=char(((bytestream[i*3+1] and $0f) shl 2)
+          or ((bytestream[i*3+2] and $c0) shr 6) + 32);
+    inc(k);
+    Result[k]:=char((bytestream[i*3+2] and $3f) + 32);
+    inc(k);
+  end;
+end;
 
 procedure flushbuf;                   {JG:08.02.00 Verschoben: wird von Decode aufgerufen...}
 begin
@@ -551,6 +587,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2002/12/14 09:25:18  dodi
+  - removed gpltools and encoder units
+
   Revision 1.35  2002/12/12 11:58:49  dodi
   - set $WRITEABLECONT OFF
 

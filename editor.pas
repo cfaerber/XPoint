@@ -28,7 +28,7 @@ interface
 
 
 uses
-  xpglobal, keys, eddef, Lister;
+  keys, eddef, Lister;
 
 
 const
@@ -96,8 +96,9 @@ uses
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
-  osdepend,mouse,encoder,clip,
-  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe, xp0;
+  osdepend,mouse,clip,
+  typeform,fileio,inout,maus2,winxp,printerx, xp0, xp1, xp2, xpe, xp_uue, 
+  xpglobal;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -753,11 +754,11 @@ end;
 function LoadUUeBlock(fn:string):absatzp;
 const blen = 45;
 var mfm   : byte;
-    s     : str90;
+    s     : string;
     t     : file;
     p     : absatzp;
     tail  : absatzp;
-    ibuf  : ^tbytestream;
+    ibuf  : tbytestream;
     b_read: Integer;
     root  : absatzp;
 
@@ -773,11 +774,21 @@ var mfm   : byte;
     end;
   end;
 
+  procedure Absatz;
+  begin
+    p:=AllocAbsatz(length(s));
+    if assigned(p) then begin
+      p^.umbruch:=true;
+      Move(s[1],p^.cont,length(s));
+      AppP;
+    end else
+      raise EOutOfMemory.Create('in loadUUEblock'); //or what?
+  end;
+
 begin
   root:=nil;
   if Fileexists(fn) then
   begin
-    getmem(ibuf,sizeof(tbytestream));
     mfm:=filemode; filemode:=0;
     assign(t,fn);  reset(t,1);
     filemode:=mfm;
@@ -797,33 +808,22 @@ begin
     s:='begin 644 '+fn;
     while not eof(t) and assigned(p) do begin
       if s='' then begin
-        blockread(t,ibuf^,blen,b_read);
-        encode_UU(ibuf^,b_read,s);
+        blockread(t,ibuf,blen,b_read);
+        s := encode_UU(ibuf,b_read);
       end;
 
-      p:=AllocAbsatz(length(s));
-      if assigned(p) then begin
-        p^.umbruch:=true;
-        Move(s[1],p^.cont,length(s));
-        AppP;
-      end;
+      Absatz;
       s:='';
 
       if eof(t) then for b_read:=1 to 3 do begin
         if b_read=1 then s:='`'
         else if b_read=2 then s:='end'
         else if b_read=3 then str(filesize(t),s);
-        p:=AllocAbsatz(length(s));
-        if assigned(p) then begin
-          p^.umbruch:=true;
-          Move(s[1],p^.cont,length(s));
-          AppP;
-        end;
+        Absatz;
       end;
 
     end;
     close(t);
-    freemem(ibuf,sizeof(tbytestream));
     if ioresult<>0 then error(3);
   end;
   LoadUUeBlock:=root;
@@ -4015,6 +4015,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.89  2002/12/14 09:25:16  dodi
+  - removed gpltools and encoder units
+
   Revision 1.88  2002/12/14 07:31:26  dodi
   - using new types
 

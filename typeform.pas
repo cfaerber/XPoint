@@ -450,7 +450,7 @@ Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
-  //todo: remove gpltools.DecodeRot13String?
+function DecodeRot13String(const s: String): String;
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
@@ -1716,6 +1716,30 @@ begin
 end;
 
 { ROT13 Kodierung }
+
+function DecodeRot13String(const s: String): String;
+var
+  i: Integer;
+  c: Char;
+begin
+  SetLength(Result, Length(s));
+  for i := 1 to Length(s) do
+  begin
+    c := s[i];
+    if (c >= 'A') and (c <= 'Z') then
+    begin
+      Inc(c, 13);
+      if c > 'Z' then Dec(c, 26);
+    end else
+      if (c >= 'a') and (c <= 'z') then
+      begin
+        Inc(c, 13);
+        if c > 'z' then Dec(c, 26);
+      end;
+    Result[i] := c;
+  end;
+end;
+
 procedure Rot13(var data; Size: Integer); {&uses edi} assembler;
 asm
          mov   edi, data
@@ -1878,6 +1902,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2002/12/14 09:25:18  dodi
+  - removed gpltools and encoder units
+
   Revision 1.124  2002/12/13 14:31:35  dodi
   - added IsIntVal function
 

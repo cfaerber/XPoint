@@ -31,6 +31,8 @@ interface
 uses
   classes, xpstreams, mime;
 
+function EncodeBase64(var source; len: integer): string;
+
 { --------------------- Encoding/Decoding Streams -------------------- }
 
 type
@@ -82,6 +84,35 @@ implementation
 
 uses
   SysUtils, Typeform, xpglobal;
+
+//todo: drop this procedure?
+function EncodeBase64(var source; len: integer): string;
+var
+  i, j, l:    integer;
+  b:          array[0..3] of byte;
+  bytestream: array[0..63] of byte;
+begin
+  result:='';
+  if len=0 then exit;
+  fillchar(bytestream,sizeof(bytestream),0);
+  move(source,bytestream,len);
+
+  l:=0;
+  for i:=0 to (len-1) div 3 do begin
+    inc(l,3);
+    if l>len then l:=len;
+    b[0]:=(bytestream[i*3] and $fc) shr 2;
+    b[1]:=((bytestream[i*3] and $03) shl 4)
+          or ((bytestream[i*3+1] and $f0) shr 4);
+    b[2]:=((bytestream[i*3+1] and $0f) shl 2)
+          or ((bytestream[i*3+2] and $c0) shr 6);
+    b[3]:=bytestream[i*3+2] and $3f;
+    for j:=0 to (l-1) mod 3+1 do
+     result:=result+Base64EncodingTable[b[j]];
+    for j:=1 to 2-(l-1) mod 3 do
+     result:=result+'=';
+  end;
+end;
 
 { TBase64EncoderStream }
 
@@ -221,6 +252,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2002/12/14 09:25:17  dodi
+// - removed gpltools and encoder units
+//
 // Revision 1.8  2002/12/06 14:27:26  dodi
 // - updated uses, comments and todos
 //

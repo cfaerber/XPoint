@@ -194,7 +194,6 @@ uses
   {$ENDIF }
   typeform,
   inout, maus2, winxp, resource,
-  gpltools, //todo: remove and use typeform.Rot13
   xp0,mime,utftools,unicode;
 
 { TLister }
@@ -1150,6 +1149,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.75  2002/12/14 09:25:17  dodi
+  - removed gpltools and encoder units
+
   Revision 1.74  2002/12/14 07:31:27  dodi
   - using new types
 

@@ -81,7 +81,7 @@ implementation
 
 uses
   ProgressOutput,       { TProgressOutput }
-  typeform, encoder, md5, mime;
+  typeform, mime_base64, md5, mime;
 
 const
   DefaultSMTPPort       = 25;
@@ -346,6 +346,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/12/14 09:25:18  dodi
+  - removed gpltools and encoder units
+
   Revision 1.22  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 
