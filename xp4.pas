@@ -1007,7 +1007,7 @@ var t,lastt: taste;
         end;
       if quote=0 then BriefSchablone(pm,headf,fn,empf,realname);
       end;
-    if (netztyp=nt_UUCP) or (netztyp=nt_ZCONNECT) then begin
+    if netztyp in [nt_UUCP,nt_Client,nt_ZCONNECT] then begin
       re_n:=false; kein_re:=false;
       end;
     if not usermsg then
@@ -2238,6 +2238,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.54  2001/12/20 15:22:13  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.26.2.53  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

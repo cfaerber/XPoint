@@ -150,7 +150,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if ntMaxRef(netztyp)>1 then
         WriteReflist(reflist,1);
       if ref<>'' then wrs('BEZ: '+ref);
-      if (attrib and attrControl<>0) and (hd.netztyp IN [nt_ZConnect,nt_UUCP]) then begin
+      if (attrib and attrControl<>0) and (hd.netztyp IN [nt_ZConnect,nt_UUCP,
+                                                         nt_Client]) then begin
         wrs('STAT: CTL');
         wrs('CONTROL: cancel '+ref);
       end;
@@ -182,7 +183,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if homepage<>''  then wrs('U-X-Homepage: '+homepage);
       if priority<>0   then wrs('U-X-Priority: '+strs(priority));
       if noarchive and (pmempfanz=0) and
-          (netztyp in [nt_UUCP, nt_ZConnect]) then
+          (netztyp in [nt_UUCP,nt_Client,nt_ZConnect]) then
         wrs('U-X-No-Archive: Yes');
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
@@ -375,7 +376,7 @@ begin
       dbWriteN(bbase,bb_gruppe,NetzGruppe);
       if brettkomm then
         dbWriteN(bbase,bb_kommentar,komm);
-      flags:=iif(netztyp=nt_UUCP,16,0);
+      flags:=iif(netztyp in [nt_UUCP,nt_Client],16,0);
       dbWriteN(bbase,bb_flags,flags);
       if order_ende and NewbrettEnde then
         SetBrettindexEnde
@@ -411,7 +412,7 @@ begin
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
-    if netztyp in [nt_ZConnect,nt_UUCP] then
+    if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
       if hdp^.fido_to<>'' then xp0.fidoto:=realname
       else xp0.fidoto:=''
     else begin
@@ -471,6 +472,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.13  2001/12/20 15:22:13  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.9.2.12  2001/09/18 22:33:39  my
   MY:- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
        erzeugt.

@@ -248,7 +248,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
           currentbox := dbReadStr(d,'boxname');
           dbRead(d,'Netztyp',nt);
           ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-          if (nt=40) and (boxpar^.PPPMode) then          { RFC/Client? }
+          if nt=nt_Client then          { RFC/Client? }
           begin
             clientbox := clientbox+' '+currentbox;
             currentbox := '';
@@ -738,6 +738,12 @@ end;
 
 {
   $Log$
+  Revision 1.4.2.8  2001/12/20 15:22:12  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.4.2.7  2001/11/20 23:15:28  my
   MY:- Variablen 'NetcallAlleFlag' und 'NetcallEndeFlag' => Konstanten
   MY:- Netcall/Spezial-Liste verwendet fr die Boxauswahl jetzt dieselben

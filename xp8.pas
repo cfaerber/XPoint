@@ -65,7 +65,7 @@ var mapsname : string[20];
 function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
 var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
     nt : byte;                       { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
-begin                                { 13=Feeder, 14=postmaster               }
+begin                                { 13=Feeder, 14=postmaster, 16=RFC/Client}
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
   if not dbFound then
@@ -81,6 +81,8 @@ begin                                { 13=Feeder, 14=postmaster               }
       mapstype:=4
     else if ntAreamgr(nt) then
       mapstype:=5
+    else if (nt=nt_Client) then
+      mapstype:=16
     else if (nt=nt_UUCP) then begin
       ReadBoxpar(nt,box);
       case Boxpar^.BMtyp of
@@ -827,7 +829,7 @@ begin
    +iifs(cpos('\',blfile)=0,' /+3',''),640,0);
   if (errorlevel=0) and (exist(TempBl)) then
     copyfile(TempBl,blfile)
-  else rfehler(836);      { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
+  else rfehler(838);      { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
   ExErase(Tempbl);
   closebox;
 end;
@@ -852,24 +854,25 @@ type maggibrett  = record
                      name  : string[40];
                    end;
     ma           = array[1..maxmaggi] of maggibrett;
-var t     : text;
-    fn    : pathstr;
-    box   : string[20];
-    i,nr  : integer;
-    d     : DB;
-    topen : boolean;
-    maf   : boolean;
-    maus  : boolean;
-    quick : boolean;
-    fido  : boolean;
-    gs    : boolean;
-    uucp  : boolean;
+var t          : text;
+    fn         : pathstr;
+    box        : string[20];
+    i,nr       : integer;
+    d          : DB;
+    topen      : boolean;
+    maf        : boolean;
+    maus       : boolean;
+    quick      : boolean;
+    fido       : boolean;
+    gs         : boolean;
+    uucp       : boolean;
     postmaster : boolean;
-    pronet: boolean;
-    qwk,brk   : boolean;
-    map   : ^ma;
-    mm    : integer;
-    bfile : string[8];
+    client     : boolean;
+    pronet     : boolean;
+    qwk,brk    : boolean;
+    map        : ^ma;
+    mm         : integer;
+    bfile      : string[8];
 
   { s. auch MAGGI.loadbretter! }
 
@@ -986,7 +989,7 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; pronet:=false; qwk:=false;
+      uucp:=false; pronet:=false; qwk:=false; client:=false;
       postmaster:=false;
       case mapstype(box) of
         2 : maf:=true;
@@ -999,6 +1002,7 @@ begin
        10 : qwk:=true;
        11..13 : uucp:=true;
        14 : begin uucp:=true; postmaster:=true; end;
+       16 : client:=true;
       end;
       rewrite(t);
       if quick or (uucp and postmaster) then
@@ -1019,7 +1023,7 @@ begin
         end
       else if not maf then
         if gs then writeln(t,copy(brett,3,brettlen))
-        else if uucp then writeln(t,newsgroup(brett))
+        else if uucp or client then writeln(t,newsgroup(brett))
         else writeln(t,copy(brett,2,brettlen))
       else begin
         dbOpen(d,OwnPath+BoxenFile,1);
@@ -1034,7 +1038,7 @@ begin
       if fido then
         writeln(t,'---');
       close(t);
-      if not (uucp and boxpar^.pppMode) then SendMaps('DEL',box,fn)
+      if not client then SendMaps('DEL',box,fn)
       else begin
         rewrite(t);
         writeln(t,newsgroup(brett));
@@ -1053,6 +1057,7 @@ begin
         fido:=ntAreaMgr(dbReadInt(d,'netztyp'));
         gs:=(dbReadInt(d,'netztyp')=nt_GS);
         uucp:=(dbReadInt(d,'netztyp')=nt_UUCP);
+        client:=(dbReadInt(d,'netztyp')=nt_Client);
         pronet:=(dbReadInt(d,'netztyp')=nt_Pronet);
         qwk:=(dbReadInt(d,'netztyp')=nt_QWK);
         dbRead(d,'dateiname',bfile);
@@ -1081,7 +1086,7 @@ begin
             else
               if not (maf or pronet) then
                 if gs then writeln(t,copy(brett,3,brettlen))
-                else if uucp then writeln(t,newsgroup(brett))
+                else if uucp or client then writeln(t,newsgroup(brett))
                 else writeln(t,copy(brett,2,BrettLen))
               else writeln(t,brettcode(mid(brett,2)));
             topen:=true;
@@ -1091,7 +1096,7 @@ begin
           if fido then
             writeln(t,'---');
           close(t);
-          if not (uucp and boxpar^.pppMode) then SendMaps('DEL',box,fn)
+          if not client then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
           topen:=false;
           end;
@@ -1172,6 +1177,7 @@ var absender : string[Adrlen];
     fido     : boolean;
     turbo    : boolean;
     uucp     : boolean;
+    client   : boolean;
     fn       : pathstr;
     bpsik    : BoxPtr;
     i        : byte;
@@ -1204,10 +1210,11 @@ begin
   fido:=(mapstype(box)=5);
   turbo:=(mapstype(box)=9);
   uucp:=(mapstype(box) in [7,11]);
+  client:=(mapstype(box)=16);
   bpsik:=boxpar;
   new(boxpar);
   ReadBox(0,bfile,boxpar);
-  if boxpar^.pppMode then
+  if client then
   begin
     if deutsch then
     begin
@@ -1219,11 +1226,11 @@ begin
       pushkey('M');
       pushkey('M');
       pushkey('F');
-      end;
+    end;
     for i:=1 to length(box) do pushkey(box[i]);
     pushkey(keycr);
     exit;
-    end;
+  end;
   if mapstype(box) in [2,8] then begin
     message('Brettliste fÅr '+ustr(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
@@ -1269,15 +1276,17 @@ var box     : string[BoxNameLen];
     maggi   : boolean;
     promaf  : boolean;
     bfile   : string[8];
+    nt      : byte;
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
   dbRead(d,'dateiname',bfile);
+  dbRead(d,'netztyp',nt);
   dbClose(d);
   ReadBox(0,bfile,boxpar);
-  if not boxpar^.pppMode then fn:='*.*' else
+  if not nt=nt_Client then fn:='*.*' else
   begin
     fn:=BoxPar^.PPPClientPath + ustr(boxfilename(box));
     fn:=fn+iifs(exist(fn+'.BL'),'.BL',iifs(exist(fn+'.GR'),'.GR','.BL'));
@@ -1308,7 +1317,7 @@ begin
     ExpandTabs(fn,bfile+'.BL');
     closebox;
     end;
-  if boxpar^.pppmode then makebl(box);
+  if nt=nt_Client then makebl(box);
   (*else*) if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
     _era(fn);
 end;
@@ -1399,7 +1408,7 @@ var d      : DB;
     fido   : boolean;
     gs     : boolean;
     uucp   : boolean;
-    ppp: boolean;
+    client : boolean;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
@@ -1466,7 +1475,7 @@ label again;
       p:=cpos(' ',s);
       if p=0 then p:=pos(#9,s);
       if p>0 then
-        if uucp then
+        if uucp or client then
           s:=left(s,p-1)
         else begin
           if p<5 then
@@ -1475,7 +1484,7 @@ label again;
             s:=copy(s,1,cpos(' ',s)-1);
           end;
       if s='' then exit;
-      if not (quick or gs or uucp) and (s[1]<>'/') then
+      if not (quick or gs or uucp or client) and (s[1]<>'/') then
         write(t,'/');  { Euromail }
       writeln(t,s);
       end;
@@ -1571,22 +1580,20 @@ begin
     fido:=ntAreamgr(netztyp);
     gs:=(netztyp=nt_GS);
     uucp:=(netztyp=nt_UUCP);
+    client:=(netztyp=nt_Client);
     if uucp then
     begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
-      ppp := BoxPar^.PPPMode;
-      {if BoxPar^.SysopInp+BoxPar^.SysopOut<>'' then ppp := false;}
-    end else
-      ppp := false;
+    end;
     qwk:=(netztyp=nt_QWK);
   end else
   begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
     uucp:=false; promaf:=false; qwk:=false; postmaster:=false;
-    netztyp:=0;
+    client:=false; netztyp:=0;
   end;
   dbClose(d);
   if fn='' then
@@ -1595,14 +1602,10 @@ begin
     Exit;
   end;
 
-  {if ppp then fn := BoxPar^.PPPClientPath + fn;}
-  if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
+  if (art=1) and exist(fn+'.BBL') and changesys and not client then
     lfile:=fn+'.BBL' else
- { if ppp and (art=1) then
-    lfile:=BoxPar^.PPPClientPath+fn+'.RC'
-  else}
 
-  if ppp then begin
+  if client then begin
     if not exist(fn+'.BL')
       then fn:=Boxpar^.PPPClientPath+fn;
     lfile:=fn+iifs(exist(fn+'.BL'),'.BL','.GR');
@@ -1619,7 +1622,7 @@ begin
   OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,4,'/M/SB/S/NLR/'+
              'APGD/'+iifs(_maus,'VSC:080/',''));
 
-  if ppp then Read_BL_File(lfile,art=0)
+  if client then Read_BL_File(lfile,art=0)
     else list_readfile(lfile,0);
   case art of
     0 : showkeys(9);
@@ -1630,12 +1633,11 @@ begin
   end;
 again:
   listVmark(BrettMark); mapsnt:=netztyp; mapsart:=art;
-  if ppp then mapsnt:=nt_uucp_c;
   if maus then LColType:=2 else
   if fido then lcoltype:=4 else
   if maf or quick then LColType:=0 else
   if promaf then lcoltype:=3 else
-  if ppp and (art=0) then lcoltype:=5 else
+  if client and (art=0) then lcoltype:=5 else
     LColType:=1;
   ListCFunc(MapsListcolor);
   listTp(Mapskeys);
@@ -1660,7 +1662,7 @@ again:
         goto again;
       end;
     end;
-    if ppp and (anz=1) and (art=0) and
+    if client and (anz=1) and (art=0) and
       (firstchar(first_marked)='!') then
     begin
       rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
@@ -1691,24 +1693,24 @@ again:
       end;
       if fido then writeln(t,'---');
       close(t);
-      if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+      if (not client) and (art=0) and (uucp or (netztyp=nt_ZConnect)) then
         BretterAnlegen;
       if art=3 then
         verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
-      if not ppp then
+      if not client then
         case art of
           0 : sendmaps('ADD',box,fn);
           1 : sendmaps('DEL',box,fn);
           3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
           4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
         end;
-      if ppp and (art in [0,1]) then
+      if client and (art in [0,1]) then
         if MakeRC(art=0,box) then
           BretterAnlegen2;
       erase(t);
     end else
       BretterAnlegen;
-    if not ppp then closelist; { PPP schlie·t den Lister selbst }
+    if not client then closelist;  { RFC/Client schlie·t den Lister selbst }
   end else
     CloseList; { Lister bei Brk schlie·en }
   freeres;
@@ -1729,11 +1731,11 @@ var brk        : boolean;
     maf        : boolean;
     maus       : boolean;
     info       : MausInfAP;
-    ppp        : Boolean;
     infos      : integer;
     fido       : boolean;
     gs         : boolean;
     uucp,gup   : boolean;
+    client     : boolean;
     autosys    : boolean;
     feeder     : boolean;
     postmaster : boolean;
@@ -1745,7 +1747,8 @@ var brk        : boolean;
 
   procedure app(s1,s2:string);
   begin
-    app_l(' '+forms(s1,iif(maus,8,iif(fido or (uucp and not gup),15,20)))+s2);
+    app_l(' '+forms(s1,iif(maus,8,iif(fido or client or
+                                     (uucp and not gup),15,20)))+s2);
   end;
 
   procedure rdsystem;
@@ -1849,35 +1852,34 @@ begin
   fido:=ntAreamgr(nt);
   gs:=(nt=nt_GS);
   uucp:=(nt=nt_UUCP);
+  client:=(nt=nt_Client);
   if uucp then begin
     ReadBoxpar(nt,box);
     gup:=(boxpar^.BMtyp=bm_gup);
     autosys:=(boxpar^.BMtyp=bm_autosys);
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
-    ppp := BoxPar^.PPPMode;
-    {if BoxPar^.SysopInp+BoxPar^.PPPClientPath<>'' then ppp := false;}
-  end else
-    ppp := false;
+  end;
 
   promaf:=ntProMaf(nt);
   case defcom of
     0 : begin
-          if (not ppp) and
-            (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster))
+          if (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster))
           then begin
             rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
             exit;
           end;
         end;
-    1 : if ppp then
+    1 : if client then
         begin
-          msgbox(63,8,_hinweis_,x,y);
-          for j := 2 to 5 do
+          msgbox(63,10,_hinweis_,x,y);
+          for j := 2 to 7 do
             { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
             { 'Liste mu· die entsprechende Funktion beim externen Client' }
-            { 'aktiviert sein und die bisherige Newsgroup-Liste gelîscht' }
-            { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+            { 'aktiviert sein (siehe auch "Newsgroup-Liste pflegen" bei'  }
+            { '/Edit/Boxen/Edit/Mail-/News-Server) und die bisherige'     }
+            { 'Newsgroup-Liste gelîscht werden (siehe /Nachricht/Brett-'  }
+            { 'manager/Sonstiges/Lîschen).'                               }
             mwrt(x+3,y+j,getres2(10800,30+j));
           errsound;
           wait(curoff);
@@ -1898,8 +1900,9 @@ begin
   else if area then lines:=7
   else if request then lines:=6
   else if gs then lines:=4
+  else if client then lines:=3
   else if uucp then
-    if gup or ppp then lines:=3
+    if gup then lines:=3
     else if autosys then lines:=5
     else if feeder then lines:=5
     else lines:=4
@@ -1924,7 +1927,7 @@ begin
     brk:=false;
     end
   else begin
-    listbox(iif(maus,45,60),lines,iifs(ppp,'RFC/Client: '+getres2(810,85),
+    listbox(iif(maus,45,60),lines,iifs(client,'RFC/Client: '+getres2(810,85),
       getres2(810,0)+mapsname+   { 'Nachricht an ' }
             +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box));
     if fido then begin
@@ -1961,7 +1964,7 @@ begin
       app('BRETT +','Bretter bestellen');
       app('BRETT -','Bretter abbestellen');
       end
-    else if ppp then begin
+    else if client then begin
       app(getres2(810,86),getres2(810,87));  { 'Newsgroup-Liste alphabetisch sortieren'     }
       app(getres2(810,88),getres2(810,89));  { 'Newsgroup-Liste mit RC-Datei abgleichen'    }
       app(getres2(810,90),getres2(810,91));  { 'Newsgroup-Liste lîschen (= Neuanforderung)' }
@@ -2005,7 +2008,7 @@ begin
       app('LIST ALL',getres2(810,8));       { 'User-, Brett- und Systemliste' }
       app('LIST BRETTER',getres2(810,9));   { 'Brettliste' }
       end;
-    if not (maf or maus or fido or gs or uucp) then begin
+    if not (maf or maus or fido or gs or uucp or client) then begin
       if not request then app('LIST USER',getres2(810,11));   { 'Userliste' }
       app('LIST MY BRETTER',getres2(810,12));   { 'bestellte Bretter' }
       if not request then app('LIST OTHER BRETTER',getres2(810,13));   { 'nicht bestellte Bretter' }
@@ -2021,8 +2024,8 @@ begin
     closebox;
     if not brk then
     begin
-      comm:=trim(left(first_marked,iif(maus,9,iif(fido or uucp,16,21))));
-      if ppp then
+      comm:=trim(left(first_marked,iif(maus,9,iif(fido or uucp or client,16,21))));
+      if client then
       begin
         brk:=true;
         if comm=getres2(810,86) then ClientBL_Sort(box);
@@ -2189,6 +2192,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.34  2001/12/20 15:22:14  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.10.2.33  2001/10/22 23:12:04  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

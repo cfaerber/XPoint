@@ -911,7 +911,7 @@ begin
                 dbWriteN(bbase,bb_pollbox,pb);
                 dbWriteN(bbase,bb_haltezeit,haltezeit);
                 dbWriteN(bbase,bb_gruppe,grnr);
-                flags:=iif(netztyp=nt_UUCP,16,0);
+                flags:=iif(netztyp in [nt_UUCP,nt_Client],16,0);
                 dbWriteN(bbase,bb_flags,flags);
                 if newbrettende then
                   SetBrettindexEnde
@@ -1237,6 +1237,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.16  2001/12/20 15:22:13  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.21.2.15  2001/08/26 15:38:28  my
   JG+MY:- Fix: When auto-creating a user with an address longer than 80
           chars the user flags (Prio, Filter, Return Receipt) of the last

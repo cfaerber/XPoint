@@ -293,7 +293,7 @@ begin
   if deutsch then
     ntAllowed:=[0..255]
   else
-    ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP];
+    ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP,nt_Client];
   developer:=exist('developer');
   exclude(ntAllowed,nt_Pronet);
 end;
@@ -1832,6 +1832,12 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.33  2001/12/20 15:22:12  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.62.2.32  2001/12/02 15:52:29  my
   MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
        <Ctrl-W> nicht-permanent umgeschaltet werden.

@@ -2050,7 +2050,7 @@ begin
            iifs(attrib and attrPmReply<>0,'PM-Reply ','')+
            iifs(attrib and attrQuoteTo<>0,'QuoteTo ','')+
            iifs(attrib and attrControl<>0,'Control ',''));
-    if netztyp=nt_UUCP then netz:=' / RFC'
+    if netztyp in [nt_UUCP,nt_Client] then netz:=' / RFC'
     else begin
       netz:=ntName(netztyp);
       if netz='???' then netz:=''
@@ -2895,6 +2895,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.34  2001/12/20 15:22:14  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.47.2.33  2001/12/07 17:57:03  my
   MY:- Fix Suchbegriffs-Bibliothek: Wenn Suchbegriffe markiert sind und
        <Esc> gedrÅckt wird, wird a) wieder zum Suche-Dialog zurÅckgekehrt

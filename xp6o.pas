@@ -935,7 +935,7 @@ again:
 { true=Userbrett  }    pm:=cpos('@',empf)>0;
 { Brettvertreter  }    if not pm then begin
                          dbReadN(bbase,bb_pollbox,pollbox);
-                         if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_ZConnect]) then begin
+                         if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_Client,nt_ZConnect]) then begin
                            Am_ReplyTo:=empf;
                            dbReadN(bbase,bb_brettname,empf);
                          end else empf:='A'+empf;
@@ -953,7 +953,7 @@ again:
                      else begin
                        re_n:=rehochn; kein_re:=false;
                        end;
-                     if hdp^.netztyp=nt_UUCP then begin
+                     if (hdp^.netztyp in [nt_UUCP,nt_Client]) then begin
                        re_n:=false; kein_re:=false;
                        end;
                      if (hdp^.netztyp<>nt_Maus) and not kein_re then
@@ -1344,6 +1344,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.19  2001/12/20 15:22:14  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.20.2.18  2001/08/12 11:20:36  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

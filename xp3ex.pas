@@ -324,7 +324,7 @@ var size   : longint;
     if p>0 then qchar[p]:='$';
 
 {    if netztyp=nt_UUCP then begin }
-    if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then
+    if (netztyp in [nt_UUCP,nt_Client]) or ((p>0) and (p2>0)) then
     begin
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
@@ -1173,6 +1173,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.22  2001/12/20 15:22:13  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.17.2.21  2001/09/18 13:45:22  my
   MY:- Kleiner Optikfix: Userdefinierte Header werden nicht mehr fest mit
        11 Stellen angezeigt, sondern die Laenge richtet sich nach der in

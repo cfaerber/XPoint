@@ -1055,7 +1055,7 @@ begin
   if origin<>'' then
     dbWriteN(bbase,bb_adresse,origin);
   flags:=flags and (not 16);
-  if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
+  if ntBoxNetztyp(box) in [nt_UUCP,nt_Client] then inc(flags,16);
   dbWriteN(bbase,bb_flags,flags);
   SetBrettindex;
   newbrett:=true;
@@ -1097,7 +1097,7 @@ begin
     dbWriteN(bbase,bb_pollbox,box);
     dbWriteN(bbase,bb_haltezeit,halten);
     flags:=flags and (not 16);
-    if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
+    if ntBoxNetztyp(box) in [nt_UUCP,nt_Client] then inc(flags,16);
     dbWriteN(bbase,bb_flags,flags);
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
@@ -1108,7 +1108,7 @@ begin
       rec:=dbRecno(bbase);
       dbSeek(bbase,biBrett,ustr(brett));
       if dbFound then begin
-        rfehler(2714);       { 'Umbennenen nicht mîglich - Brett existiert bereits!' }
+        rfehler(2714);       { 'Umbenennen nicht mîglich - Brett existiert bereits!' }
         dbGo(bbase,rec);
         goto ende;
         end;
@@ -1172,7 +1172,7 @@ var n,w    : shortint;
     filter : boolean;
     flags  : byte;
     na,tg  : string[10];
-    uucp   : byte;
+    rfc    : byte;
     sperre : boolean;    { Brett - Schreibsperre }
 
     oldbmarkanz : integer;
@@ -1295,7 +1295,7 @@ else begin
       if flags=3 then Flags:=0;
       if flags>3 then dec(flags);
       end;
-    if n=2 then uucp:=iif(ntBoxNetztyp(s)=nt_UUCP,16,0);
+    if n=2 then rfc:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
@@ -1305,7 +1305,7 @@ else begin
               dbWrite(dispdat,'pollbox',s);
               if not user then begin
                 dbRead(dispdat,'flags',flags);
-                flags:=flags and (not 16)+uucp;
+                flags:=flags and (not 16) + rfc;
                 dbWrite(dispdat,'flags',flags);
                 end;
             end;
@@ -2402,7 +2402,7 @@ var oldbox,newbox   : string[BoxNameLen];
     localuser       : boolean;
     autov,pseudos   : boolean;
     nn              : longint;
-    x,y,i,uucp,flags: byte;
+    x,y,i,rfc,flags : byte;
     brk             : boolean;
     d               : DB;
     mi,p            : shortint;
@@ -2434,7 +2434,7 @@ begin
     else mapsname:=ustr(dbReadStr(d,'nameomaps')+'@'+oldbox);
     dbClose(d);
     if mapsname<>'' then mapsname:=mapsname+ustr(ntAutoDomain(oldbox,true));
-    uucp:=iif(ntBoxNetztyp(newbox)=nt_UUCP,16,0);
+    rfc:=iif(ntBoxNetztyp(newbox) in [nt_UUCP,nt_Client],16,0);
     attrtxt(col.coldialog);
     wrt(x+2,y+10,getres2(2734,7));    { 'Bretter' }
     wrt(x+2,y+11,getres2(2734,8));    { 'User'    }
@@ -2458,7 +2458,7 @@ begin
               wrt(x+10,y+9+i,strsn(nn,4));
               dbWrite(d,'pollbox',newbox);
               if i=1 then begin
-                flags:=dbReadInt(d,'flags') and (not 16) + uucp;
+                flags:=dbReadInt(d,'flags') and (not 16) + rfc;
                 dbWrite(d,'flags',flags);
                 end;
               end;
@@ -2511,6 +2511,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.25  2001/12/20 15:22:13  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.25.2.24  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

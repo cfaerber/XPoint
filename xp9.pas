@@ -21,17 +21,17 @@ interface
 
 uses
   crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-  maus2,mouse,resource,xpglobal,xp0,xp1,xp1o,xp1o2,xp1input,xp2c,lfn;
+  maus2,mouse,resource,xpglobal,xp0,xp1,xp1o,xp1o2,xp1input,xp2c,lfn,
+  xpnt;
 
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      enetztypen = 10;        { Netztypen umgeordnet auf DFUe-Welt anno 2001 }
-      ntnr   : array[0..enetztypen-1] of byte = (40,2,30,31,20,0,3,4,10,11);
-    { ntypes : array[0..enetztypen-1] of string[10] = ('Z-Netz','ZConnect',
-                 'RFC/UUCP','MausTausch','Fido','QWK','MagicNET','ProNET',
-                 'QuickMail','GS-Mailbox','Turbo-Box'); }
+      enetztypen = 11;  { Netztypen umgeordnet auf DFUe-Welt anno 2001 }
+      ntnr   : array[0..enetztypen-1] of byte =
+        (nt_Client, nt_UUCP, nt_ZConnect, nt_FIDO, nt_QWK, nt_Maus,
+         nt_Netcall, nt_Magic, nt_Pronet, nt_Quick, nt_GS);
       maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
 
 var   UpArcnr       : integer;   { fÅr EditPointdaten }
@@ -73,7 +73,7 @@ procedure GruppenSelproc(var cr:customrec);
 implementation  {---------------------------------------------------}
 
 uses
-  xp2b,xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,lister,xpnt,xpterm,xpovl;
+  xp2b,xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,lister,xpterm,xpovl;
 
 
 {$IFDEF FPC }
@@ -89,23 +89,17 @@ function Netz_Typ(nt:byte):string;
 var i : integer;
 begin
   Netz_Typ:=ntName(nt_Netcall);
-  if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
-  else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U)
-  else for i:=1 to enetztypen-1 do
+  for i:=0 to enetztypen-1 do
     if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
 end;
 
 
 procedure BoxSelProc(var cr:customrec);
-var
-  TempBoxRec: BoxRec;
 begin
-  TempBoxRec := BoxPar^;
   with cr do begin
     s:=UniSel(1,false,s);
     brk:=(s='');
   end;
-  BoxPar^ := TempBoxRec;
 end;
 
 
@@ -143,7 +137,8 @@ begin
     nt_ProNet   : DefaultMaps:='SYSTEM';
     nt_Maus     : DefaultMaps:='MAUS';    { nicht editierbar! }
     nt_Fido     : DefaultMaps:='Areafix';
-    nt_UUCP     : DefaultMaps:='changesys';
+    nt_UUCP,
+    nt_Client   : DefaultMaps:='changesys';
     nt_QWK      : DefaultMaps:='ZQWK';
   else            DefaultMaps:='SYSOP';   { Quick, Turbo }
   end;
@@ -204,12 +199,6 @@ var d         : DB;
             dbRead(d,'Kommentar',s3);
             dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
-            if nt=40 then
-            begin
-              dbRead(d,'dateiname',fn); { Pseudo-Netztyp RFC/Client }
-              ReadBox(nt,fn,boxpar);
-              if (nt=40) and Boxpar^.pppMode then nt:=41; 
-              end;   
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
               else dc:='˚ '
@@ -587,7 +576,7 @@ var d         : DB;
       SeekLeftBox(dbox,name);
       if dbFound then nt:=dbReadInt(dbox,'netztyp') else nt:=100;
       dbClose(dbox);
-      if nt=nt_UUCP then begin
+      if nt=nt_Client then begin
         rfehler(0; 'geht nicht im client-modus');
         exit;
       end; *)
@@ -1133,7 +1122,6 @@ var x,y  : byte;
     ntyp : string[20];
     nt,b : byte;
     i    : integer;
-    pppm : boolean;
 label restart;
 begin
 restart:
@@ -1143,11 +1131,9 @@ restart:
   maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benîtigen' }
   maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
-  ntyp:=ntName(nt_UUCP_C); nt:=nt_UUCP_C;
+  ntyp:=ntName(nt_Client); nt:=nt_Client;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
-  mappsel(true,ntname(41));
-  mappsel(true,ntname(42));
-  for i:=1 to enetztypen-1 do
+  for i:=0 to enetztypen-1 do
     if (ntnr[i] in ntAllowed) then
       mappsel(true,ntName(ntnr[i]));
   mset3proc(gf_getntyp);
@@ -1160,12 +1146,6 @@ restart:
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
-  pppm:=false;
-  if lstr(ntyp)=lstr(ntName(41)) then begin
-    ntyp:=ntName(40);
-    pppm:=true;
-    end
-  else if lstr(ntyp)=lstr(ntName(42)) then ntyp := ntName(40);
   for i:=0 to enetztypen-1 do
     if lstr(ntyp)=lstr(ntName(ntnr[i])) then
       nt:=ntnr[i];
@@ -1174,7 +1154,7 @@ restart:
   email:='';
 
   dom:=ntDefaultDomain(nt);
-  if pppm then begin
+  if nt = nt_Client then begin
     email:=user;
     if not is_mailaddress(email) then
     begin
@@ -1211,7 +1191,7 @@ restart:
    case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
-    else      if not pppm then boxpar^.pointname:=''
+    else      if not nt = nt_Client then boxpar^.pointname:=''
               else
               begin
                 b := cpos('@', eMail);
@@ -1223,7 +1203,6 @@ restart:
   dbFlushClose(d);
   boxpar^.boxname:=name;
   boxpar^.username:=user;
-  boxpar^.pppMode:=pppm;
   boxpar^._Domain:=dom;
   if (nt=nt_UUCP) and exist('UUCP.SCR') then
     boxpar^.script:='UUCP.SCR';
@@ -1234,17 +1213,23 @@ restart:
     SetDefZoneNet;
     end;
   SaveConfig2;
-  if nt=nt_UUCP then begin
+  if (nt=nt_UUCP) or (nt=nt_Client) then begin
     XP_ID_AMs:=false;
     SaveConfig;
     end;
   pushkey('e');
-  if pppM then pushkey('c') else pushkey('p');
+  if nt=nt_Client then pushkey('c') else pushkey('p');
   if UniSel(1,true,'')='' then;
   end;
 end.
 {
   $Log$
+  Revision 1.19.2.39  2001/12/20 15:22:15  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.19.2.38  2001/12/11 17:49:16  my
   MY:- Envelope-Adresse (Mail-in) ist jetzt ein Pflichtfeld (falls ein
        POP3/SMTP/IMAP-Server eingetragen ist).

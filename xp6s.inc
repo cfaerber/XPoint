@@ -163,8 +163,9 @@ end;
 procedure Set_XP_ID;
 begin
   case netztyp of
-    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr2)+' ##'+#13#10;
-    else      XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr1)+' ##'+#13#10;
+    nt_UUCP,
+    nt_Client : XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr2)+' ##'+#13#10;
+    else        XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr1)+' ##'+#13#10;
   end;
 end;
 
@@ -425,7 +426,8 @@ begin
                       else _domain:=rev+'@'+lstr(pointname)+domain;
         nt_Quick,
         nt_GS       : _domain:=rev+'@'+pointname;
-        nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
+        nt_UUCP,
+        nt_Client   : if fqdn='' then _domain:=rev+'@'+pointname+domain
                         else _domain:=rev+'@'+fqdn;
       else
         _domain:='@'+box;
@@ -852,7 +854,7 @@ begin
   if sData^.pmreplyto='' then
     dbRead(d,'ReplyTo',sdata^.pmreplyto);
   betrlen:=ntBetreffLen(netztyp);
-  if (netztyp=nt_UUCP) and (umlaute=2) then
+  if (netztyp in [nt_UUCP,nt_Client]) and (umlaute=2) then
     umlaute:=0;
 end;
 
@@ -899,7 +901,8 @@ begin
   case netztyp of
     nt_Netcall,nt_ZCONNECT : l:=1;
     nt_Fido                : l:=2;
-    nt_UUCP                : l:=3;
+    nt_UUCP,
+    nt_Client              : l:=3;
     nt_Maus                : l:=4;
     nt_Magic               : l:=5;
     nt_Quick,nt_GS         : l:=6;
@@ -1012,8 +1015,8 @@ var x,y : byte;
     sml : string[1];
 begin
   case netztyp of
-    nt_ZConnect : y:=iif(pm,5,9);
-    nt_UUCP     : y:=iif(pm,5,11);
+    nt_ZConnect       : y:=iif(pm,5,9);
+    nt_UUCP,nt_Client : y:=iif(pm,5,11);
   end;
   dialog(ival(getres2(616,0)),y,getres2(616,6),x,y);   { 'ZusÑtzliche Informationen' }
   y:=2;
@@ -1039,7 +1042,7 @@ begin
       maddstring(3,y,getres2(616,3),summary,40,200,  { 'Zusammenfassung' }
                iifs(ntHeaderUmlaut(netztyp),'',asc));   { max. LÑnge: 200! }
       inc(y,2);                                 { (wg. RFC-1522-Codierung) }
-      if netztyp=nt_UUCP then begin
+      if netztyp in [nt_UUCP,nt_Client] then begin
         maddstring(3,y,getres2(616,4),distribute,40,40,asc); { 'Verbreitung' }
         inc(y,2);
         end;
@@ -1151,6 +1154,12 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.18.2.11  2001/12/20 15:22:14  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.18.2.10  2001/11/30 17:27:05  mk
   - fixed to short XP_ID String
 

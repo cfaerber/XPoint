@@ -30,9 +30,8 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_Maus      = 20;
        nt_Fido      = 30;
        nt_QWK       = 31;
-       nt_UUCP      = 40;
-       nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp } 
-       nt_UUCP_U    = 42;        { dito fuer RFC/UUCP-Auswahl, nur fuer Namen-Anzeige }
+       nt_UUCP      = 40;        { RFC/UUCP             }
+       nt_Client    = 41;        { RFC/Client           }
 
        ltNetcall    = 0;         { Login/Transfer-Typen }
        ltZConnect   = 2;         { XRef: XP7            }
@@ -43,9 +42,10 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        ltFido       = 7;
        ltUUCP       = 10;
        ltQWK        = 11;
+       ltClient     = 12;
 
 
-var ntused : array[0..42] of integer;
+var ntused : array[0..41] of integer;
 
 function ntZConnect(nt:byte):boolean;         { Ablagentyp ermitteln  }
 function ntConv(nt:byte):boolean;             { konvertiertes Format  }
@@ -70,7 +70,7 @@ function ntGrossUser(nt:byte):boolean;        { User-Gro·schreibung   }
 function ntGrossBrett(nt:byte):boolean;       { Bretter-Gro·schreibung }
 function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
 function ntKomkette(nt:byte):boolean;         { Kommentar-Verkettung  }
-{ 14.02.2000 MH: NetzunabhÑngige Useraufnahme }
+{ NetzunabhÑngige Useraufnahme }
 (*function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }*)
 function ntRfcCompatibleID(nt:byte):boolean;  { RFC-Msgid             }
 function ntMIDCompatible(n1,n2:byte):boolean; { austauschbare MsgIDs  }
@@ -161,13 +161,13 @@ end;
 function ntBinary(nt:byte):boolean;
 begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
-                    nt_UUCP]) or
+                    nt_UUCP,nt_Client]) or
             (fidobin and (nt=nt_Fido));
 end;
 
 function ntBinEncode(nt:byte):boolean;        { BinÑrmails werden uucodiert }
 begin
-  ntBinEncode:=(nt=nt_Maus) or (nt=nt_Fido);
+  ntBinEncode:=(nt in [nt_Maus,nt_Fido]);
 end;
 
 
@@ -190,7 +190,8 @@ begin
     nt_GS       : ntMessageID:=1;     { 0815@POINT }
     nt_Maus     : ntMessageID:=3;     { 0815@BOX }
     nt_Fido     : ntMessageID:=4;     { net:zone/node.point[@domain] xxxxxxxx }
-    nt_UUCP     : ntMessageID:=5;     { @point.do.main }
+    nt_UUCP,
+    nt_Client   : ntMessageID:=5;     { @point.do.main }
   else  { QWK }
     ntMessageID:=1;
   end;
@@ -267,6 +268,7 @@ begin
     30  : ntTransferType:=ltFido;
     31  : ntTransferType:=ltQWK;
     40  : ntTransferType:=ltUUCP;
+    41  : ntTransferType:=ltClient;
   end;
 end;
 
@@ -309,8 +311,7 @@ end;
 
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 begin
-  ntMapsOthers:=(nt<>nt_Quick) and (nt<>nt_Pronet) and
-                (nt<>nt_QWK);
+  ntMapsOthers:=not (nt in [nt_Quick,nt_Pronet,nt_QWK]);
 end;
 
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
@@ -329,6 +330,7 @@ begin
     20,31,90 : ntDomainType:=3;   { @BOX }
     30       : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
     40       : ntDomainType:=6;   { @point.domain }
+    41       : ntDomainType:=8;   { eMail-Adresse ('email') }
   else
     ntDomainType:=0;
   end;
@@ -354,7 +356,7 @@ begin
     else if (nt=nt_ZConnect) and not ownbox then
       ntAutoDomain:='.invalid'
     else
-      if ntDomainType(nt) in [5,6] then
+      if ntDomainType(nt) in [5,6,8] then
         ntAutoDomain:=dbReadStr(d,'domain');
     end;
   dbClose(d);
@@ -396,13 +398,13 @@ end;
 
 function ntGrossBrett(nt:byte):boolean;
 begin
-  ntGrossBrett:=(nt=nt_Netcall) or (nt=nt_Fido) or (nt=nt_Pronet);
+  ntGrossBrett:=(nt in [nt_Netcall,nt_Fido,nt_Pronet]);
 end;
 
 
 function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
 begin
-  ntKleinBrett:=(nt=nt_UUCP);
+  ntKleinBrett:=(nt in [nt_UUCP,nt_Client]);
 end;
 
 
@@ -425,9 +427,8 @@ begin
     nt_Maus     : ntName:='MausTausch';
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
-    nt_UUCP     : ntName:='RFC';
-    nt_UUCP_U   : ntName:='RFC/UUCP';
-    nt_UUCP_C   : ntName:='RFC/Client';
+    nt_UUCP     : ntName:='RFC/UUCP';
+    nt_Client   : ntName:='RFC/Client';
   else
     ntName:='???';
   end;
@@ -439,15 +440,16 @@ end;
 function ntRelogin(nt:byte):byte;
 begin
   case nt of
-    nt_Fido,nt_QWK : ntRelogin:=0;
-    nt_GS,nt_UUCP  : ntRelogin:=1;
-    else             ntRelogin:=2;
+    nt_Fido,nt_QWK,
+    nt_Client       : ntRelogin:=0;
+    nt_GS,nt_UUCP   : ntRelogin:=1;
+    else              ntRelogin:=2;
   end;
 end;
 
 function ntOnline(nt:byte):boolean;   { false -> Script erforderlich }
 begin
-  ntOnline:=(nt<>nt_Fido) and (nt<>nt_GS) and (nt<>nt_UUCP) and (nt<>nt_QWK);
+  ntOnline:=not (nt in [nt_Fido,nt_GS,nt_UUCP,nt_QWK,nt_Client]);
 end;
 
 function ntNetcall(nt:byte):boolean;          { Netcall mîglich }
@@ -464,7 +466,7 @@ end;
 function ntKomkette(nt:byte):boolean;
 begin
   ntKomkette:=
-    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet])
+    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_Client,nt_QWK,nt_Pronet])
     or ((nt=nt_Magic) and MaggiVerkettung);
 end;
 
@@ -476,7 +478,7 @@ end;
 
 function ntRfcCompatibleID(nt:byte):boolean;
 begin
-  ntRfcCompatibleID:=(nt=nt_ZConnect) or (nt=nt_Magic) or (nt=nt_UUCP);
+  ntRfcCompatibleID:=(nt in [nt_ZConnect,nt_Magic,nt_UUCP,nt_Client]);
 end;
 
 function ntMIDCompatible(n1,n2:byte):boolean;  { austauschbare MsgIDs  }
@@ -486,26 +488,25 @@ end;
 
 function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
 begin
-  ntOrigID:=(nt=nt_Maus) or (nt=nt_Fido);
+  ntOrigID:=(nt in [nt_Maus,nt_Fido]);
 end;
 
 function ntAdrCompatible(n1,n2:byte):boolean;  { umleitbare PM-Adresse }
 begin
   ntAdrCompatible:=(n1=n2) or
-                   (((n1=nt_ZConnect) or (n1=nt_UUCP)) and
-                     (n2 in [nt_ZConnect,nt_UUCP,nt_Maus]));
+                   ((n1 in [nt_ZConnect,nt_UUCP,nt_Client]) and
+                     (n2 in [nt_ZConnect,nt_UUCP,nt_Client,nt_Maus]));
 end;
 
 function ntEmpfBest(nt:byte):boolean;
 begin
-  ntEmpfBest:=(nt=nt_Fido) or (nt=nt_ZConnect) or (nt=nt_Magic) or
-              (nt=nt_UUCP);
+  ntEmpfBest:=(nt in [nt_Fido,nt_ZConnect,nt_Magic,nt_UUCP,nt_Client]);
 end;
 
 
 function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
 begin
-  ntMsg0:=(nt=nt_ZConnect) or (nt=nt_Fido) or (nt=nt_UUCP);
+  ntMsg0:=(nt in [nt_ZConnect,nt_Fido,nt_UUCP,nt_Client]);
 end;
 
 
@@ -517,12 +518,12 @@ end;
 
 function ntDownarcPath(nt:byte):boolean;      { Entpacker mu· im Pfad liegen }
 begin
-  ntDownarcPath:=(nt=nt_Fido) or (nt=nt_ZConnect);
+  ntDownarcPath:=(nt in [nt_Fido,nt_ZConnect]);
 end;
 
 function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
 begin
-  ntBrettEmpf:=(nt=nt_Fido) or (nt=nt_QWK) or (nt=nt_Magic) or (nt=nt_Pronet);
+  ntBrettEmpf:=(nt in [nt_Fido,nt_QWK,nt_Magic,nt_Pronet]);
 end;
 
 function ntBrettEmpfUsed:boolean;             { Netztypen mit Fido-To vorh. }
@@ -533,31 +534,31 @@ end;
 
 function ntEditbrettEmpf(nt:byte):boolean;    { dito, aber editierbar;  }
 begin                                         { EmpfÑnger in mbase.name }
-  ntEditBrettEmpf:=(nt=nt_Fido) or (nt=nt_QWK);
+  ntEditBrettEmpf:=(nt in [nt_Fido,nt_QWK]);
 end;
 
 
 function ntRealname(nt:byte):boolean;         { Realnames mîglich }
 begin
-  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
+  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_Client];
 end;
 
 
 function ntRealUmlaut(nt:byte):boolean;       { Umlaute im Realname }
 begin
-  ntRealUmlaut:=nt in [nt_Magic,nt_Pronet,nt_UUCP];
+  ntRealUmlaut:=nt in [nt_Magic,nt_Pronet,nt_UUCP,nt_Client];
 end;
 
 
 function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
 begin
-  ntHeaderUmlaut:=nt in [nt_ZCONNECT,nt_Magic,nt_Pronet,nt_UUCP];
+  ntHeaderUmlaut:=nt in [nt_ZCONNECT,nt_Magic,nt_Pronet,nt_UUCP,nt_Client];
 end;
 
 
 function ntCancel(nt:byte):boolean;           { Cancel-Messages mîglich }
 begin
-  ntCancel:=nt in [nt_UUCP,nt_Maus,nt_ZConnect];
+  ntCancel:=nt in [nt_UUCP,nt_Client,nt_Maus,nt_ZConnect];
 end;
 
 function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM mîglich }
@@ -567,7 +568,7 @@ end;
 
 function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt mîglich }
 begin
-  ntErsetzen:=nt in [nt_UUCP,nt_ZConnect];
+  ntErsetzen:=nt in [nt_UUCP,nt_Client,nt_ZConnect];
 end;
 
 function ntBetreffLen(nt:byte):byte;          { max. BetrefflÑnge }
@@ -586,30 +587,31 @@ end;
 
 function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
 begin
-  ntPmReply:=(nt=nt_Maus) or (nt=nt_UUCP);
+  ntPmReply:=(nt in [nt_Maus,nt_UUCP,nt_Client]);
 end;
 
 
 function ntFollowup(nt:byte):boolean;         { Followup-To mîglich }
 begin
-  ntFollowup:=(nt=nt_ZConnect) or (nt=nt_UUCP);
+  ntFollowup:=(nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
 function ntCrossAM(nt:byte):boolean;          { AM-Crosspostings mîglich }
 begin
-  ntCrossAM:=(nt=nt_UUCP) or ((nt=nt_ZConnect) and zc_xposts);
+  ntCrossAM:=(nt in [nt_UUCP,nt_Client]) or
+             ((nt=nt_ZConnect) and zc_xposts);
 end;
 
 function ntCrossPM(nt:byte):boolean;          { PM-Crosspostings mîglich }
 begin
-  ntCrossPM:=(nt=nt_ZConnect) or (nt=nt_UUCP);
+  ntCrossPM:=(nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
 function ntExtProt(nt:byte):boolean;          { externes ö.-Protokoll }
 begin
-  ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_QWK]);
+  ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_Client,nt_QWK]);
 end;
 
 {$IFDEF FPC }
@@ -630,7 +632,7 @@ end;
 
 function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
 begin
-  ntOrigWeiter:=(nt=nt_ZConnect) or (nt=nt_UUCP) or (nt=nt_Maus);
+  ntOrigWeiter:=(nt in [nt_ZConnect,nt_UUCP,nt_Client,nt_Maus]);
 end;
 
 
@@ -646,6 +648,7 @@ begin
     nt_Fido    : ntBoxnameLen:=15;
     nt_QWK     : ntBoxnameLen:=15;
     nt_UUCP    : ntBoxnameLen:=20;
+    nt_Client  : ntBoxnameLen:=20;
   else
     ntBoxnameLen:=8;   { Netcall }
   end;
@@ -654,7 +657,7 @@ end;
 
 function ntPMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
 begin
-  ntPMTeleData:=(nt=nt_ZConnect) or (nt=nt_UUCP);
+  ntPMTeleData:=(nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 function ntAMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
@@ -666,7 +669,8 @@ end;
 function ntMaxRef(nt:byte):byte;              { max. References }
 begin
   case nt of
-    nt_UUCP     : ntMaxRef:=5;
+    nt_UUCP,
+    nt_Client   : ntMaxRef:=5;
     nt_ZConnect : ntMaxRef:=3;
   else            ntMaxRef:=1;
   end;
@@ -675,7 +679,7 @@ end;
 
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 begin
-  ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet]);
+  ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Client,nt_Magic,nt_Pronet]);
 end;
 
 
@@ -700,14 +704,14 @@ end;
 
 function ntForceMailer(nt:byte):boolean;      { '... (unregistriert)' anzeigen }
 begin
-  ntForceMailer:=(nt in [nt_ZConnect,nt_UUCP]);
+  ntForceMailer:=(nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Header }
 begin
   ntPGP:=(nt=nt_ZCONNECT) or
-         ((nt=nt_UUCP) and PGP_UUCP) or
+         ((nt in [nt_UUCP,nt_Client]) and PGP_UUCP) or
          ((nt=nt_Fido) and PGP_Fido);
 end;
 
@@ -734,19 +738,19 @@ end;
 
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 begin
-  ntBCC := (nt in [nt_ZConnect,nt_UUCP]);
+  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
 function ntFilename(nt:byte):boolean;         { Dateiname im Header }
 begin
-  ntFilename := (nt in [nt_ZConnect,nt_UUCP]);
+  ntFilename := (nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
 function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
 begin
-  ntReplyToAll := (nt in [nt_ZConnect, nt_UUCP]);
+  ntReplyToAll := (nt in [nt_ZConnect,nt_UUCP,nt_Client]);
 end;
 
 
@@ -755,6 +759,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.9.2.7  2001/12/20 15:22:15  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.9.2.6  2001/11/20 23:25:56  my
   MY:- Lizenz-Header aktualisiert
 

@@ -207,8 +207,8 @@ begin
   dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
   while not dbEof (d) do
   begin
-    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/UUCP }
-    begin                                           { Boxen berÅcksichtigen     }
+    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/* }
+    begin                                           { Boxen berÅcksichtigen  }
       dbRead (d, 'username', username);
       dbRead (d, 'pointname', pointname);
       dbRead (d, 'script', flags);
@@ -221,6 +221,7 @@ begin
         6: if email <> '' then adresse := email
            else adresse := username + '@' +
             iifs (aliaspt, box + ntServerDomain (box), pointname + domain);
+        8: adresse := email;
         else adresse := '';
       end;
       if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
@@ -307,8 +308,9 @@ var x,y,i       :byte;
     res         :boolean;
     s           :string;
 begin
-  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) and
-    (not XPFirstStart) then
+  if (ntUsed [nt_UUCP] + ntUsed [nt_Client] + ntUsed [nt_ZConnect] > 0) and
+     (RTAMode and 128 = 128) and
+     (not XPFirstStart) then
   begin
     msglines := ival (getres2 (2750, 0));
     msgbox (64, msglines + 5, '', x, y);
@@ -1048,6 +1050,12 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.12  2001/12/20 15:22:14  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
   Revision 1.1.2.11  2001/11/20 23:18:45  my
   MY:- Lizenz-Header aktualisiert
 
