@@ -80,7 +80,6 @@ var
     crash    : boolean;
     sdata    : TSendUUData;
     sendflags: word;
-    msgflags : integer;
     empfnr   : shortint;
     ablage   : byte;
     madr     : longint;         { Adresse in Ablage }
@@ -505,6 +504,7 @@ var
     ua      : boolean;
     add_oe_cc : integer;
     sendflags : word;
+    msgflags : integer;
     zg_flags: integer;
 
 label ende,again;
@@ -1339,6 +1339,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/03/17 11:11:47  mk
+  - oops, fixed last commit
+
   Revision 1.20  2002/03/17 11:10:10  mk
   JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
        (Priorit„t, PGP-signiert usw.) jetzt erhalten.
