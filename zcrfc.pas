@@ -1217,8 +1217,10 @@ begin
     s:=DecodeQuotedPrintable(s)
   else
   if b64 then
-    s:=DecodeBase64(s)
-  else
+  begin
+    s:=DecodeBase64(s);
+    if s = '' then s:=s+#13#10;
+  end else
     s:=s+#13#10;
 end;
 
@@ -3699,6 +3701,10 @@ end;
 
 {
   $Log$
+  Revision 1.119  2002/10/13 11:47:39  mk
+  - fixed converting news files with base64 encoding and empty lines
+    see <8YjoOQphsaB@MSchiff.gmx.de>
+
   Revision 1.118  2002/09/13 11:57:32  cl
   - added List-* fields
 
