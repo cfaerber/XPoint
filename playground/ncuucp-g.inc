@@ -38,7 +38,7 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
 
   private
    (* checksum, packet type etc. *)
-    function Checksum(const buffer:CP_Buffer;c:smallword):smallword;
+    function DataChecksum(const buffer:CP_Buffer;c:SmallWord):SmallWord;
     function HeaderChecksum(const Header:CP_Header):byte;
 
    (* send *)
@@ -63,8 +63,8 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
     Recv_BufSize  : word;   { 32..4096 }
     Send_BufSizeLog2 : byte; { max. Groesse der ausgehenden Pakete, 0..7 }
     Recv_BufSizeLog2 : byte; { max. Groesse der eingehenden Pakete, 0..7 }
-    Buffer    : array[0..7] of ^CP_Buffer;
-    Header    : array[0..7] of  CP_Header;
+    Buffer    : array[0..7] of CP_Buffer;
+    Header    : array[0..7] of CP_Header;
     BufFirst  : shortint; { Window-Nummer des ersten epufferten Pakets }
     BufAnz    : shortint; { Anzahl epufferte Pakete }
     Close     : boolean;  { Close-Packet erhalten }
@@ -77,49 +77,48 @@ var i : integer;
 begin
   inherited Create(caller);
   Close:=false;
-  for i:=0 to 7 do new(Buffer[i]);
+//  for i:=0 to 7 do new(Buffer[i]);
 
   Recv_WinSize:=Caller.MaxWinSize;
   Recv_BufSize:=Caller.MaxPacketSize;
-  Recv_BufSizeLog2:=Trunc(Log2(Recv_BufSize))-5;
+  Recv_BufSizeLog2:=System.Round(Log2(Recv_BufSize))-5;
 end;
 
 destructor TUUCProtocolG.Destroy;
 var i:integer;
 begin
-  for i:=0 to 7 do
-    if assigned(Buffer[i]) then
-      dispose(Buffer[i]);
+//  for i:=0 to 7 do if assigned(Buffer[i]) then dispose(Buffer[i]);
 end;
 
 { --- checksum, packet type etc. -------------------------------------------- }
 
-function TUUCProtocolG.Checksum(const buffer:CP_Buffer; c:smallword):smallword;
-var ichk1,ichk2 : longint;
-    b,i         : smallword;
+function TUUCProtocolG.DataChecksum(const buffer:CP_Buffer; c:SmallWord):SmallWord;
+var i1,i2,b : SmallWord;
+    i       : Integer;
 begin
-  i:=0;
-  ichk1:=$ffff;
-  ichk2:=0;
+  i:=Low(Buffer);
+  i1:=$ffff;
+  i2:=0;
   repeat
-   (* Rotate ichk1 left.  *)
-    if ichk1 and $8000 = 0 then
-      ichk1:=ichk1 shl 1
+   (* Rotate i1 left.  *)
+    if i1 < $8000 then
+      i1:=(i1 shl 1) and $FFFF
     else
-      ichk1:=ichk1 shl 1 + 1;
-   (* Add the next character to ichk1. *)
-    b:=buffer[i] and $ff; inc(i);
-    inc(ichk1,b);
-   (* Add ichk1 xor the character position in the buffer counting from
-      the back to ichk2. *)
-    inc(ichk2,ichk1 xor c);
-   (* If the character was zero, or adding it to ichk1 caused an
-      overflow, xor ichk2 to ichk1.  *)
-    if (b=0) or (ichk1 and $ffff < b) then
-      ichk1:=ichk1 xor ichk2;
-    dec(c);
-  until c=0;
-  result:=ichk1 and $ffff;
+      i1:=(i1 shl 1 + 1) and $FFFF;
+   (* Add the next character to i1. *)
+    b:=buffer[i];
+    i1:=(i1+b) and $FFFF;
+   (* Add i1 xor the character position in the buffer counting from
+      the back to i2. *)
+    i2:=(i2+(i1 xor c)) and $FFFF;
+   (* If the character was zero, or adding it to i1 caused an
+      overflow, xor i2 to i1.  *)
+    if (b=0) or (i1<b) then
+      i1:=i1 xor i2;
+    Dec(c);
+    Inc(i);
+  until c<=0;
+  result:=i1;
 end;
 
 function TUUCProtocolG.HeaderChecksum(const Header:CP_Header):byte;
@@ -256,7 +255,7 @@ try
   if Netcall.ForcePktSize and (Send_BufSize<>Recv_BufSize) then
   begin
     Send_BufSize:=Recv_BufSize;
-    Send_BufSizeLog2:=Trunc(log2(Send_BufSize))-5;
+    Send_BufSizeLog2:=System.Round(log2(Send_BufSize))-5;
     ShowPacketSize(Send_BufSize,Recv_BufSize,true);
     Netcall.Log(' ','forced output packet size: '+strs(Send_BufSize));
   end else
@@ -319,7 +318,7 @@ end;
 { --- ringbuffer to handle error correction --------------------------------- }
 
 function TUUCProtocolG.PutDataPacket(var data; size:word; noshort:boolean):byte;
-var ssize,w : smallword;
+var ssize,w : SmallWord;
     short   : boolean;
     ofs     : word;
 begin
@@ -330,32 +329,37 @@ begin
   if Netcall.VarPacketSize then
     while (ssize>64) and (ssize div 2>=size) do
       ssize:=ssize div 2;
-  Header[Send_SeqNr,1]:=trunc(log2(ssize))-4;        { Laengenbyte k }
+  Header[Send_SeqNr,1]:=System.Round(log2(ssize))-4;        { Laengenbyte k }
 
   short:=(size<ssize) and not noshort;        { Dateninhalt erzeugen }
+
   if short then
-    if ssize-size<128 then begin
-      Buffer[Send_SeqNr]^[0]:=ssize-size;
+    if ssize-size<128 then
+    begin
+      Buffer[Send_SeqNr,0]:=ssize-size;
       ofs:=1;
-      end
-    else begin
-      buffer[Send_SeqNr]^[0]:=((ssize-size) and $7f) + $80;
-      buffer[Send_SeqNr]^[1]:=(ssize-size) shr 7;
+    end else
+    begin
+      buffer[Send_SeqNr,0]:=((ssize-size) and $7f) + $80;
+      buffer[Send_SeqNr,1]:=(ssize-size) shr 7;
       ofs:=2;
-      end
+    end
   else
     ofs:=0;
+
   if size>0 then
-    move(data,Buffer[Send_SeqNr]^[ofs],size);
+    Move(data,Buffer[Send_SeqNr,ofs],size);
+
   if ssize-size-ofs>0 then
-    fillchar(buffer[Send_SeqNr]^[size+ofs],ssize-size-ofs,0);  {mit 0 auffuellen}
+    FillChar(buffer[Send_SeqNr,size+ofs],ssize-size-ofs,0);  {mit 0 auffuellen}
 
   Header[Send_SeqNr,4]:=iif(short,$c0,$80) + Send_SeqNr shl 3 + Recv_SeqNr;
 
-  w:=CheckSum(Buffer[Send_SeqNr]^,ssize);
-  w:=$aaaa-(w xor Header[Send_SeqNr,4]);
-  Header[Send_SeqNr,2]:=Lo(w); { 2-Byte-Checksumme }
-  Header[Send_SeqNr,3]:=Hi(w);
+  w:=DataCheckSum(Buffer[Send_SeqNr],ssize);
+  w:=$aaaa-(w xor Smallword(Header[Send_SeqNr,4]));
+
+  Header[Send_SeqNr,2]:=w and $ff;
+  Header[Send_SeqNr,3]:=w shr 8;
 
   Header[Send_SeqNr,5]:=HeaderChecksum(Header[Send_SeqNr]);
   result:=Send_Seqnr;
@@ -370,8 +374,8 @@ begin
 
   DebugLog('uucp-g','Sending data packet #'+Strs(nr)+' ('+StrS(size)+' bytes)',dlInform);
 
-  CommObj.SendBlock(Header[nr],6,rd);
-  CommObj.SendBlock(Buffer[nr]^,size,rd);
+  CommObj.SendBlock(Header[nr,0],6,rd);
+  CommObj.SendBlock(Buffer[nr,0],size,rd);
 end;
 
 function TUUCProtocolG.WaitAcknowledge(all:boolean):boolean;
@@ -507,7 +511,7 @@ begin
         Netcall.TestTimeout;
         mdelay(10);
       end;
-      CommObj.ReadBlock(Buffer[j]^[0],size,i);
+      CommObj.ReadBlock(Buffer[j,0],size,i);
 
     Except // Handle Timeouts for data
       on ENetcallTimeout do begin
@@ -531,12 +535,15 @@ begin
     if not ((CtlHeader[4] shr 6) in [2,3]) then               (* not a data packet           *)
       Continue;
 
-    if ($aaaa-(CheckSum(Buffer[j]^,size) xor CtlHeader[4]) <>
-        longint(CtlHeader[3])*256 + CtlHeader[2]) then
+    w:=DataCheckSum(Buffer[j],size);
+    w:=$aaaa-(w xor SmallWord(CtlHeader[4]));
+
+    if (SmallWord(CtlHeader[3]) shl 8 + SmallWord(CtlHeader[2])) <> w then
     begin
-      Netcall.Output(mcError,'%sChecksum error - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
-      FileError; 
-      AckBuffer; 
+      Netcall.Output(mcInfo,'%sChecksum error (header %04x, data %04x) - sent NAK',[iifs(command,'',strs(file_pos)+': '),
+        (SmallWord(CtlHeader[3])shl 8 + SmallWord(CtlHeader[2])),w]);
+      FileError;
+      AckBuffer;
       SendControlPacket(cp_NAK,Recv_SeqNr);
       Continue;
     end;
@@ -548,13 +555,13 @@ begin
 
     if Ctlheader[4] shr 6=3 then                    (* short packet *)
     begin
-      if Buffer[Recv_SeqNr]^[0]<128 then
+      if Buffer[Recv_SeqNr,0]<128 then
       begin
-        off:=1; sub:=Buffer[Recv_SeqNr]^[0];
+        off:=1; sub:=Buffer[Recv_SeqNr,0];
       end
       else begin
         off:=2;
-        sub:=(integer(Buffer[Recv_SeqNr]^[1]) shl 7)+(Buffer[Recv_SeqNr]^[0] and $7f);
+        sub:=(integer(Buffer[Recv_SeqNr,1]) shl 7)+(Buffer[Recv_SeqNr,0] and $7f);
       end;
       dec(sub,off);
       DebugLog('uucp-g',Format('Short Packet: %d bytes of %d bytes used',[size-sub,size]),dlInform);
@@ -565,10 +572,10 @@ begin
     if Command then          { Befehlspaket verarbeiten }
     begin
       i:=off;
-      while (i<size-sub) and (Buffer[Recv_SeqNr]^[i]<>0) do
+      while (i<size-sub) and (Buffer[Recv_SeqNr,i]<>0) do
         inc(i);
       SetLength(s,length(s)+i-off);
-      Move(Buffer[Recv_SeqNr]^[off],s[length(s)+1-i-off],i-off);
+      Move(Buffer[Recv_SeqNr,off],s[length(s)+1-i-off],i-off);
       if i<size then
         break; (* done *)
       Continue;
@@ -578,8 +585,8 @@ begin
       if BlkSize<=0 then
         break; (* done *)
 
-      BlockWrite(f,buffer[Recv_SeqNr]^[off],blksize);
-      FileAdvance(buffer[Recv_SeqNr]^[off],blksize);
+      BlockWrite(f,buffer[Recv_SeqNr,off],blksize);
+      FileAdvance(buffer[Recv_SeqNr,off],blksize);
       if AckEach or (BufAnz=Recv_WinSize) then AckBuffer;
       Continue;
     end;
@@ -655,10 +662,14 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/03/23 11:49:43  cl
+  - fixed rounding errors w/ packet size
+  - some minor changes
+
   Revision 1.6  2001/03/22 00:03:24  cl
   - resolved some conflicts
 
-  
+
   Revision 1.5  2001/03/21 19:17:10  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
