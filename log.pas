@@ -61,6 +61,22 @@ type
 
   end;
 
+type
+  TLogModul = class(TLog)
+    protected
+
+      FModulName        : string;
+      
+    public
+
+      constructor Create(const s: string);
+      constructor CreateWithFilename(const s, fn: string);
+
+      procedure Log(l: integer; const s: string); override;
+
+  end;
+
+
 implementation
 
 uses
@@ -151,7 +167,7 @@ begin
   if not FisOpen then
     Open;
   if FisOpen then begin
-    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now) + Format(' %s %s', [llChars[l], s]));
+    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now),' ',llChars[l],s);
     Close;
   end;
 end;
@@ -182,9 +198,31 @@ begin
     FLogLevel:= l;
 end;
 
+
+constructor TLogModul.Create(const s: string);
+begin
+  inherited Create;
+  FModulName:= s;
+end;
+
+constructor TLogModul.CreateWithFilename(const s, fn: string);
+begin
+  inherited CreateWithFilename(fn);
+  FModulName:= s;
+end;
+
+procedure TLogModul.Log(l: integer; const s: string);
+begin
+  inherited Log(l, '['+FModulName + '] ' + s);
+end;
+
 end.
 {
         $Log$
+        Revision 1.4  2000/11/19 16:56:47  hd
+        - Little Change
+        - TLogModul: Adds a modul name to the log string
+
         Revision 1.3  2000/11/18 23:32:40  mk
         - modified format-parameter  to  for Virtual Pascal compatibility
 
