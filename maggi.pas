@@ -30,7 +30,8 @@
 uses dos, sysutils, classes,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
-const nt_ZConnect=2;
+const nt_ZConnect  = 2;
+      nt_UUCP      = 40;
       readempflist = false;
       readkoplist  = false;
 
@@ -76,6 +77,9 @@ type  charr       = array[0..65530] of char;
 var   f1,f2     : file;
       bretter   : integer;
       brettp    : array[1..maxbrett] of ^brett;
+      
+      empflist,uline,xline,mail : tstringlist;
+      hd : header;
 
 
 
@@ -585,7 +589,36 @@ begin
 end;
 
 
+// Frischen Header erzeugen
+procedure ClearHeader;
+begin
+  with hd do
+  if Assigned(AddRef) then
+  begin
+    AddRef.Free;
+    XEmpf.Free;
+    XOEM.Free;
+    Followup.Free;
+  end;
+
+  ULine.Clear; XLine.Clear; Mail.Clear;
+  Fillchar(hd, sizeof(hd), 0);
+
+  with hd do
+  begin
+    Netztyp := nt_UUCP;
+    AddRef := TStringList.Create;
+    XEmpf := TStringList.Create;
+    XOEM := TStringList.Create;
+    Followup := TStringList.Create;
+  end;
+end;
+
+
+{$DEFINE uuzmime }
+
 {$I xpmakehd.inc}     { MakeHeader() }
+
 
 procedure cerror;
 begin
@@ -1610,6 +1643,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/09/30 16:51:41  fe
+  Notduerftig uebersetzbar gemacht.
+
   Revision 1.24  2000/09/06 21:31:01  fe
   /home/fe/foo
 
