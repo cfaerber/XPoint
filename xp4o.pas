@@ -226,6 +226,9 @@ type  suchrec    = record
                      or_user       : Boolean;
                      or_fidoempf   : Boolean;
                      vondat,bisdat : datetimest;
+                     empf_vondat,
+                     empf_bisdat   : datetimest; { ab: Empfangsdatum von, bis }
+    
                      vonkb,biskb   : longint;
                      status        : string[10];
                      typ           : string[10];
@@ -252,6 +255,8 @@ var x,y             : byte;
     typc            : char;
     statb           : byte;
     _vondat,_bisdat : longint;
+    _empf_vondat    : longint; { ab: Empfangsdatum von }
+    _empf_bisdat    : longint; { ab: Empfangsdatum bis }
     minsize,maxsize : longint;
     bereich         : shortint;
     _brett          : string[5];
@@ -447,6 +452,13 @@ label ende,restart;
     DateFit:=not smdl(d,_vondat) and not smdl(_bisdat,d);
   end;
 
+  function EmpfDateFit:boolean;  { ab: Empfangsdatum prÅfen }
+  var d : longint;
+  begin
+    dbReadN(mbase,mb_empfdatum,d);
+    EmpfDateFit:=not smdl(d,_empf_vondat) and not smdl(_empf_bisdat,d);
+  end;
+
   function Sizefit:boolean;
   var s : longint;
   begin
@@ -552,7 +564,7 @@ label ende,restart;
 {--Spezialsuche--}
     if spez then
     with srec^ do begin
-      if DateFit and SizeFit and TypeFit and StatOk then begin
+      if DateFit and EmpfDateFit and SizeFit and TypeFit and StatOk then begin
         dbReadN(mbase,mb_betreff,betr2);
         if (betr<>'') and (length(betr2)=40) then begin
           ReadHeader(hdp^,hds,false);
@@ -753,6 +765,8 @@ begin
     fillchar(srec^,sizeof(srec^),0);
     with srec^ do begin
       vondat:='01.01.80'; bisdat:='31.12.69';
+      empf_vondat:='01.01.80'; empf_bisdat:='31.12.69'; { ab: Empfangsdatum von bis }
+
       vonkb:=0; biskb:=maxlongint div 2048;
       typ:=typa[0]; status:=stata[0];
       end;
@@ -848,42 +862,48 @@ restart:
     if nfidoempf and (fidoempf[1]<>'~') then fidoempf:='~'+fidoempf;
   
     add:=iif(ntBrettEmpfUsed,1,0);
-    dialog(53,12+add,getreps2(441,1,anztxt),x,y);
+    dialog(55,15+add,getreps2(441,1,anztxt),x,y);
     i:=4;
     while (i>0) and (ustr(typ)<>ustr(typa[i])) do dec(i);
     typ:=typa[i];
     i:=5;
     while (i>0) and (ustr(status)<>ustr(stata[i])) do dec(i);
     status:=stata[i];
-    maddstring(3,2,getres2(441,6),user,30,SuchLen,'');  mhnr(630);   { 'Absender  ' }
-    maddstring(3,3,getres2(441,7),betr,30,SuchLen,'');    { 'Betreff   ' }
+    maddstring(3,2,getres2(441,6),user,32,SuchLen,'');  mhnr(630);   { 'Absender  ' }
+    maddstring(3,3,getres2(441,7),betr,32,SuchLen,'');    { 'Betreff   ' }
     mnotrim;
     mset3proc(seek_cutspace);
     if ntBrettEmpfUsed then
-      maddstring(3,4,getres2(441,9),fidoempf,30,SuchLen,'');    { 'Fido-Empf.' }
-    maddstring(3,4+add,getres2(441,8),txt,35,SuchLen,'');     { 'Text      ' }
+      maddstring(3,4,getres2(441,9),fidoempf,32,SuchLen,'');    { 'Fido-Empf.' }
+    maddstring(3,4+add,getres2(441,8),txt,37,SuchLen,'');     { 'Text      ' }
     if history[0] <> '' then  { Bei leerer Suchhistory kein Auswahlpfeil... }
       for i:=0 to histmax do mappsel(false,history[i]);
     mnotrim;
     mset3proc(seek_cutspace);
-    maddtext(48,1,'OR',0);
-    maddbool(46,2,'',or_user);mhnr(640); 
-    maddbool(46,3,'',or_betr);
-    if ntBrettEmpfUsed then maddbool(46,4,'',or_fidoempf);  
-    madddate(3,6+add,getres2(441,10),vondat,false,false); mhnr(634); { 'von Datum ' }
-    madddate(3,7+add,getres2(441,11),bisdat,false,false); mhnr(634); { 'bis Datum ' }
-    maddint(30,6+add,getres2(441,19),vonkb,6,5,0,99999);  mhnr(635); { 'von ' }
-      maddtext(45,6+add,getres(14),0);   { 'KBytes' }
+    maddtext(50,1,'OR',0);
+    maddbool(48,2,'',or_user);mhnr(640); 
+    maddbool(48,3,'',or_betr);
+    if ntBrettEmpfUsed then maddbool(48,4,'',or_fidoempf);
+    maddtext(0,6+add,'√'+dup(55,'ƒ')+'¥',0);                { Linie }
+    madddate(3,8+add,getres2(441,10),vondat,false,false); mhnr(634); { 'von Datum ' }
+    madddate(3,9+add,getres2(441,11),bisdat,false,false); mhnr(634); { 'bis Datum ' }
+    { ab/my: Empfangsdatum }
+    maddtext(15,7+add,getres2(441,22),0);
+    maddtext(26,7+add,getres2(441,23),0);
+    madddate(25,8+add,'',empf_vondat,false,false); mhnr(643);
+    madddate(25,9+add,'',empf_bisdat,false,false); mhnr(643);
+    maddint(37,8+add,getres2(441,19),vonkb,6,5,0,99999);  mhnr(635); { 'von ' }
+      maddtext(51,8+add,'KB',0);   { 'KB' }
     biskb:=min(biskb,99999);
-    maddint(30,7+add,getres2(441,20),biskb,6,5,0,99999);  mhnr(635); { 'bis ' }
-      maddtext(45,7+add,getres(14),0);   { 'KBytes' }
-    maddstring(3,9+add,getres2(441,12),typ,8,9,'');         { 'Typ       ' }
+    maddint(37,9+add,getres2(441,20),biskb,6,5,0,99999);  mhnr(635); { 'bis ' }
+      maddtext(51,9+add,'KB',0);   { 'KB' }
+    maddstring(3,11+add,getres2(441,12),typ,8,9,'');        { 'Typ       ' }
     for i:=0 to 4 do
       mappsel(true,typa[i]);
-    maddstring(3,10+add,getres2(441,13),status,8,8,'');     { 'Status    ' }
+    maddstring(3,12+add,getres2(441,13),status,8,8,'');     { 'Status    ' }
     for i:=0 to 5 do
       mappsel(true,stata[i]);
-    maddstring(30,9+add,getres2(441,14),bretter,8,8,'');    { 'Bretter   ' }
+    maddstring(32,11+add,getres2(441,14),bretter,8,8,'');   { 'Bretter   ' }
     if aktdispmode=11 then
       MDisable
     else begin
@@ -891,7 +911,7 @@ restart:
         mappsel(true,bera[i]);
       mset1func(testbrettscope);
       end;
-    maddstring(30,10+add,getres2(441,15),suchopt,8,8,'');   { 'Optionen  ' }
+    maddstring(32,12+add,getres2(441,15),suchopt,8,8,'');   { 'Optionen  ' }
     if opthist[0] <>'' then
       for i:=0 to opthmax do mappsel(false,opthist[i]);
     readmask(brk);
@@ -910,10 +930,10 @@ restart:
       andmask:=0; ormask:=0;
       if user='' then or_user:=false else andmask:=4;
       if betr='' then or_betr:=false else inc(andmask,2);
-      if fidoempf='' then or_fidoempf:=false else inc(andmask); 
+      if fidoempf='' then or_fidoempf:=false else inc(andmask);
       if or_user then ormask:=4;
       if or_betr then inc(ormask,2);
-      if or_fidoempf then inc(ormask);   
+      if or_fidoempf then inc(ormask);
       if txt='' then
         asm
              mov al,ormask  { verhindern, dass alle Suchbegriffe auf OR stehen }
@@ -997,6 +1017,10 @@ restart:
       else typc:=' ';
       _vondat:=ixdat(copy(vondat,7,2)+copy(vondat,4,2)+copy(vondat,1,2)+'0000');
       _bisdat:=ixdat(copy(bisdat,7,2)+copy(bisdat,4,2)+copy(bisdat,1,2)+'2359');
+      { ab: Empfangsdatum }
+      _empf_vondat:=ixdat(copy(empf_vondat,7,2)+copy(empf_vondat,4,2)+copy(empf_vondat,1,2)+'0000');
+      _empf_bisdat:=ixdat(copy(empf_bisdat,7,2)+copy(empf_bisdat,4,2)+copy(empf_bisdat,1,2)+'2359');
+
       if biskb=99999 then biskb:=maxlongint div 2048;
       minsize:=vonkb*1024;
       maxsize:=biskb*1024+1023;
@@ -1049,7 +1073,7 @@ restart:
         goto restart;
         end;         
 
-      mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
+      mwrt(x+3,y+iif(spez,13+add,4),getres2(441,16)); { 'Suche:         passend:' }
       if (aktdispmode<>11) and not holdmarked then markanz:=0;
       n:=0; nf:=0;
       new(hdp);
@@ -2930,6 +2954,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.45  2003/02/24 21:29:03  my
+  AB[+MY]:- Spezial-Suche kann jetzt auch nach dem Empfangsdatum von
+            Nachrichten suchen.
+
   Revision 1.47.2.44  2002/04/13 17:29:40  my
   MY:- Ressourcen fÅr erweiterte User- und Brett-Exportfunktionen (die
        offenbar schon seit lÑngerem implementiert waren) ergÑnzt und

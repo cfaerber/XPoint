@@ -1,8 +1,8 @@
-K CrossPoint v3.40 resource file
+K CrossPoint [OpenXP/16] v3.40 resource file
 K English
-K (c) 1993-99 Peter Mandrella
-K (c) 2000-01 OpenXP-Team, http://www.openxp.de
-K (c) 2002-03 OpenXP/16, http://www.openxp16.de
+K (c) 1993-1999 Peter Mandrella
+K (c) 2000-2001 OpenXP-Team
+K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 
 # Online Help File, Key Macros
 1 XP-E.HLP
@@ -1056,6 +1056,8 @@ K (c) 2002-03 OpenXP/16, http://www.openxp16.de
 19   from~
 20   to  ~
 21   Search Library
+22   created
+23   received
 -
 + 442
 0    All

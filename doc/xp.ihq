@@ -11552,6 +11552,10 @@ l”schen Sie diese (z.B. mit <<<Del> >>oder Leertaste).
        Suche angewendet.
 
 @
+643
+Geben Sie den Zeitraum an, in dem sich das Empfangs-
+datum der gesuchten Nachrichten befinden soll.
+@
 650
 Normalerweise wird jede von Ihnen verschickte Nach-
 richt mit einer eindeutigen Kennung versehen, der
