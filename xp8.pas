@@ -627,12 +627,18 @@ begin
   Rewrite(t2);
   i:=0;
   readln(t1,s1);
-  if s1[1]='!' then i:=length(s1)
+  if FirstChar(s1)='!' then i:=length(s1)
    else reset(t1);
   while not eof(t1) do
   begin
     FillChar(s1[1], 255, ' ');
     readln(t1,s1);
+    if(s1[2]<>' ')then
+      // reformat NNTP style list to Client style list (quick hack)
+      if RightStr(s1,2)=' *' then
+        s1:='* '+LeftStr(s1,Length(s1)-2)
+      else
+        s1:='  '+s1;
     m:=length(s1)+2;
 //    n:=reformat_UKA_Brett(s1);
     if bestellen or (s1[1]='*') then       { File-Offset des Strings wird angehaengt,  }
@@ -676,13 +682,10 @@ begin
   begin
     brk:=true;
     reset(fGroupsToUnsubscribe);
-    while not eof(fGroupsToUnsubscribe) do
+    while not eof(fGroupsToUnsubscribe) and brk do
     begin
       readln(fGroupsToUnsubscribe,s2);
-      s1 := Trim(copy(s1,3,78));
-      p := cPos(' ', s1);
-      if p > 0 then s1 := copy(s1, 1, p-1);
-      if s2= s1 then
+      if trim(s2)=trim(copy(s1,3,78)) then
         brk:=false;                        { Bretter, die abzubestellen sind }
       end;
     close(fGroupsToUnsubscribe);
@@ -816,7 +819,7 @@ var t     : text;
     fido  : boolean;
     gs    : boolean;
     uucp  : boolean;
-    client: Boolean;
+    rfc   : Boolean;
     postmaster : boolean;
     pronet: boolean;
     qwk   : boolean;
@@ -938,7 +941,7 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; pronet:=false; qwk:=false; client := false;
+      uucp:=false; pronet:=false; qwk:=false; rfc := false;
       postmaster:=false;
       case mapstype(box) of
         2 : maf:=true;
@@ -951,7 +954,7 @@ begin
        10 : qwk:=true;
        11..13 : uucp:=true;
        14: begin uucp:=true; postmaster:=true; end;
-       16: client:= true;
+       16: rfc:= true;
       end;
       rewrite(t);
       if quick or (uucp and postmaster) then
@@ -987,7 +990,7 @@ begin
       if fido then
         write(t,'---',#13#10);
       close(t);
-      if not Client then 
+      if not rfc then 
         SendMaps('DEL',box,fn)
       else 
       begin
@@ -1008,6 +1011,7 @@ begin
         fido:=ntAreaMgr(dbReadInt(d,'netztyp'));
         gs:=(dbReadInt(d,'netztyp')=nt_GS);
         uucp:=(dbReadInt(d,'netztyp')=nt_UUCP);
+        rfc:=(dbReadInt(d,'netztyp') in netsRFC)and(not uucp);
         pronet:=(dbReadInt(d,'netztyp')=nt_Pronet);
         qwk:=(dbReadInt(d,'netztyp')=nt_QWK);
         bfile:= dbReadStr(d,'dateiname');
@@ -1036,7 +1040,7 @@ begin
             else
               if not (maf or pronet) then
                 if gs then write(t,copy(brett,3,brettlen),#13#10)
-                else if uucp then write(t,newsgroup(brett),#13#10)
+                else if uucp or rfc then write(t,newsgroup(brett),#13#10)
                 else write(t,copy(brett,2,BrettLen),#13#10)
               else write(t,brettcode(mid(brett,2)),#13#10);
             topen:=true;
@@ -1046,7 +1050,7 @@ begin
           if fido then
             write(t,'---',#13#10);
           close(t);
-          if not client then SendMaps('DEL',box,fn)
+          if not rfc then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
           topen:=false;
           end;
@@ -2155,6 +2159,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.5  2002/07/18 16:48:08  ma
+  - fixed: NNTP unsubscribing multiple groups at once
+
   Revision 1.70.2.4  2002/07/18 16:14:06  ma
   - fixed: NNTP .bl got corrupted when unsubscribing from a group
 
