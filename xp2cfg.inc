@@ -394,11 +394,11 @@ begin
   showmsgdatum:=true;
 {$IFDEF unix}
   { VI kann es wohl nicht sein, aber mancher sieht das anders... }
-  VarEditor:= 'pico'; EditorKB:=300;
+  VarEditor:= 'pico';
 {$ELSE }
-  VarEditor:='Q.EXE'; EditorKB:=300;
+  VarEditor:='Q.EXE';
 {$ENDIF }
-  VarLister:=''; ListerKB:=250;
+  VarLister:='';
   stdhaltezeit:=14;
   stduhaltezeit:=0;
   QuoteBreak:=79;
@@ -763,7 +763,6 @@ begin
   writeln(t,'Showungelesen=',jnf(showungelesen));
   writeln(t,'ShowMsgDatum=',jnf(showmsgdatum));
   writeln(t,'Lister=',VarLister);
-  writeln(t,'ListerKB=',listerkb);
   writeln(t,'ListVollbild=',jnf(listvollbild));
   writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
@@ -773,7 +772,6 @@ begin
   writeln(t,'ViewerVirscan=',viewer_scanner);
   writeln(t,'DelViewTmp=',jnf(delviewtmp));
   writeln(t,'Editor=',VarEditor);
-  writeln(t,'EditorKB=',editorkb);
 { writeln(t,'EditVollbild=',jnf(editvollbild)); }
   writeln(t,'ExtEditor=',exteditor);
   writeln(t,'AutoCPgDn=',jnf(autocpgd));
@@ -1105,6 +1103,7 @@ var t       : text;
     dummys  : string;
     dummyb  : boolean;
     dummybb : byte;
+    dummyi:   smallword;
     aaa     : string;   { AutoAdvance }
     buf     : array[1..1024] of byte;
     mheader : string;
@@ -1318,13 +1317,13 @@ begin
           getx(su,  'ShowUngelesen',showungelesen) or
           getx(su,  'ShowMsgdatum',showmsgdatum) or
           gets(s,su,'lister',varlister,40) or
-          getw(su,  'listerkb',listerkb) or
+          getw(su,  'listerkb',dummyi) or
           getx(su,  'listwrap',listwrap) or
           gets(s,su,'ViewerSave',viewer_save,255) or
           gets(s,su,'ViewerLister',viewer_lister,255) or
           gets(s,su,'ViewerVirscan',viewer_scanner,viewproglen) or
           gets(s,su,'editor',vareditor,40) or
-          getw(su,  'editorkb',editorkb) or
+          getw(su,  'editorkb', dummyi) or
           getx(su,  'autocpgdn',autocpgd) or
           gets(s,su,'gifviewer',viewers^[1].prog,40) or
           gets(s,su,'lbmviewer',viewers^[2].prog,40) or
@@ -1684,6 +1683,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.103  2001/01/15 23:27:35  mk
+  - removed Editorkb, Listerkb
+
   Revision 1.102  2001/01/14 10:31:08  mk
   - changed existf to FileExists
 

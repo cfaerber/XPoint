@@ -61,7 +61,7 @@ procedure shell(prog:string; space:word; cls:shortint);
       command:=LeftStr(command,pp-1);
     end;
     command:=FileUpperCase(command);
-  
+
     callviacli:=(pos('|',parameters)>0) or (pos('>',parameters)>0) or (pos('<',parameters)>0);
     commandsave:=command;
     if not callviacli then begin
@@ -285,7 +285,7 @@ begin
       lt:=iif(listmsg,iif(listkommentar,2,1),0);
       lf:=LeftStr(lf,pp-1)+strs(lt)+mid(lf,pp+5);
       end;
-    shell(lf,ListerKB,1);
+    shell(lf,0,1);
     if errorlevel in [100..110] then ExtListKeys;
     end
   else begin
@@ -399,7 +399,7 @@ begin
   if ((exteditor=3) or ((exteditor=2) and nachricht)) and (VarEditor<>'')
      and (VarEditor[1]<>'*') then begin
     ms:=shell25; shell25:=edit25;
-    shell(repfile(VarEditor,name),EditorKB,-1);
+    shell(repfile(VarEditor,name),0,-1);
     shell25:=ms;
     removeeof(name);
     bak:=BAKext;
@@ -410,7 +410,7 @@ begin
     if nachricht then pophp;
     if nachricht and (LeftStr(VarEditor,1)='*') then begin
       delfirst(VarEditor);
-      shell(repfile(VarEditor,name),EditorKB,3);
+      shell(repfile(VarEditor,name),0,3);
       insert('*',VarEditor,1);
       end;
     bak:='BAK';
@@ -463,6 +463,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/01/15 23:27:35  mk
+  - removed Editorkb, Listerkb
+
   Revision 1.48  2001/01/06 16:13:49  ma
   - shell call using FindExecutable now
 

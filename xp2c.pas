@@ -505,7 +505,6 @@ begin
   dialog(ival(getres2(255,20)),3,getres2(255,21),x,y);    { 'externer Lister' }
   maddstring(3,2,getres2(255,22),VarLister,21,40,''); mhnr(230);   { 'Lister ' }
   msetvfunc(testexecutable);
-  maddint(37,2,getres2(255,23),ListerKB,5,3,50,500);   { 'KByte:' }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -531,7 +530,6 @@ begin
 {$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
   msetvfunc(testexecutable);
-  maddint(43,2,getres2(256,7),EditorKB,5,3,50,500);   { 'KByte:' }
   maddstring(3,4,getres2(256,8),BAKext,3,3,'>');      { 'Backup-Dateierweiterung  ' }
   eds:=edtype[exteditor];
   maddstring(3,6,getres2(256,9),eds,18,18,'');    { 'externen Editor verwenden fÅr ' }
@@ -1380,6 +1378,9 @@ end.
 
 {
   $Log$
+  Revision 1.81  2001/01/15 23:27:35  mk
+  - removed Editorkb, Listerkb
+
   Revision 1.80  2001/01/14 10:43:26  mk
   - strip params before test in textexecutable
 

@@ -833,8 +833,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        viewers      : ^viewert;
        VarEditor,
        VarLister    : string;    { externer Editor/Lister  }
-       ListerKB     : smallword;
-       EditorKB     : smallword;
        stdhaltezeit,
        stduhaltezeit: integer16;
        QuoteChar    : string;
@@ -1122,6 +1120,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.116  2001/01/15 23:27:35  mk
+  - removed Editorkb, Listerkb
+
   Revision 1.115  2001/01/02 10:05:23  mk
   - implemented Header.References
 
