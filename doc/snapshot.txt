@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 21.09.2001 (letzter Update)
+DÅsseldorf, den 23.09.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -289,8 +289,8 @@ Allgemeine Bedienung und Sonstiges
   und/oder in der Hilfe ansonsten nur schwer auffindbare Informationen.
   UntermenÅ "öber OpenXP" zeigt Versions- und Snapshotnummer sowie
   OpenXP-Kontakte an. Beta- und Registrierungsfenster optisch angepa·t.
-  XP0.PAS, XP1.PAS, XP1HELP.PAS, XP2.PAS, XP4.INC, XP6.PAS,
-      XPREG.PAS, XPGLOBAL.PAS, XPX.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+  XP0.PAS, XP1.PAS, XP1HELP.PAS, XP2.PAS, XP4.INC, XP6.PAS, XPREG.PAS,
+  XPGLOBAL.PAS, XPX.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
 
 - 'Editdate' nimmt jetzt Datums- und Uhrzeitangaben an
   XP1INPUT.PAS
@@ -380,7 +380,13 @@ Allgemeine Bedienung und Sonstiges
 - Bei einem "Netcall/Alle" werden RFC/Client-Boxen ans Ende der
   Netcall-Liste sortiert (um existierende DFö-Netzwerkverbindung
   stehenlassen zu kînnen).
-  XP10.PAS, XP.IHQ
+  XP10.INC, XP.IHQ
+
+- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen
+  in der Reihenfolge ausfÅhrt, wie sie in der Datei NETCALL.LST auf-
+  gefÅhrt sind (Feature wird noch ausgebaut).
+  XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ,
+  XP.HLP, XP-E.HLP
 
 
 
