@@ -144,6 +144,7 @@ resourcestring
   res_list5             = 'Suche Beschreibung fuer %s...';
 
   res_groupnotfound     = 'Gruppe %s nicht gefunden';
+  res_error             = 'Fehler: %s';
 
   res_msg1              = 'hole Artikel %d, Zeile %d';
   res_msg3              = 'Artikel %d nicht mehr auf Server vorhanden';
@@ -359,8 +360,6 @@ begin
 end;
 
 procedure TNNTP.SelectGroup(const AGroupName: String);
-var
-  s: String;
 
   // convert ResultString from NNTP-Server to a record
   procedure GetGroupInfo(NNTPString: String);
@@ -393,20 +392,32 @@ var
     FGroupName := WorkS;
   end;
 
+const
+  nntpMsg_GroupOK = 211;
+var
+  s: String;
+  i: Integer;
+
 begin
   if Connected then
   begin
     // select one newsgroup
     SWriteln('GROUP '+ AGroupName);
     SReadln(s);
-    case ParseResult(s) of
+    i := ParseResult(s);
+    case i of
       nntpMsg_GroupnotFound : begin
         Output(mcError,res_groupnotfound, [AGroupName]);
         raise ENNTP.create(Format(res_groupnotfound, [AGroupName]));
       end;
       nntp_AuthRequired : begin
-        Output(mcInfo, res_auth, [0]);
+        Output(mcError, res_auth, [0]);
         raise ENNTP.create(res_auth);
+      end
+    else
+      if i <> nntpMsg_GroupOK then begin
+        Output(mcError, res_error, [ErrorMsg]);
+        raise ENNTP.create(res_error);
       end;
     end;
     FGroupName := AGroupName;
@@ -452,13 +463,6 @@ begin
 end;
 
 function TNNTP.PostMessage(Message: TStringList): Integer;
-{  res_post1            = 'post article';
-  res_post2            = 'article posted';
-  res_post3            = 'Fehler %d beim Holen von Artikel';
-  nntp_PostPleaseSend        = 340;
-  nntp_PostPostingNotAllowed = 440;
-  nntp_PostPostingFailed     = 441;
-  nntp_PostArticlePosted     = 240;}
 var
   Error, I: Integer;
   s: String;
@@ -522,17 +526,22 @@ begin
         Inc(I);
       end;
     end;
-
     if Error = nntp_PostArticlePosted then
-       Result := 0
-    else
-       Result := Error;
+      Result := 0
+    else begin
+      Output(mcError, res_error, [ErrorMsg]);
+      Result := Error;
+    end;
   end;
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.31  2001/10/08 21:17:45  ma
+  - better error messages
+
   Revision 1.30  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 
@@ -555,74 +564,4 @@ end.
 
   Revision 1.24  2001/04/27 10:18:56  ma
   - using "new" NNTP spool format
-
-  Revision 1.23  2001/04/23 06:57:45  ml
-  - NNTP-BoxPar for getting last X Mails
-
-  Revision 1.22  2001/04/21 15:43:56  ma
-  - added sending progress messages
-
-  Revision 1.21  2001/04/16 14:28:25  ma
-  - using ProgrOutputWindow now
-
-  Revision 1.20  2001/04/09 09:12:20  ma
-  - cosmetics
-
-  Revision 1.19  2001/04/06 22:34:58  mk
-  - changed nntp authorisation
-
-  Revision 1.18  2001/04/06 21:06:38  ml
-  - nntpsend now working
-
-  Revision 1.17  2001/04/05 13:25:47  ml
-  - NNTP is working now!
-
-  Revision 1.16  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-  Revision 1.15  2000/12/28 00:44:52  ml
-  - nntp-posting implemented
-  - ReadOnly-flag for nntp-servers
-
-  Revision 1.14  2000/12/27 00:51:00  ml
-  - userauth (user + passwd) works now with inn
-  - getting newsmail works
-
-  Revision 1.13  2000/09/11 17:13:54  hd
-  - Kleine Arbeiten an NNTP
-
-  Revision 1.12  2000/08/19 09:41:36  mk
-  - Code aufgeraeumt
-
-  Revision 1.11  2000/08/15 19:41:22  ml
-  - Messies holen implementiert
-
-  Revision 1.10  2000/08/15 14:55:37  ml
-  - vergessene Flag-abfrage nachgebessert
-
-  Revision 1.9  2000/08/15 14:51:05  ml
-  - nntp-listen abholen jetzt funktionsfaehig mit Descriptions
-
-  Revision 1.8  2000/08/03 06:56:35  mk
-  - Updates fuer Errorhandling
-
-  Revision 1.7  2000/08/02 17:01:19  mk
-  - Exceptionhandling und Timeout hinzugefuegt
-
-  Revision 1.6  2000/08/01 21:53:52  mk
-  - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
-
-  Revision 1.4  2000/08/01 18:06:18  mk
-  - WriteFMT in SWriteln geaendert
-
-  Revision 1.3  2000/08/01 16:34:35  mk
-  - Sockets laufen unter Win32 !!!
-
-  Revision 1.2  2000/08/01 11:08:01  mk
-  - auf neues TNetCallSocket umgestellt
-
-  Revision 1.1  2000/07/25 18:02:18  hd
-  - NNTP-Unterstuetzung (Anfang)
-
 }

@@ -98,11 +98,9 @@ resourcestring
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
   res_connect4          = 'Verbunden mit %s';
-  res_connect5          = 'Mail von %s an %s konnte nicht versendet werden';
   res_connect6          = 'Absenderfeld wurde abgelehnt';
-
   res_disconnect        = 'Trenne Verbindung...';
-
+  res_error             = 'Fehler: %s';
   res_postmsg           = 'Verschicke Mail %d (gesamt %.0f%%)';
 
 constructor TSMTP.Create;
@@ -205,18 +203,18 @@ begin
     553: raise ESMTP.Create(res_connect6);  // sender field not properly set
     250: ;
   else
-    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
+    raise ESMTP.CreateFmt(res_error, [ErrorMsg]);
   end;
 
   SWriteln(SMTPTOSIGN + EnvelopeTo);
   SReadln(s);
   if ParseResult(s) <> 250 then
-    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
+    raise ESMTP.CreateFmt(res_error, [ErrorMsg]);
 
   SWriteln(SMTPDATASIGN);
   SReadln(s);
   if ParseResult(s) <> 354 then
-    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
+    raise ESMTP.CreateFmt(res_error, [ErrorMsg]);
 
   if FromLine = -1 then FromLine := 0;
   if ToLine = -1   then ToLine := Mail.Count - 1;
@@ -228,7 +226,7 @@ begin
   swriteln('.');
   sreadln(s);
   if ParseResult(s) <> 250 then
-    raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    raise ESMTP.CreateFmt(res_error, [ErrorMsg]);
 end;
 
 function TSMTP.ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
@@ -293,6 +291,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2001/10/08 21:17:45  ma
+  - better error messages
+
   Revision 1.13  2001/09/25 01:51:00  ma
   - fixed: Certain servers rejected "mail from:" line
 
