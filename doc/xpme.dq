@@ -1,0 +1,103 @@
+                  -------------------------------
+                  Cross \\//     Version 3.2 BETA
+                        //\\ Point            DOS
+                  ¯  universelle Pointsoftware  ®
+                  -------------------------------
+
+CrossPoint-Meneditor
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+Mit diesem Programm k”nnen einzelne Menpunkte oder ganze Untermens innerhalb
+von CrossPoint Version 3.11 oder h”her deaktiviert werden. Die deaktivierten
+Mens bzw. Menpunkte werden innerhalb von CrossPoint nicht mehr angezeigt.
+Dadurch ist es m”glich, den Funktionsumfang des Programms einzuschr„nken und
+so die Bedienung fr unerfahrenere Anwender zu vereinfachen, oder nicht
+ben”tigte Menpunkte zu entfernen (z.B. den Menpunkt "Registrierung", falls
+Sie bereits registriert sind, oder das Men "Fido", falls Sie den Fido-Teil
+nicht verwenden).
+
+(c) 1996-99 Peter Mandrella; Freeware
+
+
+
+ş Bedienung
+
+Starten Sie das Programm XPME.EXE in Ihrem CrossPoint-Verzeichnis. XPME liest
+die verfgbaren Menpunkte aus Ihrer CrossPoint-Installation aus und zeigt sie 
+in gewohnter Form als Men an. Sie k”nnen sich in diesem Men mit den blichen
+Tasten bewegen und die gew„hlten Menpunkte oder Untermens mit den Tasten - 
+und + deaktivieren bzw. aktivieren. Deaktivierte Menpunkte bzw. Untermens
+werden vom Meneditor in einer anderen Farbe dargestellt.
+
+Wenn Sie mit dem Bearbeiten der Mens fertig sind, drcken Sie <Esc>, um den 
+Meneditor zu verlassen. Falls Sie die Abfrage nach dem Speichern der nderungen
+mit "Ja" best„tigen, aktualisiert XPME die Datei XPMENU.DAT, die Informationen
+ber alle gesperrten Menpunkte enth„lt.
+
+Beim n„chsten Start von CrossPoint wird XPMENU.DAT ausgelesen, und alle darin
+angegebenen Menpunkte werden von XP nicht mehr angezeigt. Falls Sie XPME aus
+CrossPoint heraus aufgerufen haben, mssen Sie XP neu starten, damit die nderungen
+wirksam werden.
+
+
+
+ş Spezielle Menpunkte
+
+o  /XPoint und /XPoint/Registrierung: Dieses Men und der
+   Menpunkt k”nnen nur deaktiviert werden, wenn CrossPoint
+   registriert ist.
+
+o  /Config/Sichern: Dieser Menpunkt wird von XP automatisch
+   deaktiviert, wenn bei /Config/Optionen/Bedienung die
+   Option "Sichern" auf automatisch eingestellt ist.
+
+o  /Config/Optionen/Sprache: Dieser Menpunkt wird von XP
+   automatisch aktiviert, falls mehrere Sprachmodule instal-
+   liert sind.
+
+o  /Config/Anzeige/Zeilen: Dieses Men ist von der verwen-
+   deten Grafikkarte abh„ngig. Die einzelnen Zeileneinstel-
+   lungen k”nnen mit dem Meneditor nicht ge„ndert werden.
+
+o  /Config/Anzeige/PD-Zmodem: Dieser Menpunkt wird von XP
+   automatisch aktiviert, falls das Programm ZCONFIG.EXE
+   im CrossPoint-Verzeichnis vorhanden ist.
+
+o  /XPoint/Statistik/Fragmente: Dies ist eine interne Test-
+   funktion, die beim Starten von XP mit Parameter /d
+   (Debug) aktiviert wird.
+
+o  /Zusatz: Selbstdefinierte Menpunkte k”nnen mit XPME
+   nicht deaktiviert werden.
+
+
+
+ş Mensperre aufheben
+
+Starten Sie XP mit Parameter /menu, um die gesperrten Menpunkte vorbergehend
+wieder sichtbar zu machen. L”schen Sie die Datei XPMENU.DAT, um alle Mensperren 
+rckg„ngig zu machen (Sie k”nnen natrlich auch alle Menpunkte einzeln mit XPME 
+reaktivieren...).
+
+
+
+ş Technisches
+
+Die Datei XPMENU.DAT enth„lt eine Liste von 2-Byte-Integer-Werten. Die erste 
+Zahl muá immer = 1 sein. Die zweite Zahl enth„lt die Zahl der deaktivierten 
+Menpunkte. Danach folgt eine aufsteigende sortierte Liste mit einer Zahl je 
+Menpunkt. Jedem m”glichen Menpunkt ist eine eindeutige Nummer zugeordnet.
+
+
+
+ş Versionsgeschichte
+
+v1.0  (08.04.96)
+*  erste freigegebene Version
+
+v1.01 (17.04.96)
+!  Korrektur bei der Anzeige heller Hintergrundfarben
+
+v1.02 (22.12.99)
+!  Pentium-II-Bugfix

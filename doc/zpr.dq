@@ -1,7 +1,10 @@
+                  -------------------------------
+                  Cross \\//     Version 3.2 BETA
+                        //\\ Point            DOS
+                  ฏ  universelle Pointsoftware  ฎ
+                  -------------------------------
 
-ZPR  -  ZCONNECT-Pufferreparierer v1.09
----------------------------------------
-
+þ ZPR  -  ZCONNECT-Pufferreparierer
 
 ZPR ist Freeware. Sie drfen dieses Programm beliebig einsetzen und weiterverbreiten,
 unter der Voraussetzung, daแ es (a) nicht modifiziert wird und (b) die
@@ -16,8 +19,9 @@ ZCONNECT ist ein eingetragenes Warenzeichen der ZERBERUS GmbH.
 
 
 
-Was ist ZPR?
-~~~~~~~~~~~~
+I   Was ist ZPR?
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
 
 ZPR ist ein Test- und Reparaturprogramm fr ZCONNECT-Nachrichten-Pufferdateien,
 das speziell fr Points entwickelt wurde. ZPR ist dazu geeignet, um
@@ -48,8 +52,9 @@ ISBN 3-9802182-3-6 (Verlag Art d'Ameublement).
 
 
 
-Anwendung
-~~~~~~~~~
+II   Anwendung
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
 
 ZPR [-fhlrwz] [-dDatei] <Quelldatei> [Zieldatei]
 
@@ -100,8 +105,9 @@ ZPR gibt folgende Errorlevel zurck:
 
 
 
-Beispiele
-~~~~~~~~~
+III   Beispiele
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
 
 --23ZPR <Datei>            berprft eine Datei auf formale Korrektheit, d.h.
 ob sie von einem Pointprogramm verarbeitet werden kann.
@@ -118,8 +124,9 @@ Nachrichten in die Fehlerdatei
 
 
 
-Headerzeilen
-~~~~~~~~~~~~
+IV    Headerzeilen
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
 
 Bei Fehlermeldungen benennt ZPR die fehlerhaften Zeilen durch ihre ZCONNECT-Krzel.
 Dies sind im Einzelnen (alle mit * gekennzeichneten Zeilen drfen mehrfach
@@ -158,8 +165,8 @@ dieser sieben Zeilen erkennt ZPR einen gltigen Header.
 
 
 
-Tests
-~~~~~
+V   Tests
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 ZPR fhrt die folgenden Test und Reparaturen durch:
 
@@ -206,8 +213,9 @@ von Pfadnamen.
 
 
 
-Versionsgeschichte
-~~~~~~~~~~~~~~~~~~
+VI   Versionsgeschichte
+ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
 
 11.08.93   0.91   erste freigegebene Vorabversion
            0.92   Ausstieg bei Steuerzeichen in unbekannter Header-
