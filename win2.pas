@@ -256,14 +256,14 @@ var   fb     : string;
   begin
     moff;
     if not vert then
-      gotoxy((n mod 4)*15+11,(n div 4)+y+1)
+      gotoxy((n mod 4)*19+3,(n div 4)+y+1)
     else
-      gotoxy((n div 9)*15+11,n mod 9+y+1);
+      gotoxy((n div 9)*19+3,n mod 9+y+1);
     if n+add>f.Count-1 then
-      Wrt2(sp(14))
+      Wrt2(sp(18))
     else begin
       s:=f[n+add];
-      Wrt2(' ' + forms(ConvertFileName(s), 12) + ' ');
+      Wrt2(' ' + forms(ConvertFileName(s), 16) + ' ');
     end;
     mon;
   end;
@@ -286,30 +286,30 @@ var   fb     : string;
     iit;
     if fsb_info then begin
       s:=f[add+p];
-      gotoxy(12,y+height-1);
+      gotoxy(3,y+height-1);
       moff;
 {$IFNDEF UnixFS }
       if s[1]='[' then
         case SysGetDriveType(s[2]) of
-          2 : Wrt2(forms('RAM-Disk',59));
-          3 : Wrt2(forms('Subst-Laufwerk',59));
-          4 : Wrt2(forms('device driven',59));
-          5 : Wrt2(forms('Netz-Laufwerk',59));
-          6 : Wrt2(forms('CD-ROM Laufwerk',59));
+          2 : Wrt2(forms(' RAM-Disk',74));
+          3 : Wrt2(forms(' Subst-Laufwerk',74));
+          4 : Wrt2(forms(' device driven',74));
+          5 : Wrt2(forms(' Netz-Laufwerk',74));
+          6 : Wrt2(forms(' CD-ROM Laufwerk',74));
         else
-          Wrt2(sp(59));
+          Wrt2(sp(74));
         end
       else
 {$ENDIF }
       if RightStr(s,1)=DirSepa then
-        Wrt2(Forms(ConvertFilename(s), 58))
+        Wrt2(' ' + Forms(ConvertFilename(s), 74))
       else begin
         if (findfirst(AddDirSepa(ExtractFilePath(path))+s,faanyfile,sr)<>0) then
-          Wrt2(sp(59))
+          Wrt2(sp(69)+'#')
         else begin
           s2 := Trim(strsrnp(sr.size,12,0));
-          Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + ' ' +
-            DateToStr(FileDateToDateTime(sr.time)));
+          Wrt2(' ' +forms(ConvertFileName(s),60 - Length(s2)) + '  ' + s2 + ' ' +
+            DateToStr(FileDateToDateTime(sr.time)) + ' ');
             {formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)}
         end;
         findclose(sr);
@@ -436,23 +436,23 @@ begin
 
     if not wpushed then begin
       setrahmen(0);
-      if fsb_shadow then wpushs(9,71,y,y+height,'')
-      else wpush(9,71,y,y+height,'');
+      if fsb_shadow then wpushs(2,78,y,y+height,'')
+      else wpush(2,78,y,y+height,'');
       setrahmen(1);
       wpushed:=true;
       end;
     dpath:=path;
     if pathx<>'' then dpath := ExtractFilePath(dpath);
-    dpath:=fitpath(dpath,61);
+    dpath:=fitpath(dpath,71);
     na:=normattr; ia:=invattr;
     if fsb_rcolor<>0 then begin
       if invers then invattr:=fsb_rcolor
       else normattr:=fsb_rcolor;
       end;
     iit;
-    rahmen1(9,71,y,y+height,ConvertFileName(dpath));
+    rahmen1(2,78,y,y+height,ConvertFileName(dpath));
     if fsb_info then
-      mwrt(9,y+height-2,'Ã'+dup(61,'Ä')+'´');
+      mwrt(2,y+height-2,'Ã'+dup(75,'Ä')+'´');
     normattr:=na; invattr:=ia;
     iit;
     clfswin;
@@ -461,7 +461,7 @@ begin
       fb:='';
       iit;
       clfswin;
-      mwrt(11,y+1,'keine Dateien');
+      mwrt(4,y+1,'keine Dateien');
       get(t,curoff);
       chgdrive:=xdir and (t>=^A) and (t<=^Z) and
                 (cpos(chr(ord(t[1])+64),drives)>0);
@@ -1087,6 +1087,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/26 12:36:12  mk
+  - Fileselectorbox enlarged
+
   Revision 1.29  2000/11/26 12:17:39  mk
   - FSBox now uses TStringList
 
