@@ -181,7 +181,6 @@ procedure TextMode(mode : word);
 
 { Servive-Funktionen auf dem aktiven Screen ---------------------------- }
 
-procedure PaintBox(l, r, o, u, attr: integer; clr: boolean);
 
 { Teile aus VIDEO.PAS -------------------------------------------------- }
 
@@ -193,10 +192,22 @@ function GetScreenCols: integer;
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
 { Setzt ein Fenster }
-procedure disphard(x, y: integer; s: string);	{ Ausgabe an X/Y }
 procedure mDelay(msec: word);			{ Warten }
 procedure Window(x1, y1, x2, y2: integer);	{ CRT-Window }
 
+{ Teile der WINXP.PAS -------------------------------------------------- }
+
+procedure FWrt(const x, y: word; const s: string);
+procedure NormWin;
+procedure qrahmen(l,r,o,u,typ,attr: integer; clr: boolean);
+procedure Wrt(const x, y: word; const s: string);
+procedure Wrt2(const s: string );
+
+{ Vom Basisschirm unabhaengige Fenster-Routinen ------------------------ }
+
+
+
+{ Verschiedenes -------------------------------------------------------- }
 
 { false, wenn der Screen kleiner als Cols/Rows }
 function MinimumScreen(Cols, Rows: Word): boolean;
@@ -400,15 +411,12 @@ begin
     mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
   end;
   update_panels;
-  touchwin(win.wHnd);
   wrefresh(win.wHnd);
 end;
 
 procedure RestoreWindow(var win: TWinDesc);
 begin
   { PAnel entfernen }
-  hide_panel(win.pHnd);
-  update_panels;
   del_panel(win.pHnd);
   { Window entfernen }
   delwin(win.wHnd);
@@ -420,10 +428,12 @@ begin
     FastMove(BaseWin, ActWin, sizeof(TWinDesc));
   { Re-Init }
   FillChar(win, sizeof(TWinDesc), 0);
-  if (ActWin.pHnd <> nil) then
+  if (ActWin.pHnd <> nil) then begin
     show_panel(ActWin.pHnd);
+    top_panel(ActWin.pHnd);
+  end;
+  update_panels;
   { Refresh erzwingen }
-  touchwin(ActWin.wHnd);
   wrefresh(ActWin.wHnd);
 end;
 
@@ -524,36 +534,6 @@ procedure StringOutXY(x, y: integer; s: string);
 begin
   GotoXY(x, y);
   StringOut(s);
-end;
-
-procedure PaintBox(l, r, o, u, attr: integer; clr: boolean);
-var
-  Sub: PWindow;
-  ta: byte;
-  x,y: integer;
-begin
-  Sub:= subwin(ActWin.wHnd, u-o+1, r-l+1, o-1, l-1);
-  if (Sub=nil) then begin
-    XPErrorLog('Can''t create sub window (XPCurses::PaintBox)');
-{$IFDEF Beta }
-    WriteLn('Can''t create sub window (XPCurses::PaintBox)');
-    halt(1);
-{$ENDIF }
-  end else begin
-    ta:= TextAttr;
-    WhereXY(x, y);
-    SetTextAttr(attr);
-    if (clr) then begin
-      wbkgd(Sub, CursesAtts(TextAttr));
-      touchwin(Sub);
-      werase(sub);
-    end;
-    box(Sub, 0, 0);
-    wrefresh(Sub);
-    delwin(Sub);
-    SetTextAttr(ta);
-    GotoXY(x, y);
-  end;
 end;
 
 function IsEcho: boolean;
@@ -993,6 +973,95 @@ Begin
   ClrScr;
 end;
 
+{ Teile der WINXP.PAS -------------------------------------------------- }
+
+{ Schreiben an X/Y, update des Cursors }
+procedure Wrt(const x, y: word; const s: string);
+begin
+  if (ActWin.isRel) then
+    wmove(ActWin.wHnd, y-1, x-1)
+  else
+    wmove(ActWin.wHnd, y-ActWin.y-1, x-ActWin.x-1);
+  Wrt2(s);
+end;
+
+{ Schreiben an aktueller Cursorposition, Update des Cursors }
+procedure Wrt2(const s: string );
+var
+  i: integer;
+begin
+  { Aenderung bein Textattribut bearbeiten }
+  if (TextAttr<>LastTextAttr) then
+    SetTextAttr(TextAttr);
+  { Da waddstr auch nur waddch benutzt, duerfte es von der 
+    PErformance keinen Unterschied geben. }
+  for i:= 1 to Length(s) do
+    { ToDo: Andere Consolen unterstuetzen }
+    waddch(ActWin.wHnd, CvtToISOConsole(s[i]));
+  { Erst jetzt Fenster aktualisieren }
+  wrefresh(ActWin.wHnd);
+end;
+
+{ Schreiben an X/Y, Cursor wird nicht veraendert }
+procedure FWrt(const x, y: word; const s: string);
+var
+  x0, y0: integer;
+  i: integer;
+begin
+  WhereXY(x0,y0);
+  { Hier kein GotoXY, damit der refresh unterbleibt }
+  if (ActWin.isRel) then
+    wmove(ActWin.wHnd, y-1, x-1)
+  else
+    wmove(ActWin.wHnd, y-ActWin.y-1, x-ActWin.x-1);
+  { Attribut beachten }
+  if (TextAttr<>LastTextAttr) then
+    SetTextAttr(TextAttr);
+  for i:= 1 to Length(s) do
+    { ToDo: Andere Consolen unterstuetzen }
+    waddch(ActWin.wHnd, CvtToISOConsole(s[i]));
+  { GotoXY macht auch den refresh }
+  GotoXY(x0, y0);
+end;
+
+{ Window loeschen }
+procedure NormWin;
+begin
+  window(1,1,MaxCols,MaxRows);
+end;
+
+{ Rahmen zeichnen }
+procedure qrahmen(l, r, o, u, typ, attr: integer; clr: boolean);
+var
+  Sub: PWindow;
+  ta: byte;
+  x,y: integer;
+begin
+  Sub:= subwin(ActWin.wHnd, u-o+1, r-l+1, o-1, l-1);
+  if (Sub=nil) then begin
+    XPErrorLog('Can''t create sub window (XPCurses::PaintBox)');
+{$IFDEF Beta }
+    WriteLn('Can''t create sub window (XPCurses::PaintBox)');
+    halt(1);
+{$ENDIF }
+  end else begin
+    ta:= TextAttr;
+    WhereXY(x, y);
+    SetTextAttr(attr);
+    if (clr) then begin
+      wbkgd(Sub, CursesAtts(TextAttr));
+      touchwin(Sub);
+      werase(sub);
+    end;
+    box(Sub, 0, 0);
+    wrefresh(Sub);
+    delwin(Sub);
+    SetTextAttr(ta);
+    GotoXY(x, y);
+  end;
+end;
+
+
 { Panel-Funktionen ---------------------------------------- }
 
 function panel_window(_para1:pPANEL):pWINDOW;cdecl; external;
@@ -1213,6 +1282,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/05/07 18:17:36  hd
+  - Wrt, Wrt2, FWrt und qrahmen sind jetzt Bestandteil von XPCURSES.PAS
+  - Kleiner Fix im Window-Handling
+
   Revision 1.10  2000/05/07 15:19:49  hd
   Interne Linux-Aenderungen
 

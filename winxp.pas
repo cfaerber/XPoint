@@ -51,8 +51,9 @@ var   wpstack  : array[1..maxpush] of word;
       warrcol  : byte;        { Farbe fÅr Pfeile          }
       selp     : selproc;
 
-
+{$IFNDEF NCRT }
 procedure normwin;
+{$ENDIF }
 procedure clwin(l,r,o,u:word);
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);    { Rahmen ≥ zeichen       }
@@ -74,8 +75,8 @@ procedure seldummy(var sel:slcttyp);
 procedure wpush(x1,x2,y1,y2:byte; text:string);
 procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
-procedure w_copyrght;
 
+{$IFNDEF NCRT }
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
@@ -88,6 +89,7 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn nîtig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
 procedure FWrt(const x,y:word; const s:string);
+{$ENDIF }
 
 {$IFDEF Ver32 }
 
@@ -247,12 +249,8 @@ asm
          stosw
 end;
 {$ELSE }
+{$IFNDEF NCRT }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
-{$IFDEF NCRT }
-begin
-  PaintBox(l, r, o, u, attr, clr);
-end;
-{$ELSE }
 var
   i: integer;
   SaveAttr: Byte;
@@ -406,21 +404,18 @@ begin
 end;
 {$ENDIF }
 
+{$IFNDEF NCRT }
 procedure Wrt(const x,y:word; const s:string);
 begin
 {$IFDEF BP }
   gotoxy(x,y);
   write(s);
 {$ELSE }
-  {$IFDEF NCRT }
-    StringOutXY(x, y, s);
-  {$ELSE }
-    FWrt(x, y, s);
-    GotoXY(x+Length(s), y);
-  {$ENDIF }
+  FWrt(x, y, s);
+  GotoXY(x+Length(s), y);
 {$ENDIF BP }
 end; { Wrt }
-
+{$ENDIF }
 
 {$IFDEF BP }
 procedure FWrt(const x,y:word; const s:string); assembler;
@@ -448,16 +443,8 @@ asm
 @nowrt:  pop ds
 end;
 {$ELSE }
+{$IFNDEF NCRT }
 procedure FWrt(const x,y:word; const s:string);
-{$IFDEF NCRT }
-var
-  x0, y0: smallint;
-begin
-  WhereXY(x0,y0);
-  StringOutXY(x, y, s);
-  GotoXY(x0, y0);
-end;
-{$ELSE }
 var
   i, Count: Integer;
   {$IFDEF Win32 }
@@ -602,11 +589,6 @@ begin
 end;
 
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$IFDEF NCRT }
-begin
-    StringOutXY(x, y, dup(Count, Chr));
-end;
-{$ELSE }
 {$IFDEF Win32 }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
@@ -625,7 +607,6 @@ end;
   begin
     FWrt(x, y, Dup(Count, Chr));
   end;
-{$ENDIF }
 {$ENDIF }
 
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
@@ -726,15 +707,13 @@ end;
 
 {$ENDIF Ver32 }
 
+{$IFNDEF NCRT }
 procedure Wrt2(const s:string);
 begin
-{$IFDEF NCRT  }
-  StringOut(s);
-{$ELSE }
   FWrt(WhereX, WhereY, s);
   GotoXY(WhereX+Length(s), WhereY);
-{$ENDIF }
 end;
+{$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
@@ -781,11 +760,12 @@ begin
     end;
 end;
 
+{$IFNDEF NCRT }
 procedure normwin;
 begin
   window(1,1,80,25);
 end;
-
+{$ENDIF }
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);
 begin
@@ -1120,34 +1100,6 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
-
-procedure w_copyrght;
-var z     : taste;
-    sd,st : boolean;
-{$IFDEF BP }
-    buf   : array[0..159] of byte;
-{$ENDIF }
-begin
-  moff;
-{$IFDEF BP }
-  Fastmove(mem[base:(crline-1)*160],buf,160);
-{$ENDIF}
-  mon;
-  disphard(1,crline,dup(16,'∞')+' (c) by '+pm+' ∞∞∞∞∞∞ Tel. 02632/48651 '+
-           dup(16,'∞'));
-  st:=m2t;
-  if timey=25 then m2t:=false;
-  get(z,curoff);
-  m2t:=st;
-  Disp_DT;
-  moff;
-{$IFDEF BP }
-  Fastmove(buf,mem[base:(crline-1)*160],160);
-{$ENDIF}
-  mon;
-end;
-
-
 procedure wpush(x1,x2,y1,y2:byte; text:string);
 var r   : byte;
     tx1 : char;
@@ -1213,7 +1165,7 @@ begin
     pullw[i].free:=true;
 {$ENDIF }
   rahmen:=1;
-  fnproc[3,10]:=w_copyrght;
+  fnproc[3,10]:=DummyFN;
   wpp:=0;
   warrows:=false;
   warrcol:=7;
@@ -1230,6 +1182,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2000/05/07 18:17:36  hd
+  - Wrt, Wrt2, FWrt und qrahmen sind jetzt Bestandteil von XPCURSES.PAS
+  - Kleiner Fix im Window-Handling
+
   Revision 1.34  2000/05/07 15:56:32  hd
   Keine Uhr unter Linux
 
