@@ -320,12 +320,14 @@ end;
 end.
 {
   $Log$
-  Revision 1.5.4.5  2002/06/09 08:41:26  mw
+  Revision 1.5.4.6  2002/06/09 09:33:45  mw
 
+  - CVS-Log korregiert.
+
+  Revision 1.5.4.5  2002/06/09 08:41:26  mw
   - Fonts jetzt nicht mehr als obj Datei im Source , sondern als DB-Zeile
     in der xpfonts.inc
-
-  - Der interne 16*8 Font ist jetzt auch als Font Nr. 4 ansprechbar ( /f:*4 )
+  - Der interne 8x14 Zeichensatz ist jetzt auch als Font Nr. 4 ansprechbar ( /f:*4 )
 
   Achtung: Noch kein Euro in den Fonts.
 
