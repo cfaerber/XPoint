@@ -7,9 +7,6 @@
 # fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
-# OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
-# Windows 95/98/NT:
-# <ftp://sources.redhat.com/pub/cygwin/latest/make/make-3.79.1-1.tar.gz>
 
 # Das Betriebssystem, fuer das OpenXP uebersetzt werden soll
 # (MUSS gesetzt werden.)
@@ -26,10 +23,13 @@
 #
 #CPU = 386
 
-# Ihr Compiler (nur fpc)
-# (MUSS gesetzt werden.)
+# Ihr Pascal-Compiler, mit dem der OpenXP-Quellcode uebersetzt werden
+# soll.  (MUSS gesetzt werden.)
 #
-#COMPILER = fpc
+# fpc           Free Pascal <http://www.freepascal.org/>
+# vpc           Virtual Pascal <http://www.vpascal.com/>
+#
+#COMPILER = 
 
 # Compiler-Flags
 # (KANN gesetzt werden.)
@@ -58,13 +58,13 @@ endif
 
 CPU ?= 386
 
-ifneq ($(COMPILER),fpc)
-$(error Variable "COMPILER" muss auf "fpc" gesetzt werden)
+ifeq (,$(findstring $(COMPILER),fpc vpc))
+$(error Variable "COMPILER" muss auf "fpc" oder "vpc" gesetzt werden)
 endif
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
-EXE_EXT = .exe
+EXEEXT = .exe
 # Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
 # muss hier getrickst werden
 SEP = $(subst ,,\)
@@ -75,7 +75,7 @@ endif
 
 ifeq ($(OS),linux)
 
-EXE_EXT =
+EXEEXT =
 SEP = /
 
 RM ?= rm
@@ -83,12 +83,48 @@ RM ?= rm
 endif
 
 ifeq ($(COMPILER),fpc)
-PC = ppc386$(EXE_EXT)
+PC = ppc386
 
 ifeq ($(DEBUG),yes)
 PFLAGS += -Ct -dDEBUG -Sg -pg
 else
 PFLAGS += -CX -O2 -Sg
+endif
+
+ifeq ($(OS),dos32)
+
+UNITEXT = .ppu
+OBJEXT = .o
+LIBPREF = 
+LIBEXT = .a
+
+endif
+
+ifeq ($(OS),linux)
+
+UNITEXT = .ppu
+OBJEXT = .o
+LIBPREF = lib
+LIBEXT = .a
+
+endif
+
+ifeq ($(OS),os2)
+
+UNITEXT = .ppu
+OBJEXT = .o
+LIBPREF = lib
+LIBEXT = .a
+
+endif
+
+ifeq ($(OS),win32)
+
+UNITEXT = .ppw
+OBJEXT = .ow
+LIBPREF = lib
+LIBEXT = .aw
+
 endif
 
 PF_dos32 = -TGO32V2
@@ -104,48 +140,86 @@ PFLAGS += -Fu..
 
 endif
 
+ifeq ($(COMPILER),vpc)
+PC = vpc
+
+ifeq ($(DEBUG),yes)
+PFLAGS += -DDEBUG -UObjCOM
+else
+PFLAGS += -UObjCOM
+endif
+
+UNITEXT = .ppu
+OBJEXT = .o
+LIBPREF = lib
+LIBEXT = .a
+
+PF_dos32 = 
+PF_os2 = -CO
+PF_win32 = -CW
+PF_linux = 
+PF_386 = 
+PF_486 = 
+PF_586 = 
+PF_686 = 
+
+endif
+
+BIN = example
+UNITS = objcom octhread ringbuff
+
 PFLAGS += $(PF_$(OS))
 PFLAGS += $(PF_$(CPU))
 
-all: objcom.o
+all: objcom$(UNITEXT)
 
 ifeq ($(OS),dos32)
-objcom.o: objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc ocsdosh.inc \
-	octhread.o ringbuff.o
+objcom$(UNITEXT): objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc \
+	ocsdosh.inc octhread$(UNITEXT) ringbuff$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),linux)
-objcom.o: objcom.pas ocslin.inc ocslinh.inc octhread.o octwinh.inc \
-	ringbuff.o
+objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc octhread$(UNITEXT) \
+	octwinh.inc ringbuff$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),os2)
-objcom.o: objcom.pas ocsos2.inc octhread.o ringbuff.o
+objcom$(UNITEXT): objcom.pas ocsos2.inc octhread$(UNITEXT) \
+	ringbuff$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),win32)
-objcom.o: objcom.pas ocswin.inc ocswinh.inc octhread.o octwin.inc \
-	octwinh.inc ringbuff.o
+objcom$(UNITEXT): objcom.pas ocswin.inc ocswinh.inc octhread$(UNITEXT) \
+	octwin.inc octwinh.inc ringbuff$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 
-octhread.o: octhread.pas
+octhread$(UNITEXT): octhread.pas
 	$(PC) $(PFLAGS) $<
 
-ringbuff.o: ringbuff.pas
+ringbuff$(UNITEXT): ringbuff.pas
 	$(PC) $(PFLAGS) $<
 
-example$(EXE_EXT): example.pas objcom.o
+example$(EXEEXT): example.pas objcom$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-clean:
-	-$(RM) *.o
-	-$(RM) *.a
-	-$(RM) *.ppu
-	-$(RM) example$(EXE_EXT)
+clean: $(patsubst %,clean_%,$(BIN)) $(patsubst %,clean_%,$(UNITS))
+
+$(patsubst %,clean_%,$(BIN)): clean_%:
+	-$(RM) $*$(EXEEXT)
+	-$(RM) $*$(OBJEXT)
+	-$(RM) $*$(LIBEXT)
+
+$(patsubst %,clean_%,$(UNITS)): clean_%:
+	-$(RM) $*$(UNITEXT)
+	-$(RM) $*$(OBJEXT)
+	-$(RM) $(LIBPREF)$*$(LIBEXT)
 
 #
 # $Log$
+# Revision 1.5  2000/10/05 19:56:45  fe
+# Korrekturen, v.a. fuer FPC/Win32.
+#
 # Revision 1.4  2000/09/30 16:54:17  fe
 # Abhaengigkeiten angepasst.
 #
