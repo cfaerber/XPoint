@@ -25,13 +25,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0   Main,001^XPoint˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2
 1   XPoint,011^Register,012^Import˘10,013^Export˘36,014^Statistics˘17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
-3   Nachricht,031^Search˘5,032E^xtract˘12,033^Unsent˘4,034^All˘14,035^Change˘22,036Ac^tion˘21,-,038News/Echo ^Manager˘19,039F^ileserver˘20,03aP^GP˘40,03b^Direct
+3   Nachricht,031^Search˘5,032E^xtract˘12,033^Unsent˘4,034^All˘14,035^Change˘22,036Ac^tion˘21,-,038Message Area ^Manager˘19,039F^ileserver˘20,03aP^GP˘40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Options˘28,062E^xternal˘24,063^Paths,064^Display˘9,065^Modem˘18,066P^rinter,067^Keys˘23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^sc˘33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
-9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines˘11,096M^isc,098^Accessibility,097^PD-Zmodem
+9   Anzeige,091^Colours,092^Newsgroups,093^Messages,094^Header,095^Lines˘11,096M^isc,098^Accessibility,097^PD-Zmodem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
 11  Zeilen,0b125
@@ -44,18 +44,18 @@ K (c) '2000 OpenXP Team, www.openxp.de
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
 20  Fileserver,141^Request,142^Send,143^List˘27,144^Help,145^Transfer,146S^ervice
-21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
-22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
+21  Weiter,151^Copy,152^Original,153^Forward,154^Quote-To,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
+22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166R^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
+28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File lists˘32,1f3File ^Areas˘38,1f4^Crash,1f5^Nodelists˘30,1f6^Options
 32  Fidoliste,201^Read,202^Delete,203^Search
-33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..˘29
+33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgroup ^index..˘29
 34  Pointlist,221^Activate,222^Read diff
 36  Export,241^User list,242^Newsgroup list,243^Message list,244^Screenshot    @I
 37  Netze,251^Miscellaneous,252^PM limits
@@ -1204,7 +1204,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Thank you for using CrossPoint. Please note that CrossPoint is
 2    NOT free software, it is shareware and you must register after a
 3    30-day evaluation period. For further information, including
-4    prices and a registration form, read the file *LIZENZ.DOC*.
+4    prices and a registration form, read the file *REGISTER.DOC*.
 5
 6    If you have any questions, problems or suggestions concerning XP,
 7    please feel free to send a message to one of the addresses listed
@@ -1214,9 +1214,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Choose "Continue" if you agree to these terms of license.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^LIZENZ.DOC , ^Enter Key , ^Continue , ^Quit~
-32   ~^LIZENZ.DOC , ^Enter Key~
-40   LIZENZ.DOC
+30   ~^REGISTER.DOC , ^Enter Key , ^Continue , ^Quit~
+32   ~^REGISTER.DOC , ^Enter Key~
+40   REGISTER.DOC
 41   %s not found!
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
@@ -3132,6 +3132,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # --- Settings --------------------------------------------------------
+
+# ApoNet (s. auch 520.99!)
+# 1 = Auto-Anzeige-Brett
+# 2 = Switch "Sign all messages"
+
++ 29900
+1
+2 N
+-
 
 # The following part contains some very special configuration settings.
 # You should not change these settings unless you are absolutely sure
