@@ -724,6 +724,7 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      origdb  : string;
 
   label ende;
 
@@ -1135,6 +1136,27 @@ var t,lastt: taste;
         pophp;
         if brk then goto ende;
       end;
+    end;
+
+    if pm and (empf[1]<>vert_char) then
+    begin
+      origdb:=defaultbox;
+      _empf := dbreadnStr(mbase,mb_brett);
+      if FirstChar(_empf)='U' then  { Ist Nachricht in Userbrett ? }
+      begin
+        hdp := THeader.Create;
+        ReadHeader(hdp,hds,false);
+        dbseek(ubase,uiname,AnsiUpperCase(hdp.empfaenger));
+        if dbfound then defaultbox := dbreadStr(ubase,'pollbox');
+        Hdp.Free;
+        end
+      else begin
+        dbseek(bbase,biIntnr,mid(_empf,2));
+        if dbfound then DefaultBox := dbreadStr(bbase,'pollbox');
+      end;
+      brk:=not CC_testempf(empf);
+      defaultbox:=origdb;
+      if brk then goto ende;
     end;
 
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
@@ -2180,6 +2202,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.93  2001/07/10 09:05:48  mk
+  JG:- Fix (of an extremely ancient and annoying behaviour): When
+       creating an (e.g. Reply-To) user upon replying to a message
+       stored in a user folder, XP defaults to the server of the user
+       folder where the message is stored rather than to the primary
+       server. Finally!
+
+  JG:- The fix above also fixes a bug introduced with the previous
+       commit in connection with distribution groups ('Verteiler').
+
   Revision 1.92  2001/06/12 21:22:58  my
   - added more meaningful description for "ungelesen-fix" of 01/05/23
 
