@@ -258,7 +258,7 @@ begin
   getcbreak(orgcbreak);
   setcbreak(false);
 {$ENDIF }
-  {$IFDEF Linux }
+  {$IFDEF unix }
     OSType := os_Linux;
   {$ENDIF }
   {$IFDEF OS2 }
@@ -399,7 +399,7 @@ begin
   defextrakttyp:=1;
   brettanzeige:=0;
   showmsgdatum:=true;
-{$IFDEF Linux }
+{$IFDEF unix}
   { VI kann es wohl nicht sein, aber mancher sieht das anders... }
   VarEditor:= 'pico'; EditorKB:=300;
 {$ELSE }
@@ -453,7 +453,7 @@ begin
   ListEndCR:=false;
   ListWrap:=true;
   with unpacker^ do begin
-{$IFDEF Linux }
+{$IFDEF unix}
     UnARC:='arc e $ARCHIV $DATEI';
     UnLZH:='lha e $ARCHIV $DATEI';
     UnZOO:='zoo -e $ARCHIV $DATEI';
@@ -552,7 +552,7 @@ begin
 
   fillchar(pmcrypt,sizeof(pmcrypt),0);
   with pmcrypt[1] do begin
-{$IFDEF Linux }
+{$IFDEF unix }
     { Fuer SunOS-Keys muss -e/-d statt -E/-D verwendet werden! }
     name:='DES';
     encode:='des -E -k $KEY $INFILE';
@@ -647,7 +647,7 @@ begin
   ListFixedhead:=false;
   MaggiVerkettung:=false;
   ExtraktHeader.anz:=0;
-{$IFNDEF Linux }
+{$IFNDEF unix}
   timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
 {$ENDIF }
   AutoTIC:=true;
@@ -1295,7 +1295,7 @@ var t       : text;
     fsplit(tf,dir,name,ext);
     SwapFileName:=name+SwapExt;
   end;
-{$IFDEF Linux }
+{$IFDEF unix}
 var
   dummytz: string;
 {$ENDIF }
@@ -1475,7 +1475,7 @@ begin
           gets(su,su,'Header',mheader,255) or
           gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
           gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
-{$IFDEF Linux }
+{$IFDEF unix}
           gets(su,su,'timezone',dummytz,7) or
 {$ELSE }
           gets(su,su,'timezone',TimeZone,7) or
@@ -1699,6 +1699,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.89  2000/11/01 23:03:46  mv
+   - if(n)def Linux -> if(n)def Unix fixes
+
   Revision 1.88  2000/11/01 11:01:15  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
