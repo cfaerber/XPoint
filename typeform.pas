@@ -386,6 +386,7 @@ function iifs(b:boolean; const s1,s2:string):string;  { IIF String              
 function IsNaN(d:double):boolean;
 function IntQSum(const l:longint):longint;         { Quersumme                    }
 function IsIntVal(const s: string): boolean;       { test for valid signed number }
+function IsMailAddr(const s: String): Boolean;     // test if s contains '@'
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
 {$IFNDEF FPC }
@@ -1488,6 +1489,12 @@ begin
     TimeDiff:=TimeSecs(t1)-TimeSecs(t2);
 end;
 
+function IsMailAddr(const s: String): Boolean;
+begin
+  Result := cPos('@', s) > 0;
+end;
+
+
 { IsIntVal uses Val to check the format of the string.
   Usage: eliminate compiler hints about unused assignments.
 }
@@ -1935,6 +1942,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2003/05/11 11:10:27  mk
+  - added funciton IsMailAdr
+
   Revision 1.128  2003/05/01 10:20:22  mk
   - fixed range check error in SMatch
 
