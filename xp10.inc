@@ -46,9 +46,9 @@ var brk     : boolean;
     lsec    : string[2];
     f       : file;
 
-const NetcallAlleFlag    : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
-      NetcallEndeFlag    : string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
-      NetcallSpecialFile : string[12] = 'NETCALL.LST';  { Textdatei fÅr Netcall/Spezial }
+const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
+      NetcallEndeFlag   : string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
+      NetcallSpecialDat : string[12] = 'NETCALL.DAT';  { Textdatei fÅr Netcall/Spezial }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
@@ -172,47 +172,51 @@ const NetcallAlleFlag    : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batc
   end;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
-  var d          : DB;
-      fn         : pathstr;
-      t,liste    : text;
-      ti         : string[5];
-      all        : string;
-      clientbox  : string;
-      currentbox : string[BoxNameLen];
-      box        : string[BoxNameLen];
-      x,y        : byte;
-      p          : byte;
-      label maske;
+  var d            : DB;
+      fn           : pathstr;
+      t,netcalldat : text;
+      ti           : string[5];
+      all          : string;
+      clientbox    : string;
+      currentbox   : string[BoxNameLen];
+      box          : string[BoxNameLen];
+      x,y          : byte;
+      p            : byte;
   begin
     all:='';
     clientbox:='';
-    if special then
-    begin
-      assign(liste,ownpath+NetcallSpecialFile);
-      reset(liste);
-      readln(liste,all);
-      close(liste);
-      goto maske;
-    end;
     currentbox:='';
     dbOpen(d,BoxenFile,1);
-    while not dbEOF(d) do begin
-      if dbReadInt(d,'script') and 2=0 then
+    if special then
+      if exist(ownpath+NetcallSpecialDat) then
       begin
-        currentbox := dbReadStr(d,'boxname');
-        ReadBoxPar(0,currentbox);
-        if boxpar^.PPPMode then
+        assign(netcalldat,ownpath+NetcallSpecialDat);
+        reset(netcalldat);
+        readln(netcalldat,all);
+        close(netcalldat);
+      end
+      else begin
+        dbClose(d);
+        trfehler(1005,60);   { 'keine zutreffenden Boxen' }
+        exit;
+      end
+    else
+      while not dbEOF(d) do begin
+        if dbReadInt(d,'script') and 2=0 then
         begin
-          clientbox := clientbox+' '+currentbox;
-          currentbox := ''
+          currentbox := dbReadStr(d,'boxname');
+          ReadBoxPar(0,currentbox);
+          if boxpar^.PPPMode then
+          begin
+            clientbox := clientbox+' '+currentbox;
+            currentbox := ''
+          end;
+          if currentbox <> '' then all:=all+' '+currentbox;
         end;
-        if currentbox <> '' then all:=all+' '+currentbox;
+        dbNext(d);
       end;
-      dbNext(d);
-    end;
-    maske:
     all:=trim(all + clientbox);
-    if (all='') then brk:=true
+    if all='' then brk:=true
     else begin
       if auto then
         brk:=false
@@ -582,10 +586,7 @@ begin
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
         if (anz=1) and (callall) and (exist(ownpath+NetcallAlleFlag)) then
-        begin
-          assign(f,ownpath+NetcallAlleFlag);
-          rename(f,ownpath+NetcallEndeFlag);
-        end;
+          _rename(ownpath+NetcallAlleFlag,ownpath+NetcallEndeFlag);
         execute1;
         initscs;
         end;
@@ -685,6 +686,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.4.2.4  2001/09/23 21:26:30  my
+  MY+MK:- Fixed previous commit (dbCrash) and NETCALL.LST renamed
+          to NETCALL.DAT
+
   Revision 1.4.2.3  2001/09/23 16:10:12  my
   MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
        der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind
