@@ -323,7 +323,6 @@ var   fb     : pathstr;
       s:=f^[add+p]^;
       gotoxy(12,y+height-1);
       moff;
-{$IFNDEF UnixFS }
       if s[1]='[' then
         case drivetype(s[2]) of
           2 : Wrt2(forms('RAM-Disk',59));
@@ -335,13 +334,8 @@ var   fb     : pathstr;
           Wrt2(sp(59));
         end
       else
-{$ENDIF }
       if right(s,1)=DirSepa then
-{$IFDEF BP }
-        Wrt2(sp(59))
-{$ELSE }
-        Wrt2(Forms(ConvertFilename(s), 58))
-{$ENDIF }
+        Wrt2(Forms(s, 59))
       else begin
         pa:=path;
         pathonly(pa);
@@ -1115,6 +1109,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.6  2000/12/01 09:55:21  mk
+  - LFN Directory in der Dateiauswahl anzeigen
+
   Revision 1.16.2.5  2000/11/26 10:19:23  mk
   - FSBox braucht weniger Speicher
 
