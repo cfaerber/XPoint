@@ -9640,25 +9640,232 @@ Hier geben Sie an, welcher "Familie" die von Ihnen
 verwendete PGP-Version angeh”rt. PGP muá installiert
 und per DOS-Pfad (PATH oder PGPPATH) erreichbar sein.
 
-Nachfolgend einige Hinweise zu PGP:
+Fr DOS-User wird <<PGP 2.6.3in>> empfohlen. Mit die-
+ser Version kann man zwar weder Nachrichten fr User
+neuerer DSS/DH-Schlssel kodieren noch kann man deren
+Signaturen berprfen, dafr bietet diese PGP-Version
+die h”chste Sicherheit und ist insbesondere auch
+berhaupt fr DOS verfgbar.
 
+Keine Probleme mit den neueren Schlsseln gibt es bei
+<<PGP 6.5.8>>, das allerdings fr DOS nicht zur Ver-
+fgung steht. Ferner hat diese Version eine Sicher-
+heitslcke, aufgrund derer Sie auf ihren Secret Key
+bzw. dessen Dateien trotz der Verschlsselung mittels
+des Mantras sehr genau aufpassen sollten.
 
-<<PGP - Versions- und Detailinformationen
+Vorsicht: Andere PGP-Versionen als hier aufgefhrt
+werden aufgrund von Fehlern und Inkompatibilit„ten
+nicht empfohlen. Neuere Versionen als PGP 6.5.8 wur-
+den noch nicht auf Kompatibilit„t getestet.
+
+[PGP - Detailinformationen]@1023
+
+Als Alternative gibt es noch <<GnuPG>> (Windows und
+Linux). Es untersttzt allerdings nicht ohne weiteres
+das Kodieren bzw. Dekodieren von Nachrichten nach dem
+alten PGP 2.x-Standard, dafr muá erst ein IDEA-Plug-
+in installiert werden. Ferner sind fr PGP-Kompatibi-
+lit„t einige Kommandozeilenoptionen notwendig.
+
+@
+1011
+Dieser Schalter aktiviert die Nutzung von PGP allge-
+mein sowie fr ZConnect das automatische Codieren,
+Decodieren und den Schlssel-Austausch.
+@
+1012
+<<[x]>> -> CrossPoint ruft PGP mit dem Schalter <<+batch->>
+       <<mode>> auf. Dieser bewirkt, daá alle Rckfragen
+       von PGP bergangen werden. PGP nimmt dann je-
+       weils Standardantworten an.
+
+Dieser Schalter ist unbedingt notwendig, um H„nger
+bei automatischen, unbeaufsichtigten Netzanrufen zu
+vermeiden!
+
+<<Hinweis:>> Bei der Decodierung von Nachrichten, die
+bestimmte Archivdateiformate (ZIP, RAR, LHA, LZH, ZOO
+etc.) oder ihrerseits ein weiteres PGP-Paket enthal-
+ten, benennen die meisten PGP-Versionen der 2.6.x-
+Familie die von XP an PGP bergebene Tempor„rdatei
+um, so daá XP bei der Rckgabe der Datei von PGP
+diese nicht mehr finden kann und die Decodierung
+somit fehlschl„gt.
+
+Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
+Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
+verwenden.
+
+Siehe auch: [PGP - Detailinformationen]@1023
+
+@
+1013
+<<[x]>> -> CrossPoint wartet nach dem Aufruf von PGP auf
+       einen Tastendruck.
+
+Dieser Schalter ist zu Diagnosezwecken gedacht.
+Er hilft dabei, Fehlermeldungen von PGP lesen zu
+k”nnen. Vergessen Sie nicht, den Schalter nachher
+wieder zu deaktivieren!
+
+Tritt ein Fehler beim PGP-Aufruf auf, schalten Sie
+diese Funktion ein.
+
+Ein m”glicher Fehler: der Aufrufstring wird viel zu
+lang. Versuchen sie, alle Parameter des PGP-Aufrufs
+so kurz wie m”glich zu halten (z.B. Verwendung von
+SET PGPPASS statt SET PASSPHRASE, wenn PGP sich das
+Mantra selbst aus dem Environment holen soll). Eine
+Krzung ist auch bei Ihrer [User-ID] m”glich.@1018
+@
+1014
+<<[x]>> -> CrossPoint fhrt in der Datei PGP.LOG ein
+       Protokoll ber alle automatischen PGP-Aktivi-
+       t„ten (Nachrichten decodieren, Schlssel ver-
+       schicken, Schlssel einlesen). Die Logdatei
+       wird in dem Verzeichnis abgelegt, das bei
+       /Config/Pfade/Logfile-Verzeichnis eingetragen
+       ist.
+@
+1015
+<<[x]>> -> CrossPoint berprft bei allen eingehenden
+       pers”nlichen Nachrichten, ob der Nachrichten-
+       kopf einen PGP-Public-Key enth„lt. Wenn ja,
+       dann wird dieser automatisch in Ihren "Key
+       Ring" aufgenommen.
+
+Dieser Schalter gilt <<nur>> fr Schlssel, die gem„á
+dem ZConnect-Standard im Nachrichtenkopf transpor-
+tiert werden. Schlssel im Nachrichtentext mssen
+manuell mit /Nachricht/PGP/Key_einlesen eingelesen
+werden.
+
+<<Vorsicht:>> Wenn Ihr PGP-"Key Ring" viele Schlssel
+enth„lt, kann PGP unertr„glich langsam werden. Falls
+Sie also sehr viele Mails mit PGP-Keys erhalten, ist
+es u.U. besser, nur die gewnschten Keys manuell
+einzulesen.
+
+@
+1016
+<<[x]>> -> CrossPoint berprft bei allen eingehenden
+       ”ffentlichen Nachrichten, ob der Nachrichten-
+       kopf einen PGP-Public-Key enth„lt. Wenn ja,
+       dann wird dieser automatisch in Ihren "Key
+       Ring" aufgenommen.
+
+Dieser Schalter gilt <<nur>> fr Schlssel, die gem„á
+dem ZConnect-Standard im Nachrichtenkopf transpor-
+tiert werden. Schlssel im Nachrichtentext mssen
+manuell mit /Nachricht/PGP/Key_einlesen eingelesen
+werden.
+
+<<Vorsicht:>> Wenn Ihr PGP-"Key Ring" viele Schlssel
+enth„lt, kann PGP unertr„glich langsam werden. Falls
+Sie also sehr viele ”ffentliche Nachrichten mit PGP-
+Keys erhalten, ist es u.U. besser, nur die gewnsch-
+ten Keys manuell einzulesen.
+
+@
+1017
+<<ZConnect, Fido, MausTausch
+
+<<[x]>> -> Alle ausgehenden Nachrichten werden mit PGP
+       signiert. Dazu muá PGP installiert sein
+       (s. Handbuch, Kapitel 5.12). Die Signierung
+       l„át sich im Absendefenster mit <<G>> fr ein-
+       zelne Nachrichten aufheben.
+
+<<[ ]>> -> Nachrichten k”nnen durch Drcken von <<G>> im
+       Absendefenster signiert werden.
+@
+1018
+Geben Sie hier die "User ID" (Netzadresse) aus Ihrem
+Public Key (oder besser die KeyID im Hexformat) an.
+Falls Ihr Key mehrere Netzadressen enth„lt, geben Sie
+eine davon an. Die Adresse sollte exakt die gleiche
+Schreibweise wie im PGP-Key haben, d.h.:
+
+     Vorname Nachname <user\@do.main>
+
+Empfehlenswert ist die Verwendung der KeyID, die Sie
+erhalten, wenn Sie z.B. pgp -kv <UserID> eingeben:
+
+  F:>pgp -kv theo\@tester
+
+  Type Bits/KeyID    Date       User ID
+  pub  1024/08154711 1995/11/11 Theo Tester
+                                Theo Tester
+  1 matching key found.
+
+Tragen sie in das Feld dann 0x fr Hex, gefolgt von
+der KeyID ein: 0xC39C5085. Da die L„nge von Kommando-
+zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
+diese Form der User ID zu verwenden.
+
+@
+1019
+Geben Sie hier Kommandozeilenparameter ein, die von
+GnuPG beim Verschlsseln von Nachrichten benutzt
+werden sollen.
+
+Auf diese Weise k”nnen GnuPG-verschlsselte Nach-
+richten kompatibel mit PGP bleiben. Benutzen Sie die
+erste per F2 angebotene Auswahl, um kompatibel mit
+PGP 2.x und h”her zu bleiben (dafr muá allerdings
+die IDEA-Erweiterung fr GnuPG installiert sein);
+die zweite Auswahl stellt Kompatibilit„t mit PGP
+5.x und h”her sicher, hierfr muá keine Erweiterung
+installiert sein.
+@
+1020
+<<[x]>> -> Die Nachricht wird mit einer PGP-Signatur
+       versehen. Dadurch k”nnen alle User, die im
+       Besitz Ihres Public Key sind, die Echtheit
+       Ihrer Nachricht berprfen.
+
+Die Kombination dieses Schalters mit dem Schalter
+"eigenen Key verschicken" ist nicht sinnvoll, weil
+in diesem Fall die Signatur ohne weiteres zusammen
+mit dem Key gef„lscht werden k”nnte.
+
+N„heres zu PGP ist in Kapitel 5.12 des Handbuchs
+beschrieben.
+@
+1021
+<<[x]>> -> Die Nachricht wird mit einer Key-Anforderung
+       versehen. Falls das Programm des Empf„ngers
+       den ZConnect-PGP-Standard beherrscht, wird
+       es Ihnen automatisch dessen Public Key zu-
+       senden.
+@
+1022
+<<[x]>> -> Ihr Public Key wird im Kopf der Nachricht
+       mitverschickt.
+
+Die Kombination dieses Schalters mit dem Schalter
+"Nachricht signieren" ist nicht sinnvoll, weil in
+diesem Fall die Signatur ohne weiteres zusammen mit
+dem Key gef„lscht werden k”nnte.
+@
+1023
+<<PGP - Detailinformationen
 
 Es gibt inzwischen eine unbersehbare Flle von
 a) Informationen ber und b) Versionen von PGP, auf
 die hier nicht alle im Detail ersch”pfend eingegangen
 werden kann. Zusammenfassend mnden diese in folgende
-Aussagen zum Thema PGP (Stand April 2001):
+Aussagen zum Thema PGP (Stand Juni 2001):
 
 
 ş  Wenn Sie PGP ausschlieálich in Verbindung mit
-   CrossPoint einsetzen, verwenden Sie eine der Ver-
-   sionen der <<2.6.x>>-Familie, genauer: der <<2.6.3>>-
-   Familie, und noch genauer: die Version <<2.6.3in>>.
-   Letztere ist die am weitesten entwickelte Version
-   der 2.6.x(<<i>>)-Familie und sie besitzt u.a. folgende
-   Eigenschaften:
+   CrossPoint unter DOS einsetzen, verwenden Sie eine
+   der Versionen der <<2.6.x>>-Familie, genauer: der
+   <<2.6.3>>-Familie, und noch genauer: die Version
+   <<2.6.3in>>. Letztere ist die am weitesten ent-
+   wickelte Version der 2.6.x(<<i>>)-Familie, und sie
+   besitzt u.a. folgende Eigenschaften:
 
    - Untersttzung von <<8192-bit>>-RSA-Schlsseln (die
      Verwendung gr”áerer Schlssel als 2048 bit ist
@@ -9813,17 +10020,14 @@ Aussagen zum Thema PGP (Stand April 2001):
    Eine Einschr„nkung der 2.6.x-Versionen soll ab-
    schlieáend nicht verschwiegen werden: sie unter-
    sttzen allesamt nicht die mit Version 5.x einge-
-   fhrten <<DH/DSA>>-Schlssel. Da das Prinzip der PGP-
-   Codierung aber darauf basiert, daá Nachrichten
-   und Texte mit dem ”ffentlichen Schlssel ("public
-   key") desjenigen verschlsselt werden, der der
-   Empf„nger der verschlsselten Nachricht ist, muá
-   man lediglich sicherstellen, ausschlieálich RSA-
-   Schlssel zu generieren und an andere weiterzu-
-   geben. Damit ist gew„hrleistet, daá man alle mit
-   dem eigenen "public key" veschlsselten Nachrich-
-   ten mit PGP 2.6.x einwandfrei decodieren kann.
-
+   fhrten <<DH/DSA>>-Schlssel. D.h., daá es zwar
+   keine Probleme mit an Sie gerichteten verschls-
+   selten Mails gibt (da diese mit ihrem RSA-Key
+   verschlsselt werden), Sie aber keine Signaturen
+   von DH/DSA-Schlssel-Usern berprfen und auch
+   keine verschlsselten Mails an User schicken
+   k”nnen, die ausschlieálich einen DH/DSA-Schlssel
+   besitzen.
 
 ş  Zur Versionsfamilie <<5.x>> - obwohl von CrossPoint
    untersttzt - gibt es eine klare Empfehlung: nicht
@@ -9854,8 +10058,9 @@ Aussagen zum Thema PGP (Stand April 2001):
      siehe unten bei <<PGP 6.x>>).
 
 
-ş  Von <<PGP 6.x>> ist im Zusammenhang mit CrossPoint
-   ebenfalls abzuraten, weil
+ş  <<PGP 6.x>> kann unter Umst„nden problemlos mit
+   CrossPoint benutzt werden. Allerdings muá beachtet
+   werden, daá
 
    - die Versionen 6.x bis zur Version 6.5.0 reine
      Windows-Anwendungen sind (s. auch bei PGP 5.x);
@@ -9876,27 +10081,32 @@ Aussagen zum Thema PGP (Stand April 2001):
      "<<Der ADK-Gau>>" bekannt geworden ist. Wer sich
      fr Details hierzu interessiert, sei auf
      <<http://senderek.de/security/key-experiments.html>>
-     verwiesen.
-
-   - Die zus„tzlichen Features, die die Versionsfami-
-     lien 5.x und 6.x gegenber den 2.6.x-Versionen
-     bieten (Stichworte CMR, ADK) sind a) nicht nur
-     fr den CrossPoint-Anwender von keinerlei Inter-
-     esse und Nutzen, sondern b) sogar die eigentli-
-     che Ursache der angesprochenen Sicherheitslk-
-     ken.
+     verwiesen. Dieser Fehler ist aber inzwischen be-
+     hoben.
 
    - Auch bei Version 5.x/6.x besteht die am
      20.03.2001 publizierte Sicherheitslcke bzgl.
      eines Angriffs von auáen auf den 'Secret Key'.
+     Zu diesem Angriff muá man allerdings sagen,
+     daá er nicht wirklich praxisrelevant ist, da
+     es bei den fr die Durchfhrung n”tigen Rahmen-
+     bedingungen fr den Angreifer wesentlich ein-
+     fachere M”glichkeiten gibt, an den Secret Key
+     zu kommen (Trojaner und „hnliches).
 
-   Wer (aus welchen Grnden auch immer) eine 6.x-Ver-
-   sion verwenden will oder muá, sollte unbedingt
-   darauf achten, die Version <<6.5.8>> oder h”her einzu-
-   setzen; dort wurde zumindest die ADK-Sicherheits-
-   lcke geschlossen (jedoch *nicht* die Lcke bzgl.
-   des Angriffs auf den 'Secret Key') und sie unter-
-   sttzt vollst„ndig RSA-Schlssel bis 2048 bit. Auf
+   - PGP 6.x ist nicht fr DOS verfgbar.
+
+   Dafr untersttzt PGP 6.x die neueren DH/DSA-
+   Schlssel, die von einer nicht geringen Anzahl
+   von Leuten benutzt werden.
+
+   Wer eine 6.x-Version verwenden will oder muá,
+   sollte die Version <<6.5.8>> oder h”her einsetzen;
+   dort wurde zumindest die ADK-Sicherheitslcke ge-
+   schlossen (jedoch nicht die Lcke bzgl. des An-
+   griffs auf den 'Secret Key', die allerdings nicht
+   allzu gravierend ist, s.o.), und sie untersttzt
+   vollst„ndig RSA-Schlssel bis 2048 bit. Auf
    <<ftp.openxp.de>> sind folgende Freeware-Versionen
    von PGP 6.5.8 erh„ltlich:
 
@@ -9921,13 +10131,14 @@ Aussagen zum Thema PGP (Stand April 2001):
 <<Fazit
 
 Die 2.6.x-Versionen (und hier speziell die Version
-<<2.6.3in>> in der Fassung vom <<23.03.2001>>) bieten die
-beste Kombination aus h”chstm”glicher Sicherheit und
-bestm”glicher Kooperation mit CrossPoint. Wer eine
-graphische Benutzeroberfl„che unter Windows ben”tigt,
-dem sei das Sharewareprogramm <<PGPClick>> von Robert E.
-Wilson empfohlen, mit dem sich die 2.6.x-Versionen
-komfortabel steuern lassen:
+<<2.6.3in>> in der Fassung vom <<23.03.2001>>) bieten
+h”chstm”gliche Sicherheit, die Version 6.5.8 bietet
+gr”átm”gliche Kompatibilit„t mit Schlsseln anderer
+User.
+Wer fr die 2.6.x eine graphische Benutzeroberfl„che
+unter Windows ben”tigt, dem sei das Sharewareprogramm
+<<PGPClick>> von Robert E. Wilson empfohlen, mit dem sich
+die 2.6.x-Versionen komfortabel steuern lassen:
 <<http://www.ncinter.net/~rewilson/PGPClick/>>
 
 
@@ -9945,7 +10156,8 @@ und tatkr„ftige Mithilfe an:
 <<Lutz Donnerhacke>> - fr die Erstellung der PGP-Version
                    2.6.3in und die jngsten Bug- und
                    Sicherheitsfixes in den Fassungen
-                   vom 07.10.2000 und 23.03.2001.
+                   vom 07.10.2000 und 23.03.2001
+                   (wurde erg„nzt und berarbeitet).
 
 <<Frank Prfer>>     - fr ausfhrliche Informationen zu
                    PGP allgemein und zu den verschie-
@@ -9963,186 +10175,6 @@ und tatkr„ftige Mithilfe an:
 zum Thema PGP:
 <<http://home.nexgo.de/kraven/pgp/pgpindex.html>>
 
-@
-1011
-Dieser Schalter aktiviert das automatische Codieren
-und Decodieren und den Schlssel-Austausch nach
-ZConnect-PGP-Standard.
-@
-1012
-<<[x]>> -> CrossPoint ruft PGP mit dem Schalter <<+batch->>
-       <<mode>> auf. Dieser bewirkt, daá alle Rckfragen
-       von PGP bergangen werden. PGP nimmt dann je-
-       weils Standardantworten an.
-
-Dieser Schalter ist unbedingt notwendig, um H„nger
-bei automatischen, unbeaufsichtigten Netzanrufen zu
-vermeiden!
-
-<<Hinweis:>> Bei der Decodierung von Nachrichten, die
-bestimmte Archivdateiformate (ZIP, RAR, LHA, LZH, ZOO
-etc.) oder ihrerseits ein weiteres PGP-Paket enthal-
-ten, benennen die meisten PGP-Versionen der 2.6.x-
-Familie die von XP an PGP bergebene Tempor„rdatei
-um, so daá XP bei der Rckgabe der Datei von PGP
-diese nicht mehr finden kann und die Decodierung
-somit fehlschl„gt.
-
-Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
-Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
-verwenden.
-
-Siehe auch: [PGP - Versions- und Detailinformationen]@1010
-
-@
-1013
-<<[x]>> -> CrossPoint wartet nach dem Aufruf von PGP auf
-       einen Tastendruck.
-
-Dieser Schalter ist zu Diagnosezwecken gedacht.
-Er hilft dabei, Fehlermeldungen von PGP lesen zu
-k”nnen. Vergessen Sie nicht, den Schalter nachher
-wieder zu deaktivieren!
-
-Tritt ein Fehler beim PGP-Aufruf auf, schalten Sie
-diese Funktion ein.
-
-Ein m”glicher Fehler: der Aufrufstring wird viel zu
-lang. Versuchen sie, alle Parameter des PGP-Aufrufs
-so kurz wie m”glich zu halten (z.B. Verwendung von
-SET PGPPASS statt SET PASSPHRASE, wenn PGP sich das
-Mantra selbst aus dem Environment holen soll). Eine
-Krzung ist auch bei Ihrer [User-ID] m”glich.@1018
-@
-1014
-<<[x]>> -> CrossPoint fhrt in der Datei PGP.LOG ein
-       Protokoll ber alle automatischen PGP-Aktivi-
-       t„ten (Nachrichten decodieren, Schlssel ver-
-       schicken, Schlssel einlesen). Die Logdatei
-       wird in dem Verzeichnis abgelegt, das bei
-       /Config/Pfade/Logfile-Verzeichnis eingetragen
-       ist.
-@
-1015
-<<[x]>> -> CrossPoint berprft bei allen eingehenden
-       pers”nlichen Nachrichten, ob der Nachrichten-
-       kopf einen PGP-Public-Key enth„lt. Wenn ja,
-       dann wird dieser automatisch in Ihren "Key
-       Ring" aufgenommen.
-
-Dieser Schalter gilt <<nur>> fr Schlssel, die gem„á
-dem ZConnect-Standard im Nachrichtenkopf transpor-
-tiert werden. Schlssel im Nachrichtentext mssen
-manuell mit /Nachricht/PGP/Key_einlesen eingelesen
-werden.
-
-<<Vorsicht:>> Wenn Ihr PGP-"Key Ring" viele Schlssel
-enth„lt, kann PGP unertr„glich langsam werden. Falls
-Sie also sehr viele Mails mit PGP-Keys erhalten, ist
-es u.U. besser, nur die gewnschten Keys manuell
-einzulesen.
-
-@
-1016
-<<[x]>> -> CrossPoint berprft bei allen eingehenden
-       ”ffentlichen Nachrichten, ob der Nachrichten-
-       kopf einen PGP-Public-Key enth„lt. Wenn ja,
-       dann wird dieser automatisch in Ihren "Key
-       Ring" aufgenommen.
-
-Dieser Schalter gilt <<nur>> fr Schlssel, die gem„á
-dem ZConnect-Standard im Nachrichtenkopf transpor-
-tiert werden. Schlssel im Nachrichtentext mssen
-manuell mit /Nachricht/PGP/Key_einlesen eingelesen
-werden.
-
-<<Vorsicht:>> Wenn Ihr PGP-"Key Ring" viele Schlssel
-enth„lt, kann PGP unertr„glich langsam werden. Falls
-Sie also sehr viele ”ffentliche Nachrichten mit PGP-
-Keys erhalten, ist es u.U. besser, nur die gewnsch-
-ten Keys manuell einzulesen.
-
-@
-1017
-<<ZConnect, Fido, MausTausch
-
-<<[x]>> -> Alle ausgehenden Nachrichten werden mit PGP
-       signiert. Dazu muá PGP installiert sein
-       (s. Handbuch, Kapitel 5.12). Die Signierung
-       l„át sich im Absendefenster mit <<G>> fr ein-
-       zelne Nachrichten aufheben.
-
-<<[ ]>> -> Nachrichten k”nnen durch Drcken von <<G>> im
-       Absendefenster signiert werden.
-@
-1018
-Geben Sie hier die "User ID" (Netzadresse) aus Ihrem
-Public Key (oder besser die KeyID im Hexformat) an.
-Falls Ihr Key mehrere Netzadressen enth„lt, geben Sie
-eine davon an. Die Adresse sollte exakt die gleiche
-Schreibweise wie im PGP-Key haben, d.h.:
-
-     Vorname Nachname <user\@do.main>
-
-Empfehlenswert ist die Verwendung der KeyID, die Sie
-erhalten, wenn Sie z.B. pgp -kv <UserID> eingeben:
-
-  F:>pgp -kv theo\@tester
-
-  Type Bits/KeyID    Date       User ID
-  pub  1024/08154711 1995/11/11 Theo Tester
-                                Theo Tester
-  1 matching key found.
-
-Tragen sie in das Feld dann 0x fr Hex, gefolgt von
-der KeyID ein: 0xC39C5085. Da die L„nge von Kommando-
-zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
-diese Form der User ID zu verwenden.
-
-@
-1019
-Geben Sie hier Kommandozeilenparameter ein, die von
-GnuPG beim Verschlsseln von Nachrichten benutzt
-werden sollen.
-
-Auf diese Weise k”nnen GnuPG-verschlsselte Nach-
-richten kompatibel mit PGP bleiben. Benutzen Sie die
-erste per F2 angebotene Auswahl, um kompatibel mit
-PGP 2.x und h”her zu bleiben (dafr muá allerdings
-die IDEA-Erweiterung fr GnuPG installiert sein);
-die zweite Auswahl stellt Kompatibilit„t mit PGP
-5.x und h”her sicher, hierfr muá keine Erweiterung
-installiert sein.
-@
-1020
-<<[x]>> -> Die Nachricht wird mit einer PGP-Signatur
-       versehen. Dadurch k”nnen alle User, die im
-       Besitz Ihres Public Key sind, die Echtheit
-       Ihrer Nachricht berprfen.
-
-Die Kombination dieses Schalters mit dem Schalter
-"eigenen Key verschicken" ist nicht sinnvoll, weil
-in diesem Fall die Signatur ohne weiteres zusammen
-mit dem Key gef„lscht werden k”nnte.
-
-N„heres zu PGP ist in Kapitel 5.12 des Handbuchs
-beschrieben.
-@
-1021
-<<[x]>> -> Die Nachricht wird mit einer Key-Anforderung
-       versehen. Falls das Programm des Empf„ngers
-       den ZConnect-PGP-Standard beherrscht, wird
-       es Ihnen automatisch dessen Public Key zu-
-       senden.
-@
-1022
-<<[x]>> -> Ihr Public Key wird im Kopf der Nachricht
-       mitverschickt.
-
-Die Kombination dieses Schalters mit dem Schalter
-"Nachricht signieren" ist nicht sinnvoll, weil in
-diesem Fall die Signatur ohne weiteres zusammen mit
-dem Key gef„lscht werden k”nnte.
 @
 1500
 W„hlen Sie <<Ja>>, um eine Kopie der gew„hlten Nach-
@@ -12520,15 +12552,13 @@ ausgew„hlt werden k”nnen.
 <<Config / Extern / PGP
 
 PGP ist ein weitverbreitetes und sicheres Public-
-Key-Verschlsselungsprogramm. ZConnect bietet eine
-spezielle Schnittstelle zu PGP, die das automatische
-Codieren und Decodieren, den Austausch von Schls-
-seln etc. erm”glicht.
+Key-Verschlsselungsprogramm, mit dem Nachrichten
+verschlsselt und/oder signiert werden k”nnen.
 
 An dieser Stelle finden Sie Einstellungen, die
-insbesondere die ZConnect-PGP-Funktionen betreffen.
+die PGP-Funktionen betreffen.
 
-Siehe auch: [PGP - Versions- und Detailinformationen]@1010
+Siehe auch: [PGP - Informationen]@1010
 
 @
 12601
@@ -14587,7 +14617,7 @@ PGPPATH vorhanden und korrekt gesetzt ist.
 Die fr CrossPoint geeigneten und empfehlenswerten
 PGP-Versionen erhalten Sie bei <<ftp.openxp.de>> oder
 per Fido File Request bei 2:248/2004. N„heres siehe
-unter: [PGP - Versions- und Detailinformationen]@1010
+unter: [PGP - Informationen]@1010
 
 Verwenden Sie PGP Version 2.6.3!
 @
