@@ -193,6 +193,9 @@ function ZFidoMain: integer;
 
 implementation
 
+uses
+  xp1;
+
 procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; {&uses ebx, esi, edi}
 asm
        mov    edi,data          { es:di -> msgbuf^[0] }
@@ -707,9 +710,6 @@ var f1,f2   : file;
   procedure MakePacketHeader;
   var dummy : rtlword;
       phd   : pheader;
-{$IFDEF VP }
-      aYear, aMonth, aDay, aHour, aMin, aSec: Word;
-{$ENDIF }
   begin
     fillchar(phd,sizeof(phd),0);
     with phd do begin
@@ -722,15 +722,9 @@ var f1,f2   : file;
         OrgNet:=_from.net;
         end;
       DestNode:=_to.node;
-{$IFDEF VP }
-      getdate(ayear,amonth,aday,dummy);
-      gettime(ahour,amin,asec,dummy);
-      Year := aYear; Month := aMonth -1; Day := aDay -1;
-      Hour := aHour; Min := aMin; Sec := aSec;
-{$ELSE }
-      getdate(year,month,day,dummy); dec(month);
-      gettime(hour,min,sec,dummy);
-{$ENDIF }
+      DecodeDate(Now,year,month,day);
+      dec(month);
+      DecodeTime(Now,hour,min,sec,dummy);
       PktVer:=2;
       DestNet:=_to.net;
       PrdCodL:=lo(prodcode);
@@ -997,7 +991,7 @@ begin                   //ZFidoProc
 end;
 
 
-procedure FidoZfile(fn:pathstr; append:boolean);    { FTS-0001 -> ZCONNECT }
+procedure FidoZfile(const fn: string; append:boolean);    { FTS-0001 -> ZCONNECT }
 
 const kArea = $41455241;    { AREA   }
       kFrom = $6d6f7246;    { From   }
@@ -1680,17 +1674,18 @@ end;
 
 
 procedure FidoZ;
-var sr  : searchrec;
-    d, n, e : string;
+var sr  : TSearchRec;
+    rc  : integer;
+    dir : string;
     fst : boolean;
 begin
-  FSplit(infile,d,n,e);
-  dos.findfirst(infile,ffAnyFile,sr);
+  dir:= AddDirSepa(ExtractFilePath(infile));
+  rc:= findfirst(infile,faAnyFile,sr);
   fst:=true;
-  while doserror=0 do begin
-    FidoZfile(d+sr.name,not fst);
+  while rc=0 do begin
+    FidoZfile(dir+sr.name,not fst);
     fst:=false;
-    dos.findnext(sr);
+    rc:= findnext(sr);
   end;
   FindClose(sr);
 end;
@@ -1795,6 +1790,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2000/11/16 13:45:24  hd
+        - Dos-Unit entfernt
+
         Revision 1.4  2000/11/16 13:38:19  hd
         - MoveToBad neu implementiert
           - Auf SysUtils umgestellt
