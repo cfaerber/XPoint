@@ -1515,30 +1515,34 @@ end;
   search for conf key in s, return true if found, pos of '=' in p.
   multiple keys may be separated by '|'.
   example: scomp('test2=dummy','test1|test2',p) => true, p=6 }
-function scomp(const s: string; keys: string; var p: integer):boolean;
-var p0: Integer; aKey, ConfKey: String;
+
+// Really performance critical. 
+function scomp(const s, Keys: string; var p: integer):boolean;
+var
+  p0: Integer;
+  NewKeys, ConfKey: String;
 begin
-  p:=cpos('=',s);
-  ConfKey:=UpperCase(Trim(LeftStr(s,p-1)));
-  Keys := UpperCase(Keys);
-  repeat
-    p0:=cpos('|',keys);
-    if p0<>0 then
-    begin
-      aKey:=Copy(keys, 1, p0-1);
-      Delete(keys,1,p0);
-    end else
-    begin
-      aKey:=keys;
-      keys:='';
-    end;
-    result:=Trim(aKey)=ConfKey;
-  until result or (keys='');
+  p := cpos('=', s);
+  ConfKey := LeftStr(s, p-1);
+  p0 := cpos('|', Keys);
+  if p0 = 0 then
+  begin
+    Result := UpperCase(Keys) = ConfKey
+  end else
+  begin
+    NewKeys := Keys;
+    repeat
+      Result:= Trim(Copy(NewKeys, 1, p0-1)) = ConfKey;
+      Delete(NewKeys, 1, p0);
+      p0 := cpos('|', NewKeys);
+      if p0 = 0 then Exit;
+    until true;
+  end;
 end;
 
 
 function getb(const su:string; const v:string; var b:byte):boolean;
-var   
+var
   res, p: Integer;
 begin
   if scomp(su,v,p) then begin
@@ -1619,7 +1623,8 @@ function getx(const su, v:string; var b:boolean):boolean;
 var ss : string;
     p  : Integer;
 begin
-  if scomp(su,v,p) then begin
+  if scomp(su,v,p) then
+  begin
     ss:=trim(copy(su,p+1,1));
     if ss='J' then begin
       b:=true; getx:=true;
@@ -2046,6 +2051,9 @@ end;
 
 {
   $Log$
+  Revision 1.142  2002/03/03 21:55:16  mk
+  - made readconfig about 20times faster
+
   Revision 1.141  2002/02/25 17:54:04  mk
   - little optimization for scomp
 
