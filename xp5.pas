@@ -143,20 +143,19 @@ var   nt,n,mnt,
         else
           attrtxt(col.colutility);
         if (jj=y) and (mm=m) and (j=d) then attrtxt(col.colutiinv);
-        gotoxy(pred(rx)+i shl 2,le);
-        {Erweiterung des Xp-Kalenders auf die Jahre}
+        {Erweiterung des XP-Kalenders auf die Jahre}
         {vor 1583 also auf die Verwendung des}
         {Julianischen Kalenders}
-        {Erweiterung durch MW 01/2000}
         if (fd.t>4) and (fd.t<15) and (fd.m=10) and (fd.j=1582) then
            begin
-             j:=j+10;        {Bugfix MW 02/2000}
-             write(j:2);
+             j:=j+10;
+             wrt(pred(rx)+i shl 2,le,format('%2d',[j]));
            end
         else
-          begin
-             if j>n then write('  ') else write(j:2);
-          end;               { }
+          if j>n then
+            wrt(pred(rx)+i shl 2,le,'  ')
+          else
+            wrt(pred(rx)+i shl 2,le,format('%2d',[j]));
         end;
       nt:=1;
       end;
@@ -227,8 +226,8 @@ begin
   attrtxt(col.colutility);
   moff;
   wrt(rx,ry+2,'√'+typeform.dup(30,'ƒ')+'¥');
-  gotoxy(rx+3,ry+3); write(getres2(501,1));   { 'Mo  Di  Mi  Do  Fr  Sa  ' }
-  attrtxt(col.colutihigh); write(getres2(501,2));  { 'So' }
+  wrt(rx+3,ry+3,getres2(501,1));   { 'Mo  Di  Mi  Do  Fr  Sa  ' }
+  attrtxt(col.colutihigh); wrt(rx+27,ry+3,getres2(501,2));  { 'So' }
   attrtxt(col.colutility);
   mon;
   cal:=getres2(501,3);     { '    Kalender' }
@@ -238,8 +237,7 @@ begin
     if (lm<>mm) or (lj<>jj) then begin
       attrtxt(col.colutihigh);
       moff;
-      gotoxy(rx+4,ry+1); write(cal,' ',mm:2,'/',jj:4);
-      {Erweitert f¸r Jahre kleiner 1000 durch MW 01/2000}
+      wrt(rx+4,ry+1,format('%s %2d/%4d',[cal,mm,jj]));
       mon;
       attrtxt(col.colutility);
 
@@ -316,24 +314,20 @@ begin
     else if (z=key0) or (z=key1) then begin
         attrtxt(col.colutihigh);
         moff;
-        gotoxy(rx+4,ry+1);
         di:=key2str(z);               {Jetzt kann der Kalender auch durch }
-        write(cal,' ',di,'      ');
+        wrt(rx+4,ry+1,cal+' '+di+'      ');
         repeat                        {freies Eingeben des Monats + Jahres }
           get(z,curoff);              {bedient werden}
           di:=di+key2str(z);
-          gotoxy(rx+4,ry+1);
-          write(cal,' ',di,'     ');
+          wrt(rx+4,ry+1,cal+' '+di+'     ');
         until Length(di)=2;           {Erweiterung von MW 04/2000}
         val(di,mm,code);
         di:='';
-        gotoxy(rx+4,ry+1);
-        write(cal,' ',mm:2,'/',di,'   ');
+        wrt(rx+4,ry+1,format('%s %2d/%4s   ',[cal,mm,di]));
         repeat
           get(z,curoff);
           di:=di+key2str(z);
-          gotoxy(rx+4,ry+1);
-          write(cal,' ',mm:2,'/',di,'   ');
+          wrt(rx+4,ry+1,format('%s %2d/%s   ',[cal,mm,di]));
         until Length(di)=4;
         val(di,jj,code);
         di:='';
@@ -402,39 +396,39 @@ begin
   wrt(x+4,y+10,getres2(rnr,15));
 {$ENDIF}
 {$IFDEF Win32 }
-  wrt(x+4,y+8,'Win/32' + getres2(rnr,7));
+  wrt(x+4,y+8,'Win32' + getres2(rnr,7));
 {$ENDIF }
 {$IFDEF Dos32 }
-  wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
+  wrt(x+4,y+8,'DOS' + getres2(rnr,7));
 {$ENDIF }
 {$IFDEF Linux }
   wrt(x+4,y+12,GetShortVersion);
 {$ENDIF }
   attrtxt(col.colmbox);
 {$IFDEF VP }
-  gotoxy(x+19,y+5); write(memused div 1024:5,' KB');
-  gotoxy(x+31,y+4); write(SysDiskSizeLong(0) / 1024 / 1024:8:0,' MB');
-  gotoxy(x+31,y+6); write(SysDiskFreeLong(0) / 1024 / 1024:8:0,' MB');
+  wrt(x+19,y+5,format('%5d KB',[memused div 1024]));
+  wrt(x+31,y+4,format('%8d MB',[SysDiskSizeLong(0) div 1024 div 1024]));
+  wrt(x+31,y+6,format('%8d MB',[SysDiskFreeLong(0) div 1024 div 1024]));
 {$ELSE }
   {$IFDEF Linux}
-    gotoxy(x+19,y+4); write(info.totalram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+6); write(info.freeram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+7); write(info.totalswap div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+8); write(info.freeswap div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+9); write(info.sharedram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+10); write(info.bufferram div 1024 div 1024:5,' MB');
-    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
-    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+    wrt(x+19,y+4,format('%5d MB',[info.totalram div 1024 div 1024]));
+    wrt(x+19,y+6,format('%5d MB',[info.freeram div 1024 div 1024]));
+    wrt(x+19,y+7,format('%5d MB',[info.totalswap div 1024 div 1024]));
+    wrt(x+19,y+8,format('%5d MB',[info.freeswap div 1024 div 1024]));
+    wrt(x+19,y+9,format('%5d MB',[info.sharedram div 1024 div 1024]));
+    wrt(x+19,y+10,format('%5d MB',[info.bufferram div 1024 div 1024]));
+    wrt(x+31,y+4,format('%8d MB',[disksize(0) div 1024 div 1024]));
+    wrt(x+31,y+6,format('%8d MB',[diskfree(0) div 1024 div 1024]));
   {$ELSE }
     {$IFNDEF Delphi }
-    gotoxy(x+17,y+5); write((heapsize -MaxAvail) div 1024:7,' KB');
+    wrt(x+17,y+5,format('%7d KB',[(heapsize-MaxAvail) div 1024]));
     {$ENDIF }
-    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
-    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+    wrt(x+31,y+4,format('%8d MB',[disksize(0) div 1024 div 1024]));
+    wrt(x+31,y+6,format('%8d MB',[diskfree(0) div 1024 div 1024]));
    {$ENDIF}
 {$ENDIF }
-   gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-    xpspace(XferDir)) div 1024 div 1024:8,' MB');
+   wrt(x+31,y+5,format('%8d MB',[(xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
+                                 xpspace(XferDir)) div 1024 div 1024]));
 {$IFDEF Linux}
   wrt(x+30,y+13,RightStr('     '+getres2(rnr,10),7)+'...');
 {$ELSE}
@@ -460,10 +454,7 @@ begin
   n:=0; sum:=0;
   for i:=0 to 9 do begin
     dbGetFrag(ubase,i,fsize,anz,gsize);
-    gotoxy(x+2+(i div 5)*30,y+4+ i mod 5);
-    moff;
-    write(fsize:7,anz:8,gsize:9);
-    mon;
+    wrt(x+2+(i div 5)*30,y+4+(i mod 5),format('%7d%8d%9d',[fsize,anz,gsize]));
     inc(n,anz); inc(sum,gsize);
     end;
   mwrt(x+4,y+10,'gesamt:  '+strs(sum)+' Bytes in '+strs(n)+' Fragmenten');
@@ -590,7 +581,7 @@ var
     t:=timediff(endtime,time)+1;
     if color then attrtxt(8)
     else attrtxt(7);
-    wrt(ScreenWidth-8,1,' '+formi(t div 3600,2)+':'+formi((t div 60)mod 60,2)+':'+formi(t mod 60,2));
+    wrt(ScreenWidth-8,1,format(' %2d:%2d:%2d',[t div 3600,(t div 60)mod 60,t mod 60]));
   end;
 
 begin
@@ -645,23 +636,20 @@ var x,y : Integer;
   procedure wrd(yy:byte; datei:string; d:DB);
   var n : boolean;
 
-    function prozent:real;
+    function prozent:integer;
     begin
       if dbPhysRecs(d)=0 then
-        prozent:=100.0
+        prozent:=100
       else
-        prozent:=dbRecCount(d) * 100.0 / dbPhysRecs(d);
+        prozent:=system.round(dbRecCount(d) * 100.0 / dbPhysRecs(d));
     end;
 
   begin
     n:=(d=nil);
     if n then
       dbOpen(d,datei,0);
-    moff;
-    wrt(x+3,y+yy,forms(UpperCase(datei),12));
-    write(dbRecCount(d):8,prozent:12:1,'%',
-          strsrnp(_filesize(datei+dbExt),13,0));
-    mon;
+    wrt(x+3,y+yy,format('%12s%8d%12d%%%s',[FileUpperCase(datei),dbRecCount(d),
+                        prozent,strsrnp(_filesize(datei+dbExt),13,0)]));
     if n then dbClose(d);
   end;
 
@@ -813,7 +801,7 @@ begin
   repeat
     attrtxt(col.coldiainp);
     mwrt(x+7+length(txt),y+2,typeform.dup(length(s),'*')+sp(16-length(s)));
-    gotoxy(x+7+length(txt+s),y+2);
+    wrt(x+7+length(txt+s),y+2,''); // this wrt was a gotoxy
     get(t,curon);
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
@@ -948,8 +936,13 @@ begin
   closebox;
 end;
 
+end.
+
 {
   $Log$
+  Revision 1.60  2001/09/16 19:53:58  ma
+  - fixed calendar and statistics display problems (please check)
+
   Revision 1.59  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -967,181 +960,4 @@ end;
   Revision 1.55  2001/08/10 20:57:59  mk
   - removed some hints and warnings
   - fixed some minior bugs
-
-  Revision 1.54  2001/08/03 21:40:43  ml
-  - compilable with fpc (linux)
-
-  Revision 1.53  2001/07/31 16:18:40  mk
-  - removed some unused variables
-  - changed some LongInt to DWord
-  - removed other hints and warnings
-
-  Revision 1.52  2001/07/31 13:10:33  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.51  2001/07/28 12:04:13  mk
-  - removed crt unit as much as possible
-
-  Revision 1.50  2001/07/23 16:05:20  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.49  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.48  2001/02/28 14:25:46  mk
-  - removed some tainted comments
-
-  Revision 1.47  2001/02/19 15:27:19  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.46  2000/12/27 22:36:34  mo
-  -new class TfidoNodeList
-
-  Revision 1.45  2000/12/18 09:22:59  mk
-  - fehlendes pophp ergaenzt
-
-  Revision 1.44  2000/11/17 00:15:48  mk
-  - Virtual Pascal compatibility updates
-
-  Revision 1.43  2000/11/16 22:35:30  hd
-  - DOS Unit entfernt
-
-  Revision 1.42  2000/11/14 15:51:32  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.41  2000/11/14 11:14:33  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.40  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.39  2000/10/20 11:33:35  mk
-  - Fix for Bug #116155, Bildschirmauszug fehlerhaft
-
-  Revision 1.38  2000/10/17 20:32:34  mk
-  - Speicheranzeige etwas verbessert
-
-  Revision 1.37  2000/10/17 10:05:52  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.36  2000/08/03 00:05:50  mk
-  - Sternhimmel geht jetzt auch bei groesser 80 Zeichen ;-)
-
-  Revision 1.35  2000/07/27 10:13:03  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.34  2000/07/24 16:08:03  mk
-  - konstanten Versionsstring ausgebaut
-
-  Revision 1.33  2000/07/12 14:43:46  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.32  2000/07/12 10:13:27  hd
-  - AnsiString
-
-  Revision 1.31  2000/07/05 12:47:27  hd
-  - AnsiString
-
-  Revision 1.30  2000/07/05 10:59:52  hd
-  - Weitere AnsiString-Anpassungen
-
-  Revision 1.29  2000/07/04 12:04:25  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.28  2000/06/23 15:59:22  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.27  2000/05/29 20:21:41  oh
-  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
-
-  Revision 1.26  2000/05/20 02:07:39  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
-
-  Revision 1.25  2000/05/14 15:04:51  hd
-  - Anpassungen Linux
-
-  Revision 1.24  2000/05/13 13:31:51  hd
-  - XPoint/Statistik/Speicher angepasst (Linux)
-
-  Revision 1.23  2000/05/02 19:14:01  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.22  2000/04/21 16:36:30  mk
-  - Screensaver funktioniert jetzt auch in den 32 Versionen
-
-  Revision 1.21  2000/04/18 11:23:50  mk
-  - AnyFile in ffAnyFile ($3F->$20) ersetzt
-
-  Revision 1.20  2000/04/13 12:48:38  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.19  2000/04/06 09:12:46  mk
-  MW: - weiteres Update Datumseingabe in Kalender
-
-  Revision 1.18  2000/04/06 09:04:17  mk
-  MW: - Datumseingabe in Kalender
-
-  Revision 1.17  2000/04/04 10:33:57  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.16  2000/03/25 09:03:56  mk
-  - xdelay jetzt komplett entfernt
-
-  Revision 1.15  2000/03/16 19:37:07  rb
-  Sternhimmel-Screensaver-Delay etwas umgestellt
-
-  Revision 1.14  2000/03/14 22:33:36  rb
-  Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
-
-  Revision 1.13  2000/03/14 15:15:40  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.12  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.11  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.10  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.9  2000/03/02 18:32:24  mk
-  - Code ein wenig aufgeraeumt
-
-  Revision 1.8  2000/03/01 23:49:03  rb
-  Rechenzeitfreigabe komplett Åberarbeitet
-
-  Revision 1.7  2000/03/01 22:30:21  rb
-  Dosemu-Erkennung eingebaut
-
-  Revision 1.6  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.5  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
 }
-end.
-
