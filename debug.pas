@@ -70,7 +70,8 @@ procedure OpenLogfile(App: Boolean; Filename: string);
 implementation
 
 uses
-  {$IFDEF Linux}Linux,{$ELSE}Dos,{$ENDIF }
+  {$IFDEF Linux}Linux,{$ENDIF }
+  {$IFDEF Win32} xpwin32, {$ENDIF}
   SysUtils,TypeForm;
 
 const
@@ -107,28 +108,26 @@ end;
 
 procedure DebugLog(Badge, Message: string; Level: Integer);
 var
-  H, M, S, S100, C: RTLWord;
+  c: Integer;
 begin
   if not Logging then Exit;
 
   C := FindBadge(Badge);
   if (C <> 0) and (Logbadges[C].Level >= Level) then
   begin
-    GetTime(H, M, S, S100);
-
     if LogLast=Badge+#0+Message then
       LogCount:=LogCount+1
     else
     begin
       if LogCount>0 then
       begin
-        WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message repeated ',LogCount,' times');
+        WriteLn(Logfile, DateTimeToStr(Now), ' --------> last message repeated ',LogCount,' times');
         LogCount:=0;
       end;
       LogLast:=Badge+#0+Message;
 
 
-      WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' ', Badge, ': ',
+      WriteLn(Logfile, DateTimeToStr(Now), ' ', Badge, ': ',
         Message);
       Flush(Logfile);
     end;
@@ -191,15 +190,12 @@ begin
 end;
 
 procedure CloseLogfile;
-var
-  H, M, S, S100, C: RTLWord;
 begin
   if not Logging then exit;
 
   if LogCount>0 then
   begin
-    GetTime(H, M, S, S100);
-    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message repeated ',LogCount,' times');
+    WriteLn(Logfile, DateTimeToStr(Now), ' --------> last message repeated ',LogCount,' times');
     LogLast:='';
     LogCount:=0;
   end;
@@ -228,6 +224,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/07/28 12:54:16  mk
+  - use SysUtils Date/Time routines
+
   Revision 1.16  2001/05/02 23:36:58  ma
   - fixed file wandering one more time ;-)
 
