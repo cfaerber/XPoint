@@ -684,6 +684,9 @@ Der Lister wird mit <Esc> verlassen.
 
 <<O>> Zeigt den Original Nachrichtenkopf an
 
+<<U>> Dekodiert evtl. enthaltene UUE-Bloecke
+  (siehe auch [Nachricht / Extrakt / UUdecode])@11202
+
 
 <<ALT M>> startet die Suche nach einer MessageID
       die erste markierte Textzeile wird dabei
@@ -9660,11 +9663,9 @@ wandeln. ZusÑtzlicher Text zu Beginn oder Ende der
 Nachricht wird dabei ignoriert. Das Decodieren von
 mehreren, markierten Teilnachrichten ist mîglich.
 
-Das <<Erzeugen>> von UUencode-codierten Daten ist mit
-CrossPoint dagegen z.Zt. nicht mîglich. Verwenden
-Sie stattdessen einen getrennten UU-Encoder (UU-
-Encoder finden Sie in jeder gutsortierten Mailbox
-oder in der [CrossPoint-Supportbox]).@9
+Um selbst UUE-codierte Dateien zu verschicken,
+wÑhlen Sie im EditormenÅ (ereichbar durch F10
+oder rechten Mausklick) die Option <<Laden UUE>>
 
 Falls Sie Dateien per ZCONNECT verschicken, brauchen
 Sie diese nicht zu codieren: Die Gateways nehmen
