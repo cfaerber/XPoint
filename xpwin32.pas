@@ -51,7 +51,7 @@ function SysOutputRedirected: boolean;
 implementation
 
 uses
-  typeform, windows, winxp;
+  windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -162,6 +162,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/10/24 14:49:48  fe
+  Ungenutzte Unit ausgetragen.
+
   Revision 1.10  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 
