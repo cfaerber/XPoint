@@ -14,21 +14,11 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF BP }
   {$M 16384,$a000,655360}
-{$ENDIF }
 
 program uuz;
 
-uses  xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-  crt,dos,dosx,typeform,fileio, xpdatum,montage,stack;
+uses  xpglobal,ems,crt,dos,dosx,typeform,fileio, xpdatum,montage,stack;
 
 const
       midlen      = 120;
@@ -48,9 +38,7 @@ const
       postadrlen  = 80;
       telelen     = 60;
       homepagelen = 90;
-      { 01/2000 oh }
       custheadlen = 60;
-      { /oh }
       maxaddhds   = 10;
       xpboundary  : string = '-';     { 06.01.2000 robo }
 
@@ -79,12 +67,10 @@ const
       uncompress  = 'compress.exe -df ';
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
-{$IFDEF BP }
       SwapFileName= 'uuz.swp';
-{$ENDIF }
       UUserver    = 'UUCP-Fileserver';
       tspecials   = '()<>@,;:\"/[]?=';       { RFC822-Special Chars    }
-      tspecials2  = tspecials+' ';           { RFC1341-Speical Chars   }
+      tspecials2  = tspecials+' ';           { RFC1341-Special Chars   }
 
       XpWindow    : byte = 0;
 
@@ -181,7 +167,7 @@ type  OrgStr  = string[orglen];
                   telefon    : string[TeleLen];
                   homepage   : string[HomepageLen];
                   PmReplyTo  : string[AdrLen];   { Antwort-An }
-                  AmReplyTo  : string[AdrLen];   { Diskussiom-In, nicht benutzt! }
+                  AmReplyTo  : string[AdrLen];   { Diskussion-In, nicht benutzt! }
                   amrepanz   : integer;
                   followups  : integer;          { Anzahl Followup's }
                   followup   : array[1..maxfollow] of string[AdrLen];
@@ -250,7 +236,7 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       addhd         : array[1..maxaddhds] of string;
       addhdmail     : array[1..maxaddhds] of boolean;
       addhds        : integer;
-      convibm: boolean;
+      convibm       : boolean;
 
 { 28.01.2000 robo - Envelope-Empf„nger }
       envemp        : string [adrlen];
@@ -331,9 +317,9 @@ begin
   assign(output, '');
   rewrite(output);
   writeln;
-  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
+  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME  (c) 1993-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
+          ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
 
@@ -342,7 +328,7 @@ begin
   writeln('UUZ -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
   writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
-  writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
+  writeln('uz switches:  -graberec  =  grab envelope recipient from "Received" header');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
@@ -1180,7 +1166,7 @@ begin
     b64:=ismime and (encoding=encBase64);
     binary:=ismime and (not (ctype in [tText,tMultipart,tMessage]) or
                         ((encoding=encBinary) and (ctype<>tText)));
-    hd.typ:=iifc(binary or b64{!},'B','T');
+    hd.typ:=iifc((binary or b64) and (ctype<>tText),'B','T');
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
        (charset<>'iso-8859-1') then
       hd.error:='Unsupported character set: '+charset;
@@ -2922,7 +2908,7 @@ var dat    : string[30];
   var p,r,ml : byte;
   begin
     uuz.s:=ss;
-    if convibm then IBM2ISO;
+    IBM2ISO;  { Header immer konvertieren! }
     ss:=uuz.s;
     ml:=iif(rfc1522,60,78);
     r:=ml+1-length(txt);
@@ -3055,12 +3041,12 @@ begin
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
     uuz.s:=realname;
-    if convibm then IBM2ISO;
+    IBM2ISO;  { Header immer konvertieren! }
     RFC1522form;
     wrs(f,'From: '+absender+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     if wab<>'' then begin
       uuz.s:=war;
-      if convibm then IBM2ISO;
+      IBM2ISO;  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     end;
@@ -3120,12 +3106,12 @@ begin
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
-    if convibm then IBM2ISO;
+    IBM2ISO;  { Header immer konvertieren! }
     RFC1522form;
     wrs(f,'Subject: '+uuz.s);
     if keywords<>'' then begin
       uuz.s:=keywords;
-      if convibm then IBM2ISO;
+      IBM2ISO;  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
     end;
@@ -3148,7 +3134,8 @@ begin
     { X-Priority Konvertierung }
     if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
 
-    if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then
+    if not NoMIME and (mail or (NewsMIME and (x_charset<>''))
+      or (hd.boundary<>'')) then
     with mime do begin
       wrs(f,'MIME-Version: '+mversion);
       s:=maintype(ctype)+'/'+subtype;
@@ -3181,7 +3168,7 @@ begin
       wrs(f,'Distribution: '+distribution);
     if organisation<>'' then begin
       uuz.s:=organisation;
-      if convibm then IBM2ISO;
+      IBM2ISO;  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
     end;
@@ -3203,7 +3190,7 @@ begin
       wrs(f,'X-XP-Ctl: '+strs(XPointCtl));
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
-      if convibm then IBM2ISO;
+      IBM2ISO;  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,uuz.s);
     end;
@@ -3567,6 +3554,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.18  2002/03/29 16:44:46  my
+  MY:- Fix: Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt
+       *immer* vom IBM- in den ISO1-Zeichensatz konvertiert (vorher
+       geschah dies nur, wenn der Header "CHARSET: ISO1" nicht vorhanden
+       war).
+
+  MY:- Versionsstrings auf OpenXP/16 angepaát.
+
   Revision 1.8.2.17  2001/10/20 18:49:00  mk
   - lange CC zeilen gefixt
 
