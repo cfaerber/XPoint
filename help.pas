@@ -238,7 +238,11 @@ asm
         add al, 125
         inc ebx
         loop @lp;
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ELSE }
 asm
         mov cx, size
@@ -765,6 +769,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/24 15:41:01  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.7  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

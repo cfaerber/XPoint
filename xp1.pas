@@ -346,7 +346,11 @@ asm
          inc   esi
          ret
 @ende:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure iso_conv(var buf; bufsize:word); assembler;
 asm
@@ -360,7 +364,11 @@ asm
          xlat
 @noconv: stosb
          loop   @isolp
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure ListDisplay(x,y:word; var s:string);
 begin
@@ -2151,6 +2159,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/03/24 15:41:01  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.19  2000/03/22 10:19:21  mk
   - Bug in ListDisplay behoben
 

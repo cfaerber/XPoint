@@ -176,7 +176,11 @@ asm
          dec   eax
          jnz   @exlp
 @nokeys:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ENDIF }
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
@@ -226,7 +230,11 @@ asm
 @cfound: mov   edi, i
 {!!}     mov   [edi], ecx
          mov   [edi], cx
+{$IFDEF FPC }
 end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ENDIF }
 
 procedure seek_cache2(var _sp:integer); assembler;
@@ -282,14 +290,17 @@ asm
 @nofree: mov   edi, ebx
 {!!}     mov   [edi], ebx
          mov   [edi], bx
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ENDIF }
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
   ICP:=p;
 end;
-
 
 { Platz fÅr feldanz Felder belegen }
 
@@ -1711,6 +1722,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/24 15:41:01  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.14  2000/03/17 11:16:33  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

@@ -55,6 +55,9 @@ type
   usw. wenn mîglich genommen und den spezielleren Datentypen vorgezogen
   werden.
 
+  Der Datentyp rtlword ist je nach dem verwendeten Compiler und der damit
+  verwendeten RTL 16 oder 32 Bit gro·.
+
   Folgende Datentypen sind immer gleich gro· und z.B. fÅr Records geeignet:
   Byte       1 Byte  unsigned  0..255
   SmallWord  2 Byte  unsigned  0..65535
@@ -114,6 +117,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.17  2000/03/24 08:35:30  mk
   - Compilerfaehigkeit unter FPC wieder hergestellt
 

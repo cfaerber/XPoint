@@ -285,7 +285,11 @@ end;
          pop   esi
          sub   eax,esi
   @sende:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ENDIF }
 
 
@@ -1997,6 +2001,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/03/24 15:41:01  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.17  2000/03/22 19:43:01  rb
   <Ctrl Del>: Wort rechts l”schen
 

@@ -183,7 +183,11 @@ asm
          jmp   @tcende
 @tok:    loop  @tclp
 @tcende: mov   eax,edx                   { Funktionsergebnis }
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'EDX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE}
 
@@ -1350,6 +1354,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.7  2000/03/17 11:16:35  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

@@ -80,7 +80,11 @@ asm
 @tbend:  mov eax, 0
        {  adc ax,ax }                      { C=0: false, c=1: true }
          sbb eax,eax
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 {$ENDIF}
 
 procedure LogPGP(s:string);
@@ -771,6 +775,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.11  2000/03/24 04:15:22  oh
   - PGP 6.5.x Unterstuetzung
 

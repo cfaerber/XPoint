@@ -321,7 +321,11 @@ asm
      mov   [esi-1],al
      loop  @@1
 @@2:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE }
 
@@ -362,7 +366,11 @@ asm
      mov   [esi-1],al
      loop  @@1
 @@2:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE }
 
@@ -3504,6 +3512,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/24 15:41:01  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.13  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

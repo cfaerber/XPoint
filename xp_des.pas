@@ -142,7 +142,11 @@ asm
              inc     esi
              dec     dh
              jnz     @mstl1
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure permutate(var s, codeofs; n:longint); assembler;
 asm
@@ -165,7 +169,11 @@ asm
              inc     edi
              mov     ecx,n
              rep     movsb
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 
 procedure make_comp(var source; var dest); assembler;
@@ -190,7 +198,11 @@ asm
              inc     edi
              dec     dh
              jnz     @mkklp1
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure Xs(var s1, s2; n: longint); assembler;
 asm
@@ -204,7 +216,11 @@ asm
              xor     [edi], al
              inc     edi
              loop    @Xslp
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure F2(var s, s2); assembler;
 asm
@@ -264,7 +280,11 @@ asm
              inc     ecx
              cmp     ecx,8
              jb      @F2lp
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE }
 
@@ -543,6 +563,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.5  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

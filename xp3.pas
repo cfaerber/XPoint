@@ -172,7 +172,11 @@ asm
 
 	 mov   edi,passpos              { neuen PW-Index speichern }
          mov   [edi],bx
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
          boolean;assembler;
@@ -275,7 +279,11 @@ asm
          jmp   @ende
 @found:  mov   eax,1
 @ende:   pop ebp
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure Iso1ToIBM(var data; size:word); assembler;
 asm
@@ -291,7 +299,11 @@ asm
 @ii1:     stosb
 	  loop   @isolp1
 @noconv1:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 procedure IBMToIso1(var data; size:word); assembler;
 asm
@@ -305,7 +317,11 @@ asm
           stosb
           loop   @isolp2
 @noconv2:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE}
 
@@ -1412,6 +1428,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.16  2000/03/19 21:31:51  mk
   - Fix für 32 Bit TxtSeek
 

@@ -174,7 +174,11 @@ asm
 
 @ende:   mov   edi,bytes
          add   [edi],edx
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 function  testbin(var bdata; rr:word):boolean; assembler;
 asm
@@ -195,7 +199,11 @@ asm
 @no_bin: loop  @tbloop
          mov   eax,ecx                  { FALSE: nix gefunden }
 @tbend:
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 function  ContainsUmlaut(var s:string):boolean; assembler;
 asm
@@ -212,7 +220,11 @@ asm
          jmp   @cu_ende
 @cu_found: mov  ecx,1
 @cu_ende: mov   eax,ecx
+{$IFDEF FPC }
 end ['EAX', 'ECX', 'ESI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$else }
 
@@ -2149,6 +2161,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
   Revision 1.11  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 
