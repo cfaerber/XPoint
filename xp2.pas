@@ -910,6 +910,7 @@ begin
                 rp^:=(code=l1);
                 if rp^ then begin
                   registriert.non_uucp:=true;
+                  registriert.client:=true;
                   regstr1:=' R';
                   end;
               end;
@@ -917,12 +918,14 @@ begin
                 rp^:=(code=l3);
                 if rp^ then begin
                   registriert.uucp:=true; registriert.non_uucp:=true;
+                  registriert.client:=true;
                   regstr1:=' R'; regstr2:=' R'; end;
               end;
         'B' : begin
                 rp^:=(code=l2);
                 if rp^ then begin
                   registriert.uucp:=true;
+                  registriert.client:=true;
                   regstr2:=' R';
                   end;
               end;
@@ -998,7 +1001,7 @@ begin
     if ntDomainReply(dbReadInt(d,'netztyp')) then
     begin
       new(p);
-      if dbReadInt(d,'netztyp')=nt_UUCP then begin
+      if dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client] then begin
         dom:=lstr(dbReadStr(d,'fqdn'));
         if dom='' then dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
@@ -1023,6 +1026,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.29  2001/12/20 15:03:54  my
+  MY:- Registrierroutine fÅr RFC/Client gemÑ· Vereinbarung mit Peter
+       Mandrella (Mail vom 21.11.2001) angepa·t => kein UUCP-Key mehr
+       erforderlich. :-)
+
   Revision 1.45.2.28  2001/10/26 18:34:08  my
   MY:- Zwei Debug-Ausgaben auskommentiert (der angestrebte Fix fÅr
        "/mailto:" funktioniert eh noch nicht).
