@@ -117,8 +117,9 @@ end;
 
 procedure rpsdate(var s:string);
 begin
-  rps(s,'$DAY','$TAG');
-  rps(s,'$TIME','$UHRZEIT');
+  rps(s, '$DAY2', '$TAG2');
+  rps(s, '$DAY', '$TAG');
+  rps(s, '$TIME', '$UHRZEIT');
   rps(s,'$DATUM',left(date,6)+right(date,2));
   if pos('$DATE',s)>0 then
     rpsdat(s,'$DATE',date);
@@ -706,11 +707,12 @@ begin
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
-          rps(s,'$RNAME', iifs(realname='','',realname+' '));
           rps(s,'$RNAME2', realname);
-          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
+          rps(s,'$RNAME', iifs(realname='','',realname+' '));
           rps(s,'$(RNAME2)',iifs(realname='','','('+realname+')'));
+          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
           rps(s,'$FIDOEMPF',fido_to);
+          rps(s,'$SUBJECT', betreff);
           rps(s,'$BETREFF',betreff);
           rps(s,'$ERSTELLT',fdat(datum));
           if pos('$MSGDATE',ustr(s))>0 then
@@ -1038,6 +1040,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.8  2000/07/11 08:12:12  mk
+  -- $DAY2, $SUBJECT hinzugefuegt
+
   Revision 1.10.2.7  2000/07/10 19:20:33  mk
   - $DAY, $TIME, $FIRSTNAME hinzugefuegt
 
