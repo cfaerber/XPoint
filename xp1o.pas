@@ -870,8 +870,8 @@ end;
 
 { externer Programmaufruf (vgl. xp1s.shell())               }
 {                                                           }
-{ Bei Windows-Programmen wird WINRUN.BAT erzeugt/gestartet. }
-{ Bei OS/2-Programmen wird OS2RUN.BAT erzeugt/gestartet.    }
+{ Bei Windows-Programmen wird direkt Åber START gestartet.  }
+{ Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
 {$IFNDEF Delphi5}
 procedure XPWinShell(prog:string; space:word; cls:shortint);
@@ -904,6 +904,7 @@ var w1,w2: word;
     os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
 
     if win then begin
+{      
       if not exist('winrun.bat') then begin
         assign(t,'winrun.bat');
         rewrite(t);
@@ -918,6 +919,8 @@ var w1,w2: word;
         close(t);
       end;
       prog:='winrun.bat '+prog;
+}
+      prog:='start /wait '+prog;
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -974,13 +977,19 @@ var w1,w2: word;
 begin
   case PrepareExe of
     -1 : ShowOS2Err;
-     0 : shell(prog,space,cls);
-     1 : shell(prog,space,cls);
-     2 : begin
+     0 : shell(prog,space,cls);     { DOS-Programm aufrufen }
+     1 : begin                      { Windows-Programm aufrufen }
+           ShowWait;
+           shell(prog,space,0);
+           doneShowWait;
+           clearkeybuf;
+         end;
+     2 : begin                      { OS/2-Programm aufrufen }
            ShowWait;
            Start_OS2(ownpath+'os2run.cmd','','XP-View OS/2');
            OS2_WaitForEnd('\SEM32\XPOS2SEM32');
            doneShowWait;
+           clearkeybuf;
          end;
   end;  
 end;
@@ -989,6 +998,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/03/02 21:39:01  rb
+  Starten externer Windows-Viewer verbessert
+
   Revision 1.17  2000/03/02 21:19:51  jg
   - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
 
