@@ -171,23 +171,36 @@ const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box)
   end;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
-  var d   : DB;
-      fn  : pathstr;
-      t   : text;
-      ti  : string[5];
-      all : string;
-      x,y : byte;
-      p   : byte;
-      box : string[BoxNameLen];
+  var d          : DB;
+      fn         : pathstr;
+      t          : text;
+      ti         : string[5];
+      all        : string;
+      clientbox  : string;
+      currentbox : string[BoxNameLen];
+      box        : string[BoxNameLen];
+      x,y        : byte;
+      p          : byte;
   begin
     all:='';
+    clientbox:='';
+    currentbox:='';
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
       if dbReadInt(d,'script') and 2=0 then
-        all:=all+' '+dbReadStr(d,'boxname');
-      dbNext(d);
+      begin
+        currentbox := dbReadStr(d,'boxname');
+        ReadBoxPar(0,currentbox);
+        if boxpar^.PPPMode then
+        begin
+          clientbox := clientbox+' '+currentbox;
+          currentbox := ''
+        end;
+        if currentbox <> '' then all:=all+' '+currentbox;
       end;
-    all:=trim(all);
+      dbNext(d);
+    end;
+    all:=trim(all + clientbox);
     if all='' then brk:=true
     else begin
       if auto then
@@ -659,6 +672,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.4.2.2  2001/09/21 18:09:34  my
+  MY:- Bei einem Netcall/Alle werden RFC/Client-Boxen ans Ende der
+       Netcall-Liste sortiert (um existierende DUN-Verbindung stehenlassen
+       zu k”nnen).
+
   Revision 1.4.2.1  2001/09/18 13:50:06  my
   MY:- Bei Netcall/Alle und /n:* wird eine Semaphore NETCALL.ALL im XP-
        Verzeichnis erzeugt (und nach Abarbeitung der Netcall-Liste wieder
