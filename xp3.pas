@@ -687,10 +687,10 @@ begin
       inc(x);
         if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
           { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
-          Move(marked^[x],marked^[x+1],Word(sizeof(markrec))*Word((markanz-x)));
+           Move(marked^[x],marked^[x+1],Word(sizeof(markrec))*Word((markanz-x)));  
       end;
     { MK 01.02.00: Maximale Listengr”áe beachten }
-    if (markanz < maxmarklist) then
+    { if (markanz < maxmarklist) then }
       inc(markanz);
     marked^[x].recno:=dbRecno(mbase);
     marked^[x].datum:=dat;
@@ -708,7 +708,7 @@ begin
     dec(markanz);
     if (x<markanz) then
      { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
-      Move(marked^[x+1],marked^[x],sizeof(markrec)*(markanz-x));
+      Move(marked^[x+1],marked^[x],word(sizeof(markrec))*word((markanz-x)));
     end;
 end;
 
@@ -1259,6 +1259,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/02/20 14:48:21  jg
+  -Bugfix: Nachrichten entmarkieren, wenn viele
+   Nachrichten markiert waren (Msgunmark)
+
   Revision 1.9  2000/02/19 18:00:24  jg
   Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
   Umlautunabhaengige Suche kennt jetzt "‚"
