@@ -535,9 +535,9 @@ start_ok:  inc    bx
            lds    si,dpath
            mov    di,offset Path          ; Programmname/Pfad
            lodsb
-           cmp    al,79
-           jb     pcopy1
-           mov    al,79
+;          cmp    al,79
+;          jb     pcopy1
+;          mov    al,79
 pcopy1:    cbw
            xchg   ax,cx
            rep    movsb
@@ -546,9 +546,9 @@ pcopy1:    cbw
            lds    si,para
            mov    di,offset CmdLine       ; Parameter
            lodsb
-           cmp    al,126
-           jb     pcopy2
-           mov    al,126
+;          cmp    al,126
+;          jb     pcopy2
+;          mov    al,126
 pcopy2:    stosb                          ; L„nge der Parameter-Zeile
            cbw
            xchg   ax,cx
