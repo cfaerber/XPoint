@@ -613,7 +613,7 @@ begin
   largestnets:=10;
   countdown:=false;
   AutoDiff:=true;
-  UserBoxname:=false;
+  UserBoxname:=true;
   nDelPuffer:=false;
   BrettAlle:=iifs(deutsch,'Alle','All');
   viewers^[1].ext:='GIF'; viewers^[1].prog:='VPIC.EXE $FILE';
@@ -1613,6 +1613,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.10  2001/11/04 15:18:32  my
+  MY: - Default fÅr "Systemname in PM-Brettern" (userboxname) true
+
   Revision 1.13.2.9  2001/07/20 15:56:18  my
   - implemented Fido tear line switch under
     Config/Options/Nets
