@@ -4,7 +4,7 @@
 <book lang="de">
 
   <bookinfo>
-    <title>CrossPoint 3.20</title>
+    <title>CrossPoint 3.20 Beta</title>
 
     <subtitle>universelle Pointsoftware</subtitle>
 
@@ -36,7 +36,7 @@
   </bookinfo>
 
   <preface id="vorwort1">
-    <title>Vorwort zu <application>OpenXP 3.2</application></title>
+    <title>Vorwort zu <application>OpenXP 3.20</application></title>
 
     <para>Mit viel Energie und Einsatz haben wir es geschafft, den
       komplizierten Quellcode von
@@ -53,7 +53,8 @@
       gute Arbeit geleistet haben (und es war Arbeit), &ouml;ffnen wir
       jetzt den Vorhang.</para>
 
-    <para>Das OpenXP-Team <email>dev@openxp.de</email> im Mai 2000</para>
+    <para>Das OpenXP-Team <email>dev@openxp.de</email> im M&auml;rz
+      2000</para>
 
   </preface>
 
@@ -143,8 +144,8 @@
             Version erfahren. Dann befinden Sie sich am falschen Ende
             dieses Textes - eine Auflistung aller &Auml;nderungen und
             Erg&auml;nzungen befindet sich in der Versionsgeschichte
-            in der Datei <filename>doc\geschich.txt</filename>. Falls
-            Sie es nicht ganz so detailliert wissen m&ouml;chten,
+            in der Datei <filename>geschich.txt</filename>. Falls Sie
+            es nicht ganz so detailliert wissen m&ouml;chten,
             k&ouml;nnen Sie auch in <filename>neues.txt</filename>
             nachsehen. Bitte beachten Sie auch die Hinweise in
             <filename>update.txt</filename>.</para>
@@ -321,8 +322,8 @@
 
       <para>Es gibt noch einen ganz speziellen Service, der die Anzahl
         der immer wieder auftretenden Fragen reduzieren soll: Die
-        <acronym>FAQ</acronym>-Server. Frage einfach mal in den
-        entsprechenden Echos / Newsgroups / Brettern (s. <link
+        <acronym>FAQ</acronym>-Server. Fragen Sie einfach mal in den
+        entsprechenden Brettern (s. <link
         linkend="supportbretter">oben</link>) nach, da es f&uuml;r
         verschiedene Netze dieses Angebot gibt (Usenet, Fido und
         &uuml;ber die entsprechenden Gateways).</para>
@@ -393,8 +394,9 @@
 
       <para>Das Team dankt: Nat&uuml;rlich Peter Mandrella f&uuml;r
         die Freigabe des Quellcodes und f&uuml;r das beste
-        Pointprogramm der Welt. ;) Au&szlig;erdem Stefan Vinke, Ulf
-        Hinze, Mark Peter Wege, Peter Arndt.</para>
+        Pointprogramm der Welt. ;) F&uuml;r das Beisteuern von Code
+        danken wir Robert B&ouml;ck und Martin Max Huckenbeck.
+        Au&szlig;erdem Ulf Hinze, Mark Peter Wege, Peter Arndt.</para>
 
       <para>Wir danken den Entwicklern vieler anderer Programme (vor
         allem Betriebssysteme), die uns gezeigt haben, welche Fehler
@@ -405,7 +407,7 @@
     <sect1 label="1.6" id="ka010600">
       <title>Copyrights, Warenzeichen</title>
 
-      <para>Dieser Text ist &copy; 1992-1999 by Peter Mandrella.
+      <para>Dieser Text ist (C) 1992-1999 by Peter Mandrella.
         Ausz&uuml;ge des Textes d&uuml;rfen in Mailboxnetzen
         ver&ouml;ffentlicht oder in die Dokumentation anderer
         Shareware-Pointprogramme &uuml;bernommen werden, sofern sie
@@ -417,14 +419,14 @@
         Textes setzt mein schriftliches Einverst&auml;ndnis
         voraus.</para>
 
-      <para>&copy; 1992 f&uuml;r ZCONNECT: ZERBERUS GmbH, Friedland
+      <para>(C) 1992 f&uuml;r ZCONNECT: ZERBERUS GmbH, Bielefeld
         (FRG).</para>
 
       <para><application>CrossPoint</application> ist ein
         eingetragenes Warenzeichen von Peter Mandrella. ZCONNECT ist
-        ein eingetragenes Warenzeichen der ZERBERUS GmbH, Friedland
-        (FRG). ZERBERUS ist ein eingetragenes Warenzeichen von
-        Wolfgang Mexner. Microsoft, MS,
+        ein eingetragenes Warenzeichen der ZERBERUS GmbH, Bielefeld
+        (FRG). Zerberus ist ein eingetragenes Warenzeichen von
+        Wolfgang Mexner, Linkenheim-Hochstetten. Microsoft, MS,
         <application>MS-DOS</application>,
         <application>Windows</application> und Bug sind eingetragene
         Warenzeichen der Microsoft Corporation.
@@ -545,7 +547,8 @@
 
               <entry><filename>xpuu-d.res</filename></entry>
 
-              <entry>deutsche Sprachdatei f&uuml;r uucico</entry>
+              <entry>deutsche Sprachdatei f&uuml;r
+                <command>uucico</command></entry>
 
             </row>
 
@@ -658,6 +661,14 @@
               <entry><filename>xp-fm.exe</filename></entry>
 
               <entry>Fido-Mailer</entry>
+
+            </row>
+
+            <row>
+
+              <entry><filename>uucp-fl1.exe</filename></entry>
+
+              <entry>Dateilistenkonvertierer f&uuml;r UUCP</entry>
 
             </row>
 
@@ -961,18 +972,17 @@
       <para>Unter dem Men&uuml;punkt
         <menuchoice><guimenu>Config</guimenu>
         <guisubmenu>Anzeige</guisubmenu>
-        <guisubmenu>Diverses</guisubmenu></menuchoice> kann ein
-        <emphasis>Hardware-Cursor</emphasis> f&uuml;r alle Men&uuml;s,
+        <guisubmenu>Hilfen</guisubmenu></menuchoice> kann ein
+        <emphasis>Auswahlcursor</emphasis> f&uuml;r alle Men&uuml;s,
         Auswahllisten etc. eingeschaltet werden, so da&szlig; die
         Benutzung einer Braille-Zeile erleichtert wird. An gleicher
-        Stelle kann eine zus&auml;tzliche Blindenunterst&uuml;tzung
-        aktiviert werden. Dies bewirkt, da&szlig; bei der Anzeige von
-        Fenstern der Bildschirmhintergrund ausgeblendet wird.</para>
+        Stelle kann die Ausblendung des Bildschirmhintergrunds bei der
+        Anzeige von Fenstern aktiviert werden.</para>
 
       <para>Der Schalter <guibutton>optisches Tonsignal</guibutton>
         unter <menuchoice><guimenu>Config</guimenu>
         <guisubmenu>Anzeige</guisubmenu>
-        <guisubmenu>Diverses</guisubmenu></menuchoice> erg&auml;nzt
+        <guisubmenu>Hilfen</guisubmenu></menuchoice> erg&auml;nzt
         alle akkustischen Fehlersignale um ein kurzes Aufblinken des
         Bildschirmrahmens.</para>
 
@@ -1085,7 +1095,8 @@
               <entry>QWK</entry>
 
               <entry>verwendet von Boxen mit QWK-Schnittstelle,
-                insbesondere im FidoNet</entry>
+                insbesondere im <ulink
+                url="http://www.fidonet.org/">FidoNet</ulink></entry>
 
             </row>
 
@@ -1115,8 +1126,9 @@
         dienen hier nur der besseren Lesbarkeit und fallen bei einer
         real existierenden Adresse weg. Nun zu den Adressen in
         einzelnen Netzen. Sei USERNAME ein Benutzername, BOX eine
-        Netzbox und POINT ein Pointname (im Usenet als 'site'
-        bezeichnet), dann erh&auml;lt man folgende Adressen:</para>
+        Netzbox und POINT ein Pointname (im Usenet als
+        <emphasis>site</emphasis> bezeichnet), dann erh&auml;lt man
+        folgende Adressen:</para>
 
       <table>
         <title>Adressierung in den Netzen</title>
@@ -1186,7 +1198,7 @@
         FidoNet besteht Realname-Pflicht; einen eigenen Usernamen gibt
         es dort nicht. Die Erkl&auml;rung einer Fido-Adresse
         w&uuml;rde hier zu weit f&uuml;hren; genaueres dazu finden Sie
-        in FIDO.TXT.</para>
+        in <filename>fido.txt</filename>.</para>
 
       <itemizedlist>
 
@@ -6201,7 +6213,8 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
 
               <entry>MagicNET</entry>
 
-              <entry>Es gibt kein offizielles Limit.</entry>
+              <entry>Offiziell 500 Zeilen.  Die meiste Software
+                verarbeitet aber mehr.</entry>
 
             </row>
 
@@ -10322,10 +10335,13 @@ Wochentage:   Sa
         <guimenuitem>Diverses</guimenuitem></menuchoice> das
         Login-Pa&szlig;wort angegeben sein; wahlweise ist auch die
         Angabe eines Logfiles m&ouml;glich, das nach dem Login
-        automatisch ge&ouml;ffnet wird. Bei
+        automatisch ge&ouml;ffnet wird. Die Einstellungen f&uuml;r
         <menuchoice><guimenu>XPoint</guimenu>
-        <guimenuitem>Terminal</guimenuitem></menuchoice> werden die
-        Einstellungen der Stammbox (Baudrate usw.) verwendet.</para>
+        <guimenuitem>Terminal</guimenuitem></menuchoice> k&ouml;nnen
+        Sie in <menuchoice><guimenu>Config</guimenu>
+        <guisubmenu>Optionen</guisubmenu>
+        <guimenuitem>Terminal</guimenuitem></menuchoice>
+        vornehmen.</para>
 
       <para><command>CrossTerm</command> kann und soll keine
         ausgewachsenen Terminalprogramme wie
@@ -11663,19 +11679,22 @@ Wochentage:   Sa
               <entry>FidoNet</entry>
 
               <entry><ulink
-                url="ftp://ftp.ftsc.org/FTS/FTS-0001.016">FTS-0001</ulink>,
-                <ulink
-                url="ftp://ftp.ftsc.org/FTS/FTS-0004.001">FTS-0004</ulink>,
-                <ulink
-                url="ftp://ftp.ftsc.org/FTS/FTS-0009.001">FTS-0009</ulink>,
-                <ulink
-                url="ftp://ftp.ftsc.org/FRL/FSC-0039.001">FSC-0039</ulink>,
-                <ulink
-                url="ftp://ftp.ftsc.org/FRL/FSC-0046.005">FSC-0046</ulink>,
-                <ulink
+                url="ftp://ftp.ftsc.org/FTS/FTS-0001.016">FTS-0001</ulink>
+                (Nachrichtenformat), <ulink
+                url="ftp://ftp.ftsc.org/FTS/FTS-0004.001">FTS-0004</ulink>
+                (Echomail), <ulink
+                url="ftp://ftp.ftsc.org/FTS/FTS-0009.001">FTS-0009</ulink>
+                (Message- und Reply-IDs), <ulink
+                url="ftp://ftp.ftsc.org/FRL/FSC-0039.001">FSC-0039</ulink>
+                (erw. Nachrichtenformat), <ulink
+                url="ftp://ftp.ftsc.org/FRL/FSC-0046.005">FSC-0046</ulink>
+                (^aPID-Zeile), <ulink
                 url="ftp://ftp.ftsc.org/FRL/FSC-0053.002">FSC-0053</ulink>
-                und <ulink
-                url="ftp://ftp.ftsc.org/FRL/FSC-0054.004">FSC-0054</ulink></entry>
+                (^aFLAGS-Zeile), <ulink
+                url="ftp://ftp.ftsc.org/FRL/FSC-0054.004">FSC-0054</ulink>
+                (^aCHARSET-Zeile) und <ulink
+                url="ftp://ftp.ftsc.org/FRL/FSC-0057.003">FSC-0057</ulink>
+                (Areafix-Befehle)</entry>
 
             </row>
 
@@ -19436,14 +19455,6 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry><filename>freeze.exe</filename></entry>
-
-            <entry>Packer / Entpacker (veraltet)</entry>
-
-          </row>
-
-          <row>
-
             <entry><filename>gzip.exe</filename></entry>
 
             <entry>Packer / Entpacker</entry>
@@ -19452,9 +19463,25 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
+            <entry><filename>freeze.exe</filename></entry>
+
+            <entry>Packer / Entpacker (veraltet)</entry>
+
+          </row>
+
+          <row>
+
             <entry><filename>tar.exe</filename></entry>
 
             <entry>Archivierprogramm</entry>
+
+          </row>
+
+          <row>
+
+            <entry><filename>uucp-fl1.exe</filename></entry>
+
+            <entry>Dateilistenkonvertierer f&uuml;r UUCP</entry>
 
           </row>
 
@@ -19808,8 +19835,8 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
         <guimenuitem>Puffer</guimenuitem></menuchoice> eingelesen
         werden. N&auml;heres &uuml;ber den Aufbau der Pufferdateien
         finden Sie in <link linkend="ka070100">Kapitel 7.1</link>. Das
-        Konvertieren von Fido-Paketen ist in FIDO.TXT
-        beschrieben</para>
+        Konvertieren von Fido-Paketen ist in
+        <filename>fido.txt</filename> beschrieben</para>
 
       <para>(Seven = Seven-Netz, Magic = MagicNET, Pro = ProNet, Z =
         ZConnect, Maus = MausTausch, Quick = QuickMail, GS =
