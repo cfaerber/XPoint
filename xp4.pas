@@ -2107,6 +2107,46 @@ begin      { --- select --- }
             end;
           end;
 
+        if (t=mauswheelup) and (disprec[gl]<>0) then
+        begin
+          mwrt(40,1,LeftStr(Format('UP:   p=%d komofs=%d',[p,komofs])+dup(40,' '),40));
+          GoPos(1);
+          for i:=1 to 3 do
+            if not Back then
+            begin
+              GoStart;
+              break;
+            end else
+            begin
+              scrolldown(false);
+              write_disp_line(1,0,false);
+              dec(komofs);
+            end;
+          GoPos(p);
+          for i:=1 to gl do
+            showline(i,p);
+        end;
+
+        if (t=mauswheeldn) and (disprec[gl]<>0) then
+        begin
+          mwrt(40,1,LeftStr(Format('DOWN: p=%d komofs=%d',[p,komofs])+dup(40,' '),40));
+          GoPos(gl);
+          for i:=1 to 3 do
+            if not Forth then
+            begin
+              GoEnd;
+              break;
+            end else
+            begin
+              scrollup(false);
+              write_disp_line(gl,0,false);
+              inc(komofs);
+            end;
+          GoPos(p);
+          for i:=1 to gl do
+            showline(i,p);
+        end;
+
         if t=keyhome then begin
           gostart; p:=1;
           end;
@@ -2243,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.108  2001/09/18 20:30:15  cl
+  - mouse wheel support in 'brett'/message/user screens
+
   Revision 1.107  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
