@@ -128,6 +128,9 @@
     {$R-}                 { Range Check (must be off!) }
     {$Y+}                 { Browser Informations }
   {$ENDIF }
+  {$IFDEF Delphi }
+    {$O-}
+  {$ENDIF }
 {$ELSE }
   {$IFDEF FPC }
     {$IFNDEF Linux }
@@ -207,6 +210,9 @@
 
 {
   $Log$
+  Revision 1.69  2001/08/08 20:08:57  mk
+  - Debug-Define for Delphi
+
   Revision 1.68  2001/07/31 16:48:48  mk
   - disabled optimization for delphi
 
