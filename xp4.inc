@@ -472,7 +472,7 @@ begin
      36 : case m1 of           { Export }
             1 : ExportUB(true);
             2 : ExportUB(false);
-            3 : MsgAll(7,aktdispmode,rdmode);
+            3 : MsgAll(8,aktdispmode,rdmode); // Export/Brettinhalt
             4 : ScreenShot;
           end;
 
@@ -810,6 +810,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47  2003/03/28 23:34:57  mk
+  - fixed Bug #683675: x/e/t löscht Brettinhalt
+
   Revision 1.46  2003/03/28 23:22:20  mk
   - changed numeric consts for Weiterleit() to enum TWeiterleit
 
