@@ -1792,6 +1792,18 @@ var p,i   : integer; { byte -> integer }
     GetMsgid:=s0;
   end;
 
+  function GetControl:string;
+  begin
+    s0 := Trim(s0);
+    RFCRemoveComment(s0);
+    if (ustr(copy (s0,1,7)) = ustr ('cancel ')) and (length(s0) > 7) then
+    begin
+      if s0[8] = '<' then delete (s0,8,1);
+      if s0[length(s0)] = '>' then delete (s0,length(s0),1);
+    end;
+    GetControl := s0;
+  end;
+
   procedure GetRef(s0:string);
   var p : integer;
   begin
@@ -2008,7 +2020,7 @@ begin
         'c': if zz='cc'           then GetKOPs else
              if zz='content-type' then getmime(GetContentType) else
              if zz='content-transfer-encoding' then getmime(GetCTencoding) else
-             if zz='control'      then control:=GetMsgid
+             if zz='control'      then control:=GetControl
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
@@ -3387,6 +3399,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.72  2002/04/13 12:43:00  sv
+  - Spitze Klammern wurden bei eingehenden Cancels nicht korrekt entfernt
+
   Revision 1.35.2.71  2002/04/09 21:48:04  my
   MY:- Typo im Commit-Text entfernt.
 
