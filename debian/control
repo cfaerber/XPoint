@@ -1,0 +1,20 @@
+Source: openxp
+Section: unofficial
+Priority: extra
+Maintainer: Claus Färber <cl@openxp.de>
+Standards-Version: 3.2.1
+
+Package: openxp
+Architecture: i386
+Depends: ${shlibs:Depends}
+Description: Text-based mail and newsreader, also supports Fido, ZC.
+ OpenXP is a text-based messaging user agent. Features include:
+ * POP3, SMTP and NNTP support
+ * UUCP support (internal UUCICO, dialup or TCP/IP)
+ * FidoNet support (including BinkP, dialup or TCP/IP)
+ * MausNet support (currently defunct)
+ * ZConnect support (dialup or TCP/IP)
+ * Threading across multiple mail accounts and newsgroups
+ * MIME support.
+ * PGP/GnuPG support, including PGP/MIME
+ OpenXP is a descendent from CrossPoint (XP) by Peter Mandrella.

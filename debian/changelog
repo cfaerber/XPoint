@@ -1,0 +1,9 @@
+openxp (3.9.3-20020810) unstable; urgency=low
+
+  * Initial release.
+
+ -- Claus Färber <cl@openxp.de>  Sat, 10 Aug 2002 18:39:46 +0200
+
+Local variables:
+mode: debian-changelog
+End:
