@@ -2163,10 +2163,11 @@ begin
     brk:=false; repall:=false;
     count:=0;
     repeat
-      sofs:=min(workpos+1,ActAbs^.size-dl^[scy].offset);
+      sofs:=min(workpos+1,ActAbs^.size) {-dl^[scy].offset)};
       ap:=ActAbs;
       repeat
         spos:=SeekStr(ap^.cont[sofs],ap^.size-sofs,stxt,igcase);
+      {   hinweis(strs(spos)+' / '+strs(sofs)+' / '+strs(ap^.size-sofs)); }
         if spos=-1 then begin
           ap:=ap^.next;
           sofs:=0;
@@ -2179,6 +2180,14 @@ begin
         pos.absatz:=ap;
         pos.offset:=spos+sofs;
         GotoPos(pos,1);
+
+        if not repall then begin
+          setblockmark(1);
+          Moveworkpos(workpos+length(stxt),ActAbs);
+          setblockmark(2);
+          Gotopos(pos,1);
+          end;   
+
         if ersetzen then with language^ do begin
           if aufbau then Display;
           if repall then begin
@@ -2418,6 +2427,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.17  2001/08/23 22:08:54  my
+  JG:- Search in Editor now *marks* the found term
+  JG:- If the search term was found in the second or any subsequent line
+       of a paragraph, the search was stuck at this place.
+
   Revision 1.19.2.16  2001/08/11 22:43:50  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
