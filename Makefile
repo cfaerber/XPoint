@@ -402,13 +402,12 @@ BIN = maggi ndiff pmconv uucp-fl1 uucico uuz xp xp-fm xpme yup2pkt \
 	zfido zpr
 endif
 COMPBIN = $(BIN) docform ihs rc
-
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug eddef editor encoder exxec feiertag fileio gpltools \
 	help inout ipaddr ipcclass keys lister log maske maus2 modem \
 	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
 	osdepend printerx regexpr resource stack stringtools timer \
-	typeform uart unicode utftools win2 winxp xp0 xp1 xp10 \
+	typeform uart unicode utftools viewer win2 winxp xp0 xp1 xp10 \
 	xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db xp2f xp3 xp3ex \
 	xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 xp6l xp6o xp7 \
 	xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti xp_pgp xp_uue \
@@ -416,7 +415,6 @@ UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	xpf2 xpfido xpfidonl xpftnadr xpglobal xpimpexp xpipc xpkeys \
 	xplinux xpmaus xpmime xpnntp xpnodes xpnt xpos2 xpreg xpstat \
 	xpterm xpuu xpview xpwin32 xpx zcrfc zftools zmodem
-
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -650,7 +648,7 @@ yup2pkt$(EXEEXT): yup2pkt.pas dbase$(UNITEXT) fileio$(UNITEXT) \
 	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-zfido$(EXEEXT): zfido.pas xpdefine.inc xpglobal$(UNITEXT)
+zfido$(EXEEXT): zfido.pas xpdefine.inc xpglobal$(UNITEXT) \
 	zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -933,7 +931,8 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 modem$(UNITEXT): modem.pas debug$(UNITEXT) objcom-objcom \
-	timer$(UNITEXT) typeform$(UNITEXT) xpcurses xpdefine.inc
+	timer$(UNITEXT) typeform$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 else
@@ -1064,80 +1063,6 @@ utftools$(UNITEXT): utftools.pas charsets$(SEP)8859_1.inc \
 viewer$(UNITEXT): viewer.pas database$(UNITEXT) typeform$(UNITEXT) \
 	xpdefine.inc xp0$(UNITEXT) xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
-
-ifeq ($(OS),dos32)
-
-zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
-	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
-	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
-	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
-	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
-	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
-	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
-	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
-	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
-	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
-	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
-	xpdatum$(UNITEXT) xpdefine.inc xpdos32$(UNITEXT) \
-	xpglobal$(UNITEXT) xpheader.inc xpmakehd.inc
-	$(PC) $(PFLAGS) $<
-
-endif
-ifneq (,$(findstring $(OS),freebsd linux))
-
-zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
-	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
-	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
-	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
-	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
-	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
-	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
-	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
-	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
-	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
-	unicode$(UNITEXT) utftools$(UNITEXT) xpcurses$(UNITEXT) \
-	xpdatum$(UNITEXT) xpdefine.inc xpfiles.inc \
-	xpglobal$(UNITEXT) xpheader.inc xplinux$(UNITEXT) \
-	xpmakehd.inc
-	$(PC) $(PFLAGS) $<
-
-endif
-ifeq ($(OS),os2)
-
-zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
-	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
-	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
-	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
-	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
-	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
-	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
-	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
-	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
-	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
-	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
-	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xpheader.inc xpmakehd.inc xpos2$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-endif
-ifeq ($(OS),win32)
-
-zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
-	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
-	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
-	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
-	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
-	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
-	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
-	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
-	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
-	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
-	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
-	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xpheader.inc xpmakehd.inc xpwin32$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
@@ -2507,6 +2432,80 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
+ifeq ($(OS),dos32)
+
+zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
+	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
+	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
+	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
+	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
+	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
+	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
+	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
+	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
+	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
+	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
+	xpdatum$(UNITEXT) xpdefine.inc xpdos32$(UNITEXT) \
+	xpglobal$(UNITEXT) xpheader.inc xpmakehd.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifneq (,$(findstring $(OS),freebsd linux))
+
+zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
+	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
+	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
+	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
+	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
+	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
+	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
+	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
+	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
+	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
+	unicode$(UNITEXT) utftools$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdefine.inc xpfiles.inc \
+	xpglobal$(UNITEXT) xpheader.inc xplinux$(UNITEXT) \
+	xpmakehd.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),os2)
+
+zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
+	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
+	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
+	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
+	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
+	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
+	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
+	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
+	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
+	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
+	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
+	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xpheader.inc xpmakehd.inc xpos2$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),win32)
+
+zcrfc$(UNITEXT): zcrfc.pas charsets$(SEP)8859_10.inc \
+	charsets$(SEP)8859_13.inc charsets$(SEP)8859_14.inc \
+	charsets$(SEP)8859_15.inc charsets$(SEP)8859_2.inc \
+	charsets$(SEP)8859_3.inc charsets$(SEP)8859_4.inc \
+	charsets$(SEP)8859_5.inc charsets$(SEP)8859_6.inc \
+	charsets$(SEP)8859_7.inc charsets$(SEP)8859_8.inc \
+	charsets$(SEP)8859_9.inc charsets$(SEP)cp1251.inc \
+	charsets$(SEP)cp1252.inc charsets$(SEP)cp1255.inc \
+	charsets$(SEP)cp437.inc charsets$(SEP)cp866.inc \
+	fileio$(UNITEXT) montage$(UNITEXT) typeform$(UNITEXT) \
+	unicode$(UNITEXT) utftools$(UNITEXT) xpfiles.inc \
+	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xpheader.inc xpmakehd.inc xpwin32$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+
 ifneq (,$(findstring $(OS),freebsd linux))
 
 zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
@@ -2772,6 +2771,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.49  2000/11/20 20:45:05  fe
+# fixed
+#
 # Revision 1.48  2000/11/20 19:09:53  fe
 # Dependencies fixed.
 #
