@@ -1240,7 +1240,7 @@ var x,y  : byte;
     maps : string;
     dom  : string;
     fqdom: string;  {16.01.00 HS}
-    email: string[80];
+    email: string;
     ntyp : string;
     nt   : byte;
     i, b : integer;
@@ -1491,9 +1491,8 @@ end.
 
 {
   $Log$
-  Revision 1.4  2001/07/22 21:05:18  mk
-  - fixed double RFC/UUCP in Edit/Boxen/Neu
-  - renamed ntnr to NetTypes and removed eNetztypen
+  Revision 1.5  2001/07/22 21:06:22  mk
+  - fixed crash in get_first_box: email is ansistring, not shortstring
 
   Revision 1.3  2001/07/21 16:02:11  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
