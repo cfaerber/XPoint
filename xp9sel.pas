@@ -611,24 +611,23 @@ begin
   else begin
     dbOpen(d,BoxenFile,1);
     SeekLeftBox(d,s);
-    if dbFound then begin
+    if dbFound then
+    begin
       dbRead(d,'boxname',s);
       nt:=dbReadInt(d,'netztyp');
-      end;
-    dbClose(d);
-    if not dbFound then begin
-      rfehler(2702);    { 'unbekannte Serverbox - w„hlen mit <F2>' }
-      testvertreterbox:=false;
-      end
-    else begin
       if fieldpos=amvfield then    { AM-Vertreterbox }
         ok:=(DomainNt=nt)
       else                         { PM-Vertreterbox }
         ok:=ntAdrCompatible(DomainNt,nt);
       if not ok then rfehler(2713);
       testvertreterbox:=ok;
-      end;
+    end else
+    begin
+      rfehler(2702);    { 'unbekannte Serverbox - w„hlen mit <F2>' }
+      testvertreterbox:=false;
     end;
+    dbClose(d);
+  end;
 end;
 
 function testsysname(var s:string):boolean;
@@ -904,6 +903,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.21  2001/09/06 18:44:52  mk
+  - optimized testvertreterbox
+
   Revision 1.1.2.20  2001/08/12 12:03:34  mk
   - optimized last checkin a bit more ;)
 
