@@ -591,21 +591,26 @@ var lp      : word;
   var i : integer;
 
     procedure wrp(n:integer);
-    var s1,s2 : string[120];
+    var s1,s2 : string;
         p1,p2 : byte;
     begin
       s1:=z^[n]^; s2:='';
-      while pos('<<',s1)>0 do begin
+      while pos('<<',s1)>0 do
+      begin
         p1:=pos('<<',s1);
         delete(s1,p1,2);
         p2:=pos('>>',s1);
-        if p2=0 then p2:=length(s1)+1
-        else delete(s2,p2,2);
+        if p2=0 then
+          p2:=length(s1)+1
+        else
+          delete(s1,p2,2);
         if p2<=p1 then exit;  { zur Sicherheit ... }
-        s2:=forms(s1,p1-1)+copy(s1,p1,p2-p1);
-        end;
-      if s2='' then writeln(lst,s1)
-      else writeln(lst,s1,#13,s2);
+        s2 := forms(s2,p1-1)+copy(s1,p1,p2-p1);
+      end;
+      if s2='' then
+        writeln(lst,s1)
+      else
+        writeln(lst,s1,#13,s2);
     end;
 
   begin
@@ -771,6 +776,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/10/09 22:12:12  mk
+  - Hilfe drucken stellt jetzt Hervorhebungen richtig dar (Bug #116196)
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
