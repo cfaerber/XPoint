@@ -796,14 +796,11 @@ begin
     WriteBox(dname,boxpar);
   end;
   if deffidobox<>'' then begin
-    dbSeek(d,boiName,tmpS);
-    deffidobox:= tmpS;
+    dbSeek(d,boiName,deffidobox);
     if not dbFound then
       deffidobox:=''
-    else begin
-      deffidobox:= tmpS;
+    else
       HighlightName:=UpperCase(dbReadStr(d,'username'));
-    end;
     if deffidobox<>'' then SetDefZoneNet;
   end;
   dbClose(d);
@@ -1097,6 +1094,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.127  2001/10/11 11:07:39  ma
+  - fixed corrupted default fido server
+
   Revision 1.126  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option
