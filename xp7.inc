@@ -68,10 +68,10 @@ var uucp : boolean;
       s:=PPPClient;
       s1:=PPPClientPath;
       fn:=trim(s);
-      if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
-      if Pos('start /wai ', lstr(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
-      if Pos('start /wa ', lstr(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
-      if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+      if Pos('start /wait ', lstr(fn)) = 1 then fn := mid(fn,13);
+      if Pos('start /wai ', lstr(fn)) = 1 then fn := mid(fn,12);
+      if Pos('start /wa ', lstr(fn)) = 1 then fn := mid(fn,11);
+      if Pos('start /w ', lstr(fn)) = 1 then fn := mid(fn,10);
       if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
       if (fn<>'') then
       begin
@@ -1541,6 +1541,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.17  2002/03/29 22:47:03  my
+  MY:- Geringfgige Code-Optimierung (copy => mid).
+
   Revision 1.24.2.16  2001/12/20 15:07:18  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
