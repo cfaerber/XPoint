@@ -1413,11 +1413,12 @@ begin
   if uvs_active then exit;
   crashs:=false;
   findfirst('*.pp',dos.Archive,sr);
-  if doserror<>0 then begin
+  if doserror<>0 then
+  begin
+    FindClose(sr);
     findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
   end;
-  Findclose(sr);
   markanz:=0;
   moment;
   new(hdp);
@@ -1489,7 +1490,9 @@ begin
       end;
     close(f);
     findnext(sr);
-    if (doserror<>0) and not crashs then begin
+    if (doserror<>0) and not crashs then
+    begin
+      FindClose(sr);
       findfirst('*.cp',dos.Archive,sr);
       crashs:=true;
     end;
@@ -2427,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.16  2000/12/15 21:23:46  mk
+  - Findclose-Fix
+
   Revision 1.47.2.15  2000/12/12 14:46:05  mk
   - Sucheoption 'l' von JG wieder entfernt
 

@@ -722,16 +722,17 @@ var sr   : searchrec;
     arc  : shortint;
 begin
   findfirst(XferDir+'*.*',ffAnyFile,sr);
-  if doserror=0 then begin
+  if doserror=0 then
+  begin
     while doserror=0 do begin
       last:=sr.name;
       findnext(sr);
     end;
-    FindClose(sr);
     arc:=ArcType(XferDir+last);
     if (arc>0) and not ArchiveOk(XferDir+last) then
       MoveToBad(XferDir+last);
-    end;
+  end;
+  FindClose(sr);
 end;
 
 
@@ -773,6 +774,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.10  2000/12/15 21:25:04  mk
+  - Findclose-Fix
+
   Revision 1.13.2.9  2000/12/12 14:03:56  mk
   - weitere lfn-fixes
 
