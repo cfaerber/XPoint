@@ -47,7 +47,9 @@
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+ifeq ($(OS),linux)
 SHELL = /bin/sh
+endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
@@ -86,9 +88,9 @@ ifeq ($(COMPILER),fpc)
 PC = ppc386
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -Ct -dDEBUG -Sg -pg -Fu..
+PFLAGS += -Ct -Cr- -dDEBUG -Sg -pg -Fu..
 else
-PFLAGS += -CX -O2 -Sg -Fu..
+PFLAGS += -Cr- -O2 -Sg -Fu..
 endif
 
 ifeq ($(OS),dos32)
@@ -134,7 +136,7 @@ endif
 PF_dos32 = -TGO32V2
 PF_os2 = -TOS2
 PF_win = -TWIN32
-PF_linux = -TLINUX
+PF_linux = -TLINUX -dUnixDevelop
 PF_386 = -Op1
 PF_486 = -Op1
 PF_586 = -Op2
@@ -231,6 +233,11 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.10  2000/10/19 18:16:09  fe
+# Fuer FPC SmartLinking und RangeChecking ausgestellt.
+# Anpassungen der FPC-Linux-Aufrufparameter.
+# SHELL-Variable wird nur noch bei Linux gesetzt.  (wegen Cygwin make)
+#
 # Revision 1.9  2000/10/16 11:54:20  fe
 # serial.pas ergaenzt.
 #

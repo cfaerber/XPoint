@@ -99,25 +99,25 @@
 
 # Verzeichnis, in dem die DTD von DocBook 4.1 (SGML) liegt.
 # <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #dbdir = 
 
 # Verzeichnis, in dem die ISO 8879 Entities liegen.
 # <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #entdir = 
 
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #jadedir = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
 # <http://nwalsh.com/docbook/dsssl/db157.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #moddir = 
 
@@ -144,7 +144,9 @@
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+ifeq ($(OS),linux)
 SHELL = /bin/sh
+endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
@@ -239,9 +241,9 @@ ifeq ($(COMPILER),fpc)
 PC = ppc386
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -Ct -dDEBUG -Sg -pg -FuObjCOM
+PFLAGS += -Ct -Cr- -dDEBUG -Sg -pg -FuObjCOM
 else
-PFLAGS += -CX -O2 -Sg -FuObjCOM
+PFLAGS += -Cr- -O2 -Sg -FuObjCOM
 endif
 
 ifeq ($(OS),dos32)
@@ -287,7 +289,7 @@ endif
 PF_dos32 = -TGO32V2
 PF_os2 = -TOS2
 PF_win32 = -TWIN32
-PF_linux = -TLINUX
+PF_linux = -TLINUX -dUnixDevelop
 PF_386 = -Op1
 PF_486 = -Op1
 PF_586 = -Op2
@@ -2495,6 +2497,11 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.24  2000/10/19 18:15:35  fe
+# Fuer FPC SmartLinking und RangeChecking ausgestellt.
+# Anpassungen der FPC-Linux-Aufrufparameter.
+# SHELL-Variable wird nur noch bei Linux gesetzt.  (wegen Cygwin make)
+#
 # Revision 1.23  2000/10/17 15:01:18  fe
 # dbform und readme.lnx heissen jetzt dbform.txt und linux.txt.
 #
