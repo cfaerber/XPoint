@@ -23,7 +23,7 @@
 {.$DEFINE NOASM }
 
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
-{.$DEFINE Beta }
+{$DEFINE Beta }
 
 { Wenn dieser Schalter nicht gesetzt ist, ben”tigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufw„rts lauff„hig }
@@ -83,6 +83,7 @@
   {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$MODE TP }
   {$ASMMODE Intel }
+  {$GOTO ON }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -111,6 +112,9 @@
 
 {
   $Log$
+  Revision 1.12  2000/03/07 00:48:22  mk
+  in FPC Goto On und Beta-Warnung eingeschaltet
+
   Revision 1.11  2000/03/04 11:53:20  mk
   Version auf 3.21.022 beta geaendert und Debug eingeschaltet
 
