@@ -469,28 +469,28 @@ var t,lastt: taste;
     then forth:=_back else forth:=_forth;
   end; 
 
-
+(* { Do_XPhilite auskommentiert  02/2002  my }
   procedure Do_XPhilite(wait:boolean);
-  const xtxt : string[10] = 'CrossPoint';
   begin
-    if XPdisplayed and (xtxt=xp_xp) and (ParWintime=0) and
-       (XPhilite<=length(xtxt)) then begin
+    if XPdisplayed { and (ParWintime=0) } and
+       (XPhilite<=length(xp_display)) then begin
       repeat
         if ticker<>xphltick then begin
           attrtxt(col.colkeys);
           savecursor;
-          mwrt(71,screenlines,xtxt);
+          mwrt(71,screenlines,xp_display);
           inc(XPhilite);
-          if XPhilite<=length(xtxt) then begin
+          if XPhilite<=length(xp_display) then begin
             attrtxt(col.colkeys xor 8);
-            mwrt(70+XPhilite,screenlines,xtxt[XPhilite]);
+            mwrt((screenwidth-length(xp_display))+XPhilite,screenlines,xp_display[XPhilite]);
             end;
           restcursor;
           xphltick:=ticker;
           end;
-      until (not wait) or keypressed or (XPhilite>length(xtxt));
+      until (not wait) or keypressed or (XPhilite>length(xp_display));
       end;
   end;
+{ /Do_XPhilite auskommentiert  02/2002  my } *)
 
 
   {$i xp4d.inc}     { Anzeige-Routinen }
@@ -1648,7 +1648,7 @@ begin      { --- select --- }
           gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
         else
           gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
-        Do_XPhilite(true);
+      { Do_XPhilite(true); }
         get(t,curon);
         TempOpen;
         if (t<=' ') and (t<>keybs) then
@@ -1670,7 +1670,7 @@ begin      { --- select --- }
               get(t,curon);
               end
             else begin
-              Do_XPhilite(true);
+            { Do_XPhilite(true); }
               get(t,curoff);
               end;
             if (t=lastt) and nosuccess and msgbeep then
@@ -1792,6 +1792,7 @@ begin      { --- select --- }
                    if c=k0_cW then brettweiter:=not brettweiter;      { ^W }
                    if ParDebug and (c=k0_cF) then begin               { ^F }
                      GoP; brettinfo; end;
+                   if c='H' then XPhilite:=0;
                    testsuche(t);
                    end;
                end;
@@ -1960,11 +1961,11 @@ begin      { --- select --- }
                        end;
                      end;
                    _brief_senden(t[1]);
-                   if c=k2_cW  then switch_weiterschalt;            { ^W }
+                   if c=k2_cW  then NachWeiter:=not NachWeiter;     { ^W }
                    if t=k2_cD then SwitchDatum;                     { ^S }
                    if t=keyalta then begin
                      GoP;
-                     weiterleit(5,false);  { archivieren }
+                     weiterleit(5,false);  { archivieren }          { @A }
                      setall;
                      end;
                    if (c=k2_R) or (deutsch and (c='R')) then begin 
@@ -2239,6 +2240,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.57  2002/03/08 23:01:53  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
+  MY:- öberflÅssige Prozedur 'Do_XPHilite' entfernt, 400 Bytes gespart. :)
+
+  JG+MY:- Fix Nachrichtenweiterschalter: Nach Verlassen des MIME-
+          Auswahldialogs mit <Esc> konnte es passieren, da· nur noch genau
+          einmal (und dann nie wieder) zur nÑchsten Nachricht gesprungen
+          wurde.
+
   Revision 1.26.2.56  2001/12/31 13:24:31  my
   JG:- Fix: DB-Crash bei leerer Nachrichten-Datenbank und Nachricht an
        User behoben
@@ -2300,7 +2313,7 @@ end.
           angegeben werden, die angesprungen werden soll. Mit <Ctrl-#>
           wird die nÑchste Adre·buchgruppe angesprungen.
 
-  JG+MY:- Adre·buch: <Alt-A> schaltet Zugang zu Adreﬂbuchgruppe 0 frei.
+  JG+MY:- Adre·buch: <Alt-A> schaltet Zugang zu Adre·buchgruppe 0 frei.
 
   JG+MY:- Bei Maus-Scrolling in Brett-/User-/Nachrichtenfenster
           "Autobremse" fÅr schnellere PCs gesetzt.
@@ -2308,7 +2321,7 @@ end.
   JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefa·t zu Lesemodus
           "Datum/Zeit" (kombinierte Datums-/Zeiteingabe). Steht der
           Markierbalken auf einer Nachricht, kann direkt das Eingangsdatum
-          aus der Nachricht ¸bernommen werden.
+          aus der Nachricht Åbernommen werden.
 
   JG+MY:- <Ctrl-D> (Drucken) in Nachrichten-öbersicht war zwar
           dokumentiert, funktionierte aber nicht. Drucken mit "R" geht
