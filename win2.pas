@@ -80,7 +80,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  Classes, FileIO;
+  Classes, FileIO, xp1;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -694,16 +694,14 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (not kb_ctrl) and (f[CposY+add][1]='[') then
-        begin
-          t:=chr(ord(f[CposY+add][2])-64);
-          chgdrive:=xdir and (t>=^A) and (t<=^Z) and
-            (cpos(chr(ord(t[1])+64),drives)>0)
-        end else
-        begin
-          chgdrive:=xdir and (t>=^A) and (t<=^Z) and kb_ctrl and
-                   (cpos(chr(ord(t[1])+64),drives)>0);
 
+        if (t=keycr) and (f[CPosY+add][1]='[') then
+          t:=chr(ord(f[CPosY+add][2])-64)+'+';
+        chgdrive:=false;
+        if xdir and (t[1]>=^A) and (t[1]<=^Z) and (kb_ctrl or (t<>keycr))
+        then
+          if (cpos(chr(ord(t[1])+64),drives)>0) then chgdrive:=true
+            else errsound;
           if chgdrive then begin    { Balken auf [LW:] positionieren }
             i:= 0;
             while (i<f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
@@ -715,7 +713,7 @@ begin
               disp_p;
             end;
           end;
-        end;
+        if (t=keycr) and kb_ctrl then t:='';
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
     if ((f.count>0) and (t=keycr) and (LastChar(f[CposY+add])=DirSepa)) or chgdrive then
@@ -1152,6 +1150,9 @@ end;
 
 {
   $Log$
+  Revision 1.50.2.2  2002/05/01 17:38:12  mk
+  JG:- optimized last commit
+
   Revision 1.50.2.1  2002/05/01 17:22:32  mk
   MY:- Fix: Ein Laufwerkswechsel auf Laufwerk M: mit <Ctrl-M>
        funktionierte nicht, weil XP dies als <Enter> interpretierte und
