@@ -113,7 +113,7 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+uses xp1o,xp2,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l,xms,xpovl;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
@@ -959,6 +959,7 @@ var
   ToStr: String;
   ToPos: Integer;
 begin
+  checkTimeZone(false);
   echomail:=ntEditBrettempf(netztyp) and not pm;
   fadd:=iif(echomail,2,0);
   diabox(78,15+fadd,typ,x,y);
@@ -977,7 +978,7 @@ begin
     end;
   wrt(x+3,y+6,getres2(611,12));      { 'Betreff' }
   wrt(x+3,y+8,getres2(611,13));      { 'Server'  }
-  wrt(x+3,y+10,getres2(611,14));      { 'Gr”áe'   }
+  wrt(x+3,y+10,getres2(611,14));     { 'Gr”áe'   }
   wrt(x+42,y+8,getres2(611,15));     { 'Code:'   }
   showcode;
   attrtxt(col.coldialog);
@@ -2396,6 +2397,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.43  2001/10/26 17:40:03  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.39.2.42  2001/10/22 23:04:19  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

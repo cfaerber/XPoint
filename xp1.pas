@@ -194,7 +194,7 @@ function  aFile(nr:byte):pathstr;
 
 function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
-function  ixdat(s:string):longint;              { Z-Date -> Long  }
+function  ixdat(s:string):longint;                { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
 function  ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
@@ -205,6 +205,7 @@ function  ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 function  Zdate:string;               { akt. Datum/Zeit im Z-Format }
 function  fuser(const s:string):string;              { Spaces vor/hinter '@' }
 function  aufnahme_string:string;
+function  autoTZ_string:string;
 
 function  MsgidIndex(mid:string):longint;      { case-insensitive CRC32 }
 
@@ -1918,6 +1919,11 @@ begin
   aufnahme_string:=getres2(108,minmax(useraufnahme,0,3));
 end;
 
+function autoTZ_string:string;
+begin
+  autoTZ_string:=getres2(252,minmax(AutoTimeZone,52,55));
+end;
+
 
 function IS_QPC(var betreff:string):boolean;
 begin
@@ -2278,6 +2284,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.27  2001/10/26 17:40:02  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.48.2.26  2001/10/22 23:04:17  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

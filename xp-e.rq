@@ -548,12 +548,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 17   Store unsent messages in /¯Unsent
 18   Send automatic receipts on request
 19   Automatic PM archiving
-23   Time zone
+23   Time zone~
 24   Delete X-postings in more than
 25   newsgroups
 26   Send all carbon copies as BCC
 27   in mail as well
-28   ask at Reply-To
 29   don't archive news
 30   ignore cancels/supersedes
 31   Hold own PMs
@@ -563,7 +562,17 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 42   Carbon Copies
 43   Reply-To
 44   never
-45   user defined
+50   user defined
+51   Changeover
+52   manual
+53   Date
+54   TZ Var.
+55   TZ/Date
+56   Automatic Summer/Wintertime changeover activated.
+57   Please check settings under /Config/Options/Messages
+58   and change or correct if necessary.
+59   Time zone has been changed to "%s"
+60   Environment variable "TZ" is invalid!
 #
 100  68
 101  Address options

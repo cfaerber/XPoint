@@ -9,8 +9,8 @@
 { ------------------------------------------------------------------ }
 { $Id$ }
 
-{   Cross\\//        }
-{        //\\point   }
+{   Cross \\//         }
+{         //\\ Point   }
 
 {$I XPDEFINE.INC }
 
@@ -171,7 +171,10 @@ begin
       end;
 {$ENDIF }
       if parTiming = 0 then
-        askRTA (true);     { Bei neuer Version RTA-Konfiguration abfragen }
+      begin
+        askRTA(true);     { Bei neuer Version RTA-Konfiguration abfragen }
+        setAutoTZ(true);  { autom. Sommer-/Winterzeit-Umstellung aktivieren }
+      end;
       test_defaultgruppen;
       test_systeme;
       DefaultViewer := nil;
@@ -180,6 +183,7 @@ begin
       ReadDefaultViewers;
       testtelefon(telefonnr^);
       check_date;
+      checkTimeZone(true);  { Zeitzone prÅfen und ggf. Ñndern }
       InitNodelist;
       startup:=false;
       showusername;
@@ -205,6 +209,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.23  2001/10/26 17:40:01  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.29.2.22  2001/09/18 13:50:06  my
   MY:- Bei Netcall/Alle und /n:* wird eine Semaphore NETCALL.ALL im XP-
        Verzeichnis erzeugt (und nach Abarbeitung der Netcall-Liste wieder

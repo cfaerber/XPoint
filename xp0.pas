@@ -868,7 +868,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        SendPath     : string;
        LogPath      : string;
        FilePath     : string;
-       FidoPath     : string;       { OwnPath+FidoDir }
+       FidoPath     : string;        { OwnPath+FidoDir }
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
@@ -1002,6 +1002,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ISDN_EAZ     : char;          { eigene EAZ, Default='0' }
        ISDN_Controller:byte;         { Nummer des Controllers, Default=0 }
        ISDN_incoming, isdn_outgoing: string[30];
+       AutoTimeZone : byte;          { 52=manuell, 53=Datum, 54=TZ, 55=TZ/Datum }
        SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=RÅckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
        maxcrosspost : byte;          { Filter fÅr Massen-Crosspostings }
@@ -1210,6 +1211,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.43  2001/10/26 17:40:01  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.54.2.42  2001/10/16 18:36:01  my
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
   ------------------------------------------------------------------------

@@ -89,11 +89,7 @@ procedure IsdnConfig;
 implementation  {----------------------------------------------------}
 
 uses
-  xp1o,
-  xp2,
-  xp4o2,
-  xp2b,
-  xp9bp;
+  xp1o,xp2,xp4o2,xp2b,xp9bp,montage;
 
 const
   MaxProtocols = 2;
@@ -101,10 +97,10 @@ const
     'http://',
     'https://');
 
-var hayes     : boolean;
-    small     : boolean;
-    oldfossil : char;
-    tzfeld    : shortint;
+var hayes          : boolean;
+    small          : boolean;
+    oldfossil      : char;
+    tzfeld,tzfeld1 : shortint;
 {$IFDEF CAPI }
     isdnx,isdny : byte;   { x/y bei IsdnConfig }
 {$ENDIF }
@@ -116,6 +112,7 @@ begin
     insert('/',s,1);
   testbrett:=true;
 end;
+
 
 procedure TestQC(var s:string);
 begin
@@ -281,19 +278,21 @@ end;
 function SetTimezone(var s:string):boolean;
 begin
   setfieldenable(tzfeld,s=_jn_[2]);
+  setfieldenable(tzfeld1,s=_jn_[2]);
   settimezone:=true;
 end;
 
 procedure msgoptions;
 type str24 = string[24];
-var x,y : byte;
-    brk : boolean;
-    xid : string[7];
-    i,j : byte;
-    xnr : byte;
-    xids: array[0..3] of string[6];
-    RTAStrings :array[0..4] of str24;
-    RTAErg :str24;
+var x,y        : byte;
+    brk        : boolean;
+    xid        : string[7];
+    atz        : string[8];
+    i,j        : byte;
+    xnr        : byte;
+    xids       : array[0..3] of string[6];
+    RTAStrings : array[0..4] of str24;
+    RTAErg     : str24;
     UUCP_ZConnectUsed :boolean;
 
   function getRTAMode :str24;
@@ -331,7 +330,7 @@ var x,y : byte;
 begin
   UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] > 0;
   for i:=0 to 3 do
-    xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
+    xids[i]:=getres2(252,i);        { 'nie','PMs','AMs','immer' }
   if UUCP_ZConnectUsed then
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
@@ -342,7 +341,7 @@ begin
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
   maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   { 'Tage' }
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
-  maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
+  maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);   { 'Tage' }
 
   if UUCP_ZConnectUsed then
   begin
@@ -356,28 +355,34 @@ begin
   end;
 
   maddbool(3,7 + j,getres2(252,14),haltown); mhnr (243); { 'Eigene Nachrichten halten' }
-  maddbool(3,8 + j,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
-  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+  maddbool(3,8 + j,getres2(252,31),haltownPM);           { 'Eigene PMs halten' }
+  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);        { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
-  maddbool(3,10 + j,getres2(252,16),rehochn);        { 'Re^n verwenden' }
-  maddstring(36,8 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+  maddbool(3,10 + j,getres2(252,16),rehochn);            { 'Re^n verwenden' }
+  maddstring(34,7 + j,getres2(252,23),TimeZone,8,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1˘S+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
+  atz:=autoTZ_string;
+  maddstring(34,8 + j,getres2(252,51),atz,8,8,'');     { 'Umstellung' }
+  for i:=52 to 55 do
+    mappsel(true,getres2(252,i));  { 'manuell˘Datum˘TZ-Var.˘TZ/Datum' }
+  tzfeld1:=fieldpos;
+  if replaceetime then mdisable;
   xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
-  maddstring(36,9 + j,'## XP ## ',xid,7,7,'');
+  maddstring(34,10 + j,'## XP ##  ',xid,8,7,'');
   for i:=3 downto 0 do
-    mappsel(true,xids[i]);   { 'immer˘AMs˘PMs˘nie' }
-  maddbool(3,12 + j,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /ØUnversandt' }
-  maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
-  maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
-  maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
+    mappsel(true,xids[i]);                            { 'immer˘AMs˘PMs˘nie' }
+  maddbool(3,12 + j,getres2(252,17),SaveUVS);         { 'unversandte Nachrichten nach /ØUnversandt' }
+  maddbool(3,13 + j,getres2(252,18),EmpfBest);        { 'autom. EmpfangsbestÑtigungen versenden' }
+  maddbool(3,14 + j,getres2(252,19),AutoArchiv);      { 'automatische PM-Archivierung' }
+  maddbool(3,15 + j,getres2(252,26),DefaultNokop);    { 'ZCONNECT: NOKOP' }
+  maddbool(3,16 + j,getres2(252,29),NoArchive);       { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
 
   maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
-  maddbool(3,20 + j,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);   { 'EmpfÑngern lîschen' }
+  maddbool(3,20 + j,getres2(252,27),maildelxpost);                { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -386,6 +391,11 @@ begin
       if lstr(xid)=lstr(xids[i]) then xnr:=i;
     XP_ID_PMs:=(xnr=1) or (xnr=3) or not registriert.r2;
     XP_ID_AMs:=(xnr=2) or (xnr=3){ or not registriert.r2};
+    if ustr(atz)=ustr(getres2(252,52)) then AutoTimeZone:=52       { 'manuell'  }
+    else if ustr(atz)=ustr(getres2(252,54)) then AutoTimeZone:=54  { 'TZ-Var.'  }
+    else if ustr(atz)=ustr(getres2(252,55)) then AutoTimeZone:=55  { 'TZ/Datum' }
+    else AutoTimeZone:=53;                                         { 'Datum'    }
+    CheckTimeZone(false);
     if UUCP_ZConnectUsed then setRTAMode;
     GlobalModified;
     end;
@@ -1504,6 +1514,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.28  2001/10/26 17:40:03  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.39.2.27  2001/09/16 20:22:27  my
   JG+MY:- Neuer Men¸punkt "kombinierter Ungelesen-Modus" unter
           Config/Anzeige/Bretter, bisherige Taste "U" f¸r diese Funktion

@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 (***********************************************************)
@@ -55,9 +56,11 @@ procedure incd(var d);
 procedure decd(var d);
 function  prevd(const d:datetimest):datetimest;
 function  nextd(const d:datetimest):datetimest;
-function  sommer(const d:datetimest):boolean;   { Sommerzeit? }
+function  sommer(const d,z:datetimest):boolean;   { Sommerzeit? }
+
 
 implementation
+
 
 function schaltj(jahr:integer):boolean;
 begin
@@ -176,20 +179,33 @@ begin
 end;
 
 
-{ letzter Sonntag im M„rz - letzter Sonntag im September }
+{ Sommer = letzter Sonntag im M„rz ab 2:00 - letzter Sonntag im Oktober bis 2:59 }
 
-function sommer(const d:datetimest):boolean;
-var t,m : byte;
-    res : integer;
+function sommer(const d,z:datetimest):boolean;
+var t,m    : byte;
+    res,d1 : integer;
 begin
   val(copy(d,1,2),t,res);
   val(copy(d,4,2),m,res);
-  sommer:=((m>3) and (m<9)) or ((m=3) and (t>=21)) or ((m=9) and (t<=23));
+  d1:=dow('01'+mid(d,3));                     { 1. Tag des aktuellen Monats }
+  if d1>4 then d1:=-7+d1;
+  if ((m>3) and (m<10)) or                    { April bis September                       }
+     ((m=3) and (t>29-d1)) or                 { Letzter Sonntag im M„rz schon vorbei?     } 
+     ((m=3) and (t=29-d1) and                 { Letzter Sonntag im M„rz nach 01:59 Uhr?   }
+      (ival(copy(z,1,2)+copy(z,4,2)) > 159)) or
+     ((m=10) and (t<29-d1)) or                { Letzter Sonntag im Oktober noch nicht da? }
+     ((m=10) and (t=29-d1) and                { Letzter Sonntag im Oktober vor 03:00 Uhr? }
+      (ival(copy(z,1,2)+copy(z,4,2)) < 300))
+     then sommer:=true else sommer:=false;
 end;
 
 end.
 {
   $Log$
+  Revision 1.5.2.3  2001/10/26 17:42:14  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.5.2.2  2001/08/11 20:16:28  mk
   - added const parameters if possible, saves about 2.5kb exe
 

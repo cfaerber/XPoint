@@ -9,7 +9,8 @@
 { ------------------------------------------------------------------ }
 { $Id$ }
 
-const cfs : array[0..4] of string[5] = ('Z','Shift','Ctrl','Alt','#Z');
+const cfs  : array[0..4] of string[5] = ('Z','Shift','Ctrl','Alt','#Z');
+var autoTZ : string[8];
 
 procedure defaultcolors;
 var i : integer;
@@ -295,6 +296,74 @@ begin
     ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP];
   developer:=exist('developer');
   exclude(ntAllowed,nt_Pronet);
+end;
+
+
+procedure setAutoTZ(const XPStart:boolean);
+var x,y : byte;
+begin
+  if (XPStart) and (autoTZ='') and (not XPFirstStart) then
+  begin
+    saveconfig;
+    if parTiming=0 then
+    begin
+      msgbox(59,8,_hinweis_,x,y);
+      mwrt(x+3,y+2,getres2(252,56));  { 'Automatische Sommer-/Winterzeit-Umstellung aktiviert.' }
+      mwrt(x+3,y+3,'');
+      mwrt(x+3,y+4,getres2(252,57));  { 'Bitte Einstellung unter /Config/Optionen/Nachrichten'  }
+      mwrt(x+3,y+5,getres2(252,58));  { 'ÅberprÅfen und ggf. Ñndern.'                           }
+      errsound;
+      wait(curoff);
+      closebox;
+    end;
+  end;
+end;
+
+
+procedure checkTimeZone(const XPStart:boolean);
+var tz_old,tzone : string[7];
+    date_chg     : boolean;     { énderung aufgrund Datum oder TZ? }
+
+  procedure check_sommer;
+  begin
+    date_chg:=true;
+    if not sommer(date,time) then
+    begin
+      if timezone[1]='S' then
+        timezone:='W'+timezone[2]+strs(ival(mid(timezone,3))-1)
+    end
+    else begin
+      if timezone[1]='W' then
+        timezone:='S'+timezone[2]+strs(ival(mid(timezone,3))+1);
+    end;
+  end;
+
+begin
+  if AutoTimeZone=52 then exit;
+  tz_old:=timezone;             { alten Wert fÅr Vergleich sichern }
+  tzone:=timezone;              { tzone = RÅckgabewert von getTZ }
+  if AutoTimeZone in [54,55] then
+    if not getTZ(tzone) then
+    begin
+      if (AutoTimeZone=54) and
+       (((parTiming=0) and (not XPFirstStart)) or
+        ((parTiming<>0) and (not XPStart))) then
+        fehler(getres2(252,60))
+      else check_sommer;
+    end
+    else begin
+      timezone:=tzone;
+      date_chg:=false;
+    end
+  else check_sommer;
+  if tz_old <> timezone then
+  begin
+    saveconfig;
+    if ((parTiming=0) and (not XPFirstStart)) or
+     ((parTiming<>0) and (not XPStart)) then
+      hinweis(getreps2(252,59,timezone)
+       +' ('+iifs(date_chg,getres2(252,53),'TZ')+').');
+  end;
 end;
 
 
@@ -666,7 +735,8 @@ begin
   ListFixedhead:=false;
   MaggiVerkettung:=false;
   HeaderLines:=0;
-  timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
+  timezone:=iifs(sommer(date,time),'S+2','W+1');
+  AutoTimeZone:=53;
   AutoTIC:=true;
   shellshowpar:=false;
   shellwaitkey:=false;
@@ -731,6 +801,17 @@ begin
     1 : Uaufnahme_string:='Z-Netz';
     2 : Uaufnahme_string:='Keine';
   else  Uaufnahme_string:='PMs';
+  end;
+end;
+
+
+function AutoTimeZone_string:string;
+begin
+  case AutoTimeZone of
+    52 : AutoTimeZone_string:='manuell';
+    54 : AutoTimeZone_string:='TZ-Var.';
+    55 : AutoTimeZone_string:='TZ/Datum';
+  else  AutoTimeZone_string:='Datum';
   end;
 end;
 
@@ -912,6 +993,7 @@ begin
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
   writeln(t,'TimeZone=',timezone);
+  writeln(t,'AutoTimeZone=',AutoTimeZone_string);
   writeln(t,'SaveType=',savetype);
   writeln(t,'Maxcrosspost=',maxcrosspost);
   writeln(t,'MailDelXPost=',jnf(maildelxpost));
@@ -1358,7 +1440,7 @@ begin
   dbLog('-- Konfiguration einlesen');
 {$ENDIF }
   SetDefault;
-  aaa:=''; mheader:='';
+  aaa:=''; mheader:=''; autoTZ:='';
   assign(t,ownpath+CfgFile);
   if existf(t) then
   begin
@@ -1535,7 +1617,8 @@ begin
           gets(su,su,'Header',mheader,255) or
           gets(s, su,'HeaderCustom1',mheadercustom[1],custheadlen) or
           gets(s, su,'HeaderCustom2',mheadercustom[2],custheadlen) or
-          gets(su,su,'timezone',TimeZone,7) or
+          gets(su,su,'TimeZone',TimeZone,7) or
+          gets(s,su,'AutoTimeZone',autoTZ,8) or
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
@@ -1622,27 +1705,6 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
-(*
-    MsgFeldTausch:=UStr(MsgFeldTausch);
-    { (F)lags mÅssen immer vorne stehen }
-    i:=cpos('F',MsgFeldTausch); if (i>1) then begin
-      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
-    end;
-    { Alle Buchstaben fÅr den MsgFeldTausch vorhanden? }
-    p:=0;
-    for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
-    if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-
-    UsrFeldTausch:=UStr(UsrFeldTausch);
-    { (F)lags mÅssen immer vorne stehen }
-    i:=cpos('F',UsrFeldTausch); if (i>1) then begin
-      delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
-    end;
-    { Alle Buchstaben fÅr den UsrFeldTausch vorhanden? }
-    p:=0;
-    for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
-    if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
-*)
     GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
@@ -1661,6 +1723,10 @@ begin
     else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
     else if ustr(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=2;
+    if ustr(autoTZ)='MANUELL' then AutoTimeZone:=52
+    else if ustr(autoTZ)='TZ-VAR.' then AutoTimeZone:=54
+    else if ustr(autoTZ)='TZ/DATUM' then AutoTimeZone:=55
+    else AutoTimeZone:=53;
     scsavetime:=scrsaver;                 { Screen-Saver     }
     close(lst);                           { Drucker-Schnitte }
     DruckLPT:=min(5,max(DruckLpt,1));
@@ -1761,8 +1827,13 @@ begin
   masksetmausarrows(true);
   SetSwapfilename;
 end;
+
 {
   $Log$
+  Revision 1.62.2.28  2001/10/26 17:40:03  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.62.2.27  2001/09/16 20:23:14  my
   JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
           Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in

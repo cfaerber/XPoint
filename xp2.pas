@@ -58,6 +58,8 @@ procedure testdiskspace;
 procedure testfilehandles;
 procedure TestAutostart;
 procedure ReadDomainlist;
+procedure setAutoTZ(const XPStart:boolean);
+procedure checkTimeZone(const XPStart:boolean);
 
 implementation  {-----------------------------------------------------}
 
@@ -255,8 +257,16 @@ var i  : integer;
   Var i,j,k :  Byte;
       s2    : string[8];
       s3    : string[128];
-  begin                                      { -mailto:user@name?subject=betreff;serverbox }
-    keyboard('nd');
+  begin                 { -mailto:user@name?subject=betreff;serverbox }
+    if deutsch then
+    begin
+      keyboard('nd');
+      writeln('Deutsch');
+    end else
+    begin
+      keyboard('md');
+      writeln('Englisch');
+    end;
     i:=cposx('\',s);
     if i <= length(s) then keyboard(keyup+mid(s,i+1)+keydown);
     j:=cpos('?',s);       
@@ -1013,6 +1023,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.27  2001/10/26 17:40:02  my
+  MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
+             'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
+
   Revision 1.45.2.26  2001/10/21 14:40:41  mk
   - /nb bei /mailto
 

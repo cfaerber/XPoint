@@ -559,12 +559,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 17   unversandte Nachrichten nach /ØUnversandt
 18   autom. EmpfangsbestÑtigungen versenden
 19   automatische PM-Archivierung
-23   Zeitzone~
+23   Zeitzone ~
 24   Crosspostings mit Åber
 25   EmpfÑngern lîschen
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
-28   fragen bei Antwort-an
 29   News-Archivierung im Netz verhindern
 30   Cancel- und Ersetzt-Nachrichten ignorieren
 31   Eigene PMs halten
@@ -575,6 +574,16 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 43   Antwort-an
 44   nie
 50   benutzerdefiniert
+51   Umstellung
+52   manuell
+53   Datum
+54   TZ-Var.
+55   TZ/Datum
+56   Automatische Sommer-/Winterzeit-Umstellung aktiviert.
+57   Bitte Einstellung unter /Config/Optionen/Nachrichten
+58   ÅberprÅfen und ggf. korrigieren bzw. Ñndern.
+59   Die Zeitzone wurde auf "%s" geÑndert
+60   Umgebungsvariable "TZ" (Zeitzone) ist ungÅltig!
 #
 100  68
 101  Adre·einstellungen (ZConnect / RFC)
