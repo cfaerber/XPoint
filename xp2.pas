@@ -69,7 +69,7 @@ procedure test_defaultbox;
 procedure test_defaultgruppen;
 procedure test_systeme;
 procedure testdiskspace;
-procedure DelTmpfiles(fn:string);
+procedure DelTmpfiles(const fn:string);
 procedure TestAutostart;
 {$ifndef Debug}{$ifdef FPC}
   {$HINT Soll denn nun die Check-Date-Geschichte ganz raus, oder NTP-Variante? }
@@ -951,7 +951,7 @@ begin
       end;
 end;
 
-procedure DelTmpfiles(fn:string);
+procedure DelTmpfiles(const fn:string);
 begin
   erase_mask(fn);
 end;
@@ -1099,6 +1099,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.139  2002/03/17 09:17:53  mk
+  - added const parameter to DelTempFiles
+
   Revision 1.138  2002/02/21 13:52:31  mk
   - removed 21 hints and 28 warnings
 
