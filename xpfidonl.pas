@@ -404,7 +404,7 @@ var diffdir  : string;
       exit;
       end;
     chdir(fidodir_);
-      UDiff:=true;
+    UDiff:=true;
     log(NodeList.GetFilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
     try
       Processlist(NodeList.GetFileName(i), ufile);
@@ -413,6 +413,7 @@ var diffdir  : string;
       log(getres2(2130,4));   { dito }
       UDiff:=false;
     end;
+    chdir(ownpath);
   end;
 
   function CopyUpdateFile:boolean;    { Update kopieren }
@@ -527,6 +528,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2002/01/19 13:15:08  ma
+  - fixed fido diff bug
+
   Revision 1.42  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
