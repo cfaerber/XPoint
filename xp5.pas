@@ -571,8 +571,9 @@ var c       : char;
   procedure sdelay(n:word);
   var t:longint;
   begin
-    n:=n div system.round(screenlines/2.5);
-    n:=n div 5; { weil das innere delay wg. ticker von 10 ms auf 50 ms ge„ndert wurde }
+    n:=n div (screenlines*2);
+    { weil das innere delay wg. ticker von 10 ms auf 50 ms ge„ndert wurde }
+
     t:=ticker;
     while (n>0) and not endss do begin
       if ParWintime=1 then begin
@@ -1037,6 +1038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/03/16 19:37:07  rb
+  Sternhimmel-Screensaver-Delay etwas umgestellt
+
   Revision 1.14  2000/03/14 22:33:36  rb
   Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
 
