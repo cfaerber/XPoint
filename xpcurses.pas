@@ -88,7 +88,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 91;
+   lastESCSeq = 93;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -1544,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.10  2003/09/01 23:26:16  mk
+  - fixed last commit
+
   Revision 1.64.2.9  2003/09/01 21:15:27  mk
   - added codes for Home and End from NetBSD
 
