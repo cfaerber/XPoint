@@ -1,5 +1,11 @@
 Latest news on www.openxp.com...
 
+2001-02-26: OpenXP32/GPL things...
+The original XP sources have been made available under GPL. Our thanks
+go to everybody who made this possible, especially Peter Mandrella.
+We are currently working on getting rid of non-GPL code. As soon as
+this has been done, OpenXP32 will not have to be registered anymore.
+
 2001-02-05: New website is online!
 What's new: FAQs for the different versions of OpenXP, feature
 overview and much more...

@@ -1,5 +1,8 @@
 Die letzten News von www.openxp.de...
 
+26. Februar 2001: OpenXP32/GPL wird langsam Realität
+<a href="index.php4?file=news/20010226.html">Weiteres dazu...</a>
+
 5. Februar 2001: Die neue Website ist online!
 Was es neues gibt: FAQs zu den einzelnen OpenXP-Versionen, Featureübersicht
 und viele kleine Verbesserungen.

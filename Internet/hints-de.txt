@@ -20,9 +20,14 @@ Arbeiten abnehmen k&ouml;nnen).</li>
 </ul>
 
 Allgemeines
-<ul><li>Dateien, die man sich kurz ansehen sollte: XPDefine.inc (f&uuml;r $IFDEFs),
-Typeform (die unvermeidlichen Typumformungen, Integer to String etc.), XPGlobal
-(u.a. plattformunabh&auml;ngige Typdefinitionen), Debug.</li>
+<ul><li>Wer nicht ständig das Rad neu erfinden will, möge sich die FCL zu Gemüte führen:
+<a href="http://www.freepascal.org/cgi-bin/cvsweb/~checkout~/fpc/fcl/inc/classesh.inc">
+Klassendefinitionen</a>. Dort finden sich z.B. Stringlisten, Parser, Streams und so
+weiter. <i>Dringend</i> zu empfehlen.</li>
+<li>Dateien, die man sich in Sachen XP kurz ansehen sollte: XPDefine.inc
+(f&uuml;r $IFDEFs), Typeform (die unvermeidlichen Typumformungen, Integer to
+String etc.), XPGlobal (u.a. plattformunabh&auml;ngige Typdefinitionen), Debug.
+Wo möglich Funktionen aus der SysUtils-Unit benutzen (Dateizugriff etc.).</li>
 <li>Standardtyp f&uuml;r ganze Zahlen ist Integer. Byte, Word und DWord werden
 nur verwendet, wenn es das Programmumfeld erfordert (z.b. Records). Integer ist
 auf einer 16 Bit Platform 2 Byte, auf einer 32 Bit Platform 4 Byte groß und

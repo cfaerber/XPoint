@@ -20,7 +20,7 @@ Quote reflow
 Quote reflow
 x
 x
-x
+o
 
 Prioritäten in Mail/News
 Mail/news priorities
@@ -76,11 +76,11 @@ ReplaceOwn
 x
 x
 
-PPP-Netztyp
-PPP netcall type
+Client-Modus
+Client mode
 -
-x
-x
+o
+o
 
 32 Bit<br /><small>praktisch alle Limits entschärft</small>
 32 bit<br /><small>nearly all limits removed</small>
@@ -94,11 +94,11 @@ Screen size configurable freely<br /><small>Win32/Linux only</small>
 -
 x
 
-Integrierter NNTP/SMTP/POP3-Support<br /><small>in Arbeit</small>
-Integrated NNTP/SMTP/POP3 support<br /><small>currently in progress</small>
+Integrierter NNTP/SMTP/POP3-Support
+Integrated NNTP/SMTP/POP3 support
 -
 -
-x
+o
 
 Integriertes ZFido/UUZ
 Integrated ZFido/UUZ
@@ -110,4 +110,10 @@ Verbesserter Netcall-Support<br /><small>Netcall-over-IP/nativer Schnittstellenz
 Improved netcall support<br /><small>Netcall over IP/native serial port support</small>
 -
 -
-x
+o
+
+BinkP-Protokoll (Fido over IP)
+BinkP protocol (Fido over IP)
+-
+-
+o
