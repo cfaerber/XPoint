@@ -167,6 +167,7 @@ begin
     end;
     {$I-}
     Filename:=FileUpperCase(ExpandFilename(Filename));
+    Logfilename:=Filename;
     if Rew and (not App) then
     begin
       Assign(Logfile, Filename);
@@ -227,6 +228,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/05/02 23:36:58  ma
+  - fixed file wandering one more time ;-)
+
   Revision 1.15  2001/04/22 11:30:42  ma
   - fixed file name case
   - changed "last msg occurred" to "last msg repeated" (unix syslog style)
