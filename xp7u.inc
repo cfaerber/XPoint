@@ -63,21 +63,21 @@ end;
 
 procedure NoUUZ;
 begin
-  {window(1,1,80,25);}
+  window(1,1,80,25);
   trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
   twin;
 end;
 
 procedure NoUUCICO;
 begin
-  {window(1,1,80,25);}
+  window(1,1,80,25);
   trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
   twin;
 end;
 
 procedure PackFehler;
 begin
-  {window(1,1,80,25);}
+  window(1,1,80,25);
   trfehler(713,30);    { 'Fehler beim Packen!' }
   twin;
 end;
@@ -318,12 +318,9 @@ begin
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
       findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     dispose(f1); dispose(f2);
     clrscr;
-    {window(1,1,80,25);}
+    window(1,1,80,25);
     shell(UUZBin+' -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
@@ -331,18 +328,12 @@ begin
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     findfirst(XFerDir+'D*',ffAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
     while doserror=0 do begin
       if sr.attr and dos.Archive<>0 then
         MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     EmptySpool('D*.OUT');        { ausgehende Pakete lîschen }
     EmptySpool('X*.OUT');        { C-File mu· stehenbleiben! }
     if nDelPuffer and (errorlevel=0) and (testpuffer(dpuffer,false,dummy)>=0)
@@ -390,7 +381,7 @@ begin
   if not existBin(UUZBin) then begin
     nouuz; exit;
     end;
-  {window(1,1,80,25);}
+  window(1,1,80,25);
   if (res=uu_ok) or (res=uu_recerr) then begin
     NC^.sendbuf:=spufsize;
     NC^.sendpack:=spacksize;
@@ -458,7 +449,7 @@ begin
       twin;
       cursor(curoff);
       ZtoRFC(false,ppfile,SysopOut);
-      {window(1,1,80,25);}
+      window(1,1,80,25);
       WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
@@ -477,6 +468,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.1  2000/06/29 16:59:32  mk
+  - 32 Bit Teile entnommen, Window wieder hergestellt
+
   Revision 1.13  2000/06/20 18:20:08  hd
   - Anpassungen an Linux
 

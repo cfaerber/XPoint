@@ -107,9 +107,7 @@ begin
   readpar;
   loadresource;
   initvar;
-{$IFNDEF VP }
   testlock;
-{$ENDIF }
   TestAutostart;
     if not quit then
   begin
@@ -197,6 +195,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.2  2000/06/29 16:59:32  mk
+  - 32 Bit Teile entnommen, Window wieder hergestellt
+
   Revision 1.29.2.1  2000/06/22 17:13:46  mk
   - 32 Bit Teile entfernt
 

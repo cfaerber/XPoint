@@ -412,7 +412,7 @@ end;
 procedure showkeys(nr:integer);
 begin
   savecursor;
-  {window(1,1,80,25);}
+  window(1,1,80,25);
   xp1help.showkeys(nr);
   ttwin;
   restcursor;
@@ -1114,7 +1114,7 @@ begin
       CopyPKTs;
       if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
         EmptySysin;
-      {window(1,1,80,25);}
+      window(1,1,80,25);
       end;
     if DoDiffs(FilePath+'*.*',true)=0 then;
     Netcall_connect:=true;
@@ -1436,7 +1436,7 @@ end;
 procedure FossilTest;
 begin
   if comn[comnr].fossil and not FOSSILdetect then begin
-    {window(1,1,80,25);}
+    window(1,1,80,25);
     trfehler(732,esec);   { 'Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber' }
     twin;
     writeln;
@@ -1445,6 +1445,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.1  2000/06/29 16:59:32  mk
+  - 32 Bit Teile entnommen, Window wieder hergestellt
+
   Revision 1.24  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
