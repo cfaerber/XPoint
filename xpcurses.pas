@@ -131,6 +131,8 @@ const
       (Sequenz: ncad; ncCode: 282;      DosCode : #0#91),
       (Sequenz: ncad; ncCode: 283;      DosCode : #0#92),
       (Sequenz: ncad; ncCode: 284;      DosCode : #0#93), { F20 }
+      {Sequenz: ncad; ncCode: 338;      DoSCode : #0#132), { Ctrl-PageUp }
+      {Sequenz: ncad; ncCode: 339;      DoSCode : #0#118), { Ctrl-PageDown }
       (Sequenz: #27'a'; ncCode: 285; DosCode : #0#30), { alt/a }
       (Sequenz: #27'b'; ncCode: 286; DosCode : #0#48),
       (Sequenz: #27'c'; ncCode: 287; DosCode : #0#46),
@@ -1546,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2003/06/23 14:25:52  mk
+  - added alternate keyboard codes for Ctrl+PgDown/PgUp
+
   Revision 1.74  2003/04/12 16:58:21  mk
   - fixed last commit
 
