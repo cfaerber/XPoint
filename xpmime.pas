@@ -99,7 +99,7 @@ begin
     if exist(fn) then begin
       if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
       o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
-      end 
+      end
     else o:=true;
     if not exist(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
@@ -372,7 +372,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
-      { if eof(t) then inc(n); } 
+      { if eof(t) then inc(n); }
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -555,23 +555,26 @@ var   input,t : text;
       tmp     : pathstr;
       f       : file;
       buf     : pointer;
-      i       : longint; { MK 01/00 Integer->LongInt, wegen groáen MIME-Mails }
+      i       : longint;
       s       : string;
       softbreak: boolean;
 
   procedure QP_decode;       { s quoted-printable-decodieren }
   var p : byte;
   begin
+    if s = '' then exit;
     p:=1;
-    while p<length(s)-1 do begin
-      while (p<length(s)) and (s[p]<>'=') do
+    while p<length(s)-1 do
+    begin
+      while (p<length(s)-1) and (s[p]<>'=') do
         inc(p);
-      if p<length(s)-1 then begin
+      if p<length(s)-1 then
+      begin
         s[p]:=chr(hexval(copy(s,p+1,2)));
         delete(s,p+1,2);
-        end;
-      inc(p);
       end;
+      inc(p);
+    end;
   end;
 
   procedure DecodeBase64;    { aus UUZ.PAS }
@@ -702,6 +705,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/04/22 23:27:52  mk
+  - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
+
   Revision 1.7.2.1  2000/03/25 10:43:09  mk
   - Flagzeile kuerzen
   - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
