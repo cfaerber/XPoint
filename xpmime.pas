@@ -104,8 +104,9 @@ begin
         o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
       end else
         o:=true;
-    end;
-    if not exist(fn) or not brk then
+    end else
+      o := true; { fÅr Clipboard immer Åberschreiben }
+    if not exist(fn) or not brk or UseClip then
       ExtractMultiPart(mpdata,fn,not o);
     if UseClip then
       WriteClipfile(fn);
@@ -731,6 +732,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.10  2000/12/15 21:25:50  mk
+  - fix fuer letzen Commit
+
   Revision 1.7.2.9  2000/12/15 00:24:31  mk
   - Extract von Multipartteilen mit X in Clipboard geht jetzt
 
