@@ -7201,16 +7201,6 @@ Adreábestandteilen kommen nicht an.
        Versionen und l„át die Nachrichtenmarkierungen
        bei Netzanrufen unver„ndert.
 @
-568
-<<[x]>> -> Das Programm paát nach einem Netzanruf
-       automatisch die Datumsbezge an. Aktualisierte
-       Bretter wie /¯Netcall werden dann immer sofort
-       korrekt in der Brettliste angezeigt.
-
-<<[ ]>> -> Das Programm verh„lt sich wie in frheren
-       Versionen und l„át die Datumsbezge nach einem
-       Netzanruf unver„ndert.
-@
 570
 Geben Sie den Betreff der Nachricht an.
 @
