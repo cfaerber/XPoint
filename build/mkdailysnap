@@ -1,0 +1,16 @@
+#!/bin/bash
+scriptdir=/home/boettger/openxp/
+dailydifffile=$scriptdir'openxpdiff_'`date +%d.%m.%y`
+#mailtoaddr=openxp-cvs@lists.sourceforge.net
+
+echo $scriptdir
+echo $dailydifffile
+
+# 3.70
+cd ${scriptdir}openxp
+pwd
+cvs up -d
+cvs diff -u -D "-1 day" | grep -v -w "\?" > $dailydifffile
+#test -s $dailydifffile && mailx -s dailydiff $mailtoaddr < $dailydifffile
+test -s $dailydifffile && ./snapshot
+

@@ -1,0 +1,12 @@
+#/bin/bash
+cd ~/openxp/openxp
+#baue OXP
+./buildxp
+./make-rpm-3.7.8.sh 3.7.8
+./make-rpm-3.7.9.sh 3.7.9
+
+# auf den ftp Server schieben
+
+ncftpput -u USER -p PASSWORD -v -Z -y -r 5 -W "delete openxp-3.7.7-linux-200*" ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-3.7.8-2.i386.rpm /usr/src/packages/RPMS/i386/openxp-3.7.9-1.i386.rpm /usr/src/packages/SRPMS/openxp-3.7.8-2.src.rpm /usr/src/packages/SRPMS/openxp-3.7.9-1.src.rpm openxp-3.7.8-linux-`date -I`.tar.bz2 openxp-3.7.9-linux-`date -I`.tar.bz2
+
+ncftpls -u USER -p PASSWORD -l ftp://ftp.openxp.de/

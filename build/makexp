@@ -1,0 +1,16 @@
+#!/bin/bash
+fpc -B -Ci -Co -Cr -Ct openxp 2> compile-$1.err | tee compile-$1.log
+grep -i warning compile-$1.log > warning-$1.log
+grep -i hint compile-$1.log > hint-$1.log
+grep -i note compile-$1.log > note-$1.log
+grep Error compile-$1.log > error-$1.log
+grep Fatal compile-$1.log > fatal-$1.log
+fpc -B -Ci -Co -Cr -Ct -O2 -Op2 rc
+fpc -Ci -Co -Cr -Ct -OG3p3r ihs
+dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-$1.err | tee compile-kylix-$1.log
+grep -i warning compile-kylix-$1.err > warning-kylix-$1.log
+grep -i hint compile-kylix-$1.err > hint-kylix-$1.log
+grep -i note compile-kylix-$1.err > note-kylix-$1.log
+grep Error compile-kylix-$1.err > error-kylix-$1.log
+grep -i Fatal compile-kylix-$1.err > fatal-kylix-$1.log
+

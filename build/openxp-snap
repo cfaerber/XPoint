@@ -1,0 +1,2 @@
+#!/bin/bash
+su -l -c "cd /home/boettger/openxp/openxp/; ./mkdailysnap 2>/dev/null >/dev/null" boettger

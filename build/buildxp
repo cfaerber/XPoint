@@ -1,0 +1,33 @@
+#/bin/bash
+cd ~/openxp/openxp
+# baue Beta 3.7.8
+cvs up -r branch_3_7_8
+find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" | xargs -t rm
+rm output/*
+rm compile*.log compile*.err 
+./makexp 3.7.8
+./rc openxp-d.rq
+./rc openxp-e.rq
+./ihs doc/openxp-d.ihq
+./ihs doc/openxp-e.ihq
+cp kylixout/openxp openxp-kylix
+cp openxp openxp-3.7.8
+cp openxp-kylix openxp-kylix-3.7.8
+tar cvIf openxp-3.7.8-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+#
+# baue nun alpha 3.7.9
+cvs up -A
+find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" | xargs -t rm 
+rm output/*
+rm compile.log compile.err compile-kylix*
+./makexp 3.7.9
+#make
+./rc openxp-d.rq
+./rc openxp-e.rq
+./ihs doc/openxp-d.ihq
+./ihs doc/openxp-e.ihq
+cp kylixout/openxp openxp-kylix
+cp openxp openxp-3.7.9
+cp openxp-kylix openxp-kylix-3.7.9
+tar cvIf openxp-3.7.9-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+#
