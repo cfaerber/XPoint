@@ -1044,9 +1044,10 @@ again:
                    ReplaceVertreterbox(pollbox,true);
                  dbWriteN(ubase,ub_pollbox,pollbox);
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
+                 b := 1;
+                 dbWriteN(ubase,ub_adrbuch,b);    { Adreábuch }
                  b:=1 + iif(newuseribm,0,8);
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
-                 dbWriteN(ubase,ub_adrbuch,b);    { Adreábuch }
                  end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);

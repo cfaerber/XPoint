@@ -1451,8 +1451,9 @@ fromstart:
         dbWrite(ubase,'pollbox',box);
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
-        b:=1+iif(newuseribm,0,8);
+        b:=1;
         dbWrite(ubase,'adrbuch',b);
+        b:=1+iif(newuseribm,0,8);
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
@@ -2058,6 +2059,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.10  2000/12/25 18:13:37  mk
+  - falsche Adressbuchgruppe bei neuen Usern benutzt
+
   Revision 1.7.2.9  2000/11/30 14:15:04  mk
   - fixed NewUserIBM when adding new uesers
 
