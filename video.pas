@@ -406,7 +406,7 @@ procedure SetScreenLines(lines:byte);
           mov si,offset on_seq
           mov dx,$03c4
           rep outsw
-          mov cx,4
+          mov cx,3
           mov si,offset on_grc
           mov dx,$03ce
           rep outsw
@@ -428,12 +428,12 @@ procedure SetScreenLines(lines:byte);
           mov si,offset off_seq
           mov dx,$03c4
           rep outsw
-          mov cx,4
+          mov cx,3
           mov si,offset off_grc
           mov dx,$03ce
           rep outsw
 
-       end;
+    end;
 
   begin
     getmem(p2,16*256);
@@ -526,6 +526,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.4  2000/08/25 19:21:19  jg
+  - Fix: Ein Byte Zuviel an den GCT geschickt.
+
   Revision 1.20.2.3  2000/08/25 18:01:01  jg
   - Verbesserte Unterstuetzung der 28,30,33,36 Zeilenmodi
 
