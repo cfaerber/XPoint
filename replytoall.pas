@@ -701,7 +701,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
 
     begin
       userError := false;
-      markierteAdressen := nil;  { Liste der markierten Adressen aufbauen }
+      markierteAdressen := TRTAEmpfaengerList.Create; { Liste der markierten Adressen aufbauen }
       s := List.FirstMarked;
       repeat
         if cpos ('@', s) > 0 then
@@ -956,8 +956,15 @@ begin
  FItems[Index] := Value;
 end;
 
+procedure TRTAEmpfaengerList.Sort;
+begin
+  // !!
+end;
 {
   $Log$
+  Revision 1.15  2001/09/07 18:21:02  mk
+  - fixed initialization of markierteAdressen in GetAdresse
+
   Revision 1.14  2001/09/07 02:23:26  mk
   - useranlegen is duplicate to AddNewUser, replaced
 
@@ -1010,10 +1017,6 @@ end;
   - replyto is now string instead of TStringList again
 
 }
-procedure TRTAEmpfaengerList.Sort;
-begin
-  // !!
-end;
 
 end.
 
