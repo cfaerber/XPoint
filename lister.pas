@@ -128,7 +128,6 @@ type
     arrows: listarr;
     l, o, w,
     Height: Integer;                    // Height including status line
-    Lines: TStringList;
     markpos: integer;
     // test if line Index is marked
     function Marked(Index: Integer): boolean;
@@ -137,6 +136,7 @@ type
   public
     col: listcol;
     stat: liststat;
+    Lines: TStringList;
     constructor Create;
     constructor CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
     destructor Destroy; override;
@@ -1065,6 +1065,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.49  2001/02/03 08:45:07  mk
+  - published lines property
+
   Revision 1.48  2001/01/03 08:01:49  mo
   -Richtige Positionierung des cursors und der Zeilenposition bei Suche –S-
 
