@@ -1,11 +1,13 @@
-{ --------------------------------------------------------------- }
+{ ----------------------------------------------------------------}
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { Nodelist }
@@ -60,12 +62,12 @@ type  nodeinfo = record
                    found    : boolean;
                    ispoint  : boolean;
                    status   : string[20];
-                   boxname  : string[40];
-                   standort : string[65]; { 03.02.2000 MH: 40 -> 65 }
-                   sysop    : string[40];
+                   boxname  : string[63]; { 03/2003 my: 40 -> 63 }
+                   standort : string[63]; { 03/2003 my: 65 -> 63 }
+                   sysop    : string[63]; { 03/2003 my: 40 -> 63 }
                    telefon  : string[30];
                    baud     : word;
-                   fflags   : string[80]; { MH: 40 -> 80 }
+                   fflags   : string[189]; { 03/2003 my: 80 -> 3x63 }
                    flags    : word;
                    request  : word;
                    datei    : byte;     { Nummer der Nodeliste }
@@ -75,13 +77,14 @@ type  nodeinfo = record
 procedure MakeNodelistIndex;
 procedure OpenNodeindex(fn:pathstr);
 procedure CloseNodeindex;
-procedure GetNodeInfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
-procedure GetNodeInfoN(adr:string; var ni:nodeinfo; pointtyp:shortint; _nlid:Byte);
-function  IsFidoNode(adr:string):boolean;
+procedure GetNodeInfo(const adr:string; var ni:nodeinfo; const pointtyp:shortint);
+procedure GetNodeInfoN(const adr:string; var ni:nodeinfo;
+                       const pointtyp:shortint; const _nlid:Byte);
+function  IsFidoNode(var adr:string):boolean;
 function  FidoIsISDN(var fa:FidoAdr):boolean;
 procedure KeepNodeindexOpen;
 procedure KeepNodeindexClosed;
-procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
+procedure GetNodeUserInfo(var fa:FidoAdr; var ni:NodeInfo; const browser:boolean);
 
 function  FidoRequest(node,files:string):string;
 { procedure FidoTransfer; }
@@ -100,16 +103,18 @@ function  FidoAppendRequestfile(var fa:FidoAdr):string;
 procedure ShrinkPointToNode(var fa:FidoAdr; var ni:NodeInfo);
 function  FindFidoAddress(fn:pathstr; var fa:FidoAdr):boolean;
 
-procedure NodelistBrowser;
+procedure NodelistBrowser(AltN:boolean);
 
 procedure SetCrash(adr:string; insert:boolean);
 procedure SetRequest(adr,files:string);  { '' -> Request l”schen }
 
 function  MainNodelist:integer;
 procedure NodelistIndex;
-procedure NodelistSeek;
+procedure NodelistBrowserDisabled; { Fehlermeldung, wenn Nachricht aus Nodelist-Browser gestartet }
+procedure NodelistSeek;            { Nodeliste abfragen }
+procedure NodelistGrep;            { Nodeliste durchsuchen }
 procedure SetShrinkNodelist;
-procedure ShrinkNodelist(indizieren:boolean);
+procedure ShrinkNodelist(const indizieren:boolean);
 
 function  ReqTestNode(var s:string):boolean;
 procedure FileSelProc(var cr:customrec);
@@ -119,7 +124,7 @@ procedure NodeSelProc(var cr:customrec);
 
 implementation
 
-uses  xpnt,xp2,xp3,xp4e,xpfidonl,xpovl;
+uses  xpnt,xp2,xp3,xp4e,xpfidonl,xpkeys,xpovl;
 
 
 { --- Nodelisten ----------------------------------------------------- }
@@ -725,7 +730,7 @@ Begin
       settextbuf(nf,tb^,tbuf);
       reset(nf);
       attrtxt(col.colmboxhigh);
-      mwrt(x+10,y+2,forms(getFileName(filename(nf)),12));
+      mwrt(x+10,y+2,forms(fileio.getFileName(filename(nf)),12));
       fpos:=0;
       nodes:=0;
       points:=0;
@@ -1100,7 +1105,7 @@ begin
 end;
 
 
-procedure ShrinkNodelist(indizieren:boolean);
+procedure ShrinkNodelist(const indizieren:boolean);
 var i : integer;
 begin
   i:=MainNodelist;
@@ -1126,7 +1131,7 @@ var fa : FidoAdr;
 begin
   if not IsNodeAddress(s) then begin
     fa.username:=s;
-    GetNodeuserInfo(fa,ni);
+    GetNodeuserInfo(fa,ni,false);
     if ni.found then s:=MakeFidoAdr(fa,true);
     end
   else begin
@@ -1253,7 +1258,7 @@ begin
       end
     else begin
       fa.username:=node;
-      getNodeUserInfo(fa,ni);
+      getNodeUserInfo(fa,ni,false);
       end;
     if not ni.found then begin      { drfte eigentlich nicht passieren.. }
       rfehler(2116);   { 'unbekannte Nodeadresse' }
@@ -1477,10 +1482,15 @@ var brk   : boolean;
 begin
   fidorequest:='';
   if not TestNodelist or not TestDefbox then exit;
+  NodelistBrowserButtonsDisabled:=true;
   if node='' then fillchar(fa,sizeof(fa),0)
   else SplitFido(node,FA,DefaultZone);
   getFAddress(true,getres(2111),fa,ni,brk,x,y);   { 'File-Request' }
-  if brk then exit;
+  if brk then
+  begin
+    NodelistBrowserButtonsDisabled:=false;
+    exit;
+  end;
   node:=MakeFidoAdr(fa,true);
   getReqFiles(node,files);
   if left(files,1)='>' then delfirst(files);
@@ -1507,6 +1517,7 @@ begin
     if atonce and doreq then
       fidorequest:=makeFidoAdr(fa,true);
     end;
+  NodelistBrowserButtonsDisabled:=false;
 end;
 
 
@@ -1698,7 +1709,7 @@ begin
      (not exist(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
     goto ende;
   fn:=ustr(FExpand(fn));
-  fi:=GetFilename(fn);
+  fi:=fileio.GetFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
   if (p>0) and (ival(left(fi,p-1))>0) then begin
@@ -2211,6 +2222,131 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.9  2003/03/17 23:02:20  my
+  MY:- Fido: Grundlegendes Redesign der Nodelist-Abfrage mit <Alt-N> bzw.
+             F/N/A und des Durchsuchens mit F/N/D ("Nodelist-Browser")
+       ----------------------------------------------------------------------
+       - Die Nodelist-Abfrage mit <Alt-N> bzw. F/N/A verwendet zur Ausgabe
+         jetzt den "Nodelist-Browser", der bisher nur von der Durchsuchen-
+         Funktion bei F/N/D verwendet wurde. Dadurch werden bei mehreren
+         gefundenen Eintr„gen alle zugeh”rigen Detailinformationen jetzt
+         direkt beim Scrollen unterhalb der Auswahlliste angezeigt, ohne fr
+         jeden der Eintr„ge eine erneute Suche starten zu mssen. Des
+         weiteren stehen damit jetzt auch bei der Nodelist-Abfrage die
+         Zusatzfunktionen "Nachricht" und "Request" sowie die brigen Tasten
+         fr Markiersuche ("s"), Schreiben in Datei oder Clipboard ("w") und
+         Drucken (<Ctrl-D>) zur Verfgung.
+         Die bisherige gesonderte Ausgabe fr die Nodelist-Abfrage machte
+         noch nie wirklich Sinn, da sie weniger funktional war, aber auch
+         nicht mehr Information enthielt.
+       - Als unmittelbare Folge davon entf„llt der jetzt berflssige Button
+         "Info", wenn ein User im Nodelist-Browser mit <Enter> ausgew„hlt
+         wird.
+       - Die bisherige Form der Ausgabe des Suchergebnisses einer Nodelist-
+         Abfrage bei mehreren gefundenen Eintr„gen (Liste, aus der ein
+         Eintrag mit <Enter> ausgew„hlt werden muá) wird jedoch weiterhin
+         verwendet bei Fido/Request, Nachricht/Direkt und beim Anlegen eines
+         Users. Unterhalb der Auswahlliste werden jetzt auch hier der Status
+         des Users und der Name der Node-/Pointliste angezeigt, aus der der
+         aktive Eintrag stammt.
+       - Aus dem Nodelist-Browser heraus kann jetzt direkt per Hotkey "A"
+         oder "D" unmittelbar eine neue Abfrage bzw. ein neues Durchsuchen
+         der Node-/Pointlisten gestartet werden - unabh„ngig davon, welche
+         Art der Suche vorher durchgefhrt wurde (daher kein Abbruch und
+         Neustart der Routine fr neue Suche mehr notwendig, sondern direkter
+         Wechsel zwischen den verschiedenen Arten der Suche m”glich). Wird
+         der auf den Hotkey folgende Dialog mit <Esc> abgebrochen, bleibt das
+         vorherige Suchergebnis in der Anzeige erhalten.
+         Der Nodelist-Browser fungiert somit als "Shell" fr alle Formen der
+         Suche in Node- und Pointlisten, sobald und solange er auf dem
+         Bildschirm ist.
+       - Das Durchsuchen der Node-/Pointlisten mit F/N/D ist jetzt (fast)
+         berall in XP auch mit dem Hotkey <AltGr-N> erreichbar (z.B. aus dem
+         Lister oder Editor heraus).
+       - Im Eingabedialog fr das Durchsuchen von Node-/Pointlisten wird
+         jetzt - wie auch seit jeher bei der Nodelist-Abfrage - rechts
+         oben die Day-Number der Haupt-Nodeliste angezeigt.
+       - Wird aus dem Nodelist-Browser heraus eine Nachricht oder ein
+         File-Request erzeugt, wird bis zur Beendigung der Aktion der
+         rekursive Aufruf des Nodelist-Browsers (z.B. aus dem Editor) mit
+         <Alt-N> oder <AltGr-N> verhindert.
+       - Eine erfolglose Suche fhrt nicht zu einer Fehlermeldung mit
+         anschlieáendem Abbruch der Routine, sondern es wird der Nodelist-
+         Browser mit einem entsprechenden Hinweis angezeigt. Dort kann dann
+         unmittelbar mit "A" eine neue Nodelist-Abfrage oder mit "D" ein
+         neues Durchsuchen ausgel”st (oder die gesamte Routine mit <Esc>
+         abgebrochen) werden.
+       - Box- bzw. Pointname sowie der Standort werden jetzt unterhalb der
+         Auswahlliste nochmals in voller L„nge angezeigt (im Suchergebnis
+         werden sie auf zusammen 35 Zeichen gekrzt dargestellt).
+       - Die Flags werden jetzt vollst„ndig (in 3 Zeilen   63 Zeichen)
+         angezeigt.
+       - Eine eMail-Adresse wird nicht mehr aus den Flags herausoperiert und
+         gesondert angezeigt, weil a) die Flags auch mehrere eMail-Adressen
+         enthalten k”nnen (und es deshalb willkrlich ist, wie bisher einfach
+         die erste zu nehmen), b) es sich nicht um "anschreibbare" Adressen
+         handelt, und c) aufgrund der vollst„ndigen Anzeige der Flags (s.o.)
+         jetzt ohnehin *alle* Adressen angezeigt werden.
+       - Wenn ein Durchsuchen der Node-/Pointlisten gestartet und mitten im
+         Suchlauf durch <Esc> abgebrochen wird, ohne daá bereits ein Eintrag
+         gefunden werden konnte, bricht XP die Routine nicht mehr komplett
+         ab, sondern baut den Eingabedialog mit den aktuell eingegebenen
+         Daten neu auf. Wird dann auch der Eingabedialog abgebrochen und
+         handelt es sich nicht um den ersten Suchlauf, werden die beim
+         vorherigen Suchlauf benutzten Daten restauriert (weil sich diese
+         noch in der Anzeige des Nodelist-Browsers befinden), und XP kehrt in
+         den Nodelist-Browser zurck.
+         Waren zum Zeitpunkt des Suchlauf-Abbruchs mit <Esc> jedoch bereits
+         Eintr„ge gefunden worden, dann wird der Nodelist-Browser mit den
+         gefundenen Eintr„gen neu aufgebaut.
+       - Der zuletzt benutzte Suchbegriff der Nodelist-Abfrage mit <Alt-N>
+         bzw. F/N/A bleibt fr die Dauer der XP-Session jetzt erhalten und
+         wird bei der n„chsten Abfrage wieder vorgeschlagen.
+       - Fix: Wenn aus dem Nodelist-Browser heraus eine neue Suche gestartet
+         oder ein Eintrag mit <Enter> ausgew„hlt, der nachfolgende Dialog
+         aber mit <Esc> abgebrochen wird, dann ist danach jetzt weiterhin der
+         Eintrag in der Auswahlliste aktiv, der auch vor dem Ausfhren der
+         Aktion aktiv war. Bisher wurde der Cursorbalken immer auf den ersten
+         Eintrag zurckgesetzt (unn”tiger Neustart des Listers beseitigt).
+       - Da die Funktion, einen User im Nodelist-Browser mit <Enter> ausw„h-
+         len und an diesen eine Mail oder einen Request erzeugen zu k”nnen,
+         jetzt auch in Situationen erreichbar ist, in denen sie bisher nicht
+         erreichbar war (weil sie nur ber das Men F/N/D aufgerufen werden
+         konnte), ist sie in bestimmten Situationen, in denen sie Probleme
+         verursachen k”nnte, aus Sicherheitsgrnden deaktiviert (z.B. beim
+         Editieren oder Weiterleiten einer Nachricht, beim Netcall u.„.).
+       - Fix: Eine Nodelist-Abfrage mit <Alt-N> bzw. F/N/A nach Fido-AKA gibt
+         als Suchergebnis jetzt *alle* gefundenen Eintr„ge in *allen* Listen
+         zurck (z.B. bei mehreren Pointlisten wie POINTS24 und R24PNT, die
+         berwiegend identische AKAs enthalten). Bisher wurde nur der Eintrag
+         angezeigt, der zuf„llig als erster im Index vorkam.
+       - Fix: Wenn auf einer Fido-Nachricht eines Points mit <Alt-N> eine
+         Nodelist-Abfrage ausgel”st wurde, dann wurde nicht der Eintrag bzw.
+         die Eintr„ge des Points aus der oder den Pointliste(n), sondern nur
+         der des Bossnodes aus der Nodeliste angezeigt (es ist nicht ganz
+         klar, ob das ein Bug oder Absicht war). Es werden jetzt *alle* zur
+         jeweiligen AKA geh”renden Eintr„ge des Bossnodes *und* des Points
+         aus *allen* eingebundenen Listen angezeigt.
+       - Fix: Beim Durchsuchen der Nodelisten mit F/N/D bzw. <AltGr-N> wird
+         bei "Zone"-Eintr„gen jetzt die richtige Nodenummer "0" verwendet
+         (bisher wurde als Nodenummer die Zonennummer eingesetzt, so daá z.B.
+         fr den ZC2 die falsche Nodenummer "2:2/2" statt "2:2/0" angezeigt
+         wurde und daher weder die Detailanzeige noch nachfolgende Aktionen
+         mit diesem Eintrag funktionieren konnten).
+       - Fix: "Zone"-Eintr„ge in Points24-kompatiblen Listen werden beim
+         Durchsuchen mit F/N/D bzw. <AltGr-N> ignoriert (Verhalten damit
+         jetzt identisch mit der Nodelisten-Abfrage bei <Alt-N> bzw. F/N/A).
+       - Anzeige-Fix: Der Pfeil nach unten, der anzeigt, daá in der Liste
+         noch weitere Eintr„ge folgen, wurde eine Zeile zu tief ausgegeben.
+       - Fix: Tasten und Tastenkombinationen, die durch zwischenzeitliche
+         Erweiterungen Im Nachrichten-Lister pl”tzlich auch im Nodelist-
+         Browser eine (unerwnschte) Wirkung hatten, sind jetzt deaktiviert
+         (z.B. brach <Ctrl-W> den Nodelist-Browser ab). Es haben nur noch die
+         Tasten eine Wirkung, die auch in der Hilfe zum Nodelist-Browser
+         dokumentiert sind.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.15.2.8  2003/03/17 22:36:58  my
   TS [+MY]:- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
                    ge„ndert/korrigiert/erweitert
