@@ -27,6 +27,8 @@ interface
 
 {$I xpdefine.inc }
 
+uses sysutils;
+
 // format the following strings in a way that
 // verstr+pformstr+betastr is readable
 
@@ -164,6 +166,14 @@ type
   PByteArray = ^TByteArray;
   TByteArray = array[0..MaxInt div 2] of Byte;
 
+type
+  EXPoint = class(Exception)
+  private
+    FExitCode: Integer;
+  public
+    constructor Create(ExitCode: Integer; const Message: String);
+    property ExitCode: Integer read FExitCode write FExitCode;
+  end;
 
 {$IFDEF VP }
 type
@@ -179,6 +189,12 @@ type
 
 implementation
 
+constructor EXPoint.Create(ExitCode: Integer; const Message: String);
+begin
+  inherited Create(Message);
+  self.ExitCode := ExitCode;
+end;
+
 {$IFDEF Beta }
 {$IFDEF FPC }
 {$ifndef Unix}
@@ -191,6 +207,9 @@ begin
 
 {
   $Log$
+  Revision 1.71  2002/11/14 20:10:38  cl
+  - changed some fatal errors to exceptions to allow easier debugging
+
   Revision 1.70  2002/07/25 20:50:13  ma
   - updated copyright notices
 
@@ -270,4 +289,12 @@ begin
   - Grundstruktur des Loggings eingebaut
 }
 end.
+
+
+
+
+
+
+
+
 
