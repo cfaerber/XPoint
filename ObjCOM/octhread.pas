@@ -1,27 +1,18 @@
-{$I OCDEFINE.INC }
-
 unit OCThread;
+
 (*
-**
 ** ObjCOM thread routines for OS/2 and Win9x/NT
-** Tested with: FreePascal    v0.99.14 (Win32)
-**
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
-** See history at end of file
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
+
+{$I OCDEFINE.INC }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$IFDEF OS2}
- uses OS2Base;
-{$ENDIF}
-
-{$IFDEF WIN32}
- uses windows;
-{$ENDIF}
+{$IFDEF OS2}uses OS2Base;{$ENDIF}
+{$IFDEF WIN32}uses windows;{$ENDIF}
 
 {$IFDEF OS2}
   Type THandle = Longint;
@@ -35,13 +26,8 @@ unit OCThread;
 {$ENDIF}
 
 type TSysEventObj = Object
-       {$IFDEF OS2}
-         SemHandle: HEV;
-       {$ENDIF}
-
-       {$IFDEF WIN32}
-         SemHandle: THandle;
-       {$ENDIF}
+       {$IFDEF OS2}SemHandle: HEV;{$ENDIF}
+       {$IFDEF WIN32}SemHandle: THandle;{$ENDIF}
 
        constructor init;
        destructor done;
@@ -56,13 +42,8 @@ type TSysEventObj = Object
 Type tpSysEventObj = ^TSysEventObj;
 
 type TExclusiveObj = Object
-       {$IFDEF OS2}
-         Exclusive: PHMtx;
-       {$ENDIF}
-
-       {$IFDEF WIN32}
-         Exclusive: PRTLCriticalSection;
-       {$ENDIF}
+       {$IFDEF OS2}Exclusive: PHMtx;{$ENDIF}
+       {$IFDEF WIN32}Exclusive: PRTLCriticalSection;{$ENDIF}
 
        constructor Init;
        destructor Done;
@@ -392,6 +373,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2000/10/28 09:45:50  ma
+  - introduced credits.txt
+
   Revision 1.5  2000/10/16 12:19:06  mk
   - added ocdefine.inc
 

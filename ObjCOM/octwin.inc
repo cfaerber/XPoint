@@ -1,7 +1,6 @@
 (*
 ** ObjCOM tcp communication implementation include file
-**
-** Written by M.Kiesel 2000
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
@@ -68,8 +67,9 @@ end; { func. TTelnetObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TTelnetObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte);
+function TTelnetObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 begin
+  SetLine:=True;
   // Duhhh ;)
 end; { proc. TTelnetObj.SetLine }
 
@@ -205,6 +205,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:45:50  ma
+  - introduced credits.txt
+
   Revision 1.3  2000/09/29 23:21:15  ma
   - SendChar result := true
 

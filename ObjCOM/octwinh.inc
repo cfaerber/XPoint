@@ -1,8 +1,6 @@
 (*
-**
 ** ObjCOM tcp communication implementation header file
-**
-** Written by M.Kiesel 2000
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 type tTelnetObj = Object(TCommObj)
@@ -27,7 +25,7 @@ type tTelnetObj = Object(TCommObj)
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte); virtual;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
         procedure PurgeInBuffer; virtual;
         procedure PurgeOutBuffer; virtual;
 
@@ -42,6 +40,9 @@ Type tpTelnetObj = ^TTelnetObj;
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:45:50  ma
+  - introduced credits.txt
+
   Revision 1.3  2000/09/29 23:21:43  ma
   - Done virual
 
