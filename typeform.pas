@@ -79,7 +79,6 @@ Function Blankpos(const s:string):byte;        { Position von ' ' oder #9     }
 Function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 Function CPos(c:char; const s:string):byte;    { schnelles POS fÅr CHARs      }
 Function CPosX(c:char; const s:string):byte;   { pos=0 -> pos:=length(s)+1    }
-Function CreditCardOk(s:string):boolean;     { Kreditkartennummer ÅberprÅfen }
 Function Date:DateTimeSt;                    { dt. Datumsstring             }
 Function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 Function Even(const l:longint):boolean;            { not odd()                    }
@@ -87,8 +86,6 @@ Function FileName(var f):string;                { Dateiname Assign             }
 Function FirstChar(const s:string):char;           { s[1]                         }
 Function fitpath(path:pathstr; n:byte):pathstr;   {+ Pfad evtl. abkÅrzen    }
 Function FormI(const i:longint; const n:Byte):string;    { i-->str.; bis n mit 0 auff.  }
-Function FormR(const r:real; const vk,nk:byte):string;   { r-->str.; vk+nk mit 0 auff.  }
-Function FormS(s:string; n:byte):string;     { String auf n Stellen mit ' ' }
 Function HBar(const len:byte):string;              { √ƒƒƒƒƒƒƒƒƒ...ƒƒƒƒƒƒƒƒƒ¥      }
 Function Hex(const l:longint; const n:byte):string;      { Hex-Zahl mit n Stellen       }
 Function HexVal(const s:string):longint;           { Hex-Val                      }
@@ -100,57 +97,42 @@ Function iifs(b:boolean; const s1,s2:string):string;  { IIF String              
 Function IntQSum(const l:longint):longint;         { Quersumme                    }
 Function IVal(s:string):longint;             { Value Integer                }
 Function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
-Function Lead(s:string):string;              { Anf.-u. End-0en abschneiden  }
-{$IFDEF NOASM }
-Function Left(s:string; n:byte):string;      { LeftString                   }
-{$ELSE}
-Function Left(const s:string; n:byte):string;      { LeftString                   }
-{$ENDIF}
-Function Long(const l:longint):longint;            { Type-Cast nach Longint       }
 Function LoCase(const c:char):char;                { LowerCase                    }
-Function Log(const b,r:real):real;           { allg. Logarithmus            }
-Function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
-Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
-Function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
 Function LStr(const s:string):string;              { LowerString                  }
 Function Ltrim(const s:string):string;             { linke Leerzeichen entfernen  }
 Function Max(const a,b:longint):longint;          { Maximum Integer              }
 Function Mid(const s:string; const n:byte):string;       { Rest des Strings ab Pos. n   }
 Function Min(const a,b:longint):longint;           { Minimum Integer              }
 Function MinMax(const x,min,max:longint):longint;  { x -> [min,max]               }
-Function MinS(const a,b:string):string;            { Minimum String               }
 Function MultiPos(const s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
-Function Oct(l:longint):string;              { Longint -> Oktalstring       }
-Function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
 Function PosN(s1,s2:string; n:byte):byte;    { POS ab Stelle n              }
 Function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0     }
-Function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
 Function ProgName:string;                   { Name des Programms           }
 Function ProgPath:PathStr;                   { Pfad des Programms           }
-Function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
 Function QSum(const s:string):longint;             { Quersumme                    }
 Function Range(const c1,c2:char):string;           { z.B. ('1','5') = '12345'     }
-{$IFDEF NOASM }
-Function Right(s:string; n:byte):string;     { RightString                  }
-{$ELSE }
-function Right(const s:string; n:byte):string;     { RightString                  }
-{$ENDIF }
 Function Rtrim(s:string):string;             { rechte Leerzeichen entfernen }
 Function RVal(const s:string):real;                { Value Real                   }
 Function Sgn(const x:longint):longint;       { Signum Integer               }
-Function SgnR(const x:real):real;            { Signum Real                  }
-Function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname kÅrzen        }
-Function SiMatch(const s1,s2:string):byte;         { dto., ignore case            }
 Function Sp(const n:integer):string;               { space$                       }
-Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
 Function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich               }
 Function StrS(const l:longint):string;             { "echtes" Str$, Integer       }
-Function SwapLong(l:longint):longint;        { Byteorder umdrehen           }
 Function Time:DateTimeSt;                    { dt. Zeitstring               }
-Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
 Function UStr(const s:String):String;              { UpperString                  }
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
+
+{$IFDEF NOASM }
+Function Right(s:string; n:byte):string;     { RightString                  }
+Function Left(s:string; n:byte):string;      { LeftString                   }
+Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
+Function FormS(s:string; n:byte):string;     { String auf n Stellen mit ' ' }
+{$ELSE}
+function Right(const s:string; n:byte):string;          { RightString                  }
+Function Left(const s:string; n:byte):string;           { LeftString                   }
+Function trim(const s:string):string;                   { Linke u. rechte ' ' abschn.  }
+Function FormS(const s:string; const n:byte):string;    { String auf n Stellen mit ' ' }
+{$ENDIF }
 
 Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
 Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
@@ -162,8 +144,6 @@ Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf ParitÑt setzen  }
-Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
-Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 Procedure FastMove(var Source, Dest; const Count : WORD);
@@ -174,6 +154,33 @@ Function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
 Function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 Procedure UTF82IBM(var s: String);
 Function DecodeBase64(const s: String):String;
+
+
+(*     {Unbenutzt}
+
+Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
+Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
+Function SwapLong(l:longint):longint;        { Byteorder umdrehen           }
+Function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname kÅrzen        }
+Function SiMatch(const s1,s2:string):byte;         { dto., ignore case            }
+Function CreditCardOk(s:string):boolean;           { Kreditkartennummer ÅberprÅfen }
+Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
+Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
+Function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
+Function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
+function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
+Function Lead(s:string):string;              { Anf.-u. End-0en abschneiden  }
+Function FormR(const r:real; const vk,nk:byte):string;   { r-->str.; vk+nk mit 0 auff.  }
+Function SgnR(const x:real):real;            { Signum Real                  }
+Function MinS(const a,b:string):string;            { Minimum String               }
+Function Log(const b,r:real):real;           { allg. Logarithmus            }
+Function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
+Function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
+Function Long(const l:longint):longint;            { Type-Cast nach Longint       }
+Function Oct(l:longint):string;              { Longint -> Oktalstring       }
+
+*)
+
 
 { ================= Implementation-Teil ==================  }
 
@@ -297,60 +304,18 @@ end;
 {$ENDIF}
 
 
-Function Log(const b,r:real):real;
-begin
-  log:=ln(r)/ln(b);
-end;
 
-
-Function Log2(const r:real):real;
-begin
-  log2:=Log(2,r);
-end;
-
-
-Function Log2int(const l:longint):byte;
-var i : byte;
-begin
-  log2int := 0;   { MK 12/99 }
-  for i:=0 to 31 do
-    if l and (1 shl i) <> 0 then
-      Log2int:=i;
-end;
-
-
-Function Log10(const r:real):real;
-begin
-  log10:=Log(10,r);
-end;
-
-
-function potenz(const basis,exponent:real):real;
-begin
-  if basis=0 then
-    potenz:=0
-  else
-    potenz:=exp(exponent*ln(basis));
-end;
-
+{$IFDEF NOASM}
 
 Function Max(const a,b:longint):longint;
 begin
   if a>b then max:=a else max:=b;
 end;
 
-
 Function Min(const a,b:longint):longint;
 begin
   if a<b then min:=a else min:=b;
 end;
-
-
-Function MinS(const a,b:string):string;
-begin
-  if a<b then mins:=a else mins:=b;
-end;
-
 
 Function MinMax(const x,min,max:longint):longint;
 begin
@@ -359,6 +324,117 @@ begin
   else MinMax:=x;
 end;
 
+
+{$ELSE}
+
+Function Max(const a,b:longint):longint; assembler;
+asm
+        db 66h
+        mov dx,word ptr a
+        db 66h
+        mov si,word ptr b
+        db 66h 
+        cmp dx,si
+        jg @nomax
+        db 66h
+        mov dx,si
+@nomax: mov ax,dx
+        db 66h
+        shr dx,16
+end; 
+
+
+Function Min(const a,b:longint):longint; assembler;
+asm
+        db 66h
+        mov dx,word ptr a
+        db 66h
+        mov si,word ptr b
+        db 66h 
+        cmp dx,si
+        jl @nomin
+        db 66h
+        mov dx,si
+@nomin: mov ax,dx
+        db 66h
+        shr dx,16
+end; 
+
+Function MinMax(const x,min,max:longint):longint; assembler;
+asm
+        db 66h
+        mov dx,word ptr x
+        db 66h
+        mov si,word ptr min
+        db 66h
+        mov di,word ptr max
+        db 66h 
+        cmp dx,si
+        jl @min
+        db 66h
+        cmp dx,di
+        jng @nomax
+        db 66h
+        mov dx,di
+        jmp @nomax
+@min:   db 66h
+        mov dx,si
+@nomax: mov ax,dx
+        db 66h
+        shr dx,16
+end; 
+
+{$ENDIF}
+
+
+(*
+Function Log(const b,r:real):real;
+begin
+  log:=ln(r)/ln(b);
+end;
+*)
+
+(*
+Function Log2(const r:real):real;
+begin
+  log2:=Log(2,r);
+end;
+*)
+
+(*
+Function Log2int(const l:longint):byte;
+var i : byte;
+begin
+  log2int := 0;   { MK 12/99 }
+  for i:=0 to 31 do
+    if l and (1 shl i) <> 0 then
+      Log2int:=i;
+end;
+*)
+
+(*
+Function Log10(const r:real):real;
+begin
+  log10:=Log(10,r);
+end;
+*)
+
+(*
+function potenz(const basis,exponent:real):real;
+begin
+  if basis=0 then
+    potenz:=0
+  else
+    potenz:=exp(exponent*ln(basis));
+end;
+*)
+
+(*
+Function MinS(const a,b:string):string;
+begin
+  if a<b then mins:=a else mins:=b;
+end;
+*)
 
 procedure bind(var l:longint; const min,max:longint);
 begin
@@ -374,6 +450,7 @@ begin
 end;
 
 
+{$IFDEF NOASM}
 Function Sgn(const x:longint):longint;
 begin
   if x>0 then
@@ -385,7 +462,26 @@ begin
       Sgn:=-1;
 end;
 
+{$ELSE}
 
+Function Sgn(const x:longint):longint; assembler;
+asm
+        db 66h
+        mov ax,word ptr [x]
+        db 66h
+        or ax,ax
+        mov dx,0
+        je @end
+        mov ax,1
+        jns @end
+        dec dx
+        dec ax
+        dec ax
+@end:
+end;
+{$ENDIF}
+
+(*
 Function SgnR(const x:real):real;
 begin
   if x>0 then
@@ -396,7 +492,7 @@ begin
     else
       SgnR:=-1.0;
 end;
-
+*)
 
 Function FormI(const i:longint; const n:Byte):string;
 var
@@ -408,7 +504,7 @@ begin
   formi:=st;
 end;
 
-
+(*
 Function FormR(const r:real; const vk,nk:byte):string;
 var i  : byte;
     st : string;
@@ -422,8 +518,9 @@ begin
     end;
   formr:=st;
 end;
+*)
 
-
+(*
 Function Lead(s:string):string;
 begin
   if pos('.',s)>0 then
@@ -434,7 +531,7 @@ begin
     delfirst(s);
   Lead:=s;
 end;
-
+*)
 
 Function Time:DateTimeSt;
 VAR stu,min,sec,du :rtlword;
@@ -451,7 +548,7 @@ begin
   date:=formi(ta,2)+'.'+formi(mo,2)+'.'+strs(ja);
 end;
 
-
+(*
 Procedure SetSysTime(const t:DateTimeSt);
 VAR st,mi,se,res : Integer;
 begin
@@ -460,8 +557,9 @@ begin
   Val(Copy(t,7,2),se,res);
   settime(st,mi,se,0);
 end;
+*)
 
-
+(*
 Procedure SetSysDate(const d:DateTimeSt);
 VAR t,m,j,res : Integer;
 begin
@@ -470,7 +568,7 @@ begin
   Val(Copy(d,7,4),j,res);
   setdate(j,m,t);
 end;
-
+*)
 
 Function Dup(const n:integer; const c:Char):string;
 VAR h : String;
@@ -490,6 +588,7 @@ begin
 end;
 
 
+{$IFDEF NOASM}
 Function FormS(s:string; n:byte):string;
 var b : integer;  { kann bei length(s)=255 = 256 werden!! }
 begin
@@ -498,6 +597,29 @@ begin
   s[0]:=char(n);
   FormS:=s;
 end;
+
+{$ELSE}
+
+Function FormS(const s:string; const n:byte):string; assembler;
+asm
+        push ds
+        mov ch,0
+        lds si,s
+        les di,@result
+        mov al,n
+        mov dl,al
+        stosb
+        lodsb
+        mov cl,al
+        rep movsb
+        mov cl,dl
+        sub cl,al
+        jbe @end
+        mov al,' '
+        rep stosb
+@end:   pop ds
+end;
+{$ENDIF}
 
 
 Function StrS(const l:longint):string;
@@ -1118,26 +1240,27 @@ end;
 {$else}
 function Left(const s: String; n: byte): string; assembler;
 asm
-        mov     bx, ds
+        push ds
         cld
-        les     di, @result
-        lds     si, s
-        mov     ah, 0
+        les di,@result
+        lds si,s
+        mov ah,0
+        mov bl,n
         lodsb
-        cmp     al, n
-        jb      @1
-        mov     al, n
-@1:     mov     cx, ax
+        cmp al,bl
+        jb @1
+        mov al,bl
+@1:     mov cx,ax
         stosb
         rep movsb
-        mov     ds, bx
+        pop ds
 end;
 {$endif}
 {$ENDIF }
 
 { MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
 {$IFDEF NOASM }
-Function Right<(s:string; n:byte):string;
+Function Right(s:string; n:byte):string;
 begin
   if n>=length(s) then
     Right:=s
@@ -1177,27 +1300,28 @@ end;
 {$else}
 function Right(const s: string; n: byte):string; assembler;
 asm
-        mov     bx, ds
+        push ds
         cld
-        lds     si, s
-        les     di, @result
-        xor     ax, ax
-        xor     cx, cx
-        mov     cl, n
+        lds si,s
+        les di,@result
+        xor ax,ax
+        xor cx,cx
+        mov cl,n
+        mov bl,cl
         lodsb
-        cmp     al, n                   { n > als LÑnge von s }
+        cmp al,bl                   { n > als LÑnge von s }
         jnb @3
-        mov     cl, al
-@3:     mov     dl, al                  { StringlÑnge merken }
-        sub     al, cl
+        mov cl,al
+@3:     mov dl,al                   { StringlÑnge merken }
+        sub al,cl
         jnc @1
-        mov     cl, dl
-        xor     ax, ax
-@1:     mov     es:[di], cl
-        inc     di
-        add     si, ax
+        mov cl,dl
+        xor ax,ax
+@1:     mov es:[di],cl
+        inc di
+        add si,ax
         rep movsb
-        mov     ds, bx
+        pop ds
 end;
 {$endif}
 {$ENDIF }
@@ -1240,6 +1364,7 @@ asm
 end;
 {$ENDIF}
 
+{$IFDEF NOASM}
 Function trim(s:string):string;
 begin
   while (s[length(s)]=' ') or (s[length(s)]=#9) do     { terminiert, da s[0]<>' ' fÅr s='' }
@@ -1249,18 +1374,103 @@ begin
   trim:=s;
 end;
 
+{$ELSE}
 
+Function trim(const s:string):string; assembler;
+asm
+    push ds
+    lds si,s
+    les di,@result
+    mov bx,si
+    lodsb
+    mov ah,0
+    mov cx,ax
+    cmp cl,0
+    jne @2
+@n: mov al,0
+    stosb
+    jmp @end
+
+@2: add si,ax
+    dec si
+    mov dx,0920h
+    std 
+@1: lodsb
+    or cx,cx { so Notwendig, falls String >127...}
+    je @n
+    dec cx
+    cmp al,dl
+    je @1
+    cmp al,dh
+    je @1
+    inc cx
+
+    mov si,bx
+    inc si
+    cld
+@3: lodsb
+    or cx,cx
+    je @n
+    dec cx 
+    cmp al,dl
+    je @3
+    cmp al,dh
+    je @3 
+    inc cx
+
+    dec si 
+    mov al,cl
+    stosb
+    rep movsb
+@end:
+    pop ds
+end;    
+{$ENDIF}
+
+
+{$IFDEF NOASM}
 Function Range(const c1,c2:char):string;
-
 var s : string;
     c : char;
-
 begin
   s:='';
   for c:=c1 to c2 do
     s:=s+c;
   range:=s;
 end;
+
+{$ELSE}
+
+Function Range(const c1,c2:char):string; assembler;
+asm
+    les di,@result
+    mov cl,byte ptr c1
+    mov bl,byte ptr c2
+    mov al,bl
+    mov ah,0
+    sub al,cl
+    ja @2
+    jne @1 
+    mov al,1
+    mov ah,cl
+    stosw
+@1: mov al,0
+    stosb
+    jmp @end
+
+@2: inc ax 
+    jne @4
+    dec ax
+@4: stosb
+    mov al,cl
+@3: stosb
+    inc al
+    je @end
+    cmp al,bl
+    jna @3
+@end:
+end;   
+{$ENDIF}
 
 
 Function IVal(s:string):longint;
@@ -1312,6 +1522,7 @@ begin
 end;
 
 
+{$IFDEF NOASM}
 function Hex(const l:longint; const n:byte):string;
 const hexch : array[0..15] of char = '0123456789ABCDEF';
 var   s    : string[8];
@@ -1330,6 +1541,53 @@ begin
       delete(s,1,1);
   Hex:=s;
 end;
+
+{$ELSE}
+
+function Hex(const l:longint; const n:byte):string; assembler;
+asm
+        les di,@result        
+        push di
+        inc di
+        mov al,n
+        mov ah,0
+        mov cx,ax
+        mov dx,ax
+        cmp dl,8
+        ja @tr
+        cmp dl,0
+        jne @ntr
+@tr:    mov cl,8
+@ntr:   dec cx
+        shl cx,2
+        db 66h
+
+        mov bx,word ptr l
+@1:     db 66h
+        mov ax,bx
+        db 66h
+        shr ax,cl
+        and al,0fh
+        or al,30h
+        cmp al,'9'
+        jna @12
+        add al,7
+@12:    cmp dl,0
+        jne @11
+        cmp al,'0'
+        jne @11
+        cmp cl,0
+        jne @2 
+@11:    stosb
+        inc dh                
+@2:     sub cx,4
+        jns @1
+
+        mov al,dh 
+        pop di
+        stosb
+end;
+{$ENDIF}
 
 
 Function HexVal(const s:string):longint;
@@ -1424,13 +1682,14 @@ begin
   else PosN:=pos(s1,mid(s2,n))+n-1;
 end;
 
-
+(*
 function long(const l:longint):longint;
 begin
   long:=l;
 end;
+*)
 
-
+(*
 function shortpath(path:pathstr; n:byte):pathstr;
 var ds : string;
     ns : string;
@@ -1441,18 +1700,21 @@ begin
   dellast(ds);
   shortpath:=ds+DirSepa+ns+es;
 end;
+*)
 
-
+(*
 function pofs(p:pointer):word;
 begin
   pofs:=psplit(p).o;
 end;
+*)
 
+(*
 function pseg(p:pointer):word;
 begin
   pseg:=psplit(p).s;
 end;
-
+*)
 
 Procedure iswap(var l1,l2:longint);
 var h : longint;
@@ -1549,18 +1811,19 @@ begin
   Without:=s1;
 end;
 
+
+{$IFDEF NOASM}
+
 Function Lastchar(const s:string):char;           { letztes Zeichen eines Str.   }
 begin
   lastchar:=s[length(s)];
 end;
-
 
 Function FirstChar(const s:string):char;           { UpCase(s[1]) }
 begin
   if s='' then firstchar:=#0
   else firstchar:=s[1];
 end;
-
 
 Function Blankpos(const s:string):byte;        { Position von ' ' oder #9     }
 var p1,p2 : byte;
@@ -1571,6 +1834,55 @@ begin
   else if p2=0 then blankpos:=p1
   else blankpos:=min(cpos(' ',s),cpos(#9,s));
 end;
+
+{$ELSE}
+
+Function Lastchar(const s:string):char; assembler;   { letztes Zeichen eines Str.   }
+asm
+        push ds
+        lds si,s
+        lodsb
+        mov ah,0
+        add si,ax
+        dec si
+        lodsb
+        pop ds
+end;
+
+Function FirstChar(const s:string):char; assembler;  { UpCase(s[1]) }
+asm
+        push ds
+        lds si,s
+        lodsw
+        cmp al,0
+        je @end
+        mov al,ah
+@end:   pop ds
+end;
+
+Function Blankpos(const s:string):byte; assembler;
+asm
+        push ds 
+        lds si,s
+        lodsb
+        mov ah,0
+        mov cx,ax
+        mov dl,ch 
+        inc cx
+@1:     lodsb
+        dec cx
+        je @found
+        inc dx
+        cmp al,' '
+        je @fnd
+        cmp al,9
+        jne @1
+@fnd:   mov cl,dl 
+@found: mov al,cl
+        pop ds
+end;
+{$ENDIF}
+
 
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 begin
@@ -1590,12 +1902,12 @@ begin
   hbar:='√'+dup(len-2,'ƒ')+'¥';
 end;
 
-
+(*
 Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s }
 begin
   StrChar:=s[n];
 end;
-
+*)
 
 Function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich }
 begin
@@ -1604,7 +1916,7 @@ begin
   Stricmp:=(s1=s2);
 end;
 
-
+(*
 function Oct(l:longint):string;        { Longint -> Oktalstring }
 var s   : string;
     sgn : string[1];
@@ -1622,7 +1934,7 @@ begin
   if s='' then Oct:='0'
   else Oct:=sgn+s;
 end;
-
+*)
 
 Function CPosX(c:char; const s:string):byte;   { pos=0 -> pos:=length(s)+1 }
 var p : byte;
@@ -1641,7 +1953,7 @@ begin
   else PosX:=p;
 end;
 
-
+(*
 Function SiMatch(const s1,s2:string):byte;         { dto., ignore case }
 var p,ml : byte;
 begin
@@ -1651,8 +1963,9 @@ begin
     inc(p);
   SiMatch:=p;
 end;
+*)
 
-
+(*
 function SwapLong(l:longint):longint;        { Byteorder umdrehen }
 type sr = record
             w1,w2 : smallword;
@@ -1663,9 +1976,9 @@ begin
   sr(m).w2:=swap(sr(l).w1);
   SwapLong:=m;
 end;
+*)
 
-
-
+(*
 Function CreditCardOk(s:string):boolean;   { Kreditkartennummer ÅberprÅfen }
 const cntab : array['0'..'9'] of byte = (0,2,4,6,8,1,3,5,7,9);
 var i,sum : integer;
@@ -1682,6 +1995,7 @@ begin
     else inc(sum,cntab[s[i]]);
   CreditCardOk:=(sum mod 10=0);
 end;
+*)
 
 
 {$IFDEF NO386 }
@@ -1855,6 +2169,11 @@ end.
 
 {
   $Log$
+  Revision 1.37.2.21  2001/08/11 17:19:19  my
+  - commented out unused routines
+  JG:- some functions rewritten to ASM (Trim, Range, Hex, Sgn, Min, Max,
+       Minmax, Blankpos, Firstchar, Lastchar)
+
   Revision 1.37.2.20  2001/08/05 11:42:18  my
   - moved 'DOSEmuVersion' from TYPEFORM.PAS to CLIP.PAS
   - commented out 'erase_all' in FILEIO.PAS (unused)
