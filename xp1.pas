@@ -1297,7 +1297,11 @@ var d    : DB;
   procedure showtline;
   begin
     attrtxt(col.coltline);
+{$IFDEF NCRT }
+    HorizLine(3);
+{$ELSE }
     wrt(1,3,dup(screenwidth,'ß'));
+{$ENDIF }
   end;
 
 begin
@@ -1307,7 +1311,7 @@ begin
     showtline;
     if dbFound then begin
       dbRead(d,'username',user);
-      mwrt(78-length(user),3,' '+user+' ');
+      mwrt(screenwidth-2-length(user),3,' '+user+' ');
       end;
     dbClose(d);
     end
@@ -1340,7 +1344,11 @@ begin
     showusername;
     dispfunctionkeys(false);
     attrtxt(coltline);
+{$IFDEF NCRT }
+    HorizLine(screenlines-fnkeylines);
+{$ELSE }
     mwrt(1,screenlines-fnkeylines,dup(screenwidth,'Ü'));
+{$ENDIF }
     normtxt;
     end;
   showmain(0);
@@ -2374,6 +2382,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/05/08 13:12:23  hd
+  - "Rote Linien" simuliert
+  - Usernamen-Darstellung an screenwidth ausgerichtet
+
   Revision 1.40  2000/05/07 15:57:02  mk
   - Exitprozedure wurde unter 32 Bit nicht zurueckgesetzt
 
