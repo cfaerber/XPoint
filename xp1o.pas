@@ -196,7 +196,6 @@ var s     : string;
     useclip: boolean;
     nr    : longint;
     i     : integer;
-    um2old: boolean; {Speicher fuer Original-Usemulti2}
     
   procedure ex(i:shortint);
   begin
@@ -311,18 +310,10 @@ begin
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
     begin   
-     if listvollbild then
-     begin
-      um2old:=usemulti2;
-      usemulti2:=false;  {Verhindern das Uhr zwischendurch erscheint}
+      if listvollbild then resetclock:=false;
+      ShowHeader;                                               
+      resetclock:=true;
       end;
-     ShowHeader;                                               
-     if listvollbild then 
-     begin
-       usemulti2:=um2old;
-       m2t:=false;     {Uhr auslassen...}
-       end; 
-     end;
     end;
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
@@ -998,6 +989,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/03/02 21:19:51  jg
+  - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
+
   Revision 1.16  2000/03/02 17:07:02  jg
   - Schoenheitsfix: bei "O" aus Vollbildlister
     wird Uhr nicht mehr aktiviert.

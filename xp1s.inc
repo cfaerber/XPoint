@@ -436,7 +436,7 @@ begin
     list(brk);
     pophp;
     ListMakros:=oldm;
-    m2t:=true;
+    m2t:=resetclock;
     if savescr then holen(p);
     closelist;
     end;
@@ -540,6 +540,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/03/02 21:19:51  jg
+  - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
+
   Revision 1.9  2000/02/27 08:24:57  jg
   -Strings.StrPCopy wird wieder benutzt...
 

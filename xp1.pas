@@ -40,6 +40,8 @@ const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
       Errorlevel : word    = 0;
       miscbase   : DB      = nil;       { wird bei Shell geschlossen }
       menurestart: boolean = false;     { fÅr Config-MenÅ            }
+      resetclock : boolean = true;      { Uhr aktivieren beim Beenden von Listfile }
+                                        { Benoetigt fuer xp1o.pas - "O" aus lister }  
 
 type mprec     = record
                    mstr    : string[30];
@@ -1605,6 +1607,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/02 21:19:51  jg
+  - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
+
   Revision 1.10  2000/02/27 08:24:57  jg
   -Strings.StrPCopy wird wieder benutzt...
 
