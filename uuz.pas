@@ -2049,7 +2049,10 @@ begin
              if zz='x-envelope-to' then envemp := s0 else
 
              if { (zz<>'xref') and } (left(zz,4)<>'x-xp') then AppUline(s1);
-        else if zz='from'         then GetAdr(absender,realname) else
+        else if zz='from'         then begin
+                                    MimeIsoDecode(s0,length(s0));
+                                    GetAdr(absender,realname)
+                                  end else
              if zz='to'           then GetEmpf else
              if zz='message-id'   then msgid:=GetMsgid else
              if zz='organization' then organisation:=s0 else
@@ -2081,7 +2084,7 @@ begin
     if ustr(wab)=ustr(absender) then
       wab:='';
     MimeIsoDecode(betreff,250);
-    MimeIsoDecode(realname,realnlen);
+  { MimeIsoDecode(realname,realnlen); }  { my 04/2002: wird vor GetAdr decodiert }
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
@@ -3384,6 +3387,13 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.69  2002/04/09 21:40:44  my
+  MY[+JG]}:- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach
+             RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
+             zerlegt wird (vorher wurde ein Header wie
+             'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?= <...>' nicht
+             korrekt decodiert).
+
   Revision 1.35.2.68  2002/03/30 12:49:05  my
   MY:- Wir erzeugen ausgehend jetzt einen Header "X-XP-Version", der ein
        Duplikat der Mailerzeile enth„lt. Eingehend wird dieser Header,
