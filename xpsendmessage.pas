@@ -394,7 +394,6 @@ var f,f2     : file;
     orgftime : longint;
     sigfile  : string;
     sigtemp  : boolean;
-    iso      : boolean;
     flPGPkey : boolean;     { eigenen Key mitschicken }
     flPGPsig : boolean;     { Nachricht signieren }
     flPGPreq : boolean;     { Key-Request }
@@ -1644,8 +1643,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     else case parts.count of
       0: assert(false);
       1: with TSendAttach_Part(parts[0]) do begin
-           if ntMIME(netztyp) and not ntConv(netztyp) then
-             hdp.typ := 'M' else // ZConnect with MIME
+//         if ntMIME(netztyp) and not ntConv(netztyp) then
+//           hdp.typ := 'M' else // ZConnect with MIME
            if(TSendAttach_Part(parts[0]).FileEOL=MimeEOLNone) or
              (TSendAttach_Part(parts[0]).Analyzed.IsBinary) then
              hdp.typ := 'B'  // UUZ will encode
@@ -1660,13 +1659,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
              hdp.mime.description := TSendAttach_Part(parts[0]).ContentDescription;
            end; // ntMIME
 
-           if hdp.typ <> 'M' then
-           begin
-             hdp.datei := TSendAttach_Part(parts[0]).FileName;
-             hdp.summary := TSendAttach_Part(parts[0]).ContentDescription;
-             if ntMime(netztyp) and not IsNAN(FileModify) then
-               hdp.ddatum := DateTimeToZCDateTime(TSendAttach_Part(parts[0]).FileModify);
-           end;
+           hdp.datei := TSendAttach_Part(parts[0]).FileNameO;
+           hdp.summary := TSendAttach_Part(parts[0]).ContentDescription;
+           if ntMime(netztyp) and not IsNAN(FileModify) then
+             hdp.ddatum := DateTimeToZCDateTime(TSendAttach_Part(parts[0]).FileModify);
 
            if ContentType.NeedCharset then
            begin
@@ -1678,22 +1674,14 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
            if (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
               ((IsMessage) and not flOhnesig and (sigfile<>'')) or
-              ((hdp.typ='M') and (
-                 (ContentEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable]) or
-                 (ContentType.NeedCharset and (ContentCharset<>FileCharset)) )) or
-              ((hdp.typ<>'M') and (
-                 (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) )) then
+              (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) then
            begin
              s1 := TMemoryStream.Create;
              MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
                iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''));
              if ContentType.NeedCharset then begin
-               if hdp.typ='M' then
-                 hdp.charset:=MimeCharsetToZC(ContentCharset)
-               else begin
-                 hdp.charset:=MimeCharsetToZC(FileCharset);
-                 hdp.x_charset:=ContentCharset;
-               end;
+               hdp.charset:=MimeCharsetToZC(FileCharset);
+               hdp.x_charset:=ContentCharset;
              end;
            end else
            begin
@@ -1709,7 +1697,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         Boundary:=MimeCreateMultipartBoundary(username); // does not contain chars that must be quoted
         hdp.boundary:=boundary;
         hdp.typ:='M';
-        hdp.MIME.ctype := 'multipart/mixed; boundary='+Boundary;
+        hdp.MIME.ctype := 'multipart/mixed; boundary="'+Boundary+'"';
         hdp.MIME.encoding := MimeEncoding7Bit;
 
         // if we use PGP/MIME, then only 7bit transparent encodings
@@ -1948,7 +1936,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if FileAttach then inc(l,$200);
       if hdp.pm_reply then inc(l,$400);
       if (hdp.wab<>'') or (hdp.oem.Count > 0) then inc(l,$800);
-      if iso then inc(l,$2000);
+      if (hdp.typ='T')and(hdp.charset='ISO1')then inc(l,$2000);
       if flPGPsig then inc(l,$4000);
       if msgCPanz>0 then begin
         inc(l,longint(msgCPanz) shl 16);
@@ -2298,6 +2286,10 @@ finalization
 
 {
   $Log$
+  Revision 1.14  2001/09/14 18:26:35  cl
+  - fixed iso flag
+  - no ZConnect-MIME for single-part messages
+
   Revision 1.13  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
