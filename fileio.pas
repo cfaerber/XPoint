@@ -98,7 +98,7 @@ function  _filesize(const fn:string):longint;        { Dateigroesse in Bytes    
 function  filetime(fn:string):longint;         { Datei-Timestamp         }
 function  setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen  }
 function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
-procedure erase_mask(s:string);                 { Datei(en) loeschen       }
+procedure erase_mask(const s: string);          { Datei(en) loeschen       }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:string);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:string; var res:integer);  { mehrere Verz. anl. }
@@ -108,6 +108,7 @@ procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode oeffn.}
 
 procedure adddir(var fn:string; dir:string);
+function  DirectorySize(const dir: string): longint;
 function  GetBareFileName(const p:string):string;
 function  GetEnv(const name: string): string;
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
@@ -412,7 +413,7 @@ begin
   freemem(buf,bufs);
 end;
 
-procedure erase_mask(s:string);                 { Datei(en) loeschen }
+procedure erase_mask(const s: string);                 { Datei(en) loeschen }
 var
   sr : TSearchrec;
 begin
@@ -615,9 +616,28 @@ begin
 {$endif}
 end;
 
+function DirectorySize(const dir: string): longint;
+var
+  sr: tsearchrec;
+  rc: integer;
+begin
+  result:= 0;
+  rc:= sysutils.findfirst(AddDirSepa(dir)+WildCard,faAnyFile,sr);
+  while rc=0 do begin
+    inc(result,sr.size);
+    rc:= findnext(sr);
+  end;
+  FindClose(sr);
+end;
+
 end.
 {
   $Log$
+  Revision 1.79  2000/11/16 22:04:09  hd
+  - DirectorySize: Diese Funktion liefert die Summe der Bytes, die die
+    einzelnen Dateien haben. Derivate dieser Funktion finden sich mehrfach
+    im Source (XSpace, TotalSize...)
+
   Revision 1.78  2000/11/16 20:41:47  hd
   - DOS Unit entfernt
 
