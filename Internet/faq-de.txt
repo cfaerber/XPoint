@@ -76,6 +76,23 @@ Bezugsquellen siehe "Links".
 Ich habe einen Mail/News-Client installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-04-08</small>
 Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder das  kostenlose OpenXP/32 benutzen.
 
+Wofür stehen bei XP eigentlich die ganzen Abkürzungen?&nbsp;&nbsp;<small>2002-01-20</small>
+<table>
+<tr><td width="100">MAGGI</td><td width="200">Magic</td><td width="300">Ganz am Anfang Konverter Magic-ZConnect, später auch andere Formate</td></tr>
+<tr><td>NDIFF</td><td>Nodelist Diff</td><td>Verarbeitet Fido-Nodelist-Diffs</td></tr>
+<tr><td>PMCONV</td><td>PM Convert</td></tr>
+<tr><td>RFC</td><td>"Request for comments"</td><td>Internet-Standards</td></tr>
+<tr><td>UUCICO</td><td>UUCP Copy In Copy Out</td><td>"Mailer" für UUCP</td></tr>
+<tr><td>UUCP</td><td>Unix to Unix Copy</td><td>Filetransferstandard für Unix</td></tr>
+<tr><td>UUCP-FL1</td><td>UUCP Filter No. 1</td></tr>
+<tr><td>UUZ</td><td>UUCP-ZConnect</td><td>Konvertiert inzwischen nicht nur UUCP-Format, sondern auch RFC/mbox nach ZConnect</td></tr>
+<tr><td>XP-FM</td><td>XPoint Fido Mailer</td></tr>
+<tr><td>XPME</td><td>XPoint Menu Editor</td></tr>
+<tr><td>YUP2PKT</td><td>Yuppie Mailbase to PKT</td></tr>
+<tr><td>ZFIDO</td><td>ZConnect-Fido</td></tr>
+<tr><td>ZPR</td><td>ZConnect Pufferreparierer</td></tr>
+</table>
+
 Warum gibt es zwei Entwickler-Teams?&nbsp;&nbsp;<small>2001-01-16</small>
 Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe "Links") gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.
 

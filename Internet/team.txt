@@ -10,30 +10,15 @@ UUZ, UUCP, RFC conformance
 
 <a href="http://come.to/schnoerkel/">Malte Kiesel</a>
 <a href="mailto:ma@openxp.de">ma</a>
-Fidomailer, Netcall-Routinen, ObjCOM (OpenXP/32)
-Fidomailer, netcall functions, ObjCOM (OpenXP/32)
-
-<a href="http://www.martinwodrich.de">Martin Wodrich</a>
-<a href="mailto:mw@openxp.de">mw</a>
-Verschiedenes (OpenXP/16)
-Misc (OpenXP/16)
+Fidomailer, Netcall-Routinen, ObjCOM
+Fidomailer, netcall functions, ObjCOM
 
 <a href="http://www.uni-jena.de/~i7lema">Matthias Leonhardt</a>
 <a href="mailto:ml@openxp.de">ml</a>
-Linux-Portierung (OpenXP/32)
-Porting to Linux (OpenXP/32)
+Linux-Portierung
+Porting to Linux
 
 <a href="http://www.stuebner.de">Matthias St&uuml;bner</a>
 <a href="mailto:ms@openxp.de">ms</a>
-Dokumentation, Onlinehilfe (OpenXP/32)
-Documentation, Online help (OpenXP/32)
-
-Michael Heydekamp
-<a href="mailto:my@openxp.de">my</a>
-Div. Programmierung, Client-Unterstützung, Design, Hilfe
-Misc. programming, client support, design, online help
-
-Stefan Vinke
-<a href="mailto:sv@openxp.de">sv</a>
-Verschiedenes, Hilfe (OpenXP/16)
-Misc, Help (OpenXP/16)
+Dokumentation, Onlinehilfe
+Documentation, Online help

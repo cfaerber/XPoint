@@ -1,5 +1,5 @@
-*OpenXP/32 v3.7.4 Beta<br /><small>bzw. Linux Alpha</small>
-OpenXP/32 v3.7.4 Beta<br /><small>OpenXP/32 (Linux) is alpha</small>
+*OpenXP/32 v3.7.6 Beta<br /><small>bzw. Linux Alpha</small>
+OpenXP/32 v3.7.6 Beta<br /><small>OpenXP/32 (Linux) is alpha</small>
 /openxp/oxp32win.rar
 Win32-Version [RAR]
 Win32 version [RAR]
@@ -8,7 +8,7 @@ Win32 version [RAR]
 Win32-Version [ZIP]
 Win32 version [ZIP]
 
-/openxp/openxp-3.7.4.i386.rpm
+/openxp/openxp-3.7.6.i386.rpm
 Linux-Version [rpm]
 Linux version [rpm]
 
@@ -26,7 +26,7 @@ OpenXP/32 snapshot<br /><small>"bleeding edge code", no guarantees, may not work
 Win32-Version
 Win32 version
 
-/openxp/snapshot/openxp-3.70.5-2.i386.rpm
+/openxp/snapshot/openxp-3.7.7-1.i386.rpm
 Linux-Version [rpm]
 Linux version [rpm]
 

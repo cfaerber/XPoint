@@ -1,5 +1,9 @@
 Die letzten News von www.openxp.de...
 
+27. März 2002: Umzug von OpenXP/16
+OpenXP/16 wird seit Januar 2002 unter der Leitung von Michael Heydekamp unter <a href="http://www.openxp16.de">OpenXP16.de</a> weiterentwickelt.
+<br /><a href="index.php4?file=news/20020327.html">Weiteres dazu...</a>
++
 31. Dezember 2001: OpenXP/32 v3.7.6 Beta verfügbar
 In den letzten beiden Monaten wurden hauptsächlich Fehler der letzten Beta-Version
 beseitigt und ein paar kleinere Features eingebaut. Zeit für eine neue Beta...
