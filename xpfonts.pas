@@ -288,7 +288,7 @@ begin
   with regs do
   begin
     ax:=$1130;
-    if height =5 then
+    if height= 15 then
       bh:=6        { 16er Font lesen }
     else
       bh:=3;       { 8er Font lesen  }
@@ -323,6 +323,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.4.4  2000/11/16 18:09:50  mk
+  - 26 Zeilen-Modus geht wieder (nur ein kleiner Typo)
+
   Revision 1.5.4.3  2000/10/26 07:20:51  mk
   - Grafikmodus mit 8 Zeilen/Zeichen wird jetzt direkt ueber das BIOS gesetzt
 
