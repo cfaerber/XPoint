@@ -24,7 +24,7 @@ interface
 uses
   xpglobal,
 {$ifdef NCRT}
-  oCrt,
+  xpcurses,
 {$else}
   crt,
 {$endif}
@@ -130,11 +130,14 @@ const  keyf1   = #0#59;             { Funktionstasten }
 type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
-       forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }       lastscancode : byte;
+       forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }       
+       lastscancode : byte;
 
 
+{$IFNDEF NCRT }
 function  keypressed:boolean;
 function  readkey:char;
+{$ENDIF }
 
 procedure keyboard(s:string);        { s and forwardkeys anhÑngen            }
 procedure _keyboard(s:string);       { s vorne an forwardkeys anhÑngen       }
@@ -182,6 +185,8 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
+{ keypressed ist in xpcurses definiert. }
+{$IFNDEF NCRT }
 function keypressed:boolean;
 {$IFDEF BP }
 var
@@ -201,11 +206,7 @@ begin
   else key_pressed:=crt.keypressed;
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
 {$ELSE }
-  {$ifdef NCRT}
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or oCrt.keypressed;
-  {$else}
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
-  {$endif}
 {$ENDIF }
 end;
 
@@ -252,14 +253,11 @@ begin
           mov lastscancode,ah
       end;
 {$ELSE }
-      {$ifdef NCRT}
-      readkey:=ocrt.readkey;
-      {$else}
       readkey:=crt.readkey;
-      {$endif}
 {$ENDIF }
     end;
 end;
+{$ENDIF } { NCRT }
 
 procedure keyboard(s:string);
 begin
@@ -444,6 +442,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/05/02 11:49:34  hd
+  Anpassung an Curses (Linux)
+
   Revision 1.19  2000/04/29 16:45:06  mk
   - Verschiedene kleinere Aufraeumarbeiten
 

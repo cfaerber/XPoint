@@ -38,7 +38,7 @@ uses
 {$endif}
   dos, 
 {$ifdef NCRT }
-  oCrt,
+  xpcurses,
 {$else }
   crt, 
 {$endif }
@@ -334,11 +334,7 @@ begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
 {$ifdef NCRT}
-  ocrt.window(l,o,r,min(u,25));
-  if (l=1) and (o=1) and (r=80) and (u=25) then
-    ocrt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
-  else
-    ocrt.windmax:=ocrt.windmax and $ff + 256*(u-1);
+  xpcurses.window(l,o,r,u);
 {$else}
   crt.window(l,o,r,min(u,25));
   if (l=1) and (o=1) and (r=80) and (u=25) then
@@ -418,10 +414,6 @@ end;
 
 Procedure GetCur(var a,e,x,y:byte);
 begin
-{$IFDEF NCRT }
-  x:= nWherex(StdScr);
-  y:= nWherey(StdScr);
-{$ELSE }
 {$IFDEF BP }
   asm
         mov ah, 3
@@ -436,7 +428,6 @@ begin
   end;
 {$ENDIF }
   x :=wherex; y:=wherey;
-{$ENDIF }
 end;
 
 {$IFDEF FPC }
@@ -458,11 +449,7 @@ Procedure RestCursor;
 begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
-{$IFDEF NCRT }
-   nGotoXY(StdScr, sy[cursp],sx[cursp]);
-{$ELSE }
-   gotoxy(sx[cursp],sy[cursp]);
-{$ENDIF }
+  gotoxy(sx[cursp],sy[cursp]);
 {$IFDEF BP }
   curlen(sa[cursp],se[cursp]);
 {$ENDIF }
@@ -843,7 +830,7 @@ begin
   intr($10,regs);
   {$endif}
   {$ifdef NCRT}
-  oCrt.ClrScr;
+  xpcurses.ClrScr;
   {$else}
   crt.clrscr;
   {$endif}
@@ -1678,6 +1665,10 @@ Function CopyChr(x,y:byte):char;
 begin
   CopyChr:=chr(mem[base:(2*x-2) + 2*zpz*(y-1)]);
 {$ELSE }
+{$IFDEF NCRT }
+begin
+  CopyChr:= '?'; { <--- Notfalls doch wieder LocalScreen }
+{$ELSE }
 var
   c: Char;
   Attr: SmallWord;
@@ -1685,8 +1676,8 @@ begin
   GetScreenChar(x, y, c, Attr);
   CopyChr := c;
 {$ENDIF}
+{$ENDIF}
 end;
-
 
 Function memadr(x,y:byte):word;
 begin
@@ -1865,11 +1856,14 @@ begin
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
 {$IFDEF NCRT }
-  zpz:= nCols(nScreen);
+  { zpz:= nCols(nScreen); }
 {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.30  2000/05/02 11:49:34  hd
+  Anpassung an Curses (Linux)
+
   Revision 1.29  2000/04/29 16:45:06  mk
   - Verschiedene kleinere Aufraeumarbeiten
 

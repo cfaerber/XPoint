@@ -23,7 +23,8 @@ interface
 
 uses
 {$ifdef NCRT}
-  oCrt,
+  xplinux,
+  xpcurses,
 {$else}
   crt,
 {$endif}
@@ -108,7 +109,7 @@ var
     forwardkeys[length(forwardkeys)+2]:=char(b);
     inc(byte(forwardkeys[0]),2);
 {$ifdef NCRT}
-    if not usemulti2 and not ocrt.keypressed then begin
+    if not usemulti2 and not keypressed then begin
 {$else}
     if not usemulti2 and not crt.keypressed then begin
 {$endif}
@@ -339,6 +340,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/02 11:49:34  hd
+  Anpassung an Curses (Linux)
+
   Revision 1.11  2000/04/29 16:10:41  hd
   Linux-Anpassung
 

@@ -73,7 +73,7 @@ uses
   {$ENDIF}
 {$ENDIF }
 {$IFDEF NCRT }
-  oCrt,
+  xpcurses,
   winxp,
 {$ENDIF }
 {$IFDEF Win32 }
@@ -515,7 +515,7 @@ begin
 {$ELSE }
 {$IFDEF NCRT }
   begin
-    GetScreenLines:= nRows(StdScr);
+    GetScreenLines:= ScreenRows;
 {$ELSE }
   begin
     GetScreenLines := 25;
@@ -543,6 +543,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/02 11:49:34  hd
+  Anpassung an Curses (Linux)
+
   Revision 1.15  2000/04/29 16:10:41  hd
   Linux-Anpassung
 

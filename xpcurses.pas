@@ -163,6 +163,10 @@ procedure TextColor(att : byte);
 procedure SetTextAttr(attr: byte);
 procedure TextMode(mode : word);
 
+{ Liefert die Anzahl der Zeilen/Spalten }
+function ScreenRows: integer;
+function ScreenCols: integer;
+
 { false, wenn der Screen kleiner als Cols/Rows }
 function MinimumScreen(Cols, Rows: Word): boolean;
 
@@ -204,6 +208,7 @@ function SetColorPair(att: integer): integer;
 procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
 procedure RestoreWindow(var win: TWinDesc);
 
+procedure Window(x1, y1, x2, y2: integer);
 
 implementation
 
@@ -255,6 +260,21 @@ type
   End;
 {==========================================================================}
 
+procedure Window(x1, y1, x2, y2: integer);
+begin
+  { Erstmal sehen, ob die Funktion benoetigt wird }
+end;
+
+function ScreenRows: integer;
+begin
+  ScreenRows:= MaxRows;
+end;
+
+function ScreenCols: integer;
+begin
+  ScreenCols:= MaxCols;
+end;
+
 function MinimumScreen(Cols, Rows: Word): boolean;
 begin
   MinimumScreen:= (MaxCols>=Cols) and (MaxRows>=Rows);
@@ -272,7 +292,7 @@ begin
   win.x:= x1-1; win.y:= y1-1;
   win.Cols:= x2-win.x; win.Rows:= y2-win.y;
   { Fenster erzeugen }
-  win.wHnd:= newwin(win.y, win.x, win.Rows, win.Cols);
+  win.wHnd:= newwin(win.Rows, win.Cols, win.y, win.x);
 {$IFDEF Beta}
   if (win.wHnd = nil) then begin
     WriteLn('Error creating window (XPCurses::MakeWindow)');
@@ -283,6 +303,8 @@ begin
   win.isEcho:= false;
   { Panel verbinden }
   win.pHnd:= new_panel(win.wHnd);
+  { Neues Window als aktuell setzen }
+  FastMove(win, ActWin, sizeof(TWinDesc));
   show_panel(win.pHnd);
   { Inhalt loeschen }
   ClrScr;
@@ -293,7 +315,6 @@ begin
   if (Length(s) > 0) then begin
     mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
   end;
-  FastMove(win, ActWin, sizeof(TWinDesc));
   touchwin(win.wHnd);
   wrefresh(win.wHnd);
 end;
@@ -302,6 +323,7 @@ procedure RestoreWindow(var win: TWinDesc);
 begin
   { PAnel entfernen }
   hide_panel(win.pHnd);
+  update_panels;
   del_panel(win.pHnd);
   { Window entfernen }
   delwin(win.wHnd);
@@ -932,8 +954,8 @@ Begin
 end.
 {
   $Log$
-  Revision 1.3  2000/05/01 18:59:37  hd
-  Make- und RestoreWindow
+  Revision 1.4  2000/05/02 11:49:34  hd
+  Anpassung an Curses (Linux)
 
   Revision 1.2  2000/05/01 17:14:51  hd
   - Grundlegenste Funktionen uebernommen und angepasst
