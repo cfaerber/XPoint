@@ -145,7 +145,7 @@
 
 {$IFDEF OS2 }
   {$IFNDEF VP }
-    {a$DEFINE TCP }
+    {$DEFINE TCP }
   {$ENDIF }
 {$ENDIF }
 
@@ -174,6 +174,9 @@
 
 {
   $Log$
+  Revision 1.7.2.8  2003/08/25 06:42:17  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.7.2.7  2003/01/25 14:33:21  mk
   - J+ (Writable Const) on for Kylix
 

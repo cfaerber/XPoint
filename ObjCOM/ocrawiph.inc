@@ -3,7 +3,30 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type TRawIPStream = Class(TCommStream)
+type
+  TobjSockAddrIn =
+          {$IFDEF Kylix}
+          TSockAddrIn;
+          {$ELSE}
+          {$IFDEF WIN32}
+          TSockAddrIn;
+          {$ELSE}
+          {$IFDEF OS2 }
+          TSockAddrIn;
+          {$ELSE}
+          TInetSockAddr;
+          {$ENDIF}
+          {$ENDIF}
+          {$ENDIF}
+  // in pmwsockets most calls are with sockaddr instead of TSockAddrIn
+  TobjSockaddr =
+          {$IFDEF OS2}
+            sockaddr;
+          {$ELSE }
+            TobjSockAddrIn;
+          {$ENDIF }
+
+  TRawIPStream = Class(TCommStream)
         constructor Create;
         destructor Destroy; override;
 
@@ -44,17 +67,7 @@ type TRawIPStream = Class(TCommStream)
 
       private  
         RemoteAddr,
-        LocalAddr:
-          {$IFDEF Kylix}
-          TSockAddrIn;
-          {$ELSE}
-          {$IFDEF WIN32}
-          TSockAddrIn;
-          {$ELSE}
-          TInetSockAddr;
-          {$ENDIF}
-          {$ENDIF}
-
+        LocalAddr: TobjSockAddrIn;
       protected
 	function GetRemoteIP  : Cardinal; virtual;
 	function GetRemotePort: Integer;  virtual;
@@ -69,6 +82,9 @@ type TRawIPStream = Class(TCommStream)
 
 {
   $Log$
+  Revision 1.7.2.1  2003/08/25 06:42:18  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.7  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

@@ -3,8 +3,10 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
+{$IFNDEF OS2 }
 Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
       ReadTimeOut    = 20000;                   { General event, 20 secs max }
+{$ENDIF }
 
 {$IFDEF WIN32}
 WSAInits: Integer= 0;
@@ -15,6 +17,14 @@ WSAData:  tWSAData;
 {$ifdef BSD}
   const FIONREAD = $4004667F;
 {$endif}
+
+// pmwsock is compatible to Windows Sockets specification
+{$IFDEF OS2 }
+  {$DEFINE WinSockets }
+{$ENDIF }
+{$IFDEF Win32 }
+  {$DEFINE WinSockets }
+{$ENDIF }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -53,7 +63,11 @@ begin
   {$IFDEF Kylix}
   0// TIdStack.WSTranslateSocketErrorMsg
   {$ELSE}
+  {$IFDEF OS2 }
+  pmwsock.WSAGetLastError
+  {$ELSE}
   sockets.SocketError
+  {$ENDIF }
   {$ENDIF}
   {$ENDIF})+')';
 end;
@@ -109,15 +123,7 @@ type
     PCardinal  = ^Cardinal;
     PPCardinal = ^PCardinal;
 var
-{$IFDEF WIN32}
-    Addr:     TSockAddrIn;
-{$ELSE}
-{$IFDEF Kylix}
-    Addr:     TSockAddrIn;
-{$ELSE}
-    Addr:     TInetSockAddr;
-{$ENDIF}
-{$ENDIF}
+    Addr: TobjSockAddrIn;
     DestHE:   PHostEnt;
     DestHEP:  PPCardinal; { really }
     DestIP:   array [0..15] of Cardinal;
@@ -156,8 +162,13 @@ begin
   if WinSock.WSAGetLastError <> 0 then
   {$ELSE}
   {$IFDEF fpc}
-  SHandle:=sockets.Socket(AF_INET,SOCK_STREAM,0);
-  if sockets.SocketError <> 0 then
+  {$IFDEF OS2 }
+    SHandle:=pmwsock.Socket(AF_INET,SOCK_STREAM,0);
+    if pmwsock.WSAGetLastError <> 0 then
+  {$ELSE }
+    SHandle:=sockets.Socket(AF_INET,SOCK_STREAM,0);
+    if sockets.SocketError <> 0 then
+  {$ENDIF }
   {$ELSE}
   SHandle:=Socket(AF_INET,SOCK_STREAM,0);
   if SHandle = - 1 then
@@ -169,24 +180,25 @@ begin
   end;
 
   {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
-  addr.{$IFDEF WIN32}sin_family{$ELSE}family{$ENDIF} := AF_INET;
-  addr.{$IFDEF WIN32}sin_port  {$ELSE}port  {$ENDIF} := htons(DestPort);
+  addr.{$IFDEF WinSockets}sin_family{$ELSE}family{$ENDIF} := AF_INET;
+  addr.{$IFDEF WinSockets}sin_port  {$ELSE}port  {$ENDIF} := htons(DestPort);
 
   for c:=0 to DestIPNr-1 do
   begin
-    {$R-} addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c]; {$R+}
+    {$R-} addr.{$IFDEF WinSockets}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c]; {$R+}
 
-    if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
+    if {$IFDEF WIN32}0=WinSock{$ELSE}{$IFDEF OS2}0=pmwsock{$ELSE}sockets{$ENDIF}{$ENDIF}.Connect(SHandle,
+      TObjSockAddr(Addr),SizeOf(Addr)) then
     begin
       SOpened:=True;
       IDummy:=Sizeof(LocalAddr);
 {$IFNDEF Unix}
-      getsockname(SHandle,LocalAddr, IDummy);
+      getsockname(SHandle,TObjSockAddr(LocalAddr), IDummy);
 {$ELSE}
       getsocketname(SHandle,LocalAddr, IDummy);
 {$ENDIF}
       IDummy:=Sizeof(RemoteAddr);
-      getpeername(SHandle,RemoteAddr,IDummy);
+      getpeername(SHandle,TObjSockAddr(RemoteAddr),IDummy);
       ConnectIP:=True;
       exit;
     end
@@ -233,7 +245,7 @@ procedure TRawIPStream.Close;
 begin
   if GetHandle <> INVALID_SOCKET then
   begin
-    {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}ShutDown(SHandle,2);
+    {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}{$IFDEF OS2}pmwsock.{$ELSE}sockets.{$ENDIF}{$ENDIF}{$ENDIF}ShutDown(SHandle,2);
     {$IFDEF WIN32}WinSock.CloseSocket(SHandle);{$ENDIF}
     SHandle := INVALID_SOCKET;
   end;
@@ -264,7 +276,8 @@ procedure TRawIPStream.SendBlock(var Block; BlockLen: Longint; var Written: Long
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),dlDebug+2);
 
-  Written:={$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}send(SHandle,Block,BlockLen,0);
+  Written:={$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}{$IFDEF OS2}pmwsock.{$ELSE}sockets.{$ENDIF}{$ENDIF}{$ENDIF}send(SHandle,
+    {$IFDEF OS2}PChar(Block){$ELSE}Block{$ENDIF},BlockLen,0);
   if not Written > 0 then
   begin
     SetErrorStr('SendBlock');
@@ -276,7 +289,7 @@ end; { proc. TRawIPStream.SendBlock }
 
 procedure TRawIPStream._ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
-  reads := {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}recv(SHandle,Block,Blocklen,0);
+  reads := {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}{$IFDEF OS2}pmwsock.{$ELSE}sockets.{$ENDIF}{$ENDIF}{$ENDIF}recv(SHandle,Block,Blocklen,0);
   case reads of
     0:            begin
                     SOpened:=false;
@@ -348,7 +361,7 @@ end; { func. TRawIPStream.CharAvail }
 function TRawIPStream._CharCount: Integer;
 var   SSet:  TFDSet;
 const NilTm: TTimeVal =
-  {$IFDEF WIN32}
+  {$IFDEF WinSockets}
   (tv_sec:0;tv_usec:0)
   {$ELSE}
   {$IFDEF fpc}
@@ -368,7 +381,7 @@ begin
   case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
-  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
+  else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
                      {$ELSE}not ioctl(SHandle,FIONREAD,@Result){$ENDIF} then
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
@@ -499,8 +512,8 @@ begin
   InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
   OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
   {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
-  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFNDEF FPC}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
-  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFNDEF FPC}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WinSockets}GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFNDEF FPC}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WinSockets}GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFNDEF FPC}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
   {$ENDIF}
   InFree :=InFree+Sizeof(SBuffer)-(SBufEnd-SBufBeg)
 end; { proc. TTelnetObj.GetBufferStatus }
@@ -550,7 +563,7 @@ end; { func. ReadyToSend }
 function TRawIPStream.GetRemoteIP:   Cardinal; 
 begin 
   Result := RemoteAddr.
-  {$IFDEF WIN32}
+  {$IFDEF WinSockets}
   sin_addr.s_addr
   {$ELSE}
   {$IFDEF fpc}
@@ -566,7 +579,7 @@ end;
 function TRawIPStream.GetRemotePort: Integer;
 begin
   Result := NToHS(RemoteAddr.
-  {$IFDEF WIN32}
+  {$IFDEF WinSockets}
   sin_port
   {$ELSE}
   {$IFDEF fpc}
@@ -582,7 +595,7 @@ end;
 function TRawIPStream.GetLocalIP:   Cardinal;
 begin
   Result := LocalAddr.
-  {$IFDEF WIN32}
+  {$IFDEF WinSockets}
   sin_addr.s_addr
   {$ELSE}
   {$IFDEF fpc}
@@ -598,7 +611,7 @@ end;
 function TRawIPStream.GetLocalPort: Integer;
 begin
   Result := NToHS(LocalAddr.
-  {$IFDEF WIN32}
+  {$IFDEF WinSockets}
   sin_port
   {$ELSE}
   {$IFDEF fpc}
@@ -613,6 +626,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.3  2003/08/25 06:42:18  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.15.2.2  2003/01/19 19:50:05  mk
   - changed FreeBSD to BSD to allow compiling with NetBSD
 
