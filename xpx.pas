@@ -83,9 +83,7 @@ begin
     if (ioresult=0) and
        (ival(code)=sqr(CRC32Str(reverse(name)) and $ffff)) then begin
       XP_xp:=name;
-      XP_name := '## '+name+' '+verstr+betastr;
       XP_origin := '--- '+name;
-      XP_short := short;
       end;
     end;
 end;
@@ -207,6 +205,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/07/01 09:09:32  mk
+  - xp_short entfernt
+
   Revision 1.19  2000/06/22 19:53:33  mk
   - 16 Bit Teile ausgebaut
 

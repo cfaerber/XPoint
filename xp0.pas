@@ -87,10 +87,8 @@ const  {$IFDEF DPMI}
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-       xp_xp       : string[10] = 'OpenXP';
-       xp_name     : string[30] = '## OpenXP '+verstr+betastr;  { fÅr ZConnect-Header }
+       xp_xp       : string[6] = 'OpenXP';
        xp_origin   : string[15] = '--- OpenXP';
-       xp_short    : string[2]  = 'XP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -1173,6 +1171,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.60  2000/07/01 09:09:31  mk
+  - xp_short entfernt
+
   Revision 1.59  2000/06/30 08:21:22  mk
   - nicht benutzte Funktion plevel entfernt
 
