@@ -64,7 +64,7 @@ in CrossPoint:
    <<F1>>       Help
    <<Alt F1>>   Previous Help
    <<F9>>       DOS-Shell
-   <<Alt F4>>   End Programme
+   <<Alt F4>>   End Program
 
    <<Alt K>>    Calendar
    <<Alt E>>    Editor
@@ -230,7 +230,7 @@ also be helpful (and are sometimes very necessary).
 CrossPoint is <<NOT>> free software, it is shareware.
 You may evaluate it without cost for up to 30 days
 from first installation but if you wish to use it
-after that, you must register the programme.
+after that, you must register the program.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -426,7 +426,7 @@ recorded in the address book.
 
 <<<Tab> >>  Toggles back to the Newsgroup overview.
 
-   <<Q>>    End the programme.
+   <<Q>>    End the program.
         You can define a "QUIT? Yes/No" safety
         question under /Config/Options/Miscellaneous
 
@@ -733,7 +733,7 @@ Replying to messages:
         If the search was successful, you see a
         list of the found message(s) and can read
         them. <Esc> in the message-list jumps back
-        to the Main-Lister, showing the message
+        to the message reader, showing the message
         where you started the search.
 
 <<Alt-V>>   like <<Alt-M>> but searches for text.
@@ -763,8 +763,8 @@ Replying to messages:
         line (marked with <Space>) to request from
         the Node (Box) from which the message comes.
 
-   <<C>>    Toggles coloured <<bold>> Text on/off.
-        (see [/Config/External/Lister])@237
+   <<C>>    Toggles coloured <<bold>> Text on/off
+        (see [/Config/External/Message Reader]).@237
 
    <<##>>    Jumps to the thread-tree.
 
@@ -811,8 +811,8 @@ matically. The list can have as many entries as you
 wish. Note: All auto-send messages must exist indivi-
 dually as files on the disk.
 
-<<<Enter> >>loads the selected message in the lister
-        or archive viewer.
+<<<Enter> >>loads the selected message in the message
+        reader or archive viewer.
 
   <<V>>     Activates or deactivates the selected entry.
 
@@ -1194,7 +1194,8 @@ On the right of the status line is the Packer Type:
 ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP or ZOO.
 are recognised.
 
-<<Enter>>   loads the selected file in the lister
+<<Enter>>   loads the selected file in the message
+        reader.
 
 <<Space>>   Marks the selected file. <F7> and <F8>
         be use to mark a block of files
@@ -1787,7 +1788,7 @@ your mail packets *to* the server. <F2> allows to
 select from a list for the most common ones, and
 gives you the parameters (GSZ,DSZ,BiModem).
 
-Enter the programme call and the parameters here for
+Enter the program call and the parameters here for
 an *upload to* the server.
 
 You must agree a protocol with your Sysop!
@@ -1804,7 +1805,7 @@ an errorlevel, but writes in a log what happened)
 It is also important to use BiModem version 1.24
 or higher.
 
-Make sure the transfer programme is somewhere
+Make sure the transfer program is somewhere
 (current directory, DOS PATH or give XP the
 full path), where XP can find it.
 
@@ -1844,7 +1845,7 @@ your mail packets *from* the server. <F2> allows to
 select from a list for the most common ones, and
 gives you the parameters (GSZ,DSZ,BiModem).
 
-Enter the programme call and the parameters here for
+Enter the program call and the parameters here for
 a *download from* the server.
 
 You must agree a protocol with your Sysop!
@@ -1861,11 +1862,11 @@ started with the Upload line.
 It is also important to use <<BiModem version 1.24
 (or higher).
 
-Make sure the transfer programme is somewhere
+Make sure the transfer program is somewhere
 (current directory, DOS PATH or give XP the
 full path), where XP can find it. But XP even
 beeps and warns you if, when you leave the
-dialog box, it cannot "see" the programme you
+dialog box, it cannot "see" the program you
 entered somewhere.
 
 This field can use the following macros (variables):
@@ -1888,7 +1889,7 @@ entered elsewhere).
         its real name.)
 
 <<$LOGFILE>>  The log file in BiModem-Format. Useful
-        for other programmes, do not enter BiModem
+        for other programs, do not enter BiModem
         in the Download line.
 
 These macros are replaced when the time comes with
@@ -1902,7 +1903,7 @@ the correct values. A typical call to DSZ would be:
 
 The [Upload Packer] is used to compress the mail@4006
 packets which are to be uploaded <<TO>> the
-Server (Boss). The packer is an external programme
+Server (Boss). The packer is an external program
 which compresses data prior to transfer and is more
 commonly known as an archiver. It is advisable to use
 a packer but not absolutely necessary.
@@ -1977,7 +1978,7 @@ thing doesn't support anything else!
 
 <<Batch File substitute
 
-The programme you enter will simply be started, so it
+The program you enter will simply be started, so it
 can also be a batch file. With this, you can do other
 things like make backup copies etc. before packing
 but at the end, a proper $UPFILE file (ie. proper
@@ -1997,7 +1998,7 @@ comes out of it is governed by what went in and does
 not need to be specified. In FIDO especially, it is
 not fixed and CrossPoint will deal this for you.
 
-The unpacker is an external programme which
+The unpacker is an external program which
 decompresses data after transfer.
 You must have one of these.
 
@@ -2075,7 +2076,7 @@ thing doesn't support anything else!
 
 <<Batch File substitute
 
-The programme you enter will simply be started, so it
+The program you enter will simply be started, so it
 can also be a batch file. With this you can do other
 things like make a backup copy before unpacking, but
 at the end, a proper $PUFFER file (ie. proper name
@@ -2140,7 +2141,7 @@ See also FIDO.DOC.
 @
 156
 4D Addresses are a new standard, which are by now
-supported by nearly all FIDO Box programmes.
+supported by nearly all FIDO Box programs.
 
 If in doubt, ask your Sysop.
 
@@ -2150,7 +2151,7 @@ here), then this setting is inactive.
 157
 Some "Tossers" in FIDO Box software, especially
 "TosScan", have problems dealing with mails from
-point programmes unknown to them. Since CrossPoint is
+point programs unknown to them. Since CrossPoint is
 relatively new, it is not "known".
 
 If problems should arise, this switch will deal with
@@ -2517,7 +2518,7 @@ diesen verwendet werden):
 
 @
 8020
-With this programme, all messages going to the server
+With this program, all messages going to the server
 are [packed], or compressed. You select the settings@4006
 for <<compress>>, <<freeze>>, or <<gzip>> by pressing F2. If you
 prefer to transfer [unpacked], you can leave this@4006
@@ -2547,7 +2548,7 @@ gzip            ³       o         ³     +
 
 @
 8021
-With this programme CrossPoint UNpacks messages which
+With this program CrossPoint UNpacks messages which
 have been packed with 'Compress'. These settings do
 not normally need to be changed.
 
@@ -2557,7 +2558,7 @@ the right time with the real name of the file
 to be unpacked.
 @
 8022
-With this programme CrossPoint UNpacks messages which
+With this program CrossPoint UNpacks messages which
 have been packed with 'Freeze'. These settings do
 not normally need to be changed.
 
@@ -2567,7 +2568,7 @@ the right time with the real name of the file
 to be unpacked.
 @
 8023
-With this programme CrossPoint UNpacks messages which
+With this program CrossPoint UNpacks messages which
 have been packed with 'gzip'. These settings do
 not normally need to be changed.
 
@@ -2937,17 +2938,17 @@ See also the chapter "Sysop Mode" in UUCP.DOC.
 @
 8037
 
-<<Start programme>>
-You can enter here the name of a programme or
+<<Start program>>
+You can enter here the name of a program or
 DOS command which will be started at the beginning
 of every Sysop-Mode netcall. This is important if
 the files to be imported have to be prepared
 in some way (eg. several copied together).
 
-<<End programme>>
+<<End program>>
 
-This programme is analog to the above, but started
-surprise surprise at the end of a Sysop-Mode netcall,
+This program is analogous to the above but started,
+surprise surprise, at the end of a Sysop-Mode netcall
 for dealing with those cleaning up tasks.
 @
 184
@@ -3018,14 +3019,14 @@ This setting has no effect on the Sysop-Mode.
        [/Netcall/All]@11502
 @
 199
-A programme that CrossPoint will call after receiving
+A program that CrossPoint will call after receiving
 the packet but immediately before importing the
 messages into the data base.
 Using the macro $PUFFER the name of the file about to
-be imported can be given to this programme.
+be imported can be given to this program.
 
 Its most frequent use is to comb the file with a
-filter programme, which can treat mails in various
+filter program, which can treat mails in various
 categories in various ways (throw out messages from
 known idiots, sort out messages of special
 interest), but it can be anything you want.
@@ -3034,7 +3035,7 @@ Notes:
 
 þ  You can start a batch file.
 
-þ  The programme is called, even if no messages came
+þ  The program is called, even if no messages came
    in. In this case the name of an empty puffer will
    be passed. An empty ZConnect puffer is 0 bytes,
    an empty Z-Netz puffer up to 8 bytes (4 CR/LF)
@@ -3043,7 +3044,7 @@ Notes:
 
 þ  To filter external format packets in their
    original form (Maus, MagicNET etc.) you should
-   combine the filter programme in a batch file for
+   combine the filter program in a batch file for
    the unpack operation.
 @
 8030
@@ -3152,7 +3153,7 @@ list.
 box here.
 @
 193
-This is the name of the programme in the server which
+This is the name of the program in the server which
 deals with your requests to subscribe to or cancel
 newsgroups, sends you lists of available newsgroups
 and so on. Depending on which net, and the box soft-
@@ -4462,14 +4463,13 @@ UseNet always only a simple single "Re:" is used.
 Choose a newsgroup group, or abort with <Esc>.
 @
 210
-
 Enter here the character you wish to use as the
 [quote character]@4013
 
 The usual and recommended character is << > >>
 
-When you quote-reply to a message with <Ctrl R> or
-<Ctrl P>, or when you use /Message/Forward/QuoteTo
+When you quote-reply to a message with <Ctrl-R> or
+<Ctrl-P>, or when you use /Message/Action/Quote
 or /Message/Extract/As_Quote, the message you are
 replying to is inserted in the editor with the quote
 character at the beginning of each line, to show that
@@ -4565,11 +4565,11 @@ These settings only apply to <<public>> messages.
 
 @
 213
-<<[x]>>     CrossPoint will buffer its programme data
+<<[x]>>     CrossPoint will buffer its program data,
         particularly for a DOS Shell, in EMS. About
         200 KB is needed.
 
-<<[ ]>>     CrossPoint will buffer its programme data
+<<[ ]>>     CrossPoint will buffer its program data
         to the hard disk, to the directory entered
         under /Config/Paths as TEMP directory.
         It will also do this, if no EMS is available.
@@ -4580,13 +4580,13 @@ These settings only apply to <<public>> messages.
 214
 <<[+]>>     Set this if you occasionally like to
         test the Quit function but not actually quit
-        the programme. Confirmation will be requested
+        the program. Confirmation will be requested
         before quitting and you can either confirm or
         abort.
 
 <<[ ]>>     For real men! :-)
 
-        Quits the programme immediately with no
+        Quits the program immediately with no
         questions asked.
 @
 217
@@ -4606,7 +4606,7 @@ If your <<internal>> archive newsgroups are called:
 
        /A/General
        /A/EMAIL
-       /A/Programmes
+       /A/Programs
        /A/Texts
 
 then entering <</A/>> here will cause these
@@ -4743,37 +4743,36 @@ in the middle of data handling always lead to
 unrecoverable loss of data.
 @
 230
-CrossPoint does have its own built in lister, (for
-reading messages) which should do all you need.
-But if you really cannot part from your beloved old
-lister, then you can enter it here (incl. extension
-.COM or .EXE)
+CrossPoint has its own built in message reader which
+should do all that you need but if you really cannot
+part with your beloved old message reader, you can
+enter it here (incl. extension .COM or .EXE)
 
-The macro <<$FILE>> may be entered for the name of
-the file to be listed. Otherwise XP passes the file
-name as the only parameter to the lister.
+The macro <<$FILE>> may be entered for the name of the
+file to be listed, otherwise XP passes the filename
+as the only parameter to the message reader.
 @
 231
-Enter here how many kilobytes memory your lister
-requires as a minimum. CrossPoint then attempts to
-make this much memory available when starting the
-lister.
+Enter here how many kilobytes memory your message
+reader requires as a minimum. CrossPoint will then
+attempt to make this much memory available when
+starting the message reader.
 @
 232
-Note: This option applies to the internal message 
-reader <<only>>. When using an external message reader, 
+Note: This option applies to the internal message
+reader <<only>>. When using an external message reader,
 full-screen mode is always used.
 
 <<[ ]>>     The message is displayed within the
         boundaries of the normal XP window.
 
 <<[x]>>     Switches to a full screen display for the
-        message reader when presenting a message for 
+        message reader when presenting a message for
         reading.
 @
 233
-<<[x]>>     Lines longer than 80 characters will be 
-        wrapped for display into lines of 80 
+<<[x]>>     Lines longer than 80 characters will be
+        wrapped for display into lines of 80
         characters.
 
         However, since this splitting occurs before
@@ -4788,8 +4787,8 @@ This setting can be changed non-permanently with
 @
 234
 <<[x]>>     Messages with [reference] links are indicated@4014
-        in the status bar of the lister with an
-        <<arrow>> whose direction shows whether the
+        in the status bar of the message reader with 
+        an <<arrow>> whose direction shows whether the
         other messages are "upstream" or "downstream"
 @
 235
@@ -4802,23 +4801,23 @@ This setting can be changed non-permanently with
 
 With a fixed message header, a light coloured back-
 ground looks best (set in /Config/Display/Colors
-/Lister/Message Header) with the separator line
-removed at the end (set in /Config/Display/Header).
-(Or separators top and bottom).
+/Message Reader/Message Header) with the separator 
+line removed at the end (set in /Config/Display/
+Header). (Or separators top and bottom).
 @
 236
 In Z-Netz or MagicNET, only Umlauts in IBM character
-format are permitted. Unfortunately many programmers
+format are permitted. Unfortunately many programers
 for non-IBM computers ignore this, and this leads to
 strange "Amiga characters" (actually characters to
 ISO 8859-1) like "ä" for "„" and "ö" for "”" etc.
 appearing in messages.
 
-Setting this switch on <<[x]>> converts these char-
-acters in the lister and for quotes into the editor
-into their IBM equivalents. Unfortunately the "Ä"
-cannot be converted (to "Ž") because it is so often
-used in its true IBM graphics form for lines.
+Setting this switch on <<[x]>> converts these 
+characters in the message reader and for quotes into 
+the editor into their IBM equivalents. Unfortunately 
+the "Ä" cannot be converted (to "Ž") because it is so 
+often used in its true IBM graphics form for lines.
 @
 237
 It is common to indicate emphasis on words by en-
@@ -4826,7 +4825,7 @@ closing them in *asterisks* or _underlines_.
 This switch causes CrossPoint to take words with
 these characters at each end and show them in a
 different colour, which you can set in:
-/Config/Display/Colors/Lister.
+/Config/Display/Colors/Reader.
 
 <<[x]>>     XP shows these words in the different
         colour.
@@ -5069,7 +5068,7 @@ invert the plus/minus sign!
 @
 249
 Which types of messages allow CrossPoint to advertise
-itself as the Point programme used:
+itself as the Point program used:
 
 <<always>>  on all messages.
 
@@ -5269,8 +5268,9 @@ temporary files which it uses.
 
 CrossPoint uses many temporary files; when writing
 messages in the editor, when displaying messages in
-the lister, and so on. These are all immediately
-erased after use, but must be somewhere while in use.
+the message reader, and so on. These are all 
+immediately erased after use but must be somewhere 
+while in use.
 
 It is a good idea to use a RAM Disk for this if you
 can, it makes it a lot quicker.
@@ -5281,7 +5281,7 @@ be at least 200-300KB, more if you send long
 messages.
 
 If nothing is specified, CrossPoint uses the same
-directory as the one the programme files are in.
+directory as the one the program files are in.
 
 @
 261
@@ -5313,7 +5313,7 @@ put log files. The following files are affected:
    XPFIDO.LOG     Happenings for Fido-Netcalls
 
 It is also the default directory for log files for
-the integrated terminal programme CrossTerm.
+the integrated terminal program CrossTerm.
 
 If you no longer wish to read the contents,
 you may delete log files; CrossPoint starts
@@ -5410,7 +5410,7 @@ addresses by pressing "A".
         instead of the sender address in the message
         display window.
 
-Note: this is only a default setting for programme
+Note: this is only a default setting for program
 start-up. It can be changed any time by pressing
 <Ctrl-N> when viewing the contents of a newsgroup.
 
@@ -5431,7 +5431,7 @@ NOTE: In the first form, the name of the sender will
       address of the sender will be shown.
 
 A change in this setting only has an effect at
-programme start-up. The current setting can be 
+program start-up. The current setting can be
 changed at any time whilst viewing a message list by
 pressing <Ctrl-A>
 @
@@ -5474,7 +5474,7 @@ without having to wait the number of seconds you set.
 284
 <<[x]>>     The start password, if defined in
         /Config/Options/Password, will be asked for
-        at programme start.
+        at program start.
 @
 285
 <<[x]>>     The Username that you use for the current
@@ -5729,9 +5729,9 @@ Tip: Get a decent modem cable :-)
 
 @
 960
-A FOSSIL driver is a TSR programme which, under DOS,
+A FOSSIL driver is a TSR program which, under DOS,
 takes over the job of controlling the ComPort,
-leaving an application programme less work to do.
+leaving an application program less work to do.
 
 Since they take over the job of controlling the Port,
 IRQs, Addresses, [16550 UARTs] and so on, all these@4011
@@ -5789,7 +5789,7 @@ name as the only parameter to the editor.
 
 <<Linking in other tools
 If you use the internal editor but wish to call a
-programme *after* it, perhaps a text formatter or a
+program *after* it, perhaps a text formatter or a
 signature generator, then you can also enter it here,
 but put a <<*>> in front of its name.
 
@@ -6109,21 +6109,21 @@ For example ^PC-Tools will display as <<P>>C-Tools
 and pressing "P" will start it.
 @
 441
-This is the command to start the programme.
+This is the command to start the program.
 
 There are two possibilities;
 
-  a)  an external DOS programme (max. 127 characters)
+  a)  an external DOS program (max. 127 characters)
   b)  an internal XP-Function   (max. 200 characters)
 
-<<External Programmes>> are any .COM, .EXE or .BAT
-programme. They should be in the XP directory, in the
+<<External Programs>> are any .COM, .EXE or .BAT
+program. They should be in the XP directory, in the
 DOS Path or you enter the full path to them. COM and
-EXE programmes will be started quicker if you specify
+EXE programs will be started quicker if you specify
 the extension as well.
 
 You can pass parameters (if needed) to these 
-programmes in the normal way by specifying them after 
+programs in the normal way by specifying them after
 the command. You can use the <<$FILE>> macro to pass 
 the current file name.
 
@@ -6136,7 +6136,7 @@ selected.
 
 <<Internal XP Functions>> start with a "<<*>>" in the first
 position, followed by the XP command. They are NOT
-available in the CrossTerm terminal programme.
+available in the CrossTerm terminal program.
 
 <<*>>             alone does nothing, unless the AUTOEXEC
               switch is activated; in this case the
@@ -6284,27 +6284,27 @@ $FILE. The same formats are available as in
 <<[ ]>>     XP uses a temporary File name.
 @
 444
-<<[x]>>     After ending a called programme, XP asks
-        you to press a key before the programme's
+<<[x]>>     After ending a called program, XP asks
+        you to press a key before the program's
         display disappears.
 
 <<[ ]>>     The CrossPoint display returns
         immediately.
 
 Note: if you expect to see something displayed by
-this programme, and it all just flicks back to the XP
+this program, and it all just flicks back to the XP
 display, try setting this switch.
 @
 445
-<<[x]>>     When a programme is started, the complete
+<<[x]>>     When a program is started, the complete
         screen is cleared.
 
 <<[ ]>>     Only the main XP window is cleared.
 @
 446
-<<[x]>>     The output of the started programme is
-        redirected to the lister for reading. This
-        only works when the programme allows
+<<[x]>>     The output of the started program is
+        redirected to the message reader for reading. 
+        This only works when the program allows
         redirection, as all DOS commands do.
         If in doubt, try it out.
 
@@ -6312,18 +6312,18 @@ display, try setting this switch.
         screen.
 @
 447
-<<[x]>>     When the programme has finished,
+<<[x]>>     When the program has finished,
         CrossPoint actions the [AUTOEXEC] directory.@4019
-        Entering only <<*>> for the programme name 
-        plus this switch starts no programme but does 
+        Entering only <<*>> for the program name
+        plus this switch starts no program but does
         action the AUTOEXEC directory.
 @
 448
 
-Enter here how many kilobytes memory the programme
+Enter here how many kilobytes memory the program
 requires as a minimum. CrossPoint then attempts to
 make this much memory available when starting the
-programme.
+program.
 
 If your PC does not have EMS or a RAM Disk available
 for fast swapping out of unused XP data, this option
@@ -6358,7 +6358,8 @@ than this will not be included.
         to the internal newsgroup /¯Statistic for
         reading (and storing).
 
-<<[ ]>>     The results are shown in the Lister only.
+<<[ ]>>     The results are shown in the message
+        reader only.
 @
 455
 Well what do you suppose?
@@ -6458,7 +6459,7 @@ This box has no meaning for Z-Netz.
 This field has no meaning for Fido.
 
 <<UUCP:>>
-You can enter an external programme here which Cross-
+You can enter an external program here which Cross-
 Point should use to convert the list to a CrossPoint
 conform format when reading-in file lists obtained
 from the fileserver. The name of the input and output
@@ -6531,14 +6532,14 @@ with the selected user.
 
 <<QPC:>>  A simple and fast system developed by
       ZIMAC\@HIT.ZER. It is supported by many Z-Netz
-      programmes.
+      programs.
 
 <<DES:>>  A very safe system, but designed only for
       exchange of messages between CrossPoint users.
 
 <<pmCrypt>>  (pmc-1 to pmc-3): A system developed by
       Christian Mock for linking in any external
-      coding programme. The program being used must 
+      coding program. The program being used must
       be set up under [/Config/External/pmCrypt)]@12405
 
 @
@@ -6552,7 +6553,7 @@ with the selected user.
 <<[ ]>>  Default "do not code"
 @
 490
-You can enter up to 3 external coding programmes,
+You can enter up to 3 external coding programs,
 linked in to CrossPoint through the pmCrypt system.
 The entries are as follows:
 
@@ -6561,15 +6562,15 @@ The name of the coding process. It is only a
 description for you, it is not used.
 
 <<Encode:>>
-The name (call) of a programme (or batch file) which
+The name (call) of a program (or batch file) which
 will ENcode a file (put it into code). CrossPoint
 will put the message to be encoded as the temporary
 file CRYPT.MSG (in the TEMP directory). The result of
-the actions of the called programme must leave a
+the actions of the called program must leave a
 (coded) file CRYPT.ENC in the same directory.
 
 The following macros can be used to pass information
-to the programme:
+to the program:
 
 <<$INFILE>>   =  <TempDir>\CRYPT.MSG
 <<$OUTFILE>>  =  <TempDir>\CRYPT.ENC
@@ -6581,11 +6582,11 @@ to the programme:
 /Config/Paths as the temporary directory.
 
 <<Decode:>>
-The name (call) of a programme (or batch file) which
+The name (call) of a program (or batch file) which
 will DEcode a file. CrossPoint will put the message
 to be decoded as the temporary file CRYPT.ENC (in the
 TEMP directory). The result of the actions of the
-called programme must leave a (decoded) file 
+called program must leave a (decoded) file
 CRYPT.MSG in the same directory.
 
 <<$INFILE>>   =  <TempDir>\CRYPT.ENC
@@ -6621,13 +6622,13 @@ with the switch -a)
   anyway, if it contains non-text characters.
 
 þ If the recipient uses THE ANSWER or another point
-  programme which *requires* the binary form when
+  program which *requires* the binary form when
   receiving messages for the pmCrypt system, so you
   must also use binary for sending.
 
 <<Example 1:>>
 
-Let us suppose you wish to use a fictitious programme
+Let us suppose you wish to use a fictitious program
 called SUPERKEY, which has the following syntax:
 
 encoding: SUPERKEY <Source> <Result> <Key> code
@@ -6650,7 +6651,7 @@ Name:       PC-DES
 Codierer:   echo $KEY|PC-DES $INFILE
 Decodierer: echo $KEY|PC-DES $INFILE
 
-The programme is not called, it is XP internal anyway
+The program is not called, it is XP internal anyway
 but this activates it automatically and feeds it the
 password.
 
@@ -6664,7 +6665,7 @@ be produced.
      Statistic newsgroup (and kept).
 
 <<[ ]>>   the statistic will be displayed in the
-      lister (then deleted).
+      message reader (then deleted).
 @
 502
 <<[x]>>  CrossPoint produces a detailed graphical
@@ -6784,12 +6785,12 @@ Enter the activity which CrossPoint should carry out.
 <<PACK>>         Pack Data Bank
                  (as /Re-Org pack)
 
-<<EXEC Prog.>>   Start programme or batch file
+<<EXEC Prog.>>   Start program or batch file
 
 <<END>>          Stop running the Timing List
-<<QUIT>>         End the programme
-<<QUIT n>>       End the programme with Errorlevel n
-<<QUIT_ONCE>>    End the programme but only once in
+<<QUIT>>         End the program
+<<QUIT n>>       End the program with Errorlevel n
+<<QUIT_ONCE>>    End the program but only once in
                  the time period.
 <<QUIT_ONCE n>>  ditto, but with Errorlevel n
 
@@ -7006,7 +7007,7 @@ Be careful to enter characters correctly!
      currently selected message.
 
 This setting only affects the start-up. The setting
-can be changed at any time during the programme with
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 551
@@ -7019,7 +7020,7 @@ can be changed at any time during the programme with
     newsgroup.
 
 This setting only affects the start-up. The setting
-can be changed at any time during the programme with
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 552
@@ -7031,12 +7032,12 @@ can be changed at any time during the programme with
       User.
 
 This setting only affects the start-up. The setting
-can be changed at any time during the programme with
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 554
-This sets the default [View-mode] for programme@50
-start-up. During the programme, it can be changed at
+This sets the default [View-mode] for program@50
+start-up. During the program, it can be changed at
 any time *in the newsgroup view* by pressing <<V>>
 (View) and selecting. The default remains as set
 here.
@@ -7056,7 +7057,7 @@ Netcall and messages will be shown as "new".
 @
 555
 Sets the default kind of [message/extract/as] at@11204
-programme start. It can be changed using the menu
+program start. It can be changed using the menu
 there but the default is set here.
 @
 556
@@ -7071,14 +7072,14 @@ compatible mouse driver loaded into DOS.
 
 <<[ ]>>  not swapped.
 
-Option is only read at programme start
+Option is only read at program start
 @
 558
 <<[x]>>  The mouse will be initialised anew after
      every DOS shell (Editor, external lister, <F9>
      etc.
 
-<<[ ]>>  The mouse is initialised once at programme
+<<[ ]>>  The mouse is initialised once at program
      start and is left in peace after that.
 
 Depending on hardware and mouse driver, this
@@ -7086,7 +7087,7 @@ initialising can take time, so don't use it
 unnecessarily. But if you find the mouse behaves
 strangely after DOS calls, try this switch.
 
-Option is only read at programme start
+Option is only read at program start
 @
 559
 This is the double-click speed for the left mouse
@@ -7095,7 +7096,7 @@ produce a double click reliably, but set it too slow,
 and two normal clicks may be wrongly interpreted as a
 double click, with sometimes unexpected results.
 
-Option is only read at programme start
+Option is only read at program start
 @
 585
 <<[x]>>   If you are in the /Config menu, pressing
@@ -7114,7 +7115,7 @@ For experts who know exactly where everything is,
 having to close all menus one at a time can be
 tiresome, the big jump out is easier.
 
-Option is only read at programme start
+Option is only read at program start
 @
 586
 <<automatic>>   Changed settings are always saved at
@@ -7129,7 +7130,7 @@ Option is only read at programme start
             saved when you quit CrossPoint, it will
             ask if you want to save the new settings.
 
-Option is only read at programme start
+Option is only read at program start
 @
 587
 <<[x]>> -> When you try to go past the beginning or
@@ -8049,7 +8050,7 @@ same net type, or select one with <F2>.
      newsgroup /¯Statistic.
 
 <<[ ]>>  The statistic is only displayed in the
-     lister, and not kept.
+     message reader, and not kept.
 @
 771
 <<[ ]>>  Nodes, which are registered in the Node
@@ -8372,7 +8373,7 @@ with <Ctrl-Enter>. It is not necessary to press
 
 @
 820
-Enter which external programme CrossPoint should call
+Enter which external program CrossPoint should call
 for viewing binary files.
 
 <<New>>      Create a new entry.
@@ -8388,7 +8389,7 @@ Enter the Mime-Type of this entry.
 of the Filetype (Usenet))
 
 If you select a message with this Mime-Type,
-XP will show it with the Viewer-Programme.
+XP will show it with the Viewer-program.
 
 @
 822
@@ -8396,7 +8397,7 @@ Enter the file extension.
 
 If you select a Binary file or a Fido-Fileattach
 with a file of this type, XP starts the viewer-
-programme to show it.
+program to show it.
 
 Note that in Z-Netz the message subject does not
 always contain the correct file name, which makes
@@ -8410,12 +8411,12 @@ the temp file as a HTML file.
 
 @
 823
-Enter which programme CrossPoint should call to
+Enter which program CrossPoint should call to
 view files of this format.
 
-The programme must be in the DOS Path for XP to find 
-it (or you may enter the path to the programme).
-This programme is started as soon as you select a
+The program must be in the DOS Path for XP to find
+it (or you may enter the path to the program).
+This program is started as soon as you select a
 binary file or a MIME-Meassage, containing a File
 of the selected format.
 
@@ -8462,7 +8463,7 @@ eine Sicherheitsabfrage, bevor die Dateien
 ge”ffnet werden.
 
 Wird diese Abfrage mit "Nein" beantwortet, 
-wird der interne Lister bzw das unten eingetragene 
+wird der interne Lister bzw das unten eingetragene
 [Viewerprogramm fuer Verd„chtige Dateien]@8074
 benutzt, um die Datei anzusehen.
 
@@ -8643,8 +8644,8 @@ Enter the path and filename for the file(s) to be
 ordered. Separate multiple file names with spaces.
 @
 900
-You can display the message header in the lister as
-you wish:
+You can display the message header in the message
+reader as you wish:
 
 <<Insert>>  inserts a line not presently displayed
         (except dividing lines, which can occur any
@@ -8703,7 +8704,7 @@ RFC-Nets (UseNet / "UUCP"):
              name and date/time. Optional; a file can
              be received without a name or date/time.
 
-<<Error:>>     Error message from a box programme or 
+<<Error:>>     Error message from a box program or
            a CrossPoint message converter.
 
 <<Software:>>  The software with which the message
@@ -8825,18 +8826,18 @@ substituted by a widcard, either "Z###" for ZIP or
 "A###" for ARC.
 @
 944
-You can enter here the name of either a programme or
+You can enter here the name of either a program or
 a batch file to process your nodediffs, instead of
 allowing CrossPoint to do it. The full path and name
 of the update file may be passed to either the
-programme or batch file with the macro <<$FILE>>.
+program or batch file with the macro <<$FILE>>.
 @
 945
 <<[x]>> -> CrossPoint will call its own NDIFF.EXE to
        process the diff update.
 
 <<[ ]>> -> Update files will <<NOT>> be processed by
-       CrossPoint. The external programme or batch
+       CrossPoint. The external program or batch
        file, as defined in "Process by", will be used
        instead.
 @
@@ -9127,7 +9128,7 @@ configuration of CrossPoint to your personal taste.
 @
 10008
 <<Tools Menu
-This is a menu for selecting and starting programmes
+This is a menu for selecting and starting programs
 that you can install yourself to make life easier. A
 calendar and archive viewer are pre-installed.
 
@@ -9152,7 +9153,7 @@ various formats into CrossPoint.
 <<XPoint / Export
 
 Here, you can export (write) message packets
-into various formats for use with other programmes.
+into various formats for use with other programs.
 @
 10104
 <<XPoint / Statistic Menu
@@ -9164,11 +9165,11 @@ analysis of your CrossPoint message database.
 <<XPoint / Terminal  (CrossTerm)
 
 This is (provisionally) a rather primitive terminal
-programme. Really, it is only of use for sending
+program. Really, it is only of use for sending
 commands to the modem and displaying the modem
 responses. But it does work, without frills, and you
 can operate online in a box with it. Due to a bug,
-you cannot, as indicated, exit the terminal programme
+you cannot, as indicated, exit the terminal program
 and leave the telephone line open. It always hangs
 up.
 
@@ -9327,7 +9328,7 @@ retrieve a list of newsgroups/echo areas.
 <<Message / Fileserver  (Z-Netz only)
 Some servers in Z-Netz offer Points and other boxes
 the possibility of ordering files by netcall. To use
-this an external Fileserver programme has to be
+this an external Fileserver program has to be
 available.
 
 For it to work the following conditions must be met:
@@ -9357,7 +9358,7 @@ item /Message/Fileserver/Help
 <<Message / PGP
 
 In these menus you will find many functions for
-working with the encoding programme, PGP.
+working with the encoding program, PGP.
 @
 10311
 <<Message / Direct
@@ -9521,21 +9522,21 @@ sub-menus for details.
 
 Options for the Editor, message reader and for
 entering settings for CrossPoint to use when it
-starts external programmes and tools (Editor, Lister,
-Packers etc.).
+starts external programs and tools (Editor, Message
+Reader, Packers etc.).
 @
 10603
 <<Config / Paths
 
 By default, CrossPoint puts files in the
-CrossPoint programme directory. For some types of 
-files, you can define here different directories 
+CrossPoint program directory. For some types of
+files, you can define here different directories
 where they should be kept.
 @
 10604
 <<Config / Display
 
-In the sub-menus here are  the settings for how
+In the sub-menus here are the settings for how
 CrossPoint should display practically everything.
 @
 10605
@@ -9558,8 +9559,8 @@ settings for each one.
 Printer settings.
 
 At present they apply only to printing messages with
-"R", printing with "D" when in the Lister, or when
-printing the Help pages with <Ctrl-D>.
+"R", printing with "D" when in the message readetr, 
+or when printing the Help pages with <Ctrl-D>.
 
 The settings are NOT valid when printing from the
 Editor using <Ctrl-K><P>.
@@ -9568,8 +9569,8 @@ Editor using <Ctrl-K><P>.
 <<Config / Keys
 Aside from the 9 entries in the [Tools menu], the@10608
 Function keys F1 to F10, in their Shift-Fx, Ctrl-Fx
-and Alt-Fx versions can be programmed to start
-[external programmes]. In this way you have 30 keys@10615
+and Alt-Fx versions can be programd to start
+[external programs]. In this way you have 30 keys@10615
 freely programmable.
 
 Select the key combination you wish to use from the
@@ -9584,7 +9585,7 @@ immediately.
 <<Config / Tools Menu
 
 In addition to the menu entry "Calendar", you can
-enter up to 20 user-defined [external programmes].@10615
+enter up to 20 user-defined [external programs].@10615
 Select the position (1-20) you want to edit from the
 list displayed and press "E" to edit the settings.
 <Esc> breaks off without saving the changes,
@@ -9604,7 +9605,7 @@ or alternatively at any time by pressing <Alt-S>.
 
 If you have set the "save" option above to "ask on
 quit", CrossPoint notes that changes have been made,
-and asks when exiting the programme, if you want to
+and asks when exiting the program, if you want to
 save.
 
 Exceptions are the colour settings and the key-macro
@@ -9616,15 +9617,15 @@ saving.
 10615
 You can link any .COM .EXE or .BAT file into Cross-
 Point, to be started and perform some function.
-CrossPoint must be able to find this programme either
+CrossPoint must be able to find this program either
 in the CrossPoint directory or in the DOS Path (see
 your DOS manual for "Path" info).
 
 A special feature here is the currently selected
-Message can be passed to this called programme,
+Message can be passed to this called program,
 enabling you to pass packed files to archive viewers,
 executable files to virus scanners, messages to
-printer programmes and so on.
+printer programs and so on.
 
 It is even possible to call up certain CrossPoint
 internal functions with the function keys, for
@@ -9936,8 +9937,8 @@ date or the sender box on or off.
 10904
 <<Config / Display / Header
 
-Sets how the message header in the lister and when
-"extracting with header" should look.
+Sets how the message header in the message reader and 
+when "extracting with header" should look.
 
 This menu item replaces the corresponding individual
 settings in /Config/External/Lister in older versions
@@ -10023,17 +10024,17 @@ to. For that, you use /Message/News manager/read file.
 @
 11005
 <<XPoint / Import / MauTau
-If you have used the MausTausch programme "MauTau" up
+If you have used the MausTausch program "MauTau" up
 to now, you can use this function to import the
 MauTau message base into CrossPoint.
 
-This programme is based on "MT2OUTF" from Peter
+This program is based on "MT2OUTF" from Peter
 Redecker \@ DO.
 @
 11006
 <<XPoint / Import / Yuppie
 
-If you have used the Fido Point programme "Yuppie" up
+If you have used the Fido Point program "Yuppie" up
 to now, you can use this function to import the
 Yuppie message base into CrossPoint.
 @
@@ -10133,7 +10134,7 @@ CrossPoint can extract messages in one of 4 forms:
      text.
 
   o  as Text with header - in the form as it appears
-     in the message lister.
+     in the message reader.
 
   o  as Puffer - in the form of a message packet, as
      it would be transferred over the net.
@@ -10259,7 +10260,7 @@ Note: does not enable an online Login.
 If it doesn't work, make sure all the details
 required for a Point netcall are properly entered
 under /Edit/Servers and that all supplementary
-programmes (packers, transfer protocol etc.) are
+programs (packers, transfer protocol etc.) are
 properly defined and that CrossPoint can find them.
 @
 11502
@@ -10304,7 +10305,7 @@ connection per modem already exists (if the server is
 ready for it). If your server permits the relogin
 command, it will do a logoff, but does not hang up
 and presents the mask again for a login.
-Exit your terminal programme <<(do not hang up)>> and
+Exit your terminal program <<(do not hang up)>> and
 start CrossPoint then Netcall/Relogin. CrossPoint
 does not reset the modem or dial, but begins by
 sending the correct entry for Login and carries
@@ -10322,8 +10323,8 @@ already existing connection, just do a normal netcall
 11506
 <<Netcall / Online  (CrossTerm)
 
-A simple terminal programme. It is not meant to be a 
-full-fledged terminal programme but rather for a 
+A simple terminal program. It is not meant to be a
+full-fledged terminal program but rather for a
 quick online call for a look or some simple task
 (or maybe testing the modem).
 
@@ -10399,24 +10400,24 @@ following:
 11511
 <<Netcall / Automatic
 
-Activates one of the programmed timing lists which
+Activates one of the programd timing lists which
 you can set up under [/Netcall/Timing list].@11512
 
 You are asked to enter the number of the timing list
 you wish to activate. CrossPoint then runs this
-programme until you end it (with <Esc> or the special
+program until you end it (with <Esc> or the special
 case, that one of the commands to be carried out ends
-the timing programme.
+the timing program.
 @
 11512
 <<Netcall / Timing List
 
-You can set up to 99 [timing programmes], which allow@4022
+You can set up to 99 [timing programs], which allow@4022
 CrossPoint to carry out various relevant tasks,
 programmed to time of day, day of the week or month,
 etc.
 
-Enter the number of the programme you wish to edit,
+Enter the number of the program you wish to edit,
 then one of the commands on the bottom line.
 Toggle a line in the list active or not with "A"
 (Active) (indicated by a "+"). Inactive lines will
@@ -10425,7 +10426,7 @@ not be executed when the timing list runs.
 When starting for the first time, press "N" (New) and
 use the online help under each entry.
 
-Once set up, these programmes can be used under the
+Once set up, these programs can be used under the
 menu entry [/Netcall/Automatic].@11511
 @
 11601
@@ -10592,7 +10593,7 @@ files in all its directories together is given.
 The available main memory is the amount of memory
 currently free plus the amount CrossPoint could swap
 out. It is the amount CrossPoint could make available
-to start an external programme.
+to start an external program.
 
 @
 11702
@@ -10703,7 +10704,7 @@ you wish to subscribe to.
 
 Under this hideous unenglish (;-) expression one
 understands cancelling newsgroups that one no longer
-wishes  to receive.
+wishes to receive.
 
 Will first ask you if you want to cancel the
 currently selected newsgroup. If not, you can elect
@@ -10919,7 +10920,7 @@ this command.
 <<Message / Fileserver / Service  (Z-Netz only)
 
 Some Fileservers allow you to run extra service
-programmes, for which you need a service password.
+programs, for which you need a service password.
 If you get one, enter it under
 /Edit/Systems/Edit/FS-Password.
 @
@@ -11138,22 +11139,23 @@ The highlight colour can be configured in
 <<Config / Keys / Macros
 Under this menu you can redefine keys or allocate
 whole sets of keystrokes to keys, for use in the
-newsgroup, user and message windows, plus the lister
-and (internal) editor.
+newsgroup, user and message windows, plus the message
+reader and (internal) editor.
 @
 12401
-<<Config / External / Lister
-Press <Enter> to get access to the settings for the
-Lister (internal or external). The Lister is the
-programme part that displays messages, without allowing
-you to edit them.
+<<Config / External / Message Reader
+
+Press <Enter> to define the external program to use
+for reading messages. The Message Reader is the
+program that displays messages but does not allow you
+to edit them.
 @
 12402
 <<Config / External / Editor
 
 Press <Enter> to get access to the settings for the
 Editor (internal or external). The Editor is the
-programme part that is brought up when you need to 
+program part that is brought up when you need to
 edit text files and messages.
 @
 12403
@@ -11169,7 +11171,7 @@ This is actually the settings for the CrossPoint
 Archive viewer, which it uses if you want to extract.
 an archive rather than just view it.
 It needs to have access to all the necessary
-(un)packer programmes.
+(un)packer programs.
 It is pre set-up for most purposes, but if you need
 to change it:
 
@@ -11186,7 +11188,7 @@ the particular Packer must be entered.
 CrossPoint <<must>> be able to find the Packer in the
 DOS Path. A Tick next to the entry in the table
 confirms that CrossPoint can "see" that packer
-programme.
+program.
 
 The packers DWC and Hyper are seldom met with.
 Settings for these have to be entered <<by Hand>>
@@ -11197,8 +11199,8 @@ direct in XPOINT.CFG.
 <<Config / External / pmCrypt
 
 <<pmCrypt>> is a  method devised by Christian Mock
-for integrating any external cipher programme into
-Z-Net point programmes. CrossPoint expands pmCrypt to
+for integrating any external cipher program into
+Z-Net point programs. CrossPoint expands pmCrypt to
 use in all other Net types.
 
 CrossPoint supports up to 3 external encoders, known
@@ -11315,7 +11317,7 @@ Netcall-Options decide the way XP makes netcalls.
 CrossPoint can be protected with <<2 Passwords>>.
 
 <<Start Password>> is required to start the 
-               programme.
+               program.
 
 <<Main Password>>  is required to change
                the Start Password
@@ -11474,7 +11476,7 @@ and browse the filelists that you have configured.
 
 By checking the tick box (with <Space>) you can have
 the request start immediately, or let it be stored
-for later, maybe under a timing programme.
+for later, maybe under a timing program.
 
 Stored requests are to be found under
 [/Fido/Crash] and can be started from there.@13104
@@ -11678,7 +11680,7 @@ databases with [/Message/Database/List]@13504
 As opposed to the query, which delivers a list of
 data sets meeting the search criteria, this function
 allows the requesting of a particular data set in a
-data bank, like a programme from a program library or
+data bank, like a program from a program library or
 a picture from a picture data bank.
 
 To use this a list of the data bank contents must
@@ -11839,14 +11841,15 @@ better 500KB Memory to *start* in.
 @
 20007
 There is not enough free memory available to start
-the chosen external programme or DOS shell. If you 
+the chosen external program or DOS shell. If you
 are using lots of memory, maybe showing a large text 
-in the lister, you can free up memory by closing it.
+in the message reader, you can free up memory by 
+closing it.
 
-Otherwise, if this happens often, you may
-have to re-configure DOS to make more memory
-available. CrossPoint should have at least 450KB,
-better 500KB Memory to *start* in.
+Otherwise, if this happens often, you may have to
+reconfigure DOS to make more memory available.
+CrossPoint should have at least 450KB, better 500KB
+memory to *start* in.
 
 Maybe you just tried to start something too big.
 
@@ -11889,7 +11892,7 @@ Check the settings under /Config/Keys perhaps..
 20101
 For FIDO netcalls (for importing the FIDO format
 messages) or for importing FIDO messages otherwise,
-the conversion programme XFIDO.EXE is required. This 
+the conversion program XFIDO.EXE is required. This
 is to be found in the separately obtainable XP-FIDO
 packet.
 @
@@ -11911,15 +11914,15 @@ For FIDO netcalls the mailer XP-FM.EXE is required.
 This file is in the XP-FIDO packet.
 @
 20105
-For UUCP netcalls the conversion programme UUZ.EXE is
+For UUCP netcalls the conversion program UUZ.EXE is
 required. This file is in the XP-UUCP packet.
 @
 20110
-For UUCP netcalls, the transfer programme UUCICO.EXE 
+For UUCP netcalls, the transfer program UUCICO.EXE
 is required. This file is in the XP-UUCP packet.
 @
 20111
-For handling QWK messages the conversion programme
+For handling QWK messages the conversion program
 ZQWK.EXE is required. This file is in the XP-FIDO
 packet.
 @
@@ -11940,9 +11943,9 @@ Please correct the setting for the directory for
 log files (under /Config/Paths).
 @
 20206
-CrossPoint cannot locate the programme entered. 
+CrossPoint cannot locate the program entered.
 Please check that you have entered the name correctly 
-and that the programme file is either in the 
+and that the program file is either in the
 CrossPoint directory or in the DOS Path.
 @
 20207
@@ -11963,7 +11966,7 @@ Info about File Handles)
 
 Especially when working under Windows or OS/2 more
 file handles are needed, because in the multitasking
-environment more than one programme may be using file
+environment more than one program may be using file
 handles at one time.
 @
 20211
@@ -12088,7 +12091,7 @@ Possible reasons are:
    and therefore there are no links.
 
 þ  The links have been broken, either by somebody
-   along the line using a programme that does not
+   along the line using a program that does not
    support reference links, or because of a missing
    message.
 
@@ -12143,7 +12146,7 @@ There is an inconsistency in the message base.
 This is usually due to some error when the hard disk
 was being written to. For example:
 
-þ A programme crash during a Re-Org or netcall.
+þ A program crash during a Re-Org or netcall.
 
 þ Misuse of a software cache, maybe switching off
   before the buffers were flushed with lazy-write on.
@@ -12263,7 +12266,7 @@ with one empty line of "text", if you want to send an
 Encoding the message under pmCrypt did not work.
 Check that the settings are correct under
 /Config/External/pmCrypt, and that the required
-cipher programme can be found either in the 
+cipher program can be found either in the
 CrossPoint directory or in the DOS path.
 
 If you still have difficulty, you could try encoding
@@ -12424,7 +12427,7 @@ converted. There is no simple remedy for this.
 20720
 An error has occurred in the FIDO mailer. Node the
 address where the error occurred, if you can see it
-on the screen, and send it to the programmer together
+on the screen, and send it to the programr together
 with your FIDO point configuration.
 @
 20721
@@ -12558,10 +12561,10 @@ See UUCP.DOC for details of setting up for UUCP
 systems.
 @
 20821
-You have entered a file list converting programme for
+You have entered a file list converting program for
 the fileserver under /Edit/Systems. An error has
-occurred using this programme. Check that the 
-programme is present in the CrossPoint directory or 
+occurred using this program. Check that the
+program is present in the CrossPoint directory or
 in the DOS path.
 
 If necessary, try mimicking the operation by hand
@@ -12603,9 +12606,9 @@ still correct and have not somehow become changed.
 
 @
 20907
-CrossPoint was not able to find the given programme
+CrossPoint was not able to find the given program
 either in the CrossPoint directory or in the DOS
-path. Make sure the programme is available before
+path. Make sure the program is available before
 the next netcall.
 @
 20908
@@ -12687,7 +12690,7 @@ list".
 22104
 The selected file does not seem to be a node list in
 standard FIDO format. Possibly it is a node list that
-has been prepared for another point programme with a
+has been prepared for another point program with a
 so-called "NodeList Compiler". CrossPoint cannot use
 such files.
 
@@ -12811,7 +12814,7 @@ with W (hot key for "ne<<w>>")
 @
 22808
 The memory management under DOS has crashed. Perhaps
-an external programme has made a *big* mistake.
+an external program has made a *big* mistake.
 
 Exit CrossPoint and reboot.
 @
@@ -12873,7 +12876,7 @@ already on your disk.
 
 You can send Text Files, which the reader can
 read just as if it were a message, or you can
-send Binary Files (Programme Files for example)
+send Binary Files (program Files for example)
 which are treated in a different way, to prevent
 them being corrupted.
 
@@ -12912,7 +12915,7 @@ fixed fee plus a charge per kilobyte.
 4005
 <<Transfer Protocol
 
-<< You need a Transfer Programme in addition to XP!
+<< You need a Transfer program in addition to XP!
 
 A Transfer Protocol is a kind of code system by which
 data are transferred across a modem link. For the
@@ -12922,17 +12925,17 @@ Examples of protocols are Z-Modem, X-Modem, BiModem,
 but there are many others.
 
 These protocols are not to be confused with the
-programmes which can carry them out. There are for
-example many programmes which can "do" Z-Modem, and
+programs which can carry them out. There are for
+example many programs which can "do" Z-Modem, and
 as long as each side has one of these (not
 necessarily the same one), the link works.
 
-Many terminal programmes have "built in protocols"
+Many terminal programs have "built in protocols"
 and you don't notice when they are being called.
 
 CrossPoint does not have it's own protocol (except
 in FIDO, which is special), but calls a separate
-programme (<<which you must of course have>>, in addition
+program (<<which you must of course have>>, in addition
 to CrossPoint) to do the work. This is more flexible.
 
 When CrossPoint has caused the modem to call the
@@ -12943,35 +12946,35 @@ the packet in your point (pigeonhole) to send, and to
 receive a (possibly empty) packet from you.
 
 When this point is reached, the server hands over to
-a <<transfer programme>>, telling it to *receive* a
-file. This programme readies itself. At the same time
+a <<transfer program>>, telling it to *receive* a
+file. This program readies itself. At the same time
 (because it's an agreed system), CrossPoint knows it
 has to send a file, your mail packet. Even if you
 have no mail to send, it sends a dummy packet.
-CrossPoint also calls up an external programme and
+CrossPoint also calls up an external program and
 this indicates to the other side that it wants to
 send. They understand each other, because they
 "speak" the same protocol, the transfer is made and
 ended.
-The same (or other, if you really want) programmes 
+The same (or other, if you really want) programs
 are immediately called again, this time for the 
 Server to send and your side to receive.
 
 If they don't understand each other for any reason
-(wrong programme, wrong parameters), an error occurs
+(wrong program, wrong parameters), an error occurs
 and they break off.
 
 This is why you must agree with your sysop beforehand
 which protocol is to be used.
 
-Make sure the programme you are going to use is in a
+Make sure the program you are going to use is in a
 path (PATH: see DOS handbook) where XP can find it.
 XP even beeps to warn you if, when you exit the
-dialog box, it cannot "see" the programme you 
+dialog box, it cannot "see" the program you
 entered.
 
 In the server set-up, you have to enter the correct
-parameters for whatever programme you are using
+parameters for whatever program you are using
 (XP pre enters them for the most common ones, if
 you use something exotic, see its handbook), once for
 the upload where you *send*, and once for the
@@ -12981,7 +12984,7 @@ download, where you *receive*.
 4006
 <<Packers
 
-Packers are programmes external to CrossPoint, which
+Packers are programs external to CrossPoint, which
 compress the data before transfer, or decompress it
 after transfer (the server does the same).
 
@@ -12990,7 +12993,7 @@ data to be transferred, and saves a lot of time
 and money.
 
 The packer is called in a similar way to the
-[transfer programme], but before the transfer.@4005
+[transfer program], but before the transfer.@4005
 
 << You need a packer>>, and so that both sides can
 unpack what the other side packed, it needs to be
@@ -13017,7 +13020,7 @@ PKZIP/PKUNZIP are very good, also available for all
 [platforms] but for DOS it is shareware and you@4007
 should pay for it (other platforms have it free).
 
-These programmes are known to XP, and as long as
+These programs are known to XP, and as long as
 XP can find them (in the current directory,
 DOS PATH (see DOS handbook), or give the enter
 the full path name), all parameters are entered
@@ -13247,11 +13250,11 @@ for you, you do not have to set it specially.
 Fido is undecided, but it is mostly NOT used.
 Z-Netz prefers the "Re^n" form to "Re:Re:Re:".
 
-Many e-mail programmes add this "Re:" automatically,
+Many e-mail programs add this "Re:" automatically,
 simply sticking it on the front. This can however
 lead to long chains of "Re:Re:Re:", and not much room
 for the actual subject. Some people think this ugly
-and wasteful, and it is common now for programmes to
+and wasteful, and it is common now for programs to
 gather up all the "Re:" present, count them, add 1
 and produce a summary "Re^n", eg. Re^3, indicating
 this is the third level of reply.
@@ -13280,7 +13283,7 @@ It is usual to mark text that you have quoted from
 a previous message with a special character at the
 beginning of each line, to show that it's quoted.
 
-This is usually the ">" character. Many programmes
+This is usually the ">" character. Many programs
 recognise this and can treat quoted text specially,
 just as XP can: it can highlight it in a different
 colour for clarity and even count the quantity.
@@ -13460,7 +13463,7 @@ this about every 5 minutes (if you are in the main
 window and have not pressed a key for 30 seconds).
 You can also do this manually by setting a function
 key or tool (/Config/Keys or /Config/Tools Menu)
-with only "*" for the programme and the <<"AutoExec"
+with only "*" for the program and the <<"AutoExec"
 switch ON.
 
 CrossPoint actions the file according to the file
@@ -13582,12 +13585,12 @@ otherwise the attach-file is deleted before the Fido
 mailer can transfer it. For Fido it is obligatory to
 enter the "server" line.
 
-If you integrate an external programme which sends
+If you integrate an external program which sends
 messages through the AUTOEXEC directory, then you
 should set the AUTOEXEC switch in the set-up window
 for either the /Config/Tools or the Config/Keys.
 This runs the AUTOEXEC routine every time this 
-programme has finished.
+program has finished.
 
 <<AUTOEXEC in Timing-Lists
 
@@ -13640,7 +13643,7 @@ Options are:
    /j    no dumb remark when exiting CrossPoint...
 
    /k:X  Passes the (single) keystroke X to the
-         programme, whereby X is any character.
+         program, whereby X is any character.
          (Can start a key macro on start-up)
 
    /l:X  selects the language, eg. /l:E for English.
@@ -13747,8 +13750,8 @@ In this case the LAST given is run.
 
    /ss  Start Screensaver
 
-   /x   End programme. Since it is carried out last, 
-        it is used to end the programme after other
+   /x   End program. Since it is carried out last,
+        it is used to end the program after other
         tasks have been carried out by other
         parameters.
 
@@ -13758,10 +13761,10 @@ In this case the LAST given is run.
         the progress of a netcall.
 
    /df:1  Shows the command call when an external
-          programme is called (inc. parameters).
+          program is called (inc. parameters).
 
    /df:2  Waits for a key to be pressed after an
-          external programme call.
+          external program call.
 
 Instead of specifying long parameter lines when
 calling CrossPoint, you can list your favourite
@@ -13804,7 +13807,7 @@ imported.
 4022
 << Netcall automatic and Timing Lists.
 
-Here is an example of a programme list. Each line
+Here is an example of a program list. Each line
 represents one activity, and defines times when
 it will be carried out.
 
@@ -13861,12 +13864,12 @@ carried out. The following commands are available:
 <<PACK>>         Pack Data Bank
                  (as /Re-Org pack)
 
-<<EXEC Prog.>>   Start programme or batch file
+<<EXEC Prog.>>   Start program or batch file
 
 <<END>>          Stop running the Timing List
-<<QUIT>>         End the programme
-<<QUIT n>>       End the programme with Errorlevel n
-<<QUIT_ONCE>>    End the programme but only once in
+<<QUIT>>         End the program
+<<QUIT n>>       End the program with Errorlevel n
+<<QUIT_ONCE>>    End the program but only once in
                  the time period.
 <<QUIT_ONCE n>>  ditto, but with Errorlevel n
 
@@ -13922,7 +13925,7 @@ Message/Fileserver/List/Read File
 
 If it looks like this, then enter in the field
 "converter" under your fileserver entry under
-/Edit/Systems the programme UUCP-FL1.EXE (select it
+/Edit/Systems the program UUCP-FL1.EXE (select it
 with <F2> from the list). When you read in the file
 as above, CrossPoint will now convert it.
 
@@ -13963,10 +13966,10 @@ the <<Nodelist>>, and contains details of each FIDO node
 
 If you wish to communicate directly with FIDO boxes
 You must have this list available, because the FIDO
-point programme (in this case CrossPoint), must check
+point program (in this case CrossPoint), must check
 against the nodelist before it makes contact.
 
-(There are also programmes for browsing this list, to
+(There are also programs for browsing this list, to
 glean information from it, search for boxes, sysops
 or whatever.)
 
