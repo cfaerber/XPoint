@@ -169,7 +169,6 @@ function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe groá         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben groá  }
-function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 function UpCase(const c:char):char;                { int. UpCase                  }
 function UStr(const s:String):String;              { UpperString                  }
 function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
@@ -1259,22 +1258,6 @@ end;
 
 {$ENDIF}
 
-{$ifndef hasTrim}
-function trim(s:string):string;
-var
-  l: integer;
-begin
-  l:= length(s);
-  while (s[l]=' ') or (s[l]=#9) and (l>0) do begin     { terminiert, da s[0]<>' ' fr s='' }
-    dec(l);
-    SetLength(s,l);
-  end;
-  while (s<>'') and ((s[1]=' ') or (s[1]=#9)) do
-    delete(s,1,1);
-  trim:=s;
-end;
-{$endif}
-
 function Range(const c1,c2:char):string;
 
 var s : string;
@@ -2043,6 +2026,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/07/03 15:16:22  mk
+  - Trim entfernt und Sysutils eingefuegt
+
   Revision 1.42  2000/07/03 15:11:01  mk
   - unnötige Defines entfernt
   - sysutils war zweimal in xp6o.pas enthalten

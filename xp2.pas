@@ -16,20 +16,19 @@ unit xp2;
 
 interface
 
-uses {$IFDEF virtualpascal}sysutils,{$endif}
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
 {$IFDEF Linux}
-  xplinux, sysutils,
+  xplinux,
 {$ENDIF}
-  xpcfg,
-     dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-     databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
-     resource,montage, xpglobal,
-     xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
+  sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
+  databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
+  resource,montage, xpglobal,
+  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
 
 
 procedure zusatz_menue;
@@ -1072,6 +1071,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/07/03 15:16:22  mk
+  - Trim entfernt und Sysutils eingefuegt
+
   Revision 1.48  2000/06/29 13:00:54  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
