@@ -880,7 +880,7 @@ begin
     wp:=workpos;
     wpa:=ap;
     if wp<vap(ap)^.size then
-      wpa:=AbsDelete(dl^[scy].absatz,workpos,1,false,true)
+      wpa:=AbsDelete(ap,workpos,1,false,true)
     else
       if vap(ap)^.next=nil then    { Textende }
         errsound
@@ -2102,6 +2102,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/02/18 09:04:56  mk
+  RB: * RTE im Editor behoben
+
   Revision 1.7  2000/02/17 08:34:51  mk
   RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts in die neue Zeile
         umgebrochen wird
