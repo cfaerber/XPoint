@@ -5,7 +5,8 @@ Die letzten News von www.openxp.de...
 +
 26. Juli 2003: Umbenennung von OpenXP/16
 OpenXP/16 wird seit Ende Juli 2003 unter der Leitung von Michael  
-Heydekamp als FreeXP unter freexp.de weiterentwickelt.
+Heydekamp als FreeXP unter freexp.de weiterentwickelt. FreeXP ist nach Freigabe 
+von Peter Mandrella ebenfalls Freeware und nicht mehr registrierungspflichtig.
 <a href="http://www.freexp.de/news.php#freexp">Weiteres dazu...</a>
 +
 27. Januar 2003: OpenXP/32 v3.8.8 Beta verfügbar
