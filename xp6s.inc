@@ -659,7 +659,7 @@ begin
     lines:=ival(getres2(606,1));
     msgbox(51,lines+6,getres2(606,0),x,y);    { 'Hinweis' }
     for i:=1 to lines-1 do
-      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(nq div n*100,0)));
+      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(real(nq) / real(n)*100,0)));
     mwrt(x+3,y+lines+2,getres2(606,lines+1));
     errsound;
     a:='';
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.31  2000/09/30 16:41:23  mk
+  - QuoteOK-Bugfix fuer Prozentzahlen
+
   Revision 1.30  2000/08/05 17:17:49  mk
   - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
 
