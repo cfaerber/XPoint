@@ -43,7 +43,7 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
 implementation
 
 uses
-  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime;
+  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
@@ -560,6 +560,7 @@ begin
         betreff:='QPC:'+betreff;
       end
     else begin
+      Debug.DebugLog('xpmakeheader','buffer type not zconnect?!',dlWarning);
       getline(empfaenger);
       empfaenger:= TrimRight(empfaenger);
       empfanz:=1;
@@ -583,6 +584,10 @@ end;
 
 {
   $Log$
+  Revision 1.19  2001/10/23 18:55:47  ma
+  - added small debug log, there have been many errors connected with
+    this in the past
+
   Revision 1.18  2001/10/20 17:26:43  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
