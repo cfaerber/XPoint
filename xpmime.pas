@@ -670,7 +670,7 @@ begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
           if (typ<>'text') or (subtyp<>'html') then
-            Iso1ToIBM(s[1],length(s));
+            s := IsoToIBM(s);
         end
         else
           softbreak:=false;
@@ -732,6 +732,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/10/10 05:34:56  mk
+  - Ansistring-Bugfix
+
   Revision 1.25  2000/08/08 13:18:16  mk
   - s[Length(s)] durch Lastchar ersetzt
 
