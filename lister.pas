@@ -307,7 +307,7 @@ asm
          call   app_l                  { Zeile an Liste anh„ngen }
          popfd
          popad
-         retn
+         ret
 @the_end:
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
@@ -1636,6 +1636,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/23 15:49:23  mk
+  - ret statt retn in Make_List (32 Bit)
+
   Revision 1.12  2000/04/04 21:01:21  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
