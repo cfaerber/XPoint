@@ -1,7 +1,8 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von: Peter Mandrella.     }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ CrossPoint ist eine eingetragene Marke von: Peter Mandrella.    }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
@@ -17,19 +18,19 @@
 (***********************************************************)
 
 
-UNIT inout;
+unit inout;
 
 {$I XPDEFINE.INC }
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses
 {$IFDEF Win32 }
   windows,
 {$ENDIF  }
-{$IFDEF os2 }
+{$IFDEF OS2 }
   os2base,
 {$ENDIF }
 {$ifdef vp }
@@ -269,7 +270,6 @@ procedure dummyFN;
 {$IFNDEF NCRT }
 procedure mdelay(msec:word);
 {$ENDIF }
-procedure SetBackIntensity;
 
 { ================= Implementation-Teil ==================  }
 
@@ -1599,26 +1599,6 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-{ hellen Hintergr. akt. }
-
-procedure SetBackIntensity;
-{$IFDEF OS2 }
-var
-  State: VioIntensity;
-{$ENDIF }
-begin
-  {$IFDEF OS2 }
-    with State do
-    begin
-      cb := 6;
-      rType := 2;
-      fs := 1;
-    end;
-    VioSetState(State, 0);
-  {$ENDIF }
-end;
-
-
 initialization
 {$IFDEF NCRT}
   InitXPCurses;
@@ -1660,6 +1640,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.59  2000/09/30 16:39:00  mk
+  - SysSetBackIntensity
+
   Revision 1.58  2000/09/10 15:11:52  hd
   - Fix: Farbe unter Linux
 

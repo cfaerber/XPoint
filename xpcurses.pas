@@ -184,6 +184,8 @@ function SysGetScreenCols: Integer;
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
+{ Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
+procedure SysSetBackIntensity;
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
@@ -256,10 +258,10 @@ implementation
 
 uses
 {$ifdef Debug}
-  SysUtils,		{ FormatDateTime etc. }
+  SysUtils,             { FormatDateTime etc. }
 {$endif}
-  inout,		{ dhpback }
-  typeform;		{ ISOTab }
+  inout,                { dhpback }
+  typeform;             { ISOTab }
 
 const
    { standard file descriptors }
@@ -267,7 +269,7 @@ const
    STDOUT = 1;
    STDERR = 2;
 
-   __isInit: boolean = false;		{ Curses initialisiert? }
+   __isInit: boolean = false;           { Curses initialisiert? }
 
 var
    ExitSave : pointer;                  { pointer to original exit proc }
@@ -280,10 +282,10 @@ var
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 {$ifdef Debug}
-   __F: Text;				{ Log-File }
+   __F: Text;                           { Log-File }
 
 const
-   __isopen: boolean = false;		{ Log-File }
+   __isopen: boolean = false;           { Log-File }
 {$endif}
 
 {==========================================================================
@@ -1255,6 +1257,11 @@ begin
 {$endif}
 end;
 
+procedure SysSetBackIntensity;
+begin
+end;
+
+
 { Unit-Interna --------------------------------------------------------- }
 
 { exit procedure to ensure curses is closed up cleanly }
@@ -1298,7 +1305,7 @@ begin
     exit;
   end else begin
     StartCurses:= true;
-    savetty;			{ tty sichern }
+    savetty;                    { tty sichern }
     if has_colors<>0 then
       start_color;              { Farbe aktivieren }
     cbreak;                    { disable keyboard buffering }
@@ -1358,8 +1365,8 @@ begin
     WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' InitXPCurses (repeated!!!!)');
 {$ENDIF }
   if __isInit=true then exit;
-  __isInit:= true;		{ Flag setzen }
-  
+  __isInit:= true;              { Flag setzen }
+
   { load the color pairs array with color pair indices (0..63) }
   for bg := 0 to 7 do
     for fg := 0 to 7 do cp[bg,fg]:= (bg*8)+fg;
@@ -1394,7 +1401,7 @@ begin
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
 
-  ESCDELAY:= 100;		{ 100 ms }
+  ESCDELAY:= 100;               { 100 ms }
 
 
   { set the unit exit procedure }
@@ -1405,6 +1412,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/09/30 16:34:50  mk
+  - SysSetBackIntensity
+
   Revision 1.27  2000/09/10 15:11:52  hd
   - Fix: Farbe unter Linux
 

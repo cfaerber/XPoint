@@ -30,7 +30,7 @@ end;
 const trackpath : boolean = false;
 
 
-procedure shell(prog:string; space:word; cls:shortint); 
+procedure shell(prog:string; space:word; cls:shortint);
 { Externer Aufruf, Errorlevelrueckgabe in global Errorlevel }
 var
   sm2t     : boolean;
@@ -112,7 +112,7 @@ begin
     shellkey:=false;
   end;
 
-  setbackintensity;
+  SysSetBackintensity;
   cursor(curoff);
   if (cls<>4) and (cls<>5) then holen(sp);
   m2t:=sm2t;
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2000/09/30 16:34:50  mk
+  - SysSetBackIntensity
+
   Revision 1.37  2000/09/03 20:42:13  ma
   - Debuglogs
   - Anpassungen an geaendertes Exxec (Shellaufruf)

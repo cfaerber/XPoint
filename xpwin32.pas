@@ -37,6 +37,8 @@ function SysGetScreenCols: Integer;
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
+{ Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
+procedure SysSetBackIntensity;
 procedure RegisterMailClient;
 
 implementation
@@ -62,8 +64,8 @@ end;
 
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 begin
-  // !! ToDo, dynamisch holen
-  Lines := 120;
+  // !! ToDo
+  Lines := 300;
   Cols := 160;
 end;
 
@@ -80,6 +82,11 @@ begin
   R.Right := Size.X - 1;
   R.Bottom := Size.Y - 1;
   SetConsoleWindowInfo(OutHandle, True, R);
+end;
+
+procedure SysSetBackIntensity;
+begin
+  // not needed in Win32
 end;
 
 procedure RegisterMailClient;
@@ -107,6 +114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/09/30 16:34:50  mk
+  - SysSetBackIntensity
+
   Revision 1.6  2000/08/14 14:43:00  mk
   - RegisterMailClient hinzugefuegt
 

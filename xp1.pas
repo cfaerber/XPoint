@@ -141,7 +141,7 @@ procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 procedure SetExtraktMenu;
 function  getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
 procedure setscreensize;
-procedure lines(screen,fnkey:byte);   { setzt gl usw. }
+procedure lines(fnkey:byte);   { setzt gl usw. }
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer);
 procedure SetMausEmu;
@@ -1055,9 +1055,9 @@ begin
   xp_maus_aus;
   attrtxt(7);
   setscreensize;
-  lines(screenlines,1);
+  lines(1);
   clrscr;
-  setbackintensity;
+  SysSetbackIntensity;
   with col do begin
     attrtxt(colmenu[0]);
     Wrt2(sp(screenwidth));
@@ -1105,9 +1105,8 @@ end;
 
 { fnkeylines und gl anpassen }
 
-procedure lines(screen,fnkey:byte);
+procedure lines(fnkey:byte);
 begin
-  screenlines:=screen;
   fnkeylines:=fnkey;
   gl:=screenlines-4-fnkeylines;
 end;
@@ -2001,10 +2000,13 @@ finalization
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-  SetBackIntensity;
+  SysSetBackIntensity;
 end.
 {
   $Log$
+  Revision 1.79  2000/09/30 16:34:50  mk
+  - SysSetBackIntensity
+
   Revision 1.78  2000/09/03 20:42:13  ma
   - Debuglogs
   - Anpassungen an geaendertes Exxec (Shellaufruf)

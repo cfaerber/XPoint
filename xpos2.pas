@@ -37,6 +37,8 @@ function SysGetScreenCols: Integer;
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
+{ Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
+procedure SysSetBackIntensity;
 
 implementation
 
@@ -115,9 +117,25 @@ begin
   end;
 end;
 
+procedure SysSetBackIntensity;
+var
+  State: VioIntensity;
+begin
+  with State do
+  begin
+    cb := 6;
+    rType := 2;
+    fs := 1;
+  end;
+  VioSetState(State, 0);
+end;
+
 end.
 {
   $Log$
+  Revision 1.4  2000/09/30 16:34:50  mk
+  - SysSetBackIntensity
+
   Revision 1.3  2000/08/02 16:33:08  mk
   - Unit auf OS/2 portiert
 
