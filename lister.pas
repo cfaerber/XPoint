@@ -881,7 +881,8 @@ var gl,p,y    : shortint;
           if listunvers and 16 = 0
             then write (iifs(listunvers and 1 = 0,' ','!'))
             else write (iifs(listunvers and 1 = 0,'*',''));
-          if listflags and 3<>0 then write('s') 
+          if listflags and 3=1 then write('S') 
+          else if listflags and 3=2 then Write('s')
           else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
           end;
         if markanz>0 then write('  ['+forms(strs(markanz)+']',7))
@@ -1656,6 +1657,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/07 16:28:11  jg
+  - Lister: PGP-Flags s und S
+
   Revision 1.16  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 
