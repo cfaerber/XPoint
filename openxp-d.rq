@@ -3421,6 +3421,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
 48 Sendepuffer (%s) ist fehlerhaft!
 49 /nsp: Ungültige Zeilenangabe für NETCALL.DAT: %s
+50 Fehler beim Dekomprimieren von %s
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!
 
@@ -4026,6 +4027,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.65  2002/07/31 19:54:45  cl
+# - Fehler beim Entpacken von Dateien werden abgefangen; Dateien werden
+#   nach BAD verschoben.
+#
 # Revision 1.64  2002/07/22 09:50:23  mk
 # - added missing resources 457.7-10
 #
