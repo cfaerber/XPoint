@@ -1884,6 +1884,8 @@ begin      { --- select --- }
              end;
   end;
 
+  if dispmode=10 then setbrettgelesen(_dispspec);
+
 selende:
   wlpos:=0; wltrenn:=false;
   disprec[1]:=oldrec;
