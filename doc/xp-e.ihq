@@ -77,7 +77,7 @@ in CrossPoint:
 5
 <<CrossPoint - Support
 
-CrossPoint users can get extensive support whenever
+OpenXP/16 users can get extensive support whenever
 they might be facing problems and/or have questions.
 It doesn't make any difference if you're a registered
 user (see [Licence Conditions]) or if you're still@6
@@ -90,12 +90,18 @@ one of the following channels:
 þ  Post your question to one of the following support
    forums:
 
-   <<FidoNet>>    XPOINT (International support echo)
+   FidoNet    <<CROSSPOINT.OPENXP16.GER>> (German)
+              <<XPOINT>>                  (International)
+              <<CROSSPOINT.GER>>          (German)
+              <<CROSSPOINT.EXPERT.GER>>   (German)
 
-   <<UseNet>>     de.comm.software.crosspoint (German)
+   Usenet     <<crosspoint.openxp16.pub.allgemein
+              <<de.comm.software.crosspoint
+
+   eMail      <<support\@openxp16.de>>    (Mailing list)
 
    Please note that you're welcome to post in English
-   in the German UseNet forum.
+   also in the German forums.
 
    Almost all participants in these forums are
    experienced CrossPoint users, therefore, you
@@ -108,55 +114,106 @@ one of the following channels:
 þ  <<Bug reports>> should be directed as follows
    (in descending priority):
 
-   Internet   eMail to: <<dev\@openxp.de>>
-              Here, you can directly contact the
-              OpenXP developers through their public
-              mailing list. You may subscribe to the
-              list yourself, if you wish.
-              (See <<http://www.openxp.de/>>).
+   Usenet     Write an article to:
+              <<crosspoint.openxp16.pub.allgemein
 
-   WWW        The OpenXP bug list at SourceForge:
-              <<https://sourceforge.net/projects/openxp>>
-              This is the starting page of OpenXP at
-              SourceForge. From there, you go via the
-              links "<<Bugs>>" and then "<<Submit a Bug>>"
-              and then directly to the input of your
-              bug report. Under "<<Details>>", please
-              leave a meaningful and replicable
-              description of the bug, as well as your
-              name and eMail address.
+              This is the general and publicly
+              accessible newsgroup for OpenXP/16.
+              It is available at the news servers
+              news.kannofant.de and news.t-online.de
+              (both port 119).
 
-   Usenet     Article in: <<de.comm.software.crosspoint>>
+              Alternatively you can post your bug
+              report to <<de.comm.software.crosspoint>>,
+              which is a forum for all CrossPoint
+              versions and should be available at
+              *any* (German) news server.
 
-   Fido       Echomail in: <<XPOINT>>
-              Although not directly linked to the
-              OpenXP development team, the echo
-              moderator is in <<very>> regular contact
-              with them and will pass on your bug
-              reports. The echo is on the R24, R25
-              and Z1 echomail backbones and so you
-              should have no problems getting the
-              echo.
+              The OpenXP/16 developer newsgroup
+              (<<crosspoint.openxp16.pub.developer>>)
+              is also publicly accessible, but it
+              should not be used for bug reports and
+              such. This group is available at the
+              news server news.kannofant.de *only*.
+
+   Internet   eMail to: <<support\@openxp16.de
+              With this address you have access to
+              the OpenXP/16 mailing list to which
+              the developers are subscribed to as
+              well and which you may join yourself
+              if you wish: To do this, write an eMail
+              to "<<listserver\@kruemel.org>>" with the
+              text in the message body (not in the
+              subject!) "<<subscribe openxp16-list>>".
+              Unsubscribing from the list is done the
+              same way with using the message text
+              "<<unsubscribe openxp16-list>>".
+
+   WWW        <<http://www.openxp16.de/
+              (to be completed)
+
+   Fido       Echomail in: <<CROSSPOINT.OPENXP16.GER
+              Here you are - via a gate - connected
+              to the general newsgroup of OpenXP/16
+              (see under "Usenet"): All echomails
+              that you write to this area are "gated"
+              to the newsgroup, all Usenet postings
+              in this newsgroup are vice versa gated
+              to the area.
+
+              <<CROSSPOINT.OPENXP16.GER>> is not an
+              official Fido Area - ask your SysOp to
+              get it for you (it is at least on the
+              R24 backbone) if he doesn't offer it
+              already, or contact Christian von Busse
+              (<<2:240/2188>>), who runs the Gate and
+              delivers the area to the BBR.
+
+              Of course you can also send your bug
+              report to the international <<XPOINT>> area
+              or to the general German CrossPoint
+              areas <<CROSSPOINT.GER>> and/or
+              <<CROSSPOINT.EXPERT.GER>>; however you
+              should be aware that response may take
+              longer and that not that many deve-
+              lopers will see your bug report.
 
 
-<<When you are posting problems and/or questions, you
-<<should ALWAYS indicate your CrossPoint version. If
-<<you have a crash, please ALWAYS give the precise
-<<message you saw when CrossPoint crashed.
+<<IMPORTANT:
+When you are posting problems and/or questions, you
+should ALWAYS indicate your CrossPoint version. If
+you have a crash, please ALWAYS give the precise
+message you saw when CrossPoint crashed. Information
+about your Hardware and your Operating System can
+also be helpful (and are sometimes simply necessary).
 
 
 þ  There are also some interesting homepages about
    CrossPoint on the Internet:
 
+<<         http://www.openxp16.de/
+         (Homepage of OpenXP/16; there you will find
+         further links to CrossPoint related sites in
+         the World Wide Web.)
+
 <<         http://www.openxp.de/
-         (official homepage of the OpenXP Project;
-         there you will find some interesting links
-         to further pages about CrossPoint on the
-         World Wide Web).
+         (Homepage of the OpenXP Project that is
+         developing the 32-bit version of OpenXP.)
+
+<<         http://www.xp2.de/
+         (Homepage of the XP2 Team that is developing
+         an own 16-bit version and which cooperates
+         with OpenXP/16.)
+
+<<         http://xpoint.da.ru/
+         (Homepage of the 16-bit version from Jochen
+         Gehring who cooperates with OpenXP/16 as
+         well and who always had a huge part in its
+         development.)
 
 <<         http://www.crosspoint.de/
-         (official homepage of Peter Mandrella -- the
-         original CrossPoint author).
+         (Official XP Homepage of Peter Mandrella,
+         the original CrossPoint author.)
 
 @
 6
@@ -3831,6 +3888,10 @@ newsgroup that your client shall fetch, please
 specify any value up to <<99999>>. If you don't want
 to limit this number, please enter <<0>>.
 
+ATTENTION: As some clients do not interpret the value
+<<0>> as "no limit" but as "don't fetch any news", XP
+sets a default value of <<99999>> here.
+
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The value
@@ -6032,61 +6093,152 @@ This is the command to start the programme.
 
 There are two possibilities;
 
-  a)  an external DOS programme
-  b)  an internal XP-Function
+  a)  an external DOS programme (max. 127 characters)
+  b)  an internal XP-Function   (max. 200 characters)
 
 <<External Programmes>> are any .COM, .EXE or .BAT
 programme. They should be in the XP directory, in the
-DOS Path or you enter the full path to them. COM &
+DOS Path or you enter the full path to them. COM and
 EXE programmes will be started quicker if you specify
 the extension as well.
 
-You can pass parameters (if needed) to these 
+You can pass parameters (if needed) to these
 programmes in the normal way by specifying them after 
 the command. You can use the <<$FILE>> macro to pass 
 the current file name.
 
-For example, if you are specifying the Archive-Shell
-SHEZ, you can enter here SHEZ.EXE $FILE. Now,
+For example, if you are specifying the Archive shell
+SHEZ, you can enter SHEZ.EXE $FILE here. Now,
 whenever you have an archived Message selected, you
 can select this "Tools" menu option, and SHEZ will be
 started, showing you the details of the file you had
 selected.
 
-<<Internal XP Functions>> are started by putting a
-"*" first, then the XP command.
-For example *list errors.log will show you the
-contents of the errors.log file in the lister.
+<<Internal XP Functions>> start with a "<<*>>" in the first
+position, followed by the XP command. They are NOT
+available in the CrossTerm terminal programme.
 
-These functions are NOT available in the CrossTerm
-terminal programme.
+<<*>>             alone does nothing, unless the AUTOEXEC
+              switch is activated; in this case the
+              AUTOEXEC directory will be executed.
 
-<<*>>       alone does nothing, unless you have the
-        AUTOEXEC switch on, when the AUTOEXEC
-        directory will be executed.
+<<*LIST FILE>>    loads the file into the (internal or
+              external) message reader.
 
-<<*LIST "File">> loads the file into the lister
-             (internal or external, depending which
-             you have set) for you to read.
+<<*EDIT FILE>>    as for the message reader, but to for
+              the editor.
 
-<<*EDIT "File">>   as for the Lister, but to for the
-               editor.
+<<*NETCALL BOX>>  makes a netcall to the specified Server.
 
-<<*NETCALL BOX>>  makes a netcall at the given Box.
-
-<<*RNETCALL BOX>> Does a re-login Netcall.
+<<*RNETCALL BOX>> does a Relogin Netcall.
 
 <<*REORG>>        Does what the menu function
               [/Re-Org/Messages] does.@10701
 
-<<*SETUSER BOX NAME (Realname)>>
-        Sets your Username/Real Name for the
-        specified box to the specified name.
-        This can be useful if you write in a box
-        under several names. If you leave NAME empty,
-        it will be asked for each time.
-        The (Realname) is optional and only relevant
-        for ZConnect, RFC/UUCP and MagicNET anyway.
+<<*SETUSER BOX NAME (Realname)>>  Sets your User name/
+              Real name for the specified Box to the
+              specified name. This can be useful if
+              you write in a box under several names.
+              If you leave NAME empty, it (and any
+              other parameters) will be asked for
+              each time. The Real name is optional.
+
+              Please note that you can (or have to)
+              set several more parameters, depending
+              on the net type. Further details and
+              examples, listed by parameters, can be
+              found here:
+
+              [*SETUSER - Parameter details]@4410
+
+ <<Note:>> If the length of the values for the several
+ parameters (Username rsp. eMail address, FQDN,
+ POP3/SMTP Envelope address and Real name) exceed the
+ length defined in the XP database, they will be
+ truncated automatically. The maximum lengths are:
+
+              User name     = 30 characters
+              eMail address = 80 characters
+              FQDN          = 60 characters
+              POP3 Envelope = 80 characters
+              SMTP Envelope = 80 characters
+
+@
+4410
+<<*SETUSER - Parameter details
+
+General Syntax: <<*SETUSER BOX NAME (Real name)
+
+
+<<Real name
+
+The Real name is optional. If no Real name is
+specified, the previous Real name will be deleted;
+if the previous Real name shall be retained rather
+than be changed to a new one, a "<<*>>" has to be
+specified:
+
+ *SETUSER Box1 john.doe (<<*>>)
+
+Specifying or deleting/retaining a Real name is
+relevant for ZConnect, RFC and MagicNET only.
+
+
+<<eMail address instead of User name
+<<(RFC/UUCP and RFC/Client only)
+
+With the net type RFC/Client, a complete and valid
+eMail address instead of a User name must be speci-
+fied. The same applies to the net type RFC/UUCP if
+the field "eMail address" under Edit/Servers/Edit/
+Names is used (is not empty). Example:
+
+ *SETUSER Box1 <<john.doe\@test.uk>>,john.test.uk (*)
+
+
+<<FQDN (ZConnect, RFC/UUCP and RFC/Client only)
+
+Additionally to NAME, you can here (rsp. have to!)
+specify an [FQDN] by appending it to the User name,@30002
+separated with a comma. Examples:
+
+ *SETUSER Box1 john.doe,<<john.test.uk>> (John Doe)
+ *SETUSER Box1 john.doe\@test.uk,<<john.test.uk>> (*)
+
+Should you want to delete the previous FQDN without
+setting a new one, you specify just the comma itself:
+
+ *SETUSER Box1 john.doe<<,>> (John Doe)
+ *SETUSER Box1 john.doe\@test.uk<<,>> (John Doe)
+
+You can also retain the previous FQDN without setting
+a new one; in this case a "<<*>>" has to be specified
+right behind the comma:
+
+ *SETUSER Box1 john.doe,<<*>> (John Doe)
+ *SETUSER Box1 john.doe\@test.uk,<<*>> (John Doe)
+
+
+<<POP3 and SMTP Envelope address (RFC/Client only)
+
+Additionally to the [FQDN] you can (have to!) append@30106
+the [POP3] and [SMTP Envelope address] parameters -@30133 30153
+separated with commas - in exactly this order to the
+FQDN:
+
+ *SETUSER Box1 a.b\@c.uk,a.b.c.uk,<<a.b@c.uk>>,<<a.b@c.uk>>
+
+As the FQDN, the previous SMTP Envelope address can
+be deleted or retained by specifying just the comma
+itself rsp. the "<<*>>" right behind it:
+
+ *SETUSER Box1 a.b\@c.uk,a.b.c.uk,*<<,>> (a b)
+ *SETUSER Box1 a.b\@c.uk,a.b.c.uk,*,<<*>> (a b)
+
+A POP3 Envelope address can be retained ("<<*>>") or
+changed to a new one, but it can be deleted only if
+no POP3 Server name is specified under D/S/E/N.
+Otherwise XP will report an error.
 
 @
 442
@@ -8777,16 +8929,66 @@ Select <<no>> if you want to separate the reply from
 the thread (reference link).
 @
 1502
-Enter the user name that should be used as the sender
+Enter the user name that shall be used as the sender
 of messages which you send out through this server.
 It is the same name which can be entered under
 /Edit/Server/Edit/Names.
 @
 1503
+Enter the eMail address that shall be used as the
+sender of messages which you send out through this
+server. It is the same address which can be entered
+under /Edit/Servers/Edit/Names (RFC/UUCP) rsp.
+/Edit/Servers/Edit/Client (RFC/Client).
+@
+1504
+Enter the [FQDN] ('Fully Qualified Domain Name') that@30002
+shall be used as the part right of the "<<\@>>" of your
+Message ID.
+
+Underscores "<<_>>" are not allowed in FQDNs and will be
+replaced with hyphens automatically. The "<<\@>>" will be
+converted to a dot.
+@
+1505
+Enter the [FQDN] ('Fully Qualified Domain Name') that@30106
+shall be used as the part right of the "<<\@>>" of your
+Message ID.
+
+Underscores "<<_>>" are not allowed in FQDNs and will be
+replaced with hyphens automatically. The "<<\@>>" will be
+converted to a dot.
+@
+1506
+Enter the [POP3 Envelope address] that the external@30133
+client shall use for incoming messages.
+
+This seeting has no effect to XP itself - it will
+only (if at all) be interpreted by the client during
+a netcall.
+@
+1507
+Enter the [SMTP Envelope address] that the external@30153
+client shall use for outgoing messages.
+
+This seeting has no effect to XP itself - it will
+only (if at all) be interpreted by the client during
+a netcall.
+@
+1508
 Enter the new real name which is to appear in the
 sender name for messages which you send out through
-this server. it is the same Real Name as entered
-under /Edit/Server/Edit/Names.
+this server. It is the same Real Name as entered
+under /Edit/Servers/Edit/Names.
+@
+1509
+Enter the new real name which is to appear in the
+sender name for messages which you send out through
+this server. It is the same Real Name as entered
+under /Edit/Servers/Edit/Client.
+@
+1520
+Select <<Yes>> to cancel this action.
 @
 7000
 This is a [cross reference] page. [Alt F1] brings@7001 7002
@@ -10482,7 +10684,7 @@ you wish to subscribe to.
 
 Under this hideous unenglish (;-) expression one
 understands cancelling newsgroups that one no longer
-wishes  to receive.
+wishes to receive.
 
 Will first ask you if you want to cancel the
 currently selected newsgroup. If not, you can elect
@@ -11060,7 +11262,7 @@ CrossPoint. Changes here are only effective after
 storing the configuration and at the next start.
 @
 12803
-<<Config / Options / Lister
+<<Config / Options / Message Reader
 
 Settings concerning the internal message reader.
 @
