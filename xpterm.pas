@@ -33,7 +33,7 @@ function  TermGetfilename(nr,nn:byte):string;
 
 implementation  { -------------------------------------------------- }
 
-uses  xp1o,xpkeys,xp2,xp2c,xp9bp,xp10, winxp;
+uses  xp1o,xpkeys,xp9bp,xp10, winxp;
 
 const ansimode : boolean = true;
       ansimax  = 40;       { max. LÑnge von ANSI-Codes }
@@ -60,7 +60,6 @@ var termlines    : byte;
     la           : byte;
     open_log     : boolean;
     in7e1,out7e1 : boolean;
-    orgfossil    : boolean;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
     ansiseq      : string;
@@ -74,16 +73,16 @@ procedure ShowTermStatus;
 begin
   moff;
   attrtxt(col.colmenu[0]);
-  write(forms(' CrossTerm',80));
+  Wrt2(forms(' CrossTerm',80));
   gotoxy(17,1);
   attrtxt(col.ColMenuHigh[0]);
-  write('F1');
+  Wrt2('F1');
   attrtxt(col.ColMenu[0]);
-  write(' '+getres2(2000,1)+'    ');   { 'Hilfe' }
+  Wrt2(' '+getres2(2000,1)+'    ');   { 'Hilfe' }
   attrtxt(col.ColMenuHigh[0]);
-  write('Alt-O');
+  Wrt2('Alt-O');
   attrtxt(col.ColMenu[0]);
-  write(' '+getres2(2000,2));  { 'Einstellungen' }
+  Wrt2(' '+getres2(2000,2));  { 'Einstellungen' }
   attrtxt(7);
   m2t:=true;
   mon;
@@ -93,19 +92,16 @@ end;
 procedure termscr;
 begin
   attrtxt(7);
-//  window(1,1,screenwidth,screenlines);
   moff;
   clrscr;
   mon;
   if TermStatus then begin
     termlines:=screenlines-1;
     ShowTermstatus;
-//    window(1,2,screenwidth,termlines+1);
     end
   else begin
     termlines:=screenlines;
     m2t:=false;
-//    window(1,1,screenwidth,termlines);
     windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
@@ -121,17 +117,12 @@ begin
   savecursor;
   mx:=wherex; my:=wherey;
   inout.cursor(curoff);
-//  window(1,1,screenwidth,screenlines);
   gotoxy(mx,my+iif(TermStatus,1,0));
   la:=lastattr;
 end;
 
 procedure restwin;
 begin
-  if TermStatus then
-//    window(1,2,screenwidth,termlines+1)
-  else
-//    window(1,1,screenwidth,termlines);
   restcursor;
   windmax:=ScreenWidth-1+256*(screenlines-1);
   attrtxt(la);
@@ -188,15 +179,6 @@ begin
   restwin;
 end;
 
-
-procedure GetComData;
-begin
-  with boxpar^,ComN[boxpar^.bport] do begin
-    IgnCD:=IgCD; IgnCTS:=IgCTS;
-    comnr:=bport;
-    in7e1:=uucp7e1; out7e1:=uucp7e1;
-    end;
-end;
 
 procedure add_ansi(c:char);
 const maxpar = 20;
@@ -430,7 +412,6 @@ begin
 end;
 
 procedure aufhaengen;
-var n,i : byte;
 begin
   moff;
   writeln;
@@ -440,12 +421,21 @@ begin
   Modem.Hangup;
 end;
 
-procedure Activate;
+// Modem-Befehl senden, wertet \\ aus, z.B. ATZ\\ATI1
+procedure sendmstr(s:string);
+var
+  p : integer;
 begin
-{    ActivateCom(comnr,2000,COMn[comnr].u16550);}
+  while length(trim(s))>1 do
+  begin
+    p:=pos('\\',s);
+    if p=0 then p:=length(s)+1;
+    CommObj^.SendString((trim(leftstr(s,p-1)))+#13, false);
+    s:=trim(mid(s,p+2));
+  end;
 end;
 
-function initcom:boolean;   { !! ISDN! }
+function initcom:boolean;
 var d  : DB;
     fn : string;
 begin
@@ -454,14 +444,15 @@ begin
   fn:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,fn,boxpar);
-  InitCom := true;
-
   if TermCOM<>0 then boxpar^.bport:=TermCOM;
   if TermBaud<>0 then boxpar^.baud:=TermBaud;
-  with boxpar^,ComN[boxpar^.bport] do GetComData; { IgnCD etc. }
+  ComNr := BoxPar^.BPort;
 
-  InitCom:=CommInit('serial port:2',CommObj);
-  {* Bitte NACH WELCHEN KRITERIEN wird im Original der Comport gewaehlt?!}
+  IgnCD:=COMn[ComNr].IgCD;
+  IgnCTS:=COMn[ComNr].IgCTS;
+
+  InitCom:=CommInit('serial port:' + IntToStr(BoxPar^.BPort) + ' speed:' +
+    IntToStr(BoxPar^.Baud),CommObj);
   Modem.CommObj:=CommObj;
 end;
 
@@ -488,10 +479,6 @@ end;
 {$ENDIF }
 
 
-procedure UpDown(auto,download:boolean);
-begin
-end;
-
 procedure SwitchStatus;
 var p     : pointer;
     mx,my : byte;
@@ -512,10 +499,10 @@ end;
 
 
 procedure Options;
-var stat : boolean;
+(*var stat : boolean;
     init : string;
     mcom : byte;        { ** }
-    mbaud: longint;     { ** }
+    mbaud: longint;     { ** } *)
 begin
 {  TermCOM:=boxpar^.bport;  mcom:=TermCom;
   TermBaud:=boxpar^.baud;  mbaud:=TermBaud;
@@ -543,7 +530,6 @@ end;
 
 { direct = /XPoint/Terminal }
 
-{$ifdef Unix}
 
 procedure terminal(direct:boolean);
 var
@@ -551,10 +537,9 @@ var
   connected     : boolean;
   t             : taste;
   p             : pointer;
-  rest          : boolean;
-  nr            : integer;      { Welches Ger‰t }
-  s             : string;
+{$IFDEF NCRT }
   win           : TWinDesc;     { Fenster }
+{$ENDIF }
 begin
   Debug.DebugLog('XPFM','Terminal called',1);
   connected:= not direct;
@@ -563,40 +548,36 @@ begin
     trfehler(799,30);
     exit;
   end;
-  { Ger‰t w‰hlen }
-  pushhp(24001);
-  s:= '^1 "'+COMn[1].MCommInit
-        +'",^2 "'+COMn[2].MCommInit
-        +'",^3 "'+COMn[3].MCommInit
-        +'",^4 "'+COMn[4].MCommInit+'"';
-  nr:= minisel(0,0,getres2(30001,4),s,1);
-  pophp;
-  if nr<0 then begin
-    freeres;
-    menurestart:= true;
-    exit;
-  end;
-  if not CommInit(COMn[nr].MCommInit,CommObj) then begin
-    trfehler(744,30);
+
+  if not InitCom then
+  begin
+    trfehler(744,30); // Das GerÑt kann nicht angesprochen werden!
     freeres;
     exit;
   end;
+
   Modem.CommObj:=CommObj;
+{$IFDEF NCRT }
   MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
   Scroll(win, true);
+{$ENDIF }
+  termscr;
+  moff;
   attrtxt(15);
-  writeln('OpenXP ', verstr, betastr, pformstr);
-  writeln('Terminal Emulation Ready (',CommObj^.GetBPSRate,')');
+  writeln;
+  writeln(getres(2005));
   attrtxt(7);
   writeln;
+  CommObj^.SendString(#13, false);
+  mdelay(200,true);
+  if TermInit<>'' then SendMStr(TermInit);
+
   open_log:=false;
   log:=false;
   in7e1:=false;
   out7e1:=false;
   display:=true;
   ansimode:=true;
-  IgnCD:=COMn[nr].IgCD;
-  IgnCTS:=COMn[nr].IgCTS;
   recs:='';
   lrecs:='';
   inout.cursor(curon);
@@ -622,10 +603,8 @@ begin
     else begin
       multi2;
       testbyte;
-      if AutoDownload and (pos('*'^X'B00',recs)>0) then
-        UpDown(true,true)
-      else if AutoUpload and (pos('*'^X'B01',recs)>0) then
-        UpDown(true,false);
+(*      if AutoDownload and (pos('*'^X'B00',recs)>0) then UpDown(true,true)
+      else if AutoUpload and (pos('*'^X'B01',recs)>0) then UpDown(true,false); *)
       if keypressed then begin
         get(t,curon);
         inout.cursor(curon);
@@ -647,8 +626,8 @@ begin
         if t=keyalth  then aufhaengen else
         if t=keyaltl  then SwitchLogfile else
         if t=keychom  then begin moff; clrscr; mon; end else
-        if t=keypgup  then UpDown(false,false) else
-        if t=keypgdn  then UpDown(false,true) else
+        if t=keypgup  then { UpDown(false,false) } else
+        if t=keypgdn  then {UpDown(false,true) }else
         if t=keyaltd  then begin
                              TermStatus:=not TermStatus;
                              SwitchStatus;
@@ -662,7 +641,6 @@ begin
             savewin;
             dosshell;
             restwin;
-            if not comn[bport].fossil then Activate;
             SetRTS(comnr);}
                       end
         else begin
@@ -670,8 +648,8 @@ begin
           PreExtProc:=TermDeactivateCom;
           getfilename:=TermGetfilename;
           if test_fkeys(t) then begin
-            if shellreleased then Activate;
-            shellreleased:=false;
+//            if shellreleased then Activate;
+//            shellreleased:=false;
           end else
             if t[1]>#0 then begin
               if out7e1 then
@@ -688,149 +666,15 @@ begin
     end;
 
   end; { while }
+{$IFDEF NCRT }
   RestoreWindow(win);
+{$ENDIF }
   @fnproc[0,9]:=p;
   pophp;
   m2t:=true;
-  rest:=not CommObj^.Carrier;
   TermDeactivateCom;
   showscreen(true);
 end;
-
-{$else}
-
-procedure terminal(direct:boolean);
-var
-  t    : taste;
-  ende : boolean;
-  connected : boolean;
-  p    : pointer;
-  rest : boolean;
-begin
-  Debug.DebugLog('XPFM','Terminal called',1);
-  connected:=not direct;
-  open_log:=false; log:=false;
-  in7e1:=false; out7e1:=false;
-  display:=true;
-  ansimode:=true;
-  if direct then
-    if not initcom then begin
-      comn[boxpar^.bport].fossil:=orgfossil;
-      m2t:=true;
-      exit;
-      end;
-  with boxpar^,ComN[boxpar^.bport] do begin
-    IgnCD:=IgCD; IgnCTS:=IgCTS;
-    comnr:=bport;
-    open_log:=not direct and (o_logfile<>'');
-    recs:=''; lrecs:='';
-    inout.cursor(curon);
-    display:=true;
-    pushhp(66);
-    ende:=false;
-    p:=@fnproc[0,9]; fnproc[0,9]:=DummyFN;
-
-    ansichar:=false;
-    ansifg:=7; ansibg:=0;
-    ansihigh:=0;
-    ansirev:=false;
-
-    while not ende do
-      if connected and not IgnCD and not CommObj^.Carrier then begin
-        moff;
-        writeln;
-        attrtxt(15); write(getres(2006)); attrtxt(7);   { 'Verbindung getrennt - Ende mit <Alt X>' }
-        writeln;
-        mon;
-        connected:=false;
-        end
-      else begin
-        multi2; testbyte;
-        if AutoDownload and (pos('*'^X'B00',recs)>0) then
-          UpDown(true,true)
-        else if AutoUpload and (pos('*'^X'B01',recs)>0) then
-          UpDown(true,false);
-        if keypressed then begin
-          get(t,curon); inout.cursor(curon);
-          if t=keyf6 then begin
-            savewin;
-            Makroliste(7);
-            restwin;
-            end;
-          Xmakro(t,64);
-          if t=mausleft then t:=copychr(_mausx,_mausy);
-          if t=keyup then CommObj^.SendString(ANSI_curup,False) else
-          if t=keydown then CommObj^.SendString(ANSI_curdown,False) else
-          if t=keyleft then CommObj^.SendString(ANSI_curleft,False) else
-          if t=keyrght then CommObj^.SendString(ANSI_curright,False) else
-          if t=keydel then CommObj^.SendString(#127,False) else
-          if t=keyhome then CommObj^.SendString(ANSI_home,False) else
-          if t=keyend then CommObj^.SendString(ANSI_end,False) else
-          if t=keyaltx then ende:=true else
-          if t=keyalth then aufhaengen else
-          if t=keyaltl then SwitchLogfile else
-          if t=keychom then begin moff; clrscr; mon; end else
-          if t=keypgup then UpDown(false,false) else
-          if t=keypgdn then UpDown(false,true) else
-          if t=keyaltd then begin
-                              TermStatus:=not TermStatus;
-                              SwitchStatus;
-                            end else
-          if (t=keyalto) or (t=mausright) then begin
-                              Options;
-                              connected:=CommObj^.Carrier;
-                            end
-          else
-            if t=keyf9 then begin
-{*              if not comn[bport].fossil then ReleaseCom(bport);
-              savewin;
-              dosshell;
-              restwin;
-              if not comn[bport].fossil then Activate;
-              SetRTS(comnr);}
-              end
-          else begin
-            FuncExternal:=true;     { nur externe F-Tasten zugelassen }
-            PreExtProc:=TermDeactivateCom;
-            getfilename:=TermGetfilename;
-            if test_fkeys(t) then begin
-              if shellreleased then Activate;
-              shellreleased:=false;
-              end
-            else
-              if t[1]>#0 then
-              begin
-                if out7e1 then SetParity(byte(t[1]),true);
-                CommObj^.SendChar(t[1])
-              end;
-            FuncExternal:=false;
-            PreExtProc:=nil;
-            end;
-          end;
-
-        if not connected and CommObj^.Carrier then connected:=true;
-        end;
-
-    @fnproc[0,9]:=p;
-
-    if log then begin
-      savewin;
-      closelog;
-      restwin;
-      end;
-    pophp;
-    m2t:=true;
-    showscreen(true);
-    if direct then begin
-{*      if not CommObj^.Carrier then DropDtr(bport);}
-      rest:=not CommObj^.Carrier;
-      TermDeactivateCom;
-      comn[bport].fossil:=orgfossil;
-      end;
-    end;
-end;
-
-{$endif}
 
 { --- Scripts ------------------------------------------------------- }
 
@@ -840,7 +684,6 @@ function RunScript(test:boolean; scriptfile:string;
 const MaxLines  = 500;
       Maxlabels = 100;
 {     MaxlabelLen = 20;}
-      Shortstr  = 8;
 
       pEndOK    = 0;      { RÅckgabewerte von RunScript      }
       pEndError = 1;      { = num. Parameter des END-Befehls }
@@ -1385,7 +1228,6 @@ var ip   : integer;
   end;
 
 begin    { of ExecuteScript }
-  GetComData;
   ip:=1;
   recs:=''; lrecs:='';
   zaehler[2]:=boxpar^.LoginWait;
@@ -1461,6 +1303,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/12/03 10:26:24  mk
+  - many fixes and improvements
+
   Revision 1.27  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 
