@@ -124,11 +124,11 @@ begin
       if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
-        s:=mid(s,y); x:=0;
+        s:=mid(s,y); x:=0; y:=0;
         repeat
           inc (y);                                           {Ende der URL suchen...}
           if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
-          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']' : x:=y-1; end;
+          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']', '"' : x:=y-1; end;
         until x<>0;
         s:=left(s,x);
         end;
@@ -981,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/07/17 14:11:02  mk
+  JG:- Bugfixes fuer URL-Erkennung
+
   Revision 1.52  2000/07/17 13:30:00  mk
   - AnsiString Updates
 
