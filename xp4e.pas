@@ -210,7 +210,7 @@ begin
     form_address(TestS);
     if Length(TestS) > eAdrLen then
     begin
-      Fehler('Das Feld ist '+strs(Length(TestS)-eAdrLen) + 'Zeichen zu lang');
+      Fehler(getreps(2741, strs(Length(TestS)-eAdrLen)));
       UserTest := false;
       exit;
     end else
@@ -2437,6 +2437,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.22  2001/09/11 07:49:17  mk
+  - Resource 2741 fuer Usertest
+
   Revision 1.25.2.21  2001/09/10 18:14:03  mk
   - changed usertest
 

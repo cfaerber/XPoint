@@ -2778,6 +2778,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 0 Assign Server "%s" to all unknown users (%s)?
 1 ~^Yes , ^No , Change ^Server , ^Back~
 -
+2741 Input has %s characters more then allowed
 +2750
 # number of lines
 0 11
