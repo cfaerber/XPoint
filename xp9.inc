@@ -187,7 +187,10 @@
     dom:=ntDefaultDomain(nt); bdom:=dom;
     fqdom:='';  {17.01.00 HS}
     real:='';
-    NameRead(nt,name,user,komm,maps,real,dom,fqdom,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
+    if nt in [nt_NNTP, nt_POP3] then
+      INetNameRead(nt,name,user,komm,real,fqdom,brk)
+    else
+      NameRead(nt,name,user,komm,maps,real,dom,fqdom,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
       dbSeek(d,boiName,UpperCase(name));
       if dbFound then rfehler(921)   { 'Box ist bereits vorhanden' }
