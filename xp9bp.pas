@@ -409,8 +409,8 @@ begin
     writeln(t,'UU-VarPacketSize=',jnf(varpacketsize));
     writeln(t,'UU-ForcePacketSize=',jnf(forcepacketsize));
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
-    if uusmtp then writeln(t,'UU-SMTP=',jnf(uusmtp));
-    if SmtpPPP then writeln(t, 'UU-SMTP-OneFilePerMsg=', Jnf(SmtpPPP));
+    writeln(t,'UU-SMTP=',jnf(uusmtp));
+    writeln(t,'UU-SMTP-OneFilePerMsg=', Jnf(SmtpPPP));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
     writeln(t,'BrettmanagerTyp=',BMtyp);
@@ -419,7 +419,7 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
-    end;
+  end;
   close(t);
 end;
 
@@ -531,6 +531,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2000/12/21 21:49:22  mk
+  - Smtp-Schalter immer in Config
+
   Revision 1.10.2.3  2000/12/20 18:09:22  mk
   - Schalter fuer PPP-Option von UUZ
 
