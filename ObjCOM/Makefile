@@ -182,12 +182,12 @@ all: objcom$(UNITEXT)
 
 ifeq ($(OS),dos32)
 objcom$(UNITEXT): objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc \
-	ocsdosh.inc octhread$(UNITEXT) ringbuff$(UNITEXT)
+	ocsdosh.inc ringbuff$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),linux)
-objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc octhread$(UNITEXT) \
-	octwinh.inc ringbuff$(UNITEXT) serial$(UNITEXT)
+objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc ringbuff$(UNITEXT) \
+	serial$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),os2)
@@ -233,6 +233,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.11  2000/10/20 16:12:25  fe
+# Fehler in den Abhaengigkeiten korrigiert.
+#
 # Revision 1.10  2000/10/19 18:16:09  fe
 # Fuer FPC SmartLinking und RangeChecking ausgestellt.
 # Anpassungen der FPC-Linux-Aufrufparameter.
