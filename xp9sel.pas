@@ -102,6 +102,7 @@ restart:
       else mappsel(false,seldir+cconfig.name);
       findnext(cconfig);
     end;
+    FindClose(cconfig);
   end;
   readmask(brk);
   enddialog;
@@ -829,6 +830,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.12  2001/07/31 17:54:05  mk
+  - added missing FindClose
+
   Revision 1.1.2.11  2001/07/31 17:25:41  mk
   - is_mailadress hat einen const statt var-parameter
 
