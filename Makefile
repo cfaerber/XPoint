@@ -395,8 +395,12 @@ export contribdir
 export MAKE
 export RM
 
+ifneq (,$(findstring $(OS),freebsd linux))
+BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
+else
 BIN = maggi ndiff pmconv uucp-fl1 uucico uuzext xp xp-fm xpme yup2pkt \
 	zfido zpr
+endif
 COMPBIN = $(BIN) docform ihs rc
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug eddef editor encoder exxec feiertag fileio gpltools \
@@ -582,7 +586,7 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) modem$(UNITEXT) \
-	montage$(UNITEXT) objcomunit resource$(UNITEXT) \
+	montage$(UNITEXT) objcom-objcom resource$(UNITEXT) \
 	timer$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
 	xp-fm.inc xpcurses$(UNITEXT) xpdefine.inc \
 	xpdiff$(UNITEXT) xpglobal$(UNITEXT) zmodem$(UNITEXT)
@@ -592,7 +596,7 @@ else
 
 xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) modem$(UNITEXT) \
-	montage$(UNITEXT) objcomunit resource$(UNITEXT) \
+	montage$(UNITEXT) objcom-objcom resource$(UNITEXT) \
 	timer$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
 	xp-fm.inc xpdefine.inc xpdiff$(UNITEXT) xpglobal$(UNITEXT) \
 	zmodem$(UNITEXT)
@@ -853,16 +857,16 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
 	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xpcurses$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+	resource$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
 	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+	resource$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -901,7 +905,7 @@ maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
-modem$(UNITEXT): modem.pas debug$(UNITEXT) objcomunit \
+modem$(UNITEXT): modem.pas debug$(UNITEXT) objcom-objcom \
 	timer$(UNITEXT) typeform$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
@@ -962,7 +966,7 @@ resource$(UNITEXT): resource.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 stack$(UNITEXT): stack.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-timer$(UNITEXT): timer.pas debug$(UNITEXT)
+timer$(UNITEXT): timer.pas debug$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 typeform$(UNITEXT): typeform.pas xpdefine.inc xpglobal$(UNITEXT)
@@ -1143,8 +1147,8 @@ endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-xp1help$(UNITEXT): xp1help.pas help$(UNITEXT) inout$(UNITEXT) \
-	keys$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+xp1help$(UNITEXT): xp1help.pas fileio$(UNITEXT) help$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xpcurses$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT)
@@ -1152,8 +1156,8 @@ xp1help$(UNITEXT): xp1help.pas help$(UNITEXT) inout$(UNITEXT) \
 
 else
 
-xp1help$(UNITEXT): xp1help.pas help$(UNITEXT) inout$(UNITEXT) \
-	keys$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+xp1help$(UNITEXT): xp1help.pas fileio$(UNITEXT) help$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
@@ -1253,11 +1257,11 @@ xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
-	resource$(UNITEXT) serialunit typeform$(UNITEXT) \
-	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
-	xp10$(UNITEXT) xp1help$(UNITEXT) xp1input$(UNITEXT) \
-	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2cfg.inc xp3$(UNITEXT) \
-	xp5$(UNITEXT) xp9$(UNITEXT) xp9bp$(UNITEXT) xpcfg$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
+	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
+	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
+	xp1o2$(UNITEXT) xp2cfg.inc xp3$(UNITEXT) xp5$(UNITEXT) \
+	xp9$(UNITEXT) xp9bp$(UNITEXT) xpcfg$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
 	xpe$(UNITEXT) xpeasy$(UNITEXT) xpfido$(UNITEXT) \
 	xpglobal$(UNITEXT) xpkeys$(UNITEXT) xplinux$(UNITEXT) \
@@ -1430,10 +1434,10 @@ xp3o$(UNITEXT): xp3o.pas crc$(UNITEXT) database$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o.inc xp3o2$(UNITEXT) \
-	xp4$(UNITEXT) xp4o$(UNITEXT) xp6$(UNITEXT) xp8$(UNITEXT) \
-	xp9bp$(UNITEXT) xp_pgp$(UNITEXT) xpcurses$(UNITEXT) \
-	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xpnt$(UNITEXT)
+	xp4$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) xp6$(UNITEXT) \
+	xp8$(UNITEXT) xp9bp$(UNITEXT) xp_pgp$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
@@ -1445,9 +1449,9 @@ xp3o$(UNITEXT): xp3o.pas crc$(UNITEXT) database$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o.inc xp3o2$(UNITEXT) \
-	xp4$(UNITEXT) xp4o$(UNITEXT) xp6$(UNITEXT) xp8$(UNITEXT) \
-	xp9bp$(UNITEXT) xp_pgp$(UNITEXT) xpdatum$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT) xpnt$(UNITEXT)
+	xp4$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) xp6$(UNITEXT) \
+	xp8$(UNITEXT) xp9bp$(UNITEXT) xp_pgp$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2304,7 +2308,7 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	maus2$(UNITEXT) objcomunit resource$(UNITEXT) \
+	maus2$(UNITEXT) objcom-objcom resource$(UNITEXT) \
 	typeform$(UNITEXT) uart$(UNITEXT) winxp$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
 	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
@@ -2316,7 +2320,7 @@ else
 
 xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	maus2$(UNITEXT) objcomunit resource$(UNITEXT) \
+	maus2$(UNITEXT) objcom-objcom resource$(UNITEXT) \
 	typeform$(UNITEXT) uart$(UNITEXT) winxp$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
 	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
@@ -2370,16 +2374,13 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
 endif
 
 zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
-	objcomunit timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+	objcom-objcom timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 # ObjCOM-Units
 
-objcomunit: debug$(UNITEXT) timer$(UNITEXT)
+objcom-objcom: debug$(UNITEXT) timer$(UNITEXT)
 	$(MAKE) -C ObjCOM objcom$(UNITEXT)
-
-serialunit:
-	$(MAKE) -C ObjCOM serial$(UNITEXT)
 
 # Sprachmodule
 
@@ -2612,6 +2613,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.38  2000/11/14 18:46:41  fe
+# Dependencies fixed.
+#
 # Revision 1.37  2000/11/04 23:02:01  fe
 # Removed dosx.
 # Added serialunit.
