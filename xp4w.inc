@@ -1737,8 +1737,15 @@ end;
 procedure switch_weiterschalt;
 begin
   NachWeiter:=not NachWeiter;
-  attrtxt(col.colmenu[0]);
-  mwrt(69,1,iifc(NachWeiter,'W','-'));
+  if NachWeiter then
+  begin
+    attrtxt(col.colmenu[0]);
+    mwrt(71,1,'W')
+  end
+  else begin
+    attrtxt(col.colmenudis[0]);
+    mwrt(71,1,'w');
+  end;
 end;
 
 procedure seek_brett(fwd:boolean);
@@ -1774,6 +1781,14 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.101  2002/05/01 17:14:08  mk
+  MY:- Anzeige des manuell mit <Ctrl-W> bet„tigten Nachrichten-Weiter-
+       schalters zur besseren Unterscheidung nochmals ge„ndert: Groáes "W"
+       (Farbe: Men?text) steht f?r "Weiterschalter aktiviert", kleines "w"
+       (Farbe: deaktivierter Men?text) steht f?r "Weiterschalter
+       deaktiviert". Bei Best„tigung des Config-Men?s C/O/B wird die
+       Anzeige entfernt, da dann wieder die Men?optionen gelten.
+
   Revision 1.100  2002/05/01 17:11:58  mk
   JG:- Fix: Die Unterdr?ckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
        <Shift-Esc> funktionierte nicht im Lesemodus "Alles"
