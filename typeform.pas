@@ -163,11 +163,6 @@ function ConvertFileName(s:string): String;
 
 implementation
 
-type psplit = record              { FÅr Pointer-Type-Cast }
-                o,s : smallword;
-              end;
-
-
 function CountChar(const c: char; const s: string): integer;
 const
   j: integer = 0;
@@ -359,17 +354,19 @@ end;
 
 
 function FormS(s:string; n:integer):string;
-var b : integer;  { kann bei length(s)=255 = 256 werden!! }
+var
+  i, b: integer;
 begin
-  for b:=length(s)+1 to n do
-    s[b]:=' ';
+  i := Length(s);
   SetLength(s, n);
+  for b:=i+1 to n do
+    s[b]:=' ';
   FormS:=s;
 end;
 
 
 function StrS(const l:longint):string;
-var s : string[10];
+var s : string;
 begin
   str(l:0,s);
   strs:=s;
@@ -377,7 +374,7 @@ end;
 
 
 function StrSn(const l:longint; const n:integer):string;
-var s : string[20];
+var s : string;
 begin
   str(l:n,s);
   strsn:=s;
@@ -385,7 +382,7 @@ end;
 
 
 function StrSr(const r:real; const nk:integer):string;
-var s : string[40];
+var s : string;
 begin
   str(r:0:nk,s);
   strsr:=s;
@@ -745,7 +742,7 @@ end;
 
 
 function Bin(l:longint; n:integer):string;
-var s : string[32];
+var s : string;
     i : integer;
 begin
   s:='';
@@ -835,20 +832,15 @@ var i,l: integer;
 begin
   l:= Length(s);
   SetLength(r, l);
-  for i:= 1 to l do r[i]:= s[l+1-i];
+  for i:= 1 to l do
+    r[i]:= s[l+1-i];
   reverse:= r;
-{
-  reverse[0]:=s[0];
-  for i:=1 to length(s) do reverse[i]:=s[length(s)+1-i];
-}
 end;
-
-
 
 function TopStr(const s:string):string;
 begin
   if s='' then TopStr:=''
-  else TopStr:=UpCase(s[1])+LowerCase(copy(s,2,254));
+  else TopStr:=UpCase(s[1])+LowerCase(mid(s,2));
 end;
 
 
@@ -1299,6 +1291,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/07/07 09:51:30  mk
+  - verschiedene AnsiString Fixes
+
   Revision 1.55  2000/07/06 12:05:27  hd
   - Fix: Unterschiedliche Definition (Rot13)
 
