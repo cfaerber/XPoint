@@ -3008,9 +3008,10 @@ Reihenfolge.
         zum Starten des Clients.
 
 <<Externe Einstellungen>>  Wenn Ihr Client zus„tzliche
-        Parameter in einer externen Konfigurations-
-        datei untersttzt, k”nnen Sie diese hier
-        einstellen.
+        Parameter in einer externen Konfiguration
+        untersttzt, k”nnen Sie hier ein externes
+        Konfigurationsprogramm starten oder eine
+        externe Konfigurationsdatei direkt editieren.
 
 <<Mail-/News-Server>>  Basisparameter der Mail- und News-
         Server, die bei Netcalls dieser Serverbox an-
@@ -4662,8 +4663,8 @@ Message-ID insgesamt.
 30100
 <<Netztyp RFC/Client - Allgemeines
 
-Siehe auch: [Netztyp RFC/Client - Netcall-Ablauf]@30200
------------ [Netztyp RFC/Client - Brettmanager]@30201
+Siehe auch: [Netztyp RFC/Client - Netcall-Ablauf]@30230
+----------- [Netztyp RFC/Client - Brettmanager]@30231
             [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
 Der Netztyp <<RFC/Client>> ist eine flexible und univer-
@@ -4696,9 +4697,9 @@ des Clients bzw. des Client-Kits.
 Weitere Detail-Informationen (wie zum genauen Ablauf
 eines Netcalls, der Arbeitsweise des Nachrichtenkon-
 vertierers UUZ, des internen Brettmanagers usw.)
-finden Sie in XPCLIENT.TXT sowie hier:
+finden Sie hier:
 
-[Netztyp RFC/Client - Netcall-Ablauf]@30200
+[Netztyp RFC/Client - Netcall-Ablauf]@30230
 
 @
 30101
@@ -4765,9 +4766,9 @@ eMail-Adresse einzutragen und dabei das "<<\@>>"-Zeichen
 durch einen Punkt ("<<.>>") zu ersetzen. Mit der Taste
 <<<F2> >>erzeugt XP einen solchen FQDN fr Sie automa-
 tisch. Fr T-Online-User wird dabei ein spezifischer
-FQDN generiert, der von T-Online ausdrcklich als
-gltiger und zul„ssiger FQDN zur Verfgung gestellt
-wird ("<<<eMail-Alias>.dialin.t-online.de>>").
+FQDN generiert, den T-Online ausdrcklich als
+gltigen und zul„ssigen FQDN zur Verfgung stellt
+("<<<eMail-Alias>.dialin.t-online.de>>").
 
 Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
 werden von XP automatisch durch Bindestriche ersetzt.
@@ -4778,7 +4779,7 @@ Fall ist, tragen Sie hier statt der eMail-Adresse
 unbedingt diesen FQDN ein - einzelne Provider ber-
 schreiben sonst m”glicherweise die Message-ID Ihrer
 Nachrichten mit einem aus ihrer Sicht zul„ssigen Wert
-(N„heres erfahren Sie von Ihrem Provider). Dies wird
+(N„heres erfahren Sie von Ihrem Provider). Dies wrde
 unweigerlich zu Problemen mit der XP-internen Bezugs-
 verkettung fhren.
 
@@ -4862,7 +4863,7 @@ dem ber das Makro <<$CLPATH>> beim [Client-Aufruf] dem@30108
 auszufhrenden Programm als Parameter und/oder als
 Pfad zum auszufhrenden Programm bergeben werden.
 
-Diese Pfadangabe ist auch fr den [Brettmanager] wich-@30201
+Diese Pfadangabe ist auch fr den [Brettmanager] wich-@30231
 tig, weil XP in dem hier angegebenen Verzeichnis
 immer die Liste der bestellten Newsgroups (<<<Box>.RC>>)
 erwartet. Auch die Liste der verfgbaren Newsgroups
@@ -4947,9 +4948,9 @@ nach dem n„chsten Netcall eben ohne Drucker dastehen.
 <<;-)>>
 
 Weitere Hinweise u.a. zum Ablauf eines Netcalls im
-Detail finden Sie in XPCLIENT.TXT sowie hier:
+Detail finden Sie hier:
 
-[Netztyp RFC/Client - Netcall-Ablauf]@30200
+[Netztyp RFC/Client - Netcall-Ablauf]@30230
 
 
 <<Hinweise fr Windows-GUI-Clients
@@ -4957,8 +4958,8 @@ Detail finden Sie in XPCLIENT.TXT sowie hier:
 Sollten Sie XP unter Windows 9x/ME/2000/NT betreiben
 und einen Windows-Client mit einer graphischen Ober-
 fl„che einsetzen, werden Sie m”glicherweise auf ein
-Problem stoáen, wenn Sie diesen direkt ber seine
-EXE-Datei von XP ausfhren lassen:
+Problem stoáen, wenn Sie dessen EXE-Datei direkt aus
+XP heraus ausfhren:
 
 XP wird den Client zwar starten, allerdings in einem
 anderen "Task" (vereinfacht ausgedrckt: in einem
@@ -5000,8 +5001,8 @@ solange, bis sie ihre Arbeit beendet haben.
 <<Netztyp RFC/Client - Multiserverbetrieb
 
 Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
------------ [Netztyp RFC/Client - Netcall-Ablauf]@30200
-            [Netztyp RFC/Client - Brettmanager]@30201
+----------- [Netztyp RFC/Client - Netcall-Ablauf]@30230
+            [Netztyp RFC/Client - Brettmanager]@30231
 
 (Diese Funktion ist noch nicht implementiert, aber
 man kann schon mal lesen, was es werden soll.)  :-)
@@ -5009,8 +5010,9 @@ man kann schon mal lesen, was es werden soll.)  :-)
 Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
 ten weiterer in XP eingerichteter Server mitsenden
 und/oder empfangen wollen, k”nnen Sie hier mit <<<F2> >>
-die Namen der jeweiligen Serverboxen ausw„hlen (eine
-direkte Eingabe ist in diesem Feld nicht m”glich).
+die Namen der jeweiligen Serverboxen ausw„hlen (das
+Feld ist gegen manuelle Eingaben gesperrt und kann
+mit <<<Ctrl-Del> >>gel”scht werden).
 
 CrossPoint wird dann zu Beginn eines RFC/Client-
 Netcalls die ausgehenden Nachrichten der hier ein-
@@ -5157,6 +5159,7 @@ mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<Client-Login=>>"
 gespeichert.
+
 @
 30113
 Tragen Sie hier das Paáwort ein, daá Sie fr den
@@ -5174,13 +5177,55 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-Password=>>" gespeichert.
 @
+30114
+Aktivieren Sie diese Option, wenn Sie vor der Anwahl
+vom Client gefragt werden m”chten, ob die Verbindung
+wirklich hergestellt werden soll.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-AskIfConnect=>>" gespeichert.
+@
 30115
+Das Gegenteil der vorherigen Option - wenn aktiviert,
+fragt der Client Sie nach dem Netcall, ob die Verbin-
+dung getrennt werden soll.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-AskIfDisconnect=>>" gespeichert.
+@
+30116
+Der Client trennt die Verbindung nur dann, wenn sie
+auch von ihm selbst aufgebaut wurde. Bestand bereits
+eine Verbindung zu Beginn des Netcalls, dann wird sie
+nach dem Netcall nicht getrennt.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-KeepConnectStatus=>>" gespeichert.
+@
+30130
 Der Name Ihres Servers fr eingehende Mail. Hierfr
 stehen prinzipiell die Protokolle POP3, SMTP oder
 IMAP zur Verfgung, die meisten Server (und auch die
 g„ngigen Clients) untersttzen jedoch lediglich das
 POP3-Protokoll. Mit <<<F2> >>erhalten Sie hier eine
-Auswahl derzeit g„ngiger POP3-Server.
+Auswahl derzeit g„ngiger Mail-Server (diese sind in
+der Datei SERVERS.DAT im XP-Verzeichnis gespeichert
+und k”nnen dort von Ihnen angepaát werden).
 
 M”glicherweise untersttzt Ihr Client auch die Angabe
 mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
@@ -5196,7 +5241,59 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-MailInServer=>>" gespeichert.
 
 @
-30116
+30131
+Der "Port" dieses Mail-Servers. Die Standard-Ports
+fr die jeweiligen Protokolle fr den Empfang von
+Mail sind:
+
+    POP3     : 110
+    SMTP     :  25
+    IMAP4    : 143
+    IMAP4-SSL: 585
+    IMAPS    : 993 (= IMAP4 over TLS/SSL)
+
+Server stellen ihre Dienste unter verschiedenen
+"Ports" zur Verfgung. Welchen Port Sie fr das von
+Ihnen verwendete Protokoll verwenden mssen (falls
+abweichend vom Standard) und welche Protokolle Sie
+berhaupt verwenden k”nnen, erfahren Sie vom Betrei-
+ber des Servers. I.d.R. sollten die Standardwerte
+funktionieren.
+
+Bitte denken Sie daran, bei einer nderung des Ports
+ggf. auch das [Protokoll] entsprechend anzupassen.@30132
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Ports hintereinander, jeweils
+durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInPort=>>" gespeichert.
+
+@
+30132
+Das šbertragungsprotokoll, das von Ihrem Client fr
+den Empfang von Mail verwendet wird. Das mit Abstand
+g„ngigste Protokoll ist POP3.
+
+Bitte denken Sie daran, bei einer nderung des Proto-
+kolls ggf. auch den [Port] entsprechend anzupassen.@30131
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInProtocol=>>" gespeichert.
+@
+30133
 Tragen Sie hier Ihre "Envelope"-Adresse ein. Diese
 ist normalerweise mit Ihrer eMail-Adresse fr diese
 Serverbox identisch.
@@ -5208,14 +5305,15 @@ lich gesprochen nochmals die Adresse des Empf„ngers
 "draufsteht". Damit ist sichergestellt, daá die Mail
 z.B. auch an Kopien- (Cc:) und Blindkopien-Empf„nger
 (Bcc:) korrekt zugestellt wird, obwohl diese nicht in
-der Empf„nger-Kopfzeile (To:-Header) aufgefhrt sind.
+der Empf„nger-Kopfzeile (To:-Header) der Nachricht
+aufgefhrt sind.
 
 Leider wird diese Envelope-Adresse z.B. beim POP3-
 Protokoll i.d.R. nicht bertragen. Die konkrete Folge
 in XP davon w„re, daá Cc- und Bcc-Mails in ein
 falsches PM-Brett einsortiert wrden, das den Namen
 des eigentlichen Empf„ngers (der, der im To:-Header
-steht) tr„gt.
+der Nachricht steht) tr„gt.
 
 Einige Clients besitzen daher eine Funktion, die
 durch das Setzen eines SMTP-Headers ("RCPT TO") dafr
@@ -5226,9 +5324,12 @@ Sie hier eingeben, ist die Adresse, die in den nach-
 tr„glich hinzugefgten "RCPT TO"-Header geschrieben
 wrde - falls der Client diese Einstellung auswertet.
 CrossPoint setzt bei der Konvertierung der Nachricht
-mittels UUZ dann diesen "RCPT TO"-Header um in den
-ZConnect-Header "EMP" und schreibt die ursprnglichen
-Empf„nger in "OEM"-Header (OEM = Original-Empf„nger).
+mittels des Nachrichtenkonvertierers UUZ dann diesen
+"RCPT TO"-Header um in den ZConnect-Header "EMP" und
+schreibt die ursprnglichen Empf„nger in "OEM"-Header
+(OEM = Original-Empf„nger).
+
+Zu Envelopes siehe auch: [Envelope-To auswerten]@30136
 
 Falls Sie einen Client verwenden, der die Angabe
 mehrerer Server gleichzeitig untersttzt, k”nnen Sie
@@ -5245,7 +5346,7 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-MailInEnvelope=>>" gespeichert.
 
 @
-30117
+30134
 Ihr Benutzername, den Sie zur Authentifizierung bei
 diesem Mail-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
@@ -5262,7 +5363,10 @@ Die Untersttzung von Authentifizierungsverfahren ist
 einem st„ndigen Wandel unterworfen. Bitte informieren
 Sie sich bei Ihrem Server-Betreiber sowie in Ihrer
 Client-Dokumentation, welche Verfahren beidseitig
-untersttzt werden.
+untersttzt werden. Derzeit bietet CrossPoint neben
+der Eingabe des Benutzernamens und des [Paáworts] als@30135
+einzige sinnvolle zus„tzliche Option den Schalter
+"[APOP-Authentifizierung]" an.@30138
 
 Falls Sie einen Client verwenden, der die Angabe
 mehrerer Server gleichzeitig untersttzt, k”nnen Sie
@@ -5281,13 +5385,15 @@ gen, wird in der Konfigurationsdatei <Box>.BFG unter
 dem Bezeichner "<<Client-MailInUser=>>" gespeichert.
 
 @
-30118
+30135
 Das Paáwort, das Sie fr die Authentifizierung bei
 diesem Mail-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
 
-Zu Authentifizierung siehe auch: [Benutzername]@30117
+Zu Authentifizierung siehe auch:
+[Benutzername]@30134
+[APOP-Authentifizierung]@30138
 
 Falls Sie einen Client verwenden, der die Angabe
 mehrerer Server gleichzeitig untersttzt, k”nnen Sie
@@ -5303,47 +5409,82 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-MailInPassword=>>" gespeichert.
 
 @
-30119
-Der "Port" dieses Mail-Servers. Die Standard-Ports
-fr die jeweiligen Protokolle fr eingehende Mail
-sind:
+30136
+Wie schon unter [Envelope-Adresse] erw„hnt, wird beim@30133
+POP3-Protokoll der Envelope i.d.R. nicht bertragen.
 
-POP3     : 110
-SMTP     :  25
-IMAP4    : 143
-IMAP4-SSL: 585
-IMAPS    : 993 (= IMAP4 over TLS/SSL)
+Einige Mail-Provider sind aber inzwischen dazu ber-
+gegangen, auch beim POP3-Protokoll einen speziellen
+Header zu erzeugen, der die Envelope-Adresse enth„lt.
+Hierfr haben sich die Header <<X-Envelope-To>> und
+<<Envelope-To>> eingebrgert, die beide von CrossPoint
+untersttzt werden.
 
-Server stellen ihre Dienste unter verschiedenen
-"Ports" zur Verfgung. Welchen Port Sie fr das von
-Ihnen verwendete Protokoll verwenden mssen (falls
-abweichend vom Standard) und welche Protokolle Sie
-berhaupt verwenden k”nnen, erfahren Sie vom Betrei-
-ber des Servers. I.d.R. sollten die Standardwerte
-funktionieren.
+Wenn Sie diese Option aktivieren, sorgt CrossPoint
+(genauer: der Nachrichtenkonvertierer UUZ) selbst
+dafr, daá statt der [Envelope-Adresse] der Envelope-@30133
+Header der Nachricht ausgewertet wird und Sie Ihre
+Mails somit im korrekten PM-Brett vorfinden werden.
 
-Falls Sie einen Client verwenden, der die Angabe
-mehrerer Server gleichzeitig untersttzt, k”nnen Sie
-hier ebenfalls mehrere Ports hintereinander, jeweils
-durch ein Leerzeichen getrennt, eintragen.
+Bitte fragen Sie Ihren Mail-Provider, ob er einen
+solchen Envelope-Header erzeugt, bevor Sie diese
+Option aktivieren.
+
+<<Hinweis:>> Im Unterschied zu den meisten anderen
+Einstellungen in der Client-Konfiguration von XP muá
+der Client diese Option nicht auswerten. Besser
+gesagt sollte er sie auch gar nicht auswerten, um
+m”gliche Probleme und Inkompatibilit„ten bei der
+Nachrichtenkonvertierung auszuschlieáen.
+
+@
+30137
+Normalerweise wird jede Mail, die Sie von Ihrem Mail-
+Server erfolgreich empfangen haben, anschlieáend auf
+dem Server gel”scht.
+
+Ist diese Option aktiviert, verbleibt die Mail jedoch
+auf dem Server und kann zu einem sp„teren Zeitpunkt
+(und ggf. von einem anderen Ort aus) nochmals empfan-
+gen werden.
 
 <<Hinweis:>> Diese Einstellung wird von CrossPoint
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits. Der Wert,
-den Sie hier eintragen, wird in der Konfigurations-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
-"<<Client-MailInPort=>>" gespeichert.
+"<<Client-MailInKeep=>>" gespeichert.
 
 @
-30120
+30138
+Aktivieren Sie diese Option, wenn Ihr Mail-Provider
+das Verfahren der APOP-Authentifizierung untersttzt.
+
+Hierbei werden die fr das POP3-Login erforderlichen
+Daten nicht im Klartext, sondern verschlsselt ber-
+mittelt.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInAPOP=>>" gespeichert.
+@
+30150
 Der Name Ihres Servers fr ausgehende Mail (SMTP-
 Protokoll). Mit <<<F2> >>erhalten Sie hier eine Auswahl
-derzeit g„ngiger SMTP-Server. Bitte beachten Sie, daá
-fr die Benutzung von Servern, die "Relaying" - die
-Einlieferung von Mail mit Absenderadressen aus einem
-fremden Adreáraum - erlauben ("smtprelay.t-online.de"
-z.B.) i.d.R. eine Anmeldung erforderlich ist.
+Auswahl derzeit g„ngiger SMTP-Server (diese sind in
+der Datei SERVERS.DAT im XP-Verzeichnis gespeichert
+und k”nnen dort von Ihnen angepaát werden).
+
+Bitte beachten Sie, daá fr die Benutzung von "Relay-
+servern", die die Einlieferung von Mail mit fremden
+Domains gestatten ("smtprelay.t-online.de" z.B. ist
+so ein Relayserver), i.d.R. eine Anmeldung erforder-
+lich ist.
 
 M”glicherweise untersttzt Ihr Client auch die Angabe
 mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
@@ -5359,152 +5500,7 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-MailOutServer=>>" gespeichert.
 
 @
-30121
-Wenn beim Versenden von Mails Probleme auftreten
-sollten (z.B. weil der eingetragene [Mailserver]@30120
-momentan nicht erreichbar ist), besteht prinzipiell
-die M”glichkeit, die Mails auch bei einem anderen
-Mailserver einzuliefern ("Fallback").
-
-Tragen Sie hier die Serverbox ein, deren SMTP-Server
-fr ausgehende Mail als Fallback-Server genutzt
-werden soll. Mit <<<F2> >>erhalten Sie eine Auswahl
-aller zur Verfgung stehenden Serverboxen vom Netz-
-typ RFC/Client.
-
-<<ACHTUNG:>> Das Einliefern von Mail bei einem "fremden"
-Mailserver ist i.d.R. nur bei Mailservern m”glich,
-die sog. "Relaying" erlauben ("smtprelay.t-online.de"
-z.B.). Relayserver akzeptieren auch Mails mit Absen-
-deradressen aus einem fremden Adreáraum und erfordern
-i.d.R. eine Anmeldung. Wenn Sie hier eine Serverbox
-eintragen, stellen Sie bitte sicher, daá der bei
-dieser Serverbox eingetragene SMTP-Server fr ausge-
-hende Mail Relaying erlaubt und deshalb als Fallback-
-Server genutzt werden kann. Im Zweifel erkundigen Sie
-sich bei Ihrem Mail-Provider.
-
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
-*nicht* ausgewertet. Ob und wie der externe Client
-diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits.
-
-<<Technischer Hinweis:>> Obwohl Sie hier ausschlieálich
-mit den (max. 20-stelligen) Serverbox-Namen in Berh-
-rung kommen, legt CrossPoint in der Konfigurations-
-datei (<Box>.BFG) der momentan editierten Serverbox
-den zugeh”rigen (max. 8-stelligen) Namen der Konfi-
-gurationsdatei (*.BFG) der gew„hlten Serverbox ab.
-Der Dateiname wird in der Konfigurationsdatei
-<Box>.BFG unter dem Bezeichner "<<Client-MailFallback=>>"
-gespeichert.
-
-@
-30122
-Tragen Sie hier Ihre "Envelope"-Adresse fr ausgehen-
-de Nachrichten ein. Wenn Sie hier nichts eintragen,
-wird diese normalerweise aus dem Absender (From:-
-Header) Ihrer Nachricht gebildet. In einigen F„llen
-kann es aber sinnvoll sein, eine abweichende Adresse
-anzugeben:
-
-Manche Server gestatten nur die Einlieferung von
-Mails, die eine Envelope-Adresse aus dem eigenen
-Adreáraum tragen (z.B. kann bei "mailto.t-online.de"
-nur Mail mit T-Online-Adressen eingeliefert werden).
-Andere SMTP-Server wiederum, die zur Authentifizie-
-rung das Verfahren "SMTP after POP" verwenden,
-akzeptieren mitunter nur den Envelope-Absender, der
-beim vorherigen POP3-Login verwendet wurde.
-
-Wenn Sie Mails aus einem fremden Adreáraum bei einem
-SMTP-Server einliefern wollen, k”nnen Sie also hier
-Ihre fr diesen SMTP-Server gltige Adresse eintragen
-und so den Server quasi "austricksen": Die eigent-
-liche Absenderadresse (From:-Header) „ndert sich
-dadurch n„mlich nicht (jedenfalls sollte sie das
-nicht tun).
-
-Prinzipiell sollten Sie fr das Einliefern von Nach-
-richten aus einem fremden Adreáraum jedoch einen
-SMTP-Server verwenden, der echtes "Relaying" erlaubt
-(siehe auch [Servername]).@30120
-
-Falls Sie einen Client verwenden, der die Angabe
-mehrerer Server gleichzeitig untersttzt, k”nnen Sie
-hier ebenfalls mehrere Envelope-Adressen hinterein-
-ander, jeweils durch ein Leerzeichen getrennt, ein-
-tragen.
-
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
-*nicht* ausgewertet. Ob und wie der externe Client
-diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits. Der Wert,
-den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner
-"<<Client-MailOutEnvelope=>>" gespeichert.
-
-@
-30123
-Ihr Benutzername, den Sie zur Authentifizierung bei
-diesem SMTP-Server ben”tigen. Wenn der Server keine
-Authentifizierung erfordert, lassen Sie den Eintrag
-frei.
-
-Ob Ihr Server SMTP-Authentifizierung untersttzt bzw.
-erfordert, erfahren Sie vom Betreiber des Servers.
-SMTP-Authentifizierung ist (noch) nicht sehr weit
-verbreitet, bekannte Verfahren sind "SMTP after POP"
-und "SMTP AUTH" nach RFC 2554 mit unterschiedlichen
-Methoden zur šbermittlung und Verschlsselung des
-Usernamens und Paáworts.
-
-Die Untersttzung von Authentifizierungsverfahren ist
-einem st„ndigen Wandel unterworfen. Bitte informieren
-Sie sich bei Ihrem Server-Betreiber sowie in Ihrer
-Client-Dokumentation, welche Verfahren beidseitig
-untersttzt werden.
-
-Falls Sie einen Client verwenden, der die Angabe
-mehrerer Server gleichzeitig untersttzt, k”nnen Sie
-hier ebenfalls mehrere Benutzernamen hintereinander,
-jeweils durch ein Leerzeichen getrennt, eintragen.
-
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
-*nicht* ausgewertet. Ob und wie der externe Client
-diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits. M”glicher-
-weise k”nnen oder mssen Sie weitere Einstellungen
-(wie z.B. das Authentifizierungsverfahren selbst) in
-einer externen Client-Konfigurationsdatei im Client-
-Verzeichnis vornehmen. Der Wert, den Sie hier eintra-
-gen, wird in der Konfigurationsdatei <Box>.BFG unter
-dem Bezeichner "<<Client-MailOutUser=>>" gespeichert.
-
-@
-30124
-Das Paáwort, das Sie fr die Authentifizierung bei
-diesem SMTP-Server ben”tigen. Wenn der Server keine
-Authentifizierung erfordert, lassen Sie den Eintrag
-frei.
-
-Zu Authentifizierung siehe auch: [Benutzername]@30123
-
-Falls Sie einen Client verwenden, der die Angabe
-mehrerer Server gleichzeitig untersttzt, k”nnen Sie
-hier ebenfalls mehrere Paáw”rter hintereinander,
-jeweils durch ein Leerzeichen getrennt, eintragen.
-
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
-*nicht* ausgewertet. Ob und wie der externe Client
-diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits. Der Wert,
-den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner
-"<<Client-MailOutPassword=>>" gespeichert.
-
-@
-30125
+30151
 Der "Port" dieses SMTP-Servers. Der Standard-Port
 fr das SMTP-Protokoll ist 25.
 
@@ -5528,10 +5524,205 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-MailOutPort=>>" gespeichert.
 
 @
-30126
+30152
+Wenn beim Versenden von Mails Probleme auftreten
+sollten (z.B. weil der eingetragene [Mailserver]@30150
+momentan nicht erreichbar ist), besteht prinzipiell
+die M”glichkeit, die Mails auch bei einem anderen
+Mailserver einzuliefern ("Fallback").
+
+Tragen Sie hier die Serverbox ein, deren SMTP-Server
+fr ausgehende Mail als Fallback-Server genutzt
+werden soll. Mit <<<F2> >>erhalten Sie eine Auswahl
+aller zur Verfgung stehenden Serverboxen vom Netz-
+typ RFC/Client.
+
+<<ACHTUNG:>> Das Einliefern von Mail bei einem "fremden"
+Mailserver ist i.d.R. nur bei Mailservern m”glich,
+die sog. "Relaying" erlauben ("smtprelay.t-online.de"
+z.B.). Relayserver akzeptieren auch Mails mit Absen-
+deradressen, die eine fremde Domain enthalten, und
+erfordern i.d.R. eine Anmeldung. Wenn Sie hier eine
+Serverbox eintragen, stellen Sie bitte sicher, daá
+der bei dieser Serverbox eingetragene SMTP-Server fr
+ausgehende Mail Relaying erlaubt und deshalb als
+Fallback-Server genutzt werden kann. Im Zweifel
+erkundigen Sie sich bei Ihrem Mail-Provider.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits.
+
+<<Technischer Hinweis:>> Obwohl Sie hier ausschlieálich
+mit den (max. 20-stelligen) Serverbox-Namen in Berh-
+rung kommen, legt CrossPoint in der Konfigurations-
+datei (<Box>.BFG) der momentan editierten Serverbox
+den zugeh”rigen (max. 8-stelligen) Namen der Konfi-
+gurationsdatei (*.BFG) der gew„hlten Serverbox ab.
+Der Dateiname wird in der Konfigurationsdatei
+<Box>.BFG unter dem Bezeichner "<<Client-MailFallback=>>"
+gespeichert.
+
+@
+30153
+Tragen Sie hier Ihre "Envelope"-Adresse fr ausgehen-
+de Nachrichten ein. Wenn Sie hier nichts eintragen,
+wird diese normalerweise aus dem Absender (From:-
+Header) Ihrer Nachricht gebildet. In einigen F„llen
+kann es aber sinnvoll sein, eine abweichende Adresse
+anzugeben:
+
+Manche Server gestatten nur die Einlieferung von
+Mails, deren Envelope-Adresse die eigene Domain ent-
+h„lt (z.B. kann bei "mailto.t-online.de" nur Mail
+mit T-Online-Adressen eingeliefert werden). Andere
+SMTP-Server wiederum, die zur Authentifizierung das
+Verfahren "[SMTP after POP]" verwenden, akzeptieren@30156
+mitunter nur den Envelope-Absender, der beim vor-
+herigen POP3-Login verwendet wurde.
+
+Wenn Sie Mails mit einer fremden Domain bei einem
+SMTP-Server einliefern wollen, k”nnen Sie also hier
+Ihre von diesem SMTP-Server akzeptierte Adresse ein-
+tragen und so den Server quasi "austricksen": Die
+eigentliche Absenderadresse (From:-Header) Ihrer
+Nachricht „ndert sich dadurch n„mlich nicht (jeden-
+falls sollte sie das nicht tun).
+
+Prinzipiell sollten Sie fr das Einliefern von Nach-
+richten mit fremden Domains jedoch einen SMTP-Server
+verwenden, der echtes "Relaying" erlaubt (siehe auch
+[Servername]).@30150
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Envelope-Adressen hinterein-
+ander, jeweils durch ein Leerzeichen getrennt, ein-
+tragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutEnvelope=>>" gespeichert.
+
+@
+30154
+Ihr Benutzername, den Sie zur Authentifizierung bei
+diesem SMTP-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Ob Ihr Server SMTP-Authentifizierung untersttzt bzw.
+erfordert, erfahren Sie vom Betreiber des Servers.
+SMTP-Authentifizierung ist inzwischen recht weit
+verbreitet, bekannte Verfahren sind "[SMTP after POP]"@30156
+und "[SMTP-Login nach RFC 2554]" mit unterschiedlichen@30157
+Methoden zur šbermittlung und Verschlsselung des
+Usernamens und Paáworts.
+
+Die Untersttzung von Authentifizierungsverfahren ist
+einem st„ndigen Wandel unterworfen. Bitte informieren
+Sie sich bei Ihrem Server-Betreiber sowie in Ihrer
+Client-Dokumentation, welche Verfahren beidseitig
+untersttzt werden.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Benutzernamen hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. M”glicher-
+weise k”nnen oder mssen Sie weitere Einstellungen
+(wie z.B. das Authentifizierungsverfahren selbst,
+sofern es nicht zu einem der obigen Verfahren geh”rt,
+die von CrossPoint direkt mit einer Option unter-
+sttzt werden) in einer externen Client-Konfigura-
+tionsdatei im Client-Verzeichnis vornehmen. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutUser=>>" gespeichert.
+
+@
+30155
+Das Paáwort, das Sie fr die Authentifizierung bei
+diesem SMTP-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Zu Authentifizierung siehe auch:
+[Benutzername]@30154
+[SMTP after POP]@30156
+[SMTP-Login nach RFC 2554]@30157
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Paáw”rter hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutPassword=>>" gespeichert.
+
+@
+30156
+Manche Provider verlangen einen gltigen POP3-Login
+vor dem Start eines SMTP-Mailtransfers.
+
+Aktivieren Sie in diesem Fall diese Option.
+
+Siehe auch: [SMTP-Login nach RFC 2554]@30157
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutSMTPafterPOP=>>" gespeichert.
+@
+30157
+SMTP-Login nach RFC 2554 ist ein sicheres und mitt-
+lerweile recht g„ngiges Verfahren zur Authentifizie-
+rung bei SMTP-Servern.
+
+Wenn Ihr Provider dieses Verfahren anbietet oder
+verlangt, aktivieren Sie diese Option.
+
+Unter dem Oberbegriff "SMTP-Login" sind verschiedene
+(und unterschiedlich sichere) Verfahren zur šbermitt-
+lung von Username und Paáwort zusammengefaát. Der
+SMTP-Server und der Mail-Client handeln automatisch
+die sicherste auf beiden Seiten verfgbare Variante
+aus.
+
+Siehe auch: [SMTP after POP]@30156
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+die Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutSMTPLogin=>>" gespeichert.
+
+@
+30170
 Der Name Ihres Servers fr ein- und ausgehende News
 (Postings, Artikel). Mit <<<F2> >>erhalten Sie hier eine
-Auswahl derzeit g„ngiger NNTP-Server.
+Auswahl derzeit g„ngiger NNTP-Server (diese sind in
+der Datei SERVERS.DAT im XP-Verzeichnis gespeichert
+und k”nnen dort von Ihnen angepaát werden).
 
 Bitte beachten Sie, daá nicht jeder News-Server das
 Senden von Artikeln ohne weiteres zul„át. Sie mssen
@@ -5547,10 +5738,29 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-NewsServer=>>" gespeichert.
 
 @
-30127
+30171
+Der "Port" dieses NNTP-Servers. Der Standard-Port
+fr das NNTP-Protokoll ist 119.
+
+Server stellen ihre Dienste unter verschiedenen
+"Ports" zur Verfgung. Welchen Port Sie verwenden
+mssen (falls abweichend vom Standard), erfahren
+Sie vom Betreiber des Servers. I.d.R. sollte der
+Standardwert funktionieren.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsPort=>>" gespeichert.
+
+@
+30172
 Wenn beim Versenden oder Beziehen von News Probleme
 auftreten sollten (z.B. weil der eingetragene
-[News-Server] momentan nicht erreichbar ist), besteht@30126
+[News-Server] momentan nicht erreichbar ist), besteht@30170
 prinzipiell die M”glichkeit, die Artikel auch bei
 einem anderen News-Server einzuliefern bzw. von dort
 zu beziehen ("Fallback"). Manche Clients sprechen
@@ -5587,7 +5797,7 @@ Der Dateiname wird in der Konfigurationsdatei
 gespeichert.
 
 @
-30128
+30173
 Ihr Benutzername, den Sie zur Authentifizierung bei
 diesem News-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
@@ -5601,7 +5811,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-NewsUser=>>" gespeichert.
 @
-30129
+30174
 Das Paáwort, das Sie fr die Authentifizierung bei
 diesem News-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
@@ -5615,15 +5825,66 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-NewsPassword=>>" gespeichert.
 @
-30130
-Der "Port" dieses NNTP-Servers. Der Standard-Port
-fr das NNTP-Protokoll ist 119.
+30175
+Wenn Sie m”chten, daá Ihr Client bei jedem Netcall
+die Liste aller verfgbaren Newsgroups aktualisiert
+(d.h. neu hinzugekommene Newsgroups hinzufgt), dann
+aktivieren Sie diese Option.
 
-Server stellen ihre Dienste unter verschiedenen
-"Ports" zur Verfgung. Welchen Port Sie verwenden
-mssen (falls abweichend vom Standard), erfahren
-Sie vom Betreiber des Servers. I.d.R. sollte der
-Standardwert funktionieren.
+Wenn keine Newsgroup-Liste vorhanden sein sollte,
+fordern die meisten Clients eine neue Komplettliste
+an. Wenn Sie eine vorhandene Liste l”schen und diese
+Option aktiviert ist, haben Sie nach dem n„chsten
+Netcall eine top-aktuelle Liste aller verfgbaren
+Newsgroups vorliegen (vorausgesetzt, Ihr Client
+untersttzt diese Option entsprechend).
+
+Clients, die eine Funktion zur automatischen Aktuali-
+sierung der Newsgroup-Liste besitzen, *mssen* diese
+Liste im [Client-Verzeichnis] unter dem Dateinamen@30107
+<<<Box>.BL>> oder <<<Box>.GR>> ablegen bzw. eine vorhandene
+Liste an diesem Ort aktualisieren. Bitte stellen Sie
+sicher, daá sich dann keine weitere Liste unter dem
+Dateinamen <<<Box>.BL>> im XP-Verzeichnis befindet; XP
+und der Client wrden sonst auf unterschiedliche
+Listen zugreifen und nicht mehr synchron arbeiten.
+
+Weitere Informationen hierzu siehe auch:
+[Netztyp RFC/Client - Brettmanager]@30231
+[/Nachricht/Brettmanager/Sonstiges]@11904
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Die Wahl,
+den Sie hier vornehmen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsList=>>" gespeichert.
+
+@
+30176
+Zum Schutz vor Bin„rdateien oder allgemein vor ber-
+groáen Postings k”nnen Sie hier die Gr”áe der zu
+empfangenden Artikel limitieren; l„ngere Artikel
+werden dann vom Client bersprungen.
+
+Wenn Sie kein Limit wnschen, tragen Sie <<0>> ein,
+Maximalwert ist <<999>> KB (= 1.022.976 Bytes).
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG (umgerechnet in Bytes) unter dem
+Bezeichner "<<Client-NewsMaxLen=>>" gespeichert.
+
+@
+30177
+Wenn Sie die Anzahl der je Newsgroup zu empfangenden
+Artikel begrenzen wollen, k”nnen Sie hier einen
+beliebigen Wert bis max. <<99999>> eintragen. Wenn Sie
+kein Limit wnschen, tragen Sie <<0>> ein.
 
 <<Hinweis:>> Diese Einstellung wird von CrossPoint
 *nicht* ausgewertet. Ob und wie der externe Client
@@ -5631,18 +5892,31 @@ diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
-"<<Client-NewsPort=>>" gespeichert.
-
+"<<Client-NewsMax=>>" gespeichert.
 @
-30138
-Geben Sie hier Name und ggf. Pfad der Konfigurations-
-datei an, die zus„tzliche Einstellungen fr Ihren
-externen Client enth„lt. Die Datei wird anschlieáend
-in den internen Editor geladen und kann dort bearbei-
-tet werden. Der Dateiname wird bei jeder Bearbeitung
-von XP gespeichert und bei zuknftigen Bearbeitungen
-automatisch wieder vorgeschlagen, so daá er nicht
-jedes Mal neu ausgew„hlt werden muá (aber kann).
+30180
+Geben Sie hier Name und ggf. Pfad des Konfigurations-
+programms oder der Konfigurationsdatei an, die zu-
+s„tzliche Einstellungen fr Ihren externen Client
+enth„lt. Externe Programme (mit der Dateierweiterung
+EXE, COM oder BAT) werden unmittelbar ausgefhrt,
+alle Dateien mit einer anderen oder ohne Dateierwei-
+terung werden in den internen Editor geladen und
+k”nnen dort bearbeitet werden.
+
+Externen Programmen kann als Parameter das Makro
+<<$CONFIG>> (der Name der Serverbox-Konfigurationsdatei
+<Box>.BFG *ohne* die Dateierweiterung ".BFG") ber-
+geben werden.
+
+Der Dateiname wird bei jeder Ausfhrung dieser
+Funktion von XP in der Serverbox-Konfigurationsdatei
+<Box>.BFG gespeichert und steht bei der n„chsten
+Ausfhrung automatisch wieder zur Verfgung.
+
+Mit <<<Ctrl-Del> >>k”nnen Sie den gespeicherten Datei-
+namen aus der Serverbox-Konfigurationsdatei <Box>.BFG
+entfernen.
 
 Falls kein Pfad angegeben wird, verwendet XP das
 unter [Edit/Boxen/Edit/Client/Client-Verzeichnis] ein-@30107
@@ -5651,28 +5925,31 @@ auf dieses Verzeichnis bezogen.
 
 Wenn der Dateiname Platzhalter (<<*>> oder <<?>>) enth„lt
 oder leer ist, gelangen Sie in eine Datei-Auswahlbox,
-in der Sie nach der zu editierenden Datei suchen
-k”nnen.
+in der Sie nach dem Konfigurationsprogramm oder der
+zu editierenden Datei suchen k”nnen.
 
-Mit <<<F2> >>erhalten Sie eine Liste typischer Konfigu-
-rationsdateien der g„ngigen externen Clients (*.CFG,
-*.BFG, *.BFE, *.$CF), die augenblicklich im aktuellen
-Verzeichnis existieren.
+Mit <<<F2> >>erhalten Sie eine Auswahl der momentan im
+aktuellen Verzeichnis befindlichen Programmdateien
+(*.EXE, *.COM, *.BAT) sowie der typischen Konfigura-
+tionsdateien der g„ngigen externen Clients (*.CFG,
+*.BFG, *.BFE, *.$CF).
 
 <<Hinweis:>> XP sorgt nicht dafr, daá der externe Client
-die von Ihnen angegebene Datei tats„chlich verwendet,
-sondern stellt hiermit lediglich eine komfortable
-Funktion zur Verfgung, diese Datei bearbeiten zu
-k”nnen, ohne XP verlassen zu mssen. Bitte entnehmen
-Sie der Dokumentation Ihres Clients oder Client-Kits,
-ob zus„tzliche Einstellungen in einer externen Datei
-untersttzt werden und welcher Name und Speicherort
-fr die Konfigurationsdatei erwartet wird. šblicher-
-weise liegt dem Client oder Client-Kit eine entspre-
-chende Musterdatei bei.
+die von Ihnen angegebene oder von dem externen Konfi-
+gurationsprogramm erstellte Konfigurationsdatei tat-
+s„chlich verwendet. Es stellt hiermit lediglich eine
+komfortable Funktion zur Verfgung, externe Einstel-
+lungen bearbeiten zu k”nnen, ohne XP verlassen zu
+mssen. Bitte entnehmen Sie der Dokumentation Ihres
+Clients oder Client-Kits, ob zus„tzliche Einstellun-
+gen in einer externen Datei untersttzt werden oder
+ein entsprechendes Konfigurationsprogramm existiert,
+und welcher Name und Speicherort fr die Datei bzw.
+das Programm erwartet wird. šblicherweise liegen dem
+Client oder Client-Kit entsprechende Datei(en) bei.
 
 @
-30139
+30190
 So viele Sekunden wartet der Client nach dem Senden
 des W„hlbefehls darauf, daá eine Verbindung mit dem
 angerufenen Provider zustandekommt. Danach betrachtet
@@ -5695,7 +5972,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ConnWait=>>"
 gespeichert.
 
 @
-30140
+30191
 So viele Sekunden wartet der Client nach erfolgrei-
 cher Verbindung auf das Einloggen. Ist nach Verstrei-
 chen der Zeit kein erfolgreicher Login zustandegekom-
@@ -5709,7 +5986,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<LoginWait=>>"
 gespeichert.
 @
-30141
+30192
 So viele Sekunden wartet der Client nach einem abge-
 brochenen Anruf; danach fhrt er einen erneuten Anruf
 durch.
@@ -5722,7 +5999,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<RedialWait=>>"
 gespeichert.
 @
-30142
+30193
 So oft wiederholt der Client - falls n”tig - den
 Netzanruf. Wurde auch nach der angegebenen Zahl von
 Versuchen kein Anruf korrekt beendet, so fhrt XP
@@ -5737,7 +6014,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<RedialMax=>>"
 gespeichert.
 @
-30143
+30194
 So oft versucht der Client, sich bei dem angerufenen
 Provider <<w„hrend jeder hergestellten Verbindung>> ein-
 zuloggen. Funktioniert das Einloggen auch nach der
@@ -5759,7 +6036,7 @@ datei <Box>.BFG unter dem Bezeichner "<<RetryLogin=>>"
 gespeichert.
 
 @
-30144
+30195
 Es gibt zwei M”glichkeiten fr einen erfolglosen
 Netcall-Versuch:
 
@@ -5788,7 +6065,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ConnectMax=>>"
 gespeichert.
 
 @
-30145
+30196
 Grunds„tzlich wird der Befehl zur Modem-Initialisie-
 rung mit /Config/Modem eingestellt. Ben”tigen Sie
 jedoch fr unterschiedliche Zug„nge spezielle Modem-
@@ -5815,7 +6092,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ModemInit=>>"
 gespeichert.
 
 @
-30146
+30197
 Die Nummer der Schnittstelle, an der das Modem ange-
 schlossen ist, das fr den Anruf bei der gew„hlten
 Box verwendet wird. Es werden die Schnittstellen
@@ -5836,7 +6113,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Port=>>"
 gespeichert.
 
 @
-30147
+30198
 Die Geschwindigkeit ("Baudrate" oder "DTE-Rate"),
 mit der die Daten zwischen Computer und Modem ausge-
 tauscht werden. Diese Geschwindigkeit kann, muá aber
@@ -5873,7 +6150,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Baud=>>"
 gespeichert.
 
 @
-30149
+30210
 W„hlen Sie mit <<<F2> >>die Telefon-Tarifzone fr diesen
 Zugangsprovider.
 
@@ -5889,7 +6166,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Tarifzone=>>"
 gespeichert.
 
 @
-30150
+30211
 Die Connect-Dauer gibt an, wie lange das Modem zum
 Verbindungsaufbau ben”tigt. Diese Option befindet
 sich deshalb unter dem Stichwort "Gebhren", weil
@@ -5907,8 +6184,9 @@ mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<ConnectTime=>>"
 gespeichert.
+
 @
-30160
+30220
 Wenn Sie m”chten, daá ein- und ausgehende Nachrichten
 nicht mittels Ihres Clients bertragen, sondern lokal
 auf Ihrer Festplatte gespeichert werden, sind Sie
@@ -5916,7 +6194,7 @@ hier richtig. Bitte beachten Sie, daá CrossPoint RFC-
 Nachrichtendateien in einem bestimmten Format erwar-
 tet und erzeugt; in manchen F„llen wird eine Umbenen-
 nung n”tig sein. N„heres hierzu finden Sie unter
-"[Netztyp RFC/Client - Netcall-Ablauf]".@30200
+"[Netztyp RFC/Client - Netcall-Ablauf]".@30230
 
 
 <<Eingangsverzeichnis>>
@@ -5934,11 +6212,11 @@ der ausgehenden Nachrichten selbst dafr sorgen, daá
 die Dateien gel”scht werden!
 
 @
-30200
+30230
 <<Netztyp RFC/Client - Netcall-Ablauf
 
 Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
------------ [Netztyp RFC/Client - Brettmanager]@30201
+----------- [Netztyp RFC/Client - Brettmanager]@30231
             [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
 Hier finden Sie einige weiterfhrende Informationen
@@ -6047,7 +6325,7 @@ fende vierstellige Zahl.
    eines der diversen UKA*-Clients), kann aber auch
    im XP-Verzeichnis (dann aber ausschlieálich als
    <<<Box>.BL>>!) liegen.
-   Siehe auch: [Netztyp RFC/Client - Brettmanager]@30201
+   Siehe auch: [Netztyp RFC/Client - Brettmanager]@30231
 
 <<<Box>.RC>>  Die Liste aller bestellten Bretter
    (Newsgroups) einer Serverbox - liegt immer im
@@ -6222,11 +6500,11 @@ den Schaltern aufgerufen:
            und X-Dateien', siehe UUCP.TXT) erzeugt.
 
 @
-30201
+30231
 <<Netztyp RFC/Client - Brettmanager
 
 Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
------------ [Netztyp RFC/Client - Netcall-Ablauf]@30200
+----------- [Netztyp RFC/Client - Netcall-Ablauf]@30230
             [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
 Der integrierte Brettmanager von CrossPoint unter-
@@ -6243,10 +6521,10 @@ richtig) interpretiert.
 
 <<ş Brett-/Newsgroup-Liste beziehen und aktualisieren
 
-  Die g„ngigen RFC-Clients bieten eine Option, mit
-  der Sie eine Brettliste anfordern bzw. die vorhan-
-  dene Liste automatisch aktualisieren lassen k”nnen
-  - diese Option(en) sollten Sie zun„chst aktivieren.
+  CrossPoint untersttzt die g„ngigen RFC-Clients mit
+  der Option "[Newsgroup-Liste pflegen]" - diese Option@30175
+  sollten Sie zun„chst aktivieren und so den Client
+  veranlassen, die Liste regelm„áig zu aktualisieren.
 
   Beim Netztyp RFC/Client untersttzt CrossPoint fol-
   gende Dateinamen und Speicherorte fr Brettlisten
@@ -6282,9 +6560,8 @@ richtig) interpretiert.
   RFC-Clients <<mit>>          ³ RFC-Clients <<ohne>>
   Aktualisierungsfunktion  ³ Aktualisierungsfunktion
   ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-  Client-Option "Liste neu ³ Client-Option "Liste neu
-  anfordern" aktivieren    ³ anfordern" aktivieren
-  (i.d.R. bereits aktiv)   ³ (i.d.R. deaktiviert)
+  Option "Newsgroup-Liste  ³ Option "Newsgroup-Liste
+  pflegen" aktivieren      ³ pflegen" aktivieren
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
   /Nachricht/Brettmanager/ ³
   Sonstiges/[L”schen] (falls ³       (entf„llt)@11904
@@ -6305,8 +6582,8 @@ richtig) interpretiert.
    wenn sich eine Datei <<<Box>.RC>> im Client-Verzeich-
    nis befindet, die die bestellten Gruppen enth„lt)
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-                           ³ Client-Option "Liste neu
-      (entf„llt i.d.R.)    ³ anfordern" ggf. wieder
+                           ³ Option "Newsgroup-Liste
+      (entf„llt i.d.R.)    ³ pflegen" ggf. wieder
                            ³ deaktivieren
   ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -6314,13 +6591,14 @@ richtig) interpretiert.
   zu einigen Schritten ist eine erg„nzende Erl„ute-
   rung aber sicher sinnvoll und notwendig:
 
-  <<>> Die Client-Option "Newsgroup-Liste neu anfordern"
-    ist bei Clients, die eine automatische Aktuali-
-    sierung der Newsgroup-Liste untersttzen, i.d.R.
-    mit der Option "Newsgroup-Liste aktualisieren" zu
-    einer Funktion zusammengefaát: wenn eine Liste
-    existiert, wird sie aktualisiert, wenn keine
-    existiert, wird eine neue Liste angefordert.
+  <<>> Die CrossPoint-Option "Newsgroup-Liste pflegen"
+    wird nicht von allen Clients direkt untersttzt;
+    u.U. mssen Sie eine „hnlich lautende Option in
+    einer externen Konfigurationsdatei aktivieren.
+    Clients mit einer Funktion zur automatischen
+    Aktualisierung der Newsgroup-Liste aktualisieren
+    i.d.R. eine vorhandene Liste und fordern eine
+    neue Liste an, wenn keine existieren sollte.
 
     "Aktualisierung" bedeutet bei RFC-Brettlisten:
     Neue Gruppen werden zwar zur Liste hinzugefgt,
@@ -6334,8 +6612,8 @@ richtig) interpretiert.
 
   <<>> Wenn Sie nach dem Netcall keine aktuelle News-
     group-Liste vorfinden sollten, war entweder die
-    entsprechende Option ihres Clients nicht akti-
-    viert, oder Ihr Client hat keine solche Option,
+    Option "[Newsgroup-Liste pflegen]" nicht aktiviert,@30175
+    oder Ihr Client untersttzt diese Option nicht,
     oder der Client legt die Liste unter einem ande-
     ren Dateinamen als <<<Box>.BL>> oder <<<Box>.GR>> ab. In
     diesem Fall mssen Sie die Brettliste vor und
@@ -15537,7 +15815,7 @@ Sie beim n„chsten Netcall.
 
 <<RFC/Client:
 
-(Siehe auch: [Netztyp RFC/Client - Brettmanager])@30201
+(Siehe auch: [Netztyp RFC/Client - Brettmanager])@30231
 
 Die g„ngigen externen RFC-Clients erledigen Anforde-
 rung und Aktualisierung der Liste der verfgbaren
@@ -15704,7 +15982,7 @@ zu, wenn es im XP-Verzeichnis keine Liste <Box>.BL
 vorfindet.
 
 N„heres dazu siehe auch unter:
-[Netztyp RFC/Client - Brettmanager]@30201
+[Netztyp RFC/Client - Brettmanager]@30231
 
 @
 11908

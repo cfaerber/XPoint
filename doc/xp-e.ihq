@@ -1629,8 +1629,9 @@ numbers a la FIDO at the top.
         line that runs the client.
 
 <<External Settings>>  If your client supports additional
-        settings in an external configuration file,
-        you can specify these parameters here.
+        settings in an external configuration, you
+        can launch an external configuration program or
+        load an external configuration file here.
 
 <<Mail/News Server>>  The basic parameters of the Mail
         and News servers CrossPoint shall connect to
@@ -2850,8 +2851,8 @@ See also the chapter "Sysop Mode" in UUCP.DOC.
 
 @
 8037
-
 <<Start programme>>
+
 You can enter here the name of a programme or
 DOS command which will be started at the beginning
 of every Sysop-Mode netcall. This is important if
@@ -3162,8 +3163,8 @@ Enter your 'Fully Qualified Domain Name' here.
 30100
 <<Net type RFC/Client - General
 
-See also: [Net type RFC/Client - Netcall procedure]@30200
---------- [Net type RFC/Client - Message Area Manager]@30201
+See also: [Net type RFC/Client - Netcall procedure]@30230
+--------- [Net type RFC/Client - Message Area Manager]@30231
           [Net type RFC/Client - Multiserver operation]@30109
 
 (ToDo: General introduction to RFC/Client, \@30100)
@@ -3229,8 +3230,8 @@ upon executing an RFC/Client netcall.
 <<Net type RFC/Client - Multiserver operation
 
 See also: [Net type RFC/Client - General]@30100
---------- [Net type RFC/Client - Netcall procedure]@30200
-          [Net type RFC/Client - Message Area Manager]@30201
+--------- [Net type RFC/Client - Netcall procedure]@30230
+          [Net type RFC/Client - Message Area Manager]@30231
 
 ("Additional servers" not implemented yet)
 
@@ -3298,10 +3299,47 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-Password=>>" in your
 server configuration file <server>.BFG.
 @
+30114
+Enable this option if you want your client to ask
+you if you really want to establish a connection
+to your provider.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The choice
+is written to the keyname "<<Client-AskIfConnect=>>" in
+your server configuration file <server>.BFG.
+@
 30115
+The opposite of the foregoing option - if enabled,
+your client will ask you after every netcall if you
+want to disconnect.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The choice
+is written to the keyname "<<Client-AskIfDisconnect=>>"
+in your server configuration file <server>.BFG.
+@
+30116
+The client will disconnect only if the connection
+has been established by the client. If a connection
+existed already upon starting the netcall then it
+will not be disconnected.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The choice
+is written to the keyname "<<Client-KeepConnectStatus=>>"
+in your server configuration file <server>.BFG.
+@
+30130
 Name of the Server for incoming mail, uses one of the
 protocols POP3, SMTP or IMAP. Most Servers (and most
-clients, too) support POP3 only.
+clients, too) support POP3 only. <F2> gives you a
+selection of many common mail servers (these are
+stored in the file SERVERS.DAT in your XP directory
+and may be edited by you).
 
 Your client may support multiple entries here. In
 this case you can specify more than one Server, each
@@ -3313,7 +3351,48 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailInServer=>>" in
 your server configuration file <server>.BFG.
 @
-30116
+30131
+Port number (on the Server) for incoming mail. The
+standard ports are:
+
+    POP3     : 110
+    SMTP     :  25
+    IMAP4    : 143
+    IMAP4-SSL: 585
+    IMAPS    : 993 (= IMAP4 over TLS/SSL)
+
+Please consult your provider for information about
+which protocol and port to use. Usually the standard
+ports should work fine.
+
+Please remember to change the [protocol] too (if@30132
+necessary) when changing the port. 
+
+Your client may support multiple entries here. In
+this case you can specify more than one port, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInPort=>>" in
+your server configuration file <server>.BFG.
+
+@
+30132
+The protocol your client uses to retrieve mail. The
+by far most common protocol is POP3.
+
+Please remember to change the [port] too (if necessary)@30131
+when changing the protocol. 
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInProtocol=>>" in
+your server configuration file <server>.BFG.
+@
+30133
 The 'envelope address' of your account. This is
 usually the same as your eMail address of the server
 box.
@@ -3322,9 +3401,12 @@ This entry is useful (and even necessary!) if you are
 receiving CC (carbon copy) and BCC (blind carbon
 copy) mail. Normally CrossPoint would sort this mail
 into a 'wrong' folder as your address is not part of
-To: header. Some clients have a facility that adds
-and rewrites headers so that the mail gets sorted in
-the right place (= your mail folder).
+To: header (and the reason for that is because the
+POP3 protocol usually doesn't transmit the "real"
+envelope address). Thus some clients have a facility
+that adds an SMTP header "RCPT TO" where the address
+specified here is written to. This way your mail gets
+sorted in the right place (= your mail folder).
 
 Your client may support multiple entries here. In
 this case you can specify more than one address, each
@@ -3337,7 +3419,7 @@ is written to the keyname "<<Client-MailInEnvelope=>>" in
 your server configuration file <server>.BFG.
 
 @
-30117
+30134
 Your user name, which is used for authentication (if
 authentication is required and supported by both the
 mail server and the client).
@@ -3352,7 +3434,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailInUser=>>" in
 your server configuration file <server>.BFG.
 @
-30118
+30135
 Your password, which is used for authentication (if
 authentication is required and supported by both the
 mail server and the client).
@@ -3361,40 +3443,77 @@ Your client may support multiple entries here. In
 this case you can specify more than one password,
 each one separated with a space.
 
+For more information on authentication, see also:
+[User name]@30134
+[APOP authentication]@30138
+
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailInPassword=>>" in
 your server configuration file <server>.BFG.
+
 @
-30119
-Port number (on the Server) for incoming mail. The
-standard ports are:
+30136
+As already stated under [Envelope address] the "real"@30133
+envelope usually gets simply lost when using the
+POP3 protocol.
 
-POP3     : 110
-SMTP     :  25
-IMAP4    : 143
-IMAP4-SSL: 585
-IMAPS    : 993 (= IMAP4 over TLS/SSL)
+But in the meantime some providers create a special
+header that contains this real envelope address.
+Usually the headers <<X-Envelope-To>> or <<Envelope-To>> are
+used for that and CrossPoint supports both of them.
 
-Please consult your provider for information about
-which protocol and port to use. Usually the standard
-ports should work fine.
+If you enable this option CrossPoint uses the address
+in the envelope header rather than the address
+specified under [Envelope address] to make sure that@30133
+your incoming mails gets sorted in the correct mail
+folder.
 
-Your client may support multiple entries here. In
-this case you can specify more than one port, each
-one separated with a space.
+Please ask your mail provider if he can create such
+an envelope header before enabling this option.
+
+<<Note:>> Unlike most of the other client configuration
+settings, this option needs not to be interpreted by
+the client.  Even more, it shouldn't be interpreted
+by the client in order to avoid problems and possible
+incompabilities with respect to message conversion.
+
+@
+30137
+It does what it says: The mail doesn't get deleted on
+the mail server after retrieval (which normally is
+the case).
+
+Enabling this option gives you the chance to retrieve
+your mail at a different time (and from a different
+place, if you want) once again.
 
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
-is written to the keyname "<<Client-MailInPort=>>" in
+is written to the keyname "<<Client-MailInKeep=>>" in
 your server configuration file <server>.BFG.
-
 @
-30120
+30138
+Enable this option if your provider supports APOP
+authentication.
+
+With APOP, your login data will be encrypted during
+a POP3 login.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInAPOP=>>" in
+your server configuration file <server>.BFG.
+@
+30150
 Name of the Server for outgoing mail, commonly known
-as a "SMTP Server".
+as a "SMTP Server". <F2> gives you a selection of
+many common SMTP servers (these are stored in the
+file SERVERS.DAT in your XP directory and may be
+edited by you).
 
 Your client may support multiple entries here. In
 this case you can specify more than one Server, each
@@ -3406,7 +3525,26 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailOutServer=>>" in
 your server configuration file <server>.BFG.
 @
-30121
+30151
+Port number (on the Server) for outgoing mail. The
+standard port for the SMTP protocol is 25.
+
+Please consult your provider for information about
+which port to use. Usually the standard port should
+work fine.
+
+Your client may support multiple entries here. In
+this case you can specify more than one port, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutPort=>>" in
+your server configuration file <server>.BFG.
+
+@
+30152
 Should something not work when sending mail (for
 instance if the mail server is down or not available
 due to some reason) there is generally a chance to
@@ -3432,29 +3570,29 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailFallback=>>" in
 your server configuration file <server>.BFG.
+
 @
-30122
-The 'envelope address' for outgoing messages. If you
+30153
+The 'envelope address' for outgoing mail. If you
 leave this field empty, it will be created from the
 From: header of your messages. There are cases where
 you might not want this:
 
-Some Servers accept only envelope addresses of their
-own address space. Other Servers again require the
-envelope addres that has been used for the previous
-POP3 login.
+Some Servers accept only mail with envelope addresses
+from their own domain. Other Servers again require
+the envelope address that has been used for the
+previous POP3 login (see also "[SMTP after POP]").@30156
 
-If you want to deliver Mail with sender addresses of
-a different address space, you can here enter your
-address that is valid for the Server you are deli-
-vering mail to, and this way 'cheat' your Server: the
-sender's address (From: header) will not get changed
-(at least it shouldn't).
+If you want to deliver Mail with sender addresses
+from a different domain, you can enter here your
+address that is accepted by the Server you are
+delivering mail to, and this way 'cheat' your Server:
+the sender's address (From: header) will not get
+changed (at least it shouldn't).
 
 But, generally spoken, if you want to deliver mail
-with sender addresses of a different address space,
-you should use SMTP Servers that allow a true
-"Relaying".
+with sender addresses from a different domain, you
+should use SMTP Servers that allow true "Relaying".
 
 Your client may support multiple entries here. In
 this case you can specify more than one address, each
@@ -3467,7 +3605,7 @@ is written to the keyname "<<Client-MailOutEnvelope=>>"
 in your server configuration file <server>.BFG.
 
 @
-30123
+30154
 Your user name, which is used for SMTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3486,13 +3624,18 @@ is written to the keyname "<<Client-MailOutUser=>>" in
 your server configuration file <server>.BFG.
 
 @
-30124
+30155
 Your password, which is used for SMTP Server
 authentication (if authentication is required and
 supported by both the mail server and the client).
 
 NOTE: Not many ISPs require this and usually it is
       NOT necessary to provide a password.
+
+For more information on authentication, see also:
+[User name]@30154
+[SMTP after POP]@30156
+[SMTP Login acc. RFC 2554]@30157
 
 Your client may support multiple entries here. In
 this case you can specify more than one password,
@@ -3505,28 +3648,50 @@ is written to the keyname "<<Client-MailOutPassword=>>"
 in your server configuration file <server>.BFG.
 
 @
-30125
-Port number (on the Server) for outgoing mail. The
-standard port for the SMTP protocol is 25.
+30156
+Some servers require a valid POP3 login before
+starting a SMTP mail transfer.
 
-Please consult your provider for information about
-which port to use. Usually the standard port should
-work fine.
+If this is the case, please enable this option.
 
-Your client may support multiple entries here. In
-this case you can specify more than one port, each
-one separated with a space.
+See also: [SMTP Login acc. RFC 2554]@30157
 
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
-client or client kit if this is the case. The setting
-is written to the keyname "<<Client-MailOutPort=>>" in
-your server configuration file <server>.BFG.
+client or client kit if this is the case. The choice
+is written to the keyname
+"<<Client-MailOutSMTPafterPOP=>>" in your server
+configuration file <server>.BFG.
+@
+30157
+SMTP Login as specified in RFC 2554 is a safe and in
+the meantime fairly common method for authentication
+at an SMTP server.
+
+If your provider supports or requires this method,
+please enable this option.
+
+"SMTP Login" is a generic term for several different
+(and different safe) methods to transmit usernames
+and passwords. The SMTP server and the mail client
+auto-negotiate the safest method supported by both
+sides.
+
+See also: [SMTP after POP]@30156
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The choice
+is written to the keyname "<<Client-MailOutSMTPLogin=>>"
+in your server configuration file <server>.BFG.
 
 @
-30126
+30170
 Name of the Server for public Newsgroups. Often
-referred to as a NNTP Server.
+referred to as a NNTP Server. <F2> gives you a
+selection of many common NNTP servers (these are
+stored in the file SERVERS.DAT in your XP directory
+and may be edited by you).
 
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
@@ -3534,7 +3699,22 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsServer=>>" in
 your server configuration file <server>.BFG.
 @
-30127
+30171
+Port number (on the Server) for incoming/outgoing
+news (articles, postings). The standard port for the
+NNTP protocol is 119.
+
+Please consult your provider for information about
+which port to use. Usually the standard port should
+work fine.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsPort=>>" in your
+server configuration file <server>.BFG.
+@
+30172
 Should something not work when sending or receiving
 news (for instance if the news server is down or not
 available) there is generally a chance to try it
@@ -3554,8 +3734,9 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsFallback=>>" in
 your server configuration file <server>.BFG.
+
 @
-30128
+30173
 Your user name, which is used for NNTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3566,7 +3747,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsUser=>>" in your
 server configuration file <server>.BFG.
 @
-30129
+30174
 Your password, which is used for NNTP authentication
 (if authentication is required and supported by both
 the mail server and the client).
@@ -3577,31 +3758,77 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsPass=>>" in your
 server configuration file <server>.BFG.
 @
-30130
-Port number (on the Server) for incoming/outgoing
-news (articles, postings). The standard port for the
-NNTP protocol is 119.
+30175
+If you want your client to update your newsgroup list
+(or to fetch a complete new list if no such list is
+existent), please enable this option - provided that
+your client supports it.
 
-Please consult your provider for information about
-which port to use. Usually the standard port should
-work fine.
+If your client has the facility to automatically
+fetch/update the newsgroup list please note that it
+*has* to store/find this list in the [Client directory]@30107
+under the file name <<<Box>.BL>> or <<<Box>.GR>>. Please make
+sure that then no further newsgroup list with the
+file name <<<Box>.BL>> does exist in the XP directory -
+otherwise the client and CrossPoint itself would work
+with different lists.
 
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
-client or client kit if this is the case. The setting
-is written to the keyname "<<Client-NewsPort=>>" in your
+client or client kit if this is the case. The choice
+is written to the keyname "<<Client-NewsList=>>" in your
 server configuration file <server>.BFG.
 
 @
-30138
+30176
+If you want to protect yourself against binary or
+large postings in general, please specify here the
+maximum size of postings to be fetched. Postings
+larger than the value specified will then be skipped
+by the client.
+
+If you do not want a limit, please enter <<0>>, the max.
+value you can enter is <<999>> KB (= 1,022,976 Bytes).
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The value
+(converted into Bytes) is written to the keyname
+"<<Client-NewsMaxLen=>>" in your server configuration
+file <server>.BFG.
+
+@
+30177
+If you want to limit the number of postings per
+newsgroup that your client shall fetch, please
+specify any value up to <<99999>>. If you don't want
+to limit this number, please enter <<0>>.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The value
+is written to the keyname "<<Client-NewsMax=>>" in your
+server configuration file <server>.BFG.
+@
+30180
 Enter the name (and path, if necessary) of the confi-
-guration file that holds additional settings for your
-external client. The file will then be loaded in the
-internal editor for editing. The name of the edited
-file is stored every time you edit it and will be
-automatically presented next time. Thus you don't
-always need to search for it upon the next edit (but
-you can always select a different one, of course).
+guration file or program that holds or edits additio-
+nal settings for your external client. The file will
+then be launched (if EXE, COM or BAT extension) or
+loaded in the internal editor for editing (if any
+other or no extension).
+
+If executing an external program file, you can use
+the <<$CONFIG>> macro to pass the current server confi-
+guration file <server>.BFG (*without* the file exten-
+sion ".BFG") to the program.
+
+The file name is stored in the server configuration
+file <server>.BFG every time this function is used
+and will thus automatically be available next time.
+
+With <<<Ctrl-Del> >>you can delete the saved file name
+from your server configuration file <server>.BFG.
 
 If no directory is specified, XP uses the Client
 directory specified under [Edit/Servers/Edit/Client]@30107
@@ -3612,22 +3839,25 @@ If the file name contains wildcards (<<*>> or <<?>>) or the
 file name is empty you get a file selection box where
 you can search for the file to be edited.
 
-<<<F2> >>gives you a list of typical configuration files
-of the common external clients (*.CFG, *.BFG, *.BFE,
-*.$CF) that actually exist in the current directory.
+<<<F2> >>gives you a list of all executable program
+files (*.EXE, *.COM, *.BAT) as well as of all typical
+configuration files of the common external clients
+(*.CFG, *.BFG, *.BFE, *.$CF) that actually exist in
+the current directory.
 
 <<Note:>> XP does not make sure that the external client
-really uses the specified file but just provides a
-comfortable way of editing it without forcing you to
-shell out to DOS. Please consult the documentation of
-your client or client kit if additional settings in
-an external configuration file are supported and
-which name and location of this file the external
-client expects. Usually the client or client kit
-provides a sample configuration file itself.
+really uses the specified or created file but just
+provides a comfortable way of editing it without
+forcing you to shell out to DOS. Please consult the
+documentation of your client or client kit if addi-
+tional settings in an external configuration file are
+supported or if an external configuration program
+exists, and which name and location of this file or
+program the external client expects. Usually the
+client or client kit provide a such files itself.
 
 @
-30139
+30190
 CrossPoint waits this many seconds after sending the
 command to dial to receive a "connect" answer. After
 this time CrossPoint breaks off, and starts waiting
@@ -3646,7 +3876,7 @@ is written to the keyname "<<ConnWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30140
+30191
 CrossPoint waits this many seconds after the
 "connect" message, to obtain a successful Login.
 
@@ -3655,7 +3885,7 @@ next try.
 
 This might cost money, since the other side answered
 the phone! You can set the number of these attempts
-separately in another box here, [Max. Connects], to@30144
+separately in another box here, [Max. Connects], to@30195
 limit costs.
 
 <<Note:>> Your client has to make sure to interpret this
@@ -3665,7 +3895,7 @@ is written to the keyname "<<LoginWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30141
+30192
 CrossPoint waits this many seconds after an aborted
 netcall attempt, before trying again.
 
@@ -3675,7 +3905,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<RedialWait=>>" in your
 server configuration file <server>.BFG.
 @
-30142
+30193
 This sets the number of times CrossPoint will try to
 call a number if it does not achieve a successful
 netcall, at intervals set by Dial Pause.
@@ -3701,7 +3931,7 @@ is written to the keyname "<<RedialMax=>>" in your server
 configuration file <server>.BFG.
 
 @
-30143
+30194
 This limits the number of attempts <<during one connect>>
 that CrossPoint will make to log on. Not to be con-
 fused with the setting for "max. connects".
@@ -3728,7 +3958,7 @@ is written to the keyname "<<RetryLogin=>>" in your
 server configuration file <server>.BFG.
 
 @
-30144
+30195
 Limits the number of tries where a connect happens
 but goes wrong.
 
@@ -3763,7 +3993,7 @@ is written to the keyname "<<ConnectMax=>>" in your
 server configuration file <server>.BFG.
 
 @
-30145
+30196
 You can enter a default setting for resetting
 your modem (see modem handbook about resetting,
 or initialising) under the menu /Config/Modem.
@@ -3793,7 +4023,7 @@ is written to the keyname "<<ModemInit=>>" in your server
 configuration file <server>.BFG.
 
 @
-30146
+30197
 The COM Port number to which the modem to be used
 for dialling the selected box is connected.
 Ports COM1 to COM4 are supported.
@@ -3814,7 +4044,7 @@ is written to the keyname "<<Port=>>" in your server
 configuration file <server>.BFG.
 
 @
-30147
+30198
 This is for setting the port speed, "baud rate"
 "DTE speed" or "DTE rate", the bit rate for data
 transfer between modem and computer. This speed can,
@@ -3870,7 +4100,7 @@ is written to the keyname "<<Baud=>>" in your server
 configuration file <server>.BFG.
 
 @
-30149
+30210
 Select the phone fee zone for this server by pressing
 <F2>.
 
@@ -3884,7 +4114,7 @@ is written to the keyname "<<Tarifzone=>>" in your
 server configuration file <server>.BFG.
 
 @
-30150
+30211
 Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
@@ -3906,7 +4136,7 @@ is written to the keyname "<<ConnectTime=>>" in your
 server configuration file <server>.BFG.
 
 @
-30160
+30220
 These are settings if you do not want XP to transfer
 the data via your client, but to put or take the
 prepared files to or from some place on your hard
@@ -3915,15 +4145,18 @@ disk.
 Note that XP expects and issues RFC message file
 names in a particular form. In some cases it will
 be necessary to rename them. See also "Net type
-RFC/Client - [Netcall procedure]".@30200
+RFC/Client - [Netcall procedure]".@30230
 
-<<Input directory>>
+
+<<Inbound directory>>
+
 This is the directory from which CrossPoint will
 read incoming message files. It imports all messages
 from here and deletes *all* the contents of this
 directory afterwards.
 
-<<Output directory>>
+<<Outbound directory>>
+
 CrossPoint puts all outgoing message files in this
 directory. You can transfer these files to any server
 by some other method, or do anything else you want.
@@ -3931,23 +4164,23 @@ by some other method, or do anything else you want.
 so make sure they are deleted as necessary!
 
 @
-30200
+30230
 <<Net type RFC/Client - Netcall procedure
 
 See also: [Net type RFC/Client - General]@30100
---------- [Net type RFC/Client - Message Area Manager]@30201
+--------- [Net type RFC/Client - Message Area Manager]@30231
           [Net type RFC/Client - Multiserver operation]@30109
 
-(ToDo: RFC/Client - Netcall procedure, \@30200)
+(ToDo: RFC/Client - Netcall procedure, \@30230)
 @
-30201
+30231
 <<Net type RFC/Client - Message Area Manager
 
 See also: [Net type RFC/Client - General]@30100
---------- [Net type RFC/Client - Netcall procedure]@30200
+--------- [Net type RFC/Client - Netcall procedure]@30230
           [Net type RFC/Client - Multiserver operation]@30109
 
-(ToDo: RFC/Client - Message Area Manager, \@30201)
+(ToDo: RFC/Client - Message Area Manager, \@30231)
 @
 196
 You can enter anything short and sharp here:
