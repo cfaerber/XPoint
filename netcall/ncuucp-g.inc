@@ -564,7 +564,8 @@ begin
       while (i<size-sub) and (Buffer[Recv_SeqNr,i]<>0) do
         inc(i);
       SetLength(s,length(s)+i-off);
-      Move(Buffer[Recv_SeqNr,off],s[length(s)+1-i-off],i-off);
+      if i-off > 0 then
+        Move(Buffer[Recv_SeqNr,off],s[length(s)+1-i-off],i-off);
       if i<size then
         break; (* done *)
       Continue;
@@ -644,6 +645,9 @@ end;
 
 {
   $Log$
+  Revision 1.9  2002/03/05 13:14:50  mk
+  - fixed range check error (<xpbm3327500@dirk.deimeke.net>)
+
   Revision 1.8  2001/10/20 17:26:46  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
