@@ -62,9 +62,7 @@ procedure test_defaultbox;
 procedure test_defaultgruppen;
 procedure test_systeme;
 procedure testdiskspace;
-{$IFDEF BP }
 procedure testfilehandles;
-{$ENDIF }
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
 procedure check_date;
@@ -810,13 +808,12 @@ begin
 end;
 
 
-{$IFDEF BP }
 procedure testfilehandles;
 var f,nf : byte;
 begin
   abgelaufen1:=false; {(right(date,4)+copy(date,4,2)>reverse('104991')); }
   abgelaufen2:=false; { abgelaufen1; }
-  f:=FreeFILES(20);
+  f:=FreeFILES(30);
   if (f>5) and (f<16) then begin
     nf:=((ConfigFILES+(16-f)+4)div 5)*5;
     rfehler1(210,strs(nf));
@@ -825,8 +822,6 @@ begin
     halt(1);
     end;
 end;
-{$ENDIF }
-
 
 procedure read_regkey;
 var t   : text;
@@ -1148,6 +1143,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.1  2000/08/03 09:22:23  mk
+  - Filehandles hochgesetzt
+
   Revision 1.45  2000/06/19 20:19:32  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 
