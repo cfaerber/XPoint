@@ -358,12 +358,12 @@ var i  : integer;
     t  : text;
     sr : tsearchrec;
 
-  function _is(ss:string):boolean;
+  function _is(const ss:string):boolean;
   begin
     _is:=('/'+ss=LowerCase(s)) or ('-'+ss=LowerCase(s));
   end;
 
-  function isl(ss:string):boolean;
+  function isl(const ss:string):boolean;
   begin
     isl:=('/'+ss=LowerCase(LeftStr(s,length(ss)+1))) or
          ('-'+ss=LowerCase(LeftStr(s,length(ss)+1)));
@@ -380,7 +380,7 @@ var i  : integer;
   end;
 
   procedure NetPar(s:string);
-  var p : byte;
+  var p : Integer;
   begin
     p:=cpos(':',s);
     s:=ReplDP(trim(s));
@@ -393,7 +393,7 @@ var i  : integer;
   end;
 
   procedure UserPar(s:string);
-  var p : byte;
+  var p : Integer;
   begin
     p:=cpos(':',s);
     s:=ReplDP(s);
@@ -452,7 +452,7 @@ var i  : integer;
 
   procedure ParAuswerten;
   begin
-    if _is('h') or _is('?') then ParHelp:=true else
+    if _is('h') or _is('?') or _is('-help') then ParHelp:=true else
     if _is('d')    then ParDebug:=true else
     if isl('df:') then ParDebFlags:=ParDebFlags or ival(mid(s,5)) else
     if isl('dl:') then SetDebugLoglevels(mid(s,5)) else
@@ -1100,6 +1100,10 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142.2.1  2002/05/19 10:51:00  mk
+  - added "--help" to display command line parameters
+  - added some consts
+
   Revision 1.142  2002/04/14 11:01:54  mk
   - fixed memory leaks
 
