@@ -357,7 +357,7 @@ end;
 
 function getscreenlines:byte;
 begin
-   getscreenlines:=SysGetScreenLines;
+   getscreenlines:=24;
 end;
 
 function CountPhoneNumbers:integer;
@@ -378,11 +378,10 @@ procedure InitVar;
 begin
 {$ifdef UnixFS}
   { Search for standard Linux components }
-  if not (existBin('rz')) then error(getres(118));
-  if not (existBin('sz')) then error(getres(119));
+  if not ExecutableExists('rz') then error(getres(118));
+  if not ExecutableExists('sz') then error(getres(119));
 {$else}
-  if not fileexists(zmprog) then zmprog:=fsearch(zmprog,getenv('PATH'));
-  if zmprog='' then error(getres(115));   { 'ZM.EXE fehlt' }
+  if not ExecutableExists(zmprog) then error(getres(115));   { 'ZM.EXE fehlt' }
   if ModemPort=0 then
     case ModemLine of
       1 : ModemPort:=$3f8;    2 : ModemPort:=$2f8;
@@ -546,15 +545,20 @@ begin
   if aresult=EL_break then aresult:=brk_result;
 
   log('-','exiting');
-  CommObj^.PurgeInBuffer; CommObj^.SetDTR(False); CommObj^.Close; Dispose(CommObj,Done);
+  CommObj^.PurgeInBuffer; CommObj^.SetDTR(False); CommObj^.Close;
+  Dispose(CommObj,Done);
   if timediff<>0 then set_time(secsfrom70+timediff);
   PopWindow;
   CloseResource;
+  DebugLog('XPFM','Result code: '+strs(aresult),3);
   halt(aresult);
 end.
 
 {
   $Log$
+  Revision 1.30  2000/11/19 17:52:31  ma
+  - compiles again
+
   Revision 1.29  2000/11/14 22:35:05  fe
   Replaced "exist()" by "fileexists()".
 
