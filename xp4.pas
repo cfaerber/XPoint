@@ -2018,7 +2018,7 @@ var t,lastt: taste;
         Box := dbReadNStr(bbase, bb_pollbox);      { Pollbox des Brettes     }
         // Hilfe nachtragen
 
-        Filename := GetServerFileName(Box, '.MID');
+        Filename := GetServerFileName(Box, extMid);
         if Filename = '' then
           break; // Meldung: falsche Box!!
         if FileExists(OwnPath + Filename) then
@@ -2876,6 +2876,9 @@ end;
 
 {
   $Log$
+  Revision 1.144  2003/08/23 17:40:29  mk
+  - use extMid instead of '.MID'
+
   Revision 1.143  2003/05/11 11:12:17  mk
   - use IsMailAddr when possible
 
