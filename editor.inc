@@ -2085,7 +2085,7 @@ var ap : absatzp;
        
       if not brk then 
       begin
-        assign(t1,'glossary.tmp');     { Kuerzel gefunden, Text kopieren }
+        assign(t1,'GLOSSARY.TMP');     { Kuerzel gefunden, Text kopieren }
         rewrite(t1);
         Repeat        
           readln(t,s);
@@ -2110,7 +2110,7 @@ begin
         gotopos(block[1].pos,0);
         BlockLoeschen;
         end; 
-      ap:=LoadBlock('glossary.tmp',true,2,rrand);
+      ap:=LoadBlock('GLOSSARY.CFG',true,2,rrand);
       Insert(ap,p);
       gotopos(p,0);
       end;
@@ -2410,6 +2410,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.9  2000/10/15 08:56:10  mk
+  - nochmals Grossschreibung Dateinamen Glossary-Funktion
+
   Revision 1.19.2.8  2000/10/08 11:10:55  mk
   - GLOSSARY.TMP gross geschrieben
 

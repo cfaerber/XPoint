@@ -2024,7 +2024,7 @@ const locked:boolean=false;
 begin
   if (ustr(t)='E') and not locked then begin
     locked:=true;
-    EditFile('glossary.cfg',false,false,0,false);
+    EditFile('GLOSSARY.CFG',false,false,0,false);
     locked:=false;
     t:=keyesc;
     pushkey(keyctcr); 
@@ -2034,6 +2034,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.6  2000/10/15 08:56:11  mk
+  - nochmals Grossschreibung Dateinamen Glossary-Funktion
+
   Revision 1.25.2.5  2000/10/10 22:49:44  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 
