@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.30.6';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.30.7';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
   author_name = 'OpenXP Team';
@@ -83,6 +83,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.8  2000/11/17 19:43:44  mk
+  - Versionsnummer auf 3.30.7 geaendert
+
   Revision 1.29.2.7  2000/09/08 15:52:30  mk
   - Versionsnummer erhoeht
 
