@@ -157,6 +157,8 @@ begin
   GoP;
   if modiuser(msgbrett) then
     RedispLine;
+  setall;
+  aufbau := true;
 end;
 
 procedure udelete;
@@ -1445,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.11  2000/12/10 02:59:17  mk
+  - fix fuer Anzeige nach User aendern
+
   Revision 1.3.2.10  2000/11/20 09:53:07  mk
   - fixed Bug #116162: U in Nachrichtenuebersicht
 
