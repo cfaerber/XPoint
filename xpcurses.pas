@@ -349,7 +349,7 @@ procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: b
 procedure RestoreWindow(var win: TWinDesc);
 
 { SigHandler für Xterm-Resizing, HUP etc. }
-procedure SigHandler(Sig : Integer); cdecl;
+procedure SigHandler(Sig : LongInt); cdecl;
 
 procedure Scroll(w: TWinDesc; mode: boolean);
 
@@ -1542,6 +1542,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.3  2002/12/29 11:27:10  mk
+  - SigHandler has now exactly same declaration as SignalHandler from linux.pp,
+    should help to solve fpc compile problems
+
   Revision 1.64.2.2  2002/12/28 20:11:54  mk
   - changed call to Signal for fpc compatibility
 
