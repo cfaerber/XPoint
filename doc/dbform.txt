@@ -156,6 +156,15 @@ GRUPPEN:  Brettgruppendatei
  9. Origin      String(50)       ab 1.92: Fido-Origin
 10. Adresse     String(50)       ab 1.92: Fido-Brettadresse
 
+11. AMRealname  String(40)       ab OpenXP/32 2001-06-04: Support f. Roles
+12. AMMail      String(80)         (nur RFC-Netztypen)
+13. AMReplyTo   String(80)
+14. AMFQDN      String(60)
+15. PMRealname  String(40)
+16. PMMail      String(80)
+17. PMReplyTo   String(80)
+18. PMFQDN      String(60)
+
 Indizes:
 
  1. +Name                giName
