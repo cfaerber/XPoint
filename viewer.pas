@@ -58,9 +58,9 @@ end;
 
 procedure TMessageViewer.GetFromMimeType(const MimeType: String);
 
-  function SeekMimeType(MimeType: string): boolean;
+  function SeekMimeType(const MimeType: string): boolean;
   begin
-    dbSeek(mimebase, mtiTyp, MimeType);
+    dbSeek(mimebase, mtiTyp, UpperCase(MimeType));
     SeekMimeType :=not dbBOF(mimebase) and not dbEOF(mimebase) and
               (UpperCase(MimeType) = UpperCase(dbReadStr(mimebase,'typ')));
   end;
@@ -94,9 +94,11 @@ begin
   Result := fProg = '';
 end;
 
-end.
 {
   $Log$
+  Revision 1.3  2001/10/10 22:04:09  mk
+  - enabled use of external mime viewers again
+
   Revision 1.2  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -105,3 +107,5 @@ end.
   - implemented new Viewer handling class TMessageViewer
 
 }
+end.
+

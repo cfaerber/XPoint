@@ -1887,22 +1887,19 @@ begin
         if ArcRestricted(newarc) then newarc:=0;
         if newarc=0 then
         begin
-(* 11         GetExtViewer(datei,viewer);
-          if viewer.prog='' then TestGifLbmEtc(datei,false,viewer);
-          if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
-            ViewFile(TempPath+datei,viewer,false)
+         MessageViewer.GetFromExtension(ExtractFileExt(datei));
+//          if MessageViewer.IsInternal then TestGifLbmEtc(datei,false,viewer);
+          if MessageViewer.IsInternal then
+            ListFile(TempPath+datei,datei,true,false,0)
           else
-            ListFile(TempPath+datei,datei,true,false,0);
+            ViewFile(TempPath+datei,MessageViewer,false);
           end
         else
-          // if memavail<20000 then
-          //  rfehler(431)   { 'zu wenig Speicher!' }
-          // else
           if arcbufp=max_arc then
             rfehler(432)   { 'Maximal 3 verschachtelte Archive moeglich!' }
           else begin
             decomp:=TempPath+datei;  { Stack sparen ... }
-            if ViewArchive(decomp,newarc)<>0 then; *)
+            if ViewArchive(decomp,newarc)<>0 then; 
         end;
         SaveDeleteFile(temppath+datei);
         end;
@@ -2517,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.117  2001/10/10 22:04:09  mk
+  - enabled use of external mime viewers again
+
   Revision 1.116  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

@@ -537,12 +537,12 @@ var fn     : string;
   end;
 
   procedure TestViralExtension(const Extension: String; Viewer: TMessageViewer);
-(*  var x,y   : byte;
+  var x,y   : Integer;
       t     : taste;
-      s     : string; *)
+      s     : string; 
   begin
-    // vor this file types always use internal viewer
-(*    if Pos(Extension,viewer_lister) <> 0 then Viewer.UseInternal
+    // for this file types always use internal viewer
+    if Pos(Extension,viewer_lister) <> 0 then Viewer.UseInternal
     else
     begin
       if ((pos(Extension,viewer_save)=0) and (pos(Extension,viewer_danger)>0)) then
@@ -554,9 +554,9 @@ var fn     : string;
         case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
           0, 2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
         end;
+        closebox;
       end;
-      closebox;
-    end; *)
+    end; 
   end;
 
   procedure CopyMsg;
@@ -880,16 +880,12 @@ begin
     end; // not FileAttach
 
 
-(*    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
-    MimeViewer.GetFromExtension(mpdata.fname);     { Dateiendung hat bei Viewerauswahl }
+    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+    MimeViewer.GetFromExtension(ExtractFileExt(mpdata.fname));     { Dateiendung hat bei Viewerauswahl }
     if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
-      MimeViewer.GetFromMimeType(mimetyp);
-          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
-          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
-            GetMimeViewer(mimetyp,viewer);
-          Testviralextension;                    { Schutz vor Mail-Viren }
+      MimeViewer.GetFromMimeType(MimeType);
+    Testviralextension(ExtractFileExt(MPData.FName), MimeViewer);    { Schutz vor Mail-Viren }
 
-  *)
     { Nachricht anzeigen }
 
     nw:=NachWeiter;   { kann vom Lister veraendert werden }
@@ -901,8 +897,7 @@ begin
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
       end;
-      // if (viewer.fn='') then viewer.fn:=GetMsgFilename;
-      // ViewFile(fn2,viewer,fileattach);
+      ViewFile(fn2, MimeViewer, Fileattach);
       lres:=0;
       end
     else
@@ -1612,6 +1607,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.82  2001/10/10 22:04:09  mk
+  - enabled use of external mime viewers again
+
   Revision 1.81  2001/09/08 16:29:36  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -25,17 +25,17 @@ unit xpview;
 interface
 
 uses
-  xpglobal, sysutils;
+  sysutils, Viewer, XPGlobal;
 
 (*
-procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
-procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
+procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo); *)
+procedure ViewFile(const fn:string; Viewer: TMessageViewer; Fileattach:boolean);
 
-*)
+
 implementation
 
 uses
-  database, xp0, typeform;
+  database, xp0, xp1, xp1o, typeform, fileio;
 
 (*
 { Bin„rdatei auf GIF- und ILBM-Signatur testen;  }
@@ -105,7 +105,7 @@ end;
 
 
 procedure URep(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
-var p : byte;
+var p : Integer;
 begin
   p:=pos(UpperCase(s1),UpperCase(s));
   if p>0 then begin
@@ -114,8 +114,8 @@ begin
     end;
 end;
 
-
-procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
+*)
+procedure ViewFile(const fn:string; Viewer: TMessageViewer; Fileattach:boolean);
 var p         : Integer;
     prog,
     orgfn,
@@ -126,11 +126,7 @@ var p         : Integer;
     Ext       : string;
 begin
   fn1:='';
-  orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
-
-  if (not ValidFileName(orgfn) or FileExists(orgfn)) and (viewer.ext<>'') and
-     (cpos('.',fn)>0) then
-    orgfn:=ChangeFileExt(fn, '.' + viewer.ext);
+  orgfn:=fn;
 
   if not fileattach then
   begin
@@ -151,22 +147,25 @@ begin
   else parfn:=orgfn;
 
   // Korrekte File-extension verwenden
-  ParFN := ChangeFileExt(ParFN, iifs(viewer.ext='',ExtractFileExt(Orgfn),'.'+viewer.ext));
+  ParFN := ChangeFileExt(ParFN, ExtractFileExt(Orgfn));
   RenameFile(orgfn,parfn);
 
   p:=pos('$FILE',UpperCase(prog));
   if p=0 then prog:=prog+' '+parfn
   else prog:=LeftStr(prog,p-1)+parfn+mid(prog,p+5);
-  urep(prog,'$TYPE',viewer.typ);
-  urep(prog,'$EXT',viewer.ext);
+(*  urep(prog,'$TYPE',viewer.typ);
+  urep(prog,'$EXT',viewer.ext); *)
   if not XPWinShell(prog,parfn,600,1,fileattach) then
   if not fileattach and (fn1<>'') then DeleteFile(parfn);
 end;
-  *)
+
 
 end.
 {
   $Log$
+  Revision 1.32  2001/10/10 22:04:10  mk
+  - enabled use of external mime viewers again
+
   Revision 1.31  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
