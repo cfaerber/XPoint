@@ -1,12 +1,13 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id }
+{ $Id$ }
 
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
@@ -549,13 +550,6 @@ begin                         { SelectMultiPart }
   else
     alter:=false;
 
-
-
-
-
-
-
-
   if (index=0) and (anzahl>anzahl0) then
     index:=anzahl
   else
@@ -662,8 +656,9 @@ var   input,t : text;
     end;
 
   begin
-    if length(s)<4 then s:=''
-    else begin
+    if (length(s)<4) or ((Length(Trim(s)) mod 4) <> 0) then Exit
+    else
+    begin
       if s[length(s)]='=' then
         if s[length(s)-1]='=' then pad:=2
         else pad:=1
@@ -766,6 +761,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.12  2000/12/25 23:57:44  mk
+  - fehlerhafte Base64-Zeilen werden nicht mehr dekodiert
+
   Revision 1.12.2.11  2000/12/15 21:25:30  mk
   - fix fuer letzen Commit
 
