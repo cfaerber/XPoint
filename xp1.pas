@@ -1205,8 +1205,8 @@ begin
       setvideomode(3);
       IoVideoInit;
     end;
-    if (screenlines<>25) or (screenlines<>getscreenlines) then
-      setscreenlines(screenlines);
+    if newmode or {(screenlines<>25) or} (screenlines<>getscreenlines)
+      then  setscreenlines(screenlines);
     if ParSavePal then SetPal;
   end;
   iosclines:=screenlines;
@@ -2344,6 +2344,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.33  2002/03/31 15:47:35  my
+  JG:- Zeilenanzahl (C/A/Z) wird nur noch dann neu gesetzt, wenn
+       notwendig.
+
   Revision 1.48.2.32  2002/03/08 22:56:39  my
   MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
        kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
