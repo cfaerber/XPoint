@@ -583,13 +583,13 @@ v3.20/OpenXP  (05.08.2000)
      <Alt-B> Betreff
      <Alt-U> User
 !  XPoint/Statistik/Speicher fhrte bei zuviel Speicher zu Fehlern
-+  neues Quotezeichn "&"
++  neues Quote-Zeichen "&"
 +  Im Editor kann man mit <Ctrl-K><U> eine Datei einfgen, die direkt
-   UUencodet wird
+   UUcodiert wird
 !  Viele Bugs (>10) im Lister entfernt
 !  šberschreiben des Speichers in der Suchen-Funktion verhindert
-+  Der Inhalt der Windows-Zwischenablage kann jetzt mit <Ctrl-V> und
-   <Ctrl-Ins> in jede Eingabemaske eingefgt werden
++  Der Inhalt der Windows-Zwischenablage kann jetzt mit <Ctrl-V> oder
+   <Shift-Ins> in jedes Eingabefeld eingefgt werden
 *  Leerzeichen zwischen Quotezeichen werden gel”scht
 +  O, I und G funktionieren auch im Lister
 +  Config/Optionen/Nachrichten hat den neuen Schalter "Fragen bei
@@ -704,8 +704,14 @@ v3.20b/OpenXP  (18.12.2000)
 
 v3.20c/OpenXP  (20.12.2000)
 ---------------------------
-
 !  Bei <Ctrl-B> auf ”ffentlicher Nachricht konnte der Eindruck
    entstehen, das System sei "eingeschlafen"
 !  PushHP Overflow beseitigt, konnte zu Problemen bei intensiver
    Benutzung der Online-Hilfe fhren (Bug aus v3.12d)
+
+
+v3.20d/OpenXP  (2x.12.2000)
+---------------------------
+!  Bugfix: User wurden bei der Neuaufnahme manchmal ans Ende sortiert
+   (diese User k”nnen in der User-šbersicht mit "S"pezial/"E"dit und
+   <Ctrl-Enter> "repariert" werden)
