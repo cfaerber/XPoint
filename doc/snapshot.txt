@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 19.09.2001 (letzter Update)
+DÅsseldorf, den 21.09.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
