@@ -92,12 +92,15 @@ function  PrintString(const s:string):string;
 implementation
 
 uses
+{$IFDEF Linux }
+  printer,
+{$ENDIF }
   SysUtils;
 
 procedure OpenLst(Port: Integer);
 begin
 {$IFDEF unix }
-  Assign(lst, '/dev/lp' + IntToStr(Port));
+  AssignLst(lst, '|/usr/bin/lpr -m');
 {$ELSE }
   Assign(lst, 'lpt' + IntToStr(Port));
 {$ENDIF }
@@ -148,6 +151,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2001/12/26 21:33:52  mk
+  - fixed printing with linux
+
   Revision 1.21  2001/10/15 08:31:39  mk
   - allow printing on unix platforms
 
