@@ -222,7 +222,7 @@ begin
         iifs(IsKnownCharset(pa.ContentCharset),pa.ContentCharset,'ISO-8859-1') ));
 
   if pa.FileEOL in [MimeEOLCR,MimeEOLLF] then
-    ConnectStream(ins,MimeCreateEolConverter(pa.FileEOL));
+    ConnectStream(outs,MimeCreateEolConverter(pa.FileEOL));
 
   CopyStream(ins,outs);
 
@@ -275,6 +275,9 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2001/09/10 17:25:50  cl
+// - BUGFIX: crash on line end conversion
+//
 // Revision 1.3  2001/09/09 17:40:47  cl
 // - moved common code between alle en-/decoding streams to a base class
 // - all en-/decoding streams can now destruct the other stream
