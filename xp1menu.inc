@@ -27,6 +27,7 @@ begin
 {$ELSE }
       $125 : MenuHidden:=true;
 {$ENDIF }
+      $1c7 : MenuHidden := true;
       else   if anzhidden=0 then
                MenuHidden:=false
              else begin
@@ -600,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/10/11 14:44:13  mk
+  - Menuepunkt Gebuehren abgeschaltet
+
   Revision 1.22  2000/10/02 03:12:07  mk
   - Terminal wieder eingeschaltet
 
