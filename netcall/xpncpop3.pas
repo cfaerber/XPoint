@@ -118,13 +118,14 @@ begin
   try
     result:= true;
     List := TStringList.Create;
+    List.LoadFromFile(RFCFile);
     SMTP.Connect;
     { Name und IP anzeigen }
     MWrt(x+15,y+6,SMTP.Host.Name+' ['+SMTP.Host.AsString+']');
     MWrt(x+15,y+8,FormS(SMTP.Server,50));
     MWrt(x+15,y+2,'Mails senden');
 
-//** send mails
+    SMTP.PostPlain(List);
 
     SMTP.Disconnect;
   except
@@ -137,7 +138,7 @@ begin
     ClearUnversandt(PPFile,BoxFile);
     if FileExists(PPFile)then _era(PPFile);
     if FileExists(RFCFile)then _era(RFCFile);
-    end;
+  end;
   closebox;
 end;
 
@@ -239,8 +240,8 @@ end.
 
 {
   $Log$
-  Revision 1.4  2001/04/05 14:12:30  ml
-  - working on smtp
+  Revision 1.5  2001/04/05 14:28:49  ml
+  - SMTP is working
 
   Revision 1.2  2001/03/21 19:17:09  ma
   - using new netcall routines now

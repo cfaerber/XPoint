@@ -181,7 +181,7 @@ var
   List          : TStringList;
   aFile         : string;
 begin
-  ZtoRFC(bp,PPFile,RFCFile); fehler('Konvertiert...');
+  ZtoRFC(bp,PPFile,RFCFile);
   { ProgressOutput erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
   { Host und ... }
@@ -371,8 +371,8 @@ end.
 
 {
         $Log$
-        Revision 1.4  2001/04/05 13:51:47  ml
-        - POP3 is working now!
+        Revision 1.5  2001/04/05 14:28:49  ml
+        - SMTP is working
 
         Revision 1.3  2001/04/05 13:25:47  ml
         - NNTP is working now!

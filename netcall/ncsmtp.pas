@@ -66,6 +66,7 @@ type
     { -------- SMTP-Zugriffe }
 
     procedure PostMail(Mail: TStringList; const From, ToStr: String);
+    procedure PostPlain(Mail: TStringList);
   end;
 
 implementation
@@ -215,12 +216,30 @@ begin
     DisConnect;
     exit;
   end;
-
 end;
+
+procedure TSMTP.PostPlain(Mail: TStringList);
+var
+  s: String;
+  i: Integer;
+begin
+  for i := 0 to Mail.Count - 1 do
+    swriteln(mail[i]);
+(*  if ParseResult(s) <> 250 then
+  begin
+    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    DisConnect;
+    exit;
+  end; *)
+end;
+
 
 end.
 {
   $Log$
+  Revision 1.3  2001/04/05 14:28:49  ml
+  - SMTP is working
+
   Revision 1.2  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
