@@ -1,0 +1,421 @@
+{  $Id$
+
+   OpenXP fido netcall BinkP protocol implementation include file
+
+   Copyright (C) 2001 by OpenXP team and M.Kiesel
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
+
+{ OpenXP fido netcall BinkP protocol implementation include file }
+
+type
+  tFrameType= (M_NUL,M_ADR,M_PWD,M_FILE,M_OK,M_EOB,M_GOT,M_ERR,M_BSY,M_GET,M_SKIP,M_DATA);
+  tBinkpFrame= class
+    protected
+      FDataSize,DataRead: SmallWord; FCommObj: tpCommObj;
+      IsOutgoing: Boolean;
+      function SFrameType: tFrameType;
+      function SDataSize: SmallWord;
+      function SCommandPar: string;
+      function SIsReady: boolean;
+    public
+      { The frame's data part }
+      Data: array[1..32767]of byte;
+
+      // Properties are used for incoming frames
+      { Returns frame type }
+      property FrameType: tFrameType read SFrameType;
+      { Returns frame data size (note: one byte for command included if command frame) }
+      property DataSize: SmallWord read SDataSize;
+      { Gets parameter if frame is a command frame }
+      property CommandPar: string read SCommandPar;
+      { Returns true is packet is received completely }
+      property IsReady: boolean read SIsReady;
+
+      constructor CreateWithCommObj(aCommObj: tpCommObj);
+      { Reads a frame from incoming byte stream. Will block until read entiry if Blocking is true. }
+      procedure ReadFromStream(Blocking: Boolean);
+      { Sends an outgoing command frame.  }
+      procedure SendCommandFrame(aCommand: tFrameType; Par: string);
+      { Sets up an outgoing data frame.  }
+      procedure SetupDataFrame(aDataSize: SmallWord);
+      { Sends the frame if outgoing }
+      procedure Send;
+    end;
+
+// ************************** Binkp frame class implementation ************************
+
+function tBinkpFrame.SFrameType: tFrameType;
+begin
+  if FDataSize>=$8000 then
+    result:=tFrameType(Data[1])
+  else
+    result:=M_DATA;
+end;
+
+function tBinkpFrame.SDataSize: SmallWord;
+begin
+  result:=FDataSize and $7fff;
+end;
+
+function tBinkpFrame.SCommandPar: string;
+begin
+  if FDataSize>=$8000 then begin
+    SetLength(result,(FDataSize and $7fff)-1);
+    move(Data[2],result[1],length(result));
+    end else result:='';
+end;
+
+function tBinkpFrame.SIsReady: boolean;
+var reads,readthistime,avail: longint;
+begin
+  result:=false; if IsOutgoing then exit;
+  if FDataSize=0 then begin // FDataSize not yet read
+    if FCommObj^.CharCount>=2 then
+      FCommObj^.ReadBlock(FDataSize,2,reads);
+    end else begin // FDataSize already read
+    result:=DataRead>=(FDataSize and $7fff);
+    if not result then begin
+      reads:=(FDataSize and $7fff)-DataRead;
+      avail:=FCommObj^.CharCount; if avail<reads then reads:=avail;
+      while reads>0 do begin
+        if reads>1024 then readthistime:=1024 else readthistime:=reads;
+        FCommObj^.ReadBlock(Data[DataRead+1],readthistime,readthistime);
+        dec(reads,readthistime); inc(DataRead,readthistime);
+        end;
+      end;
+    end;
+end;
+
+constructor tBinkpFrame.CreateWithCommObj(aCommObj: tpCommObj);
+begin inherited create; FCommObj:=aCommObj; end;
+
+procedure tBinkpFrame.ReadFromStream(Blocking: Boolean);
+begin
+  IsOutgoing:=false; DataRead:=0; FDataSize:=0;
+  if Blocking then repeat until SIsReady;
+end;
+
+procedure tBinkpFrame.SendCommandFrame(aCommand: tFrameType; Par: string);
+begin
+  IsOutgoing:=true;
+  Data[1]:=ord(aCommand); move(Par[1],Data[2],length(Par));
+  FDataSize:=length(Par)+1+$8000; Send;
+end;
+
+procedure tBinkpFrame.SetupDataFrame(aDataSize: SmallWord);
+begin
+  IsOutgoing:=true; FDataSize:=aDataSize;
+end;
+
+procedure tBinkpFrame.Send;
+var i,written: longint;
+begin
+  if IsOutgoing then begin
+    FCommObj^.SendBlock(FDataSize,2,written);
+    i:=0;
+    while i<(FDataSize and $7fff)do begin
+      written:=FDataSize-i; if written>1024 then written:=1024;
+      FCommObj^.SendBlock(Data[i+1],written,written);
+      inc(i,written);
+      end;
+    end;
+end;
+
+// ************************** Binkp protocol implementation ************************
+
+{ Binkp session setup procedure. Results are 0: OK, 1: Busy, 2: Error }
+function TFidomailer.BinkPSessionSetup: byte;
+type tState= (ConnInit,WaitConn,SendPasswd,WaitAddr,AuthRemote,IfSecure,WaitOk,Done);
+var
+  State: tState;
+  BpF: tBinkpFrame;
+
+begin
+  State:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  repeat
+    case State of
+      WaitConn: begin
+        BpF.SendCommandFrame(M_NUL,'SYS OpenXP test system');
+        BpF.SendCommandFrame(M_ADR,ownaddr+'@fidonet');
+        State:=SendPasswd;
+        end;
+      SendPasswd: begin
+        if Password='' then Password:='-';
+        BpF.SendCommandFrame(M_PWD,Password);
+        State:=WaitAddr;
+        end;
+      WaitAddr: begin
+        BpF.ReadFromStream(True);
+        case BpF.FrameType of
+          M_ADR: State:=AuthRemote;
+//** see if answering side presented the address we've called
+          M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+          M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+          M_NUL: Log(lcInfo,BpF.CommandPar);
+          end;
+        end;
+      AuthRemote: begin
+//** report
+        State:=IfSecure;
+        end;
+      IfSecure: begin
+        if Password='-' then begin
+          result:=0; State:=Done;
+          WriteIPC(mcInfo,'Connection established',[0]);
+        end else State:=WaitOk;
+        end;
+      WaitOk: begin
+        BpF.ReadFromStream(True);
+        case BpF.FrameType of
+          M_OK: begin WriteIPC(mcInfo,'Connection established',[0]); result:=0; State:=Done; end;
+          M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+          M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+          M_NUL: Log(lcInfo,BpF.CommandPar);
+          end;
+        end;
+      end;
+  until State=Done;
+  BpF.Destroy;
+end;
+
+{ Binkp file transfer procedure. Results are 0: OK, 1: at least sent all files, 2: not all files sent }
+function TFidomailer.BinkPFileTransfer: byte;
+type
+  tState= (WaitConn,InitTransfer,Switch,Receive,Transmit,Done);
+  tRxState= (RxWaitF,RxAccF,RxReceD,RxWriteD,RxEOB,RxDone);
+  tTxState= (TxGNF,TxTryR,TxReads,TxWLA,TxDone);
+  tResult= (OK,Continue,Failure);
+var
+  State: tState; RxState: tRxState; TxState: tTxState;
+  InBpF,OutBpF: tBinkpFrame; TheQueue: TList;
+  RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
+  TxFilename: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
+
+  function GetPar(var s: string): string;
+  var p: integer;
+  begin p:=pos(' ',s); if p<=0 then p:=length(s)+1; result:=copy(s,1,p-1); delete(s,1,p); end;
+
+  function BpReceive: tResult;
+  var s: string; RxFilePos: Cardinal;
+  begin
+    result:=OK;
+    case RxState of
+      RxWaitF: begin
+        if not InBpF.IsReady then exit;
+        case InBpF.FrameType of
+          M_DATA: ; // ignore
+          M_ERR: begin WriteIPC(mcError,'Peer reported error',[0]); RxState:=RxDone; result:=Failure; exit; end;
+          M_GET,M_GOT,M_SKIP: begin
+            TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+            end;
+          M_NUL: Log(lcInfo,InBpF.CommandPar);
+          M_EOB: begin WriteIPC(mcInfo,'Finished receiving files',[0]); RxState:=RxEOB; end;
+          M_FILE: begin
+            s:=InBpF.CommandPar; RxFilename:=GetPar(s); RxSize:=StrToIntDef(GetPar(s),0);
+            RxTime:=StrToIntDef(GetPar(s),0); RxOffset:=StrToIntDef(GetPar(s),0);
+            RxState:=RxAccF; result:=Continue;
+            end;
+          end;
+        InBpF.ReadFromStream(False);
+        end;
+      RxAccF: begin
+        WriteIPC(mcInfo,'Receiving %s',[RxFilename]);
+        if FileExists(RxFilename)then begin // file exists
+          RxFileHandle:=FileOpen(RxFilename,fmOpenReadWrite);
+          if RxFileHandle>0 then begin // opened ok
+            RxOffset:=FileSeek(RxFileHandle,0,fsFromEnd);
+            OutBpF.SendCommandFrame(M_GET,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime)+' '+IntToStr(RxOffset));
+            RxState:=RxReceD;
+            end else begin // open failed
+            OutBpF.SendCommandFrame(M_SKIP,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
+            RxState:=RxWaitF;
+            end;
+          end else begin // file does not exist
+          RxFileHandle:=FileCreate(RxFilename);
+          if RxFileHandle>0 then begin // opened ok
+            RxOffset:=0;
+            RxState:=RxReceD;
+          end else begin // open failed
+            OutBpF.SendCommandFrame(M_SKIP,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
+            RxState:=RxWaitF;
+            end;
+          RxState:=RxReceD;
+          end; // ...of "file does not exist"
+        end;
+      RxReceD: begin
+        if not InBpF.IsReady then exit;
+        case InBpF.FrameType of
+          M_DATA: begin
+            RxState:=RxWriteD;
+            RxResult:=FileWrite(RxFileHandle,InBpF.Data[1],InBpF.DataSize);
+            result:=Continue
+            end;
+          M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
+          M_GET,M_GOT,M_SKIP: begin
+            TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+            end;
+          M_NUL: Log(lcInfo,InBpF.CommandPar);
+          M_FILE: begin RxState:=RxAccF; FileClose(RxFileHandle); end; //** report partially recv file
+          end;
+        InBpF.ReadFromStream(False);
+        end;
+      RxWriteD: begin
+        if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
+        RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
+        if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
+        if RxFilePos=RxSize then begin
+          RxState:=RxWaitF; //** set file time
+          FileClose(RxFileHandle);
+          OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
+          end;
+        if RxFilePos<RxSize then RxState:=RxReceD;
+        end;
+      RxEOB: begin
+        if (not InBpF.IsReady)or(TxState<>TxDone)then exit;
+        case InBpF.FrameType of
+          M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
+          M_GET,M_GOT,M_SKIP: begin
+            TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+            end;
+          M_NUL: Log(lcInfo,InBpF.CommandPar);
+          end;
+        InBpF.ReadFromStream(False);
+        end;
+      RxDone: ;
+      end;
+  end;
+
+  procedure ProcessTheQueue;
+  var QBpF: tBinkpFrame;
+  begin
+    QBpF:=TheQueue[TheQueue.Count-1];
+    case QBpF.FrameType of
+      M_GET: begin
+        //** implement
+        end;
+      M_GOT: begin
+        //** implement
+        end;
+      M_SKIP: begin
+        //** implement
+        end;
+      end;
+    QBpF.Destroy;
+    TheQueue.Delete(TheQueue.Count-1);
+  end;
+
+  function BpTransmit: tResult;
+  var s: string;
+  begin
+    result:=OK;
+    case TxState of
+      TxGNF: begin
+        if FilesToSend.Count<=0 then begin // no more files to send
+          OutBpF.SendCommandFrame(M_EOB,'');
+          TxState:=TxWLA; result:=Continue;
+          end else begin // still files to send
+          TxFilename:=FilesToSend[0];
+          WriteIPC(mcInfo,'Sending %s',[TxFilename]);
+          TxFileHandle:=FileOpen(TxFilename,fmOpenRead);
+          if TxFileHandle>0 then begin // opened ok
+            TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
+            TxTime:=FileGetDate(TxFileHandle);
+            OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
+            TxState:=TxTryR; result:=Continue;
+            end else begin // failed to open
+            TxState:=TxDone; result:=Failure;
+            end;
+          end;
+        end;
+      TxTryR: begin
+        result:=continue;
+        if TheQueue.Count>0 then
+          ProcessTheQueue
+        else
+          TxState:=TxReadS;
+        end;
+      TxReadS: begin
+        TxResult:=FileRead(TxFileHandle,OutBpF.Data[1],32767);
+        if TxResult<0 then begin TxState:=TxDone; result:=Failure; exit end;
+        OutBpF.SetupDataFrame(TxResult); OutBpF.Send;
+        if TxResult<32767 then begin // file end reached
+          FileClose(TxFileHandle);
+          TxState:=TxGNF;
+          end else begin // still data to read
+          TxState:=TxTryR;
+          end;
+        end;
+      TxWLA: begin
+        if TheQueue.Count>0 then begin
+          ProcessTheQueue; result:=continue;
+          end else begin
+          if RxState>=RxEOB then TxState:=TxDone else TxState:=TxWLA;
+          end;
+        end;
+      TxDone: ;
+      end;
+  end;
+
+begin
+  State:=WaitConn;
+  InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); TheQueue:=TList.Create;
+  repeat
+    case State of
+      WaitConn: begin
+        WriteIPC(mcInfo,'Initiating file transfer',[0]);
+        RxState:=RxWaitF; TxState:=TxGNF; State:=Switch; //** set timer
+        InBpF.ReadFromStream(False);
+        end;
+      Switch: begin
+        if (RxState=RxDone)and(TxState=TxDone)then begin
+          WriteIPC(mcInfo,'File transfer complete',[0]);
+          result:=0; State:=Done;
+          end;
+        if FCommObj^.CharAvail then State:=Receive;
+        if FCommObj^.ReadyToSend(1024) then State:=Transmit;
+        //** if timeout...
+        end;
+      Receive: begin
+          case BpReceive of
+            OK: State:=Switch; //** set timer
+            Failure: begin if FilesToSend.Count=0 then result:=1 else result:=2; State:=Done end;
+            Continue: ;
+          end;
+        end;
+      Transmit: begin
+          case BpTransmit of
+            OK: State:=Switch; //** set timer
+            Failure: begin if FilesToSend.Count<=0 then result:=1 else result:=2; State:=Done end;
+            Continue: ;
+          end;
+        end;
+    end;
+  until State=Done;
+  InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy;
+end;
+
+
+{
+  $Log$
+  Revision 1.1  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
+}

@@ -389,7 +389,6 @@ label fn_ende,fn_ende0;
         Fidomailer.CommandDial:= MDial;
         Fidomailer.Phonenumbers:= telefon;
       end;
-      Fidomailer.DialupRequired:=True;
       Fidomailer.TimeoutConnectionEstablish:= connwait;
       Fidomailer.RedialWaitTime:= redialwait;
       Fidomailer.MaxDialAttempts:= redialmax;
@@ -896,6 +895,11 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
   Revision 1.11  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

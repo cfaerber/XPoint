@@ -49,7 +49,7 @@ type
   protected
     FCommObj: tpCommObj;
     FTimerObj: tTimer;
-    FConnected,FActive,FDialupRequired,FCommObjReleased: Boolean;
+    FConnected,FActive,FCommObjReleased: Boolean;
     FPhonenumbers: String;
     WaitForAnswer,FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
@@ -86,7 +86,7 @@ type
 
   public
     {-------- Variables to initialize for modem dialing -----------------}
-    {Phone numbers to dial (separated by spaces)}
+    {Phone numbers to dial (separated by spaces). Empty if no dialing required.}
     Phonenumbers: String;
     {Modem init string}
     CommandInit: String;
@@ -113,9 +113,6 @@ type
     {Opens log file. Overwrites if first char is '*'.}
     property LogfileName: String read FLogfileName write SLogfileName;
 
-    { True if dialing is required in order to connect. Not necessary
-      for IP connections or online calls. }
-    property DialupRequired: Boolean read FDialupRequired write FDialupRequired;
     { True if comm channel initialized }
     property Active: Boolean read FActive;
     { Either get CommObj via this property or have it released on
@@ -136,7 +133,7 @@ type
       for CommObj release even when disposed if created with this
       constructor. }
     constructor CreateWithCommObj(p: tpCommObj);
-    { Disconnects if DialUpRequired.
+    { Disconnects if phonenumbers not empty.
       Disposes CommObj if not released via property CommObj before.
       Closes log file.
       Disposes IPC. }
@@ -154,7 +151,7 @@ type
 
     { Disconnects.
       Closes log file.
-      Hangs up if DialUpRequired. }
+      Hangs up if phonenumbers specified. }
     procedure Disconnect; virtual;
   end;
 
@@ -196,7 +193,7 @@ end;
 constructor TModemNetcall.Create;
 begin
   inherited Create;
-  FConnected:=False; FActive:=False; FDialupRequired:=False; FErrorMsg:='';
+  FConnected:=False; FActive:=False; FErrorMsg:='';
   WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
@@ -221,7 +218,7 @@ end;
 
 destructor TModemNetcall.Destroy;
 begin
-  if DialupRequired and FConnected then Disconnect;
+  if (FPhonenumber<>'')and FConnected then Disconnect;
   if not FCommObjReleased then Dispose(FCommObj,Done);
   inherited destroy;
 end;
@@ -341,7 +338,7 @@ var
   CurrentPhonenumber: String;
 
 begin
-  if not FDialupRequired then begin result:=true; exit end;
+  if Phonenumbers='' then begin result:=true; exit end;
   FGotUserBreak := false;
   DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
                    Strs(MaxDialAttempts)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWaitTime),DLInform);
@@ -437,7 +434,7 @@ end;
 procedure TModemNetcall.Disconnect;
 var i : integer;
 begin
-  if FDialupRequired then begin
+  if FPhonenumber<>'' then begin
     WriteIPC(mcInfo,'Hanging up',[0]);
     DebugLog('ncmodem','Hangup',DLInform);
     FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
@@ -461,6 +458,11 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
   Revision 1.9  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

@@ -62,6 +62,8 @@ type
     function EMSIHandshake:byte;    { 0=Abbruch, 1=Again, 2=ok->WaZOO }
     procedure fmS;          { FTS-001 / FTS-007 }
     procedure WaZOOsession;
+    function BinkPSessionSetup: byte;
+    function BinkPFileTransfer: byte;
 
   public
     {These HAVE to be initialized when calling PerformNetcall}
@@ -91,7 +93,7 @@ type
 implementation
 
 uses
-  zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc,xpdiff;
+  zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -199,6 +201,7 @@ end;
 {$I ncfido-yoohoo.inc}
 {$I ncfido-emsi.inc}
 {$I ncfido-wazoo.inc}
+{$I ncfido-binkp.inc}
 
 function TFidomailer.PerformNetcall: Integer;
 var iTimer: Integer; Ende: Boolean;
@@ -237,6 +240,11 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
   Revision 1.11  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

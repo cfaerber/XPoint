@@ -133,7 +133,6 @@ var
         GenericMailer.CommandDial:= MDial;
         GenericMailer.Phonenumbers:= telefon;
         end;
-      GenericMailer.DialupRequired:=True;
       GenericMailer.TimeoutConnectionEstablish:= connwait;
       GenericMailer.RedialWaitTime:= redialwait;
       GenericMailer.MaxDialAttempts:= redialmax;
@@ -213,6 +212,11 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
   Revision 1.3  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

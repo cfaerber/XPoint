@@ -546,7 +546,6 @@ var ip   : integer;
         5 : doit:=relogin;
       end;
       if doit then begin
-        write(runlog,'!performing command!');
         case command of
           cmdWaitfor  : begin
                           par:=LowerCase(getpar);
@@ -561,14 +560,19 @@ var ip   : integer;
                           else
                             write(runlog,'!WAITFOR '+par+' ended!');
                         end;
-          cmdSend     : CommObj^.SendString(GetPar,False);
+          cmdSend     : begin
+                          par:=getpar;
+                          CommObj^.SendString(par,False);
+                          write(runlog,'!SEND '+par+'!');
+                        end;
           cmdGoto     : ip:=numpar-1;
           cmdEnd      : begin
                           ende:=true;
                           ExecuteScriptRes:=numpar;
                         end;
           cmdDelay    : mdelay(numpar);
-          cmdWrite,cmdWriteLn    : begin moff; IPC.WriteFmt(mcInfo,'%s',[GetPar]); mon; end;
+          cmdWriteLn  : begin moff; IPC.WriteFmt(mcInfo,'%s',[GetPar]); mon; end;
+          cmdWrite    : begin moff; IPC.WriteFmt(mcVerbose,'%s',[GetPar]); mon; end;
           cmdDisplay  : {**Display:=(numpar=pDispOn)};
           cmdTimer    : UniTimer.SetTimeout(numpar);
           cmdRead     : ProcessIncoming;
@@ -658,6 +662,11 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/11 01:01:10  ma
+  - ncmodem does not dial now if no phone number specified
+    (removed PerformDial property)
+  - added BinkP protocol: Compiles, but not functional yet
+
   Revision 1.4  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido
