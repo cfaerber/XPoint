@@ -43,15 +43,15 @@ procedure EinzelNetcall(BoxName:string);
 
 function  AutoMode:boolean;
 
-procedure CallFilter(input:boolean; fn:string);
+procedure CallFilter(input:boolean; const fn:string);
 { Ausgangs-PP-Datei kopieren und filtern }
 function  OutFilter(var ppfile:string):boolean;
-procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
+procedure AppLog(var logfile:string; const dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
 
 procedure ClearUnversandt(const puffer,BoxName:string);
 procedure MakeMimetypCfg;
 //**procedure LogNetcall(secs:word; FidoCrash:boolean);
-procedure SendNetzanruf(logfile: string);
+procedure SendNetzanruf(const logfile: string);
 //**procedure SendFilereqReport;
 //**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 //**procedure MoveRequestFiles(var packetsize:longint);
@@ -108,33 +108,37 @@ begin
         exclude_time:=i;
 end;
 
-procedure CallFilter(input:boolean; fn:string);
+procedure CallFilter(input:boolean; const fn:string);
 var nope : boolean;
     fp   : string;
 begin
-  if input then fp:=BoxPar^.eFilter
-  else fp:=BoxPar^.aFilter;
-  if fp='' then exit;
+  if input then
+    fp:=BoxPar^.eFilter
+  else
+    fp:=BoxPar^.aFilter;
+  if fp='' then Exit;
   exchange(fp,'$PUFFER',fn);
   nope:=not FileExists(fn);
   if nope then MakeFile(fn);
+  Debug.Debuglog('xpnetcall', 'Aufruf ' + iifs(input, 'Eingangsfilter', 'Ausgangsfilter') + ': ' + fp, DLInform);
   shell(fp,600,3);
   if nope then _era(fn);
 end;
 
 function OutFilter(var ppfile:string):boolean;
-const FilterPuffer = '_puffer';
+const
+  FilterPuffer = '_puffer';
 begin
-  if (boxpar^.aFilter<>'') and filecopy(ppfile,FilterPuffer) then begin
-    ppfile:=FilterPuffer;
+  if (boxpar^.aFilter<>'') and Filecopy(ppfile,FilterPuffer) then
+  begin
+    ppfile := FilterPuffer;
     CallFilter(false,ppfile);
-    outfilter:=true;
-    end
-  else
-    outfilter:=false;
+    Result := true;
+  end else
+    Result := false; 
 end;
 
-procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
+procedure AppLog(var logfile:string; const dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
 var f1,f2 : text;
     s     : string;
 begin
@@ -344,7 +348,7 @@ begin
 end;}
 
 
-procedure SendNetzanruf(logfile: string);
+procedure SendNetzanruf(const logfile: string);
 var betreff,hd: string;
 begin
   if not FileExists(logfile)then exit;
@@ -710,17 +714,7 @@ var
       end;
   end;
 
-Procedure ZFilter(source,dest: string);
-var
-  f:boolean;
-begin
-  f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
-  CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
-  if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
-  errorlevel:=0;
-end;
-
-function NoScript(script:string):boolean;
+function NoScript(const script:string):boolean;
 begin
   NoScript:=((script='') or not FileExists(script));
 end;
@@ -1372,6 +1366,10 @@ end;
 
 {
   $Log$
+  Revision 1.41  2001/12/20 15:23:13  mk
+  - added some const paramters
+  - removed unsued procedure ZFilter
+
   Revision 1.40  2001/12/04 10:34:22  mk
   - made client mode compilable
 
