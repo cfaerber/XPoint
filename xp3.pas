@@ -62,7 +62,7 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
-procedure Rot13(var data; size:word);
+{ procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas } 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:word);
 procedure Iso1ToIBM(var data; size:word);
@@ -152,37 +152,8 @@ procedure IBMToIso1(var data; size:word); begin end;
 {dont $L xp3.obj}
 
 { JG:17.02.00 Prozeduren aus XP3.ASM integriert }
-procedure Rot13(var data; size:word); assembler;
-asm
-         les   di,data
-         mov   cx,size
-         jcxz  @ende
-         cld
-  @rotlp:
-         mov   al,es:[di]
-         cmp   al,'A'
-         jb    @rot
-         cmp   al,'Z'
-         ja    @noupcase
-         add   al,13
-         cmp   al,'Z'
-         jbe   @rot
-         sub   al,26
-         jmp   @rot
-  @noupcase:
-         cmp   al,'a'
-         jb    @rot
-         cmp   al,'z'
-         ja    @rot
-         add   al,13
-         cmp   al,'z'
-         jbe   @rot
-         sub   al,26
-  @rot:     
-         stosb
-         loop  @rotlp
-  @ende:    
-end;
+{ jetzt in TYPEFORM.PAS: procedure Rot13(var data; size:word); assembler; }
+
 
 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
@@ -1286,6 +1257,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/18 18:39:04  jg
+  Speichermannagementbugs in Clip.pas entschaerft
+  Prozedur Cliptest in Clip.Pas ausgeklammert
+  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
+  Lister.asm in Lister.pas integriert
+
   Revision 1.6  2000/02/18 09:13:27  mk
   JG: * Volltextsuche jettz Sprachabhaengig gestaltet
       * XP3.ASM in XP3.PAS aufgenommen

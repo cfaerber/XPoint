@@ -206,14 +206,136 @@ var   lstack  : array[0..maxlst] of record
       MemFlag : byte;      { Ziel fÅr app_l: 0=Heap, 1=EMS, 2=XMS, 3=full }
 
 
+
+
 {$IFDEF ver32}
 procedure make_list(var buf; var rp:word; rr:word; wrap:byte); begin end;
-procedure Rot13(var data; size:word); begin end;
+{ procedure Rot13(var data; size:word); begin end; }
+
+
 {$ELSE}
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; external;
-procedure Rot13(var data; size:word); near; external;
-{$L lister.obj}
+
+{ JG:18.02.00 Prozedur aus Lister.asm integriert }
+{in Typeform.pas: procedure Rot13(var data; size:word); near; external; }
+
+
+{ Externes File (z.b Fileliste) fuer Anzeige mit Lister vorbereiten }
+procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; assembler;
+
+var   bxsave,cxsave : word;
+
+asm
+         les    si,buf
+         inc    si
+         mov    cx,rr
+         jcxz   @ende
+         mov    bx,1
+         mov    dh,0
+         mov    ah,wrap                { Wrap-Spalte }
+         or     ah,ah
+         jnz    @llp
+         mov    ah,255
+
+@llp:    mov    dx,0                   { StringlÑngen-ZÑhler }
+         mov    bx,0
+@llp2:   mov    di,0
+         cmp    byte ptr es:[si+bx],13 { CR ? }
+         jz     @crlf
+         cmp    byte ptr es:[si+bx],10 { LF ? }
+         jnz    @nocr
+         mov    di,1                   { Kennung fÅr LF -> nÑchstes Zeichen }
+                                       { NICHT Åberlesen }
+@crlf:   or     di,di
+         jnz    @islf
+         cmp    cx,1                   { CR ist letztes Byte         }
+         jz     @noapp                 { -> keine Leerzeile erzeugen }
+@islf:   mov    es:[si-1],dl           { LÑngenbyte davorschreiben   }
+         call near ptr @appcall
+@noapp:  inc    dx
+         dec    cx
+         jz     @nocrlf                { Block endete mit CR oder LF }
+         add    si,dx
+         cmp    di,1
+         jz     @llp
+         cmp    byte ptr es:[si],10    { LF ? }
+         jnz    @llp                   { nein, dann nÑchste Zeile lesen }
+         inc    si                     { LF Åberlesen }
+         dec    cx
+         jnz    @llp                   { endet Zeile nicht auf LF ? }
+
+@ende:   les    di,rp
+         mov    word ptr es:[di],1
+         jmp @the_end
+
+@nocr:   inc    dx                     { ein Zeichen weiter }
+         inc    bx
+         dec    cx
+         jnz    @no0
+@nocrlf: cmp    di,1                   { endete Block auf LF ? }
+         jz     @ende
+         mov    cx,dx                  { unvollstÑndige Zeile kopieren }
+         jcxz   @norest
+         mov    di,word ptr buf
+         inc    di
+@cloop:  mov    al,es:[si]
+         mov    es:[di],al
+         inc    si
+         inc    di
+         loop   @cloop
+@norest: les    di,rp
+         inc    dx
+         mov    es:[di],dx             { Offset fÅr nÑchsten Block }
+         jmp @the_end
+
+@no0:    cmp    dl,ah                  { max. LÑnge erreicht? }
+         jb     @llp2
+         cmp    byte ptr es:[si+bx],13 { folgt ein CR? }
+         jz     @llp2
+
+         mov    dh,dl
+         mov    bxsave,bx
+         mov    cxsave,cx
+@cutlp:  cmp    byte ptr es:[si+bx-1],' '   { Trennzeichen? }
+         jz     @clok
+         dec    dl
+         dec    bx
+         inc    cx
+         cmp    dl,20
+         ja     @cutlp
+         mov    dl,dh
+         mov    bx,bxsave
+         mov    cx,cxsave
+
+@clok:   mov    dh,0
+         mov    es:[si-1],dl           { LÑngenbyte = wrap }
+         call near ptr @appcall
+         add    si,dx
+         jmp    @llp
+
+@appcall:
+         push   ax
+         push   bx
+         push   cx
+         push   dx
+         push   si
+         push   di
+         push   es
+         push   es                    { Adresse des Strings auf den Stack }
+         dec    si
+         push   si
+         call far ptr app_l           { Zeile an Liste anhÑngen }
+         pop    es
+         pop    di
+         pop    si
+         pop    dx
+         pop    cx
+         pop    bx
+         pop    ax
+         retn
+@the_end:
+end;
 {$ENDIF}
+
 
 function list_markdummy(var p:string; block:boolean):boolean;
 begin

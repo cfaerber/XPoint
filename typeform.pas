@@ -170,6 +170,7 @@ function mailstring(const s: String): string; { JG:04.02.00 Mailadresse aus Stri
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
 procedure ukonv(var s:string);                { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
+procedure Rot13(var data; size:word);         { Rot 13 Kodierung }
 { ================= Implementation-Teil ==================  }
 
 IMPLEMENTATION
@@ -2094,11 +2095,49 @@ begin
   conv('™','O');
   conv('š','U');
 end;
-end.
+
+
+procedure Rot13(var data; size:word); assembler;    { ROT13 Kodierung }
+asm
+         les   di,data
+         mov   cx,size
+         jcxz  @ende
+         cld
+  @rotlp:
+         mov   al,es:[di]
+         cmp   al,'A'
+         jb    @rot
+         cmp   al,'Z'
+         ja    @noupcase
+         add   al,13
+         cmp   al,'Z'
+         jbe   @rot
+         sub   al,26
+         jmp   @rot
+  @noupcase:
+         cmp   al,'a'
+         jb    @rot
+         cmp   al,'z'
+         ja    @rot
+         add   al,13
+         cmp   al,'z'
+         jbe   @rot
+         sub   al,26
+  @rot:     
+         stosb
+         loop  @rotlp
+  @ende:    
+end;
 
 end.
 { 
   $Log$
+  Revision 1.7  2000/02/18 18:39:03  jg
+  Speichermannagementbugs in Clip.pas entschaerft
+  Prozedur Cliptest in Clip.Pas ausgeklammert
+  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
+  Lister.asm in Lister.pas integriert
+
   Revision 1.6  2000/02/16 23:04:06  mk
   JG: * Windows-Umlaute aus UKonv korrigiert
 

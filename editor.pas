@@ -164,43 +164,13 @@ var   Defaults : edp;
 { ------------------------------------------------ externe Routinen }
 
 {$IFDEF ver32}
-procedure Rot13(var data; size:word); begin end;
+{ procedure Rot13(var data; size:word); begin end; }
 function SeekStr(var data; len:word; var s:string; igcase:boolean):integer; begin end;
 function FindUmbruch(var data; zlen:integer):integer; begin end;
 {$ELSE}
 
 { 13.01.2000 robo - ASM-Routinen integriert }
-procedure Rot13(var data; size:word); assembler;
-asm
-         les   di,data
-         mov   cx,size
-         jcxz  @ende
-         cld
-  @rotlp:
-         mov   al,es:[di]
-         cmp   al,'A'
-         jb    @rot
-         cmp   al,'Z'
-         ja    @noupcase
-         add   al,13
-         cmp   al,'Z'
-         jbe   @rot
-         sub   al,26
-         jmp   @rot
-  @noupcase:
-         cmp   al,'a'
-         jb    @rot
-         cmp   al,'z'
-         ja    @rot
-         add   al,13
-         cmp   al,'z'
-         jbe   @rot
-         sub   al,26
-  @rot:     
-         stosb
-         loop  @rotlp
-  @ende:    
-end;
+{in Typeform.pas: procedure Rot13(var data; size:word); assembler; }
 
 
 function SeekStr(var data; len:word;
@@ -1929,6 +1899,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/18 18:39:03  jg
+  Speichermannagementbugs in Clip.pas entschaerft
+  Prozedur Cliptest in Clip.Pas ausgeklammert
+  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
+  Lister.asm in Lister.pas integriert
+
   Revision 1.5  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

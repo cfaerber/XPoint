@@ -53,7 +53,7 @@ Procedure String2Clip(var ldata);                  { STring ins Clipboard}
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
 
-procedure ClipTest;
+{ procedure ClipTest; }                         {JG: Ausgeklammert }
 
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
@@ -330,7 +330,7 @@ end;
 
 
 
-procedure FileToClip(fn:pathstr);
+procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Windows-Clipboard schicken }
 var f  : file;
     p  : pointer;
     bs : word;
@@ -343,7 +343,7 @@ begin
       if maxavail>maxfile then bs:=maxfile
       else bs:=maxavail;
       getmem(p,bs);
-      blockread(f,p^,maxfile,rr);
+      blockread(f,p^,bs,rr);
       close(f);
       if ClipEmpty then;
       if ClipWrite(cf_Oemtext,rr,p^) then;
@@ -352,7 +352,7 @@ begin
       end;
 end;
 
-procedure ClipToFile(fn:pathstr);
+procedure ClipToFile(fn:pathstr);       { Win-Clipboardinhalt als File speichern }
 var f  : file;
     p  : cap;
     bs : longint;
@@ -364,9 +364,9 @@ begin
   if ioresult=0 then begin
     if ClipAvailable and ClipOpen then begin
       bs:=ClipGetDatasize(cf_OemText);
-      if bs>=maxfile then begin
-        s:='Clipboard-Inhalt ist zu umfangreich'#13#10;
-        blockwrite(f,s[1],length(s));
+      if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }      
+        s:='Clipboard-Inhalt ist zu umfangreich'#13#10;   { groesser als Clipfile oder  }
+        blockwrite(f,s[1],length(s));                     { freier Speicher ist         }
         end
       else
         if bs>0 then begin
@@ -384,6 +384,11 @@ begin
     end;
 end;
 
+
+
+
+{ JG:18.02.00 ausgeklammert, Prozedur wird nirgens benutzt.... }
+(*            
 procedure ClipTest;
 var s : string;
 
@@ -439,6 +444,8 @@ begin
         end;
     until s='e';
 end;
+*)
+
 
 
 { Smartdrive vorhanden? }
@@ -529,6 +536,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/18 18:39:03  jg
+  Speichermannagementbugs in Clip.pas entschaerft
+  Prozedur Cliptest in Clip.Pas ausgeklammert
+  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
+  Lister.asm in Lister.pas integriert
+
   Revision 1.5  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 
