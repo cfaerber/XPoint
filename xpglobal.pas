@@ -14,7 +14,7 @@ interface
 
 const
   verstr      = 'v3.40';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' RC2';      { '' oder ' beta' }
+  betastr     = ' RC3';      { '' oder ' beta' }
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
@@ -83,6 +83,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.12  2001/01/02 11:43:17  mk
+  - Versionnummer auf RC3 geaendert
+
   Revision 1.29.2.11  2000/12/27 20:08:03  mk
   - Versionsnummer auf RC2 geaendert
 
