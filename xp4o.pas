@@ -2357,7 +2357,7 @@ begin
     mwrt(77,4,arcname[arctyp]);
     while not ende do begin
       if (name<>'') or (path='') then begin
-        lm:=max(1,rightpos('.',name)); 
+        lm:=rightpos('.',name); if lm=0 then lm:=length(name);
         app_l(forms(iifc(path<>'','*',' ')+forms(left(name,min(8,lm-1))+forms(mid(name,lm),4),12)
               +strsn(orgsize,11)+strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
               dt(datum,uhrzeit),80)+path+name)
@@ -2927,6 +2927,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.42  2002/04/09 21:08:47  my
+  JG:- Fix Archiv-Viewer: Bei Dateinamen, die keinen Punkt enthielten,
+       wurden innerhalb eines Archivs nur die ersten vier Stellen
+       angezeigt.
+
   Revision 1.47.2.41  2002/03/27 19:47:06  my
   MY:- Fix Archiv-Viewer: Lange Dateinamen wurden nicht korrekt an den
        Entpacker Åbergeben und der Entpacker konnte daher die Datei im
