@@ -124,10 +124,10 @@ var i,res : integer;
   var p :integer;
   begin
     p:=pos(' (',line);
-    if (p=0) or (p<cpos('@',line)) then
-      name := line
-    else
-    begin
+    if (p=0) or (p<cpos('@',line)) then begin
+      realname:='';
+      name:=line;
+    end else begin
       realname:=trim(copy(line,p+2,length(line)-p-2));
       name:=LeftStr(line,p-1);
     end;
@@ -562,6 +562,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/05/21 15:35:13  ma
+  - ensure realname's blank if not given (just in case...)
+
   Revision 1.25  2002/04/14 22:33:10  cl
   - New address handling, supports To, CC, and BCC
   - Nearly complete rewrite of DoSend's message creation
