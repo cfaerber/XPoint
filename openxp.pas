@@ -28,8 +28,8 @@ program xp;
 
 uses
   {$IFDEF unix} linux,xplinux, {$ENDIF }
+  {$IFDEF os2 } doscalls, {$ENDIF }
   {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF }
-  {$IFDEF OS2} os2base,{$ENDIF}
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
   modem,zmodem,Sysutils,xpglobal,
      xp0,      { Definitionen       }
@@ -187,6 +187,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.1  2001/03/30 13:09:34  mk
   - renamed config/help/main-files
 

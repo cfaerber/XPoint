@@ -149,7 +149,9 @@ end;
 
 procedure InitXPXUnit;
 begin
+{$IFNDEF OS2 }
   checkbreak:=false;
+{$ENDIF }
   readname;
 {$ifndef unix}
   if LeftStr(getenv('PROMPT'),4)='[XP]' then
@@ -177,6 +179,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.40  2001/04/15 19:33:34  ma
   - adjusted resource file names
 

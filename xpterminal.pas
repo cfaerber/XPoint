@@ -67,7 +67,7 @@ var termlines    : byte;
     la           : byte;
     open_log     : boolean;
     in7e1,out7e1 : boolean;
-    is_telnet	 : boolean;
+    is_telnet    : boolean;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
     ansiseq      : string;
@@ -349,9 +349,13 @@ var b : byte;
 
   procedure BiosWrite(c:char);
   begin
+    {$IFNDEF OS2 }
     directvideo:=false;
+    {$ENDIF }
     write(c);
+    {$IFNDEF OS2 }
     directvideo:=true;
+    {$ENDIF }
   end;
 
 begin
@@ -611,7 +615,7 @@ begin
         end;
         Xmakro(t,64);
         if t=mausleft then t:=copychr(_mausx,_mausy);
-	if t=keycr    then CommObj^.SendString(iifs(is_telnet,#13#10,keycr),False) else
+        if t=keycr    then CommObj^.SendString(iifs(is_telnet,#13#10,keycr),False) else
         if t=keyup    then CommObj^.SendString(ANSI_curup,False) else
         if t=keydown  then CommObj^.SendString(ANSI_curdown,False) else
         if t=keyleft  then CommObj^.SendString(ANSI_curleft,False) else
@@ -678,7 +682,7 @@ var
   connected     : boolean;
 begin
   Debug.DebugLog('XPFM','Terminal called',1);
-  
+
   is_telnet:=false;
   connected:= not direct;
 
@@ -693,7 +697,7 @@ begin
     freeres;
     exit;
   end;
-  
+
   terminal_main(connected);
 end;
 
@@ -734,6 +738,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.3  2001/03/03 10:57:44  ml
   - compilable under linux
 

@@ -35,7 +35,7 @@ unit OCThread;
 {$ENDIF}
 
 type TSysEventObj = Object
-       {$IFDEF OS2}SemHandle: HEV;{$ENDIF}
+       {$IFDEF OS2}SemHandle: Longint;{$ENDIF}
        {$IFDEF WIN32}SemHandle: THandle;{$ENDIF}
 
        constructor init;
@@ -217,7 +217,7 @@ begin
 
   {$IFDEF OS2}
     New(Exclusive);
-    DosCreateMutexSem(nil, Exclusive^, dcmw_Wait_All, false);
+//!!!    DosCreateMutexSem(nil, Exclusive^, dcmw_Wait_All, false);
   {$ENDIF}
 end; { proc. CreateExclusive }
 
@@ -390,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.9  2001/01/18 10:22:15  mk
   - more FPC and OS2 compatibility
 

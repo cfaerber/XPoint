@@ -36,7 +36,11 @@ uses
 {$IFDEF DOS32 }
   dossock,
 {$ELSE }
-  sockets,
+  {$IFDEF OS2 }
+    os2sock,
+  {$ELSE }
+    sockets,
+  {$ENDIF }
 {$ENDIF }
 {$ENDIF }
   sysutils;
@@ -161,7 +165,9 @@ begin
   Clear;
   FName:= s;
   if FAutoResolve and (s<>'') then begin
+  {$IFNDEF OS2 }
     hostinfo:= gethostbyname(PChar(s));
+  {$ENDIF }
     if hostinfo<>nil then
     with hostinfo^ do
     begin
@@ -185,7 +191,9 @@ begin
   Clear;
   FIP:= i;
   if FAutoResolve then begin
+  {$IFNDEF OS2 }
     hostinfo:= gethostbyname(PChar(AsString));
+  {$ENDIF }
     if hostinfo<>nil then with hostinfo^ do begin
       FName:= Name;
       FResolved:= true;
@@ -228,6 +236,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.10  2000/12/28 14:45:00  mk
   CL:- first things for UUCP over IP
 

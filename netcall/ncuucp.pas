@@ -62,7 +62,8 @@ type
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
-{$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}xpdos32{$ENDIF},crt{$ENDIF};
+{$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}
+{$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},crt{$ENDIF};
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
 {                                                                              }
@@ -340,12 +341,12 @@ begin
     else
       raise EUUCProtocol.Create('Protocol unimplemented');
     end;
-  
+
     if not assigned(pprot) then
       raise EUUCProtocol.Create('Protocol initialization failed');
-  
+
     result := pprot.RunProtocol;
-  
+
   except
     on Ex:Exception do begin
       Output(mcError,'%s',[ex.message]);
@@ -573,7 +574,7 @@ function TUUCProtocolSimple.RunProtocol: integer;
 begin
   if not InitProtocol then
     result:=EL_nologin
-  else 
+  else
   try
     if not Master then
       result:= EL_senderr
@@ -688,7 +689,7 @@ begin { TUUCProtocolSimple.Master:Boolean; }
       Netcall.TestBreak;
       if IOResult<>0 then ;
     end; { while !eof }
-  
+
   except
     on e:Exception do begin
       Netcall.Log(lcError,e.message);
@@ -803,7 +804,7 @@ begin
     end;
     result:=true;
     exit;
-    
+
   except
     on e:Exception do begin
       Netcall.Log(lcError,e.message);
@@ -1010,6 +1011,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/05/16 01:59:16  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.5  2001/03/28 22:26:22  cl
   - better UUCP startup roboustness/error handling
 

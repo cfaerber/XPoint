@@ -38,7 +38,11 @@ uses
 {$IFDEF DOS32 }
   dossock,
 {$ELSE }
-  sockets,
+  {$IFDEF OS2 }
+    os2sock,
+  {$ELSE }
+    sockets,
+  {$ENDIF }
 {$ENDIF }
 {$ENDIF }
   sysutils;
@@ -237,7 +241,13 @@ begin
   FAddr.Addr:= Host.Raw;
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
-  if not {$IFDEF DOS32}DOSSock.{$ELSE}Sockets.{$ENDIF}
+  if not {$IFDEF DOS32}DOSSock.{$ELSE}
+  {$IFDEF OS2 }
+    os2sock.
+  {$ELSE }
+    sockets.
+  {$ENDIF }
+    {$ENDIF}
     Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
 {$ENDIF}
   begin
@@ -390,6 +400,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/05/16 01:59:16  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.20  2001/04/16 18:09:35  ma
   - added VERBOSE debug logs (DLDebug+1 :-)
 

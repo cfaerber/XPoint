@@ -48,8 +48,8 @@ end; { destructor Done }
 
 procedure ComReadProc(var TempPtr: Pointer);
 Type TBuffRec = Record
-         BytesIn   : SmallWord;               { Number of bytes in the buffer }
-         MaxSize   : SmallWord;                     { Full size of the buffer }
+         BytesIn   : Word;               { Number of bytes in the buffer }
+         MaxSize   : Word;                     { Full size of the buffer }
      end; { TBuffRec }
 
 var Available : Boolean;
@@ -64,15 +64,15 @@ begin
        begin
          CriticalRx.EnterExclusive;
          ReturnCode := 0;
-         DosDevIoCtl(ClientHandle,                             { File-handle }
+(*!!!         DosDevIoCtl(ClientHandle,                             { File-handle }
                      ioctl_Async,                                 { Category }
                      async_GetInQueCount,                         { Function }
                      nil,                                           { Params }
                      ReturnCode,                          { Max param length }
-                     @ReturnCode,                             { Param Length }
+                     ReturnCode,                             { Param Length }
                      @BufferRec,                             { Returned data }
                      SizeOf(TBuffRec),                     { Max data length }
-                     @ReturnCode);                             { Data length }
+                     ReturnCode);                             { Data length }  *)
 
          Available := (BufferRec.BytesIn > 00);
 
@@ -288,19 +288,18 @@ begin
 
   if NOT InitFailed then
     begin
-      OpenAction := file_Open;
+      OpenAction := doOpened;
       StrpCopy(Temp, 'COM' + IntToStr(ComPort));
 
-      ReturnCode :=
+(*!!      ReturnCode :=
         DosOpen(Temp,                                    { Filename, eg: COM2 }
                 ClientHandle,
                 OpenAction,
                 0,                                                 { Filesize }
                 0,                                               { Attributes }
-                FILE_OPEN or OPEN_ACTION_OPEN_IF_EXISTS,         { Open flags }
-                OPEN_ACCESS_READWRITE or OPEN_SHARE_DENYNONE or    { OpenMode }
-                OPEN_FLAGS_FAIL_ON_ERROR,
-                nil);                                   { Extended attributes }
+                doOpen !!! or OPEN_ACTION_OPEN_IF_EXISTS,         { Open flags }
+                doReadWrite or doDenyNone or doFailonErr,          { Open Mode }
+                nil);                                   { Extended attributes } *)
 
       InitFailed := (ReturnCode <> 0);
     end; { if }
@@ -364,15 +363,15 @@ begin
   TempRec[03] := Temp_StopBits;
 
   {------------------------- Set line parameters ----------------------------}
-  DosDevIoCtl(ClientHandle,                                    { File-handle }
+(*!!  DosDevIoCtl(ClientHandle,                                    { File-handle }
               ioctl_Async,                                        { Category }
               async_SetLineCtrl,                                  { Function }
               @TempRec,                                             { Params }
               SizeOf(TempRec),                            { Max param length }
-              @RetLength,                                     { Param Length }
+              RetLength,                                     { Param Length }
               @TempRec,                                      { Returned data }
               SizeOf(TempRec),                             { Max data length }
-              @RetLength);                                     { Data length }
+              RetLength);                                     { Data length }
 
   {------------------------- Set speed parameters ---------------------------}
   BpsRec.Rate := BpsRate;
@@ -382,10 +381,10 @@ begin
               async_ExtSetBaudRate,                                { Function }
               @BpsRec,                                               { Params }
               SizeOf(BpsRec),                              { Max param length }
-              @RetLength,                                      { Param Length }
+              RetLength,                                      { Param Length }
               @BpsRec,                                        { Returned data }
               SizeOf(BpsRec),                               { Max data length }
-              @RetLength);                                      { Data length }
+              RetLength);                                      { Data length } *)
   SetLine:=True;
 end; { proc. tSerialObj.SetLine }
 
@@ -481,15 +480,15 @@ function tSerialObj.Carrier: Boolean;
 var Status    : Byte;
     RetLength : Longint;
 begin
-  DosDevIoCtl(ClientHandle,                                     { File-handle }
+(*  DosDevIoCtl(ClientHandle,                                     { File-handle }
               ioctl_Async,                                         { Category }
               async_GetModemInput,                                 { Function }
               nil,                                                   { Params }
               00,                                          { Max param length }
-              @RetLength,                                      { Param Length }
+              RetLength,                                      { Param Length }
               @Status,                                        { Returned data }
               SizeOf(Status),                               { Max data length }
-              @RetLength);                                      { Data length }
+              RetLength);                                      { Data length } *)
 
   Carrier := Status AND 128 <> 00;
 end; { func. tSerialObj.Carrier }
@@ -526,15 +525,15 @@ begin
              MaskRec.OffMask  := $FE;
            end; { if }
 
-  DosDevIoCtl(ClientHandle,                                     { File-handle }
+(*  DosDevIoCtl(ClientHandle,                                     { File-handle }
               ioctl_Async,                                         { Category }
               async_SetModemCtrl,                                  { Function }
               @MaskRec,                                              { Params }
               SizeOf(MaskRec),                             { Max param length }
-              @RetLength,                                      { Param Length }
+              RetLength,                                      { Param Length }
               @MaskRec,                                       { Returned data }
               SizeOf(MaskRec),                              { Max data length }
-              @RetLength);                                      { Data length }
+              RetLength);                                      { Data length } *)
 end; { proc. tSerialObj.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -554,7 +553,7 @@ var BpsRec   : TBpsRec;
     Status   : Byte;
     RetLength: Longint;
 begin
-  DosDevIoCtl(ClientHandle,                                     { File-handle }
+(*  DosDevIoCtl(ClientHandle,                                     { File-handle }
               ioctl_Async,                                         { Category }
               async_ExtGetBaudRate,                                { Function }
               nil,                                                   { Params }
@@ -562,7 +561,7 @@ begin
               @RetLength,                                      { Param Length }
               @BpsRec,                                        { Returned data }
               SizeOf(BpsRec),                               { Max data length }
-              @RetLength);                                      { Data length }
+              @RetLength);                                      { Data length }  *)
 
   GetBpsRate := BpsRec.CurBaud;
 end; { func. tSerialObj.GetBpsRate }
@@ -633,15 +632,15 @@ var Dcb      : DCBINFO;
 begin
   FillChar(Dcb, SizeOF(Dcb), 0);
 
-  DosDevIoCtl(ClientHandle,                                     { File-handle }
+(*  DosDevIoCtl(ClientHandle,                                     { File-handle }
               ioctl_Async,                                         { Category }
               async_GetDcbInfo,                                    { Function }
               nil,                                                   { Params }
               00,                                          { Max param length }
-              @RetLength,                                      { Param Length }
+              RetLength,                                      { Param Length }
               @Dcb,                                           { Returned data }
               SizeOf(DcbInfo),                              { Max data length }
-              @RetLength);                                      { Data length }
+              RetLength);                                      { Data length } *)
 
   if (SoftTX) or (SoftRX) then
     begin
@@ -657,20 +656,23 @@ begin
   dcb.bXOFFChar := $13;
 
   RetLength := SizeOf(DcbInfo);
-  DosDevIoCtl(ClientHandle,                                     { File-handle }
+(*  DosDevIoCtl(ClientHandle,                                     { File-handle }
               ioctl_Async,                                         { Category }
               async_SetDcbInfo,                                    { Function }
               @Dcb,                                                  { Params }
               SizeOf(DcbInfo),                             { Max param length }
-              @RetLength,                                      { Param Length }
+              RetLength,                                      { Param Length }
               nil,                                            { Returned data }
               RetLength,                                    { Max data length }
-              @RetLength);                                      { Data length }
+              RetLength);                                      { Data length } *)
 
 end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.5  2001/05/16 01:59:15  mk
+  - fixed os/2 compatibility with FPC very quick and dirty
+
   Revision 1.4  2001/03/02 15:45:54  ma
   - main buffer of ring buffer obj is private now
 
