@@ -116,6 +116,7 @@ begin
     if pa.FileEncoding in [MimeEncodingQuotedPrintable,MimeEncodingBase64] then
       f1 := MimeCreateDecoder(pa.FileEncoding,f)
     else begin
+      f1 := f;
       f := nil;
     end;
 
