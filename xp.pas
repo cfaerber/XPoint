@@ -80,16 +80,14 @@ uses xpx,
      xpreg,    { Registrierung      }
      xp6,      { Nachrichten senden }
      xp6o,     { Unversandt, Weiterleiten }
-     xp7,      { Netcall            }
-     xp7o,
-     xp7f,     { Fido-Netcall       }
+     xpnetcall,
      xpuu,     { ucico              }
      xp8,      { 'maps & Filesercer }
      xp9,      { UniSel (B/G/S/K)   }
      xp10,     { Timing-Lst./Makros }
      xpe,      { Editor             }
      xpstat,   { Statistik          }
-     xpterm,   { CrossTerm          }
+     xpterminal,{ CrossTerm          }
      xpcc,     { Verteiler          }
      xpfido,   { Nodelist u.a.      }
      xpfidonl, { Nodelist-Config    }
@@ -134,9 +132,6 @@ begin
   InitInOutUnit;                { InOut }
   InitKeysUnit;                 { Keys }
   InitMouseUnit;                { Mouse }
-  InitObjComUnit;               { ObjCOM }
-  InitModemUnit;                { Modem }
-  InitZModemUnit;               { ZModem }
   InitResourceUnit;             { Resource }
   InitWinXPUnit;                { WinXP }
   InitMaskeUnit;                { Maske }
@@ -235,6 +230,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.50  2001/01/04 16:09:47  ma
+  - adjusted unit names in "uses" statement
+  - removed obsolete unit initialization calls
+
   Revision 1.49  2000/12/31 13:01:40  mk
   - integrated ndiff
 
