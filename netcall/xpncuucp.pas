@@ -350,13 +350,6 @@ var
       result:=true;
     end;
 
-    function RunInFilter:boolean;
-    begin
-      if (boxpar^.eFilter<>'') then
-        CallFilter(true,dest);
-      result:=true;
-    end;
-
   begin { ProcessIncomingFiles: boolean }
     result    := false;
     source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir))+'X-*';
@@ -365,8 +358,7 @@ var
 
     if InitUUZ then begin
       if RunUUZ then
-        if RunInFilter then
-          result:=true;
+        result:=true;
       KillUUZ;
     end;
 
@@ -502,6 +494,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/04/22 11:00:32  ma
+  - In filter is handled in netcall unit now
+
   Revision 1.3  2001/03/26 22:57:28  cl
   - moved compression routines from xpncuucp to zcrfc/uuz
   - fixed decompression
