@@ -734,7 +734,7 @@ again:
       renamefile(Dest+fn+'XZ',Dest+fn);
 //{$ENDIF}
 
-  if not FileExists(newfn) then
+  if not FileExists(Dest+FN) then
   begin
     RenameFile(NewFN,Dest+FN);
     raise Exception.Create(Format(GetRes2(10700,50),[Dest+FN]))
@@ -3644,6 +3644,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2002/07/31 20:25:53  cl
+  - fixed lasf commit
+
   Revision 1.110  2002/07/31 19:54:45  cl
   - Fehler beim Entpacken von Dateien werden abgefangen; Dateien werden
     nach BAD verschoben.
