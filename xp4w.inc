@@ -706,7 +706,7 @@ var fn     : string;
   procedure SetKK;
   begin
     if kk then
-      disprec[p]:=dp;
+      disprec[p]:=dpp;
     kk:=false;
     GoP;
   end;
@@ -1611,6 +1611,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.71  2001/05/30 21:19:46  mk
+  JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn> and +/-
+       the message that has been entered with the last <Ctrl-Pg*> was replaced in
+       the message window with the message the message reader had entered first.
+
   Revision 1.70  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
