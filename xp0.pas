@@ -210,6 +210,12 @@ const  {$IFDEF DPMI}
        ScerrLog    = 'scerrors.log';   { Script-Fehler   }
        NetcallLog  = 'netcall.log';    { Netcall-Logfile }
 
+{$IFDEF UnixFS }
+       TempBatchFN = 'tmpbatch';
+{$ELSE }
+       TempBatchFN = 'tmp.bat';	       { Temp. Batchdatei (siehe fileio) }
+{$ENDIF }
+
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
        uiName      = 1;                { User:    +USERNAME                 }
@@ -1135,6 +1141,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.40  2000/05/09 15:51:50  hd
+  - TempBatchFN eingefuegt
+
   Revision 1.39  2000/05/09 13:12:44  hd
   - DirSepa -> xpglobal.pas
 
