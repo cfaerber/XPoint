@@ -112,6 +112,7 @@ begin
     WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' ', Badge, ': ',
       Message);
     Flush(Logfile);
+    If IOResult <> 0 then;; (* clear io error *)
   end;
 end;
 
@@ -129,10 +130,10 @@ var
   Rew: Boolean;
   err: integer;
   cd:  string;
-  
+
 begin
   if Logging then Exit;
-  
+
   cd := GetCurrentDir;
   if Logfiledir<>'' then SetCurrentDir(Logfiledir) else Logfiledir:=cd;
 
@@ -196,6 +197,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/03/16 17:07:22  cl
+  - DebugLog now clears IOResult
+
   Revision 1.11  2001/02/22 16:03:50  cl
   - logfile always opened in same dir (no wandering if shell/TempCloseLog is called)
 
