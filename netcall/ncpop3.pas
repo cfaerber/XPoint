@@ -248,9 +248,11 @@ end;
 
 procedure TPOP3.Disconnect;
 begin
-  Output(mcInfo,res_disconnect,[0]);
   if Connected then
+  begin
+    Output(mcInfo,res_disconnect,[0]);
     SWriteln('QUIT');
+  end;
   inherited Disconnect;
 end;
 
@@ -419,6 +421,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2003/05/02 12:18:09  mk
+  - in TPop3.Disconnect: show disconnect message only when connected
+
   Revision 1.20  2003/04/25 17:30:29  mk
   - use Free instead of Destroy
 
