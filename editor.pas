@@ -754,7 +754,7 @@ begin
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((isize<rrand-15) or sbrk)));
+                     ((umbruch=1) and ((isize<=rrand) or sbrk)));
         FastMove(ibuf^,p^.cont,isize);
         AppP;
         end;
@@ -1880,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.10  2000/11/10 05:21:11  mk
+  RB:- Umbruch Fix
+
   Revision 1.25.2.9  2000/11/05 15:22:01  mk
   RB:- Aenderungen bezueglich - und /
 
