@@ -1647,15 +1647,16 @@ nextBox:
       Result :=trim(copy(list.getselection,2,BoxNameLen));
     List.Free;
   end else
-    rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+    rfehler(953); { 'Keine (weiteren) hinzuzuf¸genden Serverboxen vorhanden!' }
 end;
 
 
 procedure EditAddServersList(var cr:customrec);
-var   d          : DB;
-      x,y,nt     : integer;
+var   d          : DB;        
+      x,y,nr     : integer;
       t          : taste;
-      nr,bp      : shortint;
+      nt         : Byte;
+      bp         : Integer;
       gl,width   : Integer;
       buttons    : string;
       okb,edb    : shortint;
@@ -1831,7 +1832,7 @@ label Start;
   end;
 
 begin  { --- of EditAddServersList --- }
-  showErrors:=true;                    
+  showErrors:=true;
   if own_Name <> '' then maxbox:=80;
   s1:=trim(cr.s);
   if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
@@ -2330,6 +2331,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.11  2003/09/21 19:38:01  mk
+  - fixed Bug #809656: 3.8.12. Multiserverbox keine zus‰tzlichen Serverboxen per F2
+
   Revision 1.45.2.10  2003/09/21 16:08:45  mk
   - rewrote addServersTest
 
