@@ -107,7 +107,7 @@ procedure list_dummydp(s:string);
 implementation  { ------------------------------------------------ }
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
-      MinListMem : word = 15000;   { min. Bytes fr app_l        }
+      MinListMem : word = 40000;   { min. Bytes fr app_l        }
       XmsPagesize = 4096;          { min. 1024 Bytes             }
       XmsPageKB = XmsPagesize div 1024;
 
@@ -424,9 +424,9 @@ begin
     @colfunc:=nil;
     @displproc:=nil;
     startpos:=1;
-    end;
+    if emspages>0 then memflag:=1 else memflag := 0;
+  end;
   mmm:=0;
-  memflag:=0;
   EmsBSeg:=$ffff;
 end;
 
@@ -544,16 +544,18 @@ var p  : byte;
 begin
   if (length(ltxt)=1) and (ltxt[1]=#13) then
     exit;    { einzelnes CR ignorieren }
-  { MemAvail wird aus Zeitgrnden nur bei jeder 15. Zeile getestet }
-  if (mmm=15) or (memflag=2) then begin
+  { MemAvail wird aus Zeitgrnden nur bei jeder 5. Zeile getestet }
+  if (mmm=5) or (memflag=2) then begin
     with alist^ do
       case memflag of
         0 : if (memavail<MinListMem) then
-              if emspages+xmspages=0 then begin
+              if emspages+xmspages=0 then
+              begin
                 memfull;
                 memflag:=3;
-                end
-              else begin
+              end
+              else
+              begin
                 if emspages>0 then memflag:=1
                 else memflag:=2;
                 lastheap:=last;
@@ -1503,6 +1505,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.6  2001/04/19 14:28:40  mk
+  - save some memory
+
   Revision 1.19.2.5  2001/03/19 17:35:45  mk
   - neuer Brettmanager
 
@@ -1572,3 +1577,4 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+ÿ

@@ -1247,7 +1247,6 @@ begin
   else
     box:=mapsbox;
   if not BoxHasMaps(box) then exit;
-  dbDisableIndexCache;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
   if dbFound then begin
@@ -1382,7 +1381,6 @@ begin
       aufbau:=true;
       end;
     end;
-  dbEnableIndexCache;
 end;
 
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
@@ -1832,6 +1830,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.14  2001/04/19 14:28:41  mk
+  - save some memory
+
   Revision 1.10.2.13  2001/04/14 10:07:01  mk
   - Anpassungen Client-Modus
 
