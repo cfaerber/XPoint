@@ -387,7 +387,7 @@ begin
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
   {$ENDIF}
-  if CharCount > 0 then
+  if Result > 0 then
     DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlTrace);
 end; { func. TTelnetObj.CharAvail }
 
@@ -627,6 +627,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.5  2003/12/07 17:04:50  mk
+  - fixed last commit
+
   Revision 1.15.2.4  2003/12/01 10:28:55  mk
   - prevent numerous CharCount: 0 messages
 
