@@ -32,8 +32,21 @@
 
 { implementation of the interface }
 
+procedure SysDelay(MS: Longint);
+begin
+  //todo
+end;
+
+procedure SysBeep(Freq, Dur: Integer);
+begin
+  //todo
+end;
+
 {
         $Log$
+        Revision 1.1.2.1  2003/01/11 22:08:45  mk
+        - added dummy funkctions
+
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 
