@@ -718,19 +718,19 @@ var   res  : integer;
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
   end;
 
-  procedure TestDir2(d:string);
+(*  procedure TestDir2(d:string);
   begin
     if not IsPath(d) then
       if not CreateDir(LeftStr(d,length(d)-1)) then
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
-  end;
+  end; *)
 
 begin
   EditLogpath:='';
-  TestDir2(logpath);
+(*  TestDir2(logpath);
   TestDir2(temppath);
   TestDir2(extractpath);
-  TestDir2(sendpath);
+  TestDir2(sendpath); *)
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then begin
@@ -1202,6 +1202,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.94  2000/12/06 11:19:09  mk
+  - TestPfad2 entfernt
+
   Revision 1.93  2000/12/05 17:20:25  ml
   - killed logicbug in TestDir-routine
 
