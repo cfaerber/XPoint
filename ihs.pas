@@ -131,7 +131,8 @@ var  fname,
        s,qvref,st    : string;
        z             : ^za;
        qvw           : array[1..1024] of packed record
-                                          y,x,l : byte;
+                                          y: smallword;
+                                          x,l : byte;
                                           nn    : smallword;
                                         end;
 
@@ -301,7 +302,7 @@ var  fname,
      if size=0 then exiterr('Empty page '+strs(pnr));
      blockwfw(size);
      blockwfb(qvws);
-     blockwrite(f,qvw,5*qvws);
+     blockwrite(f,qvw,6*qvws);
      xx:=7;
      obufp:=0;
      for i:=1 to lines do begin
@@ -418,6 +419,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2000/11/26 10:40:53  mk
+  - neue Hilfe mit Querverweisen in langen Texten
+
   Revision 1.20  2000/11/15 23:37:34  fe
   Corrected some string things.
 

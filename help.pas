@@ -36,7 +36,7 @@ uses
   typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
-      maxqvw   = 200;
+      maxqvw   = 350;
       maxlines = 350;   { max. Zeilen pro Hilfsseite }
 
       HBlocksatz     = true;
@@ -49,7 +49,7 @@ const maxpages = 1200;
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
 function  inithelp(name:string; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
-procedure sethelppos(_x,_y,height:byte);
+procedure sethelppos(_x,_y,height:word);
 procedure help_printable(printchar:taste; pinit,pexit:string);
 
 procedure IHS(page:word);
@@ -80,14 +80,15 @@ type pageadr = array[1..maxpages] of packed record
                                        adr : longint;
                                      end;
      qvt     = array[1..maxqvw] of packed record
-                                     y,x,l : byte;
+                                     y: smallword;
+                                     x,l : byte;
                                      xout  : byte;  { Anzeige-Position }
                                      nn    : smallword;
                                    end;
      zt      = array[1..maxlines] of string;
 
 var f         : file;
-    x,y       : byte;
+    x,y       : integer;
     pages,
     ixp,ap,
     illp      : word;
@@ -105,12 +106,12 @@ var f         : file;
     lines     : integer;
     _lines    : integer;   { iif(noheader,lines,lines-1) }
     z         : ^zt;
-    wdt,hgh   : byte;
+    wdt,hgh   : integer;
 
     pst       : array[1..maxpst] of word;
     qst       : array[1..maxpst] of byte;
     ast       : array[1..maxpst] of integer;
-    pstp      : byte;
+    pstp      :integer;
 
     NormColor,HighColor,QvwColor,QvwSelColor : byte;
 
@@ -229,7 +230,7 @@ begin
 end;
 
 
-procedure sethelppos(_x,_y,height:byte);
+procedure sethelppos(_x,_y,height:word);
 begin
   x:=_x; y:=_y; hgh:=height;
 end;
@@ -262,7 +263,7 @@ var  size    : word;
      wd      : byte;
 label laden;
 
-   procedure insqvw(y1,x1:byte; add:shortint);
+   procedure insqvw(y1,x1:integer; add:shortint);
    var i : byte;
    begin
      for i:=1 to qvws do
@@ -270,7 +271,7 @@ label laden;
          if (x>=x1) and (y=y1) then inc(x,add);
    end;
 
-   procedure addqvwout(y1,x1:byte; add:shortint);
+   procedure addqvwout(y1,x1:integer; add:shortint);
    var i : byte;
    begin
      for i:=1 to qvws do
@@ -314,7 +315,7 @@ laden:
   qvws:=blockrb;
   for i:=1 to qvws do
     with qvw^[i] do begin
-      y:=blockrb; x:=blockrb; l:=blockrb;
+      y:=blockrw; x:=blockrb; l:=blockrb;
       nn:=blockrw;
       xout:=x;
       end;
@@ -495,7 +496,7 @@ var lp      : word;
 
   function noother:boolean;
   var other : boolean;
-      i     : byte;
+      i     : word;
   begin
     other:=false;
     for i:=1 to qvws do
@@ -503,7 +504,7 @@ var lp      : word;
     noother:=not other;
   end;
 
-  procedure searchsame(add:shortint; var nr:byte);
+  procedure searchsame(add:shortint; var nr:word);
   begin
     nr:=qvp;
     repeat
@@ -514,7 +515,7 @@ var lp      : word;
     if nr=qvp then nr:=0;
   end;
 
-  procedure searchother(add:shortint; var nr:byte);
+  procedure searchother(add:shortint; var nr:word);
   begin
     nr:=qvp;
     repeat
@@ -524,9 +525,9 @@ var lp      : word;
     until qvw^[nr].y<>qvw^[qvp].y;
   end;
 
-  procedure searchlowdist(var nr:byte);
-  var y,i : byte;
-      d   : byte;
+  procedure searchlowdist(var nr:word);
+  var y,i : word;
+      d   : word;
   begin
     y:=qvw^[nr].y;
     d:=99;
@@ -538,7 +539,7 @@ var lp      : word;
   end;
 
   procedure goup;
-  var nr : byte;
+  var nr : word;
   begin
     if noother then goleft
     else begin
@@ -550,7 +551,7 @@ var lp      : word;
   end;
 
   procedure godown;
-  var nr : byte;
+  var nr : word;
   begin
     if noother then goright
     else begin
@@ -756,6 +757,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/26 10:40:43  mk
+  - neue Hilfe mit Querverweisen in langen Texten
+
   Revision 1.30  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 
