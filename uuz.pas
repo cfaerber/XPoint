@@ -3387,6 +3387,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.71  2002/04/09 21:48:04  my
+  MY:- Typo im Commit-Text entfernt.
+
   Revision 1.35.2.70  2002/04/09 21:45:32  my
   MY:- Anzahl der erforderlichen UUZ-Parameter bei ausgehenden Nachrichten
        auf 3 (vorher 4) reduziert. Routine erfÅllt ohnehin nicht ihren
@@ -3394,7 +3397,7 @@ end.
        zu erzwingen) und mÅ·te mal komplett erneuert werden.
 
   Revision 1.35.2.69  2002/04/09 21:40:44  my
-  MY[+JG]}:- Der From:-Header durchlÑuft jetzt die MIME-Decodierung nach
+  MY[+JG]:- Der From:-Header durchlÑuft jetzt die MIME-Decodierung nach
              RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
              zerlegt wird (vorher wurde ein Header wie
              'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?= <...>' nicht
