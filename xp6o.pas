@@ -875,8 +875,8 @@ again:
                  else begin
                    empf:=''; ebrett:='';
                    if typ=3 then ReplyText(betr,rehochn);
-                   ReadDirect('Nachricht weiterleiten',empf,betr,pollbox,false,brk);
-                   if brk then goto ende
+                   ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk); 
+                   if brk then goto ende                     {Nachricht weiterleiten}
                    else forcebox:=pollbox;
                    pm:=cpos('@',empf)>0;
                    if not pm then empf:='A'+empf;
@@ -1248,6 +1248,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/21 20:05:58  jg
+  - Nachricht/Weiterleiten...Direkt: Text der Fensterueberschrift
+    war fest im Programm und nicht in der .RES
+
   Revision 1.15  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
