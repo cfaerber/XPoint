@@ -1129,7 +1129,9 @@ begin
             end;
           if fido then writeln(t,'---');
           close(t);
-          CloseList; { Liste schlie·en, damit mehr Speicher frei ist }
+          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+            BretterAnlegen;
+          CloseList;
           if art=3 then
             verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
           case art of
@@ -1139,14 +1141,13 @@ begin
             4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
           end;
           erase(t);
-          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
-            BretterAnlegen;
           end
-        else
+        else begin
           BretterAnlegen;
+          CloseList;
+          end;
         end
-      else
-        closelist; { Lister hier noch bei BRK schlie·en }
+      else closelist; { Lister hier noch bei BRK schlie·en }
       freeres;
       aufbau:=true;
       end;
@@ -1585,6 +1586,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/06/26 17:56:12  mk
+  - Fix von Jochen eingebaut
+
   Revision 1.10.2.1  2000/06/24 14:16:35  mk
   - 32 Bit Teile entfernt, Fixes
 
