@@ -175,8 +175,6 @@ uses
 {$ENDIF }
 
 const
-  highbyte : byte = 0;
-
   lshift = 2;
   rshift = 1;
   ctrl   = 4;
@@ -199,7 +197,7 @@ end;
 {$IFNDEF NCRT }
 function keypressed:boolean;
 begin
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
+  keypressed:=(forwardkeys<>'') or crt.keypressed;
 end;
 
 function readkey:char;
@@ -207,15 +205,17 @@ begin
   if forwardkeys<>'' then begin
     readkey:=forwardkeys[1];
     forwardkeys:=copy(forwardkeys,2,255);
-    lastscancode:=0;
-  end
-  else
-    if highbyte<>0 then begin
-      readkey:=chr(highbyte);
-      highbyte:=0;
-    end
-    else
-      readkey:=crt.readkey;
+  end else
+    readkey:=crt.readkey;
+
+  // Scan Numeric Block keys *, - and +
+  Lastscancode:=0;
+  if GetAsyncKeyState(VK_Multiply) < 0 then
+    LastScanCode := GreyMult;
+  if GetAsyncKeyState(VK_Subtract) < 0 then
+    LastScanCode := GreyMinus;
+  if GetAsyncKeyState(VK_Add) < 0 then
+    LastScanCode := GreyPlus;
 end;
 {$ENDIF } { NCRT }
 
@@ -364,6 +364,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/07/23 10:21:39  mk
+  - added Win32 support for numeric key block keys -, + and *
+
   Revision 1.32  2001/07/23 09:23:11  ml
   - Shift-Handling fixed in Win32
 
