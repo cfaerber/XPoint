@@ -1631,7 +1631,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     end;
 
     if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
-      hdp^.org_xref:=_orgref;
+      hdp.org_xref:=_orgref;
 
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
@@ -2102,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.90  2001/01/03 18:02:11  mk
+  - fixed typo from last commit
+
   Revision 1.89  2001/01/03 17:38:53  mk
   - letzten Checkin an die 3.30er Version angeglichen
 
