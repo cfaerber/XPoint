@@ -307,7 +307,7 @@ begin
     start:=0; stop:=0; _unit:=0;
     end
   else begin
-    mult:=(y2-y1+1) / real(total);
+    mult:=(y2-y1+1) / total;
     start:=y1+trunc(from*mult);
     stop:=start+trunc(gl*mult);
     _unit:=(total+1+(y2-y1)div 2) div (y2-y1+1);
@@ -331,6 +331,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/22 22:22:50  mk
+  - um einen real()-Typecast Compilerbug drumrumprogrammeirt
+
   Revision 1.18  2000/07/05 09:50:12  hd
   - AnsiString-Anpassung
 
