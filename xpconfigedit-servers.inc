@@ -206,8 +206,9 @@
                      ClientPhone,ClientLogin,ClientPass:string; ClientAskIfConnect,
                      ClientAskIfDisconnect,ClientKeepConnectStatus:boolean;
                      const Titel:String);
-  var x,y,b       : Integer;
-      serverNames : string;
+  var
+    x,y: Integer;
+    serverNames : string;
   begin
     dialog(66,20,Titel,x,y);                                { 'Client-Einstellungen' }
 
@@ -1038,7 +1039,7 @@
             exit;
           end;
           s:='';
-          while (not eof(t)) and (i <= ServersMax) and (memavail>10000) do
+          while (not eof(t)) and (i <= ServersMax) do
           begin
             readln(t,s);
             s:=trim(s);
@@ -1943,7 +1944,6 @@
       realname     : string;
       dname,
       old_dname    : string;
-
   begin
     with boxpar^ do 
     begin
@@ -2361,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.46  2002/02/10 14:23:56  mk
+  - misc 3.40 update fixes
+
   Revision 1.45  2002/01/22 19:15:31  mk
   - after 3.40 merge fixes
 

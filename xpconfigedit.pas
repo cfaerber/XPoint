@@ -1586,7 +1586,7 @@ begin
     Result :=false;
 end;
 
-type box_array = array[0..maxboxen] of string[BoxNameLen];
+type box_array = array[0..maxboxen] of string;
                  { Box-Ergebnisliste => Eingabefeld }
 
 
@@ -1604,7 +1604,7 @@ var   d          : DB;
       list       : TLister;
 label nextBox;
 begin
-  BoxSelect:=''; brk:=false;
+  BoxSelect:='';
   height:=screenlines-17;
   if screenlines>30 then dec(height,2);
   if screenlines>40 then dec(height,2);
@@ -1663,9 +1663,11 @@ nextBox:
   begin
     brk := list.Show;
     CloseBox;
+    if brk then
+      Result := ''
+    else
+      Result :=trim(copy(list.getselection,2,BoxNameLen));
     List.Free;
-    BoxSelect:=trim(copy(list.getselection,2,BoxNameLen));
-    if brk then BoxSelect:='';
   end else
     rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
 end;
@@ -1676,10 +1678,10 @@ var   d          : DB;
       x,y,nt     : integer;
       t          : taste;
       nr,bp      : shortint;
-      gl,width   : byte;
-      buttons    : string[60];
+      gl,width   : Integer;
+      buttons    : string;
       okb,edb    : shortint;
-      p,n        : shortint;
+      p          : Integer;
       a,ii       : integer;
       s1         : string;
       modi       : boolean;
@@ -1706,8 +1708,8 @@ label Start;
   { 'mappcustomsel' halt nicht) und fragen sie daher Åber Variablen ab.}
 
   procedure display;
-  var i    : shortint;
-      box  : string[BoxNameLen];
+  var i    : Integer;
+      box  : string;
   begin
     moff;
     for i:=1 to gl do
@@ -1740,24 +1742,21 @@ label Start;
   end;
 
   procedure InsertBox;
-  var   i         : Integer;
-        boxlen,
-        bfglen    : word;
-        box       : string[BoxNameLen];
-        bfg       : string[8];
-        add       : byte;
+  var
+        i, 
+        add, bfglen: Integer;
+        box       : string;
+        bfg       : string;
         d         : DB;
         too_long  : boolean;
-  const maxboxlen : byte = 255;
-        maxbfglen = 160;
+  const
+     maxbfglen = 160;
   begin
-    if own_Name = '' then maxboxlen:=249;  { wegen mappsel-String-Addition  }
     dbOpen(d,BoxenFile,1);                 { (lfd. Nr.) in 'EditNetcallDat' }
-    boxlen:=0; bfglen:=0;
+    bfglen:=0;
     too_long:=false;
     for i:=1 to entries do
     begin
-      boxlen:=boxlen + (length(boxlist[i])+1);  { GesamtlÑnge Boxnamen }
       if own_Name <> '' then
       begin
         dbSeek(d,boiName,uppercase(boxlist[i]));
@@ -1767,11 +1766,6 @@ label Start;
           bfglen:=bfglen + (length(bfg)+1);    { GesamtlÑnge BFG-Namen }
         end;
       end;
-    end;
-    if boxlen >= maxboxlen then
-    begin { 'Maximale EingabelÑnge (%s) fÅr Serverbox-Namen erreicht!' }
-      too_long:=true;
-      rfehler1(955,strs(maxboxlen));
     end;
     if own_Name <> '' then
       if bfglen >= maxbfglen then
@@ -1806,12 +1800,6 @@ label Start;
         if dbfound then
           bfg:=dbreadStr(d,'dateiname');
       end;
-      if boxlen + length(box) > maxboxlen then
-      begin
-        too_long:=true;
-        rfehler1(958,strs(maxboxlen-boxlen));
-     { 'Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfÅgbar.' }
-      end;
       if own_Name <> '' then
         if bfglen + length(bfg) > maxbfglen then
         begin
@@ -1845,7 +1833,7 @@ label Start;
   end;
 
   procedure MoveBox;
-  var s : string[BoxNameLen];
+  var s : string;
       i : integer;
   begin                           { Ziel = (a+p); Quelle = movefrom }
     boxlist[0]:=boxlist[a+p];
@@ -1867,16 +1855,18 @@ label Start;
   end;
 
   procedure DelBox;
-  var s : string[BoxNameLen];
+  var s : string;
       i : integer;
   begin
     s:=boxlist[a+p];
     s:=mid(s,blankpos(s)+1);
-    if ReadJN(getreps2(936,4,s),true) then begin { 'Serverbox "%s" lîschen' }
-      if a+p<entries then begin  { a+p = Ziel }
+    if ReadJN(getreps2(936,4,s),true) then
+    begin { 'Serverbox "%s" lîschen' }
+      if a+p<entries then
+      begin  { a+p = Ziel }
         for i:=(a+p) to entries-1 do
           boxlist[i]:=boxlist[i+1];
-        boxlist[i+1]:='';
+        boxlist[entries]:='';
       end
       else
         boxlist[a+p]:='';
@@ -2066,7 +2056,7 @@ var   p,nt,i,j,
       bfglen     : word;
       s1         : string;
       d          : DB;
-      boxlist    : array[1..maxboxen] of string[BoxNameLen];
+      boxlist    : array[1..maxboxen] of string;
       dupelist   : array[1..maxboxen] of byte;       { Array fÅr Dupes }
 const maxboxlen  : byte = 255;
       maxbfglen = 160;
@@ -2262,14 +2252,14 @@ end;
 
 function BfgToBox(var s:string):string;
 var   d      : DB;
-      i,p    : byte;
+      p      : Integer;
       s1     : string;              { BFG-Datei }
       s2     : string;              { Boxname   }
       s3     : string;              { Gesamtstring aller Boxnamen }
       fehler : string;
 
   function isValidBfgName(const s1:string):boolean;
-  var   i  : byte;
+  var   i  : Integer;
         vb : boolean;
   const ValidBfgCh : set of char=['A'..'Z','0'..'9','_','^','$','~','!',
                           '#','%','&','-','{','}','(',')','@','''','`'];
@@ -2355,9 +2345,9 @@ end;
 
 function BoxToBfg(var s:string):string;
 var   d      : DB;
-      i,p    : byte;
+      p      : Integer;
       s1     : string;              { Boxname   }
-      s2     : string[8];           { BFG-Datei }
+      s2     : string;              { BFG-Datei }
       s3     : string;              { Gesamtstring aller BFG-Dateinamen }
       fehler : string;
 const maxbfglen = 160;
@@ -2406,8 +2396,8 @@ end;
 
 
 procedure SingleServerSel(var cr:customrec); { einzelne Serverbox (nur vom }
-var i     : byte;                            { eigenen Netztyp) auswÑhlen  }
-    s1    : string[BoxNameLen];
+var i     : Integer;                            { eigenen Netztyp) auswÑhlen  }
+    s1    : string;
     dummy : box_array; { wir brauchen keine Serverboxen-Liste zu Åbergeben }
 begin
   for i:=0 to maxboxen do dummy[i] := '';
@@ -2546,6 +2536,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2002/02/10 14:23:56  mk
+  - misc 3.40 update fixes
+
   Revision 1.44  2002/02/10 13:32:26  mk
   - fixed some display problems with Netcall/Special
 
