@@ -1,14 +1,15 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
-const cfs : array[0..3] of string[5] = ('Z','Shift','Ctrl','Alt');
+const cfs : array[0..4] of string[5] = ('Z','Shift','Ctrl','Alt','#Z');
 
 procedure defaultcolors;
 var i : integer;
@@ -349,7 +350,7 @@ begin
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
   new(boxpar);
-  for i:=0 to 3 do
+  for i:=0 to 4 do
     new(fkeys[i]);
   aktdispmode:=0;
   kombaum:=nil;
@@ -543,7 +544,7 @@ begin
   autofeier:=true;
   askreplyto:=false;
 
-  for i:=0 to 3 do begin
+  for i:=0 to 4 do begin
     fillchar(fkeys[i]^,sizeof(fkeys[0]^),0);
     for j:=1 to 10 do
       fkeys[i]^[j].vollbild:=true;
@@ -594,7 +595,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
-  haltownpm:=false;
+  haltownPM:=false;
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -637,8 +638,9 @@ begin
   soundflash:=false;
   MausLeseBest:=false;
   MausPSA:=true;
-  ShowFidoEmpf:=true;
   ShowRealnames:=false;
+  ShowFidoEmpf:=true;
+  MsgNewFirst:=false;
   ss_passwort:=false;
   NewsMIME:=true;
   MIMEqp:=false;
@@ -656,6 +658,7 @@ begin
   ZC_iso:=false;
   leaveconfig:=false;
   NewsgroupDisp:=false;
+  NewsgroupDispAll:=false;
   NetcallLogfile:=false;
   pointlist4d:=false;
   ShrinkUheaders:=false;
@@ -673,6 +676,7 @@ begin
   _usersortbox:=false;
   NeuUserGruppe:=1;
   multipartbin:=true;
+  RFC_AddOldBetreff:=false;
   mausmpbin:=false;
 
   AutoUpload:=true;
@@ -694,7 +698,7 @@ begin
   tonsignal:=false;
 
   MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
-  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
+  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/Adreábuchgruppe/Adresse/Verteiler/Kommentar }
   Magics:=false;
 
   UsePGP:=false;
@@ -778,7 +782,7 @@ begin
   wrhd(3);                           { 'allgemeine Einstellungen' }
   writeln(t,'ExtraktTyp=',defExtraktTyp);
   writeln(t,'Brettanzeige=',brettanzeige);
-  writeln(t,'Showungelesen=',jnf(showungelesen));
+  writeln(t,'ShowUngelesen=',jnf(showungelesen));
   writeln(t,'ShowMsgDatum=',jnf(showmsgdatum));
   writeln(t,'Lister=',VarLister);
   writeln(t,'ListerKB=',listerkb);
@@ -938,6 +942,7 @@ begin
   writeln(t,'TrennKommentar=',trennkomm);
   writeln(t,'TerminalBIOS=',jnf(termbios));
   writeln(t,'Tonsignal=',jnf(tonsignal));
+  writeln(t,'MsgNewFirst=',jnf(MsgNewFirst));
   writeln(t,'MsgFeldTausch=',MsgFeldTausch);
   writeln(t,'UsrFeldTausch=',UsrFeldTausch);
   writeln(t,'Magics=',jnf(Magics));
@@ -971,8 +976,10 @@ begin
   writeln(t,'RFC1522=',jnf(RFC1522));
   writeln(t,'NoArchive=',jnf(NoArchive)); {!MH:}
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
+  writeln(t,'NewsgroupAnzeigeAlle=',jnf(newsgroupdispall));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
+  writeln(t,'RFC_AddOldBetreff=',jnf(RFC_AddOldBetreff));
   wrhd(7);                                             { Fido }
   writeln(t,'Vorwahl=',vorwahl);
   writeln(t,'IntVorwahl=',intvorwahl);
@@ -987,7 +994,7 @@ begin
 { writeln(t,'Fido-PGP=',jnf(PGP_Fido)); }
 
   wrhd(8);                                             { Funktionstasten }
-  for i:=0 to 3 do
+  for i:=0 to 4 do
     for j:=1 to 10 do
       with fkeys[i]^[j] do
         if menue+prog<>'' then
@@ -1193,7 +1200,7 @@ var t       : text;
     else begin
       getfkeys:=true;
       nr:=-1;
-      for i:=0 to 3 do
+      for i:=0 to 4 do
         if copy(su,6,length(cfs[i]))=ustr(cfs[i]) then
           nr:=i;
       if nr>-1 then begin
@@ -1373,7 +1380,7 @@ begin
           getb(su,  'ExtraktTyp',defextrakttyp) or
           getb(su,  'Brettanzeige',brettanzeige) or
           getx(su,  'ShowUngelesen',showungelesen) or
-          getx(su,  'ShowMsgdatum',showmsgdatum) or
+          getx(su,  'ShowMsgDatum',showmsgdatum) or
           gets(s,su,'lister',varlister,40) or
           getw(su,  'listerkb',listerkb) or
           getx(su,  'listwrap',listwrap) or
@@ -1517,6 +1524,7 @@ begin
           getx(su,  'ZCrossPostings',dummyb) or
           getx(su,  'LeaveConfig',leaveconfig) or
           getx(su,  'NewsgroupAnzeige',newsgroupdisp) or
+          getx(su,  'NewsgroupAnzeigeAlle',newsgroupdispall) or
           getx(su,  'NetcallLogfile',netcalllogfile) or
           getx(su,  '4D-Pointlist',pointlist4d) or
           getx(su,  'IgnoreCancel',dummyb) or
@@ -1572,6 +1580,7 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
+          getx(su,  'MsgNewFirst',MsgNewFirst) or 
           gets(s,su,'msgfeldtausch',MsgFeldTausch,MsgFelderMax) or
           gets(s,su,'usrfeldtausch',UsrFeldTausch,UsrFelderMax) or
           getx(su,  'magics',magics) or
@@ -1581,6 +1590,7 @@ begin
           getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin) or
+          getx(su,  'RFC_AddOldBetreff',RFC_AddOldBetreff) or
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel) or
           getb(su,  'RTA-Mode', RTAMode) or
@@ -1612,6 +1622,7 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
+(*
     MsgFeldTausch:=UStr(MsgFeldTausch);
     { (F)lags mssen immer vorne stehen }
     i:=cpos('F',MsgFeldTausch); if (i>1) then begin
@@ -1631,6 +1642,7 @@ begin
     p:=0;
     for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
     if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
+*)
     GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
@@ -1648,8 +1660,8 @@ begin
     if ustr(userauf)='ALLE' then UserAufnahme:=0
     else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
     else if ustr(userauf)='PMS' then UserAufnahme:=3
-    else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
-    scsavetime:=scrsaver;                { Screen-Saver     }
+    else UserAufnahme:=2;
+    scsavetime:=scrsaver;                 { Screen-Saver     }
     close(lst);                           { Drucker-Schnitte }
     DruckLPT:=min(5,max(DruckLpt,1));
     AssignLst(lst,DruckLPT-1);
@@ -1751,6 +1763,34 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.27  2001/09/16 20:23:14  my
+  JG+MY:- Verbesserte Brettanzeige (zusätzlicher Schalter unter
+          Config/Anzeige/Bretter): Es können jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
+          unten)
+
+  JG+MY:- Feldtausch geändert/verbessert: Default bei Usern jetzt FHBGAK,
+          jedes Feld kann weggelassen werden, bei Weglassen großer Felder
+          werden die übrigen Felder verbreitert. Option für Nachrichten-
+          Feldtausch jetzt zusätzlich über /Config/Anzeige/Nachrichten
+          erreichbar. /Config/Anzeige/Hilfen übersichtlicher gestaltet.
+
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anhängen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei Änderung des
+          Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
+          automatisch angehängt.
+
+  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfügung).
+
+  JG+MY:- Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
+          verfügbar
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.62.2.26  2001/08/28 08:05:14  mk
   - removed GetI16, because unnecessary for 16 Bit
   - optimized GetX functions, should improve startup speed
