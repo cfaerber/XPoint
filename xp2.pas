@@ -813,7 +813,7 @@ var f,nf : byte;
 begin
   abgelaufen1:=false; {(right(date,4)+copy(date,4,2)>reverse('104991')); }
   abgelaufen2:=false; { abgelaufen1; }
-  f:=FreeFILES(30);
+  f:=FreeFILES(40);
   if (f>5) and (f<16) then begin
     nf:=((ConfigFILES+(16-f)+4)div 5)*5;
     rfehler1(210,strs(nf));
@@ -1143,6 +1143,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.2  2000/08/03 14:25:10  mk
+  - Filehandles auf 40 erhoeht
+
   Revision 1.45.2.1  2000/08/03 09:22:23  mk
   - Filehandles hochgesetzt
 
