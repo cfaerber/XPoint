@@ -30,13 +30,13 @@ const bm_changesys = 1;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
-procedure ReadBox(nt:byte; dateiname:pathstr; bp:BoxPtr);
-procedure WriteBox(dateiname:pathstr; bp:BoxPtr);
+procedure ReadBox(nt:byte; const dateiname:pathstr; bp:BoxPtr);
+procedure WriteBox(const dateiname:pathstr; bp:BoxPtr);
 procedure ReadBoxPar(nt:byte; box:string);
-function  BoxBrettebene(box:string):string;
+function  BoxBrettebene(const box:string):string;
 
-procedure ReadQFG(dateiname:pathstr; var qrec:QfgRec);
-procedure WriteQFG(dateiname:pathstr; qrec:QfgRec);
+procedure ReadQFG(const dateiname:pathstr; var qrec:QfgRec);
+procedure WriteQFG(const dateiname:pathstr; qrec:QfgRec);
 
 
 implementation  { ------------------------------------------------- }
@@ -190,7 +190,7 @@ end;
 { Box- Parameter aus angegebener Datei lesen }
 { bp^ muá initialisiert sein.                }
 
-procedure ReadBox(nt:byte; dateiname:pathstr; bp:BoxPtr);
+procedure ReadBox(nt:byte; const dateiname:pathstr; bp:BoxPtr);
 var t      : text;
     s,su   : string;
     p      : byte;
@@ -368,7 +368,7 @@ begin
 end;
 
 
-procedure WriteBox(dateiname:pathstr; bp:BoxPtr);
+procedure WriteBox(const dateiname:pathstr; bp:BoxPtr);
 var t : text;
     i : byte;
 
@@ -528,7 +528,7 @@ begin
 end;
 
 
-procedure ReadQFG(dateiname:pathstr; var qrec:QfgRec);
+procedure ReadQFG(const dateiname:pathstr; var qrec:QfgRec);
 var t  : text;
     s  : String;
     id : string[10];
@@ -560,7 +560,7 @@ begin
 end;
 
 
-procedure WriteQFG(dateiname:Pathstr; qrec:QfgRec);
+procedure WriteQFG(const dateiname:Pathstr; qrec:QfgRec);
 var t1,t2 : text;
     s,ss  : string;
     id    : string[10];
@@ -610,7 +610,7 @@ begin
 end;
 
 
-function BoxBrettebene(box:string):string;
+function BoxBrettebene(const box:string):string;
 begin
   ReadBoxPar(nt_Fido {egal} ,box);
   BoxBrettebene:=boxpar^.MagicBrett;
@@ -620,6 +620,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.23  2001/09/07 10:52:07  mk
+  - added some const parameters
+
   Revision 1.10.2.22  2001/08/11 22:18:03  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
