@@ -182,7 +182,7 @@
 
 
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
-                     PPPClient,PPPAddServers,loginname,passwort,telefon:String; Titel:String);
+                     PPPClient,PPPAddServers,PPPDialUp,telefon,loginname,passwort:String; Titel:String);
   var x,y,b:byte;
   label restart;
   begin
@@ -222,12 +222,14 @@
 
     maddstring(3,16,getres2(920,89),PPPAddServers,41,60,ValidDirCh);   { 'Zus„tzliche Server' }
 
-    maddstring(3,18,getres2(920,90),loginname,18,60,'');    { 'Login' }
+    maddstring(3,18,getres2(920,90),PPPDialUp,18,60,'');    { 'Zugang' }
+
+    maddstring(3,20,getres2(920,91),telefon,18,60,'');      { 'Telefon' }
+
+    maddstring(36,18,getres2(920,92),loginname,18,60,'');   { 'Login' }
     loginfld:=fieldpos;
 
-    maddstring(3,20,getres2(920,91),passwort,18,20,'');    { 'Paáwort' }
-
-    maddstring(36,18,getres2(920,92),telefon,18,60,'');    { 'Telefon' }
+    maddstring(36,20,getres2(920,93),passwort,18,20,'');    { 'Paáwort' }
 
     maddtext(0,3,'Ã'+dup(66,'Ä')+'´', 0);  { Linie }
     maddtext(0,11,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
@@ -265,7 +267,7 @@
       nt,i : byte;
       b,x,y: byte;
       pppm : boolean;
-      pc,pp,ps,log,pas,tel : string;
+      pc,pp,ps,dlup,tel,log,pas : string;
       
   begin
     dbGo(d,drec[p]);
@@ -293,14 +295,15 @@
     pp:='';
     pc:='';
     ps:='';
+    dlup:='';
+    tel:='';
     log:='';
     pas:='';
-    tel:='';
     replyto:='';
 
     if pppm then 
 
-      _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,log,pas,tel,getreps(915,netz_typ(nt_UUCP_C)))
+      _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,dlup,tel,log,pas,getreps(915,netz_typ(nt_UUCP_C)))
 
     else
 
@@ -322,16 +325,16 @@
         boxpar^.PPPClientpath:=pp;       
         boxpar^.PPPClient:=pc;
         boxpar^.PPPAddServers:=ps;
+        boxpar^.PPPDialUp:=dlup;
+        boxpar^.telefon:=tel;
         boxpar^.loginname:=log;
         boxpar^.passwort:=pas;
-        boxpar^.telefon:=tel;
         boxpar^.pppMode:=pppm;
         boxpar^.boxname:=name;
         boxpar^.username:=user;
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;
-        boxpar^.passwort:='GEHEIM';
-        boxpar^.telefon:='';
+        boxpar^.passwort:=iifs(deutsch,'GEHEIM','SECRET');
         nt_bpar(nt,boxpar^);
         if boxpar^.prototyp='' then
           boxpar^.prototyp:='Z';
@@ -1355,7 +1358,7 @@
       dbRead(d,'dateiname',dname);
 
       _EditPPP(brk,name,komm,email,realname,replyto,fqdn,PPPClientPath,
-               PPPClient,PPPAddServers,loginname,passwort,telefon,getres2(920,80));
+               PPPClient,PPPAddServers,PPPDialUp,telefon,loginname,passwort,getres2(920,80));
 
       if not brk then begin
         b:=cpos('@',email);
@@ -1524,17 +1527,18 @@
     dbRead(d,'dateiname',fn);
     if fn='' then fn:=left(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    pushhp(131);
     ReadBox(nt,fn,boxpar);
     nts:=''; nts2:=getres2(927,5)+getres2(927,6);   { ',^SysopMode' }
-    if boxpar^.pppmode then
+    if (nt=nt_uucp) and boxpar^.pppMode then
     begin
+      Pushhp(132);
       nts0:='^Client,'+getres2(927,2)+getres2(927,3);
       nts2:=getres2(927,5)+getres2(927,6);
       if not lastclient then edb_pos:=clientpos[edb_pos];
       lastclient:=true;
       end 
     else begin
+      Pushhp(131);
       if lastclient and (edb_pos>3) then inc(edb_pos,2);
       lastclient:=false;
       nts0:=getres2(927,1)+getres2(927,2)+getres2(927,3)+getres2(927,4);
@@ -1683,6 +1687,11 @@
 
 {
   $Log$
+  Revision 1.10.2.26  2001/06/16 02:10:36  my
+  - New help item @132 for Edit/Servers/Edit/<F1> (RFC/Client)
+  - New server configuration parameter "Client-DialUp="
+  - Re-arranged Edit/Servers/Edit/Client dialogue a bit
+
   Revision 1.10.2.25  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and
