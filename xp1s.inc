@@ -467,7 +467,7 @@ begin
     end;
   if bak<>'' then
   begin
-    name := GetBareFilename(name) + '.' + bak;
+    name := ChangeFileExt(name, '.' + bak);
     if exist(name) then _era(name);      { .BAK l”schen }
   end;
 end;
@@ -511,6 +511,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.7  2001/07/31 16:31:30  mk
+  - fixed last commit, now using ChangeFileExt
+
   Revision 1.24.2.6  2001/07/30 08:24:45  mk
   - fixed handling of bak files in EditFile
 
