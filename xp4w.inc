@@ -53,14 +53,22 @@ begin
         end;
       end;
     dbReadN(ubase,ub_username,n);
-    setall;
     if (dispmode=1) or (dispmode=3) then begin    { Adreábuch }
       dbSeek(ubase,uiAdrbuch,#1+ustr(n));
       if dbEOF(ubase) then disprec[1]:=0
       else disprec[1]:=dbRecno(ubase);
-      end;
-    aufbau:=true;
+      end
+    else begin
+      while wrongline do                     { Ausgehend von oberster Bildschirmzeile }
+      begin                                  { ersten Passenden Ubase Eintrag suchen }
+        dbnext(ubase);                            
+        if dbeof(ubase) then dbgotop(ubase);
+        end;
+      disprec[1]:=dbrecno(ubase);    
+      end;      
     end;
+    setall;
+    aufbau:=true;
 end;
 
 procedure gethdat(abhzeit:integer);

@@ -571,8 +571,8 @@ var t,lastt: taste;
          1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,#1)   { Userfenster Adressbuch }
                 else dbseek(ubase,uiBoxAdrBuch,#1);
 
-         2,4  : if not usersortbox then dbGoTop(ubase)               { Userfenster Alle User }
-                else dbSeek(ubase,uiBoxName,#1);
+         2,4  : if not usersortbox then dbSeek(ubase,uiName,#1)      { Userfenster Alle User }
+                  else dbSeek(ubase,uiBoxName,#1);
 
         10  : case rdmode of
                 0 : dbSeek(dispdat,miBrett,_dispspec);
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/05/30 17:19:31  jg
+  - Fixes fÅrs umschalten mit "A" zwischen Adressbuch und allen Usern
+
   Revision 1.20  2000/05/14 07:22:52  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
   - Feldtausch-Config: Defaultauswahl mit F2
