@@ -293,12 +293,10 @@ const
                                        { Namen der Exe-Dateien }
 {$IFDEF UnixFS}
        MaggiBin         : string        = 'maggi';
-       UUCICOBin        : string        = 'uucico';
        Yup2PktBin       : string        = 'yup2pkt';
        ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
-       UUCICOBin        = 'UUCICO.EXE';
        Yup2PktBin       = 'YUP2PKT.EXE';
        ZQWKBin          = 'ZQWK.EXE';
 {$ENDIF}
@@ -1224,6 +1222,9 @@ implementation
 
 {
   $Log$
+  Revision 1.164  2002/06/15 08:54:32  mk
+  - removed unused constant UUCICOBin
+
   Revision 1.163  2002/06/12 09:14:50  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
