@@ -34,7 +34,7 @@ total 193
 { $Id$ }
 
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 uses sysutils;
 
@@ -43,10 +43,9 @@ const bufsize = 2048;
 var  f1       : file;
      t2       : text;
      s        : string;
-     p        : byte;
+     p        : integer;
      buf      : array[0..bufsize-1] of char;
-     bufp,bufanz : word;
-     dirs     : longint;
+     bufp,bufanz,dirs : longint;
 
 
 procedure helppage;
@@ -69,7 +68,7 @@ end;
 
 
 procedure ReadInputString(var s:string);
-var len : byte;
+var len : integer;
 
   procedure skip(ch:char);
   begin
@@ -81,21 +80,20 @@ var len : byte;
 
 begin
   len:=0;
+  setlength(s,bufanz);
   while (bufp<bufanz) and (buf[bufp]<>#13) and (buf[bufp]<>#10) do begin
-    if len<255 then begin
-      inc(len);
-      s[len]:=buf[bufp];
-      end;
+    inc(len);
+    s[len]:=buf[bufp];
     inc(bufp);
     if bufp=bufanz then ReadBuf;
     end;
   Skip(#13);
   Skip(#10);
-  s[0]:=chr(len);
+  setlength(s,len);
 end;
 
 
-function forms(s:string; len:byte):string;
+function forms(s:string; len:integer):string;
 begin
   if length(s)>len then
     forms:=s
@@ -113,7 +111,7 @@ end;
 
 begin
   writeln;
-  writeln('UUCP-Filelisten-Konvertierer #1 (*NIX ls -lr)     15/07/93');
+  writeln('UUCP-Filelisten-Konvertierer #1 (*NIX ls -lR)     15/07/93');
   writeln;
   if paramcount<>2 then helppage;
   assign(f1,paramstr(1));
@@ -122,7 +120,7 @@ begin
   assign(t2,paramstr(2));
   rewrite(t2);
   if ioresult<>0 then error('ungltige Ausgabedatei');
-  writeln(paramstr(1),' ¯ ',paramstr(2));
+  writeln(paramstr(1),' -> ',paramstr(2));
   dirs:=0;
   ReadBuf;
   repeat
@@ -138,11 +136,11 @@ begin
       end
     else if pos(' ',s)=11 then begin
       p:=length(s);
-      while s[p]<>' ' do dec(p);
+      while (p>0) and (s[p]<>' ') do dec(p);
       if (p>20) and (copy(s,p-2,2)='->') then begin   { symbolic link }
         s:=copy(s,1,p-4);
         p:=length(s);
-        while s[p]<>' ' do dec(p);
+        while (p>0) and (s[p]<>' ') do dec(p);
         end;
       writeln(t2,forms(copy(s,p+1,100),min(40,77-p)),' ',copy(s,1,p-1));
       end;
@@ -153,6 +151,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/09/12 19:37:19  fe
+  Ansistring-Anpassungen und unter FPC zum Laufen gebracht.
+
   Revision 1.3  2000/09/09 22:31:55  fe
   sysutils ergaenzt
 
