@@ -239,8 +239,9 @@ begin
       error('['+strs(nr1)+']: no split page')
     else
       with block[bnr] do begin
-        if inr<>clnr then begin
-          if clnr<>$ffff then FreeRes;
+        if (inr<>clnr) or (bnr <> clbnr) then
+        begin
+          FreeRes;
           size:=rsize(bnr,inr);
           ofs:=index[bnr]^[inr,1];
           if loaded then begin
@@ -336,6 +337,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.15  2000/08/24 09:15:39  mk
+  MO:- Bug in Resourcencaching behoben
+
   Revision 1.14  2000/07/09 09:09:54  mk
   - Newexit in Initialization/Finalization umgewandelt
 
