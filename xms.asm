@@ -1,13 +1,15 @@
 ; ---------------------------------------------------------------
-; Dieser Quelltext ist urheberrechtlich geschuetzt.              
-; (c) 1991-1999 Peter Mandrella                                  
-; CrossPoint ist eine eingetragene Marke von Peter Mandrella.    
-;                                                                
+; Dieser Quelltext ist urheberrechtlich geschuetzt.
+; (c) 1991-1999 Peter Mandrella
+; (c) 2003      Openxp/16
+;
+; CrossPoint ist eine eingetragene Marke von Peter Mandrella.
+;
 ; Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der
-; Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.  
+; Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.
 ; ---------------------------------------------------------------
 
-; Routinen fÅr EMS.PAS
+; Routinen fÅr XMS.PAS
 
 
            .model tpascal
@@ -75,14 +77,54 @@ e1:        ret
 XmsTotal   endp
 
 
+;;;;;;; (original version) ;;;;;;;;
+;; function XmsAvail:word; external;
+;XmsAvail  proc     far
+;          mov      ax,0
+;          cmp      xmsok,1
+;          jnz      e2
+;          mov      ah,8
+;          call     dword ptr xmscall
+;e2:       ret
+;XmsAvail  endp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ; function XmsAvail:word; external;
 
 XmsAvail  proc     far
           mov      ax,0
           cmp      xmsok,1
-          jnz      e2
-          mov      ah,8
+          jne      e2                ; exit
+          mov      dx,0
+          push     dx
+          mov      cx,163            ; 163*100=16300 (16 Mb = 16384 Kb)
+e21:      pop      dx                ; repeat
+          add      dx,100              ; progression 100 Kb
+          push     dx
+          mov      ah,9                ; xmsallocate
+          call     dword ptr xmscall   ; handle in dx
+          call     errcheck
+          cmp      ax,1                ; 2. errcheck
+          je       e22                 ; ok
+          cmp      bl,0a0h             ; all xms reserved
+          je       e23                 ; break
+          jmp      ec22                ; break
+e22:      mov      ah,10               ; xmsfree (handle in dx)
           call     dword ptr xmscall
+          call     errcheck
+          cmp      ax,1                ; 2. errcheck
+          jne      ec22                ; break
+          dec      cx                  ; 0 = exit
+          jne      e21               ; until max. ca. 16 Mb
+          jmp      e23
+ec22:     pop      dx
+          mov      dx,0
+          mov      ax,0              ; set available XMS = 0
+          jmp      e2                ; exit
+e23:      pop      dx
+          sub      dx,100
+          mov      ax,dx
 e2:       ret
 XmsAvail  endp
 
@@ -188,3 +230,18 @@ XmsWrite  endp
 
           end
 
+; JM 14.04.03
+; - Bezeichnung in "Routinen fÅr XMS.PAS" geaendert (war EMS.PAS)
+; - Neue Function XmsAvail:
+;   - stueckweise (zu je 100 Kb), kumulierte Reservierung und Freigabe
+;     des verfuegbaren XMS-Speichers bis zur Pruefung von max ca. 16 Mb
+;   - im Fehlerfall (ax = 0) bei der Reservierung wird genauer auf den
+;     Fehlercode A0h geprueft und nur in dem Fall wird der letzte
+;     erfolgreich reservierte Wert als available gemeldet
+;     (Voraussetzung ist daher, dass der XMS-Treiber zumindest diesen
+;     Fehlercode der Belegung alles freien XMS-Speichers liefert.)
+;   - bei anderen Fehlerursachen wird XmsAvail beendet und meldet
+;     0 Kb XMS-Speicher, wobei der Fehlercode (nunmehr) aus result
+;     ermittelt werden koennte.
+;   - der als verfÅgbar gemeldete XMS-Speicher ist bei Erreichen
+;     des max. Werts immer nur der mind. verfÅgbare XMS-Speicher.
