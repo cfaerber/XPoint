@@ -26,11 +26,12 @@ unit xpterminal;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}maske,
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,Modem,Debug;
 
 procedure termscr;
+procedure telnet;
 procedure terminal(direct:boolean);
 
 procedure TermDeactivateCom;    { fÅr FKey-Shell }
@@ -66,6 +67,7 @@ var termlines    : byte;
     la           : byte;
     open_log     : boolean;
     in7e1,out7e1 : boolean;
+    is_telnet	 : boolean;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
     ansiseq      : string;
@@ -79,7 +81,7 @@ procedure ShowTermStatus;
 begin
   moff;
   attrtxt(col.colmenu[0]);
-  Wrt2(forms(' CrossTerm',80));
+  Wrt2(forms(iifs(is_telnet,' OpenXP-Telnet',' OpenXP-Term'),80));
   gotoxy(17,1);
   attrtxt(col.ColMenuHigh[0]);
   Wrt2('F1');
@@ -536,32 +538,16 @@ end;
 
 { direct = /XPoint/Terminal }
 
-
-procedure terminal(direct:boolean);
+procedure terminal_main(connected:boolean);
 var
   ende          : boolean;
-  connected     : boolean;
   t             : taste;
   p             : pointer;
 {$IFDEF NCRT }
   win           : TWinDesc;     { Fenster }
 {$ENDIF }
 begin
-  Debug.DebugLog('xpterminal','Terminal called',1);
-  connected:= not direct;
-  ende:= false;
-  if not (direct) then begin
-    trfehler(799,30);
-    exit;
-  end;
-
-  if not InitCom then
-  begin
-    trfehler(744,30); // Das GerÑt kann nicht angesprochen werden!
-    freeres;
-    exit;
-  end;
-
+  ende:=false;
   Modem.CommObj:=CommObj;
 {$IFDEF NCRT }
   MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
@@ -571,12 +557,16 @@ begin
   moff;
   attrtxt(15);
   writeln;
-  writeln(getres(2005));
+  writeln(getres(iif(is_telnet,2008,2005)));
   attrtxt(7);
   writeln;
-  CommObj^.SendString(#13, false);
-  mdelay(200,true);
-  if TermInit<>'' then SendMStr(TermInit);
+
+  if not is_telnet then
+  begin
+    CommObj^.SendString(#13, false);
+    mdelay(200,true);
+    if TermInit<>'' then SendMStr(TermInit);
+  end;
 
   open_log:=false;
   log:=false;
@@ -621,6 +611,7 @@ begin
         end;
         Xmakro(t,64);
         if t=mausleft then t:=copychr(_mausx,_mausy);
+	if t=keycr    then CommObj^.SendString(iifs(is_telnet,#13#10,keycr),False) else
         if t=keyup    then CommObj^.SendString(ANSI_curup,False) else
         if t=keydown  then CommObj^.SendString(ANSI_curdown,False) else
         if t=keyleft  then CommObj^.SendString(ANSI_curleft,False) else
@@ -682,11 +673,70 @@ begin
   showscreen(true);
 end;
 
+procedure terminal(direct:boolean);
+var
+  connected     : boolean;
+begin
+  Debug.DebugLog('XPFM','Terminal called',1);
+  
+  is_telnet:=false;
+  connected:= not direct;
+
+  if not (direct) then begin
+    trfehler(799,30);
+    exit;
+  end;
+
+  if not InitCom then
+  begin
+    trfehler(744,30); // Das GerÑt kann nicht angesprochen werden!
+    freeres;
+    exit;
+  end;
+  
+  terminal_main(connected);
+end;
+
+procedure telnet;
+var Host: String;
+    Port: Integer;
+    x,y:  Byte;
+    brk:  Boolean;
+begin
+  Debug.DebugLog('XPFM','Telnet called',1);
+  Host:='localhost';
+  Port:=23;
+
+  dialog(50,3,getres2(2009,0),x,y);
+  maddstring( 3,2,getres2(2009,1),Host,18,60,'');
+  maddint   (33,2,getres2(2009,2),Port,5,5,1,65535);
+    mappsel(false,'23');
+  freeres;
+  readmask(brk);
+  enddialog;
+
+  if brk then exit;
+
+  is_telnet:=true;
+  IgnCD :=false;
+
+  if not CommInit('telnet '+Host+':'+IntToStr(Port),CommObj) then
+  begin
+    tfehler(CommObj^.ErrorStr,30); // Das GerÑt kann nicht angesprochen werden!
+    freeres;
+    exit;
+  end;
+
+  terminal_main(true);
+end;
 
 end.
 
 {
   $Log$
+  Revision 1.2  2001/01/07 20:35:23  cl
+  OpenXP-Telnet (hpts. zum Debuggen der TCP/IP-Unterst¸tzung)
+
   Revision 1.1  2001/01/04 16:06:49  ma
   - renamed, was xpterm.pas (partly)
 

@@ -166,6 +166,7 @@ begin
       1 : case m1 of           { XPoint }
             1 : copyright(false);
             5 : terminal(true);
+	    7 : telnet;
             6 : dosshell;
             8 : if AskSave then quit:=true;
           end;
@@ -594,6 +595,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2001/01/07 20:35:23  cl
+  OpenXP-Telnet (hpts. zum Debuggen der TCP/IP-Unterstützung)
+
   Revision 1.27  2000/12/04 10:04:33  mk
   - enabled language switching again
 

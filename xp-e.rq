@@ -2164,6 +2164,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2006 Connection closed - <Alt X> to quit
 2007 Upload
 
+2008 Mini Telnet - <Alt X> to quit
+
++ 2009
+0 CrossTelnet - Connect to
+1 Hostname
+2 Port
+-
+
 + 2010
 0    Line %s:~
 1    '"' is missing
@@ -3612,6 +3620,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.121  2001/01/07 20:35:23  cl
+# OpenXP-Telnet (hpts. zum Debuggen der TCP/IP-Unterstützung)
+#
 # Revision 1.120  2000/12/31 17:41:01  my
 # - RQs:  rephrased 253.18 (Fido tear line)
 # - IHQs: implemented tear line switch (@247/248, @8104)
