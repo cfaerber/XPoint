@@ -289,26 +289,6 @@ const IBM2ISOtab : array[0..255] of byte =
 
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-{$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
-procedure IBM2ISO; assembler;
-asm
-     push  ebx
-     cld
-     mov   ebx, offset IBM2ISOtab
-     mov   esi, offset s
-     lodsb                           { StringlÑnge }
-     xor   ecx, ecx
-     mov   cl,al
-     jecxz  @@2
-@@1: lodsb
-     xlat
-     mov   [esi-1],al
-     loop  @@1
-@@2: pop  ebx
-end;
-
-{$ELSE }
-
 procedure IBM2ISO; assembler;
 asm
      cld
@@ -324,32 +304,6 @@ asm
      loop  @@1
 @@2:
 end;
-{$ENDIF }
-
-
-{$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
-procedure ISO2IBM; assembler;
-asm
-     push ebx
-     cld
-     mov   ebx, offset ISO2IBMtab - 128
-     mov   esi, offset s
-     lodsb                           { StringlÑnge }
-     xor   ecx, ecx
-     mov   cl, al
-     jecxz  @@2
-@@1: lodsb
-     cmp   al,127
-     ja    @@3
-     loop  @@1
-     jmp   @@2
-@@3: xlat
-     mov   [esi-1],al
-     loop  @@1
-@@2: pop  ebx
-end;
-
-{$ELSE }
 
 procedure ISO2IBM; assembler;
 asm
@@ -370,8 +324,6 @@ asm
      loop  @@1
 @@2:
 end;
-
-{$ENDIF }
 
 procedure logo;
 begin
@@ -1515,10 +1467,10 @@ end;
 
 {$R-}
 procedure ReadString(umbruch:boolean);
-const l : byte = 0;
+const l : Integer = 0;
       c : char = #0;
 
-  procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
+  procedure reload;  far;
   begin
     if eof(f1) then { ok:=false }
     else ReadBuf;
@@ -1530,33 +1482,12 @@ const l : byte = 0;
     if bufpos=bufanz then reload;
   end;
 
-{$IFNDEF Ver32 }
 const
       savedi : word = 0;
       savebx : word = 0;
-{$ENDIF }
 begin
   lasteol:=(eol>0);
   eol:=0;
-{$IFDEF Ver32 }
-  l:=0;
-  while (bufpos<bufanz) and (buffer[bufpos]<>#10) and
-        (not umbruch or (l<253)) and (l<MaxSlen) do begin
-    c:=buffer[bufpos];
-    if c<>#13 then begin
-      inc(l);
-      s[l]:=c;
-      end
-    else
-      inc(eol);
-    IncPos;
-    end;
-  s[0]:=char(l);
-  if buffer[bufpos]=#10 then begin
-    inc(eol);
-    IncPos;
-    end;
-{$ELSE  }
    asm
      mov   si,bufpos
      mov   di,0                    { l:=0 }
@@ -1604,11 +1535,33 @@ begin
 @@7: cmp   al,10
      jnz   @@1
 
-@@8: mov   ax,di
+     jmp @@9
+     
+@@8: cmp dl,0                     { Wenn Umbruch aktiv ist: }
+     je @@9
+     lea bx,[s+di+1]              { Vom Stringende zurueck bis zum }
+     xor cx,cx
+@_8: dec bx
+     mov al,byte ptr[bx]          { letzten Trennzeichen gehen }
+     cmp al,' '
+     je @@9
+     cmp al,','
+     je @@9
+     cmp al,';'
+     je @@9
+     cmp si,0           
+     je @_9                       { Abbruch, wenn kein Trenner im Puffer ist }
+     inc cx
+     dec si
+     dec di
+     jne @_8
+@_9: add si,cx          { wenn keine Trennmîglichkeit gefunden wurde }
+     add di,cx          { StringlÑnge und Bufferposition zurÅcksetzen }
+
+@@9: mov   ax,di
      mov   byte ptr s,al           { s[0]:=char(l) }
      mov   bufpos,si
    end;
-{$ENDIF }
   MaxSlen:=255;
 end;
 
@@ -2350,7 +2303,7 @@ begin
              if zz='x-priority'   then GetPriority else
              if zz='x-homepage'   then Homepage := s0 else
 
-             if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
+             if left(zz,4)<>'x-xp' then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
              if zz='to'           then GetEmpf else
              if zz='message-id'   then msgid:=GetMsgid else
@@ -3603,6 +3556,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.13  2001/06/09 18:29:42  mk
+  JG:- Header longer than 255 characters are splitted correctly now
+       (at the last " ", "," or ";" before pos 255 rather than exactly
+       at pos 255).
+  JG:- 'Xref' headers are not thrown away anymore
+
   Revision 1.8.2.12  2000/11/27 21:39:13  mk
   RB:- Trim in GetMsgId hinzugefuegt
 
