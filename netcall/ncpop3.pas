@@ -247,9 +247,11 @@ end;
 
 procedure TPOP3.Disconnect;
 begin
-  Output(mcInfo,res_disconnect,[0]);
   if Connected then
+  begin
+    Output(mcInfo,res_disconnect,[0]);
     SWriteln('QUIT');
+  end;
   inherited Disconnect;
 end;
 
@@ -436,6 +438,9 @@ end;
 
 {
   $Log$
+  Revision 1.18.2.3  2003/08/27 16:22:04  mk
+  - show disconnect message only once
+
   Revision 1.18.2.2  2003/08/03 19:07:13  mk
   - handle garbage in STAT response with POP3 from pop.firemail.de
 
