@@ -7814,9 +7814,9 @@ verwenden.
 @
 1010
 Hier wird festgelegt, welche PGP-Version verwendet
-werden soll. Die Version 2.6.x kommt mit nur einer
-ausfÅhrbaren Datei PGP.EXE, die Version 5.x ist
-aufgeteilt in verschiedene Dateien PGPx.EXE,
+werden soll. Die Versionen 2.6.x und 6.5.x kommen mit
+nur einer ausfÅhrbaren Datei PGP.EXE, die Version 5.x
+ist aufgeteilt in verschiedene Dateien PGPx.EXE,
 wobei das x fÅr E,K,O,S oder V steht. Diese Datei(en)
 mu·/mÅssen installiert und per DOS-Pfad (PATH oder
 PGPPATH) erreichbar sein.
@@ -7854,10 +7854,21 @@ funktioniert.
 <<[x]>> -> CrossPoint wartet nach dem Aufruf von PGP auf
        einen Tastendruck.
 
-Dieser Schalter ist zu Diagnosezwecken gedacht. Er
-hilft dabei, Fehlermeldungen von PGP lesen zu kîn-
-nen. Vergessen Sie nicht, den Schalter nachher
+Dieser Schalter ist zu Diagnosezwecken gedacht.
+Er hilft dabei, Fehlermeldungen von PGP lesen zu
+kînnen. Vergessen Sie nicht, den Schalter nachher
 wieder zu deaktivieren!
+
+Tritt ein Fehler beim PGP-Aufruf auf, schalten Sie
+diese Funktion ein.
+
+Ein mîglicher Fehler: der Aufrufstring wird viel zu
+lang. Versuchen sie, alles Parameter des PGP-Aufrufes
+so kurz wie mîglich zu halten, z.B. statt SET
+PASSPHRASE lieber SET PGPPASS verwenden, dann holt
+sich PGP die Passprase selbst aus dem Environment.
+Eine KÅrzung ist auch bei Ihrer [User-ID]@1018
+mîglich.
 @
 1014
 <<[x]>> -> CrossPoint fÅhrt in der Datei PGP.LOG ein
@@ -7922,12 +7933,29 @@ ten Keys manuell einzulesen.
 @
 1018
 Geben Sie hier die "User-ID" (Netzadresse) aus Ihrem
-Public Key an. Falls Ihr Key mehrere Netzadressen
-enthÑlt, geben Sie eine davon an. Die Adresse sollte
-exakt die gleiche Schreibweise wie im PGP-Key haben,
-d.h.
+Public Key (oder besser die Key-ID im Hexformat) an.
+Falls Ihr Key mehrere Netzadressen enthÑlt, geben Sie
+eine davon an. Die Adresse sollte exakt die gleiche
+Schreibweise wie im PGP-Key haben, d.h.
 
      Vorname Nachname <user\@do.main>
+     
+Wir empfehlen die Verwendung der Hex-ID, die sie z.B.
+erhalten, wenn sie z.B. pgp -kv (UserID) eingeben:
+
+  F:>pgp -kv rom@mind
+
+  Type Bits/KeyID    Date       User ID
+  pub  1024/C39C5085 1995/06/15 Oliver Hertel
+                                Oliver Hertel
+  1 matching key found.
+
+Tragen sie in das Feld dann 0x fÅr Hex, gefolgt von
+der KeyID ein: 0xC39C5085. DOS kommt mit sehr langen
+Aufrufzeilen beim Starten der Command.com nicht
+zurecht, daher ist die Verwendung dieses KÅrzels
+sinnvoll.
+
 @
 1020
 <<[x]>> -> Die Nachricht wird mit einer PGP-Signatur
