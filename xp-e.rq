@@ -550,6 +550,9 @@ K (c) '93-96 Peter Mandrella
 12   Use MIME for header contents
 13   remove unnessecary header lines
 14   use references
+15   binary messages as "attachments"
+16   Don't archive news on DejaNews
+17   Magics in <F3> file request
 + 254
 1    Netcall Options
 2    Show login screen

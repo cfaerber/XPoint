@@ -959,6 +959,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        UsrFeldTausch   : string[UsrFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Userliste Felder vertauscht werden }
+       Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
        brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
@@ -1102,6 +1103,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.22  2000/04/10 00:43:03  oh
+  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
+
   Revision 1.21  2000/04/09 06:51:56  jg
   - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
   - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)

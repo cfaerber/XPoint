@@ -694,6 +694,7 @@ begin
 
   MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
   UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
+  Magics:=false;
 
   UsePGP:=false;
   PGPbatchmode:=true;
@@ -935,6 +936,7 @@ begin
   writeln(t,'Tonsignal=',jnf(tonsignal));
   writeln(t,'MsgFeldTausch=',MsgFeldTausch);
   writeln(t,'UsrFeldTausch=',UsrFeldTausch);
+  writeln(t,'Magics=',jnf(Magics));
   writeln(t,'Brettkommentar=',jnf(brettkomm));
   wrhd(4);                                             { Z-Netz }
   writeln(t,'Kleinschreibung=',jnf(smallnames));
@@ -1517,6 +1519,7 @@ begin
           getx(su,  'tonsignal',tonsignal) or
           gets(s,su,'msgfeldtausch',MsgFeldTausch,MsgFelderMax) or
           gets(s,su,'usrfeldtausch',UsrFeldTausch,UsrFelderMax) or
+          getx(su,  'magics',magics) or
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
@@ -1645,6 +1648,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/04/10 00:43:03  oh
+  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
+
   Revision 1.26  2000/04/08 13:33:14  mk
   MW: Defaultwerte angepasst und aktualisiert
 

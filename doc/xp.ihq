@@ -6872,6 +6872,22 @@ sandten Nachrichten zu „ndern, mssen Sie diese mit
 den.
 
 @
+8103
+<<[ ]>> -> Werden Zeilen einer Fido-Nachricht im Lister
+       markiert und wird anschlieáend die Request-
+       Funktion mit <F3> aufgerufen, so werden keine
+       "Magics" in die Dateiliste bernommen,
+       sondern nur Dateinamen (bliches Dateiformat,
+       unter DOS z.B. 8.3-style: ARCHIV01.ZIP.
+
+<<[x]>> -> Auch Magics werden mit in die Liste der zu
+       requestenden Dateien bernommen. Magics sind
+       Kurznamen z.B. fr eine Sammlung mehrerer
+       Dateien oder Dateinamen, die sich regelm„áig
+       „ndern (k”nnen), z.B. PGPOS2 fr die aktuelle
+       Version des Programms PGP fr OS/2.
+
+@
 800
 Dies ist die Gebhrenzonen-Liste. Sie k”nnen hier bis
 zu 17 verschiedene Telefon-Tarifzonen mit den dazu-

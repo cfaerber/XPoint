@@ -1170,7 +1170,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,17,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,19,11),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1184,8 +1184,7 @@ begin
     maddbool(14,8,'Bin„rnachrichten als "Attachments"',mausmpbin);
       mhnr(8102);
     add:=5;
-    end
-  else
+  end else
     add:=0;
   maddtext(3,5+add,'UUCP/RFC',col.coldiahigh);
   maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
@@ -1200,7 +1199,10 @@ begin
     maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
-    end;
+    maddtext(3,11+add,'Fido',col.coldiahigh);
+    maddbool(14,11+add,getres2(253,17),Magics); mhnr(8103);
+    inc(add);
+  end;
   freeres;
   readmask(brk);
   if not brk and mmodified then begin

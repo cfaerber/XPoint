@@ -2204,30 +2204,30 @@ var files    : string;
     p1,s,s1,t,u : string[80];
     v        : char;
     node     : string[20];
-    mark,
-    Magics   : boolean;
+    mark,     
+    lMagics  : boolean;
     dir      : dirstr;
     name     : namestr;
     ext      : extstr;
 
 begin
-  nnode:='';
+  nnode := '';
   if not list_selbar and (list_markanz=0) then begin
     rfehler(438);   { 'keine Dateien markiert' }
     exit;
-    end;
+  end;
   if not TestNodelist or not TestDefbox then exit;
-  s:=FMsgReqnode;
-  p:=cpos('.',s);
+  s := FMsgReqnode;
+  p := cpos('.',s);
   if p>0 then node:=left(s,p-1)
   else node:=s;
-  files:='';
-  u:=''; t:='';
-  Magics:=true; { auch mach Magics suchen }
-  s:=first_marked;
+  files := '';
+  u := ''; t := '';
+  s := first_marked;
+  lMagics := Magics;
   while s<>#0 do begin
     { --- komplett neu:oh (aus MultiReq uebernommen) --->> }
-    if (s='') then Magics:=false;
+    if (s='') then lMagics:=false;
 
     { Usernamen vor Quotes killen }
     k:=pos('>',s);
@@ -2275,12 +2275,7 @@ begin
       if (pos('**',t)>0) then continue;
       if (pos('.-',t)>0) then continue;
       if (pos('-.',t)>0) then continue;
-      if not magics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
-
-      { Magic mode? }
-      if (u='MAGIC') or (u='MAGICS') or (u='REQUEST') then begin
-        Magics:=true; continue
-      end;
+      if not lMagics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
 
       { Passwort suchen, erkennen und speichern }
       p1:='';
@@ -2342,7 +2337,7 @@ begin
       for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/','+','(',')']) then id:=1;
       if (id=0) then continue;
 
-      if magics then if (UStr(t)=t) then begin
+      if lMagics then if (UStr(t)=t) then begin
         files:=files+' '+t;
         continue;
       end;
@@ -2393,6 +2388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/04/10 00:43:04  oh
+  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
+
   Revision 1.29  2000/03/22 05:06:37  jg
   - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
     Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
