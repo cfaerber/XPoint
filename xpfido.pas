@@ -923,28 +923,19 @@ begin
           net:=new_net;
           end;
         if not eof(nf) then begin
-          if (k='Host') or (k='Region') then begin
-            if ltyp<>nlFDpointlist then begin
-              net:=node;
-              np^[0].node:=0;
-              end
-            else
-              np^[0].node:=node;
-            np^[0].adr:=fpos-ll-2;
-            nodes:=1;
-            end
-          else begin  { zone }
-            if ltyp<>nlFDpointlist then begin
+          if ltyp<>nlFDpointlist then begin
+            if (k<>'Host') and (k<>'Region') then
               zone:=node;
-              net:=node;
-              end;
-            nodes:=1;
-            if ltyp=nlFDpointlist then
-              np^[0].node:=node
-            else
-              np^[0].node:=0;
+            net:=node;
+            np^[0].node:=0;
             np^[0].adr:=fpos-ll-2;
+            end
+          else begin
+            np^[0].node:=node;
+            np^[0].adr:=filepos(idf);
             end;
+
+          nodes:=1;
           node:=0;
           if ltyp=nlNodelist then
             AppUser(zone,net,node,0,fpos-ll-2);
@@ -2264,6 +2255,10 @@ end;
 
 {
   $Log$
+  Revision 1.68.2.1  2002/07/16 17:45:56  ma
+  - fixed: Nodelist lookup by point address did not work with certain
+    addresses and FD style pointlists
+
   Revision 1.68  2002/04/07 16:57:53  mk
   - added some const parameters
 
