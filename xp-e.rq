@@ -1735,9 +1735,9 @@ K (c) '93-96 Peter Mandrella
 + 911
 # Window width
 0    52
-1    Please enter the name of your server system,
-2    the type of net and your user name:
-3    Type of net~
+1    Please enter the type of Net, your Server
+2    system and your User name:
+3    Type of Net~
 4    Server name~
 5    User name  ~
 + 912
