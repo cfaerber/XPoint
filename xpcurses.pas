@@ -324,6 +324,7 @@ implementation
 uses
 {$ifdef Debug}
   SysUtils,             { FormatDateTime etc. }
+  FileIO,
 {$endif}
   keys,
   typeform;             { ISOTab }
@@ -1400,8 +1401,9 @@ begin
     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
 *)
 {$ifdef Debug}
-    AssignFile(__F,'~/.curses.log');
-    Rewrite(__F);
+                 { ~/ does not work anywhere }
+    AssignFile(__F,AddDirSepa(Getenv('HOME')) + '.curses.log');  
+    System.Rewrite(__F);
     if ioresult=0 then begin
       __isopen:= true;
       WriteLn(__F,'------------------- Curses-Init-Log on ',FormatDateTime('dd.mm.yyyy hh:nn:ss', Now));
@@ -1478,6 +1480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/04/19 00:04:05  ml
+  - fix in creating ~/.curses.log - now available for logging
+
   Revision 1.41  2001/04/17 07:41:06  ml
   - /? - fix for linux
   -    - german resfix for 202.4
