@@ -445,7 +445,7 @@ begin
         end
       else
         if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      disphard(timex,timey,__st);
+      disphard(timex,timey,' '+__st+' ');
       end;
     if m2d then begin
       getdate(y,mo,d,dow);
@@ -1781,6 +1781,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/03/23 15:47:23  jg
+  - Uhr im Vollbildlister aktiv
+    (belegt jetzt 7 Byte (leerzeichen vorne und hinten)
+
   Revision 1.18  2000/03/20 11:25:15  mk
   - Sleep(1) in Idle-Routine bei Win32 eingefuegt
 

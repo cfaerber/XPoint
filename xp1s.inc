@@ -280,6 +280,7 @@ var brk    : boolean;
     lt     : byte;
     lfirst : byte;     { Startzeile Lister }
     lofs   : word;     { Ladeposition Datei }
+    dphb   : byte;     { Uhr Hintergrundfarbe Backup }         
 
   procedure ShowMsgHead;
   var t : text;
@@ -315,7 +316,13 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then m2t:=false;
+    if listvollbild then begin                      { Im Volbildlister : }
+      if listmsg and ListFixedhead then begin       { Wenn fester Header und Msg-Lister }
+        dphb:=dphback;                              { dann Uhr aktiv mit Headerfarbe } 
+        dphback:=col.collistheader;
+        end 
+      else m2t:=false;                              { Ansonsten Uhr aus } 
+      end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
@@ -350,6 +357,7 @@ begin
     list(brk);
     pophp;
     ListMakros:=oldm;
+    if listvollbild and ListMsg and Listfixedhead then dphback:=dphb; {Uhrfarbe reseten}
     m2t:=resetclock;
     if savescr then holen(p);
     closelist;
@@ -456,6 +464,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/03/23 15:47:23  jg
+  - Uhr im Vollbildlister aktiv
+    (belegt jetzt 7 Byte (leerzeichen vorne und hinten)
+
   Revision 1.15  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

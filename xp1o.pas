@@ -305,7 +305,8 @@ begin
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
     begin   
-      if listvollbild then resetclock:=false;
+      if listvollbild and not Listfixedhead  { bei Vollbild ohne Festen Nachrichtenkopf }                  
+       then resetclock:=false;               { Uhr abschalten } 
       ShowHeader;                                               
       resetclock:=true;
       end;
@@ -957,6 +958,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/03/23 15:47:23  jg
+  - Uhr im Vollbildlister aktiv
+    (belegt jetzt 7 Byte (leerzeichen vorne und hinten)
+
   Revision 1.28  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
