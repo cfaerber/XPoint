@@ -32,7 +32,7 @@ type tTelnetObj = Object(TCommObj)
         procedure PauseCom(CloseCom: Boolean); virtual;
         procedure ResumeCom(OpenCom: Boolean); virtual;
         private
-         SHandle: Longint; SIn,SOut: Text; SOpened: Boolean; InBuffer: tRingbuffer;
+         SHandle: LongInt; SOpened: Boolean; InBuffer: tRingbuffer; WSAData: tWSAData;
          procedure ProcIncoming;
      end; { object TTelnetObj }
 
@@ -40,6 +40,10 @@ Type tpTelnetObj = ^TTelnetObj;
 
 {
   $Log$
+  Revision 1.5  2001/01/03 22:31:40  ma
+  - using WinSock instead of Sockets now
+  - implemented resolving of host name
+
   Revision 1.4  2000/10/28 09:45:50  ma
   - introduced credits.txt
 

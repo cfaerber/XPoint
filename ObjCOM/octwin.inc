@@ -12,7 +12,8 @@ Const TelnetCarrier  : Boolean = true;
 
 constructor TTelnetObj.Init;
 begin
-  SOpened:=False; Dontclose:=False; InBuffer.Init(8192); IgnoreCD:=True;
+  WSAStartup(2,WSAData); SOpened:=False; Dontclose:=False;
+  InBuffer.Init(8192); IgnoreCD:=True;
   inherited Init;
 end; { constructor Init }
 
@@ -20,7 +21,7 @@ end; { constructor Init }
 
 destructor TTelnetObj.Done;
 begin
-  InBuffer.Done;
+  InBuffer.Done; WSACleanup;
   inherited done;
 end; { destructor Done }
 
@@ -47,22 +48,56 @@ end; { func. OpenKeep }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure TTelnetObj.ProcIncoming;
-var C: Char;
+var Size: DWord;
 begin
-  while not eof(SIn)do
-    begin Read(SIn,C); InBuffer.Put(C,SizeOf(C))end;
+  if IOCTLSocket(SHandle, FIONREAD, @Size) < 0 then begin
+    ErrorStr:='Socket error'; Exit;
+  end;
+  if Size > 0 then
+  begin
+    if Size>InBuffer.BufRoom then Size:=InBuffer.BufRoom;
+    Size:=recv(SHandle,InBuffer.TmpBuf^,Size,0);
+    InBuffer.Put(InBuffer.TmpBuf^,Size);
+  end;
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function TTelnetObj.Connect(Dest: String): Boolean;
-const isocket: TInetSockAddr= (Family:AF_INET;Port:$274E;Addr:$0100A8C0);
+var
+  SAddr: TSockAddr;
+  Hostinfo: PHostent;
+  Temp,Res: Integer;
+
 begin
-  Connect:=False;
-  SHandle:=Socket(AF_INET,SOCK_STREAM,0);
-  if SocketError<>0 then begin ErrorStr:='Error opening socket'; exit end;
-  if not Sockets.Connect(SHandle,isocket,SIn,SOut)then begin ErrorStr:='Error connecting socket'; exit end;
-  ReWrite(sout); Reset(sin); SOpened:=True; Connect:=True;
+  Connect:=False; FillChar(SAddr,SizeOf(SAddr),0);
+
+  // Resolve host
+  Temp:=Pos(':',Dest);
+  if Temp<=0 then begin ErrorStr:='No port specified'; exit; end;
+  Val(Copy(Dest,Temp+1,Length(Dest)-Temp),SAddr.sin_Port,Res);
+  SAddr.sin_Port:=((SAddr.sin_Port and $ff00)shr 8)or((SAddr.sin_Port and $00ff)shl 8);
+  if Res<>0 then begin ErrorStr:='Port has to be a number'; exit; end;
+  Delete(Dest,Temp,Length(Dest)-Temp+1);
+  Hostinfo:=GetHostByName(PChar(Dest));
+  if Hostinfo<>nil then
+    with Hostinfo^ do begin
+      if(h_AddrType<>AF_INET)then begin ErrorStr:='Unsupported address type'; exit; end;
+      if(h_Length<>4)then begin ErrorStr:='Address type not IPv4'; exit; end;
+      Move(h_Addr_list^^,SAddr.sin_addr.s_addr,h_Length);
+    end
+  else begin ErrorStr:='Error resolving host name'; exit; end;
+
+  // Open socket
+  SHandle:=Socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
+  if SHandle<=0 then begin ErrorStr:='Error opening socket'; exit end;
+
+  // Connect socket
+  SAddr.sin_Family:=AF_INET;
+  if WinSock.Connect(SHandle,SAddr,SizeOf(SAddr))=SOCKET_ERROR then
+    begin ErrorStr:='Error connecting socket'; exit end;
+
+  SOpened:=True; Connect:=True;
 end; { func. TTelnetObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -70,7 +105,6 @@ end; { func. TTelnetObj.OpenCom }
 function TTelnetObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 begin
   SetLine:=True;
-  // Duhhh ;)
 end; { proc. TTelnetObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -78,15 +112,14 @@ end; { proc. TTelnetObj.SetLine }
 procedure TTelnetObj.Close;
 begin
   if DontClose then EXIT;
-
-  shutdown(SHandle,2); System.Close(SIn); System.Close(SOut); SOpened:=False;
+  shutdown(SHandle,2); SOpened:=False;
 end; { func. TTelnetObj.CloseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function TTelnetObj.SendChar(C: Char): Boolean;
 begin
-  write(SOut,C); SendChar:=True;
+  SendChar:=send(SHandle,C,SizeOf(C),0)=SizeOf(C);
 end; { proc. TTelnetObj.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -99,13 +132,9 @@ end; { func. TTelnetObj.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-type CBuffer= array[1..65000]of Char;
-
 procedure TTelnetObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
-var i: Longint;
 begin
-  for i:=1 to BlockLen do write(SOut,CBuffer(Block)[i]);
-  Written:=BlockLen;
+  Written:=send(SHandle,Block,BlockLen,0);
 end; { proc. TTelnetObj.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -205,6 +234,10 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.5  2001/01/03 22:31:40  ma
+  - using WinSock instead of Sockets now
+  - implemented resolving of host name
+
   Revision 1.4  2000/10/28 09:45:50  ma
   - introduced credits.txt
 
