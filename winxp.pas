@@ -452,7 +452,7 @@ end;
       { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
       while((AttrBuf[i+1] = AttrBuf[j+2]) and (j<num)) do inc(j);
 
-      TextAttr := AttrBuf[i+1];
+      TextAttr := Byte(AttrBuf[i+1]);
       FWrt(x+i-1, y, Copy(CharBuf, i, j-i+1));
       i := j; inc(i);
     end;
@@ -655,7 +655,7 @@ begin
           s := s + Char(TLocalScreen(Buffer)[Offset]);
           Inc(Offset, 2);
         end;
-        TextAttr := SmallWord(Byte(TLocalScreen(Buffer)[Offset-1]));
+        TextAttr := Byte(TLocalScreen(Buffer)[Offset-1]);
         FWrt(x, y, s);
         x := j; inc(x);
       end;
@@ -1527,6 +1527,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2003/01/07 09:21:54  mk
+  - fixed Kylix compilation problem (TextAttr is Byte)
+
   Revision 1.93  2002/12/28 20:04:29  mk
   - made TXpHandle an integer
   - scrptr is now TXpHandle with ncrt
