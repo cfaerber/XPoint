@@ -347,7 +347,14 @@ begin
               ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
           end;
 
-        if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
+        if ArticleIndex < NNTP.FirstMessage then
+          ArticleIndex := NNTP.FirstMessage;
+
+        // special handling for leavenode pseudo groups, where FirstMessage
+        // and LastMessage = 1: get Message 1
+        if (NNTP.FirstMessage = 1) and (NNTP.LastMessage = 1) then
+          ArticleIndex := 0;
+
         oArticle:=ArticleIndex;
 
         while ArticleIndex < NNTP.LastMessage do
@@ -416,6 +423,10 @@ end;
 
 {
         $Log$
+        Revision 1.49  2003/08/29 19:32:56  mk
+        - added special handling for leafnode pseudo groups:
+          first pseudo message will now be fetched
+
         Revision 1.48  2003/08/23 17:33:56  mk
         - added comment for message id fetching
 
