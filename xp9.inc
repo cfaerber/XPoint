@@ -275,7 +275,7 @@
         write(#7);
         dbRead(d,'boxname',dname);
         end;
-      pp:=_filesize(ownpath+dname+'.pp')>0;
+      pp:=_filesize(ownpath+dname+'.PP')>0;
       if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich l”schen' }
       then begin
         dec(ntused[dbReadInt(d,'netztyp')]);
@@ -283,15 +283,15 @@
         dbFlushClose(d);
         if exist(ownpath+dname+bfgext) then     { .BFG l”schen }
           _era(ownpath+dname+bfgext);
-        if exist(ownpath+dname+'.bl') then      { Brettliste l”schen }
-          _era(ownpath+dname+'.bl');
-        if exist(ownpath+dname+'.fl') then      { Fileliste l”schen }
-          _era(ownpath+dname+'.fl');
-        if exist(ownpath+dname+'.fbl') then     { Fileare-Liste l”schen }
-          _era(ownpath+dname+'.fbl');
-        if exist(ownpath+dname+'.inf') then     { Maus-Infofileliste l”schen }
-          _era(ownpath+dname+'.inf');
-        if pp then _era(OwnPath+dname+'.pp');   { Pollpaket l”schen }
+        if exist(ownpath+dname+'.BL') then      { Brettliste l”schen }
+          _era(ownpath+dname+'.BL');
+        if exist(ownpath+dname+'.FL') then      { Fileliste l”schen }
+          _era(ownpath+dname+'.FL');
+        if exist(ownpath+dname+'.FBL') then     { Fileare-Liste l”schen }
+          _era(ownpath+dname+'.FBL');
+        if exist(ownpath+dname+'.INF') then     { Maus-Infofileliste l”schen }
+          _era(ownpath+dname+'.INF');
+        if pp then _era(OwnPath+dname+'.PP');   { Pollpaket l”schen }
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         if name=DefFidoBox then begin
@@ -1369,6 +1369,9 @@
 
 {
   $Log$
+  Revision 1.10.2.11  2001/01/16 08:13:05  mk
+  - Grosschreibung von Dateinamen
+
   Revision 1.10.2.10  2001/01/10 17:39:06  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

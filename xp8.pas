@@ -460,7 +460,7 @@ var t     : text;
       s : string;
   begin
     mm:=0;
-    assign(t,bfile+'.bl');
+    assign(t,bfile+'.BL');
     reset(t);
     if ioresult=0 then begin
       message(getreps(801,ustr(box)));   { 'Brettliste fÅr %s laden...' }
@@ -526,7 +526,7 @@ var t     : text;
       s : string[80];
   begin
     brett:=ustr(mid(brett,length(boxpar^.magicbrett)+2));
-    assign(t,bfile+'.Bl');
+    assign(t,bfile+'.BL');
     qwkbrett:='';
     if existf(t) then begin
       reset(t);
@@ -702,7 +702,7 @@ begin
     ReadMaflist:=false;
     end
   else begin
-    assign(t2,bfile+'.bl'); rewrite(t2);
+    assign(t2,bfile+'.BL'); rewrite(t2);
     repeat
       if zok then begin
         ss:=trim(left(s,40));
@@ -724,7 +724,7 @@ var t1,t2 : text;
 begin
   assign(t1,fn); reset(t1);
   s:='';
-  assign(t2,bfile+'.bl'); rewrite(t2);
+  assign(t2,bfile+'.BL'); rewrite(t2);
   repeat
     readln(t1,s);
     if (s[1]=';') or (s[32]<>'/') then
@@ -1063,9 +1063,9 @@ begin
   if fn='' then
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
   else begin
-    if (art=1) and exist(fn+'.bbl') and changesys then
-      lfile:=fn+'.bbl'
-    else lfile:=fn+'.bl';
+    if (art=1) and exist(fn+'.BBL') and changesys then
+      lfile:=fn+'.BBL'
+    else lfile:=fn+'.BL';
     if not exist(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
@@ -1584,6 +1584,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2001/01/16 08:13:04  mk
+  - Grosschreibung von Dateinamen
+
   Revision 1.10.2.5  2000/12/12 14:03:56  mk
   - weitere lfn-fixes
 

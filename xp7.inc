@@ -1379,8 +1379,8 @@ end;
 procedure testBL;
 var f : file;
 begin
-  if not exist(bfile+'.bl') then begin
-    assign(f,bfile+'.bl');
+  if not exist(bfile+'.BL') then begin
+    assign(f,bfile+'.BL');
     rewrite(f,1);
     close(f);
     end;
@@ -1436,6 +1436,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.5  2001/01/16 08:13:04  mk
+  - Grosschreibung von Dateinamen
+
   Revision 1.24.2.4  2001/01/10 17:39:05  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
