@@ -65,6 +65,22 @@ const
     97,223, 71,182, 83,115,181,110,111, 79, 79,100,111,248, 69, 32,
     61,177, 62, 60,124,124,247, 61,176,183,183, 32,179,178,183, 32);
 
+{$IFDEF FPC}
+  {$IFDEF VER1_0_0}{$DEFINE FPC_OLD}{$ENDIF}
+  {$IFDEF VER1_0_1}{$DEFINE FPC_OLD}{$ENDIF}
+  {$IFDEF VER1_0_2}{$DEFINE FPC_OLD}{$ENDIF}
+  {$IFDEF VER1_0_3}{$DEFINE FPC_OLD}{$ENDIF}
+  {$IFDEF VER1_0_4}{$DEFINE FPC_OLD}{$ENDIF}
+
+ {$IFDEF FPC_OLD}
+  {$IFDEF UnixFS}
+   Const PathDelim = '\';
+  {$ELSE}
+   Const PathDelim = '\';
+  {$ENDIF}
+ {$ENDIF}
+{$ENDIF}
+
 type DateTimeSt = string;
      s20        = string;
      s40        = string;
@@ -1417,6 +1433,7 @@ begin
 end;
 
 {$IFDEF FPC }
+
 function ExcludeTrailingPathDelimiter(const s: String): String;
 begin
   Result := S;
@@ -1432,6 +1449,9 @@ end;
 
 {
   $Log$
+  Revision 1.109  2002/04/19 16:51:24  cl
+  - fix for FPC <= 1.0.4
+
   Revision 1.108  2002/04/14 22:21:31  cl
   - Hex(): Delphi fix; changed to universally portable code
 
