@@ -184,7 +184,7 @@ const
   );
 
 { AUTOMSG: autom. Versand }
-  AutoDbFieldCount = 14;
+  AutoDbFieldCount = 16;
   AutoDbFields: array[0..AutoDbFieldCount] of dbFeldTyp = (
     (fname:'INT_NR';    ftyp:dbTypeInt;     fsize:4; fnlen:11),
     (fname:'Dateiname'; ftyp:dbTypeString;  fsize:80),
@@ -200,7 +200,9 @@ const
     (fname:'Flags';     ftyp:dbTypeInt;     fsize:2; fnlen:5),
     (fname:'LastDate';  ftyp:dbTypeInt;     fsize:4; fnlen:10),
     (fname:'LastFdate'; ftyp:dbTypeInt;     fsize:4; fnlen:10),
-    (fname:'LastMsgID'; ftyp:dbTypeString;  fsize:120)
+    (fname:'LastMsgID'; ftyp:dbTypeString;  fsize:120),
+    (fname:'MIMEType';  ftyp:dbUntypedExt;  fsize:0; fnlen:0),
+    (fname:'CharSet';   ftyp:dbTypeString;  fsize:40)
   );
 
 { PSEUDOS: Empfaenger-Kuerzel }
@@ -1563,6 +1565,10 @@ end;
 
 {
   $Log$
+  Revision 1.55  2003/09/06 23:03:07  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.54  2003/02/07 16:13:02  cl
   - added field ``DATUM'' to SPAMFLT.DB1
 

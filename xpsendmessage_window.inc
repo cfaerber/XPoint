@@ -1304,15 +1304,6 @@ begin
   gsData.EditText;
 end;
 
-(*
-      customrec = record
-                    acol : colrec;    { aktuelle Farben }
-                    x,y  : Integer;   { aktuelle Pos. des Feldinhalts }
-                    fpos : integer;   { akt. Feldnummer }
-                    s    : string;    { var: Feldinhalt }
-                    brk  : boolean;   { var }
-                  end;
-*)
 procedure OnServerSelect(var cr:customrec);
 var Lister: TLister;
   MaxLen: Integer;
@@ -1403,6 +1394,8 @@ begin
     end;
 end;
 
+{$INCLUDE xpsendmessage_datesend.inc}
+
 function TSendUUData.SendWindow(dlg_title: string):boolean;
 var   i: Integer;
  senden: integer;
@@ -1429,7 +1422,7 @@ begin
   try //..finally
     ComposeEditableList;
       // Number of options on the left hand side
-      ll := 5;
+      ll := 4;
 
       // Number of options on the right hand side
       if flReEdit then
@@ -1531,9 +1524,9 @@ begin
       MHNr(2902);
       Inc(yy);
 
-      MaddString(1,yy,GetRes2(610,70) {'Datum'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
-      MHNr(2904);
-      Inc(yy);
+//      MaddString(1,yy,GetRes2(610,70) {'Datum'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+//      MHNr(2904);
+//      Inc(yy);
 
       yy := h+4;
 
@@ -1571,9 +1564,17 @@ begin
       inc(p,Length(s)+3);
       MHNr(2926);
 
+      s := GetRes2(610,65); { '^Datun' }
+      MAddButton(p,h+add_h+Max(ll,rr),s,senden,0,false);
+      Mset0Proc(OnDateButton);
+      inc(p,Length(s)+3);
+      MHNr(2927);
+
+(*
       s := GetRes2(610,22); { '^Intern' }
       MAddButton(p,h+add_h+Max(ll,rr),s,senden,2,true);
       MHNr(2927);
+*)      
 
       s1 := GetRes2(610,26); { '^Anhang' }
       s2 := GetRes2(610,25); { '^Text' }
@@ -1589,7 +1590,7 @@ begin
       ScrollDone;
       SetFieldPos(ok_pos);
 
-      readmask(brk);
+      Senden := readmask(brk);
 
       enddialog;
     until done;
@@ -1603,6 +1604,10 @@ begin
         if rfcprio_str = GetRes2(272,i) then begin
           rfcprio := i; break;
         end;
+
+      case senden of
+        2: Self.flIntern := true;
+      end;
     end;
 
   finally
@@ -2051,6 +2056,10 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.12  2003/09/06 23:03:08  cl
+// - send window - time-shifted sending of message
+//   cLOSES task #76792: Sendefenster: Datum
+//
 // Revision 1.11  2003/08/30 22:19:27  cl
 // - send window: select encryption and signature method
 // - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

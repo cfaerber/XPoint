@@ -32,6 +32,7 @@ var FidoOriginSav: string;
 //  Box    : String;
 //  Netztyp: Byte;
     Server : TXPServer;
+    FileStream: TStream;
     EMP,KOP: TStringList;
     PM,BCC : Boolean;
     EncryptionMethod: TSendEncryptionMethod;
@@ -188,7 +189,7 @@ var FidoOriginSav: string;
        hdp.charset:='';
        hdp.x_charset:='';
        hdp.typ:='B';
-    
+
        hdp.MIME.ctype:='application/octet-stream';  // There's no MIME content
        hdp.MIME.encoding:=MimeEncodingBase64;       // type (did I mention that
                                                     // we maintain this encoding
@@ -436,13 +437,8 @@ var FidoOriginSav: string;
 
     { --- 2. Schritt: Headerdaten erzeugen --------------------------- }
 
-(*
-    if intern then
+    if not assigned(FileStream) then
     begin
-      hdp.Empfaenger.Add(Mid(empfaddr,2));    
-      hdp.archive := false;
-    end else
-*)
 
     //-- Envelope-Empfänger und ZConnect-Header ---------------------- }
 
@@ -790,7 +786,7 @@ var FidoOriginSav: string;
 
     { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
-    if not flintern then
+    if (not flintern) then
     begin
       s1.Seek(0,soFromBeginning);
 
@@ -869,6 +865,12 @@ var FidoOriginSav: string;
       s2.Free; {s2:=nil;}
 
     end; // if not flIntern
+
+    end else // if not assigned(FileStr)
+    begin
+      s1.Seek(0,soFromBeginning);
+      CopyStream(s1,FileStream);
+    end;
 
     s1.Free; s1:=nil;
   end;
@@ -963,7 +965,7 @@ var FidoOriginSav: string;
                 else
                   SigMOverride := sigNone;
 
-              CreateSingleMessage(Server,E2,K2,PM,true,EncMOverride,SigMOverride,
+              CreateSingleMessage(Server,nil,E2,K2,PM,true,EncMOverride,SigMOverride,
                 EmpfList[i].EncodingPassword);
 
               K2.AddStrings(E2);
@@ -992,7 +994,7 @@ var FidoOriginSav: string;
     // BCC-Flag gesetzt, wenn BCCs vorhanden sind.
 
       EMP.AddStrings(BCC);
-      CreateSingleMessage(Server,EMP,KOP,PM,BCC.Count>0,secNone,sigM,'');
+      CreateSingleMessage(Server,nil,EMP,KOP,PM,BCC.Count>0,secNone,sigM,'');
     end else
     begin
 
@@ -1001,7 +1003,7 @@ var FidoOriginSav: string;
       // Keine BCCs: Einfach Nachricht erzeugen
 
       if BCC.Count<=0 then begin
-        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
+        CreateSingleMessage(Server,nil,EMP,KOP,PM,false,secNone,sigM,'');
       end else 
 
       // BCCs vorhanden: je nachdem, ob das Netz selbst BCCs unterstützt
@@ -1012,19 +1014,19 @@ var FidoOriginSav: string;
         // normalen Empfängern (ohne BCC-Flag) und eine mit den BCC-
         // Empfängern (mit BCC-Flag) erzeugen
       
-        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
+        CreateSingleMessage(Server,nil,EMP,KOP,PM,false,secNone,sigM,'');
         
         KOP.AddStrings(EMP);
         EMP.Clear;
         EMP.AddStrings(BCC);
-        CreateSingleMessage(Server,EMP,KOP,PM,true,secNone,sigM,'');
+        CreateSingleMessage(Server,nil,EMP,KOP,PM,true,secNone,sigM,'');
 
       end else
       begin
         // BCCs werden nicht unterstützt: Eine Nachricht mit den normalen
         // Empfängern erzeugen und jeweils eine für jeden BCC-Empfänger
       
-        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
+        CreateSingleMessage(Server,nil,EMP,KOP,PM,false,secNone,sigM,'');
 
         KOP.AddStrings(EMP);
         
@@ -1032,7 +1034,7 @@ var FidoOriginSav: string;
         begin
           EMP.Clear;
           EMP.Add(BCC[i]);
-          CreateSingleMessage(Server,EMP,KOP,PM,true,secNone,sigM,'');
+          CreateSingleMessage(Server,nil,EMP,KOP,PM,true,secNone,sigM,'');
         end;
         
       end;
@@ -1059,7 +1061,7 @@ var FidoOriginSav: string;
        Server: TXPServer;
   begin
     FidoOriginSav := '';
-  
+
     EMP := nil;
     KOP := nil;
     Server := nil;
@@ -1068,12 +1070,78 @@ var FidoOriginSav: string;
       KOP := TStringList.Create;
       EMP.Add(iifs(EmpfList.Count>0,EmpfList[0].ZCAddress,'$/'#$AF'Nix'));
       Server := TXPServer.CreatebyName(Box);
-      CreateSingleMessage(Server,EMP,KOP,false,false,secNone,sigNone,'');
+      CreateSingleMessage(Server,nil,EMP,KOP,false,false,secNone,sigNone,'');
     finally
       Server.Free;
       EMP.Free;
       KOP.Free;
-    end;    
+    end;
+  end;
+
+  procedure CreateDatedMessage;
+  var FileName: string;
+      Box: string;
+      EMP,KOP: TStringList;
+      Server: TXPServer;
+      FileStream: TFileStream;
+      AutoexecDB: DB;
+      TemporaryChar: Char;
+      TemporaryLongint: Longint;
+      TemporaryWord: SmallWord;
+  begin
+    FileStream := Nil;
+    EMP := Nil;
+    KOP := Nil;
+    Server := Nil;
+
+    Box := EmpfList[0].BoxName;
+
+    rmessage(608);    { 'Nachricht speichern...' }
+    try
+      repeat
+        FileName:=AutoVDir+strs(random(10000))+'.MSG';
+      until not FileExists(FileName);
+      
+      Server := TXPServer.CreatebyName(Box);
+      EMP := TStringList.Create;
+      EMP.Add(Empf1Address);
+      KOP := TStringList.Create;
+
+      FileStream := TFileStream.Create(FileName,fmCreate);
+      CreateSingleMessage(Server,FileStream,
+        EMP,KOP,false,false,secNone,sigNone,'');
+      FreeAndNil(FileStream);
+
+      dbOpen(AutoexecDB,AutoFile,1);
+      try
+        dbAppend(AutoexecDB);
+        dbWriteStr(AutoexecDB,'dateiname',FileName);
+        dbWriteStr(AutoexecDB,'betreff',Self.Subject);
+        dbWriteStr(AutoexecDB,'empfaenger',Self.Empf1Address);
+        TemporaryChar := FirstChar(hdp.typ);
+        dbWrite(AutoexecDB,'typ',TemporaryChar);
+        dbWriteStr(AutoexecDB,'pollbox',Box);
+        TemporaryLongint := DateTimeToLongDate(Self.SendDate);
+        dbWrite(AutoexecDB,'datum1',TemporaryLongint);
+        TemporaryWord := $FFF;
+        dbWrite(AutoexecDB,'monate',TemporaryWord);
+        TemporaryWord := 3;   { aktiv, l”schen }
+        Inc(TemporaryWord,(RFCPrio mod 8) * 32);
+        if flRequestMDN then Inc(TemporaryWord,256);
+        if flNoArchive then Inc(TemporaryWord,1024);
+        dbWrite(AutoexecDB,'flags',TemporaryWord);
+        dbWriteXStr(AutoexecDB,'mimetype',256,hdp.mime.ctype);
+        dbWriteStr(AutoexecDB,'charset',hdp.charset);
+      finally
+        dbClose(AutoexecDB);
+      end;
+    finally
+      closebox;
+      FreeAndNil(FileStream);
+      FreeAndNil(EMP);
+      FreeAndNil(KOP);
+      FreeAndNil(Server);
+    end;
   end;
 
   procedure BoxSort(l,r:integer);
@@ -1095,6 +1163,9 @@ var FidoOriginSav: string;
 
 var i : integer;
 begin
+  Hdp := nil;
+  try
+
   if SentOK then exit;
   CheckEmpfaengerList(EmpfList,false,false);
   CorrectEncryptionMethod;
@@ -1104,12 +1175,17 @@ begin
     message(getres2(610,iif(flIntern,4,5))+   { 'Speichere Nachricht in ' / 'Sende Nachricht an ' }
             LeftStr(Empf1Address,50)+' ');
   end;
+  try
 
 // Wir müssen schon hier einen Eintrag für unsere Nachricht machen,
 // damit wir schon eine Message-ID erzeugen können
   dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
   Count := 0;
 
+  if not IsNaN(SendDate) then
+  begin
+    CreateDatedMessage;
+  end else
   if flIntern then 
   begin
     CreateInternalMessage(DefaultBox);
@@ -1130,11 +1206,21 @@ begin
     end;
   end;
 
-  if flShow then closebox;
+  finally
+    if flShow then
+      closebox;
+  end;
+  finally
+    FreeAndNil(Hdp);
+  end;
 end;
                                                       
 //
 // $Log$
+// Revision 1.20  2003/09/06 23:03:08  cl
+// - send window - time-shifted sending of message
+//   cLOSES task #76792: Sendefenster: Datum
+//
 // Revision 1.19  2003/08/30 22:39:17  cl
 // - fixes for FPC
 //

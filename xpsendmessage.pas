@@ -31,7 +31,7 @@ uses
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
   xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,xpmime,
-  addresslist,xpnt,
+  addresslist,xpnt,xpdatum,
   xprope,
 {$IFDEF unix}
   xpcurses,
@@ -149,6 +149,8 @@ type
 
     FForceBox    : string;
 
+    FSendDate    : TDateTime;
+
     procedure MakeUserdata;
     
     function GetSigTemplate: string;
@@ -194,6 +196,8 @@ type
 
     property DefaultBox: string read GetDefaultBox;
     property ForceBox: string read FForceBox write SetForceBox;
+
+    property SendDate: TDateTime read fSendDate write fSendDate;
 
   public 
     EmpfList   : TAddressList; // includes Newsgroups
@@ -297,12 +301,17 @@ type
     property Signature: string read FSignature write FSignature;    
 
   { -- Multipart support --------------------------------------------- }
-  public
+  private
     Parts    : TList;       { Nachrichten-Teile }
-    
+
     PartsEx  : Boolean;	    { Nachrichten-Teile aus Originaldatei extrahiert? }
     PartFile : String;      { Originaldatei }
     PartFTmp : Boolean;     { Originaldatei temporär? }
+
+    function GetMIMEParts(Index: Integer): TSendAttach_Part;
+
+  public
+    property MIMEParts[Index: Integer]: TSendAttach_Part read GetMIMEParts;
 
   { -- Primary Address ----------------------------------------------- }
     
@@ -415,7 +424,7 @@ function DoSend(pm:boolean; __datei:string; is_temp,is_file:boolean;
 *)
                 
 function umlauttest(var s:string):boolean;
-function test_senddate(var s:string):boolean;
+//function test_senddate(var s:string):boolean;
 procedure firstslash(var s:string);
 function testreplyto(var s:string):boolean;
 
@@ -445,17 +454,6 @@ begin
           if p>0 then s[p]:=iso[i];
           end; }
   end;
-end;
-
-function test_senddate(var s:string):boolean;
-begin
-  if smdl(ixdispdat(s),min_send) then begin
-    rfehler(601);    { 'Rueckdatieren nicht moeglich.' }
-    s:=fdat(longdat(min_send));
-    test_senddate:=false;
-    end
-  else
-    test_senddate:=true;
 end;
 
 procedure firstslash(var s:string);
@@ -579,7 +577,7 @@ begin
   orgHdp.Free;
   orgHdp := orig_hdp;
 
-  if UpperCase(LeftStr(OrgHdp.MIME.CType,10)) = 'MULTIPART/' then
+  if UpperCase(LeftStr(orig_hdp.MIME.ctype,10)) = 'MULTIPART/' then
   begin
     PartFile := fn;
     PartFTmp := temp;
@@ -709,6 +707,8 @@ begin
   flUngelesen := false;
 
   flOhneSig := true;
+
+  fSendDate := typeform.NaN;
 
   EncryptionMethod := secNone;
   SigningMethod := sigNone;
@@ -1000,6 +1000,11 @@ begin
     result := UpperCase(LeftStr(OrgHdp.MIME.CType,10))='MULTIPART/';
 end;
 
+function TSendUUData.GetMIMEParts(Index: Integer): TSendAttach_Part;
+begin
+  result := TSendAttach_Part(Parts[Index]);
+end;
+
 { -------------------------------------------------------------------- }
                                                                         
 initialization
@@ -1010,6 +1015,10 @@ finalization
 
 {
   $Log$
+  Revision 1.78  2003/09/06 23:03:07  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.77  2003/08/30 22:39:16  cl
   - fixes for FPC
 

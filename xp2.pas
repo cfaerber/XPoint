@@ -2300,7 +2300,7 @@ begin
             debug.debuglog('xp2cfg','Invalid config line: '+s,DLWarning);
         end;
       end else
-      if Pos('FreeXP', s)<=0 then
+      if Pos('[FreeXP]', s) > 0 then
         FreeXP := true;
     end;
     close(t);
@@ -2496,6 +2496,7 @@ begin
   TestDir(JanusDir, True);
   TestDir(FidoDir, True);
   TestDir(AutoxDir, True);
+  TestDir(AutoVDir, True);
   TestDir(BadDir, True);
   if not IsPath(filepath) then begin
     if not CreateDir(filepath) then begin
@@ -2810,6 +2811,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.170  2003/09/06 23:03:07  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.169  2003/09/06 12:59:46  cl
   - workaround for deliberately changed format of nodelist indexes in
     "FreeXP 3.40 RC3" [2003-08-31].

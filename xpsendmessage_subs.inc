@@ -970,7 +970,7 @@ begin
     mind.t:=dd; mind.m:=mm; mind.j:=yy;
     incd(mind);
     senddate:=formi(mind.t,2)+'.'+formi(mind.m,2)+'.'+formi(mind.j mod 100,2);
-    min_send:=ixdispdat(senddate);
+    min_send:=ixdispdat(senddate);xxx
     dialog(27,3,'',x,y);
     madddate(3,2,getres(607),senddate,false,false);   { 'absenden am ' }
     msetvfunc(test_senddate);
@@ -1270,6 +1270,10 @@ end;
 
 {
   $Log$
+  Revision 1.36  2003/09/06 23:03:08  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.35  2003/08/30 22:19:27  cl
   - send window: select encryption and signature method
   - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

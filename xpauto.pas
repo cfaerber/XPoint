@@ -45,6 +45,7 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
                   lastmid : string;     { letzte verwendete mid }
+                  ctype,chars: string;
                 end;
 
 procedure AutoRead(var ar:AutoRec);
@@ -61,7 +62,8 @@ implementation
 
 uses
   montage,typeform,fileio,datadef,database,resource,
-  xp0,xp1,xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt, debug, zftools;
+  xp0,xp1,xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt, debug, zftools,
+  xpheader;
 
 
 procedure AutoRead(var ar:AutoRec);
@@ -80,6 +82,8 @@ begin
     dbRead(auto,'flags',flags);
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
+    ctype := dbReadXStr(auto,'mimetype');
+    chars := dbReadStr(auto,'charset');
     lastmid := dbReadStr(auto,'lastmsgid');
   end;                    
 end;
@@ -97,6 +101,8 @@ begin
     dbWrite(auto,'monate',monate);
     dbWrite(auto,'datum1',datum1);
     dbWrite(auto,'datum2',datum2);
+    dbWriteXStr(auto,'mimetype',256,ctype);
+    dbWriteStr(auto,'charset',chars);
     dbWrite(auto,'flags',flags);
   end;
 end;
@@ -214,7 +220,9 @@ var tmp  : boolean;
     b    : byte;
     muvs : boolean;
     sData: TSendUUData;
+    orghdp: THeader;
 begin
+  orghdp:=nil;
   postfile:=false;
   with ar do
   begin
@@ -254,7 +262,7 @@ begin
         if sData.forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
   //    sData.EditAttach:=false;
         muvs:=SaveUVS; SaveUVS:=false;
-        sdata:= TSendUUData.Create;
+//      sdata:= TSendUUData.Create;
         if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
 
         if PM then
@@ -264,10 +272,24 @@ begin
 
         sData.Subject := betreff;
         sData.flShow := true;
-        if typ='B' then
-          sData.AddFile(datei,tmp,'')
-        else
-          sData.AddText(datei,tmp);
+
+        if UpperCase(LeftStr(ctype,10)) = 'MULTIPART/' then
+        begin
+          orghdp := THeader.Create;
+          orghdp.mime.ctype    := ctype;
+          SData.SetMessageContent(datei,tmp,orghdp)
+        end else
+        begin
+          if typ='B' then
+            sData.AddFile(datei,tmp,'')
+          else
+            sData.AddText(datei,tmp);
+          sData.MIMEParts[0].FileCharset := Chars;
+        end;
+
+        SData.RFCPrio := (Flags div 32) mod 8;
+        SData.flRequestMDN := (Flags and 256)<>0;
+        SData.flNoArchive := (Flags and 1024)<>0;
 
         if sData.DoIt(GetRes2(610,120),false,false,sendbox) then
         begin
@@ -297,6 +319,7 @@ begin
         if tmp then
           SafeDeleteFile(datei);
       finally
+        orghdp.Free;
         sData.Free;
       end;
     end;
@@ -689,6 +712,10 @@ end;
 
 {
   $Log$
+  Revision 1.70  2003/09/06 23:03:07  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.69  2003/09/01 15:34:11  mk
   - fixed linux crash: FindClose(SR) was called twice in autoexec()
 

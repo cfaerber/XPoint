@@ -221,9 +221,15 @@ AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
 10. Datum2      Longint          dito
 11. Flags       Word             1=aktiv, 2=AutoLoeschen, 4=nur geaenderte Dat.
                                  ab 3.30: 8=ersetzen (Supersedes)
+                                 ab 3.9.8: 32+64+128=Prioritaet
+				           256=Empfangsbest.
+					   512=reserviert (Lesebest.)
+					   1024=nicht archivieren
 12. LastDate    Longint          letztes Sendedatum
 13. LastFdate   Longint          Dateidatum beim letzten Absenden
 14. LastMsgID   String(120)      ab 3.30: MessageID beim letzten Absenden
+15. MIMEType    Extern           ab 3.9.8: MIME Content-Type
+16. CharSet     String(40)       ab 3.9.8: Datei-Zeichensatz
 
 Indizes:
 

@@ -116,6 +116,7 @@ const  QPC_ID      = 'QPC:';
        JanusDir    = JanusDir_+DirSepa;
        InfileDir   = 'files'+DirSepa; { Default: Filerequests }
        AutoxDir    = 'autoexec'+DirSepa;    { AutoStart-Daten }
+       AutoVDir    = 'autosend'+DirSepa;
        BadDir      = 'bad'+DirSepa;
 
        HeaderFile  = 'header.xps';     { Schablonen-Dateien }
@@ -161,6 +162,7 @@ const  QPC_ID      = 'QPC:';
        JanusDir    = JanusDir_+DirSepa;
        InfileDir   = 'FILES'+DirSepa; { Default: Filerequests }
        AutoxDir    = 'AUTOEXEC'+DirSepa;    { AutoStart-Daten }
+       AutoVDir    = 'AUTOSEND'+DirSepa;
        BadDir      = 'BAD'+DirSepa;
        HeaderFile  = 'HEADER.XPS';     { Schablonen-Dateien }
        HeaderPriv  = 'PRIVHEAD.XPS';
@@ -1232,6 +1234,10 @@ implementation
 
 {
   $Log$
+  Revision 1.186  2003/09/06 23:03:07  cl
+  - send window - time-shifted sending of message
+    cLOSES task #76792: Sendefenster: Datum
+
   Revision 1.185  2003/09/05 18:22:49  mk
   - fixed for printing support under linux
 

@@ -1498,7 +1498,10 @@ N Deutsch
 57   Si^gnatur:  ~
 
 60   Pri^orit\x84t: ~
-70   ^Datum:     ~
+
+65   ^Datum
+67   Bei mehreren EmpfÑngern nicht mîglich.
+68   Bei verschlÅsselten/signierten Nachrichten nicht mîglich.
 
 72   B^est\x84tigung anfordern
 75   keine Signatur an^h\x84ngen
@@ -4141,6 +4144,10 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.81  2003/09/06 23:03:07  cl
+# - send window - time-shifted sending of message
+#   cLOSES task #76792: Sendefenster: Datum
+#
 # Revision 1.80  2003/08/30 22:19:26  cl
 # - send window: select encryption and signature method
 # - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
