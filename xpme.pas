@@ -697,7 +697,10 @@ begin
 end.
 {
   $Log$
-  Revision 1.5  2000/03/04 10:42:25  mk
-  Versionsinfos hinzugefuegt und weiter portiert
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
+  Revision 1.3  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
 }

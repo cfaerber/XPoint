@@ -65,7 +65,7 @@ procedure auto_empfsel(var cr:customrec);     { Brett oder Userauswahl mit abfra
  
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -1349,6 +1349,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

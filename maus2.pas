@@ -69,7 +69,7 @@ procedure maus_showHscroller(x1,x2,y2:integer; total,from,width:longint);
 
 implementation
 
-uses   inout;
+uses inout, winxp;
 
 const  maxinside = 25;
 
@@ -337,6 +337,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/04 14:53:49  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

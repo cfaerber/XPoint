@@ -42,7 +42,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt;
+uses xp3,xp3o2,xp3o,xp4e,xpnt, winxp;
 
 const CCtemp = 'verteil.$$$';
 
@@ -339,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.7  2000/02/29 09:30:17  jg
   -Bugfix Brettnameneingaben mit "." bei Empfaenger und Kopien im Sendefenster
 

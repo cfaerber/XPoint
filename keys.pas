@@ -163,11 +163,7 @@ end;
 
 function keypressed:boolean;
 begin
-{$IFDEF WIN32 }
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or keypressed;
-{$ELSE}
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
-{$ENDIF}
 end;
 
 function readkey:char;
@@ -183,7 +179,9 @@ begin
       highbyte:=0;
     end
     else begin
-      if enhKBsupport then begin
+    {$IFDEF BP }
+      if enhKBsupport then
+      begin
         asm
           mov ah,10h
           int 16h
@@ -200,7 +198,7 @@ begin
           mov @result,al
           mov lastscancode,ah
         end;
-      end  
+      end
       else begin
         asm
           xor ah,ah
@@ -213,8 +211,10 @@ begin
           mov lastscancode,ah
         end;
       end;
+{$ELSE }
+      readkey:=crt.readkey;
+{$ENDIF }
     end;
-{    readkey:=crt.readkey; }
 end;
 
 
@@ -383,10 +383,11 @@ begin
   kb_alt:=kbstat and alt<>0;
 end;
 
+{$IFDEF BP }
 procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
   asm
     mov bh,0fh  { Z„hler }
-  @@loop:  
+  @@loop:
     mov ah,5
     mov cx,0ffffh { in Puffer }
     int 16h
@@ -398,18 +399,24 @@ procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
     jnz @@loop
     mov enhKBsupport,false
     jmp @@nein
-  @@ja:    
+  @@ja:
     mov enhKBsupport,true
   @@nein:
-  end;
- 
+end;
+{$ENDIF }
+
 begin
   forwardkeys:='';
   func_proc:=func_dummy;
+{$IFDEF BP }
   TestKeyInt;
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.8  2000/03/04 14:53:49  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.7  2000/02/29 19:44:38  rb
   Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
 

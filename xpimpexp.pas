@@ -35,7 +35,7 @@ function imptestpollbox(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt;
+uses  xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt, winxp;
 
 const mdaten = 'MDATEN.DAT';    { fÅr ImportMautaubase }
       mindex = 'MDATEN.IND';
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

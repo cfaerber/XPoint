@@ -36,7 +36,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xp10,xpnt,xpfidonl;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xp10,xpnt,xpfidonl, winxp;
 
 var  statbrett : boolean;
 
@@ -1257,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -37,7 +37,7 @@ function  TermGetfilename(nr,nn:byte):pathstr;
 
 implementation  { -------------------------------------------------- }
 
-uses  xp1o,xpkeys,xp2,xp2c,xp9bp,xp10;
+uses  xp1o,xpkeys,xp2,xp2c,xp9bp,xp10, winxp;
 
 const ansimode : boolean = true;
       ansimax  = 40;       { max. L„nge von ANSI-Codes }

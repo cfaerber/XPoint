@@ -1519,10 +1519,12 @@ begin
     else if ustr(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
-    close(lst);                          { Drucker-Schnitte }
+{$IFDEF BP }
+    close(lst);                           { Drucker-Schnitte }
     DruckLPT:=min(5,max(DruckLpt,1));
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
+{$ENDIF }
     if aaa<>'' then begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
@@ -1601,6 +1603,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/03/04 14:53:49  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.13  2000/03/03 08:37:19  mk
   OH: Autodatumsbezuege werden nicht mehr doppelt geschrieben
 

@@ -27,7 +27,7 @@ procedure InitDatabase;
 
 implementation  { --------------------------------------------------- }
 
-uses xp4o2;
+uses xp4o2, winxp;
 
 
 procedure GetFieldNumbers;
@@ -862,6 +862,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -13,7 +13,7 @@
 (*                      UNIT windows                       *)
 (*                                                         *)
 (*            Window-Verwaltung & Datei-Auswahl            *)
-(*                                                         *)
+(*                                                                     *)
 (***********************************************************)
 
 {$I XPDEFINE.INC}
@@ -67,7 +67,11 @@ procedure wpush(x1,x2,y1,y2:byte; text:string);
 procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
 
-procedure fwrt(x,y:word; var s:string);
+{ Schreiben eines Strings mit Update der Cursor-Posititon }
+procedure Wrt(x,y:word; const s:string);
+{ Schreiben eines Strings ohne Update der Cursor-Position }
+procedure FWrt(x,y:word; const s:string);
+
 procedure w_copyrght;
 
 
@@ -80,8 +84,18 @@ const rchar : array[1..3,1..6] of char =
 
       shad  : byte = 0;  { Zusatz-Fensterbreite/hîhe }
 
-type  { MK 01/2000 von $0fff in $1fff geÑndert }
+type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
+
+{$IFDEF Ver32 }
+  { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
+    des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
+    Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
+  TLocalScreen = array[0..$1fff] of char;
+  PLocalScreen = ^TLocalScreen;
+var
+  LocalScreen: PLocalScreen;
+{$ENDIF }
 
 var pullw   : array[1..maxpull] of record
                                      l,r,o,u,wi : byte;
@@ -91,9 +105,10 @@ var pullw   : array[1..maxpull] of record
                                    end;
     rahmen  : shortint;
 
+
+{$IFDEF BP }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean); assembler;
 asm
-{$IFDEF BP }
          cld
          mov   al,typ
          mov   ah,6
@@ -158,79 +173,33 @@ asm
          rep   stosw
          mov   al,[bx+5]
          stosw
-{$ELSE }
-         cld
-         xor   eax, eax
-         mov   al,typ
-         mov   ah,6
-         mul   ah
-         xor   ebx, ebx
-         mov   ebx, offset rchar - 6   { Offset der Zeichentabbelle [typ] }
-         add   ebx,eax
-
-         mov   al,byte ptr o
-         dec   al
-         mul   byte ptr zpz
-         shl   eax,1                    { di  <-  (o-1) * zpz * 2 }
-         mov   edi,l
-         add   edi, base
-         dec   edi
-         shl   edi,1
-         add   edi, eax                   { di  <-  di + (l-1) * 2  }
-         mov   eax,r
-         sub   eax,l
-         dec   eax
-         mov   edx,eax
-
-         mov   ah,attr
-         push  edi
-         mov   al,[ebx+0]
-         stosw
-         mov   al,[ebx+1]
-         mov   ecx,edx
-         rep   stosw
-         mov   al,[ebx+2]
-         stosw
-         pop   edi
-         add   edi,zpz
-         add   edi,zpz
-         mov   esi,u
-         sub   esi,o
-         dec   esi
-         jz    @r2                      { Leerer Mittelteil }
-
-@qrlp1:  push  edi
-         mov   al,[ebx+3]
-         stosw
-         mov   al,' '
-         mov   ecx,edx
-         cmp   clr,1
-         jz    @docl
-         add   edi,ecx
-         add   edi,ecx
-         jmp   @nocl
-@docl:   rep   stosw
-@nocl:   mov   al,[ebx+3]
-         stosw
-         pop   edi
-         add   edi,zpz
-         add   edi,zpz
-         sub   esi,1
-         jnz   @qrlp1
-
-@r2:     mov   al,[ebx+4]
-         stosw
-         mov   al,[ebx+1]
-         mov   ecx,edx
-         rep   stosw
-         mov   al,[ebx+5]
-         stosw
-{$ENDIF }
 end;
+{$ELSE }
+{ !! Attr noch auswerten !! }
+procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
+var
+  i: integer;
+  s: String;
+begin
+  wrt(l, o, rchar[typ,1] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,3]);
+  wrt(l, u, rchar[typ,5] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,6]);
 
+  { Wird benutzt, wenn Fenster im Rahmen gefÅllt werden soll }
+  s := rchar[typ, 4] + Dup(r-l-1, ' ') + rchar[typ, 4];
+  for i := o+1 to u -1 do
+  if clr then
+    fWrt(l, i, s)
+  else
+  begin
+    wrt(l, i, rchar[typ, 4]);
+    wrt(r, i, rchar[typ, 4]);
+  end;
+end;
+{$ENDIF }
+
+{$IFDEF BP }
 procedure wshadow(li,re,ob,un:word); assembler;
 asm
-{$IFDEF BP }
          call  moff
          mov   ax,un                   { Adresse untere linke Ecke berechnen }
          dec   ax
@@ -280,60 +249,35 @@ asm
          loop  @rsloop
 
 @nors:   call  mon
-{$ELSE }
-         call  moff
-         mov   eax,un                   { Adresse untere linke Ecke berechnen }
-         dec   eax
-         mov   ebx,zpz
-         mul   ebx
-         shl   eax,1
-         mov   edi,li
-         dec   edi
-         shl   edi,1
-         add   edi,eax
-         inc   edi
-
-         add   edi, base
-         mov   ecx,re
-         cmp   ecx,ebx
-         jbe   @c1ok
-         mov   ecx,ebx
-@c1ok:   sub   ecx,li
-         inc   ecx
-         mov   al,shadowcol
-
-@usloop: stosb                         { unteren Schatten zeichnen }
-         inc   edi
-         loop  @usloop
-
-         mov   eax,ob                   { Adresse obere rechte Ecke berechnen }
-         dec   eax
-         mul   ebx
-         shl   eax,1
-         mov   edi,re
-         cmp   edi,ebx                   { Schattenspalte > 80? }
-         ja    @nors
-         dec   edi
-         shl   edi,1
-         add   edi,eax
-         inc   edi
-
-         mov   ecx,un
-         sub   ecx,ob
-         mov   al,shadowcol
-         dec   ebx
-@rsloop: stosb                         { rechten Schatten zeichnen }
-         add   edi,ebx
-         add   edi,ebx
-         inc   edi
-         loop  @rsloop
-@nors:   call  mon
-{$ENDIF }
 end;
+{$ELSE }
+procedure wshadow(li,re,ob,un:word);
+var
+  i: Integer;
+  c: Char;
+  save: byte;
+begin
+  moff;
+  save := textattr;
+  textattr := shadowcol;
+  for i := ob to un do
+  begin
+    c := LocalScreen^[(re+i*zpz)*2];
+    fwrt(re, i, c);
+  end;
+  for i := li to re do
+  begin
+    c := LocalScreen^[(i+un*zpz)*2];
+    fwrt(i, un, c);
+  end;
+  textattr := save;
+  mon;
+end;
+{$ENDIF }
 
+{$IFDEF BP }
 procedure clwin(l,r,o,u:word); assembler;
 asm
-{$IFDEF BP }
          call   moff
          mov    si,zpz
          shl    si,1
@@ -366,56 +310,33 @@ asm
          dec    bl
          jmp    @wclo
 @wcende: call   mon
+end;
 {$ELSE }
-         call   moff
-         mov    esi,zpz
-         shl    esi,1
-         mov    ecx,esi
-         mov    eax,o
-         dec    eax
-         mul    ecx
-         mov    edx,l
-         dec    edx
-         mov    ebx,edx
-         shl    edx,1
-         add    edx,eax
-         mov    edi,edx                  { dx, di = Startadresse des Fensters }
-         mov    ecx,r
-         sub    ecx,ebx
-         mov    ebx,u
-         sub    ebx,o
-         inc    ebx                     { bl = Fensterhîhe }
-         mov    bh,cl                  { bh,cx = Fensterbreite }
-         add    edi, base
-         mov    al,' '
-         mov    ah,textattr
-@wclo:   or     bl,bl
-         jz     @wcende                 { Fenster ist gelîscht }
-         cld
-         rep    stosw                  { Fensterbereich lîschen mit del }
-         mov    cl,bh                  { Fensterbreite holen }
-         add    edx,esi                  { NÑchste Fensterzeile }
-         mov    edi,edx
-         dec    bl
-         jmp    @wclo
-@wcende: call   mon
+procedure clwin(l,r,o,u:word);
+var
+  i: Integer;
+  s: String;
+begin
+  s := Dup(r-l+1, ' ');
+  for i := o to u do
+    FWrt(l, i, s);
+end;
 {$ENDIF }
+
+procedure Wrt(x,y:word; const s:string);
+begin
+  GotoXY(x+Length(s), y);
+  FWrt(x, y, s);
 end;
 
-procedure fwrt(x,y:word; var s:string); assembler;
-asm
 {$IFDEF BP }
+procedure FWrt(x,y:word; const s:string); assembler;
+asm
          push ds
          cld
          mov    es,base
          mov    ax, y
-         dec    al
-{        mov    cl,5
-         shl    ax,cl
-         mov    di,ax
-         shl    ax,1
-         shl    ax,1
-         add    di,ax }
+         dec    ax
          mul    zpz
          shl    ax,1
          mov    di,ax
@@ -432,29 +353,24 @@ asm
          stosw
          loop   @lp
 @nowrt:  pop ds
-{$ELSE }
-         cld
-         mov    edi,base
-         mov    eax, y
-         dec    eax
-         mul    zpz
-         shl    eax,1
-         mov    edi,eax
-         add    edi,x
-         add    edi,x
-         sub    edi,2
-         mov    ah,textattr
-         mov    esi, s
-         mov    ch,0
-         lodsb
-         mov    cl,al
-         jcxz   @nowrt
-@lp:     lodsb
-         stosw
-         loop   @lp
-@nowrt:
-{$ENDIF }
 end;
+{$ELSE }
+procedure FWrt(x,y:word; const s:string);
+var
+  i, Count: Integer;
+begin
+  GotoXY(x, y);
+  Write(s);
+  { LocalScreen Åbernimmt die énderungen }
+  Count := (x+y*zpz)*2;
+  if s <> '' then
+    for i := 1 to Length(s) do
+    begin
+      LocalScreen^[Count+i] := s[i];
+      LocalScreen^[Count+i+1] := Char(TextAttr);
+    end;
+end;
+{$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
 
@@ -501,14 +417,6 @@ begin
     mon;
     end;
 end;
-
-
-procedure wrt(x,y:byte; txt:string);
-begin
-  gotoxy(x,y);
-  write(txt);
-end;
-
 
 procedure normwin;
 begin
@@ -603,9 +511,11 @@ begin
     wi:=(r-l+1+shad)*2;
     getmem(savemem,wi*(u-o+ashad+1));
     moff;
-{$IFNDEF ver32}
-   for j:=o-1 to u-1+ashad do
-    Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
+    for j:=o-1 to u-1+ashad do
+{$IFDEF BP }
+      Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
+{$ELSE }
+      Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
 {$ENDIF}
     mon;
     if rahmen=1 then rahmen1(l,r,o,u,text);
@@ -619,13 +529,24 @@ end;
 
 Procedure wrest(handle:word);
 var i : byte;
+{$IFDEF Ver32 }
+  j: integer;
+{$ENDIF }
 begin
   normwin;
   with pullw[handle] do begin
     moff;
-{$IFNDEF ver32}
     for i:=o-1 to u-1+ashad do
+{$IFDEF BP }
       Fastmove(savemem^[(i-o+1)*wi],mem[base:i*zpz*2+(l-1)*2],wi);
+{$ELSE }
+      begin
+        Fastmove(savemem^[(i-o+1)*wi],LocalScreen^[i*zpz*2+(l-1)*2],wi);
+        for j := 0 to wi div 2-1 do
+        begin
+          GotoXY(l+j, i+1); Write(savemem^[(i-o+1)*wi+j]);
+        end;
+      end;
 {$ENDIF}
     mon;
     freemem(savemem,wi*(u-o+ashad+1));
@@ -875,8 +796,8 @@ begin
 end;
 
 
-var i : byte;
-
+var
+  i: byte;
 begin
   for i:=1 to maxpull do
     pullw[i].free:=true;
@@ -886,9 +807,15 @@ begin
   warrows:=false;
   warrcol:=7;
   selp:=seldummy;
+{$IFDEF Ver32 }
+  GetMem(LocalScreen, SizeOf(LocalScreen));
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.7  2000/03/04 14:53:49  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

@@ -184,7 +184,6 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 Procedure clrscr;                            { statt CRT.clrscr         }
-Procedure Wrt(x,y:byte; s:string);           { String ausgeben          }
 Procedure DispHard(x,y:byte; s:string);      { String ohne berÅcksicht. }
                                              { des akt. Windows ausgeb. }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
@@ -267,7 +266,7 @@ procedure mdelay(msec:word);
 
 IMPLEMENTATION
 
-uses   xp0,maus2;
+uses   xp0,maus2, winxp;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 

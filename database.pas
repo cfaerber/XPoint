@@ -116,23 +116,10 @@ implementation  {=======================================================}
 
 uses datadef1;
 
-{$IFDEF ver32 }
-procedure expand_node(rbuf,nodep: pointer);
-begin
-end;
-
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer);
-begin
-end;
-
-procedure seek_cache2(var _sp:integer);
-begin
-end;
-
-{$ELSE }
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
 procedure expand_node(rbuf,nodep: pointer); assembler;
 asm
+{$IFDEF BP }
          push ds
          les   di, nodep
          lds   si, rbuf
@@ -161,10 +148,36 @@ asm
          dec   ax
          jnz   @exlp
 @nokeys: pop ds
+{$ELSE }
+         mov   edi, nodep
+         mov   esi, rbuf
+         mov   edx, 0
+         mov   dl, [edi+2]             { Keysize }
+         add   edx,9                    { plus LÑngenbyte plus Ref/Data }
+         mov   ebx,136                  { (264) sizeof(inodekey); }
+         sub   ebx,edx
+         add   edi,14
+         cld
+         lodsw                         { Anzahl SchlÅssel im Node }
+         stosw                         { Anzahl speichern }
+@noerr:  mov   ecx,4                   { Ref+Data von key[0] Åbertragen }
+         rep   movsw
+         mov   cx,ax
+         jcxz  @nokeys
+         add   edi,12                  { (256) key[0].keystr Åberspringen }
+         mov   eax, ecx
+@exlp:   mov   ecx, edx
+         rep   movsb                   { Ref, Data und Key Åbertragen }
+         add   edi, ebx
+         dec   eax
+         jnz   @exlp
+@nokeys:
+{$ENDIF }
 end;
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
 asm
+{$IFDEF BP }
          xor   cx,cx
          les   di,cache
          mov   bx,word ptr dbp
@@ -188,10 +201,29 @@ asm
          jb    @sc_lp
 @cfound:  les   di,i
          mov   es:[di],cx
+{$ELSE }
+         xor   ecx,ecx
+         mov   edi, cache
+         mov   ebx, dbp
+         mov   esi, ofs
+
+@sc_lp:  cmp   byte ptr [edi],0      { not used? }
+         jz    @nextc
+         cmp   [edi+1],ebx            { dbp gleich? }
+         jnz   @nextc
+         cmp   [edi+5],esi            { ofs gleich? }
+         jz    @cfound
+@nextc:  add   edi,1080    { sizeof(cachepage) }
+         inc   ecx
+         cmp   ecx,cacheanz
+         jb    @sc_lp
+@cfound: mov   i,ecx
+{$ENDIF }
 end;
 
-procedure seek_cache2(var _sp:integer); assembler;
+procedure seek_cache2(var _sp:integer16); assembler;
 asm
+{$IFDEF BP }
          les   di,cache
          mov   ax,0ffffh               { s := maxlongint }
          mov   dx,ax
@@ -217,8 +249,34 @@ asm
 @sc2ok:   mov   bx,cx                   { sp:=i }
 @nofree:  les   di,_sp
          mov   es:[di],bx
+{$ELSE }
+         mov   edi, cache
+         mov   eax, $0000ffff          { s := maxlongint }
+         mov   edx, eax
+         mov   ebx, 0                  { sp:=0 }
+         mov   ecx, 0                  { i:=0 }
+
+@clp:    cmp   byte ptr [edi],0        { not used ? }
+         jz    @sc2ok
+         cmp   [edi+11],edx            { cache^[i].lasttick < s ? }
+         ja    @nexti
+         jb    @smaller
+         cmp   [edi+9],eax
+         jae   @nexti
+@smaller: mov   ax, [edi+9]            { s:=cache^[i].lasttick }
+         mov    dx, [edi+11]
+         mov    ebx,ecx                   { sp:=i; }
+@nexti:  add   edi,1080
+         inc   ecx
+         cmp   ecx,cacheanz
+         jb    @clp
+         jmp   @nofree
+
+@sc2ok:   mov   ebx,ecx                   { sp:=i }
+@nofree:  les   edi,_sp
+          mov   [edi],bx
+{$ENDIF }
 end;
-{$ENDIF}
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
@@ -1644,6 +1702,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/04 14:53:49  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.6  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

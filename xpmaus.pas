@@ -34,7 +34,7 @@ procedure MausGetInfs(box:string; logfile:pathstr);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9;
+uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
 
 
 { art=0 : ZurÅckgelieferte Maus-MessageIDs aus Logfile in  }
@@ -816,6 +816,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 
