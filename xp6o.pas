@@ -38,11 +38,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
      xp6,xp6l;
 
 const
-{$ifdef hasHugeString}
   mauswlbox : string = '';
-{$else}
-  mauswlbox : string[BoxNameLen] = '';
-{$endif}
 
 procedure Unversandt(edit,modi:boolean);
 
@@ -431,7 +427,7 @@ begin
     dbSeek(d,piKurzname,UpperCase(s));
     if dbFound and ((dbReadStr(d,'pollbox')='') or
        (ntBoxNetztyp(dbReadStr(d,'pollbox'))=nt_Maus)) then
-      dbRead(d,'langname',s)
+      s:= dbReadStr(d,'langname')
     else begin
       p:=cpos('@',s);
       if p=0 then s:=s+'@'+mauswlbox
@@ -588,8 +584,8 @@ label ende,again;
     b:=ord(hdp^.typ[1]);    dbWriteN(mbase,mb_typ,b);
     close(f);
     dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-    if mnt=nt_Fido then   dbWriteN(mbase,mb_name,hdp^.fido_to)
-    else                  dbWriteN(mbase,mb_name,hdp^.realname);
+    if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp^.fido_to)
+    else                  dbWriteNStr(mbase,mb_name,hdp^.realname);
     b:=1;             dbWriteN(mbase,mb_gelesen,b);
     b:=random(9)+iif(abl<10,1,11);
                       dbWriteN(mbase,mb_ablage,b);
@@ -656,7 +652,7 @@ label ende,again;
       re_n:=(dbReadInt(d,'flags') and 6 = 2) or
              ((dbReadInt(d,'flags') and 6=0) and rehochn);
       kein_re:=(dbReadInt(d,'flags') and 6=6);
-      dbRead(d,'signatur',sigfile);
+      sigfile:= dbReadStr(d,'signatur');
       if sigfile<>'' then sigfile:=sigfile+'.xps'
       else sigfile:='none.$$$';
       end;
@@ -1160,8 +1156,8 @@ begin
   close(f);
   erase(f);
   dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-  if mnt=nt_Fido then   dbWriteN(mbase,mb_name,hdp^.fido_to)
-  else                  dbWriteN(mbase,mb_name,hdp^.realname);
+  if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp^.fido_to)
+  else                  dbWriteNStr(mbase,mb_name,hdp^.realname);
   b:=1;             dbWriteN(mbase,mb_gelesen,b);
   b:=random(9)+iif(abl<10,1,11);
                     dbWriteN(mbase,mb_ablage,b);
@@ -1252,6 +1248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/07/22 10:10:25  hd
+  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
+
   Revision 1.31  2000/07/21 21:17:46  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

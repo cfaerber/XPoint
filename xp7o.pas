@@ -141,7 +141,7 @@ var f      : file;
     ldummy : longint;
 
   procedure ClrUVS;
-  var pbox : string[20];
+  var pbox : string;
       uvl  : boolean;
       uvs  : byte;
   begin
@@ -779,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/22 10:10:25  hd
+  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
+
   Revision 1.23  2000/07/21 21:17:47  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

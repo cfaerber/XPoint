@@ -615,7 +615,7 @@ end;
 function fileserver(var adresse:string):boolean;
 var d      : DB;
     p,p2   : byte;
-    fsname : string[30];
+    fsname : string;
 begin
   p:=cpos('@',adresse);
   if p=0 then exit;
@@ -623,7 +623,7 @@ begin
   if p2=0 then exit;
   dbOpen(d,SystemFile,siName);
   dbSeek(d,siName,copy(adresse,p+1,p2-p-1));
-  if dbFound then dbRead(d,'fs-name',fsname)
+  if dbFound then fsname:= dbReadStr(d,'fs-name')
   else fsname:='';
   dbClose(d);
   fileserver:=left(adresse,p-1)=fsname;
@@ -840,7 +840,7 @@ begin
   Domain := dbReadStr(d,'domain');
   FQDN := dbReadStr(d,'fqdn');
   if sData^.pmreplyto='' then
-    dbRead(d,'ReplyTo',sdata^.pmreplyto);
+    sdata^.pmreplyto:= dbReadStr(d,'ReplyTo');
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp=nt_UUCP) and (umlaute=2) then
     umlaute:=0;
@@ -1142,6 +1142,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.28  2000/07/22 10:10:25  hd
+  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
+
   Revision 1.27  2000/07/21 21:17:46  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

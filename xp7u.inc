@@ -14,7 +14,7 @@ var uunum : word;    { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
 
 function uu_nummer:word;     { n„chste Paketnummer aus UUNUMMER.DAT lesen }
 var t : text;
-    s : string[20];
+    s : string;
 begin
   if _filesize(UUnumdat)<2 then
     uu_nummer:=1
@@ -29,7 +29,7 @@ end;
 
 function GetNextUUnummer:word;   { n„chste Nummer aus C-File auslesen }
 var t : text;
-    s : string[60];
+    s : string;
     w : word;
 begin
   w:=uu_nummer;
@@ -88,21 +88,21 @@ end;
 procedure ZtoRFC(cleardir:boolean; source,destdir:string);
 var sr    : searchrec;
     f1,f2 : ^file;
-    s     : string[8];
+    s     : shortstring;
     p     : byte;
-    cunb  : string[15];
-    opt   : string[60];
+    cunb  : string;
+    opt   : string;
     news  : boolean;
     freeze: boolean;
     gzip  : boolean;
     f     : boolean;
 
  procedure DelAll(fn:string);
+ var sr: searchrec;
  begin
     findfirst(DestDir+fn,AnyFile-Directory,sr);
     while doserror=0 do begin
-      assign(f1^,DestDir+sr.name);
-      erase(f1^);
+      DeleteFile(DestDir+sr.name);
       findnext(sr);
     end;
     FindClose(sr);
@@ -158,17 +158,16 @@ var sr    : searchrec;
   end;
 
 begin
-  new(f1);                        { Spool r„umen }
-  if cleardir then begin
+  if cleardir then begin		{ Spool r„umen }
     DelAll('*.');
     DelAll('*.OUT');
-    end;
-  dispose(f1);
+  end;
   spacksize:=0;
   spufsize:=0;
   if not existBin(UUZBin) then begin
-    NoUUZ; exit;
-    end;
+    NoUUZ;
+    exit;
+  end;
   MakeMimetypCfg;
   with boxpar^ do begin
     if SizeNego then opt:='-s '
@@ -462,6 +461,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/22 10:10:25  hd
+  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
+
   Revision 1.16  2000/07/05 17:35:37  hd
   - AnsiString
 
