@@ -1,11 +1,13 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ---------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                }
+{ (c) 1991-1999 Peter Mandrella                                    }
+{ (c) 2000-2001 OpenXP-Team                                        }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                  }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.      }
+{                                                                  }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der  }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.    }
+{ ---------------------------------------------------------------- }
 { $Id$ }
 
 { XP7 - zusÑtzlicher Overlay-Teil }
@@ -115,35 +117,32 @@ begin
     end;
 end;
 
-
 procedure ClearUnversandt(const puffer,box:string);
-var f      : file;
-    adr,fs : longint;
-    hdp    : headerp;
-    hds    : longint;
-    ok     : boolean;
-    _brett : string[5];
-    _mbrett: string[5];
-    mi     : word;
-    zconnect: boolean;
-    i      : integer;
-    ldummy : longint;
-    CCFile: Text;
-    InMsgID: String;
+var f          : file;
+    adr,fs     : longint;
+    hdp        : headerp;
+    hds        : longint;
+    ok         : boolean;
+    _brett     : string[5];
+    _mbrett    : string[5];
+    mi         : word;
+    zconnect   : boolean;
+    i          : integer;
+    ldummy     : longint;
+    InMsgID    : String;
+    IDFile     : text;
+    HaveIDFile,
+    IsUnsent   : boolean;
 
-  procedure ClrUVS;
-  var pbox : string[BoxNameLen];
-      uvl  : boolean;
-      uvs  : byte;
-      IDFile     : text;
-      HaveIDFile : boolean;
+
+  { Unversandt-Flag fÅr *einzelnen* EmpfÑnger aufheben }
+  procedure ClrUVS(const CC:boolean);
+  var pbox       : string[BoxNameLen];
+      uvl        : boolean;
+      uvs        : byte;
       MsgIDFound : boolean;
-      Outmsgid   : string[MidLen];
-      CCs        : byte;
+      OutMsgID   : string[MidLen];
   begin
-    HaveIDFile := Exist('UNSENT.ID') and client;
-    if HaveIDFile then
-      Assign(IDFile, 'UNSENT.ID');
 
     with hdp^ do begin
       pbox:='!?!';
@@ -152,7 +151,7 @@ var f      : file;
       then begin
         dbSeek(bbase,biBrett,'A'+ustr(empfaenger));
         if not dbFound then begin
-          if hdp^.empfanz=1 then
+          if not CC then                { das erste Brett *mu·* existieren! }
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
           end
         else begin
@@ -187,39 +186,29 @@ var f      : file;
             if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
                (FormMsgid(hdp^.msgid)=InMsgId) then
             begin
-              MsgIDFound := false;
-              CCs := 0;
-              { Check, ob MsgID in unversandten Nachrichten enthalten ist }
-              if HaveIDFile then
-              begin
-                Reset(IDFile); { von vorn starten }
-                repeat
-                  Readln(IDFile, OutMsgid);
-                  if FormMsgid(OutMsgid) = InMsgID then
-                  begin
-                    MsgIDFound:=true;
-                    if (hdp^.empfanz>1) then
-                    begin
-                      Append(CCFile);
-                      Writeln(CCFile, OutMsgid);
-                      Close(CCFile);
-                      Reset(CCFile);
-                      repeat
-                        readln(CCFile, OutMsgid);
-                        if FormMsgid(OutMsgid)=InMsgId then
-                          inc(CCs);
-                      until eof(CCFile) or (CCs > 1);
-                      Close(CCFile);
-                    end;
-                  end;
-                until eof(IDFile) or MsgIDFound;
+              MsgIDFound:=false;
+              { ----------------------------------------------------------- }
+              if HaveIDFile then              { RFC/Client: Check, ob MsgID }
+              begin                           { in UNSENT.ID enthalten ist  }
+                if CC then
+                  MsgIDFound:=IsUnsent
+                else begin
+                  Reset(IDFile);              { von vorn starten }
+                  repeat
+                    Readln(IDFile, OutMsgID);
+                    MsgIDFound:=FormMsgid(OutMsgID)=InMsgID;
+                  until eof(IDFile) or MsgIDFound;
+                  Close(IDFile);
+                  IsUnsent:=MsgIDFound;
+                end;
               end;
+              { ----------------------------------------------------------- }
               if not MsgIDFound then
               begin
                 uvs:=uvs and $fe;
-                dbWriteN(mbase, mb_unversandt, uvs);
-              end else
-              if CCs <= 1 then
+                dbWriteN(mbase,mb_unversandt,uvs);       { UV-Flag aufheben }
+              end
+              else if not CC then
               begin
                 if not ((hdp^.typ='B') and (maxbinsave>0) and
                   (hdp^.groesse > maxbinsave*1024)) then
@@ -234,9 +223,9 @@ var f      : file;
                   { String noch in die Resource Åbernehmen }
                   tFehler('Die Datei ' + hdp^.datei + ' an ' + hdp^.empfaenger + ' bitte erneut versenden!',30);
                   uvs:=uvs and $fe;
-                  dbWriteN(mbase,mb_unversandt,uvs);
+                  dbWriteN(mbase,mb_unversandt,uvs);       { UV-Flag setzen }
                 end;
-              end; { MsgIDFound }
+              end;  { MsgIDFound and not CC }
               uvl:=true;
             end;
           end;
@@ -246,15 +235,13 @@ var f      : file;
           trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
       end;
     end;
-    if HaveIDFile then
-      Close(IDFile);
   end;
 
 begin
   assign(f,puffer);
   if not existf(f) then exit;
-  Assign(CCFile, 'UNSENT.ID2');
-  ReWrite(CCFile); Close(CCFile); { Anlegen fÅr Append }
+  HaveIDFile:=exist('UNSENT.ID') and client;
+  if HaveIDFile then assign(IDFile,'UNSENT.ID');
   new(hdp);
   zconnect:=ntZConnect(ntBoxNetztyp(box));
   reset(f,1);
@@ -267,16 +254,16 @@ begin
     seek(f,adr);
     makeheader(zconnect,f,0,0,hds,hdp^,ok,false);    { MUSS ok sein! }
     if hdp^.empfanz=1 then
-      ClrUVS
-    else for i:=1 to hdp^.empfanz do begin
+      ClrUVS(false)
+    else for i:=1 to hdp^.empfanz do
+    begin
       seek(f,adr);
       makeheader(zconnect,f,i,0,hds,hdp^,ok,false);
-      ClrUVS;
-      end;
+      ClrUVS(i>1);
+    end;
     inc(adr,hdp^.groesse+hds);
     end;
   close(f);
-  Erase(CCFile);
   dbSetIndex(mbase,mi);
   dispose(hdp);
   inc(outemsgs,TestPuffer(left(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
@@ -850,6 +837,34 @@ end.
 
 {
   $Log$
+  Revision 1.13.2.30  2003/04/08 22:22:41  my
+  MY:- Unversandt-Routine ('ClearUnversandt') optimiert:
+       1. Beim Netztyp RFC/Client findet im Falle von Crosspostings und Mails
+          mit KopienempfÑngern die PrÅfung darauf, ob beim aktuellen
+          Durchlauf der Routine eine unversandte Mail aus der Messagebase
+          in den neuen Pollpuffer extrahiert werden mu·, nicht mehr
+          mittels Schreiben/Lesen von Message-IDs in/aus der Textdatei
+          "UNSENT.ID2" statt, sondern wird anhand einer als Parameter
+          Åbergebenen Variablen vorgenommen. Das bisherige Vorgehen wÑre
+          ausschlie·lich bei Mails mit KopienempfÑngern sinnvoll gewesen,
+          die vom UUZ nicht als SMTP-Mails (= eine physikalische Mail fÅr
+          alle EmpfÑnger) erzeugt wurden, sondern bei denen fÅr jeden
+          EmpfÑnger eine eigene physikalische Mail mit jeweils identischer
+          Message-ID generiert wird. Solche Mails kînnen beim Netztyp
+          RFC/Client aber gar nicht entstehen, da der UUZ dort *immer* mit
+          dem Parameter "-SMTP" aufgerufen wird.
+       2. Die Fehlermeldung "Interner Fehler: Brett mit unvers. Nachr.
+          nicht mehr vorhanden" wÅrde jetzt beim ersten Brett eines
+          Crosspostings ausgegeben werden, wenn es nicht existiert (das
+          erste Brett *mu·* immer existieren, Crossposting-Bretter jedoch
+          nicht unbedingt). Bisher wurde die Meldung bei Crosspostings
+          generell unterdrÅckt.
+       Es handelt sich speziell bei der ersten énderung *nicht* um einen
+       Bugfix - die Routine arbeitet jetzt lediglich in solchen FÑllen
+       erheblich sinnvoller und performanter. Nur im Falle von Datei-
+       zugriffsproblemen auf dem System des Users wÑre ein Sicherheits-
+       gewinn durch die geÑnderte Routine hypothetisch mîglich.
+
   Revision 1.13.2.29  2003/01/10 21:55:37  my
   MY:- Log- und Kommentarkosmetik
 
