@@ -629,7 +629,7 @@ begin
     FillChar(s1[1], 255, ' ');
     readln(t1,s1);
     m:=length(s1)+2;
-    n:=reformat_UKA_Brett(s1);
+//    n:=reformat_UKA_Brett(s1);
     if bestellen or (s1[1]='*') then       { File-Offset des Strings wird angehaengt,  }
      writeln(t2,forms(s1,80)+strs(i+n));   { damit MakeRC schnellen Zugriff hat, um im }
     inc(i,m);                              { BL-File den '*' zu setzen bzw zu loeschen }
@@ -2152,6 +2152,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.1  2002/04/21 10:37:23  mk
+  - removed reformat_uka_brett to temp. fix crash
+
   Revision 1.70  2002/04/07 18:36:40  mk
   - fixed some with newsgroup lists
 
