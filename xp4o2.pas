@@ -51,8 +51,8 @@ implementation  { ---------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3ex;
 
-const  emax = 30;   { maximale Tiefe }
-
+const
+  emax = 129;   { maximale Tiefe }
 
 procedure packit(xpack:boolean; fname:string);
 var d  : DB;
@@ -148,7 +148,7 @@ var
       readln(t,s0);
       if (s0='---') or (s0='--') then n:=8;
       s:=UpperCase(s0);
-      quote:=(LeftStr(s,1)='>');
+      quote:=(FirstChar(s)='>');
       p:=cpos('@',s);
       while (p>0) and (LeftStr(s,7)<>'MESSAGE') and (LeftStr(s,5)<>'FROM:') do begin
         p1:=p;
@@ -399,7 +399,7 @@ var hdp    : headerp;
     nullid : longint;
     kb2    : komlistp;
 
-  procedure RecurBez(ebene:shortint; rec,spuren:longint; last:boolean;
+  procedure RecurBez(ebene:shortint; rec: LongInt; spuren1, spuren2:Int64; last:boolean;
                      var betr,brett:string);
   const bmax  = 205;
   type  brec  = record
@@ -426,7 +426,8 @@ var hdp    : headerp;
       if nullid=0 then begin
         with kombaum^[komanz] do begin
           MsgPos:=dbRecno(mbase);
-          lines:=spuren;
+          lines1:=spuren1;
+          lines2:=spuren2;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
           if recount(newbetr)=0 then;
@@ -503,7 +504,6 @@ var hdp    : headerp;
        (rec<>0) and not dbDeleted(mbase,rec) then
     begin
       if ebene>maxebene then inc(maxebene);
-      {getmem(newbetr,BetreffLen+1);}
       new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
@@ -528,13 +528,20 @@ var hdp    : headerp;
           if more then dbReadN(bezbase,bezb_msgpos,rec);
           for i:=1 to anz do begin
             mmore:=more or (i<anz);
-            RecurBez(ebene+1,ba^[i].pos,spuren+iif(mmore,1 shl longint(ebene),0),
-                     not mmore,newbetr,_brett);
+            if mmore then
+            begin
+              if ebene < 64 then
+                RecurBez(ebene+1,ba^[i].pos,
+                  spuren1+(Int64(1) shl Int64(ebene)), spuren2, not mmore,newbetr,_brett)
+              else
+                RecurBez(ebene+1,ba^[i].pos,
+                  spuren1, spuren2+(Int64(1) shl Int64(ebene-64)), not mmore,newbetr,_brett)
+            end else
+              RecurBez(ebene+1,ba^[i].pos,spuren1, spuren2,not mmore,newbetr,_brett);
             end;
           if more then dbGo(bezbase,rec);
         until not more;
       dispose(ba);
-      {freemem(newbetr,BetreffLen+1);}
       end;
   end;
 
@@ -543,7 +550,7 @@ begin
   rmessage(475);    { 'Kommentarbaum einlesen...' }
   if kombaum<>nil then
     freemem(kombaum,komanz*sizeof(komrec));
-  hdp:= AllocHEaderMEm;
+  hdp:= AllocHeaderMEm;
   getmem(kombaum,maxkomm*sizeof(komrec));
   n:=0;
   nullid:=0;
@@ -563,7 +570,7 @@ begin
   komanz:=0; maxebene:=0;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
-  RecurBez(0,dbRecno(mbase),0,true,betr,brett);
+  RecurBez(0,dbRecno(mbase),0,0,true,betr,brett);
   kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
   dbSetIndex(bezbase,mi);
   getmem(kb2,komanz*sizeof(komrec));
@@ -735,8 +742,8 @@ end;
 { s=User, s1=Betreff }
 
 function BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
-var ss : string;
-    i  : longint;   { muá longint sein, damit (1 shl i) longint ist }
+var ss : string[255];
+    i  : integer;   { muá longint sein, damit (1 shl i) longint ist }
     p  : byte;
     bs : string;
 begin
@@ -758,15 +765,23 @@ begin
       end;
     if _ebene=0 then
       ss:=''
-    else begin
+    else
+    begin
       _ebene:=min(_ebene,emax);
       ss:=sp((_ebene-1)*komwidth);
       for i:=0 to _ebene-2 do
-        if lines and (1 shl i)<>0 then
-          ss[i*komwidth+1]:='³';
-      if flags and kflLast<>0 then ss:=ss+LeftStr('ÀÄÄÄ',komwidth)
-      else ss:=ss+LeftStr('ÃÄÄÄ',komwidth);
-      end;
+        if i < 64 then
+        begin
+          if lines1 and (Int64(1) shl Int64(i))<>0 then
+            ss[i*komwidth+1]:='³'
+        end else
+          if lines2 and (Int64(1) shl Int64(i-64))<>0 then
+            ss[i*komwidth+1]:='³';
+      if flags and kflLast<>0 then
+        ss:=ss+LeftStr('ÀÄÄÄ',komwidth)
+      else
+      ss:=ss+LeftStr('ÃÄÄÄ',komwidth);
+    end;
     ss:=ss+s;
     if flags and (kflBetr+kflBrett)<>0 then
       BaumBlatt:=forms(ss,len-min(length(bs+s1),35)-3)+'  '+LeftStr(bs+s1,35)+' '
@@ -890,6 +905,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/01 10:26:36  mk
+  - Limits im Kommentarbaum erhoeht
+
   Revision 1.23  2000/10/23 20:09:18  mo
   -auf vorhandene msg-ID prüfen
 

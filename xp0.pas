@@ -354,7 +354,7 @@ const
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
-       maxkomm    = 5000;              { Kommentarbaum }
+       maxkomm    = 20000;              { Kommentarbaum }
        kflLast    = 1;
        kflBetr    = 2;
        kflPM      = 4;
@@ -672,11 +672,12 @@ type   textp  = ^text;
 
        proc   = procedure;
 
-       komrec   = record
+       komrec   = packed record
                     msgpos : longint;
-                    lines  : longint;
-                    _ebene : shortint;
-                    flags  : byte;
+                    lines1: int64;
+                    lines2: Int64;
+                    _ebene: shortint;
+                    flags : byte;
                   end;
        komliste = array[0..maxkomm-1] of komrec;   { Kommentarbaum }
        komlistp = ^komliste;
@@ -1168,6 +1169,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.95  2000/11/01 10:26:36  mk
+  - Limits im Kommentarbaum erhoeht
+
   Revision 1.94  2000/10/22 21:58:58  mk
   - case of .pp and .epp is now UnixFS dependent
 
