@@ -39,6 +39,9 @@ procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 procedure SysSetScreenSize(const Lines, Cols: Integer);
 { Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
 procedure SysSetBackIntensity;
+{ Ermittelt letztes belegtes Laufwerk }
+function SysGetMaxDrive:char;
+function SysGetDriveType(drive:char):byte;
 
 implementation
 
@@ -617,9 +620,48 @@ begin
   RealIntr($10, Reg);
 end;
 
+
+function SysGetMaxDrive:char;
+var
+  Reg: TRealRegs;
+begin
+  with Reg
+  do begin
+    ah:=$19;
+    RealIntr($21, Reg);        { aktuelles LW abfragen; 0=A, 1=B usw. }
+    ah:=$e; dl:=al;
+    RealIntr($21, Reg);        { aktuelles LW setzen; liefert lastdrive in al }
+    SysGetMaxDrive:=chr(al+64);
+  end;
+end;
+
+function SysGetDriveType(drive:char):byte;
+var
+  Regs : TRealRegs;
+begin
+  with regs do
+  begin
+    ax:=$4409;
+    bl:=ord(drive)-64;
+    RealIntr($21, regs);
+    if (Flags and CarryFlag) <> 0 then
+      SysGetdrivetype:=0
+    else
+      if dx and $8000<>0 then SysGetdrivetype:=3 else
+      if dx and $1000<>0 then SysGetdrivetype:=5 else
+      if dx and $8ff=$800 then SysGetdrivetype:=2 else
+      if dx and $4000<>0 then SysGetdrivetype:=4 else
+      SysGetdrivetype:=1;
+  end;
+end;
+
+
 end.
 {
   $Log$
+  Revision 1.6  2000/10/03 15:45:07  mk
+  - DOS32-Implementation von DriveType und AllDrives
+
   Revision 1.5  2000/10/03 03:25:04  mk
   - VESA Textmodi mit 80/132 Spalten implementiert
 

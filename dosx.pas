@@ -60,6 +60,9 @@ uses
 {$IFDEF Win32 }
   windows,
 {$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
   sysutils;
 
 function GetDrive:char;
@@ -100,8 +103,10 @@ end;
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
 
 function DriveType(drive:char):byte;
+{$IFDEF WIn32 }
 const
   DriveStr: String = '?:\'+#0;
+{$ENDIF }
 {$ifdef vp }
   var
     dt:TDriveType;
@@ -134,7 +139,7 @@ begin
         DriveType := 0;
       end;
     {$ELSE }
-      DriveType := 1;
+      DriveType := SysGetDriveType(drive);
     {$ENDIF }
   {$endif}
 end;
@@ -146,6 +151,7 @@ var
   i: integer;
 begin
   s := '';
+  {$IFNDEF DOS32 }
   {$IFDEF Vp }
     Drives:=SysGetValidDrives;
   {$ELSE }
@@ -158,6 +164,12 @@ begin
     for i := 0 to 25 do
       if (Drives and (1 shl i)) > 0 then
         s := s + Chr(i + 65);
+  {$ELSE }
+    for i:=Ord('A') to Ord(SysGetMaxdrive) do
+      if drivetype(Char(i))>0 then
+        s := s + Chr(i);
+  {$ENDIF }
+
   alldrives:=s;
 end;
 
@@ -172,6 +184,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/10/03 15:45:07  mk
+  - DOS32-Implementation von DriveType und AllDrives
+
   Revision 1.25  2000/07/16 16:59:28  mk
   - AnsiString Updates
 
