@@ -1277,10 +1277,12 @@ var
   i: Integer;
 begin
   xpboundary := '----=_NextPart_';
+  mpart:=false;
   for i := 1 to 10 + random (20) do
     xpboundary := xpboundary + char (random (25) + byte ('A'));
   with hd,hd.mime do begin
     mversion:='1.0';
+    if typ='M' then mpart:=true;
     if typ='T' then begin
       if x_charset='' then encoding:=enc7bit
       else if MakeQP then encoding:=encQP
@@ -1288,38 +1290,42 @@ begin
 
       { multipart/mixed outgoing }
 
-      if left(mimetyp,10)='multipart/' then begin
+      if left(mimetyp,10)='multipart/' then
+      begin
+        mpart:=true;
         ctype:=tMultipart;
         subtype:=mid(mimetyp,11);
         xpboundary:=hd.boundary;
       end
       else begin
-
         ctype:=tText;
         subtype:='plain';
-
       end;
 
 { /robo }
 
-      charset:=iifs(x_charset='','us-ascii',x_charset);
-      if not (convibm or mpart) then charset:='iso-8859-1';
-      end
-    else if attrib and AttrMPbin <> 0 then begin
+    end
+    else if attrib and AttrMPbin <> 0 then
+    begin
+      mpart:=true;
       ctype:=tMultipart;
       subtype:='mixed';
       encoding:=enc7bit;
       end
     else begin
       encoding:=encBase64;
-      if datei='' then begin
+      if datei='' then
+      begin
         ctype:=tApplication;
         subtype:='octet-stream';
-        end
+      end
       else
         GetBinType(datei);
-      end;
-   end;
+    end;
+    if not mpart then
+      if not convibm then charset:='ISO-8859-'+mid(hd.charset,4)
+        else charset:=iifs(x_charset='','us-ascii',x_charset);
+  end;
 end;
 
 
@@ -2812,8 +2818,6 @@ var dat    : string[30];
 begin
   with hd do
   begin
-    convibm := (lstr(hd.charset) <> 'iso1');
-    mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
     dat:=ZtoRFCdate(datum,zdatum);
     if mail then begin
       if wab='' then s:=absender          { Envelope erzeugen }
@@ -3237,8 +3241,9 @@ begin
       close(f1);
       error('fehlerhafter Eingabepuffer!');
     end;
+    convibm := (lstr(left(hd.charset,3)) <> 'iso');
     binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
-    mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
+    SetMimeData;
     if cpos('@',hd.empfaenger)=0 then      { AM }
       if binmail and not NewsMIME then
         writeln(#13'Binary message <',hd.msgid,'> will not be converted')
@@ -3257,7 +3262,6 @@ begin
             inc(hd.lines);
           end;
         end;
-        SetMimeData;
         seek(f,0);
         WriteRFCheader(f,false);
         seek(f1,adr+hds);   { Text kopieren }
@@ -3309,8 +3313,9 @@ begin
     repeat
       seek(f1,adr);
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
+      convibm := (lstr(left(hd.charset,3)) <> 'iso');
       binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
-      mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
+      SetMimeData;
       if cpos('@',hd.empfaenger)>0 then
         if ustr(left(hd.empfaenger,length(server)))=server then begin
           if not client then WrFileserver;
@@ -3321,7 +3326,6 @@ begin
             CreateNewfile;
           if binmail then
             seek(f1,adr+hds);
-          SetMimeData;
           WriteRFCheader(f2,true);
           seek(f1,adr+hds);   { Text kopieren }
           ReadBuf;
@@ -3400,6 +3404,27 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.77  2002/05/09 22:12:08  my
+  MY:- Fix: Singlepart-Nachrichten mit einem anderen Zeichensatz als
+       ISO-8859-1 (z.B. ISO-8859-15) im X-Charset-Header und ohne
+       ZConnect-Charset-Header "ISOx" (x=1-15) wurden nach der Konver-
+       tierung durch UUZ hÑufig dennoch mit der Zeichensatzdeklaration
+       ISO-8859-1 versandt. Variable 'convibm' wurde in "SetMimeData"
+       geprÅft, bevor sie gesetzt wurde und hatte dadurch einen zufÑlligen
+       Wert - als Folge dieses Fixes mu·te das Setzen der Variable 'mpart'
+       bei ausgehenden Nachrichten nach "SetMimeData" verlegt werden, weil
+       ansonsten Multipart-Nachrichten einer Zeichensatzkonvertierung
+       unterzogen worden wÑren.
+
+  MY:- Vorbereitung fÅr zukÅnftige Zeichensatzerweiterungen unter
+       ZConnect: Beim Betrieb eines externen Clients in einer ZConnect-Box
+       wird bei der UUZ-Konvertierung von ISO-Nachrichten jetzt nicht mehr
+       stur der Zeichensatz ISO-8859-1 deklariert, sondern die Deklaration
+       richtet sich nach der jeweiligen Bezeichnung im ZConnect-Charset-
+       Header ("ISO15" wird zu "ISO-8859-15"). Die Existenz eines
+       ZConnect-Headers "CHARSET: ISOx" (x=1-15) verhindert nach wie vor
+       eine Zeichensatzkonvertierung.
+
   Revision 1.35.2.76  2002/04/28 17:53:26  my
   MY:- Vorletzten Commit korrigiert: Wir entfernen jetzt doch Kommentar
        *und* die schlie·ende spitze Klammer und stellen uns auf den
