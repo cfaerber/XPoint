@@ -20,7 +20,7 @@
 
 { (Funktions)tasten & Makros }
 
-{$I xpdefine.inc }
+{$i xpdefine.inc }
 
 unit xpkeys;
 
@@ -44,21 +44,21 @@ procedure Xmakro(var t:taste; flags:byte);
 var   k0_S  : char = 'S';      { Spezial-Mode         }
       k0_A  : char = 'A';      { Alle Bretter         }
       k0_H  : char = 'H';      { Brett hinzufÅgen     }
-      k0_cH : char = ^H;       { aus Maps-Liste anlg. }
+      k0_cH : char = ''^H;     { aus Maps-Liste anlg. }
       k0_L  : char = 'L';      { Brett lîschen        }
       k0_E  : char = 'E';      { Brett editieren      }
       k0_V  : char = 'V';      { Bretter verknÅpfen   }
-      k0_cT : char = ^T;       { Trennzeile einfÅgen  }
+      k0_cT : char = ''^T;     { Trennzeile einfÅgen  }
       k0_P  : char = 'P';      { Bretter verschieben  }
       k0_Le : char = 'L';      { Lesemode setzen      }
       k0_B  : char = 'b';      { Brettbrief           }
       k0_SB : char = 'B';      { Brett-Crossposting   }
       k0_I  : char = 'I';      { BinÑrdatei senden    }
       k0_TE : char = 'E';      { Textdatei senden     }
-      k0_cG : char = ^G;       { Brettgruppe mark.    }
-      k0_cE : char = ^E;       { Bretter entmark.     }
-      k0_cW : char = ^W;       { Brettweiterschalter  }
-      k0_cF : char = ^F;       { Satznummer           }
+      k0_cG : char = ''^G;     { Brettgruppe mark.    }
+      k0_cE : char = ''^E;     { Bretter entmark.     }
+      k0_cW : char = ''^W;     { Brettweiterschalter  }
+      k0_cF : char = ''^F;     { Satznummer           }
       k0_Ac : char = 'A';      { Spezial / Zugriff    }
 
       k1_S  : char = 'S';      { Spezialmode          }
@@ -67,50 +67,50 @@ var   k0_S  : char = 'S';      { Spezial-Mode         }
       k1_V  : char = 'V';      { Verteiler anlegen    }
       k1_L  : char = 'L';      { User lîschen         }
       k1_E  : char = 'E';      { User editieren       }
-      k1_cV : char = ^V;       { Userbretter verkn.   }
+      k1_cV : char = ''^V;     { Userbretter verkn.   }
       k1_B  : char = 'b';      { Userbrief            }
       k1_SB : char = 'B';      { User-Crossposting    }
       k1_I  : char = 'I';      { BinÑrdatei senden    }
       k1_TE : char = 'E';      { Textdatei senden     }
       k1_R  : char = 'R';      { Adre·buch ein/austr. }
       k1_P  : char = 'P';      { Pa·wort Ñndern       }
-      k1_cE : char = ^E;       { User entmarkieren    }
-      k1_cW : char = ^W;       { Userweiterschalter   }
+      k1_cE : char = ''^E;     { User entmarkieren    }
+      k1_cW : char = ''^W;     { Userweiterschalter   }
       k1_U  : char = 'U';      { Usersuche            }
       k1_A  : char = 'A';      { Adre·buch-Umschalter }
 
       k2_S  : char = 'S';      { Spezial-MenÅ         }
-      k2_cR : char = ^R;       { Rot13                }
-      k2_cH : char = ^H;       { Hex-Dump             }
+      k2_cR : char = ''^R;     { Rot13                }
+      k2_cH : char = ''^H;     { Hex-Dump             }
       k2_I  : char = 'I';      { Info-Fenster         }
       k2_O  : char = 'O';      { Originalheader       }
       k2_H  : char = 'H';      { Halten               }
       k2_L  : char = 'L';      { Lîschen              }
       k2_K  : char = 'K';      { Kill                 }
-      k2_cU : char = ^U;       { UserEdit             }
+      k2_cU : char = ''^U;     { UserEdit             }
       k2_V  : char = 'V';      { Wiedervorlage        }
-      k2_cE : char = ^E;       { Nachrichten entmark. }
+      k2_cE : char = ''^E;     { Nachrichten entmark. }
       k2_U  : char = 'U';      { User-Fenster         }
-      k2_cF : char = ^F;       { Textdatei senden     }
-      k2_cI : char = ^I;       { BinÑrdatei senden    }
+      k2_cF : char = ''^F;     { Textdatei senden     }
+      k2_cI : char = ''^I;     { BinÑrdatei senden    }
       k2_G  : char = 'G';      { Bezugssuche          }
-      k2_cA : char = ^A;       { Fido-Anzeige umsch.  }
+      k2_cA : char = ''^A;     { Fido-Anzeige umsch.  }
       k2_KA : char = 'A';      { Adre·anzeige im Baum }
       k2_EA : char = 'A';      { EmpfÑngeranzeige     }
-      k2_cW : char = ^W;       { Weiterschalter       }
-      k2_cD : char = ^D;       { Datumsanzeige        }
+      k2_cW : char = ''^W;     { Weiterschalter       }
+      k2_cD : char = ''^D;     { Datumsanzeige        }
       k2_R  : char = 'R';      { Drucken              }
-      k2_cN : char = ^N;       { Realnameanzeige      }
+      k2_cN : char = ''^N;     { Realnameanzeige      }
       k2_BB : char = '#';      { Kommentarbaum        }
       k2_A  : char = 'A';      { unversandt <-> Alle  }
       k2_b  : char = 'b';      { Brettbrief           }
-      k2_cB : char = ^B;       { Quote-Brettbrief     }
+      k2_cB : char = ''^B;     { Quote-Brettbrief     }
       k2_SB : char = 'B';      { Multiquote           }
       k2_p  : char = 'p';      { PM                   }
-      k2_cP : char = ^P;       { Quote-PM             }
+      k2_cP : char = ''^P;     { Quote-PM             }
       k2_SP : char = 'P';      { Multiquote-PM        }
-      k2_cT : char = ^T;       { User-Pa·wort-Edit    }
-      k2_cQ : char = ^Q;       { indirekter Fido-Quote}
+      k2_cT : char = ''^T;     { User-Pa·wort-Edit    }
+      k2_cQ : char = ''^Q;     { indirekter Fido-Quote}
 
       k3_H  : char = 'H';      { neuer AV-Eintrag     }
       k3_E  : char = 'E';      { AutoVersand Edit     }
@@ -124,7 +124,7 @@ var   k0_S  : char = 'S';      { Spezial-Mode         }
       k4_D  : char = 'D';      { Drucken im Lister    }
       k4_W  : char = 'W';      { in Datei schreiben   }
       k4_L  : char = 'L';      { Nachricht lîschen    }
-      k4_cL : char = ^L;       { .. und drinbleiben   }
+      k4_cL : char = ''^L;     { .. und drinbleiben   }
       k4_H  : char = 'H';      { Nachricht halten     }
       k4_F  : char = 'F';      { Farbumschaltung      }
 
@@ -248,6 +248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2002/12/13 12:58:36  cl
+  - FPC compile fix
+
   Revision 1.27  2002/12/12 11:58:50  dodi
   - set $WRITEABLECONT OFF
 
