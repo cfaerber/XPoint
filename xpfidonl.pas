@@ -357,7 +357,7 @@ var diffdir  : string;
     TmpDoDiff: boolean;
     ucount   : byte;     { Z„hler fr Update-Files mit Nummern }
 
-  procedure log(txt:string);
+  procedure log(const txt:string);
   begin
     if not logopen then begin
       assign(logfile,LogPath+'NODELIST.LOG');
@@ -552,6 +552,9 @@ finalization
 
 {
   $Log$
+  Revision 1.50  2003/09/21 16:27:24  mk
+  - added const parameter for log()
+
   Revision 1.49  2003/08/28 00:16:59  mk
   - SchaltJ() -> IsLeapYear()
 
