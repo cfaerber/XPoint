@@ -572,7 +572,7 @@ var f,f2     : file;
         end
         else begin      // if ccpm then begin
           p:=cpos(':',adr);
-          if (adr[1]='+') and (p>0) then begin    { nicht eingetragenes Brett }
+          if (FirstChar(adr)='+') and (p>0) then begin    { nicht eingetragenes Brett }
             server:=copy(adr,2,p-2);
             nobrett:=true;
             end
@@ -2318,6 +2318,9 @@ finalization
 
 {
   $Log$
+  Revision 1.32  2001/12/25 20:28:15  cl
+  - fixed RangeCheckError
+
   Revision 1.31  2001/12/23 12:02:45  mk
   - fixes GetInf, now crossposts are working again
 
@@ -2404,7 +2407,7 @@ finalization
   - adaptions/fixes for PGP/MIME support
 
   Revision 1.6  2001/09/07 13:54:25  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 
