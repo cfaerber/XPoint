@@ -871,7 +871,7 @@ var f1,f2   : file;
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
       if x_charset<>'' then
-        wrs(^A'CHRS: '+MimeCharsetToFido(charset));
+        wrs(^A'CHRS: '+MimeCharsetToFido(x_charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
         wrs('');
@@ -1804,6 +1804,9 @@ end;
 
 {
         $Log$
+        Revision 1.29.2.4  2002/09/26 12:53:06  ma
+        - fixed outgoing charset declaration (CHRS)
+
         Revision 1.29.2.3  2002/07/21 20:14:42  ma
         - changed copyright from 2001 to 2002
 
