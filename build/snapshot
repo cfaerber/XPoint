@@ -11,10 +11,12 @@ pwd
 #sleep 5
 echo "building OXP"
 "$scriptdir"buildxp $1
+test -f "openxp" || echo "Ooops, no OXP-Binary"; exit
 "$scriptdir"make-rpm.sh $1 
 # auf den ftp Server schieben
-ncftpput -u USER -p PASSWORD -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$1".0-1.i386.rpm /usr/src/packages/SRPMS/openxp-"$1".0-1.src.rpm "$versiondir"openxp-"$1".0-linux-`date -I`.tar.bz2 
+ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$1".0-1.i386.rpm /usr/src/packages/SRPMS/openxp-"$1".0-1.src.rpm /"$versiondir"openxp-"$1".0-linux-`date -I`.tar.bz2 
 
-ncftpls -u USER -p PASSWORD -l ftp://ftp.openxp.de/
+ncftpls -u christianb -p linsnap5 -l ftp://ftp.openxp.de/
+#ncftpget -u christianb -p linsnap5 -z -r 5 -v ftp.openxp.de . OPENXP-D.zip
 
 echo "Finished $0"
