@@ -89,8 +89,8 @@ const
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
           FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
-var    xp_xp       : string = 'OpenXP/32';
-       xp_origin   : string = '--- OpenXP/32';
+var    xp_xp       : string = 'OpenXP';
+       xp_origin   : string = '--- OpenXP';
 const  QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -1224,6 +1224,9 @@ implementation
 
 {
   $Log$
+  Revision 1.181  2003/08/11 22:10:35  mk
+  - changed OpenXP/32 to OpenXP
+
   Revision 1.180  2003/08/04 22:48:12  mk
   - removed Edit/netze/verschiedens/mime in news
 

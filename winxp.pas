@@ -1401,7 +1401,7 @@ end;
 
 {$IFDEF Win32GUI }
 const
-  AppName = 'OpenXP/32 GUI';
+  AppName = 'OpenXP GUI';
 
 function WindowProc(Window: HWnd; AMessage: UINT; WParam : WPARAM;
                     LParam: LPARAM): LRESULT; stdcall; export;
@@ -1530,6 +1530,9 @@ end;
 
 {
   $Log$
+  Revision 1.96  2003/08/11 22:10:35  mk
+  - changed OpenXP/32 to OpenXP
+
   Revision 1.95  2003/03/16 19:02:06  cl
   - initial support for langage files in encodings different from CP437
 
