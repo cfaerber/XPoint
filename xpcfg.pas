@@ -9,6 +9,7 @@
 { $Id$ }
 
 {$I XPDEFINE.INC }
+{$F+,O+}
 
 unit XPCfg;
 
@@ -45,13 +46,13 @@ var
   wenn ein Fehler aufgetreten ist. Die Datei muss waehrend der Laufzeit
   geoeffnet bleiben. Beim Schliessen werden alle Daten freigegeben!
   Die Schliessung erfolgt durch eine Exitprozedur. }
-function OpenCfg(fn: string): boolean;
+function OpenCfg(const fn: string): boolean;
 
 { Schliessen der Cfg }
 procedure CloseCfg;
 
 { Liest einen Eintrag einer Sektion }
-function GetCfg(k: string; cs: TCfgSection): string;
+function GetCfg(const k: string; cs: TCfgSection): string;
 
 { Schreibt den Schluessel k und den Wert v in die Sektion cs.
   Wenn die Sektion nicht existiert, so wird sie erstellt. resid
@@ -154,7 +155,7 @@ begin
   JumpKey:= nil;                                { Nichts vorhanden }
 end;
 
-function GetCfg(k: string; cs: TCfgSection): string;
+function GetCfg(const k: string; cs: TCfgSection): string;
 var
   r: PCfgEntry;
 begin
@@ -436,7 +437,7 @@ begin
   modified:= true;
 end;
 
-function OpenCfg(fn: string): boolean;
+function OpenCfg(const fn: string): boolean;
 const
   cs: TCfgSection = csNone;
 var
@@ -480,6 +481,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2.2.2  2001/08/12 08:32:27  mk
+  - XPCFG in das Overlay verlegt, wird nur beim Start gebraucht
+
   Revision 1.2.2.1  2000/10/15 09:28:09  mk
   - LFN fixes
 
