@@ -400,15 +400,14 @@ end.
 }
 {
    $Log$
+   Revision 1.9.2.7  2003/01/25 22:53:57  my
+   MY: - Nochmal CVS-Log korrigiert (irgendwie nicht mein Tag heute...)
+
    Revision 1.9.2.6  2003/01/25 22:51:40  my
    MY: - CVS-Log korrigiert (versehentlich das File der v3.20 committed)
 
    Revision 1.9.2.5  2003/01/25 22:48:27  my
    MY: - 'pos()' => 'cpos()'
-
-   $Log$
-   Revision 1.9.2.6  2003/01/25 22:51:40  my
-   MY: - CVS-Log korrigiert (versehentlich das File der v3.20 committed)
 
    Revision 1.9.2.4  2003/01/25 21:31:54  my
    MY: - Ge„nderte Parameterbehandlung: Dateiname kann jetzt jede beliebige
