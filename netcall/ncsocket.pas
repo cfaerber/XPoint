@@ -37,7 +37,7 @@ uses
   dossock,
 {$ELSE }
   {$IFDEF OS2 }
-    os2sock,
+    pmwsock,
   {$ELSE }
   {$IFDEF Kylix}
     libc,
@@ -64,8 +64,27 @@ const
 type
   TSocketBuffer = array[0..MaxSocketBuffer] of Char;
 
-  TSocketNetcall = class(TNetcall)
+  {$IFDEF OS2 }
+    TInetSockAddr = TSockAddr;
+    U_Long = Cardinal;
+  {$ENDIF }
 
+  TMySockAddr =
+          {$IFDEF Kylix}
+          TSockAddrIn;
+          {$ELSE}
+          {$IFDEF WIN32}
+          TSockAddrIn;
+          {$ELSE}
+          {$IFDEF OS2 }
+          SockAddr;
+          {$ELSE}
+          TInetSockAddr;
+          {$ENDIF}
+          {$ENDIF}
+          {$ENDIF}
+
+  TSocketNetcall = class(TNetcall)
   private
 {$IFDEF Win32}
     FAddr       : TSockAddr;            { Socket-Parameter-Block }
@@ -240,6 +259,7 @@ begin
   if not Host.Resolved then
     Host.Resolve;
   FillChar(FAddr, SizeOf(FAddr), 0);
+{$IFDEF OS2 } {$DEFINE WIn32 } {$ENDIF }
 {$IFDEF Win32}
   FAddr.sin_Family:= AF_INET;
   { Hi-/Lo-Word vertauschen }
@@ -248,7 +268,7 @@ begin
   FAddr.sin_Addr.s_addr:= U_Long(Host.Raw);
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if WinSock.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
+  if {$IFDEF OS2 }pmwsock.{$ELSE}WinSock.{$ENDIF}Connect(FHandle, TMySockAddr(FAddr), SizeOf(TSockAddr)) = SOCKET_ERROR then
 {$ELSE}
 {$IFDEF Kylix}
   FAddr.sin_Family:= AF_INET;
@@ -269,7 +289,7 @@ begin
   FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
   if not {$IFDEF DOS32}DOSSock.{$ELSE}
   {$IFDEF OS2 }
-    os2sock.
+    pmwsock.
   {$ELSE }
     sockets.
   {$ENDIF }
@@ -374,7 +394,7 @@ procedure TSocketNetcall.WriteBuffer(var Buffer; Size: Integer);
 var
   count: Integer;
 begin
-  Count := send(FHandle, Buffer, Size, 0);
+  Count := send(FHandle, {$IFDEF OS2}PChar(Buffer){$ELSE}Buffer{$ENDIF}, Size, 0);
   Inc(FOutBytesCount, Count);
   if Count < 0 then
     RaiseSocketError;
@@ -434,6 +454,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2003/09/02 05:16:18  mk
+  - os2sock -> pmwsock for OS/2
+
   Revision 1.38  2002/12/29 11:23:35  mk
   - added unit keys for NCRT, too
 
