@@ -1269,22 +1269,25 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    15
+0    18
 1    Sie nutzen eine Betaversion von OpenXP. Bitte beachten Sie, daá
 2    diese Betaversion mit einiger Sicherheit Fehler enth„lt, die bei
 3    Benutzung in ”ffentlichen Netzen rger nach sich ziehen oder Ihre
-4    Datenbank besch„digen k”nnen. Wenn Sie diese Version nutzen, sind
-5    Sie fr alle Folgen selbst verantwortlich. Sollten Sie nicht damit
-6    einverstanden sein, nutzen Sie die offiziellen Release-Versionen
-7    von OpenXP. Bei Fragen, Problemen oder Anregungen k”nnen sie ber
-8    folgende Wege Kontakt mit dem OpenXP-Team aufnehmen:
-9
-10   WWW:    http://www.openxp.de/
-11   Usenet: de.comm.software.crosspoint
-12   Fido:   crosspoint.ger
+4    Datenbank besch„digen k”nnen.
+5    Die Ver”ffentlichung dieses Programms erfolgt ohne jede Gew„hr-
+6    leistung, auch ohne implizite Gew„hrleistung der Marktreife oder
+7    der Eignung fr einen bestimmten Zweck.
+8    Bei Fragen, Problemen oder Anregungen k”nnen sie ber folgende
+9    Wege Kontakt mit dem OpenXP-Team aufnehmen:
+10
+11   WWW:    http://www.openxp.de/
+12   Usenet: de.comm.software.crosspoint
 13   E-Mail: dev@openxp.de
-14
-15   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+14   Fido:   crosspoint.ger
+15
+16   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+17   Dieser Hinweis kann mit dem Kommandozeilenparameter /nb abgestellt
+18   werden.
 30   ~^Weiter , ^Abbruch~
 -
 
@@ -3667,6 +3670,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.16  2001/06/20 16:17:29  ma
+# - made beta splash screen more "GPLish"
+# - added /nb command line notice
+#
 # Revision 1.15  2001/06/11 22:23:26  ma
 # - added GnuPG support
 #

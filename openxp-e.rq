@@ -1241,20 +1241,22 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    13
-1    This is a BETA version of OpenXP. Please note it is likely that
-2    there are bugs in this BETA version which may corrupt your database
-3    or cause problems if you use this version of OpenXP in public net-
-4    works.
-5    By using this version, you are fully responsible for all damage
-6    you may cause with it. If you do not agree to these terms please
-7    use an official release version of OpenXP.
-8    If you have questions and/or suggestions for the project, please
-9    use the OpenXP support forums, especially the usenet newsgroup
-10   de.comm.software.crosspoint and the official OpenXP homepage at
-11   http://www.openxp.com
-12
-13  Choose "Continue" to use this BETA version ...
+0    15
+1    This is a beta version of OpenXP. Please note it is possible that
+2    there are bugs in this version which may corrupt your database
+3    and/or cause problems in public networks.
+4    This program is distributed without any warranty; without even the
+5    implied warranty of merchantibility or fitness for a particular
+6    purpose.
+7    You can contact the OpenXP team by the following ways:
+8
+9    WWW:    http://www.openxp.de/
+10   Usenet: de.comm.software.crosspoint
+11   E-Mail: dev@openxp.de
+12   Fido:   crosspoint.ger
+13
+14   Choose "Continue" to use this beta version.
+15   This notice may be turned off with command line parameter /nb.
 30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------
@@ -3707,6 +3709,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.20  2001/06/20 16:17:29  ma
+# - made beta splash screen more "GPLish"
+# - added /nb command line notice
+#
 # Revision 1.19  2001/06/11 22:23:26  ma
 # - added GnuPG support
 #
