@@ -365,9 +365,10 @@ var
       Angle := false;
       Group := -1;
       SkipNext := false;
-      J := 1;
-    
-      for i:=1 to length(inhalt) do
+      J := 1; i := 1;
+
+      while i <= Length(Inhalt) do
+      begin
         if SkipNext then
           SkipNext:=false else
         case inhalt[i] of
@@ -381,6 +382,8 @@ var
           ',':  If(not Quote)and(not Angle)then AddAddr;
           ';':  If(not Quote)and(not Angle)then begin AddAddr; Group:=-1; end;
         end;
+        Inc(i);
+      end;
         
       AddAddr;
     end;  
@@ -1072,6 +1075,11 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2002/07/25 20:57:39  mk
+// - possible fix for #585559: OXP/Linux 3.9: neue User verkrüppelt
+//   AddAdr used for loop varialbe i from CheckAdresses, this varialbe
+//   is undefined after the loop; changed this loop in a while loop
+//
 // Revision 1.5  2002/06/23 15:03:07  cl
 // - Adapted Nachricht/Direkt to new address handling.
 //
