@@ -15,11 +15,11 @@ Name: openxp
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 
-Version: %{version}
-Release: %{release}
+Version: 3.9.10
+Release: 1
+Source: openxp-3.9.10
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team under GPL
-Source: /usr/src/packages/SOURCES/openxp-%{version}-%{release}.tar.gz
 BuildRoot: /tmp/openxp-root
 
 # Following are optional fields
@@ -140,6 +140,21 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{filelist}
 
 %changelog
+Sun Oct 19 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.10 (release 1)
+
+Sun Oct 19 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.10 (release 1)
+
+Sun Oct 19 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.10 (release 1)
+
+Sat Oct 18 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.10 (release 1)
+
+Sat Oct 18 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.9 (release 1)
+
 * Thu Oct 9 2003 Christian Boettger <cb@openxp.de>
 - changes for new release numbering system
 
