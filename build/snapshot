@@ -17,9 +17,11 @@ sourcedir=$versiondir'openxp/'
 #
 #cd ~/openxp/$1/openxp
 cd "$sourcedir"
+pwd
+cvs up -C version.inc
 cd build
 ./inc_build_nr.pl
-eval $(get_build_nr.pl)
+eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
@@ -27,8 +29,13 @@ version="$mainversion"."$subversion"-"$buildnr"
 scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
-#cvs ci -F /tmp/openxp_ver.txt version.inc
-cvs ci -m "- new version: `$version`" version.inc
+echo '- new version: '"$version"' CB'
+commit='- new version: '"$version"' CB'
+commit2='cvs -t ci -m "'"$commit"'" '"$sourcedir"'version.inc'
+echo $commit2
+#read a
+#cvs ci -m '- new version: '"$version"' CB' version.inc
+su -c "$commit2" boettger 
 cd "$sourcedir"
 pwd
 #echo $1
@@ -37,7 +44,7 @@ pwd
 #sleep 5
 echo $version
 pwd
-#exit 1
+#read a
 echo "building OXP" $version
 "$scriptdir"buildxp $mainversion
 test -f "openxp" || echo "Ooops, no OXP-Binary"
