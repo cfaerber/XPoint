@@ -2480,7 +2480,7 @@ begin
   try
     s1 := ExtractFileExt(sr.name);
     // BAK-Dateien überspringen
-    if s1 = FileUpperCase('.' + BakExt) then Continue;
+    if s1 = FileUpperCase(ExtBak) then Continue;
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
     begin
@@ -3558,6 +3558,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2002/05/20 07:47:57  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.102  2002/05/12 20:42:49  mk
   - first version of client netcall hack
 

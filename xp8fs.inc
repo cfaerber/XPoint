@@ -157,7 +157,7 @@ begin
     WriteFST(fstype);
     end;
   KorrBoxName(box); { Groá- und Kleinschreibung korrigieren }
-  makebak(MangleBoxName(box)+ extFl, BakExt);
+  makebak(MangleBoxName(box)+ extFl, ExtBak);
   case fstype of
     0 : begin      { SendZMsg }
           assign(t2,MangleBoxName(box)+ extFl);
@@ -556,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2002/05/20 07:47:57  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.31  2002/05/05 22:47:20  mk
   - use correct case for 'bak' extension
 

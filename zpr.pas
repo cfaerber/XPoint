@@ -398,7 +398,7 @@ begin
     if fo='' then
       fo := ChangeFileExt(fi, '$$$')
     else
-      makebak(fo,BakExt);
+      makebak(fo, ExtBak);
     filemode:=WriteFilemode;
     assign(f2,fo); rewrite(f2,1);
     if ioresult<>0 then error('Kann TemporÑrdatei "'+fo+'" nicht îffnen.');
@@ -456,7 +456,7 @@ begin
   if ParRep then begin
     close(f2);
     if RightStr(fo,3)='$$$' then begin
-      makebak(fi,BakExt);
+      makebak(fi,ExtBak);
       rename(f2,fi);
       if ioresult<>0 then error('"'+fi+'" konnte nicht Åberschrieben werden');
       end;
@@ -1274,6 +1274,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/05/20 07:47:58  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.49  2002/05/05 22:47:20  mk
   - use correct case for 'bak' extension
 

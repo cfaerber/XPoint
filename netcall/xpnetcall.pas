@@ -1161,7 +1161,7 @@ begin                  { function Netcall }
       Debug.DebugLog('xpnetcall','renaming incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
       begin
-        SafeMakeBak(DeleteSpoolFiles[i], BakExt);
+        SafeMakeBak(DeleteSpoolFiles[i], ExtBak);
         Debug.DebugLog('xpnetcall','renamed '+(DeleteSpoolFiles[i]),DLInform);
       end;
     end;
@@ -1383,6 +1383,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/05/20 07:47:59  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.56  2002/05/19 21:32:29  ma
   - fixed diskpoll
 

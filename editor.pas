@@ -95,7 +95,7 @@ procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer G
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe;
+uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe, xp0;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -910,7 +910,7 @@ var ap  : pointer;
     ofs0,ofse : integer;
     cr  : boolean;
 begin
-  if overwrite then MakeBak(fn,'BAK');
+  if overwrite then MakeBak(fn, ExtBak);
   assign(f,fn);
   if not overwrite then begin
     reset(f,1); seek(f,filesize(f)); end;
@@ -1802,6 +1802,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.83  2002/05/20 07:47:55  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.82  2002/04/06 17:07:47  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux

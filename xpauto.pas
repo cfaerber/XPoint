@@ -333,7 +333,7 @@ var sr    : tsearchrec;
   function find(const ext:string):boolean;
   begin
     if first then
-      rc:= findfirst(AutoxDir+'*.'+ext,faAnyFile,sr)
+      rc:= findfirst(AutoxDir+'*'+FileUpperCase(ext),faAnyFile,sr)
     else
       rc:= findnext(sr);
     first:=(rc<>0);
@@ -554,45 +554,45 @@ begin
     first:=true;
     ctlEbest:=false; ctlErstDat:=false;
     mgel:=ParGelesen; ParGelesen:=false;
-    while find('ctl') do    { Control-Dateien }
+    while find('.ctl') do    { Control-Dateien }
       SetCTL;
-    while find('ctd') do begin
+    while find('.ctd') do begin
       SetCTL;
       DeleteFile(AutoXdir+sr.name);
       //delfile;
       end;
-    while find('zer') do     { Z-Puffer einlesen + lîschen }
+    while find('.zer') do     { Z-Puffer einlesen + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,ctlEbest,0) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('zee') do     { Z-Puffer einlesen, EB's versenden + lîschen }
+    while find('.zee') do     { Z-Puffer einlesen, EB's versenden + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,true,0) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('out') do     { Maus-OUTFILE einlesen + lîschen }
+    while find('.out') do     { Maus-OUTFILE einlesen + lîschen }
       if MausImport then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
     if FileExists(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
       FidoImport;
 
-    while find('ips') do     { Puffer versenden }
+    while find('.ips') do     { Puffer versenden }
       if SendPuffer then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('msg') do     { Nachricht/Datei senden + lîschen }
+    while find('.msg') do     { Nachricht/Datei senden + lîschen }
       if SendMsg(false) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('msd') do     { Datei senden + incl. Datei lîschen }
+    while find('.msd') do     { Datei senden + incl. Datei lîschen }
       if SendMsg(true) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find(BakExt) do     { BAK-files lîschen }
+    while find(ExtBak) do     { BAK-files lîschen }
       DeleteFile(AutoXdir+sr.name);
       //delfile;
 
-    while find('bat') do     { Batchdateien ausfÅhren }
+    while find('.bat') do     { Batchdateien ausfÅhren }
       if (LeftStr(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
         (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
@@ -673,6 +673,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/05/20 07:47:57  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.51  2002/05/15 22:02:26  mk
   - added debug log entry for AutoExec()
 

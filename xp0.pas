@@ -148,6 +148,7 @@ const
        extBbl      = '.bbl';
        extHelp     = '.hlp';
        extXps      = '.xps';
+       extBak      = '.bak';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -187,6 +188,7 @@ const
        extBbl      = '.BBL';
        extHelp     = '.HLP';
        extXps      = '.XPS';
+       extBak      = '.BAK';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -965,7 +967,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_Tearline  : boolean;
        UserSlash    : boolean;
-       BAKext       : string;
+       EditorBAKext : string;        // extension for files backupd up from the editor
        keepedname   : boolean;
        pmcrypt      : array[1..maxpmc] of
                         record
@@ -1227,6 +1229,9 @@ implementation
 
 {
   $Log$
+  Revision 1.160  2002/05/20 07:47:55  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.159  2002/05/07 15:27:39  ma
   - implemented SMTP AUTH PLAIN and LOGIN
 

@@ -474,8 +474,8 @@ begin
     shell(repfile(VarEditor,name),0,-1);
     shell25:=ms;
     removeeof(name);
-    bak:=BAKext;
-    end
+    bak := EditorBakExt;
+  end
   else begin
     if nachricht then pushhp(54);
     TED(name,reedit,keeplines,ed_ukonv,nachricht,senden);
@@ -520,6 +520,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.79  2002/05/20 07:47:56  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.78  2002/04/20 08:43:48  mk
   - fixed syntax error in last commit
 
