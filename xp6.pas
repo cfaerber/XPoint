@@ -2338,6 +2338,7 @@ fromstart:
       rewrite(f2^,1);
       hdp^.archive:=false;
       hdp^.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
+      if netztyp in [nt_ZConnect,nt_Fido] then hdp^.real_box:='';
       b:=cpos('@',hdp^.absender);
       if not ntZConnect(netztyp) then begin
         if nobox and (b>0) then
@@ -2565,6 +2566,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.61  2002/05/25 21:38:45  my
+  MY:- Die Headerzeile "X-XP-BOX" wird bei den Netztypen ZConnect und Fido
+       jetzt nur noch in der Nachrichten-Datenbank (MPUFFER.*) erzeugt,
+       jedoch nicht mehr im Pollpaket (<Box>.PP). Damit ist speziell bei
+       ZConnect sichergestellt, daá der Header nicht mehr ins Netz gelangt
+       (bei Fido wurde er ohnehin durch ZFIDO.EXE entfernt).
+
   Revision 1.39.2.60  2002/04/28 17:40:05  my
   MY:- Fix: Beim Versuch, eine beantwortete PM ohne Betreff abzusenden,
        wurde der Editor auch dann aufgerufen, wenn die entsprechende
