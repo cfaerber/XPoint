@@ -7,7 +7,7 @@ rem angegeben sein (bei FPC: -fU[pfad]).
 if "%comp%"=="" set comp=%1
 if "%comp%"=="" set comp=ppc386
 if "%target%"=="" set target=%2
-if "%target%"=="" set target=dos32
+if "%target%"=="" set target=win32
 set arg=
 if "%target%"=="dos32" set arg=-TGO32V2 -Fu.\dos32
 if "%target%"=="win32" set arg=-TWin32
@@ -17,7 +17,6 @@ goto Fehler
 :ok
 %comp% -ddevelop %arg% -Fu.\objcom xp
 if errorlevel 1 goto Fehler
-goto ex
 %comp% ndiff
 if errorlevel 1 goto Fehler
 %comp% rc
