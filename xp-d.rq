@@ -1608,6 +1608,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9    Eintrag "Client-Aufruf" fehlt
 10   Eintrag "Client-Aufruf" nicht OK
 11   Eintrag "Zus„tzliche Server" nicht OK
+12   Eintrag "Envelope-Adresse" fehlt
 -
 707  <abgebrochen>
 708  Abbruch
@@ -1946,30 +1947,43 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # RFC/Client
 80   Client-Einstellungen
 81   Server
-82   Kommentar
-83   eMail-Adresse
-84   Realname    ~
-85   Vertreter   ~
-86   FQDN        ~
-87   Client-Verzeichnis
-88   Client-Aufruf    ~
-89   Zus„tzliche Server
-90   Zugang ~
-91   Telefon~
-92   Login  ~
-93   Paáwort~
-100  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
-101  pop.t-online.deùpop.gmx.netùpop3.nexgo.deùmail.epost.deùpop3.epost.deùpop3.web.deùpop.compuserve.deùpop.mail.yahoo.deùpop.addcom.deùpop.tiscalinet.deùpop.worldonline.deùpop3.planetinternet.deùpop.kundenserver.deùmail.komtel.net
-102  Mail-Server fr ausgehende Mail (SMTP)
-103  mailto.t-online.deùsmtprelay.t-online.deùmail.gmx.netùmail.nexgo.deùpostman.nexgo.deùmail.epost.deùsmtp.web.deùsmtp.compuserve.deùsmtp.mail.yahoo.deùsmtp.addcom.deùsmtp.tiscalinet.deùsmtp.worldonline.deùmailhost.planetinternet.deùsmtp.kundenserver.deùmail.komtel.net
-104  News-Server (NNTP)
-105  news.t-online.deùnews.cis.dfn.deùnews.nexgo.deùxnews.nexgo.deùnews.compuserve.deùnews.tiscali.deùnews.worldonline.deùnews.planetinternet.deùnews.komtel.net
-106  Servername     ~
-107  Fallback-Server~
-108  Envelope-Adresse
-109  Benutzername   ~
-110  Paáwort        ~
-111  Port
+82   Name
+83   Kommentar
+84   User
+85   eMail-Adresse
+86   Realname    ~
+87   Vertreter   ~
+88   FQDN        ~
+89   Client
+90   Client-Verzeichnis
+91   Client-Aufruf    ~
+92   Zus„tzliche Server
+93   Verbindung/Login
+94   Name   ~
+95   Telefon~
+96   Login  ~
+97   Paáwort~
+98   Rckfrage vor Anwahl
+99   Rckfrage vor Auflegen
+100  Verbindungsstatus halten
+110  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
+111  Mail-Server fr ausgehende Mail (SMTP)
+112  News-Server (NNTP)
+113  Servername     ~
+114  Port
+115  Protok.
+116  Fallback-Server~
+117  Envelope-Adresse
+118  Benutzername   ~
+119  Paáwort        ~
+120  Envelope-To auswerten
+121  Mail auf Server belassen
+122  APOP-Authentifizierung
+123  SMTP after POP
+124  SMTP-Login nach RFC 2554
+125  Newsgroup-Liste pflegen
+126  Max. Artikelgr”áe (KB)  ~
+127  Max. Artikel je Gruppe~
 #
 40   Packer-Extension ~
 # ProNet:
@@ -2093,7 +2107,8 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # RFC/Client
 8    Mail-/^News-Server,
 9    E^xterne Einstellungen,
-10   Externe Konfigurationsdatei laden
+10   Externe Konfiguration starten/laden
+11   Gespeicherten Dateinamen aus Konfigurationsdatei entfernen
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3230,36 +3245,39 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 #
 39 Pfad darf nicht leer sein!
 40 Es muá ein Username oder eine eMail-Adresse angegeben werden!
-# Der String in den folgenden acht Zeilen darf max. 57 Zeichen lang sein:
+# Der String in den folgenden zehn Zeilen darf max. 57 Zeichen lang sein:
 41 Diese Einstellungen sind nur wirksam, wenn sie von Ihrem
 42 Client oder Client-Kit ausgewertet werden.
 43
 44 Ihr Client untersttzt und/oder erfordert m”glicherweise
 45 weitere Einstellungen, die Sie in einer externen Konfigu-
-46 rationsdatei im Client-Verzeichnis vornehmen mssen.
-47
-48 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
+46 rationsdatei im Client-Verzeichnis oder mittels eines
+47 externen Konfigurationsprogramms vornehmen mssen (siehe
+48 /Edit/Boxen/Edit/Externe Einstellungen).
+49
+50 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
 #
-49 Client-Verzeichnis "%s" ist nicht vorhanden!
-50 Verzeichnis "%s" ist nicht vorhanden!
+51 Client-Verzeichnis "%s" ist nicht vorhanden!
+52 Verzeichnis "%s" ist nicht vorhanden!
 #
-51 Keine (weiteren) hinzuzufgenden Serverboxen vorhanden!
-52 Maximal %s Serverbox-Eintr„ge m”glich!
-53 Maximale Eingabel„nge (%s) fr Serverbox-Namen erreicht!
-54 Maximale Eingabel„nge (%s) fr Dateinamen (.BFG) erreicht!
-55 Serverbox "%s" bereits vorhanden - trotzdem hinzufgen
-56 Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfgbar.
-57 Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfgbar.
-58 Serverbox "%s"
-59 ist %s mal vorhanden!
-60 Serverbox "%s" existiert nicht!
-61 Serverbox "%s" ist identisch mit editierter Serverbox!
-62 ist nicht vom Netztyp %s!
-63 Maximale Gesamtl„nge (%s) der Dateinamen (.BFG) berschritten!
-64 Maximale Gesamtl„nge (%s) der Serverbox-Namen berschritten!
-65 Ungltiger Name fr Serverbox-Konfigurationsdatei: "%s.BFG"
-66 Serverbox zu Dateiname "%s.BFG" nicht gefunden!
-67 Ungltiger Serverbox-Name: "%s"
+53 Keine (weiteren) hinzuzufgenden Serverboxen vorhanden!
+54 Maximal %s Serverbox-Eintr„ge m”glich!
+55 Maximale Eingabel„nge (%s) fr Serverbox-Namen erreicht!
+56 Maximale Eingabel„nge (%s) fr Dateinamen (.BFG) erreicht!
+57 Serverbox "%s" bereits vorhanden - trotzdem hinzufgen
+58 Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfgbar.
+59 Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfgbar.
+60 Serverbox "%s"
+61 ist %s mal vorhanden!
+62 Serverbox "%s" existiert nicht!
+63 Serverbox "%s" ist identisch mit editierter Serverbox!
+64 ist nicht vom Netztyp %s!
+65 Maximale Gesamtl„nge (%s) der Dateinamen (.BFG) berschritten!
+66 Maximale Gesamtl„nge (%s) der Serverbox-Namen berschritten!
+67 Ungltiger Name fr Serverbox-Konfigurationsdatei: "%s.BFG"
+68 Serverbox zu Dateiname "%s.BFG" nicht gefunden!
+69 Ungltiger Serverbox-Name: "%s"
+70 Envelope-Adresse muá angegeben werden!
 
 +  11000
 1  unbekannter Befehl
