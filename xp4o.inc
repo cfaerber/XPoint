@@ -501,8 +501,7 @@ var x,y,yy  : byte;
     if proz<>lastproz then
     begin
       moff;
-      Wrt2(Format('%3d', [min(proz,100)]));
-      GotoXY(WhereX-3, WhereY);
+      FWrt(WhereX, WhereY, Format('%3d', [min(proz,100)]));
       mon;
       lastproz:=proz;
     end;
@@ -700,6 +699,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2001/01/21 09:38:06  mk
+  - Improvement for last commit
+
   Revision 1.32  2001/01/21 09:34:38  mk
   - removed unused variables from last commit
 
