@@ -653,7 +653,7 @@ begin
 {$IFDEF UnixFS }
   FileUpperCase := s;
 {$ELSE }
-  FileUpperCase := UpperCase(s);
+  FileUpperCase := AnsiUpperCase(s);
 {$ENDIF }
 end;
 
@@ -1449,6 +1449,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.93  2001/08/02 22:24:46  mk
+  - use AnsiUpperCase instead of UpperCase in FileUpperCase
+
   Revision 1.92  2001/07/31 16:18:40  mk
   - removed some unused variables
   - changed some LongInt to DWord
