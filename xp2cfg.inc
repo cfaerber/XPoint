@@ -927,7 +927,8 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
+{  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege)); }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1390,7 +1391,8 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege', autodatumsbezuege) or
+{          getx(su,  'autodatumsbezuege', autodatumsbezuege) or }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
           getb(su,  'screenlines',screenlines) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
@@ -1749,6 +1751,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.22  2001/07/18 17:20:27  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.62.2.21  2001/04/28 15:47:32  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

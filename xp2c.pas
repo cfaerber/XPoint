@@ -513,7 +513,7 @@ procedure netcalloptions;
 var x,y : byte;
     brk : boolean;
 begin
-  dialog(59,11,getres2(254,1),x,y);     { 'Netcall-Optionen' }
+  dialog(59,10,getres2(254,1),x,y);     { 'Netcall-Optionen' }
   maddbool(3,2,getres2(254,2),ShowLogin); mhnr(560);   { 'Login-Bild zeigen' }
   maddbool(3,3,getres2(254,3),BreakLogin);   { 'Login-Bild abbrechen' }
   hayes:=hayescomm;
@@ -525,7 +525,8 @@ begin
   maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Gro·schreibung umwandeln' }
   maddbool(3,7,getres2(254,14),netcalllogfile); { 'vollstÑndiges Netcall-Logfile (NETCALL.LOG)' }
   maddbool(3,9,getres2(254,15),netcallunmark);  { 'Nachrichtenmarkierungen nach Netcall aufheben' }
-  maddbool(3,10,getres2(254,16),AutoDatumsBezuege);  { 'DatumsbezÅge nach Netcall anpassen' }
+{  maddbool(3,10,getres2(254,16),AutoDatumsBezuege); } { 'DatumsbezÅge nach Netcall anpassen' }
+{ unnîtig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -1504,6 +1505,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.18  2001/07/18 17:20:27  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.39.2.17  2001/04/28 15:47:32  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

@@ -84,7 +84,7 @@ const  {$IFDEF DPMI}
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
        realnlen = 120;               { LÑnge der Realnames }
-       AutoDatumsBezuege : boolean = false;
+{       AutoDatumsBezuege : boolean = false; } {unnîtig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -1207,6 +1207,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.39  2001/07/18 17:20:27  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.54.2.38  2001/07/17 13:52:37  mk
   - Absender-Laenge wird ¸ber Konstakte AdrLen bestimmt
 

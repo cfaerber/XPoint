@@ -472,13 +472,15 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
-  { Nach dem Netcall DatumsbezÅge setzen, damit
+(*  { Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
+    { unnîtig seit Fix von jg in XP3O2.PAS und
+      XP4.PAS (2001/05/23 und 2001/06/10) }
   if AutoDatumsBezuege then
   begin
     window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
     bd_setzen(true);
-  end;
+  end; *)
 end;
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
@@ -846,6 +848,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.18  2001/07/18 17:20:28  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.13.2.17  2001/06/27 15:36:15  my
   - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
 
