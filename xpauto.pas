@@ -581,7 +581,8 @@ begin
       delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
-      if (left(sr.name,5)<>FileUpperCase('start')) and (left(sr.name,4)<>FileUpperCase('stop')) then begin
+      if (left(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
+        (left(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
@@ -599,7 +600,6 @@ begin
     FindClose(sr);
   end;
 end;
-
 
 procedure AutoStop;
 var
@@ -660,6 +660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/09/30 16:33:13  mk
+  - LFN-Bufix
+
   Revision 1.21  2000/07/22 14:05:28  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
