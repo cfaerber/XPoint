@@ -31,6 +31,7 @@ unit mime;
 uses
   Classes,
   xpstreams,
+  xpstreams_codec,
   unicode;
 
 { ---------------------- Enum types & Constants ---------------------- }
@@ -1270,6 +1271,9 @@ end;
 
 //
 // $Log$
+// Revision 1.27  2003/08/26 22:47:16  cl
+// - split xpstreams into individual small files to remove some dependencies
+//
 // Revision 1.26  2003/08/24 19:12:33  cl
 // - better aliases for charsets
 // - additional aliases for charsets not registered w/ IANA (e.g. x-mac-roman)

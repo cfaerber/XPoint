@@ -389,7 +389,9 @@ implementation  { --------------------------------------------------- }
 
 uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o2, xp4e, xpcc, xpfido, xpmakeheader,
-  xpsendmessage_internal, xpstreams, addresses, 
+  xpsendmessage_internal, xpstreams, addresses,
+  xpstreams_codec, 
+  xpstreams_temporary, 
   xpserver, xp4;
 
 function umlauttest(var s:string):boolean;
@@ -935,6 +937,9 @@ finalization
 
 {
   $Log$
+  Revision 1.75  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.74  2003/08/24 23:33:27  cl
   - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
     Nachricht löschen (nach Versand), Empfangsbestätigungen,

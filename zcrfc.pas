@@ -174,6 +174,8 @@ uses
 {$ENDIF }
   xp0, xp1, xpnt,
   typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams,
+  xpstreams_pascal,
+  xpstreams_codec,
   xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
 
 const
@@ -3764,6 +3766,9 @@ end;
 
 {
   $Log$
+  Revision 1.139  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.138  2003/08/04 22:48:15  mk
   - removed Edit/netze/verschiedens/mime in news
 

@@ -43,8 +43,6 @@ procedure PmArchiv(einzel:boolean);
 
 function testmausempf(var s:string):boolean;
 
-
-
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
@@ -1436,6 +1434,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.10  2003/08/26 00:35:58  mk
   - fixed empty followup in weiterleit()
 

@@ -94,6 +94,8 @@ uses
   printerx,xp0,xp1,xp1o2,xp1input,
   xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
   xprope,xpspam,xpstreams,crc,
+  xpstreams_pascal,
+  xpstreams_partial,
   xpmakeheader,xpsendmessage,xpsendmessage_rta;
 
 { Customselectroutinen fuer Brett/User }
@@ -1561,6 +1563,9 @@ end;
 
 {
   $Log$
+  Revision 1.105  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.104  2003/08/24 23:33:27  cl
   - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
     Nachricht löschen (nach Versand), Empfangsbestätigungen,

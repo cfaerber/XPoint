@@ -77,6 +77,7 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$IFDEF Kylix}
   libc,
   {$ENDIF}
+  xpstreams_temporary,
   xpcc,xpnt,mime,mime_base64;
 
 var
@@ -1205,6 +1206,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.76  2003/08/25 07:05:50  mk
   - added OS/2 support
 

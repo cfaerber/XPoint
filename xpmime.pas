@@ -79,6 +79,7 @@ uses
   xpos2,
   {$ENDIF }
   xpstreams,
+  xpstreams_partial,
   xp1o,xp3,xp3o,xp3ex;
 
 
@@ -885,6 +886,9 @@ finalization
 
 {
   $Log$
+  Revision 1.66  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.65  2003/08/25 20:25:11  mk
   - fixed #589633: 3.8: Taste "v" im Lister bei Multipart
 

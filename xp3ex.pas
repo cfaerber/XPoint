@@ -60,6 +60,7 @@ uses
   xpcurses,
 {$ENDIF }
   xpglobal,typeform,
+  xpstreams_pascal,
   database,resource,xpheader, winxp,
   xp0,xp1,xp1o,xp3,xp_des,xpnt,xpfido,mime,utftools,unicode,xpstreams;
 
@@ -1238,6 +1239,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.107  2003/08/26 22:47:17  cl
+  - split xpstreams into individual small files to remove some dependencies
+
   Revision 1.106  2003/05/11 11:12:16  mk
   - use IsMailAddr when possible
 
