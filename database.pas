@@ -118,7 +118,8 @@ procedure dbWriteUserflag(dbp:DB; nr:byte; value:xpWord);
 { Neue Funktionen wg. AnsiString }
 
 function  dbReadNStr(dbp:DB; feldnr: integer): string;
-function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
+function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string; overload;
+function  dbReadXStr(dbp: DB; const feld: dbFeldStr): string; overload;
 
 procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
@@ -2331,14 +2332,28 @@ begin
   end;
 end;
 
-function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
-var
-  s: shortstring;
+function dbReadXStr(dbp: DB; const feld: dbFeldStr): string;
+var l : longint;
 begin
-  s:= '';
-  if size > 255 then size:= 255; { An ShortString anpassen }
-  dbReadX(dbp, feld, size, s);
-  dbReadXStr:= s;
+  with dp(dbp)^ do begin
+    feseek(dbp,feld,l);
+    SetLength(result,l-1);
+    seek(fe,filepos(fe)+1);
+    if l>0 then blockread(fe,result[1],l-1);
+  end;
+end;
+
+function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
+var l : longint;
+begin
+  with dp(dbp)^ do begin
+    feseek(dbp,feld,l);
+    if size >0 then l:=Min(size,l);
+    SetLength(result,l-1);
+    seek(fe,filepos(fe)+1);
+    if l>0 then blockread(fe,result[1],l-1);
+  end;
+  size := Length(Result);
 end;
 
 { Aus externer Datei in Datei einlesen }
@@ -2451,6 +2466,12 @@ begin
   end;
 end;
 
+{
+  NOTE: We MUST NOT change this function to support strings longer than 255
+  octets (at least not the obvious way).
+  16 bit versions of Crosspoint read X fields with dbReadX into string[255]
+  variables. If we put longer data in fields XP16 knows about, it will crash!
+}
 procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:xpWord; const s: string);
 var
   s0: shortstring;  //passed as untyped var!!!
@@ -2586,6 +2607,11 @@ end;
 
 {
   $Log$
+  Revision 1.67  2003/08/30 21:21:00  cl
+  - added dbReadXStr that does not require a var size: integer parameter
+  - simplified code of dbReadXStr
+  - added warning about not changing dbWriteXStr
+
   Revision 1.66  2003/08/24 21:43:36  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems
