@@ -309,9 +309,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 15   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
 16   ~          /LFN     Untersttzung langer Dateinamen erzwingen (fr Win2000)
 17   ~          /312     XP 3.12-Kompatibilit„tsmodus (X-XP-FTO statt F-TO)
-18   ~          /maus    Pseudo-Maus aktivieren
+18   ~          /maus    aktiviert eine Cursor-Maus-Emulation
 19
-20   ~          /k:xxx   (Sonder-)Tasten xxx bergeben (fr Tastenmakro)
+20   ~          /k:xxx   (Sonder-)Taste(n) xxx bergeben (fr Tastenmakro)
 21   ~          /mailto:[user@do.main][?subject:"xxx"][\BOX]
 22   ~                   /Nachricht/Direkt nach Start ausfhren
 23   ~                   und /mailto:-Parameter an Dialog bergeben

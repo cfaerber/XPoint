@@ -1,10 +1,10 @@
-K CrossPoint v3.11 resource file
+K CrossPoint v3.3 resource file
 K English
 K (c) '93-96 Peter Mandrella
 K (c) '2000 OpenXP Team, www.openxp.de
 
 # Online Help File, Key Macros
-1 xp-e.hlp
+1 XP-E.HLP
 2 KEYS-E.CFG
 5 Changing language ...
 
@@ -290,49 +290,61 @@ K (c) '2000 OpenXP Team, www.openxp.de
 19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
 -
 + 202
-1    Syntax:    XP [/Opt1 /Opt2 ...]
+1    Syntax:   XP [/Option1 /Option2 ...]
 2
-3    Options:   /m      monochrome Display
-4    ~          /LCD    fixes display problems on some laptops
-5    ~          /q      no sound signals (quiet)
-6    ~          /rp     doesn't test for TSR programs after DOS-shell
-7    ~          /sd     prevents automatic Smartdrive cache flushing
-8    ~          /ss     start screen saver at once
-9    ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
-10   ~          /w0     don't free unused system resources
-11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
-12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
-13   ~          /os2x   kind of freeing of free unused system resources (time)
-14   ~                  under OS/2 (x ranges from a to d)
-15   ~          /nolock do not test for multible instances of XP
-16   ~          /lfn    enable Support for Long Filenames (useful with Win 2000)
-17   ~          /312    XP 3.12 Compatibility Mode (X-XP-FTO statt F-TO)
-18
-19   ~          /k:X    send key X (for key macro)
-20   ~          /pw:xx  enter start password xx
-21   ~          /z:nn   set nn screen lines
-22   ~          /l:X    set language (e.g. /l:E for Englisch)
-23
-24   ~          /n:Server[:hh:mm]   start netcall to Server
-25   ~          /n:*                netcall to all Servers
-26   ~          /nr:Server          relogin netcall to Server
-27   ~          /user:Server:NAME   set user name at Server to NAME
-28   ~          /ips:Server:PUFFER  import and send puffer file
-29   ~          /autostart:...      start program by time range
-30
-31   ~          /av:<File>          view archive file
-32   ~          /f:<File>[.FNT]     load font file
-33   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
-34
-35   ~          /ip:PUF   import puffer file
-36   ~          /ipe:PUF  import puffer file with receive date = creation date
-37   ~          /g        sets /ip and /ips messages to status 'read'
-38   ~          /eb       return receipts (for /ip..)
-39   ~          /r        start messagebase reorganisation
-40   ~          /pack     do /Reorg/Pack
-41   ~          /t:n      start timing list no. n
-42
-43   ~          /x        quit program
+3    Options:  /?       command line help
+4    ~         /j       no dumb remark when exiting
+5    ~         /m       monochrome display
+6    ~         /LCD     fixes display problems on some laptops
+7    ~         /q       no sound signals (quiet)
+8    ~         /rp      doesn't test for TSR programs after DOS-shell
+9    ~         /sd      prevents automatic Smartdrive cache flushing
+10   ~         /trace   activates script protocol (see XPOINT.TXT, 8.1)
+11   ~         /w0      don't free unused system resources
+12   ~         /w, /w1  free unused system resources for Win & OS/2 (timeslice)
+13   ~         /w2      free unused system resources for Win & OS/2 (conservative)
+14   ~         /os2x    kind of freeing of free unused system resources (time)
+15   ~                  under OS/2 (x ranges from a to d)
+16   ~         /nolock  no check for multiple program launch
+17   ~         /LFN     force support of long file names (under Win2000)
+18   ~         /312     XP 3.12 compatibility mode (X-XP-FTO instead of F-TO)
+19   ~         /maus    activates a cursor-mouse emulation
+20
+21   ~         /k:xxx   send (special) key(s) xxx (for key macros)
+22   ~         /mailto:[user@do.main][?subject:"xxx"][\BOX]
+23   ~                  do /Message/Direct after program start
+24   ~                  and pass /mailto: parameters to dialogue
+25   ~         /pw:xxx  passes start password xxx
+26   ~         /nb      disable warning message of beta versions
+27   ~         /z:nn    set nn screen lines
+28   ~         /l:X     set language (e.g. /l:E for English)
+29
+30   ~         /autostart:...   start program by time range
+31   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
+32   ~         /ip:PUFFER       import puffer file
+33   ~         /ipe:PUFFER      import puffer file with receive date = creation date
+34   ~         /ips:BOX:PUFFER  import and send puffer file
+35   ~         /eb              return receipts (sub-switch for /ip..)
+36   ~         /g               sets /ip and /ips messages to status 'read'
+37   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
+38   ~         /n:*             netcall to all Servers
+39   ~         /nr:BOX          relogin netcall to Server (BOX)
+40   ~         /t:n             start timing list no. n
+41
+42   ~         /r               start message base reorganisation
+43   ~         /pack            do /Re-Org/Pack
+44   ~         /xpack           pack message base in 'automatic' mode
+45   ~         /ss              start screen saver at once
+46
+47   ~         /av:<File>       view archive file
+48   ~         /f:<File>        load font file
+49   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
+50
+51   ~         /d       start program in debug mode
+52   ~         /df:1    show command call of external programs
+53   ~         /df:2    wait for key press after external program calls
+54
+55   ~         /x       quit program
 -
 
 203  Error: Can't create directory %s !
