@@ -296,7 +296,7 @@ begin  { __ Suchmarke }
 
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
 
-            dbReadN(mbase,mb_brett,_brett);
+            _brett := dbReadNStr(mbase,mb_brett);
             s0:= dbReadNStr(mbase,mb_absender);
             dbReadN(mbase,mb_netztyp,mnt);
             fileatt:=(mnt and $200<>0);
@@ -619,6 +619,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/01/30 17:29:52  mk
+  - fixed dbReadN with AnsiString
+
   Revision 1.54  2002/01/22 19:15:29  mk
   - after 3.40 merge fixes
 
