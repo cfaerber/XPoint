@@ -526,9 +526,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    max. Speichergrî·e fÅr BinÑrnachrichten:~
 7    KB
 9    Bytes
-11   Standard-Bretthaltezeit: ~
+11   Standard-Bretthaltezeit:~
 12   Tage
-13   Standard-Userhaltezeit:  ~
+13   Standard-Userhaltezeit: ~
 14   Eigene Nachr. halten
 15   Erstellungszeit 00:00
 16   Re^n verwenden
@@ -3805,6 +3805,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.26  2001/08/11 09:02:13  mk
+# - resized some fields in Config/Optionen/Nachrichten
+#
 # Revision 1.25  2001/08/11 08:41:39  mk
 # - fixed RTA changes in Config/Optionen/Nachrichten
 #
