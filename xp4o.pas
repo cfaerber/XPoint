@@ -1473,7 +1473,7 @@ begin
     ok:=true;
     while ok and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,1,0,hds,hdp,ok,false, true);
+      makeheader(zconnect,f,1,hds,hdp,ok,false, true);
       if not ok then
         rfehler1(427,box)   { 'fehlerhaftes Pollpaket:  %s' }
       else with hdp do begin
@@ -2444,6 +2444,9 @@ end;
 
 {
   $Log$
+  Revision 1.109  2001/09/06 19:31:20  mk
+  - removed some hints und warnings
+
   Revision 1.108  2001/09/06 18:54:35  mk
   - removed some warnings
   - formatted source

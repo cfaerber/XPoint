@@ -342,7 +342,7 @@ var i        : integer;
       adr:=0; ok:=true;
       while ok and (adr<filesize(f)) do begin
         seek(f,adr);
-        MakeHeader(true,f,0,0,hds,hd,ok,false,true);
+        MakeHeader(true,f,0,hds,hd,ok,false,true);
         if (hd.attrib and attrFile<>0) then
           if not FileExists(hd.betreff) then
             tfehler(hd.betreff+' fehlt!',15)
@@ -727,7 +727,7 @@ begin
       moff;
       while not eof(f) and sh do begin
         inc(n);
-        MakeHeader(true,f,0,0,hds,hdp,ok,false,true);
+        MakeHeader(true,f,0,hds,hdp,ok,false,true);
         empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
         if empfaenger=lastempf then
           inc(count)
@@ -884,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/09/06 19:31:21  mk
+  - removed some hints und warnings
+
   Revision 1.16  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 

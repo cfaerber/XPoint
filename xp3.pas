@@ -34,7 +34,6 @@ uses
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
-      ReadHeadDisk : shortint = 0;           { Diskussion-In }
 
 
 function  msgmarked:boolean;                 { Nachricht markiert? }
@@ -384,7 +383,7 @@ begin
     else begin
       empfnr:=ReadHeadEmpf; ReadHeadEmpf:=0;
       end;
-    if ok then makeheader(ntZCablage(ablg),puffer,empfnr,ReadHeadDisk,hds,hd,
+    if ok then makeheader(ntZCablage(ablg),puffer,empfnr,hds,hd,
                           ok,true, true);
     if not nopuffer then
       close(puffer);
@@ -401,7 +400,7 @@ begin
     end;
   if LeftStr(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=Mid(hd.empfaenger,9);
-  ReadEmpflist:=false; ReadHeadDisk:=0;
+  ReadEmpflist:=false; 
   ReadKopList:=false;
 end;
 
@@ -1137,6 +1136,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.63  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.62  2001/08/31 14:44:37  mk
   - changed TxtSeek for Delphi/Kylix compatiblity
 

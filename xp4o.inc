@@ -430,7 +430,7 @@ var x,y,yy  : Integer;
         seek(f2,adr);
         enr:=dbReadInt(mbase,'netztyp') shr 24;
         hdp := THeader.Create;
-        MakeHeader(true,f2,enr,0,hds,hdp,ok,true, true);
+        MakeHeader(true,f2,enr,hds,hdp,ok,true, true);
         MsgOK:=ok and (size=hds+hdp.groesse) and (hdp.empfanz>=min(2,enr))
                   and (dbReadInt(mbase,'groesse')=hdp.groesse);
         Hdp.Free;
@@ -705,6 +705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.41  2001/09/06 18:55:13  mk
   - formatted source
 

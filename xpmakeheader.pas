@@ -36,7 +36,7 @@ const
 var
   EmpfList: TStringList;                     { Empf„ngerliste }
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 
@@ -56,7 +56,7 @@ type
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr:integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
@@ -209,15 +209,6 @@ var i,res : integer;
       if p>0 then hd.betreff[p]:=' ';
     until p=0;
   end;
-
-{  procedure GetFollowup;
-  begin
-    if cpos('@',line)>0 then exit;
-    if ((disknr>0) and (hd.amrepanz<disknr)) or (hd.amrepanz=0) then
-      hd.AmReplyTo := line;
-    if hd.amrepanz<127 then
-      inc(hd.amrepanz);
-  end; }
 
   procedure GetStichwort;
   var s : string;
@@ -573,6 +564,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/09/06 19:31:20  mk
+  - removed some hints und warnings
+
   Revision 1.11  2001/08/11 21:20:52  mk
   - THeader.OEM is now TStringList (before: String)
 

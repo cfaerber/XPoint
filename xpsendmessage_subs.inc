@@ -548,7 +548,7 @@ begin
   assign(f,fn);
   fm_ro; reset(f,1); fm_rw;
   hdp := THeader.Create;
-  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp,ok,false, true);
+  makeheader(ntZConnect(hd.netztyp),f,0,hds,hdp,ok,false, true);
   oemp:=hdp.empfaenger;
   if hdp.netztyp=nt_ZConnect then with hdp do begin
     AddZer(absender);
@@ -1125,6 +1125,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/09/06 19:31:20  mk
+  - removed some hints und warnings
+
   Revision 1.3  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
   - shortened CVS logs

@@ -192,8 +192,8 @@ end;
 
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
-    wp   : ^smallword absolute rbuf;
 {$IFDEF Delphi }
+    wp   : ^smallword absolute rbuf;
     i,o: integer;
 {$ENDIF }
 begin
@@ -289,6 +289,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2001/09/06 19:31:18  mk
+  - removed some hints und warnings
+
   Revision 1.20  2001/08/10 16:27:23  mk
   - do not use assembler version of ExpandNode with Delphi
 

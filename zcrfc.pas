@@ -3606,7 +3606,7 @@ begin
   repeat
     seek(f1, adr);
     Clearheader;
-    makeheader(true, f1, 1, 0, hds, hd, ok, false, false);
+    makeheader(true, f1, 1, hds, hd, ok, false, false);
     if not ok then
     begin
       close(f1);
@@ -3681,7 +3681,7 @@ begin
     repeat
       seek(f1, adr);
       ClearHeader;
-      makeheader(true, f1, copycount, 0, hds, hd, ok, false, false);
+      makeheader(true, f1, copycount, hds, hd, ok, false, false);
       binmail := (hd.typ = 'B');
       if cpos('@', hd.empfaenger) > 0 then
         if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
@@ -3804,6 +3804,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2001/09/06 19:31:21  mk
+  - removed some hints und warnings
+
   Revision 1.68  2001/08/11 23:06:39  mk
   - changed Pos() to cPos() when possible
 

@@ -321,7 +321,7 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,0,hds,hdp,ok,false,true); { MUSS ok sein! }
+    makeheader(zconnect,f,0,hds,hdp,ok,false,true); { MUSS ok sein! }
     if not ok then begin
       tfehler(puffer+' corrupted!',esec);
       close(f); exit;
@@ -330,7 +330,7 @@ begin
       ClrUVS
     else for i:=1 to hdp.empfanz do begin
       seek(f,adr);
-      makeheader(zconnect,f,i,0,hds,hdp,ok,false,true);
+      makeheader(zconnect,f,i,hds,hdp,ok,false,true);
       ClrUVS;
       end;
     inc(adr,hdp.groesse+hds);
@@ -1371,6 +1371,9 @@ end.
 
 {
   $Log$
+  Revision 1.31  2001/09/06 19:31:22  mk
+  - removed some hints und warnings
+
   Revision 1.30  2001/08/27 09:18:43  ma
   - changes in net type handling
 

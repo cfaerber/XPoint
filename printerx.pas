@@ -94,9 +94,6 @@ implementation
 uses
   SysUtils;
 
-type
-  textbuf = array[0..126] of char;
-
 procedure OpenLst(Port: Integer);
 begin
   Assign(lst, 'lpt' + IntToStr(Port));
@@ -145,9 +142,11 @@ begin
   PrintString:= r;
 end;
 
-end.
 {
   $Log$
+  Revision 1.19  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.18  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 
@@ -199,3 +198,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

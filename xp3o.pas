@@ -1364,7 +1364,7 @@ begin
         if show then begin
           moff; write(MsgCount:6,#8#8#8#8#8#8); mon; end;
         seek(f,adr);
-        makeheader(zconnect,f,0,0,hds,hdp,ok,true, true);
+        makeheader(zconnect,f,0,hds,hdp,ok,true, true);
         if hdp.attrib and attrFile<>0 then
           inc(fattaches,_filesize(hdp.betreff));
         inc(adr,hds+hdp.groesse);
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.66  2001/08/27 09:13:42  ma
   - changes in net type handling (1)
 

@@ -143,7 +143,7 @@ var x,y      : Integer;
         mon;
       end;
       seek(f,adr);
-      makeheader(zconnect,f,0,0,hdsize,hdp,ok,true, true);
+      makeheader(zconnect,f,0,hdsize,hdp,ok,true, true);
       if ok then begin
         inc(adr,hdsize+hdp.groesse);
         lastsubj:=hdp.betreff; lastmid:=hdp.msgid;
@@ -496,7 +496,7 @@ var x,y      : Integer;
     else begin
       assign(f,uncfile);
       reset(f,1);
-      makeheader(false,f,0,0,hds2,hdp2,ok,false, true);
+      makeheader(false,f,0,hds2,hdp2,ok,false, true);
       close(f);
       if not ok then
         trfehler(306,5)       { 'Fehler beim Decodieren' }
@@ -572,7 +572,7 @@ var x,y      : Integer;
       inc(n);
       repeat
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
+        makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
@@ -802,7 +802,7 @@ begin
       msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
+        makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.empfaenger;
         { Schalter maildelxpost beachten }
         if (hdp.empfanz>maxcrosspost)
@@ -1238,6 +1238,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.63  2001/08/27 08:24:50  mk
   JG+MY:- Fix: When auto-creating a user with an address longer than 80
           chars the user flags (Prio, Filter, Return Receipt) of the last

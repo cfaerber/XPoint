@@ -259,7 +259,7 @@ begin
     fsize:=filesize(f);
     while not found and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,empfnr,0,hds,hdp,ok,false, true);
+      makeheader(zconnect,f,empfnr,hds,hdp,ok,false, true);
       if not ok then begin
         rfehler1(621,sr.name);    { 'fehlerhaftes Pollpaket:  %s' }
         goto nextpp;   { zum naechsten Puffer weiterspringen }
@@ -1313,6 +1313,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/09/06 19:31:20  mk
+  - removed some hints und warnings
+
   Revision 1.2  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
   - shortened CVS logs

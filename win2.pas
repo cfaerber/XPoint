@@ -186,10 +186,12 @@ end;
   vert    : vertikale Anzeige }
 
 
+{$IFDEF VP }
 function OwnStringListCompare(List: TStringList; Index1, Index2: Integer): Integer;
 begin
   Result := CompareText(List[Index1], List[Index2]);
 end;
+{$ENDIF }
 
 function fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
 
@@ -1101,6 +1103,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
   Revision 1.42  2001/09/06 18:49:44  mk
   - removed unneccessary reference to memavail
 
