@@ -1007,7 +1007,7 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 begin
   dbAppend(bbase);
   dbWriteNStr(bbase,bb_brettname, Brettname);
-  dbWriteNStr(bbase,bb_pollbox, Kommentar);
+  dbWriteNStr(bbase,bb_kommentar, Kommentar);
   dbWriteNStr(bbase,bb_pollbox, Pollbox);
   dbWriteN(bbase,bb_haltezeit, haltezeit);
   dbWriteN(bbase,bb_gruppe, Gruppe);
@@ -2438,6 +2438,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2001/10/12 22:59:38  mk
+  - fixed writing "Kommentar" in AddNewBrett
+
   Revision 1.80  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
