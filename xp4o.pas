@@ -96,7 +96,7 @@ type arcbuf = record
               end;
 
 const arcbufp : byte = 0;
-      suchopt : string = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
+      suchopt : string = 'au';
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Groesse nach Reorg }
@@ -580,13 +580,6 @@ begin
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
 
-  if (SuchOpt <> '') and (suchopt[1]='*') then
-  begin                                       {Erste Suche seit Programmstart ?}
-    if UpperCase(getres(1))='XP.HLP' then
-      suchopt:='aiÑ'
-    else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
-      suchopt:='ai';
-  end;
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -732,7 +725,7 @@ begin
   if not brk then with srec^ do begin
     sst:=suchstring;
     igcase:=multipos('iu',LowerCase(suchopt));
-    umlaut:=multipos('ÑîÅ',LowerCase(suchopt));  {JG:15.02.00 Umlautschalter}
+    umlaut:=multipos('ÑîÅu',LowerCase(suchopt));
     bereich:=0;                                                 // default = Alles ( 0)
     for i:=1 to 4 do
       if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i; // 0='Alle' 1='Netz' 'User' 'markiert' 'gewÑhlt'
@@ -2417,6 +2410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.95  2001/07/10 07:59:38  mk
+  JG:- added search Option "u"
+
   Revision 1.94  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
