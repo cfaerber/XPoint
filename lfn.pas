@@ -666,7 +666,7 @@ const                                                                  {!!.05}
       DS := Seg(Name^);
       SI := Ofs(Name^);
       Flags:= 0;                                                       {!!.08}
-      Intr($21, Regs);            
+      Intr($21, Regs);
       Int21namePChar := Flags and FCarry = 0;
     end;
   end;
@@ -1197,8 +1197,12 @@ type
     end;
   end;
 
+  procedure LFNAssignStoreName(var F; var P : PChar; PSize : Word); forward;
+
   procedure Win95Rename(var F; Newname : String);
     {-Gibt einer externen Datei einen neuen Namen.}
+  var
+    P: PChar;                                                          {!!.11}
   begin
     InOutRes := 0;
 
@@ -1219,6 +1223,20 @@ type
         else
           {-Fehlercode fÅr IOResult setzen}
           InOutRes := AX;
+
+      {!!.11 begin}
+      if InOutRes = 0 then
+      begin
+        {$IFDEF AssignLongName}
+        {-Ggf. vorherigen String vom Heap holen}
+          LFNAssignDispose(F);
+        {$ENDIF}
+        {-Adresse vom AsciiZ in NewName ermitteln}
+        P:= @NewName[1];
+        {-Neuen Dateinamen speichern}
+        LFNAssignStoreName(F, P, Length(NewName));
+      end;
+      {!!.11 end}
     end;
   end;
 
@@ -1500,7 +1518,7 @@ type
 
     with T do begin
       {!!.05 begin}
-      if Name[0] = #0 then begin                                 
+      if Name[0] = #0 then begin
         {-FÅr den Fall: Assign(TEXT, '');}
         case Mode of
           fmInput :
