@@ -785,7 +785,7 @@ begin
   x:=x+length(txt);
   IF art=editread then s:='' ELSE s:=Copy(s,1,ml);
   if art<>edittabelle then
-    WHILE s[length(s)]=' ' DO dellast(s);
+    s := TrimRight(s);
   p:=min(px,length(s));
   if not canf then
     IF art<>edittabelle THEN p:=p+length(s);
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.2  2000/08/07 23:59:08  mk
+  - AnsiString-Bug beseitigt
+
   Revision 1.38.2.1  2000/06/22 17:13:45  mk
   - 32 Bit Teile entfernt
 
