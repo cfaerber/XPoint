@@ -22,6 +22,7 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
+  SysUtils,
 {$ELSE }
   crt,
 {$ENDIF }
@@ -58,7 +59,11 @@ again:
     rest:=system.round((t0-ticker)/18.2);
     if count and (rest mod 60<>last) then begin
       moff;
+{$IFDEF Linux}
+       Fwrt(WhereX,WhereY,Format('%.2d:%.2d',[rest div 60,rest mod 60]));
+{$ELSE}
       write(formi(rest div 60,2),':',formi(rest mod 60,2),#8#8#8#8#8);
+{$ENDIF}
       mon;
       last:=rest mod 60;
       end;
@@ -215,6 +220,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/10 11:51:32  ml
+  wkey benutzt jetzt fwrt statt write - downcounter im Fehlerfenster
+  positioniert Text nun richtig...
+
   Revision 1.8  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
