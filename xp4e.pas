@@ -22,11 +22,6 @@ interface
 uses  crt,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
       win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
-
-const auto_empfsel_default : byte = 1;
-      autoe_showscr        : boolean = false;
-
-
 function  newuser:boolean;
 function  modiuser(msgbrett:boolean):boolean;
 function  newverteiler:boolean;
@@ -67,9 +62,6 @@ function  testgruppe(var s:string):boolean;
 function  empftest(var s:string):boolean;
 
 procedure AutoFilename(var cr:CustomRec);
-procedure auto_empfsel(var cr:CustomRec);                   {JG: gesplittet Teil 1}
-procedure auto_empfsel_do(var cr:CustomRec;user:boolean);   {JG:            Teil 2}
-procedure auto_usersel(var cr:CustomRec);                   {JG: suche nur nach Usern}
 function  auto_testempf(var s:string):boolean;
 procedure testwot(var s:string);
 procedure auto_tagtest3(var s:string);
@@ -819,7 +811,8 @@ begin
   gesperrt:=(dbReadInt(bbase,'flags')and 8<>0);
   pb_netztyp:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
   maddstring(3,2,getres2(2735,2),adresse,36,eAdrLen,'');   { 'Vertreter-Adresse' }
-  mappcustomsel(selbrett,false);  mhnr(860);
+  mappcustomsel(auto_empfsel,false);  mhnr(860);
+  msetvfunc(testReplyTo);
   mset1func(mbshowtext); mset0proc(mbshowtxt0);
   mset3proc(mbsetvertreter);
   maddbool(3,4,getres2(2735,3),gesperrt);    { 'Schreibsperre' }
@@ -1428,7 +1421,7 @@ begin
   maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'Empf„nger ' }
     iifs(ntGrossUser(ntBoxNetztyp(box)),'>',''));
 {JG:05.02.00}
-  mappcustomsel(auto_usersel,false);          
+  mappcustomsel(seluser,false);          
 {/JG}
   msetvfunc(empftest);
   maddstring(3,4+pba,getres2(2718,3),betr,40,BetreffLen,'');  { 'Betreff   ' }
@@ -1545,69 +1538,7 @@ begin
   if not cr.brk then cr.s:=ps;
 end;
 
-{ wird auch von XP6.EDIT_CC und XP9.ReadPseudo verwendet: }
 
-{JG:05.02.00 Gesplittet in auto_empfsel und auto_empfsel_do    }
-{            damit man nur User oder Brettfenster waehlen kann.}
-
-procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
-var p    : scrptr;
-    mt   : boolean;    
-begin
-  with cr do begin        
-    sichern(p);
-    if autoe_showscr then showscreen(false);
-    mt:=m2t;
-    pushhp(1); select(iif(user,3,-1)); pophp;
-    m2t:=mt;
-    holen(p);
-    brk:=(selpos=0);
-    if not brk then
-      if user then begin
-        dbGo(ubase,selpos);
-        dbReadN(ubase,ub_username,s);
-        s:=vert_name(s);
-        end
-      else begin
-        dbGo(bbase,selpos);
-        dbReadN(bbase,bb_brettname,s);
-        delete(s,1,1);
-      end;
-    end;
-end;
-
-
-procedure auto_empfsel(var cr:CustomRec);
-var user : boolean;
-
-begin
-  with cr do begin
-    user:=multipos('@',s) or (left(s,1)='[');
-    if not user and (left(s,1)<>'/') then begin
-      user:=(ReadIt(length(getres2(2721,2))+8,getres2(2721,1),getres2(2721,2),auto_empfsel_default,brk)=2);
-      freeres;                        { 'Empf„nger:' / ' ^Brett , ^User ' }
-      end
-    else
-      brk:=false;
-    if not brk then auto_empfsel_do(cr,user)
-    end;
-end;
-
-
-procedure auto_usersel(var cr:Customrec);               {Nur aus Userliste auswaehlen lassen}
-begin
-{JG:07.02.00  Verteiler bei Nachricht-Direkt verboten}
-  with cr do begin
-    auto_empfsel_do(cr,true);
-    if (dbReadInt(ubase,'userflags') and 4<>0) then begin
-      rfehler(301);   { 'bei Verteilern nicht m”glich' }
-      brk:=True;
-      end;
-    end;
-{/JG}
-end;             
-
-{/JG}
 
 function auto_testempf(var s:string):boolean;
 var p : byte;
@@ -2249,6 +2180,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/20 09:51:39  jg
+  - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
+    und verbunden mit selbrett/seluser
+  - Bei Brettvertreteradresse (Spezial..zUgriff) kann man jetzt
+    mit F2 auch User direkt waehlen. Und Kurznamen eingeben.
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

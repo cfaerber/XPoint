@@ -67,7 +67,7 @@ function  JanusSwitch(var s:string):boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xp2,xp3,xp4e,xp9bp,xp10,xpnt,xpterm;
+uses xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -1727,6 +1727,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/20 09:51:39  jg
+  - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
+    und verbunden mit selbrett/seluser
+  - Bei Brettvertreteradresse (Spezial..zUgriff) kann man jetzt
+    mit F2 auch User direkt waehlen. Und Kurznamen eingeben.
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

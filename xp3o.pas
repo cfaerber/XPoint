@@ -25,6 +25,9 @@ const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
       pe_gelesen      = 4;     { Nachrichten auf "gelesen" setzen }
 
+      auto_empfsel_default : byte = 1;         {Flags fuer Autoempfsel in XPCC.PAS}
+      autoe_showscr        : boolean = false;
+
 type charr  = array[0..65530] of char;
      charrp = ^charr;
 
@@ -55,13 +58,81 @@ procedure AlphaBrettindex;
 procedure ReorgBrettindex;
 function  IsBinary:boolean;
 
-procedure selbrett(var cr:customrec);
-procedure seluser(var cr:customrec);
-
+procedure selbrett(var cr:customrec);         { Brettauswahl }
+procedure seluser(var cr:customrec);          { Userauswahl }                        
+procedure auto_empfsel(var cr:customrec);     { Brett oder Userauswahl mit abfrage }
+ 
 implementation  {-----------------------------------------------------}
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp;
 
+
+{ Customselectroutinen fuer Brett/User }
+
+{ Verwendung...       
+{ auto_empfsel: XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
+{ selbrett:     XP3o.Bverknuepfen, XP6S.Editsdata                             }
+{ seluser:      XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
+{               XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }          
+
+procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
+var p    : scrptr;
+    mt   : boolean;                             { user: 1 = Userauswahl  0 = Brettauswahl }
+begin
+  with cr do begin        
+    sichern(p);
+    if autoe_showscr then showscreen(false);
+    mt:=m2t;
+    pushhp(1); select(iif(user,3,-1)); pophp;
+    m2t:=mt;
+    holen(p);
+    brk:=(selpos=0);
+    if not brk then
+      if user then begin
+        dbGo(ubase,selpos);
+        dbReadN(ubase,ub_username,s);
+        s:=vert_name(s);
+        end
+      else begin
+        dbGo(bbase,selpos);
+        dbReadN(bbase,bb_brettname,s);
+        delete(s,1,1);
+      end;
+    end;
+end;
+
+procedure auto_empfsel(var cr:CustomRec);        { Abfrage Brett/User dann Auswahl }
+var user : boolean;
+begin
+  with cr do begin
+    user:=multipos('@',s) or (left(s,1)='[');
+    if not user and (left(s,1)<>'/') then begin
+      user:=(ReadIt(length(getres2(2721,2))+8,getres2(2721,1),getres2(2721,2),auto_empfsel_default,brk)=2);
+      freeres;                        { 'EmpfÑnger:' / ' ^Brett , ^User ' }
+      end
+    else
+      brk:=false;
+    if not brk then auto_empfsel_do(cr,user)
+    end;
+end;
+
+procedure seluser(var cr:customrec);                 { Brettauswahl } 
+begin
+  with cr do begin
+    auto_empfsel_do(cr,true);
+    if dbReadInt(ubase,'userflags') and 4<>0 then begin
+      rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
+      brk:=true;
+      end;
+    end;
+end;
+
+procedure selbrett(var cr:customrec);                { Userauswahl }
+begin
+  auto_empfsel_do(cr,false)
+end;
+
+{-----------}
 
 procedure bd_setzen(sig:boolean);
 var s   : atext;
@@ -221,8 +292,8 @@ end;
 
 
 { Nachrichten im ein anderes Brett verschieben }
-
-procedure selbrett(var cr:customrec);
+(*
+procedure selbrett(var cr:customrec);        
 var p : scrptr;
 begin
   sichern(p);
@@ -235,7 +306,7 @@ begin
     delete(cr.s,1,1);
     end;
 end;
-
+*)
 
 procedure Bverknuepfen;
 var x,y     : byte;
@@ -329,7 +400,7 @@ begin
   freeres;
 end;
 
-
+(*
 procedure seluser(var cr:customrec);
 var p : scrptr;
 begin
@@ -347,7 +418,7 @@ begin
       dbReadN(ubase,ub_username,cr.s);
     end;
 end;
-
+*)
 
 procedure Uverknuepfen;   { Userbretter verknÅpfen }
 var x,y      : byte;

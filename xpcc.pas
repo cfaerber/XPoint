@@ -42,7 +42,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp4e,xpnt;
+uses xp3,xp3o2,xp3o,xp4e,xpnt;
 
 const CCtemp = 'verteil.$$$';
 
@@ -327,6 +327,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/20 09:51:39  jg
+  - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
+    und verbunden mit selbrett/seluser
+  - Bei Brettvertreteradresse (Spezial..zUgriff) kann man jetzt
+    mit F2 auch User direkt waehlen. Und Kurznamen eingeben.
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
