@@ -498,31 +498,31 @@ end;
 
 function testvertreterbox(var s:string):boolean;
 var d  : DB;
-    nt : byte;
-    ok : boolean;
+    nt : ShortInt;
 begin
-  if s='' then testvertreterbox:=true
-  else begin
+  if s='' then  
+    testvertreterbox:=true
+  else 
+  begin
     dbOpen(d,BoxenFile,1);
     SeekLeftBox(d,s);
-    if dbFound then begin
+    if dbFound then 
+    begin
       s:= dbReadStr(d,'boxname');
       nt:=dbReadInt(d,'netztyp');
-    end;
-    dbClose(d);
-    if not dbFound then begin
+      if fieldpos=amvfield then    { AM-Vertreterbox }
+        Result :=(DomainNt=nt)
+      else                         { PM-Vertreterbox }
+        Result :=ntAdrCompatible(DomainNt,nt);
+      if not Result then 
+        rfehler(2713);
+    end else
+    begin
       rfehler(2702);    { 'unbekannte Serverbox - w„hlen mit <F2>' }
       testvertreterbox:=false;
-    end
-    else begin
-      if fieldpos=amvfield then    { AM-Vertreterbox }
-        ok:=(DomainNt=nt)
-      else                         { PM-Vertreterbox }
-        ok:=ntAdrCompatible(DomainNt,nt);
-      if not ok then rfehler(2713);
-      testvertreterbox:=ok;
-      end;
     end;
+    dbClose(d);
+  end;
 end;
 
 function testsysname(var s:string):boolean;
@@ -907,7 +907,7 @@ begin { --- UniSel --- }
           width:=65;
           buttons:=getres(909);   { ' ^Neu , ^L”schen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
-          pushhp(820);         {JG:1051->820}
+          pushhp(820);
           nameofs:=2;
         end;
   end;
@@ -1243,11 +1243,11 @@ var x,y  : Integer;
     user : string;
     maps : string;
     dom  : string;
-    fqdom: string;  {16.01.00 HS}
+    fqdom: string;  
     email: string;
     ntyp : string;
     nt   : byte;
-    i, b : integer;
+    i,b : integer;
     pppm : boolean;
 label restart;
 begin
@@ -1286,20 +1286,25 @@ restart:
   email:='';
 
   dom:=ntDefaultDomain(nt);
-  if pppm then begin
+  if pppm then 
+  begin
     email:=user;
     if not IsMailaddress(email) then
     begin
       rfehler(908);
       goto restart;
       end
-    else begin
+    else 
+    begin
+      b := cpos('@', eMail);
       user:=LeftStr(email,b-1);
       dom:=mid(email,b);
-      if cpos('.',dom)=0 then dom:=''
-        else dom:=mid(dom,cpos('.',dom));
-      end;
+      if cpos('.',dom)=0 then 
+        dom:=''
+        else 
+      dom:=mid(dom,cpos('.',dom));
     end;
+  end;
 
   user:=LeftStr(user,30);
 
@@ -1605,10 +1610,12 @@ restart:
     ReadExtCfgFilename := false;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.18  2001/09/06 18:53:36  mk
+  - fixed big bug in get_first_box: variable b was not initialized
+
   Revision 1.17  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 
@@ -1686,3 +1693,5 @@ end.
   - using new netcall routines now
   - renamed IPC to Progr.Output
 }
+end.
+
