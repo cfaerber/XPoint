@@ -804,12 +804,12 @@ K (c) '93-96 Peter Mandrella
 320  Rereading group dates...     %
 321  ~done.~~
 + 322
-1    Move messages to other newsgroup
+1    Move messages to another Newsgroup
 2    Source
-3    Destinat.~~
+3    Dest.~~~~~~
 4    Change message header?
 5    Working ...
-6    Newsgroup does not exist
+6    Newsgroup does not exist!
 -
 + 323
 1    Move messages to other mailgroup
@@ -962,7 +962,7 @@ K (c) '93-96 Peter Mandrella
 424  messages since last netcall
 425  messages since %s
 426  ~Select archive newsgroup:
-427  ~Select destionation newsgroup
+427  ~Select destination Newsgroup
 428  ~Select recipient
 429  Record no:~
 430  Show file contents
@@ -2622,8 +2622,8 @@ K (c) '93-96 Peter Mandrella
 -
 2730 Sort newsgroups alphabetical
 + 2731
-1    Add split line
-2    Split char. ~
+1    Add dividing line
+2    Line char. ~
 3    Comment     ~
 -
 2732 Move 1 marked newsgroup
@@ -2643,23 +2643,23 @@ K (c) '93-96 Peter Mandrella
 12   short names
 + 2735
 0    55
-1    Change newsgroup access / followup-to
-2    Followup to~
-3    No write access
-10   You have unlimited access to this newsgroup.
+1    Change Newsgroup access / Re-direct
+2    Re-direct to~
+3    Write access forbidden
+10   You have read/write access to this Newsgroup.
 11
 12
-20   You may not write in this newsgroup.
+20   You do NOT have write-access in this Newsgroup!
 21
 22
 30   All new messages and all replies that you post in
 31   this newsgroup will be redirected to the followup
 32   group/address.
-40   All public replies that you post in this newsgroup
-41   will be redirected to the followup group/address.
+40   All public replies that you post in this Newsgroup
+41   will be redirected to the "Re-direct to" group/address.
 42
 50   All public replies by other users to your messages
-51   in this newsgroup will be redirected to to followup
+51   in this newsgroup will be redirected to followup
 52   newsgroup.
 -
 2736 %s contains messages. Delete
