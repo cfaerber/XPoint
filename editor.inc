@@ -893,7 +893,8 @@ begin
         addspaces:=EndSpaces;
         if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
           then if not (ap^.cont[ap^.size-1] in ['-','/'])
-                  and (ap^.next^.cont[0]<>' ') then addspaces:=1;
+           and ((ap^.next^.cont[0]<>' ')
+            or (getquote(ap^.next)<>'')) then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
@@ -2427,6 +2428,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.19  2001/08/28 21:25:00  my
+  RB:- Fix: When pressing <Backspace> in Pos1 of a quoted line where the
+       quote signs are indented, no space was added.
+
   Revision 1.19.2.18  2001/08/27 23:52:57  my
   RB:- Ancient Quote Reflow Fix: When pressing <Enter> at Pos1 of an
        indented line, the line stays indented now.
