@@ -134,7 +134,7 @@ type
 
     { Konstruktoren }
     constructor Create;
-    constructor CreateWithHost(s: string);
+    constructor CreateWithHost(const s: string);
     constructor CreateWithIP(ip: TIP);
 
     { Strukturen freigeben }
@@ -160,7 +160,7 @@ begin
   InitVars;
 end;
 
-constructor TSocketNetcall.CreateWithHost(s: string);
+constructor TSocketNetcall.CreateWithHost(const s: string);
 begin
   inherited Create;
   InitVars;
@@ -243,7 +243,7 @@ begin
   { Hi-/Lo-Word vertauschen }
   FAddr.sin_Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
   { Adresse uebernehmen }
-  FAddr.sin_Addr.s_addr:= Host.Raw;
+  FAddr.sin_Addr.s_addr:= U_Long(Host.Raw);
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if WinSock.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
@@ -434,6 +434,10 @@ end;
 
 {
   $Log$
+  Revision 1.31  2001/10/19 00:50:55  mk
+  - range check fix for delphi
+  - const parameter for CreateWithHost
+
   Revision 1.30  2001/10/19 00:23:48  mk
   - fixed ParseError: FErrorMsg was not updated in case of error
 
