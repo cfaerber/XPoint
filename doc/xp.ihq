@@ -4374,8 +4374,8 @@ Point mit seinem Namen unterschreibt:
 Die Einstellung fr private Nachrichten gilt nur fr
 registrierte CrossPoint-Versionen. Die Einstellung
 fr ”ffentliche Nachrichten gilt nicht frs MausNet,
-im FidoNet hingegen wird immer eine leere "Tearline"
-(---) erzeugt.
+fr FidoNet finden Sie eine gesonderte Einstellung
+unter [/Config/Optionen/Netze].@8103
 
 @
 248
@@ -7587,6 +7587,13 @@ sandten Nachrichten zu „ndern, mssen Sie diese mit
 den.
 
 @
+8103
+<<[x]>> -> Bei Echomails wird die CrossPoint/OpenXP-
+       Version in die Tearline geschrieben.
+
+<<[ ]>> -> Bei Echomails wird eine leere Tearline (---)
+       erzeugt.
+@
 800
 Dies ist die Gebhrenzonen-Liste. Sie k”nnen hier bis
 zu 17 verschiedene Telefon-Tarifzonen mit den dazu-
@@ -9122,7 +9129,8 @@ diese nicht mehr finden kann und die Decodierung
 somit fehlschl„gt.
 
 Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
-Version <<2.6.3in>> vom <<07.10.2000>> verwenden.
+Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
+verwenden.
 
 Siehe auch: [PGP - Versions- und Detailinformationen]@1010
 
