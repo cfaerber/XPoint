@@ -317,8 +317,8 @@ angezeigt.
 
  <cr>  zeigt den Inhalt des gew„hlten PM-Brettes
 
-   A   wechselt den Anzeige-Modus zwischen dem
-       Adressbuch, und der Anzeige aller User.
+   A   wechselt den Anzeige-Modus zwischen Adreábuch
+       und Anzeige aller User.
 
    O   wechselt die Anordnung der Userbretter.
        M”gliche Einstellungen sind:
@@ -340,7 +340,7 @@ angezeigt.
        ihn aus dem Adreábuch aus.
 
    S   schaltet zwischen Schreib/Lese- und Bearbei-
-       tungsmodus um
+       tungsmodus um.
 
    P   dient zum Einstellen von Paáw”rtern und Co-
        dierverfahren. Allen Usern, fr die ein Paá-
@@ -391,22 +391,21 @@ angezeigt.
 
 <<Funktionen im Bearbeitungsmodus ("Spezial-Modus")
 
-   H   neuen User anlegen (hinzufgen)
+   H   neuen User anlegen (hinzufgen).
 
-   V   neuen Verteiler anlegen
+   V   neuen Verteiler anlegen.
 
    L   User bzw. Verteiler aus der Liste l”schen -
        bei Usern nur m”glich, falls im Brett des
-       Users keine Nachrichten vorhanden sind
+       Users keine Nachrichten vorhanden sind.
 
-   E   User- bzw. Verteiler-Daten bearbeiten
+   E   User- bzw. Verteiler-Daten bearbeiten.
 
-  ^V   Userbretter verknpfen (Nachr. verschieben)
+  ^V   Userbretter verknpfen (Nachr. verschieben).
 
-  ^T   Trennzeile im Adressbuch einfgen
+  ^T   Trennzeile im Adreábuch einfgen.
 
-  ^P   User in andere Adreábuchgruppe verschieben
-
+  ^P   User in andere Adreábuchgruppe verschieben.
 
 Die Funktionen L, E, ^T und ^P beziehen sich
 auf alle markierten User.
@@ -416,7 +415,7 @@ auf alle markierten User.
 
 û P      ì   1 HOT      GHOSTWRITER\@HOT-II.ZER
 û  *     ì   1 HOT      GHOSTWRITER\@HOT.ZER
- ##P      30  2 HOT      KNALL\@PENG.ZER
+ ##P     30   2 HOT      KNALL\@PENG.ZER
 ³³³³     ³   ³ ³        ³
 ³³³³     ³   ³ ³        ÀÄÄ Name/Adresse des Users
 ³³³³     ³   ³ ÀÄÄÄÄ Server fr Mail an diesen User
@@ -455,8 +454,9 @@ tergeleitet werden soll. Mit <Enter> wird die Auswahl
 best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
-um, "O" schaltet die Sortierung nach Boxen um.
-Mit Ctrl-Y wird zur n„chsten Trennzeile gesprungen.
+um, "O" schaltet die Sortierung nach Usernamen oder
+Boxen um. Mit <Ctrl-Y> wird zur n„chsten Trennzeile
+gesprungen.
 
 @
 24
@@ -481,8 +481,8 @@ Folgende Funktionen stehen zur Verfgung:
   ^D   Druckt die gew„hlte Nachricht; siehe auch
        [/Config/Drucker].@10606
 
-   ##   zeigt bei Fido/MausNet-Nachrichten den Kommen-
-       tarbaum an.
+   ##   zeigt bei Fido-/MausNet-Nachrichten den
+       Kommentarbaum an.
 
   ^W   schaltet die automatische Weiterschaltung
        beim Lesen ein bzw. aus.
@@ -497,7 +497,6 @@ Folgende Funktionen stehen zur Verfgung:
        Empf„nger- und Absenderanzeige um.
 
  AltL  W„hlt einen anderen Lesemodus.
-
 
  <Sp>  markiert die gew„hlte Nachricht. Es k”nnen
        mehrere Nachrichten in verschiedenen Brettern
@@ -673,7 +672,7 @@ verwendet werden.
   die letzte Suche.
 
 <<S>> wie <<s>>, jedoch unter Beachtung von Groá- und
-  Kleinschreibung
+  Kleinschreibung.
 
 <<M>> schaltet den Markier-Balken ein bzw. aus; Sie k”n-
   nen dann mit <Space> Zeilen oder mit <F7>/<F8>
@@ -741,13 +740,13 @@ Der Lister wird mit <Esc> verlassen.
 <<V>> schaltet "Wiedervorlage" fr die angezeigte
   Nachricht ein/aus.
 
-<<F3>>  Fido-Request von Dateien, die Sie mit "M" +
-    <Space> markiert haben. Voraussetzung ist, daá
-    Sie die angezeigte Nachricht aus dem FidoNet
-    erhalten haben.
+<<F3>> Fido-Request von Dateien, die Sie mit "M" +
+   <Space> markiert haben. Voraussetzung ist, daá
+   Sie die angezeigte Nachricht aus dem FidoNet
+   erhalten haben.
 
-<<F>>   schaltet farbliche *Hervorhebungen* ein/aus
-    (siehe [/Config/Extern/Lister]).@237
+<<F>> schaltet farbliche *Hervorhebungen* ein/aus
+  (siehe [/Config/Optionen/Lister]).@237
 
 <<Q>>   schaltet um, ob ":" und "|" als Quote-Zeichen
     interpretiert werden oder nicht.
@@ -759,8 +758,8 @@ in der Nachrichten-šbersicht direkt auf Nachrichten
 antworten.
 
 <<Backspace>> verl„át den Lister, ohne daá der Auswahl-
-  balken auf die n„chste Nachricht springt, unabh„n-
-  gig von der Einstellung bei /Config/Opt./Bedienung.
+balken auf die n„chste Nachricht springt, unabh„ngig
+von der Einstellung bei /Config/Optionen/Bedienung.
 
 
 <<Bei kommentarverketteten Nachrichten (Maus, Fido):
@@ -1221,7 +1220,6 @@ ___________________________
 @
 8064
   Mit diesem Zeichen wird das Absatzende markiert.
-
 @
 8065
 <<[x]>> -> Beim Drcken von <Return> wird die
@@ -1260,15 +1258,14 @@ Insgesamt umfaát der Kalender die Jahre 1-3000.
 
 Der Kalender l„át sich jederzeit mit <Alt-K>
 aufrufen.
-
 @
 66
 <<Alt-O>>     Einstellungen
 
 <<Alt-L>>     ”ffnet/schlieát das Logfile.
 <<Alt-H>>     trennt die Verbindung (HangUp).
-<<Alt-D>>     schaltet die Statuszeile ein/aus
-<<Ctrl-Home>> l”scht den Bildschirm
+<<Alt-D>>     schaltet die Statuszeile ein/aus.
+<<Ctrl-Home>> l”scht den Bildschirm.
 
 <<PgUp>>      Upload
 <<PgDn>>      Download
@@ -1362,11 +1359,11 @@ soll.
         zung dieser Funktion, ob Sie damit nicht
         andere Netzteilnehmer ver„rgern k”nnten.
 
-        Normalerweise werden auch "Kopien-an"-Eintr„ge
-        durch diese Funktion gel”scht. Ist das nicht
-        erwnscht, muá die <<Shift-Taste>> gehalten
-        werden, wenn der Schalter bet„tigt wird
-        (also Shift-M oder Shift-Mausklick).
+        Normalerweise werden auch "Kopien-an"-Ein-
+        tr„ge durch diese Funktion gel”scht. Ist
+        das nicht erwnscht, muá die <<Shift-Taste>>
+        gehalten werden, wenn der Schalter bet„tigt
+        wird (also Shift-M oder Shift-Mausklick).
 
 <<Betreff>> „ndert den Betreff.
 
@@ -1412,15 +1409,15 @@ soll.
 <<Crash>>   (Fido) legt die Nachricht zum Direktversand
         mit [/Fido/Crash] ab.@13104
 
-<<Prio>>    (ZConnect) legt die Priorit„t von PMs fest.
+<<Prio>>    (ZCONNECT) legt die Priorit„t von PMs fest.
         Direktmails werden von der Box per Direkt-
         Anruf zum Zielsystem verschickt, Eilmails
         werden von der Box *sofort* per Direktanruf
         abgeschickt. Das Versenden von Eil/Direkt-
         mails ist gebhrenpflichtig!
 
-<<Zusatz>>  (ZConnect/Usenet) erm”glicht die Eingabe di-
-        verser zus„tzlicher Informationen.
+<<Zusatz>>  (ZCONNECT/Usenet) erm”glicht die Eingabe
+        diverser zus„tzlicher Informationen.
 
 <<PGP>>     (ZCONNECT u.a.) erm”glicht das Signieren der
         Nachricht mit PGP und das Anfordern oder
@@ -1437,7 +1434,7 @@ soll.
 
 <<Weitere Funktionen:
 
-<<Ctrl-K>>  (ZConnect, RFC/UUCP) schaltet die Nachrich-
+<<Ctrl-K>>  (ZCONNECT, RFC/UUCP) schaltet die Nachrich-
         tenmarkierung "Blindkopie" (Blind Carbon
         Copy) ein/aus. Diese bewirkt, daá bei PMs
         mit mehreren Empf„ngern die einzelnen Emp-
@@ -1481,7 +1478,7 @@ Sie ihn mit <F2>. Alle Nachrichten aus dem gew„hlten
 Quell-Userbrett werden in das Ziel-Userbrett ver-
 schoben, ausgenommen unversandte Nachrichten.
 
-Die Schreibweise (Groá/Kleinschreibung) des Namens
+Die Schreibweise (Groá-/Kleinschreibung) des Namens
 spielt keine Rolle.
 @
 73
@@ -1507,18 +1504,20 @@ ab.
 Mit F2 kommen sie zur Auswahl fr das
 Windows-Clipboard.
 
+Mit <F2> kommen sie zur Auswahl fr das Windows-
+Clipboard (Zwischenablage).
+
 <<Windows-Clipboard>>
-kopiert den markierten Text ins Clipboard
+Kopiert den markierten Text ins Clipboard.
 
 <<Win-Clipboard (URL)>>
-versucht aus der ersten markierten Zeile eine
-Internet-URL (FTP:// oder HTTP:// oder WWW.)
-auszuschneiden, und kopiert diese ins
-Windows Clipboard.
+Versucht aus der ersten markierten Zeile eine
+Internet-URL ("ftp://" oder "http://" oder "www.")
+auszuschneiden, und kopiert diese ins Clipboard.
 
 <<Win-Clipboard (MAIL)>>
 Analog zur vorherigen Funktion, nur wird hier
-versucht eine Mailadresse zu generieren.
+versucht, eine eMail-Adresse zu extrahieren.
 
 @
 75
@@ -2979,7 +2978,7 @@ Nachrichten aufrufen soll. šber das Makro $PUFFER
 kann der Name der einzulesenden Datei bergeben
 werden; bei Z-Netz-(alt)-Netcalls hat diese Datei
 Z-Netz-Format, bei allen anderen Netzen (und bei
-ZConnect-Boxen) hat sie ZConnect-Format.
+ZCONNECT-Boxen) hat sie ZCONNECT-Format.
 
 Das Programm kann die Datei verarbeiten, „ndern,
 kopieren, oder beliebige andere Aktionen durchfhren.
@@ -2993,7 +2992,7 @@ Hinweise:
 ş  Das Programm wird auch aufgerufen, wenn keine
    Nachrichten empfangen wurden. In diesem Fall wird
    der Name einer leeren Pufferdatei bergeben. Leere
-   ZConnect-Puffer sind 0 Bytes groá, leere Z-Netz-
+   ZCONNECT-Puffer sind 0 Bytes groá, leere Z-Netz-
    Puffer bis zu 8 Bytes (4 Leerzeilen). Defekte
    Mailboxprogramme erzeugen u.U. auch leere ZCON-
    NECT-Puffer von bis zu 16 Bytes.
@@ -3191,7 +3190,7 @@ und Nachname).
 195
 (N„heres zu Domains: s. Handbuch, Kapitel 1.3).
 
-<<ZConnect:>>
+<<ZCONNECT:>>
 
 Geben Sie einen gltigen Domainnamen der Box ein.
 Der Domainname ist der Teil Ihrer Z-Netz-Adresse
@@ -3250,7 +3249,7 @@ news.shlink.de).
 Hier geben Sie den Port an, ber den der NNTP-Dienst
 erreichbar ist.
 
-Im Normalfall ist dieses der Port 119.
+Im Normalfall ist dies der Port 119.
 @
 30004
 Wenn Sie Zugangsdaten fr die Nutzung des NNTP-Dienstes
@@ -3478,12 +3477,11 @@ Wahlweise k”nnen Sie statt des "\@" auch "$" verwen-
 den; dann wird bei Namen ohne Trennung gar keine
 Initiale erzeugt.
 
-Als ganz besonderes Schmankerl wurde noch "&" fr
-die Initialen eingebaut. "&" funktioniert wie "$",
-nur mit dem Zusatz, daá auch dann keine Initialen
-erzeugt werden, wenn ein "\#" im Absender vorkommt.
-Das ist fr Nutzer eines Usenet<->Fido-Gateways
-interessant.
+Als spezielles Quote-Zeichen steht Ihnen noch "&"
+zur Verfgung. "&" funktioniert wie "$", mit dem
+Unterschied, daá auch dann keine Initialen erzeugt
+werden, wenn ein "\#" im Absender vorkommt. Das ist
+fr Nutzer eines Usenet<->Fido-Gateways interessant.
 
 Das Standard-Quotezeichen ist "> ". Bei nderungen
 sollten Sie m”glichst darauf achten, daá ein ">" im
@@ -3520,6 +3518,7 @@ Achtung: Bei Einstellung "Alle" oder "Z-Netz" kann
 die Userdatenbank sehr schnell sehr groá werden!
 Mit /Wartung/UserReorg werden die nicht ben”tigten
 Adressen wieder aus der Datenbank entfernt.
+
 @
 8068
 Neu aufgenommene User werden dieser
@@ -3527,7 +3526,7 @@ Neu aufgenommene User werden dieser
 
 @
 8069
-Adreábuchgruppe:
+<<Adreábuchgruppe>>
 
 Das Userfenster wird vor dem alphabetischen Sortieren
 nach diesen Gruppen geordnet. Gruppen mit niedrigen
@@ -3541,16 +3540,16 @@ man sie nur in dieselbe Adreábuchgruppe stecken.
 Minimalwert ist 1, Maximalwert ist 99.
 @
 8075
-Priorit„t:
+<<Priorit„t>>
 
-Diese Einstellung ist als "humane" Alternative 
-zum Filter (Nachrichten dieses Users werden
-dunkel dargestellt) oder zum Hervorheben von 
-Nachrichten wichtiger Personen gedacht.
+Diese Einstellung ist als "humane" Alternative zum
+Filter (Nachrichten dieses Users werden dunkel dar-
+gestellt) oder zum Hervorheben von Nachrichten
+wichtiger Personen gedacht.
 
-Der hier eingestellte Wert entspricht der
-unter Config/Anzeige/Farben/Nachrichten
-eingestellten Priori„ts-Farbe.
+Der hier eingestellte Wert entspricht der unter
+Config/Anzeige/Farben/Nachrichten eingestellten
+Priorit„ts-Farbe.
 
 gltige Werte sind:
 
@@ -4288,7 +4287,7 @@ Spalten            USERNAME         BOXNAME
 Splt./klein        Username         BOXNAME
 @
 842
-<<ZConnect / Fido / MausNet:>>
+<<ZCONNECT / Fido / MausNet:>>
 
 <<[x]>> -> Im Kommentarbaum, der im Nachrichtenfenster
        mit "##" aktiviert wird, werden alle Useradres-
@@ -4298,7 +4297,7 @@ Diese Einstellung kann auch im Kommentarbaum mit "A"
 nicht-permanent ge„ndert werden.
 @
 843
-<<ZConnect / MagicNET:>>
+<<ZCONNECT / MagicNET:>>
 
 <<[x]>> -> Bei der Nachrichtenanzeige innerhalb von
        Brettern wird statt der Absenderadresse der
@@ -4830,11 +4829,12 @@ Mit <F2> kann eine Box aus der Boxenliste gew„hlt
 werden.
 @
 403
-So viele Tage werden die Nachrichten in diesem Brett
-aufbewahrt. Alle Nachrichten, die „lter sind und
-nicht mit "H" auf Halten gesetzt wurden, werden bei
-der n„chsten Reorganisation gel”scht. Stichtag ist
-das Eingangsdatum der Nachricht.
+So viele Tage werden die Nachrichten im PM-Brett
+dieses Users aufbewahrt. Alle Nachrichten (auch
+die selbstgeschriebenen!), die „lter sind und nicht
+mit "H" auf Halten gesetzt wurden, werden bei der
+n„chsten Reorganisation gel”scht. Stichtag ist das
+Eingangsdatum der Nachricht.
 
 Falls Sie im n„chsten Eingabefeld "Nachr." einge-
 stellt haben, ist dies die maximale Anzahl von Nach-
@@ -4995,7 +4995,7 @@ eintragen!
 <<[x]>> -> Bei Nachrichten an diesen User werden auto-
        matisch Empfangsbest„tigungen angefordert.
 
-<<[ ]>> -> Empfagsbest„tigungen k”nnen manuell mit "E"
+<<[ ]>> -> Empfangsbest„tigungen k”nnen manuell mit "E"
       im Absendefenster angefordert werden.
 @
 427
@@ -6684,7 +6684,7 @@ bestimmte User oder Bretter senden.
 
 <<Anzeige im Kurznamen-Fenster:
 
- pm          pm\@daisy.de
+ pm          peter\@mandrella.de
  zyxel       /T-NETZ/ZYXEL-KUMMERKASTEN    MEINEBOX
  rbabel      rbabel\@babylon.pfm-mainz.de
  ³           ³                             ³
@@ -7140,7 +7140,7 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[X]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neueren
        Mail-Clients im Internet verstanden.
@@ -7194,7 +7194,7 @@ einer passenden Decodersoftware decodieren.
 Diese Einstellung gilt nur fr neu versandte Nach-
 richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
-/Nachricht/Unversandt/l”schen l”schen und neu sen-
+/Nachricht/Unversandt/L”schen l”schen und neu sen-
 den.
 
 @
@@ -7209,7 +7209,7 @@ den.
 <<[x]>> -> CrossPoint bernimmt zus„tzlich zu den Datei-
        namen auch <<Magics>> mit in die Liste der zu
        requestenden Dateien. Magics sind Kurznamen
-       fr einzelne oder eine Sammlung mehrerer
+       fr einzelne (oder eine Sammlung mehrerer)
        Dateien, die sich regelm„áig „ndern (k”nnen),
        z.B. PGPOS2 fr die aktuelle Version des
        Programms PGP fr OS/2 oder FILES fr die
@@ -7234,7 +7234,7 @@ wird die Tarifzone dagegen unter /Edit/Boxen/Edit
 <<L”schen>>   gew„hlte Tarifzone l”schen
 <<Edit>>      gew„hlte Tarifzone bearbeiten
 <<Sichern>>   nderungen sichern
-<<Ok>>        Eingabe beenden
+<<OK>>        Eingabe beenden
 
 Falls Sie CrossPoint vor dem 1.1.96 installiert
 haben, sind die alten, bis Ende 1995 gltigen Tarif-
@@ -7398,8 +7398,8 @@ Geben sie hier die Dateierweiterung ein.
 
 Wird eine Bin„rnachricht, eine MIME-Nachricht mit
 entsprechendem Inhalt (Usenet) oder ein File Attach
-(FidoNet) empfangen, kann diese mit dem hier einge-
-tragenen Viewer-Programm betrachtet werden.
+(FidoNet) empfangen, kann diese(r) mit dem hier ein-
+getragenen Viewer-Programm betrachtet werden.
 
 Beachten Sie, daá bei ber das Z-Netz verschickten
 Bin„rnachrichten der Betreff der Nachricht nicht
@@ -7526,7 +7526,6 @@ Siehe auch:
 [Lister-Dateierweiterungen]@8073
 [Ungef„hrliche Dateierweiterungen]@8072
 
-
 @
 830
 Geben Sie die einzelnen Suchbegriffe ein. Nach dem
@@ -7622,7 +7621,7 @@ Ist die Schreibsperre abgeschaltet und eine Vertre-
 teradresse eingetragen, so gibt es zwei M”glichkei-
 ten:
 
-<<ZConnect, Usenet:>>
+<<ZCONNECT, Usenet:>>
 
 Alle ”ffentlichen Antworten auf Nachrichten, die Sie
 in dieses Brett schreiben, werden an den Vertreter
@@ -8373,7 +8372,7 @@ Geben Sie hier die "User ID" (Netzadresse) aus Ihrem
 Public Key (oder besser die KeyID im Hexformat) an.
 Falls Ihr Key mehrere Netzadressen enth„lt, geben Sie
 eine davon an. Die Adresse sollte exakt die gleiche
-Schreibweise wie im PGP-Key haben, d.h.
+Schreibweise wie im PGP-Key haben, d.h.:
 
      Vorname Nachname <user\@do.main>
 
@@ -9139,14 +9138,15 @@ der Brett- oder Userliste anlegen zu mssen.
            wird dieses Feld automatisch gesetzt.
 
 
-<<Empf„nger>>  Der Name des Users. CrossPoint erg„nzt
-           den Namen bei Bedarf automatisch um Box-
-           namen oder ".ZER". Noch nicht angelegte
-           User oder Bretter sind an der Hervor-
-           hebung des Wortes "Empf„nger" zu erkennen.
+<<Empf„nger>>  Der Name des Users oder des Bretts
+           (Area, Newsgroup). CrossPoint erg„nzt den
+           Namen bei Bedarf automatisch um Boxnamen
+           oder ".ZER". Noch nicht angelegte User
+           oder Bretter sind an der Hervorhebung des
+           Wortes "Empf„nger" zu erkennen.
 
-           Brettnamen gebe Sie hier ein, indem Sie
-           "/" als erstes Zeichen verwenden.
+           Um einen Brettnamen einzugeben, mssen
+           Sie "/" als erstes Zeichen verwenden.
 
 <<Betreff>>    Der gewnschte Betreff der Nachricht.
 
@@ -9387,8 +9387,8 @@ tionen ber Funktionstasten m”glich. Z.Zt. gilt dies
 fr das Durchfhren von Netcalls (*NETCALL-Option)
 und die Reorganisation (*REORG).
 
-Alles Weitere steht in der Hilfe zu den einzelnen
-Eingabefeldern ("E" drcken..).
+Alles weitere steht in der Hilfe zu den einzelnen
+Eingabefeldern ("E" drcken).
 @
 10701
 <<Wartung / Reorganisation
@@ -9812,9 +9812,9 @@ wandeln. Zus„tzlicher Text zu Beginn oder Ende der
 Nachricht wird dabei ignoriert. Das Decodieren von
 mehreren, markierten Teilnachrichten ist m”glich.
 
-Um selbst UUE-codierte Dateien zu verschicken,
-w„hlen Sie im Editormen (ereichbar durch F10
-oder rechten Mausklick) die Option <<Laden UUE>>
+Um selbst UU-codierte Dateien zu verschicken,
+w„hlen Sie im Editor-Men (erreichbar durch <F10>
+oder rechten Mausklick) die Option <<Laden UUE>>.
 
 Falls Sie Dateien per ZCONNECT verschicken, brauchen
 Sie diese nicht zu codieren: Die Gateways nehmen
@@ -10196,7 +10196,7 @@ Schablonen erlaubt:
   $ERHALTEN  -  .. und das Empfangsdatum
   $MSGID     -  die Message-ID der Bezugsnachricht
 
-Die folgenden Makros gelten nur fr ZConnect und
+Die folgenden Makros gelten nur fr ZCONNECT und
 Magic-kompatible Netze:
 
   $RNAME     -  der Realname des Absenders der
@@ -10718,17 +10718,18 @@ richt[/Unversandt/Edit] zu verwenden ist.@10401
 12205
 <<Nachricht / ndern / Typ
 
-Diese Funktion „ndert den Typ einer Nachricht.
-aus einer Textnachricht wird eine Bin„rnachricht (B)
-aus einer Bin„rnachricht wird Multipart-Mime (M)
-und aus Multipart-Mime wird wieder eine Textnachricht.
+Diese Funktion „ndert den Typ einer Nachricht: Aus
+einer Textnachricht wird eine Bin„rnachricht (B),
+aus einer Bin„rnachricht wird eine Multipart-MIME-
+Nachricht (M), und aus einer Multipart-MIME-Nach-
+richt wird wieder eine Textnachricht.
 
 Diese nderung betrifft NUR die XP-Datenbank; der
 Puffer-Kopf der Nachricht bleibt also unver„ndert.
 Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
 die als Textnachrichten verschickt wurden und daher
 nicht vom Archiv-Viewer erkannt werden, bzw. fr
-Multipart-Mime-Nachrichten, die wegen fehlerhaften
+Multipart-MIME-Nachrichten, die wegen fehlerhafter
 Headerzeilen nicht als MIME erkannt wurden.
 @
 12206
@@ -11811,7 +11812,7 @@ niert es allerdings nur, wenn die Nachricht noch
 nicht die Box verlassen hat.
 @
 20318
-Nur ”ffentliche ZConnect- und RFC-Nachrichten k”nnen
+Nur ”ffentliche ZCONNECT- und RFC-Nachrichten k”nnen
 ersetzt werden.
 @
 20319
@@ -12069,7 +12070,7 @@ len Sie es erneut mit <Cursor oben> an und drcken
 Sie dann B, um eine neue Nachricht zu schreiben.
 @
 20447
-Nur Nachrichten, die bereits versendet wurden,
+Nur Nachrichten, die bereits versandt wurden,
 k”nnen mit [Nachricht/Weiterleiten/Ersetzen] ersetzt@12108
 werden. Unversandte Nachrichten k”nnen mit
 [Nachricht/Unversandt/Edit] ge„ndert werden.@10401
