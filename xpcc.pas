@@ -47,6 +47,7 @@ procedure del_verteiler(name:string);
 function  cc_test1(var s:string):boolean;
 function  cc_testempf(var s:string):boolean;
 
+function is_vname(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
@@ -419,6 +420,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/04/14 22:27:15  cl
+  - added is_vname to exports
+
   Revision 1.33  2002/03/17 11:20:36  mk
   JG+MY:- Fix: Beim Žndern des Empf„ngers im Sendefenster konnte es zu
           Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
