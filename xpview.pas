@@ -203,7 +203,7 @@ end;
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : byte;
-    prog      : string[ViewprogLen];
+    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)} 
     orgfn,fn1,
     parfn     : pathstr;
     f         : file; 
@@ -249,6 +249,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/05 19:46:12  jg
+  - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
+  - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
+
   Revision 1.11  2000/03/05 15:35:33  jg
   - Externe Windows-Viewer: abfangen ungueltiger Abkuerzungen von
     Lang-Filenamen,  "TMP-" kommt nur noch im aktiven DELVTMP Modus.

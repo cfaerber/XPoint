@@ -1145,7 +1145,7 @@ var d         : DB;
   begin
     typ:=''; ext:=''; prog:='';
     readmimetyp(false,typ,ext,prog,brk);
-    if not brk then begin
+    if not brk and (typ<>'*/*') then begin
       dbAppend(d);
       dbWriteN(d,mimeb_typ,typ);
       dbWriteN(d,mimeb_extension,ext);
@@ -1168,7 +1168,7 @@ var d         : DB;
     dbReadN(d,mimeb_extension,ext);
     dbReadN(d,mimeb_programm,prog);
     readmimetyp(true,typ,ext,prog,brk);
-    if not brk then begin
+    if not brk and (typ<>'*/*') then begin
       dbWriteN(d,mimeb_typ,typ);
       dbWriteN(d,mimeb_extension,ext);
       dbWriteN(d,mimeb_programm,prog);
@@ -1725,6 +1725,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/05 19:46:12  jg
+  - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
+  - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
+
   Revision 1.9  2000/02/24 20:27:54  jg
   -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen
    Eintraege am Anfang der Liste werden sofort angezeigt
