@@ -171,16 +171,26 @@ begin
         if ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
                   iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
         then begin                                           { 'neu anlegen' }
+          cc_testempf:=true;
           if p=0 then begin
             MakeBrett(mid(s,2),n,DefaultBox,ntBoxNetztyp(DefaultBox),false);
-            if modibrett then;
+            if not modibrett then
+            begin
+              dbseek(bbase,bibrett,'A'+ustr(s));
+              if dbfound then dbDelete(bbase);
+              cc_testempf:=false;
+              end;
             end
           else begin
             MakeUser(s,DefaultBox);
-            if modiuser(false) then;
+            if not modiuser(false) then
+            begin
+              dbseek(ubase,uiname,ustr(s));
+              if dbfound then dbDelete(ubase);
+              cc_testempf:=false;
+              end;
             end;
           aufbau:=true;
-          cc_testempf:=true;
           end
         else
           cc_testempf:=false;
@@ -390,6 +400,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.3  2001/07/09 22:17:37  my
+  JG:- Fix: Cancelling the automatic creation (e.g. of an Reply-To)
+       user with <Esc> does *not* create the user anymore :-)
+
   Revision 1.15.2.2  2001/04/28 15:47:36  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
