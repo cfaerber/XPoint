@@ -590,9 +590,9 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigroesse / KB }
-		  uucp_mode : byte;	   { UUCP: 1=Modem, 2=TCP/IP }
-		  uucp_ip   : string;	   { UUCP: IP oder Domain }
-                  uucp_port : integer;	   { UUCP: Port, default: uucp }
+                  uucp_mode : byte;        { UUCP: 1=Modem, 2=TCP/IP }
+                  uucp_ip   : string;      { UUCP: IP oder Domain }
+                  uucp_port : integer;     { UUCP: Port, default: uucp }
 
                   nntp_ip   : string;      { NNTP: IP oder Domain }
                   nntp_port : integer;     { NNTP: Port, default: 119 }
@@ -839,10 +839,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        LogPath      : string;
        FilePath     : string;
        FidoPath     : string;       { OwnPath+FidoDir }
-       EditLogpath  : String;
-       EditTemppath : String;
-       EditExtpath  : String;
-       EditSendpath : String;
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
@@ -1141,6 +1137,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.112  2000/12/28 19:16:07  mk
+  - removed editpathname variables
+
   Revision 1.111  2000/12/28 14:45:01  mk
   CL:- first things for UUCP over IP
 

@@ -1006,16 +1006,12 @@ begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
   maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'Tempor„r-Verzeichnis ' }
-  if EditTempPath <> '' then setfield(fieldpos,EditTemppath);
   msetVfunc(formpath);
   maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
-  if EditExtpath <> '' then setfield(fieldpos,EditExtpath);
   msetVfunc(formpath);
   maddstring(3,6,getres2(262,4),sendpath,31,MaxLenPathname,'');   { 'Sende-Verzeichnis    ' }
-  if EditSendPath <> '' then setfield(fieldpos,EditSendpath);
   msetVfunc(formpath);
   maddstring(3,8,getres2(262,5),logpath,31,MAxLenPathname,'');    { 'Logfile-Verzeichnis  ' }
-  if EditLogPath <> '' then setfield(fieldpos,EditLogpath);
   msetVfunc(formpath);
   maddstring(3,10,getres2(262,6),filepath,31,MaxLenPathname,'');  { 'FileReq-Verzeichnis  ' }
   msetVfunc(formpath);
@@ -1482,6 +1478,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/12/28 19:16:07  mk
+  - removed editpathname variables
+
   Revision 1.75  2000/12/26 21:00:32  mk
   - fixed Config/Optionen/Nachrichten
 

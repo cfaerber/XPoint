@@ -722,39 +722,26 @@ var   res  : integer;
   end;
 
 begin
-  EditLogpath:='';
   TestDir(logpath, false);
   TestDir(temppath, false);
   TestDir(extractpath, false);
   TestDir(sendpath, false);
   if logpath='' then logpath:=ownpath
   else
-    if not IsPath(logpath) then begin
+    if not IsPath(logpath) then
       trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
-       EditLogPath := logpath;
-      end;
-  EditTemppath:='';
   if temppath='' then temppath:=ownpath
   else
-    if not IsPath(temppath) then begin
+    if not IsPath(temppath) then
       trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
-      EditTemppath := temppath;
-      end;
-  EditExtpath:='';
   if extractpath='' then extractpath:=OwnPath
   else
     if not IsPath(extractpath) then
-    begin
       trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
-      EditExtpath := extractpath;
-    end;
-  EditSendpath:='';
   if sendpath='' then sendpath:=ownpath
   else
-    if not IsPath(sendpath) then begin
+    if not IsPath(sendpath) then
       trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
-      EditSendpath := sendpath;
-    end;
   editname:=sendpath+WildCard;
   TestDir(XFerDir, True);
   TestDir(JanusDir, True);
@@ -1198,6 +1185,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.98  2000/12/28 19:16:07  mk
+  - removed editpathname variables
+
   Revision 1.97  2000/12/27 22:36:36  mo
   -new class TfidoNodeList
 
