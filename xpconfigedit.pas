@@ -400,7 +400,7 @@ begin
     nt_ProNet   : DefaultMaps:='SYSTEM';
     nt_Maus     : DefaultMaps:='MAUS';    { nicht editierbar! }
     nt_Fido     : DefaultMaps:='Areafix';
-    nt_UUCP     : DefaultMaps:='changesys';
+    nt_UUCP, nt_Client: DefaultMaps:='changesys';
     nt_QWK      : DefaultMaps:='ZQWK';
   else            DefaultMaps:='SYSOP';   { Quick, Turbo }
   end;
@@ -1621,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.33  2001/12/24 23:07:04  mk
+  - updates for nt_Client
+
   Revision 1.32  2001/12/24 11:45:37  mk
   - fixed last committ
 

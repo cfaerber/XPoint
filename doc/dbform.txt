@@ -118,7 +118,8 @@ BOXEN:  Boxendatei
  6. NameOMaps   String(20)       MAPS-Name (ab 0.9g)
  7. Netztyp     Byte             ab 1.12: 0=Netcall, 2=ZConnect, 3=Magic
                                  4=ProNet, 10=QuickMail, 11=G+S, 20=Maus,
-                                 30=Fido, 31=QWK, 40=UUCP, 90=Turbo-Box
+                                 30=Fido, 31=QWK, 40=UUCP, 41=RFC/Client,
+                                 90=Turbo-Box (deaktiviert)
  8. Realname    String(40)       ab 1.2
  9. Pointname   String(25)       ab 1.2
 10. Domain      String(60)       ab 1.2

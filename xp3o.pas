@@ -66,6 +66,7 @@ function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 procedure AppPuffer(const Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
+function  getBoxAdresse(const box:string; netztyp:byte):string;
 procedure CancelMessage;
 procedure ErsetzeMessage;
 function  testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
@@ -1086,6 +1087,43 @@ begin
 end;
 
 
+function getBoxAdresse(const box:string; netztyp:byte):string;
+var d         : DB;
+    flags     : byte;
+    username  : string;
+    pointname : string;
+    domain    : string;
+    email     : string;
+    aliaspt   : boolean;
+begin
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName, UpperCase(box));
+  if dbFound then
+  begin
+    username := dbReadStr(d, 'username');
+    pointname := dbReadStr(d, 'pointname');
+    dbRead (d, 'script', flags);
+    aliaspt := (flags and 4 <> 0);
+    domain := dbReadStr(d, 'domain');
+    eMail := dbReadStr(d, 'email');
+    case netztyp of
+      nt_UUCP,
+      nt_Client  : getBoxAdresse:=iifs(email<>'', email, username + '@' +
+                                  iifs (aliaspt, box + ntServerDomain(box),
+                                                 pointname + domain));
+      nt_Maus    : getBoxAdresse:=username + '@' + box;
+      nt_ZConnect: getBoxAdresse:=username + '@' +
+                                  iifs (aliaspt, pointname, box) + domain;
+    end;
+  end
+  else begin
+    rfehler1(109,box);  { 'Unbekannte Serverbox:' %s }
+    getBoxAdresse:='';
+  end;
+  dbClose(d);
+end;
+
+
 procedure CancelMessage;
 var
     _brett : string;
@@ -1128,21 +1166,7 @@ begin
     Box := dbReadNStr(ubase,ub_pollbox);
     end;
 
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then begin
-    case ntBoxNetztyp(box) of
-      nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
-                       dbReadStr(d,'domain');
-      nt_NNTP   : adr:=dbReadStr(d,'username');
-      nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
-      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-      end;
-    end else begin
-    rfehler1(109,box);
-    adr:='';
-    end;
-  dbClose(d);
+  adr:=getBoxAdresse(box,mbNetztyp);
   if adr='' then exit;
 
   hdp := THeader.Create;
@@ -1161,7 +1185,7 @@ begin
   leer:='';
   if hds>1 then
     case mbNetztyp of
-      nt_UUCP   : begin
+      nt_UUCP, nt_Client: begin
                     _bezug:=hdp.msgid;
                     _beznet:=hdp.netztyp;
                     ControlMsg:=true;
@@ -1244,21 +1268,7 @@ begin
     box := dbReadNStr(ubase,ub_pollbox);
   end;
 
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then begin
-    case ntBoxNetztyp(box) of
-      nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
-                       dbReadStr(d,'domain');
-      nt_NNTP   : adr:=dbReadStr(d,'username');
-      nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
-      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-      end;
-    end else begin
-    rfehler1(109,box);
-    adr:='';
-    end;
-  dbClose(d);
+  adr:=getBoxAdresse(box,mbNetztyp);
   if adr='' then exit;
 
   hdp := THeader.Create;
@@ -1523,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.78  2001/12/24 23:07:04  mk
+  - updates for nt_Client
+
   Revision 1.77  2001/12/22 16:51:08  mk
   - replaced GotoXY+Write() with MWrt()
 

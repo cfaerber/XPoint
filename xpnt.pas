@@ -320,9 +320,8 @@ begin
     20,31,90 : ntDomainType:=3;   { @BOX }
     30       : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
     40       : ntDomainType:=6;   { @point.domain }
-    50,51,52 : ntDomainType:=8;   { }
-  else
-    ntDomainType:=0;
+  else // (POP3, NNTP, IMAP, Client)
+               ntDomainType:=8;   { eMail-Adresse ('email') }
   end;
 end;
 
@@ -346,7 +345,7 @@ begin
     else if (nt=nt_ZConnect) and not ownbox then
       ntAutoDomain:='.invalid'
     else
-      if ntDomainType(nt) in [5,6] then
+      if ntDomainType(nt) in [5,6,8] then
         ntAutoDomain:=dbReadStr(d,'domain');
     end;
   dbClose(d);
@@ -445,7 +444,6 @@ end;
 
 function ntOnline(nt:byte):boolean;   { false -> Script erforderlich }
 begin
-  {ntOnline:=(nt<>nt_Fido) and (nt<>nt_GS) and (nt<>nt_UUCP) and (nt<>nt_QWK);}
   ntOnline:=not (nt in [nt_Fido, nt_GS, nt_UUCP, nt_QWK, nt_NNTP, nt_POP3, nt_Client]);
 end;
 
@@ -487,9 +485,6 @@ function ntAdrCompatible(n1,n2:byte):boolean;  { umleitbare PM-Adresse }
 begin
   ntAdrCompatible:= (n1 in ([nt_Maus, nt_ZConnect]+netsRFC)) and
                     (n2 in ([nt_Maus, nt_ZConnect]+netsRFC));
-{  ntAdrCompatible:=(n1=n2) or
-                   (((n1=nt_ZConnect) or (n1=nt_UUCP)) and
-                     (n2 in [nt_ZConnect,nt_UUCP,nt_Maus]));}
 end;
 
 function ntEmpfBest(nt:byte):boolean;
@@ -626,7 +621,8 @@ begin
     nt_QWK     : ntBoxnameLen:=15;
     nt_UUCP,
     nt_NNTP,
-    nt_POP3    : ntBoxnameLen:=20;
+    nt_POP3,
+    nt_Client  : ntBoxnameLen:=20;
   else
     ntBoxnameLen:=8;   { Netcall }
   end;
@@ -684,7 +680,7 @@ end;
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Header }
 begin
   ntPGP:=(nt=nt_ZCONNECT) or
-         ((nt in [nt_UUCP,nt_NNTP,nt_POP3]) and PGP_UUCP) or
+         ((nt in [nt_UUCP,nt_NNTP,nt_POP3, nt_Client]) and PGP_UUCP) or
          ((nt=nt_Fido) and PGP_Fido);
 end;
 
@@ -717,7 +713,7 @@ end;
 
 function ntFilename(nt:byte):boolean;         { Dateiname im Header }
 begin
-  ntFilename := (nt in [nt_ZConnect,nt_UUCP]);
+  ntFilename := (nt in [nt_ZConnect,nt_UUCP, nt_Client]);
 end;
 
 function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All allowed? }
@@ -743,6 +739,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.41  2001/12/24 23:07:04  mk
+  - updates for nt_Client
+
   Revision 1.40  2001/12/23 12:00:32  mk
   - added some nt_Client
 

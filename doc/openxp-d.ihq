@@ -3926,6 +3926,10 @@ tenpakete nicht per Modem bertragen, sondern auf
 Ihrer Festplatte gespeichert werden, sind Sie hier
 richtig.
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
+
 <<Eingangsverzeichnis>>
 
 Dies ist das Verzeichnis, aus dem OpenXP bei einem
@@ -3949,6 +3953,10 @@ Mode".
 
 @
 8035
+<<[x]>> -> Aktiviert den QWK-Transfer. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
+
 <<Eingangspakete>>
 
 Geben Sie hier Pfad + Namen der QWK-Pakete an, die
@@ -3972,6 +3980,9 @@ Dateinamen in einem bestimmten Format erwartet und
 erzeugt; in den meisten F„llen wird eine Umbenennung
 n”tig sein. N„heres hierzu finden Sie in UUCP.TXT.
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
 
 <<Eingangsverzeichnis>>
 
@@ -3996,7 +4007,7 @@ Mode".
 
 @
 8037
-<<Startprogramm>>
+<<Startprogramm
 
 Hier k”nnen Sie ein Programm oder einen DOS-Befehl
 eintragen, das/der zum Beginn jedes SysopMode-Net-
@@ -4005,7 +4016,7 @@ dann ntzlich, wenn die einzulesende Pufferdatei
 erst noch bereitgestellt werden muá (z.B. durch Zu-
 sammenkopieren mehrerer anderer Puffer).
 
-<<Endprogramm>>
+<<Endprogramm
 
 Dieses Programm wird nach jedem SysopMode-Netcall
 gestartet.
@@ -5949,6 +5960,9 @@ daá der von Ihnen eingesetzte Client die vom Brett-
 manager untersttzten Funktionen nicht (oder nicht
 richtig) interpretiert.
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
 
 <<İ Brett-/Newsgroup-Liste beziehen und aktualisieren
 
@@ -12475,12 +12489,22 @@ Geben Sie hier die gewnschte Anzahl von CrossPoint-
 Lizenzen ein.
 
 Falls Sie das Programm nur im Usenet/Internet einset-
-zen m”chten, ben”tigen Sie eine Registrierung fr
-"RFC/UUCP". Falls Sie das Programm im Z-Netz, Fido-
-Net, MausNet, MagicNET o.„. einsetzen m”chten,
-ben”tigen Sie eine Registrierung fr "Fido, Z-Netz,
-MausNet etc.". Fr einen Einsatz in <<allen>> Arten von
-Netzen ist eine Komplettregistrierung erforderlich.
+zen m”chten und dafr den Netztyp "RFC/Client" ver-
+wenden, k”nnen Sie sich fr eine beliebige Registrie-
+rungsvariante entscheiden. Jede Registrierung gilt
+gleichzeitig auch fr diesen Netztyp.
+
+Sollten Sie stattdessen jedoch den Netztyp "RFC/UUCP"
+verwenden, ben”tigen Sie hierfr die gesonderte
+RFC/UUCP-Registrierung.
+
+Falls Sie das Programm im Z-Netz, Fido-Net, MausNet,
+MagicNET o.„. einsetzen m”chten, ben”tigen Sie eine
+Registrierung fr "Fido, Z-Netz, MausNet etc.". Fr
+einen Einsatz in <<allen>> Arten von Netzen ist nur dann
+eine Komplettregistrierung erforderlich, wenn Sie
+fr Usenet/Internet den Netztyp "RFC/UUCP" verwenden
+(siehe oben).
 
 Mit einer Update-Registrierung k”nnen Sie Ihre
 einfache Registrierung zu einer Komplettregistrie-
@@ -13911,6 +13935,11 @@ einem MausNet-Relogin im Hauptmen.
 Bei Fido-Boxen ist ein Relogin aus technischen Grn-
 den unm”glich.
 
+Beim Netztyp <<RFC/Client>> ist diese Funktion ohne
+Wirkung - wenn Sie eine bestehende Verbindung nutzen
+wollen, fhren Sie einen normalen Netcall durch. Der
+Client muá diese dann ggf. selbst„ndig erkennen.
+
 @
 11506
 <<Netcall / Online  (CrossTerm)
@@ -13926,6 +13955,12 @@ oder Terminate ersetzen, sondern ist nur fr den
 gelegentlichen Anruf in Ihrer Serverbox gedacht, um
 z.B. das Postfach zu leeren oder eine Datei abzu-
 rufen.
+
+Beim Netztyp <<RFC/Client>> ist diese Funktion ohne
+Wirkung - wenn Sie eine bestehende Verbindung nutzen
+wollen, fhren Sie einen normalen Netcall durch. Der
+Client muá diese dann ggf. selbst„ndig erkennen.
+
 @
 11508
 <<Netcall / Bereitschaft

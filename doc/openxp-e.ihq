@@ -2706,19 +2706,24 @@ The time is between 5 and about 15 seconds usually.
 If you are a Sysop, you do not send your netcall by
 modem, of course. You transfer it manually from
 CrossPoint into the Box Software on the same machine.
-You have to tell CrossPoint two file names:
+
+<<[x]>> ->  Enables Sysop Mode. Afterwards please enter
+        the following data (or check the existent
+        values):
 
 <<Input file>>
+
 The name of the file which CrossPoint has to read
 in to "receive" a netcall. <<Note>> after being read
 in, this file will be deleted!
 
-
 <<Output file>>
+
 The name of the file where the puffer with the
 outgoing messages should be put.
-<<Note>> If this file should already be present,
-CrossPoint will hang the new data on the end.
+
+<<Note:>> If this file should already be present,
+CrossPoint will append the new data at the end.
 You have to make sure <<yourself>> that this file is
 deleted after the data have been transferred into the
 box!
@@ -2734,33 +2739,46 @@ These are settings if you do not want XP to transfer
 the data by modem, but to put or take the prepared
 files to or from some place on your hard disk.
 
+<<[x]>> ->  Enables Sysop Mode. Afterwards please enter
+        the following data (or check the existent
+        values):
+
 <<Inbound directory>>
+
 This is the directory from which CrossPoint will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
 <<Outbound directory>>
+
 CrossPoint puts all outgoing PKT files in this
 directory. If you set the "pack output data" switch
 the packets will be packed (amazing!). You can
 transfer these packets to this mailbox by some other
 method, or do anything else you want.
+
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
 @
 8035
+<<[x]>> ->  Enables QWK Transfer. Afterwards please
+        enter the following data (or check the
+        existent values):
+
 <<Inbound Packets>>
+
 Enter the path and name for the QWK packets, which
 XP should import for a /Netcall/Single operation.
 eg.
-   C:\INBOUND\*.QWK
-
+    C:\INBOUND\*.QWK
 
 <<Outbound directory>>
+
 This is the directory where XP will put the REP files
 with the reply messages.
+
 @
 8036
 
@@ -2772,13 +2790,19 @@ Note that XP expects and issues UUCP file names in a
 particular form. In most cases it will be necessary
 to rename them. See also the documentation UUCP.DOC.
 
-<<Input directory>>
+<<[x]>> ->  Enables Sysop Mode. Afterwards please enter
+        the following data (or check the existent
+        values):
+
+<<Inbound directory>>
+
 This is the directory from which CrossPoint will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
-<<Output directory>>
+<<Outbound directory>>
+
 CrossPoint puts all outgoing PKT files in this
 directory. If you have entered a packer under
 /Edit/Servers/Edit/Point, the files will be packed.
@@ -4204,6 +4228,9 @@ newsgroups only to be displayed for selection.
 <<[x]>>     [Archived] messages will be marked for@12110
         deletion, to avoid storing them twice.
 
+<<[x]>> ->  Enables Sysop Mode. Afterwards please enter
+        the following data (or check the existent
+        values):
 
 <<[ ]>>     Messages will NOT be marked for deletion.
 
@@ -9583,6 +9610,7 @@ connection per modem already exists (if the server is
 ready for it). If your server permits the relogin
 command, it will do a logoff, but does not hang up
 and presents the mask again for a login.
+
 Exit your terminal programme <<(do not hang up)>> and
 start CrossPoint then Netcall/Relogin. CrossPoint
 does not reset the modem or dial, but begins by
@@ -9612,6 +9640,11 @@ A simple online help is available with <F1>.
 Exit with <Alt-X>.
 
 Note: "Exit without hanging up" may not work.
+
+This function has no effect if used with the net type
+RFC/Client. If you want to make a netcall using an
+already existing connection, just do a normal netcall
+- the client will have to recognize this itself.
 
 @
 11506

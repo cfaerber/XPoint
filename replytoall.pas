@@ -200,7 +200,7 @@ begin
   dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
   while not dbEof (d) do
   begin
-    if ntReplyToAll (dbReadInt (d, 'netztyp') and $FF) then { nur ZConnect und RFC/UUCP }
+    if ntReplyToAll (dbReadInt (d, 'netztyp') and $FF) then { nur ZConnect und RFC/* }
     begin                                           { Boxen berÅcksichtigen     }
       Username := dbReadStr (d, 'username');
       PointName := dbReadStr (d, 'pointname');
@@ -214,6 +214,7 @@ begin
         6: if email <> '' then adresse := email
            else adresse := username + '@' +
             iifs (aliaspt, box + ntServerDomain (box), pointname + domain);
+        8: adresse := eMail;
         else adresse := '';
       end;
       if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
@@ -984,6 +985,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2001/12/24 23:07:04  mk
+  - updates for nt_Client
+
   Revision 1.26  2001/12/22 21:43:57  mk
   - fixed two crashes in getPollBox
 
