@@ -471,26 +471,28 @@ var fn     : pathstr;
     mimetyp  : string[30];
     viewer   : ViewInfo;
                                            { Mailviren-Schutz }
-  function ViralExtension:byte;            
-  var x,y   : byte;                        {Rueckgabe:}
-      t     : taste;                       { 0: externer Mime-Viewer erlaubt }
-      s     : string[10];                  { 1: internen Lister verwenden }
-  begin                                    { 2: Viewer fuer Verdaechtige Progamme verwenden }
-    viralExtension:=0;
-    s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.'; 
-    if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
-      if pos(s,viewer_lister)>1 then viralExtension:=1
-      else begin
-        diabox(45,6,'',x,y);
-        mwrt(x+2,y+1,s+getres(2443));
-        mwrt(x+2,y+2,getres(2444));
-        t:='';
-        case readbutton(x+2,y+4,2,getres(107),2,true,t) of
-          0,2 : viralExtension:=2;              { '  ^Ja  , ^Nein ' }
+  Procedure TestViralExtension;            
+  var x,y   : byte;                       
+      t     : taste;                      
+      s     : string[10];                  
+  begin                                    
+    if (viewer.ext='') and (viewer.prog<>'') then
+    begin     
+      s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.'; 
+      if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
+        if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
+        else begin
+          diabox(45,6,'',x,y);
+          mwrt(x+2,y+1,s+getres(2443));
+          mwrt(x+2,y+2,getres(2444));
+          t:='';
+          case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
+            0,2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
+            end;
+          closebox;
           end;
-        closebox;
-        end;
-    end;
+      end;
+  end; 
 
   procedure CopyMsg;
   var f1,f2 : file;
@@ -738,12 +740,14 @@ begin
         mimetyp:='multipart/mixed';
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }  
       GetMimeViewer(mimetyp,viewer);
+      mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      Testviralextension;
 
       multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (left(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
-     if multipart then
+      if multipart then
       begin
         pushhp(94);
         if mpselect and pushed and poppush then begin
@@ -762,12 +766,8 @@ begin
           GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
           if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
             GetMimeViewer(mimetyp,viewer);
-                                            { Schutz vor Mail-Viren Bei Multiformat-Mimetyp }
-          if (viewer.ext='') and (viewer.prog<>'') then   
-            case ViralExtension of 
-              1: Viewer.Prog:='';                { Interner Lister }
-              2: viewer.Prog:=viewer_scanner;    { Alternativ-Programm }
-              end;     
+          Testviralextension;                    { Schutz vor Mail-Viren } 
+
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
       end
