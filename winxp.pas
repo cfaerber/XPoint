@@ -257,6 +257,7 @@ var
     xold, yold: Integer;
   {$ENDIF }
 begin
+  {$R-}
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
@@ -264,7 +265,6 @@ begin
     FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
   {$ELSE }
     {$IFDEF VP }
-     {$R-}
       SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
     {$ELSE }
       xold := WhereX; yold := WhereY;
@@ -274,6 +274,9 @@ begin
       GotoXY(xold, yold);
     {$ENDIF }
   {$ENDIF Win32 }
+  {$IFDEF Debug }
+    {$R+}
+  {$ENDIF }
 
   {$IFDEF Localscreen }
   { LocalScreen Åbernimmt die énderungen }
@@ -910,6 +913,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.48  2000/09/28 03:21:41  mk
+  - spezielle Anpassungen fuer Debug-Modus
+
   Revision 1.47  2000/07/27 13:41:49  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 
