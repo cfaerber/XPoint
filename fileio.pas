@@ -136,7 +136,7 @@ function  TempFile(const path:string):string;
 { Generate a name for a temp file beginning with startnamewith (max. 4 chars).
   Specify ext with a trailing "." (in Dos). Returns empty string if
   not successful }
-function TempExtFile(path,startnamewith,ext:string):string;
+function TempExtFile(path: String; const  startnamewith,ext:string):string;
 
 { Return file size or zero if file does not exist }
 function  _filesize(const fn:string):longint;
@@ -202,7 +202,7 @@ function  alldrives: string;
 
 implementation  { ------------------------------------------------------- }
 
-uses debug;
+uses debug,xp0;
 
 {$ifdef unix}
 const
@@ -567,24 +567,17 @@ begin
 end;
 
 function TempFile(const path: string): string;
-var
-  n: string;
 begin
-  result:='';
-  if not IsPath(path)then exit;
-  repeat
-    n:=formi(random(10000),4)+'.tmp'
-  until not FileExists(IncludeTrailingPathDelimiter(path)+n);
-  result:= IncludeTrailingPathDelimiter(path)+n;
+  TempExtFile(Path, '', '.tmp');
 end;
 
-function TempExtFile(path,startnamewith,ext:string):string;
+function TempExtFile(path: String; const startnamewith,ext:string):string;
 begin
-  result:='';
-  if not IsPath(path)then exit;
+  if (Path = '') or not IsPath(Path) then Path := TempPath;
+  Path := IncludeTrailingPathDelimiter(Path);
   repeat
-    result:=path+startnamewith+formi(random(10000),4)+ext
-  until not FileExists(result);
+    Result:=path+startnamewith+formi(random(10000),4)+ext
+  until not FileExists(Result);
 end;
 
 function _filesize(const fn:string):longint;
@@ -719,6 +712,9 @@ end;
 
 {
   $Log$
+  Revision 1.115  2002/04/09 08:09:36  mk
+  - fixed TempFile
+
   Revision 1.114  2002/04/08 23:02:47  mk
   - changed some AddDirSepa in IncludeTrailingPathDelimiter
 
