@@ -186,7 +186,13 @@ const
       maxs   = 5;
 type
 {$IFDEF Ver32 }
-  fnst   = HugeString;
+  { OS/2 hat Probleme in der QSort-Routine, wenn AnsiStrings verwendet
+    werden. }
+  {$IFDEF OS2 }
+    fnst   = String;
+  {$ELSE }
+    fnst   = AnsiString;
+  {$ENDIF }
 {$ELSE }
   fnst   = string[13];
 {$ENDIF }
@@ -1106,6 +1112,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/30 21:00:00  mk
+  - Fix in fsbox fuer AnsiString-Probeme in OS/2
+
   Revision 1.11  2000/04/29 20:54:07  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 
