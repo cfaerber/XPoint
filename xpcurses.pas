@@ -1360,7 +1360,9 @@ begin
   writeln;
   writeln('This message is visible only in the debug version!');
   write('Please press enter...');
+{$IFNDEF Kylix}
   readln;
+{$ENDIF}
   writeln;
 {$endif}
   { Noch ein SubWindow vorhanden= }
@@ -1502,14 +1504,16 @@ begin
 
   { TextMode(LastMode); }
 
-{$IFNDEF Kylix}
   { Redirect the standard output }
   assigncrt(Output);
   Rewrite(Output);
+{$IFNDEF Kylix}
   TextRec(Output).Handle:=StdOutputHandle;
+{$ENDIF}
   { Redirect the standard input }
   assigncrt(Input);
   Reset(Input);
+{$IFNDEF Kylix}
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
 
@@ -1544,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/10/15 09:33:17  ml
+  - exit works now with Kylix-compiled openxp
+
   Revision 1.55  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
