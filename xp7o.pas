@@ -400,6 +400,13 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
+  { Nach dem Netcall DatumsbezÅge setzen, damit
+    /ØNetzanruf korrekt in der Brettliste auftaucht }
+  if AutoDatumsBezuege then
+  begin
+    window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
+    bd_setzen(true);
+  end;
 end;
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
@@ -772,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.7  2000/11/20 19:42:15  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.13.2.6  2000/11/11 10:03:42  mk
   - Logfile Readonly oeffnen
 

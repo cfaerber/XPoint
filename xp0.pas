@@ -84,6 +84,7 @@ const  {$IFDEF DPMI}
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
        realnlen = 120;               { LÑnge der Realnames }
+       AutoDatumsBezuege : boolean = false;
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -1153,6 +1154,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.16  2000/11/20 19:42:14  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.54.2.15  2000/11/18 22:11:27  mk
   - einige Dirname, extname, pathname in string geaendert
 
