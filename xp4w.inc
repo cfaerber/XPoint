@@ -445,6 +445,59 @@ end;
 {                      3. externer Viewer fr */*       }
 {                      4. Lister                        }
 
+{ Ausschnitt aus der Mail 7nWPORiQUWB@jochen.gehring.dialin.t-online.de von
+  Jochen Gehring <Jochen.Gehring@t-online.de>:
+
+
+Zum verhalten bei Singlepart:
+
+die 600Zeilen Routine Readmsg in XP4W.INC sieht garnicht so riesig aus,
+ist aber ein wahnsinniges Gebastel das mit XP immer weiter gewachsen ist.
+Ohne den Code schritt fr Schritt durchzutracen kann man oft nur raten,
+wann die Routine wohin springt. Da huscht ein File schon mal durch den einen
+Test durch, um von einem der drei folgenden, fast gleichartigen Tests
+abgefangen zu werden. Sinnvoll w„re das ganze komplett neu zu schreiben,
+aber wer garantiert dann ob dann alles noch so funktioniert wie bisher ?
+(ich denke etzt an die verschiedenen File-Attach Varianten in Mailboxnetzen)
+
+Zum Verst„ndnis: XP geht in etwa so vor:
+
+
+ist es ein File-Attach ?
+  J -> Dateinamen aus Betreff merken ------------------
+                                                       |
+existiert ein Mime-Header ?                            |
+  N -> In Datei Extrahieren und Viewertyp setzen ----  |
+                                                    |  |
+ist es Multipart ?                                  |  |
+  N -> Mimeauswahlfenster Emulieren -----------     |  |
+                                               |    |  |
+Mimeauswahlfenster darstellen                  |    |  |
+                                               |    |  |
+gew„hlten Mime-part in Datei extrahieren     <-     |  |
+                                                    |  |
+Dateinhalt in neue Datei dekodieren          <------   |
+                                                       |
+Ist es ein Fall fr den Internen Viewer ?    <---------
+  J -> Archivviewer/Lister mit Datei Starten
+
+Existiert ein Viewertyp ?
+  J -> Zum Viewertyp passenden Viewer W„hlen
+  N -> Zur Dateiendung passenden Viewer w„hlen
+
+Passt Dateiendung zum Viewer ?
+  N -> Dateiendung entsprechend setzen
+
+Viewer starten
+
+
+Und das ist jetzt grob vereinfacht, ohne die Sonderstellung
+von Dateiendung gegenber Mime-typ, oder den Virenschutz,
+die die folgenden Tests dann kreativ durch um„ndern des Viewertyps,
+Mimetyps oder Dateiendung umgehen...
+
+}
+
 procedure read_msg(art,mp:byte);
 var fn     : string;
     fn2    : string;
@@ -1530,6 +1583,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2000/10/09 16:27:00  mk
+  JG:- Read_msg kommentiert
+
   Revision 1.40  2000/08/23 13:55:14  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst
