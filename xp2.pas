@@ -1084,7 +1084,7 @@ procedure testlock;
 var i : integer;
 begin
   if ParNolock then exit;
-  assign(lockfile, 'lockfile');
+  assign(lockfile, 'LOCKFILE');
   filemode:=FMRW + FMDenyWrite;
   rewrite(lockfile);
   if (ioresult<>0) or not fileio.lockfile(lockfile) then
@@ -1150,6 +1150,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.7  2000/10/08 11:11:18  mk
+  - Verschiedene Dateinamen gross geschrieben
+
   Revision 1.45.2.6  2000/09/30 16:28:00  mk
   - VESA 80x60-Zeilenmodus
 

@@ -746,7 +746,7 @@ var t   : text;
     typ : string[30];
     ext : string[5];
 begin
-  assign(t,'mimetyp.cfg');
+  assign(t,'MIMETYP.CFG');
   rewrite(t);
   writeln(t,'# ',getres(728));   { 'tempor„re MAGGI- und UUZ-Konfigurationsdatei' }
   writeln(t);
@@ -1445,6 +1445,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.2  2000/10/08 11:11:18  mk
+  - Verschiedene Dateinamen gross geschrieben
+
   Revision 1.24.2.1  2000/06/29 16:59:32  mk
   - 32 Bit Teile entnommen, Window wieder hergestellt
 
