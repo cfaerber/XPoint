@@ -25,7 +25,7 @@ unit ncfido;
 
 interface
 
-uses ncmodem,timer,fidoglob,xpglobal,classes;
+uses ncmodem,timer,fidoglob,xpglobal,classes,fileio;
 
 type
   hellor = record
@@ -244,6 +244,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/03/02 22:07:20  cl
+  - VPascal: define fsFromXXX constants for FileSeek
+
   Revision 1.18  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)

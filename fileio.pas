@@ -53,6 +53,13 @@ const
   { Neue AnyFile-Konstante, da $3F oft nicht laeuft }
   ffAnyFile = $20;
 
+{$IFDEF VirtualPascal}
+const
+  fsFromBeginning = 0;
+  fsFromCurrent   = 1;
+  fsFromEnd       = 2;
+{$ENDIF}
+
 type
   { Zugriffsrechte beim Erstellen einer Datei }
   TCreateMode = (
@@ -641,6 +648,9 @@ end.
 
 {
   $Log$
+  Revision 1.92  2001/03/02 22:07:20  cl
+  - VPascal: define fsFromXXX constants for FileSeek
+
   Revision 1.91  2001/02/25 11:34:12  ma
   - removed non-GPL code
 
