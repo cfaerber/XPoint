@@ -79,6 +79,7 @@ Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
 Function BlankposHuge(var s:Hugestring):Integer;        { Position von ' ' oder #9     }
 Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
 Function Center(const s:string; n:byte):string;    { String auf n Zchn. zentrieren}
+function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 Function CPos(c:char; const s:string):byte;    { schnelles POS fÅr CHARs      }
 Function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1    }
 Function CreditCardOk(s:string):boolean;     { Kreditkartennummer ÅberprÅfen }
@@ -217,6 +218,18 @@ implementation
 type psplit = record              { FÅr Pointer-Type-Cast }
                 o,s : smallword;
               end;
+
+function CountChar(const c: char; const s: string): integer;
+const
+  j: integer = 0;
+var
+  i: integer;
+begin
+  for i:= 1 to length(s) do
+    if s[i]=c then
+      inc(j);
+  CountChar:= j;
+end;
 
 {$IFDEF Ver32 }
 
@@ -2271,6 +2284,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/06/16 14:51:09  hd
+  - Neue Funktion: CountChar: Zaehlt das Vorkommen eines Zeichens
+
   Revision 1.36  2000/06/01 08:02:23  mk
   RB: - Assembler-Verbesserungen
 
