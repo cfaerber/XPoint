@@ -1054,28 +1054,40 @@ end;
 
 
 procedure testlock;
-var i : integer;
+const
+  LockString: String = 'Isn''t this a beautiful lockfile?';
+var
+  i : integer;
+  LockDenied: Boolean;
 begin
-{$IFDEF BP } { !! Diese Routine mu· noch portiert werden }
   if ParNolock then exit;
-  assign(lockfile, 'lockfile');
+  LockDenied := false;
+  assign(lockfile, 'LOCKFILE');
   filemode:=FMRW + FMDenyWrite;
   rewrite(lockfile);
-  if (ioresult<>0) or not fileio.lockfile(lockfile) then
+  if IOResult <> 0 then
+    LockDenied := true
+  else
+  begin
+    BlockWrite(lockfile, LockString[1], Length(LockString));
+    if IOResult <> 0 then
+      LockDenied := true
+    else
+      if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
+        (IOResult <> 0) then LockDenied := true;
+  end;
+  if LockDenied then
   begin
     writeln;
     for i:=1 to res2anz(244) do
       writeln(getres2(244,i));
     mdelay(1000);
     close(lockfile);
-    if ioresult<>0 then;
     runerror:=false;
     halt(1);
   end;
   lockopen:=true;
-  { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
-  FileMode := FMRW;
-{$ENDIF }
+  FileMode := FMRW; { Filemode restaurieren! }
 end;
 
 
@@ -1105,6 +1117,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.6  2000/11/10 11:29:10  mk
+  - fixed Bug #116292: Mehrfachstart von XP abfangen
+
   Revision 1.15.2.5  2000/08/03 14:24:40  mk
   - Filehandles auf 40 erhoeht
 

@@ -1376,17 +1376,16 @@ begin
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-{$IFDEF BP }
-  if lockopen then begin
-    unlockfile(lockfile);
-    close(lockfile);
-    erase(lockfile);
+  if lockopen then
+  begin
+    FileUnLock(xp0.lockfile, 0, SizeOf(xp0.lockfile));
+    close(xp0.lockfile);
+    erase(xp0.lockfile);
     if ioresult<>0 then ;
   end;
   if videotype>1 then setbackintensity(false);
   setcbreak(orgcbreak);
   exitproc:=oldexit;
-{$ENDIF}
 end;
 {$IFDEF Debug }
   {$S+}
@@ -1609,6 +1608,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.2  2000/11/10 11:29:10  mk
+  - fixed Bug #116292: Mehrfachstart von XP abfangen
+
   Revision 1.11.2.1  2000/05/13 12:09:00  mk
   - Unnoetiger Stackcheck in Non-Debugversion abgestellt
 

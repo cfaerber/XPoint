@@ -69,10 +69,8 @@ procedure fm_rw;                                { Filemode Read/Write     }
 procedure fm_all;                               { Deny none               }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
 function  ShareLoaded:boolean;                  { Locking verfÅgbar       }
-function  lock(var datei:file; from,size:longint):boolean;
-procedure unlock(var datei:file; from,size:longint);
-function  lockfile(var datei:file):boolean;
-procedure unlockfile(var datei:file);
+function  FileLock(var datei:file; from,size:longint):boolean;
+procedure FileUnLock(var datei:file; from,size:longint);
 
 procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
@@ -522,42 +520,36 @@ begin
   ShareLoaded:=shareda;
 end;
 
-
-function lock(var datei:file; from,size:longint):boolean;
-var regs : registers;
+function FileLock(var datei:file; from,size:longint):boolean;
+var
+  regs : registers;
 begin
-  if Shareda then with regs do begin
-    ax:=$5c00;
-    bx:=filerec(datei).handle;
-    cx:=from shr 16; dx:=from and $ffff;
-    si:=size shr 16; di:=size and $ffff;
-    msdos(regs);
-    lock:=flags and fcarry = 0;
-    end
-  else
-    lock:=true;
+  if Shareda then
+    with regs do
+    begin
+      ax:=$5c00;
+      bx:=filerec(datei).handle;
+      cx:=from shr 16; dx:=from and $ffff;
+      si:=size shr 16; di:=size and $ffff;
+      msdos(regs);
+      FileLock:=flags and fcarry = 0;
+    end else
+      FileLock:=true;
 end;
 
-procedure unlock(var datei:file; from,size:longint);
-var regs : registers;
+procedure FileUnLock(var datei:file; from,size:longint);
+var
+  regs : registers;
 begin
-  if shareda then with regs do begin
+  if shareda then
+  with regs do
+  begin
     ax:=$5c01;
     bx:=filerec(datei).handle;
     cx:=from shr 16; dx:=from and $ffff;
     si:=size shr 16; di:=size and $ffff;
     msdos(regs);
-    end;
-end;
-
-function lockfile(var datei:file):boolean;
-begin
-  lockfile:=lock(datei,0,maxlongint);
-end;
-
-procedure unlockfile(var datei:file);
-begin
-  unlock(datei,9,maxlongint);
+  end;
 end;
 
 
@@ -723,11 +715,13 @@ begin
 end;
 
 begin
- { TestShare;  wegen Problemen mit Novell Client 32 }
-  shareda := false;
+  TestShare;
 end.
 {
   $Log$
+  Revision 1.7.2.5  2000/11/10 11:29:10  mk
+  - fixed Bug #116292: Mehrfachstart von XP abfangen
+
   Revision 1.7.2.4  2000/08/22 17:43:25  mk
   - Test auf Share entfernt
 
