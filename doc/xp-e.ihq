@@ -2120,7 +2120,7 @@ setting this switch you can have your PC use this
 time to set its internal clock, synchronising you
 also to accurate time (within about +/- 2 sec.).
 
-If you use the [programmed timing lists] for Cross-@11507
+If you use the [programmed timing lists] for Cross-@11511
 Point activities, you could even have it call a box
 with a radio clock specially, at regular intervals,
 just to get the time, even if you don't poll Fido
@@ -2959,7 +2959,7 @@ Notes:
 @
 8030
 Enter the name of a script file that will be started
-automatically for an online session ([Netcall/Online])@11507
+automatically for an online session ([Netcall/Online])@11506
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
@@ -6080,6 +6080,22 @@ end value, so that the higher values fit on the
 chart. 1 gives sufficient detail if you have just a
 few units per day.
 @
+508
+<<Edit box/server list for /Netcall/Special
+
+Enter all boxes/servers (or select them with <F2>)
+which shall be called upon a /Netcall/Special using
+this list entry.
+
+<Esc> aborts the procedure at any time. Confirm the
+entries when finished with <Ctrl-Enter> (or <Enter>
+in the last (empty) line).
+
+You can enter as many boxes/servers as their names
+(incl. separating blanks) do not exceed a total
+length limit of 255 characters.
+
+@
 510
 <<Timing-List edit>>
 
@@ -8877,11 +8893,11 @@ immediately.
 
 @
 10608
-<<Config / Tools
+<<Config / Tools Menu
 
 In addition to the menu entry "Calendar", you can
-enter up to 9 user-defined [external programmes].@10615
-Select the position (1-9) you want to edit from the
+enter up to 20 user-defined [external programmes].@10615
+Select the position (1-20) you want to edit from the
 list displayed and press "E" to edit the settings.
 <Esc> breaks off without saving the changes,
 Ctrl-Enter exits immediately and saves the changes.
@@ -9573,15 +9589,6 @@ The [command line parameter] "/n:*" does the@4020
 same thing.
 @
 11503
-<<Netcall / Special
-
-Makes a netcall to these servers in that order as
-being listed in the file <<NETCALL.DAT>> in the XP
-directory.
-
-(This function will be enhanced)
-@
-11504
 <<Netcall / Last calls
 
 This entry is similar to to /Netcall/Single, but
@@ -9591,7 +9598,7 @@ servers that are selected for /Netcall/All (see
 shown with /Netcall/Single you can see when your
 last call to this server has taken place.
 @
-11505
+11504
 <<Netcall / Time
 
 Enables a timer for making a single netcall at a
@@ -9601,7 +9608,7 @@ Set the desired time in the time box, and the
 required box (<F2> selects from a list of your
 servers).
 @
-11506
+11505
 <<Netcall / Relogin
 
 Makes a netcall to a server when the telephone
@@ -9619,7 +9626,7 @@ box.
 FIDO does not permit Relogin for technical reasons.
 
 @
-11507
+11506
 <<Netcall / Online  (CrossTerm)
 
 A simple terminal programme. It is not meant to be a 
@@ -9640,11 +9647,62 @@ Exit with <Alt-X>.
 Note: "Exit without hanging up" may not work.
 
 @
+11508
+<<Netcall / Special
+
+Here you can control your netcalls individually and
+call any number of boxes in any order.
+
+There are 20 different entries available, each of
+them containing the names of the servers that shall
+be called when making a netcall using this entry.
+The entries are selected with <<<F2> >>(but you can
+also enter server names manually). Entries that are
+empty will not be visible in the selection list.
+
+The required netcall list for this function can be
+created and edited under [/Netcall/Special_list].@11509
+
+Please note that for better control the current
+number of the entry will also go to the input line.
+XP will internally ignore this number, thus you do
+not need to remove it manually. Vice versa, it is
+not required to add this number when entering server
+names manually.
+
+The menu item /Netcall/Special is equivalent to the
+[command line parameter] "/nsp:1..20".@4020
+@
 11509
+<<Netcall / Special list
+
+Here you can edit the list of servers that is needed
+for netcalls with [/Netcall/Special].@11508
+
+Select the position (1-20) you want to edit from the
+list displayed and press "E" or <Enter> to edit the
+entry. <Esc> leaves the edit mode.
+
+The data are stored in the file NETCALL.DAT in the
+XP directory. You can also edit this file with an
+external editor, but then you have to consider the
+following:
+
+- The maximum line length is 255 characters;
+- The server names have to be separated with
+  a single space.
+- All entries from line 21 on will be ignored;
+- The numbering of the entries is not part of
+  NETCALL.DAT and must not be a part of it;
+- You have to verify yourself that all servers
+  you enter in NETCALL.DAT do really exist in XP.
+
+@
+11511
 <<Netcall / Automatic
 
 Activates one of the programmed timing lists which
-you can set up under [/Netcall/Timing list].@11510
+you can set up under [/Netcall/Timing list].@11512
 
 You are asked to enter the number of the timing list
 you wish to activate. CrossPoint then runs this
@@ -9652,7 +9710,7 @@ programme until you end it (with <Esc> or the special
 case, that one of the commands to be carried out ends
 the timing programme.
 @
-11510
+11512
 <<Netcall / Timing List
 
 You can set up to 99 [timing programmes], which allow@4022
@@ -9670,7 +9728,7 @@ When starting for the first time, press "N" (New) and
 use the online help under each entry.
 
 Once set up, these programmes can be used under the
-menu entry [/Netcall/Automatic].@11509
+menu entry [/Netcall/Automatic].@11511
 @
 11601
 <<Edit / Templates
@@ -9712,6 +9770,7 @@ groups, but you can add as many others as you wish.
 @
 11604
 <<Edit / Systems
+
 This menu entry serves to hold various attributes and
 functions for systems (boxes). At present the
 following details can be recorded:

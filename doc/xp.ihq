@@ -452,12 +452,16 @@ nur die jeweils letzte Option ausgefhrt:
                 Bei Fido-Netcalls muá im Boxnamen ein
                 "_" statt des ":" verwendet werden!
 
-<</n:*>>            entspricht /Netcall/Alle.
+<</n:*>>            entspricht [/Netcall/Alle].@11502
 
 <</nr:BOX>>         fhrt einen Relogin-Netcall durch.
                 Die Verbindung muá bestehen, und die
                 Box muá auf die Eingabe des Userna-
                 mens warten (nur Z-Netz/QM).
+
+<</nsp:1..20>>      fhrt einen [/Netcall/Spezial] fr den@11508
+                als Parameter <<1>> bis <<20>> bergebenen
+                Eintrag aus NETCALL.DAT durch.
 
 <</t:n>>     fhrt die Timing-Liste Nr. <<n>> aus
          (s. XPOINT.TXT, Kap. 5.3).
@@ -4354,7 +4358,7 @@ bitte so grndlich wie m”glich!
 @
 8030
 Hier k”nnen Sie den Namen einer Scriptdatei ein-
-tragen, die bei Online-Anrufen ([/Netcall/Online])@11507
+tragen, die bei Online-Anrufen ([/Netcall/Online])@11506
 automatisch gestartet werden soll. Das Script wird
 sofort nach dem Eintrag auf syntaktische Korrektheit
 berprft.
@@ -8916,6 +8920,22 @@ Vorgabewert ist 12 Pf. Falls Sie sehr hohe Telefon-
 kosten haben, sollten Sie einen h”heren Wert verwen-
 den, damit die Ausgabe noch auf eine Bildschirmseite
 paát.
+@
+508
+<<Box-/Serverliste (/Netcall/Spezial) bearbeiten
+
+Tragen Sie hier die Boxen/Server ein, die bei einem
+/Netcall/Spezial mit diesem Listeneintrag angerufen
+werden sollen (oder w„hlen Sie sie mit <<<F2> >>aus).
+
+Die Eingabe wird mit <<<Esc> >>abgebrochen (verworfen)
+oder mit <<<Ctrl-Enter> >>bzw. durch Drcken von <<<Enter> >>
+innerhalb der letzten, leeren Eingabezeile beendet.
+
+Es k”nnen solange Boxen/Server hinzugefgt werden,
+wie deren Namen (inkl. trennender Leerzeichen) eine
+Gesamtl„nge von 255 Zeichen nicht berschreiten.
+
 @
 510
 <<Timing-Liste bearbeiten>>
@@ -13907,8 +13927,8 @@ Das Zusatz-Men kann neben den Menpunkten "Kalender"
 und "Archiv-Viewer" noch bis zu 20 benutzerdefinierte
 [externe Programme] enthalten. W„hlen Sie die gewnsch-@10615
 te Position (1 bis 20) und bearbeiten Sie diese mit
-<<E>> (Editieren). Mit <<<Esc> >>wird der Bearbeitungsmodus
-beendet.
+<<E>> (Editieren) (<<<Enter> >> geht auch). Mit <<<Esc> >>wird der
+Bearbeitungsmodus beendet.
 
 <<Hinweis:>> Wenn Sie CrossPoint mit 25 Bildschirmzeilen
 betreiben, steht Ihnen der Menpunkt Nr. 20 bei der
@@ -14618,20 +14638,11 @@ folgen. Daraus k”nnte dann z.B. die Konsequenz
 gezogen werden, die Verbindung zu trennen.
 
 
-Der Menpunkt Netcall/Alle entspricht dem
+Der Menpunkt /Netcall/Alle entspricht dem
 [Kommandozeilen-Parameter] <</n:*>>.@7
 
 @
 11503
-<<Netcall / Spezial
-
-Mit diesem Menpunkt wird ein Netcall fr die Boxen
-in der Reihenfolge ausgefhrt, wie sie in der Datei
-<<NETCALL.DAT>> im XP-Verzeichnis aufgefhrt sind.
-
-(Diese Funktion wird noch ausgebaut)
-@
-11504
 <<Netcall / Letzte Anrufe
 
 Dieser Menpunkt entspricht in etwa dem Menpunkt
@@ -14642,14 +14653,14 @@ call/Einzeln angezeigten Boxdaten k”nnen Sie hier
 erkennen, wann Sie bei den einzelnen Boxen zuletzt
 angerufen haben.
 @
-11505
+11504
 <<Netcall / Uhrzeit
 
 Hier k”nnen Sie einen automatischen Netzanruf bei
 einer bestimmten Box zu einer bestimmten Uhrzeit
 durchfhren (lassen).
 @
-11506
+11505
 <<Netcall / Relogin
 
 Dieser Menpunkt fhrt einen Netzanruf bei bestehen-
@@ -14673,7 +14684,7 @@ Bei Fido-Boxen ist ein Relogin aus technischen Grn-
 den unm”glich.
 
 @
-11507
+11506
 <<Netcall / Online  (CrossTerm)
 
 Dieser Menpunkt ruft bei einer Serverbox an, meldet
@@ -14688,24 +14699,82 @@ gelegentlichen Anruf in Ihrer Serverbox gedacht, um
 z.B. das Postfach zu leeren oder eine Datei abzu-
 rufen.
 @
+11508
+<<Netcall / Spezial
+
+Hiermit k”nnen Sie Ihre Netcalls individuell steuern
+und eine beliebige Anzahl von Boxen in beliebiger
+Reihenfolge anrufen.
+
+Es stehen 20 verschiedene Eintr„ge zur Verfgung, von
+denen jeder die Namen der Boxen enth„lt, fr die ein
+Netcall durchgefhrt werden soll. Der jeweilige
+Eintrag wird mit <<<F2> >>ausgew„hlt (Sie k”nnen aber
+auch Boxnamen manuell eingeben). Leere Listeneintr„ge
+werden bei der Auswahl automatisch ausgeblendet.
+
+Die hierfr notwendige Netcall-Liste (<<NETCALL.DAT>>)
+k”nnen Sie mit dem Menpunkt [/Netcall/Spezial-Liste]@11509
+erstellen und editieren.
+
+Bitte beachten Sie, daá bei Auswahl eines Eintrags
+mit <<<F2> >>die lfd. Nummer des Eintrags zur besseren
+Kontrolle mit in das Eingabefeld bernommen wird.
+Diese Nummer wird XP-intern ignoriert, sie braucht
+also nicht manuell gel”scht zu werden. Umgekehrt ist
+es bei manueller Eingabe von Boxnamen nicht erfor-
+derlich, eine lfd. Nummer voranzustellen.
+
+<<Hinweis:>>  Bei /Netcall/Spezial werden ebenso wie bei
+[/Netcall/Alle] die Steuerdateien <<NETCALL.ALL>> und@11502
+<<NETCALL.END>> erzeugt - N„heres siehe dort.
+
+Der Menpunkt /Netcall/Spezial entspricht dem
+[Kommandozeilen-Parameter] <</nsp:1..20>>.@7
+
+@
 11509
+<<Netcall / Spezial-Liste
+
+Hier editieren Sie die Boxenliste, die Sie zur Aus-
+fhrung von [/Netcall/Spezial] ben”tigen.@11508
+
+W„hlen Sie die gewnschte Position (1 bis 20) und
+bearbeiten Sie diese mit <<E>> (Editieren) (<<<Enter> >>geht
+auch). Mit <<<Esc> >>wird der Bearbeitungsmodus beendet.
+
+Die Angaben werden in die Datei <<NETCALL.DAT>> im
+XP-Verzeichnis geschrieben. Sie k”nnen diese Datei
+auch mit einem externen Editor bearbeiten, mssen
+hierbei aber folgendes beachten:
+
+- Die maximale Zeilenl„nge betr„gt 255 Zeichen;
+- Die Boxnamen sind durch ein Leerzeichen zu trennen;
+- Es werden nur die ersten 20 Zeilen bercksichtigt;
+- Die Zeilennumerierung ist nicht in NETCALL.DAT
+  enthalten und darf dort auch nicht enthalten sein;
+- Sie mssen selbst sicherstellen, daá die Boxen, die
+  Sie in NETCALL.DAT eingeben, in XP auch existieren.
+
+@
+11511
 <<Netcall / Bereitschaft
 
 Hinter diesem Menpunkt steckt die universelle Net-
 callautomatik von CrossPoint.
 
 Geben Sie die Nummer einer Timing-Liste an, die Sie
-mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11510
+mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11512
 schaltet dann in den Automatik-Modus um und fhrt
 alle zeitgesteuerten Befehle aus, so lange, bis Sie
 mit <<<Esc> >>abbrechen. Alles Weitere hierzu finden Sie
 unter "Automatische Netcalls" im Handbuch.
 @
-11510
+11512
 <<Netcall / Timing-Liste
 
 Hier k”nnen Sie bis zu 99 Timing-Listen erstellen,
-die fr die Netcall-Automatik ([/Netcall/Bereitschaft])@11509
+die fr die Netcall-Automatik ([/Netcall/Bereitschaft])@11511
 verwendet werden.
 
 Alles Weitere hierzu finden Sie unter "Automatische
