@@ -27,6 +27,9 @@
 program openxp;
 
 uses
+{$IFDEF Linux }
+  cmem,
+{$ENDIF }
   Main;
 
 begin
