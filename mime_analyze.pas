@@ -77,7 +77,7 @@ type TMimeAnalyzer = class(TStream)
     property PreferredCharset:  String          read GPreferredCharset;
 
     property EncodingAllowed[Enc:TMimeEncoding]:Boolean read GEncodingAllowed;
-    property EncodingSafeForSigned[Enc:TMimeEncoding]:Boolean read GEncodingAllowed;
+    property EncodingSafeForSigned[Enc:TMimeEncoding]:Boolean read GEncodingSafeForSigned;
     property EOLAllowed[Enc:TMimeEol]:Boolean   read GEOLAllowed;
 
     property Is8Bit:            Boolean         read GIs8Bit;
@@ -552,6 +552,9 @@ end;
 
 //
 // $Log$
+// Revision 1.5  2001/09/09 20:30:59  cl
+// - corrected property TMimeAnalyzer.EncodingSafeForSigned
+//
 // Revision 1.4  2001/09/09 17:40:47  cl
 // - moved common code between alle en-/decoding streams to a base class
 // - all en-/decoding streams can now destruct the other stream
