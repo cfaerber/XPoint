@@ -584,9 +584,10 @@ var
     begin
       s := Lines[n];
       if Assigned(FOnTestMark) then
+      begin
         if FOnTestMark(s, true) then
           Lines.Objects[n] := self
-      else
+      end else 
         Lines.Objects[n] := self
     end;
     FSelCount := f8p - f7p;
@@ -1134,6 +1135,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.68  2002/04/06 18:37:45  mk
+  - fixed Ctrl-A in Lister (bug in setmark)
+
   Revision 1.67  2002/03/03 15:45:54  cl
   - changed TListerColorEvent's first parameter from var => const
 
