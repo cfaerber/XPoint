@@ -257,7 +257,7 @@ function ShowDownloadTable($downfile) {
 	    }
 	  } else {
 	    if ($fhandle) {
-	      $fsize = sprintf("%01.2f MB", ftp_size($fhandle, $line)/1024/1024);
+	      $fsize = ftp_size($fhandle, $line);
 	      $ftime = date("Y-m-d", ftp_mdtm($fhandle, $line));
 	    } else {
 	      $fsize = ""; // no ftp connection made
@@ -278,8 +278,11 @@ function ShowDownloadTable($downfile) {
 	      $fdesc=fgets($pdfile,200);
 	    }
 	    echo("\n".htmlspecialchars($fdesc));
-	    echo(" (<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">FTP</a>/");
-	    echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ".$fsize.", ".$ftime.")");
+	    if($fsize != -1) {
+	      echo(" (<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">FTP</a>/");
+	      echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ");
+	      echo(sprintf("%01.2f MB", $fsize/1024/1024).", ".$ftime.")");
+	    } else if($language=="de") echo (" (<i>z.Zt. nicht verfügbar</i>)"); else echo(" (<i>temporarily not available</i>");
 	    fgets($pdfile,20); // skip empty line
 	  }
 	}
