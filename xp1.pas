@@ -260,11 +260,13 @@ implementation  {-------------------------------------------------------}
 
 uses
   xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,
-{$IFDEF Kylix}
-  ncursix,
-{$ELSE}
-  ncurses,
-{$ENDIF}
+{$IFDEF Linux }
+  {$IFDEF Kylix}
+    ncursix,
+  {$ELSE}
+    ncurses,
+  {$ENDIF}
+{$ENDIF }
   direct;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
@@ -2073,6 +2075,9 @@ end;
 
 {
   $Log$
+  Revision 1.130  2001/10/21 10:24:56  mk
+  - fixed last commit to allow comile with win32
+
   Revision 1.129  2001/10/20 21:35:48  ml
   - saving/restoring terminal for calling external programs works now
 
