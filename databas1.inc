@@ -9,6 +9,7 @@
 { $Id$ }
 
 
+
 { Cache-Seiten allokieren }
 
 procedure dbSetindexcache(pages:word);
@@ -134,6 +135,37 @@ begin
   freemem(np,np^.memsize);
 end;
 
+procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
+asm
+         mov   edi, nodep
+         mov   esi, rbuf
+         xor   edx, edx
+         mov   dl, [edi+2]             { Keysize }
+         add   edx,9                   { plus L,ngenbyte plus Ref/Data }
+         mov   ebx,136                 { (264) sizeof(inodekey); }
+         sub   ebx,edx
+         add   edi,14
+         xor   eax, eax
+         cld
+         lodsw                         { Anzahl Schl_ssel im Node }
+         stosw                         { Anzahl speichern }
+@noerr:  mov   ecx,2                   { Ref+Data von key[0] _bertragen }
+         rep   movsd
+         mov   ecx,eax
+         jecxz @nokeys
+         add   edi,128                 { (256) key[0].keystr _berspringen }
+         mov   eax, ecx
+@exlp:   mov   ecx, edx
+         rep   movsb                   { Ref, Data und Key _bertragen }
+         add   edi, ebx
+         dec   eax
+         jnz   @exlp
+@nokeys:
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 { Index-Knoten einlesen }
 
@@ -152,13 +184,14 @@ begin
 //      if wp^>nk then
 //        error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
-      anzahl:=wp^;
+      expand_node(rbuf, np);
+{      anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
       o:=10;
       for i:=1 to anzahl do begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
-      end;
+       end; }
 
       freemem(rbuf,irsize);
      end;
@@ -231,6 +264,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/10/04 15:40:43  mk
+  - Expand-Node wieder 32 Bit ASM
+
   Revision 1.15  2000/08/25 22:40:30  mk
   - Datenbank Indexcache freigeschaltet
 
