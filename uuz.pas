@@ -45,7 +45,6 @@ type
     NoMIME: boolean ;              { -noMIME }
     shrinkheader: boolean;        { uz: r-Schalter }
     nomailer: boolean;
-    envemp: string;                       { Envelope-Empf„nger }
     eol: Integer;
     function SetMailUser(mailuser: string): string;
     procedure FlushOutbuf;
@@ -258,7 +257,6 @@ begin
   dest:= '';                { Quell-/Zieldateien  }
   _from := '';
   _to := '';                   { UUCP-Systemnamen }
-  envemp := '';                    { Envelope-Empf„nger }
   eol := 0;
 
   ULine := TStringlist.Create;
@@ -519,6 +517,7 @@ begin
         left(LowerCase(xempf[0]), ml)) then
         wrs('OEM: ' + xoem[i]);
     end;
+    if not getrecenvemp and (envemp<>'') then wrs('U-Envelope-To: '+envemp);
     wrs('ABS: ' + absender + iifs(realname = '', '', ' (' + realname + ')'));
     if wab <> '' then wrs('WAB: ' + wab);
     wrs('BET: ' + betreff);
@@ -1698,7 +1697,7 @@ var
     by := GetRec('by ');
     from := GetRec('from ');
     { Envelope-Empf„nger ermitteln }
-    if envemp = '' then envemp := GetRec('for ');
+    if (hd.envemp='') and getrecenvemp then hd.envemp:=GetRec('for ');
     if (by <> '') and (LowerCase(by) <> LowerCase(right(hd.pfad, length(by))))
       then
     begin
@@ -1956,6 +1955,9 @@ begin
               if zz = 'x-priority' then
               GetPriority
             else
+              if zz='x-envelope-to'  then
+              envemp:=s0
+            else
               if zz = 'x-homepage' then
               homepage := s0
             else
@@ -2002,6 +2004,9 @@ begin
           else
             if zz = 'priority' then
             GetPriority
+          else
+            if zz='envelope-to' then
+            envemp:=s0
           else
             if zz = 'lines' then
             Lines := IVal(s0)
@@ -2137,12 +2142,12 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
 
-      if getrecenvemp and (mailuser = '') and (envemp <> '') then
+      if (mailuser='') and (hd.envemp<>'') then
       begin
-        if cpos('<', envemp) = 1 then delete(envemp, 1, 1);
-        if (cpos('>', envemp) = length(envemp))
-          and (length(envemp) > 0) then dellast(envemp);
-        mailuser := SetMailuser(envemp);
+        if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
+        if (cpos('>',hd.envemp)=length(hd.envemp))
+          and (length(hd.envemp)>0) then dellast(hd.envemp);
+        mailuser:=SetMailuser(hd.envemp);
       end;
 
       if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
@@ -3414,6 +3419,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/09/21 16:19:10  mk
+  RB:- (X-)-Envelope-To-Unterstützung
+     - QP Decode fuer verschiedene Header
+     - Zeilen länger als 255 Zeichen werden nicht mehr abgeschnitten
+
   Revision 1.61  2000/09/11 23:19:15  fe
   Fido-To-Verarbeitung unter RFC korrigiert.
 
