@@ -124,6 +124,9 @@ type
       { How many entries are available }
       function  Count: integer; virtual;
 
+      { Do we have no entry? }
+      function  isEmpty: boolean; virtual;
+
       { Read the directory, returns the count of files }
       function  Read: integer; virtual;
 
@@ -185,6 +188,8 @@ begin
   else if (VMask='*.*') and ((VAttr or faHidden)=0) then
     VMask:= '*';
 {$endif}
+  if VIgnC then
+    VMask:= UpperCase(VMask);
 end;
 
 procedure TDirectory.Clear;
@@ -202,6 +207,11 @@ end;
 function TDirectory.Count: integer;
 begin
   result:= VEntries.Count;
+end;
+
+function TDirectory.isEmpty: boolean;
+begin
+  result:= Count=0;
 end;
 
 function TDirectory.FName(i: integer): string;
@@ -274,18 +284,26 @@ var
   end; { DoFNMatch }
 
 begin {start MatcMAsk}
+  if VIgnC then
+    fn:= UpperCase(fn);
   LenPat:=Length(VMask);
   LenName:=Length(fn);
   result:=DoFNMatch(1,1);
 end;
 
 function TDirectory.Read: integer;
+const
+{$ifdef Unix}
+  cSM = '*';
+{$else}
+  cSM = '*.*';
+{$endif}
 var
   sr  : TSearchRec;
   fn  : TDirEntry;
 begin
   Clear;
-  if FindFirst(VDir+VMask,VAttr,sr)=0 then repeat
+  if FindFirst(VDir+cSM,VAttr,sr)=0 then repeat
     if MatchMask(sr.name) then begin
       fn:= TDirEntry.Create(sr);
       VEntries.Add(fn);
@@ -298,6 +316,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/12/07 18:40:07  hd
+        - new function: isEmpty
+        - fix: logical error in mask searching
+        - fix: ignore case works proper now
+
         Revision 1.2  2000/11/30 19:38:39  hd
         - Fix: mask incomplete
 
