@@ -1620,13 +1620,14 @@ begin
 end;
 
 function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
-var p,ml : integer;
+var
+  ml: Integer;
 begin
-  p:=0;
+  Result :=1;
   ml := min(length(s1),length(s2));
-  while (p<ml) and (s1[p]=s2[p]) do
-    inc(p);
-  SMatch:=p;
+  while (Result < ml) and (s1[Result] = s2[Result]) do
+    inc(Result);
+  Dec(Result);
 end;
 
 
@@ -1934,6 +1935,9 @@ end;
 
 {
   $Log$
+  Revision 1.128  2003/05/01 10:20:22  mk
+  - fixed range check error in SMatch
+
   Revision 1.127  2003/02/13 14:41:57  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister
