@@ -822,6 +822,13 @@ begin
   new(f); new(f2);
   new(fn); new(fn2); new(fn3);
   assign(f^,datei);
+
+  sdNope:=(sdata=nil);
+  if sdNope then begin
+    new(sData);
+    fillchar(sData^,sizeof(sdata^),0);
+  end;
+
   if sendFlags and sendQuote<>0 then begin
     ExtractSetMpdata(qmpdata);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
@@ -840,13 +847,9 @@ begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht m”glich!' }
     goto xexit1;
     end;
+
   new(passwd);
   new(hdp);
-  sdNope:=(sdata=nil);
-  if sdNope then begin
-    new(sData);
-    fillchar(sData^,sizeof(sdata^),0);
-    end;
 
   MakeSignature(signat,sigfile,sigtemp);
 
@@ -1940,7 +1943,6 @@ fromstart:
   { es muá jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
-  if sdNope then dispose(sdata);
   dispose(ccm);
   dispose(cc);
   dispose(passwd);
@@ -1948,6 +1950,7 @@ xexit:
   if sigtemp then _era(sigfile);
   dispose(fo);
 xexit1:
+  if sdNope then dispose(sdata);
   dispose(f); dispose(f2);
   dispose(fn); dispose(fn2); dispose(fn3);
 xexit2:
@@ -2059,6 +2062,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.5  2000/06/05 16:41:52  mk
+  - Zugriff auf uninitialisiertes sdata verhindert
+
   Revision 1.7.2.4  2000/04/21 16:54:16  mk
   - Loginfos angehangen
 
