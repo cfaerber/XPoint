@@ -114,6 +114,7 @@ end;
 
 procedure getmaus(var stat:mausstat);
 begin
+{$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
   if mausda then
   begin
@@ -131,6 +132,7 @@ begin
   end else
 {$ENDIF}
 {$ENDIF}
+{$IFDEF Debug}{$R+}{$ENDIF}
   begin
     stat.x := 0;
     stat.y := 0;
@@ -140,6 +142,7 @@ end;
 
 function mausx:word;
 begin
+{$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
   if Mausda then
     Result := LastEvent.dwMousePosition.X * 8
@@ -151,12 +154,14 @@ begin
   else
 {$ENDIF}
 {$ENDIF}
+{$IFDEF Debug}{$R+}{$ENDIF}
   Result := 0;
   DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
 end;
 
 function mausy:word;
 begin
+{$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
   if Mausda then
     Result := LastEvent.dwMousePosition.Y * 8
@@ -168,12 +173,14 @@ begin
   else
 {$ENDIF}
 {$ENDIF}
+{$IFDEF Debug}{$R+}{$ENDIF}
     Result := 0;
   DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
 end;
 
 function maust:word;
 begin
+{$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
   if Mausda then
     Result := LastEvent.dwButtonState
@@ -184,6 +191,7 @@ begin
   else
 {$ENDIF}
 {$ENDIF}
+{$IFDEF Debug}{$R+}{$ENDIF}
     Result := 0;
   DebugLog('mouse',Format('Maust: %s',[Hex(Result,2)]),dlTrace);
 end;
@@ -265,6 +273,9 @@ initialization
 
 {
   $Log$
+  Revision 1.35  2002/11/14 20:05:02  cl
+  - fixed range check error
+
   Revision 1.34  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -1498,6 +1498,11 @@ end;
 
 function fdat(const dat:string):string;             { Z-Datum -> Datum  }
 begin
+  if Length(dat)<6 then begin
+    Result := '';
+    exit;
+  end;
+
   SetLength(Result, 8);
   Result[1] := dat[5];
   Result[2] := dat[6];
@@ -2139,6 +2144,9 @@ end;
 
 {
   $Log$
+  Revision 1.162  2002/11/14 20:05:48  cl
+  - fixed range check error
+
   Revision 1.161  2002/09/09 09:06:34  mk
   - added const parameters
 
