@@ -92,7 +92,7 @@ type
 
     property Charsets: TStringList read FCharsets;
     
-    property DisplayString: string read GetDisplayString;    
+    property DisplayString: string read GetDisplayString;
     property AddressType: TAddressListType read FAddrType write FAddrType;    
   end;
 (*
@@ -141,21 +141,30 @@ type
   end;
 *)
 
-  TAddressList = class(TObjectList)
+  TAddressList = class
   private
     FGroupNames: TStringList;
+    FObjects: TList;
+    function GetCount: Integer;
     function GetAddress(Index: Integer): TAddressListItem;
   public
     constructor Create;
     destructor Destroy; override;
 
+    function Add(NewItem: TAddressListItem): integer; overload;
+    function Add(NewItem: TAddress): integer; overload;
+
     procedure Assign(Source: TAddressList); virtual;
+
+    procedure Delete(Index: Integer);
+    procedure Move(CurIndex, NewIndex: Integer);
+    procedure Clear;
 
     procedure AddList(Source: TAddressList); virtual;
     procedure InsertList(Index: Integer;Source: TAddressList);
-    
+
     procedure AddStrings(Source: TStrings); virtual;
-    
+
     function AddNew: TAddressListItem;
     function InsertNew(Index: Integer): TAddressListItem;
 
@@ -164,6 +173,7 @@ type
     
     property Adresses[Index: Integer]: TAddressListItem read GetAddress; default;
     property GroupNames: TStringList read FGroupNames;
+    property Count: integer read GetCount;
   end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
@@ -182,7 +192,7 @@ function  RFCWriteAddressListFolded(List: TAddressList;Encoder: TRFCWriteAddress
 
 { ======================== } implementation { ======================== }
 
-uses 
+uses
   rfc2822,typeform,xpcc,xpnt,strutils,sysutils;
 
 { ----------------------- > TAddressListItem < ----------------------- }
@@ -297,14 +307,32 @@ end;
 
 constructor TAddressList.Create;
 begin
-  inherited Create(true);
+  inherited Create;
   FGroupNames := TStringList.Create;
+  FObjects := TList.Create;
 end;
 
-destructor TAddressList.Destroy; 
+destructor TAddressList.Destroy;
+var i: integer;
 begin
+  for i := 0 to FObjects.Count-1 do
+    TObject(FObjects[i]).Free;
+  FObjects.Free;
   FGroupNames.Free;
   inherited Destroy;
+end;
+
+function TAddressList.Add(NewItem: TAddressListItem): integer;
+begin
+  result := FObjects.Add(NewItem);
+end;
+
+function TAddressList.Add(NewItem: TAddress): integer;
+var CreatedItem: TAddressListItem;
+begin
+  CreatedItem := TAddressListItem.Create;
+  CreatedItem.Address := NewItem;
+  result := FObjects.Add(CreatedItem);
 end;
 
 procedure TAddressList.Assign(Source: TAddressList);
@@ -314,11 +342,31 @@ begin
   AddList(Source);
 end;
 
+procedure TAddressList.Delete(Index: Integer);
+begin
+  TObject(FObjects[Index]).Free;
+  FObjects.Delete(Index);
+end;
+
+procedure TAddressList.Move(CurIndex, NewIndex: Integer);
+begin
+  FObjects.Move(CurIndex, NewIndex);
+end;
+
+procedure TAddressList.Clear;
+var i: integer;
+begin
+  for i := 0 to FObjects.Count-1 do
+    TObject(FObjects[i]).Free;
+  FObjects.Clear;
+  FGroupNames.Clear;
+end;
+
 procedure TAddressList.AddList(Source: TAddressList);
 var i: Integer;
    lg: integer;
 begin
-  Capacity := Capacity + Source.Count;
+  FObjects.Capacity := FObjects.Capacity + Source.Count;
   Lg := -1;
   
   for i:=0 to Source.Count-1 do
@@ -336,7 +384,7 @@ procedure TAddressList.InsertList(Index: Integer;Source: TAddressList);
 var i: Integer;
    lg: integer;
 begin
-  Capacity := Capacity + Source.Count;
+  FObjects.Capacity := FObjects.Capacity + Source.Count;
   Lg := -1;
   
   for i:=0 to Source.Count-1 do
@@ -353,7 +401,7 @@ end;
 procedure TAddressList.AddStrings(Source: TStrings);
 var i: Integer;
 begin
-  Capacity := Capacity + Source.Count;
+  FObjects.Capacity := FObjects.Capacity + Source.Count;
   for i:=0 to Source.Count-1 do
     AddNew.ZCAddress := Source[i];
 end;
@@ -361,33 +409,38 @@ end;
 function TAddressList.AddNew: TAddressListItem;
 var Index: Integer;
 begin
-  Index := Add(TAddressListItem.Create);
+  Index := FObjects.Add(TAddressListItem.Create);
   result := GetAddress(Index);
 end;
 
 function TAddressList.InsertNew(Index: Integer): TAddressListItem;
 begin
-  Insert(Index,TAddressListItem.Create);
+  FObjects.Insert(Index,TAddressListItem.Create);
   result := GetAddress(Index);
 end;
 
 function TAddressList.AddNewXP(pm:boolean;const addr,real:string): TAddressListItem;
 var Index: Integer;
 begin
-  Index := Add(TAddressListItem.CreateXP(pm,addr,real));
+  Index := FObjects.Add(TAddressListItem.CreateXP(pm,addr,real));
   result := GetAddress(Index);
 end;
 
 function TAddressList.InsertNewXP(Index: Integer; pm:boolean;const addr,real:string): TAddressListItem;
 begin
-  Insert(Index,TAddressListItem.CreateXP(pm,addr,real));
+  FObjects.Insert(Index,TAddressListItem.CreateXP(pm,addr,real));
   result := GetAddress(Index);
 end;
 
 function TAddressList.GetAddress(Index:Integer): TAddressListItem;
 begin
-  result := Items[Index] as TAddressListItem;
-end;  
+  result := TAddressListItem(FObjects.Items[Index]);
+end;
+
+function TAddressList.GetCount: Integer;
+begin
+  result := FObjects.Count;
+end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
 
@@ -701,6 +754,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.2  2002/04/17 19:27:54  cl
+// - changed addresslist.pas to compile with FPC
+//
 // Revision 1.1  2002/04/14 22:33:10  cl
 // - New address handling, supports To, CC, and BCC
 // - Nearly complete rewrite of DoSend's message creation
