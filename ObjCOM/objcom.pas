@@ -75,9 +75,9 @@ type tCommObj = Object
 
 Type tpCommObj = ^tCommObj;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF }
-{$IFDEF Linux} {$I OCSLinh.inc} {$DEFINE TCP} {$ENDIF}
-{$IFDEF OS2} {$I OCSOS2.inc} {$DEFINE TCP} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF}
+{$IFDEF Linux} { $I OCSLinh.inc } {$DEFINE TCP} {$ENDIF}
+{$IFDEF OS2} {$I OCSOS2h.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDosh.inc} {$I OCFDosh.inc} {$DEFINE Fossil} {$ENDIF}
 {$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
 
@@ -98,7 +98,7 @@ function FossilDetect: Boolean;
 uses Sysutils,Dos,Strings,Timer,Debug
 {$IFDEF Win32},OCThread,Windows{$ENDIF}
 {$IFDEF Linux},Serial,Linux{$ENDIF}
-{$IFDEF OS2},OCThread{$ENDIF}
+{$IFDEF OS2},OCThread,OS2Base{$ENDIF}
 {$IFDEF Go32V2},Go32{$ENDIF}
 {$IFDEF TCP},Sockets{$ENDIF}
 ;
@@ -370,9 +370,9 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
  {Initializes comm object. S may be for example
   "Serial Port:1 Speed:57600 Parameters:8N1"
   "Serial IO:2f8 IRQ:4 Speed:57600" (Dos) *
-  "Serial /dev/ttyS1 Speed:57600" (Linux)
+  "Serial /dev/ttyS1 Speed:57600 Flow:Hard" (Linux)
   "Fossil Port:1 Speed:57600" (Dos)
-  "Telnet Dest:192.168.0.1:20000" *
+  "Telnet Dest:192.168.0.1:20000"
   "Telnet Port:20000" *
   *: not yet working.}
 
@@ -386,9 +386,8 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
 type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
 
 var
- IPort,ISpeed,IDataBits,IStopBits: LongInt;
- CParity: Char; IgnoreCD: Boolean;
- PTag,Res: Integer; SOpt,SPort: String; ConnType: tConnType;
+ IPort,ISpeed,IDataBits,IStopBits: LongInt; IgnoreCD,FlowHardware: Boolean;
+ CParity: Char;  PTag,Res: Integer; SOpt,SPort: String; ConnType: tConnType;
 
 begin
   ConnType:=CUnknown;
@@ -397,7 +396,7 @@ begin
   if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial;
   if ConnType<>CUnknown then
     begin
-      IPort:=1; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False;
+      IPort:=1; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False; FlowHardware:=True;
       Delete(S,1,7); {delete 'Serial'/'Fossil'/'Telnet' from string}
       {$IFDEF Linux} PTag:=Pos(' ',S);
                      if PTag<>0 then begin SPort:=Copy(S,1,PTag-1); Delete(S,1,PTag)end
@@ -412,7 +411,8 @@ begin
         else if Copy(SOpt,1,5)='SPEED' then begin Delete(SOpt,1,6); Val(SOpt,ISpeed,Res)end
         else if Copy(SOpt,1,10)='PARAMETERS' then
           begin Val(Copy(SOpt,12,1),IDataBits,Res); if Res=0 then Val(Copy(SOpt,14,1),IStopBits,Res); if Res=0 then CParity:=SOpt[13]end
-        else if Copy(SOpt,1,8)='IGNORECD' then IgnoreCD:=True;
+        else if Copy(SOpt,1,8)='IGNORECD' then IgnoreCD:=True
+        else if Copy(SOpt,1,4)='FLOW' then begin Delete(SOpt,1,5); FlowHardware := (SOpt<>'SOFT')end;
       end;
       {$IFNDEF Linux} SPort:=Int2Str(IPort); {$ENDIF}
       DebugLog('ObjCOM','P'+SPort+' S'+Int2Str(ISpeed)+' '+Int2Str(IDataBits)+CParity+Int2Str(IStopBits),1);
@@ -424,7 +424,7 @@ begin
                                                CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
                 {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
                 {$ELSE} CSerial: begin CommObj:=New(tpSerialObj,Init);
-                                       CommInit:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits)end; {$ENDIF}
+                                       CommInit:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
               end;
               CommObj^.IgnoreCD:=IgnoreCD;
         end
@@ -440,6 +440,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2000/10/15 14:53:38  ma
+  - Ken J. Wright: Linux port now working
+  - M.Kiesel: OS/2 port now compiles again (VP)
+
   Revision 1.5  2000/10/02 03:16:41  mk
   - made ObjCOM Virtual Pascal compatible
 
