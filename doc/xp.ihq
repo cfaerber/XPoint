@@ -9696,10 +9696,11 @@ oder kehren Sie mit <<<Esc> >>zum Suche-Dialog zurÅck.
 
 Wenn sie mehrere Begriffe mit <<<Space> >>markieren,
 Åbernehmen Sie mit <<<Enter> >>die markierten Begriffe in
-die [Suchbegriff-History] (<<<F2> >>/ SEEK.TXT) statt in@530
-das Eingabefeld. Die entsprechende Anzahl alter Such-
-begriffe wird dabei ggf. gelîscht (SEEK.TXT verwaltet
-max. 15 EintrÑge).
+die [Suchbegriff-History] (<<<F2> >>/ SEEK.TXT); die ent-@530
+sprechende Anzahl alter Suchbegriffe wird dabei ggf.
+gelîscht (SEEK.TXT verwaltet max. 15 EintrÑge). Der
+erste markierte Suchbegriff wird in das Eingabefeld
+Åbernommen.
 
 Mit <<E>> laden Sie die Datei SEEKLIB.TXT in den Editor
 und kînnen sie dort beliebig Ñndern, z.B um oft ver-
