@@ -236,6 +236,7 @@ procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
+function  TempExtS(bytes:longint;startnamewith,ext:string):string;
 procedure _era(const Filename: String);
 // Deletes a file only if exists, uses _era to report errors
 procedure SaveDeleteFile(const Filename: String);
@@ -1840,6 +1841,13 @@ begin
     TempS:=TempFile(OwnPath);
 end;
 
+function TempExtS(bytes:longint;startnamewith,ext:string):string;
+begin
+  if (temppath='') or (temppath[1]=ownpath[1]) or (TempFree+4096>bytes) then
+    Result:=TempExtFile(TempPath,startnamewith,ext)
+  else
+    Result:=TempExtFile(OwnPath,startnamewith,ext);
+end;
 
 procedure _era(const Filename:string);
 begin
@@ -2053,6 +2061,9 @@ end;
 
 {
   $Log$
+  Revision 1.120  2001/09/08 14:25:29  cl
+  - added TempExtS (needed to create Temporary files for old PGP versions)
+
   Revision 1.119  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
