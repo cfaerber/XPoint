@@ -16,22 +16,34 @@ ShowHeader("OpenXP Online");
 
 /* Below this point you can insert html-code as you like, but remind the ShowFooter! */
 ?>
-<h2>&Uuml;ber OpenXP...</h2>
-<p>Crosspoint (XP) ist ein Text-basierendes Mail-Programm f&uuml;r viele verschiedene 
-Mailboxennetze wie FIDO, ZConnect und nat&uuml;rlich auch Internet Mail und News.
-Im Dezember '99 hat der Autor <a href='mailto:info@crosspoint.de'>Peter Mandrella</a>
-den Quellcode von CrossPoint.3.20&szlig; freigegeben. Diese Version wurde in den 
-letzten 3 Jahren von ihm entwickelt, aber nie ver&ouml;ffentlicht.
-</p>
+<h2>Information on OpenXP</h2>
 
-<h2>Bugs</h2>
-<p>
-Wichtige Hinweise &uuml;ber die Entwicklung von OpenXP finden Sie bei
-<a href='https://sourceforge.net/projects/openxp/'>SourceForge</a>.
-</p>
+Crosspoint (XP) is a text-based mailer for various bbs nets like
+FidoNet, ZConnect and of course internet mail and news. In December 1999
+the writer of Crosspoint, Peter Mandrella, released
+Crosspoint 3.20&szlig; sources to the public.
 
-<h2>Download</h2>
-<p align=center><i>Kommt noch...</i></p>
+<br>Since then many people worked on these sources - OpenXP has been
+born.
+
+<p>There are three versions of OpenXP:
+
+<p>OpenXP 3.20, basically Peter's Crosspoint
+3.20&szlig; with some bugfixes. Only further bugfixes are applied to
+this version. No new features will be added.
+
+<p>OpenXP 3.30, 16 bit, bigger changes.
+
+<p>OpenXP 3.70, purely 32 bit, there have
+been many changes. Native Windows, OS/2 and Linux/FreeBSD versions
+are available. When developing this version, some features have been disabled
+as porting a 16 bit program to 32 bit and different platforms cannot
+be done in one step. This version is "work in progress".
+
+<h3>Legal</h3>
+All OpenXP versions except for OpenXP 3.70 are subject to Peter's slicense.
+That means you have to register them. OpenXP 3.70 is GNU GPL, that means
+it is totally free.
 
 <? 
 // this is the last command, it closes the document
