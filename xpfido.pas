@@ -125,26 +125,26 @@ const bersize   = 200;     { Max. Netze pro Bereich }
       MaxNamelen= 30;      { max. Namensl„nge in Userindex }
       blocksize = 1024;    { Blockgr”áe in Userindex }
 
-type  noderec = record
-                  node : word;
+type  noderec = packed record
+                  node : smallword;
                   adr  : longint;
                 end;
       nodea   = array[0..maxnodes-1] of noderec;
-      pointrec= record
-                  point : word;
+      pointrec= packed record
+                  point : smallword;
                   adr   : longint;
                 end;
       pointa  = array[0..maxpoints-1] of pointrec;
-      berrec  = record             { Netzindex - Bereich }
-                  fromnet  : word;
-                  fromzone : word;
-                  anz      : word;
+      berrec  = packed record             { Netzindex - Bereich }
+                  fromnet  : smallword;
+                  fromzone : smallword;
+                  anz      : smallword;
                   adr      : longint;
                 end;
-      netrec  = record case integer of
-                  0 : (net  : word;
-                       zone : word;
-                       anz  : word;
+      netrec  = packed record case integer of
+                  0 : (net  : smallword;
+                       zone : smallword;
+                       anz  : smallword;
                        fnr  : byte;   { Datei-Nr. }
                        flags: byte;   { 1=Pointliste }
                        adr  : longint);
@@ -152,31 +152,31 @@ type  noderec = record
                 end;
       netrecl = array[1..bersize] of netrec;
 
-      userrec = record
+      userrec = packed record
                   name : string[MaxNamelen];
                   adr  : array[0..3] of smallword;  { Zone:Net/Node.Point }
                   fnr  : byte;                 { Nodelisten-Dateinr. }
                   fadr : longint;
                 end;
       unodep  = ^usernode;
-      usernode= record
+      usernode= packed record
                   left,right : unodep;
                   user       : userrec;
                 end;
 
-      idxheader = record
+      idxheader = packed record
                     kennung : array[0..3] of char;
                     beradr  : longint;    { Adresse Bereichsindex }
-                    bernum  : word;       { Anzahl Bereiche       }
+                    bernum  : smallword;  { Anzahl Bereiche       }
                     adrnetx : longint;    { Adresse Netzindex     }
                     fill    : array[0..49] of byte;
                   end;
 
-      udxheader = record
+      udxheader = packed record
                     kennung : array[0..3] of char;
                     anzahl  : longint;
                     blocks  : longint;
-                    version : word;
+                    version : smallword;
                   end;
 
 type  bereichlst = array[1..maxber] of berrec;
@@ -2254,6 +2254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.9  2000/03/04 23:34:53  mk
   MH: Flagzeile kuerzen, falls zu lang
 

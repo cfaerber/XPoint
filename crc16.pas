@@ -12,8 +12,8 @@ uses xpglobal;
 
 { crc auf 0 initialisieren! }
 
-FUNCTION UpdCrc16(cp: BYTE; crc: WORD): smallWORD;
-function _CRC16(var data; size:word):smallword;
+FUNCTION UpdCrc16(cp: BYTE; crc: smallWORD): smallWORD;
+function _CRC16(var data; size:smallword):smallword;
 function Crc16StrXP(s:string):smallword;
 function Crc16Str(s:string):smallword;
 
@@ -21,7 +21,7 @@ function Crc16Str(s:string):smallword;
 IMPLEMENTATION
 
 (* crctab calculated by Mark G. Mendel, Network Systems Corporation *)
-CONST crctab: ARRAY[0..255] OF WORD = (
+CONST crctab: ARRAY[0..255] OF smallWORD = (
     $0000,  $1021,  $2042,  $3063,  $4084,  $50a5,  $60c6,  $70e7,
     $8108,  $9129,  $a14a,  $b16b,  $c18c,  $d1ad,  $e1ce,  $f1ef,
     $1231,  $0210,  $3273,  $2252,  $52b5,  $4294,  $72f7,  $62d6,
@@ -67,15 +67,15 @@ CONST crctab: ARRAY[0..255] OF WORD = (
  * to Stephen Satchell, Satchell Evaluations and Chuck Forsberg,
  * Omen Technology.
  *)
-FUNCTION UpdCrc16(cp: BYTE; crc: WORD): smallWORD;
+FUNCTION UpdCrc16(cp: BYTE; crc: smallWORD): smallWORD;
 BEGIN { UpdCrc }
    UpdCrc16 := crctab[((crc SHR 8) AND 255)] XOR (crc SHL 8) XOR cp
 END;
 
 
-function _CRC16(var data; size:word):smallword;
+function _CRC16(var data; size:smallword):smallword;
 type ba = array[0..65530] of byte;
-var c16,i : word;
+var c16,i : smallword;
 begin
   c16:=0;
   for i:=0 to size-1 do
@@ -96,6 +96,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/03/07 23:41:06  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

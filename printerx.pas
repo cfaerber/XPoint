@@ -191,7 +191,7 @@ end;
 
 procedure assignlst(var f:text; d:word);
 begin
-{$IFNDEF ver32}
+{$IFDEF BP }
   with textrec(f) do begin
     handle:=$ffff;
     mode:=fmclosed;
@@ -226,16 +226,17 @@ procedure prtsc;
 begin
 end;
 
-{$S-}
-procedure newexit;
-begin
-  exitproc:=oldexit;
-  close(lst);
-end;
-{$IFDEF Debug }
-  {$S+}
+{$IFDEF BP }
+  {$S-}
+  procedure newexit;
+  begin
+    exitproc:=oldexit;
+    close(lst);
+  end;
+  {$IFDEF Debug }
+    {$S+}
+  {$ENDIF }
 {$ENDIF }
-
 
 { ^X in Steuerzeichen umsetzen;  ^0 -> ^ }
 
@@ -271,16 +272,21 @@ end;
 
 
 begin
+{$IFDEF BP }
   assignlst(lst,0);
   rewrite(lst);
   oldexit:=exitproc;
   exitproc:=@newexit;
+{$ENDIF}
   checklst:=true;
   xlatger:=false;
   prterror:=prtorgerror;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

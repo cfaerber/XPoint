@@ -1,3 +1,4 @@
+
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
@@ -151,6 +152,7 @@ asm
 @nokeys: pop ds
 {$ELSE }
          push  edi
+         push  esi
          mov   edi, nodep
          mov   esi, rbuf
          xor   edx, edx
@@ -159,8 +161,8 @@ asm
          mov   ebx,136                 { (264) sizeof(inodekey); }
          sub   ebx,edx
          add   edi,14
-         cld
          xor   eax, eax
+         cld
          lodsw                         { Anzahl SchlÅssel im Node }
          stosw                         { Anzahl speichern }
 @noerr:  mov   ecx,2                   { Ref+Data von key[0] Åbertragen }
@@ -174,7 +176,8 @@ asm
          add   edi, ebx
          dec   eax
          jnz   @exlp
-@nokeys: pop   edi
+@nokeys: pop   esi
+         pop   edi
 {$ENDIF }
 end;
 
@@ -1709,6 +1712,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.8  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

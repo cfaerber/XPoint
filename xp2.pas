@@ -781,10 +781,10 @@ procedure read_regkey;
 var t   : text;
     s   : string[20];
     p   : byte;
-    l1,l2,l3 : longint;
-    l   : longint;
-    i   : integer;
-    code: longint;
+    l1,l2,l3 : integer32;
+    l   : integer32;
+    i   : integer16;
+    code: integer32;
     rp  : ^boolean;
     c   : char;
 
@@ -1101,6 +1101,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.17  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.16  2000/03/04 15:54:43  mk
   Funktion zur DOSEmu-Erkennung gefixt
 

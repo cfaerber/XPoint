@@ -1,7 +1,13 @@
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ --------------------------------------------------------------- }
 { Ressourcen-Compiler }
-{ 12/92, 06/93        }
+{ $Id$ }
 
-{$B-,A+,V-}
+{$I XPDEFINE.INC }
 
 uses  crt,dos,typeform,fileio;
 

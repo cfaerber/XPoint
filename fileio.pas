@@ -100,7 +100,7 @@ begin
     findnext(sr);
     ex:=(doserror=0);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
   exist:=ex;
@@ -213,7 +213,7 @@ begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
 end;
@@ -237,7 +237,7 @@ begin
           end;
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
   if pos('\',path)<length(path) then begin
@@ -462,7 +462,7 @@ begin
       inc(res);
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -696,6 +696,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.8  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 

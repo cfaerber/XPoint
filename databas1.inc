@@ -174,6 +174,7 @@ end;
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
     wp   : ^word absolute rbuf;
+    i,o: integer;
 begin
   with np^ do
     with dp(db_p)^ do begin
@@ -186,17 +187,18 @@ begin
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
 {$ENDIF }
-      expand_node(rbuf,np);
-      freemem(rbuf,irsize);
-      end;
 
-{     anzahl:=wp^;      (expand_node alt)
-      FastMove(rbuf^[2],key[0].data,8);
+{     anzahl:=wp^;     (expand_node alt)
+      Move(rbuf^[2],key[0].data,8);
       o:=10;
       for i:=1 to anzahl do begin
-        FastMove(rbuf^[o],key[i],9+ksize);
+        Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
         end; }
+
+      expand_node(rbuf,np);
+      freemem(rbuf,irsize);
+     end;
 end;
 
 
@@ -266,6 +268,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.6  2000/03/06 08:51:03  mk
   - OpenXP/32 ist jetzt Realitaet
 

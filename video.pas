@@ -64,13 +64,14 @@ procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
 
 IMPLEMENTATION
 
+uses
+
 {$IFDEF BP }
   {$IFDEF DPMI }
-  uses  WinAPI;
+  WinAPI,
   {$ENDIF}
 {$ENDIF }
-
-uses inout;
+  inout;
 
 var
   vtype   : byte;
@@ -516,6 +517,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/07 23:41:07  mk
+  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+
   Revision 1.7  2000/03/04 19:33:37  mk
   - Video.pas und inout.pas komplett aufgeraeumt
 
