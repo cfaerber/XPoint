@@ -404,7 +404,7 @@ endif
 COMPBIN = $(BIN) docform ihs rc
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug eddef editor encoder exxec feiertag fileio gpltools \
-	help inout ipaddr ipcclass keys lister maske maus2 modem \
+	help inout ipaddr ipcclass keys lister log maske maus2 modem \
 	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
 	printerx regexpr resource stack stringtools timer typeform \
 	uart unicode utftools win2 winxp xp0 xp1 xp10 xp1help \
@@ -645,19 +645,9 @@ yup2pkt$(EXEEXT): yup2pkt.pas dbase$(UNITEXT) fileio$(UNITEXT) \
 	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifneq (,$(findstring $(OS),freebsd linux))
-
-zfido$(EXEEXT): zfido.pas xpcurses$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) zftools$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-else
-
 zfido$(EXEEXT): zfido.pas xpdefine.inc xpglobal$(UNITEXT)
 	zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
-
-endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
@@ -869,6 +859,9 @@ lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
 
 endif
 
+log$(UNITEXT): log.pas xpdefine.inc xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
 ifneq (,$(findstring $(OS),freebsd linux))
 
 maske$(UNITEXT): maske.pas clip$(UNITEXT) inout$(UNITEXT) \
@@ -974,8 +967,8 @@ timer$(UNITEXT): timer.pas debug$(UNITEXT) xpdefine.inc
 typeform$(UNITEXT): typeform.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-uart$(UNITEXT): uart.pas inout$(UNITEXT) typeform$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+uart$(UNITEXT): uart.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 unicode$(UNITEXT): unicode.pas xpdefine.inc xpglobal$(UNITEXT)
@@ -1064,8 +1057,8 @@ winxp$(UNITEXT): winxp.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
-xp0$(UNITEXT): xp0.pas keys$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpheader.inc
+xp0$(UNITEXT): xp0.pas keys$(UNITEXT) log$(UNITEXT) typeform$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT) xpheader.inc
 	$(PC) $(PFLAGS) $<
 
 ifeq ($(OS),dos32)
@@ -1258,7 +1251,7 @@ ifeq ($(OS),dos32)
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
 	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+	lister$(UNITEXT) log$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
@@ -1276,7 +1269,7 @@ ifneq (,$(findstring $(OS),freebsd linux))
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
 	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+	lister$(UNITEXT) log$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
@@ -1295,7 +1288,7 @@ ifeq ($(OS),os2)
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
 	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+	lister$(UNITEXT) log$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
@@ -1313,7 +1306,7 @@ ifeq ($(OS),win32)
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
 	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
+	lister$(UNITEXT) log$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
 	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
@@ -2380,16 +2373,18 @@ xpwin32$(UNITEXT): xpwin32.pas utftools$(UNITEXT) winxp$(UNITEXT) \
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) mouse$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xplinux$(UNITEXT)
+	inout$(UNITEXT) log$(UNITEXT) mouse$(UNITEXT) \
+	typeform$(UNITEXT) xp0$(UNITEXT) xp2$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) mouse$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+	inout$(UNITEXT) log$(UNITEXT) mouse$(UNITEXT) \
+	typeform$(UNITEXT) xp0$(UNITEXT) xp2$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2649,6 +2644,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.46  2000/11/19 00:47:36  fe
+# Dependecies fixed.
+#
 # Revision 1.45  2000/11/17 19:46:38  fe
 # Dependencies fixed.
 #
