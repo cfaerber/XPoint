@@ -123,7 +123,7 @@ begin
   reset(t);
   readln(t,s);
   close(t);
-  _deutsch:=(ioresult=0) and (UpperCase(s)='XP-D.RES');
+  _deutsch:=(ioresult=0) and (UpperCase(s)='OPENXP-D.RES');
   filemode:=2;
 end;
 
@@ -177,6 +177,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/04/15 19:33:34  ma
+  - adjusted resource file names
+
   Revision 1.39  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

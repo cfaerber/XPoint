@@ -107,9 +107,9 @@ var t  : text;
     s  : string;
     i  : integer;
 begin
-  if not fileexists('xp.res') and not fileexists('xp-d.res') then begin
+  if not fileexists('openxp.res') and not fileexists('openxp-d.res') then begin
     wrlogo;
-    writeln('Fehler: ''xp-d.res'' nicht gefunden.'#7);
+    writeln('Fehler: ''openxp-d.res'' nicht gefunden.'#7);
     writeln;
     writeln('Starten Sie dieses Programm bitte in einem Verzeichnis, in dem');
     writeln('CrossPoint vollst„ndig installiert wurde.');
@@ -123,7 +123,7 @@ begin
     close(t);
     end
   else
-    s:='xp-d.res';
+    s:='openxp-d.res';
   if not fileexists(s) then
     error(s+' fehlt!');
   OpenResource(s,10000);
@@ -769,6 +769,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2001/04/15 19:33:34  ma
+  - adjusted resource file names
+
   Revision 1.32  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -877,7 +877,7 @@ var s  : string;
 
 begin
   s:='';
-  Result := FindFirst('XP-*.RES', faAnyFile,sr);
+  Result := FindFirst('OPENXP-*.RES', faAnyFile,sr);
   sn:=0;
   while Result = 0 do
   begin
@@ -913,14 +913,14 @@ begin
     fehler('No language files found !?')
   else begin
     p:=sn;
-    while (sa[p]<>'XP-'+ParLanguage+'.RES') and (p>1) do dec(p);
+    while (sa[p]<>'OPENXP-'+ParLanguage+'.RES') and (p>1) do dec(p);
     nr:=MiniSel(30,(screenlines-sn) div 2,'',s,p);
     if nr>0 then begin
       nl:=copy(sa[nr],4,cpos('.',sa[nr])-4);
       if (nl<>ParLanguage) then begin
         old:=ParLanguage;
         if not _SetLanguage(nl) then begin
-          fehler('wrong version of XP-'+nl+'.RES');
+          fehler('wrong version of OPENXP-'+nl+'.RES');
           nr:=p;
           if _SetLanguage(old) then;
           end;
@@ -934,6 +934,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/04/15 19:33:34  ma
+  - adjusted resource file names
+
   Revision 1.35  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
