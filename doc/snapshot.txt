@@ -526,10 +526,10 @@ Bugfixes
   Menzeile der User-šbersicht so dokumentiert.
   XP4.PAS, XP-D.RQ
 
-- "O" nach <Ctrl-PgUp/PgDn> im Lister berschrieb den Bildschirm-
-  eintrag, auf den der Cursorbalken in der Nachrichtenbersicht
-  gebl„ttert wurde, mit der Nachricht, bei der der Lister gestartet
-  wurde.
+- "O" (Anzeige des Nachrichten-Headers) nach <Ctrl-PgUp/PgDn> im Lister
+  berschrieb den Bildschirmeintrag, auf den der Cursorbalken in der
+  Nachrichtenbersicht gebl„ttert wurde, mit der Nachricht, bei der der
+  Lister gestartet wurde.
   XP4W.INC, XP1O.PAS
 
 - Wenn im Editor der Suchbegriff ab der zweiten Zeile eines Absatzes
