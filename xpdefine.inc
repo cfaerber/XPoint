@@ -53,20 +53,21 @@
   {$DEFINE VP }
   {$DEFINE Ver32 }
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode-,AlignData-,AlignRec-,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
+  {&AlignCode+,AlignData+,AlignRec+,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
-{$IFDEF FPC }             { Freepascal >= 0.99.14 }
+{$IFDEF FPC }             { Freepascal >= 1.0 }
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
     {$UNDEF DPMI }
   {$ENDIF }
   {$MODE Delphi }
-  {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$ASMMODE Intel }
   {$GOTO ON }
+  {$PACKRECORDS Default } { Default: 2 }
+  {$C-,H+,I-,M-,P-,Q-,R-,S-,T-,V-,X+}
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -77,7 +78,11 @@
 
 {$IFDEF Debug }
   {$IFDEF VirtualPascal }
-    {$R+,S+,Q+,W+,Optimize-}
+    {$Q+,R+,S+,W+,Optimize-}
+  {$ENDIF }
+  {$IFDEF FPC }
+    {$Q+,R+,S+}
+    {$C+}                 { Assertation support }
   {$ENDIF }
 {$ENDIF }
 
@@ -130,6 +135,9 @@
 
 {
   $Log$
+  Revision 1.53  2000/09/28 03:03:19  mk
+  - Debug-Schalter auch fuer FreePascal
+
   Revision 1.52  2000/09/19 03:21:41  mk
   - Debuginfos ausgeschaltet
 
