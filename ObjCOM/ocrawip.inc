@@ -260,11 +260,11 @@ end; { func. TRawIPStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TRawIPStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TRawIPStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),dlDebug+2);
-
-  Written:={$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}send(SHandle,Block,BlockLen,0);
+  Written:={$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}send(SHandle,(Pointer(@Block))^,BlockLen,0);
+  
   if not Written > 0 then
   begin
     SetErrorStr('SendBlock');
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.17  2003/01/01 16:19:45  mk
   - changes to made FreeBSD-Version compilable
 

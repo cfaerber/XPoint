@@ -22,7 +22,7 @@ type TFossilStream = Class(TCommStream)
 
         procedure OpenQuick(Handle: Longint); override;
         procedure Close; override;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure SendBlock(const Block; BlockLen: Longint; var Written: Longint); override;
         procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); override;
         procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
@@ -38,6 +38,9 @@ type TFossilStream = Class(TCommStream)
 
 {
   $Log$
+  Revision 1.6  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.5  2001/10/01 19:45:07  ma
   - compiles again (DOS32)
 

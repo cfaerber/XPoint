@@ -423,7 +423,7 @@ end; { func. tSerialObj.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure tSerialObj.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 begin
   if OutBuffer^.BufRoom < BlockLen then
    repeat
@@ -670,6 +670,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.7  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.6  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -242,7 +242,7 @@ end; { func. TSerialStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TSerialStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 var BytesWritten: DWord;
     Success: Boolean;
 begin
@@ -412,6 +412,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.10  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.9  2002/12/14 07:31:45  dodi
   - using new types
 

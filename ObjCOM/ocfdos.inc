@@ -208,7 +208,7 @@ end; { proc. TFossilStream.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TFossilStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 {$IFDEF GO32V2}
 var Selector,
     Segment   : Word;
@@ -229,7 +229,7 @@ begin
     DosAlloc(Selector, Segment, BlockLen);
 
     if Int31Error <> 0 then EXIT;
-    DosmemPut(Segment, 0, Block, BlockLen);
+    DosmemPut(Segment, 0,(Pointer(@Block))^, BlockLen);
 
     Regs.AH := $19;
     Regs.DX := FosPort;
@@ -240,7 +240,7 @@ begin
 
     Written := Regs.AX;
 
-    DosMemGet(Segment, 0, Block, BlockLen);
+  { DosMemGet(Segment, 0, (Pointer(@Block)^, BlockLen); }
     DosFree(Selector);
   {$ENDIF}
 end; { proc. TFossilStream.SendBlock }
@@ -499,6 +499,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.5  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -51,11 +51,7 @@ type TCommStream = class(TStream)
         destructor Destroy; override;
 
         function Read(var Buffer; Count: Longint): Longint; override;
-        {Wieso ist hier "override" ausgeklammert?
-          Damit wird diese Methode nicht-virtuell,
-          mit möglicherweise unerwarteten Konsequenzen!
-        }
-        function Write(var Buffer; Count: Longint): Longint; {override;}
+        function Write(const Buffer; Count: Longint): Longint; override;
         function Seek(Offset: Longint; Origin: system.Word): Longint; override;
 
   (* --- CommObj interface ----------------------------------------------- *)
@@ -78,7 +74,7 @@ type TCommStream = class(TStream)
         function  SendChar(C: Char): Boolean; virtual;
         function  SendString(Temp: String; ExpectEcho: Boolean): Boolean; virtual;
         function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual; {Send BlockLen chars, Written normally = Blocklen, waits for OutBuffer}
+        procedure SendBlock(const Block; BlockLen: Longint; var Written: Longint); virtual; {Send BlockLen chars, Written normally = Blocklen, waits for OutBuffer}
         procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); virtual;
 
         function  GetDriverInfo: String; virtual;
@@ -164,7 +160,7 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TCommStream.Write(var Buffer; Count: Longint): Longint;
+function TCommStream.Write(const Buffer; Count: Longint): Longint;
 begin
   SendBlock(Buffer,Count,Result);
 end;
@@ -219,7 +215,7 @@ end; { proc. TCommStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TCommStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TCommStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 begin
   DebugLog('ObjCOM','Method SendBlock not overloaded',1)
 end; { proc. TCommStream.SendBlock }
@@ -510,6 +506,9 @@ end
 
 {
   $Log$
+  Revision 1.35  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.34  2003/01/01 18:56:52  dodi
   - new xpinout API
 

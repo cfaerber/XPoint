@@ -22,7 +22,7 @@ type TRawIPStream = Class(TCommStream)
 
         procedure OpenQuick(Handle: Longint); override;
         procedure Close; override;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure SendBlock(const Block; BlockLen: Longint; var Written: Longint); override;
         procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
         procedure SetDtr(State: Boolean); override;
@@ -69,6 +69,9 @@ type TRawIPStream = Class(TCommStream)
 
 {
   $Log$
+  Revision 1.8  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.7  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

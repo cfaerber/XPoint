@@ -361,7 +361,7 @@ Begin
     Port[IOBase+PO_MCR]:= Org_MCR or $FE;
 End;
 
-procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TSerialStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 Var I: Longint;
 Begin
   for I:=0 to BlockLen-1 do SendChar(tCharArray(Block)[I]);
@@ -413,6 +413,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.7  2001/10/01 19:44:26  ma
   - compiles again
   - not working yet (see lock_data)

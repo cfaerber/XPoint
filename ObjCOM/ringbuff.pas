@@ -25,7 +25,7 @@ type tCharArray = Array[0..65520] of Char;
 
           function BufRoom: Longint;
           function BufUsed: Longint;
-          function Put(var Buf; Size: Longint): Longint;
+          function Put(const Buf; Size: Longint): Longint;
           function Get(var Buf; Size: Longint; Remove: Boolean): Longint;
           procedure Clear;
 
@@ -83,7 +83,7 @@ end; { func. BufUsed }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tRingbuffer.Put(var Buf; Size: Longint): Longint;
+function tRingbuffer.Put(const Buf; Size: Longint): Longint;
 var Temp: Longint;
 begin
   if Size<0 then Halt(240);
@@ -130,6 +130,9 @@ end; { proc. Clear }
 
 {
   $Log$
+  Revision 1.8  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.7  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 

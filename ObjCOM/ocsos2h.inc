@@ -21,7 +21,7 @@ type TSerialStream = Object(TCommStream)
 
         procedure OpenQuick(Handle: Longint); override;
         procedure Close; override;
-        procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); override;
+        procedure SendBlock(const Block; BlockLen: Longint; var Written: Longint); override;
         procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); override;
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
         procedure SetDtr(State: Boolean); override;
@@ -38,6 +38,9 @@ type TSerialStream = Object(TCommStream)
 
 {
   $Log$
+  Revision 1.4  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.3  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -193,10 +193,10 @@ end; { func. TSerialStream.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+procedure TSerialStream.SendBlock(const Block; BlockLen: Longint; var Written: Longint);
 begin
 {$IFDEF Kylix}
-  Written:= send(SHandle,Block,BlockLen, 0);
+  Written:= send(SHandle,(Pointer(@Block))^,BlockLen, 0);
 {$ELSE}
   Written:= fdWrite(SHandle,Block,BlockLen);
 {$ENDIF}
@@ -348,6 +348,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.10  2003/01/06 22:43:02  cl
+  - made TCommStream.Write compatible with TStream.Write
+
   Revision 1.9  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 
