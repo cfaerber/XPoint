@@ -23,7 +23,6 @@ uses   dos,typeform,keys,xpglobal;
 { CrossPoint compilieren k”nnen. Falls Die das compilierte Programm }
 { weitergeben m”chten, mssen der angegebene Name korrekt und die   }
 { E-Mail-Adresse erreichbar sein (siehe LIZENZ.TXT).                }
-{
 { Beispiel:                                                         }
 {                                                                   }
 { const  author_name = 'Ralf Mller';                               }
@@ -34,12 +33,7 @@ uses   dos,typeform,keys,xpglobal;
 { /XPoint/Registrierung angezeigt.                                  }
 
 
-const  {$IFDEF DPMI}
-       IsDPMI      = true;
-       {$ELSE}
-       IsDPMI      = false;
-       {$ENDIF}
-
+const
        LangVersion = '13';           { Version des Sprachmoduls }
        menus       = 40;             { Anzahl der Menus }
        ZeilenMenue = 11;
@@ -77,9 +71,7 @@ const  {$IFDEF DPMI}
        PostadrLen  = 80;             { Postadresse }
        TeleLen     = 100;            { Telefon }
        HomepageLen = 90;             { WWW-Homepage }
-       { 01/2000 oh }
        CustHeadLen = 60;             { Customizable Header-Lines }
-       { /oh }
        hdErrLen    = 60;
        ViewprogLen = 70;             { Kommandozeile fr ext. Viewer }
        ResMinmem   = 340000;
@@ -305,10 +297,8 @@ const  {$IFDEF DPMI}
        hdf_FILE   = 10;       hdf_ZUSF    = 20;     hdf_xNoArchive = 32; {!MH:}
        hdf_STAT   = 11;       hdf_DIST    = 21;
        hdf_ORG    = 12;       hdf_POST    = 22;
-       { 01/2000 oh }
        hdf_Cust1  = 29;
        hdf_Cust2  = 30;
-       { /oh }
        hdf_ersetzt = 33;
        hdf_control = 34;
 
@@ -486,10 +476,8 @@ type   textp  = ^text;
                   nokop      : boolean;
                   boundary   : string[70];    { MIME-Multipart-Boundary      }
                   mimetyp    : string[30];
-                  xnoarchive : boolean; { MK 01/00 fr UUZ Fix von Robo }
-                  { 01/2000 oh }
+                  xnoarchive : boolean;
                   Cust1,Cust2: CustHeadStr;
-                  { /oh }
                   control    : string[150];
                 end;
        headerp = ^header;
@@ -793,7 +781,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParG2      : boolean = false;   { Gebhren berechnen }
        ParNolock  : boolean = false;   { keine Lockfile-šberprfung }
 {$IFDEF Beta }
-       ParNoBeta  : boolean = false;   { MK 01/00 keine Beta-Meldung }
+       ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
 
        MoreMode   : boolean = true;
@@ -814,8 +802,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        viewer_lister : string = '.TXT.ASC';                 { immer internen Lister benutzen }
        viewer_scanner : string[viewproglen] = '';            { Viewer bei Antwort=Nein }
 
-       { 01/2000 oh }
-
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
        Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
@@ -832,7 +818,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
        showungelesen : boolean = false;   { Bretter mit ungel. Nachrichten auch markieren }
-       { /oh }
 
        ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
 
@@ -1171,6 +1156,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.61  2000/07/01 11:18:28  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.60  2000/07/01 09:09:31  mk
   - xp_short entfernt
 

@@ -10,7 +10,6 @@ DBASE.PAS       dBASE-Dateien auslesen (fÅr YUP2PKT)
 DEBUG.PAS       Debug-Unit. Per Environment steuerbare Logmessages.
 DOSX.PAS        DOS- und BIOS-Funktionen
 ED*.*           Editor
-EMS.PAS         EMS-Speicherverwaltung
 EXXEC.*         externe Programme aufrufen; Swapping
 FEIERTAG.PAS    Feiertage ermitteln
 FILEIO.PAS      Dateien, Pfade, Laufwerke
@@ -32,7 +31,6 @@ VIDEO.*         Video-BIOS-Funktionen
 WIN2.PAS        Auswahlfenster
 WINDOWS.*       Fenster allgemein
 XDELAY.*        Ersatz fÅr CRT-Delay
-XMS.*           XMS-Speicherverwaltung
 
 XP.PAS          CrossPoint-Hauptprogramm, Real-Mode-Version
 XL.PAS          CrossPoint-Hauptprogramm, DPMI-Version
@@ -109,7 +107,6 @@ XPUU.PAS        UUCICO-Aufruf
 XPVIEW.PAS      BinÑrfile-Viewer
 XPX.PAS         erste Unit: Startup-Funktionen
 XP-*.RQ         Resourcendateien fÅr CrossPoint
-XPFNT*.OBJ      Bildschirmfonts
 
 NDIFF.PAS       Nodelist-Differ (NDIFF.EXE)
 PMCONV.PAS      PM-Puffer-Konvertierer (PMCONV.EXE)

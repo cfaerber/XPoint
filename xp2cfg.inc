@@ -421,7 +421,7 @@ begin
   new(wwwHomepage); wwwHomepage^:='';
   SetNtAllowed;
   fidobin:=exist('fido-bin');
-  Clipboard:=not IsDPMI and ClipAvailable;
+  Clipboard:=ClipAvailable;
   new(viewers);
   new(unpacker);
 
@@ -1783,6 +1783,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.67  2000/07/01 11:18:28  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.66  2000/06/29 13:00:54  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
