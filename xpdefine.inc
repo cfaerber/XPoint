@@ -42,7 +42,7 @@
   {$DEFINE VP }
   {$DEFINE Ver32 }
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
+  {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
   {$DEFINE hasHugeString}
 {$ENDIF }
@@ -53,7 +53,7 @@
     {$DEFINE DOS32 }
     {$UNDEF DPMI }
   {$ENDIF }
-  {$MODE TP }
+  {$MODE Delphi }
   {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE hasHugeString}
   {$ASMMODE Intel }
@@ -116,6 +116,9 @@
 
 {
   $Log$
+  Revision 1.44  2000/07/09 08:45:44  mk
+  - bei FPC/VP auf Delphi Kompatiblitaetsmodus geschaltet
+
   Revision 1.43  2000/07/06 09:12:09  mk
   - AnsiString Updates
 
