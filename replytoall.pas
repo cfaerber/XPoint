@@ -303,8 +303,8 @@ var x,y,i       : Integer;
     res         :boolean;
     s           :string;
 begin
-(*  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) {and
-     (not XPFirstStart) } then *)
+  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) {and
+     (not XPFirstStart) } then
   begin
     msglines := ival (getres2 (2750, 0));
     msgbox (64, msglines + 5, '', x, y);
@@ -1059,6 +1059,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/28 19:35:58  mk
+  - askRTA asks not every time ;)
+
   Revision 1.3  2001/07/28 18:13:56  mk
   - fixed AnsiString database read/write
   - fixed use of crt.write to Wrt2
