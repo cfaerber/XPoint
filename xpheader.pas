@@ -434,7 +434,9 @@ procedure THeader.WriteZConnect(stream:TStream);
       if pgpflags and fPGP_encoded<>0  then writeln_s(stream,'CRYPT: PGP') else
       if crypt.method<>'' then writeln_s(stream,'CRYPT: '+crypt.method);
 
-      if charset<>''             then writeln_s(stream,'CHARSET: '+charset);
+      charset:=MimeCharsetToZC(charset);
+      if (charset<>'') and (charset<>'US-ASCII') and (charset<>'IBM437') then writeln_s(stream,'CHARSET: '+charset);
+      
       if postanschrift<>''       then writeln_s(stream,'POST: '+postanschrift);
       if telefon<>''   then writeln_s(stream,'TELEFON: '+telefon);
       if homepage<>''  then writeln_s(stream,'U-X-Homepage: '+homepage);
@@ -579,6 +581,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2001/09/08 23:30:26  cl
+  - 'CHARSET:' only written if not in ['IBM437','US-ASCII'] (backwards compatibility fix)
+
   Revision 1.15  2001/09/08 20:59:50  cl
   - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
     is still recognized for backwards compatibility).
