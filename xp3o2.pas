@@ -147,9 +147,9 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if attrib and attrReqEB<>0 then
         if wab<>''       then wrs('EB: '+wab) else
         if replyto.count>0 then
-	  for i:=0 to replyto.count-1 do
+          for i:=0 to replyto.count-1 do
             wrs('EB: '+replyto[i])
-	else
+        else
           wrs('EB:');
       if attrib and attrIsEB<>0  then wrs('STAT: EB');
       if pm_reply                then wrs('STAT: PM-REPLY');
@@ -398,18 +398,23 @@ begin
         xp0.fidoto:=realname;
       end;
     reptoanz:=0;
-    if pm then begin
+
+    if pm then
+    begin
       { suboptimal }
       if replyto.count>0 then repto:=replyto[0];
       reptoanz:=0;
-      end
-      { suboptimal }
-    else if (followup.count>0) or
-         ((empfanz=1) and (empfaenger=followup[0])) then repto:=''
-         else begin
-           repto:='A'+followup[0];
+    end
+    { suboptimal }
+    else
+      if (followup.count>0) or
+         ((empfanz=1) and (followup.count > 0) and (empfaenger=followup[0])) then repto:=''
+         else
+         begin
+           if Followup.count > 0 then repto:='A'+followup[0]
+             else repto := 'A';
            reptoanz:=followup.count;
-           end;
+         end;
     if not pm then begin
       AddToReflist(hdp^.ref);
       _ref6list:=reflist;
@@ -447,6 +452,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/19 22:26:44  mk
+  - fixed crash in followup[0] with empty stringlist
+
   Revision 1.25  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 
