@@ -404,6 +404,7 @@ end;
 
 procedure releaseliste;
 begin
+  e.Clear;
   anzahl:=0;
 end;
 
@@ -2188,6 +2189,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.71.2.2  2003/08/28 05:54:52  mk
+  - added e.clear in releaseliste
+
   Revision 1.71.2.1  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 
