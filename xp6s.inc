@@ -6,9 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-
-(* 05.02.2000 MH: Durch Erweiterung des Sendefenster Verschiebung notwendig *)
-(* 06.02.2000 MH: RFC-Priority *)
+{ $Id$ }
 
 { Unterroutinen fÅr XP6.PAS }
 
@@ -1108,15 +1106,15 @@ begin
       end;
 end;
 
-procedure getprio; (* MH: RFC: X-Priority: 1, 3, 5            *)
+procedure getprio; { MH: RFC: X-Priority: 1, 3, 5            }
 var x,y : byte;
-    brk : boolean; (* MH: 06.02.2000                          *)
+    brk : boolean; { MH: 06.02.2000                          }
     prio: string[7];
 begin
   dialog(ival(getres2(272,0)),3,getres2(272,1),x,y);  { 'Sende-PrioritÑt' }
-   prio:='Normal'; rfcprio:=3; { somit erst beim ersten mal aktiv }
+   prio:='Keine'; rfcprio:=0;
   maddstring(3,2,getres2(272,2),prio,7,7,'');  { 'PrioritÑt ' }
-  mappsel(true,'Hoch˘Normal˘Niedrig');
+  mappsel(true,'Hoch˘Normal˘Niedrig˘Keine');
   readmask(brk);
   if not brk and mmodified then begin
    if prio='Hoch' then rfcprio:=1 else
@@ -1125,3 +1123,9 @@ begin
     end;
   enddialog;
 end;
+{ 
+  $Log$
+  Revision 1.5  2000/02/17 13:04:05  mk
+  MH: * Prioauswahl fuer keine Prioritaet hinzugefuegt
+
+}
