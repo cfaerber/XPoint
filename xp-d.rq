@@ -3162,6 +3162,32 @@ K (c) '93-98 Peter Mandrella
 7   PGP meldet ungÅltige Signatur!
 -
 
+# --- Xp-Easy Modus ---------------------------------------------------
++   14000
+#   Zeilenanzahl
+0   10
+1   Willkommen als neuer Benutzer 
+2   Als allererstes muessen sie noch einige Einstellungen taetigen
+3   Hierzu gehoeren u.a. auch die Einstellungen rund um den verwendeten
+4   Server. Hierzu gibt es zwei Moeglichkeiten
+5   Sie koennen alles klassisch in den Menues des Hauptprogramms
+6   einstellen oder den neuen XP-Easy Modus benutzen.
+7   Dieser Xp-Easy Modus fragt sie einfach nacheinander nach allem
+8   was unbedingt von CrossPoint benoetigt wird
+9
+10  Bitte waehlen Sie jetzt Ihren Konfigurationsmodus
+30  ~^XP-Easy , ^Klassik-Config~
+
++   14001
+#   Zeilenanzahl
+0   6
+1   Erstmal haben Sie die Mîglichkeit ihre Adresse , Telefonnummer
+2   Homepageadresse und Postanschrift einzugeben.
+3   Diese Angaben sind rein freiwillig , sie werden aber in Kopf
+4   jeder Nachricht (bzw. wenn sie nur bei PMs anklicken nur
+5   bei E-Mail (PMs)) aufgefuehrt. Bedenken Sie dies bitte wenn
+6   Sie hier was eintragen.
+-
 
 # --- Einstellungen ---------------------------------------------------
 
