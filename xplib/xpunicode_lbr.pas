@@ -52,7 +52,9 @@ unit xpunicode_lbr;
 
 { ---------------------------} interface { --------------------------- }
 
-uses classes,xpunicode;
+uses
+  Classes,
+  xpunicode;
 
 { The Line Break Type character property. }
 type TUnicodeLineBreakType = (
@@ -157,10 +159,8 @@ type TUnicodeLineBreaker = class
 { ------------------------} implementation { ------------------------- }
 
 uses xpstreams, 
-  {$IFDEF Delphi}
-    strutils,
-  {$ENDIF}
-    sysutils;
+  strutils,
+  sysutils;
 
 {$IFDEF UnixFS}
 {$I unicode/linebreak.inc }
@@ -625,6 +625,11 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2003/08/26 22:46:31  cl
+// - moved xpstreams to xplib/
+// - split xpstreams into individual small files to remove some dependencies
+// - added pasdoc documentation
+//
 // Revision 1.2  2003/08/23 23:02:38  mk
 // - removed hints and warnings
 //
