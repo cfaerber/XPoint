@@ -1106,7 +1106,7 @@ begin
                 SetGelesen;
               nextmsg:
                 SetKK;
-                if not aufbau then write_disp_line(p,0,true);
+//              if not aufbau then write_disp_line(p,0,true);
                 if _down then
                   GoDown;
                 NachWeiter:=nw;
@@ -1981,6 +1981,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.110  2003/08/30 22:15:06  cl
+  - fixed two rare range check errors
+
   Revision 1.109  2003/03/28 23:20:42  mk
   - fixed not initialized variable hderr (now false)
 

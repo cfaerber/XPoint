@@ -765,6 +765,12 @@ var ss : string[255];
     sn,
     sb : Cardinal;
 begin
+  if (bezpos < 0) or (bezpos >= ReplyTree.Count) then
+  begin
+    result := '*** OOPS ***';
+    exit;
+  end;
+
   with TReplyTreeItem(ReplyTree[bezpos]^) do
   begin
     if not KomShowAdr then begin
@@ -925,6 +931,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2003/08/30 22:15:06  cl
+  - fixed two rare range check errors
+
   Revision 1.63  2003/08/24 21:43:38  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems
