@@ -529,6 +529,7 @@ type   textp  = ^text;
                   params    : string[3];
                   baud      : longint;
                   gebzone   : string[20];
+                  SysopMode : boolean;
                   SysopInp  : string[60];  { Eingabe-Puffer fÅr SysMode }
                   SysopOut  : string[60];  { Zieldatei fÅr Sysop-Mode  }
                   SysopStart: string[60];
@@ -568,7 +569,6 @@ type   textp  = ^text;
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP/UUCP           }
                   ClientSmtp: boolean;     { UUCP: SMTP/Client         }
-                  PPPMode   : boolean;     { RFC/Client switch         }
                   PPPClientPath: string[MaxLenPathname]; { PPP Client-Pfad   }
                   PPPClient : string[MaxLenPathname];    { PPP Client-Aufruf }
                   PPPAddServers: string[160]; { PPP Pakete mitsenden   }
@@ -1125,7 +1125,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        shortkey    : array[1..maxskeys+1] of KeyRec;
        shortkeys   : shortint;
        registriert : record r1,r2:boolean; nr:longint;
-                            uucp,non_uucp:boolean;
+                            uucp,non_uucp,client:boolean; { client in A,B,C }
                             tc:char;        { A=normal, B=UUCP, C=komplett }
                             komreg,           { R-Kom / R-Org anzeigen }
                             orgreg:boolean;
@@ -1226,6 +1226,13 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.47  2001/12/20 15:03:13  my
+  MY:- Registrierroutine fÅr RFC/Client gemÑ· Vereinbarung mit Peter
+       Mandrella (Mail vom 21.11.2001) angepa·t => kein UUCP-Key mehr
+       erforderlich. :-)
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
   Revision 1.54.2.46  2001/12/11 17:46:52  my
   MY:- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
        und erweitert. Neue Einstellungen:
