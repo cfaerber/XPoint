@@ -242,7 +242,7 @@ end;
 
 procedure setaltfkeys;
 begin
-  with fkeys[3]^[1] do
+  with fkeys[3][1] do
     if menue+prog='' then fnproc[3,1]:=hilfealt
     else fnproc[3,1]:=dummyFN;
   fnproc[3,10]:=dummyFN;
@@ -294,8 +294,6 @@ begin
   maxmark:=5000;
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
-  for i:=0 to 4 do
-     new(fkeys[i]);
   aktdispmode:=0;
 
   fnproc[0,1]:=hilfe;
@@ -495,9 +493,9 @@ begin
 
   for i:=0 to 4 do
   begin
-    fillchar(fkeys[i]^,sizeof(fkeys[0]^),0);
+    fillchar(fkeys[i],sizeof(fkeys[0]),0);
     for j:=1 to 10 do
-      fkeys[i]^[j].vollbild:=true;
+      fkeys[i][j].vollbild:=true;
     end;
 
   fillchar(COMn,sizeof(COMn),0);
@@ -963,7 +961,7 @@ begin
   wrhd(8);                                             { Funktionstasten }
   for i:=0 to 4 do
     for j:=1 to 10 do
-      with fkeys[i]^[j] do
+      with fkeys[i][j] do
         if menue+prog<>'' then
           writeln(t,'FKey-',cfs[i],j,'=P ',menue,'~',prog,'~',speicher,'~',
                     ntyp,'~',jnf(bname),jnf(warten),jnf(listout),jnf(vollbild),
@@ -1177,7 +1175,7 @@ var t       : text;
       else begin
         ss:=copy(s,p+3,200);     { 'P' berlesen }
         p0:=cPos('~',ss);
-        if p0>0 then with fkeys[nr]^[j] do begin
+        if p0>0 then with fkeys[nr][j] do begin
           menue:=LeftStr(ss,p0-1);         { Men-Anzeige }
           ss:=copy(ss,p0+1,200);
           p0:=cPos('~',ss);
@@ -1707,6 +1705,11 @@ begin
 
 {
   $Log$
+  Revision 1.139  2002/01/30 17:18:13  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.138  2002/01/22 13:59:22  mk
   - after 3.40 merge fixes
 

@@ -2246,7 +2246,7 @@ begin      { --- select --- }
                  else if (c='Q') and AskQ and AskSave then quit:=true;
         10..20 : if t=keyesc then ende:=true;
       end;
-      with fkeys[3]^[4] do
+      with fkeys[3][4] do
         if (menue+prog='') and (t=keyaf4) and AskSave then
           quit:=true;
     end;
@@ -2352,6 +2352,11 @@ end;
 
 {
   $Log$
+  Revision 1.121  2002/01/30 17:18:14  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.120  2002/01/13 15:15:51  mk
   - new "empfaenger"-handling
 

@@ -374,7 +374,7 @@ begin
   if not editor then
     for i:=1 to 3 do                     { ben”tigten Platz berechnen }
       for j:=1 to 10 do                  { ohne Spaces                }
-        with fkeys[i]^[j] do
+        with fkeys[i][j] do
           if menue<>'' then begin
             inc(fks,length(menue)+3);
             inc(fkn);
@@ -395,7 +395,7 @@ begin
   else
     for i:=1 to 3 do
       for j:=1 to 10 do
-        with fkeys[i]^[j] do
+        with fkeys[i][j] do
           if menue<>'' then
             if (wherex+length(menue)+3<=screenwidth+1) and (wherey=screenlines) then
               wf(fs[i]+strs(j)+'-'+menue);
@@ -413,6 +413,11 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/01/30 17:18:13  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.31  2002/01/22 19:15:28  mk
   - after 3.40 merge fixes
 

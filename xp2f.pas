@@ -54,7 +54,7 @@ var anzahl  : Integer;
       s     : string;
       brk   : boolean;
   begin
-    with fkeys[iif(p>10,4,typ)]^[iif(p>10,p-10,p)] do begin
+    with fkeys[iif(p>10,4,typ)][iif(p>10,p-10,p)] do begin
       dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Men' }
       maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menanzeige  ' }
       maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
@@ -132,7 +132,7 @@ begin
 	attrtxt(col.colsel2bar)
       else
 	attrtxt(col.colsel2box);
-      with fkeys[iif(i>10,4,typ)]^[iif(i>10,i-10,i)] do
+      with fkeys[iif(i>10,4,typ)][iif(i>10,i-10,i)] do
       begin
         wrt(x+1,y+1+i,' '+forms(txt+strs(i),length(txt)+3));
         if menue+prog='' then
@@ -1167,6 +1167,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2002/01/30 17:18:13  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.30  2002/01/13 15:07:27  mk
   - Big 3.40 Update Part I
 

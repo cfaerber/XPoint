@@ -113,7 +113,7 @@ begin
   n:=0;
 
   for i:=1 to 10 do                                  { Zusatzmenue 1-10 }
-    with fkeys[0]^[i] do
+    with fkeys[0][i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
@@ -126,7 +126,7 @@ begin
 
   s:='';
   for i:=1 to iif(screenlines=25,9,10) do            { Zusatzmenue 11-20 }
-    with fkeys[4]^[i] do
+    with fkeys[4][i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
@@ -1125,6 +1125,11 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.133  2002/01/30 17:18:13  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.132  2002/01/22 13:59:21  mk
   - after 3.40 merge fixes
 

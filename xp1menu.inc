@@ -435,7 +435,7 @@ var ma    : map;
   begin                     { fuer Uebergang von Fkeys[0] zu Fkeys[4])       }
     n:=0;
     for i:=1 to 10 do
-      if Fkeys[0]^[i].menue<>'' then inc(n);
+      if Fkeys[0][i].menue<>'' then inc(n);
     Zusatz_II:=n;
   end;
 
@@ -624,6 +624,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2002/01/30 17:18:13  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.39  2002/01/28 20:32:24  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested

@@ -60,7 +60,7 @@ var fn   : string;
 
 begin
   fn:='';
-  with fkeys[nr]^[nn] do begin
+  with fkeys[nr][nn] do begin
     if bname then begin
       betr:= UpperCase(dbReadNStr(mbase,mb_betreff));
 {$ifdef FPC}
@@ -310,6 +310,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2002/01/30 17:18:14  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.35  2002/01/13 15:15:53  mk
   - new "empfaenger"-handling
 

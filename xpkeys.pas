@@ -144,7 +144,7 @@ var s      : string;
     auto   : boolean;
     ende   : boolean;
 begin
-  with fkeys[nr]^[nn] do begin
+  with fkeys[nr][nn] do begin
     s:=prog;
     auto:=autoexec;
     if s[1]='*' then begin
@@ -220,7 +220,7 @@ begin
   else if (t>=keyaf1) and (t<=keyaf10) then nr:=3;
   if nr>0 then begin
     n:=(ord(t[2])-84)mod 10+1;
-    if fkeys[nr]^[n].prog<>'' then begin
+    if fkeys[nr][n].prog<>'' then begin
       prog_call(nr,n);
       test_fkeys:=true;
       end;
@@ -249,6 +249,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2002/01/30 17:18:14  mk
+  - do not create fkeys record dynamically, because the record containts
+    ansistrings and FPC has problems with array->pointer of record with
+    ansistrings
+
   Revision 1.22  2002/01/19 13:46:10  mk
   - Big 3.40 udpate part III
 
