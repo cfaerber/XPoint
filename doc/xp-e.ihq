@@ -652,14 +652,14 @@ also use <Space> instead of PgDn.
 
 <<Alt-V>>   like <<Alt-M>> but searching for text.
 
+<<Alt-B>>   Topic-search. search-string is the first
+        marked textline, or the topic of the
+        shown message.
+
 <<Alt-U>>   User-search. If a Textline is marked
         it will be used as search-string, else
         CrossPoint will search for the author
         of the shown message.
-
-<<Alt-B>>   Topic-search. search-string is the first
-        marked textline, or the topic of the
-        shown message.
 
   <<L>>     sets the displayed message to delete
         and exits.
@@ -5230,16 +5230,6 @@ CrossPoint searches in the groups defined here.
 <<marked>>   all marked newsgroups.
 
 <<selected>> the currently selected newsgroup.
-@
-533
-<<[ ]>> --> Fast search in the Reference Database
-        this will only find complete message-ids.
-        searching for MID-Parts is impossible.
-
-<<[x]>> --> Slower search in the Message-headers.
-        Similar to subject-search, the search-line
-        may contain only MID-Parts to search for.
-        Options and Newsgroup-selection are allowed.
 @
 540
 You are in the key-macro editor. You can redefine
