@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
@@ -722,6 +722,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.23  2001/11/20 23:25:22  my
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.12.2.22  2001/11/04 22:01:51  mk
   RB:- UTF-7 Support (dif from Andreas D. Bauer)
 
