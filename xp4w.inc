@@ -1184,15 +1184,21 @@ begin
 end;
 
 procedure _mark_group;
-var grnr : longint;
+var grnr,g : longint;
+    feld   : string;
 begin
   moment;
   GoP;
-  dbRead(dispdat,'gruppe',grnr);
+  if dispdat=ubase then feld:='Adrbuch'
+    else feld:='Gruppe';
+  dbRead(dispdat,feld,grnr);
+  if dispdat=ubase then grnr:=byte(grnr);
   dbGoTop(dispdat);
-  while (bmarkanz<maxbmark) and not dbEOF(dispdat) do begin
-    if dbReadInt(dispdat,'gruppe')=grnr then
-      UBAddMark(dbRecno(dispdat));
+  while (bmarkanz<maxbmark) and not dbEOF(dispdat) do
+  begin
+    dbRead(dispdat,feld,g);
+    if dispdat=ubase then g:=byte(g);
+    if g=grnr then UBAddMark(dbRecno(dispdat));
     dbSkip(dispdat,1);
     end;
   if bmarkanz=maxbmark then
@@ -1759,6 +1765,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.97  2002/03/20 15:23:10  mk
+  - fixed crash in _mark_group (Ctrl-G in Userwindow)
+
   Revision 1.96  2002/03/07 12:27:14  mk
   - added description of mw2 from Jochen Gehring
 
