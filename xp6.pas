@@ -2118,9 +2118,16 @@ begin
     end;
 end;
 
+initialization
+  SendEmpfList := TStringList.Create;
+finalization
+  SendEmpfList.Free;
 end.
 {
   $Log$
+  Revision 1.59  2000/08/10 16:59:24  mk
+  - SendEmpfListe wird jetzt erzeugt und freigegeben
+
   Revision 1.58  2000/08/05 10:06:59  mk
   - Ansistring Verbesserungen
 
