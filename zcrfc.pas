@@ -2554,7 +2554,7 @@ begin
   try
     s1 := ExtractFileExt(sr.name);
     // BAK-Dateien überspringen
-    if s1 = FileUpperCase('.bak') then Continue;
+    if s1 = FileUpperCase('.' + BakExt) then Continue;
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
     begin
@@ -3628,6 +3628,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.3  2002/05/05 22:43:14  mk
+  - use correct case for 'bak' extension
+
   Revision 1.97.2.2  2002/05/05 22:19:31  mk
   - fixed "Puffer fehlt" error
 

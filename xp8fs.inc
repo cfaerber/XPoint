@@ -157,7 +157,7 @@ begin
     WriteFST(fstype);
     end;
   KorrBoxName(box); { Groá- und Kleinschreibung korrigieren }
-  makebak(MangleBoxName(box)+ extFl, 'bak');
+  makebak(MangleBoxName(box)+ extFl, BakExt);
   case fstype of
     0 : begin      { SendZMsg }
           assign(t2,MangleBoxName(box)+ extFl);
@@ -556,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30.2.1  2002/05/05 22:43:14  mk
+  - use correct case for 'bak' extension
+
   Revision 1.30  2002/04/08 23:02:47  mk
   - changed some AddDirSepa in IncludeTrailingPathDelimiter
 

@@ -1163,7 +1163,7 @@ begin                  { function Netcall }
       Debug.DebugLog('xpnetcall','renaming incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
       begin
-        SafeMakeBak(DeleteSpoolFiles[i],'bak');
+        SafeMakeBak(DeleteSpoolFiles[i], BakExt);
         Debug.DebugLog('xpnetcall','renamed '+(DeleteSpoolFiles[i]),DLInform);
       end;
     end;
@@ -1387,6 +1387,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.1  2002/05/05 22:43:16  mk
+  - use correct case for 'bak' extension
+
   Revision 1.52  2002/04/06 17:07:49  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux

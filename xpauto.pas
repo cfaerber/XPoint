@@ -590,7 +590,7 @@ begin
       if SendMsg(true) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('bak') do     { BAK-files l”schen }
+    while find(BakExt) do     { BAK-files l”schen }
       DeleteFile(AutoXdir+sr.name);
       //delfile;
 
@@ -675,6 +675,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.1  2002/05/05 22:43:14  mk
+  - use correct case for 'bak' extension
+
   Revision 1.48  2002/02/21 13:52:33  mk
   - removed 21 hints and 28 warnings
 
