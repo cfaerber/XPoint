@@ -342,7 +342,7 @@ begin
     end
   else begin
     u2z:=false;
-    if paramcount<5 then helppage;
+    if paramcount<4 then helppage;
     source:=''; dest:=''; _from:=''; _to:='';
     for i:=2 to paramcount do
       if left(paramstr(i),1)='-' then begin
@@ -3387,6 +3387,12 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.70  2002/04/09 21:45:32  my
+  MY:- Anzahl der erforderlichen UUZ-Parameter bei ausgehenden Nachrichten
+       auf 3 (vorher 4) reduziert. Routine erfllt ohnehin nicht ihren
+       vermutlichen Zweck (n„mlich die Angabe von <fromSite> und <toSite>
+       zu erzwingen) und máte mal komplett erneuert werden.
+
   Revision 1.35.2.69  2002/04/09 21:40:44  my
   MY[+JG]}:- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach
              RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
