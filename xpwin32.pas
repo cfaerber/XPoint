@@ -166,7 +166,7 @@ begin
   Result := false;
 end;
 
-function RTLexec(const path : string;const comline : string; var DosExitCode: Word): Integer;
+function RTLexec(const path, comline : string; var DosExitCode: Integer): Integer;
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
@@ -182,7 +182,8 @@ begin
   AppPath[Length(Path)]:=#0;
   AppParam[0]:='-';
   AppParam[1]:=' ';
-  Move(ComLine[1],AppParam[2],length(Comline));
+  if ComLine <> '' then  // when ComLine is empty, ComLine[1] gives AV
+    Move(ComLine[1],AppParam[2],length(Comline));
   AppParam[Length(ComLine)+2]:=#0;
   if not CreateProcess(PChar(@AppPath), PChar(@AppParam),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
@@ -194,7 +195,7 @@ begin
     Result := 0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-  if WaitForSingleObject(Proc, Infinite) <> $ffffffff then
+  if WaitForSingleObject(Proc, Infinite) <> WAIT_FAILED then
     GetExitCodeProcess(Proc,l)
   else
     l:=DWord(-1);
@@ -205,7 +206,7 @@ end;
 function SysExec(const Path, CmdLine: String): Integer;
 var
   TempError: Integer;
-  DosExitCode: Word;
+  DosExitCode: Integer;
 begin
   TempError := RTLExec(Path, CmdLine, DosExitCode);
   if TempError=0 then Result:=DosExitCode else Result:=-TempError;
@@ -235,9 +236,11 @@ begin
    FreeEnvironmentStrings(p);
 end;
 
-end.
 {
   $Log$
+  Revision 1.23  2001/10/17 12:38:38  mk
+  - fixed av in RTLExec with empty ComLine
+
   Revision 1.22  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 
@@ -278,3 +281,5 @@ end.
   Revision 1.9  2000/10/19 19:53:08  mk
   - Fix for SysSetScreenSize when resizing the window at runtime
 }
+end.
+
