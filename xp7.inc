@@ -889,7 +889,8 @@ begin
             { ppfile merken, damit der Originalpuffer nach Erfolg
               gel”scht werden kann }
             TempPPFileName := ppfile;
-            OutFilter(ppfile); { Žndert ppfile! }
+            { Žndert ppfile! }
+            if OutFilter(ppfile) then _era(ppfile);
             fn := ppfile; { fn muá sp„ter gel”scht werden }
             ppfile := TempPPFileName;
           end;
@@ -1445,6 +1446,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/03/16 18:45:13  mk
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp ZConnect und Sysoppoll aufgerufen
+
   Revision 1.8  2000/03/16 10:14:25  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
