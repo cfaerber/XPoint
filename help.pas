@@ -335,7 +335,9 @@ laden:
       xout:=x;
       end;
   lines:=1; fillchar(z^,sizeof(z^),0);
-  if memavail<2*size then exit;
+  {$IFDEF BP }
+    if memavail<2*size then exit;
+  {$ENDIF }
   getmem(buf,size);
   blockread(f,buf^,size);
   testio;
@@ -780,6 +782,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/06/05 16:16:20  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.12  2000/05/06 17:29:20  mk
   - DOS DPMI32 Portierung
 

@@ -314,7 +314,7 @@ var sr    : searchrec;
     first : boolean;
     ctlEbest,ctlErstDat : boolean;
     mgel  : boolean;       { Save fÅr ParGelesen }
-    fnstart: pathstr;	   { Name der Start.bat }
+    fnstart: pathstr;      { Name der Start.bat }
 
   function find(ext:string):boolean;
   begin
@@ -433,7 +433,11 @@ var sr    : searchrec;
     SendMsg:=false;
     empf:=''; betr:='';
     box:=''; datei:='';
-    bs:=min(maxavail-10000,8192);
+    {$IFDEF BP }
+      bs:=min(maxavail-10000,8192);
+    {$ELSE }
+      bs := 8192;
+    {$ENDIF }
     getmem(buf,bs);
     assign(t1,AutoxDir+sr.name);
     settextbuf(t1,buf^,bs);
@@ -594,10 +598,10 @@ begin
         delfile;
         end;
     if startbatch then begin
-      fnstart:=AutoxDir+fustr('start'+BatchExt);	{ START.BAT }
+      fnstart:=AutoxDir+fustr('start'+BatchExt);        { START.BAT }
       if exist(fnstart) then
         shell(fnstart,500,1);
-      fnstart:=AutoxDir+fustr('start1'+BatchExt);	{ START1.BAT, lîschen }
+      fnstart:=AutoxDir+fustr('start1'+BatchExt);       { START1.BAT, lîschen }
       if exist(fnstart) then begin
         shell(fnstart,500,1);
         _era(fnstart);
@@ -618,10 +622,10 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
 {$ENDIF }
-  fnstop:= AutoxDir+fustr('stop'+BatchExt);	{ STOP.BAT }
+  fnstop:= AutoxDir+fustr('stop'+BatchExt);     { STOP.BAT }
   if exist(fnstop) then
     shell(fnstop,500,1);
-  fnstop:= AutoxDir+fustr('stop1'+BatchExt);	{ STOP1.BAT, lîschen }
+  fnstop:= AutoxDir+fustr('stop1'+BatchExt);    { STOP1.BAT, lîschen }
   if exist(fnstop) then begin
     shell(fnstop,500,1);
     _era(fnstop);
@@ -669,6 +673,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.12  2000/05/22 17:06:04  hd
   - Programmnamen durch Konstanten aus xp0 ersetzt
   - Fix: Fehlende und falsche FindClose

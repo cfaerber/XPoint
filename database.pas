@@ -1601,9 +1601,14 @@ begin
       end
     else
       rewrite(f,1);
-    if l>0 then begin
-      s:=min(maxavail-10000,50000);
-   getmem(p,s);
+    if l>0 then
+    begin
+      {$IFDEF BP }
+        s:=min(maxavail-10000,32768);
+      {$ELSE }
+        s:=65536;
+      {$ENDIF }
+      getmem(p,s);
       repeat
         blockread(fe,p^,min(s,l),rr);
         blockwrite(f,p^,rr);
@@ -1630,8 +1635,13 @@ begin
     seek(fe,filepos(fe)+ofs);
     dec(l,ofs);
     size:=l;
-    if l>0 then begin
-      s:=min(maxavail-10000,50000);
+    if l>0 then
+    begin
+      {$IFDEF BP }
+        s:=min(maxavail-10000,32768);
+      {$ELSE }
+        s:=65536;
+      {$ENDIF }
       getmem(p,s);
       repeat
         blockread(fe,p^,min(s,l),rr);
@@ -1707,7 +1717,11 @@ begin
     if size>0 then begin
       seek(fe,adr+1);
       blockwrite(fe,size,4);
-      s:=min(maxavail-10000,50000);
+      {$IFDEF BP }
+        s:=min(maxavail-10000,32768);
+      {$ELSE }
+        s:=65536;
+      {$ENDIF }
       getmem(p,s);
       repeat
         blockread(f,p^,min(s,size),rr);
@@ -1843,6 +1857,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/06/05 16:16:20  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.21  2000/05/26 00:01:10  mk
   - Assembler-Fixes (32 Bit)
 

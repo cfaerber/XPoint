@@ -234,7 +234,11 @@ var bufs,rr:word;
     buf:pointer;
     f1,f2:file;
 begin
-  bufs:=min(maxavail,65520);
+  {$IFDEF BP }
+    bufs:=min(maxavail,32768);
+  {$ELSE }
+    bufs:=65536;
+  {$ENDIF }
   getmem(buf,bufs);
 {$IFDEF UnixFS}
   assign(f1,ResolvePathName(srcfn));
@@ -295,7 +299,7 @@ begin
 {$IFDEF UnixFS}
   path:= ResolvePathName(path);
 {$ENDIF}
-  
+
   { Auf keinen Fall das XP-Verzeichnis l”schen! }
   Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
   er:=doserror;
@@ -308,7 +312,7 @@ begin
   if (ownpath=path) then exit;
   { Oops, Rootverzeichnis erwischt! }
   if ((path='\') or (path='/')) then exit;
-  
+
   Dos.findfirst(path+WildCard,anyfile-VolumeID,sr);
   while (doserror=0) do begin
     with sr do
@@ -877,6 +881,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.37  2000/06/05 16:16:20  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.36  2000/05/29 15:12:57  oh
   -delete_all() abgesichert
 

@@ -1096,8 +1096,10 @@ var t,lastt: taste;
   begin
     if komaktiv then
       rfehler(406)   { 'Kommentarbaum ist bereits aktiv' }
+{$IFDEF BP }
     else if maxavail<20000 then
       rfehler(407)   { 'zu wenig Hauptspeicher' }
+{$ENDIF }
     else if dbRecCount(bezbase)=0 then
       rfehler(408)   { 'kein Kommentarbaum vorhanden' }
     else begin
@@ -1608,8 +1610,8 @@ begin      { --- select --- }
                    begin
                      Showungelesen:=not showungelesen;
                      GlobalModified;
-                     aufbau:=true;                     
-                     end;  
+                     aufbau:=true;
+                     end;
                    if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
@@ -2044,6 +2046,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/06/05 16:16:22  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.24  2000/06/04 09:25:42  jg
   - Ungelesen-Brettmarkierung unterstÅtzt jetzt "Sichern" unter C/O/B
 

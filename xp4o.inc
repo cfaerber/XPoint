@@ -83,9 +83,9 @@ begin
         dbReadN(mbase,mb_brett,_mbrett);
         leer:=_mbrett<>_brett;
         end;
-  
+
       if leer and ((user and (left(brett,4)<>#0+'$/T')) or
-        (not user and (left(brett,3)<>'$/T'))) then 
+        (not user and (left(brett,3)<>'$/T'))) then
       begin
         dbReadN(d,nfeld,loesch);
         if not user then loesch:=copy(loesch,2,80);
@@ -487,7 +487,12 @@ var x,y,yy  : byte;
     if domove then begin
       dbWriteN(mbase,mb_adresse,newadr);
       seek(f1,adr);
-      if (size>min(bsize,maxavail-15000)) then begin
+      {$IFDEF BP }
+        if (size>min(bsize,maxavail-15000)) then
+      {$ELSE }
+        if size>bsize then
+      {$ENDIF }
+      begin
         flushbufs;
         while size>0 do begin
           blockread(f1,p^,min(bsize,size),rr);
@@ -593,7 +598,11 @@ var x,y,yy  : byte;
 
 begin
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
-  bsize:=min(maxavail-10000,50000);
+  {$IFDEF BP }
+    bsize:=min(maxavail-10000,50000);
+  {$ELSE }
+    bsize:=65536;
+  {$ENDIF }
   getmem(p,bsize);
   test_killed;
   break:=false;
@@ -711,6 +720,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.13  2000/05/04 16:13:36  jg
   - Konvertierung des Userfenster Trennzeilenformat jetzt Automatisch
     Funktion nur Sinnvoll fuer Umstieg von Beta 23 auf Beta 24+ ....

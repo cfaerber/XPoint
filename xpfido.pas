@@ -19,7 +19,7 @@ unit xpfido;
 
 interface
 
-uses  xpglobal, 
+uses  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -474,7 +474,11 @@ var x,y        : byte;
       end;
 
     begin
-      bufsize:=min(ubufmax*sizeof(userrec),(maxavail-10000)div 3);
+      {$IFDEF BP }
+        bufsize:=min(ubufmax*sizeof(userrec),(maxavail-10000)div 3);
+      {$ELSE }
+        bufsize:=ubufmax*sizeof(userrec);
+      {$ENDIF }
       bufanz:=bufsize div sizeof(userrec);
       bufsize:=bufanz*sizeof(userrec);     { Gr”áe abrunden }
       getmem(buf[1],bufsize);
@@ -1837,7 +1841,7 @@ procedure DelFidolist;
 var cr    : CustomRec;
     t1,t2 : text;
     s     : string[80];
-    p     : byte;                              
+    p     : byte;
     nn    : longint;
     comment: boolean;
 begin
@@ -2112,7 +2116,11 @@ begin       { FidoSeekfile:string;************************ }
     new(pOutput);
     new(pFileListe);
     new(ni);
-    tbs:=min(maxavail-5000,16384);
+    {$IFDEF BP }
+      tbs:=min(maxavail-5000,16384);
+    {$ELSE }
+      tbs:=16384;
+    {$ENDIF }
     getmem(tb,tbs);
     assign(pOutput^,seekfile);
     rewrite(pOutput^);
@@ -2251,6 +2259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.14  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 

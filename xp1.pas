@@ -1158,7 +1158,9 @@ begin
 {$ELSE }
     scsize:=screenlines*2*screenwidth;
 {$ENDIF }
+{$IFDEF BP }
     if maxavail<scsize+500 then interr('Speicher-šberlauf');
+{$ENDIF }
     getmem(p,scsize);               { Bild sichern }
     moff;
 {$IFDEF BP }
@@ -2243,7 +2245,11 @@ var x,y   : byte;
   end;
 
 begin
+{$IFDEF BP }
   ps:=min(maxavail-5000,60000);
+{$ELSE }
+  ps:=65536;
+{$ENDIF }
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
@@ -2424,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/06/05 16:16:22  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.46  2000/05/17 18:45:33  mk
   - Wieder unter allen Platformen compilierbar
 

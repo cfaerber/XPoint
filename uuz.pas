@@ -676,9 +676,12 @@ var regs  : registers;
 
 begin
   doserror:=0;
+  {$IFDEF BP }
   if maxavail<$8000 then
     writeln('Zu wenig freier Speicher fr externen Programmaufruf!')
-  else begin
+  else
+  {$ENDIF }
+  begin
     pp:=pos(' ',prog);
     if pp=0 then para:=''
     else begin
@@ -1750,25 +1753,25 @@ var p,i   : integer; { byte -> integer }
     while s<=length(r0) do
     begin
       case r0[s] of
-        '\' : s:=s+1;			{ skip one }
-	'"' : if c<=0 then q:=not q;	{ toggle in-quote flag }
-	'(' : if not q then
-	        if c<=0 then
-		  begin
-		    c:=1; p:=s;		{ remeber start of comment }
-		  end
-		else
-		  c:=c+1;		{ inc comment count }
-		
-	')' : if not q then
-	        if c=1 then
-		  begin
-		    delete(r0,p,s-p+1); { remove comments }
-		    s:=p-1;		{ and reset pointer }
-		    c:=0;
-		  end
-		else
-		  c:=c-1;		{ dec comment count }
+        '\' : s:=s+1;                   { skip one }
+        '"' : if c<=0 then q:=not q;    { toggle in-quote flag }
+        '(' : if not q then
+                if c<=0 then
+                  begin
+                    c:=1; p:=s;         { remeber start of comment }
+                  end
+                else
+                  c:=c+1;               { inc comment count }
+
+        ')' : if not q then
+                if c=1 then
+                  begin
+                    delete(r0,p,s-p+1); { remove comments }
+                    s:=p-1;             { and reset pointer }
+                    c:=0;
+                  end
+                else
+                  c:=c-1;               { dec comment count }
       end;
       s:=s+1;
     end;
@@ -2297,7 +2300,7 @@ begin
 
              { X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
-	       RFCRemoveComment(s0);
+               RFCRemoveComment(s0);
                if LStr(s0)='yes' then xnoarchive:=true;
              end else
 
@@ -3569,6 +3572,9 @@ end.
 
 {
   $Log$
+  Revision 1.33  2000/06/05 16:16:22  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.32  2000/06/04 16:57:23  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)

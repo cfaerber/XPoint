@@ -450,7 +450,11 @@ var p     : ^barr;
     rr: word;
     rr0   : word;
 begin
-  siz:=min(maxavail-10000,30000);
+  {$IFDEF BP }
+  siz:=min(maxavail-10000,32768);
+  {$ELSE }
+  size := 32768;
+  {$ENDIF }
   getmem(p,siz);
   fm_ro; reset(f^,1); fm_rw;
   seek(f^,ofs);
@@ -1127,6 +1131,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.17  2000/05/29 15:13:42  jg
   - Fix: Priority-Header abschaltbar
 

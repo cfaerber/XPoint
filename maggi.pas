@@ -1507,7 +1507,11 @@ var t1,log     : text;
       b1,b2,
       b3,b4: byte;
   begin
-    bufs:=min(maxavail-16,65500);
+    {$IFDEF BP }
+      bufs:=min(maxavail-16,65500);
+    {$ELSE }
+      bufs:=65536;
+    {$ENDIF }
     getmem(buf,bufs);
     bufp:=0;
     i:=1;
@@ -1827,6 +1831,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/06/05 16:16:21  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.14  2000/06/04 18:10:28  sv
   - Maggi wieder kompilierbar
 

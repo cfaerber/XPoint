@@ -37,7 +37,7 @@ const ListHelpStr : string[8] = 'Hilfe';
       ListDebug   : boolean   = false;
       Listunvers  : byte      = 0;
       Listhalten  : byte      = 0;
-      Listflags   : longint   = 0; 
+      Listflags   : longint   = 0;
 
 type  liste   = pointer;
 
@@ -790,15 +790,15 @@ var f  : file;
     fm    : byte;
 begin
 {$IFDEF BP }
-  if (memavail+longint(EmsAvail)*16384+longint(XmsAvail)*1024<MinListMem+2000) or (maxavail<6000)
-{$ELSE }
-  if (memavail < MinListMem+2000) or (maxavail<6000)
-{$ENDIF }
-  then begin
+  if (memavail+longint(EmsAvail)*16384+longint(XmsAvail)*1024<MinListMem+2000)
+    or (maxavail<6000) then
+  begin
     app_l('zu wenig freier DOS-Speicher, um Datei anzuzeigen');
     exit;
-    end;
-  with alist^ do begin
+  end;
+{$ENDIF }
+  with alist^ do
+  begin
     txt:=fitpath(ustr(fn),40);
     ps:=min(10000,memavail-10000);
     getmem(p,ps);
@@ -826,7 +826,7 @@ begin
         end;
       end;
     freemem(p,ps);
-    end;
+  end;
 end;
 
 procedure list(var brk:boolean);
@@ -877,7 +877,7 @@ var gl,p,y    : shortint;
           if listunvers and 16 = 0
             then write (iifs(listunvers and 1 = 0,' ','!'))
             else write (iifs(listunvers and 1 = 0,'*',''));
-          if listflags and 3=1 then write('S') 
+          if listflags and 3=1 then write('S')
           else if listflags and 3=2 then Write('s')
           else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
           end;
@@ -1653,6 +1653,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/05 16:16:21  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.18  2000/05/26 00:01:10  mk
   - Assembler-Fixes (32 Bit)
 

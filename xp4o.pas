@@ -783,7 +783,11 @@ begin
       n:=0; nf:=0;
       new(hdp);
       attrtxt(col.coldiahigh);
-      psize:=min(maxavail-10000,60000);
+      {$IFDEF BP }
+        psize:=min(maxavail-10000,60000);
+      {$ELSE }
+        psize:=65536;
+      {$ENDIF }
       getmem(p,psize);
       brk:=false;
 
@@ -1131,8 +1135,13 @@ begin
     rfehler1(424,strs(ablg));   { 'Nachricht ist besch„digt  (Ablage %s)' }
     close(f);
     end
-  else begin
-    ps:=min(maxavail,30000);
+  else
+  begin
+    {$IFDEF BP }
+       ps:=min(maxavail,32768);
+    {$ELSE }
+      ps:=32768;
+    {$ENDIF }
     getmem(p,ps);
     seek(f,adr+dbReadInt(mbase,'msgsize')-size);
     repeat
@@ -2407,6 +2416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/06/05 16:16:22  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.44  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

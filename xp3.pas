@@ -649,7 +649,11 @@ var p        : pointer;
 
 label ende;
 begin
-  bufs:=min(maxavail-10000,50000);
+  {$IFDEF BP }
+    bufs:=min(maxavail-10000,50000);
+  {$ELSE }
+    bufs:=65536;
+  {$ENDIF }
   dbReadN(mbase,mb_ablage,ablage);
   assign(puffer,aFile(ablage));
   reset(puffer,1);
@@ -746,7 +750,11 @@ var f,puffer : file;
     p        : pointer;
     bs,rr    : word;
 begin
-  bs:=min(maxavail-10000,50000);
+  {$IFDEF BP }
+    bs:=min(maxavail-10000,50000);
+  {$ELSE }
+    bs:=65536;
+  {$ENDIF }
   getmem(p,bs);
   dbReadN(mbase,mb_ablage,ablage);
   dbReadN(mbase,mb_msgsize,oldsize);
@@ -1406,6 +1414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/06/05 16:16:22  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.24  2000/05/26 00:01:10  mk
   - Assembler-Fixes (32 Bit)
 

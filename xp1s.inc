@@ -80,9 +80,12 @@ begin
   de:=0;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
+{$IFDEF BP }
   if maxavail<$4000 then
     rfehler(7)  { Zu wenig freier Speicher fr externen Programmaufruf! }
-  else begin
+  else
+{$ENDIF }
+  begin
     { trackpath:=(dospath(0)+'\'=OwnPath) or (dospath(0)=shellpath); }
     getmaus(maussave);
     xp_maus_aus;
@@ -230,7 +233,7 @@ var nt : longint;
 begin
   dbreadN(mbase,mb_netztyp,nt);
   listheadercol:=iif(nt and $1000 = 0,col.collistheader,col.collistheaderhigh);
-end;   
+end;
 
 function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
 var p,p0,ml : byte;
@@ -398,10 +401,10 @@ begin
       dbread(mbase,'flags',listflags);
       end
     else begin
-      Listunvers:=0; Listhalten:=0; Listflags:=0; 
-      end;      
- 
-    list(brk); 
+      Listunvers:=0; Listhalten:=0; Listflags:=0;
+      end;
+
+    list(brk);
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
@@ -516,6 +519,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.23  2000/05/10 10:31:26  hd
   - Fixe Verdrahtung 80x25 unter Curses aufgehoben
 

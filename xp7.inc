@@ -675,7 +675,11 @@ begin
     CAPI_resume
   else
 {$ENDIF }
+  {$IFDEF BP }
     ActivateCom(comnr,max(3000,min(maxavail-20000,10000)),COMn[comnr].u16550);
+  {$ELSE }
+    ActivateCom(comnr,10000,COMn[comnr].u16550);
+  {$ENDIF }
 end;
 
 procedure ReleaseC;
@@ -1441,6 +1445,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.23  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

@@ -94,7 +94,11 @@ label ende,nextpp;
     wr:=adr;
     size:=fsize-rd;
     seek(f,adr);    { falls size=0 ist... }
-    ps:=min(maxavail-1000,50000);
+    {$IFDEF BP }
+      ps:=min(maxavail-1000,50000);
+    {$ELSE }
+      ps:=65536;
+    {$ENDIF }
     getmem(p,ps);
     while size>0 do begin
       seek(f,rd);
@@ -875,7 +879,7 @@ again:
                  else begin
                    empf:=''; ebrett:='';
                    if typ=3 then ReplyText(betr,rehochn);
-                   ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk); 
+                   ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
                    if brk then goto ende                     {Nachricht weiterleiten}
                    else forcebox:=pollbox;
                    pm:=cpos('@',empf)>0;
@@ -1248,6 +1252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.17  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

@@ -121,12 +121,14 @@ var p      : charrp;
   end;
 
 begin
-  ps:=min(maxavail-5000,60000);
+  {$IFDEF BP }
+    ps:=min(maxavail-5000,60000);
+  {$ELSE }
+    ps:=65536;
+  {$ENDIF }
   getmem(p,ps);
-  {$I-}
   reset(f,1);
   if ioresult<>0 then error('Puffer nicht vorhanden!'#7);
-  {$I+}
   fs:=filesize(f);
   if fs<=8 then error('Puffer ist leer.');
   adr:=0; n:=0; nn:=0;
@@ -217,6 +219,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.3  2000/06/05 16:16:21  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.2  2000/04/15 10:58:31  mk
   - 1001x .DOC in .TXT geandert
 

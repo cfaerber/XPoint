@@ -1478,7 +1478,11 @@ begin
   write(fn,' ¯ ',outfile,'      ');
   ok:=true;
   n:=0;
-  mbufsize:=min(65500,maxavail-16384);
+  {$IFDEF BP }
+    mbufsize:=min(65500,maxavail-16384);
+  {$ELSE }
+    mbufsize:=65536;
+  {$ENDIF }
   getmem(msgbuf,mbufsize);
   if filesize(f1)<sizeof(phd) then
     goto abbr;                        { leeres PKT }
@@ -1810,6 +1814,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.20  2000/06/03 09:21:09  mk
   - Programm verlaengert
 

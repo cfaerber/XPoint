@@ -287,8 +287,12 @@ begin
     dbSeek(bbase,biBrett,'A');
     ende:=dbEOF(bbase);
     end;
-  smax:=min(maxrec,(maxavail-20000) div sizeof(statrec));
-  smax:=min(sysmax, smax); { MK 01/00 Nur bis Anzahl der gew„hlten Systeme }
+  {$IFDEF BP }
+    smax:=min(maxrec,(maxavail-20000) div sizeof(statrec));
+  {$ELSE }
+    smax:=maxrec;
+  {$ENDIF }
+  smax:=min(sysmax, smax); { Nur bis Anzahl der gew„hlten Systeme }
   getmem(st,smax*sizeof(statrec));
   fillchar(st^,smax*sizeof(statrec),0);
   snum:=0;
@@ -1109,7 +1113,11 @@ begin
   writeln(t,dup(length(getres2(2612,26))+8,'-'));
   writeln(t);
   writeln(t);
-  bufs:=min(maxavail-2000,16384);
+  {$IFDEF BP }
+    bufs:=min(maxavail-2000,16384);
+  {$ELSE }
+    bufs:=16384;
+  {$ENDIF }
   getmem(buf,bufs);
 
   new(zone); zones:=0;
@@ -1262,6 +1270,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/05 16:16:23  mk
+  - 32 Bit MaxAvail-Probleme beseitigt
+
   Revision 1.13  2000/05/29 20:21:42  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 
