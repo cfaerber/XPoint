@@ -871,7 +871,9 @@ procedure DELchar;              { DEL - Zeichen l”schen }
 var ap,ap2,apnew : absatzp;
     ss,size1,wp  : word;
     addspaces    : integer;
-    wpa    : absatzp;
+    wpa          : absatzp;
+    quotes          : integer; { Anzahl Quotezeichen fuer Quote-Reflow }
+    quotec1,quotec2 : string;  { Quotezeichen fuer Quote-Reflow }
 begin
   with e^ do begin
     ap:=ActAbs;
@@ -888,6 +890,21 @@ begin
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
         else if memtest(ss) then begin   { Abs„tze zusammenh„ngen }
+          { 15.02.2000 robo - Quote-Reflow }
+          if config.QuoteReflow then begin
+            quotec1:=getquote(ap);
+            quotec2:=getquote(vap(ap)^.next);
+            quotes:=length(quotec1);
+            if (quotes>0) and (length(quotec2)>quotes) then
+              while (length(quotec2)>quotes)
+              and (lastchar(quotec2)=' ') do dellast(quotec2);
+            if (quotes>0) and (quotec1=quotec2) then begin
+              ap2:=vap(ap)^.next;
+              wpa:=AbsDelete(ap2,0,quotes,false,true);
+              dec(ss,quotes);
+            end;
+          end;
+          { /robo }
           apnew:=AllocAbsatz(ss);
           wpa:=apnew;
           copyflags(ap,apnew);
@@ -2085,6 +2102,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/02/15 22:22:04  mk
+  RB: * Quote-Reflow jetzt vollstaendig implementiert
+
   Revision 1.5  2000/02/15 20:43:35  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
