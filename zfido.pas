@@ -693,7 +693,7 @@ var f1,f2   : file;
       getdate(ayear,amonth,aday,dummy);
       gettime(ahour,amin,asec,dummy);
       Year := aYear; Month := aMonth -1; Day := aDay -1;
-      Hour := aHour, Min := aMin; Sec := aSec;
+      Hour := aHour; Min := aMin; Sec := aSec;
 {$ELSE }
       getdate(year,month,day,dummy); dec(month);
       gettime(hour,min,sec,dummy);
@@ -1675,6 +1675,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/04/15 12:30:58  mk
+  - Compilierfaehigkeit mit VP wieder hergestellt
+
   Revision 1.8  2000/04/13 12:48:42  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -122,7 +122,9 @@ var   sendfile  : array[1..maxfiles] of pathptr;
 procedure mdelay(msec:word);   { genaues Delay }
 var t      : longint;
     i,n    : word;
+{$IFDEF BP }
     regs   : registers;
+{$ENDIF }
 
   procedure idle;
   begin
@@ -139,6 +141,7 @@ var t      : longint;
   end;
 
 begin
+{$IFDEF BP }
   if os2time=1 then with regs do begin
     ah:=$86;
     cx:=(longint(msec)*1000) shr 16;
@@ -161,6 +164,7 @@ begin
       end;
     end;
   end;
+{$ENDIF }
 end;
 
 
@@ -400,8 +404,11 @@ begin
 end;
 
 function getscreenlines:byte;
+{$IFDEF BP }
 var regs : registers;
+{$ENDIF }
 begin
+{$IFDEF BP }
   with regs do begin
     dl:=0;
     ax:=$1130;
@@ -412,6 +419,9 @@ begin
     else
       getscreenlines:=dl+1;
   end;
+{$ELSE }
+   getscreenlines:=25
+{$ENDIF }
 end;
 
 function TeleCount:integer;
@@ -600,7 +610,8 @@ end;
 var recs      : string;
     WaitConn  : boolean;
     connstr   : string[80];
-    timer,sec : smallword;
+    timer     : smallword;
+    sec       : rtlword;
     break     : boolean;
     cps       : cpsrec;
 
@@ -631,7 +642,7 @@ begin
 end;
 
 procedure time(t:word);   { Sekunden-Timer setzen }
-var h,m,s100 : smallword;
+var h,m,s100 : rtlword;
 begin
   timer:=t;
   gettime(h,m,sec,s100);
@@ -669,7 +680,7 @@ begin
 end;
 
 procedure tb(idle:boolean);
-var h,m,s,s100 : smallword;
+var h,m,s,s100 : rtlword;
 begin
   testbyte(idle);
   if timer>0 then begin
@@ -1013,6 +1024,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/04/15 12:30:58  mk
+  - Compilierfaehigkeit mit VP wieder hergestellt
+
   Revision 1.11  2000/03/23 23:58:49  oh
   Blockstrukturen sauber formatiert
 

@@ -1099,6 +1099,7 @@ var t       : text;
     aaa     : string[5];   { AutoAdvance }
     buf     : array[1..1024] of byte;
     mheader : string;
+    aNeuUserGruppe: Integer;
 
   function getcommpar:boolean;
   var nr    : integer;
@@ -1309,6 +1310,8 @@ begin
   if existf(t) then begin
     settextbuf(t,buf);
     reset(t);
+    { Zwischenspeichern, da Integer16 nicht als var-Parameter funktioniert }
+    aNeuUserGruppe := NeuUserGruppe;
     while not eof(t) do begin
       readln(t,s);
       s:=trim(s);
@@ -1353,7 +1356,7 @@ begin
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
           gets(s,su,'UserAufnahme',userauf,10) or
-          geti(su,  'NeuUsergruppe',Neuusergruppe) or
+          geti(su,  'NeuUsergruppe', aNeuusergruppe) or
           gets(s,su,'Name_O''Maps',dummys,20) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
@@ -1528,7 +1531,7 @@ begin
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
-          getx(su,  'usersortbox',_usersortbox) or  
+          getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin))
         then
@@ -1536,6 +1539,7 @@ begin
         end;
       end;
     close(t);
+    NeuUserGruppe := aNeuUserGruppe;
 
     for i:=1 to 2 do
       if mheadercustom[i][length(mheadercustom[i])]=':' then
@@ -1651,6 +1655,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/04/15 12:30:58  mk
+  - Compilierfaehigkeit mit VP wieder hergestellt
+
   Revision 1.30  2000/04/15 09:57:59  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

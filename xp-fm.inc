@@ -162,8 +162,8 @@ end;
 function secsfrom70:longint;
 var i         : integer;
     secs      : longint;
-    y,m,d,dow : smallword;
-    h,min,s,s1: smallword;
+    y,m,d,dow : rtlword;
+    h,min,s,s1: rtlword;
 begin
   getdate(y,m,d,dow);
   gettime(h,min,s,s1);
@@ -173,7 +173,7 @@ begin
   setfeb(y);
   for i:=1 to m-1 do
     inc(secs,longint(tage[i])*tagsec);          { + Monate }
-  
+
   inc(secs,longint(d-1)*tagsec);                { + Tage }
   inc(secs,longint(h)*3600+min*60+s);           { + hms  }
   secsfrom70:=secs;
@@ -922,12 +922,12 @@ var i       : integer;
           if ss='bytes' then bytes:=num else
           if ss='s'     then secs:=num else
           if ss='cps'   then cps:=num
-          
+
           { !!!!!!!!
           else
           if ss='errors' then !? ;
           }
-          
+
         end;
         if rbytes=0 then      { komplett-Recovery }
           log('*','Skipped '+fn+'; '+strs(bytes)+'b')
@@ -964,7 +964,7 @@ begin
     aresult:=EL_nologin;
     exit;
   end;
-  
+
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
 
   zmpar:='-b'+strs(baud)+' -nologo ';     { nologo, quick-quit }
@@ -1011,7 +1011,7 @@ begin
       log(ErrChar,'transfer aborted');
     mdelay(1000);
     aresult:=EL_senderr
-  
+
   end else begin                                        { ZModem empfangen }
     assign(t,zmtempfile+'.par');
     rewrite(t);
@@ -1069,6 +1069,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/04/15 12:30:58  mk
+  - Compilierfaehigkeit mit VP wieder hergestellt
+
   Revision 1.9  2000/03/23 23:59:16  oh
   Blockstrukturen sauber formatiert
 
