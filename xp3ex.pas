@@ -480,7 +480,7 @@ var size   : longint;
       lastqc     : string[20];
       qspaces    : string[QuoteLen];
       convstr    : shortstring;         { Workaround fuer iso_conv }
-      p,q        : byte;
+      p,q        : integer;
       lastquote  : boolean;   { vorausgehende Zeile war gequotet }
       blanklines : longint;
       i          : longint;
@@ -499,7 +499,7 @@ var size   : longint;
     end;
 
     function GetQCpos:byte;
-    var p,q : byte;
+    var p,q : integer;
     begin
       QuoteOffset:=0;
       p:=cpos('>',s);
@@ -1098,6 +1098,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/11/24 21:02:25  mk
+  - modified p and q from byte to integer
+
   Revision 1.52  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 
