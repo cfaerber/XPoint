@@ -1118,16 +1118,22 @@ begin
 end;
 
 function GetTokenC(var s:string; delim_chars:string):string;
-var i  : integer;
+var
+  i: integer;
 begin
-  for i:=1 to length(s) do
+  i := 1;
+  while 1 <= Length(s) do
+  begin
     if cpos(s[i],delim_chars)>0 then begin
       Result:=LeftStr(s,i-1);
       while cpos(s[i],delim_chars)>0 do i:=i+1;
       s:=mid(s,i);
       exit;
     end;
-  result:=s; s:='';
+    Inc(i);
+  end;
+  result:=s;
+  s:='';
 end;
 
 function PosX(const s1,s2:string):integer;            { length(s)+1, falls pos=0 }
@@ -1443,6 +1449,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.89  2001/07/28 12:19:41  mk
+  - removed assignment to for-loop variable 'i' in GetTokenC
+
   Revision 1.88  2001/07/02 23:41:32  mk
   - defect base64 lines are'nt decoded anymore (readded this fix)
 
