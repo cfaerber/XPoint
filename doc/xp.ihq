@@ -3136,6 +3136,29 @@ Diese Domain sollte ausschlieálich von Ihnen verwen-
 det werden, um so die Eindeutigkeit der Message-IDs
 gew„hrleisten zu k”nnen.
 @
+30002
+Geben Sie hier die IP-Nummer oder den Domainnamen
+des NNTP-Hosts an (Vorgabe: 127.0.0.1, Beispiel:
+news.shlink.de).
+@
+30003
+Hier geben Sie den Port an, ueber den der NNTP-Dienst
+erreichbar ist.
+
+Im Normalfall ist dieses der Port 119.
+@
+30004
+SMTP
+@
+30005
+POP3
+@
+30006
+Port SMTP
+@
+30007
+Port POP, normal: 110
+@
 8034
 Geben Sie hier die Domain des UUCP-Servers an.
 @

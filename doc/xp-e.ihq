@@ -2820,6 +2820,29 @@ eg. 2:345/678\@fidonet.
 Message-ID).
 
 @
+30002
+Here you have to insert the address of your NNTP
+host. This can be an IP number or a domain.
+
+(Default: 127.0.0.1, example: news.shlink.de).
+@
+30003
+The NNTP service usally uses the port number 119.
+If not so on your provider, you can set up here the
+value you needed.
+@
+30004
+SMTP
+@
+30005
+POP3
+@
+30006
+Port SMTP
+@
+30007
+Port POP, normal: 110
+@
 8034
 Enter the name of your UUCP Server here.
 @
