@@ -10,7 +10,7 @@ Wildcardsuche, bessere Datenbankperformance,
 Glossary-Funktion, /mailto:-Parameter u.v.m.
 
 The well known Point programme by Peter
-Mandrella - revised, improved and enhanced 
+Mandrella - revised, improved and enhanced
 by the OpenXP Project. Among other things,
 version 3.40 offers: LFN support, internal
 clipboard, user groups, improved database
@@ -22,3 +22,64 @@ Vollst„ndige Quelltexte
 Complete sources
 
 OpenXP-Team, http://www.openxp.de/
+
+
+ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+º  OpenXP/16 v3.40 RC3       (Update)  º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º  Entwickler-Snapshot vom 09.03.2002  º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º Vorabversion des Release Candidate 3 º
+º der CrossPoint-Weiterentwicklung von º
+º OpenXP/16.  Dieser Snapshot  enth„lt º
+º nicht nur  zahlreiche,  sondern auch º
+º einige wichtige Bugfixes  kritischer º
+º Fehler, die zum Teil seit ber einem º
+º Jahr existieren. Des weiteren wurden º
+º einige Funktionen des neuen Netztyps º
+º RFC/Client implementiert bzw. beste- º
+º hende erweitert (Multiserverbetrieb, º
+º *SETUSER-Funktion).                  º
+º ------------------------------------ º
+º Ein Update auf  diesen Snapshot wird º
+º allen  XP-Usern dringend  empfohlen, º
+º die  noch  einen  OpenXP/16-Snapshot º
+º aus der RC3-Serie vor dem 09.03.2002 º
+º einsetzen!  Der Einsatz  dieses oder º
+º eines  sp„teren Snapshots  ist unbe- º
+º dingt  notwendig,  wenn ein  Umstieg º
+º von  CrossPoint v3.12  auf OpenXP/16 º
+º durchgefhrt werden soll!            º
+º ------------------------------------ º
+º                     (c) by OpenXP/16 º
+ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+
+ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+º  OpenXP/16 v3.40 RC3 (Komplettpaket) º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º  Entwickler-Snapshot vom 09.03.2002  º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º Vorabversion des Release Candidate 3 º
+º der CrossPoint-Weiterentwicklung von º
+º OpenXP/16.  Dieser Snapshot  enth„lt º
+º nicht nur  zahlreiche,  sondern auch º
+º einige wichtige Bugfixes  kritischer º
+º Fehler, die zum Teil seit ber einem º
+º Jahr existieren. Des weiteren wurden º
+º einige Funktionen des neuen Netztyps º
+º RFC/Client implementiert bzw. beste- º
+º hende erweitert (Multiserverbetrieb, º
+º *SETUSER-Funktion).                  º
+º ------------------------------------ º
+º Ein Update auf  diesen Snapshot wird º
+º allen  XP-Usern dringend  empfohlen, º
+º die  noch  einen  OpenXP/16-Snapshot º
+º aus der RC3-Serie vor dem 09.03.2002 º
+º einsetzen!  Der Einsatz  dieses oder º
+º eines  sp„teren Snapshots  ist unbe- º
+º dingt  notwendig,  wenn ein  Umstieg º
+º von  CrossPoint v3.12  auf OpenXP/16 º
+º durchgefhrt werden soll!            º
+º ------------------------------------ º
+º                     (c) by OpenXP/16 º
+ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
