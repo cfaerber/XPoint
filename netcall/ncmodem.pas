@@ -376,7 +376,6 @@ begin
                         FCommObj.SendString(#13,False); SysDelay(300);
                         SendCommand('AT',1); ProcessKeypresses(false);
                       end;
-                      Output(mcInfo,'Init modem 2',[0]);
                       if not FTimerObj.Timeout then begin
                         SendMultCommand(CommandInit,1); StateDialup:=SDSendDial;
                       end;
@@ -525,6 +524,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/10/27 16:19:00  ma
+  - removed unnecessary output
+
   Revision 1.10  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
