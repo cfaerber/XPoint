@@ -162,14 +162,19 @@ begin
   Inc(node^.ReferenceCount);
 end;
 
+procedure debug_out_node(const prefix1,prefix2,prefix3: string; node: TRopeNodeP); forward;
+
 procedure release_node(node: TRopeNodeP);
 begin
   if not assigned(node) then exit;
 
+  debug_out_node('- ','  ','  ',Node);
+  DebugLog('xprope','release node at address 0x'+Inttohex(Longint(pointer(node)),8),dlTrace);
+
   Dec(node^.ReferenceCount);
   if (node^.ReferenceCount) <= 0 then begin
     with node^ do case NodeType of
-      rntLeaf:   if assigned(Data) then FreeMem(data,Size);
+      rntLeaf:   if assigned(Data) then FreeMem(data,MaxSize);
       rntConcat: begin release_node(Left); release_node(Right); end;
       rntSubstring: release_node(Source);
     end;
@@ -179,23 +184,26 @@ end;
 
 {$IFDEF DEBUG}
 procedure debug_out_node(const prefix1,prefix2,prefix3: string; node: TRopeNodeP);
+var addr: string;
 begin
+  addr := ' (address 0x'+inttohex(Longint(pointer(node)),8)+')';
+
   case node^.NodeType of
   rntConcat:
     begin
-      DebugLog('xprope',prefix1+'concat node: '+IntToStr(node^.Left^.Size)+' + '+IntToStr(node^.Right^.Size)+' bytes',dlTrace);
+      DebugLog('xprope',prefix1+'concat node: '+IntToStr(node^.Left^.Size)+' + '+IntToStr(node^.Right^.Size)+' bytes'+addr,dlTrace);
       debug_out_node(prefix2+' +- ',prefix2+ ' |   ',prefix2+ ' \- ', node^.Left);
       debug_out_node(prefix2+' \- ',prefix2+ '     ',prefix2+ '    ', node^.Right);
     end;
   rntEmpty:
-    DebugLog('xprope',prefix1+'empty node',dlTrace);
+    DebugLog('xprope',prefix1+'empty node'+addr,dlTrace);
   rntLeaf:
-    DebugLog('xprope',prefix1+'leaf node: '+IntToStr(node^.Size)+' bytes',dlTrace);
+    DebugLog('xprope',prefix1+'leaf node: '+IntToStr(node^.Size)+' bytes'+addr,dlTrace);
   rntFill:
-    DebugLog('xprope',prefix1+'fill node: '+IntToStr(node^.Size)+' bytes',dlTrace);
+    DebugLog('xprope',prefix1+'fill node: '+IntToStr(node^.Size)+' bytes'+addr,dlTrace);
   rntSubstring:
     begin
-      DebugLog('xprope',prefix1+'substring node: '+IntToStr(node^.Size)+' bytes',dlTrace);
+      DebugLog('xprope',prefix1+'substring node: '+IntToStr(node^.Size)+' bytes'+addr,dlTrace);
       debug_out_node(prefix2+' \- ',prefix2+ '     ',prefix2+ '    ', node^.Source);
     end;
   end;
@@ -646,6 +654,11 @@ end;
 end.
 
 // $Log$
+// Revision 1.5  2003/02/02 17:04:23  cl
+// - BUGFIX (FPC): EINVALIDPOINTER in Spamroutine 3.9/28.1.03 Win32
+//   see <8f6oLFbzo+D@doebe.li>
+// - added more debug output
+//
 // Revision 1.4  2003/01/27 18:44:52  cl
 // - implemented SetSize(0)
 //
