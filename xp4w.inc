@@ -924,16 +924,19 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack;
-                 GoP; dpp:=dbRecno(mbase);
+                 SetKK; GoMsgBack; 
+                 GoP;
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth;
-                 GoP; dpp:=dbRecno(mbase);
+                 SetKK; GoMsgForth; 
+                 GoP;
                  ende:=false;
                end;
-        end;
+          end;
+        if (not ende) and (lres<=7) 
+          then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
+
         if lres<6 then
           if not ende then begin
             {GrabP} kk:=true; disprec[p]:=dbRecno(mbase);
@@ -1496,6 +1499,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/03 15:10:30  mk
+  JG: - Bugfix: Suchfunktionen und "O" im Lister
+        Nach Bewegung mit +/- und Cursor im Bezugsbaum
+        wurde beim Zurueckspringen in den Lister die falsche Mail angesprungen
+
   Revision 1.26  2000/06/24 14:10:28  mk
   - 32 Bit Teile entfernt
 
