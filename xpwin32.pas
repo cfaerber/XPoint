@@ -79,13 +79,18 @@ var
   Size: TCoord;
   R: TSmallRect;
 begin
+  R.Left := 0;
+  R.Top := 0;
+  R.Right := Cols - 1;
+  R.Bottom := Lines - 1;
+  SetConsoleWindowInfo(OutHandle, True, R);
   Size.X := Cols;
   Size.Y := Lines;
   SetConsoleScreenBufferSize(OutHandle, Size);
   R.Left := 0;
   R.Top := 0;
-  R.Right := Size.X - 1;
-  R.Bottom := Size.Y - 1;
+  R.Right := Cols - 1;
+  R.Bottom := Lines - 1;
   SetConsoleWindowInfo(OutHandle, True, R);
 end;
 
@@ -132,6 +137,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/10/19 19:53:08  mk
+  - Fix for SysSetScreenSize when resizing the window at runtime
+
   Revision 1.8  2000/10/10 12:15:23  mk
   - SysGetConsoleCodepage added
 
