@@ -550,10 +550,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 253
 1    Net Options
 2    Z-Netz
-3    Small user names
+3    Lower case User names
 4    Z-Netz only
 5    Warning!
-6    Small names are not allowed in Z-Netz. Do you really want to
+6    Lower case names are not allowed in Z-Netz. Do you really want to
 7    activate this option?
 8    ~^Yes ,  ^No ~
 9    Use MIME for news
@@ -912,6 +912,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 30   Fido-To:  ~
 31   Distrib.: ~
 32   Homepage: ~
+# [!MF!]
+33   Part:     ~
+34   ~of~
+# [..]
 35   Priority: ~
 48   private mail
 50
@@ -1943,9 +1947,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Sysfile subject~
 9    Sender = user@server.serverdomain
 + 929
-1    There is still a data packet for this box (%s.PP)
-2    - type of net cannot be changed. Please send or delete
-3    first the unsent messages for this box!
+# [!MF!]
+1    There is an unsent mail packet (%s.PP) for this
+2    Server. Therefore, the type of net cannot be changed.
+3    Either send or delete the mail packet first!
+# [..]
 4
 5    Do you really want to change the net type of %s
 -
@@ -2826,6 +2832,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 45 Mesagebase is bad; use /Re-Org/Pack!
 46 Close this newsgroup and *then* press "W" ...
 47 You can't supersede a unsent message
+48 Not enough RAM to complete reply tree!
 
 50 Writing to this newsgroup is disabled
 # XP4O3
