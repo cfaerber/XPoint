@@ -88,7 +88,7 @@ type
     { -------- NNTP-Zugriffe }
 
     { Liste holen (withDescr = Description, wenn moeglich }
-    function List(aList: TStringList; withDescr: boolean; onlyNew: Boolean): boolean;
+    function List(aList: TStringList; withDescr: boolean; onlyNew: Boolean; FromDateTime: TDateTime): boolean;
 
     { Holen einer Gruppenbeschreibung }
     function GroupDescription(group: string): string;
@@ -292,7 +292,7 @@ begin
 end;
 
 
-function TNNTP.List(aList: TStringList; withDescr: boolean; onlyNew: Boolean): boolean;
+function TNNTP.List(aList: TStringList; withDescr: boolean; onlyNew: Boolean; FromDateTime: TDateTime): boolean;
 var
   counter       : integer;              { Fuer die Anzeige }
   s             : string;               { group }
@@ -313,7 +313,7 @@ begin
     end;
 
     if OnlyNew then                                     { Liste anfordern }
-      SWriteln('NEWGROUPS')
+      SWriteln('NEWGROUPS ' + FormatDateTime('yymmdd hhnnss', FromDateTime))
     else
       SWriteln('LIST');                                 { Liste anfordern }
     SReadln(s);
@@ -376,11 +376,12 @@ procedure TNNTP.SelectGroup(const AGroupName: String);
       P := cPos(' ', IntChecker);
       if P <> 0 then
       begin
-        StrToIntDef(Copy(IntChecker, 1, P-1), -1);
+        Result := StrToIntDef(Copy(IntChecker, 1, P-1), -1);
         IntChecker := Copy(IntChecker, P + 1, Length(WorkS) - P);
       end else
         Result := -1;
     end;
+    
   begin
     WorkS := NNTPString;
     GetNextIntFromStr(WorkS); // ParseResultnumber -> /dev/null
@@ -534,10 +535,13 @@ begin
   end;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.36  2002/02/21 08:59:28  mk
+  - misc fixes
+  - added timestame to newgroups
+
   Revision 1.35  2002/02/13 18:26:44  mk
   - use StrToIntDef instead of try except block
 
@@ -577,3 +581,5 @@ end.
   Revision 1.24  2001/04/27 10:18:56  ma
   - using "new" NNTP spool format
 }
+end.
+

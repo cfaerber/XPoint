@@ -75,11 +75,11 @@ var
   f             : text;                 { Zum Speichern }
   i             : integer;              { -----"------- }
   bfile         : string;               { Server file name (without extension) }
+  FromDate: TDateTime;
 begin
-  if not OnlyNew and not ReadJN(getres2(30010,2),false) then begin { ' Kann dauern, wirklich? '}
-    result:= true;
+  Result := True;
+  if not OnlyNew and not ReadJN(getres2(30010,2),false) then { ' Kann dauern, wirklich? '}
     exit;
-  end;
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getgrouplistinit,[BoxName]),True);
   { Host und ... }
@@ -96,26 +96,30 @@ begin
   end;
   { Verbinden }
   try
-    if not NNTP.Connect then raise Exception.Create('');
     { Nun die Liste holen }
     List:= TStringList.Create;
-    List.Duplicates:= dupIgnore;
-    bfile := GetServerFilename(BoxName, extBl);
-    if (bFile <> '') and NNTP.List(List,false, OnlyNew) then
-    begin
-      { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
-        (Sonst gibt es einen RTE) }
-      Assign(f, bfile);
-      if FileExists(bfile) and OnlyNew then
-        Append(f)
-      else
-        ReWrite(f);
-      for i:= 0 to List.Count-1 do
-        write(f,List[i],#13,#10);
-      Close(f);
-      result:= true;
-    end else
-      result:= false;
+    try
+      if not NNTP.Connect then raise Exception.Create('');
+      List.Duplicates:= dupIgnore;
+      bfile := GetServerFilename(BoxName, extBl);
+      FromDate := FileDateToDateTime(FileAge(bfile));
+      if (bFile <> '') and NNTP.List(List,false, OnlyNew, FromDate) then
+      begin
+        { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
+          (Sonst gibt es einen RTE) }
+        Assign(f, bfile);
+        if FileExists(bfile) and OnlyNew then
+          Append(f)
+        else
+          ReWrite(f);
+        for i:= 0 to List.Count-1 do
+          write(f,List[i],#13,#10);
+        Close(f);
+      end else
+        result:= false;
+    finally
+      List.Free;
+    end;
   except
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
@@ -128,7 +132,6 @@ begin
   end;
   NNTP.Disconnect;
   NNTP.Free;
-  List.Free;
 end;
 
 function GetNNTPList(BoxName: string; bp: BoxPtr): boolean;
@@ -367,6 +370,10 @@ end;
 
 {
         $Log$
+        Revision 1.36  2002/02/21 08:59:28  mk
+        - misc fixes
+        - added timestame to newgroups
+
         Revision 1.35  2002/02/10 14:52:51  mk
         - added fetching new newsgroups (untested)
 
