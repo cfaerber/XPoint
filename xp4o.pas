@@ -1439,12 +1439,13 @@ begin
 end;
 
 
-procedure ShowHeader;
+procedure ShowHeader;            { Header direkt so anzeigen wie er im PUFFER steht }
 var fn  : pathstr;
     f   : file;
     hdp : headerp;
     hds : longint;
-begin
+    lm  : Byte;                  { Makrozwischenspeicher... }    
+begin 
   new(hdp);
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
@@ -1455,10 +1456,13 @@ begin
     seek(f,hds);
     truncate(f);
     close(f);
+    lm:=listmakros;                                   { Aktuelle Makros merken,       }
+    listmakros:=16;                                   { Archivviewermakros aktivieren }
     if ListFile(fn,getres(460),true,false,0)=0 then;  { 'Nachrichten-Header' }
+    listmakros:=lm;                                   { wieder alte Makros benutzen   }            
     _era(fn);
     end;
-  dispose(hdp);
+  dispose(hdp);    
 end;
 
 
@@ -1692,6 +1696,7 @@ end;
 procedure FileArcViewer(fn:pathstr);
 var useclip : boolean;
     arc     : shortint;
+    lm      : byte;                                     
 begin
   if (fn='') or multipos('?*',fn) then begin
     if fn='' then fn:='*.*';
@@ -1703,8 +1708,11 @@ begin
   if exist(fn) then begin
     arc:=ArcType(fn);
     if ArcRestricted(arc) then arc:=0;
-    if arc=0 then begin
-      if listfile(fn,fn,true,false,0)=0 then;
+    if arc=0 then begin                                 { Wenns kein Archiv war...      }
+      lm:=listmakros;           
+      listmakros:=16;                                   { Archivviewermacros benutzen!  }
+      if listfile(fn,fn,true,false,0)=0 then;           { und File einfach nur anzeigen }
+      listmakros:=lm;  
       end
       { rfehler(434)   { 'keine Archivdatei' }
     else
@@ -2157,6 +2165,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/02/22 15:51:20  jg
+  Bugfix fÅr "O" im Lister/Archivviewer
+  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
+  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
+  Archivviewer-Macros gÅltig im MIME-Popup
+
   Revision 1.12  2000/02/19 18:00:24  jg
   Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
   Umlautunabhaengige Suche kennt jetzt "Ç"

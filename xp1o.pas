@@ -302,46 +302,52 @@ begin
   if UpCase(c)=k4_F then                                 { 'F' }
     ListXHighlight:=not ListXHighlight;
 
-{JG 03.02.00}  
 
-   if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
-   if upcase(c) = 'O' then ShowHeader;                       { 'O' fuer Lister }
+  if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
+  begin
 
-   if t = keyaltm then begin                                   { ALT+M = Suche MessageID }
-         if list_markanz=0 then global_suchstring:=''          {Nullstring ohne Markierung}
-           else global_suchstring:=mailstring(first_marked,false);      {JG:06.02.00 Bugfix}
-         if Suche(getres(437),'MsgID@','') then ShowfromLister;   { gefundene Nachr. zeigen }
-         ex(5)                                                    { Weiter im Lister }
-         end ;
+    if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
+    if upcase(c) = 'O' then ShowHeader;                       { 'O' fuer Lister }
 
-   if t = keyaltv then begin                                     { ALT+S = Suche text }
-         if list_markanz=0 then global_suchstring:=''
-         else global_suchstring:=first_marked;
-         if Suche(getres(414),'@','') then Showfromlister;          
-         ex(5)
-         end;
+    if t = keyaltm then                                       { ALT+M = Suche MessageID }
+    begin                                                     
+      if list_markanz=0 then global_suchstring:=''            {Nullstring ohne Markierung}
+      else global_suchstring:=mailstring(first_marked,false);
+      if Suche(getres(437),'MsgID@','') then ShowfromLister;  { gefundene Nachr. zeigen }
+      ex(5)                                                   { Weiter im Lister }
+      end ;
 
-  if t = keyaltb then begin                                     { Alt+B = Betreff }
-         if list_markanz=0 then 
-            global_suchstring:=dbreadstr(mbase,'Betreff')
-         else global_suchstring:=first_marked;
-         if Suche(getres(415),'Betreff@','') then Showfromlister;
-         ex(5)
-         end;
+    if t = keyaltv then                                        { ALT+V = Suche text }
+    begin                                    
+      if list_markanz=0 then global_suchstring:=''
+      else global_suchstring:=first_marked;
+      if Suche(getres(414),'@','') then Showfromlister;          
+      ex(5)
+      end;
 
-  if t = keyaltu then begin                                     { Alt+U = User }
-         if list_markanz=0 then
-            global_suchstring:=dbreadstr(mbase,'Absender')
-            else global_suchstring:=mailstring(first_marked,false);      {JG:06.02.00 Bugfix}
-         if Suche(getres(416),'Absender@','') then Showfromlister;
-         ex(5)
-         end;
+    if t = keyaltb then                                        { Alt+B = Betreff }
+    begin
+      if list_markanz=0 then 
+        global_suchstring:=dbreadstr(mbase,'Betreff')
+      else global_suchstring:=first_marked;
+      if Suche(getres(415),'Betreff@','') then Showfromlister;
+      ex(5)
+      end;
 
-{/JG}
+    if t = keyaltu then                                        { Alt+U = User }
+    begin                                        
+      if list_markanz=0 then
+        global_suchstring:=dbreadstr(mbase,'Absender')
+      else global_suchstring:=mailstring(first_marked,false);      
+      if Suche(getres(416),'Absender@','') then Showfromlister;
+      ex(5)
+      end;
+    end;
 
   if listmakros=16 then   { Archiv-Viewer }
     if t=mausldouble then
       t:=keycr;
+
   if llh then begin
     if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
       b:=2;
@@ -918,6 +924,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/22 15:51:20  jg
+  Bugfix fÅr "O" im Lister/Archivviewer
+  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
+  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
+  Archivviewer-Macros gÅltig im MIME-Popup
+
   Revision 1.8  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
 

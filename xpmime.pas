@@ -20,7 +20,7 @@ unit xpmime;
 interface
 
 uses  dos,typeform,montage,fileio,keys,lister,database,resource,
-      xp0,xp1, xpglobal;
+      xp0,xp1, xpglobal, xpkeys;
 
 
 type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
@@ -109,6 +109,7 @@ end;
 
 procedure SMP_Keys(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
+  Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if ustr(t)='X' then
     m_extrakt(mf^[ival(mid(get_selection,57))]);
 end;
@@ -700,6 +701,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/22 15:51:20  jg
+  Bugfix fÅr "O" im Lister/Archivviewer
+  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
+  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
+  Archivviewer-Macros gÅltig im MIME-Popup
+
   Revision 1.5  2000/02/16 23:02:43  mk
   JB: * Nachricht/Extrakt/Mime Decode die Zieldatei schon vorhanden und waehlt
         entsprechend die Option Ueberschreiben/Anhaengen

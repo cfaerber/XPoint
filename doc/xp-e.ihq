@@ -493,12 +493,19 @@ You can also use <space> instead of PgDn
         nothing is marked) to a file (asks for name).
 
 
+<<Ctrl-A>>  marks all lines;
+<<Ctrl-E>>  unmarks everything.
 
-   <<I>>    shows the information in the message header.
+<<<Esc> >>  Exits the lister.
 
-   <<O>>    shows the original message-header 
+<<       Message Lister (Reader)
+<<       =======================
 
-   <<G>>    jumps to the preceding message. (Like <<->>)
+ <<I>>    shows the information in the message header.
+
+ <<O>>    shows the original message-header 
+
+ <<G>>    jumps to the preceding message. (Like <<->>)
 
 
 <<ALT M>>  Starts the search for a MessageID.
@@ -528,13 +535,7 @@ You can also use <space> instead of PgDn
        shown message.
  
 
-<<Ctrl-A>>  marks all lines;
-<<Ctrl-E>>  unmarks everything.
 
-<<<Esc> >>  Exits the lister.
-
-<<       Message Lister (Reader)
-<<       =======================
  <<L>>      sets the displayed message to delete
         and exits.
 
@@ -5228,6 +5229,7 @@ it is a .MSG file. See the field [Delete]@578
 @
 594
 <<[x]>>  the macro works in the archive viewer
+     and some windows like the MIME-Popup   
 @
 595
 <<[x]>>  the macro works in the internal editor

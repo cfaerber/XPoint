@@ -619,6 +619,16 @@ kann auch <Space> verwendet werden.
 <<W>> schreibt die markierten Zeilen bzw. den gesamten
   Text in eine Datei.
 
+
+Mit <Ctrl A> werden alle Zeilen markiert; mit <Ctrl
+E> werden alle Markierungen gelîscht.
+
+Der Lister wird mit <Esc> verlassen.
+
+
+<<Nachrichten-Lister
+
+
 <<G>> Springt zur Bezugsnachricht, alternative zu <<->> 
 
 <<I>> Zeigt den Inhalt des Nachrichtenkopfes an
@@ -629,14 +639,15 @@ kann auch <Space> verwendet werden.
 <<ALT M>> startet die Suche nach einer MessageID
       die erste markierte Textzeile wird dabei
       als Suchbegriff Åbernommen.
-      Findet sich eine "<news:" Kennung in dieser Zeile,
-      erscheint nur die MessageID als Suchbegriff.
+      Findet sich eine "<news:" Kennung in dieser
+      Zeile, erscheint nur die MessageID 
+      als Suchbegriff.
 
       War die Suche erfolgreich werden die gefundenen
       Nachrichten angezeigt. Diese kînnen dann
-      gelesen werden, (ESC) aus der Nachrichtenanzeige
-      springt zurÅck ins Listerfenster mit der
-      Nachricht bei der die Suche begonnen wurde.
+      gelesen werden, (ESC) aus der Nachrichten-
+      anzeige springt zurÅck ins Listerfenster mit
+      der Nachricht bei der die Suche begonnen wurde.
 
 
 <<ALT T>> startet die Volltextsuche analog zu <<ALT M>>
@@ -652,14 +663,6 @@ kann auch <Space> verwendet werden.
       markierte Textzeile, oder der Betreff
       der aktuell angezeigten Nachricht.
 
-
-
-Mit <Ctrl A> werden alle Zeilen markiert; mit <Ctrl
-E> werden alle Markierungen gelîscht.
-
-Der Lister wird mit <Esc> verlassen.
-
-<<Nachrichten-Lister
 
 <<L>> setzt die angezeigte Nachricht auf "Lîschen" und
   verlÑ·t den Lister.
@@ -5735,6 +5738,7 @@ rige Datei gelîscht (s. Feld "lîschen").
 @
 594
 <<[x]>> -> das Makro gilt im Archiv-Viewer
+       im MIME-Popup, und Ñhnlichen Fenstern 
 @
 595
 <<[x]>> -> das Marko gilt im internen Editor
