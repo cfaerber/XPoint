@@ -10,8 +10,6 @@
 
 { CrossPoint - UniSel: Select/Test-Routinen fuer Unisel-Menues    }
 
-{ JG: Ausgelagert, da Unit die 64K-Groesse ueberschritten hat }
-
 {$I XPDEFINE.INC}
 {$O+,F+}
 
@@ -712,9 +710,23 @@ begin
     end;
 end;
 end.
+
 {
   $Log$
+  Revision 1.1.2.5  2001/06/19 17:02:49  my
+  - *really* added CVS log infos :-)
+
   Revision 1.1.2.4  2001/06/19 06:53:00  mk
   - added CVS Log Infos
+
+  Revision 1.1.2.3  2001/06/18 23:55:58  my
+  - RFC/Client: Edit/Client/Client_call is a mandatory field now
+    (procedure ClientTest)
+
+  Revision 1.1.2.2  2001/06/16 15:22:16  my
+  - New field description "Servername" for first_box if RFC/Client
+
+  Revision 1.1.2.1  2001/06/13 01:41:41  my
+  JG:- new unit XP9SEL, unit XP9 exceeded 64K size
 
 }
