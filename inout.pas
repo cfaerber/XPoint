@@ -185,7 +185,7 @@ Procedure initscs;                              { Screen-Saver init       }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
 {$ENDIF }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
-Procedure GetCur(var a,e,x,y:byte);          { Cursorbereich abfragen   }
+Procedure GetCur(var a,e,x,y:integer);       { Cursorbereich abfragen   }
 Procedure SaveCursor;                        { Cursor retten            }
 Procedure RestCursor;                        { Cursor wiederherstellen  }
 Procedure Get(var z:taste; cur:curtype);     { Taste einlesen           }
@@ -295,8 +295,8 @@ const  maxsave     = 50;  { max. fr savecursor }
 
 type   editsa      = array[1..500] of edits;   { nur fr Type Cast }
 
-var    ca,ce: byte;
-       sx,sy,sa,se,
+var    ca,ce       : integer;
+       sx,sy,sa,se : array[1..maxsave] of integer;
        wl,wr,wo,wu : array[1..maxsave] of byte;
 {$IFNDEF NCRT }
        mwl,mwo,
@@ -399,7 +399,7 @@ end;
   {$HINTS OFF }
 {$ENDIF }
 
-Procedure GetCur(var a,e,x,y:byte);
+Procedure GetCur(var a,e,x,y:integer);
 begin
   x :=wherex; y:=wherey;
 end;
@@ -1680,6 +1680,10 @@ end;
 
 {
   $Log$
+  Revision 1.84  2001/10/17 09:54:42  ml
+  - cursorpos etc. byte -> integer to prevent range-errors
+  - terminals can be larger than 255
+
   Revision 1.83  2001/10/11 15:27:01  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 
