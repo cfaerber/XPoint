@@ -209,7 +209,7 @@ label ende;
     if spez then x:=23 else x:=19;
     msgbox(70,x,'Suchstring-Check',x,y);
     attrtxt(col.colmbox);
-    wrt(x+1,y+1,'Benutzte Teilstrings: '+IntToStr(suchanz));
+    wrt(x+1,y+1,'Benutzte Teilstrings: '+StrS(suchanz));
     wrt(x+27,y+1,iifs(suchand,'AND','OR'));
     write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));
     write(iifs(spez,'    SPEZIAL',''));
@@ -2408,6 +2408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/05/14 07:22:21  mk
+  - weiterer Fix fuer Debug-Modus
+
   Revision 1.39  2000/05/13 23:17:54  mk
   - jetzt mit FPC und Debug-Modus compilierbar
 
