@@ -76,7 +76,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 72;
+   lastESCSeq = 89;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -84,8 +84,6 @@ const
                   ncCode  : Integer;
                   DosCode : String[2];
                end = (
-      (Sequenz: #27#91#54#94; ncCode: 512; DosCode : #0#118), { Ctrl-PgDn }
-      (Sequenz: #27#91#53#94; ncCode: 513; DosCode : #0#132), { Ctrl-PgUp }
       (Sequenz: ncad; ncCode: Key_BREAK;     DosCode : #3),
       (Sequenz: ncad; ncCode: Key_BACKSPACE; DosCode : #8),
       (Sequenz: ncad; ncCode: Key_IC;        DosCode : #0#82), { insert }
@@ -156,7 +154,26 @@ const
       (Sequenz: #27'0'; ncCode: 547; DosCode : #0#128), { alt/0 }
       (Sequenz: #27'-'; ncCode: 548; DosCode : #0#130), { alt/- }
       (Sequenz: #27'='; ncCode: 549; DosCode : #0#131), { alt/= }
-      (Sequenz: #27#9; ncCode: 550; DosCode : #0#15) { alt/tab }
+      (Sequenz: #27#9;  ncCode: 550; DosCode : #0#15), { alt/tab }
+      (Sequenz: #27#91#54#94;    ncCode: 551; DosCode : #0#118), { Ctrl-PgDn }
+      (Sequenz: #27#91#53#94;    ncCode: 552; DosCode : #0#132), { Ctrl-PgUp }
+      (Sequenz: #27#91#56#126;   ncCode: 553; DosCode : #0#79), { End }
+      (Sequenz: #27#91#55#126;   ncCode: 554; DosCode : #0#71), { Home }
+      (Sequenz: #27#91#49#49#94; ncCode: 555; DosCode : #0#94), { Ctrl-F2 }
+      (Sequenz: #27#91#49#50#94; ncCode: 556; DosCode : #0#95), { Ctrl-F2 }
+      (Sequenz: #27#91#49#51#94; ncCode: 557; DosCode : #0#96), { Ctrl-F3 }
+      (Sequenz: #27#91#49#52#94; ncCode: 558; DosCode : #0#97), { Ctrl-F4 }
+      (Sequenz: #27#91#49#53#94; ncCode: 559; DosCode : #0#98), { Ctrl-F5 }
+      (Sequenz: #27#91#49#55#94; ncCode: 560; DosCode : #0#99), { Ctrl-F6 }
+      (Sequenz: #27#91#49#56#94; ncCode: 561; DosCode : #0#100), { Ctrl-F7 }
+      (Sequenz: #27#91#49#57#94; ncCode: 562; DosCode : #0#101), { Ctrl-F8 }
+      (Sequenz: #27#91#50#48#94; ncCode: 563; DosCode : #0#102), { Ctrl-F9 }
+      (Sequenz: #27#91#50#49#94; ncCode: 564; DosCode : #0#103), { Ctrl-F10 }
+      (Sequenz: #27#91#50#51#94; ncCode: 565; DosCode : #0#201), { Ctrl-F11 }
+      (Sequenz: #27#91#50#52#94; ncCode: 566; DosCode : #0#202), { Ctrl-F12 }
+      (Sequenz: #27#13;          ncCode: 567; DosCode : #0#200), { Alt-Enter }
+      (Sequenz: #27#91#55#94;    ncCode: 568; DosCode : #0#119), { Ctrl-Home }
+      (Sequenz: #27#91#56#94;    ncCode: 569; DosCode : #0#117) { Ctrl-End }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -787,15 +804,25 @@ function Readkey: char;
            begin
              Write(__F,FormatDateTime('hh:nn:ss',Now),
                      Format(' Translating KeySequence: [%d] to ', [Code]));
-             for I := 1 to Length(Result) do
+{             for I := 1 to Length(Result) do
                write(__F, '[', Ord(Result[I]), ']');
                writeln(__F);
+} 
            end;
 {$ENDIF}
            exit;
         end;
   end;
 
+  function TranslateSpecialChar(InChar :  Char): Char;
+  var
+     I :Integer;
+  begin
+     Result := InChar;
+     I := Ord(InChar);
+     if I > 128 then
+	Result := Chr(IBM2ISOTab[I]);
+  end;
 
 var
   b      : boolean;
@@ -807,13 +834,13 @@ begin
   b:= IsEcho;
   noecho;
   l:= wgetch(BaseWin.wHnd);
-  { if it's an extended key, then map to the IBM values }
 {$IFDEF Debug}
            if __isopen then
              Writeln(__F,FormatDateTime('hh:nn:ss',Now),
                      Format(' Key pressed: [%d] = ''%c''', [l, chr(l)]));
 {$ENDIF}
 
+  { if it's an extended key, then map to the IBM values }
   if (l > 255) then
   begin
      DosSeq := TranslateESCSeq(l);
@@ -825,7 +852,7 @@ begin
      for I := 2 to Length(DosSeq) do   // other chars pushed to process later
        ungetch(ord(DosSeq[I]));
   end else
-    Readkey:= chr(ord(l));
+    Readkey:= TranslateSpecialChar(chr(ord(l)));
   if (b) then echo;
 end;
 
@@ -1480,6 +1507,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/04/19 12:54:26  ml
+  - keyboardtranslation extended   (Pos1/Home etc.)
+  - ISO2IBM - Codetabletranslation (дцья - this was shitty hard work)
+
   Revision 1.42  2001/04/19 00:04:05  ml
   - fix in creating ~/.curses.log - now available for logging
 
