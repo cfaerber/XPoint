@@ -32,7 +32,7 @@ uses
   xpnt, //Netz-Typen
   xpglobal;
 
-const maxcc = 50;
+const maxcc = 126;
 var   ccte_nobrett : boolean = false;
       cc_NT :eNetz = nt_Netcall;  //byte = 0; ?
       _UserAutoCreate : boolean = false;  { User ohne Rueckfrage anlegen }
@@ -474,6 +474,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2003/03/28 06:51:29  mk
+  - maxcc is now 126 instead of 50
+
   Revision 1.40  2002/12/14 07:31:37  dodi
   - using new types
 
