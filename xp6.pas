@@ -852,11 +852,13 @@ begin
 end;
 
   Procedure changeempf;                         {Empfaenger der Mail aendern}
+  var kb_s: boolean;
   begin
+    kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
       else adresse:=uucpbrett(empfaenger,2);
-    if pm and (left(adresse,1)=vert_char)
+    if pm and (adresse[1]=vert_char)
       then adresse:=copy(adresse,2,length(adresse)-3);
     attrtxt(col.coldiarahmen);
     mwrt(x+70,y+12,' [F2] ');
@@ -869,21 +871,22 @@ end;
     msetvfunc(testmailstring);
     sel_verteiler:=true;
     readmask(brk);
-    sel_verteiler:=false;
     closemask;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
-    if (left(adresse,1)='[') and (right(adresse,1)=']')
-    then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
-    else begin
-      cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
-      fillchar(cc^,sizeof(cc^),0);
-      end;
     if (adresse<>'') and (cc_testempf(adresse)) then begin
+      if (adresse[1]='[') and (adresse[length(adresse)]=']')
+        then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
+      else if not kb_s then 
+      begin
+        cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
+        fillchar(cc^,sizeof(cc^),0);
+        end;
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
       end;
     pm:=cpos('@',empfaenger)>0;
+    sel_verteiler:=false;
     end;
 
 { ausgelagert, weil Prozedurrumpf zu groá: }
@@ -2245,6 +2248,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/06/13 16:57:56  jg
+  - Empfaenger-aendern im Sendefenster:
+    Bugfix:  Verteiler funktioieren jetzt wieder
+    Feature: Bei gedrueckter Shifttaste bleiben die Kopien-Eintraege erhalten
+
   Revision 1.37  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
