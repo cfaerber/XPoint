@@ -2029,7 +2029,6 @@ var ap : absatzp;
       s,s2 : String; 
       lsi  : byte;
       brk  : boolean;
-      x,y  : byte;
   begin
     ScanGlossary:=false;  
     assign(t,'glossary.cfg');
@@ -2107,6 +2106,8 @@ begin
       Insert(ap,p);
       gotopos(p,0);
       end;
+    Blockhidden:=true;
+    Aufbau:=true;
     end;
 end; 
 
@@ -2401,6 +2402,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.4  2000/07/24 14:52:31  jg
+  - Glossary: am Ende der Funktion wird auf jeden Fall entmarkiert.
+
   Revision 1.19.2.3  2000/07/23 12:31:37  jg
   - Glossary: kleine Fixes und Optimierungen
 
