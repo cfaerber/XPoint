@@ -162,11 +162,12 @@ begin
 {$ENDIF }
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
-  if not brk and mmodified then begin
-    if uppercase(ua)=Uppercase(getres2(250,5)) then UserAufnahme:=0       { 'Alle'   }
-    else if Uppercase(ua)=Uppercase(getres2(250,6)) then UserAufnahme:=1  { 'Z-Netz' }
-    else if Uppercase(ua)=Uppercase(getres2(250,7)) then UserAufnahme:=3  { 'PMs'    }
-    else UserAufnahme:=2;                                       { 'Keine'  }
+  if not brk and mmodified then
+  begin
+    if      ua = getres2(108,0) then UserAufnahme:=0  { 'Alle'   }
+    else if ua = getres2(108,1) then UserAufnahme:=1  { 'Z-Netz' }
+    else if ua = getres2(108,3) then UserAufnahme:=3  { 'PMs'    }
+    else UserAufnahme:=2;                             { 'Keine'  }
     Usersortbox:=_usersortbox;
     otherqcback:=OtherQuoteChars;
     GlobalModified;
@@ -1550,6 +1551,9 @@ end;
 
 {
   $Log$
+  Revision 1.137  2003/01/26 14:23:15  mk
+  - fixed COA/Useraufnahme
+
   Revision 1.136  2002/12/14 07:31:31  dodi
   - using new types
 
