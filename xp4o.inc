@@ -447,7 +447,7 @@ var x,y,yy  : Integer;
   begin
     dbReadN(mbase,mb_adresse,adr);
     dbReadN(mbase,mb_msgsize,size);
-    if (size<0) or (adr+size>f1s) then begin        { Nachricht defekt }
+    if (size<0) or (adr<0) or (MaxInt-adr<size) or (adr+size>f1s) then begin        { Nachricht defekt }
       dbDelete(mbase);
       exit;
       end;
@@ -711,6 +711,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.47.2.5  2003/11/02 12:15:45  cl
+  - BUGFIX: range check error during reorganisation with defective database,
+    see <news:8x4D6qprpVB@centermail.net>
+
   Revision 1.47.2.4  2003/04/13 17:36:10  mk
   - purge old mail one day faster than before (same as OpenXP 3.40)
 
