@@ -297,7 +297,7 @@ begin
     result:= true;
     List := TStringList.Create;
     RCList := TStringList.Create;
-    RCList.LoadFromFile(RCFilename);
+    if FileExists(RCFilename) then RCList.LoadFromFile(RCFilename);
     iNewsFile:= 0;
     NNTP.Connect;
 
@@ -367,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.29  2001/10/10 20:24:50  mk
+        - avoid exception if rc file is not found
+
         Revision 1.28  2001/10/05 20:55:03  ma
         - initial number of newsgroup postings to fetch now independent
           of maximum number to fetch
