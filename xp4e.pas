@@ -1102,7 +1102,7 @@ label ende;
 begin
   modibrett:=false;
   brett:= dbReadNStr(bbase,bb_brettname);
-  _brett:=mbrettd(brett[1],bbase);
+  _brett:=mbrettd(FirstChar(brett),bbase);
   komm:= dbReadNStr(bbase,bb_kommentar);
   box:= dbReadNStr(bbase,bb_pollbox);
   dbReadN(bbase,bb_haltezeit,halten);
@@ -1416,7 +1416,7 @@ begin
         if user then _brett:=mbrettd('U',ubase)
         else begin
           brett:= dbReadStrN(bbase,bb_brettname);
-          _brett:=mbrettd(brett[1],bbase);
+          _brett:=mbrettd(FirstChar(brett),bbase);
           end;
         dbSeek(mbase,miBrett,_brett);
         if not dbEOF(mbase) then
@@ -2516,6 +2516,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2002/07/18 01:11:56  mk
+  - fixed potential AV with mbrettd calls
+
   Revision 1.93  2002/06/23 15:03:06  cl
   - Adapted Nachricht/Direkt to new address handling.
 

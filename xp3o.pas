@@ -253,7 +253,7 @@ begin
       end;
     dbReadN(bbase,bb_ldatum,d1);
     brett := dbReadNStr(bbase,bb_brettname);
-    _brett:=mbrettd(brett[1],bbase);
+    _brett:=mbrettd(FirstChar(brett),bbase);
 
     dbSeek(mbase,miBrett,_brett+#255);  { erste Msg im naechsten Brett suchen: }
     if dbEOF(mbase) then
@@ -431,10 +431,10 @@ begin
     if not dbFound then
       fehler(getres2(322,6))   { 'Brett nicht vorhanden' }
     else begin
-      _newbrett:=mbrettd(newbrett[1],bbase);
+      _newbrett:=mbrettd(FirstChar(newbrett),bbase);
       dbGo(bbase,rec);
       oldbrett := dbReadStrN(bbase,bb_brettname);
-      _oldbrett:=mbrettd(oldbrett[1],bbase);
+      _oldbrett:=mbrettd(FirstChar(oldbrett),bbase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
       dbSeek(mbase,miBrett,_oldbrett);
@@ -703,7 +703,7 @@ begin
                     end
                   else begin
                     brett := dbReadStrN(bbase,bb_brettname);
-                    _brett:=mbrettd(brett[1],bbase);
+                    _brett:=mbrettd(FirstChar(brett),bbase);
                     dbSeek(mbase,miBrett,_brett);
                     end;
                   repeat
@@ -1533,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/07/18 01:11:56  mk
+  - fixed potential AV with mbrettd calls
+
   Revision 1.88  2002/06/12 09:14:51  mk
   - removed some length limits including AdressLength (for RFC nets only)
 

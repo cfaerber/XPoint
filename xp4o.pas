@@ -1149,7 +1149,7 @@ restart:
               else begin
                 dbGo(bbase,bmarked^[i]);
                 brett := dbReadNStr(bbase,bb_brettname);
-                TestBrett(mbrettd(brett[1],bbase));
+                TestBrett(mbrettd(FirstChar(brett),bbase));
                 end;
               inc(i);
               end;
@@ -1159,7 +1159,7 @@ restart:
           case aktdispmode of
             -1..0 : begin
                       brett := dbReadNStr(bbase,bb_brettname);
-                      TestBrett(mbrettd(brett[1],bbase));
+                      TestBrett(mbrettd(FirstChar(brett),bbase));
                     end;
              1..4 : TestBrett(mbrettd('U',ubase));
                10 : TestBrett(such_brett);
@@ -3030,6 +3030,9 @@ end;
 
 {
   $Log$
+  Revision 1.140  2002/07/18 01:11:57  mk
+  - fixed potential AV with mbrettd calls
+
   Revision 1.139  2002/04/14 22:25:36  cl
   - added Wartung/Komplett
   - changes for new address handling
