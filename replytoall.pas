@@ -19,6 +19,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
+// !!ToDO: Delete in einer For-Schleife f¸r Stringlisten ist nicht mˆglich,
+// entsprechend umbauen
 
 
 { Reply-To-All- (RTA) Routinen }
@@ -37,14 +39,58 @@ typeform,fileio,inout,winxp,keys,maske,datadef,database,
   resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xpsendmessage, maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
-procedure askRTA (const XPStart :boolean);
+procedure askRTA(const XPStart :boolean);
 procedure DoReplyToAll (var brk, adresseAusgewaehlt :boolean; var empf, realname :string; var dispdat :DB);
 
 implementation
 
+type
+  TRTAEmpfaenger = class
+  protected
+    Empf          : String;
+    RTAEmpf,
+    Vertreter,
+    UserUnbekannt :boolean;
+    Typ           :byte;
+  public
+    constructor Create; 
+    constructor CreateWithOptions(const aEmpf: String; aRTAEmpf, aVertreter, aUserUnbekannt :boolean; aTyp: byte);
+    destructor Destroy; override;
+  end;
+
+  TRTAEmpfaengerList = class
+  private
+    FItems: TList;
+    function GetItems(Index: Integer): TRTAEmpfaenger;
+    procedure SetItems(Index: Integer; const Value: TRTAEmpfaenger);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Add(Empf: TRTAEmpfaenger);
+    procedure Assign(Source: TRTAEmpfaengerList);
+    function Count: Integer;
+    procedure Clear;
+    procedure Delete(Index: Integer);
+    procedure Sort;
+    property Items[Index: Integer]: TRTAEmpfaenger read GetItems write SetItems; default;
+  end;
+      
+
+{ TRTAEmpfaenger }
+
+constructor TRTAEmpfaenger.Create;
+begin
+  empf := '';
+  RTAEmpf := false;
+  vertreter := false;
+  userUnbekannt := false; 
+  typ := 0;
+end;
+
+      
 { 'true', wenn Adresse im Baum vorhanden; 'false', wenn nicht. }
 
-function eigeneAdresse (baum :domainNodeP; adresse :AdrStr) :boolean;
+function eigeneAdresse (baum :domainNodeP; adresse :String) :boolean;
 var p :domainNodeP;
 begin
   adresse := UpperCase(adresse);
@@ -58,91 +104,32 @@ end;
 { Eine Adresse mit allen Parametern (RTAEmpfaenger, Vertreter, Typ) vorne (!)
   an eine RTA-EmpfÑngerliste anfÅgen }
 
-procedure addToRTAList (var list :RTAEmpfaengerP; const empf :AdrStr; const RTAEmpf, vertreter, userUnbekannt :boolean;
+procedure addToRTAList(List: TRTAEmpfaengerList; const empf :String; const RTAEmpf, vertreter, userUnbekannt :boolean;
                         const typ :byte);
-var neu :RTAEmpfaengerP;
+var neu : TRTAEmpfaenger;
 begin
-  if not assigned (list) then        { Wenn RTA-EmpfÑngerliste leer... }
-  begin
-    new (list);
-    list^.empf := empf;
-    list^.RTAEmpf := RTAEmpf;
-    list^.vertreter := vertreter;
-    list^.userUnbekannt := userUnbekannt;
-    list^.typ := typ;
-    list^.next := nil;
-  end else
-  begin
-    new (neu);
-    neu^.empf := empf;
-    neu^.RTAEmpf := RTAEmpf;
-    neu^.vertreter := vertreter;
-    neu^.userUnbekannt := userUnbekannt;
-    neu^.typ := typ;
-    neu^.next := list;               { vorne anfÅgen }
-    list := neu;
-  end;
+  Neu := TRTAEmpfaenger.Create;
+  neu.empf := empf;
+  neu.RTAEmpf := RTAEmpf;
+  neu.vertreter := vertreter;
+  neu.userUnbekannt := userUnbekannt;
+  neu.typ := typ;
+  List.Add(neu);
 end;
 
 { Ganze EmpfÑngerlisten an eine RTA-EmpfÑngerliste anfÅgen }
 
-procedure addList (var orginalList :RTAEmpfaengerP; newList: TStringList; const typ :byte);
-var neu :RTAEmpfaengerP;
-    i: Integer;
+procedure addList (orginalList :TRTAEmpfaengerList; newList: TStringList; const typ :byte);
+var 
+  i: Integer;
 begin
   if NewList.Count = 0 then exit;
 
-  if assigned (orginalList) then   { An bestehende Liste anfÅgen }
-  begin
-    neu := orginalList;
-    while assigned (neu^.next) do
-      neu := neu^.next;
-  end else
-    neu := nil;
-
-  if not assigned (neu) then       { bestehende Liste ist leer }
-  begin
-    new (neu);
-    neu^.next := nil;
-    neu^.empf := newList[0];
-    neu^.typ := typ;
-    neu^.RTAEmpf := false;
-    neu^.vertreter := false;
-    neu^.userUnbekannt := false;
-    NewList.Delete(0);
-    orginalList := neu;
-  end;
-
-  // Einzelne Elemente in die neue Liste kopieren }
+  // Einzelne Elemente in die neue Liste kopieren 
   for i := 0 to NewList.Count - 1 do 
-  begin
     if newList[i] <> '' then    { Leerstrings sind keine Adressen! }
-    begin
-      new (neu^.next);
-      neu := neu^.next;
-      neu^.empf := newList[i];
-      neu^.typ := typ;
-      neu^.RTAEmpf := false;
-      neu^.vertreter := false;
-      neu^.userUnbekannt := false;
-      neu^.next := nil;
-    end;
-  end;
+      orginalList.Add(TRTAEmpfaenger.CreateWithOptions(newList[i], false, false, false, typ));
   NewList.Clear;
-end;
-
-{ RTA-EmpfÑngerlisten freigeben }
-
-procedure disposeRTAEmpfList (var list :RTAEmpfaengerP);
-var lauf :RTAEmpfaengerP;
-begin
-  while assigned (list) do
-  begin
-    lauf := list^.next;
-    dispose (list);
-    list := lauf;
-  end;
-  list := nil;
 end;
 
 { Baumstuktur freigeben }
@@ -266,29 +253,14 @@ end;
 
 { RTA-EmpfÑngerliste in eine EmpfÑngerliste umwandeln, die XP6.DoSend versteht }
 
-procedure translateRTAEmpfList (var RTAEmpfList :RTAEmpfaengerP; sendEmpfList :TStringList);
+procedure translateRTAEmpfList (RTAEmpfList :TRTAEmpfaengerList; sendEmpfList :TStringList);
 var
-  loesch :RTAEmpfaengerP;
+  i: Integer;
 begin
-  while assigned (RTAEmpfList) and not RTAEmpfList^.RTAEmpf do
-  begin  { Nur als RTAEmpf markierte Adressen berÅcksichtigen }
-    loesch := RTAEmpfList;
-    RTAEmpfList := RTAEmpfList^.next;
-    dispose (loesch);
-  end;
-
-  if assigned (RTAEmpfList) then
-  begin
-    while assigned (RTAEmpfList) do { Alle weiteren EmpfÑnger Åbernehmen }
-    begin
-      if RTAEmpfList^.RTAEmpf then  { RTAEmpf beachten                   }
-        sendEmpfList.Add(RTAEmpfList.Empf);
-      loesch := RTAEmpfList;
-      RTAEmpfList := RTAEmpfList^.next;
-      dispose (loesch);
-    end;
-    RTAEmpfList := nil;
-  end;
+  for i := 0 to RTAEmpfList.Count - 1 do
+    if RTAEmpfList[I].RTAEmpf then
+      sendEmpfList.Add(RTAEmpfList[i].Empf);
+  RTAEmpfList.Clear;
 end;
 
 procedure askRTA (const XPStart :boolean);
@@ -336,75 +308,21 @@ begin
 {  if XPFirstStart then RTAMode := 13; }
 end;
 
-procedure saveList (list :RTAEmpfaengerP; var sList :RTAEmpfaengerP);
-var lauf :RTAEmpfaengerP;
-begin
-  sList := nil;
-  lauf := nil;
-  while assigned (list) do   { RTA-EmpfÑngerliste sichern }
-  begin
-    if not assigned (sList) then
-    begin
-      new (sList);
-      sList^.empf := list^.empf;
-      sList^.RTAEmpf := list^.RTAEmpf;
-      sList^.vertreter := list^.vertreter;
-      sList^.typ := list^.typ;
-      sList^.next := nil;
-      lauf := sList;
-    end else
-    begin
-      new (lauf^.next);
-      lauf := lauf^.next;
-      lauf^.empf := list^.empf;
-      lauf^.RTAEmpf := list^.RTAEmpf;
-      lauf^.vertreter := list^.vertreter;
-      lauf^.typ := list^.typ;
-      lauf^.next := nil;
-    end;
-    list := list^.next;
-  end;
-end;
-
-function userUnbekannt (const user :string) :boolean;
+function IsUserUnbekannt (const user :string) :boolean;
 begin
   dbSeek (ubase, uiName, UpperCase(user));
-  userUnbekannt := (not dbFound) and (user <> '');
-end;
-
-procedure vertausche (var s1, s2 :RTAEmpfaengerT);
-var h :RTAEmpfaengerT;
-begin
-  h.empf := s1.empf;
-  s1.empf := s2.empf;
-  s2.empf := h.empf;
-
-  h.typ := s1.typ;
-  s1.typ := s2.typ;
-  s2.typ := h.typ;
-
-  h.RTAEmpf := s1.RTAEmpf;
-  s1.RTAEmpf := s2.RTAEmpf;
-  s2.RTAEmpf := h.RTAEmpf;
-
-  h.vertreter := s1.vertreter;
-  s1.vertreter := s2.vertreter;
-  s2.vertreter := h.vertreter;
-
-  h.userUnbekannt := s1.userUnbekannt;
-  s1.userUnbekannt := s2.userUnbekannt;
-  s2.userUnbekannt := h.userUnbekannt;
+  Result := (not dbFound) and (user <> '');
 end;
 
 procedure exchangeByte (var i, j :byte);
 var h :byte;
-begin
+begin                   
   h := i;
   i := j;
   j := h;
 end;
 
-procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
+(*procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
 begin
   if assigned (vor) then
   begin
@@ -417,13 +335,13 @@ begin
     dispose (lauf);
     lauf := list;
   end;
-end;
+end; *)
 
 { die Åbergebene Adresse wird durch die Vertreteradresse ersetzt,
   sofern vorhanden. Es wird 'true' zurÅckgeben, wenn Vertreter
   vorhanden. }
 
-function getVertreter (var adr :adrStr) :boolean;
+function getVertreter (var adr :String) :boolean;
 var size :word;
 begin
   dbSeek (ubase, uiName, UpperCase(adr));
@@ -442,8 +360,7 @@ end;
 
 
 procedure DoReplyToAll (var brk, adresseAusgewaehlt :boolean; var empf, realname :string; var dispdat :DB);
-type str90 = string[90];
-var RTAEmpfList :RTAEmpfaengerP;
+var RTAEmpfList : TRTAEmpfaengerList; 
     eigeneAdressenBaum :domainNodeP;
     auswahlMarkierte :boolean;
     RTA :boolean;
@@ -463,52 +380,34 @@ var RTAEmpfList :RTAEmpfaengerP;
       ungÅltige Adressen und andere SpezialfÑlle. Nebenbei wird
       sie auch noch alphabetisch sortiert }
 
-  procedure checklist (var list :RTAEmpfaengerP);
-  var lauf, vor :RTAEmpfaengerP;
-      anzahl, i :word;
-      uEmpf :string[90];
+  procedure checklist (List : TRTAEmpfaengerList);
+  var 
+    i: Integer;
+    uEmpf :string;
   begin
-    anzahl := 0;
-    lauf := list;
-    vor := nil;
-    while assigned (lauf) do
+    for i := 0 to List.Count - 1 do
+    with List[i] do
     begin
-      if cpos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, cpos (' ', lauf^.empf), 255);
+      if cpos(' ', empf) <> 0 then Empf := LeftStr(Empf, cpos(' ', Empf));
       { ^^ Realname entfernen }
-      uEmpf := UpperCase(lauf^.empf);
-      if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', lauf^.empf) = 0)
+      uEmpf := UpperCase(Empf);
+      if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', Empf) = 0)
         or (uEmpf = UpperCase (hdp.ReplyTo))
         or (uEmpf = UpperCase (hdp.wab))
         or (uEmpf = UpperCase (hdp.oab))
-        or (not IsMailAddress(lauf^.empf))
-        {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
-        removeFromList (list, vor, lauf)
+        or (not IsMailAddress(Empf)) then
+          List.Delete(i)
       else begin
-        if eigeneAdresse (eigeneAdressenbaum, lauf^.empf) then lauf^.RTAEmpf := false
-        else lauf^.RTAEmpf := true;
-        lauf^.userUnbekannt := userUnbekannt (lauf^.empf);
-        inc (anzahl);
-        vor := lauf;
-        lauf := lauf^.next;
+        RTAEmpf := not eigeneAdresse (eigeneAdressenbaum, empf);
+        userUnbekannt := IsUserUnbekannt(Empf);
       end;
     end;
 
     { alphabetisch sortieren }
-    for i := 1 to anzahl do
-    begin
-      lauf := list^.next;
-      vor := list;
-      while assigned (lauf) do
-      begin
-        if UpperCase (lauf^.empf) < UpperCase (vor^.empf) then
-          vertausche (lauf^, vor^);
-        vor := lauf;
-        lauf := lauf^.next;
-      end;
-    end;
+    List.Sort;
 
     { Dupes lîschen }
-    if assigned (list) then
+(*    if assigned (list) then
     begin
       lauf := list^.next;
       vor := list;
@@ -523,7 +422,7 @@ var RTAEmpfList :RTAEmpfaengerP;
           vor := lauf;
           lauf := lauf^.next;
         end;
-    end;
+    end; *)
 
     uEmpf := UpperCase (hdp.wab);
     if (uEmpf = UpperCase (hdp.oab)) or (uEmpf = UpperCase (hdp.ReplyTo))
@@ -543,27 +442,25 @@ var RTAEmpfList :RTAEmpfaengerP;
     Auswahl-Dialog durch ein Sternchen (*) angezeigt werden kann,
     dass eine Vertreteradresse vorhanden ist. }
 
-  procedure checkVertreterAdressen (var list :RTAEmpfaengerP);
-  var lauf :RTAEmpfaengerP;
+  procedure checkVertreterAdressen (list : TRTAEmpfaengerList);
+  var 
+    I: Integer;
   begin
-    lauf := list;
-    while assigned (lauf) do
-    begin
-      lauf^.vertreter := getVertreter (lauf^.empf);
-      lauf := lauf^.next;
-    end;
+    for i := 0 to List.Count - 1 do
+      with List[i] do 
+        Vertreter := GetVertreter (Empf);
 
     absenderHasVertreter := getVertreter (hdp.absender);
-    absenderIsUnknown := userUnbekannt (hdp.absender);
+    absenderIsUnknown := IsUserUnbekannt (hdp.absender);
 
     pmReplyToHasVertreter := getVertreter (hdp.ReplyTo);
-    pmReplyToIsUnknown := userUnbekannt (hdp.ReplyTo); 
+    pmReplyToIsUnknown := IsUserUnbekannt (hdp.ReplyTo); 
 
     wabHasVertreter := getVertreter (hdp.wab);
-    wabIsUnknown := userUnbekannt (hdp.wab);
+    wabIsUnknown := IsUserUnbekannt (hdp.wab);
 
     oabHasVertreter := getVertreter (hdp.oab);
-    oabIsUnknown := userUnbekannt (hdp.oab);
+    oabIsUnknown := IsUserUnbekannt (hdp.oab);
   end;
 
   { Es wird ÅberprÅft, ob die gewÑhlten EmpfÑnger in der Userdatenbank
@@ -572,12 +469,12 @@ var RTAEmpfList :RTAEmpfaengerP;
     gewÑhlt. Wenn kein gÅltiger Server gefunden werden konnte, dann
     wird die Defaultbox vorgeschlagen }
 
-  function checkEmpf (var empf :str90; var RTAEmpfList :RTAEmpfaengerP) :boolean;
-  var unbekannteUser, lauf, vor :RTAEmpfaengerP;
-      brett :string[5];
-      box :string;
-      anz :integer;
-      auswahl :byte;
+  function checkEmpf (var empf : String; var RTAEmpfList : TRTAEmpfaengerList) :boolean;
+  var 
+    unbekannteUser: TRTAEmpfaengerList;
+    brett :string[5];
+    box :string;
+    auswahl :byte;
 
     procedure getPollBox;
     begin
@@ -593,17 +490,16 @@ var RTAEmpfList :RTAEmpfaengerP;
     end;
 
     procedure getUnbekannteUser;
-    var lauf :RTAEmpfaengerP;
+    var 
+      i: Integer;
     begin
-      unbekannteUser := nil;
-      if userUnbekannt (empf) then addToRTAList (unbekannteUser, empf, true, false, true, 3);
-      lauf := RTAEmpfList;
-      while assigned (lauf) do
-      begin
-        if lauf^.RTAEmpf and userUnbekannt (lauf^.empf) then
-          addToRTAList (unbekannteUser, lauf^.empf, true, false, true, 3);
-        lauf := lauf^.next;
-      end;
+      unbekannteUser := TRTAEmpfaengerList.Create;
+      if ISuserUnbekannt (empf) then unbekannteUser.Add(TRTAEmpfaenger.CreateWithOptions(empf, true, false, true, 3));
+      
+      for i := 0 to RTAEmpfList.Count - 1 do
+        with RTAEMpfList[i] do
+          if RTAEmpf and IsUserUnbekannt(Empf) then
+            addToRTAList(unbekannteUser, empf, true, false, true, 3);
     end;
 
     { Die User werden mit Standardeinstellungen und Adressbuchgruppe 0
@@ -627,28 +523,24 @@ var RTAEmpfList :RTAEmpfaengerP;
 
     { Allen neuen Usern wird der gleiche Server zugewiesen }
 
-    procedure pollBoxZuweisen (box :string);
-    var lauf :RTAEmpfaengerP;
+    procedure pollBoxZuweisen (const box :string);
+    var 
+      i: Integer;
     begin
-      lauf := unbekannteUser;
-      while assigned (lauf) do
-      begin
-        userAnlegen (lauf^.empf, box);
-        lauf := lauf^.next;
-      end;
+      for i := 0 to unbekannteUser.Count - 1 do
+        userAnlegen (unbekannteUser[i].empf, box);
     end;
 
     { FÅr jeden User erscheint das bekannte Dialogfenster "User bearbeiten" }
 
     procedure UserDialog (const box :string);
-    var lauf :RTAEmpfaengerP;
+    var 
+      i: Integer;
     begin
-      lauf := unbekannteUser;
-      while assigned (lauf) do
+      for i := 0 to unbekannteUser.Count - 1 do
       begin
-        userAnlegen (lauf^.empf, box);
+        userAnlegen (unbekannteUser[i].empf, box);
         modiUser (false);
-        lauf := lauf^.next;
       end;
     end;
 
@@ -664,11 +556,8 @@ var RTAEmpfList :RTAEmpfaengerP;
         s := reps (getreps2 (2740, 0, box), formI (anz, 0));
         breite := length (s) + 4;
         msgBox (breite, 5, '', x, y);
-        moff;
-        wrt (x + 2, y + 1, s); { 'Allen unbekannten Usern (%s) als Serverbox "%s" zuweisen' }
-        mon;
+        Mwrt (x + 2, y + 1, s); { 'Allen unbekannten Usern (%s) als Serverbox "%s" zuweisen' }
         auswahl := readButton (x + 2, y + 3, 2, '' + getres2 (2740,1), 1, true, z);
-{        ReadJNesc (reps (getreps (2740, formi (anz, 0)), box), true, brk);}
         closeBox;
         freeRes;
         if auswahl = 3 then
@@ -685,13 +574,9 @@ var RTAEmpfList :RTAEmpfaengerP;
     result := true;
     getPollBox;
     getUnbekannteUser;
-    if assigned (unbekannteUser) then
+    if unbekannteUser.Count > 0 then
     begin
-      lauf := unbekannteUser;
-      anz := 0;
-      while assigned (lauf) do
-      begin inc (anz); lauf := lauf^.next; end;
-      auswahl := ServerDialog (box, anz);
+      auswahl := ServerDialog (box, unbekannteUser.Count);
 
       case auswahl of
         0,4: result := false;
@@ -699,7 +584,7 @@ var RTAEmpfList :RTAEmpfaengerP;
         2:   UserDialog (box);
       end;
     end;
-    if result and eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte then
+(*    if result and eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte then
                                 { Bei RTA wird eine eigene Adresse als         }
     begin                       { "erster EmpfÑnger" durch eine fremde ersetzt }
       lauf := RTAEmpfList;
@@ -713,9 +598,9 @@ var RTAEmpfList :RTAEmpfaengerP;
         RTAEmpfList := RTAEmpfList^.next;
         dispose (vor);
       end;
-    end;
+    end; *)
     checkEmpf := result;
-    disposeRTAEmpfList (unbekannteUser);
+    unbekannteUser.Free;
   end;
 
   { Je nach Wert der Åbergebenen Variable wird ÅberprÅft, ob
@@ -725,16 +610,13 @@ var RTAEmpfList :RTAEmpfaengerP;
       ist oder mind zwei fremde Adresse vorhanden sind }
 
   function RTAEmpfVorhanden (const one :boolean) :boolean;
-  var lauf :RTAEmpfaengerP;
-      anz :byte;
+  var 
+    i, anz: Integer;
   begin
+    i := 0;
     anz := 0;
-    lauf := RTAEmpfList;
-    while assigned (lauf) and (anz < 2) do
-    begin
-      if lauf^.RTAEmpf then inc (anz);
-      lauf := lauf^.next;
-    end;
+    while (i < RTAEmpfList.Count) and (anz < 2) do
+      if RTAEmpfList[i].RTAEmpf then Inc(anz);
     if one then
       RTAEmpfVorhanden := anz >= 1
     else
@@ -746,7 +628,7 @@ var RTAEmpfList :RTAEmpfaengerP;
 
   function GetEmpfaenger (const replyTo: String) :string;
   const leadingchar = #7;      { Das Zeichen durch das RTA-EmpfÑnger kenntlich gemacht werden }
-  var abs, s    :str90;
+  var abs, s    :String;
       anz       :integer;      { Anzahl der Adressen im Fenster }
       h         :word;         { Hîhe des Fensters/Listers }
       x,y       : Integer;
@@ -754,7 +636,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       auswahl   :string[110];
       userError :boolean;      { Wenn der User alle Adressen markiert und 'alle' auswÑhlt :) }
       RTAEmpfaengerVorhanden :boolean;
-      savedList :RTAEmpfaengerP;
+      savedList : TRTAEmpfaengerList;
   label again;                 { Sprungmarke, um den Lister bei
                                  Userfehlern/-abbruch wieder zu starten }
 
@@ -762,7 +644,7 @@ var RTAEmpfList :RTAEmpfaengerP;
 
     procedure adressenHinzufuegen;
 
-      procedure add(const s :str90; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
+      procedure add(const s :String; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
       begin
         List.AddLine (iifs (RTAEmpf and RTAEmpfaengerVorhanden, leadingChar, ' ') + getres2 (476, typ) +
           iifs (not vertreter and not userUnbekannt, '  ', iifs (vertreter xor userUnbekannt, ' ', '')) +
@@ -772,16 +654,14 @@ var RTAEmpfList :RTAEmpfaengerP;
 
       procedure addLists;
 
-        procedure hinzu (const typ :byte);
-        var lauf :RTAEmpfaengerP;
+        procedure hinzu (aTyp: Byte);
+        var 
+          i: Integer;
         begin
-          lauf := RTAEmpfList;
-          while assigned (lauf) do
-          begin
-            if lauf^.typ = typ then
-              add (lauf^.empf, typ, lauf^.RTAEmpf, lauf^.vertreter, lauf^.userUnbekannt);
-            lauf := lauf^.next;
-          end;
+          for i := 0 to RTAEmpfList.Count - 1 do
+            with RTAEmpfList[i] do 
+              if typ = aTyp then
+                add (empf, typ, RTAEmpf, vertreter, userUnbekannt);
         end;
 
       begin
@@ -809,10 +689,10 @@ var RTAEmpfList :RTAEmpfaengerP;
 
     { Adresse aus den vom Lister zurÅckgegeben Strings extrahieren }
 
-    function getAdresse (const s :string) :str90;
-    var adr :String[90];
+    function getAdresse (const s :string) :String;
+    var adr: String;
     begin
-      adr := trim (copy (s, length (getres2 (476, 1)) + 3, 91));
+      adr := trim (copy (s, length (getres2 (476, 1)) + 3, 91)); //!!
       if adr[1] = '*' then delete (adr, 1, 1);
       if adr[1] = '(' then delete (adr, 1, 1);
       if adr[length (adr)] = ')' then delete (adr, length (adr), 1);
@@ -820,16 +700,22 @@ var RTAEmpfList :RTAEmpfaengerP;
     end;
 
     procedure markierteAdressenEntfernen (var userError :boolean);
-    var lauf, vor, markierteAdressen, tempList :RTAEmpfaengerP;
-        s :string;
+    var 
+      markierteAdressen, tempList : TRTAEmpfaengerList;
+      s :string;
+      i: Integer;
 
-      function AdresseMarkiert (const s: str90) :boolean;
-      var lauf :RTAEmpfaengerP;
+      function AdresseMarkiert (const s: String) :boolean;
+      var 
+        i: Integer;
       begin
-        lauf := markierteAdressen;
-        while assigned (lauf) and (lauf^.empf <> s) do
-          lauf := lauf^.next;
-        AdresseMarkiert := assigned (lauf);
+        for i := 0 to markierteAdressen.Count - 1 do 
+          if markierteAdressen[i].Empf = s then
+          begin
+            Result := true;
+            Exit;
+          end;
+        Result := false;
       end;
 
     begin
@@ -842,32 +728,24 @@ var RTAEmpfList :RTAEmpfaengerP;
         s := List.NextMarked;
       until s = #0;
 
-      tempList := nil;                  { RTA-EmpfÑngerliste sichern, um bei    }
-      saveList (RTAEmpfList, tempList); { einem Usererror wiederholen zu kînnen }
+      tempList := TRTAEmpfaengerList.Create; { RTA-EmpfÑngerliste sichern, um bei    }
+      tempList.Assign(RTAEmpfList);          { einem Usererror wiederholen zu kînnen }
 
-      vor := nil;
-      lauf := tempList;
-      while assigned (lauf) do
-      begin
-        if adresseMarkiert (UpperCase (lauf^.empf)) then { markierte Adressen lîschen }
-          removeFromList (tempList, vor, lauf)
-        else begin
-          vor := lauf;
-          lauf := lauf^.next;
-        end;
-      end;
+      for i := 0 to tempList.Count - 1 do
+        if adresseMarkiert(UpperCase(tempList[i].empf)) then { markierte Adressen lîschen }
+          tempList.Delete(i);
 
       if adresseMarkiert (UpperCase (abs)) then
       begin { Wenn der "erste" EmpfÑnger markiert ist... }
-        vor := nil;
-        lauf := tempList;
-        while assigned (lauf) and not lauf^.RTAEmpf do
-          removeFromList (tempList, vor, lauf);
-        if assigned (lauf) then
+        for i := 0 to tempList.Count - 1 do
+          if not tempList[i].RTAEmpf then
+            tempList.Delete(i);
+
+        if tempList.Count > 0 then
         begin
-          abs := lauf^.empf; { falls noch gÅltige Adressen vorhanden sind,    }
-                             { wird die erste als neuer EmpfÑnger eingetragen }
-          removeFromList (tempList, vor, lauf);
+          abs := tempList[0].empf; { falls noch gÅltige Adressen vorhanden sind,    }
+                                   { wird die erste als neuer EmpfÑnger eingetragen }
+          tempList.Delete(0);
         end else             { Da hat der User wohl alle Adressen markiert... }
         begin
           abs := '';
@@ -877,18 +755,18 @@ var RTAEmpfList :RTAEmpfaengerP;
         end;
       end;
 
-      disposeRTAEmpfList (markierteAdressen);
+      markierteAdressen.Free;
 
       if not userError then
       begin
-        disposeRTAEmpfList (RTAEmpfList); { Wenn kein Fehler, dann neue Liste }
-        RTAEmpfList := tempList;          { Åbernehmen }
+        // Wenn kein Fehler, dann neue Liste Åbernehmen 
+        RTAEmpfList.Assign(tempList);   
       end else
-        disposeRTAEmpfList (tempList);    { neue Liste freigeben und noch einmal }
+        tempList.Clear;  // neue Liste freigeben und noch einmal
     end;
 
   begin
-    savedList := nil;
+    savedList := TRTAEmpfaengerList.Create;
     RTAEmpfaengerVorhanden := RTAEmpfVorhanden (false) and (RTAMode and 8 = 8);
     List := TLister.CreateWithOptions(2, 78, 10, 11, 0, '/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
     if RTAEmpfaengerVorhanden then
@@ -897,7 +775,7 @@ var RTAEmpfList :RTAEmpfaengerP;
     anz := 0;
     adressenHinzufuegen;
 
-    saveList (RTAEmpfList, savedList);
+    savedList.Assign(RTAEmpfList);
 
     h := min(anz + iif (RTAEmpfaengerVorhanden, 4, 3), screenlines - 6);
     selbox (65, h, getres2 (476, 4), x, y, true);  { 'EmpfÑnger wÑhlen' }
@@ -939,7 +817,7 @@ again:
         end else
         begin
           auswahlMarkierte := true;
-          disposeRTAEmpfList (RTAEmpfList);
+          RTAEmpfList.Free;
           abs := getAdresse (trim (List.FirstMarked));
           if cpos ('@', abs) = 0 then abs := '';
           repeat
@@ -956,16 +834,16 @@ again:
         begin
           rfehler(746);                       { 'UngÅltige Auswahl' }
           List.StartPos := iif (RTAEmpfaengerVorhanden, 2, 1);
-          disposeRTAEmpfList (RTAEmpfList);
-          saveList (savedList, RTAEmpfList);
+          RTAEmpfList.Clear;
+          RTAEmpfList.Assign(savedList);
           goto again;
         end;
       end;
       if RTA then
         if not checkEmpf (abs, RTAEmpfList) then
         begin
-          disposeRTAEmpfList (RTAEmpfList);
-          saveList (savedList, RTAEmpfList);
+          RTAEmpfList.Clear;
+          RTAEmpfList.Assign(savedList);
           RTA := false;
           goto again;
         end;
@@ -973,14 +851,14 @@ again:
     List.Free;
     closebox;
     freeres;
-    disposeRTAEmpfList (savedList);
+    savedList.Free;
     adresseAusgewaehlt := true;
     GetEmpfaenger := abs;
   end;
 
 begin
   RTA := false;
-  RTAEmpfList := nil;
+  RTAEmpfList := TRTAEmpfaengerList.Create;
   getEigeneAdressen (eigeneAdressenBaum);
   brk := false;
   empf := dbReadStr(dispdat,'absender');
@@ -996,7 +874,7 @@ begin
   addList (RTAEmpfList, hdp.kopien, 3);
 
   if (RTAMode and 4 = 0) and (RTAMode and 8 = 0) and (RTAMode and 64 = 0) then
-    disposeRTAEmpfList (RTAEmpfList);
+    RTAEmpfList.Clear;
 
   checkVertreterAdressen (RTAEmpfList);
 
@@ -1015,7 +893,7 @@ begin
   hdp.Free;
 
   if not RTA then
-    disposeRTAEmpfList (RTAEmpfList)
+    RTAEmpfList.Free
   else
     translateRTAEmpfList (RTAEmpfList, sendEmpfList);
 
@@ -1023,8 +901,87 @@ begin
 end;
 
 
+constructor TRTAEmpfaenger.CreateWithOptions(const aEmpf: String; 
+  aRTAEmpf, aVertreter, aUserUnbekannt :boolean; aTyp: byte);
+begin
+  Empf := aempf;
+  RTAEmpf := aRTAEmpf;
+  vertreter := avertreter;
+  userUnbekannt := auserUnbekannt;
+  typ := atyp;
+end;
+
+destructor TRTAEmpfaenger.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TRTAEmpfaengerList }
+
+procedure TRTAEmpfaengerList.Add(Empf: TRTAEmpfaenger);
+begin
+  FItems.Add(Empf);
+end;
+
+procedure TRTAEmpfaengerList.Assign(Source: TRTAEmpfaengerList);
+var 
+  i: Integer;
+begin
+  Clear;
+  for i := 0 to Source.Count - 1 do
+    with Source[i] do 
+      Add(TRTAEmpfaenger.CreateWithOptions(Empf, RTAEmpf, Vertreter, UserUnbekannt, Typ));
+end;
+
+procedure TRTAEmpfaengerList.Clear;
+var
+  i: Integer;
+begin
+  for i := 0 to FItems.Count - 1 do
+    TRTAEmpfaenger(FItems[i]).Free;
+end;
+
+function TRTAEmpfaengerList.Count: Integer;
+begin
+  Result := FItems.Count;
+end;
+
+constructor TRTAEmpfaengerList.Create;
+begin
+  FItems := TList.Create;
+end;
+
+procedure TRTAEmpfaengerList.Delete(Index: Integer);
+begin
+  FItems.Delete(Index);
+end;
+
+destructor TRTAEmpfaengerList.Destroy;
+begin
+  Clear;
+  FItems.Free;
+  inherited;
+end;
+
+function TRTAEmpfaengerList.GetItems(Index: Integer): TRTAEmpfaenger;
+begin
+  Result := TRTAEmpfaenger(FItems[Index]);
+end;
+
+procedure TRTAEmpfaengerList.SetItems(Index: Integer;
+  const Value: TRTAEmpfaenger);
+begin
+ FItems[Index] := Value;
+end;
+
 {
   $Log$
+  Revision 1.13  2001/08/23 11:15:01  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.12  2001/08/12 20:01:39  cl
   - rename xp6*.* => xpsendmessage*.*
 
@@ -1069,5 +1026,10 @@ end;
   - replyto is now string instead of TStringList again
 
 }
+procedure TRTAEmpfaengerList.Sort;
+begin
+  // !!
+end;
+
 end.
 

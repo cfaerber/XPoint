@@ -471,15 +471,6 @@ type   textp  = ^text;
        bmarklist= array[0..maxbmark-1] of longint;
        bmarkp   = ^bmarklist;
 
-       RTAEmpfaengerP =^RTAEmpfaengerT;
-       RTAEmpfaengerT = record
-                          empf          :string;
-                          RTAEmpf,
-                          vertreter,
-                          userUnbekannt :boolean;
-                          typ           :byte;
-                          next          :RTAEmpfaengerP;
-                        end;
 
        cpsrec     = record
                       SaveLineControl  : byte;
@@ -740,8 +731,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        keydisp    : boolean = true;    { Tastenkuerzel anzeigen  }
        Clipboard  : boolean = false;   { Windows-Clipboard }
        deutsch    : boolean = true;
-       screenlines: byte    = 25;      { Bildschirmzeilen       }
-       screenwidth: byte    = 80;      { Bildschirmspalten      }
+       screenlines: Integer = 25;      { Bildschirmzeilen       }
+       screenwidth: Integer = 80;      { Bildschirmspalten      }
        ConfigScreenLines:byte = 25;    { Config-Bildzeilen (wg. /z: }
        ConfigScreenWidth:byte = 80;      { Config-Bildschirmspalten }
        OrgVideomode:word    = 3;
@@ -1181,6 +1172,11 @@ implementation
 
 {
   $Log$
+  Revision 1.136  2001/08/23 11:15:01  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.135  2001/08/10 20:57:57  mk
   - removed some hints and warnings
   - fixed some minior bugs

@@ -2977,7 +2977,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2737 Warnung: Nachrichtencodierung ist im FidoNet nicht zul„ssig!
 2738 User aus Adreábuch entfernen
 2739 Vertreter nicht in der Datenbank - neu anlegen
-
++2740
+0 Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
+1 ~^Ja , ^Nein , Anderer ^Server , ^Zurück~
+-
 +2750
 # Zeilenzahl
 0 11
@@ -3811,6 +3814,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.29  2001/08/23 11:15:00  mk
+# - RTA: fixed some bugs (only 32 bit releated) and converted all records
+#   to classes and use TList/TStringList for storage management instead of
+#   linked pointer lists
+#
 # Revision 1.28  2001/08/13 15:39:51  my
 # - removed hotkey <Ctrl-E> from menu as it does not apply always
 #

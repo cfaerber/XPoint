@@ -876,7 +876,6 @@ begin
   writeln(t,'Feiertage=',jnf(autofeier));
   writeln(t,'Shell-Showpar=',jnf(ShellShowpar));
   writeln(t,'Shell-Waitkey=',jnf(ShellWaitkey));
-  writeln(t,'AskReplyTo=',jnf(askreplyto));
   writeln(t,'UsePGP=',jnf(UsePGP));
   writeln(t,'PGP-Batchmode=',jnf(PGPbatchmode));
   writeln(t,'PGP-UserID=',PGP_UserID);
@@ -1497,7 +1496,6 @@ begin
           gets(s,su,'terminit',TermInit,40) or
           getx(su,  'shell-showpar',ShellShowpar) or
           getx(su,  'shell-waitkey',ShellWaitkey) or
-          getx(su,  'askreplyto',askreplyto) or
           getx(su,  'usepgp',UsePGP) or
           getx(su,  'pgp-batchmode',PGPbatchmode) or
           getx(su,  'uucp-pgp',PGP_UUCP) or
@@ -1695,6 +1693,11 @@ end;
 
 {
   $Log$
+  Revision 1.120  2001/08/23 11:15:01  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.119  2001/08/11 23:06:30  mk
   - changed Pos() to cPos() when possible
 

@@ -385,7 +385,8 @@ var t,lastt: taste;
               end;
             end;
       11  : wrongline:=(markanz=0);   { markierte Msgs }
-    12,20 : wrongline:=false;
+    else { 12, 20 }
+      wrongline:=false;
     end;
   end;
 
@@ -722,6 +723,8 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      saveDispRec :^dispra;
+      savePos     :shortint;
       origdb  : string;
       adresseAusgewaehlt :boolean;
 
@@ -845,6 +848,7 @@ var t,lastt: taste;
   var rnetztyp: byte;
 
   begin
+    saveDispRec := nil; { Auf keinen Fall entfernen! }
     adresseAusgewaehlt := false;
     fn:=TempS(2000);
     GoP;
@@ -1147,6 +1151,18 @@ var t,lastt: taste;
       end;
     end;
 
+    { Die folgenden Zeilen (*) und wurden eingefuegt, weil man Kopien-
+      Empf„nger in DoSend mit select (3) ausw„hlen kann und damit u.U.
+      Daten ueberschrieben werden, die sp„ter noch gebraucht werden }
+
+{*} if AutoArchiv and reply then
+{*} begin
+{*}   new (saveDispRec);
+{*}   saveDispRec^ := dispRec;
+{*}   savePos := p;
+{*} end;
+
+
     if pm and (empf[1]<>vert_char) then
     begin
       origdb:=defaultbox;
@@ -1172,10 +1188,15 @@ var t,lastt: taste;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
-      if AutoArchiv and reply then begin
+      if AutoArchiv and reply then 
+      begin
+{*}     dispRec := saveDispRec^;
+{*}     p := savePos;
+{*}     dispose (saveDispRec);
+{*}     saveDispRec := nil;  { Auf keinen Fall entfernen! }
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if (LeftStr(dbReadStrN(mbase,mb_brett),1)='1') and
+        if not dbEof (mbase) and not dbBOF (mbase) and (leftStr(dbReadStrN(mbase, mb_brett),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -1183,11 +1204,20 @@ var t,lastt: taste;
       end
     else
       SikMsg;
+
+{*} if assigned (saveDispRec) then begin { Falls kein Reply... }
+{*}   dispRec := saveDispRec^;
+{*}   p := savePos;
+{*}   dispose (saveDispRec);
+{*}   saveDispRec := nil;
+{*} end;
+
     pgdown:=false;
   ende:
     force_quotemsk:='';
     if FileExists(fn) then _era(fn);
     setall;
+    SendEmpfList.Clear;
     freesenduudatamem(sdata);
     qmpdata := nil;
   end;
@@ -2205,13 +2235,17 @@ begin
   fillchar(disprec,sizeof(disprec),0);
   XPhltick:=0;
   select(0);
-  {for i:=1 to maxgl do dispose(dispbuf[i]);}
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.100  2001/08/23 11:15:02  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.99  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

@@ -537,9 +537,9 @@ var fn     : string;
   end;
 
   procedure TestViralExtension(const Extension: String; Viewer: TMessageViewer);
-  var x,y   : byte;
+(*  var x,y   : byte;
       t     : taste;
-      s     : string;
+      s     : string; *)
   begin
     // vor this file types always use internal viewer
 (*    if Pos(Extension,viewer_lister) <> 0 then Viewer.UseInternal
@@ -1613,6 +1613,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.77  2001/08/23 11:15:03  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.76  2001/08/12 11:50:41  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

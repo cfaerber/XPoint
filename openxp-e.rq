@@ -2866,6 +2866,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2737 Warning: Message encryption is not allowed in FidoNet!
 2738 Delete User from address book
 2739 Vertreter nicht in der Datenbank - neu anlegen
++2740
+0 Assign Server "%s" to all unknown users (%s)?
+1 ~^Yes , ^No , Change ^Server , ^Back~
+-
 +2750
 # number of lines
 0 11
@@ -3786,6 +3790,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.29  2001/08/23 11:15:00  mk
+# - RTA: fixed some bugs (only 32 bit releated) and converted all records
+#   to classes and use TList/TStringList for storage management instead of
+#   linked pointer lists
+#
 # Revision 1.28  2001/08/13 15:39:51  my
 # - removed hotkey <Ctrl-E> from menu as it does not apply always
 #

@@ -309,14 +309,14 @@ end;
 
 
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten,adr:integer16; var flags:byte; edit:boolean;
+                   var halten: Integer16; adr:byte; var flags:byte; edit:boolean;
                    var brk:boolean);
 var x,y: Integer;
     filt : boolean;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
-    AdrbuchDef: Integer;
+    AdrbuchDef: Byte;
 begin
   if LeftStr(user,4)<>#0+'$/T' then
   begin
@@ -377,7 +377,7 @@ begin
   readmask(brk);
   if not brk then
   begin
-    if (adrbuchdef<>0) and (byte(adr)=0) then
+    if (adrbuchdef<>0) and (adr=0) then
      if not readJN(GetRes(2738),false) then
        adr:=adrbuchdef;
     if farb=3 then Farb:=0;
@@ -395,7 +395,8 @@ var
     user,adresse : string;
     komm         : string;
     pollbox      : string;
-    halten,adr   : integer16;
+    halten       : integer16;
+    adr          : Byte;
     b            : byte;
     brk          : boolean;
     flags        : byte;
@@ -2430,6 +2431,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2001/08/23 11:15:03  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.65  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

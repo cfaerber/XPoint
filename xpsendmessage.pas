@@ -488,7 +488,10 @@ var f,f2     : file;
   var i,first : integer;
 
     procedure GetInf(n:integer; var adr:string);
-    var p : byte;
+    var 
+      p : Integer;
+      size: Integer;
+      temp :string[90];
     begin
       with ccm^[n] do begin
         ccpm:=(cpos('@',adr)>0);
@@ -496,14 +499,38 @@ var f,f2     : file;
           dbSeek(ubase,uiName,UpperCase(adr));
           if dbFound then
           begin
+
             if dbreadint(ubase,'adrbuch')=0 then      { CCs-Empfaenger ins Adressbuch aufnehmen }
               dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
             Server := dbReadNStr(ubase,ub_pollbox);
             if (dbReadInt(ubase,'userflags') and 2<>0) and
                (dbReadInt(ubase,'codierer')<>0) then
               encode:=true;
-             end;
-            end
+
+          size := 0;
+          if dbXsize (ubase, 'adresse') <> 0 then
+          begin
+            dbReadX (ubase, 'adresse', size, temp);
+            dbSeek (ubase, uiName, UpperCase(temp));
+            if dbFound then
+            begin
+{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
+              Server := dbReadNStr(ubase,ub_pollbox);
+              if (dbReadInt(ubase,'userflags') and 2<>0) and
+                 (dbReadInt(ubase,'codierer')<>0) then
+                encode:=true;
+            end;
+          end else
+          begin
+{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
+              Server := dbReadNStr(ubase,ub_pollbox);
+            if (dbReadInt(ubase,'userflags') and 2<>0) and
+               (dbReadInt(ubase,'codierer')<>0) then
+              encode:=true;
+          end;
+        end
         else begin      // if ccpm then begin
           p:=cpos(':',adr);
           if (adr[1]='+') and (p>0) then begin    { nicht eingetragenes Brett }
@@ -523,6 +550,7 @@ var f,f2     : file;
           end;
         server:= UpperCase(server);
         end;
+      end;
     end;        // procedure GetInf(n:integer; var adr:string);
 
   { alle Kopien mit gleichem Server wie 'empfaenger' nach oben }
@@ -953,12 +981,17 @@ fromstart:
             if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
-                box:=DefaultBox
+              begin
+                box := getBrettUserPollBox (_brett);
+                if box = '' then
+                  box:=DefaultBox
+              end
               else
                 box:=OrigBox;
               end
             else
-              if _brett[1]='U' then box:=DefaultBox
+              if _brett[1]='U' then 
+                box:=DefaultBox
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
@@ -1084,7 +1117,7 @@ fromstart:
     bboxwid:=min(betrlen,54);
     showempfs:=min(cc_anz,15);
     diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
-    mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empfaenger  ' }
+    mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'Empf„nger  ' }
     attrtxt(col.coldiahigh);
     moff;
     if FirstChar(empfaenger)=vert_char then
@@ -1834,10 +1867,16 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         inc(msgCPpos);
       if msgCPpos<msgCPanz then begin
         repeat
-          if ccm^[msgCPpos].ccpm then begin
+          if ccm^[msgCPpos].ccpm then 
+          begin
             dbSeek(ubase,uiName,UpperCase(cc^[msgCPpos]));
-            if dbFound then _brett:=mbrettd('U',ubase);
-            end
+            if dbFound then
+            begin
+              _brett:=mbrettd('U',ubase);
+              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+                dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
+            end;
+          end
           else begin
             dbSeek(bbase,biBrett,'A'+UpperCase(cc^[msgCPpos]));
             if dbFound then begin
@@ -2101,6 +2140,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.2  2001/08/23 11:15:04  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.1  2001/08/12 19:57:21  cl
   - rename xp6*.* => xpsendmessage*.*
   - fixed crash in DoSend w/ hdp.oem.free

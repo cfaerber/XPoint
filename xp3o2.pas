@@ -112,6 +112,8 @@ procedure WriteHeader(var hd:theader; var f:file);
         wrs('DISKUSSION-IN: '+followup[i]);
       for i := 0 to OEM.Count - 1 do
         wrs('OEM: '+ OEM[i]);
+      for i := 0 to Kopien.Count - 1 do
+        wrs('KOP: '+ Kopien[i]);
       wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
       if wab<>'' then wrs('WAB: '+wab+iifs(war='','',' ('+war+')'));
@@ -447,6 +449,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/08/23 11:15:02  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.46  2001/08/12 20:01:39  cl
   - rename xp6*.* => xpsendmessage*.*
 

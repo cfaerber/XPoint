@@ -530,7 +530,8 @@ var x,y : integer;
   end;
 
   procedure dispshort(high:boolean);
-  var x,c1,c2 : byte;
+  begin
+(*  var x,c1,c2 : byte;
       ofs     : word;
       ks1,ks2 : byte;
   begin
@@ -551,7 +552,7 @@ var x,y : integer;
           mem[base:ofs+2*x]:=c1;
        Hier wird von den MenÅpunkten das Attribut geÑndert }
       mon;
-      end;
+      end; *)
   end;
 
 begin
@@ -603,6 +604,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2001/08/23 11:15:02  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.33  2001/08/12 11:50:38  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -1106,8 +1106,29 @@ begin                                                  { 'Sende-Priorit„t' }
   EndDialog;
 end;
 
+function getBrettUserPollBox (brett :string) :string;
+var box :string[boxNameLen];
+    s :string;
+begin
+  box := '';
+  dbRead (mbase, 'brett', brett);
+  if brett[1] = '1' then         { Brett }
+  begin
+    dbSeek (bbase, biIntNr, copy (brett, 2, 4));
+    if dbBOF (bbase) or dbEOF (bbase) then box := ''
+    else dbRead (bbase, 'pollbox', box);
+  end;
+  if not isBox (box) then box := '';
+  getBrettUserPollBox := box;
+end;
+
 {
   $Log$
+  Revision 1.2  2001/08/23 11:15:04  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.1  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

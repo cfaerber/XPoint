@@ -280,12 +280,7 @@ begin  { __ Suchmarke }
               if (dispbuf[y]<>'') then dispbuf[y]:=dispbuf[y]+' ';
               dispbuf[y]:=dispbuf[y]+taus[tausc];
             end;
-            { Sicherheitshalber nochmal auf x Zeichen krzen }
-            if (ScreenWidth>DispStrSize) then
-              dispbuf[y]:=forms(dispbuf[y],DispStrSize)
-            else
-              dispbuf[y]:=forms(dispbuf[y],ScreenWidth);
-
+            dispbuf[y]:=forms(dispbuf[y],ScreenWidth);
           end;
         end;
   10..12: begin { NACHRICHTENLISTE }
@@ -611,6 +606,11 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/08/23 11:15:02  mk
+  - RTA: fixed some bugs (only 32 bit releated) and converted all records
+    to classes and use TList/TStringList for storage management instead of
+    linked pointer lists
+
   Revision 1.48  2001/08/12 11:50:39  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -20,7 +20,6 @@ program openxp;
 {%File 'xp4d.inc'}
 {%File 'xp4o.inc'}
 {%File 'xp4w.inc'}
-{%File 'xp6s.inc'}
 {%File 'xp8.inc'}
 {%File 'xp8fs.inc'}
 {%File 'xpconfigedit-groups.inc'}
@@ -41,6 +40,7 @@ program openxp;
 {%File 'netcall\ncuucp-g.inc'}
 {%File 'netcall\ncfido-binkp.inc'}
 {%File 'ObjCOM\ocsdos.inc'}
+{%File 'xpsendmessage_subs.inc'}
 
 uses
   Forms,
@@ -112,9 +112,6 @@ uses
   xp4o2 in 'xp4o2.pas',
   xp4o3 in 'xp4o3.pas',
   xp5 in 'xp5.pas',
-  xp6 in 'xp6.pas',
-  xp6l in 'xp6l.pas',
-  xp6o in 'xp6o.pas',
   xp8 in 'xp8.pas',
   xp9bp in 'xp9bp.pas',
   xpauto in 'xpauto.pas',
@@ -170,7 +167,10 @@ uses
   ObjCOM in 'objcom\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
   xpcrt in 'xpcrt.pas',
-  archive in 'archive.pas';
+  archive in 'archive.pas',
+  xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
+  xpsendmessage_internal in 'xpsendmessage_internal.pas',
+  xpsendmessage in 'xpsendmessage.pas';
 
 {$R *.RES}
 function StartInternalTools: Boolean;
