@@ -354,10 +354,11 @@ begin
       typ:='T';
       repeat
         getline(line);
-        if length(line)>2 then begin
+        if length(line)>2 then
+        begin
           if line[1]<' ' then delfirst(line);    { gegen LF's o.„. }
           p:=cpos(':',line);
-          if p=0 then ok:=false
+          if p<2 then ok:=false // Die ID muá mindestens ein Zeichen sein
           else begin
             id:=left(line,p-1);
             {$ifdef ulines}
@@ -376,7 +377,7 @@ begin
             {  dec(byte(line[0])); }
 
             { Auskommentiert, damit die CustomHeaders mit U-* tun }
-            if id[1]='U' then                      { RFC }
+            if FirstChar(id)='U' then                      { RFC }
             if id = 'U-KEYWORDS'     then LRead(Keywords) else
             if id = 'U-SUMMARY'      then LRead(Summary) else
             if id = 'U-DISTRIBUTION' then LRead(Distribution) else
@@ -453,7 +454,7 @@ begin
             if id = 'CONTROL' then LRead(control) else
             if id = 'ERSETZT' then LRead(ersetzt) else
 
-            if id[1]='X' then begin               { XP }
+            if FirstChar(id)='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset) else
               if id = 'X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else {XP}
               if id = 'X-XP-BOX' then LRead(real_box) else
@@ -550,6 +551,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/08/10 13:14:23  mk
+  - Pruefung ob Header vor dem Doppelpunkt eine ID enthaelt eingebaut
+
   Revision 1.31  2000/08/03 15:29:35  mk
   - XLines werden jetzt nur noch kopiert, wenn die Zeile kein CustomHeader ist
 
