@@ -24,7 +24,6 @@ uses
 {$ENDIF }
 {$IFDEF unix}
   xplinux,
-  linux,
 {$ENDIF}
 {$IFDEF Win32 }
   xpwin32,
@@ -1213,6 +1212,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2000/11/16 13:46:27  hd
+  - Unit Linux wird nicht benötigt
+
   Revision 1.83  2000/11/16 12:08:42  hd
   - Fix: Zu späte Arbeit
 
