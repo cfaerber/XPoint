@@ -52,7 +52,8 @@ uses
   {$ENDIF }
 {$ENDIF }
   database,
-  datadef1;
+  datadef1,
+  xp1;
 
 
 
@@ -157,9 +158,7 @@ begin
   if xflag then
     MakeXbase(filename,ehd,f);
 
-  assign(f,filename+dbIxExt);
-  erase(f);
-  if ioresult = 0 then ;
+  SafeDeleteFile(filename+dbIxExt);
 end;
 
 
@@ -433,15 +432,16 @@ begin
     erase(f1); rename(f2,filename+dbExt);
     irec.command:=icCloseWindow;
     ICP(irec);
-    assign(f1,filename+dbIxExt);
-    erase(f1);
-    if ioresult<>0 then;
+    SafeDeleteFile(Filename+dbIxExt);
     dbPack:=true;
-    end;
+  end;
 end;
 
 {
   $Log$
+  Revision 1.17.2.2  2002/07/26 08:05:02  mk
+  - simplyfied deletion of Index files
+
   Revision 1.17.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 
