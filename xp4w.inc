@@ -802,7 +802,7 @@ begin
       // identify type of the Message (not MIME, Singlepart or Multipart)
       MultiPartType := mpNone;
       MimeType  := dbReadNStr(mbase, mb_mimetyp);
-      if LeftStr(MimeType, 9) = 'multipart' then
+      if LeftStr(MimeType,10) = 'multipart/' then
         MultiPartType := mpMulti
       else
         if (MimeType <> '') and (MimeType <> 'text/plain') then MultiPartType := mpSingle;
@@ -856,7 +856,7 @@ begin
       ExtractSetMpdata(@mpdata);
       Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead),'',fn,false,
         iif(MultiPartType = mpAuto,-1,1));
-      if mpdata.code=mcodeBase64 then
+      if mpdata.code=MimeEncodingBase64 then
         typ:='B';
 
       if (typ='B') and (ForceMultiPartType <> mpMulti) and (dbReadInt(mbase,'unversandt') and 2=0)
@@ -1613,6 +1613,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.80  2001/09/08 14:32:00  cl
+  - Moved MIME functions/types/consts to mime.pas
+  - More uniform naming of MIME functions/types/consts
+
   Revision 1.79  2001/09/07 13:54:21  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
