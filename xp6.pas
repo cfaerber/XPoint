@@ -1294,7 +1294,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                     dbSeek(d,boiName,UpperCase(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
-                    else begin
+                     else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp'))) or
+                     not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
+                     rfehler(629)   { 'nicht m”glich - unterschiedliche Netztypen' }
+                 else begin
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
@@ -2106,6 +2109,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.116  2001/06/26 23:43:47  mk
+  JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
+       an RFC recipient and then select a Fido server in the send window.
+
   Revision 1.115  2001/06/06 18:44:01  mk
   JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
          ("Internal newsgroup - writing not allowed!"). Ancient bug
