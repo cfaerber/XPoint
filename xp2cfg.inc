@@ -685,7 +685,7 @@ begin
   PGP_signall:=false;
   { 01/2000 oh }
   PGPVersion:=PGP2;
-  AutoDatumsBezuege:=false;
+  AutoDatumsBezuege:=true;
   { /oh }
 end;
 
@@ -1607,6 +1607,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.7  2000/11/17 10:52:42  mk
+  - Autodatumsbezuege default true
+
   Revision 1.13.2.6  2000/11/17 10:49:43  mk
   MH:- fixed Bug #116188: Weiterleiten bei Brettern mit Vertretern und Schreibsperre wird beachtet
 
