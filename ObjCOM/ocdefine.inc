@@ -48,7 +48,7 @@
   {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
-{$IFDEF FPC }             { Freepascal >= 1.0.2 }
+{$IFDEF FPC }             { Freepascal >= 1.0 }
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
@@ -56,28 +56,87 @@
   {$ENDIF }
   {$MODE Delphi }
   {$ASMMODE Intel }
+  {$GOTO ON }
+  {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
-  {$C-,H+,I-,M-,P-,Q-,R-,T-,V-,X+}
-  {$IFNDEF Linux}
-    {$S-}
-  {$ENDIF}
+  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
-  {$HINTS OFF}
+  {$DEFINE i386 }
+  // writable const noch definieren
+{$ENDIF }
+
+{$IFDEF Delphi }
+  {$IFDEF GUI }
+    {$APPTYPE GUI }
+  {$ELSE }
+    {$APPTYPE CONSOLE }
+  {$ENDIF }
+  {$DEFINE Ver32 }
+  {$DEFINE Int64 }
+  {$DEFINE i386}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
+{$ENDIF }
+
+{$IFDEF Kylix }
+  {$APPTYPE CONSOLE }
+  {$DEFINE Ver32 }
+  {$DEFINE Int64 }
+  {$DEFINE i386}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
 {$ENDIF }
 
 {$IFDEF DebugInfo }
+  {$IFDEF Delphi }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
+  {$ENDIF }
+  {$IFDEF Kylix }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
+  {$ENDIF }
   {$IFDEF VirtualPascal }
     {$D+,LocInfo+}
   {$ENDIF }
 {$ENDIF }
+
 
 {$IFDEF Debug }
   {$IFDEF VirtualPascal }
     {$Q+,R+,S+,W+,Optimize-}
   {$ENDIF }
   {$IFDEF FPC }
-    {$Q+,R-,S+}
-    {$C+}                 { Assertion support }
+    {$IFNDEF Linux }
+      {$S+}               { Stack Checking }
+    {$ENDIF }
+    {$C+}                 { Assertation support }
+    {$D+}
+    {$M+}                 { Typeinfo for RTTI }
+    {$L+}                 { Local Symbols }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
+    {$Y+}                 { Browser Informations }
+  {$ENDIF }
+  {$IFDEF Delphi }
+    {$O-}
+    {$C+}                 { Assertation support }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
+  {$ENDIF }
+{$ELSE }
+  {$IFDEF FPC }
+    {$IFNDEF Linux }
+      {$S-}               { Stack Checking }
+    {$ENDIF }
+    {$C-,M-,Q-,R-,Y-}
   {$ENDIF }
 {$ENDIF }
 
@@ -97,7 +156,6 @@
 
 {$IFDEF Linux }
   {$DEFINE TCP }
-  {$DEFINE Unix }
 {$ENDIF }
 
 {$IFDEF BSD }
@@ -106,37 +164,7 @@
 
 {
   $Log$
-  Revision 1.7.2.3  2003/01/07 11:13:51  mk
-  - kylix update
-
-  Revision 1.7.2.2  2003/01/01 16:18:38  mk
-  - changes to made FreeBSD version compilable
-
-  Revision 1.7.2.1  2002/11/23 23:49:36  mk
-  - added Delphi 7 support
-
-  Revision 1.7  2001/09/07 23:24:56  ml
-  - Kylix compatibility stage II
-
-  Revision 1.6  2001/01/31 20:18:19  cl
-  - improved Win32 rawip implementation:
-    - no own ringbuffer
-    - detection of remote connection close
-
-  Revision 1.5  2001/01/20 17:36:26  ml
-  - linuxextension of telnet-obj
-
-  Revision 1.4  2001/01/03 22:29:24  ma
-  - TCP port working only with Win32
-
-  Revision 1.3  2000/12/14 16:29:19  hd
-  - Workaround: no range check under FPC
-    - please, never, FPC is buggy.
-
-  Revision 1.2  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.1  2000/10/16 12:19:06  mk
-  - added ocdefine.inc
+  Revision 1.7.2.4  2003/01/09 22:22:44  mk
+  - updated to version 1.11 from HEAD-Branch
 
 }
