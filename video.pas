@@ -464,7 +464,7 @@ procedure SetScreenLines(lines:byte);
         10 : make10;
          9 : make9;
          7 : make7;
-       else fastmove(p1^,p2^,height*4096);           
+       else fastmove(p1^,p2^,4096);           
       end;
       LoadFont(height,p2^);
       {$IFDEF DPMI }
@@ -526,6 +526,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.5  2000/08/26 07:53:55  jg
+  - Fix: beim aktivieren des 28 Zeilenmodus wurden
+    14*4096 statt 4096 Byte kopiert...!
+
   Revision 1.20.2.4  2000/08/25 19:21:19  jg
   - Fix: Ein Byte Zuviel an den GCT geschickt.
 
