@@ -2411,6 +2411,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 82   compressed file (gzip)
 83   compressed file (bzip2)
 
+100 error #%d
 102 permission denied or file error
 104 unable to create temporary file
 105 temporary file could not be moved into the final location
@@ -3673,6 +3674,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.129  2001/03/24 22:57:21  cl
+# - more UUCICO ressources
+#
 # Revision 1.128  2001/03/21 19:17:07  ma
 # - using new netcall routines now
 # - renamed IPC to Progr.Output

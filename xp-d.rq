@@ -2475,6 +2475,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 # UUCP errors
 
+100 Fehler Nr. #%d
 102 Zugriff verweigert oder Dateifehler
 104 TemporÑre Datei konnte nicht erstellt werden
 105 TemporÑre Datei konnte nicht an endgÅltige Position verschoben werden
@@ -3651,6 +3652,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.104  2001/03/24 22:57:21  cl
+# - more UUCICO ressources
+#
 # Revision 1.103  2001/03/21 19:17:07  ma
 # - using new netcall routines now
 # - renamed IPC to Progr.Output
