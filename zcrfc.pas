@@ -837,7 +837,7 @@ begin
     if keywords <> '' then WriteStichworte(keywords);
     if summary <> '' then wrs('ZUSAMMENFASSUNG: ' + summary);
     if distribution <> '' then wrs('U-Distribution: ' + distribution);
-    if charset<>'' then wrs('Charset: '+charset);
+    if (charset<>'') and (charset<>'US-ASCII') and (charset<>'IBM437') then wrs('Charset: '+charset);
     if x_charset<>'' then wrs('X-XP-Charset: '+x_charset);
     if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
 
@@ -3646,6 +3646,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2001/09/10 17:42:04  cl
+  - BUGFIX: ZConnect Charset header only written if not in ['US-ASCII','IBM437']
+
   Revision 1.76  2001/09/10 17:28:35  cl
   - BUGFIX: multipart messages don't have a charset, so don's assume Windows-1252.
   - Snapshot versions of UUZ now leave a scent mark in buffers converted to
