@@ -706,7 +706,7 @@ var l  : longint;
     f  : file;
 begin
   if FileExists(fn) then
-    ZCFileTime := FormatDateTime('yymmddhhmmss', FileDateToDateTime(FileAge(fn)))
+    ZCFileTime := DateTimeToZCDateTime(FileDateToDateTime(FileAge(fn)))
   else
     ZCFileTime := '';
 end;
@@ -716,9 +716,7 @@ var
   Date: TDateTime;
   fh: Integer;
 begin
-  // try to optimize this with DateTimeToStr or something like this
-  Date := EncodeDate(ival(LeftStr(ddatum,4)), ival(copy(ddatum,5,2)), ival(copy(ddatum,7,2)))
-    + EncodeTime(ival(copy(ddatum,9,2)), ival(copy(ddatum,11,2)), ival(copy(ddatum,13,2)), 0);
+  Date := ZCDateTimeToDateTime(ddatum);
   fh := FileOpen(fn, fmOpenRead OR fmShareDenyNone);
   if fh > 0 then
   begin
@@ -1004,6 +1002,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/11/15 23:12:32  mk
+  - implemented ZCDateTimeToDateTime and DateTimeToZCDateTime functions
+
   Revision 1.70  2000/11/15 23:00:40  mk
   - updated for sysutils and removed dos a little bit
 

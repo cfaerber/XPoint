@@ -162,6 +162,12 @@ function ConvertFileName(const s:string): String;
 // siehe XPDTAUM !?
 procedure ZtoZCdatumNTZ(var d1,d2:string);
 
+// converts TDateTime to ZConnect Date and Time String
+function DateTimeToZCDateTime(DateTime: TDateTime): String;
+// converts ZConnect Date and Time String to TDateTime
+function ZCDateTimeToDateTime(const s: String): TDateTime;
+
+
 { ================= Implementation-Teil ==================  }
 
 implementation
@@ -1281,9 +1287,23 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
+function DateTimeToZCDateTime(DateTime: TDateTime): String;
+begin
+  Result := FormatDateTime('yyyymmddhhmmss', DateTime);
+end;
+
+function ZCDateTimeToDateTime(const s: String): TDateTime;
+begin
+  Result := EncodeDate(ival(LeftStr(s,4)), ival(copy(s,5,2)), ival(copy(s,7,2)))
+    + EncodeTime(ival(copy(s,9,2)), ival(copy(s,11,2)), ival(copy(s,13,2)), 0);
+end;
+
 end.
 {
   $Log$
+  Revision 1.73  2000/11/15 23:12:32  mk
+  - implemented ZCDateTimeToDateTime and DateTimeToZCDateTime functions
+
   Revision 1.72  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 
