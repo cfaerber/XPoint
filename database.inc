@@ -28,21 +28,23 @@
 { liefert searchpage (in x) die Nummer des nÑchstkleineren Keys.  }
 { Das kann auch die Nummer 0 sein!                                }
 
-procedure searchpage(bf:inodep; var searchkey:string; searchrec:longint;
+procedure searchpage(bf:inodep; const searchkey:string; searchrec:longint;
                      var x:integer);
 var r,l : integer;
     ke  : boolean;
+    TempSearchKey: String[127]; // performance critical, due to comparing ansistring with shortstring
 begin
   l:=0;
   r:=succ(bf^.anzahl);
   found:=false;
+  TempSearchKey := SearchKey;
   while (l+1<r) and not found do begin
     x:=(l+r) div 2;
-    ke:=bf^.key[x].keystr=searchkey;
+    ke:=bf^.key[x].keystr=Tempsearchkey;
     if ke and ((searchrec=0) or (bf^.key[x].data=searchrec)) then
       found:=true
     else
-      if (searchkey<bf^.key[x].keystr) or (ke and (searchrec<bf^.key[x].data))
+      if (ke and (searchrec<bf^.key[x].data)) or (Tempsearchkey<bf^.key[x].keystr)
       then r:=x
       else l:=x;
   end;
@@ -50,7 +52,7 @@ begin
     x:=l
   else
     if searchrec=0 then
-      while (x>1) and (bf^.key[x-1].keystr=searchkey) do dec(x);
+      while (x>1) and (bf^.key[x-1].keystr=TempSearchkey) do dec(x);
 end;
 
 
@@ -104,7 +106,7 @@ end;
 
 { Index-SchlÅssel 'key' in Index Nr, 'indnr' von Datenbank 'dbp' einfÅgen }
 
-procedure insertkey(dbp:DB; indnr:word; var key:string);
+procedure insertkey(dbp:DB; indnr:word; const key:string);
 
 var bf        : inodep;
     risen     : boolean;
@@ -211,7 +213,7 @@ end;
 
 { Index-SchlÅssel 'key' aus Index Nr, 'indnr' von Datenbank 'dbp' lîschen }
 
-procedure deletekey(dbp:DB; indnr:word; var key:string);
+procedure deletekey(dbp:DB; indnr:word; const key:string);
 var z         : longint;
     underflow : boolean;
     bf        : inodep;
@@ -502,6 +504,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8.2.2  2002/09/09 08:29:15  mk
+  - some performance improvements
+
   Revision 1.8.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 

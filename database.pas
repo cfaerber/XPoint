@@ -179,8 +179,8 @@ end;
 
 
 procedure getkey(dbp:DB; indnr:word; old:boolean; var key:string); forward;
-procedure insertkey(dbp:DB; indnr:word; var key:string); forward;
-procedure deletekey(dbp:DB; indnr:word; var key:string); forward;
+procedure insertkey(dbp:DB; indnr:word; const key:string); forward;
+procedure deletekey(dbp:DB; indnr:word; const key:string); forward;
 
 
 { Datensatz schreiben }
@@ -1164,13 +1164,13 @@ end;
 
 function dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;   { -1=unbekannt }
 begin
-  with dp(dbp)^ do
+  with dp(dbp)^.feldp^ do
   begin
     Result :=0;
     feldname:= UpperCase(feldname); { UpString(feldname);}
-    while (Result <=feldp^.felder) and (feldname<>feldp^.feld[Result].fname) do
+    while (feldname<>feld[Result].fname) and (Result <=felder)  do
       inc(Result);
-    if Result >feldp^.felder then
+    if Result >felder then
       Result :=-1;
   end;
 end;
@@ -1620,6 +1620,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.3  2002/09/09 08:29:14  mk
+  - some performance improvements
+
   Revision 1.52.2.2  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 
