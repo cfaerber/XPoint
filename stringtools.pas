@@ -40,7 +40,7 @@ implementation
 
 function DateTimeToZCDateTime(DateTime: TDateTime): String;
 begin
-  Result := FormatDateTime('yymmddhhmmss', DateTime);
+  Result := FormatDateTime('yymmddhhnnss', DateTime);
 end;
 
 function ZCDateTimeToDateTime(const s: String): TDateTime;
@@ -54,6 +54,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2001/03/22 18:25:09  ma
+  - FmtDateTime: "mm" means "month", *not* "minute".
+
   Revision 1.2  2000/11/17 00:20:02  mk
   - fixed a bug in DateTimeToZCDateTime
 

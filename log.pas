@@ -117,7 +117,7 @@ begin
   if FCanWrite and (FLogLevel>llNone) then begin
     Open;
     if FisOpen then
-      writeln(FHandle,FormatDateTime('hh:mm:ss',Now),'   Logging ends',newline);
+      writeln(FHandle,FormatDateTime('hh:nn:ss',Now),'   Logging ends',newline);
   end;
   Close;
 end;
@@ -150,7 +150,7 @@ begin
       FCanWrite:= false;
     end else if FFirstLog then begin
       writeln(FHandle,'---------- OpenXP ',DateToStr(Now),verstr,betastr,pformstr);
-      writeln(FHandle,FormatDateTime('hh:mm:ss',Now),'   Logging started');
+      writeln(FHandle,FormatDateTime('hh:nn:ss',Now),'   Logging started');
       FFirstLog:= False;
     end;
   end;
@@ -167,7 +167,7 @@ begin
   if not FisOpen then
     Open;
   if FisOpen then begin
-    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now),' ',llChars[l],s);
+    WriteLn(FHandle, FormatDateTime('hh:nn:ss',now),' ',llChars[l],s);
     Close;
   end;
 end;
@@ -179,7 +179,7 @@ begin
   if fn<>FFilename then begin
     Open;
     if FisOpen then begin
-      writeln(FHandle, FormatDateTime('hh:mm:ss',Now) + '   Logging ends' + newline);
+      writeln(FHandle, FormatDateTime('hh:nn:ss',Now) + '   Logging ends' + newline);
       Close;
     end;
     FFilename:= fn;
@@ -219,6 +219,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.7  2001/03/22 18:25:09  ma
+        - FmtDateTime: "mm" means "month", *not* "minute".
+
         Revision 1.6  2000/11/19 18:00:37  ma
         - newline removed, my fault.
 

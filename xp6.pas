@@ -320,7 +320,7 @@ function compiletime:string;      { Erstelldatum von XP.EXE als String uebergebe
 //var                                          { Format: 1105001824 }
 // d:datetime;
 begin
-  CompileTime := FormatDateTime('ddmmyyhhmm', FileDateToDateTime(FileAge(ownpath+'xp.exe')));
+  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ownpath+'xp.exe')));
 end;
 {$ENDIF}
 
@@ -2103,6 +2103,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.102  2001/03/22 18:25:09  ma
+  - FmtDateTime: "mm" means "month", *not* "minute".
+
   Revision 1.101  2001/03/14 20:46:04  mk
   - removed registration routines
 

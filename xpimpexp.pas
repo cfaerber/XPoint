@@ -485,12 +485,12 @@ BEGIN
     // !! UnPackTime(x.datum,tempdatum);
     tempdatum:= FileDateToDateTime(x.datum);
     write(outfile,'E');
-    write(outfile,FormatDateTime('YYYYMMDDhhmm', tempdatum));
+    write(outfile,FormatDateTime('yyyymmddhhnn', tempdatum));
     //datum_ins_outfile(tempdatum);
     // !!UnPackTime(x.SDatum,tempdatum);
     tempdatum:= FileDateToDateTime(x.SDatum);
     write(outfile,'B',upcase(x.status));
-    write(outfile,FormatDateTime('YYYYMMDDhhmm', tempdatum));
+    write(outfile,FormatDateTime('yyyymmddhhnn', tempdatum));
     //datum_ins_outfile(tempdatum);
 
     if gruppe<>'PRIVAT' then writeln(outfile,'G',gruppe);
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/03/22 18:25:09  ma
+  - FmtDateTime: "mm" means "month", *not* "minute".
+
   Revision 1.36  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

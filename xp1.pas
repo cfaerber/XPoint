@@ -1495,7 +1495,7 @@ end;
 
 function Zdate:string;
 begin
-  result:= FormatDateTime('YYMMDDhhmm',Now);
+  result:= FormatDateTime('yymmddhhnn',Now);
 end;
 
 
@@ -2052,6 +2052,9 @@ end.
 
 {
   $Log$
+  Revision 1.104  2001/03/22 18:25:09  ma
+  - FmtDateTime: "mm" means "month", *not* "minute".
+
   Revision 1.103  2001/03/03 10:57:43  ml
   - compilable under linux
 
