@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
@@ -1060,7 +1061,7 @@ restart:
     else begin
       {if spez then sst:=txt;  } { Bei Spezialsuche nur im Volltext... }
       if brk then goto ende;
-      
+
       if history_changed then begin
         history_changed:=false;
         closebox;
@@ -1164,7 +1165,6 @@ restart:
         end;
 
       freemem(p,psize);
-      CloseBox;
       dispose(hdp);
       end;
 
@@ -1190,8 +1190,8 @@ restart:
   else begin   { brk }
 ende:                               { Suche gescheitert/abgebrochen }
     suche:=false;
-    CloseBox;
     end;
+  CloseBox;
   freeres;
 end;
 { R+}
@@ -2954,6 +2954,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.46  2003/03/18 00:02:40  my
+  MY:- Fix: Wenn insgesamt 20 x innerhalb einer XP-Session erfolgreich nach
+       einer Message-ID gesucht wurde, fÅhrte dies zu einem "WPUSH error" und
+       damit einer fehlerhaften Darstellung von MenÅs und Fenstern
+       ('closebox' fehlte). DafÅr wurde bei anderen Suchen, die gar kein
+       Suchergebnis lieferten, unnîtig oft versucht, eine (nicht mehr
+       existierende) Dialogbox zu schlie·en. Es wird jetzt bei allen Suchen
+       nur noch genau einmal die Dialogbox ganz am Ende der Routine
+       geschlossen.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.47.2.45  2003/02/24 21:29:03  my
   AB[+MY]:- Spezial-Suche kann jetzt auch nach dem Empfangsdatum von
             Nachrichten suchen.
