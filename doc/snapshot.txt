@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 01.12.2001 (letzter Update)
+DÅsseldorf, den 02.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -489,6 +489,10 @@ Bugfixes
   MASKE.PAS
 
 - Komma zur Liste der fÅr URLs zulÑssigen Zeichen hinzugefÅgt.
+  XP1O.PAS
+
+- DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
+  Lister heraus behoben (<Alt-B> oder <Alt-U>)
   XP1O.PAS
 
 
