@@ -197,7 +197,7 @@ end;
 
 procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;cancode:byte;pgpsig:boolean);
 const width = 68;
-      edb   = 3;
+      edb   = 2;
       okb   = 6;
 var p,p0      : integer;        (* current line                 *)
     q,q0      : integer;        (* current start of window      *)
@@ -309,7 +309,7 @@ var p,p0      : integer;        (* current line                 *)
   procedure readbutt;
   begin
     rbx:=x+1; rby:=y+p-q+1;
-    rb:=readbutton(x+2,y+gl+2,2,iifs(Parts.Count>0,buttons,buttons2),bp,false,t);
+    rb:=readbutton(x+2,y+gl+2,2,iifs(Parts.Count>1,buttons,buttons2),bp,false,t);
   end;
 
   procedure maus_bearbeiten;
@@ -345,7 +345,7 @@ begin { SendAttach }
   selbox(width+2,gl+4,'',x,y,false);
 
   buttons := GetRes2(624,0); { ' ^Neu , ^L”schen , ^Edit , N. ^Oben , N. ^Unten , S^chlieáen ' }
-  buttons2:= GetRes2(624,2); { ' ^Neu , --------------------------------------- S^chlieáen ' }
+  buttons2:= GetRes2(624,2); { ' ^Neu , ---------, ^Edit ,                      , S^chlieáen ' }
 
   maus_pushinside(x+1,x+width,y+1,y+gl);
   poutside:=false;
@@ -394,23 +394,28 @@ begin { SendAttach }
 //    c:=UpCase(t[1]);
 
   try
+    if (rb=3) and (Parts.Count<=1) then
+      rb:=okb;
+
     case rb of
       1: begin
            SendAttach_Add(parts,x,y+1+p-q,umlaute,iifs(parts.count<=0,sigfile,''),docode,pgpsig);
            p:=parts.count-1;
            if p0=p then p0:=-1;         { if first entry }
          end;
-      2: if parts.count<=1 then
-           fehler(GetRes2(624,103))
-         else
-         begin
-           SendAttach_Delete(parts,p);
-           aufbau:=true;
-         end;
       edb: if parts.count>0 then
          begin
            SendAttach_Edit(parts,p,x,y+1+p-q,umlaute,iifs(p=0,sigfile,''),docode,pgpsig);
            p0:=-1;
+         end;
+      3: begin
+           SendAttach_Delete(parts,p);
+           aufbau:=true;
+           if parts.count=1 then
+           begin
+             attrtxt(col.colsel2box);
+             mwrt(x+2,y+gl+2,sp(width-2));
+           end;
          end;
       4: if p>0 then begin
            parts.Exchange(p,p-1);

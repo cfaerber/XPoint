@@ -1344,7 +1344,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Normal~
 17   Niedrig~
 18   Niedrigste~
-19   PGP/MIME-Sig
+19   PGP/MIME-Sig~
 -
 605  DES-Codierung...     %
 + 606
@@ -1396,7 +1396,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 14   Gr”áe
 15   Code:   ~
 16   Kopien:
-17   Signatur:
 # Fido
 20   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,C^rash,P^GP,^Zurck
 # Maus
@@ -1446,9 +1445,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 622  In diesem Netz nicht m”glich
 
 + 624
-0  ~^Neu ,^L”schen,B^earbeiten, ^Auf , A^b ,ù4S^chlieáen
+0  ~^Neu ,B^earbeiten,^L”schen, ^Auf , A^b ,ù4S^chlieáen
 1 ^Datei anh„ngen,^Text erstellen
-2  ~^Neu ,ù46S^chlieáen
+2  ~^Neu ,B^earbeiten,ù32S^chlieáen
 
 3 Nachrichtenteil sichern
 4  Dieser Nachrichtenteil wurde neu erstellt bzw. ver„ndert.
@@ -3825,6 +3824,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.36  2001/09/12 22:14:22  cl
+# - resorted buttons in attach box
+#
 # Revision 1.35  2001/09/12 21:22:12  cl
 # - added flag PGP/MIME-Sig
 #
