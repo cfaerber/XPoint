@@ -71,7 +71,7 @@
   {$GOTO ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }	  { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$B-,H+,I-,P-,T-,V-,X+}
+  {$H+,I-,P-,T-,V-,X+}
   {$DEFINE Int64 }
 {$ENDIF }
 
@@ -168,6 +168,9 @@
 
 {
   $Log$
+  Revision 1.60  2000/11/07 13:06:20  hd
+  - $B entfernt, da unter FPC nicht supported
+
   Revision 1.59  2000/11/06 11:42:12  hd
   - Stack is global under Linux
 
