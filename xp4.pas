@@ -1715,10 +1715,10 @@ begin      { --- select --- }
                    if t=keyaltp then begin GoP; pm_archiv(false); end;  { @P }
                    if c=k2_cF then datei_senden(true,false);        { ^F }
                    if c=k2_cI then datei_senden(true,true);         { ^I }
+                   if c=k2_cE then _unmark_;                        { ^E }
                    if (dispmode=10) or (dispmode=12) then begin
                      if (c=' ') and ((dispmode<12) or not markaktiv) then
                        _mark_;
-                     if c=k2_cE then _unmark_;                      { ^E }
                      if c=k2_U then to_window else                  { 'U' }
                      if t=keyaltu then usersuche(false);
                      if dispmode=10 then begin
@@ -2019,6 +2019,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.9  2000/11/08 17:55:09  mk
+  - fixed Bug #119897: Ctrl E in Displaymode 11
+
   Revision 1.6.2.8  2000/10/26 16:21:04  mk
   - Fixed Bug #116156: falsche Quoteschablone bei Mehrfachquotes
 
