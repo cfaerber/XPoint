@@ -1722,25 +1722,23 @@ again:
   end;
 
   procedure _brief_senden(c:char);
-  var
-    hdp : headerp;
-    hds : longint;
+  var hdp    : headerp;
+      hds    : longint;
+      mbrett : string[5];
   begin
-    { Nur ausfÅhren, wenn wirklich einer der benîtigten Tasten }
-    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
-
-    if (left(dispspec,1)='1') then
-    begin                           { Bei PM-Brett und Msg ohne Replyto }
-      new(hdp);                     { automatisch "P" statt "B" benutzen }
+    GoP;
+    dbreadN(mbase,mb_brett,mbrett);
+    if (mbrett[1]='1') or (mbrett[1]='U')
+    then begin                       { Bei PM ohne Replyto }
+      new(hdp);                      { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp^,hds,false);
-      if (Dispmode<>12) and (hdp^.amreplyto='')
-        or ((hdp^.empfanz=1) and
-        (hdp^.empfaenger=hdp^.amreplyto)) then
+      if (hdp^.amreplyto='') or ((hdp^.empfanz=1) and
+         (hdp^.empfaenger=hdp^.amreplyto)) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
         if c=k2_SB then c:=k2_SP;
-      end;
+        end;
       dispose(hdp);
       end;
     if c=k2_b  then brief_senden(true,false,false,0) else
@@ -2741,6 +2739,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.34  2001/06/07 16:27:26  my
+  JG:- When creating a reply, mapping "B" => "P" now checks for the
+       message status (PM/AM) rather than for the message area status.
+       Thus mapping now also works in the reference tree and in the
+       user database.
+
   Revision 1.26.2.33  2001/06/05 20:33:02  my
   JG:- Fix: When using <Ctrl-B> in a reference tree on a public
        message, XP created a private message if the reference
