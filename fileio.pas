@@ -109,8 +109,7 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode ”ffn.}
 
 procedure adddir(var fn:string; dir:string);
 function  GetBareFileName(const p:string):string;
-function getenv(const EVar: String): String;
-
+function  GetEnv(const name: string): string;
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
 
 {$IFNDEF Unix }
@@ -220,7 +219,7 @@ begin
     end;
     rc:= findnext(sr);
   end;
-  sysutils.findclose(sr);
+  findclose(sr);
 end;
 
 procedure FSplit(const path: string; var dir, name, ext: string);
@@ -606,14 +605,20 @@ begin
 end;
 {$endif }
 
-function getenv(const EVar: String): String;
+function GetEnv(const name: string): string;
 begin
-  // !!
+{$ifdef Unix}
+  result:= Linux.GetEnv(name);
+{$else}
+{$endif}
 end;
 
 end.
 {
   $Log$
+  Revision 1.74  2000/11/16 12:08:42  hd
+  - Fix: Zu späte Arbeit
+
   Revision 1.73  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 

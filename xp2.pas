@@ -24,6 +24,7 @@ uses
 {$ENDIF }
 {$IFDEF unix}
   xplinux,
+  linux,
 {$ENDIF}
 {$IFDEF Win32 }
   xpwin32,
@@ -197,24 +198,37 @@ begin
   halt;
 end;
 
+procedure TestCD;
+var f    : file;
+begin
+  assign(f,OwnPath+'xptest.tmp');
+  XPRewrite(f,cmUser);
+  if ioresult=0 then begin
+    close(f);
+    erase(f);
+  end else begin
+    writeln;
+    writeln(xp_xp+' kann nicht von einem schreibgeschtzten Laufwerk gestartet');
+    writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
+    runerror:=false;
+{$IFDEF Unix}
+    readln;         { better debuggin with readable Messages... }
+{$ENDIF}
+    halt(1);
+  end;
+end;
 
 { initialize global Dirvars defined in xpglobals.pas }
 {$IFDEF UnixFS}
 procedure initdirs;
 
-  function DirAvailableCheck(CheckDirname: String): Boolean;
-  begin
-    Result :=  FileExists(CheckDirName);
-  end; { DirAvailableCheck }
-
   procedure GetHomePath;
   begin
-    HomeDir := GetEnv(ResolvePathName(envXPHome));          { XPHOME=~/.openxp }
+    HomeDir := AddDirSepa(ResolvePathName(GetEnv(envXPHome))); { XPHOME=~/.openxp }
     if (length(HomeDir) > 0) then exit;
-    HomeDir := GetEnv('HOME');                              { HOME= }
+    HomeDir := AddDirSepa(GetEnv('HOME'));                     { HOME= }
     if (length(HomeDir) > 0) then exit;
-    HomeDir := '~';
-    if (length(HomeDir) > 0) then exit;
+    HomeDir := './';
   end; { GetHomePath }
 
   procedure GetOwnPath;
@@ -248,11 +262,11 @@ procedure initdirs;
     {$else}
     LibDir := AddDirSepa('/usr/lib/' + XPDirName) + 'lib';                    { Lib/Res-Verzeichnis }
     DocDir := AddDirSepa('/usr/lib/' + XPDirName) + 'doc';                    { Lib/Res-Verzeichnis }
-    if not DirAvailableCheck(LibDir) then
+    if not isPath(LibDir) then
     begin
       LibDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'lib';
       DocDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'doc';
-      if not DirAvailableCheck(LibDir) then
+      if not isPath(LibDir) then
       begin
         if _deutsch then
           stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
@@ -276,6 +290,7 @@ begin {initdirs}
     createOpenXPHomedir;
 
   SetCurrentDir(OwnPath);
+  TestCD;
 end; { initdirs }
 {$ELSE}
 procedure initdirs;
@@ -293,6 +308,7 @@ begin
   LibDir  := progpath;
   HomeDir := LibDir;
   DocDir  := LibDir;
+  TestCD;
 end; { initdirs }
 {$ENDIF}
 
@@ -1197,6 +1213,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2000/11/16 12:08:42  hd
+  - Fix: Zu späte Arbeit
+
   Revision 1.82  2000/11/15 23:00:40  mk
   - updated for sysutils and removed dos a little bit
 

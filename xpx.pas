@@ -19,14 +19,17 @@ interface
 uses
   xpglobal,
 {$IFDEF unix}
+  linux,
   xplinux,
+{$else}
+  dos,          { getenv }
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,mouse,inout,xp0,crc,sysutils;
+  typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
 function _deutsch:boolean;
 procedure stop(txt:string);
@@ -114,32 +117,6 @@ begin
   filemode:=2;
 end;
 
-procedure TestCD;
-var f    : file;
-    attr : rtlword;
-begin
-  assign(f,paramstr(0));
-  getfattr(f,attr);
-  if attr and ReadOnly<>0 then begin
-    assign(f,OwnPath+'XP$T.$1');
-    XPRewrite(f,cmUser);
-    if ioresult=0 then begin
-      close(f);
-      erase(f);
-      end
-    else begin
-      writeln;
-      writeln(xp_xp+' kann nicht von einem schreibgeschÅtzten Laufwerk gestartet');
-      writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
-      runerror:=false;
-{$IFDEF Unix}
-      readln;         { better debuggin with readable Messages... }
-{$ENDIF}
-      halt(1);
-      end;
-    end;
-end;
-
 
 initialization
   checkbreak:=false;
@@ -159,7 +136,6 @@ initialization
 
   initdirs;
 
-  TestCD;
   starting:=false;
 finalization
   if not SetCurrentDir(shellpath) then
@@ -173,6 +149,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.35  2000/11/16 12:08:43  hd
+  - Fix: Zu sp‰te Arbeit
+
   Revision 1.34  2000/11/14 11:14:35  mk
   - removed unit dos from fileio and others as far as possible
 
