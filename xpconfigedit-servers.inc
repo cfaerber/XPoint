@@ -182,7 +182,7 @@
   end;
 
 
-  procedure ReadNetztyp(box:string; var nt:byte; var brk:boolean);
+  procedure ReadNetztyp(const box:string; var nt:byte; var brk:boolean);
   var x,y  : Integer;
       ntyp : string;
       i    : integer;
@@ -267,7 +267,7 @@
     ReadBox(0, fn, boxpar);
     pppm:=boxpar^.Clientmode;
     if empty then
-      nt:=nt_Netcall
+      nt:=nt_Client
     else begin
       dbRead(d,'netztyp',nt);
       if (nt=nt_UUCP) and pppm then nt:=nt_Client;
@@ -2097,6 +2097,9 @@
 
 {
   $Log$
+  Revision 1.38  2001/11/24 16:20:36  mk
+  - reenabled client mode again
+
   Revision 1.37  2001/10/17 21:12:59  mk
   - allow umlauts in realname
 

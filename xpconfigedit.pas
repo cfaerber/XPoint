@@ -93,11 +93,11 @@ const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
 {$IFNDEF DOS32}
-      SupportedNetTypes: array[0..4] of byte =
-        ({nt_Client,} nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..5] of byte =
+        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ELSE}
-      SupportedNetTypes: array[0..2] of byte =
-        ({nt_Client,} nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..3] of byte =
+        (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
@@ -1278,11 +1278,10 @@ restart:
   dialog(ival(getres2(911,0)),13,'',x,y);
   maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie Netztyp und Name Ihrer Stamm-' }
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'box sowie Username bzw. eMail-Adresse ein.' }
-//**  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benîtigen' }
-//**  maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
+  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benîtigen' }
+  maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
-//**  ntyp:=ntName(nt_Client); nt:=nt_Client;
-  ntyp:=ntName(nt_POP3); nt:=nt_POP3;
+  ntyp:=ntName(nt_Client); nt:=nt_Client;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   for i:=0 to High(SupportedNetTypes) do
     mappsel(true,ntName(SupportedNetTypes[i]));
@@ -1634,6 +1633,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2001/11/24 16:20:36  mk
+  - reenabled client mode again
+
   Revision 1.27  2001/10/21 13:09:05  ml
   - removed some more warnings (only 130 yet...)
 
