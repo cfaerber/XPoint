@@ -371,8 +371,8 @@ var   hdp      : headerp;
           if vorspann then ctype:=getres2(2440,1)     { 'Vorspann' }
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
-      { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
-      { if eof(t) then inc(n); }
+      { Letzte Zeile im letzen Part wird sonst unterschlagen }
+      if not isbound inc(n);
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -723,6 +723,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.5  2000/07/27 16:17:21  mk
+  - Endlich korrekte Behandlung der letzen Zeile im letzen Part von MIME-Mails
+
   Revision 1.7.2.4  2000/07/12 08:00:49  mk
   JG: - MIME-Auswahldialog nur noch wenn wirklich sinnvoll und noetig
 
