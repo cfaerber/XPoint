@@ -280,7 +280,7 @@ begin
   writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
   writeln('uz switches:  -UseEnvTo  =  Use Envelope header instead of "RCPT TO" (SMTP)');
-  writeln('                            (Envelope-To, X-Envelope-To, U-Delivered-To)');
+  writeln('                            (Envelope-To, X-Envelope-To, Delivered-To)');
   writeln('              -graberec  =  Grab envelope recipient from "Received" header');
   writeln('              -client    =  Mode for net type RFC/Client');
   writeln;
@@ -1786,8 +1786,8 @@ var p,i   : integer; { byte -> integer }
   function GetMsgid:string;
   begin
     s0 := Trim(s0);
- (* RFCRemoveComment(s0);
-    s0 := Trim(s0); *)
+    RFCRemoveComment(s0);
+    s0 := Trim(s0);
     if firstchar(s0)='<' then delfirst(s0);
     if lastchar(s0)='>' then dellast(s0);
     GetMsgid:=s0;
@@ -1905,7 +1905,7 @@ var p,i   : integer; { byte -> integer }
 
   procedure GetDeliveredTo;
   begin
-    appUline(s1);
+    appUline('U-'+s1);
     hd.delivTo:=mailstring(s0,false);
     if cpos('@',hd.delivTo)=0 then   { Wenn keine Mailadresse im Header }
       hd.delivTo:=''                 { dann Header leeren               }
@@ -2024,6 +2024,7 @@ begin
              if zz='control'      then control:=GetControl
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
+             if zz='delivered-to' then GetDeliveredTo else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
              if zz='distribution' then GetVar(distribution,s0)
              else AppUline('U-'+s1);
@@ -2081,7 +2082,6 @@ begin
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz='envelope-to'  then envemp:=s0 else
-             if zz='u-delivered-to' then GetDeliveredTo else
              if zz<>'lines'       then AppUline('U-'+s1);
         end; { case }
         end;
@@ -3400,6 +3400,18 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.76  2002/04/28 17:53:26  my
+  MY:- Vorletzten Commit korrigiert: Wir entfernen jetzt doch Kommentar
+       *und* die schlie·ende spitze Klammer und stellen uns auf den
+       Standpunkt, da· ein Kommentar in einer MsgID nichts verloren hat
+       und die Server dafÅr zu sorgen haben, auch eine MsgID ohne
+       Kommentar korrekt zu behandeln.
+
+  MY:- Fix: Bei Verwendung des Schalters "-UseEnvTo" wird nicht mehr
+       u.a. auf "U-Delivered-To", sondern auf "Delivered-To" geprÅft
+       (Delivered-To-UnterstÅtzung ist damit aber noch noch nicht
+       komplett erledigt).
+
   Revision 1.35.2.75  2002/04/26 23:11:51  my
   MY:- Ein paar Commit-Texte geÑndert/prÑzisiert.
 
