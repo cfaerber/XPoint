@@ -473,10 +473,17 @@ begin
   OtherQuoteChars:=false;
   { /oh }
   Screenlines:=25;
+{$IFDEF UnixFS }
+  temppath:=ownpath+'temp/';                {alt: temppath:=ownpath;}
+  extractpath:=ownpath+'files/';            {alt: extractpath:='';}
+  sendpath:=ownpath+'send/';                {alt: sendpath:='';}
+  logpath:=OwnPath+'log/';                  {alt: logpath:=OwnPath;}
+{$ELSE }
   temppath:=ownpath+'TEMP\';                {alt: temppath:=ownpath;}
   extractpath:=ownpath+'FILES\';            {alt: extractpath:='';}
   sendpath:=ownpath+'SEND\';                {alt: sendpath:='';}
   logpath:=OwnPath+'LOG\';                  {alt: logpath:=OwnPath;}
+{$ENDIF }
   {Änderungen durch MW 04/2000}
   filepath:=Ownpath+InFileDir;
   fidopath:=OwnPath+FidoDir;   { fest }
@@ -508,6 +515,18 @@ begin
   ListEndCR:=false;
   ListWrap:=true;
   with unpacker^ do begin
+{$IFDEF Linux }
+    UnARC:='arc e $ARCHIV $DATEI';
+    UnLZH:='lha e $ARCHIV $DATEI';
+    UnZOO:='zoo -e $ARCHIV $DATEI';
+    UnZIP:='unzip $ARCHIV $DATEI';
+    UnARJ:='unarj e $ARCHIV $DATEI';
+    UnPAK:='pak e $ARCHIV $DATEI';	{ Nicht geprueft }
+    UnDWC:='dwc e $ARCHIV $DATEI';	{ Nicht geprueft }
+    UnHYP:='hyper -x $ARCHIV $DATEI';	{ Nicht geprueft }
+    UnSQZ:='sqz e $ARCHIV $DATEI';	{ Nicht geprueft }
+    UnRAR:='unrar e $ARCHIV $DATEI';
+{$ELSE }
     UnARC:='pkxarc $ARCHIV $DATEI';
     UnLZH:='lha e $ARCHIV $DATEI';
     UnZOO:='zoo -e $ARCHIV $DATEI';
@@ -518,6 +537,7 @@ begin
     UnHYP:='hyper -x $ARCHIV $DATEI';
     UnSQZ:='sqz e $ARCHIV $DATEI';
     UnRAR:='rar e $ARCHIV $DATEI';
+{$ENDIF }
     end;
   EditVollbild:=false;
   ExtEditor:=1;
@@ -539,7 +559,11 @@ begin
   unberührt. Dies wird an anderer Stelle geprüft und
   gesetzt.   MW 04/2000}
   UserSlash:=true;
+{$IFDEF UnixFS }
+  BAKext:= 'bak';
+{$ELSE }
   BAKext:='BAK';
+{$ENDIF }
   keepedname:=false;
   listscroller:=false; listautoscroll:=true;
   SaveType:=0;          { sofort sichern }
@@ -593,9 +617,16 @@ begin
 
   fillchar(pmcrypt,sizeof(pmcrypt),0);
   with pmcrypt[1] do begin
+{$IFDEF Linux }
+    { Fuer SunOS-Keys muss -e/-d statt -E/-D verwendet werden! }
+    name:='DES';
+    encode:='des -E -k $KEY $INFILE';
+    decode:='des -D -k $KEY $INFILE';
+{$ELSE }
     name:='PC-DES';
     encode:='echo $KEY|pc-des $INFILE';
     decode:=encode;
+{$ENDIF }
     end;
   for i:=1 to maxpmc do
     pmcrypt[i].binary:=true;
@@ -629,8 +660,13 @@ begin
   ConvISO:=false;
   KomArrows:=true;
   ShrinkNodes:='';
+{$IFDEF UnixFS }
+  PointListn:='points24';
+  PointDiffn:='pr24diff';
+{$ELSE }
   PointListn:='POINTS24';
   PointDiffn:='PR24DIFF';
+{$ENDIF }
   NS_minflags:=2;
   largestnets:=10;
   countdown:=false;
@@ -1661,6 +1697,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2000/05/02 19:56:38  hd
+  - Dateinamen fuer UnixFS angepasst (diesmal vollstaendig :-/)
+  - Programmnamen der Entpacker angepasst
+  - DES-Aufruf angepasst
+  - Die Viewer fehlen noch
+
   Revision 1.40  2000/05/02 12:36:48  sv
   - Ueberbleibsel der alten Viewerkonfiguration beseitigt
     Viewer werden nicht mehr in die Config-Datei geschrieben
