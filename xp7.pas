@@ -568,7 +568,7 @@ begin                  { of Netcall }
         end;
         RemoveEPP;
         if (SysopEnd<>'') and (not TempPPPMode) then shell(SysopEnd,600,1);
-        if SysopNetcall then   { in BoxPar }
+        if SysopNetcall or TempPPPMode then   { in BoxPar }
           sendnetzanruf(false,false);
         dispose(NC);
         dispose(addpkts);
@@ -1548,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.10  2001/04/15 21:35:53  mk
+  - Netzanrufberich im Client-Modus immer
+
   Revision 1.16.2.9  2001/03/19 17:35:46  mk
   - neuer Brettmanager
 
