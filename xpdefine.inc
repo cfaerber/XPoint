@@ -115,6 +115,7 @@
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
+  {$WRITEABLECONST OFF} { use var instead of const }
 {$ENDIF }
 
 {$IFDEF Kylix }
@@ -126,6 +127,7 @@
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
+  {$WRITEABLECONST OFF} { use var instead of const }
 {$ENDIF }
 
 {$DEFINE i386}
@@ -224,7 +226,6 @@
   {$ENDIF}
 {$ENDIF}
 
-{$WRITEABLECONST OFF} { use var instead of const }
 
 { --- Erklaerungen der selbst gesetzen Defines --- }
 
@@ -262,6 +263,9 @@
 
 {
   $Log$
+  Revision 1.86  2002/12/12 12:08:16  mk
+  - set WRITABLECONST only for Delphi and Kylix
+
   Revision 1.85  2002/12/12 11:58:50  dodi
   - set $WRITEABLECONT OFF
 
