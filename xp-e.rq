@@ -28,13 +28,13 @@ K (c) '93-96 Peter Mandrella
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055^Wiedervlg.,056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
-7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078Newsgrp ^indexù29,079Mi^scù33
+7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Head,082!^PrivHead,083!P^ublicQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-Zmodem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
 11  Zeilen,0b125
-12  Extrakt,0c1^Message,0c2^UUdecode,0c6M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Headerù13
+12  Extrakt,0c1^Message,0c2^UUdecode,0c7M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Headerù13
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
 14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Kill,0e7^Print
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
@@ -54,7 +54,7 @@ K (c) '93-96 Peter Mandrella
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File listsù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
 32  Fidoliste,201^Read,202^Delete,203^Search
-33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215^Change server
+33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..ù29
 34  Pointlist,221^Activate,222^Read diff
 36  Export,241^User list,242^Newsgroup list,243^Message list,244^Screenshot    @I
 37  Netze,251^Miscellaneous,252^PM limits
@@ -244,6 +244,7 @@ K (c) '93-96 Peter Mandrella
 
 # XP1O
 135  waiting for end of external viewer ...
+136  POSTSEM.EXE not found or corrupted ...
 
 # XPKEYS
 150  No files in AUTOEXEC directory
@@ -580,7 +581,6 @@ K (c) '93-96 Peter Mandrella
 11   AutoScrolling
 12   Multi color quotes
 13   Leave lister with <Return>
-14   Internal lister - full screen: Clock
 #
 20   51
 21   External lister options
@@ -654,8 +654,6 @@ K (c) '93-96 Peter Mandrella
 12   additional sound signals
 13   headline 1
 14   headline 2
-15   swap entries msg list
-16   swap entries user list
 + 261
 # Window width
 0    50
@@ -2309,22 +2307,20 @@ K (c) '93-96 Peter Mandrella
 106  Output file creation error
 107  Error when writing to output file
 -
-
 # XPMIME
 + 2440
-1    Intro   
-2    Extro    
+1    Vorspann
+2    Nachspann
 3    Text
-4    Graphics
+4    Grafik
 5    Video
-6    Sound
+6    Ton
 7    File
-9    Message-Part ÄÄÄÄÄÄÄÄÄÄÄ Lines ÄÄÄÄÄÄÄÄÄÄÄ Filename
-10   whole message    
+9    Message-Part ÄÄÄÄÄÄÄÄÄÄ Lines ÄÄÄÄÄÄÄÄÄÄÄÄ Filename
+10   Whole Message
 -
-2441 extrakt messagepart
-2442 decoding Binary ...
-
+2441 Extract Message-Part
+2442 Decoding binary file ...
 
 # --- XPE -------------------------------------------------------------
 
@@ -2606,16 +2602,16 @@ K (c) '93-96 Peter Mandrella
 2732 Move 1 marked newsgroup
 2733 Move %s marked newsgroups
 + 2734
-1    Change server
+1    Change Server
 2    Old Server ~
-3    New server ~
-4    Modify newsgroups
-5    Modify users
+3    New Server ~
+4    Modify Newsgroups
+5    Modify Users
 6    Modify local users
 7    Newsgr.
 8    Users
 9    Modify AutoSend
-10   Modify short namens
+10   Modify short names
 11   AutoSend
 12   short names
 + 2735

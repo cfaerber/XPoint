@@ -76,13 +76,13 @@ in CrossPoint:
 5
 <<CrossPoint - Support
 
-The current version (by Peter Mandrella) and other
+The current version (by Peter Mandrella) and
 information about CrossPoint may be found on the
 InterNet at:
 
         http://www.crosspoint.de
 
-The newest version and other information relating to
+The newest version and information relating to
 CrossPoint development by the OpenXP Project may be
 found at:
 
@@ -135,37 +135,37 @@ English Language package.
 19
 Please move the cursor to the Newsgroup where this
 Message should be forwarded to, or archived. Confirm
-the selection <Enter>, or stop with <Esc>.
+the selection <Enter> or abort with <Esc>.
 @
 20
 <<Newsgroup (NG) Overview
 
-<<see also>> [ Newsgroup display ] (Press <Enter>)@4016
+<<See also>> [ Newsgroup display ] (Press <Enter>)@4016
 
 The [Newsgroup] NG, or Area window is one of the main@4001
-windows in CrossPoint. From here you can access all
-News Messages, and adjust settings for Areas.
+windows in CrossPoint. From here, you can access all
+Messages and adjust the Message Area settings.
 
-<Enter>  shows the Messages as defined by [View].@50
+<Enter>  Lists the Messages as defined by [View].@50
 
-<Ctrl-Enter>  shows <<all>> messages.
+<Ctrl-Enter>  Lists <<ALL>> messages.
 
-   <<S>>    switches between Message Read/Write mode and
+   <<S>>    Switches between Message Read/Write mode and
         Newsgroup settings mode.
 
-<<<Tab> >>  switches between Newsgroup and User display.
+<<<Tab> >>  Switches between Newsgroup and User display.
 
   <<Q>>     Quits CrossPoint.
-        You can set a Quit? Yes/No question in
+        You can define a "Quit? Yes/No" question in
         /Config/Options/Miscellaneous.
 
- <<<Sp> >>  sets a mark on the Newsgroup at the cursor.
+ <<<Sp> >>  Marks the Newsgroup under the cursor.
         Up to 1000 Newsgroups can be marked at once.
 
 <<Ctrl-E>>  Unmarks all marked Newsgroups.
 
-<<Ctrl-G>>  marks all Newsgroups belonging to the same
-        [Grouping] as the selected Area.@200
+<<Ctrl-G>>  Marks all Newsgroups belonging to the same
+        [Group] as the selected Area.@200
 
    <</>>    Fast Find
 
@@ -176,34 +176,36 @@ News Messages, and adjust settings for Areas.
 <<<F8> >>   Jumps to the first Personal Mail Area.
 
 
-<<Functions in read/write mode
+<<Functions in Read/Write mode
 
-   <<W>>    write a message in the Newsgroup at the
+   <<W>>    Write a message in the Newsgroup at the
         cursor. The editor in /Config/External/Editor
         will be used.
 
-<<shift-W>> Write a message in all currently marked
+<<Shift-W>> Write a message in all currently marked
         Newsgroups (max. 15).
 
-   <<E>>    send text file from disk into the Newsgroup
+   <<E>>    Send text file from disk into the Newsgroup
         currently at the cursor.
 
-   <<I>>    send a binary file into this Newsgroup.
+   <<I>>    Send a binary file into this Newsgroup.
 
-   <<V>>    Selects a [View] mode. A "#"sign at left of@50
-        the Newsgroup title shows when it contains
-        something fitting the view mode to read.
+   <<H>>    Selects a View mode.
 
-   <<A>>    switches between showing all Messages in the
-        Newsgroup and showing just those fitting the
+        A "" character to the left of a Newsgroup
+        indicates there are messages to be read in
+        that Newsgroup.
+
+   <<A>>    Switches between showing <<all>> Messages in the
+        Newsgroup and showing just those matching the
         current view mode.
 
-   <<+>>    jumps to the next appropriate Newsgroup
+   <<+>>    Jumps to the next appropriate Newsgroup
 
-   <<->>    jumps to the previous appropriate Newsgroup
+   <<->>    Jumps to the previous appropriate Newsgroup
 
-<<Ctrl-W>>  toggles the automatic jumping to the next
-        appropriate Newsgroup on and off
+<<Ctrl-W>>  Toggles automatic jumping to the next
+        appropriate Newsgroup on or off
 
 
 <<Functions in Settings modes ("Special-Mode")
@@ -230,17 +232,18 @@ News Messages, and adjust settings for Areas.
 
 <<Crtl-S>> Inserts a dividing line at the cursor position
 
-   <<+>>   Raises the hold time by one day.
+   <<+>>   Increases the hold time by one day.
 
-   <<->>   Reduces the hold time by one day.
+   <<->>   Decreases the hold time by one day.
 
 The functions L, E and O apply to all marked News-
 groups.
 
 <<see also   [Newsgroup display  ](<Enter> here)@4016
 
-Newsgroup names in upper or lower case can be set in
-/Config/Display/Newsgroups.
+Newsgroup names may be displayed in either upper or
+lower case. This can be configured in:
+                        /Config/Display/Newsgroups.
 
 @
 21
@@ -250,10 +253,10 @@ See also [User display].@4017
 
 All recorded Users and their respective PM Newsgroups
 can be displayed in the user window. Depending on
-display mode <<All>> are shown or only those also
+display mode, either <<All>> are shown or only those
 recorded in the address book.
 
-<<<Enter> >>shows messages (PMs) under the current User
+<<<Enter> >>Lists messages (PMs) under the current User
         For User (carbon copy) groups, the members
         are displayed.
 
@@ -261,18 +264,18 @@ recorded in the address book.
 
 <<<Tab> >>  Toggles back to the Newsgroup overview.
 
-   <<Q>>    End the program.
-        You can set a QUIT? Yes/No safety question
-        under /Config/Options/Miscellaneous
+   <<Q>>    End the programme.
+        You can define a "QUIT? Yes/No" safety
+        question under /Config/Options/Miscellaneous
 
- <<<Sp> >>  Sets a mark on User at the cursor position.
+ <<<Sp> >>  Marks the User at the cursor position.
         Up to 1000 Users can be marked at any time.
 
 <<Ctrl-E>>  Unmarks all marked Users.
 
    <<B>>    Toggles a user in/out of the address book.
 
-   <<S>>    Toggles between Read/write mode and Settings
+   <<S>>    Toggles between Read/Write mode and Settings
         mode.
 
    <<P>>    For setting passwords and ciphers. All Users
@@ -283,24 +286,24 @@ recorded in the address book.
 <<Ctrl-W>>  Toggles the automatic jumping of the cursor
         to the next User.
 
-   <<K>>    Searches for and marks all users fitting a
-        search criterion.
+   <<K>>    Searches for and marks all Users matching
+        a search criterion.
 
-<<Alt-U>>   Finds all Messages from the  User currently
+<<Alt-U>>   Finds all Messages <<from>> the  User currently
         at the cursor.
 
-<<<F4> >>   repeats the last menu command.
+<<<F4> >>   Repeats the last menu command.
 
 <<<F6> >>   Select a key macro.
 
 
 <<Functions in Read/Write mode
 
-   <<W>>    allows writing a message to the current User
-        or carbon copy group. The Editor as set in
-       /Config/External/Editor will be used.
+   <<W>>    Allows writing a message to the current User
+        or carbon copy group. The Editor, as set in
+       /Config/External/Editor, will be used.
 
-<<shift-W>> allows writing (cross posting) a message
+<<Shift-W>> Allows writing (crossposting) a message
        to all currently marked users. (Only possible
        with ZCONNECT-Servers)
 
@@ -310,9 +313,9 @@ recorded in the address book.
    <<I>>    Sends a [Binary file] from disk to the@4002
         current User (at cursor) or carbon copy group.
 
-   <<+>>    jumps to the next marked user.
+   <<+>>    Jumps to the next marked user.
 
-   <<->>    jumps to the previous marked user.
+   <<->>    Jumps to the previous marked user.
 
 
 <<Functions in Settings mode ("Special-Mode")
@@ -325,10 +328,10 @@ recorded in the address book.
         list. Only possible for users when no messa-
         ges are present.
 
-   <<E>>    Edit user or carbon copy group.
+   <<E>>    Edit User or carbon copy group.
 
-   <<J>>    Link users. (not shown in menu). User's
-        messages are put into the linked user's area.
+   <<J>>    Link Users. (not shown in menu). User's
+        messages are put into the linked User's area.
 
 L and E apply to all marked Users.
 
@@ -339,10 +342,10 @@ L and E apply to all marked Users.
 ^^21
 @
 23
-Please select the user to whom the message should be
-forwarded to. Confirm <Enter> or stop with <Esc>.
+Please select the User to whom the message should be
+forwarded. Confirm <Enter> or abort with <Esc>.
 
-   <<A>>    toggles between showing All users and
+   <<A>>    Toggles between showing All users and
         only those in the address book.
 @
 24
@@ -674,36 +677,37 @@ dually as files on the disk.
 
 @
 50
-   <<View Mode>>
-Generally, you do not always want to see <<all>>
-messages in the database. There are too many, some
-you have already read, others are old, and so on.
-For this reason CrossPoint allows you to select
-messages to read.
+<<View Mode>>
+
+Generally, you do not want to see <<all>> messages
+in the database. There may be too many, some you
+may have already read, others may be old, etc.
+For this reason, CrossPoint allows you to select
+which messages to read.
 
 The following selection criteria are available:
 
 
 <<All>>    All messages are displayed.
 
-<<Unread>> All messages that you have not read, regard-
-       less of age.
+<<Unread>> All messages that you have not read,
+       regardless of age.
 
 <<New>>    Shows messages since the last netcall or
-       importing a Puffer-File. Empty netcalls or
-       Puffers are not counted.
+       since importing a Puffer-File. Empty netcalls
+       or Puffers are not counted.
 
 <<Today>>  Selects messages that came in on the current
        date.
 
 <<Date>>   Selects messages that came in after a date,
-       you may specify.
+       which you may specify.
 
 <<Time>>   You can fine tune the date above to specify a
-       a time of day, to filter more closely.
+       a time of day, to filter more precisely.
 
 <<Save>>   Saves a set time as a dummy time of last
-       netcall. Thus you can save the time at which
+       netcall. Thus, you can save the time at which
        a netcall was made with this setting, make
        subsequent netcalls but still use "New" to
        call up all messages since the saved time.
@@ -1285,6 +1289,16 @@ switch it off under /Config/Options/Nets. XP
 reports all incoming messages as "read".
 
 @
+94
+A complete message may be made up of many lines.
+Cursor over the desired line and press <Enter> to
+either read the message or display the contents of
+the file. Pressing <<X>> will save the file to disk.
+
+To view the complete original message, cursor over
+"Whole Message" and press <Enter>.
+
+@
 101
 All messages coming into the data base are marked
 with the receive-date. This is normally the same
@@ -1788,17 +1802,17 @@ used for MausTausch. The standard ones are:
        <<M>>  =  MPt (used to be "Puma")
 @
 151
-Your Point number, as given to you by your Sysop.
+Your Point number, as given to you by your Boss.
 @
 152
-If the server does not support 4D Addresses, you
+If the Server does not support 4D Addressing, you
 have to enter here a "Point Net" (so called "Fake
-Net") number, You get this from your Sysop. If in
+Net") number. You get this from your Boss. If in
 doubt, ask! Otherwise, don't use this field.
 @
 153
 Your [Point Password] ("Session-Password"), which you@4008
-agreed with your Sysop.
+agreed with your Boss.
 @
 154
 Here you can enter a list of "AKA" [("Also Known As")]@4009
@@ -1883,7 +1897,38 @@ otherwise!
         even if Newsgroup messages are waiting.
 @
 8041
-This number is allocated to you by your Sysop.
+This number is allocated to you by your Boss.
+
+@
+8042
+<<Only for advanced Users:>>
+
+Here, you can define the ZModem protocol options for
+the Fido-Mailer. Normally, this field will be empty
+and the Fido-Mailer will operate with the correct
+parameters.
+
+Possible options:
+
+<<-r>>   Crash Recovery.
+
+<<-ti>>  Timeout Duration .....
+
+     The number of "inactive" seconds the protocol
+     will wait before timing out. By default, it
+     will wait 300 seconds (-t300) before timing
+     out. This may need to be increased for File
+     Requests, as some Mailers need to search
+     through large filebases and therefore, need
+     more time.
+
+<<-88>>  Start sending in 8K blocks immediately.
+     This is desirable with an error-free
+     connection.
+
+A complete list of options will be found in
+ZM-GER.DOC in the PD-ZModem archive.
+
 @
 8000
 A (very) few Fido boxes require the point password,
@@ -2790,15 +2835,17 @@ change the Server Setting for all areas belonging
 to the changed server.
 @
 200
+<<Groups>>
+
 CrossPoint can administer an unlimited number of
-groups of newsgroups. Each newsgroup belongs to
-one and only one of these groups. For each group
-there are individual settings for things like
-max. message size, special character conversion
-and signature. The idea of this is mostly to allo-
-cate the groups to different nets, so you can adjust
-the settings to suit the requirements of each net,
-but you may of course use them for any purpose.
+Groups of Newsgroups. Each Newsgroup belongs to
+one and <<only one>> Group. For each group, there are
+individual settings for things like maximum message
+size, special character conversion and signature.
+The idea of this is mostly to allocate Groups to
+different Networks, so you can adjust the settings
+to suit the requirements of each Network but you
+may, of course, use them for any purpose.
 
 <<Display in "Groups" Window
 
@@ -2812,19 +2859,24 @@ but you may of course use them for any purpose.
    ³ ÀÄÄÄ Q = Quote template is set
    ÀÄÄÄÄÄ Group number (automatically allocated)
 
+Note: The "ì" character denotes there is <<NO>> limit
+      on the message size!
+
 <<Standard Groups
 
-<<Internal>> This is for messages that will NOT be
-        sent out. Example:  /¯Net Call
+<<Internal>> This is for messages that will <<NOT>>
+        be sent out. Example:  /¯Netcall
 
-<<Local>>   Messages for your local server only,
-        which will not be sent further into the net.
+<<Local>>   Messages for your local Server only,
+        which will not be sent further into the
+        Network.
 
-<<Net>>     General Net Newsgroups
+<<Net>>     General Network Newsgroups
 
-You can however create as many new groups as you wish
-and define them as "local" or "net", with different
-settings. There is only ONE "internal" group.
+You can, however, create as many new groups as you
+wish and define them as "local" or "net", with
+different settings. There is only <<ONE>> "internal"
+group.
 
 <<New>>     Defines a new group.
 
@@ -2832,7 +2884,7 @@ settings. There is only ONE "internal" group.
 
 <<Edit>>    Edits the selected group.
 
-<<Fido>>    Edits Fido-specific settings in a group.
+<<Fido>>    Edits Fido-specific settings for a group.
 
 <<OK>>      Exits this function.
 
@@ -5947,49 +5999,50 @@ A Flag must occur at least this many times in the
 node list for it to be included in the statistic.
 @
 780
-This is the name of the OLD server, whose Users and
-Areas/Newsgroups should be transferred to a new
-server.
+This is the name of the <<OLD>> Server, whose Users
+and Areas/Newsgroups should be transferred to a new
+Server.
 @
 781
-This is the name of the new server, to which all
-User/Newsgroups from the old server should be
+This is the name of the <<NEW>> Server, to which all
+Users/Newsgroups from the old Server should be
 allocated.
 @
 782
-<<modify Newsgroups
-<<[x]>>  Newsgroups are reallocated to a new server.
+<<Modify Newsgroups
+<<[x]>>  Newsgroups are reallocated to a new Server.
 
 <<[ ]>>  Newsgroups are not reallocated.
 @
 783
-<<modify users
-<<[x]>>  Users are reallocated to a new server.
+<<Modify users
+<<[x]>>  Users are reallocated to a new Server.
 
 <<[ ]>>  Users are not reallocated.
 @
 784
-<<modify local users
-<<[x]>>  All users are changed to the new server.
-     Even users with addresses in the old server.
+<<Modify local users
+<<[x]>>  All users are changed to the new Server.
+     Even users with addresses in the old Server.
 
-<<[ ]>>  Only users in whose address the old server
-     does NOT appear are changed to the new server.
+<<[ ]>>  Only users in whose address the old Server
+     does <<NOT>> appear are changed to the new
+     Server.
 
      ie. local USERS\@OLDBOX are NOT changed to the
-     new server.
+     new Server.
 
-This switch is only effective, when the [User switch]@785
+This switch is only effective when the [User switch]@785
 is ON.
 @
 785
-<<modify autosend
+<<Modify AutoSend
 <<[x]>>  All affected AutoSend entries
-     (Edit/Autosend) are changed to the new server.
+     (Edit/Autosend) are changed to the new Server.
 @
 786
 <<[x]>>  All affected Short Name entries (Edit/Short
-     Names) are changed to the new server.
+     Names) are changed to the new Server.
 @
 790
 Setting this option deactivates convert addresses
@@ -6566,6 +6619,7 @@ The User is you.
 You will find your computer if you follow the twisty
 cable beginning at the back of your [keyboard] back@7009
 'til you reach a 5 pin DIN plug stuck into something.
+
 @
 10001
 <<XPoint-Menu
@@ -6631,11 +6685,13 @@ package.
 @
 10102
 <<XPoint / Import
+
 Here, you can import messages or message packets in
 various formats into CrossPoint.
 @
 10103
 <<XPoint / Export
+
 Here, you can export (write) message packets
 into various formats for use with other programs.
 @
@@ -6665,6 +6721,7 @@ with AT commands to the modem).
 @
 10106
 <<XPoint / DOS-Shell
+
 Calls a DOS Shell (put simply, starts a sub-session
 of DOS running under CrossPoint). CrossPoint tries to
 make itself as small as possible by swapping out
@@ -6840,6 +6897,9 @@ item /Message/Fileserver/Help
 
 @
 10310
+<<Message / PGP
+@
+10311
 <<Message / Direct
 
 For real men. You can enter an address to send a
@@ -6873,14 +6933,6 @@ complete address.
 <<Fido:>>  In Fido you can enter a part of the
 address and select the correct completion from the
 node-list.
-
-@
-10311
-<<Message / Data Bank
-
-This sub-menu contains all menu items necessary for
-querying off-line data banks compatible to the
-CrossPoint data bank standard.
 @
 10401
 <<Message / Outgoing / Edit
@@ -7197,15 +7249,18 @@ The log file <<DUPES.LOG>> logs all found dupes.
 
 @
 10708
-<<Re-Org / newsgroup index
+<<Re-Org / Change Server
 
-The newsgroups index (not to be confused with the
-newsgroup database index file BRETTER.IX1) fixes the
-order in which the newsgroups are displayed. This
-menu offers functions for rebuilding this.
+This will re-allocate all newsgroups and or users
+from one Server to another.
 
-The newsgroup order can be changed with "move" in the
-special mode of the newsgroup window.
+<<This can be important>> because CrossPoint notes
+from which Server messages from Users and Newsgroups
+have come, so as to send any reply out through the
+correct Server. Replying to messages received from
+an old Server produces an error message because the
+reply wants to use a Server that may not exist any
+more.
 @
 10709
 <<Re-Org / Misc..
@@ -7631,6 +7686,17 @@ Binary files may only be extracted as "Text without
 header" or in puffer form. Even if other settings are
 set, only the message contents (w/o header) will be
 extracted.
+
+@
+11207
+<<Message / Extract / MIME-Decode
+
+This allows you to extract and decode a MIME
+multipart message.
+
+Cursor over "File" in the "Message-Part" box,
+press <Enter> and either accept the filename
+or type in a new filename.
 
 @
 11301
@@ -8187,31 +8253,31 @@ the commands listed here.
 11906
 <<Message / News manager / Import list
 
-Reads-in a message as newsgroup list. The message
-must be a proper newsgroup list, select it as the
+Reads-in a message as a newsgroup list. The message
+must be a proper newsgroup list. Select it as the
 current message and then select this menu.
 
 The contents of the message will be transferred to a
 file named XXX.BL (where XXX stands for the name of
-the server concerned). CrossPoint calls up this file
+the Server concerned). CrossPoint calls up this file
 when a list of newsgroups is to be displayed, as for
-example under /News manager/newsgroups/subscribe.
+example, under /News manager/newsgroups/subscribe.
 
-If a newsgroup list already existed, it will be
+If a newsgroup list already exists, it will be
 renamed to XXX.BAK. (XXX = as above)
 
 @
 11907
 <<Message / News manager / Read File
 
-Normally you read in a newsgroup list from a message
+Normally, you read in a newsgroup list from a message
 [Message/News manager/import list] sent to you by the@11906
-server after you have ordered a list.
+Server after you have ordered a list.
 
-But it may be that you have the list as a text file,
-and if so you can read it in with this command.
+But it may be that you have the list as a text file
+and if so, you can read it in with this command.
 
-You will be asked to select which server the list is
+You will be asked to select which Server the list is
 for, then, if you do not enter the file name
 directly, press <Enter> to select from a directory
 listing.
@@ -8991,18 +9057,15 @@ unread messages until the next netcall. Forcing an
 update will correct this, if it disturbs you.
 @
 13305
-<<Re-Org / Misc.. / Change Server
+<<Re-Org / Misc / Newsgroup index
 
-This will re-allocate all newsgroups and or users from
-one server to another.
+The newsgroups index (not to be confused with the
+newsgroup database index file BRETTER.IX1) determines
+the order in which the newsgroups are displayed. This
+menu offers functions for rebuilding this index.
 
-<<This can be important>>, because CrossPoint notes
-from which server messages from Users and Newsgroups
-have come, so as to send any reply out through the
-correct server. Replying to messages received from
-an old server brings an error message, because the
-reply wants to use a server that may not exist any
-more.
+The newsgroup order can be changed with "move" in the
+special mode of the newsgroup window.
 @
 13401
 <<Fido / Pointlist / Activate
@@ -10219,19 +10282,18 @@ Name, and you will see messages, if present.
 <<  Newsgroup (NG)
 
 A Newsgroup is simply one of a large collection of
-"places", where e-mail messages are written publicly
-for anyone to read, on a specific subject specified
+"places" where messages are written publicly, for
+anyone to read, on a specific subject specified
 by the title of the Newsgroup.
 
-Newsgroups are sometimes known as Areas or even
-Boards.
+In FidoNet, Newsgroups are known as Echomail Areas.
 
-The NGs are listed out in the Newsgroup overview
-window in CrossPoint, showing their titles which
-usually also shows what subject they cover.
+The NGs are listed in the Newsgroup overview
+window in CrossPoint, showing their titles, which
+is a good indicator as to what subject they cover.
 
 To get Newsgroups, you have to [subscribe]@10308
-(menu /message/Newsmanager) to them, that is order
+(menu /message/Newsmanager) to them, that is, order
 them from whatever source you intend to get your
 NGs from.
 
@@ -10754,25 +10816,25 @@ For [details] of how to do things, press <Enter>.@30
 4016
 <<Newsgroup Display in Read Mode
 
-   /Z-Netz/Wissenschaft/Allgemein
-   /Fido/OS2.ger
+   /PBNET/PB-ANNOUNCE
+   /FIDO/XPOINT
    ¯Unsent
- # /Alt/Tasteless/Jokes
- # /Soc/Culture/British
+  /Alt/Tasteless/Jokes
+  /Soc/Culture/British
  ³
- ÀÄÄÄÄÄÄ Newsgroups with messages to see
+ ÀÄÄÄÄÄÄ Newsgroups with messages to read
          as defined by "View" mode
     "¯"  means an internal admin newsgroup.
 
 <<Newsgroup Display in Edit Mode
 
-        ì  HIT         3 /Z-NETZ/BILDUNG/UNI
- -     30  HIT         3 /Z-NETZ/DATENSCHUTZ/ALLGEM
-    N  30  HIT         3 /Z-NETZ/DATENSCHUTZ/G10
-  X*   14  HIT         3 /Z-NETZ/KOORDINATION/DISKU
+        ì  HIT         3 /FIDO/POINTS
+ -     30  HIT         3 /FIDO/FDECHO
+    N  30  HIT         3 /FIDO/XPOINT
+  X*   14  HIT         3 /FIDO/T-MAIL.SUPPORT
  ³³³³  ³   ³           ³  ³
  ³³³³  ³   ³           ³  ÀÄÄ Newsgroup name
- ³³³³  ³   ³           ÀÄÄÄÄÄ Grouping number
+ ³³³³  ³   ³           ÀÄÄÄÄÄ Group number
  ³³³³  ³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ Which Server it comes from
  ³³³³  ÀÄÄÄÄÄÄ How long Messages are held (Hold time)
  ³³³ÀÄÄÄÄÄÄÄ N = Hold Message Quantity, not time
@@ -10781,8 +10843,8 @@ For [details] of how to do things, press <Enter>.@30
  ³ÀÄÄÄÄÄÄÄÄÄ X = No Write Access
  ÀÄÄÄÄÄÄÄÄÄÄ - = Newsgroup is empty
 
-Newsgroup names in upper or lower case can be set in
-/Config/Display/Newsgroups.
+Newsgroup names may be set in either upper or lower
+case in /Config/Display/Newsgroups.
 
 For [details] on editing press <Enter>.@20
 
