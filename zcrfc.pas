@@ -2403,10 +2403,7 @@ begin
         dec(size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
 
-      if hd.Lines = 0 then
-        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-
-      while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
+      while (Size > 0) do
       begin                         { Groesse des Textes berechnen }
         ReadString;
         if NNTPSpoolFormat then begin
@@ -3770,6 +3767,9 @@ end;
 
 {
   $Log$
+  Revision 1.136  2003/06/16 20:34:41  mk
+  - do not use header Lines in news anymore
+
   Revision 1.135  2003/05/11 11:12:20  mk
   - use IsMailAddr when possible
 
