@@ -45,8 +45,36 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_POP3      = 51;
        nt_IMAP      = 52;
 
+       midNone      = 0;
+       midMausNet   = 1;
+       midNetcall   = 2;
+       midProNet    = 6;
+       midFido      = 10;
+       midZConnect  = 20;
+       midRFC       = 30;
+
        netsRFC = [nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
+       netsFTN = [nt_Fido,nt_QWK];
+       
        netsSupportingPGP = [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_client,nt_NNTP,nt_POP3,nt_IMAP];
+
+type   TAddressType = (
+         addrDomain,	// user@domain.tld
+	 addrFido );    // user@1:2/3.4
+
+type   TNetClass = (
+         ncZConnect,
+         ncFTN,
+         ncRFC,
+         ncMaus );
+
+       TNetClassSet = set of TNetClass;
+
+type   TAttachMode = (
+         attachNone,        // no attachments permitted
+         attachZConnect,    // one text part followed by one binary part (ZConnect KOM+TYP:BIN)
+         attachFTN,         // one text part followed by several binary parts (FTN FileAttach)
+         attachMIME );      // random combination of parts (MIME)
 
 var ntused : array[0..99] of integer;
 
@@ -182,26 +210,32 @@ begin
   ntBinaryBox:=ntBinary(ntBoxNetztyp(box));
 end;
 
-
-{ 0=keine, 1=Netcall, 2=ZConnect, 3=Maus, 4=Fido, 5=UseNet, 6=ProNet }
-
+(*                                                      -- see above --
+       midNone      = 0;
+       midMausNet   = 1;
+       midNetcall   = 2;
+       midProNet    = 6;
+       midFido      = 10;
+       midZConnect  = 20;
+       midRFC       = 30;
+*)
 function ntMessageID(nt:byte):byte;
 begin
   case nt of
-    nt_Netcall  : ntMessageID:=1;     { @BOX }
-    nt_ZConnect : ntMessageID:=2;     { @POINT.BOX.zer.sub.org }
-    nt_Magic    : ntMessageID:=2;     { [_point]@system.seven.sub.org }
-    nt_Pronet   : ntMessageID:=6;     { X/HHMMSSssDDMMYYYY_KKK@BOX;NR.pro }
-    nt_Quick    : ntMessageID:=1;     { @POINT }
-    nt_GS       : ntMessageID:=1;     { 0815@POINT }
-    nt_Maus     : ntMessageID:=3;     { 0815@BOX }
-    nt_Fido     : ntMessageID:=4;     { net:zone/node.point[@domain] xxxxxxxx }
+    nt_Netcall  : ntMessageID:=midNetcall;      { @BOX }
+    nt_ZConnect : ntMessageID:=midZConnect;     { @POINT.BOX.zer.sub.org }
+    nt_Magic    : ntMessageID:=midZConnect;     { [_point]@system.seven.sub.org }
+    nt_Pronet   : ntMessageID:=midProNet;       { X/HHMMSSssDDMMYYYY_KKK@BOX;NR.pro }
+    nt_Quick    : ntMessageID:=midNetcall;      { @POINT }
+    nt_GS       : ntMessageID:=midNetcall;      { 0815@POINT }
+    nt_Maus     : ntMessageID:=midMausNet;      { 0815@BOX }
+    nt_Fido     : ntMessageID:=midFido;         { net:zone/node.point[@domain] xxxxxxxx }
     nt_UUCP,
     nt_NNTP,
     nt_POP3,
-    nt_Client   : ntMessageID:=5;     { @point.do.main }
+    nt_Client   : ntMessageID:=midRFC;          { @point.do.main }
   else  { QWK }
-    ntMessageID:=1;
+    ntMessageID := midNetcall;
   end;
 end;
 
@@ -210,7 +244,7 @@ end;
 
 function ntDomainReply(nt:byte):boolean;
 begin
-  ntDomainReply:=(ntMessageID(nt) in [2,5,50,51]);
+  ntDomainReply:=(ntMessageID(nt) in [midZConnect,midRFC]);
 end;
 
 
@@ -711,7 +745,7 @@ end;
 
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 begin
-  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_POP3]);
+  ntBCC := (nt in ([nt_ZConnect]+netsRFC));
 end;
 
 
@@ -748,6 +782,10 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.44  2002/04/14 22:29:46  cl
+  - added types TNetClass, TAttachMode, TAddressType
+          consts mid* (message id type), netsFTN
+
   Revision 1.43  2002/03/03 15:51:31  cl
   - added ntEnvelope
 
