@@ -184,7 +184,7 @@ begin
         s:=get_selection;
         if s[1]=' ' then brk:=true;
         end
-      else begin
+      else if not brk then begin
         s:=first_marked;
         x:=0;  
         repeat
@@ -713,7 +713,7 @@ msg_ok: MsgAddmark;
   var i,h: byte;
   var t  : text;
   begin
-    if suchstring='' then exit;
+    if (suchstring='') or history_changed then exit;
     h:=histmax;
     for i:=0 to histmax do if history[i]=suchstring then h:=i;
     for i:=h downto 1 do history[i]:=history[i-1];
@@ -2895,6 +2895,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.33  2001/12/07 17:57:03  my
+  MY:- Fix Suchbegriffs-Bibliothek: Wenn Suchbegriffe markiert sind und
+       <Esc> gedrckt wird, wird a) wieder zum Suche-Dialog zurckgekehrt
+       und b) die markierten Begriffe werden nicht mehr in die
+       Suchbegriff-History bernommen.
+
+  JG:- Fix Suchbegriffs-Bibliothek: Der erste markierte Suchbegriff wird
+       nicht mehr doppelt in die Suchbegriff-History bernommen.
+
   Revision 1.47.2.32  2001/12/05 19:29:05  my
   MY:- Wortumbruch kann jetzt auch im Archiv-Viewer mit <Ctrl-W>
        umgeschaltet werden (Zusatz/Archiv-Viewer)
@@ -2917,57 +2926,57 @@ end.
 
   JG+MY:- Neue Nachrichten-Suchfunktionen:
 
-          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier können oft
-            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgewählt
+          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier k”nnen oft
+            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgew„hlt
             werden.
 
           - Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
-            Suchbegriffe angezeigt und stehen beim nächsten Programmstart
-            wieder zur Verfügung (SEEK.TXT)
+            Suchbegriffe angezeigt und stehen beim n„chsten Programmstart
+            wieder zur Verfgung (SEEK.TXT)
 
           - Optionen-History: Mit <F2> werden die letzten 5 benutzten
-            Options-Kombinationen angezeigt und stehen beim nächsten
-            Programmstart wieder zur Verfügung (OPTIONS.TXT)
+            Options-Kombinationen angezeigt und stehen beim n„chsten
+            Programmstart wieder zur Verfgung (OPTIONS.TXT)
 
           - Neue Such-Optionen:
             l = sucht nur in Nachrichten, die dem aktuellen Lesemodus
                 entsprechen
-            m = hängt die gefundenen Nachrichten an die Liste bereits
+            m = h„ngt die gefundenen Nachrichten an die Liste bereits
                 markierter Nachrichten an, statt diese vorher zu ent-
                 markieren
             h = Volltextsuche nur im Header
             g = Volltextsuche in Header und Text
-            s = löscht die Einträge in der Suchbegriff-History
+            s = l”scht die Eintr„ge in der Suchbegriff-History
             k = kopiert den aktuellen Suchbegriff in die Suchbegriffs-
                 Bibliothek
 
-          - Spezial-Suche: Optionale ODER-Verknüpfung von Absender,
-            Betreff, Fido-Empfänger und Text. <F2>-History für Feld "Text"
+          - Spezial-Suche: Optionale ODER-Verknpfung von Absender,
+            Betreff, Fido-Empf„nger und Text. <F2>-History fr Feld "Text"
             und "Optionen" eingebaut.
 
           - Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
             gleichem Betreff und nicht mehr die Nachrichten, bei denen im
-            Vergleichspaar der kürzere Betreff mit dem Anfang des längeren
-            übereinstimmt (z.B. "toll" und "toller Betreff")
+            Vergleichspaar der krzere Betreff mit dem Anfang des l„ngeren
+            bereinstimmt (z.B. "toll" und "toller Betreff")
 
           - Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
 
-          - Message-ID-Suche: Suchoptionen sind wieder verfügbar
+          - Message-ID-Suche: Suchoptionen sind wieder verfgbar
 
-          - max. Anzahl der Teil-Suchbegriffe auf 20 erhöht
+          - max. Anzahl der Teil-Suchbegriffe auf 20 erh”ht
 
-          - max. Länge des Suchbegriffs auf 160 Zeichen erhöht
+          - max. L„nge des Suchbegriffs auf 160 Zeichen erh”ht
 
   JG+MY:- Brett-(markier)-Suche ("U") analog zu User-Markiersuche
           implementiert.
 
   JG+MY:- User-Markiersuche ("U") benutzt jetzt Standard-Suchstring-
           eingabe, dadurch mehrere Suchbegriffe, <F2>-Auswahl, AND/OR/NOT-
-          Verknüpfung und Umlautunabhängigkeit möglich
+          Verknpfung und Umlautunabh„ngigkeit m”glich
 
-  JG+MY:- Bei Nachricht/Ändern/Empfangsdatum jetzt Eingabe von Datum und
-          Uhrzeit sowie Übernahme des Erstelldatums der markierten
-          Nachricht möglich.
+  JG+MY:- Bei Nachricht/ndern/Empfangsdatum jetzt Eingabe von Datum und
+          Uhrzeit sowie šbernahme des Erstelldatums der markierten
+          Nachricht m”glich.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
