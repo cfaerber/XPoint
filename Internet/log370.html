@@ -162,9 +162,17 @@
   <li>JG: Fix (of an extremely ancient and annoying behaviour): When creating 
     an (e.g. Reply-To) user upon replying to a message stored in a user folder, 
     XP defaults to the server of the user folder where the message is stored rather 
-    than to the primary server. Finally!
-  <li>SV: All ASCII characters can be displayed in the online help now {xxx}
+    than to the primary server. Finally! 
+  <li>SV: All ASCII characters can be displayed in the online help now {xxx} 
   <li>SV: cancel processing fixed (WAB-Header may authorize sender (ZConnect)) 
+  <li>JG: Summary header is wrapped now 
+  <li>JG: Subject header is now read from MPUFFER (if possible) and may be up 
+    to 255 chars long 
+  <li>JG: Subject and MsgID headers are also wrapped now if longer than 78 chars 
+  <li>JG: Messages with an invalid date (usually spam) do now show &quot;N/A&quot; 
+    rather than an empty date/time mask (&quot;..,:&quot;) in the message reader 
+    header 
+  <li>JG: Hex-Dump (Ctrl-H) now also shows messages &gt;64k
 </ul>
 <p><b>07.10.2000 Version 3.70.2&szlig;</b> OpenXP goes no limits - AnsiString 
   Update<BR>
