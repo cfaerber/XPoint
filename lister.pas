@@ -326,7 +326,6 @@ end;
 procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
 var input: TFileStream;
     breaker: TUnicodeLineBreaker;
-    i: Integer;
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
 
@@ -1111,6 +1110,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.92  2003/09/28 11:00:30  mk
+  - removed unused variable in ReadFromFile
+
   Revision 1.91  2003/09/25 20:27:39  cl
   - BUGFIX: UTF8Mid works with characters, not columns => use extended version
     of UTF8FormS for lister.
