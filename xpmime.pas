@@ -639,8 +639,9 @@ begin
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
-          Iso1ToIBM(s[1],length(s));
-          end
+          if (typ<>'text') or (subtyp<>'html') then
+            Iso1ToIBM(s[1],length(s));
+        end
         else
           softbreak:=false;
         if softbreak then begin
@@ -700,6 +701,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/09 22:29:56  rb
+  text/html wird jetzt mit ISO-Zeichensatz exportiert
+
   Revision 1.8  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 
