@@ -142,6 +142,11 @@ const  {$IFDEF DPMI}
        BfgExt      = '.bfg';           { Boxen-Config-File }
        QfgExt      = '.qfg';           { QWK-Config-File   }
        SwapExt     = '.swp';
+{$IFDEF UnixFS}
+       BatchExt	   = '.sh';
+{$ELSE}
+       BatchExt	   = '.bat';
+{$ENDIF}
 
 {$IFDEF UnixFS }
        MsgFile     = 'msgs';           { DB1-Dateinamen }
@@ -216,6 +221,15 @@ const  {$IFDEF DPMI}
 {$ELSE }
        TempBatchFN = 'tmp.bat';	       { Temp. Batchdatei (siehe fileio) }
 {$ENDIF }
+
+				       { Namen der Exe-Dateien }
+{$IFDEF UnixFS}
+       MaggiBin		: pathstr	= 'maggi';
+       ZFidoBin		: pathstr	= 'zfido';
+{$ELSE}
+       MaggiBin		= 'MAGGI.EXE';
+       ZFidoBin		= 'ZFIDO.EXE';
+{$ENDIF}
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
@@ -1162,6 +1176,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.50  2000/05/22 17:07:36  hd
+  - BatchExt
+
   Revision 1.49  2000/05/14 15:17:26  oh
   -Jemand hat ein ; vergessen
 
