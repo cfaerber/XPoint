@@ -880,7 +880,7 @@ begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
-                mwrt(2+x,wherey+y,forms(copy(empfaenger,2,27),27));
+                mwrt(2,wherey,forms(copy(empfaenger,2,27),27));
                 if left(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
@@ -1237,6 +1237,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.18  2002/01/01 16:21:09  mk
+  - letzen fix rueckgaengig gemacht
+
   Revision 1.21.2.17  2001/12/26 19:02:10  mk
   - Darstellungsfehler wegen neuer MWrt-Routine beseitigt
 
