@@ -344,6 +344,7 @@ uses
   FileIO,
 {$endif}
   keys,
+  xp0,                  { ScreenLines }
   typeform;             { ISOTab }
 
 
@@ -1497,6 +1498,8 @@ begin
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
 
+  ScreenLines :=  SysGetScreenLines;
+
   ESCDELAY:= 100;               { 100 ms }
 
 
@@ -1517,6 +1520,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/04/23 18:32:28  ml
+  - Helpscreen now uses full terminal in Linux
+
   Revision 1.44  2001/04/19 14:06:24  ml
   - fixes for KeyboardIO in linux
 

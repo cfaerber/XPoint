@@ -170,7 +170,7 @@ var n,i     : integer;
 begin
 {$IFNDEF Linux}
   DosOutput;
-{$ENDIF}   
+{$ENDIF}
   iomaus:=false;
   n:=res2anz(202);
   writeln;
@@ -179,6 +179,7 @@ begin
     writeln(getres2(202,i));
     if (i+5) mod (sclines-3)=0 then
       if not Sysoutputredirected then begin
+	writeln;
         write(getres(12));
         get(t,curon);
 {$IFNDEF Linux}
@@ -1087,6 +1088,9 @@ end.
 
 {
   $Log$
+  Revision 1.109  2001/04/23 18:32:28  ml
+  - Helpscreen now uses full terminal in Linux
+
   Revision 1.108  2001/04/17 07:41:06  ml
   - /? - fix for linux
   -    - german resfix for 202.4
