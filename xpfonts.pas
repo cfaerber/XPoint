@@ -23,19 +23,37 @@ unit xpfonts;
 interface
 
 uses
-  typeform, video, xp0;
+  video, xp0 ,dos;
 
 procedure InternalFont;
-
 procedure FontScrawl16;
 procedure FontC2;
 procedure FontBroadway14;
+procedure Font8x14;
+procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
+procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
+procedure setuserchar(height:byte); 
 
 implementation  { ------------------------------------------------------ }
+
+
+uses typeform, fileio ,dosx;
+
+
+{$IFDEF BP }
+type ba  = array[0..65000] of byte;
+     bp  = ^ba;
+var
+    p1,p2   : bp;                    { Zeiger fÅr Font-Generator }
+{$ENDIF }
+
+var p : ^Pointer;
 
 procedure FontScrawl16; external;   {$L xpfnt1.obj}
 procedure FontC2; external;         {$L xpfnt2.obj}
 procedure FontBroadway14; external; {$L xpfnt3.obj}
+
+{$I XPFONTS.INC}
 
 procedure InternalFont;
 var fnr : integer;
@@ -56,10 +74,255 @@ begin
     end;
 end;
 
+procedure LoadFont(height:byte; var data);
+var regs    : registers;
+    DPMIsel : word;
+    DOSseg  : word;
+begin
+  with regs do begin
+    ax:=$1110;
+    bx:=height*256;
+    cx:=256;
+    dx:=0;
+    {$IFDEF DPMI}
+      DPMIsel:=DPMIallocDOSmem(16*height,DOSseg);
+      if DOSseg=0 then exit;   { kein DOS-Speicher frei }
+      Move(data,mem[DPMIsel:0],256*height);
+      es:=DOSseg; bp:=0;
+    {$ELSE}
+      es:=seg(data); bp:=ofs(data);
+    {$ENDIF}
+    Xintr($10,regs);
+    {$IFDEF DPMI}
+      DPMIfreeDOSmem(DPMIsel);
+    {$ENDIF}
+    end;
+end;
+
+procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
+var p  : pointer;
+    sr : searchrec;
+    h  : byte;
+    hmax:byte;
+    ofs: byte;
+    f  : file;
+begin
+  if vtype<2 then exit;
+  findfirst(fn,ffAnyFile,sr);
+  if (doserror=0) and (sr.size mod 256<=8) and (sr.size<65536) then begin
+    h:=sr.size div 256;
+    ofs:=sr.size mod 256;
+    if vtype=2 then hmax:=14 else hmax:=16;
+    if (h>=8) and (h<=hmax) then begin
+      getmem(p,256*h);
+      assign(f,fn);
+      reset(f,1);
+      seek(f,ofs);
+      blockread(f,p^,256*h);
+      close(f);
+      LoadFont(h,p^);
+      freemem(p,256*h);
+      end;
+    end;
+end;
+
+procedure setuserchar(height:byte);   { height = 12/11/10/9/7 }
+var regs  : registers;
+    sel   : word;
+
+  procedure make15; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x14-Font }
+           lds   si,p1                   { 8x15-Font generieren }
+           mov   dx,256                  { 1. Zeile wird weggelassen }
+  @c15lp:  mov   cx,15
+           rep   movsb
+           inc   si
+           dec   dx
+           jnz   @c15lp
+           pop ds
+  end;
+
+  procedure make13; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x14-Font         }
+           lds   si,p1                   { 8x13-Font generieren      }
+           mov   dx,256                  { 1. Zeile wird weggelassen }
+  @c13lp:   inc   si
+           mov   cx,13
+           rep   movsb
+           dec   dx
+           jnz   @c13lp
+           pop ds
+  end;
+
+  procedure make12; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x14-Font }
+           lds   si,p1                   { 8x12-Font generieren   }
+           mov   dx,256                  { 1. und letzte Zeile wird weggelassen }
+  @c12lp:  inc   si
+           mov   cx,12
+           rep   movsb
+           inc   si
+           dec   dx
+           jnz   @c12lp
+           pop ds
+  end;
+
+  procedure make11; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x14-Font }
+           lds   si,p1                   { 8x11-Font generieren }
+           mov   dx,256                  { 1., 2. und letzte Zeile werden }
+  @c11lp:  inc   si                     { weggelassen }
+           inc   si
+           mov   cx,11
+           rep   movsb
+           inc   si
+           dec   dx
+           jnz   @c11lp
+           pop ds
+  end;
+
+  procedure make10; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x8-Font              }
+           lds   si,p1                   { 8x10-Font generieren          }
+           mov   dx,256                  { 2. und vorletzte Zeile werden }
+           mov   bl,0                    { bei Blockzeichen verdoppelt }
+  @c10lp:  cmp   dl,80
+           jnz   @m10j1
+           inc   bl
+  @m10j1:  cmp   dl,32
+           jnz   @m10j2
+           dec   bl
+  @m10j2:  mov   al,0
+           or    bl,bl
+           jz    @zero1
+           mov   al,[si+1]
+  @zero1:  stosb
+           mov   cx,8
+           rep   movsb
+           mov   al,0
+           or    bl,bl
+           jz    @zero2
+           mov   al,[si-2]
+  @zero2:  stosb
+           dec   dx
+           jnz   @c10lp
+           pop ds
+  end;
+
+  procedure make9; assembler;
+  asm
+           push ds
+           cld
+           les   di,p2                   { Quelle: 8x8-Font }
+           lds   si,p1                   { 8x9-Font generieren }
+           mov   dx,256                  { 2. Zeile wird bei Blockzeichen }
+           mov   bl,0                    { verdoppelt }
+  @c9lp:   cmp   dl,80
+           jnz   @m9j1
+           inc   bl
+  @m9j1:   cmp   dl,32
+           jnz   @m9j2
+           dec   bl
+  @m9j2:   mov   al,0
+           or    bl,bl
+           jz    @zero91
+           mov   al,[si+1]
+  @zero91: stosb
+           mov   cx,8
+           rep   movsb
+           dec   dx
+           jnz   @c9lp
+           pop ds
+  end;
+
+  procedure make7;
+  var i,j,sk : integer;
+      skip   : array[0..255] of byte;   { zu Åbersprg. Zeile }
+      sp,dp  : word;    { SourcePointer, DestPointer }
+  begin
+    for i:=0 to 255 do
+      skip[i]:=2;
+      skip[49]:=4;    { 1 }        skip[53]:=4;    { 5 }
+      skip[67]:=4;    { C }        skip[97]:=4;    { O }
+      skip[105]:=3;   { i }        skip[106]:=3;   { j }
+      skip[129]:=4;   { Å }        skip[132]:=2;   { Ñ }
+      skip[148]:=3;   { î }        skip[154]:=3;   { ö }
+      skip[161]:=3;   { ° }        skip[168]:=3;   { ® }
+      skip[225]:=8;   { · }
+      sp:=0; dp:=0;
+      for i:=0 to 255 do begin
+        sk:=skip[i];
+        for j:=1 to 7 do begin
+          if j=sk then inc(sp);
+          p2^[dp]:=p1^[sp];
+          inc(sp); inc(dp);
+          end;
+        end;
+    end;
+
+begin
+  getmem(p2,16*256);
+  with regs do begin
+    if (height <=10) or (Height >14) then { Adresse es 8*16 und 8*8 Font beim Bios erfragen }
+    Begin
+      ax:=$1130;
+      if height>14 then bh:=6        { 16er Font lesen }
+      else bh:=3;                    { 8er Font lesen  }
+      xintr($10,regs);
+      {$IFDEF DPMI }
+      sel:=allocselector(0);
+      if SetSelectorBase(sel,longint(es)*$10)=0 then;
+      if SetSelectorLimit(sel,$ffff)=0 then;
+      es:=sel;
+      {$ENDIF }
+      p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
+      end
+    else begin 
+      p:=@Font8x14;               { 14er Font aktivieren }
+      inc(longint(p));
+      p1:=p^;
+      end;
+   case height of
+      15 : make15;
+      13 : make13;
+      12 : make12;
+      11 : make11;
+      10 : make10;
+       9 : make9;
+       7 : make7;
+     else fastmove(p1^,p2^,4096);           
+    end;
+    LoadFont(height,p2^);
+    {$IFDEF DPMI }
+    if FreeSelector(sel)=0 then;
+    {$ENDIF}
+    end;
+  freemem(p2,16*256);
+end;
+
 
 end.
 {
   $Log$
+  Revision 1.5.4.1  2000/08/27 17:17:48  jg
+  - LoadFont, LoadFontFile und setuserchar von VIDEO nach XPFONTS verlagert
+  - XP Verwendet jetzt einen internen 8x14 Zeichensatz (XPFONTS.INC)
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

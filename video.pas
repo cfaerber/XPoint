@@ -27,7 +27,7 @@ UNIT video;
 interface
 
 uses
-  xpglobal, dos, dosx;
+  xpglobal;
 
 const DPMS_On       = 0;    { Monitor an }
       DPMS_Standby  = 1;    { Stromsparstufe 1 }
@@ -37,7 +37,9 @@ const DPMS_On       = 0;    { Monitor an }
       vrows  : word = 80;                  { Anzahl Bildspalten  }
       vrows2 : word = 160;                 { Bytes / Zeile       }
       vlines : word = 25;                  { Anzahl Bildzeilen   }
+
 var  vbase  : word;                        { Screen-Base-Adresse }
+     vtype   : byte;
 
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
 function  GetVideoMode:byte;
@@ -48,8 +50,6 @@ procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
 procedure SetBackIntensity;                { heller Hintergrund setzen }
 
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
-procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
-procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
@@ -64,15 +64,7 @@ uses
   WinAPI,
   {$ENDIF}
 {$ENDIF }
-   fileio,typeform;
-
-var
-  vtype   : byte;
-
-type ba  = array[0..65000] of byte;
-     bp  = ^ba;
-var
-    p1,p2   : bp;                    { Zeiger fÅr Font-Generator }
+   fileio,typeform,xpfonts,dos;
 
 
 {- BIOS-Routinen ----------------------------------------------}
@@ -156,183 +148,10 @@ asm
          int    $10
 end;
 
-procedure LoadFont(height:byte; var data);
-var regs    : registers;
-    DPMIsel : word;
-    DOSseg  : word;
-begin
-  with regs do begin
-    ax:=$1110;
-    bx:=height*256;
-    cx:=256;
-    dx:=0;
-    {$IFDEF DPMI}
-      DPMIsel:=DPMIallocDOSmem(16*height,DOSseg);
-      if DOSseg=0 then exit;   { kein DOS-Speicher frei }
-      Move(data,mem[DPMIsel:0],256*height);
-      es:=DOSseg; bp:=0;
-    {$ELSE}
-      es:=seg(data); bp:=ofs(data);
-    {$ENDIF}
-    Xintr($10,regs);
-    {$IFDEF DPMI}
-      DPMIfreeDOSmem(DPMIsel);
-    {$ENDIF}
-    end;
-end;
-
-procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
-var p  : pointer;
-    sr : searchrec;
-    h  : byte;
-    hmax:byte;
-    ofs: byte;
-    f  : file;
-begin
-  if vtype<2 then exit;
-  findfirst(fn,ffAnyFile,sr);
-  if (doserror=0) and (sr.size mod 256<=8) and (sr.size<65536) then begin
-    h:=sr.size div 256;
-    ofs:=sr.size mod 256;
-    if vtype=2 then hmax:=14 else hmax:=16;
-    if (h>=8) and (h<=hmax) then begin
-      getmem(p,256*h);
-      assign(f,fn);
-      reset(f,1);
-      seek(f,ofs);
-      blockread(f,p^,256*h);
-      close(f);
-      LoadFont(h,p^);
-      freemem(p,256*h);
-      end;
-    end;
-end;
-
-procedure make15; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x14-Font }
-         lds   si,p1                   { 8x15-Font generieren }
-         mov   dx,256                  { 1. Zeile wird weggelassen }
-@c15lp:  mov   cx,15
-         rep   movsb
-         inc   si
-         dec   dx
-         jnz   @c15lp
-         pop ds
-end;
-
-procedure make13; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x14-Font         }
-         lds   si,p1                   { 8x13-Font generieren      }
-         mov   dx,256                  { 1. Zeile wird weggelassen }
-@c13lp:   inc   si
-         mov   cx,13
-         rep   movsb
-         dec   dx
-         jnz   @c13lp
-         pop ds
-end;
-
-procedure make12; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x14-Font }
-         lds   si,p1                   { 8x12-Font generieren   }
-         mov   dx,256                  { 1. und letzte Zeile wird weggelassen }
-@c12lp:  inc   si
-         mov   cx,12
-         rep   movsb
-         inc   si
-         dec   dx
-         jnz   @c12lp
-         pop ds
-end;
-
-procedure make11; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x14-Font }
-         lds   si,p1                   { 8x11-Font generieren }
-         mov   dx,256                  { 1., 2. und letzte Zeile werden }
-@c11lp:   inc   si                     { weggelassen }
-         inc   si
-         mov   cx,11
-         rep   movsb
-         inc   si
-         dec   dx
-         jnz   @c11lp
-         pop ds
-end;
-
-procedure make10; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x8-Font              }
-         lds   si,p1                   { 8x10-Font generieren          }
-         mov   dx,256                  { 2. und vorletzte Zeile werden }
-         mov   bl,0                    { bei Blockzeichen verdoppelt }
-@c10lp:  cmp   dl,80
-         jnz   @m10j1
-         inc   bl
-@m10j1:  cmp   dl,32
-         jnz   @m10j2
-         dec   bl
-@m10j2:  mov   al,0
-         or    bl,bl
-         jz    @zero1
-         mov   al,[si+1]
-@zero1:  stosb
-         mov   cx,8
-         rep   movsb
-         mov   al,0
-         or    bl,bl
-         jz    @zero2
-         mov   al,[si-2]
-@zero2:  stosb
-         dec   dx
-         jnz   @c10lp
-         pop ds
-end;
-
-procedure make9; assembler;
-asm
-         push ds
-         cld
-         les   di,p2                   { Quelle: 8x8-Font }
-         lds   si,p1                   { 8x9-Font generieren }
-         mov   dx,256                  { 2. Zeile wird bei Blockzeichen }
-         mov   bl,0                    { verdoppelt }
-@c9lp:   cmp   dl,80
-         jnz   @m9j1
-         inc   bl
-@m9j1:   cmp   dl,32
-         jnz   @m9j2
-         dec   bl
-@m9j2:   mov   al,0
-         or    bl,bl
-         jz    @zero91
-         mov   al,[si+1]
-@zero91: stosb
-         mov   cx,8
-         rep   movsb
-         dec   dx
-         jnz   @c9lp
-         pop ds
-end;
-
 function getvideomode:byte;
 begin
    getvideomode:=mem[Seg0040:$49];
 end;
-
 
 function getscreenlines:byte;
 var
@@ -357,124 +176,6 @@ end;
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
-
-  procedure setuserchar(height:byte);   { height = 12/11/10/9/7 }
-  var regs  : registers;
-      sel   : word;
-
-    procedure make7;
-    var i,j,sk : integer;
-        skip   : array[0..255] of byte;   { zu Åbersprg. Zeile }
-        sp,dp  : word;    { SourcePointer, DestPointer }
-    begin
-      for i:=0 to 255 do
-        skip[i]:=2;
-
-      skip[49]:=4;    { 1 }        skip[53]:=4;    { 5 }
-      skip[67]:=4;    { C }        skip[97]:=4;    { O }
-      skip[105]:=3;   { i }        skip[106]:=3;   { j }
-      skip[129]:=4;   { Å }        skip[132]:=2;   { Ñ }
-      skip[148]:=3;   { î }        skip[154]:=3;   { ö }
-      skip[161]:=3;   { ° }        skip[168]:=3;   { ® }
-      skip[225]:=8;   { · }
-
-      sp:=0; dp:=0;
-      for i:=0 to 255 do begin
-        sk:=skip[i];
-        for j:=1 to 7 do begin
-          if j=sk then inc(sp);
-          p2^[dp]:=p1^[sp];
-          inc(sp); inc(dp);
-          end;
-        end;
-    end;
-
-                      { 14*8 Font nach DEST Laden (Aktuelle Grakas haben ihn nicht im Rom) } 
-
-    procedure Getfont8x14(var dest); assembler;
-    const on_seq  :  array [1..4] of word = ($0100,$0402,$0704,$0300);
-          on_grc  :  array [1..3] of word = ($0204,$0005,$0406);
-          off_seq :  array [1..4] of word = ($0100,$0302,$0304,$0300);
-          off_grc :  array [1..3] of word = ($0004,$1005,$0e06);
-
-    asm
-          mov ax,$1111            { 8 * 14 font installieren }
-          mov bl,0
-          int 10h
-
-          mov cx,4                { Zugriff auf Bitplane 2 nach A000:0 }
-          mov si,offset on_seq
-          mov dx,$03c4
-          rep outsw
-          mov cx,3
-          mov si,offset on_grc
-          mov dx,$03ce
-          rep outsw
-
-          push ds                 { Font aus Graka-Ram kopieren }
-          mov si,$a000    
-          mov ds,si
-          mov si,0
-          les di,dest
-          mov dl,0 
-     @3:  mov cx,14               { und von 8*32 zu 8*14 konvertieren }
-          rep movsb
-          add si,18
-          dec dl
-          jne @3   
-          pop ds  
-
-          mov cx,4                { Normalen Zugriff auf Textscreen wiederherstellen }
-          mov si,offset off_seq
-          mov dx,$03c4
-          rep outsw
-          mov cx,3
-          mov si,offset off_grc
-          mov dx,$03ce
-          rep outsw
-
-    end;
-
-  begin
-    getmem(p2,16*256);
-    with regs do begin
-      if (height <=10) or (Height >14) then { Adresse es 8*16 und 8*8 Font beim Bios erfragen }
-      Begin
-        ax:=$1130;
-        if height>14 then bh:=6        { 16er Font lesen }
-        else bh:=3;                    { 8er Font lesen  }
-        xintr($10,regs);
-        {$IFDEF DPMI }
-        sel:=allocselector(0);
-        if SetSelectorBase(sel,longint(es)*$10)=0 then;
-        if SetSelectorLimit(sel,$ffff)=0 then;
-        es:=sel;
-        {$ENDIF }
-        p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
-        end
-      else begin 
-        getmem(p1,8192);            { 14er Font von Graka generieren lassen }
-        getfont8x14(p1^);           { und nach P1 kopieren... }
-        end;
-      case height of
-        15 : make15;
-        13 : make13;
-        12 : make12;
-        11 : make11;
-        10 : make10;
-         9 : make9;
-         7 : make7;
-       else fastmove(p1^,p2^,4096);           
-      end;
-      LoadFont(height,p2^);
-      {$IFDEF DPMI }
-      if FreeSelector(sel)=0 then;
-      {$ENDIF}
-      end;
-    if (height >10) and (height <=14) then freemem(p1,8192);
-    freemem(p2,16*256);
-  end;
-
 begin
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
@@ -526,6 +227,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.6  2000/08/27 17:17:48  jg
+  - LoadFont, LoadFontFile und setuserchar von VIDEO nach XPFONTS verlagert
+  - XP Verwendet jetzt einen internen 8x14 Zeichensatz (XPFONTS.INC)
+
   Revision 1.20.2.5  2000/08/26 07:53:55  jg
   - Fix: beim aktivieren des 28 Zeilenmodus wurden
     14*4096 statt 4096 Byte kopiert...!
