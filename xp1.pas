@@ -639,8 +639,8 @@ const
             0  +  1 +         8          ){ #255 };
 
 { Variable in XP0.PAS: }
-{ charbuf     : string[255];                  {82 Zeichen}
-{ attrbuf     : array [1..255] of smallword;  {82 Attribute}
+{ charbuf     : string[255];}                  {82 Zeichen}
+{ attrbuf     : array [1..255] of smallword;}  {82 Attribute}
 
 { Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
 { mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
@@ -1324,6 +1324,7 @@ end;
 procedure rfehler(nr:word);
 var s : string;
 begin
+  if lastchar(forwardkeys)=#13 then forwardkeys:=copy(forwardkeys,1,length(forwardkeys)-1);
   s:=getres2(10000+100*(nr div 100),nr mod 100);
   freeres;
   pushhp(20000+nr);
@@ -2004,6 +2005,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.77  2000/09/03 10:57:38  mo
+  - fehlerbox, lastchar(forwardkeys) wird gelöscht wenn =CR
+
   Revision 1.76  2000/08/04 17:45:31  mk
   - Hilfe erscheint jetzt auch bei mehr als 80 Spalten richtig
 
