@@ -789,7 +789,7 @@ begin
                    if( length(VarLister) <> 0 ) then             { wenn externer Lister verwendet wird }
                      wrs(dup(iif(art=xTractHead,70,72),'-'))
                    else
-                     wrs(dup(ScreenWidth,'Ä'));                  { interner Lister }
+                     wrs(dup(ScreenWidth-2,'Ä'));                  { interner Lister }
 
                    lasttrenn:=true;
                  end;
@@ -1066,6 +1066,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2001/07/20 13:22:45  mk
+  - shortened header line by two chars to avoid overlapping with scroll bar
+
   Revision 1.68  2001/04/17 20:21:29  ma
   - removed "## XP ##" checking
 
