@@ -182,6 +182,8 @@ var x,y   : byte;
     suchanz           : byte;
     seek              : string[suchlen];
     found             : boolean;
+    markedback        : marklistp; 
+    markanzback       : integer;     
 
 label ende;
 
@@ -793,6 +795,13 @@ begin
       brk:=false;
 
       if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
+        markanzback:=0; 
+        if maxavail>maxmark * sizeof(markrec) then           { Wenn genug Speicher da ist }
+        begin                                                { Markierte Nachrichten merken }
+          getmem(markedback,maxmark * sizeof(markrec));      
+          for i:=0 to markanz do markedback^[i]:=marked^[i];
+          markanzback:=markanz;
+          end;
         i:=0;
         while i<markanz do begin
           dbGo(mbase,marked^[i].recno);
@@ -801,6 +810,13 @@ begin
           if MsgMarked then inc(i);
           end;
         aufbau:=true;
+        if (markanz=0) and (markanzback<>0) then  
+        begin
+          hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
+          markanz:=markanzback;
+          for i:=0 to markanz do marked^[i]:=markedback^[i];
+          end;
+        if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));    
         end
 
       else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
@@ -2420,6 +2436,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.1  2000/07/05 15:10:46  jg
+  - Weitersuchen bei Markierten Nachrichten: bei fehlgeschlagener Suche
+    bleibt alte  Markierung erhalten (falls genug Speicher frei ist)
+
   Revision 1.47  2000/06/17 06:18:35  jg
   - Bugfix: erfolglose Suche: Fensterhintergrund wurde nicht wiederhergestellt
 
