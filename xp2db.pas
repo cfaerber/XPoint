@@ -356,6 +356,44 @@ var flp : dbFLP;
     dbAppendField(GruppenFile,fld);
   end;
 
+  { Add role fields to group db (since OpenXP/32 2001-06) }
+  procedure NewFieldsForRoles;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='amrealname'; ftyp:=dbTypeString; fsize:=40;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='ammail'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='amreplyto'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='amfqdn'; ftyp:=dbTypeString; fsize:=60;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmrealname'; ftyp:=dbTypeString; fsize:=40;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmmail'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmreplyto'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmfqdn'; ftyp:=dbTypeString; fsize:=60;
+      end;
+    dbAppendField(GruppenFile,fld);
+  end;
+
   { Feld 'ZBVx' in Systemdatei einfÅgen (ab 2.15) }
   procedure NewFieldZBV(n:char);
   var fld : dbFeldTyp;
@@ -758,6 +796,10 @@ begin
     AppS('quotemsk',8);
     AppS('origin',50);
     AppS('adresse',50);
+    AppS('amrealname',40); AppS('ammail',80);
+    AppS('amreplyto',80);  AppS('amfqdn',60);
+    AppS('pmrealname',40); AppS('pmmail',80);
+    AppS('pmreplyto',80);  AppS('pmfqdn',60);
     dbCreate(GruppenFile,flp);
     dbReleaseFL(flp);
     end
@@ -766,6 +808,8 @@ begin
       NewFieldOrigin;
     if not dbHasField(GruppenFile,'Adresse') then
       NewFieldAdresse;
+    if not dbHasField(GruppenFile,'amrealname') then
+      NewFieldsForRoles;
     end;
 
   if not FileExists(SystemFile+dbExt) then begin      { SYSTEME: Fileserver u.a. }
@@ -900,6 +944,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/06/04 17:31:37  ma
+  - implemented role feature
+
   Revision 1.28  2001/03/14 20:46:03  mk
   - removed registration routines
 

@@ -149,6 +149,9 @@ type
                      empfrealname : string;
                      msgid,
                      ersetzt    : string;
+                     SenderRealname,
+                     SenderMail,
+                     FQDN : string;  { overriding standards in DoSend if set }
                    end;
       SendUUptr   = ^SendUUdata;
 
@@ -296,6 +299,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/06/04 17:31:37  ma
+  - implemented role feature
+
   Revision 1.8  2001/04/17 22:20:18  ma
   - fixed: duplicated references were possible
 

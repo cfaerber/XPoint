@@ -106,7 +106,7 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xpconfigedit,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
      xp_pgp,xp6l;
 var
   i: integer;
@@ -884,6 +884,7 @@ fromstart:
   docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
   fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
+
   if pm then begin
     fidoto:='';
     dbSeek(ubase,uiName,UpperCase(empfaenger));
@@ -996,6 +997,7 @@ fromstart:
       if dbReadInt(bbase,'flags') and 32<>0 then
         FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
     end;
+
     dbOpen(d,gruppenfile,1);          { max. BrettMsg-Groesse ermitteln   }
     dbSeek(d,giIntnr,dbLongStr(grnr));
     if not dbFound then maxsize:=0    { duerfte nicht vorkommen }
@@ -1013,6 +1015,7 @@ fromstart:
     else
       altadr:='';
     dbClose(d);
+
     edis:=2;
     if not binary then cancode:=-1;  { Rot13 moeglich }
   end;   { of not pm }
@@ -1029,9 +1032,11 @@ fromstart:
   end else                         { interne Msgs -> Default-Username }
     dbSeek(d,boiName,UpperCase(DefaultBox));
   LoadBoxData;
+
   if pm then
     SetLocalPM;
   dbClose(d);
+
   flMLoc:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'lokal');
   flMnet:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'mausnet');
   FidoBin:=binary and pm and
@@ -1565,15 +1570,16 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       4 : hdp.absender:=username+'@'+FidoAbsAdr;
       5 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            hdp.absender:=username+'@'+
-              iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
+            hdp.absender:=iifs(sdata^.SenderMail='',
+                               username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
+                               sdata^.SenderMail);
             hdp.real_box:=box;
           end;
       7 : begin
             hdp.absender:=username+'@'+box+';'+pointname;
             hdp.real_box:=box;
           end;
-      8 : hdp.absender:=username;
+      8 : hdp.absender:=iifs(sdata^.SenderMail='',username,sdata^.SenderMail);
     end;
     hdp.realname:=realname;
     if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData^.onetztyp,netztyp)
@@ -2099,6 +2105,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.114  2001/06/04 17:31:37  ma
+  - implemented role feature
+
   Revision 1.113  2001/05/27 09:31:19  ma
   - enabled PGP and some other things for NNTP/POP3/IMAP
 

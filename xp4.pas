@@ -67,7 +67,7 @@ const
 implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xpnetcall,xp8,
-      xpe,xp9,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
+      xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer,
       xpmakeheader;
 
@@ -883,6 +883,12 @@ var t,lastt: taste;
       if (quote=2) and (markanz>0) and not MsgMarked then
         dbGo(mbase,marked^[0].recno);
       if pm then begin
+        // Needed for roles. This is somewhat tricky, I hope there are no side
+        // effects (seeking in bbase...).
+        dbSeek(bbase,biIntnr,mid(dbReadStr(mbase,'brett'),2));
+        if dbFound then dbReadN(bbase,bb_gruppe,brettgruppe);
+        // ma, 2001-06-03
+
         if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
         and not askreplyto
         then begin
@@ -968,10 +974,29 @@ var t,lastt: taste;
     sdata:=allocsenduudatamem;
     if quote=2 then sdata^.quotestr:=qchar;
 
+    // process group settings and stuff
     if not usermsg then begin
       dbOpen(d,GruppenFile,1);
       dbSeek(d,giIntnr,dbLongStr(grnr));
       gfound:=dbFound;
+      if gfound then begin
+        // Roles: read sender identity overrides.
+        // Some notes to this feature: xp6.DoSend is obviously intended for
+        // *creating* messages, not *editing* them. Problem is that DoSend
+        // overwrites many header entries with server defaults when
+        // editing a message. We have to prevent this with roles or all
+        // role settings will get lost when editing a message once after
+        // creating it. Here we do initial setup; xp6o.unversandt cares
+        // that these customized header entries are not overwritten
+        // on editing this message once more.
+        // BTW one could substitute sdata^.sendermail with xp6.forceabs
+        // but this leads to problems with other net types.
+        sdata^.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
+        sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
+        sdata^.replyto.add(dbReadStr(d,iifs(pm,'pmreplyto','amreplyto')));
+        if sdata^.replyto[0]='' then sdata^.replyto.delete(0);
+        sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
+        end;
       end;
     if pm then begin
       if quote=0 then
@@ -2135,6 +2160,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2001/06/04 17:31:37  ma
+  - implemented role feature
+
   Revision 1.83  2001/05/23 10:30:49  mk
   JG:- ungelesen-fix
 

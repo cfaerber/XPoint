@@ -368,6 +368,9 @@ begin
         oab:=hdp.oab; oar:=hdp.oar;
         end;
       oem:=hdp.oem;
+      SenderMail:=hdp.absender;
+      SenderRealname:=hdp.realname;
+      FQDN:=Mid(hdp.msgid,Pos('@',hdp.msgid)+1);
       onetztyp:=hdp.netztyp;
       quotestr:=hdp.quotestring;
       UV_edit:=true;
@@ -1292,6 +1295,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/06/04 17:31:37  ma
+  - implemented role feature
+
   Revision 1.59  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
