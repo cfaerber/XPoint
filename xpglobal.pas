@@ -18,16 +18,16 @@ const
 
 {$IFDEF VER32 }
   {$IFDEF Win32 }
-  pformstr    = ' Win/32';    { 32 Bit Windows mit Virtual Pascal }
+  pformstr    = ' Win/32';    { 32 Bit Windows mit FPC oder VP }
   {$ENDIF }
   {$IFDEF OS2 }
-  pformstr    = ' OS/2';      { 32 Bit OS/2 mit Virtual Pascal }
+  pformstr    = ' OS/2';      { 32 Bit OS/2 mit FPC oder VP }
   {$ENDIF}
   {$IFDEF Linux }
-  pformstr    = ' Linux';     { 32 Bit Linux mit Virtual Pascal }
+  pformstr    = ' Linux';     { 32 Bit Linux mit FPC oder VP }
   {$ENDIF}
   {$IFDEF Dos32 }
-  pformstr    = ' DOS/32';     { 32 Bit DOS mit TMT Pascal }
+  pformstr    = ' DOS/32';    { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
 
 {$ELSE}
@@ -104,6 +104,15 @@ type
     rtlword =    system.word; { 16 Bit bei FPC }
   {$ENDIF}
 
+  { Der Typ HugeString enth„lt in der 16 Bit Version einen normalen,
+    auf 255 Zeichen begrenzten String, in den 32 Bit Versionen
+    einen Hugestring mit bis zu 2 GB L„nge }
+  {$IFDEF BP }
+    HugeString = String;
+  {$ELSE }
+    HugeString = AnsiString;
+  {$ENDIF }
+
 {$IFDEF Ver32 }
 const
   MaxInt = MaxLongint;
@@ -121,6 +130,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/04/23 07:58:54  mk
+  - OS/2-Portierung
+
   Revision 1.21  2000/04/13 12:48:40  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -434,7 +434,8 @@ begin
     wrt(x,y,forms(txt,w));
     t:=default;
     repeat
-      mwrt(x+length(txt),y,t+#8);
+      mwrt(x+length(txt),y,t);
+      GotoXY(x+length(txt)-1, y);
       get(tt,curon);
       tt:=Ustr(tt);
       if tt=#13 then t:=default
@@ -2014,6 +2015,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/04/23 07:58:52  mk
+  - OS/2-Portierung
+
   Revision 1.21  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -127,8 +127,19 @@
   {$ENDIF CAPI }
 {$ENDIF }
 
+{$IFDEF DPMI32 }
+  {$DEFINE DOS32 }
+{$ENDIF }
+
+{$IFDEF Linux }
+  {$DEF UseLocalScreen } { Unter Linux mÅssen wir den LocalScreen verwenden }
+{$ENDIF }
+
 {
   $Log$
+  Revision 1.19  2000/04/23 07:58:54  mk
+  - OS/2-Portierung
+
   Revision 1.18  2000/04/22 20:08:15  mw
 
   - EASY-Modus per Compilerschalter abschaltbar (damit in office-Beta

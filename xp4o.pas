@@ -88,7 +88,7 @@ type arcbuf = record
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch} 
+      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Gr”áe nach Reorg }
@@ -96,7 +96,7 @@ var  reobuf : array[0..ablagen-1] of boolean;
      exdir  : pathstr;
      arctyp_save : shortint;
      mid_options       : byte;
-     mid_bretter       : byte;  
+     mid_bretter       : byte;
      Mid_teilstring    : boolean;
 
 function testbrettscope(var s:string):boolean;
@@ -118,13 +118,13 @@ begin
 end;
 
 function mid_suchoption(var s:string):boolean;
-begin  
+begin
   setfieldenable(mid_options,s='J');
-  setfieldenable(mid_bretter,s='J'); 
+  setfieldenable(mid_bretter,s='J');
   mid_suchoption:=true;
-  end; 
+  end;
 
-{ Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }       
+{ Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }
 
 function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
@@ -186,43 +186,43 @@ label ende;
   Wenn bei Normalsuche die Suchoptionen "ua&" fuer UND oder "o|" fuer ODER angegeben wurden,
   werden in den Arrays die Anfangs und End Offsets von bis zu 10 Teilsuchstrings gespeichert,
   und Suchanz auf die Anzahl der (durch Leerzeichen getrennten, bzw in Anfuehrungszeichen
-  eingefassten) Teilsuchstrings gesetzt. Suchand ist "true" bei UND Verknuepfung und "false" 
-  bei ODER Verknuepfung.  Wurden keine Verknuepfungsoptionen angegeben, wird eine OR 
-  Verknuepfung durchgefuehrt, mit einem einzigen "Teilsuchstring", der die Ganze Laenge 
-  des Suchstring abdeckt 
+  eingefassten) Teilsuchstrings gesetzt. Suchand ist "true" bei UND Verknuepfung und "false"
+  bei ODER Verknuepfung.  Wurden keine Verknuepfungsoptionen angegeben, wird eine OR
+  Verknuepfung durchgefuehrt, mit einem einzigen "Teilsuchstring", der die Ganze Laenge
+  des Suchstring abdeckt
 }
-  procedure check_seekmode;           
-  var   
+  procedure check_seekmode;
+  var
   m,n,i   : byte;
   quotes  : boolean;
-                                       
+
 {$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung}
   Procedure Show_Seekstrings;
   var n,x,y:byte;
    begin
     if spez then x:=23 else x:=19;
     msgbox(70,x,'Suchstring-Check',x,y);
-    attrtxt(col.colmbox); 
+    attrtxt(col.colmbox);
     wrt(x+1,y+1,'Benutzte Teilstrings: '); write(suchanz);
     wrt(x+27,y+1,iifs(suchand,'AND','OR'));
-    write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0')); 
-    write(iifs(spez,'    SPEZIAL','')); 
+    write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));
+    write(iifs(spez,'    SPEZIAL',''));
     wrt(x+1,y+3,'Suchstring: '+chr($af)+iifs(spez,srec^.txt,suchstring)+chr($ae));
     wrt(x+1,y+4,'sst:        '+chr($af)+sst+chr($ae));
-    for n:=0 to 9 do    
+    for n:=0 to 9 do
     begin
       wrt(x+1,y+6+n,'String'); write(n); write(': ');
       write(seekstart[n]:2); write(','); write(seeklen[n]:2);
       write(iifs(seeknot[n],' NOT ','     ')+chr($af)+left(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
       end;
     wrt(x+1,y+17,'Length(sst)='); write(length(sst)); write('  i='); write(i);
-    if spez then with srec^do 
+    if spez then with srec^do
     begin
       wrt(x+1,y+19,'Betr:     '+iifs(nbetr,' NOT ','     ')+chr($af)+betr+chr($ae));
       wrt(x+1,y+20,'User:     '+iifs(nuser,' NOT ','     ')+chr($af)+user+chr($ae));
       wrt(x+1,y+21,'Fidoempf: '+iifs(nfidoempf,' NOT ','     ')+chr($af)+fidoempf+chr($ae));
       end;
-    wait(curoff);  
+    wait(curoff);
     closebox;
    end;
 {$ENDIF}
@@ -234,17 +234,17 @@ label ende;
         seekstart[n]:=0;
         seeklen[n]:=0;
         seeknot[n]:=false;
-        end;  
+        end;
 {$Endif}
     suchand:=cpos('o',lstr(suchopt))=0;                           { OR }
     if not suchand or (cpos('a',lstr(suchopt))>0)                 { oder AND ?}
      and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
-    begin       
+    begin
       n:=0;
       seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
-      i:=length(seek);                           
+      i:=length(seek);
       while seek[i]='"' do dec(i);                  { Und Ausrufezeichen hinten abschneiden }
-      truncstr(seek,i);         
+      truncstr(seek,i);
       if seek<>'' then begin
         i:=1;
         sst:=seek+'"';  quotes:=false;
@@ -253,19 +253,19 @@ label ende;
           while sst[i]=' ' do inc(i);                  { Leerzeichen ueberspringen }
           if not quotes then
           begin
-            seeknot[n]:=sst[i]='~';                    { NOT Flag setzen }       
-            while ((sst[i]='~') or (sst[i]=' '))  
+            seeknot[n]:=sst[i]='~';                    { NOT Flag setzen }
+            while ((sst[i]='~') or (sst[i]=' '))
               do inc(i);                               { und evtl weitere ^ ueberspringen }
-            end; 
-          quotes:=sst[i]='"';                          { Evtl. "- Modus aktivieren....} 
-          while sst[i]='"' do inc(i);                  { weitere " ueberspringen }   
+            end;
+          quotes:=sst[i]='"';                          { Evtl. "- Modus aktivieren....}
+          while sst[i]='"' do inc(i);                  { weitere " ueberspringen }
           seekstart[n]:=i;
-          while (i<length(sst)) and not                { Weiterzaehlen bis Stringende      }                         
+          while (i<length(sst)) and not                { Weiterzaehlen bis Stringende      }
            ((not quotes and (sst[i]=' ')) or           { oder Space das nicht in " ist     }
             (sst[i]='"')) do inc(i);                   { oder das naechste " gefunden wird }
-          seeklen[n]:=i-seekstart[n];                  
-          quotes:=not quotes and (sst[i]='"');         { -"- Modus umschalten }      
-          if (not quotes) then inc(i);    
+          seeklen[n]:=i-seekstart[n];
+          quotes:=not quotes and (sst[i]='"');         { -"- Modus umschalten }
+          if (not quotes) then inc(i);
           inc(n);
           end;
         if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
@@ -274,31 +274,31 @@ label ende;
 
       if suchanz=1 then suchand:=true;
       m:=0;
-      for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }   
+      for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }
       begin
         if (seeknot[n]=true) and (seeklen[n]<>0) then
         begin
           i:=seekstart[m];    seekstart[m]:=seekstart[n];  seekstart[n]:=i;
           i:=seeklen[m];      seeklen[m]:=seeklen[n];      seeklen[n]:=i;
-          quotes:=seeknot[m]; seeknot[m]:=seeknot[n];      seeknot[n]:=quotes;     
-          inc(m); 
+          quotes:=seeknot[m]; seeknot[m]:=seeknot[n];      seeknot[n]:=quotes;
+          inc(m);
           end;
-        end; 
+        end;
       end
 
-    else begin 
+    else begin
       suchand:=true;
       suchanz:=1;
-      seekstart[0]:=1; 
+      seekstart[0]:=1;
       seeklen[0]:=length(sst);
-      seeknot[0]:=false; 
-      end; 
+      seeknot[0]:=false;
+      end;
 
 {$IFDEF Debug}
     if cpos('c',lstr(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
 {$ENDIF}
 
-  end;            
+  end;
 
 
   function InText(var key:string):boolean;
@@ -381,7 +381,7 @@ label ende;
     i:=1;
     while ((s[i]='~') or (s[i]=' ')) do inc(i);
     s:=mid(s,i);
-  end; 
+  end;
 
 
 {--Einzelne Nachricht mit Sucheingaben vergleichen--}
@@ -400,18 +400,18 @@ label ende;
     innerhalb des Gesamtsuchstrings SST. Suchand ist "true" bei UND-Suche,
     und "false" bei ODER-Suche Der Textinhalt wird mit den  Teilsuchstrings verglichen,
     solange Suchand=1 (UND) und Found=0, bzw bis Suchand=0 (OR) und Found=1,
-    wurde ein Teilsuchstring gefunden, obwol SeekNOT fuer ihn definiert ist, 
+    wurde ein Teilsuchstring gefunden, obwol SeekNOT fuer ihn definiert ist,
     wird die Suche beendet und Found nachtraeglich auf 0 gesetzt (Suche gescheitert).
-    NOT-Suchstrings werden dabei aus der UND-Verknuepfung ausgeklammert.  
+    NOT-Suchstrings werden dabei aus der UND-Verknuepfung ausgeklammert.
 }
     procedure Volltextcheck;
     begin
       j:=0;
       repeat
-        seek:=left(mid(sst,seekstart[j]),seeklen[j]);       
+        seek:=left(mid(sst,seekstart[j]),seeklen[j]);
         found:=Intext(seek);
         found_not:=found and seeknot[j];
-        if suchand and not found and seeknot[j] then found:=true;      
+        if suchand and not found and seeknot[j] then found:=true;
         inc(j);
       until (j=suchanz) or (suchand xor found) or found_not;
     if found_not then found:=false;
@@ -436,7 +436,7 @@ label ende;
           if length(hdp^.betreff)>40 then
             betr2:=hdp^.betreff;
           end;
-        dbReadN(mbase,mb_absender,user2); 
+        dbReadN(mbase,mb_absender,user2);
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
           dbReadN(mbase,mb_name,realn);
           end
@@ -457,10 +457,10 @@ label ende;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
           UpString(user2);
-          UpString(realn); 
+          UpString(realn);
           UpString(hdp^.fido_to);
           end;
-        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) } 
+        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) }
         if ((betr='') or (pos(betr,betr2)>0) xor nbetr) and
            ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser) and
            ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) and
@@ -474,14 +474,14 @@ label ende;
 
 {--Normale Suche--}
                                                           {Headereintragsuche}
-    else if suchfeld<>'' then begin    
+    else if suchfeld<>'' then begin
       dbRead(mbase,suchfeld,such);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
         ReadHeader(hdp^,hds,false);
         if length(hdp^.betreff)>40 then
           such:=hdp^.betreff;
         end;
-       if suchfeld='MsgID' then begin               
+       if suchfeld='MsgID' then begin
         ReadHeader(hdp^,hds,false);
         such:=hdp^.msgid;
         end;
@@ -489,13 +489,13 @@ label ende;
 
       j:=0;
       repeat
-        seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }    
+        seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
         found:=((igcase and (pos(seek,UStr(such))>0)) or
          (not igcase and (pos(seek,such)>0)));
         found_not:=found and seeknot[j];
-        if suchand and not found and seeknot[j] then found:=true;      
+        if suchand and not found and seeknot[j] then found:=true;
         inc(j);
-      until (j=suchanz) or (suchand xor found) or found_not; 
+      until (j=suchanz) or (suchand xor found) or found_not;
       if found_not then found:=false;
 
       if Found then Begin
@@ -505,18 +505,18 @@ label ende;
       else
       if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
       begin
-        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
-        if umlaut then UkonvStr(such,high(such));    
+        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
+        if umlaut then UkonvStr(such,high(such));
 
         j:=0;
         repeat
-          seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }    
-          found:=((igcase and (pos(seek,UStr(such))>0)) or      
+          seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
+          found:=((igcase and (pos(seek,UStr(such))>0)) or
            (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
-          if suchand and not found and seeknot[j] then found:=true;    
+          if suchand and not found and seeknot[j] then found:=true;
           inc(j);
-        until (j=suchanz) or (suchand xor found) or found_not; 
+        until (j=suchanz) or (suchand xor found) or found_not;
         if found_not then found:=false;
 
         if Found then Begin
@@ -525,7 +525,7 @@ label ende;
           end
         end;
       end
-                                      
+
     else begin                           {Volltextsuche}
       volltextcheck;
       if found then Begin
@@ -616,7 +616,7 @@ begin
       mhnr(530);                                       { 'Suchbegriff ' }
       maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
       mid_options:=fieldpos;
-      maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }      
+      maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
       mid_bretter:=fieldpos;
       if aktdispmode=11 then
         MDisable
@@ -628,7 +628,7 @@ begin
       if autosuche<>'' then _keyboard(keypgdn);
 
       if suchfeld='MsgID' then
-      Begin 
+      Begin
         Mid_teilstring:=false;
         Maddbool(3,6,getres2(442,25),Mid_teilstring);
         MSet1func(Mid_suchoption);
@@ -643,20 +643,20 @@ begin
         begin
           history2:=history1;
           history1:=history0;
-          history0:=seek;            
+          history0:=seek;
           end;
         end;
       if suchfeld='Betreff' then begin
         i:=ReCount(suchstring);         { JG:15.02.00 Re's wegschneiden }
         srec^.betr:=suchstring
         end
-     
+
       else if suchfeld='Absender' then begin
         suchstring:=userform(suchstring);
         srec^.user:=suchstring;
         end
 
-      else if suchfeld='MsgID' then srec^.mid:=suchstring   {JG: 22.01.00}         
+      else if suchfeld='MsgID' then srec^.mid:=suchstring   {JG: 22.01.00}
 
       else srec^.txt:=suchstring;
       if suchstring='' then goto ende;
@@ -664,7 +664,7 @@ begin
     end
 
 
-{--Eingabemaske Spezialsuche--}  
+{--Eingabemaske Spezialsuche--}
 
   else with srec^ do begin
     add:=iif(ntBrettEmpfUsed,1,0);
@@ -750,7 +750,7 @@ begin
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00} 
+      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00}
       if igcase then UpString(sst);
     {  end;}
 
@@ -759,17 +759,17 @@ begin
     if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
       suche:=false;
       if not brk then begin
-        markanz:=0;  
-        n:=GetBezug(suchstring);                
+        markanz:=0;
+        n:=GetBezug(suchstring);
         if n<>0 then begin
           dbGo(mbase,n);
           MsgAddmark;
           end;
         end;
       end
-                                             { Anzeige fuer Alle anderen Suchvarianten } 
+                                             { Anzeige fuer Alle anderen Suchvarianten }
     else begin
-      {if spez then sst:=txt;  } { Bei Spezialsuche nur im Volltext... } 
+      {if spez then sst:=txt;  } { Bei Spezialsuche nur im Volltext... }
       check_seekmode;          { Vorbereiten fuer verknuepfte Suche}
       if brk then goto ende;
 
@@ -792,7 +792,7 @@ begin
           end;
         aufbau:=true;
         end
-    
+
       else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
@@ -831,7 +831,7 @@ begin
               end;
             end;
           end
-        else                                    
+        else
           case aktdispmode of
             -1..0 : begin
                       dbReadN(bbase,bb_brettname,brett);
@@ -1165,7 +1165,7 @@ var b     : byte;
     brett : string[5];
 begin
   if not dbBOF(mbase) then
-  begin                                   {Nur Wenn ueberhaupt ne Nachricht gewaehlt ist...}  
+  begin                                   {Nur Wenn ueberhaupt ne Nachricht gewaehlt ist...}
     dbReadN(mbase,mb_gelesen,b);
     if b=1 then b:=0 else b:=1;
     dbWriteN(mbase,mb_gelesen,b);
@@ -1689,7 +1689,7 @@ var fn  : pathstr;
     hdp : headerp;
     hds : longint;
     lm  : Byte;                  { Makrozwischenspeicher... }
-begin 
+begin
   new(hdp);
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
@@ -1932,7 +1932,7 @@ end;
 procedure FileArcViewer(fn:pathstr);
 var useclip : boolean;
     arc     : shortint;
-    lm      : byte;                                     
+    lm      : byte;
 begin
   if (fn='') or multipos('?*',fn) then begin
     if fn='' then fn:='*.*';
@@ -1945,10 +1945,10 @@ begin
     arc:=ArcType(fn);
     if ArcRestricted(arc) then arc:=0;
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
-      lm:=listmakros;           
+      lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
       if listfile(fn,fn,true,false,0)=0 then;           { und File einfach nur anzeigen }
-      listmakros:=lm;  
+      listmakros:=lm;
       end
       { rfehler(434)   { 'keine Archivdatei' }
     else
@@ -2055,7 +2055,7 @@ begin
   begin
     signal;
     attrtxt(col.colmbox);
-    wrt(x+2,y+6,' '+getres(12)+' '#8);
+    wrt(x+2,y+6,' '+getres(12){+' '#8});
     wait(curon);
   end;
   closebox;
@@ -2205,7 +2205,7 @@ var files    : string;
     p1,s,s1,t,u : string[80];
     v        : char;
     node     : string[20];
-    mark,     
+    mark,
     lMagics  : boolean;
     dir      : dirstr;
     name     : namestr;
@@ -2356,7 +2356,7 @@ begin
       continue
     end; { while (k<byte(s[0])) }
     { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
-    s:=next_marked;  
+    s:=next_marked;
   end; { while s<>#0 do begin }
   files:=trim(files);
   if files='' then
@@ -2394,6 +2394,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/04/23 07:58:53  mk
+  - OS/2-Portierung
+
   Revision 1.33  2000/04/22 08:32:47  jg
   - Bugfix: NOT - Verknuepfte Usersuche
 

@@ -378,6 +378,13 @@ begin
         curoff  : CursorOff;
       end;
     {$ENDIF }
+    {$IFDEF VP }
+      case t of
+        curnorm : SysTVSetCurType(-85, -100, true);
+        cureinf : SysTVSetCurType(0, -100, true);
+        curoff  : SysTVSetCurType(-100, -100, false);
+      end;
+    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
   lastcur:=t;
@@ -1818,6 +1825,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/04/23 07:58:52  mk
+  - OS/2-Portierung
+
   Revision 1.25  2000/04/13 17:20:37  mk
   - Cursortypen setzen unter DOS und Win32 implementiert
 

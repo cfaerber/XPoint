@@ -1000,7 +1000,7 @@ var dummy : longint;
   procedure CopyPKTs;   { PKT's vom Sysopeingangsvereichnis -> SPOOL }
   var sr : searchrec;
   begin
-    findfirst(BoxPar^.sysopinp+'*.PKT',0,sr);
+    findfirst(BoxPar^.sysopinp+'*.PKT',ffAnyFile,sr);
     while doserror=0 do begin
       if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
         _era(BoxPar^.sysopinp+sr.name);
@@ -1014,7 +1014,7 @@ var dummy : longint;
   procedure EmptySysin;
   var sr : searchrec;
   begin
-    findfirst(BoxPar^.sysopinp+'*.*',0,sr);
+    findfirst(BoxPar^.sysopinp+'*.*',ffAnyFile,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
@@ -1141,7 +1141,7 @@ var sr     : searchrec;
       sum : longint;
   begin
     sum:=0;
-    findfirst(files,0,sr);
+    findfirst(files,ffAnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
@@ -1155,7 +1155,7 @@ var sr     : searchrec;
   procedure EraFiles(files:dirstr);
   var sr : searchrec;
   begin
-    findfirst(files,0,sr);
+    findfirst(files,ffAnyFile,sr);
     while doserror=0 do begin
       _era(GetFiledir(files)+sr.name);
       findnext(sr);
@@ -1209,7 +1209,7 @@ begin
       if errorlevel<>100 then
         ZQWKfehler;
       if exist(XferDir+'*.ZER') then begin
-        findfirst(XferDir+'*.ZER',0,sr);
+        findfirst(XferDir+'*.ZER',ffAnyFile,sr);
         while doserror=0 do begin
           inc(NC^.recbuf,sr.size);
           CallFilter(true,XFerDir+sr.name);
@@ -1447,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/04/23 07:58:53  mk
+  - OS/2-Portierung
+
   Revision 1.15  2000/04/16 19:50:38  mk
   - Fixes fuer FindFirst
 

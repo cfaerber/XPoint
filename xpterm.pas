@@ -328,7 +328,7 @@ begin
 
         'K'     : case ansipar[1] of
                     0 : clreol;                   { Zeilenende l”schen }
-                    1 : wrt(1,wherey,sp(wherex)+#8);  { Zeilenanfang l”schen }
+                    1 : wrt(1,wherey,sp(wherex)+#8);  {!! Zeilenanfang l”schen }
                     2 : begin                     { Zeile l”schen }
                           savecur;
                           inc(windmax,$100);
@@ -638,13 +638,13 @@ begin
     gotoxy(1,4);   { wegen BNU }
 
   end;
-  
+
     Activate;
-    
+
      IgnCD:=IgCD; IgnCTS:=IgCTS;
       mdelay(300,false);
      flushin;
-    
+
 {    mdelay(100,false);}
     if not IgnCTS and not GetCTS(comnr) then mdelay(400,false);
        { ^^ falls CTS von DTR abh„ngt.. }
@@ -670,7 +670,7 @@ begin
       mon;
       if not carrier then begin
         mdelay(100,true);
-      if not ISDN then  
+      if not ISDN then
         sendbyte(comnr,13);
         mdelay(200,true);
         if TermInit<>'' then SendMstr(TermInit);
@@ -1611,6 +1611,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/23 07:58:54  mk
+  - OS/2-Portierung
+
   Revision 1.7  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

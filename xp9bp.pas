@@ -439,7 +439,7 @@ end;
 
 procedure ReadQFG(dateiname:pathstr; var qrec:QfgRec);
 var t  : text;
-    s  : string;
+    s  : String;
     id : string[10];
 begin
   fillchar(qrec,sizeof(qrec),0);
@@ -529,6 +529,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/23 07:58:54  mk
+  - OS/2-Portierung
+
   Revision 1.5  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -121,9 +121,18 @@ end;
 
 
 function OutputRedirected:boolean;
-{$IFDEF ver32}
+{$IFDEF Ver32}
 begin
-  OutputRedirected := false;
+  {$IFDEF OS2 }
+    { VP 2.0 ist fehlerhaft, Funktion geht nur unter OS/2 }
+    {$IFDEF VP }
+       OutputRedirected := SysFileIsDevice(SysFileStdOut) = 0;
+    {$ELSE }
+       OutputRedirected := false;
+    {$ENDIF }
+  {$ELSE }
+    OutputRedirected := false;
+  {$ENDIF }
 end;
 {$ELSE}
 var regs : registers;
@@ -420,6 +429,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/23 07:58:52  mk
+  - OS/2-Portierung
+
   Revision 1.12  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -75,7 +75,7 @@ begin
         dbReadN(bbase,bb_brettname,brett);
         brettc:=brett[1];
         end
-      else dbReadN(ubase,ub_username,brett);        
+      else dbReadN(ubase,ub_username,brett);
       _brett:=mbrettd(brettc,d);
       dbSeek(mbase,miBrett,_brett);
       leer:=dbEOF(mbase);
@@ -342,7 +342,7 @@ begin
       else begin
         signal;
         attrtxt(col.colmbox);
-        mwrt(x+2,y+8,' '+getres(12)+' '#8);
+        mwrt(x+2,y+8,' '+getres(12){+' '#8});
         wait(curon);
         end;
     closebox;
@@ -683,11 +683,12 @@ begin
       end;
   until break or not (voll and reo and reobufs);
   dbSetIndex(mbase,mi);
-  if reo then begin
-    mwrt(x+3,yy+2,getres2(451,6)+#8#8#8#8#8);   { 'Einen Moment noch...     %' }
+  if reo then
+  begin
+    Wrt(x+3,yy+2,getres2(451,6));
+    GotoXY(WhereX-5, WhereY);   { 'Einen Moment noch...     %' }
     brettdatumsetzen(true);
-    end
-  else
+  end else
     mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu l”schen' }
   DisableDOS:=false;
   signal;
@@ -707,6 +708,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/04/23 07:58:53  mk
+  - OS/2-Portierung
+
   Revision 1.9  2000/04/16 08:39:59  jg
   - Usertrennzeilen nicht mehr Wegreorganisierbar
   - CTRL+Y springt in Brett- und User- und Weiterleit-/Auswahl-Fenstern
