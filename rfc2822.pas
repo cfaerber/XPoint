@@ -68,7 +68,7 @@ function RFCQuoteEncodePhraseFolded(const Source:string; CharSet: TMimeCharsets;
 { ------------------------ RFC 2822 Addresses ------------------------ }
 
 function RFCIsValidAddress(const addr:string): boolean;
-function RFCNormalizeAddress(const addr,domain:string):string;
+function RFCNormalizeAddress(const Addr,DefaultDomain:string):string;
 
 { ------------------------} implementation { ------------------------- }
 
@@ -510,7 +510,7 @@ begin
   result:=true;
 end;
 
-function RFCNormalizeAddress(const addr,domain:string):string;
+function RFCNormalizeAddress(const addr,defaultdomain:string):string;
 var i,p: integer;
     q: boolean; { in quoted string  }    
     s: boolean; { after a backslash }
@@ -549,7 +549,7 @@ begin
   if p<0 then 
   begin
     p:=Length(result);
-    if domain <>'' then result:=result+'@'+domain;
+    if defaultdomain <>'' then result:=result+'@'+defaultdomain;
   end;
   
   q:=false;
@@ -566,6 +566,9 @@ end;
 
 //
 // $Log$
+// Revision 1.13  2003/01/07 00:23:17  cl
+// - renamed "domain" to "defaultdomain"
+//
 // Revision 1.12  2002/08/09 22:16:15  cl
 // - fixed Range Check error in RFCNormalizeAddress
 //
