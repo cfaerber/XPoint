@@ -451,6 +451,7 @@ end;
 procedure testfiles;
 begin
   if not exist(source) then error('Quelldatei fehlt');
+  if exist(dest) then error('Zieldatei schon vorhanden');
   if u2z and not validfilename(dest) then
     error('ungÅltige Zieldatei: '+dest);
   if not u2z then begin
@@ -3429,6 +3430,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.20  2000/12/04 08:57:54  mk
+  - Test, ob Zieldatei schon existiert
+
   Revision 1.35.2.19  2000/11/27 21:40:49  mk
   RB:- Trim in GetMsgId hinzugefuegt
 
