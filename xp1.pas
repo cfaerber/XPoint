@@ -263,7 +263,7 @@ uses
 {$IFDEF BP }
   xpfonts,
 {$ENDIF }
-  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
+  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -1605,6 +1605,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/26 18:14:46  jg
+  - StrPCopy in Xp1s.inc integriert
+  - Suche aus Archivviewer wieder zugelassen
+    (zwecks Headereintregsuche im "O" Fenster)
+
   Revision 1.8  2000/02/24 23:50:11  rb
   Aufruf externer Viewer bei OS/2 einigermassen sauber implementiert
 

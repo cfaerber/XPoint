@@ -308,39 +308,40 @@ begin
 
     if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
     if upcase(c) = 'O' then ShowHeader;                       { 'O' fuer Lister }
+ end;
 
-    if t = keyaltm then                                       { ALT+M = Suche MessageID }
-    begin                                                     
-      if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
-      else s:=mailstring(first_marked,false);
-      if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-      ex(5)                                                   { Weiter im Lister }
-      end ;
+  if t = keyaltm then                                       { ALT+M = Suche MessageID }
+  begin                                                     
+    if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
+    else s:=mailstring(first_marked,false);
+    if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
+    ex(5)                                                   { Weiter im Lister }
+    end ;
 
-    if t = keyaltv then                                        { ALT+V = Suche text }
-    begin                                    
-      if list_markanz=0 then s:=''
-      else s:=first_marked;
-      if Suche(getres(414),'',s) then Showfromlister;          
-      ex(5)
-      end;
-
-    if t = keyaltb then                                        { Alt+B = Betreff }
-    begin
-      if list_markanz=0 then s:=dbreadstr(mbase,'Betreff')
-      else s:=first_marked;
-      if Suche(getres(415),'Betreff',s) then Showfromlister;
-      ex(5)
-      end;
-
-    if t = keyaltu then                                        { Alt+U = User }
-    begin                                        
-      if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
-      else s:=mailstring(first_marked,false);      
-      if Suche(getres(416),'Absender',s) then Showfromlister;
-      ex(5)
-      end;
+  if t = keyaltv then                                        { ALT+V = Suche text }
+  begin                                    
+    if list_markanz=0 then s:=''
+    else s:=first_marked;
+    if Suche(getres(414),'',s) then Showfromlister;          
+    ex(5)
     end;
+
+  if t = keyaltb then                                        { Alt+B = Betreff }
+  begin
+    if list_markanz=0 then s:=dbreadstr(mbase,'Betreff')
+    else s:=first_marked;
+    if Suche(getres(415),'Betreff',s) then Showfromlister;
+    ex(5)
+    end;
+
+  if t = keyaltu then                                        { Alt+U = User }
+  begin                                        
+    if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
+    else s:=mailstring(first_marked,false);      
+    if Suche(getres(416),'Absender',s) then Showfromlister;
+    ex(5)
+    end;
+
 
   if listmakros=16 then   { Archiv-Viewer }
     if t=mausldouble then
@@ -973,6 +974,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/02/26 18:14:46  jg
+  - StrPCopy in Xp1s.inc integriert
+  - Suche aus Archivviewer wieder zugelassen
+    (zwecks Headereintregsuche im "O" Fenster)
+
   Revision 1.13  2000/02/25 22:19:52  rb
   Einbindung ext. Viewer (OS/2) verbessert
 
