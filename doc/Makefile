@@ -175,14 +175,17 @@ endif
 
 HELP = xp xp-e
 OLDDOC = fido uucp
-TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
-	planung.txt readme.txt slizenz.txt tools.txt versions.txt
+
+# make.txt wird nicht installiert, da es nur beim Quellcode Sinn macht.
+
+TXT = authors.txt dbform.txt devtodo.txt files.txt gpl.txt planung.txt \
+	readme.txt slizenz.txt tools.txt update.txt versions.txt
 CONTRIBDOC = bestell.txt lizenz.doc xpoint.log
 HBFILES = xpoint.htm xpoint.rtf xpoint.tex xpoint.dvi xpoint.ps \
 	xpoint.pdf catalog xpoint.tmp xpoint.tm1 xpoint.tm2 tidyerr.tmp
 
 ifeq ($(OS),linux)
-TXT += readme.lnx
+TXT += linux.txt
 endif
 
 HELPFILES = $(patsubst %,%.hlp,$(HELP))
@@ -323,6 +326,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.11  2000/10/17 15:00:26  fe
+# Zu installierende Textdateien aktualisiert.
+#
 # Revision 1.10  2000/10/12 20:44:31  fe
 # Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
 #
