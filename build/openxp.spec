@@ -143,18 +143,6 @@ rm -rf $RPM_BUILD_ROOT
 Sun Oct 19 2003 OpenXP <dev@openxp.de>
 - New upstream version 3.9.10 (release 1)
 
-Sun Oct 19 2003 OpenXP <dev@openxp.de>
-- New upstream version 3.9.10 (release 1)
-
-Sun Oct 19 2003 OpenXP <dev@openxp.de>
-- New upstream version 3.9.10 (release 1)
-
-Sat Oct 18 2003 OpenXP <dev@openxp.de>
-- New upstream version 3.9.10 (release 1)
-
-Sat Oct 18 2003 OpenXP <dev@openxp.de>
-- New upstream version 3.9.9 (release 1)
-
 * Thu Oct 9 2003 Christian Boettger <cb@openxp.de>
 - changes for new release numbering system
 
