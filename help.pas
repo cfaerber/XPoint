@@ -33,7 +33,7 @@ INTERFACE
 uses xpglobal, crt,dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
-      maxqvw   = 200;
+      maxqvw   = 350;
       maxlines = 350;   { max. Zeilen pro Hilfsseite }
 
       HBlocksatz     = true;
@@ -75,7 +75,8 @@ type pageadr = array[1..maxpages] of record
                                        adr : longint;
                                      end;
      qvt     = array[1..maxqvw] of record
-                                     y,x,l : byte;
+                                     y: word;
+                                     x,l : byte;
                                      xout  : byte;  { Anzeige-Position }
                                      nn    : word;
                                    end;
@@ -776,6 +777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.4  2000/12/01 10:27:12  mk
+  - fix wegen Querverweisen in Zeilen ab 255
+
   Revision 1.5.2.3  2000/11/26 10:40:25  mk
   - neue Hilfe mit Querverweisen in langen Texten
 
