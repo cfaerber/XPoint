@@ -2416,12 +2416,13 @@ begin
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
       binaer:=(hd.typ='B');
-      if (mempf<>'') and (hd.EmpfAnz >=1) and (mempf<>hd.xempf[1]) then begin
+      if (mempf<>'') and (mempf<>hd.xempf[1]) then
+      begin
         hd.xoem:=hd.xempf;
         hd.oemanz:=hd.empfanz;
         hd.xempf[1]:=mempf;
         hd.empfanz:=1;
-        end;
+      end;
       fp:=fpos; bp:=bufpos;
       hd.groesse:=0;
       smtpende:=false;
@@ -2674,12 +2675,9 @@ var sr    : searchrec;
       FileType:=2
     else if left(ustr(s),5)='HELO ' then
       FileType:=3
-    else if left(lstr(s),5)='from ' then
+          else if left(lstr(s),5)='from ' then
       FileType:=4
-{ 28.01.2000 robo - Bugfix }
-{    else if left(lstr(s),6)='>From ' then }
     else if left(lstr(s),6)='>from ' then
-{ /robo }
       FileType:=4
     else
       FileType:=0;
@@ -3468,6 +3466,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.30  2001/01/05 09:25:28  mk
+  - fehler in WAB-Handling behoben
+
   Revision 1.35.2.29  2001/01/01 22:03:03  mk
   - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
 
