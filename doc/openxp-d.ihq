@@ -8,7 +8,7 @@ Keine Hilfe verfgbar.
 @
 2
 <<     °°°°°°°°°°°°°°°°°°°°°   Online-Hilfe: Inhalt
-                                <<Stand: 2002-03-31
+                                <<Stand: 2002-04-05
 
      [Hilfe zur Hilfe]              <<Open>> \\//@3
                                        //\\ <<XP>>
@@ -14485,7 +14485,7 @@ oder in bestimmten Abst„nden von OpenXP verschickt
 werden sollen.
 @
 11607
-<<Edit / Texte
+<<Edit / Textdatei
 
 Von diesem Menpunkt gelangen Sie in eine Datei-
 Auswahlbox, und von dort in den Editor. Sie k”nnen
@@ -17610,57 +17610,6 @@ ner und der Adressen!
                      (Wert <<N>>) stehen soll. Ist der
                      Eintrag nicht vorhanden, wird
                      "<<RTA-Standard=J>>" angenommen.
-@
-60001
-<< Changelog der Onlinehilfe
-
-     (Hinweise & sonstiges an: openxp\@stuebner.de)
----------------------------------------------------
-2002-03-31
-
- - Hilfe fr die /C/A/B <<...gilt fr alle>> und 
-   <<kombinierte Ungelesen Modus>>
-
----------------------------------------------------
-2002-03-24
-
- - diverse Kleinigkeiten (hab vergessen welche)
-
----------------------------------------------------
-2002-03-21
-
- - Weitesgehend alle Verweise auf MagicNet, Quick-
-   mail und GS-Mailbox entfernt da diese nicht mehr
-   untersttzt werden
-
- - Hilfe fr /D/B/T korrigiert
-
- - Hilfe fr <<Netcall / Spezial>> und <<Netcall / Spezial->>
-   <<liste>> bernommen
-
- - Lesemodus <<Reorg.>> hinzugefgt
-
- - /C/O/N <<Empf„nger-Auswahlliste>> hinzugefgt
-
- - <<Reply-to-All>> hinzugefgt
-
----------------------------------------------------
-
-2002-03-20
-
- - Lizenztext fr OpenXP (freie Software) angepasst
-
- - Verschiebungen der Hilfe im Men Netcall (Bereit-
-   schaft / Timing-Liste) korrigiert
-
- - Hilfeseiten fr <<OpenXP / Telnet>>, <<Spezial>>,
-   <<Spezial-Liste>> und das gesamte <<?>>-Men 
-   angefangen
-
- - <<Lesemodus / Datum/Zeit>> angepasst
-
- - <<Lesemodus / Reorg>> eingefgt
-
 
 @@
 vim:enc=cp437:tw=53:expandtab:
