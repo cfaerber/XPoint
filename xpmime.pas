@@ -709,12 +709,16 @@ begin
       m_extrakt(mpdata)
     else
       rfehler(2440);    { 'keine mehrteilige MIME-Nachricht' }
+  Freeres;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.23  2000/08/03 14:48:10  mk
+  - ein (nicht dringend noetiges) Freeres hinzugefuegt
+
   Revision 1.22  2000/07/27 16:17:44  mk
   - Endlich korrekte Behandlung der letzen Zeile im letzen Part von MIME-Mails
 
