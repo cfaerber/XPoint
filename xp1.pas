@@ -1876,7 +1876,7 @@ end;
 
 function TempS(bytes:longint):string;
 begin
-  if (temppath='') or (temppath[1]=ownpath[1]) or (TempFree+4096>bytes) then
+  if (temppath='') or (FirstChar(temppath)=FirstChar(ownpath)) or (TempFree+4096>bytes) then
     TempS:=TempFile(TempPath)
   else
     TempS:=TempFile(OwnPath);
@@ -2093,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.146  2002/04/09 08:51:33  mk
+  - fixed potential ansistring-crash in TempS
+
   Revision 1.145  2002/04/07 14:48:29  mk
   - additional fix for xpme (ahidden is now SmalInt)
 
