@@ -922,7 +922,7 @@ begin   { readmask }
 	    end;
 
           if (t=^U) then begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
-             s^:=mailstring(clip2string(maxlen,1));        {JG:06.02.00}
+             s^:=mailstring(clip2string(maxlen,1),false);        {JG:06.02.00}
              if xtest1(s^) then cont^:=s^;
              end;
 {/JG}
@@ -1057,6 +1057,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.6  2000/02/21 15:07:55  mk
+  MH: * Anzeige der eMail beim Nodelistbrowsen
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

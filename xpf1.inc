@@ -9,7 +9,7 @@
 { $Id$ }
 
 { XPFIDO - Nodeliste auslesen/abfragen }
-{ MH: Flaggrî·e 40 -> 65 / Liste geÑndert }
+
 
 procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
 var s  : ^string;
@@ -19,10 +19,15 @@ var s  : ^string;
   var p : byte;
       x : string[10];
     function getstr:string;
+    var b: byte;
     begin
       p:=cpos(',',s^);
       if p=0 then getstr:=''
       else begin
+
+      for b:=1 to p-1 do
+        if s^[b]='_' then s^[b]:=' ';
+
         getstr:=copy(s^,1,p-1);
         delete(s^,1,p);
         end;
@@ -30,8 +35,8 @@ var s  : ^string;
   begin
     with ni do begin
       if s^[length(s^)]<>',' then s^:=s^+',';
-      for p:=1 to length(s^) do
-        if s^[p]='_' then s^[p]:=' ';
+     { for p:=1 to length(s^) do       nach GetStr verschoben, damit im
+        if s^[p]='_' then s^[p]:=' ';  String FFlags '_' erhalten bleibt }
       status:=getstr;
       p:=cpos(',',s^);
       if p>0 then begin
@@ -386,7 +391,7 @@ end;
 
 procedure NodelistSeek;
 const active : boolean = false;
-var x,y  : byte;
+var x,y,b: byte;
     brk  : boolean;
     ni   : ^NodeInfo;
     adr  : string[30];
@@ -403,13 +408,14 @@ begin
     mwrt(x+70,y,' '+formi(nodelist^[MainNodelist].number,3)+' ');
     attrtxt(col.coldialog);
     end; { MH: Aufbau geÑndert, damit mîglichst viel angezeigt werden kann }
-  mwrt(x+3,y+2,getres2(2100,2));     { Box   }             { MH 03.02.2000 }
-  mwrt(x+3,y+3,getres2(2100,4));     { Sysop }
-  mwrt(x+3,y+4,getres2(2100,5));     { TelNr }
-  mwrt(x+3,y+5,getres2(2100,6));     { Flags }
-  mwrt(x+3,y+7,' ⁄ƒƒƒØ [                    ]'); {getres2(2100,3) Node  }
-  mwrt(x+37,y+8,getres2(2100,9));    { Status }
-    mwrt(x+55,y+8,getres2(2100,8));  { Datei }
+  mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }          { MH 03.02.2000 }
+  mwrt(x+3, y+3, GetRes2( 2100, 4));     { Sysop }
+  mwrt(x+3, y+4, GetRes2( 2100, 5));     { TelNr }
+  mwrt(x+3, y+5, GetRes2( 2100, 6));     { Flags }
+  mwrt(x+3, y+7, GetRes2( 2100, 3));     { ~⁄ƒƒƒØ [                    ] }
+  mwrt(x+35, y+7, GetRes2( 2100, 10));   { eMAiL }
+  mwrt(x+35, y+8, GetRes2( 2100, 9));    { Status }
+  mwrt(x+55, y+8, GetRes2( 2100, 8));    { Datei }
   adr:='';
   first:=true;
   TempOpen;
@@ -424,8 +430,8 @@ begin
       end;
     if not first or (adr='') then begin
       pushhp(750);
-      readstring(x+3,y+8,'AKAƒƒØ',adr,20,20,'',brk);
-      pophp;
+      ReadString(x+3, y+8, Forms(GetRes2( 2100, 7), 6), adr, 20, 20, '', brk);
+      pophp;                   { AKAƒƒØ }
       end;
     first:=false;
     if not brk then begin
@@ -441,19 +447,23 @@ begin
       attrtxt(col.coldialog);
       moff;
     { MH: Fenster putzen }
-    clwin(x+10,x+75,y+2,y+5); { Oberer Block }
-     clwin(x+45,x+51,y+8,y+8); { Status      }
-      clwin(x+62,x+73,y+8,y+8); { Datei      }
-       clwin(x+11,x+30,y+7,y+7); { Adr [ ]   }
+    clwin(x+10, x+75, y+2, y+5); { Oberer Block }
+     clwin(x+43, x+51, y+8, y+8); { Status      }
+      clwin(x+62, x+73, y+8, y+8); { Datei      }
+       clwin(x+11, x+30, y+7, y+7); { AKA [ ]   }
+        clwin(x+43, x+75, y+7, y+7); { eMAiL    }
       if ni^.found then with ni^ do begin
         attrtxt(col.coldiahigh);    { MH: 42 -> 65 }
-        wrt(x+10,y+2,left(boxname+', '+standort,65));
-        wrt(x+10,y+3,sysop);
-        wrt(x+10,y+4,telefon);
-        wrt(x+10,y+5,fflags);
-        wrt(x+11,y+7,MakeFidoAdr(fa,true));
-        wrt(x+45,y+8,status);
-          wrt(x+62,y+8,NLfilename(datei));
+        wrt(x+10, y+2, left(BoxName + ', ' + Standort,65));
+        wrt(x+10, y+3, Sysop);
+        wrt(x+10, y+4, Telefon);
+        wrt(x+10, y+5, copy(MailString(FFlags, True),1,65)); { eMail lîschen }
+        wrt(x+11, y+7, MakeFidoAdr(fa, True));
+        b := cpos('@', FFlags);
+        if b = 0 then FFlags := '';
+        wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
+        wrt(x+43, y+8, Status);
+        wrt(x+62, y+8, NLfilename(datei));
         end;
       mon;
       end;
@@ -486,16 +496,16 @@ begin
     end;                                     { 'Nodeliste' }
   mwrt(rdispx,rdispy+1,getres2(2131,32));    { 'Flags' }
   mwrt(rdispx,rdispy-1,getres2(2131,35));    { 'Status' }
-  attrtxt(col.colselhigh);                   
+  attrtxt(col.colselhigh);
   if ni.found then begin
     mwrt(rdispx+add+2,rdispy,forms(iifs(ni.ispoint,ni.boxname,ni.sysop),33));
-    mwrt(rdispx+56,rdispy-1,forms(NLfilename(ni.datei),12));
+    mwrt(rdispx+55,rdispy-1,forms(NLfilename(ni.datei),12));
     mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65)); { MH: 40 -> 65 }
     mwrt(rdispx+7,rdispy-1,forms(ni.status,12));
     end
   else begin
     mwrt(rdispx+add+2,rdispy,sp(33));
-    mwrt(rdispx+56,rdispy-1,sp(12));
+    mwrt(rdispx+55,rdispy-1,sp(12));
     mwrt(rdispx+add+2,rdispy+1,sp(65)); { MH: 40 -> 65 }
     mwrt(rdispx+7,rdispy-1,sp(12));
     end;
@@ -513,7 +523,7 @@ type NodeBrec = record
                   boxname : string[30];
                   standort: string[30];
                   telefon : string[20];
-                  flags   : string[65]; { MH: 40 -> 65 }
+                  flags   : string[80]; { MH: 40 -> 80 }
                   fnl,snl,
                   pl      : boolean;
                 end;
@@ -546,10 +556,10 @@ var   x,y,h   : byte;
       adr     : string[adrlen];
       d       : DB;
 
-label again;
+label again, NewStart;
 
   procedure ParseFlags;
-  var s,s2 : string[65]; { MH: 40 -> 65 }
+  var s,s2 : string[80]; { MH: 40 -> 65 }
       p    : byte;
   begin
     flags:=0;
@@ -819,6 +829,7 @@ again:
     listDp(ShowRQ);
     listTp(listext); listmakros:=0;
     repeat
+NewStart:                  { nach Break im AltN-Screen hier einspringen }
       pushhp(958);
       list(brk);
       pophp;
@@ -832,16 +843,19 @@ again:
           if ni.ispoint then s:=adr
           else s:=ni.boxname + ', ' +adr;
           pushhp(959);
-          n:=ReadIt(max(length(s)-4,length(getres(2132)))+10,s,
-                    getres(2132),    { ' ^Nachricht , ^Request , ^ZurÅck ' }
-                    1,brk);
+          n:=ReadIt(max(length(s)-4,length(getres(2132)))+11,s,
+             getres(2132),    { ' ^Nachricht , ^Request , ^Info , ^ZurÅck ' }
+             1,brk);          { ^Info Taste hinzugefÅgt                     }
           pophp;
           brk:=false;
           end;
         end;
-    until brk or (n=1) or (n=2);
-    closelist;
-    closebox;
+    until brk or (n=1) or (n=2) or (n=3);
+
+      if n<>3 then begin  { Break aus AltN-Screen hier nicht zulassen }
+        closelist;
+        closebox;
+      end;
 
     if not brk then
       case n of
@@ -856,6 +870,13 @@ again:
               _keyboard(keycr);
               AutoCrash:=FidoRequest(trim(mid(adr,cpos('@',adr)+1)),'');
             end;
+
+        3 : begin   { AltN-Screen aufrufen und Aka Åbergeben }
+              _keyboard(trim(copy(get_selection,39,18))+keycr);
+                NodeListSeek;          { AltN-Screen starten }
+              goto newstart;           { ZurÅck zur Liste    }
+            end;
+
       end;
     end;
 
@@ -863,6 +884,9 @@ again:
 end;
 {
   $Log$
+  Revision 1.6  2000/02/21 15:07:55  mk
+  MH: * Anzeige der eMail beim Nodelistbrowsen
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

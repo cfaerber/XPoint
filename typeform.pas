@@ -165,7 +165,7 @@ Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 procedure FastMove(var Source, Dest; const Count : WORD);
-function mailstring(const s: String): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
+function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 {$IFDEF Delphi }
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
@@ -1937,7 +1937,7 @@ end;
 
 {JG 11.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }
 {MK 11.02.00  Ein wenig eleganter geschrieben }
-function mailstring(const s: String): string;
+function mailstring(s: String; Reverse: boolean): string;
 const
   MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@','=','!'];
   WrongChar: set of Char = ['.', '_', '-'];
@@ -1958,9 +1958,14 @@ begin
       dec(j);
     until not (s[j] in WrongChar);
 
+      if Reverse then begin                   { eMail aus s loeschen }
+        delete(s, i, j-i+1);
+        MailString := s;
+      end else
+
     MailString := copy(s, i, j-i+1);
   end else
-    mailstring:=s;
+    MailString:=s;
 end;
 
 Function CreditCardOk(s:string):boolean;   { Kreditkartennummer ÅberprÅfen }
@@ -2147,6 +2152,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.10  2000/02/21 15:07:55  mk
+  MH: * Anzeige der eMail beim Nodelistbrowsen
+
   Revision 1.9  2000/02/19 18:00:24  jg
   Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
   Umlautunabhaengige Suche kennt jetzt "Ç"

@@ -55,11 +55,11 @@ type  nodeinfo = record
                    ispoint  : boolean;
                    status   : string[20];
                    boxname  : string[40];
-                   standort : string[65]; (* 03.02.2000 MH: 40 -> 65 *)
+                   standort : string[65]; { 03.02.2000 MH: 40 -> 65 }
                    sysop    : string[40];
                    telefon  : string[30];
                    baud     : word;
-                   fflags   : string[65]; (* MH: 40 -> 65 *)
+                   fflags   : string[80]; { MH: 40 -> 80 }
                    flags    : word;
                    request  : word;
                    datei    : byte;     { Nummer der Nodeliste }
@@ -2214,6 +2214,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/21 15:07:55  mk
+  MH: * Anzeige der eMail beim Nodelistbrowsen
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -102,7 +102,7 @@ begin
     else
 {JG:11.02.00}
     if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
-      s:=mailstring(first_marked);
+      s:=mailstring(first_marked,false);
       string2clip(s);                                        { ins Clipboard }
       ReadFilename:=false;
       exit;
@@ -309,7 +309,7 @@ begin
 
    if t = keyaltm then begin                                   { ALT+M = Suche MessageID }
          if list_markanz=0 then global_suchstring:=''          {Nullstring ohne Markierung}
-           else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
+           else global_suchstring:=mailstring(first_marked,false);      {JG:06.02.00 Bugfix}
          if Suche(getres(437),'MsgID@','') then ShowfromLister;   { gefundene Nachr. zeigen }
          ex(5)                                                    { Weiter im Lister }
          end ;
@@ -332,7 +332,7 @@ begin
   if t = keyaltu then begin                                     { Alt+U = User }
          if list_markanz=0 then
             global_suchstring:=dbreadstr(mbase,'Absender')
-            else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
+            else global_suchstring:=mailstring(first_marked,false);      {JG:06.02.00 Bugfix}
          if Suche(getres(416),'Absender@','') then Showfromlister;
          ex(5)
          end;
@@ -918,6 +918,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/21 15:07:55  mk
+  MH: * Anzeige der eMail beim Nodelistbrowsen
+
   Revision 1.7  2000/02/17 08:40:29  mk
   RB: * Bug mit zurueckbleibenden Dummy-Header bei Quoten von Multipart beseitigt
 

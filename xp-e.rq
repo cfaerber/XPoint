@@ -2098,13 +2098,14 @@ K (c) '93-96 Peter Mandrella
 + 2100
 1    Get node infos (Esc to quit)
 2    BBS
-3    Node
+3    ~ÚÄÄÄ¯ [                    ]
 4    Sysop
 5    Phone
 6    Flags
-7    Node
+7    AKAÄÄ¯
 8    File
 9    Status
+10   eMAiL
 -
 + 2101
 1    Building nodelist index
@@ -2237,7 +2238,7 @@ K (c) '93-96 Peter Mandrella
 34   Point list
 35   Status
 -
-2132 ~^Mail , ^Request , ^Abort~
+2132 ~^Mail , ^Request , ^Info , ^Abort~
 
 
 # --- XPAUTO, XPCC ----------------------------------------------------
