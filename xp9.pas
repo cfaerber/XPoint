@@ -1176,7 +1176,11 @@ var d         : DB;
       dbReadN(d,mimeb_extension,ext);
       dbReadN(d,mimeb_programm,prog);
     end;
-    if typ = '*/*' then exit;
+    if typ = '*/*' then
+    begin
+      RFehler(935); { 'Standardeintrag kann nicht editiert werden' }
+      exit;
+    end;
     readmimetyp(not IsNew,typ,ext,prog,brk);
     if not brk then
     begin
@@ -1762,6 +1766,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.11  2000/11/23 01:00:43  mk
+  - Meldung: Standardeintrag kann nicht editiert werden hinzugefuegt
+
   Revision 1.19.2.10  2000/11/18 22:09:50  mk
   - Bugfixes fuer die Fileserver
 
