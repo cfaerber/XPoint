@@ -27,6 +27,7 @@ const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
       ListXHighlight: boolean = true;    { fr F-Umschaltung }
       ListShowSeek  : boolean = false;
+      ListWrapToggle: boolean = false;   { fr Wortumbruch-Umschaltung }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -347,6 +348,13 @@ begin
 
   if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
+  if c = ^W then                                              { '^W' = Umbruch togglen }
+  begin
+    listwrap:=not listwrap;
+    ListWrapToggle:=true;
+    ex(-4);
+  end;
+
   if Listmakros=8 then   { Diese Funktionen NUR im Nachrichten-Lister ausfhren, nicht im Archivviewer... }
   begin
 
@@ -368,12 +376,6 @@ begin
       otherquotechars:=not otherquotechars;
 
     if c = '#' then ex(-3);                                   { '#' = Kommentarbaum }
-
-    if c = ^W then                                            { '^W' = Umbruch togglen }
-    begin
-      listwrap:=not listwrap;
-      ex(4);
-    end;
 
   end;
 
@@ -1028,6 +1030,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.25  2001/12/04 23:01:02  my
+  MY:- Fix fr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim Ausfhren
+       konnte es vorkommen, daá XP die Nachricht beantworten wollte,
+       jetzt exit code -4 statt 4)
+
   Revision 1.40.2.24  2001/12/03 13:45:23  my
   JG+MY:- DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
           Lister heraus behoben (<Alt-B> oder <Alt-U>)
@@ -1044,12 +1051,12 @@ end.
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          <Tab> springt der Cursorbalken die n„chste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
           werden. Nach Beendigung des Kommentarbaums kehrt XP zur
-          aktuellen Nachricht zurück.
+          aktuellen Nachricht zurck.
 
   JG+MY:- <Alt-M> (Message-ID-Suche) schneidet in der markierten Zeile
           '/' ab.
@@ -1057,9 +1064,9 @@ end.
   JG+MY:- Dateinamenabfrage: Letzter benutzter Pfad (ohne Dateinamen) wird
           gespeichert und erscheint im <F2>-Auswahldialog. Letzte benutzte
           Datei oder "Clipboard" ist Default. Eingaben mit Wildcards
-          werden gespeichert auch wenn keine Datei ausgewählt wurde, bei
-          Pfadänderungen in der Datei-Auswahlbox und anschließender
-          Dateiauswahl werden Pfad und Wildcard für die nächste <F2>-
+          werden gespeichert auch wenn keine Datei ausgew„hlt wurde, bei
+          Pfad„nderungen in der Datei-Auswahlbox und anschlieáender
+          Dateiauswahl werden Pfad und Wildcard fr die n„chste <F2>-
           Auswahl gespeichert.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
@@ -1272,8 +1279,8 @@ end.
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
         der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfänger"
-        können jetzt Umlautunabhängig geschalten werden
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf„nger"
+        k”nnen jetzt umlautunabh„ngig geschaltet werden
 
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000

@@ -21,9 +21,10 @@ begin
   n:=1;
   repeat
     dbSkip(dispdat,-1);
-    if not dbBOF(dispdat) and not wrongline then begin
+    if not dbBOF(dispdat) and not wrongline then
+    begin
       disprec[1]:=dbRecno(dispdat); inc(p);
-      end;
+    end;
     inc(n);
   until (n=10) or dbBOF(dispdat) or wrongline;
   aufbau:=true;
@@ -755,6 +756,28 @@ var fn     : pathstr;
 
 label ende0,nextmsg;
 
+(*  Exit-Codes Lister:
+
+    -128 bis -5 = Lister mit Fehlerton beenden
+
+    -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
+    -3  = Kommentarbaum anzeigen
+    -2  = Wiedervorlageflag umschalten
+    -1  = <->
+     0  = <Esc>
+     1  = <+>
+     2  = <Links>
+     3  = <Rechts>
+     4  = Quote erstellen entsprechend "Listkey"
+     5  = Keine Aktion, Lister mit der Nachricht neu starten,
+          auf der in der NachrichtenÅbersicht der Cursorbalken steht,
+          bzw. mit der der Lister zuletzt geîffnet wurde
+          (Kommentarbaumbewegungen werden rÅckgÑngig gemacht).
+     6  = <Ctrl-PgUp>
+     7  = <Ctrl-PgDn>
+
+    8 bis 127 = Lister mit Fehlerton beenden *)
+
 begin
   pushed:=false;
   first:=true;
@@ -932,28 +955,33 @@ begin
       lres:=0;
       end
     else
-      if arc=0 then begin              { Lister }
-        if (dbReadInt(mbase,'netztyp')and $ff in [nt_Fido,nt_QWK]) then begin
+      if arc=0 then                    { Lister }
+      begin
+        if (dbReadInt(mbase,'netztyp')and $ff in [nt_Fido,nt_QWK]) then
+        begin
           fnproc[0,3]:=Fido_Msgrequest;
           dbReadN(mbase,mb_absender,abs);
           FMsgReqnode:=mid(abs,cpos('@',abs)+1);
-          end;
-        if not pushed then begin
+        end;
+        if not pushed then
+        begin
           if first then showline(p,0);
           first:=false;
           sichern(pt); pushed:=true;
-          end;
-        if dispmode=10 then begin
+        end;
+        if dispmode=10 then
+        begin
           ldisp:=dispspec;
           brettform(ldisp,dispflags,aktdispmode<1);
           ldisp:=copy(ldisp,2,40); 
-          end
+        end
         else ldisp:='';
-        if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then begin
+        if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then
+        begin
           GetKomflags(l,r,o,u);
           ldisp:=iifc(l,#27,' ')+iifc(o,#24,' ')+iifc(u,#25,' ')+iifc(r,#26,' ')
                  +right(sp(40)+ldisp,36);
-          end;
+        end;
         lksave:=listkommentar;
         listkommentar:=ntKomkette(netztyp);
         miso:=ConvIso;
@@ -963,7 +991,7 @@ begin
         ConvIso:=miso;
         listkommentar:=lksave;
         fnproc[0,3]:=dummyFN;
-        end
+      end
       else begin    { arc <> 0 }       { interner Archiv-Viewer }
         if pushed then begin
           holen(pt); pushed:=false;
@@ -987,7 +1015,8 @@ begin
     { einer anderen Nachricht oder einem anderen Nachrichtenteil }
     { springen:                                                  }
 
-    if lres=4 then begin
+    if lres=4 then
+    begin
       sm2t:=m2t; m2t:=false;
       skeydisp:=keydisp; keydisp:=false;
       rec:=dbRecno(mbase);
@@ -999,43 +1028,48 @@ begin
         d1_0:=true;
       spop(disprec);
       dbGo(mbase,rec);
-      if ListQuoteMsg<>'' then begin
+      if ListQuoteMsg<>'' then
+      begin
         if exist(ListQuoteMsg) then _era(ListQuoteMsg);
         ListQuoteMsg:='';
-        end;
+      end;
       keydisp:=skeydisp;
       m2t:=sm2t;
-      if disprec[p]=0 then begin    { s. xp4.pm_archiv (auto-Archiv) }
+      if disprec[p]=0 then          { s. xp4.pm_archiv (auto-Archiv) }
+      begin
         disprec[p]:=dbRecno(mbase);
         d1_0:=true;
-        end;
+      end;
       mpselect:=lastmpsel; poppush:=false;
       ende:=false;
-      end
+    end
 
-    else if lres = -2 then  {Wiedervorlageflag mit "V" aus Lister heraus aendern }
+    else if lres = -2 then  { Wiedervorlageflag mit "V" aus Lister heraus aendern }
     begin
       rec:=disprec[1];
       wiedervorlage;
-      if p=1 then begin    {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
+      if p=1 then begin    { Bei 1. Bildschirmzeile wieder alte Msg anspringen }
         disprec[1]:=rec;
         dpp:=rec;
-        end;
+      end;
       ende:=false;
-      end
+    end
+
+    else if lres = -4 then ende:=false  { "O" oder <Ctrl-W> }
 
     else begin
 
-    if lres = -3 then  {Bezugsbaum "#" aus Lister heraus anzeigen }
-    begin
-      showscreen(true);
-      Bezugsbaum;
-      lres:=5;
+      if lres = -3 then  {Bezugsbaum "#" aus Lister heraus anzeigen }
+      begin
+        showscreen(true);
+        Bezugsbaum;
+        lres:=5;
       end;
 
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
         lres:=0; } { !! ungelesen-Mode }
-      if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then begin
+      if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then
+      begin
         if lres<6 then SetGelesen;
         case lres of
           -1 : if BezSeekBezug then ende:=false;         { - }
@@ -1671,21 +1705,26 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.28  2001/12/04 23:01:02  my
+  MY:- Fix fÅr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim AusfÅhren
+       konnte es vorkommen, da· XP die Nachricht beantworten wollte,
+       jetzt exit code -4 statt 4)
+
   Revision 1.25.2.27  2001/09/16 20:27:41  my
   JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
           werden. Nach Beendigung des Kommentarbaums kehrt XP zur
-          aktuellen Nachricht zur¸ck.
+          aktuellen Nachricht zurÅck.
 
-  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
-          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zusÑtzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kînnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
   JG+MY:- Brett-Schnellsuche ("/" oder ".") findet jetzt auch PM-Bretter.
 
-  JG+MY:- Mit '#' kann in der User-‹bersicht eine Adreﬂbuchgruppe
+  JG+MY:- Mit '#' kann in der User-öbersicht eine Adre·buchgruppe
           angegeben werden, die angesprungen werden soll. Mit <Ctrl-#>
-          wird die n‰chste Adreﬂbuchgruppe angesprungen.
+          wird die nÑchste Adre·buchgruppe angesprungen.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 

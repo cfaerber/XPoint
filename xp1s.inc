@@ -378,7 +378,7 @@ begin
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
-    if listvollbild and listuhr{ and ListMsg}
+    if listvollbild and listuhr {and ListMsg}
     then begin
       dphback:=dphb;                              { Uhrfarbe reseten   }
       if not (ListFixedhead and (exthdlines>0))
@@ -391,9 +391,11 @@ begin
   exthdlines:=0;
   llh:=false;
   if listexit<>4 then                    { Wenn nicht Editor gestartet wird... }
+    otherquotechars:=otherqcback;        { Status der Quotechars '|' und ':' reseten }
+  if (listexit<>-4) and (ListWrapToggle) then
   begin
-    Listwrap:=ListWrapBack;              { Status des Wortumbruchs und ...        }
-    otherquotechars:=otherqcback;        { ... der Quotechars '|' und ':' reseten }
+    ListWrap:=ListWrapBack;
+    ListWrapToggle:=false;
   end;
   listfile:=listexit;
   ListShowSeek:=false;
@@ -494,6 +496,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.13  2001/12/04 23:01:02  my
+  MY:- Fix fÅr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim AusfÅhren
+       konnte es vorkommen, da· XP die Nachricht beantworten wollte,
+       jetzt exit code -4 statt 4)
+
   Revision 1.24.2.12  2001/12/02 15:52:29  my
   MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
        <Ctrl-W> nicht-permanent umgeschaltet werden.
@@ -507,22 +514,22 @@ end;
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die n‰chste Zeile mit einem
+          <Tab> springt der Cursorbalken die nÑchste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
-          Suchoptionen (z.B. umlautunabh‰ngige Suche), Suchbegriff-History
-          und Suchbegriffs-Bibliothek verf¸gbar. "Alte" Suchfunktionen
-          jetzt ¸ber <Ctrl-S> (fr¸her "S") bzw. wie bisher ¸ber <Shift-S>
+          Suchoptionen (z.B. umlautunabhÑngige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfÅgbar. "Alte" Suchfunktionen
+          jetzt Åber <Ctrl-S> (frÅher "S") bzw. wie bisher Åber <Shift-S>
           erreichbar.
 
-  JG+MY:- Beim Editieren von Nachrichten gibt es im "ƒnderungen
+  JG+MY:- Beim Editieren von Nachrichten gibt es im "énderungen
           speichern?"-Dialog die Option "Parken", die direkt ein "P" ans
           Sendefenster weiterleitet.
 
   JG+MY:- Uhr im Archiv-Viewer aktiviert
 
-  JG+MY:- ‹bergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+  JG+MY:- öbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
