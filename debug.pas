@@ -128,13 +128,13 @@ begin
     begin
       if LogCount>0 then
       begin
-        WriteLn(Logfile, DateTimeToStr(Now), ' --------> last message repeated ',LogCount,' times');
+        WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' --------> last message repeated ',LogCount,' times');
         LogCount:=0;
       end;
       LogLast:=Badge+#0+Message;
 
 
-      WriteLn(Logfile, DateTimeToStr(Now), ' ', Badge, ': ',
+      WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' ', Badge, ': ',
         Message);
       Flush(Logfile);
     end;
@@ -202,7 +202,7 @@ begin
 
   if LogCount>0 then
   begin
-    WriteLn(Logfile, DateTimeToStr(Now), ' --------> last message repeated ',LogCount,' times');
+    WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' --------> last message repeated ',LogCount,' times');
     LogLast:='';
     LogCount:=0;
   end;
@@ -230,6 +230,9 @@ finalization
 
 {
   $Log$
+  Revision 1.22  2001/09/13 13:28:18  ma
+  - showing seconds in logs again
+
   Revision 1.21  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
