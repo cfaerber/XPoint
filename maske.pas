@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Maskeneditor; V1.1 08/91, 05/92 PM }
@@ -20,15 +21,10 @@ unit  maske;
 interface
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,keys,inout,maus2,winxp,montage,clip;
+  xpglobal,crt, typeform,keys,inout,maus2,winxp,montage,clip;
 
-const digits : string[12] = '-0123456789 ';
+const digits       : string[12] = '-0123456789 ';
+      MaskSeekMenu : Byte = 0;
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
                 'Z[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–'+
                 '—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯àáâãäåæçèéêëìíîïğñòóôõö÷øùúûüış';
@@ -92,6 +88,7 @@ procedure mdummyp(var inhalt:string);               { Dummy fr Test0   }
 function  mdummyf(var inhalt:string):boolean;       { Dummy fr Test1/2 }
 function  qdummyf(brk,modif:boolean):boolean;       { Dummy fr QuitFN  }
 
+procedure maskShiftF2(p:testproc;helpnr:word);
 
 {--------------- Masken-Einstellungen -------------}
 { beziehen sich auf die jeweils aktuelle Maske und }
@@ -307,11 +304,20 @@ var   mask    : array[0..maxmask] of maskp;
       redispfields : boolean;
       redisptext   : boolean;
 
+      ShiftF2Proc : testProc;
+      ShiftF2Help : word;
+
 
 { Feldtypen:   1=String, 2=Short, 3=Byte, 4=Integer, 5=Word, 6=Long,
                7=Real, 8=Datum (tt.mm.jj oder tt.mm.jjjj),
                9=Uhrzeit (hh:mm oder hh:mm:ss), 10=Boolean (J/N)  }
 
+
+procedure maskShiftF2(p:testproc;helpnr:word);
+begin
+    ShiftF2Proc:=p;
+    ShiftF2help:=helpnr;
+end;
 
 procedure error(txt:string);
 begin
@@ -983,8 +989,8 @@ end;
 
 
 procedure _mappsel(feld:feldp; force:boolean; s:string);
-var s1 : string[80];
-    p  : byte;
+var s1 : string;
+     p : byte;
 
   procedure app(var p:selnodep);
     procedure makenewel;
@@ -1298,6 +1304,52 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.4  2001/09/16 20:37:39  my
+  JG+MY:- Neue Nachrichten-Suchfunktionen:
+
+          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier können oft
+            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgewählt
+            werden.
+
+          - Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
+            Suchbegriffe angezeigt und stehen beim nächsten Programmstart
+            wieder zur Verfügung (SEEK.TXT)
+
+          - Optionen-History: Mit <F2> werden die letzten 5 benutzten
+            Options-Kombinationen angezeigt und stehen beim nächsten
+            Programmstart wieder zur Verfügung (OPTIONS.TXT)
+
+          - Neue Such-Optionen:
+            l = sucht nur in Nachrichten, die dem aktuellen Lesemodus
+                entsprechen
+            m = hängt die gefundenen Nachrichten an die Liste bereits
+                markierter Nachrichten an, statt diese vorher zu ent-
+                markieren
+            h = Volltextsuche nur im Header
+            g = Volltextsuche in Header und Text
+            s = löscht die Einträge in der Suchbegriff-History
+            k = kopiert den aktuellen Suchbegriff in die Suchbegriffs-
+                Bibliothek
+
+          - Spezial-Suche: Optionale ODER-Verknüpfung von Absender,
+            Betreff, Fido-Empfänger und Text. <F2>-History für Feld "Text"
+            und "Optionen" eingebaut.
+
+          - Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
+            gleichem Betreff und nicht mehr die Nachrichten, bei denen im
+            Vergleichspaar der kürzere Betreff mit dem Anfang des längeren
+            übereinstimmt (z.B. "toll" und "toller Betreff")
+
+          - Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
+
+          - Message-ID-Suche: Suchoptionen sind wieder verfügbar
+
+          - max. Anzahl der Teil-Suchbegriffe auf 20 erhöht
+
+          - max. Länge des Suchbegriffs auf 160 Zeichen erhöht
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.8.2.3  2001/08/11 22:17:52  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
