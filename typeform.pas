@@ -76,9 +76,8 @@ type DateTimeSt = string;
 function Bin(l:longint; n:integer):string;      { Bin-Zahl mit n Stellen       }
 function Blankpos(const s:string):integer;        { Position von ' ' oder #9     }
 function BlankposX(const s:string): integer;       { length(s)+1, falls bp=0      }
+function b30(l:longint):string;   { 30bit -> 5char }
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
-procedure CopyStream(InStream,OutStream:TStream);
-procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
@@ -177,7 +176,7 @@ function IBMToISO(const s: String): String;
 function ConvertFileName(const s:string): String;
 // siehe XPDTAUM !?
 procedure ZtoZCdatumNTZ(var d1,d2:string);
-function  DecodeBase64(const s: String):String;
+//function  DecodeBase64(const s: String):String;
 
 function HostToLittleEndian16(host:smallword):smallword;
 function LittleEndianToHost16(host:smallword):smallword;
@@ -1138,7 +1137,7 @@ var
   i: integer;
 begin
   i := 1;
-  while 1 <= Length(s) do
+  while i <= Length(s) do
   begin
     if cpos(s[i],delim_chars)>0 then begin
       Result:=LeftStr(s,i-1);
@@ -1276,6 +1275,17 @@ begin
   s:=LeftStr(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben }
 end;
 
+function b30(l:longint):string;   { 30bit -> 5char }
+const bc : string[5] = '-----';
+      b64: array[0..63] of char = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz+';
+var i : byte;
+begin
+  for i:=5 downto 1 do begin
+    bc[i]:=b64[l and 63];
+    l:=l shr 6;
+    end;
+  b30:=bc;
+end;
 
 { ROT13 Kodierung }
 procedure Rot13(var data; size: word); {&uses edi} assembler;
@@ -1348,96 +1358,6 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
-{ RFC 1521, see www.rfc.net }
-function DecodeBase64(const s: String):String;
-const
-  b64tab: array[0..127] of shortint =
-  (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
-    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
-var
-  b1, b2, b3, b4: byte;
-  p1, pad: integer;
-
-  function nextbyte: byte;
-  var p: integer;
-  begin
-    result:=0;
-    if p1>length(s)then exit;
-    repeat
-      if s[p1] > #127 then
-        p := -1
-      else
-        p := b64tab[byte(s[p1])];
-      inc(p1);
-    until (p >= 0) or (p1 > length(s));
-    if p>=0 then result:=p;
-  end;
-
-begin
-  result := '';
-  if length(s) >= 3 then
-  begin
-    if LastChar(s) = '=' then
-    begin
-      if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
-        pad := 2
-      else
-        pad := 1;
-      // falls ein zus„tzliches "=" angeh„ngt wurde, diesen Datensatz verwerfen
-      if Length(s) mod 4 <> 0 then
-        Pad := 3;
-    end else
-    begin
-      if Length(Trim(s)) mod 4 <> 0 then
-      begin
-        { kein gueltiger Base64 String }
-        DecodeBase64 := s; Exit;
-      end else
-        pad := 0;
-    end;
-
-    p1 := 1;
-    while p1 <= length(s) do
-    begin
-      b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
-      result := result + chr(b1 shl 2 + b2 shr 4);
-      result := result + chr((b2 and 15) shl 4 + b3 shr 2);
-      result := result + chr((b3 and 3) shl 6 + b4);
-    end;
-    SetLength(result,Length(result)-pad);
-  end;
-end;
-
-procedure CopyStream(InStream,OutStream:TStream);
-var b: array [1..8192] of char;
-    n: longint;
-begin
-  repeat
-    n := InStream.Read(b,sizeof(b));
-    if n<= 0 then break;
-    OutStream.WriteBuffer(b,n);
-  until false;
-end;
-
-procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
-var b: array [1..8192] of char;
-    n: longint;
-    i: integer;
-begin
-  repeat
-    n := InStream.Read(b,sizeof(b));
-    if n<= 0 then break;
-    for i:=Low(OutStreams) to High(OutStreams) do
-      OutStreams[i].WriteBuffer(b,n);
-  until false;
-end;
-
 { functions to convert from/to MSB and LSB }
 
 Function Swap16(X : Word) : Word; {$IFNDEF Delphi} inline; {$ENDIF }
@@ -1488,6 +1408,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.98  2001/09/08 14:20:00  cl
+  - Moved MIME functions to mime.pas
+  - Moved Stream functions to xpstreams.pas
+  - Moved b30 to typeform.pas
+
   Revision 1.97  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 
