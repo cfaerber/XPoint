@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Hotkey-Anzeige und Online-Hilfe }
@@ -21,14 +22,8 @@ interface
 
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,inout,keys,resource,maus2,help,winxp,printerx,
-  maske, xp0;
+  xpglobal,crt,typeform,inout,keys,resource,maus2,help,
+  winxp,printerx,maske,xp0;
 
 
 const inithlp : boolean = false;
@@ -43,7 +38,7 @@ procedure set_helppos;
 procedure hilfe;
 procedure hilfealt;
 procedure dispfunctionkeys(editor:boolean);
-
+procedure do_help(n:word);
 
 implementation  { --------------------------------------------------- }
 
@@ -415,6 +410,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2001/09/16 20:20:06  my
+  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
+          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaßt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.7.2.2  2001/08/11 22:17:56  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
