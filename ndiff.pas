@@ -16,10 +16,8 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-{$IFDEF BP }
-  {$A+}
-  {$M 16384,40000,40000}
-{$ENDIF }
+{$A+}
+{$M 16384,40000,40000}
 
 uses
   dos, typeform,fileio, xpglobal;
@@ -340,6 +338,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.2  2000/07/04 10:23:02  mk
+  - unnoetige Routinen rausgenommen
+
   Revision 1.6.2.1  2000/07/02 10:42:59  mk
   - pformstr entfernt
 
