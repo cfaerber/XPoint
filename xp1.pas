@@ -241,7 +241,8 @@ function  TempS(bytes:longint):string;
 function  TempExtS(bytes:longint;startnamewith,ext:string):string;
 procedure _era(const Filename: String);
 // Deletes a file only if exists, uses _era to report errors
-procedure SaveDeleteFile(const Filename: String);
+procedure SafeDeleteFile(const Filename: String);
+procedure SafeMakeBak(const Filename, NewExt: String);
 procedure _chdir(p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
@@ -974,9 +975,9 @@ end;
 
 procedure delete_tempfiles;
 begin
-  SaveDeleteFile(TempPath+swapfilename);
-  SaveDeleteFile(TempPath+MsgTempFile);
-  SaveDeleteFile(TempPath+'header.hdr');
+  SafeDeleteFile(TempPath+swapfilename);
+  SafeDeleteFile(TempPath+MsgTempFile);
+  SafeDeleteFile(TempPath+'header.hdr');
 end;
 
 
@@ -1848,11 +1849,18 @@ begin
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
 end;
 
-procedure SaveDeleteFile(const Filename: String);
+procedure SafeDeleteFile(const Filename: String);
 begin
-  if FileExists(Filename) then
-    _era(Filename);
+  if (not sysutils.DeleteFile(Filename)) and FileExists(Filename) then
+    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
 end;
+
+procedure SafeMakeBak(const Filename, NewExt: string);
+begin
+  if not MakeBak(Filename,NewExt) then
+    trfehler1(24,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht umbenennen.' }
+end;
+
 
 procedure _chdir(p:string);
 begin
@@ -2055,6 +2063,10 @@ end;
 
 {
   $Log$
+  Revision 1.133  2001/12/26 00:49:00  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+  - added SafeMakeBat
+
   Revision 1.132  2001/12/09 14:36:40  mk
   - implemented SysBeep and error sounds
 
@@ -2101,7 +2113,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.118  2001/09/07 13:54:17  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 
