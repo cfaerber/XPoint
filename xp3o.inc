@@ -127,8 +127,16 @@ var x,y,fm   : byte;
     MsgCount:=0; adr:=0;
     repeat
       inc(MsgCount);
-      if MsgCount mod 10=0 then begin
-        moff; write(MsgCount:6,#8#8#8#8#8#8); mon; end;
+      if MsgCount mod 10=0 then
+      begin
+        moff;
+{$IFDEF BP }
+        write(MsgCount:6,#8#8#8#8#8#8);
+{$ELSE }
+        FWrt(WhereX+5, WhereY+5, StrS(MsgCount));
+{$ENDIF }
+        mon;
+      end;
       seek(f,adr);
       makeheader(zconnect,f,0,0,hdsize,hdp^,ok,true);
       inc(adr,hdsize+hdp^.groesse);
@@ -191,7 +199,11 @@ var x,y,fm   : byte;
 
   procedure wwin;
   begin
+{$IFDEF BP }
     window(x+2,y+1,x+76,y+screenlines-8);
+{$ELSE }
+    window(x+2,y+2,x+76,y+15);
+{$ENDIF }
   end;
 
   function isl(s:string):boolean;
@@ -519,13 +531,10 @@ var x,y,fm   : byte;
   procedure wrp;
   var ps : string[3];
   begin
-    w0;
     ps:=strs(inmsgs*100 div msgcount);
-    gotoxy(x+73-length(ps),y);
     moff;
-    write(' ',ps,'% ');
+    FWrt(x+73-length(ps), y, ' ' + ps + '% ');
     mon;
-    w1;
   end;
 
   procedure Bezugsverkettung;
@@ -576,9 +585,14 @@ var x,y,fm   : byte;
           end;
         inc(empfnr);
       until empfnr>hdp^.empfanz;
+{$IFDEF BP }
       gotoxy(xx,wherey);
       moff;
       write(nbez,' (',n*100 div msgcount,'%) ');
+{$ELSE }
+      moff;
+      FWrt(xx+2, wherey+5, ' ('+ StrS(n*100 div msgcount) + '%) ');
+{$ENDIF }
       mon;
       inc(adr,hdp^.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
@@ -795,12 +809,22 @@ begin
                   pm:=true;
                   end;
           moff;
+{$IFDEF BP }
           writeln;
           if empfaenger[1]='U' then begin
             write('AN:'); fm:=24; end
           else
             fm:=27;
           write(forms(copy(empfaenger,2,40),fm),' ',forms(absender,22),' ',forms(betreff,23));
+{$ELSE }
+          writeln;
+          if empfaenger[1]='U' then
+          begin
+            fm:=24; FWrt(WhereX+3, WhereY+4, 'AN:')
+          end else
+            fm:=27;
+          FWrt(WhereX+fm+3-27, WhereY+4, forms(copy(empfaenger,2,40),fm) + ' ' + forms(absender,22) + ' ' + forms(betreff,23));
+{$ENDIF }
           mon;
           multi2(curoff); initscs;
 
@@ -1145,6 +1169,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/03/17 13:11:23  mk
+  - Testpuffer einlesen jetzt ca. 4x schneller
+
   Revision 1.8  2000/03/16 10:14:24  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
