@@ -283,8 +283,9 @@ var
         s := trim(s);
         if s <> '' then
           if cpos(':', s) < 3 then
+          begin
              if CommandLine then writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
-          else
+          end else
             AddHd.AddObject(s, Pointer(longint(mail)));
       end;
       close(t);
@@ -3767,6 +3768,9 @@ end;
 
 {
   $Log$
+  Revision 1.141  2003/09/09 14:21:51  mk
+  - fixed reading of news.rfc and mail.rfc, is now working again
+
   Revision 1.140  2003/08/28 18:48:33  cl
   - fixed memory leak
 
