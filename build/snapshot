@@ -76,7 +76,7 @@ tar xvzf /usr/src/packages/SOURCES/openxp-"$version".tar.gz
 cd ..
 tar cvjf openxp-"$version"-src.tar.bz2 openxp/
 # auf den ftp server schieben
-ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux.tar.bz2 /tmp/openxp-tmp/openxp-"$version"-src.tar.bz2 "$versiondir"openxp/fpc-linux-"$version"-logs.zip "$versiondir"openxp/kylix-"$version"-logs.zip
+ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux.tar.bz2 /tmp/openxp-tmp/openxp-"$version"-src.tar.bz2 "$versiondir"openxp/linux-"$mainversion"-compile-logs.zip
 ## Cross-Compilate
 #test -f "$versiondir"openxp-"$version"-dos-`date -I`.zip && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 / /"$versiondir"openxp-"$version"-dos-`date -I`.zip
 #test -f "$versiondir"openxp-"$version"-os2-`date -I`.zip && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 / /"$versiondir"openxp-"$version"-os2-`date -I`.zip

@@ -54,14 +54,14 @@ rm "$versiondir"output/* "$versiondir"kylixout/*
 rm compile*.log compile*.err 
 "$scriptdir"makexp $mainversion 
 datum=`date`
-subject="OXP/32 v"$version": Fatal compiler errors fpc/Linux "$datum"."
-subjectkylix="OXP/32 v"$version": Fatal compiler errors Kylix3 "$datum"."
-subjectdos="OXP/32 v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-subjectwin="OXP/32 v"$version": Win32 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-subjectdos="OXP/32 v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-subjectos2="OXP/32 v"$version": OS/2 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-subjectfreebsd="OXP/32 v"$version": FreeBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-subjectnetbsd="OXP/32 v"$version": NetBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subject="OXP v"$version": Fatal compiler errors fpc/Linux "$datum"."
+subjectkylix="OXP v"$version": Fatal compiler errors Kylix3 "$datum"."
+subjectdos="OXP v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectwin="OXP v"$version": Win32 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectdos="OXP v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectos2="OXP v"$version": OS/2 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectfreebsd="OXP v"$version": FreeBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectnetbsd="OXP v"$version": NetBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
 test -f ../kylixout/openxp || echo "buildxp: Ooops, Kylix had (fatal) errors"
 #test -f ../kylixout/openxp || elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < compile-kylix-error-"$version".log
 test -f "openxp" || echo "buildxp: Ooops, no openxp Linux binary" 
