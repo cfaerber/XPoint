@@ -23,13 +23,16 @@ begin
   dospath:=s;
 end;
 
-
-procedure GoDir(path:pathstr);
+{$ifndef hasXCurrentDir}
+procedure SetCurrentDir(path: string): boolean;
 begin
-  if path<>'' then
-    chdir(path);
+  SetCurrentDir:= false;
+  if ioresult=0 then;
+  if path='' then exit;
+  chdir(path);
+  SetCurrentDir:= (ioresult=0);
 end;
-
+{$endif}
 
 function OutputRedirected:boolean;
 begin
@@ -51,8 +54,12 @@ end;
 
 {
 	$Log$
+	Revision 1.2  2000/07/03 15:23:28  hd
+	- Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+	- GoDir durch SetCurrentDir ersetzt
+
 	Revision 1.1  2000/06/29 12:55:38  hd
 	- Linux-Teil isoliert
-
+	
 }
 

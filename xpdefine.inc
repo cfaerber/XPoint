@@ -52,6 +52,9 @@
   {$DEFINE Delphi }
   {$A+,B-,C-,D+,E-,F-,G+,H-,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U+,V-,W-,X+,Y-,Z1}
   {$UNDEF NeedReg }
+  {$DEFINE hasSetLength}	{ SetLength vorhanden }
+  {$DEFINE hasTrim}		{ Trim vorhanden }
+  {$DEFINE hasXCurrentDir}	{ Get-/SetCurrentDir }
 {$ENDIF }
 
 {$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
@@ -60,6 +63,9 @@
   {$B-,D-,H-,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
+  {$DEFINE hasSetLength}	{ SetLength vorhanden }
+  {$DEFINE hasTrim}		{ Trim vorhanden }
+  {$DEFINE hasXCurrentDir}	{ Get-/SetCurrentDir }
   {$UNDEF NeedReg }
 {$ENDIF }
 
@@ -74,6 +80,9 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$UNDEF NeedReg }
+  {$DEFINE hasSetLength}	{ SetLength vorhanden }
+  {$DEFINE hasTrim}		{ Trim vorhanden }
+  {$DEFINE hasXCurrentDir}	{ Get-/SetCurrentDir }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -132,6 +141,10 @@
 
 {
   $Log$
+  Revision 1.37  2000/07/03 15:23:27  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.36  2000/07/03 15:11:01  mk
   - unnötige Defines entfernt
   - sysutils war zweimal in xp6o.pas enthalten

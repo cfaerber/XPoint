@@ -231,7 +231,7 @@ begin
     while doserror=0 do begin
       if isPacket(sr.name) then begin
         ImportDir:=FExpand(ImportDir);
-        GoDir(OwnPath+XFerDir);
+        SetCurrentDir(OwnPath+XFerDir);
         shell(left(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
               500,1);
         { ^^ setzt Verzeichnis zurÅck! }
@@ -934,6 +934,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/03 15:23:27  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.15  2000/07/03 13:31:42  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

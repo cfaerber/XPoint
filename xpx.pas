@@ -17,6 +17,7 @@ unit xpx;
 interface
 
 uses
+  sysutils,
 {$IFDEF Linux }
   xplinux,
 {$ENDIF }
@@ -47,11 +48,7 @@ end;
 procedure logo;
 var t : text;
 begin
-{$IFDEF NCRT}
-  AssignCrt(t);
-{$ELSE}
   assign(t,'');
-{$ENDIF}
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -102,13 +99,13 @@ begin
   filemode:=2;
 end;
 
-
+{$ifndef Linux}
 {$S-}
+{$endif}
 procedure setpath;
 begin
-  if ioresult = 0 then ;
-  GoDir(shellpath);
-  if ioresult<>0 then GoDir(ownpath);
+  if not SetCurrentDir(shellpath) then
+    SetCurrentDir(ownpath);
   if runerror and not starting then begin
     attrtxt(7);
     writeln;
@@ -117,7 +114,9 @@ begin
   exitproc:=oldexit;
 end;
 {$IFDEF Debug }
-  {$S+}
+  {$ifndef Linux}
+    {$S+}
+  {$endif}
 {$ENDIF }
 
 
@@ -148,12 +147,14 @@ end;
 begin
   checkbreak:=false;
   readname;
+{$ifndef Linux}
   if left(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
+{$endif}
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
-    GoDir(progpath);
+    SetCurrentDir(progpath);
   oldexit:=exitproc;
   exitproc:=@setpath;
 {$IFDEF NCRT}
@@ -188,7 +189,7 @@ begin
     WriteLn('I need read, write and search rights on ''',OwnPath,'''.');
     Halt(2);
   end;
-  GoDir(OwnPath);
+  SetCurrentDir(OwnPath);
 {$ELSE }
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
@@ -205,6 +206,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/07/03 15:23:27  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.20  2000/07/01 09:09:32  mk
   - xp_short entfernt
 

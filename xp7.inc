@@ -1061,7 +1061,7 @@ begin
           end;
         if errorlevel=0 then begin
           exchange(uparcer,'$UPFILE',caller);
-          GoDir(SysopOut);
+          SetCurrentDir(SysopOut);
           shell(uparcer,500,3);                         { packen }
           end;
         if exist(SysopOut+upuffer) then _era(SysopOut+upuffer);
@@ -1423,6 +1423,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/07/03 15:23:27  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.25  2000/06/23 15:59:24  mk
   - 16 Bit Teile entfernt
 

@@ -1757,8 +1757,8 @@ begin
         else
           _era(iifs(exdir<>'',exdir,temppath)+datei);
     spath:=ShellPath;
-    if exdir<>'' then GoDir(exdir)
-    else GoDir(temppath);
+    if exdir<>'' then SetCurrentDir(exdir)
+    else SetCurrentDir(temppath);
     decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
     p:=pos('$ARCHIV',ustr(decomp));
     decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
@@ -2399,6 +2399,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/07/03 15:23:26  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.48  2000/06/23 15:59:21  mk
   - 16 Bit Teile entfernt
 

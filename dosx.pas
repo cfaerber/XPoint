@@ -40,7 +40,9 @@ function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
 {$endif} { Linux }
 
 function  dospath(d:byte):pathstr;
-procedure GoDir(path:pathstr);
+{$ifndef hasXCurrentDir}
+function  SetCurrentDir(const path: string): boolean;
+{$endif}
 
 function  OutputRedirected:boolean;
 function  IsDevice(fn:pathstr):boolean;
@@ -85,15 +87,19 @@ begin
   SetCurrentDir(Drive + ':');
 end;
 
-procedure GoDir(path:pathstr);
+{$ifndef hasXCurrentDir}
+function  SetCurrentDir(const path: string): boolean;
 begin
+  SetCurrentDir:= false;
+  if ioresult=0 then ;
   if path='' then exit;
   SetDrive(path[1]);
   if (length(path)>3) and (path[length(path)]=DirSepa) then
     Delete(path, Length(path), 1); { dec(byte(path[0])); }
   chdir(path);
+  SetCurrentDir:= (ioresult=0);
 end;
-
+{$endif}
 
 function OutputRedirected:boolean;
 begin
@@ -193,6 +199,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/03 15:23:26  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.20  2000/06/29 12:55:37  hd
   - Linux-Teil isoliert
 

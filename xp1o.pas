@@ -555,7 +555,7 @@ begin
   UniExtract:=false;
   atyp:=ArcType(_from);
   if atyp=0 then exit;
-  GoDir(_to);
+  SetCurrentDir(_to);
   if not GetDecomp(atyp,decomp) then exit;
   p:=pos('$ARCHIV',ustr(decomp));
   decomp:=left(decomp,p-1)+_from+mid(decomp,p+7);
@@ -988,6 +988,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/07/03 15:23:26  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.42  2000/07/03 13:31:39  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

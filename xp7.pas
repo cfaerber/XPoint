@@ -1165,7 +1165,7 @@ begin                  { of Netcall }
               if (DownArcer<>'') and
                  (not JanusP or (left(lstr(DownArcer),5)<>'copy ')) then
                 shell(downarcer,500,1);      { Download-Packer }
-              GoDir(OwnPath);
+              SetCurrentDir(OwnPath);
               if ltMultiPuffer(logintyp) then
                 twin;
               Activate;
@@ -1179,7 +1179,7 @@ begin                  { of Netcall }
               end;
             {window(1,1,80,25);}
             if pronet then begin
-              GoDir(ownpath);
+              SetCurrentDir(ownpath);
               if exist(XFerDir+'BRETTER.LST') then begin
                 message('Brettliste fÅr '+ustr(box)+' wird eingelesen ...');
                 Readpromaflist(XFerDir+'BRETTER.LST',bfile);
@@ -1558,6 +1558,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/03 15:23:27  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.18  2000/07/03 13:31:41  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -159,7 +159,7 @@ begin
   if trackpath then
     getdir(0,shellpath);
   if dospath(0)<>OwnPath then
-    GoDir(OwnPath);
+    SetCurrentDir(OwnPath);
   TempOpen;
 end;
 
@@ -435,8 +435,8 @@ begin
   if DisableDos then
     fehler(getres(116))   { DOS-Shell hier nicht m”glich }
   else begin
-    GoDir(ShellPath);
-    if ioresult<>0 then GoDir(ownpath);
+    SetCurrentDir(ShellPath);
+    if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
     {$IFDEF DPMI}
       assign(t,TempPath+ShellBatch);
@@ -454,6 +454,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/03 15:23:26  hd
+  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
+  - GoDir durch SetCurrentDir ersetzt
+
   Revision 1.26  2000/06/23 15:59:17  mk
   - 16 Bit Teile entfernt
 
