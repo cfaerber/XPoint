@@ -24,7 +24,7 @@
 unit xpglobal;
 
 interface
-                                                                  
+
 {$I xpdefine.inc }
 
 // format the following strings in a way that
@@ -116,11 +116,11 @@ type
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
     integer8 =   shortint;
-    integer16 =  system.smallint;
+    integer16 =  {$IFNDEF VER160}system.{$ENDIF}smallint;
     integer32 =  longint;
-    smallword =  system.word;
+    smallword =  {$IFNDEF VER160}system.{$ENDIF}word;
     Word =       Integer; // !!
-    DWord =      Longword;  { = unsigned 32 bit } 
+    DWord =      Longword;  { = unsigned 32 bit }
     variant =    pointer; // Naja...
   {$endif}
 
@@ -165,7 +165,7 @@ const
 
 type
   PCharArray = ^TCharArray;
-  TCharArray = array[0..MaxInt div 2] of Char;
+  TCharArray = array[0..MaxInt div 2-1] of Char;
   PByteArray = ^TByteArray;
   TByteArray = array[0..MaxInt div 2] of Byte;
 
@@ -196,6 +196,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.37  2004/01/05 16:06:40  mk
+  - added little bit Delphi 8 for .NET support
+
   Revision 1.63.2.36  2003/10/18 17:02:17  mk
   - Version 3.8.14 Snapshot
 

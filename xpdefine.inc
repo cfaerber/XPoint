@@ -66,6 +66,10 @@
   {$ENDIF }
 {$ENDIF }
 
+{$IFDEF VER160 }          { Delphi 8.0 for .NET Framkework  }
+  {$DEFINE Delphi }
+{$ENDIF }
+
 {$IFNDEF FPC }
    {$IFNDEF Delphi }
      {$IFNDEF Kylix }
@@ -257,6 +261,9 @@
 
 {
   $Log$
+  Revision 1.78.2.18  2004/01/05 16:06:40  mk
+  - added little bit Delphi 8 for .NET support
+
   Revision 1.78.2.17  2003/10/18 17:02:17  mk
   - Version 3.8.14 Snapshot
 
