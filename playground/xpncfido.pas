@@ -47,8 +47,9 @@ procedure ShowRQ(s:string);
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,xpfm,xpheader,xp3,xp3o;
+  direct,ncfido,xpheader,xp3,xp3o;
 
+var Fidomailer: TFidomailer;
 
 procedure SaveArcname(var box,name:string);
 var t1,t2 : text;
@@ -365,10 +366,10 @@ label fn_ende,fn_ende0;
 
     procedure AddFile(const s: string);
     begin
-      if xpfm.FilesToSend='' then
-        xpfm.FilesToSend:= s
+      if Fidomailer.FilesToSend='' then
+        Fidomailer.FilesToSend:= s
       else
-        xpfm.FilesToSend:= xpfm.FilesToSend+#9+s;
+        Fidomailer.FilesToSend:= Fidomailer.FilesToSend+#9+s;
     end;
 
     procedure WriteAttach(const puffer:string);
@@ -413,7 +414,7 @@ label fn_ende,fn_ende0;
         delete(aka,p,1);
         end;
       if aka<>'' then
-        xpfm.AKAs:= aka;
+        Fidomailer.AKAs:= aka;
     end;
 
     function EmptyPKTs:boolean;
@@ -429,54 +430,53 @@ label fn_ende,fn_ende0;
     with BoxPar^,ComN[comnr] do begin
       { set up unit's parameter }
       if fidologfile<>'' then begin
-        xpfm.logfile:= fidologfile;
-        xpfm.lognew:= true;
+        Fidomailer.logfile:= fidologfile;
+        Fidomailer.lognew:= true;
       end;
-      xpfm.Username:= username;
+      Fidomailer.Username:= username;
       if alias then
-        xpfm.OwnAddr:=LeftStr(box,cpos('/',box))+pointname
+        Fidomailer.OwnAddr:=LeftStr(box,cpos('/',box))+pointname
       else if f4d then
-        xpfm.OwnAddr:=box+'.'+pointname
+        Fidomailer.OwnAddr:=box+'.'+pointname
       else
-        xpfm.OwnAddr:=IntToStr(fa.zone)+':'+IntToStr(fpointnet)+'/'+pointname;
+        Fidomailer.OwnAddr:=IntToStr(fa.zone)+':'+IntToStr(fpointnet)+'/'+pointname;
       if domain<>'' then
-        xpfm.OwnDomain:= domain;
-      xpfm.DestAddr:= boxname;
-      xpfm.Password:= passwort;
+        Fidomailer.OwnDomain:= domain;
+      Fidomailer.DestAddr:= boxname;
+      Fidomailer.Password:= passwort;
       if orga<>'' then
-        xpfm.SysName:= orga;
-      xpfm.DebugMode:= ParDebug;
-      xpfm.SerNr:= 'SN=OpenXP';
-      xpfm.CommInitString:= MCommInit;
+        Fidomailer.SysName:= orga;
+      Fidomailer.DebugMode:= ParDebug;
+      Fidomailer.SerNr:= 'SN=OpenXP';
       if hayescomm and (ModemInit+MInit<>'') then begin
         if (ModemInit<>'') and (minit<>'') then
-          xpfm.ModemInit:= minit+'\\'+ModemInit
+          Fidomailer.ModemInit:= minit+'\\'+ModemInit
         else
-          xpfm.ModemInit:= minit+ModemInit;
+          Fidomailer.ModemInit:= minit+ModemInit;
       end;
-      xpfm.IgCTS:= IgCTS;
-      xpfm.UseRTS:= UseRTS;
-      xpfm.ModemLine:= comnr;
-      xpfm.Fossil:= fossil;
+      Fidomailer.IgCTS:= IgCTS;
+      Fidomailer.UseRTS:= UseRTS;
+      Fidomailer.ModemLine:= comnr;
+      Fidomailer.Fossil:= fossil;
       if not fossil then begin
-        xpfm.ModemPort:= Cport;
-        xpfm.IRQ:= Cirq;
-        xpfm.tlevel:= tlevel;
+        Fidomailer.ModemPort:= Cport;
+        Fidomailer.IRQ:= Cirq;
+        Fidomailer.tlevel:= tlevel;
       end;
-      xpfm.Baud:= baud;
+      Fidomailer.Baud:= baud;
       if hayescomm then begin
-        xpfm.CommandModemDial:= MDial;
-        xpfm.Phone:= telefon;
+        Fidomailer.CommandModemDial:= MDial;
+        Fidomailer.Phone:= telefon;
       end;
-      xpfm.TimeoutConnectionEstablish:= connwait;
-      xpfm.RedialWait:= redialwait;
+      Fidomailer.TimeoutConnectionEstablish:= connwait;
+      Fidomailer.RedialWait:= redialwait;
       if postsperre then
-        xpfm.ReDWait2:= redialwait;
-      xpfm.RedialMax:= redialmax;
-      xpfm.MaxConn:= connectmax;
-      xpfm.FilePath:= xp0.FilePath;
-      xpfm.MailPath:= ownpath+XFerDir;
-      xpfm.ExtFNames:= ExtPFiles;
+        Fidomailer.ReDWait2:= redialwait;
+      Fidomailer.RedialMax:= redialmax;
+      Fidomailer.MaxConn:= connectmax;
+      Fidomailer.FilePath:= xp0.FilePath;
+      Fidomailer.MailPath:= ownpath+XFerDir;
+      Fidomailer.ExtFNames:= ExtPFiles;
 
       fileatts:=0;
       WriteAttach(ppfile);
@@ -484,7 +484,7 @@ label fn_ende,fn_ende0;
         WriteAttach(addpkts^.abfile[i]+BoxFileExt);
       if (request='') and (FileAtts=0) and (_filesize(upuffer)<=60) and
          (addpkts^.anzahl=0) and not NotSEmpty then
-        xpfm.sendempty:= true;
+        Fidomailer.sendempty:= true;
       if ((request='') and (FileAtts=0)) or not EmptyPKTs then
         if packmail then
           AddFile(sendfile)
@@ -499,18 +499,18 @@ label fn_ende,fn_ende0;
         if addpkts^.reqfile[i]<>'' then
           AddFile(addpkts^.reqfile[i]);
       if ZMoptions<>'' then
-        xpfm.ZMOptions:= ZMoptions;
+        Fidomailer.ZMOptions:= ZMoptions;
       if komment='' then
-        xpfm.txt:= 'Netcall  -  '+boxname
+        Fidomailer.txt:= 'Netcall  -  '+boxname
     { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
       else
-        xpfm.txt:= komment;
-      xpfm.UseEMSI:= EMSIenable;
-      xpfm.SetTime:= gettime;
-      xpfm.SendTrx:= SendTrx;
-      xpfm.MinCPS:= MinCPS;
+        Fidomailer.txt:= komment;
+      Fidomailer.UseEMSI:= EMSIenable;
+      Fidomailer.SetTime:= gettime;
+      Fidomailer.SendTrx:= SendTrx;
+      Fidomailer.MinCPS:= MinCPS;
       if crash then
-        xpfm.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
+        Fidomailer.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
       WrAKAs;
     end; { while }
   end;
@@ -632,6 +632,7 @@ label fn_ende,fn_ende0;
 
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
+  Fidomailer:=TFidomailer.Create;
   Fidonetcall:=EL_ok;
   for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
     splitfido(addpkts^.akabox[i],fa,DefaultZone);
@@ -649,8 +650,13 @@ begin { FidoNetcall }
          else komment:=ni.boxname+', '+ni.standort;
     end;
 
-  { Init variables in xpfm unit }
+  { Init Fidomailer obj }
+  FidoIPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
+  Fidomailer:=TFidomailer.Create;
+  Fidomailer.IPC:=FidoIPC;
+  if not Fidomailer.Activate(MCommInit)then goto fn_ende;
   InitFidomailer;
+
   if packmail then begin
     DeleteFile(upuffer);
     for i:=1 to addpkts^.anzahl do
@@ -667,8 +673,8 @@ begin { FidoNetcall }
   ttwin;
 
   FidoNetcall:=EL_noconn;
-
-  aresult:= DoXPFM;
+  if not Fidomailer.Connect then goto fn_ende;
+  aresult:=Fidomailer.PerformNetcall;
 
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
@@ -753,6 +759,8 @@ begin { FidoNetcall }
       Debug.DebugLog('xpncfido','deleting netcall temporary log file: "'+fidologfile+'"',DLInform);
       DeleteFile(fidologfile);
       end;
+    Fidomailer.Destroy;
+    FidoIPC.Destroy;
 end;
 
 
@@ -995,6 +1003,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/01/28 00:15:51  ma
+  - created TFidomailer class, not compiling yet
+
   Revision 1.1  2001/01/10 16:32:19  ma
   - todo: general cleanup
 
