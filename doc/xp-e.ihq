@@ -3198,11 +3198,11 @@ permitted.
 This setting has no effect on the Sysop-Mode.
 @
 198
-<<[x]>> ->  This box will be included when calling
-        [/Netcall/All]@11502
+<<[x]>> ->  This Server will be included when using the
+        [/Netcall/All] feature.@11502
 
-<<[ ]>> ->  This box will *not* be included when calling
-       [/Netcall/All]@11502
+<<[ ]>> ->  This Server will NOT be included when using
+        the [/Netcall/All] feature.@11502
 @
 199
 A program that CrossPoint will call after receiving
