@@ -14,6 +14,10 @@
 
 {$I XPDEFINE.INC }
 
+{$IFDEF NCRT}
+  {$UNDEF NCRT}
+{$ENDIF}
+
 {$IFDEF Delphi }
   {$APPTYPE CONSOLE }
 {$ENDIF }
@@ -29,6 +33,7 @@ uses  xpglobal,
   ems,
 {$ENDIF }
 {$IFDEF Linux }
+  linux,
   XPLinux,
 {$ENDIF }
 {$IFDEF NCRT }
@@ -94,9 +99,15 @@ const
 
       nt_ZConnect = 2;
       nt_RFC      = 40;
+{$IFDEF Linux}
+      uncompress  = '/usr/bin/compress -dvf ';
+      unfreeze    = '/usr/bin/freeze -dif ';
+      ungzip      = '/usr/bin/gzip -df ';
+{$ELSE}
       uncompress  = 'compress.exe -df ';
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
+{$ENDIF}
 {$IFDEF BP }
       SwapFileName= 'uuz.swp';
 {$ENDIF }
@@ -515,8 +526,15 @@ begin
   if u2z and not validfilename(dest) then
     error('ungÅltige Zieldatei: '+dest);
   if not u2z then begin
+{$IFDEF UnixFS}
+    if (right(dest,1)<>DirSepa) then
+      dest:=ResolvePathname(dest+DirSepa)
+    else
+      dest:=ResolvePathname(dest);
+{$ELSE}
     if (right(dest,1)<>':') and (right(dest,1)<>'\') then
       dest:=dest+'\';
+{$ENDIF}
     if not IsPath(dest) then
       error('ungÅltiges Zielverzeichnis: '+dest);
     end;
@@ -2562,10 +2580,21 @@ begin
     gzip:=(pos('gunbatch',lstr(s))>0) or (pos('zunbatch',lstr(s))>0);
     seek(f1,length(s)+1);
     fsplit(fn,dir,name,ext);
+{$IFDEF Linux}
+    if (ext<>'.Z') or (ext<>'.gz') or (ext<>'.xz') then begin
+      if (freeze) then
+        newfn:=fn+'.xz'
+      else if (gzip) then
+        newfn:=fn+'.gz'
+      else
+        newfn:=fn+'.Z';
+    end;
+{$ELSE}
     if ext='' then newfn:=fn+'.Z'
     else
       if freeze then newfn:=dir+name+left(ext,2)+'XZ'
       else newfn:=dir+name+left(ext,3)+'Z';
+{$ENDIF}
     assign(f,newfn);
     rewrite(f,1);
     fMove(f1,f);
@@ -2587,6 +2616,7 @@ begin
     reset(f2,1); seek(f2,filesize(f2));
     if exist(newfn) then begin
       writeln(' - Fehler beim Entpacken');
+      writeln(uncompress+newfn);halt;
       assign(f,newfn); erase(f);
       exit;
       end;
@@ -3483,6 +3513,9 @@ end.
 
 {
   $Log$
+  Revision 1.30  2000/05/16 15:20:32  hd
+  - Kleinere, unvollstaendige Anpassungen (UnixFS)
+
   Revision 1.29  2000/05/13 15:39:51  mk
   - Crashes wegen Hugestring beseitigt
 
