@@ -497,6 +497,9 @@ type   textp  = ^text;
                   _fqdn     : string;
                   passwort  : string;
                   telefon   : string;
+                  conn_mode : byte;        { Netcall: 1=Modem, 2=TCP/IP, 3=Telnet }
+                  conn_ip   : string;      { Netcall: IP oder Domain }
+                  conn_port : integer;     { Netcall: Port, default: uucp }
                   zerbid    : string;
                   uploader  : string;
                   downloader: string;
@@ -554,7 +557,7 @@ type   textp  = ^text;
                   LocalIntl : boolean;     { Fido: ~d'Bridge-Areafix   }
                   Brettmails: boolean;     { Turbo-Box/Maus:  Brettnachr. }
                   LoginName : string;  { UUCP/QM: login-Username   }
-                  UUCPname  : string;   { uucico-Systemname         }
+                  UUCPname  : string;  { uucico-Systemname         }
                   MaxWinSize: byte;        { UUCP: max. Windowgroesse    }
                   MaxPacketSize:smallword;      { UUCP: max. Blockgroesse     }
                   VarPacketSize:boolean;   { UUCP: variable Blockgroesse }
@@ -575,9 +578,6 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigroesse / KB }
-                  uucp_mode : byte;        { UUCP: 1=Modem, 2=TCP/IP }
-                  uucp_ip   : string;      { UUCP: IP oder Domain }
-                  uucp_port : integer;     { UUCP: Port, default: uucp }
 
                   nntp_ip   : string;      { NNTP: IP oder Domain }
                   nntp_port : integer;     { NNTP: Port, default: 119 }
@@ -1122,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.120  2001/03/05 11:47:34  cl
+  - changed uucp_mode/ip/port to conn_mode/ip/port
+
   Revision 1.119  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
