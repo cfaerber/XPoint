@@ -2238,7 +2238,11 @@ procedure _chdir(p:pathstr);
 begin
   p:=trim(p);
   if p<>'' then begin
+{$IFDEF UnixFS }
+    if (length(p)>1) and (right(p,1)='/') then
+{$ELSE }
     if (length(p)>1) and (right(p,1)='\') then
+{$ENDIF }
       dellast(p);
     chdir(p);
     if ioresult<>0 then
@@ -2351,6 +2355,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/05/03 17:15:07  hd
+  - Anpassung an UnixFS (_chdir)
+
   Revision 1.35  2000/05/03 12:45:27  hd
   - sound() unter Linux ausgeklammert
 
