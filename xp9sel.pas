@@ -79,7 +79,7 @@ var   x,y,n   : byte;
       dir     : dirstr;
       name    : namestr;
       ext     : extstr;
-const cfgext  : array [1..4] of string = ('*.CFG','*.BFG','*.BFE','*.$CF');
+const cfgext  : array [1..4] of string[5] = ('*.CFG','*.BFG','*.BFE','*.$CF');
 label restart;
 begin
 restart:
@@ -112,8 +112,8 @@ restart:
     if (cpos(':',s2) = 2) or (cpos(DirSepa, s2) = 1) then
       s2 := FExpand(s2)
     else s2 := FExpand(cdir + s2);
-    if ((length(s2) = 2) and (cpos(':',s2) = 2)) or
-       (right(s2,1) = DirSepa) then
+    if ((length(s2)=2) and (s2[2]=':'))
+      or (Lastchar(s2)=DirSepa) then
       s2 := FExpand(s2 + WildCard)
     else
     if IsPath(s2) then
@@ -124,7 +124,7 @@ restart:
       rfehler1(949,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
       goto restart;
     end;
-    if (pos('*',s2)>0) or (pos('?',s2)>0) then
+    if multipos('*?',s2) then
     begin
       selcol;
       pushhp(89);
@@ -133,7 +133,7 @@ restart:
       if s2 <> '' then   { <Esc> gedrÅckt? }
       begin
         fsplit(s2,dir,name,ext);
-        if dir = cdir then s1 := name + ext else s1 := s2;
+        if dir=cdir then s1:=name+ext else s1:=s2;
       end;
       goto restart;
     end;
@@ -830,6 +830,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.13  2001/08/02 14:35:02  my
+  JG:- ReadExtCfgFilename: optimized suboptimal (but working) code
+
   Revision 1.1.2.12  2001/07/31 17:54:05  mk
   - added missing FindClose
 
