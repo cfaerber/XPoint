@@ -55,11 +55,7 @@ function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 
 const
-{$IFDEF BP }
   bufsize  = 32768;
-{$ELSE }
-  bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
-{$ENDIF }
   maxll    = 64;
 
 var x,y,fm   : byte;
@@ -1020,7 +1016,7 @@ begin
  
                                                    {Fuer User spezifizierte Farbe einstellen}
             if uflags and $E0 <> 0 then                      
-             mbflags:=longint((uflags and $E0) shr 2)          
+             mbflags:=longint((uflags and $E0) shr 2)
                                                    { Prioritaeten in anderer Farbe.... }
             else if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
             else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    }
@@ -1128,6 +1124,11 @@ begin
     close(userlog);
     puffereinlesen:=true;
 
+    write(getres(320));   { 'DatumsbezÅge werden Åberarbeitet...     %' }
+    GotoXY(WhereX-5, WhereY);
+    BrettDatumSetzen(true);
+    moff; Wrt2(getres(321)); mon;  { ' fertig.' }
+
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
   end   { if Puffer_ok }
 
@@ -1201,6 +1202,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.4  2000/11/01 10:58:03  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.21.2.3  2000/10/05 17:46:34  sv
   - Kleine Aenderung bei der Bearbeitung von Supersedes-/Ersetzt-Nachrichten
 

@@ -705,7 +705,6 @@ begin
   PGP_log:=false;
   PGP_signall:=false;
   PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
-  AutoDatumsBezuege:=false;
 end;
 
 
@@ -920,7 +919,6 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1347,7 +1345,7 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege',autodatumsbezuege) or
+          getx(su,  'autodatumsbezuege',dummyb) or
           getb(su,  'screenlines',screenlines) or
           gets(s,su,'tempdir',temppath,79) or		{ Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
@@ -1692,6 +1690,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.6  2000/11/01 10:58:03  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.62.2.5  2000/09/18 07:58:04  mw
   Voreinstellungen aktualisiert:
   - NewuserIBM ist jetzt eingeschaltet.

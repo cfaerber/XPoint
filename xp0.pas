@@ -800,7 +800,6 @@ const
 
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-       AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
@@ -1151,6 +1150,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.13  2000/11/01 10:58:02  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.54.2.12  2000/11/01 10:42:15  mk
   - Limits im Kommentarbaum erhoeht
 
