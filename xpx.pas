@@ -122,7 +122,7 @@ begin
   getfattr(f,attr);
   if attr and ReadOnly<>0 then begin
     assign(f,OwnPath+'XP$T.$1');
-    rewrite(f);
+    XPRewrite(f,cmUser);
     if ioresult=0 then begin
       close(f);
       erase(f);
@@ -132,6 +132,9 @@ begin
       writeln(xp_xp+' kann nicht von einem schreibgeschtzten Laufwerk gestartet');
       writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
       runerror:=false;
+{$IFDEF Unix}
+      readln;         { better debuggin with readable Messages... }
+{$ENDIF}   
       halt(1);
       end;
     end;
@@ -170,6 +173,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.33  2000/11/09 10:57:57  hd
+  - Rewrite -> XPRewrite
+
   Revision 1.32  2000/11/04 13:56:33  ml
   - Error-Messages are now readable in linux (stop-Procedure)
 
