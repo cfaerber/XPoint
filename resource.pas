@@ -135,6 +135,7 @@ begin
   if not ResourceOpen then
      error('no resource file open');
   FileClose(FH);
+  ResourceOpen := false;
   for i:=1 to blocks do with block[i] do
   begin
     if loaded then
@@ -350,6 +351,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/07/30 08:54:07  ma
+  - fixed: Resources could be closed twice leading to runtime error
+
   Revision 1.22  2001/07/30 08:19:29  mk
   - added ResIsOpen-Function again
 
