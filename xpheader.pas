@@ -45,6 +45,7 @@ type
   THeader = class
   private
     function GetFirstEmpfaenger: String;
+    function GetTypChar: Char;
     procedure SetFistEmpfaenger(const Value: String);
   public
     netztyp: byte;                      { --- intern ----------------- }
@@ -151,6 +152,8 @@ type
 //  procedure ReadRFC(stream:TStream);
 
     property FirstEmpfaenger: String read GetFirstEmpfaenger write SetFistEmpfaenger;
+
+    property TypChar: Char read GetTypChar;
   end;
 
   TSendUUData = class
@@ -366,6 +369,7 @@ procedure THeader.WriteZConnect(stream:TStream);
     gb : boolean;
     mtype : TMimeContentType;
     mdisp : TMimeDisposition;
+    mtype_iscomposed : boolean;
   begin
 //  with hd do begin
       if not orgdate then
@@ -420,7 +424,7 @@ procedure THeader.WriteZConnect(stream:TStream);
       if (ReplyTo <> '') and (LeftStr(ReplyTo,Length(absender)) <> absender) then
         writeln_s(stream,'ANTWORT-AN: '+ ReplyTo);
       if typ='B'       then writeln_s(stream,'TYP: BIN') else
-      if typ='M'       then writeln_s(stream,'TYP: MIME');
+      if (typ='M')and(netztyp in [nt_ZConnect]) then writeln_s(stream,'TYP: MIME');
       if datei<>''     then writeln_s(stream,'FILE: ' +LowerCase(datei));
       if ddatum<>''    then writeln_s(stream,'DDA: '  +ddatum+'W+0');
       if error<>''     then writeln_s(stream,'ERR: '  +error);
@@ -490,13 +494,16 @@ procedure THeader.WriteZConnect(stream:TStream);
       if (Boundary<>'') or (Mime.CType<>'') then
       begin
         mtype := TMimeContentType.Create(iifs(Mime.CType<>'',Mime.Ctype,'multipart/mixed'));
+        mtype_iscomposed := mtype.IsComposed;
+
         if boundary <>'' then mtype.boundary := boundary;
         if x_charset<>'' then mtype.charset := x_charset;
         writeln_s(stream,'U-Content-Type: '+mtype.AsString);
-        if typ='M' then
+        if ((typ='M') and (netztyp in [nt_Zconnect])) or mtype_iscomposed then
           writeln_s(stream,'MIME-Type: '+mtype.AsString);
         mtype.Free;
-      end;
+      end else
+        mtype_iscomposed:=false;
 
       if (datei<>'') or (Mime.Disposition<>'') then
       begin
@@ -511,8 +518,9 @@ procedure THeader.WriteZConnect(stream:TStream);
         mdisp.Free;
       end;
 
-      if (typ='M') or ntConv(netztyp) then
-      if Mime.Encoding<>MimeEncodingUnknown then begin
+      if (typ='M') or ntConv(netztyp) or mtype_iscomposed then
+      if Mime.Encoding<>MimeEncodingUnknown then 
+      begin
         case Mime.Encoding of
           MimeEncodingBinary: s:='binary';
           MimeEncoding7Bit:   s:='7bit';
@@ -521,9 +529,9 @@ procedure THeader.WriteZConnect(stream:TStream);
           MimeEncodingBase64: s:='base64';
         end;
 
-        if (typ='M') or ntConv(netztyp) then
+        if (typ='M') or ntConv(netztyp) or mtype_iscomposed then
           writeln_s(stream,'U-Content-Transfer-Encoding: '+s);
-        if typ='M' then
+        if (typ='M') or mtype_iscomposed then
           writeln_s(stream,'MIME-Encoding: '+s);
       end;
 
@@ -594,6 +602,11 @@ begin
     Result := '';
 end;
 
+function THeader.GetTypChar: Char;
+begin
+  result := iifc(typ='B','B','T');
+end;
+
 procedure THeader.SetFistEmpfaenger(const Value: String);
 begin
   if Empfaenger.Count = 0 then
@@ -655,6 +668,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.23  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 

@@ -463,6 +463,7 @@ var x,y      : Integer;
       orgsize  : longint;
       orgempf  : AdrStr;
       sp       : scrptr;
+      hdp2typ  : char;
   begin
     size:=0;
     dbSeek(ubase,uiName,UpperCase(hdp.absender));
@@ -517,7 +518,10 @@ var x,y      : Integer;
         wrkilled;
         _era(tmp);
         dbWriteNStr(mbase,mb_betreff,hdp2.betreff);
-        dbWriteN(mbase,mb_typ,hdp2.typ[1]);
+
+        hdp2typ := hdp2.typChar;
+        dbWriteN(mbase,mb_typ,hdp2typ);
+        
         dbWriteN(mbase,mb_groesse,hdp.groesse);
         dbReadN(mbase,mb_unversandt,uvs);
         uvs:=uvs or 4;                        { "c"-Flag }
@@ -1007,6 +1011,7 @@ begin
             dbWriteN(mbase,mb_groesse,groesse);
             typ1:=UpCase(typ[1]);
             if (typ1<=' ') or (typ1>#126) then typ1:='?';
+            if (typ1='M') then typ1:='T';
             dbWriteN(mbase,mb_typ,typ1);
             dbWriteNStr(mbase,mb_mimetyp,LowerCase(Trim(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1))));
             dbWriteNStr(mbase,mb_brett,_brett);
@@ -1231,6 +1236,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2002/02/18 16:59:40  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.81  2002/02/01 10:31:54  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList

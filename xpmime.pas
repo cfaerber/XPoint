@@ -532,7 +532,7 @@ var   hdp      : THeader;
         code:=MimeEncodingBinary;
         fname:='';
         startline:=1;
-        lines:=n;
+        lines:=n-1;
         part:=0;
         end;
       end;
@@ -868,6 +868,9 @@ finalization
 
 {
   $Log$
+  Revision 1.58  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.57  2002/01/05 00:11:46  cl
   - fixed charset and UTF-8 support for multipart messages
 

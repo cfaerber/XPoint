@@ -97,8 +97,8 @@ function  dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;  { -1=unbekannt }
 
 procedure dbRead  (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbReadN (dbp:DB; feldnr:integer; var data);
-procedure dbWrite (dbp:DB; const feld:dbFeldStr; var data);
-procedure dbWriteN(dbp:DB; feldnr:integer; var data);
+procedure dbWrite (dbp:DB; const feld:dbFeldStr; const data);
+procedure dbWriteN(dbp:DB; feldnr:integer; const data);
 function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
 function  dbReadStrN(dbp:DB; feldnr:integer):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
@@ -1247,7 +1247,7 @@ end;
 
 { 'data' in Feld mit Nr. 'feldnr' schreiben }
 
-procedure dbWriteN(dbp:DB; feldnr:integer; var data);
+procedure dbWriteN(dbp:DB; feldnr:integer; const data);
 begin
   with dp(dbp)^ do begin
     if dEOF or dBOF then
@@ -1280,7 +1280,7 @@ end;
 
 { 'data' in Feld mit Name 'feld' schreiben }
 
-procedure dbWrite(dbp:DB; const feld:dbFeldStr; var data);
+procedure dbWrite(dbp:DB; const feld:dbFeldStr; const data);
 begin
   dbWriteN(dbp, GetFeldNr2(dbp,feld),data);
 end;
@@ -1620,6 +1620,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/02/18 16:59:40  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.51  2001/10/20 17:26:38  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

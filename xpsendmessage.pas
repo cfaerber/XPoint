@@ -341,6 +341,7 @@ var f,f2     : file;
     b        : byte;
     si0      : integer;
     hdp      : THeader;
+    hdptyp   : char;
 
     size     : integer;
     empfneu  : boolean;
@@ -358,7 +359,7 @@ var f,f2     : file;
     maxsize  : longint;     { ab hier muss gesplittet werden      }
     grnr     : longint;     { Brettgruppen-Nr.                    }
     addsize  : longint;     { Header + Signatur                   }
-{    hdsize   : word; }
+{   hdsize   : word; }
     oversize : longint;     { Nachrichtenlimit ueberschritten     }
     parken   : boolean;     { Nachricht nach />>Unversandt        }
     SendDefault : shortint;
@@ -1999,7 +2000,8 @@ fromstart:
       dbWriteN(mbase,mb_origdatum,l);
       dbWriteN(mbase,mb_empfdatum,sendedat);
       dbWriteN(mbase,mb_groesse,hdp.groesse);
-      dbWriteN(mbase,mb_typ,hdp.typ[1]);
+      hdptyp := hdp.typChar;
+      dbWriteN(mbase,mb_typ,hdptyp);
       if ntEditBrettempf(netztyp) then
         dbWriteNStr(mbase,mb_name,hdp.fido_to)
       else if ntRealname(netztyp) then
@@ -2330,6 +2332,9 @@ finalization
 
 {
   $Log$
+  Revision 1.44  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.43  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 

@@ -248,7 +248,12 @@ var x,y,wdt: Integer;
           dbWriteN(mbase,mb_halteflags,hflags);
           if repair then msgaddmark;
           inc(nbesch); inc(bbt,msize);
-          end;
+        end;
+        if typ='M' then begin
+          typ := 'T';
+          dbWriteN(mbase,mb_typ,typ);
+        end;
+        
         dbReadN(mbase,mb_empfdatum,edat);
         dbReadN(mbase,mb_unversandt,uvs);
         if (msize=0) or   { nur zur Sicherheit - sollte nicht vorkommen }
@@ -705,6 +710,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47  2002/02/18 16:59:40  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.46  2002/01/13 15:15:52  mk
   - new "empfaenger"-handling
 

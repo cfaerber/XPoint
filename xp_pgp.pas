@@ -852,6 +852,7 @@ var tmp,tmp2 : string;
     f,f2     : file;
     orgsize  : longint;
     b        : byte;
+    c        : char;
     l        : longint;
     pass     : string;
 
@@ -954,11 +955,14 @@ begin
       SafeDeleteFile(tmp2);
       Xwrite(tmp);
       wrkilled;
-      dbWriteN(mbase,mb_typ,hdp.typ[1]);
+      c:=hdp.typChar;
+      dbWriteN(mbase,mb_typ,c);
       dbWriteN(mbase,mb_groesse,hdp.groesse);
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                          { "c"-Flag }
       dbWriteN(mbase,mb_unversandt,b);
+
+
       hdp.groesse:=orgsize;
       PGP_EndSavekey;
     end;
@@ -1163,6 +1167,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.62  2002/01/19 13:46:09  mk
   - Big 3.40 udpate part III
 

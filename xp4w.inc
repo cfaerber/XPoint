@@ -909,7 +909,7 @@ begin
       end;
 
       poppush:=true;
-      ExtractSetMimePart(MimePart);
+p      ExtractSetMimePart(MimePart);
       Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead+iif(Enable_UTF8,xTractUTF8,0)),'',fn,false,
         iif(MultiPartType = mpAuto,-1,1));
       if MimePart.code=MimeEncodingBase64 then
@@ -1694,6 +1694,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.92  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.91  2002/01/22 19:15:30  mk
   - after 3.40 merge fixes
 

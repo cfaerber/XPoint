@@ -830,8 +830,8 @@ begin
             wrs('DISKUSSION-IN: '+xempf[i])
       end
     end;
-    if typ = 'B' then wrs('TYP: BIN') else
-    if typ = 'M' then wrs('TYP: MIME');
+    if typ = 'B' then wrs('TYP: BIN'); (* else
+    if typ = 'M' then wrs('TYP: MIME'); *)
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     for i := 0 to References.Count -1 do
@@ -863,7 +863,8 @@ begin
         mtype := TMimeContentType.Create(iifs(Mime.CType<>'',Mime.Ctype,'multipart/mixed'));
         if boundary <>'' then mtype.boundary := boundary;
 
-        if typ='M' then begin
+        if (mtype.isComposed) then 
+        begin
           wrs('MIME-Type: '+mtype.AsString);
           if(Mime.encoding<>MimeEncodingUnknown) then
             wrs('MIME-Encoding: '+MimeEncodingNames[Mime.Encoding]);
@@ -3654,6 +3655,9 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.90  2002/02/11 11:26:58  cl
   - fixed address handling for unbatched mail (rmail)
 

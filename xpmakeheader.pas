@@ -156,7 +156,7 @@ var i,res : integer;
     if line<>'' then begin
       if (UpperCase(line)='MIME') then typ:='M' else
       if (UpperCase(line)<>'TRANSPARENT') then typ:='B';
-      if (typ<>'T') and (typ<>'M') and (typ<>'') then charset:='';
+      if (typ<>'T') and (typ<>'') then charset:='';
       end;
   end;
 
@@ -277,6 +277,7 @@ var i,res : integer;
 //    pa.Boundary:='';
 //    pa.Charset :='';
     hd.Mime.CType := pa.AsString;
+    if pa.iscomposed then hd.typ := 'M';
     pa.free;
   end;
 
@@ -327,6 +328,7 @@ begin
   bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
+
   with hd do
     if ZConnect then
     begin
@@ -558,6 +560,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.23  2002/02/08 16:39:22  ma
   - partially fixed handling of crosspostings
     (showed up in "Nix" most times)

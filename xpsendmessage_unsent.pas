@@ -599,9 +599,9 @@ label ende,again;
     dbWriteNStr(mbase,mb_msgid,mid);
     l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
     hdp.typ:=iifc(binaermail,'B','T');   { Typ korrigieren }
-    b:=ord(hdp.typ[1]);    dbWriteN(mbase,mb_typ,b);
+    b:=ord(hdp.typChar);    
+    dbWriteN(mbase,mb_typ,b);
     close(f);
-    dbWriteN(mbase,mb_typ,hdp.typ[1]);
     if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
     else                  dbWriteNStr(mbase,mb_name,hdp.realname);
     b:=1;             dbWriteN(mbase,mb_gelesen,b);
@@ -1240,10 +1240,10 @@ begin
   dbWriteNStr(mbase,mb_msgid,mid);
   l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
   hdp.typ:=ntyp;
-  b:=ord(hdp.typ[1]);    dbWriteN(mbase,mb_typ,b);
+  b:=ord(hdp.typChar);    
+  dbWriteN(mbase,mb_typ,b);
   close(f);
   erase(f);
-  dbWriteN(mbase,mb_typ,hdp.typ[1]);
   if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
   else                  dbWriteNStr(mbase,mb_name,hdp.realname);
   b:=1;             dbWriteN(mbase,mb_gelesen,b);
@@ -1336,6 +1336,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/02/18 16:59:41  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.18  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 

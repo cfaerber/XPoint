@@ -1494,13 +1494,20 @@ begin
   else begin
     dbReadN(mbase,mb_typ,c);
     dbReadN(mbase,mb_flags,flags);
-    if c='T' then
-      if flags and 4=0 then c:='B'  { Text -> Bin  }
-      else flags:=flags and not 4   { Mime -> Text }
-    else begin
-      flags:=flags or 4;            { Bin -> Mime }
-      c:='T';
-      end;
+
+    if (c='T') and ((flags and 4)<>0) then c:='M';
+
+    case c of
+      'T': c:='B';
+      'B': c:='M';
+      else c:='T';
+    end;
+
+    if c='M' then flags := flags or 4 else
+                  flags := flags and not 4;
+
+    if c='M' then c:='T';
+                  
     dbWriteN(mbase,mb_flags,flags);
     dbWriteN(mbase,mb_typ,c);
     aufbau:=true;
@@ -2061,7 +2068,7 @@ var hdp   : Theader;
     _(54,dbReadStrN(mbase,mb_MsgID));           { 'MsgID     :' }
     _(55,hex(dbReadIntN(mbase,mb_netztyp),4));  { 'Netztyp   :' }
     _(57,dbReadStrN(mbase,mb_Name));            { 'Name      :' }
-    _(49,hex(dbReadIntN(mbase,mb_flags),4));    { 'Flags     :' }
+    _(58,hex(dbReadIntN(mbase,mb_flags),4));    { 'Flags     :' }
     _(59,dbReadStrN(mbase,mb_MimeTyp));         { 'Mimetyp   :' }
 
     wait(curoff);
@@ -2971,6 +2978,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2002/02/18 16:59:40  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
   Revision 1.134  2002/02/10 18:49:50  mk
   - fixes misc bugs in Suche()
 
