@@ -6,7 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-
+{ $ID$ }
 
 { CrossPoint - UniSel: Select/Test-Routinen fuer Unisel-Menues    }
 
@@ -712,3 +712,9 @@ begin
     end;
 end;
 end.
+{
+  $Log$
+  Revision 1.1.2.4  2001/06/19 06:53:00  mk
+  - added CVS Log Infos
+
+}
