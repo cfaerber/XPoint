@@ -239,11 +239,14 @@ end;
 initialization
   // disable program termination at ctrl-c
   SetConsoleCtrlHandler(nil, true);
-  SetConsoleMode(OutHandle, ENABLE_MOUSE_INPUT);
+  SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), ENABLE_MOUSE_INPUT);
 finalization
 
 {
   $Log$
+  Revision 1.25  2002/01/30 22:23:28  mk
+  - corrected handle for ENABLE_MOUSE_INPUT
+
   Revision 1.24  2001/12/05 18:24:34  mk
   - disable ctrl-c
 
