@@ -502,25 +502,6 @@ var RTAEmpfList : TRTAEmpfaengerList;
             addToRTAList(unbekannteUser, empf, true, false, true, 3);
     end;
 
-    { Die User werden mit Standardeinstellungen und Adressbuchgruppe 0
-      angelegt }
-
-    procedure userAnlegen (const user, box :string);
-    var halten :integer16;
-        b :byte;
-    begin
-      dbAppend(ubase);                        { neuen User anlegen }
-      dbWriteNStr(ubase,ub_username,user);
-      dbWriteNStr(ubase,ub_pollbox,box);
-      halten:=stduhaltezeit;
-      dbWriteN(ubase,ub_haltezeit,halten);
-      b:= 1+iif(newuseribm,0,8);
-      halten := 0;
-      dbWriteN(ubase,ub_adrbuch, halten);
-      dbWriteN(ubase,ub_userflags,b);      { aufnehmen }
-      dbFlushClose(ubase);
-    end;
-
     { Allen neuen Usern wird der gleiche Server zugewiesen }
 
     procedure pollBoxZuweisen (const box :string);
@@ -528,7 +509,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
       i: Integer;
     begin
       for i := 0 to unbekannteUser.Count - 1 do
-        userAnlegen (unbekannteUser[i].empf, box);
+        AddNewUser(unbekannteUser[i].empf, box);
     end;
 
     { FÅr jeden User erscheint das bekannte Dialogfenster "User bearbeiten" }
@@ -539,7 +520,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
     begin
       for i := 0 to unbekannteUser.Count - 1 do
       begin
-        userAnlegen (unbekannteUser[i].empf, box);
+        AddNewUser(unbekannteUser[i].empf, box);
         modiUser (false);
       end;
     end;
@@ -977,6 +958,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2001/09/07 02:23:26  mk
+  - useranlegen is duplicate to AddNewUser, replaced
+
   Revision 1.13  2001/08/23 11:15:01  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
