@@ -511,6 +511,17 @@ var flp : dbFLP;
     freeres;
   end;
 
+  { Feld 'LastMsgID' in Autoversand einfÅgen (ab 3.3) }
+  procedure NewFieldLastMsgID;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='LastMsgID'; ftyp:=dbTypeString;
+      fsize:=120;
+      end;
+    dbAppendField(AutoFile,fld);
+  end;
+
   { Wiedervorlage-Datum 31.12.1999 durch 31.12.2027 ersetzen }
   procedure FixWiedervorlage;
   var x,y  : byte;
@@ -769,7 +780,7 @@ begin
       end;
 
   if not exist(AutoFile+dbExt) then begin        { AUTOMSG: autom. Versand }
-    initflp(13);
+    initflp(14);
     AppS('Dateiname',80);
     AppS('Betreff',40);
     AppX('Typ',dbTypeInt,1,1);
@@ -783,9 +794,14 @@ begin
     AppX('Flags',dbTypeInt,2,5);
     AppX('LastDate',dbTypeInt,4,10);
     AppX('LastFdate',dbTypeInt,4,10);
+    AppS('LastMsgID',120);
     dbCreate(AutoFile,flp);
     dbReleaseFL(flp);
-    end;
+  end
+  else begin
+    if not dbHasField(AutoFile,'LastMsgID') then
+      NewFieldLastMsgID;
+  end;
 
   if not exist(PseudoFile+dbExt) then begin      { PSEUDOS: EmpfÑnger-KÅrzel }
     initflp(4);
@@ -885,6 +901,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.19  2000/08/25 22:40:31  mk
   - Datenbank Indexcache freigeschaltet
 

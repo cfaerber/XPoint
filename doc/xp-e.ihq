@@ -5670,13 +5670,17 @@ also be deleted.
 
 This switch works in combination with all other
 settings, but of course has no effect on messages
-where no file is specified..
+where no file is specified.
 
 If the file is to sent each time it changes, there
 <<must>> be a "day" or "weekday" entry
 eg. "weekdays = all" to allow it to be sent.
 @
 580
+<<[x]>> -> The message will supersede the old message
+       (<<RFC>> only)
+@
+581
 A single complete date can be entered here, on which
 the message will be sent. The date will be deleted
 after sending. If the fields "days" or "weekdays" are
@@ -5684,8 +5688,8 @@ also empty, and the field "delete" is [x] "on", the
 complete entry will be deleted, plus the message if
 it is a .MSG file. See the field [Delete]@578
 @
-581
-^^580
+582
+^^581
 @
 590
 <<[x]>>  the macro works in the newsgroup list

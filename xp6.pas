@@ -89,6 +89,7 @@ type  SendUUdata = record
                      quotestr   : string;
                      UV_edit    : boolean;        { <Esc> -> "J" }
                      empfrealname : string;
+                     msgid,
                      ersetzt    : string;
                    end;
       SendUUptr   = ^SendUUdata;
@@ -1650,6 +1651,8 @@ fromstart:
     end;
     dbAppend(mbase);            { neue mbase.INT_NR fr MessageID }
     hdp^.msgid:=MessageID;
+    sData^.msgid:=hdp^.msgid;
+    hdp^.ersetzt:=sData^.ersetzt;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
     begin
@@ -2132,6 +2135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.67  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.66  2000/10/01 15:50:23  mk
   - AnsiString-Fixes
 

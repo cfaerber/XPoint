@@ -1243,6 +1243,7 @@ begin
   dispose(sData);
 end;
 
+
 { Puffer im ZConnect-Format? }
 
 function ZC_puffer(var fn:string):boolean;
@@ -1467,6 +1468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.34  2000/10/01 15:50:23  mk
   - AnsiString-Fixes
 

@@ -120,6 +120,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       wrs('BET: '+betreff);
       wrs('EDA: '+zdatum);
       wrs('MID: '+msgid);
+      if ersetzt<>'' then wrs('ersetzt: '+ersetzt);
       if ntMaxRef(netztyp)>1 then
         WriteReflist(reflist,1);
       if ref<>'' then wrs('BEZ: '+ref);
@@ -432,6 +433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.21  2000/09/06 21:31:01  fe
   /home/fe/foo
 

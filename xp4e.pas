@@ -1870,6 +1870,7 @@ var x,y    : byte;
     bin    : boolean;
     loesch : boolean;
     modif  : boolean;
+    ersetz : boolean;
     nt     : byte;
     pm     : boolean;
 
@@ -1891,9 +1892,10 @@ begin
     bin:=(UpCase(typ)='B');
     loesch:=(flags and 2<>0);
     modif:=(flags and 4<>0);
+    ersetz:=(flags and 8<>0);
     tg:=tagstring(tage);
     mon:=monstring(monate);
-    dialog(59,12,getres2(2726,iif(kopie,2,1)),x,y);   { 'AutoVersand-Nachricht (kopieren) }
+    dialog(59,13,getres2(2726,iif(kopie,2,1)),x,y);   { 'AutoVersand-Nachricht (kopieren) }
     maddstring(3,2,getres2(2726,3),betreff,42,40,'');  mhnr(570);  { 'Betreff   ' }
     maddstring(3,3,getres2(2726,4),datei,42,80,'>');  { 'Datei     ' }
     malltrim;
@@ -1911,15 +1913,16 @@ begin
     mappsel(false,getres2(2726,9));   { 'MoùDiùMiùDoùFrùSaùSo' }
     mappsel(false,getres(2723));      { 't„glich' }
     mset3proc(testwot);
-    maddstring(3,11,getres2(2726,10),mon,17,30,'0123456789,');  { 'Monate    ' }
+    maddstring(3,12,getres2(2726,10),mon,17,30,'0123456789,');  { 'Monate    ' }
     mappsel(false,getres(2724));   { 'alle' }
     mset3proc(testmon);
     maddbool  (39,6,getres2(2726,11),bin);          { 'bin„r' }
     maddbool  (39,7,getres2(2726,12),loesch);       { 'l”schen' }
     maddbool  (39,8,getres2(2726,13),modif);        { 'bei Žnderung' }
-    madddate  (39,10,getres2(2726,14),dat1,false,true);   { 'Datum 1 ' }
+    maddbool  (39,9,getres2(2726,16),ersetz);       { 'ersetzen' }
+    madddate  (39,11,getres2(2726,14),dat1,false,true);   { 'Datum 1 ' }
     mset3proc(atestdate);
-    madddate  (39,11,getres2(2726,15),dat2,false,true);   { 'Datum 2 ' }
+    madddate  (39,12,getres2(2726,15),dat2,false,true);   { 'Datum 2 ' }
     mset3proc(atestdate);
     readmask(brk);
     freeres;
@@ -1931,7 +1934,8 @@ begin
       monate:=monword(mon);
       datum1:=dl(dat1);
       datum2:=dl(dat2);
-      flags:=flags and (not (2+4)) + iif(loesch,2,0) + iif(modif,4,0);
+      flags:=flags and (not (2+4+8))
+             + iif(loesch,2,0) + iif(modif,4,0) + iif(ersetz,8,0);
       pm:=multipos('@',empf);
       nt:=0;
       if box<>'' then
@@ -2421,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.43  2000/10/05 23:10:54  mk
   - Resource 2738 angelegt
 

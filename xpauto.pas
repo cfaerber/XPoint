@@ -31,9 +31,10 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : smallword;           { 1=aktiv, 2=l”schen }
+                  flags   : word; { 1=aktiv, 2=l”schen, 4=Žnderung, 8=ersetzt }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
+                  lastmid : string;
                 end;
 
 procedure AutoRead(var ar:AutoRec);
@@ -67,7 +68,8 @@ begin
     dbRead(auto,'flags',flags);
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
-    end;
+    dbRead(auto,'lastmsgid',lastmid);
+  end;
 end;
 
 procedure AutoWrite(var ar:AutoRec);
@@ -84,7 +86,7 @@ begin
     dbWrite(auto,'datum1',datum1);
     dbWrite(auto,'datum2',datum2);
     dbWrite(auto,'flags',flags);
-    end;
+  end;
 end;
 
 
@@ -201,6 +203,7 @@ var tmp  : boolean;
     tt   : longint;
     b    : byte;
     muvs : boolean;
+    sData: SendUUptr;
 begin
   postfile:=false;
   with ar do begin
@@ -218,7 +221,7 @@ begin
         rewrite(t);
         writeln(t);
         close(t);
-        end;
+      end;
       pm:=(pos('@',empf)<>0);
       if pm and (betreff='') then betreff:='<nope>';
       empf:=vert_long(empf);
@@ -238,12 +241,16 @@ begin
       if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
+      new(sData);
+      fillchar(sData^,sizeof(sData^),0);
+      if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
       if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
-                nil,leer,leer,sendShow) then begin
+                sData,leer,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
+        dbWrite(auto,'lastmsgid',sData^.msgid);
         assign(t,datei);
         reset(t); getftime(t,tt); close(t);
         dbWrite(auto,'lastfdate',tt);
@@ -660,6 +667,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
   Revision 1.22  2000/09/30 16:33:13  mk
   - LFN-Bufix
 
