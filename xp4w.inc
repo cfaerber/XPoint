@@ -470,34 +470,27 @@ var fn     : pathstr;
     poppush  : boolean;
     mimetyp  : string[30];
     viewer   : ViewInfo;
-
-  function ViralExtension:boolean;          { Mailviren-Schutz }
-  var x,y,i : byte;
-      t     : taste;
-      width : byte;
-      found : boolean;
-  const
-    viral_ext : array [1..11] of String[4] = 
-     ('EXE','COM','BAT','CMD','DOC','XLS','XLM','XLW','PPT','VBS','JS');
-  begin
-  viralExtension:=false;
-  i:=0;
-  repeat
-    inc(i);
-    found:=(ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)+1)) = viral_ext[i]);
-  until found or (i>11);
-  if found then
-  begin
-    diabox(45,6,'',x,y);
-    mwrt(x+2,y+1,viral_ext[i]+getres(2443));
-    mwrt(x+2,y+2,getres(2444));
-    t:='';
-    case readbutton(x+2,y+4,2,getres(107),2,true,t) of
-      0,2 : viralExtension:=true;             { '  ^Ja  , ^Nein ' }
-      end;
-    closebox;
+                                           { Mailviren-Schutz }
+  function ViralExtension:byte;            
+  var x,y   : byte;                        {Rueckgabe:}
+      t     : taste;                       { 0: externer Mime-Viewer erlaubt }
+      s     : string[10];                  { 1: internen Lister verwenden }
+  begin                                    { 2: Viewer fuer Verdaechtige Progamme verwenden }
+    viralExtension:=0;
+    s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.'; 
+    if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
+      if pos(s,viewer_lister)>1 then viralExtension:=1
+      else begin
+        diabox(45,6,'',x,y);
+        mwrt(x+2,y+1,s+getres(2443));
+        mwrt(x+2,y+2,getres(2444));
+        t:='';
+        case readbutton(x+2,y+4,2,getres(107),2,true,t) of
+          0,2 : viralExtension:=2;              { '  ^Ja  , ^Nein ' }
+          end;
+        closebox;
+        end;
     end;
-  end;
 
   procedure CopyMsg;
   var f1,f2 : file;
@@ -769,10 +762,12 @@ begin
           GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
           if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
             GetMimeViewer(mimetyp,viewer);
-
-          if (viewer.ext='') and (viewer.prog<>'') then { Schutz vor Mail-Viren }
-            if ViralExtension then viewer.Prog:='';     { Bei Multiformat-Mimetyp }
-            
+                                            { Schutz vor Mail-Viren Bei Multiformat-Mimetyp }
+          if (viewer.ext='') and (viewer.prog<>'') then   
+            case ViralExtension of 
+              1: Viewer.Prog:='';                { Interner Lister }
+              2: viewer.Prog:=viewer_scanner;    { Alternativ-Programm }
+              end;     
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
       end

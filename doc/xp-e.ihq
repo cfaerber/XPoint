@@ -6465,6 +6465,80 @@ enter the name of the batch in full, eg. VIEW.BAT.
 (ie. incl. ".BAT")
 
 @
+8071
+Wenn Dateien mit externen Viewerprogrammen ge”ffnet
+sind, kann mit Crosspoint weitergearbeitet werden.
+um die angezeigten tempor„r-Dateien zu l”schen,
+gibt es zwei Vorgehensweisen:
+
+<<[ ]>> -> Es wird zusaetzlich zum Viewer-Programm
+       eine Batchdatei ge”ffnet, die wartet bis
+       das Viewer-Programm beendet wird und dann 
+       sich selbst und die Tempor„rdatei l”scht.
+
+<<[X]>> -> Crosspoint l”scht die Tempor„rdatei
+        erst beim n„chsten Programmstart.
+@
+8072
+<<Ungef„hrliche Dateiendungen>>
+
+Wenn bei Mime-Viewer Eintr„gen keine Dateiendung
+angegeben wird, k”nnen Multiformat-Mimetypen
+(z.B Application/octet-stream) mit einem 
+Allround-Viewer angesehen werden. Unter Windows
+bietet sich dazu der Befehl "START" an.
+
+Allerdings besteht bei dieser Funktion die
+Gefahr, dass Mail-Viren und andere gef„hrliche
+Dateien direkt ausgefhrt werden.
+
+Zum Schutz davor kommt bei allen Dateieendungen
+die nicht in dieser Liste eingetragen sind,
+eine Sicherheitsabfrage, bevor die Dateien 
+ge”ffnet werden.
+
+Wird diese Abfrage mit "Nein" beantwortet, 
+wird der interne Lister bzw das unten eingetragene 
+[Viewerprogramm fuer Verd„chtige Dateien]@8074
+benutzt, um die Datei anzusehen.
+
+Die Dateieendungen mssen incl. Punkt 
+eingegeben werden (also ".HTM" nicht nur "HTM")
+Folgende Dateiformate sind zu gef„hrlich, 
+und werden in dieser Liste ignoriert:
+.EXE .COM .BAT .BTM .CMD .PIF .LNK .INF .REG
+
+Siehe auch: 
+[Lister-Dateiendungen]@8073
+@
+8073
+<<Lister-Dateiendungen>>
+
+Dateien in Multiformat-Mimetyp Mails, 
+die eine dieser Dateiendungen haben, werden immer 
+mit dem XP-internen Lister/Viewer ge”ffnet.
+
+Siehe auch: 
+[Ungef„hrliche Dateiendungen]@8072
+[Viewerprogramm fuer Verd„chtige Dateien]@8074 
+@
+8074
+<<Viewerprogramm fuer Verd„chtige Dateien>>
+
+Wenn die Sicherheitsabfrage bei Multiformat-
+Mimetypen mit "Nein" beantwortet wird,
+wird das hier eingetragene Programm gestartet
+(z.B ein Virenscanner...)
+
+Ist hier nichts eingetragen, wird die
+Datei mit dem XP-Internen Lister/Viewer angezeigt.
+
+Siehe auch:
+[Lister-Dateiendungen]@8073
+[Ungef„hrliche Dateiendungen]@8072
+
+
+@
 830
 Enter the individual expressions to be searched for.
 After saving the data base query, you must make a

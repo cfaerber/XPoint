@@ -368,7 +368,8 @@ begin
             1 : options;
             2 : UI_options;
             3 : ListOptions;
-           13 : Editor_options;   
+           13 : Editor_options;
+           14 : ViewerOptions;   
             4 : msgoptions;
            12 : adroptions;
             6 : netcalloptions;
@@ -578,6 +579,11 @@ begin
 end;
 { 
   $Log$
+  Revision 1.13  2000/05/09 20:07:02  jg
+   Externe Viewer / Schutzmassnahmen:
+   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
+   - entsprechende Einstellungen unter Config/Optionen/Viewer
+
   Revision 1.12  2000/04/14 14:55:35  jg
   - Bugfix: es gab zwei Routinen namens Editoptions...
 

@@ -791,6 +791,13 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {$ENDIF }
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
+                         { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }                                  
+
+       viewer_danger : string[37] = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
+       viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF.';        { ohne Sicherheitsabfrage }
+       viewer_lister : string = '.TXT.ASC.';                 { immer internen Lister benutzen }
+       viewer_scanner : string[viewproglen] = '';            { Viewer bei Antwort=Nein }
+
        { 01/2000 oh }
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
@@ -1146,6 +1153,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.42  2000/05/09 20:07:01  jg
+   Externe Viewer / Schutzmassnahmen:
+   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
+   - entsprechende Einstellungen unter Config/Optionen/Viewer
+
   Revision 1.41  2000/05/09 19:09:20  hd
   - charbuf/attrbuf vergroessert
 

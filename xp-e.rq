@@ -49,7 +49,7 @@ K (c) '93-96 Peter Mandrella
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  Gebhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1cdEd^itor,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
+28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File listsù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
@@ -774,6 +774,16 @@ K (c) '93-96 Peter Mandrella
 7    Send-Priority
 8    Priority ~
 9    HighestùHighùNormalùLowùLowestùNone
++ 273
+# 09.05.00 JG: Neue Viewer-Optionen
+0    55
+1    Viewer-Options
+2    Safety for multiformat-mime-types
+3    Safe file-extensions (use external Viewer)
+4    Use internal viewer for this extensions
+5    Viewer-program for suspicious file extensions
+6    Miscellaneous
+7    No waiting-batch for windows-viewers
 -
 
 # --- XP3 -------------------------------------------------------------

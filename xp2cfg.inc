@@ -843,6 +843,9 @@ begin
   writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
+  writeln(t,'ViewerSave=',viewer_save);
+  writeln(t,'ViewerLister=',viewer_lister);
+  writeln(t,'ViewerVirscan=',viewer_scanner);
   writeln(t,'Editor=',VarEditor);
   writeln(t,'EditorKB=',editorkb);
 { writeln(t,'EditVollbild=',jnf(editvollbild)); }
@@ -1383,6 +1386,9 @@ begin
           gets(s,su,'lister',varlister,40) or
           getw(su,  'listerkb',listerkb) or
           getx(su,  'listwrap',listwrap) or
+          gets(s,su,'ViewerSave',viewer_save,255) or
+          gets(s,su,'ViewerLister',viewer_lister,255) or
+          gets(s,su,'ViewerVirscan',viewer_scanner,viewproglen) or
           gets(s,su,'editor',vareditor,40) or
           getw(su,  'editorkb',editorkb) or
           getx(su,  'autocpgdn',autocpgd) or
@@ -1600,6 +1606,9 @@ begin
       end;
     close(t);
 
+    viewer_save:=Viewer_save+'.';
+    viewer_lister:=Viewer_Lister+'.';
+
     for i:=1 to 2 do
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
@@ -1716,6 +1725,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.51  2000/05/09 20:07:01  jg
+   Externe Viewer / Schutzmassnahmen:
+   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
+   - entsprechende Einstellungen unter Config/Optionen/Viewer
+
   Revision 1.50  2000/05/08 18:34:45  hd
   - /var/tmp unter Linux als Default
 

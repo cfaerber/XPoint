@@ -57,6 +57,7 @@ procedure NetEnable;
 procedure GebuehrOptions;
 procedure TerminalOptions;
 procedure PGP_Options;
+procedure ViewerOptions;
 
 
 { Testfunktionen; mssen wg. Overlay im Interface-Teil stehen: }
@@ -78,6 +79,7 @@ function SetTimezone(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
 function dpmstest(var s:string):boolean;
+function testfilename( var s:string):boolean;
 
 procedure setvorwahl(var s:string);
 procedure DispArcs;
@@ -1409,10 +1411,60 @@ begin
   menurestart:=brk;
 end;
 
+function testfilename(var s:string):boolean;
+var i : byte;
+    c : char;
+begin 
+  testfilename:=true;
+  for i:=1 to length(s) do
+  begin
+    c:=s[i];    
+    if not ((c='.') or (c in ['A'..'Z']) or (c in ['0'..'9']))
+      then testfilename:=false;
+    end;  
+ end;
+
+procedure ViewerOptions;
+var x,y : byte;
+    brk : boolean;
+begin
+  if right(viewer_save,1)='.' then viewer_save:=left(viewer_save,length(viewer_save)-1);
+  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1); 
+
+  dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
+  maddtext(2,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
+  maddbool(3,4,getres2(273,7),delviewtmp);   { Keine Warte-Batchdatei bei Windows-Viewern }
+  mhnr(8071);
+  maddtext(2,7,getres2(273,2),col.coldiahigh);    { 'Sicherheit bei Multiformat Mime-Viewern:'}
+  maddtext(3,9,getres2(273,3),0);          { Sichere Dateiendungen (externen Viewer benutzen):}
+  maddstring(3,10,'',viewer_save,50,255,'>');
+  mset1func(testfilename); 
+  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF.ZIP'); 
+  maddtext(3,12,getres2(273,4),0);          {Internen Lister benutzen bei diesen Dateiendungen:}
+  maddstring(3,13,'',viewer_lister,50,255,'>');
+  mset1func(testfilename); 
+  mappsel(false,'.TXT.ASC');
+  maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verd„chtige Dateiformate}
+  maddstring(3,16,'',viewer_scanner,50,viewproglen,'');  
+  msetvfunc(testexist);
+  readmask(brk);
+  if not brk and mmodified then
+    GlobalModified;
+  enddialog;
+  freeres;
+  menurestart:=brk;  
+  viewer_save:=Viewer_save+'.';
+  viewer_lister:=Viewer_Lister+'.';
+end;
 
 end.
 {
   $Log$
+  Revision 1.32  2000/05/09 20:07:01  jg
+   Externe Viewer / Schutzmassnahmen:
+   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
+   - entsprechende Einstellungen unter Config/Optionen/Viewer
+
   Revision 1.31  2000/05/08 18:40:47  hd
   - NOEMS wieder entfernt
 

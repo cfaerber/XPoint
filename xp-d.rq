@@ -48,7 +48,7 @@ K (c) '93-98 Peter Mandrella
 24  Extern,181^Lister,182^Editor,183^Shell,184Ent^packer,185pm^Crypt,186P^GP
 26  Gebhren,1a1^Alle,1a2^Einzeln
 27  Liste,1b1^Anfordern,1b2^Nachricht einlesen,1b3^Datei einlesen
-28  Optionen,1c1^Allgemeines,1c2^Bedienung,1c3^Lister,1cdEd^itor,1c4^Nachrichten,1ccA^dressen,1c5N^etzeù37,-,1c6Net^call,1c7^Gebhrenù39,1cb^Terminal,-,1c9^Paáwort,1ca^Sprache
+28  Optionen,1c1^Allgemeines,1c2^Bedienung,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4^Nachrichten,1ccA^dressen,1c5N^etzeù37,-,1c6Net^call,1c7^Gebhrenù39,1cb^Terminal,-,1c9^Paáwort,1ca^Sprache
 29  Brettindex,1d1^Neuaufbau,1d2^Alphabetisch
 30  Nodelist,1e1^Verwalten,1e2^Update einbinden,1e3^Einschr„nken,1e4^Indizieren,-,1e6^Statistik,1e7^Durchsuchen,1e8^Abfragen      @N
 31  Fido,1f1^Request,1f2^Filelistenù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistenù30,1f6^Optionen
@@ -784,6 +784,16 @@ K (c) '93-98 Peter Mandrella
 7    Sende-Priorit„t
 8    Priorit„t ~
 9    H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine
++ 273
+# 09.05.00 JG: Neue Viewer-Optionen
+0    55
+1    Viewer-Einstellungen
+2    Sicherheit bei Multiformat Mime-Viewern
+3    Sichere Dateiendungen (externen Viewer benutzen)
+4    Internen Lister benutzen bei diesen Dateiendungen
+5    Viewerprogramm fr verd„chtige Dateiformate
+6    Allgemeines
+7    Keine Warte-Batchdatei bei Windows-Viewern
 -
 
 # --- XP3 -------------------------------------------------------------
