@@ -1038,6 +1038,7 @@ var FidoOriginSav: string;
       end;
     end;
    done:
+    begin end;
 
    finally
     Server.Free;
@@ -1134,6 +1135,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.19  2003/08/30 22:39:17  cl
+// - fixes for FPC
+//
 // Revision 1.18  2003/08/30 22:19:27  cl
 // - send window: select encryption and signature method
 // - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

@@ -92,8 +92,8 @@ var
 
 type
 {$IFDEF FPC} // Grrr
-  TSendEncryptionMethod = 1..20;
-  TSendSigningMethod = 1..21;
+  TSendEncryptionMethod = 0..10;
+  TSendSigningMethod = 0..10;
   
   const
     secNone = 0;
@@ -1010,6 +1010,9 @@ finalization
 
 {
   $Log$
+  Revision 1.77  2003/08/30 22:39:16  cl
+  - fixes for FPC
+
   Revision 1.76  2003/08/30 22:19:26  cl
   - send window: select encryption and signature method
   - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
