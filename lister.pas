@@ -59,6 +59,7 @@ type
   TListerConvertEvent = procedure(var buf; Size: xpWord) of object; { fuer Zeichensatzkonvert. }
   TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
+  TListerTestSelectEvent = function(const s: string; down: boolean): boolean;
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
   TListerDisplayLineEvent = procedure(x, y: xpWord; var s: string);
@@ -108,6 +109,7 @@ type
     FOnConvert: TListerConvertEvent;
     FOnTestMark: TListerTestMarkEvent;
     FOnEnter: TListerEnterEvent;
+    FOnTestSelect: TListerTestSelectEvent;
     FOnKeypressed: TListerKeyPressedEvent;
     FOnShowLines: TListerShowLinesEvent;
     FOnDisplayLine: TListerDisplayLineEvent;
@@ -172,6 +174,7 @@ type
     property OnConvert: TListerConvertEvent read FOnConvert write FOnConvert;
     property OnTestMark: TListerTestMarkEvent read FOnTestMark write FOnTestMark;
     property OnEnter: TListerEnterEvent read FOnEnter write FOnEnter;
+    property OnTestSelect: TListerTestSelectEvent read FOnTestSelect write FOnTestSelect;
     property OnKeyPressed: TListerKeyPressedEvent read FOnKeyPressed write FOnKeyPressed;
     property OnShowLines: TListerShowLinesEvent read FOnShowLines write FOnShowLines;
     property OnDisplayLine: TListerDisplayLineEvent read FOnDisplayline write FOnDisplayLine;
@@ -848,12 +851,29 @@ begin // Show
   oldselb := true; {!}
   
   repeat
+
+    if SelBar then
+    begin
+      while assigned(FOnTestSelect) and not FOnTestSelect(Lines[FSelLine],true) do
+      begin
+        if FSelLine < Lines.Count - 1 then Inc(FSelLine) else break;
+        if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
+      end;
+      while assigned(FOnTestSelect) and not FOnTestSelect(Lines[FSelLine],true) do
+      begin
+        if FSelLine > 0 then Dec(FSelLine) else break;
+      end;
+
+      FirstLine := Min(FirstLine,FSelLine);  
+    end;
+
     display;
     showstat;
     if Assigned(FOnShowLines) then FOnShowLines(GetSelection);
     mauszuo:=false; // (pl<>nil) and (pl^.prev<>nil);
     mauszuu:=false; // (pl<>nil) and (pl^.next<>nil);
     mauszul := false; mauszur := false;
+    
     if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
     if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
       1) then AutoDown := false;
@@ -905,7 +925,9 @@ begin // Show
       if (t = keyup) and not mausdown then
         if SelBar then
         begin
-          if FSelLine > 0 then Dec(FSelLine);
+          repeat
+            if FSelLine > 0 then Dec(FSelLine) else break;
+          until (not assigned(FOnTestSelect)) or FOnTestSelect(Lines[FSelLine],false);
           FirstLine := Min(FirstLine, FSelLine);
         end
         else
@@ -916,8 +938,8 @@ begin // Show
       if (t = keydown) and not mausdown then
         if selbar then
         begin
-          if FSelLine < Lines.Count - 1 then Inc(FSelLine);
-          if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
+            if FSelLine < Lines.Count - 1 then Inc(FSelLine);
+            if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
         end
         else
           if FirstLine + DispLines < Lines.Count then
@@ -1149,6 +1171,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.77  2003/01/07 00:20:37  cl
+  - added OnTestSelect event
+
   Revision 1.76  2002/12/21 05:37:50  dodi
   - removed questionable references to Word type
 
