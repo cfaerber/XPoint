@@ -66,6 +66,7 @@ uses
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
      replytoall,
+     zftools,
      zcrfc;    { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
@@ -82,6 +83,9 @@ begin
   else
   if Prog = 'NDIFF' then
     StartCommandLineNDIFF
+  else
+  if Prog = 'ZFIDO' then
+    StartCommandLineZFIDO
   else
     Result := false;
 end;
@@ -210,6 +214,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/12/08 14:21:58  mk
+  - implemented zfido command line
+
   Revision 1.7  2001/10/28 00:03:58  ma
   - in case of an unhandled exception file ERROR.TXT will be created
     containing last debug logs regardless of logging enabled or not

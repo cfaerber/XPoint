@@ -193,7 +193,7 @@ function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
 
 
 { Hauptprogramm, wird noch extrahiert }
-function ZFidoMain: integer;
+procedure StartCommandLineZFIDO;
 
 implementation
 
@@ -348,7 +348,7 @@ var i    : integer;
 
 begin
   warn:=false; adr3d:=false;
-  for i:=1 to paramcount do begin
+  for i:=2 to paramcount do begin
     so:= ParamStr(i);
     s:=UpperCase(so);
     if (s='-ZF') or (s='/ZF') then direction:=1
@@ -1792,19 +1792,21 @@ begin
 end;
 
 
-function ZFidoMain: integer;
+procedure StartCommandLineZFIDO;
 begin
   getpar;
   testfiles;
   if direction=1 then testadr;
   if direction=1 then ZFidoProc
   else FidoZ(1,1);
-  result:= _result;
 end;
 
 end.
 {
         $Log$
+        Revision 1.29  2001/12/08 14:21:58  mk
+        - implemented zfido command line
+
         Revision 1.28  2001/10/28 15:40:38  ma
         - Fido mailer header uses standard format
 
