@@ -350,7 +350,7 @@ begin
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
   j := iif (UUCP_ZConnectUsed, 1, 0);
-  dialog(57,iif (UUCP_ZConnectUsed, 21, 20),getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
+  dialog(57,21+j,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
@@ -386,7 +386,6 @@ begin
   maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-{  maddbool(3,16,getres2(252,28),askreplyto); }  { 'fragen bei Antwort-an' }
   maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
 
@@ -1506,6 +1505,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.23  2001/08/11 08:42:22  mk
+  - resized Config/Optionen/Nachrichten
+
   Revision 1.39.2.22  2001/08/02 22:31:33  mk
   - removed function FUStr, only usefull in 3.70
 
