@@ -239,7 +239,7 @@ begin
       if DbResult<0 then DbRead:=''
       else begin
         Move(xa(buff^)[feld[FeldNr].off],h[1],feld[FeldNr].size);
-        h[0]:=chr(feld[FeldNr].size);
+        setlength(h,feld[FeldNr].size);
         DbRead:=h;
         DbResult:=0;
         end;
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/09/19 22:46:40  fe
+  Ansistring-Fix
+
   Revision 1.7  2000/09/09 22:30:39  fe
   rtlword-Fixes
 
