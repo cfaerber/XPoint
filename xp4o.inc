@@ -21,7 +21,7 @@
 { XP4O - Reorganisation }
 
 
-procedure BU_reorg(user,adrbuch:boolean);
+procedure BU_reorg(user,adrbuch,auto:boolean);
 var x,y,xx  : Integer;
     brk,ask : boolean;
     typ     : string;
@@ -48,6 +48,10 @@ var x,y,xx  : Integer;
 
 begin
   typ:=getres2(445,iif(user,1,2));     { 'User' / 'Bretter' }
+
+  if auto then 
+    brk := false
+  else  
   if not adrbuch then
     ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)   { 'Beim L”schen von '+typ+'n nachfragen' }
   else
@@ -710,6 +714,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.48  2002/04/14 22:25:09  cl
+  - added Wartung/Komplett
+
   Revision 1.47  2002/02/18 16:59:40  cl
   - TYP: MIME no longer used for RFC and not written into database
 
