@@ -29,7 +29,7 @@ uses
       win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
 
-var   testmailstring_nt : byte; { Netztyp fuer Testmailstring } 
+var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
 
 
 function  newuser:boolean;
@@ -204,23 +204,23 @@ end;
 function testmailstring(var s:string):boolean;
 var ok:boolean;
     st:string;
-    i:byte; 
+    i:byte;
 begin
-  st:=s;  
+  st:=s;
   if testmailstring_nt in [nt_fido,nt_maus,255] then
-  begin 
-    for i:=1 to length(st) do 
+  begin
+    for i:=1 to length(st) do
     begin
       if (st[i]=' ') and (st[i+1]<>' ') then st[i]:='_';     { einzelnes Leerzeichen erlauben }
       if upcase(st[i]) in ['Ž','™','š','á',':'] then
-        if ((testmailstring_nt=nt_fido) and (st[i]=':')) or  { Fido: ':'aber keine Umlaute } 
+        if ((testmailstring_nt=nt_fido) and (st[i]=':')) or  { Fido: ':'aber keine Umlaute }
            ((testmailstring_nt=nt_maus) and (st[i]<>':')) or { Maus: Umlaute aber kein ':' }
            (testmailstring_nt=255) then st[i]:='-';          { All:  Umlaute und ':' erlaubt. }
       end;
     end;
   ok:=(st=mailstring(st,false));
   if not ok then rfehler(2251);
-  testmailstring:=ok; 
+  testmailstring:=ok;
 end;
 
 function writecode(var s:string):boolean;
@@ -313,7 +313,7 @@ var x,y  : byte;
 begin
   new(adp);
   if left(user,4)<>#0+'$/T' then
-  begin  
+  begin
     dialog(57,13,txt,x,y);
     maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
     pb_field:=fieldpos;                     { 'Server   ' }
@@ -352,7 +352,7 @@ begin
     maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
     maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
     farb:=(flags shr 5);
-    if farb >2 then inc(farb); 
+    if farb >2 then inc(farb);
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
@@ -363,15 +363,15 @@ begin
     dialog(57,7,txt,x,y);
     maddtext(3,2,getres2(2701,3),0);                   { 'User' }
     maddtext(14,2,getres2(2708,8),col.coldiahigh);     { 'Trennzeile' }
-    maddstring(3,4,getres2(2708,9),komm,30,30,''); mhnr(401); { 'Kommentar' } 
-    maddint(3,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);  { 'Adressbuchgruppe' }  
+    maddstring(3,4,getres2(2708,9),komm,30,30,''); mhnr(401); { 'Kommentar' }
+    maddint(3,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);  { 'Adressbuchgruppe' }
     end;
 
   readmask(brk);
   if not brk then
   begin
     if farb=3 then Farb:=0;
-    if farb>3 then dec(farb); 
+    if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
     end;
@@ -476,7 +476,7 @@ var name    : string[AdrLen];
     pollbox : string[BoxNameLen];
     b       : byte;
     brk     : boolean;
-    adr     : integer16; 
+    adr     : integer16;
 begin
   name:='';
   komm:='';
@@ -499,7 +499,7 @@ begin
       b:=5;
       dbWriteN(ubase,ub_userflags,b);     { aufnehmen & Verteiler }
       dbFlushClose(ubase);
-      aufbau:=true; 
+      aufbau:=true;
       newverteiler:=true;
       end;
     end;
@@ -520,7 +520,7 @@ begin
   oldname:=name;
   dbReadN(ubase,ub_kommentar,komm);
   dbReadN(ubase,ub_pollbox,pollbox);
-  dbReadN(ubase,ub_adrbuch,adr); 
+  dbReadN(ubase,ub_adrbuch,adr);
   editverteiler(getres(2705),name,komm,pollbox,adr,brk);   { 'Verteiler bearbeiten' }
   if not stricmp(name,oldname) then begin
     rec:=dbRecno(ubase);
@@ -536,7 +536,7 @@ begin
     dbWriteN(ubase,ub_username,name);
     dbWriteN(ubase,ub_kommentar,komm);
     dbWriteN(ubase,ub_pollbox,pollbox);
-    dbWriteN(ubase,ub_adrbuch,adr); 
+    dbWriteN(ubase,ub_adrbuch,adr);
     dbFlushClose(ubase);
     if name<>oldname then begin
       new(cc);
@@ -546,7 +546,7 @@ begin
       del_verteiler(oldname);
       write_verteiler(name,cc,anz);
       dispose(cc);
-      end;  
+      end;
     aufbau:=true;
     modiverteiler:=true;
     end;
@@ -751,7 +751,10 @@ begin
          getres2(2708,iif(edit,3,4)),x,y);   { 'Brett bearbeiten' / 'neues Brett anlegen' }
   userfld:=-1;
   adrfieldpos:=-1;
-  brtyp:=brett[1];
+  if Edit then
+    brtyp:=brett[1]
+  else
+    brtyp := ' ';
   if not trenn then begin
     if askloc or ParXX then begin
       maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxRealLen,'>'); mhnr(402);
@@ -964,7 +967,7 @@ begin
     else
       modiuser:=true;
     end;
-  aufbau:=true; 
+  aufbau:=true;
 end;
 
 
@@ -1351,7 +1354,7 @@ var ok    : boolean;
     size  : smallword;
     p     : byte;
     verteiler : boolean;
-    newbrett  : boolean; 
+    newbrett  : boolean;
 
   function ShrinkEmpf(user,system:string):string;
   begin
@@ -1422,12 +1425,12 @@ begin
     if not dbFound and (cpos('@',s)=0) then  { Nicht Vorhandenes Brett }
     begin
       dbSeek(bbase,biBrett,'1'+mid(ustr(s),1));  { Internes PM-Brett ? }
-      if dbfound or (s='/') then 
-      begin 
+      if dbfound or (s='/') then
+      begin
         errsound;
         ok:=false;
         end
-      else ok:=cc_testempf(s); 
+      else ok:=cc_testempf(s);
       if ok then newbrett:=true;
       end;
 
@@ -1583,7 +1586,7 @@ begin
   if brk then exit;
   fn:=TempS(2000);
   dbGo(mbase,0);    { -> Kennung fr dosend(), daá kein Brett-Reply }
-  real:=''; 
+  real:='';
   pm:=(pos('@',empf)>0);
   if pm then
   begin                                            {User}
@@ -1591,7 +1594,7 @@ begin
     headf:='';
     sigf:=PrivSignat;
     end
-  else begin                                       {Brett}     
+  else begin                                       {Brett}
     empf:='A'+empf;
     dbSeek(bbase,biBrett,ustr(empf));
     dbRead(bbase,'gruppe',grnr);
@@ -2175,7 +2178,7 @@ begin
   oldtc:=trennchar;
   dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfgen' }
   komm:='';
-  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);  
+  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);
   mappsel(false,'ÄùÍùðù°ù±ù¯ù®ùúùþ');              { 'Trennzeichen ' }
   mnotrim;
   msetvfunc(tnotempty);
@@ -2263,9 +2266,9 @@ begin
   else begin
     rec:=dbRecno(ubase);
     wlpos:=rec; wltrenn:=true;
-    i:=bmarkanz; 
+    i:=bmarkanz;
     select(3);    { loescht bmarkanz!!! }
-    bmarkanz:=i; 
+    bmarkanz:=i;
     if selpos>0 then begin
       dbGo(ubase,selpos);
       dbreadN(ubase,ub_adrbuch,ab);
@@ -2402,6 +2405,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.2  2000/07/21 18:48:11  mk
+  - Zugriff auf nicht initialisierten String beseitigt
+
   Revision 1.25.2.1  2000/07/12 17:10:59  jg
   - User-Editmenue: einstellbare Prioritaetsfarbe fuer Msgs des Users
 
