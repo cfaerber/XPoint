@@ -360,15 +360,15 @@ begin
           end;
 
      21 : case m1 of           { Weiterleiten }
-            1     : Weiterleit(1,true);      { Kopie     }
-            2     : Weiterleit(7,true);      { Original  }
-            3     : Weiterleit(2,true);      { EditTo    }
-            4     : Weiterleit(3,true);      { QuoteTo   }
+            1     : Weiterleit(wlKopie,true);       { Kopie     }
+            2     : Weiterleit(wlOriginal,true);    { Original  }
+            3     : Weiterleit(wlEditTo,true);      { EditTo    }
+            4     : Weiterleit(wlQuoteTO,true);     { QuoteTo   }
             6     : empfang_bestaetigen(nix);
             7     : CancelMessage;
             8     : ErsetzeMessage;
-            9     : Weiterleit(4,true);      { Erneut    }
-           10     : Weiterleit(5,true);      { Archiv    }
+            9     : Weiterleit(wlErneut,true);      { Erneut    }
+           10     : Weiterleit(wlArchiv,true);      { Archiv    }
            11     : pm_archiv(false);
          end;
 
@@ -810,6 +810,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.46  2003/03/28 23:22:20  mk
+  - changed numeric consts for Weiterleit() to enum TWeiterleit
+
   Revision 1.45  2002/12/14 07:31:33  dodi
   - using new types
 

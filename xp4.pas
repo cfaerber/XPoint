@@ -2434,7 +2434,7 @@ begin      { --- select --- }
                    if c=k2_cU then user_aendern(true) else          { ^U' }
                    if c=k2_cT then edit_password(true) else         { ^T' }
                    if c=k2_V then wiedervorlage;                    { 'V' }
-                   if t=keyaltr then begin GoP; weiterleit(4,true); setall; end;
+                   if t=keyaltr then begin GoP; weiterleit(wlErneut,true); setall; end;
                    if t=keyaltp then begin GoP; pm_archiv(false); end;  { @P }
                    if c=k2_cF then datei_senden(true,false);        { ^F }
                    if c=k2_cI then datei_senden(true,true);         { ^I }
@@ -2484,7 +2484,7 @@ begin      { --- select --- }
                    if t=k2_cD then SwitchDatum;                     { ^D }
                    if t=keyalta then begin
                      GoP;
-                     weiterleit(5,false);  { archivieren }
+                     weiterleit(wlKopie,false);  { archivieren }
                      setall;
                      end;
                    if (c=k2_R) or (deutsch and (c='R')) then
@@ -2788,6 +2788,9 @@ end;
 
 {
   $Log$
+  Revision 1.138  2003/03/28 23:22:20  mk
+  - changed numeric consts for Weiterleit() to enum TWeiterleit
+
   Revision 1.137  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 

@@ -33,11 +33,16 @@ uses
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xpcc, xp2c,xp_des,xpe,fidoglob;
 
+type
+  TWeiterleit = (wlNone, wlKopie, wlEditTo, wlQuoteTo, wlErneut,
+    wlArchiv, wlUserArchiv, wlOriginal);
+    
 procedure Unversandt(edit,modi:boolean);
-procedure Weiterleit(typ:byte; sendbox:boolean);
+procedure Weiterleit(typ: TWeiterleit; sendbox:boolean);
 procedure PmArchiv(einzel:boolean);
 
 function testmausempf(var s:string):boolean;
+
 
 
 implementation  { ----------------------------------------------------- }
@@ -509,11 +514,9 @@ begin
 end;
 
 
-{ typ: 1=Kopie, 2=EditTo, 3=QuoteTo, 4=Erneut, 5=Archiv, 6=User-Archiv,
-       7=Original
-  sendbox: Absende-Fenster anzeigen }
+{   sendbox: Absende-Fenster anzeigen }
 
-procedure Weiterleit(typ:byte; sendbox:boolean);
+procedure Weiterleit(typ: TWeiterleit; sendbox:boolean);
 var
     fn      : string;
     oempf   : string;
@@ -574,9 +577,9 @@ label again;
     if archivtext and not binaermail then begin
       wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
       _brett := dbReadNStr(mbase,mb_brett);
-      if (FirstChar(_brett)<>'U') or (typ=5) then
+      if (FirstChar(_brett)<>'U') or (typ=wlArchiv) then
         wrs(getres2(641,2)+iifs(pmarchiv,': /',' : ')+hdp.FirstEmpfaenger);   { '## Ursprung' }
-      if not pmarchiv and (typ<>5) then
+      if not pmarchiv and (typ<> wlArchiv) then
         wrs(getres2(641,3)+hdp.absender);   { '## Ersteller: ' }
       freeres;
       end;
@@ -786,7 +789,7 @@ begin
     rfehler(631);    { 'Nur in der Nachrichtenuebersicht moeglich.' }
     exit;
     end;
-  if typ=7 then
+  if typ=wlOriginal then
     if not ntOrigWeiter(mbNetztyp) then begin
       rfehler(627);       { 'In diesem Netz nicht moeglich.' }
       exit;
@@ -799,7 +802,7 @@ begin
         MausWeiterleiten;
       exit;
       end;
-   if (typ=5) and (ArchivBretter<>'') then begin    { Test, ob Archivbretter }
+   if (typ= wlArchiv) and (ArchivBretter<>'') then begin    { Test, ob Archivbretter }
      dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
      if dbEOF(bbase) or
         (UpperCase(LeftStr(dbReadStrN(bbase,bb_brettname),length(ArchivBretter)+1))<>
@@ -811,8 +814,8 @@ begin
 
   nextwl:=-1;
   msort:=true;
-  if (typ in [1,5,7]) and (Marked.Count>0) then begin
-    s:=getres2(643,iif(typ<>5,iif(Marked.Count>1,1,2),iif(Marked.Count>1,3,4)));
+  if (typ in [wlKopie,wlArchiv,wlOriginal]) and (Marked.Count>0) then begin
+    s:=getres2(643,iif(typ <> wlArchiv, iif(Marked.Count>1,1,2),iif(Marked.Count>1,3,4)));
     freeres;
     if ReadJNesc(reps(s,strs(Marked.Count)),true,brk) then begin    { %s markierte Nachrichten archivieren/weiterleiten }
       msort := Marked.Sorted;
@@ -832,7 +835,7 @@ begin
 again:
   dbReadN(mbase,mb_typ,ntyp);
   _brett := dbReadNStr(mbase,mb_brett);
-  if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
+  if (typ=wlErneut) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
     rfehler(620);    { 'Nicht moeglich - bitte Nachricht erneut versenden.' }
     Hdp.Free;
     exit;   { Erneut: Binaer-Versandmeldung }
@@ -846,12 +849,12 @@ again:
   
   assign(t,fn); assign(f,fn);
   rec:=dbRecno(mbase);
-  if typ in [5,6] then
+  if typ in [wlArchiv, wlUserArchiv] then
   begin
     ReadHeadEmpf := 0;
   end;
   ReadHeader(hdp,hds,true);
-  if typ in [5,6] then
+  if typ in [wlArchiv, wlUserArchiv] then
     hdp.Empfaenger.Assign(Hdp.kopien);
   if hds=1 then exit;
   betr:=hdp.betreff;
@@ -865,22 +868,22 @@ again:
     binaermail:=false;
     end;
   case typ of
-      1 : begin
+      wlKopie: begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
             extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
           end;
-      7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
-      2 : begin
+      wlOriginal: extract_msg(0,'',fn,false,1);     { Original weiterleiten }
+      wlEditTo: begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
             extract_msg(0,WeiterMsk,fn,false,1);
           end;
-      4 : extract_msg(0,iifs((FirstChar(_brett)='$') or binaermail or not sendbox,'',
+      wlErneut: extract_msg(0,iifs((FirstChar(_brett)='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
-      3 : extract_msg(3,QuoteToMsk,fn,false,1);
-      5 : binaermail:=IsBinary;          { 5: In Archivbrett archivieren }
-      6 : begin                          { 6: Im PM-Brett des Users archivieren }
+      wlQuoteTo: extract_msg(3,QuoteToMsk,fn,false,1);
+      wlArchiv: binaermail:=IsBinary;          { In Archivbrett archivieren }
+      wlUserArchiv: begin                          { Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
             dbReadN(mbase,mb_flags,msgflags);
             Name := dbReadNStr(mbase,mb_absender);
@@ -923,12 +926,12 @@ again:
   end;
   leer:='';
   case typ of
-    1..3,
-    5,7    :  begin
+    wlKopie..wlQuoteTo,
+    wlArchiv,wlOriginal:  begin
                 pm := False; //default
                 SelWeiter:=true;    { Weiterleitziel aus Liste waehlen }
                 if nextwl<1 then begin
-                  if typ<>5 then begin
+                  if typ<>wlArchiv then begin
                     diabox(length(getres2(644,2))+11,5,'',x,y);
                     mwrt(x+3,y+1,getres2(644,1));   { 'Weiterleiten an ...' }
                     ta:='';
@@ -942,7 +945,7 @@ again:
                     end;
                   end;
                   // used with select(-1|3|4)
-                  ArchivWeiterleiten:=(typ=5);
+                  ArchivWeiterleiten:=(typ= wlArchiv);
 
                   sigfile:='';
                   if SelWeiter then begin
@@ -957,7 +960,7 @@ again:
                       Am_ReplyTo:='';
                       dbGo(bbase,selpos);
 
-                      if typ = 7 then begin
+                      if typ = wlOriginal then begin
   { Brett-Vertreter }   Empf := dbReadNStr(bbase,bb_adresse);
                         zg_flags:=dbReadInt(bbase,'flags');
   { Schreibsperre   }   if zg_flags and 8<>0 then
@@ -984,7 +987,7 @@ again:
                       end;
                       ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
                     end;
-                    if typ=3 then begin
+                    if typ = wlQuoteTO then begin
                       if FirstChar(ebrett)='A' then
                         get_re_n(dbReadInt(bbase,'gruppe'))
                       else begin
@@ -999,7 +1002,7 @@ again:
                   end   { if SelWeiter }
                   else begin
                     empf:=''; ebrett:=''; am_replyto := '';
-                    if typ=3 then ReplyText(betr,rehochn);
+                    if typ= wlQuoteTo then ReplyText(betr,rehochn);
                     ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
                     if brk then exit                     {Nachricht weiterleiten}
                     else sdata.forcebox:=pollbox;
@@ -1008,19 +1011,19 @@ again:
                   end;
                 end;
 
-                if (typ in [1,5]) and pm and (hdp.typ='B')
+                if (typ in [wlKopie, wlArchiv]) and pm and (hdp.typ='B')
                 and not ntBinary(UserNetztyp(empf)) then begin
                   rfehler(636);  { 'Binaernachrichten sind in diesem Netz nicht moeglich.' }
                   exit;
                 end;
 
-                if typ=5 then
+                if typ=wlArchiv then
                   archivieren
                 else begin
-                  if (typ=3) and (sigfile='') then
+                  if (typ=wlQuoteTo) and (sigfile='') then
                     if pm then sigfile:=PrivSignat
                     else sigfile:=SignatFile;
-                  if typ=3 then begin
+                  if typ=wlQuoteTo then begin
                     binaermail:=false;
                     if (hdp.netztyp=nt_Maus) and (FirstChar(_brett)='A') then
                       sData.ReplyGroup:=hdp.FirstEmpfaenger;
@@ -1033,7 +1036,7 @@ again:
                     sData.References.Assign(Hdp.References);
                     sData.flQto:=true;
                   end;
-                  if typ in [1,7] then begin
+                  if typ in [wlKopie, wlOriginal] then begin
                     sData.summary:=hdp.summary;
                     sData.keywords:=hdp.keywords;
                     if hdp.oab<>'' then begin
@@ -1050,11 +1053,11 @@ again:
                     sData.sendfiledate:=hdp.ddatum;
                   end;
                  { suboptimal }
-                  if ((typ in [1..3,7]) and (not pm)) then
+                  if ((typ in [wlKopie..wlQuoteTo,wlOriginal]) and (not pm)) then
                     with sData.EmpfList.AddNew do begin zcaddress:=am_replyto; addresstype := atFollowupTo; end;
-                  if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
-                  if typ=7 then sData.orghdp:=hdp;
-                  if typ in [1,2,7] then
+                  if typ in [wlKopie,wlErneut,wlOriginal] then sData.quotestr:=hdp.quotestring;
+                  if typ=wlOriginal then sData.orghdp:=hdp;
+                  if typ in [wlKopie,wlEditTo,wlOriginal] then
                     sdata.flFileAttach:=(hdp.attrib and attrFile<>0);
                   ua:=uvs_active;
                   if nextwl>=0 then
@@ -1065,24 +1068,23 @@ again:
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
 *)
-                  if typ=4  then sData.flIntern := true;
-                  if typ=7  then sData.flWAB    := true;
-                  if typ<>3 then sData.flReedit := true;
+                  if typ=wlErneut  then sData.flIntern := true;
+                  if typ=wlOriginal  then sData.flWAB    := true;
+                  if typ<>wlQuoteTo then sData.flReedit := true;
 
                   sData.SigTemplate := SigFile;
 
                   sData.DoIt(
                     GetRes2(610,100+Integer(typ)),
-                    (typ=3) and SelWeiter,
-                    typ in [2,3],
+                    (typ=wlQuoteTo) and SelWeiter,
+                    typ in [wlEditTo, wlQuoteTo],
                     SendBox);
 
 
                   if nextwl>=0 then uvs_active:=ua;
-                  sData.Free;
                 end;
               end;
-         4 :  begin
+         wlErneut :  begin
                 add_oe_cc:=0;
                 assign(t,fn);
                 reset(t);
@@ -1170,7 +1172,7 @@ again:
 
                 if sData.DoIt(GetRes2(610,100+Integer(typ)),false,false,sendbox) and UnPark then SetDel;
               end;
-         6 :  begin
+         wlUserArchiv :  begin
                 _UserAutoCreate:=UserAutoCreate;
                 dbSeek(ubase,uiName,UpperCase(name));
                 if not dbFound then begin   { User noch nicht vorhanden }
@@ -1233,7 +1235,7 @@ again:
     end;
   if not msort then Marked.UnSort;
 
-  if typ<>6 then FlushClose;
+  if typ<>wlUserArchiv then FlushClose;
 
   finally
   freeres;
@@ -1405,7 +1407,7 @@ begin
       if not brk then begin
         message(getres2(644,3));     { 'PM wird archiviert...' }
         dbGo(mbase,rec);
-        Weiterleit(6,false);
+        Weiterleit(wlUserArchiv,false);
         closebox;
         end
       else
@@ -1423,7 +1425,7 @@ begin
         if FirstChar(dbReadStrN(mbase,mb_brett))='1' then
         begin
           MsgUnmark;
-          Weiterleit(6,false)
+          Weiterleit(wlUserArchiv,false)
         end;
       end;
     closebox;
@@ -1435,6 +1437,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2003/03/28 23:22:20  mk
+  - changed numeric consts for Weiterleit() to enum TWeiterleit
+
   Revision 1.5  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

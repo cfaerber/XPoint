@@ -240,7 +240,7 @@ begin
                       if rec>0 then begin
                         dbGo(mbase,rec);
                         mdm:=aktdispmode; aktdispmode:=10;
-                        Weiterleit(4,false);
+                        Weiterleit(wlArchiv,false);
                         aktdispmode:=mdm;
                         writeln(t2,'Hinweis  : Nachricht wurde automatisch neu verschickt');
                         end;
@@ -829,6 +829,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2003/03/28 23:22:20  mk
+  - changed numeric consts for Weiterleit() to enum TWeiterleit
+
   Revision 1.41  2002/12/14 07:31:38  dodi
   - using new types
 
