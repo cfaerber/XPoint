@@ -659,7 +659,7 @@ begin
             for i:=0 to replyto.count-1 do
               wrs('DISKUSSION-IN: '+replyto[i])
           else
-	    if absender<>'' then
+            if absender<>'' then
               wrs('DISKUSSION-IN: '+absender)
         end else
           for i:=0 to mailcopies.count-1 do
@@ -1807,7 +1807,7 @@ var
 
   function GetMsgid: string;
   begin
-    s0:=RFCRemoveComment(s0);
+    s0:=RFCRemoveComment(Trim(s0));
     if firstchar(s0) = '<' then delfirst(s0);
     if lastchar(s0) = '>' then dellast(s0);
     GetMsgid := s0;
@@ -2225,7 +2225,7 @@ begin
             if zz = 'archive' then
             begin
               if LowerCase(RFCRemoveComment(s0)) = 'no' then
-	        xnoarchive := true;
+                xnoarchive := true;
             end
           else
             Uline.Add('U-' + s1);
@@ -3692,6 +3692,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/11/27 21:41:54  mk
+  RB:- Trim in GetMsgId hinzugefuegt
+
   Revision 1.9  2000/11/23 22:33:23  fe
   Fixed some ugly bugs with followup and replyto.
 
