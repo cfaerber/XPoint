@@ -304,6 +304,13 @@ const
     $00,$00,$00,$00,$7c,$7c,$7c,$7c,$7c,$7c,$00,$00,$00,$00,
     $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00);
 
+const
+  VESA80x60text         = $108;
+  VESA132x25text        = $109;
+  VESA132x43text        = $10A;
+  VESA132x50text        = $10B;
+  VESA132x60text        = $10C;
+
 function SysGetScreenLines: Integer;
 var
   Reg: TRealRegs;
@@ -327,8 +334,8 @@ end;
 
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 begin
-  Lines := 57;
-  Cols := 80;
+  Lines := 60;
+  Cols := 132;
 end;
 
 procedure SysSetScreenSize(const Lines, Cols: Integer);
@@ -538,6 +545,39 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
     FreeMem(NewFont);
   end;
 
+  procedure SetVesaModus(Modus: Integer);
+  type
+    VESAInfoBlockRec = packed record
+      Signatur: LongInt;
+      VersionLo, VersionHi: Byte;
+      OEMString: Pointer;
+      Capabitilities: LongInt;
+      VideoModi: Pointer;
+      FuellBytes: array[0..243] of Byte;
+    end;
+  var
+    InfoBlockHandle: LongInt;
+    Reg: TRealRegs;
+  begin
+    with Reg do
+    begin
+      InfoBlockHandle := Global_Dos_Alloc(SizeOf(VESAInfoBlockRec));
+
+      ax := $4f00;
+      es := SmallWord(InfoBlockHandle shr 16);
+      di := 0;
+      RealIntr($10, Reg);
+
+      Global_Dos_Free(SmallWord(InfoBlockHandle));
+
+      if not (ax = $4f) then Exit; // VESA Modus not available
+
+      ax := $4f02;  // Function 2: Set new Video-Modus
+      bx := Modus;
+      RealIntr($10, Reg);
+    end;
+  end;
+
 var
   Reg: TRealRegs;
 begin
@@ -546,16 +586,25 @@ begin
     ax := 3;
     RealIntr($10, Reg);
   end;
-  case lines of
-    26     : SetNewFont(15);
-    27..28 : SetNewFont(14);
-    29..30 : SetNewFont(13);
-    31..33 : SetNewFont(12);
-    34..36 : SetNewFont(11);
-    37..40 : SetNewFont(10);
-    41..44 : SetNewFont(9);
-    45..50 : SetNewFont(8);
-    51..57 : SetNewFont(7);
+  case Cols of
+     80: case Lines of
+           26     : SetNewFont(15);
+           27..28 : SetNewFont(14);
+           29..30 : SetNewFont(13);
+           31..33 : SetNewFont(12);
+           34..36 : SetNewFont(11);
+           37..40 : SetNewFont(10);
+           41..44 : SetNewFont(9);
+           45..50 : SetNewFont(8);
+           51..57 : SetNewFont(7);
+           58..60 : SetVesaModus(VESA80x60text);
+         end;
+    132: case Lines of
+           25..42 : SetVesaModus(VESA132x25text);
+           43..49 : SetVesaModus(VESA132x43text);
+           50..59 : SetVesaModus(VESA132x50text);
+           60     : SetVesaModus(VESA132x60text);
+         end;
   end;
 end;
 
@@ -571,6 +620,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/10/03 03:25:04  mk
+  - VESA Textmodi mit 80/132 Spalten implementiert
+
   Revision 1.4  2000/09/30 16:42:56  mk
   - CAZ fuer DOS32
 
