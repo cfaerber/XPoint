@@ -158,9 +158,12 @@ begin
         3 : echo:='';
       end
     else begin
-      dbReadN(bbase,bb_brettname,echo);
-      if (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))<>nt_Fido) or (echo[1]<>'A') then echo:=''
-      else delfirst(echo);
+      if dbreccount(bbase)=0 then brk:=true
+      else begin
+        dbReadN(bbase,bb_brettname,echo);
+        if (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))<>nt_Fido) or (echo[1]<>'A') then echo:=''
+        else delfirst(echo);
+        end;
       end;
   if brk then begin
     freeres; exit; end;
@@ -325,6 +328,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.1  2001/08/23 18:46:44  my
+  JG:- Fixed crash with F/A/A and empty Message Area database.
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
