@@ -215,13 +215,10 @@
   end;
 
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
-                     PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; Titel:String);
+                     PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; const Titel:String);
   var
-    x,y: Integer ;
-  label restart;
+    x,y: Integer;
   begin
-  restart:
-
     dialog(66,20,Titel,x,y);   { 'Client-Einstellungen' }
 
     maddstring(3,2,getres2(920,81),name,20,20,              { 'Server' }
@@ -246,12 +243,12 @@
     msetvfunc(xp9_FQDNTest);
 
     maddstring(3,12,getres2(920,87),PPPClientPath,41,60,ValidDirCh);   { 'Client-Verzeichnis' }
-    mappsel(false,'UKAD\˙UKAW\˙UKAX\˙UKA_PPP\˙XPNEWS\');
+    mappsel(false,'UKAD\˘UKAW\˘UKAX\˘UKA_PPP\˘XPNEWS\');
     msetvfunc(PPPClientpathTest);
 
     maddstring(3,14,getres2(920,88),PPPClient,41,60,'');    { Client-Aufruf }
-    mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG˙UKAW.BAT /M $CLPATH $CONFIG˙UKAX.BAT /M $CLPATH $CONFIG˙' +
-     'UKA_PPP.BAT /M $CLPATH $CONFIG˙$CLPATH+XPNEWS.EXE $CONFIG˙START /W $CLPATH+XPNEWS.EXE $CONFIG');
+    mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG˘UKAW.BAT /M $CLPATH $CONFIG˘UKAX.BAT /M $CLPATH $CONFIG˘' +
+     'UKA_PPP.BAT /M $CLPATH $CONFIG˘$CLPATH+XPNEWS.EXE $CONFIG');
     msetvfunc(pppclienttest);
 
     maddstring(3,16,getres2(920,89),PPPAddServers,41,60,ValidDirCh);   { 'ZusÑtzliche Server' }
@@ -277,7 +274,7 @@
       b    : byte;
       pc,pp,ps,cldup,clphn,cllog,clpas : string;
       pppm : boolean;
-  begin
+  begin                
     dbGo(d,drec[p]);
     fn := dbReadStr(d,'dateiname');
     ReadBox(0, fn, boxpar);
@@ -289,6 +286,7 @@
       if (nt=nt_UUCP) and pppm then nt:=nt_Client;
     end;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
+    
     if nt<>nt_Client then
     begin
       pppM:=false;
@@ -429,7 +427,7 @@
         dbWriteStr(d,'nameomaps',maps);
         dbWriteStr(d,'realname',real);
         dbWriteStr(d,'domain',dom);
-        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
+        dbWriteStr(d,'fqdn',fqdom);  
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fido);
         if (name='99:99/99') or (name='99:99/98') then begin  { Fido-Crashbox }
@@ -1692,6 +1690,97 @@
       end;
   end;
 
+  procedure EditPPP(var brk:boolean);
+  var
+      b,nt         : byte;
+      replyto      : string;
+      email        : string;
+      domain,fqdn  : string;
+      user         : string;
+      name         : string;
+      komm         : string;
+      realname     : string;
+      dname,
+      old_dname    : string;
+
+  begin
+    with boxpar^ do 
+    begin
+      dbGo(d,drec[p]);
+      eMail := dbreadStr(d,'email');
+      RealName := dbReadStr(d,'realname');
+      ReplyTo := dbReadStr(d,'replyto');
+      FQDN := dbReadStr(d,'fqdn');
+      User := dbReadStr(d,'username');
+      Domain := dbReadStr(d,'domain');
+      PointName := dbReadStr(d,'pointname');
+      Name := dbReadStr(d,'boxname');
+      Komm := dbReadStr(d,'kommentar');
+      dName := dbReadStr(d,'dateiname');
+
+      _EditPPP(brk,name,komm,email,realname,replyto,fqdn,ClientPath,
+               ClientExec,ClientAddServers,ClientDialUp,ClientPhone,ClientLogin,ClientPass,getres2(920,80));
+
+      if not brk then begin
+        b:=cpos('@',email);
+        user:=LeftStr(email,b-1);
+        domain:=mid(email,b);
+        if cpos('.',domain)=0 then domain:=''
+          else domain:=mid(domain,cpos('.',domain));
+        pointname:=mid(email,b+1);
+        truncstr(pointname,min(25,cposx('.',pointname)-1));
+        sysopinp:='';
+
+        if name<>dbReadStr(d,'boxname')
+        then begin
+          if UpperCase(name)<>Uppercase(dbReadStr(d,'boxname'))
+          then begin
+            dbSeek(d,boiName, UpperCase(name));
+            if dbFound then begin
+              rfehler(921);         { 'Box bereits vorhanden!' }
+              brk:=true;
+              end;
+            end;
+          if not brk then begin
+            dbGo(d,drec[p]);
+            if UpperCase(dbReadStr(d,'boxname'))=UpperCase(DefaultBox) then begin
+              DefaultBox:=name; SaveConfig2; end;
+            old_dname:=dname;
+            dname:='';
+            dbWriteStr(d,'dateiname',dname);   { ! }
+            dname:=getdname(nt,name);
+            unique(dname);        { verÑndert pos(d)! }
+            dbGo(d,drec[p]);
+            dbWriteStr(d,'dateiname',dname);
+            if dname<>old_dname then  { kann bei Fido evtl. gleich sein! }
+              Rename_box(old_dname,dname);
+            end;
+          end;
+
+        if not brk then
+        begin
+          boxpar^._fqdn:=fqdn;
+          boxpar^.username:=user;
+          boxpar^._domain:=domain;
+          boxpar^.boxname:=name;
+          WriteBox(dname,boxpar);
+          dbwriteStr(d,'dateiname',dname);
+          dbWriteStr(d,'pointname',pointname);
+          dbWriteStr(d,'email',email);
+          dbWriteStr(d,'boxname',name);
+          dbWriteStr(d,'kommentar',komm);
+          dbWriteStr(d,'realname',realname);
+          dbWriteStr(d,'replyto',replyto);
+          dbWriteStr(d,'fqdn',fqdn);
+          dbWriteStr(d,'username',user);
+          dbWriteStr(d,'domain',domain);
+          dbFlushClose(d);
+          dbGo(d,drec[1]); aufbau:=true; brk:=true;
+          end;
+        end;
+      end;
+  end;
+
   procedure EditQWK(dateiname:string; var brk:boolean);
   const maxnmt = 10;
   var   x,y    : Integer;
@@ -1783,211 +1872,95 @@
   end;
 
   procedure EditBox;
-  const
+  const 
     edb_pos : shortint = 1;
+    Clientpos  : array[1..7] of Byte = (1,4,5,1,1,6,7);
+    lastclient : boolean = false;
   var n   : shortint;
       fn  : string;
       brk : boolean;
       nt  : byte;
       nts : string;
-      { nts2: string; }
+      nts0: string;
+      nts2: string;
   begin
     dbGo(d,drec[p]);
     fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    nts:=''; {nts2:=getres2(927,3);}   { ',^SysopMode' }
-
-    case nt of
-      nt_Netcall : begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,20)       { Netcall ^3.8, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_ZConnect: begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,21)       { ^ZConnect, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_Maus:     begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,22)       { M^ausTausch, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_Magic:    begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,23)       { M^aigNet, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_Pronet:   begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,24)       { P^ronet, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_Fido:     begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                         +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,25)       { ^FTS, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_QWK:      begin
-                     pushhp(131);
-                     nts:=
-//                       +getres2(927,8)        { ^Gebuehren, }
-                         getres2(927,9)        { ^Namen, }
-                         +getres2(927,29)       { ^QWK, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,4);       { ,^Transfer }
-                   end;
-      nt_UUCP:     begin
-                     pushhp(131);
-                     nts:=getres2(927,5)        { ^Point, }
-                         +getres2(927,7)        { ^Modem, }
-//                       +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
-                         +getres2(927,28)       { ^UUCP, }
-                         +getres2(927,10)       { ^Diverse }
-                         +getres2(927,11);      { ,^Sysop-Mode }
-                   end;
-      nt_NNTP:     begin
-                     pushhp(132);
-                     nts:=getres2(927,9)        { ^Namen, }
-                         +getres2(927,26)       { NNT^P, }
-                         +getres2(927,10);      { ^Diverses }
-                   end;
-      nt_POP3:     begin
-                     pushhp(133);
-                     nts:=getres2(927,9)        { ^Namen, }
-                         +getres2(927,27)       { ^POP3, }
-                         +getres2(927,30)       { ^SMTP, }
-                         +getres2(927,10);      { ^Diverses }
-                   end;
-    end; { case nt }
-    {n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+getreps2(927,2,nts)+nts2,edb_pos);}
+    nts:=''; nts2:=getres2(927,4)+getres2(927,5);   { ',^SysopMode' }
+    if (nt=nt_uucp) and boxpar^.ClientMode then
+    begin
+      Pushhp(132);
+      nts0:='^Client,'+getres2(927,7)+getres2(927,8)+getres2(927,2);
+      nts2:=getres2(927,4)+getres2(927,5);
+      if not lastclient then edb_pos:=clientpos[edb_pos];
+      lastclient:=true;
+      end 
+    else begin
+      Pushhp(131);
+      if lastclient then
+      begin
+        if (edb_pos=2) or (edb_pos=3) then
+          edb_pos:=1
+        else if (edb_pos=4) or (edb_pos=5) then
+          dec(edb_pos,2);
+        end;
+      lastclient:=false;
+      nts0:=getres2(927,1)+getres2(927,2)+getres2(927,3);
+      case nt of
+        nt_Netcall : nts:='^Z-Netz,';
+        nt_ZConnect: nts:='^ZConnect,';
+        nt_Maus    : nts:='M^aus,';
+        nt_Magic   : nts:='M^agicNET,';
+        nt_Pronet  : nts:='P^ronet,';
+        nt_Fido    : nts:='^Fido,';
+        nt_UUCP    : begin nts:='^RFC/UUCP,'; { nts2:=''; } end;
+        nt_QWK     : begin
+                       nts:=getres2(927,3)+'^QWK,'; nts0:='';
+                       nts2:=getres2(927,4)+getres2(927,6);  { ',^Transfer' }
+                       end;
+        end;
+      end; 
+    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+nts+nts2,edb_pos);
                  { '^Point,^Modem,^GebÅhren,^Namen,'+nts+'^Diverses'+nts2 }
-    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
     freeres;
     if n<>0 then edb_pos:=abs(n);
     if n>0 then begin
-      ReadBox(nt,fn,boxpar);
-      {if (nts='') and (n>=5) then inc(n);
-      if nts0='' then inc(n,3);}
-      case nt of
-        nt_Netcall  : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditNet(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_ZConnect : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditNet(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_Maus     : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditNet(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_Magic    : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditNet(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_Pronet   : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditNet(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_Fido     : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditFido(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_QWK      : case n of
-//                      1: EditGebuehren(brk);
-                        1: EditName(brk);
-                        2: EditQWK(fn,brk);
-                        3: EditDiverses(nt,brk);
-                        4: EditSysopdaten(nt,brk);
-                      end;
-        nt_UUCP     : case n of
-                        1: EditPointdaten(nt,brk);
-                        2: EditModemdaten(nt,brk);
-//                      3: EditGebuehren(brk);
-                        3: EditName(brk);
-                        4: EditUUCP(brk);
-                        5: EditDiverses(nt,brk);
-                        6: EditSysopdaten(nt,brk);
-                      end;
-        nt_NNTP     : case n of
-                        1: EditInetName(brk);
-                        2: EditNNTP(brk);
-                        3: EditNNTPMisc(nt,brk);
-                      end;
-        nt_POP3     : case n of
-                        1: EditInetName(brk);
-                        2: EditPOP3(brk);
-                        3: EditSMTP(brk);
-                        4: EditNNTPMisc(nt,brk);
-                      end;
-      end; { case nt }
+      if (nt=nt_uucp) and boxpar^.ClientMode then 
+      begin
+        case n of
+          1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
+          2 : EditTransport(nt,brk);
+          3 : EditExtern(fn,brk);
+          4 : EditModemdaten(nt,brk);
+//          5 : EditGebuehren(nt,brk);
+          5 : EditDiverses(nt,brk);
+          6 : EditSysopdaten(nt,brk);
+          end;
+        end
+      else begin 
+        if (nts='') and (n>=5) then inc(n);
+        if nts0='' then inc(n,3);
+        case n of
+          1 : EditPointdaten(nt,brk);
+          2 : EditModemdaten(nt,brk);
+//          3 : EditGebuehren(nt,brk);
+          4 : EditName(brk);
+          5 : case nt of
+                nt_Fido : EditFido(brk);
+                nt_QWK  : EditQWK(fn,brk);
+                nt_UUCP : EditUUCP(brk);
+                else      EditNet(brk);
+              end;
+          6 : EditDiverses(nt,brk);
+          7 : EditSysopdaten(nt,brk);
+          end;
+        end;
       if not brk then
         WriteBox(fn,boxpar);
       ReadDomainList;
-      end;
+    end;
     pophp;
   end;
 
@@ -1998,7 +1971,8 @@
       nt1 : byte;
       x,y : Integer;
       maps: string[20];
-      box : string[BoxNameLen];
+      box : string;
+      fn: String;
 
     procedure SetBrettNetztyp;
     var i,n  : integer;
@@ -2044,12 +2018,19 @@
       closebox;
       end
     else begin
-      dbRead(d,'netztyp',nt); nt1:=nt;
-      box:= dbReadStr(d,'boxname');
+      dbRead(d,'netztyp',nt); 
+      dbread(d,'dateiname',fn);
+      ReadBox(nt,fn,boxpar);
+      if (Boxpar^.ClientMode) and (nt = nt_UUCP) then nt:=nt_Client;  
+      nt1:=nt;
+      Box := dbReadStr(d,'boxname');
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
          ReadJN(getreps2(929,5,box),true) then begin
                        { 'Mîchten Sie den Netztyp fÅr %s wirklich Ñndern' }
+        Boxpar^.ClientMode:=nt=nt_Client;
+        if nt=nt_Client then nt:=nt_UUCP;
+        WriteBox(fn,BoxPar);
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
         inc(ntused[nt]);
@@ -2068,6 +2049,9 @@
 
 {
   $Log$
+  Revision 1.23  2001/09/06 22:01:14  mk
+  - client mode updates
+
   Revision 1.22  2001/09/06 19:13:55  mk
   - fixed use of not initialized variable nt in NewBox
 

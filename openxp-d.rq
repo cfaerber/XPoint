@@ -2097,37 +2097,18 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   Name      ~
 11   Pa·wort   ~
 12   d'Bridge-Areafix
-+    927
-1    ^Point,^Modem,^GebÅhren,
-2    ^Namen,%s^Diverses
-3    ,^SysopMode
-4    ,^Transfer
-5    ^Point,
-6    ^Zugang,
-7    ^Modem,
-8    ^GebÅhren,
-9    ^Namen,
-10   ^Diverses
-11   ,^Sysop-Mode
-12   ,^Lokaler Modus
-13   empty
-14   empty
-15   empty
-16   empty
-17   empty
-18   empty
-19   empty
-20   Netcall ^3.8,
-21   ^ZConnect,
-22   M^ausTausch,
-23   M^agicNET,
-24   P^ronet,
-25   ^FTS,
-26   NNT^P,
-27   ^POP3,
-28   ^UUCP,
-29   ^QWK,
-30   ^SMTP,
++ 927
+1    ^Point,
+2    ^Modem,
+3    ^Namen,
+4    ^Diverses
+5    ,^SysopMode
+# QWK
+6    ,^Transfer
+# RFC/Client
+7    Mail-/^News-Server,
+8    E^xterne Einstellungen,
+10   Externe Konfigurationsdatei laden
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -2137,7 +2118,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Pa·wort~
 7    vollstÑndige Domain
 8    Sysfile-Betreff~
-9    Absender User@Server.Serverdomain
+9    Absender Username@Boxname.Serverdomain
 + 929
 1    Es sind Polldaten fÅr diese Box vorhanden (%s.PP)
 2    - Netztyp kann nicht geÑndert werden.  Versenden oder
@@ -3819,6 +3800,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.32  2001/09/06 22:01:13  mk
+# - client mode updates
+#
 # Revision 1.31  2001/09/06 15:17:35  mk
 # - fixed resource 611,28 (part of comming new multipart MIME change)
 #

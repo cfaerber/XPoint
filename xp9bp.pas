@@ -568,9 +568,11 @@ begin
     writeln(t,'Client-Phone=', ClientPhone);
     writeln(t,'Client-Login=', ClientLogin);
     writeln(t,'Client-Password=', ClientPass);
-    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
     if ClientMode then
+    begin
+      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
       CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
+    end;
     writeln(t,'Client-ExternalConfig=', ClientExternalConfig);
     writeln(t,'Client-MailInServer=', ClientMailInServer);
     writeln(t,'Client-MailInEnvelope=', ClientMailInEnv);
@@ -698,6 +700,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/09/06 22:01:13  mk
+  - client mode updates
+
   Revision 1.47  2001/08/28 08:04:02  mk
   - removed GetX-Workaround in Val for FPC
   - added const-parameters to scomp and GetX

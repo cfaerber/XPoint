@@ -685,6 +685,11 @@ var d         : DB;
             s3 := dbReadStr(d,'Kommentar');
             dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
+            if nt=nt_UUCP then  { Pseudo-Netztyp RFC/Client }
+            begin
+              ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+              if Boxpar^.ClientMode then nt:= nt_Client; 
+            end;   
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
             {$IFDEF Unix }
@@ -1328,10 +1333,12 @@ restart:
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
     else      if not pppm then boxpar^.pointname:=''
-              else begin
+              else 
+              begin
+                b := cpos('@', eMail);
                 boxpar^.pointname:=mid(email,b+1);
                 truncstr(boxpar^.pointname,min(25,cposx('.',boxpar^.pointname)-1));
-                end;
+              end;
   end;
   dbWriteStr(d,'Pointname',boxpar^.pointname);
   dbFlushClose(d);
@@ -1613,6 +1620,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2001/09/06 22:01:14  mk
+  - client mode updates
+
   Revision 1.18  2001/09/06 18:53:36  mk
   - fixed big bug in get_first_box: variable b was not initialized
 

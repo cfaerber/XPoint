@@ -46,7 +46,7 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_IMAP      = 52;
 
        netsRFC = [nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
-       netsSupportingPGP = [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP];
+       netsSupportingPGP = [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_client,nt_NNTP,nt_POP3,nt_IMAP];
 
 var ntused : array[0..99] of integer;
 
@@ -706,9 +706,11 @@ end;
 
 begin
   fillchar(ntused,sizeof(ntused),0);
-end.
 {
   $Log$
+  Revision 1.31  2001/09/06 22:01:14  mk
+  - client mode updates
+
   Revision 1.30  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 
@@ -800,3 +802,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

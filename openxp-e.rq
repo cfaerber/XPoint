@@ -1995,36 +1995,17 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Password  ~
 12   d'Bridge Areafix
 + 927
-1    ^Point,^Modem,^Charges,
-2    ^Names,%sM^isc.
-3    ,^Sysop Mode
-4    ,^Transfer
-5    ^Point,
-6    A^ccess,
-7    ^Modem,
-8    C^harges,
-9    ^Names,
-10   ^Misc
-11   ,^Sysop Mode
-12   ,^Local Mode
-13   empty
-14   empty
-15   empty
-16   empty
-17   empty
-18   empty
-19   empty
-20   Netcall ^3.8,
-21   ^ZConnect,
-22   M^aus,
-23   M^agicNET,
-24   P^ronet,
-25   ^FTS,
-26   NNT^P,
-27   ^POP3/SMTP,
-28   ^UUCP,
-29   ^QWK,
-30   ^SMTP,
+1    ^Point,
+2    ^Modem,
+3    ^Names,
+4    M^isc.
+5    ,^SysopMode
+# QWK
+6    ,^Transfer
+# RFC/Client
+7    Mail/^News Servers,
+8    E^xternal Settings,
+10   Load external configuration file
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3794,6 +3775,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.31  2001/09/06 22:01:13  mk
+# - client mode updates
+#
 # Revision 1.30  2001/09/05 23:26:57  mk
 # - added empty resources for Menu, avoids false error in debuglog.txt
 #
