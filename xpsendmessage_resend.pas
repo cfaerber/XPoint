@@ -440,7 +440,7 @@ begin
       sData.flPGPreq := true;
     if (hdp.pgpflags and (fPGP_clearsig+fPGP_signed)<>0) or
        (dbReadInt(mbase,'netztyp') and $4000<>0) then
-      sData.flPGPsig := true;
+      sData.SigningMethod := sigMIME_or_PGPOld;
 //  if msgMarked then msgMarkEmpf:=max(1,empfnr);
 //  if hdp.nokop then sData.flNoKop := true;
 
@@ -888,7 +888,7 @@ again:
             dbSeek(ubase,uiName,UpperCase(name));
             if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
               size:=0;
-              name:= dbReadXStr(ubase,'adresse',size);
+              name:= dbReadXStr(ubase,'adresse');
               if name<>'' then dbSeek(ubase,uiName,UpperCase(name))
               else Name := dbReadNStr(mbase,mb_absender);
               end;
@@ -1149,7 +1149,7 @@ again:
                 end;
                 sData.flReedit := true;
                 if dbReadInt(mbase,'netztyp') and $4000<>0 then
-                  sData.flPGPsig := true;
+                  sData.SigningMethod := sigMIME_or_PGPOld;
 (*
                if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
                  sData.flMPart := true;
@@ -1434,6 +1434,10 @@ end;
 
 {
   $Log$
+  Revision 1.12  2003/08/30 22:19:27  cl
+  - send window: select encryption and signature method
+  - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+
   Revision 1.11  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 

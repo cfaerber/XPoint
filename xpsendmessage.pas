@@ -91,6 +91,30 @@ var
       msgMarkEmpf: byte;   { fuer sendMark }
 
 type
+{$IFDEF FPC} // Grrr
+  TSendEncryptionMethod = 1..20;
+  TSendSigningMethod = 1..21;
+  
+  const
+    secNone = 0;
+    secQPC = 1; secDESXP = 2;
+    secPMC1 = 3; secPMC2 = 4; secPMC3 = 5;
+    secMIME = 8; secPGPOld = 9; secMIME_or_PGPOld = 10;
+
+    sigNone = 0;
+    sigMIME = 8; sigPGPOld = 9; sigMIME_or_PGPOld = 10;
+
+{$ELSE}
+  TSendEncryptionMethod = (secNone = 0,
+    secQPC = 1, secDESXP = 2,
+    secPMC1 = 3, secPMC2 = 4, secPMC3 = 5,
+    secMIME = 8, secPGPOld = 9, secMIME_or_PGPOld = 10);
+
+  TSendSigningMethod = (sigNone = 0,
+    sigMIME = 8, sigPGPOld = 9, sigMIME_or_PGPOld = 10);
+{$ENDIF}
+
+type
 { ------------------------- } TSendUUData { -------------------------- }
   = class
 
@@ -198,16 +222,25 @@ type
   { == Variables from DoSend ========================================= }
   public
     Subject  : string;
-    
+
+  private
+    FEncryptionMethod: TSendEncryptionMethod;
+    FSigningMethod: TSendSigningMethod;
+
+    procedure SetEncryptionMethod(NewEncryptionMethod: TSendEncryptionMethod);
+    procedure SetSigningMethod(NewSigningMethod: TSendSigningMethod);
   public
-    DoCode   : integer;
-    CanCode  : integer;
+    property EncryptionMethod: TSendEncryptionMethod read FEncryptionMethod write SetEncryptionMethod;
+    property SigningMethod: TSendSigningMethod read FSigningMethod write SetSigningMethod;
+
+    procedure CorrectEncryptionMethod;
 
   { -- Boxdaten ------------------------------------------------------ }
 //  username : string;      { eigener Username                         }
 //  aliaspt  : boolean;     { Alias-Point (USER@BOX)              }
     
   { -- Flags --------------------------------------------------------- }
+  public
     flOhneSig     : boolean; { Keine Signatur anhängen                 }
 
     flIntern      : boolean; { force Intern                            }
@@ -220,7 +253,7 @@ type
 
     flWAB         : boolean; { ABS->WAB, OAB->ABS                      }
 
-    flPGPSig      : boolean; { PGP: Signatur erzeugen                  }
+//  flPGPSig      : boolean; { PGP: Signatur erzeugen                  }
     flPGPKey      : boolean; { PGP: eigenen Key mitschicken            }
     flPGPReq      : boolean; { PGP: Key-Request                        }
 
@@ -366,6 +399,10 @@ type
     procedure EditNachricht(pushpgdn:boolean);
     procedure MIMEDecompose;
     procedure AddMessagePart(const datei:string;temp,is_orig:boolean);
+
+    function GetIsMIMEMultipart: boolean;
+  public
+    property IsMIMEMultipart: boolean read GetIsMIMEMultipart;
   end;
 
 { -------------------------------------------------------------------- }  
@@ -514,8 +551,7 @@ end;
 procedure TSendUUData.EditAttach;
 begin
   MIMEDecompose;
-  SendAttach(Parts,Umlaute=1,SigData,nt_UUCP,
-    iif(docode in [8,9],cancode,docode),flPGPSig);
+  SendAttach(Parts,SigData,nt_UUCP);
 
   // if the user deleted the message part, switch off signatures
   if (Parts.Count<1) or not TSendAttach_Part(Parts[0]).IsMessage then
@@ -663,7 +699,7 @@ begin
   flMark   := false;
   flPGPkey := false;
   flPGPreq := false;
-  flPGPsig := false;
+//flPGPsig := false;
 //flNokop  := false;
 //flIQuote := false;
 //flMPart  := false;
@@ -674,12 +710,15 @@ begin
 
   flOhneSig := true;
 
+  EncryptionMethod := secNone;
+  SigningMethod := sigNone;
+
   FUserDataForced := false;
 end;
 
 { -------------------------------------------------------------------- }
 
-function TSendUUData.GetEmpf1Address:  string; 
+function TSendUUData.GetEmpf1Address:  string;
 begin
   if EmpfList.Count<=0 then
     result := ''
@@ -797,7 +836,7 @@ begin
     pa.ContentType.AsString := 'text/plain';
   end;
 
-  SendAttach_Analyze(pa,not is_orig,SigData,nt_uucp,docode,flPGPSig);
+  SendAttach_Analyze(pa,not is_orig,SigData,nt_uucp);
 
   parts.Insert(0,pa);
 end;
@@ -811,7 +850,7 @@ begin
   pa.IsTemp	   := temp;
   pa.IsFile      := true;
 
-  SendAttach_Analyze(pa,true,'',nt_uucp,docode,flPGPSig);
+  SendAttach_Analyze(pa,true,'',nt_uucp);
 
   parts.Insert(0,pa);
 end;
@@ -888,7 +927,7 @@ begin
     addMessagePart(s0,true,false);
   end;
 
-  SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,SigData,nt_uucp,docode,flPGPSig);
+  SendAttach_EditText(TSendAttach_Part(parts[0]),true,SigData,nt_uucp);
 
   if exteditor<3 then Subject:=EditGetbetreff;
   if edpush then begin
@@ -927,6 +966,40 @@ begin
   if not assigned(result) then result := FParentHdp;
 end;
 
+procedure TSendUUData.SetEncryptionMethod(NewEncryptionMethod: TSendEncryptionMethod);
+begin
+  FEncryptionMethod := NewEncryptionMethod;
+
+  if FSigningMethod <> sigNone then
+    case FEncryptionMethod of
+      secMIME:          FSigningMethod := sigMIME;
+      secPGPOld:        FSigningMethod := sigPGPOld;
+      secMIME_or_PGPOld:FSigningMethod := sigMIME_or_PGPOld;
+    end;
+end;
+
+procedure TSendUUData.SetSigningMethod(NewSigningMethod: TSendSigningMethod);
+begin
+  FSigningMethod := NewSigningMethod;
+
+  if FEncryptionMethod in [secMIME,secPGPOld,secMIME_or_PGPOld] then
+    case FSigningMethod of
+      sigMIME:          FEncryptionMethod := secMIME;
+      sigPGPOld:        FEncryptionMethod := secPGPOld;
+      sigMIME_or_PGPOld:FEncryptionMethod := secMIME_or_PGPOld;
+    end
+  else
+    FEncryptionMethod := secNone;
+end;
+
+function TSendUUData.GetIsMIMEMultipart: boolean;
+begin
+  if PartsEx or not assigned(OrgHdp) then
+    result := Parts.Count > 1
+  else // not PartsEx
+    result := UpperCase(LeftStr(OrgHdp.MIME.CType,10))='MULTIPART/';
+end;
+
 { -------------------------------------------------------------------- }
                                                                         
 initialization
@@ -937,6 +1010,10 @@ finalization
 
 {
   $Log$
+  Revision 1.76  2003/08/30 22:19:26  cl
+  - send window: select encryption and signature method
+  - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+
   Revision 1.75  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 

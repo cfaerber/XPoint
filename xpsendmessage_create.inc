@@ -28,13 +28,14 @@ var Count:  Integer;
     MidType:byte;
 var FidoOriginSav: string;
 
-  procedure CreateSingleMessageEncrypted(
+  procedure CreateSingleMessage(
 //  Box    : String;
 //  Netztyp: Byte;
     Server : TXPServer;
     EMP,KOP: TStringList;
     PM,BCC : Boolean;
-//  Encrypt: Integer;
+    EncryptionMethod: TSendEncryptionMethod;
+    SigningMethod: TSendSigningMethod;
     const EncrPwd: string );
 
     {-- CreateSingleMessage ------------------------------------------ }
@@ -202,7 +203,7 @@ var FidoOriginSav: string;
          s:string;
       anal:TMimeAnalyzer;
     begin
-      if pmcrypt[docode-2].binary and not ntBinary(server.netztyp) then 
+      if pmcrypt[Ord(EncryptionMethod)-2].binary and not ntBinary(server.netztyp) then 
       begin
         rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
         exit;
@@ -222,7 +223,7 @@ var FidoOriginSav: string;
         fs.Free;
       end;
 
-      s:=pmcrypt[docode-2].encode;
+      s:=pmcrypt[Ord(EncryptionMethod)-2].encode;
       rps(s,'$KEY',EncrPwd);
       rps(s,'$INFILE',fi);
       rps(s,'$OUTFILE',fo);
@@ -234,10 +235,10 @@ var FidoOriginSav: string;
       else
       begin
         fs:=TTemporaryFileStream.Create(fo,fmOpenRead);
-        if not pmcrypt[docode-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
+        if not pmcrypt[Ord(EncryptionMethod)-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
         CopyStream(fs,anal);
         
-        if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
+        if(pmcrypt[Ord(EncryptionMethod)-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
           and not ntBinary(Server.Netztyp) then
         begin
           fs.Free;
@@ -246,14 +247,14 @@ var FidoOriginSav: string;
         begin
           SetCryptFlag;
 
-          hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
+          hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[Ord(EncryptionMethod)-2].name+') '+
             hex(hdp.groesse,6);
           hdp.crypt.method:='PMCRYPT2';
           hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
           hdp.crypt.typ:=hdp.typ;
           hdp.crypt.charset:=hdp.charset;
 
-          if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
+          if(pmcrypt[Ord(EncryptionMethod)-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
           begin
             hdp.typ:='B';
             hdp.mime.encoding:=MimeEncodingBase64;
@@ -276,8 +277,8 @@ var FidoOriginSav: string;
         _era(fi);
     end;
 
-    {-- CreateSingleMessage ------------------------------------------ }    
-   
+    {-- CreateSingleMessage ------------------------------------------ }
+
   var
     I    : integer;
     L      : Longint;
@@ -301,12 +302,17 @@ var FidoOriginSav: string;
     { --- 0. Schritt: Ein paar vorarbeiten ---------------------------- }
 
     Hdp := THeader.Create;
-    Hdp.Netztyp := Server.Netztyp;          
+    Hdp.Netztyp := Server.Netztyp;
 
     { --- 1. Schritt: Body erzeugen ----------------------------------- }
 
     if ntMIME(Server.netztyp) then
       hdp.MIME.mversion := '1.0';
+
+    // We need the information for individual body parts when sending
+    // encrypted or signed
+    if (not partsex) and ((EncryptionMethod <> secNone) or (SigningMethod <> sigNone)) then
+      MIMEDecompose;
 
     if (not partsex) and assigned(orghdp) then
     begin
@@ -320,9 +326,31 @@ var FidoOriginSav: string;
       hdp.mime.cid      := orghdp.mime.cid;
       hdp.charset       := orghdp.charset;
       hdp.x_charset     := orghdp.x_charset;
-    end
-    else case parts.count of
-      0: assert(false);
+    end else
+    begin
+      assert(parts.count>0);
+      assert(SigningMethod <> sigMIME_or_PGPOld);
+      assert(EncryptionMethod <> secMIME_or_PGPOld);
+
+      // We have to use MIME for multipart messages
+      if parts.count > 1 then
+      begin
+        if EncryptionMethod in [secPGPOld,secMIME_or_PGPOld] then
+          EncryptionMethod := secMIME;
+        if SigningMethod in [sigPGPOld,sigMIME_or_PGPOld] then
+          SigningMethod := sigMIME;
+      end;
+
+      // If we use MIME, make sure all encoding methods are compliant
+      // with multipart/signed or multipart/encrypted
+      if (SigningMethod in [sigMIME]) or
+         (EncryptionMethod in [secMIME]) then
+        for i:=0 to parts.Count-1 do
+          with TSendAttach_Part(parts[i]) do
+            if not Analyzed.EncodingSafeForSigned[ContentEncoding] then
+              ContentEncoding := MimeEncodingQuotedPrintable;
+
+      case parts.count of
       1: with TSendAttach_Part(parts[0]) do begin
 //         if ntMIME(netztyp) and not ntConv(netztyp) then
 //           hdp.typ := 'M' else // ZConnect with MIME
@@ -374,20 +402,12 @@ var FidoOriginSav: string;
 
          end; // with
       else
-      begin
+       begin
         Boundary:=MimeCreateMultipartBoundary(Server.username); // does not contain chars that must be quoted
         hdp.boundary:=boundary;
         hdp.typ:='M';
         hdp.MIME.ctype := 'multipart/mixed; boundary="'+Boundary+'"';
         hdp.MIME.encoding := MimeEncoding7Bit;
-
-        // if we use PGP/MIME, then only 7bit transparent encodings
-        // are allowed.
-        if flPGPSig or (docode in [8,9]) then
-          for i:=0 to parts.Count-1 do
-            with TSendAttach_Part(parts[i]) do
-              if not Analyzed.EncodingSafeForSigned[ContentEncoding] then
-                ContentEncoding := MimeEncodingQuotedPrintable;
 
         s1 := TRopeStream.Create;
 
@@ -399,7 +419,7 @@ var FidoOriginSav: string;
             begin
               FileCharset:=MimeCharsetCanonicalName(FileCharset);
               ContentCharset:=MimeCharsetCanonicalName(ContentCharset);
-            end;
+            end; // if
             writeln_s(s1,#13#10'--'+boundary);
             MIMEWriteContentWithHeaders( s1,TSendAttach_Part(parts[i]),
               iifs((i=0) and (IsMessage) and not flOhnesig,SigData,''));
@@ -410,12 +430,13 @@ var FidoOriginSav: string;
           end; // with
         end; // for
         write_s(s1,#13#10'--'+boundary+'--');
-      end;
-    end;
+       end; // else
+      end; // case
+    end; // if (not partsex) ...
 
     { --- 2. Schritt: Headerdaten erzeugen --------------------------- }
 
-(*    
+(*
     if intern then
     begin
       hdp.Empfaenger.Add(Mid(empfaddr,2));    
@@ -438,7 +459,7 @@ var FidoOriginSav: string;
       end;
       
     //-- RFC-Header -------------------------------------------------- }
-    
+
     if Server.IsRFC then begin
       hdp.UTo := RFCWriteAddressList(EmpfList,nil,[atTo]);
       hdp.CC  := RFCWriteAddressList(EmpfList,nil,[atCC]);
@@ -469,7 +490,7 @@ var FidoOriginSav: string;
 
     if Server.netztyp=nt_Magic then
       hdp.hd_point:=Server.pointname;
-    
+
     hdp.Keywords:=keywords;
     hdp.Summary:=summary;
     if  ntAdrCompatible(onetztyp,Server.netztyp)
@@ -702,7 +723,7 @@ var FidoOriginSav: string;
         include(Lr.flags, mf_wab);
       if (hdp.typ='T')and(hdp.charset='ISO1')then //inc(l,$2000);
         include(Lr.flags, mf_ISO1);
-      if flPGPsig then //inc(l,$4000);
+      if SigningMethod in [sigMIME,sigPGPOld,sigMIME_or_PGPOld] then //inc(l,$4000);
         include(Lr.flags, mf_PGPsig);
       if Emp.Count>1 then begin
         //inc(l,longint(Min(255,EMP.Count)) shl 16);
@@ -769,27 +790,38 @@ var FidoOriginSav: string;
 
     { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
-    if not flintern then begin
+    if not flintern then
+    begin
       s1.Seek(0,soFromBeginning);
 
-      if (hdp.typ<>'M') and 
-        ( (docode in [1..5,9]) or 
-          (flPGPSig and ((cancode=9) or ((cancode<>8) and not PGP_MIME))) ) then
+      assert((hdp.typ<>'M') or (EncryptionMethod in [secNone,secMIME]));
+      assert((hdp.typ<>'M') or (SigningMethod in [sigNone,sigMIME]));
+
+      if (EncryptionMethod in [secQPC,secDESXP,secPMC1..secPMC3,secPGPOld]) or
+         (SigningMethod in  [sigPGPOld]) then
+        case EncryptionMethod of
+          secQPC:
+            EncryptMessage(false,s1); // QPC
+          secDESXP:
+            EncryptMessage(true, s1); // DES
+          secPMC1,
+          secPMC2,
+          secPMC3:
+            pmEncryptMessage(s1);  // PMC-1..3
+          secPGPOld:
+            XP_PGP.PGP_EncodeStream(s1,hdp,EncrPwd,true,SigningMethod <> sigNone,FidoOrigin);
+          else // SigningMethod must be sigPGPOld
+            XP_PGP.PGP_EncodeStream(s1,hdp,'',false,true,FidoOrigin);
+        end
+      else
+      if (EncryptionMethod in [secMIME]) or
+         (SigningMethod in  [sigMIME]) then
       begin
-        case docode of
-          1: EncryptMessage(false,s1); // QPC
-          2: EncryptMessage(true, s1); // DES
-          3..5: pmEncryptMessage(s1);  // PMC-1..3
-          8,9: XP_PGP.PGP_EncodeStream(s1,hdp,EncrPwd,true,flPGPSig,FidoOrigin);
-          else if flPGPSig then XP_PGP.PGP_EncodeStream(s1,hdp,'',false,true,FidoOrigin);
-        end;
-        end else
-      begin
-        if (hdp.typ<>'M') and (flPGPSig or (docode in [8,9])) then
+        assert((hdp.typ='M') or (parts.count=1));
+
+        if hdp.typ<>'M' then
         begin
           // encode the single part NOW for MIME
-          assert(parts.count=1);
-
           s1.Free; s1:=TRopeStream.Create;
           with TSendAttach_Part(parts[0]) do
             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
@@ -798,11 +830,14 @@ var FidoOriginSav: string;
           hdp.typ:='M';
         end;
 
-        if flPGPSig then
-          XP_PGP.PGP_MimeSignStream(s1,hdp);
+        // Encrypt the MIME stream. We can also do signing in this step.
+        if EncryptionMethod <> secNone then
+          XP_PGP.PGP_MimeEncodeStream(s1,hdp,EncrPwd,SigningMethod <> sigNone)
+        else
 
-        if (docode in [8,9]) then
-          XP_PGP.PGP_MimeEncodeStream(s1,hdp,EncrPwd);
+        // Sign the MIME stream (if it has not been signed during encryption)
+        if SigningMethod <> sigNone then
+          XP_PGP.PGP_MimeSignStream(s1,hdp);
       end;
 
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
@@ -833,27 +868,30 @@ var FidoOriginSav: string;
       CopyStream(s1,s2);
       s2.Free; {s2:=nil;}
 
-    end; // not intern
+    end; // if not flIntern
 
     s1.Free; s1:=nil;
   end;
 
-  procedure CreateSingleMessage(
-    Server : TXPServer;
-    EMP,KOP: TStringList;
-    PM,BCC : Boolean );
-  begin
-    CreateSingleMessageEncrypted(Server,EMP,KOP,PM,BCC,'');
-  end;
-
-
   procedure CreateBoxMessages(const Box:string;PM:Boolean);
   var EMP,BCC,KOP: TSTringList;
-      i:integer;
+      E2, K2 : TStringList;
+      i: integer;
       server: TXPServer;
+      SigM,SigMOverride: TSendSigningMethod;
+      EncMOverride: TSendEncryptionMethod;
+  label
+      restart,
+      done;
   begin
     FidoOriginSav := '';
-  
+    SigMOverride := sigNone;
+
+    if (EncryptionMethod = secNone) and
+      (SigningMethod = sigMIME_or_PGPOld) then
+      SigMOverride := sigMIME;
+
+  restart:
     EMP := nil;
     BCC := nil;
     KOP := nil;
@@ -866,71 +904,127 @@ var FidoOriginSav: string;
 
   // -- Adressen für diese Box suchen ----------------------------------
     for i:=0 to EmpfList.Count-1 do
-     if EmpfList[i].AddressType in [atNewsgroup,atTo] then
-      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then 
-        EMP.Add(EmpfList[i].ZcAddress)
+     if EmpfList[i].AddressType in [atNewsgroup,atTo,atCC,atBCC] then
+      if (EmpfList[i].PM = PM) and
+         (UpperCase(EmpfList[i].BoxName)=Box) and
+         (
+           (not (SigMOverride in [sigMIME,sigPGPOld])) or
+           ((SigMOverride = sigMIME) and (EmpfList[i].EncodingMethod = 8)) or
+           ((SigMOverride = sigPgpOld) and (EmpfList[i].EncodingMethod = 9))
+         )
+      then
+        if EmpfList[i].AddressType <> atBCC then
+          EMP.Add(EmpfList[i].ZcAddress)
+        else
+          BCC.Add(EmpfList[i].ZcAddress)
       else
-        KOP.Add(EmpfList[i].ZcAddress);
-      
-    for i:=0 to EmpfList.Count-1 do
-     if EmpfList[i].AddressType in [atcc] then
-      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then 
-        EMP.Add(EmpfList[i].ZcAddress)
-      else
-        KOP.Add(EmpfList[i].ZcAddress);
-
-    for i:=0 to EmpfList.Count-1 do
-     if EmpfList[i].AddressType in [atbcc] then
-      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then
-        BCC.Add(EmpfList[i].ZcAddress);
+        if EmpfList[i].AddressType <> atBCC then
+          KOP.Add(EmpfList[i].ZcAddress);
 
     if (EMP.Count=0) and (BCC.Count=0) then
-      exit; // nothing to do for this box!
-   
+      Goto Done; // nothing to do for this box!
+
+   // -- Einzelne Nachrichten bei Verschlüsselung ---------------------------
+
+    if EncryptionMethod <> secNone then
+    begin
+      E2 := nil;
+      K2 := nil;
+      try
+        E2 := TStringList.Create;
+        K2 := TStringList.Create;
+
+        K2.AddStrings(EMP);
+        K2.AddStrings(KOP);
+
+        for i:=0 to EmpfList.Count-1 do
+          if EmpfList[i].AddressType in [atNewsgroup,atTo,atCC,atBCC] then
+            if (EmpfList[i].PM = PM) and
+               (UpperCase(EmpfList[i].BoxName)=Box) then
+            begin
+              if EmpfList[i].AddressType <> atBCC then
+                K2.Delete(0);
+
+              E2.Clear;
+              E2.Add(EmpfList[i].ZcAddress);
+
+              EncMOverride := EncryptionMethod;
+              SigMOverride := SigningMethod;
+
+              if EncMOverride = secMIME_or_PGPOld then
+                if EmpfList[i].EncodingMethod = 9 then
+                  EncMOverride := secPGPOld
+                else
+                  EncMOverride := secMIME;
+
+              if SigMOverride in [sigMIME,sigPGPOld,sigMIME_or_PGPOld] then
+                if EncMOverride in [secMIME,secPGPOld,secMIME_or_PGPOld] then
+                  SigMOverride := TSendSigningMethod(Ord(EncMOverride))
+                else
+                  SigMOverride := sigNone;
+
+              CreateSingleMessage(Server,E2,K2,PM,true,EncMOverride,SigMOverride,
+                EmpfList[i].EncodingPassword);
+
+              K2.AddStrings(E2);
+            end;
+
+      finally
+        E2.Free;
+        K2.Free;
+      end;
+      Exit;
+    end;
+
+    if(SigMOverride in [sigMIME,sigPGPOld])then
+      SigM := SigMOverride
+    else
+      SigM := SigningMethod;
+
   // -- Je nach Boxtyp unterschiedliche Behandlung ---------------------
 
     if Server.Netztyp in netsRFC then begin
 
     // RFC: benötigt keine spezielle Behandlung von BCCs und Kopien.
-    
+
     // Um sicher zu stellen, dass ältere XPs nicht aus EMP/KOP plötzlich
-    // ein To/CC machen (wäre fatal, falls BCCs dabei sind), wird das 
+    // ein To/CC machen (wäre fatal, falls BCCs dabei sind), wird das
     // BCC-Flag gesetzt, wenn BCCs vorhanden sind.
-    
+
       EMP.AddStrings(BCC);
-      CreateSingleMessage(Server,EMP,KOP,PM,BCC.Count>0);
-    end else 
+      CreateSingleMessage(Server,EMP,KOP,PM,BCC.Count>0,secNone,sigM,'');
+    end else
     begin
 
     // Andere Netztypen:
 
-      // Keine BCCs: Einfach Nachricht erzeugen       
-    
+      // Keine BCCs: Einfach Nachricht erzeugen
+
       if BCC.Count<=0 then begin
-        CreateSingleMessage(Server,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
       end else 
 
       // BCCs vorhanden: je nachdem, ob das Netz selbst BCCs unterstützt
       
       if ntBCC(Server.netztyp) then begin
 
-        // BCCs werden unterstützt: Jeweils eine Nachricht mit den 
+        // BCCs werden unterstützt: Eine Nachricht mit den
         // normalen Empfängern (ohne BCC-Flag) und eine mit den BCC-
         // Empfängern (mit BCC-Flag) erzeugen
       
-        CreateSingleMessage(Server,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
         
         KOP.AddStrings(EMP);
         EMP.Clear;
         EMP.AddStrings(BCC);
-        CreateSingleMessage(Server,EMP,KOP,PM,true);
-        
+        CreateSingleMessage(Server,EMP,KOP,PM,true,secNone,sigM,'');
+
       end else
       begin
         // BCCs werden nicht unterstützt: Eine Nachricht mit den normalen
         // Empfängern erzeugen und jeweils eine für jeden BCC-Empfänger
       
-        CreateSingleMessage(Server,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false,secNone,sigM,'');
 
         KOP.AddStrings(EMP);
         
@@ -938,11 +1032,12 @@ var FidoOriginSav: string;
         begin
           EMP.Clear;
           EMP.Add(BCC[i]);
-          CreateSingleMessage(Server,EMP,KOP,PM,true);
+          CreateSingleMessage(Server,EMP,KOP,PM,true,secNone,sigM,'');
         end;
         
       end;
     end;
+   done:
 
    finally
     Server.Free;
@@ -952,6 +1047,10 @@ var FidoOriginSav: string;
     BCC.Free;
    end;
 
+    if SigMOverride = sigMIME then begin
+      SigMOverride := sigPGPOld;
+      goto restart;
+    end;
   end;
 
   procedure CreateInternalMessage(const Box: string);
@@ -968,7 +1067,7 @@ var FidoOriginSav: string;
       KOP := TStringList.Create;
       EMP.Add(iifs(EmpfList.Count>0,EmpfList[0].ZCAddress,'$/'#$AF'Nix'));
       Server := TXPServer.CreatebyName(Box);
-      CreateSingleMessage(Server,EMP,KOP,false,false);
+      CreateSingleMessage(Server,EMP,KOP,false,false,secNone,sigNone,'');
     finally
       Server.Free;
       EMP.Free;
@@ -997,6 +1096,7 @@ var i : integer;
 begin
   if SentOK then exit;
   CheckEmpfaengerList(EmpfList,false,false);
+  CorrectEncryptionMethod;
   if Boxen.Count<0 then exit;
 
   if flShow then begin
@@ -1034,6 +1134,10 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.18  2003/08/30 22:19:27  cl
+// - send window: select encryption and signature method
+// - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+//
 // Revision 1.17  2003/08/24 23:33:27  cl
 // - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
 //   Nachricht löschen (nach Versand), Empfangsbestätigungen,

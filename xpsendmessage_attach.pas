@@ -76,10 +76,8 @@ type
     destructor Destroy; override;
   end;
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;
-  Netztyp:eNetz;cancode:byte;pgpsig:boolean);
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature:string;
-  Netztyp:eNetz;docode:Byte;pgpsig:boolean);
+procedure SendAttach(parts:TList;const Signature:string; Netztyp:eNetz);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht:Boolean;const Signature:string;Netztyp:eNetz);
   
 { ------------------------} implementation { ------------------------- }
 
@@ -249,16 +247,7 @@ end;
 
 { --- SendAttach main procedure -------------------------------------- }
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:eNetz;cancode:byte;pgpsig:boolean);
-
-  function docode:byte;
-  begin
-    result:=cancode;
-    if (cancode=9) and (parts.count>1) then
-      result := 8;                // for Multipart, use PGP/MIME instead of PGP
-    if (not(cancode in [0,9])) and (parts.count>1) then
-      result := 0;                // ... and allow only PGP/MIME
-  end;
+procedure SendAttach(parts:TList;const Signature:string;Netztyp:eNetz);
 
   { --- add new part dialogue ---------------------------------------- }
 
@@ -354,7 +343,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
              pa.FileAccess := NaN;
            {$ENDIF}
   
-           SendAttach_Analyze(pa,true,'',netztyp,docode,pgpsig);
+           SendAttach_Analyze(pa,true,'',netztyp);
          end;
       2: begin
            pa.FileName    := TempS($FFFF);
@@ -369,7 +358,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
  
            pa.ContentType.AsString := 'text/plain';
   
-           SendAttach_EditText(pa,false,Umlaute,iifs(parts.count<=0,Signature,''),netztyp,docode,pgpsig);
+           SendAttach_EditText(pa,false,iifs(parts.count<=0,Signature,''),netztyp);
          end;
        else begin pa.Free; exit; end;
      end;
@@ -428,9 +417,6 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
       FileEol           : string;
   
   begin
-    PGPSign:=pgpsig and not PGP_MIME;
-    PGPEncr:=(docode=9);
-  
     ContentCharset        := pa.ContentType.Charset;
                              pa.ContentType.Charset:='';
     ContentType           := pa.ContentType.AsString;
@@ -688,7 +674,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
       1: SendAttach_EditText(pa,(n=0) and
            (pa.FileNameO='') and
            (pa.ContentDisposition.DispoType=mimedispositioninline) and
-           (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute,iifs(n=0,Signature,''),Netztyp,docode,pgpsig);
+           (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),iifs(n=0,Signature,''),Netztyp);
       2: SendAttach_EditMeta(pa);
       3: SendAttach_EditType(pa);
       4: (* debug *);
@@ -742,14 +728,16 @@ var p,p0      : integer;        (* current line                 *)
         s3:=LeftStr(s3,20-3)+'...';
     end;
 
+(*    
     if( (docode=9) or (PGPSig and
         ((cancode=9) or ((cancode<>8) and not PGP_MIME)) ))
       and (pa.FileEOL=MimeEOLNone) then
         s3:=s3+'  PGP' 
-      else 
+      else
+*)       
     case pa.ContentEncoding of
       MIMEEncoding7bit:            s3:=s3+' 7bit';
-      MIMEEncoding8bit:            s3:=s3+iifs(docode=8,'   QP',' 8bit');
+      MIMEEncoding8bit:            s3:=s3+' 8bit';
       MIMEEncodingQuotedPrintable: s3:=s3+'   QP';
       else                         s3:=s3+'  B64';
     end;
@@ -950,7 +938,7 @@ begin
   closebox;
 end;
 
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature: string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht:Boolean;const Signature: string;netztyp:eNetz);
 var FileName: String;
     OldTime : Longint;
     NewTime : Longint;
@@ -1035,7 +1023,7 @@ begin
   end else
   begin
     if IsNachricht then pushhp(54);
-    TED(FileName,true,iif(editvollbild,0,2),Umlaute,true,false);
+    TED(FileName,true,iif(editvollbild,0,2),true,true,false);
     if IsNachricht then pophp;
     SafeDeleteFile(ChangeFileExt(FileName, '.' + ExtBak)); { .BAK löschen }
 //  EditFile(FileName,IsNachricht,true,
@@ -1121,7 +1109,7 @@ begin
   end;
 
   if (NewTime<>OldTime) or (pa.Analyzed.Size<=0) then
-    SendAttach_Analyze(pa,false,Signature,netztyp,docode,pgpsig);
+    SendAttach_Analyze(pa,false,Signature,netztyp);
 end;
 
 end.

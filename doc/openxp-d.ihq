@@ -2408,7 +2408,7 @@ voranstellen.
 2902
 <<RFC
 
-Setzt die Priorit„t der Nachricht. Sie k"nnen mit
+Setzt die Priorit„t der Nachricht. Sie k”nnen mit
 <<<F2> >>zwischen verschiedenen Priorit„tsleveln
 w„hlen, und der Empf„nger kann (vielleicht) diese
 Priorit„t in seinem Mail-/Newsprogramm erkennen. Ob
@@ -2426,7 +2426,70 @@ Eil-/Direktmails ist gebhrenpflichtig!
 @
 2903
 Hier k”nnen Sie ausw„hlen, ob und wie die Nachricht
-verschlsselt/signiert wird.
+verschlsselt wird. Es stehen folgende Verschlsse-
+lungsmethoden zur Wahl:
+
+<<PGP/MIME>>: Verwendet <<multipart/encrypted>>-Nachrichten
+      (MIME) nach RFC 2015 (bzw. auch RFC 3156, wenn
+      Ihre PGP-Version dem OpenPGP-Standard, RFC
+      2440, entspricht).
+
+<<PGP (alt)>>: Verwendet das alte PGP-Format ohne MIME.
+      Mit diesem Verfahren k”nnen keine mehrteiligen
+      Nachrichten versandt werden.
+
+<<PGP/MIME + PGP (alt)>>: Verwendet entweder <<PGP/MIME>>
+      oder <<PGP (alt)>>, je nachdem, welches Verfahren
+      fr den jeweiligen Empf„nger im Adressbuch
+      eingestellt wurde.
+
+
+<<QPC>>:  Ein einfaches, sehr schnelles, aber v”llig
+      unsicheres Verfahren, das fr das Z-Netz
+      entwickelt wurde. Auáerhalb des Z-Netzes wird
+      das Verfahren nur von OpenXP und anderen
+      Crosspoint-Versionen untersttzt.
+
+<<DES (Crosspoint)>>: Ein relativ sicheres Verfahren, das
+      nur zum Austausch von Nachrichten zwischen
+      Benutzern von OpenXP und anderen Crosspoint-
+      Versionen gedacht ist.
+
+<<PMC-1 bis PMC-3>>: Verwendet das unter unter
+      [/Config/Extern/pmCrypt] eigestellte@12405 
+      Verfahren. Auch dies funktioniert i.d.R. nur
+      zwischen Benutzern von OpenXP und anderen
+      Crosspoint-Versionen.
+
+Wird fr die Verschlsselung eines der Verfahren
+<<PGP/MIME>> oder <<PGP (alt)>> gew„hlt, so kann die
+Nachricht mit demseben Verfahren auch signiert
+werden.
+Die anderen Verschlsselungsverfahren k”nnen nicht
+mit einer krypotgrafischen Signatur kombiniert
+werden.
+@
+2909
+Hier k”nnen Sie ausw„hlen, ob und wie die Nachricht
+krypotografisch signiert wird. Es stehen folgende
+Signaturmethoden zur Wahl:
+
+<<PGP/MIME>>: Verwendet <<multipart/signed>>-Nachrichten
+      (MIME) nach RFC 2015 (bzw. auch RFC 3156, wenn
+      Ihre PGP-Version dem OpenPGP-Standard, RFC
+      2440, entspricht).
+
+<<PGP (alt)>>: Verwendet das alte PGP-Format ohne MIME.
+      Mit diesem Verfahren k”nnen keine mehrteiligen
+      Nachrichten versandt werden.
+
+<<PGP/MIME + PGP (alt)>>: Verwendet entweder <<PGP/MIME>>
+      oder <<PGP (alt)>>, je nachdem, welches Verfahren
+      fr den jeweiligen Empf„nger im Adressbuch
+      eingestellt wurde.
+      Fr Empf„nger ohne PGP-Eintrag im Adressbuch
+      richtet sich das Verfahren nach dem Schalter
+      [Config/Extern/PGP: PGP/MIME verwenden].@1024
 @
 2904
 Hier k”nnen Sie ein Datum angeben, zu dem die
@@ -17809,4 +17872,4 @@ ner und der Adressen!
                      "<<RTA-Standard=J>>" angenommen.
 
 @@
-vim:enc=cp437:tw=53:expandtab:
+vim:enc=cp437:tw=53:expandtab:formatoptions=2:

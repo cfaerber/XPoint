@@ -273,6 +273,7 @@ N English
 2    after restarting OpenXP, probaby a message database file has been~
 3    damaged. Then first delete the index files (DEL *.IX1). If that  ~
 4    doesn't help, read the hints in the manual.                      ~
+5    ~                                                                ~
 -
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
@@ -460,6 +461,7 @@ N English
 4    # coloumn the holiday type (1 to 3) and the last an arbitrary comment.
 5
 6    01.01.96  1  New year
+-
 + 244
 1    OpenXP is already running in another window. It is not
 2    possible to run multiple instances of OpenXP at the same
@@ -4066,6 +4068,10 @@ N English
 -
 
 # $Log$
+# Revision 1.66  2003/08/30 22:19:26  cl
+# - send window: select encryption and signature method
+# - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+#
 # Revision 1.65  2003/08/04 22:48:11  mk
 # - removed Edit/netze/verschiedens/mime in news
 #

@@ -15,7 +15,6 @@ N Deutsch
 -
 
 # Online-Hilfe, Tastenmakros
-1 OPENXP-D.HLP
 2 keydef.cfg
 5 Lade Sprachmodul...
 
@@ -1494,14 +1493,17 @@ N Deutsch
 51   Brett-^An:  ~
 
 55   Ser^ver:    ~
-57   Si^cherheit:~
+
+56   Vers^chlÅss.:
+57   Si^gnatur:  ~
+
 60   Pri^orit\x84t: ~
 70   ^Datum:     ~
 
-72   L^esebest\x84tigung anfordern
+72   B^est\x84tigung anfordern
 75   keine Signatur an^h\x84ngen
 76   nach Versand l^\x94schen
-77   Nac^hricht nicht archivieren
+77   nicht arc^hivieren
 
 80   Aktuelle Nachricht:   
 81   Bezugsnachricht:
@@ -1533,6 +1535,18 @@ N Deutsch
 110  Nachricht weiterleiten (Maus)
 
 120  Autoversand von Nachricht
+
+129  nicht m\x94glich
+130  keine
+131  QPC (unsicher!)
+132  DES (Crosspoint)
+133  pmc-1
+134  pmc-2
+135  pmc-3
+
+138  PGP/MIME
+139  PGP (alt)
+140  PGP/MIME + PGP (alt)
 
 200  Unbekannten Benutzer anlegen
 -
@@ -4127,6 +4141,10 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.80  2003/08/30 22:19:26  cl
+# - send window: select encryption and signature method
+# - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+#
 # Revision 1.79  2003/08/28 22:01:35  mk
 # - fixed display of ressource 10800
 #

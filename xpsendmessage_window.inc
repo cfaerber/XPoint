@@ -25,10 +25,10 @@
 var done: boolean;
 
 procedure CheckEmpfaengerList(
-  List:     TAddressList;                              
+  List:     TAddressList;
   Prompt:   Boolean;
   AutoAdd:  Boolean;
-  sData:   TSendUUData
+  sData:    TSendUUData
 ); forward;
 
 var
@@ -47,6 +47,8 @@ var
   FieldInc: integer;
 
   FieldServer: Integer;
+  FieldEncryption: Integer;
+  FieldSigning: Integer;
 
   AddrCont: array[0..2,0..19] of String;
   AddrText:  array[0..1,0..19] of Pointer;
@@ -75,6 +77,196 @@ begin
 
   if Field >= 0 then
     SetField(Field,Server);
+end;
+
+type set_of_TSendEncryptionMethod = set of TSendEncryptionMethod;
+type set_of_TSendSigningMethod    = set of TSendSigningMethod;
+
+procedure CorrectEncryptionMethod(
+  List: TAddressList;
+  GSData: TSendUUData;
+  var Methods: set_of_TSendEncryptionMethod);
+var
+  i: integer;
+begin
+  Methods := [];
+
+  for i :=  0 to List.Count -1 do
+    if not List[i].Empty then
+      if (not List[i].PM) or
+         ( List[i].EncodingMethod in [0] ) or
+         ((List[i].EncodingMethod in [1,2,3..5]) and (Trim(List[i].EncodingPassword)= '')) then
+      begin
+        Methods := [];
+        break;
+      end else
+      if List[i].EncodingMethod in [1,2,3..5,8,9] then
+        Methods := Methods + [TSendEncryptionMethod(List[i].EncodingMethod)];
+
+  // For multipart messages, switch from leagacy PGP to PGP/MIME
+  if (GSData.IsMIMEMultipart) and (Methods * [secMIME_or_PGPOld,secPGPOld] <> []) then
+    Methods := (Methods + [secMIME]) - [secMIME_or_PGPOld,secPGPOld];
+
+  // If there's both leagacy PGP and MIME, activate "combination" switch
+  if (secMIME in Methods) and (secPGPOld in Methods) then
+    Methods := (Methods + [secMIME_or_PGPOld]) - [secMIME,secPGPOld];
+
+  // We don't support combining symmetric ZC and PGP encryption
+  if (Methods * [secQPC,secDESXP,secPMC1..secPMC2] <> []) and
+     (Methods * [secMIME,secPGPOld,secMIME_or_PGPOld] <> []) then
+    Methods := [];
+
+  Methods := Methods + [secNone];
+
+  if not(GSData.EncryptionMethod in Methods) then
+    if GSData.EncryptionMethod in [secMIME,secMIME_or_PGPOld,secPGPOld] then
+      if secMIME in Methods then
+        GSData.EncryptionMethod := secMIME
+      else
+      if secPGPOld in Methods then
+        GSData.EncryptionMethod := secPGPOld
+      else
+      if secMIME_or_PGPOld in Methods then
+        GSData.EncryptionMethod := secMIME_or_PGPOld;
+
+  if not(GSData.EncryptionMethod in Methods) then
+    GSData.EncryptionMethod := secNone;
+end;
+
+procedure SetEncryptionField;
+var Methods : set_of_TSendEncryptionMethod;
+    s: string;
+    i: integer;
+    j: TSendEncryptionMethod;
+begin
+  if FieldEncryption < 0 then exit;
+  CorrectEncryptionMethod(List,GSData,Methods);
+
+  if Methods = [secNone] then
+  begin
+    mclearsel(FieldEncryption);
+    SetField(FieldEncryption,GetRes2(610,129));
+  end else
+  begin
+    for j := Low(j) to High(j) do
+    begin
+      if j in Methods then
+      begin
+        if s<>'' then s := s + #$f9;
+        s := s + GetRes2(610, Ord(j)+130);
+        Inc(i);
+      end;
+    end;
+
+    if GSData.IsMIMEMultipart and
+      (GSData.EncryptionMethod in [secMime,secPGPOld,secMime_or_PGPOld]) then
+      SetField(FieldEncryption,GetRes2(610,130+Ord(secMime)))
+    else
+      SetField(FieldEncryption,GetRes2(610,130+Ord(GSData.EncryptionMethod)));
+
+    mclearsel(FieldEncryption);
+    mappendsel(FieldEncryption, true, s);
+  end;
+end;
+
+procedure CorrectSigningMethod(
+  List: TAddressList;
+  GSData: TSendUUData;
+  var Methods: set_of_TSendSigningMethod);
+var
+  i      : integer;
+  NoMIME : boolean;  
+begin
+  Methods := [];
+  NoMIME := false;
+  
+  if GSData.EncryptionMethod in [secMIME, secPGPOld, secMIME_or_PGPOld, secNone] then
+  begin
+    for i :=  0 to List.Count -1 do
+      if not List[i].Empty then
+        if List[i].PM and (List[i].EncodingMethod in [8,9]) then
+          Methods := Methods + [TSendSigningMethod(List[i].EncodingMethod)]
+        else
+        if (List[i].Netztyp>0) and not ntMIME(List[i].Netztyp) then
+          NoMime := true;
+
+    // For multipart messages, switch from leagacy PGP to PGP/MIME
+    if (GSData.IsMIMEMultipart) and (Methods * [sigMIME_or_PGPOld,sigPGPOld] <> []) then
+      Methods := (Methods + [sigMIME]) - [sigMIME_or_PGPOld,sigPGPOld];
+
+    // If there's both leagacy PGP and MIME, activate "combination" switch
+    if (sigMIME in Methods) and (sigPGPOld in Methods) then
+      Methods := (Methods + [sigMIME_or_PGPOld]) - [sigMIME,sigPGPOld];
+
+    // If there are no methods, always allow PGP/MIME and PGPOld
+    if Methods = [] then
+      Methods := Methods + [sigMIME,sigPGPOld];
+
+    // Remove MIME if we have non-MIME eNetz types (but keep "combination")
+    if NoMime then
+      Methods := Methods - [sigMIME];
+  end;
+
+  Methods := Methods + [sigNone];
+  
+  if not(GSData.SigningMethod in Methods) then
+    if GSData.SigningMethod in [sigMIME,sigMIME_or_PGPOld,sigPGPOld] then
+      if sigMIME in Methods then
+        GSData.SigningMethod := sigMIME
+      else
+      if sigPGPOld in Methods then
+        GSData.SigningMethod := sigPGPOld
+      else
+      if sigMIME_or_PGPOld in Methods then
+        GSData.SigningMethod := sigMIME_or_PGPOld;
+
+  if not(GSData.SigningMethod in Methods) then
+    GSData.SigningMethod := sigNone;
+end;
+
+procedure SetSigningField;
+var Methods : set_of_TSendSigningMethod;
+    s: string;
+    i: integer;
+    j: TSendSigningMethod;
+begin
+  if FieldSigning < 0 then exit;
+  CorrectSigningMethod(List,GSData,Methods);
+
+  if Methods = [sigNone] then
+  begin
+    mclearsel(FieldSigning);
+    SetField(FieldSigning,GetRes2(610,129));
+  end else
+  begin
+    for j := Low(j) to High(j) do
+    begin
+      if j in Methods then
+      begin
+        if s<>'' then s := s + #$f9;
+        s := s + GetRes2(610, Ord(j)+130);
+        Inc(i);
+      end;
+    end;
+
+    if GSData.IsMIMEMultipart and
+      (GSData.SigningMethod in [sigMime,sigPGPOld,sigMime_or_PGPOld]) then
+      SetField(FieldSigning,GetRes2(610,130+Ord(sigMime)))
+    else
+      SetField(FieldSigning,GetRes2(610,130+Ord(GSData.SigningMethod)));
+
+    mclearsel(FieldSigning);
+    mappendsel(FieldSigning, true, s);
+  end;
+end;
+
+procedure TSendUUData.CorrectEncryptionMethod;
+var
+  dummy_e: set_of_TSendEncryptionMethod;
+  dummy_s: set_of_TSendSigningMethod;
+begin
+  XPSendMessage.CorrectEncryptionMethod(EmpfList,self,dummy_e);
+  XPSendMessage.CorrectSigningMethod(EmpfList,self,dummy_s);
 end;
 
   procedure ScrollDone2(i,f:integer);
@@ -202,6 +394,25 @@ end;
     result := FieldPos - ((FieldPos - Field1st) mod FieldInc); 
   end;
 *)
+
+  procedure ListerOnSelect(Lister: TLister;var cr:customrec;MaxLen: Integer);
+  var x1,x2,y1,y2: Integer;
+  begin
+    x1 := cr.x;   x2 := cr.x+4+MaxLen;
+    y1 := cr.y+1; y2 := cr.y+2+Lister.Lines.Count;
+
+    if y2 > ScreenLines then begin y1 := Max(1,y1-(y2-ScreenLines)); y2:= ScreenLines; end;
+    if x2 > ScreenWidth then begin x1 := Max(1,x1-(x2-ScreenWidth)); x2:= ScreenWidth; end;
+
+    Lister.SetSize(x1+1,x2-1,y1+1,y2-1);
+    openboxat(x2-x1+1,y2-y1+1,'',x1,y1,cr.acol.ColSelBox,cr.acol.ColSelBox);
+    try
+      cr.brk := Lister.Show;
+    finally
+      closebox;
+    end;
+  end;
+
 
   procedure SelectType(var cr:customrec);
   var ii: Integer;
@@ -522,7 +733,7 @@ end;
               if dbXsize(ubase,'adresse')=0 then 
                 s := dbReadNStr(ubase,ub_username)
               else
-                s := dbReadXStr(ubase,'adresse',j);
+                s := dbReadXStr(ubase,'adresse');
               NewList.AddNew.ZCAddress := s;
             end;
           end;
@@ -897,6 +1108,7 @@ end;
       end;
     end;
     List.AddNew.Group := -1;
+    CorrectEncryptionMethod;
   end;
 
   procedure TSendUUData.UnComposeEditableList;
@@ -973,7 +1185,9 @@ var
 begin
   SendWindowInitGlobals(self);
   FieldServer := -1;
- 
+  FieldEncryption := -1;
+  FieldSigning := -1;
+
   List := TAddressList.Create;
   try //..except
   try //..finally
@@ -1080,6 +1294,9 @@ end;
 procedure OnAttachButton(var cont: string);
 begin
   gsData.EditAttach;
+
+  SetEncryptionField;
+  SetSigningField;
 end;
 
 procedure OnTextButton(var cont: string);
@@ -1131,24 +1348,6 @@ var Lister: TLister;
     dbClose(d);
   end;
 
-  procedure ShowList;
-  var x1,x2,y1,y2: Integer;
-  begin
-    x1 := cr.x;   x2 := cr.x+4+MaxLen;
-    y1 := cr.y+1; y2 := cr.y+2+Lister.Lines.Count;
-
-    if y2 > ScreenLines then begin y1 := Max(1,y1-(y2-ScreenLines)); y2:= ScreenLines; end;
-    if x2 > ScreenWidth then begin x1 := Max(1,x1-(x2-ScreenWidth)); x2:= ScreenWidth; end;
-
-    Lister.SetSize(x1+1,x2-1,y1+1,y2-1);
-    openboxat(x2-x1+1,y2-y1+1,'',x1,y1,cr.acol.ColSelBox,cr.acol.ColSelBox);
-    try
-      cr.brk := Lister.Show;
-    finally
-      closebox;
-    end;
-  end;
-
   procedure SetServer(const name: string);
   var i: integer;
       UName: string;
@@ -1173,13 +1372,35 @@ begin
     if Lister.Lines.Count<=0 then
       fehler(GetRes2(610,93))
     else begin
-      ShowList;
+      ListerOnSelect(Lister,cr,MaxLen);
       if not cr.brk then
         SetServer(Trim(Lister.FirstMarked));
     end;
   finally
     Lister.Free;
   end;
+end;
+
+function OnEncryptionMethodChange(var inhalt:string):boolean;
+var J: TSendEncryptionMethod; 
+begin
+  for j := Low(j) to High(j) do
+    if GetRes2(610,130+Ord(j)) = inhalt then begin
+      GSData.EncryptionMethod := j;
+      SetSigningField;
+      exit;
+    end;
+end;
+
+function OnSigningMethodChange(var inhalt:string):boolean;
+var J: TSendSigningMethod;
+begin
+  for j := Low(j) to High(j) do
+    if GetRes2(610,130+Ord(j)) = inhalt then begin
+      GSData.SigningMethod := j;
+      SetEncryptionField;
+      exit;
+    end;
 end;
 
 function TSendUUData.SendWindow(dlg_title: string):boolean;
@@ -1208,7 +1429,7 @@ begin
   try //..finally
     ComposeEditableList;
       // Number of options on the left hand side
-      ll := 4;
+      ll := 5;
 
       // Number of options on the right hand side
       if flReEdit then
@@ -1263,7 +1484,7 @@ begin
 
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
-        if i=0 then FieldInc := fieldpos + 1 - Field1st;        
+        if i=0 then FieldInc := fieldpos + 1 - Field1st;
       end;
 
       Maddstring(2+70,1+h-1,'',Dummy2,0,0,''); FieldDwn := FieldPos;
@@ -1278,7 +1499,7 @@ begin
       x2 := GetRes2(610,75); // 'keine Signatur anhängen'
       x3 := GetRes2(610,76);  // 'nach Versand löschen'
       x4 := GetRes2(610,77); // 'Nachricht nicht archvieren'
-      xx := Max(Max(Length(x1),Length(x2)),Max(Length(x3),Length(x4))) + 8;
+      xx := Max(Max(Length(x1),Length(x2)),Max(Length(x3),Length(x4))) + 7;
 
       yy := h+4;
 
@@ -1289,15 +1510,25 @@ begin
       MAppCustomSel(@OnServerSelect,false);
       FieldServer := FieldPos;
 
-      MaddString(1,yy,GetRes2(610,57) {'Sicherheit'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
-      MHNr(2902);
+      MaddString(1,yy,GetRes2(610,56) {'Verschlüsselung'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      MHNr(2903);
       Inc(yy);
+      MSet1Func(OnEncryptionMethodChange);
+      FieldEncryption := FieldPos;
+      SetEncryptionField;
+
+      MaddString(1,yy,GetRes2(610,57) {'Signatur'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      MHNr(2909);
+      Inc(yy);
+      MSet1Func(OnSigningMethodChange);
+      FieldSigning := FieldPos;
+      SetSigningField;
 
       if rfcprio in [1..5] then rfcprio_str := GetRes2(272,rfcprio)
       else                      rfcprio_str := GetRes2(272,6);
       MaddString(1,yy,GetRes2(610,60) {'Priorität'}, rfcprio_str, 76-w1-xx-5-8, MAXINT,'');
       MappSel(true,GetRes2(272,9));
-      MHNr(2903);
+      MHNr(2902);
       Inc(yy);
 
       MaddString(1,yy,GetRes2(610,70) {'Datum'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
@@ -1328,7 +1559,7 @@ begin
       MaddHLine(0,h+add_h-1+Max(ll,rr));
 
       p := 2;
-      
+
       s := GetRes2(610,20); { ' ^Ja ' }
       MAddButton(p,h+add_h+Max(ll,rr),s,senden,1,true);
       ok_pos := FieldPos;
@@ -1413,7 +1644,7 @@ procedure CheckEmpfaengerList(
   List:     TAddressList;
   Prompt:   Boolean;
   AutoAdd:  Boolean;
-  sData:   TSendUUData
+  sData:    TSendUUData
 );
 var Index: integer;
 
@@ -1542,20 +1773,26 @@ var Index: integer;
 //    if(UFlags and 16)<>0 then flEB:=true;
 
       if (dbXsize(ubase,'adresse')<>0) then begin
-        List[Index].ZCAddress := dbReadXStr(ubase,'adresse',size);
+        List[Index].ZCAddress := dbReadXStr(ubase,'adresse');
         if UpperCase(LeftStr(List[Index].XPAddress,80))<>UName then
           exit;                                // Gleiche Addresse nochmal
       end;
 
-//    dbReadN(ubase,ub_codierer,cancode);
-//    if (not (cancode in [8,9])) and (dbXsize(ubase,'passwort')=0) then
-//      cancode:=0
-//    else begin
-//      if cancode<>0 then
-//        if dbReadInt(ubase,'userflags') and 2<>0 then
-//          docode:=cancode;
-//      passwd:= dbReadXStr(ubase,'passwort',si0);
-//    end;
+      List[Index].EncodingMethod := Integer(dbReadByteN(ubase,ub_codierer));
+      List[Index].EncodingPassword := dbReadXStr(ubase,'passwort');
+
+      if assigned(sData) then
+      begin
+        if UFlags and 16<>0 then
+          sData.flRequestMDN := true;
+
+        // Set*Method cleans everything up and handles collisions
+        if UFlags and 2<>0 then begin
+          sData.EncryptionMethod := TSendEncryptionMethod(List[Index].EncodingMethod);
+          if List[Index].EncodingMethod in [8,9] then
+            sData.SigningMethod := TSendSigningMethod(List[Index].EncodingMethod);
+        end;
+      end;
 
       if not List[Index].BoxForce then
         List[Index].BoxName := dbReadStrN(ubase,ub_pollbox)
@@ -1643,7 +1880,6 @@ var Index: integer;
       List[Index].AddressType := atTo else
     if List[Index].AddressType in [atFollowupTo] then
       List[Index].AddressType := atMailFollowupTo;
-      
 
     if assigned(sData) then
     begin
@@ -1813,8 +2049,12 @@ begin
       AM(TNewsgroupAddress(List[Index].Address));
 end;
 
-//
+// ---------------------------------------------------------------------
 // $Log$
+// Revision 1.11  2003/08/30 22:19:27  cl
+// - send window: select encryption and signature method
+// - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+//
 // Revision 1.10  2003/08/27 21:24:31  cl
 // - send window: overwrite/select server
 //   CLOSES: task #76789 Sendefenster: Box überschreiben
@@ -1865,7 +2105,6 @@ end;
 //
 // Revision 1.1  2002/11/14 21:06:13  cl
 // - DoSend/send window rewrite -- part I
-//
 //
 // ==> renamed from xpsendmessage_addr_edit.pas to xpsendmessage_window.inc
 //

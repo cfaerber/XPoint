@@ -34,7 +34,7 @@ var i: integer;
 begin
   if (not FUserDataForced) and (not FUserDataOK) then
   begin
-    CheckEmpfaengerList(EmpfList,false,false);
+    Self.CheckEmpfaengerList(EmpfList,false,false);
   
     for i := 0 to EmpfList.Count-1 do
     begin
@@ -1270,6 +1270,10 @@ end;
 
 {
   $Log$
+  Revision 1.35  2003/08/30 22:19:27  cl
+  - send window: select encryption and signature method
+  - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+
   Revision 1.34  2003/05/11 11:12:19  mk
   - use IsMailAddr when possible
 

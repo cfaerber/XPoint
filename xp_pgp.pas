@@ -52,7 +52,7 @@ procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
 procedure PGP_EncodeStream(var data:TStream; var hd: Theader;
                          RemoteUserID:string; encode,sign:boolean;
                          const fido_origin:string);
-procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
+procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string;Sign:boolean);
 procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
 
 procedure PGP_RequestKey;
@@ -78,6 +78,7 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   libc,
   {$ENDIF}
   xpstreams_temporary,
+  xprope,
   xpcc,xpnt,mime,mime_base64;
 
 var
@@ -571,7 +572,7 @@ begin
   hd.x_charset:='';
 end;
 
-procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
+procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string;Sign:boolean);
 var b    : byte;
     fi,fo: string;
     fis: TStream;
@@ -589,13 +590,13 @@ begin
   fis.Free;
 
   if PGPVersion=PGP2 then
-    RunPGP('-ea +textmode=off '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
+    RunPGP('-ea +textmode=off '+fi+iifs(Sign,' -s','')+' '+IDform(RemoteUserID)+' -o '+fo)
   else if PGPVersion=PGP5 then
-    RunPGP5('PGPE.EXE','-a  '+fi+' -r '+IDform(RemoteUserID)+' -o '+fo)
+    RunPGP5('PGPE.EXE','-a '+fi+iifs(Sign,' -s','')+' -r '+IDform(RemoteUserID)+' -o '+fo)
   else if PGPVersion=GPG then
-    RunGPG('-e -a -o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
+    RunGPG('-e -a '+iifs(Sign,'-s ','')+'-o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
   else begin
-    RunPGP('-e -a '+fi+' '+IDform(RemoteUserID));
+    RunPGP('-e -a '+iifs(Sign,'-s ','')+fi+' '+IDform(RemoteUserID));
     fo:=fi+'.asc';
   end;
 
@@ -606,7 +607,7 @@ begin
   begin
     data.Free;
 
-    data := TMemoryStream.Create;
+    data := TRopeStream.Create;
     MimeNewType(hd,'encrypted','application/pgp-encrypted','',hd.FirstEmpfaenger);
 
     writeln_s(data,'--'+hd.boundary);
@@ -1206,6 +1207,10 @@ end;
 
 {
   $Log$
+  Revision 1.78  2003/08/30 22:19:26  cl
+  - send window: select encryption and signature method
+  - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit
+
   Revision 1.77  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 

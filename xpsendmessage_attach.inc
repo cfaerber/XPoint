@@ -221,15 +221,6 @@ end;
 
 procedure TSendUUData.SendAttach(parts:TList);
 
-  function docode:byte;
-  begin
-    result:=cancode;
-    if (cancode=9) and (parts.count>1) then
-      result := 8;                // for Multipart, use PGP/MIME instead of PGP
-    if (not(cancode in [0,9])) and (parts.count>1) then
-      result := 0;                // ... and allow only PGP/MIME
-  end;
-
   { --- add new part dialogue ---------------------------------------- }
 
   procedure SendAttach_Add(x,y:Integer);

@@ -28,7 +28,7 @@ unit xpsendmessage_attach_analyze;
 uses
   mime, mime_analyze, xpsendmessage_attach, classes, xpnt;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz);
 function  GuessContentTypeFromFileName(FileName:String):String;
 
 { ------------------------} implementation { ------------------------- }
@@ -89,7 +89,7 @@ begin
 {$ENDIF}
 end;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz);
 var data: TStream;
     GuessedType: String;
 begin
@@ -237,14 +237,6 @@ begin
 
     pa.FileEOL     := MimeEolCRLF;
     pa.FileEncoding:= MimeEncodingBinary;
-  end;
-
-  if docode=8 then
-  begin
-    if pa.ContentEncoding=MimeEncoding8Bit then
-      pa.ContentEncoding:=MimeEncoding7Bit else
-    if pa.ContentEncoding=MimeEncodingBinary then
-      pa.ContentEncoding:=MimeEncodingBase64;
   end;
 end;
 
