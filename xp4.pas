@@ -2244,10 +2244,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.59  2002/03/16 11:22:35  my
+  MY:_ Text des letzten Commits prÑzisiert.
+
   Revision 1.26.2.58  2002/03/16 00:21:50  my
   JG:- Fix: Bei der Brett-Schnellsuche mit "." oder "/" stand der Cursor
        bei gefundenen PM-Brettern um eine Stelle zu weit rechts, wenn
-       gleichzeitig C/A/B/"/"_bei_PM-Brettern deaktiviert war.
+       gleichzeitig C/A/B/"/"_bei_PM-Brettern und die Punktschreibweise
+       fÅr alle Bretter deaktiviert war.
 
   Revision 1.26.2.57  2002/03/08 23:01:53  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
