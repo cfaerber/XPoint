@@ -1489,6 +1489,7 @@ var
   p, i: integer;
   s1: string;
   zz: String;
+  TempS: String;
 
   drealn: string;
 
@@ -2050,10 +2051,10 @@ begin
               if zz = 'received' then
               GetReceived
             else
-              { suboptimal }
-              if zz = 'reply-to' then begin
-                GetAdr(s0,s,drealn);
-                replyto.add(s)
+              if zz = 'reply-to' then
+              begin
+                GetAdr(s0,TempS,drealn);
+                replyto.add(TempS)
               end
             else
               if zz = 'return-receipt-to' then
@@ -2144,8 +2145,8 @@ begin
               if (s0='nobody') or (s0='never') then
                 mailcopies.add(s0)
               else begin
-                GetAdr(s0,s,drealn);
-                mailcopies.add(s)
+                GetAdr(s0,TempS,drealn);
+                mailcopies.add(TempS)
               end
             end
           else
@@ -2258,6 +2259,7 @@ begin
   while bufpos < bufanz do
   begin
     ClearHeader;
+    hd.netztyp:=nt_RFC;
     repeat                                { Envelope einlesen }
       p := 0;
       ReadString;
@@ -2433,6 +2435,7 @@ begin
   OpenFile(fn);
   repeat
     ClearHeader;
+    hd.netztyp:=nt_RFC;
     ende := false;
     repeat
       ReadString;
@@ -2644,6 +2647,7 @@ begin
           size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
+          hd.netztyp:=nt_RFC;
           ReadRFCheader(false, s);
           binaer := (hd.typ = 'B');
           seek(f1, fp); ReadBuf; bufpos := bp;
@@ -3651,6 +3655,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/12/26 22:05:37  mk
+  - fixed some more bugs introduced by Frank Ellert
+
   Revision 1.14  2000/12/07 10:35:01  mk
   - fixed three bugs
 
