@@ -1494,7 +1494,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 3   NTDP
 4   Remove File Attach
 5   Append file to message
-6   Unsupported character set. Edit, anyway
+6   Unsupported character set: "%s"  Edit, anyway
 7   ~Edit text part
 8   (Text part)
 -
