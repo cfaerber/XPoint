@@ -334,7 +334,7 @@ begin
 
   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
-    (t=keytab) or (t=keyaltu)) then errsound
+    (t=keytab) or (t=keyaltu)) then Hinweis(Getres(136))
   else
   begin
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
@@ -979,6 +979,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.7  2000/10/11 09:02:15  mk
+  - Resource 136 added
+
   Revision 1.40.2.6  2000/10/10 05:10:27  mk
   JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
 
