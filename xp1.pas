@@ -717,16 +717,18 @@ asm
 @tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }
             dec ecx
             jz @taende                             { Mindestens 1 Zeichen abstand }
+            dec ecx                                { min. ein Zeichen Abstand }
+            jz @taende
             inc si                                 { dann Endzeichen Checken }
 
 @talp2:     cmp al,byte ptr charbuf[esi]
             jne @tanext2
 
              mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],4     { Byte vor Endzeichen ok? }
+             test byte ptr delimiters[ebx],4      { Byte vor Endzeichen ok? }
              jz @tanext2
              mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],8     { Byte nach Endzeichen ok? }
+             test byte ptr delimiters[ebx],8      { Byte nach Endzeichen ok? }
              jnz @tafound2                        { Endzeichen gefunden }
 
 @tanext2:   inc esi
@@ -1010,6 +1012,8 @@ end;
 procedure showusername;
 var d    : DB;
     user : string;
+    realname : string;
+    nt       : byte;
 
   procedure showtline;
   begin
@@ -1021,13 +1025,51 @@ var d    : DB;
 {$ENDIF }
   end;
 
+  function def_adresse:string;
+  var trueboxname : string;
+      username    : string;
+      pointname   : string;
+      domain      : string;
+      email       : string;
+      flags       : byte;
+      aliaspt     : boolean;
+  begin
+    trueboxname:=dbReadStr(d,'boxname');
+    username:=dbReadStr(d,'username');
+    pointname:=dbReadStr(d,'pointname');
+    domain:=dbReadStr(d,'domain');
+    email:=dbReadStr(d,'email');
+    dbRead(d,'script', flags);
+    aliaspt:=(flags and 4 <> 0);
+    case nt of
+      nt_Client  : def_adresse:=leftStr(email,cpos('@',email)-1) +
+                                ' @ ' + mid(email,cpos('@',email)+1);
+      nt_UUCP    : def_adresse:=iifs(email<>'', leftStr(email,cpos('@',email)-1) +
+                                ' @ ' + mid(email,cpos('@',email)+1),
+                                username + ' @ ' +
+                                iifs (aliaspt, trueboxname + ntServerDomain(DefaultBox),
+                                      pointname + domain));
+      nt_ZConnect: def_adresse:=username + ' @ ' +
+                                iifs (aliaspt, pointname, trueboxname) + domain;
+    else
+      def_adresse:=username + ' @ ' + trueboxname;
+    end;
+  end;
+
+
 begin
   if dispusername and not startup then begin
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,UpperCase(DefaultBox));
     showtline;
     if dbFound then begin
-      user:= dbReadStr(d,'username');
+      nt:=dbReadInt(d,'netztyp');
+      realname:=iifs(ntRealname(nt),dbReadStr(d,'realname'),'');
+      user:=leftStr(def_adresse,sizeof(user));
+      if (length(user)+length(realname)) <= screenwidth-7 then
+        user:=user + iifs(realname<>'',' ('+realname+')','')
+      else if length(user) <= screenwidth-10 then
+        user:=user + iifs(realname<>'',' ('+leftStr(realname,screenwidth-10-length(user))+'...)','');
       mwrt(screenwidth-2-length(user),3,' '+user+' ');
       end;
     dbClose(d);
@@ -2051,6 +2093,21 @@ end;
 
 {
   $Log$
+  Revision 1.143  2002/03/25 22:03:08  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
+       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
+         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.142  2002/03/03 21:55:16  mk
   - made readconfig about 20times faster
 

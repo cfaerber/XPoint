@@ -506,29 +506,6 @@ var t,lastt: taste;
     then back:=_forth else back:=_back;
   end; 
 
-  procedure Do_XPhilite(wait:boolean);
-  const xtxt : string = 'CrossPoint';
-  begin
-    if XPdisplayed and (xtxt=xp_xp) and (ParWintime=0) and
-       (XPhilite<=length(xtxt)) then begin
-      repeat
-        if ticker<>xphltick then begin
-          attrtxt(col.colkeys);
-          savecursor;
-          mwrt(71,screenlines,xtxt);
-          inc(XPhilite);
-          if XPhilite<=length(xtxt) then begin
-            attrtxt(col.colkeys xor 8);
-            mwrt(70+XPhilite,screenlines,xtxt[XPhilite]);
-            end;
-          restcursor;
-          xphltick:=ticker;
-          end;
-      until (not wait) or keypressed or (XPhilite>length(xtxt));
-      end;
-  end;
-
-
   {$i xp4d.inc}     { Anzeige-Routinen }
 
 
@@ -1727,7 +1704,6 @@ begin      { --- select --- }
           gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
         else
           gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
-        Do_XPhilite(true);
         get(t,curon);
         TempOpen;
         if (t<=' ') and (t<>keybs) then
@@ -1749,7 +1725,6 @@ begin      { --- select --- }
               get(t,curon);
               end
             else begin
-              Do_XPhilite(true);
               get(t,curoff);
               end;
             if (t=lastt) and nosuccess and msgbeep then
@@ -2352,6 +2327,21 @@ end;
 
 {
   $Log$
+  Revision 1.122  2002/03/25 22:03:09  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
+       und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekrzt, wenn
+         die Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.121  2002/01/30 17:18:14  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with

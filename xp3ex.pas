@@ -816,7 +816,11 @@ begin // extract_msg;
             else   rps(s,'$AREA',getres2(361,48));       { 'private Mail' }
           end;
           if wempf[1]='/' then DeleteFirstChar(wempf);
-          while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
+          for i:=1 to length(wempf) do if (wempf[i]='/') and not
+            (((i>6) and (UpperCase(copy(wempf,i-6,6))='OPENXP')) and
+             ((i<length(wempf)-1) and ((copy(wempf,i+1,2)='16') or
+              (copy(wempf,i+1,2)='32')))) then
+            wempf[i]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
           rps(s,'$RNAME2', realname);
@@ -1222,6 +1226,21 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.95  2002/03/25 22:03:08  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
+       und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekrzt, wenn
+         die Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.94  2002/03/03 15:53:32  cl
   - MPData now contains byte offset, not line counts (better performance)
 

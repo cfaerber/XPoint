@@ -1112,8 +1112,8 @@ begin
     domain := dbReadStr(d, 'domain');
     eMail := dbReadStr(d, 'email');
     case netztyp of
-      nt_UUCP,
-      nt_Client  : getBoxAdresse:=iifs(email<>'', email, username + '@' +
+      nt_Client  : getBoxAdresse:=email;
+      nt_UUCP    : getBoxAdresse:=iifs(email<>'', email, username + '@' +
                                   iifs (aliaspt, box + ntServerDomain(box),
                                                  pointname + domain));
       nt_Maus    : getBoxAdresse:=username + '@' + box;
@@ -1533,6 +1533,21 @@ end;
 
 {
   $Log$
+  Revision 1.85  2002/03/25 22:03:09  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
+       und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekrzt, wenn
+         die Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.84  2002/02/21 13:52:32  mk
   - removed 21 hints and 28 warnings
 

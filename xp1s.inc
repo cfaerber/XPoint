@@ -299,6 +299,7 @@ var
     lfirst : byte;     { Startzeile Lister }
     lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
+    wrapb  : boolean;  { Backup no_ListWrapToggle }
 
     OldTCS,OldLCS: TMimeCharsets;
 
@@ -324,6 +325,8 @@ var
 
 begin
   listexit:=0;
+  wrapb:=no_ListWrapToggle;
+  no_ListWrapToggle:=false;
   dphb := 0;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
@@ -342,7 +345,7 @@ begin
       if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }
       else begin
         dphb:=dphback;
-        if ListFixedhead then                      {   Wenn fester Header }
+        if listmsg and ListFixedhead and (exthdlines>0) then   {   Wenn fester Header }
           dphback:=listheadercol                   {   dann Uhr aktiv mit Headerfarbe }
         else begin
           dphback:=col.colliststatus;              {   bei freiem Header }
@@ -433,6 +436,7 @@ begin
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
     then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
   listfile:=listexit;
+  no_ListWrapToggle:=wrapb;
 end;
 
 
@@ -525,6 +529,21 @@ begin
     end;
 {
   $Log$
+  Revision 1.76  2002/03/25 22:03:08  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
+       und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekrzt, wenn
+         die Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.75  2002/03/03 15:45:54  cl
   - changed TListerColorEvent's first parameter from var => const
 

@@ -45,6 +45,7 @@ const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
       ListShowSeek  : boolean = false;
       ListWrapToggle: boolean = false;   { fÅr Wortumbruch-Umschaltung }
+      no_ListWrapToggle : boolean = false;   { Wortumbruch-Umschaltung verhindern }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -342,7 +343,7 @@ begin
 
   if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
-  if c = ^W then                                              { '^W' = Umbruch togglen }
+  if (c=^W) and not no_ListWrapToggle then                    { '^W' = Umbruch togglen }
   begin
     listwrap:=not listwrap;
     ListWrapToggle:=true;
@@ -655,7 +656,7 @@ begin
     { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
     dbReadN(mbase,mb_origdatum,datum);
-    datum:=Longint(LongWord(datum) and $fffffff0);  { Bit 0-3 lîschen }
+    datum:=Longint(LongWord(datum) and LongWord($fffffff0));  { Bit 0-3 lîschen }
     if dateadd>0 then
       inc(datum,dateadd)
     else begin
@@ -711,7 +712,7 @@ begin
       end;
     if ok then begin
       nr:=dbReadIntN(bezbase,bezb_datum) and 3;
-      dat:=LongInt(LongWord(dbReadIntN(bezbase,bezb_datum)) and $fffffff0);
+      dat:=LongInt(LongWord(dbReadIntN(bezbase,bezb_datum)) and LongWord($fffffff0));
       dbDelete(bezbase);
       if nr=1 then begin        { erste Kopie eines CrossPostings }
         dbSeek(bezbase,beiMsgid,crc);
@@ -1057,6 +1058,21 @@ end;
 
 {
   $Log$
+  Revision 1.109  2002/03/25 22:03:08  mk
+  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
+       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
+         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
   Revision 1.108  2002/01/30 22:36:03  mk
   - made viewers and unpackers static
 
