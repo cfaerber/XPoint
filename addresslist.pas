@@ -193,7 +193,7 @@ function  RFCWriteAddressListFolded(List: TAddressList;Encoder: TRFCWriteAddress
 { ======================== } implementation { ======================== }
 
 uses
-  rfc2822,typeform,xpcc,xpnt,strutils,sysutils;
+  rfc2822,typeform,xpcc,xpnt,sysutils;
 
 { ----------------------- > TAddressListItem < ----------------------- }
 
@@ -754,6 +754,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.3  2002/04/17 20:22:47  mk
+// - removed unit strutils, not needed with delhpi6 and not available with fpc
+//
 // Revision 1.2  2002/04/17 19:27:54  cl
 // - changed addresslist.pas to compile with FPC
 //

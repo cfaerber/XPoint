@@ -196,7 +196,7 @@ type
 { ======================== } implementation { ======================== }
 
 uses 
-  rfc2822,addresslist,typeform,xpcc,xpnt,strutils,sysutils;
+  rfc2822,addresslist,typeform,xpcc,xpnt,sysutils;
 
 // -- TAddress ---------------------------------------------------------
 
@@ -284,6 +284,7 @@ constructor TVerteiler._Create(const name: string);
 begin
   FVerteilerName := Name;
 end;
+
 class function TVerteiler.Create(const name: string): TVerteiler;
 begin
   result := _Create(name);
@@ -293,6 +294,7 @@ constructor TVerteiler._Create(CopyFrom: TVerteiler);
 begin
   FVerteilerName := CopyFrom.VerteilerName;
 end;
+
 class function TVerteiler.Create(CopyFrom: TVerteiler): TVerteiler;
 begin
   result := _Create(CopyFrom);
@@ -796,6 +798,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.2  2002/04/17 20:22:47  mk
+// - removed unit strutils, not needed with delhpi6 and not available with fpc
+//
 // Revision 1.1  2002/04/14 22:33:10  cl
 // - New address handling, supports To, CC, and BCC
 // - Nearly complete rewrite of DoSend's message creation
