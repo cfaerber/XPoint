@@ -210,7 +210,7 @@ asm
        mov    ebx,bpos          { max. Anzahl einfÅgbarer LFs }
        add    esi,ebx
        mov    ecx,size          { cx <- mbufsize-bpos }
-       xor    edx,edx            { ZÑhler fÅr eingefÅgte LF's }
+       xor    edx,edx           { ZÑhler fÅr eingefÅgte LF's }
        cld
 @lp1:  lodsb
        stosb
@@ -219,7 +219,7 @@ asm
        loop   @lp1
        jmp    @ende
 @isCR: dec    ecx
-       jcxz   @noLF            { Nachricht endet auf CR -> LF anhÑngen }
+       jecxz  @noLF            { Nachricht endet auf CR -> LF anhÑngen }
        lodsb                   { Test auf CR ohne LF }
        cmp    al,10
        jnz    @noLF
@@ -232,7 +232,7 @@ asm
        xchg   al,ah
        stosb
        inc    edx
-       jcxz   @ende
+       jecxz  @ende
        cmp    edx,ebx
        loopne @lp1
 @ende: mov edi, addlfs
@@ -260,11 +260,11 @@ asm
 {$ELSE }
         mov    edi,data
         mov    ecx,size
-        jcxz   @rende
+        jecxz  @rende
         mov    al,0
         cld
 @rlp:   repnz  scasb
-        jcxz   @rende
+        jecxz  @rende
         mov    byte ptr [edi-1],' '    { #0 -> ' ' }
         jmp    @rlp
 @rende:
@@ -296,7 +296,7 @@ asm
           mov    ebx,offset ISO2IBMtab - 128
           mov    esi,data
           mov    ecx,size
-          jcxz   @xende
+          jecxz  @xende
 @xloop:   mov    al,[esi]
           inc    esi
           cmp    al,127
@@ -336,7 +336,7 @@ asm
           mov    ebx,offset Mac2IBMtab - 128
           mov    esi,data
           mov    ecx,size
-          jcxz   @xende
+          jecxz  @xende
           jmp    @xloop
 @xloop:   mov    al,[esi]
           inc    esi
@@ -483,6 +483,9 @@ begin
     error('UngÅltige Ausgabedatei: '+outfile);
   dos.findfirst('BAD',Directory,sr);
   baddir:=(doserror=0) and (sr.attr and Directory<>0);
+  {$IFDEF Ver32 }
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
@@ -1196,8 +1199,7 @@ label abbr;
               copy(s,15,2);
   end;
 
-  { MK 06.02.2000 aus Inline in Asm konvertiert }
-  function seek0(var buf; smallsize:word):word; assembler; { suche #0 }
+  function seek0(var buf; smallsize:word):word; assembler; {&uses edi} { suche #0 }
   asm
 {$IFDEF BP }
     mov cx, smallsize
@@ -1218,10 +1220,13 @@ label abbr;
     mov eax, edx
     sub eax, ecx
 {$ENDIF }
+  {$IFDEF FPC }
+  end ['EAX', 'ECX', 'EDX', 'EDI'];
+  {$ELSE }
   end;
+  {$ENDIF }
 
-  { MK 06.02.2000 aus Inline in Asm konvertiert }
-  function seekt(var buf; size:word):word; assembler;  { suche _'---'_ }
+  function seekt(var buf; size:word):word; assembler; {&uses edi } { suche _'---'_ }
   asm
 {$IFDEF BP }
         mov cx, size
@@ -1248,7 +1253,7 @@ label abbr;
         mov edx, ecx
         cld
 @lp:    repnz scasb
-        jcxz @ok
+        jecxz @ok
         cmp [edi], ax
         jnz @lp
         cmp [edi-2],bl
@@ -1258,7 +1263,11 @@ label abbr;
 @ok:    mov eax, edx
         sub eax, ecx
 {$ENDIF }
+  {$IFDEF FPC }
+  end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
+  {$ELSE }
   end;
+  {$ENDIF }
 
   procedure seekEOM;   { Tearline & Nachrichtenende suchen }
   const bs = 4096;
@@ -1289,10 +1298,9 @@ label abbr;
     inc(tearadr,tadd);
   end;
 
-  { MK 06.02.2000 aus Inline in Asm konvertiert }
-  procedure exch_8d(var buf; size:smallword); assembler;
+  procedure exch_8d(var buf; size:smallword); assembler; {&uses edi}
   asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
         mov cx, size
         les di, buf
         cld
@@ -1302,8 +1310,22 @@ label abbr;
         mov al, $0d
 @j:     stosb
         loop @l
+{$ELSE }
+        mov ecx, size
+        mov edi, buf
+        cld
+@l:     mov al, [edi]
+        cmp al, $8d
+        jnz @j
+        mov al, $0d
+@j:     stosb
+        loop @l
 {$ENDIF }
+  {$IFDEF FPC }
+  end ['EAX', 'ECX', 'EDI'];
+  {$ELSE }
   end;
+  {$ENDIF }
 
   procedure CopyMsg(size:longint);
   const bs = 8192;
@@ -1788,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/26 00:01:10  mk
+  - Assembler-Fixes (32 Bit)
+
   Revision 1.16  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

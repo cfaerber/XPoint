@@ -266,7 +266,7 @@ end;
 procedure Iso1ToIBM(var data; size:word); assembler;
 asm
           mov    ecx,size
-          jcxz   @noconv1
+          jecxz  @noconv1
           mov    edi,data
           mov    ebx,offset ISO2IBMtab - 128
           cld
@@ -286,7 +286,7 @@ end;
 procedure IBMToIso1(var data; size:word); assembler;
 asm
           mov    ecx,size
-          jcxz   @noconv2
+          jecxz  @noconv2
           mov    edi,data
           mov    ebx,offset IBM2ISOtab
           cld
@@ -1406,6 +1406,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/05/26 00:01:10  mk
+  - Assembler-Fixes (32 Bit)
+
   Revision 1.23  2000/05/04 10:26:03  mk
   - UUZ teils auf HugeString umgestellt
 

@@ -216,7 +216,7 @@ asm
 @noerr:  mov   ecx,2                   { Ref+Data von key[0] Åbertragen }
          rep   movsd
          mov   ecx,eax
-         jcxz  @nokeys
+         jecxz @nokeys
          add   edi,128                 { (256) key[0].keystr Åberspringen }
          mov   eax, ecx
 @exlp:   mov   ecx, edx
@@ -1843,6 +1843,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/05/26 00:01:10  mk
+  - Assembler-Fixes (32 Bit)
+
   Revision 1.20  2000/05/25 16:50:19  jg
   Denkfehler (cmp ax,cx statt cmp cx,ax) beseitigt
 

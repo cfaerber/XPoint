@@ -227,7 +227,7 @@ asm
          mov    esi, buf
          inc    esi
          mov    ecx,rr
-         jcxz   @ende
+         jecxz  @ende
          mov    ebx,1
          mov    dh,0
          mov    ah,wrap                { Wrap-Spalte }
@@ -272,7 +272,7 @@ asm
 @nocrlf: cmp    edi,1                   { endete Block auf LF ? }
          jz     @ende
          mov    ecx,edx                 { unvollst„ndige Zeile kopieren }
-         jcxz   @norest
+         jecxz  @norest
          mov    edi, buf
          inc    edi
 @cloop:  mov    al, [esi]
@@ -326,10 +326,6 @@ end;
 {$ENDIF }
 
 {$ELSE}
-
-{ JG:18.02.00 Prozedur aus Lister.asm integriert }
-{in Typeform.pas: procedure Rot13(var data; size:word); near; external; }
-
 
 { Externes File (z.b Fileliste) fuer Anzeige mit Lister vorbereiten }
 procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; assembler;
@@ -1657,6 +1653,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/05/26 00:01:10  mk
+  - Assembler-Fixes (32 Bit)
+
   Revision 1.17  2000/05/07 16:28:11  jg
   - Lister: PGP-Flags s und S
 
