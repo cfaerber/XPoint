@@ -2048,7 +2048,7 @@ var
           if (t<=length(ss)-2) and(not(ss[t] in ['?',' ',#8,#10,#13])) then
             t:=t+1
           else
-          begin
+          begin if length(s)<t then break; //** fix!
             if s[t]='?' then
               p:=t-1    { maybe a new start }
             else
@@ -2373,7 +2373,7 @@ var
   p, p2, p3: Integer;
   i: integer;
   c: char;
-  binaer: boolean;
+  binaer,LastLineWasBlank,FirstLineHasBeenRead: boolean;
   pfrec: ^filerec;
 begin
   if CommandLine then write('mail: ', fn);
@@ -2383,9 +2383,13 @@ begin
   begin
     ClearHeader;
     hd.netztyp:=nt_RFC;
+    FirstLineHasBeenRead:=False;
     repeat                                { Envelope einlesen }
       p := 0;
-      ReadString;
+      if not FirstLineHasBeenRead then
+        ReadString
+      else
+        FirstLineHasBeenRead:=False;
       if s <> '' then
       begin
         p := cpos(' ', s);
@@ -2445,7 +2449,7 @@ begin
     if bufpos < bufanz then
     begin
       if CommandLine then writeln(' from ', hd.wab);
-      s[1] := c;
+      s[1] := c; hd.Lines:=-1;
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
 
@@ -2469,12 +2473,24 @@ begin
         hd.xempf.Add(mailuser);
       end;
 
-      if hd.Lines = 0 then
-        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-      while (bufpos < bufanz) and (hd.Lines > 0) do
+      // hd.Lines>=0 here if line count was given in RFC header.
+      // If not, assume mbox format: Recognize 'crlfFrom ' as beginning
+      // of next mail and unquote '>From ' to 'From '.
+      LastLineWasBlank:=False;
+      FirstLineHasBeenRead:=False;
+      while (bufpos < bufanz) and (hd.Lines<>0) do
       begin
-        ReadString; Dec(hd.Lines);
-        DecodeLine;
+        ReadString;
+        if hd.Lines>0 then
+          Dec(hd.Lines)
+        else // seems to be mbox format
+          if LastLineWasBlank then
+            if LeftStr(s,5)='From ' then begin
+              FirstLineHasBeenRead:=True; break;
+              end
+            else if LeftStr(s,6)='>From ' then
+              DelFirst(s);
+        LastLineWasBlank:=(s=''); DecodeLine;
         if (not binaer)and(hd.mime.ctype<>tMultipart)
           then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
         Mail.Add(s);
@@ -3798,6 +3814,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/04/14 00:00:47  ma
+  - added simple mbox format support (.mail->ZC)
+
   Revision 1.51  2001/04/11 19:37:52  ma
   - fixed: First posting line was ignored sometimes :-(
   - getting rid of ReadString/BufPos/BufAnz is definitely a must.
