@@ -70,7 +70,7 @@ begin
               1 : begin
                     Move(rb^[fofs],s,rb^[fofs]+1);
                     if length(s)+1>fsize then s[0]:=chr(fsize-1);
-                    if ifeldnr[i] and $8000<>0 then s:=UStr(s);
+                    if ifeldnr[i] and $8000<>0 then s:=UpperCase(s);
                     if feldanz=i then key:=key+s
                     else key:=key+forms(s,fsize-1);
                   end;
@@ -493,6 +493,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/07/04 12:04:14  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.4  2000/07/02 14:24:45  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

@@ -225,7 +225,7 @@ function writecode(var s:string):boolean;
 var cname : string[20];
 begin
   attrtxt(col.coldialog);
-  if (lstr(left(s,3))='pmc') and (ival(s[length(s)]) in [1..maxpmc]) then begin
+  if (LowerCase(left(s,3))='pmc') and (ival(s[length(s)]) in [1..maxpmc]) then begin
     cname:=pmcrypt[ival(s[length(s)])].name;
     if cname='' then cname:=getres(2700);    { 'noch nicht definiert' }
     mwrt(39,wcy,forms('('+cname+')',30));
@@ -239,7 +239,7 @@ function testgruppe(var s:string):boolean;
 var d : DB;
 begin
   dbOpen(d,GruppenFile,1);
-  dbSeek(d,giName,ustr(s));
+  dbSeek(d,giName,UpperCase(s));
   if not dbFound then rfehler(2701)   { 'unbekannte Brettgruppe - w„hlen mit <F2>' }
   else dbRead(d,'INT_NR',grnr_found);
   dbClose(d);
@@ -385,13 +385,13 @@ begin
   flags:=1;  adr:=1; { neuer User <- Aufnehmen }
   edituser(getres(2702),user,adresse,komm,pollbox,halten,adr,flags,false,brk);   { 'neuen User anlegen' }
   if not brk then begin
-    dbSeek(ubase,uiName,ustr(user));
+    dbSeek(ubase,uiName,UpperCase(user));
     if dbFound then
       rfehler(2703)    { 'Dieser User ist bereits vorhanden!' }
     else begin
       dbAppend(ubase);
       dbWrite(ubase,'username',user);
-      if ustr(adresse)=ustr(user) then adresse:='';
+      if UpperCase(adresse)=UpperCase(user) then adresse:='';
       dbWriteX(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
       dbWrite(ubase,'kommentar',komm);
       dbWrite(ubase,'pollbox',pollbox);
@@ -473,7 +473,7 @@ begin
   adr:=1;
   editverteiler(getres(2704),name,komm,pollbox,adr,brk);  { 'neuen Verteiler anlegen' }
   if not brk then begin
-    dbSeek(ubase,uiName,ustr(name));
+    dbSeek(ubase,uiName,UpperCase(name));
     if dbFound then
       rfehler(2704)   { 'Dieser Verteiler ist bereits vorhanden!' }
     else begin
@@ -512,7 +512,7 @@ begin
   editverteiler(getres(2705),name,komm,pollbox,adr,brk);   { 'Verteiler bearbeiten' }
   if not stricmp(name,oldname) then begin
     rec:=dbRecno(ubase);
-    dbSeek(ubase,uiName,ustr(name));
+    dbSeek(ubase,uiName,UpperCase(name));
     if dbFound then begin
       rfehler(2704);   { 'Dieser Verteiler ist bereits vorhanden!' }
       brk:=true;
@@ -572,7 +572,7 @@ begin
     end
   else
     dbReadN(mbase,mb_absender,suchname);
-  dbSeek(ubase,uiName,ustr(suchname));
+  dbSeek(ubase,uiName,UpperCase(suchname));
   if not dbFound then
     if ReadJN(getres(2709),true) then   { 'User nicht in der Datenbank - neu anlegen' }
       makeuser
@@ -647,9 +647,9 @@ begin
   closebox;
   if not brk then begin
     dbWriteX(ubase,'passwort',iif(pw='',0,length(pw)+1),pw);
-    if ustr(cod)='QPC' then typ:=1
-    else if ustr(cod)='DES' then typ:=2
-    else if ustr(cod)='PGP' then typ:=9
+    if UpperCase(cod)='QPC' then typ:=1
+    else if UpperCase(cod)='DES' then typ:=2
+    else if UpperCase(cod)='PGP' then typ:=9
     else typ:=2+ival(right(cod,1));
     dbWrite(ubase,'codierer',typ);
     if pw<>'' then begin
@@ -698,8 +698,8 @@ function testhaltetyp(var s:string):boolean;
 var tg,na : string[10];
 begin
   if (length(s)=1) and (lastkey<>keybs) then begin
-    tg:=ustr(getres2(2708,1));
-    na:=ustr(getres2(2708,2));
+    tg:=UpperCase(getres2(2708,1));
+    na:=UpperCase(getres2(2708,2));
     if upcase(s[1])=tg[1] then
       s:=getres2(2708,1)    { 'Tage' }
     else if upcase(s[1])=na[1] then
@@ -801,10 +801,10 @@ begin
   freeres;
   if not brk then begin
     dbOpen(d,gruppenfile,1);
-    dbSeek(d,giName,ustr(grname));
+    dbSeek(d,giName,UpperCase(grname));
     dbRead(d,'Int_nr',gruppe);
     flags:=flags and (not (1+4+32)) + iif(filter,0,4) +
-           iif(lstr(haltetyp)=lstr(tg),0,1) + iif(origin<>'',32,0);
+           iif(LowerCase(haltetyp)=LowerCase(tg),0,1) + iif(origin<>'',32,0);
     dbClose(d);
     end;
 end;
@@ -894,7 +894,7 @@ begin
   freeres;
   dbGo(bbase,rec);
   if not brk then begin
-    if { (ustr(adresse)=ustr(mid(dbReadStr(bbase,'brettname'),2))) or }
+    if { (UpperCase(adresse)=UpperCase(mid(dbReadStr(bbase,'brettname'),2))) or }
        (not gesperrt and ntFollowup(pb_netztyp) and (cpos('@',adresse)>0)) then
       adresse:='';
     dbWriteN(bbase,bb_adresse,adresse);
@@ -939,7 +939,7 @@ begin
   edituser(getres(2710),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
   dbGo(ubase,rec);
   if not brk then begin                 { 'User bearbeiten' }
-    if ustr(adresse)=ustr(user) then adresse:='';
+    if UpperCase(adresse)=UpperCase(user) then adresse:='';
     dbWriteX(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
     dbWrite(ubase,'kommentar',komm);
     dbWrite(ubase,'pollbox',pollbox);
@@ -974,7 +974,7 @@ begin
   flags:=0;
   editbrett(brett,komm,box,origin,gruppe,halten,flags,false,brk);
   if brk then exit;
-  dbSeek(bbase,biBrett,'A'+ustr(brett));
+  dbSeek(bbase,biBrett,'A'+UpperCase(brett));
   if dbFound then begin
     rfehler(2706);    { 'Dieses Brett gibt es bereits.' }
     exit;
@@ -984,7 +984,7 @@ begin
      then exit;
   if box<>'' then begin
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(box));
+    dbSeek(d,boiName,UpperCase(box));
     dbClose(d);
     if not dbFound and
        not ReadJN(getres(2712),false)    { 'Unbekannte Serverbox - Brett trotzdem anlegen' }
@@ -1048,10 +1048,10 @@ begin
     if (origin+oldorig)<>'' then
       dbWriteN(bbase,bb_adresse,origin);
     if left(brett,1)='/' then brett:='A'+brett;
-    modin:=ustr(brett)<>ustr(dbReadStr(bbase,'brettname'));
+    modin:=UpperCase(brett)<>UpperCase(dbReadStr(bbase,'brettname'));
     if modin then begin
       rec:=dbRecno(bbase);
-      dbSeek(bbase,biBrett,ustr(brett));
+      dbSeek(bbase,biBrett,UpperCase(brett));
       if dbFound then begin
         rfehler(2714);       { 'Umbennenen nicht m”glich - Brett existiert bereits!' }
         dbGo(bbase,rec);
@@ -1220,7 +1220,7 @@ else begin
               if hzahl then begin
                 dbReadN(bbase,bb_flags,flags);
                 flags:=flags and (not 1);
-                if lstr(htyp)=lstr(na) then inc(flags);
+                if LowerCase(htyp)=LowerCase(na) then inc(flags);
                 dbWriteN(bbase,bb_flags,flags);
                 end;
               end;
@@ -1364,11 +1364,11 @@ begin
       end
     else if (left(s,1)='[') and (right(s,1)=']') then verteiler:=true
     else begin
-      if ustr(s)='SYSOP' then
+      if UpperCase(s)='SYSOP' then
         s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true))
       else if (cpos('@',s)=0) or (cpos('@',s)=length(s)) then begin
         dbOpen(d,PseudoFile,1);
-        dbSeek(d,piKurzname,ustr(s));
+        dbSeek(d,piKurzname,UpperCase(s));
         if dbFound then begin
           dbRead(d,'Langname',s);
           dbRead(d,'pollbox',_pbox);
@@ -1385,9 +1385,9 @@ begin
           if (cpos('@',s)=0) and (pb_netztyp=nt_Fido) and nodeopen then
             if TestFido(s) then;
           if cpos('@',s)=0 then s:=s+'@';
-          dbSeek(ubase,uiName,ustr(s));
+          dbSeek(ubase,uiName,UpperCase(s));
           if not dbEOF(ubase) and
-             (ustr(s)=ustr(left(dbReadStr(ubase,'username'),length(s)))) then
+             (UpperCase(s)=UpperCase(left(dbReadStr(ubase,'username'),length(s)))) then
             dbReadN(ubase,ub_username,s)
           else
             if cpos('@',s)=length(s) then begin
@@ -1401,15 +1401,15 @@ begin
         s:=left(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
   if ok and not verteiler then begin
-    if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(ustr(s),1)) {ohne "/"}
-    else dbSeek(ubase,uiName,ustr(s));
+    if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(UpperCase(s),1)) {ohne "/"}
+    else dbSeek(ubase,uiName,UpperCase(s));
     attrtxt(iif(dbFound,col.coldialog,col.coldiahigh));
     wrt(empfx,empfy,getres2(2718,2));    { 'Empf„nger' }
     freeres;
 
     if not dbFound and (cpos('@',s)=0) then  { Nicht Vorhandenes Brett }
     begin
-      dbSeek(bbase,biBrett,'1'+mid(ustr(s),1));  { Internes PM-Brett ? }
+      dbSeek(bbase,biBrett,'1'+mid(UpperCase(s),1));  { Internes PM-Brett ? }
       if dbfound or (s='/') then
       begin
         errsound;
@@ -1449,7 +1449,7 @@ begin
   testmailstring_nt:=pb_netztyp;
   if not verteiler then empftest:=OK and testmailstring(s)
   else begin
-    dbseek(ubase,uiname,ustr(vert_char+s+'@V')); { Nur existierende Verteiler sind erlaubt }
+    dbseek(ubase,uiname,UpperCase(vert_char+s+'@V')); { Nur existierende Verteiler sind erlaubt }
     empftest:=dbfound;
     if not dbfound then errsound;
     end;
@@ -1478,7 +1478,7 @@ begin
   dbClose(d);
   if not dbfound then begin
     dbOpen(d,PseudoFile,1);
-    dbSeek(d,piKurzname,ustr(s));
+    dbSeek(d,piKurzname,UpperCase(s));
     if dbFound {and (pos('@',dbReadStr(d,'langname'))>0)} then begin
       dbRead(d,'pollbox',pbox);
       if (pbox='') or not IsBox(pbox) then
@@ -1581,7 +1581,7 @@ begin
     end
   else begin                                       {Brett}
     empf:='A'+empf;
-    dbSeek(bbase,biBrett,ustr(empf));
+    dbSeek(bbase,biBrett,UpperCase(empf));
     dbRead(bbase,'gruppe',grnr);
     dbOpen(d,GruppenFile,1);
     dbSeek(d,giIntnr,dbLongStr(grnr));
@@ -1708,12 +1708,12 @@ var i : integer;
     b : byte;
 begin
   UpString(wot);
-  if wot=ustr(getres(2723)) then     { 'TŽGLICH' }
+  if wot=UpperCase(getres(2723)) then     { 'TŽGLICH' }
     wobyte:=127
   else begin
     b:=0;
     for i:=1 to 7 do
-      if pos(ustr(copy(_wotag_,2*i-1,2)),wot)>0 then
+      if pos(UpperCase(copy(_wotag_,2*i-1,2)),wot)>0 then
         inc(b,1 shl (i-1));
     wobyte:=b;
     end;
@@ -1755,7 +1755,7 @@ end;
 function monword(s:string):word;
 var i,w : word;
 begin
-  if (s='') or (ustr(s)=ustr(getres(2724))) then   { 'ALLE' }
+  if (s='') or (UpperCase(s)=UpperCase(getres(2724))) then   { 'ALLE' }
     monword:=$fff
   else begin
     s:=','+s+',';
@@ -1815,7 +1815,7 @@ end;
 function atestpollbox(var s:string):boolean;
 var d : DB;
 begin
-  if (s='') or (ustr(s)='*CRASH*') then atestpollbox:=true
+  if (s='') or (UpperCase(s)='*CRASH*') then atestpollbox:=true
   else begin
     dbOpen(d,BoxenFile,1);
     SeekLeftBox(d,s);
@@ -1909,11 +1909,11 @@ begin
         nt:=ntBoxNetztyp(box)
       else
         if pm then begin
-          dbSeek(ubase,uiName,ustr(empf));
+          dbSeek(ubase,uiName,UpperCase(empf));
           if dbFound then nt:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
           end
         else begin
-          dbSeek(bbase,biBrett,'A'+ustr(empf));
+          dbSeek(bbase,biBrett,'A'+UpperCase(empf));
           if dbFound then nt:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
           end;
       if nt=0 then nt:=ntBoxNetztyp(defaultbox);
@@ -2307,11 +2307,11 @@ begin
   if (newbox<>'') and not brk then begin
     UpString(oldbox);
     dbOpen(d,BoxenFile,1);                    { oldbox.Mapsname ermitteln }
-    dbSeek(d,boiName,ustr(oldbox));
+    dbSeek(d,boiName,UpperCase(oldbox));
     if not dbFound then mapsname:=''
-    else mapsname:=ustr(dbReadStr(d,'nameomaps')+'@'+oldbox);
+    else mapsname:=UpperCase(dbReadStr(d,'nameomaps')+'@'+oldbox);
     dbClose(d);
-    if mapsname<>'' then mapsname:=mapsname+ustr(ntAutoDomain(oldbox,true));
+    if mapsname<>'' then mapsname:=mapsname+UpperCase(ntAutoDomain(oldbox,true));
     uucp:=iif(ntBoxNetztyp(newbox)=nt_UUCP,16,0);
     attrtxt(col.coldialog);
     wrt(x+2,y+10,getres2(2734,7));    { 'Bretter' }
@@ -2326,10 +2326,10 @@ begin
         dbGoTop(d);
         nn:=0;
         while not dbEOF(d) do begin
-          if ustr(dbReadStr(d,'pollbox'))=oldbox then
+          if UpperCase(dbReadStr(d,'pollbox'))=oldbox then
             if (i=1) or
-               (localuser and (ustr(dbReadStr(d,'username'))<>mapsname)) or
-               (pos('@'+oldbox,ustr(dbReadStr(d,'username')))=0)
+               (localuser and (UpperCase(dbReadStr(d,'username'))<>mapsname)) or
+               (pos('@'+oldbox,UpperCase(dbReadStr(d,'username')))=0)
             then begin
               inc(nn);
               attrtxt(col.coldiahigh);
@@ -2350,7 +2350,7 @@ begin
         else dbOpen(d,PseudoFile,0);
         nn:=0;
         while not dbEOF(d) do begin
-          if ustr(dbReadStr(d,'pollbox'))=oldbox then begin
+          if UpperCase(dbReadStr(d,'pollbox'))=oldbox then begin
             inc(nn);
             attrtxt(col.coldiahigh);
             wrt(x+32,y+9+i,strsn(nn,4));
@@ -2390,6 +2390,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/04 12:04:23  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.27  2000/07/03 13:31:40  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

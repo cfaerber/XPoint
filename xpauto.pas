@@ -226,7 +226,7 @@ begin
       pm:=(pos('@',empf)<>0);
       if not pm then insert('A',empf,1);
       leer:='';
-      if ustr(box)='*CRASH*' then begin
+      if UpperCase(box)='*CRASH*' then begin
         box:='';
         xp6.flCrash:=true;
         xp6.NoCrash:=true;    { keine RÅckfrage 'sofort versenden' }
@@ -258,7 +258,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (right(fustr(datei),4)=fustr('.msg')) and exist(datei) then
+          if (right(FileUpperCase(datei),4)=FileUpperCase('.msg')) and exist(datei) then
             _era(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -436,7 +436,7 @@ var sr    : searchrec;
       readln(t1,s);
       p:=cpos(':',s);
       if p>0 then begin
-        hdr:=lstr(left(s,p-1));
+        hdr:=LowerCase(left(s,p-1));
         if (hdr='empfaenger') or (hdr='empfÑnger') or (hdr='to') then
           empf:=trim(mid(s,p+1)) else
         if (hdr='betreff') or (hdr='subject') then
@@ -444,7 +444,7 @@ var sr    : searchrec;
         if hdr='server' then
           box:=trim(mid(s,p+1)) else
         if (hdr='datei') or (hdr='file') then
-          datei:=fustr(trim(mid(s,p+1)));
+          datei:=FileUpperCase(trim(mid(s,p+1)));
         end;
       end;
     err:=true;
@@ -460,7 +460,7 @@ var sr    : searchrec;
       if not multipos(_MPMask,datei) then
         datei:=SendPath+datei;
       if not exist(datei) then
-        axerr(5,ustr(datei)) else       { 'Datei "%s" fehlt' }
+        axerr(5,UpperCase(datei)) else       { 'Datei "%s" fehlt' }
       if attach and (cpos('@',empf)=0) then
         axerr(6,'') else   { 'File Attaches kînnen nur als PM verschicht werden!' }
       if attach and (length(datei)>BetreffLen) then
@@ -582,15 +582,15 @@ begin
       delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
-      if (left(sr.name,5)<>fustr('start')) and (left(sr.name,4)<>fustr('stop')) then begin
+      if (left(sr.name,5)<>FileUpperCase('start')) and (left(sr.name,4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
     if startbatch then begin
-      fnstart:=AutoxDir+fustr('start'+BatchExt);        { START.BAT }
+      fnstart:=AutoxDir+FileUpperCase('start'+BatchExt);        { START.BAT }
       if exist(fnstart) then
         shell(fnstart,500,1);
-      fnstart:=AutoxDir+fustr('start1'+BatchExt);       { START1.BAT, lîschen }
+      fnstart:=AutoxDir+FileUpperCase('start1'+BatchExt);       { START1.BAT, lîschen }
       if exist(fnstart) then begin
         shell(fnstart,500,1);
         _era(fnstart);
@@ -609,10 +609,10 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
 {$ENDIF }
-  fnstop:= AutoxDir+fustr('stop'+BatchExt);     { STOP.BAT }
+  fnstop:= AutoxDir+FileUpperCase('stop'+BatchExt);     { STOP.BAT }
   if exist(fnstop) then
     shell(fnstop,500,1);
-  fnstop:= AutoxDir+fustr('stop1'+BatchExt);    { STOP1.BAT, lîschen }
+  fnstop:= AutoxDir+FileUpperCase('stop1'+BatchExt);    { STOP1.BAT, lîschen }
   if exist(fnstop) then begin
     shell(fnstop,500,1);
     _era(fnstop);
@@ -660,6 +660,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/04 12:04:29  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.15  2000/07/03 13:31:43  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

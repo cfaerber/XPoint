@@ -702,7 +702,7 @@ label ende;
       if s[i]='\' then
         insert('5c',s,i+1)   { Backslash -> \5c }
       else if s[i]>#$7e then
-        s:=left(s,i-1)+'\'+lstr(hex(ord(s[i]),2))+mid(s,i+1);
+        s:=left(s,i-1)+'\'+LowerCase(hex(ord(s[i]),2))+mid(s,i+1);
       inc(i);
     end;
     sevenbit:=s;
@@ -805,7 +805,7 @@ begin
     log('~','AKA: '+s);
     getbufstr;   { password }
     if trim(s)<>'' then
-      if (ustr(s)=ustr(password)) then
+      if (UpperCase(s)=UpperCase(password)) then
         log(' ','Password ok')
       else
         log('#','Password error ('+s+')');
@@ -825,7 +825,7 @@ begin
     while bufpos<buflen do begin
       getbufstr; s2:=s;        { optionale Felder auswerten }
       getbufstr;
-      if ustr(s2)='TRX#' then  { transaction number }
+      if UpperCase(s2)='TRX#' then  { transaction number }
         trx:=hexval(copy(s,2,8));
     end;
     if trx<>0 then begin
@@ -901,10 +901,10 @@ var i       : integer;
         exit;
       end;
       if UpCase(firstchar(s)) in ['Z','E','L'] then begin
-        ok:=(UStr(GetToken(s,' '))='Z');   { Kennung }
+        ok:=(UpperCase(GetToken(s,' '))='Z');   { Kennung }
         if gettoken(s,' ')='' then;        { Datum }
         time:=gettoken(s,' ');             { Uhrzeit }
-        fn:=ustr(GetToken(s,','));         { Dateiname }
+        fn:=UpperCase(GetToken(s,','));         { Dateiname }
         s:=s+',';
         rbytes:=-1;
         while s<>'' do begin
@@ -933,7 +933,7 @@ var i       : integer;
             for i:=1 to sendfiles do begin   { Datei ok -> aus Sendeliste entfernen }
               { log('0',getfilename(fn)+' '+getfilename(sendfile[i]^)); }
               if stricmp(getfilename(fn),getfilename(SendFile[i]^)) and
-                 (pos('.REQ',ustr(fn))=0) then begin
+                 (pos('.REQ',UpperCase(fn))=0) then begin
                 if i<sendfiles then
                   Move(sendfile[i+1],sendfile[i],4*(sendfiles-i));
                 dec(sendfiles);
@@ -1025,6 +1025,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.14  2000/07/02 14:24:52  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

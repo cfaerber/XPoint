@@ -95,7 +95,7 @@ begin
   reset(t);
   readln(t,s);
   close(t);
-  _deutsch:=(ioresult=0) and (ustr(s)='XP-D.RES');
+  _deutsch:=(ioresult=0) and (UpperCase(s)='XP-D.RES');
   filemode:=2;
 end;
 
@@ -206,6 +206,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/07/04 12:04:32  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.21  2000/07/03 15:23:27  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

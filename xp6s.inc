@@ -207,7 +207,7 @@ begin
     else
       s:='';
     if not pm then begin
-      if left(lstr(fidoname),8)='shuffle:' then
+      if left(LowerCase(fidoname),8)='shuffle:' then
         fidoname:=OriShuffle(trim(mid(fidoname,9)));
       s:=s+#13#10' * Origin: '+fidoname+' ('+FidoAbsAdr+')';
       end;
@@ -233,8 +233,8 @@ begin
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
   if (netztyp=nt_Maus) and not pm and (Developer or
-     ((right(lstr(empfaenger),11)<>'/maustausch') and
-       (right(lstr(empfaenger),6)<>'/mt.xp')) or
+     ((right(LowerCase(empfaenger),11)<>'/maustausch') and
+       (right(LowerCase(empfaenger),6)<>'/mt.xp')) or
        (registriert.r2 and not XP_ID_AMs)) then
     XpID:=false;
   XID:=iifs(XpID and (netztyp<>nt_Fido),XP_ID,'');
@@ -402,7 +402,7 @@ begin
       3 : MessageID:=formi(t,2)+formi(inr mod 1000000,6)+    { MausTausch }
                      formi(random(100),2)+'@'+box;
       4 : MessageID:=fidoAbsAdr+iifs(domain<>'','@'+domain,'')+' '+ { Fido }
-                     lstr(hex(longint(dat and $1fff) shl 19+(inr and $ffff) shl 3
+                     LowerCase(hex(longint(dat and $1fff) shl 19+(inr and $ffff) shl 3
                           +random(8),8));   { eindeutig f. 16 Jahre, }
                                             { max. 65536 Msgs/Tag    }
       6 : MessageID:=iifc(pm,iifc(_bezug='','P','Q'),iifc(_bezug='','A','R'))
@@ -415,10 +415,10 @@ begin
       csum:=crc16strXP(username);
       case netztyp of
         {17.01.00 HS: Message-IDs mit dem FQDN erstellen, falls eingetragen}
-        nt_ZConnect : if fqdn='' then _domain:=rev+'@'+lstr(pointname+'.'+box)+domain
+        nt_ZConnect : if fqdn='' then _domain:=rev+'@'+LowerCase(pointname+'.'+box)+domain
                         else _domain:=rev+'@'+fqdn;
-        nt_Magic    : if aliaspt then _domain:=pointname+rev+'@'+lstr(box)+domain
-                      else _domain:=rev+'@'+lstr(pointname)+domain;
+        nt_Magic    : if aliaspt then _domain:=pointname+rev+'@'+LowerCase(box)+domain
+                      else _domain:=rev+'@'+LowerCase(pointname)+domain;
         nt_Quick,
         nt_GS       : _domain:=rev+'@'+pointname;
         nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
@@ -1128,6 +1128,12 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.20  2000/07/04 12:04:26  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.19  2000/06/29 13:00:57  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -291,7 +291,7 @@ begin
                   else
                     MapsDelBrett(iifs(bmarkanz=0,dbReadstr(bbase,'brettname'),''))
                 else begin
-                  dbSeek(bbase,biBrett,ustr(dispspec));
+                  dbSeek(bbase,biBrett,UpperCase(dispspec));
                   MapsDelBrett(dispspec);
                   end;
             3 : MapsCommands(1);
@@ -574,6 +574,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:23  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/06/29 13:00:56  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

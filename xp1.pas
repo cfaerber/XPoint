@@ -1052,7 +1052,7 @@ var d    : DB;
 begin
   if dispusername and not startup then begin
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(DefaultBox));
+    dbSeek(d,boiName,UpperCase(DefaultBox));
     showtline;
     if dbFound then begin
       dbRead(d,'username',user);
@@ -1912,7 +1912,7 @@ begin
   assign(f,fn);
   erase(f);
   if ioresult<>0 then
-    trfehler1(4,ustr(fn),30);   { 'Kann '+ustr(fn)+' nicht l”schen!?' }
+    trfehler1(4,UpperCase(fn),30);   { 'Kann '+UpperCase(fn)+' nicht l”schen!?' }
 end;
 
 procedure ExErase(fn:pathstr);
@@ -1932,7 +1932,7 @@ begin
       dellast(p);
     chdir(p);
     if ioresult<>0 then
-      trfehler1(5,ustr(p),30);   { ungltiges Verzeichnis: }
+      trfehler1(5,UpperCase(p),30);   { ungltiges Verzeichnis: }
     end;
 end;
 
@@ -1951,7 +1951,7 @@ end;
 procedure exchange(var s:string; repl,by:string);
 var p : byte;
 begin
-  p:=pos(ustr(repl),ustr(s));
+  p:=pos(UpperCase(repl),UpperCase(s));
   if p>0 then s:=copy(s,1,p-1)+by+copy(s,p+length(repl),255);
 end;
 
@@ -2019,6 +2019,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.53  2000/07/03 13:31:38  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

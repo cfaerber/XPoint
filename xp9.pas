@@ -112,7 +112,7 @@ begin
     end
   else
     if validfilename(left(boxname,8)+BfgExt) then
-      getdname:=ustr(left(boxname,8))
+      getdname:=UpperCase(left(boxname,8))
     else
       getdname:='BOX-0001';
 end;
@@ -195,7 +195,7 @@ var ls  : string[60];
     ext : string[3];
 begin
   if UpArcNr<1 then exit;
-  ls:=lstr(s);
+  ls:=LowerCase(s);
   ext:='*';
   if (left(ls,5)='pkarc') or (left(ls,5)='pkpak') then ext:='arc'
   else if left(ls,3)='lha' then ext:='lzh'
@@ -210,7 +210,7 @@ var ls  : string[60];
     ext : string[3];
 begin
   if DownArcNr<1 then exit;
-  ls:=lstr(s);
+  ls:=LowerCase(s);
   ext:='*';
   if (left(ls,6)='pkxarc') or (left(ls,7)='pkunpak') then ext:='arc'
   else if left(ls,3)='lha' then ext:='lzh'
@@ -232,7 +232,7 @@ var ok   : boolean;
 begin
   progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
   path:=getenv('PATH');
-  if ustr(left(s+' ',7))='ZMODEM ' then
+  if UpperCase(left(s+' ',7))='ZMODEM ' then
 {$IFDEF UnixFS}
     begin
       if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
@@ -246,7 +246,7 @@ begin
   else
     fn:=trim(s);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
-  if (fn<>'') and (pos('*'+ustr(fn)+'*','*COPY*DIR*PATH*')=0) then begin
+  if (fn<>'') and (pos('*'+UpperCase(fn)+'*','*COPY*DIR*PATH*')=0) then begin
 {$IFDEF UnixFS}
     ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
 {$ELSE}
@@ -258,13 +258,13 @@ begin
           (fsearch(fn+'.com',path)<>'') or
           (fsearch(fn+'.bat',path)<>'');
 {$ENDIF}
-    if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+    if not ok then rfehler1(907,UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
   end;
 end;
 
 function testmbretter(var s:string):boolean;
 begin
-  if pp_da and (ustr(s)<>ustr(BoxPar^.MagicBrett)) then begin
+  if pp_da and (UpperCase(s)<>UpperCase(BoxPar^.MagicBrett)) then begin
     s:=BoxPar^.MagicBrett;
     rfehler(927);
     testmbretter:=false;
@@ -327,7 +327,7 @@ begin
     if (p=0) or (pos('.',mid(s,p))=0) then
     begin
       dbOpen(d,PseudoFile,1);
-      dbSeek(d,piKurzname,ustr(s));
+      dbSeek(d,piKurzname,UpperCase(s));
       if dbFound then
       begin
         dbRead(d,'Langname',s);         { ists ein Kurzname ? }
@@ -442,7 +442,7 @@ end;
 
 procedure setpasswdfield(var s:string);
 begin
-  setfieldtext(4,getres2(903,iif(ustr(s)=ustr(uuserver),7,6)));
+  setfieldtext(4,getres2(903,iif(UpperCase(s)=UpperCase(uuserver),7,6)));
 end;
 
 { Fido: YooHoo-PW auf 8 Zeichen begrenzen }
@@ -508,7 +508,7 @@ begin
   if s='' then
     testlogfile:=true
   else begin
-    if lstr(s)='logfile' then           { Diese Pruefung ist nun wirklich der Hit (hd) }
+    if LowerCase(s)='logfile' then           { Diese Pruefung ist nun wirklich der Hit (hd) }
       if s[1]='l' then s:=s+'.log'
       else s:=s+'.LOG';
     if not multipos(_MPMask,s) then
@@ -575,7 +575,7 @@ var x,y   : byte;
     t     : taste;
 begin
   JanusSwitch:=true;
-  if lstr(getfield(downprotnr))='zmodem' then exit;
+  if LowerCase(getfield(downprotnr))='zmodem' then exit;
   anz:=res2anz(932);
   msgbox(63,anz+5,_hinweis_,x,y);
   for i:=1 to anz do
@@ -643,7 +643,7 @@ var d         : DB;
       1 : dbRead(d,'Boxname',s1);
       2 : dbRead(d,'Name',s1);
     end;
-    if setdefault and (ustr(s1)=ustr(default)) then begin
+    if setdefault and (UpperCase(s1)=UpperCase(default)) then begin
       p:=i;
       setdefault:=false;
       end;
@@ -666,10 +666,10 @@ var d         : DB;
             dbRead(d,'msglimit',limit);
             dbRead(d,'int_nr',grnr);
             dbRead(d,'umlaute',umlaut);
-            hd:=iifc(ustr(dbReadStr(d,'kopf')+'.XPS')<>ustr(headerfile),'K',' ');
+            hd:=iifc(UpperCase(dbReadStr(d,'kopf')+'.XPS')<>UpperCase(headerfile),'K',' ');
             qm:=dbReadStr(d,'quotemsk');
-            qt:=iifc((qm<>'') and (ustr(qm+'.XPS')<>ustr(quotemsk)),'Q',' ');
-            sig:=iifc(ustr(dbReadStr(d,'signatur')+'.XPS')<>ustr(signatfile),'S',' ');
+            qt:=iifc((qm<>'') and (UpperCase(qm+'.XPS')<>UpperCase(quotemsk)),'Q',' ');
+            sig:=iifc(UpperCase(dbReadStr(d,'signatur')+'.XPS')<>UpperCase(signatfile),'S',' ');
             s:=strsn(grnr,5)+' '+hd+qt+sig+' '+forms(s1,28)+' '+
                forms(umtyp[umlaut],6)+
                iifs(limit>0,strsrnp(limit,12,0),sp(11)+' ì')+' ';
@@ -800,12 +800,12 @@ var d         : DB;
     readmask(brk);
     if not brk then begin
       for i:=0 to 5 do
-        if ustr(ums)=ustr(umtyp[i]) then umlaut:=i;
+        if UpperCase(ums)=UpperCase(umtyp[i]) then umlaut:=i;
       flags:=flags and (not 6);
       LoString(retyp);
-      if retyp=lstr(retypes(1)) then inc(flags,2)        { re^n: }
-      else if retyp=lstr(retypes(2)) then inc(flags,4)   { re:   }
-      else if retyp=lstr(retypes(3)) then inc(flags,6);  { nein  }
+      if retyp=LowerCase(retypes(1)) then inc(flags,2)        { re^n: }
+      else if retyp=LowerCase(retypes(2)) then inc(flags,4)   { re:   }
+      else if retyp=LowerCase(retypes(3)) then inc(flags,6);  { nein  }
       end;
     enddialog;
     freeres;
@@ -827,7 +827,7 @@ var d         : DB;
     flags:=0;    { keine Standard-Gruppe; Re^n: Default }
     readgruppe(false,name,hzeit,limit,umlaut,hd,qt,sig,flags,brk);
     if not brk then begin
-      dbSeek(d,giName,ustr(name));
+      dbSeek(d,giName,UpperCase(name));
       if dbFound then
         rfehler(910)   { 'Eine Gruppe mit diesem Namen existiert bereits.' }
       else begin
@@ -959,7 +959,7 @@ var d         : DB;
     readmask(brk);
     freeres;
     if not brk then
-      if ustr(fs_name)<>ustr(uuserver) then
+      if UpperCase(fs_name)<>UpperCase(uuserver) then
         UpString(fs_name)
       else begin
         if fs_passwd='' then fs_passwd:='index';
@@ -983,7 +983,7 @@ var d         : DB;
     convert:='';
     readsystem(name,komm,fsuser,fspass,convert,0,brk);
     if not brk then begin
-      dbSeek(d,siName,ustr(name));
+      dbSeek(d,siName,UpperCase(name));
       if dbFound then
         rfehler(913)     { 'Ein System mit diesem Namen existiert bereits.' }
       else begin
@@ -995,7 +995,7 @@ var d         : DB;
         dbWrite(d,'ZBV1',convert);
         w:=iif(fsuser<>'',1,0);
         dbWrite(d,'flags',w);
-        b:=iif(ustr(fsuser)=ustr(uuserver),3,0);
+        b:=iif(UpperCase(fsuser)=UpperCase(uuserver),3,0);
         dbWrite(d,'fs-typ',b);
         dbFlushClose(d);
         dbGo(d,drec[1]);
@@ -1031,7 +1031,7 @@ var d         : DB;
       dbWrite(d,'ZBV1',convert);
       w:=iif(fsuser<>'',1,0);
       dbWrite(d,'flags',w);
-      if ustr(fsuser)=ustr(uuserver) then typ:=3
+      if UpperCase(fsuser)=UpperCase(uuserver) then typ:=3
       else if typ=3 then typ:=0;
       dbWrite(d,'fs-typ',typ);
       dbFlushClose(d);
@@ -1085,7 +1085,7 @@ var d         : DB;
     kurz:=''; lang:=''; pollbox:='';
     readpseudo(false,kurz,lang,pollbox,brk);
     if not brk then begin
-      dbSeek(d,piKurzname,ustr(kurz));
+      dbSeek(d,piKurzname,UpperCase(kurz));
       if dbFound then
         rfehler(915)     { 'Diesen Kurznamen gibt es bereits.' }
       else begin
@@ -1298,9 +1298,9 @@ var d         : DB;
     end;
     if c=#8 then dnew:=left(directsel,length(directsel)-1)
     else dnew:=directsel+c;
-    dbSeek(d,1,ustr(dnew));
+    dbSeek(d,1,UpperCase(dnew));
     if dbBOF(d) then dbGoTop(d);
-    if dbEOF(d) or (ustr(left(dbReadStr(d,nfeld),length(dnew)))<>ustr(dnew)) then
+    if dbEOF(d) or (UpperCase(left(dbReadStr(d,nfeld),length(dnew)))<>UpperCase(dnew)) then
       errsound
     else begin
       i:=1;
@@ -1311,7 +1311,7 @@ var d         : DB;
         aufbau:=true;
         p:=1;
         end;
-      DirectSel:=ustr(dnew);
+      DirectSel:=UpperCase(dnew);
       end;
   end;
 
@@ -1577,10 +1577,10 @@ begin
   else begin
     p:=cpos(' ',s);
     if p=0 then begin
-      box:=UStr(s); user:=''; real:='';
+      box:=UpperCase(s); user:=''; real:='';
       end
     else begin
-      box:=ustr(left(s,p-1));
+      box:=UpperCase(left(s,p-1));
       user:=trim(mid(s,p+1));
       p:=pos(' (',user);
       if p=0 then real:=''
@@ -1613,7 +1613,7 @@ begin
         dbWrite(d,'username',user);
         if hasreal { and (real<>'') 29.07.96 } then dbWrite(d,'realname',real);
         if box=DefFidoBox then begin
-          HighlightName:=ustr(user);
+          HighlightName:=UpperCase(user);
           aufbau:=true;
           end;
         if not dispusername then begin
@@ -1632,9 +1632,9 @@ end;
 procedure gf_getntyp(var s:string);
 var uucp : boolean;
 begin
-  gf_fido:=(lstr(s)=lstr(ntName(nt_Fido)));
-  uucp:=(lstr(s)=lstr(ntName(nt_UUCP)));
-  if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp then
+  gf_fido:=(LowerCase(s)=LowerCase(ntName(nt_Fido)));
+  uucp:=(LowerCase(s)=LowerCase(ntName(nt_UUCP)));
+  if (LowerCase(s)=LowerCase(ntName(nt_Maus))) or gf_fido or uucp then
     set_chml(userfield,'')
   else
     set_chml(userfield,'>');
@@ -1655,18 +1655,18 @@ begin
     if gf_fido then
       xp9_testbox:=testbossnode(s)
     else begin
-      if DomainNt<0 then nt:=lstr(getfield(1))   { Netztyp als String }
-      else nt:=lstr(ntName(DomainNt));
-      if nt=lstr(ntName(nt_Maus)) then begin
-        if (length(s)>4) and (ustr(left(s,4))='MAUS') then
+      if DomainNt<0 then nt:=LowerCase(getfield(1))   { Netztyp als String }
+      else nt:=LowerCase(ntName(DomainNt));
+      if nt=LowerCase(ntName(nt_Maus)) then begin
+        if (length(s)>4) and (UpperCase(left(s,4))='MAUS') then
           s:=mid(s,5);
         if cpos('.',s)>0 then s:=left(s,cpos('.',s)-1);
         s:=left(s,6);
         end
-      else if nt=lstr(ntName(nt_Netcall)) then         { Domain abschneiden }
+      else if nt=LowerCase(ntName(nt_Netcall)) then         { Domain abschneiden }
         if right(s,4)='.ZER' then s:=left(s,length(s)-4)
         else
-      else if (nt=lstr(ntName(nt_ZCONNECT))) or (nt=lstr(ntName(nt_UUCP))) then
+      else if (nt=LowerCase(ntName(nt_ZCONNECT))) or (nt=LowerCase(ntName(nt_UUCP))) then
         if cpos('.',s)>0 then truncstr(s,cpos('.',s)-1);
       xp9_testbox:=true;
       end;
@@ -1718,7 +1718,7 @@ begin
   closemask;
   closebox;
   for i:=0 to enetztypen-1 do
-    if lstr(ntyp)=lstr(ntName(ntnr[i])) then
+    if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
       nt:=ntnr[i];
   if not ntNameSpace(nt) then
     for i:=1 to length(user) do    { Leerzeichen aus Username -> "_" }
@@ -1761,6 +1761,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/07/04 12:04:28  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.21  2000/07/03 13:31:42  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

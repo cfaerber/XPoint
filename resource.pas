@@ -21,6 +21,7 @@ interface
 
 uses
   xpglobal,
+  sysutils,
   typeform,fileio;
 
 procedure OpenResource(fn:string; preloadmem:longint);
@@ -105,7 +106,7 @@ begin
   reset(f^,1);
   filemode:=fm;
   if inoutres<>0 then
-    error(ioerror(ioresult,'can''t open '+ustr(fn)));
+    error(ioerror(ioresult,'can''t open '+UpperCase(fn)));
   seek(f^,128);
   blockread(f^,blocks,2);
   seek(f^,128+16);
@@ -346,6 +347,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/04 12:04:18  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.10  2000/07/02 14:24:49  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

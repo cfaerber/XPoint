@@ -121,9 +121,9 @@ begin
     else
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=getline;
-      y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
-      if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
+      y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
+      if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
+      if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
         s:=mid(s,y); x:=0;
         repeat
@@ -178,7 +178,7 @@ begin
     exit;
     end;
   diabox(57,5,'',x,y);
-  mwrt(x+2,y+1,ustr(fitpath(fname,28))+getres(117));  { ' ist bereits vorhanden.' }
+  mwrt(x+2,y+1,UpperCase(fitpath(fname,28))+getres(117));  { ' ist bereits vorhanden.' }
   t:='';
   pushhp(76);
   nr:=readbutton(x+2,y+3,2,getres(118),iif(replace,2,1),true,t);  { ' ^Anh„ngen , ^šberschreiben , A^bbruch ' }
@@ -372,7 +372,7 @@ begin
       t:=keycr;
 
   if llh then begin
-    if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
+    if (t=keydel) or (UpperCase(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
       b:=2;
       dbWriteN(mbase,mb_halteflags,b);
       listhalten:=b;
@@ -384,7 +384,7 @@ begin
       else
         t:=keyesc;
       end else
-    if (t=keyins) or (ustr(t)=k4_H) then begin         { 'H' }
+    if (t=keyins) or (UpperCase(t)=k4_H) then begin         { 'H' }
       dbreadN(mbase,mb_halteflags,b);
       if b=1 then b:=0 else b:=1;
       dbWriteN(mbase,mb_halteflags,b);
@@ -492,7 +492,7 @@ begin
   if not exist(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
     { Datei ist Ausgangspuffer: }
-    if UStr(copy(fn1,length(fn1)-2,3))='.PP' then
+    if UpperCase(copy(fn1,length(fn1)-2,3))='.PP' then
     begin
       filecopy:=false;
       exit;
@@ -538,7 +538,7 @@ begin
       decomp:=''; exit;
       end;
     end;
-  if (pos('$DATEI',ustr(decomp))=0) or (pos('$ARCHIV',ustr(decomp))=0) then begin
+  if (pos('$DATEI',UpperCase(decomp))=0) or (pos('$ARCHIV',UpperCase(decomp))=0) then begin
     rfehler1(8,arcname[atyp]);   { 'Die Einstellung des %s-Entpacker ist fehlerhaft' }
     getDecomp:=false;
     end
@@ -557,9 +557,9 @@ begin
   if atyp=0 then exit;
   SetCurrentDir(_to);
   if not GetDecomp(atyp,decomp) then exit;
-  p:=pos('$ARCHIV',ustr(decomp));
+  p:=pos('$ARCHIV',UpperCase(decomp));
   decomp:=left(decomp,p-1)+_from+mid(decomp,p+7);
-  p:=pos('$DATEI',ustr(decomp));
+  p:=pos('$DATEI',UpperCase(decomp));
   shell(left(decomp,p-1)+dateien+mid(decomp,p+6),400,3);
   if not exist(_to+dateien) then
     tfehler('Datei(en) wurde(n) nicht korrekt entpackt!',30)
@@ -697,11 +697,11 @@ procedure SeekLeftBox(var d:DB; var box:string);
 begin
   if ((length(box)<=2) and (left(box,1)=left(DefFidoBox,1))) then
     box:=DefFidoBox;
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if not dbFound and (box<>'') and not dbEOF(d) and
-     (ustr(left(dbReadStr(d,'boxname'),length(box)))=ustr(box)) then begin
+     (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then begin
     dbRead(d,'boxname',box);
-    dbSeek(d,boiName,ustr(box));
+    dbSeek(d,boiName,UpperCase(box));
     end;
 end;
 
@@ -718,7 +718,7 @@ begin
   if cpos(' ',fn)>0 then
     fn:=left(fn,cpos(' ',fn)-1);
   fsplit(fn,dir,name,ext);
-  if ustr(name+ext)='COPY' then
+  if UpperCase(name+ext)='COPY' then
     fileda:=true
   else
     if ext<>'' then
@@ -773,9 +773,9 @@ procedure KorrBoxname(var box:string);
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound or
-     (not dbEOF(d) and (ustr(left(dbReadStr(d,'boxname'),length(box)))=ustr(box)))
+     (not dbEOF(d) and (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)))
   then
     dbRead(d,'boxname',box);  { -> korrekte Schreibweise des Systemnamens }
   dbClose(d);
@@ -786,9 +786,9 @@ function BoxFilename(var box:string):string;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then BoxFilename:=dbReadStr(d,'dateiname')
-  else BoxFilename:=ustr(box);
+  else BoxFilename:=UpperCase(box);
   dbClose(d);
 end;
 
@@ -923,16 +923,16 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
 
     win := (et=ET_Win16) or (et=ET_Win32);
     os2 := (lo(dosversion)>=20) and ((et=ET_OS2_16) or (et=ET_OS2_32));
-    winnt:=win and (lstr(getenv('OS'))='windows_nt');
+    winnt:=win and (LowerCase(getenv('OS'))='windows_nt');
 
     if win then begin
 
       if Delviewtmp then
       begin
-        if ustr(left(prog,5))<>'START' then prog:='start '+prog;
+        if UpperCase(left(prog,5))<>'START' then prog:='start '+prog;
         end
       else begin
-        if ustr(left(prog,6))='START ' then prog:=mid(prog,7);
+        if UpperCase(left(prog,6))='START ' then prog:=mid(prog,7);
         batfile:=TempExtFile(temppath,'wrun','.bat');
         assign(t,batfile);
         rewrite(t);
@@ -988,6 +988,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/07/04 12:04:20  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.44  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

@@ -18,7 +18,7 @@ unit xp9bp;
 interface
 
 uses dos,typeform,fileio,datadef,database,
-     xp0,xp1,xp2,xpnt, xpglobal;
+     sysutils,xp0,xp1,xp2,xpnt, xpglobal;
 
 
 const bm_changesys = 1;
@@ -98,8 +98,8 @@ begin
     prototyp  := 'Z';
     uparcer   := 'pkzip $UPFILE $PUFFER';
     downarcer := 'pkunzip $DOWNFILE';
-    uparcext  := fustr('zip');
-    downarcext:= fustr('zip');
+    uparcext  := FileUpperCase('zip');
+    downarcext:= FileUpperCase('zip');
     connwait  := 45;
     loginwait := 60;
     redialwait:= 240;
@@ -195,7 +195,7 @@ begin
       while not eof(t) do begin
         readln(t,s);
         if (s<>'') and (left(s,1)<>'#') then begin
-          su:=ustr(s);
+          su:=UpperCase(s);
           p:=pos('=',s);
           if (p=0) or not (
             get_exclude or
@@ -293,7 +293,7 @@ begin
           end;
         end;
     close(t);
-    if (ustr(bp^.boxname)=ustr(DefaultBox)) and (bp^.owaehlbef<>'') then begin
+    if (UpperCase(bp^.boxname)=UpperCase(DefaultBox)) and (bp^.owaehlbef<>'') then begin
       for i:=1 to 4 do begin       { 2.93 beta: Waehlbefehl -> Config/Modem }
         freemem(comn[i].MDial,length(comn[i].MDial^)+1);
         getmem(comn[i].MDial,length(boxpar^.owaehlbef)+1);
@@ -422,7 +422,7 @@ var d     : DB;
     bfile : pathstr;
 begin
   dbOpen(d,BoxenFile,1);               { zugeh”rigen Dateiname holen }
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
   begin
     dbRead(d,'dateiname',bfile);
@@ -445,18 +445,18 @@ begin
     s:='';
     while not eof(t) do begin
       readln(t,s);
-      id:=ustr(GetToken(s,':'));
+      id:=UpperCase(GetToken(s,':'));
       if id='BBS' then RepFile:=s else
       if id='ZIP' then packer:=s else
       if id='SYS' then door:=s else
-      if id='REQ' then requests:=(ustr(s)<>'N') else
-      if id='REC' then ebs:=(ustr(s)<>'N') else
+      if id='REQ' then requests:=(UpperCase(s)<>'N') else
+      if id='REC' then ebs:=(UpperCase(s)<>'N') else
       if id='PMA' then privecho:=s else
       if id='NMA' then netecho:=s else
       if id='EMA' then emailecho:=s else
       if id='NMT' then nmt:=minmax(ival(s),0,255) else
       if id='MID' then midtyp:=minmax(ival(s),0,9) else
-      if id='HDR' then hdr:=(ustr(s)<>'M') else
+      if id='HDR' then hdr:=(UpperCase(s)<>'M') else
       if id='BEB' then bretter:=s;
       end;
     close(t);
@@ -477,7 +477,7 @@ begin
     while not eof(t1) do begin
       readln(t1,s);
       ss:=s;
-      id:=ustr(GetToken(s,':'));
+      id:=UpperCase(GetToken(s,':'));
       if id='BBS' then writeln(t2,'BBS: '+RepFile) else
       if id='ZIP' then writeln(t2,'ZIP: '+packer) else
       if id='SYS' then writeln(t2,'SYS: '+door) else
@@ -497,7 +497,7 @@ begin
         end else
       if id='BEB' then writeln(t2,'BEB: '+bretter)
       else begin
-        if lstr(ss)='[brettstart]' then begin
+        if LowerCase(ss)='[brettstart]' then begin
             { MID: und HDR: k”nnen fehlen, weil ZQWK sie nicht }
             { automatisch erzeugt                              }
           if midtyp>=0 then writeln(t2,'MID: '+strs(midtyp));
@@ -524,6 +524,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/04 12:04:28  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.11  2000/06/29 13:00:58  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

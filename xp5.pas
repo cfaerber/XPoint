@@ -17,8 +17,9 @@ unit xp5;
 interface
 
 uses
+  sysutils,
       {$IFDEF virtualpascal}
-        sysutils,vpsyslow,
+        vpsyslow,
       {$endif}
 {$IFDEF NCRT }
   xpcurses,
@@ -638,7 +639,7 @@ var x,y : byte;
     if n then
       dbOpen(d,datei,0);
     moff;
-    wrt(x+3,y+yy,forms(ustr(datei),12));
+    wrt(x+3,y+yy,forms(UpperCase(datei),12));
     write(dbRecCount(d):8,prozent:12:1,'%',
           strsrnp(_filesize(datei+dbExt),13,0));
     mon;
@@ -687,7 +688,7 @@ begin
       fn:=ExtractPath+fn;
     if not exist(fn) or useclip then app:=false
     else begin
-      ffn:=ustr(fitpath(fn,50));
+      ffn:=UpperCase(fitpath(fn,50));
       app:=not overwrite(ffn,false,brk);
       if brk then goto ende;
       end;
@@ -921,6 +922,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/04 12:04:25  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.28  2000/06/23 15:59:22  mk
   - 16 Bit Teile entfernt
 

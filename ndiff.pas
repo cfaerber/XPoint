@@ -71,13 +71,13 @@ var i : integer;
   begin
     assign(t,fn);
     reset(t);
-    if ioresult<>0 then fehler(ustr(fn)+' ist nicht vorhanden.');
+    if ioresult<>0 then fehler(UpperCase(fn)+' ist nicht vorhanden.');
     close(t);
   end;
 
 begin
   if paramcount<2 then helppage;
-  shrink:=lstr(paramstr(1))='-s';
+  shrink:=LowerCase(paramstr(1))='-s';
   if shrink then begin
     if paramcount<3 then helppage;
     nd_file:=paramstr(2);
@@ -115,7 +115,7 @@ begin
   reset(t);
   readln(t,s);
   close(t);
-  p:=pos('day number',lstr(s));
+  p:=pos('day number',LowerCase(s));
   if p=0 then fehler('unbekanntes NodeDiff-Format');
   assign(t,nl_file);
   reset(t);
@@ -215,8 +215,8 @@ begin
       else begin
         nlf:=GetFileName(nl_file);
         p0:=cpos('.',nlf);
-        if ustr(copy(s,p,p0))='='+ustr(left(nlf,p0-1)) then
-          writeln(t2,left(s,p),ustr(getfilename(nl_new)))
+        if UpperCase(copy(s,p,p0))='='+UpperCase(left(nlf,p0-1)) then
+          writeln(t2,left(s,p),UpperCase(getfilename(nl_new)))
         else
           writeln(t2,s);
         end;
@@ -287,7 +287,7 @@ begin
     if (s<>'') and (s[1]<>';') and (p>0) then begin
       keep:=false;
       if p>1 then begin
-        ss:=lstr(left(s,p-1));
+        ss:=LowerCase(left(s,p-1));
         keep:=(ss='host') or (ss='region') or (ss='zone');
         p2:=pos(',',mid(s,p+1));
         if keep and (ss<>'host') and (p2>0) then begin
@@ -331,6 +331,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/07/04 12:04:17  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.7  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

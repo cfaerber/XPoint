@@ -151,7 +151,7 @@ var f      : file;
       if (cpos('@',empfaenger)=0) and
          ((netztyp<>nt_Netcall) or (left(empfaenger,1)='/'))
       then begin
-        dbSeek(bbase,biBrett,'A'+ustr(empfaenger));
+        dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
         if not dbFound then begin
           if hdp^.empfanz=1 then
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
@@ -162,7 +162,7 @@ var f      : file;
           end;
         end
       else begin
-        dbSeek(ubase,uiName,ustr(empfaenger+iifs(pos('@',empfaenger)=0,'@'+box+'.ZER','')));
+        dbSeek(ubase,uiName,UpperCase(empfaenger+iifs(pos('@',empfaenger)=0,'@'+box+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
@@ -470,7 +470,7 @@ begin
       if p>3 then begin
         box:=left(akas,p-1);
         akas:=trim(mid(akas,p));
-        dbSeek(d,boiName,ustr(box));
+        dbSeek(d,boiName,UpperCase(box));
         if not dbfound then
           rfehler1(733,box)         { 'UngÅltiger AKA-Eintrag - %s ist keine Serverbox!' }
         else begin
@@ -753,7 +753,7 @@ var ApoBrett : string[80];
 begin
   if getres2(29900,1)<>'' then begin
     ApoBrett:='A'+getres2(29900,1);
-    dbSeek(bbase,biBrett,ustr(ApoBrett));
+    dbSeek(bbase,biBrett,UpperCase(ApoBrett));
     if dbFound then begin
       dbSeek(mbase,miBrett,mbrettd('A',bbase)+#$ff);
       if dbEOF(mbase) then dbGoEnd(mbase);
@@ -780,6 +780,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/07/03 13:31:42  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

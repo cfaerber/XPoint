@@ -24,7 +24,7 @@ begin
   if ReadFilename(getres2(330,1),s,true,useclip) then   { 'Puffer einlesen' }
     if not exist(s) then
       rfehler(304)   { 'Datei nicht vorhanden!' }
-    else if pos(ustr(AblagenFile),ustr(s))>0 then
+    else if pos(UpperCase(AblagenFile),UpperCase(s))>0 then
       rfehler(305)   { 'Interne Ablage - bitte erst umbenennen!' }
     else begin
       dialog(46,6,fitpath(s,38),x,y);
@@ -195,7 +195,7 @@ var x,y      : byte;
 
   function LeftAbsender(s:string):boolean;
   begin
-    LeftAbsender:=(left(lstr(hdp^.absender),length(s)+1+length(pollbox))=lstr(s+'@'+pollbox));
+    LeftAbsender:=(left(LowerCase(hdp^.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
   end;
 
   procedure bearbeiteMsg(var id,abs,sender:string; cancel:boolean);
@@ -304,7 +304,7 @@ var x,y      : byte;
   begin
     with hdp^ do
       IsCancelMsg:=(attrib and attrControl<>0) and
-                   (lstr(left(control,7))='cancel ');
+                   (LowerCase(left(control,7))='cancel ');
   end;
 
   function isSupersedesMsg:boolean;
@@ -317,7 +317,7 @@ var x,y      : byte;
     function NameOk:boolean;
     begin
       NameOk:=stricmp(hdp^.realname,inout.pm) or
-              (pos(lstr(inout.pm),lstr(hdp^.absender))>0);
+              (pos(LowerCase(inout.pm),LowerCase(hdp^.absender))>0);
     end;
 
     function XPctlOk:boolean;
@@ -349,21 +349,21 @@ var x,y      : byte;
     automessaging:=true;
     with hdp^ do begin
       if aufnehmen and
-        ( ((left(ustr(betreff),7)='BRETTER') or
-           (pos('your list',lstr(betreff))>0))
+        ( ((left(UpperCase(betreff),7)='BRETTER') or
+           (pos('your list',LowerCase(betreff))>0))
          and
          stricmp(left(absender,length(mapsname)),mapsname) and
          (empfaenger[1]='1') )
       or
          ((left(absender,7)='SYSTEM@') and
-          ((left(ustr(betreff),11)='NETZBRETTER') or  { QuickMail }
-           (ustr(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
-           (pos('BRETTLISTE',ustr(betreff))>0)))      { ZQWK }
+          ((left(UpperCase(betreff),11)='NETZBRETTER') or  { QuickMail }
+           (UpperCase(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
+           (pos('BRETTLISTE',UpperCase(betreff))>0)))      { ZQWK }
           then begin
         MapsReadList;
         end;
 
-      if (left(ustr(betreff),6)='FILES.') and (cpos('@',absender)>0) and
+      if (left(UpperCase(betreff),6)='FILES.') and (cpos('@',absender)>0) and
          (typ='T') then
       begin
         box:=copy(absender,cpos('@',absender)+1,20);
@@ -383,7 +383,7 @@ var x,y      : byte;
         empfang_bestaetigen(pollbox);
         end;
 
-      if (sysbetreff<>'') and (empfaenger[1]='1') and (lstr(betreff)=sysbetreff) and
+      if (sysbetreff<>'') and (empfaenger[1]='1') and (LowerCase(betreff)=sysbetreff) and
          (LeftAbsender('changesys') or LeftAbsender('news') or
           LeftAbsender('postmaster') or LeftAbsender('root')) then
       begin
@@ -446,7 +446,7 @@ var x,y      : byte;
       sp       : scrptr;
   begin
     size:=0;
-    dbSeek(ubase,uiName,ustr(hdp^.absender));
+    dbSeek(ubase,uiName,UpperCase(hdp^.absender));
     if not dbFound then exit;
     dbReadX(ubase,'passwort',size,passwd);
     dbRead(ubase,'codierer',codierer);
@@ -670,7 +670,7 @@ begin
       end
     else begin
       dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,ustr(pollbox));
+      dbSeek(d,boiName,UpperCase(pollbox));
       if not dbFound then begin
         mapsname:=''; amvertreter:=''; pmvertreter:='';
         sysbetreff:='';
@@ -679,14 +679,14 @@ begin
         dbRead(d,'nameomaps',mapsname);
         dbRead(d,'AVertreter',AMvertreter);
         dbRead(d,'PVertreter',PMvertreter);
-        dbSeek(d,boiName,ustr(amvertreter));
+        dbSeek(d,boiName,UpperCase(amvertreter));
         if not dbFound then amvertreter:='';
-        dbSeek(d,boiName,ustr(pmvertreter));
+        dbSeek(d,boiName,UpperCase(pmvertreter));
         if not dbFound then pmvertreter:='';
-        dbSeek(d,boiname,ustr(pollbox));
+        dbSeek(d,boiname,UpperCase(pollbox));
         if dbReadInt(d,'netztyp')=nt_UUCP then begin
           ReadBoxPar(nt_UUCP,pollbox);
-          sysbetreff:=lstr(boxpar^.chsysbetr);
+          sysbetreff:=LowerCase(boxpar^.chsysbetr);
           end;
         end;
       dbClose(d);
@@ -811,7 +811,7 @@ begin
 
           multi2; initscs;
 
-          dbSeek(ubase,uiName,ustr(absender));
+          dbSeek(ubase,uiName,UpperCase(absender));
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
               { mwrt(29,wherey,forms(absender,22)); }
@@ -838,7 +838,7 @@ begin
               aufnehmen:=odd(uflags);
               end;
           if left(empfaenger,1)<>'U' then begin
-            dbSeek(bbase,biBrett,ustr(empfaenger));
+            dbSeek(bbase,biBrett,UpperCase(empfaenger));
             if not dbFound then begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
@@ -852,7 +852,7 @@ begin
                     seekbr:=left(seekbr,p0-1);
                     if dbEOF(bbase) or
                        (left(dbReadStr(bbase,'brettname'),length(seekbr))<>seekbr) then
-                      dbSeek(bbase,biBrett,ustr(seekbr));
+                      dbSeek(bbase,biBrett,UpperCase(seekbr));
                     end;
                   if dbEOF(bbase) then dbGoEnd(bbase);
                   if dbEOF(bbase) then grnr:=NetzGruppe
@@ -890,7 +890,7 @@ begin
             end;
           { hier kein adrok: TO-User werden immer aufgenommen! }
           if left(empfaenger,1)='U' then begin
-            dbSeek(ubase,uiName,ustr(copy(empfaenger,2,80))); {Adreábuch-Eintrag}
+            dbSeek(ubase,uiName,UpperCase(copy(empfaenger,2,80))); {Adreábuch-Eintrag}
             if not dbFound then begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
@@ -1089,7 +1089,7 @@ begin
     attrtxt(col.colmboxhigh);
 
     if check then
-      FWrt(x+2,y+2,getres2(336,2)+fustr(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
+      FWrt(x+2,y+2,getres2(336,2)+FileUpperCase(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
     else
       FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
     FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
@@ -1133,7 +1133,7 @@ var
     f    : file;
 begin
   fsplit(fn,dir,name,ext);
-  if ustr(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
+  if UpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
   if ext='' then
     ext:='.001'
   else
@@ -1149,6 +1149,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.22  2000/06/29 13:00:55  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

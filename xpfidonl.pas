@@ -190,18 +190,18 @@ begin
           readln(t,s);
           p:=cpos('=',s);
           if p>0 then begin
-            ss:=lstr(left(s,p-1));
+            ss:=LowerCase(left(s,p-1));
             s:=mid(s,p+1);
             if ss='listfile'       then listfile:=s else
             if ss='number'         then number:=minmax(ival(s),0,999) else
             if ss='updatefile'     then updatefile:=s else
-            if ss='delupdate'      then delupdate:=(ustr(s)='J') else
+            if ss='delupdate'      then delupdate:=(UpperCase(s)='J') else
             if ss='updatearchive'  then updatearc:=s else
             if ss='process-by'     then begin
               getmem(processor,length(s)+1);
               processor^:=s;
               end else
-            if ss='dodiff'         then dodiff:=(ustr(s)='J') else
+            if ss='dodiff'         then dodiff:=(UpperCase(s)='J') else
             if ss='format'         then format:=minmax(ival(s),0,6) else
             if ss='zone'           then zone:=minmax(ival(s),0,32767) else
             if ss='address'        then begin
@@ -351,7 +351,7 @@ begin
         processor^:=procstr;
         end;
       for i:=1 to res2anz(2128) do
-        if ustr(lform)=ustr(getres2(2128,i)) then
+        if UpperCase(lform)=UpperCase(getres2(2128,i)) then
           format:=i;
       if format in [nlNodelist,nlPoints24,nl4DPointlist] then
         zone:=ival(adresse)
@@ -419,7 +419,7 @@ begin
         OpenArchive(fn,arc,ar);
         if stricmp(ar.name,'FILE_ID.DIZ') then
           ArcNext(ar);
-        ffn:=ustr(ar.name);
+        ffn:=UpperCase(ar.name);
         if ffn='' then ffn:=getfilename(fn);
         CloseArchive(ar);
         end
@@ -590,7 +590,7 @@ var diffdir  : pathstr;
   procedure ExecProcessor(processor:string);
   var p : byte;
   begin
-    p:=pos('$FILE',ustr(processor));
+    p:=pos('$FILE',UpperCase(processor));
     if p>0 then
       processor:=left(processor,p-1)+ufile+mid(processor,p+5);
     log(processor);
@@ -741,6 +741,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/04 12:04:29  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.11  2000/07/03 13:31:44  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

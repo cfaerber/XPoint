@@ -15,7 +15,7 @@ var d     : DB;
     flags : smallword;
 begin
   dbOpen(d,SystemFile,1);
-  dbSeek(d,siName,ustr(box));
+  dbSeek(d,siName,UpperCase(box));
   if dbFound then begin
     dbRead(d,'flags',flags);
     dbRead(d,'fs-typ',fstype);
@@ -51,7 +51,7 @@ var absender : string[Adrlen];
   var d : DB;
   begin
     dbOpen(d,SystemFile,1);
-    dbSeek(d,siName,ustr(box));
+    dbSeek(d,siName,UpperCase(box));
     if dbFound then
       dbWrite(d,'fs-typ',typ);
     dbClose(d);
@@ -61,14 +61,14 @@ var absender : string[Adrlen];
   var d : DB;
   begin
     dbOpen(d,SystemFile,1);
-    dbSeek(d,siName,ustr(box));
+    dbSeek(d,siName,UpperCase(box));
     dbRead(d,'ZBV1',convert);
     dbClose(d);
   end;
 
 begin
   if msg then begin
-    if (left(ustr(dbReadStr(mbase,'betreff')),5)<>'FILES') and
+    if (left(UpperCase(dbReadStr(mbase,'betreff')),5)<>'FILES') and
        not ReadJN(getres(811),true) then   { 'Sind Sie sicher, daá das eine Fileliste ist' }
       exit;
     dbRead(mbase,'absender',absender);
@@ -95,13 +95,13 @@ begin
     box:=UniSel(3,false,'');
     if box='' then exit;
     if not IsServer(box,fstype) then begin
-      trfehler1(812,ustr(box),60);   { '%s ist kein Fileserver.' }
+      trfehler1(812,UpperCase(box),60);   { '%s ist kein Fileserver.' }
       exit;
       end;
     end;
 
   msgbox(48,3,'',x,y);
-  mwrt(x+3,y+1,getreps(813,ustr(box)));   { 'File-Liste fr %s wird eingelesen ...' }
+  mwrt(x+3,y+1,getreps(813,UpperCase(box)));   { 'File-Liste fr %s wird eingelesen ...' }
   if msg then begin
     fn:=TempS(dbReadInt(mbase,'groesse')+5000);
     assign(f,fn);
@@ -118,7 +118,7 @@ begin
     while not eof(t1) and
           ((pos('Typ',s)=0) or (pos('Dateiname',s)=0)) and
           ((pos('Name',s)=0) or (pos('Beschreibung',s)=0)) and
-          (pos('Í file description Í',lstr(s))=0) do begin
+          (pos('Í file description Í',LowerCase(s))=0) do begin
       s2:=s;
       readln(t1,s);
       end;
@@ -130,7 +130,7 @@ begin
       trfehler(813,60);   { 'unbekanntes Listenformat :-(' }
       exit;
       end;
-    fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',lstr(s))>0,2,0));
+    fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',LowerCase(s))>0,2,0));
     WriteFST(fstype);
     end;
   makebak(box+'.FL','BAK');
@@ -232,7 +232,7 @@ var f    : file;
    procedure SetDestfile;
    begin
      if getfield(fieldpos+1)='' then
-       setfield(fieldpos+1,lstr(getfilename(s)));
+       setfield(fieldpos+1,LowerCase(getfilename(s)));
    end;
 
 begin
@@ -399,7 +399,7 @@ var d     : DB;
       p : byte;
   begin
     s:=prev_line;
-    while (s<>#0) and (left(lstr(s),10)<>'directory ') do
+    while (s<>#0) and (left(LowerCase(s),10)<>'directory ') do
       s:=prev_line;
     if s=#0 then s:=''
     else begin
@@ -429,7 +429,7 @@ begin
   fs:=UniSel(3,false,'');
   if fs<>'' then begin
     dbOpen(d,SystemFile,1);
-    dbSeek(d,siName,ustr(fs));
+    dbSeek(d,siName,UpperCase(fs));
     dbRead(d,'fs-name',fname);
     dbRead(d,'fs-passwd',fpass);
     dbRead(d,'flags',w);
@@ -534,6 +534,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.7  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

@@ -213,7 +213,7 @@ var i,res : integer;
   procedure GetTyp(var typ,charset:string);
   begin
     if line<>'' then begin
-      if (UStr(line)<>'TRANSPARENT') then typ:='B';
+      if (UpperCase(line)<>'TRANSPARENT') then typ:='B';
       if (typ<>'T') and (typ<>'') then charset:='';
       end;
   end;
@@ -340,9 +340,9 @@ var i,res : integer;
       parname,
       parval  : string[80];
   begin
-    hd.mimetyp:=compmimetyp(lstr(GetToken(line,';')));
+    hd.mimetyp:=compmimetyp(LowerCase(GetToken(line,';')));
     while line<>'' do begin
-      parname:=lstr(GetToken(line,'='));
+      parname:=LowerCase(GetToken(line,'='));
       p:=1;
       while (p<=length(line)) and (line[p]<>';') do begin
         if line[p]='\' then delete(line,p,1);
@@ -446,7 +446,7 @@ begin
 
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
-              if LStr(line)='yes' then xnoarchive:=true;
+              if LowerCase(line)='yes' then xnoarchive:=true;
             end else
 
             if id = 'U-X-PRIORITY' then begin
@@ -563,9 +563,9 @@ begin
             if id = 'MAL' then LRead2(programm);
 
             { 01/2000 oh - Customizable Headerlines }
-            if id = UStr(mheadercustom[1]) then LRead(Cust1,CustHeadLen)
+            if id = UpperCase(mheadercustom[1]) then LRead(Cust1,CustHeadLen)
             else
-            if id = UStr(mheadercustom[2]) then LRead(Cust2,CustHeadLen);
+            if id = UpperCase(mheadercustom[2]) then LRead(Cust2,CustHeadLen);
             { /oh }
 
             line:='*';
@@ -575,7 +575,7 @@ begin
           if not ok and eof(f) then
             ok:=(groesse=0);          { letzte Msg hat L„nge 0 }
       until (line='') or not ok;
-      if ok and (attrib and attrQPC<>0) and (ustr(left(betreff,4))<>'QPC:') then
+      if ok and (attrib and attrQPC<>0) and (UpperCase(left(betreff,4))<>'QPC:') then
         betreff:='QPC:'+betreff;
       end
     else begin
@@ -604,6 +604,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:30  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/07/03 16:20:04  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

@@ -18,6 +18,7 @@ unit winxp;
 interface
 
 uses
+  sysutils,
 {$IFDEF Win32 }
   windows, strings,
 {$ENDIF }
@@ -676,7 +677,7 @@ begin
   repeat
     xch:=false;
     for i:=1 to j do
-      if UStr(l^[i].el)>UStr(l^[i+1].el) then begin
+      if UpperCase(l^[i].el)>UpperCase(l^[i+1].el) then begin
         sa:=l^[i];
         l^[i]:=l^[i+1];
         l^[i+1]:=sa;
@@ -919,6 +920,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.42  2000/07/04 12:04:18  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.41  2000/07/02 15:13:51  mk
   - Anpassungen an neue FPC-Version
 

@@ -164,7 +164,7 @@ begin
       end;
   if brk then begin
     freeres; exit; end;
-  if (echo<>'') and (echo<>'*') and (pos('/files/',lstr(echo))>0) then begin
+  if (echo<>'') and (echo<>'*') and (pos('/files/',LowerCase(echo))>0) then begin
     s:=getreps2(852,5,left(echo,40));
     case ReadIt(max(length(s)+4,40),s,getres2(852,7),1,brk) of
       1 : begin end;
@@ -176,13 +176,13 @@ begin
   if brk then exit;
 
   fn:=TempS(20000); assign(t,fn);
-  if (echo='') or ((echo<>'*') and (pos('/files/',lstr(echo))=0)) then
+  if (echo='') or ((echo<>'*') and (pos('/files/',LowerCase(echo))=0)) then
     FilescanList(2)                                     { Auswahl aus Liste }
   else if echo<>'*' then begin          { ein Brett abbestellen }
     ReadBoxPar(nt_Fido,dbReadStr(bbase,'pollbox'));
     rewrite(t);
     delete(echo,1,length(boxpar^.magicbrett));
-    if lstr(left(echo,6))='files/' then delete(echo,1,6);
+    if LowerCase(left(echo,6))='files/' then delete(echo,1,6);
     writeln(t,'-',echo);
     close(t);
     SendFilescan(fn);
@@ -200,13 +200,13 @@ begin
           dbGo(bbase,bmarked^[i]);
           dbReadN(bbase,bb_brettname,echo);
           delfirst(echo);
-          if (ustr(dbReadStr(bbase,'pollbox'))=box) and
-             (left(ustr(echo),length(boxpar^.magicbrett))=ustr(boxpar^.magicbrett))
-             and (pos('/files/',lstr(echo))>0)
+          if (UpperCase(dbReadStr(bbase,'pollbox'))=box) and
+             (left(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
+             and (pos('/files/',LowerCase(echo))>0)
           then begin
             if n=0 then rewrite(t);
             delete(echo,1,length(boxpar^.magicbrett));
-            if lstr(left(echo,6))='files/' then delete(echo,1,6);
+            if LowerCase(left(echo,6))='files/' then delete(echo,1,6);
             writeln(t,'-',echo);
             inc(n);
             end;
@@ -264,11 +264,11 @@ begin
   useclip:=true;
   if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   dbRead(d,'dateiname',bfile);
   dbClose(d);
   ReadBox(0,bfile,boxpar);
-  message(getreps(806,ustr(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
+  message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
   if filecopy(fn,bfile+'.FBL') then;
   closebox;
   if useclip or ReadJN(getreps(817,fn),false) then   { '%s lîschen' }
@@ -325,6 +325,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -218,13 +218,13 @@ var t : taste;
 begin
   if length(s)<3 then extkey:=''
   else begin
-    s:=ustr(copy(s,2,length(s)-2));
+    s:=UpperCase(copy(s,2,length(s)-2));
     if (s='<') or (s='>') or (s='^') then extkey:=s
     else begin
       t:='';
       i:=mincode;
       while (t='') and (i<=codes) do begin
-        if ustr(ta^[i])=s then t:=#0+chr(i);
+        if UpperCase(ta^[i])=s then t:=#0+chr(i);
         inc(i);
         end;
       extkey:=t;
@@ -492,7 +492,7 @@ begin
       end
     else begin
       dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,ustr(box));
+      dbSeek(d,boiName,UpperCase(box));
       if dbFound then
         testaction:=true
       else begin
@@ -715,9 +715,9 @@ var brk      : boolean;
       readmask(brk);
       enddialog;
       if not brk then begin
-        wot:=lstr(trim(wot));
+        wot:=LowerCase(trim(wot));
         for i:=1 to 7 do
-          wotag[i]:=(wot=getres2(1004,1){'alle'}) or (pos(lstr(wtage[i]),wot)>0);
+          wotag[i]:=(wot=getres2(1004,1){'alle'}) or (pos(LowerCase(wtage[i]),wot)>0);
         s:=Time2Str(tr);
         end;
       freeres;
@@ -856,7 +856,7 @@ var brk      : boolean;
       mwrt(x+13,y+1,' '+forms(mt,12));
       mwrt(x+13,y+3,' '+forms(komm,25));
       for i:=1 to mtypes do
-        if lstr(mt)=lstr(mtyp(i)) then nr:=i;
+        if LowerCase(mt)=LowerCase(mtyp(i)) then nr:=i;
       freeres;
       case nr of
         1:mt:='***'; 2:mt:='*  '; 3:mt:=' * '; 4:mt:='  *';
@@ -2025,6 +2025,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.13  2000/07/03 13:31:39  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

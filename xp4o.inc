@@ -577,9 +577,9 @@ var x,y,yy  : byte;
       newbrett : string[60];
   begin
     if znetz then
-      dbSeek(bbase,biBrett,'A/Z-NETZ/ALT/SUPPORT/XPOINT/'+ustr(brett))
+      dbSeek(bbase,biBrett,'A/Z-NETZ/ALT/SUPPORT/XPOINT/'+UpperCase(brett))
     else
-      dbSeek(bbase,biBrett,'A/T-NETZ/SUPPORT/XPOINT/'+ustr(brett));
+      dbSeek(bbase,biBrett,'A/T-NETZ/SUPPORT/XPOINT/'+UpperCase(brett));
     if dbFound then begin
       if sperre then begin
         b:=dbReadInt(bbase,'flags') and (not 8)+8;
@@ -626,7 +626,7 @@ begin
           assign(f1,aFile(abl));
           if not exist(aFile(abl)) then begin
             savecursor;
-            trfehler1(421,ustr(aFile(abl)),30);   { 'Warnung: Ablagendatei %s fehlt!' }
+            trfehler1(421,UpperCase(aFile(abl)),30);   { 'Warnung: Ablagendatei %s fehlt!' }
             restcursor;
             rewrite(f1,1);
             close(f1);
@@ -712,6 +712,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:24  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/06/29 13:00:56  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -159,7 +159,7 @@ end;
 procedure getpar;
 begin
   if paramcount<>3 then helppage;
-  Yupdir:=ustr(paramstr(1));
+  Yupdir:=UpperCase(paramstr(1));
   if right(YupDir,1)<>'\' then YupDir:=YupDir+'\';
   if not ispath(YupDir) then
     error('ungÅltiges Verzeichnis: '+yupdir);
@@ -169,7 +169,7 @@ begin
     error('Keine Yuppie-Mailbase im angegebenen Verzeichnis gefunden.');
   if not exist(YupDir+AreaDB+'.DBF') then
     error('Keine AREABASE vorhanden.');
-  outfile:=ustr(paramstr(2));
+  outfile:=UpperCase(paramstr(2));
   if not validfilename(outfile) then
     error('ungÅltige Ausgabedatei: '+outfile);
   splitfido(paramstr(3),address,2);
@@ -362,6 +362,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/07/04 12:04:32  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.5  2000/07/02 14:24:55  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

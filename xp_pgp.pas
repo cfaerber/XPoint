@@ -126,7 +126,7 @@ var path : string;
 begin
   {$ifdef linux}
   fsplit(exe,dir,name,ext);
-  exe:=LStr(name); { aus PGPK.EXE wird pgpk etc ...}
+  exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
   {$endif}
   path:=getenv('PGPPATH');
   if path<>'' then begin
@@ -427,7 +427,7 @@ begin
   repeat
     readmask(brk);
     if not brk then begin
-      dbSeek(ubase,uiName,ustr(user));
+      dbSeek(ubase,uiName,UpperCase(user));
       nt:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
       ok:=not dbFound or ntPGP(nt);
       if not ok then
@@ -557,7 +557,7 @@ begin
       hdp^.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp^.crypttyp:='';
       hdp^.pgpflags:=hdp^.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
       if hdp^.ccharset<>'' then begin
-        hdp^.charset:=ustr(hdp^.ccharset);
+        hdp^.charset:=UpperCase(hdp^.ccharset);
         hdp^.ccharset:='';
       end;
     end;
@@ -657,7 +657,7 @@ begin
   reset(t);
   repeat
     read(t,s);
-    found:=(left(lstr(s),15)='pgp-public-key:');
+    found:=(left(LowerCase(s),15)='pgp-public-key:');
     if not found then readln(t);
   until found or eof(t);
   if found then begin
@@ -778,6 +778,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/04 12:04:28  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.21  2000/07/03 13:31:43  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

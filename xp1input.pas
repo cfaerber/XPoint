@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,keys,maus2,inout,resource,winxp,maske, xp0;
+  sysutils,typeform,keys,maus2,inout,resource,winxp,maske, xp0;
 
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
@@ -175,7 +175,7 @@ begin
       else if homeend and (t=keyhome) then p:=1
       else if homeend and (t=keyend) then p:=n
       else begin
-        p1:=pos(ustr(t),ustr(hot));
+        p1:=pos(UpperCase(t),UpperCase(hot));
         if p1>0 then begin
           p:=p1; display;
           t:=keycr; end
@@ -381,7 +381,7 @@ begin
     if t=keyhome then p:=1;
     if t=keyend then p:=n;
     if checker and (t=' ') then startpos:=p;
-    p1:=pos(UStr(t),UStr(hot));
+    p1:=pos(UpperCase(t),UpperCase(hot));
     if p1>0 then begin
       p:=p1; t:=keycr; end;
   until (t=keycr) or (t=keyesc);
@@ -421,6 +421,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.8  2000/06/29 13:00:53  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -1048,7 +1048,7 @@ end;
 function FormFidoPhone(telefon:string):string;
 var p : byte;
 begin
-  if pos('unpublished',lstr(telefon))>0 then
+  if pos('unpublished',LowerCase(telefon))>0 then
     FormFidoPhone:=telefon
   else if left(telefon,length(vorwahl))=vorwahl then begin
     delete(telefon,1,length(vorwahl));
@@ -1259,7 +1259,7 @@ var ni2 : NodeInfo;
 begin
   if fa.ispoint then begin
     getNodeinfo(MakeFidoadr(fa,false),ni2,1);
-    if ni2.found and ((ni2.telefon=ni.telefon) or (pos('unpublished',lstr(ni.telefon))>0))
+    if ni2.found and ((ni2.telefon=ni.telefon) or (pos('unpublished',LowerCase(ni.telefon))>0))
     then begin
       fa.ispoint:=false;
       ni:=ni2;
@@ -1739,7 +1739,7 @@ begin
   if not ReadFilename(getres2(2117,1),fn,true,useclip) or  { 'Fileliste einlesen' }
      (not exist(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
     goto ende;
-  fn:=ustr(FExpand(fn));
+  fn:=UpperCase(FExpand(fn));
   fi:=GetFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
@@ -1989,12 +1989,12 @@ function FidoSeekfile:string;
     begin
       n:=0;
       test:=false;
-      if  icase  then  sSub:=ustr(searchStr[n2])
+      if  icase  then  sSub:=UpperCase(searchStr[n2])
       else             sSub:=searchStr[n2];
       { alle Zeilen auf ein Suchbegriff durchsuchen durchtesten }
       while ( n < BlockLength ) and (test=false)  do
       begin
-        if  icase then sZeile:=ustr(sa[n])
+        if  icase then sZeile:=UpperCase(sa[n])
         else           sZeile:=sa[n];
         _pos:=pos( sSub, sZeile );
         if _pos  > 0 then   { SubSting in der Beschreibung vorhanden}
@@ -2097,7 +2097,7 @@ begin       { FidoSeekfile:string;************************ }
 
   if brk or (fidolastseek='') then goto ende;
 
-  if icase then seek:=ustr(mid(fidolastseek,3)) {seek, enth„lt nun den suchstring}
+  if icase then seek:=UpperCase(mid(fidolastseek,3)) {seek, enth„lt nun den suchstring}
   else          seek:=mid(fidolastseek,3);
   pInitSearchStr;                       { zerlege Suchstring}
 
@@ -2127,7 +2127,7 @@ begin       { FidoSeekfile:string;************************ }
       p:=cpos('=',sNodInf);
       if (sNodInf<>'') and (FirstChar(sNodInf)<>'#') and (FirstChar(sNodInf) <>';') and (p>0) then
       begin
-        sFlistName:= ustr(mid(sNodInf,p+1));        { Name der Fileliste z.B: 22441278.fl}
+        sFlistName:= UpperCase(mid(sNodInf,p+1));        { Name der Fileliste z.B: 22441278.fl}
         assign(pFileListe^,FidoDir+sFlistName  );    { pFileListe='FIDO\22441278.fl'}
         if existf(pFileListe^) then
           pBearbeiteFileListe;
@@ -2249,6 +2249,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/04 12:04:29  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.19  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

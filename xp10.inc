@@ -64,7 +64,7 @@ var brk     : boolean;
         readln(t,s);
         UpString(s);
         p:=cpos('=',s);
-        if (p>0) and (left(s,p-1)=ustr(tr.action)) and (copy(s,p+1,8)=dat) and
+        if (p>0) and (left(s,p-1)=UpperCase(tr.action)) and (copy(s,p+1,8)=dat) and
            (copy(s,p+10,5)>=von) and (copy(s,p+10,5)<=bis) then
             it:=true;
         end;
@@ -106,7 +106,7 @@ var brk     : boolean;
           if p>0 then s:=trim(left(s,p));
           comm:=0;
           for j:=1 to comms do                   { Befehls-Nummer ermitteln }
-            if ustr(s)=comstr[j] then comm:=j;
+            if UpperCase(s)=comstr[j] then comm:=j;
           if ((comm=5) or (comm=6)) and (box<>'') then begin
             if (ival(box)>=0) and (ival(box)<=255) then
               qerrlevel:=ival(box)
@@ -114,13 +114,13 @@ var brk     : boolean;
               qerrlevel:=0;
             box:='';
             end;
-          if (comm=0) and (ustr(s)='CRASH') then begin
+          if (comm=0) and (UpperCase(s)='CRASH') then begin
             crash:=true; comm:=1;
             crashtime:=false;
             UseBox:=DefFidoBox;
             if cpos(' ',box)>0 then begin  { ZEIT-Option }
               box:=left(box,cpos(' ',box)-1);
-              if (pos(' ZEIT',ustr(action))>0) or (pos(' TIME',ustr(action))>0)
+              if (pos(' ZEIT',UpperCase(action))>0) or (pos(' TIME',UpperCase(action))>0)
               then
                 crashtime:=true;
               end;
@@ -193,7 +193,7 @@ var brk     : boolean;
         readmask(brk);
         enddialog;
         end;
-      all:=ustr(trim(all))+' ';
+      all:=UpperCase(trim(all))+' ';
 
       if not brk then begin
         fn:=TempS(1000+dbRecCount(d)*200);
@@ -203,7 +203,7 @@ var brk     : boolean;
         p:=cpos(' ',all);
         while p>0 do begin
           box:=left(all,p-1);
-          dbSeek(d,boiName,ustr(box));
+          dbSeek(d,boiName,UpperCase(box));
           if dbFound then
             writeln(t,'+ '+ti+' 23:59 01.01. 31.12. þþþþþþþ NETCALL ',box);
           delete(all,1,p);
@@ -644,6 +644,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.4  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

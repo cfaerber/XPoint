@@ -19,7 +19,7 @@ unit xpmaus;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -154,7 +154,7 @@ begin
             if p2=0 then
               s:=s+mid(anew,p)
             else
-              s:=s+ustr(copy(anew,p,p2-1));   { Domain abschneiden }
+              s:=s+UpperCase(copy(anew,p,p2-1));   { Domain abschneiden }
             end;
           end
         else
@@ -237,8 +237,8 @@ begin
                     writeln(t2,'MessageID: ',msgid);
                     writeln(t2,'Fehler   : ',anew);
                     fehlerflag:=true;
-                    if (left(lstr(anew),10)='mitteilung') and
-                       (pos('nicht gefunden',lstr(anew))>0) then begin
+                    if (left(LowerCase(anew),10)='mitteilung') and
+                       (pos('nicht gefunden',LowerCase(anew))>0) then begin
                       rec:=GetBezug(msgid);
                       if rec>0 then begin
                         dbGo(mbase,rec);
@@ -311,7 +311,7 @@ var brett  : string[5];
 
 begin
   info:=nil;
-  dbSeek(bbase,biBrett,ustr(MausInfoBrett));
+  dbSeek(bbase,biBrett,UpperCase(MausInfoBrett));
   if not dbFound then exit;
   brett:=mbrettd('$',bbase);
   mi:=dbGetIndex(mbase);
@@ -470,7 +470,7 @@ begin
           wf:=iif(pos('S-',sfl)>0,8,0);     { Schreibzugriff gesperrt? }
           if wf=8 then begin   { automatisches L”schen des Schreibschutzes }
                                { ist problematisch ...                     }
-            dbSeek(bbase,biBrett,'A'+ustr(BoxPar^.MagicBrett+sg));
+            dbSeek(bbase,biBrett,'A'+UpperCase(BoxPar^.MagicBrett+sg));
             if dbFound and (dbReadInt(bbase,'flags')and 8<>wf) then begin
               dbReadN(bbase,bb_flags,b);
               b:=(b and not 8) + wf;
@@ -558,7 +558,7 @@ var  box    : string[BoxNameLen];
         p:=blankpos(s);
         if p>0 then begin
           i:=1;
-          while (i<=infos) and (ustr(left(s,p-1))<>info^[i].ID) do
+          while (i<=infos) and (UpperCase(left(s,p-1))<>info^[i].ID) do
             inc(i);
           if i<=infos then begin
             s:=trim(mid(s,p));
@@ -732,7 +732,7 @@ var   info   : ^ia;
         inc(infos);
         with info^[infos] do begin
           readln(t1,s);
-          inf:=ustr(gets);
+          inf:=UpperCase(gets);
           intervall:=minmax(ival(gets),0,99);
           lastdate:=gets;
           if lastdate='' then lastdate:=date;
@@ -758,10 +758,10 @@ var   info   : ^ia;
         p2:=cpos(' ',s);
         if (p1>4) and (p2>p1+1) then begin   { CRC vorhanden }
           i:=1;
-          while (i<=infos) and (info^[i].inf<>ustr(copy(s,2,p1-2))) do inc(i);
+          while (i<=infos) and (info^[i].inf<>UpperCase(copy(s,2,p1-2))) do inc(i);
           if (i>infos) and (infos<MaxMausInfos) then begin
             inc(infos);
-            info^[infos].inf:=ustr(copy(s,2,p1-2));
+            info^[infos].inf:=UpperCase(copy(s,2,p1-2));
             info^[infos].intervall:=30;
             end;
           if i<=infos then begin
@@ -771,7 +771,7 @@ var   info   : ^ia;
           end
         else if pos('(generiert)',s)>0 then begin   { keine CRC vorhanden }
           i:=1;
-          while (i<=infos) and (info^[i].inf<>ustr(copy(s,2,p2-2))) do inc(i);
+          while (i<=infos) and (info^[i].inf<>UpperCase(copy(s,2,p2-2))) do inc(i);
           if i<=infos then info^[i].lastdate:=date;
           end;
         end;
@@ -822,6 +822,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/04 12:04:30  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.9  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

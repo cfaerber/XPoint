@@ -192,7 +192,7 @@ var ss : string[40];
     i  : integer;
 begin
   for i:=1 to regsites do
-    if pos(ustr(rsite^[i].name),ustr(s))>0 then rsitenr:=i;
+    if pos(UpperCase(rsite^[i].name),UpperCase(s))>0 then rsitenr:=i;
   settexttext(waehrtext,'('+rsite^[rsitenr].waehrung+')');
   ss:=getfield(zahlweisfld);
   zahlweisproc(ss);
@@ -544,14 +544,14 @@ var brk,modi : boolean;
           reset(t);
           while not eof(t) do begin
             readln(t,s);
-            key:=lstr(GetToken(s,'='));
+            key:=LowerCase(GetToken(s,'='));
             if (key='regmail') and (mailanz<maxmail) then begin
               inc(mailanz);
               mailadr[mailanz]:=s;
-              if pos('fido',lstr(s))>0 then mailnetz[mailanz]:=nt_Fido else
-              if pos('maus',lstr(s))>0 then mailnetz[mailanz]:=nt_Maus else
-              if pos('magic',lstr(s))>0 then mailnetz[mailanz]:=nt_Magic else
-              if pos('internet',lstr(s))>0 then mailnetz[mailanz]:=nt_UUCP else
+              if pos('fido',LowerCase(s))>0 then mailnetz[mailanz]:=nt_Fido else
+              if pos('maus',LowerCase(s))>0 then mailnetz[mailanz]:=nt_Maus else
+              if pos('magic',LowerCase(s))>0 then mailnetz[mailanz]:=nt_Magic else
+              if pos('internet',LowerCase(s))>0 then mailnetz[mailanz]:=nt_UUCP else
                 mailnetz[mailanz]:=nt_UUCP;
               end
             else if (key='box') and (phoneanz<maxphone) then begin
@@ -619,7 +619,7 @@ var brk,modi : boolean;
       cardnr:='0000-0000-0000-0000';
       cardvalid:='01/95';
       dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,ustr(DefaultBox));
+      dbSeek(d,boiName,UpperCase(DefaultBox));
       if dbFound then
         email:=GetAbsAddress(d);
       telefon:=xp0.telefonnr^;
@@ -702,7 +702,7 @@ var brk,modi : boolean;
         readln(t,s);
         if (s<>'') and (s[1]<>'#') and (cpos('=',s)>0) then with regdata do
         begin
-          tag:=lstr(GetToken(s,'='));
+          tag:=LowerCase(GetToken(s,'='));
           if tag='name1'          then name1:=s else
           if tag='name2'          then name2:=s else
           if tag='strasse'        then str:=s else
@@ -715,8 +715,8 @@ var brk,modi : boolean;
           if tag='mailto'         then regmailadr:=s else
           if tag='onlinenummer'   then regphone:=s else
           if tag='zustellweg'     then regwegrueck:=minmax(ival(s),1,regrueck) else
-          if tag='diskette'       then regwithdisk:=(ustr(s)<>'N') else
-          if tag='cd-rom'         then regwithcd:=(ustr(s)<>'N') else
+          if tag='diskette'       then regwithdisk:=(UpperCase(s)<>'N') else
+          if tag='cd-rom'         then regwithcd:=(UpperCase(s)<>'N') else
           if tag='zahlungsweg'    then zahlweg:=minmax(ival(s),1,zahlwege) else
           if tag='kreditkarte'    then cardnr:=s else
           if tag='gueltig_bis'    then cardvalid:=s else
@@ -724,8 +724,8 @@ var brk,modi : boolean;
           if tag='sonstige_registrierungen' then sonstregs:=minmax(ival(s),0,99) else
           if tag='komplettregistrierungen' then komplettregs:=minmax(ival(s),0,99) else
           if tag='updates' then updates:=minmax(ival(s),0,99) else
-          if tag='sammelregistrierung' then sammelreg:=(ustr(s)<>'N') else
-          if tag='key-nachbestellungen' then keyorder:=(ustr(s)<>'N') else
+          if tag='sammelregistrierung' then sammelreg:=(UpperCase(s)<>'N') else
+          if tag='key-nachbestellungen' then keyorder:=(UpperCase(s)<>'N') else
           if tag='kommentar1'     then comment1:=s else
           if tag='kommentar2'     then comment2:=s else
             fehler('unbekannter Eintrag in REGDATA.CFG: '+tag);
@@ -1239,7 +1239,7 @@ var brk,modi : boolean;
       fehler('Kann Datei '+formfile+' nicht erzeugen.');
       exit;
       end;
-    lipo:=(pos('lipovits',lstr(rsite^[rsitenr].name))>0);
+    lipo:=(pos('lipovits',LowerCase(rsite^[rsitenr].name))>0);
     if lipo then MakeDummyReq;
     name:=regdata.name1;
     padr:='2000:10/99.99';
@@ -1575,6 +1575,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.12  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

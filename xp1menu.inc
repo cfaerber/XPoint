@@ -188,8 +188,8 @@ procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
   LoString(mnu);
-  while lstr(left(menu[n]^,length(mnu)))<>mnu do inc(n);
-  p:=pos(','+lstr(typeform.hex(n,2)+typeform.hex(nr,1)),lstr(menu[n]^))+1;
+  while LowerCase(left(menu[n]^,length(mnu)))<>mnu do inc(n);
+  p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]^))+1;
 end;
 
 
@@ -245,10 +245,10 @@ begin
   if readfilename(getres(103),s,false,useclip) then begin  { Schablone bearbeiten }
 {$IFDEF UnixFS }
     addext(s,'xps');
-    if ustr(right(s,4))<>'.xps' then begin
+    if UpperCase(right(s,4))<>'.xps' then begin
 {$ELSE }
     addext(s,'XPS');
-    if ustr(right(s,4))<>'.XPS' then begin
+    if UpperCase(right(s,4))<>'.XPS' then begin
 {$ENDIF }
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
@@ -461,7 +461,7 @@ begin
   else
     if (nr=0) and (enterkey<>keyf10) then begin
       i:=1;
-      while (i<=n) and (ma^[i].hkey<>UStr(enterkey)) do inc(i);
+      while (i<=n) and (ma^[i].hkey<>UpperCase(enterkey)) do inc(i);
       if i<=n then begin
         p:=i;
         autolr:=1;
@@ -503,7 +503,7 @@ begin
     if t=keyaf4 then quit:=true;
     if not dead then begin
       i:=1;
-      while (i<=n) and (ma^[i].hkey<>UStr(t)) do inc(i);
+      while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
       if (i<=n) and (ma^[i].enabled) then begin
         p:=i; t:=keycr;
         hlp(10000+(ma^[p].mpnr shr 4)*100 + (ma^[p].mpnr and $f));
@@ -600,6 +600,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/07/04 12:04:20  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.13  2000/06/29 13:00:53  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -200,7 +200,7 @@ begin
   sendfiles:=0;
   assign(t,paramstr(1));
   reset(t);
-  if ioresult<>0 then error('CommandFile missing: '+ustr(paramstr(1)));
+  if ioresult<>0 then error('CommandFile missing: '+UpperCase(paramstr(1)));
   while not eof(t) do begin
     readln(t,s0);
     s:=trim(s0);
@@ -208,7 +208,7 @@ begin
     if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then
       if p=0 then error('Unknown Command:  '+s)
     else begin
-      id:=lstr(trim(left(s,p-1)));
+      id:=LowerCase(trim(left(s,p-1)));
       s:=trim(mid(s,p+1));
       if id='language'   then language:=s else
       if id='logfile'    then logfile:=s else
@@ -216,9 +216,9 @@ begin
       if id='modeminit'  then modeminit:=s else
       if id='dialcommand' then CommandModemDial:=s else
       if id='phone'      then phone:=trim(s) else
-      if id='cts'        then IgCTS:=(ustr(s)='N') else
-      if id='cd'         then IgCD:=(ustr(s)='N') else
-      if id='rts'        then UseRTS:=(ustr(s)<>'N') else
+      if id='cts'        then IgCTS:=(UpperCase(s)='N') else
+      if id='cd'         then IgCD:=(UpperCase(s)='N') else
+      if id='rts'        then UseRTS:=(UpperCase(s)<>'N') else
       if id='connwait'   then TimeoutConnectionEstablish:=minmax(ival(s),0,240) else
       if id='redialwait' then RedialWait:=minmax(ival(s),2,1000) else
       if id='redialwait2'then RedWait2:=minmax(ival(s),2,1000) else
@@ -228,7 +228,7 @@ begin
       if id='mailpath'   then MailPath:=s else
       if id='zmtempfile' then zmtempfile:=s else
       if id='line'       then ModemLine:=minmax(ival(s),1,4) else
-      if id='fossil'     then Fossil:=(ustr(s)<>'N') else
+      if id='fossil'     then Fossil:=(UpperCase(s)<>'N') else
       if id='port'       then ModemPort:=hexval(s) else
       if id='irq'        then IRQ:=minmax(ival(s),0,15) else
       if id='triggerlevel' then tlevel:=minmax(ival(s),2,14) else
@@ -240,17 +240,17 @@ begin
       if id='password'   then Password:=s else
       if id='text'       then txt:=s else
       if id='show'       then addtxt:=s else
-      if id='sendempty'  then sendempty:=(ustr(s)<>'N') else
-      if id='debug'      then DebugMode:=(ustr(s)<>'N') else
-      if id='emsi'       then UseEMSI:=(ustr(s)<>'N') else
+      if id='sendempty'  then sendempty:=(UpperCase(s)<>'N') else
+      if id='debug'      then DebugMode:=(UpperCase(s)<>'N') else
+      if id='emsi'       then UseEMSI:=(UpperCase(s)<>'N') else
       if id='aka'        then AKAs:=s else
       if id='sysname'    then SysName:=s else
       if id='sn'         then SerNr:=s else
-      if id='settime'    then SetTime:=(ustr(s)<>'N') else
-      if id='sendtrx'    then SendTrx:=(ustr(s)<>'N') else
+      if id='settime'    then SetTime:=(UpperCase(s)<>'N') else
+      if id='sendtrx'    then SendTrx:=(UpperCase(s)<>'N') else
       if id='colors'     then GetColors else
       if id='releasetime'then os2time:=minmax(ival(s),0,3) else
-      if id='extendedfilenames' then ExtFNames:=(ustr(s)<>'N') else
+      if id='extendedfilenames' then ExtFNames:=(UpperCase(s)<>'N') else
       if id='cpsmin'     then MinCps:=minmax(ival(s),0,9999) else
       if id='zmoptions'  then ZMoptions:=s else
       if id='phonezone'  then tarifzone:=s else
@@ -259,7 +259,7 @@ begin
         if sendfiles<maxfiles then begin
           inc(sendfiles);
           getmem(sendfile[sendfiles],length(s)+1);
-          sendfile[sendfiles]^:=ustr(s);
+          sendfile[sendfiles]^:=UpperCase(s);
         end
       { keine bekannte Option angegeben: }
       end else begin DebugLog('XPFM','Unknown option: '+s0,1); writeln('Warning - unknown Option:  '+s0)end;
@@ -339,7 +339,7 @@ begin
   if not ValidFilename(zmtempfile) then
     rerror(114);                      { 'Illegal temporary file name' }
   if not validfilename(logfile) then
-    rerror1(104,ustr(logfile));     { 'Illegal logfile name: %s' }
+    rerror1(104,UpperCase(logfile));     { 'Illegal logfile name: %s' }
   for i:=1 to sendfiles do
     if not exist(sendfile[i]^) then
       rerror1(105,sendfile[i]^);    { 'File missing:  %s' }
@@ -661,7 +661,7 @@ begin
                   if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                   log('=',ModemAnswer); SleepTime(500);
                   if not DebugMode then DisplayStatus(ModemAnswer,True);
-                  if ((pos('CONNECT',ustr(ModemAnswer))>0)or(left(ustr(ModemAnswer),7)='CARRIER'))or
+                  if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(left(UpperCase(ModemAnswer),7)='CARRIER'))or
                       (CommObj^.Carrier and(not igcd))then begin {Connect!}
                     StateDialup:=SDDone; DialUp:=True; SetBaudDetect; TimerObj.Start; {Online-Timer starten}
                     if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
@@ -765,6 +765,12 @@ end.
 
 {
   $Log$
+  Revision 1.20  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.19  2000/07/04 09:59:03  mk
   - Sysutils eingefuegt
 

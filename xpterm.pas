@@ -169,7 +169,7 @@ begin
     log:=true;
     attrtxt(col.colmenu[0]);
     fsplit(fn,dir,name,ext);
-    mwrt(53,1,forms(ustr(name+ext),12));
+    mwrt(53,1,forms(UpperCase(name+ext),12));
     wkey(1,false);
     closebox;
     end;
@@ -612,7 +612,7 @@ var d  : DB;
     fn : string[8];
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(DefaultBox));
+  dbSeek(d,boiName,UpperCase(DefaultBox));
   dbRead(d,'dateiname',fn);
   dbClose(d);
   ReadBox(0,fn,boxpar);
@@ -1093,9 +1093,9 @@ var t      : text;
     s:='*';
     if not stringflag then begin
       if comment(s0) then s:='' else
-      if ustr(s0)='CR' then s:=#13 else
-      if ustr(s0)='LF' then s:=#10 else
-      if ustr(s0)='CRLF' then s:=#13#10;
+      if UpperCase(s0)='CR' then s:=#13 else
+      if UpperCase(s0)='LF' then s:=#10 else
+      if UpperCase(s0)='CRLF' then s:=#13#10;
       if s<>'*' then begin
         s0:=s;
         stringflag:=true;
@@ -1181,7 +1181,7 @@ var t      : text;
           inc(lines);
           with script^[lines] do begin
             command:=cmd;
-            ss:=UStr(s0);
+            ss:=UpperCase(s0);
             if ss='$POINT'     then numpar:=varPoint else
             if ss='$USER'      then numpar:=varUser else
             if ss='$PASSWORD'  then numpar:=varPassword else
@@ -1486,7 +1486,7 @@ var ip   : integer;
       if doit then
         case command of
           cmdWaitfor  : begin
-                          par:=lstr(getpar);
+                          par:=LowerCase(getpar);
                           repeat
                             tb;
                             testkey;
@@ -1617,6 +1617,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.12  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

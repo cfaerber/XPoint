@@ -300,9 +300,9 @@ label abbruch,ende0;
             exchange(downarcer,'$PUFFER','*.*');
           end;
         end;
-      if ustr(left(uploader+' ',7))='ZMODEM ' then
+      if UpperCase(left(uploader+' ',7))='ZMODEM ' then
         uploader:=ZM(uploader,true);
-      if ustr(left(downloader+' ',7))='ZMODEM ' then
+      if UpperCase(left(downloader+' ',7))='ZMODEM ' then
         downloader:=ZM(downloader,false);
       exchange(uploader,'$PORT',strs(bport));
       exchange(uploader,'$ADDRESS',hex(comn[bport].Cport,3));
@@ -323,7 +323,7 @@ label abbruch,ende0;
         exchange(downloader,'$DOWNPATH','SPOOL')
       else
         exchange(downloader,'$DOWNPATH',left(OwnPath,length(OwnPath)-1));
-      bimodem:=ntExtProt(netztyp) and (pos('bimodem',lstr(uploader))>0);
+      bimodem:=ntExtProt(netztyp) and (pos('bimodem',LowerCase(uploader))>0);
       end;
   end;
 
@@ -432,7 +432,7 @@ begin                  { of Netcall }
     end;
 
   dbOpen(d,BoxenFile,1);               { zugehîrigen Dateiname holen }
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if not dbFound then begin
     dbClose(d);
     trfehler1(709,box,60);   { 'unbekannte Box:  %s' }
@@ -1163,7 +1163,7 @@ begin                  { of Netcall }
                 {window(1,1,80,25);}
                 end;
               if (DownArcer<>'') and
-                 (not JanusP or (left(lstr(DownArcer),5)<>'copy ')) then
+                 (not JanusP or (left(LowerCase(DownArcer),5)<>'copy ')) then
                 shell(downarcer,500,1);      { Download-Packer }
               SetCurrentDir(OwnPath);
               if ltMultiPuffer(logintyp) then
@@ -1181,7 +1181,7 @@ begin                  { of Netcall }
             if pronet then begin
               SetCurrentDir(ownpath);
               if exist(XFerDir+'BRETTER.LST') then begin
-                message('Brettliste fÅr '+ustr(box)+' wird eingelesen ...');
+                message('Brettliste fÅr '+UpperCase(box)+' wird eingelesen ...');
                 Readpromaflist(XFerDir+'BRETTER.LST',bfile);
                 end;
               end;
@@ -1558,6 +1558,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.19  2000/07/03 15:23:27  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

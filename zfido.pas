@@ -410,7 +410,7 @@ var i    : integer;
 begin
   warn:=false;
   for i:=1 to paramcount do begin
-    s:=ustr(paramstr(i));
+    s:=UpperCase(paramstr(i));
     if (s='-ZF') or (s='/ZF') then direction:=1
     else if (s='-FZ') or (s='/FZ') then direction:=2
     else if (left(s,2)='-H') or (left(s,2)='/H') then
@@ -456,7 +456,7 @@ begin
         s:=trim(s);
         if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
           p:=cpos('=',s);
-          if lstr(left(s,p))='bretter=' then begin
+          if LowerCase(left(s,p))='bretter=' then begin
             s:=trim(mid(s,p+1));
             p:=blankpos(s);
             if p>0 then begin
@@ -621,7 +621,7 @@ begin
           if id='MAILER' then programm:=line else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
           if id='CRYPT' then pgpencode:=true else
-          if id='SIGNED' then pgpsigned:=(pos('PGP',ustr(line))>0) else
+          if id='SIGNED' then pgpsigned:=(pos('PGP',UpperCase(line))>0) else
           if id[1]='X' then
             if id='X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else
             if id='X-XP-ATT' then attrib:=hexval(left(line,4)) else
@@ -844,7 +844,7 @@ var f1,f2   : file;
       pm:=(cpos('@',empfaenger)>0);
       uuadr:='';
       if not pm then begin
-        if left(ustr(empfaenger),length(bretter))<>ustr(bretter) then begin
+        if left(UpperCase(empfaenger),length(bretter))<>UpperCase(bretter) then begin
           writeln(' - unbekannte Brettebene: '+empfaenger+#7);
           WriteMessageHeader:=false;
           exit;
@@ -992,8 +992,8 @@ var f1,f2   : file;
           _file:=trim(left(betreff,p));
           betreff:=trimleft(mid(betreff,p));
           p2:=cpos('/',_file);
-          if p2=0 then writeln(reqfile,ustr(_file))
-          else writeln(reqfile,ustr(left(_file,p2-1))+' !'+mid(_file,p2+1));
+          if p2=0 then writeln(reqfile,UpperCase(_file))
+          else writeln(reqfile,UpperCase(left(_file,p2-1))+' !'+mid(_file,p2+1));
         end;
       until p=0;
       end;
@@ -1022,7 +1022,7 @@ begin
     blockread(f1,buf^,readfirst,rr);
     makeheader(buf^,hds,hd,ok);
     if ok then
-      if DoRequest and (ustr(left(hd.empfaenger,length(XPrequest)+1))=ustr(XPrequest)+'@')
+      if DoRequest and (UpperCase(left(hd.empfaenger,length(XPrequest)+1))=UpperCase(XPrequest)+'@')
       then begin
         if right(hd.empfaenger,length(reqnode))=reqnode then
           WriteRequest;
@@ -1181,7 +1181,7 @@ label abbr;
 
     function monster(s:string):string;
     begin
-      monster:=formi((pos(lstr(s),
+      monster:=formi((pos(LowerCase(s),
                'jan feb mar apr may jun jul aug sep oct nov dec')+3)div 4,2);
     end;
 
@@ -1397,7 +1397,7 @@ label abbr;
       p:=cpos(' ',s);
       if p>0 then s:=left(s,p-1);
       if s[length(s)]=',' then dellast(s);
-      p:=pos('@fidonet',lstr(s));
+      p:=pos('@fidonet',LowerCase(s));
       if p>0 then s:=left(s,p-1);
       getvia:=s;
       end;
@@ -1568,10 +1568,10 @@ begin
             if tt.kenn=kFlag then
               if (left(s,2)='S:') or (left(s,2)='S ') then begin
                 hd.fido_flags:=trim(mid(s,3));
-                if pos('RRQ',ustr(s))+pos('CFM',ustr(s))>0 then
+                if pos('RRQ',UpperCase(s))+pos('CFM',UpperCase(s))>0 then
                   hd.attrib:=hd.attrib or attrReqEB;
-                if pos('PGPC',ustr(s))>0 then hd.pgpencode:=true;
-                if pos('PGPS',ustr(s))>0 then hd.pgpsigned:=true;
+                if pos('PGPC',UpperCase(s))>0 then hd.pgpencode:=true;
+                if pos('PGPS',UpperCase(s))>0 then hd.pgpsigned:=true;
                 if (hd.fido_flags='PGPC') or (hd.fido_flags='PGPS') then
                   hd.fido_flags:='';
                 end
@@ -1718,9 +1718,9 @@ begin
         end;
 
       if not DelEmpty or (hd.groesse>0) then begin
-        if left(ustr(hd.x_charset),7)='LATIN-1' then
+        if left(UpperCase(hd.x_charset),7)='LATIN-1' then
           cxlate:=1
-        else if left(ustr(hd.x_charset),3)='MAC' then
+        else if left(UpperCase(hd.x_charset),3)='MAC' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1811,6 +1811,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/07/04 12:04:32  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.25  2000/07/04 09:59:04  mk
   - Sysutils eingefuegt
 

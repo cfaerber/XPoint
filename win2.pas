@@ -425,7 +425,7 @@ begin
       end;
     end;
 
-  vorgabe:=fustr(vorgabe);
+  vorgabe:=FileUpperCase(vorgabe);
   t:=#0#0;
   wpushed:=false;
   height:=iif(fsb_info,12,10);
@@ -879,7 +879,7 @@ begin
       end
     else if pvorg then begin
       i:=1;
-      while (i<=pn) and (pname(i)<>UStr(mid(path,3))+'\') do inc(i);
+      while (i<=pn) and (pname(i)<>UpperCase(mid(path,3))+'\') do inc(i);
       if i<=pn then xp:=i;
       end;
     if not brk then begin
@@ -961,7 +961,7 @@ begin
               else s:=pa^[p+a+1]^;
               if (s[i]='À') or (s[i]='Ã') then s2[i]:='Ã'
               else s2[i]:='À';
-              s2:=s2+'ÄÄ'+UStr(vn);
+              s2:=s2+'ÄÄ'+UpperCase(vn);
               while i>1 do begin
                 dec(i);
                 if s2[i]='Ã' then s2[i]:='³';
@@ -1099,6 +1099,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/04 12:04:18  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.18  2000/07/03 13:31:38  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -46,9 +46,9 @@ begin
          (telefon='') or (telefon='08-15') then
         BoxParOk:=getres2(706,3)    { 'unvollstÑndige Pointdaten' }
       else if (((not (_fido or uucp) or (UpArcer<>'')) and
-                ((not uucp and (pos('$UPFILE',ustr(UpArcer))=0)) or
-                 (pos('$PUFFER',ustr(UpArcer))=0))) or
-              (pos('$DOWNFILE',ustr(DownArcer))=0)) then
+                ((not uucp and (pos('$UPFILE',UpperCase(UpArcer))=0)) or
+                 (pos('$PUFFER',UpperCase(UpArcer))=0))) or
+              (pos('$DOWNFILE',UpperCase(DownArcer))=0)) then
         BoxParOk:=getres2(706,4)    { 'unvollstÑndige Packer-Angaben' }
       else if ntDownarcPath(netztyp) and not FindDownarcer then
         BoxparOk:=getres2(706,6)
@@ -280,7 +280,7 @@ end;
 
 function testc(s1,s2:string):boolean;
 begin
-  if pos(s1,ustr(recs))>0 then begin
+  if pos(s1,UpperCase(recs))>0 then begin
     testc:=true;
     noconnstr:=s2;
     end
@@ -439,7 +439,7 @@ begin
     retries:=retrylogin+2;
     cc:=0;
     if relogin then begin
-      recs:='Username:'; lrec:=lstr(recs);
+      recs:='Username:'; lrec:=LowerCase(recs);
       end;
     showkeys(17);
     endbef:='running arc';
@@ -494,7 +494,7 @@ begin
             if JanusPlus then janus:='JANUS2'
             else janus:='JANUS';
             if login then
-              if logintyp=ltZconnect then sendstr(lstr(janus)+#13) else
+              if logintyp=ltZconnect then sendstr(LowerCase(janus)+#13) else
               if logintyp=ltUUCP then sendstr(LoginName+#13)
               else sendstr('zerberus'#13)
             else
@@ -622,7 +622,7 @@ var mstop : array[1..3] of string[40];
 begin
   display:=true;
   for i:=1 to 3 do
-    mstop[i]:=lstr(getres2(30000,i));    { 'protokoll startet' / 'downloaden !' / '' }
+    mstop[i]:=LowerCase(getres2(30000,i));    { 'protokoll startet' / 'downloaden !' / '' }
   freeres;
   stop:=false;
   repeat
@@ -713,9 +713,9 @@ begin
       while (p<=79) and (filename[p]<>#0) do inc(p);
       Move(filename[0],filename[1],p);
       filename[0]:=chr(p);
-      if (direction='S') and (pos('CALLER',ustr(filename))>0) then
+      if (direction='S') and (pos('CALLER',UpperCase(filename))>0) then
         sok:=(abort<>'A');
-      if (direction='R') and (pos('CALLED',ustr(filename))>0) then
+      if (direction='R') and (pos('CALLED',UpperCase(filename))>0) then
         rok:=(abort<>'A');
       end;
     close(f);
@@ -1161,8 +1161,8 @@ var sr     : searchrec;
       reset(t);
       while not eof(t) do begin
         readln(t,s);
-        if left(lstr(s),4)='rep:' then
-          RepExtension:=ustr(trim(mid(s,5)));
+        if left(LowerCase(s),4)='rep:' then
+          RepExtension:=UpperCase(trim(mid(s,5)));
         end;
       close(t);
       end;
@@ -1214,7 +1214,7 @@ begin
         replace:=1
       else begin
         replace:=ReadIt(ival(getres2(726,0)),
-                        getreps2(726,1,ustr(bfile+'.'+ex)),  { '%s ist bereits vorhanden.' }
+                        getreps2(726,1,UpperCase(bfile+'.'+ex)),  { '%s ist bereits vorhanden.' }
                         getres2(726,2),   { ' ^Åberschreiben , ^anhÑngen ' }
                         2,brk);
         if brk then exit;
@@ -1378,7 +1378,7 @@ var d : DB;
 begin
   CrashPassword:='';
   dbOpen(d,'systeme',1);
-  dbSeek(d,siName,ustr(CrashBox));
+  dbSeek(d,siName,UpperCase(CrashBox));
   if dbFound and (dbReadStr(d,'fs-passwd')<>'') then
     CrashPassword:=dbReadStr(d,'fs-passwd');
   dbClose(d);
@@ -1423,6 +1423,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/04 12:04:26  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.26  2000/07/03 15:23:27  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

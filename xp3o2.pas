@@ -141,7 +141,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if (PmReplyTo<>'') and (left(PmReplyTo,length(absender))<>absender)
                        then wrs('Antwort-an: '+PmReplyTo);
       if typ='B'       then wrs('TYP: BIN');
-      if datei<>''     then wrs('FILE: ' +lstr(datei));
+      if datei<>''     then wrs('FILE: ' +LowerCase(datei));
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
       if error<>''     then wrs('ERR: '  +error);
       if programm<>''  then wrs('MAILER: '+programm);
@@ -337,7 +337,7 @@ begin
       if komm='No' then komm:='';
       end;
     { UpString(s); }
-    dbSeek(bbase,biBrett,ustr(s));
+    dbSeek(bbase,biBrett,UpperCase(s));
     if not dbFound then begin
       inc(n);
       dbAppend(bbase);
@@ -430,7 +430,7 @@ end;
 
 function UserNetztyp(adr:string):byte;
 begin
-  dbSeek(ubase,uiName,ustr(adr));
+  dbSeek(ubase,uiName,UpperCase(adr));
   if not dbFound then
     UserNetztyp:=0
   else
@@ -441,6 +441,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/04 12:04:23  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.11  2000/07/03 13:31:40  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

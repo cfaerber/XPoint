@@ -105,7 +105,7 @@ label ende;
       readln(t2,s);
       p:=blankpos(s);
       if p>0 then with hdp^,boxpar^ do begin
-        feld:=lstr(left(s,p-1));
+        feld:=LowerCase(left(s,p-1));
         s:=trim(mid(s,p));
         if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
         if feld='origin' then absender:='FileScan@'+s else
@@ -144,7 +144,7 @@ begin
   count:=0;
   while not eof(t) do begin        { gepackte TIC-Files auswerten }
     readln(t,s);
-    if (s[1]='*') and (pos('  rcvd ',lstr(s))>0) then begin
+    if (s[1]='*') and (pos('  rcvd ',LowerCase(s))>0) then begin
       s:=trim(mid(s,18));
       s:=left(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
       UpString(s);

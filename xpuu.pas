@@ -103,10 +103,10 @@ begin
       s:=trim(s0);
       p:=cpos('=',s);
       if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then begin
-        id:=lstr(trim(left(s,p-1)));
+        id:=LowerCase(trim(left(s,p-1)));
         s:=trim(mid(s,p+1));
         if id='result'      then uucico:=ival(s) else
-        if id='stopdialing' then ende:=(ustr(s)<>'N') else
+        if id='stopdialing' then ende:=(UpperCase(s)<>'N') else
         if id='waittime'    then waittime:=minmax(ival(s),0,maxlongint) else
         if id='sendtime'    then sendtime:=minmax(ival(s),0,maxlongint) else
         if id='rectime'     then rectime:=minmax(ival(s),0,maxlongint);
@@ -120,6 +120,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/04 12:04:32  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.8  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

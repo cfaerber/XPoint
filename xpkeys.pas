@@ -141,7 +141,7 @@ begin
     auto:=autoexec;
     if s[1]='*' then begin
       if funcexternal then exit;
-      s:=ustr(trim(s));
+      s:=UpperCase(trim(s));
       if copy(s,2,7)='NETCALL' then
         EinzelNetcall(trim(copy(s,10,BoxNameLen)))
       else if copy(s,2,8)='RNETCALL' then
@@ -173,7 +173,7 @@ begin
         rfehler1(21,left(s,50));   { 'UngÅltige Funktion:  %s' }
       end
     else if s<>'' then begin
-      p0:=pos('$FILE',ustr(s));
+      p0:=pos('$FILE',UpperCase(s));
       if p0>0 then begin
         fn:=getfilename(nr,nn);
         if (fn='') or not exist(fn) then exit;
@@ -242,6 +242,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/07/04 12:04:30  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.7  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -110,7 +110,7 @@ end;
 procedure SMP_Keys(var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
-  if ustr(t)='X' then
+  if UpperCase(t)='X' then
     m_extrakt(mf^[ival(mid(get_selection,57))]);
 end;
 
@@ -190,7 +190,7 @@ begin
       s0:=copy(s0,p2+1,p-p2-1)+' '+copy(s0,max(1,p2-3),3)+' '+trim(mid(s0,p+1));
       end;
   t:=minmax(ival(getstr),1,31);
-  p:=pos(lstr(getstr),'janfebmaraprmayjunjulaugsepoctnovdec');
+  p:=pos(LowerCase(getstr),'janfebmaraprmayjunjulaugsepoctnovdec');
   if p>0 then m:=(p+2)div 3 else m:=1;
   j:=minmax(ival(getstr),0,2099);
   if j<100 then
@@ -294,7 +294,7 @@ var   hdp      : headerp;
     procedure GetParam;   { Content-Type-Parameter parsen }
     var p : byte;
     begin
-      parname:=lstr(GetToken(s,'='));
+      parname:=LowerCase(GetToken(s,'='));
       parvalue:='';
       if firstchar(s)='"' then delfirst(s);
       p:=1;
@@ -332,7 +332,7 @@ var   hdp      : headerp;
     if hdp^.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
       while not eof(t) and (n<100) and
-         ((lstr(left(s,13))<>'content-type:') or (left(bound,2)<>'--')) do begin
+         ((LowerCase(left(s,13))<>'content-type:') or (left(bound,2)<>'--')) do begin
         bound:=s;
         readln(t,s);
         inc(n);
@@ -425,14 +425,14 @@ var   hdp      : headerp;
             until not folded or eof(t);
           endhd:=cpos(':',s)=0;
           if endhd and (s<>'') then bufline:=s;
-          hdline:=lstr(GetToken(s,':'));
+          hdline:=LowerCase(GetToken(s,':'));
           if hdline='content-transfer-encoding' then
-            _encoding:=lstr(s)
+            _encoding:=LowerCase(s)
           else
           if hdline='content-type' then
           begin
-            ctype:=lstr(GetToken(s,'/'));
-            subtype:=lstr(GetToken(s,';'));
+            ctype:=LowerCase(GetToken(s,'/'));
+            subtype:=LowerCase(GetToken(s,';'));
             while s<>'' do
             begin
               GetParam;
@@ -447,7 +447,7 @@ var   hdp      : headerp;
             { Manchmal ist der Dateiname nur im disposition-Teil enthalten }
             if (hdline='content-disposition') and (filename = '') then
             begin
-              parname:=lstr(GetToken(s,'='));
+              parname:=LowerCase(GetToken(s,'='));
               if firstchar(s)='"' then delfirst(s);
               if lastchar(s)='"' then dellast(s);
               if (pos('name', parname) >0) then filename:=s;
@@ -720,6 +720,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.15  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

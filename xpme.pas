@@ -133,8 +133,8 @@ begin
       readln(t,s);
       p:=cpos('=',s);
       if (s[1]<>'#') and (p>0) then
-        if lstr(left(s,p-1))='auswahlcursor' then
-          hcursor:=(ustr(mid(s,p+1))='J');
+        if LowerCase(left(s,p-1))='auswahlcursor' then
+          hcursor:=(UpperCase(mid(s,p+1))='J');
     until eof(t);
     close(t);
     end;
@@ -242,7 +242,7 @@ function special(nr:integer):boolean;
 var x,y : byte;
     t   : taste;
 begin
-  if pos('$'+hex(nr,3),ustr(specials))>0 then begin
+  if pos('$'+hex(nr,3),UpperCase(specials))>0 then begin
     msgbox(60,6,'',x,y);
     wrt(x+3,y+2,'Dieser MenÅpunkt wird von XP automatisch aktiviert bzw.');
     wrt(x+3,y+3,'deaktiviert (s. XPME.TXT).');
@@ -519,7 +519,7 @@ begin
   else
     if (nr=0) and (enterkey<>keyf10) then begin
       i:=1;
-      while (i<=n) and (ma^[i].hkey<>UStr(enterkey)) do inc(i);
+      while (i<=n) and (ma^[i].hkey<>UpperCase(enterkey)) do inc(i);
       if i<=n then begin
         p:=i;
         autolr:=1;
@@ -547,7 +547,7 @@ begin
     end;
     if not dead then begin
       i:=1;
-      while (i<=n) and (ma^[i].hkey<>UStr(t)) do inc(i);
+      while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
       if (i<=n) and (ma^[i].enabled) then begin
         p:=i; t:=keycr;
         display;
@@ -754,6 +754,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.21  2000/07/04 09:59:04  mk
   - Sysutils eingefuegt
 

@@ -762,7 +762,7 @@ again:
           readln(t,s);
           if (s<>'') and (s[1]<>';') and (cpos(',',s)>0) then begin
             inc(n);
-            ss:=ustr(s);
+            ss:=UpperCase(s);
             while cpos('_',ss)>0 do ss[cpos('_',ss)]:=' ';
             k:=left(ss,cpos(',',ss)-1);
             delete(ss,1,cpos(',',ss));
@@ -882,6 +882,12 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.10  2000/07/04 12:04:29  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.9  2000/07/02 14:24:54  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

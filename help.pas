@@ -27,6 +27,7 @@ interface
 
 uses
   xpglobal,
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -128,7 +129,7 @@ begin
   if ioresult<>0 then begin
     attrtxt(7);
     writeln;
-    writeln('<HELP> Fehler: Hilfsdatei '+ustr(filename(f))+' ist besch„digt.');
+    writeln('<HELP> Fehler: Hilfsdatei '+UpperCase(filename(f))+' ist besch„digt.');
     halt(1);
     end;
 end;
@@ -650,7 +651,7 @@ begin     { of IHS }
       qvj:='';
       for i:=1 to qvws do with qvw^[i] do
         qvj:=qvj+z^[y]^[x];
-      qvj:=UStr(qvj);
+      qvj:=UpperCase(qvj);
       end;
     if qvok then begin
       attrtxt(QvwSelColor);
@@ -726,7 +727,7 @@ begin     { of IHS }
       end;
     if (t=keycr) and qvok then
       loadpage(qvw^[qvp].nn,true);
-    if (printch<>'') and ((t=printch) or (ustr(t)=printch)) then
+    if (printch<>'') and ((t=printch) or (UpperCase(t)=printch)) then
       printit;
 
     if lqv<>qvp then begin
@@ -761,6 +762,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:16  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/07/02 14:24:47  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

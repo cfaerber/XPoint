@@ -73,13 +73,13 @@ begin
     para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
   end;
-  prog:=fustr(prog);
+  prog:=FileUpperCase(prog);
 
   if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
     dpath:=''
   else begin
     if FileExists(prog) then dpath:=prog
-    else dpath:=fUStr(fsearch(prog,getenv('PATH')));
+    else dpath:=FileUpperCase(fsearch(prog,getenv('PATH')));
     if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
       dpath:='';
   end;
@@ -102,6 +102,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 12:04:15  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.22  2000/06/23 15:59:10  mk
   - 16 Bit Teile entfernt
 

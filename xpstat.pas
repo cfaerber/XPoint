@@ -143,15 +143,15 @@ var brk       : boolean;
         if p>0 then
           sys[0]:=chr(p-1);
       end;
-    usys:=ustr(sys);
+    usys:=UpperCase(sys);
     l:=0; r:=snum+1;
     found:=false;
     while not found and (l+1<r) do begin
       m:=(l+r) div 2;
-      if ustr(st^[m].name^)=usys then begin
+      if UpperCase(st^[m].name^)=usys then begin
         found:=true; l:=m; end
       else
-        if ustr(st^[m].name^)<usys then r:=m
+        if UpperCase(st^[m].name^)<usys then r:=m
         else l:=m;
       end;
     if not found then begin
@@ -272,7 +272,7 @@ begin
   if brk then exit;
   vonl:=ixdat(copy(von,7,2)+copy(von,4,2)+copy(von,1,2)+'0000');
   bisl:=ixdat(copy(bis,7,2)+copy(bis,4,2)+copy(bis,1,2)+'2359');
-  sortkb:=(ustr(sortby)=ustr(sortbya[0]));
+  sortkb:=(UpperCase(sortby)=UpperCase(sortbya[0]));
 
   msgbox(46,5,getres2(2604,1),x,y);   { 'Statistik wird berechnet' }
   attrtxt(col.colmboxhigh);
@@ -630,7 +630,7 @@ begin
   while not eof(t) do begin
     readln(t,s);
     if (s<>'') and (s[1] in ['S','C']) and (ival(copy(s,9,2))=jahr mod 100) and
-       ((box='') or (ustr(trim(copy(s,18,15)))=box)) then begin
+       ((box='') or (UpperCase(trim(copy(s,18,15)))=box)) then begin
       monat:=ival(copy(s,6,2));
       tag:=ival(copy(s,3,2));
       kosten[monat,tag]:=kosten[monat,tag]+rval(copy(s,55,9));
@@ -929,7 +929,7 @@ var   zone     : ^zonea;
       readln(nl,s);
       p:=cpos(',',s);
       if (s<>'') and (s[1]<>';') and (p>0) then begin
-        k:=lstr(left(s,p-1));
+        k:=LowerCase(left(s,p-1));
         if k='zone' then
           if zones=maxzones then ende:=true
           else begin
@@ -1218,7 +1218,7 @@ begin
       reset(t); found:=false;
       while not eof(t) and not found do begin
         readln(t,s);
-        found:=(ustr(left(s,length(box)+9))='NETCALL '+ustr(box)+'=');
+        found:=(UpperCase(left(s,length(box)+9))='NETCALL '+UpperCase(box)+'=');
         end;
       if found then begin
         date:=copy(s,cpos('=',s)+1,8);
@@ -1254,6 +1254,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/07/03 13:31:45  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -278,14 +278,14 @@ begin  { __ Suchmarke }
                 if sabsender<>0 then begin
                   if right(s,4)='.ZER' then dec(byte(s[0]),4);
                   case sabsender of
-                    1 : if pp=0 then s:=TopAllstr(s)
+                    1 : if pp=0 then s:=TopAllStr(s)
                         else s:=TopAllStr(left(s,pp-1))+'@'+copy(s,pp+1,length(s)-pp);
-                    2 : if pp=0 then s:=TopAllstr(s)
+                    2 : if pp=0 then s:=TopAllStr(s)
                         else s:=TopAllStr(left(s,pp-1))+' @ '+copy(s,pp+1,length(s)-pp);
                     3 : if pp>0 then s:=left(s,pp-1);
                     4 : s:=TopAllStr(left(s,iif(pp>0,pp-1,length(s))));
                     5 : if pp>0 then s:=forms(left(s,pp-1),16)+' '+copy(s,pp+1,length(s)-pp);
-                    6 : if pp=0 then s:=TopAllstr(s)
+                    6 : if pp=0 then s:=TopAllStr(s)
                         else s:=TopAllStr(forms(left(s,pp-1),16))+' '+copy(s,pp+1,length(s)-pp);
                   end;
                 end;
@@ -295,7 +295,7 @@ begin  { __ Suchmarke }
               if (netztyp=nt_Maus) and (mnt and $100<>0) then
                 s1:=left('-'+s1,40) else
               if ntKomkette(netztyp) and (mnt and $100<>0) and
-                 (lstr(left(s1,3))<>'re:') and (left(s1,3)<>'Re^') then
+                 (LowerCase(left(s1,3))<>'re:') and (left(s1,3)<>'Re^') then
                 s1:=left('-'+s1,40);
             end;
             dbReadN(mbase,mb_OrigDatum,dat);
@@ -398,7 +398,7 @@ begin  { __ Suchmarke }
               { (B)etreff }
               taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
 
-              userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
+              userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
 
             end else begin
 
@@ -433,11 +433,11 @@ begin  { __ Suchmarke }
               else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
               if fidoqwk and (_brett[1]='A') and
-                 (HighlightName=ustr(dbReadStr(mbase,'name')))
+                 (HighlightName=UpperCase(dbReadStr(mbase,'name')))
                  then userflag[y]:=1
               else
                 if (cpos('@',dispspec)>0) and
-                   (ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0)))))
+                   (UpperCase(left(s0,40))=UpperCase(copy(dispspec,2,min(40,length(s0)))))
                    then Userflag[y]:=1
                 else
                   if mnt and $1000<>0 then userflag[y]:=1;

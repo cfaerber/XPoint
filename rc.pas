@@ -13,6 +13,7 @@ uses
 {$IFNDEF NCRT }
   crt,
 {$ENDIF }
+  sysutils,
   dos,typeform,fileio, xpglobal;
 
 const open   : boolean = false;

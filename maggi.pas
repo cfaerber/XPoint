@@ -227,7 +227,7 @@ var i : integer;
 
 begin
   for i:=1 to paramcount do begin
-    s:=lstr(paramstr(i));
+    s:=LowerCase(paramstr(i));
     if _is('mz') then direction:=1
     else if _is('zm') then direction:=2
     else if _is('mn') then direction:=3
@@ -239,8 +239,8 @@ begin
     else if _is('zp') then direction:=9
     else if _is('h') or _is('?') then helppage
     else if isl('n') then netzname:=forms(mid(paramstr(i),3),8)
-    else if isl('h') then bretth:=ustr(copy(s,3,25))
-    else if isl('b') then boxname:=ustr(copy(s,3,8))
+    else if isl('h') then bretth:=UpperCase(copy(s,3,25))
+    else if isl('b') then boxname:=UpperCase(copy(s,3,8))
     else if _is('m')  then msgids:=true
     else if _is('i')  then mausinfos:=true
     else if _is('o')  then mkoutfile:=true
@@ -260,7 +260,7 @@ begin
   if ((direction in [1,2,3,8,9]) and ({(brettfile='') or} (netzname=''))) or
      ((direction in [6,7]) and ((bretth='') or (boxname=''))) or
      (direction=0) or (outfile='') then helppage;
-  writeln(ustr(infile),'  ¯¯  ',ustr(outfile));
+  writeln(UpperCase(infile),'  ¯¯  ',UpperCase(outfile));
   writeln;
 end;
 
@@ -506,7 +506,7 @@ begin
       rdln;
       if left(s,1)<>'-' then begin
         fido_to:=trim(mid(s,5));
-        s:=ustr(left(s,4));
+        s:=UpperCase(left(s,4));
         if s='' then
           empfaenger:='/UNZUSTELLBAR'
         else begin
@@ -541,7 +541,7 @@ begin
         if s[1]<>'$' then
           s:=''
         else begin
-          mc:=ustr(left(s,11));
+          mc:=UpperCase(left(s,11));
           if (left(mc,2)='$ ') and (pos('NET',copy(mc,3,8))>0) then begin
             programm:=trim(mid(s,12));
             repeat
@@ -687,9 +687,9 @@ end;
 function compmimetyp(typ:string):string;
 begin
   if left(typ,12)='application/' then
-    compmimetyp:=lstr(mid(typ,12))
+    compmimetyp:=LowerCase(mid(typ,12))
   else
-    compmimetyp:=lstr(typ);
+    compmimetyp:=LowerCase(typ);
 end;
 
 
@@ -745,8 +745,8 @@ var hd    : header;
   end;
 
 begin
-{  SevenNet:=(lstr(netzname)='sevennet'); }
-  MagicNet:=(lstr(netzname)='magicnet');
+{  SevenNet:=(LowerCase(netzname)='sevennet'); }
+  MagicNet:=(LowerCase(netzname)='magicnet');
   reset(f1,1);
   rewrite(f2,1);
   if filesize(f1)<16 then begin
@@ -776,7 +776,7 @@ begin
         pm:=cpos('@',empfaenger)>0;
         if not pm then begin
           i:=1;
-          while (i<=bretter) and (ustr(brettp[i]^.name)<>ustr(empfaenger)) do
+          while (i<=bretter) and (UpperCase(brettp[i]^.name)<>UpperCase(empfaenger)) do
             inc(i);
           berr:=(i>bretter);
           if berr then writeln('unbekanntes Brett:  ',empfaenger)
@@ -1254,7 +1254,7 @@ begin
           end;
         p1:=cpos('@',empfaenger);
         if (p1=0) and
-           not stricmp(left(ustr(empfaenger),length(bretth)),bretth) then
+           not stricmp(left(UpperCase(empfaenger),length(bretth)),bretth) then
           writeln(#13#10,'unbekannte Mausgruppe: ',empfaenger)
         else begin
           inc(nn);
@@ -1263,7 +1263,7 @@ begin
           komzu:=(attrib and attrQuoteTo<>0) or
                  (not mkoutfile and (p1>0) and (replypath<>boxname));
             { !!: "Kommentar zu" bei PM-Kommentar an andere Pollbox }
-          tomaus:=(ref='') and (ustr(left(empfaenger,5))='MAUS@');
+          tomaus:=(ref='') and (UpperCase(left(empfaenger,5))='MAUS@');
           if tomaus and (betreff='<Maus-Command>') then
             writeln(t,'#CMD')
           else if tomaus and (betreff='<Maus-Direct-Command>') then
@@ -1309,10 +1309,10 @@ begin
                 if org_xref='' then writeln(t,'R',ref);
                 { fb: Wildwestverkettung nur bei G?K und PM. Ist nach
                 Maus-Specs. nicht n”tig, aber der Kompatiblit„t wegen }
-                if left(ustr(ReplyGroup),length(bretth))=bretth then
+                if left(UpperCase(ReplyGroup),length(bretth))=bretth then
                 {/fb}
                   writeln(t,':Kommentar zu ',ref,' in der Gruppe ',
-                            ustr(mid(ReplyGroup,length(bretth)+1)));
+                            UpperCase(mid(ReplyGroup,length(bretth)+1)));
                 end
               else
                 writeln(t,'-',ref);
@@ -1548,8 +1548,8 @@ begin
       readln(t1,s);
     if not eof(t1) then begin
       pm:=0;
-      if ustr(s)='#LOG' then
-        msgid:=ustr(s)
+      if UpperCase(s)='#LOG' then
+        msgid:=UpperCase(s)
       else
         msgid:=copy(s,2,120);
       firstline:=true;
@@ -1568,7 +1568,7 @@ begin
                   else begin
                     appline(s,eoln(t1));
                     if firstline then begin
-                      if left(lstr(s),13)='kommentar zu ' then begin
+                      if left(LowerCase(s),13)='kommentar zu ' then begin
                         ref:=trim(mid(s,14));
                         if cpos(' ',ref)>0 then
                           ref:=left(ref,cpos(' ',ref)-1);
@@ -1579,13 +1579,13 @@ begin
                         if cpos(' ',ref)>0 then
                           ref:=left(ref,cpos(' ',ref)-1);
                         end
-                      else if left(lstr(s),13)='followup-to: ' then
+                      else if left(LowerCase(s),13)='followup-to: ' then
                         AmReplyTo:=bretth+trim(mid(s,14))
-                      else if left(lstr(s),10)='reply-to: ' then
+                      else if left(LowerCase(s),10)='reply-to: ' then
                         PmReplyTo:=trim(mid(s,11))
-                      else if lstr(s)='content-type: uu1' then
+                      else if LowerCase(s)='content-type: uu1' then
                         typ:='B'
-                      else if lstr(left(s,11))='file-date: ' then
+                      else if LowerCase(left(s,11))='file-date: ' then
                         ddatum:=trim(mid(s,12))
                       else
                         firstline:=false;
@@ -1616,12 +1616,12 @@ begin
             'M' : begin
                     mimever:=GetToken(s,';');
                     mime:=true;
-                    if lstr(GetToken(s,':'))='content-type' then
+                    if LowerCase(GetToken(s,':'))='content-type' then
                       mimect:=s;
                   end;
             { redundante Kommentar-Zeilen aus Outfile tilgen }
             '>' : if (left(s,9)<>'boundary=') and (not mausKF) then begin
-                    parname:=lstr(trim(left(s,cposx(':',s)-1)));
+                    parname:=LowerCase(trim(left(s,cposx(':',s)-1)));
                     if (parname<>'mid') and (parname<>'rid') and
                        (parname<>'mime')
                        then appline(s,true);
@@ -1753,6 +1753,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/07/04 12:04:17  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.17  2000/07/04 09:59:03  mk
   - Sysutils eingefuegt
 

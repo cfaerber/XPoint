@@ -16,7 +16,7 @@ unit xpimpexp;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses  sysutils,
       dos,typeform,fileio,inout,maske,datadef,database,maus2,resource,
       xp0,xp1, xpglobal;
 
@@ -151,7 +151,7 @@ begin
           write(#13#10'Brett:  ',name);
           mon;
           name:='A'+name;
-          dbSeek(bbase,biBrett,ustr(name));
+          dbSeek(bbase,biBrett,UpperCase(name));
           if not dbFound then begin
             dbAppend(bbase);
             dbWriteN(bbase,bb_brettname,name);
@@ -173,7 +173,7 @@ begin
           moff;
           write(#13#10'User:   ',name);
           mon;
-          dbSeek(ubase,uiName,ustr(name));
+          dbSeek(ubase,uiName,UpperCase(name));
           if not dbFound then begin
             dbAppend(ubase);
             dbWriteN(ubase,ub_username,name);
@@ -252,19 +252,19 @@ begin
     if not exist(fn) then rfehler(106)
     else begin
       UpString(fn);
-      if pos(ustr(MausLogfile),fn)>0 then begin
+      if pos(UpperCase(MausLogfile),fn)>0 then begin
         box:='';  { dummy }
         MausLogFiles(0,false,box);
         MausLogFiles(2,false,box);
         exit;
         end;
-      if pos(ustr(MausStLog),fn)>0 then begin
+      if pos(UpperCase(MausStLog),fn)>0 then begin
         box:=UniSel(1,false,'');
         if box<>'' then
           MausLogFiles(1,false,box);
         exit;
         end;
-      if right(ustr(fn),4)='.QWK' then begin
+      if right(UpperCase(fn),4)='.QWK' then begin
         nt:=nt_QWK;
         if DefFidoBox<>'' then box:=DefFidoBox
         else box:='';
@@ -572,7 +572,7 @@ begin
     if not mfehler(ntBoxNetztyp(box)=nt_Maus,box+' ist keine MausNet-Box') and
        not mfehler(IsPath(mtpath),'ungÅltiges Verzeichnis') then begin
       if not exist(mtpath+mdaten) and IsPath(mtpath+'daten') then
-        mtpath:=mtpath+FUStr('daten')+DirSepa;
+        mtpath:=mtpath+FileUpperCase('daten')+DirSepa;
       if not mfehler(exist(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
          not mfehler(exist(mtpath+mindex),mtpath+mindex+' fehlt') and
          not mfehler(diskfree(0)>2.5*_filesize(mtpath+mdaten),
@@ -643,9 +643,9 @@ begin
     if brk or (ypath='') then exit;
     ypath:=AddDirSepa(ypath);
     if not mfehler(IsPath(ypath),'ungÅltiges Verzeichnis') then begin
-      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+FUStr('mailbase')) then
-        ypath:=ypath+FUStr('mailbase')+DirSepa;
-      { Gibt es Yuppi unter Linux? Wenn ja, sind die Dateinamen 
+      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+FileUpperCase('mailbase')) then
+        ypath:=ypath+FileUpperCase('mailbase')+DirSepa;
+      { Gibt es Yuppi unter Linux? Wenn ja, sind die Dateinamen
         klein oder gross geschrieben? }
       if not mfehler(exist(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
          not mfehler(exist(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
@@ -701,6 +701,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:30  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/06/23 15:59:26  mk
   - 16 Bit Teile entfernt
 

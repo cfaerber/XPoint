@@ -319,15 +319,15 @@ procedure GetPar;
 var i      : integer;
     switch : string[10];
 begin
-  if (lstr(paramstr(1))<>'-uz') and (lstr(paramstr(1))<>'-zu') then
+  if (LowerCase(paramstr(1))<>'-uz') and (LowerCase(paramstr(1))<>'-zu') then
     HelpPage;
-  if lstr(paramstr(1))='-uz' then begin
+  if LowerCase(paramstr(1))='-uz' then begin
     if paramcount<3 then helppage;
     u2z:=true;
     source:=''; dest:=''; OwnSite:='';
     for i:=2 to paramcount do
       if left(paramstr(i),1)='-' then begin
-        switch:=lstr(mid(paramstr(i),2));
+        switch:=LowerCase(mid(paramstr(i),2));
         if left(switch,2)='w:' then
           XpWindow:=minmax(ival(mid(switch,3)),15,60) else
         { 31.01.2000 robo - Envelope-EmpfÑnger aus Received auslesen? }
@@ -342,8 +342,8 @@ begin
         if source=''  then source:=paramstr(i) else
         if dest=''    then dest:=paramstr(i) else
 {$ELSE}
-        if source=''  then source:=ustr(paramstr(i)) else
-        if dest=''    then dest:=ustr(paramstr(i)) else
+        if source=''  then source:=UpperCase(paramstr(i)) else
+        if dest=''    then dest:=UpperCase(paramstr(i)) else
 {$ENDIF}
         if OwnSite='' then OwnSite:=paramstr(i);
     end
@@ -353,7 +353,7 @@ begin
     source:=''; dest:=''; _from:=''; _to:='';
     for i:=2 to paramcount do
       if left(paramstr(i),1)='-' then begin
-        switch:=lstr(mid(paramstr(i),2));
+        switch:=LowerCase(mid(paramstr(i),2));
         if left(switch,2)='w:' then
           XpWindow:=minmax(ival(mid(switch,3)),15,60) else
         if switch='s' then ParSize:=true else
@@ -508,9 +508,9 @@ end;
 function compmimetyp(typ:string):string;
 begin
   if left(typ,12)='application/' then
-    compmimetyp:=lstr(mid(typ,12))
+    compmimetyp:=LowerCase(mid(typ,12))
   else
-    compmimetyp:=lstr(typ);
+    compmimetyp:=LowerCase(typ);
 end;
 
 const ReadKoplist = false;
@@ -572,7 +572,7 @@ begin
       wrs('EMP: '+xempf[i]);
     for i:=1 to oemanz do begin
       ml:=min(length(xoem[i]),length(xempf[1]));
-      if (xoem[i]<>'') and (left(lstr(xoem[i]),ml)<>left(lstr(xempf[1]),ml))
+      if (xoem[i]<>'') and (left(LowerCase(xoem[i]),ml)<>left(LowerCase(xempf[1]),ml))
       then
         wrs('OEM: '+xoem[i]);
       end;
@@ -613,7 +613,7 @@ begin
     if gateway<>''    then wrs('X-Gateway: '+gateway);
     if sender<>''     then wrs('U-Sender: '+sender);
     if control<>''    then begin
-      if lstr(left(control,7))='cancel ' then wrs('STAT: CTL');
+      if LowerCase(left(control,7))='cancel ' then wrs('STAT: CTL');
       wrs('CONTROL: '+control);
     end;
     for i:=1 to ulines do
@@ -722,7 +722,7 @@ begin
       s0:=copy(s0,p2+1,p-p2-1)+' '+copy(s0,max(1,p2-3),3)+' '+trim(mid(s0,p+1));
       end;
   t:=minmax(ival(getstr),1,31);
-  p:=pos(lstr(getstr),'janfebmaraprmayjunjulaugsepoctnovdec');
+  p:=pos(LowerCase(getstr),'janfebmaraprmayjunjulaugsepoctnovdec');
   if p>0 then m:=(p+2)div 3 else m:=1;
   j:=minmax(ival(getstr),0,2099);
   if j<100 then
@@ -848,7 +848,7 @@ begin
   with hd.mime do begin
     p:=1;
     while (p<=length(s)) and not (s[p] in ['/',' ',#9]) do inc(p);
-    s1:=lstr(left(s,p-1));
+    s1:=LowerCase(left(s,p-1));
     if s1='text'        then ctype:=tText else    { --- Type }
     if s1='application' then ctype:=tApplication else
     if s1='multipart'   then ctype:=tMultipart else
@@ -862,7 +862,7 @@ begin
     SkipWhitespace;
     if s<>'' then begin
       while (p<=length(s)) and not (s[p] in [';',' ',#9]) do inc(p);
-      subtype:=lstr(left(s,p-1));       { --- Subtype  }
+      subtype:=LowerCase(left(s,p-1));       { --- Subtype  }
       if p>1 then delete(s,1,p-1);
       repeat                            { --- Parameter }
         p:=1;
@@ -870,7 +870,7 @@ begin
         SkipWhitespace;
         if s<>'' then begin
           while (p<=length(s)) and (s[p]<>'=') do inc(p);
-          s1:=lstr(trim(left(s,p-1)));
+          s1:=LowerCase(trim(left(s,p-1)));
           SkipWhitespace;
           if s<>'' then begin
             if s[1]='"' then
@@ -883,7 +883,7 @@ begin
             inc(p);
             if value[1]='"' then UnQuote(value);
             case ctype of
-              tText       : if s1='charset'   then charset:=lstr(value);
+              tText       : if s1='charset'   then charset:=LowerCase(value);
               tApplication: if s1='name'      then hd.datei:=filename else
                             if s1='type'      then filetype:=value else
                             if s1='x-date'    then hd.ddatum:=RFC2Zdate(value);
@@ -1469,7 +1469,7 @@ var p,i   : integer; { byte -> integer }
       if right(s0,1)<>',' then s0:=s0+',';
       while (followups<maxfollow) and (cpos(',',s0)>0) do begin
         p:=cpos(',',s0);
-        if lstr(left(s0,p-1))='poster' then
+        if LowerCase(left(s0,p-1))='poster' then
           pm_reply:=true
         else if p>5 then begin
           inc(followups);
@@ -1617,7 +1617,7 @@ var p,i   : integer; { byte -> integer }
     function GetRec(key:string):string;
     var p : byte;
     begin
-      p:=pos(key,lstr(s0));
+      p:=pos(key,LowerCase(s0));
       if p>0 then begin
         key:=trim(mid(s0,p+length(key)));
         p:=blankpos(key);
@@ -1636,7 +1636,7 @@ var p,i   : integer; { byte -> integer }
     from:=GetRec('from ');
     { Envelope-EmpfÑnger ermitteln }
     if envemp='' then envemp:=GetRec('for ');
-    if (by<>'') and (lstr(by)<>lstr(right(hd.pfad,length(by)))) then begin
+    if (by<>'') and (LowerCase(by)<>LowerCase(right(hd.pfad,length(by)))) then begin
       if hd.pfad<>'' then hd.pfad:=hd.pfad+'!';
       hd.pfad:=hd.pfad+by;
       end;
@@ -1683,7 +1683,7 @@ var p,i   : integer; { byte -> integer }
 {        cset:='iso-8859'; }
         p:=cpos('?',s);
         if p>0 then begin
-{          cset:=lstr(left(s,min(8,p-1))); }
+{          cset:=LowerCase(left(s,min(8,p-1))); }
           delete(s,1,p);
           p:=cpos('?',s);
           if p=2 then begin
@@ -1854,7 +1854,7 @@ begin
              { X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
                RFCRemoveComment(s0);
-               if LStr(s0)='yes' then xnoarchive:=true;
+               if LowerCase(s0)='yes' then xnoarchive:=true;
              end else
 
              if zz='x-priority'   then GetPriority else
@@ -1874,7 +1874,7 @@ begin
              if zz='newsreader'   then programm:=s0 else
              { User-Agent is new in grandson-of-1036 }
              if zz='user-agent'   then programm:=s0 else
-             if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
+             if zz='encrypted'    then pgpflags:=iif(UpperCase(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz<>'lines'       then AppUline('U-'+s1);
         end; { case }
@@ -1888,7 +1888,7 @@ begin
       absender:=sender;
     if absender='' then absender:=wab;
     if absender='' then absender:='Unknown@Sender';
-    if ustr(wab)=ustr(absender) then
+    if UpperCase(wab)=UpperCase(absender) then
       wab:='';
     MimeIsoDecode(betreff,250);
     MimeIsoDecode(realname,realnlen);
@@ -2085,8 +2085,8 @@ begin
     ende:=false;
     repeat
       ReadString(false);
-      if ustr(left(s,9))='MAIL FROM' then hd.wab:=GetAdr else      { Envelope-From }
-      if ustr(left(s,7))='RCPT TO'   then hd.empfaenger:=GetAdr;   { Envelope-To }
+      if UpperCase(left(s,9))='MAIL FROM' then hd.wab:=GetAdr else      { Envelope-From }
+      if UpperCase(left(s,7))='RCPT TO'   then hd.empfaenger:=GetAdr;   { Envelope-To }
       ende:=(bufpos>=bufanz) {or (s='QUIT')};
     until ende or (s='DATA') or (s='QUIT');
     if s='DATA' then begin
@@ -2108,7 +2108,7 @@ begin
       write(#8#8#8#8#8,n:5);
       repeat                       { UUCP-Envelope Åberlesen }
         ReadString(true);
-        nofrom:=(lstr(left(s,5))<>'from ') and (lstr(left(s,5))<>'>from');
+        nofrom:=(LowerCase(left(s,5))<>'from ') and (LowerCase(left(s,5))<>'>from');
         if (eol=0) and not nofrom then
           ReadString(false);
       until nofrom;
@@ -2183,8 +2183,8 @@ begin
   OpenFile(fn);
   ReadString(false);
   while unbatch(s) do begin
-    freeze:=(pos('funbatch',lstr(s))>0);
-    gzip:=(pos('gunbatch',lstr(s))>0) or (pos('zunbatch',lstr(s))>0);
+    freeze:=(pos('funbatch',LowerCase(s))>0);
+    gzip:=(pos('gunbatch',LowerCase(s))>0) or (pos('zunbatch',LowerCase(s))>0);
     seek(f1,length(s)+1);
     fsplit(fn,dir,name,ext);
 {$IFDEF Linux}
@@ -2369,13 +2369,13 @@ var sr    : searchrec;
       FileType:=1
     else if unbatch(s) then       { '#! cunbatch' / '#! funbatch' }
       FileType:=2
-    else if left(ustr(s),5)='HELO ' then
+    else if left(UpperCase(s),5)='HELO ' then
       FileType:=3
-    else if left(lstr(s),5)='from ' then
+    else if left(LowerCase(s),5)='from ' then
       FileType:=4
 { 28.01.2000 robo - Bugfix }
-{    else if left(lstr(s),6)='>From ' then }
-    else if left(lstr(s),6)='>from ' then
+{    else if left(LowerCase(s),6)='>From ' then }
+    else if left(LowerCase(s),6)='>from ' then
 { /robo }
       FileType:=4
     else
@@ -2538,7 +2538,7 @@ var dat    : string[30];
 
 { /robo }
 
-    formnews:=lstr(s);
+    formnews:=LowerCase(s);
   end;
 
   procedure WriteNewsgroups;   { Newsgroups nicht folden! }
@@ -2671,7 +2671,7 @@ begin
       end;
     if attrib and attrControl<>0 then
       wrs(f,'Control: '+betreff);
-    if mail and (lstr(betreff)='<none>') then
+    if mail and (LowerCase(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
     IBM2ISO;
@@ -2898,7 +2898,7 @@ var hds,adr : longint;
     end;
 
   begin
-    request:=(ustr(hd.betreff)='REQUEST');
+    request:=(UpperCase(hd.betreff)='REQUEST');
     transfer:=(hd.attrib and attrFile)<>0;
     if transfer then begin
       fromfile:=hd.betreff;
@@ -2934,7 +2934,7 @@ var hds,adr : longint;
         end;
       end;
     if transfer and (tfiles=0) then
-      WriteTransfer(lstr(getfilename(fromfile)));
+      WriteTransfer(LowerCase(getfilename(fromfile)));
   end;
 
   { String abkÅrzen, falls Zeile nicht mit CR/LF beendet }
@@ -2963,7 +2963,7 @@ begin
     exit; end;
   assign(f,'uuz.tmp');
   rewrite(f,1);
-  server:=ustr(UUserver+'@'+_to);
+  server:=UpperCase(UUserver+'@'+_to);
   files:=0;
 
   CreateNewfile;                    { 1. Durchgang: News }
@@ -3040,7 +3040,7 @@ begin
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
       binmail:=(hd.typ='B');
       if cpos('@',hd.empfaenger)>0 then
-        if ustr(left(hd.empfaenger,length(server)))=server then
+        if UpperCase(left(hd.empfaenger,length(server)))=server then
           WrFileserver
         else begin
           inc(n); write(#13'Mails: ',n);
@@ -3122,6 +3122,12 @@ end.
 
 {
   $Log$
+  Revision 1.40  2000/07/04 12:04:18  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.39  2000/07/04 09:59:03  mk
   - Sysutils eingefuegt
 

@@ -128,7 +128,7 @@ begin
     if LastChar(p)<>DirSepa then
     begin
       if (length(p)=2) and (p[2]=':') then begin     { Nur C: ? }
-        p:= UStr(p);
+        p:= UpperCase(p);
         getdir(Ord(p[1])-64,cwd);               { -> Akt. Verz. ermitteln }
         AddDirSepa:= AddDirSepa(cwd);
       end else
@@ -596,6 +596,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/07/04 12:04:16  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.46  2000/07/01 13:18:28  hd
   - Uses-Anweisung in ifdef
 

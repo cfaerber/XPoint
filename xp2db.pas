@@ -23,7 +23,7 @@ uses
   crt,
 {$ENDIF }
       dos,typeform,fileio,inout,keys,datadef,database,databaso,
-      resource,maus2,xpglobal,
+      sysutils,resource,maus2,xpglobal,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
 procedure InitDatabase;
@@ -122,7 +122,7 @@ var flp : dbFLP;
   begin
     inc(fnr);
     with flp^.feld[fnr] do begin
-      fname:=UStr(name);
+      fname:=UpperCase(name);
       ftyp:=dbTypeString;
       fsize:=len;
       end;
@@ -134,7 +134,7 @@ var flp : dbFLP;
   begin
     inc(fnr);
     with flp^.feld[fnr] do begin
-      fname:=UStr(name);
+      fname:=UpperCase(name);
       ftyp:=typ;
       fsize:=size;
       fnlen:=len;
@@ -900,6 +900,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.13  2000/06/23 15:59:18  mk
   - 16 Bit Teile entfernt
 

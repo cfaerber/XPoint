@@ -16,7 +16,8 @@ unit xp4o2;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -144,7 +145,7 @@ var _brett,
     while ((user='') or (ref='')) and (n<8) and not eof(t) do begin
       readln(t,s0);
       if (s0='---') or (s0='--') then n:=8;
-      s:=UStr(s0);
+      s:=UpperCase(s0);
       quote:=(left(s,1)='>');
       p:=cpos('@',s);
       while (p>0) and (left(s,7)<>'MESSAGE') and (left(s,5)<>'FROM:') do begin
@@ -229,7 +230,7 @@ begin
                       { |- Seiteneffekt! }
         ml:=min(length(betreff),length(bezug));
         if ((ref<>'') and (dbReadStr(mbase,'msgid')=ref)) or
-           ((ref='') and (ml>2) and (UStr(left(betreff,ml))=left(bezug,ml)) and
+           ((ref='') and (ml>2) and (UpperCase(left(betreff,ml))=left(bezug,ml)) and
            ((user='') or (dbReadStr(mbase,'absender')=user)))
         then MsgAddmark;
         end;
@@ -848,7 +849,7 @@ begin
       inc(sn);
       sa[sn]:=sr.name;
       p:=1;
-      while (p<=length(s0)) and (pos('^'+UpCase(s0[p]),ustr(s))>0) do
+      while (p<=length(s0)) and (pos('^'+UpCase(s0[p]),UpperCase(s))>0) do
         inc(p);
       if p<=length(s0) then
         s:=s+','+left(s0,p-1)+'^'+mid(s0,p)
@@ -885,6 +886,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/04 12:04:24  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.13  2000/07/02 14:24:53  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

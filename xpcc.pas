@@ -108,7 +108,7 @@ begin
         s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
       else begin
         dbOpen(d,PseudoFile,1);
-        dbSeek(d,piKurzname,ustr(s));
+        dbSeek(d,piKurzname,UpperCase(s));
         if dbFound then begin
           dbRead(d,'Langname',s);
           p:=cpos('@',s);
@@ -135,7 +135,7 @@ begin
           cc_testempf:=false;
           exit;
           end
-        else dbSeek(bbase,biBrett,'A'+ustr(s));
+        else dbSeek(bbase,biBrett,'A'+UpperCase(s));
         if not dbfound then
         begin
           s2:=s;
@@ -143,12 +143,12 @@ begin
             p:=cpos('.',s2);
             if p>0 then s2[p]:='/';
           until p=0;
-          dbSeek(bbase,biBrett,'A'+ustr(s2));
+          dbSeek(bbase,biBrett,'A'+UpperCase(s2));
            if dbfound then s:=s2;
           end;
         end
       else
-        dbSeek(ubase,uiName,ustr(s));
+        dbSeek(ubase,uiName,UpperCase(s));
       testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
       if dbFound then begin
         cc_testempf:=true;
@@ -203,7 +203,7 @@ begin
   repeat
     xchg:=false;
     for i:=1 to j do
-      if ccsmaller(ustr(cc^[i+1]),ustr(cc^[i])) then begin
+      if ccsmaller(UpperCase(cc^[i+1]),UpperCase(cc^[i])) then begin
         s:=cc^[i]; cc^[i]:=cc^[i+1]; cc^[i+1]:=s;
         xchg:=true;
         end;
@@ -267,7 +267,7 @@ begin
         begin
           repeat
             readln(t,s)
-          until eof(t) or (ustr(s)=ustr(cc^[i]));
+          until eof(t) or (UpperCase(s)=UpperCase(cc^[i]));
           if not eof(t) then                                   { wenn gefunden... }
           begin
             repeat
@@ -308,7 +308,7 @@ begin
     UpString(name);
     repeat
       readln(t,s)
-    until eof(t) or (ustr(s)=name);
+    until eof(t) or (UpperCase(s)=name);
     if not eof(t) then
       repeat
         readln(t,s);
@@ -335,7 +335,7 @@ begin
     if not eof(t1) then begin
       repeat                       { vorhergehende Verteiler kopieren }
         readln(t1,s);
-        same:=(ustr(s)=ustr(name));
+        same:=(UpperCase(s)=UpperCase(name));
         if not same then
           writeln(t2,s);
       until eof(t1) or same;
@@ -388,6 +388,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/04 12:04:29  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.17  2000/07/03 13:31:44  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -175,8 +175,8 @@ begin
     else opt:='';
     if UUsmtp then
       if UpArcer='' then opt:=opt+'-SMTP '
-      else if pos('freeze',lstr(uparcer))>0 then opt:=opt+'-fSMTP '
-      else if pos('gzip',lstr(uparcer))>0 then opt:=opt+'-zSMTP '
+      else if pos('freeze',LowerCase(uparcer))>0 then opt:=opt+'-fSMTP '
+      else if pos('gzip',LowerCase(uparcer))>0 then opt:=opt+'-zSMTP '
       else opt:=opt+'-cSMTP ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
@@ -193,10 +193,10 @@ begin
     spacksize:=spufsize;
     end
   else begin                                   { Mail/News packen }
-    freeze:=pos('freeze',lstr(BoxPar^.uparcer))>0;
-    gzip:=pos('gzip',lstr(BoxPar^.uparcer))>0;
+    freeze:=pos('freeze',LowerCase(BoxPar^.uparcer))>0;
+    gzip:=pos('gzip',LowerCase(BoxPar^.uparcer))>0;
     new(f1); new(f2);
-    p:=pos('$PUFFER',ustr(boxpar^.uparcer));
+    p:=pos('$PUFFER',UpperCase(boxpar^.uparcer));
     s[0]:=#8;
     if freeze then cunb:='#! funbatch'#10
     else if gzip then cunb:='#! gunbatch'#10
@@ -462,6 +462,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.14  2000/06/23 15:59:25  mk
   - 16 Bit Teile entfernt
 

@@ -18,7 +18,7 @@ unit database;
 interface
 
 uses xpglobal,
-  dos, typeform,datadef, inout;
+  sysutils, dos, typeform,datadef, inout;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -315,7 +315,7 @@ begin
       end;
     if flindex then move(recbuf^,orecbuf^,hd.recsize);
     if testdel and (recbuf^[0] and 1 <>0) then
-      write(#7'Fehlerhafte Indexdatei:  '+fustr(fname)+dbIxExt+#7);
+      write(#7'Fehlerhafte Indexdatei:  '+FileUpperCase(fname)+dbIxExt+#7);
     end;
 end;
 
@@ -673,7 +673,7 @@ begin
   fillchar(dp(dbp)^,sizeof(dbrec),0);
   with dp(dbp)^ do begin
     tempclosed:=false;
-    fname:=fUStr(name);
+    fname:=FileUpperCase(name);
     hdupdate:=true;
     assign(f1,name+dbExt);
     mfm:=filemode; filemode:=$42;
@@ -1629,6 +1629,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/07/04 12:04:14  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.24  2000/07/02 14:24:45  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

@@ -62,7 +62,7 @@ var icr : dbIndexCRec;
             end
           else
             if_flag:=false;
-          icr.indexstr:=UStr(icr.indexstr)+'/';
+          icr.indexstr:=UpperCase(icr.indexstr)+'/';
           repeat
             p:=pos('/',icr.indexstr);
             fn:=copy(icr.indexstr,1,p-1);
@@ -240,6 +240,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/04 12:04:14  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.5  2000/05/09 15:52:40  hd
   - UnixFS: Access-Mode eingefuegt
 

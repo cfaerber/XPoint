@@ -13,7 +13,7 @@
 function repfile(var prog,name:string):string;
 var p : byte;
 begin
-  p:=pos('$FILE',ustr(prog));
+  p:=pos('$FILE',UpperCase(prog));
   if p>0 then
     repfile:=left(prog,p-1)+name+copy(prog,p+5,127)
   else
@@ -266,7 +266,7 @@ begin
   listexit:=0;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
-    pp:=pos('$TYPE',ustr(lf));
+    pp:=pos('$TYPE',UpperCase(lf));
     if pp>0 then begin
       lt:=iif(listmsg,iif(listkommentar,2,1),0);
       lf:=left(lf,pp-1)+strs(lt)+mid(lf,pp+5);
@@ -454,6 +454,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/07/04 12:04:20  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.27  2000/07/03 15:23:26  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

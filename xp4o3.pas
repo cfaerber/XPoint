@@ -16,7 +16,7 @@ unit xp4o3;
 interface
 
 uses dos,typeform,fileio,datadef,database,inout,keys,resource,
-     xp0,xp1,xp1input, xpglobal;
+     sysutils,xp0,xp1,xp1input, xpglobal;
 
 function  __getfilename(nr,nn:byte):string;
 function  go_pm:boolean;
@@ -204,7 +204,7 @@ begin
       if hdp^.oem<>'' then
         appadr(hdp^.oem,3);                          { 'Original-Empf„nger :' }
     (*
-      dbSeek(ubase,uiName,ustr(hdp^.absender));
+      dbSeek(ubase,uiName,UpperCase(hdp^.absender));
       if dbFound and (dbXsize(ubase,'adresse')>0) then begin
         size:=0;
         dbReadX(ubase,'adresse',size,s);
@@ -240,7 +240,7 @@ var i,n    : integer;
 
   procedure TestServer;   { Crossposting bei diesem Server erlaubt? }
   begin
-    dbSeek(d,boiName,ustr(server));
+    dbSeek(d,boiName,UpperCase(server));
     if not dbFound then
       ok:=false
     else begin
@@ -284,8 +284,8 @@ begin
         end;
       end;
     if ok then
-      if s0='' then s0:=ustr(server)
-      else if s0<>ustr(server) then begin
+      if s0='' then s0:=UpperCase(server)
+      else if s0<>UpperCase(server) then begin
         rfehler(481);   { 'Crosspostings sind nur innerhalb eines Servers m”glich!' }
         ok:=false;
         brk:=true;
@@ -313,6 +313,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/07/04 12:04:25  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.7  2000/06/29 13:00:57  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

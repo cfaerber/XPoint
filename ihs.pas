@@ -107,7 +107,7 @@ var  fname,
      blockwfw(ixp); blockwfw(illp);
      blockwfl(dummy);   { da kommt die Index-Seiten-Adresse hin.. }
      readln(t,flags);   {  NH = No Header = keine "Hilfe:"-Zeile }
-     flags:=UStr(flags);
+     flags:=UpperCase(flags);
      b:=byte(pos('NH',flags)>0);
      blockwfb(b);
      b:=byte(pos('TAB',flags)>0);
@@ -414,6 +414,12 @@ end.
 
 {
   $Log$
+  Revision 1.12  2000/07/04 12:04:16  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.11  2000/07/02 14:24:48  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

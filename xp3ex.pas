@@ -56,7 +56,7 @@ procedure rps(var s:string; s1,s2:string);
 var p : byte;
 begin
   repeat
-    p:=pos(s1,ustr(s));
+    p:=pos(s1,UpperCase(s));
     if p>0 then
       s:=copy(s,1,p-1)+s2+copy(s,p+length(s1),255);
   until p=0;
@@ -69,16 +69,16 @@ var p,p2 : byte;
 begin
 { if _unescape(name) then; }
   vorn:=false;
-  p:=pos('$PSEUDO',ustr(s));
+  p:=pos('$PSEUDO',UpperCase(s));
   if p=0 then begin
     vorn:=true;
-    p:=pos('$VPSEUDO',ustr(s));
+    p:=pos('$VPSEUDO',UpperCase(s));
     end;
   if p>0 then begin
-    dbSeek(ubase,uiName,ustr(name));
+    dbSeek(ubase,uiName,UpperCase(name));
     if not dbFound then komm:=''
     else dbReadN(ubase,ub_kommentar,komm);
-    p2:=pos('P:',ustr(komm));
+    p2:=pos('P:',UpperCase(komm));
     if p2=0 then
       s:=copy(s,1,p-1)+iifs(vorn,'$VORNAME','$TUSER')+copy(s,p+iif(vorn,8,7),255)
     else
@@ -104,7 +104,7 @@ begin
   if p>0 then begin
     rps(s,'$MUSER',left(name,p-1));
     rps(s,'$TUSER',TopAllStr(left(name,p-1)));
-    if ustr(right(name,4))='.ZER' then
+    if UpperCase(right(name,4))='.ZER' then
       dec(byte(name[0]),4);
     rps(s,'$BOX',mid(name,p+1));
     end
@@ -207,9 +207,9 @@ var size   : longint;
     if size>0 then begin
       if (dtyp>=1) then begin
         if left(_brett,1)<>'U' then
-          dbSeek(ubase,uiName,ustr(hdp^.absender))
+          dbSeek(ubase,uiName,UpperCase(hdp^.absender))
         else
-          dbSeek(ubase,uiName,ustr(hdp^.empfaenger));   { Nachricht in PM-Brett }
+          dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));   { Nachricht in PM-Brett }
         if not dbFound or (dbXsize(ubase,'passwort')=0) then begin
           rfehler(308);   { 'Nachricht ist codiert, aber Paáwort fehlt!' }
           exit;
@@ -322,7 +322,7 @@ var size   : longint;
       empty:=true;
       end;
     if p>0 then with hdp^ do
-      if ustr(left(absender,8))='ZU_LANG_' then
+      if UpperCase(left(absender,8))='ZU_LANG_' then
         delete(qchar,p,1)
       else begin
         if cpos(' ',realname)>1 then qs:=trim(realname)
@@ -614,7 +614,7 @@ var size   : longint;
     else begin
       ts:='';
       repeat
-        tn:=ustr(GetToken(s,' '));
+        tn:=UpperCase(GetToken(s,' '));
         vs:='';
         while (tn<>'') and (tn[1]>'9') do begin
           case tn[1] of
@@ -719,7 +719,7 @@ begin
           rps(s,'$FIDOEMPF',fido_to);
           rps(s,'$BETREFF',betreff);
           rps(s,'$ERSTELLT',fdat(datum));
-          if pos('$MSGDATE',ustr(s))>0 then
+          if pos('$MSGDATE',UpperCase(s))>0 then
             rpsdat(s,'$MSGDATE',fdat(datum));
           rps(s,'$ERSTZEIT',ftime(datum));
           rps(s,'$ERSTTAG2',left(zdow(datum),2));
@@ -837,7 +837,7 @@ begin
     hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
                    wrs(gr(17)+hdp^.wab+iifs(hdp^.war<>'','  ('+hdp^.war+')',''));
     hdf_ANTW   : if (hdp^.pmReplyTo<>'') and
-                    ((ustr(hdp^.pmReplyTo)<>ustr(hdp^.absender))) then   { 'Antwort an : ' }
+                    ((UpperCase(hdp^.pmReplyTo)<>UpperCase(hdp^.absender))) then   { 'Antwort an : ' }
                    wrs(gr(27)+hdp^.pmReplyTo);
 
     hdf_BET    : wrs(gr(5)+left(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
@@ -1047,6 +1047,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.20  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

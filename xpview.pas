@@ -17,7 +17,7 @@ unit xpview;
 
 interface
 
-uses xpglobal, dos,dosx,typeform,fileio,inout,database,xp0,xp1,xpnt;
+uses xpglobal,sysutils,dos,dosx,typeform,fileio,inout,database,xp0,xp1,xpnt;
 
 
 type viewinfo = record
@@ -49,12 +49,12 @@ begin
   viewer.prog:='';
   p:=rightpos('.',fn);
   if (p>0) and (p<length(fn)) then begin
-    dbSeek(mimebase,mtiExt,ustr(mid(fn,p+1)));
+    dbSeek(mimebase,mtiExt,UpperCase(mid(fn,p+1)));
     if dbFound then begin
       dbReadN(mimebase,mimeb_programm,viewer.prog);
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.typ:='';
-      viewer.ext:=ustr(mid(fn,p+1));
+      viewer.ext:=UpperCase(mid(fn,p+1));
       viewer.fn:='';
       end;
     end;
@@ -63,7 +63,7 @@ end;
 
 function SeekMime(typ:string):boolean;
 begin
-  dbSeek(mimebase,mtiTyp,ustr(typ));
+  dbSeek(mimebase,mtiTyp,UpperCase(typ));
   SeekMime:=not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(typ,dbReadStr(mimebase,'typ'));
 end;
@@ -166,7 +166,7 @@ begin
       dbGoTop(mimebase);
       while not dbEOF(mimebase) and
             ((dbReadStr(mimebase,'extension')='') or
-             (pos('.'+lstr(dbReadStr(mimebase,'extension')),lstr(betreff))=0)) do
+             (pos('.'+LowerCase(dbReadStr(mimebase,'extension')),LowerCase(betreff))=0)) do
         dbNext(mimebase);
       if not dbEOF(mimebase) then begin
         dbReadN(mimebase,mimeb_programm,viewer.prog);
@@ -174,7 +174,7 @@ begin
         dbReadN(mimebase,mimeb_typ,viewer.typ);
         if viewer.prog='' then viewer.prog:='*intern*';
       betreff_fn:
-        p:=pos('.'+lstr(viewer.ext),lstr(betreff));
+        p:=pos('.'+LowerCase(viewer.ext),LowerCase(betreff));
         truncstr(betreff,p+length(viewer.ext));
         while (p>1) and (betreff[p-1] in
                ['0'..'9','a'..'z','A'..'Z','-','_','.','~','$','(',')','„','”','','Ž','™','š','á']) do
@@ -191,7 +191,7 @@ end;
 Procedure URep(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 var p : byte;
 begin
-  p:=pos(ustr(s1),ustr(s));
+  p:=pos(UpperCase(s1),UpperCase(s));
   if p>0 then begin
     delete(s,p,length(s1));
     insert(s2,s,p);
@@ -233,7 +233,7 @@ begin
     iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
 
-  p:=pos('$FILE',ustr(prog));
+  p:=pos('$FILE',UpperCase(prog));
   if p=0 then prog:=prog+' '+parfn
   else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
   urep(prog,'$TYPE',viewer.typ);
@@ -245,6 +245,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/04 12:04:32  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.17  2000/06/29 13:01:03  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

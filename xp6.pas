@@ -279,7 +279,7 @@ begin
   if (s<>'') and ((p=0) or (pos('.',mid(s,p))=0)) then
   begin
       dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
-      dbSeek(d,piKurzname,ustr(s));
+      dbSeek(d,piKurzname,UpperCase(s));
       if dbFound then
       begin
         dbRead(d,'Langname',s);
@@ -511,7 +511,7 @@ var i,first : integer;
     with ccm^[n] do begin
       ccpm:=(cpos('@',adr)>0);
       if ccpm then begin
-        dbSeek(ubase,uiName,ustr(adr));
+        dbSeek(ubase,uiName,UpperCase(adr));
         if dbFound then begin
           dbReadN(ubase,ub_pollbox,server);
           if (dbReadInt(ubase,'userflags') and 2<>0) and
@@ -526,12 +526,12 @@ var i,first : integer;
           nobrett:=true;
           end
         else begin
-          if adr[1]='/' then dbSeek(bbase,biBrett,'A'+ustr(adr))
-          else dbSeek(bbase,biBrett,ustr(adr));
+          if adr[1]='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
+          else dbSeek(bbase,biBrett,UpperCase(adr));
           if dbFound then dbReadN(bbase,bb_pollbox,server)
           else if CrosspostBox<>'' then begin
             adr:='+'+CrosspostBox+':'+adr;
-            server:=ustr(CrosspostBox);
+            server:=UpperCase(CrosspostBox);
             nobrett:=true;
             end;
           end;
@@ -727,13 +727,13 @@ var i    : integer;
 begin
   modi:=false;
   for i:=0 to cc_anz do
-    if ccm^[i].nobrett and (ccm^[i].server=ustr(oldbox)) then begin
-      ccm^[i].server:=ustr(newbox);
+    if ccm^[i].nobrett and (ccm^[i].server=UpperCase(oldbox)) then begin
+      ccm^[i].server:=UpperCase(newbox);
       cc^[i]:='+'+newbox+mid(cc^[i],cpos(':',cc^[i]));
       modi:=true;
       end
     else if ccm^[i].ccnt=newnt then begin
-      ccm^[i].server:=ustr(newbox);
+      ccm^[i].server:=UpperCase(newbox);
       modi:=true;
       end;
   if modi then TestXpostings(false);
@@ -909,7 +909,7 @@ fromstart:
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
   if pm then begin
     fidoto:='';
-    dbSeek(ubase,uiName,ustr(empfaenger));
+    dbSeek(ubase,uiName,UpperCase(empfaenger));
     if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
@@ -933,7 +933,7 @@ fromstart:
           umlaute:=iif(dbReadInt(ubase,'userflags') and 8=0,0,1);
           empfaenger:=adresse;
           ch:='*';
-          dbSeek(ubase,uiName,ustr(empfaenger));
+          dbSeek(ubase,uiName,UpperCase(empfaenger));
           end;
         if dbFound then begin
           dbRead(ubase,'pollbox',box);   { leider doppelt nîtig :-/ }
@@ -1004,7 +1004,7 @@ fromstart:
   else begin   { not pm }
     ch:='';
     verteiler:=false;
-    dbSeek(bbase,biBrett,ustr(empfaenger));
+    dbSeek(bbase,biBrett,UpperCase(empfaenger));
     if not dbFound then begin
       empfneu:=true;
       if empfaenger[1]='$' then box:=InternBox  { autom. Nachricht an neues Brett }
@@ -1043,7 +1043,7 @@ fromstart:
 
   dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ÅberprÅfen }
   if box<>'' then begin            { nicht intern.. }
-    dbSeek(d,boiName,ustr(box));
+    dbSeek(d,boiName,UpperCase(box));
     if not dbFound then begin
       dbClose(d);
       rfehler1(607,box);  { 'Unbekannte Serverbox: %s  -  Bitte ÅberprÅfen!' }
@@ -1051,7 +1051,7 @@ fromstart:
     end;
     dbRead(d,'boxname',box);       { Schreibweise korrigieren }
   end else                         { interne Msgs -> Default-Username }
-    dbSeek(d,boiName,ustr(DefaultBox));
+    dbSeek(d,boiName,UpperCase(DefaultBox));
   LoadBoxData;
   if pm and not XP_ID_PMs then XpID:=false;
   if not pm and not XP_ID_AMs then XpID:=false;
@@ -1087,7 +1087,7 @@ fromstart:
           binary or TestXPointID)
      and (pm or not ntForceMailer(netztyp)) then
     XpID:=true;
-  if pm and (ustr(left(empfaenger,length(mapsname)))=mapsname) then
+  if pm and (UpperCase(left(empfaenger,length(mapsname)))=mapsname) then
     XpID:=false;
   if SendFlags and SendWAB<>0 then XpID:=false;
   { Bei Nachrichten, die mit N/W/O weitergeleitet wurden, darf keine
@@ -1152,7 +1152,7 @@ fromstart:
          not pm then goto xexit;
     end;
     if (_bezug<>'') and ntKomkette(netztyp) and
-                    (ustr(left(betreff,20))<>ustr(oldbetr)) then begin
+                    (UpperCase(left(betreff,20))<>UpperCase(oldbetr)) then begin
       pushhp(1501);
       if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff geÑndert - Verkettung beibehalten' }
              ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
@@ -1314,7 +1314,7 @@ fromstart:
                     rfehler(637)   { 'ServerÑnderung nicht mîglich - abweichende Brettebene!' }
                   else begin
                     dbOpen(d,BoxenFile,1);
-                    dbSeek(d,boiName,ustr(newbox));
+                    dbSeek(d,boiName,UpperCase(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
                     else begin
@@ -1408,7 +1408,7 @@ fromstart:
 
       else    if n<0 then begin
                 n:=abs(n);
-                if ustr(t)=kopkey then begin
+                if UpperCase(t)=kopkey then begin
                   old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
                   edit_cc(cc,cc_anz,brk);
@@ -1418,7 +1418,7 @@ fromstart:
                   showcc;
                   showbox;   { evtl. in Klammern }
                   end;
-                if echomail and (ustr(t)=fidokey) then begin
+                if echomail and (UpperCase(t)=fidokey) then begin
                   readstring(x+13,y+2,'',fidoto,35,35,'',brk);
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
@@ -1514,7 +1514,7 @@ fromstart:
         end
     else
       if pm then begin
-        dbSeek(ubase,uiName,ustr(empfaenger));
+        dbSeek(ubase,uiName,UpperCase(empfaenger));
         dbRead(ubase,'adrbuch',b);
         if b=0 then begin
           b:=1;
@@ -1569,7 +1569,7 @@ fromstart:
       wrs('');
       wrs(getres2(612,2));   { 'BinÑrdatei verschickt' }
       wrs('');
-      wrs(getreps2(612,3,ustr(datei)));   { 'Dateiname: %s' }
+      wrs(getreps2(612,3,UpperCase(datei)));   { 'Dateiname: %s' }
       wrs(getreps2(612,4,strs(fs)));      { 'Grî·e    : %s Bytes' }
       close(f2^);
       assign(f^,TempPath+'binmsg');
@@ -1633,7 +1633,7 @@ fromstart:
         end;
       hdp^.oem:=sData^.oem;
       end;
-    if ustr(sData^.ReplyGroup)<>ustr(mid(empfaenger,2)) then
+    if UpperCase(sData^.ReplyGroup)<>UpperCase(mid(empfaenger,2)) then
       hdp^.ReplyGroup:=sData^.ReplyGroup;
     if not pm then
       hdp^.distribution:=sData^.distribute;
@@ -1838,7 +1838,7 @@ fromstart:
       AddBezug(hdp^,iif(msgCPanz=0,0,iif(msgCPpos=0,1,2)));
       if cc_anz=0 then dbFlushClose(mbase);
       if not pm and (msgCPpos=0) then begin    { Brettdatum neu setzen }
-        dbSeek(bbase,biBrett,ustr(empfaenger));
+        dbSeek(bbase,biBrett,UpperCase(empfaenger));
         if not dbFound then
           tfehler('neue Msg: Brett weg??',30)
         else
@@ -1852,11 +1852,11 @@ fromstart:
       if msgCPpos<msgCPanz then begin
         repeat
           if ccm^[msgCPpos].ccpm then begin
-            dbSeek(ubase,uiName,ustr(cc^[msgCPpos]));
+            dbSeek(ubase,uiName,UpperCase(cc^[msgCPpos]));
             if dbFound then _brett:=mbrettd('U',ubase);
             end
           else begin
-            dbSeek(bbase,biBrett,'A'+ustr(cc^[msgCPpos]));
+            dbSeek(bbase,biBrett,'A'+UpperCase(cc^[msgCPpos]));
             if dbFound then begin
               _brett:=mbrettd('A',bbase);
               dbWrite(bbase,'LDatum',sendedat);    { Brettdatum neu setzen }
@@ -1911,7 +1911,7 @@ fromstart:
         if nobox and (b>0) then
           TruncStr(hdp^.absender,b-1);
         b:=cpos('@',hdp^.empfaenger);
-        if (b>0) and (ustr(mid(hdp^.empfaenger,b+1))=box+'.ZER') then
+        if (b>0) and (UpperCase(mid(hdp^.empfaenger,b+1))=box+'.ZER') then
           hdp^.empfaenger:=left(hdp^.empfaenger,b-1);
         end;
       case docode of
@@ -2090,7 +2090,7 @@ begin
           if repto<>'' then empf:=repto;
           end;
         hf:='';
-        sendfilename:=ustr(name+ext);
+        sendfilename:=UpperCase(name+ext);
         sendfiledate:=zcfiletime(fn);
         if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
         dispose(sData);
@@ -2108,7 +2108,7 @@ var d    : DB;
 begin
   SendPMmessage:=false;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then empf:='1/'+dbReadStr(d,'username')+iifs(userboxname,'/'+box,'')
   else empf:='';
   dbClose(d);
@@ -2129,6 +2129,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/07/04 12:04:26  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.42  2000/07/03 13:31:41  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     typeform,inout,keys,winxp,maske,video,maus2,resource,
+     sysutils,typeform,inout,keys,winxp,maske,video,maus2,resource,
      xp0,xp1,xp1help,xp1input,xp2, xpglobal;
 
 
@@ -67,7 +67,7 @@ var anzahl  : byte;
       modi:=modi or mmodified;
       if not brk then
         for i:=0 to 3 do
-          if ustr(s)=ustr(getres2(240,i+7)) then ntyp:=i;
+          if UpperCase(s)=UpperCase(getres2(240,i+7)) then ntyp:=i;
       freeres;
       enddialog;
       end;
@@ -150,7 +150,7 @@ begin
     if (t=keydown) and (p<anzahl) then inc(p);
     if (t=keyhome) or (t=keypgup) then p:=1;
     if (t=keyend) or (t=keypgdn) then p:=anzahl;
-    if (t=keycr) or (ustr(t)='E') then edit(p);
+    if (t=keycr) or (UpperCase(t)='E') then edit(p);
   until t=keyesc;
   closebox;
   freeres;
@@ -179,7 +179,7 @@ var t : text;
 
   procedure wrh(b:byte);
   begin
-    write(t,'$',lstr(hex(b,2)),' ');
+    write(t,'$',LowerCase(hex(b,2)),' ');
   end;
 
   procedure wrhl(b:byte);
@@ -192,7 +192,7 @@ begin
   assign(t,colcfgfile);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler1(107,ustr(colcfgfile));  { 'Fehler beim Schreiben von %s' }
+    rfehler1(107,UpperCase(colcfgfile));  { 'Fehler beim Schreiben von %s' }
     exit;
     end;
   writeln(t,'## ',getres(241));   { 'CrossPoint - Farbkonfiguration' }
@@ -1138,6 +1138,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.15  2000/06/29 13:00:55  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -428,7 +428,7 @@ begin
     end
   else begin
     dbOpen(d,PseudoFile,1);
-    dbSeek(d,piKurzname,ustr(s));
+    dbSeek(d,piKurzname,UpperCase(s));
     if dbFound and ((dbReadStr(d,'pollbox')='') or
        (ntBoxNetztyp(dbReadStr(d,'pollbox'))=nt_Maus)) then
       dbRead(d,'langname',s)
@@ -719,10 +719,10 @@ begin
       exit;
       end;
    if (typ=5) and (ArchivBretter<>'') then begin    { Test, ob Archivbretter }
-     dbSeek(bbase,biBrett,'A'+ustr(ArchivBretter));
+     dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
      if dbEOF(bbase) or
-        (ustr(left(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
-         'A'+ustr(ArchivBretter)) then begin
+        (UpperCase(left(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
+         'A'+UpperCase(ArchivBretter)) then begin
        rfehler(630);    { 'ungÅltige Archivbrett-Einstellung' }
        exit;
        end;
@@ -780,11 +780,11 @@ again:
       6 : begin                          { 6: Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
             dbReadN(mbase,mb_absender,name);
-            dbSeek(ubase,uiName,ustr(name));
+            dbSeek(ubase,uiName,UpperCase(name));
             if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
               size:=0;
               dbReadX(ubase,'adresse',size,name);
-              if name<>'' then dbSeek(ubase,uiName,ustr(name))
+              if name<>'' then dbSeek(ubase,uiName,UpperCase(name))
               else dbReadN(mbase,mb_absender,name);
               end;
             write_archiv(true);
@@ -1013,7 +1013,7 @@ again:
                dispose(sData);
              end;
          6 : begin
-               dbSeek(ubase,uiName,ustr(name));
+               dbSeek(ubase,uiName,UpperCase(name));
                if not dbFound then begin   { User noch nicht vorhanden }
                  dbAppend(ubase);
                  dbWriteN(ubase,ub_username,name);
@@ -1118,7 +1118,7 @@ begin
   extract_msg(0,'',fn,true,1);
   if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
 
-  dbSeek(ubase,uiName,ustr(hdp^.absender));
+  dbSeek(ubase,uiName,UpperCase(hdp^.absender));
   if not dbFound then begin                        { Userbrett neu anlegen }
     dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
     if dbFound then dbReadN(bbase,bb_pollbox,box)
@@ -1248,6 +1248,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/04 12:04:26  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.23  2000/07/03 15:11:01  mk
   - unnˆtige Defines entfernt
   - sysutils war zweimal in xp6o.pas enthalten

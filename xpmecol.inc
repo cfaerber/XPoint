@@ -213,7 +213,7 @@ begin
   reset(t);
   while not eof(t) do with col do begin
     readln(t,s);
-    s:=lstr(trim(s));
+    s:=LowerCase(trim(s));
     p:=cpos('=',s);
     if (s<>'') and (s[1]<>'#') and (p>0) then begin
       s1:=copy(s,1,min(p-1,20));
@@ -420,7 +420,7 @@ begin
       else if homeend and (t=keyhome) then p:=1
       else if homeend and (t=keyend) then p:=n
       else begin
-        p1:=pos(ustr(t),ustr(hot));
+        p1:=pos(UpperCase(t),UpperCase(hot));
         if p1>0 then begin
           p:=p1; display;
           t:=keycr; end
@@ -442,6 +442,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.5  2000/06/29 13:01:02  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

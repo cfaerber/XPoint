@@ -50,7 +50,7 @@ procedure makefeld(var lfeld:dbFeldTyp; var fld:dbfeld);
 begin
   fillchar(fld,sizeof(fld),0);
   with lfeld,fld do begin
-    name:=FUStr(fname);
+    name:=FileUpperCase(fname);
     feldtyp:=ftyp;
     case ftyp of
       1,2,5 : feldsize:=fsize;
@@ -430,6 +430,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/04 12:04:15  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.9  2000/07/02 14:24:45  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

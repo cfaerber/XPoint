@@ -95,7 +95,7 @@ var t    : text;
       txt:=mid(s,13);
       p:=cpos(' ',txt);
       if p=0 then first:=''
-      else first:=lstr(left(txt,p-1));
+      else first:=LowerCase(left(txt,p-1));
       end;
   end;
 
@@ -154,7 +154,7 @@ begin
                 if starttime='' then starttime:=zeit;
                 if first='calling' then
                   inc(wahlcnt)
-                else if lstr(txt)='starting mail transfer' then begin
+                else if LowerCase(txt)='starting mail transfer' then begin
                   if lastconntime<>'' then
                     inc(logtime,tdiff(lastconntime,zeit));
                   ltrans:=zeit;
@@ -220,9 +220,9 @@ begin
   FidoImport:=false;
   with BoxPar^ do begin
     ttwin; attrtxt(7); moff; clrscr; mon;
-    p:=pos('$PUFFER',ustr(downarcer));         { Empfangspakete entpacken }
+    p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
-    p:=pos('$DOWNFILE',ustr(downarcer));       { immer > 0 ! }
+    p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
     Dos.findfirst(ImportDir+'*.*',ffAnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
@@ -497,7 +497,7 @@ label fn_ende,fn_ende0;
           if p=0 then p:=blankposx(s);
           new(fp);
           fp^.next:=rflist;
-          fp^.fn:=ustr(getfilename(left(s,p-1)));
+          fp^.fn:=UpperCase(getfilename(left(s,p-1)));
           rflist:=fp;
           end;
         end;
@@ -711,8 +711,8 @@ end;
 procedure EditRequest(var t:taste);
 var adr : string[20];
 begin
-  if ustr(t)='E' then
-    if UStr(copy(get_selection,3,1))='R' then begin
+  if UpperCase(t)='E' then
+    if UpperCase(copy(get_selection,3,1))='R' then begin
       adr:=trim(copy(get_selection,5,18));
       closebox;
       if IsFidoNode(adr) then begin
@@ -934,6 +934,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.16  2000/07/03 15:23:27  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

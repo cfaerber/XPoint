@@ -168,7 +168,7 @@ begin
   outfile:=paramstr(2);
   breite:=ival(paramstr(3));
   rand:=ival(paramstr(4));
-  nomark:=(ustr(paramstr(5))='N');
+  nomark:=(UpperCase(paramstr(5))='N');
   if infile='' then begin
     write('Eingabedatei: ');
     readln(infile);
@@ -199,6 +199,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/07/04 12:04:15  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.7  2000/07/04 10:06:37  mk
   - SysUtils eingefuegt
 

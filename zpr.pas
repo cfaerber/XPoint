@@ -294,7 +294,7 @@ var i,j : integer;
     if j>length(s) then
       _err('Dateiname bei "-d"-Option fehlt!')
     else begin
-      ferr:=UStr(mid(s,j));
+      ferr:=UpperCase(mid(s,j));
       j:=length(s)+1;
       end;
   end;
@@ -308,7 +308,7 @@ begin
     begin    { ML 13.02.2000 Überprüfung nun mit paramchars }
       if s[1] in paramchars then begin
       delete(s,1,1);
-      s:=lstr(s);
+      s:=LowerCase(s);
       j:=1;
       while (j<=length(s)) do begin
         c:=s[j];
@@ -583,7 +583,7 @@ begin
       GetString;
       p:=cpos(':',s);
       if p>1 then begin
-        feld:=ustr(left(s,p-1));
+        feld:=UpperCase(left(s,p-1));
         if (fldanz<maxhdlines) or (feld='LEN') then begin
           if fldanz<maxhdlines then inc(fldanz);
           fldsize[fldanz]:=totallen;
@@ -1027,7 +1027,7 @@ var i,j  : integer;
         end
       else if flag then                 { ist ein bekannter Header }
         for j:=1 to knownheaders do     { daraus geworden?         }
-          if ustr(left(fld[n],i-1))=headerindex[j].name then begin
+          if UpperCase(left(fld[n],i-1))=headerindex[j].name then begin
             fldtype[n]:=j;
             inc(hdfound[j]);
             end;
@@ -1194,7 +1194,7 @@ begin
         minpos:=255; minfld := 1;
         for i:=1 to knownheaders do
           if i<>hdf_LEN then begin
-            p:=pos(headerindex[i].name+':',ustr(hd1^.fld[hdlc]));
+            p:=pos(headerindex[i].name+':',UpperCase(hd1^.fld[hdlc]));
             if (p>0) and (p<minpos) then begin
               minpos:=p; minfld:=i;
               end;
@@ -1316,6 +1316,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/07/04 12:04:33  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.18  2000/07/04 09:59:04  mk
   - Sysutils eingefuegt
 

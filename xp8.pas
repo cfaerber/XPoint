@@ -74,7 +74,7 @@ var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
     nt : byte;                       { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
 begin                                { 13=Feeder, 14=postmaster               }
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if not dbFound then
     mapstype:=0
   else begin
@@ -291,7 +291,7 @@ var hf : string[12];
     assign(t,datei);                     { neue (Ab)Bestellung schreiben }
     ReadBoxPar(nt_UUCP,box);
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(box));
+    dbSeek(d,boiName,UpperCase(box));
     rewrite(t);
     writeln(t,'system: ',boxpar^.pointname,
                          iifs(boxpar^.BMdomain,dbReadStr(d,'domain'),''));
@@ -304,7 +304,7 @@ var hf : string[12];
     freelist(root);
     bef:='setsys';
     s:=mapsname+'@'+box+ntServerDomain(box);  { evtl. alten setsys-Befehl lîschen }
-    dbSeek(ubase,uiName,ustr(s));
+    dbSeek(ubase,uiName,UpperCase(s));
     if dbFound then begin
       _brett:=mbrettd('U',ubase);
       dbSeek(mbase,miBrett,_brett+dup(4,#255));
@@ -331,7 +331,7 @@ var hf : string[12];
     assign(t1,datei); reset(t1);
     assign(t2,tn); rewrite(t2);
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(box));
+    dbSeek(d,boiName,UpperCase(box));
     if boxpar^.BMdomain then domain:=dbReadStr(d,'domain')
     else domain:='';
     case typ of
@@ -466,7 +466,7 @@ var t     : text;
     assign(t,bfile+'.bl');
     reset(t);
     if ioresult=0 then begin
-      message(getreps(801,ustr(box)));   { 'Brettliste fÅr %s laden...' }
+      message(getreps(801,UpperCase(box)));   { 'Brettliste fÅr %s laden...' }
       while (mm<maxmaggi) and not eof(t) do begin
         readln(t,s);
         if maf then begin
@@ -478,7 +478,7 @@ var t     : text;
           s:=trim(left(s,40));
           if left(s,1)<>'/' then s:='/'+s;
           while cpos(' ',s)>0 do s[cpos(' ',s)]:='_';
-          map^[mm].name:=ustr(s);
+          map^[mm].name:=UpperCase(s);
           end
         else   { ProNet }
           if left(s,1)<>';' then begin
@@ -528,14 +528,14 @@ var t     : text;
   var t : text;
       s : string[80];
   begin
-    brett:=ustr(mid(brett,length(boxpar^.magicbrett)+2));
+    brett:=UpperCase(mid(brett,length(boxpar^.magicbrett)+2));
     assign(t,bfile+'.Bl');
     qwkbrett:='';
     if existf(t) then begin
       reset(t);
       while not eof(t) do begin
         readln(t,s);
-        if pos(brett,ustr(s))>0 then
+        if pos(brett,UpperCase(s))>0 then
           qwkbrett:=left(s,3);
         end;
       close(t);
@@ -591,7 +591,7 @@ begin
       if maus or fido or qwk then
       begin
         ReadBoxPar(0,box);
-        if copy(ustr(brett),2,length(boxpar^.magicbrett))=ustr(boxpar^.magicbrett)
+        if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett)
         then
           if qwk then begin
             bfile:=boxfilename(box);
@@ -608,7 +608,7 @@ begin
         else writeln(t,copy(brett,2,brettlen))
       else begin
         dbOpen(d,OwnPath+BoxenFile,1);
-        dbSeek(d,boiName,ustr(box));
+        dbSeek(d,boiName,UpperCase(box));
         if dbFound then begin
           dbRead(d,'dateiname',bfile);
           ReadBrettliste;
@@ -639,7 +639,7 @@ begin
           ReadBox(0,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
-          if ustr(dbReadStr(bbase,'pollbox'))=ustr(box) then begin
+          if UpperCase(dbReadStr(bbase,'pollbox'))=UpperCase(box) then begin
             if not topen then begin
               rewrite(t);
               if quick or (uucp and (boxpar^.BMtyp=bm_postmaster)) then
@@ -648,8 +648,8 @@ begin
               end;
             dbReadN(bbase,bb_brettname,brett);
             if maus or fido or qwk then begin
-              if copy(ustr(brett),2,length(boxpar^.magicbrett))=
-                 ustr(boxpar^.magicbrett)
+              if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=
+                 UpperCase(boxpar^.magicbrett)
               then
                 if qwk then writeln(t,'DROP ',qwkbrett(brett))
                 else begin
@@ -692,7 +692,7 @@ var t1,t2 : text;
 
   function zok:boolean;
   begin
-    zok:=pos('bestellt',lstr(s))>40;
+    zok:=pos('bestellt',LowerCase(s))>40;
   end;
 
 begin
@@ -758,7 +758,7 @@ begin
   dbReadN(mbase,mb_betreff,betreff);
   box:=systemname(absender);
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
     dbRead(d,'dateiname',bfile)
   else
@@ -785,7 +785,7 @@ begin
   new(boxpar);
   ReadBox(0,bfile,boxpar);
   if mapstype(box) in [2,8] then begin
-    message('Brettliste fÅr '+ustr(box)+' wird eingelesen ...');
+    message('Brettliste fÅr '+UpperCase(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(0,'',fn,false,0);
     case mapstype(box) of
@@ -795,15 +795,15 @@ begin
     _era(fn);
     end
   else begin
-    if (pos('BRETT',ustr(betreff))=0) and (betreff<>'Gruppenliste') and
-       (pos('list',lstr(betreff))=0) and
+    if (pos('BRETT',UpperCase(betreff))=0) and (betreff<>'Gruppenliste') and
+       (pos('list',LowerCase(betreff))=0) and
       not (fido or turbo or uucp)
       and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, da· das eine Brettliste ist' }
       goto ende;
     if pos('@',absender)=0 then
       trfehler(805,60)    { 'UngÅltige Absenderangabe' }
     else begin
-      message(getreps(806,ustr(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
+      message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
       makebak(bfile+'.BL','BAK');
       fn:=TempS(dbReadInt(mbase,'msgsize'));
       extract_msg(xTractMsg,'',fn,false,0);
@@ -838,11 +838,11 @@ begin
   maggi:=(mapstype(box)=2);    { MagicNet }
   promaf:=(mapstype(box)=8);
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   dbRead(d,'dateiname',bfile);
   dbClose(d);
   ReadBox(0,bfile,boxpar);
-  message(getreps(806,ustr(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
+  message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
   if maggi then
     if not ReadMafList(fn,bfile) then exit
     else
@@ -1037,7 +1037,7 @@ begin
     box:=mapsbox;
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then begin
     dbRead(d,'dateiname',fn);
     netztyp:=dbReadInt(d,'netztyp');
@@ -1248,7 +1248,7 @@ var brk     : boolean;
       delete(gruppe,1,1);
       ReadBoxPar(0,box);
       with BoxPar^ do
-        if left(ustr(gruppe),length(MagicBrett))<>ustr(MagicBrett) then
+        if left(UpperCase(gruppe),length(MagicBrett))<>UpperCase(MagicBrett) then
           gruppe:=''
         else
           delete(gruppe,1,length(magicbrett));
@@ -1277,7 +1277,7 @@ begin
   if box='' then exit;
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   dbRead(d,'nameomaps',mapsname);
   dbRead(d,'netztyp',nt);
   dbRead(d,'domain',domain);
@@ -1588,6 +1588,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/04 12:04:27  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.13  2000/07/03 13:31:42  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -103,7 +103,7 @@ var p      : charrp;
   begin
     if (left(hd.empfaenger,1)<>'/') and
        (left(hd.empfaenger,length(TO_ID))<>TO_ID) and not hd.archive and
-       ((uname='') or (ustr(left(hd.empfaenger,length(uname)))<>ustr(uname)))
+       ((uname='') or (UpperCase(left(hd.empfaenger,length(uname)))<>UpperCase(uname)))
     then begin
       if zconn then
         blockwrite(f2,xparc[1],length(xparc))
@@ -215,6 +215,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.5  2000/07/04 12:04:18  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.4  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

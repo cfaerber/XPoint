@@ -15,7 +15,7 @@ unit  xp_iti;
 
 interface
 
-uses  typeform,fileio, xpglobal;
+uses  typeform,fileio, sysutils, xpglobal;
 
 const MaxMausInfos = 200;
 
@@ -108,7 +108,7 @@ begin
         readln(t,s);
       if not eof(t) then begin
         inc(infos);
-        info^[infos].ID:=ustr(mid(s,2));
+        info^[infos].ID:=UpperCase(mid(s,2));
         repeat
           readln(t,s);
           case firstchar(s) of

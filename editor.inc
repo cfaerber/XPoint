@@ -2030,7 +2030,7 @@ begin
      (ersetzen and Procs.ReplFunc(e,txt,repby,igcase)) or
      (not ersetzen and Procs.FindFunc(e,txt,igcase)) then begin
     if txt='' then exit;
-    if igcase then stxt:=UStr(txt)
+    if igcase then stxt:=UpperCase(txt)
     else stxt:=txt;
     brk:=false; repall:=false;
     count:=0;
@@ -2290,6 +2290,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/07/04 12:04:15  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.21  2000/07/03 16:20:02  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

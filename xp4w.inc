@@ -54,7 +54,7 @@ begin
       end;
     dbReadN(ubase,ub_username,n);
     if (dispmode=1) or (dispmode=3) then begin    { Adreábuch }
-      dbSeek(ubase,uiAdrbuch,#1+ustr(n));
+      dbSeek(ubase,uiAdrbuch,#1+UpperCase(n));
       if dbEOF(ubase) then disprec[1]:=0
       else disprec[1]:=dbRecno(ubase);
       end
@@ -216,7 +216,7 @@ begin
     if dispmode<=0 then dbreadn(bbase,bb_brettname,uname)
       else dbReadN(ubase,ub_username,uname);
     dbnext(dispdat);
-  Until dbEOF(dispdat) or (pos('$/T',ustr(uname))>0);
+  Until dbEOF(dispdat) or (pos('$/T',UpperCase(uname))>0);
   if not dbEOF(dispdat) then dbskip(dispdat,-1);
   rec:=dbRecno(dispdat);
   disprec[1]:=rec;
@@ -339,20 +339,20 @@ begin
     ReadHeader(hdp^,hds,false);
     s:='';
     if hdp^.PmReplyTo<>'' then begin
-      dbSeek(ubase,uiName,ustr(hdp^.PmReplyTo));
+      dbSeek(ubase,uiName,UpperCase(hdp^.PmReplyTo));
       if dbFound then s:=hdp^.PmReplyTo;
       end;
     if s='' then
       dbReadN(mbase,mb_absender,s);   { auch auf mbase arbeitet.     }
     dispose(hdp);
-    dbSeek(ubase,uiName,ustr(s));
+    dbSeek(ubase,uiName,UpperCase(s));
     if not dbFound then
       rfehler(444)  { 'User nicht erfaát' }
     else begin
       if dbXsize(ubase,'adresse')>0 then begin  { Vertreteradresse? }
         size:=0;
         dbReadX(ubase,'adresse',size,s);
-        dbSeek(ubase,uiName,ustr(s));
+        dbSeek(ubase,uiName,UpperCase(s));
         if not dbFound then
           dbReadN(mbase,mb_absender,s);
         end;
@@ -485,7 +485,7 @@ var fn     : pathstr;
   begin
     if (viewer.ext='') and (viewer.prog<>'') then
     begin
-      s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.';
+      s:=UpperCase(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.';
       if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
         if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
         else begin
@@ -924,17 +924,17 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack; 
+                 SetKK; GoMsgBack;
                  GoP;
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth; 
+                 SetKK; GoMsgForth;
                  GoP;
                  ende:=false;
                end;
           end;
-        if (not ende) and (lres<=7) 
+        if (not ende) and (lres<=7)
           then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
 
         if lres<6 then
@@ -1154,18 +1154,18 @@ begin
         newsuch:=newsuch+UpCase(ch);
 
   if (dispmode<1) then begin
-    dbSeek(bbase,biBrett,'A'+ustr(newsuch));
+    dbSeek(bbase,biBrett,'A'+UpperCase(newsuch));
     if not dbEOF(bbase) then begin
       dbReadN(bbase,bb_brettname,s);
       delfirst(s);
-      if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+      if UpperCase(left(s,length(newsuch)))<>UpperCase(newsuch) then
         errsound
       else if ch<>'/' then
         suchok
       else begin
         pp:=pos('/',mid(s,length(newsuch)+1));
         if pp=0 then begin
-          dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
+          dbSeek(bbase,biBrett,'A'+UpperCase(s)+'/');
           if not dbEOF(bbase) and (left(dbReadStr(bbase,'brettname'),length(s)+2)='A'+s+'/')
           then begin
             newsuch:=s+'/';
@@ -1183,7 +1183,7 @@ begin
     end
   else begin
 
-   dbSeek(ubase,uiName,ustr(newsuch));
+   dbSeek(ubase,uiName,UpperCase(newsuch));
     if not dbEOF(ubase) then begin
 
       if (dispmode=1) or (dispmode=3) then     { Adressbuch: }
@@ -1195,12 +1195,12 @@ begin
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
           if dbEOF(ubase) then Exit;
           dbReadN(ubase,ub_username,s);
-        until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));
+        until (adrb<>0) or (left(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
         end
       else dbReadN(ubase,ub_username,s);
 
-      if left(ustr(s),length(newsuch))<>ustr(newsuch) then
+      if left(UpperCase(s),length(newsuch))<>UpperCase(newsuch) then
         errsound
       else
         suchok;
@@ -1347,7 +1347,7 @@ procedure _msg_window;
 begin
   GoP;
   msg_window(dispext or ((ArchivBretter<>'') and
-    (ustr(copy(dbReadStr(bbase,'brettname'),2,length(ArchivBretter)))=ArchivBretter)));
+    (UpperCase(copy(dbReadStr(bbase,'brettname'),2,length(ArchivBretter)))=ArchivBretter)));
 end;
 
 procedure _verknuepfen(bretter:boolean);
@@ -1499,6 +1499,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/07/04 12:04:25  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.27  2000/07/03 15:10:30  mk
   JG: - Bugfix: Suchfunktionen und "O" im Lister
         Nach Bewegung mit +/- und Cursor im Bezugsbaum

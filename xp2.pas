@@ -191,13 +191,13 @@ var i  : integer;
 
   function _is(ss:string):boolean;
   begin
-    _is:=('/'+ss=lstr(s)) or ('-'+ss=lstr(s));
+    _is:=('/'+ss=LowerCase(s)) or ('-'+ss=LowerCase(s));
   end;
 
   function isl(ss:string):boolean;
   begin
-    isl:=('/'+ss=lstr(left(s,length(ss)+1))) or
-         ('-'+ss=lstr(left(s,length(ss)+1)));
+    isl:=('/'+ss=LowerCase(left(s,length(ss)+1))) or
+         ('-'+ss=LowerCase(left(s,length(ss)+1)));
   end;
 
   function ReplDP(s:string):string;   { Fido-Boxname: "_" -> ":" }
@@ -250,9 +250,9 @@ var i  : integer;
     if _is('trace')then ParTrace:=true else
     if _is('m')    then ParMono:=true else
     if _is('j')    then ParNojoke:=true else
-    if isl('n:')  then NetPar(ustr(mid(s,4))) else
+    if isl('n:')  then NetPar(UpperCase(mid(s,4))) else
     if isl('nr:') then begin
-                         NetPar(ustr(mid(s,5)));
+                         NetPar(UpperCase(mid(s,5)));
                          ParRelogin:=true;
                        end else
     if _is('r')    then ParReorg:=true else
@@ -260,18 +260,18 @@ var i  : integer;
     if _is('pack') then ParPack:=true else
     if isl('xpack:') then begin
                          ParXpack:=true;
-                         ParXPfile:=ustr(copy(s,8,8));
+                         ParXPfile:=UpperCase(copy(s,8,8));
                        end else
     if _is('xpack')then ParXPack:=true else
     if _is('q')    then ParQuiet:=true else
     if _is('maus') then ParMaus:=true else
-    if isl('ip:') then ParPuffer:=ustr(copy(s,5,70)) else
+    if isl('ip:') then ParPuffer:=UpperCase(copy(s,5,70)) else
     if isl('ipe:')then begin
-                         ParPuffer:=ustr(copy(s,6,70));
+                         ParPuffer:=UpperCase(copy(s,6,70));
                          ParPufED:=true;
                        end else
     if _is('g')    then ParGelesen:=true else
-    if isl('ips:')then ParSendbuf:=ustr(mid(s,6)) else
+    if isl('ips:')then ParSendbuf:=UpperCase(mid(s,6)) else
     if isl('t:')  then ParTiming:=ival(copy(s,4,2)) else
     if _is('x')    then ParExit:=true else
     if _is('xx')   then ParXX:=true else
@@ -298,7 +298,7 @@ var i  : integer;
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
     if isl('autostart:') then ParAutost:=mid(s,12) else
-    if isl('l:')  then ParLanguage:=lstr(mid(s,4)) else
+    if isl('l:')  then ParLanguage:=LowerCase(mid(s,4)) else
     if _is('nomem')then ParNomem:=true else
     if _is('sd')   then ParNoSmart:=true else
     if _is('lcd')  then ParLCD:=true else
@@ -500,7 +500,7 @@ begin { loadresource }
     if (ParLanguage<>'') then begin
       lf2:='xp-'+ParLanguage+'.res';
       if not exist(lf2) then writeln('language file '+ParLanguage+' not found')
-      else if (ustr(lf)<>lf2) then begin
+      else if (UpperCase(lf)<>lf2) then begin
         lf:=lf2;
         WrLf;
         end;
@@ -523,7 +523,7 @@ begin { loadresource }
   reset(t);
   readln(t); readln(t);
   readln(t,s);
-  deutsch:=(lstr(s)='deutsch');
+  deutsch:=(LowerCase(s)='deutsch');
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
@@ -628,7 +628,7 @@ begin
   dbLog('-- Boxen ÅberprÅfen');
 {$ENDIF }
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(DefaultBox));
+  dbSeek(d,boiName,UpperCase(DefaultBox));
   if not dbFound then begin
     if dbRecCount(d)=0 then begin
       {$IFDEF EASY}
@@ -659,7 +659,7 @@ begin
   if deffidobox<>'' then begin
     dbSeek(d,boiName,deffidobox);
     if not dbFound then deffidobox:=''
-    else HighlightName:=ustr(dbReadStr(d,'username'));
+    else HighlightName:=UpperCase(dbReadStr(d,'username'));
     if deffidobox<>'' then SetDefZoneNet;
     end;
   dbClose(d);
@@ -689,7 +689,7 @@ var d     : DB;
 
   procedure getGrNr(name:string; var grnr:longint);
   begin
-    dbSeek(d,giName,ustr(name));
+    dbSeek(d,giName,UpperCase(name));
     if not dbFound then interr(getres(204));  { 'fehlerhafte Gruppendatei!' }
     dbRead(d,'INT_NR',grnr);
   end;
@@ -1008,11 +1008,11 @@ begin
       new(p);
       if dbReadInt(d,'netztyp')=nt_UUCP then begin
         dom:=dbReadStr(d,'fqdn');
-        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
+        if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
       else begin
         dom:=dbReadStr(d,'fqdn');
-        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
+        if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
                                  dbReadStr(d,'domain'));
       end;
       getmem(p^.domain,length(dom)+1);
@@ -1033,7 +1033,7 @@ procedure ReadDefaultViewers;
   procedure SeekViewer(mimetyp:string; var viewer:pviewer);
   var prog : string[ViewprogLen];
   begin
-    dbSeek(mimebase,mtiTyp,ustr(mimetyp));
+    dbSeek(mimebase,mtiTyp,UpperCase(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
        stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
       dbReadN(mimebase,mimeb_programm,prog);
@@ -1074,6 +1074,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/04 12:04:20  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.50  2000/07/03 15:54:15  hd
   - Linux: Check_Date entfernt
 

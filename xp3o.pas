@@ -367,13 +367,13 @@ begin
         newempf:=newempf+'@';
       end;
     newbrett:='A'+newbrett;
-    dbSeek(bbase,biBrett,ustr(newbrett));
+    dbSeek(bbase,biBrett,UpperCase(newbrett));
     if not dbFound then begin
       newbrett[1]:='1';
-      dbSeek(bbase,biBrett,ustr(newbrett));
+      dbSeek(bbase,biBrett,UpperCase(newbrett));
       if not dbFound then begin
         newbrett[1]:='$';
-        dbSeek(bbase,biBrett,ustr(newbrett));
+        dbSeek(bbase,biBrett,UpperCase(newbrett));
         end;
       end;
     if not dbFound then
@@ -472,7 +472,7 @@ begin
   closebox;
 
   if not brk then begin
-    dbSeek(ubase,uiName,ustr(newuser));
+    dbSeek(ubase,uiName,UpperCase(newuser));
     if not dbFound then
       fehler(getres2(323,4))   { 'User nicht vorhanden' }
     else if (dbReadInt(ubase,'userflags') and 4<>0) then
@@ -925,7 +925,7 @@ var d     : DB;
     f1,f2 : ^file;
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   dbRead(d,'dateiname',bf);
   dbClose(d);
   new(f1); new(f2);
@@ -1081,13 +1081,13 @@ begin
   else begin
     new(hdp);
     ReadHeader(hdp^,hds,true);
-    dbSeek(ubase,uiName,ustr(hdp^.empfaenger));
+    dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
     dispose(hdp);
     if not dbFound then exit;
     dbReadN(ubase,ub_pollbox,box);
     end;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
     case mbNetztyp of
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
@@ -1107,7 +1107,7 @@ begin
   ReadEmpflist:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp^,hds,true);
-  if ((ustr(adr)<>ustr(dbReadStr(mbase,'absender'))) and
+  if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
       not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
@@ -1195,13 +1195,13 @@ begin
   else begin
     new(hdp);
     ReadHeader(hdp^,hds,true);
-    dbSeek(ubase,uiName,ustr(hdp^.empfaenger));
+    dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
     dispose(hdp);
     if not dbFound then exit;
     dbReadN(ubase,ub_pollbox,box);
     end;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
     case mbNetztyp of
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
@@ -1220,7 +1220,7 @@ begin
   ReadEmpflist:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp^,hds,true);
-  if ((ustr(adr)<>ustr(dbReadStr(mbase,'absender'))) and
+  if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
       not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
@@ -1473,6 +1473,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.23  2000/07/03 13:31:40  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

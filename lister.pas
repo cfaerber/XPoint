@@ -24,6 +24,7 @@ uses
   crt,
 {$ENDIF }
   typeform,
+  sysutils,
   fileio,inout,maus2,keys,winxp;
 
 const ListHelpStr : string[8] = 'Hilfe';
@@ -529,7 +530,7 @@ var f  : file;
 begin
   with alist^ do
   begin
-    txt:=fitpath(ustr(fn),40);
+    txt:=fitpath(UpperCase(fn),40);
     ps:=min(10000,memavail-10000);
     getmem(p,ps);
     assign(f,fn);
@@ -780,7 +781,7 @@ var gl,p,y    : shortint;
           if suchcase then
             pp:=pos(suchstr,copy(EmsPtr(sline)^.cont,spos,255))
           else
-            pp:=pos(ustr(suchstr),ustr(copy(EmsPtr(sline)^.cont,spos,255)));
+            pp:=pos(UpperCase(suchstr),UpperCase(copy(EmsPtr(sline)^.cont,spos,255)));
           if pp=0 then begin
             sline:=EmsPtr(sline)^.next;
             inc(sp);
@@ -1034,7 +1035,7 @@ begin
         if (t=' ') and not stat.markable and not selbar then
           t:=keypgdn;
 
-        if stat.maysearch and ((ustr(t)='S') or (t='/') or (t='\')) then begin
+        if stat.maysearch and ((UpperCase(t)='S') or (t='/') or (t='\')) then begin
           suchcase:=(t='S') or (t='\');
           suchen(false);
           end;
@@ -1164,7 +1165,7 @@ begin
           f7p:=1; f8p:=lines;
           setmark;
           end;
-        if (ustr(t)='M') and stat.markswitch then begin
+        if (UpperCase(t)='M') and stat.markswitch then begin
           selbar:=not selbar;
           stat.markable:=selbar;
           end;
@@ -1379,6 +1380,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 12:04:16  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.22  2000/07/02 14:24:48  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

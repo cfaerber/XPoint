@@ -325,7 +325,7 @@ begin
       mwrt(x+length(txt),y,t);
       GotoXY(x+length(txt)-1, y);
       get(tt,curon);
-      tt:=Ustr(tt);
+      tt:=UpperCase(tt);
       if tt=#13 then t:=default
       else if tt=keyesc then t:=keyesc
       else if tt>' ' then t:=tt;
@@ -1883,6 +1883,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/04 12:04:15  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.29  2000/07/03 13:31:37  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

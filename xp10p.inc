@@ -141,7 +141,7 @@ begin
         else p:=0;
       until eof(t) or (p>0);
       while p>0 do begin             { einmaligen Datenblock einlesen }
-      { if lstr(left(s,p-1))='waehrung' then
+      { if LowerCase(left(s,p-1))='waehrung' then
           Waehrung:=trim(mid(s,p+1)); }
         if eof(t) then s:=''
         else readln(t,s);
@@ -156,7 +156,7 @@ begin
           fillchar(phones^[anzahl],sizeof(phones^[anzahl]),0);
           with phones^[anzahl] do begin
             repeat
-              if lstr(left(s,p-1))='zone' then komment:=trim(mid(s,p+1));
+              if LowerCase(left(s,p-1))='zone' then komment:=trim(mid(s,p+1));
               readln(t,s);
               p:=cpos('=',s);
             until p=0;
@@ -318,6 +318,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/04 12:04:19  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.5  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

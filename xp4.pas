@@ -22,7 +22,7 @@ uses xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
+  sysutils,dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
   archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
@@ -332,7 +332,7 @@ var t,lastt: taste;
               wrongline:=false
             else begin
               dbReadN(bbase,bb_brettname,s);
-              wrongline:=(ustr(copy(s,2,length(ArchivBretter)))<>ArchivBretter) and
+              wrongline:=(UpperCase(copy(s,2,length(ArchivBretter)))<>ArchivBretter) and
                          (left(s,3)<>'$/T');
               end;
         0 : if brettall or dispext then
@@ -546,9 +546,9 @@ var t,lastt: taste;
         -1  : if not ArchivWeiterleiten or (ArchivBretter='') then
                 dbGoTop(bbase)
               else begin
-                dbSeek(bbase,biBrett,'A'+ustr(ArchivBretter));
+                dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((ustr(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,-1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -599,13 +599,13 @@ var t,lastt: taste;
               else begin
                 mi:=dbGetIndex(bbase);
                 dbSetIndex(bbase,biBrett);
-                dbSeek(bbase,biBrett,'A'+ustr(ArchivBretter)+#255);
+                dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter)+#255);
                 if dbBOF(bbase) then dbGoTop(bbase)
                 else if dbEOF(bbase) then dbGoEnd(bbase)
                 else dbSkip(bbase,-1);
                 dbSetIndex(bbase,mi);
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((ustr(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -740,7 +740,7 @@ var t,lastt: taste;
     function empfbox:string;
     var box : string[boxnamelen];
     begin
-      dbSeek(bbase,biBrett,ustr(empf));
+      dbSeek(bbase,biBrett,UpperCase(empf));
       if dbEOF(bbase) or dbBOF(bbase) then box:=''
       else dbReadN(bbase,bb_pollbox,box);
       empfbox:=box;
@@ -753,7 +753,7 @@ var t,lastt: taste;
       p:=sendempflist;
       box:=empfbox;
       while p<>nil do begin
-        dbSeek(bbase,biBrett,'A'+ustr(p^.empf));
+        dbSeek(bbase,biBrett,'A'+UpperCase(p^.empf));
         if not dbFound then p^.empf:='+'+box+':'+p^.empf;
         p:=p^.next;
         end;
@@ -771,7 +771,7 @@ var t,lastt: taste;
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);
         if amreplyto<>'' then begin
-          dbSeek(bbase,biBrett,'A'+ustr(amreplyto));
+          dbSeek(bbase,biBrett,'A'+UpperCase(amreplyto));
           AddToEmpfList(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
           end;
         end;
@@ -794,7 +794,7 @@ var t,lastt: taste;
         s:=empf;
         empf:='A'+p^.empf;
         p^.empf:='+Dummy:'+mid(s,2);
-        dbSeek(bbase,biBrett,ustr(empf));   { mu· funktionieren! }
+        dbSeek(bbase,biBrett,UpperCase(empf));   { mu· funktionieren! }
         dbReadN(bbase,bb_pollbox,pb);
         p:=sendempflist;          { Sever fÅr alle nicht existierenden }
         while p<>nil do begin     { Bretter auf dieses Brett setzen    }
@@ -983,7 +983,7 @@ var t,lastt: taste;
         if pm and (left(betr,length(empfbkennung))=empfbkennung) then
           delete(betr,1,2);  { EmpfBest. }
         if not pm and (rt='') then begin
-          dbSeek(bbase,biBrett,ustr(empf));
+          dbSeek(bbase,biBrett,UpperCase(empf));
           if dbFound and (dbReadInt(bbase,'flags')and 8<>0) then begin
             if dbReadInt(bbase,'flags') and 32<>0 then rt:=''
             else dbReadN(bbase,bb_adresse,rt);
@@ -1009,10 +1009,10 @@ var t,lastt: taste;
           if not pm then begin
             if rtanz>1 then
               AddMultipleFollowups;
-            dbSeek(bbase,biBrett,ustr(empf));     { neues Brett in DISKUSSION-IN }
+            dbSeek(bbase,biBrett,UpperCase(empf));     { neues Brett in DISKUSSION-IN }
             if not dbFound and not MF_Brettda then begin
               forcebox:=EmpfBox;   { -> gleiche Pollbox }
-              dbSeek(bbase,biBrett,ustr(empf));
+              dbSeek(bbase,biBrett,UpperCase(empf));
               if not dbEOF(bbase) then
                 dbReadN(bbase,bb_gruppe,NewbrettGr);
               end;
@@ -1540,7 +1540,7 @@ begin      { --- select --- }
       if t=keyrght then t:=mainkeys[1];                  { 'X' }
       end;
     if (dispmode<>3) and (dispmode<>4) and (dispmode<>-1) and
-       ((t=keyf10) or (t=keyf4) or (pos(ustr(t),mainkeys)>0)) then begin
+       ((t=keyf10) or (t=keyf4) or (pos(UpperCase(t),mainkeys)>0)) then begin
       GoP;                       { 0 -> EOF/BOF }
       if dispmode=20 then dbClose(auto);
       enabledisable;
@@ -2037,6 +2037,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/04 12:04:23  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.28  2000/06/24 14:10:28  mk
   - 32 Bit Teile entfernt
 

@@ -103,7 +103,7 @@ var i : integer;
 begin
   if (length(s)=1) and (lastkey<>keybs) then begin
     for i:=4 downto 0 do
-      if upcase(s[1])=ustr(left(getres2(442,i),1)) then
+      if upcase(s[1])=UpperCase(left(getres2(442,i),1)) then
         s:=getres2(442,i);
     freeres;
     if length(s)>1 then _keyboard(keyend);
@@ -235,8 +235,8 @@ label ende;
         seeknot[n]:=false;
         end;
 {$Endif}
-    suchand:=cpos('o',lstr(suchopt))=0;                           { OR }
-    if not suchand or (cpos('a',lstr(suchopt))>0)                 { oder AND ?}
+    suchand:=cpos('o',LowerCase(suchopt))=0;                           { OR }
+    if not suchand or (cpos('a',LowerCase(suchopt))>0)                 { oder AND ?}
      and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
     begin
       n:=0;
@@ -294,7 +294,7 @@ label ende;
       end;
 
 {$IFDEF Debug}
-    if cpos('c',lstr(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
+    if cpos('c',LowerCase(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
 {$ENDIF}
 
   end;
@@ -489,7 +489,7 @@ label ende;
       j:=0;
       repeat
         seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
-        found:=((igcase and (pos(seek,UStr(such))>0)) or
+        found:=((igcase and (pos(seek,UpperCase(such))>0)) or
          (not igcase and (pos(seek,such)>0)));
         found_not:=found and seeknot[j];
         if suchand and not found and seeknot[j] then found:=true;
@@ -510,7 +510,7 @@ label ende;
         j:=0;
         repeat
           seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
-          found:=((igcase and (pos(seek,UStr(such))>0)) or
+          found:=((igcase and (pos(seek,UpperCase(such))>0)) or
            (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
           if suchand and not found and seeknot[j] then found:=true;
@@ -565,7 +565,7 @@ begin
 
   if suchopt[1]='*' then
   begin                                       {Erste Suche seit Programmstart ?}
-    if ustr(getres(1))='XP.HLP' then
+    if UpperCase(getres(1))='XP.HLP' then
       suchopt:='ai„'
     else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
       suchopt:='ai';
@@ -670,10 +670,10 @@ begin
     add:=iif(ntBrettEmpfUsed,1,0);
     dialog(50,12+add,getreps2(441,1,anztxt),x,y);
     i:=4;
-    while (i>0) and (ustr(typ)<>ustr(typa[i])) do dec(i);
+    while (i>0) and (UpperCase(typ)<>UpperCase(typa[i])) do dec(i);
     typ:=typa[i];
     i:=5;
-    while (i>0) and (ustr(status)<>ustr(stata[i])) do dec(i);
+    while (i>0) and (UpperCase(status)<>UpperCase(stata[i])) do dec(i);
     status:=stata[i];
     maddstring(3,2,getres2(441,6),user,32,SuchLen,'');  mhnr(630);   { 'Absender  ' }
     maddstring(3,3,getres2(441,7),betr,32,SuchLen,'');    { 'Betreff   ' }
@@ -715,14 +715,14 @@ begin
 
   if not brk then with srec^ do begin
     sst:=suchstring;
-    igcase:=multipos('iu',lstr(suchopt));
-    umlaut:=multipos('„”',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
+    igcase:=multipos('iu',LowerCase(suchopt));
+    umlaut:=multipos('„”',LowerCase(suchopt));  {JG:15.02.00 Umlautschalter}
     bereich:=0;
     for i:=1 to 4 do
-      if ustr(bretter)=ustr(bera[i]) then bereich:=i;
+      if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i;
     statb:=0;
     for i:=1 to 5 do
-      if ustr(status)=ustr(stata[i]) then statb:=i;
+      if UpperCase(status)=UpperCase(stata[i]) then statb:=i;
     me:=true;
     attrtxt(col.coldialog);
 
@@ -738,10 +738,10 @@ begin
         end;
       scantilde(betr,nbetr); scantilde(user,nuser);
       scantilde(fidoempf,nfidoempf);
-      if ustr(typ)=ustr(typa[1]) then typc:='T'
-      else if ustr(typ)=ustr(typa[2]) then typc:='B'
-      else if ustr(typ)=ustr(typa[3]) then typc:='F'
-      else if ustr(typ)=ustr(typa[4]) then typc:='M'
+      if UpperCase(typ)=UpperCase(typa[1]) then typc:='T'
+      else if UpperCase(typ)=UpperCase(typa[2]) then typc:='B'
+      else if UpperCase(typ)=UpperCase(typa[3]) then typc:='F'
+      else if UpperCase(typ)=UpperCase(typa[4]) then typc:='M'
       else typc:=' ';
       _vondat:=ixdat(copy(vondat,7,2)+copy(vondat,4,2)+copy(vondat,1,2)+'0000');
       _bisdat:=ixdat(copy(bisdat,7,2)+copy(bisdat,4,2)+copy(bisdat,1,2)+'2359');
@@ -911,7 +911,7 @@ begin
     betr2:=trim(betr2);
     UkonvStr(betr2,high(betr2));
     ll:=min(length(betr),length(betr2));
-    if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then
+    if (ll>0) and (UpperCase(left(betr,ll))=UpperCase(left(betr2,ll))) then
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
@@ -1271,7 +1271,7 @@ begin
         readln(t,s);
         s:=trim(s);
         if cpos('@',s)>0 then begin
-          dbSeek(ubase,uiName,ustr(s));
+          dbSeek(ubase,uiName,UpperCase(s));
           if not dbFound then begin
             inc(n);
             makeuser(s,DefaultBox);
@@ -1427,12 +1427,12 @@ begin
         if (cpos('@',empfaenger)=0) and
            ((netztyp<>nt_Netcall) or (left(empfaenger,1)='/'))
         then begin
-          dbSeek(bbase,biBrett,'A'+ustr(empfaenger));
+          dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
           if not dbFound then fehlt
           else _brett:='A'+dbLongStr(dbReadInt(bbase,'int_nr'));
           end
         else begin
-          dbSeek(ubase,uiName,ustr(empfaenger+
+          dbSeek(ubase,uiName,UpperCase(empfaenger+
                  iifs(pos('@',empfaenger)>0,'','@'+box+'.ZER')));
           if not dbFound then fehlt
           else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
@@ -1543,7 +1543,7 @@ var hdp   : headerp;
         mwrt(x+3,y+1+j,left(empfaenger,72));
         end;
       wait(curoff);
-      if rlist and (ustr(lastkey)='R') then keyboard('R');
+      if rlist and (UpperCase(lastkey)='R') then keyboard('R');
       closebox;
       end;
   end;
@@ -1581,7 +1581,7 @@ var hdp   : headerp;
       showrefs(reflist);
       wrt(x+3,y+i+1,left(ref,72));
       wait(curoff);
-      if elist and (ustr(lastkey)='E') then keyboard('E');
+      if elist and (UpperCase(lastkey)='E') then keyboard('E');
       closebox;
       end;
   end;
@@ -1681,9 +1681,9 @@ begin
       repeat
         get(t,curon);
       until (t<mausfirstkey) or (t>mauslastkey) or (t=mausleft) or (t=mausright);
-      if elist and (ustr(t)='E') then empfliste;
-      if rlist and (ustr(t)='R') then refliste;
-    until (not elist or (ustr(t)<>'E')) and (not rlist or (ustr(t)<>'R'));
+      if elist and (UpperCase(t)='E') then empfliste;
+      if rlist and (UpperCase(t)='R') then refliste;
+    until (not elist or (UpperCase(t)<>'E')) and (not rlist or (UpperCase(t)<>'R'));
     end;
   closebox;
   freeres;
@@ -1738,9 +1738,9 @@ begin
   if not getDecomp(atyp,decomp) then
     exdir:=''
   else begin
-    p:=pos('$DATEI',ustr(decomp));
+    p:=pos('$DATEI',UpperCase(decomp));
     datei:=trim(copy(fn,2,12));
-    if (exdir='') and ((temppath='') or (ustr(temppath)=ownpath))
+    if (exdir='') and ((temppath='') or (UpperCase(temppath)=ownpath))
       and exist(datei) then begin
         rfehler(428);   { 'extrahieren nicht m”glich - bitte Temp-Verzeichnis angeben!' }
         exit;
@@ -1760,7 +1760,7 @@ begin
     if exdir<>'' then SetCurrentDir(exdir)
     else SetCurrentDir(temppath);
     decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
-    p:=pos('$ARCHIV',ustr(decomp));
+    p:=pos('$ARCHIV',UpperCase(decomp));
     decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
     shell(decomp,400,3);
     if exdir='' then begin
@@ -1822,7 +1822,7 @@ var s   : string;
     sex : pathstr;
     dd  : string[30];
 begin
-  if ustr(t)='X' then begin
+  if UpperCase(t)='X' then begin
     dp:=ExtractPath;
     dd:=getres(463);
     dialog(47+length(dd),3,getres(462),x,y);   { 'Extrakt' }
@@ -2136,7 +2136,7 @@ begin
       gotoxy(x+13,y+4); write(n*100 div nn:3);
       gotoxy(x+35,y+4); write(nf:4);
       dbReadN(ubase,ub_username,uname);
-      if pos(suchst,ustr(uname))>0 then begin
+      if pos(suchst,UpperCase(uname))>0 then begin
         UBAddmark(dbRecno(ubase));
         if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
           UserMarkSuche:=true;
@@ -2266,7 +2266,7 @@ begin
       and (s[k+1] in ['a'..'z','A'..'Z','0'..'9','_','@','.','!','/','?','*',
                       '$','%','-']) do inc(k);
       t:=copy(s,1,k);
-      u:=UStr(t);
+      u:=UpperCase(t);
       delete(s,1,byte(t[0]));
       { Auf den Dateinamen muá ein Trennzeichen folgen }
       if (s<>'') then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
@@ -2294,7 +2294,7 @@ begin
         p1:=copy(t,ic,20); delete(t,ic,99)
       end;
 
-      u:=UStr(t);
+      u:=UpperCase(t);
       if (length(u)<2) then continue;
       s1:=u;
       if (s1='S0') or (s1='XP') then continue;
@@ -2319,7 +2319,7 @@ begin
       { Ist der String eine Versionsnummer? V42.3, 1.0, X75, V34B etc. }
       if (byte(t[0])<8) then begin
         u:=t;
-        if (UStr(copy(u,1,3))='VOL') then delete(u,1,3);
+        if (UpperCase(copy(u,1,3))='VOL') then delete(u,1,3);
         if (UpCase(u[1]) in ['V','X']) then delete(u,1,1);
         id:=0;
         for ic:=1 to length(u) do if not (UpCase(u[ic]) in ['0'..'9','.','A','B','G']) then id:=1;
@@ -2328,7 +2328,7 @@ begin
 
       { Ist der String eine Baudrate oder Dateigroesse? xx.xK, x in  [0..9] }
       if (length(t)<10) then begin
-        u:=UStr(t);
+        u:=UpperCase(t);
         { Zahl }
         while ((u<>'') and (u[1] in ['0'..'9'])) do delete(u,1,1);
         { . }
@@ -2348,11 +2348,11 @@ begin
       for ic:=1 to length(u) do if not (u[ic] in ['0'..'9','-','/','+','(',')']) then id:=1;
       if (id=0) then continue;
 
-      if lMagics then if (UStr(t)=t) then begin
+      if lMagics then if (UpperCase(t)=t) then begin
         files:=files+' '+t;
         continue;
       end;
-      u := UStr(t);
+      u := UpperCase(t);
       ic := pos('.',u); if not (ic in [2..9]) then continue;
       if (length(u)<4) then continue;
       if (length(u)-ic>3) then continue;
@@ -2399,6 +2399,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/04 12:04:24  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.49  2000/07/03 15:23:26  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

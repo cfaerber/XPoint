@@ -939,7 +939,7 @@ begin
                      end;
                  end else begin
       ste:=s; ste[succ(p)]:=' ';
-      if autogr then a:=UStr(a);
+      if autogr then a:=UpperCase(a);
       IF (POS(a,li)>0) AND (p<ml) AND
          (NOT ((li=chml[2]) AND (p>0) AND (a='-'))) AND
          (NOT ((li=chml[2]) AND (POS('.',ste)>0) AND (a='.'))) THEN begin
@@ -1529,7 +1529,7 @@ begin
   repeat
     mwrt(x,y,c); gotoxy(x,y);
     get(t,curon);
-    t:=UStr(t);
+    t:=UpperCase(t);
     if pos(t[1],li)>0 then c:=t[1];
     if (t=keyup) then begin
       p:=pos(c,li); inc(p);
@@ -1652,6 +1652,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.43  2000/07/04 12:04:16  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.42  2000/07/03 13:31:38  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -838,17 +838,17 @@ var xch   : boolean;
 begin
   cnt:=0;
   Cut_QPC_DES(betr);
-  p:=pos('(war:',lstr(betr)); if p>0 then betr:=left(betr,p-1);
-  p:=pos('(was:',lstr(betr)); if p>0 then betr:=left(betr,p-1);
+  p:=pos('(war:',LowerCase(betr)); if p>0 then betr:=left(betr,p-1);
+  p:=pos('(was:',LowerCase(betr)); if p>0 then betr:=left(betr,p-1);
   repeat
     xch:=false;
     betr:=trim(betr);
     for i:=1 to ReAnz do
-      if ustr(left(betr,length(retyp[i])))=retyp[i] then begin
+      if UpperCase(left(betr,length(retyp[i])))=retyp[i] then begin
         inc(cnt); betr:=trim(copy(betr,length(retyp[i])+1,BetreffLen));
         xch:=true;
         end;
-    if ustr(left(betr,3))='RE^' then begin
+    if UpperCase(left(betr,3))='RE^' then begin
       p:=4;
       while (p<=length(betr)) and (betr[p]>='0') and (betr[p]<='9') do
         inc(p);
@@ -956,7 +956,7 @@ function isbox(box:string):boolean;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   isbox:=dbFound;
   dbClose(d);
 end;
@@ -1092,7 +1092,7 @@ function box_file(box:string):string;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then box_file:=dbReadStr(d,'dateiname')
   else box_file:=box;
   dbClose(d);
@@ -1198,7 +1198,7 @@ var d    : DB;
     wbox : string[BoxNameLen];
 begin
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then begin              { Test auf Vertreterbox }
     if pm then
       dbRead(d,'PVertreter',wbox)
@@ -1228,15 +1228,21 @@ end;
 function compmimetyp(typ:string):string;
 begin
   if left(typ,12)='application/' then
-    compmimetyp:=lstr(mid(typ,12))
+    compmimetyp:=LowerCase(mid(typ,12))
   else
-    compmimetyp:=lstr(typ);
+    compmimetyp:=LowerCase(typ);
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.32  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.31  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

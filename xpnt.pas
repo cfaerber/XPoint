@@ -21,7 +21,7 @@ unit xpnt;
 
 interface
 
-uses   xp0,typeform,datadef,database,crc;
+uses   sysutils,xp0,typeform,datadef,database,crc;
 
 const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_ZConnect  = 2;         { XRef: XP3, XP6       }
@@ -221,7 +221,7 @@ var d  : DB;
 begin
   if box='' then box:=DefaultBox;
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
     dbRead(d,'netztyp',nt)
   else
@@ -344,7 +344,7 @@ var d  : DB;
 begin
   ntAutoDomain:='';
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then begin
     dbRead(d,'netztyp',nt);
     if ntAutoZer(nt) then
@@ -363,7 +363,7 @@ var d : DB;
 begin
   ntServerDomain:='';
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
+  dbSeek(d,boiName,UpperCase(box));
   if dbFound then
     if dbReadInt(d,'netztyp')<>nt_UUCP then
       ntServerDomain:=ntAutoDomain(box,true)
@@ -745,6 +745,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/07/04 12:04:31  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.9  2000/06/19 20:22:48  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -221,7 +221,7 @@ begin
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
-  else fn:=FUStr(trim(mid(s,p)));
+  else fn:=FileUpperCase(trim(mid(s,p)));
   openinfile:=found and (fn<>'');
   if EOFinput then exit;
 end;
@@ -521,6 +521,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/04 12:04:28  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.15  2000/07/03 13:31:43  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

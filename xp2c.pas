@@ -169,9 +169,9 @@ begin
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
-    if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
-    else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
-    else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
+    if UpperCase(ua)=UpperCase(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
+    else if UpperCase(ua)=UpperCase(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
+    else if UpperCase(ua)=UpperCase(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
     { else UserAufnahme:=2;  keine - gibt's nicht mehr }
     Usersortbox:=_usersortbox;
     GlobalModified;
@@ -235,11 +235,11 @@ begin
   readmask(brk);
   if not brk and mmodified then begin
     for i:=0 to 3 do
-      if lstr(xas)=lstr(xa[i]) then defExtraktTyp:=i;
+      if LowerCase(xas)=LowerCase(xa[i]) then defExtraktTyp:=i;
     for i:=0 to 3 do
-      if lstr(lms)=lstr(lm[i]) then DefReadMode:=i;
+      if LowerCase(lms)=LowerCase(lm[i]) then DefReadMode:=i;
     for i:=0 to 2 do
-      if lstr(save)=lstr(stp[i]) then SaveType:=i;
+      if LowerCase(save)=LowerCase(stp[i]) then SaveType:=i;
     for i:=0 to 2 do
       if dbls=dbl[i] then
         case i of
@@ -340,7 +340,7 @@ begin
   if not brk and mmodified then begin
     xnr:=0;
     for i:=0 to 3 do
-      if lstr(xid)=lstr(xids[i]) then xnr:=i;
+      if LowerCase(xid)=LowerCase(xids[i]) then xnr:=i;
     XP_ID_PMs:=(xnr=1) or (xnr=3) or not registriert.r2;
     XP_ID_AMs:=(xnr=2) or (xnr=3){ or not registriert.r2};
     GlobalModified;
@@ -367,7 +367,7 @@ function testurl(var s:string):boolean;
   begin
     p:= CPos(':',s);
     if p>0 then
-      protocol:= lstr(copy(s,1,p+2))
+      protocol:= LowerCase(copy(s,1,p+2))
     else
       protocol:= '';
     for i:= 1 to MaxProtocols do
@@ -589,7 +589,7 @@ begin
   readmask(brk);
   if not brk then
     for i:=1 to 3 do
-      if fustr(eds)=ustr(edtype[i]) then
+      if FileUpperCase(eds)=UpperCase(edtype[i]) then
         exteditor:=i;
   if not brk and mmodified then
     GlobalModified;
@@ -668,7 +668,7 @@ begin
   readmask(brk);
   if not brk and mmodified then begin
     for i:=0 to 2 do
-      if lstr(brett)=lstr(btyp(i)) then brettanzeige:=i;
+      if LowerCase(brett)=LowerCase(btyp(i)) then brettanzeige:=i;
     for i:=1 to 3 do
       if stricmp(tks,tk(i)) then trennkomm:=i;
     aufbau:=true;
@@ -705,7 +705,7 @@ begin
   readmask(brk);
   if not brk and mmodified then begin
     for i:=0 to 6 do
-      if lstr(sabs)=lstr(abstyp(i)) then sabsender:=i;
+      if LowerCase(sabs)=LowerCase(abstyp(i)) then sabsender:=i;
     KomShowadr:=BaumAdresse;
     aufbau:=true;
     GlobalModified;
@@ -774,11 +774,11 @@ begin
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   { 'Feldtausch in Nachrichten-Liste': }
   maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
-             '>'+MsgFeldDef+LStr(MsgFeldDef));
+             '>'+MsgFeldDef+LowerCase(MsgFeldDef));
   mappsel(false,MsgFeldDef);
   { 'Feldtausch in Userliste': }
   maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
-             '>'+UsrFeldDef+LStr(UsrFeldDef));
+             '>'+UsrFeldDef+LowerCase(UsrFeldDef));
   mappsel(false,UsrFeldDef);
 
 {$IFNDEF Linux}
@@ -875,9 +875,9 @@ begin
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
     if Cport<$1000 then
-      pstr:=lstr(hex(Cport,3))
+      pstr:=LowerCase(hex(Cport,3))
     else
-      pstr:=lstr(hex(Cport,4));
+      pstr:=LowerCase(hex(Cport,4));
     mi:=minit^; me:=mexit^; md:=mdial^;
     if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
@@ -955,7 +955,7 @@ var brk  : boolean;
 begin
   dialog(50,6,getres2(269,1),isdnx,isdny);  { 'ISDN/CAPI-Konfiguration (1TR6/X.75)' }
   attrtxt(col.coldiarahmen);
-  ints:=lstr(hex(ISDN_Int,2));
+  ints:=LowerCase(hex(ISDN_Int,2));
   maddstring(3,2,getres2(269,2),ints,2,2,'<0124567899abcdef');  { 'CAPI-Interrupt ' }
   mhnr(910);
   mset0proc(TestCapiInt); mset3proc(testcapiint);
@@ -977,7 +977,7 @@ function formpath(var s:string):boolean;
 var
     res : integer;
 begin
-  s:=fustr(FExpand(s));
+  s:=FileUpperCase(FExpand(s));
   if (s<>'') and (right(s,1)<>DirSepa) then
     s:=s+DirSepa;
   if not validfilename(s+'1$2$3.xxx') then
@@ -1048,7 +1048,7 @@ var fy : byte;
 
 function testarc(var s:string):boolean;
 begin
-  if (pos('$ARCHIV',ustr(s))=0) or (pos('$DATEI',ustr(s))=0) then begin
+  if (pos('$ARCHIV',UpperCase(s))=0) or (pos('$DATEI',UpperCase(s))=0) then begin
     rfehler(209);    { 'Die Packer-Angabe muá $ARCHIV und $DATEI enthalten!' }
     testarc:=false;
     end
@@ -1376,7 +1376,7 @@ begin
   dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
   if (TermCOM=0) or (TermBaud=0) then begin
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(DefaultBox));
+    dbSeek(d,boiName,UpperCase(DefaultBox));
     dbRead(d,'dateiname',fn);
     dbClose(d);
     ReadBox(0,fn,boxpar);
@@ -1441,7 +1441,7 @@ var x,y : byte;
     brk : boolean;
     sall: boolean;
 begin
-  sall:=(ustr(GetRes2(29900,2))<>'N');
+  sall:=(UpperCase(GetRes2(29900,2))<>'N');
   dialog(ival(getres2(271,0)),iif(sall,14,13),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
 
   maddstring(3,2,'PGP-Version ',PGPVersion,5,5,'');
@@ -1519,6 +1519,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/07/04 12:04:20  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.42  2000/07/03 13:31:39  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

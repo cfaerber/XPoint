@@ -152,7 +152,7 @@ begin
   reset(t);
   while not eof(t) do with col do begin
     readln(t,s);
-    s:=lstr(trim(s));
+    s:=LowerCase(trim(s));
     p:=cpos('=',s);
     if (s<>'') and (s[1]<>'#') and (p>0) then begin
       s1:=copy(s,1,min(p-1,20));
@@ -244,7 +244,7 @@ begin
         getb(colmsgsprio4); getb(colmsgsprio5);
         end
       else
-        tfehler(getres(213)+ustr(s1),60);  { 'ungÅltige Farbkonfiguration:  ' }
+        tfehler(getres(213)+UpperCase(s1),60);  { 'ungÅltige Farbkonfiguration:  ' }
       end;
       if (colmsgsprio1=7) and (colmsgsprio2=7) and (colmsgsprio5=7) and (colmsgs<>7)
       then begin
@@ -832,7 +832,7 @@ begin
   assign(t,ownpath+cfgfile);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler1(107,ustr(cfgfile));  { 'Fehler beim Schreiben von %s' }
+    rfehler1(107,UpperCase(cfgfile));  { 'Fehler beim Schreiben von %s' }
     exit;
     end;
   writeln(t,'## ',getres2(214,1));   { 'CrossPoint - Konfigurationsdatei' }
@@ -876,15 +876,15 @@ begin
   writelimits('MaxLocalPM',2);
   writeln(t,'ReHochN=',jnf(rehochn));
   if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
-    if fustr(temppath)<>fustr(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
+    if FileUpperCase(temppath)<>FileUpperCase(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
     if sendpath<>'' then
       writeln(t,'SendfileDir=',sendpath);
-    if fustr(logpath)<>fustr(ownpath) then
+    if FileUpperCase(logpath)<>FileUpperCase(ownpath) then
       writeln(t,'LogDir=',logpath);
-    if fustr(filepath)<>ownpath+InfileDir then
+    if FileUpperCase(filepath)<>ownpath+InfileDir then
       writeln(t,'FileDir=',filepath);
   end;
   writeln(t,'ShowLogin=',jnf(ShowLogin));
@@ -1123,7 +1123,7 @@ begin
   assign(t,ownpath+cfg2file);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler1(107,fustr(cfg2file));  { 'Fehler beim Schreiben von %s' }
+    rfehler1(107,FileUpperCase(cfg2file));  { 'Fehler beim Schreiben von %s' }
     exit;
     end;
   writeln(t,'## ',getres2(214,1));
@@ -1260,7 +1260,7 @@ var t       : text;
       getfkeys:=true;
       nr:=-1;
       for i:=0 to 3 do
-        if copy(su,6,length(cfs[i]))=ustr(cfs[i]) then
+        if copy(su,6,length(cfs[i]))=UpperCase(cfs[i]) then
           nr:=i;
       if nr>-1 then begin
         p0:=6+length(cfs[nr]);
@@ -1288,7 +1288,7 @@ var t       : text;
               p0:=pos('~',ss);
               if p0>0 then begin
                 ntyp:=min(3,ival(left(ss,p0-1)));
-                ss:=ustr(copy(ss,p0+1,30));
+                ss:=UpperCase(copy(ss,p0+1,30));
                 bname:=left(ss,1)='J';
                 warten:=copy(ss,2,1)='J';
                 listout:=copy(ss,3,1)='J';
@@ -1406,7 +1406,7 @@ begin
     while not eof(t) do begin
       readln(t,s);
       s:=trim(s);
-      su:=ustr(s);
+      su:=UpperCase(s);
       if (s<>'') and (s[1]<>'#') then begin
         p:=pos('=',s);
         if (p=0) or not (
@@ -1637,7 +1637,7 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
-    MsgFeldTausch:=UStr(MsgFeldTausch);
+    MsgFeldTausch:=UpperCase(MsgFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
     i:=pos('F',MsgFeldTausch); if (i>1) then begin
       delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
@@ -1647,7 +1647,7 @@ begin
     for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
     if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
 
-    UsrFeldTausch:=UStr(UsrFeldTausch);
+    UsrFeldTausch:=UpperCase(UsrFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
     i:=pos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
@@ -1665,15 +1665,15 @@ begin
       screenlines:=ParZeilen;
     end;
 
-    { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
+    { if getenv(reverse('BPX'))<>LowerCase(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
     otherqcback:=otherquotechars;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
-    if ustr(userauf)='ALLE' then UserAufnahme:=0
-    else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
-    else if ustr(userauf)='PMS' then UserAufnahme:=3
+    if UpperCase(userauf)='ALLE' then UserAufnahme:=0
+    else if UpperCase(userauf)='Z-NETZ' then UserAufnahme:=1
+    else if UpperCase(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
 (*
@@ -1725,7 +1725,7 @@ begin
     while not eof(t) do begin
       readln(t,s);
       s:=trim(s);
-      su:=ustr(s);
+      su:=UpperCase(s);
       if (s<>'') and (s[1]<>'#') then begin
         p:=pos('=',s);
         if (p=0) or not (
@@ -1783,6 +1783,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.68  2000/07/04 12:04:21  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.67  2000/07/01 11:18:28  mk
   - 16 Bit Teile entfernt
 

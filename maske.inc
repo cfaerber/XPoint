@@ -229,11 +229,11 @@ var ax,p,myp  : integer;
         end;
       if (selliste<>nil) and forcesll then begin
         p:=selliste;
-        while (p<>nil) and (ustr(cont^)<>ustr(p^.el^)) do
+        while (p<>nil) and (UpperCase(cont^)<>UpperCase(p^.el^)) do
           p:=p^.next;
         if (p=nil) and (cont^<>'') then begin    { „hnlichen Eintrag suchen }
           p:=selliste;
-          while (p<>nil) and (left(ustr(p^.el^),length(cont^))<>ustr(cont^)) do
+          while (p<>nil) and (left(UpperCase(p^.el^),length(cont^))<>UpperCase(cont^)) do
             p:=p^.next;
           if p<>nil then begin
             cont^:=p^.el^;
@@ -359,7 +359,7 @@ var ax,p,myp  : integer;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
         width:=max(width,length(p1^.el^));
-        if ustr(cont^)=ustr(p1^.el^) then p:=lines;
+        if UpperCase(cont^)=UpperCase(p1^.el^) then p:=lines;
         p1:=p1^.next;
         end;
 
@@ -437,7 +437,7 @@ var ax,p,myp  : integer;
     if afld^.nonedit then xtest1:=false
     else begin
       if afld^.topcase then begin
-        s:=lstr(s);
+        s:=LowerCase(s);
         s[1]:=UpCase(s[1]);
         end;
       x1:=afld^.test1(s);
@@ -909,10 +909,10 @@ begin   { readmask }
             UpString(cont^); replace:=false; end
             else
           if (t=^K) and not (autoup or topcase) then begin
-            cont^:=lstr(cont^); replace:=false; end
+            cont^:=LowerCase(cont^); replace:=false; end
             else
           if (t=^X) and not (autoup or autodown) then begin
-            cont^:=TopAllStr(ustr(cont^)); replace:=false; end
+            cont^:=TopAllStr(UpperCase(cont^)); replace:=false; end
             else
                                                               { JG: Clipboard fuer Menues }
 
@@ -1068,6 +1068,12 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.18  2000/07/04 12:04:17  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
   Revision 1.17  2000/07/03 16:20:02  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

@@ -105,7 +105,7 @@
     freeres;
     readmask(brk);
     if not brk and (name=DefFidoBox) then begin
-      HighlightName:=ustr(user);
+      HighlightName:=UpperCase(user);
       aufbau:=true;
       end;
     enddialog;
@@ -127,7 +127,7 @@
     enddialog;
     if not brk then
       for i:=0 to enetztypen-1 do
-        if lstr(ntyp)=lstr(ntName(ntnr[i])) then
+        if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
           nt:=ntnr[i];
   end;
 
@@ -174,7 +174,7 @@
     {16.01.00 HS}
     NameRead(nt,name,user,komm,maps,real,dom,fqdom,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
-      dbSeek(d,boiName,ustr(name));
+      dbSeek(d,boiName,UpperCase(name));
       if dbFound then rfehler(921)   { 'Box ist bereits vorhanden' }
       else begin
         dbGo(d,drec[p]);
@@ -321,7 +321,7 @@
         if DefFidobox=name then DefFidobox:=''
         else begin
           DefFidoBox:=name;
-          HighlightName:=ustr(dbReadStr(d,'username'));
+          HighlightName:=UpperCase(dbReadStr(d,'username'));
           aufbau:=true;
           SetDefZoneNet;
           end;
@@ -697,10 +697,10 @@
     NameRead(nt,name,user,komm,maps,realname,dom,fqdom,bdom,fidoname,kompname,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
-      newibox:=(ustr(name)<>ustr(dbReadStr(d,'boxname')));
+      newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
       if newbox then begin
         if newibox then begin
-          dbSeek(d,boiName,ustr(name));
+          dbSeek(d,boiName,UpperCase(name));
           if dbFound then begin
             rfehler(921);         { 'Box bereits vorhanden!' }
             brk:=true;
@@ -708,7 +708,7 @@
           end;
         if not brk then begin
           dbGo(d,drec[p]);
-          if ustr(dbReadStr(d,'boxname'))=ustr(DefaultBox) then begin
+          if UpperCase(dbReadStr(d,'boxname'))=UpperCase(DefaultBox) then begin
             DefaultBox:=name; SaveConfig2; end else
           if dbReadstr(d,'boxname')=DefFidoBox then begin
             DefFidoBox:=name; SaveConfig2; end;
@@ -1278,7 +1278,7 @@
       while not dbEOF(bbase) do begin
         gotoxy(x+31,y+1); moff;
         write(i*100 div n); mon;
-        if ustr(dbReadStr(bbase,'pollbox'))=ustr(box) then begin
+        if UpperCase(dbReadStr(bbase,'pollbox'))=UpperCase(box) then begin
           flags:=dbReadInt(bbase,'flags') and not 16 + uucp;
           dbWriteN(bbase,bb_flags,flags);
           end;
@@ -1296,7 +1296,7 @@
     if exist(dbReadStr(d,'dateiname')+'.pp') then begin
       msgbox(60,9,_fehler_,x,y);
       mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fÅr diese Box vorhanden (%s.PP)' }
-                   ustr(dbReadStr(d,'dateiname'))));
+                   UpperCase(dbReadStr(d,'dateiname'))));
       mwrt(x+3,y+3,getres2(929,2));   { '- Netztyp kann nicht geÑndert werden.  Versenden oder' }
       mwrt(x+3,y+4,getres2(929,3));   { 'lîschen Sie bitte zuerst die unversandten Nachrichten' }
       mwrt(x+3,y+5,getres2(929,4));   { 'fÅr diese Box!' }
