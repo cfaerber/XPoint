@@ -1,5 +1,5 @@
-verbesserte MIME-Unterstützung
-improved MIME support
+Verbesserte MIME-Unterstützung
+Improved MIME support
 x
 x
 x
@@ -22,11 +22,11 @@ x
 x
 o
 
-Prioritäten in Mail/News
-Mail/news priorities
-x
-x
-x
+Erweiterte Reply-Funktion<br /><small>Reply-To-All, an markierte User antworten etc.</small>
+Enhanced reply<br /><small>Reply-to-all, reply to marked users only, ...</small>
+-
+o
+o
 
 Verbesserter Support v. ext. Viewern
 Improved external viewer support
@@ -34,8 +34,8 @@ Improved external viewer support
 x
 x
 
-Adressbuchgruppen
-Address book groups
+Adressbuchgruppen/User-Prioritäten
+Address book groups/User priorities
 -
 x
 x

@@ -25,11 +25,12 @@ function ShowHeader($title) {
 	echo("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n");
 	echo("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"".$language."\" lang=\"".$language."\">\n");
 	echo("<head>\n");
-    	echo("<meta name=\"copyright\" content=\"Copyright by OpenXP team, &copy; 1999-" . htmlspecialchars(date("Y")) . ", all rights reserved\" />\n");
 	// depends on the language
 	if ($language == "de") {
+		echo("<meta name=\"copyright\" content=\"Copyright by OpenXP-Team, &copy; 1999-" . htmlspecialchars(date("Y")) . ", all rights reserved\" />\n");
     		echo("<meta name=\"description\" content=\"Information zu einem Point-Programm\" />\n");
 	} else {
+		echo("<meta name=\"copyright\" content=\"Copyright by OpenXP Team, &copy; 1999-" . htmlspecialchars(date("Y")) . ", all rights reserved\" />\n");
 		echo("<meta name=\"description\" content=\"Information on a point program\" />\n");
 	};
 	echo("<meta name=\"keywords\" content=\"crosspoint,xp,mail,news,email,point,fido,zconnect,maus,rfc,mua,newsreader\" />\n");
@@ -42,11 +43,11 @@ function ShowHeader($title) {
 	echo("\n<table width=\"100%\"><tr>\n<td width=\"75\">&nbsp;</td>");
 	// link to the other language
 	if ($language == "de") {
-	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP Projekt Homepage</a></h1></td>");
+	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP-Projekt</a></h1></td>");
 	  echo("\n<td width=\"75\" align=\"right\">");
 	  echo("<small><a href=\"http://www.openxp.com/\">English</a></small>");
 	} else {
-	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP project homepage</a></h1></td>");
+	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP Project</a></h1></td>");
 	  echo("\n<td width=\"75\" align=\"right\">");
 	  echo("<small><a href=\"http://www.openxp.de/\">Deutsch</a></small>");
 	};
@@ -98,7 +99,7 @@ function ShowFooter() {
 		echo("<a href=\"#top\">Top</a>\n");
 	};
 	echo("</td><td align=\"right\">");
-	echo("<small>Published by <a href=\"mailto:dev@openxp.de\">OpenXP team</a></small>\n");
+	echo("<small>Published by <a href=\"mailto:dev@openxp.de\">OpenXP Team</a></small>\n");
 	// close the doc
 	echo("</td></tr></table></body>\n</html>\n");
 };

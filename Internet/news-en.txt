@@ -8,9 +8,9 @@ UUCP-over-TCP/IP, including UUCP-t.
 2001-03-24: OpenXP 3.70 finally GPL'd!
 As announced, OpenXP 3.70 is available under GPL from now on. This means that it does not have to be registered at all now
 and in future.
-<br />Some changes have been made also. The Fido mailer supports BinkP protocol directly now (Win32 version only). ZConnect
+<br />Some changes have also been made. The Fido mailer supports BinkP protocol directly now (Win32 version only). ZConnect
 works again. Integration of UUCP is being worked on.
-<br />Although it is to soon to release a new beta, you may test OpenXP 3.70 by using a snapshot. Be sure to backup your data before!
+<br />Although it is too soon to release a new beta, you may test OpenXP 3.70 by using a snapshot. Be sure to backup your data before!
 Please read the FAQs.
 
 2001-02-26: OpenXP32/GPL things...

@@ -17,6 +17,10 @@ aber keine Probleme mit der XP2-Datenbank).
 <br />Beim Umstieg auf OpenXP 3.70 ergeben sich einige Änderungen, dort
 in der FAQ nachsehen.
 
+Kann ich Mails aus anderen Programmen übernehmen?&nbsp;&nbsp;<small>2001-04-14</small>
+OpenXP 3.70 kann Mails aus dem mbox-Format in das von XP (alle Versionen) benutzte ZConnect-Format konvertieren. Dazu den Mailbuffer nach *.mail umbenennen, dann den Buffer mittels "openxp uuz -uz in.mail out.z domain.net" konvertieren. out.z läßt sich dann über XPoint/Import/Puffer einlesen nach XP importieren.
+<br />Das mbox-Format wird von den meisten Unix-Programmen benutzt, es gibt Konverter von diversen anderen Formaten auf mbox.
+
 Was ist beim Wechsel zwischen XP2 und OpenXP zu beachten?&nbsp;&nbsp;<small>2001-01-17</small>
 Zur Sicherheit sollte man sich eine Kopie der Konfigurationsdateien
 (*.cfg, *.bfg) anlegen. Die Datenbanken sind kompatibel.
@@ -52,11 +56,11 @@ Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das s
 <br />Als Anwender sollte man von Snapshots und wenn nicht unbedingt nötig auch von Betaversionen die Finger lassen.
 <br />Betatester sind herzlich eingeladen, die Betaversionen zu testen und Hinweise auf Fehler in der Mailingliste kundzutun :-).
 
-Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?&nbsp;&nbsp;<small>2001-01-17</small>
-Dazu wird ein Client für XP benötigt. Siehe "Links". In OpenXP 3.70 werden Mail und News integriert.
+Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?&nbsp;&nbsp;<small>2001-04-08</small>
+Dazu wird ein Client für XP benötigt. Siehe "Links". In OpenXP 3.70 sind Mail und News integriert.
 
-Ich habe UKAW/UKA_PPP installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-01-17</small>
-Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder auf eine freie OpenXP-Version warten.
+Ich habe UKAW/UKA_PPP installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-04-08</small>
+Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder das  kostenlose OpenXP 3.70 benutzen.
 
 Warum gibt es zwei Entwickler-Teams?&nbsp;&nbsp;<small>2001-01-16</small>
 Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe "Links") gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.

@@ -7,6 +7,11 @@ auch motivierter sein :-).
 <br /><b>Die weiteren Ausführungen sind eher für Programmierer und andere Interessierte
 gedacht.</b>
 
+Welche Texte sind relevant?
+Bei OpenXP bis Version 3.40 wird im Rahmen der <a href="ftp://ftp.openxp.de/openxp/devdoc/license/slizenz.txt">SLizenz</a>
+gearbeitet, für diese Versionen gelten also für den User die Bestimmungen in <a href="index.php4?bare=lizenz.txt">LIZENZ.DOC</a>.
+<br />OpenXP/32 steht unter der <a href="ftp://ftp.openxp.de/openxp/devdoc/license/gpl.txt">GPL</a>.
+
 Warum wurde für OpenXP/32 die GPL statt der SLizenz gewählt?
 <ul>
 <li>Die Registrierungsgebühr entfällt.</li>

@@ -1,10 +1,10 @@
 FAQ zu OpenXP 3.70
 
-Warum ist die Win32-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
+Warum ist die Windows-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
 Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
 sehr schlecht (bekanntes Problem, nachzulesen auch z.B. in der <a href="http://www.vim.org/html/os_win32.html#win32-problems">FAQ zu Vim</a>).
 Es hilft, Config/Anzeige/Zeilen auf nicht-DOS-Werte zu stellen (also <i>nicht</i> 80 Spalten)
-und vor allem den Vollbildmodus zu meiden; unter WinNT/2000 ist die Win32-Version immer angemessen schnell,
+und vor allem den Vollbildmodus zu meiden; unter WinNT/2000 ist die Windows-Version immer angemessen schnell,
 dort werden Konsolenprogramme nicht so stiefmütterlich behandelt.
 <br />Der Vollbildmodus bringt auf größeren Monitoren gegenüber OpenXP im Fenster mit großer Zeilen-/Spaltenzahl aber auch
 keinen Vorteil. Einmal paßt weniger auf den Monitor (da man bei Vollbild auf Standardtextauflösungen beschränkt ist); zum anderen
@@ -13,17 +13,30 @@ Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor ke
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
+OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-04-10</small>
+Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version bietet <i>keine</i> graphische Oberfläche, also nicht wundern. Im folgenden die Einschränkungen der einzelnen Versionen:
+<ul>
+<li>DOS: Die integrierten Mail/Newsclients (NNTP/POP3/SMTP) funktionieren hier nicht, ebenso wie BinkP (Fido over IP). Die Bildschirmgröße läßt sich nicht völlig frei ändern, es werden nur die unter DOS üblichen Textmodi unterstützt. Für den Modemzugriff stehen die gewohnten Möglichkeiten zur Verfügung (also direkter Zugriff auf die Hardware und Fossil).</li>
+<li>Windows: Modemzugriff direkt über die Windows-ComPorts. Siehe FAQ/Allgemein: Man braucht bei USB-Modems etc. keine Umwege über Fossil machen. Fossil steht dementsprechend auch gar nicht zur Verfügung.</li>
+<li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX.</li>
+</ul>
+Noch allgemein zum Modemzugriff:<br />
+Mit der Umstellung im Netcall-Bereich wurden die alten Modemeinstellungen abgeschafft. Stattdessen gibt man
+jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F2 bekommt, sollten klarmachen,
+wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
+aus den XP-Konfigurationsdateien auslesen. Änderungen am Config/Modem-Dialog sind in der Planung.
+
 Was ist beim neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-03-20</small>
 <big>Fido:</big>
 <ul>
-<li>Bei Edit/Boxen/Edit/Point darf unter "AKAs" die eigene Adresse <b>nicht</b> mehr eingetragen werden.</li>
+<li>Bei Edit/Boxen/Edit/Point darf unter "Pakete mitsenden" der eigene Node <b>nicht</b> mehr eingetragen werden.</li>
 <li>Beim Mitsenden von Paketen müssen die "Slave"-Boxen bei den Einstellungen zur 4D-Adressierung usw. richtige Werte enthalten.</li>
 <li>Bei der Verbindungsart "TCP/IP" wird automatisch das BinkP-Protokoll benutzt; beim Netcall muß das DFÜ-Netzwerk verbunden sein. BinkP steht nur unter OpenXP/Win32 zur Verfügung. Linux folgt, sobald jemand die paar Zeilen in ObjCOM fixt ;-).</li>
 <li>Fido-Crashanrufe gehen z.Zt. nicht.</li>
 </ul>
 <big>ZConnect:</big>
 <ul>
-<li>Es <b>muß</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein (siehe Unterverzeichnis "beispiel" bzw. das Archiv "beispiel.exe").</li>
+<li>Es <b>muß</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein (siehe Beispielskripte im "beispiel"-Verzeichnis bzw. <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi/~checkout~/beispiel/zcjanusp.scr">diese</a> Datei, Login cvs/cvs).</li>
 </ul>
 <big>Allgemein:</big>
 <ul>
@@ -33,7 +46,7 @@ Was ist beim neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-03-
 Da die Netcall-Implementationen noch recht neu sind, ist mit Fehlern zu rechnen. Insbesondere die Fido-Netcalls sind nicht ganz trivial und bisher nur im "Standardbetrieb" <i>etwas</i> getestet. Bei Fehlern bitte Mail an <a href="mail:ma@openxp.de">Malte</a>, am besten gleich das letzte Debuglog (debuglog.txt im OpenXP-Verzeichnis) beilegen.
 
 Was bringen die Umstellungen im Netcall-Bereich?&nbsp;&nbsp;<small>2001-02-11</small>
-Unterstützung von Linux; stabilerer und sauberer Betrieb unter Win32; Unterstützung von Remote Modems (Benutzung von Modems,
+Unterstützung von Linux; stabilerer und sauberer Betrieb unter Windows; Unterstützung von Remote Modems (Benutzung von Modems,
 die an andere Rechner angeschlossen und über TCP freigegeben sind, siehe
 <a href="http://www.linuxdoc.org/HOWTO/mini/Linux-Modem-Sharing.html">
 Linux-Modem-Sharing-Howto</a>); Unterstützung von Netcalls over IP (Netcalls über das Internet); evtl. direkte CAPI-Unterstützung.
@@ -53,12 +66,3 @@ Umstellung ist aber auf keinen Fall in den nächsten Monaten zu
 rechnen, im Moment gibt es noch nicht einmal eine passende
 freie Codebibliothek dafür, und wir werden sowas nicht auch noch
 machen ;-).
-
-Wie stelle ich mein Modem ein/wie benutze ich Fossil?&nbsp;&nbsp;<small>2001-01-16</small>
-Mit der Umstellung im Netcall-Bereich wurden die alten
-Modemeinstellungen abgeschafft. Stattdessen gibt man
-jetzt einen "CommInit"-String an (Config/Modem...).
-Die Beispiele, die man per F2 bekommt, sollten klarmachen,
-wie man damit umgeht. Die alten Einstellungen gelten
-nur für externe Programme wie PPP-Clients etc.; Fossil
-wird nur unter DOS unterstützt, RawIP/Telnet nur unter Win32.
