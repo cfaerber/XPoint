@@ -57,10 +57,14 @@ UNITS	=
 INCLUDES=
 
 RESSOURCE_FILES=$(patsubst openxp-%.rq,openxp-%.res,$(wildcard openxp-*.rq))
-HELP_FILES=$(patsubst doc/openxp-%.ihq.,openxp-%.hlp,$(wildcard doc/openxp-*.ihq))
+HELP_FILES=$(patsubst doc/openxp-%.ihq,openxp-%.hlp,$(wildcard doc/openxp-*.ihq))
 
 # --- abstract targets ------------------------------------------------
-all: $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES)
+all: bin res
+
+bin: $(OPENXP) 
+
+res: $(RESSOURCE_FILES) $(HELP_FILES)
 
 # --- cleaning --------------------------------------------------------
 mostlyclean:
@@ -105,6 +109,12 @@ ihs$(EXEEXT): ihs.pas $(UNITS) $(INCLUDES)
 
 openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 	$(IHS) $<
+	cp doc/openxp-$*.hlp $@
+
+# --- files list ------------------------------------------------------
+
+MANIFEST.snap: $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES)
+	(for a in $^ ; do echo $$a ; done) > FILELIST
 
 # --- autoconf configuration PASCAL adaptions -------------------------
 # config.inc: config.h Makefile
@@ -121,14 +131,24 @@ openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 #		  -e "s/[ 	]*$$//"					\
 #		$< >$@
 
+# --- configuration ---------------------------------------------------
+
+${srcdir}/Makefile: Makefile.in configure
+	cd ${srcdir} && ./configure
+
 # --- maintainer only -------------------------------------------------
-# --- (taken from autoconf documentation) -----------------------------
+
+autoconf: ${srcdir}/configure
+
 ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 	cd ${srcdir} && autoconf
 
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.5  2003/01/13 15:42:41  cl
+# - autoconf update for cross-compilation
+#
 # Revision 1.4  2002/08/10 18:46:57  cl
 # - autoconf: install location now configurable
 #
