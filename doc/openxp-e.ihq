@@ -13,11 +13,11 @@ Sorry, no help available!
 
                       [Hotkeys]@4
 
-               [Command line parameters]@4020
+                [Command line switches]@4020
 
                       [Support]@5
 
-                 [Licence Conditions]@6
+                 [Licence conditions]@6
 
 <<<Tab> >> ... go to next [cross-reference]@7000
 <<Alt-F1>> ... go back one page
@@ -30,64 +30,63 @@ Starting Online Help:
 
 <<F1>>      Shows context sensitive help
 
-<<Tab>> to go to next [cross-reference] and <<shift-Tab>>@7000
+<<Tab>> to go to next [cross-reference] and <<Shift-Tab>>@7000
             to go to previous [cross-reference].
 <Enter>.
 
-<<Alt F1>>  Shows the previous help page.
+<<Alt-F1>>  Shows the previous help page.
 
 When displaying a help page...:
 
 <<F1>>      Shows help contents list
 
-<<Alt F1>>  Shows the previous help page. Repeated <Alt
+<<Alt-F1>>  Shows the previous help page. Repeated <Alt
         F1> flips back through previous pages.
 
-<<Ctrl D>>  Prints the current help page. The current
-        printer settings used as: [/Config/Printer].@10606
+<<Ctrl-D>>  Prints the current help page. The current
+        printer settings used as in: [/Config/Printer].@10606
 
-Large Help topics covering several screens can be
+Large help topics covering several screens can be
 recognised by the different borders. The usual
-PgUp/PgDn keys can be used to turn pages.
+PgUp/PgDn keys can be used to "turn" pages.
 
-Many Help pages contain coloured [cross-references] to@7000
+Many help pages contain coloured [cross-references] to@7000
 other pages. You can view these pages by keying its
-<<first letter>> to select the reference then <<ENTER>> or
-by using the keys <<Tab>> and <<shift-Tab>>. <<Alt-F1>> brings
-you back to where you were. Press the <<Tab>> key, and
-see what happens.
+<<first letter>> to select the reference and then press
+<<ENTER>> or by using the keys <<Tab>> and <<Shift-Tab>>. 
+<<Alt-F1>> brings you back to where you were. Press the
+<<Tab>> key and see what happens.
 @
 4
-You can use the following Keys (almost) everywhere
+You can use the following keys (almost) everywhere
 in OpenXP:
 
    <<F1>>       Help
-   <<Alt F1>>   Previous Help
+   <<Alt-F1>>   Previous help
    <<F9>>       Shell
-   <<Alt F4>>   End Programme
+   <<Alt-F4>>   End program
 
-   <<Alt K>>    Calendar
-   <<Alt E>>    Editor
-   <<Alt T>>    Notepad
-   <<Alt I>>    Print Screen to File
-   <<Alt 1>>    Switch off monitor display
+   <<Alt-K>>    Calendar
+   <<Alt-E>>    Editor
+   <<Alt-T>>    Notepad
+   <<Alt-I>>    Print screen to file
+   <<Alt-1>>    Switch off monitor display
 
-   <<Alt N>>    Browse Nodelist
+   <<Alt-N>>    Browse nodelist
 @
 5
 <<OpenXP - Support
 
-The current version (by Peter Mandrella) and
-information about OpenXP may be found on the
-InterNet at:
+The original version of CrossPoint
+(by Peter Mandrella) and information about 
+OpenXP may be found on the InterNet at:
 
-        http://www.OpenXP.de
+        http://www.openxp.com
 
-The newest version and information relating to
-OpenXP development by the OpenXP Project may be
-found at:
+The current version and information relating to
+OpenXP development may also be found at:
 
-        http://www.openxp.de
+        http://www.openxp.com
 
 The official German FidoNet support site is Max
 Raabe's Klystron BBS:
@@ -104,7 +103,7 @@ sources:
         FidoNet: XPOINT
                  (International FidoNet support echo)
 
-        Usenet:  de.comm.software.OpenXP
+        Usenet:  de.comm.software.openxp
                  (German support newsgroup)
                  (Although the dominant language is
                  German, English *is* allowed)
@@ -116,7 +115,6 @@ echo, together with a note to the moderator
 requesting that the bug report be forwarded into
 the German support newsgroup. The moderator is a
 very obliging chappie :-)
-
 @
 6
 <<OpenXP - Licence Conditions
@@ -125,6 +123,77 @@ OpenXP is subject to the General Public License.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
+@
+11
+<<Using OpenXP as the default Windows mailer
+
+In Windows 95/98, ME, 2000 and NT, OpenXP can be
+registered as the default mailer so that it will
+be automatically started when clicking on a <<mailto:>>
+link. 
+
+<<Comprehensive explanation to do>>
+@
+12
+<<OpenXP and mailing lists
+
+<<Comprehensive explanation to do>>
+@
+13
+<<같같같같같같같같같같같같같같같 CrossPoint - Usage
+
+
+[Help]@3
+
+[Area Overview]@20
+[User Overview]@21
+[Message List]@30
+[Message Reader]@39
+[Message Editor]@54
+
+[Conventional keys]@10
+[Function keys]@8076
+[Hotkeys]@4
+
+[Miscellaneous Topics]@14
+
+
+The following possibilties exist for using
+menu options and functions:
+
+  In menus and input fields, either the "cursor"
+  keys or the <<<Tab> >> key may be used to move
+  around. The <<<Enter> >> key activates an option,
+  <<<F10> >> activates any "special" menus and <<<ESC> >>
+  takes you back one "page".
+
+  Menu options may be accessed more quickly with the
+  use of their respective option hotkeys:
+  <<M>>/<<U>>/<<H>> is the same as /Message/Unsent/Show.
+
+  If you would prefer to use a mouse:
+  A left-click is the same as pressing <<<Enter> >>and is
+  the main mouse action. A right-click is the same as
+  pressing <<<ESC> >> and takes you back one window.
+  Left-clicking on a menu option will activate that
+  option whilst right-clicking on a menu option will
+  close the menu.
+
+  If you have a 3-button mouse and a suitable driver
+  installed, the middle mouse button will act as a
+  double left-click.
+@
+14
+<<     같같같같같�   Online Help: Miscellaneous Topics
+
+
+     [Installing PGP]@1010
+
+     [CrossPoint and mailing lists]@12
+
+     [RFC/Client Net type]@30100
+
+     [Using CrossPoint as the default Windows mailer]@11
 @
 19
 Please move the cursor to the position where you want
@@ -299,7 +368,7 @@ or mixed case. This can be configured in /Config
 
 @
 21
-<<User-Overview
+<<User Overview
 
 See also [User display].@4017
 
@@ -404,7 +473,7 @@ forwarded. Confirm <Enter> or abort with <Esc>.
 ^^23
 @
 30
-<<Message Reading window
+<<Message List
 
 <<see also>>  [ message display ]  <<(Press <Enter>)@4015
 
@@ -828,7 +897,7 @@ sections:
 
 Commonly used editor functions:
 
-    <F2>        Save message (stay in editor)
+    <F2>        Save message and stay in editor
     <Esc>       Exit editor
     <Shift F2>  Save message and exit editor
     <F10>       Menu
@@ -6269,7 +6338,11 @@ that the clipboard contains too much (or none) text.
 
 <<Ctrl C>> or <<Strg Ins>> copies the text of this
 box to the Windows Clipboard.
+@
+8076
+To Do
 
+[8076]
 @
 531
 Enter the type of search.
@@ -8350,6 +8423,16 @@ Examples:
 
 <<Abort>>       Self-explanatory, really :-)
 @
+1010
+To Do
+
+[1010]
+@
+1012
+To Do
+
+[1012]
+@
 1019
 Please enter GnuPG command line options that shall be
 used for encrypting mails here.
@@ -8361,6 +8444,11 @@ need to install GnuPG IDEA support then). Use the
 second option to keep GnuPG compatible with PGP 5.x
 and higher. IDEA support needs not to be installed
 then.
+@
+1023
+To Do
+
+[1023]
 @
 1500
 Select <<Yes>> to archive a copy of the selected
@@ -13296,3 +13384,11 @@ Press <Enter> to read about [Fido addresses].@4010
 Choose a device. At the moment you can setup up to
 four devices (/Config/Modem).
 @@
+
+
+
+
+
+
+
+
