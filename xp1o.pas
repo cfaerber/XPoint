@@ -381,6 +381,7 @@ begin
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
     (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
   else begin
+    Nr:=dbrecno(mbase);
 
     if t = keyaltm then                                       { Alt-M = Suche MessageID }
     begin
@@ -410,6 +411,7 @@ begin
       if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
 
+    dbgo(mbase,nr);
   end;
 
   if listmakros=16 then   { Archiv-Viewer }
@@ -1026,6 +1028,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.24  2001/12/03 13:45:23  my
+  JG+MY:- DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
+          Lister heraus behoben (<Alt-B> oder <Alt-U>)
+
   Revision 1.40.2.23  2001/12/02 15:53:20  my
   MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
        <Ctrl-W> nicht-permanent umgeschaltet werden.
