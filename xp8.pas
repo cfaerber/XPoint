@@ -62,7 +62,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
 {$IFDEF Sockets }
   xpnntp,
 {$ENDIF }
-  xp9bp,xp9,xpnt;
+  xp9bp,xp9,xpnt, crc;
 
 const mapsbox : string = '';
 
@@ -1612,6 +1612,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/22 18:54:31  mk
+  - Probleme mit Fileservern und langen Dateinamen behoben
+
   Revision 1.29  2000/11/16 22:51:56  hd
   - DOS Unit entfernt
 
