@@ -978,7 +978,7 @@ begin
       spush(disprec,sizeof(disprec));
       qmpdata:=@mpdata;
       _brief_senden(listkey[1]);
-      qmpdata:=nil;
+      qmpdata:=nil; lastmpsel := false;
       if disprec[p]=0 then      { s. xp4.pm_archiv (auto-Archiv) }
         d1_0:=true;
       spop(disprec);
@@ -1597,6 +1597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47  2000/10/24 13:42:51  mk
+  - MIME-fixes (merged from 3.30 branch)
+
   Revision 1.46  2000/10/19 15:10:07  mk
   - Fix fuer TestViralExtension
 
