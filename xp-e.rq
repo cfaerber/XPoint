@@ -1834,6 +1834,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 34   g protocol
 35   Size negotiation
 36   Batched SMTP
+57   create a single file for each mail
 37   z protocol
 38   f protocol
 39   e protocol
@@ -1858,7 +1859,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Turbo
 55   Get news
 56   Serial no
-57   Pro Nachricht eine Datei erstellen
 + 921
 0    59
 1    Wait for connection ~

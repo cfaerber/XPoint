@@ -3445,10 +3445,57 @@ Systemnamen (Pointnamen).
        tragen werden, was die šbertragungsgeschwin-
        digkeit *wesentlich* erh”ht.
 
+       Hierzu werden die Mails in einem speziellen
+       SMTP-Format erstellt, das bestimmte Steuer-
+       befehle fr den SMTP-Transfer enth„lt.
+
 Nicht jedes UUCP-System untersttzt Batched SMTP. Im
 Zweifelsfall fragen Sie bitte den Systembetreiber.
+
+Siehe auch: [fr jede PM eine Datei erstellen]@8018
 @
 8018
+Dies ist ein Zusatzschalter fr "Batched SMTP" und
+nur fr Anwender sinnvoll (und empfohlen!), die einen
+externen PPP-Client wie UKA_PPP oder UKAW in einer
+RFC/UUCP-Box betreiben (und sollte auch nur von
+diesen verwendet werden):
+
+<<[x]>> -> CrossPoint erstellt fr jede PM (Mail) eine
+       eigene Datei im <<SMTP-Format>>, statt alle PMs
+       gemeinsam in dieselbe Datei zu schreiben.
+
+       Dies ist sinnvoll, um das mehrfache Senden
+       derselben Nachrichten im Falle von šbertra-
+       gungsproblemen im PPP-Betrieb mit externen
+       Clients zu verhindern.
+
+<<Hinweis:>> Das Aktivieren dieses Zusatzschalters ist
+*nicht* gleichbedeutend mit dem Deaktivieren des
+Schalters "[Batched SMTP]" insgesamt.  Zwar wird in@8017
+beiden F„llen jede PM als eigene Datei bertragen,
+jedoch in unterschiedlichen Formaten: Nur wenn Sie
+"Batched SMTP" <<und>> den Zusatzschalter "fr jede PM
+eine Datei erstellen" aktivieren, wird jede Nachricht
+in einer eigenen Datei im <<SMTP-Format>> erstellt und
+bertragen.
+
+Konkrete Vorteile des SMTP-Formats im PPP-Betrieb mit
+externen Clients: Nachrichten, die Kopienempf„nger
+(CC, Carbon Copies) enthalten, werden physikalisch
+nur einmal erstellt und gesendet, und die Empf„nger
+k”nnen korrekt erkennen, wer eigentlicher Empf„nger
+und wer Kopienempf„nger ist.
+
+Beides ist nicht der Fall, wenn Sie "Batched SMTP"
+insgesamt deaktivieren: Dann wird auch fr *jeden*
+Kopienempf„nger physikalisch immer eine eigene Nach-
+richt erstellt und bertragen, und jeder der Empf„n-
+ger sieht sich selbst als eigentlichen Empf„nger und
+den/die anderen Empf„nger als Kopienempf„nger.
+
+@
+8019
 <<[ ]>> -> CrossPoint verwendet das Standard-Netcall-
        verfahren "Janus".
 
