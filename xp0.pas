@@ -794,8 +794,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                          { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }                                  
 
        viewer_danger : string[37] = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
-       viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF.';        { ohne Sicherheitsabfrage }
-       viewer_lister : string = '.TXT.ASC.';                 { immer internen Lister benutzen }
+       viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
+       viewer_lister : string = '.TXT.ASC';                 { immer internen Lister benutzen }
        viewer_scanner : string[viewproglen] = '';            { Viewer bei Antwort=Nein }
 
        { 01/2000 oh }
@@ -1153,6 +1153,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.43  2000/05/10 13:45:17  jg
+  - Viewer-Sicherheitslisten: im Default war ein Punkt zuviel
+
   Revision 1.42  2000/05/09 20:07:01  jg
    Externe Viewer / Schutzmassnahmen:
    - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
