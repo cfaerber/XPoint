@@ -59,7 +59,7 @@ procedure AutoStop;
 
 implementation
 
-uses xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt;
+uses xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt, debug;
 
 
 procedure AutoRead(var ar:AutoRec);
@@ -330,7 +330,7 @@ var sr    : tsearchrec;
     mgel  : boolean;       { Save fÅr ParGelesen }
     fnstart: string;      { Name der Start.bat }
 
-  function find(ext:string):boolean;
+  function find(const ext:string):boolean;
   begin
     if first then
       rc:= findfirst(AutoxDir+'*.'+ext,faAnyFile,sr)
@@ -549,9 +549,7 @@ var sr    : tsearchrec;
   end;
 
 begin
-{$IFDEF Debug }
-  dbLog('-- AutoExec');
-{$ENDIF }
+  Debug.DebugLog('XPAUTO','AutoExec() - test autoexec directory',DLDebug);
   if not isEmptyDir(AutoxDir) then begin
     first:=true;
     ctlEbest:=false; ctlErstDat:=false;
@@ -675,6 +673,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/05/15 22:02:26  mk
+  - added debug log entry for AutoExec()
+
   Revision 1.50  2002/05/13 21:27:53  ma
   - fixed processing of AUTOEXEC dir
 
