@@ -21,9 +21,6 @@
 # Fuer das Erstellen eines Quellcodearchiv wird die
 # Archivierungssoftware rar <http://www.rarsoft.com/> gebraucht.
 #
-# Unter DOS, Windows und OS/2 muessen z.Z. noch rm, rmdir und mkdir
-# installiert werden.
-#
 # Unten muessen einige Variablen gesetzt werden.
 
 # make             uebersetzt das ganze Programm
@@ -274,11 +271,18 @@ EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
 	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr
 
+ifeq ($(OS),win32)
+RST = ipaddr ncnntp ncpop3 ncsmtp
+else
+RST =
+endif
+
 BINFILES = $(patsubst %,%$(EXEEXT),$(BIN))
 COMPBINFILES = $(patsubst %,%$(EXEEXT),$(COMPBIN))
 INSTALLBINFILES = $(BINFILES) $(CONTRIBBIN)
 RESFILES = $(patsubst %,%.res,$(RES))
-DATAFILES = $(RESFILES) icons.res $(CONTRIBDATA)
+RSTFILES = $(patsubst %,%.rst,$(RST))
+DATAFILES = $(RESFILES) $(RSTFILES) icons.res $(CONTRIBDATA)
 CONTRIB = $(CONTRIBBIN) $(CONTRIBDATA)
 
 PFLAGS += $(PF_$(OS))
@@ -2178,6 +2182,7 @@ documentation:
 
 install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	install_datadir $(patsubst %,install_%,$(RESFILES)) \
+	$(patsubst %,install_%,$(RSTFILES)) \
 	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
 	$(patsubst %,install_%,$(CONTRIB))
 	$(INSTALL_DATA) icons.res $(datadir)
@@ -2201,6 +2206,9 @@ install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
 $(patsubst %,install_%,$(RESFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+
+$(patsubst %,install_%,$(RSTFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 
 $(patsubst %,install_%,$(EXAMPLES)): install_%:
@@ -2244,7 +2252,9 @@ endif
 # Aufraeumen
 
 clean: $(patsubst %,clean_%,$(COMPBINFILES)) \
-	$(patsubst %,clean_%,$(UNITS)) $(patsubst %,clean_%,$(RESFILES))
+	$(patsubst %,clean_%,$(UNITS)) \
+	$(patsubst %,clean_%,$(RESFILES)) \
+	$(patsubst %,clean_%,$(RSTFILES))
 	-$(RM) $(DISTFILE)
 	$(MAKE) -C ObjCOM clean
 	$(MAKE) -C doc clean
@@ -2260,6 +2270,9 @@ $(patsubst %,clean_%,$(UNITS)): clean_%:
 	-$(RM) $(LIBPREF)$*$(LIBEXT)
 
 $(patsubst %,clean_%,$(RESFILES)): clean_%:
+	-$(RM) $*
+
+$(patsubst %,clean_%,$(RSTFILES)): clean_%:
 	-$(RM) $*
 
 # Erstellen eines Quellcodearchivs
@@ -2281,6 +2294,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.15  2000/10/05 22:06:18  fe
+# Unterstuetzung fuer Windows-RessourceStringTables ergaenzt.
+#
 # Revision 1.14  2000/10/05 19:55:43  fe
 # Korrekturen, v.a. fuer FPC/Win32.
 #
