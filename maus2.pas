@@ -110,7 +110,8 @@ var
 
 function has_moved(x,y:word): boolean;
 begin
-  result:=(lx<>x)or(y<>ly);
+  result:=((lx<>x)or(y<>ly))
+          and((lx<>255)and(ly<>255));
   lx:=x; ly:=y;
 end;
 
@@ -554,6 +555,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/10/28 15:39:26  ma
+  - old behaviour in has_moved
+
   Revision 1.43  2001/10/20 17:26:39  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
