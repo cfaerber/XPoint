@@ -35,25 +35,25 @@
 
 # Verzeichnis, in dem die DTD von DocBook 4.1 (SGML) liegt.
 # <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #dbdir = 
 
 # Verzeichnis, in dem die ISO 8879 Entities liegen.
 # <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #entdir = 
 
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #jadedir = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
 # <http://nwalsh.com/docbook/dsssl/db157.zip>
-# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+# (MUSS gesetzt werden, falls MAKEHB auf yes gesetzt ist.)
 #
 #moddir = 
 
@@ -69,18 +69,15 @@
 #
 #DOCFORMFLAGS = 72 1 N
 
-# Parameter fuer w3m
-# (KANN gesetzt werden.)
-#
-#W3MFLAGS = -dump -cols 72
-
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # Ab hier bitte keine Aenderungen mehr durchfuehren
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+ifeq ($(OS),linux)
 SHELL = /bin/sh
+endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
@@ -112,7 +109,7 @@ endif
 endif
 
 DOCFORMFLAGS ?= 72 1 N
-W3MFLAGS ?= -dump -cols 72
+H2TFLAGS ?= -dump -cols 72
 TIDYFLAGS ?= -q -f tidyerr.tmp -m -asxml --doctype strict --show-warnings no --add-xml-decl yes
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
@@ -136,7 +133,7 @@ SED ?= sed
 RECODE ?= recode
 JADE ?= openjade
 TIDY ?= tidy
-W3M ?= w3m
+H2T ?= w3m
 TEX ?= tex
 PDFTEX ?= pdftex
 DVIPS ?= dvips
@@ -162,7 +159,7 @@ SED ?= sed
 RECODE ?= recode
 JADE ?= openjade
 TIDY ?= tidy
-W3M ?= w3m
+H2T ?= w3m
 TEX ?= tex
 PDFTEX ?= pdftex
 DVIPS ?= dvips
@@ -212,7 +209,7 @@ $(HELPFILES): %.hlp: %.ihq
 	$(IHS) $*
 
 xpoint.txt: xpoint.htm
-	$(W3M) $(W3MFLAGS) xpoint.htm > xpoint.tmp
+	$(H2T) $(H2TFLAGS) xpoint.htm > xpoint.tmp
 	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
 
 xpoint.htm: xpoint.sgm xpoint.dsl catalog
@@ -326,6 +323,10 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.12  2000/10/19 18:17:12  fe
+# SHELL-Variable wird nur noch bei Linux gesetzt.  (wegen Cygwin make)
+# Variablen W3M und W3MPARMS in H2T und H2TPARMS umbenannt.
+#
 # Revision 1.11  2000/10/17 15:00:26  fe
 # Zu installierende Textdateien aktualisiert.
 #
