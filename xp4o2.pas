@@ -562,7 +562,7 @@ begin
   if kombaum<>nil then
     freemem(kombaum,komanz*sizeof(komrec));
   new(hdp);
-  realmaxkom:=min(maxkomm,(memavail-10000) div 2 div sizeof(komrec));
+  realmaxkom:=min(maxkomm,(maxavail-15000) div 2 div sizeof(komrec));
   getmem(kombaum,realmaxkom*sizeof(komrec));
   n:=0;
   nullid:=0;
@@ -925,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.8  2000/12/18 11:26:28  mk
+  - maxavail statt memavail bei Kommentarbaumstart abfragen
+
   Revision 1.11.2.7  2000/12/12 11:30:28  mk
   - FindClose hinzugefuegt
 
