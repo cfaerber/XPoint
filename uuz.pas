@@ -28,7 +28,7 @@ uses  xpglobal,
 {$IFDEF BP }
   ems,
 {$ENDIF }
-{$IFDEF NCRC }
+{$IFDEF Linux }
   xpcurses,
 {$ELSE }
   crt,
@@ -164,7 +164,11 @@ type  OrgStr  = string[orglen];
                   absender   : string[80];
                   datum      : string[11];    { Netcall-Format }
                   zdatum     : string[22];    { ZConnect-Format }
+{$IFDEF BP }
                   pfad,pfad2 : string;        { Netcall-Format }
+{$ELSE }
+                  pfad       : HugeString;        { Netcall-Format }
+{$ENDIF }
                   msgid,ref  : string[midlen];{ ohne <> }
                   ersetzt    : string[midlen];
                   addrefs    : integer;
@@ -176,7 +180,7 @@ type  OrgStr  = string[orglen];
                   ckomlen    : longint;
                   realname   : string[realnlen];
 
-                  programm   : string[60];    { Mailer-Name }
+                  programm   : string;        { Mailer-Name }
                   datei      : string[40];    { Dateiname }
                   ddatum     : string[22];    { Dateidatum, jjjjmmtthhmmss }
                   prio       : byte;          { 10=direkt, 20=Eilmail }
@@ -228,7 +232,7 @@ type  OrgStr  = string[orglen];
                   mimetyp    : string[30];
                   mimereltyp : string[25];
 
-                  { 03.09.1999 robo - X-No-Archive Konvertierung }
+                  { X-No-Archive Konvertierung }
                   xnoarchive : boolean;
                   Cust1,Cust2: string[custheadlen];
 
@@ -240,7 +244,6 @@ type  OrgStr  = string[orglen];
 
 var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       f1,f2         : file;          { Quell/Zieldatei     }
-{      errorlevel    : integer; }
       u2z           : boolean;       { Richtung; mail/news }
       mails,news    : longint;       { Counter             }
       buffer        : array[0..bufsize] of char;    { Kopierpuffer }
@@ -253,7 +256,7 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       smore         : array[1..maxmore] of string;
       outbuf        : charrp;
       outbufpos     : word;
-      s             : string;
+      s             : HugeString;
       MaxSlen       : longint;       { max. LÑnge fÅr ReadString() }
       qprint,b64    : boolean;       { MIME-Content-TT's (ReadRFCheader) }
       qprchar       : set of char;
@@ -555,7 +558,7 @@ var regs  : registers;
     free  : word;            { freie Paras nach Set Block }
     envir : array[0..1023+18] of byte;    { neues Environment }
     dpath : pathstr;
-    para  : string[130];
+    para  : string;
     pp    : byte;
     sm2t  : boolean;
 
@@ -818,7 +821,7 @@ begin
   outbufpos:=0;
 end;
 
-procedure wrfs(var s:string);
+procedure wrfs(var s:Hugestring);
 begin
   if outbufpos+length(s)>=outbufsize then
     FlushOutbuf;
@@ -826,22 +829,23 @@ begin
   inc(outbufpos,length(s));
 end;
 
-
 procedure WriteHeader;
 var i  : integer;
     ml : shortint;
-    ss : string;
+    ss : Hugestring;
 
-  procedure wrs(s:string);
+  procedure wrs(s:Hugestring);
   begin
+    {$IFDEF BP }
     TruncStr(s,253);
+    {$ENDIF }
     s:=s+#13#10;
     wrfs(s);
   end;
 
   procedure WriteStichworte(keywords:string);
   var p  : byte;
-      stw: string[60];
+      stw: string;
   begin
     while keywords<>'' do begin
       p:=cpos(',',keywords);
@@ -866,12 +870,16 @@ begin
     wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
     if wab<>'' then wrs('WAB: '+wab);
     wrs('BET: '+betreff);
+{$IFDEF BP }
     if pfad2='' then
       wrs('ROT: '+pfad)
     else begin              { Pfad > 255 Zeichen }
       ss:='ROT: ';
       wrfs(ss); wrfs(pfad); wrs(pfad2);
-      end;
+    end;
+{$ELSE } { Unter 32 Bit ist Pfad lang genug }
+    wrs('ROT: '+pfad);
+{$ENDIF }
     wrs('MID: '+msgid);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
@@ -1080,7 +1088,7 @@ procedure UnQuote(var s:string);    { RFC-822-quoting entfernen }
 var p : byte;
 begin
   if s[1]='"' then delete(s,1,1);
-  if s[length(s)]='"' then dellast(s);
+  if s[length(s)]='"' then typeform.dellast(s);
   p:=1;
   while (p<length(s)) do begin
     if s[p]='\' then delete(s,p,1);
@@ -1120,7 +1128,7 @@ end;
 
 procedure GetContentType(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 var p     : byte;
-    s1    : string[20];
+    s1    : string[30];
     value : string;
 
   procedure SkipWhitespace;
@@ -1291,17 +1299,17 @@ var p,b     : byte;
         s[p2+1]:=chr((b2 and 15) shl 4 + b3 shr 2);
         s[p2+2]:=chr((b3 and 3) shl 6 + b4);
         inc(p2,3);
-        end;
-      s[0]:=chr(p2-1-pad);
+      end;
+      SetLength(s, p2-1-pad);
       end;
   end;
 
 begin
   if qprint then begin
     while (s<>'') and (s[length(s)]=' ') do    { rtrim }
-      dec(byte(s[0]));
+      SetLength(s, Length(s)-1);
     softbrk:=(lastchar(s)='=');    { quoted-printable: soft line break }
-    if softbrk then dellast(s);
+    if softbrk then dellastHuge(s);
     p:=cpos('=',s);
     if p>0 then
       while p<length(s)-1 do begin
@@ -1496,7 +1504,7 @@ end;
 
 {$R-}
 procedure ReadString(umbruch:boolean);
-const l : byte = 0;
+const l : Integer = 0;
       c : char = #0;
 
   procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
@@ -1532,7 +1540,7 @@ begin
       inc(eol);
     IncPos;
     end;
-  s[0]:=char(l);
+  Setlength(s, l);
   if buffer[bufpos]=#10 then begin
     inc(eol);
     IncPos;
@@ -1709,7 +1717,7 @@ begin
         if bytesleft<-1 then s[p-1]:='=';
         end;
     until (p>70) or (bytesleft<=0);
-    s[0]:=chr(p);
+    SetLength(s, p);
     end;
 end;
 {$IFDEF Debug }
@@ -1719,11 +1727,10 @@ end;
 
 procedure ReadRFCheader(mail:boolean; s0:string);
 const zz  : string[40] = '';    { Datensegment-optimiert }
-var p,i   : integer; { 28.01.2000 robo - byte -> integer }
+var p,i   : integer; { byte -> integer }
     s1    : string;
 
-{    d40   : string[40]; }
-    drealn: string[realnlen]; { 11.10.1999 robo - Realname verlÑngert }
+    drealn: string[realnlen]; { Realname verlÑngert }
     manz  : integer;      { Anzahl zusÑtzliche Strings in 'smore' }
 
   procedure AppUline(s:string);
@@ -1925,10 +1932,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
 
   procedure GetKOPs;
   var p : byte;
-      s : string;
-      a : string[adrlen];
-{      r : string[40]; }
-      r : string[realnlen]; { 11.10.1999 robo - Realname verlÑngert }
+      s, a, r: string;
   begin
     s0:=trim(s0)+',';
     while cpos(',',s0)>0 do begin
@@ -2016,7 +2020,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
   end;
 
   procedure GetReceived;        { Mail - "Received: by" an Pfad anhÑngen }
-  var by,from : string[80];
+  var by,from : string;
     function GetRec(key:string):string;
     var p : byte;
     begin
@@ -2035,9 +2039,8 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     appUline('U-'+s1);
     by:=GetRec('by ');
     from:=GetRec('from ');
-{ 28.01.2000 robo - Envelope-EmpfÑnger ermitteln }
+    { Envelope-EmpfÑnger ermitteln }
     if envemp='' then envemp:=GetRec('for ');
-{ /robo }
     if (by<>'') and (lstr(by)<>lstr(right(hd.pfad,length(by)))) then begin
       if hd.pfad<>'' then hd.pfad:=hd.pfad+'!';
       hd.pfad:=hd.pfad+by;
@@ -2142,8 +2145,12 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
   procedure GetPath;
   begin
     hd.pfad:=s0;
+{$IFDEF BP }
     if manz>0 then hd.pfad2:=smore[1]
     else hd.pfad2:='';
+{$ELSE }
+    if manz>0 then hd.pfad :=hd.pfad + smore[1];
+{$ENDIF }
   end;
 
   procedure GetPriority;  { robo: X-Priority konvertieren }
@@ -2250,13 +2257,10 @@ begin
              if zz='received'     then GetReceived else
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
-
              else AppUline('U-'+s1);
         's': if zz='subject'      then GetBetreff(false) else
-{             if zz='sender'       then GetAdr(sender,d40) else }
              if zz='sender'       then GetAdr(sender,drealn) else
-             { 11.10.1999 robo - Realname verlÑngert }
-
+             if zz='supersedes'   then ersetzt:=s0 else
              if zz='summary'      then summary:=s0
              else AppUline('U-'+s1);
         'x': if zz='x-gateway'    then gateway:=s0 else
@@ -2290,7 +2294,6 @@ begin
              if zz='in-reply-to'  then GetInReplyto else
              if zz='followup-to'  then getFollowup else
              if zz='newsreader'   then programm:=s0 else
-             if zz='supersedes'   then ersetzt:=s0 else
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz<>'lines'       then AppUline('U-'+s1);
@@ -2481,7 +2484,7 @@ begin
   if compressed then begin
     assign(f,fn);
     reset(f,1);
-    s[0]:=#4;
+    setlength(s, 4);
     blockread(f,s[1],4,rr);
     close(f);
     if (left(s,2)=#$1f#$9d) or (left(s,2)=#$1f#$9f) or
@@ -2555,7 +2558,7 @@ begin
         smtpende:=(s='.');
         if not smtpende then begin
           if (s<>'') and (s[1]='.') then     { SMTP-'.' entfernen }
-            delfirst(s);
+            delfirstHuge(s);
           UnquotePrintable;    { hÑngt CR/LF an, falls kein Base64 }
           inc(hd.groesse,length(s));
           end;
@@ -2568,7 +2571,7 @@ begin
         smtpende:=(s='.');
         if not smtpende then begin
           if (s<>'') and (s[1]='.') then    { SMTP-'.' entfernen }
-            delfirst(s);
+            delfirstHuge(s);
           UnQuotePrintable;    { hÑngt CR/LF an, falls kein Base64 }
           if not binaer then ISO2IBM;
           wrfs(s);
@@ -2716,7 +2719,7 @@ var sr    : searchrec;
     dfile : string[12];   { Name des D.-files }
     p     : byte;
     n     : longint;
-    mailuser: string[60];
+    mailuser: string;
 
   procedure GetStr;   { eine Textzeile aus X.-File einlesen }
   var c : char;
@@ -2873,8 +2876,7 @@ var dat    : string[30];
     s,
     rfor   : string;
     first  : boolean;
-    i      : integer;
-    j      : integer; { 24.09.1999 robo }
+    i, j   : integer;
     xdate  : boolean;
     ep     : empfnodep;
 
@@ -3223,7 +3225,7 @@ var hds,adr : longint;
     f       : file;
     fn      : string[12];
     fc      : text;
-    server  : string[80];   { Adresse UUCP-Fileserver }
+    server  : string;       { Adresse UUCP-Fileserver }
     files   : longint;
     binmail : boolean;
     copycount : integer;    { fÅr Mail-'CrossPostings' }
@@ -3237,8 +3239,12 @@ var hds,adr : longint;
 
   procedure wrbuf(var f:file);
   begin
+  {$IFDEF BP }
     if length(s)<255 then inc(byte(s[0]));
     s[length(s)]:=#10;
+  {$ELSE }
+    s := s + #10;
+  {$ENDIF }
     if outbufpos+length(s)>=outbufsize then
       FlushOutbuf(f);
     FastMove(s[1],outbuf^[outbufpos],length(s));
@@ -3324,7 +3330,7 @@ var hds,adr : longint;
       s:=trim(s);
       if (s<>'') and (s[1]<>'#') then begin
         if request then begin
-          p:=blankpos(s);
+          p:=blankposHuge(s);
           if p=0 then begin
             fromfile:=s;
             tofile:=Unix2DOSfile(s,'');
@@ -3531,6 +3537,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2000/05/04 10:26:03  mk
+  - UUZ teils auf HugeString umgestellt
+
   Revision 1.23  2000/05/03 07:31:02  mk
   - unter FPC jetzt auch compilierbar
 

@@ -115,9 +115,8 @@ const  {$IFDEF DPMI}
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
-       TPufferFile = 'tpuffer';       { TurboBox-Puffer }
        XFerDir_    = 'spool';         { eingehende Mailbatches }
-       XFerDir     = XFerDir_+DirSepa; 
+       XFerDir     = XFerDir_+DirSepa;
        JanusDir_   = XFerDir+'janus';
        JanusDir    = JanusDir_+DirSepa;
        FidoDir_    = 'fido';
@@ -382,7 +381,6 @@ type   textp  = ^text;
        { alle nicht genutzen Headerzeilen sollten = 0 sein         }
        { Netztypen: 0=Netcall, 1=Pointcall, 2=ZConnect, 3=MagicNET }
        {            10=QM, 11=GS, 20=Maus, 30=Fido, 40=RFC         }
-       {            90=Turbo-Box                                   }
 
        OrgStr      = string[OrgLen];
        AdrStr      = string[AdrLen];
@@ -415,7 +413,7 @@ type   textp  = ^text;
                   datum      : string[11];    { Netcall-Format               }
                   zdatum     : string[22];    { ZConnect-Format; nur auslesen }
                   orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
-                  pfad       : string;        { Netcall-Format               }
+                  pfad       : Hugestring;    { Netcall-Format               }
                   msgid,ref  : string[midlen];{ ohne <>                      }
                   refanz     : integer;       { Anzahl BEZ-Zeilen            }
                   typ        : string[1];     { T / B                        }
@@ -423,8 +421,8 @@ type   textp  = ^text;
                   charset    : string[7];
                   ccharset   : string[7];     { crypt-content-charset }
                   groesse    : longint;
-                  realname   : string[realnlen]; { MK 01/00 UUZ Fix von robo }
-                  programm   : string[40];    { Mailer-Name }
+                  realname   : string[realnlen];
+                  programm   : string;        { Mailer-Name }
                   organisation : OrgStr;
                   postanschrift: string[PostAdrLen];
                   telefon    : TeleStr;
@@ -574,7 +572,6 @@ type   textp  = ^text;
                   aFilter   : string[60];  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
                   SysopPack : boolean;     { Sysopnetcall-Paket packen }
-                  SerienNr  : smallword;   { Turbo-Box: Seriennr.      }
                   Script    : string[50];  { Netcall-Script     }
                   chsysbetr : string[50];  { Changesys-Betreff  }
                   uucp7e1   : boolean;     { gerade Parity beim Login }
@@ -1038,7 +1035,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        xaufbau      : boolean;       { Bezugsbaum neu einlesen        }
        readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues }
        readdate     : longint;       { 3=Heute, 4=Datum              }
-       nachweiter,nw: boolean;       { Auto-Advace im Msg-Fenster    }         
+       nachweiter,nw: boolean;       { Auto-Advace im Msg-Fenster    }
        brettweiter  : boolean;
        userweiter   : boolean;
        qchar        : string[20];    { zuletzt verwendeter Quote-String }
@@ -1136,6 +1133,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.35  2000/05/04 10:26:04  mk
+  - UUZ teils auf HugeString umgestellt
+
   Revision 1.34  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

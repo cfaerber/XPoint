@@ -98,7 +98,7 @@ procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
 function  vert_name(s:string):string;
 function  vert_long(s:string):string;
 function  systemname(adr:string):string;
-function  pfadbox(zconnect:boolean; var pfad:string):string;
+function  pfadbox(zconnect:boolean; var pfad:Hugestring):string;
 function  file_box(d:DB; dname:string):string;
 function  box_file(box:string):string;
 function  brettok(trenn:boolean):boolean;
@@ -1223,7 +1223,7 @@ begin
 end;
 
 
-function pfadbox(zconnect:boolean; var pfad:string):string;
+function pfadbox(zconnect:boolean; var pfad:Hugestring):string;
 var p : byte;
 begin
   if zconnect then begin
@@ -1406,6 +1406,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/05/04 10:26:03  mk
+  - UUZ teils auf HugeString umgestellt
+
   Revision 1.22  2000/05/03 00:21:21  mk
   - unbenutzte Units aus uses entfernt
 

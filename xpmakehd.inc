@@ -68,6 +68,40 @@ var i,res : integer;
     if ok and (buf^[o]=#10) then IncO;
   end;
 
+  { wie getline fÅr HugeString }
+  procedure getlineHuge(var s:Hugestring);
+  var l : byte;
+
+    procedure IncO;
+    begin
+      inc(o);
+      if o=bufanz then
+        if eof(f) then
+          ok:=false
+        else begin
+          inc(size,bufsize);
+          ReadBuf;
+          end;
+    end;
+
+  begin
+    l:=0;
+    while (o<bufanz) and (buf^[o]<>#13) do
+    begin
+{$IFDEF BP }
+      if l<255 then
+{$ENDIF }
+      begin
+        inc(l);
+        s[l]:=buf^[o];
+        end;
+      incO;
+    end;
+    SetLength(s, l);
+    IncO;
+    if ok and (buf^[o]=#10) then IncO;
+  end;
+
   procedure GetName(var name,realname:string);
   var p : byte;
   begin
@@ -90,6 +124,12 @@ var i,res : integer;
   begin
     if maxlen<length(line) then
       line[0]:=chr(maxlen);
+    s:=line;
+  end;
+
+  { bei diesen Strings gibt es keine LÑngenbeschrÑnkung }
+  procedure LRead2(var s:string);
+  begin
     s:=line;
   end;
 
@@ -326,7 +366,7 @@ var i,res : integer;
       line:=trim(mid(line,p+1));
       if parname='boundary' then hd.boundary:=left(parval,70) else
       if (parname='name') and (hd.datei='') then hd.datei:=left(parval,40) else
-      
+
       { 03.02.2000 robo }
       {$ifdef uuzmime}
       if parname='type' then hd.mimereltyp:=left(parval,25) else
@@ -404,8 +444,8 @@ begin
             if id = 'U-KEYWORDS'     then LRead(Keywords,60) else
             if id = 'U-SUMMARY'      then LRead(Summary,200) else
             if id = 'U-DISTRIBUTION' then LRead(Distribution,40) else
-            if id = 'U-X-NEWSREADER' then LRead(Programm,40) else
-            if id = 'U-X-MAILER'     then LRead(Programm,40) else
+            if id = 'U-X-NEWSREADER' then LRead2(Programm) else
+            if id = 'U-X-MAILER'     then LRead2(Programm) else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
 
@@ -440,8 +480,8 @@ begin
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
             if id = 'BEZ'    then GetRef else
-            if id = 'MAILER' then LRead(programm,40) else
-            if id = 'ORG'    then LRead(organisation,orgLen) else 
+            if id = 'MAILER' then LRead2(programm) else
+            if id = 'ORG'    then LRead(organisation,orgLen) else
             if id = 'OEM'    then GetName(oem,dummy) else
             if id = 'OAB'    then GetName(oab,oar) else
             if id = 'WAB'    then GetName(wab,war) else
@@ -524,15 +564,9 @@ begin
               else
             {$ENDIF}
 
-{ 11.10.1999 robo - Realname verlÑngert }
-
-{            if id = 'ABR' then LRead(realname,40) else }    { ZConnect 1.9 }
             if id = 'ABR' then LRead(realname,realnlen) else { ZConnect 1.9 }
-
-{ /robo }
-
             if id = 'BIN' then typ:='B' else
-            if id = 'MAL' then LRead(programm,40);
+            if id = 'MAL' then LRead2(programm);
 
             { 01/2000 oh - Customizable Headerlines }
             if id = UStr(mheadercustom[1]) then LRead(Cust1,CustHeadLen)
@@ -560,7 +594,7 @@ begin
         delete(betreff,1,1);
       getline(absender,79);
       getline(datum,10);
-      getline(pfad,255);
+      getlineHuge(pfad);
       getline(msgid,120);
       getline(typ,1);
       getline(s,20);
@@ -576,6 +610,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/05/04 10:26:03  mk
+  - UUZ teils auf HugeString umgestellt
+
   Revision 1.7  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
