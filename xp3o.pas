@@ -608,13 +608,11 @@ var fname   : string;
   begin
     if XReadF_error then exit;
     extract_msg(ETyp,schab,fname,append,1);
-    if art<>1 then begin
+    if art<>1 then
+    begin
       inc(n);
-      gotoxy(x+27,y+2);
-      moff;
-      write(n:4);
-      mon;
-      end;
+      mwrt(x+27,y+2, Format('%4d', [n]));
+    end;
     append:=true;
   end;
 
@@ -1525,6 +1523,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2001/12/22 16:51:08  mk
+  - replaced GotoXY+Write() with MWrt()
+
   Revision 1.76  2001/10/20 17:26:40  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
