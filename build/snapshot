@@ -28,7 +28,7 @@ scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
 #cvs ci -F /tmp/openxp_ver.txt version.inc
-cvs ci -m "- new version: $version" version.inc
+cvs ci -m "- new version: `$version`" version.inc
 cd "$sourcedir"
 pwd
 #echo $1
@@ -37,7 +37,7 @@ pwd
 #sleep 5
 echo $version
 pwd
-exit 1
+#exit 1
 echo "building OXP" $version
 "$scriptdir"buildxp $mainversion
 test -f "openxp" || echo "Ooops, no OXP-Binary"
