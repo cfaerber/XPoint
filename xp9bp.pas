@@ -17,7 +17,7 @@ unit xp9bp;
 
 interface
 
-uses dos,typeform,fileio,datadef,database,
+uses dos,typeform,fileio,datadef,database,crt,
      xp0,xp1,xp2,xpnt, xpglobal;
 
 
@@ -306,7 +306,10 @@ begin
             getx(su,  'brettmanagerdomain',BMdomain) or
             getw(su,  'maxfilesize',maxfsize)
           ) then
+          begin
+            window(1,1,80,25);
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
+          end;
           end;
         end;
     close(t);
@@ -557,6 +560,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.13  2001/05/30 07:32:07  mk
+  - Fenster vor Fehlermeldung restaurieren
+
   Revision 1.10.2.12  2001/04/23 18:45:03  mk
   - Spoolverzeichnis auch in versch. Unterverzeichnissen anlegen
 
