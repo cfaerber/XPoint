@@ -26,6 +26,7 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
 {$ELSE }
   crt,
 {$ENDIF }
+  winxp,
       dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti;
 
@@ -56,15 +57,16 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  window(1,4,80,screenlines-2);
+  {window(1,4,80,screenlines-2);}	{ Fenster-Problem beim Netcall (hd) }
 end;
 
 procedure twin;
 begin
   attrtxt(7);
-  ttwin;
+{  ttwin; }
   moff;
-  clrscr;
+  clwin(1,screenwidth,4,screenlines-2);
+{  clrscr;}
   mon;
   cursor(curon);
 end;
@@ -780,6 +782,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/16 12:53:53  hd
+  - Bildschirm beim Netcall (Fix-Versuch, bitte testen)
+
   Revision 1.9  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 
