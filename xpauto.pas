@@ -328,6 +328,7 @@ var sr    : tsearchrec;
       rc:= findnext(sr);
     first:=(rc<>0);
     find:=not first;
+    if first then findclose(sr);
   end;
 
   function NamePollbox:string;
@@ -671,6 +672,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/12/12 14:24:20  mk
+  - fixed missing FindClose
+
   Revision 1.30  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 
