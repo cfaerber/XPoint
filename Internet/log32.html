@@ -4,7 +4,14 @@
 <h3>v3.9.x (Entwicklerzweig, wird 4.0.0)</h3> 
 <!-- Bei Webnews stehen die neuesten Nachrichten typischerweise OBEN. -->
 <ul>
-  <li>alle Fixes und &Auml;nderungen der 3.8.x </li>
+  <li>alle Fixes und &Auml;nderungen der 3.8.x</li>
+  <li>viele weitere kleinere Bugfixes</li>
+  <li> 2003-05-01 cl: CRLF at the end of a text file is now uniformly handled
+    as the start of
+an additional line.</li>
+  <li>2003-05-01 mk: fixed #704019: Empf&auml;nger &quot;Alle&quot; bei Fido-Antworten</li>
+  <li>2003-05-01 mk: fixed #721302: Fidoechos ueber Brettmanager bestellen (Linux)</li>
+  <li>2003-05-01 mk: Neuer Boxtyp IMAP mit entsprechenden Routinen f&uuml;r den Netcall</li>
   <li>2003-02-13 cl: implemented correct display of UTF8 and Unicode Line breaking 
     in the lister</li>
   <li>2003-01-28 cl: <a href="index.php4?file=spam.html">Spam-Filter</a> implementiert 
@@ -39,7 +46,18 @@
 <h3>v3.8.x (Anwenderzweig)</h3>
 <p><b>ab x.x.2002 v3.8.9</b></p>
 <ul>
-  <li>verschiedene Bugfixes</li>
+  <li>cl+ma+mk: verschiedene kleinere und gr&ouml;&szlig;ere Bugfixes, die hier nicht alle
+    gelistet sind: </li>
+  <li>2003-05-01 mk: fixed incorrect flags in ArchivAMToPM when archiving messages</li>
+  <li>2003-05-01 mk: Nachrichten Parken hat nicht funktioniert</li>
+  <li>2003-05-01 mk: korrektes Handling von PageDown am Ende der angezeigten
+    Datei</li>
+  <li>2003-05-01 mk: Problem beim konvertieren von FIDO-Paketen mit ZFido behoben</li>
+  <li>2003-04-25 mk: MessageID-Request und Headeronly hinzugef&uuml;gt. Beim Bestellen
+    von Newsgroups kann Headeronly angew&auml;hlt werden. &quot;M&quot; im Nachrichten-Lister
+    holt die komplette Nachricht. Bei erfolgloser Suche einer Message-ID kann
+    diese online angefordert werden. </li>
+  <li>2003-04-25 mk: &lt;Strg-B&gt; im Editor formatiert Bl&ouml;cke</li>
   <li>2003-04-12 mk: Softbreaks bleiben beim Laden einer Datei in den Editor
     erhalten</li>
   <li>2003-04-12 mk: Probleme mit kaputten Umlauten nach &quot;Del&quot;-Taste in Editor
