@@ -250,7 +250,7 @@ label ende;
       n:=0;
       seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
       i:=length(seek);
-      while seek[i]='"' do dec(i);                  { Und Ausrufezeichen hinten abschneiden }
+      while (seek[i]='"') and (i <> 0) do dec(i);      { Und Ausrufezeichen hinten abschneiden }
       truncstr(seek,i);
       if seek<>'' then begin
         i:=1;
@@ -281,7 +281,7 @@ label ende;
 
       if suchanz=1 then suchand:=true;
       m:=0;
-      for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }
+      for n:=0 to suchanz-1 do     { Teilstrings Umsortieren: NOT zuerst }
       begin
         if (seeknot[n]=true) and (seeklen[n]<>0) then
         begin
@@ -2440,6 +2440,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.3  2000/08/08 09:24:18  mk
+  - Bugfixes fuer Suche
+
   Revision 1.47.2.2  2000/07/22 22:01:02  mk
   - Zugriff auf nicht initialisierten String beseitigt
 
