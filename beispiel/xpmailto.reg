@@ -1,0 +1,33 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail]
+@="CrossPoint"
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint]
+@="CrossPoint"
+"DLLPath"="C:\\XP\\XPICONS.DLL"
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols]
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto]
+@="URL:MailTo Protocol"
+"EditFlags"=hex:02,00,00,00
+"URL Protocol"=""
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\DefaultIcon]
+@="C:\\XP\\XPICONS.DLL,-1"
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell\open\command]
+@="\"C:\\BAT\\XP.BAT\" \"-nb -%1\\t-online\""
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell]
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell\open]
+
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell\open\command]
+@="C:\\BAT\\XP.BAT"
+
