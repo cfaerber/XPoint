@@ -13,6 +13,7 @@
 { PM 10/92              }
 
 {$I XPDEFINE.INC }
+{$S-}
 
 {$M 16384,$a000,655360}
 
@@ -3443,6 +3444,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.48  2001/08/11 13:12:17  mk
+  - no stack checking in uuz
+
   Revision 1.35.2.47  2001/08/07 16:53:45  mk
   JG:- Ctrl-Z umwandeln
 
