@@ -79,7 +79,6 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      wahlcnt   : integer;  { Anwahlversuche }
      bimodem   : boolean;
      komment   : string;
-     SysopMode : boolean;
      fidologfile: string;
     _turbo     : boolean;
     _uucp      : boolean;
@@ -776,8 +775,7 @@ begin
   TempPPPMode := (netztyp = nt_Client);
   with BoxPar^ do
   begin
-    if SysopInp+SysopOut<>'' then TempPPPMode := false;
-    SysopMode:=(SysopInp+SysopOut<>'');
+    if SysopMode then TempPPPMode := false;
     if SysopMode then
     begin
       if TempPPPMode then
@@ -1050,7 +1048,7 @@ begin                  { function Netcall }
     case netztyp of
       nt_Fido: begin
         Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-        case FidoNetcall(BoxName,Boxpar,FidoCrash,sysopmode,NetcallLogfile,IncomingFiles) of
+        case FidoNetcall(BoxName,Boxpar,FidoCrash,boxpar^.sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1064,7 +1062,7 @@ begin                  { function Netcall }
 
       nt_ZConnect: begin
         Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
-        case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+        case ZConnectNetcall(BoxName,Boxpar,ppfile,boxpar^.sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1078,7 +1076,7 @@ begin                  { function Netcall }
 
       nt_UUCP: begin
         Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
-        case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles,DeleteSpoolFiles) of
+        case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,boxpar^.sysopmode,NetcallLogfile,IncomingFiles,DeleteSpoolFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1150,7 +1148,7 @@ begin                  { function Netcall }
     ImportOK := true;
 
   if ImportOK and (DeleteSpoolFiles.Count>0) then 
-    if SysopMode or nDelPuffer then
+    if boxpar^.SysopMode or nDelPuffer then
     begin
       Debug.DebugLog('xpnetcall','deleting incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
@@ -1322,9 +1320,7 @@ end;
 function AutoMode:boolean;
 var brk: boolean;
 begin
-{$IFDEF Debug }
-  dbLog('-- AutoMode');
-{$ENDIF }
+  Debug.DebugLog('xpnetcall','AutoMode', dlTrace);
   automode:=false;
   if ParSetuser<>'' then
     SetUsername(ParSetuser);
@@ -1387,6 +1383,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2002/05/19 21:32:29  ma
+  - fixed diskpoll
+
   Revision 1.55  2002/05/12 20:42:49  mk
   - first version of client netcall hack
 
