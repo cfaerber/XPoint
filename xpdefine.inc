@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -25,8 +25,8 @@
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {.$DEFINE Beta }
 
-{ Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
-  CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
+{ Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er,
+  ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
 {.$DEFINE NO386 }
 
 { Wenn dieser Schalter definiert ist, wird eine Version mit CAPI-
@@ -52,7 +52,7 @@
 {$IFDEF BP } { Nur fÅr Borland Pascal 7 und 8 }
   {$A+,B-,D-,E-,F-,I-,G+,L-,N-,O-,P-,Q-,R-,S-,T-,V-,X+,Y-}
   {$IFDEF NO386 }
-    {$G-,E+,N+} { keine 286er Befehle, kein CoPro nîtig }
+    {$G-}                 { keine 286er Befehle }
   {$ENDIF }
 {$ENDIF }
 
@@ -111,8 +111,8 @@
 
 {
   $Log$
-  Revision 1.11  2000/03/04 11:53:20  mk
-  Version auf 3.21.022 beta geaendert und Debug eingeschaltet
+  Revision 1.10.2.1  2000/09/19 03:19:52  mk
+  - CoPro-Emu fuer XT Version nicht benoetigt
 
   Revision 1.10  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
