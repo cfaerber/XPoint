@@ -400,13 +400,17 @@ end.
 }
 {
    $Log$
+   Revision 1.9.2.6  2003/01/25 22:51:40  my
+   MY: - CVS-Log korrigiert (versehentlich das File der v3.20 committed)
+
    Revision 1.9.2.5  2003/01/25 22:48:27  my
    MY: - 'pos()' => 'cpos()'
 
-   Revision 1.2.2.4  2003/01/25 22:47:35  my
-   MY: - 'pos()' => 'cpos()'
+   $Log$
+   Revision 1.9.2.6  2003/01/25 22:51:40  my
+   MY: - CVS-Log korrigiert (versehentlich das File der v3.20 committed)
 
-   Revision 1.2.2.3  2003/01/25 21:41:11  my
+   Revision 1.9.2.4  2003/01/25 21:31:54  my
    MY: - GeÑnderte Parameterbehandlung: Dateiname kann jetzt jede beliebige
          oder wie bisher keine Extension enthalten (bisher fÅhrte der
          korrekte Dateiname 'XP.IHQ' zu einer Fehlermeldung). Bei öbergabe
@@ -414,13 +418,7 @@ end.
        - Kosmetik bei Versions- und Copyright-Strings.
        - Copyright-Header hinzugefÅgt.
 
-   Revision 1.2.2.2  2003/01/25 17:45:41  mw
+   Revision 1.9.2.3  2003/01/25 17:46:40  mw
    MW: - IHS compiliert jetzt wieder fehlerfrei die Hilfen.
-
-   Revision 1.2.2.1  2003/01/15 16:02:02  mw
-   MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
-         bei allen Quelldateien in die Dateien geschrieben.
-         Assembler-Quellen nur ID.
-
 
 }
