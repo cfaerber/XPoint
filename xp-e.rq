@@ -287,7 +287,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 13   ^Text,^Hotkey,^Arrows
 14   ^Text,^Highlighted,^Inverse
 15   ^Text,^Highlighted,^Reference,^Selected Reference
-16   ^Message Header,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,^highlighted,^Quote,H^ighlited quote
+16   ^Message Header,Header highli^ghted,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,^highlighted,^Quote,H^ighlited quote
 17   ^Head,^Status line,^Text,^Quote,^Marked,^End marker,M^enu,Me^nu keys,Menu ^Bar,^selected key
 18   ^Text,^Data,^Status line
 19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
@@ -541,10 +541,10 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 6    Save binary files up to:~
 7    KB
 9    Bytes
-11   Standard hold time AMs: ~
+11   Default hold time AMs:  ~
 12   Days
-13   Standard hold time PMs: ~
-14   Hold own AMs
+13   Default hold time PMs:  ~
+14   Hold own Public msgs
 15   Creation time = 00:00
 16   Use Re^n
 17   Store unsent messages in /¯Unsent
@@ -557,11 +557,11 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 27   in mail as well
 29   Create users automatically upon PM reply
 30   Ignore cancels/supersedes
-31   Hold own PMs
-39   User selection list:    ~
-40   always
-41   Carbon Copies + Reply-To
-42   Carbon Copies
+31   Hold own Private msgs
+39   Recipient pick-list:    ~
+40   Always
+41   Carbon copies + Reply-To
+42   Carbon copies
 43   Reply-To
 44   never
 50   user defined
@@ -676,7 +676,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 9    Usenet groups with "."
 10   Separator comment   ~
 11   ... applies to all Message Areas
-12   combined Unread mode
+12   Combined Unread mode
 21   left
 22   middle
 23   right
@@ -702,16 +702,17 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 4    Show address of primary server
 5    Cursor in menus and lists
 6    Lock screen-blanker
-7    optical sound signal
+7    Visual 'warnings'
 8    Blank window background
 9    Power saver
 10   Terminal BIOS output
 11   Accessibility options
-12   additional sound signals
+12   Additional sounds
 13   Headline 1
 14   Headline 2
-15   Column order Message Reading Window
-16   Column order User-Overview        ~
+15   Message-list column order
+16   User list column order  ~
+17   Keep VGA palette
 + 261
 # Window width
 0    50
@@ -1092,10 +1093,10 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 2    Nessagebase Test
 3    Messagebase Statistics
 # die L„nge von Feld Nr. 4 bestimmt die Fensterbreite:
-4    messages :
-5    deleted  :
-6    bad      :
-7    no bad messages found
+4    Messages :
+5    Deleted  :
+6    Bad      :
+7    No bad messages found
 -
 449  Stop at the end of file
 450  ~Stop at the end of file.
@@ -1106,7 +1107,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 4   not enough disk space to pack messagebase file no %s
 5   ~- packing ...     %
 6   One moment please...     %
-7   nothing to delete
+7   Nothing to delete ...
 -
 + 452
 # 452,1 must start with "N"!
@@ -1297,8 +1298,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 3    Changed your mind?
 4    Oops... I guess that wasn't a XP registration key.
 5    Your registration key has been saved.
-6    CrossPoint will quit now and must be
-7    restarted to have the key take effect.
+6    CrossPoint will now exit and must be
+7    restarted for the key to take effect.
 8    Key was deleted.
 -
 
@@ -1488,15 +1489,15 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 3    Net transfer
 4    Netcall
 # Datum
-5    ~of~
+5    ~on~
 # Zeit
 6    ~at~
 # Netztransfer-Box
 7    ~to~
 # Netzanruf-Box
 8    ~to~
-9    Output packet : %s Bytes
-10   Input packet  : %s Bytes
+9    outbound packet : %s Bytes
+10   inbound packet  : %s Bytes
 11   == Netcall was aborted! ==
 12   Dial start   :~
 13   Dials        :~
@@ -1529,8 +1530,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 40   ----------------------- Fido Logfile -----------------------
 41   -------------------------- Logfile -------------------------
 42   additional outgoing messages:
-43   Send packet     : %s Bytes
-44   Received packet : %s Bytes
+43   outgoing packet : %s Bytes
+44   incoming packet : %s Bytes
 45   ---------------------- Client Logfile ----------------------
 -
 701  Netcalls not allowed between %s and %s!
@@ -2029,7 +2030,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 16   Reply servers
 17   for News  ~
 18   for Mails ~
-19   replace local copies of own messages
+19   Replace local copies of own messages
 20   'MAILER-DAEMON' as sender at RRQs
 + 925
 1    Net Options
@@ -2749,7 +2750,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 6    Server  ~
 7    Msgs.
 8    Days
-9    Hold time~
+9    Hold time:~
 10   use IBM umlauts
 11   Group  ~
 12   Message filter
@@ -3243,7 +3244,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 68 Server for file name "%s.BFG" not found!
 69 Invalid Server name: "%s"
 70 Envelope address must be specified!
-71 Input/Output data incomplete!
+71 Inbound/Outbound data incomplete!
 72 FQDN corrected
 73 Invalid user name
 74 SETUSER - Parameter "FDQN" not specified!
