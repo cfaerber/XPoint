@@ -108,8 +108,6 @@ end;
 
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
 var p1,p2,p3 : byte;
-    res      : integer;
-    l        : longint;
 begin
   fillchar(frec,sizeof(frec),0);
   with frec do begin
@@ -362,6 +360,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.8  2000/09/09 22:31:55  fe
   sysutils ergaenzt
 

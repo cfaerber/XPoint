@@ -103,7 +103,6 @@ var    Header : packed record
 
 
 procedure FeldNummer(f:DbPointer; fname:string);
-var i : word;
 begin
   FeldNr:=1;
   while (FeldNr<=f^.felder) and (f^.feld[FeldNr].name<>fname) do inc(FeldNr);
@@ -468,6 +467,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.8  2000/09/19 22:46:40  fe
   Ansistring-Fix
 

@@ -306,7 +306,6 @@ begin
 {$ELSE }
   procedure consolewrite(x,y:word; num:dword);  { Num = Chars in xp0.charpuf (String) }
   var
-    s: String;
     i, j: Integer;
   begin
     i := 1;
@@ -913,6 +912,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.49  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.48  2000/09/28 03:21:41  mk
   - spezielle Anpassungen fuer Debug-Modus
 

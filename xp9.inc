@@ -1420,7 +1420,7 @@
       brk : boolean;
       nt  : byte;
       nts : string;
-      nts2: string;
+      { nts2: string; }
   begin
     dbGo(d,drec[p]);
     fn:= dbReadStr(d,'dateiname');
@@ -1698,6 +1698,9 @@
 
 {
   $Log$
+  Revision 1.24  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.23  2000/09/25 03:44:32  mk
   - Loginfo hinzugefuegt
 

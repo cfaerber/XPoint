@@ -253,7 +253,6 @@ var i  : integer;
 
   procedure Par_mailto; { Mailto: Parameter auswerten }
   Var i,j,k :  Byte;
-      s2    : string[8];
       s3    : string;
   begin                                      { -mailto:user@name?subject=betreff;serverbox }
     keyboard('nd');
@@ -1112,6 +1111,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.68  2000/08/25 23:02:07  mk
   JG:
   - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz

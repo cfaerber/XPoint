@@ -539,7 +539,8 @@ var
     buttons    : string;
     okb,edb    : integer;
     CurRow,n   : integer;
-    a,ii     : integer;
+    { ii     : integer; }
+    a        : integer;
     modi     : boolean;
     reindex  : boolean;
     boxsel1,
@@ -2049,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.38  2000/09/29 11:27:43  fe
+  Ungenutzte, lokale Variablen entfernt.
+
   Revision 1.37  2000/08/25 23:02:07  mk
   JG:
   - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
