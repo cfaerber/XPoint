@@ -19,10 +19,10 @@ uses
   dos,
   typeform,fileio, xpglobal,sysutils;
 
-const maxpages = 1200;
-      version  = '1.21';
-      date     = '''89-91,95';
-      obufsize = 10000;
+const maxpages = 4096;
+      version  = '1.22';
+      date     = '''89-91,95,00';
+      obufsize = 16384;
 
 var  fname,
      outpath  : pathstr;
@@ -129,7 +129,7 @@ var  fname,
        qvws          : byte;
        s,qvref,st    : string;
        z             : ^za;
-       qvw           : array[1..300] of packed record
+       qvw           : array[1..1024] of packed record
                                           y,x,l : byte;
                                           nn    : smallword;
                                         end;
@@ -410,6 +410,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2000/11/12 11:04:21  mk
+  - some Limits increased
+
   Revision 1.16  2000/10/17 10:05:40  mk
   - Left->LeftStr, Right->RightStr
 
