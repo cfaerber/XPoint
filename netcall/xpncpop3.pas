@@ -39,7 +39,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 implementation  { ------------------------------------------------- }
 
 uses
-  Netcall,NCSocket,NCSMTP,NCPOP3,
+  Netcall,NCSocket,ncsmtp,ncpop3,
   progressoutput,xpprogressoutputwindow,
 {$ifdef NCRT}
   XPCurses,
@@ -277,6 +277,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.31  2001/12/26 01:35:33  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

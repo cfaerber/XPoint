@@ -55,11 +55,11 @@ type
 
 uses SysUtils
   {$IFDEF Delphi}
-  {$IFDEF Kylix}
-  ,IdGlobal
-  {$ELSE}
+//  {$IFDEF Kylix}
+//  ,IdGlobal
+//  {$ELSE}
   ,StrUtils
-  {$ENDIF}
+//  {$ENDIF}
   {$ENDIF}
   ;
 
@@ -253,6 +253,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2001/12/30 19:56:48  cl
+// - Kylix 2 compile fixes
+//
 // Revision 1.6  2001/09/17 16:16:14  cl
 // - SetSize is now correctly marked as override
 //

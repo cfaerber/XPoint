@@ -63,7 +63,7 @@
 # os2           OS/2
 # win32         Windows 95/98/NT
 #
-#OS = 
+OS = linux
 
 # Ihre CPU (386, 486, 586, 686)
 # (KANN gesetzt werden.)
@@ -76,7 +76,7 @@
 # fpc           Free Pascal <http://www.freepascal.org/>
 # vpc           Virtual Pascal <http://www.vpascal.com/>
 #
-#COMPILER = 
+COMPILER = fpc
 
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
@@ -279,9 +279,9 @@ ifeq ($(COMPILER),fpc)
 PC = ppc386
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -Ct -Cr- -dDEBUG -Sg -FuObjCOM
+PFLAGS += -Ct -Cr- -dDEBUG -Sg -FuObjCOM -Funetcall
 else
-PFLAGS += -Cr- -O2 -Sg -FuObjCOM
+PFLAGS += -Cr- -O2 -Sg -FuObjCOM -Funetcall
 endif
 
 ifeq ($(OS),dos32)
@@ -2802,6 +2802,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.52  2001/12/30 19:56:48  cl
+# - Kylix 2 compile fixes
+#
 # Revision 1.51  2000/11/23 13:05:13  fe
 # Fixed dependencies.
 # Synchronized Linux installation paths with xp2.pas.

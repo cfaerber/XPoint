@@ -87,7 +87,7 @@ implementation
 uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
-  StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
+  stringtools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
 
 
 // get one line from lister, check for marked lines
@@ -1038,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.105  2001/12/30 19:56:48  cl
+  - Kylix 2 compile fixes
+
   Revision 1.104  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

@@ -26,7 +26,7 @@ unit utftools;
 interface
 
 uses
-  Unicode,mime;
+  unicode,mime;
 
 
 function IsKnownCharset(Charset: String): Boolean;
@@ -261,6 +261,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.12  2001/12/30 19:56:48  cl
+// - Kylix 2 compile fixes
+//
 // Revision 1.11  2001/12/30 18:05:46  cl
 // - changed TUTF8Decoder.Decode(const Source: PUTF8Char) to
 //           TUTF8Decoder.Decode(const Source: UTF8String)

@@ -251,7 +251,7 @@ function MimeCreateEOLConverter(Eol:TMimeEol):TCoDecStream;
 
 uses
   SysUtils,
-  CRC,
+  crc,
   mime_base64,
   mime_qp,
   UTFTools,
@@ -1199,6 +1199,9 @@ end;
 
 //
 // $Log$
+// Revision 1.11  2001/12/30 19:56:48  cl
+// - Kylix 2 compile fixes
+//
 // Revision 1.10  2001/12/30 18:15:10  cl
 // - additional fixes/adaptions for last commit
 //

@@ -1,6 +1,7 @@
 program openxp;
 
 {$I xpdefine.inc }
+{$IFDEF __undefined__]
 
 {%File 'xpmecol.inc'}
 {%File 'databas2.inc'}
@@ -202,6 +203,10 @@ uses
   mime in 'mime.pas';
 
 {$R *.res}
+{$ENDIF}
+uses
+  main;
+
 begin
   StartOpenXP;
 end.

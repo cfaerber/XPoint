@@ -180,7 +180,7 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  GPLTools,xp0;
+  gpltools,xp0;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -1084,6 +1084,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.64  2001/12/30 19:56:48  cl
+  - Kylix 2 compile fixes
+
   Revision 1.63  2001/10/22 21:55:46  cl
   - killed more range check errors
 

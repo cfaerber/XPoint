@@ -25,7 +25,7 @@ unit xpview;
 interface
 
 uses
-  sysutils, Viewer, XPGlobal;
+  sysutils, viewer, XPGlobal;
 
 (*
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo); *)
@@ -118,6 +118,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.33  2001/10/11 09:00:40  mk
   - external viewer files now with correct file extension
 

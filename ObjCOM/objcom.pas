@@ -15,7 +15,7 @@ unit objcom;
 
 {$I ocdefine.inc}
 
-uses Ringbuff,Classes,OSDepend
+uses ringbuff,classes,osdepend
      {$IFDEF DOS32},Ports,DOS{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux}
@@ -109,7 +109,7 @@ function FossilDetect: Boolean;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Timer,Debug;
+uses Sysutils,timer,debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
 {$IFDEF Linux} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
@@ -488,6 +488,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.28  2001/12/26 21:29:27  mk
   - fixed range check error (see <8FcIqG-Ya0B@addicks.net>),
     please take a look at this fix!

@@ -87,7 +87,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, x
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
-     RegExpr;
+     regexpr;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
       suchlen = 255;
@@ -2515,6 +2515,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2001/12/30 19:56:48  cl
+  - Kylix 2 compile fixes
+
   Revision 1.123  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

@@ -93,14 +93,30 @@ implementation
 
 uses
 {$IFDEF Linux }
+ {$IFNDEF Kylix}
   printer,
+ {$ELSE}
+  xp1,
+  libc,
+ {$ENDIF}
 {$ENDIF }
   SysUtils;
+
+{$IFDEF unix }
+ {$IFDEF Kylix}
+var LstFile:String;
+ {$ENDIF}
+{$ENDIF}
 
 procedure OpenLst(Port: Integer);
 begin
 {$IFDEF unix }
+ {$IFNDEF Kylix}
   AssignLst(lst, '|/usr/bin/lpr -m');
+ {$ELSE}
+  LstFile:=TempS(10000);
+  Assign(lst, LstFile);
+ {$ENDIF}
 {$ELSE }
   Assign(lst, 'lpt' + IntToStr(Port));
 {$ENDIF }
@@ -108,9 +124,16 @@ begin
   if IOResult = 0 then ;
 end;
 
+
 procedure CloseLst;
 begin
   Close(lst);
+{$IFDEF unix }
+ {$IFDEF Kylix}
+  libc.system(PChar('/usr/bin/lpr -m '+LstFile));
+  SafeDeleteFile(LstFile);
+ {$ENDIF}
+{$ENDIF}
 end;
 
 
@@ -151,6 +174,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2001/12/30 19:56:48  cl
+  - Kylix 2 compile fixes
+
   Revision 1.22  2001/12/26 21:33:52  mk
   - fixed printing with linux
 

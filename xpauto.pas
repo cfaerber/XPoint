@@ -28,7 +28,7 @@ interface
 
 uses
   sysutils,montage,typeform,fileio,inout,datadef,database,resource, xpheader,
-  xp0,xp1,xpglobal, ZFTools;
+  xp0,xp1,xpglobal, zftools;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.45  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

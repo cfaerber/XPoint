@@ -31,7 +31,7 @@ interface
 uses
   xpglobal,             { Nur wegen der Typendefinition }
   NetCall,              { TNetcall }
-  IPAddr,               { TIP }
+  ipaddr,               { TIP }
 {$ifdef NCRT}
   xpcurses,
 {$else}
@@ -434,6 +434,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.31  2001/10/19 00:50:55  mk
   - range check fix for delphi
   - const parameter for CreateWithHost

@@ -30,7 +30,7 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2, winxp,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,ProgressOutput;
+  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,progressoutput;
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;
@@ -664,6 +664,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.7  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found

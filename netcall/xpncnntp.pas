@@ -40,7 +40,7 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 implementation  { ------------------------------------------------- }
 
 uses
-  NCNNTP,
+  ncnntp,
   NCSocket,
   progressoutput,
   xpprogressoutputwindow,
@@ -369,6 +369,9 @@ end;
 
 {
         $Log$
+        Revision 1.34  2001/12/30 19:56:49  cl
+        - Kylix 2 compile fixes
+
         Revision 1.33  2001/12/26 01:35:33  cl
         - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

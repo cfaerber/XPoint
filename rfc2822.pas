@@ -62,11 +62,11 @@ function RFCNormalizeAddress(const addr,domain:string):string;
 uses
   Typeform,
 {$IFDEF Delphi}
-  {$IFDEF Kylix}
-  IdGlobal,
-  {$ELSE}
+//  {$IFDEF Kylix}
+//  IdGlobal,
+//  {$ELSE}
   strutils,
-  {$ENDIF}
+//  {$ENDIF}
 {$ENDIF}
   SysUtils;
 

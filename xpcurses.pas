@@ -30,7 +30,7 @@ uses
 {$IFDEF FPC }
   linux,
 {$ENDIF }
-  UTFTools,
+  utftools,
 {$IFDEF Kylix}
   libc,
   ncursix,
@@ -1551,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.62  2001/11/06 12:12:31  ml
   - highlighted backgrounds work now with Eterm (console blinks yes but will be fixed soon)
 

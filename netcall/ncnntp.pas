@@ -30,8 +30,8 @@ interface
 uses
   xpglobal,             { Nur wegen der Typendefinition }
   ProgressOutput,       { TProgressOutput }
-  Netcall,              { TNetcall }
-  NCSocket,             { TSocketNetcall }
+  netcall,              { TNetcall }
+  ncsocket,             { TSocketNetcall }
   Classes,              { TStringList }
   sysutils;
 
@@ -539,6 +539,9 @@ end.
 
 {
   $Log$
+  Revision 1.33  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
   Revision 1.32  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
