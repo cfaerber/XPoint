@@ -141,34 +141,37 @@ end;
 
 { ^X in Steuerzeichen umsetzen;  ^0 -> ^ }
 
-Function PrintString(s:string):string;
+function PrintString(s:string):string;
 var i,j,p : byte;
+    r: string;
 begin
   i:=1;
   j:=0;
   while i<=length(s) do begin
     inc(j);
+    SetLength(r, j);
     if s[i]='^' then begin
       inc(i);
       if s[i]='0' then
-        printstring[j]:='^'
+        r[j]:='^'
       else if s[i]='#' then
-        printstring[j]:='#'
+        r[j]:='#'
       else
-        printstring[j]:=chr(ord(s[i])-64);
+        r[j]:=chr(ord(s[i])-64);
       end
     else if s[i]='#' then begin
       p:=i;
       while (i<length(s)) and (s[i+1]>='0') and (s[i+1]<='9') do
         inc(i);
-      if i=p then printstring[j]:='#'
-      else printstring[j]:=chr(minmax(ival(copy(s,p+1,i-p)),0,255));
+      if i=p then r[j]:='#'
+      else r[j]:=chr(minmax(ival(copy(s,p+1,i-p)),0,255));
       end
     else
-      printstring[j]:=s[i];
+      r[j]:=s[i];
     inc(i);
     end;
-  printstring[0]:=chr(j);
+  SetLength(r, j);
+  PrintString:= r;
 end;
 
 
@@ -179,6 +182,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.11  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 

@@ -70,7 +70,11 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
                     enctrly,enctrln,enctrld,enchome,encend,enpgdn);
 
        slcttyp  = record
+{$IFDEF hasHugeString}
+		    el : string;
+{$ELSE}
                     el : string[60];             { Auswahl-Position         }
+{$ENDIF}
                     zu : boolean;                { zugelassen ?             }
                     nu : longint;                { Benutzer                 }
                   end;
@@ -84,7 +88,11 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
        edits    = record
                     x,y,px,
                     len,art : shortint;
+{$ifdef hasHugeString}
+		    s	    : string;
+{$else}
                     s       : string[78];
+{$endif}
                     tproc   : testproc;
                     edproc  : editproc;
                   end;
@@ -143,7 +151,12 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        Int15Delay : byte     = 0;         { 1=int15, 2=int28, 3=HLT, 4=int2F }
 
 
-var    chml : Array[1..5] of string[230];
+var    
+{$ifdef hasHugeString}
+       chml : array[1..5] of string;
+{$else}
+       chml : Array[1..5] of string[230];
+{$endif}
 
        datex,datey,                    { Koordinaten fÅr Datum und Uhrzeit }
        timex,timey  : shortint;
@@ -208,9 +221,9 @@ function  ticker:longint;                    { mem[Seg0040:$6c]         }
       art : Edittyp (edit-read, -edit, -break, -tabelle)
       enderded : EndeEdTyp (s.o.)                           }
 
-Procedure ReadEdit(x,y: Byte; txt: atext; VAR s:string; ml:Byte;
-                   li:string; VAR px : byte; art:edittype;
-                   VAR enderded:endeedtyp);
+Procedure ReadEdit(x,y: Byte; txt: atext; var s:string; ml:Byte;
+                   li:string; var px : byte; art:edittype;
+                   var enderded:endeedtyp);
 
 {     String-Einlese-Prozeduren
       x,y : Koordinaten                txt : Prompt-Text
@@ -1652,6 +1665,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.44  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.43  2000/07/04 12:04:16  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

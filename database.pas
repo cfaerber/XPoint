@@ -1224,7 +1224,7 @@ var i : integer;
 begin
   with dp(dbp)^ do begin
     i:=0;
-    UpString(feldname);
+    feldname:= UpperCase(feldname); { UpString(feldname);}
     while (i<=feldp^.felder) and (feldname<>feldp^.feld[i].fname) do
       inc(i);
     if i>feldp^.felder then dbGetFeldNr:=-1
@@ -1629,6 +1629,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.25  2000/07/04 12:04:14  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -86,14 +86,13 @@ const
        PMC_ID      = '*crypted*';
        XPMC_ID     = '*Xcrypted*';
        TO_ID       = '/'#0#0#8#8'TO:';
-       TO_len      = length(TO_ID);
+       TO_len	   = 8;			{ lenght() kann schiefgehen bei AnsiStrings! }
        vert_char   = #4;             { Verteiler-Kennung }
        MausinfoBrett= '$/¯Mausinfo';
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
        BaseDir     = '.openxp/';     { Basisverzeichnis }
-       ClipFileName= '.openxp.clipboard'; { Simuliertes Clipboard (in TempPath) }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
@@ -1157,6 +1156,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.63  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.62  2000/07/04 18:34:53  hd
   - Clipboard fuer Linux simuliert
 

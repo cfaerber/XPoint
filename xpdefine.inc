@@ -53,7 +53,8 @@
     {$UNDEF DPMI }
   {$ENDIF }
   {$MODE TP }
-  {$C-,H-,I-,M-,P-,T-,V-,X+}
+  {$C-,H+,I-,M-,P-,T-,V-,X+}
+  {$DEFINE hasHugeString}
   {$ASMMODE Intel }
   {$GOTO ON }
 {$ENDIF }
@@ -114,6 +115,11 @@
 
 {
   $Log$
+  Revision 1.41  2000/07/05 09:09:29  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.40  2000/07/04 09:58:18  mk
   - NODPMI wieder eingefuegt
 

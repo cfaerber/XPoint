@@ -69,13 +69,13 @@ begin
             case ftyp of
               1 : begin
                     Move(rb^[fofs],s,rb^[fofs]+1);
-                    if length(s)+1>fsize then s[0]:=chr(fsize-1);
+                    if length(s)+1>fsize then SetLength(s, fsize-1); {s[0]:=chr(fsize-1);}
                     if ifeldnr[i] and $8000<>0 then s:=UpperCase(s);
                     if feldanz=i then key:=key+s
                     else key:=key+forms(s,fsize-1);
                   end;
               2 : for j:=1 to fsize do begin
-                    inc(byte(key[0]));
+                    SetLength(key, length(key)+1); {inc(byte(key[0]));}
                     key[length(key)]:=char(rb^[fofs+fsize-j]);
                   end;
               3 : begin
@@ -84,9 +84,10 @@ begin
                     key:=key+s;
                   end;
               4 : begin
+	            SetLength(key, length(key)+4);
                     for j:=1 to 4 do
                       key[length(key)+j]:=char(rb^[fofs+4-j]);
-                    inc(byte(key[0]),4);
+                    {inc(byte(key[0]),4);}
                   end;
             end;
         end;
@@ -493,6 +494,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.5  2000/07/04 12:04:14  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

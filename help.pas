@@ -170,9 +170,9 @@ var ixadr : longint;
 
 begin
 {$IFDEF UnixFS }
-  if pos('.',getfilename(name))=0 then name:=name+'.hlp';
+  if pos('.',ExtractFileName(name))=0 then name:=name+'.hlp';
 {$ELSE }
-  if pos('.',getfilename(name))=0 then name:=name+'.HLP';
+  if pos('.',ExtractFilename(name))=0 then name:=name+'.HLP';
 {$ENDIF }
   assign(f,name);
   fm:=filemode; filemode:=0;
@@ -331,7 +331,7 @@ laden:
       inc(sl,p-p1);
       end;
     if buf^[p]=7 then begin
-      s[0]:=chr(sl);
+      SetLength(s, sl);
       zlen[lines]:=length(s)+1;
       getmem(z^[lines],zlen[lines]);
       z^[lines]^:=s;
@@ -341,7 +341,7 @@ laden:
     else
       if buf^[p]=$1a then begin
         inc(p);
-        s[0]:=chr(sl);
+        SetLength(s, sl);
         s:=s+sp(buf^[p]);
         inc(sl,buf^[p]);
         end
@@ -446,7 +446,7 @@ begin
     yy:=y+i+iif(NoHeader,-1,2);
     if p=0 then begin
       fillchar(s[length(s)+1],80,32);
-      s[0]:=chr(wdt);
+      SetLength(s, wdt);
       fwrt(x,yy,s);
   end
     else begin
@@ -762,6 +762,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 09:09:28  hd
+  - Anpassungen AnsiString
+  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
   Revision 1.17  2000/07/04 12:04:16  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -19,7 +19,7 @@ const
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
-function  AddDirSepa(p: pathstr): pathstr;
+function  AddDirSepa(p: string): string;
 begin
   if p='' then
     AddDirSepa:= ''
@@ -36,13 +36,13 @@ end;
   - Startverzeichnis der aktuellen Programmdatei
   - Environment-Var PATH
 }
-function  existBin(fn: pathstr): boolean;
+function  existBin(fn: string): boolean;
 var
   envpath: string;                      { Opps, bug in brain. PATH kann > 256 sein }
-  filename, path: PathStr;
+  filename, path: string;
   i, j, k: integer;
 begin
-  filename:= GetFileName(fn);           { Evtl. Pfad ignorieren }
+  filename:= Gestring(fn);           { Evtl. Pfad ignorieren }
   if exist(fn) then begin               { -> Aktuelles Verzeichnis }
     existBin:= true;
     exit;
@@ -75,7 +75,7 @@ begin
     existBin:= false;
 end;
 
-function ValidFileName(name:PathStr):boolean;
+function ValidFileName(name:string):boolean;
 var f : file;
 begin
   if (name='') or multipos('*?&',name) then
@@ -93,17 +93,17 @@ begin
 end;
 
 
-function IsPath(name:PathStr):boolean;         { Pfad vorhanden ? }
+function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
 var
   curdir: string;
 begin
   curdir:= GetCurrentDir;
-  IsPath:= SetCurrentDir(name);
+  IsPath:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
 end;
 
 
-function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
+function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
 var bufs,rr:word;
     buf:pointer;
@@ -145,7 +145,7 @@ end;
 
 { path: Pfad mit '\' bzw. '/' am Ende! }
 
-procedure erase_all(path:pathstr);
+procedure erase_all(path:string);
   
   function parent_dir(s: string): boolean;
   begin
@@ -242,7 +242,7 @@ end;
 {       1 = Pfad angelegt          }
 {     < 0 = IO-Fehler              }
 
-procedure mklongdir(path:pathstr; var res:integer);
+procedure mklongdir(path:string; var res:integer);
 const testfile = 'test0000.$$$';
 var p : byte;
 begin
@@ -278,7 +278,7 @@ begin
     end;
 end;
 
-function TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen }
+function TempFile(path:string):string;       { TMP-Namen erzeugen }
 var n : string[12];
 begin
   repeat
@@ -287,7 +287,7 @@ begin
   TempFile:=ResolvePathName(path+n);
 end;
 
-function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
+function TempExtFile(path,ld,ext:string):string;  { Ext-Namen erzeugen }
 { ld max. 4 Zeichen, ext mit Punkt '.bat' }
 var n : string[MaxLenFilename];
 begin
@@ -298,7 +298,7 @@ begin
 end;
 
 
-function _filesize(fn:pathstr):longint;
+function _filesize(fn:string):longint;
 var sr : searchrec;
 begin
   findfirst(ResolvePathName(fn),ffAnyFile,sr);
@@ -309,7 +309,7 @@ begin
   findclose(sr);
 end;
 
-procedure MakeFile(fn:pathstr);
+procedure MakeFile(fn:string);
 var t : text;
 begin
   assign(t,ResolvePathName(fn));
@@ -320,7 +320,7 @@ begin
     close(t);
 end;
 
-function filetime(fn:pathstr):longint;
+function filetime(fn:string):longint;
 var sr : searchrec;
 begin
   findfirst(ResolvePathName(fn),ffAnyFile,sr);
@@ -331,7 +331,7 @@ begin
   findclose(sr);
 end;
 
-procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
+procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen }
 var f : file;
 begin
   assign(f,ResolvePathName(fn));
@@ -341,7 +341,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:pathstr):dirstr;
+function GetFileDir(p:string):dirstr;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -350,16 +350,16 @@ begin
   GetFileDir:=d;
 end;
 
-function GetFileName(p:pathstr):string;
+function Gestring(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
 begin
   fsplit(ResolvePathName(p),d,n,e);
-  GetFileName:=n+e;
+  Gestring:=n+e;
 end;
 
-function GetBareFileName(p:pathstr):string;
+function GetBareFileName(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -368,7 +368,7 @@ begin
   GetBareFileName:=n;
 end;
 
-function GetFileExt(p:pathstr):string;
+function GetFileExt(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -377,7 +377,7 @@ begin
   GetFileExt:=mid(e,2);
 end;
 
-function _rename(n1,n2:pathstr):boolean;
+function _rename(n1,n2:string):boolean;
 var f : file;
 begin
   assign(f,ResolvePathName(n1));
@@ -387,32 +387,30 @@ end;
 
 { Extension anhÑngen, falls noch nicht vorhanden }
 
-procedure addext(var fn:pathstr; ext:extstr);
-var dir  : dirstr;
-    name : namestr;
-    _ext : extstr;
+procedure addext(var fn:string; ext:string);
+var s : string;
+    l : integer;
 begin
   fn:=ResolvePathName(fn);
-  fsplit(fn,dir,name,_ext);
-  if _ext='' then fn:=dir+name+'.'+ext;
+  s:= ExtractFileExt(fn);
+  l:= Length(s);
+  if l>0 then
+    Delete(fn, Length(fn)-l, l);
+  fn:= fn + ext;
 end;
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
-procedure adddir(var fn: pathstr; dir:dirstr);
-var _dir : dirstr;
-    name : namestr;
-    ext  : extstr;
+procedure adddir(var fn: string; dir: string);
+var s: string;
 begin
   fn:=ResolvePathName(fn);
-  fsplit(fn,_dir,name,ext);
-  if _dir='' then begin
-    if dir[length(dir)]<>DirSepa then dir:=dir+DirSepa;
-    insert(dir,fn,1);
-  end;
+  s:= ExtractFilePath(fn);
+  if s='' then
+    fn:= AddDirSepa(dir)+fn;
 end;
 
-procedure WildForm(var s: pathstr);
+procedure WildForm(var s: string);
 begin
 end;
 
@@ -423,7 +421,7 @@ end;
 {   liefern diskfree und disksize falsche Werte              }
 { Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
 
-function exetype(fn:pathstr):TExeType;
+function exetype(fn:string):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
     magic2  : array[0..2] of char;
@@ -479,9 +477,14 @@ end;
 
 {
 	$Log$
+	Revision 1.2  2000/07/05 09:09:29  hd
+	- Anpassungen AnsiString
+	- Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+	  erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
 	Revision 1.1  2000/06/30 13:48:11  hd
 	- Linux extrahiert
 	- fileio.inc fuer systemunabhaengige Routinen
 	- Linux: IsPath, era, erase_mask vereinfacht
-
+	
 }
