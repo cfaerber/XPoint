@@ -51,6 +51,7 @@ function SysOutputRedirected: boolean;
 // Execute an external program; return errorlevel of called program if
 // successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
+function GetEnv(envvar: string): string;
 
 implementation
 
@@ -707,6 +708,12 @@ begin
   if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 
+function GetEnv(envvar: string): string;
+begin
+  Dos.GetEnv(envvar);
+end;
+
+
 var
   CheckBreak: Boolean;
 initialization
@@ -718,6 +725,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/08/04 20:19:13  mk
+  - added some dos compatibility functions
+
   Revision 1.12  2001/01/05 18:36:05  ma
   - fixed SysExec
 

@@ -72,6 +72,7 @@ implementation
 uses
   {$IFDEF Linux}Linux,{$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF Dos32} xpdos32, {$ENDIF}
   SysUtils,TypeForm;
 
 const
@@ -224,6 +225,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/08/04 20:19:13  mk
+  - added some dos compatibility functions
+
   Revision 1.17  2001/07/28 12:54:16  mk
   - use SysUtils Date/Time routines
 

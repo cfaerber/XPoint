@@ -30,6 +30,9 @@ uses
 {$ifdef Win32}
   Windows,
 {$endif}
+{$IFDEF DOS32 }
+  Crt,
+{$ENDIF }
   Classes, SysUtils;
 
 { Consts }
@@ -51,6 +54,9 @@ implementation
 end.
 {
         $Log$
+        Revision 1.3  2001/08/04 20:19:13  mk
+        - added some dos compatibility functions
+
         Revision 1.2  2001/07/28 12:04:09  mk
         - removed crt unit as much as possible
 

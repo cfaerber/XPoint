@@ -32,8 +32,16 @@
 
 { implementation of the interface }
 
+procedure SysDelay(MS: Longint);
+begin
+  Delay(MS);
+end;
+
 {
         $Log$
+        Revision 1.2  2001/08/04 20:19:13  mk
+        - added some dos compatibility functions
+
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 

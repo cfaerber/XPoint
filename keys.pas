@@ -214,6 +214,7 @@ begin
     readkey:=crt.readkey;
 {$ENDIF }
 
+{$IFDEF Win32 }
   // Scan Numeric Block keys *, - and +
   Lastscancode:=0;
   if GetAsyncKeyState(VK_Multiply) < 0 then
@@ -222,6 +223,7 @@ begin
     LastScanCode := GreyMinus;
   if GetAsyncKeyState(VK_Add) < 0 then
     LastScanCode := GreyPlus;
+{$ENDIF }
 end;
 {$ENDIF } { NCRT }
 
@@ -368,6 +370,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/08/04 20:19:13  mk
+  - added some dos compatibility functions
+
   Revision 1.37  2001/07/31 16:18:39  mk
   - removed some unused variables
   - changed some LongInt to DWord
