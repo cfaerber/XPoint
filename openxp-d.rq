@@ -1268,25 +1268,22 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    18
+0    15
 1    Sie nutzen eine Betaversion von OpenXP. Bitte beachten Sie, daá
-2    diese Betaversion mit einiger Sicherheit Fehler enth„lt, die bei
-3    Benutzung in ”ffentlichen Netzen rger nach sich ziehen oder Ihre
-4    Datenbank besch„digen k”nnen.
+2    eventuelle Programmfehler bei der Benutzung in ”ffentlichen
+3    Netzen rger nach sich ziehen oder die Nachrichtendatenbank
+4    besch„digen k”nnen.
 5    Die Ver”ffentlichung dieses Programms erfolgt ohne jede Gew„hr-
 6    leistung, auch ohne implizite Gew„hrleistung der Marktreife oder
 7    der Eignung fr einen bestimmten Zweck.
 8    Bei Fragen, Problemen oder Anregungen k”nnen sie ber folgende
 9    Wege Kontakt mit dem OpenXP-Team aufnehmen:
 10
-11   WWW:    http://www.openxp.de/
-12   Usenet: de.comm.software.crosspoint
-13   E-Mail: dev@openxp.de
-14   Fido:   crosspoint.ger
-15
-16   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
-17   Dieser Hinweis kann mit dem Kommandozeilenparameter /nb abgestellt
-18   werden.
+11   WWW:    http://www.openxp.de/          E-Mail: dev@openxp.de
+12   Usenet: de.comm.software.crosspoint    Fido:   crosspoint.ger
+13
+14   Dieser Hinweis kann mit dem Kommandozeilenparameter /nb abgestellt
+15   werden.
 30   ~^Weiter , ^Abbruch~
 -
 
@@ -3723,6 +3720,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.19  2001/07/27 16:21:37  ma
+# - changed splash screen once again: Made smaller (corrupted menu lines
+#   in 80x25 text mode)
+#
 # Revision 1.18  2001/07/21 16:02:09  mk
 # - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 #

@@ -1240,7 +1240,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    15
+0    12
 1    This is a beta version of OpenXP. Please note it is possible that
 2    there are bugs in this version which may corrupt your database
 3    and/or cause problems in public networks.
@@ -1249,13 +1249,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    purpose.
 7    You can contact the OpenXP team by the following ways:
 8
-9    WWW:    http://www.openxp.de/
-10   Usenet: de.comm.software.crosspoint
-11   E-Mail: dev@openxp.de
-12   Fido:   crosspoint.ger
-13
-14   Choose "Continue" to use this beta version.
-15   This notice may be turned off with command line parameter /nb.
+9    WWW:    http://www.openxp.de/          E-Mail: dev@openxp.de
+10   Usenet: de.comm.software.crosspoint    Fido:   crosspoint.ger
+11
+12   This notice may be turned off with command line parameter /nb.
 30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------
@@ -3758,6 +3755,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.23  2001/07/27 16:21:37  ma
+# - changed splash screen once again: Made smaller (corrupted menu lines
+#   in 80x25 text mode)
+#
 # Revision 1.22  2001/07/21 16:02:10  mk
 # - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 #
