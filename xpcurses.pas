@@ -14,15 +14,15 @@ unit xpcurses;
 interface
 
 uses
+  xpglobal,
   linux,
   ncurses,
-  xplinux,
-  xpglobal;
+  xplinux;
 
 {$PACKRECORDS 4}
 {$linklib panel}
 
-Const
+const
 
  { CRT modes }
    BW40          = 0;            { 40x25 B/W on Color Adapter }
@@ -378,7 +378,7 @@ begin
   { Solange ich nicht weiss, ob XP irgendwo die Reihenfolge bei
     wrest nicht analog zu wpull vornimmt, ist diese Sicherung notwendig }
   getmem(win.PrevWin, sizeof(TWinDesc));
-  Move(ActWin, win.PrevWin^, sizeof(TWinDesc));
+  system.Move(ActWin, win.PrevWin^, sizeof(TWinDesc));
   { Fenster beschreiben }
   win.x:= x1-1; win.y:= y1-1;
   win.Cols:= x2-win.x; win.Rows:= y2-win.y;
@@ -395,7 +395,7 @@ begin
   { Panel verbinden }
   win.pHnd:= new_panel(win.wHnd);
   { Neues Window als aktuell setzen }
-  Move(win, ActWin, sizeof(TWinDesc));
+  system.Move(win, ActWin, sizeof(TWinDesc));
   show_panel(win.pHnd);
   if (f) then begin
     { Inhalt loeschen }
@@ -419,10 +419,10 @@ begin
   delwin(win.wHnd);
   { Vorheriger Descriptor vorhanden ? }
   if (win.PrevWin^.wHnd <> nil) then begin
-    Move(win.PrevWin^, ActWin, sizeof(TWinDesc));
+    system.Move(win.PrevWin^, ActWin, sizeof(TWinDesc));
     freemem(win.PrevWin, sizeof(TWinDesc));
   end else
-    Move(BaseWin, ActWin, sizeof(TWinDesc));
+    system.Move(BaseWin, ActWin, sizeof(TWinDesc));
   { Re-Init }
   FillChar(win, sizeof(TWinDesc), 0);
   if (ActWin.pHnd <> nil) then begin
@@ -942,7 +942,7 @@ Begin
 {$ENDIF }
     if (ActWin.wHnd <> nil) then
       delwin(ActWin.wHnd);
-    Move(BaseWin, ActWin, sizeof(TWinDesc));
+    system.Move(BaseWin, ActWin, sizeof(TWinDesc));
   end;
   NormVideo;
   LastMode := mode;
@@ -1265,7 +1265,7 @@ begin
   end;
 
   { Am Anfang ist die Basis auch Aktuell }
-  Move(BaseWin, ActWin, sizeof(TWinDesc));
+  system.Move(BaseWin, ActWin, sizeof(TWinDesc));
 
   BaseSub:= nil;
 
@@ -1288,6 +1288,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/03 08:53:21  hd
+  - ncurses.pas enthaelt eine Funktion Move, weshalb hier nicht "Move(...)"
+    sondern "System.Move(...)" fuer Speicherbewegungen benutzt werden muss.
+
   Revision 1.20  2000/07/02 14:24:53  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
