@@ -100,7 +100,10 @@ aufgeführt. Im konkreten Fall OpenXP werden wir natürlich
 sinnlos, wie aus dem obigen Absatz hervorgeht :-).
 
 Ich habe weitere Fragen.
-Siehe <a href="http://www.fsf.org/philosophy/license-list.html">Lizenzliste</a>
+Auf den Seiten des GNU-Projektes gibt es eine weitere
+<a href="http://www.gnu.org/copyleft/gpl-faq.html">FAQ zur GPL</a>, die weit
+ausführlicher als diese FAQ ist (englisch).
+<br />Ferner gibt es die <a href="http://www.fsf.org/philosophy/license-list.html">Lizenzliste</a>
 der Free Software Foundation. Dort werden allerhand Lizenzen
 in ihren Grundzügen beschrieben und nach GPL-Kompatibilität und
 anderen Kriterien klassifiziert.

@@ -1,4 +1,4 @@
-FAQ zu OpenXP 3.70
+FAQ zu OpenXP/32
 
 Warum ist die Windows-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
 Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
@@ -27,22 +27,22 @@ jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F
 wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
 aus den XP-Konfigurationsdateien auslesen. Änderungen am Config/Modem-Dialog sind in der Planung.
 
-Was ist bei den neuen Netcalls zu beachten?&nbsp;&nbsp;<small>2001-04-21</small>
+Was ist bei den Netcalls zu beachten?&nbsp;&nbsp;<small>2001-09-16</small>
 <big>NNTP/SMTP/POP3:</big>
 <ul>
 <li>Diese Netcalltypen funktionieren nur unter Windows bzw. Linux.</li>
 <li>Die Internetverbindung muß mit Betriebssystemmethoden (DFÜ-Netzwerk/pppd etc.) vor dem OpenXP-Netcall aufgebaut werden.</li>
 <li>POP3: Defaultmäßig wird zur Authentifizierung APOP benutzt (so gehen die Paßwörter nicht im Klartext über das Netz). Die Mailserver diverser Provider sagen zwar, daß sie APOP können, APOP funktioniert aber trotzdem nicht. In diesem Falle das Feature unter Edit/Boxen/Edit ausstellen und am besten dem Provider noch eine böse Mail schreiben.</li>
-<li>SMTP: Einige Server lehnen Mails auch beim SMTP after POP mit "relaying denied" ab, wenn in der Mail als Absender nicht die E-Mail-Adresse eingetragen ist, die man auch tatsächlich bei diesem Provider hat.</li>
+<li>SMTP: Einige Server lehnen Mails auch beim SMTP after POP mit "relaying denied" ab, wenn in der Mail als Absender nicht die E-Mail-Adresse eingetragen ist, die man auch tatsächlich bei diesem Provider hat. Als Workaround kann man im SMTP-Envelope die Originaladresse eintragen lassen (Edit/Boxen/Edit/Namen), über das Role-Feature (Edit/Gruppen/Edit/RFC) jedoch in der Mail selbst einen anderen Absender eintragen lassen.
+<br />Falls der benutzte SMTP-Server kein SMTP Auth unterstützt, dürfen bei den SMTP-Einstellungen auch keine Logindaten angegeben werden.</li>
 <li>NNTP: Zum Beziehen von Newsgroups muß - wie ganz normal bei Mailboxen auch - erstmal eine Newsgroupliste bestellt und Newsgroups abonniert werden (Nachricht/Brettmanager/Liste anfordern bzw. Bestellen). In Newsgroups muß im Moment zum Verschicken von Replies per Mail (STRG-P) in Edit/Boxen/Edit/Diverses ein POP3/SMTP-Server als Vertretersystem für PMs angegeben sein.</li>
-<li><i>Bitte vorerst nur in Test-Newsgroups posten!</i>- Die Funktionalität ist bisher wenig getestet.</li>
+<li>Insbesondere mit dem POP3-Client vorsichtig umgehen, Mailverlust kann nicht ausgeschlossen werden!</li>
 </ul>
 <big>Fido:</big>
 <ul>
 <li>Bei Edit/Boxen/Edit/Point darf unter "Pakete mitsenden" der eigene Node <b>nicht</b> mehr eingetragen werden.</li>
 <li>Beim Mitsenden von Paketen müssen die "Slave"-Boxen bei den Einstellungen zur 4D-Adressierung usw. richtige Werte enthalten.</li>
-<li>Bei der Verbindungsart "TCP/IP" wird automatisch das BinkP-Protokoll benutzt; beim Netcall muß das DFÜ-Netzwerk verbunden sein. BinkP steht nur unter OpenXP/Win32 zur Verfügung. Linux folgt, sobald jemand die paar Zeilen in ObjCOM fixt ;-).</li>
-<li>Fido-Crashanrufe gehen z.Zt. nicht.</li>
+<li>Bei der Verbindungsart "TCP/IP" wird automatisch das BinkP-Protokoll benutzt; beim Netcall muß das DFÜ-Netzwerk verbunden sein. BinkP steht nur unter Win32 und Linux zur Verfügung.</li>
 </ul>
 <big>ZConnect:</big>
 <ul>
@@ -53,7 +53,6 @@ Was ist bei den neuen Netcalls zu beachten?&nbsp;&nbsp;<small>2001-04-21</small>
 <li>Es wird als Transferprotokoll immer das interne ZModem benutzt.</li>
 <li>Die Statistik funktioniert nicht; das Netcall-Logging ist nur rudimentär implementiert.</li>
 </ul>
-Da die Netcall-Implementationen noch recht neu sind, ist mit Fehlern zu rechnen. Insbesondere die Fido-Netcalls sind nicht ganz trivial und bisher nur im "Standardbetrieb" <i>etwas</i> getestet. Bei Fehlern bitte Mail an <a href="mail:ma@openxp.de">Malte</a>, am besten gleich das letzte Debuglog (debuglog.txt im OpenXP-Verzeichnis) beilegen.
 
 Was bringen die Umstellungen im Netcall-Bereich?&nbsp;&nbsp;<small>2001-02-11</small>
 Unterstützung von Linux; stabilerer und sauberer Betrieb unter Windows; Unterstützung von Remote Modems (Benutzung von Modems,
@@ -64,15 +63,3 @@ Linux-Modem-Sharing-Howto</a>); Unterstützung von Netcalls over IP (Netcalls übe
 Die Gebührenberechnung funktioniert nicht.&nbsp;&nbsp;<small>2001-01-16</small>
 Wurde abgeschaltet; bei Gelegenheit und wenn sich ein Programmierer
 dafür findet, wird sie wieder eingebaut.
-
-Die Maus geht nicht.&nbsp;&nbsp;<small>2001-01-16</small>
-Die Maus wurde - wie vieles im alten XP - nachträglich "dazuprogrammiert".
-Dementsprechend gut wurde sie unterstützt und integriert; der Code wurde
-in OpenXP 3.70 entfernt.
-Es ist langfristig geplant, OpenXP 3.70 auf andere Ausgaberoutinen
-umzustellen. Dabei wird sich Mausunterstützung ebenso wie richtige
-Unterstützung von GUIs von alleine ergeben. Mit dieser
-Umstellung ist aber auf keinen Fall in den nächsten Monaten zu
-rechnen, im Moment gibt es noch nicht einmal eine passende
-freie Codebibliothek dafür, und wir werden sowas nicht auch noch
-machen ;-).

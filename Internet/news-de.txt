@@ -1,25 +1,30 @@
 Die letzten News von www.openxp.de...
 
+15. Juli 2001: Mail und News in OpenXP/32
+Seit April kann OpenXP/32 auch direkt mit Mail und News umgehen (nicht die DOS-Version). Zwar sind die internen Clients noch recht rudimentär, sie sind aber komfortabel einzurichten und sollten im Normalfall vollkommen ausreichen.
+<br />Damit unterstützt OpenXP/32 jetzt Mail, News, ZConnect und Fido (auch over IP) direkt und ohne Zusatztools (unter DOS nur mit Einschränkungen).
+<br />Noch immer gilt, daß OpenXP/32 nicht für jeden Anwender zu empfehlen ist. Ein Backup wird dringend empfohlen.
++
 1. Mai 2001: "Reply-To-All" in OpenXP v3.40
 OpenXP v3.40 bietet jetzt die Möglichkeit, eine Mail mit mehreren
 Empfängern an den Absender <i>und</i> alle übrigen Empfänger automatisch und
 mit einem Tastendruck beantworten zu können (sog. "Reply-To-All").
 <br /><a href="index.php4?file=news/20010501-rta.html">Weiteres dazu...</a>
-+
-29. März 2001: UUCP in OpenXP 3.70
+
+29. März 2001: UUCP in OpenXP/32
 UUCP ist jetzt fertig integriert. Neu ist die Unterstützung von
 UUCP über TCP/IP; hierzu wurde auch UUCP-t eingebaut. 
 [<a href="index.php4?file=news/20010329-uucp.html">Screenshot</a>]
-+
-24. März 2001: OpenXP 3.70 jetzt GPL!
-Wie angekündigt steht OpenXP 3.70 jetzt unter der GPL. D.h. insbesondere, daß jegliche Registrierungsgebühr entfällt. An dieser
+
+24. März 2001: OpenXP/32 jetzt GPL!
+Wie angekündigt steht OpenXP/32 jetzt unter der GPL. D.h. insbesondere, daß jegliche Registrierungsgebühr entfällt. An dieser
 Stelle nochmals Dank an alle, die diese Sache möglich gemacht haben, allen voran natürlich Peter Mandrella.
 <br />Außerdem sind die Netcalls neu implementiert worden. Der Fidomailer unterstützt jetzt direkt BinkP (nur Win32-Version).
 ZConnect wird auch wieder unterstützt.
 <br />Leider ist es immer noch zu früh für eine neue Beta. Wer möchte kann sich aber einen Snapshot besorgen (Backup nicht vergessen!)
-und testen; die Hinweise unter FAQ/3.70 bitte lesen.
+und testen; bitte die FAQ lesen.
 
-26. Februar 2001: OpenXP32/GPL wird langsam Realität
+26. Februar 2001: OpenXP/32 (GPL) wird langsam Realität
 <a href="index.php4?file=news/20010226.html">Weiteres dazu...</a>
 
 5. Februar 2001: Die neue Website ist online!

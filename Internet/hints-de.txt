@@ -69,7 +69,7 @@ sollte diese Tatsache sehr deutlich in einem Kommentar beim Prozedurkopf
 hervorgehoben werden.</li></ul>
 
 Ansistrings
-Seit OpenXP 3.70 werden Ansistrings benutzt, die sich deutlich von normalen
+Seit OpenXP/32 werden Ansistrings benutzt, die sich deutlich von normalen
 Strings unterscheiden. Kurzabri&szlig; dazu: Statt eines Array of Char mit
 der L&auml;nge des Strings in Arr[0] wird ein Pointer gespeichert, der
 auf den (nullterminierten) String

@@ -94,8 +94,8 @@ Screen size configurable freely<br /><small>Win32/Linux only</small>
 -
 x
 
-Integrierter NNTP/SMTP/POP3-Support
-Integrated NNTP/SMTP/POP3 support
+Integrierter NNTP/SMTP/POP3-Support<br /><small>unter Win32/Linux, unterstützt APOP und SMTP Auth</small>
+Integrated NNTP/SMTP/POP3 support<small>Win32/Linux, with APOP and SMTP Auth support</small>
 -
 -
 x
