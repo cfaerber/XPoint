@@ -209,7 +209,6 @@ begin
   maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-Men bei <Esc> vollst„ndig verlassen' }
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und Nachrichtenbersicht' }
 
-(* no mouse support implemented yet
   oldm:=_maus;
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Mausbedienung' }
   maddbool(39,3,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
@@ -219,7 +218,6 @@ begin
   else dbls:=dbl[2];
   maddstring(39,6,getres2(251,24),dbls,9,9,'<');  { 'Doppelklick ' }
   for i:=0 to 2 do mappsel(true,dbl[i]);
-*)
 
   freeres;
   readmask(brk);
@@ -1446,6 +1444,10 @@ end;
 
 {
   $Log$
+  Revision 1.105  2001/09/16 13:17:57  ma
+  - re-enabled mouse config options
+  - shortened CVS logs
+
   Revision 1.104  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -1462,98 +1464,7 @@ end;
 
   Revision 1.100  2001/09/06 18:04:57  ma
   - commented out mouse config options
-
-  Revision 1.99  2001/08/11 23:06:30  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.98  2001/08/11 08:43:53  mk
-  - fixed my previous commit: label was not correct placed
-
-  Revision 1.97  2001/08/11 08:41:40  mk
-  - fixed RTA changes in Config/Optionen/Nachrichten
-
-  Revision 1.96  2001/08/04 19:40:49  mk
-  - Autodatumsbezuege removed
-
-  Revision 1.95  2001/08/03 21:40:43  ml
-  - compilable with fpc (linux)
-
-  Revision 1.94  2001/07/28 12:33:33  mk
-  - GetEnv is now in OS dependend and not in dos unit
-
-  Revision 1.93  2001/07/28 12:04:10  mk
-  - removed crt unit as much as possible
-
-  Revision 1.92  2001/07/27 18:10:11  mk
-  - ported Reply-To-All from 3.40, first part, untested
-  - replyto is now string instead of TStringList again
-
-  Revision 1.91  2001/07/23 16:05:18  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.90  2001/06/11 22:23:27  ma
-  - added GnuPG support
-
-  Revision 1.89  2001/05/29 09:16:50  ma
-  - fixed: C/O/N help messages were in wrong order with Unix
-
-  Revision 1.88  2001/05/19 16:12:53  ma
-  - removed XP_ID (shareware notice)
-
-  Revision 1.87  2001/04/18 11:48:49  ml
-  - fix external Editor under linux (You can now use YOUR Editor for all Mails)
-
-  Revision 1.86  2001/04/14 11:45:15  mk
-  - fixed help number under linux
-
-  Revision 1.85  2001/03/14 20:46:03  mk
-  - removed registration routines
-
-  Revision 1.84  2001/03/13 19:24:56  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.83  2001/01/21 12:12:36  mk
-  - modifications to testexecutable() (MA)
-
-  Revision 1.82  2001/01/20 15:33:21  mk
-  - fixed Timezonefield in Unix Versions
-
-  Revision 1.81  2001/01/15 23:27:35  mk
-  - removed Editorkb, Listerkb
-
-  Revision 1.80  2001/01/14 10:43:26  mk
-  - strip params before test in textexecutable
-
-  Revision 1.79  2001/01/06 16:58:26  ma
-  - well. VP doesn't like exit(X).
-
-  Revision 1.78  2001/01/06 16:14:36  ma
-  - removed obsolete CAPI code
-  - renamed testexist to textexecutable
-  - replaced mklongdir by CreateDir
-
-  Revision 1.77  2000/12/31 14:49:04  mk
-  - Tearlineschalter in Config/Optionen/Netze
-
-  Revision 1.76  2000/12/28 19:16:07  mk
-  - removed editpathname variables
-
-  Revision 1.75  2000/12/26 21:00:32  mk
-  - fixed Config/Optionen/Nachrichten
-
-  Revision 1.74  2000/12/25 14:02:41  mk
-  - converted Lister to class TLister
-
-  Revision 1.73  2000/12/17 00:35:13  mk
-  - optische Korrektur in AccessibilityOptions
-
-  Revision 1.72  2000/12/11 11:16:49  mk
-  - Custom Headerlines ueber 19 Zeichen jetzt moeglich
-
-  Revision 1.71  2000/12/03 22:23:08  mk
-  - Improved Printing Support
 }
+
 end.
 
