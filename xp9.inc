@@ -719,6 +719,16 @@
         end;
     end;
 
+    procedure renbox2(ext:string);
+    var f : file;
+    begin
+      assign(f,BoxPar^.PPPClientpath+old_dname+ext);
+      if existf(f) then begin
+        if exist(BoxPar^.PPPClientpath+dname+ext) then
+          _era(BoxPar^.PPPClientpath+dname+ext);
+        rename(f,BoxPar^.PPPClientpath+dname+ext);
+        end;
+    end;
   begin
     dbGo(d,drec[p]);
     dbRead(d,'netztyp',nt);
@@ -767,9 +777,8 @@
             renbox('.BL');
             renbox('.FBL');
             renbox('.INF');
-
-            renbox(BoxPar^.PPPClientpath+'.BL');
-            renbox(BoxPar^.PPPClientpath+'.RC');
+            renbox2('.BL');
+            renbox2('.RC');
             end;
           end;
         end;
@@ -1373,6 +1382,9 @@
 
 {
   $Log$
+  Revision 1.10.2.15  2001/04/03 17:19:45  mk
+  - fixes fuer Client-Modus
+
   Revision 1.10.2.14  2001/03/19 17:35:46  mk
   - neuer Brettmanager
 

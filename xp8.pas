@@ -431,7 +431,7 @@ var t1,t2      : text;
     Count,
     LineCount     : integer;
     marked : boolean;
-    Buf1, Buf2: ^Buffer;
+    Articles: String;
 
   procedure domark;
   const
@@ -444,10 +444,8 @@ var t1,t2      : text;
     blfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.BL';
     if not exist(rcfile) or not exist(blfile) then exit;
     Assign(t2,blfile);
-    SetTextBuf(t2, Buf2^);
     Reset(t2);
     Assign(t1,TempFile('')); { neues BL-File }
-    SetTextBuf(t1, Buf1^);
     Rewrite(t1);
 
     OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/');
@@ -495,14 +493,15 @@ var t1,t2      : text;
 
 label makercend;
 
+var
+  x, y: byte;
+  brk: boolean;
 begin
-  New(Buf1); New(Buf2);
   moment;
   MakeRc:=true;
   ReadBox(0,box,boxpar);
   rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
   Assign(t1,rcfile);       { BOX.RC }
-  SetTextBuf(t1, Buf1^);
   if not (exist(rcfile)) then
   begin
     Rewrite(t1);
@@ -510,6 +509,19 @@ begin
   end;
   if bestellen then
   begin
+    Articles := '10';
+    dialog(30,3,'Newsgroups bestellen',x,y);
+    maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
+    mhnr(11901);
+    readmask(brk);
+    enddialog;
+    if brk then
+    begin
+      MakeRc:=false;
+      CloseList;
+      goto MakeRCEnd;
+    end;
+
     line := first_marked;
     while line <> #0 do
     begin   { PrÅfen, ob Brett schon bestellt }
@@ -543,7 +555,7 @@ begin
     begin  { neue Bretter an RC-File anhÑngen }
       if cpos(' ',line) <> 0 then
         line:=copy(line,1,cpos(' ',line)-1);
-      writeln(t1,Line + ' -'+StrS(10){!!});
+      writeln(t1,Line + ' -'+Articles);
       line := next_marked;
     end;
     Close(t1);
@@ -551,7 +563,6 @@ begin
   begin             { abbestellen }
     MakeRc:=false;
     Assign(t2,TempFile('')); { RC-Copy-File }
-    SetTextBuf(t2, Buf2^);
     ReWrite(t2);             { ????.TMP: neues BOX.RC      }
     line := first_marked;
     while line <> #0 do
@@ -586,7 +597,6 @@ begin
       Close(t2);
       Rename(t2,rcfile);
       Assign(t2,TempFile(''));
-      SetTextBuf(t2, Buf2^);
       Rewrite(t2);
       Line := next_marked;
     end;
@@ -598,7 +608,6 @@ begin
 makercend:
   InOutRes:=0;
   closebox;
-  Dispose(Buf1); Dispose(Buf2);
 end;
 
 { bbase-aktuelles Brett abbstellen   }
@@ -1233,6 +1242,7 @@ label again;
   end;
 
 begin
+  dbDisableIndexCache;
   if mapsbox='' then begin
     box:=UniSel(1,false,DefaultBox);
     if box='' then exit;   { brk }
@@ -1260,7 +1270,8 @@ begin
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
       ppp := BoxPar^.PPPMode;
       if BoxPar^.SysopInp+BoxPar^.SysopOut<>'' then ppp := false;
-    end;
+    end else
+      ppp := false;
     qwk:=(netztyp=nt_QWK);
     end
   else begin
@@ -1277,9 +1288,10 @@ begin
     if ppp then fn := BoxPar^.PPPClientPath + fn;
     if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
       lfile:=fn+'.BBL' else
-    if (art=1) and ppp and exist(fn+'.RC') and ppp then
+    if ppp and (art=1) then
       lfile:=fn+'.RC'
-    else lfile:=fn+'.BL';
+    else
+      lfile:=fn+'.BL';
     if not exist(lfile) or (_fileSize(lfile) = 0) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
@@ -1317,8 +1329,8 @@ begin
             goto again;
             end;
           end;
-        if ppp and (anz=1) then
-        if (art=0) and (firstchar(first_marked)='!') then begin
+        if ppp and (anz=1) and (art=0) and
+          (firstchar(first_marked)='!') then begin
           rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
           goto again;
         end;
@@ -1372,6 +1384,7 @@ begin
       aufbau:=true;
       end;
     end;
+  dbEnableIndexCache;
 end;
 
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
@@ -1387,6 +1400,7 @@ var brk     : boolean;
     maf     : boolean;
     maus    : boolean;
     info    : MausInfAP;
+    ppp: Boolean;
     infos   : integer;
     fido    : boolean;
     gs      : boolean;
@@ -1511,14 +1525,23 @@ begin
     autosys:=(boxpar^.BMtyp=bm_autosys);
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
-    end;
+    ppp := BoxPar^.PPPMode;
+    if BoxPar^.SysopInp+BoxPar^.SysopOut<>'' then ppp := false;
+  end else
+    ppp := false;
+
   promaf:=ntProMaf(nt);
   case defcom of
     0 : if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
           rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
           exit;
           end;
-    1 : if not ntMapsBrettliste(nt) then begin
+    1 : if ppp then
+        begin
+          rfehler(828); { 'Client-Modus - Newsgroupliste bitte Åber externen Client anfordern!' }
+          exit;
+        end else
+       if not ntMapsBrettliste(nt) then begin
           rfehler(818);
           exit;
           end;
@@ -1805,6 +1828,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.10  2001/04/03 17:19:45  mk
+  - fixes fuer Client-Modus
+
   Revision 1.10.2.9  2001/03/25 12:01:06  mk
   - zwei kleine Fehler im Brettmanager beseitigt
 
