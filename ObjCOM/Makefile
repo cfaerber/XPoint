@@ -4,7 +4,7 @@
 #
 # $Id$
 #
-# Fuer GNU make <http://www.gnu.org/>
+# Fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
 # OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
@@ -54,7 +54,9 @@ CPU ?= 386
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
 EXE_EXT = .exe
-SEP = \\
+# Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
+# muss hier getrickst werden
+SEP = $(subst ,,\)
 
 RM ?= rm
 
@@ -118,6 +120,9 @@ clean:
 
 #
 # $Log$
+# Revision 1.2  2000/09/27 21:22:49  fe
+# kleinere Korrekturen
+#
 # Revision 1.1  2000/09/26 14:01:57  fe
 # Makefile fuer GNU make
 #
