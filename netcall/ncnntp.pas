@@ -120,6 +120,8 @@ type
 
 implementation
 
+uses Timer;
+
 const
   DefaultNNTPPort               = 119;
 
@@ -145,7 +147,7 @@ resourcestring
   res_group2            = 'Gruppe %s gesetzt';
   res_group3            = 'Gruppe %s nicht gefunden';
 
-  res_msg1            = 'hole Artikel %d';
+  res_msg1            = 'hole Artikel %d, Zeile %d';
   res_msg2            = 'Artikel %d geholt';
   res_msg3            = 'Fehler beim Holen von Artikel %d';
 
@@ -425,14 +427,14 @@ end;
 
 function TNNTP.GetMessage(msgNr: Integer; Message: TStringList): Integer;
 var
-  Error: Integer;
+  Error,iLine: Integer;
   s: String;
+  Timer: TTimer;
 begin
   Result := nntp_NotConnected;
   if Connected then
   begin
     // select one newsgroup
-    Output(mcInfo,res_msg1, [msgNr]);
     SWriteln('ARTICLE '+ IntToStr(msgNr));
     SReadln(s);
     Error := ParseResult(s);
@@ -443,8 +445,14 @@ begin
       exit;
     end;
 
+    Timer.Init; Timer.SetTimeout(1); iLine:=0;
     SReadln(s);
     repeat
+      inc(iLine);
+      if Timer.Timeout then begin
+        Output(mcInfo,res_msg1, [msgNr,iLine]);
+        Timer.SetTimeout(1);
+        end;
       if (s <> '') and (s[1] = '.') then
         Message.Add(Copy(s, 2, MaxInt))
       else
@@ -452,6 +460,7 @@ begin
 
       SReadln(s);
     until s = '.';
+    Timer.Done;
 
     Result := 0;
     Output(mcInfo,res_msg2, [msgNr]);
@@ -544,6 +553,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2001/04/09 09:12:20  ma
+  - cosmetics
+
   Revision 1.19  2001/04/06 22:34:58  mk
   - changed nntp authorisation
 

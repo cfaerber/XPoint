@@ -138,6 +138,7 @@ begin
     NNTP.DisConnect;
     List.Free;
   end else begin { not Connect }
+    mdelay(2000);
     trfehler(831,31);
     result:= true;
   end;
@@ -373,8 +374,8 @@ begin
       while ArticleIndex < NNTP.LastMessage do
       begin
         Inc(ArticleIndex);
-        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex-oArticle+1) + '/' +
-                      IntToStr(NNTP.LastMessage-oArticle+1) + '             ');
+        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex-oArticle) + '/' +
+                      IntToStr(NNTP.LastMessage-oArticle) + '             ');
 
         NNTP.GetMessage(ArticleIndex, List);
         if List.Count > 10000 then
@@ -386,6 +387,7 @@ begin
     SaveNews;
     NNTP.Disconnect;
   except
+    mdelay(2000);
     trfehler(831,31);
     result:= false;
   end;
@@ -401,6 +403,9 @@ end.
 
 {
         $Log$
+        Revision 1.11  2001/04/09 09:12:20  ma
+        - cosmetics
+
         Revision 1.10  2001/04/07 13:28:09  ml
         - sorted newsgrouplist
 
