@@ -1771,6 +1771,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.44  2002/04/27 02:32:14  my
+  MY:- Kleine, aber entscheidende nderung des Commit-Textes zu
+       Revision 1.25.2.39 ("deaktiviert" => "aktiviert")
+
   Revision 1.25.2.43  2002/04/26 23:11:52  my
   MY:- Ein paar Commit-Texte ge„ndert/pr„zisiert.
 
@@ -1809,7 +1813,7 @@ end;
        C/O/B aktiv ist. Vorher stand ein groáes "W" fr "Weiterschalter
        manuell deaktiviert" (Grmpf), keine Anzeige konnte entweder
        bedeuten, daá die Einstellung unter C/O/B aktiv ist, oder daá der
-       Weiterschalter manuell deaktiviert wurde (Grmpf).
+       Weiterschalter manuell aktiviert wurde (Grmpf).
 
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
