@@ -308,6 +308,7 @@ var x,y  : byte;
     filt : boolean;
     uml  : boolean;
     ebs  : boolean;
+    farb : byte;
 begin
   if left(user,4)<>#0+'$/T' then
   begin
@@ -348,6 +349,10 @@ begin
     maddbool(3,12,getres2(2701,10),ebs);   { 'Empfangsbest„tigungen' }
     maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
     maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
+    farb:=(flags shr 5);
+    if farb >2 then inc(farb); 
+    maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
+    mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
     mhnr(8069);
     end
@@ -362,7 +367,12 @@ begin
 
   readmask(brk);
   if not brk then
+  begin
+    if farb=3 then Farb:=0;
+    if farb>3 then dec(farb); 
+    flags:=(flags and not $E0) or (farb shl 5);
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
+    end;
   enddialog;
   freeres;
 end;
@@ -2402,6 +2412,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/13 16:44:58  mk
+  JG: - User-Editmenu: einstellbare Prioritaetsfarbe fuer Msgs des User
+
   Revision 1.33  2000/07/11 21:39:21  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

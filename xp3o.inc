@@ -468,6 +468,7 @@ var x,y      : byte;
   begin
     size:=0;
     dbSeek(ubase,uiName,UpperCase(hdp^.absender));
+    uflags := 0;
     if not dbFound then exit;
     dbReadX(ubase,'passwort',size,passwd);
     dbRead(ubase,'codierer',codierer);
@@ -999,8 +1000,12 @@ begin
             if filterattr and fattrLoeschen<>0 then flags:=2;
             if filterattr and fattrHalten<>0 then flags:=1;
             dbWriteN(mbase,mb_halteflags,flags);
-                                                    { Prioritaeten in anderer Farbe.... }
-            if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
+
+                                                   {Fuer User spezifizierte Farbe einstellen}
+            if uflags and $E0 <> 0 then
+             mbflags:=longint((uflags and $E0) shr 2)
+                                                   { Prioritaeten in anderer Farbe.... }
+            else if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
             else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    }
             else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
             else if hdp^.Priority=1 then mbflags:=8      { hoechste   }
@@ -1173,6 +1178,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/07/13 16:44:57  mk
+  JG: - User-Editmenu: einstellbare Prioritaetsfarbe fuer Msgs des User
+
   Revision 1.25  2000/07/07 14:38:36  hd
   - AnsiString
   - Kleine Fixes nebenbei
