@@ -151,7 +151,6 @@ var   e         : TStringList;
       dayused   : wt_array;   { fÅr CheckDay() }
 
 
-      netcalldat : text;
       NetcallSpecialList : array[1..NetcallSpecialMax] of String;
                           { Array fÅr Zeileninhalt NETCALL.DAT }
 
@@ -2067,9 +2066,12 @@ end;
 
 
 procedure ReadNetcallSpecialData;
-var i : byte;
+var
+  i: Integer;
+  netcalldat : text;
 begin
-  for i:=1 to NetcallSpecialMax do NetcallSpecialList[i] := '';
+  for i:=1 to NetcallSpecialMax do
+    NetcallSpecialList[i] := '';
   if FileExists(ownpath+NetcallSpecialDat) then
   begin
     i:=1;
@@ -2086,15 +2088,18 @@ begin
 end;
 
 
+// Netcall/Spezial-Liste
 procedure EditNetcallDat;
-var x,y,p,i    : Integer;
-    t          : taste;
+var
+  netcalldat : text;
+  x,y,p,i    : Integer;
+  t          : taste;
 
 const lines  = NetcallSpecialMax;
 
-  procedure edit(p:byte);
+  procedure edit(p: Integer);
   var boxline : customrec;
-            i : byte;
+            i : Integer;
   begin
     own_Name:='';      { Flag fÅr EditAddServersList }
     showErrors:=true;  { Flag fÅr EditAddServersList }
@@ -2184,6 +2189,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.70  2002/02/10 13:32:26  mk
+  - fixed some display problems with Netcall/Special
+
   Revision 1.69  2002/01/22 19:15:28  mk
   - after 3.40 merge fixes
 

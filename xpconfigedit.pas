@@ -1594,9 +1594,9 @@ function BoxSelect(const entries:byte; boxlist:box_array; colsel2:boolean):strin
 const width = 51+BoxNameLen;
 var   d          : DB;
       brk        : boolean;
+      nt         : Byte;
       x,y,height,
-      i,nt,
-      sel_anz    : integer;     { Anzahl der auszuwÑhlenden Boxen }
+      i, sel_anz : integer;     { Anzahl der auszuwÑhlenden Boxen }
       box        : string;      { Name der aktuellen Box          }
       user       : string;      { Username der aktuellen Box      }
       komm       : string;      { Kommentar der aktuellen Box     }
@@ -1605,8 +1605,6 @@ var   d          : DB;
 label nextBox;
 begin
   BoxSelect:=''; brk:=false;
-  list := nil;
-try
   height:=screenlines-17;
   if screenlines>30 then dec(height,2);
   if screenlines>40 then dec(height,2);
@@ -1657,23 +1655,19 @@ try
       end;
       List.addline(boxline);
     end;
-    nextBox:
+nextBox:
     dbNext(d);
   end;
   dbClose(d);
   if sel_anz > 0 then       { Wenn Box(en) gefunden, Auswahl }
   begin
     brk := list.Show;
+    CloseBox;
+    List.Free;
     BoxSelect:=trim(copy(list.getselection,2,BoxNameLen));
     if brk then BoxSelect:='';
   end else
     rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
-finally
-  list.Free;
-  list:=nil;
-end;
-    
-//if own_Name <> '' then
 end;
 
 
@@ -1746,7 +1740,7 @@ label Start;
   end;
 
   procedure InsertBox;
-  var   i         : byte;
+  var   i         : Integer;
         boxlen,
         bfglen    : word;
         box       : string[BoxNameLen];
@@ -2552,6 +2546,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2002/02/10 13:32:26  mk
+  - fixed some display problems with Netcall/Special
+
   Revision 1.43  2002/01/30 23:07:58  mk
   - fixed Netz_Typ
 
