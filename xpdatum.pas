@@ -142,6 +142,8 @@ begin
     s:= 'W';
   { Negativ-Abweichung zu UTC? }
   if (isNegative) then
+    s:= s + '-'
+  else
     s:= s + '-';
   s:= s + IntToStr(tzHours);
   { Minuten? }
@@ -158,6 +160,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/05/03 19:41:27  hd
+  - Noch eine Nachlaessigkeit in TimeZone
+
   Revision 1.5  2000/05/03 16:53:55  hd
   - Hours in TimeZone vergessen
 
