@@ -868,7 +868,7 @@ begin
     end;
   if aktdispmode=10 then begin
     RereadBrettdatum(_brett);
-    RereadUngelesen(_brett);
+    if art>4 then RereadUngelesen(_brett);
     if rdmode=1 then _keyboard(keyhome);
     end;
   if (art=6) and (aktdispmode=12) then begin
@@ -1465,6 +1465,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/29 22:09:27  mk
+  JG: - Brett-Gelesen-Bug bei Nachricht/Alle behoben
+
   Revision 1.29  2000/07/27 10:13:01  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
