@@ -665,7 +665,7 @@ begin { FidoNetcall }
     end;
 
   // let's clean up
-  DeleteFile(UpArcFilename);
+  SafeDeleteFile(UpArcFilename);          
   for i:=0 to AKABoxes.ReqFile.Count-1 do
     if AKABoxes.ReqFile[i]<>'' then
     begin
@@ -896,6 +896,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/04/14 12:00:55  mk
+  - use SafeDeleteFile
+
   Revision 1.31  2002/04/07 17:03:04  mk
   - removed debugging code from last checkin
 
