@@ -142,21 +142,30 @@ begin
         if not dbfound then
         begin
           s2:=s;
-          repeat
-            p:=cpos('.',s2);
-            if p>0 then s2[p]:='/';
-          until p=0;
+          p:=cpos('.',s2);
+          if p>0 then s2[p]:='/';
           dbSeek(bbase,biBrett,'A'+ustr(s2));
-           if dbfound then s:=s2;
+          if dbfound then s:=s2
+          else begin
+            repeat
+              p:=cpos('.',s2);
+              if p>0 then s2[p]:='/';
+            until p=0;
+            dbSeek(bbase,biBrett,'A'+ustr(s2));
+             if dbfound then s:=s2;
+            end;
           end;
+          p:=0;
         end
       else
         dbSeek(ubase,uiName,ustr(s));
+
       testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
+
       if dbFound then begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStrN(bbase,bb_brettname),2)
-        else dbReadN(ubase,ub_username,s);
+          else dbReadN(ubase,ub_username,s);
         if left(s,1)=vert_char
           then s:=copy(s,2,length(s)-3);
         end
@@ -405,6 +414,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.9  2002/03/08 23:13:06  my
+  JG+MY:- Fix: Beim ndern des Empf„ngers im Sendefenster konnte es zu
+          Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
+          anlegen?") kommen, wenn es sich z.B. um Fido-Bretter mit
+          Brettebenen handelte und unter /Config/Anzeige/Bretter die
+          Punktschreibweise fr alle Bretter gew„hlt war. Zusatz-Fix fr
+          pr„zisere Anzeige und Bestimmung der Brettebene im Sendefenster
+          implementiert.
+
   Revision 1.15.2.8  2001/12/20 23:38:40  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
