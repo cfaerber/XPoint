@@ -915,28 +915,31 @@ begin
     end;
 end;
 
-procedure ModiGelesen;
+procedure ModiGelesen;                    {Nachricht-Gelesen status aendern}
 var b     : byte;
     brett : string[5];
 begin
-  dbReadN(mbase,mb_gelesen,b);
-  if b=1 then b:=0 else b:=1;
-  dbWriteN(mbase,mb_gelesen,b);
-  dbReadN(mbase,mb_brett,brett);
-  if b=1 then begin
-    dbSeek(mbase,miGelesen,brett+#0);
-    if dbEOF(mbase) or (dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0)
-    then b:=0   { keine ungelesenen Nachrichten mehr im Brett vorhanden }
-    else b:=2;
-    end
-  else
-    b:=2;        { noch ungelesene Nachrichten im Brett vorhanden }
-  dbSeek(bbase,biIntnr,mid(brett,2));
-  if dbFound then begin
-    b:=dbReadInt(bbase,'flags') and (not 2) + b;
-    dbWriteN(bbase,bb_flags,b);
+  if not dbBOF(mbase) then 
+  begin                                   {Nur Wenn ueberhaupt ne Nachricht gewaehlt ist...}  
+    dbReadN(mbase,mb_gelesen,b);
+    if b=1 then b:=0 else b:=1;
+    dbWriteN(mbase,mb_gelesen,b);
+    dbReadN(mbase,mb_brett,brett);
+    if b=1 then begin
+      dbSeek(mbase,miGelesen,brett+#0);
+      if dbEOF(mbase) or (dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0)
+      then b:=0   { keine ungelesenen Nachrichten mehr im Brett vorhanden }
+      else b:=2;
+      end
+    else
+      b:=2;        { noch ungelesene Nachrichten im Brett vorhanden }
+    dbSeek(bbase,biIntnr,mid(brett,2));
+    if dbFound then begin
+      b:=dbReadInt(bbase,'flags') and (not 2) + b;
+      dbWriteN(bbase,bb_flags,b);
+      end;
+    aufbau:=true;
     end;
-  aufbau:=true;
 end;
 
 
@@ -2151,6 +2154,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/02/19 10:12:13  jg
+  Bugfix Gelesenstatus aendern per F4 im ungelesen Modus
+
   Revision 1.10  2000/02/18 17:28:08  mk
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 
