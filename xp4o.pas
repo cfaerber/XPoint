@@ -150,7 +150,7 @@ var x,y   : byte;
     hdp   : headerp;
     hds   : longint;
     bretter : string[8];
-
+    Check4Date: Boolean;
     suchstring      : string[SuchLen];
     typc          : char;
     statb           : byte;
@@ -393,6 +393,8 @@ label ende;
       such  : string[81];
           j : byte;
       found_not : boolean;
+      d: Longint;
+      b: Byte;
 
 {   Volltextcheck:
 
@@ -473,8 +475,19 @@ label ende;
 
 
 {--Normale Suche--}
-                                                          {Headereintragsuche}
-    else if suchfeld<>'' then begin
+    else if check4date and (readmode >0) then  {Suchen im akt. Lesemodus }
+    begin
+      if readmode=1 then begin
+        dbReadN(mbase,mb_gelesen,b);
+        if b>0 then exit;
+        end
+      else if aktdispmode <> 10 then begin
+        dbReadN(mbase,mb_empfdatum,d);
+        if smdl(d,readdate) then exit;
+        end;
+      end;                                                          {Headereintragsuche}
+
+    if suchfeld<>'' then begin
       dbRead(mbase,suchfeld,such);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
         ReadHeader(hdp^,hds,false);
@@ -538,7 +551,9 @@ label ende;
 
   procedure TestBrett(_brett:string);
   begin
-    dbSeek(mbase,miBrett,_brett);
+    if check4date and (aktdispmode=10) and (readmode>1)
+      then dbSeek(mbase,miBrett,_brett+dbLongStr(readdate))
+      else dbSeek(mbase,miBrett,_brett);
     while not dbEof(mbase) and (dbReadStr(mbase,'brett')=_brett) and not brk do
     begin
       TestMsg;
@@ -718,6 +733,7 @@ begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
     umlaut:=multipos('„”',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
+    check4date:=cpos('l',lstr(suchopt))>0;  {Suchen ab aktuellem Lesedatum}
     bereich:=0;
     for i:=1 to 4 do
       if ustr(bretter)=ustr(bera[i]) then bereich:=i;
@@ -2236,7 +2252,7 @@ var files    : string;
     v        : char;
     node     : string[20];
     secondtry,
-    mark,     
+    mark,
     lMagics  : boolean;
     dir      : dirstr;
     name     : namestr;
@@ -2342,7 +2358,7 @@ begin
         if (ext='.DIZ') then continue;
         if (name='FILES') or (name='FILE_ID') or (name='00GLOBAL')
           or (name='DESCRIPT') then continue;
-        
+
         { Ist der String eine Versionsnummer? V42.3, 1.0, X75, V34B etc. }
         if (byte(t[0])<8) then begin
           u:=t;
@@ -2388,7 +2404,7 @@ begin
         continue
       end; { while (k<byte(s[0])) }
       { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
-      s:=next_marked;  
+      s:=next_marked;
     end; { while (s<>#0) do begin }
     files:=trim(files);
     { Abbrechen, wenn was gefunden, oder zweiter Durchlauf oder schon beim
@@ -2422,7 +2438,7 @@ begin
       if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
-      setbrettgelesen(_brett); 
+      setbrettgelesen(_brett);
       end;
 end;
 
@@ -2430,6 +2446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.12  2000/11/30 20:33:30  mk
+  JG:- Suchmodus l hinzugefuegt
+
   Revision 1.47.2.11  2000/11/20 20:43:14  mk
   - Suchlaenge auf 73 reduziert
 
