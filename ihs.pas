@@ -28,6 +28,10 @@ uses
   xp0, dos,
   typeform,fileio, xpglobal,sysutils;
 
+{$IFDEF Delphi}
+type pathstr = string;
+{$ENDIF}  
+
 const maxpages = 4096;
       version  = '1.23';
       date     = '''89-91,95,00';
@@ -428,6 +432,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2001/09/25 21:14:13  cl
+  - Delphi compile fix
+
   Revision 1.28  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
