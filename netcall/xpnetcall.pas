@@ -79,8 +79,8 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      outemsgs  : longint;  { Anzahl mitgeschickter EPP-Nachrichten }
      wahlcnt   : integer;  { Anwahlversuche }
      bimodem   : boolean;
-     SysopMode : boolean;
      komment   : string;
+     SysopMode : boolean;
      fidologfile: string;
     _turbo     : boolean;
     _uucp      : boolean;
@@ -696,7 +696,6 @@ var
     bfile      : string;
     ppfile     : string;
     eppfile    : string;
-    domain     : string;
     d          : DB;
     i          : integer;
 
@@ -979,8 +978,9 @@ begin                  { function Netcall }
   ppfile:=bfile+BoxFileExt;
   eppfile:=bfile+EBoxFileExt;
   dbRead(d,'netztyp',netztyp);
+  ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
+  BoxPar^._domain   := dbReadStr(d,'domain');
   komment := dbReadStr(d,'kommentar');
-  domain := dbReadStr(d,'domain');
   dbClose(d);
   Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
 
@@ -997,7 +997,6 @@ begin                  { function Netcall }
   {$endif}
 
   Debug.DebugLog('xpnetcall','get server parameters',DLInform);
-  ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
   if FidoCrash then BoxPar^.BoxName:=CrashBoxName;
 
   if not PerformDial and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
@@ -1127,13 +1126,13 @@ begin                  { function Netcall }
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
         if Boxpar^.SMTPAfterPop then
         begin
-          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles);
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile) or netcall_connect;
 
         end
         else begin
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles) or netcall_connect;
+          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles) or netcall_connect;
         end;
       end; {case ltPOP3}
 
@@ -1373,6 +1372,10 @@ end.
 
 {
   $Log$
+  Revision 1.27  2001/07/29 19:54:28  cl
+  - FIX: received mail now sorted correctly into <local>@<point><domain>
+    instead of <local>@<point> (parameter BoxPtr^._domain read in correctly)
+
   Revision 1.26  2001/07/28 12:04:19  mk
   - removed crt unit as much as possible
 
