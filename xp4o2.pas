@@ -57,9 +57,9 @@ procedure SetLanguage;
 
 implementation  { ---------------------------------------------------- }
 
-uses xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10;
+uses xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10, debug;
 
-procedure packit(xpack:boolean; fname:string);
+procedure packit(xpack:boolean; const fname:string);
 var d  : DB;
     mp : boolean;
 begin
@@ -870,8 +870,10 @@ var s  : string;
   end;
 
 begin
-  s:='';
-  Result := FindFirst(LibDir + 'openxp-*.res', faAnyFile,sr);
+  s:= LibDir + 'openxp-*.res';
+  Result := FindFirst(s, faAnyFile,sr);
+  Debug.DebugLog('XP2o2', Format('Searching for Language Files in %s with Result %d', [s, Result]),DLDebug);
+  s := '';
   sn:=0;
   while Result = 0 do
   begin
@@ -928,6 +930,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/05/20 08:01:13  mk
+  - added debug log for setlanguage
+
   Revision 1.53  2002/05/19 11:21:56  mk
   - fixed language switchin in linux
 
