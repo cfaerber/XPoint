@@ -694,21 +694,28 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (f[CposY+add][1]='[') then
+        if (t=keycr) and (not kb_ctrl) and (f[CposY+add][1]='[') then
+        begin
           t:=chr(ord(f[CposY+add][2])-64);
-        chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
-                  (cpos(chr(ord(t[1])+64),drives)>0);
-        if chgdrive then begin    { Balken auf [LW:] positionieren }
-          i:= 0; 
-          while (i<f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
-          if (i<=f.count) and (i<>CposY+add) then begin
-            while i-add<1 do dec(add,iif(vert,9,4));
-            while i-add>36 do inc(add,iif(vert,9,4));
-            CposY:=i-add;
-            display;
-            disp_p;
+          chgdrive:=xdir and (t>=^A) and (t<=^Z) and
+            (cpos(chr(ord(t[1])+64),drives)>0)
+        end else
+        begin
+          chgdrive:=xdir and (t>=^A) and (t<=^Z) and kb_ctrl and
+                   (cpos(chr(ord(t[1])+64),drives)>0);
+
+          if chgdrive then begin    { Balken auf [LW:] positionieren }
+            i:= 0;
+            while (i<f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+            if (i<=f.count) and (i<>CposY+add) then begin
+              while i-add<1 do dec(add,iif(vert,9,4));
+              while i-add>36 do inc(add,iif(vert,9,4));
+              CposY:=i-add;
+              display;
+              disp_p;
             end;
           end;
+        end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
     if ((f.count>0) and (t=keycr) and (LastChar(f[CposY+add])=DirSepa)) or chgdrive then
@@ -1145,6 +1152,12 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/05/01 17:21:48  mk
+  MY:- Fix: Ein Laufwerkswechsel auf Laufwerk M: mit <Ctrl-M>
+       funktionierte nicht, weil XP dies als <Enter> interpretierte und
+       die entsprechende Aktion (Verzeichniswechsel, Datei ”ffnen)
+       ausf?hrte.
+
   Revision 1.50  2002/04/06 17:07:47  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux
