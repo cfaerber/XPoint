@@ -31,8 +31,6 @@ uses
   xpglobal,
 {$ifdef NCRT}
   xpcurses,
-{$else}
-  crt,
 {$endif}
 {$IFDEF Win32 }
   windows,
@@ -44,7 +42,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils,
+  sysutils, osdepend,
   keys,inout,maus2,typeform,winxp;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
@@ -156,7 +154,7 @@ begin
     if errdisp then begin
       wpull(25,55,10,14,'Fehler',handle);
       mwrt(28,12,'Datei existiert nicht');
-      delay(1500);
+      SysDelay(1500);
       wrest(handle);
       brk:=true;
       fi:='*brk*';
@@ -1103,6 +1101,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.37  2001/06/29 10:40:53  mk
   - fixed crash in file selector box when using shortkeys
 

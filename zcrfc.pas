@@ -40,8 +40,6 @@ uses xpglobal,
   {$ENDIF }
   {$IFDEF NCRT }
   xpcurses,                             { Fuer die Sonderzeichen an der Console }
-  {$ELSE }
-  crt,
   {$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
@@ -3823,6 +3821,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.60  2001/07/27 18:10:15  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

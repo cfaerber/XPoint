@@ -29,12 +29,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  sysutils,
+  sysutils, osdepend,
   keys,clip,mouse,eddef, encoder, Lister;
 
 
@@ -1143,7 +1138,7 @@ var  dl         : displp;
       SetAbscol;
       i:=0;
       line:=firstline-1;
-      inc(windmax,$100);
+//      inc(windmax,$100);
       attrtxt(acol);
       if not dispnoshow then moff;
       repeat
@@ -1222,7 +1217,7 @@ var  dl         : displp;
           end;
         end;
       if not dispnoshow then mon;
-      dec(windmax,$100);
+//      dec(windmax,$100);
       end;
     if dispnoshow then dispnoshow:=false
     else aufbau:=false;
@@ -1683,6 +1678,9 @@ end.
 
 {
   $Log$
+  Revision 1.54  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
   Revision 1.53  2001/02/26 14:30:26  ma
   - removed non-GPL code part II
 

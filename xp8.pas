@@ -29,10 +29,8 @@ interface
 uses sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,lister,
+  typeform,fileio,inout,keys,datadef,database,lister, winxp,
   maske,maus2,resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
   xpglobal,fidoglob;
 
@@ -1375,7 +1373,7 @@ label again;
         makebrett(boxpar^.MagicBrett+trim(copy(s,4,50)),n,box,netztyp,true)
       else makebrett(s,n,box,netztyp,true);
       moff;
-      gotoxy(x+22,y+2); write(n:5);
+      gotoxy(x+22,y+2); Wrt2(Format('%5d', [n]));
       mon;
       s:=List.NextMarked;
       end;
@@ -2094,6 +2092,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/07/28 12:04:14  mk
+  - removed crt unit as much as possible
+
   Revision 1.47  2001/07/23 16:05:22  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

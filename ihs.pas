@@ -24,8 +24,6 @@
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   dos,
   typeform,fileio, xpglobal,sysutils;
@@ -430,6 +428,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
   Revision 1.23  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

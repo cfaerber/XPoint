@@ -27,7 +27,7 @@ unit xp2c;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE }crt,{$ENDIF }
+  {$IFDEF NCRT}xpcurses,{$ENDIF }
   sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
   printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
   xpglobal;
@@ -1441,6 +1441,9 @@ end.
 
 {
   $Log$
+  Revision 1.93  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.92  2001/07/27 18:10:11  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

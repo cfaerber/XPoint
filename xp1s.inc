@@ -98,13 +98,11 @@ procedure shell(prog:string; space:word; cls:shortint);
   {$endif}
 
   procedure ShowPar;
-  var w1,w2    : word;
+  var
       x,y,p,p2 : Integer;
   begin
     savecursor;
     cursor(curoff);
-    w1:=windmin; w2:=windmax;
-    window(1,1,ScreenWidth,ScreenLines);
     if length(prog)<=74 then
       message(prog)
     else begin
@@ -116,7 +114,6 @@ procedure shell(prog:string; space:word; cls:shortint);
       mwrt(x+3+p,y+2,LeftStr(mid(prog,p2+1), 71-p));
       end;
     wkey(15,false);
-    windmin:=w1; windmax:=w2;
     closebox;
     restcursor;
   end;
@@ -508,6 +505,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.55  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

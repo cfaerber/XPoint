@@ -27,7 +27,7 @@ unit xpconfigedit;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
   sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
   xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
@@ -1517,6 +1517,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/07/28 12:04:15  mk
+  - removed crt unit as much as possible
+
   Revision 1.9  2001/07/27 18:35:11  mk
   JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
           under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)

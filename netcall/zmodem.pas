@@ -124,7 +124,7 @@ var
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
+  {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
   SysUtils, Debug, CRC;
 
 var TimerObj: tTimer;
@@ -2727,6 +2727,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/07/28 12:04:20  mk
+  - removed crt unit as much as possible
+
   Revision 1.16  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

@@ -27,7 +27,7 @@ unit xp1help;
 interface
 
 uses
-  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF NCRT} xpcurses,{$ENDIF}
   typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
   maske,xp0,xpglobal;
 
@@ -387,7 +387,7 @@ begin
   if fks<ScreenWidth-10-length(hilfe) then wf('F1-'+hilfe);
   if fks<ScreenWidth-23-length(hilfe)-length(makros) then wf('F6-'+makros);
   if fks<ScreenWidth-18-length(hilfe) then wf('F9-DOS');
-  inc(windmax,$100);
+//  inc(windmax,$100);
   if editor then
     wf('F10-'+getres(133))
   else
@@ -404,7 +404,7 @@ begin
   else
     if wherey=screenlines then Wrt2(sp(screenwidth+1-wherex));
   mon;
-  dec(windmax,$100);
+//  dec(windmax,$100);
   fnkeylines:=1;
 end;
 
@@ -413,6 +413,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.23  2001/07/23 16:05:17  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

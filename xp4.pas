@@ -27,11 +27,6 @@ unit xp4;
 interface
 
 uses xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
@@ -2202,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.95  2001/07/28 12:04:12  mk
+  - removed crt unit as much as possible
+
   Revision 1.94  2001/07/27 18:10:12  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

@@ -30,10 +30,8 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes,
+  typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes, osdepend, winxp,
   resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
 
 { Deklaration des Kommentarbaums in XP0 }
@@ -269,11 +267,12 @@ var nn,n : longint;
     nr   : byte;
 
   procedure wrn;
-  var p : byte;
+  var p : Integer;
   begin
     if nn=0 then exit;
     p:=n*100 div nn;
-    if p<>lp then begin
+    if p<>lp then
+    begin
       gotoxy(xx,y+2);
       attrtxt(col.colmboxhigh);
       moff;
@@ -935,6 +934,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/07/28 12:04:13  mk
+  - removed crt unit as much as possible
+
   Revision 1.38  2001/07/23 16:05:20  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

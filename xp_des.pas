@@ -30,10 +30,8 @@ interface
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
-  fileio,inout,maus2,xp0, xpglobal;
+  winxp, fileio,inout,maus2,xp0, xpglobal;
 
 procedure DES_PW(keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
@@ -421,6 +419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2001/07/28 12:04:14  mk
+  - removed crt unit as much as possible
+
   Revision 1.13  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

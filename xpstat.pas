@@ -30,8 +30,6 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,lister,resource,
   xp0,xp2,xp1,xpglobal,fidoglob;
@@ -1259,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.38  2001/07/23 16:05:24  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

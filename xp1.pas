@@ -29,8 +29,6 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
 {$IFDEF linux }
   linux,
@@ -777,10 +775,8 @@ end;
 {$IFNDEF NCRT }
 procedure sound(hz:word);
 begin
-{$IFNDEF VP }
-  if not ParQuiet then
-    crt.sound(hz);
-{$ENDIF }
+//  if not ParQuiet then
+//    crt.sound(hz);
 end;
 {$ENDIF } { NCRT }
 
@@ -1263,39 +1259,29 @@ procedure signal;              { s. Config/Anzeige/Hilfen }
 begin
   if not ParQuiet and tonsignal then
   begin
-{$IFDEF VP }
-    PlaySound(1205, 60);
-    PlaySound(1000, 60);
-    PlaySound(800, 60);
-{$ELSE }
-    mdelay(60);
+{    mdelay(60);
     sound(1205);
     mdelay(60);
     sound(1000);
     mdelay(60);
     sound(800);
     mdelay(60);
-    nosound;
-{$ENDIF }
+    nosound; }
   end;
 end;
 
 procedure _fehler(const txt:string; hinweis:boolean);
 var x,y   : Integer;
-    w1,w2 : word;
     lcol  : byte;
     s: String;
 begin
   s := LeftStr(txt, screenwidth-6);
   savecursor; lcol:=textattr;
-  w1:=windmin; w2:=windmax;
-  window(1,1,ScreenWidth,ScreenLines);
   msgbox(length(s)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
   mwrt(x+3,y+2, s);
   errsound;
   wait(curoff);
   closebox;
-  windmin:=w1; windmax:=w2;
   restcursor;
   attrtxt(lcol);
 end;
@@ -1809,7 +1795,7 @@ begin
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
-    box:=(fsize>1024*1024) and (windmin=0) and (ExtractFileExt(FileName(f1))<>'.$$$');
+    box:=(fsize>1024*1024) and (ExtractFileExt(FileName(f1))<>'.$$$');
     if box then begin
       MsgBox(56,5,getreps(134,extractfilename(FileName(f1))),x,y);
       attrtxt(col.colmboxhigh);
@@ -2057,6 +2043,9 @@ end.
 
 {
   $Log$
+  Revision 1.110  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.109  2001/07/27 18:10:11  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

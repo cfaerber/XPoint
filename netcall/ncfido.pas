@@ -95,7 +95,7 @@ type
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
+  {$IFDEF Unix} xpcurses, {$ELSE} crt, {$ENDIF}
   zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom,md5;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
@@ -242,6 +242,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.4  2001/05/19 16:20:25  ma
   - implemented secure BinkP CRAM-MD5 authentication
 

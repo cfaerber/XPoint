@@ -27,7 +27,7 @@ unit xpncuucp;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
+  {$IFDEF NCRT}xpcurses,{$ENDIF }
   sysutils,typeform,montage,fileio,keys,maus2,inout,lister,resource,
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,
   zcrfc,progressoutput;
@@ -497,6 +497,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.7  2001/07/21 16:02:13  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

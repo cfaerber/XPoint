@@ -29,7 +29,7 @@ unit  xpnetcall;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
   sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
   maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
   xp1input,xp2c,xp3o2,xp6,xpdiff,xpncuucp,zftools,fidoglob,
@@ -1373,6 +1373,9 @@ end.
 
 {
   $Log$
+  Revision 1.26  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.25  2001/07/23 16:05:26  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

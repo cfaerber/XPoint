@@ -30,11 +30,9 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,fileio,inout,keys,montage,maske,datadef,database,
-  lister,archive,maus2,winxp,printerx,resource,xpglobal,
+  lister,archive,maus2,winxp,printerx,resource,xpglobal, osdepend,
   xp0,xp1,xp1o2,xp1help,xp1input;
 
 
@@ -437,12 +435,13 @@ label ende;
 
   begin
     inc(n);
-    if (n mod 10)=0 then begin
+    if (n mod 10)=0 then
+    begin
       moff;
-      gotoxy(x+9,wherey); write(n:7);
-      gotoxy(x+26,wherey); write(nf:5);
+      Wrt(x+9, WhereY, Format('%7d', [n]));
+      Wrt(x+26, WhereY, Format('%5d', [nf]));
       mon;
-      end;
+    end;
 
 {--Spezialsuche--}
     if spez then with srec^ do
@@ -976,8 +975,9 @@ begin
   dbSetIndex(mbase,miBrett);
   while not dbEOF(bbase) and not brk do begin
     inc(n);
-    gotoxy(xx,y+2); attrtxt(col.colmboxhigh);
-    write(n*100 div nn:3);
+    attrtxt(col.colmboxhigh);
+    Wrt(xx, y+2, Format('%3d', [n*100 div n]));
+
     if not smdl(dbReadInt(bbase,'ldatum'),ixDat('2712310000')) then begin
       _brett:=copy(dbReadStr(bbase,'brettname'),1,1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
@@ -1249,11 +1249,12 @@ begin
       n:=0;
       assign(t,fn);
       reset(t);
-      while not eof(t) do begin
+      while not eof(t) do
+      begin
         readln(t,s);
         makebrett(s,n,DefaultBox,ntBoxNetztyp(DefaultBox),true);
-        gotoxy(x+22,y+2); write(n:5);
-        end;
+        Wrt(x+22,y+2, Format('%5d', [n]));
+      end;
       close(t);
       closebox;
       aufbau:=true;
@@ -1304,10 +1305,10 @@ begin
             inc(n);
             AddNewUser(s,DefaultBox);
             if not adrb then dbWriteN(ubase,ub_adrbuch,b);
-            gotoxy(x+26,y+2); write(n:5);
-            end;
+            Wrt(x+26, y+2, Format('%5d', [n]));
           end;
         end;
+      end;
       close(t);
       wkey(1,false);
       closebox;
@@ -1375,7 +1376,8 @@ begin
       cnt:=dbRecCount(d); n:=0;
       while not dbEOF(d) do begin
         attrtxt(col.colmboxhigh);
-        gotoxy(xx,y+2); write(n*100 div cnt:3);
+
+        Wrt(xx, y+2, Format('%3d', [n*100 div cnt]));
         if user then
           if dbReadInt(ubase,'userflags') and 4=0 then  { keine Verteiler }
             writeln(t,komform(ubase,dbReadStr(ubase,'username')))
@@ -2139,10 +2141,11 @@ begin
     mi:=dbGetIndex(ubase); dbSetIndex(ubase,0);
     dbGoTop(ubase);
     attrtxt(col.coldiahigh);
-    while not dbEOF(ubase) and not brk do begin
+    while not dbEOF(ubase) and not brk do
+    begin
       inc(n);
-      gotoxy(x+13,y+4); write(n*100 div nn:3);
-      gotoxy(x+35,y+4); write(nf:4);
+      Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
+      Wrt(x+35, y+4, Format('%4d', [nf]));
       UName := dbReadNStr(ubase,ub_username);
       if pos(suchst,UpperCase(uname))>0 then begin
         UBAddmark(dbRecno(ubase));
@@ -2410,6 +2413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.98  2001/07/28 12:04:13  mk
+  - removed crt unit as much as possible
+
   Revision 1.97  2001/07/27 18:10:12  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

@@ -26,7 +26,8 @@ unit xpterminal;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}maske,
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
+  maske,
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,objcom,Modem,Debug;
 
@@ -110,7 +111,7 @@ begin
   else begin
     termlines:=screenlines;
     m2t:=false;
-    windmax:=ScreenWidth-1+(termlines-1)*256;
+//    windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
   disp_DT;
@@ -120,7 +121,7 @@ end;
 
 
 procedure savewin;
-var mx,my : byte;
+var mx,my : Integer;
 begin
   savecursor;
   mx:=wherex; my:=wherey;
@@ -132,7 +133,7 @@ end;
 procedure restwin;
 begin
   restcursor;
-  windmax:=ScreenWidth-1+256*(screenlines-1);
+//  windmax:=ScreenWidth-1+256*(screenlines-1);
   attrtxt(la);
 end;
 
@@ -272,10 +273,10 @@ begin
                     0 : begin              { Lîschen bis Bildende }
                           savecur;
                           clreol;
-                          inc(windmax,$100);
+//                          inc(windmax,$100);
                           for i:=wherey+1 to termlines do
                             wrt(1,i,sp(80));
-                          dec(windmax,$100);
+//                          dec(windmax,$100);
                           restcur;
                         end;
                     1 : begin              { Lîschen bis Bildanfang }
@@ -293,15 +294,15 @@ begin
                     1 : wrt(1,wherey,sp(wherex)+#8);  {!! Zeilenanfang lîschen }
                     2 : begin                     { Zeile lîschen }
                           savecur;
-                          inc(windmax,$100);
+//                          inc(windmax,$100);
                           wrt(1,wherey,sp(80));
-                          dec(windmax,$100);
+//                          dec(windmax,$100);
                           restcur;
                         end;
                   end;
 
-        'L'     : for i:=1 to min(ansipar[1],termlines+1) do insline;
-        'M'     : for i:=1 to min(ansipar[1],termlines+1) do delline;
+//        'L'     : for i:=1 to min(ansipar[1],termlines+1) do insline;
+//        'M'     : for i:=1 to min(ansipar[1],termlines+1) do delline;
 
         { @ / P : n Zeichen einfÅgen / lîschen }
 
@@ -350,11 +351,11 @@ var b : byte;
   procedure BiosWrite(c:char);
   begin
     {$IFNDEF OS2 }
-    directvideo:=false;
+//    directvideo:=false;
     {$ENDIF }
     write(c);
     {$IFNDEF OS2 }
-    directvideo:=true;
+//    directvideo:=true;
     {$ENDIF }
   end;
 
@@ -738,6 +739,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.5  2001/07/23 16:05:24  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -30,8 +30,6 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   sysutils,
   typinfo, xp0,
@@ -330,13 +328,9 @@ end;
 
 procedure mbeep;
 begin
-{$IFDEF VP }
-  Playsound(600, 20);
-{$ELSE }
-  sound(600);
-  delay(20);
-  nosound;
-{$ENDIF }
+{!!  sound(600);
+  SysDelay(20);
+  nosound; }
 end;
 
 {$IFDEF FPC }
@@ -1296,6 +1290,9 @@ end.
 
 {
   $Log$
+  Revision 1.27  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.26  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

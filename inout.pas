@@ -39,8 +39,6 @@ uses
 {$endif}
 {$ifdef NCRT }
   xpcurses,
-{$else }
-  crt,
 {$endif }
   sysutils,
   keys,
@@ -162,7 +160,6 @@ var
                                             aktiv      : boolean;
                                           end;
 
-       base         : word;            { Screenbase                        }
        scsaveadr    : procedure;       { Screen-Saver Proc (muss alle Ak-  }
                                        { tionen selbst durchfÅhren)        }
        lastattr     : byte;            { aktuelles Bildschirm-Attribut     }
@@ -200,7 +197,6 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 {$IFNDEF NCRT }
-Procedure clrscr;                            { statt CRT.clrscr         }
 Procedure DispHard(x,y:byte; s:string);      { String ohne berÅcksicht. }
                                              { des akt. Windows ausgeb. }
 {$ENDIF }
@@ -335,11 +331,11 @@ Procedure window(l,o,r,u:byte);
 begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
-  crt.window(l,o,r,min(u,25));
+(*  crt.window(l,o,r,min(u,25));
   if (l=1) and (o=1) and (r=screenwidth) and (u=screenlines) then
     crt.windmax:=ScreenWidth-1 {crt.windmax and $ff} + 256*ScreenLines
   else
-    crt.windmax:=crt.windmax and $ff + 256*(u-1);
+    crt.windmax:=crt.windmax and $ff + 256*(u-1); *)
 end;
 {$ENDIF } { NCRT }
 
@@ -737,13 +733,6 @@ Procedure HighTxt;
 begin
   AttrTxt(HighAttr);
 end;
-
-{$IFNDEF NCRT }
-Procedure clrscr;
-begin
-  crt.clrscr;
-end;
-{$ENDIF }
 
 {$IFNDEF NCRT }
 Procedure disphard(x,y:byte; s:string);
@@ -1632,9 +1621,6 @@ procedure InitInOutUnit;
 begin
 {$IFDEF NCRT}
   InitXPCurses;
-{$else}
-  if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
-  normtxt;
 {$endif}
   chml[1]:=range(#32,#126)+range(#128,#255);
   chml[3]:='1234567890 ';
@@ -1670,6 +1656,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
   Revision 1.70  2001/04/10 10:03:23  ml
   - keyboard-translation completely rewritten (what a mess)
   - Ctrl-Up/Down now do the job

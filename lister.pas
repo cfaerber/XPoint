@@ -29,8 +29,6 @@ uses
   xpglobal,
   {$IFDEF NCRT }
   xpcurses,
-  {$ELSE }
-  crt,
   {$ENDIF }
   typeform,
   sysutils, classes,
@@ -403,7 +401,7 @@ var
 //      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
 //      FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);
 
-      Write(FirstLine+1:5,lines.count-1:6);
+      Wrt2(Format('%5d%6d', [FirstLine+1, Lines.Count-1]));
       if xa=1 then
         Wrt2('        ')
       else
@@ -419,7 +417,7 @@ var
           else Wrt2(iifs(listunvers and 1 = 0,'*',''));
         if listflags and 3=1 then Wrt2('S')
         else if listflags and 3=2 then Wrt2('s')
-        else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
+        else Wrt2(iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
         end;
       if SelCount>0 then Wrt2('  ['+forms(strs(SelCount)+']',7))
       else if stat.helpinfo then Wrt2(' F1-' + ListHelpStr);
@@ -1074,6 +1072,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.53  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
   Revision 1.52  2001/07/21 13:44:36  mk
   - Added TLister method UnmarkLine
 

@@ -29,11 +29,9 @@ interface
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2, xpheader,
-      resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
+  osdepend, resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
@@ -218,7 +216,7 @@ begin
   mon;
   if sig then signal;
   // wkey(1,false);  // damit werden Makros unterbrochen, da der Tastaturpuffer geloescht wird
-  delay(500);
+  SysDelay(500);
   closebox;
 end;
 
@@ -1373,7 +1371,7 @@ begin
       until not ok or (adr>=fs);
     close(f);
     if show then begin
-      if fs>0 then delay(300);
+      if fs>0 then SysDelay(300);
       closebox;
       end;
     if ok and (adr=fs) then testpuffer:=msgcount
@@ -1525,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
   Revision 1.60  2001/07/27 18:10:12  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

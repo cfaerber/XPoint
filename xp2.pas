@@ -27,7 +27,6 @@ unit xp2;
 interface
 
 uses
-  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF }
   {$IFDEF unix} xplinux,{$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
   {$IFDEF DOS32} xpdos32, {$ENDIF }
@@ -36,7 +35,7 @@ uses
   sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,resource,montage,
   xpglobal,debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
-  classes;
+  classes, osdepend;
 
 procedure zusatz_menue;
 procedure setaltfkeys;
@@ -496,7 +495,7 @@ var i  : integer;
     if _is('nolock') then ParNolock:=true
     else               begin
                          writeln('unbekannte Option: ',paramstr(i),#7);
-                         delay(500);
+                         SysDelay(500);
                        end
   end;
 
@@ -1092,6 +1091,9 @@ end.
 
 {
   $Log$
+  Revision 1.113  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.112  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -29,8 +29,6 @@ interface
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
      sysutils,typeform,inout,keys,winxp,maske,maus2,resource,
      xp0,xp1,xp1help,xp1input,xp2, xpglobal;
@@ -138,9 +136,9 @@ begin
           if copy(prog,1,1)='*' then
             Wrt2(sp(18) + chk(autoexec) + '      ')
           else
-            write(' ',forms(getres2(240,ntyp+7),10),' ',chk(bname),' ',
-                  chk(warten),' ',chk(listout),' ',chk(autoexec),'  ',
-                  speicher:3,' ');
+            Wrt2(' ' + forms(getres2(240,ntyp+7),10) +
+            Format(' %s %s %s %s  ', [chk(bname), chk(warten), chk(listout), chk(autoexec){,
+              speicher}]));
           end;
         end;
       end;
@@ -181,7 +179,7 @@ procedure savecolors;
 var t : text;
     i : integer;
 
-  procedure wrl(s:string);
+  procedure wrl(const s:string);
   begin
     write(t,s,'=');
   end;
@@ -700,17 +698,20 @@ var ma     : map;
     moff;
     for i:=1 to n do
       with ma^[i] do begin
-        if i=p then attrtxt($70)
-        else attrtxt(7);
-        gotoxy(x,y+i-1);
-        write('  ',LeftStr(mstr,max(0,hpos-1)));
-        if hpos>0 then begin
+        if i=p then
+          attrtxt($70)
+        else
+          attrtxt(7);
+
+        Wrt(x, y+i-1, '  ' + LeftStr(mstr,max(0,hpos-1)));
+        if hpos>0 then
+        begin
           if i<>p then attrtxt(15);
-          write(mstr[hpos]);
+          Wrt2(mstr[hpos]);
           if i=p then attrtxt($70) else attrtxt(7);
-          end;
-        write(forms(Mid(mstr,hpos+1),ml+2-hpos));
         end;
+        Wrt2(forms(Mid(mstr,hpos+1),ml+2-hpos));
+      end;
     mon;
   end;
 
@@ -1155,6 +1156,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
   Revision 1.26  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

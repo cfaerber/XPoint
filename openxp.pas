@@ -29,7 +29,6 @@ program xp;
 uses
   {$IFDEF unix} linux,xplinux, {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
-  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF }
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
   modem,zmodem,Sysutils,xpglobal,
      xp0,      { Definitionen       }
@@ -190,6 +189,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.3  2001/07/27 18:10:10  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

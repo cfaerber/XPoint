@@ -30,8 +30,6 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
@@ -669,11 +667,7 @@ begin
         end;
       end
     else if developer then begin
-{$IFDEF VP }
-  playsound(4000, 5);
-{$ELSE }
-      sound(4000); delay(5); nosound;
-{$ENDIF }
+//      sound(4000); delay(5); nosound;
       end;
     dbSetIndex(bezbase,mi);
     end;
@@ -1018,6 +1012,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.82  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

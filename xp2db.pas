@@ -29,8 +29,6 @@ interface
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
       typeform,fileio,inout,keys,datadef,database,databaso,
       sysutils,resource,maus2,xpglobal, datadef1,
@@ -958,6 +956,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
   Revision 1.31  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

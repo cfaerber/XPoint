@@ -43,7 +43,7 @@ type
     procedure SetTimeout(TimeoutSec: Double);
   end;
 
-function  Calibrate: LongInt;            
+function  Calibrate: LongInt;
 function  GetTicks: LongInt;
 procedure WaitTime (Milliseconds: Real); {Busy loop}
 procedure SleepTime(Milliseconds: Real); {Idle loop}
@@ -55,9 +55,7 @@ uses
   {$IFDEF Win32}
   Windows,
   {$ELSE}
-  {$IFNDEF NCRT}
-  CRT,
-  {$ELSE}
+  {$IFDEF NCRT}
   XPCurses,
   {$ENDIF}
   {$ENDIF}                              {for Delay/Sleep}
@@ -149,6 +147,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.17  2001/03/19 12:19:21  cl
   - put GetTicks into interface
   - TPTimer = ^TTimer

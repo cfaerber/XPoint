@@ -32,17 +32,12 @@ uses
     vpsyslow,
     vputils,
   {$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
 {$IFDEF unix}
   linux,
   xplinux,
 {$ENDIF}
   xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,datadef,database,
-  maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob;
+  maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob, OSDepend;
 
 procedure kalender;
 procedure memstat;
@@ -530,7 +525,7 @@ var c       : char;
         while t=ticker do mdelay(0); { mdelay(50) geht nicht wg. multi2 }
         if t<ticker then inc(t) else t:=ticker;
       end
-      else delay(50);
+      else SysDelay(50);
       dec(n);
     end;
   end;
@@ -950,6 +945,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2001/07/28 12:04:13  mk
+  - removed crt unit as much as possible
+
   Revision 1.50  2001/07/23 16:05:20  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

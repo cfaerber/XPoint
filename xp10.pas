@@ -31,8 +31,6 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   stack,typeform,fileio,inout,keys,montage,feiertag,winxp,classes,
   maske,datadef,database,maus2,lister,resource,xpglobal,xp0,xp1,xp1o2,
@@ -623,10 +621,11 @@ var
         case typ of
           1 : begin                               { Timingliste }
                 str2time(e.Strings[i+a-1],tr);    { e.Strings Lesen -1 ba 0 bassierend}
-                with tr do begin
-                  write(' ',iifc(active,'+',' '),' ',von,'-',bis,'  ',vond,'-',
-                  bisd,'  ',copy(e.Strings[i+a-1],29,8),'  ',forms(action,33));
-                  end;
+                with tr do
+                begin
+                  Wrt2(' ' + iifc(active,'+',' ') + ' ' + von + '-' + bis + '  ' + vond + '-' +
+                  bisd + '  ' + copy(e.Strings[i+a-1],29,8) + '  ' + forms(action,33));
+                end;
               end;
           2 : begin                           { Tastenmakros }
                 tt:=LeftStr(e.Strings[i+a-1],13);
@@ -638,8 +637,8 @@ var
                 Setlength(bunla, mtypes-1); {bunla[0]:=chr(mtypes-1);}
                 for j:=2 to mtypes do
                   bunla[j-1]:=iifc(e.Strings[i+a-1][14+j]=' ',' ',_bunla[j]);
-                write(' ',tt,bunla,' ',forms(mid(e.Strings[i+a-1],26),50-length(komm)),
-                      ' ',komm,' ');
+                Wrt2(' ' + tt + bunla + ' ' + forms(mid(e.Strings[i+a-1],26),50-length(komm)) +
+                      ' ' + komm + ' ');
               end;
           3 : with phones^[i+a] do begin      { Gebhrenliste Array}
                 s:=' '+forms(komment,25);
@@ -660,7 +659,7 @@ var
                       iifs(fdodiff,'Diff  ','      ')+
                       forms(getres2(2128,fformat),16));
           6 : with tarif^[a+i] do                             { array }
-                write(forms(' '+getres2(1022,1)+' '+          { 'Tarifgruppe ' }
+                Wrt2(forms(' '+getres2(1022,1)+' '+          { 'Tarifgruppe ' }
                             strs(a+i)+':   '+daytxt(a+i),53));
           end; // case typ of
         end;   // if i+a>eanz then
@@ -839,7 +838,7 @@ var
     attrtxt(col.coldiahigh);
     gotoxy(x,y);
     moff;
-    write(' ',gett,' ');
+    Wrt2(' ' + gett +' ');
     mon;
   end;
 
@@ -2075,6 +2074,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.57  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.56  2001/07/27 19:01:01  ma
   - changed behaviour of macro entering routine, works with Win9x now
 

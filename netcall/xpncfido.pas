@@ -27,9 +27,9 @@ unit xpncfido;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
+  {$IFDEF NCRT}xpcurses,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl,
+  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl, winxp,
   fidoglob,classes;
 
 
@@ -884,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.14  2001/07/23 16:05:26  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

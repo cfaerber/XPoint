@@ -37,12 +37,7 @@ uses
 {$IFDEF VP }
   vpsyslow,
 {$ENDIF }
-{$ifdef NCRT}
-  xpcurses,
-{$else}
-  crt,
-{$endif}
-  keys,inout,maus2,typeform, xpglobal;
+  OsDepend, keys,inout,maus2,typeform, xpglobal;
 
 const
 {$IFDEF NCRT }
@@ -53,6 +48,32 @@ const
       maxpush = 20;
 
       shadowcol: byte = 8;
+
+{$IFNDEF NCRT}
+const
+{ Foreground and background color constants }
+  Black         = 0;
+  Blue          = 1;
+  Green         = 2;
+  Cyan          = 3;
+  Red           = 4;
+  Magenta       = 5;
+  Brown         = 6;
+  LightGray     = 7;
+
+{ Foreground color constants }
+  DarkGray      = 8;
+  LightBlue     = 9;
+  LightGreen    = 10;
+  LightCyan     = 11;
+  LightRed      = 12;
+  LightMagenta  = 13;
+  Yellow        = 14;
+  White         = 15;
+
+{ Add-in for blinking }
+  Blink         = 128;
+{$ENDIF }
 
 type  selproc = procedure(var sel:slcttyp);
 
@@ -97,6 +118,11 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn n”tig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
 procedure FWrt(const x,y:word; const s:string);
+procedure Clreol;
+procedure GotoXY(x, y: Integer);
+procedure TextColor(Color: Byte);
+procedure TextBackground(Color: Byte);
+procedure ClrScr;
 {$ENDIF }
 
 { Schreiben eines Strings ohne Update der Cursor-Position
@@ -137,6 +163,11 @@ var
     OutHandle     : THandle;
 {$ENDIF }
 
+{$IFNDEF NCRT }
+var
+  WhereX, WhereY: Integer;
+  TextAttr: Byte;   { Current text attribute }
+{$ENDIF }
 
 procedure InitWinXPUnit;
 
@@ -214,7 +245,7 @@ begin
   { Vorlaeufig kein Schatten unter Linux }
 end;
 {$ELSE }
-procedure wshadow(li,re,ob,un:word);
+procedure wshadow(li,re,ob,un: Integer);
 var
   i: Integer;
   c: Char;
@@ -336,6 +367,53 @@ begin
     end;
   end;
 {$ENDIF Win32 }
+
+procedure Clreol;
+begin
+  FillScreenLine(WhereX, WhereY, ' ', ScreenWidth-WhereX);
+end;
+
+procedure GotoXY(x, y: Integer);
+var
+  CurInfo: TCoord;
+begin
+  WhereX := X;
+  WhereY := Y;
+
+  FillChar(Curinfo, SizeOf(Curinfo), 0);
+  CurInfo.X := X - 1;
+  CurInfo.Y := Y - 1;
+
+  SetConsoleCursorPosition(OutHandle, CurInfo);
+end;
+
+Procedure TextColor(Color: Byte);
+{
+  Switch foregroundcolor
+}
+Begin
+  TextAttr:=(Color and $8f) or (TextAttr and $70);
+End;
+
+
+
+Procedure TextBackground(Color: Byte);
+{
+  Switch backgroundcolor
+}
+Begin
+  TextAttr:=((Color shl 4) and ($f0 and not Blink)) or (TextAttr and ($0f OR Blink) );
+End;
+
+procedure ClrScr;
+var
+  i: Integer;
+begin
+  for i := 1 to ScreenLines do
+    FillScreenLine(1, i, ' ', ScreenWidth);
+  GotoXY(1, 1);
+end;
+
 
 procedure SDisp(const x,y:word; const s:string);
 {$IFDEF Win32 }
@@ -515,15 +593,15 @@ begin
       moff;
       qrahmen(ls-i,rs+i,os-i*ny div nx,us+i*ny div nx,typ,attr1,true);
       mon;
-   delay(del);
-      end
+      Sysdelay(del);
+  end
   else
     for i:=0 to ny do begin
       moff;
       qrahmen(ls-i*nx div ny,rs+i*nx div ny,os-i,us+i,typ,attr1,true);
       mon;
-   delay(del);
-      end;
+      Sysdelay(del);
+    end;
   if txt<>'' then begin
     moff;
     la:=lastattr;
@@ -934,6 +1012,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.56  2001/07/23 16:05:17  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

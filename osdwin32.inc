@@ -32,8 +32,16 @@
 
 { implementation of the interface }
 
+procedure SysDelay(MS: Longint);
+begin
+  Sleep(ms);
+end;
+
 {
         $Log$
+        Revision 1.2  2001/07/28 12:04:09  mk
+        - removed crt unit as much as possible
+
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 

@@ -29,8 +29,6 @@ uses
   winxp,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
@@ -769,6 +767,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.33  2001/04/15 19:33:34  ma
   - adjusted resource file names
 

@@ -33,8 +33,6 @@ uses
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
@@ -150,7 +148,7 @@ end;
 procedure InitXPXUnit;
 begin
 {$IFNDEF OS2 }
-  checkbreak:=false;
+//  checkbreak:=false;
 {$ENDIF }
   readname;
 {$ifndef unix}
@@ -179,6 +177,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.41  2001/05/16 01:59:15  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 

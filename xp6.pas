@@ -28,12 +28,7 @@ interface
 
 uses
   sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
+  typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
   xpglobal,Classes,fidoglob;
 
@@ -2109,6 +2104,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.119  2001/07/28 12:04:13  mk
+  - removed crt unit as much as possible
+
   Revision 1.118  2001/07/27 18:10:13  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

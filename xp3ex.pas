@@ -30,10 +30,8 @@ uses
   sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
-  typeform,fileio,inout,database,resource,stack, xpheader,
+  typeform,fileio,inout,database,resource,stack, xpheader, winxp,
   xp0,xp1,xpglobal, classes;
 
 const xTractMsg   = 0;
@@ -1067,6 +1065,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
   Revision 1.70  2001/07/27 18:10:12  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

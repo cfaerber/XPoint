@@ -16,8 +16,6 @@ interface
 uses
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
@@ -84,6 +82,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.13  2001/07/28 12:04:15  mk
+  - removed crt unit as much as possible
+
   Revision 1.12  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

@@ -28,11 +28,6 @@ interface
 
 uses
   sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
   typeform,fileio,inout,datadef,database,montage,resource, xpheader,
   xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal,classes,fidoglob;
 
@@ -1140,6 +1135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.58  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
   Revision 1.57  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -28,8 +28,8 @@ unit xpmodemscripts;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
-  sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
+  sysutils,typeform,fileio,inout,keys,datadef,database,maus2, winxp,
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,ProgressOutput;
 
 function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; ProgressOutput: TProgressOutput;
@@ -665,6 +665,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.3  2001/04/22 16:45:01  ma
   - added debug logs
 

@@ -30,7 +30,7 @@ uses
 {$ifdef NCRT}
   xplinux,
   xpcurses,
-{$else}
+{$ELSE }
   crt,
 {$endif}
   typeform, mouse,keys, xpglobal;
@@ -341,6 +341,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2001/07/28 12:04:09  mk
+  - removed crt unit as much as possible
+
   Revision 1.23  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

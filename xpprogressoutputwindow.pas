@@ -88,7 +88,7 @@ type
 implementation  { ------------------------------------------------- }
 
 uses
-  {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF Unix} xpcurses,{$ENDIF}
   typeform,winxp,xp0,xp1,inout;
 
 constructor TProgressOutputWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
@@ -276,6 +276,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/28 12:04:16  mk
+  - removed crt unit as much as possible
+
   Revision 1.4  2001/07/23 16:05:24  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -258,7 +258,7 @@ begin
         end;
       end;
     Output(mcVerbose,'',[0]);
-  until(State=Done)or KeyPressed or Timer.Timeout;
+  until(State=Done) or KeyPressed or Timer.Timeout;
   if Timer.Timeout then begin Output(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
   if Keypressed then begin Output(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
   while KeyPressed do ReadKey;
@@ -550,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/07/28 12:04:19  mk
+  - removed crt unit as much as possible
+
   Revision 1.4  2001/05/19 16:20:25  ma
   - implemented secure BinkP CRAM-MD5 authentication
 

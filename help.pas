@@ -27,12 +27,9 @@ unit help;
 interface
 
 uses
-  xpglobal,
-  sysutils,
+  xpglobal, osdepend, sysutils,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
@@ -771,6 +768,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
   Revision 1.34  2001/07/11 20:03:19  mk
   SV:- All ASCII characters can be displayed in the online help now {xxx}
 

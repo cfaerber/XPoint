@@ -698,7 +698,7 @@ begin
     Rerout(true,'MELDUNGEN',true);
     Rerout(true,'UPDATES',true);
     end;
-  delay(500);
+  SysDelay(500);
   closebox;
   freeres;
   wrtiming('REORG');
@@ -708,6 +708,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2001/07/28 12:04:12  mk
+  - removed crt unit as much as possible
+
   Revision 1.35  2001/07/23 16:05:19  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

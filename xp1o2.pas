@@ -29,8 +29,6 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,keys,fileio,inout,maus2,datadef,database, sysutils,
   stack,resource, xp0;
@@ -222,6 +220,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/07/28 12:04:10  mk
+  - removed crt unit as much as possible
+
   Revision 1.18  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

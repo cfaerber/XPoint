@@ -31,8 +31,6 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   typeform,fileio,archive,montage,
   xp0,xp1,xp1o,xp3,xp3o;

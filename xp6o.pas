@@ -28,8 +28,6 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE }
-  crt,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,datadef,database,maske, xpheader,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
@@ -1295,6 +1293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2001/07/28 12:04:14  mk
+  - removed crt unit as much as possible
+
   Revision 1.63  2001/07/27 18:10:14  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again
