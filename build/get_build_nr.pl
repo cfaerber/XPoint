@@ -39,3 +39,10 @@
 print "export OPENXP_MAINVER=$MAINVER\n";
 print "export OPENXP_SUBVER=$SUBVER\n";
 print "export OPENXP_BUILD=$BUILD\n";
+
+$VERZ = $ENV{'TEMP'};
+if (!$VERZ) { $VERZ = '/tmp' } 
+open(OutFile, ">$VERZ/openxp_ver.txt");
+$_ = "- new version $MAINVER.$SUBVER-$BUILD";
+print OutFile;
+close(OutFile);
