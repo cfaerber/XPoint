@@ -34,19 +34,20 @@ const umtyp : array[0..5] of string[5] =
                  'QuickMail','GS-Mailbox','Turbo-Box'); }
       maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
 
-var   UpArcnr   : integer;    { fÅr EditPointdaten }
-      DownArcNr : integer;
-      userfield : integer;    { Masken-Nr., s. get_first_box }
-      gf_fido   : boolean;
-      loginfld  : integer;    { UUCP-Loginname }
-      uup1,uupl : integer;
-      DomainNt  : shortint;   { Netztyp f. setdomain() und testvertreterbox() }
-      bDomainNt : byte;                                                { u.a. }
-      EditPnt   : byte;       { Netztyp f. EditPointdaten }
-      EMSIfield : integer;
-      pp_da     : boolean;    { unversandte Nachrichten vorhanden }
-      amvfield  : integer;    { EditDiverses }
-      downprotnr: integer;    { Edit/Point - Download-Protokoll }
+var   UpArcnr       : integer;   { fÅr EditPointdaten }
+      DownArcNr     : integer;
+      userfield     : integer;   { Masken-Nr., s. get_first_box }
+      gf_fido       : boolean;
+      loginfld      : integer;   { UUCP-Loginname }
+      uup1,uupl     : integer;
+      DomainNt      : shortint;  { Netztyp f. setdomain() und testvertreterbox() }
+      bDomainNt     : byte;                                               { u.a. }
+      EditPnt       : byte;      { Netztyp f. EditPointdaten }
+      EMSIfield     : integer;
+      pp_da         : boolean;   { unversandte Nachrichten vorhanden }
+      amvfield      : integer;   { EditDiverses }
+      downprotnr    : integer;   { Edit/Point - Download-Protokoll }
+      MailInServerFld : integer; { Name MailInServer RFC/Client }
 
 const own_Nt    : byte = 255;
         { Netztyp f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
@@ -59,6 +60,9 @@ const own_Nt    : byte = 255;
       maxbox    : byte = maxboxen;
         { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
 
+      delete_on_cDel  : boolean = false; { Steuerung des Verhaltens...   }
+      leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
+      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfÅgen }
 
 function  Netz_Typ(nt:byte):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -1241,12 +1245,35 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.38  2001/12/11 17:49:16  my
+  MY:- Envelope-Adresse (Mail-in) ist jetzt ein Pflichtfeld (falls ein
+       POP3/SMTP/IMAP-Server eingetragen ist).
+
+  MY:- Neue Variable 'delete_on_cDel': Mit <Ctrl-Del> kann der Inhalt auch
+       von Feldern gelîscht werden, die gegen Eingaben gesperrt sind
+       (hierzu mu· 'delete_on_cDel' in der Maskenroutine auf 'true'
+       gesetzt und beim Verlassen des Feldes wieder zurÅckgesetzt werden).
+       Bei DrÅcken von <Ctrl-Del> wird die Variable 'cDel_pressed'
+       gesetzt, so da· in AbhÑngigkeit davon weitere Aktionen ausgefÅhrt
+       werden kînnen.
+
+  MY:- Neue Variable 'leave_on_cDel': Wenn in Maskenroutine auf 'true'
+       gesetzt, wird der Dialog nach Lîschen des Feldinhalts mit
+       <Ctrl-Del> verlassen.
+
+  MY:- Neue Variable 'may_insert_clip' (Default: true): Der Clipboard-
+       Inhalt kann nur noch dann mit <Ctrl-C> in Felder eingefÅgt werden,
+       wenn may_insert_clip=true ist. Damit kînnen Felder gegen das
+       EinfÅgen des Clipboard-Inhalts geschÅtzt werden.
+
+  MY:- Typos im CVS-Log bereinigt.
+
   Revision 1.19.2.37  2001/11/20 23:22:55  my
   MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
        D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
        siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
        den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
-       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Box(en)
        abgelegt.
   MY:- Cursorblinken in Boxauswahl (nonedit) deaktiviert
   MY:- Lizenz-Header aktualisiert
