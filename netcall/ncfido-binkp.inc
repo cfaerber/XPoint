@@ -265,6 +265,7 @@ begin
         end;
       WaitOk: begin
         if BpF.IsReady then begin
+          Log(lcInfo,BpF.CommandPar);
           case BpF.FrameType of
             M_OK: begin
                     if CRAM_MD5_Challenge<>'' then
@@ -274,8 +275,8 @@ begin
                     result:=0; State:=Done;
                     end;
             M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-            M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
-            M_NUL: Log(lcInfo,BpF.CommandPar);
+            M_ERR: begin Output(mcError,'Error: %s',[BpF.CommandPar]); result:=2; State:=Done; end;
+            M_NUL: ;
             end;
           if State<>Done then BpF.ReadFromStream(False);
           end;
@@ -522,6 +523,9 @@ begin
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
   InBpF.ReadFromStream(False);
+
+  try
+
   repeat
     case State of
       WaitConn: begin
@@ -581,12 +585,23 @@ begin
       result:=BreakTransfer;
       end;
   until State=Done;
+
+  except
+    on E: Exception do begin
+      Debug.DebugLogException(E);
+    end;
+  end;
+
   InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy; PendingFilesWithPath.Destroy;
 end;
 
 
 {
   $Log$
+  Revision 1.11.2.4  2003/09/12 17:36:51  ma
+  - better error messages (wrong password...)
+  - log exceptions
+
   Revision 1.11.2.3  2003/05/10 20:58:35  ma
   - fixed: Files were sent with wrong timestamp
 
