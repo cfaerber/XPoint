@@ -135,18 +135,35 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
 
 
 
-function getdname(nt:byte; boxname:string):string;
-var fa : fidoadr;
+function CreateServerFilename(d: db; nt:byte; const boxname:string):string;
+var fa : fidoadr; i: integer;
 begin
   if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(_MPMask,boxname)) then begin
     splitfido(boxname,fa,0);
-    getdname:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
+    result:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
     end
-  else
-    if validfilename(LeftStr(boxname,8)+extBfg) then
-      getdname:=FileUpperCase(LeftStr(boxname,8))
-    else
-      getdname:=FileUpperCase('box-0001');
+  else begin
+    result:='';
+    for i:=1 to length(boxname)do
+      if UpCase(boxname[i]) in ['0'..'9','A'..'Z']then
+        result:=result+boxname[i];
+    if result='' then result:='box-0001';
+    result:=FileUpperCase(LeftStr(result,8));
+    end;
+
+  // this function will be called when creating the first server
+  // no database is available then
+  if not assigned(d) then exit;
+
+  // assure no other server uses the same file
+  dbSeek(d,boiDatei,result);
+  if dbFound then begin
+    result:=LeftStr(result,6)+'01';
+    repeat
+      dbSeek(d,boiDatei,result);
+      if dbFound then result:=LeftStr(result,6)+formi(ival(RightStr(result,2))+1,2);
+    until not dbFound;
+    end;
 end;
 
 
@@ -1322,7 +1339,7 @@ restart:
   dbWrite(d,'netztyp',nt);
   dbWriteStr(d,'boxname',name);
   dbWriteStr(d,'username',user);
-  dname:=getdname(nt,name);
+  dname:=CreateServerFilename(nil,nt,name);
   dbWriteStr(d,'dateiname',dname);
   maps:=DefaultMaps(nt);
   dbWriteStr(d,'NameOMaps',maps);
@@ -1616,6 +1633,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2001/10/11 11:18:39  ma
+  - changed server file name creation strategy
+
   Revision 1.25  2001/10/01 19:52:22  ma
   - disabled client mode II
 

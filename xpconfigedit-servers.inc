@@ -201,18 +201,6 @@
           nt:= SupportedNetTypes[i];
   end;
 
-  procedure unique(var dname:string);    { eindeutigen Dateinamen erzeugen }
-  begin
-    dbSeek(d,boiDatei,dname);
-    if dbFound then begin
-      dname:=LeftStr(dname,6)+'01';
-      repeat
-        dbSeek(d,boiDatei,dname);
-        if dbFound then dname:=LeftStr(dname,6)+formi(ival(RightStr(dname,2))+1,2);
-      until not dbFound;
-      end;
-  end;
-
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
                      PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; const Titel:String);
   var
@@ -413,8 +401,7 @@
           begin
             Boxpar^.nntp_port := 119;
           end;
-        dname:=getdname(nt,name);      { eindeutigen Dateinamen bestimmen }
-        unique(dname);
+        dname:=CreateServerFilename(d,nt,name);      { eindeutigen Dateinamen bestimmen }
         WriteBox(dname,boxpar);
         dbAppend(d);
         dbWrite(d,'netztyp',nt);
@@ -1148,8 +1135,7 @@
           old_dname:=dname;
           dname:='';
           dbWriteStr(d,'dateiname',dname);   { ! }
-          dname:=getdname(nt,name);
-          unique(dname);        { veraendert pos(d)! }
+          dname:=CreateServerFilename(d,nt,name); { veraendert pos(d)! }
           dbGo(d,drec[p]);
           dbWriteStr(d,'dateiname',dname);
           { evtl. User&Bretter ueberarbeiten }
@@ -1241,8 +1227,7 @@
           old_dname:=dname;
           dname:='';
           dbWriteStr(d,'dateiname',dname);   { ! }
-          dname:=getdname(nt,name);
-          unique(dname);        { veraendert pos(d)! }
+          dname:=CreateServerFilename(d,nt,name); { veraendert pos(d)! }
           dbGo(d,drec[p]);
           dbWriteStr(d,'dateiname',dname);
           { evtl. User&Bretter ueberarbeiten }
@@ -1748,8 +1733,7 @@
             old_dname:=dname;
             dname:='';
             dbWriteStr(d,'dateiname',dname);   { ! }
-            dname:=getdname(nt,name);
-            unique(dname);        { ver„ndert pos(d)! }
+            dname:=CreateServerFilename(d,nt,name); { ver„ndert pos(d)! }
             dbGo(d,drec[p]);
             dbWriteStr(d,'dateiname',dname);
             if dname<>old_dname then  { kann bei Fido evtl. gleich sein! }
@@ -2120,6 +2104,9 @@
 
 {
   $Log$
+  Revision 1.35  2001/10/11 11:18:39  ma
+  - changed server file name creation strategy
+
   Revision 1.34  2001/10/10 20:14:12  mk
   - allow empty realname (as described in online help)
 
