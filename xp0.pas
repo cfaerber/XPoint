@@ -127,6 +127,8 @@ const
        QfgExt      = '.qfg';           { QWK-Config-File   }
        SwapExt     = '.swp';
        BatchExt    = '.sh';
+       BoxfileExt  = '.pp';
+       EBoxFileExt = '.epp';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -156,6 +158,8 @@ const
        QfgExt      = '.QFG';           { QWK-Config-File   }
        SwapExt     = '.SWP';
        BatchExt    = '.BAT';
+       BoxFileExt  = '.PP';
+       EBoxFileExt = '.EPP';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -1164,6 +1168,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.94  2000/10/22 21:58:58  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.93  2000/10/19 15:25:06  mk
   - sstringp in AnsiString umgewandelt
 

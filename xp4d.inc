@@ -138,7 +138,7 @@ begin  { __ Suchmarke }
 
                   if ( length(komm) > 1 ) then                  { Kommentar vorhanden ?}
                     dispbuf[y]:=c+                                                  {   4  }
-                                + forms(copy(s,2,100)+'_', 60 + over80 div 2)+' '   {+ 60 }
+                                + forms(mid(s,2), 60 + over80 div 2)+' '   {+ 60 }
                                 + forms( komm , 16 + over80 div 2)                  {+ 16 }
                   else
                      dispbuf[y]:=c+forms(copy(s,2,76+over80),77+over80)
@@ -599,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2000/10/22 21:58:58  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.38  2000/10/17 10:05:50  mk
   - Left->LeftStr, Right->RightStr
 

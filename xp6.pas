@@ -1942,7 +1942,7 @@ fromstart:
         end;
 
       if not flCrash or not MayCrash then
-        assign(f2,boxfile+'.pp')           { ..und ab damit ins Pollpaket }
+        assign(f2,boxfile+BoxfileExt)           { ..und ab damit ins Pollpaket }
       else begin
         assign(f2,CrashFile(hdp^.empfaenger));
         SetCrashInfo;
@@ -2132,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.70  2000/10/22 21:58:59  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.69  2000/10/17 10:05:52  mk
   - Left->LeftStr, Right->RightStr
 

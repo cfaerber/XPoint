@@ -1410,7 +1410,7 @@ var _brett   : string;
 begin
   if uvs_active then exit;
   crashs:=false;
-  dos.findfirst('*.pp',dos.Archive,sr);
+  dos.findfirst('*'+BoxFileExt,dos.Archive,sr);
   if doserror<>0 then
   begin
     FindClose(sr);
@@ -2424,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/10/22 21:58:59  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.71  2000/10/19 20:52:22  mk
   - removed Unit dosx.pas
 

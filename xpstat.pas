@@ -799,8 +799,8 @@ begin
   yy:=y+4;
   dbOpen(d,BoxenFile,1);
   for i:=1 to ppanz do begin
-    msgs:=testpuffer(pp_epp[i].name+'.PP',false,attsize);
-    emsgs:=testpuffer(pp_epp[i].name+'.EPP',false,eattsize);
+    msgs:=testpuffer(pp_epp[i].name+BoxFileExt,false,attsize);
+    emsgs:=testpuffer(pp_epp[i].name+EBoxFileExt,false,eattsize);
     moff;
     wrt(x+3,yy,forms(file_box(d,pp_epp[i].name),11));
     if (msgs<0) or (emsgs<0) then
@@ -1254,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/10/22 21:59:01  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.26  2000/10/17 10:06:01  mk
   - Left->LeftStr, Right->RightStr
 

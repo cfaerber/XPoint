@@ -961,7 +961,7 @@ begin
   dbClose(d);
   assign(f1,fn);
   reset(f1,1);
-  assign(f2,bf+'.PP');
+  assign(f2,bf+BoxFileExt);
   if existf(f2) then begin
     reset(f2,1);
     seek(f2,filesize(f2));
@@ -1496,6 +1496,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/10/22 21:58:58  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.37  2000/10/17 10:05:49  mk
   - Left->LeftStr, Right->RightStr
 

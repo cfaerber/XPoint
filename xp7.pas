@@ -444,13 +444,8 @@ begin                  { of Netcall }
     exit;
     end;
   bfile := dbReadStr(d,'dateiname');
-{$IFDEF UnixFS}
-  ppfile:=bfile+'.pp';
-  eppfile:=bfile+'.epp';
-{$ELSE}
-  ppfile:=bfile+'.PP';       { muá ohne Pfad bleiben, wg. XPU.INC.ZtoRFC! }
-  eppfile:=bfile+'.EPP';
-{$ENDIF}
+  ppfile:=bfile+BoxFileExt;
+  eppfile:=bfile+EBoxFileExt;
   user := dbReadStr(d,'username');
   dbRead(d,'netztyp',netztyp);
   komment := dbReadStr(d,'kommentar');
@@ -1544,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/10/22 21:59:00  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.36  2000/10/19 20:52:22  mk
   - removed Unit dosx.pas
 

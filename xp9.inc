@@ -296,7 +296,7 @@
         write(#7);
         dname:= dbReadStr(d,'boxname');
         end;
-      pp:=_filesize(ownpath+dname+'.pp')>0;
+      pp:=_filesize(ownpath+dname+BoxFileExt)>0;
       if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich l”schen' }
       then begin
         dec(ntused[dbReadInt(d,'netztyp')]);
@@ -312,7 +312,7 @@
           _era(ownpath+dname+'.fbl');
         if exist(ownpath+dname+'.inf') then     { Maus-Infofileliste l”schen }
           _era(ownpath+dname+'.inf');
-        if pp then _era(OwnPath+dname+'.pp');   { Pollpaket l”schen }
+        if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket l”schen }
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         if name=DefFidoBox then begin
@@ -800,7 +800,7 @@
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
-            renbox('.pp');
+            renbox(BoxFileExt);
             renbox(BfgExt);
             renbox('.fl');
             renbox('.bl');
@@ -892,7 +892,7 @@
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
-            renbox('.pp');
+            renbox(BoxFileExt);
             renbox(BfgExt);
             renbox('.fl');
             renbox('.bl');
@@ -1132,7 +1132,7 @@
   begin
     with boxpar^ do begin
       dbRead(d,'netztyp',nt);
-      pp_da:=exist(dbReadStr(d,'dateiname')+'.PP');
+      pp_da:=exist(dbReadStr(d,'dateiname')+BoxFileExt);
       _nname:=false; _alias:=false; _mids:=false; _brett:=false;
       _atp:=false; _repto:=false; _light:=false; _brettm:=false;
       width:=34;
@@ -1238,7 +1238,7 @@
       nli : boolean;
   begin
     dbGo(d,drec[p]);
-    pp_da:=exist(dbReadStr(d,'dateiname')+'.PP');
+    pp_da:=exist(dbReadStr(d,'dateiname')+BoxFileExt);
     with boxpar^ do begin
       maps:= dbReadStr(d,'nameomaps');
       dialog(ival(getres2(926,0)),13,getres2(926,1),x,y);  { 'Fido-Einstellungen' }
@@ -1657,7 +1657,7 @@
 
   begin
     dbGo(d,drec[p]);
-    if exist(dbReadStr(d,'dateiname')+'.pp') then begin
+    if exist(dbReadStr(d,'dateiname')+BoxFileExt) then begin
       msgbox(60,9,_fehler_,x,y);
       mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fr diese Box vorhanden (%s.PP)' }
                    FileUpperCase(dbReadStr(d,'dateiname'))));
@@ -1694,6 +1694,9 @@
 
 {
   $Log$
+  Revision 1.28  2000/10/22 21:59:00  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.27  2000/10/17 10:05:56  mk
   - Left->LeftStr, Right->RightStr
 

@@ -1057,11 +1057,11 @@ begin
 
     NC^.sendbuf:=_filesize(ppfile);
     for i:=1 to addpkts^.anzahl do
-      inc(NC^.sendbuf,_filesize(addpkts^.abfile[i]+'.PP'));
+      inc(NC^.sendbuf,_filesize(addpkts^.abfile[i]+BoxFileExt));
     if (NC^.sendbuf>0) or (SendAKAs<>'') then begin     { -- Ausgabepaket -- }
       outmsgs:=testpuffer(ppfile,false,dummy);
       for i:=1 to addpkts^.anzahl do
-        inc(outmsgs,testpuffer(addpkts^.abfile[i]+'.PP',false,dummy));
+        inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
       if SysopPack then begin
         ztofido(ppfile,upuffer,ownfidoadr,3,addpkts,alias);    { ZFIDO }
         if (errorlevel=MaggiFehler) and exist(ppfile) then begin
@@ -1087,19 +1087,19 @@ begin
         end;
       CopyFileAttaches(ppfile);
       for i:=1 to addpkts^.anzahl do
-        CopyFileAttaches(addpkts^.abfile[i]+'.PP');
+        CopyFileAttaches(addpkts^.abfile[i]+BoxFileExt);
       Moment;
       RemoveEPP;
       outmsgs:=0;
       ClearUnversandt(ppfile,box);
       for i:=1 to addpkts^.anzahl do
-        ClearUnversandt(addpkts^.abfile[i]+'.PP',addpkts^.abox[i]);
+        ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
       closebox;
       if exist(ppfile) then _era(ppfile);
       if exist(eppfile) then _era(eppfile);
       with addpkts^ do
         for i:=1 to anzahl do
-          if exist(abfile[i]+'.PP') then _era(abfile[i]+'.PP');
+          if exist(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
       end;
 
     if exist(SysopInp+'*.*') then begin             { -- Eingangspaket -- }
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/10/22 21:58:59  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.34  2000/10/17 10:05:54  mk
   - Left->LeftStr, Right->RightStr
 

@@ -219,7 +219,7 @@ begin
   close(f);
   dbSetIndex(mbase,mi);
   FreeHeaderMem(hdp);
-  inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
+  inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+EBoxFileExt,false,ldummy));
 end;
 
 
@@ -479,14 +479,14 @@ begin
             addpkts^.reqfile[addpkts^.akanz]:='';
             end;
           bfile:=dbReadStr(d,'dateiname');
-          if exist(bfile+'.PP') then begin
+          if exist(bfile+BoxFileExt) then begin
             alias:=(dbReadInt(d,'script') and 4<>0);
             with BoxPar^ do
               if alias then
                 OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
               else
                 OwnFidoAdr:=boxname+'.'+pointname;
-            source:=bfile+'.PP';
+            source:=bfile+BoxFileExt;
             dest:=formi(ival(LeftStr(dest,8))+1,8)+'.PKT';
             Convert;
             if exist(sout+dest) then begin
@@ -777,6 +777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/10/22 21:59:00  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.30  2000/10/17 20:36:50  mk
   - Diskfree/Disksize von Longint auf Int64 umgestellt
 

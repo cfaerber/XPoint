@@ -440,7 +440,7 @@ label fn_ende,fn_ende0;
       fileatts:=0;
       WriteAttach(t,ppfile);
       for i:=1 to addpkts^.anzahl do
-        WriteAttach(t,addpkts^.abfile[i]+'.PP');
+        WriteAttach(t,addpkts^.abfile[i]+BoxFileExt);
       if (request='') and (FileAtts=0) and (_filesize(upuffer)<=60) and
          (addpkts^.anzahl=0) and not NotSEmpty then
         writeln(t,'SendEmpty=Y');
@@ -672,8 +672,8 @@ begin
       end;
     if exist(eppfile) then _era(eppfile);
     for i:=1 to addpkts^.anzahl do begin
-      ClearUnversandt(addpkts^.abfile[i]+'.PP',addpkts^.abox[i]);
-      _era(addpkts^.abfile[i]+'.PP');
+      ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
+      _era(addpkts^.abfile[i]+BoxFileExt);
       end;
     closebox;
     end;
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/10/22 21:59:00  mk
+  - case of .pp and .epp is now UnixFS dependent
+
   Revision 1.30  2000/10/19 20:52:23  mk
   - removed Unit dosx.pas
 
