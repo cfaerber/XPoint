@@ -20,11 +20,7 @@ unit  resource;
 interface
 
 uses
-  xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-  typeform,fileio;
+  xpglobal,ems,typeform,fileio;
 
 procedure OpenResource(fn:string; preloadmem:longint);
 procedure CloseResource;
@@ -85,18 +81,15 @@ begin
   halt(1);
 end;
 
-{$IFDEF BP }
 procedure EmsEinblenden(nr:integer);
 var i : byte;
 begin
   for i:=0 to block[nr].emspages-1 do
     emspage(block[nr].emshandle,i,i);
 end;
-{$ENDIF }
-
 
 {$S-}
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure newexit; far;
 begin
   exitproc:=oldexit;
   if f<>nil then closeresource;
@@ -108,9 +101,7 @@ end;
 
 procedure OpenResource(fn:string; preloadmem:longint);
 var i  : integer;
-{$IFDEF BP }
     pg : byte;
-{$ENDIF }
     fm : byte;
 begin
   if f<>nil then
@@ -132,7 +123,6 @@ begin
     blockread(f^,index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-{$IFDEF BP }
       pg:=(longint(block[i].contsize)+$3fff) div $4000;
       if emsavail>=pg then begin
         EmsAlloc(pg,block[i].emshandle);
@@ -142,7 +132,6 @@ begin
         EmsEinblenden(i);
         end
       else
-{$ENDIF }
         if memavail-block[i].contsize>preloadmem then begin
           getmem(block[i].rptr,block[i].contsize);
           block[i].loaded:=true;
@@ -168,11 +157,9 @@ begin
   close(f^);
   dispose(f);
   for i:=1 to blocks do with block[i] do begin
-{$IFDEF BP }
     if emspages>0 then
       emsfree(emshandle)
     else
-{$ENDIF }
       if loaded then
         freemem(rptr,contsize);
     freemem(index[i],anzahl*4);
@@ -243,9 +230,7 @@ begin
     with block[bnr] do begin
       s[0]:=chr(rsize(bnr,inr));
       if loaded then begin
-{$IFDEF BP }
         if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
         FastMove(rptr^[index[bnr]^[inr,1]],s[1],length(s));
         end
       else begin
@@ -259,12 +244,13 @@ end;
 
 procedure FreeRes;                        { Gruppe freigeben }
 begin
-  if clnr<>$ffff then begin
+  if clnr<>$ffff then
+  begin
     if not block[clbnr].loaded then
       freemem(clcont,clcsize);
     freemem(clindex,clsize*4);
     clnr:=$ffff;
-    end;
+  end;
 end;
 
 
@@ -287,11 +273,10 @@ begin
       error('['+strs(nr1)+']: no split page')
     else
       with block[bnr] do begin
-{$IFDEF BP }
         if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
-        if inr<>clnr then begin
-          if clnr<>$ffff then FreeRes;
+        if (inr<>clnr) and (bnr<>clbnr) then
+        begin
+          FreeRes;
           size:=rsize(bnr,inr);
           ofs:=index[bnr]^[inr,1];
           if loaded then begin
@@ -387,6 +372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/08/24 09:15:29  mk
+  MO:- Bug in Resourcencaching behoben
+
   Revision 1.7  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 
