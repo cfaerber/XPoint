@@ -6,15 +6,20 @@
 <ul>
   <li>alle Fixes und &Auml;nderungen der 3.8.x</li>
   <li>viele weitere kleinere Bugfixes</li>
-  <li> 2003-05-01 cl: CRLF at the end of a text file is now uniformly handled
-    as the start of an additional line.</li>
+  <li><strong> ab 2002 cl: Komplett neues Adresshandling, neues Sendefenster
+    usw. ("richtiger" CC/BCC-Support etc.), noch fehlerhaft</strong></li>
+  <li>2003-08-xx cl+xx: Make-Umgebung f&uuml;r Debian</li>
+  <li>2003-05-01 cl: CRLF
+    at the end of a text file is now uniformly handled as the start of an additional
+  line.</li>
   <li>2003-05-01 mk: fixed #704019: Empf&auml;nger &quot;Alle&quot; bei Fido-Antworten</li>
   <li>2003-05-01 mk: fixed #721302: Fidoechos ueber Brettmanager bestellen (Linux)</li>
-  <li>2003-05-01 mk: Neuer Boxtyp IMAP mit entsprechenden Routinen f&uuml;r den Netcall</li>
-  <li>2003-02-13 cl: implemented correct display of UTF8 and Unicode Line breaking 
-    in the lister</li>
-  <li>2003-01-28 cl: <a href="index.php4?file=spam.html">Spam-Filter</a> implementiert 
-  </li>
+  <li><strong>2003-05-01 mk: Neuer Boxtyp IMAP mit entsprechenden Routinen f&uuml;r
+  den Netcall</strong></li>
+  <li><strong>2003-02-13 cl: implemented correct display of UTF8 and Unicode Line breaking 
+    in the lister</strong></li>
+  <li><strong>2003-01-28 cl: <a href="index.php4?file=spam.html">Spam-Filter</a> mit
+      SQLite Support implementiert </strong>  </li>
   <li>2002-07-26 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=500581&group_id=3766&atid=103766">#500581</a>: 
     Gruppensuche mit &quot;.&quot; als Trennzeichen</li>
   <li>2002-07-26 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=585559&group_id=3766&atid=103766">#585559</a>: 
@@ -38,12 +43,48 @@
   <li>2002-05-26 ma: E-Mail-Adresse wird jetzt im "richtigen" Datenbankfeld gespeichert, 
     kann dadurch länger als 30 Zeichen sein.</li>
   <li>2002-05-07 ma: SMTP Auth Plain/Login eingebaut (bisher nur CRAM-MD5)</li>
-  <li>2002-04-14 cl: Komplett neues Adresshandling ("richtiger" CC/BCC-Support 
-    etc.), <b>noch fehlerhaft</b></li>
 </ul>
 
 <h3>v3.8.x (Anwenderzweig)</h3>
-<p><b>ab x.x.2002 v3.8.9</b></p>
+<p><b>Version 3.8.12 vom xx.xx.2003</b></p>
+<ul>
+  <li>cl+ma+mk: verschiedene kleinere und gr&ouml;&szlig;ere Bugfixes, die hier
+    nicht alle gelistet sind</li>
+  <li>2003-08-26 mk: added support for german umlaut keys in menu</li>
+  <li>2003-08-26 mk: Fehler beim erstellen mehrerer Verzeichnisse behoben, Client-Verzeichnis
+    wird jetzt korrekt erstellt</li>
+  <li>2003-08-26 mk: Fehler in den Resourcen und Dokumentation behoben (RFC/Client)</li>
+  <li>2003-08-26 mk: RTA-Meldung wird beim ersten Start von OpenXP nicht mehr
+    angezeigt</li>
+  <li>2003-08-26 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=589633&group_id=3766&atid=103766">#589633</a>: 3.8: Taste &quot;v&quot; im Lister bei
+  Multipart</li>
+  <li>2003-08-26 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=794074&group_id=3766&atid=103766">#794074</a>: Kein Binary Versand beim Autoversand</li>
+  <li> 2003-08-26 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=794671&group_id=3766&atid=103766">#794671</a>: Men&uuml; bei N/M/S/RFC Client ist
+    f&uuml;r
+    Zconnect</li>
+  <li>2003-08-26 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=5896321&group_id=3766&atid=103766">#589632</a>: 3.8: Anzeige selbstdefinierte Kopfzeilen</li>
+  <li>2003-08-25 mk: Portierung auf OS/2 aktualisiert sowie Raw IP Support f&uuml;r
+    OS/2 hinzugef&uuml;gt (n&ouml;tig f&uuml;r interne Clients)</li>
+  <li>2003-08-24 cl: fixes f&uuml;r internen Lister</li>
+  <li>2003-08-24 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=557886&group_id=3766&atid=103766">#557886</a>: Sprachumschaltung geht nicht (Linux)</li>
+  <li>2003-08-24 mk: korrektes Filemode-Handling, l&ouml;st evtl. Probleme mit Linux</li>
+  <li>2003-08-24 mk: Verbesserung der Dateinamen von OpenXP f&uuml;r den ftp-Server</li>
+  <li>2003-08-23 mf: Verbesserungen f&uuml;r englische Hilfe</li>
+  <li>2003-08-23 mk: Zusatzmen&uuml;: Programm-Eintrag darf jetzt l&auml;nger als 60 Zeichen
+    sein</li>
+  <li>2003-08-23 mk: Verbesserungen f&uuml;r Autoversand, beseitigt m&ouml;glicherweise
+    verschiedene Bugs</li>
+  <li>2003-08-23 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=570787&group_id=3766&atid=103766">#670787</a>:
+    Requestdatei nicht verschiebbar</li>
+  <li>2003-08-23 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=721302&group_id=3766&atid=103766">#721302</a>: Fidoechos ueber Brettmanager bestellen</li>
+  <li>2003-08-23 mk: Bugfixes und interne Verbesserungen f&uuml;r den Message-ID-Request</li>
+  <li>2003-08-23 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=733047&group_id=3766&atid=103766">#733047</a>: Bad User-Agent header syntax</li>
+  <li>2003-08-15 mk: fixed Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=671059&group_id=3766&atid=103766">#671059</a>:
+    Falscher Server bei unbekannten + bekannten Usern</li>
+  <li>2003-08-12 mk: removed Edit/netze/verschiedens/mime in news</li>
+  <li>2003-08-12 mk: OpenXP/32 in OpenXP umbenannt</li>
+</ul>
+<p><b>Version 3.8.9 vom 01. Mai 2003</b></p>
 <ul>
   <li>cl+ma+mk: verschiedene kleinere und gr&ouml;&szlig;ere Bugfixes, die hier nicht alle
     gelistet sind</li>
@@ -76,8 +117,7 @@ Session das Einlesen eines Puffers stattgefunden hatte, dann
 erschien die Meldung beim naechsten Programmstart wieder, auch wenn
 der letzte XP-Start u.U. nur ein paar Minuten zuruecklag</li>
   <li>2004-04-02 mk: ESC Handling in Makros korrigiert</li>
-  <li>2004-04-02 mk: &quot;keine&quot; in User-Aufnahme wieder erlaubt<br>
-  </li>
+  <li>2004-04-02 mk: &quot;keine&quot; in User-Aufnahme wieder erlaubt</li>
 </ul>
 <p><b>ab 3.08.2002 v3.8.7-8</b></p>
 <ul>
