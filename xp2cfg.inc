@@ -776,7 +776,6 @@ begin
   writeln(t,'Quote=','"',quotechar,'"');
   { 01/2000 oh }
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   { /oh }
   writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
   writeln(t,'ScreenSaver=',scrsaver);
@@ -1602,6 +1601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/03/03 08:37:19  mk
+  OH: Autodatumsbezuege werden nicht mehr doppelt geschrieben
+
   Revision 1.12  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 
