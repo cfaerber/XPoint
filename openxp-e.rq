@@ -200,7 +200,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
   3  w/o Header with Head    Puffer     Quote
 -
 105  Working, please wait ...
-106  File name:~
+106  Filename:~
 107  ~^Yes , ^No~
 + 108
   0  All
@@ -1119,7 +1119,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 457
 1    Create user list
 2    Create newsgroup list
-3    invalid file name
+3    invalid filename
 4    Export comments, too
 5    creating user list...     %
 6    creating newsgroup list...     %
@@ -1166,7 +1166,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 461  %s already exists. Overwrite
 462  Extract
 463  Destination directory:~
-464  ~File name       OrgSize   CompSize     %    Method     Date      Time
+464  ~Filename       OrgSize   CompSize     %    Method     Date      Time
 465  Archive or text file
 + 466
 1    Copying message file...
@@ -1388,6 +1388,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    Sending message to~
 
 10   Send message ...
+11   Write message ...
 
 20   ~^Yes~
 21   ^No
@@ -1411,12 +1412,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 81   Select ...
 
+84   To:
+
 86   Orig. To:  ~
 87   Forwarder:  ~
 
 92   Marked addresses
-90   Area(s) or Group(s)
-91   ^User or Direct
+90   User or Direct
+91   Area(s) or Group(s)
 
 -
 + 611
@@ -1463,7 +1466,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 612
 1    Message limit exceeded by %s Bytes! Send message, anyway
 2    Sent binary file
-3    File name: %s
+3    Filename: %s
 4    Size     : %s Bytes
 -
 613  Send binary file
@@ -1502,7 +1505,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 21    Metadata
 #  +------------------------------------------------------------+
-13   File name  ~
+13   Filename  ~
 14   Description~
 
 12   Disposition~
@@ -1664,8 +1667,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    Node/Name~
 5    marked
 + 706
-1    no input packet file name
-2    no output packet file name
+1    no input packet filename
+2    no output packet filename
 3    incomplete point data
 4    incomplete packer settings
 5    no uploader setting
@@ -2663,7 +2666,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    bytes
 4    bytes/s
 
-5    File name:
+5    Filename:
 6    File type:
 7    Transfer'd:
 
@@ -2739,7 +2742,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 96   Unknown packer format (-QZ)
 97   Command interpreter not found
 98   Unknown DOS error
-99   No QWK file name specified (-QZ)
+99   No QWK filename specified (-QZ)
 101  Drive not ready
 102  Not enough disk space
 103  Not enough free main memory!
@@ -3198,7 +3201,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13 User groups are not allowed here!
 14 Not possible within this net!
 15 Function is not allowed here.
-16 Illegal path or file name.
+16 Illegal path or filename.
 17 Only possible with public messages!
 18 Not possible within this net!
 19 That's not your message!
@@ -3215,7 +3218,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9  This message has no references
 10 Invalid address
 11 File not found
-12 Invalid file name
+12 Invalid filename
 13 Not possible - binary file
 14 Marked messages are already being displayed
 15 No messages marked!
@@ -3266,7 +3269,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3  File was not crypted!
 4  Plese send message to Server as a normal netmail.
 5  not enough memory to send the message
-6  Internal newsgroup - writing not allowed!
+6  Internal message area - writing not allowed!
 7  Unknown Server: %s
 8  file path too long
 9  Binary messages are not allowed in this Net
@@ -3402,7 +3405,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  Invalid server configuration line: %s
 2  Invalid server name!
 3  The serial number must have a length of 4 digits.
-4  Invalid file name
+4  Invalid filename
 5  Directory must be different from OpenXP working directory
 6  Can't creare directory!
 7  Warnung: Programm "%s" not found!
@@ -3425,7 +3428,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 26 Without EMSI the password is limited to 8 characters!
 27 Can't change - there are unsent messages!
 # log file
-28 Invalid file name!
+28 Invalid filename!
 #
 29 "%s" is no fido server!
 30 Warning - illegal characters in point name: %s
@@ -3459,19 +3462,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 53 There are no (more) servers that could be added!
 54 This list may contain a maximum of %s servers!
 55 Maximum input length (%s) for server names reached!
-56 Maximum input length (%s) for file names (.BFG) reached!
+56 Maximum input length (%s) for filenames (.BFG) reached!
 57 Server "%s" does already exist - add, anyway
 58 Input too long (Server names)! %s characters still available.
-59 Input too long (file names (.BFG))! %s characters still available.
+59 Input too long (filenames (.BFG))! %s characters still available.
 60 Server "%s"
 61 does exist %s times!
 62 Server "%s" does not exist!
 63 Server "%s" is identical with the server currently edited!
 64 is not of net type %s!
-65 Maximum total length (%s) of file names (.BFG) exceeded!
+65 Maximum total length (%s) of filenames (.BFG) exceeded!
 66 Maximum total length (%s) of Server names exceeded!
-67 Invalid server configuration file name: "%s.BFG"
-68 Server for file name "%s.BFG" not found!
+67 Invalid server configuration filename: "%s.BFG"
+68 Server for filename "%s.BFG" not found!
 69 Invalid Server name: "%s"
 70 Envelope address must be specified!
 71 Input/Output data incomplete!
@@ -3505,7 +3508,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 +  12100
 1  Error in nodelist index - please rebuild index
-2  No nodelist active
+2  No active nodelist found
 3  This nodelist IS already active!
 4  That's no nodelist.
 5  Not enough disk space to copy nodelist
@@ -3552,7 +3555,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #  XPFM
 40 Error while initialize port "%s"
 97 Invalid address: "%s"
-98 Invalid log file name: %s
+98 Invalid logfile name: %s
 99 XPFM error: %s
 
 
@@ -3669,7 +3672,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33  Math argument out of domain of func
 34  Math result not representable
 35  Resource deadlock would occur
-36  File name too long
+36  Filename too long
 37  No record locks available
 38  Function not implemented
 39  Directory not empty
@@ -3842,7 +3845,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 81  InPath invalid
 82  MailPath missing
 83  MailPath invalid
-84  Invalid file name (temp. file)
+84  Invalid filename (temp. file)
 85  Name missing
 86  'Address' missing
 87  Invalid baud rate
@@ -4053,6 +4056,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.61  2003/02/07 13:49:45  mf
+# Numerous minor changes
+#
 # Revision 1.60  2003/02/05 18:08:04  mf
 # 901.12, .13, .30, .50, .51, .52, .55 added
 #
