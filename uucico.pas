@@ -1444,7 +1444,7 @@ end;
 function SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
-    sf  : string;
+    sf  : string[200];
     s2  : string[20];
     o   : longint;
     fn  : string;
@@ -1747,8 +1747,8 @@ begin
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end
                   else begin
-                    s:=Unix2DOSfile(s,FilePath, false);
-                    if s='' then s:=Unix2DOSfile(source,FilePath, false);
+                    s:=Unix2DOSfile(s,FilePath);
+                    if s='' then s:=Unix2DOSfile(source,FilePath);
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
                     wrlog('S','receiving '+s+' as '+ustr(fn));
@@ -1926,6 +1926,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.7  2001/01/07 15:40:59  mk
+  - removed last patches (LFN)
+
   Revision 1.1.2.6  2001/01/07 10:51:03  mk
   - LFN beim requesten entfernt
 

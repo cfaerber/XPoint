@@ -3239,7 +3239,7 @@ var hds,adr : longint;
           p:=blankpos(s);
           if p=0 then begin
             fromfile:=s;
-            tofile:=Unix2DOSfile(s,'', UseLFN);
+            tofile:=Unix2DOSfile(s,'');
             end
           else begin
             fromfile:=left(s,p-1);
@@ -3466,6 +3466,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.32  2001/01/07 15:41:00  mk
+  - removed last patches (LFN)
+
   Revision 1.35.2.31  2001/01/05 09:31:33  mk
   - fehler in WAB-Handling behoben (teil 2)
 

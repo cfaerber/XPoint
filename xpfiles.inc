@@ -12,36 +12,31 @@
 
 { fn:         Unix-Dateiname, evtl. incl. Pfad                   }
 { destdir<>'' -> Namenskollision in diesem Verzeichnis vermeiden }
-{ short83:  wenn true, wird der Dateiname auf 8.3 gekurtzt }
 
-function Unix2DOSfile(fn,destdir:pathstr; short83: boolean):pathstr;
+function Unix2DOSfile(fn,destdir:pathstr):pathstr;
 var p,i     : byte;
     allowed : set of char;
     name    : namestr;
     ext     : extstr;
     n       : word;
 begin
-  if not short83 then UpString(fn);
+  UpString(fn);
   p:=length(fn);
   while (fn[p]<>'/') and (p>0) do dec(p);
   if p>0 then delete(fn,1,p);
   if fn='~' then fn:='';
-  if not short83 and (right(fn,6)='.TAR.Z') then     { .tar.z -> .taz }
+  if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
     fn:=left(fn,length(fn)-5)+'TAZ';
   p:=pos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);
   while (p>0) and (fn[p]<>'.') do dec(p);
-  if not short83 and (p>1) then
-  begin
+  if p>1 then begin
     fn:=left(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
     dec(p);
-  end;
-  if Short83 then
-    allowed:=['a'..'z','A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9']
-  else
-    allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
+    end;
+  allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
   for i:=1 to p do
     if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }
       fn[i]:='-';
@@ -50,17 +45,12 @@ begin
     if not (fn[i] in allowed) then
       fn[i]:='-';
   p:=cpos('.',fn);
-  if not Short83 then
-  begin
-    if p=0 then
-    begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
-      name:=left(fn,8); ext:='';
-    end else
-    begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
-      name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
+  if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
+    name:=left(fn,8); ext:='';
+    end
+  else begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
+    name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
     end;
-  end else
-    name := fn;
   if length(ext)=2 then n:=10
   else n:=1;
   while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
