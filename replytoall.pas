@@ -385,11 +385,13 @@ var RTAEmpfList : TRTAEmpfaengerList;
     uEmpf :string;
   begin
     i := 0;
-    while i < List.Count do 
+    while i < List.Count do
       with List[i] do
       begin
-        if cpos(' ', empf) <> 0 then Empf := LeftStr(Empf, cpos(' ', Empf));
+        if cpos(' ', empf) <> 0 then
+          Empf := LeftStr(Empf, cpos(' ', Empf)-1);
         { ^^ Realname entfernen }
+
         uEmpf := UpperCase(Empf);
         if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', Empf) = 0)
           or (uEmpf = UpperCase (hdp.ReplyTo))
@@ -398,9 +400,9 @@ var RTAEmpfList : TRTAEmpfaengerList;
           or (not IsMailAddress(Empf)) then
             List.Delete(i)
         else begin
-          Inc(i);
           RTAEmpf := not eigeneAdresse (eigeneAdressenbaum, empf);
           userUnbekannt := IsUserUnbekannt(Empf);
+          Inc(i);
         end;
       end;
 
@@ -692,7 +694,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
 
     function getAdresse (const s :string) :String;
     begin                                           
-      Result := trim (Mid(s, Length(GetRes2 (476, 1)) + 3)); 
+      Result := trim (Mid(s, Length(GetRes2 (476, 1)) + 3));
       TrimFirstChar(Result, '*');
       TrimFirstChar(Result, '(');
       TrimLastChar(Result, ')');
@@ -983,6 +985,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.29.2.3  2003/03/26 09:56:36  mk
+  - fixed checklist: while cutting realname from addresses, the last
+    space was not cut
+
   Revision 1.29.2.2  2002/07/29 19:53:15  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
