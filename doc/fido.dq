@@ -106,31 +106,32 @@ Das FidoNet ist das „lteste und gr”áte aller Mailboxnetze und kann daher auch
 mit den meisten Besonderheiten aufwarten. Wegen der groáen Anzahl spezieller
 Fido-Features habe ich mich dazu entschlossen, alle ausschlieálich das FidoNet
 betreffenden Dinge in diesem Text zusammenzufassen. Er soll und kann nicht die
-Gesamtdokumentation XPOINT.DOC ersetzen, sondern dient nur als Erg„nzung und
+Gesamtdokumentation XPOINT.TXT ersetzen, sondern dient nur als Erg„nzung und
 als Schnelleinstiegshilfe fr Fido. Zum Verst„ndnis des CrossPoint-Konzeptes
-sollten Sie zumindest die Grundlagenkapitel von XPOINT.DOC lesen.
+sollten Sie zumindest die Grundlagenkapitel von XPOINT.TXT lesen.
 
 Fr den Fido-Teil von CrossPoint gelten die gleichen Shareware-Lizenzbedingungen
-wie fr das restliche Programm - das Fido-Modul wird zwar getrennt geliefert,
-ist aber als Teil des CrossPoint-Gesamtpaketes zu betrachten. Genaueres hierzu
-finden Sie in LIZENZ.DOC. Ebenso wie fr XPOINT.DOC gilt auch fr diesen Text,
+wie fr das restliche Programm. Genaueres hierzu finden Sie in LIZENZ.TXT. 
+Ebenso wie fr XPOINT.TXT gilt auch fr diesen Text,
 daá Auszge daraus mit Quellenangabe in Mailboxnetzen ver”ffentlicht werden
 drfen.
 
 
 So, kommen wir nun endlich zur Hauptsache - zum Einsatz von CrossPoint im
 FidoNet. Wenn Sie bereits Erfahrung mit anderer Fido-Pointsoftware und fundierte
-Kenntnis der Fido-Technik haben, k”nnen Sie direkt in Kapitel 2.1 mit der
+Kenntniss der Fido-Technik haben, k”nnen Sie direkt in Kapitel 2.1 mit der
 Installation fortfahren. Als Fido-Neuuser sollten Sie Teil 1 dieses Textes
 zumindest kurz berfliegen, da ich die dort erkl„rten Konzepte und Begriffe
 als bekannt voraussetzen werde.
 
-Bei Problemen erreichen Sie mich im FidoNet unter 2:2454/97.80 oder im
-Internet als pm@daisy.de. Weiteres zum CrossPoint-Support entnehmen Sie bitte
-XPOINT.DOC.
+>>|
+Bei Problemen erreichen Sie das Team in den bekannten Support-Echos (s.
+XPOINT.TXT, Kapitel 1.1).
+<<|
 
 Peter Mandrella,
-September 1992 - September 1995
+September 1992 - September 1995 
+(berarbeitet vom OpenXP-Team im M„rz 2000)
 
 
 --4 PS: Fido und FidoNet sind eingetragene Warenzeichen von Tom Jennings und
@@ -168,15 +169,15 @@ untergeordnet und hat - wie Alles im FidoNet - eine eigene Nummer.
 Eine Useradresse (User, engl. = Benutzer) im FidoNet setzt sich aus dem Namen
 des Users und aus Zone, Netz, Node und evtl. Pointnummer zusammen. Beispiel:
 
-             Peter Mandrella @ 2:2454/97.80
+             Christian Faulhammer @ 2:2452/125.16
 
 Diese Adresse bedeutet, daá ich mich in Europa befinde, und daá ich meine
-Daten von Node Nr. 97 - der Klystron-BBS in Koblenz - des Netzes 2454 beziehe.
+Daten von Node Nr. 125 - dem Last Outpost in Herzogenrath - des Netzes 2452 beziehe.
 Wie Sie sehen, taucht die Region nicht innerhalb der Adresse auf, sondern ist
-Teil der Netznummer. Die 80 schlieálich ist meine Pointnummer innerhalb der Box.
+Teil der Netznummer. Die 16 schlieálich ist meine Pointnummer innerhalb der Box.
 Bei Usern, die kein Point sind, sondern ihr Daten "online" abholen, entf„llt
 die Pointnummer (n„heres zum Unterschied zwischen Online-Usern und Points finden
-Sie in XPOINT.DOC, Kap. 1.4).
+Sie in XPOINT.TXT, Kap. 1.4).
 
 
 þ 4D oder 2D?
@@ -244,18 +245,6 @@ Das Einrichten eines Fido-Points ist daher oft nicht so simpel und unproblematis
 wie z.B. im MausNet. Wenn es Probleme gibt, fragen Sie zun„chst einmal bei Ihrem
 Boss nach - er fhrt ein genaues Protokoll ber s„mtliche Anrufe und kann
 dadurch am besten die Fehlerursache herausfinden.
-
-Wenn Ihr Fido-Point einwandfrei funktioniert, so sollten Sie damit rechnen, daá
-er dies eines Tages pl”tzlich nicht mehr tun wird. Grund sind die fast t„glich
-neu erscheinenden Fido-Programme, die manchmal nicht vollst„ndig standardkonform
-oder unausgereift sind. So gab es z.B. seit Erscheinen von XP v2.1 zwei F„lle,
-in denen kurzfristige Programm„nderungen n”tig waren, um den XP-Usern weiterhin
-einwandfreies Pollen bei Boxen mit bestimmter Software zu erm”glichen. Sollte
-es nach einer Softwareumstellung bei Ihrem Boss pl”tzlich Probleme geben, so
->>|
-schicken Sie dem Team bitte eine m”glichst exakte Beschreibung, damit die
-Fehlerursache lokalisiert werden kann.
->>|
 
 þ 2D-Points
 

@@ -237,6 +237,7 @@ und Jochen Herz fr ihre langj„hrige, zuverl„ssige Untersttzung.
 
 Peter Mandrella, Dezember 1999
 
+
 >>|
 Mit viel Energie und Einsatz haben wir es geschafft, den komplizierten Quellcode
 von CrossPoint zu verstehen und vor allem zu bearbeiten. Unser Ziel war eine
@@ -255,6 +256,7 @@ und bin Teamleiter des Doku-Teams.
 
 Christian Faulhammer im M„rz 2000
 <<|
+
 
 
 Vorwort zur Version 3.11
@@ -490,7 +492,8 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      NEUES.TXT        Beschreibung neuer Features
      BESTELL.TXT      Bestellinformationen fr Zusatzprodukte
 >>|
-     ZPR.TXT          Dokumentation von ZPR.EXE
+     ZPR.TXT          Dokumentation von ZPR.EXE (Puffereparatur)
+     XPME.TXT         Dokumentation des Meneditors
 <<|
      BEISPIEL.EXE     einige Beispiel-Briefschablonen (SFX-Archiv)
      SCRIPTS.EXE      Beispiel-Scriptdateien (SFX-Archiv, s.Kap.8.3)
@@ -2050,6 +2053,7 @@ sollte daher nur aus zwei Trennstrichen und einem echten Space (ASCII 255)
 bestehen.
 <<|
 
+
 ş Makros
 
 Folgende Makros k”nnen in allen Schablonen eingesetzt werden:
@@ -2426,6 +2430,7 @@ Wenn die Bezugssuche nicht weiterhilft, gibt es immer noch die M”glichkeit,
 mit <Alt B> alle Nachrichten mit gleichem Betreff im aktuellen Brett zu
 suchen.
 
+
 >>|
 ş MessageID-Suche
 
@@ -2449,6 +2454,7 @@ einzugeben, d.h. die Shift-Taste ist gleichzeitig zu drcken; ansonsten wrde
 nur eine einfache Antwort erzeugt. Bei privaten Mehrfach-Quotes geht die Antwort
 immer an den Absender der Nachricht, auf der gerade der Auswahlbalken steht -
 vorausgesetzt, der Balken steht auf einer der markierten Nachrichten.
+
 
 >>|
 ş Suchoptionen
@@ -2556,9 +2562,9 @@ von 64 KByte zu verschicken. Um solche Nachrichten zu decodieren, mssen
 Sie die einzelnen Teile vorher markieren. Achten Sie darauf, daá keine
 Nachrichten markiert sind, die nicht dazugeh”ren (evtl. Ctrl-E drcken)!
 
-Das Erzeugen von uu-codierten Nachrichten ist mit CrossPoint z.Zt. nicht
-m”glich. Verwenden Sie stattdessen ein getrenntes UU-Codierprogramm, wie
-Sie es z.B. in der XP-Supportbox finden.
+>>|
+CrossPoint kann im Editor Dateien uu-codieren, siehe Kapitel 6.2.
+<<|
 
 
 
@@ -2944,6 +2950,7 @@ in der Brettbersicht vorhanden ist, landen die Nachrichten in einem Brett
 >>|
 mit dem Namen "/Nix".
 <<|
+
 
 ş Mega-Crosspostings
 
@@ -4221,6 +4228,7 @@ Problem in Zukunft beheben.
 CrossPoint wurde mit PGP 2.6.i, 2.6.2i und 5.0i getestet. Es sollte auch mit 
 neueren PGP-Versionen funktionieren, sofern an diesen nichts Wesentliches 
 ge„ndert wurde, wie dies mit der Version fnf geschehen ist.
+::
 <<|
 
 
@@ -4367,6 +4375,7 @@ im Notfall in einem der Support-Echos nach, viele Entwickler sind auch dort
 aktiv.
 <<|
 
+
 ş Technisches
 
 Fr den ZCONNECT-Schlsselversand extrahiert CrossPoint Ihren Public Key
@@ -4396,6 +4405,7 @@ Signatur berprfen:          pgp <ED> -o <AD>
 Schlssel in Ring einlesen:   pgp -ka <ED>
 eigenen Key editieren:        pgp -ke <UserID>
 User-ID l”schen               pgp -kr <UserID>
+
 
 >>|
 Version 5.x:
@@ -4652,6 +4662,7 @@ Zustand des Editors. Von links nach rechts werden angezeigt:
                           benutzen (s. o. "Editor-Einstellungen")
 <<|
 
+
 ş Funktionen zur Bearbeitung von Textbl”cken:
 
 Mit <F7> und <F8> oder mit der linken Maustaste wird ein Textblock markiert.
@@ -4705,8 +4716,8 @@ noch folgende Funktionen zur Verfgung:
 <<|
     <Ctrl Q><Y>      : bis Absatzende l”schen
     <Alt Y>          : bis Textende l”schen (*)
->>|
 
+>>|
   Nur in Verbindung mit der Windows Zwischenablage:
   
     <Shift Del>      : Block ausschneiden und ins Clipboard ver-
@@ -7336,9 +7347,7 @@ Eine Beschreibung dieser Programme finden Sie in FIDO.TXT.
 
 ş XPME.EXE
 
-Dies ist der Meneditor, mit dem einzelne Menpunkte und Untermens aus dem 
-CrossPoint-Men entfernt werden k”nnen (s. Kap. 2.4).
-
+s. XPME.TXT
 
 
 ş empfehlenswerte Programme
@@ -7493,6 +7502,7 @@ fr CrossPoint ein neues Icon zu w„hlen.
 Fr Windos ab 95 gilt, daá sie das Icon der PIF-Datei ber den Kontexmen-Punkt
 "Eigenschaften" ge„ndert werden kann.
 <<|
+
 
 ş Clipboard (Zwischenablage)
 
@@ -8002,7 +8012,7 @@ OS/2 und Linux.
 
 H.  Erste Hilfe bei Datenverlust
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-:;
+
 CrossPoint ist eigentlich ein recht gutmtiges Programm - defekte Datenbanken
 werden soweit wie m”glich repariert, bei besch„digten Ablagedateien erhalten Sie
 eine Fehlermeldung, k”nnen aber normal weiterarbeiten, bei Zugriffen auf Tempor„r-Laufwerke
@@ -8066,7 +8076,7 @@ o  Benennen Sie die betreffende Ablagedatei (MPUFFER.x) um.
 
 o  Fhren Sie eine Reorganisation durch. XP l”scht dabei alle Nach-
    richten, die sich in der fehlerhaften Ablage befanden.
-
+::? XpCheck
 o  šberprfen Sie die umbenannte Datei mit dem Programm XPCHECK auf
    Fehler. Falls die Datei fehlerhaft ist, reparieren Sie sie mit
    dem Programm ZAP (MPUFFER.0 bis 9) bzw. ZPR (MPUFFER.10 bis 19).
@@ -8083,12 +8093,13 @@ Gehen Sie dazu wie folgt vor:
 
 o  Legen Sie wenn m”glich ein komplettes Backup des XP-Verzeichnis-
    ses an - zur Sicherheit.
-
+::?
 o  šberprfen Sie die Dateien MPUFFER.* mit dem Programm XPCHECK auf
    Fehler.
 
 o  Reparieren Sie evtl. fehlerhafte Puffer - soweit m”glich - mit
    dem Programm ZAP (MPUFFER.0 bis 9) bzw. ZPR (MPUFFER.10 bis 19)
+::?
    Von XPCHECK als fehlerhaft befundene Puffer k”nnen sonst nicht
    mehr eingelesen werden!
 
@@ -8099,6 +8110,12 @@ o  Benennen Sie die MPUFFER-Dateien um - z.B. mit
      REN MPUFFER.* PUFFER.*
    Achten Sie darauf, daá anschlieáend KEINE Dateien mit den Namen
    MPUFFER.* mehr vorhanden sind!
+
+>>|
+o  Bearbeiten Sie den Puffer, in dem von Ihnen geschriebene 
+   Nachrichten liegen, mit PMCONV (s. Anhang C). Dieser Puffer
+   heiát entweder MPUFFER.0 oder MPUFFER.10, je nach Format.
+<<|
 
 o  Lesen Sie die umbenannten Dateien einzeln mit /XPoint/Import
    /Puffer wieder ein; den Schalter "Empfangsdatum = Erstellungsda-
@@ -8192,7 +8209,7 @@ Netzanrufe durchfhrt, ist es daher ratsam, den Monitor abzuschalten.
 
 
 ş "Alle"-Umschaltung
-
+:: Im Todo
 Wenn Sie in der Nachrichtenbersicht mit "A" auf Komplettanzeige umschalten,
 springt der Auswahlbalken an den Beginn der Nachrichtenliste.
 
@@ -8221,9 +8238,10 @@ warnt.
 
 ş Netzwerkf„higkeit
 
-CrossPoint ist nicht netzwerkf„hig. Bei Verwendung im Netzwerk darf CrossPoint
-nicht auf mehreren Stationen gleichzeitig gestartet werden; sonst k”nnten
-Dateien besch„digt werden und Nachrichten verlorengehen.
+>>|
+CrossPoint ist nicht netzwerkf„hig. Ein mehrfaches Starten versucht CrossPoint
+jedoch zu verhindern.
+<<|
 
 
 ş Headerbehandlung
