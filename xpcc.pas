@@ -42,7 +42,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, winxp;
+uses xp3,xp3o2,xp3o,xp4e,xpnt;
 
 const CCtemp = 'verteil.$$$';
 
@@ -150,13 +150,24 @@ begin
         if ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
                   iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
         then begin                                           { 'neu anlegen' }
+          cc_testempf:=true;
           if p=0 then begin
             MakeBrett(mid(s,2),n,DefaultBox,ntBoxNetztyp(DefaultBox),false);
-            if modibrett then;
-            end
+            if not modibrett then
+            begin
+              dbseek(bbase,bibrett,'A'+ustr(s));
+              if dbfound then dbDelete(bbase);
+              cc_testempf:=false;
+            end;
+          end
           else begin
             MakeUser(s,DefaultBox);
-            if modiuser(false) then;
+            if not modiuser(false) then
+            begin
+              dbseek(ubase,uiname,ustr(s));
+              if dbfound then dbDelete(ubase);
+              cc_testempf:=false;
+              end;
             end;
           aufbau:=true;
           cc_testempf:=true;
@@ -339,8 +350,9 @@ end;
 end.
 {
   $Log$
-  Revision 1.8  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.7.2.1  2001/07/10 14:48:04  mk
+  JG:- Fix: Cancelling the automatic creation (e.g. of an Reply-To)
+       user with <Esc> does *not* create the user anymore :-)
 
   Revision 1.7  2000/02/29 09:30:17  jg
   -Bugfix Brettnameneingaben mit "." bei Empfaenger und Kopien im Sendefenster
