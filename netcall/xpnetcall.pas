@@ -740,16 +740,6 @@ begin
   close(f);
 end;
 
-procedure testBL;
-var f : file;
-begin
-  if not FileExists(bfile+'.bl') then begin
-    assign(f,bfile+'.bl');
-    rewrite(f,1);
-    close(f);
-    end;
-end;
-
   procedure RemoveEPP;
   var f : file;
   begin
@@ -1212,6 +1202,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/04/06 12:54:01  mk
+  - fixed unix filename handling with .bl/.rc
+
   Revision 1.11  2001/04/05 13:25:47  ml
   - NNTP is working now!
 

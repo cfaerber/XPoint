@@ -1063,9 +1063,9 @@ label again;
     Moment;
     RCList := TStringList.Create;
     if Art = 0 then
-      RCFilename := fn + '.RC'
+      RCFilename := FileUppercase(fn + '.rc')
     else
-      RCFilename := fn + '.BL';
+      RCFilename := FileUppercase(fn + '.bl');
     try
       if FileExists(RCFilename) then
       begin
@@ -1104,9 +1104,9 @@ label again;
       RCList.Sort;
       RCList.SaveToFile(RCFilename);
       if art = 0 then
-        List.Lines.SaveToFile(fn + '.BL')
+        List.Lines.SaveToFile(FileUppercase(fn + '.bl'))
       else
-        List.Lines.SaveToFile(fn + '.RC');
+        List.Lines.SaveToFile(FileUppercase(fn + '.rc'));
     finally
       RCList.Free;
     end;
@@ -1157,6 +1157,7 @@ begin
     if (art=1) and nntp and FileExists(fn+'.rc') then
       lfile:=fn+'.rc'
     else lfile:=fn+'.bl';
+    lfile := FileUpperCase(lfile);
     if not FileExists(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
@@ -1696,6 +1697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/04/06 12:54:01  mk
+  - fixed unix filename handling with .bl/.rc
+
   Revision 1.37  2001/03/27 16:01:46  mk
   - fixed and speedup new brettmanager
 

@@ -109,7 +109,7 @@ begin
       MWrt(x+15,y+2,Format(getres2(30010,11),[List.Count])); { Liste speichern (%d Gruppen) }
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
-      assign(f,box+'.bl');
+      assign(f,FileUppercase(box+'.bl'));
       rewrite(f);
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
@@ -371,6 +371,9 @@ end.
 
 {
         $Log$
+        Revision 1.6  2001/04/06 12:54:01  mk
+        - fixed unix filename handling with .bl/.rc
+
         Revision 1.5  2001/04/05 14:28:49  ml
         - SMTP is working
 
