@@ -102,7 +102,7 @@ uses
   dossock
 {$ELSE }
   {$IFDEF OS2 }
-    os2sock
+    pmwsock
   {$ELSE }
   {$IFDEF fpc}
     sockets
@@ -247,6 +247,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2003/09/01 16:34:26  mk
+  - use pmwsock instead of os2sock
+
   Revision 1.16  2002/12/04 16:56:58  dodi
   - updated uses, comments and todos
 
