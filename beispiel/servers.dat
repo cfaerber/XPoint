@@ -1,0 +1,65 @@
+## POP3/SMTP/NNTP-Server
+##
+## Die hier aufgefhrten Servernamen werden in der Mail-/News-Server-
+## Konfiguration einer RFC/Client-Box (D/B/E/N) mittels <F2> im
+## jeweiligen Eingabefeld "Servername" zur Auswahl angeboten.
+##
+## Es existieren 3 "Sections", wobei jede Section mit einer ”ffnenden
+## eckigen Klammer ("[") und dem String "POP3", "SMTP" oder "NNTP"
+## beginnen muá. Die Zeichen danach spielen keine Rolle. Die Zeilen
+## drfen mit Leerzeichen eingerckt sein.
+##
+## Es sind maximal 20 Servernamen pro Section m”glich, darber
+## hinausgehende Eintr„ge in einer Section werden ignoriert. Servernamen
+## drfen nicht mit einer eckigen Klammer ("[") beginnen, dies wrde als
+## Beginn einer neuen Section interpretiert.
+##
+## Zeilen, die mit "#" oder ";" beginnen, werden als Kommentare
+## interpretiert und - genauso wie Leerzeilen - ebenfalls ignoriert.
+
+
+[POP3/SMTP/IMAP (Mail eingehend/incoming)]
+pop.t-online.de
+pop.gmx.net
+pop3.nexgo.de
+mail.epost.de
+pop3.epost.de
+pop3.web.de
+pop.compuserve.de
+pop.mail.yahoo.de
+pop.addcom.de
+pop.tiscalinet.de
+pop.worldonline.de
+pop3.planetinternet.de
+pop.kundenserver.de
+mail.komtel.net
+
+
+[SMTP (Mail ausgehend/outgoing)]
+mailto.t-online.de
+smtprelay.t-online.de
+mail.gmx.net
+mail.nexgo.de
+postman.nexgo.de
+mail.epost.de
+smtp.web.de
+smtp.compuserve.de
+smtp.mail.yahoo.de
+smtp.addcom.de
+smtp.tiscalinet.de
+smtp.worldonline.de
+mailhost.planetinternet.de
+smtp.kundenserver.de
+mail.komtel.net
+
+
+[NNTP (News)]
+news.t-online.de
+news.cis.dfn.de
+news.nexgo.de
+xnews.nexgo.de
+news.compuserve.de
+news.tiscali.de
+news.worldonline.de
+news.planetinternet.de
+news.komtel.net
