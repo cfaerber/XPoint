@@ -135,7 +135,7 @@ end;
 procedure options;
 var x,y : byte;
     brk : boolean;
-    ua  : string[10];
+    ua  : string;
     i   : integer;
 begin
   dialog(56,20,getres2(250,1),x,y);    { 'allgemeine Optionen' }
@@ -184,14 +184,14 @@ end;
 procedure UI_options;
 var x,y  : byte;
     brk  : boolean;
-    xa   : array[0..3] of string[15];
-    lm   : array[0..3] of string[10];
-    xas  : string[15];
-    lms  : string[10];
-    dbl  : array[0..2] of string[10];
-    dbls : string[10];
-    stp  : array[0..2] of string[15];
-    save : string[15];
+    xa   : array[0..3] of string;
+    lm   : array[0..3] of string;
+    xas  : string;
+    lms  : string;
+    dbl  : array[0..2] of string;
+    dbls : string;
+    stp  : array[0..2] of string;
+    save : string;
     i    : integer;
     oldm : boolean;
 begin
@@ -297,10 +297,10 @@ end;
 procedure msgoptions;
 var x,y : byte;
     brk : boolean;
-    xid : string[7];
+    xid : string;
     i   : byte;
     xnr : byte;
-    xids: array[0..3] of string[6];
+    xids: array[0..3] of string;
 begin
   for i:=0 to 3 do
     xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
@@ -561,8 +561,8 @@ end;
 procedure editoptions;
 var brk   : boolean;
     x,y,i : byte;
-    eds   : string[20];
-    edtype: array[1..3] of string[17];
+    eds   : string;
+    edtype: array[1..3] of string;
 begin
   for i:=1 to 3 do
     edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
@@ -640,8 +640,8 @@ procedure brett_config;
 var x,y   : byte;
     brk   : boolean;
     i     : integer;
-    brett : string[11];
-    tks   : string[10];
+    brett : string;
+    tks   : string;
 
   function btyp(n:byte):string;
   begin
@@ -685,7 +685,7 @@ procedure NachrichtenanzeigeCfg;
 var x,y   : byte;
     brk   : boolean;
     i     : integer;
-    sabs  : string[12];
+    sabs  : string;
 
   function abstyp(n:byte):string;
   begin                        { 'normal' / 'klein' / 'klein/Space'    }
@@ -868,9 +868,9 @@ end;
 procedure ModemConfig(nr:byte);
 var brk  : boolean;
     x,y  : byte;
-    pstr : string[4];
-    mi,me: string[200];
-    md   : string[100];
+    pstr : string;
+    mi,me: string;
+    md   : string;
 begin
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
@@ -949,9 +949,9 @@ end;
 
 procedure IsdnConfig;
 var brk  : boolean;
-    pstr : string[3];
-    ints : string[2];
-    eaz  : string[1];
+    pstr : string;
+    ints : string;
+    eaz  : string;
 begin
   dialog(50,6,getres2(269,1),isdnx,isdny);  { 'ISDN/CAPI-Konfiguration (1TR6/X.75)' }
   attrtxt(col.coldiarahmen);
@@ -1117,10 +1117,10 @@ procedure DruckConfig;
 const
 {  lpts : array[1..5] of string[4] = ('LPT1','LPT2','LPT3','COM1','COM2');  }
   { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstÅtzt }
-  lpts : array[1..3] of string[4] = ('LPT1','LPT2','LPT3');
+  lpts : array[1..3] of string = ('LPT1','LPT2','LPT3');
 var x,y : byte;
     brk : boolean;
-    lpt : string[4];
+    lpt : string;
     i   : integer;
     allc: string;
 begin
@@ -1311,7 +1311,7 @@ var x,y : byte;
     r   : real;
 begin
   dialog(ival(getres2(1023,0)),6,getres2(1023,1),x,y);  { 'Telefonkosten-Einstellungen' }
-  r:=GebNoconn/100;
+  r:=GebNoconn/100.0;
 (*  maddreal(3,2,getres2(1023,2),r,8,2,0,99999);   { 'Kosten fÅr nicht zustandegekommene Verbindung        ' }
     mhnr(970); *)
   maddbool(3,2,getres2(1023,5),autofeier);  { 'deutsche Feiertage berÅcksichtigen' }
@@ -1369,9 +1369,9 @@ end;
 {$else} { Linux }
 var x,y : byte;
     brk : boolean;
-    com : string[20];
+    com : string;
     d   : DB;
-    fn  : string[8];
+    fn  : string;
 begin
   dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
   if (TermCOM=0) or (TermBaud=0) then begin
@@ -1519,6 +1519,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.43  2000/07/04 12:04:20  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

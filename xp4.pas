@@ -59,14 +59,14 @@ const suchch    = #254;
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
       DispStrSize       = 255;
 
-type  dispstr   = string[DispStrSize];
-      specstr   = string[DispStrSize];
+type  dispstr   = string;
+      specstr   = string;
       dispra    = array[1..maxgl] of longint;
 
 var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
       dispspec  : specstr;      { Filter/Bereich fÅr Anzeige }
-      _dispspec : string[5];
+      _dispspec : string;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
       xphltick  : longint;
@@ -86,14 +86,14 @@ var   disprec   : dispra;
       _p        : byte;
       brettgruppe : longint;     { Gruppe des Brettes bei dispmode 10..19 }
       U_read    : boolean;       { ungelesene Nachrichten gelesen }
-      mainkeys  : string[10];
-      bezbetr   : string[BetreffLen];
+      mainkeys  : string;
+      bezbetr   : string;
       briefsent : boolean;
       mdisplay  : boolean;
 
 
-function _getfilename(nr,nn:byte):pathstr;
-var fn : pathstr;
+function _getfilename(nr,nn:byte):string;
+var fn : string;
 begin
   fn:='';
   if isempty or (aktdispmode<10) or (aktdispmode>19) then
@@ -107,7 +107,7 @@ end;
 
 
 procedure fido_msgrequest;
-var node : string[20];
+var node : string;
     p    : scrptr;
     rec  : longint;
 begin
@@ -190,7 +190,7 @@ label selende;
   end;
 
   procedure pm_archiv(einzel:boolean);
-  var _brett : string[5];
+  var _brett : string;
   begin
     dbReadN(mbase,mb_brett,_brett);
     if (_brett[1]<>'1') and (_brett[1]<>'A') then
@@ -224,7 +224,7 @@ label selende;
 
 
   procedure show_lesemode;
-  var sps : string[20];
+  var sps : string;
   begin
     if dispext then exit;
     attrtxt(col.colkeys);
@@ -273,7 +273,7 @@ var t,lastt: taste;
     ende   : boolean;
     ya     : shortint;    { gl-save, y-Offset fÅr die Anzeige }
     user_msgs : boolean;  { Typ 10, User-Msg-Fenster          }
-    suchst : string[maxsuch];
+    suchst : string;
     suchen : boolean;
     savedd : DB;          { dispdat }
     TempBack: Boolean;
@@ -321,11 +321,11 @@ var t,lastt: taste;
   end;
 
   function wrongline:boolean;    { am Ende des Anzeige-Auschnitts angekommen? }
-  var s      : string[90];
+  var s      : string;
       dat    : longint;
       gel    : byte;
       adrb   : byte;
-      _brett : string[5];
+      _brett : string;
   begin
     case dispmode of
        -1 : if not ArchivWeiterleiten or (ArchivBretter='') then
@@ -371,7 +371,7 @@ var t,lastt: taste;
 
   function forth:boolean;
   var
-      _brett : string[5];
+      _brett : string;
   begin
     case dispmode of
       11 : if markpos>=markanz-1 then forth:=false
@@ -418,7 +418,7 @@ var t,lastt: taste;
 
   function Back:boolean;
   var
-      _brett : string[5];
+      _brett : string;
   begin
     case dispmode of
       11 : if markpos=0 then Back:=false
@@ -464,7 +464,7 @@ var t,lastt: taste;
   end;
 
   procedure Do_XPhilite(wait:boolean);
-  const xtxt : string[10] = 'CrossPoint';
+  const xtxt : string = 'CrossPoint';
   begin
     if XPdisplayed and (xtxt=xp_xp) and (ParWintime=0) and
        (XPhilite<=length(xtxt)) then begin
@@ -668,15 +668,15 @@ var t,lastt: taste;
   { quote: 0=nein, 1=ja, 2=evtl. MultiQuote }
 
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
-  var empf,rt : string[AdrLen];
+  var empf,rt : string;
       rtanz   : integer;
-      realname: string[40];
-      rt0     : string[AdrLen];   { Vertreter-Adresse }
-      _empf   : string[5];
-      betr    : string[BetreffLen];
-      fn      : pathstr;
+      realname: string;
+      rt0     : string;   { Vertreter-Adresse }
+      _empf   : string;
+      betr    : string;
+      fn      : string;
       headf,
-      sigf    : string[12];
+      sigf    : string;
       typ     : char;
       grnr    : longint;
       d       : DB;
@@ -738,7 +738,7 @@ var t,lastt: taste;
     end;
 
     function empfbox:string;
-    var box : string[boxnamelen];
+    var box : string;
     begin
       dbSeek(bbase,biBrett,UpperCase(empf));
       if dbEOF(bbase) or dbBOF(bbase) then box:=''
@@ -748,7 +748,7 @@ var t,lastt: taste;
 
     procedure SetNobrettServers;
     var p   : empfnodep;
-        box : string[BoxNameLen];
+        box : string;
     begin
       p:=sendempflist;
       box:=empfbox;
@@ -784,8 +784,8 @@ var t,lastt: taste;
 
     function MF_brettda:boolean;
     var p  : empfnodep;
-        s  : string[AdrLen];
-        pb : string[BoxNameLen];
+        s  : string;
+        pb : string;
     begin
       p:=sendempflist;
       while (p<>nil) and (p^.empf[1]='+') do
@@ -1151,7 +1151,7 @@ var t,lastt: taste;
     Auto_Copy;
   end;
 
-  procedure GetAutoFN(var fn:pathstr);
+  procedure GetAutoFN(var fn:string);
   var dir  : dirstr;
       name : namestr;
       ext  : extstr;
@@ -1162,7 +1162,7 @@ var t,lastt: taste;
   end;
 
   procedure auto_read;
-  var fn   : pathstr;
+  var fn   : string;
       arc  : shortint;
   begin
     GoP;
@@ -1182,7 +1182,7 @@ var t,lastt: taste;
   end;
 
   procedure auto_editfile;
-  var fn  : pathstr;
+  var fn  : string;
       typ : char;
   begin
     GoP;
@@ -1211,7 +1211,7 @@ var t,lastt: taste;
   end;
 
   procedure usersuche(userbase:boolean);
-  var suchs : string[90];
+  var suchs : string;
   begin
     GoP;
     if userbase then dbReadN(ubase,ub_username,suchs)
@@ -2037,6 +2037,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.29  2000/07/04 12:04:23  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

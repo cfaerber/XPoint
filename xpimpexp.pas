@@ -56,16 +56,16 @@ type ubrec = record
                nextfree  : longint;
                typ       : byte;    { 0=User, 1=Brett }
                aufnehmen : byte;
-               name      : string[80];
-               adresse   : string[80];
+               name      : string;
+               adresse   : string;
                haltezeit : byte;
-               pollbox   : string[8];
+               pollbox   : string;
                ablage    : byte;
                xx3       : byte;
                zielnetz  : byte;    { 1=Zerberus, 2=Magic }
               end;
 
-var fn   : pathstr;
+var fn   : string;
     brk  : boolean;
     x,y  : byte;
     f    : file of ubrec;
@@ -225,13 +225,13 @@ end;
 
 procedure readfremdpuffer;    { X/Import/Fremdformat }
 var t   : text;
-    s   : string[80];
-    fn  : pathstr;
+    s   : string;
+    fn  : string;
     nt  : shortint;
     x,y : byte;
     brk : boolean;
     d   : DB;
-    box : string[BoxNameLen];
+    box : string;
     red : boolean;
     eb  : boolean;
     useclip : boolean;
@@ -377,7 +377,7 @@ end;
 
 { --- nach MT2OUTF.PAS von Peter Redecker @ DO ------------------------ }
 
-procedure MakeOutfile(var box:string; path:pathstr);
+procedure MakeOutfile(var box:string; path:string);
 const EndOfLine = 13;
       EndOfMsg  = 10;
       bufsize   = 4096;
@@ -438,7 +438,7 @@ var   daten    : FILE;
         ergebnis[p]:=chr(was);
         end;
       end;
-    ergebnis[0]:=chr(p);
+    SetLength(ergebnis, p); {ergebnis[0]:=chr(p);}
     letztes_zeichen:=was;
     zeile_auslesen:=ergebnis;
   end;
@@ -507,8 +507,9 @@ BEGIN
       Seek(index,x.KommentarZu);
       read(index,tempx);
       Seek(daten,tempx.DIndex);
+      SetLength(idzeile^, 40);			{ Init }
       blockread(daten,idzeile^[1],40,rr);
-      idzeile^[0]:=chr(rr);
+      SetLength(idzeile^, rr);			{ Korrekt }
       writeln(outfile,'-',left(idzeile^,cpos(#13,idzeile^)-1));
       Seek(daten,Seek_daten_merk);
       Seek(index,seek_index_merk);
@@ -549,10 +550,10 @@ end;
 
 
 procedure ImportMautauBase;   { X/Import/MauTau }
-var mtpath : pathstr;
+var mtpath : string;
     brk    : boolean;
     x,y    : byte;
-    box    : string[boxnamelen];
+    box    : string;
 begin
   if not mfehler(existBin(MaggiBin),MaggiBin+' fehlt!') then begin
     dialog(51,9,'',x,y);
@@ -593,7 +594,7 @@ begin
 end;
 
 procedure ImportYuppiebase;          { --- Yuppie-Import ----------------- }
-var ypath : pathstr;
+var ypath : string;
     brk   : boolean;
     x,y   : byte;
 
@@ -660,9 +661,9 @@ end;
 
 procedure ImportQWKpacket;
 var x,y     : byte;
-    fn      : pathstr;
+    fn      : string;
     useclip : boolean;
-    bretth  : string[40];
+    bretth  : string;
     brk     : boolean;
     dir     : dirstr;
     name    : namestr;
@@ -701,6 +702,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 12:04:30  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

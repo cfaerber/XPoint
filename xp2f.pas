@@ -38,13 +38,13 @@ procedure EditFkeys(typ:byte);
               ('ohne Kopf','mit Kopf','Puffer','Quote'); }
 var anzahl  : byte;
     x,y,p,i : byte;
-    txt     : string[10];
+    txt     : string;
     t       : taste;
     modi    : boolean;
 
   procedure edit(p:byte);
   var x,y,i : byte;
-      s     : string[10];
+      s     : string;
       brk   : boolean;
   begin
     with fkeys[typ]^[p] do begin
@@ -757,11 +757,11 @@ var y,ax,xp,yp : shortint;
 
   {$R-}
   procedure display;
-  const s1 : string[5] = 'ÚÄÄÄ¿';
-        s2 : string[1] = '³';
-        s3 : string[5] = 'ÀÄÄÄÙ';
-        s0 : string[27]= '                           ';
-        sx : string[3] = ' * ';
+  const s1 : string = 'ÚÄÄÄ¿';
+        s2 : string = '³';
+        s3 : string = 'ÀÄÄÄÙ';
+        s0 : string = '                           ';
+        sx : string = ' * ';
   var i,j,x3,xx : byte;
   begin
     attrtxt(7);
@@ -1138,6 +1138,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.16  2000/07/04 12:04:22  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

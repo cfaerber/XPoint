@@ -60,6 +60,9 @@ procedure test_systeme;
 procedure testdiskspace;
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
+{$ifdef FPC}
+  {$HINT Soll denn nun die Check-Date-Geschichte ganz raus, oder NTP-Variante? }
+{$endif}
 {$ifndef Linux}
 procedure check_date;
 {$endif}
@@ -185,7 +188,7 @@ end;
 
 procedure readpar;
 var i  : integer;
-    s  : string[127];
+    s  : string;
     t  : text;
     sr : searchrec;
 
@@ -453,11 +456,11 @@ end;
 
 
 procedure loadresource;             { Sprachmodul laden }
-var lf : string[12];
-    lf2: string[12];
+var lf : string;
+    lf2: string;
     sr : searchrec;
     t  : text;
-    s  : string[40];
+    s  : string;
     ca : char;
 {$IFDEF UnixFS }
     CurDirBackup: String;
@@ -562,7 +565,7 @@ var   res  : integer;
       end;
   end;
 
-  procedure SetPath(var pathp:pathptr; var oldpath:pathstr);
+  procedure SetPath(var pathp:pathptr; var oldpath:string);
   begin
     getmem(pathp,length(oldpath)+1);
     pathp^:=oldpath;
@@ -622,7 +625,7 @@ end;
 
 procedure test_defaultbox;
 var d    : DB;
-    dname: string[8];
+    dname: string;
 begin
 {$IFDEF Debug }
   dbLog('-- Boxen ÅberprÅfen');
@@ -675,7 +678,7 @@ var d     : DB;
   procedure AppGruppe(name:string; limit:longint; halten:integer16;
                       var grnr:longint);
   const b : byte = 1;
-  var   s : string[8];
+  var   s : string;
   begin
     dbAppend(d);
     dbWrite(d,'name',name);
@@ -726,7 +729,7 @@ end;
 
 procedure test_systeme;
 var d : DB;
-    s : string[30];
+    s : string;
 begin
 {$IFDEF Debug }
   dbLog('-- Systeme ÅberprÅfen');
@@ -765,7 +768,7 @@ begin
       msgbox(51,8,'',x,y);
       moff;
       wrt(x+3,y+1,getres2(206,1));   { 'WARNUNG!' }
-      wrt(x+3,y+3,reps(getres2(206,2),trim(strsrn(free/$100000,0,1))));
+      wrt(x+3,y+3,reps(getres2(206,2),trim(strsrn(free div $100000,0,1))));
       wrt(x+3,y+4,reps(getres2(206,3),left(ownpath,2)));
       wrt(x+3,y+6,getres(12));   { 'Taste drÅcken ...' }
       freeres;
@@ -782,7 +785,7 @@ end;
 
 procedure read_regkey;
 var t   : text;
-    s   : string[20];
+    s   : string;
     p   : byte;
     l1,l2,l3 : integer32;
     l   : integer32;
@@ -886,7 +889,7 @@ end;
 
 procedure TestAutostart;
 var p   : byte;
-    f,t : string[5];
+    f,t : string;
     min : word;
 begin
   p:=cpos('-',ParAutost);
@@ -967,7 +970,7 @@ end;
 procedure ReadDomainlist;
 var d   : DB;
     p   : DomainNodeP;
-    dom : string[120];
+    dom : string;
 
   function smaller(dl:DomainNodeP):boolean;
   begin
@@ -1031,7 +1034,7 @@ end;
 procedure ReadDefaultViewers;
 
   procedure SeekViewer(mimetyp:string; var viewer:pviewer);
-  var prog : string[ViewprogLen];
+  var prog : string;
   begin
     dbSeek(mimebase,mtiTyp,UpperCase(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
@@ -1074,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.51  2000/07/04 12:04:20  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -21,10 +21,10 @@ uses xpglobal,sysutils,dos,dosx,typeform,fileio,inout,database,xp0,xp1,xpnt;
 
 
 type viewinfo = record
-                  typ : string[30];
-                  ext : string[5];
-                  fn  : string[40];
-                  prog: string[ViewprogLen];
+                  typ : string;
+                  ext : string;
+                  fn  : string;
+                  prog: string;
                 end;
 
 
@@ -72,7 +72,7 @@ end;
 { anhand des MIME-Typs passenden Viewer aus MIMETYP.DB1 suchen }
 
 procedure GetMimeViewer(typ:string; var viewer:viewinfo);
-var gt : string[30];
+var gt : string;
 begin
   viewer.prog:='';
   if typ='' then exit;
@@ -127,9 +127,9 @@ end;
 
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
 var f       : file;
-    id      : string[80];
+    id      : string;
     rr      : word;
-    betreff : string[BetreffLen];
+    betreff : string;
     p       : byte;
 
 label betreff_fn;
@@ -140,8 +140,9 @@ begin
     assign(f,fn);
     if existf(f) then begin
       resetfm(f,0);
+      SetLength(id,80);			{ Init AnsiString }
       blockread(f,id[1],80,rr);
-      id[0]:=chr(rr);
+      SetLength(id,rr);			{ Anpassen an gelesenen Daten }
       close(f);
       end
     else
@@ -201,12 +202,12 @@ end;
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : byte;
-    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)}
+    prog      : string;  {Maximallaenge= Programmname+' '+Pfadstring(79)}
     orgfn,fn1,
-    parfn     : pathstr;
+    parfn     : string;
 begin
   fn1:='';
-  orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
+  orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
   if (not ValidFileName(orgfn) or exist(orgfn)) and (viewer.ext<>'') and
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
@@ -245,6 +246,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.18  2000/07/04 12:04:32  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -37,23 +37,23 @@ const hf : array[0..4] of char = ' +-Aù';
       wv : array[0..5] of char = ' cwwss';
 
 var
-    taus    : array[1..MsgFelderMax+UsrFelderMax] of string[81];
+    taus    : array[1..MsgFelderMax+UsrFelderMax] of string;
     tausc   : 0..MsgFelderMax+UsrFelderMax;
     kuerzen : boolean;
-    s,s0    : string[81];
+    s,s0    : string;
     dat,edat: longint;
-    sdat    : string[15];
-    c       : string[3];
-    s1      : string[BetreffLen];
-    s2      : string[20];
+    sdat    : string;
+    c       : string;
+    s1      : string;
+    s2      : string;
     size    : longint;
     typ     : char;
     hzeit   : integer16;  { Haltezeit }
-    pbox    : string[BoxNameLen];
-    komm    : string[30];
+    pbox    : string;
+    komm    : string;
     dadr,pw : char;
     ab,flags: byte;
-    abc     : string[2];
+    abc     : string;
     grnr    : longint;
     uflags  : byte;
     markc   : char;
@@ -64,11 +64,11 @@ var
     vert    : boolean;
     mnt     : longint;
     netztyp : byte;
-    _brett  : string[5];
+    _brett  : string;
     t,m,j,d : rtlword;
     tempd: integer;
     fileatt : boolean;
-    dflags  : string[20];
+    dflags  : string;
     fidoqwk : boolean;
     uv_anz  : integer;
 
@@ -276,7 +276,7 @@ begin  { __ Suchmarke }
               else begin
                 s:=s0;
                 if sabsender<>0 then begin
-                  if right(s,4)='.ZER' then dec(byte(s[0]),4);
+                  if right(s,4)='.ZER' then delete(s, length(s)+1-4, 4); {dec(byte(s[0]),4);}
                   case sabsender of
                     1 : if pp=0 then s:=TopAllStr(s)
                         else s:=TopAllStr(left(s,pp-1))+'@'+copy(s,pp+1,length(s)-pp);
@@ -377,7 +377,7 @@ begin  { __ Suchmarke }
 
             if fidoqwk and (dispmode=10) and
                dispfto and (_brett[1]='A') then begin
-              if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
+              if cpos('@',s)>0 then SetLength(s, cpos('@',s)-1); {s[0]:=chr(cpos('@',s)-1);}
               dbReadN(mbase,mb_name,s0);
 
               { (F)lags }

@@ -43,7 +43,7 @@ const trackpath : boolean = false;
 
 procedure shell(prog:string; space:word; cls:shortint);  { Externer Aufruf }
 var sm2t     : boolean;
-    _xp_     : string[4];
+    _xp_     : string;
     maussave : mausstat;
     sp       : scrptr;
     de       : integer;
@@ -224,7 +224,7 @@ var brk    : boolean;
     p      : scrptr;
     oldm   : byte;
     msg    : boolean;
-    lf     : pathstr;
+    lf     : string;
     pp     : byte;
     lt     : byte;
     lfirst : byte;     { Startzeile Lister }
@@ -359,7 +359,7 @@ begin
 end;
 
 
-procedure RemoveEOF(fn:pathstr);
+procedure RemoveEOF(fn:string);
 var f : file;
     b : byte;
 begin
@@ -381,10 +381,10 @@ end;
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurÅckwandeln                 }
 
-procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
+procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 var p   : byte;
-    bak : string[3];
+    bak : string;
     ms  : boolean;
 begin
   if ((exteditor=3) or ((exteditor=2) and nachricht) or
@@ -454,6 +454,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.28  2000/07/04 12:04:20  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

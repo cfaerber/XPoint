@@ -15,14 +15,14 @@
 procedure BU_reorg(user,adrbuch:boolean);
 var x,y,xx  : byte;
     brk,ask : boolean;
-    typ     : string[10];
+    typ     : string;
     d       : DB;
     brett   : string[BrettLen];
     brettc  : char;
-    _brett  : string[5];
-    _mbrett : string[5];
+    _brett  : string;
+    _mbrett : string;
     nfeld   : integer;
-    loesch  : string[90];
+    loesch  : string;
     n,gel   : longint;
     leer    : boolean;
     next    : longint;
@@ -144,7 +144,7 @@ var x,y,wdt: byte;
     nbesch : longint;
     bt,dbt,
     bbt    : longint;
-    disp   : string[90];
+    disp   : string;
     hzeit  : integer16;
     hzahl  : boolean;
     dat    : datt;
@@ -171,7 +171,7 @@ var x,y,wdt: byte;
   end;
 
   procedure testdel(_brett:string);
-  var _mbrett : string[5];
+  var _mbrett : string;
       haltedat: longint;
       edat    : longint;
       dd      : datt;
@@ -419,7 +419,7 @@ var x,y,yy  : byte;
   procedure movemsg;
   var adr,size : longint;
       rr       : word;
-      mid      : string[4];
+      mid      : string;
       domove   : boolean;
       rec : longint;
       b   : byte;
@@ -574,7 +574,7 @@ var x,y,yy  : byte;
 
   procedure Rerout(znetz:boolean; brett:string; sperre:boolean);
   var b        : byte;
-      newbrett : string[60];
+      newbrett : string;
   begin
     if znetz then
       dbSeek(bbase,biBrett,'A/Z-NETZ/ALT/SUPPORT/XPOINT/'+UpperCase(brett))
@@ -712,6 +712,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 12:04:24  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

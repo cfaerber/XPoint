@@ -511,7 +511,7 @@ begin
   if inoutres<>0 then begin
     res:=ioresult;
     tfehler(ioerror(res,
-       reps(getreps(123,strs(res)),fileio.getfilename(fn1))),30);
+       reps(getreps(123,strs(res)),extractfilename(fn1))),30);
                                  { 'Fehler %s beim Kopieren von %s' }
     end;
 end;
@@ -794,7 +794,7 @@ end;
 
 
 function testtelefon(var s:string):boolean;
-var tele,tnr : string[TeleLen+1];
+var tele,tnr : string;
     p,n      : byte;
     ok       : boolean;
     endc     : set of char;
@@ -871,7 +871,7 @@ begin
     rewrite(t2);
     while not eof(t1) do begin
       readln(t1,s);
-      while (s[length(s)]=' ') do dec(byte(s[0]));  { Spaces wegschneiden }
+      while (s[length(s)]=' ') do SetLength(s, Length(s)-1);  { Spaces wegschneiden }
       repeat
         p:=pos(#9,s);              { TABs expandieren }
         if p>0 then begin
@@ -903,7 +903,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
                  1 Windows-Programm
                  2 OS/2-Programm
   }
-  var ext     : string[3];
+  var ext     : string;
       exepath,
       batfile : string;
       et      : TExeType;
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.47  2000/07/05 13:55:01  hd
   - AnsiString
 

@@ -41,7 +41,7 @@ const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
       menurestart: boolean = false;     { fÅr Config-MenÅ            }
 
 type mprec     = record
-                   mstr    : string[30];
+                   mstr    : string;
                    hpos    : byte;
                    hkey    : char;
                    enabled : boolean;
@@ -152,9 +152,9 @@ procedure moment;
 procedure message(txt:string);
 procedure rmessage(nr:word);
 procedure WaitIt(txt:atext; p:proc; sec:word);
-procedure WriteClipFile(fn:pathstr);
+procedure WriteClipFile(fn:string);
 procedure selcol;
-procedure file_box(var name:pathstr; changedir:boolean);
+procedure file_box(var name:string; changedir:boolean);
 procedure XP_testbrk(var brk:boolean);
 
 procedure errsound;
@@ -179,8 +179,8 @@ procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
-procedure RemoveEOF(fn:pathstr);
-procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
+procedure RemoveEOF(fn:string);
+procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
@@ -197,7 +197,7 @@ procedure xp_DB_Error;    { Aufruf bei <DB> internem Fehler }
 procedure fmove(var f1,f2:file);
 procedure iso_conv(var buf; bufsize:word);
 
-function  aFile(nr:byte):pathstr;
+function  aFile(nr:byte):string;
 
 function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
@@ -241,10 +241,10 @@ procedure PrintLine(s:string);
 procedure ExitPrinter;
 
 function  TempFree:longint;                 { Platz auf Temp-Laufwerk }
-function  TempS(bytes:longint):pathstr;
-procedure _era(fn:pathstr);
-procedure ExErase(fn:pathstr);
-procedure _chdir(p:pathstr);
+function  TempS(bytes:longint):string;
+procedure _era(fn:string);
+procedure ExErase(fn:string);
+procedure _chdir(p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
 procedure cm_w(s:string);                     { Command-Mode-Ausgabe }
@@ -1042,7 +1042,7 @@ end;
 
 procedure showusername;
 var d    : DB;
-    user : string[40];
+    user : string;
 
   procedure showtline;
   begin
@@ -1276,7 +1276,7 @@ begin
 end;
 
 
-procedure WriteClipFile(fn:pathstr);
+procedure WriteClipFile(fn:string);
 begin
   if exist(fn) then begin
     FileToClip(fn);
@@ -1355,7 +1355,7 @@ begin
 end;
 
 procedure rfehler(nr:word);
-var s : string[80];
+var s : string;
 begin
   s:=getres2(10000+100*(nr div 100),nr mod 100);
   freeres;
@@ -1472,7 +1472,7 @@ begin
   normtxt;
 end;
 
-procedure file_box(var name:pathstr; changedir:boolean);
+procedure file_box(var name:string; changedir:boolean);
 begin
   if (pos('*',name)>0) or (pos('?',name)>0) then begin
     selcol;
@@ -1684,7 +1684,7 @@ begin
 end;
 
 function getx(var su:string; v:string; var b:boolean):boolean;
-var ss : string[1];
+var ss : string;
     p  : byte;
 begin
   p:=pos('=',su);
@@ -1759,7 +1759,7 @@ begin
 end;
 
 
-function aFile(nr:byte):pathstr;
+function aFile(nr:byte):string;
 begin
   aFile:=AblagenFile+strs(nr);
 end;
@@ -1874,7 +1874,7 @@ begin
   if fsize>0 then begin
     box:=(fsize>1024*1024) and (windmin=0) and (GetFileExt(FileName(f1))<>'$$$');
     if box then begin
-      MsgBox(56,5,getreps(134,getfilename(FileName(f1))),x,y);
+      MsgBox(56,5,getreps(134,extractfilename(FileName(f1))),x,y);
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,dup(50,'∞'));
       fpos:=0;
@@ -1905,7 +1905,7 @@ begin
 end;
 
 
-function TempS(bytes:longint):pathstr;
+function TempS(bytes:longint):string;
 begin
   if (temppath='') or (temppath[1]=ownpath[1]) or (TempFree+4096>bytes) then
     TempS:=TempFile(TempPath)
@@ -1914,7 +1914,7 @@ begin
 end;
 
 
-procedure _era(fn:pathstr);
+procedure _era(fn:string);
 var f : file;
 begin
   assign(f,fn);
@@ -1923,12 +1923,12 @@ begin
     trfehler1(4,UpperCase(fn),30);   { 'Kann '+UpperCase(fn)+' nicht lîschen!?' }
 end;
 
-procedure ExErase(fn:pathstr);
+procedure ExErase(fn:string);
 begin
   if exist(fn) then _era(fn);
 end;
 
-procedure _chdir(p:pathstr);
+procedure _chdir(p:string);
 begin
   p:=trim(p);
   if p<>'' then begin
@@ -2023,6 +2023,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.55  2000/07/04 18:34:53  hd
   - Clipboard fuer Linux simuliert
 

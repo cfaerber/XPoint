@@ -21,7 +21,7 @@ uses dos,typeform,fileio,datadef,database,inout,keys,resource,
 function  __getfilename(nr,nn:byte):string;
 function  go_pm:boolean;
 procedure Smenu(var t:taste);
-function  readmsg_getfilename:pathstr;
+function  readmsg_getfilename:string;
 function  GetWABreplyEmpfaenger(var realname:string):string;
 procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
@@ -32,12 +32,12 @@ uses xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
 
 
 function __getfilename(nr,nn:byte):string;
-var fn   : pathstr;
+var fn   : string;
     i    : integer;
-    betr : string[betrefflen];
+    betr : string;
 
   procedure setfn;
-  var tf : pathstr;
+  var tf : string;
       d  : dirstr;
       n  : namestr;
       e  : extstr;
@@ -71,7 +71,7 @@ end;
 
 
 function go_pm:boolean;
-var brett : string[BrettLen];
+var brett : string;
     ok    : boolean;
 begin
   dbSeek(bbase,biBrett,'1');
@@ -135,8 +135,8 @@ begin
 end;
 
 
-function readmsg_getfilename:pathstr;
-var fn  : pathstr;
+function readmsg_getfilename:string;
+var fn  : string;
     hdp : headerp;
     hds : longint;
 begin
@@ -153,7 +153,7 @@ function GetWABreplyEmpfaenger(var realname:string):string;
 const maxadr = 10;
 var hdp : headerp;
     hds : longint;
-    abs : string[AdrLen];
+    abs : string;
     s   : string;
     nr  : shortint;
     wabok: boolean;
@@ -232,7 +232,7 @@ end;
 procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 var i,n    : integer;
     s0,                            { Server der 1. Kopie }
-    server : string[BoxNameLen];
+    server : string;
     d      : DB;
     ok     : boolean;
     e      : AdrStr;
@@ -313,6 +313,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.8  2000/07/04 12:04:25  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

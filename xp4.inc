@@ -30,7 +30,7 @@ var
     nachrichten: boolean;
     uvse,uvsl  : boolean;
     mtyp       : char;
-    _brett     : string[5];
+    _brett     : string;
 
 begin
   nachrichten:= (dispmode>=10) and (dispmode<=19);
@@ -127,8 +127,8 @@ procedure menuopt(t:taste);
 const
   lastmenusel : integer = 0;
 var m,m1     : integer;
-    nix      : string[20];
-    adr      : string[20];
+    nix      : string;
+    adr      : string;
 begin
   menurestart:=false;
   repeat
@@ -574,6 +574,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 12:04:23  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -28,8 +28,8 @@ uses
      xp0,xp1,xp1o2,xp1help,xp1input;
 
 
-var  such_brett  : string[5];    { fr Suche im gew„hlten Brett }
-     FMsgReqnode : string[BoxNameLen];    { F3 - Request - Nodenr. }
+var  such_brett  : string;    { fr Suche im gew„hlten Brett }
+     FMsgReqnode : string;    { F3 - Request - Nodenr. }
 
 procedure msg_info;          { interpretierten Header anzeigen }
 procedure ShowHeader;        { Original-Header anzeigen        }
@@ -53,11 +53,11 @@ procedure ModiGelesen;
 procedure ModiHighlite;
 
 procedure zeige_unversandt;
-function  ViewArchive(var fn:pathstr; typ:shortint):shortint;
-procedure FileArcViewer(fn:pathstr);
+function  ViewArchive(var fn:string; typ:shortint):shortint;
+procedure FileArcViewer(fn:string);
 
 procedure ShowArch(var fn:string);
-function  a_getfilename(nr,nn:byte):pathstr;
+function  a_getfilename(nr,nn:byte):string;
 procedure ArcSpecial(var t:taste);
 
 procedure DupeKill(autodupekill:boolean);
@@ -82,17 +82,17 @@ const max_arc = 3;   { maximale verschachtelte Archivdateien }
 
 type arcbuf = record
                 arcer_typ : shortint;
-                arcname   : pathstr;
+                arcname   : string;
               end;
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
+      suchopt : string = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Gr”áe nach Reorg }
      abuf   : array[1..max_arc+1] of arcbp;
-     exdir  : pathstr;
+     exdir  : string;
      arctyp_save : shortint;
      mid_options       : byte;
      mid_bretter       : byte;
@@ -127,19 +127,19 @@ begin
 
 function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
-                     betr,user,txt : string[SuchLen];
-                     fidoempf,mid  : string[SuchLen];
+                     betr,user,txt : string;
+                     fidoempf,mid  : string;
                      nbetr,nuser   : Boolean;
                      nfidoempf     : Boolean;
-                     vondat,bisdat : datetimest;
+                     vondat,bisdat : string;
                      vonkb,biskb   : longint;
-                     status        : string[10];
-                     typ           : string[10];
+                     status        : string;
+                     typ           : string;
                    end;
 const srec       : ^suchrec = nil;
-      history0   : string[Suchlen]='';
-      history1   : string[Suchlen]='';
-      history2   : string[Suchlen]='';
+      history0   : string='';
+      history1   : string='';
+      history2   : string='';
 
 var x,y   : byte;
     brk   : boolean;
@@ -147,15 +147,15 @@ var x,y   : byte;
     p     : pointer;
     psize : word;
     spez  : boolean;
-    sst   : string[SuchLen];   { evtl. UpString von suchstring }
+    sst   : string;   { evtl. UpString von suchstring }
     i     : integer;
-    brett : string[AdrLen];
+    brett : string;
     me,uu : boolean;
     hdp   : headerp;
     hds   : longint;
-    bretter : string[8];
+    bretter : string;
 
-    suchstring      : string[SuchLen];
+    suchstring      : string;
     typc          : char;
     statb           : byte;
     _vondat,_bisdat : longint;
@@ -163,18 +163,18 @@ var x,y   : byte;
     igcase          : boolean;
     umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}
     bereich         : shortint;
-    _brett          : string[5];
+    _brett          : string;
     mi,add          : byte;
-    bera            : array[0..4] of string[10];
-    stata           : array[0..5] of string[10];
-    typa            : array[0..4] of string[10];
+    bera            : array[0..4] of string;
+    stata           : array[0..5] of string;
+    typa            : array[0..4] of string;
 
 
     suchand           : boolean;
     seeklen,seekstart : array[0..9] of byte;
     seeknot           : array[0..9] of boolean;
     suchanz           : byte;
-    seek              : string[suchlen];
+    seek              : string;
     found             : boolean;
     markedback        : marklistp;
     markanzback       : integer;
@@ -388,10 +388,10 @@ label ende;
 {--Einzelne Nachricht mit Sucheingaben vergleichen--}
 
   procedure TestMsg;
-  var betr2 : string[BetreffLen];
-      user2 : string[AdrLen];
-      realn : string[40];
-      such  : string[81];
+  var betr2 : string;
+      user2 : string;
+      realn : string;
+      such  : string;
           j : byte;
       found_not : boolean;
 
@@ -450,10 +450,10 @@ label ende;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-          UkonvStr(betr2,high(betr2));
-          UkonvStr(user2,high(user2));
-          UkonvStr(realn,high(realn));
-          UkonvStr(hdp^.fido_to,high(hdp^.fido_to));
+          UkonvStr(betr2,Length(betr2));
+          UkonvStr(user2,Length(user2));
+          UkonvStr(realn,Length(realn));
+          UkonvStr(hdp^.fido_to,Length(hdp^.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
@@ -486,7 +486,7 @@ label ende;
         ReadHeader(hdp^,hds,false);
         such:=hdp^.msgid;
         end;
-      if umlaut then UkonvStr(such,high(such));
+      if umlaut then UkonvStr(such,Length(such));
 
       j:=0;
       repeat
@@ -507,7 +507,7 @@ label ende;
       if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
-        if umlaut then UkonvStr(such,high(such));
+        if umlaut then UkonvStr(such,Length(such));
 
         j:=0;
         repeat
@@ -732,8 +732,8 @@ begin
       sst:=txt;
       user:=userform(user);
       if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        UkonvStr(betr,high(betr)); UkonvStr(user,high(user));
-       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,high(fidoempf));
+        UkonvStr(betr,Length(betr)); UkonvStr(user,Length(user));
+       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,Length(fidoempf));
         end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); {UpString(txt);} UpString(fidoempf);
@@ -752,7 +752,7 @@ begin
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00}
+      if umlaut then UkonvStr(sst,Length(sst));                        {JG:15.02.00}
       if igcase then UpString(sst);
     {  end;}
 
@@ -906,7 +906,7 @@ end;
 
 procedure betreffsuche;
 var betr,betr2   : string;
-    brett,_Brett : string[5];
+    brett,_Brett : string;
     ll     : integer;
 
 begin
@@ -914,7 +914,7 @@ begin
   dbReadN(mbase,mb_betreff,betr);
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  UkonvStr(betr,high(betr));
+  UkonvStr(betr,Length(betr));
   dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
@@ -923,7 +923,7 @@ begin
     dbReadN(mbase,mb_betreff,betr2);
     ReCount(betr2);
     betr2:=trim(betr2);
-    UkonvStr(betr2,high(betr2));
+    UkonvStr(betr2,Length(betr2));
     ll:=min(length(betr),length(betr2));
     if (ll>0) and (UpperCase(left(betr,ll))=UpperCase(left(betr2,ll))) then
       MsgAddmark;
@@ -942,9 +942,9 @@ end;
 procedure SucheWiedervorlage;
 var x,y,xx : byte;
     brk    : boolean;
-    _brett : string[5];
-    mbrett : string[5];
-    dat    : string[4];
+    _brett : string;
+    mbrett : string;
+    dat    : string;
     n,nn   : longint;
     bi     : shortint;
 begin
@@ -1022,7 +1022,7 @@ var brk  : boolean;
     hdp  : headerp;
     hds  : longint;
     x,y  : byte;
-    fn   : pathstr;
+    fn   : string;
     f    : file;
 begin
   if testuvs(getres(453)) then exit;   { 'Žndern' }
@@ -1067,8 +1067,8 @@ end;
 
 
 procedure ModiText;
-var fn   : pathstr;
-    fn2  : pathstr;
+var fn   : string;
+    fn2  : string;
     f,f2 : file;
     hdp  : headerp;
     hds  : longint;
@@ -1188,7 +1188,7 @@ end;
 
 procedure ModiGelesen;                    {Nachricht-Gelesen status aendern}
 var b     : byte;
-    brett : string[5];
+    brett : string;
 begin
   if not dbBOF(mbase) then
   begin                                   {Nur Wenn ueberhaupt ne Nachricht gewaehlt ist...}
@@ -1217,7 +1217,7 @@ end;
 { Brettliste importieren }
 
 procedure ImportBrettliste;
-var fn  : pathstr;
+var fn  : string;
     s   : string;
     t   : text;
     x,y : byte;
@@ -1253,7 +1253,7 @@ end;
 { Userliste importieren }
 
 procedure ImportUserliste;
-var fn  : pathstr;
+var fn  : string;
     adrb: boolean;
     brk : boolean;
     s   : string;
@@ -1308,7 +1308,7 @@ end;
 { User-/Brettliste exportieren }
 
 procedure ExportUB(user:boolean);
-var fname : pathstr;
+var fname : string;
     t     : text;
     d     : DB;
     x,y,xx: byte;
@@ -1320,7 +1320,7 @@ var fname : pathstr;
 label ende;
 
   function komform(d:DB; s:string):string;
-  var kom : string[30];
+  var kom : string;
   begin
     dbRead(d,'kommentar',kom);
     if exkom and (kom<>'') then
@@ -1381,15 +1381,15 @@ end;
 
 
 procedure zeige_unversandt;
-var _brett   : string[5];
-    _mbrett  : string[5];
+var _brett   : string;
+    _mbrett  : string;
     sr       : searchrec;
     f        : file;
     hdp      : headerp;
     hds      : longint;
     ok       : boolean;
     adr,fsize: longint;
-    box      : string[BoxNameLen];
+    box      : string;
     uvf      : boolean;
     uvs      : byte;
     mtyp     : char;
@@ -1512,8 +1512,8 @@ var hdp   : headerp;
     x,y  : byte;
     dat   : datetimest;
     anz   : byte;
-    xxs   : array[1..20] of string[65];
-    netz  : string[20];
+    xxs   : array[1..20] of string;
+    netz  : string;
     p     : byte;
     elist : boolean;    { mehrere Empf„nger }
     rlist : boolean;    { mehrere References }
@@ -1706,7 +1706,7 @@ end;
 
 
 procedure ShowHeader;            { Header direkt so anzeigen wie er im PUFFER steht }
-var fn  : pathstr;
+var fn  : string;
     f   : file;
     hdp : headerp;
     hds : longint;
@@ -1737,12 +1737,12 @@ end;
 { Fehler -> exdir:=''                                         }
 
 procedure ShowArch(var fn:string);   { 'var' wegen Stackplatz }
-var decomp : string[127];
+var decomp : string;
     p      : byte;
-    datei  : string[12];
+    datei  : string;
     newarc : longint;
     atyp   : shortint;
-    spath  : pathstr;
+    spath  : string;
     ats    : shortint;
     viewer : viewinfo;
 begin
@@ -1815,9 +1815,9 @@ begin
 end;
 
 
-function a_getfilename(nr,nn:byte):pathstr;
-var fn   : pathstr;
-    sex  : pathstr;
+function a_getfilename(nr,nn:byte):string;
+var fn   : string;
+    sex  : string;
 begin
   fn:=trim(copy(get_selection,2,12));
   sex:=exdir; exdir:=TempPath;
@@ -1829,12 +1829,12 @@ end;
 
 procedure ArcSpecial(var t:taste);
 var s   : string;
-    dp  : pathstr;
+    dp  : string;
     x,y : byte;
     brk : boolean;
-    fk  : string[32];
-    sex : pathstr;
-    dd  : string[30];
+    fk  : string;
+    sex : string;
+    dd  : string;
 begin
   if UpperCase(t)='X' then begin
     dp:=ExtractPath;
@@ -1872,7 +1872,7 @@ end;
 
 { 0=Esc, 1=minus, 2=plus }
 
-function ViewArchive(var fn:pathstr; typ:shortint):shortint;
+function ViewArchive(var fn:string; typ:shortint):shortint;
 var ar   : ArchRec;
     brk  : boolean;
     lm   : byte;
@@ -1951,7 +1951,7 @@ begin
   ViewArchive:=listexit;
 end;
 
-procedure FileArcViewer(fn:pathstr);
+procedure FileArcViewer(fn:string);
 var useclip : boolean;
     arc     : shortint;
     lm      : byte;
@@ -1987,7 +1987,7 @@ var d     : DB;
     n,ll  : longint;
     x,y   : byte;
     last,
-    next  : string[30];
+    next  : string;
     flags : byte;
     log   : text;
     rec,rec2 : longint;
@@ -1999,7 +1999,7 @@ var d     : DB;
   end;
 
   procedure log_it;
-  var _brett : string[5];
+  var _brett : string;
   begin
     dbRead(d,'brett',_brett);
     write(log,fdat(longdat(dbReadInt(d,'origdatum'))),' ');
@@ -2085,7 +2085,7 @@ end;
 
 procedure print_msg(initpr:boolean);
 var t  : text;
-    fn : pathstr;
+    fn : string;
     s  : string;
 begin
   if dbReadInt(mbase,'typ')=ord('B') then
@@ -2121,12 +2121,12 @@ end;
 { Ausgabe true -> UserMode umschalten }
 
 function UserMarkSuche(allmode:boolean):boolean;
-const suchst  : string[40] = '';
+const suchst  : string = '';
 var   x,y     : byte;
       brk     : boolean;
       nn,n,nf : longint;
       uname,
-      sname   : string[AdrLen];
+      sname   : string;
       spos    : longint;
       rec     : longint;
       mi      : shortint;
@@ -2198,7 +2198,7 @@ end;
 
 procedure NtInfo;
 var mnt : longint;
-    nts : string[20];
+    nts : string;
 begin
   dbReadN(mbase,mb_netztyp,mnt);
   nts:=' ('+ntName(mnt and $ff)+')';
@@ -2221,9 +2221,9 @@ procedure FidoMsgRequest(var nnode:string);
 var files    : string;
     ic,id,
     k,p      : byte;
-    p1,s,s1,t,u : string[80];
+    p1,s,s1,t,u : string;
     v        : char;
-    node     : string[20];
+    node     : string;
     mark,
     lMagics  : boolean;
     dir      : dirstr;
@@ -2255,10 +2255,10 @@ begin
 
     k:=0;
     if (s<>'') then
-    while (k<byte(s[0])) do begin
+    while (k<Length(s)) do begin
       t:=''; v:=#0;
       { Nach dem ersten erlaubten Zeichen suchen }
-      while (byte(s[0])>0)
+      while (Length(s)>0) {(byte(s[0])>0)}
       and not (s[1] in ['a'..'z','A'..'Z','0'..'9','@','!','$','^']) do begin
           v:=s[1];
           delete(s,1,1);
@@ -2266,7 +2266,7 @@ begin
       end;
       { Vor dem Dateinamen muá ein Trennzeichen stehen }
       if (v<>#0) then if not (v in [#32,'"','<','>','¯','®','(','[','{',',',';',':','_','*']) then begin
-        while (byte(s[0])>0)
+        while (Length(s)>0) {(byte(s[0])>0) }
         and not (s[1] in [#32,'"','<','>','¯','®','(','[','{','_','*']) do begin
           delete(s,1,1);
           continue
@@ -2281,21 +2281,22 @@ begin
                       '$','%','-']) do inc(k);
       t:=copy(s,1,k);
       u:=UpperCase(t);
-      delete(s,1,byte(t[0]));
+      delete(s,1,length(t)); {delete(s,1,byte(t[0]));}
       { Auf den Dateinamen muá ein Trennzeichen folgen }
       if (s<>'') then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
 
-      if (mark and (t[byte(t[0])] in ['_','*'])) then dec(byte(t[0]));
+      if (mark and (t[Length(t){byte(t[0])}] in ['_','*'])) then SetLength(t,Length(t)-1); {dec(byte(t[0]));}
 
-      while (byte(t[0])>0) and (t[byte(t[0])] in ['.','!','?','/']) do dec(byte(t[0]));
-      if (byte(t[0])<2) then continue;
+      {while (byte(t[0])>0) and (t[byte(t[0])] in ['.','!','?','/']) do dec(byte(t[0]));}
+      while (Length(t)>0) and (t[LEngth(t)] in ['.','!','?','/']) do DelLast(t);
+      if (Length(t)<2) then continue;
       k:=0;
-      for ic:=1 to byte(t[0]) do if t[ic]='.' then inc(k);
+      for ic:=1 to Length(t) do if t[ic]='.' then inc(k);
       if (k>1) then continue;
       if (pos('**',t)>0) then continue;
       if (pos('.-',t)>0) then continue;
       if (pos('-.',t)>0) then continue;
-      if not magics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
+      if not magics then if (pos('.',t)<3) and (Length(t)<5) then continue;
 
       { Magic mode? }
       if (u='MAGIC') or (u='MAGICS') or (u='REQUEST') then begin
@@ -2321,7 +2322,7 @@ begin
       if (s1='FAQ') or (s1='OS') then continue;
       if (s1='DOS') then continue;
       if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
-      ic:=pos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
+      ic:=pos('@',t); if (ic>1) and (ic<>Length(t)) then continue;
 
       { Auf Beschreibungs-Datei testen }
       FSplit(u,dir,name,ext);
@@ -2331,7 +2332,7 @@ begin
         or (name='DESCRIPT') then continue;
 
       { Ist der String eine Versionsnummer? V42.3, 1.0, X75, V34B etc. }
-      if (byte(t[0])<8) then begin
+      if (Length(t)<8) then begin
         u:=t;
         if (UpperCase(copy(u,1,3))='VOL') then delete(u,1,3);
         if (UpCase(u[1]) in ['V','X']) then delete(u,1,1);
@@ -2387,7 +2388,7 @@ end;
 
 function _killit(ask:boolean):boolean;
 var uv     : byte;
-    _brett : string[5];
+    _brett : string;
 begin
   _killit:=false;
   dbReadN(mbase,mb_unversandt,uv);
@@ -2413,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.51  2000/07/05 16:10:29  mk
   JG: - Weitersuchen bei Markierten Nachrichten: bei fehlgeschlagener Suche bleibt die alte Markierung erhalten
 

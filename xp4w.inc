@@ -29,7 +29,7 @@ begin
 end;
 
 procedure UserSwitch;
-var n  : string[AdrLen];
+var n  : string;
     ab : byte;
 begin
   if dispmode<3 then
@@ -130,7 +130,7 @@ end;
 procedure change_adressbuch;
 var ab        : byte;
     _brett,
-    _mbrett   : string[5];
+    _mbrett   : string;
 begin
   GoP;
   dbRead(ubase,'adrbuch',ab);
@@ -175,7 +175,7 @@ begin
 end;
 
 procedure loeschuser;
-var _user,_brett : string[5];
+var _user,_brett : string;
 begin
   GoP;
   _user:=mbrettd('U',ubase);
@@ -207,7 +207,7 @@ begin
 end;
 
 Procedure TrennzeilenSuche;
-var   uname  : string[AdrLen];
+var   uname  : string;
       rec     : longint;
 begin
   dbgo(dispdat,disprec[1]);
@@ -253,7 +253,7 @@ begin
 end;
 
 procedure verteiler_loeschen;
-var name : string[AdrLen];
+var name : string;
 begin
   GoP;
   dbReadN(ubase,ub_username,name);
@@ -320,10 +320,10 @@ procedure wiedervorlage; forward;
 { --- Nachrichten berabeiten --------------------------- }
 
 procedure to_window;           { Nachrichten-Fenster -> TO-Brett }
-var s      : string[adrlen];
+var s      : string;
     d1     : longint;
     oldds  : specstr;
-    _oldds : string[5];
+    _oldds : string;
     mhd    : longint;
     halten : integer16;
     size   : smallword;
@@ -445,8 +445,8 @@ end;
 {                      4. Lister                        }
 
 procedure read_msg(art,mp:byte);
-var fn     : pathstr;
-    fn2    : pathstr;
+var fn     : string;
+    fn2    : string;
     typ    : char;
     arc    : shortint;
     _down  : boolean;
@@ -457,7 +457,7 @@ var fn     : pathstr;
     pt     : scrptr;
     lksave : boolean;
     netztyp: shortint;
-    ldisp  : string[40];
+    ldisp  : string;
     l,r,o,u: boolean;
     sm2t   : boolean;
     skeydisp : boolean;
@@ -466,7 +466,7 @@ var fn     : pathstr;
     d1_0   : boolean;
     FileAttach : boolean;
     brk    : boolean;
-    abs    : string[AdrLen];
+    abs    : string;
     miso   : boolean;
     rec    : longint;
     multipart : boolean;
@@ -475,13 +475,13 @@ var fn     : pathstr;
     lastmpsel: boolean;
     mpart_nr : integer;    { anzuzeigender Nachrichtenteil }
     poppush  : boolean;
-    mimetyp  : string[30];
+    mimetyp  : string;
     viewer   : ViewInfo;
                                            { Mailviren-Schutz }
   Procedure TestViralExtension;
   var x,y   : byte;
       t     : taste;
-      s     : string[10];
+      s     : string;
   begin
     if (viewer.ext='') and (viewer.prog<>'') then
     begin
@@ -518,13 +518,13 @@ var fn     : pathstr;
 
   procedure SetGelesen;
   var b     : byte;
-      brett : string[5];
+      brett : string;
       nt    : byte;
       flags : byte;
       rflag : boolean;
       rec,
       rec2  : longint;
-      crc   : string[4];
+      crc   : string;
       mi    : shortint;
   begin
     dbReadN(mbase,mb_gelesen,b);
@@ -652,7 +652,7 @@ var fn     : pathstr;
     GoP;
   end;
 
-  procedure ExtractKom(fn:pathstr);
+  procedure ExtractKom(fn:string);
   var hdp : headerp;
       hds : longint;
       f   : file;
@@ -1069,7 +1069,7 @@ begin
 end;
 
 procedure show_info;
-var s : string[80];
+var s : string;
     b : byte;
 begin
   attrtxt(col.colmsgsinfo);
@@ -1094,7 +1094,7 @@ begin
 end;
 
 procedure weiterleit_info;
-var s : string[80];
+var s : string;
 begin
   attrtxt(col.colBretterHi);
   if ArchivWeiterleiten then
@@ -1128,9 +1128,9 @@ begin
 end;
 
 procedure suchchar(ch:char);
-var s       : string[90];
+var s       : string;
     adrb,pp : byte;
-    newsuch : string[maxsuch];
+    newsuch : string;
       indx  : word;
   procedure suchok;
   begin
@@ -1262,7 +1262,7 @@ var dat    : longint;
     flags  : byte;
     halten : integer16;
     mhd    : longint;
-    _brett : string[5];
+    _brett : string;
     weiter : boolean;
 
   procedure mw1;   { Aufteilung zum Stack-Platz-sparen }
@@ -1361,8 +1361,8 @@ begin
 end;
 
 procedure loeschbrett;
-var brett          : string[BrettLen];
-    _brett,_brett2 : string[5];
+var brett          : string;
+    _brett,_brett2 : string;
 begin
   GoP;
   dbRead(bbase,'Brettname',brett);
@@ -1499,6 +1499,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.29  2000/07/04 16:42:45  hd
   - Funktion even entfernt
 

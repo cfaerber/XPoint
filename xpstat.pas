@@ -72,8 +72,8 @@ begin
 end;
 
 
-procedure showstat(var fn:pathstr; bez:string);
-var hd  : string[12];
+procedure showstat(var fn:string; bez:string);
+var hd  : string;
 begin
   signal;
   hd:=''; InternBox:=DefaultBox;
@@ -113,18 +113,18 @@ var brk       : boolean;
     sysmax: word; { Userwahl maximale Systeme }
     n,i       : integer;
     ende      : boolean;
-    _brett    : string[5];
+    _brett    : string;
     st        : ^statarr;
     smax,snum : word;          { maximale Systeme / Anzahl Systeme }
-    absender  : string[AdrLen];
+    absender  : string;
     t         : text;
-    fn        : pathstr;
+    fn        : string;
     orgdat    : longint;
-    txt       : string[20];
-    brett     : string[BrettLen];
+    txt       : string;
+    brett     : string;
     erstdat   : boolean;
-    sortby    : string[10];
-    sortbya   : array[0..1] of string[10];
+    sortby    : string;
+    sortbya   : array[0..1] of string;
     sortkb    : boolean;
     bi        : shortint;
     msum,bsum : longint;
@@ -133,15 +133,15 @@ var brk       : boolean;
   var p     : byte;
       l,r,m : integer;
       found : boolean;
-      usys  : string[80];
+      usys  : string;
   begin
     if art=0 then begin
       p:=cpos('.',sys);
       if right(sys,4)='.ZER' then
-        dec(byte(sys[0]),4)
+        Delete(sys,length(sys)+1-4,4) {dec(byte(sys[0]),4)}
       else if (dbReadInt(mbase,'netztyp') and $ff)=nt_Fido then
         if p>0 then
-          sys[0]:=chr(p-1);
+          SetLength(sys, p-1); {sys[0]:=chr(p-1);}
       end;
     usys:=UpperCase(sys);
     l:=0; r:=snum+1;
@@ -439,10 +439,10 @@ var x,y       : byte;
     stat      : ^statt;
     grnum     : longint;
     d         : DB;
-    _brett    : string[5];
+    _brett    : string;
     bgr,nr    : longint;
     i         : integer;
-    fn        : pathstr;
+    fn        : string;
     t         : text;
     bi        : shortint;
     msum,bsum : longint;
@@ -561,15 +561,15 @@ end;
 
 
 procedure GebuehrenZaehler(alle:boolean);
-var box     : string[BoxNameLen];
-    showbox : string[BoxNameLen+2];
+var box     : string;
+    showbox : string;
     x,y,wdt : byte;
     brk     : boolean;
     monate  : boolean;
     jahr    : word;
     monat   : byte;
     tag     : byte;
-    fn      : pathstr;
+    fn      : string;
     t       : text;
     kosten  : array[1..12,1..31] of real;
     ksum    : array[1..12] of real;
@@ -733,7 +733,7 @@ end;
 procedure UV_stat;
 const maxpp = 40;
 type pprec  = record
-                name  : string[8];
+                name  : string;
                 psize : longint;
                 esize : longint;
               end;
@@ -768,7 +768,7 @@ begin
   dos.findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
-      truncstr(sr.name,cpos('.',sr.name)-1);
+      SetLength(sr.name, cpos('.', sr.name)-1); {truncstr(sr.name,cpos('.',sr.name)-1);}
       j:=1;
       while (j<=ppanz) and (sr.name<>pp_epp[j].name) do inc(j);
       if j>ppanz then begin
@@ -841,7 +841,7 @@ procedure NodeStatistik;
 
 var x,y   : byte;
     brk   : boolean;
-    fn    : pathstr;
+    fn    : string;
     t     : text;
     buf   : pointer;
     bufs  : word;
@@ -856,17 +856,17 @@ type  zonerec  = record
                    nr,regs,nets : word;
                    nodes        : longint;
                    nodelist     : byte;
-                   name         : string[20];
+                   name         : string;
                  end;
       zonea    = array[0..maxzones] of zonerec;
       flagrec  = record
-                   name : string[11];
+                   name : string;
                    anz  : longint;
                  end;
       flaga    = array[1..maxflags] of flagrec;
       lnetrec  = record
-                   name : string[30];
-                   netz : string[15];
+                   name : string;
+                   netz : string;
                    nodes: word;
                  end;
       lneta    = array[1..maxlnets] of lnetrec;
@@ -885,8 +885,8 @@ var   zone     : ^zonea;
        ende     : boolean;
        i        : integer;
        _nodes   : word;      { Gr”áe aktuelles Netz }
-       k        : string[20];
-       hostname : string[30];
+       k        : string;
+       hostname : string;
        newfile  : boolean;
 
     procedure showzone;
@@ -897,7 +897,7 @@ var   zone     : ^zonea;
 
     procedure testlnet;
     var i  : byte;
-        ss : string[80];
+        ss : string;
     begin
       ss:=mid(s,p+1);
       i:=1;
@@ -998,12 +998,12 @@ var   zone     : ^zonea;
 
   procedure OutputNodestat;
   var i,j : integer;
-      k   : string[20];
+      k   : string;
       zr  : zonerec;
 
     procedure sortflags(l,r:integer);
     var i,j : integer;
-        x   : string[11];
+        x   : string;
         w   : FlagRec;
     begin
       i:=l; j:=r;
@@ -1146,14 +1146,14 @@ var x,y    : byte;
     d      : DB;
     t      : text;
     anz    : longint;
-    box    : string[20];
+    box    : string;
     buf    : array[1..1024] of byte;
-    s      : string[100];
+    s      : string;
     found  : boolean;
     date   : datetimest;
     time   : datetimest;
     diff   : longint;
-    ds     : string[20];
+    ds     : string;
     oldXSA : boolean;
 
   procedure dats2fd(ds:datetimest; var dat:fdate);
@@ -1254,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

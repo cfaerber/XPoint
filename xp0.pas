@@ -1145,10 +1145,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        LogPath      : string;
        FilePath     : string;
        FidoPath     : string;       { OwnPath+FidoDir }
-       EditLogpath  : string;
-       EditTemppath : string;
-       EditExtpath  : string;
-       EditSendpath : string;
 {$else}
        SwapFileName : string[12];
        helpfile     : string[12];     { XP.HLP     }
@@ -1161,11 +1157,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        LogPath      : pathstr;
        FilePath     : pathstr;
        FidoPath     : pathstr;       { OwnPath+FidoDir }
+{$endif}
        EditLogpath  : pathptr;
        EditTemppath : pathptr;
        EditExtpath  : pathptr;
        EditSendpath : pathptr;
-{$endif}
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
@@ -1359,6 +1355,12 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
 {$ifdef hasHugeString}
+       MsgFeldTausch   : string;     { fÅr blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, kînnen
+                                       in der Brettliste Felder vertauscht werden }
+       UsrFeldTausch   : string;     { fÅr blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, kînnen
+                                       in der Userliste Felder vertauscht werden }
 {$else}
        MsgFeldTausch   : string[MsgFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
@@ -1583,6 +1585,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.65  2000/07/06 08:58:43  hd
+  - AnsiString
+
   Revision 1.64  2000/07/05 10:40:12  hd
   - String[#] weitestgehend in string gewandelt
 

@@ -8,7 +8,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-const cfs : array[0..3] of string[5] = ('Z','Shift','Ctrl','Alt');
+const cfs : array[0..3] of string = ('Z','Shift','Ctrl','Alt');
 
 procedure defaultcolors;
 var i : integer;
@@ -124,7 +124,7 @@ var t       : text;
     ca      : array[1..maxcol] of byte;
     n,p     : byte;
     msk,mnr : byte;
-    s1      : string[20];
+    s1      : string;
     l       : longint;
     res     : integer;
     buf     : array[1..512] of byte;
@@ -812,7 +812,7 @@ var t   : text;
 
   procedure writeheaderlines;
   var i : integer;
-      s : string[10];
+      s : string;
   begin
     write(t,'Header=');
     for i:=1 to HeaderLines do begin
@@ -1182,20 +1182,20 @@ procedure readconfig;
 var t       : text;
     s,su    : string;
     i, p    : byte;
-    userauf : string[10];
+    userauf : string;
     dummys  : string;
     dummyb  : boolean;
     dummybb : byte;
-    aaa     : string[5];   { AutoAdvance }
+    aaa     : string;   { AutoAdvance }
     buf     : array[1..1024] of byte;
     mheader : string;
 
   function getcommpar:boolean;
   var nr    : integer;
-      bs,es : string[200];
-      ds    : string[100];
-      ports : string[4];
-      comnr : string[5];
+      bs,es : string;
+      ds    : string;
+      ports : string;
+      comnr : string;
 
     function AddComnr:boolean;
     begin
@@ -1252,7 +1252,7 @@ var t       : text;
 
   function getfkeys:boolean;
   var i,j,nr,p0 : shortint;
-      ss        : string[200];
+      ss        : string;
   begin
     if left(su,5)<>'FKEY-' then
       getfkeys:=false
@@ -1379,7 +1379,7 @@ var t       : text;
   end;
 
   procedure SetSwapfilename;
-  var tf  : pathstr;
+  var tf  : string;
       dir  : dirstr;
       name : namestr;
       ext  : extstr;
@@ -1783,6 +1783,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.70  2000/07/06 08:58:45  hd
+  - AnsiString
+
   Revision 1.69  2000/07/05 18:57:54  mk
   - AnsiString Updates
 

@@ -105,7 +105,7 @@ end;
 
 procedure showmain(nr:shortint);
 var i      : integer;
-    s      : string[20];
+    s      : string;
     p      : byte;
     x:   Integer;
 begin
@@ -233,7 +233,7 @@ end;
 
 
 procedure miscschab;
-var s       : pathstr;
+var s       : string;
     useclip : boolean;
 begin
 {$IFDEF UnixFS }
@@ -334,7 +334,7 @@ var ma    : map;
 
   procedure display;
   var i,hp  : byte;
-      s     : string[40];
+      s     : string;
       check : char;
   begin
     if nr=0 then showmain(p)
@@ -600,6 +600,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/07/06 08:58:44  hd
+  - AnsiString
+
   Revision 1.14  2000/07/04 12:04:20  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

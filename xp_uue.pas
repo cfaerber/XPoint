@@ -30,7 +30,7 @@ uses
 
 procedure uudecode;            { aktuelle Nachricht decodieren }
 
-function uudecfile(infile,outpath:pathstr; wait:boolean):boolean;
+function uudecfile(infile,outpath:string; wait:boolean):boolean;
 
 
 implementation
@@ -44,7 +44,7 @@ const obufsize = 12288; { Auf 32 Byte Gr”áen angepasst }
 type  buffer = array[0..50000] of byte;
       bufptr = ^buffer;
 
-var   s        : string[100];
+var   s        : string;
       f1,f2    : ^file;
       bufp     : word;
       outbuf,
@@ -210,7 +210,7 @@ end;
 { f1 -> mit Assign zugewiesene Eingabedatei }
 { fn <- Dateiname aus der 'begin'-Zeile     }
 
-function openinfile(var f1:file; var fn:pathstr):boolean;
+function openinfile(var f1:file; var fn:string):boolean;
 var found: boolean;
     p    : byte;
 begin
@@ -232,7 +232,7 @@ begin
 end;
 
 
-procedure uudecIt(var f1:file; outfile:pathstr; wait:boolean;
+procedure uudecIt(var f1:file; outfile:string; wait:boolean;
                   filenr,filetotal:integer; overwrite:boolean);
 const x : byte = 0;
       y : byte = 0;
@@ -340,7 +340,7 @@ type  uumarkrec = record
                     sortfld : array[1..3] of longint;
                   end;
 
-var tmp,fn   : pathstr;
+var tmp,fn   : string;
     useclip  : boolean;
     brk      : boolean;
     decmark  : boolean;
@@ -383,7 +383,7 @@ var tmp,fn   : pathstr;
   const tbs = 4096;
   var i  : integer;
       t  : text;
-      s  : string[80];
+      s  : string;
       tb : pointer;
       p  : byte;
   begin
@@ -498,8 +498,8 @@ begin
 end;
 
 
-function uudecfile(infile,outpath:pathstr; wait:boolean):boolean;
-var fn : pathstr;
+function uudecfile(infile,outpath:string; wait:boolean):boolean;
+var fn : string;
 begin
   uudecfile:=false;
   new(f1);
@@ -521,6 +521,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/06 08:58:46  hd
+  - AnsiString
+
   Revision 1.16  2000/07/04 12:04:28  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
