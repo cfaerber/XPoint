@@ -691,6 +691,7 @@ var x,y      : Integer;
 var
   OwnMessageReplaced: Boolean;
   s: String;
+  nt: Byte;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag := 255;
@@ -760,8 +761,10 @@ begin
         dbSeek(d,boiName,UpperCase(pmvertreter));
         if not dbFound then pmvertreter:='';
         dbSeek(d,boiname,UpperCase(pollbox));
-        if dbReadInt(d,'netztyp')=nt_UUCP then begin
-          ReadBoxPar(nt_UUCP,pollbox);
+        nt := dbReadInt(d,'netztyp');
+        if nt in netsRFC then
+        begin
+          ReadBoxPar(nt, pollbox);
           sysbetreff:=LowerCase(boxpar^.chsysbetr);
           end;
         end;
@@ -1276,6 +1279,10 @@ end;
 
 {
   $Log$
+  Revision 1.94  2002/08/05 22:54:06  mk
+  - read boxPar with other boxtypes as ntUUCP, too
+    allows ReplaceOwn and ReplaceDupe for all RFC boxtypes
+
   Revision 1.93  2002/07/25 20:43:54  ma
   - updated copyright notices
 
