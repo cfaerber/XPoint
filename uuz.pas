@@ -2265,13 +2265,10 @@ begin
              if zz='received'     then GetReceived else
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
-
              else AppUline('U-'+s1);
         's': if zz='subject'      then GetBetreff(false) else
-{             if zz='sender'       then GetAdr(sender,d40) else }
              if zz='sender'       then GetAdr(sender,drealn) else
-             { 11.10.1999 robo - Realname verl„ngert }
-             
+             if zz='supersedes'   then ersetzt:=s0 else
              if zz='summary'      then summary:=s0
              else AppUline('U-'+s1);
         'x': if zz='x-gateway'    then gateway:=s0 else
@@ -2305,7 +2302,6 @@ begin
              if zz='in-reply-to'  then GetInReplyto else
              if zz='followup-to'  then getFollowup else
              if zz='newsreader'   then programm:=s0 else
-             if zz='supersedes'   then ersetzt:=s0 else
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz<>'lines'       then AppUline('U-'+s1);
@@ -3545,6 +3541,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.3  2000/05/03 22:25:30  mk
+  RB: - supersedes werden jetzt konvertiert
+
   Revision 1.8.2.2  2000/04/24 19:29:58  mk
   RB: - QP fix
 
