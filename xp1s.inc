@@ -458,7 +458,10 @@ begin
     bak:='BAK';
     end;
   if bak<>'' then
-    if FileExists(ChangeFileExt(name, '.'+bak)) then _era(name);      { .BAK l”schen }
+  begin
+    name:=ChangeFileExt(name, '.'+bak);
+    if FileExists(name) then _era(name); { .BAK löschen }
+  end;
 end;
 
 
@@ -501,6 +504,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/08/01 00:41:35  mk
+  - fixed bak file deletion in EditFilename
+
   Revision 1.57  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
