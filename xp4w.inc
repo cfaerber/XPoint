@@ -861,13 +861,13 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack; dpp:=dbRecno(mbase);
-                 GoP;
+                 SetKK; GoMsgBack;
+                 GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth; dpp:=dbRecno(mbase);
-                 GoP;
+                 SetKK; GoMsgForth;
+                 GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
         end;
@@ -1421,6 +1421,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.5  2000/06/12 19:53:26  mk
+  - Pgd Down/Up-Bug gefixt
+
   Revision 1.3.2.4  2000/05/18 22:38:12  mk
   JG: - Fix: Anzeige-Refresh beim entfernen des Wiedervorlage-Fags (1.21)
 
