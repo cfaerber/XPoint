@@ -574,8 +574,11 @@ begin
   lock:=SysLockFile(datei,from,size)=0;
   {$else}
   {$ifdef win32}
-  Lock := Windows.LockFile(FileRec(Datei).Handle,
-    Lo(From), Hi(From), Lo(Size), Hi(Size));
+  (* Aus unbekannten GrÅnden funktioniert das ganze unter Windows 95
+     nicht, wohl aber unter Windows NT
+    Lock := Windows.LockFile(FileRec(Datei).Handle,
+    Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
+  Lock := true;
   {$endif}
    {$ifdef linux}                     { ML 25.03.2000    Filelocking f¸r Linux }
    lock := flock (datei, LOCK_SH);
@@ -784,6 +787,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/03/25 23:20:30  mk
+  - LockFile geht unter Win9x nicht, wohl aber unter NT. Ausgeklammert
+
   Revision 1.16  2000/03/25 18:46:59  ml
   uuz lauff‰hig unter linux
 
