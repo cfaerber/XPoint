@@ -30,7 +30,7 @@ interface
 uses
   xpglobal, classes, xpheader;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
+procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient: integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 
@@ -50,7 +50,7 @@ type
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr:integer;
+procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient:integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
@@ -144,7 +144,11 @@ var i,res : integer;
       p:=pos(' (',s);
       if p>0 then SetLength(s, p-1);
     end;
-    hd.Empfaenger.Add(s);
+    if (hd.empfaenger.count+1=NrOfFirstRecipient) or
+       ((NrOfFirstRecipient=0) and (hd.empfaenger.count=0)) then
+     hd.Empfaenger.Insert(0,s)
+    else
+     hd.Empfaenger.Add(s);
   end;
 
   procedure GetTyp(var typ,charset:string);
@@ -554,6 +558,10 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/02/08 16:39:22  ma
+  - partially fixed handling of crosspostings
+    (showed up in "Nix" most times)
+
   Revision 1.22  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 
