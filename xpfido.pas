@@ -78,6 +78,9 @@ procedure CloseNodeindex;
 procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:integer);
 function  IsFidoNode(adr:string):boolean;
 function  FidoIsISDN(var fa:FidoAdr):boolean;
+{ returns node name if node supports BinkP; node name may not be a valid IP }
+{ address, there seems to be no standard :-( }
+function  FidoIsBinkP(var fa:FidoAdr):string;
 procedure KeepNodeindexOpen;
 procedure KeepNodeindexClosed;
 procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
@@ -2192,8 +2195,18 @@ function FidoIsISDN(var fa:FidoAdr):boolean;
 var ni : NodeInfo;
 begin
   GetNodeInfo(MakeFidoAdr(fa,true),ni,2);
-  FidoIsISDN:=(pos('ISDN',ni.fflags)>0) or
-              (pos('X75',ni.fflags)>0);
+  result:=(pos('ISDN',ni.fflags)>0) or
+          (pos('X75',ni.fflags)>0);
+end;
+
+function FidoIsBinkP(var fa:FidoAdr):string;
+var ni : NodeInfo;
+begin
+  GetNodeInfo(MakeFidoAdr(fa,true),ni,2);
+  if pos('IBN',ni.fflags)>0 then
+    result:=ni.boxname
+  else
+    result:='';
 end;
 
 
@@ -2241,6 +2254,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2001/06/05 16:44:49  ma
+  - Fido crash netcalls should be working again
+  - cleaned up a bit
+
   Revision 1.50  2001/06/04 16:12:52  ma
   - fixed: file name case
 

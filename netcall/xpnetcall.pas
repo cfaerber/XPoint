@@ -37,7 +37,7 @@ uses
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
 
-function  netcall(PerformDial: boolean; BoxName: string; DialOnlyOnce,Relogin,Crash: boolean): boolean;
+function  netcall(PerformDial: boolean; BoxName: string; DialOnlyOnce,Relogin,FidoCrash: boolean): boolean;
 procedure netcall_at(zeit:datetimest; BoxName:string);
 procedure EinzelNetcall(BoxName:string);
 
@@ -50,7 +50,7 @@ procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlo
 
 procedure ClearUnversandt(puffer,BoxName:string);
 procedure MakeMimetypCfg;
-//**procedure LogNetcall(secs:word; crash:boolean);
+//**procedure LogNetcall(secs:word; FidoCrash:boolean);
 procedure SendNetzanruf(logfile: string);
 //**procedure SendFilereqReport;
 //**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
@@ -273,14 +273,14 @@ begin
 end;
 
 
-//** procedure LogNetcall(secs:word; crash:boolean);
+//** procedure LogNetcall(secs:word; FidoCrash:boolean);
 {var t : text;
 begin
   assign(t,logpath+Logfile);
   if existf(t) then append(t)
   else rewrite(t);
   with NC^ do
-    writeln(t,iifc(crash,'C','S'),iifc(not _fido and (recbuf=0),iifc(logtime=0,'!','*'),' '),
+    writeln(t,iifc(FidoCrash,'C','S'),iifc(not _fido and (recbuf=0),iifc(logtime=0,'!','*'),' '),
               fdat(datum),' ',ftime(datum),' ',
               forms(boxpar^.boxname,16),sendbuf:10,recbuf:10,kosten:10:2,' ',
               formi(secs div 3600,2),':',formi((secs div 60) mod 60,2),':',
@@ -292,6 +292,7 @@ end;}
 procedure SendNetzanruf(logfile: string);
 var betreff,hd: string;
 begin
+  if not FileExists(logfile)then exit;
   betreff:=getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
            boxpar^.boxname;
   hd:='';
@@ -448,7 +449,7 @@ begin
     end;
     hd:='';
     InternBox:=BoxName;
-    if crash then betreff:=ftime(datum)+' - '+getres2(700,37)+boxpar^.boxname   { 'Direktanruf bei ' }
+    if FidoCrash then betreff:=ftime(datum)+' - '+getres2(700,37)+boxpar^.boxname   { 'Direktanruf bei ' }
     else betreff:=ftime(datum)+' - '+getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
                   boxpar^.boxname;
     if DoSend(false,fn,netbrett,betreff+iifs(abbruch,getres2(700,38),''),  { ' (Fehler)' }
@@ -461,7 +462,7 @@ begin
     end;
     end;
   _era(fn);
-  LogNetcall(sum,crash);
+  LogNetcall(sum,FidoCrash);
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
@@ -614,7 +615,7 @@ begin
   rewrite(f,1);
 end;
 
-function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,crash:boolean):boolean;
+function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,FidoCrash:boolean):boolean;
 
 const crlf : array[0..1] of char = #13#10;
 //      ACK  = #6;
@@ -634,7 +635,7 @@ var
     logintyp   : shortint;        { ltZConnect / ltMaus }
 
     ldummy     : longint;
-    NumCount   : byte;            { Anzahl Telefonnummern der BoxName }
+    NumCount   : byte;            { Anzahl Telefonnummern der Box }
 
     ScreenPtr  : ScrPtr; { Bildschirmkopie }
     IncomingFiles: TStringList;
@@ -798,24 +799,30 @@ end;
     close(bFile);
   end;
 
-var NetcallLogfile: String;
+var NetcallLogfile,CrashBoxName: String;
 
 begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','function Netcall',DLInform);
   netcall:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
 
-  if not crash then begin
+  if not FidoCrash then begin
     if BoxName='' then
-      BoxName:=UniSel(1,false,DefaultBox);         { zu pollende BoxName abfragen }
+      BoxName:=UniSel(1,false,DefaultBox);         { zu pollende Box abfragen }
     if BoxName='' then exit;
+    end
+  else begin
+    // boxpar^.boxname will be crash box name
+    CrashBoxName:=BoxName;
+    BoxName:=DefFidoBox;
+    if not TestDefBox then exit;
+    if not TestNodelist then exit;
     end;
 
-  Debug.DebugLog('xpnetcall','get BoxName file name',DLInform);
   dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(BoxName));
   if not dbFound then begin
     dbClose(d);
-    trfehler1(709,BoxName,60);   { 'unbekannte BoxName:  %s' }
+    trfehler1(709,BoxName,60);   { 'unbekannte Box:  %s' }
     exit;
     end;
   bfile := dbReadStr(d,'dateiname');
@@ -825,6 +832,7 @@ begin                  { function Netcall }
   komment := dbReadStr(d,'kommentar');
   domain := dbReadStr(d,'domain');
   dbClose(d);
+  Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
 
   if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_UUCP])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
@@ -838,21 +846,17 @@ begin                  { function Netcall }
     end;
   {$endif}
 
-  if crash then begin
-    tfehler('Fido crash netcalls are currently not supported.',60);
-    exit;
-    end;
-
-  Debug.DebugLog('xpnetcall','get BoxName parameters',DLInform);
+  Debug.DebugLog('xpnetcall','get server parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
+  if FidoCrash then BoxPar^.BoxName:=CrashBoxName;
 
   if not PerformDial and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
-    rfehler(708);   { 'Online-Anruf bei dieser BoxName nicht moeglich' }
+    rfehler(708);   { 'Online-Anruf bei dieser Box nicht moeglich' }
     exit;
     end;
 
-  Debug.DebugLog('xpnetcall','get login type',DLInform);
   logintyp:=ntTransferType(netztyp);
+  Debug.DebugLog('xpnetcall','got login type: '+inttostr(logintyp),DLInform);
   _maus:=(logintyp=ltMaus);
   _fido:=(logintyp=ltFido);
   _uucp:=(logintyp=ltUUCP);
@@ -903,99 +907,99 @@ begin                  { function Netcall }
         exit;
         end;
       end;
+    end;
 
-    Debug.DebugLog('xpnetcall','saving screen',DLInform);
-    Sichern(ScreenPtr);
+  Debug.DebugLog('xpnetcall','saving screen',DLInform);
+  Sichern(ScreenPtr);
 
 //**    AppendEPP;
 
-    netcalling:=true;
-    showkeys(0);
-    netcall:=false;
-    connects:=0;
-    IncomingFiles:=TStringList.Create;
+  netcalling:=true;
+  showkeys(0);
+  netcall:=false;
+  connects:=0;
+  IncomingFiles:=TStringList.Create;
 
-    {------------------------- call appropriate mailer ------------------------}
-    Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
+  {------------------------- call appropriate mailer ------------------------}
+  Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
 
-    if PerformDial then begin
-      NetcallLogfile:=TempFile('');
-      if not fileexists(ppfile)then makepuf(ppfile,false);
-      inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      cursor(curoff);
-      inc(wahlcnt);
-      case LoginTyp of
-        ltFido: begin
-          Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-          case FidoNetcall(BoxName,Boxpar,crash,sysopmode,NetcallLogfile,IncomingFiles) of
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
-            EL_noconn : begin Netcall_connect:=false; end;
-            EL_recerr,
-            EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-            EL_break  : begin Netcall:=false; end;
-          else begin Netcall:=true; end;
-            end; {case}
-          SendNetzanruf(NetcallLogFile);
-          end; {case ltFido}
+  if PerformDial then begin
+    NetcallLogfile:=TempFile('');
+    if (not fileexists(ppfile))and(not FidoCrash) then makepuf(ppfile,false);
+    inmsgs:=0; outmsgs:=0; outemsgs:=0;
+    cursor(curoff);
+    inc(wahlcnt);
+    case LoginTyp of
+      ltFido: begin
+        Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
+        case FidoNetcall(BoxName,Boxpar,FidoCrash,sysopmode,NetcallLogfile,IncomingFiles) of
+          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_noconn : begin Netcall_connect:=false; end;
+          EL_recerr,
+          EL_senderr,
+          EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+          EL_break  : begin Netcall:=false; end;
+        else begin Netcall:=true; end;
+          end; {case}
+        SendNetzanruf(NetcallLogFile);
+        end; {case ltFido}
 
-        ltZConnect: begin
-          Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
-          case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
-            EL_noconn : begin Netcall_connect:=false; end;
-            EL_recerr,
-            EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-            EL_break  : begin  Netcall:=false; end;
-          else begin Netcall:=true end;
-            end; {case}
-          SendNetzanruf(NetcallLogFile);
-          end; {case ltZConnect}
+      ltZConnect: begin
+        Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
+        case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_noconn : begin Netcall_connect:=false; end;
+          EL_recerr,
+          EL_senderr,
+          EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+          EL_break  : begin  Netcall:=false; end;
+        else begin Netcall:=true end;
+          end; {case}
+        SendNetzanruf(NetcallLogFile);
+        end; {case ltZConnect}
 
-        ltUUCP: begin
-          Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
-          case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
-            EL_noconn : begin Netcall_connect:=false; end;
-            EL_recerr,
-            EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-            EL_break  : begin  Netcall:=false; end;
-          else begin Netcall:=true end;
-            end; {case}
-          SendNetzanruf(NetcallLogFile);
-          end; {case ltUUCP}
+      ltUUCP: begin
+        Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
+        case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_noconn : begin Netcall_connect:=false; end;
+          EL_recerr,
+          EL_senderr,
+          EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+          EL_break  : begin  Netcall:=false; end;
+        else begin Netcall:=true end;
+          end; {case}
+        SendNetzanruf(NetcallLogFile);
+        end; {case ltUUCP}
 
-        ltPOP3: begin
-          Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
-          if Boxpar.SMTPAfterPop then
-          begin
-            GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
-            SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          end
-          else begin
-            SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-            GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
-          end;
-        end; {case ltPOP3}
-
-        ltNNTP: begin
-          Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
-          SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
-          GetNNTPMails(BoxName,Boxpar,IncomingFiles);
+      ltPOP3: begin
+        Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
+        if Boxpar^.SMTPAfterPop then
+        begin
+          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+        end
+        else begin
+          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
         end;
+      end; {case ltPOP3}
 
-        else
-          Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
-          trfehler(799,30); { 'Funktion nicht implementiert' }
-        end; {case LoginTyp}
+      ltNNTP: begin
+        Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
+        SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
+        GetNNTPMails(BoxName,Boxpar,IncomingFiles);
+      end;
+
+      else
+        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
+        trfehler(799,30); { 'Funktion nicht implementiert' }
+      end; {case LoginTyp}
 
 //**      RemoveEPP;
-      if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
-      if FileExists(NetcallLogfile)then _era(NetcallLogfile);
-      end; {if PerformDial}
-    end; {with boxpar}
+    if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
+    if FileExists(NetcallLogfile)then _era(NetcallLogfile);
+    end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
@@ -1009,7 +1013,7 @@ begin                  { function Netcall }
   cursor(curoff);
   Holen(ScreenPtr);
   aufbau:=true;
-  if Netcall_connect and not crash then AponetNews;
+  if Netcall_connect and not FidoCrash then AponetNews;
   Debug.DebugLog('xpnetcall','finished netcall',DLInform);
 end;
 
@@ -1213,6 +1217,10 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/06/05 16:44:49  ma
+  - Fido crash netcalls should be working again
+  - cleaned up a bit
+
   Revision 1.20  2001/06/04 17:43:23  ma
   - renamed unit xp9
 
@@ -1230,47 +1238,4 @@ end.
   - incoming files are merged now
   - executing incoming filter
   - not many test runs have been made, please check.
-
-  Revision 1.15  2001/04/16 16:56:18  ml
-  - smtpafterpop-setting does the job now
-
-  Revision 1.14  2001/04/15 19:31:22  ma
-  - added error message for DOS32 TCP/IP netcalls
-
-  Revision 1.13  2001/04/06 21:06:39  ml
-  - nntpsend now working
-
-  Revision 1.12  2001/04/06 12:54:01  mk
-  - fixed unix filename handling with .bl/.rc
-
-  Revision 1.11  2001/04/05 13:25:47  ml
-  - NNTP is working now!
-
-  Revision 1.10  2001/03/24 23:43:08  cl
-  - fixes for DOS32
-
-  Revision 1.9  2001/03/24 23:09:43  cl
-  - enabled UUCP
-
-  Revision 1.8  2001/03/24 13:08:56  mk
-  - made compilable under DOS32
-
-  Revision 1.7  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-  Revision 1.4  2001/01/06 21:13:37  mo
-  - Änderung an TnodeListItem
-
-  Revision 1.3  2001/01/04 22:30:01  mo
-  -bugfix für sysop net call beirorlevel <> 0
-  -nach Aufruf des Sysop Startprog.
-
-  Revision 1.2  2001/01/04 21:22:54  ma
-  - added/refined debug logs
-
-  Revision 1.1  2001/01/04 16:05:10  ma
-  - renamed, was xp7.pas
-  - todo: split and simplify
-
 }
