@@ -614,25 +614,6 @@ var RTAEmpfList :RTAEmpfaengerP;
       end;
     end;
 
-    { Die User werden mit Standardeinstellungen und Adressbuchgruppe 0
-      angelegt }
-
-    procedure userAnlegen (user, box :string);
-    var halten :integer16;
-        b :byte;
-    begin
-      dbAppend(ubase);                        { neuen User anlegen }
-      dbWriteN(ubase,ub_username,user);
-      dbWriteN(ubase,ub_pollbox,box);
-      halten:=stduhaltezeit;
-      dbWriteN(ubase,ub_haltezeit,halten);
-      b:= 1+iif(newuseribm,0,8);
-      halten := 0;
-      dbWriteN(ubase,ub_adrbuch, halten);
-      dbWriteN(ubase,ub_userflags,b);      { aufnehmen }
-      dbFlushClose(ubase);
-    end;
-
     { Allen neuen Usern wird der gleiche Server zugewiesen }
 
     procedure pollBoxZuweisen (const box :string);
@@ -641,7 +622,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       lauf := unbekannteUser;
       while assigned (lauf) do
       begin
-        userAnlegen (lauf^.empf, box);
+        MakeUser(lauf^.empf, box);
         lauf := lauf^.next;
       end;
     end;
@@ -654,7 +635,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       lauf := unbekannteUser;
       while assigned (lauf) do
       begin
-        userAnlegen (lauf^.empf, box);
+        MakeUser(lauf^.empf, box);
         modiUser (false);
         lauf := lauf^.next;
       end;
@@ -1057,6 +1038,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.9  2001/09/07 02:22:44  mk
+  - Useranlegen durch makeuser ersetzt
+
   Revision 1.1.2.8  2001/08/23 11:04:04  mk
   - little code optimization (const parameter, MWrt)
 
