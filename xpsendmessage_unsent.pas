@@ -1199,7 +1199,7 @@ var
 begin
   _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
-  dbReadN(mbase,mb_ablage,flags);
+  dbReadN(mbase,mb_flags,flags);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
   else
@@ -1364,6 +1364,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.9  2003/05/01 19:15:28  mk
+  - fixed incorrect flags in ArchivAMToPM when archiving messages
+
   Revision 1.21.2.8  2002/09/01 09:52:55  mk
   - Nachricht/Weiterleiten/Erneut: do not kill Recipient
 
