@@ -38,7 +38,7 @@ procedure SmartResetCache;
 procedure SmartFlushCache;
 
 const
-  ClipFileName : string[8] = 'CLIP.TXT';
+  ClipFileName = 'CLIP.TXT';
 
 implementation  { ---------------------------------------------------- }
 
@@ -642,6 +642,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.13  2001/11/20 23:06:48  my
+  MY:- Variable 'ClipFileName' => Konstante
+
   Revision 1.19.2.12  2001/10/11 11:25:14  cl
   - added CLD, see <mid:8AglY0iZcDB@3247.org> & References
 
