@@ -2120,14 +2120,19 @@
     lastclient : boolean = false;
   var n   : shortint;
       fn  : string;
+      bn  : string;
       brk : boolean;
       nt  : byte;
       nts : string;
   begin
     dbGo(d,drec[p]);
     fn:= dbReadStr(d,'dateiname');
-    if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
+    bn:= dbReadStr(d,'boxname');
+    if fn='' then fn:=LeftStr(bn,8);
     dbRead(d,'netztyp',nt);
+    own_Nt:=nt;               { für 'addServersTest' }
+    own_Name:=UpperCase(bn);  { und 'toggleSysop'    }
+    showErrors:=true;         { in xp9sel.pas        }
     ReadBox(nt,fn,boxpar);
 
     nts:='';
@@ -2361,6 +2366,9 @@
 
 {
   $Log$
+  Revision 1.50  2002/05/20 01:03:12  ma
+  - fix: own_nt was not set
+
   Revision 1.49  2002/05/07 15:27:39  ma
   - implemented SMTP AUTH PLAIN and LOGIN
 
