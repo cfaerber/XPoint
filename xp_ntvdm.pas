@@ -14,58 +14,58 @@ uses windows;
 
 { --- Imports from ntvdm.exe ------------------------------------ }
 
-procedure setEAX(para:ULONG);  external 'ntvdm.exe'; function getEAX:ULONG; external 'ntvdm.exe';
-procedure setAX(para:USHORT);  external 'ntvdm.exe'; function getAX:USHORT; external 'ntvdm.exe';
-procedure setAL(para:UCHAR);   external 'ntvdm.exe'; function getAL:UCHAR;  external 'ntvdm.exe';
-procedure setAH(para:UCHAR);   external 'ntvdm.exe'; function getAH:UCHAR;  external 'ntvdm.exe';
+  procedure setEAX(para:ULONG);  external 'ntvdm.exe';   { function getEAX:ULONG; external 'ntvdm.exe'; }
+{ procedure setAX(para:USHORT);  external 'ntvdm.exe'; } { function getAX:USHORT; external 'ntvdm.exe'; }
+{ procedure setAL(para:UCHAR);   external 'ntvdm.exe'; } { function getAL:UCHAR;  external 'ntvdm.exe'; }
+{ procedure setAH(para:UCHAR);   external 'ntvdm.exe'; } { function getAH:UCHAR;  external 'ntvdm.exe'; }
 
-procedure setEBX(para:ULONG);  external 'ntvdm.exe'; function getEBX:ULONG; external 'ntvdm.exe';
-procedure setBX(para:USHORT);  external 'ntvdm.exe'; function getBX:USHORT; external 'ntvdm.exe';
-procedure setBL(para:UCHAR);   external 'ntvdm.exe'; function getBL:UCHAR;  external 'ntvdm.exe';
-procedure setBH(para:UCHAR);   external 'ntvdm.exe'; function getBH:UCHAR;  external 'ntvdm.exe';
+{ procedure setEBX(para:ULONG);  external 'ntvdm.exe'; } { function getEBX:ULONG; external 'ntvdm.exe'; }
+{ procedure setBX(para:USHORT);  external 'ntvdm.exe'; } { function getBX:USHORT; external 'ntvdm.exe'; }
+{ procedure setBL(para:UCHAR);   external 'ntvdm.exe'; } { function getBL:UCHAR;  external 'ntvdm.exe'; }
+{ procedure setBH(para:UCHAR);   external 'ntvdm.exe'; } { function getBH:UCHAR;  external 'ntvdm.exe'; }
 
-procedure setECX(para:ULONG);  external 'ntvdm.exe'; function getECX:ULONG; external 'ntvdm.exe';
-procedure setCX(para:USHORT);  external 'ntvdm.exe'; function getCX:USHORT; external 'ntvdm.exe';
-procedure setCL(para:UCHAR);   external 'ntvdm.exe'; function getCL:UCHAR;  external 'ntvdm.exe';
-procedure setCH(para:UCHAR);   external 'ntvdm.exe'; function getCH:UCHAR;  external 'ntvdm.exe';
+  procedure setECX(para:ULONG);  external 'ntvdm.exe';     function getECX:ULONG; external 'ntvdm.exe';  
+{ procedure setCX(para:USHORT);  external 'ntvdm.exe'; } { function getCX:USHORT; external 'ntvdm.exe'; }
+{ procedure setCL(para:UCHAR);   external 'ntvdm.exe'; }   function getCL:UCHAR;  external 'ntvdm.exe';  
+{ procedure setCH(para:UCHAR);   external 'ntvdm.exe'; }   function getCH:UCHAR;  external 'ntvdm.exe';  
 
-procedure setEDX(para:ULONG);  external 'ntvdm.exe'; function getEDX:ULONG; external 'ntvdm.exe';
-procedure setDX(para:USHORT);  external 'ntvdm.exe'; function getDX:USHORT; external 'ntvdm.exe';
-procedure setDH(para:UCHAR);   external 'ntvdm.exe'; function getDH:UCHAR;  external 'ntvdm.exe';
-procedure setDL(para:UCHAR);   external 'ntvdm.exe'; function getDL:UCHAR;  external 'ntvdm.exe';
+{ procedure setEDX(para:ULONG);  external 'ntvdm.exe'; } { function getEDX:ULONG; external 'ntvdm.exe'; }
+{ procedure setDX(para:USHORT);  external 'ntvdm.exe'; }   function getDX:USHORT; external 'ntvdm.exe';  
+{ procedure setDH(para:UCHAR);   external 'ntvdm.exe'; } { function getDH:UCHAR;  external 'ntvdm.exe'; }
+{ procedure setDL(para:UCHAR);   external 'ntvdm.exe'; } { function getDL:UCHAR;  external 'ntvdm.exe'; }
 
-procedure setESP(para:ULONG);  external 'ntvdm.exe'; function getESP:ULONG; external 'ntvdm.exe';
-procedure setSP(para:USHORT);  external 'ntvdm.exe'; function getSP:USHORT; external 'ntvdm.exe';
+{ procedure setESP(para:ULONG);  external 'ntvdm.exe'; } { function getESP:ULONG; external 'ntvdm.exe'; }
+{ procedure setSP(para:USHORT);  external 'ntvdm.exe'; } { function getSP:USHORT; external 'ntvdm.exe'; }
 
-procedure setEBP(para:ULONG);  external 'ntvdm.exe'; function getEBP:ULONG; external 'ntvdm.exe';
-procedure setBP(para:USHORT);  external 'ntvdm.exe'; function getBP:USHORT; external 'ntvdm.exe';
+{ procedure setEBP(para:ULONG);  external 'ntvdm.exe'; } { function getEBP:ULONG; external 'ntvdm.exe'; }
+{ procedure setBP(para:USHORT);  external 'ntvdm.exe'; } { function getBP:USHORT; external 'ntvdm.exe'; }
 
-procedure setESI(para:ULONG);  external 'ntvdm.exe'; function getESI:ULONG; external 'ntvdm.exe';
-procedure setSI(para:USHORT);  external 'ntvdm.exe'; function getSI:USHORT; external 'ntvdm.exe';
+{ procedure setESI(para:ULONG);  external 'ntvdm.exe'; }   function getESI:ULONG; external 'ntvdm.exe';  
+{ procedure setSI(para:USHORT);  external 'ntvdm.exe'; } { function getSI:USHORT; external 'ntvdm.exe'; }
 
-procedure setEDI(para:ULONG);  external 'ntvdm.exe'; function getEDI:ULONG; external 'ntvdm.exe';
-procedure setDI(para:USHORT);  external 'ntvdm.exe'; function getDI:USHORT; external 'ntvdm.exe';
+{ procedure setEDI(para:ULONG);  external 'ntvdm.exe'; }   function getEDI:ULONG; external 'ntvdm.exe';  
+{ procedure setDI(para:USHORT);  external 'ntvdm.exe'; } { function getDI:USHORT; external 'ntvdm.exe'; }
 
-procedure setEIP(para:ULONG);  external 'ntvdm.exe'; function getEIP:ULONG; external 'ntvdm.exe';
-procedure setIP(para:USHORT);  external 'ntvdm.exe'; function getIP:USHORT; external 'ntvdm.exe';
+{ procedure setEIP(para:ULONG);  external 'ntvdm.exe'; } { function getEIP:ULONG; external 'ntvdm.exe'; }
+{ procedure setIP(para:USHORT);  external 'ntvdm.exe'; } { function getIP:USHORT; external 'ntvdm.exe'; }
 
-procedure setCS(para:USHORT);  external 'ntvdm.exe'; function getCS:USHORT; external 'ntvdm.exe';
-procedure setSS(para:USHORT);  external 'ntvdm.exe'; function getSS:USHORT; external 'ntvdm.exe';
-procedure setDS(para:USHORT);  external 'ntvdm.exe'; function getDS:USHORT; external 'ntvdm.exe';
-procedure setES(para:USHORT);  external 'ntvdm.exe'; function getES:USHORT; external 'ntvdm.exe';
-procedure setFS(para:USHORT);  external 'ntvdm.exe'; function getFS:USHORT; external 'ntvdm.exe';
-procedure setGS(para:USHORT);  external 'ntvdm.exe'; function getGS:USHORT; external 'ntvdm.exe';
+{ procedure setCS(para:USHORT);  external 'ntvdm.exe'; } { function getCS:USHORT; external 'ntvdm.exe'; }
+{ procedure setSS(para:USHORT);  external 'ntvdm.exe'; } { function getSS:USHORT; external 'ntvdm.exe'; }
+{ procedure setDS(para:USHORT);  external 'ntvdm.exe'; } { function getDS:USHORT; external 'ntvdm.exe'; }
+{ procedure setES(para:USHORT);  external 'ntvdm.exe'; } { function getES:USHORT; external 'ntvdm.exe'; }
+{ procedure setFS(para:USHORT);  external 'ntvdm.exe'; } { function getFS:USHORT; external 'ntvdm.exe'; }
+{ procedure setGS(para:USHORT);  external 'ntvdm.exe'; } { function getGS:USHORT; external 'ntvdm.exe'; }
 
-procedure setCF(para:ULONG);   external 'ntvdm.exe'; function getCF:ULONG;  external 'ntvdm.exe';
-procedure setPF(para:ULONG);   external 'ntvdm.exe'; function getPF:ULONG;  external 'ntvdm.exe';
-procedure setAF(para:ULONG);   external 'ntvdm.exe'; function getAF:ULONG;  external 'ntvdm.exe';
-procedure setZF(para:ULONG);   external 'ntvdm.exe'; function getZF:ULONG;  external 'ntvdm.exe';
-procedure setSF(para:ULONG);   external 'ntvdm.exe'; function getSF:ULONG;  external 'ntvdm.exe';
-procedure setIF(para:ULONG);   external 'ntvdm.exe'; function getIF:ULONG;  external 'ntvdm.exe';
+  procedure setCF(para:ULONG);   external 'ntvdm.exe';   { function getCF:ULONG;  external 'ntvdm.exe'; }
+{ procedure setPF(para:ULONG);   external 'ntvdm.exe'; } { function getPF:ULONG;  external 'ntvdm.exe'; }
+{ procedure setAF(para:ULONG);   external 'ntvdm.exe'; } { function getAF:ULONG;  external 'ntvdm.exe'; }
+{ procedure setZF(para:ULONG);   external 'ntvdm.exe'; } { function getZF:ULONG;  external 'ntvdm.exe'; }
+{ procedure setSF(para:ULONG);   external 'ntvdm.exe'; } { function getSF:ULONG;  external 'ntvdm.exe'; }
+{ procedure setIF(para:ULONG);   external 'ntvdm.exe'; } { function getIF:ULONG;  external 'ntvdm.exe'; }
 
-procedure setDF(para:ULONG);   external 'ntvdm.exe'; 
-procedure setOF(para:ULONG);   external 'ntvdm.exe'; 
-procedure setMSW(para:USHORT); external 'ntvdm.exe'; 
+{ procedure setDF(para:ULONG);   external 'ntvdm.exe';  }
+{ procedure setOF(para:ULONG);   external 'ntvdm.exe';  }
+{ procedure setMSW(para:USHORT); external 'ntvdm.exe';  }
 
 function  GetVDMPointer(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; begin GetVDMPointer:=Pointer(DWORD(Hi(Address)*16+Lo(Address))); end;
 function  FreeVDMPointer(Address:ULONG; Size:USHORT; Buffer:Pointer; ProtectedMode:BOOL):BOOL; begin FreeVDMPointer:=true; end;
@@ -251,8 +251,11 @@ exports OpenXP_Call;
 
 end.
 
-{ 
+{
   $Log$
+  Revision 1.1.2.4  2001/07/18 20:13:19  cl
+  - removed unnecessary imports from NTVDM.EXE
+
   Revision 1.1.2.3  2001/07/04 01:33:12  my
   - changed ANSI-Umlaut to ASCII-Umlaut (please no ANSI, guys :-))
 
@@ -261,5 +264,4 @@ end.
 
   Revision 1.1.2.1  2001/07/02 20:43:04  mk
   - NTVDM Interface
-
 }  
