@@ -39,9 +39,9 @@ begin
 end;
 
 procedure aufhaengen;
-var n,i : byte;
 begin
-(*  display:=ParDebug;
+(*var n,i : byte;
+  display:=ParDebug;
     if HayesComm then begin
       n:=5;
       time(100);
@@ -537,27 +537,6 @@ end;
 
 function BoxParOk:string;
 var uucp : boolean;
-
-  function FindDownarcer:boolean;
-  {* currently not working}
-  begin
-    chdir(XferDir_);
-    with boxpar^ do
-      if not ExecutableExists(downarcer) then begin     { FileDa sucht zuerst im }
-        chdir('..');                          { aktuellen Verzeichnis  }
-        if ExecutableExists(downarcer) then begin
-          downarcer:=ownpath+downarcer;
-          FindDownarcer:=true;
-          end
-        else
-          FindDownarcer:=false;
-        end
-      else begin
-        FindDownarcer:=true;
-        chdir('..');
-        end;
-  end;
-
 begin
   uucp:=(logintyp=ltUUCP);
   with BoxPar^ do begin
@@ -627,10 +606,10 @@ begin
 end;
 
 procedure testbyte;
-var b : byte;
-    l : integer;
 begin
-(*!!   if receive(comnr,b) then
+(*!! var b : byte;
+    l : integer;
+   if receive(comnr,b) then
    begin
     if in7e1 then b:=b and $7f;
     if display then begin
@@ -731,9 +710,9 @@ begin
 end;
 
 procedure sendcomm(s:string);
-var p : byte;
 begin
-(*  flushin;
+(*var p : byte;
+  flushin;
   recs:=''; lrec:='';
   if not HayesComm or ISDN then exit;
   repeat
@@ -1354,18 +1333,6 @@ var dummy : longint;
     outmsgs:=0; outemsgs:=0;
   end;
 
-  procedure CopyPKTs;   { PKT's vom Sysopeingangsvereichnis -> SPOOL }
-  var
-    sr   : TSearchRec;
-  begin
-    if findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile, sr)=0 then repeat
-      if pos('.PKT',UpperCase(sr.name))>0 then
-        if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
-          DeleteFile(BoxPar^.sysopinp+sr.name);
-    until findnext(sr)<>0;
-    findclose(sr);
-  end;
-
   procedure CopyFileAttaches(ppfile:string);
   var hd  : THeader;
       hds : longint;
@@ -1395,6 +1362,7 @@ var dummy : longint;
   end;
 
 begin { FidoSysopTransfer }
+  Debug.DebugLog('xpncuucp','FidoSysopTransfer starting',DLInform);
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do begin
     if not IsPath(SysopInp) then begin          // Verzeichnisse testen
@@ -1413,29 +1381,37 @@ begin { FidoSysopTransfer }
       outmsgs:=testpuffer(ppfile,false,dummy);
       for i:=1 to addpkts^.anzahl do
         inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
+
+      ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);
+
       if SysopPack then begin
-        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);    // ZFIDO
         if (errorlevel=MaggiFehler) and FileExists(ppfile) then begin
           ferror(729);                          // 'Fehler bei der ZFIDO-Konvertierung'
           exit;
           end;
         if errorlevel=0 then begin
+          Debug.DebugLog('xpncuucp','compressing outgoing packets',DLInform);
           exchange(uparcer,'$UPFILE',caller);
           SetCurrentDir(SysopOut);
           shell(uparcer,500,3);                 // packen
           end;
-        if FileExists(SysopOut+upuffer) then _era(SysopOut+upuffer);
-        with addpkts^ do
-          for i:=1 to anzahl do
-            if FileExists(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
-        end
-      else
-        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);  { ZFIDO }
+        if FileExists(SysopOut+upuffer) then begin
+          Debug.DebugLog('xpncuucp','deleting upuffer',DLInform);
+          _era(SysopOut+upuffer);
+          end;
+        if errorlevel=0 then begin // Caution!- Errorlevel from shell(uparcer...)!
+          Debug.DebugLog('xpncuucp','compression successful, deleting old packets',DLInform);
+          with addpkts^ do
+            for i:=1 to anzahl do
+              if FileExists(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
+          end;
+        end;
 
       if (errorlevel<>0) and FileExists(ppfile) then begin
         ferror(729);     { 'Fehler bei ZFIDO-Konvertierung' }
         exit;
         end;
+      Debug.DebugLog('xpncuucp','copying file attachments',DLInform);
       CopyFileAttaches(ppfile);
       for i:=1 to addpkts^.anzahl do
         CopyFileAttaches(addpkts^.abfile[i]+BoxFileExt);
@@ -1448,43 +1424,57 @@ begin { FidoSysopTransfer }
       closebox;
       if FileExists(ppfile) then _era(ppfile);
       if FileExists(eppfile) then _era(eppfile);
+      Debug.DebugLog('xpncuucp','deleting some files...',DLInform);
       with addpkts^ do
         for i:=1 to anzahl do
           if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
-      end;
 
-
-      if not isEmptyDir(BoxPar^.sysopinp) then                  // SysOp Eingansverzeichnis leer
-      begin
+      Debug.DebugLog('xpncuucp','processing incoming files',DLInform);
+      if not isEmptyDir(BoxPar^.sysopinp) then begin
+        Debug.DebugLog('xpncuucp','deleting old packets: "'+xp0.XFerDir+'*.pkt"',DLInform);
         erase_mask(xp0.XFerDir+'*.pkt');                        // L”sche alle alten pakete im spool
 
+        Debug.DebugLog('xpncuucp','searching for uncompressed packets: "'+BoxPar^.sysopinp+'*.pkt"',DLInform);
         dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
         if dir.Count>0 then begin                               // *.pkt im SysopIn Verzeichnisvorhanden
           for i:=0 to dir.Count-1 do begin                              //
-            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then // move *.pkt von SysOpIn -> Spool
+            Debug.DebugLog('xpncuucp','found a packet: "'+XFerDir+dir.Name[i]+'"',DLDebug);
+            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then begin // move *.pkt von SysOpIn -> Spool
+              Debug.DebugLog('xpncuucp','copied ok, deleting',DLDebug);
               _era(dir.LongName[i]);
+              end;
             end; // for
           end;   // Dir.Count
-        if FidoImport(SysopInp,box) then
+        if FidoImport(SysopInp,box) then begin
+          Debug.DebugLog('xpncuucp','FidoImport successful, deleting packets',DLDebug);
           for i:=0 to dir.Count-1 do                            // alles *.pkts im SysOpIn l”schen
             if FileExists(BoxPar^.sysopinp+dir.Name[i]) then    // Archive werden in func FidoImport gel”scht
               _era(BoxPar^.sysopinp+dir.Name[i]);
+          end
+        else
+          Debug.DebugLog('xpncuucp','FidoImport not successful',DLError);
         dir.Free;
+        end; // if not isEmptyDir...
 
-        end; // if not isEmptyDir(BoxPar^.sysopinp)
+      end // SendAKAs<>''...
+    else
+      Debug.DebugLog('xpncuucp','no akas',DLInform);
 
-
+// if not isEmptyDir(BoxPar^.sysopinp)
 //    if not isEmptyDir(SysopInp) then begin   { -- Eingangspaket -- }
 //      erase_mask(xp0.XFerDir+WildCard);
 //      CopyPKTs;
 //      if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
 //        erase_mask(BoxPar^.sysopinp+WildCard);
-        //EmptySysin;
-      {window(1,1,80,25);}
+//      EmptySysin;
+//      window(1,1,80,25);
 //      end;
+
+    Debug.DebugLog('xpncuucp','diffing',DLInform);
     if DoDiffs(FilePath+'*.*',true)=0 then;
     Netcall_connect:=true;
-    end;
+    end; // with boxpar...
+  Debug.DebugLog('xpncuucp','FidoSysopCall complete',DLInform);
 end;
 
 
@@ -1595,47 +1585,6 @@ begin
         end;
       end;
     end;
-end;
-
-
-procedure ringsignal;
-var mz    : longint;
-    i     : byte;
-    _ende : boolean;
-begin
-  mz:=zaehler[2];
-  moff;
-  writeln; writeln;
-  attrtxt(15);
-  write(getres(712));   { 'Anruf eingegangen!   <Enter>=weiter, <Esc>=Abbruch' }
-  attrtxt(7);
-  writeln;
-  mon;
-  for i:=1 to 5 do begin
-    sound(1000);
-    mdelay(75);
-    sound(745);
-    mdelay(75);
-    end;
-{$IFNDEF VP }
-  nosound;
-{$ENDIF }
-  mwriteln;
-
-  _ende:=false;
-  zaehler[2]:=300;
-  repeat
-    multi2;
-    write(#13,restzeit);
-    if keypressed then begin
-      c:=readkey;
-      ende:=(c=keyesc);
-      _ende:=(c=keycr);
-      end;
-  until ende or _ende or timeout(false);
-  mwriteln; mwriteln;
-  flushin;       { RINGs l”schen }
-  zaehler[2]:=max(1,mz-(300-zaehler[2]));
 end;
 
 function tickdiff:longint;
@@ -1767,19 +1716,15 @@ begin
   TeleCount:=n;
 end;
 
-procedure FossilTest;
-begin
-(*  if comn[comnr].fossil and not FOSSILdetect then begin
-    {window(1,1,80,25);}
-    trfehler(732,esec);   { 'Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber' }
-    twin;
-    writeln; *)
-    comn[comnr].fossil:=false;
-//    end;
-end;
 
 {
   $Log$
+  Revision 1.2  2001/01/06 18:23:42  ma
+  - cleaned up
+  - added debug logs to fidosysopcall
+  - some error checks in fidosysopcall added
+  - todo: move non-uucp routines out of this file
+
   Revision 1.1  2001/01/04 16:04:13  ma
   - renamed, was xp7u.inc
   - todo: split, simplify, merge with uucico and change to unit
