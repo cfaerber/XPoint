@@ -3612,8 +3612,8 @@ nung besitzen, nur Umlaute im IBM-Format enthalten.
 Leider halten sich viele Programmierer von nicht-
 IBM-Rechnern nicht an diesen Standard, wodurch oft
 unlesbare "Amiga-Sonderzeichen" (Sonderzeichen nach
-ISO-8859-1) auftauchen, z.B. "„" statt "„" oder "”"
-statt "”".
+ISO-8859-1) auftauchen, z.B. "„" statt "ä" oder "”"
+statt "ö".
 
 Wenn Sie hier <<[x]>> einstellen, konvertiert XP diese
 Zeichen im Lister und bei Quotes in ein lesbares
