@@ -1804,10 +1804,10 @@ var p,i   : integer; { byte -> integer }
   end;
 
   procedure GetKOPs;
-  var p : byte;
+  var i, p : byte;
       s, a, r: string;
   begin
-    s0:=trim(s0)+',';
+    s0:=trim(s0)+','; i := 1;
     while cpos(',',s0)>0 do begin
       p:=cpos(',',s0);
       s:=trim(mid(s0,p+1));
@@ -1815,9 +1815,14 @@ var p,i   : integer; { byte -> integer }
         truncstr(s0,p-1);
         GetAdr(a,r);
         AppUline('KOP: '+a+iifs(r<>'',' ('+r+')',''));
-        end;
-      s0:=s;
       end;
+      s0:=s;
+      if (s = ',') and (i<=manz) then
+      begin
+        s0 := Trim(smore[i]) + ',';
+        inc(i);
+      end;
+    end;
   end;
 
   function GetMsgid:string;
@@ -3459,6 +3464,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.54  2001/10/20 17:07:59  mk
+  - support fuer CC-Header mit mehr als 255 Zeichen
+
   Revision 1.35.2.53  2001/09/16 21:19:27  mk
   - fixed fuer letzten checkin, uuz wieder compilierbar
 
