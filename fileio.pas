@@ -604,7 +604,7 @@ begin
   end;
 end;
 
-(*
+{$IFDEF NO386}
 procedure TestShare;
 var
   regs : registers;
@@ -618,8 +618,7 @@ begin
     ShareDa := al = $ff;
   end;
 end;
-*)
-
+{$ELSE}
 procedure Testshare; Assembler;
 asm
       mov ax,1000h
@@ -627,7 +626,7 @@ asm
       shr al,7
       mov [shareda],al
 end;         
-
+{$ENDIF}
 
 procedure resetfm(var f:file; fm:byte);
 var fm0 : byte;
@@ -752,6 +751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.17  2003/01/17 17:01:28  mw
+  MW: - Make XT-Version compile again (Part 1)
+
   Revision 1.41.2.16  2001/08/12 08:46:46  mk
   - added const parameters
 

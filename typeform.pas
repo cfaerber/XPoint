@@ -271,7 +271,7 @@ end;
 
 
 
-{$IFDEF NOASM}
+{$IFDEF NO386}
 
 Function Max(const a,b:longint):longint;
 begin
@@ -1505,7 +1505,7 @@ begin
 end;
 
 
-{$IFDEF NOASM}
+{$IFDEF NO386}
 function Hex(const l:longint; const n:byte):string;
 const hexch : array[0..15] of char = '0123456789ABCDEF';
 var   s    : string[8];
@@ -2064,6 +2064,9 @@ end;
   end.
 {
   $Log$
+  Revision 1.37.2.30  2003/01/17 17:01:27  mw
+  MW: - Make XT-Version compile again (Part 1)
+
   Revision 1.37.2.29  2002/05/30 21:40:36  my
   JG: 'function dup' in ASM-Fassung eingebaut
 

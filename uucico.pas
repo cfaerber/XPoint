@@ -117,12 +117,14 @@ end;
 
 procedure InitVar;
 begin
+  {$IFNDEF NO386}
   If (WinVersion = 3) or { Win 9x/ME/... }
      ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
   begin
     EnableLFN;
     UseLfn := true;
   end;
+  {$ENDIF}
   uulog:=nil; deblog:=nil;
   with col do
     if color then begin
@@ -1936,6 +1938,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.12  2003/01/17 17:01:27  mw
+  MW: - Make XT-Version compile again (Part 1)
+
   Revision 1.1.2.11  2002/03/08 23:40:10  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte

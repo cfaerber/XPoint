@@ -412,6 +412,7 @@ var t : text;
   end;
 
 begin
+  {$IFNDEF NO386}
   InitWinVersion;
 
   If (WinVersion = 3) or { Win 9x/ME/... }
@@ -420,7 +421,7 @@ begin
     EnableLFN;
     UseLfn := true;
   end;
-
+  {$ENDIF}
   mails:=0; news:=0;
   uunumber:=0;
   new(uline);
@@ -3404,6 +3405,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.80  2003/01/17 17:01:26  mw
+  MW: - Make XT-Version compile again (Part 1)
+
   Revision 1.35.2.79  2002/07/11 12:27:11  my
   MY:- BetrefflÑnge von 245 auf 248 Zeichen erhîht (255-CRLF-"BET: ").
        Vorgriff auf die geÑnderte Betreffbehandlung im UUZ, der zukÅnftig

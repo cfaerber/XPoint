@@ -321,13 +321,13 @@ begin
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
-
+  {$IFNDEF NO386}
   InitWinVersion;
 
   If (WinVersion = 3) or { Win 9x/ME/... }
      ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
     EnableLFN;
-
+  {$ENDIF}
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
   if right(ownpath,1)<>'\' then
@@ -343,6 +343,9 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.19  2003/01/17 17:01:26  mw
+  MW: - Make XT-Version compile again (Part 1)
+
   Revision 1.18.2.18  2003/01/17 09:10:41  mw
   MW: - Variable xmsovrbuf ist nun nur noch dann true, wenn das
         Overlay wirklich ins XMS geladen wurde.
