@@ -2416,6 +2416,7 @@ begin
       if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
+      setbrettgelesen(_brett); 
       end;
 end;
 
@@ -2423,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/08/09 13:27:55  mk
+  - Ungelesen Bug beim (K)illen von Nachrichten aus der Markiert-Liste behoben
+
   Revision 1.63  2000/08/08 09:23:54  mk
   - Bugfixes fuer Suche
 

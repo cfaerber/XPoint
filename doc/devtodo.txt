@@ -26,8 +26,6 @@ Text                                                Version Prio Autor
   SysGetScreenCols, SysGetMaxScreenSize,
   SysSetScreenSize in xp{OS}.pas
 - dosx.pas, alldrives portieren 		    *       1    na
-- FPC sockets.pas geht nicht mit Text-Files         W       1    na
-  (connect(?, ?, tin, tout)
 - Clip.pas, Clip2String, Ansi			    W	    2    na
 - Funktion der Hilfe sicherstellen (geht noch       L       2    na
   nicht)
@@ -36,5 +34,3 @@ Text                                                Version Prio Autor
 - POP3						    LOW     1    hd,mk
 - IMAP						    LOW     2    na
 - UUCP over TCP/IP                                  *       1    na
-- Nodelisteneinbinden gibt RTE 216 haufenweise      LOW     1    na
-- Volltextsuche funktioniert nicht                  LOW     2    na
