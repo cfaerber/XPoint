@@ -98,6 +98,7 @@ procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
 function  GetFileDir(p:pathstr):dirstr;
 function  GetFileName(p:pathstr):string;
+function  GetBareFileName(p:pathstr):string;    { Filename ohne .ext }
 function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
@@ -454,6 +455,15 @@ begin
   GetFileName:=n+e;
 end;
 
+function GetBareFileName(p:pathstr):string;
+var d : dirstr;
+    n : namestr;
+    e : extstr;
+begin
+  fsplit(p,d,n,e);
+  GetBareFileName:=n;
+end;
+
 function GetFileExt(p:pathstr):string;
 var d : dirstr;
     n : namestr;
@@ -753,6 +763,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/24 04:16:21  oh
+  - Function GetBareFileName() (Dateiname ohne EXT) fuer PGP 6.5.x
+
   Revision 1.12  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 
