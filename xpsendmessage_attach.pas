@@ -470,11 +470,11 @@ begin
 
   if RecodedCharset or RecodedEncoding then
   begin
-    ins := TFileStream.Create(pa.FileName,fmOpenRead or fmShareDenyWrite);
+    ins := TFileStream.Create(pa.FileName,fmOpenRead);
 
     try // [1]
       FileName := TempS(_FileSize(pa.FileName));
-      outs := TFileStream.Create(FileName,fmCreate or fmShareDenyWrite);
+      outs := TFileStream.Create(FileName,fmCreate);
 
       try // [2]
         if RecodedEncoding then
