@@ -168,6 +168,7 @@ begin
   if w and readonly<>0 then begin
     rfehler(9);        { 'Datei ist schreibgeschtzt.' }
     brk:=true;
+    Overwrite := false;
     exit;
     end;
   diabox(57,5,'',x,y);
@@ -980,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.17  2001/08/10 20:01:11  mk
+  - Overwrite liefert false, wenn Datei schreibgeschützt
+
   Revision 1.40.2.16  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 
