@@ -34,19 +34,19 @@ uses
       messages,
     {$ENDIF }
   {$ENDIF }
-  {$IFDEF DOS32} 
-    crt, {for GotoXY} 
+  {$IFDEF DOS32}
+    crt, {for GotoXY}
   {$ENDIF}
-  {$IFDEF unix} 
+  {$IFDEF unix}
     xplinux,
-    xpcurses, 
+    xpcurses,
   {$ENDIF }
   osdepend,
   keys,
   inout,
   maus2,
   typeform,
-  xpglobal, 
+  xpglobal,
   mime;
 
 const
@@ -87,29 +87,32 @@ const
 
 type  selproc = procedure(var sel:slcttyp);
 
-var   wpstack  : array[1..maxpush] of word;
+type  TxpHandle = byte; //0..maxpull
+      TWord = integer;  //todo: adjust or remove, as appropriate
+
+var   wpstack  : array[1..maxpush] of TxpHandle;
       wpp      : byte;
       warrows  : boolean;     { Pfeile bei wslct anzeigen }
       warrcol  : byte;        { Farbe fÅr Pfeile          }
       selp     : selproc;
 
-procedure clwin(l,r,o,u:word);
+procedure clwin(l,r,o,u:TWord);
 
 procedure rahmen1(li,re,ob,un: Integer; const txt:string);    { Rahmen ≥ zeichen       }
 procedure rahmen2(li,re,ob,un: Integer; const txt:string);    { Rahmen ∫ zeichnen      }
 procedure rahmen3(li,re,ob,un: Integer; const txt:string);    { Special-Rahmen         }
 procedure rahmen1d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ≥ zeichen }
 procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ∫ zeichnen}
-procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:word; const txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:TWord; const txt:string);
 procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
-procedure wrest(handle: Integer);
-procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
-                var n:word; var brk:boolean);
+Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: TxpHandle);
+procedure wrest(handle: TxpHandle);
+procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:TWord;
+  abs1:boolean; var n:TWord; var brk:boolean);
 procedure seldummy(var sel:slcttyp);
 procedure wpush(x1,x2,y1,y2: integer; text:string);
 procedure wpushs(x1,x2,y1,y2: integer; text:string);
@@ -137,9 +140,9 @@ procedure ClrScr;
 
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
-procedure SDisp(const x,y:word; const s:string);
+procedure SDisp(const x,y:TWord; const s:string);
 
-procedure consolewrite(x,y:word; num: Integer);
+procedure consolewrite(x,y:TWord; num: Integer);
 
 
 { Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
@@ -188,7 +191,7 @@ procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
 function  GetConsoleOutputCharset:TMimeCharsets;
 
 { 
-  Sets and reads the charset (most) functions that operate on the 
+  Sets and reads the charset (most) functions that operate on the
   console screen use.
   If different from the actual console charset, there will be automatic
   conversion.
@@ -310,7 +313,7 @@ begin
 end;
 {$ENDIF }
 
-procedure clwin(l,r,o,u:word);
+procedure clwin(l,r,o,u:TWord);
 var
   i: Integer;
 begin
@@ -427,7 +430,7 @@ begin
 {$ENDIF NCRT }
 
 {$IFDEF Win32Console }
-  procedure consolewrite(x,y:word; num: Integer);  { 80  Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:TWord; num: Integer);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
     OutRes: ULong;                            { Auf Konsole ausgeben....}
@@ -436,7 +439,7 @@ begin
     Num := Win32_Wrt(WritePos,Copy(charbuf,1,num));
     WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
-  procedure consolewrite(x,y:word; num: Integer);  { Num = Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:TWord; num: Integer);  { Num = Chars in xp0.charpuf (String) }
   var
     i, j: Integer;                        
   begin
@@ -506,7 +509,7 @@ end;
 
 {$ENDIF}
 
-procedure SDisp(const x,y:word; const s:string);
+procedure SDisp(const x,y:TWord; const s:string);
 {$IFDEF Win32Console }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
@@ -517,7 +520,7 @@ procedure SDisp(const x,y:word; const s:string);
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
     Len := Win32_Wrt(WritePos,s);
-    GetMem(a,SizeOf(WORD)*Len);
+    GetMem(a,SizeOf(a[0])*Len);
     ReadConsoleOutputAttribute(OutHandle, a, Len, WritePos, OutRes);
     for i := 0 to Len-1 do
       a^[i] := (a^[i] and $FFF0) or (TextAttr and $F);
@@ -663,7 +666,7 @@ end;
 {$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
-procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:word; const txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:TWord; const txt:string);
 var la           : byte;
     ls,rs,os,us,
     i,nx,ny,del  : byte;
@@ -771,10 +774,10 @@ begin
 end;
 
 
-Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
+Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: TxpHandle);
 {$IFDEF NCRT }
 var
-  i: Integer;
+  i: TxpHandle;
 begin
   handle := 0;
   for I := 1 to maxpull do
@@ -794,7 +797,7 @@ begin
 end;
 {$ELSE }
 var
-  i : byte;
+  i : TxpHandle;
 begin
   if (x2-x1<1) or (y2-y1<1) then
   begin
@@ -830,7 +833,7 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-Procedure wrest(handle: Integer);
+Procedure wrest(handle: TxpHandle);
 {$IFDEF NCRT }
 begin
   RestoreWindow(pullw[handle].win);
@@ -850,7 +853,7 @@ end;
 {$ENDIF }
 
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-var i,j : word;
+var i,j : TWord;
     xch : boolean;
     sa  : slcttyp;
     l   : pntslcta;
@@ -870,12 +873,12 @@ begin
 end;
 
 
-Procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
-                var n:word; var brk:boolean);
+procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:TWord;
+  abs1:boolean; var n:TWord; var brk:boolean);
 
 var z          : taste;
     i,po,pon   : integer;
-    wsize      : word;
+    wsize      : TWord;
     pa,pan     : integer;
     ende       : boolean;
     ox         : integer;
@@ -1522,6 +1525,9 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/12/05 19:36:21  dodi
+  - removed ambiguous word type
+
   Revision 1.87  2002/07/25 20:43:53  ma
   - updated copyright notices
 

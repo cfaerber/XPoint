@@ -27,11 +27,10 @@ unit xpncfido;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF }
-  sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl, winxp,
-  fidoglob,classes;
-
+  classes,  //TStringList
+  xp0,      //boxptr
+  keys,     //taste
+  lister;   //TLister
 
 function FidoNetcall(boxname: string;
                      boxpar: boxptr;
@@ -47,8 +46,14 @@ procedure ShowRQ(s:string);
 implementation   { -------------------------------------------------- }
 
 uses
+  sysutils,
+  {$IFDEF NCRT}xpcurses,{$ENDIF }
+  ZFTools,typeform,montage,fileio,maus2,inout,
+  resource,
+  maske,xpglobal,debug,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl, winxp,
+  fidoglob,
   ncfido,xpheader,xp3,xp3o,xpmakeheader,xpprogressoutputwindow,
-  datadef,database,xp9bp,xpnt,xpnetcall;  //,direct;
+  datadef,database,xp9bp,xpnt,xpnetcall,direct;
 
 type
   TAKABoxes= record
@@ -917,6 +922,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/12/05 19:36:22  dodi
+  - removed ambiguous word type
+
   Revision 1.37  2002/12/04 16:57:04  dodi
   - updated uses, comments and todos
 

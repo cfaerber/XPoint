@@ -14,7 +14,7 @@
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created on Mai, 3st 2000 by Markus K„mmerer <mk@happyarts.de>
+   Created on Mai, 3st 2000 by Markus Kaemmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 
@@ -59,22 +59,22 @@ const
   x_copyright = '(c) 2000-2002';
 
 type
-  { Regeln fr Datentypen unter 16/32 Bit
+  { Regeln fuer Datentypen unter 16/32 Bit
 
-  Die gr”áe einiger Datentypen unterscheidet sich je nach verwendetem
+  Die Groesse einiger Datentypen unterscheidet sich je nach verwendetem
   Compiler und der Systemumgebung. Folgende Regeln sollten beachtet werden:
 
   Der im Regelfall zu verwendede Datentyp ist Integer. Dieser Datentyp
-  ist unter 16 Bit natrlich 16 Bit groá und unter 32 Bit wiederum 32 Bit
-  groá und immer signed (vorzeichenbehaftet). Dieser Datentyp ist immer der
-  _schnellste_ fr das System verfgbare Datentyp, sollte also in Schleifen
-  usw. wenn m”glich genommen und den spezielleren Datentypen vorgezogen
+  ist unter 16 Bit natuerlich 16 Bit gross und unter 32 Bit wiederum 32 Bit
+  gross und immer signed (vorzeichenbehaftet). Dieser Datentyp ist immer der
+  _schnellste_ fuer das System verfuegbare Datentyp, sollte also in Schleifen
+  usw. wenn moeglich genommen und den spezielleren Datentypen vorgezogen
   werden.
 
   Der Datentyp rtlword ist je nach dem verwendeten Compiler und der damit
-  verwendeten RTL 16 oder 32 Bit groá.
+  verwendeten RTL 16 oder 32 Bit gross.
 
-  Folgende Datentypen sind immer gleich groá und z.B. fr Records geeignet:
+  Folgende Datentypen sind immer gleich gross und z.B. fuer Records geeignet:
   Byte       1 Byte  unsigned  0..255
   SmallWord  2 Byte  unsigned  0..65535
   DWord      4 Byte  unsigned  0..4294967295
@@ -86,40 +86,46 @@ type
 
   }
 
+{ DoDi: wenn ein einziger Compiler (VP) keine vorzeichenlosen Datentypen kennt,
+  dann muessen doch nicht alle anderen Compiler darauf verzichten?
+  Deshalb kann "word" (smallword) ueberall so verwendet werden, wie es der Compiler kennt!
+
+  todo: smallword -> unsigned16
+}
   {$ifdef virtualpascal }
     { Virtual Pascal, 32 Bit }
     integer8 =   shortint;
     integer16 =  smallint;
     integer32 =  longint;
     integer =    longint;
+    unsigned16 = ???;
     word =       longint; { = signed }
     dword =      longint; { = signed }
     longword=    longint;
     rtlword =    longint;     { 32 Bit bei VP }
     variant =    pointer; // Naja...
     Int64 =      longint; // Ohje...
-    Cardinal =   longint;
+    Cardinal =   longint; // Wirklich??? gibt's da nix ohne Vorzeichen???
   {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
-    { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-    Word =       Integer; // !!
+    unsigned16 = system.word;
+    { Unter FPC ist ein Integer standardmaessig 16 Bit gross }
     integer =    longint;
-    smallword =  system.word;
   {$endif}
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
-    smallword =  system.word;
-    Word =       Integer; // !!
-    DWord =      Longword;  { = unsigned 32 bit } 
+    unsigned16 = system.word;
+    DWord =      Longword;  { = unsigned 32 bit }
     variant =    pointer; // Naja...
   {$endif}
+    smallword =  unsigned16;  //todo: drop and use unsigned16 wherever required
 
 const
 {$IFDEF UnixFS }
@@ -207,6 +213,9 @@ begin
 
 {
   $Log$
+  Revision 1.72  2002/12/05 19:36:21  dodi
+  - removed ambiguous word type
+
   Revision 1.71  2002/11/14 20:10:38  cl
   - changed some fatal errors to exceptions to allow easier debugging
 

@@ -101,8 +101,9 @@ const maxs = 5;
 var  pntl  : pntslcta;
      sr    : tsearchrec;
      rc    : integer;
-     lnum,n,
-     handle : Integer;
+     n     : Tword;  //var parameter!
+     lnum,
+     handle : TxpHandle;  //Integer;
      p      : Integer;
      s      : string[20];
      slas   : array[1..maxs] of string;
@@ -1150,6 +1151,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/12/05 19:36:21  dodi
+  - removed ambiguous word type
+
   Revision 1.53  2002/07/25 20:43:53  ma
   - updated copyright notices
 
