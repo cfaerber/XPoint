@@ -103,8 +103,8 @@ procedure pophp;
 procedure freehelp;
 
 procedure setenable(mnu,nr:byte; flag:boolean);
-procedure setmenup(mnu:string; nr:byte; anew:string);
-procedure setmenupos(mnu:string; newpos:byte);
+procedure setmenup(const mnu:string; nr:byte; const anew:string);
+procedure setmenupos(const mnu:string; newpos:byte);
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
 procedure SetExtraktMenu;
@@ -133,7 +133,7 @@ procedure moment;
 procedure message(const txt:string);
 procedure rmessage(nr:xpWord);
 procedure WaitIt(txt:atext; p:proc; sec:xpWord);
-procedure WriteClipFile(fn:string);
+procedure WriteClipFile(const fn:string);
 procedure selcol;
 procedure file_box(var name:string; changedir:boolean);
 procedure XP_testbrk(var brk:boolean);
@@ -159,9 +159,9 @@ function  ioerror(i:integer; const otxt:atext):atext;
 procedure shell(const prog:string; space:xpWord; cls:shortint);  { externer Aufruf }
 
 { Execute an external program and add any files created in current dir to SL }
-function ShellNTrackNewFiles(prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
+function ShellNTrackNewFiles(const prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
 
-function  listfile(name,header:string; savescr,listmsg:boolean;
+function  listfile(const name,header:string; savescr,listmsg:boolean;
                    utf8:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(const fn:string);
@@ -222,7 +222,7 @@ procedure write_lastcall(const dat:String);
 
 procedure InitPrinter;
 procedure PrintPage;
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
@@ -232,7 +232,7 @@ procedure _era(const Filename: String);
 // Deletes a file only if exists, uses _era to report errors
 procedure SafeDeleteFile(const Filename: String);
 procedure SafeMakeBak(const Filename, NewExt: String);
-procedure _chdir(p:string);
+procedure _chdir(const p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
 procedure cm_w(const s:string);                     { Command-Mode-Ausgabe }
@@ -1149,7 +1149,7 @@ end;
 { &n :  Menuenummer             }
 { &p :  Position im Menuestring }
 
-procedure findnr(var mnu:string; nr:byte; var n,p:byte);
+procedure findnr(mnu:string; nr: Integer; var n,p:byte);
 begin
   n:=0;
   mnu := LowerCase(mnu);
@@ -1176,7 +1176,7 @@ end;
 
 { ACHTUNG!! es muss auf dem Heap genuf Platz fuer menu[n]^ belegt sein!! }
 
-procedure setmenup(mnu:string; nr:byte; anew:string);
+procedure setmenup(const mnu:string; nr:byte; const anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
@@ -1189,7 +1189,7 @@ end;
 
 { neue Menue-Position setzen }
 
-procedure setmenupos(mnu:string; newpos:byte);
+procedure setmenupos(const mnu:string; newpos:byte);
 var n,p : byte;
 begin
   findnr(mnu,1,n,p);
@@ -1676,7 +1676,7 @@ begin
   printlines:=0;
 end;
 
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 begin
   {$IFDEF Unix }
     s := IBMToISO(s);
@@ -1884,7 +1884,7 @@ begin
 end;
 
 { Execute an external program and add any files created in current dir to SL }
-function ShellNTrackNewFiles(prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
+function ShellNTrackNewFiles(const prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
 var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
 begin
   curdir:=GetCurrentDir;
@@ -1965,7 +1965,7 @@ end;
 { 0=normal, -1=Minus, 1=Plus, 2=links, 3=rechts, 4=P/B/^P/^B (ListKey),
   5="0", 6=PgUp, 7=PgDn }
 
-function listfile(name,header:string; savescr,listmsg:boolean;
+function listfile(const name,header:string; savescr,listmsg:boolean;
                   utf8:boolean;
                   cols:shortint):shortint; { Lister }
 var
@@ -2470,7 +2470,7 @@ begin
 end;
 
 
-procedure WriteClipFile(fn:string);
+procedure WriteClipFile(const fn:string);
 begin
   if FileExists(fn) then begin
     FileToClip(fn);
@@ -3150,16 +3150,11 @@ begin
   end;
 end;
 
-procedure _chdir(p:string);
+procedure _chdir(const p:string);
 begin
-  p:=trim(p);
   if p<>'' then 
-  begin
-    TrimLastChar(p, DirSepa);
-    chdir(p);
-    if ioresult<>0 then
+    if not SetCurrentDir(ExcludeTrailingBackslash(Trim(p))) then
       trfehler1(5,UpperCase(p),30);   { ungueltiges Verzeichnis: }
-    end;
 end;
 
 function testmem(size:longint; wait:boolean):boolean;
@@ -3379,6 +3374,10 @@ end;
 
 {
   $Log$
+  Revision 1.197  2003/10/06 16:01:32  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.196  2003/10/02 20:50:13  cl
   - TLister.OnDisplay now gets the full line to be displayed
   - tweaks and optimisations for xp1.ListDisplay

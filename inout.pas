@@ -811,7 +811,7 @@ const trennz  = [' ','&','('..'/',':'..'?','['..'`','{'..#127];
 VAR   p: integer;
       fnkn  : shortint;
       a       : taste;
-      inss    : string[80];
+      inss    : string;
       ste     : shortstring;
       mlm,mrm : boolean;
       r1      : taste;
@@ -1675,6 +1675,10 @@ end;
 
 {
   $Log$
+  Revision 1.108  2003/10/06 16:01:32  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.107  2003/08/28 01:14:14  mk
   - removed old types s20, s40, s60 and s80
 

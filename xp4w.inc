@@ -1720,7 +1720,7 @@ var dat    : longint;
    springt der Cursor ans Ende der Brettliste (t:=keyend) }
 
   procedure mw2;
-  var   s       : string[81]; 
+  var   s       : string;
         helprec : longint;
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag ÅberprÅfen }
@@ -1981,6 +1981,10 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.112  2003/10/06 16:01:34  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.111  2003/09/06 12:57:11  cl
   - BUGFIX: display line not updated when message status changed in lister
     See <8tEHCQ0y3TB@ferdy.wiesibox.de> "Snapshot vom 04.09."

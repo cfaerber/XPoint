@@ -920,7 +920,7 @@ var t     : text;
 
   function qwkbrett(brett:string):string;
   var t : text;
-      s : string[80];
+      s : string;
   begin
     brett:=UpperCase(mid(brett,length(boxpar^.magicbrett)+2));
     assign(t,bfile+extBl);
@@ -3128,6 +3128,10 @@ end;
 
 {
   $Log$
+  Revision 1.93  2003/10/06 16:01:34  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.92  2003/08/28 22:01:35  mk
   - fixed display of ressource 10800
 

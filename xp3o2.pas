@@ -35,7 +35,7 @@ procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; const box:string; netztyp:eNetz;
                     order_ende:boolean);
 procedure SetUngelesen;
-function  UserNetztyp(adr:string):eNetz;
+function  UserNetztyp(const adr:string):eNetz;
 
 
 implementation  { ---------------------------------------------------- }
@@ -195,7 +195,7 @@ begin
 end;
 
 
-function UserNetztyp(adr:string):eNetz;
+function UserNetztyp(const adr:string):eNetz;
 begin
   dbSeek(ubase,uiName,UpperCase(adr));
   if not dbFound then
@@ -206,6 +206,10 @@ end;
 
 {
   $Log$
+  Revision 1.59  2003/10/06 16:01:33  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.58  2003/02/07 16:11:01  cl
   - BUGFIX: BretterAnlegen was not called for NNTP
   - BUGFIX: correct handling of TAB character in Group lists

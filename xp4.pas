@@ -1226,16 +1226,15 @@ var t,lastt: taste;
     end;
 
     procedure SikMsg;
-    const sikmsg: String = 'lastmsg';
-    var f : file;
+    const
+      sikmsg: String = 'lastmsg';
     begin
       SikMsg := FileUpperCase(SikMsg);
-      assign(f,fn);
-      if existf(f) then begin
-        SafeDeleteFile(TempPath+sikmsg);
-        rename(f,TempPath+sikmsg);
-        if ioresult<>0 then;     { falls LASTMSG Read-Only war.. }
-        end;
+      if FileExists(SigMsg) then
+      begin
+        SafeDeleteFile(TempPath + sikmsg);
+        RenameFile(SikMsg, TempPath + sikmsg);
+      end;
     end;
 
     function empfbox:string;
@@ -1820,12 +1819,10 @@ var t,lastt: taste;
   end;
 
   function GetAutoFN: string;
-  var dir, name, ext, fn: string;
   begin
-    fn:= dbReadStr(auto,'dateiname');
-    fsplit(fn,dir,name,ext);
-    if dir='' then GetAutoFN:=SendPath+fn
-    else GetAutoFN:= fn;
+    Result := dbReadStr(auto,'dateiname');
+    if ExtractFileDir(Result) = '' then
+      Result :=SendPath + Result;
   end;
 
   procedure auto_read;
@@ -2875,6 +2872,10 @@ end;
 
 {
   $Log$
+  Revision 1.146  2003/10/06 16:01:34  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.145  2003/08/28 05:41:40  mk
   - create sData on correct place in brief_senden
 

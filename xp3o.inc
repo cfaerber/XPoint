@@ -58,7 +58,7 @@ end;
 {               handen, sonst aus DefaultBox                  }
 { Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
 
-function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
+function  PufferEinlesen(const puffer, pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:xpWord):boolean;
 const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
@@ -364,7 +364,7 @@ var x,y      : Integer;
   end;
 
   procedure TestControlMessage;
-  var box    : string[20];
+  var box    : string;
       fstype : byte;
   begin
     automessaging:=true;
@@ -453,7 +453,7 @@ var x,y      : Integer;
     automessaging:=false;
   end;
 
-  function logstr(s:string):string;
+  function logstr(const s:string):string;
   begin
     logstr:=LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5)+' '+s;
   end;
@@ -1379,13 +1379,11 @@ end;
 { Die Datei befindet sich normalerweise im XP- oder im SPOOL-     }
 { Verzeichnis.                                                    }
 
-procedure MoveToBad(fn:string);
+procedure MoveToBad(const fn:string);
 var
-    name : string;
-    ext  : string;
-    f    : file;
+  name : string;
+  ext  : string;
 begin
-  {fsplit(fn,dir,name,ext);}
   ext:= ExtractFileExt(fn);
   name:= ExtractFilename(fn);
   if (ext<>'') then
@@ -1397,15 +1395,16 @@ begin
     while FileExists(BadDir+name+ext) and (ext<>'.999') do
       ext:='.'+formi(ival(mid(ext,2))+1,3);
   SafeDeleteFile(BadDir+name+ext);
-  if not FileExists(BadDir+name+ext) then begin
-    assign(f,fn);
-    rename(f,BadDir+name+ext);
-    if ioresult<>0 then;
-    end;
+  if not FileExists(BadDir+name+ext) then
+    RenameFile(fn, BadDir+name+ext);
 end;
 
 {
   $Log$
+  Revision 1.109  2003/10/06 16:01:33  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.108  2003/10/06 11:06:17  mk
   - added some const paramters
 

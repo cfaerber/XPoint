@@ -186,7 +186,7 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
 
 
 function  iohandler:boolean;
-procedure error(txt:string);
+procedure error(const txt:string);
 procedure writeinf(dbp:DB);
 procedure writehd(dpb:DB);
 
@@ -199,31 +199,19 @@ uses
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
-  if lastioerror<>0 then begin
-(*
-    writeln('<DB> I/O-Fehler '+strs(lastioerror));
-    halt(1);
-*)
+  if lastioerror<>0 then
     raise EXPDatabase.Create(1,'<DB> I/O-Fehler '+strs(lastioerror));
-  end;
   iohandler:=true;
 end;
 
 
 { interner Fehler }
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
-(*
-  writeln;
-  writeln('<DB> interner Fehler: ',txt);
-*)
   Debug.DebugLog('datadef1','DB Error: '+txt,dlError);
   if dbInterrProc<>nil then
     proctype(dbInterrProc);
-(*
-  halt(1);
-*)
   raise EXPDatabase.Create(1,'<DB> interner Fehler: '+txt);
 end;
 
@@ -247,6 +235,10 @@ end;
 
 {
   $Log$
+  Revision 1.27  2003/10/06 16:01:32  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.26  2002/12/22 10:24:33  dodi
   - redesigned database initialization
 

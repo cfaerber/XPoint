@@ -271,10 +271,14 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.3  2003/10/06 16:01:36  mk
+// - some little code optimizations (mostly added const parameters and
+//   use of new file system RTL functions)
+//
 // Revision 1.2  2003/09/29 21:08:15  mk
 // - don't use strutils for fpc
 //
 // Revision 1.1  2003/09/29 20:47:18  cl
 // - moved charset handling/conversion code to xplib
 //
-end.
+

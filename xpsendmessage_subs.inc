@@ -539,7 +539,7 @@ begin
 end;
 
 procedure ShowFlags;
-var flags : string[80];
+var flags : string;
 
   function pmcc_anz:integer;
   var
@@ -1273,6 +1273,10 @@ end;
 
 {
   $Log$
+  Revision 1.38  2003/10/06 16:01:35  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.37  2003/09/21 16:10:30  mk
   - added try finally block in get_origbox
 

@@ -234,7 +234,7 @@ var   fb     : string;
     if invers then invtxt else normtxt;
   end;
 
-  procedure rahmen1(li,re,ob,un: Integer; const txt:txst);
+  procedure rahmen1(li,re,ob,un: Integer; const txt: String);
   var i : Integer;
   begin
     moff;
@@ -1152,6 +1152,10 @@ end;
 
 {
   $Log$
+  Revision 1.60  2003/10/06 16:01:32  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.59  2003/08/28 01:14:15  mk
   - removed old types s20, s40, s60 and s80
 

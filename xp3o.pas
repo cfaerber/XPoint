@@ -53,22 +53,22 @@ procedure bd_setzen(sig:boolean);  { Wartung/Datumsbezuege }
 procedure readpuffer;              { Xpoint/Import/Puffer }
 
 procedure BrettdatumSetzen(show:boolean);
-procedure RereadBrettdatum(_brett:string);
+procedure RereadBrettdatum(const _brett:string);
 procedure Bverknuepfen;
 procedure Uverknuepfen;
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
-procedure NeuerEmpfaenger(name:string);
-function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
+procedure NeuerEmpfaenger(const name:string);
+function  PufferEinlesen(const puffer, pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:xpWord):boolean;
                          
 procedure AppPuffer(const Box,fn:string);
-procedure empfang_bestaetigen(var box:string);
+procedure empfang_bestaetigen(const box:string);
 procedure CancelMessage;
 procedure ErsetzeMessage;
-function  testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
-function  ZC_puffer(var fn:string):boolean;
-procedure MoveToBad(fn:string);
+function  testpuffer(const fn:string; show:boolean; var fattaches:longint):longint;
+function  ZC_puffer(const fn:string):boolean;
+procedure MoveToBad(const fn:string);
 
 procedure wrtiming(s:string);
 procedure AlphaBrettindex;
@@ -112,7 +112,7 @@ uses
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
 var p        : scrptr;
     mt       : boolean;
-    pollbox  : string[BoxNameLen];
+    pollbox  : string;
     zg_flags : integer;
     size     : Integer;
     adresse  : string;
@@ -302,8 +302,8 @@ end;
 
 { Brett = dbLongStr(Int_nr) }
 
-procedure RereadBrettdatum(_brett:string);
-var _mBrett : string[5];
+procedure RereadBrettdatum(const _brett:string);
+var _mBrett : string;
     d1,d2   : longint;
     mi      : xpWord;
 begin
@@ -338,8 +338,8 @@ begin
 end;
 
 
-procedure RereadUngelesen(_brett:string);
-var _mBrett : string[5];
+procedure RereadUngelesen(const _brett:string);
+var _mBrett : string;  
     mi      : xpWord;
     flags   : byte;
     bug,mug : boolean;
@@ -944,7 +944,7 @@ end;
 { diese Prozedur verpasst der Nachricht in recno(mbase) }
 { eine neue Empfaenger-Zeile im Header                  }
 
-procedure NeuerEmpfaenger(name:string);
+procedure NeuerEmpfaenger(const name:string);
 var f1    : file;
     size  : longint;
     fn    : string;
@@ -999,7 +999,7 @@ end;
 
 { Empfangsbestaetigung zu aktueller Nachricht erzeugen }
 
-procedure empfang_bestaetigen(var box:string);
+procedure empfang_bestaetigen(const box:string);
 var tmp  : string;
     t,t2 : text;
     orgd : string;
@@ -1341,7 +1341,7 @@ end;
 
 { Puffer im ZConnect-Format? }
 
-function ZC_puffer(var fn:string):boolean;
+function ZC_puffer(const fn:string):boolean;
 var t : text;
     s : string;
     abs,emp,eda : boolean;
@@ -1371,7 +1371,7 @@ end;
 
 { liefert Anzahl der Nachrichten, oder -1 bei Fehler }
 
-function testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
+function testpuffer(const fn:string; show:boolean; var fattaches:longint):longint;
 var ok       : boolean;
     f        : file;
     MsgCount,
@@ -1426,7 +1426,7 @@ procedure wrtiming(s:string);
 var t1,t2 : text;
     s1    : string;
     ww    : boolean;
-    ts    : string[80];
+    ts    : string;
 begin
   s:=uppercase(s);
   ts:=trim(s)+'='+LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5);
@@ -1563,6 +1563,10 @@ end;
 
 {
   $Log$
+  Revision 1.106  2003/10/06 16:01:33  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
   Revision 1.105  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 
