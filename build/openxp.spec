@@ -1,21 +1,29 @@
-# Openxp.spec  first version created by Matthias Leonhardt
+# Openxp.spec  first version created by Matthias Leonhardt <ml@mleo.net>
 # 07.11.2000   some changes to get it running
 # 11.11.2000   some more changes to get more running
 # 15.10.2001   fix for symlinks-kill
-Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
+# 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
+Summary: openxp - The Open-Source OpenXP Project (from Crosspoint by Peter Mandrella)
 Name: openxp
-%define version 3.7.6
+%define version %version%
+%define release %release%
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -FuObjCOM -Funetcall
-%define helpdir /home/leo/openxp/contrib
-%define filelist /home/leo/openxptools/filelist.lst
+#%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
+#%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl. -Ci -Co -Cr
+# -CX for Releases only
+#%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fl.
+# for snapshots
+%define ppcopts -gl -O0 -FU. -FuObjCOM -Funetcall -Fl.
+#%define helpdir /home/boettger/openxp/openxp/contrib
+##%define filelist /home/boettger/openxp/openxptools/filelist.lst
+%define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 Version: %{version}
-Release: 1
+Release: %{release}
 Group: Applications/Mail
-Copyright: (C) 2000 by OpenXP-Team
-Source: /usr/src/packages/SOURCES/openxp.tar.gz
+Copyright: (C) 2000 by OpenXP-Team under GPL
+Source: /usr/src/packages/SOURCES/openxp-%{version}-%{release}.tar.gz
 BuildRoot: /tmp/openxp-root
 # Following are optional fields
 URL: http://www.openxp.de
@@ -26,7 +34,7 @@ BuildArchitectures: i386
 Requires: ncurses
 #Obsoletes:
 %description
-OpenXP - the mail- and newsreader for fido and other networks
+OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
 
 %prep
 
@@ -39,7 +47,8 @@ OpenXP - the mail- and newsreader for fido and other networks
 #make openxp
 #patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
 #patch < /home/leo/openxptools/xp4.pas.diff
-ppc386 %{ppcopts} openxp
+#ppc386 %{ppcopts} openxp
+ppc386 -B %{ppcopts} openxp
 ppc386 %{ppcopts} rc
 ppc386 %{ppcopts} ihs
 ./rc openxp-d.rq
@@ -59,20 +68,39 @@ mkdir -p $RPM_BUILD_ROOT%{Prefix}
 mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
+mkdir $RPM_BUILD_ROOT%{Prefix}/examples
+
+mkdir -p %{Prefix}
+mkdir -p %{Prefix}/bin
+mkdir -p %{Prefix}/lib
+mkdir -p %{Prefix}/doc
+mkdir -p %{Prefix}/examples
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
+cp openxp %{Prefix}/bin
+#cp rc $RPM_BUILD_ROOT%{Prefix}/bin
+#cp ihs $RPM_BUILD_ROOT%{Prefix}/bin
 
 # copy resources
 cp openxp-d.res openxp-e.res $RPM_BUILD_ROOT%{Prefix}/lib
+cp openxp-d.res openxp-e.res %{Prefix}/lib
 
 # copy Helpfiles
-pushd .
-cd %{helpdir}
+#pushd .
+#cd %{helpdir}
+rm -rf doc/CVS
 cp doc/* $RPM_BUILD_ROOT%{Prefix}/doc
-popd
-cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
+cp doc/* %{Prefix}/doc
+#popd
+#cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz $RPM_BUILD_ROOT%{Prefix}/doc
+cp file_id.diz %{Prefix}/doc
+
+# copy example files
+rm -rf beispiel/CVS
+cp beispiel/* $RPM_BUILD_ROOT%{Prefix}/examples
+cp beispiel/* %{Prefix}/examples
 
 pushd .
 cd $RPM_BUILD_ROOT
@@ -81,14 +109,20 @@ popd
 
 %pre
 # echo pre >> /tmp/rpm.log
-%define Prefix /usr/local/lib/openxp
+#%define Prefix /usr/local/lib/openxp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
-/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+#/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
+#/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
+#/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
 # echo preend >> /tmp/rpm.log
 
 %post
 # echo post >> /tmp/rpm.log
+/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
+
 
 %preun
 # echo preun >> /tmp/rpm.log
@@ -111,6 +145,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{filelist}
 
 %changelog
+* Thu Oct 9 2003 Christian Boettger <cb@openxp.de>
+- changes for new release numbering system
+
 * Sun Jan 6 2002 Matthias Leonhardt <i7lema@rz.uni-jena.de>
 - compilerupdate
 - range-check-fixes
