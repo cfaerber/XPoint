@@ -1435,8 +1435,10 @@ procedure InitWinXPUnit;
 {$IFNDEF NCRT }
 var
   i: byte;
+{$IFDEF Win32Gui }
   hWindow: HWnd;
   aMessage: TMsg;
+{$ENDIF }
 begin
   for i:=1 to maxpull do
     pullw[i].free:=true;
@@ -1479,6 +1481,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2002/01/12 23:05:13  mk
+  - fixed DOS32 compile
+
   Revision 1.78  2002/01/12 21:57:13  mk
   - fixed FPC compilation
 
