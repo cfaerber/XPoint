@@ -39,7 +39,7 @@ function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
 
 implementation  { ---------------------------------------------------- }
 
-const  ConfigFile = 'UUCICO.CFG';
+const  ConfigFile = 'uucico.cfg';
        ResultFIle = 'UUCICOR.TMP';
 
 
@@ -47,7 +47,7 @@ function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 var t        : text;
-    id       : string[20];
+    id       : string;
     s0,s     : string;
     p        : byte;
 begin
@@ -58,7 +58,7 @@ begin
   with boxpar^,comn[boxpar^.bport] do begin
     writeln(t,'Language=',ParLanguage);
     writeln(t,'Debug=',iifc(ParDebug,'Y','N'));
-    writeln(t,'DebugWindow=1 80 4 ',screenlines-2);
+    writeln(t,'DebugWindow=1 ',screenwidth,' 4 ',screenlines-2);
     writeln(t,'Colors=$',hex(col.colmailer,2),' $',hex(col.colmailerhigh,2),
               ' $',hex(col.colmailerhi2,2));
     writeln(t,'Server=',boxname);
@@ -91,6 +91,9 @@ begin
     close(t);
     end;
   if exist(ResultFile) then _era(ResultFile);
+  {$ifdef Linux}
+  {$hint Muss noch angepasst werden }
+  {$endif}
   shell('UUCICO.EXE '+ConfigFile,500,4);            { --- uucico.exe }
   if not exist(ResultFile) then
     uucico:=uu_parerr
@@ -120,6 +123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/12 13:15:02  hd
+  - Ansistring
+
   Revision 1.9  2000/07/04 12:04:32  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

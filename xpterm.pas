@@ -73,7 +73,7 @@ var termlines    : byte;
     orgfossil    : boolean;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
-    ansiseq      : string[80];
+    ansiseq      : string;
     ansilen      : byte;          { length(ansiseq) - fÅr schnellen Zugriff }
     ansifg,ansibg: byte;          { Farbattribute }
     ansihigh     : byte;          { add fÅr helle Farben }
@@ -263,7 +263,7 @@ begin
     ansichar:=false
   else if c>' ' then
     if ((c>='A') and (c<='Z')) or ((c>='a') and (c<='z')) then begin
-      ansiseq[0]:=chr(ansilen);
+      SetLength(ansiseq, ansilen);
       delete(ansiseq,1,1);        { '[' lîchen }
       if ansiseq<>'' then begin
         qmark:=(ansiseq[1]='?');
@@ -602,11 +602,11 @@ end;
 
 function initcom:boolean;   { !! ISDN! }
 var d  : DB;
-    fn : string[8];
+    fn : string;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(DefaultBox));
-  dbRead(d,'dateiname',fn);
+  fn:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,fn,boxpar);
   InitCom := true; { MK 12/99 wir gehen davon aus, das die Initialisierung ok lÑuft }
@@ -778,7 +778,7 @@ end;
 
 procedure Options;
 var stat : boolean;
-    init : string[40];
+    init : string;
     mcom : byte;        { ** }
     mbaud: longint;     { ** }
 begin
@@ -962,7 +962,7 @@ function RunScript(test:boolean; scriptfile:string;
 
 const MaxLines  = 500;
       Maxlabels = 100;
-      MaxlabelLen = 20;
+{     MaxlabelLen = 20;}
       Shortstr  = 8;
 
       pEndOK    = 0;      { RÅckgabewerte von RunScript      }
@@ -995,12 +995,12 @@ type  stringp  = ^string;
                    onflag    : byte;              { 0=nix, 1=ON, 2=Timeout }
                                                   { 3=Online, 4=Relogin }
                    onstrp    : stringp;           { .. String-Parameter }
-                   onstr     : string[Shortstr];
+                   onstr     : string;
                    command   : shortint;          { Befehlsnummer       }
                    numpar    : longint;           { .. num. Parameter   }
                    cr,lf     : boolean;
                    strparp   : stringp;           { .. String-Parameter }
-                   strpar    : string[Shortstr];
+                   strpar    : string;
                  end;
       ScrArr   = array[0..MaxLines] of scrrec;
       ScrArrP  = ^ScrArr;
@@ -1013,7 +1013,7 @@ var   script   : ScrArrP;
 
 function LoadScript:boolean;
 type labela = array[1..maxlabels] of record
-                                       name : string[MaxLabelLen];
+                                       name : string;
                                        line : integer;
                                      end;
      lap    = ^labela;
@@ -1080,7 +1080,7 @@ var t      : text;
   end;
 
   procedure GetString;
-  var s : string[2];
+  var s : string;
   begin
     GetWord;
     s:='*';
@@ -1163,7 +1163,7 @@ var t      : text;
   end;
 
   procedure AddStrComm(cmd:integer);
-  var ss : string[20];
+  var ss : string;
   begin
     GetString;
     if ok then
@@ -1409,7 +1409,7 @@ var ip   : integer;
   end;
 
   function GetPar:string;
-  var crlf : string[2];
+  var crlf : string;
   begin
     with script^[ip],boxpar^ do begin
       if lf then
@@ -1610,6 +1610,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/12 13:15:02  hd
+  - Ansistring
+
   Revision 1.16  2000/07/11 21:39:23  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

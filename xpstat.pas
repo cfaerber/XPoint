@@ -293,7 +293,7 @@ begin
   while not (ende or brk) do begin
     if marked then dbGo(bbase,bmarked^[n]);
     if art=1 then begin
-      dbReadN(bbase,bb_brettname,brett);
+      brett:= dbReadNStr(bbase,bb_brettname);
       if odd(dbReadInt(bbase,'flags')) then   { Halteanzahl }
         count(brett,0,-dbReadInt(bbase,'haltezeit'))
       else
@@ -315,7 +315,7 @@ begin
           dbReadN(mbase,iif(erstdat,mb_origdatum,mb_empfdatum),orgdat);
         if not smdl(orgdat,vonl) and not smdl(bisl,orgdat) then
           if art=0 then begin
-            dbReadN(mbase,mb_absender,absender);
+            absender:= dbReadNStr(mbase,mb_absender);
             repeat
               p:=cpos('@',absender);
               if p>0 then begin
@@ -1211,7 +1211,7 @@ begin
   settextbuf(t,buf);
   while not dbEOF(d) do begin
     if countbox then begin
-      dbRead(d,'boxname',box);
+      box:= dbReadStr(d,'boxname');
       reset(t); found:=false;
       while not eof(t) and not found do begin
         readln(t,s);
@@ -1251,6 +1251,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/12 13:15:02  hd
+  - Ansistring
+
   Revision 1.19  2000/07/06 17:33:25  hd
   - ^string entfernt
 
