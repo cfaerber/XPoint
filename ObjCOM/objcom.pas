@@ -4,7 +4,7 @@ unit objcom;
 **
 ** Serial communication routines for DOS, OS/2, Linux and Win9x/NT.
 ** Fossil communication routines for DOS.
-** TCP/IP communication routines for Win9x/NT.
+** TCP/IP communication routines for Win9x/NT and Linux.
 **
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
@@ -15,18 +15,12 @@ unit objcom;
 
 {$I ocdefine.inc}
 
-uses Ringbuff,Classes
-     {$IFDEF DOS32},Ports{$ENDIF}
+uses Ringbuff,Classes,OSDepend
+     {$IFDEF DOS32},Ports,DOS{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux}
-     {$IFDEF fpc}
-     ,Linux
-     ,sockets
-     {$ENDIF}
-     {$IFDEF Kylix}
-     ,libc
-     ,KernelIoctl
-     {$ENDIF}
+       {$IFDEF fpc},Linux,sockets{$ENDIF}
+       {$IFDEF Kylix},libc,KernelIoctl{$ENDIF}
      {$ENDIF}
      {$IFDEF OS2},OCThread
        {$IFDEF VIRTUALPASCAL},OS2Base{$ELSE},OS2Def,DosCalls{$ENDIF}
@@ -387,7 +381,7 @@ begin
   SendBlock(Temp[1], Length(Temp), Written);
   if (ExpectEcho) and (Written>0) then begin
     i:=0; while(CharCount<Written)and(i<CommandTimeout)do
-      begin SleepTime(100); inc(i,100); Str(CharCount,Echo); DebugLog('ObjCOM','Waiting '+Echo,3)end;
+      begin SysDelay(100); inc(i,100); Str(CharCount,Echo); DebugLog('ObjCOM','Waiting '+Echo,3)end;
     if CharCount<Written then Written:=CharCount;
     SetLength(Echo,Written); ReadBlock(Echo[1], Written, ReadBytes); SetLength(Echo,ReadBytes); ErrorStr:=Echo;
     SendString:=(ReadBytes=Length(Temp))and(Echo=Temp);
@@ -480,6 +474,9 @@ end.
 
 {
   $Log$
+  Revision 1.27  2001/10/01 19:45:07  ma
+  - compiles again (DOS32)
+
   Revision 1.26  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

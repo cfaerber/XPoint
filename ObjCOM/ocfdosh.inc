@@ -3,7 +3,7 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type TFossilStream = Object(TCommStream)
+type TFossilStream = Class(TCommStream)
         constructor Create;
         destructor Destroy; override;
 
@@ -38,6 +38,9 @@ type TFossilStream = Object(TCommStream)
 
 {
   $Log$
+  Revision 1.5  2001/10/01 19:45:07  ma
+  - compiles again (DOS32)
+
   Revision 1.4  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

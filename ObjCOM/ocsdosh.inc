@@ -4,14 +4,14 @@
 *)
 
 type
- tSerialObj = Object(TCommStream);
+ tSerialStream = Class(TCommStream)
 {        constructor Init;}
         destructor Destroy; override;
 
         function  Open(Comport: Byte; Baudrate: Longint; Databits: Byte;
                        Parity: Char; Stopbits: Byte): Boolean; override; {Uses array ComportResources - see below}
         function HOpen(iIOBase,iIRQ: Integer; Baudrate: Longint; Databits: Byte;
-                       Parity: Char; Stopbits: Byte): Boolean; override;
+                       Parity: Char; Stopbits: Byte): Boolean;
 {        function  OpenKeep(Comport: Byte): Boolean; override;}
         function  GetChar: Char; override;
         function  CharAvail: Boolean; override;
@@ -35,7 +35,8 @@ type
 {        procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); override;}
         procedure PauseCom(CloseCom: Boolean); override;
         procedure ResumeCom(OpenCom: Boolean); override;
-     private
+
+      {should be private but needed by helper functions}
         Active       : Boolean;
         IOBase       : Word;
         IRQ          : Byte;
@@ -46,8 +47,7 @@ type
         T_Head,T_Tail: Word;        {Head: Next byte to transmit, Tail: Last byte scheduled to tm}
         OLD_MCR      : Byte;        {Old Modem control register}
         {$IFNDEF FPC}Org_Vector: Pointer;{$ELSE}Org_Vector: TSegInfo;{$ENDIF}   {Original interrupt vector}
-        Next         : tpSerialObj; {linear list: pointer to next comm object}
-     end; { object TSerialObj }
+     end; { object TSerialStream }
 
   tComportResource= record IOBase,IRQ: Integer end;  
 
@@ -58,6 +58,9 @@ const
 
 {
   $Log$
+  Revision 1.5  2001/10/01 19:45:07  ma
+  - compiles again (DOS32)
+
   Revision 1.4  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 
