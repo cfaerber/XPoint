@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
+  typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
 {$IFDEF CAPI }
   capi,
 {$ENDIF CAPI }
@@ -481,7 +481,7 @@ begin
   s2:=trim(s);
   if LeftStr(s2,1)='*' then delfirst(s2);
   if cpos(' ',s2)>0 then s2:=copy(s2,1,cpos(' ',s)-1);
-  if (s2='') or (FSearch(s2,GetEnv('PATH'))<>'') then
+  if (s2='') or (FileSearch(s2,GetEnv('PATH'))<>'') then
     testexist:=true
   else begin
     rfehler(206);   { 'Programm nicht erreichbar (Extension nicht vergessen!)' }
@@ -879,7 +879,9 @@ const
 {$endif} { Unix }
 var brk  : boolean;
     x,y  : byte;
+{$ifndef Unix }
     pstr : string;
+{$endif}
     nr   : integer; { Number of Com-Port }
 begin
   { Schnittstelle abfragen }
@@ -945,7 +947,9 @@ begin
     readmask(brk);
     if not brk and mmodified then
     begin
-      Cport:=hexval(pstr);
+{$ifndef Unix}
+      Cport:=hexval(pstr)
+{$endif}
       { if fossil then IgCTS := not foscts; ??? }
       GlobalModified;
     end;
@@ -1002,7 +1006,7 @@ function formpath(var s:string):boolean;
 var
     res : integer;
 begin
-  s:=FileUpperCase(FExpand(s));
+  s:=FileUpperCase(ExpandFileName(s));
   if (s<>'') and (RightStr(s,1)<>DirSepa) then
     s:=s+DirSepa;
   if not validfilename(s+'1$2$3.xxx') then
@@ -1414,8 +1418,8 @@ end;
 function testpgpexe(var s:string):boolean;
 begin
   testpgpexe:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
-  if (s=_jn_[1]) and (fsearch('PGP.EXE',getenv('PGPPATH'))='') and
-                     (fsearch('PGP.EXE',getenv('PATH'))='') then begin
+  if (s=_jn_[1]) and (filesearch('PGP.EXE',getenv('PGPPATH'))='') and
+                     (filesearch('PGP.EXE',getenv('PATH'))='') then begin
     rfehler(217);    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
     s:=_jn_[2];
     end;
@@ -1513,6 +1517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/11/16 20:41:47  hd
+  - DOS Unit entfernt
+
   Revision 1.64  2000/11/15 23:00:40  mk
   - updated for sysutils and removed dos a little bit
 
