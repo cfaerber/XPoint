@@ -464,6 +464,8 @@ var lf : string[12];
     sr : searchrec;
     t  : text;
     s  : string[40];
+    ca : char;     
+      
   procedure WrLf;
   begin
     rewrite(t);
@@ -478,9 +480,17 @@ begin
   reset(t);
   if ioresult<>0 then begin                               {Wenn XP.RES nicht existiert}
     if doserror<>0 then interr('.RES file not found');
-    if parlanguage='' then lf:=sr.name                    {/L Parameter beruecksichtigen}
-    else lf:='XP-'+ParLanguage+'.RES';                    
-    WrLf;                                                 {und XP.RES erstellen }
+    if parlanguage='' then                                {/L Parameter beruecksichtigen}
+    begin    
+      parlanguage:=sr.name[4];
+      write ('<D>eutsch / <E>nglish ?  '+parlanguage);
+      repeat 
+        ca:=upcase(readkey);                              { Und ansonsten Auswahl-Bringen }
+      until (ca='D') or (ca='E') or (ca=keycr); 
+      if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }     
+      end;
+    lf:='XP-'+parlanguage+'.RES';
+    WrLf;                                                {und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
@@ -494,12 +504,15 @@ begin
         end;
       end;
     end;
+(*
   if doserror=0 then begin
     findnext(sr);
-    languageopt:=(doserror=0);
-  end
+    languageopt:=doserror=0);                 { Sprachaenderung aus Menue ausgeschalten }
+  end                                         { siehe auch xp4o2.pas und xp4.inc }
   else
     languageopt:=false;
+*)
+
   {$IFDEF virtualpascal}
   FindClose(sr);
   {$ENDIF}
@@ -1088,6 +1101,10 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15  2000/03/03 21:12:49  jg
+  - Config-Optionen-Sprache ausgeklammert
+  - Sprachabfrage bei allererstem Start eingebaut
+
   Revision 1.14  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

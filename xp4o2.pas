@@ -40,7 +40,7 @@ function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
 function  BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
 
-procedure SetLanguage;
+(* procedure SetLanguage; *)
 
 
 implementation  { ---------------------------------------------------- }
@@ -768,13 +768,30 @@ begin
     end;
 end;
 
+                                         
+(*
+{
+Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug: 
 
+wenn XP mit Englischen Resourcen geladen wurde 
+(ob aus xp.res oder per Parameter /l:e ist egal)
+gibt es bei der ausfuehrung von "Freemain" einen RTE 204. 
+ist kein EMS vorhanden gibt es unter Win98 einen GPF.
+Beim Start mit deutschen Resourcen funktioniert Die Routine 
+einwandfrei (auch mehrmaliger Wechsel zwischen D und E...)  
+ob die Deutschen Resourcen XP-E.RES oder XP.D.RES heissen ist egal.
+Der Wechsel zwischen zwei deutschen Resourcen klappt einwandfrei.
+-> Filegroessen/Speicher Problem oder Fehler in XP-E.RES ?  
+
+Siehe auch xp2.pas und xp4.inc
+}
+                                                                 
 procedure SetLanguage;
 const maxs = 20;
 var s  : string;
     p  : byte;
     t  : text;
-    sr : searchrec;
+    sr : searchrec; 
     s0 : string[40];
     sn : integer;
     sa : array[1..maxs] of string[12];
@@ -864,11 +881,15 @@ begin
       menurestart:=true;
     end;
 end;
-
+*)
 
 end.
 {
   $Log$
+  Revision 1.6  2000/03/03 21:12:49  jg
+  - Config-Optionen-Sprache ausgeklammert
+  - Sprachabfrage bei allererstem Start eingebaut
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
