@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.8.7pl5';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.8.7pl6';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -191,6 +191,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.17  2002/09/11 01:36:31  mk
+  - version 3.8.7pl6
+
   Revision 1.63.2.16  2002/08/25 23:58:32  cl
   - BUGFIX: <3D6386F1.8EBE067C@expires-2002-08-31.arcornews.de>
             UUCP.Modul sendet keine Newspakete?
