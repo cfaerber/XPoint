@@ -29,7 +29,33 @@ interface
 
 uses   sysutils,xp0,typeform,datadef,database,crc;
 
+{$IFDEF ANALYSE}
+type
+  eNetz = (
+    nt_Netcall,   //= 0;         { Puffer-Formate       }
+    nt_1,
+    nt_ZConnect,  //= 2;         { XRef: XP3, XP6       }
+    nt_Magic,     //= 3;
+    nt_Pronet,    //= 4;         { ProNET / TopNET      }
+    nt_Quick,     //= 10;        { QuickMail            }
+    nt_GS,        //= 11;        { GS-Mailbox           }
+    nt_Maus,      //= 20;
+    nt_Fido,      //= 30;
+    nt_QWK,       //= 31;
+
+    nt_UUCP,      //= 40;
+    nt_Client,    //= 41;
+    nt_NNTP,      //= 50;
+    nt_POP3,      //= 51;
+    nt_IMAP,      //= 52;
+    nt_m1,        //= -1
+    nt_90,        //= 90
+    nt_99,        //= 99;
+    nt_None       //=$FF/-1
+  );
+{$ELSE}
 const  nt_Netcall   = 0;         { Puffer-Formate       }
+        nt_1        = 1;
        nt_ZConnect  = 2;         { XRef: XP3, XP6       }
        nt_Magic     = 3;
        nt_Pronet    = 4;         { ProNET / TopNET      }
@@ -44,7 +70,42 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_NNTP      = 50;
        nt_POP3      = 51;
        nt_IMAP      = 52;
+        nt_90       = 90;
+        nt_99       = 99;
+        nt_None     = $FF;  //or -1
+type
+  eNetz = 0..99;
+{$ENDIF}
 
+type
+  eMsgFlags = (
+    mf_RueckVerkettet,
+    mf_Attachment,
+    mf_pm_reply,
+    mf_wab, //?
+    mf_Reply, //mf_1000 - Antwort auf eigene Msg
+    mf_ISO1,  //standard charset?
+    mf_PGPsig,
+    mf_Kom  //if komlen>0 then //inc(mnt,$8000);
+  );
+  sMsgFlags = set of eMsgFlags;
+
+  RNetzMsg = packed record
+  case integer of
+  0:  (i: LongInt);
+  1:  (netztyp:     eNetz;
+      flags:        sMsgFlags;
+      CPanz, CPpos: byte; //crosspostings
+      );
+  end;
+
+type
+  eDomainType = (
+  //DoDi: some dummies, for now
+    dt0, dt1, dt2, dt3, dt4, dt5, dt6, dt7, dt8
+  );
+
+const
        midNone      = 0;
        midMausNet   = 1;
        midNetcall   = 2;
@@ -55,13 +116,14 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
 
        netsRFC = [nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
        netsFTN = [nt_Fido,nt_QWK];
-       
+
        netsSupportingPGP = [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_client,nt_NNTP,nt_POP3,nt_IMAP];
 
-type   TAddressType = (
-         addrDomain,	// user@domain.tld
-	 addrFido );    // user@1:2/3.4
-
+type
+  TAddressType = (
+    addrDomain,	// user@domain.tld
+	  addrFido    // user@1:2/3.4
+   );
 type   TNetClass = (
          ncNone,
          ncZConnect,
@@ -77,90 +139,94 @@ type   TAttachMode = (
          attachFTN,         // one text part followed by several binary parts (FTN FileAttach)
          attachMIME );      // random combination of parts (MIME)
 
-var ntused : array[0..99] of integer;
+var ntused : array[eNetz] of integer; //[eNetz]?
 
-function ntZConnect(nt:byte):boolean;         { Ablagentyp ermitteln  }
-function ntConv(nt:byte):boolean;             { konvertiertes Format  }
+function ntZConnect(nt:eNetz):boolean;         { Ablagentyp ermitteln  }
+function ntConv(nt:eNetz):boolean;             { konvertiertes Format  }
 function ntZCablage(ablg:byte):boolean;       { ZConnect-Ablage       }
-function ntName(nt:byte):string;              { s. auch XP4O.MsgInfo() }
-function mbNetztyp:byte;
+function ntName(nt:eNetz):string;              { s. auch XP4O.MsgInfo() }
+function mbNetztyp:eNetz;
 function ntZonly:boolean;                     { nur Z-Netz/alt }
-function ntXPctl(nt:byte):boolean;            { XP-Control-Messages }
-function ntClass(nt:byte): TNetClass;         { Netz-Uebertyp }
+function ntXPctl(nt:eNetz):boolean;            { XP-Control-Messages }
+function ntClass(nt:eNetz):TNetClass;         { Netz-Uebertyp }
 
-function ntBinary(nt:byte):boolean;           { BinÑrmails erlaubt    }
+function ntBinary(nt:eNetz):boolean;           { BinÑrmails erlaubt    }
 function ntBinaryBox(box:string):boolean;     { dito                  }
-function ntMIME(nt:byte):boolean;             { MIME mˆglich          }
-function ntBinEncode(nt:byte):boolean;        { BinÑrmails werden uucodiert }
-function ntMessageID(nt:byte):byte;           { Message-ID-Format     }
-function ntDomainReply(nt:byte):boolean;      { Replys auf eig. Nachr. erkennbar }
-function ntZDatum(nt:byte):boolean;           { langes Datumsformat   }
-function ntDomainType(nt:byte):byte;          { Domain fÅr Absender + MsgID }
-function ntAutoZer(nt:byte):boolean;          { .ZER-Pflicht          }
+function ntMIME(nt:eNetz):boolean;             { MIME mˆglich          }
+function ntBinEncode(nt:eNetz):boolean;        { BinÑrmails werden uucodiert }
+function ntMessageID(nt:eNetz):byte;           { Message-ID-Format     }
+function ntDomainReply(nt:eNetz):boolean;      { Replys auf eig. Nachr. erkennbar }
+function ntZDatum(nt:eNetz):boolean;           { langes Datumsformat   }
+function ntDomainType(nt:eNetz):byte;          { Domain fÅr Absender + MsgID }
+function ntAutoZer(nt:eNetz):boolean;          { .ZER-Pflicht          }
 function ntAutoDomain(box:string; ownbox:boolean):string;   { .Domain }
 function ntServerDomain(box:string):string;   { Domain des Servers    }
-function ntDefaultDomain(nt:byte):string;     { Domain fÅr neue Boxen }
-function ntGrossUser(nt:byte):boolean;        { User-Gro·schreibung   }
-function ntGrossBrett(nt:byte):boolean;       { Bretter-Gro·schreibung }
-function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
-function ntKomkette(nt:byte):boolean;         { Kommentar-Verkettung  }
-function ntRfcCompatibleID(nt:byte):boolean;  { RFC-Msgid             }
-function ntMIDCompatible(n1,n2:byte):boolean; { austauschbare MsgIDs  }
-function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
-function ntAdrCompatible(n1,n2:byte):boolean; { umleitbare PM-Adresse }
-function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
-function ntNameSpace(nt:byte):boolean;        { Leerzeichen in Usernamen }
-function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
+function ntDefaultDomain(nt:eNetz):string;     { Domain fuer neue Boxen }
+function ntGrossUser(nt:eNetz):boolean;        { User-Gro·schreibung   }
+function ntGrossBrett(nt:eNetz):boolean;       { Bretter-Gro·schreibung }
+function ntKleinBrett(nt:eNetz):boolean;       { Bretter-Kleinschreibung }
+function ntKomkette(nt:eNetz):boolean;         { Kommentar-Verkettung  }
+function ntRfcCompatibleID(nt:eNetz):boolean;  { RFC-Msgid             }
+function ntMIDCompatible(n1,n2:eNetz):boolean; { austauschbare MsgIDs  }
+function ntOrigID(nt:eNetz):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
+function ntAdrCompatible(n1,n2:eNetz):boolean; { umleitbare PM-Adresse }
+function ntMsg0(nt:eNetz):boolean;             { Nachricht darf leer sein }
+function ntNameSpace(nt:eNetz):boolean;        { Leerzeichen in Usernamen }
+function ntBrettEmpf(nt:eNetz):boolean;        { Fido-To }
 function ntBrettEmpfUsed:boolean;             { Netztypen mit Fido-To vorh. }
-function ntEditbrettEmpf(nt:byte):boolean;    { dito, aber editierbar }
-function ntRealname(nt:byte):boolean;         { Realnames mîglich }
-function ntRealUmlaut(nt:byte):boolean;       { Umlaute im Realname }
-function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
-function ntCancel(nt:byte):boolean;           { Cancel-Messages mîglich }
-function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM mîglich }
-function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt mîglich }
-function ntBetreffLen(nt:byte): Integer;      { max. BetrefflÑnge }
-function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
-function ntFollowup(nt:byte):boolean;         { Followup-To mîglich }
-function ntCrossAM(nt:byte):boolean;          { AM-Crosspostings mîglich }
-function ntCrossPM(nt:byte):boolean;          { PM-Crosspostings mîglich }
-function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
-function ntBoxnameLen(nt:byte):byte;          { max. LÑnge von Servernamen }
-function ntPMTeleData(nt:byte):boolean;       { PMs: Telefon + Postanschrift }
-function ntAMTeleData(nt:byte):boolean;       { AMs: Telefon + Postanschrift }
-function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
-function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
-function ntIBM(nt:byte):boolean;              { IBM-Zeichensatz verwenden }
-function ntPGP(nt:byte):boolean;              { PGP-Keys im Headaer }
-function ntBrettebene(nt:byte):boolean;       { Netztyp mit Brettebene }
-function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
-function ntFilename(nt:byte):boolean;         { Dateiname im Header }
-function ntBoxNetztyp(box:string):byte;       { Netztyp der Box       }
-function ntRelogin(nt:byte):byte;             { Relogin-Netcall mîglich }
-function ntOnline(nt:byte):boolean;           { Online-Anruf mîglich  }
-function ntNetcall(nt:byte):boolean;          { Netcall mîglich }
-function ntOnePW(nt:byte):boolean;            { Point-PW = Online-PW  }
-function ntDownarcPath(nt:byte):boolean;      { Entpacker mu· im Pfad liegen }
-function ntExtProt(nt:byte):boolean;          { externes ö.-Protokoll }
-function ntGrossPW(nt:byte):boolean;          { Pa·wort mu· gro·geschr. werden }
+function ntEditbrettEmpf(nt:eNetz):boolean;    { dito, aber editierbar }
+function ntRealname(nt:eNetz):boolean;         { Realnames mîglich }
+function ntRealUmlaut(nt:eNetz):boolean;       { Umlaute im Realname }
+function ntHeaderUmlaut(nt:eNetz):boolean;     { Umlaute in Keywords etc. }
+function ntCancel(nt:eNetz):boolean;           { Cancel-Messages mîglich }
+function ntCancelPM(nt:eNetz):boolean;         { Cancel auch bei PM mîglich }
+function ntErsetzen(nt:eNetz):boolean;         { Supersedes/Ersetzt mîglich }
+function ntBetreffLen(nt:eNetz):Integer;      { max. BetrefflÑnge }
+function ntPmReply(nt:eNetz):boolean;          { attrPmReply erzeugen }
+function ntFollowup(nt:eNetz):boolean;         { Followup-To mîglich }
+function ntCrossAM(nt:eNetz):boolean;          { AM-Crosspostings mîglich }
+function ntCrossPM(nt:eNetz):boolean;          { PM-Crosspostings mîglich }
+function ntOrigWeiter(nt:eNetz):boolean;       { Weiterleiten mit WAB  }
+function ntBoxnameLen(nt:eNetz):byte;          { max. LÑnge von Servernamen }
+function ntPMTeleData(nt:eNetz):boolean;       { PMs: Telefon + Postanschrift }
+function ntAMTeleData(nt:eNetz):boolean;       { AMs: Telefon + Postanschrift }
+function ntSec(nt:eNetz):boolean;              { sekundengenaue Uhrzeit }
+function ntOptIso(nt:eNetz):boolean;           { wahlweise ISO-Zeichensatz }
+function ntIBM(nt:eNetz):boolean;              { IBM-Zeichensatz verwenden }
+function ntPGP(nt:eNetz):boolean;              { PGP-Keys im Headaer }
+function ntBrettebene(nt:eNetz):boolean;       { Netztyp mit Brettebene }
+function ntBCC(nt:eNetz):boolean;              { BCC-Option vorhanden }
+function ntFilename(nt:eNetz):boolean;         { Dateiname im Header }
+function ntBoxNetztyp(box:string):eNetz;       { Netztyp der Box       }
+function ntRelogin(nt:eNetz):byte;             { Relogin-Netcall mîglich }
+function ntOnline(nt:eNetz):boolean;           { Online-Anruf mîglich  }
+function ntNetcall(nt:eNetz):boolean;          { Netcall mîglich }
+function ntOnePW(nt:eNetz):boolean;            { Point-PW = Online-PW  }
+function ntDownarcPath(nt:eNetz):boolean;      { Entpacker mu· im Pfad liegen }
+function ntExtProt(nt:eNetz):boolean;          { externes ö.-Protokoll }
+function ntGrossPW(nt:eNetz):boolean;          { Pa·wort mu· gro·geschr. werden }
 
-function ntMAF(nt:byte):boolean;              { MAF statt MAPS        }
-function ntQuickMaps(nt:byte):boolean;        { Maps-Bestellung an Sysop }
-function ntNude(nt:byte):boolean;             { Mausnet-"CMD"-Maps    }
-function ntAreamgr(nt:byte):boolean;          { Fido-Areafix/Areamgr  }
-function ntProMaf(nt:byte):boolean;           { Pronet-System         }
-function ntNoMaps(nt:byte):boolean;           { kein Maps-Service     }
-function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
-function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
+function ntMAF(nt:eNetz):boolean;              { MAF statt MAPS        }
+function ntQuickMaps(nt:eNetz):boolean;        { Maps-Bestellung an Sysop }
+function ntNude(nt:eNetz):boolean;             { Mausnet-"CMD"-Maps    }
+function ntAreamgr(nt:eNetz):boolean;          { Fido-Areafix/Areamgr  }
+function ntProMaf(nt:eNetz):boolean;           { Pronet-System         }
+function ntNoMaps(nt:eNetz):boolean;           { kein Maps-Service     }
+function ntMapsOthers(nt:eNetz):boolean;       { Maps/Sonstige         }
+function ntMapsBrettliste(nt:eNetz):boolean;   { Maps/Liste_anfordern  }
 
-function ntEnvelopes(nt: integer): boolean;   { Trennung Envelope/Header }
-function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
+function ntEnvelopes(nt: eNetz):boolean;   { Trennung Envelope/Header }
+function ntReplyToAll (nt :eNetz):boolean;    { Reply-To-All erlaubt }
 
 function FormMsgId(MsgID: String): String;
 function grosschar(b:boolean):string;
 
+(* todo: Entwicklungsleichen?
 function ntValidAddress(nt:byte;const addr:string):boolean;
 function ntNormalizeAddress(nt:byte;var addr:string):boolean;
+*)
+
+function  dbNetztyp(d: DB):eNetz;
 
 implementation  { ---------------------------------------------------- }
 
@@ -175,34 +241,38 @@ uses Debug;
   X-XP-FTO:  Fido-EmpfÑnger bei Echomail
   X-XP-MRP:  Maus-Reply-Path (Pfad der Bezugsnachricht) }
 
-
-function ntZConnect(nt:byte):boolean;
+function ntZConnect(nt:eNetz):boolean;
 begin
-  ntZConnect:=(nt>1);
+  ntZConnect:= nt>nt_1;
 end;
 
-function mbNetztyp:byte;
+function mbNetztyp:eNetz;
 begin
-  mbNetztyp:=(dbReadInt(mbase,'netztyp') and $ff);
+  mbNetztyp:=eNetz(dbReadInt(mbase,'netztyp'));
+end;
+
+function  dbNetztyp(d: DB):eNetz;
+begin
+  Result := eNetz(dbReadInt(d,'netztyp'));
 end;
 
 
-function ntBinary(nt:byte):boolean;
+function ntBinary(nt:eNetz):boolean;
 begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
                     nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP, nt_Client]) or
             (fidobin and (nt=nt_Fido));
 end;
 
-function ntMIME(nt:byte):boolean;
+function ntMIME(nt:eNetz):boolean;
 begin
   ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP, nt_Client])  or
             (zc_mime and (nt in [nt_ZConnect]));
 end;
 
-function ntBinEncode(nt:byte):boolean;        { BinÑrmails werden uucodiert }
+function ntBinEncode(nt:eNetz):boolean;        { Binaermails werden uucodiert }
 begin
-  ntBinEncode:=(nt=nt_Maus) or (nt=nt_Fido);
+  ntBinEncode:= nt in [nt_Maus, nt_Fido];
 end;
 
 
@@ -220,7 +290,7 @@ end;
        midZConnect  = 20;
        midRFC       = 30;
 *)
-function ntMessageID(nt:byte):byte;
+function ntMessageID(nt:eNetz):byte;
 begin
   case nt of
     nt_Netcall  : ntMessageID:=midNetcall;      { @BOX }
@@ -243,15 +313,15 @@ end;
 
 { Replys auf eigene Nachrichten werden anhand der BEZ-Domain erkannt: }
 
-function ntDomainReply(nt:byte):boolean;
+function ntDomainReply(nt:eNetz):boolean;
 begin
   ntDomainReply:=(ntMessageID(nt) in [midZConnect,midRFC]);
 end;
 
 
-function ntConv(nt:byte):boolean;
+function ntConv(nt:eNetz):boolean;
 begin
-  ntConv:=(nt>2);
+  ntConv:= nt>nt_ZConnect;
 end;
 
 
@@ -260,7 +330,7 @@ begin
   ntZCablage:=(ablg>9);
 end;
 
-function ntClass(nt:byte): TNetClass;         { Netz-Uebertyp }
+function ntClass(nt:eNetz):TNetClass;         { Netz-Uebertyp }
 begin
   case nt of
     nt_Netcall: Result := ncZConnect;
@@ -277,25 +347,23 @@ begin
   end;
 end;
 
-function ntBoxNetztyp(box:string):byte;
+function ntBoxNetztyp(box:string):eNetz;
 var d  : DB;
-    nt : byte;
 begin
   if box='' then box:=DefaultBox;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
-    dbRead(d,'netztyp',nt)
+    dbRead(d,'netztyp',Result)
   else
-    nt:=0;
+    Result:=nt_Netcall;
   dbClose(d);
-  ntBoxNetztyp:=nt;
 end;
 
 
-function ntZDatum(nt:byte):boolean;
+function ntZDatum(nt:eNetz):boolean;
 begin
-  ntZDatum:=(nt>=2);
+  ntZDatum:= nt>=nt_ZConnect;
 end;
 
 
@@ -318,27 +386,27 @@ begin
 end;
 
 
-function ntMAF(nt:byte):boolean;
+function ntMAF(nt:eNetz):boolean;
 begin
   ntMAF:=(nt=nt_Magic);
 end;
 
-function ntProMaf(nt:byte):boolean;
+function ntProMaf(nt:eNetz):boolean;
 begin
   ntProMaf:=(nt=nt_Pronet);
 end;
 
-function ntQuickMaps(nt:byte):boolean;
+function ntQuickMaps(nt:eNetz):boolean;
 begin
   ntQuickMaps:=(nt=nt_Quick);
 end;
 
-function ntNude(nt:byte):boolean;
+function ntNude(nt:eNetz):boolean;
 begin
   ntNude:=(nt=nt_Maus);
 end;
 
-function ntAreamgr(nt:byte):boolean;
+function ntAreamgr(nt:eNetz):boolean;
 begin
   ntAreamgr:=(nt=nt_Fido);
 end;
@@ -346,7 +414,7 @@ end;
 {$IFDEF FPC }
   {$HINTS OFF }
 {$ENDIF }
-function ntNoMaps(nt:byte):boolean;
+function ntNoMaps(nt:eNetz):boolean;
 begin
   ntNoMaps:= nt in [nt_POP3];
 end;
@@ -354,25 +422,25 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
-function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
+function ntMapsOthers(nt:eNetz):boolean;       { Maps/Sonstige         }
 begin
   ntMapsOthers:=not (nt in [nt_Quick,nt_Pronet,nt_QWK,nt_NNTP,nt_POP3]);
 end;
 
-function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
+function ntMapsBrettliste(nt:eNetz):boolean;   { Maps/Liste_anfordern  }
 begin
   ntMapsBrettliste:=(nt<>nt_QWK);
 end;
 
-function ntDomainType(nt:byte):byte;
+function ntDomainType(nt:eNetz):byte;
 begin
   case nt of
-    nt_Netcall, 1 {???}     : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
+    nt_Netcall, nt_1 {???}  : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
     nt_ZConnect             : ntDomainType:=5;   { @BOX.domain [@POINT.domain] }
     nt_Magic                : ntDomainType:=1;   { @POINT oder @BOX }
     nt_Pronet               : ntDomainType:=7;   { @BOX;POINT }
     nt_Quick, nt_GS         : ntDomainType:=2;   { @POINT }
-    nt_Maus, nt_QWK, 90     : ntDomainType:=3;   { @BOX }
+    nt_Maus, nt_QWK, nt_90  : ntDomainType:=3;   { @BOX }
     nt_Fido                 : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
     nt_UUCP                 : ntDomainType:=6;   { @point.domain }
   else // (POP3, NNTP, IMAP, Client)
@@ -381,14 +449,14 @@ begin
 end;
 
 
-function ntAutoZer(nt:byte):boolean;
+function ntAutoZer(nt:eNetz):boolean;
 begin
-  ntAutoZer:=(nt<=1);
+  ntAutoZer:=(nt<=nt_1);
 end;
 
 function ntAutoDomain(box:string; ownbox:boolean):string;
 var d  : DB;
-    nt : shortint;
+    nt : eNetz; //shortint;
 begin
   ntAutoDomain:='';
   dbOpen(d,BoxenFile,1);
@@ -413,7 +481,7 @@ begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
-    if dbReadInt(d,'netztyp')<>nt_UUCP then
+    if dbNetztyp(d)<>nt_UUCP then
       ntServerDomain:=ntAutoDomain(box,true)
     else
       ntServerDomain:=dbReadStr(d,'boxdomain');
@@ -421,7 +489,7 @@ begin
 end;
 
 
-function ntDefaultDomain(nt:byte):string;     { Domain fÅr neue Boxen }
+function ntDefaultDomain(nt:eNetz):string;     { Domain fuer neue Boxen }
 begin
   case nt of
     nt_Pronet   : ntDefaultDomain:='.pro';
@@ -433,20 +501,20 @@ begin
 end;
 
 
-function ntGrossUser(nt:byte):boolean;
+function ntGrossUser(nt:eNetz):boolean;
 begin
   ntGrossUser:=(not smallnames and (nt=nt_Netcall)) or
                (nt in [nt_Magic,nt_Quick,nt_GS,nt_Pronet]);
 end;
 
 
-function ntGrossBrett(nt:byte):boolean;
+function ntGrossBrett(nt:eNetz):boolean;
 begin
   ntGrossBrett:=(nt=nt_Netcall) or (nt=nt_Fido) or (nt=nt_Pronet);
 end;
 
 
-function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
+function ntKleinBrett(nt:eNetz):boolean;       { Bretter-Kleinschreibung }
 begin
   ntKleinBrett:=(nt in [nt_UUCP, nt_NNTP, nt_Client]);
 end;
@@ -459,7 +527,7 @@ begin
 end;
 
 
-function ntName(nt:byte):string;
+function ntName(nt:eNetz):string;
 begin
   case nt of
     nt_Netcall  : ntName:='Z-Netz alt';
@@ -476,15 +544,15 @@ begin
     nt_NNTP     : ntName:='NNTP';
     nt_POP3     : ntName:='POP3/SMTP';
   else
-    Debug.DebugLog('xpnt','Unknown net type: '+IntToStr(nt),DLWarning);
-    ntName:='? '+IntToStr(nt);
+    Debug.DebugLog('xpnt','Unknown net type: '+IntToStr(ord(nt)),DLWarning);
+    ntName:='? '+IntToStr(ord(nt));
   end;
 end;
 
 
 { 0=kein Relogin, 1=Relogin nur mit Script, 2=Relogin immer mîglich }
 
-function ntRelogin(nt:byte):byte;
+function ntRelogin(nt:eNetz):byte;
 begin
   case nt of
     nt_Fido,
@@ -497,23 +565,23 @@ begin
   end;
 end;
 
-function ntOnline(nt:byte):boolean;   { false -> Script erforderlich }
+function ntOnline(nt:eNetz):boolean;   { false -> Script erforderlich }
 begin
   ntOnline:=not (nt in [nt_Fido, nt_GS, nt_UUCP, nt_QWK, nt_NNTP, nt_POP3, nt_Client]);
 end;
 
-function ntNetcall(nt:byte):boolean;          { Netcall mîglich }
+function ntNetcall(nt:eNetz):boolean;          { Netcall mîglich }
 begin
   ntNetcall:=(nt<>nt_QWK);
 end;
 
 
-function ntOnePW(nt:byte):boolean;
+function ntOnePW(nt:eNetz):boolean;
 begin
   ntOnePW:=(nt=nt_Maus);
 end;
 
-function ntKomkette(nt:byte):boolean;
+function ntKomkette(nt:eNetz):boolean;
 begin
   ntKomkette:=
     (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet,nt_NNTP, nt_POP3, nt_Client])
@@ -521,47 +589,47 @@ begin
 end;
 
 
-function ntRfcCompatibleID(nt:byte):boolean;
+function ntRfcCompatibleID(nt:eNetz):boolean;
 begin
   ntRfcCompatibleID:=nt in [nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
-function ntMIDCompatible(n1,n2:byte):boolean;  { austauschbare MsgIDs  }
+function ntMIDCompatible(n1,n2:eNetz):boolean;  { austauschbare MsgIDs  }
 begin
   ntMIDcompatible:=(n1=n2) or (ntRfcCompatibleID(n1) and ntRfcCompatibleID(n2));
 end;
 
-function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
+function ntOrigID(nt:eNetz):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
 begin
-  ntOrigID:=(nt=nt_Maus) or (nt=nt_Fido);
+  ntOrigID:= nt in [nt_Maus, nt_Fido];
 end;
 
-function ntAdrCompatible(n1,n2:byte):boolean;  { umleitbare PM-Adresse }
+function ntAdrCompatible(n1,n2:eNetz):boolean;  { umleitbare PM-Adresse }
 begin
   ntAdrCompatible:= (n1 in ([nt_Maus, nt_ZConnect]+netsRFC)) and
                     (n2 in ([nt_Maus, nt_ZConnect]+netsRFC));
 end;
 
-function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
+function ntMsg0(nt:eNetz):boolean;             { Nachricht darf leer sein }
 begin
   ntMsg0:=nt in ([nt_ZConnect,nt_Fido]+netsRFC);
 end;
 
 
-function ntNameSpace(nt:byte):boolean;        { Leerzeichen in Usernamen }
+function ntNameSpace(nt:eNetz):boolean;        { Leerzeichen in Usernamen }
 begin
   ntNameSpace:=(nt in [nt_Fido,nt_Magic,nt_Maus,nt_Quick,nt_GS,nt_Pronet,nt_QWK]);
 end;
 
 
-function ntDownarcPath(nt:byte):boolean;      { Entpacker mu· im Pfad liegen }
+function ntDownarcPath(nt:eNetz):boolean;      { Entpacker mu· im Pfad liegen }
 begin
-  ntDownarcPath:=(nt=nt_Fido) or (nt=nt_ZConnect);
+  ntDownarcPath:= nt in [nt_Fido, nt_ZConnect];
 end;
 
-function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
+function ntBrettEmpf(nt:eNetz):boolean;        { Fido-To }
 begin
-  ntBrettEmpf:=(nt=nt_Fido) or (nt=nt_QWK) or (nt=nt_Magic) or (nt=nt_Pronet);
+  ntBrettEmpf:= nt in [nt_Fido, nt_QWK, nt_Magic, nt_Pronet];
 end;
 
 function ntBrettEmpfUsed:boolean;             { Netztypen mit Fido-To vorh. }
@@ -570,45 +638,45 @@ begin
                     ntUsed[nt_Pronet] > 0;
 end;
 
-function ntEditbrettEmpf(nt:byte):boolean;    { dito, aber editierbar;  }
+function ntEditbrettEmpf(nt:eNetz):boolean;    { dito, aber editierbar;  }
 begin                                         { EmpfÑnger in mbase.name }
-  ntEditBrettEmpf:=(nt=nt_Fido) or (nt=nt_QWK);
+  ntEditBrettEmpf:= nt in [nt_Fido, nt_QWK];
 end;
 
 
-function ntRealname(nt:byte):boolean;         { Realnames mîglich }
+function ntRealname(nt:eNetz):boolean;         { Realnames mîglich }
 begin
   ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
-function ntRealUmlaut(nt:byte):boolean;       { Umlaute im Realname }
+function ntRealUmlaut(nt:eNetz):boolean;       { Umlaute im Realname }
 begin
   ntRealUmlaut:=nt in [nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
-function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
+function ntHeaderUmlaut(nt:eNetz):boolean;     { Umlaute in Keywords etc. }
 begin
   ntHeaderUmlaut:=nt in [nt_ZCONNECT,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
-function ntCancel(nt:byte):boolean;           { Cancel-Messages mîglich }
+function ntCancel(nt:eNetz):boolean;           { Cancel-Messages mîglich }
 begin
   ntCancel:=nt in [nt_UUCP,nt_Maus,nt_ZConnect,NT_NNTP, nt_Client];
 end;
 
-function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM mîglich }
+function ntCancelPM(nt:eNetz):boolean;         { Cancel auch bei PM mîglich }
 begin
   ntCancelPM:=(nt=nt_Maus);
 end;
 
-function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt mîglich }
+function ntErsetzen(nt:eNetz):boolean;         { Supersedes/Ersetzt mîglich }
 begin
   ntErsetzen:=nt in [nt_UUCP,nt_ZConnect,nt_NNTP,nt_POP3, nt_Client];
 end;
 
-function ntBetreffLen(nt:byte): Integer;      { max. BetrefflÑnge }
+function ntBetreffLen(nt:eNetz):Integer;      { max. BetrefflÑnge }
 begin
   case nt of
     nt_Netcall : ntBetreffLen:=40;
@@ -622,42 +690,42 @@ begin
 end;
 
 
-function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
+function ntPmReply(nt:eNetz):boolean;          { attrPmReply erzeugen }
 begin
   ntPmReply:=nt in [nt_Maus, nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
 end;
 
 
-function ntFollowup(nt:byte):boolean;         { Followup-To mîglich }
+function ntFollowup(nt:eNetz):boolean;         { Followup-To mîglich }
 begin
   ntFollowup:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP];
 end;
 
 
-function ntCrossAM(nt:byte):boolean;          { AM-Crosspostings mîglich }
+function ntCrossAM(nt:eNetz):boolean;          { AM-Crosspostings mîglich }
 begin
   ntCrossAM:=(nt in [nt_UUCP,nt_NNTP, nt_Client]) or ((nt=nt_ZConnect) and zc_xposts);
 end;
 
-function ntCrossPM(nt:byte):boolean;          { PM-Crosspostings mîglich }
+function ntCrossPM(nt:eNetz):boolean;          { PM-Crosspostings mîglich }
 begin
   ntCrossPM:=nt in [nt_ZConnect,nt_UUCP,nt_POP3];
 end;
 
 
-function ntExtProt(nt:byte):boolean;          { externes ö.-Protokoll }
+function ntExtProt(nt:eNetz):boolean;          { externes ö.-Protokoll }
 begin
   ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_QWK,nt_NNTP,nt_POP3]);
 end;
 
 
-function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
+function ntOrigWeiter(nt:eNetz):boolean;       { Weiterleiten mit WAB  }
 begin
   ntOrigWeiter:=nt in [nt_ZConnect,nt_UUCP,nt_Maus,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
-function ntBoxnameLen(nt:byte):byte;
+function ntBoxnameLen(nt:eNetz):byte;
 begin
   case nt of
     nt_Zconnect: ntBoxnameLen:=20;
@@ -678,41 +746,41 @@ begin
 end;
 
 
-function ntPMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
+function ntPMTeleData(nt:eNetz):boolean;        { Telefon + Postanschrift }
 begin
   ntPMTeleData:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
-function ntAMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
+function ntAMTeleData(nt:eNetz):boolean;        { Telefon + Postanschrift }
 begin
   ntAMTeleData:=((nt=nt_ZConnect) and not adrpmonly) or (nt=nt_POP3);
 end;
 
 
-function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
+function ntSec(nt:eNetz):boolean;              { sekundengenaue Uhrzeit }
 begin
   ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet,nt_NNTP,nt_POP3, nt_Client]);
 end;
 
 
 function ntZonly:boolean;                     { nur Z-Netz/alt }
-var i : integer;
+var i : eNetz;
 begin
-  i:=99;
-  while (i>0) and (ntUsed[i]=0) do dec(i);
-  ntZonly:=(i=0);
+  i:=nt_99;
+  while (i>nt_Netcall) and (ntUsed[i]=0) do dec(i);
+  ntZonly:= (i=nt_Netcall);
 end;
 
 // Network types where the IBM charset is default but can be changed
 // to ISO-8859-*
-function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
+function ntOptIso(nt:eNetz):boolean;           { wahlweise ISO-Zeichensatz }
 begin
   ntOptIso:=(nt=nt_ZConnect);
 end;
 
 // Network types where the IBM charset is default, otherwise we use
 // ISO-8859-1 or UTF-8
-function ntIBM(nt:byte):boolean;      
+function ntIBM(nt:eNetz):boolean;
 begin
   Result:=nt in [
     nt_Netcall,
@@ -726,7 +794,7 @@ begin
     nt_QWK ];
 end;
 
-function ntPGP(nt:byte):boolean;              { PGP-Keys im Header }
+function ntPGP(nt:eNetz):boolean;              { PGP-Keys im Header }
 begin
   ntPGP:=(nt=nt_ZCONNECT) or
          ((nt in [nt_UUCP,nt_NNTP,nt_POP3, nt_Client]) and PGP_UUCP) or
@@ -734,7 +802,7 @@ begin
 end;
 
 
-function ntGrossPW(nt:byte):boolean;       { Pa·wort mu· gro·geschr. werden }
+function ntGrossPW(nt:eNetz):boolean;       { Pa·wort mu· gro·geschr. werden }
 begin
   ntGrossPW:=(nt in [nt_Netcall,nt_Magic,nt_Pronet,nt_Quick,nt_GS]);
 end;
@@ -742,36 +810,36 @@ end;
 
 { XP-Control-Messages fÅr SUPPORT.CFG }
 
-function ntXPctl(nt:byte):boolean;
+function ntXPctl(nt:eNetz):boolean;
 begin
   ntXPctl:=(nt in [nt_ZConnect,nt_UUCP,nt_Fido,nt_NNTP,nt_POP3, nt_Client]);
 end;
 
 
-function ntBrettebene(nt:byte):boolean;       { Netztyp mit Brettebene }
+function ntBrettebene(nt:eNetz):boolean;       { Netztyp mit Brettebene }
 begin
   ntBrettebene := (nt in [nt_Fido,nt_Maus,nt_QWK,nt_Magic,nt_Pronet]);
 end;
 
 
-function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
+function ntBCC(nt:eNetz):boolean;              { BCC-Option vorhanden }
 begin
   ntBCC := (nt in ([nt_ZConnect]+netsRFC));
 end;
 
 
-function ntFilename(nt:byte):boolean;         { Dateiname im Header }
+function ntFilename(nt:eNetz):boolean;         { Dateiname im Header }
 begin
   ntFilename := (nt in [nt_ZConnect,nt_UUCP, nt_Client]);
 end;
 
-function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All allowed? }
+function ntReplyToAll (nt :eNetz):boolean;    { Reply-To-All allowed? }
 begin
   // only LSB contains net type
-  ntReplyToAll := ((nt and $FF) in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP, nt_CLient]);
+  ntReplyToAll := nt in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP, nt_CLient];
 end;
 
-function ntEnvelopes(nt: integer): boolean;   { Trennung Envelope/Header }
+function ntEnvelopes(nt: eNetz):boolean;   { Trennung Envelope/Header }
 begin
   result := nt in (netsRFC + [nt_Maus]);
 end;
@@ -793,6 +861,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.51  2002/12/13 14:31:15  dodi
+  - introduced new types
+
   Revision 1.50  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 
