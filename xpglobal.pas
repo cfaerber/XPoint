@@ -38,8 +38,10 @@ const
   pformstr    = ' OS/2';      { 32 Bit OS/2 mit FPC oder VP }
   {$ENDIF}
   {$IFDEF Linux}
+  {$ifndef BSD}
   pformstr    = ' Linux';     { 32 Bit Linux mit FPC oder VP }
-  {$ENDIF}
+  {$endif} 
+ {$ENDIF}
   {$IFDEF FreeBSD}
    pformstr    = ' FreeBSD';  { 32 Bit native FreeBSD v4+ mit FPC }
   {$endif}
@@ -150,6 +152,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.43  2000/11/03 13:36:09  mv
+   * Made an error yesterday that only manifested under FreeBSD. Fixed.
+
   Revision 1.42  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
