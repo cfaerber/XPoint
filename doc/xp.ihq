@@ -3337,6 +3337,25 @@ Achtung: Bei Einstellung "Alle" oder "Z-Netz" kann
 die Userdatenbank sehr schnell sehr groá werden!
 Mit /Wartung/UserReorg werden die nicht ben”tigten
 Adressen wieder aus der Datenbank entfernt.
+@
+8068
+Neu aufgenommene User werden dieser 
+[Adressbuchgruppe] zugeordnet.@8069
+
+@
+8069
+Adressbuchgruppe:
+
+Das Userfenster wird vor dem alphabetischen Sortieren
+nach diesen Gruppen geordnet. Gruppen mit niedrigen
+Nummern werden ganz oben angezeigt, Gruppen mit hohen
+Nummern erscheinen am Ende der Userliste.
+
+Wenn man bestimmte User (oder Pseudouser wie Areafix)
+im Userfenster zusammengruppieren will, muss man sie
+nur in dieselbe Adressbuchgruppe stecken. 
+
+Minimalwert ist 1 Maximalwert ist 99
 
 @
 213
