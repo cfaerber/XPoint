@@ -82,7 +82,7 @@ const
   überhaupt, habe ich mich danach gerichtet, wie der Buchstabe  
   ausgesprochen wird bzw. welche Bedeutung ein Symbol hat (und habe dazu  
   notfalls etwas Recherche betrieben, z.B. bei den Buchstaben "Eth" und  
-  "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im  
+  "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im
   Unterschied zu den alten Tabellen) eher kein Kriterium.
 
 
@@ -821,64 +821,6 @@ begin
   end;
 end;
 
-function CharExistsL(const S : AnsiString; C : AnsiChar) : Boolean; register;
-  {-Count the number of a given character in a string. }
-asm
-  push  ebx
-  xor   ecx, ecx
-  or    eax, eax
-  jz    @@Done
-  mov   ebx, [eax-StrOffset].LStrRec.Length
-  or    ebx, ebx
-  jz    @@Done
-  jmp   @@5
-
-@@Loop:
-  cmp   dl, [eax+3]
-  jne   @@1
-  inc   ecx
-  jmp   @@Done
-
-@@1:
-  cmp   dl, [eax+2]
-  jne   @@2
-  inc   ecx
-  jmp   @@Done
-
-@@2:
-  cmp   dl, [eax+1]
-  jne   @@3
-  inc   ecx
-  jmp   @@Done
-
-@@3:
-  cmp   dl, [eax+0]
-  jne   @@4
-  inc   ecx
-  jmp   @@Done
-
-@@4:
-  add   eax, 4
-  sub   ebx, 4
-
-@@5:
-  cmp   ebx, 4
-  jge   @@Loop
-
-  cmp   ebx, 3
-  je    @@1
-
-  cmp   ebx, 2
-  je    @@2
-
-  cmp   ebx, 1
-  je    @@3
-
-@@Done:
-  mov   eax, ecx
-  pop   ebx
-end;
-
 function WordCount(const S: String): Integer;
 begin
   Result := WordCountEx(S, ' ');
@@ -894,7 +836,7 @@ begin
   SLen := Length(S);
 
   while I <= SLen do begin
-    while (I <= SLen) and CharExistsL(Delims, S[I]) do
+    while (I <= SLen) and (CPos(s[i], Delims) > 0) do
       Inc(I);
 
     {if we're not beyond end of S, we're at the start of a word}
@@ -902,7 +844,7 @@ begin
       Inc(Result);
 
     {find the end of the current word}
-    while (I <= SLen) and not CharExistsL(Delims, S[I]) do
+    while (I <= SLen) and (CPos(s[i], Delims) = 0) do
       Inc(I);
   end;
 end;
@@ -2079,6 +2021,9 @@ end;
 
 {
   $Log$
+  Revision 1.136  2003/09/10 14:17:39  mk
+  - removed dupe function CharExistsL and optimized WordCountEx
+
   Revision 1.135  2003/09/02 16:43:26  mk
   - added const parameter for MultiPos
 
