@@ -880,7 +880,7 @@ procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
 var t1,t2 : text;
     s     : string;
 begin
-  if FileExists(schab) then begin
+  if FileExists(OwnPath + schab) then begin
     assign(t1,schab); reset(t1);
     assign(t2,fn); rewrite(t2);
     while not eof(t1) do begin
@@ -1143,6 +1143,9 @@ finalization
 
 {
   $Log$
+  Revision 1.73  2001/12/22 22:15:05  mk
+  - search templates always in our main path
+
   Revision 1.72  2001/11/18 12:31:22  mk
   - fixed some file case problems with fido file lists
 
