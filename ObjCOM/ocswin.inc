@@ -56,7 +56,7 @@ procedure TSerialStream.ProcIncoming;
 var BytesRead: DWord;
 begin
   if not DataRequested then begin
-    DebugLog('ObjCOM','Requesting incoming.',DLDebug);
+//    DebugLog('ObjCOM','Requesting incoming.',DLDebug);
     while ReadFile(SaveHandle,InBuffer.TmpBuf^,InBufSize,BytesRead,@ReadOL)and(BytesRead>0)do
       begin InBuffer.Put(InBuffer.TmpBuf^,BytesRead); DebugLog('ObjCOM','ReadFile True',DLDebug)end;
     if GetLastError=ERROR_IO_PENDING then DataRequested:=True;
@@ -269,7 +269,7 @@ end; { proc. TSerialStream.ReadBlock }
 
 function TSerialStream.CharAvail: Boolean;
 begin
-  DebugLog('ObjCOM','CharAvail',DLDebug);
+//  DebugLog('ObjCOM','CharAvail',DLDebug);
   ProcIncoming; Result := (InBuffer.BufUsed > 0);
 end; { func. TSerialStream.CharAvail }
 
@@ -412,6 +412,10 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.11  2003/05/11 11:29:09  mk
+  - disable debug message "Requesting incoming" and "CharAvail"
+    due to extreme large logfiles
+
   Revision 1.10  2003/01/06 22:43:02  cl
   - made TCommStream.Write compatible with TStream.Write
 
