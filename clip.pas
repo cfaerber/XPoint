@@ -148,6 +148,7 @@ begin
     GlobalUnlock(MemHandle);
     // Insert data into clipboard
     SetClipboardData(cf_Text, MemHandle);
+    GlobalFree(MemHandle);
   end;
   CloseClipboard;
 end;
@@ -184,6 +185,7 @@ begin
       GlobalUnlock(MemHandle);
       // Insert data into clipboard
       SetClipboardData(cf_Text, MemHandle);
+      GlobalFree(MemHandle);
     end;
     CloseClipboard;
     Close(f);
@@ -643,6 +645,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/30 12:35:17  mk
+  - Memory Leak in Windows Clipboard gefixt
+
   Revision 1.14  2000/04/29 16:45:05  mk
   - Verschiedene kleinere Aufraeumarbeiten
 
