@@ -197,7 +197,12 @@ ende:
   halt(errlevel);
  except
   on E:Exception do begin
-    DebugLogException(E);
+    Debug.DebugLogException(E);
+    Debug.LastLogMessages.Insert(0,'Last debug logs recorded before crash.');
+    Debug.LastLogMessages.Insert(1,'If failure is reproduceable, email this file to dev@openxp.de.');
+    Debug.LastLogMessages.Insert(2,'Be sure to delete all passwords that may be contained herein before.');
+    Debug.LastLogMessages.Insert(3,'----------------------------------------------------------------------');
+    Debug.LastLogMessages.SaveToFile('ERROR.TXT');
     raise;
   end;
  end;
@@ -205,6 +210,10 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/10/28 00:03:58  ma
+  - in case of an unhandled exception file ERROR.TXT will be created
+    containing last debug logs regardless of logging enabled or not
+
   Revision 1.6  2001/10/15 09:04:21  ml
   - compilable with Kylix ;-)
 
