@@ -405,7 +405,7 @@ function MinMax(const x,min,max:longint):longint;  { x -> [min,max]             
 function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
 function MinR(const a,b:real):real;                { Minimum Real                 }
 function MinS(const a,b:string):string;            { Minimum String               }
-function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+function MultiPos(const s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
 function NaN:Double;
 function OctVal(s:string):longint;           { Oktalstring -> Logint        }
 function PosN(const s1,s2:string; n:integer):integer;    { POS ab Stelle n              }
@@ -1505,7 +1505,7 @@ begin
 end;
 
 
-function MultiPos(s1,s2:string):boolean;
+function MultiPos(const s1,s2:string):boolean;
 var i  : integer;
     mp : boolean;
 begin
@@ -2079,6 +2079,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2003/09/02 16:43:26  mk
+  - added const parameter for MultiPos
+
   Revision 1.134  2003/08/30 23:47:09  mk
   - added WordCount(Ex)
 
