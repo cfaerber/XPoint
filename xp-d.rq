@@ -272,7 +272,7 @@ K (c) '93-98 Peter Mandrella
 5    ^Taste,Te^xt,^aktivierte Taste,a^ktivierter Text
 6    ^Trennlinien,^Statuszeile ArcViewer,^Bestellte Bretter,Bild^rand
 7    ^Text,^gew„hlt,^markiert,T^rennzeile
-8    ^Text,^markiert,^gew„hlt,^Infozeile,^hervorgehoben,g^ew„hlt+hervorgeh.
+8    ^Text,^markiert,^gew„hlt,^Infozeile,^hervorgehoben,g^ew„hlt+hervorgeh.,Priorit„t ^1 (h”chste),Priorit„t ^2 (hoch),Priorit„t ^4 (niedrig),Priorit„t ^5 (niedrigste)
 9    ^Text,^Rahmen,^hervorgehoben
 10   ^Text,^Rahmen,^hervorgehoben,^Eingabefeld,^mark. Eingabefeld,^Pfeile,^Auswahlliste,Auswahl^Balken,^Schalter
 11   ^Text,^Rahmen,^hervorgehoben,^Balken

@@ -960,9 +960,9 @@ begin
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(ref)) or
-              (filterattr and fattrHilite<>0) or
+              (filterattr and fattrHilite<>0) {or}
               { Nachricht mit Priority High und Highest hevorheben }
-              (hdp^.Priority in [1..2])
+              {(hdp^.Priority in [1..2])}
             then begin
               attrtxt(col.colmboxhigh);
               showbetreff;
@@ -1003,7 +1003,14 @@ begin
             if filterattr and fattrLoeschen<>0 then flags:=2;
             if filterattr and fattrHalten<>0 then flags:=1;
             dbWriteN(mbase,mb_halteflags,flags);
-            mbflags:=iif(boundary<>'',4,0);
+                                                    { Prioritaeten in anderer Farbe.... }
+            if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
+            else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    } 
+            else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
+            else if hdp^.Priority=1 then mbflags:=8      { hoechste   }    
+            else mbflags:=0;
+
+            mbflags:=mbflags or iif(boundary<>'',4,0);
             dbWriteN(mbase,mb_flags,mbflags);
             wrll(dbRecno(mbase));     { fÅr Bezugsverkettung merken }
             l:=ixdat(datum) and $fffffff0;
@@ -1169,6 +1176,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/04/28 14:52:52  jg
+  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
+    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
+
   Revision 1.11  2000/04/15 21:44:46  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

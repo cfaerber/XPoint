@@ -33,6 +33,7 @@ begin
       colbretter:=7; colbretterinv:=$30; colbretterhi:=2; colbrettertr:=3;
       colmsgs:=7; colmsgshigh:=2; colmsgsinv:=$30; colmsgsinfo:=2;
       colmsgsuser:=lightred; colmsgsinvuser:=$30+red;
+      Colmsgsprio1:=7; colmsgsprio2:=7; colmsgsprio4:=7; colmsgsprio5:=7;
       colmbox:=$70; colmboxrahmen:=$70; colmboxhigh:=$7f;
       coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$7e;
       coldiainp:=$1e; coldiaarrows:=$1a;
@@ -86,6 +87,7 @@ begin
       colbretter:=7; colbretterinv:=$70; colbretterhi:=$f; colbrettertr:=7;
       colmsgs:=7; colmsgshigh:=15; colmsgsinv:=$70; colmsgsinfo:=15;
       colmsgsuser:=15; colmsgsinvuser:=$70;
+      Colmsgsprio1:=7; colmsgsprio2:=7; colmsgsprio4:=7; colmsgsprio5:=7;
       colmbox:=$7; colmboxrahmen:=$7; colmboxhigh:=$f;
       coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$70;
       coldiainp:=$7; coldiamarked:=$f; coldiaarrows:=$f;
@@ -236,9 +238,19 @@ begin
         end
       else if s1='border' then
         getb(colborder)
+      else if s1='priority' then 
+      begin
+        getb(colmsgsprio1); getb(colmsgsprio2); 
+        getb(colmsgsprio4); getb(colmsgsprio5);   
+        end 
       else
         tfehler(getres(213)+ustr(s1),60);  { 'ungÅltige Farbkonfiguration:  ' }
       end;
+      if (colmsgsprio1=7) and (colmsgsprio2=7) and (colmsgsprio5=7) and (colmsgs<>7) 
+      then begin
+        colmsgsprio1:=colmsgs; colmsgsprio2:=colmsgs; 
+        colmsgsprio4:=colmsgs; colmsgsprio5:=colmsgs;
+        end;   
     end;
   close(t);
 end;
@@ -1654,6 +1666,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2000/04/28 14:52:52  jg
+  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
+    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
+
   Revision 1.36  2000/04/26 06:48:49  mk
   - RTE 217 bei MInit behoben
 

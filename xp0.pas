@@ -302,6 +302,10 @@ type   textp  = ^text;
                   ColMsgsInfo   : byte;   { Msgs, 1. Zeile          }
                   ColMsgsUser   : byte;   { PM-archivierte Msgs     }
                   ColMsgsInvUser: byte;   { gew„hlt+hervorgehoben   }
+                  ColMsgsPrio1  : byte;   { Farbe fuer Priority 1   }
+                  ColMsgsPrio2  : byte;   { ... 2 }
+                  ColMsgsPrio4  : byte;   { ... 4 }
+                  ColMsgsPrio5  : byte;   { ... 5 }
                   ColMbox       : byte;   { Meldungs-Box, Text      }
                   ColMboxRahmen : byte;   { Meldungs-Box, Rahmen    }
                   ColMboxHigh   : byte;   { Meldungs-Box, hervorgeh.}
@@ -1115,6 +1119,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.32  2000/04/28 14:52:51  jg
+  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
+    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
+
   Revision 1.31  2000/04/28 14:48:49  hd
   Kleinschreibung der Datei- und Verzeichnisnamen fuer Linux
 

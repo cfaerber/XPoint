@@ -72,7 +72,7 @@ var   disprec   : dispra;
 
       dispbuf   : array[1..maxgl] of ^dispstr;
       markflag  : array[1..maxgl] of byte;  { 0=nix, 1=mark, 2=trenn }
-      userflag  : array[1..maxgl] of boolean;
+      userflag  : array[1..maxgl] of byte;  { 0=nix; 1=hervorgehoben; 2-5 = Prio 1,2,4,5 }
       ub_p      : shortint;
 
       UserDispmode : shortint;   { 1=AdrBuch, 2=Alle }
@@ -270,7 +270,7 @@ var t,lastt: taste;
       if aktdispmode<10 then attrtxt(col.colbretterinv)
       else
         if ((aktdispmode=10) or (aktdispmode=11) or (aktdispmode=12))
-           and userflag[y] then
+           and (userflag[y]<>0) then
           attrtxt(col.colmsgsinvuser)
         else
           attrtxt(col.colmsgsinv)
@@ -283,13 +283,17 @@ var t,lastt: taste;
         end
       else
         case aktdispmode of
-          10,12 : if markflag[y]<>0 then
-                    attrtxt(col.colmsgshigh)
-                  else
-                    if userflag[y] then attrtxt(col.colmsgsuser)
-                    else attrtxt(col.colmsgs);
-          11    : if userflag[y] then attrtxt(col.colmsgsuser)
-                  else attrtxt(col.colmsgs);
+          10,11,12 : if (aktdispmode<>11) and (markflag[y]<>0) then
+                       attrtxt(col.colmsgshigh)
+                     else
+                       if userflag[y]=0 then attrtxt(col.colmsgs)                      
+                       else if userflag[y]=1 then attrtxt(col.colmsgsuser)
+                       else if userflag[y]=2 then attrtxt(col.colmsgsprio1)
+                       else if userflag[y]=3 then attrtxt(col.colmsgsprio2)
+                       else if userflag[y]=4 then attrtxt(col.colmsgsprio4)
+                       else if userflag[y]=5 then attrtxt(col.colmsgsprio5) 
+                       else attrtxt(col.colmsgs); { nur zur Sicherheit... }
+
           20    : attrtxt(col.colmsgs);
         end;
   end;
@@ -2013,6 +2017,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/04/28 14:52:52  jg
+  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
+    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
+
   Revision 1.15  2000/04/20 04:18:55  jg
   - Lesemodus aendern jetzt auch im Nachrichtenfenster
 

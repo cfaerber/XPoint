@@ -265,7 +265,9 @@ begin
     wrl('ArcViewer'); wrhl(colarcstat);
     wrl('Maps'); wrhl(colmapsbest);
     wrl('Mailer'); wrh(colmailer); wrh(colmailerhigh); wrhl(colmailerhi2);
-    wrl('Border'); wrh(colborder);
+    wrl('Border'); wrhl(colborder);
+    wrl('Priority'); wrh(colmsgsprio1); wrh(colmsgsprio2); 
+                     wrh(colmsgsprio4) ;wrhl(colmsgsprio5);
     end;
   close(t);
 end;
@@ -1020,6 +1022,10 @@ begin
                4 : cset(colmsgsinfo);
                5 : cset(colmsgsuser);
                6 : cset(colmsgsinvuser);
+               7 : cset(colmsgsprio1);
+               8 : cset(colmsgsprio2); 
+               9 : cset(colmsgsprio4);                
+              10 : cset(colmsgsprio5); 
              end;
            until m=0;
        9 : repeat    { Message-Box }
@@ -1165,6 +1171,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/28 14:52:52  jg
+  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
+    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
+
   Revision 1.6  2000/03/20 11:26:21  mk
   - SDisp-Routine teilweise nach Win32 portiert
 
