@@ -353,9 +353,9 @@ K (c) 2002-03 OpenXP/16, http://www.openxp16.de
 54   ~          /df:1    Externe Aufrufbefehle anzeigen
 55   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
 56
-57   ~          /x       Programm beenden
+57   ~          /xmsovr  Overlay bei nicht vorhandenem EMS im XMS zwischenspeichern
 58
-59   ~          /xmsovr  Overlay bei nicht vorhandenem EMS im XMS zwischenspeichern.
+59   ~          /x       Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
