@@ -211,59 +211,63 @@ begin
   { Verbinden }
   try
     List := TStringList.Create;
-    POP.Connect;
-    POP.Stat;
+    try
+      POP.Connect;
+      POP.Stat;
 
-    POWindow.WriteFmt(mcInfo, res_mailstat,
-                      [POP.MailCount, POP.NewMailCount, POP.MailSize]);
+      POWindow.WriteFmt(mcInfo, res_mailstat,
+                        [POP.MailCount, POP.NewMailCount, POP.MailSize]);
 
-    FirstMail := 1; LastMail := POP.MailCount;
-    if POP.OnlyNew then begin
-      FirstMail := POP.LastRead + 1;
-      LastMail := POP.NewMailCount + FirstMail - 1;
-      end;
+      FirstMail := 1; LastMail := POP.MailCount;
+      if POP.OnlyNew then begin
+        FirstMail := POP.LastRead + 1;
+        LastMail := POP.NewMailCount + FirstMail - 1;
+        end;
 
-    for i := FirstMail to LastMail do
-    begin
-      POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
-      POP.Retr(i, List);
-      if BoxPar^.Pop3_Clear then POP.Dele(I);
-      // UUZ muá erweitert werden,wenn das funktionieren soll
-      // if List.Count > 10000 then
-      SaveMail;
-    end;
-//    SaveMail;
-  except
-    on E: EPOP3 do begin
-      POWindow.WriteFmt(mcError, E.Message, [0]);
-      result:= false;
+      for i := FirstMail to LastMail do
+      begin
+        POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
+        POP.Retr(i, List);
+        if BoxPar^.Pop3_Clear then POP.Dele(I);
+        // UUZ muá erweitert werden,wenn das funktionieren soll
+        // if List.Count > 10000 then
+        SaveMail;
       end;
-    on E: EUserBreakError do begin
-      POWindow.WriteFmt(mcError, res_userbreak, [0]);
-      result:= false;
-      end;
-    on E: ESocketNetcall do begin
-      POWindow.WriteFmt(mcError, res_noconnect, [0]);
-      result:= false;
-      end;
-    on E: Exception do begin
-      POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
-      {$IFDEF DEBUG }
-        // crash in Debug-Versions to give line information
-        raise;
-      {$ELSE}
+  //    SaveMail;
+      POP.Disconnect; // first try, do when no execption occours
+    except
+      on E: EPOP3 do begin
+        POWindow.WriteFmt(mcError, E.Message, [0]);
         result:= false;
-      {$ENDIF }
-      end; 
+        end;
+      on E: EUserBreakError do begin
+        POWindow.WriteFmt(mcError, res_userbreak, [0]);
+        result:= false;
+        end;
+      on E: ESocketNetcall do begin
+        POWindow.WriteFmt(mcError, res_noconnect, [0]);
+        result:= false;
+        end;
+      on E: Exception do begin
+        POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
+        {$IFDEF DEBUG }
+          // crash in Debug-Versions to give line information
+          raise;
+        {$ELSE}
+          result:= false;
+        {$ENDIF }
+        end;
+    end;
+  finally
+    POP.Disconnect; // seconds try if there was an exception handled
+    POP.Free;
   end;
-  POP.Disconnect;
 
   if POP.UIDLs.Count>0 then
     POP.UIDLs.SaveToFile(UIDLFileName)
   else
     DeleteFile(UIDLFileName);
   List.Free;
-  POP.Free;
   ProcessIncomingFiles(IncomingFiles);
 
   if BoxPar^.POP3_ForceOneArea then begin
@@ -279,6 +283,10 @@ end;
                       
 {
   $Log$
+  Revision 1.40  2003/04/28 08:42:30  mk
+  - do POP.Disconnect in try except block first time, to give
+    helpful error messages instead of a crash
+
   Revision 1.39  2003/04/03 13:34:06  mk
   - POP3 and SMTP-Port is now configurable in *.bfg
 
