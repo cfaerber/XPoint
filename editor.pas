@@ -683,15 +683,8 @@ var mfm   : byte;
     t     : text;
     p     : absatzp;
     tail  : absatzp;
-    tbuf  : charrp;
-    ibuf  : charrp;
-    isize : word;
     sbrk  : boolean;
     root  : absatzp;
-    endcr : boolean;          { CR am Dateiende }
-    endlf : boolean;          { LF am Zeilenende }
-    srest : boolean;
-    pp    : byte;
 
   procedure AppP;
   begin
@@ -709,10 +702,8 @@ begin
   root:=nil;
   if Fileexists(fn) then
   begin
-    getmem(ibuf,maxabslen);
-    getmem(tbuf,4096);
     mfm:=filemode; filemode:=0;
-    assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
+    assign(t,fn); reset(t);
     filemode:=mfm;
 {$IFDEF FPC }
   {$IFDEF VER1_1 }
@@ -725,67 +716,27 @@ begin
     p := Pointer(1);
 {$ENDIF }
     tail:=nil;
-    endcr:=false;
-    srest:=false;
-    while (srest or not eof(t)) and assigned(p) do
+    while (not eof(t)) and assigned(p) do
     begin
-      isize:=0;
       sbrk:=false;
-      endlf:=false;
-      while (srest and (isize=0) or not (eoln(t) or endlf))
-            and (isize<maxabslen-255) do
-      begin
-        if not srest then
-          read(t,s)
-        else
-          srest:=false;
-        pp:=cpos(#10,s);
-        if pp>0 then begin
-          endlf:=(pp=length(s));
-          Move(s[1],ibuf^[isize],pp-1);
-          inc(isize,pp-1);
-          delete(s,1,pp);
-          srest:=true;
-        end
-        else begin
-          if (length(s)>40) and sbreaks and eoln(t) and (LastChar(s)=' ')
-             and not eof(t)
-          then
-          begin
-            DeleteLastChar(s);
-            sbrk:=true;
-            readln(t);
-          end;
-          if (s <> '') then
-          begin
-          Move(s[1],ibuf^[isize],length(s));
-          inc(isize,length(s));
-          end;
-        end;
+      Readln(t,s);
+      if (length(s)>40) and sbreaks and
+         (LastChar(s)=' ') and (not eof(t) then begin
+        DeleteLastChar(s);
+        sbrk:=true;
       end;
-      if eoln(t) and not srest then
-      begin
-        endcr:=not eof(t);
-        readln(t);
-      end;
-      p:=AllocAbsatz(isize);
+
+      p:=AllocAbsatz(length(s));
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((isize<=rrand) or sbrk)));
-        Move(ibuf^,p^.cont,isize);
+                     ((umbruch=1) and ((length(s)<=rrand) or sbrk)));
+        if length(s)>0 then
+          Move(s[1],p^.cont,length(s));
         AppP;
       end;
     end;
     close(t);
-    freemem(tbuf);
-    freemem(ibuf);
-    if endcr then
-    begin
-      p:=AllocAbsatz(0);
-      p^.umbruch:=(umbruch<>0);
-      AppP;
-    end;
     if ioresult<>0 then error(3);
     end;
   LoadBlock:=root;
@@ -1852,6 +1803,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.80  2002/02/24 20:57:35  ma
+  - LoadBlock's using Ansistrings now (also fixing some hangs)
+
   Revision 1.79  2002/02/22 08:25:10  mk
   - fixed crash with external tools
 
