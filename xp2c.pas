@@ -758,12 +758,6 @@ procedure MiscAnzeigeCfg;
 var i,x,y    : byte;
     brk,du : boolean;
 begin
-{$IFDEF Linux }
-  dialog(36,5,'',x,y);
-  maddbool(3,2,getres2(260,4),dispusername);  { 'Username anzeigen' }
-  maddstring(3,4,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
-  maddstring(3,5,getres2(260,14),mheadercustom[2],19,19,''); { 'userdef. Kopfzeile 2' }
-{$ELSE }
   dialog(36,13,'',x,y);
   maddint(3,2,getres2(260,1),scrsaver,5,5,0,10000); mhnr(280);   { 'Screen-Saver (Sek.)  ' }
     msetvfunc(scstest);
@@ -775,9 +769,8 @@ begin
   du:=dispusername;
   maddbool(3,9,getres2(260,4),dispusername);  { 'Username anzeigen' }
 
-  maddstring(3,11,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
-  maddstring(3,12,getres2(260,14),mheadercustom[2],19,19,''); { 'userdef. Kopfzeile 2' }
-{$ENDIF }
+  maddstring(3,11,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
+  maddstring(3,12,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1552,6 +1545,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.8  2000/12/11 11:16:27  mk
+  - Custom Headerlines ueber 19 Zeichen jetzt moeglich
+
   Revision 1.39.2.7  2000/11/25 01:32:57  mk
   - Weiterschalter sofort uebernehmen
 
