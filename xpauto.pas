@@ -275,7 +275,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg')) then
+          if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg') then
             SafeDeleteFile(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -675,6 +675,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.7  2002/07/27 08:40:18  mk
+  - fixed typo
+
   Revision 1.48.2.6  2002/07/26 10:13:43  mk
   - fixed dbWrite with AnsiStrings
 
