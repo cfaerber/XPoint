@@ -1057,8 +1057,11 @@ begin
         erase(decf);
         end;
       end;
-    if (hdp^.netztyp=nt_Fido) and (art=xTractMsg) and ExtCliptearline then
-      Clip_Tearline;
+    if (hdp^.netztyp=nt_Fido) and (art=xTractMsg) then
+      if ExtCliptearline then
+        Clip_Tearline
+      else
+        if ExtChgTearline then Chg_Tearline;
     close(f);
     DisposeEmpflist(hdp^.kopien);
     dispose(hdp);
@@ -1072,6 +1075,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.11  2000/12/29 10:30:39  mk
+  - fixed Bug #109282: Fido: N/W/K
+
   Revision 1.10.2.10  2000/11/01 11:36:20  mk
   RB:- Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
 
