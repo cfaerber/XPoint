@@ -57,7 +57,7 @@ procedure SendNetzanruf(logfile: string);
 //**procedure MoveRequestFiles(var packetsize:longint);
 //**procedure MoveLastFileIfBad;
 
-procedure UniqueDownloadName(var s:string;path:string); { makes a a download filename usable and unique }
+procedure AssignUniqueDownloadName(var f:file;var s:string;path:string); { makes a a download filename usable and unique }
 
 procedure AponetNews; {?!}
 
@@ -553,14 +553,14 @@ begin
   close(t);
 end;
 
-procedure UniqueDownloadName(var s:string;path:string);
+procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
 var pold,name,ext,i: string;
     j,mlen: integer;
 begin
   s := ExtractFileName(s); (* replace path *)
   path:= AddDirSepa(path);
 
-  if s='' then s:='noname';
+  if s='' then s:='NONAME';
   
   (* 
      replace invalid chars
@@ -603,34 +603,36 @@ begin
   {$ENDIF}
 
   s   :=path+name+ext;
-  if not FileExists(s) then exit; (* bingo *)
+  if FileExists(s) then begin
+    j:=0;
+    name:=name+'-'; (* sep *)
+   
+    (* calculate max chars that may be added to name *)
+   
+    {$IFDEF DOS32}
+    if not System.LFNSupport true then 
+      mlen:=8-length(name)
+    else 
+    {$ENDIF}
+      mlen:=MaxLenPathName-Length(s)-length(Path)-1;
+  
+    (* find free filename *)
+  
+    repeat
+      inc(j); i:=Strs(j);
+  
+      if (mlen<length(i)) then begin
+        name:=copy(name,1,max(0,length(name)-length(i)+mlen));
+        mlen:=length(i);
+        if length(name) >4 then name[Length(name)]:='-'; (* sep *)
+      end;
+      s := path+name+i+ext;
+    until not FileExists(s);
+  end;
 
-  j:=0;
-  name:=name+'-'; (* sep *)
- 
-  (* calculate max chars that may be added to name *)
- 
-  {$IFDEF DOS32}
-  if (* not System.LFNSupport *) true then 
-    mlen:=8-length(name)
-  else 
-  {$ENDIF}
-    mlen:= MaxLenPathName-Length(s)-length(Path)-1;
-
-  (* find free filename *)
-
-  repeat
-    inc(j); i:=Strs(j);
-
-    if (mlen<length(i)) then begin
-      name:=copy(name,1,max(0,length(name)-length(i)+mlen));
-      mlen:=length(i);
-      if length(name) >4 then name[Length(name)]:='-'; (* sep *)
-    end;
-
-    s := path+name+i+ext;
-
-  until not FileExists(s);
+  (* BUG: not thread safe *)
+  assign(f,s);
+  rewrite(f,1);
 end;
 
 function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,crash:boolean):boolean;
@@ -962,6 +964,7 @@ begin                  { function Netcall }
             EL_break  : begin  Netcall:=false; end;
           else begin Netcall:=true end;
             end; {case}
+	  SendNetzanruf(NetcallLogFile);
           end; {case ltUUCP}
 
         ltPOP3: begin
@@ -1195,6 +1198,10 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/03/16 23:05:07  cl
+  - fixes for AssignUniqueDownload
+  - fixes for ltUUCP
+
   Revision 1.17  2001/03/03 16:21:32  ma
   - removed unused variables/procedures
 
