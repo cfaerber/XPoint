@@ -248,6 +248,8 @@ type
     flOhneSig     : boolean; { Keine Signatur anhängen                 }
 
     flIntern      : boolean; { force Intern                            }
+    flPostpone    : boolean; { => Unversandt                           }
+
     flShow        : boolean; { ausfuehrliche Sendeanzeige              }
     flDelay       : boolean; { 0,5 s Warten                            }
     flReedit      : boolean; { TED: Softbreaks umwandeln               }
@@ -686,6 +688,7 @@ begin
   SentOK   := false;
   
   flIntern := false;
+  flPostpone := false;
   flShow   := false;
   flDelay  := false;
 //flQuote  := false;
@@ -1015,6 +1018,10 @@ finalization
 
 {
   $Log$
+  Revision 1.79  2003/09/07 14:49:42  cl
+  - send window: postpone message
+    CLOESES task #76797: "Sendefenster: Parken"
+
   Revision 1.78  2003/09/06 23:03:07  cl
   - send window - time-shifted sending of message
     cLOSES task #76792: Sendefenster: Datum

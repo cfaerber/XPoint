@@ -1299,6 +1299,18 @@ begin
   SetSigningField;
 end;
 
+function OnExit(brk,modif:boolean):boolean;
+var dummy: boolean;
+begin
+  result := true;
+  if brk then
+    case ReadIt(60,GetRes2(600,4),GetRes2(600,5),1,dummy) of
+      1: MQuit(3);              // postpone, only changes return value
+      2: ;
+      else result := false;       // cancel
+    end;
+end;
+
 procedure OnTextButton(var cont: string);
 begin
   gsData.EditText;
@@ -1563,18 +1575,13 @@ begin
       MAddButton(p,h+add_h+Max(ll,rr),s,senden,-1,true);
       inc(p,Length(s)+3);
       MHNr(2926);
+      MaskSetQFunc(OnExit);
 
       s := GetRes2(610,65); { '^Datun' }
       MAddButton(p,h+add_h+Max(ll,rr),s,senden,0,false);
       Mset0Proc(OnDateButton);
       inc(p,Length(s)+3);
       MHNr(2927);
-
-(*
-      s := GetRes2(610,22); { '^Intern' }
-      MAddButton(p,h+add_h+Max(ll,rr),s,senden,2,true);
-      MHNr(2927);
-*)      
 
       s1 := GetRes2(610,26); { '^Anhang' }
       s2 := GetRes2(610,25); { '^Text' }
@@ -1607,6 +1614,7 @@ begin
 
       case senden of
         2: Self.flIntern := true;
+        3: Self.flPostpone := true;
       end;
     end;
 
@@ -2056,6 +2064,10 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.13  2003/09/07 14:49:42  cl
+// - send window: postpone message
+//   CLOESES task #76797: "Sendefenster: Parken"
+//
 // Revision 1.12  2003/09/06 23:03:08  cl
 // - send window - time-shifted sending of message
 //   cLOSES task #76792: Sendefenster: Datum

@@ -224,7 +224,7 @@ end;
 
 procedure THeader.Clear;
 begin
-  netztyp := nt_Netcall;
+  netztyp := nt_ZConnect;
   archive := false;
   attrib := 0;
   filterattr := 0;
@@ -889,6 +889,10 @@ end;
 
 {
   $Log$
+  Revision 1.41  2003/09/07 14:49:42  cl
+  - send window: postpone message
+    CLOESES task #76797: "Sendefenster: Parken"
+
   Revision 1.40  2003/08/26 22:33:05  cl
   - added interface for THeader to read from TSTream objects
 

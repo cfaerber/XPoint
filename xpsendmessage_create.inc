@@ -39,6 +39,9 @@ var FidoOriginSav: string;
     SigningMethod: TSendSigningMethod;
     const EncrPwd: string );
 
+  var
+    NoServer : boolean;
+
     {-- CreateSingleMessage ------------------------------------------ }
 
     {-- CreateSingleMessage: Fido ------------------------------------ }
@@ -50,7 +53,7 @@ var FidoOriginSav: string;
         num  : integer;
     begin
       Result := '';
-      if not Server.IsFTN then exit;
+      if NoServer or not Server.IsFTN then exit;
       if pm then exit;
 
       if FidoOriginSav<>'' then begin
@@ -105,7 +108,7 @@ var FidoOriginSav: string;
 
     function MayCrash:boolean;
     begin 
-      Result := PM and Server.IsFTN;
+      Result := (not NoServer) and PM and Server.IsFTN;
     end;
 
     procedure SetCrashInfo;
@@ -204,7 +207,7 @@ var FidoOriginSav: string;
          s:string;
       anal:TMimeAnalyzer;
     begin
-      if pmcrypt[Ord(EncryptionMethod)-2].binary and not ntBinary(server.netztyp) then 
+      if pmcrypt[Ord(EncryptionMethod)-2].binary and not ((not NoServer) and ntBinary(server.netztyp)) then 
       begin
         rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
         exit;
@@ -240,7 +243,7 @@ var FidoOriginSav: string;
         CopyStream(fs,anal);
         
         if(pmcrypt[Ord(EncryptionMethod)-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
-          and not ntBinary(Server.Netztyp) then
+          and not ((Not NoServer) and ntBinary(server.netztyp)) then
         begin
           fs.Free;
           rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
@@ -292,7 +295,7 @@ var FidoOriginSav: string;
 
     NewMidType : byte;
     fn2      : string;
-    s1,s2:   TStream;
+    s1,s2,s3: TStream;
     hdptyp   : char;
     b: byte;
 
@@ -300,14 +303,21 @@ var FidoOriginSav: string;
     flags    : longint;
 
   begin
+    s1 := nil;
+    s2 := nil;
+    s3 := nil;
+
     { --- 0. Schritt: Ein paar vorarbeiten ---------------------------- }
 
     Hdp := THeader.Create;
-    Hdp.Netztyp := Server.Netztyp;
+    NoServer := not assigned(Server);
+    if NoServer then Server := TXPServer.CreateByName(DefaultBox);
+
+    if not NoServer then Hdp.Netztyp := Server.Netztyp;
 
     { --- 1. Schritt: Body erzeugen ----------------------------------- }
 
-    if ntMIME(Server.netztyp) then
+    if NoServer or ntMIME(Server.netztyp) then
       hdp.MIME.mversion := '1.0';
 
     // We need the information for individual body parts when sending
@@ -318,6 +328,7 @@ var FidoOriginSav: string;
     if (not partsex) and assigned(orghdp) then
     begin
       // just pass-through
+      FreeAndNil(s1);
       s1 := TFileStream.Create(PartFile,fmOpenRead);
 
       hdp.typ           := orghdp.typ;
@@ -361,7 +372,7 @@ var FidoOriginSav: string;
            else
              hdp.typ := 'T'; // UUZ will encode
 
-           if ntMIME(Server.netztyp) then
+           if NoServer or ntMIME(Server.netztyp) then
            begin
              hdp.mime.ctype    := TSendAttach_Part(parts[0]).ContentType.AsString;
              hdp.mime.encoding := TSendAttach_Part(parts[0]).ContentEncoding;
@@ -371,7 +382,8 @@ var FidoOriginSav: string;
 
            hdp.datei := TSendAttach_Part(parts[0]).FileNameO;
            hdp.summary := TSendAttach_Part(parts[0]).ContentDescription;
-           if ntMime(Server.netztyp) and not IsNAN(FileModify) then
+           if (NoServer or ntMIME(Server.netztyp))
+              and not IsNAN(FileModify) then
              hdp.ddatum := DateTimeToZCDateTime(TSendAttach_Part(parts[0]).FileModify);
 
            if ContentType.NeedCharset then
@@ -381,10 +393,12 @@ var FidoOriginSav: string;
            end;
 
            // Determine whether we can use the file unchanged:
-           if (Server.netztyp=nt_Fido) or (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
+           if ((not NoServer) and (Server.netztyp=nt_Fido)) or
+              (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
               ((IsMessage) and not flOhnesig and (SigData<>'')) or
               (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) then
            begin
+             FreeAndNil(s1);
              s1 := TRopeStream.Create;
              MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
                SigData,FidoOrigin);
@@ -394,6 +408,7 @@ var FidoOriginSav: string;
              end;
            end else
            begin
+             FreeAndNil(s1);
              s1 := TFileStream.Create(FileName,fmOpenRead);
              if ContentType.NeedCharset then begin
                hdp.charset:=MimeCharsetToZC(FileCharset);
@@ -405,11 +420,13 @@ var FidoOriginSav: string;
       else
        begin
         Boundary:=MimeCreateMultipartBoundary(Server.username); // does not contain chars that must be quoted
+
         hdp.boundary:=boundary;
         hdp.typ:='M';
         hdp.MIME.ctype := 'multipart/mixed; boundary="'+Boundary+'"';
         hdp.MIME.encoding := MimeEncoding7Bit;
 
+        FreeAndNil(s1);
         s1 := TRopeStream.Create;
 
         for i:=0 to parts.Count-1 do
@@ -447,7 +464,7 @@ var FidoOriginSav: string;
 
     hdp.DiskussionIn.Clear;
     hdp.AntwortAn.Clear;
-    
+
     for i:=0 to EmpfList.Count-1 do
       case EmpfList[i].AddressType of
         atReplyTo:    hdp.AntwortAn.Add(EmpfList[i].ZcAddress);
@@ -456,7 +473,7 @@ var FidoOriginSav: string;
       
     //-- RFC-Header -------------------------------------------------- }
 
-    if Server.IsRFC then begin
+    if (NoServer) or Server.IsRFC then begin
       hdp.UTo := RFCWriteAddressList(EmpfList,nil,[atTo]);
       hdp.CC  := RFCWriteAddressList(EmpfList,nil,[atCC]);
       hdp.BCC := RFCWriteAddressList(EmpfList,nil,[atBCC]);
@@ -477,19 +494,16 @@ var FidoOriginSav: string;
     if not Server.AliasPoint then hdp.real_box:=Server.Name;
     hdp.realname:=iifs(SenderRealname='',Server.Realname,SenderRealname);
     
-    if flWAB and ntAdrCompatible(onetztyp,Server.netztyp)
+    if flWAB and (not NoServer) and ntAdrCompatible(onetztyp,Server.netztyp)
     then begin
       hdp.wab:=hdp.absender; hdp.war:=hdp.realname;
       hdp.absender:=oab; hdp.realname:=oar;
       { oab:=''; }
       end;
 
-    if Server.netztyp=nt_Magic then
-      hdp.hd_point:=Server.pointname;
-
     hdp.Keywords:=keywords;
     hdp.Summary:=summary;
-    if  ntAdrCompatible(onetztyp,Server.netztyp)
+    if (not NoServer) and ntAdrCompatible(onetztyp,Server.netztyp)
     then begin
       if not flWAB then begin
         hdp.oab:=oab; hdp.oar:=oar;
@@ -503,7 +517,7 @@ var FidoOriginSav: string;
     sendedat:=ixdat(zdate);
     hdp.datum:=iifs(ReplaceEtime,LeftStr(zdate,6)+'0000',zdate);
 
-    if Server.Netztyp = nt_UUCP then
+    if (not NoServer) and (Server.Netztyp = nt_UUCP) then
       hdp.pfad := iifs(Server.AliasPoint,Server.username,Server.pointname+Server.domain+'!'+Server.username)
     else
       hdp.pfad := '';
@@ -560,7 +574,7 @@ var FidoOriginSav: string;
       hdp.telefon:=telefonnr;
       hdp.homepage:=wwwHomepage;
       end
-    else if (Server.netztyp in netsRFC) and not adrpmonly then
+    else if NoServer or ((Server.netztyp in netsRFC) and (not adrpmonly)) then
       hdp.homepage:=wwwHomepage;
 
     hdp.datei:=sendfilename;
@@ -572,7 +586,8 @@ var FidoOriginSav: string;
       if FidoTo<>'' then
         hdp.fido_to:=fidoto
       else
-        if not pm and (Server.netztyp in netsFTN) then hdp.fido_to:=brettalle;
+        if not pm and (NoServer or (Server.netztyp in netsFTN)) then
+          hdp.fido_to:=brettalle;
 
     hdp.attrib:=iif(pm and flRequestMDN,attrReqEB,0);
     hdp.xnoarchive := flNoArchive;
@@ -631,16 +646,33 @@ var FidoOriginSav: string;
 //    hdp.replyto := '';
     hdp.References.Assign(References);
 
-    hdp.groesse:=s1.Size;
-    s1.Seek(0,soFromBeginning);
-
+    FreeAndNil(s2);
     fn2:=TempS(s1.Size+4000);
     s2 := TFileStream.Create(fn2,fmCreate);
 
+    hdp.groesse:=s1.Size;
+    FreeAndNil(s3);
+
+    if NoServer then
+    begin
+      s3 := TRopeStream.Create;
+      for i := 0 to KOP.Count-1 do
+        writeln_s(s3,GetRes2(600,1)+' '+KOP[i]);
+      writeln_s(s3,'');
+      inc(hdp.groesse,s3.Size);
+    end;
+
     hdp.WriteToStream(s2);      // Header erzeugen
+
+    if assigned(s3) then begin
+      s3.Seek(0,soFromBeginning);
+      CopyStream(s3,s2);  // ## Originalempfaenger
+    end;
+
+    s1.Seek(0,soFromBeginning);
     CopyStream(s1,s2);  // Body anhängen
 
-    s2.Free; {s2:=nil;}
+    FreeAndNil(s2);
 
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
@@ -655,10 +687,10 @@ var FidoOriginSav: string;
     end else
     begin
       for i:=EMP.Count-1 downto 0 do
-        if PM then 
+        if PM then
         begin
           Emp[i]:=Addr2DB(EMP[i]);
-      
+
           dbSeek(ubase,uiName,UpperCase(Emp[i]));
           if not dbFound then             { kein bekannter B. Nutzer => anlegen }
             AddNewUser(Emp[i],Server.Name);
@@ -675,7 +707,7 @@ var FidoOriginSav: string;
           else
             EMP.Delete(i);
         end;
-      
+
       if (not PM) and (EMP.Count<=0) then    { kein bekanntes Brett *** GRMPF ***       }
       begin                                  { => "$/>>Nix" nehmennehmen und ggf. anlegen! }
         dbSeek(bbase,biBrett,UpperCase('$/¯Nix'));
@@ -687,15 +719,15 @@ var FidoOriginSav: string;
     end;
 
     // 3b) Einträge erzeugen
-    for i:=0 to EMP.Count-1 do 
+    for i:=0 to EMP.Count-1 do
     begin
       if Count<>0 then
         dbAppend(mbase);      { Neuer Eintrag (hier wg. Message-ID      }
       Inc(Count);
-      Ablage := iif(ntZConnect(Server.netztyp),10,0);
+      Ablage := iif(NoServer or ntZConnect(Server.netztyp),10,0);
       dbWriteN(mbase,mb_ablage,Ablage);
 
-      if i=0 then begin 
+      if i=0 then begin
          Xwrite(fn2);         { In MPUFFER.?? ablegen                   }
         _era(fn2);
         mpadr  := dbReadIntN(mbase,mb_adresse);
@@ -755,14 +787,14 @@ var FidoOriginSav: string;
       dbWriteN(mbase,mb_halteflags,b);
       if flintern then b:=0
       else b:=1;
-      if flCrash and (Server.Netztyp in netsFTN) then inc(b,16);    { !! Crash-Flag }
+      if flCrash and (Server.Netztyp in netsFTN) and not NoServer then inc(b,16);    { !! Crash-Flag }
       dbWriteN(mbase,mb_unversandt,b);
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
       flags := flags or 256; // this mail is from yourself, needed for replaceown
 
       flags:=flags and not 56;
-      if Server.netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
+      if (not NoServer) and (Server.netztyp=nt_Zconnect) then { Zconnect-Prioritaet: }
         if msgprio=10 then flags:=flags or 16        { Direkt = Hoch }
         else if msgprio=20 then flags:=flags or 8;   { Eilmail = Hoechste }
 
@@ -818,7 +850,7 @@ var FidoOriginSav: string;
         if hdp.typ<>'M' then
         begin
           // encode the single part NOW for MIME
-          s1.Free; s1:=TRopeStream.Create;
+          FreeAndNil(s1); s1:=TRopeStream.Create;
           with TSendAttach_Part(parts[0]) do
             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
               iifs((IsMessage),sigData,''),
@@ -850,6 +882,7 @@ var FidoOriginSav: string;
 
     // BUG: possible race condition; no other solution possible with
     //      standard PASCAL RTL.
+      FreeAndNil(s2);
       if FileExists(fn2) then begin
         s2 := TFileStream.Create(fn2,fmOpenReadWrite);
         s2.Seek(0,soFromEnd);
@@ -862,8 +895,6 @@ var FidoOriginSav: string;
 
       s1.Seek(0,soFromBeginning);
       CopyStream(s1,s2);
-      s2.Free; {s2:=nil;}
-
     end; // if not flIntern
 
     end else // if not assigned(FileStr)
@@ -872,7 +903,10 @@ var FidoOriginSav: string;
       CopyStream(s1,FileStream);
     end;
 
-    s1.Free; s1:=nil;
+    FreeAndNil(s1);
+    FreeAndNil(s2);
+    FreeAndNil(s3);
+    if NoServer then FreeAndNil(Server);
   end;
 
   procedure CreateBoxMessages(const Box:string;PM:Boolean);
@@ -1059,6 +1093,7 @@ var FidoOriginSav: string;
   procedure CreateInternalMessage(const Box: string);
   var EMP,KOP: TStringList;
        Server: TXPServer;
+      i: integer;
   begin
     FidoOriginSav := '';
 
@@ -1073,6 +1108,31 @@ var FidoOriginSav: string;
       CreateSingleMessage(Server,nil,EMP,KOP,false,false,secNone,sigNone,'');
     finally
       Server.Free;
+      EMP.Free;
+      KOP.Free;
+    end;
+  end;
+
+  procedure CreatePostponedMessage;
+  var EMP,KOP: TStringList;
+      i: Integer;
+  begin
+    FidoOriginSav := '';
+
+    EMP := nil;
+    KOP := nil;
+    try
+      EMP := TStringList.Create;
+      EMP.Add('$/'#$AF'Unversandt');
+
+      KOP := TStringList.Create;
+      for i:=0 to EmpfList.Count-1 do
+        if EmpfList[i].AddressType in [atNewsgroup,atTo,atCC,atBCC] then
+          KOP.Add(EmpfList[i].ZcAddress);
+
+      flIntern := true;
+      CreateSingleMessage(nil,nil,EMP,KOP,false,false,secNone,sigNone,'');
+    finally
       EMP.Free;
       KOP.Free;
     end;
@@ -1187,9 +1247,11 @@ begin
     CreateDatedMessage;
   end else
   if flIntern then 
-  begin
-    CreateInternalMessage(DefaultBox);
-  end else
+    CreateInternalMessage(DefaultBox)
+  else
+  if flPostPone then
+    CreatePostponedMessage
+  else
   begin
 
   // RFC- und ZConnect-Boxen müssen nach vorn sortiert werden, damit wir
@@ -1217,6 +1279,10 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.21  2003/09/07 14:49:42  cl
+// - send window: postpone message
+//   CLOESES task #76797: "Sendefenster: Parken"
+//
 // Revision 1.20  2003/09/06 23:03:08  cl
 // - send window - time-shifted sending of message
 //   cLOSES task #76792: Sendefenster: Datum

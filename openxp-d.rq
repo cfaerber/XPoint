@@ -1391,9 +1391,9 @@ N Deutsch
 # Die folgende Zeile darf keine Umlaute enthalten:
 + 600  
 1 ## Originalempfaenger:
-2 ## Originalempfaenger(CC):
-3 ## Originalempfaenger(BCC):
-10  et al.
+
+4 Soll diese Nachricht in /ØUnversandt gespeichert werden?
+5 ~ ^Ja  ,^Nein (Nachricht Verwerfen), ^ZurÅck~
 -
 + 601
 # Codierverfahren
@@ -4144,6 +4144,10 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.82  2003/09/07 14:49:42  cl
+# - send window: postpone message
+#   CLOESES task #76797: "Sendefenster: Parken"
+#
 # Revision 1.81  2003/09/06 23:03:07  cl
 # - send window - time-shifted sending of message
 #   cLOSES task #76792: Sendefenster: Datum
