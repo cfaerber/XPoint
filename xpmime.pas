@@ -33,7 +33,9 @@ uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xp
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
       public
-        startline  : longint;      { 0 = kein Multipart }
+        offset     : longint;
+        length     : longint;
+//      startline  : longint;      { 0 = kein Multipart }
         lines      : longint;
         code       : TMimeEncoding;
         typ,subtyp : string;       { fÅr ext. Viewer }
@@ -300,6 +302,9 @@ var   hdp      : THeader;
         parvalue : string;
         vorspann : boolean;
         n,_start : longint;
+        startpos : longint;
+        endpos   : longint;
+        curpos   : longint;     { NB: filepos does not work with text }
         isbound  : boolean;
         endbound : boolean;
         last     : integer;
@@ -375,6 +380,8 @@ var   hdp      : THeader;
     reset(t);
     ClearPartsList;
     stackwarn:=false;
+    startpos := 0;
+    curpos   := 0;
 
     if hdp.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
@@ -405,12 +412,14 @@ var   hdp      : THeader;
       if bptr=0 then bound:=#0     { Nachspann }
       else bound:=bstack[bptr];
       repeat
+        endpos := curpos; 
         if bufline<>'' then begin
           s:=bufline; bufline:='';
           dec(_start);
           end
         else begin
           readln(t,s);
+          inc(curpos,Length(s)+2);
           inc(n);
           if (n>=1) and (Firstline = '') then firstline:=s;
           end;
@@ -422,12 +431,13 @@ var   hdp      : THeader;
       until isbound or eof(t);
       { Letzte Zeile im letzen Part wird sonst unterschlagen }
       if not isbound then inc(n);
+      if not isbound then endpos:=curpos;
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
         { das war kein Nachspann, sondern ein text/plain ohne Subheader ... }
         ctype:='text'; subtype:='plain';
-        end;
+      end;
 
       if (ctype=getres2(2440,1)) and MimeVorspann then
         ctype:='';
@@ -445,8 +455,10 @@ var   hdp      : THeader;
           fname:=filename;
           ddatum:=filedate;
           charset := MimeGetCharsetFromName(CharsetName);
-          startline:=_start;
-          lines:=n-startline;
+          offset := startpos;
+          length := endpos-startpos;
+//        startline:=_start;
+          lines:=n-_start;
           part:= PartsList.Count - 1;
         end;
       end;
@@ -456,7 +468,8 @@ var   hdp      : THeader;
         pop;
         s:='';
         last:=1;
-        end;
+        startpos := curpos;
+      end;
 
       reset_var;
       if not eof(t) and not endbound then begin
@@ -466,11 +479,13 @@ var   hdp      : THeader;
             s:=iifs(s2=#0,'',s2)
           else begin
             readln(t,s); inc(n);
+            inc(curpos,Length(s)+2);
             end;
           if not eof(t) and (cpos(':',s)>0) then
             repeat                { Test auf Folding }
               readln(t,s2);
               inc(n);
+              inc(curpos,Length(s2)+2);
               folded:=(firstchar(s2) in [' ',#9]);
               if folded then s:=s+' '+trim(s2)
               else if s2='' then s2:=#0;
@@ -507,12 +522,13 @@ var   hdp      : THeader;
               if (pos('name', parname) >0) then filename:=s;
             end;
         until endhd or eof(t);
+        startpos := curpos - length(bufline);
 
         if subboundary<>'' then begin
           push('--'+subboundary);
           reset_var;
           vorspann:=true;
-          end;
+        end;
 
         end;
       end;
@@ -531,7 +547,9 @@ var   hdp      : THeader;
         subtyp:='';
         code:=MimeEncodingBinary;
         fname:='';
-        startline:=1;
+        offset:=0;
+//      length:=filesize(t);
+//      startline:=1;
         lines:=n-1;
         part:=0;
         end;
@@ -621,18 +639,25 @@ procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append, utf8:boolean);
 var
   tmp      : string;
   ins,outs : TStream;
+  inp      : TStream;
+  
   s        : string;
   i        : integer;
+  rem,rd   : longint;
+  buffer   : array [0..65535] of char;
   
 begin
   // Extract full message
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
   extract_msg(0,'',tmp,false,0);
 
-  // Open it and read over the first lines
+  // Open it and seek to correct position
   ins := TFileStream.Create(tmp,fmOpenRead);
  try
-  for i:=1 to mpdata.startline-1 do readln_s(ins);
+//for i:=1 to mpdata.startline-1 do readln_s(ins);
+  ConnectStream(ins,TPartialStream.Create(
+    mpdata.offset,mpdata.offset+mpdata.length));
+  ins.Seek(0,soFromBeginning);
 
   // Open the destination file
   if append then
@@ -643,7 +668,7 @@ begin
   if append then 
     outs.Seek(0,soFromEnd);
 
-  // Now link charset recoders
+  // Now link charset recoders:
   // if Charset is unkown, assume Windows-1252 is used
   if mpdata.Charset = csUnknown then mpdata.Charset := csCP1252;
 
@@ -657,23 +682,13 @@ begin
           ConnectStream(outs,TCharsetEncoderStream.Create(mpdata.Charset,csCP437));
     end; // case
 
+  // Also link transfer decoders
+  if mpdata.code in [MimeEncodingQuotedPrintable,MimeEncodingBase64] then
+    ConnectStream(ins,MimeCreateDecoder(mpdata.code));
+
   if mpdata.lines>500 then rmessage(2442);    { 'decodiere BinÑrdatei ...' }
  try
-
-  // Note: We can't just connect the appropriate decoding stream
-  //   in front of ins and do a CopyStream because wee need to do
-  //   line counting.
-  for i:=1 to mpdata.lines do 
-  begin
-    s:=readln_s(ins);
-    case mpdata.code of
-      MimeEncodingQuotedPrintable: write_s(outs,DecodeQuotedPrintable(s));
-      MimeEncodingBase64:          write_s(outs,DecodeBase64(s));
-      else                         writeln_s(outs,s);
-    end; // case
-    
-  end;
-
+   CopyStream(ins,outs);
  finally
   if mpdata.lines>500 then closebox;
  end;
@@ -810,7 +825,7 @@ begin
   MimePart := TMimePart.Create;
   SelectMultiPart(true,1,true, MimePart,brk);
   if not brk then
-    if MimePart.startline>0 then
+    if MimePart.offset>0 then
       m_extrakt(MimePart)
     else
       rfehler(2440);    { 'keine mehrteilige MIME-Nachricht' }
@@ -830,7 +845,9 @@ procedure TMIMEPart.Assign(Source: TMIMEPart);
 begin
   if Assigned(Source) then
   begin
-    StartLine := Source.startline;
+//  StartLine := Source.startline;
+    Offset := Source.Offset;
+    Length := Source.Length;
     lines := Source.Lines;
     code := Source.Code;
     typ := Source.typ;
@@ -847,7 +864,9 @@ end;
 
 procedure TMIMEPart.Clear;
 begin
-  startline := 0;
+//startline := 0;
+  offset := 0;
+  length := 0;
   lines := 0;
   code := MimeEncodingUnknown;
   typ := '';
@@ -868,6 +887,9 @@ finalization
 
 {
   $Log$
+  Revision 1.59  2002/03/03 15:53:32  cl
+  - MPData now contains byte offset, not line counts (better performance)
+
   Revision 1.58  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 

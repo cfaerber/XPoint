@@ -749,7 +749,7 @@ begin // extract_msg;
     ex_MimePart.Free;
     ex_MimePart := nil;
   end;
-  multipart:=(MimePart.startline>0);
+  multipart:=(MimePart.offset>0);
   _brett := dbReadNStr(mbase,mb_brett);
   if art=xTractPuf then
     Xread(name,append)
@@ -1222,6 +1222,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.94  2002/03/03 15:53:32  cl
+  - MPData now contains byte offset, not line counts (better performance)
+
   Revision 1.93  2002/02/09 12:00:51  ma
   - fixed display of recipients in message viewer
 

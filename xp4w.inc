@@ -899,7 +899,7 @@ begin
           pophp;
           if brk then goto nextmsg;
           mpart_nr:=MimePart.part;
-          if MimePart.startline>0 then begin
+          if MimePart.offset>0 then begin
             if MimePart.typ<>'' then
               MimeType := Compmimetyp(MimePart.typ+'/'+MimePart.subtyp)
             else
@@ -1694,6 +1694,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.94  2002/03/03 15:53:32  cl
+  - MPData now contains byte offset, not line counts (better performance)
+
   Revision 1.93  2002/02/20 08:20:05  ml
   - removed very dangerous "p" to get openxp compilable in linux
 
