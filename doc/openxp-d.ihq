@@ -61,10 +61,10 @@ Seite.
 
 @
 4
-<<CrossPoint - Hotkeys
+<<OpenXP - Hotkeys
 
 Die folgenden Tasten k”nnen Sie (fast) berall in
-CrossPoint verwenden:
+OpenXP verwenden:
 
    <<<F1> >>      Hilfe
    <<<Alt-F1> >>  letzte Hilfe
@@ -108,14 +108,14 @@ Stellt das Betriebssystem keine Zwischenablagefunk-
 tion zur Verfgung (wie z.B. DOS), oder kann die zur
 Verfgung stehende Zwischenablage nicht von DOS-Pro-
 grammen angesprochen werden (Windows 2000/NT), ver-
-wendet CrossPoint eine Tempor„rdatei als interne
+wendet OpenXP eine Tempor„rdatei als interne
 Zwischenablage.
 
 @
 5
-<<CrossPoint - Support
+<<OpenXP - Support
 
-Als CrossPoint-Benutzer erhalten Sie umfangreichen
+Als OpenXP-Benutzer erhalten Sie umfangreichen
 Support bei Problemen und Fragen. Dabei macht es
 keinen Unterschied, ob Sie bereits registrierter
 Anwender sind (s. [Lizenzbestimmungen]), oder Cross-@6
@@ -136,7 +136,7 @@ M”glichkeiten:
 
   (*) Z-Netz: Es ist zu empfehlen, prim„r die Usenet-
               Gruppe zu benutzen, da Sie im Z-Netz-
-              Brett kaum noch aktive CrossPoint-User
+              Brett kaum noch aktive OpenXP-User
               antreffen werden.
 
    Die Bretter werden von vielen erfahrenen XP-Usern
@@ -185,12 +185,12 @@ M”glichkeiten:
 
 
 <<Bei Problemen und Anfragen sollten Sie IMMER die
-<<Nummer Ihrer CrossPoint-Version angeben, bei einem
+<<Nummer Ihrer OpenXP-Version angeben, bei einem
 <<Programmausstieg IMMER die genaue Fehlermeldung!
 
 
 ş  Es gibt im Internet auch einige Homepages zum
-   Thema CrossPoint:
+   Thema OpenXP:
 
 <<         http://www.openxp.de/
          (offizielle Homepage des OpenXP-Projekts;
@@ -216,18 +216,18 @@ genden Datei <<LIZENZ.DOC>> und unter dem Menpunkt
 /XPoint/Registrierung.
 @
 7
-<<CrossPoint - Kommandozeilen-Parameter
+<<OpenXP - Kommandozeilen-Parameter
 
-Die Aufrufsyntax von CrossPoint ist:
+Die Aufrufsyntax von OpenXP ist:
 
-XP [/Option1 /Option2 ...]
+OpenXP [/Option1 /Option2 ...]
 
 
 M”gliche Optionen sind:
 
 <</?>>    Ausgabe der Kommandozeilenhilfe
 
-<</312>>  v3.12-Kompatibilit„tsmodus: CrossPoint verwen-
+<</312>>  v3.12-Kompatibilit„tsmodus: OpenXP verwen-
       det statt der standardkonformen ZC-Headerzeile
       <<F-TO>> den bis Version 3.12 verwendeten pro-
       priet„ren Header <<X-XP-FTO>>. Die Verwendung
@@ -244,7 +244,7 @@ M”gliche Optionen sind:
 <</f:<Datei> >>l„dt eine EGA/VGA-Schriftdatei (Bild-
       schirm-Font) in den blichen Formaten (8x8 bis
       8x16 Punkte). Falls keine Dateierweiterung an-
-      gegeben wird, nimmt XP ".FNT" an.
+      gegeben wird, nimmt OpenXP ".FNT" an.
 
 <</gd:<Datei> >>w„hlt eine andere Gebhrendatei
       (Default: GEBUEHR.DAT). N„heres s. FIDO.TXT.
@@ -287,12 +287,12 @@ M”gliche Optionen sind:
 
 <</mailto:[user\@do.main][?subject:"xxx"][\BOX]
       Dieser Parameter wird automatisch ausgefhrt,
-      wenn CrossPoint als Standard-Mailer in Windows
+      wenn OpenXP als Standard-Mailer in Windows
       registriert ist und ein Mausklick auf einen
       <<mailto:>>-Link erfolgt (funktioniert leider
       nicht, wenn Netscape als Standard-Browser in-
       stalliert ist!). N„here Informationen siehe:
-      [CrossPoint als Standard-Mailer in Windows]@11
+      [OpenXP als Standard-Mailer in Windows]@11
 
 <</maus>> aktiviert eine Cursor-Maus-Emulation.
 
@@ -306,27 +306,28 @@ M”gliche Optionen sind:
       mentierten OS/2-Funktionen zur Rechenzeit-
       Freigabe. Die Verwendung der Schalter <</os2a>>
       bis <</os2d>> kann zur Systeminstabilit„t fhren,
-      bei merkwrdigen Problemen w„hrend des XP-
-      Betriebs nicht weiterverwenden!
+      bei merkwrdigen Problemen w„hrend des
+      OpenXP-Betriebs nicht weiterverwenden!
 
 <</pw:xxx>> bergibt das Startpaáwort <<xxx>>
       (s. XPOINT.TXT, Kap. 3.4).
 
-<</q>>    schaltet alle Tonsignale ab. Damit CrossPoint
+<</q>>    schaltet alle Tonsignale ab. Damit OpenXP
       Sie beim automatischen Netcall nicht weckt.
 
-<</rp>>   CrossPoint berprft nach Beendigung einer DOS-
+<</rp>>   OpenXP berprft nach Beendigung einer DOS-
       Shell, ob residente Programme geladen wurden.
       Sollte diese šberprfung - aus welchem Grund
       auch immer - rger machen, k”nnen Sie sie mit
       <</rp>> abschalten.
 
 <</sd>>   Falls ein MS-Smartdrive-Schreibcache vorhanden
-      ist, leert XP den Cache in regelm„áigen Abst„n-
-      den und bei Programmende, um die Gefahr von
-      Datenverlusten zu verringern. Sollten diese
-      Smartdrive-Zugriffe Probleme verursachen, so
-      k”nnen Sie sie mit <</sd>> abschalten.
+      ist, leert OpenXP den Cache in regelm„áigen
+      Abst„nden und bei Programmende, um die Ge-
+      fahr von Datenverlusten zu verringern.
+      Sollten diese Smartdrive-Zugriffe Pro-
+      bleme verursachen, so k”nnen Sie sie mit
+      <</sd>> abschalten.
 
 <</trace>> aktiviert die Netcall-Scriptprotokollierung
       (s. XPOINT.TXT, Kap. 8.1.).
@@ -342,8 +343,8 @@ M”gliche Optionen sind:
       explizit ab.
 
 <</w2>>   erzwingt Rechenzeitfreigabe wie in Versionen
-      vor XP v3.20 (Uhr, ScreenSaver und die <</maus>>-
-      Emulation werden abgeschaltet).
+      vor OpenXP v3.20 (Uhr, ScreenSaver und die
+      <</maus>>-Emulation werden abgeschaltet).
 
 <</z:nn>> stellt <<nn>> Bildzeilen ein. <<nn>> muá einer der
       bei [/Config/Anzeige/Zeilen] angezeigten Zeilen-@10905
@@ -356,7 +357,7 @@ benen Reihenfolge ausgefhrt. Die gleichzeitige Anga-
 be von <</ip>> und <</ipe>> ist nicht m”glich; es wird dann
 nur die jeweils letzte Option ausgefhrt:
 
-<</autostart:...>>  startet CrossPoint nur zu bestimmten
+<</autostart:...>>  startet OpenXP nur zu bestimmten
                 Uhrzeiten (s. XPOINT.TXT, Kap. 5.3.).
 
 <</user:BOX:NAME>>  „ndert den Usernamen bei der angege-
@@ -367,7 +368,7 @@ nur die jeweils letzte Option ausgefhrt:
                 det werden!
 
 <</ip:PUFFER>>      liest den angegebenen Puffer ein
-                ([/XPoint/Import/Puffer]). Der Datei-@11001
+                ([/OpenXP/Import/Puffer]). Der Datei-@11001
                 name darf Laufwerks- und Pfadbezeich-
                 nungen enthalten.
 
@@ -426,7 +427,7 @@ nur die jeweils letzte Option ausgefhrt:
 Die folgenden Optionen sind nur zu Diagnosezwecken
 gedacht:
 
-<</d>>       startet CrossPoint im Debug-Mode. Dies be-
+<</d>>       startet OpenXP im Debug-Mode. Dies be-
          wirkt u.a. eine genauere Anzeige w„hrend
          des Netcalls und kann hilfreich sein, um
          Netcall-Probleme zu lokalisieren. Auáerdem
@@ -458,10 +459,10 @@ Siehe auch: [Errorlevel]@8
 
 @
 8
-<<CrossPoint - Errorlevel
+<<OpenXP - Errorlevel
 
 
-CrossPoint gibt bei Beendigung folgende ERRORLEVEL-
+OpenXP gibt bei Beendigung folgende ERRORLEVEL-
 Werte zurck:
 
 <<0>>:      Programm wurde normal beendet.
@@ -474,7 +475,8 @@ Werte zurck:
 
 <<10-255>>: Diese Errorlevel-Werte k”nnen mit der QUIT-
         Option in Timing-Listen erzeugt werden und
-        dadurch von XP aus externe Programme steuern.
+        dadurch von OpenXP aus externe Programme
+        steuern.
         Siehe auch XPOINT.TXT, Kap. 5.3 (automatische
         Netcalls). Im Prinzip sind auch Werte von 0-9
         m”glich, aber wie gesagt: Besser nicht ver-
@@ -483,11 +485,11 @@ Werte zurck:
 
 @
 9
-<<CrossPoint - Bezugsquellen
+<<OpenXP - Bezugsquellen
 
 Die neueste Version des OpenXP-Teams und weitere
-Infos zur Weiterentwicklung von CrossPoint durch
-das OpenXP-Projekt finden Sie auf:
+Infos zur Weiterentwicklung von OpenXP finden
+Sie auf:
 
 <<        http://www.openxp.de/
         oder Fido File Request bei <<2:248/2004>>
@@ -509,9 +511,9 @@ finden Sie im Internet unter:
 
 @
 10
-<<CrossPoint - Tastaturkonventionen
+<<OpenXP - Tastaturkonventionen
 
-CrossPoint verwendet - einerseits aus Tradition (1992
+OpenXP verwendet - einerseits aus Tradition (1992
 war das so blich) und weil man es andererseits von
 DFš-Programmen so gewohnt ist - die internationalen
 (englischen) Begriffe fr Tastenbezeichnungen.
@@ -521,7 +523,7 @@ eine Gegenberstellung der Abweichungen zwischen den
 internationalen und den deutschen Tastenbezeichnun-
 gen:
 
-      CrossPoint      ³   deutsche Tastatur
+      OpenXP          ³   deutsche Tastatur
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
               <<<Shift> >>³ <<<Umschalt> >>
 (Control)      <<<Ctrl> >>³ <<<Strg> >>    (Steuerung)
@@ -571,16 +573,16 @@ Darstellung ³ Bedeutung
 
 @
 11
-<<CrossPoint als Standard-Mailer in Windows
+<<OpenXP als Standard-Mailer in Windows
 
 In Windows (95/98, Millennium, 2000 und NT) k”nnen
-Sie CrossPoint als Standard-Mailer registrieren, so
-daá automatisch CrossPoint gestartet wird, wenn Sie
+Sie OpenXP als Standard-Mailer registrieren, so
+daá automatisch OpenXP gestartet wird, wenn Sie
 auf einen sog. <<mailto:>>-Link klicken. Dabei werden
 die Mail-Adresse des Empf„ngers und die Serverbox an
-CrossPoint bergeben und Sie k”nnen nach Eingabe des
+OpenXP bergeben und Sie k”nnen nach Eingabe des
 Betreffs direkt mit dem Editieren Ihrer Nachricht
-beginnen. Hierzu verwendet CrossPoint beim Start den
+beginnen. Hierzu verwendet OpenXP beim Start den
 Parameter <</mailto:>>, der folgende Syntax hat:
 
 <</mailto:[user\@do.main][?subject:"xxx"][\BOX]
@@ -613,7 +615,7 @@ Wenn keine Box angegeben wurde, wird der Server
 verwendet, der dem jeweiligen User zugewiesen ist.
 Existiert der User nicht, wird die Stammbox verwen-
 det. ACHTUNG: das kann z.B. auch eine Fido-Box sein,
-deshalb sollte die CrossPoint beiliegende Registrie-
+deshalb sollte die OpenXP beiliegende Registrie-
 rungsdatei <<XPMAILTO.REG>> (s.u.) vor Ausfhrung unbe-
 dingt daraufhin berprft werden, ob die darin be-
 findlichen Eintr„ge eine gltige RFC-Box enthalten
@@ -628,17 +630,18 @@ einer nicht RFC-basierten Serverbox jedoch durchaus
 sinnvoll sein.
 
 
-Dem CrossPoint-Paket liegt eine Datei <<XPMAILTO.REG>>
+Dem OpenXP-Paket liegt eine Datei <<XPMAILTO.REG>>
 (im BEISPIELE-Verzeichnis) bei. Bitte passen Sie dort
 zun„chst mit einem Texteditor an <<allen>> entsprechenden
-Stellen den Pfad zu Ihrer XP-Installation (z.B.
-"C:\XP"), den Namen des zu verwendenden Servers (z.B.
-"t-online") und den Pfad bzw. Namen des XP-Startbe-
-fehls (z.B. "C:\BAT\XP.BAT") an und fhren Sie diese
-Datei aus (z.B. durch einen Doppelklick auf die Datei
-im Windows Explorer). Danach sind die in XPMAILTO.REG
-enthaltenen Angaben in Ihrer Windows-Registry
-(Registrierdatenbank) eingetragen.
+Stellen den Pfad zu Ihrer OpenXP-Installation
+(z.B. "C:\XP"), den Namen des zu verwendenden
+Servers (z.B. "t-online") und den Pfad bzw. Namen
+des OpenXP-Startbefehls (z.B. "C:\BAT\XP.BAT") an
+und fhren Sie diese Datei aus (z.B. durch einen
+Doppelklick auf die Datei im Windows Explorer).
+Danach sind die in XPMAILTO.REG enthaltenen An-
+gaben in Ihrer Windows-Registry (Registrierdaten-
+bank) eingetragen.
 
 Bitte beachten Sie, daá Backslashes in Pfadangaben
 in XPMAILTO.REG doppelt anzugeben sind!
@@ -652,10 +655,10 @@ Machen Sie in jedem Fall vorher ein Backup der ent-
 sprechenden Datei (<<SYSTEM.DAT>> in Ihrem Windows-
 Verzeichnis)!
 
-Die folgenden Angaben gehen davon aus, daá CrossPoint
+Die folgenden Angaben gehen davon aus, daá OpenXP
 in C:\XP installiert ist, der zu verwendende Server
 (d.h. der Name der zu verwendenden Box) "t-online"
-ist, und daá Sie CrossPoint mit einer Batchdatei
+ist, und daá Sie OpenXP mit einer Batchdatei
 XP.BAT starten, die im Verzeichnis C:\BAT liegt.
 
 
@@ -746,7 +749,7 @@ Wert:      <<(Standard)>>
 Daten:     <<C:\BAT\XP.BAT>>
 
 
-<<Hinweis:>> Es ist sinnvoll, fr CrossPoint eine PIF-
+<<Hinweis:>> Es ist sinnvoll, fr OpenXP eine PIF-
          Datei anzulegen, dort die Batchdatei (z.B.
          XP.BAT) bzw. XP.EXE einzutragen, und in
          XPMAILTO.REG dann statt "C:\BAT\XP.BAT" den
@@ -755,7 +758,7 @@ Daten:     <<C:\BAT\XP.BAT>>
 
 @
 12
-<<CrossPoint und Mailinglisten
+<<OpenXP und Mailinglisten
 
 Mailinglisten sind, kurz gesagt, Bretter auf PM-Basis
 (im Usenet-Jargon: Newsgroups auf eMail-Basis). Das
@@ -767,7 +770,7 @@ geleitet.
 
 Normalerweise wrden alle Mails, die Sie ber eine
 Mailingliste erhalten, in Ihr internes PM-Brett ein-
-sortiert werden. Des weiteren wrde sich CrossPoint,
+sortiert werden. Des weiteren wrde sich OpenXP,
 wenn Sie auf eine solche Mail antworten, auch wie
 bei einer PM verhalten - es wrde also z.B. fragen,
 ob Sie die PM archivieren wollen, und es wrde die
@@ -776,9 +779,10 @@ entsprechende PM-Schablone verwenden.
 Dieses Verhalten ist i.d.R. nicht erwnscht, weil
 Sie auf die Dauer bei Mailinglisten, die einen hohen
 "Traffic" haben, die šbersicht verlieren wrden.
-Idealerweise sollte sich eine Mailingliste in XP wie
-ein Brett (Newsgroup) verhalten. Eine grunds„tzliche
-Anleitung, wie Sie dies erreichen, folgt hier:
+Idealerweise sollte sich eine Mailingliste in
+OpenXP wie ein Brett (Newsgroup) verhalten. Eine
+grunds„tzliche Anleitung, wie Sie dies erreichen,
+folgt hier:
 
 
 <<Anmeldung bei der Liste und User einrichten
@@ -824,14 +828,14 @@ unter /Edit/Boxen/Edit/Namen eintragen (bzw. wenn
 Sie bereits einen Eingangsfilter haben, mssen Sie
 den vorhandenen entsprechend erg„nzen). Sinn dieses
 Eingangsfilters ist es, alle Mails der Mailingliste
-in ein spezielles Brett in CrossPoint zu verschieben.
+in ein spezielles Brett in OpenXP zu verschieben.
 
-CrossPoint stellt keinen eigenen Eingangsfilter zur
+OpenXP stellt keinen eigenen Eingangsfilter zur
 Verfgung, hierzu mssen Sie sich eines externen
 Filterprogramms bedienen. Nicht ganz trivial in der
 Bedienung, aber sehr flexibel und bew„hrt ist z.B.
-das speziell fr XP entwickelte XPFILTER von Robin
-Sommer.
+das speziell fr OpenXP entwickelte XPFILTER von
+Robin Sommer.
 
 Ein sog. "Muster" fr XPFILTER, das alle ber die
 OpenXP-Mailingliste eingehenden Nachrichten in ein
@@ -922,9 +926,9 @@ wird die Auswahl best„tigt, mit <<<Esc> >>abgebrochen.
 20
 <<Brett-šbersicht
 
-Das Brettfenster ist eines der Hauptfenster von XP.
-Von hier aus haben Sie Zugriff auf alle Brettnach-
-richten und Bretteinstellungen.
+Das Brettfenster ist eines der Hauptfenster von
+OpenXP. Von hier aus haben Sie Zugriff auf alle
+Brettnachrichten und Bretteinstellungen.
 
 
 <<Funktionen in allen Modi
@@ -1521,7 +1525,7 @@ Der Lister wird mit <<<Esc> >>verlassen.
         Wenn eine Textzeile markiert ist und dort
         eine Message-ID erkannt wird, wird automa-
         tisch die Message-ID als Suchbegriff ber-
-        nommen. Erkennt CrossPoint keine Message-ID,
+        nommen. Erkennt OpenXP keine Message-ID,
         wird die komplette Zeile als Suchbegriff
         verwendet. Ist keine Textzeile markiert, wird
         der letzte verwendete Suchbegriff angeboten.
@@ -1551,7 +1555,7 @@ ten Suchl„ufe gilt:
         zur Verfgung, wenn ein Kommentarbaum aktiv
         ist und dieser Kommentarbaum aus einer Liste
         markierter Nachrichten heraus aufgebaut wur-
-        de. CrossPoint k”nnte sonst abstrzen.
+        de. OpenXP k”nnte sonst abstrzen.
 
 
 <<L>> setzt die angezeigte Nachricht auf "L”schen" und
@@ -1680,7 +1684,7 @@ vorhanden sein.
 50
 In der Regel m”chte man nicht alle Nachrichten lesen,
 sondern nur eine bestimmte Auswahl davon. Daher kann
-bei CrossPoint zwischen verschiedenen Nachrichten-
+bei OpenXP zwischen verschiedenen Nachrichten-
 Lesemodi gew„hlt werden:
 
 <<Alles>>     Es werden s„mtliche Nachrichten angezeigt.
@@ -1732,7 +1736,7 @@ ment, dessen Farbe ge„ndert werden soll, mit <<<Enter> >>
 best„tigen Sie die Auswahl.
 
 Mit der Option ¯Default® werden die Standard-Farben
-von CrossPoint gew„hlt; alle eigenen Farbeinstellun-
+von OpenXP gew„hlt; alle eigenen Farbeinstellun-
 gen gehen dabei verloren. Wahlweise k”nnten Sie auch
 die Datei XPOINT.COL l”schen.
 
@@ -1850,10 +1854,10 @@ Bei Verwendung von <<*>>, <<->> und <<+>> mssen Sie die Tasten
 auf dem numerischen Ziffernblock benutzen.
 
 Diese Zwischenablage arbeitet unabh„ngig von den b-
-rigen Blockoperationen. Falls XP unter einem Be-
+rigen Blockoperationen. Falls OpenXP unter einem Be-
 triebssystem arbeitet, das eine eigene Zwischenab-
 lage zur Verfgung stellt (z.B. Windows, OS/2), wird
-diese verwendet, ansonsten die XP-interne.
+diese verwendet, ansonsten die OpenXP-interne.
 
 @
 58
@@ -1985,8 +1989,8 @@ kette), erscheint ein PopUp-Men, aus dem mit den
 Cursortasten ein Textbaustein gew„hlt werden kann.
 
 Um diese Funktion nutzen zu k”nnen, muá eine Datei
-<<GLOSSARY.CFG>> im XP-Verzeichnis existieren. In
-dieser Datei werden dann die Textbausteine nach
+<<GLOSSARY.CFG>> im OpenXP-Verzeichnis existieren.
+In dieser Datei werden dann die Textbausteine nach
 folgenden Regeln aufgenommen:
 
 - Am Anfang einer Zeile kennzeichnet eine in ">" und
@@ -2039,7 +2043,7 @@ ___________________________
 >Diverse Textkrzel
 
 >xp<
-CrossPoint
+CrossPoint/OpenXP
 >
 
 >oxp<
@@ -2177,7 +2181,7 @@ also ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP oder ZOO.
 
 Dateien, deren Name mit einem <<*>> gekennzeichnet
 ist, wurden inclusive Dateipfad eingepackt. Je nach
-Packer k”nnen sie nicht direkt aus dem XP-Archiv-
+Packer k”nnen sie nicht direkt aus dem OpenXP-Archiv-
 Viewer heraus angezeigt oder extrahiert werden.
 
 Mit <<P>> und <<B>> k”nnen Sie wie in der Nachrichten-šber-
@@ -2189,7 +2193,7 @@ der Entpacker auch mehrmals aufgerufen wird.
 
 @
 68
-Dies ist das <<Sende-Fenster>> von CrossPoint. Hier geben
+Dies ist das <<Sende-Fenster>> von OpenXP. Hier geben
 Sie an, ob und wie eine Nachricht verschickt werden
 soll.
 
@@ -2265,8 +2269,8 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 <<ohneSig>>  verschickt die Nachricht ohne Signatur.
 
 <<L”schen>>  setzt die Nachricht auf "L”schen"; sie wird
-         nach dem Absenden bei der n„chsten XP-Reor-
-         ganisation gel”scht.
+         nach dem Absenden bei der n„chsten OpenXP-
+         Reorganisation gel”scht.
 
 <<Crash>>    (Fido) legt die Nachricht zum Direktversand
          mit [/Fido/Crash] ab.@13104
@@ -2282,10 +2286,10 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          k”nnen mit <<<F2> >>zwischen verschiedenen
          Priorit„tsleveln w„hlen, und der Empf„nger
          kann (vielleicht) diese Priorit„t in seinem
-         Mail-/Newsprogramm erkennen. Ob und wie XP
-         empfangene Nachrichten darstellt, die einen
-         Priorit„tsstatus besitzen, k”nnen Sie unter
-         /Config/Anzeige/Farben einstellen.
+         Mail-/Newsprogramm erkennen. Ob und wie
+         OpenXP empfangene Nachrichten darstellt, die
+         einen Priorit„tsstatus besitzen, k”nnen Sie
+         unter /Config/Anzeige/Farben einstellen.
 
 <<Zusatz>>   (ZConnect/Usenet) erm”glicht die Eingabe
          diverser zus„tzlicher Informationen.
@@ -2472,7 +2476,7 @@ Bei Dateien, die im internen Editor erstellt wurden,
 ist der Zeichensatz nicht „nderbar.
 @
 69
-<<Ja>>  ->  CrossPoint fgt dem MAPS-Befehl das Attribut
+<<Ja>>  ->  OpenXP fgt dem MAPS-Befehl das Attribut
         VERBOSE hinzu.
 @
 70
@@ -2514,9 +2518,9 @@ Geben Sie den Namen an, unter dem die markierten
 Zeilen gespeichert werden sollen. Wenn nichts mar-
 kiert ist, wird der gesamte Text gespeichert.
 
-Wenn Sie den Dateinamen ohne Pfad angeben, legt XP
-die Datei im Extrakt-Verzeichnis ([/Config/Pfade/Ext.])@261
-ab.
+Wenn Sie den Dateinamen ohne Pfad angeben, legt
+OpenXP die Datei im Extrakt-Verzeichnis
+([/Config/Pfade/Ext.])@261 ab.
 
 Mit <<<F2> >>kommen sie zur Auswahl fr das Clipboard
 (Zwischenablage).
@@ -2540,14 +2544,14 @@ Stellt das Betriebssystem keine Zwischenablagefunk-
 tion zur Verfgung (wie z.B. DOS), oder kann die zur
 Verfgung stehende Zwischenablage nicht von DOS-Pro-
 grammen angesprochen werden (Windows 2000/NT), ver-
-wendet CrossPoint eine Tempor„rdatei als interne
+wendet OpenXP eine Tempor„rdatei als interne
 Zwischenablage.
 
 @
 75
 Geben Sie den Namen an, unter dem die decodierte
 Datei gespeichert werden soll. Wenn Sie den Datei-
-namen ohne Pfad angeben, legt XP die Datei im Ex-
+namen ohne Pfad angeben, legt OpenXP die Datei im Ex-
 trakt-Vereichnis ([/Config/Pfade/Extrakt...]) ab.@261
 @
 76
@@ -2566,7 +2570,7 @@ trakt-Vereichnis ([/Config/Pfade/Extrakt...]) ab.@261
 <<Datei>> ->  Eintrag UND zugeh”rige Datei l”schen
 @
 78
-<<Stammbox>>   Diese Box schl„gt CrossPoint beim Anlegen
+<<Stammbox>>   Diese Box schl„gt OpenXP beim Anlegen
            neuer Bretter oder User und beim Durchfh-
            ren von Netcalls vor.
 
@@ -2599,7 +2603,7 @@ editieren oder l”schen.
 
 Wenn ein File Request trotz Verbindungsaufnahme mit
 der angerufenen Box nicht erfolgreich war, oder wenn
-nicht alle Dateien angekommen sind, merkt XP sich
+nicht alle Dateien angekommen sind, merkt OpenXP sich
 die fehlenden Dateien in einem "zurckgestellten
 Request". N„heres hierzu ist in FIDO.TXT beschrieben.
 
@@ -2620,13 +2624,13 @@ Sie haben eine Nachricht mit einem File Attach ge-
 w„hlt, also eine Nachricht, die aus einem Text mit
 angeh„ngter Datei besteht.
 
-<<Ja>>   -> CrossPoint zeigt den Inhalt der Datei an.
+<<Ja>>   -> OpenXP zeigt den Inhalt der Datei an.
         Der Name der Datei steht im Betreff der
         Nachricht. Falls kein Pfad angegeben ist,
         befindet sie sich im bei /Config/Pfade ein-
         gestellten [FileReq-Verzeichnis.]@264
 
-<<Nein>> -> CrossPoint zeigt den Inhalt der Nachricht an.
+<<Nein>> -> OpenXP zeigt den Inhalt der Nachricht an.
 @
 82
 W„hlen Sie die gewnschte Datenbank und drcken Sie
@@ -2659,7 +2663,7 @@ nach rechts - folgende Informationen angezeigt:
 ş Dateigr”áe der Liste in KByte
 
 Alle Filelisten befinden sich im Verzeichnis "FIDO"
-unterhalb von XP.
+unterhalb von OpenXP.
 
 Falls als Name einer Box nur "???" angezeigt wird,
 ist die Box nicht mehr in der Nodeliste enthalten,
@@ -2725,7 +2729,7 @@ Sie sie bei /Config/Optionen/Netze abschalten.
 
 @
 92
-CrossPoint hat entdeckt, daá sich das Systemdatum
+OpenXP hat entdeckt, daá sich das Systemdatum
 seit dem letzten Programmstart in ungew”hnlicher
 Weise ge„ndert hat. Bitte berprfen Sie, ob das
 Datum stimmt, und korrigieren Sie es gegebenenfalls.
@@ -2749,10 +2753,10 @@ zu beantworten, w„hlen Sie "gesamte Nachricht".
 101
 Alle eingelesenen Nachrichten erhalten eine interne
 Datumsmarkierung (Empfangsdatum); dies ist normaler-
-weise das Datum des Puffereinlesens. Dadurch kann XP
-die Nachrichten im Nachrichten-Fenster immer in der
-korrekten Reihenfolge anzeigen; auáerdem dient das
-Empfangsdatum als Referenz bei der Reorganisation.
+weise das Datum des Puffereinlesens. Dadurch kann
+OpenXP die Nachrichten im Nachrichten-Fenster immer
+in der korrekten Reihenfolge anzeigen; auáerdem dient
+das Empfangsdatum als Referenz bei der Reorganisation.
 
 Wenn Sie allerdings eine fertige Pufferdatei - z.B.
 aus einem anderen Pointprogramm - einlesen, dann
@@ -2761,34 +2765,34 @@ alle Nachrichten das gleiche Datum und bleiben da-
 durch u.U. l„nger in der Datenbank stehen als n”tig.
 
 Durch "Empfangsdatum = Erstellungsdatum" bernimmt
-XP bei allen eingelesenen Nachrichten das Empfangs-
-datum aus dem Original-Erstellungsdatum der Nach-
-richt und verhindert damit die o.g. Probleme.
+OpenXP bei allen eingelesenen Nachrichten das
+Empfangsdatum aus dem Original-Erstellungsdatum der
+Nachricht und verhindert damit die o.g. Probleme.
 
 @
 102
 Bei automatisch (nach einem Netcall) eingelesenen
-Puffern weiá XP, von welcher Box sie stammen, und
+Puffern weiá OpenXP, von welcher Box sie stammen, und
 kann daher bei neu angelegten Brettern den Server-
 Eintrag korrekt setzen. Bei von Hand eingelesenen
 Puffern handelt es sich u.U. um Nachrichten aus
 verschiedenen Servern.
 
 Mit "Server aus Pfad bernehmen" veranlassen Sie
-XP dazu, bei neu angelegten Brettern das letzte
+OpenXP dazu, bei neu angelegten Brettern das letzte
 (bei ZConnect-Daten: erste) im Nachrichtenpfad
 angegebene System als Server einzutragen. Ist diese
 Option ausgeschaltet, oder ist der Pfad leer, nimmt
-XP immer die mit /Edit/Boxen/W„hlen eingestellte
+OpenXP immer die mit /Edit/Boxen/W„hlen eingestellte
 Stammbox.
 
 @
 103
 <<[x]>> -> Bei Nachrichten, deren Betreff mit "\##" be-
-       ginnt, erzeugt XP eine automatische Empfangs-
-       best„tigung. Dazu muá allerdings auch die ent-
-       sprechende Option unter /Optionen/Nachrichten
-       eingeschaltet sein.
+       ginnt, erzeugt OpenXP eine automatische Em-
+       pfangsbest„tigung. Dazu muá allerdings auch
+       die entsprechende Option unter /Optionen/
+       Nachrichten eingeschaltet sein.
 
 Diese Option ist ntzlich, wenn ein Netcall fehlge-
 schlagen ist und Sie den Puffer von Hand einlesen.
@@ -2815,8 +2819,8 @@ Siehe auch: [Suchoptionen]@531
 120
 Geben Sie den Namen der Datei an, in die die gew„hl-
 te(n) Nachricht(en) extrahiert werden sollen. Wird
-kein Name angegeben, dann zeigt XP ein Datei-Aus-
-wahlfenster an.
+kein Name angegeben, dann zeigt OpenXP ein Datei-
+Auswahlfenster an.
 
 Ist die angegebene Datei bereits vorhanden, so kann
 zwischen šberschreiben der Datei oder Anh„ngen der
@@ -2860,7 +2864,7 @@ Reihenfolge.
         Durchfhrung von Netcalls betreffen.
 
 <<Gebhr>>  šber diesen Menpunkt werden alle Daten er-
-        faát, die CrossPoint zum Berechnen der ange-
+        faát, die OpenXP zum Berechnen der ange-
         fallenen Telefonkosten ben”tigt.
 
 <<Namen>>   dient zum ndern von Username, Boxname, u.a.
@@ -2870,7 +2874,7 @@ Reihenfolge.
 <<Diverses>>   Verschiedene Einstellungen, die u.a. On-
         line-Anrufe betreffen.
 
-<<SysopMode>>  Hier k”nnen Sie CrossPoint mitteilen, daá
+<<SysopMode>>  Hier k”nnen Sie OpenXP mitteilen, daá
         die Netcall-Pakete fr die gew„hlte Box nicht
         per Modem verschickt, sondern auf Platte ab-
         gelegt werden sollen, um sie dann "von Hand"
@@ -2932,7 +2936,7 @@ auch beide Paáw”rter gleich sein.
 142
 Die Telefonnummer der Box. Falls die Box ber mehre-
 re Nummern verfgt, k”nnen Sie diese getrennt durch
-Leerzeichen eingeben. CrossPoint wird dann reihum bei
+Leerzeichen eingeben. OpenXP wird dann reihum bei
 den einzelnen Nummern anrufen, bis ein Anruf erfolg-
 reich war.
 @
@@ -2955,7 +2959,7 @@ Hier sollte "2200" stehen.
 @
 144
 Das Upload-Protokoll ist ein externes Programm, das
-CrossPoint zum šbertragen der Nachrichten ZUR ange-
+OpenXP zum šbertragen der Nachrichten ZUR ange-
 rufenenen Box verwendet. Am einfachsten ist es, wenn
 Sie das mitgelieferte ZModem verwenden (ZM.EXE).
 šbernehmen Sie dazu einfach die Voreinstellung
@@ -2999,8 +3003,8 @@ typische Aufrufzeile fr DSZ ist:
 
 WICHTIG: Bei DSZ/GSZ sollten Sie auf jeden Fall die
 Dateierweiterung (.COM/.EXE) mit angeben; sonst
-erkennt XP nicht, wenn ein Netcall fehlerhaft abge-
-brochen wurde! Das Gleiche gilt fr die $LOGFILE-
+erkennt OpenXP nicht, wenn ein Netcall fehlerhaft
+abgebrochen wurde! Das Gleiche gilt fr die $LOGFILE-
 Angabe im BiModem-Aufruf:
 
 <<BIMODEM /L $PORT /U $UPFILE /I $LOGFILE
@@ -3014,7 +3018,7 @@ zeichnis mit angegeben werden:
 <<HSLINK -P$PORT -U$DOWNPATH $UPFILE
 
 Bitte stellen Sie auch sicher, daá das Upload-Pro-
-gramm im CrossPoint-Verzeichnis oder ber einen DOS-
+gramm im OpenXP-Verzeichnis oder ber einen DOS-
 Pfad erreichbar ist!
 
 @
@@ -3059,8 +3063,8 @@ ist:
 
 WICHTIG: Bei DSZ/GSZ sollten Sie auf jeden Fall die
 Dateierweiterung (.COM/.EXE) mit angeben; sonst
-erkennt XP nicht, wenn ein Netcall fehlerhaft abge-
-brochen wurde!
+erkennt OpenXP nicht, wenn ein Netcall fehlerhaft
+abgebrochen wurde!
 
 Bitte stellen Sie sicher, daá das Download-Programm
 im aktuellen Verzeichnis oder ber einen DOS-Pfad
@@ -3262,22 +3266,22 @@ M”glichkeiten:
   Problemen beim Versenden von Nachrichten kommt.
 
 <<Technischer Hinweis:>> Wenn dieser Schalter aktiviert
-wird, verwendet XP innerhalb von PKT-Dateien den FTSC
-Product Code von d'Bridge, damit TosScan die Pakete
-als 4D erkennt. Unabh„ngig davon verwendet der XP-
-Mailer XP-FM immer den XP-eigenen Code (E9h).
+wird, verwendet OpenXP innerhalb von PKT-Dateien den
+FTSC Product Code von d'Bridge, damit TosScan die
+Pakete als 4D erkennt. Unabh„ngig davon verwendet der
+OpenXP-Mailer immer den eigenen Code (E9h).
 
 @
 158
-Der Fido-Mailer von CrossPoint untersttzt bei Modem-
+Der Fido-Mailer von OpenXP untersttzt bei Modem-
 betrieb die beiden Verbindungsprotokolle YooHoo und
-EMSI. Normalerweise wird CrossPoint automatisch EMSI
+EMSI. Normalerweise wird OpenXP automatisch EMSI
 verwenden, das bessere der beiden Protokolle, sofern
 es von der Gegenseite untersttzt wird.
 
 Im Normalfall sollte der EMSI-Schalter immer einge-
 schaltet bleiben. Falls es aber beim EMSI-Netcall zu
-Problemen kommen sollte, k”nnen Sie CrossPoint durch
+Problemen kommen sollte, k”nnen Sie OpenXP durch
 Abschalten von EMSI dazu zwingen, YooHoo zu verwen-
 den.
 
@@ -3294,9 +3298,9 @@ Systemuhr stellen zu lassen; die Genauigkeit liegt
 bei +/- 1-2 Sekunden.
 
 Wenn Sie mit automatischen Netcalls ber Timinglisten
-arbeiten, k”nnen Sie CrossPoint auch z.B. einmal pro
+arbeiten, k”nnen Sie OpenXP auch z.B. einmal pro
 Woche bei einer Box mit DFC77-Uhr anrufen lassen.
-Dies ist auch dann m”glich, wenn Sie CrossPoint an-
+Dies ist auch dann m”glich, wenn Sie OpenXP an-
 sonsten nicht im Fido-Netz einsetzen!
 @
 8040
@@ -3351,12 +3355,12 @@ Pakete mit Buchstaben als letztem Zeichen.
 Falls Sie bei einer solchen Box pollen (der Sysop
 kann Ihnen genauere Auskunft darber geben), mssen
 Sie diesen Schalter aktivieren, damit auch die Pa-
-kete mit erweiterten Dateinamen korrekt in XP einge-
-lesen werden. Beachten Sie, daá dadurch auch andere
-empfangene Dateien mit Erweiterungen wie z.B. .MOD
-NICHT im FileRequest-Verzeichnis, sondern im SPOOL-
-Unterverzeichnis abgelegt werden (dort werden alle
-Mailpakete zwischengespeichert).
+kete mit erweiterten Dateinamen korrekt in OpenXP
+eingelesen werden. Beachten Sie, daá dadurch auch
+andere empfangene Dateien mit Erweiterungen wie z.B.
+.MOD NICHT im FileRequest-Verzeichnis, sondern im
+SPOOL-Unterverzeichnis abgelegt werden (dort werden
+alle Mailpakete zwischengespeichert).
 @
 8004
 Geben Sie hier Ihre zweistellige Pointnummer ein.
@@ -3442,7 +3446,7 @@ Paketgr”áen.
 8013
 Nur bei <<UUCP-g>> und <<UUCP-G>>.
 
-<<[ ]>> -> CrossPoint verwendet beim Senden die
+<<[ ]>> -> OpenXP verwendet beim Senden die
        Paketgr”áe, die vom angerufenen System an-
        gefordert wurde.
 
@@ -3461,7 +3465,7 @@ evtl. erh”hen, indem Sie mit diesem Schalter die
 Sendepaketgr”áe fest einstellen.
 @
 8014
-<<[x]>> -> CrossPoint schl„gt dem angerufenen System eine
+<<[x]>> -> OpenXP schl„gt dem angerufenen System eine
        "size negotiation" vor. Dies bedeutet, dass vor
        der šbertragung jeder Datei dem jeweils ande-
        ren System die Dateigr”áe mitgeteilt wird, was
@@ -3476,7 +3480,7 @@ System einfach ignoriert wird.
 8015
 Hier k”nnen Sie einstellen, welche der vom angerufe-
 nen System angebotenen UUCP-šbertragungsverfahren
-CrossPoint akzeptieren soll.
+OpenXP akzeptieren soll.
 
 Wenn mehrere Protokolle angekreuzt sind, wird das
 erst(best)m”gliche verwendet; wenn Sie z.B. alle
@@ -3592,7 +3596,7 @@ nicht untersttzt:
          keine Fehlerprfung.
 @
 8016
-Mit diesem Namen meldet sich CrossPoint bein angeru-
+Mit diesem Namen meldet sich OpenXP bein angeru-
 fenen System an. Falls nichts anderweitiges verein-
 bart wurde, ist dieser Name identisch mit Ihrem
 Systemnamen (Pointnamen).
@@ -3610,10 +3614,10 @@ Nicht jedes UUCP-System untersttzt Batched SMTP. Im
 Zweifelsfall fragen Sie bitte den Systembetreiber.
 @
 8018
-<<[ ]>> -> CrossPoint verwendet das Standard-Netcall-
+<<[ ]>> -> OpenXP verwendet das Standard-Netcall-
        verfahren "Janus".
 
-<<[x]>> -> CrossPoint verwendet das erweiterte Netcall-
+<<[x]>> -> OpenXP verwendet das erweiterte Netcall-
        verfahren "Janus Plus".
 
 Diesen Schalter sollten Sie nur aktivieren, falls
@@ -3663,7 +3667,7 @@ bzip2           ³       -         ³     ++
 
 @
 8021
-Mit diesem Programm entpackt CrossPoint Nachrichten,
+Mit diesem Programm entpackt OpenXP Nachrichten,
 die mit 'compress' gepackt sind. Diese Einstellung
 sollten Sie normalerweise nicht „ndern.
 
@@ -3671,7 +3675,7 @@ $DOWNFILE muá immer angegeben sein und wird jeweils
 durch den Namen der zu entpackenden Datei ersetzt.
 @
 8022
-Mit diesem Programm entpackt CrossPoint Nachrichten,
+Mit diesem Programm entpackt OpenXP Nachrichten,
 die mit 'freeze' gepackt sind. Diese Einstellung
 sollten Sie normalerweise nicht „ndern.
 
@@ -3679,7 +3683,7 @@ $DOWNFILE muá immer angegeben sein und wird jeweils
 durch den Namen der zu entpackenden Datei ersetzt.
 @
 8023
-Mit diesem Programm entpackt CrossPoint Nachrichten,
+Mit diesem Programm entpackt OpenXP Nachrichten,
 die mit 'gzip' gepackt sind. Diese Einstellung soll-
 ten Sie normalerweise nicht „ndern.
 
@@ -3687,7 +3691,7 @@ $DOWNFILE muá immer angegeben sein und wird jeweils
 durch den Namen der zu entpackenden Datei ersetzt.
 @
 8026
-Mit diesem Programm entpackt CrossPoint Nachrichten,
+Mit diesem Programm entpackt OpenXP Nachrichten,
 die mit 'bzip2' gepackt sind. Diese Einstellung soll-
 ten Sie normalerweise nicht „ndern.
 
@@ -3706,7 +3710,7 @@ gerader Parit„t" verwenden sollen.
 8025
 Tragen Sie hier eine Zahl gr”áer 0 ein, wenn die
 Gr”áe der empfangenen Nachrichtenpakete begrenzt
-werden soll. Gr”áere Pakete werden von CrossPoint
+werden soll. Gr”áere Pakete werden von OpenXP
 abgewiesen und vom Server verworfen.
 
 Diese Einstellung funktioniert nur bei Servern, die
@@ -3715,10 +3719,10 @@ daran, daá beim Empfangen von Dateien deren Gr”áe
 angezeigt wird.
 @
 160
-So viele Sekunden wartet XP nach dem Senden des W„hl-
-befehls darauf, daá eine Verbindung mit dem angeru-
-fenen System zustandekommt. Danach betrachtet es den
-Anruf als gescheitert und wartet auf den n„chsten
+So viele Sekunden wartet OpenXP nach dem Senden des
+W„hlbefehls darauf, daá eine Verbindung mit dem an-
+gerufenen System zustandekommt. Danach betrachtet es
+den Anruf als gescheitert und wartet auf den n„chsten
 Anruf.
 
 Achtung: Viele Modems besitzen eine eingebaute War-
@@ -3730,35 +3734,37 @@ finden Sie in Ihrem Modemhandbuch.
 
 @
 161
-So viele Sekunden wartet XP nach erfolgreicher Ver-
-bindung auf das Einloggen. Ist nach Verstreichen
+So viele Sekunden wartet OpenXP nach erfolgreicher
+Verbindung auf das Einloggen. Ist nach Verstreichen
 der Zeit kein erfolgreiches Login zustandegekommen,
-betrachtet XP den Anruf als gescheitert.
+betrachtet OpenXP den Anruf als gescheitert.
 @
 162
-So viele Sekunden wartet XP nach einem abgebrochenen
-Anruf; danach fhrt es einen erneuten Anruf durch.
+So viele Sekunden wartet OpenXP nach einem abgebroch-
+enen Anruf; danach fhrt es einen erneuten Anruf
+durch.
 @
 163
-So oft wiederholt XP - falls n”tig - den Netzanruf.
+So oft wiederholt OpenXP - falls n”tig - den Netz-
+anruf.
 Wurde auch nach der angegebenen Zahl von Versuchen
-kein Anruf korrekt beendet, so fhrt XP keine wei-
-teren Anrufe mehr durch und kehrt zum Programm zu-
-rck.
+kein Anruf korrekt beendet, so fhrt OpenXP keine
+weiteren Anrufe mehr durch und kehrt zum Programm
+zurck.
 @
 164
-So oft versucht XP, sich bei der angerufenen Box ein-
-zuloggen. Funktioniert das Einloggen auch nach der
-angegebenen Zahl von Versuchen nicht, bricht XP den
-Netzanruf ab und l„át das Modem auflegen.
+So oft versucht OpenXP, sich bei der angerufenen Box
+einzuloggen. Funktioniert das Einloggen auch nach der
+angegebenen Zahl von Versuchen nicht, bricht OpenXP
+den Netzanruf ab und l„át das Modem auflegen.
 
 Funktionieren Anrufe auch bei mehreren Loginversuchen
 nicht, dann ist davon auszugehen, daá der Pointname
 oder das Paáwort falsch sind. Um Genaueres ber die
-Fehlerursache herauszufinden, k”nnen Sie XP auch mit
-dem Parameter /d (Debug-Mode) starten. Es wird dann
-der genaue Verlauf des Netzanrufs am Bildschirm an-
-gezeigt.
+Fehlerursache herauszufinden, k”nnen Sie OpenXP auch
+mit dem Parameter /d (Debug-Mode) starten. Es wird
+dann der genaue Verlauf des Netzanrufs am Bildschirm
+angezeigt.
 @
 165
 Nach erfolgreicher Verbindungsaufnahme und Login
@@ -3766,7 +3772,7 @@ packt die angerufene Box zun„chst die fr Sie bereit-
 liegenden Daten; dies kann je nach Menge durchaus
 einige Minuten dauern.
 
-Wie viele Sekunden CrossPoint auf die packende Box
+Wie viele Sekunden OpenXP auf die packende Box
 warten soll, das k”nnen Sie mit dieser Option ein-
 stellen. Geben Sie besser ein paar Minuten zu viel
 als zu wenig an!
@@ -3774,7 +3780,7 @@ als zu wenig an!
 Achtung: Einige Modems besitzen eine eingebaute
 Wartezeit, nach der sie die Verbindung eigenst„ndig
 abbrechen ("inactivity timeout"). Falls die Verbin-
-dung also regelm„áig beendet wird, bevor der XP-
+dung also regelm„áig beendet wird, bevor der OpenXP-
 Countdown bei 00:00 angekommen ist, sollten Sie die-
 se Modemeinstellung entsprechend erh”hen.
 
@@ -3862,7 +3868,7 @@ viert sein.
 
 Statt der ber <<<F2> >>ausw„hlbaren Werte k”nnen Sie
 auch beliebige andere sinnvolle Baudraten angeben,
-z.B. 4800. CrossPoint l„át alle Eingaben zu, die von
+z.B. 4800. OpenXP l„át alle Eingaben zu, die von
 der seriellen Schnittstelle untersttzt werden.
 
 Falls Sie Ihr Modem ber einen FOSSIL-Treiber ansteu-
@@ -3898,18 +3904,18 @@ Point nur zwei Dateinamen mitteilen:
 
 <<Eingabepuffer>>
 
-Name der Datei, die beim Netcall von XP eingelesen
-werden soll. ACHTUNG: Nach dem Einlesen wird diese
-Datei gel”scht.
+Name der Datei, die beim Netcall von OpenXP einge-
+lesen werden soll. ACHTUNG: Nach dem Einlesen wird
+diese Datei gel”scht.
 
 <<Ausgabepuffer>>
 
 Der Name der Datei, in der beim Netcall der Puffer
 mit ausgehenden Nachrichten abgelegt werden soll.
 ACHTUNG: Ist die Datei bereits vorhanden, h„ngt
-XP die neuen Daten am Ende an. Sie mssen also nach
-der šbertragung zur Box selbst dafr sorgen, daá der
-Netcallpuffer gel”scht wird!!
+OpenXP die neuen Daten am Ende an. Sie mssen also
+nach der šbertragung zur Box selbst dafr sorgen,
+daá der Netcallpuffer gel”scht wird!!
 
 Sobald Sie diese beiden Dateien eingetragen haben,
 werden alle anderen Boxdaten-Eintragungen (Pointda-
@@ -3926,21 +3932,21 @@ richtig.
 
 <<Eingangsverzeichnis>>
 
-Dies ist das Verzeichnis, aus dem XP bei einem Net-
-call die Nachrichtenpakete einlesen soll. XP liest
-alle gepackten oder ungepackten Pakete aus dem ange-
-gebenen Verzeichnis ein und l”scht anschlieáend den
-gesamten Verzeichnisinhalt.
+Dies ist das Verzeichnis, aus dem OpenXP bei einem
+Netcall die Nachrichtenpakete einlesen soll. OpenXP
+liest alle gepackten oder ungepackten Pakete aus
+dem angegebenen Verzeichnis ein und l”scht anschlies-
+send den gesamten Verzeichnisinhalt.
 
 <<Ausgangsverzeichnis>>
 
-In diesem Verzeichnis legt XP ausgehende PKT-Dateien
-ab. Falls Sie den entsprechenden Schalter aktiviert
-haben, werden diese Dateien gepackt. Sie k”nnen die
-Pakete anschlieáend zur Mailbox bertragen, oder
-sonstwie weiterverarbeiten. ACHTUNG! Sie mssen nach
-der Weiterverarbeitung selbst dafr sorgen, daá die
-Pakete gel”scht werden!
+In diesem Verzeichnis legt OpenXP ausgehende PKT-
+Dateien ab. Falls Sie den entsprechenden Schalter
+aktiviert haben, werden diese Dateien gepackt. Sie
+k”nnen die Pakete anschlieáend zur Mailbox ber-
+tragen, oder sonstwie weiterverarbeiten.
+ACHTUNG! Sie mssen nach der Weiterverarbeitung
+selbst dafr sorgen, daá die Pakete gel”scht werden!
 
 N„heres finden Sie in FIDO.TXT im Kapitel "Sysop-
 Mode".
@@ -3950,42 +3956,44 @@ Mode".
 <<Eingangspakete>>
 
 Geben Sie hier Pfad + Namen der QWK-Pakete an, die
-XP bei /Netcall/Einzeln einlesen soll, z.B.
+OpenXP bei /Netcall/Einzeln einlesen soll, z.B.
 
    C:\INBOUND\*.QWK
 
 
 <<Ausgangsverzeichnis>>
 
-Dies ist das Verzeichnis, in dem XP die ausgehenden
-REP-Dateien mit den Antwortnachrichten ablegen soll.
+Dies ist das Verzeichnis, in dem OpenXP die ausgehen-
+den REP-Dateien mit den Antwortnachrichten ablegen
+soll.
 @
 8036
 Wenn Sie m”chten, daá ein- und ausgehende Nachrich-
 tenpakete nicht per UUCP, sondern lokal auf Ihrer
 Festplatte bertragen gespeichert werden, sind Sie
-hier richtig. Bitte beachten Sie, daá XP UUCP-Datei-
-namen in einem bestimmten Format erwartet und
+hier richtig. Bitte beachten Sie, daá OpenXP UUCP-
+Dateinamen in einem bestimmten Format erwartet und
 erzeugt; in den meisten F„llen wird eine Umbenennung
 n”tig sein. N„heres hierzu finden Sie in UUCP.TXT.
 
 
 <<Eingangsverzeichnis>>
 
-Dies ist das Verzeichnis, aus dem XP bei einem Net-
-call die Nachrichtenpakete einlesen soll. XP liest
-alle gepackten oder ungepackten News- und Mail-Pakete
-aus dem angegebenen Verzeichnis ein und l”scht an-
-schlieáend den gesamten Verzeichnisinhalt.
+Dies ist das Verzeichnis, aus dem OpenXP bei einem
+Netcall die Nachrichtenpakete einlesen soll. OpenXP
+liest alle gepackten oder ungepackten News- und Mail-
+Pakete aus dem angegebenen Verzeichnis ein und l”scht
+anschlieáend den gesamten Verzeichnisinhalt.
 
 <<Ausgangsverzeichnis>>
 
-In diesem Verzeichnis legt XP ausgehende Nachrichten-
-pakete ab. Falls bei /Edit/Boxen/Edit/Point ein Up-
-load-Packer eingetragen ist, werden die Nachrichten
-gepackt. ACHTUNG! Sie mssen nach einer Weiterverar-
-beitung der ausgehenden Nachrichten selbst dafr
-sorgen, daá die Pakete gel”scht werden!
+In diesem Verzeichnis legt OpenXP ausgehende Nach-
+richtenpakete ab. Falls bei /Edit/Boxen/Edit/Point
+ein Upload-Packer eingetragen ist, werden die Nach-
+richten gepackt.
+ACHTUNG! Sie mssen nach einer Weiterverarbeitung
+der ausgehenden Nachrichten selbst dafr sorgen, daá
+die Pakete gel”scht werden!
 
 N„heres finden Sie in UUCP.TXT im Kapitel "Sysop-
 Mode".
@@ -4022,7 +4030,7 @@ gestartet.
        anrufbericht erzeugt.
 @
 185
-<<[x]>> -> CrossPoint l„át im Ausgabepuffer bei von Ihnen
+<<[x]>> -> OpenXP l„át im Ausgabepuffer bei von Ihnen
        geschriebenen Nachrichten die Boxangabe weg;
        der Absender besteht also nur aus Ihrem User-
        namen. Dies ist u.U. n”tig, um Probleme beim
@@ -4065,7 +4073,7 @@ gestellt ist.
 @
 189
 Hier k”nnen Sie bis zu vier Uhrzeit-Bereiche angeben,
-in denen keine Netcalls erlaubt sind. CrossPoint wird
+in denen keine Netcalls erlaubt sind. OpenXP wird
 Netcalls um diese Uhrzeiten dann abfangen. Zeitbe-
 reiche, die ber die 00:00-Grenze hinweggehen, mssen
 in zwei Eintr„ge aufgeteilt werden. Nicht mehr ben”-
@@ -4246,7 +4254,7 @@ stattdessen /Wartung/Server-Wechsel verwenden.
        dieses Schalters verlangsamt allerdings das
        Einlesen der Nachrichten nach einem Netcall.
 
-<<[ ]>> -> CrossPoint legt beim Eintreffen selbst-
+<<[ ]>> -> OpenXP legt beim Eintreffen selbst-
        geschriebener Nachrichten Duplikate an.
 
 Die Einstellung wird bei allen Netztypen untersttzt,
@@ -4493,7 +4501,7 @@ Geben Sie hier die eMail-Adresse ein, die Ihre eMails
 erhalten sollen.
 
 Sie k”nnen dieses Feld auch freilassen - in diesem
-Fall setzt CrossPoint Ihre Absenderadresse wie folgt
+Fall setzt OpenXP Ihre Absenderadresse wie folgt
 zusammen:
 
 <<Username>>\@<<Pointname>>.<<Domain>>
@@ -4506,7 +4514,7 @@ unter Edit/Boxen/Edit/RFC/UUCP ist aktiviert)
 
 Wenn Sie hier eine eMail-Adresse angeben, brauchen
 Sie bei "Username", "Domain" und "Pointname" (siehe
-Edit/Point) keine Eintr„ge vorzunehmen: CrossPoint
+Edit/Point) keine Eintr„ge vorzunehmen: OpenXP
 bertr„gt die einzelnen Bestandteile der Adresse dann
 automatisch in die leeren Felder - jedoch nur in die
 Felder, die leer sind. Bestehende Eintr„ge werden
@@ -4556,7 +4564,7 @@ beliebigen externen Mail- und News-Clients, die
 ihrerseits beliebige Verbindungs- und šbertragungs-
 protokolle verwenden k”nnen.
 
-Hierbei bergibt CrossPoint die Kontrolle eines Net-
+Hierbei bergibt OpenXP die Kontrolle eines Net-
 calls nach dem Konvertieren des Ausgangspuffers bis
 zum Einlesen des Eingangspuffers vollst„ndig an den
 externen Client. Das bedeutet, daá der externe Client
@@ -4564,7 +4572,7 @@ fr Verbindungsaufbau, Nachrichtenaustausch und Ver-
 bindungsabbau ausschlieálich selbst zust„ndig ist.
 
 Voraussetzung fr eine funktionierende Kooperation
-zwischen CrossPoint und dem externen Mail-Client ist,
+zwischen OpenXP und dem externen Mail-Client ist,
 daá der Client Nachrichten im <<SMTP-Mailformat>> verar-
 beiten und erzeugen kann. N„heres zu Nachrichten-
 formaten siehe UUCP.TXT.
@@ -4691,7 +4699,7 @@ Message-ID insgesamt.
 
 
 <<Hinweis:>> Welche Kunststcke auch immer Sie mit der
-M”glichkeit, einen FQDN in CrossPoint konfigurieren
+M”glichkeit, einen FQDN in OpenXP konfigurieren
 zu k”nnen, vollfhren: Es wird Ihnen alles nichts
 ntzen, wenn Sie an einen News-Server geraten, der
 ohne jede Rcksicht Ihre Message-IDs berschreibt.
@@ -4761,7 +4769,7 @@ legt (und nicht automatisch aktualisiert) wird.
 30108
 (Siehe auch: [Client-Verzeichnis])@30107
 
-Tragen Sie hier das Programm ein, das CrossPoint bei
+Tragen Sie hier das Programm ein, das OpenXP bei
 einem RFC/Client-Netcall ausfhren soll. Fr einige
 g„ngige Clients bzw. Client-Kits k”nnen Sie mit <<<F2> >>
 einen der vorbereiteten Eintr„ge ausw„hlen.
@@ -4823,7 +4831,7 @@ weiterverarbeitet werden k”nnen:
           T-ONLI01.BFG). Die Dateierweiterung ".BFG"
           wird *nicht* mit bergeben.
 
-CrossPoint kann nicht berprfen, ob Ihre Eingaben an
+OpenXP kann nicht berprfen, ob Ihre Eingaben an
 dieser Stelle korrekt und sinnvoll sind - dafr ms-
 sen Sie selbst sorgen. Wenn Sie hier ein Programm
 eintragen, das Ihren Drucker sprengt, dann werden Sie
@@ -4853,7 +4861,7 @@ verrichtet hat, sondern den Netcall als beendet be-
 trachten, obwohl der Client vielleicht noch nicht
 einmal die Verbindung hergestellt hat. Im Ergebnis
 werden also weder Ihre Nachrichten versandt noch
-die vom Client geholten Nachrichten in CrossPoint
+die vom Client geholten Nachrichten in OpenXP
 eingelesen werden.
 
 Um diesen unerwnschten Effekt zu vermeiden, mssen
@@ -4903,7 +4911,7 @@ fel drcken Sie <<<F9> >>und fhren im XP-Verzeichnis
 den DOS-Befehl "dir *.bfg" aus, um die vorhandenen
 BFG-Dateien sehen zu k”nnen).
 
-CrossPoint wird dann zu Beginn eines RFC/Client-
+OpenXP wird dann zu Beginn eines RFC/Client-
 Netcalls die ausgehenden Nachrichten der hier ein-
 getragenen Serverbox(en) *zus„tzlich* zu denen des
 "Pollservers" konvertieren und im Spool-Verzeichnis
@@ -4943,7 +4951,7 @@ Provider eintragen (z.B. den Namen der DFš-Netzwerk-
 verbindung in Windows 9x/ME/2000/NT, die Sie fr den
 Verbindungsaufbau verwenden).
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -4959,7 +4967,7 @@ Wenn Ihr Client die Verbindung zu Ihrem Provider ber
 eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
 herstellt, kann dieses Feld i.d.R. leer bleiben.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -4976,7 +4984,7 @@ Wenn Ihr Client die Verbindung zu Ihrem Provider ber
 eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
 herstellt, kann dieses Feld i.d.R. leer bleiben.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -4992,7 +5000,7 @@ Wenn Ihr Client die Verbindung zu Ihrem Provider ber
 eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
 herstellt, kann dieses Feld i.d.R. leer bleiben.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5013,7 +5021,7 @@ mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
 hier auch mehrere Server hintereinander, jeweils
 durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5057,7 +5065,7 @@ hier ebenfalls mehrere Envelope-Adressen hinterein-
 ander, jeweils durch ein Leerzeichen getrennt, ein-
 tragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5090,7 +5098,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Benutzernamen hintereinander,
 jeweils durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. M”glicher-
@@ -5115,7 +5123,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Paáw”rter hintereinander,
 jeweils durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5148,7 +5156,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Ports hintereinander, jeweils
 durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5171,7 +5179,7 @@ mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
 hier auch mehrere Server hintereinander, jeweils
 durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5216,7 +5224,7 @@ hier ebenfalls mehrere Envelope-Adressen hinterein-
 ander, jeweils durch ein Leerzeichen getrennt, ein-
 tragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5250,7 +5258,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Benutzernamen hintereinander,
 jeweils durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. M”glicher-
@@ -5275,7 +5283,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Paáw”rter hintereinander,
 jeweils durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5299,7 +5307,7 @@ mehrerer Server gleichzeitig untersttzt, k”nnen Sie
 hier ebenfalls mehrere Ports hintereinander, jeweils
 durch ein Leerzeichen getrennt, eintragen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5318,7 +5326,7 @@ Senden von Artikeln ohne weiteres zul„át. Sie mssen
 sich m”glicherweise erst dort anmelden, bevor Sie
 eigene Artikel versenden k”nnen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5333,7 +5341,7 @@ diesem News-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5347,7 +5355,7 @@ diesem News-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5365,7 +5373,7 @@ mssen (falls abweichend vom Standard), erfahren
 Sie vom Betreiber des Servers. I.d.R. sollte der
 Standardwert funktionieren.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5388,7 +5396,7 @@ l„ngere Zeit eintragen, mssen Sie ggf. auch diese
 Modemeinstellung entsprechend erh”hen; n„heres dazu
 finden Sie in Ihrem Modemhandbuch.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5403,7 +5411,7 @@ cher Verbindung auf das Einloggen. Ist nach Verstrei-
 chen der Zeit kein erfolgreicher Login zustandegekom-
 men, betrachtet der Client den Anruf als gescheitert.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5416,7 +5424,7 @@ So viele Sekunden wartet der Client nach einem abge-
 brochenen Anruf; danach fhrt er einen erneuten Anruf
 durch.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5431,7 +5439,7 @@ Versuchen kein Anruf korrekt beendet, so fhrt XP
 keine weiteren Anrufe mehr durch und kehrt zum
 Programm zurck.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5452,7 +5460,7 @@ daten oder das Paáwort falsch sind. Um Genaueres ber
 die Fehlerursache herauszufinden, sehen Sie die Logs
 durch, die Ihr Client (hoffentlich) erstellt.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5481,7 +5489,7 @@ W„hlversuche" auf 50 eingestellt haben, wird nach 10
 fehlerhaften Verbindungen oder nach 50 erfolglosen
 Anwahlversuchen der Netcall abgebrochen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5508,7 +5516,7 @@ erzeugt werden, z.B. "ATE1\\ATS13=32". I.d.R. ist
 dies aber nicht n”tig, sondern die Modembefehle
 k”nnen alle hinter einem AT aufeinanderfolgen.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5529,7 +5537,7 @@ Insbesondere bei Verwendung von COM3 und COM4 mssen
 eine korrekte Portadresse und IRQ-Nummer eingetragen
 werden!
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5557,7 +5565,7 @@ viert sein.
 
 Statt der ber <<<F2> >>ausw„hlbaren Werte k”nnen Sie
 auch beliebige andere sinnvolle Baudraten angeben,
-z.B. 4800. CrossPoint l„át alle Eingaben zu, die von
+z.B. 4800. OpenXP l„át alle Eingaben zu, die von
 der seriellen Schnittstelle untersttzt werden.
 
 Falls Sie Ihr Modem ber einen FOSSIL-Treiber ansteu-
@@ -5566,7 +5574,7 @@ die Baudrate durch den FOSSIL-Treiber fest vorgegeben
 ("gelockt") werden. N„heres dazu finden Sie in der
 Dokumentation des FOSSIL-Treibers.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5582,7 +5590,7 @@ Zugangsprovider.
 Unter /Config/Optionen/Gebhren/Tarifzonen k”nnen
 Tarifzonen bearbeitet oder neu eingerichtet werden.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5602,7 +5610,7 @@ des angerufenen Modems und dem Aufleuchten der CD-
 Lampe. Bei einem internen Modem mssen Sie den Wert
 sch„tzen; er liegt in der Regel bei 5-10 Sekunden.
 
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
+<<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
@@ -5614,7 +5622,7 @@ gespeichert.
 Wenn Sie m”chten, daá ein- und ausgehende Nachrichten
 nicht mittels Ihres Clients bertragen, sondern lokal
 auf Ihrer Festplatte gespeichert werden, sind Sie
-hier richtig. Bitte beachten Sie, daá CrossPoint RFC-
+hier richtig. Bitte beachten Sie, daá OpenXP RFC-
 Nachrichtendateien in einem bestimmten Format erwar-
 tet und erzeugt; in manchen F„llen wird eine Umbenen-
 nung n”tig sein. N„heres hierzu finden Sie unter
@@ -5649,7 +5657,7 @@ Serverbox, die fr die Einbindung des Clients, die
 Durchfhrung des Netcalls, das Erstellen von Batches
 oder Scripts und das Lokalisieren von Problemen hilf-
 reich sein k”nnen. Normalerweise mssen Sie als XP-
-Anwender das alles gar nicht wissen, weil CrossPoint
+Anwender das alles gar nicht wissen, weil OpenXP
 und der Client bzw. der fr diesen Client speziell
 entwickelte "Client-Kit" automatisch miteinander so
 kooperieren, daá weitere Eingriffe seitens des Anwen-
@@ -5658,7 +5666,7 @@ ders nicht notwendig sein sollten.
 
 <<Verbindungs- und šbertragungsprotokolle
 
-Da CrossPoint den Verbindungsaufbau und die Nachrich-
+Da OpenXP den Verbindungsaufbau und die Nachrich-
 tenbertragung vollst„ndig den Clients berl„át,
 k”nnen so beliebige Verbindungs- und šbertragungs-
 protokolle verwendet werden.
@@ -5719,11 +5727,11 @@ fortlaufende vierstellige Zahl. Es wird je Nachricht
 eine Datei erzeugt (s. auch weiter unten, "<<Nachrich-
 <<tenkonvertierung ZC<->RFC mit UUZ>>").
 
-<<Mnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
+<<Mnnnn.MSG>>  Unter diesem Namen erwartet OpenXP
    die eingegangenen Mails (PMs) im Spool-Verzeichnis
    der Serverbox.
 
-<<Nnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
+<<Nnnnn.MSG>>  Unter diesem Namen erwartet OpenXP
    die eingegangenen News (AMs) im Spool-Verzeichnis
    der Serverbox.
 
@@ -5755,7 +5763,7 @@ fende vierstellige Zahl.
    (Newsgroups) einer Serverbox - liegt immer im
    Client-Verzeichnis.
 
-<<XPCLIENT.LOG>>  Diese Datei h„ngt CrossPoint nach jedem
+<<XPCLIENT.LOG>>  Diese Datei h„ngt OpenXP nach jedem
    Netcall an den Netzanrufbericht an, sofern vorhan-
    den. Die Datei wird im Client-Verzeichnis erwartet
    und nach Verarbeitung gel”scht.
@@ -5798,7 +5806,7 @@ folgenden Einzelschritten ab:
     als Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im
     Spool-Verzeichnis <XP>\SPOOL\<Box> ablegen.
 
- 5. <<Unversandt-Handling>> - CrossPoint prft das Spool-
+ 5. <<Unversandt-Handling>> - OpenXP prft das Spool-
     Verzeichnis <XP>\SPOOL\<Box> auf unversandte
     Nachrichten (*.OUT), erstellt anhand der Message-
     IDs ein neues Pollpaket (<Box>.PP), l”scht die
@@ -5840,7 +5848,7 @@ mssen sich dabei im XP-Verzeichnis befinden):
 
 <<UUZ.EXE -uz SPOOL\<Box>\*.MSG CLPUFFER
 
-Die Pufferdatei CLPUFFER k”nnen Sie dann ber XPoint/
+Die Pufferdatei CLPUFFER k”nnen Sie dann ber OpenXP/
 Import/Puffer_einlesen... na, einlesen eben. :-)
 
 Sie k”nnen aber auch einfach bis zum n„chsten Netcall
@@ -5874,7 +5882,7 @@ den Schaltern aufgerufen:
          fentlich) in der Dokumentation des Clients.
 
 <<-client>>: Dieser Schalter hat entscheidende Bedeutung
-         fr das Zusammenspiel zwischen CrossPoint
+         fr das Zusammenspiel zwischen OpenXP
          und externem Client:
 
          - Im Unterschied zum UUCP-Protokoll, bei dem
@@ -5914,7 +5922,7 @@ Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
 ----------- [Netztyp RFC/Client - Netcall-Ablauf]@30200
             [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
-Der integrierte Brettmanager von CrossPoint unter-
+Der integrierte Brettmanager von OpenXP unter-
 sttzt den Netztyp RFC/Client mit einigen speziellen
 Funktionen, die sich von denen der brigen Netztypen
 unterscheiden und sich an der Praxis einiger g„ngiger
@@ -5933,7 +5941,7 @@ richtig) interpretiert.
   dene Liste automatisch aktualisieren lassen k”nnen
   - diese Option(en) sollten Sie zun„chst aktivieren.
 
-  Beim Netztyp RFC/Client untersttzt CrossPoint fol-
+  Beim Netztyp RFC/Client untersttzt OpenXP fol-
   gende Dateinamen und Speicherorte fr Brettlisten
   (in dieser Reihenfolge):
 
@@ -5941,7 +5949,7 @@ richtig) interpretiert.
   <<<Box>.BL>>  (Client-Verzeichnis)
   <<<Box>.GR>>  (Client-Verzeichnis)
 
-  D.h., CrossPoint sucht in dieser Reihenfolge nach
+  D.h., OpenXP sucht in dieser Reihenfolge nach
   einer Brettliste und ”ffnet beim Ausfhren der
   entsprechenden Brettmanager-Funktionen die erste
   Liste, die gefunden wurde.
@@ -6134,7 +6142,7 @@ richtig) interpretiert.
   sein.
 
   Beispiel: Sie haben Ihre Serverbox "Freeline"
-  genannt. CrossPoint geht dann von folgenden Datei-
+  genannt. OpenXP geht dann von folgenden Datei-
   namen aus:
 
   <<FREELINE.BFG>>     (Serverbox-Konfigurationsdatei im
@@ -6281,7 +6289,7 @@ auch die Server-Einstellung aller Bretter „ndern, bei
 denen die Nodeadresse eingetragen ist.
 @
 200
-CrossPoint kann beliebige viele Brettgruppen verwal-
+OpenXP kann beliebige viele Brettgruppen verwal-
 ten; jedes Brett geh”rt zu genau einer dieser Grup-
 pen. Fr jede Brettgruppe k”nnen Daten wie maximale
 Nachrichtengr”áe, Sonderzeichen-Konvertierung und
@@ -6345,7 +6353,7 @@ Dies ist das Gr”áenlimit fr Nachrichten, die Sie in
 ein Brett dieser Gruppe schreiben. šberschreitet eine
 Nachricht das Limit, dann wird dies im Sendefenster
 durch ein <<!>> hinter der Gr”áenangabe angezeigt.
-Auáerdem warnt CrossPoint, wenn Sie die Nachricht mit
+Auáerdem warnt OpenXP, wenn Sie die Nachricht mit
 "Ja" absenden.
 
 Wenn kein Limit gilt, mssen Sie hier 0 eintragen.
@@ -6374,7 +6382,7 @@ richten konvertiert werden sollen:
         Bretter notwendig.
 
 <<Hinweis:>> Fr Usenet- und Internet-Nachrichten k”nnen
-Sie die Einstellung "IBM" verwenden; CrossPoint nimmt
+Sie die Einstellung "IBM" verwenden; OpenXP nimmt
 dann automatisch eine Konvertierung in den dort
 blichen ISO-8859-1-Zeichensatz vor.
 
@@ -6454,7 +6462,7 @@ Point, in denen abschlieáende Leerzeichen NICHT ent-
 fernt werden. Dadurch l„át sich ein Abstand zwischen
 Quote-Zeichen und zitiertem Text schaffen.
 
-Auf Wunsch kann CrossPoint automatisch die Initialen
+Auf Wunsch kann OpenXP automatisch die Initialen
 des zitierten Users in das Quote-Zeichen einsetzen.
 Dazu wird das Zeichen <<\@>> verwendet. Ist das Quote-
 zeichen z.B. "<<\@> >>", dann wird aus:
@@ -6640,7 +6648,7 @@ Boxnamen im Empf„nger enthalten.
 @
 221
 <<[x]>> -> Beim Anlegen neuer Bretter mit <<<Ctrl-H> >>oder
-       mit [/XPoint/Import/Brettliste] bzw. mit@11004
+       mit [/OpenXP/Import/Brettliste] bzw. mit@11004
        [/Nachricht/Brettmanager/Bestellen] (nur ZCon-@11901
        nect und RFC/UUCP) werden die Kommentare aus
        der Brettliste, falls vorhanden, in die XP-
@@ -6715,7 +6723,7 @@ ren Wert ein - Fehler durch volle Festplatten fhren
 meistens zu Datenverlusten!
 @
 230
-CrossPoint besitzt einen eingebauten Nachrichten-
+OpenXP besitzt einen eingebauten Nachrichten-
 Lister, so daá eigentlich kein externer Lister ben”-
 tigt wird. Wenn Sie sich aber nicht von Ihrem alten
 Lister trennen k”nnen, dann tragen Sie hier den Da-
@@ -6842,7 +6850,7 @@ Diese Einstellung gilt auch fr den Editor.
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
 Ihnen verschickte Bin„rnachrichten komplett in XP
 gespeichert werden. Ist eine Nachricht gr”áer als
-angegeben, speichert CrossPoint stattdessen eine
+angegeben, speichert OpenXP stattdessen eine
 kurze Versandmeldung, um Speicherplatz zu sparen.
 
 Achtung! Auch codierte Textnachrichten sind Bin„r-
@@ -6905,7 +6913,7 @@ Wenn Sie hier <<[x]>> einstellen, versieht XP alle
 ausgehenden Nachrichten mit der Uhrzeit 00:00.
 @
 246
-Bezge auf vorhandene Nachrichten werden von XPoint
+Bezge auf vorhandene Nachrichten werden von OpenXP
 durch ein vorangestelltes "Re:" im Betreff gekenn-
 zeichnet. Um lange "Re:"-Ketten bei Mehrfachbezgen
 zu vermeiden, ist es im Z-Netz blich, mehrere Re's
@@ -6934,7 +6942,7 @@ sein. Fr User in Deutschland ist dies:
     <<S+2>>   fr Sommerzeit
 
 Denken Sie also beim Umstellen der Uhr daran, auch
-Ihre CrossPoint-Konfiguration anzupassen, damit Ihre
+Ihre OpenXP-Konfiguration anzupassen, damit Ihre
 Mails im Netz mit der korrekten Uhrzeit erscheinen.
 
 Das allgemeine Format dieses Eintrags ist ein <<W>> oder
@@ -6962,7 +6970,7 @@ mit einem <<!>> markiert sind und zum Netcall-Versand
 bereitliegen.
 @
 249
-<<[x]>> -> CrossPoint sendet beim Erhalt einer Nachricht,
+<<[x]>> -> OpenXP sendet beim Erhalt einer Nachricht,
        deren Betreff mit "\##" beginnt, automatisch
        eine Empfangsbest„tigung zurck. Das Gleiche
        gilt fr Fido-Nachrichten mit EB-Anforderung
@@ -7044,7 +7052,7 @@ doch gespeichert werden. "Das Usenet vergiát nicht!"
 <<ZConnect / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
-       bearbeitet. Das heiát, wenn CrossPoint eine
+       bearbeitet. Das heiát, wenn OpenXP eine
        Cancel- oder Ersetzt-Nachricht (RFC:
        'Supersedes') empf„ngt, dann wird die Bezugs-
        nachricht gesucht und, wenn sie gefunden wird,
@@ -7064,7 +7072,7 @@ Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
 lichst weit zu verbreiten. Um dem entgegenzuwirken,
-l”scht CrossPoint Crosspostings ab einer einstell-
+l”scht OpenXP Crosspostings ab einer einstell-
 baren Anzahl von Empf„ngern automatisch.
 
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
@@ -7077,13 +7085,13 @@ Header vermerkten Empf„ngern gel”scht.
 @
 1040
 Hier k”nnen Sie den Namen Ihrer Organisation einge-
-ben, z.B. den Namen Ihrer Firma, wenn Sie CrossPoint
+ben, z.B. den Namen Ihrer Firma, wenn Sie OpenXP
 kommerziell einsetzen. Diese Zeile wird im Kopf von
 ZConnect- und Usenet-Nachrichten bergeben.
 
 Auáerdem wird sie bei Fido-Netcalls als Ihr System-
 name gesendet. Ist keine Organisation angegeben,
-sendet CrossPoint stattdessen Ihren Usernamen.
+sendet OpenXP stattdessen Ihren Usernamen.
 @
 1041
 <<z.Zt. nur ZConnect:>>
@@ -7148,12 +7156,12 @@ richtenkopf des Listers angezeigt werden sollen.
        bertragen.
 @
 260
-Im Tempor„r-Verzeichnis werden alle von CrossPoint
+Im Tempor„r-Verzeichnis werden alle von OpenXP
 angelegten Tempor„rdateien abgelegt, z.B. im Editor
 bearbeitete Texte oder im Lister angezeigte Nach-
 richten. Es ist empfehlenswert, als Temp-Verzeichnis
 eine Ramdisk zu verwenden; dies beschleunigt das
-Arbeiten mit CrossPoint deutlich.
+Arbeiten mit OpenXP deutlich.
 
 Bitte achten Sie <<unbedingt>> darauf, daá auf dem ange-
 gebenen Laufwerk auch gengend Platz vorhanden ist!
@@ -7181,7 +7189,7 @@ Sie aber auch explizit ein anderes Verzeichnis ange-
 ben.
 @
 263
-In diesem Verzeichnis legt CrossPoint folgende Da-
+In diesem Verzeichnis legt OpenXP folgende Da-
 teien ab:
 
    XPOINT.LOG     Gebhren-Logfile
@@ -7465,7 +7473,7 @@ erkl„ren, wozu genau die IRQ-Nummer da ist. Sie
 sollten nur wissen, daá COM1 und COM2 normalerweise
 auf IRQ4 bzw. IRQ3 eingestellt sind. Die IRQ-Einstel-
 lung muá immer identisch mit der Einstellung Ihrer
-Hardware sein, ansonsten kann CrossPoint zwar Daten
+Hardware sein, ansonsten kann OpenXP zwar Daten
 senden, jedoch nichts empfangen.
 
 M”gliche IRQ-Werte sind 0 bis 7 bei XTs und 0 bis
@@ -7556,7 +7564,7 @@ kabel nicht durchverbunden ist, mssen Sie hier <<[x]>>
 einstellen.
 
 Achtung: Bei abgeschalteter CD-Erkennung k”nnte das
-Netcall-Verhalten von CrossPoint instabiler werden.
+Netcall-Verhalten von OpenXP instabiler werden.
 Sie sollten auf jeden Fall versuchen, das Problem zu
 beheben, das zum Fehlen des CD-Signals fhrt. Bei
 Fido-Netcalls MUSS die CD-Erkennung korrekt arbeiten!
@@ -7565,7 +7573,7 @@ Fido-Netcalls MUSS die CD-Erkennung korrekt arbeiten!
 Normalerweise signalisiert das Modem durch das CTS-
 Signal (Clear To Send), daá es empfangsbereit ist.
 Falls die CTS-Leitung im Modemkabel nicht beschaltet
-ist (zu erkennen daran, daá CrossPoint keine Daten
+ist (zu erkennen daran, daá OpenXP keine Daten
 an das Modem schickt), dann mssen Sie diese Einstel-
 lung auf <<[x]>> setzen.
 
@@ -7592,7 +7600,7 @@ weit verbreitet sind z.B. die Treiber X00 und BNU,
 der ISDN-Treiber cFos und der Netzwerk-Treiber
 Stomper.
 
-Da CrossPoint einen gleichwertigen eingebauten Trei-
+Da OpenXP einen gleichwertigen eingebauten Trei-
 ber besitzt, werden Sie die FOSSIL-Treiber-Unter-
 sttzung nur fr spezielle Anwendungen ben”tigen,
 z.B. wenn Sie eine ISDN-Karte oder eine serielle
@@ -7613,7 +7621,7 @@ Einstellungen bei eingeschalteter FOSSIL-Option.
 
 Falls w„hrend der Wartezeit zwischen zwei Netcalls
 ein Ring-Signal vom Modem eingeht (to ring = klin-
-geln), dann h„lt CrossPoint den Netcall fr bis zu
+geln), dann h„lt OpenXP den Netcall fr bis zu
 5 Minuten an.
 
 Bei einigen Modem-Verbindungskabeln in Sparausfh-
@@ -7702,7 +7710,7 @@ Verfgung zu stellen.
 Die Dateierweiterungen der Backup-Dateien, die der
 eingetragene Editor erzeugt (falls er berhaupt Back-
 updateien erzeugt). Diese Dateien werden bei Verlas-
-sen des Editors automatisch von CrossPoint gel”scht.
+sen des Editors automatisch von OpenXP gel”scht.
 
 Die Einstellung gilt nur fr den externen Editor;
 der interne Editor erzeugt immer BAK-Dateien.
@@ -7720,7 +7728,7 @@ der interne Editor erzeugt immer BAK-Dateien.
                      det.
 @
 304
-<<[x]>> -> CrossPoint sendet beim Schreiben von Briefen
+<<[x]>> -> OpenXP sendet beim Schreiben von Briefen
        (keine Quotes) ein <<<Ctrl-PgDn> >>an den Editor,
        um den Cursor unter den Briefkopf zu plazie-
        ren. Das funktioniert nur bei Editoren, die
@@ -7740,14 +7748,14 @@ Diese Angabe bezieht sich nur auf den internen Editor
 Vollbild umgeschaltet.
 @
 306
-<<[x]>> -> CrossPoint schl„gt bei /Edit/Textdatei immer
+<<[x]>> -> OpenXP schl„gt bei /Edit/Textdatei immer
        den zuletzt eingegebenen Dateinamen vor.
 
 <<[ ]>> -> Der Dateiname ist immer "*.*" im Sende-Ver-
        zeichnis ([/Config/Pfade/Sende-Verzeichnis]).@262
 @
 307
-<<[x]>> -> CrossPoint schaltet beim Aufruf des externen
+<<[x]>> -> OpenXP schaltet beim Aufruf des externen
        Editors auf 25 Bildzeilen um.
 
 Diese Einstellung ist nur von Bedeutung, wenn bei
@@ -7755,7 +7763,7 @@ Diese Einstellung ist nur von Bedeutung, wenn bei
 stellt sind.
 @
 310
-<<[x]>> -> beim DOS-Aufruf mit <<<F9> >>oder [/XPoint/DOS]@10106
+<<[x]>> -> beim DOS-Aufruf mit <<<F9> >>oder [/OpenXP/DOS]@10106
        wird die Bildschirmanzeige immer auf 25 Zei-
        len umgeschaltet.
 
@@ -7767,7 +7775,7 @@ Diese Option ist nur bei EGA- und VGA-Karten von
 Bedeutung.
 @
 311
-Hier k”nnen Sie festlegen, ob CrossPoint beim Aufruf
+Hier k”nnen Sie festlegen, ob OpenXP beim Aufruf
 der DOS-Shell zus„tzlichen Environment-(Umgebungs-)
 Speicher zur Verfgung stellen soll; dazu wird der
 /E-Schalter von COMMAND.COM verwendet.
@@ -7798,7 +7806,7 @@ hilft dabei, die Ausgaben von externen Programmen
 lesen zu k”nnen.
 
 Vergessen Sie nicht, den Schalter nachher wieder zu
-deaktivieren - CrossPoint wrde sonst beim n„chsten
+deaktivieren - OpenXP wrde sonst beim n„chsten
 unbeaufsichtigten Netzanruf auf einen Tastendruck
 warten.
 @
@@ -7922,7 +7930,7 @@ NAME\@BOX.ZER (Z-Netz alt), Vorname Nachname@BOX
 (Fido) oder USER\@SYSTEM (alle anderen Netze).
 
 WICHTIG: Auch bei Usern der eigenen Box muá innerhalb
-         von CrossPoint der Boxname IMMER mit ange-
+         von OpenXP der Boxname IMMER mit ange-
          geben werden!
 
 Bei Fido-Usern k”nnen Sie hier auch einen Teil des
@@ -8140,7 +8148,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
        werden Sie aufgefordert, eine Taste zu drk-
        ken.
 
-<<[ ]>> -> Es geht direkt zurck zu CrossPoint.
+<<[ ]>> -> Es geht direkt zurck zu OpenXP.
 @
 445
 <<[x]>> -> Beim Programmaufruf wird der Bildschirm
@@ -8339,7 +8347,7 @@ W„hlen Sie die gewnschte Druckerschnittstelle.
 471
 Diese Einstellung bewirkt eine seitenweise Formatie-
 rung der Druckausgabe. Wenn z.B. 65 Zeilen einge-
-stellt sind, sendet CrossPoint alle 65 Zeilen den
+stellt sind, sendet OpenXP alle 65 Zeilen den
 Seitenvorschub-Code zum Drucker.
 
 Wenn Sie keinen Seitenvorschub wnschen, dann geben
@@ -8413,7 +8421,7 @@ dem gew„hlten User vereinbart haben:
       kaum mehr Sicherheit als [ROT13].@483
 
 <<DES:>>  Ein relativ sicheres Verfahren, das nur zum Aus-
-      tausch von Nachrichten zwischen CrossPoint-
+      tausch von Nachrichten zwischen OpenXP-
       Benutzern gedacht ist.
 
 <<PGP:>>  Ein weit verbreitetes und ziemlich sicheres
@@ -8558,7 +8566,7 @@ stik erstellt werden soll.
        zeigt.
 @
 502
-<<[x]>> -> CrossPoint erstellt zus„tzlich zur Jahresge-
+<<[x]>> -> OpenXP erstellt zus„tzlich zur Jahresge-
        samtbersicht eine detaillierte graphische
        Tagesbersicht fr jeden Monat.
 @
@@ -8636,7 +8644,7 @@ tifizieren (z.B. "Mo,Di,Mi,Fr" oder "modimifr" oder
 "hamoladimifrood"). "alle" steht fr alle Wochentage.
 @
 525
-Geben Sie hier die Aktion an, die CrossPoint im an-
+Geben Sie hier die Aktion an, die OpenXP im an-
 gegebenen Zeitintervall durchfhren soll. M”gliche
 Aktionen sind:
 
@@ -8984,7 +8992,7 @@ weich(R)-kompatibler Maustreiber.
 Je nach Maustreiber und Systemgeschwindigkeit kann
 die Initialisierung eine Weile dauern. Wenn externe
 Programme die Maus manipulieren und die Mausbedienung
-nach der Rckkehr zu CrossPoint nicht mehr korrekt
+nach der Rckkehr zu OpenXP nicht mehr korrekt
 funktioniert, sollten Sie die Maus-Initialisierung
 einschalten.
 @
@@ -9271,7 +9279,7 @@ rige Datei gel”scht (s. Feld "l”schen").
 <<[x]>> -> das Marko gilt im internen Editor
 @
 596
-<<[x]>> -> das Makro gilt fr /XPoint/Terminal
+<<[x]>> -> das Makro gilt fr /OpenXP/Terminal
 @
 600
 Geben Sie die gewnschten Bretter und/oder User an
@@ -9490,10 +9498,10 @@ Der Name des Magic-kompatiblen Netzes.
 @
 652
 Unter dieser Bretthierarchie werden die Nachrichten-
-Bretter in CrossPoint einsortiert. Bei Angabe von
+Bretter in OpenXP einsortiert. Bei Angabe von
 "/" landen alle Bretter in der Hauptebene. Die
 Angabe einer Bretthierarchie ist vor allem dann
-sinnvoll, wenn Sie CrossPoint in verschiedenen Net-
+sinnvoll, wenn Sie OpenXP in verschiedenen Net-
 zen einsetzen und eines oder mehrere der Netze keine
 eigene Bretthierarchie besitzt (z.B. Fido oder Maus-
 Net).
@@ -9684,7 +9692,7 @@ Origin aller Nachrichten, die Sie in Bretter dieser
 Gruppe schreiben, sofern fr das betreffende Brett
 kein eigener Origin eingetragen ist.
 
-Wenn kein Text angegeben ist, verwendet CrossPoint
+Wenn kein Text angegeben ist, verwendet OpenXP
 den unter /Edit/Boxen/Edit/Namen/Origin eingestell-
 ten Text.
 
@@ -9783,7 +9791,7 @@ Sie anschlieáend auch den Namen ALLER zugeh”rigen
 Bretter „ndern!
 @
 710
-CrossPoint kann beliebig viele Kurzbezeichnungen fr
+OpenXP kann beliebig viele Kurzbezeichnungen fr
 User- oder Brettnamen verwalten, die Sie bei /Nach-
 richt/Direkt oder beim Weiterleiten statt des vollen
 Empf„ngernamens angeben k”nnen. Dies erspart eine
@@ -9988,14 +9996,14 @@ sollen, sollten Sie mit [/Netcall/Einzeln] oder einer@11501
 @
 740
 Geben Sie die Nummer des Nodes oder den Namen des
-Sysops/Points an, bei dem CrossPoint anrufen soll.
+Sysops/Points an, bei dem OpenXP anrufen soll.
 @
 750
 Geben Sie die Nummer des Nodes bzw. Points an, ber
 den Sie Informationen abfragen m”chten (in der Form
 Zone:Net/Node.Point), oder den Namen des Sysops bzw.
 Points. Wenn Sie bei einer Nodeadresse Zone und evtl.
-Net weglassen, setzt CrossPoint Zone und Netz Ihrer
+Net weglassen, setzt OpenXP Zone und Netz Ihrer
 Fido-Stammbox ein.
 
 Die Zeile [Flags] enth„lt verschiedene Informationen@751
@@ -10035,7 +10043,7 @@ Die wichtigsten Fido-Nodelisten-Flags sind:
 <<FileReq>>  XA   = alle Arten von File Request
          XX   = nur Requests nach WaZOO-Standard
 
-(CrossPoint untersttzt WaZOO File Requests.)
+(OpenXP untersttzt WaZOO File Requests.)
 
 @
 760
@@ -10144,12 +10152,12 @@ ZConnect untersttzt neben dem IBM-PC-Zeichensatz
 auch den auf vielen anderen Rechnern blichen ISO-
 8859-1-Zeichensatz (Latin1).
 
-<<[ ]>> -> CrossPoint verschickt die Nachrichten weiter-
+<<[ ]>> -> OpenXP verschickt die Nachrichten weiter-
        hin im IBM-PC-Zeichensatz. Damit ist sicher-
        gestellt, daá auch Benutzer alter ZConnect-
        Software Ihre Nachrichten lesen k”nnen.
 
-<<[x]>> -> CrossPoint verwendet den neuen ISO-Zeichen-
+<<[x]>> -> OpenXP verwendet den neuen ISO-Zeichen-
        satz. Dieser Schalter ist nur fr den Fall
        gedacht, daá irgendwann ein ZConnect-basier-
        tes Netz komplett auf ISO umstellen sollte.
@@ -10197,7 +10205,7 @@ MIME-Header, die lediglich Informationszwecken dienen.
 @
 792
 Das alte Z-Netz-Nachrichtenformat erlaubt nur groá
-geschriebene Useradressen; CrossPoint wandelt daher
+geschriebene Useradressen; OpenXP wandelt daher
 die Adressen der betreffenden Nachrichten automa-
 tisch in Groáschreibung um.
 
@@ -10207,7 +10215,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
 /Config/Optionen/Netcall abschalten.
 @
 793
-<<[x]>> -> CrossPoint teilt der MausBox beim Anruf mit,
+<<[x]>> -> OpenXP teilt der MausBox beim Anruf mit,
        wieviel Platz auf der Festplatte frei ist. Der
        Wert ist so gew„hlt, daá der Platz auch zum
        Entpacken und Einlesen der empfangenen Daten
@@ -10226,7 +10234,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
        Sie sie sp„ter beantworten m”chten.
 @
 795
-<<[x]>> -> CrossPoint fordert bei jedem Netzanruf die
+<<[x]>> -> OpenXP fordert bei jedem Netzanruf die
        Bearbeitungsstatus Ihrer PMs an und legt
        alle ge„nderten Status im Brett /¯Mausstatus
        ab. Dadurch haben Sie immer einen šberblick
@@ -10239,7 +10247,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
        zum Einlesen der Status nach dem Anruf.
 @
 796
-<<[x]>> -> CrossPoint verwendet auch bei ”ffentlichen
+<<[x]>> -> OpenXP verwendet auch bei ”ffentlichen
        Nachrichten (News) den MIME-Standard (RFC
        2045 ff.), um die Verwendung von Umlauten und 
        anderen Sonderzeichen zu kennzeichnen. Dies ist
@@ -10253,7 +10261,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
        "ASCII" gew„hlt sein.
 @
 797
-<<[x]>> -> Vereinfacht ausgedrckt: CrossPoint verwendet
+<<[x]>> -> Vereinfacht ausgedrckt: OpenXP verwendet
        ein spezielles Verfahren namens "quoted-prin-
        table", um Umlaute und andere Sonderzeichen
        so zu codieren, daá sie auch von „lteren
@@ -10330,12 +10338,12 @@ aktivieren.
 <<[ ]>> -> XP verschickt MausTausch-Bin„rnachrichten -
        wie in den Programmversionen vor 3.2 - im
        UUencode-Format. Falls der Empf„nger auch mit
-       MausTausch und CrossPoint arbeitet, werden
+       MausTausch und OpenXP arbeitet, werden
        diese Nachrichten automatisch decodiert.
 
 <<[x]>> -> Bin„rnachrichten werden als mehrteilige MIME-
        Nachrichten - sogenannte "Attachments" -
-       verschickt. Dieses Format wird von CrossPoint
+       verschickt. Dieses Format wird von OpenXP
        ab Version 3.2 und von vielen Internet-Mail-
        programmen automatisch decodiert.
 
@@ -10358,7 +10366,7 @@ den.
        Liste der zu requestenden Dateien bernommen
        (z.B.ARCHIV01.ZIP),jedoch keine <<Magics>>.
 
-<<[x]>> -> CrossPoint bernimmt zus„tzlich zu den Datei-
+<<[x]>> -> OpenXP bernimmt zus„tzlich zu den Datei-
        namen auch <<Magics>> mit in die Liste der zu
        requestenden Dateien. Magics sind Kurznamen
        fr einzelne (oder eine Sammlung mehrerer)
@@ -10460,7 +10468,7 @@ aber nur eine ben”tigt wird.
 
 @
 806
-CrossPoint kann fr jede Tarifgruppe bis zu 12 Uhr-
+OpenXP kann fr jede Tarifgruppe bis zu 12 Uhr-
 zeitbereiche verwalten, in denen jeweils unterschied-
 liche Gebhren gelten k”nnen.
 
@@ -10515,7 +10523,7 @@ Sekunden dauert und 11 Pfennig kostet.
 809
 An dieser Stelle wird festgelegt, fr welche Wochen-
 und/oder Feiertage die gew„hlte Tarifgruppe gelten
-soll. CrossPoint kann zwischen drei verschiedenen
+soll. OpenXP kann zwischen drei verschiedenen
 Feiertagskategorien unterscheiden, von denen in
 Deutschland z.Zt. allerdings nur eine ben”tigt wird.
 
@@ -10527,7 +10535,7 @@ Feiertage sowie der 24.12. und 31.12. der Kategorie
 verbilligter Telefontarif!)
 @
 820
-Hier k”nnen sie angeben, welche Programme CrossPoint
+Hier k”nnen sie angeben, welche Programme OpenXP
 zum Anzeigen diverser Dateitypen verwenden soll.
 
 <<Neu>>      dient zum Erstellen eines neuen Eintrags.
@@ -10803,7 +10811,7 @@ rung gelten die o.g. Regeln daher unver„ndert.
 
 @
 823
-Geben Sie hier an, welches Programm CrossPoint zum
+Geben Sie hier an, welches Programm OpenXP zum
 Anzeigen des angegebenen Dateityps verwenden soll.
 
 Das Programm muá sich im aktuellen Verzeichnis
@@ -10824,7 +10832,7 @@ der Name der Datei vollst„ndig  ausgeschrieben wer-
 den, inkl. der Erweiterung ".BAT".
 
 Wenn das eingetragene Viewer-Programm eine Windows-
-Anwendung ist, startet CrossPoint das Programm
+Anwendung ist, startet OpenXP das Programm
 automatisch mit einer speziellen "Warte-Batch" -
 es sei denn, Sie haben dies explizit bei
 "[Keine Warte-Batch bei Windows-Viewern]" unter@8071
@@ -10845,7 +10853,7 @@ fr den entsprechenden Dateityp registriert ist).
 Tragen Sie hier einfach "<<start $FILE>>" ein, wenn Sie
 diese Funktion unter Windows nutzen m”chten.
 
-Vereinfacht dargestellt, wrde CrossPoint also z.B.
+Vereinfacht dargestellt, wrde OpenXP also z.B.
 bei Erhalt einer MIME-Nachricht des Typs <<image/gif>>
 mit der Datei <<xyz.gif>> den Befehl <<start /w xyz.gif>>
 ausfhren und so automatisch das fr GIF-Dateien in
@@ -10855,7 +10863,7 @@ Windows registrierte Programm ausfhren.
 8071
 Wenn unter Windows Dateien mit externen Windows-
 Viewer-Programmen ge”ffnet werden, kann parallel mit
-CrossPoint weitergearbeitet werden (d.h., Sie k”nnen
+OpenXP weitergearbeitet werden (d.h., Sie k”nnen
 aus dem Windows-Viewer heraus mit <<<Alt-Tab> >>zu XP
 zurckwechseln). Wie und wann die hierbei angelegten
 Tempor„rdateien gel”scht werden, k”nnen Sie wie folgt
@@ -10876,7 +10884,7 @@ steuern:
        <<del C:\XP\TEMP\XYZ.GIF
        <<del C:\XP\TEMP\wrun7207.bat
 
-<<[x]>> -> CrossPoint fhrt das Windows-Viewer-Programm
+<<[x]>> -> OpenXP fhrt das Windows-Viewer-Programm
        mit genau der Befehlszeile aus, wie Sie sie in
        /Edit/Viewer eingegeben haben (ggf. stellt XP
        lediglich noch den Befehl <<start>> voran). Dabei
@@ -10885,7 +10893,7 @@ steuern:
        ten Dateinamen nach dem Muster <<TMP-nnnn.EXT>>
        extrahiert (wobei "nnnn" fr eine vierstellige
        Zufallszahl und "EXT" fr die Erweiterung des
-       originalen Dateinamens steht). CrossPoint
+       originalen Dateinamens steht). OpenXP
        l”scht diese Dateien beim n„chsten Programm-
        start dann automatisch.
 
@@ -10912,7 +10920,7 @@ Allerdings besteht bei dieser Funktion die Gefahr,
 daá Mail-Viren oder andere gef„hrliche Dateien
 direkt ausgefhrt werden.
 
-Um dies zu verhindern, fragt CrossPoint bei allen
+Um dies zu verhindern, fragt OpenXP bei allen
 Dateien mit Erweiterungen, die <<nicht>> in dieser
 Liste enthalten sind, vorher nach, ob die Dateien
 ge”ffnet werden sollen.
@@ -11092,7 +11100,7 @@ Diese Einstellung dient nur zur Kontrolle - bei
 gr”áeren Nachrichten erscheint ein entsprechender
 Hinweis im Sendefenster, den Sie aber bergehen
 k”nnen. Die "lokal"-Einstellung fr RFC/UUCP ist
-i.d.R. ohne Bedeutung, da CrossPoint anhand der
+i.d.R. ohne Bedeutung, da OpenXP anhand der
 Useradresse nicht ermitteln kann, ob es sich um
 eine lokale Nachricht handelt.
 
@@ -11403,7 +11411,7 @@ Updates konstruieren.
 Geben Sie die gewnschten Suchkriterien an. Zwischen
 den verschiedenen Feldern besteht eine UND-Verknp-
 fung: Wenn Sie als Sysop z.B. "Werner" und als Flags
-"ZYX" angeben, sucht CrossPoint nach allen Nodes,
+"ZYX" angeben, sucht OpenXP nach allen Nodes,
 die "Werner" heiáen und ein ZyXEL-Modem besitzen.
 
 <<Sysop, Standort, Boxname
@@ -11646,7 +11654,7 @@ nicht in der Liste vorhanden sind, k”nnen Sie auch
 direkt eingeben.
 @
 992
-Dieser Befehl wird beim Aufruf von /XPoint/Terminal
+Dieser Befehl wird beim Aufruf von /OpenXP/Terminal
 zum Modem geschickt. Es k”nnen auch mehrere, durch
 "\\" getrennte Befehle eingegeben werden, z.B.
 "AT\\ATZ".
@@ -11656,7 +11664,7 @@ zum Modem geschickt. Es k”nnen auch mehrere, durch
        sequenz (*B00) von der angerufenen Mailbox
        erh„lt, wird automatisch ein PD-ZModem-Down-
        load gestartet. Vorraussetzung ist, daá ZM.EXE
-       sich im CrossPoint-Verzeichnis befindet oder
+       sich im OpenXP-Verzeichnis befindet oder
        ber einen DOS-Pfad erreichbar ist.
 
 <<[ ]>> -> Der Download muá manuell mit <<<PgDn> >>gestartet
@@ -11728,7 +11736,7 @@ mein sowie fr ZConnect das automatische Codieren,
 Decodieren und den Schlssel-Austausch.
 @
 1012
-<<[x]>> -> CrossPoint ruft PGP mit dem Schalter <<+batch->>
+<<[x]>> -> OpenXP ruft PGP mit dem Schalter <<+batch->>
        <<mode>> auf. Dieser bewirkt, daá alle Rckfragen
        von PGP bergangen werden. PGP nimmt dann je-
        weils Standardantworten an.
@@ -11754,7 +11762,7 @@ Siehe auch: [PGP - Detailinformationen]@1023
 
 @
 1013
-<<[x]>> -> CrossPoint wartet nach dem Aufruf von PGP auf
+<<[x]>> -> OpenXP wartet nach dem Aufruf von PGP auf
        einen Tastendruck.
 
 Dieser Schalter ist zu Diagnosezwecken gedacht.
@@ -11773,7 +11781,7 @@ Mantra selbst aus dem Environment holen soll). Eine
 Krzung ist auch bei Ihrer [User-ID] m”glich.@1018
 @
 1014
-<<[x]>> -> CrossPoint fhrt in der Datei PGP.LOG ein
+<<[x]>> -> OpenXP fhrt in der Datei PGP.LOG ein
        Protokoll ber alle automatischen PGP-Aktivi-
        t„ten (Nachrichten decodieren, Schlssel ver-
        schicken, Schlssel einlesen). Die Logdatei
@@ -11782,7 +11790,7 @@ Krzung ist auch bei Ihrer [User-ID] m”glich.@1018
        ist.
 @
 1015
-<<[x]>> -> CrossPoint berprft bei allen eingehenden
+<<[x]>> -> OpenXP berprft bei allen eingehenden
        pers”nlichen Nachrichten, ob der Nachrichten-
        kopf einen PGP-Public-Key enth„lt. Wenn ja,
        dann wird dieser automatisch in Ihren "Key
@@ -11802,7 +11810,7 @@ einzulesen.
 
 @
 1016
-<<[x]>> -> CrossPoint berprft bei allen eingehenden
+<<[x]>> -> OpenXP berprft bei allen eingehenden
        ”ffentlichen Nachrichten, ob der Nachrichten-
        kopf einen PGP-Public-Key enth„lt. Wenn ja,
        dann wird dieser automatisch in Ihren "Key
@@ -11913,7 +11921,7 @@ Aussagen zum Thema PGP (Stand Juni 2001):
 
 
 ş  Wenn Sie PGP ausschlieálich in Verbindung mit
-   CrossPoint unter DOS einsetzen, verwenden Sie eine
+   OpenXP unter DOS einsetzen, verwenden Sie eine
    der Versionen der <<2.6.x>>-Familie, genauer: der
    <<2.6.3>>-Familie, und noch genauer: die Version
    <<2.6.3in>>. Letztere ist die am weitesten ent-
@@ -12006,7 +12014,7 @@ Aussagen zum Thema PGP (Stand Juni 2001):
      Decodierung vieler g„ngiger Archivdateien sowie
      von Nachrichten, die andere PGP-Pakete enthal-
      ten, beim Aufruf durch Batchdateien oder Shell-
-     Scripts (wie z.B. CrossPoint);
+     Scripts (wie z.B. OpenXP);
 
    - Die 32-bit-Variante wurde mit dem seinerzeit
      (1996) aktuellen DJGPP compiliert, daher m”g-
@@ -12082,14 +12090,14 @@ Aussagen zum Thema PGP (Stand Juni 2001):
    k”nnen, die ausschlieálich einen DH/DSA-Schlssel
    besitzen.
 
-ş  Zur Versionsfamilie <<5.x>> - obwohl von CrossPoint
+ş  Zur Versionsfamilie <<5.x>> - obwohl von OpenXP
    untersttzt - gibt es eine klare Empfehlung: nicht
    verwenden. Eine ausfhrliche Begrndung hierzu
    wrde an dieser Stelle zu weit fhren, deshalb nur
    ganz kurz:
 
    - Es gibt ohnehin nur eine PGP 5-Version, die fr
-     den Betrieb mit CrossPoint geeignet ist: die
+     den Betrieb mit OpenXP geeignet ist: die
      Portierung <<PGP 5.0i>> fr DOS/386 von Georg Bauer
      und Tim Svenson. Diese Version ist Freeware und
      als <<PGP50IBI.ZIP>> ebenfalls auf <<ftp.openxp.de>>
@@ -12112,7 +12120,7 @@ Aussagen zum Thema PGP (Stand Juni 2001):
 
 
 ş  <<PGP 6.x>> kann unter Umst„nden problemlos mit
-   CrossPoint benutzt werden. Allerdings muá beachtet
+   OpenXP benutzt werden. Allerdings muá beachtet
    werden, daá
 
    - die Versionen 6.x bis zur Version 6.5.0 reine
@@ -12563,7 +12571,7 @@ einen Programmteil, der fr jede neue Nachricht nach
 dem Zufallsprinzip einen neuen Origin aus einer
 Origin-Datei ausw„hlt.
 
-Der Origin-Shuffler von CrossPoint wird durch Eingabe
+Der Origin-Shuffler von OpenXP wird durch Eingabe
 von "shuffle: Dateiname" statt eines Origins akti-
 viert. Als Dateiname ist dabei der Name einer Text-
 datei einzusetzen, die pro Zeile einen Origintext
@@ -12612,7 +12620,7 @@ wieder loslassen. N„heres finden Sie in Ihrem Tasta-
 turhandbuch.
 @
 7003
-Das CrossPoint-[Hilfesystem] besteht aus mehr als@3
+Das OpenXP-[Hilfesystem] besteht aus mehr als@3
 1.000 Seiten. Je nach Kontext aktiviert die Taste
 [<F1>] die passende Hilfeseite.@7005
 @
@@ -12647,7 +12655,7 @@ Den Rechner finden Sie, indem Sie das Kabel verfol-
 gen, das an der Rckseite Ihrer [Tastatur] beginnt.@7009
 @
 10001
-<<XPoint-Men
+<<OpenXP-Men
 
 Dieses Men enth„lt alle Systemfunktionen, die in
 keinem anderen Men unterzubringen waren...
@@ -12711,39 +12719,31 @@ k”nnen ber [/Config/Zusatz-Men] eigene Menpunkte@10608
 mit externen Programmen definiert werden.
 @
 10101
-<<XPoint / Registrierung
+<<OpenXP / Information
 
-šber diesen Menpunkt k”nnen Sie...
-
-ş  den Inhalt von LIZENZ.DOC anzeigen oder aus-
-   drucken lassen,
-
-ş  das Registrierungsformular ausfllen, aus-
-   drucken und absenden oder per Mail verschicken,
-   und
-
-ş  Ihren Registrierungscode eingeben.
+Unter diesem Menpunkt erhalten Sie Informationen
+zur Lizenz von OpenXP/32.
 @
 10102
-<<XPoint / Import
+<<OpenXP / Import
 
 Hier k”nnen Dateien in verschiedenen Formaten in
-CrossPoint eingelesen werden.
+OpenXP eingelesen werden.
 @
 10103
-<<XPoint / Export
+<<OpenXP / Export
 
-Hier werden CrossPoint-Daten in Dateien geschrieben,
+Hier werden OpenXP-Daten in Dateien geschrieben,
 um sie z.B. an ein anderes Programm zu bergeben.
 @
 10104
-<<XPoint / Statistik-Men
+<<OpenXP / Statistik-Men
 
 Dieses Men beinhaltet verschiedene Funktionen zur
 Status-Anzeige und Statistik-Auswertung.
 @
 10105
-<<XPoint / Terminal  (CrossTerm)
+<<OpenXP / Terminal  (CrossTerm)
 
 Dies ist ein Mini-Terminal-Programm. Es enth„lt nur
 die allernotwendigsten Funktionen, die ein Terminal-
@@ -12753,7 +12753,7 @@ bereits viele hervorragende Shareware-Terminalpro-
 gramme gibt.
 @
 10106
-<<XPoint / DOS-Shell
+<<OpenXP / DOS-Shell
 
 .. ruft die DOS-Kommandozeile auf. XP macht sich dazu
 so klein wie m”glich, indem es Daten-Speicherplatz
@@ -12768,7 +12768,7 @@ Beachten Sie, daá innerhalb der DOS-Shell <<keine re-
 <<sidenten Programme>> aufgerufen werden drfen!
 @
 10108
-<<XPoint / Beenden
+<<OpenXP / Beenden
 
 Hier geht's raus. Wahlweise k”nnen Sie dazu auch die
 Quit-Optionen im Brett- oder Userfenster verwenden.
@@ -12777,7 +12777,7 @@ nen Sie sich zus„tzlich noch fragen lassen, ob Sie
 das Programm denn wirklich unbedingt sicher sofort
 und ohne Widerruf verlassen m”chten.
 
-Mit <<<Alt-F4> >>k”nnen Sie CrossPoint brigens innerhalb
+Mit <<<Alt-F4> >>k”nnen Sie OpenXP brigens innerhalb
 jedes der Hauptfenster ohne Rckfrage verlassen, vor-
 ausgesetzt, Sie haben diese Tastenkombination nicht
 umdefiniert.
@@ -12939,7 +12939,7 @@ der Brett- oder Userliste anlegen zu mssen.
 
 
 <<Empf„nger>>  Der Name des Users oder des Bretts
-           (Area, Newsgroup). CrossPoint erg„nzt den
+           (Area, Newsgroup). OpenXP erg„nzt den
            Namen bei Bedarf automatisch um Boxnamen
            oder ".ZER". Noch nicht angelegte User
            oder Bretter sind an der Hervorhebung des
@@ -13038,7 +13038,7 @@ Suchoptionen.
 10505
 <<Nachricht / Suchen / Wiedervorlage
 
-Hier sucht CrossPoint alle Brettnachrichten, die Sie
+Hier sucht OpenXP alle Brettnachrichten, die Sie
 mit <<V>> auf Wiedervorlage gesetzt haben, und zeigt
 diese an. Wiedervorlage-Nachrichten in PM-Archiv-
 Brettern werden NICHT gefunden.
@@ -13094,7 +13094,7 @@ se einstellen.
 <<Config / Anzeige
 
 In diesem Untermen finden sich alle Einstellungen,
-die das "„uáere Erscheinungsbild" von CrossPoint
+die das "„uáere Erscheinungsbild" von OpenXP
 betreffen.
 @
 10605
@@ -13170,7 +13170,7 @@ tion zum Sichern.
 @
 10615
 Es k”nnen beliebige .COM- und .EXE-Programme sowie
-.BAT-Dateien in CrossPoint eingebunden werden. Die
+.BAT-Dateien in OpenXP eingebunden werden. Die
 Programme mssen sich dazu entweder im XP-Verzeich-
 nis befinden, ber den DOS-Pfad erreichbar sein,
 oder Sie mssen den vollst„ndigen Zugriffspfad
@@ -13204,7 +13204,7 @@ ten verwendet.
 Bitte beachten Sie, daá zum Reorganisieren zus„tzli-
 cher Plattenspeicher ben”tigt wird. Als grobe Faust-
 regel kann gelten: Mindestens ben”tigter Platz = ein
-Zehntel des von CrossPoint insgesamt belegten Spei-
+Zehntel des von OpenXP insgesamt belegten Spei-
 cherplatzes. Mehr kann aber nicht schaden.
 
 Die Reorganisation ist recht aufwendig und kann daher
@@ -13401,7 +13401,7 @@ Siehe auch:  [interner Editor]@54
 10813
 <<Edit / Schablonen / L”schnachricht
 
-Hier kann der Text bearbeitet werden, den CrossPoint
+Hier kann der Text bearbeitet werden, den OpenXP
 beim Versenden von [Cancel-Nachrichten] verwendet.@12107
 @
 10814
@@ -13411,7 +13411,7 @@ Hier k”nnen Sie alle Nicht-Standard-Schablonen er-
 stellen und bearbeiten, die dann unter /Edit/Gruppen
 als Signatur oder Kopf fr bestimmte Bretter einge-
 tragen werden. Alle Schablonen-Dateien mssen sich
-im CrossPoint-Verzeichnis befinden und die Erweite-
+im OpenXP-Verzeichnis befinden und die Erweite-
 rung .XPS besitzen.
 
 Siehe auch:  [interner Editor]@54
@@ -13421,7 +13421,7 @@ Siehe auch:  [interner Editor]@54
 10901
 <<Config / Anzeige / Farben
 
-Farben sind Geschmackssache - bei CrossPoint k”nnen
+Farben sind Geschmackssache - bei OpenXP k”nnen
 Sie alle Farben an Ihren pers”nlichen Geschmack an-
 passen.
 
@@ -13438,7 +13438,7 @@ von Brettern und Usern betreffen.
 10903
 <<Config / Anzeige / Nachrichten
 
-CrossPoint bietet eine Reihe von M”glichkeiten, um
+OpenXP bietet eine Reihe von M”glichkeiten, um
 die Anzeige der Nachrichten innerhalb eines Brettes
 an die eigenen Wnsche anzupassen. So k”nnen Sie
 z.B. die Anzeige des Nachrichtendatums oder der
@@ -13454,7 +13454,7 @@ soll.
 10905
 <<Config / Anzeige / Zeilen
 
-CrossPoint nutzt die erweiterten F„higkeiten von
+OpenXP nutzt die erweiterten F„higkeiten von
 EGA- und VGA-Karten aus und bietet die M”glich-
 keit ein, die Anzahl der Bildzeilen (fast) belie-
 big einzustellen. Die Zeilen„nderungen werden
@@ -13504,24 +13504,24 @@ vieren, die die Benutzung von XP insbesondere fr
 blinde und fr geh”rlose Anwender erleichtern.
 @
 11001
-<<XPoint / Import / Puffer einlesen
+<<OpenXP / Import / Puffer einlesen
 
 Die Puffer-Import-Funktion liest eine Zerberus(R)-
 kompatible Pufferdatei im Netcall- oder ZConnect-
 Format ein. Sie ist haupts„chlich fr den Fall ge-
 dacht, daá Sie bereits vorhandene Nachrichten aus
-anderen Pointprogrammen in CrossPoint bernehmen
+anderen Pointprogrammen in OpenXP bernehmen
 m”chten.
 
 W„hrend des Einlesens werden neu angelegte Bretter
 und User hervorgehoben angezeigt.
 @
 11002
-<<XPoint / Import / Fremdformat
+<<OpenXP / Import / Fremdformat
 
 Hier k”nnen Sie beliebige Fido-(PKT)-, MagicNET-,
 QuickMail-, QWK- oder MausTausch-(OUTFILE)-Pakete
-einlesen. CrossPoint startet automatisch einen der
+einlesen. OpenXP startet automatisch einen der
 Nachrichtenkonvertierer MAGGI, ZFIDO und QWK. Es muá
 eine Serverbox eingetragen sein und angegeben wer-
 den, deren Netztyp dem einzulesenden Nachrichtenfor-
@@ -13537,13 +13537,13 @@ Hand einlesen" beschrieben ist.
 
 @
 11003
-<<XPoint / Import / Userliste
+<<OpenXP / Import / Userliste
 
 Hier k”nnen Sie eine Liste von Useradressen aus
 einer Textdatei in die XP-Userliste einlesen lassen.
 @
 11004
-<<XPoint / Import / Brettliste (Z-Netz)
+<<OpenXP / Import / Brettliste (Z-Netz)
 
 Normalerweise werden neue Bretter beim Einlesen von
 Nachrichten automatisch angelegt. Wenn Sie aber z.B.
@@ -13551,7 +13551,7 @@ ALLE bestellten Bretter in der Brettliste haben m”ch-
 ten, dann k”nnen Sie einfach eine Brettlisten-Datei
 einlesen, die Sie z.B. zuvor mit /Nachricht/Brett-
 manager/Liste_anfordern angefordert und in eine
-Datei extrahiert haben. CrossPoint legt alle noch
+Datei extrahiert haben. OpenXP legt alle noch
 nicht vorhandenen Bretter neu an. Als Server wird
 die unter /Edit/Boxen gew„hlte Stammbox eingetragen.
 
@@ -13565,7 +13565,7 @@ als "Textfile" in einem Brett ablegen sollten.
 
 @
 11006
-<<XPoint / Import / Yuppie
+<<OpenXP / Import / Yuppie
 
 Wenn Sie bisher mit dem Fido-Pointprogramm "Yuppie"
 gearbeitet haben, k”nnen Sie hier die Yuppie-Nach-
@@ -13664,7 +13664,7 @@ entfernen oder das Programm verlassen.
 11206
 <<Nachricht / Extrakt / Als..
 
-CrossPoint kann Nachrichten in vier verschiedenen
+OpenXP kann Nachrichten in vier verschiedenen
 Formaten extrahieren:
 
   ş  als Text ohne Kopf - dies ist der reine Nach-
@@ -13675,7 +13675,7 @@ Formaten extrahieren:
 
   ş  als Puffer - dies ist das Format, in dem die
      Nachricht ber das Netz angekommen ist. Ein
-     solcher Puffer kann mit /XPoint/Import/Puffer
+     solcher Puffer kann mit /OpenXP/Import/Puffer
      eingelesen werden.
 
   ş  als Quote - dazu wird die Quote-Schablone fr
@@ -13726,7 +13726,7 @@ Nachrichten die Halte-Markierung.
 
 Hier werden alle <<angezeigten>> Nachrichten auf L”schen
 gesetzt. Sollten sich darunter Nachrichten befinden,
-die auf "Halten" stehen, dann fragt CrossPoint auto-
+die auf "Halten" stehen, dann fragt OpenXP auto-
 matisch nach, ob diese auch gel”scht werden sollen.
 @
 11403
@@ -13744,7 +13744,7 @@ halten, nicht-l”schen und nicht-markiert gesetzt.
 <<Nachricht / Alle / Lesen
 
 Diese Funktion fhrt nicht etwa dazu, daá Sie jetzt
-den ganzen Unsinn lesen mssen - nein, CrossPoint
+den ganzen Unsinn lesen mssen - nein, OpenXP
 erledigt dies schon fr Sie und entfernt die "unge-
 lesen"-Markierungen bei allen angezeigten Nachrich-
 ten.
@@ -13782,7 +13782,7 @@ einen Pfad erreichbar sein.
 <<Netcall / Alle
 
 Hier k”nnen Sie Netzanrufe bei mehreren Boxen durch-
-fhren lassen - CrossPoint ruft dazu so oft abwech-
+fhren lassen - OpenXP ruft dazu so oft abwech-
 selnd bei den einzelnen Boxen an, bis alle Netcalls
 erfolgreich waren. Vorgabe sind alle Boxen, bei denen
 Sie unter /Edit/Boxen/Edit/Diverses/Netcall_Alle <<[x]>>
@@ -13817,7 +13817,7 @@ durchfhren (lassen).
 <<Netcall / Relogin
 
 Dieser Menpunkt fhrt einen Netzanruf bei bestehen-
-der Verbindung durch. CrossPoint geht also davon
+der Verbindung durch. OpenXP geht also davon
 aus, daá die Verbindung zum Server bereits herge-
 stellt ist und fhrt keine Anwahl mehr durch.
 
@@ -13844,7 +13844,7 @@ Dieser Menpunkt ruft bei einer Serverbox an, meldet
 sich mit Ihrem Usernamen und dem bei /Edit/Boxen/Edit
 /Diverses eingetragenen Online-Paáwort an und wech-
 selt anschlieáend in das eingebaute Mini-Terminalpro-
-gramm "CrossTerm" (/XPoint/Terminal).
+gramm "CrossTerm" (/OpenXP/Terminal).
 
 CrossTerm kann und soll kein Programm wie Telemate
 oder Terminate ersetzen, sondern ist nur fr den
@@ -13856,10 +13856,10 @@ rufen.
 <<Netcall / Bereitschaft
 
 Hinter diesem Menpunkt steckt die universelle Net-
-callautomatik von CrossPoint.
+callautomatik von OpenXP.
 
 Geben Sie die Nummer einer Timing-Liste an, die Sie
-mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11509
+mit [/Netcall/Timingliste] erstellt haben - OpenXP@11509
 schaltet dann in den Automatik-Modus um und fhrt
 alle zeitgesteuerten Befehle aus, so lange, bis Sie
 mit <<<Esc> >>abbrechen. Alles Weitere hierzu finden Sie
@@ -13891,7 +13891,7 @@ von XP ignoriert).
 11602
 <<Edit / Boxen
 
-CrossPoint kann beliebig viele Serverboxen verwalten.
+OpenXP kann beliebig viele Serverboxen verwalten.
 Die Verwaltung der Server geschieht ber diesen Men-
 punkt.
 @
@@ -13920,7 +13920,7 @@ gung beantragen!
 11605
 <<Edit / Kurznamen
 
-CrossPoint kann beliebig viele Empf„nger-Kurznamen
+OpenXP kann beliebig viele Empf„nger-Kurznamen
 verwalten, die Sie bei /Nachricht/Direkt oder beim
 Weiterleiten statt des vollst„ndigen Brett- oder
 Usernamens angeben k”nnen. Dies erspart eine Menge
@@ -13958,7 +13958,7 @@ fr bestimmte Typen von Bin„rnachrichten und fr die
 verschiedenen MIME-Typen eintragen. Wenn eine Bin„r-
 nachricht vom betreffenden Typ bzw. ein Teil einer
 MIME-Nachricht mit <<<Enter> >>angew„hlt wird, aktiviert
-CrossPoint statt des internen Listers dann das dazu-
+OpenXP statt des internen Listers dann das dazu-
 geh”rige Programm.
 @
 11650
@@ -14028,7 +14028,7 @@ $(RNAME)).
 
 @
 11701
-<<XPoint / Statistik / Speicher
+<<OpenXP / Statistik / Speicher
 
 Die Speicher-Statistik gibt Auskunft ber die Aus-
 nutzung von Haupt-, EMS-, XMS- und Festplatten-
@@ -14056,7 +14056,7 @@ MS-DOS 7.0 + Windows 4.0 etc.).
 
 @
 11702
-<<XPoint / Statistik / Nachrichten
+<<OpenXP / Statistik / Nachrichten
 
 Die Nachrichten-Statistik berechnet, wieviele Nach-
 richten bei einer jetzt durchzufhrenden Reorgani-
@@ -14064,10 +14064,10 @@ sation ([/Wartung/Reorganisation]) gel”scht wrden@10701
 und wieviel Platten-Speicherplatz dabei frei wrde.
 @
 11703
-<<XPoint / Statistik / Datenbank
+<<OpenXP / Statistik / Datenbank
 
 Die Datenbank-Statistik zeigt die Anzahl der Daten-
-s„tze und die Ausnutzung in den einzelnen CrossPoint-
+s„tze und die Ausnutzung in den einzelnen OpenXP-
 Datenbanken an:
 
    MSGS         Nachrichtendatei
@@ -14089,27 +14089,27 @@ Ausnutzung betr„gt danach wieder 100%.
 
 @
 11705
-<<XPoint / Statistik / Gruppen
+<<OpenXP / Statistik / Gruppen
 
 Die Brettgruppenstatistik berechnet den Anteil der
 einzelnen Brettgruppen am gesamten Nachrichtenvolu-
 men.
 @
 11706
-<<XPoint / Statistik / Systeme
+<<OpenXP / Statistik / Systeme
 
 Die Systemstatistik ermittelt die Verteilung des
 Nachrichtenaufkommens auf die einzelnen Boxen bzw.
 Systeme.
 @
 11707
-<<XPoint / Statistik / Bretter
+<<OpenXP / Statistik / Bretter
 
 Die Brettstatistik  ermittelt die Verteilung des
 Nachrichtenaufkommens auf die einzelnen Bretter.
 @
 11709
-<<XPoint / Statistik / Gebhren
+<<OpenXP / Statistik / Gebhren
 
 Der Gebhrenz„hler wertet den Inhalt des Logfiles
 XPOINT.LOG statistisch aus und erstellt eine šber-
@@ -14293,7 +14293,7 @@ einlesen eingelesen werden.
 
 Ist die Liste vorhanden, dann mssen Sie nur noch
 die gewnschten Dateien markieren und die Bestel-
-lung best„tigen; alles Weitere erledigt CrossPoint
+lung best„tigen; alles Weitere erledigt OpenXP
 von alleine.
 
 <<Hinweis:>> Es wird der SEND-Befehl von SendZMsg ver-
@@ -14498,7 +14498,7 @@ Fr unversandte Nachrichten verwenden Sie bitte
 12202
 <<Nachricht / ndern / EmpfDatum
 
-CrossPoint versieht alle eingehenden Nachrichten mit
+OpenXP versieht alle eingehenden Nachrichten mit
 einem Datumsvermerk, damit sie im Nachrichtenfenster
 in der korrekten Reihenfolge angezeigt werden k”nnen.
 Wenn Ihnen diese Reihenfolge nicht gef„llt, k”nnen
@@ -14608,7 +14608,7 @@ der DOS-Shell (COMMAND.COM) einstellen.
 12404
 <<Config / Extern / Entpacker
 
-Der eingebaute Archiv-Viewer von CrossPoint ben”tigt
+Der eingebaute Archiv-Viewer von OpenXP ben”tigt
 zum Extrahieren von Archivdateien entsprechende Zu-
 satzprogramme. Da es fr einige Archivformate ver-
 schiedene Programme gibt (z.B. ARC oder PKArc fr das
@@ -14637,10 +14637,10 @@ darf <<manuell>> in XPOINT.CFG erfolgen.
 
 <<pmCrypt>> ist ein von Christian Mock erdachtes Verfah-
 ren, um beliebige externe Codierprogramme in Z-Netz-
-Pointprogramme einzubinden. CrossPoint erweitert den
+Pointprogramme einzubinden. OpenXP erweitert den
 Einsatz von pmCrypt auf s„mtlichen anderen Netztypen.
 
-CrossPoint untersttzt bis zu drei externe Codierer,
+OpenXP untersttzt bis zu drei externe Codierer,
 die als "pmc-1" bis "pmc-3" abgekrzt werden und bei
 der Paáwort-Eingabe (<<P>> in der Userbersicht) wahl-
 weise statt der eingebauten QPC- und DES-Verfahren
@@ -14659,13 +14659,13 @@ die PGP-Funktionen betreffen.
 Siehe auch: [PGP - Informationen]@1010
 @
 12601
-<<XPoint / Statistik / Gebhren / Alle
+<<OpenXP / Statistik / Gebhren / Alle
 
 Hier erhalten Sie eine šbersicht ber alle Telefon-
 kosten, die in einem Jahr angefallen sind.
 @
 12602
-<<XPoint / Statistik / Gebhren / Einzeln
+<<OpenXP / Statistik / Gebhren / Einzeln
 
 Hier erhalten Sie eine šbersicht der Telefonkosten,
 die bei einem bestimmten Server angefallen sind.
@@ -14728,7 +14728,7 @@ verlassen und neu starten.
 12803
 <<Config / Optionen / Lister
 
-Der eingebaute Lister von CrossPoint wird zum Anzei-
+Der eingebaute Lister von OpenXP wird zum Anzei-
 gen von Nachrichten, Brettlisten, Dateilisten etc.
 verwendet. Hier finden Sie alle Einstellungen, die
 den internen Lister betreffen.
@@ -14789,18 +14789,18 @@ lungen fr die Telefonkostenberechnung.
 Die Berechnung selbst erfolgt nach jedem Netzanruf.
 Die angefallenen Gebhren werden jeweils im Netzan-
 rufbericht und im Anruflogfile (XPOINT.LOG) gespei-
-chert und k”nnen ber /XPoint/Statistik/Gebhren
+chert und k”nnen ber /OpenXP/Statistik/Gebhren
 ausgewertet werden.
 @
 12811
 <<Config / Optionen / Terminal
 
-Einstellungen fr /XPoint/Terminal
+Einstellungen fr /OpenXP/Terminal
 @
 12809
 <<Config / Optionen / Paáwort
 
-Hier k”nnen Sie CrossPoint mit zwei Paáw”rtern
+Hier k”nnen Sie OpenXP mit zwei Paáw”rtern
 schtzen:
 
 <<Startpaáwort>>  wird bei Programmstart abgefragt.
@@ -14815,7 +14815,7 @@ wort gesperrt wird.
 
 <<ACHTUNG!>>  Merken Sie sich die Paáw”rter unbedingt
 genauestens! Falls Sie ein Paáwort vergessen, mssen
-Sie CrossPoint neu installieren und Ihre Nachrichten-
+Sie OpenXP neu installieren und Ihre Nachrichten-
 datenbank aus den Pufferdateien neu aufbauen lassen
 (s. Handbuch, Anhang H).
 
@@ -14823,10 +14823,10 @@ datenbank aus den Pufferdateien neu aufbauen lassen
 12810
 <<Config / Optionen / Sprache
 
-Hier k”nnen Sie die Sprache der CrossPoint-Benutzer-
+Hier k”nnen Sie die Sprache der OpenXP-Benutzer-
 oberfl„che w„hlen. Welche Sprachen zur Verfgung
 stehen, h„ngt davon ab, welche Sprachmodule Sie im
-CrossPoint-Verzeichnis installiert haben.
+OpenXP-Verzeichnis installiert haben.
 @
 12901
 <<Wartung / Sonstiges / Brettindex / Neuaufbau
@@ -15156,19 +15156,19 @@ Die Reihenfolge der Bretter kann mit <<P>> im Spezial-
 Modus ge„ndert werden.
 @
 13601
-<<XPoint / Export / Userliste
+<<OpenXP / Export / Userliste
 
 Hier wird eine Liste aller eingetragenen User in
 eine Datei geschrieben.
 @
 13602
-<<XPoint / Export / Brettliste
+<<OpenXP / Export / Brettliste
 
 Hier wird eine Liste aller eingetragenen Netzbretter
 in eine Datei geschrieben.
 @
 13603
-<<XPoint / Export / Brettinhalt
+<<OpenXP / Export / Brettinhalt
 
 Diese Funktion schreibt eine Liste aller angezeigten
 Nachrichten in eine Datei. Die Liste enth„lt lfd.
@@ -15176,7 +15176,7 @@ Nummer, Gr”áe, Erstellungsdatum, Typ, Absender und
 Betreff der einzelnen Nachrichten.
 @
 13604
-<<XPoint / Export / Bildschirm
+<<OpenXP / Export / Bildschirm
 
 Hier wird eine Kopie des anzeigten Bildschirms in
 eine Datei geschrieben.
@@ -15295,7 +15295,7 @@ fonnummern die Tarifzonen ermitteln kann.
 <<Config / Optionen / Gebhren / Tarife
 
 šber die Tariftabellen l„át sich die Gebhrenab-
-sch„tzung von CrossPoint an verschiedene Berech-
+sch„tzung von OpenXP an verschiedene Berech-
 nungsmodelle anpassen, z.B. fr verschiedene L„nder.
 @
 13903
@@ -15393,7 +15393,7 @@ dort ggf. eine neue User-ID einzutragen!
 Drcken Sie zweimal <<<Esc> >>und dann <<<F1> >>fr Hilfe.
 @
 20004
-CrossPoint konnte eine Datei nicht l”schen. Entweder
+OpenXP konnte eine Datei nicht l”schen. Entweder
 wurde die Datei bereits gel”scht (z.B. durch ein
 externes Programm oder "von Hand" auf DOS-Ebene),
 oder die Datei ist schreibgeschtzt. Im letzteren
@@ -15405,7 +15405,7 @@ Fehlermeldung in den meisten F„llen ignorieren.
 Es ist zuwenig freier Hauptspeicher vorhanden, um
 die gew„hlte Programmfunktion auszufhren. ndern Sie
 Ihre DOS-Konfiguration, so daá mehr Speicher verfg-
-bar ist! Um die Funktionen von CrossPoint voll aus-
+bar ist! Um die Funktionen von OpenXP voll aus-
 nutzen zu k”nnen, sollten vor dem Programmstart
 wenigstens 450, besser jedoch 500 KByte an freiem
 Speicher vorhanden sein.
@@ -15483,7 +15483,7 @@ ist.
 Fr die Verarbeitung von QWK-Nachrichten wird das
 Konvertierprogramm ZQWK.EXE ben”tigt, das im XP-
 QWK-Paket enthalten ist. Das QWK-Paket erhalten Sie
-dort, wo Sie CrossPoint herhaben -> [Bezugsquellen].@9
+dort, wo Sie OpenXP herhaben -> [Bezugsquellen].@9
 @
 20201
 Korrigieren Sie die Tempor„rverzeichnis-Einstellung
@@ -15502,7 +15502,7 @@ Korrigieren Sie die Logfileverzeichnis-Einstellung
 bei /Config/Pfade!
 @
 20206
-CrossPoint kann das eingetragene Programm nicht fin-
+OpenXP kann das eingetragene Programm nicht fin-
 den. šberprfen Sie, ob der Dateiname stimmt, und ob
 das Programm im XP-Verzeichnis oder per DOS-Pfad
 erreichbar ist bzw. der korrekte Zugriffspfad ange-
@@ -15519,7 +15519,7 @@ felsfall einfach die Einstellung, die bei <<<F2> >>vor-
 gegeben wird.
 @
 20210
-CrossPoint hat festgestellt, daá zu wenig Dateien
+OpenXP hat festgestellt, daá zu wenig Dateien
 ("File Handles") frei sind. Verlassen Sie XP und er-
 h”hen Sie die Einstellung in CONFIG.SYS!
 
@@ -15708,7 +15708,7 @@ richt/Alle/entfernen, um alle Nachrichten in diesem
 Brett zu entfernen.
 @
 20421
-Irgendwer hat eine der CrossPoint-Ablagedatein ge-
+Irgendwer hat eine der OpenXP-Ablagedatein ge-
 l”scht; alle in dieser Datei (ehemals) vorhanden
 Nachrichten werden jetzt aus der Nachrichtendatenbank
 ausgetragen.
@@ -15717,7 +15717,7 @@ Falls Sie die Datei absichtlich gel”scht hatten,
 k”nnen Sie diese Fehlermeldung ignorieren. Ansonsten
 sollten Sie sich nach dem Ende der Reorganisation
 auf die Suche nach der verlorenen Datei machen (z.B.
-auf einem Backup) und diese mit /XPoint/Import/Puf-
+auf einem Backup) und diese mit /OpenXP/Import/Puf-
 fer wieder neu einlesen lassen.
 
 Der Name der Ablagedateien ist MPUFFER.x mit x=0-9
@@ -15816,7 +15816,7 @@ ist, mssen Sie sie dazu zun„chst mit /Nachricht
 20431
 Es ist nicht gengend freier DOS-Speicher vorhanden,
 um den Inhalt der Archivdatei anzuzeigen. Eventuell
-hilft es, wenn Sie CrossPoint verlassen, es neustar-
+hilft es, wenn Sie OpenXP verlassen, es neustar-
 ten und die Datei dann noch einmal aufrufen.
 @
 20433
@@ -15833,7 +15833,7 @@ Das angegebene Zielverzeichnis existiert nicht.
 @
 20435
 Fr /Wartung/Dupekill wird mindestens <<doppelt>> so
-viel Festplattenplatz ben”tigt, wie unter /XPoint
+viel Festplattenplatz ben”tigt, wie unter /OpenXP
 /Statistik/Datenbank als Gr”áe von "MSGS" angezeigt
 wird.
 @
@@ -15863,7 +15863,7 @@ Siehe auch [/Nachricht/Weiterleiten/L”schen].@12107
 @
 20444
 Der Absender der gew„hlten Nachricht ist nicht in
-Ihrer CrossPoint-Userliste erfaát.
+Ihrer OpenXP-Userliste erfaát.
 @
 20445
 Die Anzahl der Datens„tze in der Nachrichtendaten-
@@ -15927,7 +15927,7 @@ Schicken Sie die Nachricht mit einem normalen Net-
 call zu dieser Box ab!
 @
 20606
-Sie k”nnen keine Nachrichten in interne CrossPoint-
+Sie k”nnen keine Nachrichten in interne OpenXP-
 bretter schreiben!
 @
 20607
@@ -15965,9 +15965,9 @@ gew„hlt haben, so wird Ihre Nachricht mehrfach - in
 der alten und neuen Version - ins Netz verschickt.
 @
 20624
-Das gew„hlte Brett ist ein CrossPoint-internes
+Das gew„hlte Brett ist ein OpenXP-internes
 Brett. In diesem Brett k”nnen nur Nachrichten von
-CrossPoint selbst abelegt werden; das Schreiben von
+OpenXP selbst abelegt werden; das Schreiben von
 Nachrichten ist hier nicht m”glich.
 @
 20625
@@ -16031,7 +16031,7 @@ Nachrichten, die mit /Nachrichten/Weiterleiten/
 nicht ge„ndert werden.
 @
 20701
-CrossPoint konnte das Brett mit der unversandten
+OpenXP konnte das Brett mit der unversandten
 Nachricht nicht wiederfinden, um die <<!>>-Markierung
 zu entfernen. Diese Fehlermeldung k”nnte ein Hinweis
 auf eine defekte Indexdatei sein; in diesem Fall
@@ -16041,7 +16041,7 @@ empfiehlt sich /Wartung/Packen.
 ^^20701
 @
 20703
-CrossPoint konnte die unversandte Nachricht nicht in
+OpenXP konnte die unversandte Nachricht nicht in
 der Datenbank wiederfinden, um die <<!>>-Markierung zu
 entfernen. Diese Fehlermeldung kann ignoriert werden.
 Tritt sie sehr h„ufig auf, so k”nnte dies ein Hinweis
@@ -16105,7 +16105,7 @@ chen:
    packer ist nicht vorhanden oder nicht ber einen
    DOS-Pfad erreichbar. Insbesondere bei ZConnect-
    und Fido-Netcalls gengt es <<NICHT>>, wenn der Ent-
-   packer sich im CrossPoint-Verzeichnis befindet!!
+   packer sich im OpenXP-Verzeichnis befindet!!
 
 ş  Sie haben bei /Edit/Boxen/Edit/Point den falschen
    Entpacker eingestellt. Evtl. hat die Box mit
@@ -16159,7 +16159,7 @@ Handbuchs.
 @
 20722
 Sie verwenden vermutlich eine Version des Fido-Mai-
-lers (XP-FM), die nicht zu Ihrer CrossPoint-Version
+lers (XP-FM), die nicht zu Ihrer OpenXP-Version
 kompatibel ist.
 @
 20723
@@ -16241,12 +16241,12 @@ wieder gel”scht werden.
 @
 20801
 Das automatische (Ab-)Bestellen von Brettern mit
-CrossPoint ist bei dieser Box nicht m”glich. Schicken
+OpenXP ist bei dieser Box nicht m”glich. Schicken
 Sie Ihre Brettwnsche bitte an den Sysop!
 @
 20802
 Fr das abzubestellende Brett ist keine Serverbox
-eingetragen. Daher "weiá" CrossPoint nicht, an welche
+eingetragen. Daher "weiá" OpenXP nicht, an welche
 Box es die Abbestellnachricht schicken soll. Tragen
 Sie ggf. den korrekten Server ein (Taste <<S>> fr
 Spezialmodus, dann <<E>> fr Editieren).
@@ -16279,7 +16279,7 @@ Menpunkten (/Nachricht/Fileserver/...)!
 ^^20810
 @
 20813
-CrossPoint untersttzt die Filelisten-Formate von
+OpenXP untersttzt die Filelisten-Formate von
 SendZMsg, iMLS und NCB-Mail. Die Liste muá <<exakt>>
 eines dieser Formate haben. NCB-Mail-Filelisten ms-
 sen im "Fido-Style-Format" generiert worden sein.
@@ -16365,7 +16365,7 @@ den Programmierer und geben Sie den Namen der Box
 an, den Sie bei /Edit/Boxen eingetragen haben!
 @
 20907
-CrossPoint konnte das angegebene Programm weder im
+OpenXP konnte das angegebene Programm weder im
 XP-Verzeichnis noch in einem per DOS-Pfad ereichba-
 ren Verzeichnis finden. Stellen Sie bitte vor dem
 n„chsten Netcall sicher, daá das Programm vorhanden
@@ -16410,7 +16410,7 @@ um ein Fehlerprotokoll zu erhalten. Korrigieren Sie
 anschlieáend die Fehler (Tip: Mit <<<Alt-E> >>k”nnen Sie
 jederzeit eine beliebige Datei editieren).
 
-Eine Beschreibung der CrossPoint-Scriptsprache
+Eine Beschreibung der OpenXP-Scriptsprache
 finden Sie im Abschnitt "Scriptprogrammierung" im
 Handbuch.
 @
@@ -16637,7 +16637,7 @@ solcher Server vorhanden ist, mssen Sie ihn zuerst
 anlegen.
 @
 22414
-Das QWK-Paket erhalten Sie dort, wo Sie CrossPoint
+Das QWK-Paket erhalten Sie dort, wo Sie OpenXP
 herhaben -> [Bezugsquellen].@9
 @
 22415
@@ -16648,7 +16648,7 @@ lesen zu k”nnen. Wenden Sie sich ggf. an den ZQWK-
 Programmierer (s. QWK.DOC).
 @
 22604
-Fr die Gebhrenstatistik ben”tigt CrossPoint das
+Fr die Gebhrenstatistik ben”tigt OpenXP das
 Logfile XPOINT.LOG, das im bei /Config/Pfade einge-
 stellten Logfile-Verzeichnis angelegt wird und
 Informationen ber alle Netzanrufe enth„lt. Falls
@@ -16688,7 +16688,7 @@ Die Speicherverwaltung von DOS wurde zerst”rt. Dies
 k”nnte daran liegen, daá ein externes Programm einen
 gr”áeren Fehler gemacht hat.
 
-Verlassen Sie CrossPoint umgehend und booten Sie den
+Verlassen Sie OpenXP umgehend und booten Sie den
 Rechner neu!
 @
 22810
@@ -16711,7 +16711,7 @@ stellen Sie sicher, daá es per DOS-Pfad (PATH) er-
 reichbar ist, oder daá die Umgebungsvariable
 PGPPATH vorhanden und korrekt gesetzt ist.
 
-Die fr CrossPoint geeigneten und empfehlenswerten
+Die fr OpenXP geeigneten und empfehlenswerten
 PGP-Versionen erhalten Sie bei <<ftp.openxp.de>> oder
 per Fido File Request bei 2:248/2004. N„heres siehe
 unter: [PGP - Informationen]@1010
