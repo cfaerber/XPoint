@@ -60,8 +60,7 @@ const suchch    = #254;
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
       DispStrSize       = 255;
 
-type  dispstr   = string;
-      specstr   = string;
+type  specstr   = string;
       dispra    = array[1..maxgl] of longint;
 
 var   disprec   : dispra;
@@ -72,7 +71,7 @@ var   disprec   : dispra;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
       xphltick  : longint;
 
-      dispbuf   : array[1..maxgl] of ^dispstr;
+      dispbuf   : array[1..maxgl] of string;
       markflag  : array[1..maxgl] of byte;  { 0=nix, 1=mark, 2=trenn }
       userflag  : array[1..maxgl] of byte;  { 0=nix; 1=hervorgehoben; 2-5 = Prio 1,2,4,5 }
       ub_p      : shortint;
@@ -317,7 +316,7 @@ var t,lastt: taste;
   begin
     lcol(y,p);
     moff;
-    fwrt(1,y+ya+3,dispbuf[y]^);
+    fwrt(1,y+ya+3,dispbuf[y]);
     mon;
   end;
 
@@ -767,7 +766,7 @@ var t,lastt: taste;
         hds : longint;
         i   : integer;
     begin
-      new(hdp);
+      getmem(hdp,sizeof(header)); {new(hdp);}
       for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);
@@ -776,7 +775,7 @@ var t,lastt: taste;
           AddToEmpfList(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
           end;
         end;
-      dispose(hdp);
+      freemem(hdp, sizeof(header)); {dispose(hdp);}
       sendempflist:=empflist; empflist:=nil;
     end;
 
@@ -934,7 +933,7 @@ var t,lastt: taste;
 
     if pm then sigf:=PrivSignat
     else sigf:=SignatFile;
-    new(sData);
+    getmem(sData, sizeof(SendUUdata)); {new(sData);}
     fillchar(sdata^,sizeof(sdata^),0);
     if quote=2 then sdata^.quotestr:=qchar;
 
@@ -995,9 +994,9 @@ var t,lastt: taste;
             ReadHeadEmpf:=dbReadInt(mbase,'netztyp') shr 24;
             if ReadHeadEmpf<>0 then begin
               ReadEmpflist:=true;          { Crossposting-Empf„nger einlesen }
-              new(hdp);
+              getmem(hdp, sizeof(header)); {new(hdp);}
               ReadHeader(hdp^,hds,false);
-              dispose(hdp);
+              freemem(hdp, sizeof(header)); {dispose(hdp);}
               sendempflist:=empflist; empflist:=nil;
               SetNobrettServers;
               end;
@@ -1061,7 +1060,7 @@ var t,lastt: taste;
     force_quotemsk:='';
     if exist(fn) then _era(fn);
     setall;
-    dispose(sData);
+    freemem(sData, sizeof(SendUUdata)); {dispose(sData);}
   end;
 
   procedure _brief_senden(c:char);
@@ -1233,7 +1232,7 @@ var t,lastt: taste;
       dbGo(mbase,disprec[1]);
       if dbReadInt(mbase,'gelesen')<>0 then begin
         p:=2;
-        while ((p<maxgl) and (disprec[p]<>0) and (dispbuf[p]^[2]<>'>'))
+        while ((p<maxgl) and (disprec[p]<>0) and ((length(dispbuf[p])>0) and (dispbuf[p][2]<>'>')))
               or dbDeleted(dispdat,disprec[p]) do inc(p);
         if (p>=maxgl) or (disprec[p]=0) then
           GoStart
@@ -2007,7 +2006,7 @@ begin
   dbLog('-- Hauptfenster');
 {$ENDIF }
   dispext:=false;
-  for i:=1 to maxgl do new(dispbuf[i]);
+  for i:=1 to maxgl do dispbuf[i]:='';
   readmode:=DefReadmode;
   if readmode=rmHeute then
     readdate:=ixdat(left(zdate,6)+'0000')
@@ -2031,13 +2030,16 @@ begin
   fillchar(disprec,sizeof(disprec),0);
   XPhltick:=0;
   select(0);
-  for i:=1 to maxgl do dispose(dispbuf[i]);
+  {for i:=1 to maxgl do dispose(dispbuf[i]);}
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.32  2000/07/09 11:55:31  hd
+  - AnsiString
+
   Revision 1.31  2000/07/09 08:35:16  mk
   - AnsiStrings Updates
 

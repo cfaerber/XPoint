@@ -100,16 +100,16 @@ begin  { __ Suchmarke }
             dbRead(bbase,'kommentar',komm);
             if left(s,3)='$/T' then begin
               if komm='' then
-                dispbuf[y]^:='   '+dup(76,s[4])+' '
+                dispbuf[y]:='   '+dup(76,s[4])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]^:='   '+komm+' '+dup(75-length(komm),s[4])+' ';
+                  1 : dispbuf[y]:='   '+komm+' '+dup(75-length(komm),s[4])+' ';
                   2 : begin
-                        dispbuf[y]^:='   '+dup((74-length(komm))div 2,s[4])+' '+
+                        dispbuf[y]:='   '+dup((74-length(komm))div 2,s[4])+' '+
                                      komm+' ';
-                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[4])+' ';
+                        dispbuf[y]:=dispbuf[y]+dup(79-length(dispbuf[y]),s[4])+' ';
                       end;
-                  3 : dispbuf[y]^:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
+                  3 : dispbuf[y]:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
                 end;
               markflag[y]:=2;
               end
@@ -132,16 +132,16 @@ begin  { __ Suchmarke }
                 end;
                 if length(s)>43 then
                   if length(s)>70 then
-                    dispbuf[y]^:=c+forms(copy(s,2,76),77)
+                    dispbuf[y]:=c+forms(copy(s,2,76),77)
                   else
-                    dispbuf[y]^:=c+copy(s,2,70)+' '+forms(komm,77-length(s))
+                    dispbuf[y]:=c+copy(s,2,70)+' '+forms(komm,77-length(s))
                 else
-                  dispbuf[y]^:=c+forms(copy(s,2,43),44)+forms(komm,33);
+                  dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,33);
                 end
               else begin
                 dbReadN(bbase,bb_haltezeit,hzeit);
                 dbReadN(bbase,bb_gruppe,grnr);
-                dispbuf[y]^:=markc+iifc(dat<>0,' ','-')+iifc(flags and 8<>0,'X',' ')+
+                dispbuf[y]:=markc+iifc(dat<>0,' ','-')+iifc(flags and 8<>0,'X',' ')+
                              iifc(dbReadStr(bbase,'adresse')<>'',
                                   iifc(flags and 32=0,'*','O'),' ')+
                              iifc(odd(flags),'N',' ')+hz(hzeit)+'  '+
@@ -170,16 +170,16 @@ begin  { __ Suchmarke }
             if left(s,4)=#0+'$/T' then begin
 
               if komm='' then
-                dispbuf[y]^:='     '+dup(74,s[5])+' '
+                dispbuf[y]:='     '+dup(74,s[5])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]^:='     '+komm+' '+dup(73-length(komm),s[5])+' ';
+                  1 : dispbuf[y]:='     '+komm+' '+dup(73-length(komm),s[5])+' ';
                   2 : begin
-                        dispbuf[y]^:='     '+dup((72-length(komm))div 2,s[5])+' '+
+                        dispbuf[y]:='     '+dup((72-length(komm))div 2,s[5])+' '+
                                      komm+' ';
-                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[5])+' ';
+                        dispbuf[y]:=dispbuf[y]+dup(79-length(dispbuf[y]),s[5])+' ';
                       end;
-                  3 : dispbuf[y]^:='     '+dup(73-length(komm),s[5])+' '+komm+' ';
+                  3 : dispbuf[y]:='     '+dup(73-length(komm),s[5])+' '+komm+' ';
                 end;
               markflag[y]:=2;
               end
@@ -246,15 +246,15 @@ begin  { __ Suchmarke }
                  );
 
             { Felder zusammenkopieren }
-            tausc:=0; dispbuf[y]^:='';
+            tausc:=0; dispbuf[y]:='';
             while (tausc<UsrFelderMax) do begin
               inc(tausc);
               if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
-              if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
-              dispbuf[y]^:=dispbuf[y]^+taus[tausc];
+              if (dispbuf[y]<>'') then dispbuf[y]:=dispbuf[y]+' ';
+              dispbuf[y]:=dispbuf[y]+taus[tausc];
             end;
             { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
-            dispbuf[y]^:=forms(dispbuf[y]^,80);
+            dispbuf[y]:=forms(dispbuf[y],80);
 
           end;
         end;
@@ -406,7 +406,7 @@ begin  { __ Suchmarke }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
-                dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
+                dispbuf[y]:=forms(dflags+siz+sdat+' '+s,80);
               end else begin
 
               { (F)lags }
@@ -447,23 +447,23 @@ begin  { __ Suchmarke }
               muss sie noch zusammenkopiert werden: }
             if (dispmode<>12) then begin
               { Felder zusammenkopieren }
-              tausc:=0; dispbuf[y]^:='';
+              tausc:=0; dispbuf[y]:='';
               while (tausc<MsgFelderMax) do begin
                 inc(tausc);
                 if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
-                if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
-                dispbuf[y]^:=dispbuf[y]^+taus[tausc];
+                if (dispbuf[y]<>'') then dispbuf[y]:=dispbuf[y]+' ';
+                dispbuf[y]:=dispbuf[y]+taus[tausc];
               end;
               { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
-              dispbuf[y]^:=forms(dispbuf[y]^,80);
+              dispbuf[y]:=forms(dispbuf[y],80);
             end;
           end;
-     20 : dispbuf[y]^:=AutoShow;
+     20 : dispbuf[y]:=AutoShow;
   end;
   if show then begin
     lcol(y,p);
     moff;
-    fwrt(1,3+y+ya,dispbuf[y]^);
+    fwrt(1,3+y+ya,dispbuf[y]);
     mon;
     end;
   disprec[y]:=dbRecNo(dispdat);
@@ -496,7 +496,7 @@ begin
     if dispmode<10 then attrtxt(col.colbretter)
     else attrtxt(col.colmsgs);
     clwin(1,screenwidth,3+i+ya,3+ya+gl);
-    for j:=i to gl do dispbuf[j]^:='';
+    for j:=i to gl do dispbuf[j]:='';
     end;
   aufbau:=false;
   if dispmode=12 then xaufbau:=false;
@@ -528,12 +528,20 @@ end;
 
 
 procedure scrollup(show:boolean);
-var p : pointer;
+var {p : pointer;}
     i : integer;
+    s : string;
 begin
+  { AnsiString Anpassung, funktioniert hoffentlich :-/ }
+  s:=dispbuf[1];
+  for i:= 2 to maxgl do
+    dispbuf[i-1]:= dispbuf[i];
+  dispbuf[maxgl]:= s;
+  {
   p:=dispbuf[1];
   Move(dispbuf[2],dispbuf[1],sizeof(dispbuf)-4);
   dispbuf[maxgl]:=p;
+  }
   Move(disprec[2],disprec[1],sizeof(disprec)-4);
   disprec[maxgl]:=0;
   Move(markflag[2],markflag[1],sizeof(markflag)-1);
@@ -542,19 +550,27 @@ begin
     moff;
     for i:=1 to gl-1 do begin
       lcol(i,0);
-      fwrt(1,i+3+ya,dispbuf[i]^);
+      fwrt(1,i+3+ya,dispbuf[i]);
       end;
     mon;
     end;
 end;
 
 procedure scrolldown(show:boolean);
-var p : pointer;
+var {p : pointer;}
     i : integer;
+    s : string;
 begin
+  { AnsiString Anpassung, funktioniert hoffentlich :-/ }
+  s:= dispbuf[maxgl];
+  for i:= maxgl downto 2 do
+    dispbuf[i]:= dispbuf[i-1];
+  dispbuf[1]:= s;
+  {
   p:=dispbuf[maxgl];
   Move(dispbuf[1],dispbuf[2],sizeof(dispbuf)-4);
   dispbuf[1]:=p;
+  }
   Move(disprec[1],disprec[2],sizeof(disprec)-4);
   Move(markflag[1],markflag[2],sizeof(markflag)-1);
   Move(userflag[1],userflag[2],sizeof(userflag)-1);
@@ -562,7 +578,7 @@ begin
     moff;
     for i:=2 to gl do begin
       lcol(i,0);
-      fwrt(1,i+3+ya,dispbuf[i]^);
+      fwrt(1,i+3+ya,dispbuf[i]);
       end;
     mon;
     end;

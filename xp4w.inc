@@ -582,7 +582,8 @@ var fn     : string;
         U_read:=true;
         end;
       end;
-    dispbuf[p]^[2]:=' ';
+    if (length(dispbuf[p])>0) then
+      dispbuf[p][2]:=' ';
   end;
 
 { JG:24.04.00 Ausgeklammerte Stellen sorgen dafuer das durch blaettern im Lister
@@ -1001,7 +1002,8 @@ begin
     else
       UBUnmark(disprec[p]);
     markflag[p]:=0;
-    if (dispmode<1) or (dispmode>9) then dispbuf[p]^[1]:=' ';
+    { Hier kann es zu einer Schutzverletzung kommen, wenn dispbuf = '' }
+    if (dispmode<1) or (dispmode>9) then dispbuf[p][1]:=' ';
     end
   else
     if iif(msgs,markanz,bmarkanz)=iif(msgs,maxmark,maxbmark) then
@@ -1012,7 +1014,7 @@ begin
       else
         UBAddMark(disprec[p]);
       markflag[p]:=1;
-      if (dispmode<1) or (dispmode>9) then dispbuf[p]^[1]:=suchch;
+      if (dispmode<1) or (dispmode>9) then dispbuf[p][1]:=suchch;
       end;
   showline(p,p);
   t:=keydown; lastt:='';
@@ -1499,6 +1501,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/07/09 11:55:31  hd
+  - AnsiString
+
   Revision 1.30  2000/07/06 08:58:46  hd
   - AnsiString
 
