@@ -565,6 +565,10 @@ label ende;
 {--# Suche #--}
 
 begin
+  for i:=0 to 4 do bera[i]:=getres2(442,i);
+  for i:=0 to 5 do stata[i]:=getres2(442,10+i);
+  for i:=0 to 4 do typa[i]:=getres2(442,20+i);
+
   if suchopt[1]='*' then
   begin                                       {Erste Suche seit Programmstart ?}
     if ustr(getres(1))='XP.HLP' then
@@ -582,9 +586,6 @@ begin
       end;
     end;
   spez:=(suchfeld='*');
-  for i:=0 to 4 do bera[i]:=getres2(442,i);
-  for i:=0 to 5 do stata[i]:=getres2(442,10+i);
-  for i:=0 to 4 do typa[i]:=getres2(442,20+i);
   case aktdispmode of
     -1,0 : bretter:=bera[iif(bmarkanz>0,3,1)];
     1..4 : bretter:=bera[iif(bmarkanz>0,3,2)];
@@ -2416,6 +2417,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/06/05 16:38:51  jg
+  Fix: (Suche) Stringvariable wurden vor initialisierung verwendet.
+
   Revision 1.45  2000/06/05 16:16:22  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
