@@ -83,17 +83,17 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
 
 type  TimeRec   = record
                     active    : boolean;
-                    von,bis   : string;  { Uhrzeit }
-                    vond,bisd : string;  { Datum   }
+                    von,bis   : string[5];  { Uhrzeit }
+                    vond,bisd : string[6];  { Datum   }
                     wotag     : array[1..7] of boolean;
-                    action    : string;
+                    action    : string[80];
                     comm      : byte;       { 1=NC, 2=Reorg, 3=Pack, 5=Exec }
                                             { 5=Quit, 6=Quit_Once }
-                    box       : string;
+                    box       : string[BoxNameLen];
                     crash     : boolean;
                     crashtime : boolean;    { Crash - TimeSync }
                     qerrlevel : byte;
-                    nxtime    : datetimest;
+                    nxtime    : string[11];
                     ncconn    : integer;    { CONNECT-Countdown }
                     comport   : byte;
                     redialwait: integer;
@@ -335,11 +335,14 @@ procedure loadfile(typ:byte; fn:string);
 var t : text;
     s : string;
 begin
+  e.Clear;
   anzahl:=0;
-  if exist(fn) then begin
+  if exist(fn) then
+  begin
     assign(t,fn);
     reset(t);
-    while not eof(t) and (anzahl<maxentries) and (memavail>10000) do begin
+    while not eof(t) do
+    begin
       readln(t,s);
       if trim(s)<>'' then
         if (typ=2) and (left(s,1)='!') then
@@ -348,11 +351,11 @@ begin
           else
         else begin
           inc(anzahl);
-          e[anzahl]:=left(s,filewidth);
+          e.Add(left(s,filewidth));
         end;
-      end;
-    close(t);
     end;
+    close(t);
+  end;
 end;
 
 procedure savefile(typ:byte; fn:string);
@@ -672,6 +675,9 @@ var brk      : boolean;
       x,y : byte;
       all : boolean;
       wtage:array[1..7] of string;
+      aVon, aBis: String;
+      aVonD, aBisD: String;
+      aAction: String;
   begin
     for i:=1 to 7 do
       wtage[i]:=copy(_wotag_,i*2-1,2);
@@ -688,19 +694,22 @@ var brk      : boolean;
           if wotag[i] then wot:=wot+','+wtage[i];
         if left(wot,1)=',' then delete(wot,1,1);
         end;
+
+      // Umkopieren wegen AnsiStrings
+      aVon := Von; aBis := bis; aVonD := VonD; aBisD := BisD; aAction := Action;
       dialog(48,9,getres2(1004,iif(edit,2,3)),x,y);   { 'Eintrag bearbeiten' / 'neuer Eintrag' }
-      maddtime(3,2,getres2(1004,4),von,false); mhnr(520);   { 'Uhrzeit von' }
+      maddtime(3,2,getres2(1004,4),avon,false); mhnr(520);   { 'Uhrzeit von' }
       msetvfunc(__timeok);
-      maddtime(24,2,getres2(1004,5),bis,false);       { 'bis ' }
+      maddtime(24,2,getres2(1004,5),abis,false);       { 'bis ' }
       msetvfunc(__timeok);
-      maddform(3,4,getres2(1004,6),vond,'  .  .','0123456789');   { 'Datum vom  ' }
+      maddform(3,4,getres2(1004,6),avond,'  .  .','0123456789');   { 'Datum vom  ' }
       msetvfunc(__dateok);
-      maddform(25,4,getres2(1004,7),bisd,'  .  .','0123456789');  { 'bis zum ' }
+      maddform(25,4,getres2(1004,7),abisd,'  .  .','0123456789');  { 'bis zum ' }
       msetvfunc(__dateok);
       maddstring(3,6,getres2(1004,8),wot,20,20,'');   { 'Wochentage ' }
       mappsel(false,getres2(1004,1));
       for i:=1 to 7 do mappsel(false,wtage[i]);
-      maddstring(3,8,getres2(1004,9),action,30,80,'');   { 'Aktion     ' }
+      maddstring(3,8,getres2(1004,9),aaction,30,80,'');   { 'Aktion     ' }
       mappsel(false,boxsel1);
       if boxsel2<>'' then
         mappsel(false,boxsel2);
@@ -708,12 +717,14 @@ var brk      : boolean;
       msetvfunc(testaction);
       readmask(brk);
       enddialog;
-      if not brk then begin
+      if not brk then
+      begin
+        Von := aVon; Bis := abis; VonD := aVonD; BisD := aBisD; Action := aAction;
         wot:=LowerCase(trim(wot));
         for i:=1 to 7 do
           wotag[i]:=(wot=getres2(1004,1){'alle'}) or (pos(LowerCase(wtage[i]),wot)>0);
         s:=Time2Str(tr);
-        end;
+      end;
       freeres;
       end;
   end;
@@ -1539,7 +1550,6 @@ var brk      : boolean;
   end;
 
 begin
-  e := TStringList.Create;
   case typ of
     1 : begin                       { Timing-Liste }
           filewidth:=TimingWidth;
@@ -2019,9 +2029,17 @@ end;
 
 {$I XP10.INC}    { Timinglisten-Interpreter }
 
+initialization
+  e := TStringList.Create;
+finalization
+  e.free;
 end.
 {
   $Log$
+  Revision 1.30  2000/08/09 19:51:34  mk
+  - verschiedene Fixes fuer Timeingliste
+  - Netcall/Alle funktioniert jetzt
+
   Revision 1.29  2000/08/08 17:15:31  mk
   MO: TextEditNodelist nutzt jetzt den richtigen Index
 

@@ -90,10 +90,11 @@ var brk     : boolean;
 
   begin
     anz:=0;
-    i:=1;
+    i:=0;
     dat:=tf(date); tim:=left(time,5);
     lastbox:='';
-    while (i<=anzahl) and (anz<maxentries-1) do begin   { -1 wegen Splitting }
+    while i<anzahl do
+    begin   { -1 wegen Splitting }
       Str2Time(e[i],tr);
       with tr do
         if active and (tf(vond)<=dat) and (tf(bisd)>=dat) and ((bis>=tim) or (von>bis))
@@ -146,14 +147,14 @@ var brk     : boolean;
             begin
               inc(anz);
               new(tl[anz]);
-              fillchar(tl[anz], SizeOf(tl[anz]), 0);
+              fillchar(tl[anz]^, SizeOf(tl[anz]^), 0);
               tl[anz]^:=tr2;
             end;
             if (bis<von) and (bis>=tim) then
               if not intime(date,'00:00',bis,tr) then begin
                 inc(anz);
                 new(tl[anz]);
-              fillchar(tl[anz], SizeOf(tl[anz]), 0);
+                fillchar(tl[anz]^, SizeOf(tl[anz]^), 0);
                 tr.von:='00:00';
                 tl[anz]^:=tr;
                 end;
@@ -644,6 +645,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/08/09 19:51:34  mk
+  - verschiedene Fixes fuer Timeingliste
+  - Netcall/Alle funktioniert jetzt
+
   Revision 1.9  2000/08/03 20:08:18  mk
   - e[] auf TStringlist umgestellt
 
