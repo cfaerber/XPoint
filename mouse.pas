@@ -119,7 +119,7 @@ asm
          mov   bp,seg @data            { Turbo-Datensegment setzen }
          mov   ds,bp
 
-(*         cmp   stsize,0                { kein eigener Stack? }
+         cmp   stsize,0                { kein eigener Stack? }
          jz    @nost1
          mov   ssave1,sp       { Stack sichern }
          mov   ssave2,ss
@@ -130,7 +130,7 @@ asm
          add   bp,stsize
          sub   bp,16
          and   bp,0fffeh
-         mov   sp,bp *)
+         mov   sp,bp
 
 @nost1:  push  ax
          push  bx
@@ -156,10 +156,10 @@ asm
          pop   bx
          pop   ax
 
-(*         cmp   stsize,0
+         cmp   stsize,0
          jz    @nost2
          mov   sp,ssave1       { Stack wiederherstellen }
-         mov   ss,ssave2 *)
+         mov   ss,ssave2
 @nost2:  pop   bp
          pop   ds
          popf
@@ -513,6 +513,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.2  2000/04/16 08:38:23  mk
+  - Stackframe im Mausinterrupt wird wieder erzeugt
+
   Revision 1.5.2.1  2000/04/06 22:12:44  mk
   RB: - Bugfixes fuer Editor und Maustastenabfrage
 
