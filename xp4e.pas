@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team, http://www.openxp.de    		  }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -90,7 +90,7 @@ function  brettaffe(var s:string):boolean;
 procedure setbrett(var s:string);
 function  testhaltetyp(var s:string):boolean;
 function  mbshowtext(var s:string):boolean;
-procedure mbshowtxt0(var s:string);
+{procedure mbshowtxt0(var s:string);}
 procedure mbsetvertreter(var s:string);
 function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
@@ -99,28 +99,21 @@ implementation  { --------------------------------------------------- }
 
 uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido;
 
-var   adp         : ^atext;
-      wcy         : byte;          { fÅr writecode() }
-      grnr_found  : longint;       { von Testgruppe gefundene INT_NR }
-      empfx,empfy : byte;          { msgdirect() -> empftest()       }
-      _pmonly     : boolean;       {    "                            }
+var   adp         : string;	{ War ^atext (atext = s80, also shortstring) }
+      wcy         : byte;       { fÅr writecode() }
+      grnr_found  : longint;    { von Testgruppe gefundene INT_NR }
+      empfx,empfy : byte;       { msgdirect() -> empftest()       }
+      _pmonly     : boolean;    {    "                            }
       adrfieldpos : integer;
-      pb_netztyp  : byte;          { Netztyp von testpollbox() }
-      ntyp_y      : byte;          { intern EditBrett          }
-      brettfld    : integer;       { intern EditBrett          }
-      userfld     : integer;       { intern EditUser           }
-{$ifdef hasHugeString}
+      pb_netztyp  : byte;       { Netztyp von testpollbox() }
+      ntyp_y      : byte;       { intern EditBrett          }
+      brettfld    : integer;    { intern EditBrett          }
+      userfld     : integer;    { intern EditUser           }
       pb_field    : integer;
-      pbox        : string; { intern EditBrett/ReadDirect }
-      rdforcebox  : boolean;            { intern ReadDirect    }
-      rdorgbox    : string; { intern ReadDirect    }
-{$else}
-      pb_field    : integer;
-      pbox        : string[BoxNameLen]; { intern EditBrett/ReadDirect }
-      rdforcebox  : boolean;            { intern ReadDirect    }
-      rdorgbox    : string[BoxNameLen]; { intern ReadDirect    }
-{$endif}
-      mbx,mby     : byte;          { Text fÅr modibrett2() }
+      pbox        : string; 	{ intern EditBrett/ReadDirect }
+      rdforcebox  : boolean;    { intern ReadDirect    }
+      rdorgbox    : string; 	{ intern ReadDirect    }
+      mbx,mby     : byte;       { Text fÅr modibrett2() }
       mblasttext  : shortint;
 
 
@@ -133,7 +126,7 @@ end;
 
 procedure FormFido(var s:string);  { lokal }
 var fa   : FidoAdr;
-    user : string[60];
+    user : string;
 begin
   SplitFido(s,fa,0);
   with fa do begin
@@ -152,12 +145,12 @@ begin
   else
     if pb_netztyp=nt_Fido then
       FormFido(s);
-  adp^:=s;
+  adp:=s;
 end;
 
 procedure get_address(var s:string);
 begin
-  if s='' then s:=adp^;
+  if s='' then s:=adp;
   if (s<>'') and (cpos('@',s)=0) then
     AddBox(s)
   else
@@ -229,10 +222,11 @@ begin
 end;
 
 function writecode(var s:string):boolean;
-var cname : string[20];
+var cname : string;
 begin
   attrtxt(col.coldialog);
-  if (LowerCase(left(s,3))='pmc') and (ival(s[length(s)]) in [1..maxpmc]) then begin
+  if (LowerCase(left(s,3))='pmc') and
+  	((length(s)>0) and (ival(s[length(s)]) in [1..maxpmc])) then begin
     cname:=pmcrypt[ival(s[length(s)])].name;
     if cname='' then cname:=getres(2700);    { 'noch nicht definiert' }
     mwrt(39,wcy,forms('('+cname+')',30));
@@ -293,7 +287,7 @@ begin
     SeekLeftBox(d,s);
     if dbFound then begin
       dbRead(d,'netztyp',pb_netztyp);
-      dbRead(d,'boxname',s);
+      s:= dbReadStr(d,'boxname');
       pbox:=s;
       end;
     dbClose(d);
@@ -315,7 +309,6 @@ var x,y  : byte;
     uml  : boolean;
     ebs  : boolean;
 begin
-  new(adp);
   if left(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
@@ -331,7 +324,7 @@ begin
     if edit then begin
       maddtext(3,4,getres2(2701,3),col.coldialog);    { 'User     ' }
       maddtext(13,4,' '+left(user,41),col.coldiahigh);
-      adp^:=user;
+      adp:=user;
       userfld:=-1;
       end
     else begin
@@ -372,21 +365,14 @@ begin
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
   enddialog;
   freeres;
-  dispose(adp);
 end;
 
 
 function newuser:boolean;
 var
-{$ifdef hasHugeString}
     user,adresse : string;
     komm         : string;
     pollbox      : string;
-{$else}
-    user,adresse : string[AdrLen];
-    komm         : string[30];
-    pollbox      : string[BoxNameLen];
-{$endif}
     halten,adr   : integer16;
     b            : byte;
     brk          : boolean;
@@ -404,11 +390,11 @@ begin
       rfehler(2703)    { 'Dieser User ist bereits vorhanden!' }
     else begin
       dbAppend(ubase);
-      dbWrite(ubase,'username',user);
+      dbWriteStr(ubase,'username',user);
       if UpperCase(adresse)=UpperCase(user) then adresse:='';
-      dbWriteX(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
-      dbWrite(ubase,'kommentar',komm);
-      dbWrite(ubase,'pollbox',pollbox);
+      dbWriteXStr(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
+      dbWriteStr(ubase,'kommentar',komm);
+      dbWriteStr(ubase,'pollbox',pollbox);
       dbWrite(ubase,'haltezeit',halten);
       dbWrite(ubase,'userflags',flags);
       b:=1;
@@ -474,15 +460,9 @@ end;
 
 function newverteiler:boolean;
 var
-{$ifdef hasHugeString}
     name         : string;
     komm         : string;
     pollbox      : string;
-{$else}
-    name         : string[AdrLen];
-    komm         : string[30];
-    pollbox      : string[BoxNameLen];
-{$endif}
     b       : byte;
     brk     : boolean;
     adr     : integer16;
@@ -499,9 +479,9 @@ begin
       rfehler(2704)   { 'Dieser Verteiler ist bereits vorhanden!' }
     else begin
       dbAppend(ubase);
-      dbWriteN(ubase,ub_username,name);
-      dbWriteN(ubase,ub_kommentar,komm);
-      dbWriteN(ubase,ub_pollbox,pollbox);
+      dbWriteNStr(ubase,ub_username,name);
+      dbWriteNStr(ubase,ub_kommentar,komm);
+      dbWriteNStr(ubase,ub_pollbox,pollbox);
       b:=1;
       dbWriteN(ubase,ub_adrbuch,adr); {NeuUserGruppe nicht fuer Verteiler...}
       dbWriteN(ubase,ub_codierer,b);      { dÅrfte egal sein }
@@ -517,25 +497,19 @@ end;
 
 function modiverteiler:boolean;
 var
-{$ifdef hasHugeString}
     name,oldname : string;
     komm         : string;
     pollbox      : string;
-{$else}
-    name,oldname : string[AdrLen];
-    komm         : string[30];
-    pollbox      : string[BoxNameLen];
-{$endif}
     brk          : boolean;
-    cc           : ccp;
+    cc           : ccp;		{ String-Array }
     anz,adr      : integer16;
     rec          : longint;
 begin
   modiverteiler:=false;
-  dbReadN(ubase,ub_username,name);
+  name:= dbReadNStr(ubase,ub_username);
   oldname:=name;
-  dbReadN(ubase,ub_kommentar,komm);
-  dbReadN(ubase,ub_pollbox,pollbox);
+  komm:= dbReadNStr(ubase,ub_kommentar);
+  pollbox:= dbReadNStr(ubase,ub_pollbox);
   dbReadN(ubase,ub_adrbuch,adr);
   editverteiler(getres(2705),name,komm,pollbox,adr,brk);   { 'Verteiler bearbeiten' }
   if not stricmp(name,oldname) then begin
@@ -549,9 +523,9 @@ begin
       dbGo(ubase,rec);
     end;
   if not brk then begin
-    dbWriteN(ubase,ub_username,name);
-    dbWriteN(ubase,ub_kommentar,komm);
-    dbWriteN(ubase,ub_pollbox,pollbox);
+    dbWriteNStr(ubase,ub_username,name);
+    dbWriteNStr(ubase,ub_kommentar,komm);
+    dbWriteNStr(ubase,ub_pollbox,pollbox);
     dbWriteN(ubase,ub_adrbuch,adr);
     dbFlushClose(ubase);
     if name<>oldname then begin
@@ -578,10 +552,10 @@ var hdp      : headerp;
   var absender : string;
       pollbox  : string;
   begin
-    dbReadN(mbase,mb_absender,absender);
+    absender:= dbReadNStr(mbase,mb_absender);
     dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
     if dbFound then       { mÅ·te IMMER true sein }
-      dbReadN(bbase,bb_pollbox,pollbox)
+      pollbox:= dbReadNStr(bbase,bb_pollbox)
     else
       pollbox:=DefaultBox;
     ReplaceVertreterbox(pollbox,true);
@@ -591,15 +565,15 @@ var hdp      : headerp;
 begin
   GetMsgBrettUser:=true;
   if MarkUnversandt and (left(dbReadStr(mbase,'brett'),1)='U') then begin
-    new(hdp);
+    hdp:= AllocHeaderMem;
     readheader(hdp^,hds,true);
     suchname:=hdp^.empfaenger;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     if left(suchname,length(TO_ID))=TO_ID then
       suchname:=mid(suchname,length(TO_ID)+1);
     end
   else
-    dbReadN(mbase,mb_absender,suchname);
+    suchname:= dbReadNStr(mbase,mb_absender);
   dbSeek(ubase,uiName,UpperCase(suchname));
   if not dbFound then
     if ReadJN(getres(2709),true) then   { 'User nicht in der Datenbank - neu anlegen' }
@@ -612,15 +586,9 @@ end;
 procedure editpass(msgbrett:boolean);
 var pw    : string;
     typ   : byte;
-{$ifdef hasHugeString}
     cod   : string;
     name  : string;
     adr   : string;
-{$else}
-    cod   : string[5];
-    name  : string[AdrLen];
-    adr   : string[AdrLen];
-{$endif}
     size  : smallword;
     x,y   : byte;
     brk   : boolean;
@@ -635,17 +603,17 @@ begin
     exit;
   netztyp:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
   if netztyp=nt_Fido then begin
-    dbReadN(ubase,ub_username,adr);
+    adr:= dbReadNStr(ubase,ub_username);
     SplitFido(adr,fa,2);
-(*  if fa.zone<=6 then begin
-      message(getres(2737));  { 'Warnung: Nachrichtencodierung ist im FidoNet nicht zulÑssig!' }
-      errsound;
+{  if fa.zone<=6 then begin
+      message(getres(2737)); } { 'Warnung: Nachrichtencodierung ist im FidoNet nicht zulÑssig!' }
+{     errsound;
       wkey(2,false);
       closebox;
-      end; *)
+      end; }
     end;
   size:=0;
-  dbReadX(ubase,'passwort',size,pw);
+  pw:= dbReadXStr(ubase,'passwort',size);
   if size=0 then pw:='';
   dbRead(ubase,'codierer',typ);
   if typ=9 then
@@ -658,7 +626,7 @@ begin
       2    : cod:='DES';
       3..2+maxpmc : cod:='pmc-'+strs(typ-2);
     end;
-  dbRead(ubase,'username',name);
+  name:= dbReadStr(ubase,'username');
   dialog(67,7,left(fuser(name),60),x,y);
   wcy:=y+3;
   maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Pa·wort ' }
@@ -680,7 +648,7 @@ begin
   closemask;
   closebox;
   if not brk then begin
-    dbWriteX(ubase,'passwort',iif(pw='',0,length(pw)+1),pw);
+    dbWriteXStr(ubase,'passwort',iif(pw='',0,length(pw)+1),pw);
     if UpperCase(cod)='QPC' then typ:=1
     else if UpperCase(cod)='DES' then typ:=2
     else if UpperCase(cod)='PGP' then typ:=9
@@ -729,7 +697,7 @@ begin
 end;
 
 function testhaltetyp(var s:string):boolean;
-var tg,na : string[10];
+var tg,na : string;
 begin
   if (length(s)=1) and (lastkey<>keybs) then begin
     tg:=UpperCase(getres2(2708,1));
@@ -750,15 +718,9 @@ procedure editbrett(var brett,komm,box,origin:string; var gruppe:longint;
 var x,y    : byte;
     askloc : boolean;
     d      : DB;
-{$ifdef hasHugeString}
     grname : string;
     haltetyp:string;
     na,tg  : string;
-{$else}
-    grname : string[40];
-    haltetyp:string[6];
-    na,tg  : string[10];
-{$endif}
     trenn  : boolean;
     pba    : byte;
     filter : boolean;   { Nachrichtenfilter erlaubt }
@@ -768,7 +730,7 @@ begin
   dbOpen(d,gruppenfile,1);
   dbSeek(d,giIntnr,dbLongStr(gruppe));
   if not dbFound then dbGoTop(d);   { sollte nicht vorkommen! }
-  dbRead(d,'name',grname);
+  grname:= dbReadStr(d,'name');
   dbClose(d);
   askloc:=not edit or (left(brett,1)<>'$');
   trenn:=(left(brett,3)='$/T');
@@ -853,11 +815,13 @@ end;
 function mbshowtext(var s:string):boolean;
 var newstate : shortint;
     len,i    : byte;
-    f1,f2    : string[1];
+    f1,f2    : string;
 begin
   mbshowtext := true;
-  if fieldpos=1 then f1:=trim(s) else f1:=trim(getfield(1));
-  if fieldpos=2 then f2:=s else f2:=getfield(2);
+  if fieldpos=1 then f1:=trim(s) 
+  else f1:=trim(getfield(1));
+  if fieldpos=2 then f2:=s 
+  else f2:=getfield(2);
   if f1='' then
     newstate:=iif(f2=_jn_[1],2,1)
   else
@@ -871,10 +835,12 @@ begin
     end;
 end;
 
+
 procedure mbshowtxt0(var s:string);
 begin
   mbshowtext(s);
 end;
+
 
 procedure mbsetvertreter(var s:string);
 begin
@@ -918,7 +884,7 @@ begin
   mblasttext:=-1;
   rec:=dbRecno(bbase);
   if dbReadInt(bbase,'flags') and 32<>0 then adresse:=''
-  else dbReadN(bbase,bb_adresse,adresse);
+  else adresse:= dbReadNStr(bbase,bb_adresse);
   gesperrt:=(dbReadInt(bbase,'flags')and 8<>0);
   pb_netztyp:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
   maddstring(3,2,getres2(2735,2),adresse,36,eAdrLen,'');   { 'Vertreter-Adresse' }
@@ -937,12 +903,14 @@ begin
     if { (UpperCase(adresse)=UpperCase(mid(dbReadStr(bbase,'brettname'),2))) or }
        (not gesperrt and ntFollowup(pb_netztyp) and (cpos('@',adresse)>0)) then
       adresse:='';
-    dbWriteN(bbase,bb_adresse,adresse);
+    dbWriteNStr(bbase,bb_adresse,adresse);
     b:=dbReadInt(bbase,'flags') and (not 8);
     if gesperrt then inc(b,8);
     if adresse<>'' then begin
       b:=b and (not 32);
-      dbWriteN(bbase,bb_adresse,adresse);
+      { MAcht das Sinn, dass dieser Datensatz u.U. zum 2. Mal geschrieben wird?
+        (hd/2000-07-11) }
+      dbWriteNStr(bbase,bb_adresse,adresse);
       end;
     dbWriteN(bbase,bb_flags,b);
     dbFlushClose(bbase);
@@ -952,15 +920,9 @@ end;
 
 function modiuser(msgbrett:boolean):boolean; {us}
 var
-{$ifdef hasHugeString}
     user,adresse : string;
     komm         : string;
     pollbox      : string;
-{$else}
-    user,adresse : string[AdrLen];
-    komm         : string[30];
-    pollbox      : string[BoxNameLen];
-{$endif}
     size         : smallword;
     halten,adr   : integer16;
     flags        : byte;
@@ -970,15 +932,15 @@ begin
   modiuser:=false;
   if msgbrett and not GetMsgbrettUser then
     exit;
-  dbRead(ubase,'username',user);
+  user:= dbReadStr(ubase,'username');
   if dbXsize(ubase,'adresse')=0 then adresse:=user
   else begin
     size:=0;
-    dbReadX(ubase,'adresse',size,adresse);
+    adresse:= dbReadXStr(ubase,'adresse',size);
     if adresse='' then adresse:=user;
     end;
-  dbRead(ubase,'kommentar',komm);
-  dbRead(ubase,'pollbox',pollbox);
+  komm:= dbReadStr(ubase,'kommentar');
+  pollbox:= dbReadStr(ubase,'pollbox');
   dbRead(ubase,'haltezeit',halten);
   dbRead(ubase,'userflags',flags);
   dbRead(ubase,'Adrbuch',adr);
@@ -987,9 +949,9 @@ begin
   dbGo(ubase,rec);
   if not brk then begin                 { 'User bearbeiten' }
     if UpperCase(adresse)=UpperCase(user) then adresse:='';
-    dbWriteX(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
-    dbWrite(ubase,'kommentar',komm);
-    dbWrite(ubase,'pollbox',pollbox);
+    dbWriteXStr(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
+    dbWriteStr(ubase,'kommentar',komm);
+    dbWriteStr(ubase,'pollbox',pollbox);
     dbWrite(ubase,'haltezeit',halten);
     dbWrite(ubase,'userflags',flags);
     dbWrite(ubase,'Adrbuch',adr);
@@ -1005,17 +967,10 @@ end;
 
 function newbrett:boolean;
 var
-{$ifdef hasHugeString}
     brett : string;
     komm  : string;
     box   : string;
     origin: string;
-{$else}
-    brett : string[brettLen];
-    komm  : string[30];
-    box   : string[BoxNameLen];
-    origin: string[80];
-{$endif}
     gruppe: longint;
     halten: integer16;
     flags : byte;
@@ -1047,13 +1002,13 @@ begin
     end;
   dbAppend(bbase);
   brett:='A'+brett;
-  dbWriteN(bbase,bb_brettname,brett);
-  dbWriteN(bbase,bb_kommentar,komm);
-  dbWriteN(bbase,bb_pollbox,box);
+  dbWriteNStr(bbase,bb_brettname,brett);
+  dbWriteNStr(bbase,bb_kommentar,komm);
+  dbWriteNStr(bbase,bb_pollbox,box);
   dbWriteN(bbase,bb_haltezeit,halten);
   dbWriteN(bbase,bb_gruppe,gruppe);
   if origin<>'' then
-    dbWriteN(bbase,bb_adresse,origin);
+    dbWriteNStr(bbase,bb_adresse,origin);
   flags:=flags and (not 16);
   if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
   dbWriteN(bbase,bb_flags,flags);
@@ -1064,21 +1019,12 @@ end;
 
 function modibrett:boolean;
 var
-{$ifdef hasHugeString}
     brett  : string;
     komm   : string;
     box    : string;
     origin : string;
     oldorig: string;
     _brett : string;
-{$else}
-    brett  : string[BrettLen];
-    komm   : string[30];
-    box    : string[BoxNameLen];
-    origin : string[60];
-    oldorig: string[60];
-    _brett : string[5];
-{$endif}
     halten : integer16;
     flags  : byte;
     brk    : boolean;
@@ -1091,27 +1037,27 @@ var
 label ende;
 begin
   modibrett:=false;
-  dbReadN(bbase,bb_brettname,brett);
+  brett:= dbReadNStr(bbase,bb_brettname);
   _brett:=mbrettd(brett[1],bbase);
-  dbReadN(bbase,bb_kommentar,komm);
-  dbReadN(bbase,bb_pollbox,box);
+  komm:= dbReadNStr(bbase,bb_kommentar);
+  box:= dbReadNStr(bbase,bb_pollbox);
   dbReadN(bbase,bb_haltezeit,halten);
   dbReadN(bbase,bb_flags,flags);
   dbReadN(bbase,bb_gruppe,gruppe);
   if flags and 32=0 then origin:=''
-  else dbReadN(bbase,bb_adresse,origin);
+  else origin:= dbReadNStr(bbase,bb_adresse);
   oldorig:=origin;
   editbrett(brett,komm,box,origin,gruppe,halten,flags,true,brk);
   if not brk then begin
-    dbWriteN(bbase,bb_kommentar,komm);
-    dbWriteN(bbase,bb_pollbox,box);
+    dbWriteNStr(bbase,bb_kommentar,komm);
+    dbWriteNStr(bbase,bb_pollbox,box);
     dbWriteN(bbase,bb_haltezeit,halten);
     flags:=flags and (not 16);
     if ntBoxNetztyp(box)=nt_UUCP then inc(flags,16);
     dbWriteN(bbase,bb_flags,flags);
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
-      dbWriteN(bbase,bb_adresse,origin);
+      dbWriteNStr(bbase,bb_adresse,origin);
     if left(brett,1)='/' then brett:='A'+brett;
     modin:=UpperCase(brett)<>UpperCase(dbReadStr(bbase,'brettname'));
     if modin then begin
@@ -1134,12 +1080,12 @@ begin
       if not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
          odd(dbReadInt(mbase,'unversandt')) then begin
         rfehler(2711);    { 'Unversandte Nachrichten vorhanden - Brettname nicht Ñnderbar' }
-        dbReadN(bbase,bb_brettname,brett);
+        brett:= dbReadNStr(bbase,bb_brettname);
         modin:=false;
         end;
       dbSetIndex(mbase,mi);
       end;
-    dbWriteN(bbase,bb_brettname,brett);
+    dbWriteNStr(bbase,bb_brettname,brett);
     if modin then begin
       dbSeek(mbase,mb_brett,_brett);
       if not dbEOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
@@ -1168,17 +1114,10 @@ const nn : shortint = 1;
 var n,w    : shortint;
     x,y    : byte;
     brk    : boolean;
-{$ifdef hasHugeString}
     s      : string;
     htyp   : string;
     brett  : string;
     na,tg  : string;
-{$else}
-    s      : string[30];
-    htyp   : string[6];
-    brett  : string[BrettLen];
-    na,tg  : string[10];
-{$endif}
     halten,adr : integer16;
     hzahl  : boolean;
     grnr   : longint;
@@ -1249,7 +1188,7 @@ else begin
           dbReadN(bbase,bb_gruppe,grnr);
           dbOpen(d,GruppenFile,1);
           dbSeek(d,giIntnr,dbLongStr(grnr));
-          dbRead(d,'name',s);
+          s:= dbReadStr(d,'name');
           dbClose(d);
           maddstring(3,2,getres2(2715,11),s,30,30,''); mhnr(406);  { 'Gruppe  ' }
           mappcustomsel(GruppenSelProc,false);
@@ -1278,9 +1217,9 @@ else begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
       case n of
-        1 : dbWrite(dispdat,'kommentar',s);
+        1 : dbWriteStr(dispdat,'kommentar',s);
         2 : begin
-              dbWrite(dispdat,'pollbox',s);
+              dbWriteStr(dispdat,'pollbox',s);
               if not user then begin
                 dbRead(dispdat,'flags',flags);
                 flags:=flags and (not 16)+uucp;
@@ -1302,7 +1241,7 @@ else begin
               dbWriteN(ubase,ub_userflags,b);
               end
             else begin
-              dbReadN(bbase,bb_brettname,brett);
+              brett:= dbReadNStr(bbase,bb_brettname);
               if left(brett,1)='A' then
                 dbWriteN(bbase,bb_gruppe,grnr_found)
               else
@@ -1341,8 +1280,8 @@ end;
 
 procedure _multiloesch(user:boolean);
 var i              : integer;
-    brett          : string[90];
-    _brett,_brett2 : string[5];
+    brett          : string;
+    _brett,_brett2 : string;
     dispdat        : DB;
 begin
   if user then dispdat:=ubase
@@ -1358,14 +1297,14 @@ begin
       else begin
         if user then _brett:=mbrettd('U',ubase)
         else begin
-          dbRead(bbase,'Brettname',brett);
+          brett:= dbReadStr(bbase,'Brettname');
           _brett:=mbrettd(brett[1],bbase);
           end;
         dbSeek(mbase,miBrett,_brett);
         if not dbEOF(mbase) then
-          dbRead(mbase,'Brett',_brett2);
+          _brett2:= dbReadStr(mbase,'Brett');
         if not dbEOF(mbase) and (_brett=_brett2) then begin
-          if user then dbReadN(ubase,ub_username,brett)
+          if user then brett:= dbReadNStr(ubase,ub_username)
           else brett:=mid(brett,2);
           rfehler1(2708,left(brett,50));   { 'Brett %s ist nicht leer.' }
           { i:=bmarkanz; }
@@ -1406,8 +1345,8 @@ function empftest(var s:string):boolean;
 var ok    : boolean;
     brett : boolean;
     d     : DB;
-    _pbox : string[BoxNameLen];
-    oldpb : string[BoxNameLen];
+    _pbox : string;
+    oldpb : string;
     size  : smallword;
     p     : byte;
     verteiler : boolean;
@@ -1442,8 +1381,8 @@ begin
         dbOpen(d,PseudoFile,1);
         dbSeek(d,piKurzname,UpperCase(s));
         if dbFound then begin
-          dbRead(d,'Langname',s);
-          dbRead(d,'pollbox',_pbox);
+          s:= dbReadStr(d,'Langname');
+          _pbox:= dbReadStr(d,'pollbox');
           if (_pbox<>'') and
              (not rdforcebox or
               not ntAdrCompatible(ntBoxNetztyp(_pbox),pb_netztyp))
@@ -1460,7 +1399,7 @@ begin
           dbSeek(ubase,uiName,UpperCase(s));
           if not dbEOF(ubase) and
              (UpperCase(s)=UpperCase(left(dbReadStr(ubase,'username'),length(s)))) then
-            dbReadN(ubase,ub_username,s)
+            s:= dbReadNStr(ubase,ub_username)
           else
             if cpos('@',s)=length(s) then begin
               dellast(s);
@@ -1494,12 +1433,12 @@ begin
     if dbfound or newbrett then
     begin
       if cpos('@',s)=0 then
-        dbReadN(bbase,bb_Pollbox,_pbox)
+        _pbox:= dbReadNStr(bbase,bb_Pollbox)
       else begin
-        dbReadN(ubase,ub_pollbox,_pbox);
+        _pbox:= dbReadNStr(ubase,ub_pollbox);
         size:=0;
         if dbXsize(ubase,'adresse')>0 then   { Vertreter }
-          dbReadX(ubase,'adresse',size,s);
+          s:= dbReadXStr(ubase,'adresse',size);
         end;
       if (_pbox<>'') and
          (not rdforcebox or
@@ -1535,7 +1474,7 @@ end;
 
 function dtestpollbox(var s:string):boolean;
 var d  : DB;
-    adr: string[AdrLen];
+    adr: string;
 {    orgnt : byte; }
 begin
 {  orgnt:=ntBoxNetztyp(pbox); }
@@ -1544,7 +1483,7 @@ begin
   SeekLeftBox(d,s);
   if dbFound then begin
     dbRead(d,'netztyp',pb_netztyp);
-    dbRead(d,'boxname',s);
+    s:= dbReadStr(d,'boxname');
     pbox:=s;
     end;
   dbClose(d);
@@ -1552,12 +1491,12 @@ begin
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,UpperCase(s));
     if dbFound {and (pos('@',dbReadStr(d,'langname'))>0)} then begin
-      dbRead(d,'pollbox',pbox);
+      pbox:= dbReadStr(d,'pollbox');
       if (pbox='') or not IsBox(pbox) then
         pbox:=DefaultBox;
       s:=pbox;
       pb_netztyp:=ntBoxNetztyp(pbox);
-      dbRead(d,'langname',adr);
+      adr:= dbReadStr(d,'langname');
       setfield(userfld,adr);
       _keyboard(keycr);
       end;
@@ -1626,21 +1565,12 @@ end;
 
 procedure msgdirect;
 var brk  : boolean;
-{$ifdef hasHugeString}
     empf : string;
     betr : string;
     real : string;
     box  : string;
     headf: string;
     sigf : string;
-{$else}
-    empf : string[adrlen];
-    betr : string[BetreffLen];
-    real : string[40];
-    box  : string[BoxNameLen];
-    headf: string[12];
-    sigf : string[12];
-{$endif}
     fn   : string;
     sdata: SendUUPtr;
     pm   : boolean;
@@ -1674,12 +1604,12 @@ begin
     end;
   if autocpgd then pgdown:=true;
   forcebox:=box;
-  new(sdata);
+  getmem(sdata,sizeof(SendUUdata)); {new(sdata);}
   fillchar(sdata^,sizeof(sdata^),0);
   sdata^.empfrealname:=real;
   if DoSend(pm,fn,empf,betr,true,false,true,false,true,sdata,headf,sigf,0)
   then;
-  dispose(sdata);
+  freemem(sdata,sizeof(SendUUdata)); {dispose(sdata);}
   pgdown:=false;
   if exist(fn) then era(fn);
 end;
@@ -1687,9 +1617,9 @@ end;
 
 function get_lesemode(var showtime:boolean):shortint;
 var n   : shortint;
-    d   : datetimest;
+    d   : string;
     brk : boolean;
-    sich: string[20];
+    sich: string;
     x,y : byte;
 begin
   get_lesemode:=-1;
@@ -1737,24 +1667,22 @@ end;
 
 procedure AutoFilename(var cr:CustomRec);
 var ps  : string;
-    dir : dirstr;
-    name: namestr;
-    ext : extstr;
+    dir : string;
 begin
   selcol;
-  fsplit(cr.s,dir,name,ext);
-  if dir='' then dir:=SendPath
-  else
-    if cpos(':',dir)=0 then begin
-      if left(dir,1)<>'\' then dir:='\'+dir;
-      dir:=left(dospath(0),2)+dir;
-      end;
-  if right(dir,1)<>'\' then dir:=dir+'\';
-  ps:=fsbox(screenlines div 2 - 5,dir+'*.*','',name+ext,true,false,false);
+  dir:= ExtractFilePath(cr.s);
+  if dir='' then dir:= AddDirSepa(SendPath);
+{$ifndef UnixFS}
+  { Laufwerksbuchstaben hinzufuegen }
+  if cpos(':',dir)=0 then begin
+    if left(dir,1)<>DirSepa then dir:=DirSepa+dir;
+    dir:=left(dospath(0),2)+dir;
+  end;
+{$endif}
+  ps:=fsbox(screenlines div 2 - 5,dir+WildCard,'',ExtractFileName(cr.s),true,false,false);
   cr.brk:=(ps='');
   if not cr.brk then cr.s:=ps;
 end;
-
 
 
 function auto_testempf(var s:string):boolean;
@@ -1767,6 +1695,7 @@ begin
     if p>0 then s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
   auto_testempf:=true;
 end;
+
 
 function wostring(wotage:byte):string;
 var i   : integer;
@@ -1902,7 +1831,7 @@ begin
     SeekLeftBox(d,s);
     if dbFound then begin
       dbRead(d,'netztyp',pb_netztyp);
-      dbRead(d,'boxname',s);
+      s:= dbReadStr(d,'boxname');
       pbox:=s;
       end
     else
@@ -1914,19 +1843,11 @@ end;
 
 procedure AutoEdit(kopie:boolean; var ar:AutoRec; var brk:boolean);
 var x,y    : byte;
-{$ifdef hasHugeString}
     wot    : string;
     tg     : string;
     mon    : string;
     dat1,
     dat2   : string;
-{$else}
-    wot    : string[21];
-    tg     : string[60];
-    mon    : string[40];
-    dat1,
-    dat2   : DateTimeSt;
-{$endif}
     bin    : boolean;
     loesch : boolean;
     modif  : boolean;
@@ -2017,7 +1938,7 @@ procedure auto_new;
 var ar  : autorec;
     brk : boolean;
 begin
-  fillchar(ar,sizeof(ar),0);
+  fillchar(ar,sizeof(autorec),0);
   with ar do begin
     typ:='T';
     monate:=$fff;
@@ -2124,6 +2045,7 @@ begin
     end;
   wrt(x+3,y+6,getres(12));    { 'Taste drÅcken ...' }
   mon;
+  findclose(sr);
   freeres;
   wait(curon);
   closebox;
@@ -2198,15 +2120,9 @@ end;
 procedure Bretttrennung;
 var x,y   : byte;
     brk   : boolean;
-{$ifdef hasHugeString}
     oldtc : string;
     s     : string;
     komm  : string;
-{$else}
-    oldtc : string[1];
-    s     : string[AdrLen];
-    komm  : string[30];
-{$endif}
     bi    : shortint;
     rec   : longint;
     rec2  : longint;
@@ -2228,8 +2144,8 @@ begin
     dbAppend(bbase);
     rec2:=dbRecno(bbase);
     s:='$/T'+trennchar;
-    dbWriteN(bbase,bb_brettname,s);
-    dbWriteN(bbase,bb_kommentar,komm);
+    dbWriteNStr(bbase,bb_brettname,s);
+    dbWriteNStr(bbase,bb_kommentar,komm);
     dbWriteN(bbase,bb_gruppe,LocGruppe);
     bi:=dbGetIndex(bbase);
     dbSetIndex(bbase,biBrett);
@@ -2248,15 +2164,9 @@ end;
 procedure Usertrennung;
 var x,y   : byte;
     brk   : boolean;
-{$ifdef hasHugeString}
     oldtc : string;
     s     : string;
     komm  : string;
-{$else}
-    oldtc : string[1];
-    s     : string[AdrLen];
-    komm  : string[30];
-{$endif}
     rec   : longint;
     rec2  : longint;
     ab    : integer;
@@ -2275,11 +2185,12 @@ begin
     rec:=dbRecno(ubase);
     dbAppend(ubase);
     rec2:=dbRecno(ubase);
+{$hint Ist es moeglich, bei AnsiString chr(0) zu nutzen? }
     s:=#0+'$/T'+trennchar;
-    dbWriteN(ubase,ub_username,s);
-    dbWriteN(ubase,ub_kommentar,komm);
+    dbWriteNStr(ubase,ub_username,s);
+    dbWriteNStr(ubase,ub_kommentar,komm);
     s:=#0;
-    dbWriteN(ubase,ub_pollbox,s);
+    dbWriteNStr(ubase,ub_pollbox,s);
     dbGo(ubase,rec);
     dbreadN(ubase,ub_adrbuch,ab);
     dbgo(ubase,rec2);
@@ -2377,15 +2288,9 @@ begin
 
 procedure ChangePollbox;
 var
-{$ifdef hasHugeString}
     oldbox,newbox   : string;
     mapsname        : string;
     anew,s          : string;
-{$else}
-    oldbox,newbox   : string[BoxNameLen];
-    mapsname        : string[40];
-    anew,s           : string[50];
-{$endif}
     user,bretter    : boolean;
     localuser       : boolean;
     autov,pseudos   : boolean;
@@ -2442,7 +2347,7 @@ begin
               inc(nn);
               attrtxt(col.coldiahigh);
               wrt(x+10,y+9+i,strsn(nn,4));
-              dbWrite(d,'pollbox',newbox);
+              dbWriteStr(d,'pollbox',newbox);
               if i=1 then begin
                 flags:=dbReadInt(d,'flags') and (not 16) + uucp;
                 dbWrite(d,'flags',flags);
@@ -2462,7 +2367,7 @@ begin
             inc(nn);
             attrtxt(col.coldiahigh);
             wrt(x+32,y+9+i,strsn(nn,4));
-            dbWrite(d,'pollbox',newbox);
+            dbWriteStr(d,'pollbox',newbox);
             end;
           dbNext(d);
           end;
@@ -2478,7 +2383,7 @@ begin
           if anew='' then s:=''
           else s:=left(dbReadStr(d,'adresse'),p-1)+anew+
                   mid(dbReadStr(d,'adresse'),p+length(oldbox));
-          dbWrite(d,'adresse',s);
+          dbWriteStr(d,'adresse',s);
           end;
         dbNext(d);
         end;
@@ -2498,6 +2403,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/07/11 14:59:30  hd
+  - Ansistring
+  - Ein paar Linux-Anpassungen
+
   Revision 1.31  2000/07/09 08:35:16  mk
   - AnsiStrings Updates
 
