@@ -90,7 +90,7 @@ function iif(b:boolean; l1,l2:longint):longint; { IIF Integer               }
 function iifb(b,b1,b2:boolean):boolean;         { IIF Boolean               }
 function iifc(b:boolean; c1,c2:char):char;      { IIF Char                  }
 function iifr(b:boolean; r1,r2:real):real;      { IIF Real                  }
-function iifs(b:boolean; s1,s2:string):string;  { IIF String                }
+function iifs(b:boolean; const s1,s2:string):string;  { IIF String                }
 function IntQSum(const l:longint):longint;         { Quersumme                    }
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
@@ -778,7 +778,7 @@ begin
 end;
 
 
-function iifs(b:boolean; s1,s2:string):string;
+function iifs(b:boolean; const s1,s2:string):string;
 begin
   if b then iifs:=s1
   else iifs:=s2;
@@ -1340,6 +1340,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2001/01/04 17:27:36  mk
+  - iifs now uses const parameters
+
   Revision 1.77  2000/12/04 14:20:56  mk
   RB:- UTF-7 Support added
 
