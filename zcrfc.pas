@@ -2742,12 +2742,15 @@ var
     p := cpos(':', zdate);
     if p = 0 then p := length(zdate) + 1;
 
-    ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + leftStr(zdate,
-      2) +
-      LeftStr(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
-      copy(zdate, 13, 2) + ' ' + zdate[16] + formi(IVal(copy(zdate, 17, p -
-        17)), 2) +
-      formi(IVal(mid(zdate, p + 1)), 2);
+    if length(zdate) >= 16 then
+      ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + leftStr(zdate,
+        2) +
+        LeftStr(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
+        copy(zdate, 13, 2) + ' ' + zdate[16] + formi(IVal(copy(zdate, 17, p -
+          17)), 2) +
+        formi(IVal(mid(zdate, p + 1)), 2)
+    else
+      ZtoRFCdate := '';
   end;
 
   { uebersetzt einen ZC Forumnamen in einen RFC Forumnamen }
@@ -3693,6 +3696,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.32  2003/12/07 16:41:17  mk
+  - fixed crash in ZtoRFCDate when date is empty
+
   Revision 1.97.2.31  2003/10/05 12:36:52  mk
   - removed RawFormat and NNTPSpoolFormat from ZCRFC
   - internal NNTP uses rnews format now
