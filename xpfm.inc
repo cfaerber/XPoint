@@ -697,8 +697,7 @@ begin
                                                         { EMSI_DAT erzeugen }
   sec70:=secsfrom70;
   EMSIData:='{'+Password+'}{8N1,PUA}{ZAP,ZMO,XMA,ARC,FNC}{'+
-            hex(prodcode,2)+'}{CrossPoint/XP-FM}{'+mid(verstr,2)+'}{'+SerNr+
-            '}{IDENT}{['+Convert2SevenBit(SysName)+']'+
+            hex(prodcode,2)+'}{OpenXP}{'+verstr+'}{}{IDENT}{['+Convert2SevenBit(SysName)+']'+
             '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(baud>=9600,
             '9600',strs(baud))+'][]}'+
             iifs(SendTrx,'{TRX#}{['+hex(sec70,8)+']}','');
@@ -912,6 +911,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.4  2000/12/25 16:36:37  mk
+        - modified EMSI Info
+
         Revision 1.3  2000/12/22 10:17:48  mk
         - compatibility update for VP
 
