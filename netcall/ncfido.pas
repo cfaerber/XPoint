@@ -96,7 +96,7 @@ implementation
 
 uses
   {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
-  zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom;
+  zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom,md5;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -242,6 +242,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/05/19 16:20:25  ma
+  - implemented secure BinkP CRAM-MD5 authentication
+
   Revision 1.3  2001/04/16 18:13:28  ma
   - ProgOutWin now pauses a bit on closing
     (some seconds if an error occured, one second if not)

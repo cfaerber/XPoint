@@ -157,14 +157,25 @@ end;
 
 { Binkp session setup procedure. Results are 0: OK, 1: Busy, 2: Error }
 function TFidomailer.BinkPSessionSetup: byte;
-type tState= (WaitConn,SendPasswd,WaitAddr,AuthRemote,IfSecure,WaitOk,Done);
+type tState= (WaitConn,WaitAddr,SendPasswd,AuthRemote,IfSecure,WaitOk,Done);
 var
   State,LastState: tState;
   BpF: tBinkpFrame;
   Timer: tTimer;
+  s,CRAM_MD5_Challenge: String;
+
+  function DecodeHex(s: string): string;
+  begin
+    result:='';
+    while s<>'' do begin
+      result:=result+Char(HexVal(Copy(s,1,2)));
+      Delete(s,1,2);
+      end;
+  end;
 
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  CRAM_MD5_Challenge:='';
   Timer.Init; Timer.SetTimeout(60);
   Output(mcVerbose,'Authenticating...',[0]);
   repeat
@@ -178,27 +189,42 @@ begin
           BpF.SendCommandFrame(M_NUL,'SYS OpenXP system')
         else
           BpF.SendCommandFrame(M_NUL,'SYS '+SysName);
-//        BpF.SendCommandFrame(M_NUL,'ZYZ '+Username);
+        BpF.SendCommandFrame(M_NUL,'ZYZ '+Username);
         BpF.SendCommandFrame(M_ADR,AKAs);
-        State:=SendPasswd;
-        end;
-      SendPasswd: begin
-        if Password='' then Password:='-';
-        BpF.SendCommandFrame(M_PWD,Password);
         State:=WaitAddr;
         BpF.ReadFromStream(False);
         end;
-      WaitAddr: begin
+      WaitAddr: begin // WaitAddr BEFORE SendPasswd because we're waiting for md5 challenge
         if BpF.IsReady then begin
           case BpF.FrameType of
-            M_ADR: State:=AuthRemote;
+            M_ADR: State:=SendPasswd;
 //** see if answering side presented the address we've called
             M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
             M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
-            M_NUL: Log(lcInfo,BpF.CommandPar);
+            M_NUL: begin
+                     s:=BpF.CommandPar;
+                     Log(lcInfo,s);
+                     // see if we got an md5 challenge: format "OPT xxx CRAM-MD5/SHA1-challenge yyy"
+                     if(Copy(s,1,3)='OPT')and(Pos(' CRAM-',s)<>0) then begin
+                       Delete(s,1,Pos(' CRAM-',s)+5);
+                       if Pos(' ',s)<>0 then s:=LeftStr(s,Pos(' ',s)-1);
+                       if Pos('MD5',s)<>0 then begin
+                         Delete(s,1,Pos('-',s));
+                         CRAM_MD5_Challenge:=s;
+                         end;
+                       end;
+                     end;
             end;
           if State=WaitAddr then BpF.ReadFromStream(False);
           end;
+        end;
+      SendPasswd: begin
+        Debug.DebugLog('ncfido','Challenge: '+CRAM_MD5_Challenge,DLInform);
+        if Password='' then Password:='-';
+        if CRAM_MD5_Challenge<>'' then
+          Password:='CRAM-MD5-'+LowerCase(CRAM_MD5(Password,DecodeHex(CRAM_MD5_Challenge)));
+        BpF.SendCommandFrame(M_PWD,Password);
+        State:=AuthRemote;
         end;
       AuthRemote: begin
 //** report
@@ -216,7 +242,13 @@ begin
       WaitOk: begin
         if BpF.IsReady then begin
           case BpF.FrameType of
-            M_OK: begin Output(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
+            M_OK: begin
+                    if CRAM_MD5_Challenge<>'' then
+                      Output(mcInfo,'Secure authentication successful',[0])
+                    else
+                      Output(mcInfo,'Plain text authentication successful',[0]);
+                    result:=0; State:=Done;
+                    end;
             M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
             M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
             M_NUL: Log(lcInfo,BpF.CommandPar);
@@ -518,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/05/19 16:20:25  ma
+  - implemented secure BinkP CRAM-MD5 authentication
+
   Revision 1.3  2001/05/09 19:37:53  ma
   - connection termination recognition changed again
 
