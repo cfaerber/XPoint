@@ -11019,12 +11019,16 @@ Forward templates.
 The following macros are only usable in Z-Netz and
 Magic-compatible nets:
 
-  $RNAME     -  The real name of the original sender
-  $(RNAME)   -  as $RNAME, but in brackets
+  $RNAME     -  The real name of the original sender,
+                plus a space at the end
+  $(RNAME)   -  Same as $RNAME but in brackets
+  $RNAME2    -  Same as $RNAME but without a space at
+                the end
+  $(RNAME2)  -  Same as $(RNAME) but without a space
+                at the end
 
-The real name is inserted followed by a space.
-If no real name is available, these macros are empty.
-
+If no real name is available, these macros will be
+empty.
 @
 11701
 <<XPoint / Statistics / Memory
