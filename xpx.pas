@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - First Unit }
@@ -129,20 +130,6 @@ begin
     end;
 end;
 
-function _deutsch:boolean;
-var t : text;
-    s : string;
-begin
-  filemode:=0;
-  assign(t,'XP.RES');
-  reset(t);
-  readln(t,s);
-  close(t);
-  _deutsch:=(ioresult=0) and (ustr(s)='XP-D.RES');
-  filemode:=2;
-end;
-
-
 {$S-}
 procedure setpath; far;
 begin
@@ -242,6 +229,45 @@ begin
 
 end;
 
+function _deutsch:boolean;
+var t : text;
+    s : string;
+    i : integer;
+begin
+  filemode:=0;
+  assign(t,'XP.RES');
+  reset(t);
+  readln(t,s);
+  close(t);
+  for i := 1 to length(s) do s[i] := UpCase(s[i]);
+  _deutsch:=(ioresult<>0) or (s='XP-D.RES');
+  filemode:=2;
+end;
+
+procedure logo;
+var t : text;
+begin
+  assign(t,'');
+  rewrite(t);
+  writeln(t);
+  write(t,xp_xp);
+  if (xp_xp='CrossPoint') then write(t,'(R)');
+  if _deutsch then author_name := 'OpenXP-Team'
+  else author_name := 'OpenXP Team';
+  writeln(t,' ',verstr,betastr,' ',x_copyright,
+            ' by ',author_name,' (',author_mail,')');
+  writeln(t);
+  if _deutsch then
+  begin
+    writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
+  end else
+  begin
+    writeln(t,'based on CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
+  end;
+  writeln(t);
+  close(t);
+end;
+
 begin
   checkbreak:=false;
   if swap(dosversion)<MinVersion then
@@ -296,6 +322,15 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.12  2001/09/16 20:36:58  my
+  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
+          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaßt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.18.2.11  2001/08/11 20:16:30  mk
   - added const parameters if possible, saves about 2.5kb exe
 

@@ -1,38 +1,30 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Registrierung }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpreg;
 
 interface
 
-uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,keys,winxp,montage,
+uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,
       video,datadef,database,maus2,maske,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
 procedure copyright(wait:boolean);
-{ MK 19.01.2000 }
 procedure BetaMessage;
+procedure About;
 
 procedure regbeiproc(var s:string);
 procedure calcpreis(var s:string);
@@ -45,6 +37,7 @@ procedure regwegproc(var s:string);
 function  regtestfilename(var s:string):boolean;
 function  carddate_valid(var s:string):boolean;
 function  testupdates(var s:string):boolean;
+function  LizenzNummer:string;
 
 
 implementation  { --------------------------------------------------- }
@@ -1394,7 +1387,7 @@ var x,y,i : byte;
       end
     else if (cpos('-',code)=0) or
             (ival(copy(code,2,cpos('-',code)-2))=0) then begin
-      message(getres2(521,4));   { 'UngÅltiger Registrieruns-Code.' }
+      message(getres2(521,4));   { 'UngÅltiger Registrierungs-Code.' }
       wkey(2,false);
       closebox;
       end
@@ -1431,26 +1424,22 @@ var x,y,i : byte;
       end;
   end;
 
-  function LizenzNummer:string;
-  begin
-    with registriert do
-      if orgreg then LizenzNummer:='Org-'+tc+strs(nr)
-      else if komreg then LizenzNummer:='Kom-'+tc+strs(nr)
-      else LizenzNummer:=tc+strs(nr);
-  end;
-
 label again,noclose;
 
 begin
   msglines:=ival(getres2(520,0));
   msgbox(70,msglines+8+iif(wait,3,0),'',x,y);
   moff;
-  wrt(x+3,y+1,'Cross \\//    '+
-              Right('               ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
-  wrt(x+3,y+2,'      //\\ Point');
-  s:='OpenXP ' + x_copyright + ' by ' + author_name;
+  attrtxt(col.colmboxhigh);
+  wrt(x+9,y+1,'\\//');
+  wrt(x+9,y+2,'//\\');
+  attrtxt(col.colmbox);
+  wrt(x+3,y+1,'Cross');
+  wrt(x+14,y+2,'Point');
+  s := verstr+betastr+' (c) 1992-99 '+pm;
+  wrt(x+67-length(s),y+1,s);
+  s := 'OpenXP ' + x_copyright + ' by ' + author_name;
   wrt(x+67-length(s),y+2,s);
-
   if registriert.r2 then begin
     s:=getres2(520,19)+LizenzNummer;   { 'Lizenznummer: ' }
     wrt(x+67-length(s),y+3,s);
@@ -1491,11 +1480,7 @@ again:
   pushhp(iif(wait,1550,1551));
   n:=ReadButton(x+3,sely,2,'*'+sels,n,true,z);
   pophp;
-{$IFDEF UnixFS }
-  s:='doc/' + getres2(520,40);   { Muss noch an die Grundstruktur angepasst werden }
-{$ELSE }
   s:='DOC\' + getres2(520,40);   { 'LIZENZ.DOC' }
-{$ENDIF }
   case n of
     1 : begin
           if not exist(s) then           { 'LIZENZ.DOC' }
@@ -1547,24 +1532,37 @@ noclose:
 end;
 
 procedure BetaMessage;
-var x,y,i : byte;
-    msglines    : byte;
-    z     : taste;
-    s:String;
+var x,y,i,p  : byte;
+    msglines : byte;
+    z        : taste;
+    s        : string;
 begin
   msglines:=ival(getres2(530,0));
-  msgbox(73,msglines+7,'',x,y);
+  msgbox(72,msglines+7,'',x,y);
   moff;
-  wrt(x+3,y+1,'Cross \\//    '+
-              Right('           ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
-  wrt(x+3,y+2,'      //\\ Point');
-  s:='OpenXP ' + x_copyright + ' by ' + author_name;
-  wrt(x+67-length(s),y+2,s);
-
-  for i:=1 to msglines do
-  begin
+  attrtxt(col.colmboxhigh);
+  wrt(x+9,y+1,'\\//');
+  wrt(x+9,y+2,'//\\');
+  attrtxt(col.colmbox);
+  wrt(x+3,y+1,'Cross');
+  wrt(x+14,y+2,'Point');
+  s := verstr+betastr+' (c) 1992-99 '+pm;
+  wrt(x+69-length(s),y+1,s);
+  s := 'OpenXP ' + x_copyright + ' by ' + author_name;
+  wrt(x+69-length(s),y+2,s);
+  for i:=1 to msglines do begin
     s:=getres2(530,i);
-    wrt(x+3,y+3+i, s);
+    gotoxy(x+3,y+3+i);
+    repeat
+      p:=cposx('*',s);
+      write(left(s,p-1));
+      delete(s,1,p);
+      p:=cposx('*',s);
+      attrtxt(col.colmboxhigh);
+      write(left(s,p-1));
+      attrtxt(col.colmbox);
+      delete(s,1,p);
+    until s='';
   end;
   mon;
   pushhp(1550);
@@ -1574,9 +1572,80 @@ begin
   freeres;
 end;
 
+procedure About;
+var x,y : byte;
+    z   : taste;
+    ver : string;
+    addxVer,addxInf,addxDia,addy : shortint;
+begin
+  addy := 0;
+  addxVer := 0;
+  addxInf := 0;
+  addxDia := 0;
+  ver := xp_xp+' '+verstr+betastr;
+  {$IFDEF Snapshot}
+    addy := addy+1;
+  {$ENDIF}
+  if registriert.r2 then addy := addy+1;
+  if length(ver) > 28 then  { Versionsstring lÑnger als PM-Copyright }
+  begin
+    if odd(length(ver)) then
+      addxDia := length(ver)-27
+    else
+      addxDia := length(ver)-28;
+    addxInf := addxDia div 2;
+  end else                  { Versionsstring gleich lang oder kÅrzer als PM-Copyright }
+  begin
+    if odd(length(ver)) then
+      addxVer := (27-length(ver)) div 2
+    else
+      addxVer := (28-length(ver)) div 2;
+  end;
+  diabox(34+addxDia,17+addy,'',x,y);
+  moff;
+  attrtxt(col.colmboxhigh);
+  wrt(x+15+addxInf,y+2,'\\//');
+  wrt(x+15+addxInf,y+3,'//\\');
+  wrt(x+3+addxVer,y+5,ver);
+  {$IFDEF Snapshot}
+    wrt(x+3+addxVer,y+6,'Snapshot: '+compiletime);
+  {$ENDIF}
+  if registriert.r2 then
+    wrt(x+3+addxVer,y+5+addy,getres2(520,19)+LizenzNummer);
+  attrtxt(col.colmbox);
+  wrt(x+9+addxInf,y+2,'Cross');
+  wrt(x+20+addxInf,y+3,'Point');
+  wrt(x+3+addxInf,y+7+addy,'(c) 1992-99  '+pm);
+  wrt(x+3+addxInf,y+8+addy,x_copyright+'  '+author_name);
+  wrt(x+3+addxInf,y+10+addy,'Fido : '+author_fido);
+  wrt(x+3+addxInf,y+11+addy,'eMail: '+author_mail);
+  wrt(x+3+addxInf,y+12+addy,'WWW  : '+author_url);
+  mon;
+  ReadButton(x+12+addxInf,y+14+addy,1,'*   ^OK   ',1,true,z);
+  closebox;
+  freeres;
+end;
+
+function LizenzNummer:string;
+begin
+  with registriert do
+    if orgreg then LizenzNummer:='Org-'+tc+strs(nr)
+    else if komreg then LizenzNummer:='Kom-'+tc+strs(nr)
+    else LizenzNummer:=tc+strs(nr);
+end;
+
 end.
 {
   $Log$
+  Revision 1.10.2.8  2001/09/16 20:41:33  my
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.10.2.7  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

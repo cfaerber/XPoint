@@ -1,9 +1,10 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{                                                                 }
-{ Globale Konstanten/Variablen (OpenXP) und Tools                 }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Globale Konstanten/Variablen (OpenXP) und Tools                    }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 {$I XPDEFINE.INC }
@@ -16,13 +17,17 @@ interface
 const
   verstr      = 'v3.40';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' RC3';      { '' oder ' beta' }
-  author_name = 'OpenXP-Team';
+  author_fido = '2:248/2004';
   author_mail = 'dev@openxp.de';
+  author_url  = 'http://www.openxp.de/';
 
   xp_xp       : string[17] = 'CrossPoint/OpenXP';
   xp_client   : string[17] = '       CrossPoint';
   xp_origin   : string[21] = '--- CrossPoint/OpenXP';
   x_copyright = '(c) 2000-01';
+
+var
+  author_name: String[11];
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -75,29 +80,21 @@ const
   MaxLenFilename = 13;
   MaxLenPathname = 79;
 
-procedure logo;
-
 implementation
 
-procedure logo;
-var t : text;
-begin
-  assign(t,'');
-  rewrite(t);
-  writeln(t);
-  write(t,xp_xp);
-  if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,betastr,' ',x_copyright,
-            ' by ',author_name,' (',author_mail,')');
-  writeln(t);
-  writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
-  writeln(t);
-  close(t);
-end;
 
 end.
 {
   $Log$
+  Revision 1.29.2.18  2001/09/16 20:42:28  my
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.29.2.17  2001/06/27 15:35:06  my
   - changed string for RFC/Client netcalls
 
