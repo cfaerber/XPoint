@@ -1,0 +1,92 @@
+#/bin/bash
+echo "Starting $0 $*"
+#
+# has to be called as root because of rpm call in make-rpm.sh
+#
+mainversion=$1
+subversion=0
+buildnr=1
+# example: version = 3.8.12-1
+# mainversion has to be 3.8 in this example
+# subversion has to be 12 in this example
+# buildnr has to be 1 in this example
+version="$mainversion"."$subversion"-"$buildnr"
+echo $version
+#scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$mainversion"/
+echo $versiondir
+sourcedir="$versiondir"'openxp/'
+echo $sourcedir
+scriptdir="$sourcedir"'build/'
+echo $scriptdir
+#
+echo sourcedir $sourcedir
+cd "$sourcedir"
+pwd
+cvs up -C version.inc
+cd "$scriptdir"
+pwd
+#
+./inc_build_nr.pl
+eval $(./get_build_nr.pl)
+mainversion=$OPENXP_MAINVER
+subversion=$OPENXP_SUBVER
+buildnr=$OPENXP_BUILD
+version="$mainversion"."$subversion"-"$buildnr"
+echo $version
+#scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$mainversion"/
+echo $versiiondir
+sourcedir="$versiondir"'openxp/'
+echo $sourcedir
+scriptdir="$sourcedir"'build/'
+echo $scriptdir
+cd "$sourcedir"
+echo '- new version: '"$version"' CB'
+commit='- new version: '"$version"' CB'
+commit2='cvs -t ci -m "'"$commit"'" version.inc'
+echo $commit2
+pwd
+#echo stop
+#read a
+#cvs ci -m '- new version: '"$version"' CB' version.inc
+su -c "$commit2" boettger 
+pwd
+#echo $1
+#echo $scriptdir
+#echo $versiondir
+#sleep 5
+echo $version
+pwd
+#echo stop
+#read a
+echo "building OXP" $version
+#echo stop
+#read a
+"$scriptdir"buildxp $mainversion
+test -f "openxp" || echo "Ooops, no OXP-Binary"
+test -f "openxp" || exit
+"$scriptdir"make-rpm.sh $mainversion 
+# Source tarball als .bz2 packen
+cd /tmp
+mkdir -p openxp-tmp
+mkdir -p openxp-tmp/openxp
+cd openxp-tmp/openxp
+tar xvzf /usr/src/packages/SOURCES/openxp-"$version".tar.gz
+cd ..
+tar cvjf openxp-"$version"-src.tar.bz2 openxp/
+# auf den ftp server schieben
+ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux-`date -I`.tar.bz2 /tmp/openxp-tmp/openxp-"$version"-src.tar.bz2 "$versiondir"openxp/fpc-linux-"$version"-logs.zip "$versiondir"openxp/kylix-"$version"-logs.zip
+## Cross-Compilate
+#test -f "$versiondir"openxp-"$version"-dos-`date -I`.zip && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-dos-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-os2-`date -I`.zip && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-os2-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-win32-`date -I`.zip && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-win32-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-netbsd-`date -I`.tar.bz2 && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-netbsd-`date -I`.tar.bz2
+#test -f "$versiondir"openxp-"$version"-freebsd-`date -I`.tar.bz2 && ncftpput -f /root/oxppass.cfg -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-freebsd-`date -I`.tar.bz2
+##
+ncftpls -f /root/oxppass.cfg -l ftp://ftp.openxp.de/
+#ncftpget -f /root/oxppass.cfg -z -r 5 -v ftp.openxp.de . OPENXP-D.zip
+cd 
+rm -rf /tmp/openxp-tmp/
+chown -R boettger.users /home/boettger/openxp/
+echo "Finished $0"
