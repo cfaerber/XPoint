@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,databaso,
+      typeform,fileio,inout,keys,datadef,database,databaso,
       sysutils,resource,maus2,xpglobal, datadef1,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
@@ -903,6 +903,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/16 20:53:50  hd
+  - DOS Unit entfernt
+
   Revision 1.22  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 

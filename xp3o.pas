@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
+  sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
       resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/11/16 20:53:50  hd
+  - DOS Unit entfernt
+
   Revision 1.41  2000/11/14 15:51:29  mk
   - replaced Exist() with FileExists()
 

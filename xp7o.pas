@@ -28,7 +28,7 @@ uses
 {$ifdef Unix}
   ZFTools,      { ZFido-Unit }
 {$endif}
-  winxp, dos,typeform,inout,fileio,datadef,database,resource,maus2,
+  winxp,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti,debug;
 
 procedure ttwin;
@@ -683,7 +683,8 @@ end;
 
 procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 var f1,f2 : file;
-    sr    : searchrec;
+    sr    : tsearchrec;
+    rc    : integer;
     df    : Int64;
 begin
   moff;
@@ -691,14 +692,14 @@ begin
   writeln(getres(723));        { 'Pufferdateien werden zusammenkopiert ...' }
   writeln;
   mon;
-  assign(f1,dest);
-  if existf(f1) then _era(dest);
-  Dos.findfirst(fmask,ffAnyFile,sr);
-  if doserror=0 then begin
+  if FileExists(dest) then DeleteFile(dest);
+  rc:= findfirst(fmask,faAnyFile,sr);
+  if rc=0 then begin
+    assign(f1,dest);
     rewrite(f1,1);
     cursor(curon);
     df:=diskfree(0);
-    while doserror=0 do begin
+    while rc=0 do begin
       moff;
       if sr.size+50000>df then begin
         writeln(sr.name,'   - ',getres(724));
@@ -711,14 +712,14 @@ begin
         mon;
         assign(f2,ExtractFilePath(fmask)+sr.name);
         if sr.size>70 then begin     { kleinere ZCONNECT-Puffer sind }
-          setfattr(f2,0);            { auf jeden Fall fehlerhaft     }
+          //setfattr(f2,0);            { auf jeden Fall fehlerhaft     }
           reset(f2,1);
           fmove(f2,f1);
           close(f2);
           end;
         erase(f2);
         end;
-      Dos.findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
     close(f1);
@@ -732,14 +733,16 @@ end;
 { FILES verschieben. Gesamtgr”áe der brigen Dateien ermitteln. }
 
 procedure MoveRequestFiles(var packetsize:longint);
-var sr : searchrec;
+var
+  sr : tsearchrec;
+  rc : integer;
 begin
   { ToDo }
   packetsize:=0;
-  Dos.findfirst(XferDir+Wildcard,ffAnyFile,sr);
-  while doserror=0 do begin
+  rc:= findfirst(XferDir+Wildcard,faAnyFile,sr);
+  while rc=0 do begin
     inc(packetsize,sr.size);
-    Dos.findnext(sr);
+    rc:= findnext(sr);
   end;
   FindClose(sr);
 end;
@@ -749,15 +752,16 @@ end;
 { Falls ja -> nach BAD verschieben.                                   }
 
 procedure MoveLastFileIfBad;
-var sr   : searchrec;
-    last : string[12];
+var sr   : tsearchrec;
+    rc   : integer;
+    last : string;
     arc  : shortint;
 begin
-  dos.findfirst(XferDir+WildCard,ffAnyFile,sr);
-  if doserror=0 then begin
-    while doserror=0 do begin
+  rc:= findfirst(XferDir+WildCard,faAnyFile,sr);
+  if rc=0 then begin
+    while rc=0 do begin
       last:=sr.name;
-      Dos.findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
     arc:=ArcType(XferDir+last);
@@ -771,7 +775,7 @@ end;
 {         in bestimmtem Brett anzeigen                            }
 
 procedure AponetNews;
-var ApoBrett : string[80];
+var ApoBrett : string;
     tmp      : string;
     miso     : boolean;
     pt       : scrptr;
@@ -795,7 +799,7 @@ begin
           Listfile(tmp,mid(ApoBrett,2),false,true,3);
           holen(pt);
           ConvIso:=miso;
-          _era(tmp);
+          DeleteFile(tmp);
           end;
         end;
       end;
@@ -805,6 +809,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/11/16 20:53:50  hd
+  - DOS Unit entfernt
+
   Revision 1.38  2000/11/14 22:19:16  hd
   - Fido-Modul: Anpassungen an Linux
 

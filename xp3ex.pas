@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,database,resource,stack,
+  typeform,fileio,inout,database,resource,stack,
   xp0,xp1,xpglobal, classes;
 
 const xTractMsg   = 0;
@@ -1096,6 +1096,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/11/16 20:53:50  hd
+  - DOS Unit entfernt
+
   Revision 1.50  2000/11/14 15:51:29  mk
   - replaced Exist() with FileExists()
 
