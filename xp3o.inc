@@ -116,7 +116,7 @@ var x,y,fm   : byte;
     cancels     : integer;
     orgempf  : string[AdrLen];
     mbflags  : longint;
-    mstr     : string;		{ Message-Text }
+    mstr     : string;          { Message-Text }
     sp       : scrptr;
 
   function puffer_ok:boolean;
@@ -576,9 +576,9 @@ begin
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
   if (zconnect) then
-    msgbox(60,7,getres(333),x,y)	{ 'Puffer einlesen' }
+    msgbox(45,8,getres(333),x,y)        { 'Puffer einlesen' }
   else
-    msgbox(60,8,getres(333),x,y);
+    msgbox(45,9,getres(333),x,y);
   attrtxt(col.colmbox);
   assign(f,puffer);
   reset(f,1);
@@ -586,7 +586,7 @@ begin
   if fs<16 then begin
     close(f);
     moff;
-    rmessage(334);	{ 'leerer Puffer' }
+    rmessage(334);      { 'leerer Puffer' }
     mon;
     wkey(1,false);
     closebox;
@@ -642,8 +642,8 @@ begin
       dbClose(d);
       end;
 
-    moff; 
-    Wrt(x+2,y+3,getres(335));		{ 'Puffer kopieren...' }
+    moff;
+    Wrt(x+2,y+3,getres(335));           { 'Puffer kopieren...' }
     mon;
     assign(pfile,aFile(ablage));        { Puffer in die kleinste }
     if existf(pfile) then begin         { Ablage kopieren ..     }
@@ -664,11 +664,11 @@ begin
     until eof(f);
     close(pfile);
     moff;
-    Wrt2(' '+getres2(324,7));		{ fertig }
-    mstr:= getres2(330,6);		{ Importiere Nachrichten }
+    Wrt2(' '+getres2(324,7));           { fertig }
+    mstr:= getres2(330,6);              { Importiere Nachrichten }
     FWrt(x+2,y+4,mstr+' 0%');
     mon;
-    
+
     assign(pfile,TempS(msgcount*8+2048));
     rewrite(pfile,1);
     llanz:=0;
@@ -759,7 +759,6 @@ begin
 
           multi2(curoff); initscs;
 
-          attrtxt(col.colmboxhigh);
           dbSeek(ubase,uiName,ustr(absender));
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
@@ -792,8 +791,8 @@ begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
-                
-		if left(empfaenger,1)<>'A' then grnr:=IntGruppe
+
+                if left(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
                   p0:=posn('/',seekbr,3);
@@ -826,7 +825,7 @@ begin
                 flags:=iif(netztyp=nt_UUCP,16,0);
                 dbWriteN(bbase,bb_flags,flags);
                 if newbrettende then
-		  SetBrettindexEnde
+                  SetBrettindexEnde
                 else
                   SetBrettindex;
                 writeln(brettlog,logstr(copy(empfaenger,2,255)));
@@ -951,9 +950,9 @@ begin
                 (PGP_AutoPM and (firstchar(empfaenger)='1')))
             then begin
               savecursor;
-	      sichern(sp);
+              sichern(sp);
               PGP_ImportKey(true);
-	      holen(sp);
+              holen(sp);
               restcursor;
               end;
             if (firstchar(empfaenger)='1') and UsePGP and
@@ -996,14 +995,14 @@ begin
       inc(adr,hdp^.groesse+hdsize);
       inc(padr,hdp^.groesse+hdsize);
       inc(inmsgs);
-      if ((inmsgs mod 3) = 0) then begin	{ User beruhigen }
+      if ((inmsgs mod 3) = 0) then begin        { User beruhigen }
         moff;
         FWrt(x+3+length(mstr),y+4,strs((inmsgs * 100) div MsgCount)+'%');
-	mon;
+        mon;
       end;
     until adr>=fs-3;     { 3 Byte Toleranz }
     moff;
-    FWrt(x+3+length(mstr),y+4,'100%');
+    FWrt(x+3+length(mstr),y+4,getres2(324,7));
     mon;
     dbrestartHU(mbase);
     dbFlush(mbase);
@@ -1030,7 +1029,7 @@ begin
   else begin
     close(f);
     moff;
-    msgbox(78,9,getres2(336,1),x,y);	{ 'ACHTUNG !!!' }
+    msgbox(78,9,getres2(336,1),x,y);    { 'ACHTUNG !!!' }
     attrtxt(col.colmboxhigh);
 
     if check then
@@ -1094,6 +1093,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/05/15 20:02:38  mk
+  - Optische Korrekturen fuer Puffer importieren
+
   Revision 1.17  2000/05/15 10:03:04  hd
   Bezuege im gleichen Fenster beim Puffereinlesen
 
