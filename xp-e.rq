@@ -539,21 +539,21 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Standard news hold time:   ~
 12   Days
 13   Standard user PM hold time:~
-14   Hold own messages
+14   Hold own public messages
 15   Creation time = 00:00
 16   Use Re^n
 17   Store unsent messages in /¯Unsent
 18   Send automatic receipts on request
 19   Automatic PM archiving
-23   Time zone
+23   ~Time zone
 24   Delete X-postings in more than
 25   newsgroups
 26   Send all carbon copies as BCC
-27   at mail as well
+27   in mail as well
 28   ask at Reply-To
 29   don't archive news
 30   ignore cancels/supersedes
-31   Hold own PMs
+31   Hold own private messages
 #
 100  68
 101  Address options
