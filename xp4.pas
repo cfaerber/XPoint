@@ -1726,6 +1726,8 @@ again:
       hds    : longint;
       mbrett : string[5];
   begin
+        { Nur ausfhren, wenn wirklich einer der benoetigten Tasten }
+    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
     GoP;
     dbreadN(mbase,mb_brett,mbrett);
     if (mbrett[1]='1') or (mbrett[1]='U')
@@ -2739,6 +2741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.35  2001/06/08 17:53:14  my
+  JG:- Fixed last commit: replaced accidentally deleted line.
+
   Revision 1.26.2.34  2001/06/07 16:27:26  my
   JG:- When creating a reply, mapping "B" => "P" now checks for the
        message status (PM/AM) rather than for the message area status.
