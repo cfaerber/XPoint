@@ -174,6 +174,7 @@ uses
   {$ifdef Win32} Windows, xpcrt, {$endif}
   {$IFDEF DOS32} go32, crt, {$ENDIF}
   {$IFDEF VP} vpsyslow, {$ENDIF}
+  inout,
   typeform; //not really
 
 
@@ -471,6 +472,9 @@ initialization
 
 {
   $Log$
+  Revision 1.53  2002/12/28 20:23:38  mk
+  - added inout to allow comiling with fpc
+
   Revision 1.52  2002/12/28 20:11:03  dodi
   - start keyboard input redesign
 
