@@ -1,3 +1,5 @@
+{$i xpdefine.inc }
+
 unit Timer;
 
 { $Id$ }
@@ -31,7 +33,12 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 
 IMPLEMENTATION
 
-USES Dos,
+USES
+{$ifdef Linux}
+  Linux,
+{$else}
+  Dos,
+{$endif} { Linux }
 {$IFDEF Win32}
   Windows,
 {$else}
@@ -53,11 +60,7 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-{$IFDEF VirtualPascal }
   H,M,S,S100: Word;
-{$ELSE }
-  H,M,S,S100: Integer;
-{$ENDIF }
 begin
   GetTime(H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
@@ -130,6 +133,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/11/08 19:18:56  hd
+  - Fix: XPDEFINE.INC vergessen :-(
+
   Revision 1.10  2000/10/20 14:54:28  hd
   - xpcurses hinzugefuegt
 
