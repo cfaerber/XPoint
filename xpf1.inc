@@ -23,9 +23,9 @@ var s  : string;
     var i: byte;
     begin
       p:=cpos(',',s);
-      if p=0 then 
+      if p=0 then
         getstr:=''
-      else 
+      else
       begin
         for i:=p-1 downto 1 do
           if s[i]='_' then s[i]:=' ';
@@ -416,10 +416,8 @@ begin
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
     attrtxt(col.coldialog);
-    end; 
-{TAINTED}    
-  { MH: Aufbau geÑndert, damit mîglichst viel angezeigt werden kann }
-  mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }          { MH 03.02.2000 }
+    end;
+  mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }
   mwrt(x+3, y+3, GetRes2( 2100, 4));     { Sysop }
   mwrt(x+3, y+4, GetRes2( 2100, 5));     { TelNr }
   mwrt(x+3, y+5, GetRes2( 2100, 6));     { Flags }
@@ -427,7 +425,6 @@ begin
   mwrt(x+35, y+7, GetRes2( 2100, 10));   { eMAiL }
   mwrt(x+35, y+8, GetRes2( 2100, 9));    { Status }
   mwrt(x+55, y+8, GetRes2( 2100, 8));    { Datei }
-{/TAINTED}  
   adr:='';
   first:=true;
   TempOpen;
@@ -458,17 +455,13 @@ begin
         end;
       attrtxt(col.coldialog);
       moff;
-{TAINTED}      
-    { MH: Fenster putzen }
     clwin(x+10, x+75, y+2, y+5); { Oberer Block }
      clwin(x+43, x+51, y+8, y+8); { Status      }
       clwin(x+62, x+73, y+8, y+8); { Datei      }
        clwin(x+11, x+30, y+7, y+7); { AKA [ ]   }
         clwin(x+43, x+75, y+7, y+7); { eMAiL    }
-{/TAINTED}	
       if ni^.found then with ni^ do begin
         attrtxt(col.coldiahigh);
-{TAINTED}	
         wrt(x+10, y+2, LeftStr(BoxName + ', ' + Standort,65));
         wrt(x+10, y+3, Sysop);
         wrt(x+10, y+4, Telefon);
@@ -479,7 +472,6 @@ begin
         wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
         wrt(x+43, y+8, Status);
         wrt(x+62, y+8, NodeList.GetFilename(datei));
-{/TAINTED}	
         end;
       mon;
       end;
@@ -495,7 +487,7 @@ end;
 
 var  rdispx,rdispy : byte;
 
-procedure ShowRQ(s:string); {TAINTED}{ unklar }{ MH: Liste angepasst }{/TAINTED}
+procedure ShowRQ(s:string);
 var ni  : NodeInfo;
     add : byte;
 begin
@@ -516,13 +508,13 @@ begin
   if ni.found then begin
     mwrt(rdispx+add+2,rdispy,forms(iifs(ni.ispoint,ni.boxname,ni.sysop),33));
     mwrt(rdispx+55,rdispy-1,forms(NodeList.GetFilename(ni.datei),12));
-    mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65)); { MH: 40 -> 65 }
+    mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65));
     mwrt(rdispx+7,rdispy-1,forms(ni.status,12));
     end
   else begin
     mwrt(rdispx+add+2,rdispy,sp(33));
     mwrt(rdispx+55,rdispy-1,sp(12));
-    mwrt(rdispx+add+2,rdispy+1,sp(65)); { MH: 40 -> 65 }
+    mwrt(rdispx+add+2,rdispy+1,sp(65));
     mwrt(rdispx+7,rdispy-1,sp(12));
     end;
 end;
@@ -846,9 +838,7 @@ again:
     List.OnKeyPressed := listext;
     listmakros:=0;
     repeat
-{TAINTED}    
 NewStart:                  { nach Break im AltN-Screen hier einspringen }
-{TAINTED}
       pushhp(958);
       brk := List.Show;
       pophp;
@@ -864,19 +854,17 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
           pushhp(959);
           n:=ReadIt(max(length(s)-4,length(getres(2132)))+11,s,
              getres(2132),    { ' ^Nachricht , ^Request , ^Info , ^ZurÅck ' }
-             1,brk);    {TAINTED}{ ^Info Taste hinzugefÅgt }{/TAINTED}
+             1,brk);
           pophp;
           brk:=false;
           end;
         end;
     until brk or (n=1) or (n=2) or (n=3);
 
-{TAINTED}
       if n<>3 then begin  { Break aus AltN-Screen hier nicht zulassen }
         List.Free;
         closebox;
       end;
-{/TAINTED}      
 
     if not brk then
       case n of
@@ -892,13 +880,11 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
               AutoCrash:=FidoRequest(trim(mid(adr,cpos('@',adr)+1)),'');
             end;
 
-{TAINTED}
         3 : begin   { AltN-Screen aufrufen und Aka Åbergeben }
               _keyboard(trim(copy(List.GetSelection,39,18))+keycr);
                 NodeListSeek;          { AltN-Screen starten }
               goto newstart;           { ZurÅck zur Liste    }
             end;
-{/TAINTED}	    
 
       end;
     end;
@@ -907,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.31  2001/03/01 14:04:19  mk
+  - removed some tinted code/comments
+
   Revision 1.30  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

@@ -333,7 +333,6 @@ begin
     20 : flags:=flags+getres2(604,iif(length(flags)<20,8,9));  { 'Eilmail ' / 'Eilmail ' }
   end;
 
-{TAINTED}
   { RFC: Gew„hlten X-Priority-Flag im Sendefenster anzeigen   }
   case RFCPrio of
      1 : Flags := Flags + GetRes2(604, 14);       { 'H”chste '}
@@ -342,7 +341,6 @@ begin
      4 : Flags := Flags + GetRes2(604, 17);       { 'Niedrig '}
      5 : Flags := Flags + GetRes2(604, 18);    { 'Niedrigste '}
   end;
-{/TAINTED}  
 
   if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
   if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
@@ -1125,48 +1123,39 @@ begin
       end;
 end;
 
-{TAINTED}
-
 { Dialog: Priorit„t ermitteln und in glob. Variable RFCPrio schreiben }
 { RFC: X-Priority: 1, 2, 3, 4, 5 }
 procedure GetPrio;
 var
-  x, y: byte;
+  x, y: Byte;
+  i: Integer;
   brk: boolean;
   Prio: string;
 begin                                                  { 'Sende-Priorit„t' }
   Dialog(ival(getres2(272, 0)), 3, getres2(272, 7), x, y);
-  Prio:=GetRes2(272, iif(rfcprio=0,6,rfcprio));
+  Prio := GetRes2(272, iif(rfcprio=0, 6, rfcprio));
   MaddString(3, 2, GetRes2(272,8), Prio, 10, 10, '');       { 'Priorit„t ' }
   MappSel(false, GetRes2(272, 9));
   ReadMask(brk);          { 'H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine' }
 
   if not brk and mmodified then
   begin
-    if Prio = GetRes2(272, 6) then          { 'keine' }
-      RFCPrio := 0
-    else
-    if Prio = GetRes2(272, 1) then          { 'H”chste' }
-      RFCPrio := 1
-    else
-      if Prio = GetRes2(272, 2) then           { 'Hoch' }
-        RFCPrio := 2
-      else
-        if Prio = GetRes2(272, 3) then       { 'Normal' }
-          RFCPrio := 3
-        else
-      if Prio = GetRes2(272, 4) then        { 'Niedrig' }
-        RFCPrio := 4
-      else
-    if Prio= GetRes2(272, 5) then        { 'Niedrigste' }
-      RFCPrio := 5;
+    RFCPrio := 0;                         { 'keine' }
+    for i := 1 to 5 do
+      if Prio = GetRes2(272, 1) then
+      begin
+        RFCPrio := i;
+        break;
+      end;
   end;
   EndDialog;
 end;
-{/TAINTED}
 
 {
   $Log$
+  Revision 1.49  2001/03/01 14:04:18  mk
+  - removed some tinted code/comments
+
   Revision 1.48  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 
