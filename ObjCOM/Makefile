@@ -12,11 +12,12 @@
 # (MUSS gesetzt werden.)
 #
 # dos32		DOS 32 Bit
+# freebsd       FreeBSD
 # linux		Linux
 # os2		OS/2
 # win32		Windows
 #
-#OS = dos32
+#OS = 
 
 # Ihre CPU (386, 486, 586, 686)
 # (KANN gesetzt werden.)
@@ -47,14 +48,14 @@
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 SHELL = /bin/sh
 endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
-ifeq (,$(findstring $(OS),dos32 linux os2 win32))
-$(error Variable "OS" muss auf "dos32", "linux", "os2" oder "win32" \
+ifeq (,$(findstring $(OS),dos32 freebsd linux os2 win32))
+$(error Variable "OS" muss auf "dos32", "freebsd", "linux", "os2" oder "win32" \
 gesetzt werden)
 endif
 
@@ -75,7 +76,7 @@ RM ?= rm
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 EXEEXT =
 SEP = /
@@ -99,6 +100,16 @@ UNITEXT = .ppu
 OBJEXT = .o
 LNKEXT = .a
 LIBPREF = 
+LIBEXT = .a
+
+endif
+
+ifeq ($(OS),freebsd)
+
+UNITEXT = .ppu
+OBJEXT = .o
+LNKEXT = .a
+LIBPREF = lib
 LIBEXT = .a
 
 endif
@@ -134,9 +145,10 @@ LIBEXT = .aw
 endif
 
 PF_dos32 = -TGO32V2
+PF_freebsd = -TFREEBSD -dUnixDevelop
+PF_linux = -TLINUX -dUnixDevelop
 PF_os2 = -TOS2
 PF_win = -TWIN32
-PF_linux = -TLINUX -dUnixDevelop
 PF_386 = -Op1
 PF_486 = -Op1
 PF_586 = -Op2
@@ -162,9 +174,10 @@ LIBPREF =
 LIBEXT = .lib
 
 PF_dos32 = 
+PF_freebsd = 
+PF_linux = 
 PF_os2 = -CO
 PF_win32 = -CW
-PF_linux = 
 PF_386 = -$$G3+
 PF_486 = -$$G4-
 PF_586 = -$$G5-
@@ -183,6 +196,11 @@ all: objcom$(UNITEXT)
 ifeq ($(OS),dos32)
 objcom$(UNITEXT): objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc \
 	ocsdosh.inc ringbuff$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+endif
+ifeq ($(OS),freebsd)
+objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc ringbuff$(UNITEXT) \
+	serial$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 endif
 ifeq ($(OS),linux)
@@ -233,6 +251,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.12  2000/10/23 17:16:53  fe
+# FreeBSD-Anpassungen
+#
 # Revision 1.11  2000/10/20 16:12:25  fe
 # Fehler in den Abhaengigkeiten korrigiert.
 #

@@ -58,6 +58,7 @@
 # (MUSS gesetzt werden.)
 #
 # dos32         DOS 32 Bit
+# freebsd       FreeBSD
 # linux         Linux
 # os2           OS/2
 # win32         Windows 95/98/NT
@@ -150,14 +151,14 @@
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 SHELL = /bin/sh
 endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
-ifeq (,$(findstring $(OS),dos32 linux os2 win32))
-$(error Variable "OS" muss auf "dos32", "linux", "os2" oder "win32" \
+ifeq (,$(findstring $(OS),dos32 freebsd linux os2 win32))
+$(error Variable "OS" muss auf "dos32", "freebsd", "linux", "os2" oder "win32" \
 gesetzt werden)
 endif
 
@@ -205,6 +206,7 @@ EXEEXT = .exe
 # Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
 # muss hier getrickst werden
 SEP = $(subst ,,\)
+MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= mkdir
@@ -214,6 +216,31 @@ RC = rc
 RAR ?= rar
 
 CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe
+CONTRIBDATA = fido.pc
+
+endif
+
+ifeq ($(OS),freebsd)
+
+prefix ?= /usr/local
+bindir ?= $(prefix)/bin
+datadir ?= $(prefix)/share/openxp
+docdir ?= $(prefix)/share/doc/openxp
+exampledir ?= $(prefix)/share/examples/openxp
+
+EXEEXT =
+SEP = /
+MAKE ?= gmake
+RM ?= rm
+RMDIR ?= rmdir
+INSTALLDIR ?= install -m 755 -d
+INSTALL_PROGRAM ?= install -b -V t -s -p -m 755
+INSTALL_DATA ?= install -b -V existing -p -m 644
+LN ?= ln -s
+RC = ./rc
+RAR = rar
+
+CONTRIBBIN =
 CONTRIBDATA = fido.pc
 
 endif
@@ -230,6 +257,7 @@ exampledir ?= $(prefix)/beispiel
 
 EXEEXT =
 SEP = /
+MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= install -m 755 -d
@@ -259,6 +287,16 @@ UNITEXT = .ppu
 OBJEXT = .o
 LNKEXT = .a
 LIBPREF = 
+LIBEXT = .a
+
+endif
+
+ifeq ($(OS),freebsd)
+
+UNITEXT = .ppu
+OBJEXT = .o
+LNKEXT = .a
+LIBPREF = lib
 LIBEXT = .a
 
 endif
@@ -294,9 +332,10 @@ LIBEXT = .aw
 endif
 
 PF_dos32 = -TGO32V2
+PF_freebsd = -TFREEBSD -dUnixDevelop
+PF_linux = -TLINUX -dUnixDevelop
 PF_os2 = -TOS2
 PF_win32 = -TWIN32
-PF_linux = -TLINUX -dUnixDevelop
 PF_386 = -Op1
 PF_486 = -Op1
 PF_586 = -Op2
@@ -324,9 +363,10 @@ LIBPREF =
 LIBEXT = .lib
 
 PF_dos32 = 
+PF_freebsd = 
+PF_linux = 
 PF_os2 = -CO
 PF_win32 = -CW
-PF_linux = 
 PF_386 = -$$G3+
 PF_486 = -$$G4+
 PF_586 = -$$G5+
@@ -352,6 +392,7 @@ export entdir
 export jadedir
 export moddir
 export contribdir
+export MAKE
 export RM
 
 # uucico uebersetzt nicht.
@@ -406,7 +447,7 @@ docform$(EXEEXT): docform.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 ihs$(EXEEXT): ihs.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
@@ -450,7 +491,7 @@ uuzext$(EXEEXT): uuzext.pas uuz$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp$(EXEEXT): xp.pas archive$(UNITEXT) clip$(UNITEXT) crc$(UNITEXT) \
 	database$(UNITEXT) databaso$(UNITEXT) datadef$(UNITEXT) \
@@ -507,7 +548,7 @@ xp$(EXEEXT): xp.pas archive$(UNITEXT) clip$(UNITEXT) crc$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) modem$(UNITEXT) \
@@ -528,7 +569,7 @@ xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	keys$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
@@ -550,7 +591,7 @@ yup2pkt$(EXEEXT): yup2pkt.pas dbase$(UNITEXT) fileio$(UNITEXT) \
 	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 zfido$(EXEEXT): zfido.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
@@ -566,7 +607,7 @@ zfido$(EXEEXT): zfido.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 zpr$(EXEEXT): zpr.pas dosx$(UNITEXT) typeform$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
@@ -587,7 +628,7 @@ archive$(UNITEXT): archive.pas montage$(UNITEXT) typeform$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 clip$(UNITEXT): clip.pas fileio$(UNITEXT) xp0$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT) xplinux$(UNITEXT)
@@ -604,7 +645,7 @@ endif
 crc$(UNITEXT): crc.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 database$(UNITEXT): database.pas databas1.inc databas2.inc \
 	database.inc datadef$(UNITEXT) datadef1$(UNITEXT) \
@@ -622,7 +663,7 @@ database$(UNITEXT): database.pas databas1.inc databas2.inc \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 databaso$(UNITEXT): databaso.pas database$(UNITEXT) datadef$(UNITEXT) \
 	datadef1$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
@@ -652,7 +693,7 @@ dbase$(UNITEXT): dbase.pas typeform$(UNITEXT) xpdefine.inc \
 debug$(UNITEXT): debug.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 dosx$(UNITEXT): dosx.pas linux/dosx.inc linux/dosxh.inc xpdefine.inc \
 	xpglobal$(UNITEXT)
@@ -669,7 +710,7 @@ eddef$(UNITEXT): eddef.pas keys$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 editor$(UNITEXT): editor.pas clip$(UNITEXT) eddef$(UNITEXT) editor.inc \
 	encoder$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -700,7 +741,7 @@ feiertag$(UNITEXT): feiertag.pas montage$(UNITEXT) typeform$(UNITEXT) \
 	xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 fileio$(UNITEXT): fileio.pas fileio.inc linux/fileio.inc \
 	linux/fileioh1.inc typeform$(UNITEXT) xp0$(UNITEXT) \
@@ -718,7 +759,7 @@ endif
 gpltools$(UNITEXT): gpltools.pas xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 help$(UNITEXT): help.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	keys$(UNITEXT) maus2$(UNITEXT) mouse$(UNITEXT) \
@@ -737,7 +778,7 @@ help$(UNITEXT): help.pas fileio$(UNITEXT) inout$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 inout$(UNITEXT): inout.pas keys$(UNITEXT) maus2$(UNITEXT) \
 	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
@@ -760,7 +801,7 @@ ipaddr$(UNITEXT): ipaddr.pas xpdefine.inc xpglobal$(UNITEXT)
 ipcclass$(UNITEXT): ipcclass.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 keys$(UNITEXT): keys.pas typeform$(UNITEXT) xpcurses$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT)
@@ -774,7 +815,7 @@ keys$(UNITEXT): keys.pas typeform$(UNITEXT) xpdefine.inc \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
 	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
@@ -792,7 +833,7 @@ lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 maske$(UNITEXT): maske.pas clip$(UNITEXT) inout$(UNITEXT) \
 	keys$(UNITEXT) maske.inc maus2$(UNITEXT) montage$(UNITEXT) \
@@ -810,7 +851,7 @@ maske$(UNITEXT): maske.pas clip$(UNITEXT) inout$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
 	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
@@ -862,7 +903,7 @@ netcall$(UNITEXT): netcall.pas ipcclass$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 printerx$(UNITEXT): printerx.pas inout$(UNITEXT) keys$(UNITEXT) \
 	maus2$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
@@ -913,7 +954,7 @@ utftools$(UNITEXT): utftools.pas charsets$(SEP)8859_1.inc \
 	charsets$(SEP)cp866.inc xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 uuz$(UNITEXT): uuz.pas fileio$(UNITEXT) montage$(UNITEXT) \
 	typeform$(UNITEXT) unicode$(UNITEXT) utftools$(UNITEXT) \
@@ -932,7 +973,7 @@ uuz$(UNITEXT): uuz.pas fileio$(UNITEXT) montage$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 win2$(UNITEXT): win2.pas dosx$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
@@ -950,7 +991,7 @@ win2$(UNITEXT): win2.pas dosx$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 winxp$(UNITEXT): winxp.pas inout$(UNITEXT) keys$(UNITEXT) \
 	maus2$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
@@ -987,7 +1028,7 @@ xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	$(PC) $(PFLAGS) $<
 
 endif
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) debug$(UNITEXT) dosx$(UNITEXT) \
@@ -1036,7 +1077,7 @@ xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp10$(UNITEXT): xp10.pas database$(UNITEXT) datadef$(UNITEXT) \
 	feiertag$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -1068,7 +1109,7 @@ xp10$(UNITEXT): xp10.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1help$(UNITEXT): xp1help.pas help$(UNITEXT) inout$(UNITEXT) \
 	keys$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
@@ -1088,7 +1129,7 @@ xp1help$(UNITEXT): xp1help.pas help$(UNITEXT) inout$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1input$(UNITEXT): xp1input.pas inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
@@ -1106,7 +1147,7 @@ xp1input$(UNITEXT): xp1input.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1o$(UNITEXT): xp1o.pas archive$(UNITEXT) clip$(UNITEXT) \
 	crc$(UNITEXT) database$(UNITEXT) datadef$(UNITEXT) \
@@ -1134,7 +1175,7 @@ xp1o$(UNITEXT): xp1o.pas archive$(UNITEXT) clip$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1o2$(UNITEXT): xp1o2.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1173,7 +1214,7 @@ xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	$(PC) $(PFLAGS) $<
 
 endif
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) dosx$(UNITEXT) \
@@ -1229,7 +1270,7 @@ xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp2c$(UNITEXT): xp2c.pas database$(UNITEXT) datadef$(UNITEXT) \
 	editor$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -1257,7 +1298,7 @@ xp2c$(UNITEXT): xp2c.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp2db$(UNITEXT): xp2db.pas database$(UNITEXT) databaso$(UNITEXT) \
 	datadef$(UNITEXT) datadef1$(UNITEXT) fileio$(UNITEXT) \
@@ -1283,7 +1324,7 @@ xp2db$(UNITEXT): xp2db.pas database$(UNITEXT) databaso$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp2f$(UNITEXT): xp2f.pas inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
@@ -1303,7 +1344,7 @@ xp2f$(UNITEXT): xp2f.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp3$(UNITEXT): xp3.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) montage$(UNITEXT) \
@@ -1327,7 +1368,7 @@ xp3$(UNITEXT): xp3.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp3ex$(UNITEXT): xp3ex.pas database$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) resource$(UNITEXT) stack$(UNITEXT) \
@@ -1348,7 +1389,7 @@ xp3ex$(UNITEXT): xp3ex.pas database$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp3o$(UNITEXT): xp3o.pas crc$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -1409,7 +1450,7 @@ xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
 	$(PC) $(PFLAGS) $<
 
 endif
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
@@ -1479,7 +1520,7 @@ xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4e$(UNITEXT): xp4e.pas database$(UNITEXT) datadef$(UNITEXT) \
 	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1508,7 +1549,7 @@ xp4e$(UNITEXT): xp4e.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4o$(UNITEXT): xp4o.pas archive$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
@@ -1541,7 +1582,7 @@ xp4o$(UNITEXT): xp4o.pas archive$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4o2$(UNITEXT): xp4o2.pas crc$(UNITEXT) database$(UNITEXT) \
 	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
@@ -1573,7 +1614,7 @@ xp4o3$(UNITEXT): xp4o3.pas database$(UNITEXT) datadef$(UNITEXT) \
 	xpglobal$(UNITEXT) xpkeys$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp5$(UNITEXT): xp5.pas clip$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) feiertag$(UNITEXT) fileio$(UNITEXT) \
@@ -1596,7 +1637,7 @@ xp5$(UNITEXT): xp5.pas clip$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp6$(UNITEXT): xp6.pas crc$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -1633,7 +1674,7 @@ xp6l$(UNITEXT): xp6l.pas xp0$(UNITEXT) xpcc$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp6o$(UNITEXT): xp6o.pas crc$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -1664,7 +1705,7 @@ xp6o$(UNITEXT): xp6o.pas crc$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp7$(UNITEXT): xp7.pas database$(UNITEXT) datadef$(UNITEXT) \
 	debug$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
@@ -1702,7 +1743,7 @@ xp7$(UNITEXT): xp7.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) dosx$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1732,7 +1773,7 @@ endif
 xp7l$(UNITEXT): xp7l.pas typeform$(UNITEXT) xp0$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp7o$(UNITEXT): xp7o.pas archive$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) debug$(UNITEXT) fileio$(UNITEXT) \
@@ -1760,7 +1801,7 @@ xp7o$(UNITEXT): xp7o.pas archive$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1807,7 +1848,7 @@ xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp9$(UNITEXT): xp9.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1842,7 +1883,7 @@ xp9bp$(UNITEXT): xp9bp.pas database$(UNITEXT) datadef$(UNITEXT) \
 	xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp_des$(UNITEXT): xp_des.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	maus2$(UNITEXT) xp0$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
@@ -1868,7 +1909,7 @@ xp_pgp$(UNITEXT): xp_pgp.pas database$(UNITEXT) fileio$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xp_uue$(UNITEXT): xp_uue.pas database$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
@@ -1897,7 +1938,7 @@ xpauto$(UNITEXT): xpauto.pas database$(UNITEXT) datadef$(UNITEXT) \
 	xpglobal$(UNITEXT) xpmaus$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpcc$(UNITEXT): xpcc.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) maske$(UNITEXT) \
@@ -1920,7 +1961,7 @@ xpcc$(UNITEXT): xpcc.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpcfg$(UNITEXT): xpcfg.pas fileio$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
@@ -1950,7 +1991,7 @@ xpdiff$(UNITEXT): xpdiff.pas xpdefine.inc xpglobal$(UNITEXT)
 xpdos32$(UNITEXT): xpdos32.pas utftools$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpe$(UNITEXT): xpe.pas dosx$(UNITEXT) eddef$(UNITEXT) editor$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1974,7 +2015,7 @@ xpe$(UNITEXT): xpe.pas dosx$(UNITEXT) eddef$(UNITEXT) editor$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpeasy$(UNITEXT): xpeasy.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -1998,7 +2039,7 @@ xpeasy$(UNITEXT): xpeasy.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpf2$(UNITEXT): xpf2.pas archive$(UNITEXT) fileio$(UNITEXT) \
 	montage$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
@@ -2017,7 +2058,7 @@ xpf2$(UNITEXT): xpf2.pas archive$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpfido$(UNITEXT): xpfido.pas archive$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
@@ -2057,7 +2098,7 @@ xpftnadr$(UNITEXT): xpftnadr.pas xpdefine.inc xpglobal$(UNITEXT)
 xpglobal$(UNITEXT): xpglobal.pas xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpimpexp$(UNITEXT): xpimpexp.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) maske$(UNITEXT) \
@@ -2082,7 +2123,7 @@ xpimpexp$(UNITEXT): xpimpexp.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpipc$(UNITEXT): xpipc.pas ipcclass$(UNITEXT) maus2$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
@@ -2108,7 +2149,7 @@ xplinux$(UNITEXT): xplinux.pas typeform$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpmaus$(UNITEXT): xpmaus.pas crc$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -2142,7 +2183,7 @@ xpmime$(UNITEXT): xpmime.pas database$(UNITEXT) fileio$(UNITEXT) \
 	xpkeys$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpnntp$(UNITEXT): xpnntp.pas inout$(UNITEXT) ipaddr$(UNITEXT) \
 	ipcclass$(UNITEXT) maus2$(UNITEXT) ncnntp$(UNITEXT) \
@@ -2174,7 +2215,7 @@ xpnt$(UNITEXT): xpnt.pas crc$(UNITEXT) database$(UNITEXT) \
 xpos2$(UNITEXT): xpos2.pas utftools$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpreg$(UNITEXT): xpreg.pas clip$(UNITEXT) database$(UNITEXT) \
 	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
@@ -2201,7 +2242,7 @@ xpreg$(UNITEXT): xpreg.pas clip$(UNITEXT) database$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpstat$(UNITEXT): xpstat.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -2227,7 +2268,7 @@ xpstat$(UNITEXT): xpstat.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
@@ -2252,7 +2293,7 @@ xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 
 endif
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpuu$(UNITEXT): xpuu.pas fileio$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
@@ -2278,7 +2319,7 @@ xpwin32$(UNITEXT): xpwin32.pas typeform$(UNITEXT) utftools$(UNITEXT) \
 	winxp$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 
 xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) mouse$(UNITEXT) typeform$(UNITEXT) \
@@ -2534,6 +2575,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.26  2000/10/23 17:15:39  fe
+# FreeBSD-Anpassungen
+#
 # Revision 1.25  2000/10/19 19:39:44  fe
 # Neue SETLINKS-Variable bestimmt, ob bei Linux bei "make install"
 # Softlinks nach /usr/bin und /usr/lib gesetzt werden.

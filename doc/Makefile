@@ -12,6 +12,7 @@
 # (MUSS gesetzt werden.)
 #
 # dos32		DOS 32 Bit
+# freebsd       FreeBSD
 # linux		Linux
 # os2		OS/2
 # win32		Windows
@@ -76,14 +77,14 @@
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-ifeq ($(OS),linux)
+ifneq (,$(findstring $(OS),freebsd linux))
 SHELL = /bin/sh
 endif
 
 # Ueberpruefen, ob die Variablen richtig gesetzt sind
 
-ifeq (,$(findstring $(OS),dos32 linux os2 win32))
-$(error Variable "OS" muss auf "dos32", "linux", "os2" oder "win32" \
+ifeq (,$(findstring $(OS),dos32 freebsd linux os2 win32))
+$(error Variable "OS" muss auf "dos32", "freebsd", "linux", "os2" oder "win32" \
 gesetzt werden)
 endif
 
@@ -142,6 +143,31 @@ INSTALLDIR ?= mkdir
 INSTALL_DATA ?= xcopy
 DOCFORM ?= ..\docform.exe
 IHS ?= ..\ihs.exe
+
+endif
+
+ifeq ($(OS),freebsd)
+
+prefix ?= /usr/local
+datadir ?= $(prefix)/share/openxp
+docdir ?= $(prefix)/share/doc/openxp
+
+SEP = /
+MAKE ?= gmake
+RM ?= rm
+RMDIR ?= rmdir
+SED ?= sed
+RECODE ?= recode
+JADE ?= openjade
+TIDY ?= tidy
+H2T ?= w3m
+TEX ?= tex
+PDFTEX ?= pdftex
+DVIPS ?= dvips
+INSTALLDIR ?= install -m 755 -d
+INSTALL_DATA ?= install -b -V existing -p -m 644
+DOCFORM ?= ../docform
+IHS ?= ../ihs
 
 endif
 
@@ -344,6 +370,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.14  2000/10/23 17:16:27  fe
+# FreeBSD-Anpassungen
+#
 # Revision 1.13  2000/10/19 19:37:57  fe
 # Parameter fuer links und lynx eingetragen.
 #
