@@ -30,8 +30,7 @@ while(<DE>) {
     $cursect=$1;
   } elsif (/^- *$/) {
     $cursect=undef;
-  } else {
-    /^([0-9]*)[\t ]*([^\t ].*)/;
+  } elsif(/^([0-9]+)[\t ]*([^\t ].*)/) {
     $x=$1; $y=$2;
     
     $x=sprintf('%d.%d',$cursect,$x) if defined $cursect;
@@ -52,8 +51,7 @@ while(<EN>) {
     $cursect=$1;
   } elsif (/^- *$/) {
     $cursect=undef;
-  } else {
-    /^([0-9]*)[\t ]*([^\t ].*)/;
+  } elsif(/^([0-9]+)[\t ]*([^\t ].*)/) {
     $x=$1; 
     $x=sprintf('%d.%d',$cursect,$x) if defined $cursect;
     delete $deutsch{$x};
@@ -66,6 +64,9 @@ foreach (sort {$a <=> $b} keys %deutsch) {
 
 #
 # $Log$
+# Revision 1.2  2003/08/30 22:15:35  cl
+# - fixed empty lines
+#
 # Revision 1.1  2001/09/12 21:39:39  cl
 # - added programme to find missing ressources
 #
