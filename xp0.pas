@@ -1167,7 +1167,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
          Bitmaske:  11111111
                     ||  ||||
-                    ||  |||\- WAB-Header vorhanden
+                    ||  |||\- OAB/WAB-Header vorhanden
                     ||  ||\-- Reply-To-Empf„nger vorhanden
                     ||  |\--- KOP/OEM/EMP vorhanden
                     ||  \---- RTA
@@ -1207,6 +1207,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.37  2001/07/01 15:40:11  my
+  - updated documentation of RTA bitmask (added OAB Header)
+
   Revision 1.54.2.36  2001/06/29 01:24:55  my
   - RFC/Client: implemented Mail/News server configuration
 
