@@ -378,11 +378,15 @@ label ende;
   procedure Scantilde(var s:String; var suchnot:boolean);
   begin
     trim(s);
-    if s='' then suchnot:=false
-     else suchnot:=s[1]='~';
-    i:=1;
-    while ((s[i]='~') or (s[i]=' ')) do inc(i);
-    s:=mid(s,i);
+    if s='' then
+     suchnot:=false
+    else
+    begin
+      suchnot:=s[1]='~';
+      i:=1;
+      while ((s[i]='~') or (s[i]=' ')) do inc(i);
+      s:=mid(s,i);
+    end;
   end;
 
 
@@ -2416,6 +2420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/07/22 21:59:43  mk
+  - Zugriff auf nicht initialisierten String beseitigt
+
   Revision 1.56  2000/07/22 14:05:27  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
