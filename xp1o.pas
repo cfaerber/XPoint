@@ -388,8 +388,11 @@ begin
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
+      while lastchar(s)='/' do
+        DeleteLastChar(s);
+      s:=mid(s,rightpos('/',s)+1);
       if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-      end;
+    end;
 
     if t = keyaltv then                                        { ALT+V = Suche text }
     begin
@@ -1065,6 +1068,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2003/04/25 19:20:21  mk
+  - optimizes MID-Extraction (alt-m)
+
   Revision 1.118  2002/12/28 17:17:37  mk
   - dup -> typeform.dup
 
