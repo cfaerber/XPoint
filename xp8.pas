@@ -1325,7 +1325,7 @@ var d      : DB;
     maus   : boolean;
     fido   : boolean;
     gs     : boolean;
-    uucp, ppp, nntp: boolean;
+    uucp, nntp: boolean;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
@@ -1472,13 +1472,14 @@ label again;
     closebox;
     dbFlushClose(bbase);
   end;
+
   procedure HandleNNTP;
   var
     RCList: TStringList;
     s, s1: String;
     RCFilename: String;
     Index: Integer;
-    AlreadySubscribed: Boolean;
+    Unmarklist: TStringlist;
   begin
     Moment;
     RCList := TStringList.Create;
@@ -1493,37 +1494,55 @@ label again;
         RCList.LoadFromFile(RCFilename);
       end;
 
-      s:=List.FirstMarked;
-      while s<>#0 do
-      begin
-        if cPos(' ', s) > 0 then s1 := Copy(s, 1, cPos(' ', s)-1) else s1 := s;
+      Unmarklist := TStringlist.Create;
+      try
+        s:=List.FirstMarked;
+        while s<>#0 do
+        begin
+          if cPos(' ', s) > 0 then s1 := Copy(s, 1, cPos(' ', s)-1) else s1 := s;
 
-        try
-          case Art of
-            0: begin // subscribe
-                 AlreadySubscribed := false;
-                 for Index := 0 to RCList.Count-1 do
-                   AlreadySubscribed := AlreadySubscribed or(LeftStr(RCList[Index],Length(s1))=s1);
-                 if AlreadySubscribed then
-                   rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
-                 else
-                 begin
-                   RCList.Add(s1);
-                   List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
+          try
+            case Art of
+              0: begin // subscribe
+                   Index := 0;
+                   while Index < RCList.Count do
+                   begin
+                     if LeftStr(RCList[Index],Length(s1))=s1 then
+                     begin
+                       rfehler1(831,s1);     { 'Newsgroup %s wurde bereits bestellt' }
+                       break;
+                     end else
+                       Inc(Index);
+                   end;
+                   if Index = RCList.Count then // no dupe found
+                   begin
+                     RCList.Add(s1);
+                     List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
+                   end;
                  end;
-               end;
-            1: begin // unsubscribe
-                 List.Lines.Delete(List.Lines.IndexOf(s));
-                 Index := RCList.IndexOf(s1 + ' *');
-                 if Index = -1 then Index := RCList.IndexOf(s1);
-                 if Index <> -1 then RCList[Index] := s1;
-               end;
+              1: begin // unsubscribe
+                   // remember unsubscribed groups; we can not delete at
+                   // this place, because of marked-handling in TLister
+                   UnmarkList.Add(s);
+                   Index := RCList.IndexOf(s1 + ' *');
+                   if Index = -1 then Index := RCList.IndexOf(s1);
+                   if Index <> -1 then RCList[Index] := s1;
+                 end;
+            end;
+          except
+            // !! Fehlermeldung
           end;
-        except
-          // !! Fehlermeldung
-        end;
 
-        s := List.NextMarked;
+          s := List.NextMarked;
+        end;
+        // delete unsubcribed groups finally
+        while UnmarkList.Count > 0 do
+        begin
+          List.Lines.Delete(List.Lines.IndexOf(UnmarkList[0]));
+          UnmarkList.Delete(0);
+        end;
+      finally
+        UnmarkList.Free;
       end;
 
       RCList.Sort;
@@ -1560,8 +1579,7 @@ begin
     fido:=ntAreamgr(netztyp);
     gs:=(netztyp=nt_GS);
     uucp:=(netztyp=nt_UUCP);
-    nntp := (netztyp=nt_NNTP);
-    ppp := (netztyp = nt_Client);
+    nntp := netztyp in [nt_NNTP, nt_Client];
     if uucp then begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
@@ -1572,7 +1590,7 @@ begin
   else begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
-    uucp:=false; promaf:=false; qwk:=false; postmaster:=false; ppp := false;
+    uucp:=false; promaf:=false; qwk:=false; postmaster:=false; 
     netztyp:=0;
     end;
   dbClose(d);
@@ -1581,7 +1599,7 @@ begin
   else begin
     if (art=1) and FileExists(fn +  extBbl) and changesys then
       lfile:=fn+ extBbl else
-    if (art=1) and nntp and FileExists(fn+ extRc) then
+    if (art=1) and NNTP and FileExists(fn+ extRc) then
       lfile:=fn+extRc
     else lfile:=fn+extBl;
     lfile := FileUpperCase(lfile);
@@ -1605,13 +1623,13 @@ begin
     again:
       List.OnTestMark := BrettMark;
       mapsnt:=netztyp; mapsart:=art;
-      if ppp then mapsnt:=nt_Client;
+      if NNTP then mapsnt:=nt_Client;
       if maus then LColType:=2 else
       if fido then lcoltype:=4 else
       if maf or quick then LColType:=0 else
       if promaf then lcoltype:=3
       else LColType:=1;
-      if ppp and (art=0) then lcoltype:=5 else
+      if NNTP and (art=0) then lcoltype:=5 else
         LColType:=1;
       List.OnColor := MapsListcolor;
       brk := List.Show;
@@ -1628,7 +1646,7 @@ begin
             goto again;
             end;
           end;
-        if ppp and (anz=1) and (art=0) and
+        if NNTP and (anz=1) and (art=0) and
           (Firstchar(List.FirstMarked)='!') then
         begin
           rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
@@ -1645,7 +1663,7 @@ begin
           goto again;
         if art in [0,1,3,4] then
         begin
-          if Netztyp = nt_NNTP then
+          if NNTP then
             HandleNNTP
           else
           begin
@@ -1663,19 +1681,19 @@ begin
               end;
             if fido then write(t,'---',#13#10);
             close(t);
-            if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+            if (not NNTP) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
               BretterAnlegen;
             List.Free;
             if art=3 then
               verbose:=ReadJN(getres2(810,20),false);  { 'ausfhrliche Liste' }
-            if not ppp then
+            if not NNTP then
               case art of
                 0 : sendmaps('ADD',box,fn);
                 1 : sendmaps('DEL',box,fn);
                 3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
                 4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
               end;
-            if ppp and (art in [0,1]) then
+            if NNTP and (art in [0,1]) then
               if MakeRC(art=0,box, List) then
                 BretterAnlegen2;
 
@@ -2159,6 +2177,12 @@ end;
 
 {
   $Log$
+  Revision 1.76  2002/08/01 17:51:10  mk
+  - fixed
+    589620: 3.8: NNTP:Bestellung einer bestellten NG
+    589622: 3.8: NNTP: Alle NGs abbestellen -> Crash
+    589621: 3.8: NNTP: Mehrere NGs abbestellen
+
   Revision 1.75  2002/07/25 20:43:55  ma
   - updated copyright notices
 
