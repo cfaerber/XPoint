@@ -20,7 +20,7 @@
 
 { mhelpnr=0 -> keine Hilfsseiten }
 
-procedure readHmask(mhelpnr: Integer; var brk:boolean);
+function readHmask(mhelpnr: Integer; var brk:boolean): integer;
 var ax,p,myp  : integer;
     afld      : feldp;
     helpsave  : Integer;          { zum Sichern von help_page }
@@ -749,8 +749,11 @@ var ax,p,myp  : integer;
   begin
     fld.test0(fld.cont); 
     if fld.test1(fld.cont) and fld.btnquit then
+    begin
+      amaskp^.return := fld.maxlen;
       if fld.maxlen<0 then t := keyESC 
       else                 t := ^J;
+    end;
   end;
 
   procedure maus_bearbeiten;
@@ -958,7 +961,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         mauszuu:=yp<felder;
 
         if done then begin
-          if donebrk then 
+          if return < 0 then 
             t:=KeyESC 
           else 
             t:=^J;
@@ -1314,6 +1317,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.53  2003/09/06 22:59:25  cl
+  - added return value from read[h]mask to identify pressed button or value
+    passed to MQuit (instead of boolean brk)
+
   Revision 1.52  2002/12/04 16:56:59  dodi
   - updated uses, comments and todos
 

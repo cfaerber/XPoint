@@ -88,8 +88,8 @@ type  colrec   =  record              { 0 = keine spezielle Farbe }
 {-------------- allgemeine Funktionen -------------}
 
 procedure openmask(l,r,o,u: Integer; pushit:boolean);   { neue Maske oeffnen }
-procedure readmask(var brk:boolean);                { *** Einlesen ***  }
-procedure readHmask(mhelpnr: Integer; var brk:boolean); { .. mit Hilfsseiten }
+function readmask(var brk:boolean): integer;                { *** Einlesen ***  }
+function readHmask(mhelpnr: Integer; var brk:boolean): integer; { .. mit Hilfsseiten }
 function  mmodified:boolean;                        { Inhalt geaendert   }
 procedure closemask;                                { Maske schliessen   }
 procedure readstring(x,y: Integer; const text:string; var s:string; displ,maxl: Integer;
@@ -191,7 +191,8 @@ procedure mclearsel(nr: Integer);
 procedure mappendsel(nr: Integer; force:boolean; const s:string);
 
 procedure mscroll(distance: Integer);
-procedure mquit(brk: boolean);
+procedure mquit(brk: boolean); overload;
+procedure mquit(returncode: integer); overload;
 
 procedure InitMaskeUnit;
 
@@ -326,7 +327,7 @@ type
                    redisplay   : boolean;
 
                    done        : boolean;
-                   donebrk     : boolean;
+                   return      : integer;
                  end;
       maskp    = ^masktyp;
 
@@ -1142,9 +1143,9 @@ end;
 {$I maske.inc}     { - Hauptprogramm - }
 
 
-procedure readmask(var brk:boolean);
+function readmask(var brk:boolean): integer;
 begin
-  readhmask(0,brk);
+  result := readhmask(0,brk);
 end;
 
 { mask_helpnr = mhelpnr + afld^.helpnr }
@@ -1362,7 +1363,13 @@ end;
 procedure mquit(brk: boolean);
 begin
   amaskp^.done    := true;
-  amaskp^.donebrk := brk;
+  amaskp^.return  := iif(brk,-1,1);
+end;
+
+procedure mquit(returncode: integer);
+begin
+  amaskp^.done    := true;
+  amaskp^.return  := returncode;
 end;
 
 { Der Status der nullten Maske dient als Prototyp fuer alle }
@@ -1405,6 +1412,10 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.48  2003/09/06 22:59:25  cl
+  - added return value from read[h]mask to identify pressed button or value
+    passed to MQuit (instead of boolean brk)
+
   Revision 1.47  2003/08/28 01:14:15  mk
   - removed old types s20, s40, s60 and s80
 
