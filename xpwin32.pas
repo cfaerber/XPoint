@@ -47,6 +47,8 @@ procedure RegisterMailClient;
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
+// Execute an externel program
+function SysExec(const Path, CmdLine: String): Integer;
 
 implementation
 
@@ -54,7 +56,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  windows, winxp;
+  dos, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -162,9 +164,19 @@ begin
   Result := false;
 end;
 
+// Execute an externel program
+function SysExec(const Path, CmdLine: String): Integer;
+begin
+  Exec(Path, CmdLine);
+  Result := DosExitCode;
+end;
+
 end.
 {
   $Log$
+  Revision 1.13  2000/11/18 21:10:00  mk
+  - added SysExec
+
   Revision 1.12  2000/10/24 15:11:44  mk
   - VPUtils in uses bei VP wegen Max() hinzugefuegt
 

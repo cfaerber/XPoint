@@ -30,6 +30,17 @@ function Xec(prog:string; const prompt:string):Integer;
 implementation  { --------------------------------------------------- }
 
 uses
+{$IFDEF Win32 }
+  windows,
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+  dos,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
 {$ifdef unix}Linux,{$endif}sysutils;
 
 function Xec(prog:string; const prompt:string):Integer;
@@ -62,7 +73,7 @@ begin
     dpath:=''
   else begin
     if FileExists(prog) then dpath:=prog
-    else dpath:=FileUpperCase(fsearch(prog,getenv('PATH')));
+    else dpath:=FileUpperCase(fileSearch(prog,getenv('PATH')));
     if (RightStr(dpath,4)<>'.EXE') and (RightStr(dpath,4)<>'.COM') then
       dpath:='';
   end;
@@ -72,19 +83,26 @@ begin
     dpath:=getenv('comspec');
   end;
   Debug.TempCloseLog(False);
+{$IFDEF DOS32 }
   SwapVectors;
   DosError :=0;
-  Exec(dpath, para);
+{$ENDIF }
+  SysExec(dpath, para);
+{$IFDEF DOS32 }
   TempError:=DosError; if TempError=0 then Result:=DosExitCode else Result:=-TempError;
   SwapVectors;
-  Debug.TempCloseLog(True);
   DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
+{$ENDIF }
+  Debug.TempCloseLog(True);
 {$ENDIF }
 end;
 
 end.
 {
   $Log$
+  Revision 1.33  2000/11/18 21:10:00  mk
+  - added SysExec
+
   Revision 1.32  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

@@ -48,6 +48,8 @@ function SysGetDriveType(drive:char):byte;
 // Returns the used Codepage in form of the Unicode charset
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysOutputRedirected: boolean;
+// Execute an externel program
+function SysExec(const Prog: String): Integer;
 
 implementation
 
@@ -695,9 +697,19 @@ begin
   Result := false;
 end;
 
+// Execute an externel program
+function SysExec(const Prog: String): Integer;
+begin
+  Exec(Prog, '');
+  Result := DosExitCode;
+end;
+
 end.
 {
   $Log$
+  Revision 1.10  2000/11/18 21:10:00  mk
+  - added SysExec
+
   Revision 1.9  2000/10/26 07:20:22  mk
   - Grafikmodus mit 8 Zeilen/Zeichen wird jetzt direkt ueber das BIOS gesetzt
 

@@ -47,12 +47,13 @@ procedure SysSetBackIntensity;
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
+// Execute an externel program
+function SysExec(const Path, CmdLine: String): Integer;
 
 implementation
 
 uses
-  vpsyslow,
-  os2base;
+  vpsyslow, os2base, dos;
 
 function Invalid16Parm(const p: Pointer; const Length: Longint): Boolean;
 begin
@@ -155,9 +156,19 @@ begin
   Result := false;
 end;
 
+// Execute an externel program
+function SysExec(const Path, CmdLine: String): Integer;
+begin
+  Exec(Path, CmdLine);
+  Result := DosExitCode;
+end;
+
 end.
 {
   $Log$
+  Revision 1.7  2000/11/18 21:10:00  mk
+  - added SysExec
+
   Revision 1.6  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 
