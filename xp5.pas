@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Utilities }
@@ -37,10 +38,55 @@ procedure EditPassword;
 function  Password:boolean;
 procedure InitPWsystem;
 
+function reorgdate:datetimest;
+function timingdate(s1:string):datetimest;
 
 implementation  {-----------------------------------------------------}
 
 uses xpovl;
+
+function timingdate(s1:string):datetimest;
+var t   : text;
+    s   : string;
+    fnd : boolean;
+begin
+  timingdate:='';
+  fnd:=false;
+  assign(t,timingdat);
+  reset(t);
+  if ioresult<>0 then exit;
+  repeat 
+    readln(t,s);
+    if pos(s1,s)>0 then fnd:=true;
+  until eof(t) or fnd;
+  close(t); 
+  if fnd then
+  asm 
+    xor si,si
+@1: inc si
+    cmp byte ptr s[si],'='
+    jne @1
+    les di,@result
+    mov al,10
+    stosb 
+    mov ax,word ptr s[si+7]
+    stosw
+    mov ax,word ptr s[si+4]
+    stosw
+    mov ax,word ptr s[si+1]
+    stosw
+    mov ax,word ptr s[si+10]
+    stosw
+    mov ax,word ptr s[si+13]
+    stosw
+    end;  
+end; 
+
+
+function reorgdate:datetimest;
+begin
+  reorgdate:=timingdate('REORG=');
+end;
 
 procedure kalender;
 
@@ -1010,6 +1056,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.12  2001/09/16 20:31:21  my
+  JG+MY:- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.27.2.11  2001/08/05 11:45:35  my
   - added new unit XPOVL.PAS ('uses')
 
