@@ -13,8 +13,8 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.30.7';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';      { '' oder ' beta' }
+  verstr      = 'v3.40';  { Versionnr. - steht nur an dieser Stelle }
+  betastr     = ' RC1';      { '' oder ' beta' }
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
@@ -83,6 +83,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.10  2000/12/26 21:07:02  mk
+  - Versionsnummer auf 3.40 RC1 geaendert
+
   Revision 1.29.2.9  2000/12/06 09:41:20  mk
   - OpenXP-Team mit Bindestrich in der Mitte
 
