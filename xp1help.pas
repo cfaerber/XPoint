@@ -291,13 +291,8 @@ var
       mh   : boolean;
 begin
   if not inithlp then
-{$IFDEF UnixFS}
     if not inithelp(DocDir+helpfile,
                     1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
-{$ELSE}
-    if not inithelp(DocDir+helpfile,
-                    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
-{$ENDIF}
     begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
       if ioresult<>0 then;
@@ -310,7 +305,7 @@ begin
     hlp:='';
     setrahmen(2);
     openbox(58,18+(ScreenLines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
-    sethelppos(x+3,6+(screenlines-24)div 4,16+(screenlines-25)div 2);
+    sethelppos(x+3,y+1,16+(screenlines-25)div 2);
     setrahmen(1);
     mh:=hotkeys;
     hotkeys:=false;
@@ -408,6 +403,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/01/20 15:25:00  ml
+  - helpfix
+
   Revision 1.19  2001/01/11 11:38:56  ma
   - some other screen adjustment fixes
 
