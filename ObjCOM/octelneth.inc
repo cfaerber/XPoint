@@ -32,8 +32,7 @@ type tTelnetObj = Object(tRawIPObj)
 //        procedure PauseCom(CloseCom: Boolean); virtual;
 //        procedure ResumeCom(OpenCom: Boolean); virtual;
         private
-//        SHandle: LongInt; SOpened: Boolean; InBuffer: tRingbuffer; WSAData: tWSAData;
-          InBuffer: tRingbuffer;
+//         SHandle: LongInt; SOpened: Boolean; InBuffer: tRingbuffer; WSAData: tWSAData;
          procedure ProcIncoming; virtual;
      end; { object tTelnetObj }
 
@@ -41,10 +40,17 @@ Type tpTelnetObj = ^tTelnetObj;
 
 {
   $Log$
+  Revision 1.3  2001/02/03 16:31:23  ma
+  - reverted back mostly to rev 1.1
+  - compilable again with Linux
+  - fixed some bugs
+  - added some non-critical enhancements by CL
+    (connection error handling, OutFree detection)
+
   Revision 1.2  2001/01/31 20:18:19  cl
   - improved Win32 rawip implementation:
-    - no own ringbuffer
-    - detection of remote connection close
+  - no own ringbuffer
+  - detection of remote connection close
 
   Revision 1.1  2001/01/28 18:06:38  ma
   - added a bit real telnet functionality

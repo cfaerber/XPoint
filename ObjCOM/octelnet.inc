@@ -57,9 +57,10 @@ const iac: string= TELNET_IAC+TELNET_IAC;
 var Written: LongInt;
 begin
   if c=TELNET_IAC then
-    result:=send(SHandle,iac[1],2,0)=2
+    SendBlock(iac[1],2,Written)
   else
-    result:=send(SHandle,c,SizeOf(c),0)=SizeOf(c);
+    SendBlock(c,SizeOf(c),Written);
+  result:=Written>0;
 end; { proc. tTelnetObj.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -84,6 +85,13 @@ end; { proc. tTelnetObj.SendBlock }
 
 {
   $Log$
+  Revision 1.2  2001/02/03 16:31:23  ma
+  - reverted back mostly to rev 1.1
+  - compilable again with Linux
+  - fixed some bugs
+  - added some non-critical enhancements by CL
+    (connection error handling, OutFree detection)
+
   Revision 1.1  2001/01/28 18:06:38  ma
   - added a bit real telnet functionality
   - renamed former connection type "telnet" to "rawip"
