@@ -76,8 +76,8 @@ ReplaceOwn
 x
 x
 
-Client-Modus<br /><small>Universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
-Client mode<br /><small>Universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
+RFC/Client-Boxtyp<br /><small>Universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
+RFC/Client server type<br /><small>Universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
 -
 o
 o

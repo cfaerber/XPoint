@@ -8,47 +8,22 @@ Project coordination. Donations: Konto 268863800, BLZ 38070724, Bank 24
 UUZ, UUCP, RFC-Konformität
 UUZ, UUCP, RFC conformance
 
-Jochen Gehring
-<a href="mailto:jg@openxp.de">jg</a>
-Verschiedenes, Assembler
-Misc, Assembler
-
-Helmut Hullen
-<a href="mailto:hh@openxp.de">hh</a>
-ehemals ToDo-Liste; wird jetzt bei SourceForge gef&uuml;hrt
-formerly ToDo list which is located at SourceForge now
-
-Hinrich Donner
-<a href="mailto:hd@openxp.de">hd</a>
-Linux-Portierung
-Porting to Linux
-
 <a href="http://come.to/schnoerkel/">Malte Kiesel</a>
 <a href="mailto:ma@openxp.de">ma</a>
-Fidomailer, Netcall-Routinen, ObjCOM
-Fidomailer, netcall functions, ObjCOM
-
-<a href="http://www.martinwodrich.de">Martin Wodrich</a>
-<a href="mailto:mw@openxp.de">mw</a>
-Verschiedenes 
-Misc
+Fidomailer, Netcall-Routinen, ObjCOM (OpenXP/32)
+Fidomailer, netcall functions, ObjCOM (OpenXP/32)
 
 <a href="http://www.uni-jena.de/~i7lema">Matthias Leonhardt</a>
 <a href="mailto:ml@openxp.de">ml</a>
-Linux-Portierung
-Porting to Linux
+Linux-Portierung (OpenXP/32)
+Porting to Linux (OpenXP/32)
 
 Michael Heydekamp
 <a href="mailto:my@openxp.de">my</a>
-Verschiedenes, Design, Hilfe, Dokumentation
-Misc, Design, Help, Documentation
-
-Michael Koppel
-<a href="mailto:mo@openxp.de">mo</a>
-&nbsp;
-&nbsp;
+Div. Programmierung, Client-Unterstützung, Design, Hilfe
+Misc. programming, client support, design, online help
 
 Stefan Vinke
 <a href="mailto:sv@openxp.de">sv</a>
-Verschiedenes, Hilfe
-Misc, Help
+Verschiedenes, Hilfe (OpenXP/16)
+Misc, Help (OpenXP/16)

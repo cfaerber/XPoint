@@ -22,7 +22,7 @@ function ShowHeader($title) {
 	header ("Content-Language: ".$language);
 	
 	// now we use XHTML 1.0
-	echo("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n");
+	echo("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"DTD/xhtml1-transitional.dtd\">\n");
 	echo("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"".$language."\" lang=\"".$language."\">\n");
 	echo("<head>\n");
 	// depends on the language
@@ -282,7 +282,7 @@ function ShowDownloadTable($downfile) {
 	      echo(" (<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">FTP</a>/");
 	      echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ");
 	      echo(sprintf("%01.2f MB", $fsize/1024/1024).", ".$ftime.")");
-	    } else if($language=="de") echo (" (<i>z.Zt. nicht verfügbar</i>)"); else echo(" (<i>temporarily not available</i>");
+	    } else if($language=="de") echo (" (<i>z.Zt. nicht verfügbar</i>)"); else echo(" (<i>temporarily not available</i>)");
 	    fgets($pdfile,20); // skip empty line
 	  }
 	}

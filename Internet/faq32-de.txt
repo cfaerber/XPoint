@@ -9,7 +9,8 @@ dort werden Konsolenprogramme nicht so stiefmütterlich behandelt.
 <br />Der Vollbildmodus bringt auf größeren Monitoren gegenüber OpenXP im Fenster mit großer Zeilen-/Spaltenzahl aber auch
 keinen Vorteil. Einmal paßt weniger auf den Monitor (da man bei Vollbild auf Standardtextauflösungen beschränkt ist); zum anderen
 stört auf größeren Monitoren im Vollbildmodus die geringe Scanlinezahl der Textmodi (was sich in schwarzen horizontalen dünnen
-Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor kennen ;-).
+Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor kennen ;-). Tip: Die Win-Symbolleiste läßt sich
+per Rechtsklick auf den Startmenüeintrag, Eigenschaften, "Symbolleiste anzeigen" abwählen entfernen.
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
