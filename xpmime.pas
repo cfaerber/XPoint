@@ -254,7 +254,7 @@ var   hdp      : headerp;
   var   t      : text;
         tmp    : string;
         buf    : pointer;
-        bstack : array[1..maxlevel] of ^string;    { Boundaries }
+        bstack : array[1..maxlevel] of string;    { Boundaries }
         bptr   : integer;
         s         : string;
 	bufline   : string;
@@ -302,17 +302,14 @@ var   hdp      : headerp;
         end
       else begin
         inc(bptr);
-        getmem(bstack[bptr],length(boundary)+1);
-        bstack[bptr]^:=boundary;
+        bstack[bptr]:=boundary;
         end;
     end;
 
     procedure pop;
     begin
-      if bptr>0 then begin
-        freemem(bstack[bptr],length(bstack[bptr]^)+1);
+      if bptr>0 then
         dec(bptr);
-        end;
     end;
 
     procedure reset_var;
@@ -388,7 +385,7 @@ var   hdp      : headerp;
     while not eof(t) and (anzahl<maxparts) do begin
       _start:=n+1;
       if bptr=0 then bound:=#0     { Nachspann }
-      else bound:=bstack[bptr]^;
+      else bound:=bstack[bptr];
       repeat
         if bufline<>'' then begin
           s:=bufline; bufline:='';
@@ -754,6 +751,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/06 18:26:26  hd
+  - Stringzeiger entfernt
+
   Revision 1.17  2000/07/05 13:55:03  hd
   - AnsiString
 
