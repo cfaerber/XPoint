@@ -28,7 +28,7 @@ uses xpglobal,
 
 
 const
-  maxgl   = 60;
+  maxgl   = 150;	{ auf 100 erhoeht (hd/2000-07-09) }
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -192,8 +192,8 @@ label selende;
   procedure pm_archiv(einzel:boolean);
   var _brett : string;
   begin
-    dbReadN(mbase,mb_brett,_brett);
-    if (_brett[1]<>'1') and (_brett[1]<>'A') then
+    _brett:= dbReadNStr(mbase,mb_brett);
+    if (length(_brett)=0) or ((_brett[1]<>'1') and (_brett[1]<>'A')) then
       rfehler(403)     { 'PM-Archiv in diesem Brett nicht mîglich' }
     else begin
       PmArchiv(einzel);
@@ -331,7 +331,7 @@ var t,lastt: taste;
        -1 : if not ArchivWeiterleiten or (ArchivBretter='') then
               wrongline:=false
             else begin
-              dbReadN(bbase,bb_brettname,s);
+              s:= dbReadNStr(bbase,bb_brettname);
               wrongline:=(UpperCase(copy(s,2,length(ArchivBretter)))<>ArchivBretter) and
                          (left(s,3)<>'$/T');
               end;
@@ -344,11 +344,11 @@ var t,lastt: taste;
               wrongline:=(adrb=0);
             end;
       2,4 : begin                              { alle User      }
-             dbReadN(ubase,ub_username,s);
+             s:= dbReadNStr(ubase,ub_username);
              wrongline:=(pos('$/T',s)>0);
              end;
       10  : begin                { Brett-Msgs     }
-              dbRead(dispdat,'brett',_brett);
+              _brett:= dbReadStr(dispdat,'brett');
               case rdmode of
                 0 : wrongline:=(_brett<>_dispspec);
                 1 : begin
@@ -395,7 +395,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,1);
-              if not dbEOF(mbase) then dbRead(mbase,'brett',_brett);
+              if not dbEOF(mbase) then _brett:= dbReadStr(mbase,'brett');
             until dbEOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -442,7 +442,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,-1);
-              if not dbBOF(mbase) then dbRead(mbase,'brett',_brett);
+              if not dbBOF(mbase) then _brett:= dbReadStr(mbase,'brett');
             until dbBOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -738,12 +738,10 @@ var t,lastt: taste;
     end;
 
     function empfbox:string;
-    var box : string;
     begin
       dbSeek(bbase,biBrett,UpperCase(empf));
-      if dbEOF(bbase) or dbBOF(bbase) then box:=''
-      else dbReadN(bbase,bb_pollbox,box);
-      empfbox:=box;
+      if dbEOF(bbase) or dbBOF(bbase) then empfbox:=''
+      else empfbox:= dbReadNStr(bbase,bb_pollbox);
     end;
 
     procedure SetNobrettServers;
@@ -795,7 +793,7 @@ var t,lastt: taste;
         empf:='A'+p^.empf;
         p^.empf:='+Dummy:'+mid(s,2);
         dbSeek(bbase,biBrett,UpperCase(empf));   { mu· funktionieren! }
-        dbReadN(bbase,bb_pollbox,pb);
+        pb:= dbReadNStr(bbase,bb_pollbox);
         p:=sendempflist;          { Sever fÅr alle nicht existierenden }
         while p<>nil do begin     { Bretter auf dieses Brett setzen    }
           if p^.empf[1]='+' then
@@ -843,7 +841,7 @@ var t,lastt: taste;
         if brk then exit;
         end
       else
-        dbRead(dispdat,'username',empf)          { kein Reply.. }
+        empf:= dbReadStr(dispdat,'username')          { kein Reply.. }
     else begin
       if (quote=2) and (markanz>0) and not MsgMarked then
         dbGo(mbase,marked^[0].recno);
@@ -854,8 +852,8 @@ var t,lastt: taste;
         and not askreplyto
         then begin
         { /robo }
-          dbRead(dispdat,'absender',empf);
-          if ntRealName(mbNetztyp) then dbRead(dispdat,'name',realname);
+          empf:= dbReadStr(dispdat,'absender');
+          if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
           end
         else begin
           empf:=GetWABreplyEmpfaenger(realname);
@@ -872,15 +870,15 @@ var t,lastt: taste;
             dbReadN(bbase,bb_flags,flags);
             gesperrt:=(flags and 8<>0);
             if not gesperrt then begin
-              dbReadN(bbase,bb_brettname,empf);
+              empf:= dbReadNStr(bbase,bb_brettname);
               if flags and 32<>0 then rt0:=''    { Fido-Origin eingetragen }
-              else dbReadN(bbase,bb_adresse,rt0);
+              else rt0:= dbReadNStr(bbase,bb_adresse);
               if cpos('@',rt0)>0 then rt0:=''    { PM's nicht erlaubt! }
               else if rt0<>'' then insert('A',rt0,1);
               end
             else begin
               if flags and 32<>0 then empf:=''   { Fido-Origin eingetragen }
-              else dbReadN(bbase,bb_adresse,empf);
+              else empf:= dbReadNStr(bbase,bb_adresse);
               if empf='' then begin
                 rfehler(450);    { 'Schreibzugriff auf dieses Brett ist gesperrt' }
                 exit;
@@ -892,7 +890,7 @@ var t,lastt: taste;
             end    { not xposting }
 
         else begin  { dispmode >= 10 }
-          dbRead(mbase,'brett',_empf);
+          _empf:= dbReadStr(mbase,'brett');
           if left(_empf,1)='U' then begin
             rfehler(405);   { 'Nachricht bitte als PM schicken' }
             exit;
@@ -900,10 +898,10 @@ var t,lastt: taste;
           else begin
             dbSeek(bbase,biIntnr,copy(_empf,2,4));
             if dbReadInt(bbase,'flags') and 32<>0 then rt0:=''    { Fido-Origin eingetragen }
-            else dbReadN(bbase,bb_adresse,rt0);
+            else rt0:= dbReadNStr(bbase,bb_adresse);
             if cpos('@',rt0)=0 then            { PMs nicht erlaubt! }
               if rt0<>'' then insert('A',rt0,1);
-            dbReadN(bbase,bb_brettname,empf);
+            empf:= dbReadNStr(bbase,bb_brettname);
             dbReadN(bbase,bb_gruppe,brettgruppe);
             gesperrt:=(dbReadInt(bbase,'flags') and 8<>0);
             if gesperrt or
@@ -959,7 +957,7 @@ var t,lastt: taste;
       else begin
         headf:=dbReadStr(d,'kopf')+'.xps';
         sigf:=dbReadStr(d,'signatur')+'.xps';
-        dbRead(d,'quotemsk',force_quotemsk);
+        force_quotemsk:= dbReadStr(d,'quotemsk');
         if force_quotemsk<>'' then
           force_quotemsk:=force_quotemsk+'.xps';
         getren;
@@ -974,7 +972,7 @@ var t,lastt: taste;
 
     if (dispmode>=10) and (dispmode<=19) then begin
       dbRead(mbase,'typ',typ);
-      dbRead(mbase,'betreff',betr);
+      betr:= dbReadStr(mbase,'betreff');
       if (typ='B') and (quote=1) and not IS_QPC(betr) and not IS_DES(betr) and
          not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
       then goto ende;
@@ -986,7 +984,7 @@ var t,lastt: taste;
           dbSeek(bbase,biBrett,UpperCase(empf));
           if dbFound and (dbReadInt(bbase,'flags')and 8<>0) then begin
             if dbReadInt(bbase,'flags') and 32<>0 then rt:=''
-            else dbReadN(bbase,bb_adresse,rt);
+            else rt:= dbReadNStr(bbase,bb_adresse);
             if cpos('@',rt)=0 then rt:='A'+rt
             else pm:=true;
             end;
@@ -1035,7 +1033,7 @@ var t,lastt: taste;
     flqto:=flqto or qtflag;
     _pmReply:=_pmReply or pmrflag;
     if (netztyp=nt_QWK) and _pmReply and (dispmode in [10..19]) then begin
-      dbReadN(mbase,mb_brett,_empf);
+      _empf:= dbReadNStr(mbase,mb_brett);
       dbSeek(bbase,biIntnr,mid(_empf,2));
       if dbFound then
         sData^.ReplyGroup:=mid(dbReadStr(bbase,'brettname'),2);
@@ -1094,8 +1092,8 @@ var t,lastt: taste;
     else begin
       komaktiv:=true;
       GoP;
-      dbReadN(mbase,mb_betreff,bezbetr);
-      dbReadN(mbase,mb_brett,xp0.kombrett);
+      bezbetr:= dbReadNStr(mbase,mb_betreff);
+      xp0.kombrett:= dbReadNStr(mbase,mb_brett);
       BezBaum(bezbetr);
       if komanz<2 then
         rfehler(409)   { 'keine BezÅge vorhanden' }
@@ -1151,14 +1149,16 @@ var t,lastt: taste;
     Auto_Copy;
   end;
 
-  procedure GetAutoFN(var fn:string);
+  function GetAutoFN: string;
   var dir  : dirstr;
       name : namestr;
       ext  : extstr;
+      fn   : shortstring;
   begin
-    dbRead(auto,'dateiname',fn);
+    fn:= dbReadStr(auto,'dateiname');
     fsplit(fn,dir,name,ext);
-    if dir='' then fn:=SendPath+fn;
+    if dir='' then GetAutoFN:=SendPath+fn
+    else GetAutoFN:= fn;
   end;
 
   procedure auto_read;
@@ -1166,7 +1166,7 @@ var t,lastt: taste;
       arc  : shortint;
   begin
     GoP;
-    GetAutoFN(fn);
+    fn:= GetAutoFN;
     if not exist(fn) then
       rfehler(411)    { 'Datei nicht vorhanden' }
     else begin
@@ -1186,7 +1186,7 @@ var t,lastt: taste;
       typ : char;
   begin
     GoP;
-    GetAutoFN(fn);
+    fn:= GetAutoFN;
     if not ValidFilename(fn) then
       rfehler(412)   { 'ungÅltiger Dateiname' }
     else begin
@@ -1214,8 +1214,8 @@ var t,lastt: taste;
   var suchs : string;
   begin
     GoP;
-    if userbase then dbReadN(ubase,ub_username,suchs)
-    else dbReadN(mbase,mb_absender,suchs);
+    if userbase then suchs:= dbReadNStr(ubase,ub_username)
+    else suchs:= dbReadNStr(mbase,mb_absender);
     if Suche('User','Absender',suchs) then select(11);
     setall;
   end;
@@ -1317,7 +1317,7 @@ begin      { --- select --- }
 
   lastt:=''; nosuccess:=false;
 {$IFDEF Debug }
-  dbLog('-- îffne Fenster('+strs(dispmode)+')');
+  dbLog('-- Oeffne Fenster('+strs(dispmode)+')');
 {$ENDIF }
   savedd:=dispdat;
   lastdm:=aktdispmode;
@@ -1971,7 +1971,7 @@ selende:
   setmainkeys(aktdispmode);
   dispdat:=savedd;
 {$IFDEF Debug }
-  dbLog('-- schlie·e Fenster('+strs(dispmode)+')');
+  dbLog('-- Schliesse Fenster('+strs(dispmode)+')');
 {$ENDIF }
 end;    { select }
 
@@ -2037,6 +2037,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/09 15:35:50  hd
+  - AnsiString-Update
+
   Revision 1.32  2000/07/09 11:55:31  hd
   - AnsiString
 
