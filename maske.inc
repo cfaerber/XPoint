@@ -406,17 +406,17 @@ var ax,p,myp  : integer;
 
       if noslpos then             { Position wird jeweils neu bestimmt }
         if maussel then begin
-          slx:=min(xx2,75-width);
+          slx:=min(xx2,ScreenWidth-width);
           sly:=max(3,yy-p-a);
           sll:=min(lines,ScreenLines-sly-1);
           end
         else
           if (yy-a<=ScreenLines-3-slmin) or (yy-a+lines+2<=ScreenLines-1) then begin
-            slx:=min(xx2,75-width); sly:=yy-a+1; sll:=min(lines,ScreenLines-3-yy+a);
+            slx:=min(xx2,ScreenWidth-5-width); sly:=yy-a+1; sll:=min(lines,ScreenLines-3-yy+a);
             end
           else begin
             i:=lines div 2;
-            slx:=min(75-width,xx2+7);
+            slx:=min(ScreenWidth-5-width,xx2+7);
             sly:=max(3,min(yy-a-i+1,ScreenLines-2-lines));
             sll:=min(ScreenLines-2-sly,lines);
             end;
@@ -1162,6 +1162,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.43.2.2  2002/08/25 09:05:13  mk
+  - fixed calculation of dialog with in procedure select, when
+    screenwith is > 80 chars
+
   Revision 1.43.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 
