@@ -139,6 +139,8 @@ xpuu-e.rq       ???
 
 file_id.diz	???
 icons.res	Icons fuer OpenXP im Windows-Format
+
+build.bat       DOS-Batchdatei zum Compilieren von OpenXP
 Makefile        Makefile fuer GNU make
 
 Neue Sources, die unter der GPL stehen
@@ -163,25 +165,24 @@ xpoint.sgm      Handbuch im DocBook-Format
 xpoint.dsl      Stylesheet fuer Handbuch
 xpoint.cat      Katalogdatei fuer Handbuch
 
-dbform          Beschreibung der Datenbankfelder
-
-readme.lnx	Hinweise zur Nutzung unter Linux
-
-xp.ihq          Quelltext der deutschen Online-Hilfe
-xp-e.ihq        Quelltext der englischen Online-Hilfe
 fido.dq         Fido-Dokumentation im Quelltext
 uucp.dq         UUCP-Dokumentation im Quelltext
 
-authors.txt     ???
-devtodo.txt     ???
-files.txt       ???
-gpl.txt         ???
-make.txt        ???
-planung.txt     ???
-readme.txt      ???
-slizenz.txt     ???
-tools.txt       ???
-versions.txt    ???
+xp.ihq          Quelltext der deutschen Online-Hilfe
+xp-e.ihq        Quelltext der englischen Online-Hilfe
+
+authors.txt     Namen und E-Mail-Adressen der OpenXP-Autoren
+dbform.txt      Beschreibung der Datenbankfelder
+devtodo.txt     zu erledigende Aufgaben
+files.txt       Liste der Dateien im OpenXP-Quellcode (diese Datei)
+gpl.txt         GNU General Public License
+linux.txt       Hinweise zur Nutzung unter Linux
+make.txt        Anleitung zum Compilieren von OpenXP
+planung.txt     Strategieplanung fuer die weiteren OpenXP-Versionen
+readme.txt      wichtige Hinweise
+slizenz.txt     Lizenz des OpenXP-Quellcode
+tools.txt       Tabelle von externen XP-Tools
+versions.txt    Versions-FAQ fuer CrossPoint und OpenXP
 
 Makefile        Makefile fuer GNU make
 
