@@ -103,7 +103,7 @@ function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
-
+procedure WriteBatch(s:string);                 { Batchfile erstellen     }
 
 implementation  { ------------------------------------------------------- }
 
@@ -353,6 +353,23 @@ begin
   else
     ioerror:=otxt;
   end;
+end;
+
+procedure WriteBatch(s:string);
+var
+  f:text;
+  io:integer;
+begin
+  assign(f,'tmp.bat');
+  rewrite(f);
+  io:=ioresult;
+  if (io=0) then begin
+    writeln(f,'@echo off');
+    writeln(f,s);
+    close(f);
+  end;
+  io:=ioresult;
+  io:=ioresult;
 end;
 
 
@@ -782,6 +799,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/05/05 00:10:49  oh
+  -PGP-Aufrufe ueber Batch-Datei
+
   Revision 1.26  2000/05/03 07:33:56  mk
   - unbenutze Variablen/Units rausgeworfen
 

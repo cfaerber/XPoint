@@ -100,18 +100,27 @@ end;
 
 { PGP 2.6.x und 6.5.x }
 procedure RunPGP(par:string);
-var path : pathstr;
+const
+  {$ifdef linux}
+    PGPEXE = 'pgp';
+    PGPBAT = 'xpgp.sh';
+  {$else}
+    PGPEXE = 'PGP.EXE';
+    PGPBAT = 'XPGP.BAT';
+  {$endif}
+var
+  path : pathstr;
 begin
-  if exist('XPGP.BAT') then
-    path:='XPGP.BAT'
+  if exist(PGPBAT) then
+    path:=PGPBAT
   else begin
     path:=getenv('PGPPATH');
     if path<>'' then begin
       if lastchar(path)='\' then dellast(path);
-      path:=fsearch('PGP.EXE',path);
+      path:=fsearch(PGPEXE,path);
     end;
     if path='' then
-      path:=fsearch('PGP.EXE',getenv('PATH'));
+      path:=fsearch(PGPEXE,getenv('PATH'));
   end;
   if path='' then
     trfehler(3001,30)    { 'PGP fehlt oder ist nicht per Pfad erreichbar.' }
@@ -129,7 +138,16 @@ end;
 procedure RunPGP5(exe,par:string);
 var path : pathstr;
     pass,batch : string;
+    {$ifdef linux}
+    dir:dirstr;
+    name:namestr;
+    ext:extstr;
+    {$endif}
 begin
+  {$ifdef linux}
+  fsplit(exe,dir,name,ext);
+  exe:=LStr(name); { aus PGPK.EXE wird pgpk etc ...}
+  {$endif}
   path:=getenv('PGPPATH');
   if path<>'' then begin
     if lastchar(path)='\' then dellast(path);
@@ -152,7 +170,7 @@ begin
         'V' : batch := ' -z '+pass+' ';
       end;
     end;
-    shell(path+iifs(PGPbatchmode,batch,' ')+par,500,1);
+    shell(path+iifs(PGPbatchmode,batch,' ')+par,2048{500},1);
     shellkey:=false;
   end;
 end;
@@ -319,7 +337,7 @@ begin
   { --- codieren --- }
   if encode and not sign then begin
     if PGPVersion=PGP2 then
-      RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
+      RunPGP('-ea '+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else if PGPVersion=PGP5 then
       RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
     else begin
@@ -354,13 +372,13 @@ begin
     if PGPVersion=PGP2 then
       RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+uid+' -o '+tmp)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-s -a '+t+' '+filename(source)+' -r '+IDform(UserID)+uid+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-sa '+t+' '+filename(source)+' -r '+IDform(UserID)+uid+' -o '+tmp)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-es -a '+t+' '+_source+' '+IDform(UserID)+uid);
+      RunPGP('-e -s -a '+t+' '+_source+' '+IDform(UserID)+uid);
       if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
@@ -776,6 +794,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/05 00:10:49  oh
+  -PGP-Aufrufe ueber Batch-Datei
+
   Revision 1.14  2000/04/16 15:19:54  oh
   - PGP 2.6.3, 5.x und 6.5.x-Unterstuetzung komplett funktionstuechtig!
 

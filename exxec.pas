@@ -11,7 +11,7 @@
 { Exec-Swapper }
 
 {$I XPDEFINE.INC }
-{.$define debugtofile}
+{$define debugtofile}
 
 {$IFDEF BP }
   {$F+}
@@ -323,7 +323,7 @@ var regs  : registers;
         end;
       close(swapfile);
       erase(swapfile);
-      end;
+    end;
   end;
 
   procedure geterrorlevel;
@@ -334,7 +334,7 @@ var regs  : registers;
       regs.ah:=$4d;
       msdos(regs);
       errorlevel:=regs.al;
-      end;
+    end;
   end;
 
   function environment:string;
@@ -353,6 +353,7 @@ var regs  : registers;
     {$ENDIF }
   end;
 
+  {$define usebatch}
   {$ifdef debugtofile}{$i dbug.inc}{$endif}
 
 begin
@@ -364,10 +365,11 @@ begin
   if fs>0 then begin               { Freeliste sichern }
     getmem(p,fs);
     FastMove(freeptr^,p^,fs);
-    end;
+  end;
 
   pp:=pos(' ',prog);
-  if pp=0 then para:=''
+  if pp=0 then
+    para:=''
   else begin
     para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
@@ -377,17 +379,27 @@ begin
   if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
     dpath:=''
   else begin
-    if exist(prog) then dpath:=prog
-    else dpath:=UStr(fsearch(prog,getenv('PATH')));
+    if exist(prog) then
+      dpath:=prog
+    else
+      dpath:=UStr(fsearch(prog,getenv('PATH')));
     if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
       dpath:='';
   end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
-  if dpath='' then begin
-    para:=environment+' /c '+prog+para;
-    dpath:=getenv('comspec');
-  end;
 
+  {$ifndef usebatch}
+    if dpath='' then begin
+      para:=environment+' /c '+prog+para;  
+      dpath:=getenv('comspec');
+    end;
+  {$else}
+    dpath:=getenv('comspec');
+    WriteBatch(prog+para);
+    para:=environment+' /c tmp.bat';
+    {$ifdef debugtofile}dBugLog(dpath+' '+para);{$endif}
+  {$endif}
+  
   {$IFNDEF DPMI}
     paras:=memw[prefixseg:2]-prefixseg+1;
     space:=(space+1)*64;   { KB -> Paragraphs, + 1 extra-KB }
@@ -396,8 +408,7 @@ begin
     if (heapfree>=space) or (so(heapptr).s-ovrheaporg<64) then begin
       swappars:=0;
       swapmore:=0;
-      end
-    else begin
+    end else begin
       swappars:=min(space-heapfree,so(heapptr).s-ovrheaporg-2);
       swapstart:=so(heapptr).s-swappars+2;
       swapmore:={0;}  max(0,space-heapfree-swappars);
@@ -432,8 +443,6 @@ begin
       fileanz:=0;
     {$ENDIF}
 
-    {$ifdef debugtofile}dBugLog(dpath+' '+para);{$endif}
-  
     swapvectors;
     if swapmore=0 then
       exec(dpath,para)
@@ -470,11 +479,16 @@ begin
     {$ENDIF}
 
     end;  { is swapok }
+    {$ifdef debugtofile}dBugLog('Errorlevel: '+StrS(errorlevel));{$endif}
+    {$ifdef debugtofile}dBugLog('SET TEST='+GetEnv('TEST'));{$endif}
 
   if fs>0 then begin
     FastMove(p^,freeptr^,fs);
     freemem(p,fs);
   end;
+  {$ifdef usebatch}
+  if exist('tmp.bat') then era('tmp.bat');
+  {$endif}
 end;
 
 {$ENDIF }
@@ -486,6 +500,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/05/05 00:10:49  oh
+  -PGP-Aufrufe ueber Batch-Datei
+
   Revision 1.13  2000/05/04 15:24:47  oh
   -Parameter-Stringbegrenzung aufgehoben
 
