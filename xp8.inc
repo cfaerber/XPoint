@@ -44,7 +44,7 @@ begin
 end;
 
 
-function fileechomarkfunc(var s:string; block:boolean):boolean;
+function fileechomarkfunc(const s:string; block:boolean):boolean;
 begin
   if trim(s)='' then begin
     if not block then errsound;
@@ -347,6 +347,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2001/09/20 18:29:52  cl
+  - changed var to const for TLister.OnMarkTest
+
   Revision 1.19  2001/09/08 16:29:36  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -55,11 +55,11 @@ function  IsServer(box:string; var fstype:byte):boolean;
 procedure FS_ReadList(msg:boolean);
 procedure FS_command(comm:string; request:byte);
 
-function testmark(var s:string; block:boolean):boolean;
-function BrettMark(var s:string; block:boolean):boolean;
+function testmark(const s:string; block:boolean):boolean;
+function BrettMark(const s:string; block:boolean):boolean;
 function MapsListcolor(var s:string; line:longint):byte;
 function UUsendTestSourcefile(var s:string):boolean;
-function fileechomarkfunc(var s:string; block:boolean):boolean;
+function fileechomarkfunc(const s:string; block:boolean):boolean;
 function fileechocolfunc(var s:string; line:longint):byte;
 
 
@@ -1219,7 +1219,7 @@ begin
 end;
 
 
-function BrettMark(var s:string; block:boolean):boolean;
+function BrettMark(const s:string; block:boolean):boolean;
 begin
   BrettMark:=false;
   if (trim(s)='') or
@@ -2102,6 +2102,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2001/09/20 18:29:52  cl
+  - changed var to const for TLister.OnMarkTest
+
   Revision 1.60  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

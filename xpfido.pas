@@ -112,7 +112,7 @@ procedure ShrinkNodelist(indizieren:boolean);
 
 function  ReqTestNode(var s:string):boolean;
 procedure FileSelProc(var cr:customrec);
-function  fstestmark(var s:string; block:boolean):boolean;
+function  fstestmark(const s:string; block:boolean):boolean;
 procedure NodeSelProc(var cr:customrec);
 
 
@@ -1438,7 +1438,7 @@ begin
 end;
 
 
-function fstestmark(var s:string; block:boolean):boolean;
+function fstestmark(const s:string; block:boolean):boolean;
 begin
   if (LeftStr(s,2)>'  ') and ((s<#176) or (s>#223)) then
     fstestmark:=true
@@ -2262,6 +2262,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2001/09/20 18:29:52  cl
+  - changed var to const for TLister.OnMarkTest
+
   Revision 1.60  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

@@ -233,7 +233,7 @@ end;
 
 var fstyp : byte;   { 0=SendZMsg, 1=iMLS }
 
-function testmark(var s:string; block:boolean):boolean;
+function testmark(const s:string; block:boolean):boolean;
 begin
   if (s<>'') and
      (((fstyp=0) and (FirstChar(s)<>'%') and (copy(s,2,1)=' ')) or
@@ -560,6 +560,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2001/09/20 18:29:52  cl
+  - changed var to const for TLister.OnMarkTest
+
   Revision 1.27  2001/09/08 16:29:36  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
