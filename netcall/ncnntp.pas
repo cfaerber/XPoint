@@ -38,6 +38,14 @@ uses
 type
   ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
 
+const
+  // returnErrors of GetMessage
+  nntpMsg_noGroupSelected   = 412;
+  nntpMsg_noArticleSelected = 420;
+  nntpMsg_wrongArticleNr    = 423;
+  nntpMsg_nosuchArticle     = 430;
+
+
 type
   TNNTP = class(TSocketNetcall)
 
@@ -46,6 +54,10 @@ type
     FServer             : string;               { Server-Software }
     FUser, FPassword    : string;               { Identifikation }
 
+    GroupName: String;
+    EstimateNr,
+    FirstNr,
+    LastNr: Integer;
   public
 
     constructor Create;
@@ -68,6 +80,15 @@ type
 
     { Liste holen (withDescr = Description, wenn moeglich }
     function List(aList: TStringList; withDescr: boolean): boolean;
+
+    { aktuelle Gruppe ausw„hlen }
+    procedure SelectGroup(const AGroupName: String); virtual;
+
+    { Message vom server holen }
+    function GetMessage(msgNr: Integer; Message: TStringList): Integer; virtual;
+
+    property FirstMessage: Integer read FirstNr;
+    property LastMessage: Integer read LastNr;
   end;
 
 implementation
@@ -91,6 +112,14 @@ resourcestring
   res_list2             = 'Kann nicht mit %s kommunizieren!';
   res_list3             = '%s gibt die Liste nicht frei!';
   res_list4             = '%d gelesen';
+
+  res_group1            = 'setze Gruppe %s';
+  res_group2            = 'Gruppe %s gesetzt';
+  res_group3            = 'Gruppe %s nicht gefunden';
+
+  res_msg1            = 'hole Artikel %d';
+  res_msg2            = 'Artikel %d geholt';
+  res_msg3            = 'Fehler beim Holen von Artikel %d';
 
 constructor TNNTP.Create;
 begin
@@ -283,9 +312,99 @@ begin
   end;
 end;
 
+procedure TNNTP.SelectGroup(const AGroupName: String);
+var
+  s: String;
+
+  // convert ResultString from NNTP-Server to a record
+  procedure GetGroupInfo(NNTPString: String);
+  var
+    WorkS: String;
+
+    function GetNextIntFromStr(Var IntChecker: String): Integer;
+    var
+      P: Integer;
+    begin
+      P := Pos(' ', IntChecker);
+      if P <> 0 then
+      begin
+        try
+          Result := StrToInt(Copy(IntChecker, 1, P-1));
+        except
+          Result := -1;
+        end;
+        IntChecker := Copy(IntChecker, P + 1, Length(WorkS) - P);
+      end else
+        Result := -1;
+    end;
+  begin
+    WorkS := NNTPString;
+    GetNextIntFromStr(WorkS); // ParseResultnumber -> /dev/null
+
+    EstimateNr := GetNextIntFromStr(WorkS);
+    FirstNr := GetNextIntFromStr(WorkS);
+    LastNr := GetNextIntFromStr(WorkS);
+    GroupName := WorkS;
+  end;
+
+begin
+  if Connected then
+  begin
+    // select one newsgroup
+    WriteIPC(mcInfo,res_group1, [AGroupName]);
+    SWriteln('GROUP '+ AGroupName);
+    SReadln(s);
+    if ParseResult(s) = 411 then
+    begin
+      WriteIPC(mcInfo,res_group3, [AGroupName]);
+      raise ENNTP.create(Format(res_group3, [AGroupName]));
+    end;
+    GroupName := AGroupName;
+    GetGroupInfo(s);
+    WriteIPC(mcInfo,res_group2, [AGroupName]);
+  end;
+end;
+
+
+function TNNTP.GetMessage(msgNr: Integer; Message: TStringList): Integer;
+var
+  Error: Integer;
+  s: String;
+begin
+  Result := -1;
+  if Connected then
+  begin
+    // select one newsgroup
+    WriteIPC(mcInfo,res_msg1, [msgNr]);
+    SWriteln('ARTICLE '+ IntToStr(msgNr));
+    SReadln(s);
+    Error := ParseResult(s);
+    if Error > 400 then
+    begin
+      WriteIPC(mcInfo,res_msg3, [msgNr]);
+      Result := Error;
+      exit;
+    end;
+
+    SReadln(s);
+    repeat
+      Message.Add(s);
+      SReadln(s);
+    until s = '.';
+
+    Result := 0;
+    WriteIPC(mcInfo,res_msg2, [msgNr]);
+  end;
+end;
+
+
+
 end.
 {
   $Log$
+  Revision 1.11  2000/08/15 19:41:22  ml
+  - Messies holen implementiert
+
   Revision 1.10  2000/08/15 14:55:37  ml
   - vergessene Flag-abfrage nachgebessert
 
