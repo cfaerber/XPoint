@@ -43,6 +43,7 @@ uses
 
 procedure SysDelay(MS: Longint);
 procedure SysBeep(Freq, Dur: Integer);
+function GetTimeZone: String;
 
 implementation
 
@@ -54,6 +55,9 @@ implementation
 
 {
         $Log$
+        Revision 1.6.2.2  2003/08/26 04:51:02  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.6.2.1  2003/01/01 16:18:37  mk
         - changes to made FreeBSD version compilable
 

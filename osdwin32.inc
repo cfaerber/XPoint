@@ -42,8 +42,35 @@ begin
   Windows.Beep(Freq, Dur);
 end;
 
+function GetTimeZone: String;
+var
+  TZ : TTimeZoneInformation;
+
+  function HourToStr(Minutes: Integer): String;
+  begin
+    if Minutes <= 0 then
+      Result := '+' + IntToStr(-Minutes div 60)
+    else
+      Result := IntToStr(-Minutes div 60);
+  end;
+
+begin
+  case GetTimeZoneInformation(TZ) of
+    TIME_ZONE_ID_UNKNOWN :
+      Result := 'W' + HourToStr(TZ.Bias div 60);
+    TIME_ZONE_ID_STANDARD:
+      Result := 'W' + HourToStr(TZ.Bias + TZ.StandardBias);
+    TIME_ZONE_ID_DAYLIGHT:
+      Result := 'S' + HourToStr(TZ.Bias + TZ.DaylightBias);
+  end;
+end;
+
+
 {
         $Log$
+        Revision 1.3.2.1  2003/08/26 04:51:02  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.3  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 

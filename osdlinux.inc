@@ -43,8 +43,62 @@ procedure SysBeep(Freq, Dur: Integer);
 begin
 end;
 
+{ Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
+  Diese wird hier verwendet. Es sollte auch klappen, dass ein Zeitzonen-
+  wechsel ohne manuelle Konfiguration beruecksichtigt wird. }
+function GetTimeZone: String;
+var
+  tzBase, tzMinutes, tzHours: LongInt;
+  isNegative: boolean;
+  s: string[7];
+  {$IFDEF Kylix }
+  tzseconds: LongInt;
+  tzdaylight: Boolean;
+  {$ENDIF}
+begin
+  {$IFDEF Kylix }
+  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
+  tzseconds := 0;
+  tzdaylight := False;
+  {$ENDIF}
+  { Abweichung in positiven Minuten darstellen }
+  if (tzseconds < 0) then begin
+    isNegative:= true;
+    tzBase:= tzseconds div -60;
+  end else begin
+    isNegative:= false;
+    tzBase:= tzseconds div 60;
+  end;
+  { Minuten sind der Rest von Stunden }
+  tzMinutes:= tzBase mod 60;
+  { Stunde hat 60 Minuten }
+  tzHours:= tzBase div 60;
+
+  if (tzdaylight) then
+    s:= 'S'
+  else
+    s:= 'W';
+  { Negativ-Abweichung zu UTC? }
+  if (isNegative) then
+    s:= s + '-'
+  else
+    s:= s + '+';
+  s:= s + IntToStr(tzHours);
+  { Minuten? }
+  if (tzMinutes <> 0) then begin
+    s:= s + ':';
+    if (tzMinutes < 10) then            { Kenne zwar keine solche Zone, aber wer weiss }
+      s:= s + '0';
+    s:= s + IntToStr(tzMinutes);
+  end;
+  GetTimeZone:= s;
+end;
+
 {
         $Log$
+        Revision 1.4.2.1  2003/08/26 04:51:02  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.4  2001/12/09 15:57:36  ml
         - os-dependend beep not yet implemented in linux
 

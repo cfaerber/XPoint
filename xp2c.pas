@@ -365,14 +365,18 @@ begin
   maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   			{ 'Erstellungszeit 00:00' }
 
 {$IFNDEF Unix }
+{$IFNDEF Win32 }
   mset1func(SetTimezone);
+{$ENDIF }
 {$ENDIF }
   maddbool(3,10 + j,getres2(252,16),rehochn); mhnr(246);        { 'Re^n verwenden' }
 {$IFNDEF Unix}
+{$IFNDEF Win32 }
   maddstring(36,8 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
+{$ENDIF }
 {$ENDIF }
   maddbool(3,12 + j,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /¯Unversandt' }
   maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
@@ -1550,6 +1554,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.8  2003/08/26 04:51:02  mk
+  - added automatic TimeZone dectection for Win32
+
   Revision 1.127.2.7  2003/08/25 06:43:51  mk
   - added OS/2 support
 

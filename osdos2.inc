@@ -40,8 +40,15 @@ procedure SysBeep(Freq, Dur: Integer);
 begin 
 end;
 
+function GetTimeZone: String;
+begin
+  Result := '';
+end;
 {
         $Log$
+        Revision 1.2.2.1  2003/08/26 04:51:02  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.2  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 
