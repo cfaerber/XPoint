@@ -23,6 +23,10 @@
 
 { OpenXP fido netcall BinkP protocol implementation include file }
 
+{$IFDEF VP}
+const fsFromEnd= 2; fsFromCurrent= 1;
+{$ENDIF}
+
 type
   tFrameType= (M_NUL,M_ADR,M_PWD,M_FILE,M_OK,M_EOB,M_GOT,M_ERR,M_BSY,M_GET,M_SKIP,M_DATA);
   tBinkpFrame= class
@@ -413,6 +417,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/02/12 23:43:25  ma
+  - some fixes
+
   Revision 1.2  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors

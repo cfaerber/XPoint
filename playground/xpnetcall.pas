@@ -270,7 +270,11 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,0,hds,hdp,ok,false,true);    { MUSS ok sein! }
+    makeheader(zconnect,f,0,0,hds,hdp,ok,false,true);
+    if not ok then begin
+      tfehler(puffer+' corrupted!',esec);
+      close(f); exit;
+      end;
     if hdp.empfanz=1 then
       ClrUVS
     else for i:=1 to hdp.empfanz do begin
@@ -891,6 +895,7 @@ begin                  { function Netcall }
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
           GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
           end; {case ltPOP3}
 
         else
@@ -1118,6 +1123,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/02/12 23:43:25  ma
+  - some fixes
+
   Revision 1.9  2001/02/11 19:18:14  ma
   - added POP3/SMTP code (untested)
 

@@ -94,7 +94,7 @@ var
   List          : TStringList;
   aFile         : string;
 begin
-  ZtoRFC(bp,PPFile,RFCFile);
+  ZtoRFC(bp,PPFile,RFCFile); fehler('Konvertiert...');
   { IPC erstellen }
   IPC:= TXPIPC.Create;
   { Host und ... }
@@ -120,6 +120,7 @@ begin
   IPC.X:= x+15; IPC.Y:= y+4; IPC.MaxLength:= 50;
   { Verbinden }
   try
+    result:= true;
     List := TStringList.Create;
     SMTP.Connect;
     { Name und IP anzeigen }
@@ -129,10 +130,10 @@ begin
 
 //** send mails
 
-    SMTP.DisConnect;
+    SMTP.Disconnect;
   except
     trfehler(831,31);
-    result:= true;
+    result:= false;
   end;
   List.Free;
   SMTP.Free;
@@ -147,20 +148,23 @@ end;
 
 function GetPOP3Mails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
 
+const RFCFile= 'POP3TEMP';
+
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
   var iFile: Integer; uu: TUUZ;
   begin
     uu := TUUZ.Create;
     for iFile:=0 to IncomingFiles.Count-1 do begin
       uu.source := IncomingFiles[iFile];
-      uu.dest := 'POP3IBUF';
+      uu.dest := RFCFile;
       uu.OwnSite := boxpar^.pointname+domain;
       uu.ClearSourceFiles := true;
       uu.utoz;
       end;
     uu.free;
+    iFile:=IncomingFiles.Count;
     IncomingFiles.Clear;
-    IncomingFiles.Add('POP3IBUF');
+    if iFile>0 then IncomingFiles.Add(RFCFile);
   end;
 
 var
@@ -197,6 +201,7 @@ begin
   IPC.X:= x+15; IPC.Y:= y+4; IPC.MaxLength:= 50;
   { Verbinden }
   try
+    result:= true;
     List := TStringList.Create;
     POP.Connect;
     { Name und IP anzeigen }
@@ -217,10 +222,10 @@ begin
       IncomingFiles.Add(aFile);
     end;
 
-    POP.DisConnect;
+    POP.Disconnect;
   except
     trfehler(831,31);
-    result:= true;
+    result:= false;
   end;
   List.Free;
   POP.Free;
@@ -231,6 +236,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2  2001/02/12 23:43:25  ma
+  - some fixes
+
   Revision 1.1  2001/02/11 19:18:14  ma
   - added POP3/SMTP code (untested)
 

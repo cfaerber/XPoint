@@ -366,10 +366,10 @@ begin
                           result:=False;
                           if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
-                            if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             WriteIPC(mcInfo,'%s',[ModemAnswer]);
                             SleepTime(200);
-                            if (pos('CONNECT',UpperCase(ModemAnswer))>0) or (Pos('CARRIER',UpperCase(ModemAnswer))>0) then begin
+                            if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
+                            if LeftStr(ModemAnswer,7)='CONNECT' then begin
                               {Connect!}
                               TXPMessageWindow(IPC).Timer.Start;
                               StateDialup:=SDConnect; result:=True;
@@ -445,6 +445,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/02/12 23:43:25  ma
+  - some fixes
+
   Revision 1.11  2001/02/11 16:30:35  ma
   - added sysop call
   - some changes with class constructors

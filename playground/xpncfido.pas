@@ -52,7 +52,7 @@ uses
 
 type
   TAKABoxes= record
-               BoxBareFilename: TStringList;
+               BoxName: TStringList;
                PPFile: TStringList;  // needed for unsend handling
                ReqFile: TStringList; // needed for request result processing
              end;
@@ -153,14 +153,14 @@ begin { ProcessAKABoxes }
           writeln(t,'Bretter=',BoxName,' ',tempboxpar^.magicbrett);
           if FileExists(bfile+BoxFileExt) then begin
             Debug.DebugLog('xpncfido','PP exists '+bfile+BoxFileExt,DLDebug);
-            AKABoxes.BoxBareFilename.Add(bfile);
+            AKABoxes.BoxName.Add(BoxName);
             AKABoxes.PPFile.Add(bfile+BoxFileExt);
             alias:=(dbReadInt(d,'script') and 4<>0);
             ownfidoadr:=GetFidoPointAdr(tempboxpar,alias);
             Convert(tempboxpar,bfile+BoxFileExt,upbuffer);
             end
           else begin
-            AKABoxes.BoxBareFilename.Add(bfile);
+            AKABoxes.BoxName.Add(BoxName);
             AKABoxes.PPFile.Add('');
             end;
           splitfido(boxname,fa,DefaultZone);
@@ -298,12 +298,6 @@ function FidoNetcall(boxname: string;
                      Logfile: String;
                      IncomingFiles: TStringList): shortint;
 
-type rfnodep     = ^reqfilenode;
-     reqfilenode = record
-                     fn   : string;
-                     next : rfnodep;
-                   end;
-
 var i        : integer;
     request  : string;
     ownaddr  : string;
@@ -311,7 +305,6 @@ var i        : integer;
     ni       : NodeInfo;
     CrashBox : FidoAdr;
     fileatts : integer;   { File-Attaches }
-    rflist   : rfnodep;
     OutgoingFiles: TStringList;
     Fidomailer: TFidomailer;
 
@@ -414,12 +407,6 @@ label fn_ende,fn_ende0;
   end;
 
   procedure ProcessRequestResult(fa:string);   { Requests zurÅckstellen }
-  var files,
-      nfiles : string;
-      fname  : string;
-      pw     : string;
-      fp     : rfnodep;
-      p      : byte;
 
     function match(wfn,fn:string):boolean;
     var
@@ -447,6 +434,13 @@ label fn_ende,fn_ende0;
       end;
     end;
 
+  var files,
+      nfiles : string;
+      fname  : string;
+      pw     : string;
+      p      : byte;
+      iFile  : integer;
+
   begin
     files:=''; GetReqFiles(fa,files);
     if files<>'' then
@@ -460,12 +454,9 @@ label fn_ende,fn_ende0;
           truncstr(fname,p-1);
           if cpos('.',fname)=0 then
             fname:='';                 { Magic Name -> l"schen }
-          fp:=rflist;
-          while (fname<>'') and (fp<>nil) do begin
-            if match(fname,fp^.fn) then
+          for iFile:=0 to IncomingFiles.Count-1 do
+            if match(fname,IncomingFiles[iFile]) then
               fname:='';
-            fp:=fp^.next;
-            end;
           if fname<>'' then begin
             nfiles:=nfiles+' '+fname;
             if pw<>'' then nfiles:=nfiles+'/'+pw;
@@ -602,7 +593,7 @@ begin { FidoNetcall }
 
   // Convert outgoing buffers
   OutgoingFiles:=TStringList.Create;
-  AKABoxes.BoxBareFilename:=TStringList.Create;
+  AKABoxes.BoxName:=TStringList.Create;
   AKABoxes.ReqFile:=TStringList.Create;
   AKABoxes.PPFile:=TStringList.Create;
   UpBufferFilename:=LeftStr(date,2)+LeftStr(typeform.time,2)+
@@ -618,7 +609,7 @@ begin { FidoNetcall }
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
     _era(UpBufferFilename);
-    OutgoingFiles.Destroy; AKABoxes.BoxBareFilename.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+    OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
     exit;
     end
   else _era(UpBufferFilename);
@@ -644,7 +635,7 @@ begin { FidoNetcall }
         trfehler1(2340,Fidomailer.ErrorMsg,30);
         Fidomailer.Destroy; // releases IPC
         _era(UpArcFilename);
-        OutgoingFiles.Destroy; AKABoxes.BoxBareFilename.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+        OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
         exit;
         end;
       Fidomailer.OutgoingFiles:=OutgoingFiles; Fidomailer.IncomingFiles:=IncomingFiles;
@@ -674,7 +665,7 @@ begin { FidoNetcall }
     outmsgs:=0;
     for i:=0 to AKABoxes.PPFile.Count-1 do
       if AKABoxes.PPFile[i]<>'' then begin
-        ClearUnversandt(AKABoxes.PPFile[i],AKABoxes.BoxBareFilename[i]);
+        ClearUnversandt(AKABoxes.PPFile[i],AKABoxes.BoxName[i]);
         _era(AKABoxes.PPFile[i]);
         end;
     closebox;
@@ -682,17 +673,15 @@ begin { FidoNetcall }
 
   ProcessIncomingFiles(IncomingFiles,XFerDir,xp0.Filepath,boxpar^.downarcer,boxpar);
 
-//**  WriteFidoNetcallLog(fidologfile,iifs(crash,DefFidoBox,Boxpar^.boxname),crash);
-//**  if true {!! (result=EL_ok) or (result=EL_recerr)} then begin
+//**  if result IN [el_ok,el_recerr] then begin
   if false then begin
-    window(1,1,screenwidth,screenlines);
     if AutoDiff then
       if DoDiffs(FilePath+'*.*',true)=0 then;
     if AutoTIC then
       TestTICfiles(Logfile);
     end;
 
-  OutgoingFiles.Destroy; AKABoxes.BoxBareFilename.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+  OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
 end;
 
 
@@ -907,6 +896,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/02/12 23:43:25  ma
+  - some fixes
+
   Revision 1.13  2001/02/11 16:30:35  ma
   - added sysop call
   - some changes with class constructors
