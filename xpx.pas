@@ -296,8 +296,7 @@ begin
     OvrInit('xp.ovr'); 
 
     {Lightweight-Readpar}
-    noovrbuf:=false;
-    xmsovrbuf:=true; 
+    noovrbuf:=false; 
     for i:=1 to paramcount do begin     
       if ((paramstr(i)='/?') and (not noovrbuf)) then noovrbuf:=true;
       if ((ustr(left(paramstr(i),4))='/AV:') and (not noovrbuf)) then noovrbuf:=true;
@@ -309,11 +308,17 @@ begin
     if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then begin
       OvrInitEMS;
       xmsovrbuf:=false;
+      emsovrbuf:=true;
     end 
-    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>(Size_OVR+700))) then
-      OvrInitXMS
-    else xmsovrbuf:=false;  
-   
+    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>(Size_OVR+700))) then begin
+      OvrInitXMS;
+      xmsovrbuf:=true;
+      emsovrbuf:=false;
+    end
+    else begin
+      xmsovrbuf:=false;
+      emsovrbuf:=false;  
+    end;
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
@@ -337,6 +342,15 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.26  2003/04/13 16:06:39  mw
+  MW: - Neue Variable emsovrbuf zeigt true, wenn das Overlay im EMS steckt
+
+      - Speicherstatistik zeigt jetzt neuen Punkt Overlay an, der anzeigt
+        wo das Overlay residiert.
+
+      Wichtiger Hinweis: Bei Problemen mit XP immer einen kompletten Auszug
+                         aus X/S/S mitsenden.
+
   Revision 1.18.2.25  2003/04/13 15:07:11  mw
   MW: - Neue Funktion Size_OVR in Fileio
 

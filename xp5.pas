@@ -442,7 +442,7 @@ var regs : registers;
     free : longint;
 begin
   win:=(WinVersion>0);
-  msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
+  msgbox(70,iif(win,15,14),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
   wrt(x+22,y+2,'DOS-RAM      EMS         XMS        '+
@@ -490,7 +490,15 @@ begin
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
   WriteVer(os2,win,lnx,x+22,y+9);
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,iif(
-    (WinVersion=4)and(Lo(WinNTVersion)=0),11,10),9),getres2(rnr,9)+'...');
+    (WinVersion=4)and(Lo(WinNTVersion)=0),13,12),9),getres2(rnr,9)+'...');
+  attrtxt(col.colmboxhigh);
+  wrt(x+4,y+iif(win,12,11),'Overlay');
+  attrtxt(col.colmbox);
+  gotoxy(x+23,y+12);
+  if ((xmsovrbuf=true) and (emsovrbuf=false)) then write('XMS');
+  if ((xmsovrbuf=false) and (emsovrbuf=true)) then write('EMS');
+  if ((xmsovrbuf=false) and (emsovrbuf=false)) then write('Disk');
+  if ((xmsovrbuf=true) and (emsovrbuf=true)) then write('ERROR');
   mon;
   freeres;
   wait(curon);
@@ -1062,6 +1070,15 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.19  2003/04/13 16:06:39  mw
+  MW: - Neue Variable emsovrbuf zeigt true, wenn das Overlay im EMS steckt
+
+      - Speicherstatistik zeigt jetzt neuen Punkt Overlay an, der anzeigt
+        wo das Overlay residiert.
+
+      Wichtiger Hinweis: Bei Problemen mit XP immer einen kompletten Auszug
+                         aus X/S/S mitsenden.
+
   Revision 1.27.2.18  2003/01/19 08:29:09  mw
   MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
         Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!

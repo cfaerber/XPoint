@@ -1229,6 +1229,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
       noovrbuf : boolean;
       xmsovrbuf : boolean;
+      emsovrbuf : boolean;
 
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
@@ -1249,6 +1250,15 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.63  2003/04/13 16:06:39  mw
+  MW: - Neue Variable emsovrbuf zeigt true, wenn das Overlay im EMS steckt
+
+      - Speicherstatistik zeigt jetzt neuen Punkt Overlay an, der anzeigt
+        wo das Overlay residiert.
+
+      Wichtiger Hinweis: Bei Problemen mit XP immer einen kompletten Auszug
+                         aus X/S/S mitsenden.
+
   Revision 1.54.2.62  2003/03/17 22:55:17  my
   MY:- Variablen fÅr Nodelist-Browser deklariert (um den Browser bzw.
        bestimmte Funktionen deaktivieren zu kînnen).
