@@ -17,7 +17,7 @@ unit xp3o2;
 
 interface
 
-uses typeform,datadef,database,resource,xp0,xp6;
+uses typeform,datadef,database,resource,xp0,xp6, xp4;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -439,6 +439,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4.2.3  2001/07/11 21:09:30  mk
+  - am_replyto bei N/W/K/D loeschen
+
   Revision 1.4.2.2  2001/07/11 20:35:31  mk
   JG:- ungelesen-fix, Unread flag of /Netcall ("/Netzanruf")
     message area should now always be set correctly => "Update date

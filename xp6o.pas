@@ -890,7 +890,7 @@ again:
                      end;
                    end   { if SelWeiter }
                  else begin
-                   empf:=''; ebrett:=''; am_reply := '';
+                   empf:=''; ebrett:=''; am_replyto := '';
                    if typ=3 then ReplyText(betr,rehochn);
                    ReadDirect('Nachricht weiterleiten',empf,betr,pollbox,true,brk);
                    if brk then goto ende
