@@ -304,8 +304,11 @@ begin
                 int multiplex                  { DX:AX }
                 pop di                         { Clipboardstatus }
 
-                cmp al,0                       { Abbruch bei }
-                je @nope                       { leerem Testclipboard }
+                cmp ax,$0100                   { Abbruch bei }
+                ja @nope                       { leerem Testclipboard }
+                jne @lower
+                dec ax
+  @lower:       cmp al,0
                 or dl,ah
                 cmp dx,0                       { oder mehr als 256 Zeichen }
                 jne @nope
@@ -316,9 +319,11 @@ begin
                 push bx                        { Clipboardstatus sichern }
                 push di
 
+                push word ptr es:[bx+256]      { Bytes nach String retten }
                 mov ax,1705h                   { Text aus Clipboard anhÑngen }
                 mov dx,cf_Oemtext
                 int multiplex
+                pop word ptr es:[bx+256]
 
                 pop di
                 pop si                         { SI=Textstart }
@@ -329,11 +334,11 @@ begin
                 mov bx,-1
   @@1:          inc bx
                 dec cx
-                je @nope
-                cmp byte ptr es:[si+bx],0      { Ab Textende rÅckwÑrts }
-                jne @@1                        { FÅll-Nullen und Steuerzeichen lîschen }
+                je @@1c
+                cmp byte ptr es:[si+bx],0      { vom Textanfang aus }
+                jne @@1                        { erste Null suchen }
 
-                cmp oneline,0
+  @@1c:         cmp oneline,0
                 je @@1b
   @@1a:         cmp byte ptr es:[si+bx-1],' '
                 jnbe @@1b
@@ -377,9 +382,7 @@ begin
                 call far ptr delay
                 call far ptr nosound
 
-  @bye:         cmp di,0                       { Wenn Clipboard nicht auf war }
-                je @jup
-                mov ax,1708h                   { wieder schliessen }
+  @bye:         mov ax,1708h                   { Clipboard immer schliessen }
                 int multiplex
   @jup:
   end;
@@ -680,6 +683,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.24  2002/08/02 23:06:18  my
+  JG:- Fix: Das einzeilige EinfÅgen des Clipboard-Inhalts in Eingabefelder
+       funktionierte bei Strings mit mehr als 223 Zeichen nicht und wurde
+       mit einem Tonsignal quittiert. Max. EinfÅgelÑnge ist jetzt identisch
+       mit max. StringlÑnge (255 Zeichen).
+
+  JG:- Fix: Nach dem einzeiligen EinfÅgen des Clipboard-Inhalts in Eingabe-
+       felder konnte es vorkommen, da· das Clipboard danach fÅr Windows
+       blockiert war. Clipboard wird jetzt auch hier immer geschlossen
+       (bisher passierte das nur, wenn XP der Meinung war, es auch geîffnet
+       zu haben).
+
   Revision 1.19.2.23  2002/05/30 20:34:04  my
   JG:- Beim einzeiligen EinfÅgen des Clipboard-Inhalts (z.B. in Eingabe-
        felder) werden jetzt alle Steuerzeichen entfernt statt in
