@@ -27,7 +27,7 @@ unit debug;
 
 interface
 
-uses xpglobal,sysutils;
+uses xpglobal,sysutils,classes;
 
 const         {Loglevels proposed are}
   DLNone = 0;
@@ -39,6 +39,9 @@ const         {Loglevels proposed are}
 
   DLDefault: Integer = {$IFDEF Debug} DLDebug {$ELSE} DLWarning {$ENDIF};
 
+  { Maximum number of messages to keep in LastLogMessages list }
+  qLastLogMessages: Integer= 200;
+
   {Messages will be logged only if environment variable DEBUG exists
    pointing to a file. If file starts with *, the logfile will be
    overwritten each time.}
@@ -46,6 +49,10 @@ const         {Loglevels proposed are}
   {If compiler directive DEBUG is set, logging will be set to on by
    default, using file "debuglog.txt" and level 3 if not overridden
    by explicit setting.}
+
+var
+  LastLogMessages: TStringList;
+  { Here the last qLastLogMessages debug logs are stored }
 
 procedure DebugLog(Badge, Message: string; Level: Integer);
 {Write a debug message to logfile if level is less or equal badge level.
@@ -87,67 +94,75 @@ uses
   TypeForm;
 
 const
-  qLogbadges = 50;
   Logging: Boolean = False;
 
 var
-  Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer end;
+  Logbadges: TStringlist; { String is badge, int(pointer) is level }
   Logfile: Text; Logfilename: string;
   LogCount:integer;LogLast: string;
 
 function FindBadge(Badge: string): Integer;
 var
-  I: Integer;
+  I,L: Integer;
   Temp: LongInt;
   S: string;
 begin
-  I := 0; Badge := UpperCase(Badge);
-  repeat Inc(I)until (Logbadges[I].Badge = '') or
-                     ((Logbadges[I].Badge = Badge) or (I = qLogbadges));
-  if (Logbadges[I].Badge = '') and (I <= qLogbadges) then {Open new entry}
+  Badge := UpperCase(Badge);
+  if not LogBadges.Find(Badge, I) then {Open new entry}
   begin
-    Logbadges[I].Badge := Badge; S := GetEnv(PChar(Badge));
+    I := Logbadges.Add(Badge);
+    S := GetEnv(PChar(Badge));
     if S = '' then S := GetEnv('DEFAULT');
     if S = '' then Str(DLDefault,S);
-    Val(S, Logbadges[I].Level, Temp);
+    L := StrToIntDef(S, 0);
+    Logbadges.Objects[I] := Pointer(L);
     // NB: This must be after we set the data, so a recursive call will find it
-    DebugLog('debug',Format('debug level for %s is %d',[LogBadges[i].Badge,LogBadges[i].Level]),DLNone);
+    DebugLog('debug',Format('debug level for %s is %d',[Badge,L]),DLNone);
     FindBadge := I
   end
   else
-    if Logbadges[I].Badge = Badge then
-    FindBadge := I
-  else
-    FindBadge := 0;
+    FindBadge := I;
 end;
 
 procedure DebugLog(Badge, Message: string; Level: Integer);
 var
   c: Integer;
+  WriteToLog: Boolean;
+  S: String;
 begin
-  if not Logging then Exit;
-
   C := FindBadge(Badge);
-  if (C <> 0) and (Logbadges[C].Level >= Level) then
+  if C >= 0 then
   begin
-    if LogLast=Badge+#0+Message then
-      LogCount:=LogCount+1
-    else
+    WriteToLog := Integer(Logbadges.Objects[C]) >= Level;
+    if WriteToLog and (LogLast=Badge+#0+Message) then begin
+      LogCount:=LogCount+1;
+      WriteToLog := false;
+    end;
+
+    if (LogCount>0) and WriteToLog then
     begin
-      if LogCount>0 then
-      begin
-        WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' --------> last message repeated ',LogCount,' times');
-        LogCount:=0;
-      end;
+      S := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+           ' --------> last message repeated ' + IntToStr(LogCount) + ' times';
+      if Logging then
+        WriteLn(Logfile, S);
+      LogCount:=0;
+    end;
+
+    if WriteToLog then
       LogLast:=Badge+#0+Message;
+    S := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ' ' + Badge + ': ' + Message;
 
+    LastLogMessages.Add(S);
+    if LastLogMessages.Count > qLastLogMessages then
+      LastLogMessages.Delete(0);
 
-      WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' ', Badge, ': ',
-        Message);
+    if WriteToLog and Logging then
+    begin
+      WriteLn(Logfile, S);
       Flush(Logfile);
     end;
-    If IOResult <> 0 then;; (* clear io error *)
   end;
+  If IOResult <> 0 then;; (* clear io error *)
 end;
 
 procedure DebugLogException(e:Exception);
@@ -162,7 +177,7 @@ begin
     message:=Mid(e.message,i+1);
   end else
   begin
-    badge:='';
+    badge:='fatal';
     message:=e.message;
   end;
 
@@ -174,7 +189,7 @@ var
   C: Integer;
 begin
   C := FindBadge(Badge);
-  if C <> 0 then Logbadges[C].Level := Level;
+  if C >= 0 then Logbadges.Objects[C] := Pointer(Level);
   if UpperCase(Badge)='DEFAULT' then DLDefault := Level;
 end;
 
@@ -224,12 +239,16 @@ begin
 end;
 
 procedure CloseLogfile;
+var S: String;
 begin
   if not Logging then exit;
 
   if LogCount>0 then
   begin
-    WriteLn(Logfile, FormatDateTime('yyyy-mm-dd hh:nn:ss', Now), ' --------> last message repeated ',LogCount,' times');
+    S := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) +
+         ' --------> last message repeated ' + IntToStr(LogCount) + ' times';
+    LastLogMessages.Add(S);
+    WriteLn(Logfile, S);
     LogLast:='';
     LogCount:=0;
   end;
@@ -247,16 +266,25 @@ begin
 end;
 
 initialization
-  LogCount:=0;LogLast:='';
+  LogCount:=0; LogLast:='';
+  Logbadges := TStringlist.Create; Logbadges.Sorted := True;
+  LastLogMessages := TStringlist.Create;
   OpenLogfile(False, GetEnv('DEBUG'));
   FindBadge('DEFAULT');
 
 finalization
   CloseLogfile;
+  Logbadges.Destroy;
+  LastLogMessages.Destroy;
 
 
 {
   $Log$
+  Revision 1.25  2001/10/28 00:02:05  ma
+  - using stringlists for badge storing
+  - keeping track of last debug messages in every case
+    (see LastLogMessages stringlist)
+
   Revision 1.24  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling
@@ -269,82 +297,7 @@ finalization
 
   Revision 1.22  2001/09/13 13:28:18  ma
   - showing seconds in logs again
-
-  Revision 1.21  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.20  2001/09/08 16:29:28  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.19  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
-
-  Revision 1.18  2001/08/04 20:19:13  mk
-  - added some dos compatibility functions
-
-  Revision 1.17  2001/07/28 12:54:16  mk
-  - use SysUtils Date/Time routines
-
-  Revision 1.16  2001/05/02 23:36:58  ma
-  - fixed file wandering one more time ;-)
-
-  Revision 1.15  2001/04/22 11:30:42  ma
-  - fixed file name case
-  - changed "last msg occurred" to "last msg repeated" (unix syslog style)
-
-  Revision 1.14  2001/03/20 14:35:51  cl
-  - repeated identical messages are only printed once w/ count
-  - changed code to prevent logfile wandering to a cleaner solution
-
-  Revision 1.13  2001/03/20 12:15:38  ma
-  - implemented debug badge DEFAULT
-
-  Revision 1.12  2001/03/16 17:07:22  cl
-  - DebugLog now clears IOResult
-
-  Revision 1.11  2001/02/22 16:03:50  cl
-  - logfile always opened in same dir (no wandering if shell/TempCloseLog is called)
-
-  Revision 1.10  2001/01/04 22:01:31  ma
-  - re-enabled default logging if cond variable DEBUG is set
-  - logfile will be overwritten on program start, so no problems should occur.
-
-  Revision 1.9  2000/11/22 08:02:37  mk
-  - made compilable
-
-  Revision 1.8  2000/11/21 10:08:11  ma
-  - not logging by default in snapshots anymore
-
-  Revision 1.7  2000/11/19 22:34:27  mk
-  - fixed some compile bugs
-  - applyed source code formatting
-
-  Revision 1.6  2000/11/19 12:50:45  ma
-  - now aware of general DEBUG mode (IFDEF DEBUG...)
-  - debug files other than set by environment may be used
-
-  Revision 1.5  2000/11/08 17:38:45  hd
-  - Fix: fehlendes FindClose
-
-  Revision 1.4  2000/08/17 13:36:17  mk
-  - Anpassung fuer VP
-
-  Revision 1.3  2000/07/13 23:58:50  ma
-  - Kosmetik
-
-  Revision 1.2  2000/06/29 13:00:49  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.1  2000/06/19 20:15:34  ma
-  - wird erstmal nur fuer den neuen XP-FM benoetigt
-
 }
+
 end.
 
