@@ -128,11 +128,13 @@ const
   WildCard = '*';
   _MPMask  = '/';       { Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
   newline  = #10;
+  PathSepa = ':';
 {$ELSE }
   DirSepa  = '\';
   WildCard = '*.*';
   _MPMask  = ':\';      { Reihenfolge NICHT AENDERN!!!!! }
   newline  = #13#10;
+  PathSepa = ';';
 {$ENDIF }
 
 var
@@ -181,8 +183,13 @@ begin
 {$ENDIF }
 {$ENDIF }
 end.
+
 {
   $Log$
+  Revision 1.52  2001/01/06 16:16:26  ma
+  - added PathSepa
+  - shortened CVS logs
+
   Revision 1.51  2000/12/27 13:34:23  hd
   - Set Linux version to alpha state
   - Increased copyright (a little bit to early)
@@ -195,141 +202,4 @@ end.
 
   Revision 1.48  2000/11/18 18:38:21  hd
   - Grundstruktur des Loggings eingebaut
-
-  Revision 1.47  2000/11/16 14:46:10  hd
-  - Unit DOS entfernt
-
-  Revision 1.46  2000/11/15 23:00:44  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.45  2000/11/11 20:13:54  mk
-  - first delphi compilation support
-
-  Revision 1.44  2000/11/11 19:26:48  ml
-  - changed libdirs for rpm
-
-  Revision 1.43  2000/11/03 13:36:09  mv
-   * Made an error yesterday that only manifested under FreeBSD. Fixed.
-
-  Revision 1.42  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.41  2000/10/17 20:35:50  mk
-  - Int64=LongInt (urghl!) bei VirtualPascal hinzugefuegt
-
-  Revision 1.40  2000/10/10 21:58:57  mk
-  - LongWord fuer VirtualPascal hinzugefuegt
-
-  Revision 1.39  2000/10/09 22:14:45  ml
-  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
-
-  Revision 1.38  2000/10/07 17:46:02  mk
-  - Versionsnummer auf 3.70.3 geaendert
-
-  Revision 1.37  2000/07/23 22:01:23  mk
-  - Units unter die GPL gestellt
-
-  Revision 1.36  2000/07/22 13:26:20  mk
-  - variant-typ fuer vp
-
-  Revision 1.35  2000/07/20 17:10:10  mk
-  - Zeiger auf neue Array-Typen hinzugefuegt
-
-  Revision 1.33  2000/07/04 17:34:42  hd
-  - "Compiled at..." unter Linux entfernt
-
-  Revision 1.32  2000/06/29 13:01:02  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.31  2000/06/22 19:53:32  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.30  2000/06/22 14:58:02  mk
-  - Versionsnummer auf 3.70.1 angepasst
-
-  Revision 1.29  2000/06/22 14:45:51  mk
-  - Versionsnummer auf 3.30.1 geaendert
-
-  Revision 1.28  2000/05/22 16:30:22  hd
-  - _MPMask fuer den Ersatz bei multipos(':\',path)
-
-  Revision 1.27  2000/05/14 09:19:22  mk
-  - Debuginfos eingeschaltet und Beta 25 eingetragen
-
-  Revision 1.26  2000/05/13 09:31:35  mk
-  - Debugstringausgabe unter FPC
-
-  Revision 1.25  2000/05/09 13:14:32  hd
-  - DirSepa abhaengig von UnixFS, ebenso WildCard
-  - MaxLenFilename/-Pathname eingefuehrt (bitte DOS etc. anpassen)
-
-  Revision 1.24  2000/05/07 11:29:48  ml
-  Bug in typeform unter Linux keine '\' als Verzeichnistrennung...
-
-  Revision 1.23  2000/04/24 08:10:11  mk
-  - Versionsinfo auf 3.21.024 angepasst
-
-  Revision 1.22  2000/04/23 07:58:54  mk
-  - OS/2-Portierung
-
-  Revision 1.21  2000/04/13 12:48:40  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.20  2000/04/04 21:01:24  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.19  2000/03/24 20:25:50  rb
-  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
-
-  Revision 1.18  2000/03/24 15:41:02  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.17  2000/03/24 08:35:30  mk
-  - Compilerfaehigkeit unter FPC wieder hergestellt
-
-  Revision 1.16  2000/03/24 00:03:39  rb
-  erste Anpassungen fÅr die portierung mit VP
-
-  Revision 1.15  2000/03/22 18:18:44  mk
-  - Versionsinfo auf 3.21.23 geaendert
-
-  Revision 1.14  2000/03/17 11:16:35  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.13  2000/03/16 10:14:25  mk
-  - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen f¸r Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen ƒnderung wieder
-
-  Revision 1.12  2000/03/14 18:16:15  mk
-  - 16 Bit Integer unter FPC auf 32 Bit Integer umgestellt
-
-  Revision 1.11  2000/03/09 23:39:34  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.10  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.9  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.8  2000/03/04 11:53:20  mk
-  Version auf 3.21.022 beta geaendert und Debug eingeschaltet
-
-  Revision 1.7  2000/03/02 18:32:24  mk
-  - Code ein wenig aufgeraeumt
-
 }
