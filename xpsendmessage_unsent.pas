@@ -820,11 +820,7 @@ again:
             ExtChgtearline:=true;
             extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
           end;
-      7 : begin
-            // we extract our message as UTF8, this prevents data loss
-            extract_msg(xtractutf8,'',fn,false,1);     { Original weiterleiten }
-            hdp.charset := 'UTF-8';
-          end;                            
+      7 : extract_msg(xtractOriginal,'',fn,false,1);     { Original weiterleiten }
       2 : begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
@@ -1016,7 +1012,13 @@ again:
                  if ((typ in [1..3,7]) and (not pm)) and (am_replyto <> '') then
                    sData.followup.add(am_replyto);
                  if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
-                 if typ=7 then sData.orghdp:=hdp;
+                 if typ=7 then
+                   sData.orghdp:=hdp
+                 else
+                 begin
+                   sData.orghdp := THeader.Create;
+                   sData.orghdp.MIME := hdp.MIME;
+                 end;
                  if typ in [1,2,7] then
                    xpsendmessage.FileAttach:=(hdp.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -1367,6 +1369,10 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.12  2003/12/07 12:49:32  mk
+  - improved handling for Nachricht/Weiterleit/Original (preserve original
+    charset) and preserve multipart with Nachricht/Weiterleit/Kopie
+
   Revision 1.21.2.11  2003/12/06 16:45:42  mk
   - fixed Nachricht/Weiterleiten/Original:
     messages are created (and converted) now to UTF-8, regarless of there original

@@ -43,6 +43,7 @@ const xTractMsg   = 0;
       xTractModeMask = $FF;
 
       xTractUTF8  = $100;
+      xTractOriginal = $200;
 
       ExtCliptearline : boolean = true;
       ExtChgtearline  : boolean = false;
@@ -192,6 +193,7 @@ var size   : longint;
     str    : TStream;
     
     ExtUTF8     : boolean;
+    ExtOriginal: boolean;
 
     SourceToUTF8: TUTF8Encoder;
     UTF8ToDest:   TUTF8Decoder;    
@@ -741,6 +743,7 @@ begin // extract_msg;
 
  try
 
+  ExtOriginal := (art and xTractOriginal) <> 0;
   ExtUTF8 := (art and xTractUTF8)<>0;
   art := art and xTractModeMask;
   
@@ -789,7 +792,8 @@ begin // extract_msg;
       if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
         SourceToUTF8 := CreateUTF8Encoder(SourceCS);
       TemplateToUTF8 := CreateUTF8Encoder(csCP437);
-    end else begin
+    end else
+    begin
       if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
       begin
         if not (SourceCS in [csUTF8]) then
@@ -1103,12 +1107,15 @@ begin // extract_msg;
 
         str := TPascalFileStream.Create(f);
         try
-          case ExtUTF8 of
-            true: if not (SourceCS in [csUTF8,csASCII,csUNKNOWN]) then 
-              ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csUTF8));
-            false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
-              ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
-          end;
+          if ExtOriginal then
+             ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,SourceCS))
+          else
+            case ExtUTF8 of
+              true: if not (SourceCS in [csUTF8,csASCII,csUNKNOWN]) then
+                ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csUTF8));
+              false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then
+                ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
+            end;
           XreadS(hds+hdp.komlen,str);
         finally
           str.Free;
@@ -1228,6 +1235,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.95.2.3  2003/12/07 12:49:32  mk
+  - improved handling for Nachricht/Weiterleit/Original (preserve original
+    charset) and preserve multipart with Nachricht/Weiterleit/Kopie
+
   Revision 1.95.2.2  2003/04/03 15:55:12  mk
   - fixed header line in lister
 
