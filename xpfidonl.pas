@@ -171,7 +171,7 @@ end;
 function NLfilename(n:integer):string;
 var p : byte;
 begin
-  if (n<1) or (n>=NodeList.Count) then
+  if n>=NodeList.Count then
     NLfilename:=''
   else
     with PNodeListItem(Nodelist[n])^ do
@@ -738,6 +738,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/08/04 09:02:49  mk
+  - Bug in NLFilename nach Stringlistumestellung behoben
+
   Revision 1.16  2000/08/01 08:40:41  mk
   - einige String-Parameter auf const geaendert
 

@@ -1391,7 +1391,7 @@ var brk      : boolean;
   var fn : string;
       ft : longint;
   begin
-    fn:=FidoDir+NLfilename(n);
+    fn:=FidoDir+NLfilename(n-1);
     ft:=filetime(fn);
     editfile(fn,false,false,0,false);
     if filetime(fn)<>ft then reindex:=true;
@@ -1424,8 +1424,8 @@ var brk      : boolean;
                 1,brk) of
       1 : del_it;
       3 : begin
-            if exist(FidoDir+NLfilename(a+p)) then
-              _era(FidoDir+NLfilename(a+p));
+            if exist(FidoDir+NLfilename(a+p-1)) then
+              _era(FidoDir+NLfilename(a+p-1));
             del_it;
           end;
     end;
@@ -1450,7 +1450,7 @@ var brk      : boolean;
     wrt(x+3,y+3,getres2(2129,3));       { 'Bytes' }
     wrt(x+3,y+4,getres2(2129,4));       { 'Eintr„ge' }
     attrtxt(col.colmbox);
-    fn:=NLfilename(a+p);
+    fn:=NLfilename(a+p-1);
     wrt(x+14,y+2,fn);
     if not exist(FidoDir+fn) then
       wrt(x+14,y+3,' - fehlt -')
@@ -2022,6 +2022,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/08/04 09:06:25  mk
+  - Bug in NLFilename nach Stringlistumestellung behoben
+
   Revision 1.26  2000/08/03 21:30:14  mk
   - FPC Kompatiblitaetsfix
 
