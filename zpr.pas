@@ -481,9 +481,9 @@ procedure ReadHeader(adr:longint; var hdp:header; minstdh:byte; var ok:boolean);
 var bufanz,
     bufpos  : Integer;
     s       : string;
-    p,i     : byte;
+    p,i     : Integer;
     feld    : string[maxzchdlen];
-    stdh    : byte;
+    stdh    : Integer;
     totallen: longint;    { Zeilenl„nge komplett incl Zeilentrennung }
 
   procedure ReadBuf;
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/12/04 22:47:49  mk
+  - fixed range check error in ReadHeader
+
   Revision 1.43  2001/10/20 17:26:44  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
