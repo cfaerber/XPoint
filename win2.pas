@@ -21,12 +21,9 @@
   {$O+,F+}
 {$ENDIF }
 
-UNIT win2;
+unit win2;
 
-
-{  ==========================  Interface-Teil  ==========================  }
-
-INTERFACE
+interface
 
 uses
   xpglobal,
@@ -186,13 +183,7 @@ const
       maxs   = 5;
 type
 {$IFDEF Ver32 }
-  { OS/2 hat Probleme in der QSort-Routine, wenn AnsiStrings verwendet
-    werden. }
-  {$IFDEF OS2 }
-    fnst   = String;
-  {$ELSE }
-    fnst   = AnsiString;
-  {$ENDIF }
+  fnst   = HugeString;
 {$ELSE }
   fnst   = string[13];
 {$ENDIF }
@@ -254,25 +245,28 @@ var   fb     : pathstr;
   end;
 
   procedure qsort;
+
     procedure sort(l,r:integer);
     var i,j : integer;
         x,w : fnst;
     begin
       i:=l; j:=r;
-      x:=UStr(f^[(l+r) div 2]);
+      x := UStrHuge(f^[(l+r) div 2]);
       repeat
-        while UStr(f^[i])<x do inc(i);
-        while UStr(f^[j])>x do dec(j);
-        if i<=j then begin
+        while UStrHuge(f^[i]) < x do inc(i);
+        while UStrHuge(f^[j]) > x do dec(j);
+        if i<=j then
+        begin
           w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
           inc(i); dec(j);
-          end;
-      until i>j;
-      if l<j then sort(l,j);
-      if r>i then sort(i,r);
+        end;
+      until i > j;
+      if l < j then sort(l, j);
+      if r > i then sort(i, r);
     end;
+
   begin
-   sort(1,fn);
+    sort(1,fn);
   end;
 
   procedure clfswin;
@@ -1112,6 +1106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/01 08:48:27  mk
+  - fsbox jetzt endlich gefixt
+
   Revision 1.12  2000/04/30 21:00:00  mk
   - Fix in fsbox fuer AnsiString-Probeme in OS/2
 
