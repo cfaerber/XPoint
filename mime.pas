@@ -230,7 +230,7 @@ type
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
 
-function MimeCharsetCanonicalName(Name:string):string;
+function MimeCharsetCanonicalName(Const Name:string):string;
 
 function MimeCharsetToZC(const Name:string):string;
 function ZCCharsetToMIME(const Name:string):string;
@@ -1317,6 +1317,9 @@ end;
 
 //
 // $Log$
+// Revision 1.25  2003/01/07 00:22:28  cl
+// - made parameter const
+//
 // Revision 1.24  2002/12/14 07:31:28  dodi
 // - using new types
 //

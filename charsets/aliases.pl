@@ -35,8 +35,8 @@ $UserAgent->request($Request,sub {
     open STDOUT,">aliases.inc";
     print "(* \$Id$ *)\n";
     print "(* generated from IANA charset list -- do not edit *)\n\n";
-    print "function MimeCharsetCanonicalName(Name: String): String;\nbegin\n";
-    print "  Name:=UpperCase(Name);";
+    print "function MimeCharsetCanonicalName(Const Name: String): String;\nvar UName: String;\nbegin\n";
+    print "  UName:=UpperCase(Name);";
     $started=1;
   }
 
@@ -49,7 +49,7 @@ $UserAgent->request($Request,sub {
       printf STDERR $name.(($#alias>0)?(" (".($#alias)." aliases)\n"):"\n");
       print "\n";
       foreach (@alias) {
-        printf "  if name=%-63s else\n",
+        printf "  if UName=%-63s else\n",
           sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'";
       };
   
@@ -77,6 +77,9 @@ $UserAgent->request($Request,sub {
 } );
 
 # $Log$
+# Revision 1.5  2003/01/07 00:22:28  cl
+# - made parameter const
+#
 # Revision 1.4  2002/03/25 18:42:24  cl
 # - fixed detection of preferred MIME charsets
 #
