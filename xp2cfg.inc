@@ -345,7 +345,11 @@ begin
   maskcheckbuttons;
 
   randomize;
+{$IFDEF NCRT }
+  ScreenWidth:= ScreenCols;
+{$ELSE }
   screenwidth:=80;
+{$ENDIF }
   iomaus:=ParMaus;
   mausfx:=8;
   UseMulti2:=ParWintime<2;
@@ -1706,6 +1710,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2000/05/03 17:16:14  hd
+  - ScreenWidth angepasst
+
   Revision 1.44  2000/05/03 12:46:23  hd
   - timezone wurde beim Lesen moniert (Linux)
 
