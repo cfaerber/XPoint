@@ -69,7 +69,7 @@ function BlankposX(var s:string): integer;       { length(s)+1, falls bp=0      
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
-function CPosX(c:char; var s:string):integer;   { pos=0 -> pos:=length(s)+1    }
+function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
@@ -1055,7 +1055,7 @@ begin
 end;
 
 
-function CPosX(c:char; var s:string):integer;   { pos=0 -> pos:=length(s)+1 }
+function CPosX(c:char; const  s:string):integer;   { pos=0 -> pos:=length(s)+1 }
 var p : integer;
 begin
   p:=cpos(c,s);
@@ -1285,6 +1285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/11/18 21:17:37  mk
+  - changed in CPosX var to const parameter
+
   Revision 1.75  2000/11/16 12:35:47  mk
   - Unit Stringtools added
 
