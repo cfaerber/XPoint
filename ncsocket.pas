@@ -263,7 +263,7 @@ begin
   if Size > 0 then
   begin
 {$ENDIF }
-    // Validen Puffer an Startposition schieben und damit alte Daten aus Buffer entfernen 
+    // Validen Puffer an Startposition schieben und damit alte Daten aus Buffer entfernen
     if FInPos > 0 then
     begin
       FInCount := FInCount - FInPos;
@@ -276,7 +276,7 @@ begin
       if Size > (MaxSocketBuffer-FInCount) then
     {$ENDIF }
         Size := MaxSocketBuffer - FInCount;
-  
+
     Count := recv(FHandle, FInBuf[FInCount], Size, 0);
     if Count < 0 then
       RaiseSocketError
@@ -298,11 +298,11 @@ end;
 
 procedure TSocketNetcall.RaiseSocketError;
 begin
-{$IFDEF Win32}   
+{$IFDEF Win32}
   raise ESocketError.CreateFMT('WSASocketError %d', [WSAGetLastError]);
-{$ELSE}   
+{$ELSE}
   raise ESocketError.CreateFMT('SocketError %d', [SocketError]);
-{$ENDIF}   
+{$ENDIF}
 end;
 
 procedure TSocketNetcall.SWriteln(s: String);
@@ -315,21 +315,25 @@ procedure TSocketNetcall.SReadln(var s: String);
 var
   c: Char;
 begin
-  s := ''; 
+  s := '';
   repeat
-    while FInPos = FInCount do ReadBuffer;
+    while FInPos >= FInCount do ReadBuffer;
     c := FInBuf[FinPos]; Inc(FinPos);
     if c = #10 then
       break
     else
       if c <> #13 then
-	s := s + c;
-  until true;
+        s := s + c;
+  until false;
 end;
 
 end.
 {
   $Log$
+  Revision 1.8  2000/08/01 17:54:26  mk
+  - Oops, ein kleiner Bug weniger
+  - Lauft jetzt unter Linux und Win32
+
   Revision 1.7  2000/08/01 17:45:26  ml
   - Socketanpassungen fuer Linux
 
