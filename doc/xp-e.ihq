@@ -30,7 +30,7 @@ Starting Online Help:
 <<F1>>      Shows context sensitive help
 
 <<Tab>>     to go to next [cross-reference] and <<Shift-Tab>>@7000
-            to go to previous [cross-reference].
+        to go to previous [cross-reference].@7000
 
 <<Alt-F1>>  Shows the previous help page.
 
@@ -646,8 +646,8 @@ also use <Space> instead of PgDn.
 
         If the search was successful, you see a
         list of the found message(s) and can read
-        them. (Esc) in the message-list jumps back
-        to the Main-Lister, showing the message
+        them. <Esc> in the message-list jumps back
+        to the main viewer, showing the message
         where you started the search.
 
 <<Alt-V>>   like <<Alt-M>> but searching for text.
@@ -678,7 +678,7 @@ also use <Space> instead of PgDn.
         the Node (Box) from which the message comes.
 
   <<C>>     toggles coloured <<bold>> Text on/off.
-        (see [/Config/External/Lister]).@237
+        (see [/Config/External/Message_Reader]).@237
 
 With <<P>>, <<Ctrl-P>>, <<R>>, <<Ctrl-R>> and <<Ctrl-Q>> you can answer
         directly to messages from inside the message
@@ -722,13 +722,13 @@ already defined macros.
 40
 <<Automatic Message-Sending
 
-This is the list of messages to be sent auto-
-matically. The list can have as many entries as you
+This is the list of messages to be sent automati-
+cally. The list can have as many entries as you
 wish. Note: All auto-send messages must exist indivi-
 dually as files on the disk.
 
-<<<Enter> >>loads the selected message in the lister
-        or archive viewer.
+<<<Enter> >>loads the selected message in the message
+        reader or archive viewer.
 
   <<V>>     Activates or deactivates the selected entry.
 
@@ -1047,7 +1047,7 @@ On the right of the status line is the Packer Type:
 ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP or ZOO.
 are recognised.
 
-<<Enter>>   loads the selected file in the lister
+<<Enter>>   loads the selected file in the viewer.
 
 <<Space>>   Marks the selected file. <F7> and <F8>
         be use to mark a block of files
@@ -3344,21 +3344,21 @@ in the middle of data handling always leads to
 unrecoverable loss of data!!
 @
 230
-CrossPoint does have its own built in lister, (for
-reading messages) which should do all you need.
-But if you really cannot part from your beloved old
-lister, then you can enter it here (incl. extension
-.COM or .EXE)
+CrossPoint does have its own built in message reader
+which should do all you need. But if you really
+cannot part from your beloved old message reader,
+then you can enter it here (incl. extension .COM or
+.EXE).
 
 The macro <<$FILE>> may be entered for the name of
 the file to be listed. Otherwise XP passes the file
-name as the only parameter to the lister.
+name as the only parameter to the message reader.
 @
 231
-Enter here how many kilobytes memory your lister
-requires as a minimum. CrossPoint then attempts to
-make this much memory available when starting the
-lister.
+Enter here how many kilobytes memory your message
+reader requires as a minimum. CrossPoint then
+attempts to make this much memory available when
+starting the message reader.
 @
 232
 Note: This option applies to the internal message 
@@ -3386,8 +3386,8 @@ full-screen mode is always used.
 @
 234
 <<[x]>> ->  Messages with [reference] links are indicated@4014
-        in the status bar of the lister with an
-        <<arrow>> whose direction shows whether the
+        in the status bar of the message reader with
+        an <<arrow>> whose direction shows whether the
         other messages are "upstream" or "downstream"
 @
 235
@@ -3400,9 +3400,9 @@ full-screen mode is always used.
 
 With a fixed message header, a light coloured back-
 ground looks best (set in /Config/Display/Colours
-/Lister/Message Header) with the separator line
-removed at the end (set in /Config/Display/Header).
-(Or separators top and bottom).
+/Reader/Message Header) with the separator line
+removed at the end (or separators top and bottom,
+set in /Config/Display/Header).
 @
 236
 In Z-Netz or MagicNET, only Umlauts in IBM character
@@ -3413,10 +3413,10 @@ ISO 8859-1) like "ä" for "„" and "ö" for "”" etc.
 appearing in messages.
 
 Setting this switch on <<[x]>> converts these char-
-acters in the lister and for quotes into the editor
-into their IBM equivalents. Unfortunately the "Ä"
-cannot be converted (to "Ž") because it is so often
-used in its true IBM graphics form for lines.
+acters in the mesage reader and for quotes into the
+editor into their IBM equivalents. Unfortunately the
+"Ä" cannot be converted (to "Ž") because it is so
+often used in its true IBM graphics form for lines.
 @
 237
 It is common to indicate emphasis on words by en-
@@ -3424,7 +3424,7 @@ closing them in *asterisks* or _underlines_.
 This switch causes CrossPoint to take words with
 these characters at each end and show them in a
 different colour, which you can set in:
-/Config/Display/Colours/Lister.
+/Config/Display/Colours/Reader.
 
 <<[x]>> ->  XP shows these words in the different
         colour.
@@ -3564,20 +3564,21 @@ this setting have no effect, you don't even see it!
 @
 247
 Which types of messages allow CrossPoint to advertise
-itself as the point programme used:
+itself as the Point programme used:
 
 <<always>>  on all messages.
 
-<<AMs>>     only public messages.
+<<AMs>>     only on public messages.
 
-<<PMs>>     only private messages.
+<<PMs>>     only on private messages.
 
 <<never>>   well, never :-(
 
 Note: the "PM" and "never" settings may only be
 changed in the registered version of CrossPoint.
-In Fido, XP never advertises itself. In MausNet,
-you can switch it off for PMs only.
+In MausNet, you can switch it off for PMs only
+and for FidoNet you will find a special setting under
+[Config/Options/Nets].@8103
 @
 248
 <<[x]>> ->  Messages aborted (with <Esc>) at the
@@ -3767,8 +3768,9 @@ temporary files which it uses.
 
 CrossPoint uses many temporary files; when writing
 messages in the editor, when displaying messages in
-the lister, and so on. These are all immediately
-erased after use, but must be somewhere while in use.
+the message reader, and so on. These are all
+immediately erased after use, but must be somewhere
+while in use.
 
 It is a good idea to use a RAM Disk for this if you
 can, it makes it a lot quicker.
@@ -4622,7 +4624,8 @@ selected.
 <<Internal XP Functions>> are started by putting a
 "*" first, then the XP command.
 For example *list errors.log will show you the
-contents of the errors.log file in the lister.
+contents of the errors.log file in the message
+reader.
 
 These functions are NOT available in the CrossTerm
 terminal programme.
@@ -4631,12 +4634,12 @@ terminal programme.
         AUTOEXEC switch on, when the AUTOEXEC
         directory will be executed.
 
-<<*LIST "File">> loads the file into the lister
+<<*LIST "File">> loads the file into the message reader
              (internal or external, depending which
              you have set) for you to read.
 
-<<*EDIT "File">>   as for the Lister, but to for the
-               editor.
+<<*EDIT "File">>   as for the message reader, but to for
+             the editor.
 
 <<*NETCALL BOX>>  makes a netcall at the given Box.
 
@@ -4697,8 +4700,8 @@ display, try setting this switch.
 @
 446
 <<[x]>> ->  The output of the started programme is
-        redirected to the lister for reading. This
-        only works when the programme allows
+        redirected to the message reader for reading.
+        This only works when the programme allows
         redirection, as all DOS commands do.
         If in doubt, try it out.
 
@@ -4752,7 +4755,8 @@ than this will not be included.
         to the internal newsgroup /¯Statistic for
         reading (and storing).
 
-<<[ ]>> ->  The results are shown in the Lister only.
+<<[ ]>> ->  The results are shown in the message reader
+        only.
 @
 455
 Well what do you suppose?
@@ -5058,7 +5062,7 @@ be produced.
         Statistic newsgroup (and kept).
 
 <<[ ]>> ->  the statistic will be displayed in the
-        lister (then deleted).
+        message reader (then deleted).
 @
 502
 <<[x]>> ->  CrossPoint produces a detailed graphical
@@ -5290,7 +5294,7 @@ See also the documentation in XPOINT.TXT
 
 <<Messages>>   functions only in the message window.
 
-<<Lister>>     functions only in the message reader.
+<<Reader>>     functions only in the message reader.
 
 <<ArcViewer>>  functions only in the archive viewer.
 
@@ -5428,8 +5432,8 @@ Option is only read at programme start.
 @
 558
 <<[x]>> ->  The mouse will be initialised anew after
-        every DOS shell (Editor, external lister,
-        <F9> etc.).
+        every DOS shell (Editor, external message
+        reader, <F9> etc.).
 
 <<[ ]>> ->  The mouse is initialised once at programme
         start and is left in peace after that.
@@ -6391,7 +6395,7 @@ same net type, or select one with <F2>.
         newsgroup /¯Statistic.
 
 <<[ ]>> ->  The statistic is only displayed in the
-        lister, and not kept.
+        message reader, and not kept.
 @
 771
 <<[ ]>> ->  Nodes, which are registered in the Node
@@ -6612,6 +6616,12 @@ on MagicNET technology. But if you want to try your
 luck now, set this switch ON.
 
 Otherwise leave it OFF.
+@
+8103
+<<[x]>> ->  Echomail tear lines will show the version of
+        CrossPoint/OpenXP.
+
+<<[ ]>> ->  CrossPoint creates an empty tear line (---).
 @
 800
 This is the telephone charges list. You can enter up
@@ -9189,8 +9199,8 @@ sub-menus for details.
 
 Options for the Editor, message reader and for
 entering settings for CrossPoint to use when it
-starts external programmes and tools (Editor, Lister,
-Packers etc.).
+starts external programmes and tools (Editor,
+Message Reader, Packers etc.).
 @
 10603
 <<Config / Paths
@@ -9226,8 +9236,8 @@ settings for each one.
 Printer settings.
 
 At present they apply only to printing messages with
-"R", printing with "D" when in the Lister, or when
-printing the Help pages with <Ctrl-D>.
+"R", printing with "D" when in the message reader, or
+when printing the Help pages with <Ctrl-D>.
 
 The settings are NOT valid when printing from the
 Editor using <Ctrl-K><P>.
@@ -9616,12 +9626,12 @@ date or the sender box on or off.
 10904
 <<Config / Display / Header
 
-Sets how the message header in the lister and when
-"extracting with header" should look.
+Sets how the message header in the message reader and
+when "extracting with header" should look.
 
 This menu item replaces the corresponding individual
-settings in /Config/External/Lister in older versions
-of CrossPoint.
+settings in /Config/External/Message_Reader in older
+versions of CrossPoint.
 @
 10905
 <<Config / Display / Lines
@@ -9828,7 +9838,7 @@ CrossPoint can extract messages in one of 4 forms:
      text.
 
   o  as Text with header - in the form as it appears
-     in the message lister.
+     in the message reader.
 
   o  as Puffer - in the form of a message packet, as
      it would be transferred over the net.
@@ -10761,16 +10771,14 @@ The highlight colour can be configured in
 
 Under this menu you can redefine keys or allocate
 whole sets of keystrokes to keys, for use in the
-newsgroup, user and message windows, plus the lister
-and (internal) editor.
+newsgroup, user and message windows, plus the message
+reader and (internal) editor.
 @
 12401
-<<Config / External / Lister
+<<Config / External / Message Reader
 
 Press <Enter> to get access to the settings for the
-Lister (internal or external). The Lister is the
-programme part that displays messages, without
-allowing you to edit them.
+message reader.
 @
 12402
 <<Config / External / Editor
@@ -11592,12 +11600,13 @@ better 500KB Memory to *start* in.
 There is not enough free memory available to start
 the chosen external programme or DOS shell. If you 
 are using lots of memory, maybe showing a large text 
-in the lister, you can free up memory by closing it.
+in the message reader, you can free up memory by
+closing it.
 
-Otherwise, if this happens often, you may
-have to re-configure DOS to make more memory
-available. CrossPoint should have at least 450KB,
-better 500KB Memory to *start* in.
+Otherwise, if this happens often, you may have to
+re-configure DOS to make more memory available.
+CrossPoint should have at least 450KB, better 500KB
+Memory to *start* in.
 
 Maybe you just tried to start something too big.
 @

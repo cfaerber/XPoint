@@ -47,7 +47,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21  Weiter,151^Copy,152^Original,153^Forward,154^Quote-To,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
 22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166R^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
-24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
+24  Extern,181^Message Reader,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
@@ -93,7 +93,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 19   October
 20   November
 21   December
-# Lister
+# Reader
 22   Help
 23   Search for:
 24   Searching...
@@ -164,8 +164,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 4  A E L V T I S O
 
-# Lister keys
-# Print, write to file, flag message "deleted" and leave lister,
+# Reader keys
+# Print, write to file, flag message "deleted" and leave reader,
 # flag message "deleted", flag message "hold", *higlight* color switch
 
 5  D W L ^L H C
@@ -445,7 +445,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Subject-name
 12   Wait
 13   Fullscreen
-14   Output to lister
+14   Output to reader
 15   Memory:~
 16   KBytes
 17   Look for files in AUTOEXEC directory
@@ -568,6 +568,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   remove unnessecary header lines
 14   use references
 15   binary messages as "attachments"
+16   OpenXP version in tear line
 + 254
 1    Netcall Options
 2    Show login screen
@@ -600,8 +601,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   Exit reader with <Enter>
 #
 20   51
-21   External lister options
-22   Lister~
+21   External message reader options
+22   Reader~
 23   KBytes:
 + 256
 # window width
@@ -1986,7 +1987,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Newsgrps.
 3    Users
 4    Messages
-5    Lister
+5    Reader
 6    ArcViewer
 7    Editor
 8    Terminal
@@ -2028,7 +2029,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Newsgrp. window
 2    Users window
 3    Message window
-4    Lister
+4    Reader
 5    Archive Viewer
 6    Editor
 7    Terminal
