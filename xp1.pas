@@ -662,12 +662,15 @@ var
   StartAttr, CountAttr: Integer;
   Unicode: Boolean;
   CharBuf: String;
+  OrgLen: Integer;
 
    procedure WriteChar(i: Integer);
    begin
      CharBuf[j] := s[i];
      AttrBuf[j2] := TextAttr;
      Inc(j); Inc(j2);
+     // handle off by one because the special character are
+     // two bytes in s, because of UTF-8 encoding
      {$IFDEF Win32Console }
        if (s[i] > Char($7f)) and not Unicode then
        begin
@@ -679,45 +682,53 @@ var
    end;
 
 begin
-  s := ' ' + s + ' ';
-  i := 1; j := 1; j2 := 1;
-  Unicode := false;
-  SetLength(CharBuf, Length(s));
-  Fillchar(attrbuf, Sizeof(attrbuf), 0);
+  Fillchar(attrbuf, Sizeof(attrbuf), TextAttr);
 
-  while i < length(s) do
+  if ListXHighlight then
   begin
-    Inc(i);
-    if s[i] in ['*', '_', '/'] then
-    begin                                      // check starting char
-      if ((Delimiters[Ord(s[i-1])] and 1) <> 0) and
-        ((Delimiters[Ord(s[i+1])] and 2) <> 0) then
-      begin
-        Inc(i); StartAttr := j2;
-        CountAttr := 0;
-        while i < Length(s) do
+    OrgLen := Length(s);
+    // not nice, but a working fix for the utf8-problem. Later we should
+    // convert the string to widechar, this would make things easier
+    s := ' ' + s + sp(OrgLen);
+    SetLength(CharBuf, Length(s));
+    i := 1; j := 1; j2 := 1;
+    Unicode := false;
+    while i < length(s) do
+    begin
+      Inc(i);
+      if s[i] in ['*', '_'] then
+      begin                                      // check starting char
+        if ((Delimiters[Ord(s[i-1])] and 1) <> 0) and
+          ((Delimiters[Ord(s[i+1])] and 2) <> 0) then
         begin
-          WriteChar(i);
-          Inc(i); Inc(CountAttr);              // at least one char space
-          if s[i] in ['*', '_', '/'] then     // check ending char
+          Inc(i); StartAttr := j2;
+          CountAttr := 0;
+          while i < Length(s) do
           begin
-            if ((Delimiters[Ord(s[i-1])] and 4) <> 0) and
-              ((Delimiters[Ord(s[i+1])] and 8) <> 0) then
+            WriteChar(i);
+            Inc(i); Inc(CountAttr);              // at least one char space
+            if s[i] in ['*', '_'] then     // check ending char
             begin
-              for c := 0 to CountAttr-1 do
-                AttrBuf[StartAttr+c] := ListHiCol;
-              break;
+              if ((Delimiters[Ord(s[i-1])] and 4) <> 0) and
+                ((Delimiters[Ord(s[i+1])] and 8) <> 0) then
+              begin
+                for c := 0 to CountAttr-1 do
+                  AttrBuf[StartAttr+c] := ListHiCol;
+                break;
+              end;
             end;
-          end;
-       end;
-      end;
-    end else
-      WriteChar(i);
-  end;
+         end;
+        end;
+      end else
+        WriteChar(i);
+    end;
 
-  if FindUrl(s, a, b) then
-    for i := a+1 to b do
-      attrbuf[i] := ListHiCol;
+    if FindUrl(s, a, b) then
+      for i := a-1 to b-2 do
+        attrbuf[i] := ListHiCol;
+    SetLength(CharBuf, OrgLen);
+  end else
+    CharBuf := s;
 
   Consolewrite(x, y, CharBuf);
 end;
@@ -3204,6 +3215,12 @@ end;
 
 {
   $Log$
+  Revision 1.190  2003/09/22 21:24:23  mk
+  - fixes for new highlight handling
+    - resolves not correct position of highlighting with URLs
+    - added support for F key again
+    - garbage at end of line is supressed now
+
   Revision 1.189  2003/09/21 20:17:40  mk
   - rewrite of Listdisplay:
     removed Assemlber function MakeListDisplay, now
