@@ -189,6 +189,7 @@ procedure IOExcept(e: ExceptClass);
 function  alldrives: string;
 {$endif}
 
+function RenameDir(Const OldName, NewName : String) : Boolean;
 
 implementation  { ------------------------------------------------------- }
 
@@ -509,7 +510,7 @@ end;
 
 function CreateMultipleDirectories(path:string): String;
 var
-  p : byte;
+  p : Integer;
   adir : string;
 begin
   result:='';
@@ -659,10 +660,23 @@ begin
   result:= FileMaskSize(AddDirSepa(dir)+WildCard);
 end;
 
+function RenameDir(Const OldName, NewName : String) : Boolean;
+var
+  f: File;
+begin
+  Assign(f, Oldname);
+  rename(f, newname);
+  RenameDir := IOResult = 0;
+end;
+
 end.
 
 {
   $Log$
+  Revision 1.96  2001/07/21 13:29:51  mk
+  - Added RenameDir
+  - minior fix for CreateMultipleDirectories
+
   Revision 1.95  2001/03/16 17:04:53  cl
   - IoExcept (checks for IoError and raises exception)
 
