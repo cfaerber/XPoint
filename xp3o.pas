@@ -781,6 +781,7 @@ var i,ii     : longint;
   end;
 
 begin
+  ff:=false;
   { falls im aktuellen Brett keine Nachricht selektiert ist, rausgehen }
   if dbBOF(mbase) then Exit;
   if not (aktdispmode in [10..19]) then begin
@@ -857,10 +858,10 @@ begin
                 dbSkip(mbase,1);
                 rec:=dbRecno(mbase);
                 dbGo(mbase,rec2);
-                end;
-              dbWriteN(mbase,mb_gelesen,gelesen);
-              if rdmode=1 then
+                dbWriteN(mbase,mb_gelesen,gelesen);
                 dbGo(mbase,rec);
+              end else
+                dbWriteN(mbase,mb_gelesen,gelesen);
             end;
         8 :          { Liste erzeugen }
              writeln(t,i+1:4,dbReadInt(mbase,'groesse'):8,'  ',
@@ -1532,6 +1533,10 @@ end;
 
 {
   $Log$
+  Revision 1.87  2002/05/21 15:24:05  ma
+  - more debug logs
+  - fixed hints and warnings
+
   Revision 1.86  2002/04/14 22:26:56  cl
   - changes for new address handling
 
