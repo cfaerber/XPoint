@@ -147,6 +147,11 @@ begin
             gotoxy(1,5);
           end;
   end;
+  {$ifdef Win32}
+  // todo: adjust screen size with Win9x/ME only, not with WinNT/2000
+  SysSetScreenSize(25,80);
+  Window(1,1,80,25);
+  {$endif}
   if (cls=2) or (cls=-1) then
   begin
     if shell25 and (screenlines>25) then
@@ -473,6 +478,10 @@ end;
 
 {
   $Log$
+  Revision 1.52  2001/04/03 13:33:15  ma
+  - screen size set to 80x25 with Win32 now
+  - todo: don't set screen size with WinNT/2000
+
   Revision 1.51  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
