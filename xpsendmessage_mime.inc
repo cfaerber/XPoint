@@ -173,7 +173,7 @@ var s: TStream;
     except
       on EReadError do; // ignore
     end; // try;
-    if Assiged(d) then
+    if Assigned(d) then
       d.Free; 
     if Assigned(pa) then
       pa.Free;
@@ -182,7 +182,7 @@ var s: TStream;
 begin
   if (PartFile='') then PartsEx := true;
   if partsex then exit; // Already done
-
+                                                                                                                         
   try
     s := TFileStream.Create(PartFile,fmOpenRead);
     try
@@ -303,6 +303,9 @@ end;
 
 //
 // $Log$
+// Revision 1.5  2003/09/29 17:35:22  mk
+// - fixed typo in last committ
+//
 // Revision 1.4  2003/09/29 10:46:41  mk
 // - fixed crash in ReadParts of TSendUUData.MIMEDecompose;
 //   this fixes missing text with N/U/E
