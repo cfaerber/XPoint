@@ -5222,10 +5222,19 @@ Aktionen sind:
 
 @
 530
-Geben Sie hier die Suchbegriffe ein.
+Geben Sie hier den Suchbegriff ein.
+Mit [F2] bekommen Sie eine Auswahl 
+der drei zuletzt benutzten Suchbegriffe.
+
+
+Wenn Sie die Suchoptionen "a" oder "o" nicht
+verwenden, wird exakt nach dem Text gesucht
+der hier eingegeben wurde. (NatÅrlich unter
+BerÅcksichtigung der Suchoptionen "i" und "Ñ".)
+
 
 bei AND/OR verknÅpften Suchen (mit den Such-
-optionen "a" bzw "o") kînnen sie mehrere Worte 
+optionen "a" bzw "o") kînnen Sie mehrere Worte 
 in GÑnsefÅsschen (") einschliessen:
 
 "Fischers Fritz" fischt "frische Fische"
@@ -5235,6 +5244,17 @@ sucht dann z.B nach:
 "Fischers Fritz"
 "fischt"
 "frische Fische"
+
+
+Eine Tilde (~) vor einem Wort bedeutet, dass
+dieses NICHT im durchsuchten Text vorkommen darf:
+
+~"Fischers Fritz" ~fischt frische Fische
+
+sucht dann z.B nach allen EintrÑgen, in denen 
+"frische" UND/ODER "Fische" aber weder 
+"Fischers Fritz" noch "fischt" vorkommt.
+
 
 
 
@@ -5263,7 +5283,7 @@ als Buchstabenfolge ein:
 <<i>>  Gro·/Kleinschreibung ignorieren (statt "i"
    kann auch "u" verwendet werden).
 
-<<Ñ>>  Umlaut-sensitive Suche (ae=Ñ, oe=î, usw.) 
+<<Ñ>>  Umlaut-insensitive Suche (ae=Ñ, oe=î, usw.) 
    statt "Ñ" kann auch "î" oder "Å" verwendet werden.
 
 <<a>>  AND-VerknÅpfung: ALLE im Suchbegriff angegebenen
@@ -5814,10 +5834,20 @@ oder auch nicht.
 Geben Sie den gesuchten Absender oder einen Teil
 davon ein (z.B. nur den Boxnamen), oder lassen Sie
 das Eingabefeld frei.
+
+Mit einer Tilde (~) am Beginn des Suchbegriffs
+wird bestimmt, dass der Suchbegriff NICHT 
+gefunden werden darf.
+
 @
 631
 Geben Sie den gesuchten Betreff oder einen Teil
 davon ein, oder lassen Sie das Eingabefeld frei.
+
+Mit einer Tilde (~) am Beginn des Suchbegriffs
+wird bestimmt, dass der Suchbegriff NICHT 
+gefunden werden darf
+
 @
 632
 Geben Sie einen Begriff ein, der sich innerhalb der
@@ -5830,6 +5860,10 @@ in GÑnsefÅsschen (") einschliessen:
 
 "Fischers Fritz" fischt "frische Fische"
 
+Mit einer Tilde (~) vor einem Wort kann bestimmt 
+werden, dass dieses sich NICHT im gesuchten Text
+befinden darf.
+
 @
 633
 <<Fido:>>
@@ -5840,6 +5874,12 @@ Eingabefeld frei.
 
 Wenn Sie hier Ihren Namen eingeben, sucht XP nach
 Fido-Brettnachrichten, die an Sie gerichtet sind.
+
+
+Mit einer Tilde (~) am Beginn des Suchbegriffs
+wird bestimmt, dass der Suchbegriff NICHT 
+gefunden werden darf
+
 @
 634
 Geben Sie den Zeitraum an, in dem sich das Erstel-

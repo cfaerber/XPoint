@@ -4710,6 +4710,9 @@ Enter the activity which CrossPoint should carry out.
 @
 530
 Enter the search string.
+With [F2] you get a history-menu
+of the last 3 search-strings.
+
 
 If you are using AND/OR combination 
 (Options "a" or "o") you may use quotes to 
@@ -4722,6 +4725,10 @@ will search for
 "i dont know"
 "what"
 "to write here"
+
+
+<<~>> works as NOT-Operator: If a word is found
+that is marked with (~) the search fails. 
 
 
 
@@ -5288,11 +5295,15 @@ Any text (or none) as comment to help you.
 Messages will be searched for by sender. Enter the
 sender to be searched for, or a part of the
 name (like just the box name). May be left empty.
+
+Use <<~>> as NOT-Operator
 @
 631
 Messages will be searched for by Subject. Enter the
 Subject you are looking for, or a part of
 it. May be left empty.
+
+Use <<~>> as NOT-Operator
 @
 632
 Messages will be searched for by a text string in all
@@ -5305,7 +5316,8 @@ mark some words as a phrase:
 
 "i dont know" what "to write here"
 
-
+<<~>> works as NOT-Operator: If a word is found
+that is marked with ~ the search fails.  
 
 @
 633
@@ -5318,6 +5330,8 @@ messages from that user).
 
 You may use your own name here, to find messages
 directed at you.
+
+Use <<~>> as NOT-Operator
 @
 634
 Enter the time period in which the message to be
