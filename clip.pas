@@ -18,10 +18,14 @@ interface
 
 uses xpglobal,resource, dos;
 
+{$IFNDEF NO386}
 function ClipAvailable:boolean;                     { Clipboard verfÅgbar?       }
+{$ENDIF}
 
 function  Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
 procedure String2Clip(var str: String);             { String ins Clipboard       }
+
+{$IFNDEF NO386}
 procedure FileToClip(fn:pathstr);                   { Dateiinhalt ins Clipboard  }
 procedure ClipToFile(fn:pathstr);                   { Clipboardinhalt als Datei  }
 
@@ -30,6 +34,7 @@ function  WinNTVersion:dword;
 function  InitWinVersion:SmallWord;
 procedure DestructWinVersion;
 function  DOSEmuVersion: String;
+{$ENDIF}
 
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
@@ -54,6 +59,7 @@ type
   ca  = array[0..65530] of char;
   cap = ^ca;
 
+{$IFNDEF NO386}
 var
   windows_version:  smallword;
   windows_nt_ver:   Dword;
@@ -186,6 +192,8 @@ begin
   ClipAvailable := WinClipAvailable or WinNTClipAvailable;
 end;
 
+{$ENDIF}
+
 function ClipOpen:boolean; assembler;         { Clipboard îffnen }
 asm
               mov    ax,1701h
@@ -268,7 +276,7 @@ asm
 @cr1:
 end;
 
-
+{$IFNDEF NO386}
 function _Clip2String(maxlen,oneline:byte):string;
 var
   s: String;
@@ -387,13 +395,16 @@ begin
   @jup:
   end;
 end;
+{$ENDIF}
 
 function Clip2String(maxlen,oneline:byte):String;
 var t: text;
     s: String;
 begin
+{$IFNDEF NO386}
   if Clipboard then Clip2String:=_Clip2String(maxlen,oneline)
   else begin
+{$ENDIF}
     s:='';
     assign(t,ClipFileName);
     reset(t);
@@ -403,7 +414,9 @@ begin
       close(t);
     end;
     Clip2String:=s;
+{$IFNDEF NO386}
   end;
+{$ENDIF}
 end;  
 
 
@@ -414,6 +427,7 @@ var
   str_p: Pointer;
   str_l: DWORD;
 begin
+  {$IFNDEF NO386}
   if WinNTClipAvailable then
   begin
     str_p:=@(Str[1]);
@@ -429,6 +443,7 @@ begin
       db  $c4,$c4,$58,2
     end;    
   end else
+  {$ENDIF}
   asm
               mov ax,1701h                     { Clipboard îffnen }
               int multiplex
@@ -504,7 +519,7 @@ asm
 @end:
 end;
 
-
+{$IFNDEF NO386}
 procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Clipboard schicken }
 var f  : file;
     p  : pointer;
@@ -545,7 +560,6 @@ begin
     ClipClose;                          { Clipboard immer schliessen }
   end;
 end;
-
 
 procedure ClipToFile(fn:pathstr);       { Clipboardinhalt als File speichern }
 var f  : file;
@@ -595,7 +609,7 @@ begin
     end;
   end;
 end;
-
+{$ENDIF}
 
 { Smartdrive vorhanden? }
 
@@ -683,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.25  2003/01/17 18:40:59  mw
+  MW: - Make XT-Version compile again (Part 2)
+
   Revision 1.19.2.24  2002/08/02 23:06:18  my
   JG:- Fix: Das einzeilige EinfÅgen des Clipboard-Inhalts in Eingabefelder
        funktionierte bei Strings mit mehr als 223 Zeichen nicht und wurde

@@ -397,11 +397,12 @@ begin
   moff;
 end;
 
+{$IFNDEF NO386}
 procedure writever(os2,win,lnx:boolean; x,y:byte);
 begin
   gotoxy(x,y);
-  if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
-  else if lnx then write(DOSEmuVersion)
+  if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))  
+  else if lnx then write(DOSEmuVersion)  
   else begin
     write(lo(dosversion):2,'.',formi(hi(dosversion),2));
     if win then begin
@@ -427,6 +428,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure memstat;
 const rnr = 500;
@@ -441,7 +443,9 @@ var regs : registers;
     lnx  : boolean;
     free : longint;
 begin
+  {$IFNDEF NO386}
   win:=(WinVersion>0);
+  {$ENDIF}
   msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
@@ -452,7 +456,9 @@ begin
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfÅgbar }
   os2:=lo(dosversion)>=10;
+  {$IFNDEF NO386}
   lnx:=DOSEmuVersion <> '';
+  {$ENDIF}
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
@@ -488,9 +494,11 @@ begin
   gotoxy(x+57,y+6);
   if free>=0 then write(free / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
+  {$IFNDEF NO386}
   WriteVer(os2,win,lnx,x+22,y+9);
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,iif(
     (WinVersion=4)and(Lo(WinNTVersion)=0),11,10),9),getres2(rnr,9)+'...');
+  {$ENDIF}
   mon;
   freeres;
   wait(curon);
@@ -1062,6 +1070,9 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.17  2003/01/17 18:41:00  mw
+  MW: - Make XT-Version compile again (Part 2)
+
   Revision 1.27.2.16  2003/01/10 22:02:32  my
   MY:- Log-Kosmetik
 

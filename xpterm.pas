@@ -660,8 +660,10 @@ begin
       if OStype<>OS_2 then
       begin
         RestComState(comnr,cps);
+        {$IFNDEF NO386}
         if WinVersion >= 3 then
           SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+        {$ENDIF}
       end;
       rfehler(2002);     { 'Modem nicht bereit.' }
       initcom:=false;
@@ -1615,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2003/01/17 18:41:00  mw
+  MW: - Make XT-Version compile again (Part 2)
+
   Revision 1.10.2.5  2001/06/23 19:15:22  mk
   - kleine Aenderung fuer neue WinVersion Routine
 
