@@ -20,7 +20,8 @@ unit  exxec;
 
 interface
 
-uses xpglobal, dos, typeform;
+uses
+  xpglobal, dos, typeform, fileio;
 
 const ExecOk      = 0;
       ExecSwaperr = 1;
@@ -481,6 +482,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/04/16 20:38:49  mk
+  - Fixes fuer FindFirst (2)
+
   Revision 1.10  2000/04/16 19:50:38  mk
   - Fixes fuer FindFirst
 
