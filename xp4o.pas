@@ -817,7 +817,7 @@ begin
         if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
       end
 
-      else if bereich<4 then begin              //0='Alle' 'Netz' 'User' 'markiert' 'gew„hlt'
+      else if bereich<3 then begin              //0='Alle' 'Netz' 'User' 'markiert' 'gew„hlt'
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
@@ -826,7 +826,6 @@ begin
         begin
           _brett := dbReadNStr(mbase,mb_brett);
           if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
-                            ((bereich=3) and (_brett[1]='A')) or
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
@@ -2426,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.88  2001/01/01 20:17:35  mo
+  -Spezialsuche in markierten Brettern -lter Satnd wieder hergesetllt
+
   Revision 1.87  2000/12/31 11:52:10  mk
   JG:- MsgId-Suche mit mehreren Strings
 
