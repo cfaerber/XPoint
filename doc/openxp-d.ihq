@@ -116,13 +116,10 @@ Zwischenablage.
 <<OpenXP - Support
 
 Als OpenXP-Benutzer erhalten Sie umfangreichen
-Support bei Problemen und Fragen. Dabei macht es
-keinen Unterschied, ob Sie bereits registrierter
-Anwender sind (s. [Lizenzbestimmungen]), oder Cross-@6
-Point noch testen. Wenn Sie Probleme haben, die sich
-nicht mit der Online-Hilfe oder der Dokumentation
-(Handbuch) l”sen lassen, haben Sie verschiedene
-M”glichkeiten:
+Support bei Problemen und Fragen. Wenn Sie Pro-
+bleme haben, die sich nicht mit der Online-Hilfe
+oder der Dokumentation l”sen lassen, haben Sie
+verschiedene M”glichkeiten:
 
 
 ş  Schildern Sie Ihr Problem in einem der Support-
@@ -394,9 +391,9 @@ nur die jeweils letzte Option ausgefhrt:
 
 <</n:BOX[:hh:mm]>>  fhrt einen Netcall bei der angegebe-
                 nen Box durch. Bei Angabe einer Uhr-
-                zeit im Format <<hh:mm>> wartet Cross-
-                Point bis zu dieser Uhrzeit. Achtung:
-                Bei Fido-Netcalls muá im Boxnamen ein
+                zeit im Format <<hh:mm>> wartet OpenXP
+                bis zu dieser Uhrzeit. Achtung: Bei
+                Fido-Netcalls muá im Boxnamen ein
                 "_" statt des ":" verwendet werden!
 
 <</n:*>>            entspricht /Netcall/Alle.
@@ -2204,9 +2201,8 @@ soll.
          allerdings als Datei mit Namen LASTMSG im
          Tempor„rverzeichnis liegen.
 
-<<Intern>>   die Nachricht wird nur innerhalb von Cross-
-         Point gespeichert und nicht ins Netz ver-
-         sandt.
+<<Intern>>   die Nachricht wird nur innerhalb von OpenXP
+         gespeichert und nicht ins Netz versandt.
 
 <<Spezial>>  schaltet die Anzeige der zus„tzlichen Funk-
          tionen ein. Unabh„ngig von der gerade akti-
@@ -3899,8 +3895,8 @@ sch„tzen; er liegt in der Regel bei 5-10 Sekunden.
 182
 Falls Sie Sysop sind, m”chten Sie Ihre Netcallpuffer
 natrlich nicht per Modem verschicken, sondern "von
-Hand" in die Box einspielen. Dazu mssen Sie Cross-
-Point nur zwei Dateinamen mitteilen:
+Hand" in die Box einspielen. Dazu mssen Sie OpenXP
+nur zwei Dateinamen mitteilen:
 
 <<Eingabepuffer>>
 
@@ -4082,21 +4078,21 @@ tigte Eintr„ge k”nnen mit <<<Ctrl-Y> >>gel”scht werden.
 Erkundigen Sie sich bei Ihrem Sysop, zu welchen Uhr-
 zeiten keine Point-Anrufe erlaubt sind!
 
-Diese Einstellung gilt NICHT fr den Betrieb von XP
-im Sysop-Mode.
+Diese Einstellung gilt NICHT fr den Betrieb von
+OpenXP im Sysop-Mode.
 @
 198
 <<[x]>> -> Diese Box wird bei [/Netcall/Alle] bercksich-@11502
        tigt.
 @
 199
-Hier k”nnen Sie ein externes Programm angeben, das XP
-nach jedem Netcall unmittelbar vor dem Einlesen der
-Nachrichten aufrufen soll. šber das Makro <<$PUFFER>>
-kann der Name der einzulesenden Datei bergeben
-werden; bei Z-Netz-(alt)-Netcalls hat diese Datei
-Z-Netz-Format, bei allen anderen Netzen (und bei
-ZConnect-Boxen) hat sie ZConnect-Format.
+Hier k”nnen Sie ein externes Programm angeben, das
+OpenXP nach jedem Netcall unmittelbar vor dem
+Einlesen der Nachrichten aufrufen soll. šber das
+Makro <<$PUFFER>> kann der Name der einzulesenden Datei
+bergeben werden; bei Z-Netz-(alt)-Netcalls hat diese
+Datei Z-Netz-Format, bei allen anderen Netzen (und
+bei ZConnect-Boxen) hat sie ZConnect-Format.
 
 Das Programm kann die Datei verarbeiten, „ndern,
 kopieren, oder beliebige andere Aktionen durchfhren.
@@ -4125,11 +4121,11 @@ nicht mehr eingelesen werden.
 
 @
 8050
-Hier k”nnen Sie ein externes Programm angeben, das XP
-vor jedem Netcall aufruft. Bei ZConnect und Z-Netz
-(alt) wird das Programm vor dem Packen, bei den
-brigen Netztypen vor der Nachrichtenkonvertierung
-gestartet.
+Hier k”nnen Sie ein externes Programm angeben, das
+OpenXP vor jedem Netcall aufruft. Bei ZConnect und
+Z-Netz (alt) wird das Programm vor dem Packen, bei
+den brigen Netztypen vor der Nachrichtenkonver-
+tierung gestartet.
 
 šber das Makro <<$PUFFER>> kann der Name des ausgehenden
 Nachrichtenpuffers bergeben werden. Bei Z-Netz-
@@ -4147,11 +4143,12 @@ sie auf 0 Byte L„nge gekrzt werden.
 <<WARNUNG
 
 Gehen Sie mit Ausgangsfiltern bitte sehr vorsichtig
-um! XP stellt sicher, daá die ins Netz verschickten
-Nachrichten korrekt sind. Wenn ein Filterproramm die
-von XP erzeugten Nachrichten ver„ndert, ist dies
-jedoch nicht mehr gew„hrleistet. Fehler in Nachrich-
-tenpaketen k”nnen zu St”rungen im Netzbetrieb fhren.
+um! OpenXP stellt sicher, daá die ins Netz ver-
+schickten Nachrichten korrekt sind. Wenn ein Filter-
+programm die von OpenXP erzeugten Nachrichten ver-
+„ndert, ist dies jedoch nicht mehr gew„hrleistet.
+Fehler in Nachrichtenpaketen k”nnen zu St”rungen
+im Netzbetrieb fhren.
 Verwenden Sie nur Filterprogramme, von denen Sie
 sicher sind, daá sie fehlerfrei arbeiten! Falls Sie
 eigene Filterprogramme schreiben, testen Sie diese
@@ -4191,7 +4188,7 @@ N„heres zu Scriptdateien finden Sie in Teil VIII des
 Handbuchs.
 @
 8032
-Hier k”nnen Sie eine Serverbox eintragen, die XP
+Hier k”nnen Sie eine Serverbox eintragen, die OpenXP
 beim automatischen Neuanlegen von Brettern statt der
 Box, aus der die erhaltenen Nachrichten stammen, als
 Server eintr„gt. Dies ist dann ntzlich, wenn Sie
@@ -4215,7 +4212,7 @@ dessen /Wartung/Server-Wechsel verwenden.
 
 @
 8033
-Hier k”nnen Sie eine Serverbox eintragen, die XP
+Hier k”nnen Sie eine Serverbox eintragen, die OpenXP
 beim automatischen Anlegen von Usern statt der Box,
 aus der die erhaltenen Nachrichten stammen, als
 Server eintr„gt. Dies ist immer dann ntzlich, wenn
@@ -4537,18 +4534,19 @@ richten die Message-ID <<Zufallszahl>>\@<<Pointname>>.<<Domain>>
 (ZConnect).
 
 Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
-werden von XP automatisch durch Bindestriche ersetzt.
+werden von OpenXP automatisch durch Bindestriche er-
+setzt.
 Das Zeichen "<<\@>>" wird in einen Punkt umgewandelt.
 
 Wenn Sie hier etwas eintragen, sollten Sie einen aus-
 schlieálich von Ihnen verwendeten Namen eingeben, um
 so die Eindeutigkeit des FQDN sicherzustellen. Die
 Eindeutigkeit des FQDN ist nur fr ”ffentliche Nach-
-richten (Artikel/Postings = AMs) innerhalb von XP
-relevant. Uneindeutige FQDNs wie "anyname.de" sind
-absolut RFC-konform (weil "fully qualified"), die
-RFC-Forderung nach Eindeutigkeit bezieht sich auf die
-Message-ID insgesamt.
+richten (Artikel/Postings = AMs) innerhalb von
+OpenXP relevant. Uneindeutige FQDNs wie "anyname.de"
+sind absolut RFC-konform (weil "fully qualified"),
+die RFC-Forderung nach Eindeutigkeit bezieht sich
+auf die Message-ID insgesamt.
 
 @
 30100
@@ -4587,8 +4585,8 @@ des Clients bzw. des Client-Kits.
 
 Weitere Detail-Informationen (wie zum genauen Ablauf
 eines Netcalls, der Arbeitsweise des Nachrichtenkon-
-vertierers UUZ, des internen Brettmanagers usw.)
-finden Sie in XPCLIENT.TXT sowie hier:
+vertierers, des internen Brettmanagers usw.) finden
+Sie in XPCLIENT.TXT sowie hier:
 
 [Netztyp RFC/Client - Netcall-Ablauf]@30200
 
@@ -4596,7 +4594,7 @@ finden Sie in XPCLIENT.TXT sowie hier:
 30101
 Dies ist der - v”llig beliebige - Name des Servers.
 
-Im Gegensatz zu den brigen von XP untersttzten
+Im Gegensatz zu den brigen von OpenXP untersttzten
 Netztypen hat der Servername beim Netztyp RFC/Client
 keinerlei technische Funktion.
 
@@ -4655,14 +4653,15 @@ Bei Teilnehmern, die keine eigene Domain besitzen,
 ist es g„ngige und sinnvolle Praxis, hier die eigene
 eMail-Adresse einzutragen und dabei das "<<\@>>"-Zeichen
 durch einen Punkt ("<<.>>") zu ersetzen. Mit der Taste
-<<<F2> >>erzeugt XP einen solchen FQDN fr Sie automa-
-tisch. Fr T-Online-User wird dabei ein spezifischer
-FQDN generiert, der von T-Online ausdrcklich als
-gltiger und zul„ssiger FQDN zur Verfgung gestellt
-wird ("<<<eMail-Alias>.dialin.t-online.de>>").
+<<<F2> >>erzeugt OpenXP einen solchen FQDN fr Sie
+automatisch. Fr T-Online-User wird dabei ein spezi-
+fischer FQDN generiert, der von T-Online ausdrck-
+lich als gltiger und zul„ssiger FQDN zur Verfgung
+gestellt wird ("<<<eMail-Alias>.dialin.t-online.de>>").
 
 Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
-werden von XP automatisch durch Bindestriche ersetzt.
+werden von OpenXP automatisch durch Bindestriche er-
+setzt.
 
 Andere News-Provider stellen m”glicherweise ebenfalls
 einen spezifischen FQDN zu Verfgung. Wenn das der
@@ -4671,8 +4670,8 @@ unbedingt diesen FQDN ein - einzelne Provider ber-
 schreiben sonst m”glicherweise die Message-ID Ihrer
 Nachrichten mit einem aus ihrer Sicht zul„ssigen Wert
 (N„heres erfahren Sie von Ihrem Provider). Dies wird
-unweigerlich zu Problemen mit der XP-internen Bezugs-
-verkettung fhren.
+unweigerlich zu Problemen mit der OpenXP-internen
+Bezugsverkettung fhren.
 
 Wenn Sie dieses Feld freilassen, erhalten Ihre Nach-
 richten die Message-ID <<Zufallszahl>>\@<<Domain>>.<<TLD>>, also
@@ -4680,21 +4679,22 @@ z.B. "82AWL5iACHB\@openxp.de" (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
 ".de" ".com", ".net", ".org" usw.). Dies wird aller-
 dings zu Problemen im Zusammenhang mit der farblichen
 Hervorhebung von Antworten auf eigene Nachrichten in
-XP fhren, da der Teil rechts vom "<<\@>>" der Message-ID
-dann nicht mehr eindeutig ist und XP alle Antworten
-hervorheben wrde, die sich auf Nachrichten beziehen,
-deren rechter Teil der Message-ID ebenfalls aus dem
-FQDN "openxp.de" bestehen.
+OpenXP fhren, da der Teil rechts vom "<<\@>>" der
+Message-ID dann nicht mehr eindeutig ist und XP alle
+Antworten hervorheben wrde, die sich auf Nach-
+richten beziehen, deren rechter Teil der Message-ID
+ebenfalls aus dem FQDN "openxp.de" bestehen.
 
 Sie sollten daher dieses Feld *nicht* freilassen und
 einen ausschlieálich von Ihnen verwendeten, vom News-
 Server als zul„ssig anerkannten Namen eintragen, um
 so die Eindeutigkeit des FQDN sicherzustellen. Die
 Eindeutigkeit des FQDN ist nur fr ”ffentliche Nach-
-richten (Artikel/Postings = AMs) innerhalb von XP
-relevant. Uneindeutige FQDNs wie "t-online.de" sind
-absolut RFC-konform (weil "fully qualified"), die
-RFC-Forderung nach Eindeutigkeit bezieht sich auf die
+richten (Artikel/Postings = AMs) innerhalb von
+OpenXP relevant.
+Uneindeutige FQDNs wie "t-online.de" sind absolut
+RFC-konform (weil "fully qualified"), die RFC-For-
+derung nach Eindeutigkeit bezieht sich auf die
 Message-ID insgesamt.
 
 
@@ -4726,44 +4726,46 @@ Vergleich zu a) den Aufwand nicht wert).
 30107
 (Siehe auch: [Client-Aufruf])@30108
 
-Geben Sie hier den <<relativen>> Pfad vom XP-Verzeichnis
-zu dem Verzeichnis an, in dem der Client installiert
-ist, oder w„hlen Sie mit <<<F2> >>einen der vorbereiteten
-Eintr„ge aus. Der Client <<muá>> in einem beliebigen Ver-
-zeichnis unmittelbar unterhalb des XP-Verzeichnisses
-installiert sein.
+Geben Sie hier den <<relativen>> Pfad vom OpenXP-
+Verzeichnis zu dem Verzeichnis an, in dem der Client
+installiert ist, oder w„hlen Sie mit <<<F2> >>einen der
+vorbereiteten Eintr„ge aus. Der Client <<muá>> in einem
+beliebigen Verzeichnis unmittelbar unterhalb des
+OpenXP-Verzeichnisses installiert sein.
 
 Beispiel: Wenn Ihr Client im Verzeichnis CLIENT
 installiert ist, das sich unmittelbar unterhalb des
-XP-Verzeichnisses befindet, geben Sie hier an:
+OpenXP-Verzeichnisses befindet, geben Sie hier an:
 
 <<CLIENT\>>   oder
 <<.\CLIENT\>>
 
 Absolute Pfadangaben, mehrere Verzeichnisebenen,
-Laufwerksbuchstaben oder Pfade oberhalb des XP-
+Laufwerksbuchstaben oder Pfade oberhalb des OpenXP-
 Verzeichnisses werden in diesem Eingabefeld nicht
-akzeptiert. Sie k”nnen auch nicht das XP-Verzeichnis
-selbst angeben oder das Feld gar ganz leer lassen.
+akzeptiert. Sie k”nnen auch nicht das OpenXP-Ver-
+zeichnis selbst angeben oder das Feld gar ganz leer
+lassen.
 Der Backslash am Ende des Pfades ist obligatorisch,
 wird aber automatisch erg„nzt, wenn er fehlt.
 
 Wenn das Verzeichnis noch nicht existiert, k”nnen Sie
-es von XP automatisch anlegen lassen. Es kann auáer-
-dem ber das Makro <<$CLPATH>> beim [Client-Aufruf] dem@30108
-auszufhrenden Programm als Parameter und/oder als
-Pfad zum auszufhrenden Programm bergeben werden.
+es von OpenXP automatisch anlegen lassen. Es kann
+auáerdem ber das Makro <<$CLPATH>> beim [Client-Aufruf]@30108
+dem auszufhrenden Programm als Parameter und/oder
+als Pfad zum auszufhrenden Programm bergeben
+werden.
 
 Diese Pfadangabe ist auch fr den [Brettmanager] wich-@30201
-tig, weil XP in dem hier angegebenen Verzeichnis
+tig, weil OpenXP in dem hier angegebenen Verzeichnis
 immer die Liste der bestellten Newsgroups (<<<Box>.RC>>)
 erwartet. Auch die Liste der verfgbaren Newsgroups
 (<<<Box>.BL>> oder <<<Box>.GR>>) wird hier gesucht - es sei
 denn, Sie verwenden einen Client, der die Newsgroup-
 Liste nicht automatisch aktualisiert: In diesem Fall
 k”nnen Sie mit [/Nachricht/Brettmanager/Datei_einlesen]@11907
-eine Liste einlesen, die dann im XP-Verzeichnis abge-
-legt (und nicht automatisch aktualisiert) wird.
+eine Liste einlesen, die dann im OpenXP-Verzeichnis
+abgelegt (und nicht automatisch aktualisiert) wird.
 
 @
 30108
@@ -4777,18 +4779,18 @@ einen der vorbereiteten Eintr„ge ausw„hlen.
 Die Konfiguration des Clients selbst (Server- und
 Port-Eintr„ge fr die šbertragungsprotokolle wie
 POP3, SMTP und NNTP sowie weitere client-spezifische
-Optionen) nehmen Sie auáerhalb von XP in der Konfi-
-gurationsdatei des jeweiligen Clients vor. N„heres
-dazu erfahren Sie (hoffentlich) in der Dokumentation
-Ihres Clients oder Client-Kits.
+Optionen) nehmen Sie auáerhalb von OpenXP in der
+Konfigurationsdatei des jeweiligen Clients vor.
+N„heres dazu erfahren Sie (hoffentlich) in der Do-
+kumentation Ihres Clients oder Client-Kits.
 
 Das hier eingetragene Programm bernimmt nach der
 ZC->RFC-Konvertierung der ausgehenden Nachrichten
-durch XP (UUZ) die vollst„ndige Kontrolle ber den
+durch OpenXP die vollst„ndige Kontrolle ber den
 Netcall und ist somit fr Anwahl, Nachrichtentrans-
 port und Abwahl alleine zust„ndig. Nachdem sich das
-Programm beendet hat, bernimmt XP die RFC->ZC-Kon-
-vertierung und liest die Nachrichten ein.
+Programm beendet hat, bernimmt OpenXP die RFC->
+ZC-Konvertierung und liest die Nachrichten ein.
 
 Bei Clients, die aus mehreren ausfhrbaren Dateien
 (z.B. fr Anwahl/Abwahl, Mail- und News-Transport)
@@ -4800,7 +4802,7 @@ Bei Clients, die ber eine einzige ausfhrbare EXE-
 Datei gestartet werden, kann diese hier auch direkt
 angegeben werden.
 
-Fr Batches oder Scripts, die im XP-Verzeichnis
+Fr Batches oder Scripts, die im OpenXP-Verzeichnis
 liegen, geben Sie keinen Programmpfad an. Sollten
 diese jedoch im [Client-Verzeichnis] liegen (oder Sie@30107
 einen aus einer einzigen EXE-Datei bestehenden Client
@@ -4822,14 +4824,15 @@ weiterverarbeitet werden k”nnen:
           relative Pfad zu dem Verzeichnis, in dem
           der externe Client installiert ist.
 
-<<$CONFIG>> - Der Name der Serverbox in XP, wie er von XP
-          als <Box>.BFG im XP-Verzeichnis abgelegt
-          wurde, also ggf. auf 8 Zeichen gekrzt
-          und/oder bei mehreren Boxen mit identisch
-          beginnenden Namen mit einer Numerierung in
-          den beiden letzten Stellen versehen (z.B.
-          T-ONLI01.BFG). Die Dateierweiterung ".BFG"
-          wird *nicht* mit bergeben.
+<<$CONFIG>> - Der Name der Serverbox in OpenXP, wie er
+          von XP als <Box>.BFG im XP-Verzeichnis ab-
+          gelegt wurde, also ggf. auf 8 Zeichen ge-
+          krzt und/oder bei mehreren Boxen mit
+          identisch beginnenden Namen mit einer
+          Numerierung in den beiden letzten Stellen
+          versehen (z.B. T-ONLI01.BFG). Die Datei-
+          erweiterung ".BFG" wird *nicht* mit ber-
+          geben.
 
 OpenXP kann nicht berprfen, ob Ihre Eingaben an
 dieser Stelle korrekt und sinnvoll sind - dafr ms-
@@ -4846,31 +4849,32 @@ Detail finden Sie in XPCLIENT.TXT sowie hier:
 
 <<Hinweise fr Windows-GUI-Clients
 
-Sollten Sie XP unter Windows 9x/ME/2000/NT betreiben
-und einen Windows-Client mit einer graphischen Ober-
-fl„che einsetzen, werden Sie m”glicherweise auf ein
-Problem stoáen, wenn Sie diesen direkt ber seine
-EXE-Datei von XP ausfhren lassen:
+Sollten Sie OpenXP unter Windows 9x/ME/2000/NT be-
+treiben und einen Windows-Client mit einer
+graphischen Oberfl„che einsetzen, werden Sie
+m”glicherweise auf ein Problem stoáen, wenn Sie
+diesen direkt ber seine EXE-Datei von OpenXP aus-
+fhren lassen:
 
-XP wird den Client zwar starten, allerdings in einem
-anderen "Task" (vereinfacht ausgedrckt: in einem
-zweiten Fenster). Da die beiden Prozesse "XP" und
-"Client" v”llig unabh„ngig voneinander agieren, wird
-XP nicht darauf warten, bis der Client seine Arbeit
-verrichtet hat, sondern den Netcall als beendet be-
-trachten, obwohl der Client vielleicht noch nicht
-einmal die Verbindung hergestellt hat. Im Ergebnis
-werden also weder Ihre Nachrichten versandt noch
-die vom Client geholten Nachrichten in OpenXP
-eingelesen werden.
+OpenXP wird den Client zwar starten, allerdings in
+einem anderen "Task" (vereinfacht ausgedrckt: in
+einem zweiten Fenster). Da die beiden Prozesse
+"OpenXP" und "Client" v”llig unabh„ngig voneinander
+agieren, wird OpenXP nicht darauf warten, bis der
+Client seine Arbeit verrichtet hat, sondern den Net-
+call als beendet betrachten, obwohl der Client viel-
+leicht noch nicht einmal die Verbindung hergestellt
+hat. Im Ergebnis werden also weder Ihre Nachrichten
+versandt noch die vom Client geholten Nachrichten
+in OpenXP eingelesen.
 
 Um diesen unerwnschten Effekt zu vermeiden, mssen
 Sie dem Client-Aufruf bei solchen Clients den Befehl
 "<<start /w>>" (bzw. "<<start /wait>>") voranstellen. Dieser
 Befehl bewirkt, daá das aufgerufene Programm (der
-Client) das aufrufende Programm (XP) solange anh„lt,
-bis das aufgerufene Programm mit seiner Arbeit fertig
-ist und sich beendet hat.
+Client) das aufrufende Programm (OpenXP) solange an-
+h„lt, bis das aufgerufene Programm mit seiner Arbeit
+fertig ist und sich beendet hat.
 
 Soweit die Regel. Es ist aber schon von F„llen
 berichtet worden (z.B. unter Windows 2000), bei denen
@@ -4884,8 +4888,8 @@ Die Angabe von "<<start /w>>" ist *nicht* erforderlich
 fr Windows-Clients, die keine graphische Oberfl„che
 haben, sondern in der sog. "Console" laufen und des-
 halb so aussehen wie ein DOS-Programm. Solche Clients
-laufen automatisch im XP-Fenster und blockieren XP
-solange, bis sie ihre Arbeit beendet haben.
+laufen automatisch im OpenXP-Fenster und blockieren
+OpenXP solange, bis sie ihre Arbeit beendet haben.
 
 @
 30109
@@ -4899,17 +4903,17 @@ Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
 man kann schon mal lesen, was es werden soll.)  :-)
 
 Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
-ten weiterer in XP eingerichteter Server mitsenden
-und/oder empfangen wollen, tragen Sie hier die Namen
-der jeweiligen Server mit einem Leerzeichen getrennt
-ein.
+ten weiterer in OpenXP eingerichteter Server mit-
+senden und/oder empfangen wollen, tragen Sie hier
+die Namen der jeweiligen Server mit einem Leer-
+zeichen getrennt ein.
 
 Achten Sie bei der Eingabe darauf, genau den Namen
 zu verwenden, der der Serverbox-Konfigurationsdatei
 <Box>.BFG des jeweiligen Servers entspricht (im Zwei-
-fel drcken Sie <<<F9> >>und fhren im XP-Verzeichnis
-den DOS-Befehl "dir *.bfg" aus, um die vorhandenen
-BFG-Dateien sehen zu k”nnen).
+fel drcken Sie <<<F9> >>und fhren im OpenXP-Ver-
+zeichnis den DOS-Befehl "dir *.bfg" aus, um die vor-
+handenen BFG-Dateien sehen zu k”nnen).
 
 OpenXP wird dann zu Beginn eines RFC/Client-
 Netcalls die ausgehenden Nachrichten der hier ein-
@@ -4922,7 +4926,7 @@ Eingegangene Nachrichten hingegen werden am Ende des
 Netcalls in dem/den spezifischen Spool-Verzeich-
 nis(sen) der hier eingetragenen Serverbox(en) erwar-
 tet und von dort in jeweils einen ZConnect-Puffer
-konvertiert und in XP eingelesen.
+konvertiert und in OpenXP eingelesen.
 
 Was zwischen diesen beiden Schritten passiert (und
 ob berhaupt etwas passiert), ist alleine Sache des
@@ -4939,7 +4943,7 @@ bekannte L”sung (oder auch die Antwort, daá es leider
 keine L”sung gibt).
 
 Bitte wundern Sie sich nicht, wenn der Nachrichten-
-konvertierer UUZ im "Multiserverbetrieb" sowohl zu
+konvertierer im "Multiserverbetrieb" sowohl zu
 Beginn als auch am Ende eines Netcalls mehrmals
 hintereinander aufgerufen wird - das ist v”llig
 normal und muá so sein. :-)
@@ -5045,10 +5049,11 @@ z.B. auch an Kopien- (CC) und Blindkopien-Empf„nger
 der Empf„nger-Kopfzeile (To:-Header) aufgefhrt sind.
 
 Leider geht diese Envelope-Adresse z.B. beim POP3-
-Protokoll verloren. Die konkrete Folge in XP davon
-w„re, daá CC- und BCC-Mails in ein falsches PM-Brett
-einsortiert wrden, das den Namen des eigentlichen
-Empf„ngers (der, der im To:-Header steht) tr„gt.
+Protokoll verloren. Die konkrete Folge in OpenXP
+davon w„re, daá CC- und BCC-Mails in ein falsches
+PM-Brett einsortiert wrden, das den Namen des ei-
+gentlichen Empf„ngers (der, der im To:-Header steht)
+tr„gt.
 
 Einige Clients besitzen daher eine Funktion, die
 durch Umschreiben und nachtr„gliches Einfgen von
@@ -5435,9 +5440,9 @@ gespeichert.
 30133
 So oft wiederholt der Client - falls n”tig - den
 Netzanruf. Wurde auch nach der angegebenen Zahl von
-Versuchen kein Anruf korrekt beendet, so fhrt XP
-keine weiteren Anrufe mehr durch und kehrt zum
-Programm zurck.
+Versuchen kein Anruf korrekt beendet, so fhrt
+OpenXP keine weiteren Anrufe mehr durch und kehrt
+zum Programm zurck.
 
 <<Hinweis:>> Diese Einstellung wird von OpenXP
 *nicht* ausgewertet. Ob und wie der externe Client
@@ -5631,15 +5636,17 @@ nung n”tig sein. N„heres hierzu finden Sie unter
 
 <<Eingangsverzeichnis>>
 
-Dies ist das Verzeichnis, aus dem XP bei einem Net-
-call die Nachrichten einlesen soll. XP liest alle
-Nachrichten aus dem angegebenen Verzeichnis ein und
-l”scht anschlieáend den gesamten Verzeichnisinhalt.
+Dies ist das Verzeichnis, aus dem OpenXP bei einem
+Netcall die Nachrichten einlesen soll. OpenXP liest
+alle Nachrichten aus dem angegebenen Verzeichnis ein
+und l”scht anschlieáend den gesamten Verzeichnis-
+inhalt.
 
 <<Ausgangsverzeichnis>>
 
-In diesem Verzeichnis legt XP ausgehende Nachrichten
-ab. ACHTUNG! Sie mssen nach einer Weiterverarbeitung
+In diesem Verzeichnis legt OpenXP ausgehende Nach-
+richten ab.
+ACHTUNG! Sie mssen nach einer Weiterverarbeitung
 der ausgehenden Nachrichten selbst dafr sorgen, daá
 die Dateien gel”scht werden!
 
@@ -5652,16 +5659,17 @@ Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
             [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
 Hier finden Sie einige weiterfhrende Informationen
-zum Betrieb einer in XP eingerichteten RFC/Client-
-Serverbox, die fr die Einbindung des Clients, die
-Durchfhrung des Netcalls, das Erstellen von Batches
-oder Scripts und das Lokalisieren von Problemen hilf-
-reich sein k”nnen. Normalerweise mssen Sie als XP-
-Anwender das alles gar nicht wissen, weil OpenXP
-und der Client bzw. der fr diesen Client speziell
-entwickelte "Client-Kit" automatisch miteinander so
-kooperieren, daá weitere Eingriffe seitens des Anwen-
-ders nicht notwendig sein sollten.
+zum Betrieb einer in OpenXP eingerichteten RFC/
+Client-Serverbox, die fr die Einbindung des
+Clients, die Durchfhrung des Netcalls, das Erstel-
+len von Batches oder Scripts und das Lokalisieren
+von Problemen hilfreich sein k”nnen. Normalerweise
+mssen Sie als OpenXP-Anwender das alles gar nicht
+wissen, weil OpenXP und der Client bzw. der fr
+diesen Client speziell entwickelte "Client-Kit"
+automatisch miteinander so kooperieren, daá weitere
+Eingriffe seitens des Anwenders nicht notwendig
+sein sollten.
 
 
 <<Verbindungs- und šbertragungsprotokolle
@@ -5686,12 +5694,12 @@ und deren Funktion. An diese Konventionen mssen sich
 die eingesetzten Clients halten, anderenfalls mssen
 die Dateinamen und/oder ihr Speicherort vorher durch
 Batches oder Scripts ggf. so angepaát werden, daá der
-Client und XP korrekt miteinander kooperieren.
+Client und OpenXP korrekt miteinander kooperieren.
 
 <<<XP>\SPOOL\<Box> >> Das Spool-Verzeichnis der Server-
    box, fr die ein Netcall durchgefhrt wird. <<<XP> >>
-   steht dabei fr das XP-Verzeichnis, <<<Box> >>fr den
-   Namen der Serverbox, genauer: fr den Namensanteil
+   steht dabei fr das OpenXP-Verzeichnis, <<<Box> >>fr
+   den Namen der Serverbox bzw. fr den Namensanteil
    der Serverbox-Konfigurationsdatei <<<Box>.BFG>> (also
    ggf. auf 8 Stellen gekrzt, bei in den ersten acht
    Stellen identischen Namen mit einer lfd. Numerie-
@@ -5702,10 +5710,10 @@ Client und XP korrekt miteinander kooperieren.
    oder Umbenennen einer Serverbox automatisch
    erstellt bzw. umbenannt.
 
-   Im Spool-Verzeichnis legt XP bei einem Netcall
-   alle ausgehenden RFC-Nachrichten ab und liest ein-
-   gegangene Nachrichten (nur) aus diesem Verzeichnis
-   ein. Ausnahme: "[Multiserverbetrieb]"@30109
+   Im Spool-Verzeichnis legt OpenXP bei einem Net-
+   call alle ausgehenden RFC-Nachrichten ab und
+   liest eingegangene Nachrichten (nur) aus diesem
+   Verzeichnis ein. Ausnahme: "[Multiserverbetrieb]"@30109
 
    Name und Pfad des Spool-Verzeichnisses sind in der
    o.a. Form "fest verdrahtet" und k”nnen nicht kon-
@@ -5714,18 +5722,17 @@ Client und XP korrekt miteinander kooperieren.
    k”nnen ihn aus dem Wert "Client-Spool=" in der
    Konfigurationsdatei <Box>.BFG auslesen.
 
-<<Mnnnn.OUT>>  Ausgehende Mails (PMs) legt XP (genauer:
-   der Nachrichtenkonvertierer UUZ) unter diesem
-   Namen im Spool-Verzeichnis ab.
+<<Mnnnn.OUT>>  Ausgehende Mails (PMs) legt OpenXP
+   unter diesem Namen im Spool-Verzeichnis ab.
 
 <<Nnnnn.OUT>>  Ausgehende News (Artikel, Postings, AMs)
-   werden von XP (bzw. UUZ) unter diesem Namen im
-   Spool-Verzeichnis abgelegt.
+   werden von OpenXP unter diesem Namen im Spool-
+   Verzeichnis abgelegt.
 
 Fr Mails wie fr News gilt: "nnnn" steht fr eine
 fortlaufende vierstellige Zahl. Es wird je Nachricht
 eine Datei erzeugt (s. auch weiter unten, "<<Nachrich-
-<<tenkonvertierung ZC<->RFC mit UUZ>>").
+<<tenkonvertierung ZC<->RFC>>").
 
 <<Mnnnn.MSG>>  Unter diesem Namen erwartet OpenXP
    die eingegangenen Mails (PMs) im Spool-Verzeichnis
@@ -5735,28 +5742,29 @@ eine Datei erzeugt (s. auch weiter unten, "<<Nachrich-
    die eingegangenen News (AMs) im Spool-Verzeichnis
    der Serverbox.
 
-Eingegangene Mails und News werden von UUZ in einen
-ZConnect-Puffer konvertiert und anschlieáend in XP
-eingelesen. "nnnn" steht auch hier fr eine fortlau-
-fende vierstellige Zahl.
+Eingegangene Mails und News werden in einen
+ZConnect-Puffer konvertiert und anschlieáend in
+OpenXP eingelesen. "nnnn" steht auch hier fr eine
+fortlaufende vierstellige Zahl.
 
 <<M*.IN, N*.IN>>  Eingegangene Mails und News, die
-   erfolgreich konvertiert *und* in XP eingelesen
-   werden konnten, erhalten danach die Dateierweite-
-   rung .IN statt .MSG. Diese bleiben bis zum n„ch-
-   sten Netcall im Spool-Verzeichnis der Serverbox
-   liegen und werden beim n„chsten Netcall gel”scht.
+   erfolgreich konvertiert *und* in OpenXP eingele-
+   sen werden konnten, erhalten danach die Dateier-
+   weiterung .IN statt .MSG. Diese bleiben bis zum
+   n„chsten Netcall im Spool-Verzeichnis der Server-
+   box liegen und werden beim n„chsten Netcall ge-
+   l”scht.
 
-<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers, den
-   UUZ bei einem Netcall einer RFC/Client-Serverbox
-   aus den eingegangenen RFC-Nachrichten erstellt.
+<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers, der
+   bei einem Netcall einer RFC/Client-Serverbox aus
+   den eingegangenen RFC-Nachrichten erstellt wird.
 
 <<<Box>.BL>> oder <<<Box>.GR>>  Die Gesamtliste aller vorhan-
    denen Bretter (Newsgroups) einer Serverbox - liegt
    i.d.R. im [Client-Verzeichnis] (speziell bei Einsatz@30107
    eines der diversen UKA*-Clients), kann aber auch
-   im XP-Verzeichnis (dann aber ausschlieálich als
-   <<<Box>.BL>>!) liegen.
+   im OpenXP-Verzeichnis (dann aber ausschlieálich
+   als <<<Box>.BL>>!) liegen.
    Siehe auch: [Netztyp RFC/Client - Brettmanager]@30201
 
 <<<Box>.RC>>  Die Liste aller bestellten Bretter
@@ -5787,10 +5795,10 @@ folgenden Einzelschritten ab:
     Ausgangsfilter eingetragen).
 
  3. <<ZC->RFC-Konvertierung>> der ausgehenden Nachrichten
-    durch UUZ und Ablegen der konvertierten Nach-
-    richten (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im
-    Spool-Verzeichnis <XP>\SPOOL\<Box> (nur, wenn
-    ausgehende Nachrichten vorhanden).
+    und Ablegen der konvertierten Nachrichten
+    (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im Spool-
+    Verzeichnis <XP>\SPOOL\<Box> (nur, wenn aus-
+    gehende Nachrichten vorhanden).
 
     Im "[Multiserverbetrieb]" werden auch die Nachrich-@30109
     ten der Server, die bei einem Netcall einer Ser-
@@ -5798,13 +5806,14 @@ folgenden Einzelschritten ab:
     in dem Spool-Verzeichnis der Serverbox abgelegt,
     fr die der Netcall durchgefhrt wird.
 
- 4. <<Aufruf des externen Clients>> (ab hier gibt XP die
-    Kontrolle an das externe Programm ab). Der Client
-    muá die im Spool-Verzeichnis liegenden Nachrich-
-    ten (*.OUT) versenden, erfolgreich versendete
-    Nachrichten l”schen, und eingehende Nachrichten
-    als Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im
-    Spool-Verzeichnis <XP>\SPOOL\<Box> ablegen.
+ 4. <<Aufruf des externen Clients>> (ab hier gibt
+    OpenXP die Kontrolle an das externe Programm
+    ab). Der Client muá die im Spool-Verzeichnis
+    liegenden Nachrichten (*.OUT) versenden, er-
+    folgreich versendete Nachrichten l”schen und
+    eingehende Nachrichten als Mnnnn.MSG (Mails)
+    bzw. Nnnnn.MSG (News) im Spool-Verzeichnis
+    <XP>\SPOOL\<Box> ablegen.
 
  5. <<Unversandt-Handling>> - OpenXP prft das Spool-
     Verzeichnis <XP>\SPOOL\<Box> auf unversandte
@@ -5832,21 +5841,21 @@ folgenden Einzelschritten ab:
     Datei wird anschlieáend gel”scht.
 
 
-<<Nachrichtenkonvertierung ZC<->RFC mit UUZ
+<<Nachrichtenkonvertierung ZC<->RFC
 
-Der Nachrichtenkonvertierer UUZ legt ausgehende Nach-
+Der Nachrichtenkonvertierer legt ausgehende Nach-
 richten (*.OUT) im Spool-Verzeichnis <XP>\SPOOL\<Box>
 der jeweiligen Serverbox ab; aus demselben Verzeich-
-nis konvertiert UUZ eingegangene Nachrichten (*.MSG)
-in die ZConnect-Pufferdatei CLPUFFER, die anschlie-
-áend von XP eingelesen wird.
+nis werden die eingegangenen Nachrichten (*.MSG)
+in die ZConnect-Pufferdatei CLPUFFER konvertiert,
+die anschlieáend von OpenXP eingelesen wird.
 
 Wenn w„hrend eines Netcalls mal etwas schiefgegangen
 sein sollte, k”nnen Sie die eingegangenen Nachrichten
 mit folgendem Befehl auch manuell konvertieren (Sie
-mssen sich dabei im XP-Verzeichnis befinden):
+mssen sich dabei im OpenXP-Verzeichnis befinden):
 
-<<UUZ.EXE -uz SPOOL\<Box>\*.MSG CLPUFFER
+<<OPENXP UUZ -uz SPOOL\<Box>\*.MSG CLPUFFER
 
 Die Pufferdatei CLPUFFER k”nnen Sie dann ber OpenXP/
 Import/Puffer_einlesen... na, einlesen eben. :-)
@@ -5856,8 +5865,8 @@ warten, im Spool-Verzeichnis der Serverbox liegende
 Nachrichten (*.MSG) werden dann am Ende des Netcalls
 automatisch mit eingelesen.
 
-UUZ wird beim Netztyp RFC/Client *immer* mit folgen-
-den Schaltern aufgerufen:
+Der Konverter wird beim Netztyp RFC/Client *immer*
+mit folgenden Schaltern aufgerufen:
 
 <<-SMTP>>:   Dieser Schalter sorgt dafr, daá die
          ausgehenden PMs (Mnnnn.OUT) im SMTP-Mail-
@@ -5899,11 +5908,12 @@ den Schaltern aufgerufen:
 
            Das Erzeugen von einer Datei je Nachricht
            spielt u.a. fr das Unversandt-Handling
-           eine wichtige Rolle, da XP sonst nicht
-           erkennen k”nnte, welche Nachrichten nicht
-           versandt wurden. Auáerdem verhindert diese
-           Methode das Senden von 'Dupes' im Falle
-           von Verbindungs-/šbertragungsproblemen.
+           eine wichtige Rolle, da OpenXP sonst
+           nicht erkennen k”nnte, welche Nachrichten
+           nicht versandt wurden. Auáerdem verhin-
+           dert diese Methode das Senden von
+           'Dupes' im Falle von Verbindungs-/šber-
+           tragungsproblemen.
 
          - Die ausgehenden Nachrichtendateien werden
            nach dem Schema "Mnnnn.OUT" (Mails, PMs)
@@ -5945,7 +5955,7 @@ richtig) interpretiert.
   gende Dateinamen und Speicherorte fr Brettlisten
   (in dieser Reihenfolge):
 
-  <<<Box>.BL>>  (XP-Verzeichnis)
+  <<<Box>.BL>>  (OpenXP-Verzeichnis)
   <<<Box>.BL>>  (Client-Verzeichnis)
   <<<Box>.GR>>  (Client-Verzeichnis)
 
@@ -5957,13 +5967,13 @@ richtig) interpretiert.
   Grunds„tzlich gilt: Wenn Ihr Client eine automa-
   tische Aktualisierung von Brettlisten untersttzt,
   sollte die Newsgroup-Liste immer im Client-Ver-
-  zeichnis abgelegt sein (im XP-Verzeichnis darf dann
-  keine Liste <<<Box>.BL>> existieren!). Besitzt Ihr
-  Client keine Aktualisierungsfunktion, sollten Sie
-  die Liste immer im XP-Verzeichnis ablegen. Wie Sie
-  dies im Detail erreichen und wie der Umgang damit
-  in der Praxis funktioniert, wird im folgenden genau
-  erl„utert.
+  zeichnis abgelegt sein (im OpenXP-Verzeichnis darf
+  dann keine Liste <<<Box>.BL>> existieren!). Be-
+  sitzt Ihr Client keine Aktualisierungsfunktion,
+  sollten Sie die Liste immer im OpenXP-Verzeichnis
+  ablegen. Wie Sie dies im Detail erreichen und wie
+  der Umgang damit in der Praxis funktioniert, wird
+  im folgenden genau erl„utert.
 
   Die einzelnen (und zum Teil unterschiedlichen)
   Schritte zum Beziehen und Einrichten einer Gesamt-
@@ -5992,7 +6002,7 @@ richtig) interpretiert.
                            İ nach Einlesen l”schen)
   -------------------------+-------------------------
   Liste <<<Box>.BL>>/<<<Box>.GR>>  İ Liste <<<Box>.BL>> liegt im
-  liegt im Client-Verz.    İ XP-Verzeichnis
+  liegt im Client-Verz.    İ OpenXP-Verzeichnis
   -------------------------+-------------------------
    [/Nachricht/Brettmanager/Sonstiges/Abgleich]  (nur,@11904
    wenn sich eine Datei <<<Box>.RC>> im Client-Verzeich-
@@ -6042,18 +6052,20 @@ richtig) interpretiert.
     ist bei den g„ngigen UKA*-Clients der Regelfall),
     sollten Sie die Funktion /Nachricht/Brettmanager/
     [Datei_einlesen] deshalb *nicht* ausfhren, damit@11907
-    XP keine Liste <<<Box>.BL>> im XP-Verzeichnis ablegt.
+    OpenXP keine Liste <<<Box>.BL>> im XP-Verzeichnis
+    ablegt.
     Anderenfalls wrde die Liste im Client-Verzeich-
     nis (falls sie nach dem Einlesen nicht gel”scht
     wurde) zwar bei jedem Netcall aktualisiert wer-
-    den, der XP-Brettmanager wrde aber immer auf die
-    (nicht aktualisierte) Liste im XP-Verzeichnis zu-
-    greifen <<=> >>Client und XP arbeiten nicht synchron.
+    den, der OpenXP-Brettmanager wrde aber immer
+    auf die (nicht aktualisierte) Liste im OpenXP-
+    Verzeichnis zugreifen <<=> >>Client und OpenXP
+    arbeiten nicht synchron.
 
-    Hingegen wird der XP-Brettmanager, wenn er keine
-    <<<Box>.BL>> im XP-Verzeichnis vorfindet, immer auf
-    die neueste, vom Client aktualisierte Liste im
-    Client-Verzeichnis zugreifen.
+    Hingegen wird der Brettmanager wenn er keine
+    <<<Box>.BL>> im OpenXP-Verzeichnis vorfindet
+    immer auf die neueste vom Client aktualisierte
+    Liste im Client-Verzeichnis zugreifen.
 
     Bei Clients ohne automatische Aktualisierung w„re
     das ausdrckliche Einlesen theoretisch zwar eben-
@@ -6131,22 +6143,22 @@ richtig) interpretiert.
 <<İ Dateinamenskonventionen
 
   Voraussetzung fr ein problemloses Zusammenspiel
-  zwischen dem XP-Brettmanager und den externen RFC-
-  Clients ist, daá die Namen der in XP eingerichteten
-  Serverbox, der Brettliste im Client-Verzeichnis
-  (sofern sie dort liegt, bei ins XP-Verzeichnis ein-
-  gelesenen Listen sorgt XP selbst fr die korrekte
-  Benennung) und der aktiven Client-Konfigurations-
-  datei identisch sind. Genauer: der Namensanteil
-  ohne Dateierweiterung dieser Dateien muá identisch
-  sein.
+  zwischen dem OpenXP-Brettmanager und den externen
+  RFC-Clients ist, daá die Namen der in OpenXP ein-
+  gerichteten Serverbox, der Brettliste im Client-
+  Verzeichnis (sofern sie dort liegt, bei in das
+  OpenXP-Verzeichnis eingelesenen Listen sorgt
+  OpenXP selbst fr die korrekte Benennung) und der
+  aktiven Client-Konfigurationsdatei identisch sind.
+  Genauer: der Namensanteil ohne Dateierweiterung
+  dieser Dateien muá identisch sein.
 
   Beispiel: Sie haben Ihre Serverbox "Freeline"
   genannt. OpenXP geht dann von folgenden Datei-
   namen aus:
 
   <<FREELINE.BFG>>     (Serverbox-Konfigurationsdatei im
-                    XP-Verzeichnis)
+                    OpenXP-Verzeichnis)
   <<FREELINE.>>CFG     (Client-Konfigurationsdatei im
                     Client-Verzeichnis)
   <<FREELINE>>.BL/.GR  (Brettliste im Client-Verzeichnis)
@@ -6203,9 +6215,9 @@ richtig) interpretiert.
   der RC-Datei.
 
   Fr die Synchronisierung von Gesamtliste und RC-
-  Datei sorgt XP bei jedem (Ab-)Bestellvorgang auto-
-  matisch - unabh„ngig davon, ob die Gesamtliste im
-  Client- oder im XP-Verzeichnis liegt.
+  Datei sorgt OpenXP bei jedem (Ab-)Bestellvorgang
+  automatisch - unabh„ngig davon, ob die Gesamtliste im
+  Client- oder im OpenXP-Verzeichnis liegt.
 
   Sollten Sie oder ein externes Programm RC-Datei
   bzw. Brettliste manipuliert oder Sie eine neue
@@ -6223,35 +6235,36 @@ richtig) interpretiert.
 
 <<İ Brettlisten-Formate
 
-  Wenn Sie die Brettlisten, die im XP-Verzeichnis
-  mittels [/Nachricht/Brettmanager/Datei_einlesen]@11907
+  Wenn Sie die Brettlisten, die im OpenXP-Verzeich-
+  nis mittels [/Nachricht/Brettmanager/Datei_einlesen]@11907
   abgelegt werden, und die Brettlisten, die sich im
   Client-Verzeichnis befinden, einem genaueren Ver-
   gleich unterziehen, werden Sie feststellen, daá das
   Format dieser beiden Listen unterschiedlich ist.
 
-  Brettlisten im XP-Verzeichnis haben z.B. zwei Leer-
-  zeichen vor jedem Gruppennamen, Listen im Client-
-  Verzeichnis jedoch nicht. Auch sind die Markierun-
-  gen fr bestellte Bretter unterschiedlich (im XP-
-  Verzeichnis vor, im Client-Verzeichnis hinter den
-  Gruppennamen). Dies ist notwendig, um die Kompati-
-  bilit„t der im Client-Verzeichnis liegenden Listen
-  mit den g„ngigen Clients sicherzustellen, die diese
-  Listen aktualisieren.
+  Brettlisten im OpenXP-Verzeichnis haben z.B. zwei
+  Leerzeichen vor jedem Gruppennamen, Listen im
+  Client-Verzeichnis jedoch nicht. Auch sind die
+  Markierungen fr bestellte Bretter unterschiedlich
+  (im OpenXP-Verzeichnis vor, im Client-Verzeichnis
+  hinter den Gruppennamen). Dies ist notwendig, um
+  die Kompatibilit„t der im Client-Verzeichnis lie-
+  genden Listen mit den g„ngigen Clients sicherzu-
+  stellen, die diese Listen aktualisieren.
 
   Das alles braucht Sie aber nicht weiter zu kmmern:
   Sie werden n„mlich auch feststellen, daá das Anzei-
-  geformat im XP-Brettmanager immer identisch ist,
-  egal welches dieser Listenformate Sie laden: die
-  Gruppennamen sind um zwei Zeichen eingerckt, be-
-  stellte Gruppen sind mit einem "<<*>>" davor markiert.
+  geformat im OpenXP-Brettmanager immer identisch
+  ist, egal welches dieser Listenformate Sie laden:
+  die Gruppennamen sind um zwei Zeichen eingerckt,
+  bestellte Gruppen sind mit einem "<<*>>" davor mar-
+  kiert.
 
   Allerdings kann es sein, daá die Bearbeitung der im
   Client-Verzeichnis abgelegten Listen wegen der bei
   jedem Laden erforderlichen internen Umwandlung
   etwas langsamer erfolgt als die der im "Original"-
-  XP-Format abgelegten Listen im XP-Verzeichnis.
+  XP-Format abgelegten Listen im OpenXP-Verzeichnis.
 
 
 <<İ Sonstige Funktion(en)
@@ -6313,13 +6326,14 @@ ge andere Zwecke einsetzen.
 
 <<Standardgruppen
 
-Intern    Gruppe fr XP-Interne Bretter. Nachrichten
-          in diesen Brettern werden NICHT verschickt.
+Intern    Gruppe fr OpenXP-Interne Bretter. Nach-
+          richten in diesen Brettern werden NICHT
+          verschickt.
           Beispiel:  /¯Netzanruf
 
 Lokal     Gruppe fr lokale Bretter innerhalb Ihrer
           Serverbox. Nachrichten an diese Bretter
-          werden nicht ins Netz verschickt.
+          werden nicht verschickt.
 
 Netz      Allgemeine Gruppe fr Netz-Bretter.
 
@@ -6335,12 +6349,12 @@ nur EINE.
 
 <<OK>>       verl„át das Gruppenfenster
 
-<<Hinweis:>> Die Gruppen-Nummern werden von XP fortlau-
-fend vergeben. Wenn Sie eine Gruppe anlegen und an-
-schlieáend wieder l”schen, wird die betreffende Num-
-mer also NICHT mehr neu vergeben. Evtl. wird es in
-einer sp„teren Version die M”glichkeit geben, alte
-Gruppennummern zu "recyclen".
+<<Hinweis:>> Die Gruppen-Nummern werden von OpenXP
+fortlaufend vergeben. Wenn Sie eine Gruppe anlegen
+und anschlieáend wieder l”schen, wird die betref-
+fende Nummer also NICHT mehr neu vergeben. Evtl.
+wird es in einer sp„teren Version die M”glichkeit
+geben, alte Gruppennummern zu "recyclen".
 
 @
 201
@@ -6457,9 +6471,9 @@ Nachrichten mit <<<Ctrl-B> >>/ <<<Ctrl-P> >>oder /Nachricht
 /Als_Quote verwendet. Es wird jeder zitierten Zeile
 vorangestellt.
 
-Dies ist eines der wenigen Eingabefelder von Cross-
-Point, in denen abschlieáende Leerzeichen NICHT ent-
-fernt werden. Dadurch l„át sich ein Abstand zwischen
+Dies ist eines der wenigen Eingabefelder von OpenXP,
+in denen abschlieáende Leerzeichen NICHT entfernt
+werden. Dadurch l„át sich ein Abstand zwischen
 Quote-Zeichen und zitiertem Text schaffen.
 
 Auf Wunsch kann OpenXP automatisch die Initialen
@@ -6651,8 +6665,8 @@ Boxnamen im Empf„nger enthalten.
        mit [/OpenXP/Import/Brettliste] bzw. mit@11004
        [/Nachricht/Brettmanager/Bestellen] (nur ZCon-@11901
        nect und RFC/UUCP) werden die Kommentare aus
-       der Brettliste, falls vorhanden, in die XP-
-       Brettbersicht bernommen.
+       der Brettliste, falls vorhanden, in die
+       OpenXP-Brettbersicht bernommen.
 
 <<[ ]>> -> Die Bretter erhalten zun„chst keinen Kommen-
        tar.
@@ -6663,11 +6677,11 @@ mit <<S>>pezial/<<E>>dit „ndern.
 222
 <<Fido, QWK, RFC/UUCP:
 
-<<[x]>> -> Fr neue User, die automatisch in der Cross-
-       Point-Userliste eingetragen werden (z.B. wenn
-       Sie auf eine Nachricht antworten), wird die
-       Verwendung von Umlauten aktiviert. Dies ist
-       die empfohlene Einstellung.
+<<[x]>> -> Fr neue User, die automatisch in der OpenXP-
+       Userliste eingetragen werden (z.B. wenn Sie
+       auf eine Nachricht antworten), wird die Ver-
+       wendung von Umlauten aktiviert. Dies ist die
+       empfohlene Einstellung.
 
 <<[ ]>> -> Umlaute sind fr neue User zun„chst deakti-
        viert, d.h. deutsche Sonderzeichen werden in
@@ -6710,8 +6724,8 @@ auch fr den Editor. Sie l„át sich im Lister jeder-
 zeit mit der Taste <<Q>> umschalten.
 @
 225
-So viele Megabytes Festplattenplatz ben”tigt Cross-
-Point mindestens zum Arbeiten. Ist bei <<Programmstart>>
+So viele Megabytes Festplattenplatz ben”tigt OpenXP
+mindestens zum Arbeiten. Ist bei <<Programmstart>>
 zu wenig Platz vorhanden, dann wird eine Warnung
 angezeigt. Dadurch sind Sie vor unliebsamen šberra-
 schungen durch berfllte Festplatten sicher.
@@ -6730,14 +6744,14 @@ Lister trennen k”nnen, dann tragen Sie hier den Da-
 teinamen inkl. Erweiterung (.COM oder .EXE) ein.
 
 Wahlweise kann das Makro <<$FILE>> fr die zu listende
-Datei eingesetzt werden. Ansonsten bergibt XP den
-Dateinamen als einzigen Parameter an den Lister.
+Datei eingesetzt werden. Ansonsten bergibt OpenXP
+den Dateinamen als einzigen Parameter an den Lister.
 @
 231
 Geben Sie hier an, wieviele KiloBytes Speicher der
-Lister mindestens ben”tigt. XP versucht dann, beim
-Aufruf des Listers soviel Speicher wie ben”tigt zur
-Verfgung zu stellen.
+Lister mindestens ben”tigt. OpenXP versucht dann,
+beim Aufruf des Listers soviel Speicher wie ben”tigt
+zur Verfgung zu stellen.
 @
 232
 <<[x]>> -> bei der Nachrichtenanzeige wird auf Vollbild
@@ -6787,11 +6801,11 @@ unlesbare "Amiga-Sonderzeichen" (Sonderzeichen nach
 ISO-8859-1) auftauchen, z.B. "„" statt "ä" oder "”"
 statt "ö".
 
-Wenn Sie hier <<[x]>> einstellen, konvertiert XP diese
-Zeichen im Lister und bei Quotes in ein lesbares
-Format. Ausgenommen ist das groáe  - es entspricht
-dem IBM-Grafikzeichen "Ä" und wrde in Rahmengrafi-
-ken sehr merkwrdig aussehen.
+Wenn Sie hier <<[x]>> einstellen, konvertiert OpenXP
+diese Zeichen im Lister und bei Quotes in ein les-
+bares Format. Ausgenommen ist das groáe  - es ent-
+spricht dem IBM-Grafikzeichen "Ä" und wrde in
+Rahmengrafiken sehr merkwrdig aussehen.
 
 Diese Einstellung betrifft auch einen evtl. einge-
 bundenen externen Lister.
@@ -6802,9 +6816,9 @@ In vielen Netzen ist es blich, hervorgehobene W”r-
 ter durch Einschlieáen in *Sterne* oder _Unterstri-
 che_ hervorzuheben.
 
-<<[x]>> -> XP stellt hervorgehobene W”rter in einer
-       anderen Farbe dar, die bei /C/A/Farben/Lister
-       eingestellt werden kann.
+<<[x]>> -> OpenXP stellt hervorgehobene W”rter in
+       einer anderen Farbe dar, die bei /C/A/Farben/
+       Lister eingestellt werden kann.
 
 <<[ ]>> -> Die Hervorhebungen werden nicht besonders be-
        handelt.
@@ -6848,9 +6862,9 @@ Diese Einstellung gilt auch fr den Editor.
 @
 240
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
-Ihnen verschickte Bin„rnachrichten komplett in XP
-gespeichert werden. Ist eine Nachricht gr”áer als
-angegeben, speichert OpenXP stattdessen eine
+Ihnen verschickte Bin„rnachrichten komplett in
+OpenXP gespeichert werden. Ist eine Nachricht gr”áer
+als angegeben, speichert OpenXP stattdessen eine
 kurze Versandmeldung, um Speicherplatz zu sparen.
 
 Achtung! Auch codierte Textnachrichten sind Bin„r-
@@ -6909,8 +6923,8 @@ rechtliche Bedenken, weil dadurch prinzipiell ein
 Nutzungsprofil ber einzelne User erstellt werden
 k”nnte.
 
-Wenn Sie hier <<[x]>> einstellen, versieht XP alle
-ausgehenden Nachrichten mit der Uhrzeit 00:00.
+Wenn Sie hier <<[x]>> einstellen, versieht OpenXP
+alle ausgehenden Nachrichten mit der Uhrzeit 00:00.
 @
 246
 Bezge auf vorhandene Nachrichten werden von OpenXP
@@ -6990,11 +7004,12 @@ Der Empfang einer Nachricht kann auch manuell mit
 251
 <<ZConnect / RFC:
 
-Wenn Sie hier <<[x]>> einstellen, versieht XP standard-
-m„áig alle PMs an mehrere Empf„nger mit einer Blind-
-kopie-Markierung (Blind Carbon Copy). Diese bewirkt,
-daá die einzelnen Empf„nger jeweils nicht die Namen
-der brigen Empf„nger erkennen k”nnen.
+Wenn Sie hier <<[x]>> einstellen, versieht OpenXP
+standardm„áig alle PMs an mehrere Empf„nger mit
+einer Blindkopie-Markierung (Blind Carbon Copy).
+Diese bewirkt, daá die einzelnen Empf„nger jeweils
+nicht die Namen der brigen Empf„nger erkennen
+k”nnen.
 
 Der Blindkopie-Status kann auch im Sendefenster je
 Nachricht mit <<<Ctrl-K> >>ein- oder ausgeschaltet
@@ -7169,9 +7184,9 @@ Es sollte mindestens doppelt soviel Platz vorhanden
 sein, wie die gr”áte von Ihnen versandte Nachricht
 ben”tigt, mindestens jedoch 200-300 KByte.
 
-Wird kein Temp-Verzeichnis angegeben, verwendet XP
-immer das Verzeichnis, in dem sich auch die Programm-
-dateien befinden.
+Wird kein Temp-Verzeichnis angegeben, verwendet
+OpenXP immer das Verzeichnis, in dem sich auch die
+Programmdateien befinden.
 @
 261
 Im Extrakt-Verzeichnis werden die mit /Nachricht
@@ -7350,14 +7365,15 @@ so lange warten zu mssen.
        Stromsparschaltung aktivieren.
 @
 283
-<<[x]>> -> Beim Aktivieren des Screensavers schaltet XP
-       Ihren Monitor in den Stromsparmodus. Voraus-
-       setzung dafr ist, daá Ihre Grafikkarte und
-       Ihr Monitor den VESA-DPMS-Standard unter-
+<<[x]>> -> Beim Aktivieren des Screensavers schaltet
+       OpenXP Ihren Monitor in den Stromsparmodus.
+       Voraussetzung dafr ist, daá Ihre Grafikkarte
+       und Ihr Monitor den VESA-DPMS-Standard unter-
        sttzen.
 
-Wenn XP in einem Windows- oder OS/2-Fenster l„uft,
-steht normalerweise kein VESA-DPMS zur Verfgung.
+Wenn OpenXP in einem Windows- oder OS/2-Fenster
+l„uft, steht normalerweise kein VESA-DPMS zur Ver-
+fgung.
 
 @
 284
@@ -7455,8 +7471,8 @@ sortiert.
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
        Aufblinken des Bildschirmrahmens erg„nzt.
 
-Wenn XP in einem Windows- oder OS/2-Fenster l„uft,
-ist diese Einstellung ohne Wirkung.
+Wenn OpenXP in einem Windows- oder OS/2-Fenster
+l„uft, ist diese Einstellung ohne Wirkung.
 @
 290
 Dies ist die physikalische Adresse der gew„hlten se-
@@ -7520,8 +7536,8 @@ Mit "\\" k”nnen Sie auch mehrere Zeilen zum Modem
 senden lassen, z.B. "ATZ\\ATS0=0".
 @
 294
-Dies ist der Befehl, den XP zum W„hlen an Ihr Modem
-schickt. šbliche Befehle sind:
+Dies ist der Befehl, den OpenXP zum W„hlen an Ihr
+Modem schickt. šbliche Befehle sind:
 
    ATDP     fr Pulswahl
    ATDT     fr Tonwahl
@@ -7547,7 +7563,7 @@ Wenn Sie unglcklicher Besitzer eines postzugelasse-
 nen Modems sind, muá zwischen mehreren W„hlversuchen
 jeweils eine Pause von mindestens 30 Sekunden liegen.
 
-Wenn Sie diesen Schalter aktivieren, wartet XP
+Wenn Sie diesen Schalter aktivieren, wartet OpenXP
 zwischen mehreren W„hlversuchen immer genau so lange,
 wie Sie es unter /Edit/Boxen/Edit/Modem eingestellt
 haben. Wenn der Schalter deaktiviert ist, wird dage-
@@ -7579,7 +7595,7 @@ lung auf <<[x]>> setzen.
 
 Achtung: Abgeschaltete CTS-Erkennung kann - insbeson-
 dere bei langsamen Baudraten (bis 2400 Baud) - dazu
-fhren, daá einzelne von XP an das Modem gesandte
+fhren, daá einzelne von OpenXP an das Modem gesandte
 Zeichen verloren gehen! Die dadurch auftretenden Pro-
 bleme sind schwer vorherzusagen. Sie sollten in jedem
 Fall versuchen, das Problem zu beseitigen, das zum
@@ -7608,7 +7624,7 @@ Schnittstelle auf einem anderen Netzwerkrechner
 verwenden m”chten. In diesem Fall muá immer zuerst
 der passende Treiber geladen werden. Ist der Treiber
 *nicht* geladen, erhalten Sie bei Zugriff auf die
-Schnittstelle eine kurze Meldung, und XP versucht
+Schnittstelle eine kurze Meldung, und OpenXP versucht
 anschlieáend, den eingebauten Treiber zu verwenden.
 
 Da FOSSIL-Treiber die Verwaltung von Portadressen,
@@ -7626,10 +7642,10 @@ geln), dann h„lt OpenXP den Netcall fr bis zu
 
 Bei einigen Modem-Verbindungskabeln in Sparausfh-
 rung k"nnte es jedoch sein, daá diese Ring-Leitung
-gar nicht beschaltet ist - zu erkennen daran, daá XP
-f„lschlicherweise einen eingehenden Anruf meldet. In
-diesem Fall sollten Sie die RING-Erkennung auf <<[ ]>>
-setzen.
+gar nicht beschaltet ist - zu erkennen daran, daá
+OpenXP f„lschlicherweise einen eingehenden Anruf
+meldet. In diesem Fall sollten Sie die RING-Erken-
+nung auf <<[ ]>> setzen.
 
 Neben dem Modemkabel kommt als Fehlerursache auch
 ein Fehler in der Firmware des Modems in Frage -
@@ -7657,10 +7673,10 @@ gnoseprogramm "MSD" anzeigen lassen.
 
 Achtung: Einige, wenige 16550A-Bausteine sind nicht
 ganz kompatibel zum Original und werden daher nicht
-von XP erkannt. Unter OS/2 oder Windows bernimmt
-das Betriebssystem die Verwaltung des FIFOs. Dabei
-spielt es keine Rolle, ob der FIFO von XP erkannt
-wird.
+von OpenXP erkannt. Unter OS/2 oder Windows ber-
+nimmt das Betriebssystem die Verwaltung des FIFOs.
+Dabei spielt es keine Rolle, ob der FIFO von OpenXP
+erkannt wird.
 
 @
 963
@@ -7687,8 +7703,8 @@ Nachrichten und zum Editieren von Schablonen verwen-
 det.
 
 Wahlweise kann das Makro <<$FILE>> fr die zu editieren-
-de Datei eingesetzt werden. Ansonsten bergibt XP den
-Dateinamen als einzigen Parameter an den Editor.
+de Datei eingesetzt werden. Ansonsten bergibt OpenXP
+den Dateinamen als einzigen Parameter an den Editor.
 
 <<Einbinden von Zusatzprogrammen
 
@@ -7702,9 +7718,9 @@ dem Programmnamen dazu ein <<*>> voran.
 @
 301
 Geben Sie hier an, wieviele KiloBytes Speicher der
-Editor mindestens ben”tigt. XP versucht dann, beim
-Aufruf des Editors soviel Speicher wie ben”tigt zur
-Verfgung zu stellen.
+Editor mindestens ben”tigt. OpenXP versucht dann,
+beim Aufruf des Editors soviel Speicher wie ben”tigt
+zur Verfgung zu stellen.
 @
 302
 Die Dateierweiterungen der Backup-Dateien, die der
@@ -7782,24 +7798,24 @@ Speicher zur Verfgung stellen soll; dazu wird der
 
 Normalerweise mssen Sie hier gar nichts eintragen -
 bei Einstellung "0" wird immer so viel Umgebungs-
-speicher verwendet, wie beim Aufruf von XP vorhanden
-war. Nur wenn Sie zus„tzlichen Speicher ben”tigen
-(fr lange SET-Befehle), sollten Sie hier einen Wert
-von z.B. 1024 (ein KByte) eingeben.
+speicher verwendet, wie beim Aufruf von OpenXP vor-
+handen war. Nur wenn Sie zus„tzlichen Speicher be-
+n”tigen (fr lange SET-Befehle), sollten Sie hier
+einen Wert von z.B. 1024 (ein KByte) eingeben.
 
 Genauere Erl„uterungen zum Environment-Speicher
 finden Sie in Ihrem DOS-Handbuch.
 @
 312
-<<[x]>> -> Vor dem Aufruf externer Programme zeigt XP
+<<[x]>> -> Vor dem Aufruf externer Programme zeigt OpenXP
        ein Fenster mit der genauen Aufruf-Befehls-
        zeile an.
 
 Dieser Schalter ist zu Diagnosezwecken gedacht.
 @
 313
-<<[x]>> -> Nach dem Aufruf externer Programme wartet XP
-       auf einen Tastendruck.
+<<[x]>> -> Nach dem Aufruf externer Programme wartet
+       OpenXP auf einen Tastendruck.
 
 Dieser Schalter ist zu Diagnosezwecken gedacht. Er
 hilft dabei, die Ausgaben von externen Programmen
@@ -7882,13 +7898,13 @@ werden.
 @
 407
 Hier k”nnen Sie den Inhalt der Origin-Zeile eintra-
-gen, die XP unter alle Nachrichten in diesem Brett
-setzen soll. Ist fr das Brett kein Origin eingetra-
-gen, so verwendet XP den Origin der entsprechenden
-Brettgruppe (einstellbar bei /Edit/Gruppen). Ist auch
-fr die Brettgruppe kein Origin vorhanden, dann wird
-der bei /Edit/Boxen/Edit/Namen eingetragene Origin
-verwendet.
+gen, die OpenXP unter alle Nachrichten in diesem
+Brett setzen soll. Ist fr das Brett kein Origin ein-
+getragen, so verwendet XP den Origin der entsprechen-
+den Brettgruppe (einstellbar bei /Edit/Gruppen). Ist
+auch fr die Brettgruppe kein Origin vorhanden, dann
+wird der bei /Edit/Boxen/Edit/Namen eingetragene
+Origin verwendet.
 
 Beachten Sie, daá aus technischen Grnden nicht
 gleichzeitig ein Origin und ein Vertreter fr ein
@@ -7958,15 +7974,15 @@ oder aber ein User-Pseudonym in der Form
 
    P:Pseudonym
 
-Entdeckt XP in einer Schablone das Makro $PSEUDO,
+Entdeckt OpenXP in einer Schablone das Makro $PSEUDO,
 dann berprft es zun„chst, ob fr den betreffenden
 User ein Pseudonym definiert ist. Wenn ja, wird das
 Makro durch das Pseudonym ersetzt, ansonsten wird es
 wie das Makro $TUSER ausgewertet.
 
 Statt $PSEUDO kann auch $VPSEUDO verwendet werden;
-in diesem Fall setzt XP bei nicht gefundenem Pseu-
-donym $VORNAME statt $TUSER ein.
+in diesem Fall setzt OpenXP bei nicht gefundenem
+Pseudonym $VORNAME statt $TUSER ein.
 
 Wenn Sie einen Kommentar UND ein Pseudonym verwenden
 m”chten, schreiben Sie den Kommentar einfach vor das
@@ -8065,24 +8081,24 @@ Dieses Eingabefeld darf auch leer bleibem.
 Hier gibt es zwei Eingabem”glichkeiten:
 
   a)  ein externes Programm
-  b)  eine interne XP-Funktion
+  b)  eine interne OpenXP-Funktion
 
 <<Externe Programm>> sind beliebige .COM-, .EXE- oder
-.BAT-Dateien, die im XP-Verzeichnis liegen oder per
-DOS-Pfad erreichbar sind. EXE- und COM-Programme
+.BAT-Dateien, die im OpenXP-Verzeichnis liegen oder
+per Pfad erreichbar sind. EXE- und COM-Programme
 werden deutlich schneller ausgefhrt, wenn Sie die
 Erweiterung ".EXE" oder ".COM" mit angeben. Hinter
 dem Programmnamen k”nnen beliebige Parameter ange-
-geben werden. Auáerdem ist die Verwendung des <<$FILE>>
--Makros m”glich.
+geben werden. Auáerdem ist die Verwendung des <<$FILE>>-
+Makros m”glich.
 
 Nehmen wir z.B. an, daá Sie den Archiv-Verwalter SHEZ
 einbinden m”chten. Dann geben Sie als Programmname
 einfach  SHEZ $FILE  an. Nun k”nnen Sie eine belie-
 bige Bin„rnachricht w„hlen und die entsprechende
 Funktionstaste bzw. den Menpunkt w„hlen - dann
-schreibt XP die gew„hlte Nachricht in eine Datei und
-bergibt den Namen der Datei an SHEZ.
+schreibt OpenXP die gew„hlte Nachricht in eine Datei
+und bergibt den Namen der Datei an SHEZ.
 
 <<interne Funktionen>> beginnen immer mit einem "*"; sie
 sind *nicht* innerhalb von CrossTerm verfgbar:
@@ -8138,10 +8154,10 @@ Es stehen die gleichen Formate wie bei /Nachricht
            nen/BrettQuote).
 @
 443
-<<[x]>> -> XP versucht bei der Verwendung von <<$FILE>>, den
-       Dateinamen aus dem Betreff zu erzeugen.
+<<[x]>> -> OpenXP versucht bei der Verwendung von <<$FILE>>,
+       den Dateinamen aus dem Betreff zu erzeugen.
 
-<<[ ]>> -> XP erzeugt einen Tempor„r-Dateinamen.
+<<[ ]>> -> OpenXP erzeugt einen Tempor„r-Dateinamen.
 @
 444
 <<[x]>> -> Nach Beendigung des aufgerufenen Programms
@@ -8175,10 +8191,10 @@ Es stehen die gleichen Formate wie bei /Nachricht
        Aufruf.
 @
 448
-Der Speicherbedarf des externen Programms. XP ver-
-sucht, soviel Speicher wie angegeben bereitzustel-
-len. Evtl. werden dazu XP-Daten tempor„r auf Fest-
-platte oder in den EMS-Speicher ausgelagert.
+Der Speicherbedarf des externen Programms. OpenXP
+versucht, soviel Speicher wie angegeben bereitzu-
+stellen. Evtl. werden dazu XP-Daten tempor„r auf
+Festplatte oder in den EMS-Speicher ausgelagert.
 
 Wenn Ihr Rechner nicht ber EMS, XMS oder Ramdisk
 verfgt, dann ist diese Option recht ntzlich, um
@@ -8279,8 +8295,8 @@ dies normalerweise FILESERVER.
 <<UUCP:>>
 
 W„hlen Sie mit <<<F2> >>"UUCP-Fileserver". Dadurch weiá
-XP, daá dieses System UUCP-Dateibertragungen unter-
-sttzt.
+OpenXP, daá dieses System UUCP-Dateibertragungen
+untersttzt.
 
 <<Fido:>>
 
@@ -8309,8 +8325,8 @@ Falls die angegebene UUCP-Site ber eine Dateiliste
 verfgt, tragen Sie hier bitte den Namen der Datei
 ein. Normalerweise ist dies "index", "contents",
 "FILES" o.„., meist mit einem vorangestellten "~/",
-also z.B. "~/index".  XP verwendet diese Angabe fr
-/Nachricht/Fileserver/Liste/anfordern.
+also z.B. "~/index".  OpenXP verwendet diese Angabe
+fr /Nachricht/Fileserver/Liste/anfordern.
 
 @
 465
@@ -8324,12 +8340,12 @@ Dieses Eingabefeld ist ohne Bedeutung.
 
 <<UUCP:>>
 
-Hier k”nnen Sie ein Programm eintragen, das XP beim
-Einlesen von Dateilisten ber /Nachricht/Fileserver
-/Liste/.. verwenden soll, um die Listen in ein XP-
-konformes Format zu konvertieren. Der Name der Ein-
-gabe- und Ausgabedatei muá ber die Makros $INFILE
-und $OUTFILE bergeben werden.
+Hier k”nnen Sie ein Programm eintragen, das OpenXP
+beim Einlesen von Dateilisten ber /Nachricht/File-
+server/Liste/.. verwenden soll, um die Listen in
+ein OpenXP-konformes Format zu konvertieren. Der
+Name der Eingabe- und Ausgabedatei muá ber die Ma-
+kros $INFILE und $OUTFILE bergeben werden.
 
 @
 469
@@ -8463,8 +8479,8 @@ von R„tseln.
 @
 490
 Hier k”nnen Sie bis zu drei externe Codierprogramme
-eintragen, die ber das pmCrypt-Verfahren in Cross-
-Point eingebunden werden. Die einzelnen Angaben sind:
+eintragen, die ber das pmCrypt-Verfahren in OpenXP
+eingebunden werden. Die einzelnen Angaben sind:
 
 <<Name:>>
 
@@ -8518,9 +8534,9 @@ chen.
 
 Was Sie dabei beachten sollten:
 
-ş XP berprft in jedem Fall den Typ der codierten
-  Nachrichten und setzt ihn automatisch auf 'bin„r',
-  falls unerlaubte Zeichen vorhanden sind.
+ş OpenXP berprft in jedem Fall den Typ der codier-
+  ten Nachrichten und setzt ihn automatisch auf 'bi-
+  n„r', falls unerlaubte Zeichen vorhanden sind.
 
 ş Falls der Empf„nger THE ANSWER oder ein anderes
   Pointprogramm benutzt, das bei pmCrypt den Typ
@@ -8769,8 +8785,8 @@ diese (z.B. mit <<<Del> >>oder der Leertaste).
 
 @
 532
-Hier wird eingestellt, in welchen Brettern XP suchen
-soll:
+Hier wird eingestellt, in welchen Brettern OpenXP
+suchen soll:
 
 <<Alle>>      alle Bretter
 
@@ -9005,12 +9021,12 @@ finden Sie im Kapitel "Bedienung" im Handbuch.
 585
 <<[x]>> -> Wenn Sie innerhalb eines Dialog-Fensters im
        /Config-Men <<<Esc> >>drcken, wird das Config-
-       Men komplett beendet, und XP kehrt zum Ar-
-       beitsfenster zurck.
+       Men komplett beendet, und OpenXP kehrt zum
+       Arbeitsfenster zurck.
 
-<<[ ]>> -> Bei <<<Esc> >>springt XP auf den gleichen Men-
-       punkt zurck, mit dem das Dialogfenster akti-
-       viert wurde.
+<<[ ]>> -> Bei <<<Esc> >>springt OpenXP auf den gleichen
+       Menpunkt zurck, mit dem das Dialogfenster
+       aktiviert wurde.
 
 Diese Einstellung gilt auch fr einige Funktionen im
 /Edit-Men.
@@ -9024,10 +9040,10 @@ Diese Einstellung gilt auch fr einige Funktionen im
              gesichert werden.
 
 <<Rckfrage>>    Wenn Einstellungen ge„ndert wurden,
-             fragt XP bei Programmende nach, ob sie
-             gesichert werden sollen, es sei denn,
-             Sie haben dies bereits mit /Config/Si-
-             chern bzw. <<<Alt-S> >>getan.
+             fragt OpenXP bei Programmende nach, ob
+             sie gesichert werden sollen, es sei
+             denn, Sie haben dies bereits mit /Con-
+             fig/Sichern bzw. <<<Alt-S> >>getan.
 @
 587
 <<[x]>> -> Wenn Sie am Anfang der šbersicht <<<Cursor- >>
@@ -9045,7 +9061,7 @@ Diese Einstellung gilt auch fr einige Funktionen im
 Diese Einstellung gilt nicht fr Fido-Netcalls.
 @
 561
-<<[x]>> -> XP versucht den Begráungsbildschirm beim
+<<[x]>> -> OpenXP versucht den Begráungsbildschirm beim
        Netzanruf so frh wie m”glich abzubrechen, um
        šbertragungszeit zu sparen. Dies ist auch
        (oder gerade dann) sinnvoll, wenn der Begr-
@@ -9094,7 +9110,7 @@ QuickMail/GS-Mailbox heiáen sie PUFFER.
 @
 564
 <<[x]>> -> Eingegehende Nachrichtenpakete werden nach
-       dem Einlesen in XP sofort gel”scht. Dies
+       dem Einlesen in OpenXP sofort gel”scht. Dies
        spart Platz auf der Festplatte.
 
 <<[ ]>> -> Eingehende Pakete werden erst beim n„chsten
@@ -9155,11 +9171,11 @@ Geben Sie den Betreff der Nachricht an.
 571
 Geben Sie den Namen der Datei an, die verschickt wer-
 den soll, oder w„hlen Sie die Datei mit <<<F2> >>aus.
-Wird kein Pfad angegeben, sucht XP die Datei im Sen-
-de-Verzeichnis (/Config/Pfade/..).
+Wird kein Pfad angegeben, sucht OpenXP die Datei im
+Sende-Verzeichnis (/Config/Pfade/..).
 
 Der Dateiname kann auch ganz entfallen; in diesem
-Fall erzeugt XP eine Nachricht, die nur aus einer
+Fall erzeugt OpenXP eine Nachricht, die nur aus einer
 Leerzeile besteht. Dies ist ntzlich zum Senden von
 MAPS-Befehlen, um z.B. regelm„áig eine Brettliste
 zu bestellen.
@@ -9176,9 +9192,9 @@ Liste gew„hlt werden.
 573
 Hier k”nnen Sie eine Serverbox eintragen, an die die
 Nachricht abgesetzt werden soll. I.d.R. wird dieses
-Feld freibleiben; XP verwendet dann den fr den Emp-
-f„nger eingetragenen Server oder - falls nicht vor-
-handen - die Stammbox.
+Feld freibleiben; OpenXP verwendet dann den fr den
+Empf„nger eingetragenen Server oder - falls nicht
+vorhanden - die Stammbox.
 
 Zum Versenden von Fido-Crashmails tragen Sie hier
 bitte *CRASH* ein.
@@ -9396,8 +9412,9 @@ Geben Sie den Empf„nger der Brettnachrichten an,
 nach denen Sie suchen m”chten, oder lassen Sie das
 Eingabefeld frei.
 
-Wenn Sie hier Ihren Namen eingeben, sucht XP nach
-Fido-Brettnachrichten, die an Sie gerichtet sind.
+Wenn Sie hier Ihren Namen eingeben, sucht OpenXP
+nach Fido-Brettnachrichten, die an Sie gerichtet
+sind.
 
 Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
 bestimmt, daá der Suchbegriff NICHT gefunden werden
@@ -9582,14 +9599,14 @@ in Klammern einen Realname anh„ngen, z.B.
       user\@system.do.main (Vorname Nachname)
 @
 657
-Wenn Sie XP im LightNET einsetzen, und die Serverbox
-mit dem LightNET-eigenen Verfahren arbeitet, mssen
-Sie diesen Schalter aktivieren.
+Wenn Sie OpenXP im LightNET einsetzen und die Ser-
+verbox mit dem LightNET-eigenen Verfahren arbeitet,
+mssen Sie diesen Schalter aktivieren.
 @
 658
 <<Brettmanager-Typ:>>
 
-   Der Typ des RFC/UUCP-Brettbestell-Managers. XP
+   Der Typ des RFC/UUCP-Brettbestell-Managers. OpenXP
    untersttzt die Brettmanager "changesys", "GUP",
    "AutoSys" und "feeder". Falls Sie den Typ "manu-
    ell" w„hlen, werden Brettbestell-Wnsche als Mail
@@ -9597,7 +9614,7 @@ Sie diesen Schalter aktivieren.
 
 <<Brettmanager-Name:>>
 
-   Dies ist der "Username" des Brettmanagers. XP
+   Dies ist der "Username" des Brettmanagers. OpenXP
    schickt alle Brettmanager-Nachrichten an die
    Adresse, die sich aus diesem Namen, aus dem Ser-
    vernamen und aus der Serverdomain ergibt.
@@ -9638,7 +9655,8 @@ Daten von und zur Box bertragen werden:
 
 <<Fido>>        fr Fido und kompatible Netze
 
-<<QWK>>         hiermit wird XP zum QWK-Offline-Reader
+<<QWK>>         hiermit wird OpenXP zum QWK-Offline-
+            Reader
 
 <<MagicNET>>    fr MagicNET und LightNET
 
@@ -9706,10 +9724,10 @@ eigene Absenderadresse in der Form zone:net/node[.p]
 eingeben (eine sogenannte AKA).
 
 Diese Einstellung ist nur noch aus Kompatiblit„ts-
-grnden zu „lteren XP-Versionen vorhanden. Falls Sie
-ber eine Box Nachrichten unter verschiedenen AKAs
-absenden m”chten, verwenden Sie bitte die in FIDO.
-DOC, Kapitel 2.5 beschriebene Methode.
+grnden zu „lteren OpenXP-Versionen vorhanden. Falls
+Sie ber eine Box Nachrichten unter verschiedenen
+AKAs absenden m”chten, verwenden Sie bitte die in
+FIDO.DOC, Kapitel 2.5 beschriebene Methode.
 @
 695
 Hier k”nnen Sie Einstellungen zur Identit„t machen,
@@ -9881,11 +9899,11 @@ men mit sogenannten TIC-Files zugeschickt - Dateien
 mit der Erweiterung ".TIC", die Informationen ber
 die verschickten File-Echo-Dateien enthalten.
 
-<<[x]>> -> XP wertet TIC-Files automatisch aus, legt in
-       der XP-Brettliste entsprechende File Areas
-       (Dateibretter) an, in die die erhaltenen Da-
-       teien einsortiert werden und l”scht die TIC-
-       Files anschlieáend.
+<<[x]>> -> OpenXP wertet TIC-Files automatisch aus,
+       legt in der OpenXP-Brettliste entsprechende
+       File Areas (Dateibretter) an, in die die er-
+       haltenen Dateien einsortiert werden und l”scht
+       die TIC-Files anschlieáend.
 
 <<[ ]>> -> TIC-Files werden wie alle anderen Dateien
        im FileRequest-Verzeichnis (s. /Config/Pfade)
@@ -9893,8 +9911,8 @@ die verschickten File-Echo-Dateien enthalten.
 
 @
 728
-<<[x]>> -> XP berprft nach jedem File Request, ob alle
-       bestellten Dateien angekommen sind. Falls
+<<[x]>> -> OpenXP berprft nach jedem File Request, ob
+       alle bestellten Dateien angekommen sind. Falls
        eine oder mehrere Dateien fehlen, so bleiben
        diese als zurckgestellter Request (Kennzeich-
        nung <<r>> bei /Fido/Crash) erhalten. Zurckge-
@@ -9907,20 +9925,20 @@ die verschickten File-Echo-Dateien enthalten.
        l”scht, egal ob die Dateien angekommen sind
        oder nicht.
 
-Beachten Sie, daá XP beim Verwenden von "Magic Names"
-(s. FIDO.TXT) nicht erkennen kann, ob die gewnschten
-Dateien tats„chlich angekommen sind. Daher werden
-File Requests ohne Dateierweiterung grunds„tzlich
-nicht zurckgestellt.
+Beachten Sie, daá OpenXP beim Verwenden von "Magic
+Names" (s. FIDO.TXT) nicht erkennen kann, ob die ge-
+wnschten Dateien tats„chlich angekommen sind. Daher
+werden File Requests ohne Dateierweiterung grund-
+s„tzlich nicht zurckgestellt.
 
 @
 718
 Private Fido-Nachrichten enthalten in den sogenann-
 ten "Via-Kludgelines" ausfhrliche Informationen
 ber das Routing der Nachricht. Normalerweise faát
-XP diese Informationen beim Einlesen von Fido-Mails
-zu einem einfachen Pfad zusammen und l”scht die
-umfangreichen Via-Zeilen.
+OpenXP diese Informationen beim Einlesen von Fido-
+Mails zu einem einfachen Pfad zusammen und l”scht
+die umfangreichen Via-Zeilen.
 
 Falls Sie hier <<[ ]>> einstellen, werden die voll-
 st„ndigen Via-Zeilen in den Nachrichtenkopf bernom-
@@ -9931,7 +9949,7 @@ Alle Fido-Brettnachrichten haben einen Empf„nger.
 Wenn Sie auf vorhandene Nachrichten antworten, ist
 dies der Absender der Bezugsnachricht. Wenn Sie
 neue Nachrichten mit <<B>> innerhalb der Brettliste
-schreiben, schl„gt XP den Namen vor, den Sie hier
+schreiben, schl„gt OpenXP den Namen vor, den Sie hier
 eingetragen haben.
 @
 730
@@ -10053,11 +10071,12 @@ mit gleichem Netztyp, oder w„hlen Sie eine Box mit
 <<<F2> >>aus.
 @
 761
-<<[x]>> -> XP bernimmt bei allen eingelesenen Nachrich-
-       ten das Empfangsdatum aus dem Original-Erstel-
-       lungsdatum der Nachricht. Das ist n”tig, da-
-       mit beim Einlesen groáer, „lterer Pakete die
-       Bretthaltezeiten korrekt funktionieren.
+<<[x]>> -> OpenXP bernimmt bei allen eingelesenen Nach-
+       richten das Empfangsdatum aus dem Original-
+       Erstellungsdatum der Nachricht. Das ist n”-
+       tig, damit beim Einlesen groáer, „lterer Pa-
+       kete die Bretthaltezeiten korrekt funktio-
+       nieren.
 
 <<[ ]>> -> Empfangsdatum ist das aktuelle Datum.
 @
@@ -10286,7 +10305,7 @@ diese Einschr„nkung zu umgehen; die Sonderzeichen
 werden dazu beim Absender codiert und beim Empf„nger
 wieder decodiert.
 
-<<[x]>> -> XP codiert Sonderzeichen in Headerzeilen
+<<[x]>> -> OpenXP codiert Sonderzeichen in Headerzeilen
        gem„á RFC 2047 (empfohlene Einstellung).
 
 <<[ ]>> -> Sonderzeichen in Headerzeilen werden nach
@@ -10335,11 +10354,11 @@ noch testen m”chten, k”nnen Sie diesen Schalter
 aktivieren.
 @
 8102
-<<[ ]>> -> XP verschickt MausTausch-Bin„rnachrichten -
-       wie in den Programmversionen vor 3.2 - im
-       UUencode-Format. Falls der Empf„nger auch mit
-       MausTausch und OpenXP arbeitet, werden
-       diese Nachrichten automatisch decodiert.
+<<[ ]>> -> OpenXP verschickt MausTausch-Bin„rnach-
+       richten - wie in den Programmversionen vor
+       3.2 - im UUencode-Format. Falls der Empf„nger
+       auch mit MausTausch und OpenXP arbeitet, wer-
+       den diese Nachrichten automatisch decodiert.
 
 <<[x]>> -> Bin„rnachrichten werden als mehrteilige MIME-
        Nachrichten - sogenannte "Attachments" -
@@ -10393,10 +10412,10 @@ ternationalen Vorwahlen, die in keiner der anderen
 Zonen enthalten sind.
 
 Die Vorwahlen werden nur fr Fido-Direktanrufe ben”-
-tigt, weil XP die Zone dort anhand der Telefonnummer
-ermitteln muá. Fr "normale" Anrufe bei Serverboxen
-wird die Tarifzone dagegen unter /Edit/Boxen/Edit
-/Gebhren eingetragen.
+tigt, weil OpenXP die Zone dort anhand der Telefon-
+nummer ermitteln muá. Fr "normale" Anrufe bei Ser-
+verboxen wird die Tarifzone dagegen unter
+/Edit/Boxen/Edit/Gebhren eingetragen.
 
 <<Neu>>       neue Tarifzone anlegen
 <<L”schen>>   gew„hlte Tarifzone l”schen
@@ -10455,7 +10474,7 @@ Wochenende/Feiertage:
    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Tarifgruppen
 
 Dies entspricht dem derzeitigen Tarifmodell in
-Deutschland. XP unterscheidet zwischen drei ver-
+Deutschland. OpenXP unterscheidet zwischen drei ver-
 schiedenen Feiertagskategorien, von denen z.Zt.
 aber nur eine ben”tigt wird.
 
@@ -10675,12 +10694,12 @@ erweiterung gesucht. Existiert ein solcher Eintrag,
 wird bei Bin„r- und MIME-Nachrichten die Datei unter
 dem netztyp-spezifisch hinterlegten Dateinamen (z.B.
 im Nachrichten-Betreff bei Z-Netz-Nachrichten oder im
-MIME-Header bei RFC-Mails) ins XP-Tempor„rverzeichnis
-extrahiert und an den dieser Erweiterung zugewiesenen
-Viewer bergeben. Bei File Attaches (Fido) wird die
-im [FileReq-Verzeichnis] abgelegte Datei ge”ffnet,@264
-deren Name im Betreff der Nachricht steht - sofern
-die Datei dort (noch) existiert.
+MIME-Header bei RFC-Mails) ins OpenXP-Tempor„rver-
+zeichnis extrahiert und an den dieser Erweiterung
+zugewiesenen Viewer bergeben. Bei File Attaches
+(Fido) wird die im [FileReq-Verzeichnis] abgelegte@264
+Datei ge”ffnet, deren Name im Betreff der Nachricht
+steht - sofern die Datei dort (noch) existiert.
 
 Beachten Sie, daá bei ber das Z-Netz verschickten
 Bin„rnachrichten der Betreff der Nachricht nicht
@@ -10705,10 +10724,10 @@ passenden Eintrag fr den jeweiligen MIME-Typ
 gesucht, der im MIME-Header der (Teil-)Nachricht
 angegeben ist. Existiert ein solcher Eintrag, wird
 die Datei unter dem im MIME-Header der Nachricht
-hinterlegten Dateinamen ins XP-Tempor„rverzeichnis
-extrahiert (bitte beachten Sie hierzu jedoch die Er-
-l„uterungen unter <<3.>>!) und an den diesem MIME-Typ
-zugewiesenen Viewer bergeben.
+hinterlegten Dateinamen ins OpenXP-Tempor„rverzeich-
+nis extrahiert (bitte beachten Sie hierzu jedoch die
+Erl„uterungen unter <<3.>>!) und an den diesem MIME-
+Typ zugewiesenen Viewer bergeben.
 
 Wird auch fr den jeweiligen MIME-Typ kein passender
 Eintrag gefunden, wird die Datei an den internen
@@ -10824,7 +10843,7 @@ passenden Dateityp enth„lt.
 
 Wenn Sie als Parameter das Makro <<$FILE>> verwenden,
 wird es durch den Namen der Datei ersetzt. Ansonsten
-bergibt XP den Namen der Datei dem Programm als
+bergibt OpenXP den Namen der Datei dem Programm als
 ersten Parameter.
 
 Falls Sie als Viewer eine Batchdatei eintragen, muá
@@ -10837,8 +10856,8 @@ automatisch mit einer speziellen "Warte-Batch" -
 es sei denn, Sie haben dies explizit bei
 "[Keine Warte-Batch bei Windows-Viewern]" unter@8071
 /Config/Optionen/Viewer deaktiviert. In diesem Fall
-stellt XP bei Windows-Viewern dem eigentlichen Pro-
-grammaufruf lediglich noch den Befehl <<start>> voran
+stellt OpenXP bei Windows-Viewern dem eigentlichen
+Programmaufruf lediglich noch den Befehl <<start>> voran
 (wenn Sie diesen im Aufrufbefehl nicht schon selbst
 angegeben haben sollten).
 
@@ -10846,9 +10865,10 @@ Wenn Sie einen Viewer-Eintrag nur mit MIME-Typ aber
 ohne Dateierweiterung (oder nur mit Dateierweiterung
 aber ohne MIME-Typ) angelegt haben, bietet sich unter
 Windows der Befehl <<start>> als "Universal-Viewer" an.
-Damit bergibt XP die Datei immer automatisch an den
-passenden Viewer (also das Programm, das in Windows
-fr den entsprechenden Dateityp registriert ist).
+Damit bergibt OpenXP die Datei immer automatisch an
+den passenden Viewer (also das Programm, das in Win-
+dows fr den entsprechenden Dateityp registriert
+ist).
 
 Tragen Sie hier einfach "<<start $FILE>>" ein, wenn Sie
 diese Funktion unter Windows nutzen m”chten.
@@ -10864,17 +10884,17 @@ Windows registrierte Programm ausfhren.
 Wenn unter Windows Dateien mit externen Windows-
 Viewer-Programmen ge”ffnet werden, kann parallel mit
 OpenXP weitergearbeitet werden (d.h., Sie k”nnen
-aus dem Windows-Viewer heraus mit <<<Alt-Tab> >>zu XP
-zurckwechseln). Wie und wann die hierbei angelegten
-Tempor„rdateien gel”scht werden, k”nnen Sie wie folgt
-steuern:
+aus dem Windows-Viewer heraus mit <<<Alt-Tab> >>zu
+OpenXP zurckwechseln). Wie und wann die hierbei an-
+gelegten Tempor„rdateien gel”scht werden, k”nnen Sie
+wie folgt steuern:
 
 <<[ ]>> -> Das Windows-Viewer-Programm wird ber eine
        Batchdatei gestartet, die wartet, bis das Pro-
        gramm beendet wird und die dann die Tempor„r-
        datei und anschlieáend sich selbst l”scht. Ein
        solcher Programmaufruf ber eine "Warte-Batch"
-       aus XP sieht dann z.B. so aus:
+       aus OpenXP sieht dann z.B. so aus:
        <<start command /c C:\XP\TEMP\wrun7207.bat
        Dabei enth„lt "wrun7207.bat" die eigentlichen
        Befehle zum Starten des Programms sowie zum
@@ -10886,16 +10906,16 @@ steuern:
 
 <<[x]>> -> OpenXP fhrt das Windows-Viewer-Programm
        mit genau der Befehlszeile aus, wie Sie sie in
-       /Edit/Viewer eingegeben haben (ggf. stellt XP
-       lediglich noch den Befehl <<start>> voran). Dabei
-       werden die tempor„ren Dateien nicht mit ihrem
-       originalen, sondern mit einem zuf„llig erzeug-
-       ten Dateinamen nach dem Muster <<TMP-nnnn.EXT>>
-       extrahiert (wobei "nnnn" fr eine vierstellige
-       Zufallszahl und "EXT" fr die Erweiterung des
-       originalen Dateinamens steht). OpenXP
-       l”scht diese Dateien beim n„chsten Programm-
-       start dann automatisch.
+       /Edit/Viewer eingegeben haben (ggf. stellt
+       OpenXP lediglich noch den Befehl <<start>> voran).
+       Dabei werden die tempor„ren Dateien nicht mit
+       ihrem originalen, sondern mit einem zuf„llig
+       erzeugten Dateinamen nach dem Muster
+       <<TMP-nnnn.EXT>> extrahiert (wobei "nnnn" fr
+       eine vierstellige Zufallszahl und "EXT" fr
+       die Erweiterung des originalen Dateinamens
+       steht). OpenXP l”scht diese Dateien beim
+       n„chsten Programmstart dann automatisch.
 
 Auf den Aufrufbefehl fr Viewer-Programme, die keine
 Windows-Anwendungen sind, hat diese Einstellung kei-
@@ -10945,7 +10965,7 @@ Siehe auch:
 
 Dateien in MIME-Multiformat-Mails, die eine dieser
 Dateierweiterungen haben, werden immer mit dem
-XP-internen Lister/Viewer ge”ffnet.
+OpenXP-internen Lister/Viewer ge”ffnet.
 
 Siehe auch:
 [Sichere Dateierweiterungen]@8072
@@ -10960,7 +10980,7 @@ hier eingetragene Programm gestartet (z.B. ein
 Virenscanner ...).
 
 Ist hier nichts eingetragen, wird die Datei mit dem
-XP-internen Lister/Viewer angezeigt.
+OpenXP-internen Lister/Viewer angezeigt.
 
 Siehe auch:
 [Lister-Dateierweiterungen]@8073
@@ -10979,8 +10999,8 @@ Hier k”nnen Sie den Namen eines Brettes eingeben
 - oder mit <<<F2> >>ausw„hlen -, an das alle Antworten
 auf Ihre Nachricht geschickt werden sollen; im
 Usenet wird dies blicherweise als "Followup-To"
-bezeichnet. Verwenden Sie die in XP bliche Brett-
-schreibweise.
+bezeichnet. Verwenden Sie die in OpenXP bliche
+Brettschreibweise.
 
 Wenn Sie wnschen, daá Antworten auf Ihre Nachricht
 nicht ”ffentlich in ein oder mehrere Bretter erfol-
@@ -11072,8 +11092,8 @@ ten:
 
 Alle ”ffentlichen Antworten auf Nachrichten, die Sie
 in dieses Brett schreiben, werden an den Vertreter
-umgeleitet. XP versieht die Nachrichten dazu mit ei-
-ner Antwortadresse fr ”ffentliche Nachrichten, wie
+umgeleitet. OpenXP versieht die Nachrichten dazu mit
+einer Antwortadresse fr ”ffentliche Nachrichten, wie
 Sie sie auch im Sendefenster direkt eingeben k”nnen
 (Zusatz-Schalter <<U>>).
 
@@ -11118,10 +11138,10 @@ das Brett /FIDO/MS-DOS.
 Geben Sie den Namen der Datei an, die Sie verschicken
 ("uploaden") m”chten, oder w„hlen Sie eine Datei aus.
 
-Beachten Sie, daá XP keine Kopie der Datei anlegt,
-d.h. sie muá bis zur endgltigen šbertragung vorhan-
-den sein! Legen Sie die Datei also m”glichst nicht
-auf einer RAM-Disk ab.
+Beachten Sie, daá OpenXP keine Kopie der Datei an-
+legt, d.h. sie muá bis zur endgltigen šbertragung
+vorhanden sein! Legen Sie die Datei also m”glichst
+nicht auf einer RAM-Disk ab.
 @
 891
 Geben Sie an, wo und unter welchem Namen die Datei
@@ -11206,7 +11226,7 @@ oder RFC-Netze (Usenet / "UUCP"):
             Datei *ohne* Dateiname/Datum ankommen).
 
 <<Fehler:>>     Fehlermeldung eines Boxprogramms oder
-            eines XP-Nachrichtenkonvertierers.
+            eines OpenXP-Nachrichtenkonvertierers.
 
 <<Software:>>   Die Software, mit der die Nachricht er-
             stellt oder weitergeleitet wurde.
@@ -11306,9 +11326,9 @@ einzubindenden Node- oder Pointliste an, oder w„hlen
 Sie den Namen aus. Die Liste wird bei Bedarf automa-
 tisch entpackt und ins FIDO-Unterverzeichnis kopiert.
 
-XP versucht, den Typ der Liste automatisch zu erken-
-nen. Gelingt dies nicht, so mssen Sie den Typ von
-Hand einstellen.
+OpenXP versucht, den Typ der Liste automatisch zu
+erkennen. Gelingt dies nicht, so mssen Sie den Typ
+von Hand einstellen.
 @
 932
 <<Ja>>       l”scht den gew„hlten Listeneintrag.
@@ -11392,8 +11412,7 @@ Updates konstruieren.
 @
 945
 <<[x]>> -> Die Update-Dateien sind "Diff"-Dateien (s.
-       FIDO.TXT). XP ruft zum Einbinden das Programm
-       NDIFF.EXE auf.
+       FIDO.TXT).
 
 <<[ ]>> -> Die Update-Dateien werden unver„ndert einge-
        bunden (es sei denn, Sie haben ein Bearbei-
@@ -11420,8 +11439,8 @@ die "Werner" heiáen und ein ZyXEL-Modem besitzen.
     den Node- und Pointlisten. Bei Points steht
     <<Sysop>> fr den Pointnamen; der Boxname hat dort
     keine Bedeutung. Sie k”nnen - wie bei allen
-    Suchfunktionen von XP - nach beliebigen Text-
-    teilen suchen.
+    Suchfunktionen von OpenXP - nach beliebigen
+    Textteilen suchen.
 
 <<Nodeadresse
 
@@ -11465,11 +11484,11 @@ Beispiele:
 <<V34,H16>>   sucht nach Boxen mit USR-Dual-Standard-
           Modems
 
-<<XA XX>>     sucht nach Boxen, bei denen Sie mit XP
+<<XA XX>>     sucht nach Boxen, bei denen Sie mit OpenXP
           Dateien "requesten" k”nnen.
 
 <<ISDNC,XA ISDNC,XX>>   sucht nach ISDN-Boxen, bei denen
-          Sie mit XP Dateien "requesten" k”nnen.
+          Sie mit OpenXP Dateien "requesten" k”nnen.
 
 @
 956
@@ -11521,9 +11540,9 @@ Drcken Sie ...
 @
 971
 <<[x]>> -> Bundeseinheitliche Feiertage sowie der 24.12.
-       und der 31.12. werden von XP bei der Gebhren-
-       absch„tzung automatisch bercksichtigt (Feier-
-       tagskategorie: 1).
+       und der 31.12. werden von OpenXP bei der Ge-
+       bhrenabsch„tzung automatisch bercksichtigt
+       (Feiertagskategorie: 1).
 
 <<[ ]>> -> Es werden nur Feiertage bercksichtigt, die
        Sie in [FEIERTAG.DAT] eingetragen haben.@979
@@ -11531,13 +11550,13 @@ Drcken Sie ...
 972
 <<[x]>> -> Falls Sie ISDN verwenden und den FOSSIL-Trei-
        ber cFos ab Version 1.04 benutzen, berechnet
-       XP die Telefonkosten von ISDN-Anrufen anhand
-       der Gebhreneinheiten, die cFos ermittelt hat.
-       Dies ist im Normalfall die exakteste Form der
-       Gebhrenabsch„tzung.
+       OpenXP die Telefonkosten von ISDN-Anrufen an-
+       hand der Gebhreneinheiten, die cFos ermit-
+       telt hat. Dies ist im Normalfall die exak-
+       teste Form der Gebhrenabsch„tzung.
 
-<<[ ]>> -> XP verwendet in jedem Fall den eingebauten
-       Algorithmus zur Telefonkostenabsch„tzung.
+<<[ ]>> -> OpenXP verwendet in jedem Fall den eingebau-
+       ten Algorithmus zur Telefonkostenabsch„tzung.
 
 <<Technischer Hinweis:>> cFos beinhaltet eine Program-
 mierschnittstelle, ber die Telefoneinheiten und
@@ -11574,7 +11593,7 @@ das Brett /FIDO/MS-DOS.
 Je nachdem, mit welcher [Door] die Mailbox arbeitet,@989
 mssen Netmails (Nachrichten an andere Boxen) beim
 Erzeugen der Nachrichtenpakete unterschiedlich
-adressiert werden. Daher k”nnen Sie XP an dieser
+adressiert werden. Daher k”nnen Sie OpenXP an dieser
 Stelle mitteilen, mit welcher Door die Mailbox
 arbeitet.
 
@@ -11749,10 +11768,10 @@ vermeiden!
 bestimmte Archivdateiformate (ZIP, RAR, LHA, LZH, ZOO
 etc.) oder ihrerseits ein weiteres PGP-Paket enthal-
 ten, benennen die meisten PGP-Versionen der 2.6.x-
-Familie die von XP an PGP bergebene Tempor„rdatei
-um, so daá XP bei der Rckgabe der Datei von PGP
-diese nicht mehr finden kann und die Decodierung
-somit fehlschl„gt.
+Familie die von OpenXP an PGP bergebene Tempor„r-
+datei um, so daá OpenXP bei der Rckgabe der Datei
+von PGP diese nicht mehr finden kann und die Deco-
+dierung somit fehlschl„gt.
 
 Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
 Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
@@ -11943,9 +11962,9 @@ Aussagen zum Thema PGP (Stand Juni 2001):
      Archivformate wie ZIP, RAR, LHA, LZH etc. sowie
      manche Nachrichten, die ihrerseits wieder PGP-
      codierte Nachrichten oder andere PGP-Schlssel
-     enthielten, nicht decodieren, wenn es von XP mit
-     dem Schalter <<+batchmode>> aufgerufen wurde -
-     siehe auch: [PGP-Rckfragen bergehen].@1012
+     enthielten, nicht decodieren, wenn es von Open-
+     XP mit dem Schalter <<+batchmode>> aufgerufen
+     wurde - siehe auch: [PGP-Rckfragen bergehen].@1012
 
    - Das Archivformat ARJ wird ab den Versionen vom
      07.10.2000 jetzt korrekt erkannt und unter-
@@ -11975,7 +11994,7 @@ Aussagen zum Thema PGP (Stand Juni 2001):
    <<*>> Die PGP-Versionen 2.6.3in vom 07.10.2000 bzw.
      23.03.2001 sind ein unmittelbares Resultat der
      Recherchen zum Thema PGP im Rahmen der šber-
-     arbeitung der XP-Online-Hilfe fr das OpenXP-
+     arbeitung der Online-Hilfe fr das OpenXP-
      Projekt. Dank an alle Beteiligten siehe am Ende
      dieses Textes.
 
@@ -12089,6 +12108,15 @@ Aussagen zum Thema PGP (Stand Juni 2001):
    keine verschlsselten Mails an User schicken
    k”nnen, die ausschlieálich einen DH/DSA-Schlssel
    besitzen.
+
+   Ferner entsprechenden mit PGP 2.6.3in erzeugte
+   Schlssel u.U. nicht dem Standard, was sich da-
+   rin „uáert, daá z.B. GnuPG den Import des Public
+   Keys mit dem Hinweis auf eine fehlende Selbstsig-
+   natur verweigert. In diesem Fall muá der Schls-
+   sel mit der Option "--allow-non-selfsigned-uid"
+   in GnuPG eingelesen werden. PGP-Versionen sind
+   hiervon nicht betroffen.
 
 ş  Zur Versionsfamilie <<5.x>> - obwohl von OpenXP
    untersttzt - gibt es eine klare Empfehlung: nicht
@@ -12575,12 +12603,12 @@ Der Origin-Shuffler von OpenXP wird durch Eingabe
 von "shuffle: Dateiname" statt eines Origins akti-
 viert. Als Dateiname ist dabei der Name einer Text-
 datei einzusetzen, die pro Zeile einen Origintext
-enth„lt. Die Datei muá sich entweder im XP-Verzeich-
-nis befinden, oder Sie mssen den kompletten Datei-
-pfad mit angeben.
+enth„lt. Die Datei muá sich entweder im OpenXP-Ver-
+zeichnis befinden, oder Sie mssen den kompletten
+Dateipfad mit angeben.
 @
 2001
-Wenn Sie m”chten, daá XP fr jede Nachricht eine
+Wenn Sie m”chten, daá OpenXP fr jede Nachricht eine
 andere Signatur verwendet, k”nnen Sie innerhalb
 einer Signaturdatei mehrere Signaturen angeben, die
 jeweils durch "-*-" zu trennen sind. Auáerdem muá
@@ -12595,8 +12623,8 @@ Beispiel:
     Alte chinesische Unix-Weisheit Nr. 3
     -*-
 
-XP w„hlt dann jeweils eine der Signaturen nach dem
-Zufallsprinzip aus.
+OpenXP w„hlt dann jeweils eine der Signaturen nach
+dem Zufallsprinzip aus.
 
 @
 7000
@@ -12671,9 +12699,9 @@ f„llt.
 10003
 <<Nachrichten-Men
 
-Das umfangreichste Men von XP - hier finden sich
-alle Funktionen zum Bearbeiten und Versenden von
-Nachrichten, die nicht ber direkte Tastendrcke
+Das umfangreichste Men von OpenXP - hier finden
+sich alle Funktionen zum Bearbeiten und Versenden
+von Nachrichten, die nicht ber direkte Tastendrcke
 (Hot-Keys) erreichbar sind.
 @
 10004
@@ -12706,8 +12734,8 @@ matisch" w„hlen.)
 10007
 <<Config-Men
 
-Hier finden Sie alles was Sie ben”tigen, um Cross-
-Point an Ihre pers”nlichen Bedrfnisse anzupassen.
+Hier finden Sie alles was Sie ben”tigen, um OpenXP
+an Ihre pers”nlichen Bedrfnisse anzupassen.
 @
 10008
 <<Zusatz-Men
@@ -12748,21 +12776,21 @@ Status-Anzeige und Statistik-Auswertung.
 Dies ist ein Mini-Terminal-Programm. Es enth„lt nur
 die allernotwendigsten Funktionen, die ein Terminal-
 programm haben muá. Eine Erweiterung des Terminals
-in zuknftigen XP-Versionen ist nicht geplant, da es
-bereits viele hervorragende Shareware-Terminalpro-
-gramme gibt.
+in zuknftigen OpenXP-Versionen ist nicht geplant,
+da es bereits viele hervorragende Shareware-Termi-
+nalprogramme gibt.
 @
 10106
 <<OpenXP / DOS-Shell
 
-.. ruft die DOS-Kommandozeile auf. XP macht sich dazu
-so klein wie m”glich, indem es Daten-Speicherplatz
-auf die Festplatte oder in den EMS- oder XMS-Speicher
-auslagert (die EMS- und XMS-Auslagerung kann unter
-/Config/Optionen/Allgemeines abgeschaltet werden.
-Ich wáte allerdings nicht wozu).
+.. ruft die DOS-Kommandozeile auf. OpenXP macht sich
+dazu so klein wie m”glich, indem es Daten-Speicher-
+platz auf die Festplatte oder in den EMS- oder XMS-
+Speicher auslagert (die EMS- und XMS-Auslagerung
+kann unter /Config/Optionen/Allgemeines abgeschaltet
+werden. Ich wáte allerdings nicht wozu).
 
-Mit EXIT kommen Sie von DOS wieder zurck zu XP.
+Mit EXIT kommen Sie von DOS wieder zurck zu OpenXP.
 
 Beachten Sie, daá innerhalb der DOS-Shell <<keine re-
 <<sidenten Programme>> aufgerufen werden drfen!
@@ -12888,10 +12916,11 @@ terzuleiten.
 stellt, Listen angefordert oder sonstige Steuerbe-
 fehle an die Box geschickt werden.
 
-Im MausNet sendet XP dazu eine Steuernachricht an
-den internen Pseudouser "MAUS", in allen anderen
-Netzen sendet XP eine Nachricht an den Brettverwal-
-ter, der bei /Edit/Boxen/Edit/Namen eingetragen ist.
+Im MausNet sendet OpenXP dazu eine Steuernachricht
+an den internen Pseudouser "MAUS", in allen anderen
+Netzen sendet OpenXP eine Nachricht an den Brettver-
+walter, der bei /Edit/Boxen/Edit/Namen eingetragen
+ist.
 @
 10309
 <<Nachricht / Fileserver  (nur Z-Netz)
@@ -12965,8 +12994,8 @@ se angeben.
 <<Nachricht / Datenbank
 
 Dieses Untermen beinhaltet alle n”tigen Funktionen
-zur Abfrage von Offline-Datenbanken, die zum Cross-
-Point-Datenbank-Standard kompatibel sind.
+zur Abfrage von Offline-Datenbanken, die zum OpenXP-
+Datenbank-Standard kompatibel sind.
 @
 10401
 <<Nachricht / Unversandt / Edit
@@ -13006,7 +13035,7 @@ Nachrichten, die zum Versand (in *.PP) bereitliegen.
 
 Dieser Menpunkt listet alle unversandten Nachrich-
 ten auf, die in den Pollpaketen (*.PP) zum Versand
-bereitliegen. XP markiert dazu die betreffenden
+bereitliegen. OpenXP markiert dazu die betreffenden
 Nachrichten und ruft [/Nachricht/Suchen/Markiert]@10506
 auf.
 @
@@ -13085,10 +13114,10 @@ ren Optionen, die Lister und Editor betreffen.
 10603
 <<Config / Pfade
 
-Normalerweise legt XP alle Dateien in dem Verzeichnis
-ab, in dem sich auch das Programm befindet. Fr eini-
-ge Dateien k”nnen Sie hier jedoch eigene Verzeichnis-
-se einstellen.
+Normalerweise legt OpenXP alle Dateien in dem Ver-
+zeichnis ab, in dem sich auch das Programm befindet.
+Fr einige Dateien k”nnen Sie hier jedoch eigene
+Verzeichnisse einstellen.
 @
 10604
 <<Config / Anzeige
@@ -13107,10 +13136,10 @@ Schnittstellen immer gleich sind. Alle weiterfhren-
 den Optionen finden Sie dann unter /Edit/Boxen/Edit
 /Modem.
 
-Durch diesen Aufbau k”nnen mit XP problemlos bis zu
-vier Modems an vier verschiedenen Schnittstellen ver-
-waltet werden, ohne daá irgendwelche modemspezifi-
-schen Einstellungen doppelt n”tig w„ren.
+Durch diesen Aufbau k”nnen mit OpenXP problemlos bis
+zu vier Modems an vier verschiedenen Schnittstellen
+verwaltet werden, ohne daá irgendwelche modemspezi-
+fischen Einstellungen doppelt n”tig w„ren.
 @
 10606
 <<Config / Drucker
@@ -13151,14 +13180,15 @@ Mit <<<Esc> >>wird der Bearbeitungsmodus beendet.
 Wenn die Option "Sichern" bei /Config/Optionen/Bedie-
 nung nicht auf "automatisch" eingestellt ist, gelten
 nderungen der Einstellungen des Config-Mens und von
-/Fido/Optionen nur solange, bis XP verlassen wird.
+/Fido/Optionen nur solange, bis OpenXP verlassen
+wird.
 Sollen die nderungen dauerhaft werden, dann mssen
 Sie sie mit dem Menpunkt <<Sichern>> speichern. Wahlwei-
 se kann auch jederzeit die Tastenkombination <<<Alt-S> >>
 verwendet werden.
 
 Wenn Sie die Option "Sichern" auf "Rckfrage" ein-
-stellen, berprft XP bei Programmende, ob sich
+stellen, berprft OpenXP bei Programmende, ob sich
 Einstellungen ge„ndert haben, und fragt ggf. nach,
 ob die nderungen gesichert werden sollen.
 
@@ -13171,9 +13201,9 @@ tion zum Sichern.
 10615
 Es k”nnen beliebige .COM- und .EXE-Programme sowie
 .BAT-Dateien in OpenXP eingebunden werden. Die
-Programme mssen sich dazu entweder im XP-Verzeich-
-nis befinden, ber den DOS-Pfad erreichbar sein,
-oder Sie mssen den vollst„ndigen Zugriffspfad
+Programme mssen sich dazu entweder im OpenXP-Ver-
+zeichnis befinden, ber den DOS-Pfad erreichbar
+sein, oder Sie mssen den vollst„ndigen Zugriffspfad
 angeben.
 
 Eine Besonderheit ist, daá Sie die gerade gew„hlte
@@ -13181,12 +13211,12 @@ Nachricht als Datei an das externe Programm ber-
 geben k”nnen. Dadurch ist es z.B. m”glich, Archiv-
 Viewer, Virenscanner, zus„tzliche Lister-Programme,
 Druckprogramme und vieles andere als "externe
-Befehle" in XP zu integrieren.
+Befehle" in OpenXP zu integrieren.
 
-Wahlweise ist auch der Aufruf bestimmter XP-Funk-
-tionen ber Funktionstasten m”glich. Z.Zt. gilt dies
-fr das Durchfhren von Netcalls (*NETCALL-Option)
-und die Reorganisation (*REORG).
+Wahlweise ist auch der Aufruf bestimmter OpenXP-
+Funktionen ber Funktionstasten m”glich. Z.Zt. gilt
+dies fr das Durchfhren von Netcalls (*NETCALL-Op-
+tion) und die Reorganisation (*REORG).
 
 Alles weitere steht in der Hilfe zu den einzelnen
 Eingabefeldern (<<E>> drcken).
@@ -13468,9 +13498,9 @@ Standard 2.0 untersttzen, fehlt m”glicherweise der
 EGA-Zeichensatz 8x14, der fr die Darstellung der
 Zeilenmodi 28, 30, 33 und 36 notwendig ist. In diesen
 F„llen wrden Sie daher u.U. unleserliches "Pixel-
-chaos" auf Ihrem XP-Bildschirm sehen.
+chaos" auf Ihrem OpenXP-Bildschirm sehen.
 
-Um dies zu vermeiden, l„dt XP bei den genannten
+Um dies zu vermeiden, l„dt OpenXP bei den genannten
 Zeilenmodi einen internen Font, so daá eine einheit-
 liche und funktionierende Darstellung auf allen
 Grafikkarten gew„hrleistet ist.
@@ -13500,8 +13530,8 @@ gespeichert.
 <<Config / Anzeige / Hilfen
 
 Hier lassen sich verschiedene Anzeigehilfen akti-
-vieren, die die Benutzung von XP insbesondere fr
-blinde und fr geh”rlose Anwender erleichtern.
+vieren, die die Benutzung von OpenXP insbesondere
+fr blinde und fr geh”rlose Anwender erleichtern.
 @
 11001
 <<OpenXP / Import / Puffer einlesen
@@ -13521,11 +13551,10 @@ und User hervorgehoben angezeigt.
 
 Hier k”nnen Sie beliebige Fido-(PKT)-, MagicNET-,
 QuickMail-, QWK- oder MausTausch-(OUTFILE)-Pakete
-einlesen. OpenXP startet automatisch einen der
-Nachrichtenkonvertierer MAGGI, ZFIDO und QWK. Es muá
-eine Serverbox eingetragen sein und angegeben wer-
-den, deren Netztyp dem einzulesenden Nachrichtenfor-
-mat entspricht.
+einlesen. OpenXP konvertiert das Nachrichtenformat
+automatisch. Es muá eine Serverbox eingetragen sein
+und angegeben werden, deren Netztyp dem einzulesen-
+den Nachrichtenformat entspricht.
 
 Zum korrekten Einlesen von MagicNET-Paketen muá eine
 Brettliste fr die betreffende Box vorhanden sein.
@@ -13540,7 +13569,8 @@ Hand einlesen" beschrieben ist.
 <<OpenXP / Import / Userliste
 
 Hier k”nnen Sie eine Liste von Useradressen aus
-einer Textdatei in die XP-Userliste einlesen lassen.
+einer Textdatei in die OpenXP-Userliste einlesen
+lassen.
 @
 11004
 <<OpenXP / Import / Brettliste (Z-Netz)
@@ -13621,10 +13651,11 @@ M^P^&XDB6YHFFZLJV[\@O'\DS7]HWG^L[W_@\,"H?$HO&(3"J7S*
 M]8K-:K?<KO<+#HO'Y++YC$ZKU^RV^PV/R^?TNOV.S^OW_+[_#Q\@
 
 Diese Nachrichten k”nnen Sie mit dem eingebauten
-UUdecoder von XP wieder in eine Bin„rdatei zurck-
-wandeln. Zus„tzlicher Text zu Beginn oder Ende der
-Nachricht wird dabei ignoriert. Das Decodieren von
-mehreren, markierten Teilnachrichten ist m”glich.
+UUdecoder von OpenXP wieder in eine Bin„rdatei zu-
+rckwandeln. Zus„tzlicher Text zu Beginn oder Ende
+der Nachricht wird dabei ignoriert. Das Decodieren
+von mehreren, markierten Teilnachrichten ist m”g-
+lich.
 
 Um selbst UU-codierte Dateien zu verschicken,
 w„hlen Sie im Editormen (erreichbar durch <<<F10> >>
@@ -13775,8 +13806,8 @@ Bitte stellen Sie unbedingt sicher, daá alle Point-
 Parameter unter /Edit/Boxen/Edit/Point korrekt ein-
 gestellt sind! Insbesondere die Up-/Download- und
 Packer-Angaben mssen korrekt und die entsprechen-
-den externen Programme im XP-Verzeichnis oder ber
-einen Pfad erreichbar sein.
+den externen Programme im OpenXP-Verzeichnis oder
+ber einen Pfad erreichbar sein.
 @
 11502
 <<Netcall / Alle
@@ -13824,7 +13855,7 @@ stellt ist und fhrt keine Anwahl mehr durch.
 Auf diese Weise k”nnen Sie z.B. in einem Terminal-
 Programm online in der Box arbeiten, dann einen
 Relogin-Befehl eingeben, das Terminalprogramm bei
-laufender Verbindung verlassen und mit XP einen
+laufender Verbindung verlassen und mit OpenXP einen
 Netcall durchfhren, um die angebrochene Gebhren-
 einheit auszunutzen.
 
@@ -13882,11 +13913,12 @@ Hier k”nnen verschiedene Briefschablonen angelegt
 und bearbeitet werden, die als Vorlage fr von Ihnen
 abgesandte Nachrichten verwendet werden. Innerhalb
 der Schablonen k”nnen bestimmte [Makros] verwendet@11650
-werden. Wenn Sie die Schablone benutzen, ersetzt XP
-alle enthaltenen Makros durch einen passenden Inhalt.
+werden. Wenn Sie die Schablone benutzen, ersetzt
+OpenXP alle enthaltenen Makros durch einen passenden
+Inhalt.
 Einzige Ausnahme sind Signaturen - diese k”nnen <<keine>>
 Makros enthalten (tun sie es doch, werden die Makros
-von XP ignoriert).
+von OpenXP ignoriert).
 @
 11602
 <<Edit / Boxen
@@ -13934,8 +13966,8 @@ Dieser Menpunkt hat nichts mit Automobiltransporten
 zu tun, sondern dient zum automatischen Versenden
 von Nachrichten. Es k”nnen beliebig viele Dateien
 eingetragen werden, die zu einem bestimmten Zeitpunkt
-oder in bestimmten Abst„nden von XP verschickt werden
-sollen.
+oder in bestimmten Abst„nden von OpenXP verschickt
+werden sollen.
 @
 11607
 <<Edit / Texte
@@ -13945,8 +13977,8 @@ Auswahlbox, und von dort in den Editor. Sie k”nnen
 alles editieren, was Ihnen gef„llt.
 
 Falls kein Verzeichnis angegeben wird, verwendet
-XP das unter [/Config/Pfade/Sende-Verzeichnis] einge-@262
-stellte Verzeichnis.
+OpenXP das unter [/Config/Pfade/Sende-Verzeichnis]@262
+eingestellte Verzeichnis.
 
 Siehe auch:  [interner Editor]@54
 @
@@ -14035,10 +14067,10 @@ nutzung von Haupt-, EMS-, XMS- und Festplatten-
 Speicher.
 
 Beim Festplattenspeicher wird die Gesamtgr”áe aller
-im XP-Verzeichnis befindlichen Dateien zusammenge-
-rechnet. Bei groáen Laufwerken kann je nach Betriebs-
-system mehr freien Platz vorhanden sein, als ange-
-zeigt wird.
+im OpenXP-Verzeichnis befindlichen Dateien zusammen-
+gerechnet. Bei groáen Laufwerken kann je nach Be-
+triebssystem mehr freien Platz vorhanden sein, als
+angezeigt wird.
 
 Der verfgbare Hauptspeicher errechnet sich aus dem
 freien Hauptspeicher zuzglich der Speichermenge, die
@@ -14046,13 +14078,13 @@ auf Festplatte bzw. in den EMS- oder XMS-Speicher
 ausgelagert werden kann. Soviel Speicher steht bei
 Bedarf externen Programmen zur Verfgung.
 
-Auáerdem zeigt XP die Betriebssystem-Versionsnummer
-an. Diese Nummer hat heutzutage allerdings keine
-groáe Aussagekraft mehr, weil die Versionsnummern
-der Programmierer zunehmend durch Phantasiezahlen
-aus der Marketingabteilung ersetzt werden ("OS/2
-Version 3 Warp" statt OS/2 2.3, "Windows 95" statt
-MS-DOS 7.0 + Windows 4.0 etc.).
+Auáerdem zeigt OpenXP die Betriebssystem-Versions-
+nummer an. Diese Nummer hat heutzutage allerdings
+keine groáe Aussagekraft mehr, weil die Versions-
+nummern der Programmierer zunehmend durch Phantasie-
+zahlen aus der Marketingabteilung ersetzt werden
+("OS/2 Version 3 Warp" statt OS/2 2.3, "Windows 95"
+statt MS-DOS 7.0 + Windows 4.0 etc.).
 
 @
 11702
@@ -14268,8 +14300,8 @@ zelne Texte gar nicht zu bestellen.
 Wahlweise k”nnen Sie auch einzelne Infotexte manuell
 mit /Nachricht/Brettmanager/Sonstige anfordern.
 
-Die "maschinenlesbare Gruppenliste" wird von Cross-
-Point fr das Bestellen von Brettern verwendet.
+Die "maschinenlesbare Gruppenliste" wird von OpenXP
+fr das Bestellen von Brettern verwendet.
 
 @
 12001
@@ -14538,13 +14570,13 @@ aus einer Bin„rnachricht wird eine Multipart-MIME-
 Nachricht (M), und aus einer Multipart-MIME-Nach-
 richt wird wieder eine Textnachricht.
 
-Diese nderung betrifft NUR die XP-Datenbank; der
-Puffer-Kopf der Nachricht bleibt also unver„ndert.
-Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
-die als Textnachrichten verschickt wurden und daher
-nicht vom Archiv-Viewer erkannt werden, bzw. fr
-Multipart-MIME-Nachrichten, die wegen fehlerhafter
-Headerzeilen nicht als MIME erkannt wurden.
+Diese nderung betrifft NUR die OpenXP-Datenbank;
+der Puffer-Kopf der Nachricht bleibt also unver„n-
+dert. Sie ist haupts„chlich fr Bin„rnachrichten ge-
+dacht, die als Textnachrichten verschickt wurden und
+daher nicht vom Archiv-Viewer erkannt werden, bzw.
+fr Multipart-MIME-Nachrichten, die wegen fehler-
+hafter Headerzeilen nicht als MIME erkannt wurden.
 @
 12206
 <<Nachricht / ndern / gelesen
@@ -14716,8 +14748,8 @@ anders unterzubringen waren.
 <<Config / Optionen / Bedienung
 
 šber diesen Menpunkt k”nnen Sie verschiedene Optio-
-nen einstellen, die die Benutzeroberfl„che von XP
-betreffen.
+nen einstellen, die die Benutzeroberfl„che von Open-
+XP betreffen.
 
 Alle diese Einstellungen gelten nur bei Programmstart
 und k”nnen danach beliebig ge„ndert werden. Einstel-
@@ -14778,7 +14810,7 @@ der Fido-spezifischen Einstellungen, die sich unter
 <<Config / Optionen / Netcall
 
 Die Netcall-Optionen bestimmen das Netcall-Verhalten
-von XP.
+von OpenXP.
 @
 12807
 <<Config / Optionen / Gebhren
@@ -14874,13 +14906,13 @@ Kapitel "Nodelist".
 Einmal w”chentlich werden im FidoNet sog. NODEDIFF-
 und POINTDIFF-Dateien verteilt, die zur Aktualisie-
 rung von Node- und Pointlisten dienen. Mit diesem
-Menpunkt k”nnen Sie eine DIFF-Datei einbinden. XP
-erkennt dabei automatisch, zu welcher der vorhan-
-denen Listen die DIFF-Datei paát.
+Menpunkt k”nnen Sie eine DIFF-Datei einbinden.
+OpenXP erkennt dabei automatisch, zu welcher der
+vorhandenen Listen die DIFF-Datei paát.
 
 Neben den DIFF-Dateien k”nnen mit diesem Menpunkt
 auch Listen-Updates eingebunden werden, die kein
-Diff-Format haben - vorausgesetzt, Sie haben XP
+Diff-Format haben - vorausgesetzt, Sie haben OpenXP
 unter /Fido/Nodelisten/Verwalten mitgeteilt, wie es
 mit diesen Updates umgehen soll.
 
@@ -14891,9 +14923,9 @@ Netzanruf eingebunden, so daá ein manuelles Einbin-
 den nicht n”tig ist.
 
 Beachten Sie bitte, daá Nodediffs meist im ARC-Format
-verteilt werden. XP entpackt die Dateien zwar auto-
-matisch, allerdings muá dazu ein ARC-Entpacker (z.B.
-PKXARC) vorhanden sein.
+verteilt werden. OpenXP entpackt die Dateien zwar
+automatisch, allerdings muá dazu ein ARC-Entpacker
+(z.B. PKXARC) vorhanden sein.
 
 N„heres zu Nodelist und Nodediffs finden Sie in
 FIDO.TXT, Kapitel "Nodelist".
@@ -14947,10 +14979,10 @@ listen von Fido-kompatiblen Netzen.
 13004
 <<Fido / Nodelisten / Indizieren
 
-Normalerweise werden Nodelisten von XP automatisch
-nach jeder nderung indiziert. Sollte der Index
-besch„digt worden sein, k”nnen Sie ihn mit diesem
-Menpunkt neu aufbauen.
+Normalerweise werden Nodelisten von OpenXP automa-
+tisch nach jeder nderung indiziert. Sollte der In-
+dex besch„digt worden sein, k”nnen Sie ihn mit die-
+sem Menpunkt neu aufbauen.
 @
 13006
 <<Fido / Nodelisten / Statistik
@@ -14969,8 +15001,9 @@ Nodelisten nach verschiedenen Kriterien durchsuchen.
 Hier k”nnen Sie die Daten beliebiger Fido-Nodes ab-
 fragen. Geben Sie dazu einfach die betreffende Node-
 Adresse in der Form Zone:Net/Node an. Wenn Sie Zone
-und evtl. Net weglassen, setzt XP statt dessen Zone
-und Net Ihrer Fido-Stammbox (Ihres Bossnodes) ein.
+und evtl. Net weglassen, setzt OpenXP statt dessen
+Zone und Net Ihrer Fido-Stammbox (Ihres Bossnodes)
+ein.
 
 Statt der Adresse k”nnen Sie auch nach dem Namen
 eines Sysops oder Points suchen; geben Sie dazu den
@@ -15129,11 +15162,11 @@ N„heres dazu finden Sie im Handbuch, Stichwort
 13304
 <<Wartung / Sonstiges / Datumsbezge
 
-XP merkt sich bei jedem Brett das Empfangsdatum der
-letzten Nachricht, und ob noch ungelesene Nachrich-
-ten vorhanden sind. Diese Daten werden normalerweise
-immer automatisch auf dem aktuellen Stand gehalten,
-und Sie mssen sich nicht darum kmmern.
+OpenXP merkt sich bei jedem Brett das Empfangsdatum
+der letzten Nachricht, und ob noch ungelesene Nach-
+richten vorhanden sind. Diese Daten werden normaler-
+weise immer automatisch auf dem aktuellen Stand ge-
+halten, und Sie mssen sich nicht darum kmmern.
 
 Einzige Ausnahme ist das Entfernen von ungelesenen
 Nachrichten mit <<K>>: Wenn Sie alle Nachrichten eines
@@ -15213,10 +15246,10 @@ entweder direkt in der Brettliste oder in der File-
 Manager-Arealiste markieren.
 
 Achtung: Beim Markieren in der Brettliste berprft
-XP *nicht*, ob es sich bei den gew„hlten Brettern
-tats„chlich um File Areas handelt oder ob der File
-Manager fr die betreffende Box korrekt konfiguriert
-ist - hierauf mssen Sie selbst achten.
+OpenXP *nicht*, ob es sich bei den gew„hlten Bret-
+tern tats„chlich um File Areas handelt oder ob der
+File Manager fr die betreffende Box korrekt konfi-
+guriert ist - hierauf mssen Sie selbst achten.
 @
 13803
 <<Fido / File Areas / Liste anfordern
@@ -15288,8 +15321,8 @@ wird ber den Menpunkt /Edit/Boxen/Edit/Gebhren
 eine dieser Zonen zugeordnet.
 
 Fr Fido-Crashanrufe kann zus„tzlich eine Vorwahl-
-Tabelle angelegt werden, so daá XP anhand der Tele-
-fonnummern die Tarifzonen ermitteln kann.
+Tabelle angelegt werden, so daá OpenXP anhand der
+Telefonnummern die Tarifzonen ermitteln kann.
 @
 13902
 <<Config / Optionen / Gebhren / Tarife
@@ -15342,7 +15375,7 @@ von Keys bei /Config/Extern/PGP deaktiviert haben.
 Hiermit k”nnen Sie eine PGP-codierte Nachricht deco-
 dieren. Bei Nachrichten, die nach dem ZConnect-PGP-
 Standard codiert sind, ist dies nicht notwendig,
-weil sie von XP automatisch decodiert werden.
+weil sie von OpenXP automatisch decodiert werden.
 
 @
 14004
@@ -15451,37 +15484,38 @@ tieren sollte, aber die Datei ist nicht vorhanden.
 20101
 Fr Fido-Netcalls und zum Importieren von Fido-Nach-
 richten wird der Nachrichtenkonvertierer ZFIDO.EXE
-ben”tigt, der im getrennt erh„ltlichen XP-Fido-Paket
-enthalten ist.
+ben”tigt, der im getrennt erh„ltlichen OpenXP-Fido-
+Paket enthalten ist.
 @
 20102
 Fr MausTausch-, MagicNET- und QuickMail-Netcalls
 und zum Einlesen entsprechender Nachrichten wird der
 Nachrichtenkonvertierer MAGGI.EXE ben”tigt, der im
-XP-Paket enthalten ist. Bitte stellen Sie sicher,
-daá sich dieses Programm im XP-Verzeichnis befindet!
+OpenXP-Paket enthalten ist. Bitte stellen Sie
+sicher, daá sich dieses Programm im OpenXP-Verzeich-
+nis befindet!
 @
 20103
 Zum Einbinden von Nodediff-Dateien wird das Programm
-NDIFF.EXE ben”tigt; es ist im XP-Fido-Paket enthal-
-ten.
+NDIFF.EXE ben”tigt; es ist im OpenXP-Fido-Paket ent-
+halten.
 @
 20104
 Fr Fido-Netcalls wird das Mailer-Programm XP-FM.EXE
-ben”tigt; es ist im XP-Fido-Paket enthalten.
+ben”tigt; es ist im OpenXP-Fido-Paket enthalten.
 @
 20105
 Fr UUCP-Netcalls wird das Konvertierprogramm UUZ.EXE
-ben”tigt. Es ist im XP-UUCP-Paket enthalten.
+ben”tigt. Es ist im OpenXP-UUCP-Paket enthalten.
 @
 20110
 Fr UUCP-Netcalls wird das šbertragungsprogramm
-UUCICO.EXE ben”tigt, das im XP-UUCP-Paket enthalten
-ist.
+UUCICO.EXE ben”tigt, das im OpenXP-UUCP-Paket ent-
+halten ist.
 @
 20111
 Fr die Verarbeitung von QWK-Nachrichten wird das
-Konvertierprogramm ZQWK.EXE ben”tigt, das im XP-
+Konvertierprogramm ZQWK.EXE ben”tigt, das im OpenXP-
 QWK-Paket enthalten ist. Das QWK-Paket erhalten Sie
 dort, wo Sie OpenXP herhaben -> [Bezugsquellen].@9
 @
@@ -15504,7 +15538,7 @@ bei /Config/Pfade!
 20206
 OpenXP kann das eingetragene Programm nicht fin-
 den. šberprfen Sie, ob der Dateiname stimmt, und ob
-das Programm im XP-Verzeichnis oder per DOS-Pfad
+das Programm im OpenXP-Verzeichnis oder per DOS-Pfad
 erreichbar ist bzw. der korrekte Zugriffspfad ange-
 geben wurde.
 @
@@ -15520,8 +15554,8 @@ gegeben wird.
 @
 20210
 OpenXP hat festgestellt, daá zu wenig Dateien
-("File Handles") frei sind. Verlassen Sie XP und er-
-h”hen Sie die Einstellung in CONFIG.SYS!
+("File Handles") frei sind. Verlassen Sie OpenXP und
+erh”hen Sie die Einstellung in CONFIG.SYS!
 
 Insbesondere, wenn Sie unter Windows oder OS/2
 arbeiten, werden sehr viele File Handles ben”tigt,
@@ -15561,9 +15595,9 @@ Siehe auch Handbuch, Kapitel "Kommentarverkettung".
 @
 20305
 Die MPUFFER-Dateien bilden die Nachrichtendatenbank
-von XP. Alle dort enthaltenen Nachrichten sind be-
-reits in XP vorhanden; ein Einlesen macht also wenig
-Sinn.
+von OpenXP. Alle dort enthaltenen Nachrichten sind
+bereits in OpenXP vorhanden; ein Einlesen macht also
+wenig Sinn.
 
 Falls Sie die Pufferdateien neu einlesen lassen
 m”chten, weil die Nachrichtendatenbank defekt ist,
@@ -15612,8 +15646,8 @@ ten), die durch einen technischen Fehler entstanden
 sind.
 
 Da bisher noch kein allgemeiner Konsens ber Fremd-
-cancels besteht, erlaubt XP nur das L”schen von eige-
-nen Nachrichten.
+cancels besteht, erlaubt OpenXP nur das L”schen von
+eigenen Nachrichten.
 @
 20314
 Das nachtr„gliche L”schen von Nachrichten ist nur im
@@ -15640,7 +15674,7 @@ aus Ihrem PM-Fach archiviert werden.
 @
 20404
 Das Kommentieren von unversandten Nachrichten wird
-von XP im MausNet noch nicht untersttzt.
+von OpenXP im MausNet noch nicht untersttzt.
 @
 20405
 Verwenden Sie die Taste <<<Ctrl-P> >>statt <<<Ctrl-B> >>bzw.
@@ -15654,11 +15688,12 @@ Sie den aktiven Baum zuerst verlassen.
 20407
 Es ist nicht gengend freier Hauptspeicher vorhan-
 den, um einen Kommentarbaum anzeigen zu lassen. Ver-
-lassen Sie XP und „ndern Sie Ihre DOS-Einstellungen,
-so daá mehr DOS-Arbeitsspeicher zur Verfgung steht!
-Es sollten vor dem Start von XP mindestens 450 KByte
-vorhanden sein, um alle Programmfunktionen nutzen
-zu k”nnen.
+lassen Sie OpenXP und „ndern Sie Ihre DOS-Einstel-
+lungen, so daá mehr DOS-Arbeitsspeicher zur Verfgung
+steht!
+Es sollten vor dem Start von OpenXP mindestens
+450 KByte vorhanden sein, um alle Programmfunk-
+tionen nutzen zu k”nnen.
 @
 20408
 Das Netz, in dem Sie lesen und schreiben, unter-
@@ -15728,10 +15763,10 @@ Der Text von Bin„rnachrichten kann nicht ge„ndert
 werden. Verwenden Sie ggf. /Nachricht/ndern/Typ.
 @
 20424
-Es besteht eine Inkonsistenz innerhalb der Cross-
-Point-Datenbank, oder eine der Nachrichten-Ablage-
-Dateien wurde besch„digt. Dies kann zahlreiche
-Ursachen haben, z.B.
+Es besteht eine Inkonsistenz innerhalb der OpenXP-
+Datenbank, oder eine der Nachrichten-Ablage-Dateien
+wurde besch„digt. Dies kann zahlreiche Ursachen
+haben, z.B.
 
 ş einen Programmausstieg w„hrend einer Reorganisation
 
@@ -15744,7 +15779,7 @@ Ursachen haben, z.B.
 
 Im Anhang des Handbuchs finden Sie im Kapitel "Erste
 Hilfe bei Datenverlust" Hinweise, wie sich besch„-
-digte XP-Datenbanken reparieren lassen.
+digte OpenXP-Datenbanken reparieren lassen.
 
 <<Wichtiger Hinweis:>> Solche Fehler k”nnen auch dann
 gemeldet werden, wenn die Ablagedateien an sich v”l-
@@ -15783,10 +15818,10 @@ tum des letzten Netcalls) und sie neu abzusenden.
 @
 20428
 Die Datei, die Sie ansehen bzw. extrahieren m”chten,
-ist bereits im XP-Verzeichnis vorhanden. Um sicher-
-zustellen, daá keine wichtige Datei berschrieben
-wird, kann XP diese Datei *nicht* im eigenen Ver-
-zeichnis entpacken.
+ist bereits im OpenXP-Verzeichnis vorhanden. Um
+sicherzustellen, daá keine wichtige Datei ber-
+schrieben wird, kann OpenXP diese Datei *nicht* im
+eigenen Verzeichnis entpacken.
 
 Geben Sie bitte unter /Config/Pfade ein anderes
 Tempor„rverzeichnis an, in dem die Datei entpackt
@@ -15826,7 +15861,7 @@ Das angegebene Zielverzeichnis existiert nicht.
 ş  Bei der angegebenen Datei handelt es sich nicht
    um ein gepacktes Archiv, oder
 
-ş  das Archivformat ist XP nicht bekannt (sehr un-
+ş  das Archivformat ist OpenXP nicht bekannt (un-
    wahrscheinlich), oder
 
 ş  die Datei wurde besch„digt.
@@ -15906,16 +15941,16 @@ Bretter oder User mit verschiedenen Servern markiert.
 @
 20602
 In diesem Netz ist das Verschicken leerer Nachrichten
-mit XP nicht m”glich. Senden Sie die Nachricht erneut
-ab und achten Sie darauf, daá der Nachrichtentext
-zumindest aus einer Leerzeile besteht.
+mit OpenXP nicht m”glich. Senden Sie die Nachricht
+erneut ab und achten Sie darauf, daá der Nach-
+richtentext zumindest aus einer Leerzeile besteht.
 @
 20603
 Das Codieren der Nachricht mit pmCrypt hat nicht
 funktioniert. šberprfen Sie, ob die Einstellungen
 bei /Config/Extern/pmCrypt korrekt sind und ob das
-Codierprogramm im XP-Verzeichnis vorhanden oder ber
-einen DOS-Pfad erreichbar ist!
+Codierprogramm im OpenXP-Verzeichnis vorhanden oder
+ber einen DOS-Pfad erreichbar ist!
 
 Versuchen Sie ggf., eine Datei auf DOS-Ebene "von
 Hand" zu codieren, um die Fehlerursache zu finden.
@@ -15955,7 +15990,7 @@ daher komplett neu versenden.
 ^^20427
 @
 20622
-XP kann die unversandte Nachricht nicht in den
+OpenXP kann die unversandte Nachricht nicht in den
 Dateien mit ausgehenden Nachrichten (*.PP) finden;
 wahrscheinlichste Ursache dafr ist, daá eine der
 Dateien besch„digt wurde.
@@ -15979,9 +16014,9 @@ fenster parken, wird sie im Brett /¯Unversandt abge-
 legt, und der tats„chliche Empf„nger wird als Origi-
 nalempf„nger in die erste Nachrichtenzeile gesetzt.
 Mit /Nachricht/Weiterleiten/Erneut bzw. <<<Alt-R> >>kann
-eine solche Nachricht reaktiviert werden; XP liest
-dann den Empf„nger aus der "Originalempf„nger"-Zeile
-aus.
+eine solche Nachricht reaktiviert werden; OpenXP
+liest dann den Empf„nger aus der "Originalempf„n-
+ger"-Zeile aus.
 
 Die von Ihnen gew„hlte Nachricht hat eine ungltige
 "Originalempf„nger"-Zeile. Um die Nachricht trotzdem
@@ -16001,7 +16036,7 @@ Archivbretter existieren nicht.
 Im Normalfall sollte eine ”ffentliche Nachricht nicht
 mehr als 3-4 Empf„nger haben. Nachrichten mit sehr
 vielen Empf„ngern sind im Netz unerwnscht und k”nnen
-daher mit XP nicht erzeugt werden.
+daher mit OpenXP nicht erzeugt werden.
 @
 20635
 ™ffentliche Nachrichten mssen immer einen Betreff
@@ -16066,8 +16101,9 @@ lich.
 @
 20708
 Es gibt fr diesen Netztyp kein standardisiertes
-Loginverfahren. Daher mssen Sie XP zuerst ber eine
-Scriptdatei mitteilen, wie das Login ablaufen soll.
+Loginverfahren. Daher mssen Sie OpenXP zuerst ber
+eine Scriptdatei mitteilen, wie das Login ablaufen
+soll.
 N„heres dazu finden Sie im Abschnitt "Scriptprogram-
 mierung" im Handbuch.
 @
@@ -16114,9 +16150,9 @@ chen:
 
 ş  Das Nachrichtenpaket ist defekt.
 
-Achtung: XP hat das nicht entpackte Nachrichtenpaket
-im Unterverzeichnis "BAD" abgelegt, damit es beim
-n„chsten Netzanruf nicht gel”scht wird!
+Achtung: OpenXP hat das nicht entpackte Nachrichten-
+paket im Unterverzeichnis "BAD" abgelegt, damit es
+beim n„chsten Netzanruf nicht gel”scht wird!
 
 @
 20717
@@ -16205,11 +16241,11 @@ koll finden Sie in der Datei SCERRORS.LOG.
 20732
 Sie haben bei /Config/Modem/... einen FOSSIL-Treiber
 aktiviert, allerdings ist zum gegenw„rtigen Zeitpunkt
-kein FOSSIL-Treiber geladen. XP verwendet daher die
-eigenen Schnittstellenroutinen. N„here Erl„uterungen
-zu FOSSIL-Treibern finden Sie in der Online-Hilfe zu
-/Config/Modem/... und im Kapitel "Kleine Modemkunde"
-im Anhang des Handbuchs.
+kein FOSSIL-Treiber geladen. OpenXP verwendet daher
+die eigenen Schnittstellenroutinen. N„here Erl„u-
+terungen zu FOSSIL-Treibern finden Sie in der On-
+line-Hilfe zu /Config/Modem/... und im Kapitel
+"Kleine Modemkunde" im Anhang des Handbuchs.
 @
 20733
 Bei /Edit/Boxen/Edit/Point ist im Feld "Pakete mit-
@@ -16217,10 +16253,10 @@ senden" die Adresse eines Servers eingetragen, der
 nicht mehr vorhanden ist.
 @
 20736
-Bevor XP QWK-Nachrichten verschicken kann, ben”tigt
-es einige Daten ber die QWK-Serverbox. Lesen Sie
-dazu zun„chst ein beliebiges Nachrichtenpaket von
-dieser Box ein!
+Bevor OpenXP QWK-Nachrichten verschicken kann, be-
+n”tigt es einige Daten ber die QWK-Serverbox. Lesen
+Sie dazu zun„chst ein beliebiges Nachrichtenpaket
+von dieser Box ein!
 @
 20737
 Es ist ein unbekannter ZQWK-Fehler aufgetreten.
@@ -16229,10 +16265,10 @@ Bitte wenden Sie sich an den Programmierer von ZQWK
 @
 20738
 Es gibt kein vorgeschriebenes Relogin-Verfahren fr
-diesen Netztyp. Sie mssen XP ber eine Scriptdatei
-mitteilen, wie das Relogin durchzufhren ist. N„heres
-zur Scriptprogrammierung finden Sie im entsprechen-
-den Abschnitt des Handbuchs.
+diesen Netztyp. Sie mssen OpenXP ber eine Script-
+datei mitteilen, wie das Relogin durchzufhren ist.
+N„heres zur Scriptprogrammierung finden Sie im ent-
+sprechenden Abschnitt des Handbuchs.
 @
 20741
 Sie haben ein Unterverzeichnis angelegt, das mit dem
@@ -16308,8 +16344,8 @@ Systemen finden Sie in UUCP.TXT.
 Sie haben fr den Fileserver bei /Edit/Systeme ein
 Filelisten-Konvertierprogramm eingetragen, aber bei
 der Ausfhrung des Programms ist etwas schiefgelau-
-fen. šberprfen Sie, ob das Programm im XP-Verzeich-
-nis oder ber einen DOS-Pfad erreichbar ist und
+fen. šberprfen Sie, ob das Programm im OpenXP-Ver-
+zeichnis oder ber einen DOS-Pfad erreichbar ist und
 versuchen Sie ggf., die Dateiliste "von Hand" auf
 DOS-Ebene zu konvertieren.
 @
@@ -16343,10 +16379,10 @@ Bevor Sie File Areas bestellen k”nnen, muá eine
 20901
 In der Konfigurationsdatei einer Serverbox (*.BFG)
 ist ein ungltiger Eintrag vorhanden. Dies kann z.B.
-daran liegen, daá sie von einer neueren XP-Version
-direkt auf eine „ltere Version umgestiegen sind (was
-Sie <<niemals>> tun sollten!), oder daran, daá eine
-Konfigurationsdatei besch„digt wurde.
+daran liegen, daá sie von einer neueren OpenXP-Ver-
+sion direkt auf eine „ltere Version umgestiegen sind
+(was Sie <<niemals>> tun sollten!), oder daran, daá
+eine Konfigurationsdatei besch„digt wurde.
 
 Editieren Sie die Einstellungen der einzelnen Server-
 boxen unter /Edit/Server. Es gengt, eine beliebige
@@ -16366,10 +16402,10 @@ an, den Sie bei /Edit/Boxen eingetragen haben!
 @
 20907
 OpenXP konnte das angegebene Programm weder im
-XP-Verzeichnis noch in einem per DOS-Pfad ereichba-
-ren Verzeichnis finden. Stellen Sie bitte vor dem
-n„chsten Netcall sicher, daá das Programm vorhanden
-ist!
+OpenXP-Verzeichnis noch in einem per DOS-Pfad er-
+reichbaren Verzeichnis finden. Stellen Sie bitte vor
+dem n„chsten Netcall sicher, daá das Programm vor-
+handen ist!
 @
 20908
 Die Vertreteradresse muá die Form einer normalen
@@ -16432,7 +16468,7 @@ name korrigiert wird.
 Die Timingliste enth„lt einen ungltigen Befehl.
 Eine Liste der erlaubten Befehle finden Sie im
 Handbuch und in der Online-Hilfe. Beachten Sie,
-daá der Befehl PACKEN ab XP Version 2.9 in PACK
+daá der Befehl PACKEN ab OpenXP Version 2.9 in PACK
 umbenannt wurde.
 @
 21002
@@ -16506,7 +16542,7 @@ Bei der gew„hlten Datei handelt es sich nicht um eine
 Nodelist im Standard-FidoNet-Format. M”glicherweise
 handelt es sich um eine Nodelist, die mit einem sog.
 "Nodelist-Compiler" bereits fr ein anderes Programm
-vorbereitet wurde - solche Dateien k”nnen von XP
+vorbereitet wurde - solche Dateien k”nnen von OpenXP
 <<nicht>> verarbeitet werden!
 
 Besorgen Sie sich bitte eine Nodelist im Original-
@@ -16553,8 +16589,8 @@ markieren Sie sie mit den Tasten <<W>> und <<F>>.
 ^^22101
 @
 22123
-XP kann das angegebene Unterverzeichnis nicht anle-
-gen. Vermutlich existiert bereits eine Datei mit
+OpenXP kann das angegebene Unterverzeichnis nicht
+anlegen. Vermutlich existiert bereits eine Datei mit
 gleichem Namen.
 @
 22125
@@ -16611,10 +16647,10 @@ Teilnachrichten handelt, so mssen Sie vor dem Deco-
 dieren alle Teile markieren.
 @
 22402
-XP konnte in der gew„hlten Nachricht keine "begin"-
-Zeile finden. Falls die Datei aus mehreren Teilen
-besteht, mssen Sie vor dem Decodieren alle Teile
-markieren.
+OpenXP konnte in der gew„hlten Nachricht keine
+"begin"-Zeile finden. Falls die Datei aus mehreren
+Teilen besteht, mssen Sie vor dem Decodieren alle
+Teile markieren.
 @
 22404
 Die Datei besteht aus zu vielen Einzelteilen. Extra-
@@ -16700,10 +16736,10 @@ ihn bitte mit einer m”glichst genauen Beschreibung
 der Umst„nde an das OpenXP-Team (<<dev@openxp.de>>)!
 @
 22901
-Fr die Online-Registrierung verwendet XP den Fido-
-Mailer (XP-FM.EXE). Sie finden diese Datei im XP-
-Fido-Paket, das bei allen im Handbuch angegebenen
-Bezugsquellen erh„ltlich ist.
+Fr die Online-Registrierung verwendet OpenXP den
+Fido-Mailer (XP-FM.EXE). Sie finden diese Datei im
+OpenXP-Fido-Paket, das bei allen im Handbuch ange-
+gebenen Bezugsquellen erh„ltlich ist.
 @
 23001
 Installieren Sie zun„chst das Programm PGP und
