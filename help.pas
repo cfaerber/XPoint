@@ -41,7 +41,7 @@ uses
 
 const maxpages = 1200;
       maxqvw   = 200;
-      maxlines = 250;   { max. Zeilen pro Hilfsseite }
+      maxlines = 350;   { max. Zeilen pro Hilfsseite }
 
       HBlocksatz     = true;
       HKeinBlocksatz = false;
@@ -104,8 +104,8 @@ var f         : file;
     last,next : word;
     qvws      : byte;
     qvw       : ^qvt;
-    lines     : byte;
-    _lines    : byte;   { iif(noheader,lines,lines-1) }
+    lines     : Word;
+    _lines    : Word;   { iif(noheader,lines,lines-1) }
     z         : ^zt;
     zlen      : array[1..maxlines] of byte;
     wdt,hgh   : byte;
@@ -270,7 +270,7 @@ procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..30000] of byte;
 var  size    : word;
      buf     : ^buft;
-     i,sl,ps : byte;
+     i,sl,ps : word;
      p,p1    : word;
      s       : string;
      l,r,m   : word;
@@ -784,6 +784,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.3  2000/11/14 09:40:24  mk
+  - Anzahl der maximalen Zeilen in der Hilfe erhoeht
+
   Revision 1.13.2.2  2000/10/09 22:12:37  mk
   - Hilfe drucken stellt jetzt Hervorhebungen richtig dar (Bug #116196)
 
