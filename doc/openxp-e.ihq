@@ -1562,29 +1562,23 @@ numbers a la FIDO at the top.
 
 @
 131
-<<Point>>   The settings concerning your Point in
-        the server. These settings must correspond
-        with those in the server.
+<<Point>>   The settings specific to your Point for
+        this Server. These settings must correspond
+        with those which your BossNode gave you.
 
-<<Modem>>   Parameters governing the behaviour
-        of the modem during netcalls.
+<<Modem>>   Parameters governing the behaviour of the
+        modem during netcalls.
 
-<<Charges>> The information entered here allows XP
-        to calculate (approximately) the telephone
-        charges from netcalls.
+<<Names>>   For entering Username, Boss address etc.
 
-<<Names>>   For entering User, Box etc. names.
+<<FTS>>     AreaFix and AllFix specific settings.
+     
+<<Misc.>>   Miscellaneous settings.
 
-<<"Net">>   The net type is shown here. Settings
-        specific to that net.
-
-<<Misc.>>   Various settings, e.g. for online
-        operations.
-
-<<SysopMode>>
-        OpenXP will write mail packets to the
-        local hard disk instead of sending them over
-        a modem connection. They can then be read
+<<Sysop Mode>>
+        OpenXP will write mail packets to the local 
+        hard disk instead of sending them over a 
+        modem connection. They can then be read
         into some other application by hand.
 
         A typical use for this feature would be for a
@@ -7203,11 +7197,11 @@ feature. However, if messages to AreaFix are
 accepted, do NOT enable this feature.
 @
 705
-If the server offers a File Manager (Filescan), you
-can put its name and password here. Get the password
-from your sysop. It can be, but must not be, the same
-as your session password (point password), and/or
-your Area Manager password.
+If the Server offers a file-echo manager (AllFix), 
+you can put its name and password here. Get the 
+password from your BossNode. It can be, but doesn't 
+have to be, the same as your session password and/or
+your message area manager (AreaFix) password.
 @
 706
 ^^705
