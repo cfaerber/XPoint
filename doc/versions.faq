@@ -64,7 +64,7 @@ Allgemein
 ---------
 - Komplette Umstellung auf 32 Bit (compiliert mit FreePascal, Delphi und Kylix)
 - Native-Versionen für Windows, DOS 32 Bit, Linux sowie
-  vorbereitet für FreeBSD und OS/2
+  vorbereitet für FreeBSD, NetBSD und OS/2
 - Die meisten Limits sind jetzt fast nur noch vom Hauptspeicher abhängig.
   Die editierbaren Nachrichten können beliebig groß sein, Nachrichtenteile,
   Headerzeilen werden nicht mehr nach 255 Zeichen abgeschnitten, Anzahl der
@@ -98,4 +98,5 @@ Networking
 - UUZ kann mehere Mails in einem Puffer konvertieren (z.B. IMAP-Folder)
 - UUZ: Option -X, wenn angegeben, werden alle X-Header übernommen
 - LDA/Expires-Header werden unterstützt
-
+- Unterstützung von HeaderOnly-News (intern und RFC/Client)
+- Onine MessageID-Request
