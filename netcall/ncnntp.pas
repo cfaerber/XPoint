@@ -149,7 +149,7 @@ resourcestring
   res_msg3              = 'Artikel %d nicht mehr auf Server vorhanden';
 
   res_posterror         = 'Fehler %d beim Absenden des Artikels';
-  res_postmsg           = 'Verschicke Artikel %d (gesamt %5.1f%%)';
+  res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
 
   res_auth              = 'Authentifikation benötigt';
 
@@ -537,6 +537,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/06/04 17:01:14  ma
+  - cosmetics
+
   Revision 1.25  2001/04/27 10:25:27  ma
   - fixed: '.' quoting was not done with outgoing articles
 
