@@ -204,6 +204,10 @@
   {$IFNDEF FPC}{$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }{$ENDIF}
 {$ENDIF }
 
+{$IFDEF Unix }
+  {$DEFINE NCRT }
+{$ENDIF }
+
 { --- 2. File System and other system features ----------------------- }
 
 { UnixFS: POSIXoid file system: uses '/' as a path separator and is    }
@@ -253,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.11  2003/01/18 23:59:47  mk
+  - define NCRT for Unix
+
   Revision 1.78.2.10  2003/01/18 22:20:08  mk
   - merged most of the changes from Head-Branch to support FreeBSD/NetBSD
   - removed Virtual Pascal support
