@@ -29,7 +29,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,uart,resource,fileio,xpdiff,crc16,
+  dos,typeform,uart,resource,fileio,xpdiff,crc,
   xpglobal, montage, inout, winxp;
 
 const aresult    : byte = 0;
@@ -1030,6 +1030,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/06/20 22:22:21  ma
+  - letzte Version des alten Mailers
+
   Revision 1.13  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 
