@@ -26,7 +26,7 @@
 
 { OS specific uses }
 
-uses xpcurses;
+uses xpcurses, linux;
 
 { local declarations }
 
@@ -97,6 +97,9 @@ end;
 
 {
         $Log$
+        Revision 1.7  2003/08/26 17:36:26  mk
+        - added linux to uses
+
         Revision 1.6  2003/08/26 04:58:14  mk
         - added automatic TimeZone dectection for Win32
 
