@@ -131,13 +131,17 @@
 {$ENDIF }
 
 {$IFDEF Linux }
-  {$DEFINE LocalScreen } { Unter Linux m《sen wir den LocalScreen verwenden }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
+  {$DEFINE NCRT }        { NCRT statt CRT verwenden }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
-  {$DEFINE LocalScreen } { Unter FreeBSD m《sen wir den LocalScreen verwenden }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
+  {$DEFINE NCRT }        { NCRT statt CRT verwenden }
+{$ENDIF }
+
+{$IFDEF NCRT }
+  {$DEFINE LocalScreen } { Unter NCRT m《sen wir den LocalScreen verwenden }
 {$ENDIF }
 
 { --- Erklвungen der selbst gesetzen Defines --- }
@@ -157,11 +161,23 @@
   Dateinamen, die von OpenXP erzeugt oder benutzt werden, m《sen immer
   komplett klein geschrieben sein.
 
+  NCRT
+
+  Baut auf den Units OCRT, NCRT, PANEL und NCURSES auf. Dient als Interface
+  zur Konsole bei z.B. Linux. Ob es mit Curses-Versionen unter Windows oder
+  OS/2 laeuft, bliebe zu testen. Die Units sind bei FreePascal unter
+  Packages. Die aktuellen Sources bekommt man bei www.cncware.com/fpc.html.
+  Die Units sind hier direkt in den Source-Tree eingepflegt, damit eine
+  getestete Version vorhanden ist.
+
 }
 
 
 {
   $Log$
+  Revision 1.22  2000/04/29 08:35:09  mk
+  - NCRT Define hinzugefuegt
+
   Revision 1.21  2000/04/26 20:58:56  mk
   - Erweiterungen fuer Linux
 
