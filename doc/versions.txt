@@ -76,17 +76,16 @@ Original 3.12d -> OpenXP 3.20 (ausgehend von Peter Mandrella's 3.20 Source
 - /Config/Anzeige/Hilfen
 - etwa 10 Jahr-2000 Fehler beseitigt, die z.T. zu Fehlfunktionen fhren k”nnen
 - Untersttzung des ISDN-Flags X75 in FIDO-Nodelisten
-- internen Kalender bis auf das Jahr 3000 erweitert
 - verbesserte Suche nach Filenamen und Magics in Requestfunktion <F3>
-- einige interne nderungen zur verbesserung der allgemeinen Performance
+- die Geschwindigkeit vieler Operationen verbessert
 - Untersttzung von PGP 5.x und 6.5.x hinzugefgt und verbessert
 - Config/Anzeige/Kopf: Userdefinierbarer Nachrichtenkopf,
   siehe zus„tzlich Config/Anzeige/Diverses
 - Config/Optionen/Netcall: Option Datumsbezge nach Netcall anpassen
 - wesentliche Verbesserungen und Bugfixes von UUZ
 - Editor: mit Shift-Tasten markieren, <Ctrl-Del> und <Ctrl-Ins> hinzugef.
-- Config/Optionen/Lister: Option Lister mit <Return> verlassen
-- FQDN implementiert (siehe Hilfe)
+- Config/Optionen/Lister: Option Lister mit <Enter> verlassen
+- FQDN Untersttzung, siehe Hilfe
 - <Ctrl-K><U> im Editor liesst Dateien UUEncoded ein
 - Nachricht/Suchen/MessageID sowie die Suchfunktionen nach User,
   Betreff, Text, MID in den Lister integriert
@@ -98,21 +97,19 @@ Original 3.12d -> OpenXP 3.20 (ausgehend von Peter Mandrella's 3.20 Source
 - Quote Reflow und <Ctrl-B> implementiert, <Shift-Enter> tut immer das
   Gegenteil von <Enter>
 - Suche nach kompletten Message-IDs > 1000mal mal schneller als vorher
-- mit '*' im Sendefenster kann nachtr„glich Empf„nger ge„ndert werden
+- mit '/' im Sendefenster kann nachtr„glich Empf„nger ge„ndert werden
 - automatische Rechenzeitfreigabe unter Windows, Uhr bleibt sichtbar
 - Volltextsuche mit Umlauten und UND/ODER Verknpfung
 - Untersttzung von Priorities in Mail/News in XP und UUZ
-- Hilfe, Doku und Resourcen: uáerst Umfangreiche Verbesserungen
+- Hilfe und Resourcen: umfangreiche Korrekturen, Erg„nzungen und
+  Erweiterungen
 - Englische OpenXP Version mit englischer Hilfe und Installationsanl.
 
 OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 
-- Betahinweis kann mit '/nb' als Parameter abgeschaltet werden
 - kleinere Erweiterungen fr das Mailhandling in XP und UUZ
 - deutlich erweiterte Untersttzung von externen Viewern
-- nderung in der Zeitschleifenfreigabe, Uhr wird jetzt immer angezeigt
-- FQDN jetzt auch fr UUCP-Boxentyp
-- Suchfunktion untersttzt und/oder-Suche und Suche nach ganzen W”rtern
+- Suche nach ganzen W”rtern
 - Bessere Erkennung von Magics bei File-Requests
 - Lesenmodus „ndern auch im Nachrichtenfenster m”glich
 - Adressbuchgruppen, siehe auch Config/Optionen/Allgemeines:
@@ -120,8 +117,7 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 - Config/Optionen/Editor zeigt das gleiche Men wie <F10> im Editor
 - Verbesserte Default-Einstellungen im gesamten XP
 - Lister: Q schaltet Quotechars um
-- Config/Anzeige/Hilfen: Felder in der Userliste sind sortierbar
-- Config/Anzeige/Hilfe/Feldtausch
+- Config/Anzeige/Hilfen/Feldtausch: Felder in der Userliste sind sortierbar
 - Nachricht/Direkt + Weiterleiten: Bretter mit / oder F2 direkt
   ausw„hlbar
 - Schutzmaánahmen fr externe Viewer, siehe Config/Optionen/Viewer
@@ -141,23 +137,32 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 - Volltextsuche untersttz '?' und '*'
 - MIME-Auswahldialog erscheint nur noch wenn n”tig,
   <Shift>+<Enter> erzwingt ihn
-- 80 kb mehr Speicher im Editor frei
 - <Strg>+<G> markiert gesamte Adressbuchgruppe
 - Crosspostings mit Shift+B: Beschr„kungen bei Verteilern, versch.
   Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben
-- Editor: Glossary-Funktion, <Alt>+<G>, siehe Hilfe
-          <Ctrl-B>: Bl”cke reformatieren
+- Editor: <Ctrl-Enter> Glossary-Funktion, siehe Hilfe
+          <Ctrl-B> Bl”cke reformatieren
+          noch mehr verfgbarer Speicher (ca. 30kb)
 - UUE-Dekodierung direkt aus Lister mit <U>
 - User-Men: Einstellbare Priorit„tsfarbe fr jeden User
 - Zus„tzliche Tags $RNAME2, $(RNAME2)
 - Untersttzung von langen Dateinamen unter Windows 9x und 2000
-- Merklich schnellere Datenbankroutinen unter andermn durch Index-Cache
+- Merklich schnellere Datenbankroutinen (Index-Cache)
 - Verbesserte Untersttzung der 28, 30, 33 und 36 Zeilen-Modi
 - Untersttzung des Parameters -mailto
 - Englische Hilfe und Resouren-Datei verbessert und aktualisiert
+- Deutsche Hilfe und Resourcen: nochmals umfangreiche
+  Korrekturen, Erg„nzungen und Erweiterungen
 - Config/Optionen/Nachrichten...Eigene PMs halten
 - Kommandozeilenparameter -K verarbeitet jetzt komplette Zeichenketten
 - Interne Zwischenablage, wenn keine externe vorhanden ist
+- hervorgehobene Nachrichten k”nnen auch im Lister durch
+  „ndern der Nachrichtenkopffarbe hervorgehoben werden.
+- Taste U in der Brettansicht
+  schaltet die zus„tzliche Anzeige der Bretter mit ungelesenen
+  Nachrichten Ein/Aus
+- Im PM-Bretter CTRL+B = CTRL+P, dadurch keine l„stige
+  Meldung mehr: "Schreiben im Brett nicht m”glich".
 
 OpenXP 3.30.x Beta -> OpenXP 3.70.x Beta
 
