@@ -1613,10 +1613,36 @@ numbers a la FIDO at the top.
 <<Misc.>>   Various settings, e.g. for online
         operations.
 
-<<SysopMode>> Tells CrossPoint to put the poll
-        packet onto the local hard disk, rather
-        than send it over a modem. (It can then be
-        read into some other application by hand)
+<<SysopMode>> Tells CrossPoint to put the poll packet
+        onto the local hard disk, rather than doing a
+        netcall (it can then be read into some other
+        application manually).
+
+@
+132
+<<Client>>  All mandatory settings for the operation with
+        external clients such as server name, eMail
+        address, client directory and the command
+        line that runs the client.
+
+<<Modem>>   Optional parameters governing the behaviour
+        of the modem during netcalls. As CrossPoint
+        doesn't invoke the dialling itself when
+        operating with external clients, it is the
+        job of your client (or your client kit) to
+        interpret these parameters.
+
+<<Charges>> Here you specify your phone fee zone and the
+        connect time. Again, the client will have to
+        interpret these data (if at all).
+
+<<Misc.>>   Input/output filters, reply servers and some
+        other options.
+
+<<SysopMode>> Tells CrossPoint to put the poll packet
+        onto the local hard disk, rather than doing a
+        netcall (it can then be read into some other
+        application manually).
 
 @
 139
@@ -2954,7 +2980,7 @@ But in UseNet and Z-Netz it is a useful feature.
 Also note, that this setting does <<not>> affect news-
 groups already there! To change the server for par-
 ticular newsgroups, you can use
-/Re-Org/Misc./Change Server.
+/Re-Org/Change Server.
 
 @
 8033
@@ -2972,8 +2998,13 @@ or even from ZConnect and UseNet to Maus Net.
 
 Note that changing this setting does <<not>> change
 user already in the address book. To change these use
-Re-Org/Misc../Change Server.
+Re-Org/Change Server.
 
+@
+8051
+(ToDo: comprehensive explanation, \@8051)
+@8052
+(ToDo: comprehensive explanation, \@8052)
 @
 190
 
@@ -2984,7 +3015,7 @@ details, which is used for addressing this box from
 Note that changing this entry does not automatically
 change the entries in newsgroups and users to match:
 You have to change these entries separately through
-/Re-Org/Misc../Change Server.
+/Re-Org/Change Server.
 @
 191
 <<MausNet / Fido:>>
@@ -3012,8 +3043,9 @@ manual.
 192
 
 You can enter some suitable comment here, the full
-name of the box, the place or whatever, up to 20
-characters.
+name of the box, the place or whatever. Only the
+first 23 characters will be displayed in the server
+list.
 
 <<Fido:>> You should put the name of your server
 box here.
@@ -3098,7 +3130,143 @@ Message-ID).
 
 @
 8034
-Enter the name of your UUCP Server here.
+Enter the domain of your UUCP Server here.
+@
+30001
+Enter your eMail address here.
+
+(ToDo: comprehensive explanation, UUCP specific,
+\@30001)
+@
+30002
+Enter your 'Fully Qualified Domain Name' here.
+
+(ToDo: comprehensive explanation, UUCP specific,
+\@30002).
+@
+30100
+(ToDo: General introduction to RFC/Client, \@30100)
+@
+30101
+This is the name of the server. You can choose any
+name here, unlike the other types of net it has no
+technical function with RFC/Client.
+
+Note that changing this entry does not automatically
+change the entries in newsgroups and users to match:
+You have to change these entries separately through
+/Re-Org/Change Server.
+@
+30102
+You can enter some suitable comment here, the full
+name of the provider, the protocols supported or
+whatever. Only the first 23 characters will be
+displayed in the server list.
+@
+30103
+Enter your eMail address here.
+
+(ToDo: comprehensive explanation, client specific,
+\@30103)
+@
+30104
+^^194
+@
+30105
+You can set a stand-in ("Reply-To") address for your
+messages. All PM replies to your messages which you
+send over this server will be redirected to this
+stand-in address (as long as the person answering has
+this capability).
+
+Stand-In addresses must be complete domain addresses
+in the form <<User>>\@<<Domain>>.<<TLD>> (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
+such as ".uk", ".com", ".org" etc.). You can put your
+real name in brackets on the end, e.g.:
+
+      <<user>>\@<<domain>>.<<tld (Forename Surname)>>
+@
+30106
+Enter your 'Fully Qualified Domain Name' here.
+
+(ToDo: comprehensive explanation, client specific,
+\@30106).
+@
+30107
+Enter the <<relative>> path to the directory where the
+client is installed.
+
+(ToDo: comprehensive explanation, \@30107).
+@
+30108
+Enter the external command here that shall be run
+upon executing an RFC/Client netcall.
+
+(ToDo: comprehensive explanation, \@30108).
+@
+30109
+("Additional servers" not implemented yet)
+
+(ToDo: comprehensive explanation, \@30109).
+@
+30110
+Here you can enter a name for your Dial-Up account
+(for instance the name of your Dial-Up Network (DUN)
+connection in Windows 9x/ME/2000/NT that you are
+using for connecting to your provider).
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-DialUp=>>" in your
+server configuration file <server>.BFG.
+@
+30111
+Enter the telephone number you need to dial when
+establishing a connection to your provider.
+
+If you establish the connection via the Dial-Up
+Network (DUN) facility of Windows 9x/ME/2000/NT,
+this entry can normally be left blank.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Telefon=>>" in your server
+configuration file <server>.BFG.
+@
+30112
+Here you can enter a string (a user name for
+instance) that is required for identification
+when connecting to your provider.
+
+If you establish the connection via the Dial-Up
+Network (DUN) facility of Windows 9x/ME/2000/NT,
+this entry can normally be left blank.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<LoginName=>>" in your server
+configuration file <server>.BFG.
+@
+30113
+Enter the password required for authentication when
+connecting to your provider.
+
+If you establish the connection via the Dial-Up
+Network (DUN) facility of Windows 9x/ME/2000/NT,
+this entry can normally be left blank.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Passwort=>>" in your server
+configuration file <server>.BFG.
+@
+30200
+(ToDo: RFC/Client - netcall procedure and further
+details, \@30200)
 @
 196
 You can enter anything short and sharp here:
