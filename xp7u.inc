@@ -187,7 +187,6 @@ begin
       opt := opt + '-SMTP '
     end;
     if ClientSmtp or client then opt := opt+'-client ';
-    if BoxPar^.PPPMailInUseEnvTo then opt := opt + '-UseEnvTo ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
@@ -599,8 +598,8 @@ begin
       begin
         NC^.Recbuf := filesum(inbound+'*.MSG');
         if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
-        shell(UUZBin+' -uz -w:'+strs(screenlines)+
-          ' '+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
+        shell(UUZBin+' -uz -w:'+strs(screenlines)+iifs(PPPMailInUseEnvTo,
+          ' -UseEnvTo ',' ')+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
         if nDelPuffer and (errorlevel=0) and
           (testpuffer(dpuffer,false,dummy)>=0) then
             EmptyDir(inbound, '*.MSG'); { entpackte Dateien l”schen }
@@ -625,6 +624,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.24  2002/01/06 17:56:58  my
+  MY:- Letzten Commit korrigiert: -UseEnvTo wird jetzt incoming (-uz) statt
+       outgoing (-zu) aufgerufen.
+
   Revision 1.13.2.23  2002/01/04 12:03:36  mk
   - implemented UseEnvTo
 
@@ -690,10 +693,12 @@ end;
   - verschiedene Aenderungen fuer PPP-Modus
 
   Revision 1.13.2.5  2001/01/10 17:39:06  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.13.2.4  2001/01/02 17:06:15  mk
-  - bei UUCP den Eingangsfilter auch anwerfen wenn kein Pollpaket vorhanden und PPP Option eingeschaltet ist
+  - bei UUCP den Eingangsfilter auch anwerfen wenn kein Pollpaket
+    vorhanden und PPP Option eingeschaltet ist
 
   Revision 1.13.2.3  2000/12/20 18:09:21  mk
   - Schalter fuer PPP-Option von UUZ
