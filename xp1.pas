@@ -2039,6 +2039,9 @@ begin
     XLIne := TStringList.Create;
     fLine := TStringList.Create;
     zLIne := TStringList.Create;
+    ReplyTo := TStringList.Create;
+    Followup := TStringList.Create;
+    MailCopies := TStringList.Create;
   end;
 end;
 
@@ -2052,6 +2055,9 @@ begin
     XLine.Free;
     fLine.Free;
     zLine.Free;
+    ReplyTo.Free;
+    Followup.Free;
+    Mailcopies.free;
   end;
   freemem(hdp);
   hdp:= nil;
@@ -2066,6 +2072,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.91  2000/11/18 13:50:37  mk
+  - initialize new record fields in Allocmem
+
   Revision 1.90  2000/11/16 19:37:55  hd
   - DOS-Unit entfernt
   - xp1cm.inc integriert
