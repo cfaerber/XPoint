@@ -1,5 +1,3 @@
-$Id$
-
 Beim Umstieg auf eine neue Programmversion empfiehlt es sich, eine
 vollstÑndige Sicherung der alten Version incl. des Datenbestandes
 anzufertigen - fÅr den Fall, da· sich in der neueren Version zusÑtz-
@@ -101,23 +99,30 @@ die von Ihnen benutzte XP-Version vorgesehen sind.
         Dadurch wird verhindert, da· bei einem Netcall-Abbruch Daten
         mehrfach Åbertragen und von XP 3.11 mehrfach eingelesen werden.
 
-3.2     Es empfiehlt sich alle Dateien mit der Endung *.IX1 vorher zu 
-        lîschen, da umfangreiche énderungen in den Indices vorgenommen 
+3.2     Es empfiehlt sich alle Dateien mit der Endung *.IX1 vorher zu
+        lîschen, da umfangreiche énderungen in den Indices vorgenommen
         werden. In keinem Fall kommt man aber um die Neuanlage letzterer
         herum.
 
-3.4     RFC/UUCP: Falls sie bei Edit/Boxen/Edit/RFC|UUCP den Schalter
+3.4     RFC/UUCP: Falls sie bei /Edit/Boxen/Edit/RFC|UUCP den Schalter
         "Absender User@Server.(Server)domain" eingeschaltet haben,
-        mÅssen Sie bei Edit/Boxen/Edit/Namen im Feld "Serverdom." den
+        mÅssen Sie bei /Edit/Boxen/Edit/Namen im Feld "Serverdom." den
         Eintrag einstellen, den Sie bisher im Feld "Domain" verwendet
         haben.
 
-        Fido und MagicNet: Im intern verwendeten Nachrichtenformat
-        wird der Fido-EmpfÑnger statt in der Headerzeile X-XP-FTO in
-        der Zeile F-TO untergebracht. Wenn Sie bisher externe Tools
-        benutzt haben, die auf diese Information zugreifen (z.B.
-        CrossSecretary, XP-Filter oder PKT2ZER), mÅssen Sie diese
-        Tools umkonfigurieren oder eine speziell fÅr OpenXP
-        vorgesehene Version dieser Tools installieren. Die Programme
-        "xp", "zfido" und "maggi" haben einen Schalter "-312", mit dem
-        das Verhalten der XP-Version 3.12 emuliert wird.
+        Fido und MagicNet: Im intern verwendeten Nachrichtenformat wird
+        der Fido-EmpfÑnger statt in der Headerzeile X-XP-FTO nun in der
+        Zeile F-TO untergebracht. Wenn Sie bisher externe Tools benutzt
+        haben, die auf diese Information zugreifen (z.B. CrossSecretary,
+        XP-Filter oder PKT2ZER), mÅssen Sie diese Tools umkonfigurieren
+        oder eine speziell fÅr OpenXP/16 vorgesehene Version dieser
+        Tools installieren. Die Programme "XP", "ZFIDO" und "MAGGI"
+        haben einen Schalter "/312", mit dem das Verhalten der XP-
+        Version 3.12 emuliert wird.
+
+        Der Sysop-Mode wird jetzt Åber einen Schalter unter /Edit/Boxen/
+        Edit/SysopMode aktiviert bzw. deaktiviert. Dadurch ist kein
+        Lîschen bzw. Neueintragen der Verzeichnisdaten beim Umschalten
+        mehr erforderlich. Bei Serverboxen, bei denen in vorherigen
+        Versionen bisher der Sysop-Mode aktiviert war, mu· der Schalter
+        nach dem Update daher einmal manuell aktiviert werden.
