@@ -867,7 +867,6 @@ begin
     end else
       rewrite(f2,1);
 
-    { Merken, da der Outfilter ihn verÑndern kann }
     assign(f1,ppfile);
 
     if (logintyp=ltMaus) and not existf(f1) then
@@ -877,20 +876,7 @@ begin
 
     if existf(f1) then
     begin
-      { Ausgangsfilter auch fÅr ZConnect aufrufen, aber nur
-        wenn ein Puffer da ist. Originalfile lîschen }
-      if logintyp = ltZConnect then
-      begin
-        ClrScr;
-        writeln('"', ppfile, '" wird jetzt konvertiert'); readln;
-        TempPPFileName := ppfile;
-        if OutFilter(ppfile) then _era(TempPPFileName);
-        writeln('"', ppfile, '" ist das Ergebnis');
-        Writeln('"', tempppfilename, '" wurde gelîscht'); readln;
-        Assign(f1, ppfile); { neuen Namen merken }
-      end;
-
-      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then
+      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltZConnect] then
       begin
         fn:=TempS(_filesize(ppfile)+10000);
         case logintyp of
@@ -898,6 +884,16 @@ begin
           ltQuick : ZtoQuick(ppfile,fn,false,3);
           ltGS    : ZtoQuick(ppfile,fn,true,3);
           ltMaus  : ZtoMaus(ppfile,fn,3);
+          ltZConnect:
+          begin
+            { ppfile merken, damit der Originalpuffer nach Erfolg
+              gelîscht werden kann }
+            TempPPFileName := ppfile;
+            { éndert ppfile! }
+            if OutFilter(ppfile) then _era(ppfile);
+            fn := ppfile; { fn mu· spÑter gelîscht werden }
+            ppfile := TempPPFileName;
+          end;
         end;
         if errorlevel=MaggiFehler then
         begin
@@ -917,7 +913,6 @@ begin
       NC^.sendbuf:=filesize(f1);
       if logintyp=ltMaus then
         RemoveMausmark;
-      Writeln('Jetzt wird "', ppfile, '" an "', sysopout, '" rangehangen'); readln;
       fmove(f1,f2);            { .PP an Ausgabepuffer hÑngen }
       close(f1);
       close(f2);
@@ -952,18 +947,14 @@ begin
           ltQuick : QuickToZ(SysopInp,fn,false,3);
           ltGS    : QuickToZ(SysopInp,fn,true,3);
           ltMaus  : begin
-{$IFNDEF WIN32}
                       ft:=filetime(box+'.itg');
-{$ENDIF}
                       MausToZ(SysopInp,fn,3);
                       MausGetInfs(box,mauslogfile);
                       MausLogFiles(0,false,box);
                       MausLogFiles(1,false,box);
                       MausLogFiles(2,false,box);
-{$IFNDEF WIN32}
                       if ft<>filetime(box+'.itg') then
                         MausImportITG(box);
-{$ENDIF}
                     end;
         end;
         end;
@@ -1456,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.2  2000/03/30 14:06:12  mk
+  - unnˆtigen Debugcode entfernt
+
   Revision 1.5.2.1  2000/03/25 15:28:11  mk
   - URL-Erkennung im Lister erkennt jetzt auch
     einen String der mit WWW. beginnt als URL an.

@@ -35,7 +35,7 @@ function imptestpollbox(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt, winxp;
+uses  xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt;
 
 const mdaten = 'MDATEN.DAT';    { fÅr ImportMautaubase }
       mindex = 'MDATEN.IND';
@@ -679,7 +679,7 @@ begin
       if not brk then begin
         if left(bretth,1)<>'/' then bretth:='/'+bretth;
         if right(bretth,1)<>'/' then bretth:=bretth+'/';
-        shell('ZQWK.EXE -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4); readln;
+        shell('ZQWK.EXE -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fsplit(fn,dir,name,ext);
         fn:=name+'.ZER';
         if not exist(fn) then
@@ -698,8 +698,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.6  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.5.2.1  2000/03/30 14:06:12  mk
+  - unnˆtigen Debugcode entfernt
 
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
