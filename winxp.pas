@@ -29,7 +29,7 @@ interface
 uses
   sysutils,
 {$IFDEF Win32 }
-  windows, strings,
+  windows,
 {$ENDIF }
 {$IFDEF unix}
   xplinux, strings,
@@ -1012,6 +1012,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/07/28 12:39:56  mk
+  - removed unused unit strings
+
   Revision 1.57  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 
