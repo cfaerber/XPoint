@@ -957,8 +957,8 @@ begin
                       if ft<>filetime(box+'.itg') then
                         MausImportITG(box);
                     end;
-        end;
-        end;
+      end;
+    end;
     NC^.recbuf:=_filesize(SysopInp);
     CallFilter(true,fn);
     if PufferEinlesen(fn,box,false,false,true,pe_Bad) then begin
@@ -1446,6 +1446,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/03/30 14:05:05  mk
+  - unnötigen Debugcode entfernt
+
   Revision 1.9  2000/03/16 18:45:13  mk
   - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp ZConnect und Sysoppoll aufgerufen
 

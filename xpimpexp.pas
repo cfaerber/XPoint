@@ -679,7 +679,7 @@ begin
       if not brk then begin
         if left(bretth,1)<>'/' then bretth:='/'+bretth;
         if right(bretth,1)<>'/' then bretth:=bretth+'/';
-        shell('ZQWK.EXE -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4); readln;
+        shell('ZQWK.EXE -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fsplit(fn,dir,name,ext);
         fn:=name+'.ZER';
         if not exist(fn) then
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/30 14:05:05  mk
+  - unnötigen Debugcode entfernt
+
   Revision 1.6  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

@@ -265,3 +265,76 @@ http://click.egroups.com/1/2120/3/_/682185/_/953938865/
 
 
 
+From Rolf_Jentsch@T-ONLINE.de Tue Mar 28 11:31:00 2000
+Path: uni-berlin.de!fu-berlin.de!newsfeed01.sul.t-online.de!newsmm00.btx.dtag.de!t-online.de!news.btx.dtag.de!not-for-mail
+From: Rolf_Jentsch@T-ONLINE.de (Rolf Jentsch)
+Newsgroups: de.comm.software.crosspoint
+Subject: Re: Bug in XP 3.21 beta 22
+Date: 28 Mar 2000 11:31:00 +0200
+Organization: T-Online
+Lines: 14
+Message-ID: <7ajJ1K2$hZB@rolf.t-online.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Trace: news03.btx.dtag.de 954274309 22015 340058917921-0001 000328 20:11:49
+X-Complaints-To: abuse@t-online.de
+X-Sender: 340058917921-0001@t-dialin.net
+X-Newsreader: CrossPoint v3.21.022beta DOS/16 R/A12069
+Xref: uni-berlin.de de.comm.software.crosspoint:40545
+
+Hallo Leute,
+
+folgendes kleiner Bug. Die Anzeige steht auf Lesen/ungelesene Nachrichten.
+Ich bekomme eine mehrteilige Mime Nachricht mit FA, die ich via ALT-P  
+ungelesen archiviere - mich interessiert da nur der FA. Obwohl das Brett  
+jetzt leer ist, wird in der Uebersicht immer noch der Status ungelesen  
+angezeigt.
+
+
+- *wbr* Rolf -
+
+
+
+
+
+From AvataR@AvataR-DC.de Tue Mar 28 23:32:00 2000
+Path: uni-berlin.de!fu-berlin.de!blackbush.xlink.net!newscore.gigabell.net!news.ndh.net!not-for-mail
+From: AvataR@AvataR-DC.de (Garvin Hicking)
+Newsgroups: de.comm.software.crosspoint
+Subject: Limitationen
+Date: 28 Mar 2000 22:32:00 +0100
+Organization: AvataR Design & Computer GbR
+Lines: 18
+Message-ID: <7aikDJZiXVB@avatar.avatar-dc.de>
+NNTP-Posting-Host: port2022.duesseldorf.ndh.net
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Trace: passat.ndh.net 954275633 25185 195.227.37.22 (28 Mar 2000 20:33:53 GMT)
+X-Complaints-To: abuse@ndh.net
+NNTP-Posting-Date: 28 Mar 2000 20:33:53 GMT
+X-Newsreader: CrossPoint v3.21.022beta DOS/16 R/A11610, via NNTP
+X-Nntp-Client: UKAW v1.77g (195.227.37.22); Compilation by 'www.gohel.de'
+X-Homepage: http://www.avatar-dc.de/
+Xref: uni-berlin.de de.comm.software.crosspoint:40550
+
+Hi!
+
+UUZ in der Version 3.21.22ß schneidet in Mails und News Zeilen nach 255  
+Zeichen ab. Ist das irgendwie möglich, anders zu lösen?
+
+Es gibt da ein paar Spezis, die längere Absätze mit Endloszeilen schreiben  
+(was irgendwie sehr sinnvoll ist). Diese werden aber durch UUZ gnadenlos  
+gekappt.
+
+Notfalls könnte man solche langen Zeilen ja (wenn der Datentyp einer Zeile  
+nicht vergrößerbar ist) in mehrere Absätze zerlegen...?
+
+
+-- 
+Bye                   .:~~[  AvataR Design & Computer  ]~~:.
+                      |   Garvin Hicking - ICQ 21392242    |
+ Garvin.              `....[ http://www.AvataR-DC.de/ ]....'
+
+
