@@ -956,6 +956,7 @@ end;
 procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
+  Pal: pPal;
 begin
   if (videotype<2) or ParLCD then
     screenlines:=25
@@ -967,13 +968,33 @@ begin
     end;
   if (ParFontfile='') and not ParLCD then begin
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
-    then begin
+    then
+    begin
+      GetMem(Pal, SizeOf(TPal));
+      asm
+	      mov ax, 01009h
+	      mov bx, 0
+	      mov cx, 16
+	      les dx, dword ptr Pal
+	      int 10h
+      end;
       setvideomode(3);
       IoVideoInit;
+      if vtype = 3 then
+      begin
+       asm
+	        mov ax, 01002h
+	        mov bx, 0
+	        mov cx, 16
+	        les dx, dword ptr Pal
+	        int 10h
+        end;
+        FreeMem(pal, SizeOf(TPal));
       end;
-     if (screenlines<>25) or (screenlines<>getscreenlines) then
-      setscreenlines(screenlines);
     end;
+    if (screenlines<>25) or (screenlines<>getscreenlines) then
+      setscreenlines(screenlines);
+  end;
   iosclines:=screenlines;
   crline:=screenlines;
   actscreenlines:=screenlines;
@@ -2055,6 +2076,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.12  2000/12/29 16:57:14  mk
+  - Palette sichern beim start
+
   Revision 1.48.2.11  2000/12/29 02:22:20  mk
   - palette sichern verbessert
 
