@@ -44,10 +44,10 @@ const maxpages = 1200;
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
 function  inithelp(name:string; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
-procedure sethelppos(_x,_y,height:sysWord);
+procedure sethelppos(_x,_y,height: Unsigned16);
 procedure help_printable(printchar:taste; pinit,pexit:string);
 
-procedure IHS(page:sysWord);
+procedure IHS(page: Unsigned16);
 procedure releasehelp;
 
 
@@ -97,7 +97,7 @@ var f         : file;
     x,y       : integer;
     pages,
     ixp,ap,
-    illp      : sysWord;
+    illp      : Unsigned16;
     noheader  : boolean;
     tabmode   : boolean;
 
@@ -106,7 +106,7 @@ var f         : file;
     dodecode,
     headhigh  : boolean;
 
-    last,next : sysWord;
+    last,next : Unsigned16;
     qvws      : byte;
     qvw       : ^qvt;
     lines     : integer;
@@ -114,7 +114,7 @@ var f         : file;
     z         : ^zt;
     wdt,hgh   : integer;
 
-    pst       : array[1..maxpst] of sysWord;
+    pst       : array[1..maxpst] of Unsigned16;
     qst       : array[1..maxpst] of byte;
     ast       : array[1..maxpst] of integer;
     pstp      :integer;
@@ -237,7 +237,7 @@ begin
 end;
 
 
-procedure sethelppos(_x,_y,height:sysWord);
+procedure sethelppos(_x,_y,height:Unsigned16);
 begin
   x:=_x; y:=_y; hgh:=height;
 end;
@@ -257,14 +257,14 @@ end ['EAX', 'EBX', 'ECX'];
 end;
 {$ENDIF }
 
-procedure loadpage(nr:sysWord; pstentry:boolean);
+procedure loadpage(nr:Unsigned16; pstentry:boolean);
 type buft    = array[1..32768] of byte;
-var  size    : sysWord;
+var  size    : Unsigned16;
      buf     : ^buft;
      i,sl,ps : integer;
-     p,p1    : sysWord;
+     p,p1    : Unsigned16;
      s       : string;
-     l,r,m   : sysWord;
+     l,r,m   : Unsigned16;
      lc      : char;
      res     : integer;
      wd      : byte;
@@ -497,8 +497,8 @@ begin
 end;
 
 
-procedure IHS(page:sysWord);
-var lp      : sysWord;
+procedure IHS(page:Unsigned16);
+var lp      : Unsigned16;
     la,i    : integer;
     t       : taste;
     uc      : char;
@@ -521,7 +521,7 @@ var lp      : sysWord;
 
   function noother:boolean;
   var other : boolean;
-      i     : sysWord;
+      i     : Unsigned16;
   begin
     other:=false;
     for i:=1 to qvws do
@@ -529,7 +529,7 @@ var lp      : sysWord;
     noother:=not other;
   end;
 
-  procedure searchsame(add:shortint; var nr:sysWord);
+  procedure searchsame(add:shortint; var nr:Unsigned16);
   begin
     nr:=qvp;
     repeat
@@ -540,7 +540,7 @@ var lp      : sysWord;
     if nr=qvp then nr:=0;
   end;
 
-  procedure searchother(add:shortint; var nr:sysWord);
+  procedure searchother(add:shortint; var nr:Unsigned16);
   begin
     nr:=qvp;
     repeat
@@ -550,9 +550,9 @@ var lp      : sysWord;
     until qvw^[nr].y<>qvw^[qvp].y;
   end;
 
-  procedure searchlowdist(var nr:sysWord);
-  var y,i : sysWord;
-      d   : sysWord;
+  procedure searchlowdist(var nr:Unsigned16);
+  var y,i : Unsigned16;
+      d   : Unsigned16;
   begin
     y:=qvw^[nr].y;
     d:=99;
@@ -564,7 +564,7 @@ var lp      : sysWord;
   end;
 
   procedure goup;
-  var nr : sysWord;
+  var nr : Unsigned16;
   begin
     if noother then goleft
     else begin
@@ -576,7 +576,7 @@ var lp      : sysWord;
   end;
 
   procedure godown;
-  var nr : sysWord;
+  var nr : Unsigned16;
   begin
     if noother then goright
     else begin
@@ -785,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.53  2003/08/27 18:55:15  mk
+  - SysWord -> Unsigned16
+
   Revision 1.52  2003/08/24 21:43:37  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems
