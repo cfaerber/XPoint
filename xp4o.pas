@@ -320,7 +320,6 @@ label ende;
       if (ofs>0) and (ofs<wsize+1+length(key)) then begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
-        if umlaut then upstring(key);          { Umlaut-Suche automatisch Case_insensitiv }
         TempKey := Key;
         Intext:=TxtSeek(p,wsize,Tempkey,igcase,umlaut);
         end
@@ -2416,7 +2415,7 @@ begin
       if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
-      setbrettgelesen(_brett); 
+      setbrettgelesen(_brett);
       end;
 end;
 
@@ -2424,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/08/22 19:48:47  mk
+  - unnoetige Umlautkonvertierung entfernt
+
   Revision 1.64  2000/08/09 13:27:55  mk
   - Ungelesen Bug beim (K)illen von Nachrichten aus der Markiert-Liste behoben
 
