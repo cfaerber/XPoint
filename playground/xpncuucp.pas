@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall routines
-   (C) 2001 OpenXP team (www.openxp.de), M.Kiesel and C.F"arber
+   (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
   sysutils,typeform,montage,fileio,keys,maus2,inout,lister,resource,
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,
-  zcrfc;
+  zcrfc,ipcclass;
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
@@ -43,7 +43,7 @@ implementation
 
 uses
   xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
-  xpnt,xpnetcall,ncgeneric,objcom;
+  xpnt,xpnetcall,ncuucp,objcom;
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
@@ -51,13 +51,9 @@ function UUCPNetcall(boxname: string;
                      diskpoll: boolean;
                      Logfile: String;
                      IncomingFiles: TStringList):shortint;
-var
-(*
-    UUCICO:     TUUCPNetcall;
-*)
-
-  uunum : word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
-
+var 
+  UUNum:  word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
+  CmdFile:string;
 
   (* Nummer in UUNUMMER.DAT lesen/schreiben *)
 
@@ -223,9 +219,9 @@ var
 
               { now, try .OUT => .X/.XX }
               if (compression<>bzip) and (not existf(f1^)) then case compression of
-	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'F');
-	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'GZ');
-		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'Z');
+	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'F');
+	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'GZ');
+		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'Z');
 	      end; 
 
 	      { finally, try .OUT => .OUT.X/.OUT.XX }
@@ -339,6 +335,7 @@ var
     
     procedure KillUUZ;
     begin
+      CmdFile:=uu.CommandFile;
       uu.Free;
       result:=true;
     end; 
@@ -367,7 +364,53 @@ var
       if _filesize(dest)>=1 then IncomingFiles.Add(dest)
       else _era(dest);
   end;
- 
+
+  function RunUUCICO:integer;
+  var UUCICO: TUUCPNetcall;
+      CommInit: string;
+  begin
+    case BoxPar^.UUCP_Mode of
+      1: CommInit:=ComN[boxpar^.bport].MCommInit;
+      2: CommInit:='RAWIP ' +BoxPar^.UUCP_IP+':'+StrS(BoxPar^.UUCP_Port);
+      3: CommInit:='TELNET '+BoxPar^.UUCP_IP+':'+StrS(BoxPar^.UUCP_Port);
+    else 
+      begin result:= el_noconn; exit; end;
+    end;
+
+    UUCICO:=TUUCPNetcall.
+      CreateWithCommInitAndIPC(CommInit,
+      TXPMessageWindow.CreateWithSize(50,10,'UUCICO',True));
+
+    UUCICO.UUremote      := BoxName;
+    UUCICO.UUname        := iifs(BoxPar^.UUCPname<>'',BoxPar^.UUCPName,BoxPar^.PointName);
+    UUCICO.UUprotos      := BoxPar^.UUProtos;
+      
+    UUCICO.FilePath      := InFileDir;
+    UUCICO.CommandFile   := CmdFile;
+     
+    UUCICO.MaxWinSize    := BoxPar^.MaxWinSize;
+    UUCICO.MaxPacketSize := BoxPar^.MaxPacketSize;
+    UUCICO.VarPacketSize := BoxPar^.VarPacketSize;
+    UUCICO.ForcePktSize  := BoxPar^.ForcePacketSize;
+    
+    UUCICO.SizeNego      := BoxPar^.SizeNego;
+    UUCICO.MaxFSize      := BoxPar^.MaxFSize;
+
+    UUCICO.LogFileName   := LogFile;
+
+    if UUCICO.Connect then
+    begin
+      UUCICO.WriteIPC(mcVerbose,'Login',[]);
+      if RunScript(BoxPar,UUCICO.CommObj,UUCICO.IPC,false,BoxPar^.Script,false,false) = 0 then
+      begin
+        UUCICO.WriteIPC(mcVerbose,'Starting UUCICO',[]);
+        result := UUCICO.PerformNetcall;
+      end;
+    end;
+
+    UUCICO.Free;
+  end;
+
 { 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
@@ -379,14 +422,6 @@ function UUCPNetcall(boxname: string;
 begin {function UUCPNetcall}
   Debug.DebugLog('xpncuucp','uucp netcall starting',DLInform);
   result:=el_noconn;
-  {
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
-            EL_noconn : begin Netcall_connect:=false; end;
-            EL_recerr,
-            EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-            EL_break  : begin  Netcall:=false; end;
-  }	    
   
   ReadUU;
 
@@ -408,12 +443,15 @@ begin {function UUCPNetcall}
       result:=el_recerr;
   end {!diskpoll}
   else begin
-    result:=el_noconn; 
-    Debug.DebugLog('xpncucp','not implemented',DLInform);
+    if ProcessOutgoingFiles then begin
+      result:=RunUUCICO;
+      ProcessIncomingFiles; (* always read in files we've got *)
+    end else
+      result:=el_noconn; 
   end; {!diskpoll}
   
   if result IN [el_recerr,el_ok] then begin
-    Debug.DebugLog('xpncucp','sending upbuffer was successful, clearing',DLInform);
+    Debug.DebugLog('xpncucp','sending upbuffer was successful, clearing unsent flags',DLInform);
     if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname); _era(ppfile); end;
     WriteUU;
   end;
@@ -424,8 +462,8 @@ end.
 
 {
   $Log$
-  Revision 1.6  2001/02/26 12:47:33  cl
-  - oops; reverting accidentally committed modifications
+  Revision 1.7  2001/02/28 22:35:32  cl
+  - UUCP connection, login and initial handshake working
 
   Revision 1.4  2001/02/22 17:14:34  cl
   - UUCP sysop netcalls working

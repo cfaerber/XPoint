@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall class
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"aerber
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -30,34 +30,41 @@ uses ncmodem,timer,fidoglob,xpglobal,classes;
 
 type
   TUUCPNetcall = class(TModemNetcall)
+  private
+    function    TestBRK:  Boolean;
 
   protected
-    function InitHandshake(var waittime:integer):char;
+    function    InitHandshake : Char;
+    procedure   FinalHandshake;
   
   public
-    function PerformNetcall: Integer;
+    function  PerformNetcall: Integer;
+    property  UserBrk       : Boolean read TestBRK;
 
-    UUprotos	  : string;
-    
+    UUremote      : string;
+    UUname        : string;
+    UUprotos      : string;
+
+    FilePath      : string;
+    CommandFile   : string;
+
     MaxWinSize    : byte;
     MaxPacketSize : word;
     VarPacketSize : boolean;
     ForcePktSize  : boolean;
 
     SizeNego      : boolean;
-    
-    FilePath      : string;
-    commandfile   : string;
+    MaxFSize      : LongInt;
   end;
 
 implementation
 
 uses zmodem, ipcclass, resource, sysutils, typeform, debug, montage, crc,
-xpdiff, objcom, fileio, inout, keys;
-
-type 
+xpdiff, objcom, fileio, inout, keys, xpnetcall;
 
 (*
+  UUCP protocol implementation
+
   planned class hierarchy:
 
   TUUCProtocol
@@ -65,6 +72,7 @@ type
    |     +-- TUUCProtocolG 	(gGv protocols)
    |     +-- TUUCProtocolE      (e protocol)
    |     \-- TUUCProtocolFZ     (fz protocols)
+   +-- TUUCProtocolA (not yet implemented)
    \-- TUUCProtocolI (not yet implemented)
 
   TUUCPNetcall will connect to the UUCP host, do the initial handshake
@@ -77,71 +85,91 @@ type
   TUUCProtocol and only implement RunProtocol (besides con-/destructor).  
 *)	 
 
-  TUUCProtocol = class
-    protected
-      Netcall: 	  TUUCPNetcall; 
-    public
-      constructor InitProtocol(caller: tuucpnetcall);
-      destructor  ExitProtocol; virtual;
-      function    RunProtocol: integer; virtual; abstract;
+type TUUCProtocol = class
+  private
+                FNetcall: TUUCPNetcall; 
+    function    FCommObj: TPCommObj;
+    function    FBreak  : Boolean;
+
+  protected  
+    property	Netcall:  TUUCPNetcall read FNetcall; 
+    property    CommObj:  TPCommObj    read FCommObj;
+    property    UserBrk:  Boolean      read FBreak;
+
+  public
+    constructor InitProtocol(caller: tuucpnetcall);
+    destructor  ExitProtocol; virtual;
+    function    RunProtocol: integer; virtual; abstract;
   end;
+  
+function TUUCProtocol.FCommObj:TPCommObj;
+begin 
+  if assigned(FNetcall) then 
+    result:=FNetcall.CommObj 
+  else 
+    result:=nil; 
+end;
 
-  TUUCProtocolSimple = class(TUUCProtocol)
-    public
-      constructor InitProtocol(caller: tuucpnetcall);
-      destructor  ExitProtocol; virtual; override;
-      function    RunProtocol: integer; virtual; override;
+function TUUCProtocol.FBreak: Boolean;
+begin
+  result:=Netcall.TestBRK;
+end;
 
-    protected
+type TUUCProtocolSimple = class(TUUCProtocol)
+  public
+    constructor InitProtocol(caller: tuucpnetcall);
+    destructor  ExitProtocol; virtual; override;
+    function    RunProtocol: integer; virtual; override;
+
+  protected
     (* abstract protocol implementation functions *)
-      function SendCommand(s:string):boolean; virtual; abstract;
-      function GetCommand:string; virtual; abstract;
-      function SendFile(fn:string; offset:longint):shortint; virtual; abstract;
-      function RecFile(fn:string):Shortint; virtual; abstract;
+    function SendCommand(s:string):boolean; virtual; abstract;
+    function GetCommand:string; virtual; abstract;
+    function SendFile(fn:string; offset:longint):shortint; virtual; abstract;
+    function RecFile(fn:string):Shortint; virtual; abstract;
 
     (* common protocol functions *)
-      function RepeatGetcommand(c:char):string; 
-      function RepeatSendFile(fn:string; offset:longint):boolean;
-      function RepeatRecFile(fn:string; size:longint):boolean;
+    function RepeatGetcommand(c:char):string; 
+    function RepeatSendFile(fn:string; offset:longint):boolean;
+    function RepeatRecFile(fn:string; size:longint):boolean;
 
     (* helper functions *)
-      procedure WriteTransfer;
-      procedure ResetTransdat(blksize:word);
-      procedure StartFile(send:boolean; fn:string; size:longint);
-      procedure ShowFtype(var data; len:word);
-      procedure TestBRK;
+    procedure WriteTransfer;
+    procedure ResetTransdat(blksize:word);
+    procedure StartFile(send:boolean; fn:string; size:longint);
+    procedure ShowFtype(var data; len:word);
 
     (* high level protocol functions *)
-      function SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
-      function RecFiles(var rectime:longint):boolean;
-      function GetSlave(var ok:boolean):boolean;
+    (* master: process command file *)
+    function Master:boolean;
+    (* slave: receive commands *)
+    function Slave:boolean;
 
     (* global vars *)
-      transdata : record
-        connstart   : longint;      { Ticks: CONNECT }
-        files       : longint;
-        filesize    : longint;      { aktuelle Datei }
-        filestart   : longint;
-        transferred : longint;      { davon uebertrg. }
-        blocksize   : word;
-        errors      : longint;
-        total       : longint;
-        totalfrom   : longint;      { Ticks: Sende/Empfangsstart }
-        sending     : boolean;
-      end;
+    transdata : record
+      connstart   : longint;      { Ticks: CONNECT }
+      files       : longint;
+      filesize    : longint;      { aktuelle Datei }
+      filestart   : longint;
+      transferred : longint;      { davon uebertrg. }
+      blocksize   : word;
+      errors      : longint;
+      total       : longint;
+      totalfrom   : longint;      { Ticks: Sende/Empfangsstart }
+      sending     : boolean;
+    end;
       
-      starttime     : longint;
-      onlinetime    : longint;
-      resopen       : boolean;
-      dlogopen      : boolean;
-      ulogopen      : boolean;
-      break         : boolean;      { <Esc> gedrueckt }
-      filetrans     : boolean;      { fuer rerrmsg }
-      ShowTime      : boolean;
-      FileStarted   : boolean;
+    starttime     : longint;
+    onlinetime    : longint;
+    resopen       : boolean;
+    dlogopen      : boolean;
+    ulogopen      : boolean;
+    filetrans     : boolean;      { fuer rerrmsg }
+    ShowTime      : boolean;
+    FileStarted   : boolean;
 
-      FileRetries: shortint;
-  end;
+    FileRetries: shortint;
+end;
   
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       (* uu_parerr  = 1; *)
@@ -155,23 +183,151 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       fileRepeat    =   1;    { Datei wiederholen }
       fileError     =   2;    { Datei - Abbruch   }
 
-type 
-      TUUCProtocolG = class(TUUCProtocolSimple)
+{ --- UUCP command parser ------------------------------------- }
 
-      end;
+type TUUCPCommand = object (* class is too much *)
+public
+  cmd, src, dest, user, opts, temp, ntfy, exec: string;
+  mode: integer; size,restart: longint; 
+  constructor Parse(s:string);
+end;
 
+type TUUCPResponse = object (* class is too much *)
+public
+  cmd: string;  ok:  boolean;
+  reason, mode:integer; restart: longint;
+  constructor Parse(s:string);
+  function ReasonMsg:string;
+end;
+
+function ModeVal(s:string):integer;
+begin 
+  result:=CVal(s); 
+  if result > 511 {==0666 okt} then 
+    result:=iVal(s); { wrong number format }
+end;
+  
+function FPosVal(s:string):LongInt; 
+begin 
+  if s<>'' then result:=CVal(s)
+  else result:=-1;
+end;
+
+constructor TUUCPCommand.Parse(s:string);
+var tmp: string;
+
+  function NextToken:string; 
+  begin 
+    result:=GetToken(s,' '#9#10); 
+  end;
+
+begin
+  cmd  := ''; src  := ''; dest := ''; user := ''; opts := ''; 
+  temp := ''; ntfy := ''; exec := '';
+  mode :=  0; size := -1; restart := -1;
+
+  cmd  := NextToken;
+
+  if (cmd<>'S') and (cmd<>'R') and (cmd<>'X') and 
+     (cmd<>'E') and (cmd<>'H') then exit; (* not supported *)
+  
+  src  := NextToken;
+  dest := NextToken;
+  user := NextToken;
+
+  opts := NextToken;
+
+  if LeftStr(opts,1)='-' then opts:=mid(opts,2)
+  else begin opts:=''; exit; end;     (* illegal options *)
+
+  (* X from to user -options *)
+
+  (* R from to user -options size [Taylor UUCP] *)
+  (* R from to user -options dummy mode owner temp restart [SRV4] *)
+  if cmd='R' then 
+  begin
+    tmp := NextToken;
+
+    if tmp <> 'dummy' then 
+    begin (* SRV4 *) 
+      mode := ModeVal(NextToken);
+      ntfy := NextToken;
+      temp := NextToken;
+      restart := FPosVal(NextToken);
+    end else
+      size := FPosVal(NextToken);
+  end else
+
+  (* S from to user -options temp mode notify size *)
+  (* E from to user -options temp mode notify size command *)
+  if (cmd='S') or (cmd='E') then 
+  begin
+    temp := NextToken;
+    mode := ModeVal(NextToken);
+    ntfy := NextToken;
+    size := FPosVal(NextToken);
+
+    if cmd='E' then 
+      exec := NextToken;    
+  end;
+end;
+
+constructor TUUCPResponse.Parse(s:string);
+
+  function NextToken:string; 
+  begin 
+    result:=GetToken(s,' '#9#10); 
+  end;
+  
+begin
+  cmd:=''; ok:=false;
+  reason:=0; mode:=0; restart:=-1;
+
+  cmd:= LeftStr(s,1);
+  ok := Copy(s,2,1)='Y';
+  reason := IVal(Mid(NextToken,3));
+  
+  if cmd='S' then
+    restart:=FPosVal(NextToken)
+  else 
+
+  if cmd='R' then begin
+    mode   := ModeVal(NextToken);
+    restart:= FPosVal(NextToken);
+  end;
+end;
+
+function TUUCPResponse.ReasonMsg;
+begin
+  case reason of
+    02: result:='permission denied or file error';
+    04: result:='unable to create temporary file';
+    05: result:='temporary file could not be moved into the final location';
+    06: result:='file too large to transfer at the moment';
+    07: result:='file too large to ever transfer';
+    08: result:='file already received previously';
+    09: result:='unable to open another channel';
+    10: result:='file too large';
+    else 
+        result:='unknown error';
+  end;
+end;
+
+{ --- Individual protocol implementations --------------------- }
+
+{$I ncuucp-t.inc}
 { $I ncuucp-g.inc}
 { $I ncuucp-e.inc}
 { $I ncuucp-fz.inc}
 
 { --- TUUCProtocol base class -------------------------------------- }
 
-constructor TUUCProtocol.InitProtocol(caller: tuucpnetcall); begin Netcall:=caller; end;
+constructor TUUCProtocol.InitProtocol(caller: tuucpnetcall); begin FNetcall:=caller; end;
 destructor  TUUCProtocol.ExitProtocol; begin end;
 
 { --- UUCP-Verteiler ------------------------------------------------ }
 
-constructor TUUCProtocolSimple.InitProtocol(caller: tuucpnetcall); 
+constructor TUUCProtocolSimple.InitProtocol(caller: TUUCPNetcall); 
 begin 
   inherited InitProtocol(caller);
 
@@ -193,7 +349,6 @@ begin
   resopen       := false;
   dlogopen      := false;
   ulogopen      := false;
-  break         := false;      { <Esc> gedrueckt }
   filetrans     := false;      { fuer rerrmsg }
   ShowTime      := true;
   FileStarted   := false;
@@ -215,7 +370,7 @@ begin
     if (s<>'') and (LeftStr(s,1)<>c) then
       Netcall.Log(lcError,'unexpected command: '+s);
     dec(n);
-  until (LeftStr(s,1)=c) or (n=0) or (not Netcall.CommObj.Carrier);
+  until (LeftStr(s,1)=c) or (n=0) or (not CommObj.Carrier);
   RepeatGetcommand:=s;
 end;
 
@@ -253,6 +408,15 @@ end;
 procedure TUUCProtocolSimple.StartFile(send:boolean; fn:string; size:longint);
 begin
   inc(transdata.files);
+
+  if send then begin
+    Netcall.LogTxFile(fn);
+(*    Netcall.WriteIPC(mcVerbose,'Sending %s (%d bytes)',fn,size);  *)
+  end else begin
+    Netcall.LogRxFile(fn);
+(*    Netcall.WriteIPC(mcVerbose,'Receiving %s (%d bytes)',fn,size);  *)
+  end;
+  
 // if ParDebug then begin
 //    if send then 
    //  Netcall.WriteIPC('Sending '+fn);
@@ -290,6 +454,7 @@ begin
 //    filestart:=ticker;
 //    WriteTransfer;
 //    end;
+
   FileStarted:=true;
 end;
 
@@ -358,6 +523,14 @@ end;
 procedure TUUCProtocolSimple.WriteTransfer;
 var sec,cps : longint;
 begin
+(*  if send then begin *)
+(*  Netcall.LogTxFile(fn);
+    Netcall.WriteIPC(mcInfo,'Sent %s (%d bytes)',fn,size); *)
+(*  end else begin *)
+(*  Netcall.LogRxFile(fn);
+    Netcall.WriteIPC(mcInfo,'Received %s (%d bytes)',fn,size); *)
+(*  end; *)
+
 (* if ParDebug then exit; *)
 //  attrtxt(col.colmailerhi);
 //  with transdata do begin
@@ -393,17 +566,21 @@ begin
 //          dup(min(lwdt-3,system.round((lwdt-3)*(transferred/filesize))),'±'));
 //    end;
 //  WriteOnline;
-  testbrk;
+  UserBrk;
 end;
 
-procedure TUUCProtocolSimple.testbrk;
+function TUUCPNetcall.TestBRK: Boolean;
 begin
-  if keypressed and (readkey=#27) then begin
-    break:=true;
+  if FGotUserBreak then
+    result:=true
+  else if keypressed and (readkey=#27) then begin
+    result:=true;
+    FGotUserBreak:=true;
 (* rmsg(getres2(2300,51)); *)
-    Netcall.Log(lcExit,'User break.');
-    Sleeptime(500);
-    end;
+    Log(lcExit,'User break.');
+    WriteIPC(mcInfo,'User break - aborting...',[]);
+  end else
+    result:=false;
 end;
 
 { --- TUUCPNetcall ------------------------------------------------------ }
@@ -425,25 +602,32 @@ end;
 function TUUCPNetcall.PerformNetcall: Integer;
 var pprot : TUUCProtocol;
 begin  
-  result:=el_noconn; if not Connect then exit;
-  DebugBadge:='ncuucp';
-
-  case InitHandshake(5000) of
-    'g','G','v': pprot := TUUCProtocolG.InitProtocol(self);
-(*  'e':         pprot := TUUCProtocolE.InitProtocol(self);
+  result:=el_noconn; pprot:=nil;
+  if not Connect then exit;
+  
+  case InitHandshake of
+    '*': pprot:=nil;
+(*  'g','G','v': pprot := TUUCProtocolG.InitProtocol(self); *)
+(*   
+    'e':         pprot := TUUCProtocolE.InitProtocol(self);
     'f':         pprot := TUUCProtocolFZ.InitProtocol(self,true);
-    'z':	 pprot := TUUCProtocolFZ.InitProtocol(self,false); *)
+    'z':	 pprot := TUUCProtocolFZ.InitProtocol(self,false); 
+*)
   else exit end;
 
-  (* if not pprot.ok then
-    result := el_nologin;
-  else *)
+  if assigned(pprot) then begin
     result := pprot.RunProtocol;
+    pprot.ExitProtocol;
+  end else begin
+    WriteIPC(mcError,'UUCP protocol initialization failed',[]);
+    Log(lcError     ,'UUCP protocol initialization failed');
+    result := el_nologin;
+  end;
 
-  pprot.ExitProtocol;
+  Disconnect;
 end;
 
-function TUUCPNetcall.InitHandshake(var waittime:integer):char;
+function TUUCPNetcall.InitHandshake:char;
 var n,i : integer;                            { --- uucp - Init-Handshake }
     s   : string;
     ti  : longint;
@@ -453,8 +637,8 @@ var n,i : integer;                            { --- uucp - Init-Handshake }
   var recs: string;
   begin
     repeat
-      if CommObj.CharAvail then s:=s+CommObj.GetChar;
-    until (* timeout(true) or break or *)
+      if CommObj.CharAvail then recs:=recs+CommObj.GetChar;
+    until (* timeout(true) or *) UserBRK or
           ((recs<>'') and (recs[length(recs)] in [#0,#4,#10,#13]));
 
     if LeftStr(recs,1)=^P then delete(recs,1,1);
@@ -462,23 +646,23 @@ var n,i : integer;                            { --- uucp - Init-Handshake }
   end;
 
 begin
-
-  InitHandshake:=#0;
+  result:=#0;
   mdelay(500);
 
+  WriteIPC(mcVerbose,'UUCP Initial Handshake',[]);
+
   CommObj.PurgeInBuffer;
-  CommObj.SendString( ^P'S'+pointname+iifs(SizeN,' -N','')+#0);
+  CommObj.SendString(^P'S'+UUName+iifs(SizeNego,' -N','')+#0,false);
 
   for n := 1 to 5 do begin
     s:=GetUUStr;
-  (* if timeout(true) then break; *)
-  (* if break then exit; *)
+    if s='' then exit;
     if s[1]='R' then break; 
   end;
 
   if LeftStr(s,3)<>'ROK' then begin
     if s='RLOGIN' then s:=s+' - wrong login name';
-    if nocarrier then
+    if not CommObj.Carrier then
       Log(lcError,'connection terminated by remote site')
     else
       Log(lcStop,'got "'+s+'" - aborting');
@@ -486,79 +670,469 @@ begin
     end;
   Log(lcInfo,'UUCP connection established');
 
-  SizeN:=(s='ROKN');         { size negotiation }
-  if SizeN then begin
-    rmsg(getres2(2300,38));  { 'Using size negotiation' }
+  SizeNego:=(s='ROKN');         { size negotiation }
+  if SizeNego then begin
+ (*  rmsg(getres2(2300,38));  { 'Using size negotiation' } *)
     log(lcInfo,'using size negotiation');
-    end;
+    WriteIPC(mcInfo,'UUCP connection established w/ size negitiation',[]);
+  end else
+    WriteIPC(mcInfo,'UUCP connection established',[]);
 
   for n := 1 to 5 do begin
     s:=GetUUStr; dec(n);
   (* if timeout(true) then break; *)
   (* if break then exit; *)
     if s[1]='P' then break;
-  end
+  end;
     
   if LeftStr(s,1)<>'P' then begin
     Log(lcStop,'got '+s+' - aborting');
+    WriteIPC(mcError,'Got %s, aborting',[s]);
     exit;
-    end;
+  end;
     
   delete(s,1,1);
-  WrLog('~','remote protocols: '+s);
+  Log('~','remote protocols: '+s);
   if not multipos(uuprotos,s) then begin
-    CommObj.SendString(^P'UN'#0);
-    rmsg(getreps2(2300,37,s));    { 'no common protocol (remote supports %s)' }
+    CommObj.SendString(^P'UN'#0,false);
+(*  rmsg(getreps2(2300,37,s));    { 'no common protocol (remote supports %s)' } *)
     Log(lcStop,'no common protocol');
+    WriteIPC(mcError,'no common protocol - remote supports: %s',[s]);
     result:=#0;    
     exit;
     end;
   for i:=length(uuprotos) downto 1 do     { bestes Protokoll ermitteln }
     if cpos(uuprotos[i],s)>0 then proto:=uuprotos[i];
-  CommObj.SendString(^P'U'+proto+#0);
+  CommObj.SendString(^P'U'+proto+#0,false);
   Log(lcInfo,'selected protocol'+sp(cpos(proto,s))+'^');
+  WriteIPC(mcError,'selected protocol: %s',[proto]);
 
   result:=proto;
 end;
 
 
-procedure FinalHandshake;           { --- uucp - Handshake vor Hangup }
+procedure TUUCPNetcall.FinalHandshake;           { --- uucp - Handshake vor Hangup }
 var b : byte;
 begin
-  if not NoCarrier then begin
-    sendstr(^P'OOOOOO');
-    mdelay(800);
-    if ParDebug then
-      while receive(comnr,b) do
-        wrdebug(chr(b));
-    flushinput(comnr);
-    end;
-  {$ifdef debug}
-    close(debugfile);
-  {$endif}
-  {$ifdef sim}
-    close(siminput);
-  {$endif}
+  if not CommObj.Carrier then begin
+    CommObj.SendString(^P'OOOOOO',false);
+    CommObj.PurgeInBuffer;	
+  end;
 end;
-
 
 {----- TUUCProtocolSimple: Mails/News/Dateien senden, Dateien anfordern ---------------- }
 
-function RunProtocol(Caller:^TUUCPNetcall: integer; 
-var fuucico: integer
+function TUUCProtocolSimple.RunProtocol: integer; 
 begin
-  if not SendFiles(CommandFile,sendtime,rectime) then
-    fuucico:= uu_senderr
-  else if not RecFiles(rectime) then
-    fuucico:= uu_recerr
+  if not Master then
+    result:= uu_senderr
+  else if not Slave then
+    result:= uu_recerr
   else
-    fuucico:=uu_ok;
+    result:=uu_ok;
+end;
 
-  RunProtocol:=fuucico;
-end
+{----- TUUCProtocolSimple.Master: send files and file requests ------------------------- }
 
+function U2DOSfile(var s:string):string;
+var i : integer;
+    b : byte;
+begin (* FIXME: What happens if length(s)<6 ? *)
+  s:=s[1]+'-'+RightStr(s,5);
+  b:=0;
+  for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
+    if (s[i+4]>='A') and (s[i+4]<='Z') then
+      inc(b,1 shl i);
+  result:=s+hex(b,1);
+end;
 
-function TUUCProtocolSimple.SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
+function TUUCProtocolSimple.Master:Boolean;
+var t   : text;
+    s	: string;        { unparsed UUCP command }
+    c   : TUUCPCommand;  { parsed UUCP command }
+    a   : string;        { unparsed UUCP response }
+    r   : TUUCPResponse; { parsed UUCP response }
+    oops: boolean;
+  
+  procedure LocalFile(var src:string; down: boolean );
+  var p: integer;
+    
+
+  begin
+    if not multipos(_MPMask,src) then begin
+      (* kein Pfad => gleiches Verzeichnis wie CommandFile *)
+      (*              auﬂerdem Schreibweise anpassen       *)
+      if down then
+        src:=U2DOSFile(src)
+      else begin 
+        (* fn:= fn[length(fn)-4]+'-'+RightStr(fn,4)+'.OUT'; *)
+        src:=RightStr(src,5)+'.OUT';
+        Insert('-',src,2);
+      end;
+      src := ExtractFilePath(Netcall.CommandFile)+src;
+    end else 
+      if down then
+        UniqueDownloadName(src,Netcall.FilePath)
+    {$IFNDEF UnixFS}
+      else
+        (* nur unter DOS: Pfadseparatoren wieder anpassen *)
+        for p:=1 to length(src) do
+          if src[p]='/' then src[p]:='\'
+    {$ENDIF};
+  end;
+
+  (* Handle S command as master *)
+
+  procedure Do_S;
+  begin
+    LocalFile(c.src,false);
+ 
+    if fileexists(c.src) then 
+    begin
+      Netcall.Log('+','sending '+c.src+' as '+c.dest);
+
+      if SendCommand(s) then 
+      begin
+        r.Parse(RepeatGetCommand('S')); { SY/SN }
+	if r.ok then begin
+          if RepeatSendFile(c.src,r.restart) then begin
+            r.Parse(RepeatGetcommand('C'));
+	    if r.ok then
+	      Netcall.Log('*','sent file') (* xxx bytes yyy cps *)
+            else
+	      Netcall.Log(lcStop,'remote error: '+r.reasonmsg+' (#'+strs(r.reason)+')');
+          end { !SendFile } else
+	    Netcall.Log(lcStop,'remote refuses file: '+r.reasonmsg+' (#'+strs(r.reason)+')');
+	end; { r.ok }
+      end; { !SendCommand }
+    end else
+    begin
+      Netcall.Log(lcError,'File not found: '+c.src);
+      Netcall.WriteIPC(mcError,'File not found: %s',[c.src]); 
+    end;
+  end;
+ 
+  (* handle R command as master *)
+ 
+  procedure Do_R;
+  begin
+    LocalFile(c.dest,true);
+    
+    if ValidFileName(c.dest) then 
+    begin
+      Netcall.Log('+','requesting '+c.src+' as '+c.dest);
+      
+      if SendCommand(s) then 
+      begin
+        r.Parse(RepeatGetCommand('R')); { RY/RN }
+	if r.ok then
+	begin
+	  if RepeatRecFile(c.src,r.restart) then begin
+            SendCommand('CY');
+	    Netcall.Log('*','received file'); (* xxx bytes yyy cps *)
+	  end else begin
+	    SendCommand('CN');
+	    Netcall.Log(lcStop,'receive error');
+	  end; { RecFile }
+        end else begin { !r.ok }
+	  Netcall.Log(lcStop,'remote refuses to send file: '+r.reasonmsg+' (#'+strs(r.reason)+')');
+	end; {!r.ok}
+      end; { !SendCommand }
+    end else
+    begin
+      Netcall.Log(lcError,'invalid filename: '+c.src);
+      Netcall.WriteIPC(mcError,'Invalid filename: %s',[c.src]); 
+    end;
+
+  end;
+
+begin { TUUCProtocolSimple.Master:Boolean; }
+  oops:=false;
+
+  assign(t,Netcall.CommandFile); reset(t);
+
+  while (not oops) and (not eof(t)) do
+  begin
+    if not CommObj.Carrier then begin oops:=true; break; end;
+    if     UserBrk         then begin oops:=true; break; end;
+   
+    readln(t,s);
+
+    c.Parse(s);    
+
+    if c.cmd='S ' then Do_S else
+    if c.cmd='R ' then Do_R else 
+    begin
+      Netcall.Log(lcError,'Unknown/unsupported UUCP command: '+s);
+      Netcall.WriteIPC(mcError,'Unknown/unsupported UUCP command: %s',[s]); 
+    end;
+
+  end; { while not eof(^t) }
+
+  close(t);
+  result:=not oops;
+end;
+
+function TUUCProtocolSimple.Slave:Boolean;
+var s   : string;       { unparsed incoming command }
+    c   : TUUCPCommand; { parsed incoming command }
+    oops: boolean;    
+
+  function BecomeSlave:boolean; (* was named GetSlave in orig. XP ;-))) *)
+  var r: TUUCPResponse;
+      a: string;
+  begin
+    if SendCommand('H') then begin
+      r.Parse(RepeatGetCommand('H')); { HY/HN }
+      if r.cmd<>'' then begin
+        if r.ok then begin
+          Netcall.Log('+','HY: no files to receive');
+          SendCommand('HY');
+	end else
+          Netcall.Log('+','HN: remote has data for you');
+        result:=not r.ok;
+	exit; (* quit *)
+      end;
+    end;
+    
+    oops:=true;
+    result:=false;
+  end;
+
+  (* handle S command as slave *)
+
+  procedure Do_S;
+    var s:string;
+  begin
+    s:=iifs(c.dest<>'',c.dest,c.src);
+  
+    if s='' then begin                     { S ohne Dateiname }
+      Netcall.Log(lcError,'got S command without file name');
+      if not SendCommand('SN2') then oops:=true;
+    end else 
+    if (c.size>0) and (Netcall.maxfsize>0) and (c.size>1024*Netcall.maxfsize) then begin
+      Netcall.Log(lcError,'file too large ('+StrS(c.size div 1000)+' kB)');
+      if SendCommand('SN7') then exit;
+    end else
+    if SendCommand('SY 0x0') then
+    begin
+      if ((LeftStr(s,2)='D.') or (LeftStr(s,2)='X.')) and not Multipos(_MPMask,s) then
+        s:=ExtractFilePath(Netcall.CommandFile)+U2DOSfile(s)
+      else
+        UniqueDownloadName(s,Netcall.FilePath);
+
+      Netcall.Log('+','receiving '+c.src+' as '+s);
+      if RepeatRecFile(c.src,c.size) then begin
+        Netcall.Log('*','received file'); (* xxx bytes yyy cps zzz errors *)
+        SendCommand('CY');
+	exit;
+      end;
+    end; {!SendCommand}
+    oops:=true;
+  end;
+  
+  (* handle H command as slave = hangup sequenc = hangup sequencee *)
+
+  procedure Do_H;
+  begin
+    if SendCommand('HY') then
+      GetCommand;         { = HY }
+  end;
+
+begin
+  oops:=false; 
+
+  if BecomeSlave then while not oops do 
+  begin
+    c.Parse(GetCommand);
+    if c.cmd = '' then begin oops:=true; break; end;
+
+    case c.cmd[1] of 
+      'R': begin SendCommand('RN2'); end;	(* refuse file requests *)
+      'X': begin SendCommand('XN'); end;	(* refuse exec requests *)
+      'S': begin Do_S; end;
+      'H': begin Do_H; break; end;
+      else begin SendCommand(LeftStr(c.cmd,1)+'N'); end;
+    end;
+
+  end;
+
+  result:=not oops;
+end;
+
+{$IF 0}
+var ok    : boolean;
+    s     : string;
+    fn    : string;
+    c     : char;
+    p     : byte;
+    ti,tf : longint;
+    size  : longint;
+    fs    : longint;
+    secs  : longint;
+    n     : integer;
+    source: string;
+
+label ende;
+
+  procedure getfilesize;
+  var ss   : string;
+      pp,i : byte;
+  begin
+    ss:=s;
+    for i:=1 to 6 do begin
+      pp:=blankpos(ss);
+      ss:=trim(mid(ss,pp+1));
+      end;
+    pp:=blankpos(ss);
+    if pp>0 then ss:=LeftStr(ss,pp-1);
+    size:=Cval(ss);                  { size negotiation - Dateigroesse }
+  end;
+
+begin
+  ti:=ticker;
+  RecFiles:=false;
+  if not GetSlave(ok) then begin
+    RecFiles:=ok;
+    exit;
+    end;
+  c:=' ';
+  WrdLn;
+  ResetTransdat(grBufSize);
+  n:=5;
+  repeat                   { Slave-Schleife fuer eingehende Befehle }
+    s:=GetCommand;
+    if s='' then
+      if n=0 then goto ende
+      else dec(n)
+    else n:=5;
+    if s<>'' then begin
+      c:=s[1];
+      case c of
+        'R' : begin
+                logerror('host refuses file request');
+                if SendCommand('RN2') then;   { Request-Anforderung }
+              end;
+        'X' : begin
+                logerror('host refuses program execution');
+                if SendCommand('XN') then;    { Execute-Anforderung }
+              end;
+        'S' : begin                  { remote uucp-Sendeanforderung }
+                size:=0;
+                s:=trim(mid(s,2));
+                p:=blankpos(s);
+                if p>0 then begin
+                  source:=LeftStr(s,p-1);   { Quelldatei auf anderem Rechner }
+                  s:=trim(mid(s,p));
+                  p:=blankpos(s);
+                  if p>0 then begin
+                    if SizeNego then getFilesize;
+                    s:=LeftStr(s,p-1);
+                    end;
+                  end;
+                if s='' then s:=source;
+                if s='' then begin                     { S ohne Dateiname }
+                  logerror('got S command without file name');
+                  if not SendCommand('SN2') then goto ende;
+                  end
+                else if (size>0) and (maxfsize>0) and (size>1024*maxfsize)
+                then begin
+                  logerror('file too large ('+strs(size div 1024)+' KB)');
+                  if not SendCommand('SN7') then goto ende;
+                  end
+                else begin
+                  tf:=ticker;
+                  if not SendCommand('SY 0x0') then goto ende;
+                  if (LeftStr(s,2)='D.') or (LeftStr(s,2)='X.') then begin
+                    fn:=XFerDir+U2DOSfile(s);
+                    netcall.log('+','receiving '+s+' as '+uppercase(fn));
+                    end
+                  else begin
+                    s:=Unix2DOSfile(s,FilePath);
+                    if s='' then s:=Unix2DOSfile(source,FilePath);
+                    if s='' then s:='unnamed';
+                    fn:=FilePath+s;
+                    netcall.log('S','receiving '+s+' as '+uppercase(fn));
+                    end;
+                  if not RecFile(fn,size) then
+                    goto ende;
+                  fs:=_filesize(fn);
+                  secs:=max(1,secondsfrom(tf));
+                  netcall.log('*','received '+strs(fs)+' bytes, '+strs(fs div secs)+
+                            ' cps, '+strs(transdata.errors)+' errors');
+                  if SendCommand('CY') then;
+                  end;
+              end;
+      else    if c<>'H' then begin
+                netcall.log(lcStop,'unknown UUCP command: '+s);
+                if SendCommand(c+'N') then;    { ungueltiger Befehl }
+              end;
+      end;
+    end;
+  until (c='H') or NoCarrier or break;           { Hangup }
+  if c='H' then begin
+    RecFiles:=true;
+    if SendCommand('HY') then
+      s:=GetCommand;         { = HY }
+    end;
+ende:
+  inc(rectime,secondsfrom(ti));
+end;
+
+// function fuucico(start:longint; var ende:boolean;
+//                 var waittime:integer; var sendtime,rectime:longint):integer;
+// begin
+//   SizeNego:=sizenego;
+//   fillchar(transdata,sizeof(transdata),0);
+//   transdata.connstart:=start;
+//   InitInterface;
+//   if ParDebug then begin             { UUDEBUG.LOG: ucico-Debug-Logfile }
+//     new(deblog);
+//     assign(deblog^,DebugLog);
+//     rewrite(deblog^);
+//     dlogopen:=true;
+//     end;
+//   if uulogfile<>'' then begin        { Temp: XPUUCP.LOG }
+//     new(uulog);
+//     assign(uulog^,uulogfile);
+//     rewrite(uulog^);
+//     writeln(uulog^,'----------  ',date,' -> ',boxname);
+//     ulogopen:=true;
+//     end
+//   else
+//     uulog:=nil;
+//   (* if ParDebug then mcur:=curon
+//   else mcur:=curoff; *)
+//   ShowWindow;
+//   recs:=''; _ende:=false;
+//   sendtime:=0; rectime:=0; waittime:=0;
+// 
+//   if InitHandshake(waittime) then begin     { enthaelt InitProtocol }
+//     if SendFiles(CommandFile,sendtime,rectime) then
+//       if RecFiles(rectime) then begin
+//         fuucico:=uu_ok; _ende:=true; end
+//       else fuucico:=uu_recerr
+//     else fuucico:=uu_senderr;
+//     ExitProtocol;
+//     end
+//   else
+//     fuucico:=uu_nologin;
+// 
+//   if NoCarrier and not break then
+//     LogError('carrier lost');
+//   FinalHandshake;
+//   rmsg(getres2(2300,50));    { 'Modem auflegen' }
+//   Log('+','hanging up');
+//   ExitInterface;
+//   CloseLogfiles;
+//   closewindow;
+//   freeres;
+//   ende:=_ende;
+// end;
+ 
+end.
+
+function TUUCProtocolSimple_SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
     s2  : string;
@@ -619,7 +1193,7 @@ begin
       else
         fn:=XFerDir+fn[length(fn)-4]+'-'+RightStr(fn,4)+'.OUT';
       if fileexists(fn) then begin
-        if not SizeN and (pos('""',s)>0) then
+        if not SizeNego and (pos('""',s)>0) then
           s:=trim(LeftStr(s,pos('""',s)-1));
         netcall.Log('+','sending '+fn+' as '+sf);
         if not SendCommand(s) then begin
@@ -696,7 +1270,7 @@ begin
             fn:=LeftStr(fn,length(fn)-1)+strs(ival(RightStr(fn,1))+1);
         end;
       ti:=ticker;
-      if SizeN then
+      if SizeNego then
         s:=s+' '+strs(diskfree(ord(FilePath[1])-64) div 3);
       netcall.log('+','requesting file: '+sf);
       if not SendCommand(s) then begin
@@ -730,222 +1304,14 @@ ende:
   close(t^);
   dispose(t);
 end;
+{$ENDIF}
 
-
-function TUUCProtocolSimple.GetSlave(var ok:boolean):boolean;
-var s : string[20];
-    n : byte;
-begin
-  GetSlave:=false; ok:=false;
-  if not SendCommand('H') then exit;   { uucp-Befehl "H" }
-  n:=10;
-  repeat
-    dec(n);
-    if n=0 then exit;
-    s:=LeftStr(GetCommand,2);
-  until (s='HN') or (s='HY') or NoCarrier or break;
-  if not NoCarrier and not break then begin
-    ok:=true;
-    if s='HN' then begin            { HN -> Daten empfangen; HY -> Ende }
-      GetSlave:=true;
-      netcall.log('+','HN: remote has data for you');
-      end
-    else begin
-      netcall.log('+','HY: no files to receive');
-      if SendCommand('HY') then;
-      end;
-    end;
-end;
-
-
-function U2DOSfile(s:string):string;
-var i : integer;
-    b : byte;
-begin
-  s:=s[1]+'-'+RightStr(s,5);
-  b:=0;
-  for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
-    if (s[i+4]>='A') and (s[i+4]<='Z') then
-      inc(b,1 shl i);
-  U2DOSfile:=s+hex(b,1);
-end;
-
-{$I xpfiles.inc}
-
-function TUUCProtocolSimple.RecFiles(var rectime:longint):boolean;
-var ok    : boolean;
-    s     : string;
-    fn    : string;
-    c     : char;
-    p     : byte;
-    ti,tf : longint;
-    size  : longint;
-    fs    : longint;
-    secs  : longint;
-    n     : integer;
-    source: string;
-
-label ende;
-
-  procedure getfilesize;
-  var ss   : string;
-      pp,i : byte;
-  begin
-    ss:=s;
-    for i:=1 to 6 do begin
-      pp:=blankpos(ss);
-      ss:=trim(mid(ss,pp+1));
-      end;
-    pp:=blankpos(ss);
-    if pp>0 then ss:=LeftStr(ss,pp-1);
-    size:=Cval(ss);                  { size negotiation - Dateigroesse }
-  end;
-
-begin
-  ti:=ticker;
-  RecFiles:=false;
-  if not GetSlave(ok) then begin
-    RecFiles:=ok;
-    exit;
-    end;
-  c:=' ';
-  WrdLn;
-  ResetTransdat(grBufSize);
-  n:=5;
-  repeat                   { Slave-Schleife fuer eingehende Befehle }
-    s:=GetCommand;
-    if s='' then
-      if n=0 then goto ende
-      else dec(n)
-    else n:=5;
-    if s<>'' then begin
-      c:=s[1];
-      case c of
-        'R' : begin
-                logerror('host refuses file request');
-                if SendCommand('RN2') then;   { Request-Anforderung }
-              end;
-        'X' : begin
-                logerror('host refuses program execution');
-                if SendCommand('XN') then;    { Execute-Anforderung }
-              end;
-        'S' : begin                  { remote uucp-Sendeanforderung }
-                size:=0;
-                s:=trim(mid(s,2));
-                p:=blankpos(s);
-                if p>0 then begin
-                  source:=LeftStr(s,p-1);   { Quelldatei auf anderem Rechner }
-                  s:=trim(mid(s,p));
-                  p:=blankpos(s);
-                  if p>0 then begin
-                    if SizeN then getFilesize;
-                    s:=LeftStr(s,p-1);
-                    end;
-                  end;
-                if s='' then s:=source;
-                if s='' then begin                     { S ohne Dateiname }
-                  logerror('got S command without file name');
-                  if not SendCommand('SN2') then goto ende;
-                  end
-                else if (size>0) and (maxfsize>0) and (size>1024*maxfsize)
-                then begin
-                  logerror('file too large ('+strs(size div 1024)+' KB)');
-                  if not SendCommand('SN7') then goto ende;
-                  end
-                else begin
-                  tf:=ticker;
-                  if not SendCommand('SY 0x0') then goto ende;
-                  if (LeftStr(s,2)='D.') or (LeftStr(s,2)='X.') then begin
-                    fn:=XFerDir+U2DOSfile(s);
-                    netcall.log('+','receiving '+s+' as '+uppercase(fn));
-                    end
-                  else begin
-                    s:=Unix2DOSfile(s,FilePath);
-                    if s='' then s:=Unix2DOSfile(source,FilePath);
-                    if s='' then s:='unnamed';
-                    fn:=FilePath+s;
-                    netcall.log('S','receiving '+s+' as '+uppercase(fn));
-                    end;
-                  if not RecFile(fn,size) then
-                    goto ende;
-                  fs:=_filesize(fn);
-                  secs:=max(1,secondsfrom(tf));
-                  netcall.log('*','received '+strs(fs)+' bytes, '+strs(fs div secs)+
-                            ' cps, '+strs(transdata.errors)+' errors');
-                  if SendCommand('CY') then;
-                  end;
-              end;
-      else    if c<>'H' then begin
-                netcall.log(lcStop,'unknown UUCP command: '+s);
-                if SendCommand(c+'N') then;    { ungueltiger Befehl }
-              end;
-      end;
-    end;
-  until (c='H') or NoCarrier or break;           { Hangup }
-  if c='H' then begin
-    RecFiles:=true;
-    if SendCommand('HY') then
-      s:=GetCommand;         { = HY }
-    end;
-ende:
-  inc(rectime,secondsfrom(ti));
-end;
-
-// function fuucico(start:longint; var ende:boolean;
-//                 var waittime:integer; var sendtime,rectime:longint):integer;
-// begin
-//   SizeN:=sizenego;
-//   fillchar(transdata,sizeof(transdata),0);
-//   transdata.connstart:=start;
-//   InitInterface;
-//   if ParDebug then begin             { UUDEBUG.LOG: ucico-Debug-Logfile }
-//     new(deblog);
-//     assign(deblog^,DebugLog);
-//     rewrite(deblog^);
-//     dlogopen:=true;
-//     end;
-//   if uulogfile<>'' then begin        { Temp: XPUUCP.LOG }
-//     new(uulog);
-//     assign(uulog^,uulogfile);
-//     rewrite(uulog^);
-//     writeln(uulog^,'----------  ',date,' -> ',boxname);
-//     ulogopen:=true;
-//     end
-//   else
-//     uulog:=nil;
-//   (* if ParDebug then mcur:=curon
-//   else mcur:=curoff; *)
-//   ShowWindow;
-//   recs:=''; _ende:=false;
-//   sendtime:=0; rectime:=0; waittime:=0;
-// 
-//   if InitHandshake(waittime) then begin     { enthaelt InitProtocol }
-//     if SendFiles(CommandFile,sendtime,rectime) then
-//       if RecFiles(rectime) then begin
-//         fuucico:=uu_ok; _ende:=true; end
-//       else fuucico:=uu_recerr
-//     else fuucico:=uu_senderr;
-//     ExitProtocol;
-//     end
-//   else
-//     fuucico:=uu_nologin;
-// 
-//   if NoCarrier and not break then
-//     LogError('carrier lost');
-//   FinalHandshake;
-//   rmsg(getres2(2300,50));    { 'Modem auflegen' }
-//   Log('+','hanging up');
-//   ExitInterface;
-//   CloseLogfiles;
-//   closewindow;
-//   freeres;
-//   ende:=_ende;
-// end;
+end.
 
 {
   $Log$
-  Revision 1.4  2001/02/26 12:47:33  cl
-  - oops; reverting accidentally committed modifications
+  Revision 1.5  2001/02/28 22:35:32  cl
+  - UUCP connection, login and initial handshake working
 
   Revision 1.2  2001/02/21 17:45:53  cl
   - first things for TUUCPNetcall
@@ -965,5 +1331,4 @@ end;
 
   Revision 1.3  2000/10/27 16:14:29  fe
   uucico notduerftig uebersetzbar gemacht.
-
 }
