@@ -565,22 +565,29 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 105  Homepage     ~
 109  Anschrift, Telefon und Homepage nur in PMs
 + 253
-1    netzspezifische Optionen
-2    Z-Netz
-3    Z-Netz alt: kleine Usernamen
-4    nur Z-Netz
-5    ACHTUNG!
+1    Netzspezifische Optionen
+2    ZConnect
+3    kleine Usernamen
+4    Z-Netz
+5    VORSICHT: MôGLICHE KOMPATIBILITéTSPROBLEME
 6    Im Z-Netz sind z.Zt. keine kleingeschriebenen Adressen erlaubt!
 7    Mîchten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
-9    MIME in News
-10   ZConnect: ISO-Zeichensatz
-11   MIME: "quoted-printable" verwenden
-12   MIME in Headerzeilen verwenden
+9    MIME auch fÅr News verwenden
+10   ISO-8859-1-Zeichensatz
+11   MIME: Quoted-Printable voreinstellen
+12   MIME: Sonderzeichen in Headerzeilen
 14   Kommentarverkettung
-15   BinÑrnachrichten als "Attachments"
+15   Keine einteiligen BinÑrnachrichten
 17   Magics im <F3>-Request
 18   OpenXP-Version in Tearline schreiben
+20   MIME verwenden
+21   Der ZConnect-Standard 3.1, der die Verwendung von MIME in
+22   ZConnect erlaubt wurde sehr spÑt verabschiedet und wird 
+23   daher kaum von von Pointsoftware oder Gateways unterstÅtzt.
+25   SMTP/POP3/
+26   UUCP (RFC)
+
 + 254
 1    Netcall-Optionen
 2    Login-Bild zeigen
@@ -3876,6 +3883,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.39  2001/09/19 16:17:40  cl
+# - implemented option "MIME verwenden" for ZConnect
+# - resorted "Config/Optionen/Netze/Verschiedenes..."
+# - updated some help texts for "Config/Optionen/Netze/Verschiedenes..."
+#
 # Revision 1.38  2001/09/14 18:09:56  cl
 # - added database info to message <i>nfo screen
 #

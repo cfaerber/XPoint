@@ -10141,7 +10141,7 @@ User-Schalter aktiviert ist.
 790
 ZConnect untersttzt neben dem IBM-PC-Zeichensatz
 auch den auf vielen anderen Rechnern blichen ISO-
-8859-1-Zeichensatz.
+8859-1-Zeichensatz (Latin1).
 
 <<[ ]>> -> CrossPoint verschickt die Nachrichten weiter-
        hin im IBM-PC-Zeichensatz. Damit ist sicher-
@@ -10155,6 +10155,44 @@ auch den auf vielen anderen Rechnern blichen ISO-
        Bis dahin sollten Sie mit Rcksicht auf Benut-
        zer „lterer Software weiterhin mit dem IBM-
        PC-Zeichensatz arbeiten.
+
+Diese Einstellung kann im Sendefenster mit
+Anhang/Dateityp fr jede Nachricht einzeln ge„ndert
+werden.
+
+Fr [MIME]-Nachrichten wird immer ISO-8859-1 oder UTF-8@791
+voreingestell.
+
+Falls [MIME] nicht fr ZConnect aktiviert ist, muss ein@791
+eventuell einer Nachricht vorangestellter Textteil
+immer im IBM-PC-Zeichensatz verschickt werden; diese
+Einstellung wird dann ignoriet.
+@
+791
+Die neueste und vermutliche letzte ZConnect-
+Spezifikation erlaubt jetzt auch die Verwendung von
+MIME, insbesondere zum Versenden von mehrteiligen
+Nachrichten. <<Dieses Feature wird allerdings nur von>>
+<<einem Teil der ZConnect-Software auch untersttzt.>>
+
+Da der meiste Nachrichtenverkehr mittlerweile ber
+Gatways zu RFC-basierten Formaten l„uft, sollten Sie
+zun„chst testen, ob <<ihr Gateway>> MIME korrekt umsetzt.
+
+Je nachdem, ob Sie MIME aktivieren, „ndert sich, wie 
+viele Dateien sie anh„ngen k”nnen:
+
+<<[ ]>> -> OpenXP erlaubt maximal einen Textkommentar
+       und eine beliebige angeh„ngte Datei.
+      
+<<[x]>> -> OpenXP erlaubt beliebig viele Nachrichten-
+       teile, auáerdem ist PGP/MIME m”glich.
+
+Einteilige Nachrichten (Text oder Bin„r) werden von
+OpenXP bei ZConnect <<nie>> mittels MIME kodiert.
+
+Unabh„ngig von dieser Einstellung erzeugt OpenXP immer 
+MIME-Header, die lediglich Informationszwecken dienen.
 @
 792
 Das alte Z-Netz-Nachrichtenformat erlaubt nur groá
@@ -10202,17 +10240,16 @@ sollten Sie auch die Adreá-Groáwandlung unter
 796
 <<[x]>> -> CrossPoint verwendet auch bei ”ffentlichen
        Nachrichten (News) den MIME-Standard (RFC
-       1341), um die Verwendung von Umlauten und an-
-       deren Sonderzeichen zu kennzeichnen. Dies ist
+       2045 ff.), um die Verwendung von Umlauten und 
+       anderen Sonderzeichen zu kennzeichnen. Dies ist
        die empfohlene Einstellung.
 
 <<[ ]>> -> MIME wird gem„á seiner Spezifikation nur fr
-       PMs (Mails) verwendet. Dies sollten Sie nur
-       dann tun, wenn Ihre ”ffentlichen Nachrichten
-       keine Sonderzeichen enthalten, d.h. als
-       Zeichensatz der betreffenden Brettgruppe bei
-       /Edit/Gruppen sollte "ASCII" gew„hlt sein.
-
+       Mail verwendet. Dies sollten Sie nur dann tun, 
+       wenn Ihre ”ffentlichen Nachrichten keine Sonder-
+       zeichen enthalten, d.h. als Zeichensatz der be-
+       treffenden Brettgruppe bei /Edit/Gruppen sollte
+       "ASCII" gew„hlt sein.
 @
 797
 <<[x]>> -> Vereinfacht ausgedrckt: CrossPoint verwendet
@@ -10221,64 +10258,56 @@ sollten Sie auch die Adreá-Groáwandlung unter
        so zu codieren, daá sie auch von „lteren
        Systemen im Netz korrekt transportiert werden.
 
-<<[ ]>> -> Sonderzeichen werden 1:1 (im ISO-8859-1-
-       Zeichensatz) verschickt.
+<<[ ]>> -> Sonderzeichen werden 1:1 verschickt.
 
-Diese Option sollten Sie vorerst abgeschaltet las-
-sen. "quoted-printable" wird erst von sehr wenigen
-Systemen beherrscht, und fr alle anderen Teilnehmer
-werden Ihre Nachrichten dadurch ziemlich unleserlich.
-
+Diese Einstellung k”nnen Sie auch fr einzelne
+Nachrichten mit Anhang/Bearbeiten/Dateityp im 
+Sendefenster „ndern.
+       
 Unabh„ngig von dieser Einstellung werden alle ein-
 gehenden, als "quoted-printable" codierten Texte
 korrekt verarbeitet.
-
 @
 798
 Normalerweise k”nnen in Betreff, Realname, Zusammen-
 fassung und anderen Header-Informationen mit Text-
 charakter keine Sonderzeichen verwendet werden. Es
-gibt allerdings einen Standard namens RFC 1522, um
+gibt allerdings einen Standard namens RFC 2047, um
 diese Einschr„nkung zu umgehen; die Sonderzeichen
 werden dazu beim Absender codiert und beim Empf„nger
 wieder decodiert.
 
 <<[x]>> -> XP codiert Sonderzeichen in Headerzeilen
-       gem„á RFC 1522 (empfohlene Einstellung).
+       gem„á RFC 2047 (empfohlene Einstellung).
 
 <<[ ]>> -> Sonderzeichen in Headerzeilen werden nach
        ASCII gewandelt.
 
-Nach RFC 1522 erzeugte Headerzeilen sind fr Empf„n-
+Nach RFC 2047 erzeugte Headerzeilen sind fr Empf„n-
 ger, deren Software diesen Standard nicht unter-
 sttzt, nur schwer lesbar - allerdings drfte solche
 Software inzwischen kaum noch in Benutzung sein.
 
 Unabh„ngig von dieser Einstellung werden nach RFC
-1522 codierte Zeilen in eingehenden Nachrichten im-
+2047 codierte Zeilen in eingehenden Nachrichten im-
 mer erkannt und ausgewertet.
-
 @
 799
-<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
-       Nachrichten - sogenannte "Attachments" oder
-       "MIME-Multipart"-Nachrichten - verschickt.
-       Dieses Format wird von allen neueren Mail-
-       Clients im Internet verstanden. Dies ist die
-       empfohlene Einstellung.
+<<[x]>> -> Einteiligen Bin„rnachrichten wird ein Textteil
+       vorangestellt, so dass diese zu mehrteiligen
+       Nachrichten werden. 
 
-<<[ ]>> -> XP verschickt Bin„rnachrichten - wie in den
-       Programmversionen 3.0 bis 3.11 - als einteili-
-       ge MIME-Nachrichten. Dieses Format ist ein-
-       fach, korrekt und platzsparend, wird aber lei-
-       der von einigen weitverbreiteten Mail-Clients
-       nicht untersttzt.
+<<[ ]>> -> Einteilige Bin„rnachrichten werden auch (ab-
+       gesehen von einer Base64- oder Quoted-Print-
+       able-Kodierung) als solche verschickt.  
+       Leider k”nnen einige kaputte, aber weit ver-
+       breitete Mailprogramme mit solchen v”llig
+       korrekten Nachrichten nicht umgehen.
 
-Diese Einstellung gilt nur fr neu versandte Nach-
-richten. Um das Format von existierenden, unver-
-sandten Nachrichten zu „ndern, mssen Sie diese mit
-/Nachricht/Unversandt/L”schen l”schen und neu sen-
-den.
+Diese Einstellung gilt nur fr neu versandte
+Nachrichten. Fr bereits versandte Nachrichten
+verwenden Sie bitte Nachricht/Unversandt/ndern und
+l”schen Sie ggf. unter Anhang bereits erzeugte Teile.       
 @
 8100
 Wie in Kapitel "Kommentarverkettung" des Handbuchs
@@ -10402,7 +10431,6 @@ Es sei hier noch einmal darauf hingewiesen, daá zum
 Beenden der Eingabe nicht alle Felder mit <<<Enter> >>
 best„tigt werden mssen, sondern daá man statt dessen
 auch <<<Ctrl-Enter> >>verwenden kann.
-
 @
 805
 Jede Tarifgruppe legt die Telefongebhren fr be-

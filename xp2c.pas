@@ -104,6 +104,7 @@ const
 
 var hayes     : boolean;
     small     : boolean;
+    zcmime_old: boolean;
     tzfeld    : shortint;
     GPGEncodingOptionsField: integer;
 
@@ -443,7 +444,6 @@ begin
   menurestart:=brk;
 end;
 
-
 function smalladr(var s:string):boolean;
 var x,y : Integer;
     t   : taste;
@@ -462,6 +462,28 @@ begin
     smalladr:=ok;
     closebox;
     end;
+end;
+
+function zcmime(var s:string):boolean;
+var x,y : Integer;
+  t   : taste;
+  ok  : boolean;
+begin
+  if (s=_jn_[2]) or zcmime_old then result:=true
+else begin
+  msgbox(69,10,getres2(253,5),x,y); { 'VORSICHT: MôGLICHE KOMPATIBILITéTSPROBLEME' }
+  mwrt(x+3,y+2,getres2(253,21));  { 'Der ZConnect-Standard 3.1, der die Verwendung von MIME in ZConnect' }
+  mwrt(x+3,y+3,getres2(253,22));  { 'erlaubt wurde sehr spÑt verabschiedet und wird daher kaum von' }
+  mwrt(x+3,y+4,getres2(253,23));  { 'von Pointsoftware oder Gateways unterstÅtzt.' }
+  mwrt(x+3,y+6,getres2(253,7));   { 'Mîchten Sie diese Option wirklich einschalten?' }
+  t:='';
+  errsound; errsound;
+  ok:=(readbutton(x+3,y+8,2,getres2(253,8),2,true,t)=1);  { '  ^Ja  , ^Nein ' }
+  if ok then zcmime_old:=true
+  else s:=_jn_[2];
+  result:=ok;
+  closebox;
+  end;
 end;
 
 function testhayes(var s:string):boolean;
@@ -1156,39 +1178,58 @@ var x,y   : Integer;
     add   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
+
+  function yi:integer; begin result:=y; inc(y); end;
+
 begin
-  dialog(57,iif(deutsch,19,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
-  maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
-  maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
+  dialog(57,iif(deutsch,21,14),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  y:=2;
+
+  maddtext(3,y,GetRes2(253,25),col.coldiahigh);
+  maddtext(3,y+1,GetRes2(253,26),col.coldiahigh);
+  maddbool(14,yi,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
+  maddbool(14,yi,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
+  maddbool(14,yi,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
+  maddbool(14,yi,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
+  inc(y);
+  
+  maddtext(3,y,'Fido (FTN)',col.coldiahigh);
+  maddbool(14,yi,getres2(253,17),Magics); mhnr(8103);
+  maddbool(14,yi,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
+  inc(y);
+ 
+  maddtext(3,y,getres2(253,2),col.coldiahigh);   { 'ZConnect' }
+  maddbool(14,yi,getres2(253,10),zc_iso); mhnr(790);      { 'ISO-Zeichensatz' }
+  zcmime_old:=zc_mime;
+  maddbool(14,yi,getres2(253,20),zc_mime); mhnr(791); { 'MIME verwenden' }
+  msetvfunc(zcmime); mhnr(792);
+  inc(y);
+
   small:=smallnames;
-  maddbool(14,3,getres2(253,3),smallnames);              { 'Z-Netz alt: kleine Usernamen' }
+  maddtext(3,y,getres2(253,4),col.coldiahigh);   { 'Z-Netz' }
+  maddbool(14,yi,getres2(253,3),smallnames);      { 'kleine Usernamen' }
   msetvfunc(smalladr); mhnr(792);
-  if deutsch then begin
-    maddtext(3,5,'Maus',col.coldiahigh);
-    maddbool(14,5,'OUTFILE-Grî·e begrenzen',MaxMaus); mhnr(793);
-    maddbool(14,6,'RÅckfrage fÅr Nachrichtenstatus',MausLeseBest);
-    maddbool(14,7,'Bearbeitungsstatus anfordern',MausPSA);
-    maddbool(14,8,'BinÑrnachrichten als "Attachments"',mausmpbin);
+  inc(y);
+  
+ if deutsch then begin
+    maddtext(3,y,'Maus',col.coldiahigh);
+    maddbool(14,yi,'OUTFILE-Grî·e begrenzen',MaxMaus); mhnr(793);
+    maddbool(14,yi,'RÅckfrage fÅr Nachrichtenstatus',MausLeseBest);
+    maddbool(14,yi,'Bearbeitungsstatus anfordern',MausPSA);
+    maddbool(14,yi,'BinÑrnachrichten als "Attachments"',mausmpbin);
       mhnr(8102);
-    add:=5;
-  end else
-    add:=0;
-  maddtext(3,5+add,'RFC/UUCP',col.coldiahigh);
-  maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
-  maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
-  maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
-  maddbool(14,8+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
+    inc(y);
+ end;
+  
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,10+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,y,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,10+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,yi,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
-    inc(add,2);
+    inc(y);
   end;
-  maddtext(3,10+add,'Fido',col.coldiahigh);
-  maddbool(14,10+add,getres2(253,17),Magics); mhnr(8103);
-  maddbool(14,11+add,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
+
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1444,6 +1485,11 @@ end;
 
 {
   $Log$
+  Revision 1.106  2001/09/19 16:17:40  cl
+  - implemented option "MIME verwenden" for ZConnect
+  - resorted "Config/Optionen/Netze/Verschiedenes..."
+  - updated some help texts for "Config/Optionen/Netze/Verschiedenes..."
+
   Revision 1.105  2001/09/16 13:17:57  ma
   - re-enabled mouse config options
   - shortened CVS logs
