@@ -105,13 +105,11 @@ begin
   aufbau:=true;
 end;
 
-(*                       { Ausgeklammert, siehe auch xp4o2.pas und xp2.pas }
 procedure _SetLanguage;
 begin
   SetLanguage;
   setmainkeys(dispmode);
 end;
-*)
 
 procedure menuopt(t:taste);
 const
@@ -369,7 +367,7 @@ begin
            12 : adroptions;
             6 : netcalloptions;
             9 : EditPassword;
-        (* 10 : _SetLanguage; *)
+           10 : _SetLanguage;
            11 : TerminalOptions;
           end;
 
@@ -572,6 +570,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.7.2.1  2000/12/10 15:47:19  mk
+  - Sprachumschaltung aktiviert
+
   Revision 1.7  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert
   - Sprachabfrage bei allererstem Start eingebaut

@@ -504,18 +504,14 @@ begin
         end;
       end;
     end;
-(*
+
   if doserror=0 then begin
     findnext(sr);
-    languageopt:=doserror=0);                 { Sprachaenderung aus Menue ausgeschalten }
+    languageopt:=doserror=0;                 { Sprachaenderung aus Menue ausgeschalten }
   end                                         { siehe auch xp4o2.pas und xp4.inc }
   else
     languageopt:=false;
-*)
 
-  {$IFDEF virtualpascal}
-  FindClose(sr);
-  {$ENDIF}
   if not exist(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
@@ -1124,6 +1120,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.9  2000/12/10 15:47:19  mk
+  - Sprachumschaltung aktiviert
+
   Revision 1.15.2.8  2000/11/17 12:16:18  mk
   - Probleme beim aktualisieren der Defautviewer behoben
 
