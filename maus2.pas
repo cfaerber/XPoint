@@ -133,7 +133,7 @@ begin
   inout.autoup:=(yy<inside[istack,2]);
   inout.autodown:=(yy>inside[istack,3]);
 
-  result := not (not (autodown or autoup) or not nn);
+  result := nn and (inout.AutoUp or inout.AutoDown);
 end;
 
 {$IFDEF Win32}
@@ -211,9 +211,7 @@ begin
       else
         if ((dwButtonState and 1)<>0) then
         begin
-          if (istack>0) and was_inside then
-            auto_move
-          else
+          if (istack>0) and was_inside and not auto_move then
             put(mauslmoved);
         end else
         if ((dwButtonState and 2)<>0) then
@@ -264,9 +262,7 @@ begin
   begin
     if (Buttons and 1)<>0 then
     begin
-      if (istack>0) and was_inside then
-        auto_move
-      else
+      if (istack>0) and was_inside and not auto_move then
         put(mauslmoved);
     end else
     if (Buttons and 2)<>0 then
@@ -549,6 +545,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2001/09/18 20:29:19  cl
+  - fixed scrolling with pressed mouse button
+
   Revision 1.33  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

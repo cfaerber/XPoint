@@ -598,13 +598,13 @@ begin
     if autoup and autoupenable then z:=keyup
     else if autodown and autodownenable then z:=keydown
     else z:=#0#0;
-{$IFDEF Win32}
+{$IFNDEF DOS32}
     autoup:=false;
     autodown:=false;
 {$ENDIF}
     autolast:=ticker;
     exit;
-    end;
+  end;
 
   repeat
     cursor(cur);
@@ -1666,6 +1666,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2001/09/18 20:29:19  cl
+  - fixed scrolling with pressed mouse button
+
   Revision 1.79  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling
