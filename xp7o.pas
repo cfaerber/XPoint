@@ -57,16 +57,21 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  {window(1,4,80,screenlines-2);}       { Fenster-Problem beim Netcall (hd) }
+  {$IFNDEF Linux}
+  window(1,4,80,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
+  {$ENDIF}
 end;
 
 procedure twin;
 begin
   attrtxt(7);
-{  ttwin; }
+  ttwin;
   moff;
+  {$IFDEF Linux}
   clwin(1,screenwidth,4,screenlines-2);
-{  clrscr;}
+  {$ELSE}
+  clrscr;
+  {$ENDIF}
   mon;
   cursor(curon);
 end;
@@ -782,6 +787,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/21 17:00:25  sv
+  - Netcall-Bildschirm fuer DOS gefixt
+
   Revision 1.11  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
