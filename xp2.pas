@@ -1,19 +1,18 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - StartUp }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp2;
 
@@ -72,23 +71,41 @@ begin
 end;
 
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
-var s    : string;
-    i,ml : byte;
-begin
+var s       : string;
+    i,ml    : byte;
+    n       : byte;
+    m1empty : boolean;
+  begin
   freemem(menu[2],length(menu[2]^)+1);
+  freemem(menu[menus],length(menu[menus]^)+1);
   s:=''; ml:=14;
-  for i:=1 to 10 do
+  n:=0;
+
+  for i:=1 to 10 do                                  { Zusatzmenue 1-10 }
     with fkeys[0]^[i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
+        inc(n);
         end;
-  if s<>'' then s:=',-'+s;
+  m1empty:=false;
+  if s<>'' then s:=',-'+s else m1empty:=true;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
   getmem(menu[2],length(s)+1);
   menu[2]^:=s;
-end;
 
+  s:='';
+  for i:=1 to iif(screenlines=25,9,10) do            { Zusatzmenue 11-20 }
+    with fkeys[4]^[i] do
+      if menue<>'' then begin
+        s:=s+','+hex(i+$24,3)+menue;
+        ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
+        inc(n);
+        end;
+  if m1empty and (s<>'') then s:=',-'+s; 
+  getmem(menu[menus],length(s)+1);
+  menu[menus]^:=s;
+end;
 
 procedure setmenus;
 var i : integer;
@@ -321,7 +338,7 @@ var i  : integer;
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
     if isl('autostart:') then ParAutost:=mid(s,12) else
-    if isl('l:')  then ParLanguage:=lstr(mid(s,4)) else
+    if isl('l:')  then ParLanguage:=ustr(mid(s,4)) else
     if isl('f:') then ParFontfile:=ustr(mid(s,4)) else
     if _is('nomem')then ParNomem:=true else
     if _is('sd')   then ParNoSmart:=true else
@@ -502,29 +519,29 @@ begin { loadresource }
 {$ENDIF UnixFS }   
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
+  findfirst('XP-*.RES', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
   assign(t,'XP.RES');
   reset(t);
   if ioresult<>0 then
-  begin                                     { Wenn XP.RES nicht existiert }
-    if parlanguage='' then                                {/L Parameter beruecksichtigen}
+  begin                                                   { Wenn XP.RES nicht existiert }
+    if parlanguage='' then                                {/L Parameter beruecksichtigen }
     begin
       parlanguage:=sr.name[4];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
       repeat
-        ca:=locase(readkey);                              { Und ansonsten Auswahl-Bringen }
-      until (ca='d') or (ca='e') or (ca=keycr);
+        ca:=upcase(readkey);                              { und ansonsten Auswahl bringen }
+      until (ca='D') or (ca='E') or (ca=keycr);
       if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }
       end;
-    lf:='xp-'+parlanguage+'.res';
-    WrLf;                                                {und XP.RES erstellen }
+    lf:='XP-'+parlanguage+'.RES';
+    WrLf;                                                 { und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
     close(t);
     if (ParLanguage<>'') then begin
-      lf2:='xp-'+ParLanguage+'.res';
-      if not exist(lf2) then writeln('language file '+ParLanguage+' not found')
+      lf2:='XP-'+ustr(ParLanguage)+'.RES';
+      if not exist(lf2) then writeln('language file '+ustr(ParLanguage)+' not found')
       else if (ustr(lf)<>lf2) then begin
         lf:=lf2;
         WrLf;
@@ -656,15 +673,6 @@ begin
   dbSeek(d,boiName,ustr(DefaultBox));
   if not dbFound then begin
     if dbRecCount(d)=0 then begin
-      {$IFDEF EASY}
-      if not NeuBenutzergruss then
-         begin
-           EasyMainDialog;
-           {Provisorium zur Fehlervermeidung}
-           xp9.get_first_box(d);
-         end
-      else
-      {$ENDIF}
       xp9.get_first_box(d);
       dbRead(d,'dateiname',dname);
       end
@@ -1000,6 +1008,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.24  2001/09/16 20:21:45  my
+  JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verf¸gung).
+
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.45.2.23  2001/09/06 18:42:40  mk
   - removed unused variable n from zusatz_menu
 
