@@ -835,7 +835,7 @@ begin
         if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
         end
 
-      else if bereich<4 then begin                       {-- Suche: Alle/Netz/User/markiert --}
+      else if bereich<3 then begin                       {-- Suche: Alle/Netz/User/markiert --}
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
@@ -843,7 +843,6 @@ begin
         while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
           dbReadN(mbase,mb_brett,_brett);
           if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
-           		    ((bereich=3) and (_brett[1]='A')) or
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
@@ -2456,6 +2455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.21  2001/01/01 20:17:01  mo
+  -Spezialsuche in markierten Brettern -lter Satnd wieder hergesetllt
+
   Revision 1.47.2.20  2000/12/31 14:23:56  mo
   -Spezialsuche in markierten Brettern auch aus der Nachrichten/User Übersicht
 
