@@ -51,6 +51,9 @@ function SysOutputRedirected: boolean;
 implementation
 
 uses
+  {$IFDEF VP}
+  vputils,
+  {$ENDIF }
   windows, winxp;
 
 function SysGetScreenLines: Integer;
@@ -162,6 +165,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/10/24 15:11:44  mk
+  - VPUtils in uses bei VP wegen Max() hinzugefuegt
+
   Revision 1.11  2000/10/24 14:49:48  fe
   Ungenutzte Unit ausgetragen.
 
