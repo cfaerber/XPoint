@@ -527,7 +527,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24   Delete X-postings in more than
 25   Newsgroups
 26   Send all carbon copies as BCC
-27   at mail as well
+27   mail as well
 28   ask at Reply-To
 29   don't archive news
 30   ignore cancels/supersedes
@@ -3008,7 +3008,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3  Unsent message not found in messagebase!
 4  Not enough memory for netcall!
 5  No primary fido server selected
-6  No nodelist active
+6  Nodelist not installed
 7  Relogin not possible at this server
 8  Script file needed for online call!
 9  unknown server:  %s
@@ -3693,6 +3693,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.16  2001/05/20 12:37:32  mf
+# 252.27, 10700.6 changed.
+#
 # Revision 1.15  2001/05/19 16:12:52  ma
 # - removed XP_ID (shareware notice)
 #
