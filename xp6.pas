@@ -325,9 +325,7 @@ function compiletime:string;      { Erstelldatum von XP.EXE als String uebergebe
 var                                          { Format: 1105001824 }
  d:datetime;
 begin
-  unpacktime(filetime(ownpath+'xp.exe'),d);
-  compiletime:=(formi(d.day,2)+formi(d.month,2)+RightStr(formi(d.year,2),2)
-    +formi(d.hour,2)+formi(d.min,2));
+  CompileTime := FormatDateTime('ddmmyyhhmm', FileDateToDateTime(FileAge(ownpath+'xp.exe')));
 end;
 {$ENDIF}
 
@@ -2132,6 +2130,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.73  2000/11/15 23:00:42  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.72  2000/11/14 15:51:32  mk
   - replaced Exist() with FileExists()
 

@@ -2042,7 +2042,7 @@ var x,y : byte;
     ar  : AutoRec;
     fn  : string;
     sr  : searchrec;
-    dt  : DateTime;
+    dt  : TDateTime;
 begin
   AutoRead(ar);
   fn:=ar.datei;
@@ -2060,12 +2060,10 @@ begin
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
   else begin
     wrt(x+11,y+3,trim(strsrnp(_filesize(fn),15,0))+getres(13));   { ' Bytes' }
-    unpacktime(sr.time,dt);
+    dt := FileDateToDateTime(sr.time);
     gotoxy(x+11,y+4);
-    with dt do
-      write(formi(day,2),'.',formi(month,2),'.',formi(year mod 100,2),', ',
-            formi(hour,2),':',formi(min,2),':',formi(sec,2));
-    end;
+    write(DateToStr(dt), ', ', TimeToStr(dt));
+  end;
   wrt(x+3,y+6,getres(12));    { 'Taste drÅcken ...' }
   mon;
   findclose(sr);
@@ -2425,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/11/15 23:00:41  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.49  2000/11/14 15:51:30  mk
   - replaced Exist() with FileExists()
 

@@ -247,11 +247,9 @@ var
       ActTime : longint;
       fh: Integer;
   begin
-    getdate(dt.year,dt.month,dt.day,dummy);
-    gettime(dt.hour,dt.min,dt.sec,dummy);
-    PackTime(dt,ActTime);
-    if filetime(NodelistCfg)>filetime(UserIndexf) then begin
-      if filetime(NodelistCfg)>ActTime then
+    if FileDateToDateTime(FileAge(NodeListCfg)) > FileDateToDateTime(FileAge(UserIndexF)) then
+    begin
+      if FileDateToDateTime(FileAge(NodeListCfg))> now then
       begin
         fh := FileOpen(NodeListCfg, fmOpenReadWrite {$IFDEF WIn32 } OR fmShareExclusive {$ENDIF });
         FileSetDate(fh, DateTimeToFileDate(now));
@@ -743,6 +741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/15 23:00:43  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.22  2000/11/14 15:51:36  mk
   - replaced Exist() with FileExists()
 

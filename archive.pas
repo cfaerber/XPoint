@@ -263,29 +263,29 @@ end;
 
 procedure GetDateFrom70(secs:longint; var datum,uhrzeit:word);
 const tagsec = 24*60*60;
-var dt   : TSystemTime;
+var dt   : TDateTime;
     ts   : TTimeStamp;
+    year, month, day: Integer;
 begin
-  with dt do begin
-    year:=1970;
-    while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
-      dec(secs,iif(schaltj(year),366,365)*tagsec);
-      inc(year);
-      end;
-    if year>2099 then
-      secs:=0
-    else begin
-      month:=1;
-      while (secs>=tagsec*monthlen(year,month)) do begin
-        dec(secs,tagsec*monthlen(year,month));
-        inc(month);
-        end;
-      day:=secs div tagsec + 1; secs:=secs mod tagsec;
-      hour:=secs div 3600;      secs:=secs mod 3600;
-      minute:=secs div 60;         second:=secs mod 60;
-      end;
+  year:=1970;
+  while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
+    dec(secs,iif(schaltj(year),366,365)*tagsec);
+    inc(year);
     end;
-  ts:= DateTimeToTimeStamp(SystemTimeToDateTime(dt));
+  if year>2099 then
+    secs:=0
+  else
+  begin
+    month:=1;
+    while (secs>=tagsec*monthlen(year,month)) do begin
+      dec(secs,tagsec*monthlen(year,month));
+      inc(month);
+    end;
+  end;
+  day:=secs div tagsec + 1; secs:=secs mod tagsec;
+  dt := EncodeDate(Year, Month, Day) +
+    EncodeTime(secs div 3600, secs mod 3600, secs div 60, secs mod 60);
+  ts:= DateTimeToTimeStamp(dt);
   uhrzeit:= ts.time;
   datum:= ts.date;
 end;
@@ -646,59 +646,6 @@ label again;
     TarVAL:=l;
   end;
 
-  procedure CalcUnixTime(s:string; var zeit,datum:word);
-  const  tagsec = 24*60*60;
-  var dt   : TSystemTime;
-      ts   : TTimeStamp;
-      secs : longint;
-      tage : word;
-
-    function monthlen(j,m:word):word;
-    begin
-      case m of
-        1 : monthlen:=31;
-        2 : if schaltj(j) then monthlen:=29
-            else monthlen:=28;
-        3 : monthlen:=31;
-        4 : monthlen:=30;
-        5 : monthlen:=31;
-        6 : monthlen:=30;
-        7 : monthlen:=31;
-      else  if odd(m) then monthlen:=30
-            else monthlen:=31;
-      end;
-    end;
-
-  begin
-    secs:=OctVal(s);
-    with dt do begin
-      year:=1970;
-      if schaltj(year) then tage:=366
-      else tage:=365;
-      while (secs>=tage*tagsec) and (year<=2099) do begin
-        dec(secs,tage*tagsec);
-        inc(year);
-        if schaltj(year) then tage:=366
-        else tage:=365;
-        end;
-      if year>2099 then
-        secs:=0
-      else begin
-        month:=1;
-        while (secs>=tagsec*monthlen(year,month)) do begin
-          dec(secs,tagsec*monthlen(year,month));
-          inc(month);
-          end;
-        day:=secs div tagsec + 1; secs:=secs mod tagsec;
-        hour:=secs div 3600;      secs:=secs mod 3600;
-        minute:=secs div 60;      second:=secs mod 60;
-        end;
-      end;
-    ts:= DateTimeToTimeStamp(SystemTimeToDateTime(dt));
-    zeit:= ts.time;
-    datum:= ts.date;
-  end;
-
 begin
   with ar do
   again:
@@ -845,7 +792,7 @@ begin
                     method:='stored';
                     orgsize:=TarVal(TAR.size);
                     compsize:=orgsize;
-                    CalcUnixTime(TAR.mtime,uhrzeit,datum);
+                    GetDateFrom70(OctVal(TAR.mtime),uhrzeit,datum);
                     attrib:=0;
                     inc(adr,512+((compsize+511)div 512)*512);
                     end;
@@ -988,6 +935,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.22  2000/11/15 17:29:52  hd
   - Unit DOS entfernt
 

@@ -1901,13 +1901,9 @@ var ar   : ArchRec;
 
   procedure renameDWC;
   var f  : file;
-      _d : dirstr;
-      _n : namestr;
-      _e : extstr;
   begin
     assign(f,fn);
-    fsplit(fn,_d,_n,_e);
-    fn:=_d+'temp$$.dwc';
+    fn:=ExtractFilePath(fn) +'temp$$.dwc';
     rename(f,fn);
   end;
 
@@ -2233,9 +2229,7 @@ var files    : string;
     secondtry,
     mark,
     lMagics  : boolean;
-    dir      : dirstr;
-    name     : namestr;
-    ext      : extstr;
+    dir, name, ext: string;
 
 begin
   nnode := '';
@@ -2425,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2000/11/15 23:00:41  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.76  2000/11/14 15:51:31  mk
   - replaced Exist() with FileExists()
 

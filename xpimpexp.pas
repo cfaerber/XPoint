@@ -491,10 +491,10 @@ BEGIN
     writeln(outfile,'V',absender);
     IF gruppe='PRIVAT' then writeln(outfile,'A',empfaenger);
     writeln(outfile,'W',betreff);
-    UnPackTime(x.datum,tempdatum);
+    // !! UnPackTime(x.datum,tempdatum);
     write(outfile,'E');
     datum_ins_outfile(tempdatum);
-    UnPackTime(x.SDatum,tempdatum);
+    // !!UnPackTime(x.SDatum,tempdatum);
     write(outfile,'B',upcase(x.status));
     datum_ins_outfile(tempdatum);
 
@@ -660,9 +660,6 @@ var x,y     : byte;
     useclip : boolean;
     bretth  : string;
     brk     : boolean;
-    dir     : dirstr;
-    name    : namestr;
-    ext     : extstr;
 begin
   if not mfehler(existBin(ZQWKBin),getres2(2422,1)) and not FehlerFidoStammbox
   then begin
@@ -679,8 +676,7 @@ begin
         if LeftStr(bretth,1)<>'/' then bretth:='/'+bretth;
         if RightStr(bretth,1)<>'/' then bretth:=bretth+'/';
         shell(ZQWKBin+' -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
-        fsplit(fn,dir,name,ext);
-        fn:=name+'.ZER';
+        fn:=ChangeFileExt(fn, '.ZER');
         if not FileExists(fn) then
           fehler(getres2(2422,4))
         else begin
@@ -697,6 +693,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/15 23:00:44  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.28  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 

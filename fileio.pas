@@ -54,6 +54,8 @@ const
   FMDenyBoth   = $10;
   FMCompatible = $00;
 
+  fmsharedenynone = 0;
+
 
 const
   { Neue AnyFile-Konstante, da $3F oft nicht l„uft }
@@ -83,9 +85,6 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 
 { DOS-Routinen }
 procedure FSplit(const path: string; var dir, name, ext: string);
-function  GetFTime(var F; var time: longint): boolean;
-procedure PackTime(const when: TSystemTime; var fdt: longint);
-procedure UnpackTime(const fdt: longint; var res: TSystemTime);
 
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
@@ -110,6 +109,7 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode ”ffn.}
 
 procedure adddir(var fn:string; dir:string);
 function  GetBareFileName(const p:string):string;
+function getenv(const EVar: String): String;
 
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
 
@@ -205,33 +205,6 @@ begin
   System.Rewrite(F);
 end;
 
-procedure PackTime(const when: TSystemTime; var fdt: longint);
-begin
-  fdt:= DateTimeToFileDate(SystemTimeToDateTime(when));
-end;
-
-procedure UnpackTime(const fdt: longint; var res: TSystemTime);
-begin
-  DateTimeToSystemTime(FileDateToDateTime(fdt),res);
-end;
-
-function GetFTime(var F; var time: longint): boolean;
-var
-  ff : ^filerec;
-  fh : longint;
-begin
-  ff:= @f;
-  fh:= FileOpen(ff^.name, fmOpenRead);
-  if fh<0 then begin
-    time:= 0;
-    result:= false;
-  end else begin
-    time:= FileGetDate(fh);
-    result:= true;
-    FileClose(fh);
-  end;
-end;
-
 { Liefert True zurück, falls ein Verzeichnis leer ist }
 function isEmptyDir(const path: string): boolean;
 var
@@ -247,7 +220,7 @@ begin
     end;
     rc:= findnext(sr);
   end;
-  findclose(sr);
+  sysutils.findclose(sr);
 end;
 
 procedure FSplit(const path: string; var dir, name, ext: string);
@@ -370,7 +343,9 @@ begin
     result:= true
   else if FileExists(AddDirSepa(ExtractFilePath(ParamStr(0)))+fname) then
     result:= true
-  else begin
+  else
+{$IFDEF FPC }
+  begin
     path:= getenv('PATH');
     i:= pos(PathSepaChar, path);
     while i>0 do begin
@@ -384,6 +359,7 @@ begin
     if Length(path)>0 then
       result:= FileExists(AddDirSepa(path)+fname);
   end;
+{$ENDIF }
 end;
 
 function ValidFileName(const name:string):boolean;
@@ -441,9 +417,9 @@ var
   sr : TSearchrec;
 begin
   if findfirst(s, faAnyfile, sr) = 0 then repeat
-    DeleteFile(ExtractFileDir(s) + DirSepa +sr.name);
+    sysutils.DeleteFile(ExtractFileDir(s) + DirSepa +sr.name);
   until findnext(sr) <> 0;
-  FindClose(sr);
+  sysutils.FindClose(sr);
 end;
 
 
@@ -533,7 +509,7 @@ begin
     Result := sr.Size
   else
     Result := 0;
-  Findclose(sr);
+  sysutils.Findclose(sr);
 end;
 
 procedure MakeFile(fn:string);
@@ -555,7 +531,7 @@ begin
     filetime:=sr.time
   else
     filetime:=0;
-  findclose(sr);
+  sysutils.findclose(sr);
 end;
 
 function setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen }
@@ -630,9 +606,17 @@ begin
 end;
 {$endif }
 
+function getenv(const EVar: String): String;
+begin
+  // !!
+end;
+
 end.
 {
   $Log$
+  Revision 1.73  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.72  2000/11/15 20:30:58  hd
   - GetFTime
   - PackTime

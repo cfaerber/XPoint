@@ -196,9 +196,7 @@ var   fb     : pathstr;
       add,x  : integer;
       disp   : boolean;
       t      : taste;
-      dir    : dirstr;
-      name   : namestr;
-      ext    : extstr;
+      dir, name, ext: string;
       xtext  : string[20];
       paths  : array[1..maxs] of pathstr;
       pathn  : byte;
@@ -298,20 +296,11 @@ var   fb     : pathstr;
       dispfile(i);
   end;
 
-  procedure pathonly(var path:pathstr);
-  var dir  : dirstr;
-      name : namestr;
-      ext  : extstr;
-  begin
-    fsplit(path,dir,name,ext);
-    path:=dir;
-  end;
-
   procedure disp_p;
   var s,s2  : string;
       pa    : pathstr;
       sr    : searchrec;
-      t     : datetime;
+      t     : Tdatetime;
       xx,yy : byte;
   begin
     if invers then normtxt else invtxt;
@@ -338,23 +327,17 @@ var   fb     : pathstr;
       if RightStr(s,1)=DirSepa then
         Wrt2(Forms(ConvertFilename(s), 58))
       else begin
-        pa:=path;
-        pathonly(pa);
+        pa:=ExtractFilePath(path);
         if RightStr(pa,1)<>DirSepa then pa:=pa+DirSepa;
         findfirst(pa+s,ffanyfile,sr);
         if doserror<>0 then
           Wrt2(sp(59))
         else
         begin
-          UnpackTime(sr.time,t);
-          with t do
-          begin
-            s2 := Trim(strsrnp(sr.size,12,0));
-            Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
-               { PM 01/00 Y2K-Patch für Dateidaten von 1.1.2000 bis 31.12.2009 }
-                 formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)
-                 {,'       ',formi(hour,2),':',formi(min,2),':',formi(sec,2)});
-          end
+          s2 := Trim(strsrnp(sr.size,12,0));
+          Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
+            DateToStr(FileDateToDateTime(sr.time)));
+//            formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)
         end;
       end;
       mon;
@@ -424,7 +407,7 @@ begin
   else begin
     pathn:=0;
     p:=pos(';',pathx);
-    pathonly(path);
+    path := ExtractFilePath(path);
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
     while p>0 do begin
       inc(pathn);
@@ -492,7 +475,7 @@ begin
       wpushed:=true;
       end;
     dpath:=path;
-    if pathx<>'' then pathonly(dpath);
+    if pathx<>'' then dpath := ExtractFilePath(dpath);
     dpath:=fitpath(dpath,61);
     na:=normattr; ia:=invattr;
     if fsb_rcolor<>0 then begin
@@ -1109,6 +1092,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.26  2000/11/14 11:14:31  mk
   - removed unit dos from fileio and others as far as possible
 

@@ -1919,12 +1919,13 @@ var dt    : datetime;
     dummy : rtlword;
     pdt   : longint;
 begin
+  { !!
   fillchar(dt,sizeof(dt),0);
   getdate(dt.year,dt.month,dt.day,dummy);
   gettime(dt.hour,dt.min,dt.sec,dummy);
   packtime(dt,pdt);
   if pdt shr 16 <> filetime(NewDateFile) shr 16 then
-    fileio.setfiletime(NewDateFile,pdt);
+    fileio.setfiletime(NewDateFile,pdt); }
 end;
 
 
@@ -2017,6 +2018,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.87  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.86  2000/11/14 15:51:27  mk
   - replaced Exist() with FileExists()
 

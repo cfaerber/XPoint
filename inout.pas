@@ -313,7 +313,7 @@ function memadr(x,y:byte):word;forward;
 
 function ticker:longint;
 var
-  h, m, s, hund : rtlword;
+  h, m, s, hund : smallword;
 begin
   DecodeTime(Now, h, m, s, hund);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
@@ -433,9 +433,10 @@ procedure disp_DT;
 var h,m,s,s100 : rtlword;
 {$ENDIF }
 begin
-{$IFNDEF NCRT }
+{$IFDEF OOPS }
   if UseMulti2 then begin
-    if m2t then begin
+    if m2t then
+    begin
       gettime(h,m,s,s100);
       __st[1]:=chr(h div 10+48);
       __st[2]:=chr(h mod 10+48);
@@ -454,7 +455,7 @@ begin
 end;
 
 Procedure multi2;
-var h,m,s,s100 : rtlword;
+var h,m,s,s100 : smallword;
     i          : integer16;
     l          : longint;
 begin
@@ -1646,6 +1647,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.64  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.63  2000/11/15 17:45:47  hd
   - Unit DOS entfernt
 

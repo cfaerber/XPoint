@@ -1054,7 +1054,7 @@ end;
 {$ifndef unix}
 procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
-var dt   : DateTime;
+var
     days : longint;
     dow  : rtlword;
     ddiff: longint;
@@ -1065,11 +1065,8 @@ var dt   : DateTime;
     t,m,j: word;
     m3s  : procedure;
 begin
-  fillchar(dt,sizeof(dt),0);
-  getdate(dt.year,dt.month,dt.day,dow);
-  days:=longint(dt.year)*365+dt.month*30+dt.day;
-  unpacktime(filetime(NewDateFile),dt);                  { Abstand in Tagen }
-  ddiff:=days - (longint(dt.year)*365+dt.month*30+dt.day);
+  // diff in days
+  ddiff:=system.Round(Now - FileDateToDateTime(FileAge(NewDateFile)));
   if (ddiff<0) or (ddiff>maxdays) then begin
     wdt:=4+max(max(length(getres2(225,1)),length(getres2(225,2))),
                    length(getres2(225,3))+10);
@@ -1200,6 +1197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.82  2000/11/15 23:00:40  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.81  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 

@@ -38,9 +38,7 @@ var fn   : string;
 
   procedure setfn;
   var tf : string;
-      d  : dirstr;
-      n  : namestr;
-      e  : extstr;
+      d, n, e: String;
   begin
     tf:=TempS(dbReadInt(mbase,'msgsize')+5000);
     fsplit(tf,d,n,e);
@@ -310,6 +308,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/11/15 23:00:42  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.16  2000/10/17 10:05:52  mk
   - Left->LeftStr, Right->RightStr
 

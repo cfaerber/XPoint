@@ -15,9 +15,9 @@ var uucp : boolean;
   begin
     chdir(XferDir_);
     with boxpar^ do
-      if not FileDa(downarcer) then begin     { FileDa sucht zuerst im }
+      if not ExistBin(downarcer) then begin     { FileDa sucht zuerst im }
         chdir('..');                          { aktuellen Verzeichnis  }
-        if FileDa(downarcer) then begin
+        if ExistBin(downarcer) then begin
           downarcer:=ownpath+downarcer;
           FindDownarcer:=true;
           end
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2000/11/15 23:00:42  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.41  2000/11/14 22:19:15  hd
   - Fido-Modul: Anpassungen an Linux
 

@@ -1287,10 +1287,7 @@ var t       : text;
   end;
 
   procedure SetSwapfilename;
-  var tf  : string;
-      dir  : dirstr;
-      name : namestr;
-      ext  : extstr;
+  var tf, dir, name, ext  : string;
   begin
     tf:=TempFile(TempPath);
     fsplit(tf,dir,name,ext);
@@ -1700,6 +1697,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.92  2000/11/15 23:00:40  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.91  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 

@@ -1208,14 +1208,6 @@ var t   : text;
     fn  : string[12];
     sr  : searchrec;
 
-  function fdate:string;
-  var
-    dt : datetime;
-  begin
-    unpacktime(sr.time,dt);
-    fdate:=formi(dt.month,2)+'/'+formi(dt.year mod 100,2);
-  end;
-
 begin
   listbox(73,15,getres(iif(delfilelist,2105,2106)));
   assign(t,FileLists);          { 'Fileliste l”schen','File Request' }
@@ -1236,7 +1228,7 @@ begin
           fn:=LeftStr(fn,cpos('.',fn)-1);
         app_l(' '+forms(node,14)+' '+
               forms(iifs(ni.found,ni.boxname+', '+ni.standort,'???'),32)+
-              '  '+fdate+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
+              '  '+FormatDateTime('mm/yy', FileDateToDateTime(sr.time))+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
         end;
       end;
     end;
@@ -2248,6 +2240,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/11/15 23:00:43  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.34  2000/11/14 15:51:36  mk
   - replaced Exist() with FileExists()
 

@@ -2449,9 +2449,7 @@ var
   bzip: boolean;
   p: integer;
   newfn: String;
-  dir: dirstr;
-  name: namestr;
-  ext: extstr;
+  dir, name, ext: string;
   binaer: boolean;
 label
   ende;
@@ -3566,6 +3564,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2  2000/11/15 23:00:44  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.1  2000/11/14 21:36:53  fe
   Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
   So the program is called "uuz" again.

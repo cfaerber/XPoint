@@ -40,7 +40,7 @@ const
   {$IFDEF Linux}
   {$ifndef BSD}
   pformstr    = ' Linux';     { 32 Bit Linux mit FPC oder VP }
-  {$endif} 
+  {$endif}
  {$ENDIF}
   {$IFDEF FreeBSD}
    pformstr    = ' FreeBSD';  { 32 Bit native FreeBSD v4+ mit FPC }
@@ -134,8 +134,8 @@ var
 { Initialisiert vom Hauptprogramm                               }
   HomeDir,                     { User-Verzeichnis mit Datenbank }
   LibDir,                      { Libraries und Ressourcen       }
-  DocDir: String;	       { Dokumentationsverzeichnis      }
-  
+  DocDir: String;              { Dokumentationsverzeichnis      }
+
 const
   XPDirName = 'openxp';        { Default LibDirname of openxp   }
   BaseDir   = '.' + XPDirName;
@@ -149,6 +149,19 @@ type
   TCharArray = array[0..MaxInt div 2] of Char;
   PByteArray = ^TByteArray;
   TByteArray = array[0..MaxInt div 2] of Byte;
+
+
+{$IFDEF VP }
+type
+  FileRec = record
+    Handle:   Longint;                  // File handle
+    Mode:     Longint;                  // Current file mode
+    RecSize:  Longint;                  // I/O operation record size
+    Private:  array [1..28] of Byte;    // Reserved
+    UserData: array [1..32] of Byte;    // User data area
+    Name:     array [0..259] of Char;   // File name (ASCIIZ)
+  end;
+{$ENDIF }
 
 implementation
 
@@ -164,6 +177,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.46  2000/11/15 23:00:44  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.45  2000/11/11 20:13:54  mk
   - first delphi compilation support
 

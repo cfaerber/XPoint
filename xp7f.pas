@@ -527,9 +527,7 @@ label fn_ende,fn_ende0;
     function match(wfn,fn:string):boolean;
     var
       p, i : integer;
-      dir : dirstr;
-      name: namestr;
-      ext : extstr;
+      dir, name, ext : string;
     begin
       p:=cpos('.',fn);
       if p=0 then
@@ -952,6 +950,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/11/15 23:00:43  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.35  2000/11/14 22:19:16  hd
   - Fido-Modul: Anpassungen an Linux
 

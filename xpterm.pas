@@ -105,7 +105,7 @@ begin
   else begin
     termlines:=screenlines;
     m2t:=false;
-//    window(1,1,screenwidth,termlines); 
+//    window(1,1,screenwidth,termlines);
     windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
@@ -139,9 +139,6 @@ end;
 
 
 procedure openlog(fn:string);
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
 begin
   savewin;
   if not multipos(':\',fn) then
@@ -155,8 +152,7 @@ begin
     else rewrite(logfile);
     log:=true;
     attrtxt(col.colmenu[0]);
-    fsplit(fn,dir,name,ext);
-    mwrt(53,1,forms(UpperCase(name+ext),12));
+    mwrt(53,1,forms(UpperCase(ExtractFileName(fn)),12));
     wkey(1,false);
     closebox;
     end;
@@ -588,7 +584,7 @@ begin
   Modem.CommObj:=CommObj;
   MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
   Scroll(win, true);
-  attrtxt(15); 
+  attrtxt(15);
   writeln('OpenXP ', verstr, betastr, pformstr);
   writeln('Terminal Emulation Ready (',CommObj^.GetBPSRate,')');
   attrtxt(7);
@@ -1465,6 +1461,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/15 23:00:44  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.25  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 

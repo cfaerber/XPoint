@@ -127,7 +127,8 @@ begin
     SetColors;
     showscreen(true);
     DelTmpfiles('*.$$$');
-    if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
+
+    // !!if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
     if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
       DelTmpfiles('TMP-????.*');
       chdir(temppath);
@@ -196,6 +197,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.41  2000/11/15 23:00:39  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.40  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 

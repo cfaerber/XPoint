@@ -119,10 +119,7 @@ end;
 
 
 procedure SelSchab(var cr:CustomRec);
-var ps  : pathstr;
-    dir : dirstr;
-    name: namestr;
-    ext : extstr;
+var ps, dir, name, ext: String;
 begin
   selcol;
   ps:=fsbox(screenlines div 2 - 5,'*.xps','',cr.s+'.xps',false,false,false);
@@ -223,11 +220,6 @@ end;
 function progtest(var s:string):boolean;
 var ok   : boolean;
     fn   : pathstr;
-{$IFNDEF UnixFS}
-    dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
-{$ENDIF}
     path : string[127];
 begin
   progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
@@ -250,8 +242,7 @@ begin
 {$IFDEF UnixFS}
     ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
 {$ELSE}
-    fsplit(fn,dir,name,ext);
-    if ext<>'' then
+    if ExtractFileExt(fn)<>'' then
       ok:=fsearch(fn,path)<>''
     else
       ok:=(fsearch(fn+'.exe',path)<>'') or
@@ -412,9 +403,7 @@ begin
 end;
 
 function testscript(var s:string):boolean;
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
+var dir, name, ext: String;
 begin
   if trim(s)='' then
     testscript:=true
@@ -1832,6 +1821,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.45  2000/11/15 23:00:43  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.44  2000/11/14 15:51:35  mk
   - replaced Exist() with FileExists()
 

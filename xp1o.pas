@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,keys,fileio,inout,maus2,lister,
+  sysutils,typeform,keys,fileio,inout,maus2,lister,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -41,7 +41,6 @@ function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(var t:taste);
 procedure ExtListKeys;
 function  filecopy(fn1,fn2:string):boolean;
-function  FileDa(fn:string):boolean;   { Programm im Pfad suchen }
 procedure ExpandTabs(fn1,fn2:string);
 
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
@@ -167,12 +166,8 @@ function overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
 var x,y : byte;
     nr  : shortint;
     t   : taste;
-    f   : file;
-    w   : rtlword;
 begin
-  assign(f,fname);
-  getfattr(f,w);
-  if w and readonly<>0 then begin
+  if FileGetAttr(fname) and faReadonly<>0 then begin
     rfehler(9);        { 'Datei ist schreibgeschÅtzt.' }
     brk:=true;
     exit;
@@ -187,11 +182,9 @@ begin
   overwrite:=(nr=2);
   if nr=2 then
   begin    { Datei lîschen -> evtl. Undelete mîglich }
-    setfattr(f,0);
-    erase(f);
-    if ioresult<>0 then
-    begin { Michael Koppel und MK 07.01.2000 Abbruch, wenn Datei
-      nicht gelîscht werden kann, weil z.B. von anderem Prog. geîffnet }
+    FileSetAttr(fname, 0);
+    if not DeleteFile(fname) then
+    begin
       rfehler(9);        { 'Datei ist schreibgeschÅtzt.' }
       brk:=true;
       exit;
@@ -481,7 +474,7 @@ var f1,f2 : file;
     time  : longint;
     res   : integer;
 begin
-  if (fexpand(fn1)=fexpand(fn2)) and FileExists(fn1) then
+  if (ExpandFileName(fn1)=ExpandFileName(fn2)) and FileExists(fn1) then
   begin
     filecopy:=true;
     exit;
@@ -502,12 +495,13 @@ begin
 
   assign(f1,fn1);
   reset(f1,1);
-  getftime(f1,time);
+//!!  getftime(f1,time);
   assign(f2,fn2);
   rewrite(f2,1);
     fmove(f1,f2);
-  setftime(f2,time);
+//!!  setftime(f2,time);
   close(f1); close(f2);
+
   filecopy:=(inoutres=0);
   if inoutres<>0 then begin
     res:=ioresult;
@@ -707,72 +701,30 @@ begin
 end;
 
 
-function FileDa(fn:string):boolean;   { Programm im Pfad suchen }
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
-  function Find(fn:string):boolean;
-  begin
-    Find:=Fsearch(fn,GetEnv('PATH'))<>'';
-  end;
-begin
-  if cpos(' ',fn)>0 then
-    fn:=LeftStr(fn,cpos(' ',fn)-1);
-  fsplit(fn,dir,name,ext);
-{$ifdef Unix}
-  if name='cp' then
-    FileDa:= true
-  else
-    FileDa:= Find(fn);
-{$else}
-  if UpperCase(name+ext)='COPY' then
-    fileda:=true
-  else
-    if ext<>'' then
-      FileDa:=Find(fn)
-    else
-      FileDa:=Find(fn+'.exe') or Find(fn+'.com') or Find(fn+'.bat');
-{$endif}
-end;
-
-
 function ZCfiletime(var fn:string):string;   { ZC-Dateidatum      }
 var l  : longint;
-    dt : datetime;
     f  : file;
 begin
-  assign(f,fn);
-  reset(f,1);
-  if ioresult<>0 then
-    ZCfiletime:=''
-  else begin
-    getftime(f,l);
-    close(f);
-    unpacktime(l,dt);
-    with dt do
-      ZCfiletime:=formi(year,4)+formi(month,2)+formi(day,2)+
-                  formi(hour,2)+formi(min,2)+formi(sec,2);
-    end;
+  if FileExists(fn) then
+    ZCFileTime := FormatDateTime('yymmddhhmmss', FileDateToDateTime(FileAge(fn)))
+  else
+    ZCFileTime := '';
 end;
 
 procedure SetZCftime(const fn:string; const ddatum: String);
-var dt : datetime;
-    l  : longint;
-    f  : file;
+var
+  Date: TDateTime;
+  fh: Integer;
 begin
-  assign(f,fn);
-  reset(f,1);
-  if ioresult=0 then with dt do begin
-    year:=ival(LeftStr(ddatum,4));
-    month:=ival(copy(ddatum,5,2));
-    day:=ival(copy(ddatum,7,2));
-    hour:=ival(copy(ddatum,9,2));
-    min:=ival(copy(ddatum,11,2));
-    sec:=ival(copy(ddatum,13,2));
-    packtime(dt,l);
-    setftime(f,l);
-    close(f);
-    end;
+  // try to optimize this with DateTimeToStr or something like this
+  Date := EncodeDate(ival(LeftStr(ddatum,4)), ival(copy(ddatum,5,2)), ival(copy(ddatum,7,2)))
+    + EncodeTime(ival(copy(ddatum,9,2)), ival(copy(ddatum,11,2)), ival(copy(ddatum,13,2)), 0);
+  fh := FileOpen(fn, fmOpenRead OR fmShareDenyNone);
+  if fh > 0 then
+  begin
+    FileSetDate(fh, DateTimeToFileDate(Date));
+    FileClose(fh);
+  end;
 end;
 
 
@@ -977,14 +929,18 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
     PrepareExe:=0;
     exepath:=LeftStr(prog,blankposx(prog)-1);
     if ExtractFileExt(exepath)='' then exepath:=exepath+'.exe';
-    exepath:=fsearch(exepath,getenv('PATH'));
+    exepath:=filesearch(exepath,getenv('PATH'));
     if not stricmp(RightStr(exepath,4),'.exe') then
       et:=ET_Unknown
     else
       et:=exetype(exepath);
 
     win := (et=ET_Win16) or (et=ET_Win32);
-    os2 := (lo(dosversion)>=20) and ((et=ET_OS2_16) or (et=ET_OS2_32));
+  {$IFDEF OS2 }
+    os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
+  {$ELSE }
+    os2 := false;
+  {$ENDIF }
     winnt:=win and (LowerCase(getenv('OS'))='windows_nt');
 
     if win then begin
@@ -1048,6 +1004,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/11/15 23:00:40  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.69  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 

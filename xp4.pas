@@ -1223,10 +1223,7 @@ var t,lastt: taste;
   end;
 
   function GetAutoFN: string;
-  var dir  : dirstr;
-      name : namestr;
-      ext  : extstr;
-      fn   : shortstring;
+  var dir, name, ext, fn: string;
   begin
     fn:= dbReadStr(auto,'dateiname');
     fsplit(fn,dir,name,ext);
@@ -2127,6 +2124,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/11/15 23:00:40  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.60  2000/11/15 12:24:21  mk
   - fixed bug with Alt-P in reply trees
 

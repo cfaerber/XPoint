@@ -1061,7 +1061,7 @@ begin
     end
   else begin
     attrtxt(col.coldialog);
-    wrt(64,fy+fieldpos*2-1,iifc(FileDa(s),#251,' '));
+    wrt(64,fy+fieldpos*2-1,iifc(existBin(s),#251,' '));
     testarc:=true;
     end;
 end;
@@ -1069,7 +1069,7 @@ end;
 procedure DispArcs;
   procedure ww(y:byte; var p:string);
   begin
-    wrt(64+(screenwidth-80) div 2 ,fy+y,iifc(FileDa(p),#251,' '));
+    wrt(64+(screenwidth-80) div 2 ,fy+y,iifc(ExistBin(p),#251,' '));
   end;
 begin
   attrtxt(col.coldialog);
@@ -1513,6 +1513,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/11/15 23:00:40  mk
+  - updated for sysutils and removed dos a little bit
+
   Revision 1.63  2000/11/13 11:09:29  ml
   - uses serial kill - doesseems to be needed
 
