@@ -69,7 +69,7 @@ var  fname    : pathstr;
      if filepos(f)<n then begin
        fillchar(b,sizeof(b),0);
        blockwrite(f,b,n-filepos(f));
-       end;
+     end;
    end;
 
    procedure create_header;
@@ -133,7 +133,7 @@ var  fname    : pathstr;
        else begin
          s:=left(qvref,p-1);
          qvref:=copy(qvref,p+1,80);
-         end;
+       end;
        val(s,w,r);
        if w=0 then exiterr('Mission or illegal cross reference in page '+strs(pnr));
        nextqvref:=w;
@@ -146,7 +146,7 @@ var  fname    : pathstr;
          p:=pos('   ',s); p1:=p;
          while (p<=length(s)) and (s[p]=' ') do inc(p);
          s:=copy(s,1,p1-1)+#$1a+chr(p-p1)+copy(s,p,80);
-         end;
+       end;
        compr:=s;
      end;
 
@@ -183,17 +183,17 @@ var  fname    : pathstr;
            if (pp>0) and (pp<p) then begin
              delete(qs,pos('<<',qs),2);
              inc(sub,2);
-             end;
+           end;
          until (pp=0) or (pp>=p);
          repeat
            pp:=pos('>>',qs);
            if (pp>0) and (pp<p) then begin
              delete(qs,pos('>>',qs),2);
              inc(sub,2);
-             end;
+           end;
          until (pp=0) or (pp>=p);
          sub_hgh:=sub;
-         end;
+       end;
      end;
 }
 
@@ -219,63 +219,62 @@ var  fname    : pathstr;
      blockwfw(pnr);
      if no_lastnext then begin
        last:=0; next:=0;
-       end
-     else begin
+     end else begin
        readln(t,st);
        if pos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
        val(left(st,pos(' ',st)-1),last,res);
        if res<>0 then exiterr('Illegal LAST statement');
        val(mid(st,pos(' ',st)+1),next,res);
        if res<>0 then exiterr('Illegal NEXT statement');
-       end;
+     end;
      blockwfw(last); blockwfw(next);
      if last<>0 then begin
-       inc(qvwun); qvwused[qvwun]:=last; end;
+       inc(qvwun); qvwused[qvwun]:=last;
+     end;
      if next<>0 then begin
-       inc(qvwun); qvwused[qvwun]:=next; end;
+       inc(qvwun); qvwused[qvwun]:=next;
+     end;
      if leermode then begin
        lines:=1; z^[1]:='';
-       end
-     else
+     end else
        lines:=0;
      qvws:=0;
      repeat
        readln(t,s);
        if (s<>'@') and (s<>'@@') then begin
          p:=pos('@',s);
-         if p>0 then
-           if (p>1) and (s[p-1]='\') then
-             delete(s,p-1,1)
-           else begin
-             qvref:=copy(s,p+1,80);
-             s:=copy(s,1,p-1);
-             p1:=pos('[',s);
-             while p1>0 do begin
-               p2:=p1+1;
-               while (p2<length(s)) and (s[p2]<>']') do inc(p2);
-               if p2-p1>2 then begin
-                 inc(qvws);
-                 with qvw[qvws] do begin
-                   y:=lines+1; x:=p1{-sub_hgh(p1)}; l:=p2-p1-1;
-                   nn:=nextqvref;
-                   inc(qvwun);
-                   qvwused[qvwun]:=nn;
-                   end;
-                 s:=copy(s,1,p1-1)+copy(s,p1+1,p2-p1-1)+copy(s,p2+1,80);
-                 end;
-               inc(p1);
-               while (p1<length(s)) and (s[p1]<>'[') do inc(p1);
-               if p1=length(s) then p1:=0;
+         if p>0 then if (p>1) and (s[p-1]='\') then
+           delete(s,p-1,1)
+         else begin
+           qvref:=copy(s,p+1,80);
+           s:=copy(s,1,p-1);
+           p1:=pos('[',s);
+           while p1>0 do begin
+             p2:=p1+1;
+             while (p2<length(s)) and (s[p2]<>']') do inc(p2);
+             if p2-p1>2 then begin
+               inc(qvws);
+               with qvw[qvws] do begin
+                 y:=lines+1; x:=p1{-sub_hgh(p1)}; l:=p2-p1-1;
+                 nn:=nextqvref;
+                 inc(qvwun);
+                 qvwused[qvwun]:=nn;
                end;
+               s:=copy(s,1,p1-1)+copy(s,p1+1,p2-p1-1)+copy(s,p2+1,80);
              end;
+             inc(p1);
+             while (p1<length(s)) and (s[p1]<>'[') do inc(p1);
+             if p1=length(s) then p1:=0;
+           end;
+         end;
          inc(lines);
          z^[lines]:=compr(s);
-         end;
+       end;
      until (s='@') or (s='@@');
      if (lines=2) and (copy(z^[2],1,2)='^^') then begin
        z^[1]:=z^[2];
        lines:=1;
-       end;
+     end;
      size:=0;
      for i:=1 to lines do
        inc(size,length(z^[i])+1);
@@ -290,7 +289,7 @@ var  fname    : pathstr;
        if docode then encode;
        FastMove(gs[1],obuf[obufp+1],length(gs));
        inc(obufp,length(gs));
-       end;
+     end;
      blockwrite(f,obuf,obufp);
      create_page:=(s<>'@@');
      dispose(z);
@@ -303,7 +302,7 @@ var  fname    : pathstr;
        j:=1;
        while (j<=pages) and (pageadr[j].nr<>qvwused[i]) do inc(j);
        if j>pages then exiterr('Missing Page '+strs(qvwused[i]));
-       end;
+     end;
    end;
 
    procedure write_page_index;
@@ -320,7 +319,7 @@ var  fname    : pathstr;
        fillchar(b,sizeof(b),0);
        b[0]:=$1a;
        blockwrite(f,b,512-n);
-       end;
+     end;
      seek(f,132); blockwfw(pages);
      seek(f,138); blockwfl(adrix);
    end;
@@ -338,7 +337,7 @@ begin
   if not exist(fname+'.ihq') then begin
     writeln; writeln('Error: File not found.');
     halt(1);
-    end;
+  end;
 
   getmem(p,20000);
   assign(t,fname+'.ihq');
