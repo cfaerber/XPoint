@@ -158,7 +158,7 @@ procedure seluser(var cr:customrec);                 { Userauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
-    if not sel_verteiler and (dbReadInt(ubase,'userflags') and 4<>0) then begin
+    if (not cr.brk) and ((not sel_verteiler) and (dbReadInt(ubase,'userflags') and 4<>0)) then begin
       rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
       brk:=true;
       end;
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/12/30 12:44:56  mk
+  - fixed crash in seluser
+
   Revision 1.45  2000/12/03 12:38:21  mk
   - Header-Record is no an Object
 
