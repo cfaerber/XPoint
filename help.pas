@@ -281,6 +281,26 @@ label laden;
            xout := xout + add;
    end;
 
+   // check for \axxx' and convert to Ascii
+   procedure checkASCIIs (var s :string);
+   var s1 :string;
+       okay :boolean;
+       code, err :integer;
+   begin
+     okay := true;
+     while okay and (pos ('\a', s) <> 0) do
+     begin
+       s1 := copy(s, pos ('\a', s) + 2, 3);
+       val (s1, code, err);
+       okay := (err = 0) and (code > 0) and (code <= 255);
+       if okay then
+       begin
+         insert (Chr (code), s, pos ('\a', s));
+         delete (s, pos ('\a', s), 5);
+       end;
+     end;
+   end;
+
 begin
   if ap<>nr then begin
     if loaded then
@@ -364,6 +384,7 @@ laden:
     end;
   for i:=iif(NoHeader,1,2) to lines do begin
     s:=z^[i];
+    checkASCIIs(s);
     randseed:=100;
     wd:=wdt;
     p:=pos('<<',s);
@@ -758,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/05/02 19:57:34  mk
+  - check for \axxx implemented (merge from 3.40)
+
   Revision 1.32  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
