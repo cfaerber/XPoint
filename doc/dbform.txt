@@ -4,6 +4,10 @@ Datenbank-Formate von CrossPoint
 MSGS:  Nachrichtendatei
 
  1. Brett       String(5)   i    $/1/A/U + Int-Nr. aus BRETTER oder USER
+                                 $ = Intern
+                                 1 = PM 
+                                 A = îffentlich
+                                 U = User  
  2. Betreff     String(40)
  3. Absender    String(80)  i
  4. OrigDatum   Longint
@@ -16,8 +20,8 @@ MSGS:  Nachrichtendatei
                                         8=Wiedervorlage, 16=Crash, 32=zurÅckgest.
                                         64=interne Nachricht - keine Statusabfrage
                                         128=gecancelt
-11. Ablage      Byte             0..9 / 10..19
-12. Adresse     Longint          Offset in der Ablage
+11. Ablage      Byte             0..9 / 10..19 MPUFFER Datei
+12. Adresse     Longint          Offset in der Ablage (MPUFFER)
 13. MsgSize     Longint          Gesamtgrî·e incl. Header
 14. WVdatum     Longint          ab 0.9g: Original-Empfangsdatum bei Wiedervlg.
 15. MsgID       String(19)       ab 1.01
@@ -32,12 +36,12 @@ MSGS:  Nachrichtendatei
 17. Name        String(25)       ab 2.1:  Fido: Brettempf, sonst: Realname
 18. Flags       Longint          ab 3.1:  1=PGP-Signatur ok
                                           2=PGP-Signatur fehlerhaft
-                                          4=Multipart-MIME Nachricht (ab 3.2)
-                                          8+16+32=Priority (ab 3.21)
+                                          4=Multipart-MIME-Nachricht (ab 3.2)
+                                          8+16+32=PrioritÑt (ab 3.21)
                                            000=normal / 001=hoechste / 010=hoch               
                                            011=niedrig / 100=niedrigste
-                                          256 = Eigene Nachricht (f¸r Replaceown)
-19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
+                                           256=Eigene Nachricht (fÅr ReplaceOwn)
+19. Mimetyp     String(30)       ab 3.2:  Multipart-MIME-Typ der Nachricht
 
 Indizes:
 
@@ -92,7 +96,7 @@ USER:   User(U)/Verteiler
  6. AdrBuch     Byte        i       Adressbuchgruppe, 0:User steht nicht im Adressbuch
  7. Passwort    Extern           U
  8. UserFlags   Byte                ~1=DummUser, 2=Default:codieren, 4=Verteiler
-                                    8=keine Umlaute, 16=EBs
+                                    8=keine Umlaute, 16=EBs, 32+64+128=PrioritÑt
  9. Codierer    Byte             U  0=Nix, 1=QPC, 2=DES, 3-5=pmc1-3, 9=PGP
 
 Indizes:
@@ -126,6 +130,8 @@ BOXEN:  Boxendatei
 13. AVertreter  String(20)       ab 2.15: Vertreterbox fÅr AMs
 14. PVertreter  String(20)       ab 2.15: Vertreterbox fÅr PMs
 15. Boxdomain   String(60)       ab 2.15: Domain des Servers
+16. FQDN        String(60)       ab 3.20: FQDN (MsgID)
+17. Email       String(80)       ab 3.40: eMail-Adresse 
 
 Indizes:
 
@@ -185,7 +191,7 @@ AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
  9. Datum1      Longint          einzelnes Datum
 10. Datum2      Longint          dito
 11. Flags       Word             1=aktiv, 2=AutoLîschen, 4=nur geÑnderte Dat.
-                                 ab 3.30: 8=ersetzen (Supersede)
+                                 ab 3.30: 8=ersetzen (Supersedes)
 12. LastDate    Longint          letztes Sendedatum
 13. LastFdate   Longint          Dateidatum beim letzten Absenden
 14. LastMsgID   String(120)      ab 3.30: MessageID beim letzten Absenden
