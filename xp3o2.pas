@@ -166,7 +166,7 @@ procedure WriteHeader(var hd:theader; var f:file);
       if homepage<>''  then wrs('U-X-Homepage: '+homepage);
       if priority<>0   then wrs('U-X-Priority: '+strs(priority));
       if noarchive and (pmempfanz=0) and
-          (netztyp in [nt_UUCP, nt_ZConnect]) then
+          (netztyp in [nt_NNTP, nt_UUCP, nt_ZConnect]) then
         wrs('U-X-No-Archive: Yes');
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
@@ -459,6 +459,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/07/20 14:41:47  ma
+  - fixed: X-No-Archive did not work with NNTP
+
   Revision 1.40  2001/06/12 21:22:27  my
   - added more meaningful description for "ungelesen-fix" of 01/05/23
 
