@@ -827,8 +827,8 @@
       { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if Copy(ustr(cfgfile), 1, 5) = ('<XP>' + DirSepa) then
-        cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
+      if left(cfgfile,5)='<XP>' + DirSepa then
+        cfgfile:= ownpath + Mid(cfgfile,6);
       if LFNEnabled then cfgfile := GetLongName(cfgfile);
       pushhp(30129);
       { 'Externe Konfigurationsdatei laden' }
@@ -837,13 +837,14 @@
         if not exist(cfgfile) then
           if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
         EditFile(cfgfile,false,false,0,false);
+        if not exist(cfgfile) then exit;
         if LFNEnabled then cfgfile := GetShortName(cfgfile);
         fsplit(cfgfile,dir,name,ext);
         if ustr(dir) = ustr(fullClientDir) then
           cfgfile := name + ext
         else
-        if ustr(Copy(dir, 1, Length(ownpath))) = ustr(ownpath) then
-          cfgfile := '<XP>' + Copy(cfgfile, Length(ownpath), Length(cfgfile)-Length(ownpath)+1);
+        if ustr(left(dir, Length(ownpath))) = ustr(ownpath) then
+          cfgfile := '<XP>' + mid(cfgfile, Length(ownpath));
         if not (ustr(cfgfile) = ustr(pppExternCfg)) then
         begin
           pppExternCfg := cfgfile;
@@ -1860,6 +1861,12 @@
 
 {
   $Log$
+  Revision 1.10.2.40  2001/08/02 14:33:53  my
+  - EditExtern: filename of a non-existing file is written to
+    <server>.BFG only if the user confirmed file creation *and*
+    indeed created the file
+  JG:- EditExtern: optimized suboptimal (but working) code;
+
   Revision 1.10.2.39  2001/08/01 15:51:41  my
   - EditExtern: If LFNs are enabled, LFN is displayed in input field
     and Editor (but as before, SFN is stored in .BFG)
