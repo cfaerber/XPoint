@@ -294,7 +294,7 @@ end;
 {$ENDIF }
 
 
-function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi, edi}
+function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi}
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
 {$IFDEF BP }
@@ -336,9 +336,9 @@ asm
   @testslash2:
             cmp   al,'/'               { '/' -> Umbruch, falls kein }
             jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [di+bx-1],' '
+            cmp   byte ptr [si+bx-1],' '
             jz    @fnext
-            cmp   byte ptr [di+bx-1],'-'
+            cmp   byte ptr [si+bx-1],'-'
             jnz   @ufound
 
   @fnext:
@@ -384,9 +384,9 @@ asm
   @testslash2:
             cmp   al,'/'               { '/' -> Umbruch, falls kein }
             jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [edi+ebx-1],' '
+            cmp   byte ptr [esi+ebx-1],' '
             jz    @fnext
-            cmp   byte ptr [edi+ebx-1],'-'
+            cmp   byte ptr [esi+ebx-1],'-'
             jnz   @ufound
 
   @fnext:
@@ -396,7 +396,7 @@ asm
             mov   eax,ebx
 {$ENDIF }
 {$IFDEF FPC }
-end ['EAX', 'EBX', 'ESI', 'EDI'];
+end ['EAX', 'EBX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
@@ -2014,6 +2014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.4  2000/04/30 08:38:53  mk
+  - Crash Findumbruch beseitigt (edi->esi)
+
   Revision 1.9.2.3  2000/04/06 07:50:12  mk
   - Bloecke formatieren im Editor uebernommen
 
