@@ -1405,7 +1405,6 @@ end;
 
 procedure register_spam(Spam:boolean);
 var flags: longint;
-     halt: byte;
   NewStatus, OldStatus: TSpamStatus;
         s: TStream;
   spambrt: boolean;
@@ -1416,7 +1415,6 @@ var flags: longint;
 
        hd: Theader;
    hdsize: Longint;
-    hderr: boolean;
    ablage: Byte;
      madr: Longint;
       crc: string;
@@ -1546,7 +1544,7 @@ begin
 
           hd := THeader.Create;
           try
-            ReadHeader(hd,hdsize,hderr);
+            ReadHeader(hd,hdsize, false{hderr});
             _brett := UpperCase(hd.FirstEmpfaenger);
             i := CPos('@',_brett);
             if i<=0 then
@@ -1983,6 +1981,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.109  2003/03/28 23:20:42  mk
+  - fixed not initialized variable hderr (now false)
+
   Revision 1.108  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 
