@@ -30,8 +30,8 @@
 { Ist in Snapshot-Versionen definiert }
 {$DEFINE Snapshot}
 
-{ Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
-  CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
+{ Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er,
+  ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
 {.$DEFINE NO386 }
 
 { Wenn dieser Schalter definiert ist, wird eine Version mit CAPI-
@@ -65,7 +65,7 @@
 {$IFDEF BP }              { Nur fÅr Borland Pascal 7 und 8 }
   {$A+,B-,D-,E-,F-,I-,G+,L-,N-,O-,P-,Q-,R-,S-,T-,V-,X+,Y-}
   {$IFDEF NO386 }
-    {$G-,E+,N+} { keine 286er Befehle, kein CoPro nîtig }
+    {$G-}                 { keine 286er Befehle }
   {$ENDIF }
 {$ENDIF }
 
@@ -79,6 +79,9 @@
 
 {
   $Log$
+  Revision 1.30.2.3  2000/09/19 03:21:11  mk
+  - CoPro-Emu fuer XT Version nicht benoetigt
+
   Revision 1.30.2.2  2000/06/26 17:57:21  mk
   - Versionsnummer auf 3.30.2 gesetzt
 
