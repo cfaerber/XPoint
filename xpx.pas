@@ -34,6 +34,7 @@ procedure stop(txt:string);
 implementation
 
 uses
+  log,
   xp2;
 
 const starting : boolean = true;
@@ -133,6 +134,8 @@ initialization
 
   initdirs;
 
+  XPLog:= TLog.CreateWithFilename(XPLogName);
+
   starting:=false;
 finalization
   if not SetCurrentDir(shellpath) then
@@ -142,10 +145,17 @@ finalization
     attrtxt(7);
     writeln;
     writeln('Fehler: ',ioerror(exitcode,'<interner Fehler>'));
+    if XPLog<>nil then
+      XPLog.Log(llError,'Fehler: '+ioerror(exitcode,'<interner Fehler>'));
   end;
+  if XPLog<>nil then
+    XPLog.Free;
 end.
 {
   $Log$
+  Revision 1.37  2000/11/18 18:38:22  hd
+  - Grundstruktur des Loggings eingebaut
+
   Revision 1.36  2000/11/16 12:11:18  hd
   - Units entfernt
 

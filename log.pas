@@ -36,11 +36,11 @@ type
     protected
     
       FFilename         : string;
-      FKeepOpen         : boolean;
-      FHandle           : longint;
+      FHandle           : text;
       FCanWrite         : boolean;
       FFirstLog         : boolean;
       FLogLevel         : integer;
+      FisOpen           : boolean;
 
       procedure PFilename(const fn: string); virtual;
       procedure PLogLevel(l: integer); virtual;
@@ -52,11 +52,10 @@ type
       destructor Destroy; override;
 
       property Filename: string read FFilename write PFilename;
-      property KeepOpen: boolean read FKeepOpen write FKeepOpen;
+      property isOpen: boolean read FisOpen;
       property LogLevel: integer read FLogLevel write PLogLevel;
 
       procedure Close; virtual;
-      function  isOpen: boolean; virtual;
       function  Open: boolean; virtual;
       procedure Log(l: integer; const s: string); virtual;
       
@@ -74,80 +73,74 @@ const
 constructor TLog.Create;
 begin
   FFilename:= '';
-  FHandle:= -1;
-  FKeepOpen:= false;
   FCanWrite:= false;
   FFirstLog:= true;
+  FisOpen:= false;
+{$ifdef DEBUG}
+  FLogLevel:= llDebug;
+{$else}
   FLogLevel:= llError;
+{$endif}
 end;
 
 constructor TLog.CreateWithFilename(const fn: string);
 begin
   FFilename:= fn;
-  FHandle:= -1;
-  FKeepOpen:= false;
   FCanWrite:= true;
   FFirstLog:= true;
+  FisOpen:= false;
+{$ifdef DEBUG}
+  FLogLevel:= llDebug;
+{$else}
   FLogLevel:= llError;
+{$endif}
 end;
 
 destructor TLog.Destroy;
-var
-  s: string;
 begin
-  if FCanWrite then begin
-    if not isOpen
-      then Open;
-    if isOpen then begin
-      s:= FormatDateTime('hh:mm:ss',Now) + '   Logging ends' + newline + newline;
-      FileWrite(FHandle,s,length(s));
-    end;
+  if FCanWrite and (FLogLevel>llNone) then begin
+    Open;
+    if FisOpen then
+      writeln(FHandle,FormatDateTime('hh:mm:ss',Now),'   Logging ends',newline);
   end;
   Close;
 end;
 
 procedure TLog.Close;
 begin
-  if isOpen then begin
-    FileClose(FHandle);
-    FHandle:= -1;
+  if FisOpen then begin
+    CloseFile(FHandle);
+    FisOpen:= False;
   end;
 end;
 
-function TLog.isOpen: boolean;
-begin
-  result:= not(FHandle<0);
-end;
-
 function TLog.Open: boolean;
-var
-  s: string;
 begin
   result:= true;
-  if isOpen then
+  if FLogLevel=llNone then
     Exit
   else if FFilename='' then begin
     result:= false;
     FCanWrite:= false;
   end else begin
-    FHandle:= FileOpen(FFilename, fmOpenWrite);
+    AssignFile(FHandle,FFilename);
+    if FileExists(FFilename) then
+      Append(FHandle)
+    else
+      Rewrite(FHandle);
+    FisOpen:= ioresult=0;
     if not isOpen then begin
       result:= false;
       FCanWrite:= false;
     end else if FFirstLog then begin
-      s:= '---------- OpenXP ' + DateToStr(Now)
-        + verstr + betastr + pformstr + newline;
-      FileWrite(FHandle,s,length(s));
-      s:= FormatDateTime('hh:mm:ss',Now) + '   Logging started' + newline;
-      FileWrite(FHandle,s,length(s));
+      writeln(FHandle,'---------- OpenXP ',DateToStr(Now),verstr,betastr,pformstr);
+      writeln(FHandle,FormatDateTime('hh:mm:ss',Now),'   Logging started');
       FFirstLog:= False;
     end;
   end;
 end;
 
 procedure TLog.Log(l: integer; const s: string);
-var
-  msg: string;
 begin
   if (l<=llNone) or not(FCanWrite) then
     Exit
@@ -155,12 +148,12 @@ begin
     l:= llDebug;
   if l<FLogLevel then
     Exit;
-  msg:= FormatDateTime('hh:mm:ss',now) + Format(' %c %s'+newline, [llChars[l], s]);
-  if not isOpen then
+  if not FisOpen then
     Open;
-  FileWrite(FHandle,msg,length(msg));
-  if not FKeepOpen then
+  if FisOpen then begin
+    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now) + Format(' %c %s', [llChars[l], s]));
     Close;
+  end;
 end;
 
 procedure TLog.PFilename(const fn: string);
@@ -169,11 +162,10 @@ var
 begin
   if fn<>FFilename then begin
     Open;
-    if isOpen then begin
-      s:= FormatDateTime('hh:mm:ss',Now) + '   Logging ends' + newline + newline;
-      FileWrite(FHandle,s,length(s));
+    if FisOpen then begin
+      writeln(FHandle, FormatDateTime('hh:mm:ss',Now) + '   Logging ends' + newline);
+      Close;
     end;
-    Close;
     FFilename:= fn;
     FCanWrite:= true;
     FFirstLog:= true;
@@ -193,6 +185,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.2  2000/11/18 18:38:21  hd
+        - Grundstruktur des Loggings eingebaut
+
         Revision 1.1  2000/11/18 17:55:43  hd
         - Neue Klasse: TLog
           - Soll das Logging uebernehmen

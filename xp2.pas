@@ -89,7 +89,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,
+uses log,xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,
 {$IFDEF UnixFS}
   xpx,
 {$ENDIF}
@@ -754,16 +754,12 @@ procedure test_defaultbox;
 var d    : DB;
     tmpS, dname: string;
 begin
-{$IFDEF Debug }
-  dbLog('-- Boxen ÅberprÅfen');
-{$ENDIF }
+  XPLog.Log(llDebug,'Check default system');
   tmpS:= UpperCase(DefaultBox);
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,tmpS);
   if not dbFound then begin
-    {$ifdef Debug}
-    dbLog('-- Defaultbox "'+tmpS+'" nicht gefunden');
-    {$endif}
+    XPLog.Log(llError,'Default system <'+tmpS+'> not found!');
     if dbRecCount(d)=0 then begin
       {$IFDEF EASY}
       if not NeuBenutzergruss then
@@ -780,16 +776,14 @@ begin
     else begin
       dbGoTop(d);
       DefaultBox := dbReadStr(d,'boxname');
+      XPLog.Log(llDebug,'Default system: '+DefaultBox);
       dName := dbReadStr(d,'dateiname');
       end;
     SaveConfig;
     end
   else
     dName := dbReadStr(d,'Dateiname');
-  {$ifdef Debug}
-  dbLog('-- Defaultbox: "'+tmpS+'"');
-  dbLog('-- Dateiname : "'+dname+'"');
-  {$endif}
+  XPLog.Log(llDebug,'Default system: '+tmpS+', file: '+dname);
   if not FileExists(OwnPath+dname+BfgExt) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(dname,boxpar);
@@ -1197,6 +1191,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.86  2000/11/18 18:38:21  hd
+  - Grundstruktur des Loggings eingebaut
+
   Revision 1.85  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

@@ -123,10 +123,12 @@ const
   DirSepa  = '/';
   WildCard = '*';
   _MPMask  = '/';       { Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
+  newline  = #10;
 {$ELSE }
   DirSepa  = '\';
   WildCard = '*.*';
   _MPMask  = ':\';      { Reihenfolge NICHT AENDERN!!!!! }
+  newline  = #13#10;
 {$ENDIF }
 
 var
@@ -177,6 +179,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.48  2000/11/18 18:38:21  hd
+  - Grundstruktur des Loggings eingebaut
+
   Revision 1.47  2000/11/16 14:46:10  hd
   - Unit DOS entfernt
 

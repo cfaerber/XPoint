@@ -18,7 +18,7 @@ unit xp0;
 interface
 
 uses
-  typeform,keys,xpglobal,classes,sysutils;
+  typeform,keys,xpglobal,log,classes,sysutils;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -1165,11 +1165,20 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
   // erkannt und ausgewertet wurden, siehe xp2cfg.inc
   BadConfigLinesList: TStringList;
 
+const
+  XPLogName             = 'openxp.log';
+
+var
+  XPLog                 : TLog;         { Logging }
+
 implementation
 
 end.
 {
   $Log$
+  Revision 1.101  2000/11/18 18:38:21  hd
+  - Grundstruktur des Loggings eingebaut
+
   Revision 1.100  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 
