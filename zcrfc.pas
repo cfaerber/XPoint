@@ -575,15 +575,7 @@ begin
   end;
 
   p := pos('$PUFFER',UpperCase(uparc));
-{$IFDEF UnixFS}
-{$IFDEF fpc}
-  Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7));
-{$ELSE}
   Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
-{$ENDIF}
-{$ELSE}
-  Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
-{$ENDIF}
 
   assign(f1,Dest+fn);
 
@@ -735,15 +727,7 @@ again:
   if commandline then write(unxxxing[ctype]);
 
   p := pos('$DOWNFILE',UpperCase(arcer));
-{$IFDEF UnixFS}
-{$IFDEF fpc}
-  Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9));
-{$ELSE}
   Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
-{$ENDIF}
-{$ELSE}
-  Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
-{$ENDIF}
 
 //{$IFNDEF UnixFS}  { argh }
   if (ctype=compress_freeze) and (not FileExists(Dest+fn)) then
@@ -3761,6 +3745,9 @@ end;
 
 {
   $Log$
+  Revision 1.127  2002/12/22 13:28:31  mk
+  - use common Shell command (from xp1.pas) with linux, too
+
   Revision 1.126  2002/12/21 05:38:03  dodi
   - removed questionable references to Word type
 
