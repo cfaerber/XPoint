@@ -1,17 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ Editor v1.0   PM 05/93 }
+    OpenXP editor unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC}
 
+{ OpenXP editor unit }
 unit editor;
 
 interface
@@ -587,23 +597,6 @@ begin
 
 procedure freeblock(var ap:absatzp); forward;
 
-procedure FreeLastDelEntry;
-  procedure freelast(var dnp:delnodep);
-  begin
-    if dnp^.next=nil then begin
-      FreeBlock(dnp^.absatz);
-      dispose(dnp);
-      dnp:=nil;
-      end
-    else
-      freelast(dnp^.next);
-  end;
-begin
-  if assigned(DelRoot) then
-      freelast(delroot);
-end;
-
-
 procedure FreeDellist;             { Liste gel”schter Bl”cke freigeben }
 var ap : absatzp;
 begin
@@ -635,11 +628,14 @@ begin
   allocabsatz:=p;
 end;
 
-procedure freeabsatz(var p:absatzp);
+function freeabsatz(const p:absatzp): absatzp;
+var p2: absatzp;
 begin
-  if assigned(p) then
-    freemem(p,asize+p^.msize);
-  p:=nil;
+  if assigned(p) then begin
+    p2:=p;
+    freemem(p2,asize+p^.msize);
+    end;
+  result:=nil;
 end;
 
 { ------------------------------------------------------------ Edit }
@@ -1547,7 +1543,7 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-        editfFormatBlock  : BlockFormatieren;
+//        editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
 
@@ -1871,8 +1867,12 @@ initialization
   AktEd := nil;
 finalization
 end.
+
 {
   $Log$
+  Revision 1.52  2001/02/25 11:34:12  ma
+  - removed non-GPL code
+
   Revision 1.51  2001/02/19 11:48:49  mk
   - fixed crash in config/optionen/editor
 
@@ -1887,151 +1887,4 @@ end.
 
   Revision 1.47  2000/11/14 15:51:26  mk
   - replaced Exist() with FileExists()
-
-  Revision 1.46  2000/11/10 05:20:25  mk
-  RB:- Umbruch Fix
-
-  Revision 1.45  2000/11/05 15:08:31  mk
-  RB:- Aenderungen bezueglich - und /
-
-  Revision 1.44  2000/11/01 10:08:04  mk
-  - fixes Bug #116197, last CRLLF in SaveBlock
-
-  Revision 1.43  2000/10/25 06:24:09  mk
-  - fixes Bug #116197, last CRLF in LoadBlock
-
-  Revision 1.42  2000/10/17 10:05:39  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.41  2000/10/15 15:20:17  mk
-  JG:- Editor Funktion Glossary implementiert
-
-  Revision 1.40  2000/10/15 08:50:05  mk
-  - misc fixes
-
-  Revision 1.39  2000/08/08 13:18:13  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.38  2000/07/23 10:00:59  mk
-  - memavail wo moeglich rausgenommen
-
-  Revision 1.37  2000/07/20 17:08:50  mk
-  - Notwendigkeit von Absolute entfernt
-
-  Revision 1.36  2000/07/20 10:54:36  mk
-  - AnsiString Update, Editor funktioniert jetzt wieder
-
-  Revision 1.35  2000/07/15 20:02:59  mk
-  - AnsiString updates, noch nicht komplett
-
-  Revision 1.34  2000/07/14 11:35:41  mk
-  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
-
-  Revision 1.33  2000/07/06 09:12:08  mk
-  - AnsiString Updates
-
-  Revision 1.32  2000/07/05 17:10:53  mk
-  - AnsiString Updates
-
-  Revision 1.31  2000/07/05 09:50:12  hd
-  - AnsiString-Anpassung
-
-  Revision 1.30  2000/07/04 12:04:15  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.29  2000/07/03 13:31:37  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.28  2000/07/02 14:24:46  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.27  2000/06/23 15:59:10  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.26  2000/06/22 19:53:24  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.25  2000/05/06 17:29:19  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.24  2000/05/02 19:13:58  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.23  2000/04/30 08:30:38  mk
-  - Crash Findumbruch beseitigt (edi->esi)
-
-  Revision 1.22  2000/04/23 07:58:52  mk
-  - OS/2-Portierung
-
-  Revision 1.21  2000/04/13 12:48:30  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.20  2000/04/04 21:01:20  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.19  2000/04/04 10:33:55  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.18  2000/03/24 15:41:01  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.17  2000/03/22 19:43:01  rb
-  <Ctrl Del>: Wort rechts l”schen
-
-  Revision 1.16  2000/03/21 21:19:09  rb
-  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
-
-  Revision 1.15  2000/03/20 11:27:44  mk
-  - Persistene Bloecke im Editor sind jetzt default
-
-  Revision 1.14  2000/03/17 21:22:10  rb
-  vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
-
-  Revision 1.13  2000/03/17 11:16:33  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.12  2000/03/15 21:49:47  mk
-  - kleiner Bugfix fuer Editor (im letzten Patch eingebaut)
-
-  Revision 1.11  2000/03/14 15:15:35  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.10  2000/03/09 23:39:32  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.9  2000/03/02 20:51:22  rb
-  Wrapper-Funktionen vap und vap2 aus Editor entfernt
-
-  Revision 1.8  2000/02/29 19:44:38  rb
-  Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
-
-  Revision 1.7  2000/02/19 11:40:06  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.6  2000/02/18 18:39:03  jg
-  Speichermannagementbugs in Clip.pas entschaerft
-  Prozedur Cliptest in Clip.Pas ausgeklammert
-  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
-  Lister.asm in Lister.pas integriert
-
-  Revision 1.5  2000/02/17 16:14:19  mk
-  MK: * ein paar Loginfos hinzugefuegt
-
 }

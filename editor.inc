@@ -1,12 +1,23 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
+
+    OpenXP editor unit include file
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 { Offset der Cursorposition in dl^[scy].absatz; kann grî·er }
 { als die LÑnge des Absatzes sein!                          }
@@ -36,11 +47,8 @@ begin
     end;
 end;
 
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
+function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
          forward;
-{/TAINTED}	 
 
 procedure TruncAbs(aptr:absatzp);
 var
@@ -57,10 +65,7 @@ begin
         dec(p);
       if p<size then
       begin
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-        if AbsDelete(aptr,p,size-p,false,true)<>nil then; { .robo }
-{/TAINTED}	
+        AbsDelete(aptr,p,size-p,false,true);
         aufbau:=true;
       end;
     end;
@@ -719,13 +724,10 @@ begin
     end;
 end;
 
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
-{/TAINTED}
+function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
 var apnew : absatzp;
 begin
-  AbsDelete:=ap;
+  result:=ap;
   if len>0 then begin
     if delentry and (memavail-len-asize-16>minfree) then begin
       apnew:=AllocAbsatz(len);
@@ -750,7 +752,7 @@ begin
           CheckBlockOrder;
         end;
         freeabsatz(ap);
-        AbsDelete:=apnew;
+        result:=apnew;
       end;
     end;
     if bkorr then KorrBlockScrolled(true);
@@ -779,34 +781,6 @@ begin
     end;
 end;
 
-{TAINTED}
-{ unklar -- nicht im CVS-Log: muss ueberprueft werden, inwiefern 'leicht' veraendert. }
-{ 10.02.2000 robo - aus xp3ex.pas entnommen und leicht verÑndert }
-function GetQuote(ap:absatzp):string;
-var p,q : byte;
-    s   : string;
-begin
-  p:=min(ap^.size,80);
-  SetLength(s,p);
-  if p > 0 then Move(ap^.cont,s[1],p);
-  p:=cpos('>',s);
-  if p>5 then p:=0
-  else if p>0 then begin
-    repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
-      q:=p+1;     { ermitteln                                    }
-      while (q<=length(s)) and (q-p<=4) and (s[q]<>'>') do
-        inc(q);
-      if (q<=length(s)) and (s[q]='>') then p:=q;
-    until q>p;
-    while (p<length(s)) and (s[p+1]='>') do inc(p);
-    while (p<length(s)) and (s[p+1]=' ') do inc(p);
-  end;
-  s:=LeftStr(s,p);
-  GetQuote:=s;
-end;
-{ /robo }
-{/TAINTED}
-
 procedure NewLine;              { Enter - Absatz einfÅgen }
 var ap,ap2   : absatzp;
     wp       : integer;
@@ -832,18 +806,7 @@ begin
       copysize:=max(0,ap^.size-wp);
       spaces:=0;
       delsp:=0;
-{TAINTED}
-      { Quote-Reflow }
-      if config.QuoteReflow xor kb_shift then begin
-        quotec:=GetQuote(ap);
-        if quotec<>'' then begin
-          delsp:=wp;
-          while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
-          dec(delsp,wp);
-        end;
-      end
-      else quotec:='';
-{/TAINTED}    
+      quotec:='';
       quotes:=length(quotec);
       if wp>=ap^.size
         then quotes:=0; { kein Reflow bei Zeilenende }
@@ -888,8 +851,6 @@ var ap,ap2,apnew : absatzp;
     ss,size1,wp  : word;
     addspaces    : integer;
     wpa          : absatzp;
-    quotes          : integer; { Anzahl Quotezeichen fuer Quote-Reflow }
-    quotec1,quotec2 : string;  { Quotezeichen fuer Quote-Reflow }
 begin
   with e^ do begin
     ap:=ActAbs;
@@ -902,29 +863,10 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
-{TAINTED}
-        if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
-          then if not (ap^.cont[ap^.size-1] in ['-','/'])
-                  and (ap^.next^.cont[0]<>' ') then addspaces:=1;
-{/TAINTED}		  
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu gro·' }
         else begin   { AbsÑtze zusammenhÑngen }
-{TAINTED}	
-          { Quote-Reflow }
-          if config.QuoteReflow then begin
-            quotec1:=getquote(ap);
-            quotec2:=getquote(ap^.next);
-            quotes:=length(quotec1);
-            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
-              ap2:=ap^.next;
-              wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
-              dec(ss,length(quotec2));
-            end;
-          end;
-          { /robo }
-{/TAINTED}	  
           apnew:=AllocAbsatz(ss);
           wpa:=apnew;
           copyflags(ap,apnew);
@@ -944,8 +886,8 @@ begin
           fillchar(apnew^.cont[size1],addspaces,32);
           Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
           absatzwechsel(ap,apnew,false);
-          FreeAbsatz(ap);
-          FreeAbsatz(ap2);
+          ap:=FreeAbsatz(ap);
+          ap2:=FreeAbsatz(ap2);
           KorrBlockScrolled(true);
           modified:=true;
           end;
@@ -973,7 +915,7 @@ end;
 
 procedure WortRechtsLoeschen;   { Wort rechts lîschen }
 var wp,wpnew,size : integer;
-    wpa,ap        : absatzp; { .robo } { unbedenklich }
+    wpa           : absatzp;
 begin
   size:=ActAbs^.size;
   if workpos>=size then
@@ -986,11 +928,7 @@ begin
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-    ap:=ActAbs; { .robo }
-    wpa:=AbsDelete(ap,wp,wpnew-wp,true,true); { .robo }
-{/TAINTED}    
+    wpa:=AbsDelete(ActAbs,wp,wpnew-wp,true,true);
     MoveWorkpos(wp,wpa);
     aufbau:=true;
   end;
@@ -998,7 +936,7 @@ end;
 
 procedure WortLinksLoeschen;    { Wort links lîschen }
 var wp,wpnew{,size }: word;
-    wpa,ap        : absatzp; { .robo } { unbedenklich }
+    wpa             : absatzp;
 begin
   if workpos=0 then
     BackSpace
@@ -1012,27 +950,19 @@ begin
     while (wpnew>0) and not (ActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
     if wpnew=workpos then dec(wpnew);
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-    ap:=ActAbs; { .robo }
-    wpa:=AbsDelete(ap,wpnew,wp-wpnew,true,true); { .robo }
-{/TAINTED}   
+    wpa:=AbsDelete(ActAbs,wpnew,wp-wpnew,true,true);
     MoveWorkPos(wpnew,wpa);
     aufbau:=true;
   end;
 end;
 
 procedure ZeileLoeschen;        { akt. Zeile lîschen }
-var apd,ap : absatzp; { .robo } { unbedenklich }
+var apd    : absatzp;
     bc     : boolean;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
     if (ActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-      ap:=ActAbs; { .robo }
-      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
-{/TAINTED}      
+      AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
     end
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz lîschen }
       absatzwechsel(ActAbs,ActAbs^.next,false);
@@ -1048,39 +978,25 @@ begin
         AddDelEntry(ActAbs);
       end
       else begin
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-        ap:=ActAbs; { .robo }
-        FreeAbsatz(ap); { .robo }
-{/TAINTED}	
+        FreeAbsatz(ActAbs);
       end;
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
     end
-    else begin                     { 3. Fall: Zeile aus Absatz lîschen }
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-      ap:=ActAbs; { .robo }
-      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
-{/TAINTED}      
-    end;
+    else                     { 3. Fall: Zeile aus Absatz lîschen }
+      AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
   aufbau:=true;
 end;
 
 procedure AbsatzRechtsLoeschen;
 var
   wp,size : integer;
-  ap      : absatzp; { .robo } { unbedenklich }
 begin
   size:=ActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
-{TAINTED}
-{ unklar -- nicht im CVS-Log }
-    ap:=ActAbs; { .robo }
-    AbsDelete(ap,wp,size-wp,true,true); { .robo }
-{/TAINTED}    
+    AbsDelete(ActAbs,wp,size-wp,true,true);
     aufbau:=true;
   end;
 end;
@@ -1151,7 +1067,7 @@ begin
             apnew^.cont[wp]:=t[1];
             if ap^.size>wp then
               Move(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
-            FreeAbsatz(ap);
+            ap:=FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
             if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1);
             end;
@@ -1168,7 +1084,7 @@ begin
   ZeichenEinfuegen(false);
 end;
 
-procedure Insert(var blk:absatzp; var endpos:position); forward; { .robo } { unbedenklich }
+procedure Insert(var blk:absatzp; var endpos:position); forward;
 
 procedure tabulator;
 var n,i   : byte;
@@ -1334,13 +1250,13 @@ end;
 { Block an Cursorposition einfÅgen; Blockzeiger auf Ende zurÅckliefern }
 { blk^ wird freigegeben!                                               }
 
-procedure Insert(var blk:absatzp; var endpos:position); { .robo } { unbedenklich }
+procedure Insert(var blk:absatzp; var endpos:position);
 var ap,ap2,ap3,apn : absatzp;
     ss             : word;
     wp             : integer;
     spaces         : integer;
 begin
-  endpos.absatz:=nil; { .robo } { unbedenklich }
+  endpos.absatz:=nil;
   if blk=nil then exit;
   ap:=ActAbs;
   spaces:=EndSpaces;
@@ -1349,9 +1265,7 @@ begin
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu gro· }
-{TAINTED} { unklar -- nicht im CVS-Log }
-    else if assigned(blk) { .robo }
-{/TAINTED}    
+    else if assigned(blk)
     then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
@@ -1365,10 +1279,10 @@ begin
       endpos.offset:=wp+ss;
       absatzwechsel(ap,ap2,true);
       blockabsinsert(ap,ap2,wp,ss);
-      FreeAbsatz(ap);
+      ap:=FreeAbsatz(ap);
       e^.modified:=true;
     end;
-    FreeAbsatz(blk);
+    blk:=FreeAbsatz(blk);
   end
   else begin                              { mehrere AbsÑtze einfÅgen }
     apn:=blk;
@@ -1379,10 +1293,7 @@ begin
       error(2);     { 'Absatz zu gro· }
       FreeBlock(blk);
     end
-{TAINTED} { unklar -- nicht im CVS-Log }
-    else if assigned(blk) { .robo }
-{/TAINTED}    
-    then begin
+    else if assigned(blk)then begin
       ap2:=AllocAbsatz(blk^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
       Move(ap^.cont,ap2^.cont,wp-spaces);
@@ -1407,9 +1318,9 @@ begin
       absatzwechsel(ap,ap2,false);
       endpos.absatz:=ap3;
       endpos.offset:=apn^.size;
-      FreeAbsatz(apn);
-      FreeAbsatz(blk);
-      FreeAbsatz(ap);
+      apn:=FreeAbsatz(apn);
+      blk:=FreeAbsatz(blk);
+      ap:=FreeAbsatz(ap);
       e^.modified:=true;
     end
     else
@@ -1419,14 +1330,12 @@ begin
   aufbau:=true;
 end;
 
-procedure InsertWithMark(var ap:absatzp); { .robo }{ unbedenklich }
+procedure InsertWithMark(var ap:absatzp);
 var pos : position;
 begin
   if assigned(ap) then begin
     Insert(ap,pos);
-{TAINTED} { unklar -- nicht im CVS-Log }
-    if assigned(pos.absatz) then begin { .robo }
-{/TAINTED}    
+    if assigned(pos.absatz) then begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
@@ -1498,7 +1407,7 @@ begin
     errsound
   else begin
     Insert(ap,endp);
-    if assigned(endp.absatz) then begin { .robo }
+    if assigned(endp.absatz) then begin
       SetBlockMark(1);
       SetBlock(2,endp.absatz,endp.offset,2);
       KorrBlockScrolled(false);
@@ -1673,10 +1582,10 @@ begin
 end;
 
 procedure BlockKopieren;     { Ctrl-K-C }
-var ap : absatzp; { .robo }
+var ablock: absatzp;
 begin
-  ap:=CopyBLock; { .robo }
-  InsertWithMark(ap); { .robo }
+  ablock:=CopyBlock;
+  InsertWithMark(ablock);
 end;
 
 procedure BlockEinAus;
@@ -1752,16 +1661,13 @@ end;
 
 
 procedure BlockClpEinfuegen;
-var ap : absatzp; { .robo }
+var lblock: absatzp;
 begin
   with e^ do
     if Clipavailable then begin
       ClipToFile(EdTempFile);
-{TAINTED}
-  { unklar -- nicht im CVS-Log }
-      ap :=LoadBlock(EdTempFile,false,0,rrand); { .robo }
-      InsertWithMark(ap); { .robo }
-{/TAINTED}      
+      lblock:=LoadBlock(EdTempFile,false,0,rrand);
+      InsertWithMark(lblock);
       { if FileExists(EdTempFile) then era(EdTempFile); }
     end
     else begin
@@ -1855,205 +1761,6 @@ begin
     writeln(lst);
     end;
 end;
-
-{TAINTED}
-
-{ Block reformatieren }
-
-procedure BlockFormatieren; { by Robo }
-var ap,ap2    : absatzp;
-    apnew     : absatzp;
-    fp        : integer;
-    copysize  : integer;
-    ss,size1  : word;
-    addspaces : integer;
-    spaces    : integer;
-    quotes    : integer;
-    quotec1   : string;
-    quotec2   : string;
-    saveumbr  : boolean;
-
-  procedure su(ap:absatzp);    { Umbruch einstellen }
-  begin
-    with e^ do
-      if ap^.size<rrand-10 then
-        if na_umbruch=0 then ap^.umbruch:=false
-        else if na_umbruch=2 then ap^.umbruch:=true;
-  end;
-
-begin
-  with e^ do begin
-    if blockinverse or blockhidden then begin
-      { kein Block markiert oder Blockmarkierung ausgeschaltet:
-        ActAbs bis Leerzeile formatieren }
-      if ActAbs^.size=0 then begin { Leerzeile -> abbrechen }
-        errsound;
-        exit;
-      end;
-      SetBlock(1,ActAbs,0,2);
-      ap:=ActAbs;
-      if config.QuoteReflow and assigned(ap^.next)
-        then quotec1:=getquote(ap^.next)
-        else quotec1:='';
-      while assigned(ap^.next) and (ap^.next^.size>length(quotec1)) do begin
-        ap:=ap^.next;
-        if config.QuoteReflow and assigned(ap^.next)
-          then quotec1:=getquote(ap^.next)
-          else quotec1:='';
-      end;
-      SetBlock(2,ap,ap^.size,3);
-    end
-    else begin
-      { Blockmarkierung auf Absatzanfang und Absatzende ausdehnen }
-      with block[1].pos do
-        if offset>0 then offset:=0;
-      bskorr(1,1);
-      with block[2].pos do
-        if offset=0
-          then SetBlock(2,absatz^.prev,absatz^.prev^.size,block[2].disp)
-          else
-            if offset<absatz^.size then offset:=absatz^.size;
-      bskorr(2,3);
-    end;
-    { Cursor auf Blockanfang setzen }
-    gotopos(block[1].pos,0);
-    ap:=ActAbs;
-    saveumbr:=ap^.umbruch;
-    ap^.umbruch:=true;
-    repeat
-      fp:=advance(ap,0,rrand);
-      if fp<ap^.size then begin  { Absatz umbrechen }
-        spaces:=0;
-        if config.QuoteReflow
-          then quotec1:=GetQuote(ap)
-          else quotec1:='';
-        quotes:=length(quotec1);
-        if quotes>rrand div 2 then begin
-          quotec1:=trimright(quotec1);
-          quotes:=length(quotec1);
-          if quotes>rrand div 2 then quotes:=0;
-        end;
-        if config.autoindent and (quotes=0) then begin
-          while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
-            inc(spaces);
-          if spaces>rrand div 2 then spaces:=0;
-        end;
-        if (fp<=quotes) or (fp<=spaces) then begin { Absatz kann nicht umgebrochen werden }
-          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
-          errsound;
-          break;
-        end;
-        copysize:=max(0,ap^.size-fp);
-        if createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
-        then begin
-          if spaces>0 then
-            fillchar(ap2^.cont,spaces,' ')
-          else if quotes>0 then
-            Move(quotec1[1],ap2^.cont[0],quotes);
-          if assigned(ap^.next) then
-            ap^.next^.prev:=ap2;
-          ap2^.next:=ap^.next;
-          ap^.next:=ap2;
-          ap2^.prev:=ap;
-          blockabssplit(ap,ap,ap2,fp,spaces+quotes);
-          ap:=AbsDelete(ap,fp,copysize,false,false);
-          su(ap);
-          su(ap2);
-          KorrBlockScrolled(false);
-          TruncAbs(ap);
-          ap:=ap2;
-        end
-        else begin
-          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
-          errsound;
-          break;
-        end;
-      end
-      else
-      if assigned(ap^.next)
-      and (ap<>block[2].pos.absatz)
-      then begin  { AbsÑtze ggf. zusammenfÅgen }
-        addspaces:=1;
-        if ap^.size>0 then if ap^.cont[ap^.size-1] in ['-','/']
-          then addspaces:=0;
-        TruncAbs(ap^.Next); { Leerzeichen am Absatzende entfernen }
-        ss:=ap^.size + ap^.next^.size + addspaces;
-        if ss>maxabslen then
-          error(2)    { 'Absatz zu gro·' }
-        else if true then begin
-          spaces:=0;
-          if config.QuoteReflow then begin
-            quotec1:=getquote(ap);
-            quotec2:=getquote(ap^.next);
-            quotes:=length(quotec1);
-          end
-          else begin
-            quotec1:='';
-            quotec2:='';
-            quotes:=0;
-          end;
-          if config.autoindent and (quotes=0) and (length(quotec2)=0) then
-          begin
-            while (spaces<ap^.next^.size) and (ap^.next^.cont[spaces]=' ') do
-              inc(spaces);
-            if spaces>rrand div 2 then spaces:=0;
-          end;
-          TruncAbs(ap);
-          TruncAbs(ap^.next);
-          if (ap^.size>length(quotec1))
-          and (ap^.next^.size>length(quotec2))  { Leerzeile belassen }
-          and (trim(quotec1)=trim(quotec2))  { nur bei ident. QuoteCh zusammenf. }
-          then begin
-            if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
-              ap2:=ap^.next;
-              AbsDelete(ap2,0,length(quotec2),false,true);
-              dec(ss,length(quotec2));
-            end
-            else if spaces>0 then begin
-              ap2:=ap^.next;
-              AbsDelete(ap2,0,spaces,false,true);
-              dec(ss,spaces);
-            end;
-            apnew:=AllocAbsatz(ss);
-            apnew^.umbruch:=true;
-            ap2:=ap^.next;
-            blockabsinsert(ap,apnew,maxint,maxint);
-            blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
-            if assigned(ap^.prev) then begin
-              apnew^.prev:=ap^.prev;
-              ap^.prev^.next:=apnew;
-            end;
-            if assigned(ap2^.next) then begin
-              apnew^.next:=ap2^.next;
-              ap2^.next^.prev:=apnew;
-            end;
-            size1:=ap^.size;
-            Move(ap^.cont,apnew^.cont,size1);
-            fillchar(apnew^.cont[size1],addspaces,32);
-            Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
-            absatzwechsel(ap,apnew,false);
-            FreeAbsatz(ap);
-            FreeAbsatz(ap2);
-            KorrBlockScrolled(true);
-            ap:=apnew;
-          end
-          else ap:=ap^.next;
-        end
-        else begin
-          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
-          errsound;
-          break;
-        end;
-      end
-      else ap:=ap^.next;
-    until ap=block[2].pos.absatz^.next;
-    CheckBlockOrder;
-    modified:=true;
-    aufbau:=true;
-  end;
-end;
-
-{/TAINTED}
 
 { Markierten Block als String zurueckgeben }
 
@@ -2183,7 +1890,6 @@ var
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
-      apd   : absatzp; { .robo }
       insap : absatzp;
       pos   : position;
       repall: boolean;
@@ -2247,11 +1953,7 @@ begin
             if insap=nil then brk:=true
             else begin
               Move(repby[1],insap^.cont,length(repby));
-{TAINTED}
-  { unklar -- nicht im CVS-Log }
-              apd:=ActAbs; { .robo }
-              AbsDelete(apd,workpos,length(txt),false,true); { .robo }
-{/TAINTED}	      
+              AbsDelete(ActAbs,workpos,length(txt),false,true);
               Insert(insap,pos);
               MoveWorkpos(workpos+length(repby),ActAbs);
             end;
@@ -2406,7 +2108,6 @@ sok:  case p of
         9 : LocalMenu:=EditfWrapOn;
        11 : LocalMenu:=EditfSetup;
        { 12 : LocalMenu:=EditfSaveSetup; }
-        { /robo }
       else  LocalMenu:=0;
       end;
     wpop;
@@ -2424,14 +2125,8 @@ begin
     writeln(t,'AbsatzEnde=',absatzendezeichen);
     writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
 
-    { 01/2000 oh }
     writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
-    { /oh }
-{TAINTED}
-    { 10.02.2000 robo }
-    writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
-    { /robo }
-{/TAINTED}
+    writeln(t,'QuoteReflow=N');
     end;
   close(t);
 end;
@@ -2467,8 +2162,12 @@ begin
         end;
       end;
 end;
+
 {
   $Log$
+  Revision 1.43  2001/02/25 11:34:12  ma
+  - removed non-GPL code
+
   Revision 1.42  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
@@ -2480,115 +2179,4 @@ end;
 
   Revision 1.39  2000/12/25 14:02:39  mk
   - converted Lister to class TLister
-
-  Revision 1.38  2000/12/07 13:44:40  mk
-  RB:- move cursor to end of block after block insert functions
-
-  Revision 1.37  2000/11/28 10:14:08  mk
-  RB:- major Bugfix for special Ctrg-Y/Ctrg-B handling
-
-  Revision 1.36  2000/11/14 15:51:26  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.35  2000/11/14 11:14:31  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.34  2000/11/05 15:08:31  mk
-  RB:- Aenderungen bezueglich - und /
-
-  Revision 1.33  2000/10/25 12:29:33  mk
-  - Glossary auf neue Loadblock angepasst
-
-  Revision 1.32  2000/10/17 10:05:38  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.31  2000/10/15 15:20:17  mk
-  JG:- Editor Funktion Glossary implementiert
-
-  Revision 1.30  2000/10/01 15:50:22  mk
-  - AnsiString-Fixes
-
-  Revision 1.29  2000/09/30 16:31:40  mk
-  - AnsiString-Bugfix
-
-  Revision 1.28  2000/08/12 11:20:48  mk
-  JG:- Quotereflow Fix
-
-  Revision 1.27  2000/07/31 22:05:04  mk
-  RB:- Quotereflow verfeinert
-
-  Revision 1.26  2000/07/21 21:17:42  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.25  2000/07/14 11:35:41  mk
-  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
-
-  Revision 1.24  2000/07/05 17:10:53  mk
-  - AnsiString Updates
-
-  Revision 1.23  2000/07/05 09:50:12  hd
-  - AnsiString-Anpassung
-
-  Revision 1.22  2000/07/04 12:04:15  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.21  2000/07/03 16:20:02  hd
-  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
-
-  Revision 1.20  2000/07/02 14:24:46  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.19  2000/05/06 17:29:19  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.18  2000/04/27 09:06:55  jg
-  - Editor: Pgdn in der letzten Textseite springt ohne scrollen zum Textende
-            beim Quote-Reflow wird der Cursor an den Zeilenanfang gesetzt,
-            und nicht mehr hinter das Quotezeichen
-
-  - Lister: "/" als Hervorhebezeichen erlaubt.
-
-  Revision 1.17  2000/04/06 20:55:52  rb
-  Bugfixes; ich wills schliesslich keinen Murks hinterlassen
-
-  Revision 1.16  2000/03/27 22:21:59  rb
-  Bugfix fÅr 'Block reformatieren'
-
-  Revision 1.15  2000/03/21 22:08:20  rb
-  kleiner Schînheitsbugfix fÅr 'Block reformatieren', Onlinehilfe angepasst
-
-  Revision 1.14  2000/03/21 21:19:09  rb
-  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
-
-  Revision 1.13  2000/03/21 01:01:55  rb
-  'Block reformatieren' verbessert, weiterer kleiner Bugfix
-
-  Revision 1.12  2000/03/17 23:10:27  rb
-  'Block reformatieren' fertiggestellt
-
-  Revision 1.11  2000/03/17 21:22:10  rb
-  vActAbs entfernt, erster Teil von 'Blîcke reformatieren' (<Ctrl K><F>)
-
-  Revision 1.10  2000/03/02 20:51:22  rb
-  Wrapper-Funktionen vap und vap2 aus Editor entfernt
-
-  Revision 1.9  2000/02/19 11:40:06  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.8  2000/02/18 09:04:56  mk
-  RB: * RTE im Editor behoben
-
-  Revision 1.7  2000/02/17 08:34:51  mk
-  RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts in die neue Zeile
-        umgebrochen wird
-
-  Revision 1.6  2000/02/15 22:22:04  mk
-  RB: * Quote-Reflow jetzt vollstaendig implementiert
-
-  Revision 1.5  2000/02/15 20:43:35  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
 }

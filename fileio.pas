@@ -115,10 +115,10 @@ function  IsPath(const Fname:string):boolean;
 { Generate name for a temp file, returns empty string if not successful }
 function  TempFile(const path:string):string;
 
-{ Generate a name for a temp file beginning with ld (max. 4 chars).
+{ Generate a name for a temp file beginning with startnamewith (max. 4 chars).
   Specify ext with a trailing "." (in Dos). Returns empty string if
   not successful }
-function  TempExtFile(path,ld,ext:string):string;
+function TempExtFile(path,startnamewith,ext:string):string;
 
 { Return file size or zero if file does not exist }
 function  _filesize(const fn:string):longint;
@@ -515,18 +515,14 @@ begin
   result:=AddDirSepa(path)+n;
 end;
 
-{TAINTED}
-function TempExtFile(path,ld,ext:string):string;
-var n : string[MaxLenFilename];
+function TempExtFile(path,startnamewith,ext:string):string;
 begin
   result:='';
   if not IsPath(path)then exit;
   repeat
-    n:=ld+formi(random(10000),4)+ext
-  until not FileExists(path+n);
-  result:=path+n;
+    result:=path+startnamewith+formi(random(10000),4)+ext
+  until not FileExists(result);
 end;
-{/TAINTED}
 
 function _filesize(const fn:string):longint;
 var sr : TSearchrec;
@@ -645,6 +641,9 @@ end.
 
 {
   $Log$
+  Revision 1.91  2001/02/25 11:34:12  ma
+  - removed non-GPL code
+
   Revision 1.90  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
