@@ -36,7 +36,7 @@ MSGS:  Nachrichtendatei
                                           8+16+32=Priority (ab 3.21)
                                            000=normal / 001=hoechste / 010=hoch               
                                            011=niedrig / 100=niedrigste
-
+                                          256 = Eigene Nachricht (für Replaceown)
 19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
 
 Indizes:
