@@ -440,8 +440,8 @@ function TMimeAnalyzer.GuessEOL:TMimeEOL;
 var lf,cr,crlf: Integer;
 begin
   crlf:=FCRLFCount;
-  lf  :=FCRCount-FCRLFCount;    (* bare LFs *)
-  cr  :=FLFCount-FCRLFCount;    (* bare CRs *)
+  lf  :=FLFCount-FCRLFCount;    (* bare LFs *)
+  cr  :=FCRCount-FCRLFCount;    (* bare CRs *)
 
   { NB: We err on the safe side here: If there's the slightest doubt
     that a file has a certain EOL type, we return MimeEolNone;
@@ -553,6 +553,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2001/09/10 17:25:17  cl
+// - BUGFIX: CR EOL was detected as LF and vice versa.
+//
 // Revision 1.6  2001/09/10 15:58:01  ml
 // - Kylix-compatibility (xpdefines written small)
 // - removed div. hints and warnings
