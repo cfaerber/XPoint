@@ -585,7 +585,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 13   ~ ^Ja  , ^Nein~
 14   vollstÑndiges Netcall-Logfile (NETCALL.LOG)
 15   Nachrichtenmarkierungen nach Netcall aufheben
-16   DatumsbezÅge nach Netcall anpassen
 + 255
 # Fensterbreite
 0    46
@@ -3670,6 +3669,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.17  2001/07/18 17:27:03  my
+# - removed resource 254,16 ("update date entries after netcall")
+#
 # Revision 1.16  2001/06/20 16:17:29  ma
 # - made beta splash screen more "GPLish"
 # - added /nb command line notice
