@@ -1720,7 +1720,11 @@ fromstart:
              end;
            end else
            begin
-             s1 := TFileStream.Create(FileName,fmOpenRead);
+             // 0 byte long message: no file here, so create one
+             if FileExists(FileName) then
+               s1 := TFileStream.Create(FileName,fmOpenRead)
+             else
+               s1 := TFileStream.Create(FileName,fmCreate);
              if ContentType.NeedCharset then begin
                hdp.charset:=MimeCharsetToZC(FileCharset);
                hdp.x_charset:=ContentCharset;
@@ -2332,6 +2336,9 @@ finalization
 
 {
   $Log$
+  Revision 1.47  2002/04/07 10:08:33  mk
+  - fixed crash when sending messages with 0 byte length
+
   Revision 1.46  2002/03/03 11:25:24  mk
   - fixed cc bug
 
