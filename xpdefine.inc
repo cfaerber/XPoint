@@ -27,6 +27,9 @@
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {$DEFINE Beta }
 
+{ Ist in Snapshot-Versionen definiert }
+{$DEFINE Snapshot}
+
 { Wenn dieser Schalter nicht gesetzt ist, ben”tigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufw„rts lauff„hig }
 {.$DEFINE NO386 }
@@ -170,6 +173,9 @@
 
 {
   $Log$
+  Revision 1.28  2000/05/11 18:21:53  jg
+  - Compiledatum im Mailer-String von Snapshotversionen ($IFDEF Snapshot)
+
   Revision 1.27  2000/05/08 18:40:48  hd
   - NOEMS wieder entfernt
 

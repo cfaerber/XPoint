@@ -437,6 +437,16 @@ begin
   pgpo_keytest:=true;
 end;
 
+{$IFDEF Snapshot}
+function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
+var                                          { Format: 1105001824 } 
+ d:datetime;
+begin
+  unpacktime(filetime(ownpath+'xp.exe'),d);
+  compiletime:=(formi(d.day,2)+formi(d.month,2)+right(formi(d.year,2),2)
+    +formi(d.hour,2)+formi(d.min,2));
+end;
+{$ENDIF}
 
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
@@ -1747,8 +1757,9 @@ fromstart:
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
       { MK 01/00 VerkÅrzte Anzeige der Versionstypen/nummern }
       { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
-      hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)+pformstr+
-                     iifs(registriert.r2,' '+KomOrgReg+'R/'+
+      hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
+                     {$IFDEF Snapshot} + '@' + compiletime {$ENDIF} 
+                     +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2215,6 +2226,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/05/11 18:21:53  jg
+  - Compiledatum im Mailer-String von Snapshotversionen ($IFDEF Snapshot)
+
   Revision 1.28  2000/05/07 10:41:27  hd
   - Linux: Variable Fensterbreite
 
