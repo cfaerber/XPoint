@@ -556,8 +556,8 @@ begin
       FWrt(64, Screenlines, xp_client);   { 'CrossPoint/Client' }
       shell(s,600,3);
 {      XPWinshell(OwnPath + s,'', 600,3, false); }
-      attrtxt(col.colkeys);
-      FWrt(64, Screenlines, xp_xp);   { 'CrossPoint/OpenXP' }
+{      dispfunctionkeys(false); }
+      showscreen(false);
     end;
 
     if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
@@ -608,9 +608,6 @@ begin
           RenameFiles;
         end;
       end;
-
-      AppLog(fidologfile,'client.log');
-      if exist('client.log') then _era('client.log');
     end else
       if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
         if ImportUUCPfromSpool(SysopInp) then
@@ -621,6 +618,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.14  2001/04/14 10:07:01  mk
+  - Anpassungen Client-Modus
+
   Revision 1.13.2.13  2001/04/11 07:54:24  mk
   - weitere Arbeiten am Client-Modus
 

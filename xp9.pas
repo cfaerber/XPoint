@@ -1120,6 +1120,15 @@ var d         : DB;
     dbRead(d,'ZBV1',convert);
     readsystem(name,komm,fsuser,fspass,convert,typ,brk);
     if not brk then begin
+(*      dbOpen(dbox,BoxenFile,1);
+      SeekLeftBox(dbox,name);
+      if dbFound then nt:=dbReadInt(dbox,'netztyp') else nt:=100;
+      dbClose(dbox);
+      if nt=nt_UUCP then begin
+        rfehler(0; 'geht nicht im client-modus');
+        exit;
+      end; *)
+
       dbWrite(d,'Name',name);
       dbWrite(d,'Kommentar',komm);
       dbWrite(d,'fs-name',fsuser);
@@ -1869,6 +1878,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.20  2001/04/14 10:07:01  mk
+  - Anpassungen Client-Modus
+
   Revision 1.19.2.19  2001/04/10 11:36:38  mk
   - weitere Anpassungen Client-Modus
 

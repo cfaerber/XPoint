@@ -102,14 +102,26 @@
     if fqdom then begin  {16.01.00 HS: Eingabemîglichkeit fÅr FQDNs}
       maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(30001);
+      if nt = nt_UUCP then
+        mappsel(false,'username.dialin.t-online.de');
       inc(yy,2);
       end;
     freeres;
     readmask(brk);
-    if not brk and (name=DefFidoBox) then begin
-      HighlightName:=ustr(user);
-      aufbau:=true;
+    if not brk then
+    begin
+      if name=DefFidoBox then
+      begin
+        HighlightName:=ustr(user);
+        aufbau:=true;
       end;
+      if nt= nt_UUCP then begin
+        if lstr(fqdn)='username.dialin.t-online.de' then
+        begin
+          fqdn:=user+copy(fqdn,9,19)
+        end;
+      end;
+    end;
     enddialog;
   end;
 
@@ -1389,6 +1401,9 @@
 
 {
   $Log$
+  Revision 1.10.2.18  2001/04/14 10:07:01  mk
+  - Anpassungen Client-Modus
+
   Revision 1.10.2.17  2001/04/10 11:36:38  mk
   - weitere Anpassungen Client-Modus
 

@@ -1530,10 +1530,16 @@ begin
 
   promaf:=ntProMaf(nt);
   case defcom of
-    0 : if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
+    0 : begin
+          if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
           rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
           exit;
           end;
+          if ppp then begin
+          rfehler(854);     { 'Diese Funktion wird im Client-Modus nicht unterstÅtzt.' }
+          exit;
+          end;
+        end;
     1 : if ppp then
         begin
           hinweis(getres2(10800,28)); { 'Client-Modus - Newsgroup-Liste bitte Åber externen Client anfordern!' }
@@ -1826,6 +1832,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.13  2001/04/14 10:07:01  mk
+  - Anpassungen Client-Modus
+
   Revision 1.10.2.12  2001/04/11 07:54:24  mk
   - weitere Arbeiten am Client-Modus
 
