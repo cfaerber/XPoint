@@ -1,0 +1,104 @@
+
+Beim Umstieg auf eine neue Programmversion empfiehlt es sich, eine
+vollst„ndige Sicherung der alten Version incl. des Datenbestandes
+anzufertigen - fr den Fall, daá sich in der neueren Version zus„tz-
+liche Fehler eingeschlichen haben.
+
+Das Update gestaltet sich denkbar einfach: Kopieren Sie alle Dateien
+der neuen XP-Version in Ihr CrossPoint-Verzeichnis - fertig. Die meisten
+n”tigen Anpassungen erfolgen automatisch; alles Weitere entnehmen Sie
+bitte der nachfolgenden Liste.
+
+Die aufgelisteten nderungen gelten jeweils fr alle nachfolgenden
+Versionen. Wenn Sie also z.B. von XP 2.1 auf 3.1 umsteigen, mssen Sie
+alle nderungen ab Version 2.15 beachten.
+
+
+        ----------------------------------------------------------------
+
+2.0     Nach dem ersten Programmstart sollte einmal der Menpunkt
+        /Wartung/Sonstiges/MsgIDs_einlesen aufgerufen werden.
+
+        Es k”nnen absofort mehrere Telefonnummern pro Box eingegeben
+        werden, getrennt durch Leerzeichen. Bitte achten Sie darauf, daá
+        in keiner bereits eingetragenen Nummer ein Leerzeichen vorkommt;
+        CrossPoint wrde sie sonst fr zwei Nummern halten!
+
+        Tastenmakros fr Lister und Archiv-Viewer werden jetzt getrennt
+        behandelt. Lister-Makros, die auch fr den Archiv-Viewer gelten
+        sollen, mssen entsprechend umkonfiguriert werden.
+
+        ----------------------------------------------------------------
+
+2.15    Falls nur eine Serverbox eingetragen ist, entf„llt die Abfrage
+        des Boxnamens bei /Netcall/Alle, /N/Brettmanager/Sonstiges u.a.
+        Tastenmakros, die diese Funktionen verwenden, mssen umgeschrieben
+        werden (^M entfernen).
+
+        Falls Sie CrossPoint ber das Programm SHROOM starten, sollten
+        Sie dieses entfernen; XP stellt jetzt selbst gengend Speicher-
+        platz in der DOS-Shell zur Verfgung.
+
+        Fido: Die AKA-Einstellung bei /Fido/Optionen entf„llt. AKAs, die
+        bei allen Systemen mitgesendet werden sollen, mssen Sie bei den
+        einzelnen Servern und/oder bei einem allgemeinen Crash-Server
+        (99:99/99 - s. FIDO.DOC) eintragen.
+
+        Im AUTOEXEC-Verzeichnis k”nnen jetzt beliebige Batchdateien
+        abgelegt werden, die nach der Abarbeitung gel”scht werden. Falls
+        Sie dort irgendwelche Batchdateien auáer START/STOP abgelegt haben,
+        sollten Sie sie vor dem Start von XP in ein anderes Verzeichnis
+        verlagern.
+
+        Die Funktion PACKEN in Timinglisten heiát jetzt PACK (einheit-
+        liche englische Schreibweise).
+
+2.16    Bei /Config/Optionen/Paáwort eingegebene Paáw”rter werden mit
+        dem Update gel”scht und mssen neu eingegeben werden.
+
+        ZCONNECT/JANUS: Der Entpacker fr die eingehenden Nachrichten
+        *muss!*, wie in der Online-Hilfe angegeben, per DOS-Pfad erreichbar
+        sein. Es gengt nicht mehr, ihn ins XP-Verzeichnis zu kopieren!
+        Der Entpacker wird jetzt im SPOOL-Unterverzeichnis gestartet.
+        Falls Sie spezielle Entpacker-Batches verwenden, mssen Sie diese
+        und die Entpacker-Einstellung ggf. anpassen.
+
+2.93    Die W„hlbefehl-Einstellung befindet sich jetzt nicht mehr in der
+        Box-Konfiguration, sondern bei /Config/Modem. Bitte Einstellung
+        kontrollieren!
+
+3.0     XP kopiert jetzt die PKT-Dateien von GS-Mailboxen selbst„ndig
+        zu einem Puffer zusammen. Wer als Entpacker fr GS-Mailbox eine
+        Batchdatei eingetragen hat, MUSS diese durch einen normalen
+        Packer-Entrag ersetzen. Der Entpacker muá ber einen DOS-Pfad
+        erreichbar sein!
+
+        ----------------------------------------------------------------
+
+3.1     Die Fido-Nodelistenverwaltung wurde vollst„ndig berarbeitet.
+        Zusatztools, die die Nodelisten-Daten von XP 3.02 verwenden
+        (z.B. XBrowse), funktionieren nicht mehr mit Version 3.1 bzw.
+        mssen an die neue Version angepaát werden. Dies gilt u.U. auch
+        fr Request-Zusatztools, die die Datei REQUEST.DAT manipulieren.
+
+        Falls Sie mit PD-Zmodem arbeiten, sollten Sie als Upload- und
+        Download-Protokoll einfach "Zmodem" eintragen bzw. mit F2
+        ausw„hlen. XP erzeugt dann die passenden Parameter fr den
+        Zmodem-Aufruf.
+
+        Die Telefonkostenberechnung wurde vollst„ndig berarbeitet.
+        šberprfen Sie die Einstellungen unter /Config/Optionen
+        /Gebhren und fr die einzelnen Server unter /Edit/Boxen/Edit
+        /Gebhren.
+
+3.11    ZCONNECT/Janus+: Falls Sie bei einer Mailbox pollen, die mit
+        NCB-Mail arbeitet, weisen Sie den Sysop nach dem Update auf
+        XP 3.11 darauf hin, daá er in den Einstellungen fr Ihren Point
+        den Schalter "l”sche gesendet" bei "Extra" einschalten sollte.
+        Dadurch wird verhindert, daá bei einem Netcall-Abbruch Daten
+        mehrfach bertragen und von XP 3.11 mehrfach eingelesen werden.
+
+3.2     Es empfiehlt sich alle Dateien mit der Endung *.IX1 vorher zu 
+        l”schen, da umfangreiche nderungen in den Indices vorgenommen 
+        werden. In keinem Fall kommt man aber um die Neuanlage letzterer
+        herum.
