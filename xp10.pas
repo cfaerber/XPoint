@@ -969,12 +969,12 @@ var
     freeres;
   end;
 
-  procedure MacroKey;
+  procedure MacroKey(strIdx : integer);
   var x,y    : byte;
       tt,ttt : string;
       ta     : tap;
   begin
-    tt:=left(e.Strings[a+CurRow],15);
+    tt:=left(e.Strings[strIdx],15);
     diabox(35,5,'',x,y);
     mwrt(x+20,y,' <Shift Esc> ');
     mwrt(x+3,y+2,getres(1008));   { 'neue Taste' }
@@ -987,20 +987,20 @@ var
     dispose(ta);
     closebox;
     if tt<>ttt then begin
-      e.Strings[a+CurRow]:=forms(tt,15)+mid(e.Strings[a+CurRow],16);
+      e.Strings[strIdx]:=forms(tt,15)+mid(e.Strings[strIdx],16);
       sort_e;
       modi:=true;
       end;
   end;
 
-  procedure MacroScope;
+  procedure MacroScope(strIdx : integer);
   var x,y,i  : byte;
       brk    : boolean;
       enable : array[1..mtypes-1] of boolean;
       s: String;
   begin
     for i:=1 to mtypes-1 do
-      enable[i]:=(e[a+CurRow][15+i]<>' ');
+      enable[i]:=(e[strIdx][15+i]<>' ');
     dialog(24,mtypes+1,getres2(1009,0),x,y);    { 'Makro gÅltig im..' }
     for i:=1 to mtypes-1 do begin
       maddbool(3,1+i,getres2(1009,i),enable[i]); mhnr(589+i);
@@ -1011,9 +1011,9 @@ var
     if not brk then begin
       for i:=1 to mtypes-1 do
       begin
-        s := e.Strings[a+CurRow];
+        s := e.Strings[strIdx];
         s[15+i]:=iifc(enable[i],'*',' ');
-        e.Strings[a+CurRow] := s;
+        e.Strings[strIdx] := s;
       end;
       modi:=true;
       end;
@@ -1662,8 +1662,8 @@ begin   {procedure UniEdit(typ:byte); }
               1 : NewMacro;
               2 : if CurRow+a<=anzahl then DelEntry(a+CurRow-1);  //EintragLîschen
               3 : if CurRow+a<=anzahl then EditMacro(a+CurRow-1); //Macro Tastenfolge bearbeiten
-              4 : if CurRow+a<=anzahl then MacroKey;
-              5 : if CurRow+a<=anzahl then MacroScope;
+              4 : if CurRow+a<=anzahl then MacroKey(a+CurRow-1);  //
+              5 : if CurRow+a<=anzahl then MacroScope(a+CurRow-1);
               6 : begin
                     savefile(2,KeydefFile);
                     modi:=false;
@@ -2041,6 +2041,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.36  2000/08/20 11:57:32  mk
+  MO:- weitere Index-Fehler behoben
+
   Revision 1.35  2000/08/15 11:12:23  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 
