@@ -59,7 +59,9 @@ type TXPServer = class
     F_ScriptExists, F_FromWithoutPoint, F_DontCreateMessageIDs,
     F_AliasPoint, F_CallOnCallAll: boolean;
 
+    function GetAbsAddr: String;
     function GetFidoAbsAddr: String;
+    function GetUserDomain: String;
     function GetMessageIDType: byte;
 
     function GetIsFTN:     boolean;
@@ -89,6 +91,9 @@ type TXPServer = class
     property Email:     String  	read F_Email write F_Email;
     property ReplyTo:   String  	read F_ReplyTo write F_ReplyTo;
     property Fidoname:  String  	read F_Fidoname write F_Fidoname;
+
+    property UserDomain: string         read GetUserDomain;
+    property AbsAddr:   String          read GetAbsAddr;    
     property FidoAbsAddr: String        read GetFidoAbsAddr;
 
   { -- Misc ---------------------------------------------------------- }
@@ -245,6 +250,53 @@ begin
   result := Netztyp = nt_ZConnect;
 end;
 
+(*
+function ntDomainType(nt:eNetz):byte;
+begin
+  case nt of
+    nt_Netcall, nt_1 {???}  : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
+    nt_ZConnect             : ntDomainType:=5;   { @BOX.domain [@POINT.domain] }
+    nt_Magic                : ntDomainType:=1;   { @POINT oder @BOX }
+    nt_Pronet               : ntDomainType:=7;   { @BOX;POINT }
+    nt_Quick, nt_GS         : ntDomainType:=2;   { @POINT }
+    nt_Maus, nt_QWK, nt_90  : ntDomainType:=3;   { @BOX }
+    nt_Fido                 : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
+    nt_UUCP                 : ntDomainType:=6;   { @point.domain }
+  else // (POP3, NNTP, IMAP, Client)
+    ntDomainType:=8;   { eMail-Adresse ('email') }
+  end;
+end;
+*)
+function TXPServer.GetUserDomain:string;
+begin
+  case Netztyp of
+    nt_Netcall, nt_1        : result := iifs(AliasPoint,pointname+'.ZER','');
+    nt_Magic                : result := iifs(AliasPoint,'',pointname);
+    nt_Quick,nt_GS          : result := pointname;
+    nt_Maus, nt_QWK, nt_90  : result := '';
+    nt_Fido                 : result := FidoAbsAddr;
+    nt_ZConnect             : result := iifs(AliasPoint and (pointname<>''),pointname+domain,'');
+    nt_UUCP                 : result := iifs(AliasPoint or (pointname = ''),'',pointname+domain);
+    nt_Pronet               : result := Name+';'+pointname;
+    else                      result := '';
+  end;
+end;
+
+function TXPServer.GetAbsAddr:string;
+begin
+  case Netztyp of
+    nt_Netcall, nt_1        : result := username+'@'+iifs(AliasPoint,pointname,Name)+'.ZER';
+    nt_Magic                : result := username+'@'+iifs(AliasPoint,Name,pointname);
+    nt_Quick,nt_GS          : result := username+'@'+pointname;
+    nt_Maus, nt_QWK, nt_90  : result := username+'@'+Name;
+    nt_Fido                 : result := username+'@'+FidoAbsAddr;
+    nt_ZConnect             : result := username+'@'+iifs(AliasPoint,pointname,Name)+domain;
+    nt_UUCP                 : result := username+'@'+iifs(AliasPoint,Name+Boxdomain,pointname+domain);
+    nt_Pronet               : result := username+'@'+Name+';'+pointname;
+    else                      result := email;
+  end;
+end;
+
 function TXPServer.GetFidoAbsAddr:string;
 begin
 //  if AltAdr<>'' then
@@ -350,6 +402,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.5  2003/01/07 00:27:04  cl
+// - moved some functions from xpnt.pas to TXPServer
+//
 // Revision 1.4  2002/12/21 19:00:37  cl
 // - fixed Message-ID generation for Non-UUCP RFC net types
 //

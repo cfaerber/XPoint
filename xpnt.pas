@@ -99,12 +99,6 @@ type
       );
   end;
 
-type
-  eDomainType = (
-  //DoDi: some dummies, for now
-    dt0, dt1, dt2, dt3, dt4, dt5, dt6, dt7, dt8
-  );
-
 const
        midNone      = 0;
        midMausNet   = 1;
@@ -149,7 +143,6 @@ function mbNetztyp:eNetz;
 function ntZonly:boolean;                     { nur Z-Netz/alt }
 function ntXPctl(nt:eNetz):boolean;            { XP-Control-Messages }
 function ntClass(nt:eNetz):TNetClass;         { Netz-Uebertyp }
-
 function ntBinary(nt:eNetz):boolean;           { BinÑrmails erlaubt    }
 function ntBinaryBox(box:string):boolean;     { dito                  }
 function ntMIME(nt:eNetz):boolean;             { MIME mˆglich          }
@@ -157,7 +150,6 @@ function ntBinEncode(nt:eNetz):boolean;        { BinÑrmails werden uucodiert }
 function ntMessageID(nt:eNetz):byte;           { Message-ID-Format     }
 function ntDomainReply(nt:eNetz):boolean;      { Replys auf eig. Nachr. erkennbar }
 function ntZDatum(nt:eNetz):boolean;           { langes Datumsformat   }
-function ntDomainType(nt:eNetz):byte;          { Domain fÅr Absender + MsgID }
 function ntAutoZer(nt:eNetz):boolean;          { .ZER-Pflicht          }
 function ntAutoDomain(box:string; ownbox:boolean):string;   { .Domain }
 function ntServerDomain(box:string):string;   { Domain des Servers    }
@@ -437,23 +429,6 @@ begin
   ntMapsBrettliste:=(nt<>nt_QWK);
 end;
 
-function ntDomainType(nt:eNetz):byte;
-begin
-  case nt of
-    nt_Netcall, nt_1 {???}  : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
-    nt_ZConnect             : ntDomainType:=5;   { @BOX.domain [@POINT.domain] }
-    nt_Magic                : ntDomainType:=1;   { @POINT oder @BOX }
-    nt_Pronet               : ntDomainType:=7;   { @BOX;POINT }
-    nt_Quick, nt_GS         : ntDomainType:=2;   { @POINT }
-    nt_Maus, nt_QWK, nt_90  : ntDomainType:=3;   { @BOX }
-    nt_Fido                 : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
-    nt_UUCP                 : ntDomainType:=6;   { @point.domain }
-  else // (POP3, NNTP, IMAP, Client)
-    ntDomainType:=8;   { eMail-Adresse ('email') }
-  end;
-end;
-
-
 function ntAutoZer(nt:eNetz):boolean;
 begin
   ntAutoZer:=(nt<=nt_1);
@@ -473,7 +448,7 @@ begin
     else if (nt=nt_ZConnect) and not ownbox then
       ntAutoDomain:='.invalid'
     else
-      if ntDomainType(nt) in [5,6,8] then
+      if nt in netsRFC then
         ntAutoDomain:=dbReadStr(d,'domain');
     end;
   dbClose(d);
@@ -866,6 +841,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.54  2003/01/07 00:27:04  cl
+  - moved some functions from xpnt.pas to TXPServer
+
   Revision 1.53  2002/12/21 20:06:22  cl
   - FPC compile fixes
 
