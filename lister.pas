@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -108,8 +109,8 @@ procedure list_dummydp(s:string);
 implementation  { ------------------------------------------------ }
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
-      MinListMem : word = 15000;   { min. Bytes fÅr app_l        }
-      ListerBufferCount = 16383;
+      ListerBufferCount = 16383;   { LÑnge des Eingangspuffers }
+      ListerMaxLineLength = 255;   { maximale LÑnge einer Zeile im Lister }
 
 type  lnodep  = ^listnode;
       listnode= record
@@ -191,42 +192,57 @@ var   lstack  : array[0..maxlst] of record
 
 
 
-
+// Zerlegen des Buffers in einzelne Zeilen
 function make_list(var buf: ListerCharArray; BufLen: Integer; wrap:byte): Integer;
 var
   i, j: Integer;
   s: String;
 begin
+  Result := 0;
   if BufLen = 0 then exit;
   if wrap = 0 then wrap := 255;
   j := 0;
   while j < BufLen do
   begin
     i := 0;
-    // solange, bis entweder Zeilenende oder Wrap-Bereich Åberschritten
-    while (buf[i+j] <> #13) and (buf[i+j] <> #10) and (i < wrap) and (i+j < BufLen) do
+    // solange, bis entweder Zeilenende, Wrap-Bereich Åberschritten,
+    // LÑnge des Buffers erreicht oder maximale ZeilenÑnge erreicht
+    while (buf[i+j] <> #13) and (buf[i+j] <> #10) and (i < wrap) and
+      (i+j < BufLen) and (i < ListerMaxLineLength) do
       inc(i);
+
     // Spezialbehandlung, wenn Zeile umgebrochen werden mu·
     if i = wrap then
     begin
-      for i := wrap downto 20 do
-        if Buf[i+j] = ' ' then break;
+      i := wrap;
+      while (i > 20) and (Buf[i+j] <> ' ') do
+        dec(i);
       // wenn keine Umbruchstelle gefunden wurde, Wrap-LÑnge Åbernehmen
       // ansonsten Leerzeichen Åberspringen
       if i = 20 then
         i := wrap
       else
         inc(i);
+      end;
+
+    // wenn kein Zeilenende gefunden wurde, aber Puffer alle ist
+    if j+i = BufLen then
+    begin
+      Result := i;
+      Move(Buf[j], Buf[0], i);
+      Exit;
+    end else
+    begin
+      SetLength(s, i);
+      if i > 0 then
+        Move(Buf[j], S[1], i);
+      App_l(s);
     end;
-    SetLength(s, i);
-    Move(Buf[j], S[1], i);
-    App_l(s);
     // CRLF Åberlesen
     if Buf[i+j] = #13 then inc(i);
     if Buf[i+j] = #10 then inc(i);
     inc(j, i);
   end;
-  Result := BufLen-j;
 end;
 
 {$IFDEF FPC }
@@ -378,17 +394,10 @@ var p  : byte;
 
   procedure appnode(var lnp:lnodep; back:lnodep);
   begin
-    case memflag of
-      0 : begin
-            getmem(lnp,sizeof(listnode));
-            fillchar(lnp^,sizeof(listnode),0);
-          end;
-      3 : begin
-            writeln('LIST: internal memory allocation error');
-            halt(1);
-          end;
-    end;
-    with lnp^ do begin
+    getmem(lnp,sizeof(listnode));
+    fillchar(lnp^,sizeof(listnode),0);
+    with lnp^ do
+    begin
       next:=nil;
       prev:=back;
       linenr:=alist^.lines;
@@ -412,29 +421,15 @@ var p  : byte;
 
 begin
   if ltxt=#13 then  exit;    { einzelnes CR ignorieren }
-  { MemAvail wird aus ZeitgrÅnden nur bei jeder 15. Zeile getestet }
-  if (mmm=15) or (memflag=2) then begin
-    with alist^ do
-      case memflag of
-        0 : if (memavail<MinListMem) then
-              begin
-                memflag:=2;
-                lastheap:=last;
-              end;
-      end;
-    mmm:=0;
-    end;
-  if memflag<3 then
+  p:=cpos(TAB,ltxt);
+  while p>0 do
   begin
+    delete(ltxt,p,1);
+    insert(sp(8-(p-1) mod 8),ltxt,p);
     p:=cpos(TAB,ltxt);
-    while p>0 do begin
-      delete(ltxt,p,1);
-      insert(sp(8-(p-1) mod 8),ltxt,p);
-      p:=cpos(TAB,ltxt);
-      end;
-    apptxt;
-    inc(mmm);
   end;
+  apptxt;
+  inc(mmm);
 end;
 
 
@@ -477,12 +472,15 @@ begin
         rp := make_list(p^,rr+rp,stat.wrappos);
       until eof(f);
       close(f);
-      if rp>1 then begin     { den Rest der letzten Zeile noch anhÑngen.. }
-        SetLength(s, rp-1);
-        Move(p^[1],s[1],rp-1);
+      if rp>0 then
+      begin                   { den Rest der letzten Zeile noch anhÑngen.. }
+        SetLength(s, rp);
+        Move(p^[0],s[1],rp);
         app_l(s);
         end;
       end;
+      // Sonderbehandlung wenn letzte Zeile eine Leerzeile ist
+      if p^[rr] = #10 then App_l('');
     freemem(p,ps);
   end;
 end;
@@ -1306,6 +1304,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/09/28 03:02:04  mk
+  - Bugfixes fuer Make_list
+
   Revision 1.32  2000/09/27 17:05:48  mk
   - Make_list auf Pascal portiert
 
