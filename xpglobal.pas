@@ -59,29 +59,25 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2002';
+  x_copyright = '(c) 2000-2003';
 
 type
-  { Regeln fuer Datentypen unter 16/32 Bit
+  { Regeln fuer Datentypen unter 32 Bit
 
   Die Groesse einiger Datentypen unterscheidet sich je nach verwendetem
   Compiler und der Systemumgebung. Folgende Regeln sollten beachtet werden:
 
   Der im Regelfall zu verwendede Datentyp ist Integer. Dieser Datentyp
-  ist unter 16 Bit natuerlich 16 Bit gross und unter 32 Bit wiederum 32 Bit
-  gross und immer signed (vorzeichenbehaftet). Dieser Datentyp ist immer der
-  _schnellste_ fuer das System verfuegbare Datentyp, sollte also in Schleifen
-  usw. wenn moeglich genommen und den spezielleren Datentypen vorgezogen
-  werden.
-
-  Der Datentyp rtlword ist je nach dem verwendeten Compiler und der damit
-  verwendeten RTL 16 oder 32 Bit gross.
+  ist unter 32 Bit wiederum 32 Bit gross und immer signed (vorzeichenbehaftet).
+  Bei späteren 64 Bit Versionen kann dieser Datentyp 64 Bit groß sein.
+  Dieser Datentyp ist immer der _schnellste_ fuer das System verfuegbare Datentyp,
+  sollte also in Schleifen usw. wenn moeglich genommen und den spezielleren
+  Datentypen vorgezogen werden.
 
   Folgende Datentypen sind immer gleich gross und z.B. fuer Records geeignet:
   Byte       1 Byte  unsigned  0..255
-  SmallWord  2 Byte  unsigned  0..65535
+  Unsigned16 2 Byte  unsigned  0..65535
   DWord      4 Byte  unsigned  0..4294967295
-  (Vorsicht bei BP und VP, dort gibt es kein echtes DWord)
 
   Integer8   1 Byte  signed   -128..127
   Integer16  2 Byte  signed   -32768..32767
@@ -89,34 +85,13 @@ type
 
   }
 
-{ DoDi: wenn ein einziger Compiler (VP) keine vorzeichenlosen Datentypen kennt,
-  dann muessen doch nicht alle anderen Compiler darauf verzichten?
-  Deshalb kann "word" (smallword) ueberall so verwendet werden, wie es der Compiler kennt!
-
-  todo: smallword -> unsigned16
-}
-  {$ifdef virtualpascal }
-    { Virtual Pascal, 32 Bit }
-    integer8 =   shortint;
-    integer16 =  smallint;
-    integer32 =  longint;
-    integer =    longint;
-    unsigned16 = ???;
-    word =       longint; { = signed }
-    dword =      longint; { = signed }
-    longword=    longint;
-    rtlword =    longint;     { 32 Bit bei VP }
-    variant =    pointer; // Naja...
-    Int64 =      longint; // Ohje...
-    Cardinal =   longint; // Wirklich??? gibt's da nix ohne Vorzeichen???
-  {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
     unsigned16 = system.word;
-    { Unter FPC ist ein Integer standardmaessig 16 Bit gross }
+    { Unter FPC ist ein Integer im BP Kompatibilitätsmodus standardmaessig 16 Bit gross }
     integer =    longint;
   {$endif}
   {$IFDEF Delphi }
@@ -132,8 +107,7 @@ type
 
 //todo: replace all usages of these temporary types by something more appropriate
 type
-    xpWord =     integer;     //used in all units which used xpglobal
-    sysWord =    unsigned16;  //used in all units which didn't use xpglobal
+  xpWord =     integer;     //used in all units which used xpglobal
 
 const
 {$IFDEF UnixFS }
@@ -189,18 +163,6 @@ type
     property ExitCode: Integer read FExitCode write FExitCode;
   end;
 
-{$IFDEF VP }
-type
-  FileRec = record
-    Handle:   Longint;                  // File handle
-    Mode:     Longint;                  // Current file mode
-    RecSize:  Longint;                  // I/O operation record size
-    Private:  array [1..28] of Byte;    // Reserved
-    UserData: array [1..32] of Byte;    // User data area
-    Name:     array [0..259] of Char;   // File name (ASCIIZ)
-  end;
-{$ENDIF }
-
 implementation
 
 constructor EXPoint.Create(ExitCode: Integer; const Message: String);
@@ -221,6 +183,10 @@ begin
 
 {
   $Log$
+  Revision 1.81  2003/08/27 17:41:47  mk
+  - updated copyright year to 2003
+  - updated data type comments
+
   Revision 1.80  2003/08/15 21:36:18  mk
   - fixed #733047: Bad User-Agent header syntax
 
