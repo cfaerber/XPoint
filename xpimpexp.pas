@@ -49,7 +49,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt, winxp;
+xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xpconfigedit,xpnt, winxp;
 
 const mdaten = 'MDATEN.DAT';    { fÅr ImportMautaubase }
       mindex = 'MDATEN.IND';
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.37  2001/03/22 18:25:09  ma
   - FmtDateTime: "mm" means "month", *not* "minute".
 

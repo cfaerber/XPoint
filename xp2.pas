@@ -82,7 +82,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg
+ xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg
  {$IFDEF UnixFS},xpx{$ENDIF};
 
 var   zaehlx,zaehly : byte;
@@ -774,11 +774,11 @@ begin
          begin
            EasyMainDialog;
            {Provisorium zur Fehlervermeidung}
-           xp9.get_first_box(d);
+           xpconfigedit.get_first_box(d);
          end
       else
       {$ENDIF}
-      xp9.get_first_box(d);
+      xpconfigedit.get_first_box(d);
       dName := dbReadStr(d,'dateiname');
       end
     else begin
@@ -1088,6 +1088,9 @@ end.
 
 {
   $Log$
+  Revision 1.110  2001/06/04 17:36:49  ma
+  - renamed old xp9 source files
+
   Revision 1.109  2001/04/23 18:32:28  ml
   - Helpscreen now uses full terminal in Linux
 

@@ -88,7 +88,8 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
 { Customselectroutinen fuer Brett/User }
 
 { Verwendung...                                                                   }
-{ auto_empfsel:     XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
+{ auto_empfsel:     XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC,                 }
+{                   XPConfigEdit.ReadPseudo                                       }
 { selbrett:         XP3o.Bverknuepfen, XP6S.Editsdata                             }
 { seluser:          XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
 {                   XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }
@@ -1512,6 +1513,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/06/04 17:36:49  ma
+  - renamed old xp9 source files
+
   Revision 1.54  2001/04/19 00:06:11  ma
   - fixed: cancelling did not work
   - please check cancelling in non-NNTP networks

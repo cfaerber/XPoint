@@ -47,7 +47,7 @@ procedure MausGetInfs(box, logfile:string);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
+uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xpconfigedit, winxp;
 
 
 { art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }
@@ -821,6 +821,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.24  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

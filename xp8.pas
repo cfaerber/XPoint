@@ -71,7 +71,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
-  xp9bp,xp9,xpnt, crc, classes;
+  xp9bp,xpconfigedit,xpnt, crc, classes;
 
 const mapsbox : string = '';
 
@@ -1703,6 +1703,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.42  2001/05/02 23:37:31  ma
   - fixed: newsgroups could be subscribed multiple times
 

@@ -131,7 +131,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xpnetcall,xp9,xpauto;
+uses xp4o,xpnetcall,xpconfigedit,xpauto;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
@@ -158,7 +158,7 @@ begin
         if not brk then MsgReorg;
         end
       else if copy(s,2,7)='SETUSER' then
-        SetUsername(mid(trim(prog),10))    { in XP9 }
+        SetUsername(mid(trim(prog),10))    { in XPConfigEdit }
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
@@ -249,6 +249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.17  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

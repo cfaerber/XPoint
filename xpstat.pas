@@ -49,7 +49,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl,winxp;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xpconfigedit,xpnt,xpfidonl,winxp;
 
 var  statbrett : boolean;
 
@@ -1259,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.36  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

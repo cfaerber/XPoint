@@ -106,7 +106,7 @@ function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xpconfigedit,xpcc,xpauto,xpfido;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fÅr writecode() }
@@ -2432,6 +2432,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2001/06/04 17:36:50  ma
+  - renamed old xp9 source files
+
   Revision 1.58  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
