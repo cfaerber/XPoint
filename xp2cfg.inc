@@ -1465,8 +1465,8 @@ begin
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
           gets(su,su,'Header',mheader,255) or
-          gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
-          gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
+          gets(s,su,'HeaderCustom1',mheadercustom[1],255) or
+          gets(s,su,'HeaderCustom2',mheadercustom[2],255) or
 {$IFDEF unix}
           gets(su,su,'timezone',dummytz,7) or
 {$ELSE }
@@ -1680,6 +1680,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.97  2000/12/15 19:03:38  mk
+  - do not uppercase Custom Headers
+
   Revision 1.96  2000/12/03 22:23:08  mk
   - Improved Printing Support
 
