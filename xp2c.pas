@@ -713,15 +713,15 @@ begin
       SetListCursor(curon);
       SetWinSelCursor(curon);
       EdSelcursor:=true;
-      end
-    else begin
+    end else begin
       MaskSelcursor(curoff);
       SetListCursor(curoff);
       SetWinSelCursor(curoff);
       EdSelcursor:=false;
-      end;
-    GlobalModified;
     end;
+    aufbau:=true;
+    GlobalModified;
+  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1327,7 +1327,7 @@ begin
   dialog(ival(getres2(271,0)),iif(sall,14,13),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
   
   maddstring(3,2,'PGP-Version ',PGPVersion,5,5,'');
-  mappsel(false,PGP2+'˘'+PGP5);
+  mappsel(false,PGP2+'˘'+PGP5+'˘'+PGP6);
     mhnr(1010);
   maddbool(3,4,getres2(271,2),UsePGP);   { 'ZCONNECT-PGP-UnterstÅtzung' }
     mset1func(testpgpexe);

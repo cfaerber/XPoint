@@ -762,6 +762,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        
        PGP2 = '2.6.x';
        PGP5 = '5.x';
+       PGP6 = '6.5.x';
        PGPVersion : string[5] = PGP2;
        
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
@@ -1084,6 +1085,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.15  2000/03/24 04:15:22  oh
+  - PGP 6.5.x Unterstuetzung
+
   Revision 1.14  2000/03/24 02:20:17  oh
   - Schalter Config/Anzeige/Hilfen: Feldtausch in Listen eingefuegt
 
