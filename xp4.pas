@@ -1792,9 +1792,9 @@ begin      { --- select --- }
                    if t=keycr then
                      if kb_shift then read_msg(0,2)   { Shift-Enter }
                      else read_msg(0,1) else          { Enter }
-                   if t=^J then read_msg(0,0) else    { Ctrl-Enter }
+                   if t=^J then read_msg(0, 0) else   { Ctrl-Enter }
                    if t=k2_cR then read_msg(1,0) else { 'R' - Rot13 }
-                   if t=k2_cH then read_msg(2,1) else { ^H }
+                   if t=k2_cH then read_msg(2,0) else { ^H }
                    if c=k2_I then begin GoP; msg_info; end else     { 'I' }
                    if c=k2_O then begin GoP; ShowHeader; end else   { 'O' }
                    if (c=k2_H) or (t=keyins) then setmstat(1) else  { 'H' }
@@ -2114,6 +2114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.16  2000/11/01 10:44:25  mk
+  - Ctrl-H wieder ohne MIME-Auswahl
+
   Revision 1.26.2.15  2000/10/26 16:17:52  mk
   - Fixed Bug #116156: falsche Quoteschablone bei Mehrfachquotes
 
