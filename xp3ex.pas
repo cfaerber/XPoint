@@ -32,7 +32,7 @@ uses
   xpcurses,
 {$ENDIF }
   typeform,fileio,inout,database,resource,stack, xpheader, winxp,
-  xp0,xp1,xpglobal, classes;
+  xp0,xp1,xpglobal, classes, xpmime;
 
 const xTractMsg   = 0;
       xTractHead  = 1;
@@ -46,16 +46,16 @@ const xTractMsg   = 0;
 procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
 procedure rpsdate(var s:string);
-procedure ExtractSetMpdata(mpdata:pointer);
+procedure ExtractSetMimePart(MimePart: TMimePart);
 procedure extract_msg(art:byte; schablone:string; name:string;
                       append:boolean; decode:shortint);
 
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmime, xpmakeheader;
+uses xp1o,xp3,xp_des,xpnt,xpfido, xpmakeheader;
 
-var  ex_mpdata : pmpdata;
+var  ex_MimePart : TMimePart;
 
 
 procedure rps(var s:string; s1,s2:string);
@@ -142,9 +142,11 @@ begin
 end;
 
 
-procedure ExtractSetMpdata(mpdata:pointer);
+procedure ExtractSetMimePart(MimePart: TMimePart);
 begin
-  ex_mpdata:=pmpdata(mpdata);
+  if ex_MimePart = nil then 
+    ex_MimePart := TMimePart.Create;
+  ex_MimePart.Assign(MimePart);
 end;
 
 
@@ -174,7 +176,7 @@ var size   : longint;
     mstatus: string[80];
     iso1   : boolean;    { charset: ISO1 }
     lasttrenn : boolean;
-    mpdata : multi_part;
+    MimePart : TMimePart;
     multipart : boolean;
     sizepos : longint;
     mpsize  : longint;
@@ -698,10 +700,14 @@ Label ExitL;
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
   TempKopien := TStringList.Create;
-  if ex_mpdata=nil then mpdata.startline:=0
-  else mpdata:=ex_mpdata^;
-  ex_mpdata:=nil;
-  multipart:=(mpdata.startline>0);
+  MimePart := TMimePart.Create;
+  if Assigned(ex_MimePart) then 
+  begin
+    MimePart.Assign(ex_MimePart);
+    ex_MimePart.Free;
+    ex_MimePart := nil;
+  end;
+  multipart:=(MimePart.startline>0);
   _brett := dbReadNStr(mbase,mb_brett);
   if art=xTractPuf then
     Xread(name,append)
@@ -955,8 +961,8 @@ begin
     hdf_TEL    : if hdp.telefon<>'' then
                    wrs(gr(26)+telestring(hdp.telefon));  { 'Telefon    : ' }
 
-    hdf_FILE   : if multipart and (mpdata.fname<>'') then
-                   wrs(gr(12)+mpdata.fname)    { 'Dateiname  : ' }
+    hdf_FILE   : if multipart and (MimePart.fname<>'') then
+                   wrs(gr(12)+MimePart.fname)    { 'Dateiname  : ' }
                  else if hdp.datei<>'' then
                    wrs(gr(12)+hdp.datei+ddat);
 
@@ -980,9 +986,9 @@ begin
     hdf_Homepage: if hdp.homepage<>'' then
                     wrs(gr(32)+hdp.homepage);              { 'Homepage   : ' }
 
-    hdf_Part    : if multipart and (mpdata.part>0) then
-                    wrs(gr(33)+strs(mpdata.part)+           { 'Teil       : ' }
-                        gr(34)+strs(mpdata.parts));         { ' von ' }
+    hdf_Part    : if multipart and (MimePart.part>0) then
+                    wrs(gr(33)+strs(MimePart.part)+           { 'Teil       : ' }
+                        gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
                     wrs(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
@@ -1011,7 +1017,7 @@ begin
         mpsize:=filesize(f);
         close(f);
         mehdl:=exthdlines; mehds:=extheadersize;
-        ExtractMultiPart(mpdata,name,true);    { rekursiver Aufruf von }
+        ExtractMultiPart(MimePart,name,true);    { rekursiver Aufruf von }
         exthdlines:=mehdl;                     { extact_msg!           }
         extheadersize:=mehds;
         reset(f,1);
@@ -1045,7 +1051,7 @@ begin
         tmp:=ListQuoteMsg
       else begin
         XReadIsoDecode:=(art=xTractQuote);
-        if multipart then ExtractMultipart(mpdata,tmp,false)
+        if multipart then ExtractMultipart(MimePart,tmp,false)
         else Xread(tmp,false);
         if decode<>0 then begin
           assign(decf,tmp);
@@ -1098,10 +1104,17 @@ ExitL:
   ExtCliptearline:=true;
   ExtChgtearline:=false;
   TempKopien.Free;
+  MimePart.Free;
 end;
 
+initialization 
+  ex_MimePart := nil;
+finalization
 {
   $Log$
+  Revision 1.83  2001/12/08 09:23:02  mk
+  - create list of MIME parts dynamically
+
   Revision 1.82  2001/10/20 17:26:40  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

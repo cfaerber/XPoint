@@ -30,7 +30,7 @@ uses
   sysutils,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,
+  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze, xpmime,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
@@ -75,13 +75,13 @@ const sendIntern = 1;     { force Intern              }
       flCrash   : boolean = false;
       flQTo     : boolean = false;       { Maus: Wildwestverkettung }
       flNokop   : boolean = false;
-      qmpdata   : pointer = nil;
 
       OldMsgSize: longint = 0;{ s. XP3.XWrite }
       OldMsgPos : longint = 0;
 
 var
   SendEmpfList: TStringList;
+  qMimePart: TMimePart;
 
 var
       InternBox : string;  { Boxname bei /Netzanruf }
@@ -919,7 +919,7 @@ begin      //-------- of DoSend ---------
 
   if sendFlags and sendQuote<>0 then
   begin
-    ExtractSetMpdata(qmpdata);
+    ExtractSetMimePart(qMimePart);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
                 datei,false,1);
     sdata^.quotestr:=qchar;
@@ -2320,11 +2320,15 @@ end;
 
 initialization
   SendEmpfList := TStringList.Create;
+  qMimePart := nil;
 finalization
   SendEmpfList.Free;
 
 {
   $Log$
+  Revision 1.30  2001/12/08 09:23:03  mk
+  - create list of MIME parts dynamically
+
   Revision 1.29  2001/11/06 12:48:43  ml
   - fix for 2 range-check-errors
 

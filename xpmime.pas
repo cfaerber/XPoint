@@ -31,24 +31,26 @@ uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xp
       xp0,xp1,xpkeys,utftools,Mime;
 
 
-type  multi_part = record                   { Teil einer Multipart-Nachricht }
-                     startline  : longint;  { 0 = kein Multipart }
-                     lines      : longint;
-                     code       : TMimeEncoding;
-                     typ,subtyp : string[20];   { fÅr ext. Viewer }
-                     level      : integer;      { Verschachtelungsebene 1..n }
-                     fname      : string[255];   { fÅr Extrakt + ext. Viewer }
-                     ddatum     : shortstring;   { Dateidatum fÅr extrakt }
-                     part,parts : integer;
-                     alternative: boolean;
-                     Charset  : TMimeCharsets;
-                   end;
-      pmpdata    = ^multi_part;
+type  TMimePart = class { Teil einer Multipart-Nachricht }
+      public
+        startline  : longint;      { 0 = kein Multipart }
+        lines      : longint;
+        code       : TMimeEncoding;
+        typ,subtyp : string;       { fÅr ext. Viewer }
+        level      : integer;      { Verschachtelungsebene 1..n }
+        fname      : string;       { fÅr Extrakt + ext. Viewer }
+        ddatum     : string;       { Dateidatum fÅr extrakt }
+        part,parts : integer;
+        alternative: boolean;
+        Charset    : TMimeCharsets;
+        procedure Clear;
+        procedure Assign(Source: TMIMEPart);
+      end;
 
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
-                          var mpdata:multi_part; var brk:boolean);
-procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
+                          mpdata: TMimePart; var brk:boolean);
+procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append:boolean);
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
@@ -72,18 +74,23 @@ uses
   {$IFDEF OS2 }
   xpos2,
   {$ENDIF }
-  xp1o,xp3,xp3o,xp3ex;
+  classes, xp1o,xp3,xp3o,xp3ex;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }
 
-const maxparts = 100;    { max. Teile in einer Nachricht }
-
-type
-  TMimeMFArray= array[1..maxparts] of multi_part;
 var
-  mf: TMimeMFArray;
+  PartsList: TList; // List of MIME Parts
 
+
+procedure ClearPartsList;
+var
+  i: Integer;
+begin
+  for i := 0 to PartsList.Count - 1 do 
+    TMimePart(PartsList[i]).Free;
+  PartsList.Clear;
+end;
 
 function typname(typ,subtyp:string):string;
 var s : string;
@@ -101,7 +108,7 @@ begin
     typname:=s;
 end;
 
-procedure m_extrakt(var mpdata:multi_part);
+procedure m_extrakt(mpdata: TMimePart);
 var fn      : string;
     useclip : boolean;
     brk,o   : boolean;
@@ -133,7 +140,7 @@ procedure SMP_Keys(LSelf: TLister; var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if UpperCase(t)='X' then
-    m_extrakt(mf[ival(mid(LSelf.getselection,57))]);
+    m_extrakt(TMimePart(PartsList[ival(mid(LSelf.getselection,57))]));
 end;
 
 // select keys for SINGLE-PART MIME
@@ -257,13 +264,13 @@ end;
 { forceselect: true = Auswahl auch bei multipart/alternative }
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
-                          var mpdata:multi_part; var brk:boolean);
+                          mpdata:TMimePart; var brk:boolean);
 var   hdp      : THeader;
       hds      : longint;
-      anzahl   : integer;     { Anzahl der Nachrichtenteile }
       anzahl0  : integer;     { Anzahl Nachrichtenteile ohne Gesamtnachricht }
       alter    : boolean;
       List: TLister;
+      MimePart: TMimePart;
 
   procedure MakePartlist;
   const maxlevel = 25;    { max. verschachtelte Multiparts }
@@ -363,7 +370,7 @@ var   hdp      : THeader;
     getmem(buf,bufsize);
     settextbuf(t,buf^,bufsize);
     reset(t);
-    anzahl:=0;
+    ClearPartsList;
     stackwarn:=false;
 
     if hdp.boundary='' then begin     { Boundary erraten ... }
@@ -389,7 +396,8 @@ var   hdp      : THeader;
     bufline:='';
     firstline := '';
 
-    while not eof(t) and (anzahl<maxparts) do begin
+    while not eof(t) do 
+    begin
       _start:=n+1;
       if bptr=0 then bound:=#0     { Nachspann }
       else bound:=bstack[bptr];
@@ -421,9 +429,12 @@ var   hdp      : THeader;
       if (ctype=getres2(2440,1)) and MimeVorspann then
         ctype:='';
 
-      if ctype<>'' then begin
-        inc(anzahl);
-        with mf[anzahl] do begin
+      if ctype<>'' then 
+      begin
+        MimePart := TMimePart.Create;
+        PartsList.Add(MimePart); 
+        with MimePart do 
+        begin
           level:=bptr+last;
           typ:=ctype;
           subtyp:=subtype;
@@ -433,10 +444,9 @@ var   hdp      : THeader;
           charset := MimeGetCharsetFromName(CharsetName);
           startline:=_start;
           lines:=n-startline;
-          part:=anzahl;
- {         parts := anzahl; MK 01/00 Bitte pr¸fen, ob ok, wenn das reingenommen wird!!! }
-          end;
+          part:= PartsList.Count - 1;
         end;
+      end;
       last:=0;
 
       if endbound then begin
@@ -506,10 +516,13 @@ var   hdp      : THeader;
 
     pop;
 
-    anzahl0:=anzahl;
-    if anzahl>1 then begin
-      inc(anzahl);
-      with mf[anzahl] do begin
+    anzahl0:= PartsList.Count;
+    if PartsList.Count >1 then 
+    begin
+      MimePart := TMimePart.Create;
+      PartsList.Add(MimePart); 
+      with MimePart do 
+      begin
         level:=1;
         typ:=getres2(2440,10);    { 'gesamte Nachricht' }
         subtyp:='';
@@ -542,40 +555,40 @@ var i : integer;
 
 begin                         { SelectMultiPart }
   brk:=false;
-  fillchar(mpdata,sizeof(mpdata),0);
+  mpdata.Clear;
   hdp := THeader.Create;
   ReadHeader(hdp,hds,true);
   MakePartlist;
-  if not forceselect and (anzahl=3) and (mf[2].typ='text')
-     and (mf[1].typ='text') and (mf[1].subtyp='plain')
+  if not forceselect and (PartsList.Count=3) and (TMimePart(PartsList[1]).typ='text')
+     and (TMimePart(PartsList[0]).typ='text') and (TMimePart(PartsList[0]).subtyp='plain')
      and (((hdp.mime.ctype='multipart/alternative')      { Text+HTML Messis }
-            and (mf[2].subtyp='html'))
-         or (mf[2].subtyp='x-vcard'))                 { oder Text mit VCard }
+            and (TMimePart(PartsList[1]).subtyp='html'))
+         or (TMimePart(PartsList[1]).subtyp='x-vcard'))                 { oder Text mit VCard }
   then begin
-    index:=1;
+    index:=0;
     select:=false;                         { Standardmaessig Nur Text zeigen }
     alter:=true;
     end
   else
     alter:=false;
 
-  if (index=0) and (anzahl>anzahl0) then
-    index:=anzahl
+  if (index=0) and (PartsList.Count >anzahl0) then
+    index:=PartsList.Count - 1
   else
-    index:=minmax(index,1,anzahl0);
+    index:=minmax(index,0,anzahl0-1);
 
-  if anzahl>0 then
-    if not select or (anzahl=1) then begin
-      if (anzahl>1) or (mf[index].typ <> getres2(2440,1)) then begin { 'Vorspann' }
-        mpdata:=mf[index];
+  if PartsList.Count >0 then
+    if not select or (PartsList.Count =1) then begin
+      if (Partslist.Count >1) or (TMimePart(PartsList[index]).typ <> getres2(2440,1)) then begin { 'Vorspann' }
+        mpdata.Assign(PartsList[index]);
         mpdata.parts:=max(1,anzahl0);
         mpdata.alternative:=alter;
         end
       end
     else begin
-      List := listbox(56,min(screenlines-4,anzahl),getres2(2440,9));   { 'mehrteilige Nachricht' }
-      for i:=1 to anzahl do
-        with mf[i] do
+      List := listbox(56,min(screenlines-4, PartsList.Count),getres2(2440,9));   { 'mehrteilige Nachricht' }
+      for i:=0 to PartsList.Count - 1 do
+        with TMimePart(PartsList[i]) do
           List.AddLine(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
                 ' ' + fnform(fname,23) + ' ' + strs(i));
       List.OnKeypressed := SMP_Keys;
@@ -583,7 +596,7 @@ begin                         { SelectMultiPart }
       brk := List.Show;
       if not brk then
       begin
-        mpdata:=mf[List.SelLine+1];
+        mpdata.Assign(PartsList[List.SelLine+1]);
         if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
            (mpdata.typ=getres2(2440,10)) then begin
           mpdata.typ:='text';
@@ -601,7 +614,7 @@ end;
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
-procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
+procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append:boolean);
 const bufsize = 2048;
 
 var   input,t : text;
@@ -646,8 +659,9 @@ begin
     for i:=1 to startline-1 do
       readln(input);
 
-    if code<>MimeEncodingBase64 then begin     { plain / quoted-printable }
-      assign(t,fn);
+    if code<>MimeEncodingBase64 then 
+    begin     { plain / quoted-printable }
+      system.assign(t,fn);
       if append then system.append(t)
       else rewrite(t);
       for i:=1 to lines do begin
@@ -680,7 +694,7 @@ begin
       end
 
     else begin                          { base64 }
-      assign(f,fn);
+      system.assign(f,fn);
       if append then begin
         reset(f,1);
         seek(f,filesize(f));
@@ -711,21 +725,65 @@ begin
 end;
 
 procedure mimedecode;    { Nachricht/Extract/MIME-Decode }
-var mpdata : multi_part;
-    brk    : boolean;
+var 
+  MimePart: TMimePart;
+  brk: boolean;
 begin
-  mpdata.startline:=0;
-  SelectMultiPart(true,1,true,mpdata,brk);
+  MimePart := TMimePart.Create;
+  SelectMultiPart(true,1,true, MimePart,brk);
   if not brk then
-    if mpdata.startline>0 then
-      m_extrakt(mpdata)
+    if MimePart.startline>0 then
+      m_extrakt(MimePart)
     else
       rfehler(2440);    { 'keine mehrteilige MIME-Nachricht' }
+  MimePart.Free;
   Freeres;
 end;
 
+{ TMIMEPart }
+
+procedure TMIMEPart.Assign(Source: TMIMEPart);
+begin
+  StartLine := Source.startline;
+  lines := Source.Lines;
+  code := Source.Code;
+  typ := Source.typ;
+  subtyp := Source.subtyp;
+  level := Source.level;
+  fname := Source.fname;
+  ddatum := Source.ddatum;
+  part := Source.Part;
+  parts := Source.Parts;
+  alternative := Source.alternative;
+  Charset := Source.Charset;
+end;
+
+procedure TMIMEPart.Clear;
+begin
+  startline := 0;
+  lines := 0;
+  code := MimeEncodingUnknown;
+  typ := '';
+  subtyp := '';
+  level := 0;
+  fname := '';
+  part := 0;
+  parts := 0;
+  alternative := false;
+  Charset := csUnknown;
+end;
+
+initialization
+  PartsList := TList.Create;
+finalization
+  ClearPartsList;
+  PartsList.Free;
+
 {
   $Log$
+  Revision 1.52  2001/12/08 09:23:02  mk
+  - create list of MIME parts dynamically
+
   Revision 1.51  2001/09/26 23:34:20  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

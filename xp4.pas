@@ -722,7 +722,7 @@ var t,lastt: taste;
       pmrflag : boolean;   { Maus-PM-Reply auf am durch autom. Umleitung }
       gfound  : boolean;
       mqfirst : longint;
-      mpdata  : multi_part;
+      MimePart  : TMimePart;
       saveDispRec :^dispra;
       savePos     :shortint;
       origdb  : string;
@@ -1132,21 +1132,22 @@ var t,lastt: taste;
       { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
         Multipart-Daten vorhanden, wir faken uns also welche, damit
         die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-      if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
+      if (qMimePart = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
-        fillchar(mpdata,sizeof(mpdata),0);
-        mpdata.fname := fn;
-        SelectMultiPart(true,1,false,mpdata,brk);
+        MimePart := TMimePart.Create;
+        MimePart.fname := fn;
+        SelectMultiPart(true,1,false,MimePart,brk);
 
         // is MIME-Typ not text/plain and quote then ask
         // if quoting binary mails is desired
-        if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
-          and (mpdata.typ <> '') and (quote=1) and
+        if not ((MimePart.typ='text') and (MimePart.subtyp='plain'))
+          and (MimePart.typ <> '') and (quote=1) and
           not ReadJN(getres(406),true)   { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
           then begin pophp; goto ende; end;
 
-        qmpdata := @mpdata;
+        qMimePart := TMimePart.Create;
+        qMimePart.Assign(MimePart);
         pophp;
         if brk then goto ende;
       end;
@@ -1221,7 +1222,8 @@ var t,lastt: taste;
     setall;
     SendEmpfList.Clear;
     freesenduudatamem(sdata);
-    qmpdata := nil;
+    qMimePart.Free;
+    qMimePart := nil;
   end;
 
   procedure _brief_senden(c:char);
@@ -2281,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2001/12/08 09:23:02  mk
+  - create list of MIME parts dynamically
+
   Revision 1.110  2001/10/17 20:11:43  mk
   - fixed range check error with ntReplyToAll
 

@@ -514,7 +514,7 @@ var fn     : string;
     abs    : string;
     miso   : boolean;
     rec    : longint;
-    mpdata : multi_part;
+    MimePart : TMimePart;
     mpselect : boolean;
     lastmpsel: boolean;
     mpart_nr : integer;    { anzuzeigender Nachrichtenteil }
@@ -649,7 +649,7 @@ var fn     : string;
   procedure GoMsgBack;    { '-' -> zurueck }
   begin
     SetGelesen;
-(*    if multipart and not mpdata.alternative and (mpart_nr>1) then begin
+(*    if multipart and not MimePart.alternative and (mpart_nr>1) then begin
       dec(mpart_nr); ende:=false;
       end
     else *)
@@ -674,8 +674,8 @@ var fn     : string;
   procedure GoMsgForth;       { '+' -> vorwaerts }
   begin
     SetGelesen;
-(*    if multipart and not mpdata.alternative and
-       (mpart_nr>0) and (mpart_nr<mpdata.parts)
+(*    if multipart and not MimePart.alternative and
+       (mpart_nr>0) and (mpart_nr<MimePart.parts)
     then begin
       inc(mpart_nr);
       ende:=false;
@@ -750,11 +750,12 @@ begin
   poppush:=true;
   MimeViewer := TMessageViewer.Create;
   mpart_nr := 1;
+  MimePart := TMimePart.Create;
 
   repeat                { +/- - Schleife }
     ende:=true;
     MimeType := '';
-    fillchar(mpdata,sizeof(mpdata),0);
+    MimePart.Clear;
     Arc := 0;
     GoP;
     aktdisprec:=dbRecno(mbase);
@@ -810,7 +811,7 @@ begin
       if ForceMultiPartType = mpNone then MultiPartType := mpNone;
 
 
-      mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      MimePart.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
 
       // Singlepart Mime Message
       case MultiPartType of
@@ -820,7 +821,7 @@ begin
           List := Listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
           List.AddLine(forms(' '
             + typname(LeftStr(MimeType,cpos('/', MimeType)-1),mid(Mimetype,cpos('/',MimeType)+1)),30)
-            + '  ' + fnform(mpdata.fname,23) + ' 1');
+            + '  ' + fnform(MimePart.fname,23) + ' 1');
           List.AddLine(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
           List.OnKeypressed := SSP_Keys;
           List.Startpos := 1;
@@ -839,13 +840,13 @@ begin
           if mpselect and pushed and poppush then begin
             holen(pt); sichern(pt);
             end;
-          SelectMultiPart(mpselect,mpart_nr, ForceMultiPartType = mpMulti,mpdata,brk);
+          SelectMultiPart(mpselect,mpart_nr, ForceMultiPartType = mpMulti,MimePart,brk);
           pophp;
           if brk then goto nextmsg;
-          mpart_nr:=mpdata.part;
-          if mpdata.startline>0 then begin
-            if mpdata.typ<>'' then
-              MimeType := Compmimetyp(mpdata.typ+'/'+mpdata.subtyp)
+          mpart_nr:=MimePart.part;
+          if MimePart.startline>0 then begin
+            if MimePart.typ<>'' then
+              MimeType := Compmimetyp(MimePart.typ+'/'+MimePart.subtyp)
             else
               MimeType := 'text/plain';
           end;
@@ -853,10 +854,10 @@ begin
       end;
 
       poppush:=true;
-      ExtractSetMpdata(@mpdata);
+      ExtractSetMimePart(MimePart);
       Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead),'',fn,false,
         iif(MultiPartType = mpAuto,-1,1));
-      if mpdata.code=MimeEncodingBase64 then
+      if MimePart.code=MimeEncodingBase64 then
         typ:='B';
 
       if (typ='B') and (ForceMultiPartType <> mpMulti) and (dbReadInt(mbase,'unversandt') and 2=0)
@@ -880,11 +881,11 @@ begin
     end; // not FileAttach
 
 
-    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
-    MimeViewer.GetFromExtension(ExtractFileExt(mpdata.fname));     { Dateiendung hat bei Viewerauswahl }
+    MimePart.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+    MimeViewer.GetFromExtension(ExtractFileExt(MimePart.fname));     { Dateiendung hat bei Viewerauswahl }
     if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
       MimeViewer.GetFromMimeType(MimeType);
-    Testviralextension(ExtractFileExt(MPData.FName), MimeViewer);    { Schutz vor Mail-Viren }
+    Testviralextension(ExtractFileExt(MimePart.FName), MimeViewer);    { Schutz vor Mail-Viren }
 
     { Nachricht anzeigen }
 
@@ -958,9 +959,9 @@ begin
       skeydisp:=keydisp; keydisp:=false;
       rec:=dbRecno(mbase);
       spush(disprec,sizeof(disprec));
-      qmpdata:=@mpdata;
+      qMimePart:=@MimePart;
       _brief_senden(listkey[1]);
-      qmpdata:=nil; lastmpsel := false;
+      qMimePart:=nil; lastmpsel := false;
       if disprec[p]=0 then      { s. xp4.pm_archiv (auto-Archiv) }
         d1_0:=true;
       spop(disprec);
@@ -1027,11 +1028,11 @@ begin
         end
       else
         case lres of
-          0 : if lastmpsel and (MultiPartType = mpMulti) and (mpdata.parts>1) and
-                 not mpdata.alternative
+          0 : if lastmpsel and (MultiPartType = mpMulti) and (MimePart.parts>1) and
+                 not MimePart.alternative
               then begin
                 SetGelesen;
-                if (mpart_nr>0) and (mpart_nr<mpdata.parts) then
+                if (mpart_nr>0) and (mpart_nr<MimePart.parts) then
                   inc(mpart_nr);
                 mpselect:=true;
                 ende:=false;
@@ -1056,6 +1057,7 @@ ende0:
   if pushed then holen(pt);
   if d1_0 then disprec[1]:=0;
   MimeViewer.Free;
+  MimePart.Free;
 end;
 
 procedure setmstat(newstat:byte);
@@ -1607,6 +1609,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.84  2001/12/08 09:23:02  mk
+  - create list of MIME parts dynamically
+
   Revision 1.83  2001/10/11 09:00:40  mk
   - external viewer files now with correct file extension
 
