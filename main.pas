@@ -119,8 +119,14 @@ begin
   InitXP1Unit;                  { XP1 }
 
   InitXPXUnit;                  { XPX }
+
 { Program }
-  readpar;
+  readpar; // uses write(ln), so do this before ncurses init
+
+{$IFDEF NCRT}
+  InitXPCurses;
+{$endif}
+
   xp2.loadresource;
   initvar;
   TestAutostart;
@@ -237,6 +243,13 @@ end;
 
 {
   $Log$
+  Revision 1.17  2002/05/19 10:52:09  mk
+  - do readpar before initializing the ncurses lib to
+    allow displaying of the command line parameters
+    with write and writeln
+
+    Please test his change for side effects
+
   Revision 1.16  2002/04/14 11:01:54  mk
   - fixed memory leaks
 

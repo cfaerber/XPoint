@@ -1634,9 +1634,6 @@ procedure InitInOutUnit;
 var
   ii, jj: Integer;
 begin
-{$IFDEF NCRT}
-  InitXPCurses;
-{$endif}
   chml[1]:=range(#32,#126)+range(#128,#255);
   chml[3]:='1234567890 ';
   chml[2]:=chml[3]+'.,';
@@ -1670,6 +1667,13 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/05/19 10:52:09  mk
+  - do readpar before initializing the ncurses lib to
+    allow displaying of the command line parameters
+    with write and writeln
+
+    Please test his change for side effects
+
   Revision 1.90  2002/05/12 17:57:43  ma
   - added clear text keypress debug info
 
