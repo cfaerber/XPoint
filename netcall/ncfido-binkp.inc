@@ -82,6 +82,7 @@ begin
     SetLength(result,(FDataSize and $7fff)-1);
     if length(result)>0 then
       move(Data[2],result[1],length(result));
+    result:=trim(result);
     end else result:='';
 end;
 
@@ -379,9 +380,9 @@ var
       RxWriteD: begin
         if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
         RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
-        Output(mcVerbose,'Receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
+        Output(mcVerbose,'Receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/iif(RxSize<=0,1,RxSize)]);
         if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
-        if RxFilePos=RxSize then begin
+        if(RxFilePos=RxSize)or(RxSize=0)then begin
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
@@ -584,6 +585,10 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/07/07 10:26:13  ma
+  - fixed null terminated string handling (Argus)
+  - fixed handling of zero byte files
+
   Revision 1.11  2001/10/21 10:35:13  ma
   - fixed some range check errors
   - disabled file download resuming (specification seems incorrect)
