@@ -1114,6 +1114,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.8  2002/03/08 23:35:00  my
+  MY:- CVS-Logs korrigiert
+
   Revision 1.13.2.7  2001/12/18 18:19:55  mk
   - Menuaufbau beschleunigt
 
@@ -1149,55 +1152,55 @@ end;   { readmask }
   Revision 1.13.2.3  2001/09/16 20:38:15  my
   JG+MY:- Neue Nachrichten-Suchfunktionen:
 
-          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier können oft
-            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgewählt
+          - Suchbegriffs-Bibliothek (SEEKLIB.TXT): Hier k”nnen oft
+            benutzte Suchbegriffe abgelegt und mit <Shift-F2> ausgew„hlt
             werden.
 
           - Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
-            Suchbegriffe angezeigt und stehen beim nächsten Programmstart
-            wieder zur Verfügung (SEEK.TXT)
+            Suchbegriffe angezeigt und stehen beim n„chsten Programmstart
+            wieder zur Verfgung (SEEK.TXT)
 
           - Optionen-History: Mit <F2> werden die letzten 5 benutzten
-            Options-Kombinationen angezeigt und stehen beim nächsten
-            Programmstart wieder zur Verfügung (OPTIONS.TXT)
+            Options-Kombinationen angezeigt und stehen beim n„chsten
+            Programmstart wieder zur Verfgung (OPTIONS.TXT)
 
           - Neue Such-Optionen:
             l = sucht nur in Nachrichten, die dem aktuellen Lesemodus
                 entsprechen
-            m = hängt die gefundenen Nachrichten an die Liste bereits
+            m = h„ngt die gefundenen Nachrichten an die Liste bereits
                 markierter Nachrichten an, statt diese vorher zu ent-
                 markieren
             h = Volltextsuche nur im Header
             g = Volltextsuche in Header und Text
-            s = löscht die Einträge in der Suchbegriff-History
+            s = l”scht die Eintr„ge in der Suchbegriff-History
             k = kopiert den aktuellen Suchbegriff in die Suchbegriffs-
                 Bibliothek
 
-          - Spezial-Suche: Optionale ODER-Verknüpfung von Absender,
-            Betreff, Fido-Empfänger und Text. <F2>-History für Feld "Text"
+          - Spezial-Suche: Optionale ODER-Verknpfung von Absender,
+            Betreff, Fido-Empf„nger und Text. <F2>-History fr Feld "Text"
             und "Optionen" eingebaut.
 
           - Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
             gleichem Betreff und nicht mehr die Nachrichten, bei denen im
-            Vergleichspaar der kürzere Betreff mit dem Anfang des längeren
-            übereinstimmt (z.B. "toll" und "toller Betreff")
+            Vergleichspaar der krzere Betreff mit dem Anfang des l„ngeren
+            bereinstimmt (z.B. "toll" und "toller Betreff")
 
           - Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
 
-          - Message-ID-Suche: Suchoptionen sind wieder verfügbar
+          - Message-ID-Suche: Suchoptionen sind wieder verfgbar
 
-          - max. Anzahl der Teil-Suchbegriffe auf 20 erhöht
+          - max. Anzahl der Teil-Suchbegriffe auf 20 erh”ht
 
-          - max. Länge des Suchbegriffs auf 160 Zeichen erhöht
+          - max. L„nge des Suchbegriffs auf 160 Zeichen erh”ht
 
-  JG+MY:- <F2>-Auswahl unterstützt jetzt Links-/Rechts-Scrolling
+  JG+MY:- <F2>-Auswahl untersttzt jetzt Links-/Rechts-Scrolling
           (angezeigt durch Hinweispfeile)
 
   JG+MY:- Neue Tastenfunktion in Texteingabe-Feldern: <Ctrl-A> markiert
           das gesamte Eingabefeld
 
-  JG+MY:- Select-Routine (mappsel) stürzt nicht mehr ab, wenn String
-          größer als Bildschirmbreite ist (akut in Suchbegriff-History)
+  JG+MY:- Select-Routine (mappsel) strzt nicht mehr ab, wenn String
+          gr”áer als Bildschirmbreite ist (akut in Suchbegriff-History)
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
