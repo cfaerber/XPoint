@@ -1642,3 +1642,9 @@ begin
   oldexit:=exitproc;
   exitproc:=@_closelog;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/17 16:14:19  mk
+  MK: * ein paar Loginfos hinzugefuegt
+
+}

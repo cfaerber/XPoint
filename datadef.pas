@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { DATABASE.PAS - globale Deklarationen }
 
@@ -82,4 +83,9 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
 implementation
 
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/17 16:14:19  mk
+  MK: * ein paar Loginfos hinzugefuegt
 
+}

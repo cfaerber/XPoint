@@ -1,10 +1,10 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1998, 2000 by Robert Bîck                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 unit encoder;
 
@@ -76,3 +76,9 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
   end;
 
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/17 16:14:19  mk
+  MK: * ein paar Loginfos hinzugefuegt
+
+}

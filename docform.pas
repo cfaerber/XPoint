@@ -10,6 +10,7 @@
 { --------------------------------------------------------------- }
 { Originalautor           : Peter Mandrella                       }
 { Datum                   : Nov. 1991                             }
+{ $Id$ }
 
 
 {$R-}
@@ -196,3 +197,9 @@ begin
   if not validfilename(outfile) then stop('ungÅltige Ausgabedatei');
   xlate;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/17 16:14:19  mk
+  MK: * ein paar Loginfos hinzugefuegt
+
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { ISDN-CAPI-Interface  (c) PM }
 { v0.9  30/01/93              }
@@ -1377,3 +1378,9 @@ begin
   oldexit:=exitproc;
   exitproc:=@newexit;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/17 16:14:18  mk
+  MK: * ein paar Loginfos hinzugefuegt
+
+}

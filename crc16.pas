@@ -93,5 +93,10 @@ begin
   Crc16Str:=_CRC16(s[1],length(s));
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/17 16:14:19  mk
+  MK: * ein paar Loginfos hinzugefuegt
+
+}
