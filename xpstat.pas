@@ -285,13 +285,13 @@ begin
   attrtxt(col.colmboxhigh);
   ende:=false;
   bi:=dbGetIndex(bbase);
-  if marked then
-    n:=0
-  else begin
+  n := 0;
+  if not marked then
+  begin
     dbSetIndex(bbase,biBrett);
     dbSeek(bbase,biBrett,'A');
     ende:=dbEOF(bbase);
-    end;
+  end;
   smax:=maxrec;
   smax:=min(sysmax, smax); { Nur bis Anzahl der gew„hlten Systeme }
   getmem(st,smax*sizeof(statrec));
@@ -1128,7 +1128,7 @@ begin
       attrtxt(col.colmboxhigh);
       mwrt(x+5+length(getres2(2612,25)),y+2,forms(NodeList.GetFilename(nls),12));
       attrtxt(col.colmbox);
-      write(' / ');
+      Wrt2(' / ');
       CalcNodeStat(nls,brk);
       if brk then break;
       end;
@@ -1262,10 +1262,11 @@ begin
   closebox;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.48  2001/10/12 22:55:26  mk
+  - fixed some Write()
+
   Revision 1.47  2001/10/01 22:07:34  mk
   - fixed UV_Stat
 
@@ -1415,3 +1416,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

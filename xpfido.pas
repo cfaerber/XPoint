@@ -253,8 +253,8 @@ var x,y        : Integer;
   begin
     attrtxt(col.colmboxhigh);
     moff;
-    gotoxy(x+31,y+2); write(zone,':',net); write(sp(x+40-wherex));
-    gotoxy(x+49,y+2); write(gusers:6);
+    Wrt(x+31,y+2, Format('%d:%d', [zone, net])); Wrt2(sp(x+40-wherex));
+    Wrt(x+49,y+2, Format('%6d', [gusers]));
     mon;
   end;
 
@@ -755,7 +755,7 @@ begin
   assign(tf,'nodes.$$$'); rewrite(tf,1);
   nets:=0; bufnets:=0;
   uroot:=nil; chunks:=0; users:=0; gusers:=0;
-  chunksize:=(memavail-10000) div (sizeof(usernode)+8);
+  chunksize:= 2566;
   new(uf[0]);
   assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
 
@@ -2273,6 +2273,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2001/10/12 22:55:25  mk
+  - fixed some Write()
+
   Revision 1.62  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 
