@@ -333,7 +333,7 @@ begin
   maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),19,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddtext(9+length(getres2(252,24)),20,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
   maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
@@ -1482,6 +1482,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/12/26 21:00:32  mk
+  - fixed Config/Optionen/Nachrichten
+
   Revision 1.74  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 
