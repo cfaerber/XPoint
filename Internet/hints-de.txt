@@ -61,7 +61,7 @@ lieber zu lang als zu kurz w&auml;hlen. Globale Bezeichner, die k&uuml;rzer als
 f&uuml;nf Buchstaben sind (und dabei m&ouml;glichst noch mit einem Underscore
 anfangen oder Zahlen beinhalten ;-), <i>k&ouml;nnen</i> gar nicht gut gew&auml;hlt sein.</li>
 <li>XP sollte nach den eigenen &Auml;nderungen noch vollst&auml;ndig kompilierbar sein.
-Das l&auml;&szlig;t sich einfach mittels der build.bat
+Das l&auml;&szlig;t sich einfach mittels der build.bat bzw. dem Build-System in ./Build 
 &uuml;berpr&uuml;fen.</li>
 <li>Bei jeder Funktion m&ouml;glichst den (schreibenden) Zugriff auf globale
 Variablen vermeiden - wenn das doch gemacht wird bzw. unvermeidlich ist,

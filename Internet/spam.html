@@ -1,0 +1,26 @@
+<h2>Spam-Info</h2>
+
+<hr />
+<p> Die wichigsten Funktionen sind folgende Tasten in der Nachrichten&uuml;bersicht:</p>
+<ul>
+  <li>``.'' -&gt; markiert die aktuelle Nachricht als SPAM (und verschiebt sie 
+    ggf. ins ``/&raquo;Spam''-Brett).</li>
+  <li> ``,'' -&gt; markiert die aktuelle Nachricht als Nicht-SPAM (und verschiebt 
+    sie ggf. aus dem ``/&raquo;Spam''-Brett heraus).</li>
+</ul>
+<p>Bei folgenden Netcalls wird alles, mit mehr als 75% als SPAM erkannt wurde, 
+  automatisch in ``/&raquo;Spam'' einsortiert.</p>
+<p>Es ist besonders wichtig, sowohl m&ouml;glichst viel SPAM als auch /eigenen/ 
+  Nicht-SPAM als solchen zu kennzeichnen. Ohne eine m&ouml;glichst gro&szlig;e 
+  Datenbasis kann der Spamfilter logischerweise nichts erkennen.</p>
+<p>Die Gr&ouml;&szlig;e der Datenbank scheint sich etwa auf 3,2 MiB (ca. 140000 
+  Worte, plus 3,8 MiB Index) einzupendeln, d.h. am Anfang steigt die Gr&ouml;&szlig;e 
+  der Datenbank sehr schnell, aber je mehr SPAM klassifiziert wurde, desto weniger 
+  neue Worte kommen hinzu.</p>
+<p>&Uuml;ber ``I'' (Informationen zur Nachricht) kann man auch die Informationen 
+  &uuml;ber den SPAM-Status einer Nachricht abrufen: Es werden denn die am meisten 
+  und wenigsten charakteristischsten Worte (gr&ouml;&szlig;te/geringste Abweichung 
+  von 50%) der aktuellen Nachricht, die Anzahl des Vorkommens in ``guten'' und 
+  ``schlechten'' Nachrichten sowie die daraus berechnete SPAM-Wahrscheinlichkeit 
+  angezeigt.<br>
+</p>
