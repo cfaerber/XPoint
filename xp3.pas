@@ -996,7 +996,8 @@ begin
   if FirstChar(s)<>vert_char then
     vert_name:=s
   else begin
-    if cpos('@',s)>0 then truncstr(s,cpos('@',s)-1);
+    if IsMailAddr(s) then
+      truncstr(s,cpos('@',s)-1);
     vert_name:=mid(s,2);
     end;
 end;
@@ -1179,6 +1180,9 @@ end;
 
 {
   $Log$
+  Revision 1.93  2003/05/11 11:12:16  mk
+  - use IsMailAddr when possible
+
   Revision 1.92  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 

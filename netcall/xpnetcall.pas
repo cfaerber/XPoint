@@ -184,7 +184,7 @@ var f      : file;
   begin
     with Header do begin
       pbox:='!?!';
-      if (cpos('@', aRecipient)=0) and
+      if ( not IsMailAddr(aRecipient)) and
          ((netztyp<>nt_Netcall) or (FirstChar(aRecipient)='/'))
       then begin
         dbSeek(bbase,biBrett,'A'+UpperCase(aRecipient));
@@ -1379,6 +1379,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2003/05/11 11:12:21  mk
+  - use IsMailAddr when possible
+
   Revision 1.69  2003/05/01 09:52:30  mk
   - added IMAP support
 

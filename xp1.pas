@@ -3238,7 +3238,7 @@ begin
                                              pointname + domain));
   else
     if netztyp in netsRFC then begin
-      if cpos('@',username)<>0 then
+      if IsMailAddr(Username) then
         // old versions stored email address in username db fields
         result:= username
       else
@@ -3288,6 +3288,9 @@ end;
 
 {
   $Log$
+  Revision 1.181  2003/05/11 11:12:16  mk
+  - use IsMailAddr when possible
+
   Revision 1.180  2003/04/12 07:43:24  mk
   - scrptr is now a pointer instead of record
 

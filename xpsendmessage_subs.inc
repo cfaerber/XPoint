@@ -542,12 +542,13 @@ procedure ShowFlags;
 var flags : string[80];
 
   function pmcc_anz:integer;
-  var i,anz : integer;
+  var
+    i: Integer;
   begin
-    anz:=0;
+    Result := 0;
     for i:=1 to cc_anz do
-      if cpos('@',cc^[i])>0 then inc(anz);
-    pmcc_anz:=anz;
+      if IsMailAddr(cc^[i]) then
+        Inc(Result);
   end;
 
 begin
@@ -1269,6 +1270,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2003/05/11 11:12:19  mk
+  - use IsMailAddr when possible
+
   Revision 1.33  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

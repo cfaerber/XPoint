@@ -1592,7 +1592,7 @@ var
     lposter: boolean;
   begin
     lposter:=false;
-    if cpos('@',line)=0 then
+    if not IsMailAddr(Line) then
     begin
       getnewsgroupsline(line,FollowUp);
       for i:=0 to FollowUp.count-1 do
@@ -1992,7 +1992,7 @@ begin
   until (s0 = '') or (bufpos >= bufanz);
   with hd do
   begin
-    if (cpos('@', absender) = 0) and (cpos('@', sender) > 0) then
+    if (not IsMailAddr(Absender)) and IsMailAddr(Sender) then
       absender := sender;
     if absender = '' then absender := wab;
     if absender = '' then absender := 'Unknown@Sender';
@@ -3464,7 +3464,7 @@ begin
       raise Exception.Create('fehlerhafter Eingabepuffer!');
     end;
 //    binmail := (hd.typ <> 'T');
-    if cpos('@', hd.FirstEmpfaenger) = 0 then { AM }
+    if not IsMailAddr(hd.FirstEmpfaenger) then { AM }
 //      if binmail and not NewsMIME then
 //      begin
 //        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
@@ -3529,7 +3529,7 @@ begin
       seek(f1, adr);
       ClearHeader;
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
-      if cpos('@', hd.Empfaenger[copycount]) > 0 then
+      if IsMailAddr(hd.Empfaenger[copycount]) then
         if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then begin
           if not Client then WrFileserver
         end else begin
@@ -3770,6 +3770,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2003/05/11 11:12:20  mk
+  - use IsMailAddr when possible
+
   Revision 1.134  2003/05/05 09:49:35  cl
   - FIX: Messages ending without a CRLF from ZConnect were not converted
     correctly

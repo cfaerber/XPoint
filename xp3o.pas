@@ -1090,7 +1090,8 @@ begin
   then
     empf:=hdp.absender;
   Hdp.Free;
-  if cpos('@',empf)>0 then begin
+  if IsMailAddr(Empf) then
+  begin
     sData.flEB:=true{auto};
 
     sData.AddText(tmp,true);
@@ -1225,10 +1226,10 @@ begin
                     sData.SenderRealname := hdp.realname;
 
                     for i:= 0 to hdp.Empfaenger.Count-1 do
-                      if CPos('@',hdp.Empfaenger[i]) = 0 then
+                      if not IsMailAddr(hdp.Empfaenger[i]) then
                         sData.EmpfList.AddNew.ZCAddress := hdp.Empfaenger[i];
                     for i:= 0 to hdp.Kopien.Count-1 do
-                      if CPos('@',hdp.Kopien[i]) = 0 then
+                      if not IsMailAddr(hdp.Kopien[i]) then
                         sData.EmpfList.AddNew.ZCAddress := hdp.Kopien[i];
 
                     if assigned(hdp.References) then sData.References.Assign(hdp.References);
@@ -1560,6 +1561,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2003/05/11 11:12:17  mk
+  - use IsMailAddr when possible
+
   Revision 1.102  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 

@@ -763,7 +763,7 @@ var t,lastt: taste;
       if sl.Count<=0 then exit;
       for i := 0 to sl.Count-1 do
       begin
-        if CPos('@',sl[i])>0 then at := pm_typ 
+        if IsMailAddr(sl[i]) then at := pm_typ 
         else                      at := am_typ;
         if at<>atUnused then
           with sData.EmpfList.AddNew do 
@@ -2876,6 +2876,9 @@ end;
 
 {
   $Log$
+  Revision 1.143  2003/05/11 11:12:17  mk
+  - use IsMailAddr when possible
+
   Revision 1.142  2003/05/01 11:51:03  mk
   - fixed #704019: Empfänger "Alle" bei Fido-Antworten
 

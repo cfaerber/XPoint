@@ -1513,7 +1513,7 @@ begin
 
     if dbfound or newbrett then
     begin
-      if cpos('@',s)=0 then
+      if not IsMailAddr(s) then
         _pbox:= dbReadNStr(bbase,bb_Pollbox)
       else begin
         _pbox:= dbReadNStr(ubase,ub_pollbox);
@@ -2452,6 +2452,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2003/05/11 11:12:18  mk
+  - use IsMailAddr when possible
+
   Revision 1.105  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

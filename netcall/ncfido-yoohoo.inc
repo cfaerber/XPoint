@@ -57,7 +57,8 @@ begin
     point:=FidoAddress.point;
     SetZero(my_password,password,8);
     capabilities:=MyCap;
-    if cPos('@',username)<>0 then inc(capabilities,do_domain);
+    if IsMailAddr(username) then
+      inc(capabilities,do_domain);
   end;
 end;
 
@@ -429,6 +430,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2003/05/11 11:12:21  mk
+  - use IsMailAddr when possible
+
   Revision 1.9  2003/01/13 22:14:29  cl
   - send window rewrite IIa - cleanups
 

@@ -235,10 +235,10 @@ begin
         writeln(t);
         close(t);
       end;
-      pm:=(cPos('@',empf)<>0);
+      pm:= IsMailAddr(empf);
       if pm and (betreff='') then betreff:='<nope>';
       empf:=vert_long(empf);
-      pm:=(cPos('@',empf)<>0);
+      pm:= IsMailAddr(empf);
       if not pm then insert('A',empf,1);
       leer:='';
       if UpperCase(box)='*CRASH*' then begin
@@ -482,7 +482,7 @@ var sr    : tsearchrec;
             datei:=SendPath+datei;
           if not FileExists(datei) then
             axerr(5,UpperCase(datei))        { 'Datei "%s" fehlt' }
-          else if attach and (cpos('@',empf)=0) then
+          else if attach and (not IsMailAddr(empf)) then
             axerr(6,'')    { 'File Attaches koennen nur als PM verschicht werden!' }
           else if attach and (length(datei)>BetreffLen) then
             axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
@@ -696,6 +696,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2003/05/11 11:12:19  mk
+  - use IsMailAddr when possible
+
   Revision 1.64  2003/04/16 20:51:11  mk
   - fixed crash in SendMsg (initialized sData)
   - use AnsiString to copy text from file to message

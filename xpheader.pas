@@ -385,7 +385,7 @@ procedure THeader.WriteZConnect(stream:TStream);
   begin
     Result := 0;  
     for i := 0 to Empfaenger.Count - 1 do
-      if cpos('@', Empfaenger[i])>0 then
+      if IsMailAddr(Empfaenger[i]) then
         Inc(Result);
   end;
 
@@ -405,7 +405,7 @@ procedure THeader.WriteZConnect(stream:TStream);
         else
                   ZtoZCdatum(datum,zdatum);
       gb:=ntGrossBrett(netztyp) or (netztyp=nt_ZConnect);
-      if gb and (cpos('@',FirstEmpfaenger)=0) and (LeftStr(FirstEmpfaenger,2)<>'/¯') then
+      if gb and (not IsMailAddr(FirstEmpfaenger)) and (LeftStr(FirstEmpfaenger,2)<>'/¯') then
         FirstEmpfaenger := UpperCase(Firstempfaenger);
       if nokop and (pmempfanz>1) then
         writeln_s(stream,'STAT: NOKOP');
@@ -413,7 +413,7 @@ procedure THeader.WriteZConnect(stream:TStream);
       for i := 0 to Empfaenger.Count - 1 do
       begin
         s := Empfaenger[i];
-        if gb and (cpos('@', s)=0) then
+        if gb and (not IsMailAddr(s)) then
           s := UpperCase(s);
         writeln_s(stream,'EMP: '+ s);
       end;
@@ -690,10 +690,10 @@ begin
   { -- Construct Newsgroups out of EMP/KOP --------------------------- }
   result := '';
   for i:=0 to EMPfaenger.Count-1 do
-    if cpos('@',EMPfaenger[i])=0 then
+    if not IsMailAddr(EMPfaenger[i]) then
       result:=result+ZCBrettToRFC(EMPfaenger[i])+',';
   for i:=0 to KOPien.Count-1 do
-    if cpos('@',KOPien[i])=0 then
+    if not IsMailAddr(KOPien[i]) then
       result:=result+ZCBrettToRFC(KOPien[i])+',';
   SetLength(result,Length(result)-1);
 end;
@@ -709,7 +709,7 @@ begin
   { -- Construct Newsgroups out of EMP/KOP --------------------------- }
   result := '';
   for i:=0 to DiskussionIn.Count-1 do
-    if cpos('@',EMPfaenger[i])=0 then
+    if not IsMailAddr(EMPfaenger[i]) then
       result:=result+ZCBrettToRFC(DiskussionIn[i])+',';
   SetLength(result,Length(result)-1);
 end;
@@ -734,7 +734,7 @@ begin
 
   { -- Walk KOP ------------------------------------------------------ } 
   for i:=KOPien.Count-1 downto 0 do
-    if cpos('@',KOPien[i])<=0 then      // ignore mail addreses
+    if not IsMailAddr(KOPien[i]) then      // ignore mail addreses
       if N.Find(KOPien[i],j) then          
         N.Delete(j)                     // no need to add
       else
@@ -742,7 +742,7 @@ begin
       
   { -- Walk EMP ------------------------------------------------------ }
   for i:=EMPfaenger.Count-1 downto 0 do
-    if cpos('@',EMPfaenger[i])=0 then  
+    if not IsMailAddr(EMPfaenger[i]) then  
       EMPfaenger.Delete(i);             // delete all Newsgroups
 
   { -- Add new Newsgroups to EMP ------------------------------------- }
@@ -773,7 +773,7 @@ begin
 
   { -- Walk DiskussionIn --------------------------------------------- } 
   for i:=DiskussionIn.Count-1 downto 0 do
-    if cpos('@',DiskussionIn[i])<=0 then      // ignore mail addreses
+    if not IsMailAddr(DiskussionIn[i]) then      // ignore mail addreses
       if N.Find(DiskussionIn[i],j) then          
         N.Delete(j)                           // no need to add
       else
@@ -802,14 +802,14 @@ begin
       RFCReadAddressList(FBCC,n,nil);
       { -- Walk KOP -------------------------------------------------- } 
       for i:=KOPien.Count-1 downto 0 do
-        if cpos('@',KOPien[i])=0 then      // ignore mail addreses
+        if not IsMailAddr(KOPien[i]) then      // ignore mail addreses
           if N.Find(KOPien[i],j) then          
             N.Delete(j)                     // no need to add
         else
           Kopien.Delete(i);               // no longer in Recipients
       { -- Walk EMP -------------------------------------------------- }
       for i:=EMPfaenger.Count-1 downto 0 do
-        if cpos('@',EMPfaenger[i])<>0 then  
+        if IsMailAddr(EMPfaenger[i]) then  
           EMPfaenger.Delete(i);             // delete all Mail Addresses
       { -- Add new Recipients to EMP --------------------------------- }
         EMPfaenger.AddStrings(N);
@@ -828,7 +828,7 @@ begin
       RFCReadAddressList(FReplyto,    AntwortAn,nil);
   { -- Same with Diskussion-In --------------------------------------- }
     for i:=DiskussionIn.Count-1 downto 0 do
-      if cpos('@',DiskussionIn[i])<>0 then  
+      if IsMailAddr(DiskussionIn[i]) then  
         DiskussionIn.Delete(i);             // delete all Mail Addresses
     RFCReadAddressList(FMailFollowupTo,DiskussionIn,nil);
   end;
@@ -847,19 +847,19 @@ begin
     if nokop then
     begin
       for i:=0 to EMPfaenger.Count-1 do
-        if cpos('@',EMPfaenger[i])<>0 then
+        if IsMailAddr(EMPfaenger[i]) then
           FBCC:=FBCC+EMPfaenger[i]+',';
       for i:=0 to KOPien.Count-1 do
-        if cpos('@',KOPien[i])<>0 then
+        if IsMailAddr(KOPien[i]) then
           FBCC:=FBCC+KOPien[i]+',';
       SetLength(FBCC,Length(FBCC)-1);
     end else
     begin
       for i:=0 to Empfaenger.Count-1 do
-        if cpos('@',Empfaenger[i])<>0 then
+        if IsMailAddr(Empfaenger[i]) then
           FTo:=FTo+Empfaenger[i]+',';
       for i:=0 to Kopien.Count-1 do
-        if cpos('@',Kopien[i])<>0 then
+        if IsMailAddr(Kopien[i]) then
           FTo:=FTo+Kopien[i]+',';
       SetLength(FTo,Length(FTo)-1);
     end;
@@ -868,7 +868,7 @@ begin
   { -- construct Reply-To out of ANTWORT-AN -------------------------- }
   if FReplyto = '' then begin
     for i:=0 to AntwortAn.Count-1 do
-      if cpos('@',AntwortAn[i])<>0 then
+      if IsMailAddr(AntwortAn[i]) then
         FReplyto:=FReplyto+AntwortAn[i]+',';
     SetLength(FReplyto,Length(FReplyto)-1);
   end;
@@ -876,7 +876,7 @@ begin
   { -- construct Mail-Followup-To out of DISKUSSION-IN --------------- }
   if FMailReplyTo = '' then begin
     for i:=0 to DiskussionIn.Count-1 do
-      if cpos('@',DiskussionIn[i])<>0 then
+      if IsMailAddr(DiskussionIn[i]) then
         FMailReplyTo:=FMailReplyTo+DiskussionIn[i]+',';
     SetLength(FMailReplyTo,Length(FMailReplyTo)-1);
   end;
@@ -885,6 +885,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2003/05/11 11:12:19  mk
+  - use IsMailAddr when possible
+
   Revision 1.37  2003/04/25 21:11:19  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

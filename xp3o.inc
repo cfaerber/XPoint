@@ -384,7 +384,7 @@ var x,y      : Integer;
         MapsReadList;
         end;
 
-      if (LeftStr(UpperCase(betreff),6)='FILES.') and (cpos('@',absender)>0) and
+      if (LeftStr(UpperCase(betreff),6)='FILES.') and IsMailAddr(absender) and
          (typ='T') then
       begin
         box:=copy(absender,cpos('@',absender)+1,20);
@@ -637,7 +637,7 @@ var x,y      : Integer;
   var
     Index: Integer;
   begin
-    if cpos('@',dom)=0 then
+    if not IsMailAddr(dom) then
       IsOwnDomain:=false
     else
     begin
@@ -875,12 +875,12 @@ begin
                               
         { Schalter maildelxpost beachten }
         if (hdp.Empfaenger.Count > maxcrosspost)
-        and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then begin
+        and ((not IsMailAddr(hdp.FirstEmpfaenger)) or maildelxpost) then begin
           empfnr:=hdp.Empfaenger.Count +1;                { Crossposting-Filter }
           continue;
           end;
           
-        if (cpos('@',hdp.FirstEmpfaenger)<>0) and (not spam_ok) then 
+        if IsMailAddr(hdp.FirstEmpfaenger) and (not spam_ok) then 
 //      if not spam_ok then
         begin
           if not assigned(spam) then
@@ -930,9 +930,9 @@ begin
           tobrett:=archive or (copy(FirstEmpfaenger,1,TO_len)=TO_ID);
           atp:=cPos('@',FirstEmpfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
-            if (FirstChar(FirstEmpfaenger)<>'/') and (cpos('@',Firstempfaenger)=0) then
+            if (FirstChar(FirstEmpfaenger)<>'/') and (not IsMailAddr(Firstempfaenger)) then
               Firstempfaenger:=Firstempfaenger+'@'+pollbox+'.ZER';
-            if cpos('@',Firstempfaenger)>0 then
+            if IsMailAddr(FirstEmpfaenger) then
               if tobrett then
                 Firstempfaenger:='U'+mid(Firstempfaenger,iif(archive,1,length(TO_ID)+1))
               else begin
@@ -1065,7 +1065,7 @@ begin
               name:=copy(FirstEmpfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
               checkbox(pb);
-              if cpos('@',name)=0 then name:=LeftStr(name+'@'+pb+'.ZER',79);
+              if not IsMailAddr(Name) then name:=LeftStr(name+'@'+pb+'.ZER',79);
               dbWriteNStr(ubase,ub_username,name);
               dbWriteNStr(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
@@ -1406,6 +1406,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2003/05/11 11:12:17  mk
+  - use IsMailAddr when possible
+
   Revision 1.105  2003/04/25 21:11:16  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

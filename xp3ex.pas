@@ -881,7 +881,7 @@ begin // extract_msg;
                    else
                      s:='';
                    if hdp.Empfaenger.Count = 1  then
-                     if cpos('@',hdp.FirstEmpfaenger)>0 then
+                     if IsMailAddr(hdp.FirstEmpfaenger) then
                        wrs437(gr(2)+mausname(hdp.FirstEmpfaenger)+s)   { 'Empfaenger : ' }
                      else
                        wrs437(gr(2)+hdp.FirstEmpfaenger+s)
@@ -1238,6 +1238,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.106  2003/05/11 11:12:16  mk
+  - use IsMailAddr when possible
+
   Revision 1.105  2003/04/03 15:56:15  mk
   - fixed header line in lister
 

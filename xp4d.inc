@@ -39,7 +39,7 @@ begin
     if newsgroupdisp and (s[2]='/') then delete(s,2,1);
     if (FirstChar(s)='1') or (cpos(':',s)>0) then begin
       i:=cpos('/',s);
-      if (i>2) and (cpos('@',s)=0) then s[i]:='@';
+      if (i>2) and (not IsMailAddr(s)) then s[i]:='@';
     end else
       // convert slashes to points EXCEPT slashes in OpenXP/16 or OpenXP/32
       for i:=3 to length(s) do if (s[i]='/') and not
@@ -464,7 +464,8 @@ begin  { __ Suchmarke }
             if fidoqwk and (dispmode=10) and
                dispfto and (FirstChar(_brett)='A') then
             begin
-              if cpos('@',s)>0 then SetLength(s, cpos('@',s)-1); {s[0]:=chr(cpos('@',s)-1);}
+              if IsMailAddr(s) then
+                SetLength(s, cpos('@',s)-1); {s[0]:=chr(cpos('@',s)-1);}
               s0:= dbReadNStr(mbase,mb_name);
 
               ulen:=19; {Absender-laenge}
@@ -642,6 +643,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2003/05/11 11:12:18  mk
+  - use IsMailAddr when possible
+
   Revision 1.63  2003/04/25 21:11:17  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

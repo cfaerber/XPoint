@@ -169,7 +169,7 @@ var i,res : integer;
     s: String;
   begin
     s := line;
-    if (cpos('@',s)>0) or (FirstChar(s)<>'/') then
+    if IsMailAddr(s) or (FirstChar(s)<>'/') then
     begin
       p:=pos(' (',s);
       if p>0 then SetLength(s, p-1);
@@ -270,7 +270,7 @@ var i,res : integer;
     if (p>0) and (lastchar(s)='>') then begin
       delete(s,1,p);
       DeleteLastChar(s);
-      if cpos('@',s)>0 then hd.pgp_uid:=s;
+      if IsMailAddr(s) then hd.pgp_uid:=s;
       end;
   end;
 
@@ -606,6 +606,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2003/05/11 11:12:19  mk
+  - use IsMailAddr when possible
+
   Revision 1.35  2003/04/25 21:11:19  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

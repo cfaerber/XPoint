@@ -210,7 +210,7 @@ begin
                     until not dbFound;
                   end;
               1 : with hdp do begin
-                    if cpos('@',FirstEmpfaenger)>0 then
+                    if IsMailAddr(FirstEmpfaenger) then
                       FirstEmpfaenger:=LeftStr(FirstEmpfaenger,cpos('@',Firstempfaenger)-1);
                     System.write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
                              '   ',forms(FirstEmpfaenger,21),'  ',forms(betreff,30),'  ');
@@ -829,6 +829,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2003/05/11 11:12:19  mk
+  - use IsMailAddr when possible
+
   Revision 1.42  2003/03/28 23:22:20  mk
   - changed numeric consts for Weiterleit() to enum TWeiterleit
 

@@ -169,7 +169,7 @@ end;
     
 class function TAddress.Create(const addr: string): TAddress;
 begin
-  if CPos('@',addr)>0 then
+  if IsMailAddr(addr) then
     result := TEmailAddress.Create(addr)
   else
     result := TNewsgroupAddress.Create(addr);
@@ -195,7 +195,7 @@ begin
     result := TVerteiler.Create(Copy(addr,2,Length(addr)-2))
   else
 
-  if CPos('@',addr)>0 then
+  if IsMailAddr(addr) then
     result := TEmailAddress.CreateZC(addr)
     
   else
@@ -204,7 +204,7 @@ end;
 
 class function TAddress.CreateRFC(const addr: string): TAddress;
 begin
-  if CPos('@',addr)>0 then
+  if IsMailAddr(addr) then
     result := TEmailAddress.CreateRFC(addr)
     
   else
@@ -547,6 +547,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.11  2003/05/11 11:12:16  mk
+// - use IsMailAddr when possible
+//
 // Revision 1.10  2003/01/13 22:05:19  cl
 // - send window rewrite - Fido adaptions
 // - new address handling - Fido adaptions and cleanups
