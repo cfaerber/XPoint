@@ -36,6 +36,4 @@ Text                                                Version Prio Autor
 - NNTP						    LOW     1    hd,mk
 - POP3						    LOW     1    hd,mk
 - IMAP						    LOW     3    na
-
-
-
+- Nodelisteneinbinden gibt RTE 216 haufenweise      LOW     1    na
