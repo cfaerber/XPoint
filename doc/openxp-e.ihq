@@ -88,13 +88,11 @@ OpenXP development may also be found at:
 
         http://www.openxp.com
 
-The official German FidoNet support site is Max
-Raabe's Klystron BBS:
-
-        +49-261-9524095
-        +49-261-9524094 (ISDN)
-
-        FidoNet: 2:2454/97
+A very good source for CrossPoint and related "tools"
+is Christian von Busse's FidoNet system, Kruemel Box.
+Amongst other things, Christian is the author of the 
+excellent CrossSecretary and PktSecretary. His system
+may be reached at 2:240/2188
 
 There is NO official English support site but help
 and support may be obtained from the following
@@ -103,18 +101,21 @@ sources:
         FidoNet: XPOINT
                  (International FidoNet support echo)
 
-        Usenet:  de.comm.software.openxp
+                 POINTS
+                 (International FidoNet Points echo)
+
+
+        Usenet:  de.comm.software.crosspoint
                  (German support newsgroup)
                  (Although the dominant language is
-                 German, English *is* allowed)
+                  German, English *is* allowed)
 
 All bug reports should be posted in the German
 support newsgroup. If you do not have internet
-access, bug reports may be posted in the FidoNet
-echo, together with a note to the moderator
-requesting that the bug report be forwarded into
-the German support newsgroup. The moderator is a
-very obliging chappie :-)
+access, bug reports may be posted in either of 
+the relevant FidoNet echos, together with a note 
+to the moderator requesting that the bug report 
+be forwarded into the German support newsgroup.
 @
 6
 <<OpenXP - Licence Conditions
@@ -13384,6 +13385,7 @@ Press <Enter> to read about [Fido addresses].@4010
 Choose a device. At the moment you can setup up to
 four devices (/Config/Modem).
 @@
+
 
 
 
