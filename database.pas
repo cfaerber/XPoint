@@ -1584,7 +1584,10 @@ end;
 
 {
   $Log$
-  Revision 1.57  2002/09/09 08:29:36  mk
+  Revision 1.58  2002/09/30 12:17:46  cl
+  - BUGFIX <8Wv6b4jJcDB@3247.org>: off-by-one error
+
+  Revision 1.52.2.3  2002/09/09 08:29:14  mk
   - some performance improvements
 
   Revision 1.56  2002/07/25 20:43:51  ma
