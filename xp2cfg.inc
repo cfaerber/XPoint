@@ -865,6 +865,7 @@ begin
   writeln(t,'ViewerSave=',viewer_save);
   writeln(t,'ViewerLister=',viewer_lister);
   writeln(t,'ViewerVirscan=',viewer_scanner);
+  writeln(t,'DelViewTmp=',jnf(delviewtmp));
   writeln(t,'Editor=',VarEditor);
   writeln(t,'EditorKB=',editorkb);
 { writeln(t,'EditVollbild=',jnf(editvollbild)); }
@@ -1803,6 +1804,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.56  2000/05/18 03:44:36  jg
+  - Bugfix: vergessen Delviewtmp in XPOINT.CFG abzuspeichern.
+
   Revision 1.55  2000/05/15 20:56:40  oh
   -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
 
