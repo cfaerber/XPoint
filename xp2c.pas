@@ -154,7 +154,11 @@ begin
   maddbool(3,16,getres2(250,22),_UserSortBox);            { 'Useranzeigen nach Server sortieren' }
   maddbool(3,17,getres2(250,21),OtherQuoteChars);         { 'Farbe auf fÅr Quotezeichen : und |' }
 
+{$IFDEF UnixFS}
+  maddint(3,19,getres2(250,25),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk' }
+{$ELSE }
   maddint(3,19,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
+{$ENDIF }
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
@@ -212,8 +216,7 @@ begin
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und NachrichtenÅbersicht' }
   oldm:=_maus;
 {$IFDEF Linux }
-  maddbool(39,2,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
-  maddbool(39,3,getres2(251,23),MausShInit);      { 'Initialisierung' }
+  { Maus-Bedienung noch nicht implementiert }
 {$ELSE }
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Maus-Bedienung' }
   maddbool(39,3,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
@@ -774,7 +777,9 @@ begin
   { 'Feldtausch in Userliste': }
   maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
              UsrFeldDef+LStr(UsrFeldDef));
+{$IFNDEF Linux}
   maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
+{$ENDIF}
   maddbool(3,7,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
   maddbool(3,9,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
   freeres;
@@ -959,9 +964,9 @@ function formpath(var s:string):boolean;
 var
     res : integer;
 begin
-  s:=ustr(FExpand(s));
-  if (s<>'') and (right(s,1)<>'\') then
-    s:=s+'\';
+  s:=fustr(FExpand(s));
+  if (s<>'') and (right(s,1)<>DirSepa) then
+    s:=s+DirSepa;
   if not validfilename(s+'1$2$3.xxx') then
     if ReadJN(getres2(262,1),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
     begin
@@ -995,23 +1000,23 @@ var brk : boolean;
 begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
-  maddstring(3,2,getres2(262,2),temppath,31,79,''); mhnr(260);   { 'TemporÑr-Verzeichnis ' }
+  maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'TemporÑr-Verzeichnis ' }
   if Assigned(EditTemppath) then
     setfield(fieldpos,EditTemppath^);
   msetVfunc(formpath);
-  maddstring(3,4,getres2(262,3),extractpath,31,79,'');   { 'Extrakt-Verzeichnis  ' }
+  maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
   if Assigned(EditExtpath) then
     setfield(fieldpos,EditExtpath^);
   msetVfunc(formpath);
-  maddstring(3,6,getres2(262,4),sendpath,31,79,'');   { 'Sende-Verzeichnis    ' }
+  maddstring(3,6,getres2(262,4),sendpath,31,MaxLenPathname,'');   { 'Sende-Verzeichnis    ' }
   if Assigned(EditSendpath) then
     setfield(fieldpos,EditSendpath^);
   msetVfunc(formpath);
-  maddstring(3,8,getres2(262,5),logpath,31,79,'');    { 'Logfile-Verzeichnis  ' }
+  maddstring(3,8,getres2(262,5),logpath,31,MAxLenPathname,'');    { 'Logfile-Verzeichnis  ' }
   if Assigned(EditLogpath) then
     setfield(fieldpos,EditLogpath^);
   msetVfunc(formpath);
-  maddstring(3,10,getres2(262,6),filepath,31,79,'');  { 'FileReq-Verzeichnis  ' }
+  maddstring(3,10,getres2(262,6),filepath,31,MaxLenPathname,'');  { 'FileReq-Verzeichnis  ' }
   msetVfunc(formpath);
   readmask(brk);
   if not brk and mmodified then begin
@@ -1460,6 +1465,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/05/13 14:24:32  hd
+  - FormPath an Linux angepasst
+  - path_config, options, UI_options angepasst
+
   Revision 1.33  2000/05/10 13:52:57  jg
   - Viewer-Sicherheitslisten F2-Auswahl hatte ein ".ZIP" zuviel
 
