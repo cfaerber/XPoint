@@ -3,38 +3,34 @@
 # 11.11.2000   some more changes to get more running
 # 15.10.2001   fix for symlinks-kill
 # 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
-Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
+Summary: openxp - The Open-Source OpenXP Project (from Crosspoint by Peter Mandrella)
 Name: openxp
 %define version %version%
 %define release %release%
 %define compopts %compopts%
 
-#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
-#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-# -CX for Releases only
-# %define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-# for snapshots
-%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-# old settings
-# %define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
-%define toolsppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+%define ppcopts -FU. -FuObjCOM -Funetcall -Fuxplib -Fubuild -Fl.
+
 #%define helpdir /home/boettger/openxp/openxp/contrib
-##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
+
 Version: %{version}
 Release: %{release}
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team under GPL
 Source: /usr/src/packages/SOURCES/openxp-%{version}-%{release}.tar.gz
 BuildRoot: /tmp/openxp-root
+
 # Following are optional fields
 URL: http://www.openxp.de
 Distribution: none
+
 #Patch: openxp.patch
 Prefix: %{Prefix}
 BuildArchitectures: i386
 Requires: ncurses
+
 #Obsoletes:
 %description
 OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
@@ -48,20 +44,16 @@ OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networ
 %build
 #CFLAGS="$RPM_OPT_FLAGS" ./configure --Prefix=/usr
 #make openxp
-#patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
-#patch < /home/leo/openxptools/xp4.pas.diff
-#ppc386 %{ppcopts} openxp
+
 ppc386 -B %{compopts} %{ppcopts} openxp
-ppc386 %{toolsppcopts} rc
-ppc386 %{toolsppcopts} ihs
+ppc386 %{ppcopts} rc
+ppc386 %{ppcopts} ihs
+
 ./rc openxp-d.rq
 ./rc openxp-e.rq
 ./ihs doc/openxp-d
 ./ihs doc/openxp-e
-#/home/leo/openxp/rc openxp-d.rq
-#/home/leo/openxp/rc openxp-e.rq
-#/home/leo/openxp/ihs doc/openxp-d
-#/home/leo/openxp/ihs doc/openxp-e
+
 
 %install
 # echo install >> /tmp/rpm.log
@@ -72,6 +64,7 @@ mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
 mkdir $RPM_BUILD_ROOT%{Prefix}/examples
+
 mkdir -p %{Prefix}
 mkdir -p %{Prefix}/bin
 mkdir -p %{Prefix}/lib
@@ -103,7 +96,6 @@ cp file_id.diz %{Prefix}/doc
 rm -rf beispiel/CVS
 cp beispiel/* $RPM_BUILD_ROOT%{Prefix}/examples
 cp beispiel/* %{Prefix}/examples
-
 
 pushd .
 cd $RPM_BUILD_ROOT
@@ -150,6 +142,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Oct 9 2003 Christian Boettger <cb@openxp.de>
 - changes for new release numbering system
+
 * Sun Jan 6 2002 Matthias Leonhardt <i7lema@rz.uni-jena.de>
 - compilerupdate
 - range-check-fixes
