@@ -263,7 +263,7 @@ var size   : longint;
           exit;
           end;
         dbReadN(ubase,ub_codierer,coder);
-        if coder<>dtyp then begin
+        if coder<>byte(dtyp) then begin
           if dtyp=1 then
             rfehler(309)  { 'Nachricht ist QPC-codiert, aber es ist ein DES-Passwort eingetragen!' }
           else
@@ -1232,6 +1232,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.101  2002/12/16 14:53:11  mk
+  - fixed compiler warning
+
   Revision 1.100  2002/12/14 07:31:31  dodi
   - using new types
 

@@ -62,7 +62,7 @@ type
     property SecureLoginMandatory: boolean read FSecureLoginMandatory write FSecureLoginMandatory;
 
     { Verbindung herstellen }
-    function Connect(AFQDomain: String): boolean;
+    function Connect(AFQDomain: String): boolean; reintroduce;
 
     { Abmelden }
     procedure Disconnect; override;
@@ -346,6 +346,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/12/16 14:53:12  mk
+  - fixed compiler warning
+
   Revision 1.23  2002/12/14 09:25:18  dodi
   - removed gpltools and encoder units
 
