@@ -26,7 +26,7 @@
 
 { OS specific uses }
 
-//uses  Crt;  //todo: really used?
+uses  Crt;  
 
 { local declarations }
 
@@ -48,6 +48,9 @@ end;
 
 {
         $Log$
+        Revision 1.5  2003/08/23 19:15:27  mk
+        - compile fixes for dos32
+
         Revision 1.4  2002/12/04 16:57:00  dodi
         - updated uses, comments and todos
 

@@ -617,7 +617,7 @@ begin
 {$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
 {$IFNDEF NCRT}  {NCurses uses wgetch}
     if true {UseMulti2 }then
-      get_without_sys
+      //????get_without_sys
     begin
       repeat
         st1:=kbstat;
@@ -637,7 +637,7 @@ begin
           else begin
             mox:=mausx; moy:=mausy;
           end;
-          if ParWintime>0 then mdelay(0);
+          mdelay(0);
         end;
         z:=#255;
         if maus and iomaus and (maust and mausst<>0) then begin
@@ -1675,6 +1675,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2003/08/23 19:15:27  mk
+  - compile fixes for dos32
+
   Revision 1.105  2003/05/10 17:30:00  mk
   - added call to multi2
 

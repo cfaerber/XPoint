@@ -328,7 +328,7 @@ var
 
   procedure put(b:byte);
   begin
-    PushMouseKey(b);
+    PushMausKey(b);
     koo_da:=true;
   end;
 
@@ -539,6 +539,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2003/08/23 19:15:27  mk
+  - compile fixes for dos32
+
   Revision 1.54  2003/01/01 16:19:44  mk
   - changes to made FreeBSD-Version compilable
 
