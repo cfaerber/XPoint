@@ -160,7 +160,7 @@ procedure seluser(var cr:customrec);                 { Userauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
-    if not sel_verteiler and (dbReadInt(ubase,'userflags') and 4<>0) then begin
+    if (not cr.brk) and ((not sel_verteiler) and (dbReadInt(ubase,'userflags') and 4<>0)) then begin
       rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
       brk:=true;
       end;
@@ -1507,6 +1507,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.7  2000/12/30 12:44:39  mk
+  - fixed crash in seluser
+
   Revision 1.21.2.6  2000/10/15 08:52:00  mk
   - misc fixes
 
