@@ -381,12 +381,21 @@ begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
+
+{ Die Quote-Routine von XP erhÑlt immer eine Nachricht mit Header und
+  wirft den Header vor dem Quoten weg. Wenn nur einige markierte Zeilen
+  zitiert werden sollen, kann nicht die komplette Nachricht mit Header
+  extrahiert und an den Quoter Åbergeben werden. Stattdessen wird vor
+  dem extrahieren der markierten Zeilen ein Dummy-Header erzeugt. Die
+  acht Leerzeilen sind ein Dummy-Header im alten Z-Netz-Format ("Z2.8"). }
+
         if ntZConnect(mbNetztyp) then begin  { Dummy-ZC-Header erzeugen }
           writeln(tt,'Dummy: das ist ein Dummy-Header');
           writeln(tt);
           end
         else
           for i:=1 to 8 do writeln(tt);
+
         s:=first_marked;
         nr:=current_linenr;
         while s<>#0 do begin
@@ -974,6 +983,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/02/28 11:06:37  mk
+  - Peters Kommentar zum Dummy-Quoten eingefuegt
+
   Revision 1.14  2000/02/26 18:14:46  jg
   - StrPCopy in Xp1s.inc integriert
   - Suche aus Archivviewer wieder zugelassen
