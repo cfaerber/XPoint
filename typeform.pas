@@ -74,7 +74,7 @@ const
 
  {$IFDEF FPC_OLD}
   {$IFDEF UnixFS}
-   Const PathDelim = '\';
+   Const PathDelim = '/';
   {$ELSE}
    Const PathDelim = '\';
   {$ENDIF}
@@ -1449,6 +1449,9 @@ end;
 
 {
   $Log$
+  Revision 1.110  2002/04/19 16:52:20  cl
+  - fix for last commit: pathdelim is '/' for UnixFS
+
   Revision 1.109  2002/04/19 16:51:24  cl
   - fix for FPC <= 1.0.4
 
