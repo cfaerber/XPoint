@@ -301,32 +301,35 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
 13   ~          /os2x   kind of freeing of free unused system resources (time)
 14   ~                  under OS/2 (x ranges from a to d)
-15
-16   ~          /k:X    send key X (for key macro)
-17   ~          /pw:xx  enter start password xx
-18   ~          /z:nn   set nn screen lines
-19   ~          /l:X    set language (e.g. /l:E for Englisch)
-20
-21   ~          /n:Server[:hh:mm]   start netcall to Server
-22   ~          /n:*                netcall to all Servers
-23   ~          /nr:Server          relogin netcall to Server
-24   ~          /user:Server:NAME   set user name at Server to NAME
-25   ~          /ips:Server:PUFFER  import and send puffer file
-26   ~          /autostart:...      start program by time range
-27
-28   ~          /av:<File>          view archive file
-29   ~          /f:<File>[.FNT]     load font file
-30   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
-31
-32   ~          /ip:PUF   import puffer file
-33   ~          /ipe:PUF  import puffer file with receive date = creation date
-34   ~          /g        sets /ip and /ips messages to status 'read'
-35   ~          /eb       return receipts (for /ip..)
-36   ~          /r        start messagebase reorganisation
-37   ~          /pack     do /Reorg/Pack
-38   ~          /t:n      start timing list no. n
-39
-40   ~          /x        quit program
+15   ~          /nolock do not test for multible instances of XP
+16   ~          /lfn    enable Support for Long Filenames (useful with Win 2000)
+17   ~          /312    XP 3.12 Compatibility Mode (X-XP-FTO statt F-TO)
+18
+19   ~          /k:X    send key X (for key macro)
+20   ~          /pw:xx  enter start password xx
+21   ~          /z:nn   set nn screen lines
+22   ~          /l:X    set language (e.g. /l:E for Englisch)
+23
+24   ~          /n:Server[:hh:mm]   start netcall to Server
+25   ~          /n:*                netcall to all Servers
+26   ~          /nr:Server          relogin netcall to Server
+27   ~          /user:Server:NAME   set user name at Server to NAME
+28   ~          /ips:Server:PUFFER  import and send puffer file
+29   ~          /autostart:...      start program by time range
+30
+31   ~          /av:<File>          view archive file
+32   ~          /f:<File>[.FNT]     load font file
+33   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
+34
+35   ~          /ip:PUF   import puffer file
+36   ~          /ipe:PUF  import puffer file with receive date = creation date
+37   ~          /g        sets /ip and /ips messages to status 'read'
+38   ~          /eb       return receipts (for /ip..)
+39   ~          /r        start messagebase reorganisation
+40   ~          /pack     do /Reorg/Pack
+41   ~          /t:n      start timing list no. n
+42
+43   ~          /x        quit program
 -
 
 203  Error: Can't create directory %s !
