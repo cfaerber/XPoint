@@ -177,3 +177,35 @@ Baumdarstellung durch # oder durch "G" sich diese ansehen kann.
 Ich wuerd mir aber noch alternativ eine langsame Teilstringsuche  
 wuenschen.
 BTW die Optionen bewirken ja nichts, kann/sollte man sie ausblenden?
+From lars@tecs.de Thu Mar 23 01:00:00 2000
+Path: uni-berlin.de!craze02.tecs.DE!not-for-mail
+From: Lars Becker <lars@tecs.de>
+Newsgroups: de.comm.software.crosspoint
+Subject: 2 Featurerequests: Prioritaet, Umlaute im Betreff
+Date: 23 Mar 2000 00:00:00 +0000
+Lines: 17
+Message-ID: <7aQayOGPmoB@terra-incognita.tecs.de>
+NNTP-Posting-Host: craze02.tecs.de (195.158.169.2)
+X-Trace: fu-berlin.de 953820829 5162417 195.158.169.2 (16 [24970])
+X-NO-ARCHIVE: Yes
+User-Agent: VSoup v1.2.9.48Beta [OS/2]
+Xref: uni-berlin.de de.comm.software.crosspoint:40377
+--------
+Hallo OpenXP-Team,
+
+zwei *kleinere* Featurerequests:
+
+    1.)  Ich habe eben mal mit den Prioritaeten rumgespielt und
+    gesehen das die eigenen Prioritaetseinstellungen bei ZConnect
+    nicht angezeigt werden, obwohl die Anzeige der Prioritaet bei
+    C/Anzeige/Kopf eingestellt ist.  Dort wird wohl nur X-Priority
+    ausgewertet.  Ich denke die Anzeige der ZConnect-Prio waere fuer
+    ZC-Nutzer sicherlich interessant.
+
+    2.)  Traegt man ins Subject versehentlich Umlaute ein "biept's"
+    aber nix geschieht.  Die automatische Wandlung in 7bit-ASCII
+    waere praktisch.
+
+Gruss,
+- Lars.
+
