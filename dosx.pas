@@ -57,6 +57,9 @@ uses
   {$ifdef vp }
   vpsyslow,
   {$endif}
+  {$IFDEF Win32 }
+  windows,
+  {$ENDIF }
   sysutils;
 {$ENDIF }
 
@@ -138,13 +141,16 @@ end;
 { benîtigt DOS ab Version 3.0       }
 { pro Handle wird 1 Byte benîtigt   }
 
-{ 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz }
+{ 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
 
 function DriveType(drive:char):byte;
 {$IFDEF Ver32  }
-  {$ifdef vp }
-var dt:TDriveType;
-  {$endif}
+const
+  DriveStr: String = '?:\'+#0;
+{$ifdef vp }
+  var
+    dt:TDriveType;
+{$endif}
 begin
   {$ifdef vp }
   dt:=SysGetDriveType(drive);
@@ -155,15 +161,26 @@ begin
     dtHDNTFS,
     dtHDExt2     : DriveType:=1;
     dtTVFS       : DriveType:=3;
-    dtCDRom,
     dtNovellNet,
     dtLAN        : DriveType:=5;
+    dtCDRom      : DriveType:=6;
     else           DriveType:=0;
   end;
   {$else}
-  { !! Hier sollte speziell fÅr das Betriebssystem eine saubere
-    Implementation gemacht werden }
-  if Drive <= #26 then DriveType := 1 else DriveType := 0;
+    {$IFDEF Win32 }
+      DriveStr[1] := Drive;
+      case GetDriveType(@DriveStr[1]) of
+        DRIVE_REMOVABLE,
+        DRIVE_FIXED:     DriveType := 1;
+        DRIVE_RAMDISK:   DriveType := 2;
+        DRIVE_REMOTE:    DriveType := 5;
+        DRIVE_CDROM:     DriveType := 6;
+      else
+        DriveType := 0;
+      end;
+    {$ELSE }
+      DriveType := 1;
+    {$ENDIF }
   {$endif}
 end;
 {$ELSE }
@@ -199,19 +216,8 @@ end;
 
 function alldrives:string;
 
+  {$IFDEF BP  }
   function GetMaxDrive:char;
-  {$ifdef vp }
-  var drives,count:longint;
-  begin
-    drives:=SysGetValidDrives;
-    count:=0;
-    while drives<>0 do begin
-      inc(count);
-      drives:=drives shr 1;
-    end;
-    GetMaxDrive:=chr(drives+64);
-  end;
-  {$else}
   var regs : registers;
   begin
     with regs do begin
@@ -222,18 +228,40 @@ function alldrives:string;
       GetMaxDrive:=chr(al+64);
     end;
   end;
-  {$endif}
+  {$ENDIF }
 
 var b : byte;
     s : string;
     c : char;
+{$IFDEF Ver32 }
+    Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
+    i: integer;
+{$ENDIF }
 begin
   b:=0;
+{$IFDEF BP }
   for c:='A' to GetMaxdrive do
     if drivetype(c)>0 then begin
       inc(b);
       s[b]:=c;
     end;
+{$ELSE }
+  {$IFDEF Vp }
+    Drives:=SysGetValidDrives;
+  {$ELSE }
+    {$IFDEF Win32 }
+      Drives := GetLogicalDrives;
+    {$ELSE }
+      Drives := 1 shl 27 - 1; {!!}
+    {$ENDIF }
+  {$ENDIF }
+    for i := 0 to 25 do
+      if (Drives and (1 shl i)) > 0 then
+      begin
+        inc(b);
+        s[b] := Chr(i + 65);
+      end;
+{$ENDIF }
   s[0]:=chr(b);
   alldrives:=s;
 end;
@@ -390,6 +418,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/25 00:29:22  mk
+  - GetDriveType und AllDrives jetzt sauber portiert
+
   Revision 1.10  2000/03/24 23:11:16  rb
   VP Portierung
 

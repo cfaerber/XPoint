@@ -309,6 +309,7 @@ var   fb     : pathstr;
           3 : write(forms('Subst-Laufwerk',59));
           4 : write(forms('device driven',59));
           5 : write(forms('Netz-Laufwerk',59));
+          6 : write(forms('CD-ROM Laufwerk',59));
         else
           write(sp(59));
         end
@@ -1077,6 +1078,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/25 00:29:22  mk
+  - GetDriveType und AllDrives jetzt sauber portiert
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
