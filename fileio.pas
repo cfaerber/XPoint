@@ -13,6 +13,8 @@
 
 {$I XPDEFINE.INC }
 
+{$mode objfpc}
+
 unit fileio;
 
 interface
@@ -20,41 +22,7 @@ interface
 {$ifdef unix}
   {$i linux/fileioh1.inc}
 {$else}
-
-uses
-  sysutils,
-{$ifdef vp }
-  vpusrlow,
-{$endif}
-{$IFDEF Win32 }
-  windows,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-  xpglobal,
-  dos, typeform;
-
-{$ifdef vp }
-const FMRead       = fmOpenRead;     { Konstanten fÅr Filemode }
-      FMWrite      = fmOpenWrite;
-      FMRW         = fmOpenReadWrite;
-      FMDenyNone   = fmShareDenyNone;
-      FMDenyRead   = fmShareDenyRead;
-      FMDenyWrite  = fmShareDenyWrite;
-      FMDenyBoth   = fmShareExclusive;
-      FMCompatible = fmShareCompat;
-{$else}
-const FMRead       = $00;     { Konstanten fÅr Filemode }
-      FMWrite      = $01;
-      FMRW         = $02;
-      FMDenyNone   = $40;
-      FMDenyRead   = $30;
-      FMDenyWrite  = $20;
-      FMDenyBoth   = $10;
-      FMCompatible = $00;
-{$endif}
-
+  {$i fileioh1.inc}
 {$endif} { Linux }
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
@@ -63,6 +31,26 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
 const
   { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
   ffAnyFile = $20;
+
+{ Zugriffsrechte beim Erstellen einer Datei }
+type TCreateMode = (
+        cmUser,                         { Nur User RW }
+        cmUserE,                        { mit Ausf¸hrung }
+        cmGrpR,                         { User RW, Group R }
+        cmGrpRE,                        { + Ausf¸hrung }
+        cmGrpRW,                        { Beide RW }
+        cmGrpRWE,                       { + Ausf¸hrung }
+        cmAllR,                         { User RW, alle anderen R }
+        cmAllRE,                        { + Ausf¸hrung }
+        cmAllRW,                        { Alle RW }
+        cmAllRWE);                      { Alle alles }
+
+{ Funktionen zum Erstellen der Datei unter Ber¸cksichtigung
+  der Zugriffsrechte. }
+
+procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
+procedure XPRewrite(var F: file; cm: TCreateMode);
+procedure XPRewrite(var F: text; cm: TCreateMode);
 
 function  AddDirSepa(p: string): string;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
@@ -117,6 +105,22 @@ uses
 
 const
   PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
+
+procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
+begin
+  System.Rewrite(F,l);
+end;
+
+procedure XPRewrite(var F: file; cm: TCreateMode);
+begin
+  System.Rewrite(F);
+end;
+
+procedure XPRewrite(var F: text; cm: TCreateMode);
+begin
+  System.Rewrite(F);
+end;
+
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
@@ -574,6 +578,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/11/09 10:50:06  hd
+  - Neu: XPRewrite(var F: File|Text [; l: longint]; cm: TCreateMode);
+  - Fix: Invalid Types dirstr<->string
+
   Revision 1.59  2000/11/04 23:12:56  mk
   - fixed false reporting in IsPath
 

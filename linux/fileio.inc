@@ -16,6 +16,74 @@ uses
 
 const
   PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
+  STAT_IRWUSR           = STAT_IRUSR or STAT_IWUSR;
+  STAT_IRWGRP           = STAT_IRGRP or STAT_IWGRP;
+  STAT_IRWOTH           = STAT_IROTH or STAT_IWOTH;
+
+function SetAccessMode(const fn: string; const cm: TCreateMode): boolean;
+var
+  fm: longint;
+begin
+  case cm of
+    cmUser   : fm:= STAT_IRWUSR;
+    cmUserE  : fm:= STAT_IRWXU;
+    cmGrpR   : fm:= STAT_IRWUSR or STAT_IRGRP;
+    cmGrpRE  : fm:= STAT_IRWXU or STAT_IRGRP or STAT_IXGRP;
+    cmGrpRW  : fm:= STAT_IRWUSR or STAT_IRWGRP;
+    cmGrpRWE : fm:= STAT_IRWXU or STAT_IRWXG;
+    cmAllR   : fm:= STAT_IRWUSR or STAT_IRGRP or STAT_IROTH;
+    cmAllRE  : fm:= STAT_IRWXU or STAT_IRGRP or STAT_IXGRP or STAT_IROTH or STAT_IXOTH;
+    cmAllRW  : fm:= STAT_IRWUSR or STAT_IRWGRP or STAT_IRWOTH;
+    cmAllRWE : fm:= STAT_IRWXU or STAT_IRWXG or STAT_IRWXO;
+  end; { case }
+  { Mode setzen }
+  result:= chmod(fn, fm);
+end;
+
+procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F,l);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  { Nochmaliges öffnen, denn bei IOResult=0 ist die Datei zu,
+    ansonsten wäre IOResult gelöscht. }
+  System.Rewrite(F,l);        
+end;
+
+procedure XPRewrite(var F: file; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  System.Rewrite(F);
+end;
+
+procedure XPRewrite(var F: text; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  System.Rewrite(F);
+end;
+
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
@@ -297,7 +365,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:string):dirstr;
+function GetFileDir(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -434,6 +502,10 @@ end;
 
 {
         $Log$
+        Revision 1.8  2000/11/09 10:50:06  hd
+        - Neu: XPRewrite(var F: File|Text [; l: longint]; cm: TCreateMode);
+        - Fix: Invalid Types dirstr<->string
+
         Revision 1.7  2000/10/19 20:52:26  mk
         - removed Unit dosx.pas
 
