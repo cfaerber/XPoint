@@ -63,21 +63,12 @@ procedure shell(prog:string; space:word; cls:shortint);
     command:=FileUpperCase(command);
   
     callviacli:=(pos('|',parameters)>0) or (pos('>',parameters)>0) or (pos('<',parameters)>0);
+    commandsave:=command;
     if not callviacli then begin
-      commandsave:=command;
-      if not FileExists(command)then
-        if Pos('.',ExtractFileName(command))=0 then begin // no file extension specified
-          command:=FileUpperCase(fileSearch(commandsave+'.EXE','.'+DirSepa+getenv('PATH')));
-          if not FileExists(command)then
-            command:=FileUpperCase(fileSearch(commandsave+'.COM','.'+DirSepa+getenv('PATH')));
-          if not FileExists(command)then
-            begin command:=commandsave; callviacli:=true end; // a last chance...
-          end
-        else begin // file extension is specified
-          command:=FileUpperCase(fileSearch(commandsave,'.'+DirSepa+getenv('PATH')));
-          if not FileExists(command)then
-            begin command:=commandsave; callviacli:=true end; // a last chance...
-        end;
+      command:=FindExecutable(command);
+      if(command='')or(Pos('.BAT',command)<>0)then begin
+        callviacli:=true; command:=commandsave;
+      end;
     end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
@@ -472,6 +463,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/01/06 16:13:49  ma
+  - shell call using FindExecutable now
+
   Revision 1.47  2001/01/05 18:35:03  ma
   - moved Exxec unit into XP1 unit
 
