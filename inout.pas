@@ -434,6 +434,7 @@ procedure disp_DT;
 var
   h, m, s, s100: SmallWord;
 begin
+{$IFNDEF Unix }
   if UseMulti2 then begin
     if m2t then
     begin
@@ -451,6 +452,7 @@ begin
       disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
       end;
     end;
+{$ENDIF }
 end;
 
 Procedure multi2;
@@ -1666,6 +1668,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/02/21 17:14:41  mk
+  - linux compile fix
+
   Revision 1.88  2002/02/21 13:52:30  mk
   - removed 21 hints and 28 warnings
 
