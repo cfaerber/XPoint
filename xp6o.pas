@@ -916,7 +916,7 @@ again:
                      end;
                    end   { if SelWeiter }
                  else begin
-                   empf:=''; ebrett:='';
+                   empf:=''; ebrett:=''; am_replyto := '';
                    if typ=3 then ReplyText(betr,rehochn);
                    ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
                    if brk then goto ende                     {Nachricht weiterleiten}
@@ -1295,6 +1295,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.13  2001/01/03 11:47:01  mk
+  - am_replyto bei N/W/K/D loeschen
+
   Revision 1.20.2.12  2000/12/18 00:14:53  mk
   - bei Unversand Boxnamen auch ermitteln, wenn Pollpaket nicht vorhanden
 
