@@ -66,6 +66,7 @@ var p,p2 : byte;
 begin
 { if _unescape(name) then; }
   vorn:=false;
+  rps(s, '$FIRSTNAME', '$VORNAME');
   p:=pos('$PSEUDO',UpperCase(s));
   if p=0 then begin
     vorn:=true;
@@ -120,6 +121,8 @@ end;
 
 procedure rpsdate(var s:string);
 begin
+  rps(s,'$DAY','$TAG');
+  rps(s,'$TIME','$UHRZEIT');
   rps(s,'$DATUM',left(date,6)+right(date,2));
   if pos('$DATE',s)>0 then
     rpsdat(s,'$DATE',date);
@@ -1057,6 +1060,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/07/10 19:19:27  mk
+  - $DAY, $TIME, $FIRSTNAME hinzugefuegt
+
   Revision 1.26  2000/07/09 13:22:50  mk
   - $RNAME2 und $(RNAME2) eingebaut
 
