@@ -164,8 +164,8 @@ end;
 
 destructor TPOP3.Destroy;
 begin
-  UIDLs.Destroy;
-  FAvailableUIDLs.Destroy;
+  UIDLs.Free;
+  FAvailableUIDLs.Free;
   inherited Destroy;
 end;
 
@@ -419,6 +419,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2003/04/25 17:30:29  mk
+  - use Free instead of Destroy
+
   Revision 1.19  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 
