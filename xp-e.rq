@@ -132,6 +132,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Start call
 # Fileserver
 21   order
+22 S^uche
 
 + 22
 # Keys in Newsgroup window:
@@ -3411,6 +3412,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.110  2000/12/08 01:10:07  mk
+# MH:- Usersuche bei Auswahl ueber F2 moeglich
+#
 # Revision 1.109  2000/11/20 19:54:08  mk
 # - Automatische Datumsbezuege wieder wie immer (schaltbar)
 #
