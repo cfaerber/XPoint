@@ -81,10 +81,6 @@ begin
                    downloader:='gsz.exe portx $ADDRESS,$IRQ rz';
                  end;
       nt_NNTP:   begin
-                   nntp_ip:='127.0.0.1';        { Default IP }
-                   nntp_port:= 119;             { Port }
-                   nntp_id:= '';                { User-ID }
-                   nntp_pwd:= '';               { PAssword }
                  end;
       nt_POP3:   begin
                  end;
@@ -161,6 +157,21 @@ begin
     BMtyp:=bm_changesys;
     BMdomain:=false;
     maxfsize:=0;
+
+    nntp_ip:='localhost';        { Default IP }
+    nntp_port:= 119;             { Port }
+    nntp_id:= '';                { User-ID }
+    nntp_pwd:= '';               { PAssword }
+
+    pop3_ip := 'localhost';             { POP3: IP oder Domain }
+    pop3_id := '';                      { POP3: User-ID, falls nîtig }
+    pop3_pwd  := '';                    { POP3: Passwort, falls nîtig }
+    pop3_clear := true;                 { POP3: Nachrichten lîschen }
+
+    SMTP_ip := 'localhost';             { SMTP: IP oder Domain }
+    SMTP_id := '';                      { SMTP: User-ID, falls nîtig }
+    SMTP_pwd  := '';                    { SMTP: Passwort, falls nîtig }
+    SmtpAfterPOP := false;              { SMTP: Vorher POP3 Login nîtig }
   end;
   nt_bpar(nt,bp^);
 end;
@@ -300,6 +311,14 @@ begin
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
             gets(s,su,'NNTP-Password',nntp_pwd,255) or
+            gets(s,su,'POP3_IP', pop3_ip,255) or
+            gets(s,su,'POP3_ID', pop3_id,255) or
+            gets(s,su,'POP3_Ppwd', pop3_pwd, 255) or
+            getx(su,  'POP3_Clear', pop3_clear) or
+            gets(s,su,'SMTP_IP', smtp_ip, 255) or
+            gets(s,su,'SMTP_ID', smtp_id, 255) or
+            gets(s,su,'SMTP_Pwd', smtp_pwd, 255) or
+            getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',LastCall)
           ) then
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
@@ -543,6 +562,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/08/19 20:59:09  mk
+  - Auslesen der neuen Boxenparameter eingebaut
+
   Revision 1.20  2000/07/26 08:20:13  mk
   - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
 
