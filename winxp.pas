@@ -32,7 +32,7 @@ uses
   {$IFDEF DOS32} crt, {for GotoXY} {$ENDIF}
   {$IFDEF unix} xplinux,xpcurses, {$ENDIF }
   {$IFDEF VP } vpsyslow, {$ENDIF }
-  OsDepend, keys,inout,maus2,typeform, xpglobal;
+  osdepend, keys,inout,maus2,typeform, xpglobal;
 
 const
 {$IFDEF NCRT }
@@ -236,7 +236,7 @@ end;
 {$ENDIF NCRT }
 
 {$IFDEF NCRT }
-procedure wshadow(li,re,ob,un:word);
+procedure wshadow(li,re,ob,un: Integer);
 begin
   { Vorlaeufig kein Schatten unter Linux }
 end;
@@ -1059,6 +1059,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2001/12/30 19:22:05  cl
+  - Linux FPC compile fix (prototype for wshadow did not match NCRT implementation).
+
   Revision 1.69  2001/12/05 18:24:45  mk
   - fixed last commit
 
