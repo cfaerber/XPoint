@@ -16,14 +16,22 @@
 #
 # Zum Installieren von OpenXP wird ausserdem ein Archiv mit
 # verschiedenen Dateien, die nicht im OpenXP-Quellcode enthalten sind,
-# benoetigt.  (Z.Z. noch nicht verfuegbar.)
+# benoetigt: <ftp://ftp.openxp.de/openxp/snapshot/oxpcontr.rar>
 #
-# Fuer das Erstellen eines Quellcodearchiv wird die
-# Archivierungssoftware rar <http://www.rarsoft.com/> gebraucht.
+# Fuer das Erstellen eines Quellcodearchiv muss die
+# Archivierungssoftware rar <http://www.rarsoft.com/> installiert sein.
 #
-# Zum Uebersetzen des Handbuchs werden OpenJade, sed, w3m, tidy,
-# die DocBook DTD und die modular Stylesheets benoetigt.
-
+# Zum Uebersetzen des Handbuchs werden OpenJade
+# <http://www.netfolder.com/DSSSL/>, sed
+# <http://www.gnu.org/software/sed/> (DOS/32:
+# <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/sed302b.zip>), w3m
+# <http://ei5nazha.yz.yamagata-u.ac.jp/~aito/w3m/eng/>, tidy
+# <http://www.w3c.org/People/Ragget/tidy/>, die DocBook DTD
+# <http://nwalsh.com/docbook/dsssl/db157.zip>, die ISO 8879 Entities
+# <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
+# und die Modular Stylesheets
+# <http://nwalsh.com/docbook/dsssl/db157.zip> benoetigt.
+#
 # Unten muessen einige Variablen gesetzt werden.
 
 # make                   uebersetzt das ganze Programm
@@ -85,6 +93,12 @@
 #
 #DBDIR = 
 
+# Verzeichnis, in dem die ISO 8879 Entities liegen.
+# <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#ENTDIR = 
+
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
@@ -92,19 +106,20 @@
 #JADEDIR = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
-# <http://nwalsh.com/docbook/dsssl/>
+# <http://nwalsh.com/docbook/dsssl/db157.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
 #MODDIR = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
-# des Quellcode sind
-# (MUSS gesetzt werden.)
+# des Quellcode sind.
+# <ftp://ftp.openxp.de/openxp/snapshot/oxpcontr.rar>
+# (MUSS gesetzt werden, falls "make install" aufgerufen wird.)
 #
 #contribdir = 
 
 # Name des Quellcode-Archivs
-# (MUSS gesetzt werden.)
+# (MUSS gesetzt werden, falls "make dist" aufgerufen wird.)
 #
 #DISTFILE = oxp370_s.rar
 
@@ -129,12 +144,24 @@ ifeq (,$(findstring $(COMPILER),fpc vpc))
 $(error Variable "COMPILER" muss auf "fpc" oder "vpc" gesetzt werden)
 endif
 
-ifeq (,$(contribdir))
-$(error Variable "contribdir" muss gesetzt werden)
+ifeq ($(MAKEHB),yes)
+
+ifeq (,$(DBDIR))
+$(error Variable "DBDIR" muss gesetzt werden)
 endif
 
-ifeq (,$(DISTFILE))
-$(error Variable "DISTFILE" muss gesetzt werden)
+ifeq (,$(ENTDIR))
+$(error Variable "ENTDIR" muss gesetzt werden)
+endif
+
+ifeq (,$(JADEDIR))
+$(error Variable "JADEDIR" muss gesetzt werden)
+endif
+
+ifeq (,$(MODDIR))
+$(error Variable "MODDIR" muss gesetzt werden)
+endif
+
 endif
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
@@ -276,6 +303,7 @@ export COMPILER
 export DEBUG
 export MAKEHB
 export DBDIR
+export ENTDIR
 export JADEDIR
 export MODDIR
 export contribdir
@@ -2217,6 +2245,10 @@ documentation:
 
 # Installation
 
+ifeq (,$(contribdir))
+install:
+	$(error Variable "contribdir" muss gesetzt werden)
+else
 install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	install_datadir $(patsubst %,install_%,$(RESFILES)) \
 	$(patsubst %,install_%,$(RSTFILES)) \
@@ -2224,6 +2256,7 @@ install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	$(patsubst %,install_%,$(CONTRIB))
 	$(INSTALL_DATA) icons.res $(datadir)
 	$(MAKE) -C doc install
+endif
 
 install_bindir:
 	-$(INSTALLDIR) $(bindir)
@@ -2330,6 +2363,10 @@ maintainer-clean: localclean
 
 # Etwas umstaendlich wegen der maximalen Zeilenlaenge von COMMAND.COM.
 
+ifeq (,$(DISTFILE))
+dist:
+	$(error Variable "DISTFILE" muss gesetzt werden)
+else
 dist:
 	-$(RM) $(DISTFILE)
 	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile icons.res \
@@ -2343,9 +2380,15 @@ dist:
 	$(RAR) $(RARFLAGS) $(DISTFILE) linux$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE) ObjCOM$(SEP)Makefile \
 	ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
+endif
 
 #
 # $Log$
+# Revision 1.17  2000/10/09 22:11:22  fe
+# Ergaenzungen fuer Handbuch.
+# URL von oxpcontr.rar ergaenzt.
+# Korrekturen und Ergaenzungen.
+#
 # Revision 1.16  2000/10/08 18:15:12  fe
 # Uebersetzung des Handbuchs ergaenzt.
 # Neue Unit gpltools ergaenzt.
