@@ -178,10 +178,10 @@ begin
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
-  if (ioresult<>0) 
+  if (ioresult<>0)
 {$ifdef Linux}
      or not TestAccess(name, taUserR)
-{$endif}  
+{$endif}
   then begin
     filemode:=fm;
     inithelp:=false;
@@ -332,6 +332,7 @@ laden:
     if buf^[p]>=32 then begin
       p1:=p;
       while buf^[p]>=32 do inc(p);
+      SetLength(s, sl+1+p-p1);
       Move(buf^[p1],s[sl+1],p-p1);
       inc(sl,p-p1);
       end;
@@ -757,6 +758,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/16 16:59:28  mk
+  - AnsiString Updates
+
   Revision 1.19  2000/07/06 10:32:04  hd
   - Typ 'stringp' entfernt (fuer AnsiString nicht noetig)
   - Linux

@@ -79,11 +79,6 @@ begin
   dospath:=s;
 end;
 
-procedure SetDrive(drive:char);
-begin
-  SetCurrentDir(Drive + ':');
-end;
-
 function OutputRedirected:boolean;
 begin
   {$IFDEF OS2 }
@@ -177,6 +172,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/16 16:59:28  mk
+  - AnsiString Updates
+
   Revision 1.24  2000/07/15 20:02:58  mk
   - AnsiString updates, noch nicht komplett
 
