@@ -6781,6 +6781,12 @@ Datei an beliebigen Tagen bei Žnderung verschickt
 werden soll.
 @
 580
+<<[x]>> -> <<RFC>>: Die Nachricht ersetzt die alte Nachricht
+       ("Supersedes").
+
+       Siehe auch: [Nachrichten/Weiterleiten/Ersetzen]@12108
+@
+581
 Hier kann ein einzelnes Datum angegeben werden, zu
 dem die Nachricht verschickt werden soll. Nach dem
 Absenden wird das Datumsfeld automatisch gel”scht.
@@ -6789,8 +6795,8 @@ steht "l”schen" auf <<[x]>>, wird nach dem Absenden
 der komplette Eintrag und evtl. auch die dazugeh”-
 rige Datei gel”scht (s. Feld "l”schen").
 @
-581
-^^580
+582
+^^581
 @
 590
 <<[x]>> -> das Makro gilt in der Brettliste
