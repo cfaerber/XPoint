@@ -1925,12 +1925,8 @@ begin
 end;
 
 procedure set_checkdate;
-var
-  Handle: Integer;
 begin
-  Handle := FileOpen(NewDateFile, fmOpenReadWrite);
-  FileSetDate(Handle, DateTimeToFileDate(Now));
-  FileClose(Handle);
+  FileSetDate(NewDateFile, DateTimeToFileDate(Now));
 end;
 
 
@@ -2108,6 +2104,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.13  2003/01/07 11:18:48  mk
+  - use cross platform FileSetDate
+
   Revision 1.147.2.12  2003/01/01 16:18:37  mk
   - changes to made FreeBSD version compilable
 
