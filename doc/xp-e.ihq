@@ -7047,7 +7047,8 @@ Special keys are:
 <PgUp>, <PgDn>
 <Ctrl PgUp> -PgDn
 <Ins>, <Del>
-<Ctrl PrtScr>         Ctrl-PrintScreen
+<Ctrl PrtScr>        Ctrl-PrintScreen
+< >                  Space
 
 The characters <, > and ^ must also be enclosed in
 pointed brackets.

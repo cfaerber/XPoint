@@ -10294,15 +10294,6 @@ Geben Sie die gewnschte Tastenfolge ein. <<<Shift->>
 <<Enter> >>best„tigt die Eingabe, <<<Shift-Esc> >>bricht die
 Eingabe ab, und <<<Shift-Backspace> >>l”scht die jeweils
 letzte Taste.
-
-<<Hinweis:>> Die Leertaste wird nicht unter allen Umst„n-
-den korrekt ausgewertet, speziell dann nicht, wenn
-sie die erste oder die letzte Taste eines Makros ist.
-Wenn Sie feststellen sollten, daá ein Makro, das
-Leertasten enth„lt, nicht korrekt funktioniert, bear-
-beiten Sie das Makro nachtr„glich ([C/T/Makros/Edit])@548
-und schlieáen Sie die Leertaste in spitze Klammern
-(< >) ein.
 @
 548
 Hier kann das gew„hlte Tastenmakro bearbeitet werden.
@@ -10327,9 +10318,10 @@ M”gliche Sondertasten sind:
 <Ctrl PgUp>, -PgDn   Ctrl + Seite oben/unten
 <Ins>, <Del>         einfgen/l”schen
 <Ctrl PrtSc>         Ctrl-PrintScreen / Ctrl-Druck
+< >                  Leertaste
 
-Die Zeichen <<<>>, <<> >>und <<^>> mssen, das Leerzeichen kann
-ebenfalls in spitze Klammern eingeschlossen werden.
+Die Zeichen <<<>>, <<> >>und <<^>> mssen ebenfalls
+in spitze Klammern eingeschlossen werden.
 
 Folgende Sondertasten sind identisch mit Ctrl-Steuer-
 codes und als solche einzugeben:
