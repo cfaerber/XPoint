@@ -30,18 +30,18 @@ uses
   sysutils,
   typeform,fileio;
 
-procedure OpenResource(fn:string; preloadmem:longint);
+procedure OpenResource(const fn:string; preloadmem:longint);
 procedure CloseResource;
 function  ResIsOpen:boolean;
 
 function  GetRes(nr:word):string;
-function  GetRepS(nr:word; txt:String):string;
+function  GetRepS(nr:word; const txt:String):string;
 function  GetRes2(nr1,nr2:word):string;
-function  GetReps2(nr1,nr2:word; txt:string):string;
+function  GetReps2(nr1,nr2:word; const txt:string):string;
 function  Res2Anz(nr:word):word;
 function  IsRes(nr:word):boolean;
 procedure FreeRes;                        { Cluster freigeben }
-function  reps(s1,s2:string):string;
+function  reps(const s1,s2:string):string;
 
 procedure InitResourceUnit;
 
@@ -94,7 +94,7 @@ end;
 
 { preloadmem: soviel Bytes Heap soll mindestens freibleiben }
 
-procedure OpenResource(fn:string; preloadmem:longint);
+procedure OpenResource(const fn:string; preloadmem:longint);
 var
   i  : integer;
 begin
@@ -314,7 +314,7 @@ begin
 end;
 
 
-function reps(s1,s2:string):string;
+function reps(const s1,s2:string):string;
 var p : byte;
 begin
   p:=pos('%s',s1);
@@ -322,12 +322,12 @@ begin
   else reps:=s1;
 end;
 
-function GetRepS(nr:word; txt:String):string;
+function GetRepS(nr:word; const txt:String):string;
 begin
   GetReps:=reps(getres(nr),txt);
 end;
 
-function GetReps2(nr1,nr2:word; txt:string):string;
+function GetReps2(nr1,nr2:word; const txt:string):string;
 begin
   GetReps2:=reps(getres2(nr1,nr2),txt);
 end;
@@ -350,6 +350,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/02/10 13:31:52  mk
+  - added some const parameters
+
   Revision 1.25  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
