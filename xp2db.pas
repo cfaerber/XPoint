@@ -379,9 +379,9 @@ var flp : dbFLP;
     moment;
     dbOpen(bbase,BrettFile,0);    { Flags-Feld korrigieren }
     while not dbEOF(bbase) do begin
-      dbRead(bbase,'flags',b);
+      dbReadN(bbase,bb_flags,b);
       b:=b and 7;
-      dbWrite(bbase,'flags',b);
+      dbWriteN(bbase,bb_flags,b);
       dbNext(bbase);
       end;
     dbClose(bbase);
@@ -475,9 +475,9 @@ var flp : dbFLP;
       if hdp^.mimetyp<>'' then
         dbWrite(mbase,'mimetyp',hdp^.mimetyp);
       if hdp^.boundary<>'' then begin
-        dbRead(mbase,'flags',flags);
+        dbReadN(mbase,mb_flags,flags);
         flags:=flags or 4;
-        dbWrite(mbase,'flags',flags);
+        dbWriteN(mbase,mb_flags,flags);
         end;
       dbNext(mbase);
       end;
@@ -892,6 +892,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.6  2001/08/12 11:20:29  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.12.2.5  2001/07/22 21:44:56  mk
   - removed some old comments
 

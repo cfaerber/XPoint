@@ -173,7 +173,7 @@ begin
               if hdp^.msgid<>s then begin
                 dbNext(bezbase);
                 stop:=dbEOF(bezbase) or
-                      (dbReadInt(bezbase,'msgid')<>MsgidIndex(s));
+                      (dbReadIntN(bezbase,bezb_msgid)<>MsgidIndex(s));
                 end;
               end;
           until stop or (hdp^.msgid=s);
@@ -324,7 +324,7 @@ begin
   loesch:=2;
   if not dbBOF(mbase) then
     dbSkip(mbase,-1);
-  while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
+  while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=brett) do begin
     if dbReadInt(mbase,'halteflags')<>2 then begin
       rec:=dbRecno(mbase);
       dbReadN(mbase,mb_absender,abs);
@@ -339,9 +339,9 @@ begin
       wrt(x+14,y+2,maus+': '+forms(betreff,30));
       mon;
       dbSkip(mbase,-1);
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=brett) do begin
         if (dbReadInt(mbase,'halteflags')=0) and
-           (dbReadStr(mbase,'betreff')=betreff) then begin
+           (dbReadStrN(mbase,mb_betreff)=betreff) then begin
           dbReadN(mbase,mb_absender,abs);
           if (maus=trim(mid(abs,cpos('@',abs)+1))) or NetInfofile then begin
             inc(n);
@@ -822,6 +822,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.3  2001/08/12 11:20:39  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.8.2.2  2001/08/11 22:18:05  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

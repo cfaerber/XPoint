@@ -583,7 +583,7 @@ var i,first : integer;
             if dbFound then
             begin
 {              if dbreadint(ubase,'adrbuch')=0 then   }   { CC-Empfaenger ins Adressbuch aufnehmen }
-{                dbwrite(ubase,'adrbuch',NeuUserGruppe);}
+{                dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);}
               dbReadN(ubase,ub_pollbox,server);
               if (dbReadInt(ubase,'userflags') and 2<>0) and
                  (dbReadInt(ubase,'codierer')<>0) then
@@ -592,7 +592,7 @@ var i,first : integer;
           end else
           begin
 {            if dbreadint(ubase,'adrbuch')=0 then    }  { CC-Empfaenger ins Adressbuch aufnehmen }
-{              dbwrite(ubase,'adrbuch',NeuUserGruppe);}
+{              dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);}
             dbReadN(ubase,ub_pollbox,server);
             if (dbReadInt(ubase,'userflags') and 2<>0) and
                (dbReadInt(ubase,'codierer')<>0) then
@@ -1104,7 +1104,7 @@ begin
     if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
-      dbRead(ubase,'pollbox',box);
+      dbReadN(ubase,ub_pollbox,box);
       if verteiler then begin  { Verteiler }
         cancode:=0;
         read_verteiler(vert_name(empfaenger),cc,cc_anz);
@@ -1127,9 +1127,9 @@ begin
           dbSeek(ubase,uiName,ustr(empfaenger));
           end;
         if dbFound then begin
-          dbRead(ubase,'pollbox',box);   { leider doppelt nîtig :-/ }
+          dbReadN(ubase,ub_pollbox,box);   { leider doppelt nîtig :-/ }
           _brett:=mbrettd('U',ubase);
-          dbRead(ubase,'codierer',cancode);
+          dbReadN(ubase,ub_codierer,cancode);
           if (cancode<>9) and (dbXsize(ubase,'passwort')=0) then
             cancode:=0
           else begin
@@ -1165,7 +1165,7 @@ begin
           if dbBOF(mbase) or dbEOF(mbase) then
             box:=DefaultBox         { /Nachricht/Direkt }
           else begin
-            dbRead(mbase,'brett',_brett);
+            dbReadN(mbase,mb_brett,_brett);
             if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
@@ -1183,7 +1183,7 @@ begin
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
-                else dbRead(bbase,'pollbox',box);
+                else dbReadN(bbase,bb_pollbox,box);
                 if box='' then box:=DefaultBox;  { dÅrfte nicht vorkommen }
                 end;
             ReplaceVertreterbox(box,true);
@@ -1208,10 +1208,10 @@ begin
       grnr:=iif(newbrettgr<>0,newbrettgr,IntGruppe);
       end
     else begin
-      dbRead(bbase,'pollbox',box);    { Nachricht an vorhandenes Brett  }
+      dbReadN(bbase,bb_pollbox,box);    { Nachricht an vorhandenes Brett  }
       if (box='') and (empfaenger[1]='$') then
         box:=InternBox;               { /Netzanruf, /Statistik ... }
-      dbRead(bbase,'gruppe',grnr);
+      dbReadN(bbase,bb_gruppe,grnr);
       _brett:=mbrettd(empfaenger[1],bbase);
       if dbReadInt(bbase,'flags') and 32<>0 then
         dbReadN(bbase,bb_adresse,fidoname);    { Brett-Origin }
@@ -1717,13 +1717,13 @@ fromstart:
     if empfneu then
       if pm then begin
         dbAppend(ubase);                        { neuen User anlegen }
-        dbWrite(ubase,'username',empfaenger);
-        dbWrite(ubase,'pollbox',box);
+        dbWriteN(ubase,ub_username,empfaenger);
+        dbWriteN(ubase,ub_pollbox,box);
         halten:=stduhaltezeit;
-        dbWrite(ubase,'haltezeit',halten);
+        dbWriteN(ubase,ub_haltezeit,halten);
         b:=1+iif(newuseribm,0,8);;
-        dbWrite(ubase,'adrbuch',NeuUserGruppe);
-        dbWrite(ubase,'userflags',b);      { aufnehmen }
+        dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
+        dbWriteN(ubase,ub_userflags,b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
         end
@@ -1744,10 +1744,10 @@ fromstart:
     else
       if pm then begin
         dbSeek(ubase,uiName,ustr(empfaenger));
-        dbRead(ubase,'adrbuch',b);
+        dbReadN(ubase,ub_adrbuch,b);
         if b=0 then begin
           b:=1;
-          dbWrite(ubase,'adrbuch',NeuUserGruppe);
+          dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
           end;
         end;
 
@@ -2028,7 +2028,7 @@ fromstart:
       else if ntRealname(netztyp) then
         dbWriteN(mbase,mb_name,hdp^.realname);
       b:=1;
-      dbWrite(mbase,'gelesen',b);
+      dbWriteN(mbase,mb_gelesen,b);
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
       else if not (HaltOwn and (sendbox or _verteiler))
@@ -2038,7 +2038,7 @@ fromstart:
       else b:=1;
       if bin_msg then inc(b,2);                  { 2 = BinÑr-Meldung }
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
-      dbWrite(mbase,'unversandt',b);
+      dbWriteN(mbase,mb_unversandt,b);
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
 
@@ -2086,7 +2086,7 @@ fromstart:
         else
           if not smdl(sendedat,dbReadInt(bbase,'ldatum')) then
             { nur, wenn keine Wiedervorlage vorhanden! }
-            dbWrite(bbase,'LDatum',sendedat);
+            dbWriteN(bbase,bb_ldatum,sendedat);
         end;
       inc(msgCPpos);
       while (msgCPpos<msgCPanz) and ccm^[msgCPpos].nobrett do
@@ -2099,14 +2099,14 @@ fromstart:
             begin
               _brett:=mbrettd('U',ubase);
               if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
-                dbwrite(ubase,'adrbuch',NeuUserGruppe);
+                dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
             end;
             end
           else begin
             dbSeek(bbase,biBrett,'A'+ustr(cc^[msgCPpos]));
             if dbFound then begin
               _brett:=mbrettd('A',bbase);
-              dbWrite(bbase,'LDatum',sendedat);    { Brettdatum neu setzen }
+              dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
               end;
             end;
           if not dbFound then inc(msgCPpos);
@@ -2377,6 +2377,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.36  2001/08/12 11:20:35  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.39.2.35  2001/08/11 22:18:00  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -78,10 +78,10 @@ var absender : string[Adrlen];
 
 begin
   if msg then begin
-    if (left(ustr(dbReadStr(mbase,'betreff')),5)<>'FILES') and
+    if (left(ustr(dbReadStrN(mbase,mb_betreff)),5)<>'FILES') and
        not ReadJN(getres(811),true) then   { 'Sind Sie sicher, daá das eine Fileliste ist' }
       exit;
-    dbRead(mbase,'absender',absender);
+    dbReadN(mbase,mb_absender,absender);
     p:=cpos('@',absender);
     p2:=p+cpos('.',copy(absender,p+1,20));
     if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
@@ -546,6 +546,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.5  2001/08/12 11:20:38  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.6.2.4  2001/08/11 22:43:57  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 

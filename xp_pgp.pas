@@ -432,11 +432,11 @@ begin
     1..4   : if dbEOF(ubase) or dbBOF(ubase) then
                user:=''
              else
-               user:=dbReadStr(ubase,'username');
+               user:=dbReadStrN(ubase,ub_username);
     10..19 : if dbEOF(mbase) or dbBOF(mbase) then
                user:=''
              else
-               user:=dbReadStr(mbase,'absender');
+               user:=dbReadStrN(mbase,mb_absender);
     else     user:='';
   end;
   dialog(58,3,getres2(3001,1),x,y);   { 'PGP-Key anfordern bei ...' }
@@ -449,7 +449,7 @@ begin
     readmask(brk);
     if not brk then begin
       dbSeek(ubase,uiName,ustr(user));
-      nt:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
+      nt:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
       ok:=not dbFound or ntPGP(nt);
       if not ok then
         rfehler1(3003,ntname(nt));   { 'Beim Netztyp %s wird PGP nicht unterstÅtzt.' }
@@ -799,6 +799,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.5  2001/08/12 11:20:39  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.19.2.4  2001/08/12 08:59:02  mk
   - added some const parameters
 

@@ -182,7 +182,7 @@ var f      : file;
           if _mbrett = _brett then
           begin
             dbReadN(mbase,mb_unversandt,uvs);
-            InMsgID := dbReadStr(mbase,'msgid');
+            InMsgID := dbReadStrN(mbase,mb_msgid);
             if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
                (FormMsgid(hdp^.msgid)=InMsgId) then
             begin
@@ -827,7 +827,7 @@ begin
       if dbEOF(mbase) then dbGoEnd(mbase);
       if not dbBOF(mbase) then begin
         dbSkip(mbase,-1);
-        if not dbBOF(mbase) and (dbReadStr(mbase,'brett')=mbrettd('A',bbase))
+        if not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=mbrettd('A',bbase))
         then begin
           tmp:=TempS(dbReadInt(mbase,'msgsize'));
           extract_msg(xTractHead,'',tmp,false,0);
@@ -848,6 +848,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.22  2001/08/12 11:20:37  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.13.2.21  2001/08/11 22:18:02  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

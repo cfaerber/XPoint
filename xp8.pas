@@ -303,9 +303,9 @@ var hf : string[12];
       dbSeek(mbase,miBrett,_brett+dup(4,#255));
       if dbEOF(mbase) then dbGoEnd(mbase)
       else dbSkip(mbase,-1);
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
             odd(dbReadInt(mbase,'unversandt')) do begin
-        if dbReadStr(mbase,'betreff')='setsys' then
+        if dbReadStrN(mbase,mb_betreff)='setsys' then
           Unversandt(false,false);
         dbSkip(mbase,-1);
         end;
@@ -972,7 +972,7 @@ begin
     MapsBrettliste(1)
   else if nr=1 then begin
     if brett<>'' then begin
-      dbRead(bbase,'pollbox',box);
+      dbReadN(bbase,bb_pollbox,box);
       if box='' then begin
         rfehler(802);   { 'Dieses Brett hat keine Serverbox!' }
         exit; end;
@@ -1060,7 +1060,7 @@ begin
           ReadBox(0,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
-          if ustr(dbReadStr(bbase,'pollbox'))=ustr(box) then begin
+          if ustr(dbReadStrN(bbase,bb_pollbox))=ustr(box) then begin
             if not topen then begin
               rewrite(t);
               if quick or (uucp and (boxpar^.BMtyp=bm_postmaster)) then
@@ -1775,7 +1775,7 @@ var brk     : boolean;
     10..12 : if not dbEOF(mbase) then begin
                if not aufnehm then
                  dbReadN(mbase,mb_absender,user);
-               dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+               dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
                if dbFound then
                  dbReadN(bbase,bb_brettname,gruppe);
                end;
@@ -2167,6 +2167,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.30  2001/08/12 11:20:37  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.10.2.29  2001/08/11 22:18:02  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -218,7 +218,7 @@ var size   : longint;
           rfehler(308);   { 'Nachricht ist codiert, aber Paáwort fehlt!' }
           exit;
           end;
-        dbRead(ubase,'codierer',coder);
+        dbReadN(ubase,ub_codierer,coder);
         if coder<>dtyp then begin
           if dtyp=1 then
             rfehler(309)  { 'Nachricht ist QPC-codiert, aber es ist ein DES-Paáwort eingetragen!' }
@@ -747,7 +747,7 @@ begin
           rps(s,'$BRETT',wempf);
           p:=length(wempf);
           while (p>0) and (wempf[p]<>'/') do dec(p);
-          case firstchar(dbReadStr(mbase,'brett')) of
+          case firstchar(dbReadStrN(mbase,mb_brett)) of
             '$'  : rps(s,'$AREA',trim(getres2(361,1)));  { '(internes CrossPoint-Brett)' }
             'A'  : rps(s,'$AREA',mid(wempf,p+1));
             else   rps(s,'$AREA',getres2(361,48));       { 'private Mail' }
@@ -1172,6 +1172,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.20  2001/08/12 11:20:29  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.17.2.19  2001/08/11 22:17:57  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

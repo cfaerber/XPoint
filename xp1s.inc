@@ -389,9 +389,9 @@ begin
 
     if listmsg then
     begin
-      dbread(mbase,'halteflags',listhalten);
-      dbread(mbase,'unversandt',listunvers);
-      dbread(mbase,'flags',listflags);
+      dbReadN(mbase,mb_halteflags,listhalten);
+      dbReadN(mbase,mb_unversandt,listunvers);
+      dbReadN(mbase,mb_flags,listflags);
       end
     else begin
       Listunvers:=0; Listhalten:=0; Listflags:=0;
@@ -511,6 +511,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.9  2001/08/12 11:20:29  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.24.2.8  2001/08/11 20:16:29  mk
   - added const parameters if possible, saves about 2.5kb exe
 

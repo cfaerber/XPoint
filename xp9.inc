@@ -1802,7 +1802,7 @@
       while not dbEOF(bbase) do begin
         gotoxy(x+31,y+1); moff;
         write(i*100 div n); mon;
-        if ustr(dbReadStr(bbase,'pollbox'))=ustr(box) then begin
+        if ustr(dbReadStrN(bbase,bb_pollbox))=ustr(box) then begin
           flags:=dbReadInt(bbase,'flags') and not 16 + uucp;
           dbWriteN(bbase,bb_flags,flags);
           end;
@@ -1861,6 +1861,10 @@
 
 {
   $Log$
+  Revision 1.10.2.43  2001/08/12 11:20:38  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.10.2.42  2001/08/11 22:18:02  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

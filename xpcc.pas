@@ -154,7 +154,7 @@ begin
       testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
       if dbFound then begin
         cc_testempf:=true;
-        if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
+        if p=0 then s:=mid(dbReadStrN(bbase,bb_brettname),2)
         else dbReadN(ubase,ub_username,s);
         if left(s,1)=vert_char
           then s:=copy(s,2,length(s)-3);
@@ -400,6 +400,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.6  2001/08/12 11:20:39  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.15.2.5  2001/08/11 22:18:04  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -207,7 +207,7 @@ begin
     end;
   dispose(hdp);
 
-  if user=dbReadStr(mbase,'absender') then user:='';
+  if user=dbReadStrN(mbase,mb_absender) then user:='';
                                         { das war die eigene Adresse ... }
   dbReadN(mbase,mb_brett,_brett);
   dbReadN(mbase,mb_betreff,bezug);
@@ -224,9 +224,9 @@ begin
       if (recnt=0) or (ReCount(betreff)=recnt-1) or (ref<>'') then begin
                       { |- Seiteneffekt! }
         ml:=min(length(betreff),length(bezug));
-        if ((ref<>'') and (dbReadStr(mbase,'msgid')=ref)) or
+        if ((ref<>'') and (dbReadStrN(mbase,mb_msgid)=ref)) or
            ((ref='') and (ml>2) and (UStr(left(betreff,ml))=left(bezug,ml)) and
-           ((user='') or (dbReadStr(mbase,'absender')=user)))
+           ((user='') or (dbReadStrN(mbase,mb_absender)=user)))
         then MsgAddmark;
         end;
        dbSkip(mbase,-1);
@@ -279,7 +279,7 @@ var nn,n : longint;
       repeat
         dbReadN(bezbase,bezb_datum,dat);
         if dat and 3=1 then begin
-          dbGo(mbase,dbReadInt(bezbase,'msgpos'));
+          dbGo(mbase,dbReadIntN(bezbase,bezb_msgpos));
           if (dbReadInt(mbase,'adresse')=mpos) and
              (dbReadInt(mbase,'ablage')=abl) then
             if dbReadInt(mbase,'netztyp') shr 24<empfnr then
@@ -291,7 +291,7 @@ var nn,n : longint;
               end;
           end;
         dbNext(bezbase);
-      until (nr<>0) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>mcrc);
+      until (nr<>0) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>mcrc);
       BezNr:=nr;
       end;
   end;
@@ -309,7 +309,7 @@ begin
   new(hd);
   while not dbEOF(mbase) do begin
     inc(n); wrn;
-    if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then begin
+    if (dbReadStrN(mbase,mb_msgid)<>'') and ntKomkette(mbNetztyp) then begin
       ReadHeader(hd^,hds,false);
       if hds>1 then
         if hd^.empfanz=1 then
@@ -461,13 +461,13 @@ var hdp    : headerp;
 
     function _last:boolean;
     begin
-      _last:=dbEOF(bezbase) or (dbReadInt(bezbase,'ref')<>ID);
+      _last:=dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_ref)<>ID);
     end;
 
     procedure AddD0;     { erste (noch) vorhandene Kopie hinzufÅgen }
     begin
-      while not _last and (dbReadInt(bezbase,'msgid')=mid) do begin
-        if dbReadInt(bezbase,'datum') and 3<>2 then begin
+      while not _last and (dbReadIntN(bezbase,bezb_msgid)=mid) do begin
+        if dbReadIntN(bezbase,bezb_datum) and 3<>2 then begin
           inc(anz);
           dbReadN(bezbase,bezb_msgpos,ba^[anz].pos);
           dbReadN(bezbase,bezb_datum,ba^[anz].dat);
@@ -482,11 +482,11 @@ var hdp    : headerp;
     begin
       rec:=dbRecno(bezbase);
       found:=false;
-      while not _last and (dbReadInt(bezbase,'msgid')=mid) do begin
+      while not _last and (dbReadIntN(bezbase,bezb_msgid)=mid) do begin
         dbReadN(bezbase,bezb_msgpos,rec2);
         if not found and not dbDeleted(mbase,rec2) then begin
           dbGo(mbase,rec2);
-          if dbReadStr(mbase,'brett')=kombrett then begin
+          if dbReadStrN(mbase,mb_brett)=kombrett then begin
             inc(anz);
             dbReadN(bezbase,bezb_msgpos,ba^[anz].pos);
             dbReadN(bezbase,bezb_datum,ba^[anz].dat);
@@ -519,7 +519,7 @@ var hdp    : headerp;
           anz:=0;
           while not _last and (anz<bmax) do begin
             dbReadN(bezbase,bezb_msgid,mid);
-            if dbReadInt(bezbase,'datum') and 3=0 then
+            if dbReadIntN(bezbase,bezb_datum) and 3=0 then
               AddD0
             else
               if not AddDx then AddD0;
@@ -644,7 +644,7 @@ begin
       if back then vdat:=0
       else vdat:=longint($ffffffff);
       repeat
-        if dbReadInt(bezbase,'msgpos')=rec0 then
+        if dbReadIntN(bezbase,bezb_msgpos)=rec0 then
           vor:=false
         else begin
           dbReadN(bezbase,bezb_datum,dat2);
@@ -657,7 +657,7 @@ begin
             end;
           end;
         dbNext(bezbase);
-      until dbEOF(bezbase) or (dbReadInt(bezbase,'ref')<>ref);
+      until dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_ref)<>ref);
       if rec<>0 then begin
         dbGo(mbase,rec);
         BezSeek:=true;
@@ -695,14 +695,14 @@ begin
   BezSeekKommentar:=false;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
-  mid:=left(dbReadStr(mbase,'msgid'),4);
+  mid:=left(dbReadStrN(mbase,mb_msgid),4);
   dbSeek(bezbase,beiRef,mid);
   if dbFound then begin
     dbReadN(bezbase,bezb_ref,ref);
     dbReadN(bezbase,bezb_datum,dat);    { .. und jetzt den zeitlich ersten }
     dbReadN(bezbase,bezb_msgpos,rec);   { Kommentar suchen ..              }
     dbSkip(bezbase,1);
-    while not dbEOF(bezbase) and (dbReadInt(bezbase,'ref')=ref) do begin
+    while not dbEOF(bezbase) and (dbReadIntN(bezbase,bezb_ref)=ref) do begin
       dbReadN(bezbase,bezb_datum,dat2);
       if smdl(dat2,dat) then begin
         dat:=dat2;
@@ -732,7 +732,7 @@ begin
   _left:=false; _right:=false; up:=false; down:=false;
   if hds>1 then begin
     up:=(hdp^.ref<>'');
-    dbSeek(bezbase,beiRef,left(dbReadStr(mbase,'msgid'),4));
+    dbSeek(bezbase,beiRef,left(dbReadStrN(mbase,mb_msgid),4));
     down:=dbFound;
     if hdp^.ref<>'' then begin
       ref:=MsgidIndex(hdp^.ref);
@@ -742,7 +742,7 @@ begin
         dbReadN(bezbase,bezb_ref,ref);
         dbReadN(mbase,mb_origdatum,dat0);
         repeat
-          if dbReadInt(bezbase,'msgpos')=rec then
+          if dbReadIntN(bezbase,bezb_msgpos)=rec then
             vor:=false
           else begin
             dbReadN(bezbase,bezb_datum,dat);
@@ -750,7 +750,7 @@ begin
             if smdl(dat0,dat) or (not vor and (dat=dat0)) then _right:=true;
             end;
           dbSkip(bezbase,1);
-        until dbEOF(bezbase) or (dbReadInt(bezbase,'ref')<>ref) or
+        until dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_ref)<>ref) or
               (_left and _right);
         end;
       end;
@@ -789,9 +789,9 @@ begin
       s:=s+' (PM)';
     bs:='';
     if flags and kflBrett<>0 then begin   { Brettwechsel }
-      dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+      dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
       if dbFound then begin
-        bs:=copy(dbReadStr(bbase,'brettname'),2,40);
+        bs:=copy(dbReadStrN(bbase,bb_brettname),2,40);
         if flags and kflbetr<>0 then bs:=bs+': '
         else s1:='';
         end;
@@ -925,6 +925,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.11  2001/08/12 11:20:33  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.11.2.10  2001/08/11 22:43:54  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 

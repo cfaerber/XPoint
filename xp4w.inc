@@ -101,7 +101,7 @@ var mhd    : longint;
 begin
   GoP;
   rec:=disprec[p];
-  dispspec:='U'+left(dbReadStr(ubase,'username'),40);  { nur fÅr Anzeige }
+  dispspec:='U'+left(dbReadStrN(ubase,ub_username),40);  { nur fÅr Anzeige }
   _dispspec:=mbrettd('U',ubase);                       { abschneiden     }
   mhd:=abhdatum;
   dbReadN(ubase,ub_haltezeit,halten);
@@ -139,7 +139,7 @@ var ab        : byte;
     _mbrett   : string[5];
 begin
   GoP;
-  dbRead(ubase,'adrbuch',ab);
+  dbReadN(ubase,ub_adrbuch,ab);
   _brett:=mbrettd('U',ubase);
   dbSeek(mbase,miBrett,_brett);
   if dbEOF(mbase) then _mbrett:=''
@@ -149,7 +149,7 @@ begin
     exit;
     end;
   if ab<>0 then ab:=0 else ab:=NeuUserGruppe;
-  dbWrite(ubase,'adrbuch',ab);
+  dbWriteN(ubase,ub_adrbuch,ab);
   dbFlushClose(ubase);
   if (ab=0) and (p=1) or (p=gl) then begin
     if p=1 then
@@ -189,7 +189,7 @@ begin
   _user:=mbrettd('U',ubase);
   dbSeek(mbase,miBrett,_user);
   if not dbEOF(mbase) then
-    dbRead(mbase,'Brett',_brett);
+    dbReadN(mbase,mb_brett,_brett);
   if not dbEOF(mbase) and (_user=_brett) then
     rfehler(416)
   else
@@ -251,7 +251,7 @@ var anz : integer16;
 begin
   GoP;
   rec:=disprec[p];
-  edit_verteiler(vert_name(dbReadStr(ubase,'username')),anz,brk);
+  edit_verteiler(vert_name(dbReadStrN(ubase,ub_username)),anz,brk);
   if not brk then begin
     dbGo(ubase,rec);
     dbWriteN(ubase,ub_haltezeit,anz);
@@ -342,7 +342,7 @@ var s      : string[adrlen];
   var
     pollbox  : string[BoxNameLen];
   begin
-    dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+    dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
     if dbFound then       { mÅ·te IMMER true sein }
       dbReadN(bbase,bb_pollbox,pollbox)
     else
@@ -354,7 +354,7 @@ var s      : string[adrlen];
 begin
   d1:=disprec[1];             { Mu· gesichert werden, da Zielfenster }
   GoP;
-  if left(dbReadStr(mbase,'brett'),1)='U' then
+  if left(dbReadStrN(mbase,mb_brett),1)='U' then
     fehler('In diesem Brett nicht mîglich.')
   else begin
     new(hdp);
@@ -590,11 +590,11 @@ var fn     : pathstr;
         dbWriteN(mbase,mb_gelesen,b);
         if dbReadInt(mbase,'netztyp') shr 24<>0 then begin  { Crossposting }
           rec:=dbRecno(mbase);
-          crc:=left(dbReadStr(mbase,'msgid'),4);
+          crc:=left(dbReadStrN(mbase,mb_msgid),4);
           mi:=dbGetIndex(bezbase); dbSetIndex(bezbase,beiMsgID);
           dbSeek(bezbase,beiMsgID,crc);     { alle Kopien auf 'gelesen' }
           if dbFound then begin
-            while not dbEOF(bezbase) and (dbLongStr(dbReadInt(bezbase,'msgid'))=crc)
+            while not dbEOF(bezbase) and (dbLongStr(dbReadIntN(bezbase,bezb_msgid))=crc)
             do begin
               dbReadN(bezbase,bezb_msgpos,rec2);
               if (rec2<>rec) and not dbDeleted(mbase,rec2) then begin
@@ -604,7 +604,7 @@ var fn     : pathstr;
                 dbReadN(mbase,mb_brett,brett);
                 dbSeek(mbase,miGelesen,brett+#0);
                 if not dbEOF(mbase) and
-                   ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
+                   ((dbReadStrN(mbase,mb_brett)<>brett) or (dbReadInt(mbase,'gelesen')<>0))
                 then begin
                   dbSeek(bbase,biIntnr,mid(brett,2));
                   if dbFound then begin
@@ -1247,7 +1247,7 @@ begin
         pp:=cpos('/',mid(s,length(newsuch)+1));
         if pp=0 then begin
           dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
-          if not dbEOF(bbase) and (left(dbReadStr(bbase,'brettname'),length(s)+2)='A'+s+'/')
+          if not dbEOF(bbase) and (left(dbReadStrN(bbase,bb_brettname),length(s)+2)='A'+s+'/')
           then begin
             newsuch:=s+'/';
             suchok;
@@ -1316,7 +1316,7 @@ var wvdat : longint;
     flags : byte;
 begin
   GoP;
-{   if left(dbReadStr(mbase,'brett'),1)='U' then
+{   if left(dbReadStrN(mbase,mb_brett),1)='U' then
     fehler('Wiedervorlage hier nicht mîglich!') }
   dbReadN(mbase,mb_unversandt,flags);
   if flags and 8 = 0 then begin
@@ -1331,8 +1331,8 @@ begin
     end;
   flags:=flags xor 8;
   dbWriteN(mbase,mb_unversandt,flags);
-  if left(dbReadStr(mbase,'brett'),1)<>'U' then
-    RereadBrettdatum(dbReadStr(mbase,'brett'));
+  if left(dbReadStrN(mbase,mb_brett),1)<>'U' then
+    RereadBrettdatum(dbReadStrN(mbase,mb_brett));
   aufbau:=true;
   if (dispmode<>11) and (dispmode<>12) and (p=1) then
     disprec[1]:=disprec[2];
@@ -1456,7 +1456,7 @@ procedure _msg_window;
 begin
   GoP;
   msg_window(dispext or ((ArchivBretter<>'') and
-    (ustr(copy(dbReadStr(bbase,'brettname'),2,length(ArchivBretter)))=ArchivBretter)));
+    (ustr(copy(dbReadStrN(bbase,bb_brettname),2,length(ArchivBretter)))=ArchivBretter)));
 end;
 
 procedure _verknuepfen(bretter:boolean);
@@ -1474,11 +1474,11 @@ var brett          : string[BrettLen];
     _brett,_brett2 : string[5];
 begin
   GoP;
-  dbRead(bbase,'Brettname',brett);
+  dbReadN(bbase,bb_brettname,brett);
   _brett:=mbrettd(brett[1],bbase);
   dbSeek(mbase,miBrett,_brett);
   if not dbEOF(mbase) then
-    dbRead(mbase,'Brett',_brett2);
+    dbReadN(mbase,mb_brett,_brett2);
   if not dbEOF(mbase) and (_brett=_brett2) then
     rfehler(419)    { 'Brett ist nicht leer' }
   else begin
@@ -1608,6 +1608,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.25  2001/08/12 11:20:34  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.25.2.24  2001/08/11 22:43:55  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 

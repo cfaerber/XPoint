@@ -446,9 +446,9 @@ begin
   rec:=dbRecno(mbase);
   b:=0;
   dbWriteN(mbase,mb_gelesen,b);
-  RereadBrettdatum(dbReadStr(mbase,'brett'));
+  RereadBrettdatum(dbReadStrN(mbase,mb_brett));
   dbGo(mbase,rec);
-  setbrettgelesen(dbReadStr(mbase,'brett'));
+  setbrettgelesen(dbReadStrN(mbase,mb_brett));
   dbGo(mbase,rec);
 end;
 
@@ -459,13 +459,17 @@ begin
   if not dbFound then
     UserNetztyp:=0
   else
-    UserNetztyp:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
+    UserNetztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.9.2.10  2001/08/12 11:20:31  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.9.2.9  2001/08/11 10:58:36  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

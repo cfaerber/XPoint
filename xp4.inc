@@ -291,7 +291,7 @@ begin
                   if dbEOF(bbase) then  { noch keine Bretter angelegt }
                     MapsDelbrett('U')   { .. erzwingt Listenauswahl }
                   else
-                    MapsDelBrett(iifs(bmarkanz=0,dbReadstr(bbase,'brettname'),''))
+                    MapsDelBrett(iifs(bmarkanz=0,dbReadStrN(bbase,bb_brettname),''))
                 else begin
                   dbSeek(bbase,biBrett,ustr(dispspec));
                   MapsDelBrett(dispspec);
@@ -579,6 +579,10 @@ begin
 end;
 { 
   $Log$
+  Revision 1.14.2.2  2001/08/12 11:20:31  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.14.2.1  2000/12/09 16:41:07  mk
   - Sprachumschaltung aktiviert
 

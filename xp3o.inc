@@ -245,16 +245,16 @@ var x,y,fm   : byte;
     if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
     dbSeek(bezbase,beiMsgId,dbLongStr(crc));
     if dbFound then
-      while (not dbEOF(bezbase)) and (dbReadInt(bezbase,'msgid')=crc) do begin
+      while (not dbEOF(bezbase)) and (dbReadIntN(bezbase,bezb_msgid)=crc) do begin
         repeat;
           hdp2^.msgid:='';
-          rec:=dbReadInt(bezbase,'MsgPos');
+          rec:=dbReadIntN(bezbase,bezb_msgpos);
           if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
             dbGo(mbase,rec);
             Readheader(hdp2^,hds,false);
           end;
           dbNext(bezbase);
-        until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
+        until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>crc);
         if okay and (cancel or (hdp2^.msgid<>hdp2^.ersetzt)) then DelMsg; { zu lîschende/zu ersetzende Nachricht lîschen }
       end;
     dispose(hdp2);
@@ -478,7 +478,7 @@ var x,y,fm   : byte;
     dbSeek(ubase,uiName,ustr(hdp^.absender));
     if not dbFound then exit;
     dbReadX(ubase,'passwort',size,passwd);
-    dbRead(ubase,'codierer',codierer);
+    dbReadN(ubase,ub_codierer,codierer);
     if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
       (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
     new(hdp2);
@@ -854,12 +854,12 @@ begin
             if adrok(absender) then begin
               mwrt(29,wherey,forms(absender,22));
               dbAppend(ubase);
-              dbWrite(ubase,'username',absender);
+              dbWriteN(ubase,ub_username,absender);
               pb:=pollbox_str(zconnect,true);
-              dbWrite(ubase,'pollbox',pb);
-              dbWrite(ubase,'haltezeit',stduhaltezeit);
+              dbWriteN(ubase,ub_pollbox,pb);
+              dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1+iif(newuseribm {ntUserIBMchar(netztyp)},0,8);  { aufnehmen / Umlaute }
-              dbWrite(ubase,'userflags',flags);
+              dbWriteN(ubase,ub_userflags,flags);
               writeln(userlog,logstr(absender));
               end;        { 14.02.2000 MH: NetzunabhÑngige Useraufnahme }
             aufnehmen:=true;
@@ -887,7 +887,7 @@ begin
                   if p0>0 then begin
                     seekbr:=left(seekbr,p0-1);
                     if dbEOF(bbase) or
-                       (left(dbReadStr(bbase,'brettname'),length(seekbr))<>seekbr) then
+                       (left(dbReadStrN(bbase,bb_brettname),length(seekbr))<>seekbr) then
                       dbSeek(bbase,biBrett,ustr(seekbr));
                     end;
                   if dbEOF(bbase) then dbGoEnd(bbase);
@@ -939,7 +939,7 @@ begin
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1 +iif(newuseribm,0,8);
-              dbWrite(ubase,'userflags',flags);
+              dbWriteN(ubase,ub_userflags,flags);
               adrbuch:=NeuUserGruppe;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
               end
@@ -959,7 +959,7 @@ begin
             dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(msgid)));
             if dbFound and not dbDeleted(bezbase, dbRecno(bezbase)) then
             begin { RÅcklÑufer gefunden }
-              msgpos := dbReadInt(bezbase,'msgpos');
+              msgpos := dbReadIntN(bezbase,bezb_msgpos);
               if not dbDeleted(mbase, msgpos) then
               begin
                 dbGo(mbase, msgpos);
@@ -1236,6 +1236,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.14  2001/08/12 11:20:30  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.21.2.13  2001/08/11 22:43:54  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 

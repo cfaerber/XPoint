@@ -144,7 +144,7 @@ begin
   if (aktdispmode=10) and not dbEOF(mbase) and not dbBOF(mbase) then begin
     dbReadN(mbase,mb_brett,_brett);
     dbSeek(bbase,biIntnr,mid(_brett,2));
-    if dbFound and (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))=nt_Fido) then begin
+    if dbFound and (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))=nt_Fido) then begin
       dbReadN(bbase,bb_brettname,echo);
       if echo[1]='A' then delfirst(echo)
       else echo:='';
@@ -159,7 +159,7 @@ begin
       end
     else begin
       dbReadN(bbase,bb_brettname,echo);
-      if (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))<>nt_Fido) or (echo[1]<>'A') then echo:=''
+      if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (echo[1]<>'A') then echo:=''
       else delfirst(echo);
       end;
   if brk then begin
@@ -179,7 +179,7 @@ begin
   if (echo='') or ((echo<>'*') and (pos('/files/',lstr(echo))=0)) then
     FilescanList(2)                                     { Auswahl aus Liste }
   else if echo<>'*' then begin          { ein Brett abbestellen }
-    ReadBoxPar(nt_Fido,dbReadStr(bbase,'pollbox'));
+    ReadBoxPar(nt_Fido,dbReadStrN(bbase,bb_pollbox));
     rewrite(t);
     delete(echo,1,length(boxpar^.magicbrett));
     if lstr(left(echo,6))='files/' then delete(echo,1,6);
@@ -200,7 +200,7 @@ begin
           dbGo(bbase,bmarked^[i]);
           dbReadN(bbase,bb_brettname,echo);
           delfirst(echo);
-          if (ustr(dbReadStr(bbase,'pollbox'))=box) and
+          if (ustr(dbReadStrN(bbase,bb_pollbox))=box) and
              (left(ustr(echo),length(boxpar^.magicbrett))=ustr(boxpar^.magicbrett))
              and (pos('/files/',lstr(echo))>0)
           then begin
@@ -231,7 +231,7 @@ begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
     rfehler(850)     { 'Keine Filescan-Nachricht gew„hlt!' }
   else begin
-    splitfido(dbReadStr(mbase,'absender'),fa,DefaultZone);
+    splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
     box:=MakeFidoAdr(fa,false);
     if not IsBox(box) then
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
@@ -325,6 +325,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.4.1  2001/08/12 11:20:37  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

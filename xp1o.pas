@@ -354,14 +354,14 @@ begin
     if t = keyaltb then                                        { Alt+B = Betreff }
     begin
       s:=getline;
-      if s='' then s:=dbreadstr(mbase,'Betreff');
+      if s='' then s:=dbReadStrN(mbase,mb_betreff);
       if Suche(getres(415),'Betreff',s) then Showfromlister;
       end;
 
     if t = keyaltu then                                        { Alt+U = User }
     begin
       s:=mailstring(getline,false);
-      if s='' then s:=dbreadstr(mbase,'Absender');
+      if s='' then s:=dbReadStrN(mbase,mb_absender);
       if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
   end;
@@ -599,12 +599,12 @@ end;
 function KK:boolean;
 begin
   KK:=ntKomkette(dbReadInt(mbase,'netztyp')and $ff) and
-     (dbReadStr(mbase,'msgid')<>'');
+     (dbReadStrN(mbase,mb_msgid)<>'');
 end;
 
 function HasRef:boolean;
 begin
-  dbSeek(bezbase,beiRef,left(dbReadStr(mbase,'msgid'),4));
+  dbSeek(bezbase,beiRef,left(dbReadStrN(mbase,mb_msgid),4));
   HasRef:=dbFound;
 end;
 
@@ -618,28 +618,28 @@ var crc : string[4];
 
   function MidOK:boolean;
   begin
-    MidOK:=(dbLongStr(dbReadInt(bezbase,'msgid'))=crc);
+    MidOK:=(dbLongStr(dbReadIntN(bezbase,bezb_msgid))=crc);
   end;
 
   function DatOK:boolean;
   begin
-    DatOK:=(dbReadInt(bezbase,'datum') and $fffffff0)=dat;
+    DatOK:=(dbReadIntN(bezbase,bezb_datum) and $fffffff0)=dat;
   end;
 
 begin
   if KK then begin
     pos:=dbRecno(mbase);
-    crc:=left(dbReadStr(mbase,'msgid'),4);
+    crc:=left(dbReadStrN(mbase,mb_msgid),4);
     mi:=dbGetIndex(bezbase); dbSetIndex(bezbase,beiMsgid);
     dbSeek(bezbase,beiMsgid,crc);
     ok:=dbfound;
-    while ok and (dbReadInt(bezbase,'msgpos')<>pos) do begin
+    while ok and (dbReadIntN(bezbase,bezb_msgpos)<>pos) do begin
       dbNext(bezbase);
       ok:=not dbEOF(bezbase) and MidOK;
       end;
     if ok then begin
-      nr:=dbReadInt(bezbase,'datum') and 3;
-      dat:=dbReadInt(bezbase,'datum') and $fffffff0;
+      nr:=dbReadIntN(bezbase,bezb_datum) and 3;
+      dat:=dbReadIntN(bezbase,bezb_datum) and $fffffff0;
       dbDelete(bezbase);
       if nr=1 then begin        { erste Kopie eines CrossPostings }
         dbSeek(bezbase,beiMsgid,crc);
@@ -647,7 +647,7 @@ begin
           while not dbEOF(bezbase) and not DatOK and MidOK do
             dbNext(bezbase);
           if not dbEOF(bezbase) and DatOK and MidOK and
-             (dbReadInt(bezbase,'datum') and 3=2) then begin
+             (dbReadIntN(bezbase,bezb_datum) and 3=2) then begin
             inc(dat);        { + 1 }
             dbWrite(bezbase,'datum',dat);
             end;
@@ -667,7 +667,7 @@ var pos : longint;
 begin
   dbSeek(bezbase,beiMsgid,dbLongStr(MsgidIndex(ref)));
   if dbFound then begin
-    pos:=dbReadInt(bezbase,'msgpos');
+    pos:=dbReadIntN(bezbase,bezb_msgpos);
     dbGo(mbase,pos);
     if dbDeleted(mbase,pos) then
       GetBezug:=0
@@ -980,6 +980,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.19  2001/08/12 11:20:28  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.40.2.18  2001/08/11 22:17:56  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -80,7 +80,7 @@ begin
   if not dbBOF(bbase) and not dbEOF(bbase) then begin
     ok:=false;
     repeat
-      dbRead(bbase,'brettname',brett);
+      dbReadN(bbase,bb_brettname,brett);
       if brett[1]='1' then begin
         dbSkip(bbase,-1);    { Index auf Brettindex-Feld }
         ok:=true;
@@ -308,6 +308,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.4  2001/08/12 11:20:34  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.6.2.3  2001/08/11 22:17:59  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -423,7 +423,7 @@ begin
     if first and (aktdispmode in [10..19]) then begin
       dbGo(mbase,AktDisprec);
       if not dbEOF(mbase) and not dbBOF(mbase) and (mbNetztyp=nt_Fido) then begin
-        splitfido(dbReadStr(mbase,'absender'),fa,DefaultZone);
+        splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
         adr:=MakeFidoAdr(fa,false);
         brk:=false;
         end;
@@ -884,6 +884,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.7.2.3  2001/08/12 11:20:39  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.7.2.2  2000/08/20 10:41:23  mk
   MO:- erster Nodelistenindex ist jetzt kleiner
 

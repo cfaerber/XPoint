@@ -95,8 +95,8 @@ var
 begin  { __ Suchmarke }
   case aktdispmode of
    -1,0 : begin
-            dbRead(bbase,'brettname',s);
-            dbRead(bbase,'kommentar',komm);
+            dbReadN(bbase,bb_brettname,s);
+            dbReadN(bbase,bb_kommentar,komm);
             if left(s,3)='$/T' then begin
               if komm='' then
                 dispbuf[y]^:='   '+dup(76,s[4])+' '
@@ -141,7 +141,7 @@ begin  { __ Suchmarke }
                 dbReadN(bbase,bb_haltezeit,hzeit);
                 dbReadN(bbase,bb_gruppe,grnr);
                 dispbuf[y]^:=markc+iifc(dat<>0,' ','-')+iifc(flags and 8<>0,'X',' ')+
-                             iifc(dbReadStr(bbase,'adresse')<>'',
+                             iifc(dbReadStrN(bbase,bb_adresse)<>'',
                                   iifc(flags and 32=0,'*','O'),' ')+
                              iifc(odd(flags),'N',' ')+hz(hzeit)+'  '+
                              forms(pbox,9)+strsn(grnr,4)+' '+
@@ -269,7 +269,7 @@ begin  { __ Suchmarke }
             if ((netztyp=nt_Maus) or fidoqwk) and (pp>0) then
               s:=left(s0,pp-1)+' @ '+mid(s0,pp+1)
             else
-              if showrealos and (dbReadStr(mbase,'name')<>'') and
+              if showrealos and (dbReadStrN(mbase,mb_name)<>'') and
                  ((dispmode<>11) or not markunversandt) then
                 dbReadN(mbase,mb_name,s)
               else begin
@@ -432,7 +432,7 @@ begin  { __ Suchmarke }
               else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
               if fidoqwk and (_brett[1]='A') and
-                 (HighlightName=ustr(dbReadStr(mbase,'name')))
+                 (HighlightName=ustr(dbReadStrN(mbase,mb_name)))
                  then userflag[y]:=1              
               else
                 if (cpos('@',dispspec)>0) and

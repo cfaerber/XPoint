@@ -453,7 +453,7 @@ var ok     : boolean;
     nopuffer: boolean;
 begin
   ok:=true;
-  dbRead(mbase,'ablage',ablg);
+  dbReadN(mbase,mb_ablage,ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
   if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then
   begin
@@ -494,7 +494,7 @@ begin
       aufbau:=true;
       end;
     flags:=2;
-    dbWrite(mbase,'halteflags',flags);
+    dbWriteN(mbase,mb_halteflags,flags);
   end;
   if left(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=copy(hd.empfaenger,9,255);
@@ -1051,7 +1051,7 @@ end;
 function QuoteSchab(pm:boolean):string;
 begin
   if pm then
-    if left(dbReadStr(mbase,'brett'),1)='A' then
+    if left(dbReadStrN(mbase,mb_brett),1)='A' then
       QuoteSchab:=QuotePriv
     else
       QuoteSchab:=QuotePMpriv
@@ -1146,7 +1146,7 @@ function brettok(trenn:boolean):boolean;   { s. auch XP4D.INC.Write_Disp_Line }
 begin
   if dbEOF(bbase) or dbBOF(bbase) then
     brettok:=false
-  else if trennall and trenn and (left(dbReadStr(bbase,'brettname'),3)='$/T') then
+  else if trennall and trenn and (left(dbReadStrN(bbase,bb_brettname),3)='$/T') then
     brettok:=true
   else
     case readmode of
@@ -1278,6 +1278,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.13  2001/08/12 11:20:29  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.25.2.12  2001/08/11 22:17:57  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -2037,7 +2037,7 @@ var b    : byte;                               { wenn keine ungelesenen Nachrich
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
   if dbEOF(mbase) then nope:=true
-    else nope:=((dbReadStr(mbase,'brett')<>brett)
+    else nope:=((dbReadStrN(mbase,mb_brett)<>brett)
       or (dbReadInt(mbase,'gelesen')<>0));
   rec:=dbrecno(bbase);
   dbSeek(bbase,biIntnr,mid(brett,2));
@@ -2054,6 +2054,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.23  2001/08/12 11:20:28  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.48.2.22  2001/08/11 22:17:55  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

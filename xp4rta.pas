@@ -623,14 +623,14 @@ var RTAEmpfList :RTAEmpfaengerP;
         b :byte;
     begin
       dbAppend(ubase);                        { neuen User anlegen }
-      dbWrite(ubase,'username',user);
-      dbWrite(ubase,'pollbox',box);
+      dbWriteN(ubase,ub_username,user);
+      dbWriteN(ubase,ub_pollbox,box);
       halten:=stduhaltezeit;
-      dbWrite(ubase,'haltezeit',halten);
+      dbWriteN(ubase,ub_haltezeit,halten);
       b:= 1+iif(newuseribm,0,8);
       halten := 0;
-      dbWrite(ubase,'adrbuch', halten);
-      dbWrite(ubase,'userflags',b);      { aufnehmen }
+      dbWriteN(ubase,ub_adrbuch, halten);
+      dbWriteN(ubase,ub_userflags,b);      { aufnehmen }
       dbFlushClose(ubase);
     end;
 
@@ -1060,6 +1060,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.7  2001/08/12 11:20:34  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.1.2.6  2001/08/11 21:30:03  mk
   - use cpos() when possible
   - fixed bug (next_marked was accessed twice at and of list)

@@ -190,7 +190,7 @@ label selende;
       if _brett[1]='1' then
       begin
         dbGo(mbase,disprec[1]);
-        if (Dispmode <> 12) and (left(dbReadStr(mbase,'brett'),1)<>'1') then
+        if (Dispmode <> 12) and (left(dbReadStrN(mbase,mb_brett),1)<>'1') then
           disprec[1]:=0;
       end
         else
@@ -389,7 +389,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,1);
-              if not dbEOF(mbase) then dbRead(mbase,'brett',_brett);
+              if not dbEOF(mbase) then dbReadN(mbase,mb_brett,_brett);
             until dbEOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -436,7 +436,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,-1);
-              if not dbBOF(mbase) then dbRead(mbase,'brett',_brett);
+              if not dbBOF(mbase) then dbReadN(mbase,mb_brett,_brett);
             until dbBOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -531,7 +531,7 @@ var t,lastt: taste;
 
   function trennzeile:boolean;
   begin
-    trennzeile:=(left(dbReadStr(bbase,'brettname'),3)='$/T');
+    trennzeile:=(left(dbReadStrN(bbase,bb_brettname),3)='$/T');
   end;
 
   procedure gostart;
@@ -542,7 +542,7 @@ var t,lastt: taste;
               else begin
                 dbSeek(bbase,biBrett,'A'+ustr(ArchivBretter));
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((ustr(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((ustr(left(dbReadStrN(bbase,bb_brettname),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,-1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -599,7 +599,7 @@ var t,lastt: taste;
                 else dbSkip(bbase,-1);
                 dbSetIndex(bbase,mi);
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((ustr(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((ustr(left(dbReadStrN(bbase,bb_brettname),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -903,7 +903,7 @@ var t,lastt: taste;
             end    { not xposting }
 
         else begin  { dispmode >= 10 }
-          dbRead(mbase,'brett',_empf);
+          dbReadN(mbase,mb_brett,_empf);
           if left(_empf,1)='U' then begin
             rfehler(405);   { 'Nachricht bitte als PM schicken' }
             exit;
@@ -987,8 +987,8 @@ var t,lastt: taste;
     if (Quote= 2) and (not multiquote(brk) and brk) then exit;
 
     if (dispmode>=10) and (dispmode<=19) then begin
-      dbRead(mbase,'typ',typ);
-      dbRead(mbase,'betreff',betr);
+      dbReadN(mbase,mb_typ,typ);
+      dbReadN(mbase,mb_betreff,betr);
       if (typ='B') and (quote=1) and not IS_QPC(betr) and not IS_DES(betr) and
          not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
       then goto ende;
@@ -1050,7 +1050,7 @@ var t,lastt: taste;
       dbReadN(mbase,mb_brett,_empf);
       dbSeek(bbase,biIntnr,mid(_empf,2));
       if dbFound then
-        sData^.ReplyGroup:=mid(dbReadStr(bbase,'brettname'),2);
+        sData^.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
       end;
     sdata^.empfrealname:=realname;
 
@@ -1101,12 +1101,12 @@ var t,lastt: taste;
         new(hdp);
         ReadHeader(hdp^,hds,false);
         dbseek(ubase,uiname,ustr(hdp^.empfaenger));
-        if dbfound then dbread(ubase,'pollbox',defaultbox);
+        if dbfound then dbReadN(ubase,ub_pollbox,defaultbox);
         dispose(hdp);
         end
       else begin
         dbseek(bbase,biIntnr,mid(_empf,2));
-        if dbfound then dbread(bbase,'pollbox',defaultbox);
+        if dbfound then dbReadN(bbase,bb_pollbox,defaultbox);
         end;
       ReplaceVertreterbox(defaultbox,true);
       brk:=not CC_testempf(empf);
@@ -1122,7 +1122,7 @@ var t,lastt: taste;
 {*}     dispose (saveDispRec);
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStr(mbase,'brett'),1)='1') and
+        if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStrN(mbase,mb_brett),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -2164,6 +2164,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.46  2001/08/12 11:20:31  mk
+  - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
+    save about 5kb RAM and improve speed
+
   Revision 1.26.2.45  2001/08/11 10:58:36  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit
