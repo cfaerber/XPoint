@@ -768,8 +768,6 @@ asm
 @taende:    pop eax
             mov ecx,edx
             popa
-            ret
-
 {-------------------------}
 @ende:
 end; { of MakeListdisplay }
@@ -2093,6 +2091,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.1  2002/04/30 08:54:33  mk
+  - removed unnecessary ret
+
   Revision 1.147  2002/04/13 16:10:16  ma
   - fixed scomp: Scanning for multiple configuration keys did not work
 
