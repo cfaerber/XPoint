@@ -595,6 +595,12 @@ begin
     wrs('BET: '+betreff);
     wrs('ROT: '+pfad);
     wrs('MID: '+msgid);
+   {$IFDEF Debug }
+    if(length(msgid)=0) then begin
+      writeLn('Achtung keine MSGID vorhanden');
+      ReadKey;
+      end;
+   {$ENDIF }
     ZtoZCdatumNTZ(datum,zdatum);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
@@ -1051,7 +1057,7 @@ label abbr;
   end;
 
   procedure getrestofline;
-  var p : byte;
+  var p, p2 : byte;
   begin
     SetLength(s, 255);
     blockread(f1,s[1],255,rr);
@@ -1060,15 +1066,16 @@ label abbr;
     if p=0 then p:=cpos(#10,s);
     if p=0 then p:=cpos(#0,s);
     lfs:=0;
-    if (p>0) then begin                     //im String ein cr, lf oder #0
-      SetLength(s, p-1);
+    if (p>0) then begin                         //im String ein cr, lf oder #0
+      p2:=p;                                    //Position merken
       if (p>1) then begin
         if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
         while (p<rr) and (s[p+1]=#10) do begin
           inc(p);                                 { LFs berlesen }
           inc(lfs);
           end;
-        end
+        end;
+        SetLength(s, p2-1);                     //nach dem Ende der LFs Suche String cutten
       end
     else
       p:=rr;
@@ -1681,6 +1688,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/10/28 07:50:53  mo
+  -ANSI-String Bug umschifft
+
   Revision 1.39  2000/10/17 10:06:02  mk
   - Left->LeftStr, Right->RightStr
 
