@@ -3559,7 +3559,7 @@ N Deutsch
 32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
 33 Liste mu· die entsprechende Funktion beim externen Client
 34 aktiviert sein und die bisherige Newsgroup-Liste gelîscht
-35 werden (siehe Nachricht/Brettmanager/Sonstiges).
+35 werden.
 36 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
 # NNTP
 40 Gruppenliste konnte nicht Åbertragen werden.
@@ -4127,6 +4127,9 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.79  2003/08/28 22:01:35  mk
+# - fixed display of ressource 10800
+#
 # Revision 1.78  2003/08/27 21:24:31  cl
 # - send window: overwrite/select server
 #   CLOSES: task #76789 Sendefenster: Box ¸berschreiben
