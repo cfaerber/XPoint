@@ -1823,7 +1823,7 @@ fromstart:
       1: with TSendAttach_Part(parts[0]) do begin
 //         if ntMIME(netztyp) and not ntConv(netztyp) then
 //           hdp.typ := 'M' else // ZConnect with MIME
-           if((TSendAttach_Part(parts[0]).FileEOL = MimeEOLNone) or
+           if binary or ((TSendAttach_Part(parts[0]).FileEOL = MimeEOLNone) or
               (TSendAttach_Part(parts[0]).Analyzed.IsBinary)) and 
               not TSendAttach_Part(parts[0]).ContentType.NeedCharset then
              hdp.typ := 'B'  // UUZ will encode
@@ -2514,6 +2514,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.20  2003/08/25 20:48:04  mk
+  - 794074: Kein Binary Versand beim Autoversand
+
   Revision 1.48.2.19  2003/08/23 23:48:11  mk
   - removed misplaced F2 in DOSendBox
 
