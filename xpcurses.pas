@@ -19,7 +19,6 @@
 
 {$I xpdefine.inc}
 { Only in this unit: Writeable Const On }
-{$J+}
 
 unit xpcurses;
 
@@ -32,7 +31,6 @@ uses
 {$IFDEF FPC }
   linux,
 {$ENDIF }
-  utftools,
 {$IFDEF Kylix}
   libc,
   ncursix,
@@ -40,14 +38,13 @@ uses
   ncurses,
 {$ENDIF}
 {$IFDEF Unix}
-  mime,
+  xpcharset,
 {$ENDIF}
   xplinux;
 
 {$IFDEF fpc }
 {$packrecords 4}
 {$linklib panel}
-{$j+}
 {$ENDIF}
 
 const
@@ -1563,6 +1560,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.82  2003/09/30 00:11:27  cl
+  - fixes for Linux compilation
+
   Revision 1.81  2003/09/06 22:29:30  mk
   - removd new added keyboard codes due hangs with linux/netbios
     we have to find another way to support this keycodes
