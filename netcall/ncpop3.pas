@@ -254,7 +254,7 @@ begin
   Result := false;
   if Connected then
   begin
-    SWritelnFmt('STAT %d', [ID]);
+    SWritelnFmt('DELE %d', [ID]);
     SReadln(s);
     if ParseError(s) then
       exit;
@@ -290,6 +290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2001/04/06 13:51:22  mk
+  - delete pop3 mails after recieving
+
   Revision 1.6  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

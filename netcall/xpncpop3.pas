@@ -223,9 +223,10 @@ begin
     begin
       MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(i) + '             ');
       POP.Retr(i, List);
-// UUZ muá erweitert werden,wenn das funktionieren soll
-//   if List.Count > 10000 then
-        SaveMail;
+      if BoxPar^.Pop3_Clear then POP.Dele(I);
+      // UUZ muá erweitert werden,wenn das funktionieren soll
+      // if List.Count > 10000 then
+      SaveMail;
     end;
 
     SaveMail;
@@ -244,8 +245,8 @@ end.
 
 {
   $Log$
-  Revision 1.6  2001/04/06 13:23:02  mk
-  - fix when no smtp mails to send
+  Revision 1.7  2001/04/06 13:51:23  mk
+  - delete pop3 mails after recieving
 
   Revision 1.5  2001/04/05 14:28:49  ml
   - SMTP is working
