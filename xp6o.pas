@@ -688,7 +688,7 @@ label ende,again;
              (LeftStr(empf,21)='## Originalempf„nger:');   { Kompatibilitaet zu XP 1.0-2.1 }
   end;
 
- :¼Çcedure GetOEmpflist;
+  procedure GetOEmpflist;
   var s : string;
   begin
     repeat
@@ -1290,6 +1290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/11/18 12:37:36  hd
+  - Ungueltiges Zeichen entfernt
+
   Revision 1.44  2000/11/18 00:04:43  fe
   Made compileable again.  (Often a suboptimal way...)
 
