@@ -974,8 +974,15 @@ begin                  { function Netcall }
 
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
-          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
-          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          if Boxpar.SMTPAfterPop then
+          begin
+            GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+            SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          end
+          else begin
+            SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+            GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          end;
         end; {case ltPOP3}
 
         ltNNTP: begin
@@ -1209,6 +1216,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/04/16 16:56:18  ml
+  - smtpafterpop-setting does the job now
+
   Revision 1.14  2001/04/15 19:31:22  ma
   - added error message for DOS32 TCP/IP netcalls
 
