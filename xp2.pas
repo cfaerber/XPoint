@@ -216,7 +216,7 @@ begin
   end;
 end;
 
-{ initialize global Dirvars defined in xpglobals.pas }
+{ initialize global Dirvars defined in xpglobal.pas }
 {$IFDEF UnixFS}
 procedure initdirs;
 
@@ -258,6 +258,19 @@ procedure initdirs;
     {$ifdef UnixDevelop}
     Libdir:= './';
     {$else}
+    {$ifdef BSD}
+    LibDir := AddDirSepa('/usr/local/share/' + XPDirName); { Lib/Res-Verzeichnis }
+    DocDir := AddDirSepa('/usr/local/doc/' + XPDirName);   { Lib/Res-Verzeichnis }
+    if not isPath(LibDir) then
+    begin
+      if _deutsch then
+        stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
+             LibDir + '" nicht vorhanden.')
+      else
+        stop('The programm is not installed correctly - LibDir: "' +
+             LibDir + '" not available.');
+    end;
+    {$else}
     LibDir := AddDirSepa('/usr/lib/' + XPDirName) + 'lib';                    { Lib/Res-Verzeichnis }
     DocDir := AddDirSepa('/usr/lib/' + XPDirName) + 'doc';                    { Lib/Res-Verzeichnis }
     if not isPath(LibDir) then
@@ -276,6 +289,7 @@ procedure initdirs;
     end;
     LibDir := AddDirSepa(LibDir);
     DocDir := AddDirSepa(DocDir);
+    {$endif}
     {$endif}
   end;
 
@@ -1194,6 +1208,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.90  2000/11/22 20:56:44  fe
+  Added FreeBSD paths.
+
   Revision 1.89  2000/11/19 13:32:55  ma
   - oops. Debugged debug procedure ;-)
 
