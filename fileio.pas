@@ -46,6 +46,7 @@ Function  ValidFileName(const name:PathStr):boolean;  { gÅltiger Dateiname ?    
 Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
 function  TempFile(const path:pathstr):pathstr;       { TMP-Namen erzeugen      }
 function  TempExtFile(const path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
+function Size_OVR:integer;                      { Groesse des Overlays in KB }
 function  _filesize(const fn:pathstr):longint;        { Dateigrî·e in Bytes     }
 function  filetime(const fn:pathstr):longint;         { Datei-Timestamp         }
 procedure setfiletime(const fn:pathstr; newtime:longint);  { Dateidatum setzen  }
@@ -449,6 +450,10 @@ begin
   TempExtFile:=path+n;
 end;
 
+function Size_OVR:integer;
+begin
+  Size_OVR:=((_filesize(ownpath+'xp.ovr')) DIV 1024);
+end;
 
 function _filesize(const fn:pathstr):longint;
 var sr : searchrec;
@@ -751,6 +756,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.19  2003/04/13 15:07:11  mw
+  MW: - Neue Funktion Size_OVR in Fileio
+
+      - Overlaycache wird jetzt bei mindestens Size_OVR+700KB EMS/XMS
+        angelegt.
+
   Revision 1.41.2.18  2003/01/19 08:29:10  mw
   MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
         Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!

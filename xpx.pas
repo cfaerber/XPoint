@@ -305,11 +305,12 @@ begin
     end;
 
     {Overlaycache anlegen in EMS oder XMS}
-    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>2040)) then begin
+    { Size_OVR enthaelt die Groesse des OVR-Files }
+    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then begin
       OvrInitEMS;
       xmsovrbuf:=false;
     end 
-    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>2040)) then
+    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>(Size_OVR+700))) then
       OvrInitXMS
     else xmsovrbuf:=false;  
    
@@ -336,6 +337,12 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.25  2003/04/13 15:07:11  mw
+  MW: - Neue Funktion Size_OVR in Fileio
+
+      - Overlaycache wird jetzt bei mindestens Size_OVR+700KB EMS/XMS
+        angelegt.
+
   Revision 1.18.2.24  2003/04/12 19:43:48  mw
   MW: - Letzten Commit korregiert (Es gibt jetzt kein Compileschalter
         xmsovr mehr. In Xpx.pas war bei den Units noch einer drin.
