@@ -24,7 +24,7 @@ uses windows;
 { procedure setBL(para:UCHAR);   external 'ntvdm.exe'; } { function getBL:UCHAR;  external 'ntvdm.exe'; }
 { procedure setBH(para:UCHAR);   external 'ntvdm.exe'; } { function getBH:UCHAR;  external 'ntvdm.exe'; }
 
-  procedure setECX(para:ULONG);  external 'ntvdm.exe';     function getECX:ULONG; external 'ntvdm.exe';  
+{ procedure setECX(para:ULONG);  external 'ntvdm.exe'; }   function getECX:ULONG; external 'ntvdm.exe';  
 { procedure setCX(para:USHORT);  external 'ntvdm.exe'; } { function getCX:USHORT; external 'ntvdm.exe'; }
 { procedure setCL(para:UCHAR);   external 'ntvdm.exe'; }   function getCL:UCHAR;  external 'ntvdm.exe';  
 { procedure setCH(para:UCHAR);   external 'ntvdm.exe'; }   function getCH:UCHAR;  external 'ntvdm.exe';  
@@ -67,8 +67,8 @@ uses windows;
 { procedure setOF(para:ULONG);   external 'ntvdm.exe';  }
 { procedure setMSW(para:USHORT); external 'ntvdm.exe';  }
 
-function  GetVDMPointer(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; begin GetVDMPointer:=Pointer(DWORD(Hi(Address))*16+DWORD(Lo(Address))); end;
-function  FreeVDMPointer(Address:ULONG; Size:USHORT; Buffer:Pointer; ProtectedMode:BOOL):BOOL; begin FreeVDMPointer:=true; end;
+function  GetVDMAddress(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; external 'ntdvm.exe' name 'MGetVdmAddress';
+function  FreeVDMPointer(Address:ULONG; Size:USHORT; Buffer:Pointer; ProtectedMode:BOOL):BOOL; begin FreeVDMPointer := true; end;
 
 { --- Exact Windows Version ------------------------------------- }
 
@@ -90,7 +90,7 @@ var maxlen:  integer;
 begin
   maxlen := getCL;
   oneline:= getCH<>0;
-  sp := GetVDMPointer(GetEDI,maxlen,false);
+  sp := GetVDMAddress(GetEDI,maxlen,false);
   setCF(1);
 
   OpenClipboard(0);
@@ -126,7 +126,7 @@ var 	cp: PChar;
 	pm: PChar;
 begin
   cl := GetECX;
-  cp := GetVDMPointer(GetESI,cl,false);
+  cp := GetVDMAddress(GetESI,cl,false);
 
   SetCF(1);
 
@@ -160,7 +160,7 @@ var	fn: PChar;
 	cp: LPTSTR;
 	wr: DWORD;
 begin
-  fn:=GetVDMPointer(GetESI,$10000,false);
+  fn:=GetVDMAddress(GetESI,$10000,false);
   setCF(1);
 
   OpenClipboard(0);
@@ -193,7 +193,7 @@ var	fn: PChar;
 	mh: HANDLE;
 	mp: PChar;
 begin
-  fn:=GetVDMPointer(GetESI,$10000,false);
+  fn:=GetVDMAddress(GetESI,$10000,false);
   setCF(1);
 
   fh:=CreateFile(fn,GENERIC_READ,0,0,OPEN_EXISTING,
@@ -253,11 +253,14 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.7  2003/03/01 16:28:46  cl
+  - next try for xp_ntvdm.dll
+
   Revision 1.1.2.6  2002/04/12 14:52:07  cl
   - removed sysutils unit
 
   Revision 1.1.2.5  2002/04/12 14:50:11  cl
-  - fixed GetVDMPointer
+  - fixed GetVDMAddress
   - fixed mem_to_clip (called by String2Clip)
 
   Revision 1.1.2.4  2001/07/18 20:13:19  cl
