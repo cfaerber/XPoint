@@ -348,8 +348,6 @@ var f,f2     : file;
     boxfile  : string;
     username : string;  { eigener Username                    }
     pointname: string;
-    XP_ID    : string;
-    XID      : string;  { CrossPoint-ID                       }
     _brett   : string;
     mapsname : string;
     senddate : string;  { mit 'D' zeitversetzt absenden       }
@@ -1031,8 +1029,6 @@ fromstart:
   end else                         { interne Msgs -> Default-Username }
     dbSeek(d,boiName,UpperCase(DefaultBox));
   LoadBoxData;
-  if pm and not XP_ID_PMs then XpID:=false;
-  if not pm and not XP_ID_AMs then XpID:=false;
   if pm then
     SetLocalPM;
   dbClose(d);
@@ -1060,12 +1056,6 @@ fromstart:
     rfehler(609);   { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
     goto xexit;
   end;
-  if pm and (UpperCase(LeftStr(empfaenger,length(mapsname)))=mapsname) then
-    XpID:=false;
-  if SendFlags and SendWAB<>0 then XpID:=false;
-  { Bei Nachrichten, die mit N/W/O weitergeleitet wurden, darf keine
-    XpID gesetzt werden, auch nicht in der unregistrierten Version }
-  Set_XP_ID;
 
   if (netztyp<>nt_Fido) then
     AltAdr:='';
@@ -1520,10 +1510,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         end;
       fo:=fido_origin(false);
       if fo<>'' then
-        wrs(fo)
-      else
-        if XpID then                       { ID }
-          blockwrite(f2,XID[1],length(XID));
+        wrs(fo);
       close(f2);
       end;
 
@@ -1635,10 +1622,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
-    if (netztyp<>nt_Fido) or pm or not XP_ID_AMs then
-      hdp.programm:=xp_xp+' '+verstr+Trim(betastr)
-                     {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
-                     +pformstr;
+    if (netztyp<>nt_Fido) or pm then
+      hdp.programm:=LeftStr(xp_xp,iif(pos('/',xp_xp)<>0,pos('/',xp_xp)-1,length(xp_xp)))
+                     +'/'+trim(verstr)
+                     +' ('+Without(Without(Trim(pformstr),'('),')')+betastr
+                     {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
+                     +')';
     hdp.organisation:=orga;
     if sdata^.ersetzt<>''then hdp.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2101,6 +2090,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.112  2001/05/19 16:17:51  ma
+  - removed XP_ID (shareware notice)
+  - changed program id:
+    "OpenXP/32 vVERSION (PLATFORM)"
+
   Revision 1.111  2001/04/27 10:15:09  ma
   - moved line "flags or 256" to correct position
     (but ReplaceOwn does still not work)

@@ -27,6 +27,9 @@ interface
 
 {$I XPDEFINE.INC }
 
+// format the following strings in a way that
+// verstr+pformstr+betastr is readable
+
 const
   verstr      = 'v3.70.3';  { Versionnr. - steht nur an dieser Stelle }
 {$ifdef Linux}
@@ -36,21 +39,21 @@ const
 {$endif}
 
   {$IFDEF Win32 }
-  pformstr    = ' Win/32';    { 32 Bit Windows mit FPC oder VP }
+  pformstr    = ' (Win32)';     { 32 Bit Windows mit FPC oder VP }
   {$ENDIF }
   {$IFDEF OS2 }
-  pformstr    = ' OS/2';      { 32 Bit OS/2 mit FPC oder VP }
+  pformstr    = ' (OS/2)';      { 32 Bit OS/2 mit FPC oder VP }
   {$ENDIF}
   {$IFDEF Linux}
   {$ifndef BSD}
-  pformstr    = ' Linux';     { 32 Bit Linux mit FPC oder VP }
+  pformstr    = ' (Linux)';     { 32 Bit Linux mit FPC oder VP }
   {$endif}
- {$ENDIF}
+  {$ENDIF}
   {$IFDEF FreeBSD}
-   pformstr    = ' FreeBSD';  { 32 Bit native FreeBSD v4+ mit FPC }
+   pformstr    = ' (FreeBSD)';  { 32 Bit native FreeBSD v4+ mit FPC }
   {$endif}
   {$IFDEF Dos32 }
-  pformstr    = ' DOS/32';    { 32 Bit DOS mit FPC oder VP }
+  pformstr    = ' (DOS32)';     { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
 
   author_name = 'OpenXP-Team';
@@ -186,6 +189,11 @@ end.
 
 {
   $Log$
+  Revision 1.53  2001/05/19 16:17:51  ma
+  - removed XP_ID (shareware notice)
+  - changed program id:
+    "OpenXP/32 vVERSION (PLATFORM)"
+
   Revision 1.52  2001/01/06 16:16:26  ma
   - added PathSepa
   - shortened CVS logs

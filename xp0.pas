@@ -90,8 +90,8 @@ const
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-       xp_xp       : string = 'OpenXP';
-       xp_origin   : string = '--- OpenXP';
+       xp_xp       : string = 'OpenXP/32';
+       xp_origin   : string = '--- OpenXP/32';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -891,8 +891,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        DruckFF      : string;
        DruckLira    : byte;
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
-       XP_ID_PMs    : boolean;
-       XP_ID_AMs    : boolean;
        XP_Tearline  : boolean;
        UserSlash    : boolean;
        BAKext       : string;
@@ -1124,6 +1122,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.127  2001/05/19 16:17:51  ma
+  - removed XP_ID (shareware notice)
+  - changed program id:
+    "OpenXP/32 vVERSION (PLATFORM)"
+
   Revision 1.126  2001/04/23 06:57:44  ml
   - NNTP-BoxPar for getting last X Mails
 
