@@ -109,17 +109,23 @@ const  {$IFDEF DPMI}
        MausinfoBrett= '$/¯Mausinfo';
        uuserver    = 'UUCP-Fileserver';
 
-       PufferFile  = 'PUFFER';       { Z-Netz-Puffer }
-       TPufferFile = 'TPUFFER';      { TurboBox-Puffer }
-       XFerDir     = 'SPOOL\';       { eingehende Mailbatches }
-       XFerDir_    = 'SPOOL';
-       JanusDir    = 'SPOOL\JANUS\';
-       JanusDir_   = 'SPOOL\JANUS';
-       FidoDir     = 'FIDO\';        { Nodelists }
-       FidoDir_    = 'FIDO';
-       InfileDir   = 'FILES\';       { Default: Filerequests }
-       AutoxDir    = 'AUTOEXEC\';    { AutoStart-Daten }
-       BadDir      = 'BAD\';
+{$IFDEF UnixFS }
+       DirSepa     = '/';            { Trennzeichen im Verzeichnisbaum }
+{$ELSE }
+       DirSepa     = '\';
+{$ENDIF }
+
+       PufferFile  = 'puffer';        { Z-Netz-Puffer }
+       TPufferFile = 'tpuffer';       { TurboBox-Puffer }
+       XFerDir_    = 'spool';         { eingehende Mailbatches }
+       XFerDir     = XFerDir_+DirSepa; 
+       JanusDir_   = XFerDir+'janus';
+       JanusDir    = JanusDir_+DirSepa;
+       FidoDir_    = 'fido';
+       FidoDir     = FidoDir_+DirSepa;{ Nodelists }
+       InfileDir   = 'files'+DirSepa; { Default: Filerequests }
+       AutoxDir    = 'autoexec'+DirSepa;    { AutoStart-Daten }
+       BadDir      = 'bad'+DirSepa;
 
        HeaderFile  = 'header.xps';     { Schablonen-Dateien }
        HeaderPriv  = 'privhead.xps';
@@ -134,21 +140,21 @@ const  {$IFDEF DPMI}
        EB_Msk      = 'empfbest.xps';
        CancelMsk   = 'cancel.xps';
 
-       BfgExt      = '.BFG';           { Boxen-Config-File }
-       QfgExt      = '.QFG';           { QWK-Config-File   }
-       SwapExt     = '.SWP';
+       BfgExt      = '.bfg';           { Boxen-Config-File }
+       QfgExt      = '.qfg';           { QWK-Config-File   }
+       SwapExt     = '.swp';
 
-       MsgFile     = 'MSGS';           { DB1-Dateinamen }
-       BrettFile   = 'BRETTER';
-       UserFile    = 'USER';
-       BoxenFile   = 'BOXEN';
-       GruppenFile = 'GRUPPEN';
-       SystemFile  = 'SYSTEME';
-       DupeFile    = 'DUPEKILL';       { tempor„r in XP4O.DupeKill }
-       AutoFile    = 'AUTOMSG';
-       PseudoFile  = 'PSEUDOS';
-       BezugFile   = 'BEZUEGE';
-       MimetFile   = 'MIMETYP';
+       MsgFile     = 'msgs';           { DB1-Dateinamen }
+       BrettFile   = 'bretter';
+       UserFile    = 'user';
+       BoxenFile   = 'boxen';
+       GruppenFile = 'gruppen';
+       SystemFile  = 'systeme';
+       DupeFile    = 'dupekill';       { tempor„r in XP4O.DupeKill }
+       AutoFile    = 'automsg';
+       PseudoFile  = 'pseudos';
+       BezugFile   = 'bezuege';
+       MimetFile   = 'mimetyp';
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
@@ -1109,6 +1115,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.31  2000/04/28 14:48:49  hd
+  Kleinschreibung der Datei- und Verzeichnisnamen fuer Linux
+
   Revision 1.30  2000/04/25 08:45:23  jg
   - kleine Aenderungen zur Suche des Nachrichtenweiterschalten-Bugs
    (Variable NW nach xp0 verlagert + Anzeige wenn STRG+W ausgefuehrt wird)
