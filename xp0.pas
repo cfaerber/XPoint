@@ -406,7 +406,7 @@ type   textp  = ^text;
                   kopien     : empfnodep;     { KOP: - Liste }
                   empfanz    : integer;       { Anzahl EMP-Zeilen }
                   betreff    : string[BetreffLen];
-                  absender   : string[80];
+                  absender   : string[AdrLen];
                   datum      : string[11];    { Netcall-Format               }
                   zdatum     : string[22];    { ZConnect-Format; nur auslesen }
                   orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
@@ -1207,6 +1207,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.38  2001/07/17 13:52:37  mk
+  - Absender-Laenge wird über Konstakte AdrLen bestimmt
+
   Revision 1.54.2.37  2001/07/01 15:40:11  my
   - updated documentation of RTA bitmask (added OAB Header)
 
