@@ -1326,7 +1326,7 @@ begin
       if encoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
         encoding := MimeEncoding7Bit;
     end else
-    if typ = 'T' then
+    if (typ='T') and ((ctype='')or(UpperCase(LeftStr(ctype,5))='TEXT/')) then
     begin
       if encoding=MimeEncodingUnknown then
       begin
@@ -3102,7 +3102,7 @@ end;
 procedure WriteRfcTrailer(f: TStream);
 begin
   if hd.attrib and AttrMPbin <> 0 then
-    wrs(f, '--' + xpboundary + '--');
+    wrs(f, #10'--' + xpboundary + '--');
 end;
 
 procedure TUUZ.ZtoU;
@@ -3666,6 +3666,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2002/08/25 19:37:56  cl
+  - UUZ: Fixes for AttrMPart
+
   Revision 1.115  2002/08/04 18:41:10  mk
   - fixed linux compiliation problems from last patch
 
