@@ -407,11 +407,9 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { Nach dem Netcall Datumsbezge setzen, damit
     /¯Netzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then begin
-    window(1,1,screenwidth,screenlines); {Screenfenster vorher korrigieren!}
-    bd_setzen(true);
-    end;
-  { /oh }
+  if Assigned(NC) then
+    if AutoDatumsBezuege and ((NC^.Recpack >0) or (NC^.Recbuf > 0)) then
+      bd_setzen(true);
 end;
 
 
@@ -779,6 +777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/10/15 09:43:45  mk
+  OH:- Datumsbezuege aktualisieren nur noch wenn noetig
+
   Revision 1.27  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
 
