@@ -557,7 +557,7 @@ var
       2: result:=e.Count;                       //TastenMakros
       3: result:=anzahl;                        //Gebhren
       4: result:=xhd.anz+1;                     //Header
-      5: result:=Nodelist.mEntrys.Count;        //nodeliste
+      5: result:=Nodelist.Entries.Count;        //nodeliste
       6: result:=tables;                        //Tarif
     else
       result:=anzahl;
@@ -643,7 +643,7 @@ var
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
-          5 : with TNodeListItem(Nodelist.mEntrys[a+i-1]) do
+          5 : with TNodeListItem(Nodelist.Entries[a+i-1]) do
                 Wrt2(' '+forms(listfile,14)+                                    // NL-Dateiname
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+   //Nodelistennummer
                       forms(updatefile,14)+forms(updatearc,14)+
@@ -1397,17 +1397,17 @@ var
   var nlr : TNodeListItem;
       brk : boolean;
   begin
-    nlr:=TNodeListItem(Nodelist.mEntrys[strIdx]);
+    nlr:=TNodeListItem(Nodelist.Entries[strIdx]);
     EditNLentry(nlr,brk);
     if not brk then
     begin
       reindex:=reindex or
-               (nlr.format<>TNodeListItem(nodelist.mEntrys[strIdx]).format) or
-               (nlr.zone<>TNodeListItem(nodelist.mEntrys[strIdx]).zone) or
+               (nlr.format<>TNodeListItem(nodelist.Entries[strIdx]).format) or
+               (nlr.zone<>TNodeListItem(nodelist.Entries[strIdx]).zone) or
                ((nlr.format=3) and
-                ((nlr.net<> TNodeListItem(nodelist.mEntrys[strIdx]).net) or
-                 (nlr.node<> TNodeListItem(nodelist.mEntrys[strIdx]).node)));
-      Nodelist.mEntrys[strIdx] :=nlr;
+                ((nlr.net<> TNodeListItem(nodelist.Entries[strIdx]).net) or
+                 (nlr.node<> TNodeListItem(nodelist.Entries[strIdx]).node)));
+      Nodelist.Entries[strIdx] :=nlr;
       modi:=true;
     end;
   end;
@@ -1432,9 +1432,9 @@ var
     begin
       if a+CurRow-1<anzahl then
       begin
-        Item := NodeList.mEntrys[strIdx];
+        Item := NodeList.Entries[strIdx];
         Item.Free;
-        NodeList.mEntrys.Delete(strIdx);
+        NodeList.Entries.Delete(strIdx);
         dec(anzahl);
         modi:=true;
         reindex:=true;
@@ -1611,7 +1611,7 @@ begin   {procedure UniEdit(typ:byte); }
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
           filewidth:=255;
-          anzahl:=NodeList.mEntrys.Count;
+          anzahl:=NodeList.Entries.Count;
           width:=70;
           buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info , ^OK ' }
           okb:=6; edb:=2;
@@ -1702,7 +1702,7 @@ begin   {procedure UniEdit(typ:byte); }
         5 : case nr of
               1 : if NewNodeentry then
                   begin
-                    Anzahl := NodeList.mEntrys.Count;
+                    Anzahl := NodeList.Entries.Count;
                     modi:=true;
                     reindex:=true;
                   end;
@@ -1789,13 +1789,13 @@ begin   {procedure UniEdit(typ:byte); }
           if reindex then
           begin
             KeepNodeindexClosed;
-            if Nodelist.mOpen then CloseNodeIndex;
-            if NodeList.mEntrys.Count=0 then
+            if Nodelist.Open then CloseNodeIndex;
+            if NodeList.Entries.Count=0 then
             begin
               DeleteFile(NodeIndexF);
               DeleteFile(UserIndexF);
               DeleteFile(NodelistCfg);
-              Nodelist.mOpen:=false;
+              Nodelist.Open:=false;
             end
             else begin
               MakeNodelistindex;
@@ -2051,6 +2051,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.52  2001/01/06 21:13:35  mo
+  - Änderung an TnodeListItem
+
   Revision 1.51  2001/01/06 17:18:07  mk
   - fixed some TNodeListItem-Bugs
 

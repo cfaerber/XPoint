@@ -16,7 +16,7 @@ unit xp6l;
 
 interface
 
-uses  sysutils,xp0,xpcc, xpglobal;
+uses  sysutils,classes,xp0,xpcc, xpglobal;
 
 
 { Tabelle fÅr IBM -> ISO-Konvertierung }
@@ -29,30 +29,87 @@ const maxcc  = 50;
       flEB     : boolean = false;
       flMloc   : boolean = false;
       flMnet   : boolean = false;
+///////////////////////////////////////////////////////////////////////////////
+type
+    PTccmore = ^Tccmore;
+    TCcmore  = record
+        server   : string[BoxNameLen];  // Server
+        nt       : byte;                // netztyp
+        mail     : boolean;             // prsînliche mail '@' im EmfÑnger enthalten
+        cpanz    : shortint;            // n = erster von n EmfÑngern
+        nobrett  : boolean;             // Phantom-Crossposting
+        encode   : boolean;             // PM - Default: Codieren
+      end;
+     Tccmorea  = class(TList)             { [0]=erster Empf. }
+     public
+        //mCount   :integer;
+        //mEntries  :array[0..maxcc] of Tccmore;   { [0]=erster Empf }}
 
-type ccmore  = record
-                 server : string[BoxNameLen];      { Server }
-                 ccnt   : byte;
-                 ccpm   : boolean;
-                 cpanz  : shortint;  { n = erster von n EmfÑngern }
-                 nobrett: boolean;   { Phantom-Crossposting }
-                 encode : boolean;   { PM - Default: Codieren }
-               end;
-    ccmorea  = array[0..maxcc] of ccmore;   { [0]=erster Empf. }
+        /////////////////////////////////////
+        //constructor create;
+        private
+        procedure   NewElement;         //
+        public
+        procedure   del;                //
+        end;
 
-var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
-    min_send : longint;     { minimales Sendedatum (fÅr "D"atum) }
-    cc_anz   : integer16;   { Anzahl CC-EmpfÑnger }
-    cc       : ccp;         { Kopie-EmpfÑnger }
-    ccm      : ^ccmorea;
+
+///////////////////////////////////////////////////////////////////////////////
+
+var umlaute  : byte;        // 0=IBM; 1=ASCII; (2=ISO)
+    min_send : longint;     // minimales Sendedatum (fÅr "D"atum
+    cc_anz   : integer16;   // Anzahl CC-EmpfÑnger
+    ccL      : ccp;         // Kopie-EmpfÑnger
+    Cccm     : Tccmorea;
 
 
 implementation
+///////////////////////////////////////////////////////////////////////////////
+//constructor Tccmorea.create;
+//begin
+//  NewElement;
+//  Clear;
+//end;
+procedure Tccmorea.Del;
+ var  i :byte;
+ s :string;
+begin
+  for i:=1 to maxcc do begin        // [0] nicht lîschen da Server der Org. mail
+    with PTccmore(Items[i]) do begin
+      server   :='';                // Server
+      nt       :=0;                 // netztyp
+      mail     :=false;             // prsînliche mail '@' im EmfÑnger enthalten
+      cpanz    :=0;                 // n = erster von n EmfÑngern
+      nobrett  :=false;             // Phantom-Crossposting
+      encode   :=false;             // PM - Default: Codieren
+      end;
+    end;
+end;
+
+procedure Tccmorea.NewElement;
+var Prec :PTccmore;
+    i :byte;
+begin
+  for i:=0 to maxcc do begin
+    new(Prec);
+    add(Prec);
+  end;
+  del;
+end;
 
 
+// end Tccmorea
+///////////////////////////////////////////////////////////////////////////////
+initialization
+ Cccm:=Tccmorea.Create;
+ Cccm.NewElement;
+finalization
 end.
 {
   $Log$
+  Revision 1.7  2001/01/06 21:13:36  mo
+  - ƒnderung an TnodeListItem
+
   Revision 1.6  2000/07/03 13:31:41  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -81,7 +81,7 @@ var s  : string;
 
 begin           { begin procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo) };
   ni.found:=false;                                              //war (nfile<1)
-  if (nfile<0) or (nfile>NodeList.mEntrys.Count-1) then exit;
+  if (nfile<0) or (nfile>NodeList.Entries.Count-1) then exit;
         new(nodelf);                                            //es kann ein nodelisten index von
   assign(nodelf^,FidoDir+NodeList.GetFilename(nfile));
   resetfm(nodelf^,fmRead);
@@ -121,7 +121,7 @@ label again;
 
 begin
   fillchar(ni,sizeof(ni),0);
-  if not Nodelist.mOpen then exit;
+  if not Nodelist.Open then exit;
   splitfido(adr,fa,2);
   if pointtyp=0 then fa.ispoint:=false;
   if not nodelistopen then begin
@@ -410,7 +410,7 @@ begin
 { MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if NodeList.GetMainNodelist>0 then begin
-    NlItem:=nodelist.mEntrys[NodeList.GetMainNodelist];
+    NlItem:=nodelist.Entries[NodeList.GetMainNodelist];
     attrtxt(col.coldiarahmen);
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
@@ -746,8 +746,8 @@ again:
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
   List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
-  for i:=0 to NodeList.mEntrys.Count - 1 do
-    with TNodeListItem(Nodelist.mEntrys[i]),NB_Data^ do
+  for i:=0 to NodeList.Entries.Count - 1 do
+    with TNodeListItem(Nodelist.Entries[i]),NB_Data^ do
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
           (pl and (format<>nlNodelist))) and
@@ -893,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.28  2001/01/06 21:13:36  mo
+  - Änderung an TnodeListItem
+
   Revision 1.27  2001/01/06 17:18:07  mk
   - fixed some TNodeListItem-Bugs
 

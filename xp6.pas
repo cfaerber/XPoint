@@ -28,6 +28,7 @@ uses
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
   xpglobal,Classes,fidoglob;
 
+
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfuehrliche Sendeanzeige }
       sendDelay  = 4;     { 0,5 s Warten              }
@@ -98,7 +99,6 @@ implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
-
 var
   i: integer;
 
@@ -423,103 +423,102 @@ var f,f2     : file;
     fo       : string;
     flags    : longint;
 
-label xexit,xexit1,xexit2,fromstart,ReadAgain;
+  label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
 {$I xp6s.inc}
 
-function uucpbrett(s:string; edis:byte):string;
-var i : integer;
-begin
-  if (edis=1) or (netztyp<>nt_UUCP) or not NewsgroupDisp then
-    uucpbrett:=mid(s,edis)
-  else begin
-    delete(s,1,2);
-    for i:=1 to length(s) do if s[i]='/' then s[i]:='.';
-    uucpbrett:=s;
-    end;
-end;
-
-
-procedure EditNachricht(pushpgdn:boolean);
-var p      : byte;
-    edpush : boolean;
-begin
-  edpush:=not editvollbild and
-     ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
-  if edpush then begin
-    attrtxt(col.coledithead);
-    moff;
-    { Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden }
-    wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
-    p:=cpos('@',empfaenger);
-    wrt(1,1,' ');
-    if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79+screenwidth-80))
-    else
-      if pm then Wrt2(forms(getres2(611,40)+LeftStr(empfaenger,p-1)+'@'+
-                       mid(empfaenger,p+1),70+screenwidth-80)+sp(9))
-      else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
-                 iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
-                      getres2(611,43)+fidoto,''),70+screenwidth-80)+sp(9));
-    wrt(1,2,' '+forms(getres2(611,42)+betreff,79 + screenwidth-80));   { 'Betreff:      ' }
-    mon;
-    end;
-  if pushpgdn then pushkey(keycpgd);
-  if exteditor<3 then EditSetBetreff(betreff,betrlen);
-  editfile(datei,true,
-           (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
-           iif(editvollbild,0,2),umlaute=1);
-  if exteditor<3 then betreff:=EditGetbetreff;
-  if edpush then begin
-    moff; wpop; mon;
-    end;
-  if pushpgdn and keypressed then begin
-    get(t,curoff);
-    if t<>keycpgd then _keyboard(t);
-    end;
-  otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
-end;
-
-
-procedure TestXpostings(all:boolean);  { Crossposting-Informationen zusammenstellen }
-var i,first : integer;
-
-  procedure GetInf(n:integer; var adr:string);
-  var p : byte;
+  function uucpbrett(s:string; edis:byte):string;
+  var i : integer;
   begin
-    with ccm^[n] do begin
-      ccpm:=(cpos('@',adr)>0);
-      if ccpm then begin
-        dbSeek(ubase,uiName,UpperCase(adr));
-        if dbFound then
-        begin
-          if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
-            dbwrite(ubase,'adrbuch',NeuUserGruppe);
-          Server := dbReadNStr(ubase,ub_pollbox);
-          if (dbReadInt(ubase,'userflags') and 2<>0) and
-             (dbReadInt(ubase,'codierer')<>0) then
-            encode:=true;
-          end;
-        end
-      else begin
-        p:=cpos(':',adr);
-        if (adr[1]='+') and (p>0) then begin    { nicht eingetragenes Brett }
-          server:=copy(adr,2,p-2);
-          nobrett:=true;
-          end
-        else begin
-          if adr[1]='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
-          else dbSeek(bbase,biBrett,UpperCase(adr));
-          if dbFound then Server := dbReadNStr(bbase,bb_pollbox)
-          else if CrosspostBox<>'' then begin
-            adr:='+'+CrosspostBox+':'+adr;
-            server:=UpperCase(CrosspostBox);
-            nobrett:=true;
-            end;
-          end;
-        end;
-      server:= UpperCase(server);
+    if (edis=1) or (netztyp<>nt_UUCP) or not NewsgroupDisp then
+      uucpbrett:=mid(s,edis)
+    else begin
+      delete(s,1,2);
+      for i:=1 to length(s) do if s[i]='/' then s[i]:='.';
+      uucpbrett:=s;
       end;
   end;
+
+
+  procedure EditNachricht(pushpgdn:boolean);
+  var p      : byte;
+     edpush : boolean;
+  begin
+    edpush:=not editvollbild and ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
+    if edpush then begin
+      attrtxt(col.coledithead);
+      moff;
+      // Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden
+      wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
+      p:=cpos('@',empfaenger);
+      wrt(1,1,' ');
+      if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79+screenwidth-80))
+      else
+        if pm then Wrt2(forms(getres2(611,40)+LeftStr(empfaenger,p-1)+'@'+
+                       mid(empfaenger,p+1),70+screenwidth-80)+sp(9))
+        else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
+                 iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
+                      getres2(611,43)+fidoto,''),70+screenwidth-80)+sp(9));
+      wrt(1,2,' '+forms(getres2(611,42)+betreff,79 + screenwidth-80));   { 'Betreff:      ' }
+      mon;
+      end;
+    if pushpgdn then pushkey(keycpgd);
+    if exteditor<3 then EditSetBetreff(betreff,betrlen);
+    editfile(datei,true,
+           (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
+           iif(editvollbild,0,2),umlaute=1);
+    if exteditor<3 then betreff:=EditGetbetreff;
+    if edpush then begin
+      moff; wpop; mon;
+      end;
+    if pushpgdn and keypressed then begin
+      get(t,curoff);
+      if t<>keycpgd then _keyboard(t);
+     end;
+    otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
+  end;
+
+
+  procedure TestXpostings(all:boolean);  { Crossposting-Informationen zusammenstellen }
+  var i,first : integer;
+
+    procedure GetInf(n:integer; var adr:string);
+    var p : byte;
+    begin
+      with PTccmore(Cccm[n]) do begin
+        mail:=(cpos('@',adr)>0);
+        if mail then begin      // pers”nlich mail
+          dbSeek(ubase,uiName,UpperCase(adr));
+          if dbFound then
+          begin
+            if dbreadint(ubase,'adrbuch')=0 then      { CCs-Empfaenger ins Adressbuch aufnehmen }
+              dbwrite(ubase,'adrbuch',NeuUserGruppe);
+            Server := dbReadNStr(ubase,ub_pollbox);
+            if (dbReadInt(ubase,'userflags') and 2<>0) and
+               (dbReadInt(ubase,'codierer')<>0) then
+              encode:=true;
+             end;
+            end
+        else begin      // if ccpm then begin
+          p:=cpos(':',adr);
+          if (adr[1]='+') and (p>0) then begin    { nicht eingetragenes Brett }
+            server:=copy(adr,2,p-2);
+            nobrett:=true;
+            end
+          else begin
+            if adr[1]='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
+            else dbSeek(bbase,biBrett,UpperCase(adr));
+            if dbFound then Server := dbReadNStr(bbase,bb_pollbox)
+            else if CrosspostBox<>'' then begin
+              adr:='+'+CrosspostBox+':'+adr;
+              server:=UpperCase(CrosspostBox);
+              nobrett:=true;
+              end;
+            end;
+          end;
+        server:= UpperCase(server);
+        end;
+    end;        // procedure GetInf(n:integer; var adr:string);
 
   { alle Kopien mit gleichem Server wie 'empfaenger' nach oben }
   { wandern lassen                                             }
@@ -527,23 +526,26 @@ var i,first : integer;
   procedure CollectFirstServer;
   var s1    : string[BoxNameLen];
       s     : AdrStr;
-      cmr   : ccmore;
+      cmr   : PTCcmore;
       p1,p2 : integer;
   begin
-    s1:=ccm^[0].server;
+    s1:=PTccmore(Cccm[0]).server;
     p1:=1;
-    while (p1<=cc_anz) and (ccm^[p1].server=s1) do inc(p1);
+    while (p1<=cc_anz) and (PTccmore(Cccm[p1]).server=s1) do inc(p1);    //Anzah der mail fr Server 1
     p2:=p1;
     while p1<=cc_anz do begin
-      while (p1<=cc_anz) and (ccm^[p1].server<>s1) do inc(p1);
+      while (p1<=cc_anz) and (PTccmore(Cccm[p1]).server<>s1) do inc(p1);
       if p1<=cc_anz then begin
-        cmr:=ccm^[p1];
-        Move(ccm^[p2],ccm^[p2+1],(p1-p2)*sizeof(cmr));
-        ccm^[p2]:=cmr;
-        s:=cc^[p1];
-        Move(cc^[p2],cc^[p2+1],(p1-p2)*sizeof(cc^[1]));
-        cc^[p2]:=s;
-        inc(p1); inc(p2);
+        cmr:=Cccm[p1];                  // rette alten Wert
+//      Move(Cccm[p2],Cccm^[p2+1],(p1-p2)*sizeof(cmr));
+        Cccm[p2+1]:=Cccm[p2];
+        Cccm[p2]:=cmr;
+        s:=ccL^[p1];
+//        Move(cc^[p2],cc^[p2+1],(p1-p2)*sizeof(cc^[1]));
+        ccL^[p2+1]:=ccL^[p2];
+        ccL^[p2]:=s;
+        inc(p1);
+        inc(p2);
         end;
       end;
     first:=p2;
@@ -554,28 +556,33 @@ var i,first : integer;
   procedure SortForServer_PM;
   var i   : integer;
       xch : boolean;
-      cmr : ccmore;
+//      cmr : PTCcmore;
       s   : AdrStr;
     function IndexStr(i:integer):string;
     begin
-      with ccm^[i] do
+      with PTccmore(Cccm[i]) do
         { !! Char(Byte(x)) ist eine grosse Schweinerei, evtl. mal aendern }
-        IndexStr:=char(byte(encode))+forms(server,BoxNameLen)+char(byte(ccpm));
+        IndexStr:=char(byte(encode))+forms(server,BoxNameLen)+char(byte(mail));
     end;
   begin
     repeat
       xch:=false;
       for i:=cc_anz downto first+1 do
         if IndexStr(i)<IndexStr(i-1) then begin
-          cmr:=ccm^[i]; ccm^[i]:=ccm^[i-1]; ccm^[i-1]:=cmr;
-          s:=cc^[i]; cc^[i]:=cc^[i-1]; cc^[i-1]:=s;
+//          cmr:=Cccm[i];
+//          Cccm[i]:=Cccm[i-1];
+//          Cccm[i-1]:=cmr;
+          Cccm.Exchange(i,i-1);
+          s:=ccL^[i];
+          ccL^[i]:=ccL^[i-1];
+          ccL^[i-1]:=s;
           xch:=true;
           end;
       inc(first);
     until not xch;
   end;
 
-  procedure ReadServerNTs;
+  procedure ReadServerNTs;              // Netztyp des Servers ermitteln
   var d  : DB;
       i  : integer;
       nt : byte;
@@ -584,12 +591,12 @@ var i,first : integer;
     dbOpen(d,BoxenFile,1);
     i:=iif(verteiler,1,0);
     while i<=cc_anz do begin
-      s:=ccm^[i].server;
+      s:=PTccmore(Cccm[i]).server;       // Servername
       dbSeek(d,boiName,s);
       if dbFound then dbRead(d,'netztyp',nt)
       else nt:=0;
-      while (i<=cc_anz) and (ccm^[i].server=s) do begin
-        ccm^[i].ccnt:=nt;
+      while (i<=cc_anz) and (PTccmore(Cccm[i]).server=s) do begin  // alles ber den gleichen Serve
+        PTccmore(Cccm[i]).nt:=nt;                                  // dann auch der gleiche Netzty
         inc(i);
         end;
       end;
@@ -603,121 +610,126 @@ var i,first : integer;
     errflag:=false;
     i:=iif(verteiler,1,0);
     while i<=cc_anz do begin
-      while (i<=cc_anz) and
-            ((ccm^[i].ccpm and not ntCrossPM(ccm^[i].ccnt)) or
-             (not ccm^[i].ccpm and not ntCrossAM(ccm^[i].ccnt)) or
-             ccm^[i].encode) do
-        inc(i);
-      if i<=cc_anz then begin
+
+      while (i<=cc_anz) and ((PTccmore(Cccm[i]).mail and not ntCrossPM(PTccmore(Cccm[i]).nt)) or
+            //                pers”nliche mail     und  kein  PM Crosspostings im netz m”glich
+            (not PTccmore(Cccm[i]).mail and not ntCrossAM(PTccmore(Cccm[i]).nt)) or
+            //  keine pers”nliche mail  und  keine  AM-Crosspostings m”glich
+             PTccmore(Cccm[i]).encode) do
+           //mail verschlssel
+        inc(i);   //i = Anzah der mails die nicht Xgepostet werden koennen
+
+      if i<=cc_anz then begin //es ist mail vorhanden die xgepostet werden koennen
         j:=i;
-        while (j<=cc_anz) and (ccm^[j].{ccnt}server=ccm^[i].{ccnt}server) and
-              (ccm^[j].ccpm=ccm^[i].ccpm) and not ccm^[j].encode do
+        while (j<=cc_anz) and (PTccmore(Cccm[j]).server=PTccmore(Cccm[i]).server) and
+              (PTccmore(Cccm[j]).mail=PTccmore(Cccm[i]).mail) and not PTccmore(Cccm[j]).encode do
           inc(j);
+
         if j-i>1 then begin
-          ccm^[i].cpanz:=min(j-i,iif(ccm^[i].ccpm,maxcc,MaxXposts));
-          if not ccm^[i].ccpm and (j-i>MaxXposts) then begin
+          PTccmore(Cccm[i]).cpanz:=min(j-i,iif(PTccmore(Cccm[i]).mail,maxcc,MaxXposts));
+          if not PTccmore(Cccm[i]).mail and (j-i>MaxXposts) then begin
             if not errflag then
               rfehler1(632,strs(MaxXposts));   { 'Es sind maximal %s Brettempfaenger pro Server moeglich.' }
             errflag:=true;
             if j<=cc_anz then begin
-              Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1]));
-              Move(ccm^[j],ccm^[i+MaxXposts],(cc_anz-j)*sizeof(ccm^[1]));
+              //Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1]));
+              ccL^[i+MaxXposts]:=ccL^[j];
+              //Move(Cccm.[j],Cccm.mEntries[i+MaxXposts],(cc_anz-j)*sizeof(Cccm.mEntries[1]));
+              Cccm[i+MaxXposts]:=Cccm[j];//dasklappt nie
               end;
             dec(cc_anz,j-i-MaxXposts);
-            for k:=cc_anz+1 to maxcc do cc^[k]:='';
+            for k:=cc_anz+1 to maxcc do ccL^[k]:='';
             j:=i+MaxXposts;
             end;
           end;
         i:=j;
         end;
       end;
+   end;
+  begin
+    if all then begin
+      if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
+      if not verteiler then GetInf(0,empfaenger);   { 1. Server einlesen, }
+      for i:=1 to cc_anz do                         {    PM-Flags setzen  }
+        GetInf(i,ccL^[i]);
+      first:=1;
+      if not verteiler then CollectFirstServer;     { 2. nach Server sortieren }
+      SortForServer_PM;
+      ReadServerNTs;                                { 3. Netztypen einlesen }
+      FindXposts;                                   { 4. Crosspostflags setzen }
+      if cc_anz>10 then closebox;
+      end
+    else begin                          // Nach Pollbox-Wechsel }
+      for i:=0 to cc_anz do
+        PTccmore(Cccm[i]).cpanz:=0;      // ccm^[i].cpanz:=0;
+      SortForServer_PM;
+      FindXposts;
+    end;
   end;
 
-begin
-  if all then begin
-    if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
-    fillchar(ccm^,sizeof(ccm^),0);
-    if not verteiler then GetInf(0,empfaenger);   { 1. Server einlesen, }
-    for i:=1 to cc_anz do                         {    PM-Flags setzen  }
-      GetInf(i,cc^[i]);
-    first:=1;
-    if not verteiler then CollectFirstServer;     { 2. nach Server sortieren }
-    SortForServer_PM;
-    ReadServerNTs;                                { 3. Netztypen einlesen }
-    FindXposts;                                   { 4. Crosspostflags setzen }
-    if cc_anz>10 then closebox;
-    end
-  else begin                       { Nach Pollbox-Wechsel }
-    for i:=0 to cc_anz do
-      ccm^[i].cpanz:=0;
-    SortForServer_PM;
-    FindXposts;
-    end;
-end;
 
-
-procedure ReadEmpflist;
-var
-  i: Integer;
-begin
-  // !! Assign moeglich, wenn beides StringListe
-  for i := 0 to SendEmpfList.Count - 1 do
-    if cc_anz<maxcc then
-    begin
-      inc(cc_anz);
-      cc^[cc_anz]:=Sendempflist[i];
-    end;
-  SortCCs(cc,cc_anz);
-  TestXpostings(true);
-end;
-
-
-procedure RemovePhantomServers;   { .. werden jetzt nicht mehr gebraucht }
-var i : integer;
-begin
-  for i:=1 to cc_anz do
-    if ccm^[i].nobrett then
-      delete(cc^[i],1,cpos(':',cc^[i]));
-end;
-
-function ohnebox(i:integer):string;
-begin
-  if ccm^[i].nobrett then
-    ohnebox:='A'+mid(cc^[i],cpos(':',cc^[i])+1)
-  else
-    ohnebox:='A'+cc^[i];
-end;
-
-
-function IncompatibleNTs:boolean;
-var i  : integer;
-    nt : byte;
-begin
-  IncompatibleNTs:=false;
-  nt:=ccm^[iif(verteiler,1,0)].ccnt;
-  for i:=1 to cc_anz do
-    if not ntAdrCompatible(nt,ccm^[i].ccnt) then
-      IncompatibleNTs:=true;
-end;
-
-
-procedure KorrPhantomServers(var oldbox,newbox:string; newnt:byte);
-var i    : integer;
-    modi : boolean;
-begin
-  modi:=false;
-  for i:=0 to cc_anz do
-    if ccm^[i].nobrett and (ccm^[i].server=UpperCase(oldbox)) then begin
-      ccm^[i].server:=UpperCase(newbox);
-      cc^[i]:='+'+newbox+mid(cc^[i],cpos(':',cc^[i]));
-      modi:=true;
-      end
-    else if ccm^[i].ccnt=newnt then begin
-      ccm^[i].server:=UpperCase(newbox);
-      modi:=true;
+  procedure ReadEmpflist;
+  var
+    i: Integer;
+  begin
+    // !! Assign moeglich, wenn beides StringListe
+    for i := 0 to SendEmpfList.Count - 1 do
+      if cc_anz<maxcc then
+      begin
+        inc(cc_anz);
+        ccL^[cc_anz]:=Sendempflist[i];
       end;
-  if modi then TestXpostings(false);
-end;
+    SortCCs(ccL,cc_anz);
+    TestXpostings(true);
+  end;
+
+
+  procedure RemovePhantomServers;   { .. werden jetzt nicht mehr gebraucht }
+  var i : integer;
+  begin
+    for i:=1 to cc_anz do
+      if PTccmore(Cccm[i]).nobrett then
+        delete(ccL^[i],1,cpos(':',ccL^[i]));
+  end;
+
+  function ohnebox(i:integer):string;
+  begin
+    if PTccmore(Cccm[i]).nobrett then
+      ohnebox:='A'+mid(ccL^[i],cpos(':',ccL^[i])+1)
+    else
+      ohnebox:='A'+ccL^[i];
+  end;
+
+
+  function IncompatibleNTs:boolean;
+  var i  : integer;
+      nt : byte;
+  begin
+    IncompatibleNTs:=false;
+    nt:=PTccmore(Cccm[iif(verteiler,1,0)]).nt;
+    for i:=1 to cc_anz do
+      if not ntAdrCompatible(nt,PTccmore(Cccm[i]).nt) then
+        IncompatibleNTs:=true;
+  end;
+
+
+  procedure KorrPhantomServers(var oldbox,newbox:string; newnt:byte);
+  var i    : integer;
+      modi : boolean;
+  begin
+    modi:=false;
+    for i:=0 to cc_anz do
+      if PTccmore(Cccm[i]).nobrett and (PTccmore(Cccm[i]).server=UpperCase(oldbox)) then begin
+        PTccmore(Cccm[i]).server:=UpperCase(newbox);
+        ccL^[i]:='+'+newbox+mid(ccL^[i],cpos(':',ccL^[i]));
+        modi:=true;
+        end
+      else if PTccmore(Cccm[i]).nt=newnt then begin
+        PTccmore(Cccm[i]).server:=UpperCase(newbox);
+        modi:=true;
+        end;
+    if modi then TestXpostings(false);
+  end;
 
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   var kb_s: boolean;
@@ -748,7 +760,7 @@ end;
       else if not kb_s then
       begin
         cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
-        fillchar(cc^,sizeof(cc^),0);
+        fillchar(ccL^,sizeof(ccL^),0);
         end;
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
@@ -759,71 +771,70 @@ end;
 
 { ausgelagert, weil Prozedurrumpf zu gross: }
 
-procedure DisplaySendbox;
-var
-  ToStr: String;
-  ToPos: Integer;
-begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }
-  diabox(78,13+fadd,typ,x,y);
-  moff;
-  wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
+  procedure DisplaySendbox;
+  var
+    ToStr: String;
+    ToPos: Integer;
+  begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }
+    diabox(78,13+fadd,typ,x,y);
+    moff;
+    wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
 
-  ToStr := getres2(611,11); { '^An' }
-  ToPos := cpos('^', ToStr);
-  fidokey := copy(ToStr, ToPos+1, 1); { (A)n }
-  Delete(ToStr, ToPos, 1);
+    ToStr := getres2(611,11); { '^An' }
+    ToPos := cpos('^', ToStr);
+    fidokey := copy(ToStr, ToPos+1, 1); { (A)n }
+    Delete(ToStr, ToPos, 1);
 
-  if echomail then begin
-    wrt(x+3,y+4, ToStr);    { 'An' }
-    inc(y,2);
-    end;
-  wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
-  wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
-  wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
-  wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
-  showcode; { 05.02.2000 MH: 38 > 42 }
-  attrtxt(col.coldialog);
-  wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
-  showcc; { 05.02.2000 MH: x+39 -> x+43 }
-  attrtxt(col.coldiahigh);
-  kopkey:=LeftStr(getres2(611,16),1);
-  wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
-  if empfaenger[1]=vert_char then
-    wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
-  else
-    wrt(x+14,y+2-fadd,LeftStr(uucpbrett(empfaenger,edis),52));
+    if echomail then begin
+      wrt(x+3,y+4, ToStr);    { 'An' }
+      inc(y,2);
+      end;
+    wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
+    wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
+    wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
+    wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
+    showcode; { 05.02.2000 MH: 38 > 42 }
+    attrtxt(col.coldialog);
+    wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
+    showcc; { 05.02.2000 MH: x+39 -> x+43 }
+    attrtxt(col.coldiahigh);
+    kopkey:=LeftStr(getres2(611,16),1);
+    wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
+    if empfaenger[1]=vert_char then
+      wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
+    else
+      wrt(x+14,y+2-fadd,LeftStr(uucpbrett(empfaenger,edis),52));
 
-  pgpkey:=getres2(611,50);
-  if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
+    pgpkey:=getres2(611,50);
+    if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
 
-  if echomail then
-  begin
-    wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
-    wrt(x+14,y+2,fidoto);
+    if echomail then
+    begin
+      wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
+      wrt(x+14,y+2,fidoto);
+     end;
+    showbetreff;
+    showbox;
+    showsize;
+    mon;
   end;
-  showbetreff;
-  showbox;
-  showsize;
-  mon;
-end;
 
 
-procedure WriteHeaderHdr;
-var f:text;
-begin
-  assign(f,temppath+FileUpperCase('header.hdr'));
-  rewrite(f);
-  writeln(f,'TYP: ',typ);
-  writeln(f,'BOX: ',box);
-{  writeln(f,'NETZTYP: ',netztyp); }
-  writeln(f,'EMPF: ',copy(empfaenger,2,99));
-  writeln(f,'FIDOTO: ',fidoto);
-  writeln(f,'BETREFF: ',betreff);
-  close(f);
-end;
+  procedure WriteHeaderHdr;
+  var f:text;
+  begin
+    assign(f,temppath+FileUpperCase('header.hdr'));
+    rewrite(f);
+    writeln(f,'TYP: ',typ);
+    writeln(f,'BOX: ',box);
+  {  writeln(f,'NETZTYP: ',netztyp); }
+    writeln(f,'EMPF: ',copy(empfaenger,2,99));
+    writeln(f,'FIDOTO: ',fidoto);
+    writeln(f,'BETREFF: ',betreff);
+    close(f);
+  end;
 
-
-begin      {-------- of DoSend ---------}
+begin      //-------- of DoSend ---------
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
@@ -860,9 +871,9 @@ begin      {-------- of DoSend ---------}
   MakeSignature(signat,sigfile,sigtemp);
 
   cc_anz:=0; cc_count:=0;
-  new(cc); new(ccm);
-  fillchar(cc^,sizeof(cc^),0);
-  fillchar(ccm^,sizeof(ccm^),0);
+  new(ccL); {  new(ccm); }                            //mo bookmark
+  Cccm.del;                                     //alle Eintr„ge nullen
+//  fillchar(cc^,sizeof(cc^),0);
   SendDefault:=1;
   verteiler:=false;
   if SendEmpflist<>nil then ReadEmpflist;
@@ -889,9 +900,9 @@ fromstart:
       Box := dbReadStr(ubase,'pollbox');
       if verteiler then begin  { Verteiler }
         cancode:=0;
-        read_verteiler(vert_name(empfaenger),cc,cc_anz);
+        read_verteiler(vert_name(empfaenger),ccL,cc_anz);
         TestXpostings(true);
-        if box='' then box:=ccm^[1].server
+        if box='' then box:=PTccmore(Cccm[1]).server
         else forcebox:=box;
         ch:='';
         end
@@ -1099,8 +1110,8 @@ fromstart:
     else
       Wrt2(LeftStr(uucpbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
-      if ccm^[ii].ccpm then
-        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(cc^[ii],bboxwid))
+      if PTccmore(Cccm[ii]).mail then
+        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(ccL^[ii],bboxwid))
       else
         wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(uucpbrett(ohnebox(ii),2),bboxwid));
     if showempfs=15 then
@@ -1148,7 +1159,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
   orgftime:=filetime(datei);
   if edit then begin
     WriteHeaderHdr;
-    EditNachricht(pgdown);
+    EditNachricht(pgdown);              //Editor aufrufen
   end;
   if not getsize then goto xexit;        { --> Nachrichten-Groesse 0 }
   calc_hdsize;
@@ -1387,7 +1398,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                 if UpperCase(t)=kopkey then begin
                   old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
-                  edit_cc(cc,cc_anz,brk);
+                  edit_cc(ccL,cc_anz,brk);
                   sel_verteiler:=false;
                   if (old_cca=0) and (cc_anz>0) then forcebox:='';
                   if cc_anz>0 then TestXpostings(true);
@@ -1712,7 +1723,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if cc_anz=0 then     { Anzahl der Crossposting-EMPS ermitteln }
       msgCPanz:=0
     else
-      msgCPanz:=ccm^[0].cpanz;
+      msgCPanz:=PTccmore(Cccm[0]).cpanz;
     msgCPpos:=0;
 
     fm_ro;
@@ -1723,7 +1734,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     assign(f2,fn2);
     rewrite(f2,1);
     for ii:=1 to msgCPanz-1 do
-      EmpfList.Add(cc^[ii]);
+      EmpfList.Add(ccL^[ii]);
     hdp.References.Assign(sData^.References);
     WriteHeader(hdp,f2);
 {    hdsize:=filepos(f2); }
@@ -1823,16 +1834,16 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             dbWrite(bbase,'LDatum',sendedat);
         end;
       inc(msgCPpos);
-      while (msgCPpos<msgCPanz) and ccm^[msgCPpos].nobrett do
+      while (msgCPpos<msgCPanz) and PTccmore(Cccm[msgCPpos]).nobrett do
         inc(msgCPpos);
       if msgCPpos<msgCPanz then begin
         repeat
-          if ccm^[msgCPpos].ccpm then begin
-            dbSeek(ubase,uiName,UpperCase(cc^[msgCPpos]));
+          if PTccmore(Cccm[msgCPpos]).mail then begin
+            dbSeek(ubase,uiName,UpperCase(ccL^[msgCPpos]));
             if dbFound then _brett:=mbrettd('U',ubase);
             end
           else begin
-            dbSeek(bbase,biBrett,'A'+UpperCase(cc^[msgCPpos]));
+            dbSeek(bbase,biBrett,'A'+UpperCase(ccL^[msgCPpos]));
             if dbFound then begin
               _brett:=mbrettd('A',bbase);
               dbWrite(bbase,'LDatum',sendedat);    { Brettdatum neu setzen }
@@ -1901,7 +1912,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       hdp.typ:=iifs(newbin,'B','T');
       hdp.groesse:=filesize(f);
       for ii:=1 to msgCPanz-1 do
-        Empflist.Add(cc^[ii]);
+        Empflist.Add(ccL^[ii]);
       WriteHeader(hdp,f2);
       fmove(f,f2);
       close(f); close(f2);
@@ -1910,7 +1921,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if pmc_code then pmCryptFile(hdp,fn3) else
       if (docode=9) or flPGPsig then begin
         for ii:=1 to msgCPanz-1 do
-          Empflist.Add(cc^[ii]);
+          Empflist.Add(ccL^[ii]);
         xp_pgp.PGP_EncodeFile(f,hdp,fn3,passwd,docode=9,flPGPsig,fo);
         EmpfList.Clear;
         end;
@@ -1945,8 +1956,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       closebox;    { "Nachricht abschicken/speichern" }
 
     if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
-      Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
-      Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
+//    Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
+      ccL^[1]:=ccL^[msgCPanz];
+//      Move(Cccm.[msgCPanz-1],Cccm.mEntries[0],(maxcc-msgCPanz+2)*sizeof(Cccm.mEntries[1]));
+        Cccm[0]:=Cccm[msgCPanz-1];
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
       end;
 
@@ -1954,9 +1967,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
   end;   { not verteiler }
 
   if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
-    empfaenger:=cc^[1];
-    Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
-    Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
+    empfaenger:=ccL^[1];
+//    Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
+    ccL^[1]:=ccL^[2];
+//    Move(Cccm.mEntries[1],Cccm.mEntries[0],maxcc*sizeof(Cccm.mEntries[1]));
+    Cccm[0]:=Cccm[1];
     dec(cc_anz); inc(cc_count);
     pm:=cpos('@',empfaenger)>0;
     if not pm then empfaenger:='A'+empfaenger;
@@ -1975,8 +1990,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
   { es muss jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
-  dispose(ccm);
-  dispose(cc);
+{  dispose();}
+  dispose(ccL);
   Hdp.Free;
   if sigtemp then _era(sigfile);
 xexit1:
@@ -2100,6 +2115,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.93  2001/01/06 21:13:35  mo
+  - Änderung an TnodeListItem
+
   Revision 1.92  2001/01/05 09:33:09  mk
   - removed THeader.Ref
 

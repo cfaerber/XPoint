@@ -850,7 +850,7 @@ begin
     hdf_ABS   :  begin
                    if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
                       (hdp.realname='') and
-                      (length(hdp.absender)<54) and Nodelist.mOpen and
+                      (length(hdp.absender)<54) and Nodelist.Open and
                       (pos(':',hdp.absender)>0) then begin
                                   { sieht nach einer Fido-Adresse aus ... }
                      GetNodeinfo(hdp.absender,ni,0);
@@ -1085,6 +1085,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2001/01/06 21:13:35  mo
+  - Änderung an TnodeListItem
+
   Revision 1.60  2001/01/02 10:05:24  mk
   - implemented Header.References
 

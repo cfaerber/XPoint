@@ -738,20 +738,20 @@ begin
   new(uf[0]);
   assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
 
-  for liste:=0 to NodeList.mEntrys.Count - 1 do
+  for liste:=0 to NodeList.Entries.Count - 1 do
   begin
-    zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
+    zone:=TNodeListItem(Nodelist.Entries[liste]).zone;
     if zone=0 then zone:=DefaultZone;
     net:=0; node:=0;
     assign(nf,FidoDir+NodeList.GetFilename(liste));
-    ltyp:=TNodeListItem(Nodelist.mEntrys[liste]).format;
+    ltyp:=TNodeListItem(Nodelist.Entries[liste]).format;
     case ltyp of
       nlPoints24,
       nl4DPointlist,
-      nlFDpointlist : zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
+      nlFDpointlist : zone:=TNodeListItem(Nodelist.Entries[liste]).zone;
       nlNode        : begin
-                         zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
-                         net :=TNodeListItem(Nodelist.mEntrys[liste]).net;
+                         zone:=TNodeListItem(Nodelist.Entries[liste]).zone;
+                         net :=TNodeListItem(Nodelist.Entries[liste]).net;
                       end;
     end;
 
@@ -840,7 +840,7 @@ begin
 
               nlNode:
                 if not newnet then
-                  AppPoint(TNodeListItem(Nodelist.mEntrys[liste]).node);
+                  AppPoint(TNodeListItem(Nodelist.Entries[liste]).node);
 
               nlPoints24:
                 if not newnet then
@@ -874,7 +874,7 @@ begin
 
         if points>0 then begin
           if nodes=0 then begin       { ntNode }
-            np^[0].node:=TNodeListItem(Nodelist.mEntrys[liste]).node;
+            np^[0].node:=TNodeListItem(Nodelist.Entries[liste]).node;
             inc(nodes);
             end;
           np^[nodes-1].adr:=filepos(idf);
@@ -1010,7 +1010,7 @@ begin
     NXerror; exit; end;
   UserBlocks:=uhd.blocks;
   close(f);
-  Nodelist.mOpen:=true;
+  Nodelist.Open:=true;
 end;
 
 
@@ -1022,7 +1022,7 @@ end;
 
 procedure KeepNodeindexOpen;
 begin
-  if Nodelist.mOpen and not nodelistopen then begin
+  if Nodelist.Open and not nodelistopen then begin
     { new(nodelf);
     assign(nodelf^,nodefile);
     reset(nodelf^,1); }
@@ -1069,7 +1069,7 @@ procedure NodelistIndex;
 begin
   if not TestNodelist then exit;
   CloseNodeindex;
-  Nodelist.mOpen:=false;
+  Nodelist.Open:=false;
   MakeNodelistIndex;
   OpenNodeindex(NodeIndexF);
 end;
@@ -1133,7 +1133,7 @@ procedure ShrinkNodelist(indizieren:boolean);
 var i : integer;
 begin
   i:=NodeList.GetMainNodelist;
-  if (i>0) and Nodelist.mOpen and (trim(ShrinkNodes)<>'') then
+  if (i>0) and Nodelist.Open and (trim(ShrinkNodes)<>'') then
     if not FileExists('NDIFF.EXE') then
       rfehler(103)   { 'NDIFF.EXE fehlt!' }
     else begin
@@ -1340,9 +1340,9 @@ end;
 
 function TestNodelist:boolean;
 begin
-  if not Nodelist.mOpen then
+  if not Nodelist.Open then
     rfehler(2102);   { 'keine Nodelist aktiv' }
-  TestNodelist:=Nodelist.mOpen;
+  TestNodelist:=Nodelist.Open;
 end;
 
 function testDefbox:boolean;
@@ -1727,7 +1727,7 @@ begin
   if p=0 then fn:=fn+'.';
   if (p>0) and (ival(LeftStr(fi,p-1))>0) then begin
     fillchar(fa,sizeof(fa),0);
-    if not Nodelist.mOpen then
+    if not Nodelist.Open then
       node:=''
     else begin
       node:=strs(DefaultZone)+':'+strs(ival(LeftStr(fi,4)))+'/'+strs(ival(copy(fi,5,4)));
@@ -2225,6 +2225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/01/06 21:13:36  mo
+  - Änderung an TnodeListItem
+
   Revision 1.41  2001/01/06 17:18:08  mk
   - fixed some TNodeListItem-Bugs
 

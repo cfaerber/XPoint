@@ -914,7 +914,7 @@ var   zone     : ^zonea;
     assign(nl,FidoDir+NodeList.GetFilename(nls)); settextbuf(nl,buf^,bufs);
     reset(nl);
     ende:=false;
-    _z:=TNodeListItem(Nodelist.mEntrys[nls]).zone; _n:=0; _nodes:=0;
+    _z:=TNodeListItem(Nodelist.Entries[nls]).zone; _n:=0; _nodes:=0;
     hostname:='';
     newfile:=true;
     brk:=false;
@@ -1069,7 +1069,7 @@ var   zone     : ^zonea;
   end;
 
 begin
-  if not Nodelist.mOpen then begin
+  if not Nodelist.Open then begin
     rfehler(2606);  { 'keine Node- oder Pointliste vorhanden bzw. aktiviert' }
     exit;
     end;
@@ -1105,8 +1105,8 @@ begin
   fillchar(lnet^,LargestNets*sizeof(lnetrec),0);
 
   brk:=false;
-  for nls:=0 to NodeList.mEntrys.Count - 1 do
-    if TNodeListItem(Nodelist.mEntrys[nls]).format=1 then
+  for nls:=0 to NodeList.Entries.Count - 1 do
+    if TNodeListItem(Nodelist.Entries[nls]).format=1 then
     begin   { Nodeliste }
       attrtxt(col.colmboxhigh);
       mwrt(x+5+length(getres2(2612,25)),y+2,forms(NodeList.GetFilename(nls),12));
@@ -1249,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/06 21:13:37  mo
+  - Änderung an TnodeListItem
+
   Revision 1.33  2001/01/06 17:18:08  mk
   - fixed some TNodeListItem-Bugs
 

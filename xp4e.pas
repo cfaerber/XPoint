@@ -194,7 +194,7 @@ begin
         s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1))
-    else if (pb_netztyp=nt_fido) and Nodelist.mOpen then
+    else if (pb_netztyp=nt_fido) and Nodelist.Open then
       usertest:=Testfido(s);
     end;
 end;
@@ -1412,7 +1412,7 @@ begin
             end;
           end
         else begin
-          if (cpos('@',s)=0) and (pb_netztyp=nt_Fido) and Nodelist.mOpen then
+          if (cpos('@',s)=0) and (pb_netztyp=nt_Fido) and Nodelist.Open then
             if TestFido(s) then;
           if cpos('@',s)=0 then s:=s+'@';
           dbSeek(ubase,uiName,UpperCase(s));
@@ -2423,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/01/06 21:13:35  mo
+  - Änderung an TnodeListItem
+
   Revision 1.55  2000/12/27 22:36:35  mo
   -new class TfidoNodeList
 

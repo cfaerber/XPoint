@@ -1208,7 +1208,7 @@ begin                  { function Netcall }
     if not isbox(DefFidoBox) then begin
       rfehler(705); exit;   { 'keine Fido-Stammbox gewaehlt' }
       end
-    else if not Nodelist.mOpen then begin
+    else if not Nodelist.Open then begin
       rfehler(706); exit;   { 'keine Nodeliste aktiviert' }
       end
     else begin
@@ -2319,6 +2319,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/01/06 21:13:37  mo
+  - Änderung an TnodeListItem
+
   Revision 1.3  2001/01/04 22:30:01  mo
   -bugfix für sysop net call beirorlevel <> 0
   -nach Aufruf des Sysop Startprog.

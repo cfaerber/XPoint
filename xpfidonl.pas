@@ -68,10 +68,10 @@ begin           //procedure InitNodelist;
   NodeList.LoadConfigFromFile;          { Nodelist-Konfiguration im neuen Format laden }
   indexflag:=false;                     { altes Format wird nicht mehr untersttzt                    }
 
-  for i:=0 to NodeList.mEntrys.Count - 1 do
+  for i:=0 to NodeList.Entries.Count - 1 do
     if not FileExists(FidoDir+NodeList.GetFilename(i)) then
       trfehler1(214,FidoDir+NodeList.GetFilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
-  if NodeList.mEntrys.Count > 0 then
+  if NodeList.Entries.Count > 0 then
   begin
     xni:=FileExists(NodeIndexF);                //exists 'FIDO\NODELIST.IDX'
     if xni then NL_Datecheck;
@@ -84,7 +84,7 @@ begin           //procedure InitNodelist;
       end;
     end
   else
-    Nodelist.mOpen:=false;    //mOpen wird von procedure OpenNodeindex ggf. auf true gesetzt
+    Nodelist.Open:=false;    //mOpen wird von procedure OpenNodeindex ggf. auf true gesetzt
 end;
 
 
@@ -115,33 +115,32 @@ begin
   with NLItem do
   begin
     filechar:='>'+range('#','~')+'!';
-    maddtext(3,2,getres2(2127,5),0);    { 'Listenname      ' }
-    maddtext(21,2,listfile,col.coldiahigh);
-    maddtext(39,2,getres2(2127,6),0);   { 'Nummer ' }
-    maddtext(47,2,formi(number,3),col.coldiahigh);
-    lform:=getres2(2128,format);
-    maddstring(3,4,getres2(2127,7),lform,15,20,'');   { 'Listenformat    ' }
-      mhnr(940);
+    maddtext(3,2,getres2(2127,5),0);                    // 'Listenname      '
+    maddtext(21,2,NLItem.listfile,col.coldiahigh);
+    maddtext(39,2,getres2(2127,6),0);                   // 'Nummer '
+    maddtext(47,2,formi(NLItem.number,3),col.coldiahigh);
+    lform:=getres2(2128,NLItem.format);
+    maddstring(3,4,getres2(2127,7),lform,15,20,'');     // 'Listenformat
+    mhnr(940);
     for i:=1 to res2anz(2128) do
       mappsel(true,getres2(2128,i));
-    case format of
-      1     : if zone=0 then adresse:=''
-              else adresse:=strs(zone);
-      2,4   : adresse:=strs(zone);
-      3     : adresse:=strs(zone)+':'+strs(net)+'/'+strs(node);
+    case NLItem.format of
+      1     : if NLItem.zone=0 then adresse:=''
+              else adresse:=strs(NLItem.zone);
+      2,4   : adresse:=strs(NLItem.zone);
+      3     : adresse:=strs(NLItem.zone)+':'+strs(NLItem.net)+'/'+strs(NLItem.node);
       5     : adresse:='';
-    end;
+      end;
     maddstring(3,5,getres2(2127,8),adresse,15,15,'0123456789:/');
-                                                   { 'Zone/Adresse    ' }
-    maddstring(3,7,getres2(2127,9),updatefile,12,12,filechar); { 'Update-Datei   ' }
+    maddstring(3,7,getres2(2127,9),fupdatefile,12,12,filechar);          //'Update-Datei   '
     mset1func(setfnlenable);
-    maddstring(3,8,getres2(2127,10),updatearc,12,12,filechar);  { 'Update-Archiv  ' }
-    maddstring(3,10,getres2(2127,11),processor,28,40,'');  { 'bearbeiten durch' }
+    maddstring(3,8,getres2(2127,10),fupdatearc,12,12,filechar);          // 'Update-Archiv  ' }
+    maddstring(3,10,getres2(2127,11),fprocessor,28,40,'');               // 'bearbeiten durch' }
       if updatefile='' then mdisable;
       fne_first:=fieldpos;
-    maddbool(3,12,getres2(2127,12),dodiff);    { 'Update als Diff einbinden' }
+    maddbool(3,12,getres2(2127,12),fdodiff);                             // 'Update als Diff einbinden'
       if updatefile='' then mdisable;
-    maddbool(3,13,getres2(2127,13),delupdate); { 'Update nach Einbinden l”schen' }
+    maddbool(3,13,getres2(2127,13),fdelupdate); { 'Update nach Einbinden l”schen' }
       if updatefile='' then mdisable;
     readmask(brk);
     if not brk then
@@ -222,9 +221,9 @@ begin   //function NewNodeEntry:boolean;
       else
         ffn:=ExtractFileName(fn); {getfilename(fn);}
       i:=0;
-      while (i<NodeList.mEntrys.Count) and (ffn<>NodeList.GetFilename(i)) do
+      while (i<NodeList.Entries.Count) and (ffn<>NodeList.GetFilename(i)) do
         inc(i);
-      if i<NodeList.mEntrys.Count then
+      if i<NodeList.Entries.Count then
         rfehler(1009)   { 'Diese Node-/Pointliste ist bereits eingebunden' }
       else
       with NLItem do
@@ -263,7 +262,7 @@ begin   //function NewNodeEntry:boolean;
             DelUpdate:=true;
             end
           else
-            PL_FormatDetect(fn,format);
+            PL_FormatDetect(fn,fformat);
           if not detect then
             EditNLentry(NLItem,brk)
           else
@@ -434,8 +433,8 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   diffdir:=ExtractFilePath(files);
   diffnames:=extractfilename(files);
 
-  for i:=0 to NodeList.mEntrys.Count - 1 do
-  with TNodeListItem(Nodelist.mEntrys[i]) do
+  for i:=0 to NodeList.Entries.Count - 1 do
+  with TNodeListItem(Nodelist.Entries[i]) do
   begin
     ucount:=5;
     nextnr:=number;
@@ -492,7 +491,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   freeres;
   if logopen then close(logfile);
   if reindex then begin
-    if Nodelist.mOpen then CloseNodeIndex;
+    if Nodelist.Open then CloseNodeIndex;
     MakeNodelistindex;
     OpenNodeindex(NodeIndexF);
     end;
@@ -518,6 +517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/01/06 21:13:37  mo
+  - Änderung an TnodeListItem
+
   Revision 1.31  2001/01/06 17:18:08  mk
   - fixed some TNodeListItem-Bugs
 
