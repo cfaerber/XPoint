@@ -893,6 +893,7 @@ var w1,w2: word;
       win,os2,
       winnt   : boolean;
       t       : text;
+      del_all_viewer_tmp: boolean;
   begin
     PrepareExe:=0;
     exepath:=left(prog,blankposx(prog)-1);
@@ -909,7 +910,8 @@ var w1,w2: word;
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
     if win then begin
-      batfile:=TempExtFile('','wrun','.bat');
+      Del_all_Viewer_tmp:=false;          
+      batfile:=TempExtFile(temppath,'wrun','.bat');
       assign(t,batfile);
       rewrite(t);
       writeln(t,'@echo off');
@@ -918,13 +920,13 @@ var w1,w2: word;
       writeln(t);
       writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
       writeln(t,'echo.');
-      writeln(t,'start /wait '+prog);
-      writeln(t,'del '+parfn);
+      writeln(t,'start %1 '+prog);
+      writeln(t,'if !%1==!/wait del '+parfn);
       writeln(t,'del '+batfile);
       close(t);
       if winnt then
         prog:='cmd /c start cmd /c '+batfile
-        else prog:='start command /c '+batfile;
+        else prog:='start command /c'+batfile+iifs(del_all_viewer_tmp,'',' /wait');
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -962,6 +964,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/03/04 11:07:32  jg
+  - kleine Aenderungen am Tempfilehandling fuer externe Windowsviewer
+
   Revision 1.19  2000/03/03 20:26:40  rb
   Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
 

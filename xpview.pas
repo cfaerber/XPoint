@@ -205,6 +205,7 @@ var p         : byte;
     prog      : string[ViewprogLen];
     orgfn,fn1,
     parfn     : pathstr;
+    f         : file; 
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
@@ -212,11 +213,16 @@ begin
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
   if stricmp(fn,orgfn) or not ValidFileName(orgfn)
-    then orgfn:=TempS(_filesize(fn)+5000);
+    then orgfn:=TempS(_filesize(fn)+5000);                              
   if copyfile(fn,orgfn) then fn1:=orgfn;
 
   prog:=viewer.prog;
-  parfn:=iifs(fn1<>'',fn1,fn);
+  orgfn:=iifs(fn1<>'',fn1,fn);
+
+  parfn:=left(orgfn,length(orgfn)-3);    { Tempdatei mit richtiger Extension versorgen }
+  parfn:=left(parfn,length(parfn)-5)+'TMP-'+right(parfn,5)+viewer.ext; 
+  _rename(orgfn,parfn);
+
   p:=pos('$FILE',ustr(prog));
   if p=0 then prog:=prog+' '+parfn
   else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
