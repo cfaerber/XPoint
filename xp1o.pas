@@ -473,8 +473,11 @@ function filecopy(fn1,fn2:string):boolean;
 var f1,f2 : file;
     time  : longint;
     res   : integer;
+
 begin
-  if (ExpandFileName(fn1)=ExpandFileName(fn2)) and FileExists(fn1) then
+
+  if (FileUpperCase(ExpandFileName(fn1))=FileUpperCase(ExpandFileName(fn2)))
+      and FileExists(fn1) then
   begin
     filecopy:=true;
     exit;
@@ -1002,6 +1005,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/12/10 09:12:23  mo
+  -filecopy, kleine Ergänzug mit FileUpperCase
+
   Revision 1.73  2000/12/03 12:38:20  mk
   - Header-Record is no an Object
 
