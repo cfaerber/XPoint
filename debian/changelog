@@ -1,3 +1,9 @@
+openxp (3.8.13-1) experimental; urgency=low
+
+  * New upstream version.
+
+ -- Claus Färber <cl@openxp.de>  Sat, 25 Oct 2003 15:33:22 +0200
+
 openxp (3.8.12-1) experimental; urgency=low
 
   * Initial Debian Release for 3.8.x branch.
