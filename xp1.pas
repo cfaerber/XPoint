@@ -102,7 +102,6 @@ var printlines : longint;
 procedure showstack;                  { Stack/Heap-Anzeige im Debug-Mode }
 procedure sound(hz:word);
 procedure XpIdle;
-function  plevelstr:string;           { Patchlevel }
 
 procedure showscreen(newmode:boolean);
 procedure showusername;
@@ -1580,15 +1579,6 @@ begin
 end;
 
 
-function plevelstr:string;           { Patchlevel }
-begin
-  if lastchar(patchlevel)='0' then
-    plevelstr:=''
-  else
-    plevelstr:=' pl'+lastchar(patchlevel);
-end;
-
-
 { rechten Teil der ID in LowerCase umwandeln und CRC32 bilden }
 
 function MsgidIndex(mid:string):longint;
@@ -1608,6 +1598,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.3  2000/11/17 22:34:36  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.11.2.2  2000/11/10 11:29:10  mk
   - fixed Bug #116292: Mehrfachstart von XP abfangen
 

@@ -31,7 +31,7 @@ procedure FS_ReadList(msg:boolean);
 const
       tbufs = 2048;
 var absender : string[Adrlen];
-    box      : string[8];   { das ist auf jeden Fall eine Zerberus-Box.. }
+    box      : string[BoxNameLen];
     x,y,p,p2 : byte;
     f        : file;
     fn       : pathstr;
@@ -534,6 +534,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.1  2000/11/17 22:34:37  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -62,7 +62,7 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln(t,' ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' (',author_mail,')');
   writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
@@ -85,11 +85,9 @@ begin
     readln(t,code);
     close(t);
     if (ioresult=0) and
-       (ival(code)=sqr(crc32(reverse(name)) and $ffff)) then begin
+       (ival(code)=sqr(CRC32(reverse(name)) and $ffff)) then begin
       XP_xp:=name;
-      XP_name := '## '+name+' '+verstr+betastr;
       XP_origin := '--- '+name;
-      XP_short := short;
       end;
     end;
 end;
@@ -271,6 +269,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/11/17 22:34:38  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.7  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

@@ -1007,7 +1007,7 @@ begin
   msgbox(62,anz+6,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+3,y+2,reps(getreps2(511,1,xp_xp),'3.2'{mid(verstr,2)}));  { 'Willkommen bei %s Version %s!' }
+  wrt(x+3,y+2,reps(getreps2(511,1,xp_xp),Verstr+BetaStr));  { 'Willkommen bei %s Version %s!' }
   attrtxt(col.colmbox);
   for i:=2 to anz do
     wrt(x+3,y+2+i,getres2(511,i));
@@ -1020,6 +1020,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.4  2000/11/17 22:34:37  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.9.2.3  2000/10/20 11:23:30  mk
   - Fix for Bug #116155, Bildschirmauszug fehlerhaft
 

@@ -284,8 +284,8 @@ begin
   with col do begin
     at(colkeys);
     wrt(31,2,'  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ');
-    wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS             '+
-           right(sp(10)+xp_xp,10));
+    wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS      '+
+           right(sp(10)+xp_xp,17));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -1168,6 +1168,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/11/17 22:34:36  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -84,11 +84,8 @@ const  {$IFDEF DPMI}
        ResMinmem   = 340000;
        realnlen = 40;                { robo 01/00 LÑnge der Realnames }
 
-       patchlevel  : string[13] = '*patchlevel*0';
-       xp_xp       : string[10] = 'CrossPoint';
-       xp_name     : string[30] = '## CrossPoint '+verstr+betastr;  { fÅr ZConnect-Header }
-       xp_origin   : string[15] = '--- CrossPoint';
-       xp_short    : string[2]  = 'XP';
+       xp_xp       : string[17] = 'CrossPoint/OpenXP';
+       xp_origin   : string[21] = '--- CrossPoint/OpenXP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -1073,6 +1070,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.7  2000/11/17 22:34:36  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.10.2.6  2000/11/01 10:34:43  mk
   - Limits im Kommentarbaum erhoeht
 

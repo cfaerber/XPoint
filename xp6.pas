@@ -1619,10 +1619,8 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      { MK 01/00 VerkÅrzte Anzeige der Versionstypen/nummern }
-      { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
-      hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)+pformstr+
-                     iifs(registriert.r2,' '+KomOrgReg+'R/'+
+      hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
+                     +iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2062,6 +2060,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.7  2000/11/17 22:34:37  mk
+  - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
+
   Revision 1.7.2.6  2000/09/18 01:35:06  mk
   - Umbau wegen Prozedurrumpf zu gross wenn NO386 gesetzt
 
