@@ -282,15 +282,15 @@ haben.
 alles ber die neuen Features dieser Version erfahren. Dann befinden Sie
 sich am falschen Ende dieses Textes - eine Auflistung aller Žnderungen und
 Erg„nzungen befindet sich am Ende, in der Versionsgeschichte. Falls Sie es
-nicht ganz so detailliert wissen m”chten, k”nnen Sie auch in NEUES.DOC
-nachsehen. Bitte beachten Sie auch die Hinweise in UPDATE.DOC!
+nicht ganz so detailliert wissen m”chten, k”nnen Sie auch in NEUES.TXT
+nachsehen. Bitte beachten Sie auch die Hinweise in UPDATE.TXT!
 
 --3 o  Sie sind bereits mit Mailboxen vertraut und benutzen m”glicherweise schon
 eine andere Pointsoftware. Dann sollten Sie Teil I und II dieser Dokumentation
 kurz berfliegen und anschlieáend in Kapitel 3.1 (Installation) fortfahren. Wenn
 Sie CrossPoint im FidoNet nutzen m”chten, finden Sie die n”tigen Informationen
-im Text FIDO.DOC, der dem getrennt erh„ltlichen Fido-Paket beiliegt. Der
-Einsatz im Usenet ist in UUCP.DOC im UUCP-Paket beschrieben.
+im Text FIDO.TXT, der dem getrennt erh„ltlichen Fido-Paket beiliegt. Der
+Einsatz im Usenet ist in UUCP.TXT im UUCP-Paket beschrieben.
 
 --3 o  Sie haben keinerlei DFš-Kenntnisse. Sie haben sich gerade ein Modem zugelegt,
 CrossPoint kopiert und m”chten sofort Ihren ersten Netzanruf machen. Sie sind
@@ -494,7 +494,7 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      ZCONFIG.EXE      Konfigurationsprogramm fr ZM
 
 Wenn Sie CrossPoint bereits installiert haben und auf eine neuere Version
-updaten m”chten, lesen Sie bitte UPDATE.DOC.
+updaten m”chten, lesen Sie bitte UPDATE.TXT.
 
 >>|
 Sie ben”tigen einen Packer und Entpacker (z.B. PKZip/PKUnzip),
@@ -1231,6 +1231,7 @@ Pos 1/Home     - Um 100 Jahre "       erh”hen
 Ende           - Um 100 Jahre "       verringern
 Einf           - Um 1000 Jahre "      erh”hen
 Entf           - Um 1000 Jahre "      verringern
+Zifferntasten  - Direktes Ansteuern von Monat und Jahr.
 
 
 III   Arbeiten mit CrossPoint

@@ -109,7 +109,7 @@ herk”mmliche UUCP-Systeme bei weitem bertrifft.
 Haben Sie bereits mit einer anderen UUCP-Software gearbeitet und m”chten nun
 auf CrossPoint umsteigen?
 
-Dann sollten Sie zun„chst einmal XPOINT.DOC lesen, oder zumindest die ersten
+Dann sollten Sie zun„chst einmal XPOINT.TXT lesen, oder zumindest die ersten
 Kapitel kurz berfliegen, um sich mit dem Grundkonzept von CrossPoint vertraut
 zu machen; es weicht deutlich von dem anderer Newsreader/Mailer ab. Die
 Terminologie in den einzelnen Netzen ist sehr unterschiedlich, und um eine
@@ -117,7 +117,7 @@ gr”átm”gliche Konsistenz zu erreichen, verwendet CrossPoint innerhalb des
 Programms weitgehend einheitliche Begriffe, z.B. "Point" statt "leaf-site",
 "Brett" statt "Newsgroup" und "PM" statt "Mail". Bei allen Verfechtern einer
 klaren Usenet-Terminologie m”chte ich mich schonmal im voraus dafr entschuldigen.
-Innerhalb von UUCP.DOC habe ich mich bemht, die "korrekten" Bezeichnungen zu
+Innerhalb von UUCP.TXT habe ich mich bemht, die "korrekten" Bezeichnungen zu
 verwenden.
 
 Im šbrigen k”nnen Sie gleich bei Abschnitt II dieses Textes fortfahren; Teil I
@@ -413,7 +413,7 @@ physikalisch nur einmal vorhanden sind, sich aber in mehreren Gruppen befinden,
 d.h. die mehrere Empf„nger haben. Auf diese Weise k”nnen Artikel, die thematisch
 in mehrere Gruppen geh”ren, in jede passende Gruppe geschickt werden, ohne daá
 sie mehrfach gesendet werden máten. N„heres dazu finden Sie in Kap. 4.6. von
-XPOINT.DOC.
+XPOINT.TXT.
 
 
 ş moderierte Newsgroups
@@ -428,7 +428,7 @@ dorthin weiterleiten.
 
 Das automatische Umleiten Ihrer Nachrichten an einen Moderator kann CrossPoint
 fr Sie bernehmen; Sie mssen dazu nur die Adresse des Moderators als
-Brettvertreter eintragen. N„heres dazu finden Sie in Kap. 4.5. von XPOINT.DOC.
+Brettvertreter eintragen. N„heres dazu finden Sie in Kap. 4.5. von XPOINT.TXT.
 
 
 ş Mailinglisten
@@ -577,7 +577,7 @@ II   Installation und Bedienung
 
 Dieser Abschnitt enth„lt Informationen, die speziell die Installation und
 Nutzung von CrossPoint im Usenet betreffen. Ausfhrlichere Informationen zur
-Installation und Benutzung finden Sie in XPOINT.DOC.
+Installation und Benutzung finden Sie in XPOINT.TXT.
 
 
 
@@ -694,7 +694,7 @@ besitzen, bei dem das CD- oder das CTS-Signal nicht weitergeleitet wird. In
 diesem Fall sollten Sie "CD ignorieren" bzw. "CTS ignorieren" einschalten.
 Falls das Modem eine &C-Option besitzt, muá sie eingeschaltet sein (AT &C1).
 Eine genauere Beschreibung der wichtigsten Modem-Kommandos finden Sie in Anhang
-F von XPOINT.DOC.
+F von XPOINT.TXT.
 
 Erscheint in der Netcall-Wartepause immer die Meldung "Anruf eingegangen",
 dann untersttzt Ihre serielle Schnittstelle oder Ihr Modemkabel kein
@@ -735,7 +735,7 @@ unbedingt Name und Telefonnummer des Servers an!.
 
 Zur Aktivierung eines Login-Scripts sind drei Dinge n”tig:
 
---3 o  Lesen Sie Teil VIII von XPOINT.DOC; dort ist die Scriptprogram-mierung
+--3 o  Lesen Sie Teil VIII von XPOINT.TXT; dort ist die Scriptprogram-mierung
 beschrieben.
 
 --3 o  Passen Sie das mitgelieferte Standard-Script UUCP.SCR entsprechend
@@ -774,7 +774,7 @@ ist der beste Weg, um Ihr Postfach mit hunderten von Kilobytes unntzer Mails
 zu fllen.
 
 Das Versenden von PMs testen Sie am besten, indem Sie Empfangsbest„tigungen
-anfordern (s. XPOINT.DOC, Kap. 5.9).
+anfordern (s. XPOINT.TXT, Kap. 5.9).
 
 
 
@@ -791,7 +791,7 @@ anderen System arbeitet.
 Wenn Sie Glck haben, verfgt Ihr UUCP-Server ber eines der relativ verbreiteten
 Newsgroup-Bestellsysteme "Changesys", "GUP", "AutoSys" oder "Feeder". Diese
 Systeme werden von XP direkt untersttzt, sodaá Sie auf das komfortable
-XP-Brettbestellsystem zurckgreifen k”nnen, das in Kapitel 3.2 von XPOINT.DOC
+XP-Brettbestellsystem zurckgreifen k”nnen, das in Kapitel 3.2 von XPOINT.TXT
 beschrieben ist.
 
 Wenn Sie Pech haben, besitzt Ihr Server gar kein automatisch arbeitendes
@@ -844,7 +844,7 @@ anfordern und einlesen.
 
 ş Newsgroups (ab)bestellen
 
-Siehe XPOINT.DOC, Kap. 3.2.
+Siehe XPOINT.TXT, Kap. 3.2.
 
 
 ş Die .BBL-Datei
@@ -1083,7 +1083,7 @@ diese Namen in etwa den Laufwerksbuchstaben von DOS.
 
 Bevor Sie bei einem UUCP-Server Dateien bestellen k”nnen, muá er zus„tzlich
 zum Eintrag bei /Edit/Boxen noch bei /Edit/Systeme als Fileserver erfaát
-werden (vgl. auch XPOINT.DOC, Kap. 4.3). Dazu sind folgende Eingaben erforderlich:
+werden (vgl. auch XPOINT.TXT, Kap. 4.3). Dazu sind folgende Eingaben erforderlich:
 
 - Systemname:  Der Sitename des Systems, so wie er auch bei /Edit
                /Boxen eingetragen ist.
@@ -1270,7 +1270,7 @@ Auspacken erh„lt die Datei dann wieder den korrekten Datumseintrag.
 ş Dateien von XP versenden lassen
 
 U.U. m”chten Sie Dateien nicht manuell, sondern durch ein externes Programm
-versenden lassen. Mit Hilfe des AUTOEXEC-Verzeichnisses (s. XPOINT.DOC, Kap.
+versenden lassen. Mit Hilfe des AUTOEXEC-Verzeichnisses (s. XPOINT.TXT, Kap.
 7.6) ist dies denkbar einfach:
 
 Nehmen wir an, Sie m”chten die Datei D:\SCAN\SCANV106.ZIP so uploaden lassen,
@@ -1416,7 +1416,7 @@ auch.
 
 RFC-Nachrichten bestehen aus einem Nachrichtenkopf (Header), einer Leerzeile
 und dem Nachrichteninhalt (Body), haben also den gleichen prinzipiellen Aufbau
-wie ZCONNECT-Nachrichten (s. XPOINT.DOC, Kap. 7.1). Die einzelnen Zeilen sind
+wie ZCONNECT-Nachrichten (s. XPOINT.TXT, Kap. 7.1). Die einzelnen Zeilen sind
 normalerweise nur mit LFs (ASCII #10) getrennt, aber gelegentlich kann es
 auch CR/LF (#13/#10) sein.
 
@@ -1732,7 +1732,7 @@ Anhang
 A.  Dateien im CrossPoint/UUCP-Paket
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-uucp.doc       das lesen Sie gerade
+uucp.TXTc       das lesen Sie gerade
 uucico.exe     uucico-Programm (s. Kap. 4.2)
 xpuu-d.res     deutsche Sprachdatei fr uucico
 uuz.exe        Nachrichtenkonvertierer (s. Kap. 4.1)

@@ -683,6 +683,9 @@ Der Lister wird mit <Esc> verlassen.
 <<F>>   schaltet farbliche *Hervorhebungen* ein/aus
     (s. [/Config/ExternLister]).@237
 
+<<Q>>   schaltet um, ob "|" und ":" als Quote-Zeichen
+    interpretiert werden oder nicht.     
+
 <<Ctrl R>> schaltet die Rot13-Codierung ein/aus.
 
 Mit <<p>>, <<Ctrl P>>, <<b>>, <<Ctrl B>> und <<Ctrl Q>> k”nnen Sie wie
@@ -861,6 +864,7 @@ aus einer Befehlsbersicht.
        [Markierungen]@59
        [L”schen]@60
        [Sonstiges]@61
+       [Men]@62
 
 
 Die wichtigsten Editor-Funktionen:
@@ -868,7 +872,7 @@ Die wichtigsten Editor-Funktionen:
     <F2>        Text speichern
     <Esc>       Editor verlassen
     <Shift F2>  Text speichern und Editor verlassen
-    <F10>       Men
+    <F10>       [Men]@62
 
 @
 55
@@ -883,7 +887,7 @@ links nach rechts werden angezeigt:
   - Dateiname
 @
 56
-<F1>        : Online-Hilfe
+<F1>        : [Online-Hilfe]@54
 <F2>        : Text speichern
 <F3>        : Absatzumbruch ausschalten
 <F4>        : Absatzumbruch einschalten
@@ -892,7 +896,7 @@ links nach rechts werden angezeigt:
 <F7>        : Blockanfang setzen
 <F8>        : Blockende setzen
 <F9>        : DOS-Shell
-<F10>       : Men
+<F10>       : [Men]@62
 
 <Shift F2>  : Text speichern und Editor verlassen
 <Shift F3>  : Absatzumbruch im ganzen Text abschalten
@@ -921,7 +925,6 @@ markiert.
 <Ctrl K><U> : Block aus Datei lesen und UU-kodieren
 <Ctrl K><O> : Block Rot13-codieren
 <Ctrl K><S> : Schreibweise (groá/klein) wechseln
-<Ctrl K><F> : Block reformatieren
 <Ctrl Q><B> : Cursor an Blockanfang bewegen
 <Ctrl Q><K> : Cursor an Blockende bewegen
 
@@ -1000,6 +1003,56 @@ lange der Hauptspeicher ausreicht, und k”nnen mit
 <Alt B>      „ndert innerhalb des Nachrichteneditors
              den Betreff.
 
+<Ctrl B>     reformatiert den markierten Block. Ist
+             kein Block markiert, wird beginnend vom
+             Absatz, auf dem der Cursor steht, bis
+             zur n„chsten Leerzeile neu formatiert.
+
+@
+62
+Das Men erreichen Sie ber die Taste <F10> oder
+durch halten der rechten Maustaste.
+
+            ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
+            ³ Kopieren       <<*>> ³
+            ³ Ausschneiden   <<->> ³
+            ³ Einfgen       <<+>> ³
+            ³ Laden        <<^KR>> ³
+            ³ Laden UUE    <<^KU>> ³
+            ³ Speichern    <<^KW>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ Umbruch aus   <<F3>> ³
+            ³ Umbruch ein   <<F4>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ [Optionen]     <<^OR>> ³@63
+            ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+@
+63
+<<rechter Rand>>
+  Spalte, in der der Text automatisch umgebrochen
+  wird.
+
+<<Absatzendezeichen>>
+  Zeichen, mit dem das Absatzende markiert wird.
+
+<<[x] autom. einrcken>>
+  Auch als Auto-Indent bekannt. Beim Drcken von
+  <Return> wird die nachfolgende Zeile automatisch
+  um die gleiche Anzahl von Leerzeichen eingerckt,
+  wie die vorhergehende.
+
+<<[x] persistente Bl”cke>>
+  Markierte Bl”cke werden durch Tastendruck nicht
+  entmarkiert oder berschrieben. Sinnvoll, wenn
+  man die Wordstartasten fr Blockoperationen ver-
+  wenden m”chte.
+
+<<[x] Quote-Reflow>>
+  Beim Umbrechen oder Zusammenfgen von gequoteten
+  Zeilen werden die Quotezeichen mit bercksichtigt.
+  Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
+
 @
 65
 Mit den Cursortasten kann zwischen verschiedenen
@@ -1012,6 +1065,11 @@ werden.
 Mit Bild hoch/runter , Pos1/Home / Ende sowie
 Einf /Entf kann um mehrere Jahre (10,100,1000)
 gebl„ttert werden.
+
+Durch die Zifferntasten kann Monat und Jahr
+direkt eingestellt werden. Eingabe muá dann
+inkl. fhrender Nullen erfolgen.
+z.B. 012000 fr Januar 2000. 
 
 Insgesamt umfaát der Kalender die Jahre 1-3000.
 @
@@ -3363,7 +3421,8 @@ hier eingestellt werden, daá diese zwei Zeichen auch
 wie Quote-Zeichen behandelt werden sollen.
 
 Diese Einstellung gilt sowohl fr den Lister als auch
-den Editor.
+den Editor. Sie l„át sich im Lister jederzeit 
+mit der Taste "Q" umschalten.
 @
 224
 So viele Megabytes Festplattenplatz ben”tigt Cross-
@@ -3491,6 +3550,16 @@ Diese Einstellung gilt auch fr den Editor.
 8061
 <<[x]>> -> Der Lister kann durch Drcken der <<Return->>
        Taste verlassen werden.
+@
+8062
+<<[x]>> -> Uhranzeige beim Vollbild-Lister aktivieren.
+       Die Uhr wird am rechten Rand der obersten
+       Textzeile eingeblendet.
+
+       Dieser Schalter gilt nicht, wenn mit dem 
+       Kommandozeilen-Parameter /W2 die h”chste 
+       Stufe der Rechenzeitfreigabe aktiviert wurde.    
+       
 @
 240
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
@@ -4022,6 +4091,35 @@ gesucht und der Text dahinter angezeigt.
        Bildschirmhintergrund ausgeblendet.
 @
 1032
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder in der Nachrichtenliste fest. Jeder
+Buchstabe muá <<genau einmal>> vorkommen, ansonsten
+wird auf die Standardeinstellung zurckgesetzt.
+       
+       Die Buchstaben stehen fr
+       
+       F  Flags
+       G  Gr”áe
+       D  Datum
+       A  Absender
+       E  Empf„nger
+       B  Betreff
+@
+1033
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder in der Userliste fest. Jeder Buchstabe
+muá <<genau einmal>> vorkommen, ansonsten wird auf
+die Standardeinstellung zurckgesetzt.
+       
+       Die Buchstaben stehen fr
+       
+       F  Flags
+       H  Halten
+       B  Box
+       A  Adresse/Verteiler
+       K  Kommentar
+@
+1034
 <<[x]>> -> Die Ausgaben im internen Terminal werden
        nicht direkt auf den Bildschirm geschrieben,
        sondern laufen ber BIOS-Funktionen. Dies
@@ -4029,12 +4127,12 @@ gesucht und der Text dahinter angezeigt.
        thesizers, ist allerdings langsamer als die
        direkte Ausgabe.
 @
-1033
+1035
 <<[x]>> -> Das Ende von l„nger dauernden Funktionen wie
        z.B. dem Packen von Nachrichten oder Such-
        funktionen wird durch ein Tonsignal angzeigt.
 @
-1034
+1036
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
        Aufblinken des Bildschirmrahmens erg„nzt.
 
@@ -5313,6 +5411,17 @@ soll:
 <<markiert>>  alle markierten Bretter
 
 <<gew„hlt>>   das momentan gew„hlte Brett
+@
+533
+<<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
+        Es muss die komplette Message-ID angegeben 
+        werden. Teilstring-Suche oder Verknpfungen 
+        sind nicht m”glich.
+
+<<[x]>> --> Langsamere Suche ber Nachrichtenheader.
+        Es k”nnen wie z.B bei der Betreffsuche 
+        Teilstrings gesucht, Suchoptionen benutzt,
+        und zu durchsuchende Bretter gew„hlt werden.
 @
 540
 Sie befinden sich im Tastenmakro-Editor - hier k”n-
