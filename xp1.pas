@@ -263,7 +263,7 @@ uses
 {$IFDEF BP }
   xpfonts,
 {$ENDIF }
-  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt;
+  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -1605,6 +1605,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/02/27 08:24:57  jg
+  -Strings.StrPCopy wird wieder benutzt...
+
   Revision 1.9  2000/02/26 18:14:46  jg
   - StrPCopy in Xp1s.inc integriert
   - Suche aus Archivviewer wieder zugelassen

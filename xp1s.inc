@@ -248,24 +248,6 @@ Function DosStartSession(Var Data:TStartData):Word; Assembler;
 	pop	ds
  End;
 
-function StrPCopy(Dest: PChar; Source: String): PChar; assembler;
-asm
-	PUSH	DS
-	CLD
-	LDS	SI,Source
-	LES	DI,Dest
-	MOV	BX,DI
-	MOV	DX,ES
-	LODSB
-	XOR	AH,AH
-	XCHG	AX,CX
-	REP	MOVSB
-	XOR	AL,AL
-	STOSB
-	XCHG	AX,BX
-	POP	DS
-end;
-
 Procedure Start_OS2(Programm,Parameter,Title:String);
 Var StartData:TStartData;
     Temp:String;
@@ -558,6 +540,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/02/27 08:24:57  jg
+  -Strings.StrPCopy wird wieder benutzt...
+
   Revision 1.8  2000/02/26 18:14:47  jg
   - StrPCopy in Xp1s.inc integriert
   - Suche aus Archivviewer wieder zugelassen
