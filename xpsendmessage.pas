@@ -847,7 +847,6 @@ end;
     mwrt(x+70,y+12,' [F2] ');
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     attrtxt(col.coldiarahmen);
-    mwrt(x+70,y+14,' [F2] ');
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
@@ -2515,6 +2514,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.19  2003/08/23 23:48:11  mk
+  - removed misplaced F2 in DOSendBox
+
   Revision 1.48.2.18  2003/08/22 19:09:12  mk
   - second fix for #733047: Bad User-Agent header syntax
 
