@@ -131,6 +131,7 @@ type
 	       Rows, Cols	: word;		{ Ausdehnung }
 	       isRel		: boolean;	{ Relative Koordinaten ? }
 	       isEcho		: boolean;	{ Eingaben zeigen? }
+	       PrevWin		: PWinDesc;	{ vorheriges Fenster }
              end;
 
 var
@@ -162,6 +163,13 @@ procedure TextColor(att : byte);
 procedure SetTextAttr(attr: byte);
 procedure TextMode(mode : word);
 
+{ false, wenn der Screen kleiner als Cols/Rows }
+function MinimumScreen(Cols, Rows: Word): boolean;
+
+{ Schreiben }
+procedure StringOut(s: string);
+procedure StringOutXY(x, y: integer; s: string);
+
 { Cursor-Funktionen }
 procedure GotoXY(x,y : integer);
 function WhereX : integer;
@@ -174,11 +182,28 @@ function IsEcho: boolean;
 procedure SetEcho(b: boolean);
 
 { Panel-Funktionen }
+function panel_window(_para1:pPANEL):pWINDOW;cdecl;
+procedure update_panels;cdecl;
+function hide_panel(_para1:pPANEL):longint;cdecl;
+function show_panel(_para1:pPANEL):longint;cdecl;
 function del_panel(_para1:pPANEL):longint;cdecl;
+function top_panel(_para1:pPANEL):longint;cdecl;
+function bottom_panel(_para1:pPANEL):longint;cdecl;
+function new_panel(_para1:pWINDOW):pPANEL;cdecl;
+function panel_above(_para1:pPANEL):pPANEL;cdecl;
+function panel_below(_para1:pPANEL):pPANEL;cdecl;
+function move_panel(_para1:pPANEL; _para2:longint; _para3:longint):longint;cdecl;
+function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl;
+function panel_hidden(_para1:pPANEL):longint;cdecl;
 
 { Eigentlich nicht benoetigt von Aussen }
 function IsBold(att: integer): boolean;
 function SetColorPair(att: integer): integer;
+
+{ Erstellt ein Fenster und macht es aktiv }
+procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
+procedure RestoreWindow(var win: TWinDesc);
+
 
 implementation
 
@@ -230,6 +255,85 @@ type
   End;
 {==========================================================================}
 
+function MinimumScreen(Cols, Rows: Word): boolean;
+begin
+  MinimumScreen:= (MaxCols>=Cols) and (MaxRows>=Rows);
+end;
+
+procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
+var
+  p: array[0..258] of char;
+begin
+  { Solange ich nicht weiss, ob XP irgendwo die Reihenfolge bei
+    wrest nicht analog zu wpull vornimmt, ist diese Sicherung notwendig }
+  getmem(win.PrevWin, sizeof(TWinDesc));
+  FastMove(ActWin, win.PrevWin^, sizeof(TWinDesc));
+  { Fenster beschreiben }
+  win.x:= x1-1; win.y:= y1-1;
+  win.Cols:= x2-win.x; win.Rows:= y2-win.y;
+  { Fenster erzeugen }
+  win.wHnd:= newwin(win.y, win.x, win.Rows, win.Cols);
+{$IFDEF Beta}
+  if (win.wHnd = nil) then begin
+    WriteLn('Error creating window (XPCurses::MakeWindow)');
+    halt(1);
+  end;
+{$ENDIF }
+  win.isRel:= false;
+  win.isEcho:= false;
+  { Panel verbinden }
+  win.pHnd:= new_panel(win.wHnd);
+  show_panel(win.pHnd);
+  { Inhalt loeschen }
+  ClrScr;
+  { Rahmen zeichnen }
+  if (f) then
+    box(win.wHnd, 0, 0);
+  { Titel }
+  if (Length(s) > 0) then begin
+    mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
+  end;
+  FastMove(win, ActWin, sizeof(TWinDesc));
+  touchwin(win.wHnd);
+  wrefresh(win.wHnd);
+end;
+
+procedure RestoreWindow(var win: TWinDesc);
+begin
+  { PAnel entfernen }
+  hide_panel(win.pHnd);
+  del_panel(win.pHnd);
+  { Window entfernen }
+  delwin(win.wHnd);
+  { Vorheriger Descriptor vorhanden ? }
+  if (win.PrevWin^.wHnd <> nil) then begin
+    FastMove(win.PrevWin^, ActWin, sizeof(TWinDesc));
+    freemem(win.PrevWin, sizeof(TWinDesc));
+  end else 
+    FastMove(BaseWin, ActWin, sizeof(TWinDesc));
+  { Re-Init }
+  FillChar(win, sizeof(TWinDesc), 0);
+  if (ActWin.pHnd <> nil) then
+    show_panel(ActWin.pHnd);
+  { Refresh erzwingen }
+  touchwin(ActWin.wHnd);
+  wrefresh(ActWin.wHnd);
+end;
+
+procedure StringOut(s: string);
+var
+  p: array[0..255] of char;
+begin
+  { hier Zeichen umcodieren }
+  waddstr(ActWin.wHnd, StrPCopy(p, s));
+  wrefresh(ActWin.wHnd);
+end;
+
+procedure StringOutXY(x, y: integer; s: string);
+begin
+  GotoXY(x, y);
+  StringOut(s);
+end;
 
 function IsEcho: boolean;
 begin
@@ -726,8 +830,19 @@ end;
 
 { Panel-Funktionen ---------------------------------------- }
 
-function del_panel(_para1:pPANEL):longint;cdecl;External;
-
+function panel_window(_para1:pPANEL):pWINDOW;cdecl; external;
+procedure update_panels;cdecl; external;
+function hide_panel(_para1:pPANEL):longint;cdecl; external;
+function show_panel(_para1:pPANEL):longint;cdecl; external;
+function del_panel(_para1:pPANEL):longint;cdecl; external;
+function top_panel(_para1:pPANEL):longint;cdecl; external;
+function bottom_panel(_para1:pPANEL):longint;cdecl; external;
+function new_panel(_para1:pWINDOW):pPANEL;cdecl; external;
+function panel_above(_para1:pPANEL):pPANEL;cdecl; external;
+function panel_below(_para1:pPANEL):pPANEL;cdecl; external;
+function move_panel(_para1:pPANEL; _para2:longint; _para3:longint):longint;cdecl; external;
+function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl; external;
+function panel_hidden(_para1:pPANEL):longint;cdecl; external;
 
 { exit procedure to ensure curses is closed up cleanly }
 procedure EndXPCurses;
@@ -762,6 +877,7 @@ begin
      scrollok(stdscr,bool(true));
      win.whnd:= stdscr;		{ Handle merken }
      win.phnd:= nil;		{ Noch kein Panel }
+     win.PrevWin:= nil;
      getmaxyx(stdscr,MaxRows,MaxCols);
      win.Cols:= MaxCols; win.Rows:= MaxRows;
      win.x:= 0; win.y:= 0;
@@ -816,6 +932,9 @@ Begin
 end.
 {
   $Log$
+  Revision 1.3  2000/05/01 18:59:37  hd
+  Make- und RestoreWindow
+
   Revision 1.2  2000/05/01 17:14:51  hd
   - Grundlegenste Funktionen uebernommen und angepasst
 
