@@ -71,7 +71,7 @@ procedure helppage;
 begin
   writeln('PMs in Pufferdatei konvertieren:  PMCONV <Puffer> [Username]');
   writeln;
-  writeln('Dokumentation: s. XPOINT.DOC, Anhang C');
+  writeln('Dokumentation: s. XPOINT.TXT, Anhang C');
   halt(1);
 end;
 
@@ -217,6 +217,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.2  2000/04/15 10:58:31  mk
+  - 1001x .DOC in .TXT geandert
+
   Revision 1.1  2000/03/03 13:05:36  mk
   PMCONV.PAS in den Tree aufgenommen
 

@@ -76,7 +76,7 @@ bzw. formatiert:
      XP.EXE        bpc.exe
      XP.HLP        ihs xp.ihq
      *.RES         rc <Dateiname.rq>
-     *.DOC         df.bat    (Quelldateien: *.dq)
+     *.TXT         df.bat    (Quelldateien: *.dq)
 
 
 3. Compilieren der einzelnen Module (32 Bit)

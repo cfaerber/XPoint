@@ -225,7 +225,7 @@ begin
   if pos('$'+hex(nr,3),ustr(specials))>0 then begin
     msgbox(60,6,'',x,y);
     wrt(x+3,y+2,'Dieser MenÅpunkt wird von XP automatisch aktiviert bzw.');
-    wrt(x+3,y+3,'deaktiviert (s. XPME.DOC).');
+    wrt(x+3,y+3,'deaktiviert (s. XPME.TXT).');
     wrt(x+3,y+5,'Taste drÅcken ...');
     errsound;
     get(t,curon);
@@ -745,6 +745,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/04/15 10:58:32  mk
+  - 1001x .DOC in .TXT geandert
+
   Revision 1.12  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
