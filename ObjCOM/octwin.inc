@@ -1,12 +1,7 @@
-{$h-}
 (*
+** ObjCOM tcp communication implementation include file
 **
-** ObjCOM telnet communication implementation include file
-** Incomplete, untested
-**
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
-** See history at end of file
+** Written by M.Kiesel 2000
 *)
 
 Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
@@ -18,7 +13,7 @@ Const TelnetCarrier  : Boolean = true;
 
 constructor TTelnetObj.Init;
 begin
-  SOpened:=False; Dontclose:=False; InBuffer.Init(8192);
+  SOpened:=False; Dontclose:=False; InBuffer.Init(8192); IgnoreCD:=True;
   inherited Init;
 end; { constructor Init }
 
@@ -47,6 +42,7 @@ end; { proc. TTelnetObj.OpenQuick }
 
 function TTelnetObj.OpenKeep(Comport: Byte): Boolean;
 begin
+  OpenKeep:=False;
 end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -62,7 +58,6 @@ end;
 
 function TTelnetObj.Connect(Dest: String): Boolean;
 const isocket: TInetSockAddr= (Family:AF_INET;Port:$274E;Addr:$0100A8C0);
-var S: Longint;
 begin
   Connect:=False;
   SHandle:=Socket(AF_INET,SOCK_STREAM,0);
@@ -91,7 +86,7 @@ end; { func. TTelnetObj.CloseCom }
 
 function TTelnetObj.SendChar(C: Char): Boolean;
 begin
-  write(SOut,C);
+  write(SOut,C); SendChar:=True;
 end; { proc. TTelnetObj.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -116,7 +111,6 @@ end; { proc. TTelnetObj.SendBlock }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure TTelnetObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
-var i: Longint;
 begin
   repeat ProcIncoming until CharCount>=BlockLen;
   InBuffer.Get(Block,Blocklen,True);
@@ -211,6 +205,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.3  2000/09/29 23:21:15  ma
+  - SendChar result := true
+
   Revision 1.2  2000/09/11 23:00:13  ma
   - provisional outgoing TCP support added
 
