@@ -81,7 +81,7 @@ const
   Bei den Überlegungen, in welches einzelne Zeichen man konvertiert und ob  
   überhaupt, habe ich mich danach gerichtet, wie der Buchstabe  
   ausgesprochen wird bzw. welche Bedeutung ein Symbol hat (und habe dazu  
-  notfalls etwas Recherche betrieben, z.B. bei den Buchstaben "Eth" und  
+  notfalls etwas Recherche betrieben, z.B. bei den Buchstaben "Eth" und
   "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im
   Unterschied zu den alten Tabellen) eher kein Kriterium.
 
@@ -482,7 +482,8 @@ function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
 // scans Buffer with Len for first occurrence of char c
-function BufferScan(const Buffer; Len: Integer; c: Char): Integer; 
+function BufferScan(const Buffer; Len: Integer; c: Char): Integer;
+function FindURL(const s: String; var x, y: Integer): Boolean;
 
 { ================= Implementation-Teil ==================  }
 
@@ -1931,6 +1932,31 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
+function FindURL(const s: String; var x, y: Integer): Boolean;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+    '-','_','#','=','&','%','@','$',',','+'];
+begin
+  x:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
+  if x=0 then x:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
+  if x=0 then x:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
+  if x=0 then x:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
+  y:=x;
+  Result := x <> 0;
+  if Result then
+  begin
+    while (y<=length(s)) and (s[y] in urlchars) do
+    begin
+      // "," is a valid url char, but test for things like
+      // "see on http:///www.openxp.de, where" ...
+      // in this case, "," does not belong to the url
+      if (s[y] = ',') and (y<Length(s)) and (not (s[y+1] in urlchars)) then
+        break;
+      inc(y); {Ende der URL suchen...}
+    end;
+  end;
+end;
+
 { functions to convert from/to MSB and LSB }
 
 Function Swap16(X : smallword) : smallword; {$IFNDEF Delphi} inline; {$ENDIF }
@@ -2021,6 +2047,9 @@ end;
 
 {
   $Log$
+  Revision 1.137  2003/09/21 20:11:39  mk
+  - added function FindURL
+
   Revision 1.136  2003/09/10 14:17:39  mk
   - removed dupe function CharExistsL and optimized WordCountEx
 
