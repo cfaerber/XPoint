@@ -44,10 +44,12 @@ procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
+procedure SSP_Keys(var t:taste);
+function typname(typ,subtyp:string):string;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3ex;
+uses xp1o,xp3,xp3o,xp3ex;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }
@@ -111,6 +113,20 @@ begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if ustr(t)='X' then
     m_extrakt(mf^[ival(mid(get_selection,57))]);
+end;
+
+                                                      { Select-Tasten fuer SINGLE-PART MIME }
+procedure SSP_Keys(var t:taste);          { Select-Tasten fuer SINGLE-PART MIME }
+var OldET : byte;
+begin
+  Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
+  if ustr(t)='X' then
+  begin
+    OldET:=ExtraktTyp;
+    ExtraktTyp:=0;                        { Als Text ohne Kopf extrahieren... }
+    extrakt(1,aktdispmode,0);              
+    ExtraktTyp:=OldET;
+    end; 
 end;
 
 
@@ -726,6 +742,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.5  2000/08/05 14:36:57  jg
+  - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
+
   Revision 1.12.2.4  2000/08/03 14:48:26  mk
   - ein (nicht dringend noetiges) Freeres hinzugefuegt
 

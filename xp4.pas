@@ -54,7 +54,7 @@ implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
       xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime;
+      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -2062,6 +2062,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.5  2000/08/05 14:36:57  jg
+  - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
+
   Revision 1.26.2.4  2000/08/02 09:58:33  jg
   - "U" (ins Userfenster Umschalten) funktioniert
     jetzt auch wenn die Markiert-Liste angezeigt wird.
