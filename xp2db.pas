@@ -147,7 +147,7 @@ var flp : dbFLP;
 
       if default<>'' then
       begin
-        dbOpen(d,BoxenFile,0);
+        dbOpen(d,filename,0);
         while not dbEOF(d) do begin
           dbWriteStr(d,fieldname,default);
           dbNext(d);
@@ -997,6 +997,10 @@ end;
 
 {
   $Log$
+  Revision 1.45  2002/11/20 23:04:01  cl
+  - Fixed error reported in <8a41csTy3TB@ferdy.wiesibox.de>:
+    ("<DB> interner Fehler: unbekannter Feldname: PMSignatur")
+
   Revision 1.44  2002/11/14 20:07:28  cl
   - Simplified adding new fields to DB.
   - New DB fields (GRUPPEN): QuoteChar, QuoteToMsk, PMKopf, PMSignatur, PMQuoteMsk.
