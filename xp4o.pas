@@ -112,7 +112,7 @@ Procedure Brettmarksuche;
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,debug,viewer, xpconfigedit, classes, xp9bp,
+     xp_pgp,debug,viewer, xpconfigedit, classes, xp9bp, mime, 
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
@@ -462,7 +462,14 @@ label ende, restart;
         end else
         begin
           TxtSeekKey := Key;
-          Intext:=TxtSeek(p,wsize,igcase,umlaut);
+          Intext := TxtSeek(p,wsize,igcase,umlaut);
+          // hack to allow searching in iso charset
+          if result = false then
+          begin
+            SetString(s,pChar(p), wsize);
+            s := isotoibm(s);
+            InText := TxtSeek(@s[1], Length(s), igcase, umlaut);
+          end;
         end;
       end else
         Intext:=false;
@@ -3018,6 +3025,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.12  2004/07/12 18:41:07  mk
+  - fixed bug #892470, convert full text to ibm charset before searching
+
   Revision 1.138.2.11  2004/01/18 15:07:08  mk
   - use WildCard instead of * or *.*
 
