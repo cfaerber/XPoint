@@ -72,15 +72,27 @@ EXEEXT = .exe
 # muss hier getrickst werden
 SEP = $(subst ,,\)
 
+MAKE ?= make
 RM ?= rm
 
 endif
 
-ifneq (,$(findstring $(OS),freebsd linux))
+ifeq ($(OS),freebsd)
 
 EXEEXT =
 SEP = /
 
+MAKE ?= gmake
+RM ?= rm
+
+endif
+
+ifeq ($(OS),linux)
+
+EXEEXT =
+SEP = /
+
+MAKE ?= make
 RM ?= rm
 
 endif
@@ -185,6 +197,14 @@ PF_686 = -$$G5-
 
 endif
 
+export PC
+export OS
+export CPU
+export COMPILER
+export DEBUG
+export MAKE
+export RM
+
 BIN = example
 UNITS = objcom octhread ringbuff
 
@@ -194,29 +214,39 @@ PFLAGS += $(PF_$(CPU))
 all: objcom$(UNITEXT)
 
 ifeq ($(OS),dos32)
+
 objcom$(UNITEXT): objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc \
-	ocsdosh.inc ringbuff$(UNITEXT)
+	ocsdosh.inc ringbuff$(UNITEXT) root-debug root-timer
 	$(PC) $(PFLAGS) $<
+
 endif
 ifeq ($(OS),freebsd)
+
 objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc ringbuff$(UNITEXT) \
-	serial$(UNITEXT)
+	root-debug root-timer
 	$(PC) $(PFLAGS) $<
+
 endif
 ifeq ($(OS),linux)
+
 objcom$(UNITEXT): objcom.pas ocslin.inc ocslinh.inc ringbuff$(UNITEXT) \
-	serial$(UNITEXT)
+	root-debug root-timer
 	$(PC) $(PFLAGS) $<
+
 endif
 ifeq ($(OS),os2)
+
 objcom$(UNITEXT): objcom.pas ocsos2.inc octhread$(UNITEXT) \
-	ringbuff$(UNITEXT)
+	ringbuff$(UNITEXT) root-debug root-timer
 	$(PC) $(PFLAGS) $<
+
 endif
 ifeq ($(OS),win32)
+
 objcom$(UNITEXT): objcom.pas ocswin.inc ocswinh.inc octhread$(UNITEXT) \
-	octwin.inc octwinh.inc ringbuff$(UNITEXT)
+	octwin.inc octwinh.inc ringbuff$(UNITEXT) root-debug root-timer
 	$(PC) $(PFLAGS) $<
+
 endif
 
 octhread$(UNITEXT): octhread.pas
@@ -225,11 +255,16 @@ octhread$(UNITEXT): octhread.pas
 ringbuff$(UNITEXT): ringbuff.pas
 	$(PC) $(PFLAGS) $<
 
-serial$(UNITEXT): serial.pas
-	$(PC) $(PFLAGS) $<
-
 example$(EXEEXT): example.pas objcom$(UNITEXT)
 	$(PC) $(PFLAGS) $<
+
+# root-Units
+
+root-debug:
+	$(MAKE) -C .. debug$(UNITEXT)
+
+root-timer:
+	$(MAKE) -C .. timer$(UNITEXT)
 
 clean: $(patsubst %,clean_%,$(BIN)) $(patsubst %,clean_%,$(UNITS))
 
@@ -251,6 +286,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.13  2000/11/14 18:45:20  fe
+# Dependecies fixed.
+#
 # Revision 1.12  2000/10/23 17:16:53  fe
 # FreeBSD-Anpassungen
 #
