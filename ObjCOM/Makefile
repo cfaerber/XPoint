@@ -145,12 +145,12 @@ endif
 ifeq ($(COMPILER),vpc)
 PC = vpc
 
-VPPREFIX ?= \vp21
+vpprefix ?= \vp21
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(VPPREFIX)$(SEP)units.%p;.." -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
+PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(vpprefix)$(SEP)units.%p;.." -L"$(vpprefix)$(SEP)lib.%p;$(vpprefix)$(SEP)units.%p" -R"$(vpprefix)$(SEP)res.%p"
 else
-PFLAGS += -$$SmartLink+ -M -U"$(VPPREFIX)$(SEP)units.%p;.." -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
+PFLAGS += -$$SmartLink+ -M -U"$(vpprefix)$(SEP)units.%p;.." -L"$(vpprefix)$(SEP)lib.%p;$(vpprefix)$(SEP)units.%p" -R"$(vpprefix)$(SEP)res.%p"
 endif
 
 UNITEXT = .vpi
@@ -228,6 +228,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.8  2000/10/12 20:44:46  fe
+# Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
+#
 # Revision 1.7  2000/10/11 21:50:46  fe
 # Korrekturen fuer Virtual Pascal.
 #

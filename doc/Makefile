@@ -26,7 +26,7 @@
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
 #
-#prefix = \OXP370
+#prefix = C:\Programme\OpenXP
 
 # Soll das Handbuch aus DocBook gebaut werden?
 # (KANN gesetzt werden.)
@@ -37,25 +37,25 @@
 # <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#DBDIR = 
+#dbdir = 
 
 # Verzeichnis, in dem die ISO 8879 Entities liegen.
 # <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#ENTDIR = 
+#entdir = 
 
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#JADEDIR = C:\Programme\OpenJade-1.3\dsssl
+#jadedir = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
 # <http://nwalsh.com/docbook/dsssl/db157.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#MODDIR = 
+#moddir = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
 # des Quellcode sind.
@@ -93,20 +93,20 @@ CPU ?= 386
 
 ifeq ($(MAKEHB),yes)
 
-ifeq (,$(DBDIR))
-$(error Variable "DBDIR" muss gesetzt werden)
+ifeq (,$(dbdir))
+$(error Variable "dbdir" muss gesetzt werden)
 endif
 
-ifeq (,$(ENTDIR))
-$(error Variable "ENTDIR" muss gesetzt werden)
+ifeq (,$(entdir))
+$(error Variable "entdir" muss gesetzt werden)
 endif
 
-ifeq (,$(JADEDIR))
-$(error Variable "JADEDIR" muss gesetzt werden)
+ifeq (,$(jadedir))
+$(error Variable "jadedir" muss gesetzt werden)
 endif
 
-ifeq (,$(MODDIR))
-$(error Variable "MODDIR" muss gesetzt werden)
+ifeq (,$(moddir))
+$(error Variable "moddir" muss gesetzt werden)
 endif
 
 endif
@@ -117,9 +117,14 @@ TIDYFLAGS ?= -q -f tidyerr.tmp -m -asxml --doctype strict --show-warnings no --a
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
+ifeq ($(OS),win32)
+prefix ?= C:\Programme\OpenXP
+else
 prefix ?= \OPENXP
-datadir = $(prefix)
-docdir = $(prefix)\DOC
+endif
+
+datadir ?= $(prefix)
+docdir ?= $(prefix)$(SEP)DOC
 
 # Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
 # muss hier getrickst werden
@@ -144,9 +149,10 @@ endif
 
 ifeq ($(OS),linux)
 
-prefix ?= /usr/local/xp
-datadir = $(prefix)
-docdir = $(prefix)/doc
+prefix ?= /opt/openxp
+datadir ?= $(prefix)/lib
+datalinkdir ?= /usr/lib
+docdir ?= $(prefix)/doc
 
 SEP = /
 MAKE ?= make
@@ -185,10 +191,10 @@ TXT += $(OLDDOCFILES) xpoint.txt
 
 # "/" und "\" fuer sed quoten und $(SEP) bzw. $(SEP)docbook$(SEP) anhaengen
 
-DBDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(DBDIR)$(SEP))))
-ENTDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(ENTDIR)$(SEP))))
-JADEDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(JADEDIR)$(SEP))))
-MODDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(MODDIR)$(SEP)docbook$(SEP))))
+dbdirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(dbdir)$(SEP))))
+entdirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(entdir)$(SEP))))
+jadedirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(jadedir)$(SEP))))
+moddirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(moddir)$(SEP)docbook$(SEP))))
 
 ifeq ($(MAKEHB),yes)
 all: xpoint.txt $(HELPFILES) $(OLDDOCFILES)
@@ -212,10 +218,10 @@ xpoint.htm: xpoint.sgm xpoint.dsl catalog
 	-$(TIDY) $(TIDYFLAGS) xpoint.htm
 
 catalog: xpoint.cat
-	$(SED) 's/@DBDIR@/$(DBDIRQ)/' xpoint.cat > xpoint.tmp
-	$(SED) 's/@ENTDIR@/$(ENTDIRQ)/' xpoint.tmp > xpoint.tm1
-	$(SED) 's/@JADEDIR@/$(JADEDIRQ)/' xpoint.tm1 > xpoint.tm2
-	$(SED) 's/@MODDIR@/$(MODDIRQ)/' xpoint.tm2 > catalog
+	$(SED) 's/@DBDIR@/$(dbdirq)/' xpoint.cat > xpoint.tmp
+	$(SED) 's/@ENTDIR@/$(entdirq)/' xpoint.tmp > xpoint.tm1
+	$(SED) 's/@JADEDIR@/$(jadedirq)/' xpoint.tm1 > xpoint.tm2
+	$(SED) 's/@MODDIR@/$(moddirq)/' xpoint.tm2 > catalog
 
 xpoint.rtf: xpoint.sgm xpoint.dsl catalog
 	$(JADE) -c catalog -d xpoint.dsl#print -t rtf xpoint.sgm > xpoint.rtf
@@ -251,8 +257,14 @@ installdirs: install_datadir install_docdir
 install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
+ifeq ($(OS),linux)
 $(patsubst %,install_%,$(HELPFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
+	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(HELPFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 
 install_docdir:
 	-$(INSTALLDIR) $(docdir)
@@ -277,8 +289,14 @@ uninstall: $(patsubst %,uninstall_%,$(TXT)) \
 $(patsubst %,uninstall_%,$(TXT)): uninstall_%: %
 	-$(RM) $(docdir)$(SEP)$*
 
+ifeq ($(OS),linux)
+$(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
+	-$(RM) $(datalinkdir)$(SEP)$*
+	-$(RM) $(datadir)$(SEP)$*
+else
 $(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
 	-$(RM) $(datadir)$(SEP)$*
+endif
 
 clean:  $(patsubst %,clean_%,$(HBFILES)) \
 	$(patsubst %,clean_%,$(OLDDOCFILES)) \
@@ -305,6 +323,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.10  2000/10/12 20:44:31  fe
+# Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
+#
 # Revision 1.9  2000/10/10 20:01:46  fe
 # Restliche GNU-Targets ergaenzt.
 #

@@ -9,8 +9,9 @@
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
 
 # Damit Sie dieses Makefile benutzen koennen, muessen ein aktuelles GNU
-# make (s.o.), der Free Pascal Compiler <http://www.freepascal.org/> und
-# die GNU fileutils <http://www.gnu.org/software/fileutils/> (DOS/32:
+# make (s.o.), der Free Pascal Compiler <http://www.freepascal.org/>
+# oder der Virtual Pascal Compiler <http://www.vpascal.com/> und die GNU
+# fileutils <http://www.gnu.org/software/fileutils/> (DOS/32:
 # <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/fil316b.zip>) auf
 # ihrem System installiert sein.
 #
@@ -79,7 +80,7 @@
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
 #
-#prefix = \OPENXP
+#prefix = C:\Programme\OpenXP
 
 # Compiler-Flags
 # (KANN gesetzt werden.)
@@ -100,25 +101,25 @@
 # <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#DBDIR = 
+#dbdir = 
 
 # Verzeichnis, in dem die ISO 8879 Entities liegen.
 # <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#ENTDIR = 
+#entdir = 
 
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#JADEDIR = C:\Programme\OpenJade-1.3\dsssl
+#jadedir = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
 # <http://nwalsh.com/docbook/dsssl/db157.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
-#MODDIR = 
+#moddir = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
 # des Quellcode sind.
@@ -160,30 +161,36 @@ endif
 
 ifeq ($(MAKEHB),yes)
 
-ifeq (,$(DBDIR))
-$(error Variable "DBDIR" muss gesetzt werden)
+ifeq (,$(dbdir))
+$(error Variable "dbdir" muss gesetzt werden)
 endif
 
-ifeq (,$(ENTDIR))
-$(error Variable "ENTDIR" muss gesetzt werden)
+ifeq (,$(entdir))
+$(error Variable "entdir" muss gesetzt werden)
 endif
 
-ifeq (,$(JADEDIR))
-$(error Variable "JADEDIR" muss gesetzt werden)
+ifeq (,$(jadedir))
+$(error Variable "jadedir" muss gesetzt werden)
 endif
 
-ifeq (,$(MODDIR))
-$(error Variable "MODDIR" muss gesetzt werden)
+ifeq (,$(moddir))
+$(error Variable "moddir" muss gesetzt werden)
 endif
 
 endif
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
+ifeq ($(OS),win32)
+prefix ?= C:\Programme\OpenXP
+else
 prefix ?= \OPENXP
-bindir = $(prefix)
-datadir = $(prefix)
-exampledir = $(prefix)\BEISPIEL
+endif
+
+bindir ?= $(prefix)
+datadir ?= $(prefix)
+docdir ?= $(prefix)\DOC
+exampledir ?= $(prefix)\BEISPIEL
 
 EXEEXT = .exe
 # Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
@@ -204,11 +211,13 @@ endif
 
 ifeq ($(OS),linux)
 
-prefix ?= /usr/local/xp
-bindir = $(prefix)
-linkdir ?= /usr/bin
-datadir = $(prefix)
-exampledir = $(prefix)/beispiel
+prefix ?= /opt/openxp
+bindir ?= $(prefix)/bin
+binlinkdir ?= /usr/bin
+datadir ?= $(prefix)/lib
+datalinkdir ?= /usr/lib
+docdir ?= $(prefix)/doc
+exampledir ?= $(prefix)/beispiel
 
 EXEEXT =
 SEP = /
@@ -291,12 +300,12 @@ endif
 ifeq ($(COMPILER),vpc)
 PC = vpc
 
-VPPREFIX ?= \vp21
+vpprefix ?= \vp21
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(VPPREFIX)$(SEP)units.%p;ObjCOM" -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
+PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(vpprefix)$(SEP)units.%p;ObjCOM" -L"$(vpprefix)$(SEP)lib.%p;$(vpprefix)$(SEP)units.%p" -R"$(vpprefix)$(SEP)res.%p"
 else
-PFLAGS += -$$SmartLink+ -M -U"$(VPPREFIX)$(SEP)units.%p;ObjCOM" -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
+PFLAGS += -$$SmartLink+ -M -U"$(vpprefix)$(SEP)units.%p;ObjCOM" -L"$(vpprefix)$(SEP)lib.%p;$(vpprefix)$(SEP)units.%p" -R"$(vpprefix)$(SEP)res.%p"
 endif
 
 UNITEXT = .vpi
@@ -320,13 +329,19 @@ export PC
 export OS
 export CPU
 export prefix
+export bindir
+export binlinkdir
+export datadir
+export datalinkdir
+export docdir
+export exampledir
 export COMPILER
 export DEBUG
 export MAKEHB
-export DBDIR
-export ENTDIR
-export JADEDIR
-export MODDIR
+export dbdir
+export entdir
+export jadedir
+export moddir
 export contribdir
 export RM
 
@@ -2317,7 +2332,7 @@ install_bindir:
 ifeq ($(OS),linux)
 $(patsubst %,install_%,$(BINFILES)): install_%: %
 	$(INSTALL_PROGRAM) $* $(bindir)
-	$(LN) $(bindir)$(SEP)$* $(linkdir)$(SEP)$*
+	$(LN) $(bindir)$(SEP)$* $(binlinkdir)$(SEP)$*
 else
 $(patsubst %,install_%,$(BINFILES)): install_%: %
 	$(INSTALL_PROGRAM) $* $(bindir)
@@ -2326,11 +2341,23 @@ endif
 install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
+ifeq ($(OS),linux)
 $(patsubst %,install_%,$(RESFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
+	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(RESFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 
+ifeq ($(OS),linux)
 $(patsubst %,install_%,$(RSTFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
+	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(RSTFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 
 $(patsubst %,install_%,$(EXAMPLES)): install_%:
 	$(INSTALL_DATA) beispiel$(SEP)$* $(exampledir)
@@ -2341,8 +2368,14 @@ install_exampledir:
 $(patsubst %,install_%,$(CONTRIBBIN)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)$(OS)$(SEP)$* $(bindir)
 
+ifeq ($(OS),linux)
 $(patsubst %,install_%,$(CONTRIBDATA)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
+	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(CONTRIBDATA)): install_%:
+	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
+endif
 
 # Deinstallation
 
@@ -2358,12 +2391,18 @@ uninstall: $(patsubst %,uninstall_%,$(CONTRIBEXAMPLE)) \
 $(patsubst %,uninstall_%,$(CONTRIBEXAMPLE)): uninstall_%:
 	-$(RM) $(exampledir)$(SEP)$*
 
+ifeq ($(OS),linux)
+$(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
+	-$(RM) $(datalinkdir)$(SEP)$*
+	-$(RM) $(datadir)$(SEP)$*
+else
 $(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
 	-$(RM) $(datadir)$(SEP)$*
+endif
 
 ifeq ($(OS),linux)
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
-	-$(RM) $(linkdir)$(SEP)$*
+	-$(RM) $(binlinkdir)$(SEP)$*
 	-$(RM) $(bindir)$(SEP)$*
 else
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
@@ -2455,6 +2494,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.21  2000/10/12 20:44:07  fe
+# Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
+#
 # Revision 1.20  2000/10/11 21:51:50  fe
 # Korrekturen fuer Virtual Pascal.
 #
