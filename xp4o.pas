@@ -26,6 +26,7 @@ uses
 {$endif}
 {$IFDEF NCRT }
   xpcurses,
+  sysutils,
 {$ELSE }
   crt,
 {$ENDIF }
@@ -208,7 +209,7 @@ label ende;
     if spez then x:=23 else x:=19;
     msgbox(70,x,'Suchstring-Check',x,y);
     attrtxt(col.colmbox);
-    wrt(x+1,y+1,'Benutzte Teilstrings: '); Wrt2(suchanz);
+    wrt(x+1,y+1,'Benutzte Teilstrings: '+IntToStr(suchanz));
     wrt(x+27,y+1,iifs(suchand,'AND','OR'));
     write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));
     write(iifs(spez,'    SPEZIAL',''));
@@ -2407,6 +2408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/05/07 10:28:03  hd
+  - Fix: (check_seekmode): wrt2 verlangt einen string, kein byte!
+
   Revision 1.37  2000/05/06 17:29:22  mk
   - DOS DPMI32 Portierung
 
