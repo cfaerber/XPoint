@@ -38,17 +38,18 @@ begin
     exit;
   end;
 
-  ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
   ZModemObj:=TZModemObj.Init(FCommObj,IPC);
 
   WriteIPC(mcVerbose,getres2(30004,12),[0]);  { 'Senden' }
   ZModemOkay:=True;
-  if(sendempty and ZedZap)and(OutgoingFiles.Count<=0)then
+  if OutgoingFiles.Count<=0 then
     ZModemOkay:=ZModemObj.Send('',True)
   else
     for i:=1 to OutgoingFiles.Count do
-      if ZModemOkay then
+      if ZModemOkay then begin
         ZModemOkay:=ZModemObj.Send(OutgoingFiles[i-1],i=OutgoingFiles.Count);
+        LogTxFile(OutgoingFiles[i-1]);
+        end;
 
   if not ZModemOkay then begin
     WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
@@ -64,6 +65,8 @@ begin
     {ZModem-Ausgaberoutinen setzen}
     WriteIPC(mcVerbose,getres2(30004,13),[0]);    { 'Empfangen' }
     ZModemOkay:=ZModemObj.Receive(IncomingDir,IncomingFiles);
+    for i:=1 to IncomingFiles.Count do
+      LogRxFile(IncomingFiles[i-1]);
     if (not ZModemOkay) then begin
       WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
@@ -74,6 +77,11 @@ end;
 
 {
   $Log$
+  Revision 1.9  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.8  2001/02/19 12:18:28  ma
   - simplified ncmodem usage
   - some small improvements

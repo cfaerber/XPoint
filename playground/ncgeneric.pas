@@ -53,7 +53,7 @@ begin
     iFile:=0; result:=true;
     while (iFile<OutgoingFiles.Count) and (result) do begin
       result:=ZModemObj.Send(OutgoingFiles[iFile],iFile=OutgoingFiles.Count-1);
-      if result then inc(iFile);
+      if result then begin LogTxFile(OutgoingFiles[iFile]); inc(iFile)end;
       end;
     if not result then while iFile<OutgoingFiles.Count do OutgoingFiles.Delete(iFile);
     end;
@@ -64,9 +64,12 @@ end;
 function TGenericMailer.ReceiveFiles(IncomingDir: String; IncomingFiles: TStringList): boolean;
 var
   ZModemObj: TZModemObj;
+  i: Integer;
 begin
   ZModemObj:=TZModemObj.Init(FCommObj,IPC);
   result:=ZModemObj.Receive(IncomingDir,IncomingFiles);
+  for i:=0 to IncomingFiles.Count-1 do
+    LogRxFile(IncomingFiles[i]);
   ZModemObj.Done;
 end;
 
@@ -75,6 +78,11 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.3  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors

@@ -113,8 +113,7 @@ const
       EMSI_DAT   = '**EMSI_DAT';
 
 
-var   ZedZap,LogSending  : boolean;
-      TimerObj: tTimer;
+var   TimerObj: tTimer;
       Timers : array[0..qTimers-1] of tTimer;
       Dummy  : LongInt;
 
@@ -207,7 +206,7 @@ var iTimer: Integer; Ende: Boolean;
 begin
   aresult:=el_noconn; result:=el_noconn;
   if not Connect then exit;
-  TimerObj.Init; Log(lcCalling,'calling '+txt);
+  TimerObj.Init;
 
   if SetTime then begin //** BinkP mailer
     if BinkPSessionSetup=0 then
@@ -237,7 +236,6 @@ begin
 
   SleepTime(2000);
   TimerObj.Done;
-  Log(lcExit,'exiting');
   Disconnect;
   result:=aresult;
 end;
@@ -246,6 +244,11 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.17  2001/02/19 14:15:15  ma
   - proper AKA handling (primarily for BinkP)
 

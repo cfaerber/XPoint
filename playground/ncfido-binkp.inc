@@ -23,10 +23,6 @@
 
 { OpenXP fido netcall BinkP protocol implementation include file }
 
-{$IFDEF VP}
-const fsFromEnd= 2; fsFromCurrent= 1; fsFromBeginning= 0;
-{$ENDIF}
-
 type
   tFrameType= (M_NUL,M_ADR,M_PWD,M_FILE,M_OK,M_EOB,M_GOT,M_ERR,M_BSY,M_GET,M_SKIP,M_DATA);
   tBinkpFrame= class
@@ -315,6 +311,7 @@ var
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
           WriteIPC(mcInfo,'%s received',[RxFilename]);
           IncomingFiles.Add(IncomingDir+RxFilename);
+          LogRxFile(IncomingDir+RxFilename);
           end;
         if RxFilePos<RxSize then RxState:=RxReceD;
         end;
@@ -387,18 +384,18 @@ var
         if OutgoingFiles.Count<=0 then begin // no more files to send
           OutBpF.SendCommandFrame(M_EOB,'');
           TxState:=TxWLA; result:=Continue;
-          end else begin // still files to send
+          end else begin                     // still files to send
           TxFilename:=ExtractFilename(OutgoingFiles[0]);
           WriteIPC(mcInfo,'Sending %s',[TxFilename]);
           TxFileHandle:=FileOpen(OutgoingFiles[0],fmOpenRead);
           OutgoingFiles.Delete(0); //** should not be deleted here but in ProcessTheQueue
-          if TxFileHandle>0 then begin // opened ok
+          if TxFileHandle>0 then begin       // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
             TxTime:=FileGetDate(TxFileHandle);
             OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
             TxState:=TxTryR; result:=Continue;
-            end else begin // failed to open
+            end else begin                   // failed to open
             TxState:=TxDone; result:=Failure;
             end;
           end;
@@ -418,6 +415,7 @@ var
           FileClose(TxFileHandle);
           TxState:=TxGNF;
           PendingFiles.Add(TxFilename);
+          LogTxFile(TxFilename);
           TxFilename:='';
           end else begin // still data to read
           TxState:=TxTryR;
@@ -488,6 +486,11 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.7  2001/02/19 14:15:15  ma
   - proper AKA handling (primarily for BinkP)
 

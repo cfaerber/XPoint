@@ -51,7 +51,7 @@ procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlo
 procedure ClearUnversandt(puffer,BoxName:string);
 procedure MakeMimetypCfg;
 //**procedure LogNetcall(secs:word; crash:boolean);
-//**procedure SendNetzanruf(once,crash:boolean);
+procedure SendNetzanruf(logfile: string);
 //**procedure SendFilereqReport;
 //**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 //**procedure MoveRequestFiles(var packetsize:longint);
@@ -312,7 +312,16 @@ begin
 end;}
 
 
-//**procedure SendNetzanruf(once,crash:boolean);
+procedure SendNetzanruf(logfile: string);
+var betreff,hd: string;
+begin
+  betreff:=getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
+           boxpar^.boxname;
+  hd:='';
+  if DoSend(false,logfile,netbrett,betreff,
+            false,false,false,false,false,nil,hd,hd,sendIntern+sendShow) then
+    SetUngelesen;
+end;
 (* var t,log         : text;
     fn            : string;
     sum           : word;
@@ -880,6 +889,7 @@ begin                  { function Netcall }
             EL_break  : begin Netcall:=false; end;
           else begin Netcall:=true; end;
             end; {case}
+          SendNetzanruf(NetcallLogFile);
           end; {case ltFido}
 
         ltZConnect: begin
@@ -893,6 +903,7 @@ begin                  { function Netcall }
             EL_break  : begin  Netcall:=false; end;
           else begin Netcall:=true end;
             end; {case}
+          SendNetzanruf(NetcallLogFile);
           end; {case ltZConnect}
 
         ltPOP3: begin
@@ -908,7 +919,7 @@ begin                  { function Netcall }
 
 //**      RemoveEPP;
       if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
-      if FileExists(NetcallLogfile)then _era(NetcallLogfile); //** until log file processing implemented
+      if FileExists(NetcallLogfile)then _era(NetcallLogfile);
       end; {if PerformDial}
     end; {with boxpar}
 
@@ -1126,6 +1137,11 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.12  2001/02/19 14:15:15  ma
   - proper AKA handling (primarily for BinkP)
 

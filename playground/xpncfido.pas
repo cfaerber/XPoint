@@ -159,13 +159,14 @@ begin { ProcessAKABoxes }
         sendakas:=trim(mid(sendakas,p));
         if GetBoxData(aboxname,alias,domain,bfile)then begin
           Debug.DebugLog('xpncfido','server file name is '+bfile,DLDebug);
+          AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
           ReadBox(nt_Fido,bfile,@tempboxpar);
           writeln(t,'Bretter=',aBoxName,' ',tempboxpar.magicbrett);
-          if FileExists(bfile+BoxFileExt) then begin
+          if FileExists(bfile+BoxFileExt)and
+             (tempboxpar.notsempty or(_filesize(bfile+BoxFileExt)>10)) then begin
             Debug.DebugLog('xpncfido','PP exists '+bfile+BoxFileExt,DLDebug);
             AKABoxes.BoxName.Add(aBoxName);
             AKABoxes.PPFile.Add(bfile+BoxFileExt);
-            AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
             ownfidoadr:=GetPointAdr(aboxname,false);
             Convert(@tempboxpar,bfile+BoxFileExt,upbuffer);
             end
@@ -555,18 +556,20 @@ begin { FidoNetcall }
   if crash then crash:=ProcessCrash;
   if not crash then ProcessAKABoxes(boxpar,UpBufferFilename,OutgoingFiles);
 
-  // Compress outgoing buffers
-  UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetPointAdr(boxname,false),boxname);
-  ShellCommandUparcer:=boxpar^.uparcer;
-  exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
-  exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
-  if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
-    trfehler(713,30);  { 'Fehler beim Packen!' }
-    _era(UpBufferFilename);
-    OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
-    exit;
-    end
-  else _era(UpBufferFilename);
+  if FileExists(UpBufferFilename)then begin
+    // Compress outgoing buffers
+    UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetPointAdr(boxname,false),boxname);
+    ShellCommandUparcer:=boxpar^.uparcer;
+    exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
+    exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
+    if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
+      trfehler(713,30);  { 'Fehler beim Packen!' }
+      _era(UpBufferFilename);
+      OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+      exit;
+      end
+    else _era(UpBufferFilename);
+    end;
 
   if crash then begin
     getNodeInfo(boxpar^.boxname,ni,2);
@@ -598,11 +601,13 @@ begin { FidoNetcall }
       end;
     end;
 
-  _era(UpArcFilename);
+  DeleteFile(UpArcFilename);
+  for i:=0 to AKABoxes.ReqFile.Count-1 do
+    if AKABoxes.ReqFile[i]<>'' then begin
+      ProcessRequestResult(AKABoxes.ReqFile[i]);
+      DeleteFile(AKABoxes.ReqFile[i]);
+      end;
   if (result IN [el_ok,el_recerr]) then begin   { Senden OK }
-    for i:=0 to AKABoxes.ReqFile.Count-1 do
-      if AKABoxes.ReqFile[i]<>'' then
-        ProcessRequestResult(AKABoxes.ReqFile[i]);
     if crash then SetCrash(MakeFidoAdr(fa,true),false);
     outmsgs:=0;
     for i:=0 to AKABoxes.PPFile.Count-1 do
@@ -838,6 +843,11 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/02/23 13:51:05  ma
+  - implemented transferred file logging
+  - implemented empty send batch (Fido)
+  - implemented basic netcall logging
+
   Revision 1.17  2001/02/19 14:15:15  ma
   - proper AKA handling (primarily for BinkP)
 
