@@ -192,8 +192,8 @@ begin
     abs:=hdp.replyto
   else begin
     wabok:=(cPos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
-    if (hds=1) or ((hdp.wab='') and (hdp.oem.Count > 0) and (hdp.replyto <> '')) or
-                  ((hdp.wab='') and (hdp.oem[0]=hdp.vertreter) and (hdp.replyto <> '')) or
+    if (hds=1) or ((hdp.wab='') and (hdp.oem.Count = 0) and (hdp.replyto <> '')) or
+                  ((hdp.wab='') and (hdp.oem.count > 0) and (hdp.oem[0]=hdp.vertreter) and (hdp.replyto <> '')) or
                   (not wabok and (hdp.oem.count = 0) and (hdp.replyto = ''))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
@@ -314,6 +314,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2002/01/02 11:13:40  mk
+  - fixed two Bugs in GetWABReply (prevents Ctrl-P to FIDO PMs)
+
   Revision 1.33  2001/12/23 10:59:03  mk
   - fixed ReadXPostEmpfaenger, EmpfList was not correctly assigned to SendEmpfList
 
