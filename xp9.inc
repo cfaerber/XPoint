@@ -513,6 +513,7 @@
           msetvfunc(progtest);
           maddstring(3,11+add,getres2(920,57),unbzipper,br,40,''); { 'bzip2-Entpacker' }
           mappsel(false,'bzip2 -vdf $DOWNFILE');
+          mhnr(8026);
           msetvfunc(progtest);
           end;
         if not fido then
@@ -1697,6 +1698,9 @@
 
 {
   $Log$
+  Revision 1.30  2000/11/04 18:57:49  fe
+  Link to bzip2 helppage added.
+
   Revision 1.29  2000/11/02 21:27:04  fe
   bzip2 support added.
 
