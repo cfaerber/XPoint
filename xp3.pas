@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,datadef,database,montage,resource,
-      xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal;
+  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -1237,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/09 08:35:15  mk
+  - AnsiStrings Updates
+
   Revision 1.33  2000/07/05 15:46:47  hd
   - AnsiString
 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -16,7 +17,7 @@ unit xp0;
 
 interface
 
-uses   dos,typeform,keys,xpglobal;
+uses  dos,typeform,keys,xpglobal;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -79,13 +80,8 @@ const
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-{$ifdef hasHugeString}
        xp_xp       : string = 'OpenXP';
        xp_origin   : string = '--- OpenXP';
-{$else}
-       xp_xp       : string[6] = 'OpenXP';
-       xp_origin   : string[15] = '--- OpenXP';
-{$endif}
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -307,6 +303,8 @@ const
        hdf_ersetzt = 33;
        hdf_control = 34;
 
+{$I XPHEADER.INC }
+
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -401,175 +399,18 @@ type   textp  = ^text;
        { Netztypen: 0=Netcall, 1=Pointcall, 2=ZConnect, 3=MagicNET }
        {            10=QM, 11=GS, 20=Maus, 30=Fido, 40=RFC         }
 
-{$ifdef hasHugeString}
        OrgStr      = string;
        AdrStr      = string;
        TeleStr     = string;
        HomepageStr = string;
        CustHeadStr = string;
-{$else}
-       OrgStr      = string[OrgLen];
-       AdrStr      = string[AdrLen];
-       TeleStr     = string[TeleLen];
-       HomepageStr = string[HomepageLen];
-       CustHeadStr = string[CustHeadLen];
-{$endif}
        pviewer     = ^string;
 
        refnodep= ^refnode;             { Datentyp fÅr Reference-Liste }
        refnode = record
                    next  : refnodep;
-{$ifdef hasHugeString}
                    ref   : string;
-{$else}
-                   ref   : string[midlen];
-{$endif}
                  end;
-       empfnodep=^empfnode;
-       empfnode= record
-                   next   : empfnodep;
-{$ifdef hasHugeString}
-                   empf   : string;
-{$else}
-                   empf   : AdrStr;
-{$endif}
-                 end;
-{$ifdef hasHugeString}
-       header = record
-                  netztyp    : byte;          { --- intern ----------------- }
-                  archive    : boolean;       { archivierte PM               }
-                  attrib     : word;          { Attribut-Bits                }
-                  filterattr : word;          { Filter-Attributbits          }
-                  empfaenger : string;    { --- allgemein --- Brett / User / TO:User }
-                  kopien     : empfnodep;     { KOP: - Liste }
-                  empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  betreff    : string;
-                  absender   : string;
-                  datum      : string;    { Netcall-Format               }
-                  zdatum     : string;    { ZConnect-Format; nur auslesen }
-                  orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
-                  pfad       : string;    { Netcall-Format               }
-                  msgid,ref  : string;{ ohne <>                      }
-                  ersetzt    : string;{ ohne <>                      }
-                  refanz     : integer;       { Anzahl BEZ-Zeilen            }
-                  typ        : string;     { T / B                        }
-                  crypttyp   : string;     { '' / T / B                   }
-                  charset    : string;
-                  ccharset   : string;     { crypt-content-charset }
-                  groesse    : longint;
-                  realname   : string;
-                  programm   : string;        { Mailer-Name }
-                  organisation : string;
-                  postanschrift: string;
-                  telefon    : string;
-                  homepage   : string;
-                  PmReplyTo  : string;        { Antwort-An    }
-                  AmReplyTo  : string;        { Diskussiom-In }
-                  amrepanz   : integer;       { Anzahl Diskussion-in's }
-                  komlen     : longint;       { --- ZCONNECT --- Kommentar-LÑnge }
-                  ckomlen    : longint;       { Crypt-Content-KOM }
-                  datei      : string;    { Dateiname                  }
-                  ddatum     : string;    { Dateidatum, jjjjmmtthhmmss }
-                  prio       : byte;          { 10=direkt, 20=Eilmail      }
-                  error      : string; { ERR-Header              }
-                  oem,oab,wab: string;
-                  oar,war    : string;    { Realnames }
-                  real_box   : string;    { --- Maggi --- falls Adresse = User@Point }
-                  hd_point   : string;    { eigener Pointname }
-                  pm_bstat   : string;    { --- Maus --- Bearbeitungs-Status }
-                  org_msgid  : string;
-                  org_xref   : string;
-                  ReplyPath  : string;
-                  ReplyGroup : string;    { Kommentar-zu-Gruppe          }
-                  fido_to    : string;    { --- Fido ------------------- }
-                  x_charset  : string;    { --- RFC -------------------- }
-                  keywords   : string;
-                  summary    : string;
-{!MH:}          priority   : byte;          { Priority: 1, 3, 5 }
-                  distribution:string;
-                  pm_reply   : boolean;       { Followup-To: poster }
-                  quotestring: string;
-                  empfbestto : string;
-                  pgpflags   : word;          { PGP-Attribut-Flags           }
-                  pgp_uid    : string;    { alternative Adresse          }
-                  vertreter  : string;
-                  XPointCtl  : longint;
-                  nokop      : boolean;
-                  boundary   : string;    { MIME-Multipart-Boundary      }
-                  mimetyp    : string;
-                  xnoarchive : boolean;
-                  Cust1,Cust2: string;
-                  control    : string;
-                end;
-{$else}
-       header = record
-                  netztyp    : byte;          { --- intern ----------------- }
-                  archive    : boolean;       { archivierte PM               }
-                  attrib     : word;          { Attribut-Bits                }
-                  filterattr : word;          { Filter-Attributbits          }
-                  empfaenger : string[90];    { --- allgemein --- Brett / User / TO:User }
-                  kopien     : empfnodep;     { KOP: - Liste }
-                  empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  betreff    : string[BetreffLen];
-                  absender   : string[80];
-                  datum      : string[11];    { Netcall-Format               }
-                  zdatum     : string[22];    { ZConnect-Format; nur auslesen }
-                  orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
-                  pfad       : Hugestring;    { Netcall-Format               }
-                  msgid,ref  : string[midlen];{ ohne <>                      }
-                  ersetzt    : string[midlen];{ ohne <>                      }
-                  refanz     : integer;       { Anzahl BEZ-Zeilen            }
-                  typ        : string[1];     { T / B                        }
-                  crypttyp   : string[1];     { '' / T / B                   }
-                  charset    : string[7];
-                  ccharset   : string[7];     { crypt-content-charset }
-                  groesse    : longint;
-                  realname   : string[realnlen];
-                  programm   : string;        { Mailer-Name }
-                  organisation : OrgStr;
-                  postanschrift: string[PostAdrLen];
-                  telefon    : TeleStr;
-                  homepage   : HomepageStr;
-                  PmReplyTo  : AdrStr;        { Antwort-An    }
-                  AmReplyTo  : AdrStr;        { Diskussiom-In }
-                  amrepanz   : integer;       { Anzahl Diskussion-in's }
-                  komlen     : longint;       { --- ZCONNECT --- Kommentar-LÑnge }
-                  ckomlen    : longint;       { Crypt-Content-KOM }
-                  datei      : string[40];    { Dateiname                  }
-                  ddatum     : string[14];    { Dateidatum, jjjjmmtthhmmss }
-                  prio       : byte;          { 10=direkt, 20=Eilmail      }
-                  error      : string[hdErrLen]; { ERR-Header              }
-                  oem,oab,wab: AdrStr;
-                  oar,war    : string[realnlen];    { Realnames }
-                  real_box   : string[20];    { --- Maggi --- falls Adresse = User@Point }
-                  hd_point   : string[25];    { eigener Pointname }
-                  pm_bstat   : string[20];    { --- Maus --- Bearbeitungs-Status }
-                  org_msgid  : string[120];
-                  org_xref   : string[120];
-                  ReplyPath  : string[8];
-                  ReplyGroup : string[40];    { Kommentar-zu-Gruppe          }
-                  fido_to    : string[36];    { --- Fido ------------------- }
-                  x_charset  : string[25];    { --- RFC -------------------- }
-                  keywords   : string[60];
-                  summary    : string[200];
-{!MH:}          priority   : byte;          { Priority: 1, 3, 5 }
-                  distribution:string[40];
-                  pm_reply   : boolean;       { Followup-To: poster }
-                  quotestring: string[20];
-                  empfbestto : string[AdrLen];
-                  pgpflags   : word;          { PGP-Attribut-Flags           }
-                  pgp_uid    : string[80];    { alternative Adresse          }
-                  vertreter  : string[80];
-                  XPointCtl  : longint;
-                  nokop      : boolean;
-                  boundary   : string[70];    { MIME-Multipart-Boundary      }
-                  mimetyp    : string[30];
-                  xnoarchive : boolean;
-                  Cust1,Cust2: CustHeadStr;
-                  control    : string[150];
-                end;
-{$endif} { hasHugeString }
-       headerp = ^header;
 
        markrec  =  record
                      recno : longint;
@@ -1570,6 +1411,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.69  2000/07/09 08:35:14  mk
+  - AnsiStrings Updates
+
   Revision 1.68  2000/07/07 14:38:36  hd
   - AnsiString
   - Kleine Fixes nebenbei

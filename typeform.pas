@@ -158,6 +158,8 @@ function IsoToIbm(s:string): String;            { Konvertiert ISO in IBM Zeichne
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
   Zeichensatz konvertiert }
 function ConvertFileName(s:string): String;
+// siehe XPDTAUM !?
+procedure ZtoZCdatumNTZ(var d1,d2:string);
 
 { ================= Implementation-Teil ==================  }
 
@@ -1288,9 +1290,18 @@ begin
   {$ENDIF }
 end;
 
+procedure ZtoZCdatumNTZ(var d1,d2:string);
+begin
+  if ival(left(d1,2))<70 then d2:='20'+d1+'00W+0'
+  else d2:='19'+d1+'00W+0';
+end;
+
 end.
 {
   $Log$
+  Revision 1.57  2000/07/09 08:35:13  mk
+  - AnsiStrings Updates
+
   Revision 1.56  2000/07/07 09:51:30  mk
   - verschiedene AnsiString Fixes
 

@@ -11,9 +11,6 @@
 { CrossPoint - MausNet }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpmaus;
 
@@ -25,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     sysutils,dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
+  sysutils,dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
      xp0,xp1,xp1input,crc,xp_iti, xpglobal;
 
 
@@ -840,6 +837,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/09 08:35:19  mk
+  - AnsiStrings Updates
+
   Revision 1.11  2000/07/05 12:47:28  hd
   - AnsiString
 

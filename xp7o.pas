@@ -25,8 +25,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  winxp,
-      dos,typeform,inout,fileio,datadef,database,resource,maus2,
+  winxp, dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti;
 
 procedure ttwin;
@@ -796,6 +795,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/09 08:35:19  mk
+  - AnsiStrings Updates
+
   Revision 1.19  2000/07/05 17:35:37  hd
   - AnsiString
 

@@ -15,9 +15,6 @@
 { Errorlevel:  0=ok, 1=Fehler             }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$M 16384,80000,110000}
-{$ENDIF }
 
 uses
   sysutils,
@@ -59,7 +56,7 @@ const XPrequest = 'File Request';
       attrKillSent = $0080;
 
 type  FidoAdr  = record
-                   username   : string[36];
+                   username   : string;
                    zone,net   : word;
                    node,point : word;
                    ispoint    : boolean;
@@ -67,30 +64,30 @@ type  FidoAdr  = record
 
       zheader  = record                      { ZConnect - Header }
                    netztyp    : byte;
-                   empfaenger : string[90];    { Brett / User / TO:User }
-                   betreff    : string[72];
-                   absender   : string[80];
-                   realname   : string[40];
-                   datum      : string[11];    { Netcall-Format }
-                   zdatum     : string[22];    { ZConnect-Format }
+                   empfaenger : string;    { Brett / User / TO:User }
+                   betreff    : string;
+                   absender   : string;
+                   realname   : string;
+                   datum      : string;    { Netcall-Format }
+                   zdatum     : string;    { ZConnect-Format }
                    pfad       : string;        { Netcall-Format }
-                   msgid,ref  : string[midlen]; { ohne <> }
-                   org_msgid  : string[midlen]; { ^aORIGID }
-                   org_xref   : string[midlen]; { ^aORIGREF }
-                   typ        : string[1];     { T / B }
+                   msgid,ref  : string; { ohne <> }
+                   org_msgid  : string; { ^aORIGID }
+                   org_xref   : string; { ^aORIGREF }
+                   typ        : string;     { T / B }
                    groesse    : longint;
                    komlen     : longint;       { Kommentar-LÑnge }
                    programm   : string;        { Mailer-Name }
-                   datei      : string[40];    { Dateiname }
+                   datei      : string;    { Dateiname }
                    prio       : byte;          { 10=direkt, 20=Eilmail }
                    attrib     : word;          { Attribut-Bits }
                    filterattr : word;
-                   fido_to    : string[36];
-                   fido_flags : string[80];
-                   x_charset  : string[25];
-                   keywords   : string[60];
-                   summary    : string[200];
-                   distribution:string[40];
+                   fido_to    : string;
+                   fido_flags : string;
+                   x_charset  : string;
+                   keywords   : string;
+                   summary    : string;
+                   distribution:string;
                    pgpencode  : boolean;
                    pgpsigned  : boolean;
                    XPointCtl  : longint;
@@ -170,42 +167,6 @@ const
 
 procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; {&uses ebx, esi, edi}
 asm
-{$IFDEF BP }
-       push ds
-       les    di,data          { es:di -> msgbuf^[0] }
-       lds    si,data          { es:si -> msgbuf^[bpos] }
-       mov    bx,bpos          { max. Anzahl einfÅgbarer LFs }
-       add    si,bx
-       mov    cx,size          { cx <- mbufsize-bpos }
-       xor    dx,dx            { ZÑhler fÅr eingefÅgte LF's }
-       cld
-@lp1:  lodsb
-       stosb
-       cmp    al,13
-       jz     @isCR
-       loop   @lp1
-       jmp    @ende
-@isCR: dec    cx
-       jcxz   @noLF            { Nachricht endet auf CR -> LF anhÑngen }
-       lodsb                   { Test auf CR ohne LF }
-       cmp    al,10
-       jnz    @noLF
-       stosb                   { ok: CR/LF }
-       loop   @lp1
-       jmp    @ende
-@noLF: xchg   ah,al
-       mov    al,10            { LF einfÅgen }
-       stosb
-       xchg   al,ah
-       stosb
-       inc    dx
-       jcxz   @ende
-       cmp    dx,bx
-       loopne @lp1
-@ende: les    di,addlfs
-       mov    es:[di],dx
-       pop ds
-{$ELSE }
        mov    edi,data          { es:di -> msgbuf^[0] }
        mov    esi,data          { es:si -> msgbuf^[bpos] }
        mov    ebx,bpos          { max. Anzahl einfÅgbarer LFs }
@@ -238,7 +199,6 @@ asm
        loopne @lp1
 @ende: mov edi, addlfs
        mov [edi], edx
-{$ENDIF}
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ELSE }
@@ -247,18 +207,6 @@ end;
 
 procedure Remove0(var data; size:word); assembler; {&uses edi}
 asm
-{$IFDEF BP }
-        les    di,data
-        mov    cx,size
-        jcxz   @rende
-        mov    al,0
-        cld
-@rlp:   repnz  scasb
-        jcxz   @rende
-        mov    byte ptr es:[di-1],' '    { #0 -> ' ' }
-        jmp    @rlp
-@rende:
-{$ELSE }
         mov    edi,data
         mov    ecx,size
         jecxz  @rende
@@ -269,7 +217,6 @@ asm
         mov    byte ptr [edi-1],' '    { #0 -> ' ' }
         jmp    @rlp
 @rende:
-{$ENDIF}
 {$IFDEF FPC }
 end ['EAX', 'ECX', 'EDI'];
 {$ELSE }
@@ -278,22 +225,6 @@ end;
 
 procedure ISO2IBM(var data; size:word); assembler; {&uses ebx, esi}
 asm
-{$IFDEF BP }
-          mov    bx,offset ISO2IBMtab - 128
-          les    si,data
-          mov    cx,size
-          jcxz   @xende
-@xloop:   mov    al,es:[si]
-          inc    si
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    es:[si-1],al
-          loop   @xloop
-@xende:
-{$ELSE }
           mov    ebx,offset ISO2IBMtab - 128
           mov    esi,data
           mov    ecx,size
@@ -308,7 +239,6 @@ asm
           mov    [esi-1],al
           loop   @xloop
 @xende:
-{$ENDIF}
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
 {$ELSE }
@@ -317,23 +247,6 @@ end;
 
 procedure Mac2IBM(var data; size:word); assembler; {&uses ebx, esi}
 asm
-{$IFDEF BP }
-          mov    bx,offset Mac2IBMtab - 128
-          les    si,data
-          mov    cx,size
-          jcxz   @xende
-          jmp    @xloop
-@xloop:   mov    al,es:[si]
-          inc    si
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    es:[si-1],al
-          loop   @xloop
-@xende:
-{$ELSE }
           mov    ebx,offset Mac2IBMtab - 128
           mov    esi,data
           mov    ecx,size
@@ -349,7 +262,6 @@ asm
           mov    [esi-1],al
           loop   @xloop
 @xende:
-{$ENDIF}
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
 {$ELSE }
@@ -562,20 +474,18 @@ var b       : charr absolute buf;
     o,res : integer;
     line    : string;
     p       : byte;
-    id      : string[30];
+    id      : string;
 
   procedure getZline;
-  var l : byte;
+  var
+    l : byte;
   begin
-    l:=0;
-    while (o<ReadFirst) and (b[o]<>#13) do begin
-      if l<255 then begin
-        inc(l);
-        line[l]:=b[o];
-        end;
+    line := '';
+    while (o<ReadFirst) and (b[o]<>#13) do
+    begin
+      line := line + b[o];
       inc(o);
-      end;
-    line[0]:=char(l);
+    end;
     inc(o,2);
     if o>=ReadFirst then ok:=false;
   end;
@@ -658,10 +568,10 @@ var buffer : array[0..2047] of byte;
     for i:=1 to length(s) do
       if s[i]<' ' then
         s[i]:='_';
-    if length(s)>253 then TruncStr(s,253);
     s:=s+#13#10;
     Move(s[1],buffer[ofs],length(s));
     inc(ofs,length(s));
+    // !!
     if ofs>sizeof(buffer)-260 then
       writebuffer;
   end;
@@ -669,12 +579,6 @@ var buffer : array[0..2047] of byte;
   function fdat(dat:string):string;             { Z-Datum -> Datum  }
   begin
     fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+left(dat,2);
-  end;
-
-  procedure ZtoZCdatum(var d1,d2:string);
-  begin
-    if ival(left(d1,2))<70 then d2:='20'+d1+'00W+0'
-    else d2:='19'+d1+'00W+0';
   end;
 
 begin
@@ -685,7 +589,7 @@ begin
     wrs('BET: '+betreff);
     wrs('ROT: '+pfad);
     wrs('MID: '+msgid);
-    ZtoZCdatum(datum,zdatum);
+    ZtoZCdatumNTZ(datum,zdatum);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
     if typ='B'      then wrs('TYP: BIN');
@@ -753,7 +657,6 @@ var f1,f2   : file;
 
   procedure wrs(s:string);
   begin
-    if length(s)>253 then TruncStr(s,253);
     s:=s+#13#10;
     blockwrite(f2,s[1],length(s));
   end;
@@ -808,10 +711,10 @@ var f1,f2   : file;
 
   function WriteMessageHeader:boolean;
   var mhd    : mheader;
-      s      : string[20];
+      s      : string;
       p      : byte;
-      xflags : string[20];
-      uuadr  : string[79];
+      xflags : string;
+      uuadr  : string;
 
     function fdate:string;
     begin
@@ -893,7 +796,7 @@ var f1,f2   : file;
       wr0(fa2.username);                       { toUserName   }
       wr0(fa1.username);                       { fromUserName }
       if attrib and attrFile<>0 then
-        betreff:=getFileName(betreff);
+        betreff:=ExtractFileName(betreff);
       wr0(betreff);                            { Subject      }
 
       if not pm then
@@ -1069,7 +972,7 @@ var f1,f2  : file;
     ok     : boolean;
     phd    : pheader;
     mhd    : mheader;
-    fdat   : string[20];
+    fdat   : string;
     i,j,p  : integer;
     adr,n  : longint;
     adr0   : longint;
@@ -1115,37 +1018,43 @@ label abbr;
 
   procedure wrs(s:string);
   begin
-    if length(s)>253 then TruncStr(s,253);
     s:=s+#13#10;
     blockwrite(f2,s[1],length(s));
   end;
 
   function getstr(ml:byte):string;
-  var pp : byte;
+  var
+    pp : byte;
+    s : String;
   begin
-    pp:=0;
+    pp:=0; s := '';
+    SetLength(s, rr);
     while (p<=rr) and (buf[p]<>0) do begin
-      if pp<ml then begin
+      if pp<ml then
+      begin
         inc(pp);
-        getstr[pp]:=char(buf[p]);
-        end;
-      inc(p);
+        s[pp]:=char(buf[p]);
       end;
-    getstr[0]:=chr(pp);
+      inc(p);
+    end;
+    SetLength(s, pp);
+    GetStr := s;
     inc(p);
   end;
 
   procedure getrestofline;
   var p : byte;
   begin
+    SetLength(s, 255);
     blockread(f1,s[1],255,rr);
-    s[0]:=chr(rr);
+    SetLength(s, rr);
     p:=cpos(#13,s);
     if p=0 then p:=cpos(#10,s);
     if p=0 then p:=cpos(#0,s);
     lfs:=0;
-    if p>0 then begin
-      s[0]:=chr(p-1);
+    if p>0 then
+    begin
+      SetLength(s, p-1);
       if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
       while (p<rr) and (s[p+1]=#10) do begin
         inc(p);   { LFs Åberlesen }
@@ -1376,7 +1285,7 @@ label abbr;
       while (s<>'') and ((s[1]<'0') or (s[1]>'9')) do
         delfirst(s);
       while (s<>'') and ((s[length(s)]<'0') or (s[length(s)]>'9')) do
-        dec(byte(s[0]));
+        DelLast(s);
       splitfido(s,origin);
       end;
   end;
@@ -1449,7 +1358,7 @@ label abbr;
   procedure InternetAdresse(s:string);
   var p : byte;
   begin
-    p:=pos('<',left(s,253));
+    p:=pos('<',s);
     if p>0 then begin
       s:=mid(s,p+1);      { User Name <...> -> Realname und <> wegschneiden }
       dellast(s);
@@ -1620,7 +1529,7 @@ begin
         if attrib and attrCrash<>0 then prio:=10;
         attrib:=mattrib and $3012;   { Crash, File, ReqEB, IsEB }
         if (attrib and attrFile<>0) and (cpos('\',betreff)>0) then
-          betreff:=GetFileName(betreff);   { Pfad aus Betreff entfernen }
+          betreff:=ExtractFileName(betreff);   { Pfad aus Betreff entfernen }
         end;
 
       adr0:=adr;              { wird unten geÑndert, falls Origin vorhanden }
@@ -1811,6 +1720,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/07/09 08:35:20  mk
+  - AnsiStrings Updates
+
   Revision 1.26  2000/07/04 12:04:32  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

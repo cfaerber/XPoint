@@ -55,7 +55,7 @@ begin
   repeat
     p:=pos(s1,UpperCase(s));
     if p>0 then
-      s:=Left(s,p-1)+Trim(s2)+mid(s, p + length(s1);
+      s:=Left(s,p-1)+Trim(s2)+mid(s, p + length(s1));
   until p=0;
 end;
 
@@ -1055,6 +1055,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/09 08:35:15  mk
+  - AnsiStrings Updates
+
   Revision 1.24  2000/07/07 18:38:50  mk
   - Trim fuer Textmakros eingefuegt und Space bei $RNAME entfernt
 

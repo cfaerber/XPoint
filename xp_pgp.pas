@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -16,7 +17,8 @@ unit  xp_pgp;
 
 interface
 
-uses  sysutils,xpglobal, dos,typeform,fileio,resource,database,maske,xp0,xp1;
+uses  sysutils,xpglobal, dos,typeform,fileio,resource,database,maske,
+  xp0,xp1;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
@@ -261,7 +263,7 @@ end;
 { Bei Fido-Nachrichten Origin abschneiden und nach Codierung }
 { / Signierung wieder anh„ngen.                              }
 
-procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
+procedure PGP_EncodeFile(var source:file; var hd: xp0.header;
                          fn,UserID:string; encode,sign:boolean;
                          var fido_origin:string);
 var tmp  : string;
@@ -778,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/09 08:35:19  mk
+  - AnsiStrings Updates
+
   Revision 1.23  2000/07/05 17:10:54  mk
   - AnsiString Updates
 

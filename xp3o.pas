@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -22,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      sysutils,dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
+  sysutils,dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
       resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
@@ -1521,6 +1522,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/09 08:35:15  mk
+  - AnsiStrings Updates
+
   Revision 1.25  2000/07/05 15:46:47  hd
   - AnsiString
 

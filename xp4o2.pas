@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -23,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
+  dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
       resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
 
 { Deklaration des Kommentarbaums in XP0 }
@@ -896,6 +897,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/09 08:35:17  mk
+  - AnsiStrings Updates
+
   Revision 1.16  2000/07/05 17:35:36  hd
   - AnsiString
 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -26,27 +27,12 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
 uses dos, sysutils,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect=2;
-      OrgLen    = 80;
-      hderrlen  = 40;
-      BetreffLen= 70;
       readempflist = false;
       readkoplist  = false;
-      postadrlen= 80;
-      telelen   = 60;
-      adrlen    = 80;
-      homepagelen = 90;
-      { 01/2000 oh }
-      custheadlen = 60;
-      { /oh }
-      realnlen= 40;
 
       direction : byte = 0;
       infile    : pathstr = '';
@@ -68,8 +54,6 @@ const nt_ZConnect=2;
       mausKF    : boolean = true;    { fb: Filter f?r Kommentare }
       MausIT_files : boolean = false;   { ITI/ITG -> Box.IT* }
 
-      { attrCrash   = $0002; }        { header.attrib: Crashmail   }
-      { attrFile    = $0010; }        { File attached              }
       attrMPbin   = $0040;            { Multipart-Binary           }
       attrReqEB   = $1000;            { EB anfordern               }
       attrIsEB    = $2000;            { EB                         }
@@ -78,82 +62,11 @@ const nt_ZConnect=2;
       AttrQPC     = $0001;            { QPC-codiert                }
       AttrControl = $0020;            { Cancel-Nachricht }
 
+{$I XPHEADER.INC }
+
 type  charr       = array[0..65530] of char;
       charrp      = ^charr;
 
-      empfnodep=^empfnode;
-      empfnode= record
-                  next   : empfnodep;
-                  empf   : string[AdrLen];
-                end;
-
-      header = record
-                 netztyp    : byte;
-                 archive    : boolean;       { archivierte PM }
-                 empfaenger : string[90];    { Brett / User / TO:User }
-                 empfanz    : integer;
-                 kopien     : empfnodep;
-                 betreff    : string[BetreffLen];
-                 absender   : string[80];
-                 datum      : string[11];    { Netcall-Format }
-                 ddatum     : string[14];
-                 zdatum     : string[22];    { ZConnect-Format; nur auslesen }
-                 pfad       : HugeString;    { Netcall-Format }
-                 msgid,ref  : string[120];   { ohne <> }
-                 ersetzt    : string[120];   { ohne <> }
-                 typ        : string[1];     { T / B }
-                 crypttyp   : string[1];
-                 groesse    : longint;
-                 komlen     : longint;       { Kommentar-LÑnge }
-                 ckomlen    : longint;
-                 realname   : string[realnlen];
-                 programm   : string[60];    { Mailer-Name }
-                 datei      : string[40];    { Dateiname }
-                 prio       : byte;          { 10=direkt, 20=Eilmail }
-                 oem,oab,wab: string[90];
-                 oar,war    : string[realnlen];
-                 real_box   : string[20];    { X-XP-BOX: Absendebox }
-                 hd_point   : string[25];    { X-XP-PNT: Pointname  }
-                 pm_bstat   : string[20];    { X-XP-BST: Bearb.-Status }
-                 org_msgid  : string[120];   { X-XP-ORGMID }
-                 org_xref   : string[120];   { X-XP-ORGREF }
-                 attrib     : word;          { X-XP-ATT    }
-                 filterattr : word;          { X-XP-F      }
-                 fido_to    : string[36];    { X-XP-FTO    }
-                 organisation  : string[OrgLen];
-                 postanschrift : string[PostAdrlen];
-                 telefon    : string[telelen];
-                 homepage   : string[homepagelen];
-                 PmReplyTo  : string[80];      { Reply-To }
-                 AmReplyTo  : string[80];
-                 amrepanz   : integer;
-                 error      : string[hderrlen];
-                 ReplyPath  : string[8];
-                 ReplyGroup : string[40];
-                 x_charset  : string[25];
-                 keywords   : string[60];
-                 summary    : string[200];
-                 priority   : byte;           { Priority by MH }
-                 distribution:string[40];
-                 pm_reply   : boolean;
-                 QuoteString: string[20];
-                 empfbestto : string[adrlen];
-                 charset    : string[7];
-                 ccharset   : string[7];
-                 vertreter  : string[80];
-                 XPointCtl  : longint;
-                 nokop      : boolean;
-                 mimever    : string[20];    { MIME }
-                 mimect     : string;
-                 boundary   : string[70];
-                 gate       : string[80];
-                 mimetyp    : string[30];
-                 xnoarchive: boolean; { MK 01/00 fÅr UUZ Fix von Robo }
-                 { 01/2000 oh }
-                 Cust1,Cust2: string[custheadlen];
-                 { /oh }
-                 control    : string[150];
-               end;
 
       brett  = record
                  code  : string[4];
@@ -165,10 +78,10 @@ var   f1,f2     : file;
       brettp    : array[1..maxbrett] of ^brett;
 
 
-{ 01/2000 oh : wird zum Einlesen der Customizable Headerlines benîtigt }
 
 const
-      mheadercustom : array[1..2] of string[custheadlen] = ('','');
+  { wird zum Einlesen der Customizable Headerlines benîtigt }
+      mheadercustom : array[1..2] of string = ('','');
 
 procedure logo;
 begin
@@ -267,7 +180,6 @@ end;
 
 { s. auch XP8.readbrettliste! }
 
-{$R-}
 procedure loadbretter(pronet:boolean);
 const s : string = '';
       p : byte = 0;
@@ -332,7 +244,7 @@ begin
             brettp[bretter]^.code:=trim(copy(s,41,6));
           p:=40;
           while (p>0) and (s[p]=' ') do dec(p);
-          s[0]:=chr(p);
+          SetLength(s, p);
           { UpString(s); }
           if left(s,1)<>'/' then s:=left('/'+s,40);
           while cpos(' ',s)>0 do
@@ -347,10 +259,6 @@ begin
   writeln(' ok.');
   writeln;
 end;
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
-
 
 procedure testfiles;
 begin
@@ -368,7 +276,7 @@ begin
 end;
 
 procedure fmove(size:longint);
-const bs = 20000;
+const bs = 32768;
 var p  : pointer;
     rr : word;
 begin
@@ -396,13 +304,6 @@ begin
     end;
   reverse:=s;
 end;
-
-procedure ZtoZCdatum(var d1,d2:string);
-begin
-  if ival(left(d1,2))<70 then d2:='20'+d1+'00W+0'
-  else d2:='19'+d1+'00W+0';
-end;
-
 
 procedure MZ(pronet:boolean);
 const maxmlines = 10;   { max. $-Zeilen, die in Z-Text Åbernommen werden }
@@ -434,7 +335,6 @@ var hd   : header;
     ef1:=eof(f1);
   end;
 
-  {$R-}
   procedure rdln;
   var l,b : byte;
 
@@ -457,12 +357,9 @@ var hd   : header;
         if (b<>13) and (b<>10) then begin   { LFs werden einfach ignoriert }
           inc(l); s[l]:=chr(b); end;
       until (b=13) or (bpos>=bsize);
-    s[0]:=chr(l);
+    SetLength(s, l);
     { if b=13 then getb; }    { LF Åberlesen }
   end;
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
 
   function ff(msgid:string):string;
   begin
@@ -560,7 +457,7 @@ begin
           if mc='$ ORIGIN  :' then begin
             datum:=copy(s,21,2)+copy(s,16,2)+copy(s,13,2)+copy(s,24,2)+
                    copy(s,27,2);
-            ZtoZCdatum(datum,zdatum);
+            ZtoZCdatumNTZ(datum,zdatum);
             end else
           if mc='$ REALNAME:' then
             realname:=trim(mid(s,12)) else
@@ -669,7 +566,7 @@ procedure setzdate(var hd:header);
 begin
   with hd do begin
     if datum='' then datum:=zdate;
-    ZtoZCdatum(datum,zdatum);
+    ZtoZCdatumNTZ(datum,zdatum);
     end;
 end;
 
@@ -693,11 +590,7 @@ begin
 end;
 
 
-{$R-}
 {$I xpmakehd.inc}     { MakeHeader() }
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
 
 procedure cerror;
 begin
@@ -719,7 +612,6 @@ var hd    : header;
     fs    : longint;
     nn    : longint;
     alias : boolean;
-{    SevenNet : boolean; }
     MagicNet : boolean;
     reqfile  : text;
     reqopen  : boolean;
@@ -745,7 +637,6 @@ var hd    : header;
   end;
 
 begin
-{  SevenNet:=(LowerCase(netzname)='sevennet'); }
   MagicNet:=(LowerCase(netzname)='magicnet');
   reset(f1,1);
   rewrite(f2,1);
@@ -768,8 +659,9 @@ begin
           reqopen:=true;
           end;
         seek(f1,adr+hds);
-        blockread(f1,s[1],min(255,groesse),rr);
-        s[0]:=chr(rr);
+        SetLength(s, groesse);
+        blockread(f1,s[1],groesse,rr);
+        SetLength(s, rr);
         write(reqfile,s);
         end
       else begin
@@ -989,22 +881,17 @@ var hd     : header;
   end;
 
   procedure getline;
-  var b : byte;
-      c : char;
+  var
+    c : char;
   begin
-    b:=0;
-    c:=#0;
-    while (c<>#10) and ((bufpos<rr) or (size>0)) and (b<253) do begin
+    c:=#0; s := ''; // Hier ist es besser, ein wenig RAM vorher zu allocieren
+    while (c<>#10) and ((bufpos<rr) or (size>0)) do
+    begin
       c:=getchar;
-      if (c>=' ') or (c=#9) then begin
-        inc(b); s[b]:=c;
-        end;
-      end;
-    if b<253 then begin
-      s[b+1]:=#13; s[b+2]:=#10;
-      inc(b,2);
-      end;
-    s[0]:=chr(b);
+      if (c>=' ') or (c=#9) then
+        s := s + c;
+    end;
+    s := s + #13#10;
   end;
 
   procedure get_infofiles;
@@ -1102,7 +989,6 @@ var hd     : header;
     writeln(t,':',left(map,32));
     writeln(t,':',mid(map,33));
     writeln(t,':begin 644 ',iifs(hd.datei<>'',hd.datei,mid(zdate,3)+'.msg'));
-    {$R-}
     while size>0 do begin
       blockread(f1,line,min(llen,size),rr);
       s[0]:=chr(1+((rr+2) div 3)*4);
@@ -1118,9 +1004,6 @@ var hd     : header;
       writeln(t,':',s);
       dec(size,rr);
       end;
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
     writeln(t,':`');
     writeln(t,':end');
     writeln(t,':size ',hd.groesse);
@@ -1196,7 +1079,6 @@ var hd     : header;
     writeln(t);
     writeln(t,':Content-Transfer-Encoding: base64');
     writeln(t,':');
-    {$R-}
     while size>0 do begin
       blockread(f1,line,min(llen,size),rr);
       s[0]:=chr(((rr+2) div 3)*4);
@@ -1215,9 +1097,6 @@ var hd     : header;
       writeln(t,':',s);
       dec(size,rr);
       end;
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
     writeln(t,':---');
   end;
 
@@ -1379,7 +1258,7 @@ var t1,log     : text;
     f2         : file;
     pmlog,stlog: text;
     hd         : header;
-    s          : string[253];
+    s          : string;
     tbuf       : ^tbufa;
     lines,i,nn : longint;
     c          : char;
@@ -1432,10 +1311,7 @@ var t1,log     : text;
 
   procedure wrs(s:string);
   begin
-    if length(s)>253 then s[0]:=#253;
-    s[length(s)+1]:=#13;
-    s[length(s)+2]:=#10;
-    inc(byte(s[0]),2);
+    s := s + #13#10;
     blockwrite(f2,s[1],length(s));
   end;
 
@@ -1455,7 +1331,7 @@ var t1,log     : text;
       bufp : word;
       i    : integer;
       n,p  : byte;
-      s    : string[80];
+      s    : string;
       b1,b2,
       b3,b4: byte;
   begin
@@ -1527,9 +1403,7 @@ begin
   for i:=1 to maxxlines do
     new(xline[i]);
   MausReadITI(boxname,info,infos);
-{$IFDEF BP }
-  fsize:=_filesize(infile);
-{$ENDIF }
+  // !! fsize:=_filesize(infile);
   assign(t1,infile); settextbuf(t1,b1^); reset(t1);
   assign(f2,outfile); rewrite(f2,1);
   assign(log,logfile); rewrite(log);
@@ -1597,15 +1471,13 @@ begin
                   end;
             'A' : if empfaenger='' then empfaenger:=mausform(s);
             'B' : begin pm_bstat:=left(s,15); inc(pm); end;
-            'E' : begin datum:=copy(s,3,10); ZtoZCdatum(datum,zdatum); end;
+            'E' : begin datum:=copy(s,3,10); ZtoZCdatumNTZ(datum,zdatum); end;
             'G' : empfaenger:=bretth+s;
             'O' : organisation:=s;
             'V' : absender:=mausform(s);
             'W' : begin betreff:=s; inc(pm); keinbetreff:=false; end;
-            { fb: Name des Gateway aus der daf?r vorgesehenen Header-Zeile
-              nehmen }
+            { Name des Gateway aus der dafÅr vorgesehenen Header-Zeile nehmen }
             'Y' : gate:=left(s,80);
-            { /fb }
             'I' : org_msgid:=left(s,120);
             'R' : org_xref:=left(s,120);
             'N' : realname:=left(s,40);
@@ -1753,6 +1625,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/07/09 08:35:12  mk
+  - AnsiStrings Updates
+
   Revision 1.18  2000/07/04 12:04:17  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -122,7 +122,7 @@ begin
     if Assigned(P) then
     begin
       Size := StrLen(P);
-      Str[0] := Char(Size);
+      SetLength(Str, Size);
       Move(P^, Str[1], Size);
     end;
     Clip2String := Str;
@@ -312,6 +312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/09 08:35:12  mk
+  - AnsiStrings Updates
+
   Revision 1.24  2000/07/05 17:10:53  mk
   - AnsiString Updates
 

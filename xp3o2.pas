@@ -16,7 +16,7 @@ unit xp3o2;
 
 interface
 
-uses sysutils,typeform,datadef,database,resource,xp0,xp6, xpglobal;
+uses sysutils, typeform,datadef,database,resource,xp0,xp6, xpglobal;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -445,6 +445,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/09 08:35:15  mk
+  - AnsiStrings Updates
+
   Revision 1.13  2000/07/05 10:59:52  hd
   - Weitere AnsiString-Anpassungen
 

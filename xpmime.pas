@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -257,7 +258,7 @@ var   hdp      : headerp;
         bstack : array[1..maxlevel] of string;    { Boundaries }
         bptr   : integer;
         s         : string;
-	bufline   : string;
+        bufline   : string;
         s2        : string;
         folded    : boolean;
 {$ifdef hasHugeString}
@@ -751,6 +752,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/09 08:35:19  mk
+  - AnsiStrings Updates
+
   Revision 1.18  2000/07/06 18:26:26  hd
   - Stringzeiger entfernt
 

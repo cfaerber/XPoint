@@ -98,11 +98,7 @@ label ende;
   var t2  : text;
       hdp : headerp;
       s   : string;
-{$ifdef hasHugeString}
       feld: string;
-{$else}
-      feld: string[20];
-{$endif}
       p   : byte;
   begin
     ProcessTICfile:=false;

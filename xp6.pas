@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -2156,6 +2157,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/07/09 08:35:18  mk
+  - AnsiStrings Updates
+
   Revision 1.47  2000/07/06 12:39:35  hd
   - ^string entfernt
 

@@ -279,7 +279,7 @@ end;
 
 procedure getpar;
 var i,j : integer;
-    s   : string[127];
+    s   : string;
     c   : char;
     err : boolean;
 
@@ -366,16 +366,12 @@ end;
 Procedure MakeBak(n,newext:string);
 var bakname : string;
     f       : file;
-    dir     : dirstr;
-    name    : namestr;
-    ext     : extstr;
 begin
   assign(f,n);
   filemode:=ReadFilemode;
   reset(f,1); if ioresult<>0 then exit;
   close(f);
-  fsplit(n,dir,name,ext);
-  bakname:=dir+name+'.'+newext;
+  bakname:=ChangeFileExt(n, newext);
   assign(f,bakname);
 {$IFNDEF Delphi }
   setfattr(f,archive);  { evtl. altes BAK lîschen }
@@ -425,15 +421,10 @@ begin
 end;
 
 procedure openfiles;
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
 begin
   if ParRep then begin
-    if fo='' then begin
-      fsplit(fi,dir,name,ext);
-      fo:=dir+name+'.$$$';
-      end
+    if fo='' then
+      fo := ChangeFileExt(fi, '$$$')
     else
       makebak(fo,'BAK');
     filemode:=WriteFilemode;
@@ -546,17 +537,13 @@ var bufanz,
   end;
 
   procedure GetString;
-  var len : byte;
   begin
-    len:=0;
-    totallen:=0;
-    while (bufpos<bufanz) and (buf[bufpos]<>#13) and (buf[bufpos]<>#10) do begin
-      if len<253 then begin
-        inc(len); s[len]:=buf[bufpos];
-        end;
+    totallen:=0; s := '';
+    while (bufpos<bufanz) and (buf[bufpos]<>#13) and (buf[bufpos]<>#10) do
+    begin
+      s := s + buf[bufpos];
       IncO;
-      end;
-    s[0]:=chr(len);
+    end;
     if bufpos=bufanz then ok:=false
     else if buf[bufpos]=#10 then begin   { LF statt CR/LF }
       IncO; hdp^.lferror:=true;
@@ -922,7 +909,7 @@ var i,j  : integer;
 
   procedure TeleCheck;                   { TELEFON ÅberprÅfen }
   var p,j : byte;
-      nr  : string[80];
+      nr  : string;
       tok : boolean;
   begin
     cont:=left(trim(cont),254)+' ';
@@ -1316,6 +1303,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/07/09 08:35:20  mk
+  - AnsiStrings Updates
+
   Revision 1.19  2000/07/04 12:04:33  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

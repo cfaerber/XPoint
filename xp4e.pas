@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      sysutils,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
+ sysutils,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
       win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
 
@@ -1063,7 +1063,7 @@ end;
 
 
 function modibrett:boolean;
-var 
+var
 {$ifdef hasHugeString}
     brett  : string;
     komm   : string;
@@ -2498,6 +2498,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/09 08:35:16  mk
+  - AnsiStrings Updates
+
   Revision 1.30  2000/07/05 13:55:01  hd
   - AnsiString
 
