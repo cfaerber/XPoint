@@ -72,6 +72,7 @@ type
 
 const
       clnr   : word  = $ffff;    { geladener Cluster }
+      ResourceOpen : Boolean = false;
 
 var   block  : packed array[1..maxblocks] of rblock;
       blocks : word;
@@ -97,21 +98,28 @@ procedure OpenResource(fn:string; preloadmem:longint);
 var
   i  : integer;
 begin
+  if ResourceOpen then
+    error('Resource file already open');
   FH := FileOpen(fn, fmOpenRead);
   if FH < 0 then
     error(ioerror(ioresult,'can''t open '+UpperCase(fn)));
+  ResourceOpen := true;
   FileSeek(FH, 128, 0);
   FileRead(FH, Blocks, 2);
   FileSeek(FH, 128+16, 0);
   FileRead(FH,block,sizeof(block));
-  for i:=1 to blocks do begin          { Indextabellen laden }
+  for i:=1 to blocks do
+  begin          { Indextabellen laden }
     getmem(index[i],block[i].anzahl*4);
     FileSeek(FH, block[i].fileadr, 0);
-    FileRead(FH,index[i]^,block[i].anzahl*4);
+    FileRead(FH, index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-      getmem(block[i].rptr,block[i].contsize);
-      block[i].loaded:=true;
+      if memavail-block[i].contsize>preloadmem then
+      begin
+        getmem(block[i].rptr,block[i].contsize);
+        block[i].loaded:=true;
+      end;
       if block[i].loaded then
         FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
       else
@@ -124,19 +132,21 @@ end;
 procedure CloseResource;
 var i : integer;
 begin
+  if not ResourceOpen then
+     error('no resource file open');
   FileClose(FH);
-  for i:=1 to blocks do with block[i] do begin
-      if loaded then
-        freemem(rptr,contsize);
+  for i:=1 to blocks do with block[i] do
+  begin
+    if loaded then
+      freemem(rptr,contsize);
     freemem(index[i],anzahl*4);
-    end;
+  end;
   freeres;
 end;
 
 function ResIsOpen:boolean;
 begin
-  ResIsOpen := false;
-//   ResIsOpen:=(f<>nil);
+  ResIsOpen := ResourceOpen;
 end;
 
 
@@ -327,7 +337,8 @@ var
 procedure ExitResourceUnit;
 begin
   ExitProc:= SavedExitProc;
-  Closeresource;
+  if ResourceOpen then
+    Closeresource;
 end;
 
 procedure InitResourceUnit;
@@ -339,6 +350,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/07/30 08:19:29  mk
+  - added ResIsOpen-Function again
+
   Revision 1.21  2001/07/28 13:07:27  mk
   - converted to new SysUtils File routines
 
