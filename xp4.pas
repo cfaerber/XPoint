@@ -894,7 +894,7 @@ var t,lastt: taste;
         dbGo(mbase,marked^[0].recno);
       if pm then 
       begin
-        if reply and ntReplyToAll (dbReadInt (mbase, 'netztyp')) then
+        if reply and ntReplyToAll(mbNetztyp) then
         begin
           DoReplyToAll (brk, adresseAusgewaehlt, empf, realname, dispdat);
           if brk or (empf = '') then exit;
@@ -2281,6 +2281,9 @@ end;
 
 {
   $Log$
+  Revision 1.110  2001/10/17 20:11:43  mk
+  - fixed range check error with ntReplyToAll
+
   Revision 1.109  2001/09/18 20:33:06  cl
   - oops, removed private debug code
 
