@@ -36,7 +36,10 @@
   {$MODE Delphi }
   {$ASMMODE Intel }
   {$PACKRECORDS Default } { Default: 2 }
-  {$C-,H+,I-,M-,P-,Q-,R-,S-,T-,V-,X+}
+  {$C-,H+,I-,M-,P-,Q-,R-,T-,V-,X+}
+  {$IFNDEF Linux}
+    {$S-}
+  {$ENDIF}
   {$DEFINE Int64 }
   {$HINTS OFF}
 {$ENDIF }
@@ -74,11 +77,14 @@
 {$ENDIF }
 
 {$IFDEF Linux }
-  {a$DEFINE TCP }
+  {$DEFINE TCP }
 {$ENDIF }
 
 {
   $Log$
+  Revision 1.5  2001/01/20 17:36:26  ml
+  - linuxextension of telnet-obj
+
   Revision 1.4  2001/01/03 22:29:24  ma
   - TCP port working only with Win32
 

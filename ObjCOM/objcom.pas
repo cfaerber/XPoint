@@ -89,7 +89,7 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
 function FossilDetect: Boolean;
 
 {$IFDEF Win32} {$I OCSWinh.inc} {$I OCTWinh.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLinh.inc} {$ENDIF}
+{$IFDEF Linux} {$I OCSLinh.inc} {$I OCTLinuxh.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
@@ -97,10 +97,14 @@ function FossilDetect: Boolean;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Dos,Timer,Debug;
+uses Sysutils,Dos,Timer,
+{$IFDEF Linux}
+  Sockets,
+{$ENDIF}
+  Debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCTWin.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLin.inc} {$ENDIF}
+{$IFDEF Linux} {$I OCSLin.inc} {$I OCTLinux.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
@@ -428,6 +432,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/01/20 17:36:26  ml
+  - linuxextension of telnet-obj
+
   Revision 1.16  2001/01/18 10:22:15  mk
   - more FPC and OS2 compatibility
 
