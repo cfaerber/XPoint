@@ -1575,11 +1575,13 @@ begin
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
 {$IFDEF BP }
+    { In 32 Bit Versionen ist lst am Anfang nicht geîffnet, das
+      schlie·en wÅrde zu einem IOResult 103 fÅhren }
     close(lst);                           { Drucker-Schnitte }
+{$ENDIF }
     DruckLPT:=min(5,max(DruckLpt,1));
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
-{$ENDIF }
     if aaa<>'' then begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
@@ -1656,6 +1658,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/04/24 11:28:54  mk
+  - 32 Bit: Drucken funktioniert jetzt
+
   Revision 1.34  2000/04/22 13:54:09  mw
 
   - TermInit Default angepasst

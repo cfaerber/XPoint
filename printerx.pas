@@ -27,7 +27,7 @@ UNIT printerx;
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses  xpglobal, crt,dos,winxp,keys,typeform,inout,maus2;
 
@@ -83,14 +83,12 @@ var  checklst,xlatger : boolean;
      prterror         : perrfunc;
 
 Procedure assignlst(var f:text; d:word);
-Procedure wrlst(s:string);
-Procedure xger(ja:boolean);
 Function  PrintString(s:string):string;
 
 
 { ================= Implementation-Teil ==================  }
 
-IMPLEMENTATION
+implementation
 
 
 type textbuf = array[0..126] of char;
@@ -207,22 +205,12 @@ begin
     prport:=d;
     name[0]:=#0;
   end;
+{$ELSE }
+  Assign(lst, 'lpt1' + Chr(Ord('1')+d));
+  if IOResult = 0 then ;
 {$ENDIF}
 end;
 
-
-procedure xger(ja:boolean);
-
-begin
-  xlatger:=ja;
-end;
-
-
-procedure wrlst(s:string);
-
-begin
-  write(lst,s);
-end;
 
 {$IFDEF BP }
   {$S-}
@@ -282,6 +270,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/04/24 11:28:54  mk
+  - 32 Bit: Drucken funktioniert jetzt
+
   Revision 1.7  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

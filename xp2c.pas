@@ -126,7 +126,7 @@ begin
   maddstring(3,5,getres2(250,4),ua,7,7,'');           { 'User-Aufnahme ' }
   for i:=5 to 7 do
     mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
-  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' } 
+  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
   mhnr(8068);
   {$IFDEF DPMI}
     maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
@@ -139,7 +139,7 @@ begin
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten lîschen' }
-  maddbool(3,11,getres2(250,24),archivtext); mhnr(8070);  { 'Archivierungsvermerk erstellen' }   
+  maddbool(3,11,getres2(250,24),archivtext); mhnr(8070);  { 'Archivierungsvermerk erstellen' }
   maddbool(3,12,getres2(250,14),newbrettende); mhnr(219); { 'neue Bretter am Ende anhÑngen' }
   maddbool(3,13,getres2(250,15),UserBoxname);             { 'Boxname in PM-Brettern' }
   maddbool(3,14,getres2(250,19),brettkomm);               { 'Kommentare aus Brettliste Åbernehmen' }
@@ -155,7 +155,7 @@ begin
     else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
     else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
     { else UserAufnahme:=2;  keine - gibt's nicht mehr }
-    Usersortbox:=_usersortbox;        
+    Usersortbox:=_usersortbox;
 {$IFDEF BP }
     ListUseXms:=SwapToXms;
 {$ENDIF}
@@ -459,7 +459,7 @@ begin
   dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
-  maddbool(3,3,getres2(255,14),listuhr);        { 'interner Lister - Uhr bei Vollbild' }  
+  maddbool(3,3,getres2(255,14),listuhr);        { 'interner Lister - Uhr bei Vollbild' }
     mhnr(8062);
   maddbool(3,4,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
     mhnr(233);
@@ -1069,17 +1069,13 @@ begin
   readmask(brk);
   if not brk and mmodified then
   begin
-    { MK 01/00 COM-Drucker wurden nicht selektiert }
+    { COM-Drucker wurden nicht selektiert }
     for i := 1 to high(lpts) do
       if lpt = lpts[i] then DruckLPT := i;
 {    DruckLPT:=ival(lpt[4]); }
-{$IFDEF BP }
-    { !! Hier kracht es in der 32 Bit Version,
-      das muss genauer untersucht werden }
     close(lst);
     assignlst(lst,DruckLPT-1);
     rewrite(lst);
-{$ENDIF }
     GlobalModified;
   end;
   enddialog;
@@ -1361,7 +1357,7 @@ var x,y : byte;
 begin
   sall:=(ustr(GetRes2(29900,2))<>'N');
   dialog(ival(getres2(271,0)),iif(sall,14,13),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
-  
+
   maddstring(3,2,'PGP-Version ',PGPVersion,5,5,'');
   mappsel(false,PGP2+'˘'+PGP5+'˘'+PGP6);
     mhnr(1010);
@@ -1392,6 +1388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/04/24 11:28:54  mk
+  - 32 Bit: Drucken funktioniert jetzt
+
   Revision 1.23  2000/04/22 13:54:08  mw
 
   - TermInit Default angepasst
