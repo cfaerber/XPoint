@@ -445,6 +445,7 @@ var size   : longint;
       { 03.02.2000 robo }
       qc         : char;
       { /robo }
+      QuoteOffset: byte;
 
     procedure FlushStmp;
     begin
@@ -467,7 +468,9 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-       { while (p<length(s)) and (s[p+1]=' ') do inc(p); } { Leerzeichen nicht dazu zaehlen }
+        q:=p;         
+        while (q<length(s)) and (s[q+1]=' ') do inc(q);  { Textanfang suchen }
+        QuoteOffset:=q-p;                  { Leerzeichen zwischen letztem ">" und Textanfang }
         end;
       GetQCpos:=p;
     end;
@@ -548,6 +551,7 @@ var size   : longint;
           end
           else inc(q);
         end;
+        p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if left(s,length(lastqc))=lastqc then
             insert(stmp,s,p+1)               { einfÅgen }
@@ -1028,6 +1032,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.2  2000/05/08 18:19:42  jg
+  - Bugfix: Leerzeichen nach Quotezeichen auch beim Zeilenumbruch beachten
+
   Revision 1.10.2.1  2000/04/30 05:50:30  jg
   - Bugfix Leerzeichen NACH dem Quotezeichen bleiben erhalten
 
