@@ -95,7 +95,7 @@ again:
         p2:=p3;
         if p2=0 then mstr:=s
         else mstr:=LeftStr(s,p2-1);
-        if hpos>0 then hkey:=UpCase(mstr[hpos])
+        if hpos>0 then hkey:=System.UpCase(mstr[hpos])
         else hkey:=#255;
         if cPos('ù',mstr)>0 then begin
           p2:=cPos('ù',mstr);
@@ -624,6 +624,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40.2.1  2002/04/20 14:07:35  mk
+  - fixed crash in non-debug-mode with delphi
+
   Revision 1.40  2002/01/30 17:18:13  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with
