@@ -18,7 +18,7 @@ unit ObjCOM;
 uses Ringbuff
      {$IFDEF DOS32},Ports{$ENDIF}
      {$IFDEF Win32},OCThread,Windows{$ENDIF}
-     {$IFDEF Linux},Serial,Linux{$ENDIF}
+     {$IFDEF Linux},Linux{$ENDIF}
      {$IFDEF OS2},OCThread,OS2Base{$ENDIF}
      {$IFDEF Go32V2},Go32{$ENDIF}
      {$IFDEF TCP},Sockets{$ENDIF};
@@ -437,6 +437,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/11/12 16:31:21  hd
+  - Serielle Unterstützung hergestellt
+
   Revision 1.10  2000/10/28 09:35:20  ma
   - moved "uses" to interface part
   - SetLine is now a function
