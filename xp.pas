@@ -135,10 +135,8 @@ begin
     DelTmpfiles('*.$$$');
     if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
     if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
-      DelTmpfiles('TMP-????.*');
-      chdir(temppath);
-      DelTmpfiles('TMP-????.*');
-      chdir(ownpath);
+      DelTmpFiles('TMP-????.*');
+      DelTmpFiles('temppath'+'TMP-????.*');
       end;
     testdiskspace;
     testfilehandles;
@@ -206,6 +204,12 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.25  2002/03/08 22:53:54  my
+  JG:- Fix: TemporÑrdateien werden jetzt auch dann korrekt gelîscht, wenn
+       sie sich nicht im aktuellen Verzeichnis befinden (Pfad wurde nicht
+       Åbergeben und der Befehl unter plain DOS wegen des Backslashs am
+       Ende auch nicht korrekt ausgefÅhrt).
+
   Revision 1.29.2.24  2001/10/27 15:55:03  my
   MY:- Hinweistext Zeitzonen-Umstellung prÑzisiert/korrigiert.
   MY:- Autom. Umstellung wird auch dann aktiviert, wenn ein Timing-

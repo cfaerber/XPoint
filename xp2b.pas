@@ -86,7 +86,7 @@ var sr : searchrec;
 begin
   findfirst(fn,ffAnyFile,sr);
   while doserror=0 do begin
-    _era(sr.name);
+    _era(getfiledir(fn)+sr.name);
     findnext(sr);
   end;
   Findclose(sr);
