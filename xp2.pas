@@ -86,7 +86,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg
+ xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg,mime,utftools
 {$IFDEF Kylix}
   ,libc
 {$ENDIF}  
@@ -1097,6 +1097,10 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.126  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.125  2001/09/27 23:04:03  mk
   - moved variable initialization to initialization-part to avoid crashes
     in finalization parts with rc and ihs

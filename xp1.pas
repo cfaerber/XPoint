@@ -223,6 +223,7 @@ function gets(const s,su, v:string; var ss:string):boolean;
 function getr(const su, v:string; var r:double):boolean;
 
 procedure exchange(var s:string; const repl,by:string);
+function repfile(const prog,name:string):string;
 
 function notempty(var s:string):boolean;
 
@@ -2065,6 +2066,10 @@ end;
 
 {
   $Log$
+  Revision 1.125  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.124  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

@@ -905,6 +905,8 @@ begin      //-------- of DoSend ---------
   sdNope:=(sdata=nil);
   if sdNope then sdata:=allocsenduudatamem;
 
+  netztyp:=sdata^.onetztyp;
+
   if sendFlags and sendQuote<>0 then
   begin
     ExtractSetMpdata(qmpdata);
@@ -2316,6 +2318,10 @@ finalization
 
 {
   $Log$
+  Revision 1.22  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.21  2001/10/01 10:26:19  ma
   - (hopefully) fixed Fido binary mails
 

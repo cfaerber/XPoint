@@ -20,14 +20,14 @@
 
 { DOS-Shell }
 
-function repfile(var prog,name:string):string;
+function repfile(const prog,name:string):string;
 var p : byte;
 begin
   p:=pos('$FILE',UpperCase(prog));
   if p>0 then
-    repfile:=LeftStr(prog,p-1)+name+copy(prog,p+5,127)
+    result:=LeftStr(prog,p-1)+name+copy(prog,p+5,127)
   else
-    repfile:=prog+' '+name;
+    result:=prog+' '+name;
 end;
 
 const trackpath : boolean = false;
@@ -503,6 +503,10 @@ begin
     end;
 {
   $Log$
+  Revision 1.65  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.64  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

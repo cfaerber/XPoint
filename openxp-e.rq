@@ -569,6 +569,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 15   binary messages as "attachments"
 17   Magics in <F3> file request
 18   OpenXP version in tear line
+20   Enable MIME
+21   The use of MIME is only specified in version 3.1 of the
+22   ZConnect specification, which is not supported by most
+23   point software and gateways.
+25   SMTP/POP3/
+26   UUCP (RFC)
 + 254
 1    Netcall Options
 2    Show login screen
@@ -620,6 +626,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Internal editor - full screen
 12   Keep filename of Edit/Text
 13   25 screen lines for ext. editor
+14   Editor Charset
+15   IBM437ùISO-8859-1ùUTF-8
+16   IBM437ùWindows-1252ùUTF-8
 + 257
 # window width
 0    40
@@ -3878,6 +3887,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.37  2001/10/07 17:12:30  cl
+# - added charset recoding for external editors
+#   and corresponding config option
+#
 # Revision 1.36  2001/10/05 20:55:00  ma
 # - initial number of newsgroup postings to fetch now independent
 #   of maximum number to fetch

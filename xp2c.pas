@@ -82,6 +82,7 @@ function testexecutable(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
 function testfilename( var s:string):boolean;
+function testvalidcharset(var s:string):boolean;
 
 procedure setvorwahl(var s:string);
 procedure DispArcs;
@@ -95,7 +96,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  xp1o,xp2,xp3, xp4o2,xp9bp, xpnt;
+  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt;
 
 const
   MaxProtocols = 2;
@@ -609,22 +610,30 @@ begin
   for i:=1 to 3 do
     edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
 {$IFDEF unix}
-  dialog(ival(getres2(256,0)),10,getres2(256,5),x,y);   { 'Editor' }
+  dialog(ival(getres2(256,0)),12,getres2(256,5),x,y);   { 'Editor' }
 {$ELSE }
-  dialog(ival(getres2(256,0)),11,getres2(256,5),x,y);   { 'Editor' }
+  dialog(ival(getres2(256,0)),13,getres2(256,5),x,y);   { 'Editor' }
 {$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
   msetvfunc(testexecutable);
   maddstring(3,4,getres2(256,8),BAKext,3,3,'>');      { 'Backup-Dateierweiterung  ' }
+  
+  maddstring(3,6,getres2(256,14),EditCharset,12,MAXINT,''); { 'Zeichensatz  ' }
+  mappsel(false,getres2(256,{$ifdef Unix}15{$else}16{$endif}));
+  msetvfunc(testvalidcharset);
+  mhnr(308);
+
   eds:=edtype[exteditor];
-  maddstring(3,6,getres2(256,9),eds,18,18,'');    { 'externen Editor verwenden fÅr ' }
+  maddstring(3,8,getres2(256,9),eds,18,18,'');    { 'externen Editor verwenden fÅr ' }
   for i:=1 to 3 do
     mappsel(true,edtype[i]);
-  maddbool(3,8,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
-{ maddbool(3,9,getres2(256,11),editvollbild);}  { 'interner Editor - Vollbild' }
-  maddbool(3,9,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
+  mhnr(303);
+    
+  maddbool(3,10,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
+{ maddbool(3,11,getres2(256,11),editvollbild);}  { 'interner Editor - Vollbild' }
+  maddbool(3,11,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
 {$IFNDEF unix}
-  maddbool(3,10,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
+  maddbool(3,12,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
 {$ENDIF }
   freeres;
   readmask(brk);
@@ -1392,6 +1401,12 @@ begin
     end;
 end;
 
+function testvalidcharset(var s:string):boolean;
+begin
+  result := IsKnownCharset(s);
+  if result then s:= MimeCharsetCanonicalName(s);  
+end;
+
 function setpgpdialog(var s:string):boolean;
 begin
   result:=True;
@@ -1507,6 +1522,10 @@ end;
 
 {
   $Log$
+  Revision 1.110  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.109  2001/10/05 20:55:01  ma
   - initial number of newsgroup postings to fetch now independent
     of maximum number to fetch

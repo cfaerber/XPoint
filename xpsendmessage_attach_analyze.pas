@@ -166,26 +166,72 @@ begin
           pa.ContentEncoding := MimeEncodingQuotedPrintable;
       end;
     end;
+  
+    pa.FileCharset := MimeCharsetCanonicalName(pa.FileCharset);
 
-    if ntIBM(netztyp) then
+    if(pa.FileCharset='IBM437') or 
+      (pa.FileCharset='') then 
     begin
-      if not pa.Analyzed.Is8Bit then
-        pa.ContentCharset := 'US-ASCII'
-      else if ZC_MIME and ntOptISO(netztyp) and pa.Analyzed.IsLatin1DOS then
-        pa.ContentCharset := 'ISO-8859-1'
-      else
-        pa.ContentCharset := 'IBM437';
+      if ntIBM(netztyp) then
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else if ZC_MIME and ntOptISO(netztyp) and pa.Analyzed.IsLatin1DOS then
+          pa.ContentCharset := 'ISO-8859-1'
+        else
+          pa.ContentCharset := 'IBM437';
+      end else
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else if pa.Analyzed.IsLatin1DOS then
+          pa.ContentCharset := 'ISO-8859-1'
+        else
+          pa.ContentCharset := 'UTF-8';
+      end;
+    end else
+    if pa.FileCharset='ISO-8859-1' then 
+    begin
+      if ntIBM(netztyp) then
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else if ZC_MIME and ntOptISO(netztyp) then
+          pa.ContentCharset := 'ISO-8859-1'
+        else
+          pa.ContentCharset := 'IBM437';
+      end else
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else
+          pa.ContentCharset := 'ISO-8859-1'
+      end;
+    end else
+    if pa.FileCharset='UTF-8' then 
+    begin
+      if ntIBM(netztyp) then
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else
+          pa.ContentCharset := 'IBM437';
+      end else
+      begin
+        if not pa.Analyzed.Is8Bit then
+          pa.ContentCharset := 'US-ASCII'
+        else
+          pa.ContentCharset := 'UTF-8'
+      end;
     end else
     begin
-      if not pa.Analyzed.Is8Bit then
-        pa.ContentCharset := 'US-ASCII'
-      else if pa.Analyzed.IsLatin1DOS then
-        pa.ContentCharset := 'ISO-8859-1'
-      else
-        pa.ContentCharset := 'UTF-8';
+      if ntIBM(netztyp) and 
+        not (ZC_MIME and ntOptISO(netztyp)) then
+          pa.ContentCharset := 'IBM437'
+        else
+          pa.ContentCharset := pa.FileCharset
     end;
 
-    pa.FileCharset := iifs(pa.Analyzed.Is8Bit,'IBM437','US-ASCII');
     pa.FileEOL     := MimeEolCRLF;
     pa.FileEncoding:= MimeEncodingBinary;
   end;

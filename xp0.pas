@@ -930,6 +930,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Unpacker     : ^UnpackRec;
        EditVollbild : boolean;
        ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=grosse Files }
+       EditCharset  : string;
        ShowMsgPath  : boolean;
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
@@ -1199,6 +1200,10 @@ implementation
 
 {
   $Log$
+  Revision 1.143  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.142  2001/10/05 20:55:01  ma
   - initial number of newsgroup postings to fetch now independent
     of maximum number to fetch

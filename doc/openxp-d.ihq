@@ -7791,6 +7791,37 @@ Diese Einstellung ist nur von Bedeutung, wenn bei
 [/Config/Anzeige/Zeilen] mehr als 25 Bildzeilen einge-@10905
 stellt sind.
 @
+308
+Gibt an, welchen Zeichensatz der externe Editor
+verwendet. OpenXP wird den Zeichensatz automatisch
+konvertieren, falls dies nîtig ist.
+
+<<IBM437>>        Der PC-Zeichensatz. Dieser wird von den
+              meisten DOS- sowie Windows- und
+              OS/2-Textmodusprogrammen erwartet.
+              (Vorgabe fÅr DOS, Windows und OS/2.)
+
+<<ISO-8859-1>>    Dieser Zeichensatz (auch bekannt als
+              Latin-1) ist der Standard auf den
+              meisten Nicht-DOS-Systemen (Unix,
+              Amiga, ...).
+              (Vorgabe fÅr alle anderen Systeme.)
+
+<<Windows-1252>>  Windows verwendet eine Erweiterung des
+              ISO-8859-1-Zeichensatzes.
+
+<<UTF-8>>         Eine 8-Bit-Transformation von Unicode.
+              Wenn Ihr Editor diesen Zeichensatz
+              verwendet, sollte das explizit in der
+              Dokumentation stehen.
+
+Bestimmte Dateien legt OpenXP immer im PC-Zeichensatz
+(IBM437) ab; diese Dateien mÅssen mit der dafÅr vor-
+gesehenen Funktion von OpenXP bearbeitet werden.
+Schablonen mÅssen Sie beispielsweise immer mit der
+Funktion Edit/Schablonen[/Sonstige] und nicht mit
+Edit/Textdatei bearbeiten.
+@
 310
 <<[x]>> -> beim DOS-Aufruf mit <<<F9> >>oder [/OpenXP/DOS]@10106
        wird die Bildschirmanzeige immer auf 25 Zei-
@@ -16788,3 +16819,4 @@ WÑhlen Sie hier ein GerÑt. OpenXP erlaubt Ihnen zur
 Zeit die Verwaltung von bis zu vier GerÑten. Sie
 kînnen diese unter /Config/Modem einstellen.
 @@
+vim:enc=cp437:tw=53:expandtab:

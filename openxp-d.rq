@@ -639,6 +639,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   interner Editor - Vollbild
 12   Edit/Textdatei-Name beibehalten
 13   25 Bildzeilen bei ext. Editor
+14   Zeichensatz
+15   IBM437ùISO-8859-1ùUTF-8
+16   IBM437ùWindows-1252ùUTF-8
+
 + 257
 # Fensterbreite
 0    38
@@ -3890,6 +3894,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.43  2001/10/07 17:12:30  cl
+# - added charset recoding for external editors
+#   and corresponding config option
+#
 # Revision 1.42  2001/10/05 20:55:01  ma
 # - initial number of newsgroup postings to fetch now independent
 #   of maximum number to fetch

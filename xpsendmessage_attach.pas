@@ -92,9 +92,9 @@ uses
 {$IFDEF Delphi}
   DateUtils,
 {$ENDIF}
-  fileio, inout, keys, lister, maus2, resource, typeform, winxp, xp0, xp1,
-  xp1input, xp1o, xp4e, xpglobal, xpnt, xpsendmessage_attach_analyze, maske,
-  xpdatum, xpstreams, utftools;
+  fileio, inout, keys, lister, maske, maus2, resource, typeform,
+  utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
+  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams;
 
 constructor TSendAttach_Part.Create;
 begin
@@ -196,13 +196,6 @@ end;
 
 var encodings_sel: array[boolean] of string;
     encodings_old: boolean;
-
-function on_charset_exit(var content:string):boolean;
-var content2: string;
-begin
-  result := IsKnownCharset(content);
-  if result then content:= MimeCharsetCanonicalName(content);  
-end;
 
 function on_charset_exit_fido(var content:string):boolean;
 var content2: string;
@@ -369,7 +362,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
            pa.IsTemp      := True;
            pa.IsFile      := false;
   
-           pa.FileCharset := 'IBM437';
+//         pa.FileCharset := 'IBM437';
            pa.FileEOL     := MimeEolCRLF;
  
            pa.ContentType.AsString := 'text/plain';
@@ -524,7 +517,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
     case netztyp of
       nt_ZConnect: MSetVFunc(on_charset_exit_zc);
       nt_Fido:     MSetVFunc(on_charset_exit_fido);
-      else         MSetVFunc(on_charset_exit);
+      else         MSetVFunc(testvalidcharset);
     end;
 
     mhnr(17935);
@@ -546,9 +539,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
     mhnr(17936);
   
     maddstring(2,11,GetRes2(624,44),FileCharset,16,maxint,'');
-    If not pa.IsFile then
-      mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,39)))
-    else if pa.IsExtract then
+    If(not pa.IsFile) or pa.IsExtract then
       mappsel(true,pa.FileCharset)
     else if Uppercase(pa.Analyzed.GuessedCharset)='UTF-16' then
       mappsel(true,'UTF-16')
@@ -966,12 +957,32 @@ var FileName: String;
     Charset : String;
     ins,outs: TStream;
 
+    MyEditCharset:  String;
+    MyExtEdit: boolean;
+    
     RecodedCharset: Boolean;
     RecodedEncoding:Boolean;
 
+    MS: boolean;
+    f2:  string;
+
 begin
+  (* determine whether to use external editor *)
+
+  MyExtEdit := ( (exteditor=3) or ((exteditor=2) and pa.IsMessage) )
+    and (VarEditor<>'') and (FirstChar(VarEditor)<>'*');
+
   Charset := MimeCharsetCanonicalName(pa.FileCharset);
-  RecodedCharset := (Charset<>'') and (Charset<>'IBM437') and (Charset<>'US-ASCII');
+  if Charset='' then Charset := 'IBM437';
+
+  if MyExtEdit then begin
+    MyEditCharset := MimeCharsetCanonicalName(EditCharset);
+    RecodedCharset := Charset<>EditCharset;
+  end else begin
+    MyEditCharset := 'IBM437';
+    RecodedCharset := (Charset<>'IBM437') and (Charset<>'US-ASCII');
+  end;
+    
   RecodedEncoding := pa.FileEncoding in [MimeEncodingQuotedPrintable,MimeEncodingBase64];
 
   if RecodedCharset or RecodedEncoding then
@@ -987,7 +998,7 @@ begin
           ConnectStream(ins,MimeCreateDecoder(pa.FileEncoding));
 
         if RecodedCharset then
-          ConnectStream(outs,TCharsetEncoderStream.Create(Charset,csCP437));
+          ConnectStream(outs,TCharsetEncoderStream.Create(Charset,MyEditCharset));
 
         CopyStream(ins,outs);
       finally
@@ -1005,11 +1016,69 @@ begin
     FileName := pa.FileName;
 
   OldTime  := FileAge(FileName);
-  EditFile(FileName,IsNachricht,true,
-    iif(editvollbild,0,2),Umlaute);
-  NewTime := FileAge(FileName);
 
-  if not pa.IsTemp or RecodedCharset or RecodedEncoding then begin
+  if MyExtEdit then
+  begin
+    ms:=shell25; shell25:=edit25;
+    shell(repfile(VarEditor,FileName),0,-1);
+    shell25:=ms;
+    removeeof(FileName);
+    if BakExt<>'' then
+      SaveDeleteFile(ChangeFileExt(FileName, '.'+bakext)); { .BAK löschen }
+  end else
+  begin
+    if IsNachricht then pushhp(54);
+    TED(FileName,true,iif(editvollbild,0,2),Umlaute);
+    if IsNachricht then pophp;
+    SaveDeleteFile(ChangeFileExt(FileName, '.BAK')); { .BAK löschen }
+//  EditFile(FileName,IsNachricht,true,
+//    iif(editvollbild,0,2),Umlaute);
+  end;  
+
+  NewTime := FileAge(FileName);
+    
+  if (not MyExtEdit) and pa.IsMessage and (FirstChar(VarEditor)='*') then 
+  begin
+    if MyEditCharset<>EditCharset then
+    begin
+      ins := TFileStream.Create(FileName,fmOpenRead);
+      try
+        F2 := TempS(_FileSize(FileName));
+        outs := TFileStream.Create(F2,fmCreate);
+        try
+          ConnectStream(outs,TCharsetEncoderStream.Create(MyEditCharset,EditCharset));
+          CopyStream(ins,outs);
+        finally
+          outs.Free;
+        end;
+      finally
+        ins.Free;
+      end;
+
+      if pa.IsTemp then
+      begin
+        _era(pa.FileName);
+        pa.FileName:=FileName;
+      end else
+      begin
+        _era(FileName);
+      end;      
+
+      if OldTime=NewTime then
+        OldTime:=FileAge(f2);
+      FileName:=F2;
+      
+      RecodedCharset:=true;
+
+      MyEditCharset:=EditCharset;
+    end;
+    
+    Shell(RepFile(Mid(VarEditor,2),FileName),0,3);
+    NewTime := FileAge(FileName);
+  end;
+  
+  if(not pa.IsTemp)or RecodedCharset or RecodedEncoding then 
+  begin
     if NewTime<>OldTime then
     begin               (* modified - use this file from now on *)
       if pa.IsTemp then
@@ -1025,6 +1094,7 @@ begin
       pa.IsTemp := true;
       pa.IsFile := false;
       pa.IsExtract := false;
+      pa.FileCharset := MyEditCharset;
     end
     else                (* not modified - just delete copy      *)
       _era(FileName);

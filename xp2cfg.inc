@@ -473,8 +473,10 @@ begin
   UserSlash:=true;
 {$IFDEF UnixFS }
   BAKext:= 'bak';
+  EditCharset:='ISO-8859-1';
 {$ELSE }
   BAKext:='BAK';
+  EditCharset:='IBM437';
 {$ENDIF }
   keepedname:=false;
   listscroller:=false; listautoscroll:=true;
@@ -818,6 +820,7 @@ begin
   writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
   writeln(t,'UserSlash=',jnf(UserSlash));
   writeln(t,'EditBackup=',BAKext);
+  writeln(t,'EditCharset=',EditCharset);
   writeln(t,'KeepEdName=',jnf(keepedname));
   writeln(t,'AbsenderAnzeige=',sabsender);
   writeln(t,'Environment=',envspace);
@@ -1395,6 +1398,7 @@ begin
           getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
           xp1.gets(s,su,'EditBackup',BAKext) or
+          xp1.gets(s,su,'EditCharset',EditCharset) or
           getx(su,  'KeepEDName',keepedname) or
           getb(su,  'EinhProZeile',dummybb) or         { -> Config2 }
           getb(su,  'AbsenderAnzeige',sabsender) or
@@ -1622,7 +1626,15 @@ begin
     if mheader='' then SetDefaultHeader
     else SetHeader(mheader);
     EditVollbild:=false;
-    if RightStr(date,4)<'1996' then ZC_ISO:=false;
+    EditCharset:=MimeCharsetCanonicalName(EditCharset);
+    if not IsKnownCharset(EditCharset) then
+{$IFDEF Unix}
+      EditCharset := 'ISO-8859-1';
+{$ELSE}
+      EditCharset := 'IBM437';
+{$ENDIF}
+    
+//  if RightStr(date,4)<'1996' then ZC_ISO:=false;
     end
   else begin
     SetDefaultHeader;
@@ -1697,6 +1709,10 @@ begin
 
 {
   $Log$
+  Revision 1.129  2001/10/07 17:12:30  cl
+  - added charset recoding for external editors
+    and corresponding config option
+
   Revision 1.128  2001/09/27 23:04:03  mk
   - moved variable initialization to initialization-part to avoid crashes
     in finalization parts with rc and ihs
