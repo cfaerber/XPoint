@@ -542,8 +542,8 @@ var x,y        : byte;
       Move(uf[1]^,uf[0]^,sizeof(file));
   end;
 
-  procedure MakeUserIndex(xx:byte);     { Userindex komprimieren }
-  const ubufanz   = 100;
+  procedure MakeUserIndex(xx:byte);     { Userindex komprimieren, user-Name -fidoAdresse -AdresseNlEintrag }
+  const ubufanz   = 100;                { werden komprimiert in user.idx abgespeichert }
   type  block     = array[0..blocksize-1] of byte;
         ubufa     = array[0..ubufanz-1] of userrec;
   var   bbuf      : ^block;
@@ -552,9 +552,9 @@ var x,y        : byte;
         bufp,bufanz:word;
         lname     : string[MaxNamelen];
         user      : UserRec;
-        cuser     : array[0..50] of byte;  { komprimierter User-Record }
+        cuser     : array[0..50] of byte;       { komprimierter User-Record }
         cuserp    : byte;
-        outp      : word;  { Position in bbuf }
+        outp      : word;                       { Position in bbuf }
         w         : word;
         b,adrf    : byte;
         nn        : longint;
@@ -579,7 +579,7 @@ var x,y        : byte;
       lname:='';
     end;
 
-  begin
+  begin         { procedure MakeUserIndex(xx:byte);      Userindex komprimieren  }
     fillchar(uihd,sizeof(uihd),0);
     uihd.kennung:=nodekenn;
     seek(uf[0]^,0);
@@ -594,75 +594,80 @@ var x,y        : byte;
     nn:=0;
     while bufp<bufanz do begin
       inc(nn);
-      user:=ubuf^[bufp];
-      inc(bufp);
+      user:=ubuf^[bufp];      { user.name :string[30]; adr: array[0..3] of smalword; fnr:byte        ; fadr :longint}
+      inc(bufp);              { username               zone/net/node               Nodelistennummer    adresse in der nodelist }
       if bufp=bufanz then ReadUbuf;
       with user do
         repeat
-          cuserp:=0;
+          cuserp:=0;                                            { L„nder der abzuspeichernden Daten }
           { R-}
-          b:=0; w:=min(length(name),length(lname));
-          while (b<w) and (name[b+1]=lname[b+1]) do inc(b);
-          cuser[cuserp]:=b; inc(cuserp,2);
-          w:=length(name)-b;
-          cuser[cuserp]:=w; inc(cuserp);        { Name }
-          if w>0 then
-            Move(name[b+1],cuser[cuserp],w);
-          inc(cuserp,w);
-          lname:=name;
-          adrf:=0;
-          if (adr[0]>0) and (adr[0]<16) then    { Zone }
-            inc(adrf,adr[0]*16)
+          b:=0; w:=min(length(name),length(lname));             { user.name, lname = name des letzten Eintrages}
+          while (b<w) and (name[b+1]=lname[b+1]) do inc(b);     { aktueller username im letzten usernamen enthalten oder gleich? }
+          cuser[cuserp]:=b; inc(cuserp,2);                      { curser[0]= Anzahl der gleichen chars,curse[1] wird bersprungen inhalt adrf }
+          w:=length(name)-b;                                    { L„nge des Namens (Anzahl der ungleichen Zeichen )}
+          cuser[cuserp]:=w; inc(cuserp);        { Name }        { curser[2]=L„nge Namen, Zeiger+1}
+          if w>0 then                                           { curser[3]=Anzahl derungleiche Zeichen }
+            Move(name[b+1],cuser[cuserp],w);                    { Name nach curser[3] und}
+          inc(cuserp,w);                                        { Zeiger um L„nge Namen erh”hen }
+          lname:=name;                                          { aktuellen Namen in lname merken }
+          adrf:=0;                                              { adrf:byte, bitfeld zum merken div. Eigenschaften }
+          if (adr[0]>0) and (adr[0]<16) then    { Zone }        { passt user zone in 4 Bit }
+            inc(adrf,adr[0]*16)                                 { ja, adrf=user.ddr[0] geshiftet um 4 }
           else begin
-            cuser[cuserp]:=lo(adr[0]);
-            cuser[cuserp+1]:=hi(adr[0]);
-            inc(cuserp,2);
+            cuser[cuserp]:=lo(adr[0]);                          { nein, user zone in zwei bytes sichern }
+            cuser[cuserp+1]:=hi(adr[0]);                        { swap}
+            inc(cuserp,2);                                      { zeiger+2 }
             end;
-          cuser[cuserp]:=lo(adr[1]); inc(cuserp);   { Net }
-          if adr[1]<256 then
-            inc(adrf,1)
+          cuser[cuserp]:=lo(adr[1]); inc(cuserp);   { Net }     { net speichern }
+          if adr[1]<256 then                                    { passt net in ein Byte }
+            inc(adrf,1)                                         { ja, lsb in adef setzen}
           else begin
-            cuser[cuserp]:=hi(adr[1]); inc(cuserp);
+            cuser[cuserp]:=hi(adr[1]); inc(cuserp);             { nein, dann  net in zwei bytes speicher }
             end;
-          cuser[cuserp]:=lo(adr[2]); inc(cuserp);   { Node }
-          if adr[2]<256 then
-            inc(adrf,2)
+          cuser[cuserp]:=lo(adr[2]); inc(cuserp);   { Node }    { das gleiche Spiel mit der node Adresse }
+          if adr[2]<256 then                                    { passt in ein byte }
+            inc(adrf,2)                                         { ja, bit 1 setzen }
           else begin
-            cuser[cuserp]:=hi(adr[2]); inc(cuserp);
+            cuser[cuserp]:=hi(adr[2]); inc(cuserp);             { nein, dann noch zweites byte speichern }
             end;
-          if adr[3]=0 then                          { Point }
-            inc(adrf,4)
+          if adr[3]=0 then                                      { Point ? }
+            inc(adrf,4)                                         { nein, bit 2 setzen }
           else begin
-            cuser[cuserp]:=lo(adr[3]); inc(cuserp);
-            if adr[3]<256 then
-              inc(adrf,8)
+            cuser[cuserp]:=lo(adr[3]); inc(cuserp);             { nein, point# speichern }
+            if adr[3]<256 then                                  { passt point in ein byte }
+              inc(adrf,8)                                       { bit 3 setzen }
             else begin
               cuser[cuserp]:=hi(adr[3]); inc(cuserp);
               end;
             end;
-          cuser[1]:=adrf;                           { Adreá-Flag }
-          if fnr=0 then
-            inc(cuser[2],$40)
+          cuser[1]:=adrf;       { Adreá-Flag  bit 0  - net  in einem byte gespeichert }
+                                {             bit 1  - node in einem byte gespeichert }
+                                {             bit 2  - is node (keine point# gespeicheret }
+                                {             bit 3  - point in einem byte gespeichert }
+                                {             bit 4..7 -zonen#, wenn zone# <16         }
+
+          if fnr=0 then         { nummer der nodeliste, 0 = keine Nodeliste bei Dos/16 oder }
+            inc(cuser[2],$40)   { bit 6 setzen          0 = ertser Eintrag in der Tlist }
           else begin
-            cuser[cuserp]:=fnr;
-            inc(cuserp);
+            cuser[cuserp]:=fnr;                 { nodelisten# speichern  }
+            inc(cuserp);                        { zeiger + 1 }
             end;
-          if fadr<$1000000 then begin
-            inc(cuser[2],$80);
-            Move(fadr,cuser[cuserp],3);
-            inc(cuserp,3);
+          if fadr<$1000000 then begin           { passt Adress in 3 byte }
+            inc(cuser[2],$80);                  { ja, msb curser[2] setzen }
+            Move(fadr,cuser[cuserp],3);         { ja, adresse nach cuser schieben }
+            inc(cuserp,3);                      { Zeiger erh”hen }
             end
           else begin
-            Move(fadr,cuser[cuserp],4);
+            Move(fadr,cuser[cuserp],4);         { nein, 4-byte Adresse sichern }
             inc(cuserp,4);
             end;
           { R+}
-          ok:=(outp+cuserp+1)<=blocksize;
+          ok:=(outp+cuserp+1)<=blocksize;       { blockgr”áe erreicht ? }
           if not ok then
-            FlushOut
+            FlushOut                            { ja, block wegschreiben }
           else begin
-            Move(cuser,bbuf^[outp],cuserp);
-            inc(outp,cuserp);
+            Move(cuser,bbuf^[outp],cuserp);     { cuser[], in den Block schreiben }
+            inc(outp,cuserp);                   { bytez„hler erh”hen}
             end;
         until ok;
       end;
@@ -671,7 +676,7 @@ var x,y        : byte;
       FlushOut;
     seek(uf[1]^,0);
     uihd.blocks:=filesize(uf[1]^) div blocksize - 1;
-    blockwrite(uf[1]^,uihd,sizeof(uihd));   { Header schreiben }
+    blockwrite(uf[1]^,uihd,sizeof(uihd));       { Header schreiben }
     dispose(ubuf);
     dispose(bbuf);
   end;
@@ -2243,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/08/19 08:56:24  mk
+  MO:- Source ausfuehrlich kommentiert
+
   Revision 1.28  2000/08/17 22:13:00  mk
   - MO: - fidolastseek[Length(fidolastseek)] durch Lastchar ersetzt
 
