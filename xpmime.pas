@@ -73,6 +73,9 @@ begin
   else if typ='video' then s:=getres2(2440,5)   { 'Video'  }
   else if typ='audio' then s:=getres2(2440,6)   { 'Audio'  }
   else if typ='application' then s:=getres2(2440,7)  { 'Datei' }
+  else if typ=#0'vorspann'  then s:=getres2(2440,1)  { 'Datei' }
+  else if typ=#0'nachspann' then s:=getres2(2440,2)  { 'Datei' }
+  else if typ=#0'gesamt'    then s:=getres2(2440,10)  { 'Datei' }
   else s:=typ;
   if subtyp='octet-stream' then subtyp:='';
   if (subtyp<>'') and (subtyp<>'plain') and (subtyp<>'octet-stream') then
@@ -398,19 +401,19 @@ var   hdp      : headerp;
         endbound:=(s=bound+'--');
         isbound:=endbound or (s=bound);
         if (ctype='') and (s<>'') and not isbound then
-          if vorspann then ctype:=getres2(2440,1)     { 'Vorspann' }
-          else ctype:=getres2(2440,2);                { 'Nachspann' }
+          if vorspann then ctype:=#0'vorspann' {getres2(2440,1)} { 'Vorspann' }
+          else ctype:=#0'nachspann' {getres2(2440,2)} ;          { 'Nachspann' }
       until isbound or eof(t);
       { Letzte Zeile im letzen Part wird sonst unterschlagen }
       if not isbound then inc(n);
       vorspann:=false;
 
-      if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
+      if not eof(t) and (ctype=#0'nachspann'{getres2(2440,2)}) then begin  { 'Nachspann' }
         { das war kein Nachspann, sondern ein text/plain ohne Subheader ... }
         ctype:='text'; subtype:='plain';
         end;
 
-      if (ctype=getres2(2440,1)) and MimeVorspann then
+      if (ctype=#0'vorspann' {getres2(2440,1)}) and MimeVorspann then
         ctype:='';
 
       if ctype<>'' then begin
@@ -502,7 +505,7 @@ var   hdp      : headerp;
       inc(anzahl);
       with mf^[anzahl] do begin
         level:=1;
-        typ:=getres2(2440,10);    { 'gesamte Nachricht' }
+        typ:=#0'gesamt' {getres2(2440,10)};  { 'gesamte Nachricht' }
         subtyp:='';
         code:=mcodeNone;
         fname:='';
@@ -558,14 +561,14 @@ begin                         { SelectMultiPart }
 
   if anzahl>0 then
     if not select or (anzahl=1) then begin
-      if (anzahl>1) or (mf^[index].typ <> lstr(getres2(2440,1))) then begin { 'Vorspann' }
+      if (anzahl>1) or (mf^[index].typ <> #0'vorspann' {Lstr(getres2(2440,1))} ) then begin { 'Vorspann' }
         mpdata:=mf^[index];
         mpdata.parts:=max(1,anzahl0);
         mpdata.alternative:=alter;
         end
       end
     else begin
-      listbox(56,min(screenlines-4,anzahl),getres2(2440,9));   { 'mehrteilige Nachricht' }
+      listbox(56,min(screenlines-4,anzahl),getres2(2440,9) );   { 'mehrteilige Nachricht' }
       for i:=1 to anzahl do
         with mf^[i] do
           app_l(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
@@ -575,8 +578,7 @@ begin                         { SelectMultiPart }
       list(brk);
       if not brk then begin
         mpdata:=mf^[ival(mid(get_selection,57))];
-        if (mpdata.typ=lstr(getres2(2440,1))) or (mpdata.typ=lstr(getres2(2440,2))) or
-           (mpdata.typ=lstr(getres2(2440,10))) then begin
+        if FirstChar(mpdata.typ)=#0 then begin
           mpdata.typ:='text';
           mpdata.subtyp:='plain';
           end;
@@ -719,6 +721,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.21  2001/09/21 16:18:18  cl
+  - typ is now #0'keyword' instead of GetRes2(2440,xxx),
+  - the ressources are read in typname only,
+  - so we can convert everything to LStr w/o damaging the case of
+      strings from the ressource file
+
   Revision 1.12.2.20  2001/09/21 13:37:15  my
   MY:- Letzten Commit rÅckgÑngig gemacht. FÅhrte zu demselben Bug, der
        mit dem vorletzten Commit gefixt wurde, obwohl die énderung an
