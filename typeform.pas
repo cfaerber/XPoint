@@ -355,7 +355,9 @@ function b30(l:longint):string;   { 30bit -> 5char }
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
+function CPosFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
+function CPosXFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
 function CVal(s:string):longint;             { C Value Integer - nnnn/0nnn/0xnnn }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
@@ -587,6 +589,21 @@ end ['ECX', 'EDX', 'EDI'];
 end;
 {$endif}
 {$ENDIF } *)
+
+
+function CPosFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
+var
+  i: Integer;
+begin
+  if start<=Length(s) then
+    for i := start to length(s) do
+      if s[i]=c then
+      begin
+        CPosFrom := i;
+        Exit;
+      end;
+  CPosFrom := 0;
+end;
 
 procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
 asm
@@ -1483,13 +1500,31 @@ end;
 
 
 function CPosX(c:char; const  s:string):integer;   { pos=0 -> pos:=length(s)+1 }
-var p : integer;
+var
+  i: Integer;
 begin
-  p:=cpos(c,s);
-  if p=0 then CPosX:=length(s)+1
-  else CPosX:=p;
+  for i := 1 to length(s) do
+    if s[i]=c then
+    begin
+      CPosX := i;
+      Exit;
+    end;
+  CPosX := Length(s)+1;
 end;
 
+function CPosXFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
+var
+  i: Integer;
+begin
+  if start<=length(s) then
+    for i := 1 to length(s) do
+      if s[i]=c then
+      begin
+        CPosXFrom := i;
+        Exit;
+      end;
+  CPosXFrom := Length(s)+1;
+end;
 
 { erstes durch 'delimiter' abgegrenztes Wort aus s extrahieren }
 
@@ -1798,22 +1833,37 @@ begin
 end;
 {$ENDIF }
 
+{ Sucht nach char in Buffer mit Länge Len }
+{ Ausgabe: 0..Len-1 => Position von c     }
+{          Len      => nicht gefunden     }
+
 function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
 asm
         PUSH    EDI
-        MOV     EDI, Buffer
-        MOV     AL, C
-        MOV     ECX, Len
-        MOV     EBX, ECX
+        CLD
+        MOV     EDI, Buffer    
+        MOV     AL, C          
+        MOV     ECX, Len       
+        MOV     EBX, ECX       
+
         REPNE   SCASB
-        SUB     EBX, ECX
-        MOV     EAX, EBX
-        DEC     EAX
-@@1:    POP     EDI
+
+        OR      ECX, ECX
+        JZ      @@1
+        INC     ECX
+
+@@1:    SUB     EBX, ECX
+        MOV     EAX, EBX        
+        POP     EDI
 end;
 
 {
   $Log$
+  Revision 1.117  2002/09/26 22:16:53  cl
+  - Fixed bug in BufferScan: Incorrect result when char not found in Buffer
+  - Added functions CPosX (similar to PosX), and CPosFrom, CPosXFrom
+    (like CPos/CPosX, but searches from start pos)
+
   Revision 1.116  2002/09/09 08:42:32  mk
   - misc performance improvements
 
