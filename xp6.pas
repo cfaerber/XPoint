@@ -888,12 +888,21 @@ end;
 { ausgelagert, weil Prozedurrumpf zu groá: }
 
 procedure DisplaySendbox;
+var
+  ToStr: String;
+  ToPos: Integer;
 begin  { 05.02.2000 MH: 70 -> 78 f. Zurck }
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empf„nger ' }
+
+  ToStr := getres2(611,11); { '^An' }
+  ToPos := cpos('^', ToStr);
+  fidokey := copy(ToStr, ToPos+1, 1); { (A)n }
+  Delete(ToStr, ToPos, 1);
+
   if echomail then begin
-    wrt(x+3,y+4,getres2(611,11));    { 'An' }
+    wrt(x+3,y+4, ToStr);    { 'An' }
     inc(y,2);
     end;
   wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
@@ -906,18 +915,20 @@ begin  { 05.02.2000 MH: 70 -> 78 f. Zurck }
   showcc; { 05.02.2000 MH: x+39 -> x+43 }
   attrtxt(col.coldiahigh);
   kopkey:=left(getres2(611,16),1);
-  wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }              { 'K' }
+  wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
   if empfaenger[1]=vert_char then
     wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
   else
     wrt(x+14,y+2-fadd,left(uucpbrett(empfaenger,edis),52));
-  fidokey:=left(getres2(611,11),1);
+
   pgpkey:=getres2(611,50);
   if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
-  if echomail then begin
-    wrt(x+3,y+2,fidokey);            { 'A' }
+
+  if echomail then
+  begin
+    wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
     wrt(x+14,y+2,fidoto);
-    end;
+  end;
   showbetreff;
   showbox;
   showsize;
@@ -2224,6 +2235,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/06/01 21:18:40  mk
+  - Resource 611,11 enthaelt jetzt Hotkey
+
   Revision 1.34  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 
