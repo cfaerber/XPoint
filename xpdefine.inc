@@ -92,13 +92,6 @@
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$DEFINE Sockets }     { Sockets-Unit vorhanden }
-{$ENDIF }
-
-{$IFDEF Win32 }
-  {$IFDEF FPC }
-    {$DEFINE Sockets }   { Sockets-Unit vorhanden }
-  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
@@ -135,6 +128,9 @@
 
 {
   $Log$
+  Revision 1.48  2000/08/01 11:07:13  mk
+  - Define Sockets wieder entfernt
+
   Revision 1.47  2000/07/30 09:09:15  mk
   - Define Sockets eingefuert, um DOS32 und VP Versionen compilierbar zu erhalten
 
