@@ -517,9 +517,11 @@ begin
     if t=keyaf4 then quit:=true;
     if not dead then begin
       i:=1;
-      case t[1] of 
-        #132: t[1] := #142; // Bildschirm ä in Tastatur ä umwandeln
-        // ö und ü noch hinzufügen
+      // Tastaturcode in Zeichencode umwandleln
+      case t[1] of
+        #148: t[1] := #153; // ö
+        #132: t[1] := #142; // ä
+        #129: t[1] := #154; // ü
       end;
       while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
       if (i<=n) and (ma^[i].enabled) then begin
@@ -624,6 +626,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40.2.4  2003/08/25 17:39:12  mk
+  - added support for german umlaut keys in menu
+
   Revision 1.40.2.3  2002/07/29 19:53:15  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
