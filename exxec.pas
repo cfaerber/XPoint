@@ -36,6 +36,9 @@ uses
   sysutils;
 
 function Xec(prog:string; const prompt:string):Integer;
+{ Gibt Errorlevel des aufgerufenen Programms zurueck, falls Aufruf
+  erfolgen konnte, ansonsten (Programm nicht vorhanden etc.) Fehlercode
+  mit negativem Vorzeichen }
 var
     pp    : byte;
     para  : string;
@@ -74,8 +77,8 @@ begin
   SwapVectors;
   Exec(dpath, para);
   SwapVectors;
+  if DosError<>0 then Result:=-DosError else Result:=DOSExitCode;
   Debug.TempCloseLog(True);
-  Result := DOSExitCode;
   DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
 {$ENDIF }
 end;
@@ -83,6 +86,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/09/03 20:36:40  ma
+  - Fix zur Errorlevel-Rueckgabe. Vorsicht: Verhalten geaendert!- Siehe
+    Hinweis beim Kopf von Xec
+
   Revision 1.27  2000/08/20 12:22:40  mk
   - Linux fix
 
