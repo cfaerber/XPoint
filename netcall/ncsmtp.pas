@@ -79,7 +79,7 @@ type
 
 implementation
 
-uses typeform, encoder, md5;
+uses typeform, encoder, md5, mime;
 
 const
   DefaultSMTPPort       = 25;
@@ -293,6 +293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2001/09/08 15:01:55  cl
+  - Moved MIME functions/types/consts to mime.pas
+
   Revision 1.11  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 
