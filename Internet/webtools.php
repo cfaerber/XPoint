@@ -83,7 +83,7 @@ function ShowHeader($title) {
 	} while (next($Menu) != false);
 	// that's it. now close left cell and go to main part
 	echo("</dl>\n</td></tr>\n</table>");
-	echo("</td></tr></table>\n</td>\n<td align=\"left\" valign=\"top\">\n");
+	echo("</td></tr></table>\n</td>\n<td align=\"left\" valign=\"top\" rowspan=\"2\">\n");
 	// Document is prepared now
 }; // ShowHeader
 
@@ -91,6 +91,8 @@ function ShowHeader($title) {
 // concludes the HTML page
 function ShowFooter() {
 	global $language;
+        echo("\n</td></tr><tr>");
+        echo("\n<td><a href=\"http://sourceforge.net\"><img src=\"http://sourceforge.net/sflogo.php?group_id=3766&amp;type=1\" width=\"88\" height=\"31\" border=\"0\" alt=\"SourceForge\" /></a>"); 
 	echo("\n</td></tr></table>\n<hr noshade=\"noshade\" size=\"1\" />");
 	echo("\n<table width=\"100%\"><tr>\n<td align=\"left\">");
 	if ($language == "de") {
