@@ -1413,10 +1413,7 @@ begin
     if markpos=nil then
       first_marked:=#0
     else
-      if EmsPtr(markpos)^.cont='' then
-        first_marked:=' '
-      else
-        first_marked:=EmsPtr(markpos)^.cont;
+      first_marked:=EmsPtr(markpos)^.cont;
     end;
   linepos:=markpos;
 end;
@@ -1496,6 +1493,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.2  2000/07/18 14:55:44  mk
+  - first_marked fuegt keine Leerzeichen in Leerzeilen mehr ein
+
   Revision 1.19.2.1  2000/07/16 22:34:11  mk
   - next_line fuegt keine Leerzeichen in Leerzeilen mehr ein
 
