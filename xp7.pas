@@ -163,6 +163,7 @@ var
     source     : string;
     ff         : boolean;
 
+    ScreenPtr : ScrPtr; { Bildschirmkopie }
     isdn       : boolean;
     orgfossil  : boolean;
     jperror    : boolean;
@@ -409,10 +410,6 @@ begin                  { of Netcall }
   netcall:=true;
   Netcall_connect:=false;
   logopen:=false; netlog:=nil;
-  (* if net and (memavail<50000) then begin
-    trfehler(704,esec);   { 'Zu wenig freier Speicher fr Netcall!' }
-    exit;
-  end; *)
 
   if crash then
     if not isbox(DefFidoBox) then begin
@@ -629,6 +626,8 @@ begin                  { of Netcall }
 
     { Ab hier kein exit mehr! }
 
+    Sichern(ScreenPtr);
+
     AppendEPP;
 
     netcalling:=true;
@@ -715,7 +714,7 @@ begin                  { of Netcall }
       { --------------------------------------------------------------- }
       { bisherige Netcall-Typen                                         }
       { --------------------------------------------------------------- }
-      
+
       ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
 
 
@@ -1313,7 +1312,7 @@ begin                  { of Netcall }
 
       case LoginTyp of
         ltPOP3: begin
-                  trfehler(799,30); 
+                  trfehler(799,30);
                 end;
       else
         trfehler(799,30); { 'Funktion nicht implementiert' }
@@ -1339,7 +1338,7 @@ begin                  { of Netcall }
     dispose(addpkts);
     netcalling:=false;
     cursor(curoff);
-    {window(1,1,screenwidth,screenlines);}
+    Holen(ScreenPtr);
     aufbau:=true;
     end;
   if Netcall_connect and not crash then AponetNews;
@@ -1545,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/09/28 03:25:20  mk
+  - Bildschirm restaurieren nach Netcall
+
   Revision 1.33  2000/09/25 16:27:51  hd
   - 'Nicht implementiert eingefuegt'
 
