@@ -30,7 +30,7 @@ uses
   xpglobal, 
   keys; //taste
 
-const maxpages = 1200;
+const maxpages = 2000;
       maxqvw   = 400;
       maxlines = 400;   { max. Zeilen pro Hilfsseite }
 
@@ -195,6 +195,10 @@ begin
     wdt:=blockrb;
     hgh:=blockrb; dec(hgh,3);
     pages:=blockrw;
+    {$IFDEF Debug }
+      if Pages > MaxPages then
+        raise Exception.Create('MaxPages in help.pas is to small');
+    {$ENDIF }
     ixp:=blockrw;
     illp:=blockrw;
     ixadr:=blockrl;
@@ -785,6 +789,9 @@ finalization
 
 {
   $Log$
+  Revision 1.54  2003/09/13 17:40:18  mk
+  - fixed #804967: Crash beim Aufruf der Hilfe
+
   Revision 1.53  2003/08/27 18:55:15  mk
   - SysWord -> Unsigned16
 
