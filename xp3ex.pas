@@ -846,7 +846,7 @@ begin
     hdf_ABS   :  begin
                    if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
                       (hdp.realname='') and
-                      (length(hdp.absender)<54) and NodeOpen and
+                      (length(hdp.absender)<54) and Nodelist.mOpen and
                       (pos(':',hdp.absender)>0) then begin
                                   { sieht nach einer Fido-Adresse aus ... }
                      GetNodeinfo(hdp.absender,ni,0);
@@ -1079,6 +1079,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/12/27 22:36:35  mo
+  -new class TfidoNodeList
+
   Revision 1.55  2000/12/03 12:38:21  mk
   - Header-Record is no an Object
 

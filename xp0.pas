@@ -18,7 +18,7 @@ unit xp0;
 interface
 
 uses
-  typeform,keys,xpglobal,log,classes,sysutils;
+  typeform,keys,xpglobal,log,classes,sysutils,fidoglob;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -105,8 +105,6 @@ const
        XFerDir     = XFerDir_+DirSepa;
        JanusDir_   = XFerDir+'janus';
        JanusDir    = JanusDir_+DirSepa;
-       FidoDir_    = 'fido';
-       FidoDir     = FidoDir_+DirSepa;{ Nodelists }
        InfileDir   = 'files'+DirSepa; { Default: Filerequests }
        AutoxDir    = 'autoexec'+DirSepa;    { AutoStart-Daten }
        BadDir      = 'bad'+DirSepa;
@@ -136,12 +134,9 @@ const
        XFerDir     = XFerDir_+DirSepa;
        JanusDir_   = XFerDir+'JANUS';
        JanusDir    = JanusDir_+DirSepa;
-       FidoDir_    = 'FIDO';
-       FidoDir     = FidoDir_+DirSepa;{ Nodelists }
        InfileDir   = 'FILES'+DirSepa; { Default: Filerequests }
        AutoxDir    = 'AUTOEXEC'+DirSepa;    { AutoStart-Daten }
        BadDir      = 'BAD'+DirSepa;
-
        HeaderFile  = 'HEADER.XPS';     { Schablonen-Dateien }
        HeaderPriv  = 'PRIVHEAD.XPS';
        SignatFile  = 'SIGNATUR.XPS';
@@ -191,7 +186,6 @@ const
        KilledDat   = 'reorg.dat';
        CCfile      = 'verteil.dat';
        FidoCfg     = 'fido.cfg';
-       OldNLCfg    = FidoDir+'nodelist.cfg';
        NodelistCfg = FidoDir+'nodelst.cfg';
        NodeindexF  = FidoDir+'nodelist.idx';
        UserindexF  = FidoDir+'nodeuser.idx';
@@ -231,7 +225,6 @@ const
        PseudoFile  = 'PSEUDOS';
        BezugFile   = 'BEZUEGE';
        MimetFile   = 'MIMETYP';
-
        CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
        Cfg2File    = 'XPOINT2.CFG';
        Cfg3File    = 'OPENXP.CFG';      { NEue cfg mit Sektionen }
@@ -247,12 +240,7 @@ const
        KilledDat   = 'REORG.DAT';
        CCfile      = 'VERTEIL.DAT';
        FidoCfg     = 'FIDO.CFG';
-       OldNLCfg    = FidoDir+'NODELIST.CFG';
-       NodelistCfg = FidoDir+'NODELST.CFG';
-       NodeindexF  = FidoDir+'NODELIST.IDX';
-       UserindexF  = FidoDir+'NODEUSER.IDX';
        ARCmailDat  = 'ARCMAIL.DAT';
-       FileLists   = FidoDir+'FILELIST.CFG';
        ReqDat      = 'REQUEST.DAT';    { Crashs + Requests }
        RegDat      = 'REGDAT.XP';
        UUnumdat    = 'UUNUMMER.DAT';
@@ -261,7 +249,6 @@ const
        menufile    = 'XPMENU.DAT';
        CrashTemp   = 'CRASH.TMP';
        GlossaryTemp= 'GLOSSARY.TMP';
-
        ErrlogFile  = 'ERRORS.LOG';     { LogFiles }
        Logfile     = 'XPOINT.LOG';
        BiLogFile   = 'LOGFILE';        { fuer BiModem-Uebertragung }
@@ -633,28 +620,6 @@ type   textp  = ^text;
                   hdr       : boolean;     { Header im Body           }
                   bretter   : string;  { Brettebene               }
                 end;
-
-       FidoAdr = record
-                   username   : string;  { darf aber nach FTS nicht > 36 sein (incl #0) }
-                   zone,net   : word;
-                   node,point : word;
-                   ispoint    : boolean;
-                 end;
-
-       PNodeListItem = ^TNodeListItem;
-       TNodeListItem  = class
-       public
-                   listfile   : string;    { Nodelisten-Datei      }
-                   number     : integer;   { akt. Nummer           }
-                   updatefile : string;    { Diff/Update-Datei     }
-                   updatearc  : string;    { gepackte Update-Datei }
-                   processor  : string;    { externer Bearbeiter   }
-                   DoDiff     : boolean;
-                   DelUpdate  : boolean;   { Diff loeschen }
-                   format     : byte;      { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
-                   zone,net,node : word;
-                   sort       : longint;   { Temporaerfeld }
-                 end;
 
 
        fkeyt  = array[1..10] of record
@@ -1121,11 +1086,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        PointDiffn  : string;
        Pointlist4D : boolean;        { 4D-Liste statt Points24 }
 
-       DefaultZone : word;           { Fido - eigene Zone }
-       DefaultNet  : word;           {      - eigenes Net }
-       DefaultNode : word;           {      - eigener Node}
-       Nodelist    : TList;          { Node-/Pointlisten }
-       NodeOpen    : boolean;        { Nodelist(en) vorhanden & geoeffnet }
+       Nodelist    : TNodeList;          { Node-/Pointlisten }
        ShrinkNodes : string;    { Nodeliste einschraenken }
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
        KomShowadr  : boolean;        { <-> BaumAdresse }
@@ -1176,6 +1137,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.110  2000/12/27 22:36:36  mo
+  -new class TfidoNodeList
+
   Revision 1.109  2000/12/25 20:31:17  mk
   - zfido is now completly integrated
 

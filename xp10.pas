@@ -24,9 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
-  classes, maske,datadef,database,maus2,lister,resource,xpglobal,
-     xp0,xp1,xp1o2,xp1help,xp1input,xp5;
+  stack,typeform,fileio,inout,keys,montage,feiertag,winxp,classes,
+  maske,datadef,database,maus2,lister,resource,xpglobal,xp0,xp1,xp1o2,
+  xp1help,xp1input,xp5,fidoglob;
 
 
 procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=Gebhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
@@ -553,12 +553,12 @@ var
   function eanzahl:integer;
   begin
     case typ of
-      1: result:=e.Count;               //Timingliste or
-      2: result:=e.Count;               //TastenMakros
-      3: result:=anzahl;                //Gebhren
-      4: result:=xhd.anz+1;             //Header
-      5: result:=Nodelist.Count;        //nodeliste
-      6: result:=tables;                //Tarif
+      1: result:=e.Count;                       //Timingliste or
+      2: result:=e.Count;                       //TastenMakros
+      3: result:=anzahl;                        //Gebhren
+      4: result:=xhd.anz+1;                     //Header
+      5: result:=Nodelist.mEntrys.Count;        //nodeliste
+      6: result:=tables;                        //Tarif
     else
       result:=anzahl;
     end;
@@ -643,7 +643,7 @@ var
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
-          5 : with PNodeListItem(Nodelist[a+i-1])^ do
+          5 : with PNodeListItem(Nodelist.mEntrys[a+i-1])^ do
                 Wrt2(' '+forms(listfile,14)+                                    // NL-Dateiname
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+   //Nodelistennummer
                       forms(updatefile,14)+forms(updatearc,14)+
@@ -1398,17 +1398,17 @@ var
       brk : boolean;
   begin
     nlr:=TNodeListItem.Create;
-    nlr:=PNodeListItem(Nodelist[strIdx])^;
+    nlr:=PNodeListItem(Nodelist.mEntrys[strIdx])^;
     EditNLentry(nlr,brk);
     if not brk then
     begin
       reindex:=reindex or
-               (nlr.format<>PNodeListItem(nodelist[strIdx])^.format) or
-               (nlr.zone<>PNodeListItem(nodelist[strIdx])^.zone) or
+               (nlr.format<>PNodeListItem(nodelist.mEntrys[strIdx])^.format) or
+               (nlr.zone<>PNodeListItem(nodelist.mEntrys[strIdx])^.zone) or
                ((nlr.format=3) and
-                ((nlr.net<> PNodeListItem(nodelist[strIdx])^.net) or
-                 (nlr.node<> PNodeListItem(nodelist[strIdx])^.node)));
-      PNodeListItem(Nodelist[strIdx])^:=nlr;
+                ((nlr.net<> PNodeListItem(nodelist.mEntrys[strIdx])^.net) or
+                 (nlr.node<> PNodeListItem(nodelist.mEntrys[strIdx])^.node)));
+      PNodeListItem(Nodelist.mEntrys[strIdx])^:=nlr;
       modi:=true;
     end;
   end;
@@ -1417,7 +1417,7 @@ var
   var fn : string;
       ft : longint;
   begin
-    fn:=FidoDir+NLfilename(n);
+    fn:=FidoDir+NodeList.GetFilename(n);
     ft:=filetime(fn);
     editfile(fn,false,false,0,false);
     if filetime(fn)<>ft then reindex:=true;
@@ -1433,9 +1433,9 @@ var
     begin
       if a+CurRow-1<anzahl then
       begin
-        Item := NodeList[strIdx];
+        Item := NodeList.mEntrys[strIdx];
         Dispose(Item);
-        NodeList.Delete(strIdx);
+        NodeList.mEntrys.Delete(strIdx);
         dec(anzahl);
         modi:=true;
         reindex:=true;
@@ -1450,8 +1450,8 @@ var
                 1,brk) of
       1 : del_it;
       3 : begin
-            if FileExists(FidoDir+NLfilename(strIdx)) then
-              _era(FidoDir+NLfilename(strIdx));
+            if FileExists(FidoDir+NodeList.GetFilename(strIdx)) then
+              _era(FidoDir+NodeList.GetFilename(strIdx));
             del_it;
           end;
     end;
@@ -1476,7 +1476,7 @@ var
     wrt(x+3,y+3,getres2(2129,3));       { 'Bytes' }
     wrt(x+3,y+4,getres2(2129,4));       { 'Eintr„ge' }
     attrtxt(col.colmbox);
-    fn:=NLfilename(a+CurRow-1);
+    fn:=NodeList.GetFilename(a+CurRow-1);
     wrt(x+14,y+2,fn);
     if not FileExists(FidoDir+fn) then
       wrt(x+14,y+3,' - fehlt -')
@@ -1612,7 +1612,7 @@ begin   {procedure UniEdit(typ:byte); }
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
           filewidth:=255;
-          anzahl:=NodeList.Count;
+          anzahl:=NodeList.mEntrys.Count;
           width:=70;
           buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info , ^OK ' }
           okb:=6; edb:=2;
@@ -1703,8 +1703,8 @@ begin   {procedure UniEdit(typ:byte); }
         5 : case nr of
               1 : if NewNodeentry then
                   begin
-                    Anzahl := NodeList.Count;
-                    SortNodelists(nodelist);
+                    Anzahl := NodeList.mEntrys.Count;
+                    SortNodelists;
                     modi:=true;
                     reindex:=true;
                   end;
@@ -1767,7 +1767,7 @@ begin   {procedure UniEdit(typ:byte); }
       end;
     if (typ=5) and ((nr=0) or (nr=okb)) and modi then begin
       oldft:=filetime(NodelistCfg);
-      SaveNodeCfg;
+      NodeList.SaveConfigToFile;
       if (oldft<>0) and not reindex then  { autom. Neuindizierung bei }
         setfiletime(NodelistCfg,oldft);   { n„chstem Programmstart verhindern }
       modi:=false;
@@ -1791,13 +1791,13 @@ begin   {procedure UniEdit(typ:byte); }
           if reindex then
           begin
             KeepNodeindexClosed;
-            if nodeopen then CloseNodeIndex;
-            if NodeList.Count=0 then
+            if Nodelist.mOpen then CloseNodeIndex;
+            if NodeList.mEntrys.Count=0 then
             begin
               DeleteFile(NodeIndexF);
               DeleteFile(UserIndexF);
               DeleteFile(NodelistCfg);
-              nodeopen:=false;
+              Nodelist.mOpen:=false;
             end
             else begin
               MakeNodelistindex;
@@ -2053,6 +2053,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.48  2000/12/27 22:36:36  mo
+  -new class TfidoNodeList
+
   Revision 1.47  2000/12/25 14:02:40  mk
   - converted Lister to class TLister
 

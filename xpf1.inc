@@ -80,10 +80,10 @@ var s  : string;
   end;
 
 begin           { begin procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo) };
-  ni.found:=false;                                        //war (nfile<1)
-  if (nfile<0) or (nfile>NodeList.Count-1) then exit;     //hier scheint der Fehler zu sein nfile = 0
-  new(nodelf);                                            //es kann ein nodelisten index von
-  assign(nodelf^,FidoDir+NLfilename(nfile));
+  ni.found:=false;                                              //war (nfile<1)
+  if (nfile<0) or (nfile>NodeList.mEntrys.Count-1) then exit;
+        new(nodelf);                                            //es kann ein nodelisten index von
+  assign(nodelf^,FidoDir+NodeList.GetFilename(nfile));
   resetfm(nodelf^,fmRead);
   if ioresult=0 then
   begin
@@ -121,7 +121,7 @@ label again;
 
 begin
   fillchar(ni,sizeof(ni),0);
-  if not nodeopen then exit;
+  if not Nodelist.mOpen then exit;
   splitfido(adr,fa,2);
   if pointtyp=0 then fa.ispoint:=false;
   if not nodelistopen then begin
@@ -410,7 +410,7 @@ begin
 { MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if MainNodelist>0 then begin
-    NlItem:=nodelist[MainNodelist];
+    NlItem:=nodelist.mEntrys[MainNodelist];
     attrtxt(col.coldiarahmen);
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
@@ -471,7 +471,7 @@ begin
         if b = 0 then FFlags := '';
         wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
         wrt(x+43, y+8, Status);
-        wrt(x+62, y+8, NLfilename(datei));
+        wrt(x+62, y+8, NodeList.GetFilename(datei));
         end;
       mon;
       end;
@@ -507,7 +507,7 @@ begin
   attrtxt(col.colselhigh);
   if ni.found then begin
     mwrt(rdispx+add+2,rdispy,forms(iifs(ni.ispoint,ni.boxname,ni.sysop),33));
-    mwrt(rdispx+55,rdispy-1,forms(NLfilename(ni.datei),12));
+    mwrt(rdispx+55,rdispy-1,forms(NodeList.GetFilename(ni.datei),12));
     mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65)); { MH: 40 -> 65 }
     mwrt(rdispx+7,rdispy-1,forms(ni.status,12));
     end
@@ -746,16 +746,16 @@ again:
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
   List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
-  for i:=0 to NodeList.Count - 1 do
-    with PNodeListItem(Nodelist[i])^,NB_Data^ do
+  for i:=0 to NodeList.mEntrys.Count - 1 do
+    with PNodeListItem(Nodelist.mEntrys[i])^,NB_Data^ do
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
           (pl and (format<>nlNodelist))) and
-         FileExists(FidoDir+NLfilename(i))
+         FileExists(FidoDir+NodeList.GetFilename(i))
       then begin
         attrtxt(col.coldiahigh);
-        mwrt(x+10,y+14,forms(NLfilename(i),12));
-        assign(t,FidoDir+NLfilename(i));
+        mwrt(x+10,y+14,forms(NodeList.GetFilename(i),12));
+        assign(t,FidoDir+NodeList.GetFilename(i));
         settextbuf(t,buf^,bufsize);
         reset(t);
         if zone<>0 then azone:=zone   { Start-Nodeadresse setzen }
@@ -893,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.25  2000/12/27 22:36:31  mo
+  -new class TfidoNodeList
+
   Revision 1.24  2000/12/25 14:02:44  mk
   - converted Lister to class TLister
 

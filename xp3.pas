@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
   typeform,fileio,inout,datadef,database,montage,resource, xpheader,
-  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal, classes;
+  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal,classes,fidoglob;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -87,7 +87,6 @@ procedure getablsizes;
 function  QuoteSchab(pm:boolean):string;
 procedure ClearPGPflags(hdp:theader);
 
-procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
 function  MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
 function  IsNodeAddress(adr:string):boolean;
 procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
@@ -1097,53 +1096,6 @@ begin
 end;
 
 
-procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
-var p1,p2,p3 : byte;
-begin
-  fillchar(frec,sizeof(frec),0);
-  with frec do begin
-    p1:=cpos('@',adr);
-    if p1>0 then begin
-      username:=trim(LeftStr(adr,p1-1));
-      delete(adr,1,p1);
-      end;
-    adr:=trim(adr);
-    p1:=cpos(':',adr);
-    p2:=cpos('/',adr);
-    p3:=cpos('.',adr);
-    if p3=0 then p3:=cpos(',',adr);
-    if p1+p2=0 then begin
-      zone:=DefaultZone;
-      net:=DefaultNet;
-      if p3>0 then begin
-        if p3>1 then
-          node:=ival(LeftStr(adr,p3-1))
-        else
-          node:=DefaultNode;
-        point:=minmax(ival(mid(adr,p3+1)),0,65535);
-        ispoint:=(point>0);
-        end
-      else
-        node:=minmax(ival(adr),0,65535);
-      end
-    else
-      if (p2<>0) and (p1<p2) and ((p3=0) or (p3>p2)) then begin
-        if p1=0 then
-          zone:=DefaultZone
-        else
-          zone:=minmax(ival(LeftStr(adr,p1-1)),0,65535);
-        net:=minmax(ival(copy(adr,p1+1,p2-p1-1)),0,65535);
-        ispoint:=(p3>0);
-        if ispoint then begin
-          point:=minmax(ival(mid(adr,p3+1)),0,65535);
-          if point=0 then ispoint:=false;
-          end
-        else
-          p3:=length(adr)+1;
-        node:=minmax(ival(copy(adr,p2+1,p3-p2-1)),0,65535);
-        end;
-    end;
-end;
 
 function MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
 begin
@@ -1220,6 +1172,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.52  2000/12/27 22:36:35  mo
+  -new class TfidoNodeList
+
   Revision 1.51  2000/12/05 14:58:09  mk
   - AddNewUser
 

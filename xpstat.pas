@@ -23,8 +23,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
-  lister,resource,xp0,xp2,xp1, xpglobal;
+  typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,lister,resource,
+  xp0,xp2,xp1,xpglobal,fidoglob;
 
 
 procedure MultiStat(art:byte);
@@ -39,7 +39,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl, winxp;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl,winxp;
 
 var  statbrett : boolean;
 
@@ -847,7 +847,7 @@ const maxzones = 250;
 type  zonerec  = record
                    nr,regs,nets : smallword;
                    nodes        : longint;
-                   nodelist     : byte;
+                   NlNo         : byte;
                    name         : string[20];
                  end;
       zonea    = array[0..maxzones] of zonerec;
@@ -911,10 +911,10 @@ var   zone     : ^zonea;
 
   begin
     if zones=maxzones then exit;
-    assign(nl,FidoDir+NLfilename(nls)); settextbuf(nl,buf^,bufs);
+    assign(nl,FidoDir+NodeList.GetFilename(nls)); settextbuf(nl,buf^,bufs);
     reset(nl);
     ende:=false;
-    _z:=PNodeListItem(Nodelist[nls])^.zone; _n:=0; _nodes:=0;
+    _z:=PNodeListItem(Nodelist.mEntrys[nls])^.zone; _n:=0; _nodes:=0;
     hostname:='';
     newfile:=true;
     brk:=false;
@@ -935,13 +935,13 @@ var   zone     : ^zonea;
             for i:=1 to p-1 do                   { Zonenname ermitteln }
               if s[i]='_' then s[i]:=' ';
             zone^[zones].name:=LeftStr(s,p-1);
-            zone^[zones].nodelist:=nls;
+            zone^[zones].nlno:=nls;
             newfile:=false;
             end
         else begin    { k<>'zone' }
           if newfile then begin
             inc(zones);
-            zone^[zones].nodelist:=nls;
+            zone^[zones].nlno:=nls;
             newfile:=false;
             end;
           with zone^[zones] do
@@ -1026,7 +1026,7 @@ var   zone     : ^zonea;
     writeln(t,k,'-------------+--------------------------+------+-------+-------+-----------');
     fillchar(zr,sizeof(zr),0);
     for i:=1 to zones do with zone^[i] do begin
-      writeln(t,k,forms(NLfilename(nodelist),13),'| ',
+      writeln(t,k,forms(NodeList.GetFilename(nlno),13),'| ',
                   forms(iifs(nr=0,'('+strs(DefaultZone)+')',
                                   strsn(nr,3)+': '+name),25),
                   '| ',regs:4,' | ',nets:5,' |',nodes:6,' | ',
@@ -1069,7 +1069,7 @@ var   zone     : ^zonea;
   end;
 
 begin
-  if not nodeopen then begin
+  if not Nodelist.mOpen then begin
     rfehler(2606);  { 'keine Node- oder Pointliste vorhanden bzw. aktiviert' }
     exit;
     end;
@@ -1105,11 +1105,11 @@ begin
   fillchar(lnet^,LargestNets*sizeof(lnetrec),0);
 
   brk:=false;
-  for nls:=0 to NodeList.Count - 1 do
-    if PNodeListItem(Nodelist[nls])^.format=1 then
+  for nls:=0 to NodeList.mEntrys.Count - 1 do
+    if PNodeListItem(Nodelist.mEntrys[nls])^.format=1 then
     begin   { Nodeliste }
       attrtxt(col.colmboxhigh);
-      mwrt(x+5+length(getres2(2612,25)),y+2,forms(NLfilename(nls),12));
+      mwrt(x+5+length(getres2(2612,25)),y+2,forms(NodeList.GetFilename(nls),12));
       attrtxt(col.colmbox);
       write(' / ');
       CalcNodeStat(nls,brk);
@@ -1249,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/27 22:36:31  mo
+  -new class TfidoNodeList
+
   Revision 1.31  2000/12/25 20:35:17  mk
   - fixed a bug introduced with new lister
 

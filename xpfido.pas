@@ -25,7 +25,7 @@ uses  xpglobal,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
-  xp0,xp1,xp1o,xp1input;
+  xp0,xp1,xp1o,xp1input,fidoglob;
 
 const nfComp   = $0001;
       nfHST    = $0002;
@@ -47,12 +47,6 @@ const nfComp   = $0001;
 
       NodeChar = '0123456789:/.';
       crashID  = '®crash¯';
-
-      nlNodelist = 1;     { normale Nodelist }
-      nlPoints24 = 2;     { Pointliste im P24-Format }
-      nlNode     = 3;     { Pointlist fr einen Node }
-      nl4DPointlist = 4;  { 4D-Pointliste }
-      nlFDpointlist = 5;  { FrontDoor-Pointliste }
 
 type  nodeinfo = record
                    found    : boolean;
@@ -745,20 +739,20 @@ begin
   new(uf[0]);
   assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
 
-  for liste:=0 to NodeList.Count - 1 do
+  for liste:=0 to NodeList.mEntrys.Count - 1 do
   begin
-    zone:=PNodeListItem(Nodelist[liste])^.zone;
+    zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
     if zone=0 then zone:=DefaultZone;
     net:=0; node:=0;
-    assign(nf,FidoDir+NLfilename(liste));
-    ltyp:=PNodeListItem(Nodelist[liste])^.format;
+    assign(nf,FidoDir+NodeList.GetFilename(liste));
+    ltyp:=PNodeListItem(Nodelist.mEntrys[liste])^.format;
     case ltyp of
       nlPoints24,
       nl4DPointlist,
-      nlFDpointlist : zone:=PNodeListItem(Nodelist[liste])^.zone;
+      nlFDpointlist : zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
       nlNode        : begin
-                         zone:=PNodeListItem(Nodelist[liste])^.zone;
-                         net :=PNodeListItem(Nodelist[liste])^.net;
+                         zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
+                         net :=PNodeListItem(Nodelist.mEntrys[liste])^.net;
                       end;
     end;
 
@@ -847,7 +841,7 @@ begin
 
               nlNode:
                 if not newnet then
-                  AppPoint(PNodeListItem(Nodelist[liste])^.node);
+                  AppPoint(PNodeListItem(Nodelist.mEntrys[liste])^.node);
 
               nlPoints24:
                 if not newnet then
@@ -881,7 +875,7 @@ begin
 
         if points>0 then begin
           if nodes=0 then begin       { ntNode }
-            np^[0].node:=PNodeListItem(Nodelist[liste])^.node;
+            np^[0].node:=PNodeListItem(Nodelist.mEntrys[liste])^.node;
             inc(nodes);
             end;
           np^[nodes-1].adr:=filepos(idf);
@@ -1017,7 +1011,7 @@ begin
     NXerror; exit; end;
   UserBlocks:=uhd.blocks;
   close(f);
-  nodeopen:=true;
+  Nodelist.mOpen:=true;
 end;
 
 
@@ -1029,7 +1023,7 @@ end;
 
 procedure KeepNodeindexOpen;
 begin
-  if nodeopen and not nodelistopen then begin
+  if Nodelist.mOpen and not nodelistopen then begin
     { new(nodelf);
     assign(nodelf^,nodefile);
     reset(nodelf^,1); }
@@ -1076,7 +1070,7 @@ procedure NodelistIndex;
 begin
   if not TestNodelist then exit;
   CloseNodeindex;
-  nodeopen:=false;
+  Nodelist.mOpen:=false;
   MakeNodelistIndex;
   OpenNodeindex(NodeIndexF);
 end;
@@ -1084,8 +1078,8 @@ end;
 
 function MainNodelist:integer;
 begin
-  Result := NodeList.Count-1;
-  while (Result>=0) and (PNodeListItem(nodelist[Result])^.listfile<>'NODELIST.###') do
+  Result := NodeList.mEntrys.Count-1;
+  while (Result>=0) and (PNodeListItem(nodelist.mEntrys[Result])^.listfile<>'NODELIST.###') do
     dec(Result);
 end;
 
@@ -1149,11 +1143,11 @@ procedure ShrinkNodelist(indizieren:boolean);
 var i : integer;
 begin
   i:=MainNodelist;
-  if (i>0) and nodeopen and (trim(ShrinkNodes)<>'') then
+  if (i>0) and Nodelist.mOpen and (trim(ShrinkNodes)<>'') then
     if not FileExists('NDIFF.EXE') then
       rfehler(103)   { 'NDIFF.EXE fehlt!' }
     else begin
-      shell('NDIFF.EXE -s '+FidoDir+NLfilename(i)+' '+ShrinkNodes,250,3);
+      shell('NDIFF.EXE -s '+FidoDir+NodeList.GetFilename(i)+' '+ShrinkNodes,250,3);
       if errorlevel<>0 then
         rfehler(2114)   { 'Fehler beim Bearbeiten der Nodelist' }
       else
@@ -1356,9 +1350,9 @@ end;
 
 function TestNodelist:boolean;
 begin
-  if not NodeOpen then
+  if not Nodelist.mOpen then
     rfehler(2102);   { 'keine Nodelist aktiv' }
-  TestNodelist:=NodeOpen;
+  TestNodelist:=Nodelist.mOpen;
 end;
 
 function testDefbox:boolean;
@@ -1743,7 +1737,7 @@ begin
   if p=0 then fn:=fn+'.';
   if (p>0) and (ival(LeftStr(fi,p-1))>0) then begin
     fillchar(fa,sizeof(fa),0);
-    if not nodeopen then
+    if not Nodelist.mOpen then
       node:=''
     else begin
       node:=strs(DefaultZone)+':'+strs(ival(LeftStr(fi,4)))+'/'+strs(ival(copy(fi,5,4)));
@@ -2243,6 +2237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/12/27 22:36:31  mo
+  -new class TfidoNodeList
+
   Revision 1.38  2000/12/25 14:02:44  mk
   - converted Lister to class TLister
 

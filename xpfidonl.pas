@@ -18,15 +18,13 @@ unit xpfidonl;
 interface
 
 uses  classes,sysutils,typeform,montage,fileio,maske,resource,archive,
-      xp0,xp1,xp1o,xp3, xpglobal;
+      xp0,xp1,xp1o,xp3,xpglobal,fidoglob;
 
 
 procedure InitNodelist;
-function  NLfilename(n:integer):string;
-procedure SaveNodeCFG;                    { NODELST.CFG speichern }
 procedure EditNLentry(var NLItem: TNodeListItem; var brk:boolean);
 function  NewNodeEntry:boolean;
-procedure SortNodelists(NodeList:TList);  { nach Dateigr”áe sortieren }
+procedure SortNodelists;  { nach Dateigr”áe sortieren }
 
 function  DoDiffs(files:string; auto:boolean):byte;
 procedure ManualDiff;
@@ -56,7 +54,7 @@ begin
     if (LeftStr(s,18)='NODELIST=NODELIST.') and FileExists(FidoDir+mid(s,10))
     then
     begin
-      New(Item); NodeList.Add(Item);
+      New(Item); NodeList.mEntrys.Add(Item);
       with Item^ do
       begin
         listfile:='NODELIST.###';
@@ -64,14 +62,14 @@ begin
         updatefile:='NODEDIFF.###';
         updatearc:='NODEDIFF.A##';
         DoDiff:=true;
-        format:=1;
+        format:=nlNodelist;
         end;
       end
     else if (LeftStr(s,10)='POINTLIST=') and FileExists(FidoDir+mid(s,11)) then begin
       p:=cpos('.',s);
       if p>0 then
       begin
-        New(Item); NodeList.Add(Item);
+        New(Item); NodeList.mEntrys.Add(Item);
         with Item^ do
         begin
           listfile:=copy(s,11,p-10)+'###';
@@ -83,7 +81,7 @@ begin
             end
           else
             DoDiff:=false;
-          format:=iif(Pointlist4D,4,2);
+          if Pointlist4D then format:=nl4DPointlist else format:=nlPoints24;
           zone:=DefaultZone;
           end;
         end;
@@ -95,7 +93,7 @@ begin
       p:=cpos(',',s);
       if (p>0) and FileExists(FidoDir+LeftStr(s,p-1)) then
       begin
-        New(Item); NodeList.Add(Item);
+        New(Item); NodeList.mEntrys.Add(Item);
         with Item^ do
         begin
           listfile:=LeftStr(s,p-1);
@@ -137,104 +135,6 @@ begin
 *)
 end;
 
-
-procedure SaveNodeCFG;                    { NODELST.CFG speichern }
-var t : text;
-    i : integer;
-begin
-  assign(t,NodelistCfg);
-  rewrite(t);
-  for i:=0 to NodeList.Count - 1 do
-  with PNodeListItem(NodeList[i])^ do
-  begin
-    writeln(t,'Listfile=',listfile);
-    if pos('###',listfile)>0 then
-      writeln(t,'Number=',number);
-    if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
-    if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
-    if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
-    if processor<>'' then writeln(t,'process-by=',processor);
-    writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
-    writeln(t,'Format=',format);
-    case format of
-      nlNodelist     : if zone>0 then writeln(t,'zone=',zone);
-      nlPoints24,
-      nl4DPointlist  : writeln(t,'zone=',zone);
-      nlNode         : writeln(t,'address=',zone,':',net,'/',node);
-    end;
-    writeln(t);
-    end;
-  close(t);
-end;
-
-
-function NLfilename(n:integer):string;
-var p : byte;
-begin
-  if n>=NodeList.Count then
-    NLfilename:=''
-  else
-    with PNodeListItem(Nodelist[n])^ do
-    begin
-      p:=pos('###',listfile);
-      if p=0 then
-        NLfilename:=listfile
-      else
-        NLfilename:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
-    end;
-end;
-
-
-procedure ReadNewNodeCFG(nlp: TList);      { NODELST.CFG laden }
-var t  : text;
-    s  : string;
-    ss : string[20];
-    p  : byte;
-    fa : fidoadr;
-    Item: PNodeListItem;
-begin
-  assign(t,NodelistCfg);
-  if existf(t) then begin
-    reset(t);
-    while not eof(t) do
-    begin
-      New(Item);
-      Item^:=TNodelistItem.Create;
-      NLP.Add(Item);
-      with Item^ do begin
-        repeat
-          readln(t,s);
-          p:=cpos('=',s);
-          if p>0 then begin
-            ss:=LowerCase(LeftStr(s,p-1));
-            s:=mid(s,p+1);
-            if ss='listfile'       then listfile:=s else
-            if ss='number'         then number:=minmax(ival(s),0,999) else
-            if ss='updatefile'     then updatefile:=s else
-            if ss='delupdate'      then delupdate:=(UpperCase(s)='J') else
-            if ss='updatearchive'  then updatearc:=s else
-            if ss='process-by'     then Processor :=s else
-            if ss='dodiff'         then dodiff:=(UpperCase(s)='J') else
-            if ss='format'         then format:=minmax(ival(s),0,6) else
-            if ss='zone'           then zone:=minmax(ival(s),0,32767) else
-            if ss='address'        then begin
-              SplitFido(s,fa,2);
-              zone:=fa.zone; net:=fa.net; node:=fa.node;
-              end;
-            end;
-        until eof(t) or (s='');
-        if (format<1) or (format>5) then
-        begin
-          NLP.Remove(Item);
-          Dispose(Item);
-        end;
-      end;  { with }
-    end;  { while }
-    close(t);
-  end;
-end;
-
-
 procedure InitNodelist;
 var
     indexflag : boolean;
@@ -262,26 +162,27 @@ var
   end;
 
 begin
-  NodeList := TList.Create;
   if (_filesize(OldNLcfg)>0) and (_filesize(NodelistCfg)=0) then
   begin
-    ReadOldNodeCFG;                { Nodelist-Konfiguration im alten  }
-    SortNodelists(NodeList);       { Format laden und im neuen Format }
-    saveflag:=true;                { abspeichern                      }
+    NodeList := TNodeList.Create;
+    ReadOldNodeCFG;                     { Nodelist-Konfiguration im alten  }
+    SortNodelists;                      { Format laden und im neuen Format }
+    saveflag:=true;                     { abspeichern                      }
     _era(OldNLcfg);
     indexflag:=true;
     end
   else begin
-    ReadNewNodeCFG(NodeList);      { Nodelist-Konfiguration im neuen }
-    indexflag:=false;              { Format laden                    }
+    NodeList := TNodeList.Create;
+    NodeList.LoadConfigFromFile;   { Nodelist-Konfiguration im neuen }
+    indexflag:=false;                           { Format laden                    }
     saveflag:=false;
   end;
   if saveflag then
-    SaveNodeCFG;
-  for i:=0 to NodeList.Count - 1 do
-    if not FileExists(FidoDir+NLfilename(i)) then
-      trfehler1(214,FidoDir+NLfilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
-  if NodeList.Count > 0 then
+    NodeList.SaveConfigToFile;
+  for i:=0 to NodeList.mEntrys.Count - 1 do
+    if not FileExists(FidoDir+NodeList.GetFilename(i)) then
+      trfehler1(214,FidoDir+NodeList.GetFilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
+  if NodeList.mEntrys.Count > 0 then
   begin
     NL_Datecheck;
     xni:=FileExists(NodeIndexF);
@@ -294,7 +195,7 @@ begin
       end;
     end
   else
-    nodeopen:=false;
+    Nodelist.mOpen:=false;
 end;
 
 
@@ -433,9 +334,9 @@ begin
       else
         ffn:=ExtractFileName(fn); {getfilename(fn);}
       i:=0;
-      while (i<NodeList.Count) and (ffn<>NLfilename(i)) do
+      while (i<NodeList.mEntrys.Count) and (ffn<>NodeList.GetFilename(i)) do
         inc(i);
-      if i<NodeList.Count then
+      if i<NodeList.mEntrys.Count then
         rfehler(1009)   { 'Diese Node-/Pointliste ist bereits eingebunden' }
       else
       with NLItem do
@@ -450,7 +351,7 @@ begin
             listfile:=LeftStr(listfile,p)+'###';
             DoDiff:=true;
             end;
-          format:=1;   { Nodelist }
+          format:=nlNodelist;                           { Nodelist }
           detect:=false;
           if listfile='NODELIST.###' then begin         { Typvorgabe 'Nodeliste' }
             updatefile:='NODEDIFF.###';
@@ -485,7 +386,7 @@ begin
             begin
               New(PNLItem);
               PNLItem^ := NLItem;
-              NodeList.Add(PNLItem);
+              NodeList.mEntrys.Add(PNLItem);
               if listfile='NODELIST.###' then
                 ShrinkNodelist(false);
               NewNodeEntry:=true;
@@ -497,16 +398,16 @@ begin
 end;
 
 
-procedure SortNodelists(nodelist:TList);       { nach Dateigr”áe sortieren }
+procedure SortNodelists;       { nach Dateigr”áe sortieren }
 var
   i,j : integer;
 begin
-  for i:=0 to NodeList.Count - 1 do
-    PNodeListItem(NodeList[i])^.sort:=_filesize(FidoDir+NLfilename(i));
-  for i:=0 to NodeList.Count - 1 do
-    for j:=NodeList.Count - 1 downto 1 do
-      if PNodeListItem(Nodelist[j])^.sort>PNodeListItem(Nodelist[j-1])^.sort then
-        NodeList.Exchange(j, j-1);
+  for i:=0 to NodeList.mEntrys.Count - 1 do
+    PNodeListItem(NodeList.mEntrys[i])^.sort:=_filesize(FidoDir+NodeList.GetFilename(i));
+  for i:=0 to NodeList.mEntrys.Count - 1 do
+    for j:=NodeList.mEntrys.Count - 1 downto 1 do
+      if PNodeListItem(Nodelist.mEntrys[j])^.sort>PNodeListItem(Nodelist.mEntrys[j-1])^.sort then
+        NodeList.mEntrys.Exchange(j, j-1);
 end;
 
 
@@ -608,21 +509,21 @@ var diffdir  : string;
       rfehler(103);    { 'NDIFF.EXE fehlt!' }
       exit;
       end;
-    if not FileExists(FidoDir+NLfilename(i)) then exit;
+    if not FileExists(FidoDir+NodeList.GetFilename(i)) then exit;
     fm:=filemode; filemode:=0;
-    assign(t,FidoDir+NLfilename(i));          { 1. Zeile vergleichen }
+    assign(t,FidoDir+NodeList.GetFilename(i));          { 1. Zeile vergleichen }
     reset(t); readln(t,s1); close(t);
     assign(t,ufile);
     reset(t); readln(t,s2); close(t);
     filemode:=fm;
     if s1<>s2 then begin
-      trfehler1(2111,NLfilename(i),30);   { '%s: Falsche Version von Nodelist oder Nodediff' }
-      log(getreps2(2130,3,NLfilename(i)));   { dito }
+      trfehler1(2111,NodeList.GetFilename(i),30);   { '%s: Falsche Version von Nodelist oder Nodediff' }
+      log(getreps2(2130,3,NodeList.GetFilename(i)));   { dito }
       exit;
       end;
     chdir(fidodir_);
-    log(NLfilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
-    shell(OwnPath+'NDIFF.EXE '+NLfilename(i)+' '+ufile,250,3);
+    log(NodeList.GetFilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
+    shell(OwnPath+'NDIFF.EXE '+NodeList.GetFilename(i)+' '+ufile,250,3);
     if errorlevel>0 then begin
       arfehler(2112,auto);    { 'Fehler beim Bearbeiten der Node-/Pointdiff' }
       log(getres2(2130,4));   { dito }
@@ -637,7 +538,7 @@ var diffdir  : string;
     CopyUpdateFile:=false;
     if (filetime(newlist)<>filetime(ufile)) or
        (_filesize(newlist)<>_filesize(ufile)) then
-      if diskfree(0)+_filesize(NLfilename(i)) < _filesize(ufile)+8192 then begin
+      if diskfree(0)+_filesize(NodeList.GetFilename(i)) < _filesize(ufile)+8192 then begin
         arfehler(2113,auto);  { 'Zu wenig Plattenplatz zum Kopieren des Nodelist-Updates' }
         log(getreps2(2130,5,extractfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
@@ -653,15 +554,15 @@ var diffdir  : string;
       TmpDoDiff := true;
   end;
 
-begin
+begin   //function  DoDiffs(files:string; auto:boolean):byte;
   DoDiffs:=1;
   reindex:=false;
   logopen:=false;
   diffdir:=ExtractFilePath(files);
   diffnames:=extractfilename(files);
 
-  for i:=0 to NodeList.Count - 1 do
-  with PNodeListItem(Nodelist[i])^ do
+  for i:=0 to NodeList.mEntrys.Count - 1 do
+  with PNodeListItem(Nodelist.mEntrys[i])^ do
   begin
     ucount:=5;
     nextnr:=number;
@@ -686,7 +587,7 @@ begin
         if processor<>'' then ExecProcessor(processor);
         if DoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
-          SaveNodeCFG;
+          NodeList.SaveConfigToFile;
           done:=true;
           if listfile='NODELIST.###' then
             ShrinkNodelist(false);
@@ -694,9 +595,9 @@ begin
         if not DoDiff and CopyUpdateFile then
         begin    { Update kopieren }
           if pos('##',listfile)>0 then begin
-            _era(FidoDir+NLfilename(i));      { alte Liste l”schen }
+            _era(FidoDir+NodeList.GetFilename(i));      { alte Liste l”schen }
             number:=nextnr;
-            SaveNodeCFG;
+            NodeList.SaveConfigToFile;
             end;
           done:=true;
           end;
@@ -718,7 +619,7 @@ begin
   freeres;
   if logopen then close(logfile);
   if reindex then begin
-    if nodeopen then CloseNodeIndex;
+    if Nodelist.mOpen then CloseNodeIndex;
     MakeNodelistindex;
     OpenNodeindex(NodeIndexF);
     end;
@@ -744,6 +645,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/12/27 22:36:31  mo
+  -new class TfidoNodeList
+
   Revision 1.26  2000/12/10 10:54:56  mo
   -TNodelistItem in eine Klasse umgewandelt
 

@@ -26,7 +26,7 @@ uses
 {$ENDIF }
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal, Classes;
+  xpglobal,Classes,fidoglob;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfuehrliche Sendeanzeige }
@@ -2100,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.85  2000/12/27 22:36:34  mo
+  -new class TfidoNodeList
+
   Revision 1.84  2000/12/25 14:02:43  mk
   - converted Lister to class TLister
 

@@ -23,7 +23,7 @@ uses
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,datadef,database,maske, xpheader,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
-  xp2c,xp_des,xpe;
+  xp2c,xp_des,xpe,fidoglob;
 
 procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);
@@ -1282,6 +1282,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/12/27 22:36:33  mo
+  -new class TfidoNodeList
+
   Revision 1.50  2000/12/05 14:58:11  mk
   - AddNewUser
 

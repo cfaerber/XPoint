@@ -25,7 +25,7 @@ uses sysutils,
 {$ENDIF }
   typeform,fileio,inout,keys,datadef,database,lister,
   maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
-  xpglobal;
+  xpglobal,fidoglob;
 
 
 procedure SendMaps(bef:string; var box,datei:string);
@@ -1615,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/27 22:36:32  mo
+  -new class TfidoNodeList
+
   Revision 1.32  2000/12/25 20:35:16  mk
   - fixed a bug introduced with new lister
 

@@ -31,9 +31,8 @@ uses
   linux,
   xplinux,
 {$ENDIF}
-  xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
-  datadef,database,maus2,maske,clip,resource,
-  xp0,xp1,xp1input,xp1o,xp1o2;
+  xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,datadef,database,
+  maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob;
 
 procedure kalender;
 procedure memstat;
@@ -940,6 +939,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/12/27 22:36:34  mo
+  -new class TfidoNodeList
+
   Revision 1.45  2000/12/18 09:22:59  mk
   - fehlendes pophp ergaenzt
 

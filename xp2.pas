@@ -35,9 +35,8 @@ uses
   xpos2,
 {$ENDIF }
   sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-  databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
-  resource,montage, xpglobal, debug,
-  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,
+  databaso,maske,help,printerx,lister,win2,maus2,crc,clip,resource,montage,
+  xpglobal, debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
 {$IFDEF XPEasy }
   xpeasy,
 {$ENDIF }
@@ -1199,6 +1198,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.97  2000/12/27 22:36:36  mo
+  -new class TfidoNodeList
+
   Revision 1.96  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 

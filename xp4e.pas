@@ -24,7 +24,7 @@ uses
   crt,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp, xpheader,
-  win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3;
+  win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3,fidoglob;
 
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
@@ -194,7 +194,7 @@ begin
         s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1))
-    else if (pb_netztyp=nt_fido) and nodeopen then
+    else if (pb_netztyp=nt_fido) and Nodelist.mOpen then
       usertest:=Testfido(s);
     end;
 end;
@@ -1412,7 +1412,7 @@ begin
             end;
           end
         else begin
-          if (cpos('@',s)=0) and (pb_netztyp=nt_Fido) and nodeopen then
+          if (cpos('@',s)=0) and (pb_netztyp=nt_Fido) and Nodelist.mOpen then
             if TestFido(s) then;
           if cpos('@',s)=0 then s:=s+'@';
           dbSeek(ubase,uiName,UpperCase(s));
@@ -2423,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/12/27 22:36:35  mo
+  -new class TfidoNodeList
+
   Revision 1.54  2000/12/05 14:58:09  mk
   - AddNewUser
 

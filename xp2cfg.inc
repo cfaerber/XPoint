@@ -333,7 +333,6 @@ begin
   DefaultZone:=2;
   DefaultNet:=248;
   DefaultNode:=2004;
-  nodeopen:=false;
   kludges:=true;
   gAKAs:='';
   AutoCrash:='';
@@ -1681,6 +1680,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.99  2000/12/27 22:36:36  mo
+  -new class TfidoNodeList
+
   Revision 1.98  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 

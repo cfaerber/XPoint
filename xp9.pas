@@ -26,7 +26,7 @@ uses
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
-  xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
+  xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
 
 
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -1820,6 +1820,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.51  2000/12/27 22:36:32  mo
+  -new class TfidoNodeList
+
   Revision 1.50  2000/12/03 14:19:41  mk
   - Serverdom mit Punkt
 

@@ -24,9 +24,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  ZFTools,typeform,montage,fileio,keys,maus2,
-  inout,lister,resource,maske, xpglobal,debug,
-  xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
+  ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,maske,xpglobal,
+  debug,xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl,fidoglob;
 
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
@@ -938,6 +937,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/12/27 22:36:32  mo
+  -new class TfidoNodeList
+
   Revision 1.48  2000/12/25 23:21:04  mk
   - removed develop label
 
