@@ -833,6 +833,29 @@ begin // Show
   oldselb := true; {!}
   
   repeat
+    if SelBar then
+    begin
+      FSelLine := MinMax(FSelLine, 0, Lines.Count -1);
+(*
+      while assigned(FOnTestSelect) and not FOnTestSelect(Lines[FSelLine],true) do
+      begin
+        if FSelLine < Lines.Count - 1 then Inc(FSelLine) else break;
+        if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
+      end;
+      while assigned(FOnTestSelect) and not FOnTestSelect(Lines[FSelLine],true) do
+      begin
+        if FSelLine > 0 then Dec(FSelLine) else break;
+      end;
+*)      
+      FirstLine := Min(FirstLine, FSelLine);
+      FirstLine := Max(FirstLine, FSelLine-DispLines +1);
+      FirstLine := Max(FirstLine, 0);
+    end else
+    begin
+      FirstLine := Min(FirstLine,Lines.Count-1);
+      FirstLine := Max(FirstLine,0);
+    end;
+
     display;
     showstat;
     if Assigned(FOnShowLines) then FOnShowLines(GetSelection);
@@ -883,30 +906,27 @@ begin // Show
         suchcase := (t = 'S') or (t = '\');
         suchen(false);
       end;
+
       if stat.maysearch and (t = keytab) then
         suchen(true);
 
       // key up
       if (t = keyup) and not mausdown then
         if SelBar then
-        begin
-          if FSelLine > 0 then Dec(FSelLine);
-          FirstLine := Min(FirstLine, FSelLine);
-        end
+          FSelLine := FSelLine - 1
         else
-          if FirstLine > 0 then
-            Dec(FirstLine);
+          FirstLine := FirstLine - 1
+      else
 
       // key down
       if (t = keydown) and not mausdown then
-        if selbar then
-        begin
-          if FSelLine < Lines.Count - 1 then Inc(FSelLine);
-          if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
-        end
+      begin
+        if SelBar then
+          FSelLine := FSelLine + 1
         else
-          if FirstLine + DispLines < Lines.Count then
-            Inc(FirstLine);
+        if FirstLine + DispLines < Lines.Count then
+          FirstLine := FirstLine + 1
+      end else
 
       // goto first line of text
       if (t = keyhome) or (t = keycpgu) then
@@ -914,43 +934,37 @@ begin // Show
         FirstLine := 0;
         FSelLine := 0;
         slen := 0;
-      end;
+      end else
 
       // goto last line of text
-      if (t = keyend) or (t = keycpgd) then
-      begin
-        FirstLine := Max(Lines.Count - DispLines, 0);
-        FSelLine := Lines.Count - 1;
-      end;
-
       if t = keypgup then
       begin
-        FirstLine := Max(0, FirstLine - DispLines);
-        FSelLine := Max(FirstLine, FSelLine - DispLines);
-      end;
+        if SelBar then
+          FSelLine := FSelLine - DispLines;
+        FirstLine := FirstLine - DispLines;
+      end else
 
       if t = keypgdn then
       begin
-        if stat.allpgdn then
-        begin
-          if Lines.Count-DispLines > FirstLine then
-            FirstLine := Min(FirstLine + DispLines - 2, Max(Lines.Count, 0));
-        end else
-          FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - DispLines, 0));
-        FSelLine := Min(FSelLine + DispLines, Max(Lines.Count - 1, 0));
-      end;
+        if SelBar then
+          FSelLine := FSelLine + DispLines;
+
+        if FirstLine + DispLines < Lines.Count -1 then
+          FirstLine := FirstLine + DispLines;
+      end else
 
       if t = keychom then
-        FirstLine := 0;
+        FirstLine := 0
+      else
 
-      if (t = keycend) and selbar then
+      if (t = keyend) then
       begin
-        FirstLine := 0;
-        while (FirstLine < lines.count) and (FirstLine < DispLines) do
-        begin
-          inc(Firstline);
-        end;
-      end;
+        if Selbar then
+          FSelLine := Lines.Count - 1
+        else
+          if FirstLine + DispLines < Lines.Count -1 then
+            FirstLine := Lines.Count - DispLines;
+      end else
 
       if not stat.noshift then
       begin
@@ -1139,6 +1153,18 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.4  2003/08/24 14:37:27  cl
+  - merged fixes from main branch:
+
+  Revision 1.87  2003/08/21 18:41:25  cl
+  - some fixes for last commits
+
+  Revision 1.86  2003/08/20 20:39:21  cl
+  - fixed one more "list index out of bounds" error
+
+  Revision 1.85  2003/08/20 18:24:21  cl
+  - fixed several off-by-one errors in lister component
+
   Revision 1.69.2.3  2003/05/10 15:44:09  mk
   - show two more lines when listing messages after PgDown
 
