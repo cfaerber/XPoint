@@ -570,6 +570,7 @@ begin
   SwapMausKeys:=false;
   MausDblclck:=mausdbl_norm;
   MausShInit:=false;
+  MausWheelStep:=3;
   ConvISO:=false;
   KomArrows:=true;
   ShrinkNodes:='';
@@ -847,6 +848,7 @@ begin
   writeln(t,'SwapMaus=',jnf(SwapMausKeys));
   writeln(t,'Doppelklick=',MausDblclck);
   writeln(t,'MausInit=',jnf(mausshinit));
+  writeln(t,'MausWheel=',MausWheelStep);
   writeln(t,'ISO2IBM=',jnf(ConvISO));
   writeln(t,'NewUserIBM=',jnf(newuseribm));
   writeln(t,'UserSortBox=',jnf(_usersortbox));
@@ -1429,6 +1431,7 @@ begin
           getx(su,  'SwapMaus',swapmauskeys) or
           getb(su,  'Doppelklick',MausDblclck) or
           getx(su,  'MausInit',mausshinit) or
+          geti(su,  'MausWheel',mauswheelstep) or
           getx(su,  'ISO2IBM',ConvISO) or
           getx(su,  'KommPfeile',KomArrows) or
           getx(su,  'ListScroller',listscroller) or
@@ -1613,6 +1616,8 @@ begin
     MausSwapped:=SwapMausKeys;
     maus_setdblspeed(minmax(mausdblclck,1,50));
     SetMausEmu;
+    MausWheelStep:=MinMax(MausWheelStep,1,120);
+    
     FidoTo:=brettalle;
     if auswahlcursor then
     begin
@@ -1698,6 +1703,9 @@ begin
 
 {
   $Log$
+  Revision 1.126  2001/09/20 18:26:27  cl
+  - configuration option for mouswheel stepwidth (no UI yet)
+
   Revision 1.125  2001/09/08 16:29:32  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
