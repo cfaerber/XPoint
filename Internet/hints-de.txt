@@ -31,7 +31,13 @@ Wo möglich Funktionen aus der SysUtils-Unit benutzen (Dateizugriff etc.).</li>
 <li>Standardtyp f&uuml;r ganze Zahlen ist Integer. Byte, Word und DWord werden
 nur verwendet, wenn es das Programmumfeld erfordert (z.b. Records). Integer ist
 auf einer 16 Bit Platform 2 Byte, auf einer 32 Bit Platform 4 Byte groß und
-immer das <i>schnellste</i> CPU Register.</li>
+immer das <i>schnellste</i> CPU Register. Datentypen mit fester Länge (Integer16
+etc.) werden in XPGlobal definiert.</li>
+<li>Dateizugriff: Da unter DOS/Windows alle Dateien mit Großbuchstaben angelegt
+werden müssen (ansonsten gibt es Probleme beim gemischten Zugriff von Windows/pure
+DOS), Dateinamen unter Unix aber besser kleingeschrieben werden sollten, bitte
+beim Öffnen von Dateien "FileIO.FileUppercase" benutzen und die Dateinamen defaultmäßig
+klein schreiben ("FileCreate(FileUppercase('testfile.txt'))").</li>
 <li>Bei dem Inline-Assembler muss darauf geachtet werden, das die Variablen SI,
 DI, ES ohne Probleme verwendet werden dürfen. Die Variable DS muss jedoch vorher
 gesichert werden.</li>

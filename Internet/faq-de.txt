@@ -35,7 +35,7 @@ Es gibt mehrere Möglichkeiten für Programme, auf serielle Geräte zuzugreifen:
 <li>Win32-API
 <br /><small>Der Weg für Win32-Programme. Hinter einem Win32-ComPort kann sich alles mögliche verbergen (reale ComPorts, emulierte Ports einer ISDN-Karte etc.). Der Port wird von einem Gerätetreiber zur Verfügung gestellt.</small></li>
 <li>CAPI
-<br /><small>CAPI ist ein Interface für ISDN-Karten. Es gibt die Versionen 1.1 und 2.0 (die Version 2.0 ist <i>nicht</i> abwärtskompatibel zur Version 1.1, die meisten CAPIs sind aber Dual-CAPIs und stellen beide Interfaces zur Verfügung). Achtung: Manche ISDN-Windows-Treiber stellen das CAPI nur Windows-Programmen zur Verfügung.</li>
+<br /><small>CAPI ist ein Interface für ISDN-Karten. Es gibt die Versionen 1.1 und 2.0 (die Version 2.0 ist <i>nicht</i> abwärtskompatibel zur Version 1.1, die meisten CAPIs sind aber Dual-CAPIs und stellen beide Interfaces zur Verfügung). Achtung: Manche ISDN-Windows-Treiber stellen das CAPI nur Windows-Programmen zur Verfügung.</small></li>
 </ol>
 (Open)XP (DOS) kann auf Hardware (1) und Fossil (2) zugreifen, OpenXP 3.70 (Win32) auf Win32-ComPorts (3).
 <br />USB- und WinModems stellen normalerweise nur einen Win32-ComPort (3) zur Verfügung.
