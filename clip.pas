@@ -60,7 +60,6 @@ uses
   xp0,
 {$ifdef unix}
   linux,
-  fileio,
   xplinux;
 {$else}
 {$IFDEF Win32 }
@@ -335,6 +334,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/09/06 19:28:57  mk
+  - removed unsed unit fileio from uses
+
   Revision 1.31  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 

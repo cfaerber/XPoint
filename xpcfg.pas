@@ -74,7 +74,6 @@ procedure PutCfg(k, v: string; cs: TCfgSection; resid: integer);
 implementation
 
 uses
-  fileio,
   resource,
 {$IFDEF unix}
   xplinux,
@@ -501,6 +500,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/09/06 19:28:57  mk
+  - removed unsed unit fileio from uses
+
   Revision 1.10  2001/09/06 18:52:35  mk
   - fixed uninitialized variable last
 
