@@ -368,12 +368,12 @@ var   fb     : pathstr;
   var i : integer;
   begin
     i:=p+add+1;
-    while (i<=fn) and (f^[i]^[1]<>ab) do inc(i);
+    while (i<=fn) and (Upcase(f^[i]^[1])<>ab) do inc(i);
     if i>fn then begin
       i:=1;
-      while (i<=p+add) and (f^[i]^[1]<>ab) do inc(i);
+      while (i<=p+add) and (Upcase(f^[i]^[1])<>ab) do inc(i);
       end;
-    if f^[i]^[1]=ab then begin
+    if Upcase(f^[i]^[1])=ab then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -1117,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.8  2000/12/14 10:37:14  mk
+  - Char-Upcase bei Suche nach Dateien in FSBox
+
   Revision 1.16.2.7  2000/12/12 11:30:27  mk
   - FindClose hinzugefuegt
 
