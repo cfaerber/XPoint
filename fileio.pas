@@ -112,8 +112,10 @@ uses
   linux;
 {$endif}
 
+{$IFDEF BP }
 var
   ShareDa : boolean;
+{$ENDIF }
 
 function exist(n:string):boolean;
 {$IFDEF Ver32  }
@@ -578,7 +580,7 @@ begin
     Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
   Lock := true;
   {$endif}
-   {$ifdef linux}                     { ML 25.03.2000    Filelocking für Linux }
+   {$ifdef linux}                     { Filelocking für Linux }
    lock := flock (datei, LOCK_SH);
  {$endif}
 {$ENDIF}
@@ -780,6 +782,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/05/03 07:33:56  mk
+  - unbenutze Variablen/Units rausgeworfen
+
   Revision 1.25  2000/04/29 16:45:06  mk
   - Verschiedene kleinere Aufraeumarbeiten
 

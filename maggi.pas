@@ -209,9 +209,6 @@ begin
 end;
 
 procedure error(txt:atext);
-var
-    t      : longint;
-    i      : integer;
 begin
   writeln('Fehler: ',txt);
   halt(1);
@@ -1827,6 +1824,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/05/03 07:33:56  mk
+  - unbenutze Variablen/Units rausgeworfen
+
   Revision 1.10  2000/04/30 21:03:35  mk
   - kein crt noetig
 
