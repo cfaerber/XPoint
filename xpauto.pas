@@ -552,7 +552,7 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoExec');
 {$ENDIF }
-  if FileExists(AutoxDir+WildCard) then begin
+  if not isEmptyDir(AutoxDir) then begin
     first:=true;
     ctlEbest:=false; ctlErstDat:=false;
     mgel:=ParGelesen; ParGelesen:=false;
@@ -675,6 +675,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.2  2002/05/13 21:26:39  ma
+  - fixed processing of AUTOEXEC dir
+
   Revision 1.48.2.1  2002/05/05 22:43:14  mk
   - use correct case for 'bak' extension
 
