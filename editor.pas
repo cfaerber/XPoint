@@ -1347,18 +1347,58 @@ var  dl         : displp;
       case tk of
         editCorrectWorkpos: CorrectWorkPos;
         { Blockoperationen }
-        editfText         : ZeichenEinfuegen(false);
-        editfBS           : BackSpace;
-        editfDEL          : DELchar;
+        editfText         : if e^.config.persistentblocks
+                             then ZeichenEinfuegen(false)
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               ZeichenEinfuegen(false);
+                             end;
+        editfBS           : if e^.config.persistentblocks
+                             then BackSpace
+                             else if (blockinverse or blockhidden)
+                              then BackSpace
+                              else BlockLoeschen;
+        editfDEL          : if kb_shift
+                             then BlockClpKopie(true)
+                             else if e^.config.persistentblocks
+                              then DELchar
+                              else if (blockinverse or blockhidden)
+                               then DELchar
+                               else BlockLoeschen;
         { Blockoperationen }
-        editfNewline      : NewLine;
+        editfNewline      : if e^.config.persistentblocks
+                             then NewLine
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               NewLine;
+                             end;
         editfDelWordRght  : WortRechtsLoeschen;
         editfDelWordLeft  : WortLinksLoeschen;
         editfDelLine      : ZeileLoeschen;
-        editfCtrlPrefix   : Steuerzeichen;
-        editfTAB          : Tabulator;
+        editfCtrlPrefix   : if e^.config.persistentblocks
+                             then Steuerzeichen
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               Steuerzeichen;
+                             end;
+        editfTAB          : if e^.config.persistentblocks
+                             then Tabulator
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               Tabulator;
+                             end;
         editfUndelete     : Undelete;
-        editfParagraph    : Paragraph;
+        editfParagraph    : if e^.config.persistentblocks
+                             then Paragraph
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               Paragraph;
+                             end;
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
@@ -1426,10 +1466,14 @@ var  dl         : displp;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
         { Blockoperationen }
-        editfPasteBlock   : begin
-                              BlockClpEinfuegen;
-                              BlockEinAus;
-                            end;
+        editfPasteBlock   : if e^.config.persistentblocks
+                             then BlockClpEinfuegen
+                             else begin
+                               if not (blockinverse or blockhidden)
+                                then BlockLoeschen;
+                               BlockClpEinfuegen;
+                               BlockEinAus;
+                             end;
 //        editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
@@ -1773,6 +1817,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.71  2001/12/04 10:17:53  mk
+  - fixed persistent blocks
+
   Revision 1.70  2001/10/17 22:11:25  ml
   - removed some range-check Errors
 
