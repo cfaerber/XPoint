@@ -38,7 +38,7 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-  H,M,S,S100: rtlword;
+  H,M,S,S100: word;
 begin
   GetTime(H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
@@ -111,6 +111,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/09/12 12:40:17  fe
+  rtlword-"Fix" wieder zurueckgenommen.  Mmh.
+
   Revision 1.6  2000/09/09 22:30:39  fe
   rtlword-Fixes
 
