@@ -627,12 +627,8 @@ begin
     wrs('BET: '+betreff);
     wrs('ROT: '+pfad);
     wrs('MID: '+msgid);
-   {$IFDEF Debug }
-    if(length(msgid)=0) then begin
-      writeLn('Achtung keine MSGID vorhanden');
-      ReadKey;
-      end;
-   {$ENDIF }
+    if(length(msgid)=0) then
+      Debug.Debuglog('zftools','No msgid: '+empfaenger+' '+absender+' '+betreff,dlWarning);
     ZtoZCdatumNTZ(datum,zdatum);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
@@ -1808,6 +1804,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.15  2001/03/23 13:42:34  ma
+        - missing msgid reported in debug log
+
         Revision 1.14  2001/02/26 00:03:04  ma
         - adr3d was not initialized correctly (an annoying bug: zc->fido conversion
           failed if and only if fido->zc conversion [=netcall] was done before)
