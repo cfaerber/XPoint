@@ -287,7 +287,8 @@ end;
 procedure TSocketNetcall.DisConnect;
 begin
   if FConnected then begin
-    ShutDown(FHandle, 2);
+    ShutDown(FHandle, 2); // SD_BOTH
+    CloseSocket(FHandle);
     FConnected := false;
   end;
 end;
@@ -434,6 +435,9 @@ end;
 
 {
   $Log$
+  Revision 1.33  2002/04/14 12:01:24  mk
+  - Close Socket-Handle in TSocketNetcall.DisConnect
+
   Revision 1.32  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 
