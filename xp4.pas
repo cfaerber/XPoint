@@ -1165,7 +1165,7 @@ var t,lastt: taste;
 {*} end;
 
 
-    if pm and (empf[1]<>vert_char) then
+    if (dispmode<>1) and (dispmode<>2) and pm and (FirstChar(empf)<>vert_char) then
     begin
       origdb:=defaultbox;
       _empf := dbreadnStr(mbase,mb_brett);
@@ -2283,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2001/12/31 14:00:29  mk
+  JG: Fixed DB-Crash when replying to a user with empty message base
+
   Revision 1.113  2001/12/31 13:53:39  mk
   - fixed bug #490572 (template with Ctrl-B is missing)
 
