@@ -23,7 +23,7 @@
 
 {$I xpdefine.inc }
 
-unit zcrfc;
+unit zcrfc;                                      
 
 //{$IFDEF NCRT}
 //  {$UNDEF NCRT}
@@ -223,10 +223,6 @@ var
   TempS: ShortString;
   t: tstringlist;
 
-const
-  { Wird zum Einlesen der Customizable Headerlines benoetigt }
-  // S wird Standardmaessig mit dieser Laenge allociert
-  MaxSLen = 4096;
 
 // Frischen Header erzeugen
 procedure ClearHeader;
@@ -1324,42 +1320,39 @@ begin
   ReadBuf;
 end;
 
+// performance critical
 procedure TUUz.ReadString;
+const
+  DefaultLength = 128;
 var
   l: Integer;
   c: char;
-
-  procedure IncPos;
-  begin
-    inc(bufpos);
-    if bufpos = bufanz then
-      if not eof(f1) then
-        ReadBuf;
-  end;
-
 begin
   l := 0; eol := 1;
   s := '';
-  SetLength(s, MaxSLen);
+  SetLength(s, DefaultLength);
   while (bufpos < bufanz) and (buffer[bufpos] <> #10) do
   begin
     c := buffer[bufpos];
     if c <> #13 then
     begin
       inc(l);
-      if c = #26 then c := '?'; // Ctrl-Z abfangen
-      // Die ersten MaxSLen Bytes machen wir effizient, danach machen
-      // wir uns ersteinmal keinen groesseren Aufwand
-      if l <= MaxSlen then
+      if c <> #26 then
         s[l] := c
       else
-        s := s + c;
+        s[l] := '?'; // Ctrl-Z abfangen
+      if (l mod DefaultLength)=0 then
+        SetLength(s, ((l div DefaultLength) + 1) * DefaultLength);
     end else
       Inc(eol);
-    IncPos;
+    inc(bufpos);
+    if (bufpos = bufanz) and not eof(f1) then
+      ReadBuf;
   end;
   Setlength(s, l);
-  IncPos;
+  inc(bufpos);
+  if (bufpos = bufanz) and not eof(f1) then
+    ReadBuf;
 end;
 
 procedure TUUz.ReadBinString(bytesleft: longint); { Base64-Codierung }
@@ -3655,6 +3648,9 @@ end;
 
 {
   $Log$
+  Revision 1.92  2002/03/04 01:13:49  mk
+  - made uuz -uz three times faster
+
   Revision 1.91  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 

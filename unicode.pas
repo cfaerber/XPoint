@@ -156,22 +156,54 @@ type
 implementation
 
 uses charmaps;
-              
+
 // -------------------------------------------------------------------
 //   Helper functions
 // -------------------------------------------------------------------
 
+{$R-,Q-}
 function UnicodeToUTF8(c: UCChar): UTF8String;
 begin
   if c <= $007f then
     Result := Chr(c)
   else if c <= $07ff then
-    Result := Chr($c0 or (c shr 6)) + Chr($80 or (c and $3f))
-  else if c <= $ffff then
-    Result := Chr($e0 or (c shr 12)) + Chr($80 or ((c shr 6) and $3f)) +
-      Chr($80 or (c and $3f));
+  begin
+    SetLength(Result, 2);
+    Result[1] := Chr($c0 or (c shr 6));
+    Result[2] := Chr($80 or (c and $3f));
+  end else if c <= $ffff then
+  begin
+    SetLength(Result, 3);
+    Result[1] := Chr($e0 or (c shr 12));
+    Result[2] := Chr($80 or ((c shr 6) and $3f));
+    Result[3] := Chr($80 or (c and $3f));
+  end;
   // !!!: How are Unicode chars >$ffff handled? (new in Unicode 3)
 end;
+
+// same as UnicodeToUTF8, but changes a given string at position index
+// length of the given string is not checked!
+procedure UnicodeToUTF8ToString(c: UCChar; var s: String; var Index: Integer);
+begin
+  if c <= $007f then
+  begin
+    Inc(Index); s[Index] := Chr(c);
+  end
+  else if c <= $07ff then
+  begin
+    Inc(Index); s[Index] := Chr($c0 or (c shr 6));
+    Inc(Index); s[Index] := Chr($80 or (c and $3f));
+  end else if c <= $ffff then
+  begin
+    Inc(Index); s[Index] := Chr($e0 or (c shr 12));
+    Inc(Index); s[Index] := Chr($80 or ((c shr 6) and $3f));
+    Inc(Index); s[Index] := Chr($80 or (c and $3f));         
+  end;
+end;
+
+{$IFDEF Debug }
+  {$R+,Q+}
+{$ENDIF }
 
 
 // -------------------------------------------------------------------
@@ -383,27 +415,29 @@ end;}
 
 function T8BitUTF8Decoder.Decode(const Source: UTF8String): String;
 var
-  p: Integer;
+  i, p: Integer;
   Index: Integer;
   L1Table: PL2RevTable;
 begin
-  SetLength(Result, 0);
-  p := 1;
+  SetLength(Result, Length(Source));
+  p := 1; i := 1;
   while p<=Length(Source) do
   begin
     if ShortInt(Ord(Source[p+0])) > 0 then     // = "if Ord(Source[p+0]) < $80 then"
     begin
       // 1-byte encoding
-      Result := Result + FL3RevTable[Ord(Source[p+0])];
+      Result[i] := FL3RevTable[Ord(Source[p+0])];
+      Inc(i);
       Inc(p);
     end else if Ord(Source[p+0]) < $e0 then
     begin
       // 2-byte encoding
       Index := Ord(Source[p+0]) and $1f;
       if Assigned(FL2RevTable[Index]) then
-        Result := Result + FL2RevTable[Index]^[Ord(Source[p+1]) and $3f]
+        Result[i] := FL2RevTable[Index]^[Ord(Source[p+1]) and $3f]
       else
-        Result := Result + '?';
+        Result[i] := '?';
+      Inc(i);
       Inc(p, 2);
     end else
     begin
@@ -414,14 +448,16 @@ begin
       begin
         Index := Ord(Source[p+1]) and $3f;
         if Assigned(L1Table^[Index]) then
-          Result := Result + L1Table^[Index]^[Ord(Source[p+2]) and $3f]
+          Result[i] := L1Table^[Index]^[Ord(Source[p+2]) and $3f]
         else
-          Result := Result + '?';
+          Result[i] := '?';
       end else
-        Result := Result + '?';
+        Result[i] := '?';
+      Inc(i);       
       Inc(p, 3);
     end;
   end;
+  SetLength(Result, i-1);
 end;
 
 // -------------------------------------------------------------------
@@ -430,14 +466,21 @@ end;
 
 function TWindowsUTF8Encoder.Encode(const Source: String): UTF8String;
 var
-  i: Integer;
+  i, j: Integer;
+  c: Char;
 begin
-  SetLength(Result, 0);
+  Result := '';
+  SetLength(Result, Length(Source) * 3); // maximum length of the new string
+  j := 0;
   for i := 1 to Length(Source) do
-    if Ord(Source[i]) in [$80..$9F] then
-      Result := Result + UnicodeToUTF8(CP1252TransTable[Source[i]])
+  begin
+    c := Source[i];
+    if not Ord(c) in [$80..$9F] then
+      UnicodeToUTF8ToString(UCChar(Ord(c)), Result, j)
     else
-      Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
+      UnicodeToUTF8ToString(CP1252TransTable[c], Result, j);
+  end;
+  SetLength(Result, j);
 end;
 
 constructor TWindowsUTF8Decoder.Create;
@@ -489,6 +532,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/03/04 01:13:49  mk
+  - made uuz -uz three times faster
+
   Revision 1.11  2002/01/03 18:59:12  cl
   - moved character set maps to own units (allows including them from several
     other units without duplication)
