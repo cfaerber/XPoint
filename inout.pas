@@ -681,6 +681,7 @@ begin
 {$ENDIF NCRT}
 {$ENDIF Win32}
     begin
+      multi2;
       key_pressed:=true;
     end;
 
@@ -1674,6 +1675,9 @@ end;
 
 {
   $Log$
+  Revision 1.105  2003/05/10 17:30:00  mk
+  - added call to multi2
+
   Revision 1.104  2003/04/12 13:02:12  mk
   - added more debug info for getkey
 
