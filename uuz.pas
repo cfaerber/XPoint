@@ -1429,7 +1429,10 @@ begin
      jz    @@4
      cmp   al,10                   { eol-Zeichen? }
      jz    @@4
-     cmp   di,253                  { max. Stringl„nge erreicht? }
+     cmp   al, 1ah                 { Ctrl-Z }
+     jne   @_3
+     mov   al, '?'
+@_3: cmp   di,253                  { max. Stringl„nge erreicht? }
      ja    @@5
      inc   di                      { inc(l)  }
      mov   byte ptr s+di,al        { s[l]:=c }
@@ -3440,6 +3443,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.47  2001/08/07 16:53:45  mk
+  JG:- Ctrl-Z umwandeln
+
   Revision 1.35.2.46  2001/08/05 11:45:32  my
   - added new unit XPOVL.PAS ('uses')
 
