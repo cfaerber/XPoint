@@ -57,6 +57,8 @@ procedure SendNetzanruf(logfile: string);
 //**procedure MoveRequestFiles(var packetsize:longint);
 //**procedure MoveLastFileIfBad;
 
+procedure UniqueDownloadName(var s:string;path:string); { makes a a download filename usable and unique }
+
 procedure AponetNews; {?!}
 
 { Converts stringlist to comma separated string }
@@ -93,7 +95,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpfidonl,xpmaus,xpncfido,xpnczconnect,xpncpop3,xpmakeheader,ncmodem;
+     xpfido,xpfidonl,xpmaus,xpncfido,xpnczconnect,xpncpop3,xpncuucp,xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -551,6 +553,86 @@ begin
   close(t);
 end;
 
+procedure UniqueDownloadName(var s:string;path:string);
+var pold,name,ext,ext2,i: string;
+    j,mlen: integer;
+begin
+  s := ExtractFileName(s); (* replace path *)
+  path:= AddDirSepa(path);
+
+  if s='' then s:='noname';
+  
+  (* 
+     replace invalid chars
+  
+     Unix: all, except '/' and #0
+     DOS:  A-Z 0-9 $ % ' - _ @   ~ ` ! ( ) { } ^ # &
+     LFN:  a-z <sp> + , ; = [ ]
+  *)
+
+  for j := 1 to length(s) do 
+  {$IFDEF UnixFS} 
+    if s[j] in [#0..#31,'/'] then
+  {$ELSE}
+    if (s[j] in [#0..#31,'/','\','<','>','|',':','"','*','?'])
+    {$IFDEF DOS32}
+      or ((not System.LFNSupport) and (s[j] in [' ','+',',',';','=','[',']']))
+    {$ENDIF} 
+      then
+  {$ENDIF}
+        s[j]:='_';
+
+  FSplit(s,pold,name,ext);
+
+  (* truncate to 8.3 on TRUE DOS *)
+
+  {$IFDEF DOS32}
+  if not System.LFNSupport then 
+  begin
+    if (ext='.Z') or (ext='.gz') or (ext='.bz') or (ext='.F') then begin
+      FSplit(name,pold,name,ext2);
+      if ext2<>'' then begin
+        if ext ='.F' then ext:= '-XZ';
+        ext:=LeftStr(ext2,5-length(ext))+Mid(ext,2);
+      end;
+    end;
+  
+    name:=UpperCase(copy(name,1,8)); for j:= 1 to length(name) do if name[j] in ['.'] then name[j]:='_';
+    ext :=UpperCase(copy(ext, 1,4));                      (* ^^^ grmpf, another pass ^^^ *)
+  end;
+  {$ENDIF}
+
+  s   :=path+name+ext;
+  if not FileExists(s) then exit; (* bingo *)
+
+  j:=0;
+  name:=name+'-'; (* sep *)
+ 
+  (* calculate max chars that may be added to name *)
+ 
+  {$IFDEF DOS32}
+  if (* not System.LFNSupport *) true then 
+    mlen:=8-length(name)
+  else 
+  {$ENDIF}
+    mlen:= MaxLenPathName-Length(s)-length(Path)-1;
+
+  (* find free filename *)
+
+  repeat
+    inc(j); i:=Strs(j);
+
+    if (mlen<length(i)) then begin
+      name:=copy(name,1,max(0,length(name)-length(i)+mlen));
+      mlen:=length(i);
+      if length(name) >4 then name[Length(name)]:='-'; (* sep *)
+    end;
+
+    s := path+name+i+ext;
+
+  until not FileExists(s);
+end;
+
 function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,crash:boolean):boolean;
 
 const crlf : array[0..1] of char = #13#10;
@@ -790,7 +872,7 @@ begin                  { function Netcall }
   msgids:=(dbReadInt(d,'script') and 8=0);
   dbClose(d);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_UUCP])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
     end;
@@ -906,11 +988,24 @@ begin                  { function Netcall }
           SendNetzanruf(NetcallLogFile);
           end; {case ltZConnect}
 
+        ltUUCP: begin
+          Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
+          case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+            EL_noconn : begin Netcall_connect:=false; end;
+            EL_recerr,
+            EL_senderr,
+            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+            EL_break  : begin  Netcall:=false; end;
+          else begin Netcall:=true end;
+            end; {case}
+          end; {case ltUUCP}
+
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
           GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
           SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          end; {case ltPOP3}
+        end; {case ltPOP3}
 
         else
           Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
@@ -1137,8 +1232,8 @@ end.
 
 {
   $Log$
-  Revision 1.15  2001/02/26 12:47:33  cl
-  - oops; reverting accidentally committed modifications
+  Revision 1.16  2001/02/28 22:43:13  cl
+  - UniqueDownloadName, UUCP netcall
 
   Revision 1.13  2001/02/23 13:51:05  ma
   - implemented transferred file logging
