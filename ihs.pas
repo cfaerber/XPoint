@@ -1,8 +1,17 @@
+{ ------------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                   }
+{ (c) 1991-1999 Peter Mandrella                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                     }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.         }
+{                                                                     }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der     }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.       }
+{ ------------------------------------------------------------------- }
 { Intelligent Help System          }
 { Rel. 1.01 (c) 11/89 PM           }
 {      1.02 (c) 03/90              }
 {      1.1  (c) 01/91              }
-{      1.3  (c) 01/2003 Openxp/16  }
+{      1.3  (c) 01/2003 OpenXP/16  }
 
 { $Id$ }
 
@@ -12,10 +21,13 @@ uses crt,dos,typeform,fileio;
 
 const maxpages = 4096;
       version  = '1.3';
-      date     = '2003';
+      date     = '2002-2003';
       obufsize = 16384;
 
 var  fname    : pathstr;
+     dir      : dirstr;
+     name     : namestr;
+     ext      : extstr;
      t        : text;
      f        : file;
      pages    : word;
@@ -86,7 +98,7 @@ var  fname    : pathstr;
      dummy:=0;
      readln(t,s);     { Name }
      blockwf(#13#10+'Intelligent Help System Rel. '+version+#13#10);
-     blockwf('(c) '+date+' by Peter Mandrella'+#13#10);
+     blockwf('(c) '+date+' by OpenXP/16'+#13#10);
      blockwf('Help file for '+s+#13#10#$1a);
      blockwfill(128);
      readln(t,x,y);
@@ -332,24 +344,28 @@ var  fname    : pathstr;
 
 begin
   clrscr;
-  writeln('Intelligent Help System Rel '+version);
-  writeln('(c) ''89-91,95 Peter Mandrella (c) '+date+' Openxp/16');
+  writeln('Intelligent Help System Rel. '+version);
+  writeln('(c) 1991-2000 Peter Mandrella, (c) '+date+' OpenXP/16');
   writeln;
   write('Source File: ');
   fname:=paramstr(1);
-  if fname='' then readln(fname)
-  else writeln(fname);
+  if fname='' then readln(fname);
+  if fname='' then exit;
+  fsplit(fname,dir,name,ext);
+  if ustr(ext)='.HLP' then ext:='';
+  fname:=ustr(name)+iifs(ext='','.IHQ',ustr(ext));
+  if paramstr(1)<>'' then writeln(fname);
 
-  if not exist(fname+'.ihq') then begin
+  if not exist(fname) then begin
     writeln; writeln('Error: File not found.');
     halt(1);
-    end;
+  end;
 
   getmem(p,20000);
-  assign(t,fname+'.ihq');
+  assign(t,fname);
   settextbuf(t,p^,20000);
   reset(t);
-  assign(f,fname+'.hlp'); rewrite(f,1);
+  assign(f,name+'.HLP'); rewrite(f,1);
 
   create_header;
   qvwun:=0;
@@ -384,6 +400,14 @@ end.
 }
 {
    $Log$
+   Revision 1.9.2.4  2003/01/25 21:31:54  my
+   MY: - GeÑnderte Parameterbehandlung: Dateiname kann jetzt jede beliebige
+         oder wie bisher keine Extension enthalten (bisher fÅhrte der
+         korrekte Dateiname 'XP.IHQ' zu einer Fehlermeldung). Bei öbergabe
+         der Extension '.HLP' wird diese ausgetauscht gegen '.IHQ'.
+       - Kosmetik bei Versions- und Copyright-Strings.
+       - Copyright-Header hinzugefÅgt.
+
    Revision 1.9.2.3  2003/01/25 17:46:40  mw
    MW: - IHS compiliert jetzt wieder fehlerfrei die Hilfen.
 
