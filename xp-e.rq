@@ -1,4 +1,4 @@
-K CrossPoint v3.20 resource file
+K CrossPoint v3.2 resource file
 K English
 K (c) '93-96 Peter Mandrella
 K (c) '2000 OpenXP Team, www.openxp.de
@@ -289,46 +289,56 @@ K (c) '2000 OpenXP Team, www.openxp.de
 19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
 -
 + 202
-1    Syntax:    XP [/Opt1 /Opt2 ...]
+1    Syntax:   XP [/Option1 /Option2 ...]
 2
-3    Options:   /m      monochrome Display
-4    ~          /LCD    fixes display problems on some laptops
-5    ~          /q      no sound signals (quiet)
-6    ~          /rp     doesn't test for TSR programs after DOS-shell
-7    ~          /sd     prevents automatic Smartdrive cache flushing
-8    ~          /ss     start screen saver at once
-9    ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
-10   ~          /w0     don't free unused system resources
-11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
-12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
-13   ~          /os2x   kind of freeing of free unused system resources (time)
-14   ~                  under OS/2 (x ranges from a to d)
-15
-16   ~          /k:X    send key X (for key macro)
-17   ~          /pw:xx  enter start password xx
-18   ~          /z:nn   set nn screen lines
-19   ~          /l:X    set language (e.g. /l:E for Englisch)
-20
-21   ~          /n:Server[:hh:mm]   start netcall to Server
-22   ~          /n:*                netcall to all Servers
-23   ~          /nr:Server          relogin netcall to Server
-24   ~          /user:Server:NAME   set user name at Server to NAME
-25   ~          /ips:Server:PUFFER  import and send puffer file
-26   ~          /autostart:...      start program by time range
-27
-28   ~          /av:<File>          view archive file
-29   ~          /f:<File>[.FNT]     load font file
-30   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
-31
-32   ~          /ip:PUF   import puffer file
-33   ~          /ipe:PUF  import puffer file with receive date = creation date
-34   ~          /g        sets /ip and /ips messages to status 'read'
-35   ~          /eb       return receipts (for /ip..)
-36   ~          /r        start messagebase reorganisation
-37   ~          /pack     do /Reorg/Pack
-38   ~          /t:n      start timing list no. n
-39
-40   ~          /x        quit program
+3    Options:  /?       command line help
+4    ~         /j       no dumb remark when exiting
+5    ~         /m       monochrome display
+6    ~         /LCD     fixes display problems on some laptops
+7    ~         /q       no sound signals (quiet)
+8    ~         /rp      doesn't test for TSR programs after DOS-shell
+9    ~         /sd      prevents automatic Smartdrive cache flushing
+10   ~         /trace   activates script protocol (see XPOINT.TXT, 8.1)
+11   ~         /w0      don't free unused system resources
+12   ~         /w, /w1  free unused system resources for Win & OS/2 (timeslice)
+13   ~         /w2      free unused system resources for Win & OS/2 (conservative)
+14   ~         /os2x    kind of freeing of free unused system resources (time)
+15   ~                  under OS/2 (x ranges from a to d)
+16   ~         /nolock  no check for multiple program launch
+17   ~         /maus    activates a cursor-mouse emulation
+18
+19   ~         /k:X     send key X (for key macro)
+20   ~         /pw:xxx  passes start password xxx
+21   ~         /nb      disable warning message of beta versions
+22   ~         /z:nn    set nn screen lines
+23   ~         /l:X     set language (e.g. /l:E for English)
+24
+25   ~         /autostart:...   start program by time range
+26   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
+27   ~         /ip:PUFFER       import puffer file
+28   ~         /ipe:PUFFER      import puffer file with receive date = creation date
+29   ~         /ips:BOX:PUFFER  import and send puffer file
+30   ~         /eb              return receipts (sub-switch for /ip..)
+31   ~         /g               sets /ip and /ips messages to status 'read'
+32   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
+33   ~         /n:*             netcall to all Servers
+34   ~         /nr:BOX          relogin netcall to Server (BOX)
+35   ~         /t:n             start timing list no. n
+36
+37   ~         /r               start message base reorganisation
+38   ~         /pack            do /Re-Org/Pack
+39   ~         /xpack           pack message base in 'automatic' mode
+40   ~         /ss              start screen saver at once
+41
+42   ~         /av:<File>       view archive file
+43   ~         /f:<File>        load font file
+44   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
+45
+46   ~         /d       start program in debug mode
+47   ~         /df:1    show command call of external programs
+48   ~         /df:2    wait for key press after external program calls
+49
+50   ~         /x       quit program
 -
 
 203  Error: Can't create directory %s !

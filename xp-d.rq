@@ -292,47 +292,55 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 + 202
 # XP /? - Zeilenzahl ist variabel
-1    Aufruf:    XP [/Opt1 /Opt2 ...]
+1    Aufruf:    XP [/Option1 /Option2 ...]
 2
-3    Optionen:  /j       kein dummer Spruch bei Programmende
-4    ~          /m       monochrome Anzeige
-5    ~          /LCD     verhindert Anzeigeprobleme auf einigen Laptops
-6    ~          /q       keine Tonsignale (quiet)
-7    ~          /rp      Åbergeht bei DOS-Shell Test auf residente Programme
-8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
-9    ~          /ss      Screensaver aktivieren
+3    Optionen:  /?       Ausgabe der Kommandozeilenhilfe
+4    ~          /j       kein dummer Spruch bei Programmende
+5    ~          /m       monochrome Anzeige
+6    ~          /LCD     verhindert Anzeigeprobleme auf einigen Laptops
+7    ~          /q       keine Tonsignale (quiet)
+8    ~          /rp      Åbergeht bei DOS-Shell Test auf residente Programme
+9    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
 10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.TXT, Kap. 8.1)
 11   ~          /w0      keine Rechenzeit-Freigabe
-12   ~          /w, /w1  Win & OS/2-Rechenzeit-Freigabe (Timeslice)
-13   ~          /w2      Win & OS/2-Rechenzeit-Freigabe (konservativ)
+12   ~          /w, /w1  Windows- und OS/2-Rechenzeit-Freigabe (Timeslice)
+13   ~          /w2      Windows- und OS/2-Rechenzeit-Freigabe (konservativ)
 14   ~          /os2x    Art der Rechenzeit-Freigabe unter OS/2 (x = a bis d)
 15   ~          /nolock  keine öberprÅfung auf mehrfachen Programmstart
-16
-17   ~          /k:X     Taste X Åbergeben (fÅr Tastenmakro)
-18   ~          /pw:xx   Startpa·wort xx Åbergeben
-19   ~          /z:nn    stellt nn Bildschirmzeilen ein
-20   ~          /l:X     Sprache wÑhlen (z.B. /l:D fÅr deutsch)
-21
-22   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfÅhren
-23   ~          /n:*             Netcall bei allen Boxen
-24   ~          /nr:BOX          Relogin-Netcall bei BOX
+16   ~          /maus    aktiviert eine Cursor-Maus-Emulation
+17
+18   ~          /k:X     Taste X Åbergeben (fÅr Tastenmakro)
+19   ~          /pw:xxx  Startpa·wort xxx Åbergeben
+20   ~          /nb      Warnhinweis bei Beta-Versionen abschalten
+21   ~          /z:nn    stellt nn Bildschirmzeilen ein
+22   ~          /l:X     Sprache wÑhlen (z.B. /l:D fÅr Deutsch)
+23
+24   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
 25   ~          /user:BOX:NAME   Username bei BOX setzen
-26   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-27   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-28
-29   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-30   ~          /f:<Datei>       Schriftdatei laden
-31   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.TXT)
-32
-33   ~          /ip:PUF   liest die angegebene Pufferdatei ein
-34   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
-35   ~          /g        trÑgt /ip- und /ips-Nachrichten als 'gelesen' ein.
-36   ~          /eb       EmpfangsbestÑtigungen (Zusatzschalter fÅr /ip..)
-37   ~          /r        Nachrichten-Reorganisation durchfÅhren
-38   ~          /pack     /Wartung/Packen durchfÅhren
-39   ~          /t:n      Timing-Liste Nr. n ausfÅhren
+26   ~          /ip:PUFFER       liest den angegebenen Puffer ein
+27   ~          /ipe:PUFFER      liest Puffer mit Empfangsdatum = Erstelldatum ein
+28   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+29   ~          /eb              EmpfangsbestÑtigungen (Zusatzschalter fÅr /ip..)
+30   ~          /g               trÑgt /ip- und /ips-Nachrichten als 'gelesen' ein
+31   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfÅhren
+32   ~          /n:*             Netcall bei allen Boxen
+33   ~          /nr:BOX          Relogin-Netcall bei BOX
+34   ~          /t:n             Timing-Liste Nr. n ausfÅhren
+35
+36   ~          /r               Nachrichten-Reorganisation durchfÅhren
+37   ~          /pack            /Wartung/Packen durchfÅhren
+38   ~          /xpack           Automatisches Packen durchfÅhren
+39   ~          /ss              Screensaver aktivieren
 40
-41   ~          /x        Programm beenden
+41   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+42   ~          /f:<Datei>       Schriftdatei laden
+43   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.TXT)
+44
+45   ~          /d       Programm im Debug-Mode starten
+46   ~          /df:1    Externe Aufrufbefehle anzeigen
+47   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
+48
+49   ~          /x       Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
