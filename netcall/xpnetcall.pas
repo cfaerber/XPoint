@@ -88,7 +88,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xp9,xp10,xpheader,
+uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
      xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp, xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -1213,6 +1213,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/06/04 17:43:23  ma
+  - renamed unit xp9
+
   Revision 1.19  2001/05/20 12:22:55  ma
   - moved some functions to proper units
 
