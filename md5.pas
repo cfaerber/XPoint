@@ -33,6 +33,7 @@
 unit MD5;
 
 {$i xpdefine.inc}
+{$ifdef VP}{$q-}{$endif}
 
 interface
   uses SysUtils,XPGlobal,Typeform;
@@ -367,6 +368,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/04/16 15:33:10  ma
+  - disabled range checking with VP
+
   Revision 1.1  2001/04/15 13:01:05  ma
   - this is a modified part of Sven Knispel's GPL'd CryptLIB
     (http://www.planet-express.com/sven/technical/dev/CryptLIB/default.html)
