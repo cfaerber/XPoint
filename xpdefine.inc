@@ -20,10 +20,6 @@
 
 {$DEFINE DebugInfo }
 
-{ Keine Assembler-Routine verwenden. Ein Gegenpart in Pascal muá
-  existieren }
-{.$DEFINE NOASM }
-
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {$DEFINE Beta }
 
@@ -42,13 +38,6 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF VER130 }          { Delphi 5 }
-  {$DEFINE Ver32 }
-  {$DEFINE Win32 }
-  {$DEFINE Delphi }
-  {$A+,B-,C-,D+,E-,F-,G+,H-,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U+,V-,W-,X+,Y-,Z1}
-{$ENDIF }
-
 {$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
   {$DEFINE VP }
   {$DEFINE Ver32 }
@@ -61,10 +50,9 @@
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
-    {$UNDEF DPMI }
   {$ENDIF }
-  {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$MODE TP }
+  {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$ASMMODE Intel }
   {$GOTO ON }
 {$ENDIF }
@@ -125,6 +113,9 @@
 
 {
   $Log$
+  Revision 1.39  2000/07/03 18:15:47  mk
+  - Left/Right deutlich vereinfacht
+
   Revision 1.38  2000/07/03 16:26:28  mk
   - unnoetige Compilerdirectiven entfernt bzw. vereinfacht
 

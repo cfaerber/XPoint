@@ -105,19 +105,9 @@ function IntQSum(const l:longint):longint;         { Quersumme                  
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(s:string):longint;             { Value Integer                }
 function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
-function Lead(s:string):string;              { Anf.-u. End-0en abschneiden  }
-{$ifdef FPC}
-function Left(s: string; n: integer): string;
-function Right(s: string; n: integer): string;
-{$else}
-{$IFDEF NOASM }
-function Left(s:string; n:byte):string;      { LeftString                   }
-function Right(s:string; n:byte):string;     { RightString                  }
-{$ELSE}
-function Left(const s:string; n:byte):string;      { LeftString                   }
-function Right(const s:string; n:byte):string;     { RightString                  }
-{$ENDIF}
-{$endif} { FPC }
+function Lead(s:string):string;              { Anf.-u. Enden abschneiden  }
+function Left(const s: string; Count: integer): string;
+function Right(const s: string; Count: integer): string;
 function Long(const l:longint):longint;            { Type-Cast nach Longint       }
 function LoCase(const c:char):char;                { LowerCase                    }
 function Log(const b,r:real):real;           { allg. Logarithmus            }
@@ -129,7 +119,7 @@ function Max(const a,b:longint):longint;          { Maximum Integer             
 function MaxR(const a,b:real):real;                { Maximum Real                 }
 function MaxS(const a,b:string):string;            { Maximum String               }
 function Mid(const s:string; const n:byte):string;       { Rest des Strings ab Pos. n   }
-function Min(const a,b:longint):longint;           { Minimum Integer              }
+function Min(a,b:longint):longint;              { Minimum Integer              }
 function MinMax(const x,min,max:longint):longint;  { x -> [min,max]               }
 function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
 function MinR(const a,b:real):real;                { Minimum Real                 }
@@ -339,7 +329,7 @@ begin
 end;
 
 
-function Min(const a,b:longint):longint;
+function Min(a,b:longint):longint;
 begin
   if a<b then min:=a else min:=b;
 end;
@@ -1151,76 +1141,30 @@ end;
 
 
 {$ifdef FPC}
-function Left(s: string; n: integer): string;
+
+function Left(const s: string; n: integer): string;
 begin
   Left:= LeftStr(s, n);
 end;
 
-function Right(s: string; n: integer): string;
+function Right(const s: string; n: integer): string;
 begin
   Right:= RightStr(s,n);
 end;
 
 {$else} { FPC }
 
-{$IFDEF NOASM }
-
-function Left(s:string; n:byte):string;
+function Left(const s:string; Count: Integer):string;
 begin
-  if n<length(s) then
-    SetLength(s,n);
-  left:=s;
+  Left := Copy(S, 1, Count);
 end;
 
-function Right(s:string; n:byte):string;
+function Right(const s:string; Count: Integer):string;
 begin
-  if n>=length(s) then
-    Right:=s
-  else
-    Right:=copy(s,length(s)-n+1,255);
+   If Count>Length(S) then
+     Count:=Length(S);
+   Right := Copy(S, 1 + Length(S) - Count, Count);
 end;
-
-{$ELSE }
-
-function Left(const s: String; n: byte): string; {&uses esi,edi} assembler;
-asm
-        cld
-        mov     edi, @result
-        mov     esi, s
-        xor     eax, eax
-        lodsb
-        cmp     al, n
-        jb      @1
-        mov     al, n
-@1:     mov     ecx, eax
-        stosb
-        rep     movsb
-end;
-
-function Right(const s: string; n: byte):string; {&uses esi,edi} assembler;
-asm
-        cld
-        mov     esi, s
-        mov     edi, @result
-        xor     eax, eax
-        xor     ecx, ecx
-        mov     cl, n
-        lodsb
-        cmp     al, n                   { n > als L„nge von s }
-        jnb @3
-        mov     cl, al
-@3:     mov     dl, al                  { Stringl„nge merken }
-        sub     al, cl
-        jnc @1
-        mov     cl, dl
-        xor     eax, eax
-@1:     mov     [edi], cl
-        inc     edi
-        add     esi, eax
-        rep     movsb
-end;
-
-{$ENDIF } { NOASM }
 
 {$endif} { FPC }
 
@@ -2014,6 +1958,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/07/03 18:15:46  mk
+  - Left/Right deutlich vereinfacht
+
   Revision 1.45  2000/07/03 17:28:54  hd
   - Date/Time geaendert
   - Left/Right angepasst (nur FPC, da die Funktionen bei VPC fehlen)
