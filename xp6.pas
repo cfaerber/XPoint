@@ -1993,10 +1993,13 @@ fromstart:
           end;
       2 : hdp^.absender:=username+'@'+pointname;
       3 : hdp^.absender:=username+'@'+box;
-      4 : hdp^.absender:=username+'@'+FidoAbsAdr;
+      4 : begin
+            hdp^.absender:=username+'@'+FidoAbsAdr;
+            hdp^.real_box:=box;  { my Test: 'X-XP-BOX' auch bei Fido }
+          end;
       5 : begin
             hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
-            hdp^.real_box:=box;  { Test: 'X-XP-BOX' auch bei ZConnect }
+            hdp^.real_box:=box;  { my Test: 'X-XP-BOX' auch bei ZConnect }
           end;
       6 : begin
             if email<>'' then hdp^.absender:=email else
@@ -2560,6 +2563,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.57  2002/04/25 14:40:32  my
+  MY:- Header 'X-XP-BOX' auch bei Fido schreiben (wegen forcebox-Handling,
+       speziell N/W/R aus Unversandt-Brett)
+
   Revision 1.39.2.56  2002/04/24 19:12:31  sv
   SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
             mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
