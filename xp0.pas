@@ -17,7 +17,7 @@ unit xp0;
 
 interface
 
-uses   dos,typeform,keys,xpglobal, lfn;
+uses   dos,typeform,keys,xpglobal,lfn;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -57,7 +57,7 @@ const  {$IFDEF DPMI}
        mausdefy    = 28;
        MaxNodelists = 100;
        MaxAKAs     = 10;
-       MaxBadConfigLines = 50;      { Maximale Zahl der unbekannten Config-Zeilen }
+       MaxBadConfigLines = 50;       { Maximale Zahl der unbekannten Config-Zeilen }
        maxviewers  = 7;
        defviewers  = 3;
        maxpmlimits = 6;              { Z/Maus/Fido/UUCP/Magic/QMGS     }
@@ -449,7 +449,7 @@ type   textp  = ^text;
                   x_charset  : string[25];    { --- RFC -------------------- }
                   keywords   : string[60];
                   summary    : string[200];
-{!MH:}          priority   : byte;          { Priority: 1, 3, 5 }
+{!MH:}            priority   : byte;          { Priority: 1, 3, 5 }
                   distribution:string[40];
                   pm_reply   : boolean;       { Followup-To: poster }
                   quotestring: string[20];
@@ -568,32 +568,44 @@ type   textp  = ^text;
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP/UUCP           }
                   ClientSmtp: boolean;     { UUCP: SMTP/Client         }
-                  PPPMode   : Boolean;     { RFC/Client switch         }
-                  PPPClientPath: string[60];  { PPP Client-Pfad        }
-                  PPPClient : string[60];  { PPP Client-Aufruf         }
-                  PPPAddServers: string[200]; { Pakete mitsenden       }
+                  PPPMode   : boolean;     { RFC/Client switch         }
+                  PPPClientPath: string[MaxLenPathname]; { PPP Client-Pfad   }
+                  PPPClient : string[MaxLenPathname];    { PPP Client-Aufruf }
+                  PPPAddServers: string[160]; { PPP Pakete mitsenden   }
                   PPPDialUp : string[60];  { PPP Zugang/Dial-Up        }
                   PPPPhone  : string[60];  { PPP Telefon               }
                   PPPLogin  : string[60];  { PPP Login                 }
                   PPPPass   : string[20];  { PPP Passwort              }
-                  PPPSpool  : string[60];  { PPP Spool-Verzeichnis     }
-                  PPPExternCfg: string[60];   { PPP externe Config     }
-                  PPPMailInSrvr  : string[160];  { PPP Mail-Server   incoming }
-                  PPPMailInEnv   : string[160];  { PPP Mail-Envelope incoming }
-                  PPPMailInUser  : string[160];  { PPP Mail-User     incoming }
-                  PPPMailInPass  : string[75];   { PPP Mail-Passwort incoming }
-                  PPPMailInPort  : string[50];   { PPP Mail-Port     incoming }
-                  PPPMailOutSrvr : string[160];  { PPP Mail-Server   outgoing }
-                  PPPMailFallback: string[8];    { PPP Fallback-Server (Mail) }
-                  PPPMailOutEnv  : string[160];  { PPP Mail-Envelope outgoing }
-                  PPPMailOutUser : string[160];  { PPP Mail-User     outgoing }
-                  PPPMailOutPass : string[75];   { PPP Mail-Passwort outgoing }
-                  PPPMailOutPort : string[50];   { PPP Mail-Port     outgoing }
-                  PPPNewsSrvr    : string[160];  { PPP News-Server            }
-                  PPPNewsFallback: string[8];    { PPP Fallback-Server (News) }
-                  PPPNewsUser    : string[160];  { PPP News-User              }
-                  PPPNewsPass    : string[160];  { PPP News-Passwort          }
-                  PPPNewsPort    : string[50];   { PPP News-Port              }
+                  PPPAskIfConnect     : boolean;    { PPP RÅckfrage vor Anwahl     }
+                  PPPAskIfDisconnect  : boolean;    { PPP RÅckfrage vor Auflegen   }
+                  PPPKeepConnectStatus: boolean;    { PPP Verbindungsstatus halten }
+                  PPPSpool: string[MaxLenPathname]; { PPP Spool-Verzeichnis      }
+                  PPPMailInServer    : string[160]; { PPP Mail-Server   incoming }
+                  PPPMailInPort      : string[50];  { PPP Mail-Port     incoming }
+                  PPPMailInProtocol  : string[5];   { PPP Mail-Protok.  incoming }
+                  PPPMailInEnv       : string[160]; { PPP Mail-Envelope incoming }
+                  PPPMailInUser      : string[160]; { PPP Mail-User     incoming }
+                  PPPMailInPass      : string[75];  { PPP Mail-Passwort incoming }
+                  PPPMailInUseEnvTo  : boolean;     { PPP Mail (X-)Envelope-To auswerten }
+                  PPPMailInKeep      : boolean;     { PPP Mail incoming nicht lîschen }
+                  PPPMailInAPOP      : boolean;     { PPP Mail-Authentifizierung (APOP) incoming }
+                  PPPMailOutServer   : string[160]; { PPP Mail-Server   outgoing }
+                  PPPMailOutPort     : string[50];  { PPP Mail-Port     outgoing }
+                  PPPMailFallback    : string[8];   { PPP Fallback-Server (Mail) }
+                  PPPMailOutEnv      : string[160]; { PPP Mail-Envelope outgoing }
+                  PPPMailOutUser     : string[160]; { PPP Mail-User     outgoing }
+                  PPPMailOutPass     : string[75];  { PPP Mail-Passwort outgoing }
+                  PPPMailOutSMTPafterPOP : boolean; { PPP Mail-Authentifizierung (SMTP after POP) outgoing }
+                  PPPMailOutSMTPLogin: boolean;     { PPP Mail-Authentifizierung (SMTP AUTH) outgoing }
+                  PPPNewsServer      : string[160]; { PPP News-Server            }
+                  PPPNewsPort        : string[50];  { PPP News-Port              }
+                  PPPNewsFallback    : string[8];   { PPP Fallback-Server (News) }
+                  PPPNewsUser        : string[160]; { PPP News-User              }
+                  PPPNewsPass        : string[160]; { PPP News-Passwort          }
+                  PPPNewsList        : boolean;     { PPP News Liste anfordern/aktualisieren }
+                  PPPNewsMaxLen      : longint;     { PPP News max. ArtikellÑnge (KB) }
+                  PPPNewsMax         : longint;     { PPP News max. Artikelanzahl pro Newsgroup }
+                  PPPExternCfg : string[MaxLenPathname]; { PPP externe Config    }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -1214,6 +1226,26 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.46  2001/12/11 17:46:52  my
+  MY:- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
+       und erweitert. Neue Einstellungen:
+       - D/B/E/C/Verbindung: RÅckfrage vor Anwahl
+                             RÅckfrage vor Auflegen
+                             Verbindungsstatus halten
+       - D/B/E/N/Mail (In) : Protokoll
+                             Envelope-To auswerten
+                             Mail auf Server belassen
+                             APOP-Authentifizierung
+       - D/B/E/N/Mail (Out): SMTP after POP
+                             SMTP-Login nach RFC 2554
+       - D/B/E/N/News      : Newsgroup-Liste pflegen
+                             Max. Artikelgrî·e (KB)
+                             Max. Artikel je Gruppe
+
+  MY:- Einige Variablen eindeutiger benannt und Grî·e geÑndert.
+
+  MY:- ANSI-MÅll und Typos im CVS-Log bereinigt.
+
   Revision 1.54.2.45  2001/12/02 15:52:29  my
   MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
        <Ctrl-W> nicht-permanent umgeschaltet werden.
@@ -1223,7 +1255,7 @@ end.
        D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
        siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
        den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
-       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Box(en)
        abgelegt.
 
   Revision 1.54.2.43  2001/10/26 17:40:01  my
@@ -1245,32 +1277,32 @@ end.
          durchfÅhrt.
 
   Revision 1.54.2.41  2001/09/16 20:17:25  my
-  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
-          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zusÑtzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kînnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
   JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
           unten)
 
-  JG+MY:- Feldtausch ge‰ndert/verbessert: Default jetzt FHBGAK, jedes Feld
-          kann weggelassen werden, bei Weglassen groﬂer Felder werden die
-          ¸brigen Felder verbreitert. /Config/Anzeige/Hilfen
-          ¸bersichtlicher gestaltet.
+  JG+MY:- Feldtausch geÑndert/verbessert: Default jetzt FHBGAK, jedes Feld
+          kann weggelassen werden, bei Weglassen gro·er Felder werden die
+          Åbrigen Felder verbreitert. /Config/Anzeige/Hilfen
+          Åbersichtlicher gestaltet.
 
-  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh‰ngen" unter
-          Config/Optionen/Netze. Wenn aktiviert, wird bei ƒnderung des
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anhÑngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei énderung des
           Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
-          automatisch angeh‰ngt.
+          automatisch angehÑngt.
 
-  JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
-          zeilen stehen nur die ersten 19 zur Verf¸gung).
+  JG+MY:- ZusatzmenÅ fa·t jetzt bis zu 20 EintrÑge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur VerfÅgung).
 
-  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
-          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+  JG+MY:- Neuer MenÅpunkt "?" (Hilfe) im HauptmenÅ mit UntermenÅs fÅr
+          nÅtzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. UntermenÅ "öber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaﬂt.
+          Registrierungsfenster optisch angepa·t.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -1283,7 +1315,7 @@ end.
     "update date entries after netcall"
 
   Revision 1.54.2.38  2001/07/17 13:52:37  mk
-  - Absender-Laenge wird ¸ber Konstakte AdrLen bestimmt
+  - Absender-Laenge wird Åber Konstante AdrLen bestimmt
 
   Revision 1.54.2.37  2001/07/01 15:40:11  my
   - updated documentation of RTA bitmask (added OAB Header)
