@@ -2180,9 +2180,9 @@ begin
     spath:=ShellPath;
     if exdir<>'' then GoDir(exdir)
     else GoDir(temppath);
-    decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
+    decomp:=copy(decomp,1,p-1)+'"'+datei+'"'+copy(decomp,p+6,127);
     p:=pos('$ARCHIV',ustr(decomp));
-    decomp:=copy(decomp,1,p-1)+'"'+abuf[arcbufp]^.arcname+'" "'+copy(decomp,p+8,127) + '"';
+    decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
     shell(decomp,400,3);
     if exdir='' then begin
       datei:=mid(datei,rightpos('\',datei)+1);
@@ -2902,6 +2902,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.38  2002/03/10 13:52:50  my
+  JG+MY:- Kleine Korrektur bei der Anzeige (bzw. dem Entpacken) von
+          Dateien mit langen Dateinamen (Entpacker-Parameter nicht mehr in
+          AnfÅhrungszeichen einschlie·en).
+
   Revision 1.47.2.37  2002/03/09 21:52:20  my
   JG:- Einige kleinere Korrekturen bei der Anzeige von LFN-Dateinamen in
        Archiven vorgenommen und die Anzeige von Dateien, die sich in einem
