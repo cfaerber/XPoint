@@ -19,11 +19,10 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-  SysUtils,
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,keys,fileio,inout,maus2,datadef,database,
+  typeform,keys,fileio,inout,maus2,datadef,database, sysutils,
   stack,resource, xp0;
 
 procedure wkey(sec:word; count:boolean);
@@ -33,7 +32,7 @@ procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 implementation  { --------------------------------------------------- }
 
-uses xp1,xp1input, winxp, sysutils;
+uses xp1,xp1input, winxp;
 
 
 procedure wkey(sec:word; count:boolean);
@@ -213,6 +212,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2001/01/21 15:32:52  mk
+  - little uses update for linux
+
   Revision 1.15  2001/01/21 12:12:16  mk
   - added some units winxp, sysutils in uses
 
