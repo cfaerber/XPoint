@@ -726,6 +726,7 @@ var i,ii     : longint;
   end;
 
 begin
+  if dbBOF(mbase) then exit;
   if not (aktdispmode in [10..19]) then begin
     rfehler(315);      { 'Nur in der NachrichtenÅbersicht mîglich.' }
     exit;
@@ -1366,6 +1367,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/05/06 17:48:19  mk
+  - Fix fuer msgall, wenn keine Nachricht im Brett ist
+
   Revision 1.7.2.1  2000/04/18 20:22:02  mk
   JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
