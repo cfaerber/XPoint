@@ -3413,7 +3413,6 @@ Wahlweise kînnen Sie statt des "\@" auch "$" verwen-
 den; dann wird bei Namen ohne Trennung gar keine
 Initiale erzeugt.
 
-RB 01/2000:
 Als ganz besonderes Schmankerl wurde noch "&" fÅr
 die Initialen eingebaut. "&" funktioniert wie "$",
 nur mit dem Zusatz, da· auch dann keine Initialen
@@ -8612,9 +8611,9 @@ Falls die Online-Registrierung nicht funktionieren
 sollte, verwenden Sie bitte den herkîmmlichen Regi-
 strierungsweg per Post oder E-Mail.
 
-Anmerkung von MW in 01/2000:
+Anmerkung der OpenXP-Entwickler:
 Die Online-Registrierung ist seit Anfang 2000
-nicht mehr mîglich !!!
+nicht mehr mîglich.
 
 @
 1580
@@ -8745,11 +8744,6 @@ Ihrer Tastatur, im Gegensatz zur [F1-Taste].@7005
 Die Tastatur finden Sie, indem Sie das Kabel verfol-
 gen, das mit einem 5poligen DIN-Stecker an der RÅck-
 seite Ihres [Rechners] angebracht ist.@7013
-
-Anmerkung von MW (01/2000):
-Heutzutage gibt es auch andere Mîglichkeiten, eine
-Tastatur anzuschlie·en (PS/2-Stecker und USB).
-
 @
 7010
 Just another [Querverweis].@7001
