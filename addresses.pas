@@ -199,6 +199,8 @@ type
     property Point: integer read GetPoint write SetPoint;
   end;
 
+function FTNParse(addr: string; var z,n,f,p: integer): boolean;  
+
 { ======================== } implementation { ======================== }
 
 uses 
@@ -246,7 +248,7 @@ begin
     result := TEmailAddress.Create(addr,real)
   else
   
-  if FirstChar(addr)='A' then
+  if FirstChar(addr) in ['A','$'] then
     result := TNewsgroupAddress.CreateZC(Mid(addr,2))
   else
     result := TNewsgroupAddress.CreateZC(addr)
@@ -811,9 +813,12 @@ begin
   F4dOK := true;
 end;
 
-
 //    
 // $Log$
+// Revision 1.5  2002/11/14 19:59:29  cl
+// - made FTNParse public
+// - added more fields to TAddressListItem
+//
 // Revision 1.4  2002/04/20 13:56:54  ml
 // - kylix compatibility
 //

@@ -38,10 +38,18 @@ type
 
   TAddressListType = (
     atUnused,
+    
     atNewsgroup,
     atTo,
     atCC,
-    atBCC );
+    atBCC,
+    
+    atFrom,
+    atSender,
+    
+    atFollowupTo,
+    atReplyTo,
+    atMailCopiesTo );
 
   TAddressListTypeSet = set of TAddressListType;
   const AddressListTypeAll: TAddressListTypeSet = [Low(TAddressListType)..High(TAddressListType)]; type
@@ -56,6 +64,22 @@ type
     FNetztyp:   byte;
     FNewUser:   boolean;
     FAddrType:  TAddressListType;
+
+    FOrigType:  TAddressListType;
+    FOrigSame:  boolean;
+    
+    FEncMeth:   integer;
+    FEncPass:   string;
+
+    FKopf        : string;
+    FSignatur    : string;
+    FOrigin      : string;
+    FAdresse     : string;
+    
+    FRealname    : string;
+    FMail        : string;
+    FReplyTo     : string;
+    FFQDN        : string;
     
     procedure SetAddress(NewValue: TAddress);
     
@@ -93,7 +117,23 @@ type
     property Charsets: TStringList read FCharsets;
     
     property DisplayString: string read GetDisplayString;
-    property AddressType: TAddressListType read FAddrType write FAddrType;    
+    property AddressType: TAddressListType read FAddrType write FAddrType;
+    
+    property OriginalType: TAddressListType read FOrigType write FOrigType;
+    property OriginalSameMsg: boolean read FOrigSame write FOrigSame;
+
+    property EncodingMethod:   integer read FEncMeth write FEncMeth;
+    property EncodingPassword: string  read FEncPass write FEncPass;
+
+    property Kopf        : string read FKopf         write FKopf       ;
+    property Signatur    : string read FSignatur     write FSignatur   ;
+    property Origin      : string read FOrigin       write FOrigin     ;
+    property Adresse     : string read FAdresse      write FAdresse    ;
+    
+    property Realname  : string read FRealname   write FRealname ;
+    property Mail      : string read FMail       write FMail     ;
+    property ReplyTo   : string read FReplyTo    write FReplyTo  ;
+    property FQDN      : string read FFQDN       write FFQDN     ;
   end;
 
   TAddressList = class
@@ -120,19 +160,20 @@ type
     procedure AddList(Source: TAddressList); virtual;
     procedure InsertList(Index: Integer;Source: TAddressList);
 
-    procedure AddStrings(Source: TStrings); virtual;
+    procedure AddStrings(Source: TStrings); virtual;    
 
     function AddNew: TAddressListItem;
     function InsertNew(Index: Integer): TAddressListItem;
 
     function AddNewXP(pm:boolean;const addr,real:string): TAddressListItem;
     function InsertNewXP(Index: Integer; pm:boolean;const addr,real:string): TAddressListItem;
+
+    function findZC(const addr: string): Integer;
     
     property Adresses[Index: Integer]: TAddressListItem read GetAddress; default;
     property GroupNames: TStringList read FGroupNames;
     property Count: integer read GetCount;
     property Capacity: integer read GetCapacity write SetCapacity;
-    
   end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
@@ -142,7 +183,8 @@ type TRFCWriteAddressEncodeFunction = function(const input:string):string;
 type TRFCWriteAddressFoldedEncodeFunction = function(const input:string; var MaxFirstLen, MaxLen: integer; const EOL: String):string;
 
 procedure RFCReadAddress(const addr:string; var a, r: string; Decoder:TRFCReadAddressDecodeFunction);
-procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction);
+procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction); overload;
+procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction; NewType: TAddressListType); overload;
 
 function  RFCWriteAddressList(List: TAddressList;Encoder: TRFCWriteAddressEncodeFunction;
   const types:TAddressListTypeSet): string;
@@ -172,7 +214,6 @@ begin
   FCharsets := TStringList.Create;
 end;
 
-
 procedure TAddressListItem.Assign(otherList: TAddressListItem);
 begin
   FAddress.Free;
@@ -183,6 +224,22 @@ begin
   Netztyp  := otherList.Netztyp;
   NewUser  := otherList.NewUser;
   AddressType:=otherList.AddressType;
+
+  FOrigType:= otherList.FOrigType;
+  FOrigSame:= otherList.FOrigSame;
+
+  FEncMeth    := otherList.FEncMeth   ;
+  FEncPass    := otherList.FEncPass   ;
+            
+  FKopf       := otherList.FKopf      ;
+  FSignatur   := otherList.FSignatur  ;
+  FOrigin     := otherList.FOrigin    ;
+  FAdresse    := otherList.FAdresse   ;
+             
+  FRealname := otherList.FRealname;
+  FMail     := otherList.FMail    ;
+  FReplyTo  := otherList.FReplyTo ;
+  FFQDN     := otherList.FFQDN    ;
 
   FCharsets.Assign(otherList.FCharsets);
 end;
@@ -373,12 +430,14 @@ var Index: Integer;
 begin
   Index := FObjects.Add(TAddressListItem.Create);
   result := GetAddress(Index);
+  Result.AddressType := atTo;
 end;
 
 function TAddressList.InsertNew(Index: Integer): TAddressListItem;
 begin
   FObjects.Insert(Index,TAddressListItem.Create);
   result := GetAddress(Index);
+  Result.AddressType := atTo;
 end;
 
 function TAddressList.AddNewXP(pm:boolean;const addr,real:string): TAddressListItem;
@@ -386,12 +445,14 @@ var Index: Integer;
 begin
   Index := FObjects.Add(TAddressListItem.CreateXP(pm,addr,real));
   result := GetAddress(Index);
+  Result.AddressType := atTo;
 end;
 
 function TAddressList.InsertNewXP(Index: Integer; pm:boolean;const addr,real:string): TAddressListItem;
 begin
   FObjects.Insert(Index,TAddressListItem.CreateXP(pm,addr,real));
   result := GetAddress(Index);
+  Result.AddressType := atTo;
 end;
 
 function TAddressList.GetAddress(Index:Integer): TAddressListItem;
@@ -412,6 +473,23 @@ end;
 procedure TAddressList.SetCapacity(NewCapacity: Integer);
 begin
   FObjects.Capacity := NewCapacity;
+end;
+
+function TAddressList.findZC(const addr: string): integer;
+var i: integer;
+    s,t: string;
+begin
+  RFCReadAddress(addr,s,t,nil);
+
+  for i := 0 to Count-1 do 
+    if (Adresses[i].ZCAddress = s) or
+      ((Adresses[i].Address is TDomainEmailAddress) and ((Adresses[i].Address as TDomainEmailAddress).AddrSpec = s)) then
+        begin
+          result := i;
+          exit;
+        end;
+      
+  result := -1;
 end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
@@ -475,6 +553,11 @@ end;
 { Parses an address-list into email addresses and real names. Group    }
 { syntax is supported but group names are ignored as of now.           }
 procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction);
+begin
+  RFCReadAddressList(addr,Dest,Decoder,atTo);
+end;
+
+procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction; NewType: TAddressListType);
 var i,j:integer;
     dq:boolean; // in domain quotes
     qq:boolean; // in double quotes
@@ -510,6 +593,7 @@ var i,j:integer;
     if assigned(List) then 
       with List[List.Add(TDomainEMailAddress.Create(A,R))] do begin
         if gg then Group := cg;        
+        AddressType := NewType;
       end;
 
     if assigned(ALst) then
@@ -726,6 +810,10 @@ end;
 
 //    
 // $Log$
+// Revision 1.9  2002/11/14 19:59:29  cl
+// - made FTNParse public
+// - added more fields to TAddressListItem
+//
 // Revision 1.8  2002/07/02 20:21:23  mk
 // - fixed EMP: "''" Bug
 //
