@@ -1189,6 +1189,7 @@ restart:
       Suchergebnis:=true;
       suche:=true;                  { Suche erfolgreich }
       signal;
+      CloseBox;
       end;
 
     end { of NOT Brk }
@@ -2978,6 +2979,9 @@ end;
 
 {
   $Log$
+  Revision 1.138  2002/04/13 22:22:59  mk
+  - fixed Bug #497283, MsgID-Suche kaputt
+
   Revision 1.137  2002/03/02 14:29:53  mk
   - fixed regex search
 
