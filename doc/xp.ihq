@@ -1135,7 +1135,7 @@ angezeigt.
 
 <<<Shift-B> >>schickt einen Brief als Crossposting an
          alle markierten User. Dies ist nur bei
-         ZCONNECT-Servern mîglich.
+         ZConnect-Servern mîglich.
 
    <<E>>     schickt eine vorbereitete Textdatei an den
          gewÑhlten User bzw. die Verteiler-EmpfÑnger.
@@ -1258,7 +1258,7 @@ Folgende Funktionen stehen zur VerfÅgung:
 <<<Ctrl-D> >>druckt die gewÑhlte Nachricht; siehe auch
          [/Config/Drucker].@10606
 
-   <<##>>     zeigt bei Fido-, MausNet-, ZCONNECT- und
+   <<##>>     zeigt bei Fido-, MausNet-, ZConnect- und
          Usenet-Nachrichten den Kommentarbaum an.
          Komplexe KommentarbÑume mit entsprechend
          vielen Ebenen und/oder Nachrichten kînnen
@@ -1368,7 +1368,7 @@ Folgende Funktionen stehen zur VerfÅgung:
 
 <<<Ctrl-S> >>schaltet die Datumsanzeige ein/aus.
 
-<<<Ctrl-N> >>schaltet bei ZCONNECT, RFC und MagicNET
+<<<Ctrl-N> >>schaltet bei ZConnect, RFC und MagicNET
          zwischen Anzeige der "Realnames" und der
          Useradressen ein/aus.
 
@@ -1565,7 +1565,7 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 
 
 <<Bei kommentarverketteten Nachrichten (Maus, Fido,
-<<ZCONNECT, Usenet):
+<<ZConnect, Usenet):
 
 <<+>> springt zum ersten Kommentar der Nachricht, falls
   vorhanden.
@@ -2245,17 +2245,26 @@ soll.
 <<Crash>>    (Fido) legt die Nachricht zum Direktversand
          mit [/Fido/Crash] ab.@13104
 
-<<Prio>>     (ZCONNECT) legt die PrioritÑt von PMs fest.
+<<Prio>>     (ZConnect) legt die PrioritÑt von PMs fest.
          Direktmails werden von der Box per Direkt-
          Anruf zum Zielsystem verschickt, Eilmails
          werden von der Box *sofort* per Direktanruf
          abgeschickt. Das Versenden von Eil-/Direkt-
          mails ist gebÅhrenpflichtig!
 
-<<Zusatz>>   (ZCONNECT/Usenet) ermîglicht die Eingabe
+         (RFC) setzt die PrioritÑt der Nachricht. Sie
+         kînnen mit <<<F2> >>zwischen verschiedenen
+         PrioritÑtsleveln wÑhlen, und der EmpfÑnger
+         kann (vielleicht) diese PrioritÑt in seinem
+         Mail-/Newsprogramm erkennen. Ob und wie XP
+         empfangene Nachrichten darstellt, die einen
+         PrioritÑtsstatus besitzen, kînnen Sie unter
+         /Config/Anzeige/Farben einstellen.
+
+<<Zusatz>>   (ZConnect/Usenet) ermîglicht die Eingabe
          diverser zusÑtzlicher Informationen.
 
-<<PGP>>      (ZCONNECT u.a.) ermîglicht das Signieren
+<<PGP>>      (ZConnect u.a.) ermîglicht das Signieren
          der Nachricht mit PGP und das Anfordern
          oder Verschicken von Public Keys.
 
@@ -2270,7 +2279,7 @@ soll.
 
 <<Weitere Funktionen:
 
-<<<Ctrl-K> >>(ZCONNECT, RFC/UUCP) schaltet die Nachrich-
+<<<Ctrl-K> >>(ZConnect, RFC/UUCP) schaltet die Nachrich-
          tenmarkierung "Blindkopie" (Blind Carbon
          Copy/BCC) ein/aus. Bei BCCs kînnen die ein-
          zelnen EmpfÑnger nicht erkennen, wer Kopien
@@ -2552,7 +2561,7 @@ Weise geÑndert hat. Bitte ÅberprÅfen Sie, ob das
 Datum stimmt, und korrigieren Sie es gegebenenfalls.
 @
 93
-<<ZCONNECT:
+<<ZConnect:
 
 Geben Sie die Netzadresse des Points an, dessen PGP-
 Public-Key sie anfordern mîchten, oder wÑhlen Sie
@@ -2597,7 +2606,7 @@ verschiedenen Servern.
 
 Mit "Server aus Pfad Åbernehmen" veranlassen Sie
 XP dazu, bei neu angelegten Brettern das letzte
-(bei ZCONNECT-Daten: erste) im Nachrichtenpfad
+(bei ZConnect-Daten: erste) im Nachrichtenpfad
 angegebene System als Server einzutragen. Ist diese
 Option ausgeschaltet, oder ist der Pfad leer, nimmt
 XP immer die mit /Edit/Boxen/WÑhlen eingestellte
@@ -2779,7 +2788,7 @@ Dieses Eingabefeld kann folgende Makros enthalten:
 
 <<$DOWNPATH>>  das Zielverzeichnis fÅr zu empfangende
          Dateien. Diese Angabe gilt <<nur>> fÅr den
-         Netztyp ZCONNECT mit "Janus Plus" bei der
+         Netztyp ZConnect mit "Janus Plus" bei der
          Verwendung eines bidirektionalen Protokolls.
 
 <<$LOGFILE>> das Logfile im BiModem-Format. Diese Angabe
@@ -2843,7 +2852,7 @@ verwendet werden:
 
 <<$DOWNPATH>>  das Zielverzeichnis fÅr zu empfangende
          Dateien. Diese Angabe gilt <<nur>> fÅr den
-         Netztyp ZCONNECT mit "Janus Plus" und ist
+         Netztyp ZConnect mit "Janus Plus" und ist
          dort anstelle von $DOWNFILE anzugeben.
 
 Eine typische Download-Zeile fÅr das Protokoll GSZ
@@ -3619,7 +3628,7 @@ Dokumentation des FOSSIL-Treibers.
 WÑhlen Sie mit <<<F2> >>die Telefon-Tarifzone fÅr diesen
 Server.
 
-Unter /Config/Optionen//GebÅhren/Tarifzonen kînnen
+Unter /Config/Optionen/GebÅhren/Tarifzonen kînnen
 Tarifzonen bearbeitet oder neu eingerichtet werden.
 @
 181
@@ -3831,7 +3840,7 @@ Nachrichten aufrufen soll. öber das Makro <<$PUFFER>>
 kann der Name der einzulesenden Datei Åbergeben
 werden; bei Z-Netz-(alt)-Netcalls hat diese Datei
 Z-Netz-Format, bei allen anderen Netzen (und bei
-ZCONNECT-Boxen) hat sie ZCONNECT-Format.
+ZConnect-Boxen) hat sie ZConnect-Format.
 
 Das Programm kann die Datei verarbeiten, Ñndern,
 kopieren, oder beliebige andere Aktionen durchfÅhren.
@@ -3845,10 +3854,10 @@ nicht mehr eingelesen werden.
 ˛  Das Programm wird auch aufgerufen, wenn keine
    Nachrichten empfangen wurden (Ausnahme: RFC/UUCP).
    In diesem Fall wird der Name einer leeren Puffer-
-   datei Åbergeben. Leere ZCONNECT-Puffer sind
+   datei Åbergeben. Leere ZConnect-Puffer sind
    0 Bytes gro·, leere Z-Netz-Puffer bis zu 8 Bytes
    (4 Leerzeilen). Defekte Mailboxprogramme erzeugen
-   u.U. auch leere ZCONNECT-Puffer von bis zu
+   u.U. auch leere ZConnect-Puffer von bis zu
    16 Bytes.
 
 ˛  Das Ganze funktioniert auch im Sysop-Mode.
@@ -3861,7 +3870,7 @@ nicht mehr eingelesen werden.
 @
 8050
 Hier kînnen Sie ein externes Programm angeben, das XP
-vor jedem Netcall aufruft. Bei ZCONNECT und Z-Netz
+vor jedem Netcall aufruft. Bei ZConnect und Z-Netz
 (alt) wird das Programm vor dem Packen, bei den
 Åbrigen Netztypen vor der Nachrichtenkonvertierung
 gestartet.
@@ -3869,7 +3878,7 @@ gestartet.
 öber das Makro <<$PUFFER>> kann der Name des ausgehenden
 Nachrichtenpuffers Åbergeben werden. Bei Z-Netz-
 (alt)-Netcalls hat diese Datei Z-Netz-Format, bei
-allen anderen Netztypen ZCONNECT-Format. Die Datei
+allen anderen Netztypen ZConnect-Format. Die Datei
 beinhaltet auch die Nachrichten aus einer evtl. vor-
 handenen EPP-Datei (s. Handbuch, Stichwort "EPP").
 
@@ -3960,8 +3969,8 @@ PMs aber nur Åber einen Server beantworten mîchten
 ger pollen).
 
 Neben der Umleitung innerhalb des gleichen Netzes
-ist auch eine Umleitung zwischen ZCONNECT und Usenet
-oder von ZCONNECT bzw. Usenet ins MausNet mîglich.
+ist auch eine Umleitung zwischen ZConnect und Usenet
+oder von ZConnect bzw. Usenet ins MausNet mîglich.
 
 Beachten Sie, da· dieser Eintrag <<nicht>> fÅr bereits
 im Adre·buch vorhandene User gilt! Zur Umstellung
@@ -4013,7 +4022,7 @@ den Brettbestellungen abgewickelt werden. Je nach
 Netztyp und Boxprogramm ist einer der folgenden Namen
 zu verwenden:
 
-<<ZCONNECT>>    MAPS
+<<ZConnect>>    MAPS
 
 <<Z-Netz/alt>>  MAPS     fÅr Zerberus und Euromail
             AREAFIX  fÅr AlphaNet 2000
@@ -4048,7 +4057,7 @@ und Nachname).
 195
 (NÑheres zu Domains: s. Handbuch, Kapitel 1.3).
 
-<<ZCONNECT>>
+<<ZConnect>>
 
 Geben Sie einen gÅltigen Domainnamen der Box ein.
 Der Domainname ist der Teil Ihrer Z-Netz-Adresse
@@ -4097,7 +4106,7 @@ werden soll. Ihre Nachrichten erhalten dann die
 Message-ID <<MID\@FQDN>>. Wenn Sie dieses Feld frei-
 lassen, erhalten Ihre Nachrichten die Message-ID
 <<MID\@Pointname.Domain>> (RFC/UUCP), bzw.
-<<MID\@Pointname.Boxname.Domain>> (ZCONNECT).
+<<MID\@Pointname.Boxname.Domain>> (ZConnect).
 
 Diese Domain sollte ausschlie·lich von Ihnen verwen-
 det werden, um so die Eindeutigkeit der Message-IDs
@@ -4299,15 +4308,15 @@ bigen Editor bearbeiten.
 <<Vorgabe>> ->  Es gilt die Einstellung unter /Config
             /Optionen/Nachrichten
 
-Bei ZCONNECT und im Usenet wird nur ein einzelnes
+Bei ZConnect und im Usenet wird nur ein einzelnes
 "Re:" verwendet, und im MausNet bleibt der Betreff
 beim Antworten unverÑndert. Im FidoNet wird manchmal
 mit "Re:", meist jedoch ohne gearbeitet.
 
-Diese Einstellung gilt nicht fÅr ZCONNECT, MausNet
+Diese Einstellung gilt nicht fÅr ZConnect, MausNet
 Usenet und fÅr persînliche Nachrichten. Im MausNet
 wird grundsÑtzlich kein "Re:" verwendet, im Usenet,
-bei ZCONNECT und bei allen persînlichen Nachrichten
+bei ZConnect und bei allen persînlichen Nachrichten
 wird immer ein einfaches "Re:" vorangestellt.
 
 @
@@ -4514,8 +4523,8 @@ Boxnamen im EmpfÑnger enthalten.
 221
 <<[x]>> -> Beim Anlegen neuer Bretter mit <<<Ctrl-H> >>oder
        mit [/XPoint/Import/Brettliste] bzw. mit@11004
-       [/Nachricht/Brettmanager/Bestellen] (nur ZCON-@11901
-       NECT und RFC/UUCP) werden die Kommentare aus
+       [/Nachricht/Brettmanager/Bestellen] (nur ZCon-@11901
+       nect und RFC/UUCP) werden die Kommentare aus
        der Brettliste, falls vorhanden, in die XP-
        BrettÅbersicht Åbernommen.
 
@@ -4791,14 +4800,14 @@ es wird dann immer nur ein einfaches "Re:" erzeugt.
 Diese Einstellung kann wahlweise auch fÅr jede Brett-
 gruppe einzeln erfolgen (/Edit/Gruppen); dort kann
 das Erzeugen von "Re:"'s auch ganz abgeschaltet wer-
-den. Sie gilt jedoch nicht fÅr ZCONNECT, MausNet und
+den. Sie gilt jedoch nicht fÅr ZConnect, MausNet und
 Usenet: Im MausNet wird kein "Re:" verwendet, im
-Usenet und bei ZCONNECT wird immer ein einfaches
+Usenet und bei ZConnect wird immer ein einfaches
 "Re:" vorangestellt.
 
 @
 247
-<<ZCONNECT, UUCP/RFC:
+<<ZConnect, UUCP/RFC:
 
 Hier sollte immer Ihre korrekte Zeitzone eingetragen
 sein. FÅr User in Deutschland ist dies:
@@ -4872,7 +4881,7 @@ Der Empfang einer Nachricht kann auch manuell mit
        soll.
 @
 252
-<<ZCONNECT / RFC:
+<<ZConnect / RFC:
 
 Wenn Sie hier <<[x]>> einstellen, versieht XP standard-
 mÑ·ig alle PMs an mehrere EmpfÑnger mit einer Blind-
@@ -4884,7 +4893,7 @@ Der Blindkopie-Status kann auch im Sendefenster je
 Nachricht mit <<<Ctrl-K> >>ein- oder ausgeschaltet
 werden.
 
-Achtung: Bei ZCONNECT wird diese Funktion durch die
+Achtung: Bei ZConnect wird diese Funktion durch die
 Boxprogramme ausgefÅhrt, und es ist nicht sicherge-
 stellt, da· sie von allen Boxprogrammen unterstÅtzt
 wird. Wenn es sehr wichtig ist, da· die einzelnen
@@ -4901,7 +4910,7 @@ richtentext.
 
 @
 253
-<<ZCONNECT / RFC:
+<<ZConnect / RFC:
 
 Manche Absender setzen einen Antwort-an-Header in
 ihren Mails (RFC: Reply-To), weil sie eine Antwort
@@ -4920,7 +4929,7 @@ Ist der Schalter deaktiviert, wird grundsÑtzlich die
 Antwort-an-Adresse verwendet, wenn vorhanden.
 @
 254
-<<ZCONNECT / RFC:
+<<ZConnect / RFC:
 
 <<[x]>> -> Ihre îffentlichen Nachrichten werden mit dem
        Header "X-No-Archive: Yes" versehen. Dadurch
@@ -4933,7 +4942,7 @@ doch gespeichert werden. "Das Usenet vergi·t nicht!"
 
 @
 255
-<<ZCONNECT / RFC:
+<<ZConnect / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
        bearbeitet. Das hei·t, wenn CrossPoint eine
@@ -4971,25 +4980,25 @@ Header vermerkten EmpfÑngern gelîscht.
 Hier kînnen Sie den Namen Ihrer Organisation einge-
 ben, z.B. den Namen Ihrer Firma, wenn Sie CrossPoint
 kommerziell einsetzen. Diese Zeile wird im Kopf von
-ZCONNECT- und Usenet-Nachrichten Åbergeben.
+ZConnect- und Usenet-Nachrichten Åbergeben.
 
 Au·erdem wird sie bei Fido-Netcalls als Ihr System-
 name gesendet. Ist keine Organisation angegeben,
 sendet CrossPoint stattdessen Ihren Usernamen.
 @
 1041
-<<z.Zt. nur ZCONNECT:>>
+<<z.Zt. nur ZConnect:>>
 
 Hier kînnen Sie Ihre Postanschrift eingeben, wobei
 die einzelnen Zeilen durch Semikola getrennt sein
 mÅssen.
 
-Diese Anschrift wird im Kopf aller ZCONNECT-Nachrich-
+Diese Anschrift wird im Kopf aller ZConnect-Nachrich-
 ten mitgeschickt und Usern mit geeigneter Software
 angezeigt.
 @
 1042
-<<z.Zt. nur ZCONNECT:>>
+<<z.Zt. nur ZConnect:>>
 
 Hier kînnen Sie Ihre Telefonnummer(n) eingeben; meh-
 rere Nummern mÅssen durch Leerzeichen getrennt sein.
@@ -5014,13 +5023,13 @@ fÅr eine Leitung, an der eine dieser japanischen
 Videokameras mit eingebautem anrufbeantwortendem
 CD-Player-Fax angeschlossen ist.
 
-Die Nummern werden im Kopf aller ZCONNECT-Nachrich-
+Die Nummern werden im Kopf aller ZConnect-Nachrich-
 ten mitgeschickt und Usern mit geeigneter Software
 angezeigt.
 
 @
 1043
-<<ZCONNECT / RFC:>>
+<<ZConnect / RFC:>>
 
 Falls Sie eine Homepage im Internet haben, kînnen
 Sie hier die vollstÑndige "URL" ngeben, z.B.:
@@ -5174,7 +5183,7 @@ Spalten            USERNAME         BOXNAME
 Splt./klein        Username         BOXNAME
 @
 842
-<<ZCONNECT / Fido / MausNet:>>
+<<ZConnect / Fido / MausNet:>>
 
 <<[x]>> -> Im Kommentarbaum, der im Nachrichtenfenster
        mit "##" aktiviert wird, werden alle Useradres-
@@ -5184,7 +5193,7 @@ Diese Einstellung kann auch im Kommentarbaum mit <<A>>
 nicht-permanent geÑndert werden.
 @
 843
-<<ZCONNECT / MagicNET:>>
+<<ZConnect / MagicNET:>>
 
 <<[x]>> -> Bei der Nachrichtenanzeige innerhalb von
        Brettern wird statt der Absenderadresse der
@@ -6000,7 +6009,7 @@ sind *nicht* innerhalb von CrossTerm verfÅgbar:
               NAME weglassen, wird er jeweils abge-
               fragt. Die Angabe des Realnames (in
               Klammern) ist optional und nur bei
-              ZCONNECT, RFC/UUCP und MagicNET rele-
+              ZConnect, RFC/UUCP und MagicNET rele-
               vant.
 
 @
@@ -6894,7 +6903,7 @@ Diese Einstellung gilt nicht fÅr Fido-Netcalls.
        gen" eingeschaltet ist - komplett angezeigt.
 
 
-Diese Einstellung gilt nur fÅr Z-Netz / ZCONNECT-
+Diese Einstellung gilt nur fÅr Z-Netz / ZConnect-
 Netcalls.
 @
 562
@@ -7120,7 +7129,7 @@ rige Datei gelîscht (s. Feld "lîschen").
 <<[x]>> -> das Makro gilt im <<Nachrichten>>-Lister
 @
 594
-<<[x]>> -> das Makro gilt im Archiv-Viewer
+<<[x]>> -> das Makro gilt im Archiv-Viewer,
        im MIME-Popup, und Ñhnlichen Fenstern
 @
 595
@@ -7388,7 +7397,7 @@ bitte Ihren Sysop.
        POINT:USER.
 @
 655
-<<Z-Netz / ZCONNECT
+<<Z-Netz / ZConnect
 
 <<[x]>> -> Ihre Nachrichten erhalten die Absenderadresse
        Username\@Pointname.Domain.
@@ -7397,7 +7406,7 @@ bitte Ihren Sysop.
        Username\@Boxname.Domain.
 
 Normalerweise haben Pointadressen - gemÑ· Z-Netz-
-bzw. ZCONNECT-Standard - immer die letztere Form.
+bzw. ZConnect-Standard - immer die letztere Form.
 Sie sollten nur dann die Einstellung <<[x]>> wÑhlen,
 wenn die angerufene Box aus irgendeinem Grund den
 Pointnamen in der Useradresse benîtigt.
@@ -7974,18 +7983,18 @@ User-Schalter aktiviert ist.
        Kurznamen) erhalten einen neuen Server.
 @
 790
-ZCONNECT unterstÅtzt neben dem IBM-PC-Zeichensatz
+ZConnect unterstÅtzt neben dem IBM-PC-Zeichensatz
 auch den auf vielen anderen Rechnern Åblichen ISO-
 8859-1-Zeichensatz.
 
 <<[ ]>> -> CrossPoint verschickt die Nachrichten weiter-
        hin im IBM-PC-Zeichensatz. Damit ist sicher-
-       gestellt, da· auch Benutzer alter ZCONNECT-
+       gestellt, da· auch Benutzer alter ZConnect-
        Software Ihre Nachrichten lesen kînnen.
 
 <<[x]>> -> CrossPoint verwendet den neuen ISO-Zeichen-
        satz. Dieser Schalter ist nur fÅr den Fall
-       gedacht, da· irgendwann ein ZCONNECT-basier-
+       gedacht, da· irgendwann ein ZConnect-basier-
        tes Netz komplett auf ISO umstellen sollte.
        Bis dahin sollten Sie mit RÅcksicht auf Benut-
        zer Ñlterer Software weiterhin mit dem IBM-
@@ -8858,7 +8867,7 @@ Ist die Schreibsperre abgeschaltet und eine Vertre-
 teradresse eingetragen, so gibt es zwei Mîglichkei-
 ten:
 
-<<ZCONNECT, Usenet:>>
+<<ZConnect, Usenet:>>
 
 Alle îffentlichen Antworten auf Nachrichten, die Sie
 in dieses Brett schreiben, werden an den Vertreter
@@ -8977,7 +8986,7 @@ gedeutet werden soll).
             mehrteiligen Nachricht
 
 
-Alle weiteren Zeilen gelten nur fÅr ZCONNECT und/
+Alle weiteren Zeilen gelten nur fÅr ZConnect und/
 oder RFC-Netze (Usenet / "UUCP"):
 
 <<Antwort in:>> Das Brett, in das îffentliche Antworten
@@ -9777,7 +9786,7 @@ zum Thema PGP:
 1011
 Dieser Schalter aktiviert das automatische Codieren
 und Decodieren und den SchlÅssel-Austausch nach
-ZCONNECT-PGP-Standard.
+ZConnect-PGP-Standard.
 @
 1012
 <<[x]>> -> CrossPoint ruft PGP mit dem Schalter <<+batch->>
@@ -9840,7 +9849,7 @@ KÅrzung ist auch bei Ihrer [User-ID] mîglich.@1018
        Ring" aufgenommen.
 
 Dieser Schalter gilt <<nur>> fÅr SchlÅssel, die gemÑ·
-dem ZCONNECT-Standard im Nachrichtenkopf transpor-
+dem ZConnect-Standard im Nachrichtenkopf transpor-
 tiert werden. SchlÅssel im Nachrichtentext mÅssen
 manuell mit /Nachricht/PGP/Key_einlesen eingelesen
 werden.
@@ -9860,7 +9869,7 @@ einzulesen.
        Ring" aufgenommen.
 
 Dieser Schalter gilt <<nur>> fÅr SchlÅssel, die gemÑ·
-dem ZCONNECT-Standard im Nachrichtenkopf transpor-
+dem ZConnect-Standard im Nachrichtenkopf transpor-
 tiert werden. SchlÅssel im Nachrichtentext mÅssen
 manuell mit /Nachricht/PGP/Key_einlesen eingelesen
 werden.
@@ -9873,9 +9882,9 @@ ten Keys manuell einzulesen.
 
 @
 1017
-<<ZCONNECT, Fido, MausTausch
+<<ZConnect, Fido, MausTausch
 
-<<[x]>> -> Alle ausgehende Nachrichten werden mit PGP
+<<[x]>> -> Alle ausgehenden Nachrichten werden mit PGP
        signiert. Dazu mu· PGP installiert sein
        (s. Handbuch, Kapitel 5.12). Die Signierung
        lÑ·t sich im Absendefenster mit <<G>> fÅr ein-
@@ -9926,7 +9935,7 @@ beschrieben.
 1021
 <<[x]>> -> Die Nachricht wird mit einer Key-Anforderung
        versehen. Falls das Programm des EmpfÑngers
-       den ZCONNECT-PGP-Standard beherrscht, wird
+       den ZConnect-PGP-Standard beherrscht, wird
        es Ihnen automatisch dessen Public Key zu-
        senden.
 @
@@ -11172,7 +11181,7 @@ blinde und fÅr gehîrlose Anwender erleichtern.
 <<XPoint / Import / Puffer einlesen
 
 Die Puffer-Import-Funktion liest eine Zerberus(R)-
-kompatible Pufferdatei im Netcall- oder ZCONNECT-
+kompatible Pufferdatei im Netcall- oder ZConnect-
 Format ein. Sie ist hauptsÑchlich fÅr den Fall ge-
 dacht, da· Sie bereits vorhandene Nachrichten aus
 anderen Pointprogrammen in CrossPoint Åbernehmen
@@ -11295,7 +11304,7 @@ Um selbst UU-codierte Dateien zu verschicken,
 wÑhlen Sie im EditormenÅ (erreichbar durch <<<F10> >>
 oder rechten Mausklick) die Option <<Laden UUE>>.
 
-Falls Sie Dateien per ZCONNECT verschicken, brauchen
+Falls Sie Dateien per ZConnect verschicken, brauchen
 Sie diese nicht zu codieren: Die Gateways nehmen
 Ihnen diese Aufgabe - wenn nîtig - ab.
 
@@ -11313,7 +11322,7 @@ gewÑhlten Brettes, in eine Datei.
 Hier werden alle Nachrichten des angezeigten Kommen-
 tarbaums in eine Datei geschrieben.
 
-Der Kommentarbaum einer Fido-, Maus-, ZCONNECT- oder
+Der Kommentarbaum einer Fido-, Maus-, ZConnect- oder
 Usenet-Nachricht wird mit "\#" aktiviert.
 @
 11205
@@ -11675,7 +11684,7 @@ Schablonen erlaubt:
   $ERHALTEN  -  .. und das Empfangsdatum
   $MSGID     -  die Message-ID der Bezugsnachricht
 
-Die folgenden Makros gelten nur fÅr ZCONNECT, RFC-
+Die folgenden Makros gelten nur fÅr ZConnect, RFC-
 basierende und MagicNET-kompatible Netze:
 
   $RNAME     -  der Realname des Absenders der
@@ -12043,7 +12052,7 @@ gesetzt.
 12102
 <<Nachricht / Weiterleiten / Original
 
-(nur ZCONNECT, Usenet und Maus)
+(nur ZConnect, Usenet und Maus)
 
 Diese Funktion arbeitet wie [Weiterleiten/Kopie], al-@12101
 lerdings behÑlt die weitergeleitete Nachricht ihren
@@ -12087,7 +12096,7 @@ Und bei Brettnachrichten au·erdem
 12107
 <<Nachricht / Weiterleiten / Lîschen
 
-<<ZCONNECT / RFC:>>  Dieser MenÅpunkt erzeugt eine Lîsch-
+<<ZConnect / RFC:>>  Dieser MenÅpunkt erzeugt eine Lîsch-
 nachricht ("Cancel-Nachricht") fÅr die gewÑhlte, von
 Ihnen geschriebene Brettnachricht. Auf diese Weise
 kann eine bereits verschickte Nachricht nachtrÑglich
@@ -12106,7 +12115,7 @@ der Box noch nicht ins Netz versandt wurde.
 12108
 <<Nachricht / Weiterleiten / Ersetzen
 
-<<ZCONNECT / RFC:>> Wenn Sie eine îffentliche Nach-
+<<ZConnect / RFC:>> Wenn Sie eine îffentliche Nach-
 richt abgeschickt haben und Ihnen im Nachhinein
 auffÑllt, da· Ihre Nachricht Fehler enthÑlt, dann
 kînnen Sie mit diesem MenÅpunkt eine Nachricht er-
@@ -12315,29 +12324,16 @@ ausgewÑhlt werden kînnen.
 <<Config / Extern / PGP
 
 PGP ist ein weitverbreitetes und sicheres Public-
-Key-VerschlÅsselungsprogramm. ZCONNECT bietet eine
+Key-VerschlÅsselungsprogramm. ZConnect bietet eine
 spezielle Schnittstelle zu PGP, die das automatische
 Codieren und Decodieren, den Austausch von SchlÅs-
 seln etc. ermîglicht.
 
 An dieser Stelle finden Sie Einstellungen, die
-insbesondere die ZCONNECT-PGP-Funktionen betreffen.
+insbesondere die ZConnect-PGP-Funktionen betreffen.
 
 Siehe auch: [PGP - Versions- und Detailinformationen]@1010
 
-@
-12407
-<<Config / Extern / Viewer
-
-Hier kînnen Sie Viewer-Programme (Anzeigeprogramme)
-fÅr bestimmte Typen von BinÑrnachrichten angeben.
-Wenn eine BinÑrnachricht vom betreffenden Typ mit
-<<<Enter> >>angewÑhlt wird, aktiviert CrossPoint statt
-des Listers dann das dazugehîrige Programm.
-
-GIF- und IFF/ILBM-Grafiken werden anhand ihres In-
-halts erkannt, alle anderen Dateien anhand des Datei-
-namens.
 @
 12601
 <<XPoint / Statistik / GebÅhren / Alle
@@ -12776,7 +12772,7 @@ gefunden, die sich in diesen ersten 21 Zeilen befinden.
 
 Dieser MenÅpunkt bewirkt einen kompletten Neuaufbau
 der internen Bezugsverkettung, die z.Zt. nur im Maus-
-und FidoNet und bei ZCONNECT von Bedeutung ist. Nor-
+und FidoNet und bei ZConnect von Bedeutung ist. Nor-
 malerweise wird die Bezugsverkettung automatisch
 verwaltet, und Sie werden diese Funktion nicht benî-
 tigen.
@@ -12996,15 +12992,15 @@ Verschiedene Einstellungen, die die GebÅhrenabschÑt-
 zung betreffen.
 @
 14001
-<<Nachricht / PGP / Key anfordern (ZCONNECT)
+<<Nachricht / PGP / Key anfordern (ZConnect)
 
 Mit diesem MenÅpunkt kînnen Sie den PGP-Public-Key
-eines ZCONNECT-Points anfordern. Wenn die Software
-des betreffenden Points den ZCONNECT-PGP-Standard
+eines ZConnect-Points anfordern. Wenn die Software
+des betreffenden Points den ZConnect-PGP-Standard
 unterstÅtzt, erfolgt der Key-Austausch vollauto-
 matisch.
 
-Falls Sie selbst Ihren Public Key einem ZCONNECT-
+Falls Sie selbst Ihren Public Key einem ZConnect-
 Point mitteilen mîchten, verwenden Sie dazu den
 Schalter "PGP" im Nachrichten-Sendefenster.
 @
@@ -13021,7 +13017,7 @@ von Keys bei /Config/Extern/PGP deaktiviert haben.
 <<Nachricht / PGP / Decodieren
 
 Hiermit kînnen Sie eine PGP-codierte Nachricht deco-
-dieren. Bei Nachrichten, die nach dem ZCONNECT-PGP-
+dieren. Bei Nachrichten, die nach dem ZConnect-PGP-
 Standard codiert sind, ist dies nicht notwendig,
 weil sie von XP automatisch decodiert werden.
 
@@ -13227,7 +13223,7 @@ Eine ausfÅhrliche Anleitung zu PGP finden Sie im
 Handbuch, Kapitel 5.12.
 @
 20218
-Aktivieren Sie die ZCONNECT-PGP-UnterstÅtzung mit
+Aktivieren Sie die ZConnect-PGP-UnterstÅtzung mit
 dem ersten Schalter in diesem Fenster!
 @
 20301
@@ -13303,7 +13299,7 @@ niert es allerdings nur, wenn die Nachricht noch
 nicht die Box verlassen hat.
 @
 20318
-Nur îffentliche ZCONNECT- und RFC-Nachrichten kînnen
+Nur îffentliche ZConnect- und RFC-Nachrichten kînnen
 ersetzt werden.
 @
 20319
@@ -13671,7 +13667,7 @@ zuerst mit /Nachricht/éndern/Text.
 @
 20627
 Das Weiterleiten von Nachrichten mit Originalab-
-sender ist nur bei ZCONNECT, bei RFC/UUCP und im
+sender ist nur bei ZConnect, bei RFC/UUCP und im
 MausNet mîglich.
 @
 20630
@@ -13784,7 +13780,7 @@ chen:
 
 ˛  Der bei /Edit/Boxen/Edit/Point eingetragene Ent-
    packer ist nicht vorhanden oder nicht Åber einen
-   DOS-Pfad erreichbar. Insbesondere bei ZCONNECT-
+   DOS-Pfad erreichbar. Insbesondere bei ZConnect-
    und Fido-Netcalls genÅgt es <<NICHT>>, wenn der Ent-
    packer sich im CrossPoint-Verzeichnis befindet!!
 
@@ -14102,7 +14098,7 @@ Vergessen Sie nicht, anschlie·end auch alle dazuge-
 hîrigen Bretter umzubenennen!
 @
 20930
-Bei ZCONNECT-Servern dÅrfen Pointnamen nur aus den
+Bei ZConnect-Servern dÅrfen Pointnamen nur aus den
 Zeichen A bis Z, 0 bis 9 sowie "-" bestehen. Falls
 Ihnen der Sysop einen Pointnamen genannt hat, der
 Zeichen wie "!", "#", "_" etc. enthÑlt, setzen Sie
@@ -14378,7 +14374,7 @@ Rechner neu!
 22818
 Es ist ein interner Fehler aufgetreten. Melden Sie
 ihn bitte mit einer mîglichst genauen Beschreibung
-der UmstÑnde an den Programmierer!
+der UmstÑnde an das OpenXP-Team (<<dev@openxp.de>>)!
 @
 22901
 FÅr die Online-Registrierung verwendet XP den Fido-
@@ -14408,7 +14404,7 @@ meldung lesen kînnen.
 @
 23003
 Das automatische Anfordern von Public Keys ist z.Zt.
-nur bei ZCONNECT-Usern mîglich.
+nur bei ZConnect-Usern mîglich.
 @
 23004
 PGP hat die Nachricht nicht decodiert. Aktivieren
