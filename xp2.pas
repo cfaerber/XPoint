@@ -73,6 +73,7 @@ procedure testlock;
 procedure ReadDefaultViewers;
 
 procedure ShowDateZaehler;
+Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche } 
 
 
 implementation  {-----------------------------------------------------}
@@ -1110,10 +1111,34 @@ begin
   SeekViewer('text/plain',PTextViewer);
 end;
 
+Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche } 
+Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }  
+Begin
+  UsrFeldPos1:=1;
+  UsrFeldPos2:=2;
+  i:=1;
+  While UsrFeldtausch[i]<>'A' do
+  begin
+    Case UsrFeldtausch[i] of
+                      { Spezial             Normal }
+      'F' : Begin inc(UsrFeldPos1,5);   inc(UsrFeldPos2,4);  end; { Flags }
+      'G' : Begin inc(UsrFeldPos1,3);                        end; { Gruppen }
+      'H' : Begin inc(UsrFeldPos1,7);                        end; { Haltezeit }
+      'B' : Begin inc(UsrFeldPos1,10);                       end; { Box }
+      'K' : Begin inc(UsrFeldPos1,31);  inc(UsrFeldPos2,31); end; { Kommentar }
+      end;
+    inc(i);
+    end;
+   if UsrfeldPos2=33 Then UsrFeldpos2:=32;   
+end;
 
 end.
 {
   $Log$
+  Revision 1.38  2000/05/14 07:22:51  jg
+  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
+  - Feldtausch-Config: Defaultauswahl mit F2
+
   Revision 1.37  2000/05/13 14:29:13  hd
   Workaround wg. noch nicht vorhandener Unit
 

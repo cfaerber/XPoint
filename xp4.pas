@@ -1492,7 +1492,7 @@ begin      { --- select --- }
         if dispmode<1 then
           gotoxy(iif(dispext,26,4)+length(suchst),p+ya+3)
         else
-          gotoxy(iif(dispext,22,6)+length(suchst),p+ya+3);
+          gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
         Do_XPhilite(true);
         get(t,curon);
         TempOpen;
@@ -2038,6 +2038,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/05/14 07:22:52  jg
+  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
+  - Feldtausch-Config: Defaultauswahl mit F2
+
   Revision 1.19  2000/05/06 17:29:22  mk
   - DOS DPMI32 Portierung
 

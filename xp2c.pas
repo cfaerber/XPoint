@@ -773,10 +773,13 @@ begin
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   { 'Feldtausch in Nachrichten-Liste': }
   maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
-             MsgFeldDef+LStr(MsgFeldDef));
+             '>'+MsgFeldDef+LStr(MsgFeldDef));
+  mappsel(false,MsgFeldDef);
   { 'Feldtausch in Userliste': }
   maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
-             UsrFeldDef+LStr(UsrFeldDef));
+             '>'+UsrFeldDef+LStr(UsrFeldDef));
+  mappsel(false,UsrFeldDef);
+
 {$IFNDEF Linux}
   maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
 {$ENDIF}
@@ -799,16 +802,17 @@ begin
     aufbau:=true;
     GlobalModified;
     { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
-    MsgFeldTausch:=UStr(MsgFeldTausch);
-    j:=0;
-    for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
+    j:=0;   
+    for i := 1 to length(MsgFeldDef) do
+      if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
     if (j<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
     { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
-    UsrFeldTausch:=UStr(UsrFeldTausch);
     j:=0;
-    for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
+    for i := 1 to length(UsrFeldDef) do 
+     if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
     if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
-  end;
+    GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
+    end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1465,6 +1469,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/05/14 07:22:51  jg
+  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
+  - Feldtausch-Config: Defaultauswahl mit F2
+
   Revision 1.34  2000/05/13 14:24:32  hd
   - FormPath an Linux angepasst
   - path_config, options, UI_options angepasst

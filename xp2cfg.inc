@@ -1623,6 +1623,7 @@ begin
     p:=0;
     for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
     if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
+    GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
     if ParZeilen>0 then begin
@@ -1725,6 +1726,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.52  2000/05/14 07:22:51  jg
+  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
+  - Feldtausch-Config: Defaultauswahl mit F2
+
   Revision 1.51  2000/05/09 20:07:01  jg
    Externe Viewer / Schutzmassnahmen:
    - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen

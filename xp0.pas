@@ -1004,6 +1004,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        UsrFeldTausch   : string[UsrFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Userliste Felder vertauscht werden }
+       UsrFeldPos1  : Byte;          { Spezialmodus Position der Usernamen (FeldTausch) }
+       UsrFeldPos2  : Byte;          { Normalmodus Position der Uusernamen (FeldTausch) }
        Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
        brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
@@ -1155,6 +1157,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.46  2000/05/14 07:22:51  jg
+  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
+  - Feldtausch-Config: Defaultauswahl mit F2
+
   Revision 1.45  2000/05/12 20:33:21  mk
   - ParWinTime default 1 in 32 Bit
 
