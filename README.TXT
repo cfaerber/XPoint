@@ -18,9 +18,8 @@ procedure:
   { this procedure is really stupid }
   procedure UnbelieveableStupid;
   ;-)
-- delete the CVS logs at the bottom (keep only DOLLAR Log DOLLAR): Logs have
-  grown and are partly contraproductive if using full text search on the
-  source.
+- delete CVS logs at the end of the file. Keep only entries that are absolutely
+  necessary.
 - move the entry you processed in this list to the bottom of the list and
   comment it properly
 - commit *everything* that has to do with these changes in one batch
@@ -68,7 +67,6 @@ ncpop3.pas
 ncsmtp.pas
 ncsocket.pas
 netcall.pas ncbase.pas (damit's zusammenhaengt...?)
-xp-fm.pas ncfido.pas (wenn fertig integriert...)
  ---
 
 keys.pas
@@ -103,9 +101,11 @@ timer.pas
 typeform.pas (in Stringtools und Datetools aufteilen?)
 unicode.pas 
 utftools.pas unicodetools.pas 
-uucico.pas (was ist das ueberhaupt?)
-uucp-fl1.pas (wird's gebraucht?)
-uucp-g.inc uucp-fl1.inc (sonst weiss man nicht, wozu's gehoert)
+
+uucico.pas xpncuucp.pas (integrieren)
+uucp-fl1.pas
+uucp-g.inc
+
 uuz.pas zc2rfc.pas (oder sowas, uuz ist irgendwie nicht aussagekraeftig, oder?)
 viewer.pas (was ist das?- Hinweis im Kopf fehlt. Ist's ein kompletter Viewer
  oder nur ein "Typ-Herausfinder"?)
@@ -117,9 +117,6 @@ xp.pas openxp.pas (? :-)
 
 XP-D.RES (in resource-Verzeichnis)
 XP-E.RES
-
-xp-fm.pas ncfido.pas, sobald in Netcall-Klassenstruktur integriert
-xp-fm.inc
 
 xp0.pas xpdeclarations.pas
 xp1.pas xpgeneralroutines.pas ( :-( )
@@ -158,14 +155,6 @@ xp6.pas
 xp6l.pas
 xp6o.pas
 xp6s.inc
-xp7.inc
-xp7.pas
-xp7f.pas
-xp7l.pas
-xp7o.pas
-xp7o.bak
-xp7.pas
-xp7u.inc
 xp8.inc
 xp8.pas
 xp8fs.inc
@@ -187,8 +176,6 @@ xpf2.pas
 xpfido.pas
 xpfidonl.pas
 xpfiles.inc
-xpfm-d.rq
-xpfm-e.rq
 xpftnadr.pas
 xpglobal.pas
 xpheader.inc
@@ -201,13 +188,11 @@ xpmaus.pas
 xpme.pas
 xpmecol.inc
 xpmime.pas
-xpnntp.pas
 xpnodes.pas
 xpnt.pas
 xpos2.pas
 xpreg.pas
 xpstat.pas
-xpterm.pas
 xpuu.pas
 xpuu-d.rq
 xpuu-e.rq
@@ -227,11 +212,21 @@ zpr.pas
 
 [FILES PROCESSED -----------------------------------------------------------]
 
-(none yet)
+xpterminal.pas.............. Comm terminal unit
+xpmodemscripts.pas.......... Modem script file processing unit
+
+xpnetcall.pas............... Netcall base unit
+xpncnntp.pas................ NNTP netcall unit
+xpncpop3.pas................ POP3 netcall unit
+xpncfido.pas................ Fido netcall unit
 
 [CVS logs ------------------------------------------------------------------]
 Please delete logs in a way no more than a few logs are visible here.
 
 $Log$
+Revision 1.2  2001/01/04 16:08:29  ma
+xpncfido, xpncuucp, xpnetcall, xpmodemscripts, xpterminal,
+xpncnntp, xpncpop3
+
 Revision 1.1  2000/12/10 18:35:28  ma
 - suggesting a way to slowly get properly names sources
