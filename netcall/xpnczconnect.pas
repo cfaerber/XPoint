@@ -56,11 +56,11 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   begin
     s:=ExtractFilename(s);
     p:=cPos('.',s);
-    result:=(UpperCase(Copy(s,2,1))='P')and(p<>0);
+    result:=(UpperCase(Copy(s,2,1))='P')and(p<>0); { Janus+ }
     if result then
-      for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9'])
+      for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9']) { Janus+ }
     else
-      result:=UpperCase(Copy(s,1,7))='CALLER.';
+      result:=UpperCase(Copy(s,1,7))='CALLED.'; { Janus }
   end;
 
 var x,y: Integer;
@@ -251,6 +251,12 @@ end.
 
 {
   $Log$
+  Revision 1.11.2.1  2002/05/04 20:16:22  mk
+  MA:- Janus incoming packets should be named CALLED.*
+
+  Revision 1.12  2002/05/04 18:37:12  ma
+  - Janus incoming packets should be named CALLED.*
+
   Revision 1.11  2001/10/15 13:12:26  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
