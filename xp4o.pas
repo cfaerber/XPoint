@@ -777,7 +777,7 @@ begin
   for i:=0 to 4 do bera[i]:=getres2(442,i);
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
-  if suchopt[1]='*' then
+  if FirstChar(suchopt)='*' then
   begin                                       { Erste Suche seit Programmstart? }
     suchopt:='au';
     InitHistory;
@@ -2980,6 +2980,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.5  2002/08/01 20:45:19  mk
+  - fixed range check error, ansistring suchopt can be empty
+
   Revision 1.138.2.4  2002/07/29 19:53:16  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
