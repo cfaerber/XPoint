@@ -31,9 +31,7 @@ uses
 {$ifdef NCRT}
   xpcurses,
 {$else}
-  {$IFNDEF Delphi }
   crt,
-  {$ENDIF }
 {$endif}
 {$IFDEF DOS32 }
   go32,
@@ -199,21 +197,16 @@ end;
 {$IFNDEF NCRT }
 function keypressed:boolean;
 begin
-{$IFNDEF Delphi }
   keypressed:=(forwardkeys<>'') or crt.keypressed;
-{$ENDIF }
 end;
 
 function readkey:char;
 begin
-{$IFNDEF Delphi }
   if forwardkeys<>'' then begin
     readkey:=forwardkeys[1];
     forwardkeys:=copy(forwardkeys,2,255);
   end else
     readkey:=crt.readkey;
-{$ENDIF }
-
 {$IFDEF Win32 }
   // Scan Numeric Block keys *, - and +
   Lastscancode:=0;
@@ -370,6 +363,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/08/10 16:38:06  mk
+  - delphi version supports keyboard ;)
+
   Revision 1.38  2001/08/04 20:19:13  mk
   - added some dos compatibility functions
 
