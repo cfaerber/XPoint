@@ -575,6 +575,7 @@ end;
 
 { art: 1=aktuelle Nachricht, 2=Brett, 3=Markiert, 4=Kommentarbaum }
 
+// Nachricht/Extrahieren
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 var fname   : string;
     x,y,p   : Integer;
@@ -633,14 +634,15 @@ begin
         Betreff := dbReadStrN(mbase,mb_betreff);
         if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
-        if recount(betreff)>0 then;  { entfernt Re^n }
+        Recount(betreff); { entfernt Re^n }
         if cPos(' ',betreff)=0 then fname:=betreff
         else fname:=copy(betreff,1,cPos(' ',betreff)-1);
         end
       else
         fname:=hdp.datei;
       i:=1;                            { ungueltige Zeichen entfernen }
-      UpString(fname);
+      fName := FileUpperCase(fname);
+      DebugLog('xp3o','Raw filename: '+fname, DLDebug);
       while i<=length(fname) do
         if pos(fname[i],'_^$~!#%-{}()@''`.'+range('A','Z')+'0123456789Ž™š')>0 then
           inc(i)
@@ -654,18 +656,13 @@ begin
     if etyp=xTractQuote then schab:=QuoteMsk
     else schab:='';
     text:=reps(getres2(324,art),strs(markanz));
-    { case art of
-        1 : text:='Nachricht extrahieren';
-        2 : text:='Brett-Nachrichten extrahieren';
-        3 : text:=strs(markanz)+' markierte Nachrichten extrahieren';
-        4 : text:='Kommentarbaum extrahieren';
-      end; }
     pushhp(120);
-    useclip:=true;
+    useclip:=true;                                                
     ok:=ReadFileName(text,fname,true,useclip);
     pophp;
-    if (cPos('\',fname)=0) and (cPos(':',fname)=0) then
-      fname:=extractpath+fname;
+    if ExtractFileDir(fname) = '' then 
+      fname := Extractpath + fname;
+    DebugLog('xp3o','Coocked filename: '+fname, DLDebug);
     if ok then
       if not ValidFileName(fname) then
         fehler(getres2(324,5))   { 'ungueltiger Datei- oder Pfadname' }
@@ -1528,6 +1525,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2001/09/29 09:31:05  mk
+  - some tweaks for extrakt(), specially for linux
+
   Revision 1.74  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
