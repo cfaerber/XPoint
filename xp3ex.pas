@@ -55,7 +55,7 @@ begin
   repeat
     p:=pos(s1,UpperCase(s));
     if p>0 then
-      s:=copy(s,1,p-1)+s2+copy(s,p+length(s1),255);
+      s:=Left(s,p-1)+Trim(s2)+mid(s, p + length(s1);
   until p=0;
 end;
 
@@ -1055,6 +1055,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/07 18:38:50  mk
+  - Trim fuer Textmakros eingefuegt und Space bei $RNAME entfernt
+
   Revision 1.23  2000/07/06 21:29:12  mk
   JG: - Bei FIDO-Nachrichten mit mehreren Brettempfaengern wird der FIDO-Empfaenger jetzt in Klammern mit angezeigt
 
