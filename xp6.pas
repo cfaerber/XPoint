@@ -459,7 +459,7 @@ var p      : byte;
  
     cc_hand,  cc_size : word;
     ccm_hand,ccm_size : word;
-    ma_hand,  ma_size : word;
+  (*  ma_hand,  ma_size : word; *)
     xmsstored         : boolean;
 
   procedure store_arrays;     { Arrays ins XMS sichern und Speicher freigeben }
@@ -483,7 +483,7 @@ var p      : byte;
 
   begin
     XmsStored:=false;
-    if xmstest and (xmsavail > ((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3)
+    if xmstest and (xmsavail > ((sizeof(cc^)+sizeof(ccm^) (*+sizeof(marked^)*) ) div 1024) +3)
     then begin
       n:=0;
       cc_size:=sizeof(cc^);
@@ -494,23 +494,23 @@ var p      : byte;
       ccm_hand:=XmsAlloc(sizeof(ccm^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ccm_hand,ccm^,0,sizeof(ccm^));
  {*}  if not xms_ok then exit;
-      ma_size:=sizeof(marked^); 
+ (*     ma_size:=sizeof(marked^); 
       ma_hand:=XmsAlloc(sizeof(marked^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ma_hand,marked^,0,sizeof(marked^));
- {*}  if not xms_ok then exit;
+ {*}  if not xms_ok then exit; *)
       XmsStored:=true;
-      dispose(ccm); dispose(cc); dispose(marked);
+      dispose(ccm); dispose(cc); (* dispose(marked); *)
       end; 
   end;     
 
   procedure get_arrays;       { Arrays neu Anlegen und aus XMS einlesen }
   begin
     if XmsStored then begin
-      new(marked); new(cc); new(ccm); 
+      (* new(marked); *) new(cc); new(ccm); 
       XmsRead(cc_hand,cc^,0,cc_size);
       XmsRead(ccm_hand,ccm^,0,ccm_size);
-      XmsRead(ma_hand,marked^,0,ma_size);
-      XmsFree(ma_hand);
+      (* XmsRead(ma_hand,marked^,0,ma_size);
+      XmsFree(ma_hand); *)
       XmsFree(ccm_hand);
       XmsFree(cc_hand);
       end;
@@ -2193,6 +2193,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.5  2000/08/16 06:14:30  jg
+  - Bugfix: Crashs im Zusammenhang mit dem Editorstart behoben
+    (der Speicher von Marked wird nich mehr freigegeben)
+
   Revision 1.39.2.4  2000/07/31 08:16:15  jg
   - OOPS.. Version mit unbrauchbarem Debugcode hochgeladen...
 
