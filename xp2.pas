@@ -105,7 +105,7 @@ end;
 procedure setmenus;
 var i : integer;
 begin
-  for i:=0 to menues do
+  for i:=0 to menus do
     if (i<>11) then setmenu(i,getres2(10,i));
   zusatz_menue;
   case videotype of
@@ -120,7 +120,7 @@ end;
 procedure freemenus;
 var i : integer;
 begin
-  for i:=0 to menues do
+  for i:=0 to menus do
     freemem(menu[i],length(menu[i]^)+1);
 end;
 
@@ -1077,6 +1077,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.10  2000/02/28 08:57:05  mk
+  - Version auf 3.20 RC1 geandert
+
   Revision 1.9  2000/02/27 22:30:10  mk
   - Kleinere Aenderung zum Sprachenwechseln-Bug (2)
 

@@ -17,8 +17,8 @@ interface
 {$ENDIF }
 
 const
-  verstr      = 'v3.20.021';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';      { '' oder ' beta' }
+  verstr      = 'v3.20 RC1';  { Versionnr. - steht nur an dieser Stelle }
+  betastr     = '';           { '' oder ' beta' }
 
 {$IFDEF VER32 }
   {$IFDEF Win32 }
@@ -47,7 +47,7 @@ const
   x_copyright = '(c) 2000';
 
 type
-  { MK 11.01.2000 Regeln fr Datentypen unter 16/32 Bit
+  { MK: Regeln fr Datentypen unter 16/32 Bit
 
   Die gr”áe einiger Datentypen unterscheidet sich je nach verwendetem
   Compiler und der Systemumgebung. Folgende Regeln sollten beachtet werden:

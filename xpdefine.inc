@@ -16,14 +16,14 @@
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
   Code der EXE-Datei nicht }
 
-{$DEFINE DebugInfo }
+{.$DEFINE DebugInfo }
 
 { Keine Assembler-Routine verwenden. Ein Gegenpart in Pascal mu·
   existieren }
 {.$DEFINE NOASM }
 
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
-{$DEFINE Beta }
+{.$DEFINE Beta }
 
 { Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
@@ -111,6 +111,9 @@
 
 {
   $Log$
+  Revision 1.9  2000/02/28 08:57:05  mk
+  - Version auf 3.20 RC1 geandert
+
   Revision 1.8  2000/02/27 09:05:39  mk
   Ab Beta 3.20.21 ohne Debug-Infos
 

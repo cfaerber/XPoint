@@ -174,7 +174,7 @@ var t : text;
 begin
   assign(t,''); rewrite(t);
   writeln(t);
-  writeln(t,'XP-FM  Fido Mailer ',verstr,betastr,'  (c) ''93-99 by Peter Mandrella');
+  writeln(t,'XP-FM  Fido Mailer ',verstr,pformstr, betastr, ' (c) ''93-99 by Peter Mandrella');
   writeln(t);
   if FOSSILdetect then begin
     writeln(t,'FOSSIL driver detected');
@@ -1079,6 +1079,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/02/28 08:57:05  mk
+  - Version auf 3.20 RC1 geandert
+
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
