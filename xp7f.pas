@@ -220,7 +220,7 @@ begin
     p:=pos('$PUFFER',ustr(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',ustr(downarcer));       { immer > 0 ! }
-    findfirst(ImportDir+'*.*',AnyFile,sr);
+    findfirst(ImportDir+'*.*',ffAnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
       window(1,1,80,25); attrtxt(7);
@@ -254,9 +254,9 @@ begin
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
         if nDelPuffer then
-          findfirst(XFerDir+'*.*',AnyFile,sr)
+          findfirst(XFerDir+'*.*',ffAnyFile,sr)
         else begin
-          findfirst(XFerDir+'*.pkt',AnyFile,sr);    { .PKT - Dateien l”schen  }
+          findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
           if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
           end;
         while doserror=0 do begin
@@ -936,6 +936,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/18 11:23:50  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.7  2000/04/15 14:18:21  mk
   - Fix fuer FindFirst mit Diretories
 

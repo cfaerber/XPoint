@@ -598,7 +598,7 @@ var ypath : pathstr;
       sum : longint;
   begin
     sum:=0;
-    findfirst(ypath+'*.DBT',AnyFile,sr);
+    findfirst(ypath+'*.DBT',ffAnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/18 11:23:52  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.9  2000/04/15 21:44:48  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

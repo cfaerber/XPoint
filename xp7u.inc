@@ -150,7 +150,7 @@ var sr    : searchrec;
       sr  : searchrec;
   begin
     sum:=0;
-    findfirst(fmask,AnyFile,sr);
+    findfirst(fmask,ffAnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
@@ -205,7 +205,7 @@ begin
     if freeze then cunb:='#! funbatch'#10
     else if gzip then cunb:='#! gunbatch'#10
     else cunb:='#! cunbatch'#10;
-    findfirst(DestDir+'D*.OUT',AnyFile,sr);
+    findfirst(DestDir+'D*.OUT',ffAnyFile,sr);
     while doserror=0 do begin
       inc(spufsize,sr.size);
       assign(f1^,DestDir+sr.name);
@@ -283,7 +283,7 @@ var sr      : searchrec;
 
 begin
   ImportUUCPfromSpool:=false;
-  findfirst(XFerDir+'D*.',AnyFile,sr);   { Datenfiles - ohne Extension }
+  findfirst(XFerDir+'D*.',ffAnyFile,sr);   { Datenfiles - ohne Extension }
   if doserror=0 then begin
     twin;
     clrscr;
@@ -326,7 +326,7 @@ begin
     window(1,1,80,25);
     shell('UUZ.EXE -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
-    findfirst(XFerDir+'*.0??',AnyFile,sr);
+    findfirst(XFerDir+'*.0??',ffAnyFile,sr);
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
@@ -334,7 +334,7 @@ begin
     {$IFDEF virtualpascal}
     FindClose(sr);
     {$ENDIF}
-    findfirst(XFerDir+'D*',AnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
+    findfirst(XFerDir+'D*',ffAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
     while doserror=0 do begin
       if sr.attr and dos.Archive<>0 then
         MoveToBad(XFerDir+sr.name);
@@ -429,7 +429,7 @@ var dummy : longint;
   procedure EmptySysin;
   var sr : searchrec;
   begin
-    findfirst(BoxPar^.sysopinp+'*.*',AnyFile,sr);
+    findfirst(BoxPar^.sysopinp+'*.*',ffAnyFile,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/04/18 11:23:51  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.8  2000/04/15 14:18:21  mk
   - Fix fuer FindFirst mit Diretories
 

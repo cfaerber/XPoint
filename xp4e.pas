@@ -1932,7 +1932,7 @@ begin
   mwrt(x+3,y+4,getres2(2729,4));    { 'Datum:' }
   attrtxt(col.colmbox);
   mwrt(x+11,y+2,fitpath(fn,56));
-  findfirst(fn,AnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   moff;
   if doserror<>0 then
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
@@ -2301,6 +2301,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/18 11:23:49  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.14  2000/04/15 21:44:46  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

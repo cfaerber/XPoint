@@ -245,7 +245,7 @@ begin
     end
   else begin
     if not multipos('*?',s) then begin
-      findfirst(s,AnyFile,sr);
+      findfirst(s,ffAnyFile,sr);
       if (s[length(s)]<>'\') and (doserror<>0) then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
@@ -534,6 +534,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/04/18 11:23:51  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.5  2000/04/15 21:44:47  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

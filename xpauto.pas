@@ -140,7 +140,7 @@ var mmask     : array[1..12] of boolean;
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
-    findfirst(fn,AnyFile,sr);
+    findfirst(fn,ffAnyFile,sr);
     if doserror<>0 then
       amodi:=false
     else
@@ -314,7 +314,7 @@ var sr    : searchrec;
 
   function find(ext:string):boolean;
   begin
-    if first then findfirst(AutoxDir+'*.'+ext,AnyFile,sr)
+    if first then findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
     else findnext(sr);
     first:=(doserror<>0);
     find:=not first;
@@ -388,7 +388,7 @@ var sr    : searchrec;
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
-          findfirst(AutoxDir+'*.PKT',AnyFile,sr);
+          findfirst(AutoxDir+'*.PKT',ffAnyFile,sr);
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
             findnext(sr);
@@ -655,6 +655,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/18 11:23:51  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.7  2000/04/15 21:44:48  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

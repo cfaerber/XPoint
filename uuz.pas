@@ -2780,7 +2780,7 @@ begin
   outbufpos:=0;
   spath:=GetFileDir(source);
   n:=0;
-  findfirst(source,AnyFile,sr);
+  findfirst(source,ffAnyFile,sr);
   while doserror=0 do begin
     if left(sr.name,2)='X-' then begin
       ReadXFile;                          { X.-file interpretieren }
@@ -3509,6 +3509,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2000/04/18 11:23:47  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.17  2000/04/13 12:48:32  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

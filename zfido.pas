@@ -1756,7 +1756,7 @@ var sr  : searchrec;
     fst : boolean;
 begin
   FSplit(infile,d,n,e);
-  findfirst(infile,AnyFile,sr);
+  findfirst(infile,ffAnyFile,sr);
   fst:=true;
   while doserror=0 do begin
     FidoZfile(d+sr.name,not fst);
@@ -1792,6 +1792,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/04/18 11:23:52  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.11  2000/04/15 14:45:16  mk
   - Ops, noch ein paar ASM-Routinen portiert
 

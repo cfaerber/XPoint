@@ -1221,7 +1221,7 @@ begin
     p:=pos('=',s);
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
-      findfirst(FidoDir+fn,AnyFile,sr);
+      findfirst(FidoDir+fn,ffAnyFile,sr);
       if (doserror=0) and (sr.size>0) then begin
         node:=left(s,p-1);
         GetNodeinfo(node,ni,1);
@@ -2245,6 +2245,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/18 11:23:51  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.12  2000/04/13 12:48:40  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

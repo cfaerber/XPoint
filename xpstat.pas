@@ -750,7 +750,7 @@ var sr       : searchrec;
     w        : pprec;
 begin
   ppanz:=0;
-  findfirst('*.pp',AnyFile,sr);
+  findfirst('*.pp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .PP-Files }
     if sr.size>0 then begin
 
@@ -764,7 +764,7 @@ begin
   {$IFDEF virtualpascal}
   FindClose(sr);
   {$ENDIF}
-  findfirst('*.epp',AnyFile,sr);
+  findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
       truncstr(sr.name,cpos('.',sr.name)-1);
@@ -819,7 +819,7 @@ begin
     end;
   dbClose(d);
   if crashs then begin
-    findfirst('*.cp',AnyFile,sr);
+    findfirst('*.cp',ffAnyFile,sr);
     sumbytes:=0; summsgs:=0;
     while doserror=0 do begin
       inc(summsgs,testpuffer(sr.name,false,attsize));
@@ -1257,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/18 11:23:52  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.8  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

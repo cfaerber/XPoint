@@ -341,7 +341,7 @@ var sr  : searchrec;
 begin
   mon;
   sum:=0;
-  findfirst(dir+'*.*',AnyFile,sr);
+  findfirst(dir+'*.*',ffAnyFile,sr);
   while doserror=0 do begin
     inc(sum,sr.size);
     findnext(sr);
@@ -1097,6 +1097,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/04/18 11:23:50  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.20  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

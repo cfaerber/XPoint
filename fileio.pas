@@ -191,7 +191,7 @@ begin
   else begin
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
-      findfirst(name+'*.*',AnyFile,sr);
+      findfirst(name+'*.*',ffAnyFile,sr);
       if doserror=0 then
         IsPath:=true
       else
@@ -243,7 +243,7 @@ end;
 procedure erase_mask(s:string);                 { Datei(en) l”schen }
 var sr : searchrec;
 begin
-  findfirst(s,Anyfile,sr);
+  findfirst(s,ffAnyfile,sr);
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
@@ -406,7 +406,7 @@ end;
 function _filesize(fn:pathstr):longint;
 var sr : searchrec;
 begin
-  findfirst(fn,AnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   if doserror<>0 then
     _filesize:=0
   else
@@ -430,7 +430,7 @@ end;
 function filetime(fn:pathstr):longint;
 var sr : searchrec;
 begin
-  findfirst(fn,AnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   if doserror=0 then
     filetime:=sr.time
   else
@@ -799,6 +799,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/04/18 11:23:47  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.22  2000/04/16 19:50:38  mk
   - Fixes fuer FindFirst
 

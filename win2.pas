@@ -61,7 +61,10 @@ procedure prest;   { Path-Liste wiederherstellen       }
 
 { ========================= Implementation-Teil =========================  }
 
-IMPLEMENTATION
+implementation
+
+uses
+  FileIO;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -318,7 +321,7 @@ var   fb     : pathstr;
         pa:=path;
         pathonly(pa);
         if right(pa,1)<>'\' then pa:=pa+'\';
-        findfirst(pa+s,anyfile,sr);
+        findfirst(pa+s,ffanyfile,sr);
         if doserror<>0 then
           write(sp(59))  { !? }
         else begin
@@ -1077,6 +1080,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/18 11:23:48  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.8  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

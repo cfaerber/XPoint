@@ -75,7 +75,7 @@ uses
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
-  inout;
+  inout, fileio;
 
 var
   vtype   : byte;
@@ -216,7 +216,7 @@ var p  : pointer;
     f  : file;
 begin
   if vtype<2 then exit;
-  findfirst(fn,AnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   if (doserror=0) and (sr.size mod 256<=8) and (sr.size<65536) then begin
     h:=sr.size div 256;
     ofs:=sr.size mod 256;
@@ -534,6 +534,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/04/18 11:23:48  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.13  2000/04/13 12:48:33  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

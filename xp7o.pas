@@ -653,7 +653,7 @@ begin
   mon;
   assign(f1,dest);
   if existf(f1) then _era(dest);
-  findfirst(fmask,AnyFile,sr);
+  findfirst(fmask,ffAnyFile,sr);
   if doserror=0 then begin
     rewrite(f1,1);
     cursor(curon);
@@ -698,7 +698,7 @@ var sr : searchrec;
 begin
   { ToDo }
   packetsize:=0;
-  findfirst(XferDir+'*.*',AnyFile,sr);
+  findfirst(XferDir+'*.*',ffAnyFile,sr);
   while doserror=0 do begin
     inc(packetsize,sr.size);
     findnext(sr);
@@ -717,7 +717,7 @@ var sr   : searchrec;
     last : string[12];
     arc  : shortint;
 begin
-  findfirst(XferDir+'*.*',AnyFile,sr);
+  findfirst(XferDir+'*.*',ffAnyFile,sr);
   if doserror=0 then begin
     while doserror=0 do begin
       last:=sr.name;
@@ -771,6 +771,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/18 11:23:50  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.6  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -475,7 +475,7 @@ var lf : string[12];
 begin
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('XP-*.RES', AnyFile, sr);
+  findfirst('XP-*.RES', ffAnyFile, sr);
   assign(t,'XP.RES');
   reset(t);
   if ioresult<>0 then
@@ -1103,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/04/18 11:23:49  mk
+  - AnyFile in ffAnyFile ($3F->$20) ersetzt
+
   Revision 1.27  2000/04/16 19:50:38  mk
   - Fixes fuer FindFirst
 
