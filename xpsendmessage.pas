@@ -926,7 +926,7 @@ begin      //-------- of DoSend ---------
       if not is_file then
         AddMessagePart(datei,is_temp,true)
       else
-        AddFilePart(datei,is_temp);
+        if netztyp=nt_Fido then AddFilePart(datei,is_temp);
     end;
     partsex:=true;
     OrigBox:='';
@@ -1899,7 +1899,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           end;
         end;
       end;
-//    if FileAttach then inc(hdp.attrib,attrFile);
+    if FileAttach then { Fido file attachment }
+      inc(hdp.attrib,attrFile);
     if netztyp=nt_Maus then
       if flQTo then inc(hdp.attrib,AttrQuoteTo);
     if ntPmReply(netztyp) then
@@ -2315,6 +2316,9 @@ finalization
 
 {
   $Log$
+  Revision 1.21  2001/10/01 10:26:19  ma
+  - (hopefully) fixed Fido binary mails
+
   Revision 1.20  2001/09/25 21:07:45  cl
   - added UI for non-RFC network charset selection
 
