@@ -358,7 +358,7 @@ var ax,p,myp  : integer;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
-        width:=max(width,length(p1^.el^));
+        width:=max(width,min(length(p1^.el^), 70));
         if ustr(cont^)=ustr(p1^.el^) then p:=lines;
         p1:=p1^.next;
         end;
@@ -1070,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.11.2.1  2001/07/11 20:12:41  mk
+  - Breite der Ausgabe auf 70 Zeichen beschraenken
+
   Revision 1.11  2000/03/02 18:32:23  mk
   - Code ein wenig aufgeraeumt
 
