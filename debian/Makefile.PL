@@ -81,7 +81,21 @@ while(<XPDEFINE>) {
 }
 close XPDEFINE;
 
+my $openxp = 'openxp';
 
+open RULES, "<debian/rules";
+while(<RULES>) {
+  if(m/^openxp\s*=\s*(.*\S)/) {
+    $openxp = $1;
+    last;
+  }
+}
+close RULES;
+
+if($debian_changelog_package ne $openxp) {
+  $debian_changelog =~ s/^$debian_changelog_package/$openxp/meg;
+  $debian_changelog_package = $openxp;
+}
 
 # --- write changelog -------------------------------------------------
 
