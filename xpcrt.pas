@@ -190,6 +190,9 @@ begin
                                       
                  AltKey := ((Buf.Event.KeyEvent.dwControlKeyState AND
                             (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
+                 ShiftKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND SHIFT_PRESSED) > 0);
+                 CtrlKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND (RIGHT_CTRL_PRESSED OR LEFT_CTRL_PRESSED)) > 0);
+
                  if not(Buf.Event.KeyEvent.wVirtualKeyCode in [VK_SHIFT, VK_MENU, VK_CONTROL,
                                                       VK_CAPITAL, VK_NUMLOCK,
                                                       VK_SCROLL]) then
@@ -201,8 +204,9 @@ begin
 {$ENDIF Debug }
 
                       if (ord(buf.Event.KeyEvent.AsciiChar) = 0) or
-                        (ord(buf.Event.KeyEvent.AsciiChar) = $E0)  or
-                        (buf.Event.KeyEvent.dwControlKeyState=2) then
+{                        (ord(buf.Event.KeyEvent.AsciiChar) = $E0)  or }
+                        (buf.Event.KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
+{                        (buf.Event.KeyEvent.dwControlKeyState = LEFT_ALT_PRESSED) } then 
                         begin
                            SpecialKey := TRUE;
                            ScanCode := Chr(RemapScanCode(Buf.Event.KeyEvent.wVirtualScanCode, Buf.Event.KeyEvent.dwControlKeyState,
@@ -223,10 +227,6 @@ begin
                           end
                         else break;
                    end
-                 else begin
-                   ShiftKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND SHIFT_PRESSED) > 0);
-                   CtrlKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND (RIGHT_CTRL_PRESSED OR LEFT_CTRL_PRESSED)) > 0);
-                 end;
               end
              else if (Buf.Event.KeyEvent.wVirtualKeyCode in [VK_MENU]) then
                if DoingNumChars then
