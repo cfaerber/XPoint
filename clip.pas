@@ -286,6 +286,7 @@ begin
       mov dx,$0101
       mov ax,ntvdm_handle
       db  $c4,$c4,$58,2
+      cld
     end;    
     Clip2String := s;
   end else
@@ -396,6 +397,7 @@ begin
       mov dx,$0102
       mov ax,ntvdm_handle
       db  $c4,$c4,$58,2
+      cld
     end;    
   end else
   if WinClipAvailable then
@@ -478,6 +480,7 @@ begin
       mov dx,$0104
       mov ax,ntvdm_handle
       db  $c4,$c4,$58,2
+      cld
     end;    
   end else
   if WinClipAvailable and ClipOpen then
@@ -519,6 +522,7 @@ begin
       mov dx,$0103
       mov ax,ntvdm_handle
       db  $c4,$c4,$58,2
+      cld
     end;    
   end else
   if WinClipAvailable then
@@ -638,6 +642,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.12  2001/10/11 11:25:14  cl
+  - added CLD, see <mid:8AglY0iZcDB@3247.org> & References
+
   Revision 1.19.2.11  2001/09/16 20:36:27  my
   JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
           Windows-Clipboard nicht verfügbar ist. Altes Editor-RAM-
