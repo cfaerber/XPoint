@@ -385,13 +385,14 @@ var t: text;
 begin
   if ClipAvailable then Clip2String:=_Clip2String(maxlen,oneline)
   else begin
+    s:='';
     assign(t,ClipFileName);
     reset(t);
     if IOResult = 0 then
-      readln(t,s)
-    else
-      s := '';
-    close(t);
+    begin
+      readln(t,s);
+      close(t);
+    end;
     Clip2String:=s;
   end;
 end;  
@@ -463,8 +464,11 @@ begin
   else begin
     assign(t,ClipFileName);
     rewrite(t);
-    if IOResult = 0 then writeln(t,str);
-    close(t);
+    if IOResult = 0 then
+    begin
+      writeln(t,str);
+      close(t);
+    end;
   end;
 end;  
 
@@ -527,9 +531,9 @@ begin
       replace_asc0(p^,rr);
       ClipWrite(cf_Oemtext,rr,p^);
       freemem(p,bs);
+      close(f);
     end;
     ClipClose;                          { Clipboard immer schliessen }
-    close(f);
   end;
 end;
 
@@ -670,6 +674,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.21  2002/05/28 21:36:45  my
+  MY: Ein paar IOResult- und close()-Anweisungen sauberer gestaltet.
+
   Revision 1.19.2.20  2002/05/25 21:55:12  my
   MY:- Fix: Das interne Clipboard (Datei "CLIP.TXT") funktioniert speziell
        im Editor jetzt auch unter Linux DOS-Emu (dort stÅrzte XP bisher
