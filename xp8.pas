@@ -59,7 +59,7 @@ function fileechocolfunc(var s:string; line:longint):byte;
 implementation  { ------------------------------------------------- }
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
-{$IFDEF FPC }
+{$IFDEF Sockets }
   xpnntp,
 {$ENDIF }
   xp9bp,xp9,xpnt;
@@ -1314,7 +1314,7 @@ begin
           exit;
           end;
   end;
-{$IFDEF FPC }
+{$IFDEF Sockets }
   if nntp then begin
     if not GetNNTPList(box,boxpar) then
       rfehler(830); { 'Gruppenliste konnte nicht uebertragen werden' }
@@ -1603,6 +1603,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/30 09:09:15  mk
+  - Define Sockets eingefuert, um DOS32 und VP Versionen compilierbar zu erhalten
+
   Revision 1.22  2000/07/27 10:13:04  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
