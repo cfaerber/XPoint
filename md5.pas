@@ -33,7 +33,7 @@
 unit md5;
 
 {$i xpdefine.inc}
-{$Q-}
+{$Q-} {$R-}
 
 
 interface
@@ -390,6 +390,9 @@ implementation
 
 {
   $Log$
+  Revision 1.7  2001/10/21 11:02:34  ma
+  - disabled range checking (due to FPC crashes)
+
   Revision 1.6  2001/10/19 21:30:32  mk
   - Q- for all compilers
 
