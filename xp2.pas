@@ -36,7 +36,7 @@ uses
 {$ENDIF }
   sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
-  resource,montage, xpglobal,
+  resource,montage, xpglobal, debug,
   xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,
 {$IFDEF XPEasy }
   xpeasy,
@@ -391,11 +391,30 @@ var i  : integer;
       end;
   end;
 
+  procedure SetDebugLoglevels(s: String);
+  var i,j,Level,Res: Integer; Badge: String;
+  begin
+    if(s<>'')and(GetEnv('DEBUG')='')then
+      Debug.OpenLogfile(False,'debuglog.txt');
+    while s<>''do begin
+      i:=Pos('=',s);
+      if i=0 then s:='' else begin
+        j:=Pos(',',s); if j=0 then j:=Length(s)+1;
+        Badge:=Copy(s,1,i-1); Val(Copy(s,i+1,j-i-1),Level,Res);
+        if Badge<>'DEFAULT' then
+          Debug.SetLoglevel(Badge,Level)
+        else
+          Debug.DLDefaultIfInDebugMode:=Level;
+      end;
+    end;
+  end;
+
   procedure ParAuswerten;
   begin
     if _is('h') or _is('?') then ParHelp:=true else
     if _is('d')    then ParDebug:=true else
     if isl('df:') then ParDebFlags:=ParDebFlags or ival(mid(s,5)) else
+    if isl('dl:') then SetDebugLoglevels(mid(s,5)) else
     if _is('dd')   then ParDDebug:=true else
     if _is('trace')then ParTrace:=true else
     if _is('j')    then ParNojoke:=true else
@@ -753,12 +772,12 @@ procedure test_defaultbox;
 var d    : DB;
     tmpS, dname: string;
 begin
-  XPLog.Log(llDebug,'Check default system');
+  Debug.DebugLog('XP2','Check default system',DLDebug);
   tmpS:= UpperCase(DefaultBox);
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,tmpS);
   if not dbFound then begin
-    XPLog.Log(llError,'Default system <'+tmpS+'> not found!');
+    Debug.DebugLog('XP2','Default system <'+tmpS+'> not found!',DLError);
     if dbRecCount(d)=0 then begin
       {$IFDEF EASY}
       if not NeuBenutzergruss then
@@ -775,14 +794,14 @@ begin
     else begin
       dbGoTop(d);
       DefaultBox := dbReadStr(d,'boxname');
-      XPLog.Log(llDebug,'Default system: '+DefaultBox);
+      Debug.DebugLog('XP2','Default system: '+DefaultBox,DLDebug);
       dName := dbReadStr(d,'dateiname');
       end;
     SaveConfig;
     end
   else
     dName := dbReadStr(d,'Dateiname');
-  XPLog.Log(llDebug,'Default system: '+tmpS+', file: '+dname);
+  Debug.DebugLog('XP2','Default system: '+tmpS+', file: '+dname,DLDebug);
   if not FileExists(OwnPath+dname+BfgExt) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(dname,boxpar);
@@ -1174,6 +1193,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.88  2000/11/19 13:03:06  ma
+  - added "dl:badge=level,badge=level"... switch, sets debug level of
+    module badge to level. Output will be in "debuglog.txt", default levels
+    are set via DEFAULT=level (DLInform if conditional define DEBUG is set).
+
   Revision 1.87  2000/11/18 21:42:17  mk
   - implemented new Viewer handling class TMessageViewer
 
