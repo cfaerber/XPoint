@@ -1063,7 +1063,7 @@ var t     : text;
     s     : string;
 begin
   FileContainsUmlaut:=false;
-  assign(t,datei);
+  assign(t,fn^);
   settextbuf(t,buf);
   if not existf(t) then exit;
   fm_ro; reset(t); fm_rw;
@@ -1154,6 +1154,14 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.12  2002/03/08 23:06:43  my
+  XP6S.INC
+  --------
+  JG:- Fix: Bei der Prfung, ob eine neu erstellte Nachricht Umlaute
+       enth„lt, wird jetzt auch die Signatur einbezogen und daher auch
+       dann der korrekte Zeichensatz deklariert, wenn zwar der
+       Nachrichtentext keine Umlaute enth„lt, die Signatur aber doch.
+
   Revision 1.18.2.11  2001/12/20 15:22:14  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
