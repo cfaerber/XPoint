@@ -274,6 +274,7 @@ var dt   : TDateTime;
     year, month, day: Integer;
 begin
   year:=1970;
+  month:=1;
   while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
     dec(secs,iif(schaltj(year),366,365)*tagsec);
     inc(year);
@@ -282,7 +283,6 @@ begin
     secs:=0
   else
   begin
-    month:=1;
     while (secs>=tagsec*monthlen(year,month)) do begin
       dec(secs,tagsec*monthlen(year,month));
       inc(month);
@@ -941,6 +941,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/09/06 18:45:53  mk
+  - fixed uninitialized variable
+
   Revision 1.26  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 
