@@ -1997,10 +1997,12 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9    Pack outbound mail
 # Position of 923.8
 10   31
+11   Enable Sysop Mode
 # QWK
-12   Inbound packets  ~
+12   Inbound packets   ~
 13   Outbound directory~
 14   Transfer
+15   Enable QWK Transfer
 #
 20   Start programme
 21   End programme ~
@@ -3094,7 +3096,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 32 No FOSSIL driver installed - using built in driver
 33 Invalid AKA entry - %s is no server!
 34 Invalid AKA entry - no server for %s found!
-35 QWK netcalls are not possible - use sysop mode!
+35 QWK netcalls are not possible - use "Transfer"!
 36 Please import a QWK packet first, to obtain the server configuration!
 37 QWK error %s while message conversion!
 38 Script file needed for relogin netcall!
@@ -3109,6 +3111,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 47 Oops - all matching recipients marked/filtered!?  (press F1 for help)
 48 Max. 126 recipients allowed (selected: %s)!  (press F1 for help)
 49 /nsp: Invalid line number specified for NETCALL.DAT: %s
+50 Start online call for net type RFC/Client via normal netcall!
 
 +  10800
 1  This server offers no automatic subscribing functions.
@@ -3143,9 +3146,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # The string in the following four lines must not exceed 57 characters:
 32 Net type RFC/Client: To get a new newsgroup list, the
 33 appropriate function of the external client must be acti-
-34 vated and the previous newsgroup list has to be deleted
-35 (see Message/Message_Area_Manager/Others).
-36 Sort of newsgroup list was not successful!
+34 vated (see also "Update Newsgroup list" at /Edit/Servers/
+35 Edit/Mail/News_Servers) and the previous newsgroup list
+36 has to be deleted (see Message/Message_Area_Manager/
+37 Others/Delete).
+38 Sort of newsgroup list was not successful!
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
@@ -3228,6 +3233,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 68 Server for file name "%s.BFG" not found!
 69 Invalid Server name: "%s"
 70 Envelope address must be specified!
+71 Input/Output data incomplete!
 
 +  11000
 1  unknown command

@@ -1567,7 +1567,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 40   ----------------------- UUCP-Logfile -----------------------
 41   ------------------------- Logfile --------------------------
 42   mitverschickte Nachr. :
-43   Sendepuffer:    %s Bytes
+43   Sendepuffer   : %s Bytes
 44   Empfangspuffer: %s Bytes
 45   ---------------------- Client-Logfile ----------------------
 -
@@ -2040,10 +2040,12 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9    Ausgangspakete packen
 # Position von 923.8
 10   34
+11   Sysop-Mode aktivieren
 # QWK
 12   Eingangspakete     ~
 13   Ausgangsverzeichnis~
 14   Transfer
+15   QWK-Transfer aktivieren
 #
 20   Startprogramm  ~
 21   Endprogramm    ~
@@ -3144,7 +3146,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 32 Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber
 33 UngÅltiger AKA-Eintrag: %s ist keine Serverbox!
 34 UngÅltiger AKA-Eintrag: kein zu %s passender Server vorhanden!
-35 Netzanruf QWK-Boxen ist nicht mîglich - Sysop-Mode verwenden!
+35 Netzanruf QWK-Boxen ist nicht mîglich - "Transfer" verwenden!
 36 Bitte zuerst Nachrichtenpaket einlesen, um Serverdaten zu ermitteln!
 37 ZQWK-Fehler Nr. %s bei Nachrichtenkonvertierung!
 38 Scriptdatei fÅr Relogin-Anruf erforderlich!
@@ -3159,6 +3161,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 47 Oops - *alle* passenden EmpfÑnger markiert/gefiltert!?  (Hilfe mit F1)
 48 Max. 126 EmpfÑnger erlaubt (ausgewÑhlt: %s)!  (Hilfe mit F1)
 49 /nsp: UngÅltige Zeilenangabe fÅr NETCALL.DAT: %s
+50 Online-Anruf beim Netztyp RFC/Client Åber normalen Netcall starten!
 
 +  10800
 1  Diese Box unterstÅtzt keine Brettbestell-Funktionen.
@@ -3193,9 +3196,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # Der String in den folgenden vier Zeilen darf max. 57 Zeichen lang sein:
 32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
 33 Liste mu· die entsprechende Funktion beim externen Client
-34 aktiviert sein und die bisherige Newsgroup-Liste gelîscht
-35 werden (siehe Nachricht/Brettmanager/Sonstiges).
-36 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
+34 aktiviert sein (siehe auch "Newsgroup-Liste pflegen" bei
+35 /Edit/Boxen/Edit/Mail-/News-Server) und die bisherige
+36 Newsgroup-Liste gelîscht werden (siehe /Nachricht/Brett-
+37 manager/Sonstiges/Lîschen).
+38 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
 # XP8.INC
 50 Keine Filescan-Nachricht gewÑhlt!
 51 %s ist kein eingetragener Fido-Server!
@@ -3278,6 +3283,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 68 Serverbox zu Dateiname "%s.BFG" nicht gefunden!
 69 UngÅltiger Serverbox-Name: "%s"
 70 Envelope-Adresse mu· angegeben werden!
+71 Angaben Eingang/Ausgang unvollstÑndig!
 
 +  11000
 1  unbekannter Befehl
