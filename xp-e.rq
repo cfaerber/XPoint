@@ -40,7 +40,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
 14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Unread,0e7^Kill,0e8^Print
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8S^pecial,0f9Spe^cial list,-,0fbA^utomatic,0fcT^iming list
-16  Edit,101^Templatesù8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
+16  Edit,101^Templatesù8,102^Servers,103^Groups,104S^ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone chargesù26
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
@@ -540,12 +540,12 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 3    always
 5    Message options
 6    Save binary files up to:~
-7    KB
-9    Bytes
-11   Default hold time AMs:  ~
-12   Days
-13   Default hold time PMs:  ~
-14   Hold own Public msgs
+7    Kb
+9    bytes
+11   Default hold time (AMs):~
+12   days
+13   Default hold time (PMs):~
+14   Hold own public msgs
 15   Creation time = 00:00
 16   Use Re^n
 17   Store unsent messages in /¯Unsent
@@ -558,7 +558,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 27   in mail as well
 29   Create users automatically upon PM reply
 30   Ignore cancels/supersedes
-31   Hold own Private msgs
+31   Hold own private msgs
 39   Recipient pick-list:    ~
 40   Always
 41   Carbon copies + Reply-To
@@ -1041,7 +1041,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 6    Sender   ~
 7    Subject  ~
 8    Text     ~
-9    Fido-To  ~
+9    Recipient~
 10   from Date~
 11   to Date  ~
 12   Type     ~
@@ -1403,7 +1403,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 # Subject window
 6    To       ~
 7    Subject ~
-8    Fido-to ~
+8    Recipient
 # Send window
 10   To       ~
 11   ^Recipient
@@ -1639,11 +1639,11 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 805  Are you sure that this is a newsgroup list
 806  Newsgroup list for %s is being copied ...
 + 807
-1    Newsgroup
-2    Newsgroups
+1    newsgroup
+2    newsgroups
 # subscribe number of newsgroups at server
-3    Subscribe %s %s at %s
-4    Unsubscribe %s %s at %s
+3    Subscribe to %s %s at %s
+4    Unsubscribe from %s %s at %s
 5    Create %s %s
 6    Request contents of the selected newsgroups
 10   Creating newsgroups ...
@@ -1668,14 +1668,14 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 13   Unsubscribed newsgroups
 14   Clear your BBS mailbox contents
 15   Determine MAPS version
-16   Subscribe newsgroups
-17   Unsubscribe newsgroups
+16   Subscribe to newsgroups
+17   Unsubscribe from newsgroups
 18   Get your user status
 20   Verbose list
 # Fido Areafix
-40   Liste of available echos
-41   List of subscribed echos
-42   List of unsubscribed echos
+40   List of available echos
+41   List of linked echos
+42   List of unlinked echos
 43   Help for Areafix commands
 44   Request echo contents
 # Alphanet 2000 AREAFIX
@@ -1814,9 +1814,9 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 # window width
 0    54
 1    Edit short name
-2    Append new short name
+2    Add new short name
 3    Short name ~
-4    Nwsgrp./User
+4    N'group/User
 5    Server     ~
 -
 906  Delete "%s"
@@ -1832,7 +1832,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 0    52
 1    Please enter the type of Net, the name of your
 2    Server and your user name or eMail address.
-3    The use of a RFC/Client Server requires a
+3    The use of an RFC/Client Server requires a
 4    third-party Mail/News client.
 5    Type of Net~
 6    Server name~
@@ -2606,13 +2606,13 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 
 2600 ~statistics of~
 2601 ~statistics
-2602 maximal number of systems (%s) reached
+2602 maximum number of systems (%s) reached
 + 2603
 1    System statistics
 2    Newsgroup statistics
 3    From
 4    ~to~
-5    date of creation
+5    Creation date
 6    only marked newsgroups
 7    Output to /¯Statistics
 8    KBytes
@@ -3166,7 +3166,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 36 has to be deleted (see Message/Message_Area_Manager/
 37 Others/Delete).
 38 Sort of newsgroup list was not successful!
-39 Subscribe Newsgroups
+39 Subscribe to newsgroups
 40 Number of articles
 # XP8.INC
 50 No file scan message selected!
