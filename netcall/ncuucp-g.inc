@@ -507,7 +507,8 @@ begin
         Netcall.Output(mcError,'%sTimeout - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
         FileError; AckBuffer;
         SendControlPacket(cp_NAK,Recv_SeqNr);
-        Continue; (* restart repeat loop *)
+//        Continue; (* restart repeat loop *)
+//      Workaround for an FPC 1.0.5 problem with continue between try except
       end;
     end;
 
@@ -644,6 +645,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/04/09 14:50:39  mk
+  - quick and dirty temp. workaround for fpc compiler problem
+
   Revision 1.4  2001/03/26 22:51:04  cl
   - proper shutdown with some protocols (ignore errors due to hangup)
   - range check fix for VPascal
