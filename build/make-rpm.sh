@@ -42,7 +42,7 @@ esac
 #cvs co openxp
 
 cd openxp
-tar czf "$versiondir"openxp-src-"$version".tar.gz *
+tar cvzf "$versiondir"openxp-src-"$version".tar.gz *
 mv "$versiondir"openxp-src-"$version".tar.gz /usr/src/packages/SOURCES/openxp-"$version".tar.gz
 rm -fr /tmp/xp-source-$mainversion
 echo now making rpm
