@@ -867,7 +867,8 @@ begin
             rewrite(t);
             s:=first_marked;
             repeat
-              writeln(t,trim(copy(s,5,18)));
+              if Pos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
+                writeln(t,trim(copy(s,5,18)));
               s:=next_marked;
             until s=#0;
             close(t);
@@ -936,6 +937,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/04/24 19:35:18  mk
+  JG: Fix: Fido/Crash...markiert: Menuezeilen wurden wie Nodes behandelt
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
