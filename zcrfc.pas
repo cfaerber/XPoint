@@ -543,7 +543,6 @@ end;
 procedure tuuz.testfiles;
 begin
   if not FileExists(source) then raise Exception.Create('Quelldatei fehlt');
-  if FileExists(dest) then raise Exception.Create('Zieldatei schon vorhanden');
   if u2z and not validfilename(dest) then
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z then
@@ -2793,8 +2792,13 @@ var
   end;
 
 begin
-  assign(f2, dest);
-  rewrite(f2, 1);
+  assign(f2,dest);
+  if FileExists(dest) then
+  begin
+    reset(f2,1);
+    seek(f2,filesize(f2));
+  end else
+    rewrite(f2,1);
   outbufpos := 0;
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
@@ -3720,6 +3724,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/12/31 11:51:05  mk
+  - append to dest file instead of error
+
   Revision 1.19  2000/12/30 17:47:41  mk
   - renamed AddRef to References
 
