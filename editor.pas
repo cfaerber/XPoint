@@ -1018,8 +1018,7 @@ var  dl         : displp;
      e          : edp;
      tk         : EdToken;
      trennzeich : set of char;     { fÅr Wort links/rechts }
-     tbm        : integer;      { 17.01.2000 robo - Blockmarker, auf dem
-                                                    der Cursor steht }
+     ShiftBlockMarker: Integer;
 
   procedure showstat;
   begin
@@ -1267,76 +1266,83 @@ var  dl         : displp;
       if EdSave(ed) then Quit;
     end;
 
-    { 17.01.2000 robo - Block markieren }
-    procedure shift_markieren(moved, up:boolean);
-      var m_pos:position;
-      begin
-        with e^ do begin
-          GetPosition(m_pos);
-          m_pos.offset:=min(m_pos.offset,m_pos.absatz^.size);
-          if not moved then begin
-            if ((PosCoord(m_pos,2)<>PosCoord(block[1].pos,block[1].disp))
-            and (PosCoord(m_pos,2)<>PosCoord(block[2].pos,block[2].disp)))
-            or blockinverse or blockhidden
-            then begin
-              setblockmark(1);
-              setblockmark(2);
-              tbm:=3;
-            end;
-          end
-          else begin
-            if up then begin
-              if (tbm=1) or (tbm=3)
-               then begin
-                 setblockmark(1);
-                 tbm:=1;
-               end
-               else if PosCoord(m_pos,2)<=PosCoord(block[1].pos,block[1].disp)
-                then begin
-                  block[2]:=block[1];
-                  setblockmark(1);
-                  tbm:=1;
-                end
-                else setblockmark(2);
-            end
-            else begin
-              if (tbm=2) or (tbm=3)
-               then begin
-                 setblockmark(2);
-                 tbm:=2;
-               end
-               else if PosCoord(m_pos,2)>=PosCoord(block[2].pos,block[2].disp)
-                then begin
-                  block[1]:=block[2];
-                  setblockmark(2);
-                  tbm:=2;
-                end
-                else setblockmark(1);
-            end
-            ;
+    procedure ShiftMarkStart;
+    var 
+      MarkPos: Position;
+    begin
+      with e^ do
+        if kb_shift then 
+        begin
+          GetPosition(MarkPos);
+          MarkPos.offset:=min(MarkPos.offset,MarkPos.absatz^.size);
+          if ((PosCoord(MarkPos,2)<>PosCoord(block[1].pos,block[1].disp))
+            and (PosCoord(MarkPos,2)<>PosCoord(block[2].pos,block[2].disp)))
+            or blockinverse or blockhidden then 
+          begin
+            SetBlockMark(1);
+            SetBlockMark(2);
+            ShiftBlockMarker := 3;
           end;
+        end else
+          if not config.persistentblocks and not blockhidden then 
+          begin
+            blockhidden:=true;
+            aufbau:=true;
+          end;
+    end;
+
+    procedure ShiftMarkEnd(MoveCursorAbove: Boolean);
+    var 
+      MarkPos: Position;
+    begin
+      if not kb_shift then Exit;
+      with e^ do 
+      begin
+        GetPosition(MarkPos);
+        MarkPos.Offset:=min(MarkPos.offset,MarkPos.absatz^.size);
+        if MoveCursorAbove then 
+        begin
+          if (ShiftBlockMarker = 1) or (ShiftBlockMarker = 3) then 
+          begin
+            SetBlockMark(1);
+            ShiftBlockMarker := 1;
+          end else 
+            if PosCoord(MarkPos,2)<=PosCoord(block[1].pos,block[1].disp) then 
+            begin
+               block[2]:=block[1];
+               SetBlockMark(1);
+               ShiftBlockMarker := 1;
+            end else 
+              SetBlockMark(2);
+        end else 
+        begin
+          if (ShiftBlockMarker = 2) or (ShiftBlockMarker = 3) then 
+          begin
+            SetBlockMark(2);
+            ShiftBlockMarker := 2;
+          end else 
+            if PosCoord(MarkPos,2)>=PosCoord(block[2].pos,block[2].disp) then 
+            begin
+              block[1]:=block[2];
+              SetBlockMark(2);
+              ShiftBlockMarker :=2;
+            end else 
+              SetBlockMark(1);
         end;
       end;
-    { /robo }
-
-    { 17.01.2000 robo - Block entmarkieren }
-    procedure entmarkieren;
-      begin
-        with e^ do
-         if not blockhidden then begin
-           blockhidden:=true;
-           aufbau:=true;
-         end;
-      end;
-    { /robo }
+    end;
 
   begin
     with e^ do begin
       if (tk>=1) and (tk<=29) then GetPosition(lastpos);
+
+      if tk in [editfBOL, editfEOL, editfPgUp, editfPgDn, editfUp, editfDown,
+        editfLeft, editfRight, editfPageTop, editfPageBottom, editfTop, 
+        editfBottom, editfWordLeft, editfWordRight] then ShiftMarkStart;
+
       case tk of
         -1                : CorrectWorkpos;
 
-        { 17.01.2000 robo - Blockoperationen }
         editfText         : if e^.config.persistentblocks
                              then ZeichenEinfuegen(false)
                              else begin
@@ -1395,96 +1401,24 @@ var  dl         : displp;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
 
-        { 17.01.2000 robo - Block markieren }
-        editfBOL          : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Zeilenanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfEOL          : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Zeilenende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfPgUp         : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              SeiteOben(true);
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfPgDn         : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              SeiteUnten;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        { /robo }
+        { Block markieren }
+        editfBOL          : Zeilenanfang;
+        editfEOL          : Zeilenende;
+        editfPgUp         : SeiteOben(true);
+        editfPgDn         : SeiteUnten;
         editfScrollUp     : Scroll_Up;
         editfScrollDown   : Scroll_Down;
-        { 17.01.2000 robo - Block markieren }
-        editfUp           : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeileOben then;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfDown         : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeileUnten then;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfLeft         : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              if ZeichenLinks then;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfRight        : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              CondZeichenRechts;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfPageTop      : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Seitenanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfPageBottom   : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Seitenende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfTop          : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Textanfang;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfBottom       : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              Textende;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        editfWordLeft     : begin
-                              if kb_shift then shift_markieren(false,true)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              WortLinks;
-                              if kb_shift then shift_markieren(true,true);
-                            end;
-        editfWordRight    : begin
-                              if kb_shift then shift_markieren(false,false)
-                              else if not e^.config.persistentblocks then entmarkieren;
-                              WortRechts;
-                              if kb_shift then shift_markieren(true,false);
-                            end;
-        { /robo }
+        { Block markieren }
+        editfUp           : ZeileOben;
+        editfDown         : ZeileUnten;
+        editfLeft         : ZeichenLinks;
+        editfRight        : CondZeichenRechts;
+        editfPageTop      : Seitenanfang;
+        editfPageBottom   : Seitenende;
+        editfTop          : Textanfang;
+        editfBottom       : Textende;
+        editfWordLeft     : WortLinks;
+        editfWordRight    : WortRechts;
 
         editfLastpos      : GotoPos(lastpos,0);
         editfMark1        : SetMarker(1);
@@ -1504,21 +1438,7 @@ var  dl         : displp;
         editfFindReplace  : Suchen(false,true);
         editfFindRepeat   : Suchen(true,false);
 
-        { 17.01.2000 robo - shift-ins: Block einfuegen - Zweitbelegung
-                            ctrl-ins: Block kopieren - Zweitbelegung   }
-        editfChangeInsert : begin
-                              if kb_shift
-                               then if e^.config.persistentblocks
-                                then BlockClpEinfuegen
-                                else begin
-                                  if not (blockinverse or blockhidden)
-                                   then BlockLoeschen;
-                                  BlockClpEinfuegen;
-                                  BlockEinAus;
-                                end
-                                else e^.insertmode:=not e^.insertmode;
-                            end;
-        { /robo }
+        editfChangeInsert : e^.insertmode:=not e^.insertmode;
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
         editfAbsatzmarke  : SetAbsatzmarke;
         editfWrapOn       : UmbruchEin;
@@ -1564,8 +1484,13 @@ var  dl         : displp;
         editfSaveQuit     : SpeichernEnde;
         editfBreak        : Quit;
         editfGlossary     : Glossary;
-
       end;
+
+      if tk in [editfBOL, editfPgUp, editfUp, editfLeft, editfPageTop,
+        editfTop, editfWordLeft] then ShiftMarkEnd(true)
+      else
+        if tk in [editfEOL, editfPgDn, editfDown, editfRight, editfPageBottom, 
+          editfBottom, editfWordRight] then ShiftMarkEnd(false);
     end;
   end;
 
@@ -1885,6 +1810,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.15  2001/09/06 10:43:54  mk
+  - Robos Blockmarieren mit Shift wesentlich vereinfacht, spart 1kb Exe
+    (R¸ckportiert von 32 Bit)
+
   Revision 1.25.2.14  2001/09/06 10:38:25  mk
   - added keys shift-ins, shift-del and ctrl-ins in Editor
 
