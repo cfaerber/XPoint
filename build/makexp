@@ -26,7 +26,11 @@ case "$mainversion" in
     3.8)
        echo "Version $mainversion "
        #fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
-       fpcopts='-gl -Ci -Co -Cr -Ct -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       # for snapshots
+       fpcopts='-gl -Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       # for releases
+       fpcopts='-Ci -Co -Cr -Ct -XX -CX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       # cross compiling
        fpcoptscross='-gl -Ci -Co -Cr -Ct -XX -Fu./ObjCOM -Fu./netcall -FU../output -Fl../output'
        echo "fpc option $fpcopts"
        ;;
