@@ -28,6 +28,10 @@ uses
       dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
       win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
+
+var   testmailstring_nt : byte; { Netztyp fuer Testmailstring } 
+
+
 function  newuser:boolean;
 function  modiuser(msgbrett:boolean):boolean;
 function  newverteiler:boolean;
@@ -199,8 +203,22 @@ end;
 
 function testmailstring(var s:string):boolean;
 var ok:boolean;
+    st:string;
+    i:byte; 
 begin
-  ok:=(s=mailstring(s,false));
+  st:=s;  
+  if testmailstring_nt in [nt_fido,nt_maus,255] then
+  begin 
+    for i:=1 to length(st) do 
+    begin
+      if (st[i]=' ') and (st[i+1]<>' ') then st[i]:='_';     { einzelnes Leerzeichen erlauben }
+      if upcase(st[i]) in ['Ž','™','š','á',':'] then
+        if ((testmailstring_nt=nt_fido) and (st[i]=':')) or  { Fido: ':'aber keine Umlaute } 
+           ((testmailstring_nt=nt_maus) and (st[i]<>':')) or { Maus: Umlaute aber kein ':' }
+           (testmailstring_nt=255) then st[i]:='-';          { All:  Umlaute und ':' erlaubt. }
+      end;
+    end;
+  ok:=(st=mailstring(st,false));
   if not ok then rfehler(2251);
   testmailstring:=ok; 
 end;
@@ -1414,6 +1432,7 @@ begin
   p:=cpos('@',s);
   if p>0 then
     s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+  testmailstring_nt:=pb_netztyp;
   if not verteiler then empftest:=OK and testmailstring(s)
   else begin
     dbseek(ubase,uiname,ustr(vert_char+s+'@V')); { Nur existierende Verteiler sind erlaubt }
@@ -2338,6 +2357,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/05/13 09:14:40  jg
+  - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
+
   Revision 1.23  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 

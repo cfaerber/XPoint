@@ -151,6 +151,7 @@ begin
         end
       else
         dbSeek(ubase,uiName,ustr(s));
+      testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
       if dbFound then begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
@@ -389,6 +390,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/13 09:14:41  jg
+  - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
+
   Revision 1.14  2000/05/07 18:16:04  hd
   Kleine Linux-Anpassungen
 

@@ -870,6 +870,7 @@ end;
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
     mappcustomsel(scr_auto_empfsel,false);
+    testmailstring_nt:=255;   { Adressschreibweisen aller Netztypen erlauben }
     msetvfunc(testmailstring);
     sel_verteiler:=true;
     readmask(brk);
@@ -2226,6 +2227,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/05/13 09:14:41  jg
+  - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
+
   Revision 1.29  2000/05/11 18:21:53  jg
   - Compiledatum im Mailer-String von Snapshotversionen ($IFDEF Snapshot)
 
