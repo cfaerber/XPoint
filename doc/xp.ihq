@@ -5391,7 +5391,7 @@ mit den (max. 20-stelligen) Serverbox-Namen in Berh-
 rung kommen, legt CrossPoint in der Konfigurations-
 datei (<Box>.BFG) der momentan editierten Serverbox
 den zugeh”rigen (max. 8-stelligen) Namen der Konfi-
-gurationsdatei (*.BFG) der jeweiligen Serverbox ab.
+gurationsdatei (*.BFG) der gew„hlten Serverbox ab.
 Der Dateiname wird in der Konfigurationsdatei
 <Box>.BFG unter dem Bezeichner "<<Client-MailFallback=>>"
 gespeichert.
@@ -5571,10 +5571,17 @@ Sie von Ihrem News-Provider.
 <<Hinweis:>> Diese Einstellung wird von CrossPoint
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
-mentation Ihres Clients oder Client-Kits. Der Wert,
-den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner
-"<<Client-NewsFallback=>>" gespeichert.
+mentation Ihres Clients oder Client-Kits.
+
+<<Technischer Hinweis:>> Obwohl Sie hier ausschlieálich
+mit den (max. 20-stelligen) Serverbox-Namen in Berh-
+rung kommen, legt CrossPoint in der Konfigurations-
+datei (<Box>.BFG) der momentan editierten Serverbox
+den zugeh”rigen (max. 8-stelligen) Namen der Konfi-
+gurationsdatei (*.BFG) der gew„hlten Serverbox ab.
+Der Dateiname wird in der Konfigurationsdatei
+<Box>.BFG unter dem Bezeichner "<<Client-NewsFallback=>>"
+gespeichert.
 
 @
 30128
