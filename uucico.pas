@@ -65,6 +65,7 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       filetrans     : boolean = false;      { fÅr rerrmsg }
       ShowTime      : boolean = true;
       FileStarted   : boolean = false;
+      Uselfn: boolean = false;
 
 
 var   omx,omy      : byte;
@@ -190,9 +191,7 @@ begin
   if (paramcount<1) or (paramcount>2) then Helppage;
   if paramcount=2 then CommandFile:=paramstr(2);
   assign(t,paramstr(1));
-  {$I-}
   reset(t);
-  {$I+}
   if ioresult<>0 then StopError('Config file missing: '+ustr(paramstr(1)));
   while not eof(t) do begin
     readln(t,s0);
@@ -231,6 +230,7 @@ begin
         if id='onlinetime' then OnlineTime:=ival(s) else
         if id='releasetime' then ReleaseTime:=minmax(ival(s),0,3) else
         if id='maxfilesize' then maxfsize:=minmax(ival(s),0,9999) else
+        if id='lfn' then begin EnableLFN; Uselfn := true end else
           writeln('Warning - unknown Option:  '+s0);
         end;
     end;
@@ -576,7 +576,7 @@ begin
 end;
 
 
-{$F+,S-} { R-} procedure WriteOnline; {$F-,S+}
+{$F+} procedure WriteOnline; {$F-}
 const lasttick : longint = 0;
 begin
   if not ParDebug and showtime and (abs(ticker-lasttick)>10) then begin
@@ -585,7 +585,6 @@ begin
     lasttick:=ticker;
     end;
 end;
-{ R+}
 
 
 procedure ShowWindow;
@@ -1054,7 +1053,6 @@ begin
       transdata.blocksize:=rr;
       for i:=0 to rr-1 do begin
         b:=buf[i];
-        { R-}
         if chk>$7fff then chk:=chk shl 1 + 1
         else chk:=chk shl 1;
         inc(chk,b);
@@ -1074,7 +1072,6 @@ begin
             SendByte($7b);                   { $7a..$7f escapen }
             SendByte(b-$40);
             end;
-        { R+}
         end;
       WrzSize;
     until eof(f) or NoCarrier or break;
@@ -1109,11 +1106,9 @@ var b       : byte;
   procedure putchar(b:byte);
   begin
     buf[bp]:=b; inc(bp);
-    { R-}
     if chk>$7fff then chk:=chk shl 1 + 1
     else chk:=chk shl 1;
     inc(chk,b);
-    { R+}
   end;
 
   procedure wrongbyte;
@@ -1448,7 +1443,7 @@ end;
 function SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
-    sf  : string[200];
+    sf  : string;
     s2  : string[20];
     o   : longint;
     fn  : string;
@@ -1751,8 +1746,8 @@ begin
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end
                   else begin
-                    s:=Unix2DOSfile(s,FilePath);
-                    if s='' then s:=Unix2DOSfile(source,FilePath);
+                    s:=Unix2DOSfile(s,FilePath, UseLFN);
+                    if s='' then s:=Unix2DOSfile(source,FilePath, UseLFN);
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
                     wrlog('S','receiving '+s+' as '+ustr(fn));
@@ -1902,7 +1897,7 @@ begin
 end;
 
 
-{$F+,S-}
+{$F+}
 procedure newexit;
 begin
   if ioresult<>0 then;
@@ -1910,7 +1905,7 @@ begin
   gotoxy(omx,omy);
   exitproc:=oldexit;
 end;
-{$F-,S+}
+{$F-}
 
 
 begin
@@ -1930,6 +1925,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.4  2001/01/01 12:12:10  mk
+  - verbesserte LFN-UnterstÅtzung
+
   Revision 1.1.2.3  2000/12/31 11:35:54  mk
   - fileio.disksize statt lfn.disksize benutzen
 

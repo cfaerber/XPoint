@@ -91,6 +91,7 @@ const
       OwnSite     : string[60] = '';        { fÅr EmpfÑngeradresse von Mails }
       shrinkheader: boolean = false;         { uz: r-Schalter }
       nomailer    : boolean = false;
+      UseLFN: Boolean = false;
 
       tText       = 1;        { Content-Types: plain, richtext       }
       tMultipart  = 2;        { mixed, parallel, alternative, digest }
@@ -341,7 +342,10 @@ begin
         if switch='graberec' then
           getrecenvemp:=true else
         if switch='lfn' then
-          EnableLFN else
+        begin
+          EnableLFN;
+          UseLFN := true;
+        end else
         if switch='r' then
           shrinkheader:=true
         end
@@ -3233,7 +3237,7 @@ var hds,adr : longint;
           p:=blankpos(s);
           if p=0 then begin
             fromfile:=s;
-            tofile:=Unix2DOSfile(s,'');
+            tofile:=Unix2DOSfile(s,'', UseLFN);
             end
           else begin
             fromfile:=left(s,p-1);
@@ -3460,6 +3464,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.27  2001/01/01 12:12:11  mk
+  - verbesserte LFN-UnterstÅtzung
+
   Revision 1.35.2.26  2001/01/01 01:09:11  mk
   - umbenennen des Zielfiles geht jetzt
 
