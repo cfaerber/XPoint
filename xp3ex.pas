@@ -905,7 +905,7 @@ begin
 
     hdf_EDA    : wrs(gr(9)+copy(zdow(hdp^.datum),1,2)+' '+fdat(hdp^.datum)+', '+  { 'Datum      : ' }
                      ftime(hdp^.datum)+iifs(hdp^.datum<>longdat(edat),'  ('+
-                        gr(10)+fdat(longdat(edat))+')',''));   { 'erhalten: ' }
+                        gr(10)+fdat(longdat(edat))+', '+ftime(longdat(edat))+')',''));   { 'erhalten: ' }
 
     hdf_LEN    : begin
                    sizepos:=filesize(f);
@@ -1084,6 +1084,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.13  2000/12/31 15:07:59  mk
+  - Erhaten: zeigt Uhrzeit an
+
   Revision 1.17.2.12  2000/12/31 11:04:19  mk
   - Chg_Tearline und Clip_Tearline verarbeiten jetzt auch #13---
 
