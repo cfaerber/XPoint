@@ -375,15 +375,29 @@ end; { proc. SendWait }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function TCommStream.SendString(Temp: String; ExpectEcho: Boolean): Boolean;
-var Written,ReadBytes,I: Longint; Echo: String;
+var
+  Written,ReadBytes,I: Longint;
+  Echo: String;
 begin
   if ExpectEcho then PurgeInBuffer;
   SendBlock(Temp[1], Length(Temp), Written);
-  if (ExpectEcho) and (Written>0) then begin
+  if (ExpectEcho) and (Written>0) then
+  begin
     i:=0; while(CharCount<Written)and(i<CommandTimeout)do
-      begin SysDelay(100); inc(i,100); Str(CharCount,Echo); DebugLog('ObjCOM','Waiting '+Echo,3)end;
+    begin
+      SysDelay(100);
+      inc(i,100);
+      Str(CharCount,Echo);
+      DebugLog('ObjCOM','Waiting '+Echo,3)
+    end;
     if CharCount<Written then Written:=CharCount;
-    SetLength(Echo,Written); ReadBlock(Echo[1], Written, ReadBytes); SetLength(Echo,ReadBytes); ErrorStr:=Echo;
+    SetLength(Echo,Written);
+    if Written >= 1 then
+      ReadBlock(Echo[1], Written, ReadBytes)
+    else
+      ReadBytes := 0;
+    SetLength(Echo,ReadBytes);
+    ErrorStr:=Echo;
     SendString:=(ReadBytes=Length(Temp))and(Echo=Temp);
   end;
 end; { proc. SendString }
@@ -474,6 +488,10 @@ end.
 
 {
   $Log$
+  Revision 1.28  2001/12/26 21:29:27  mk
+  - fixed range check error (see <8FcIqG-Ya0B@addicks.net>),
+    please take a look at this fix!
+
   Revision 1.27  2001/10/01 19:45:07  ma
   - compiles again (DOS32)
 
