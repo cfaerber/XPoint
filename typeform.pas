@@ -135,7 +135,7 @@ Function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
 Function PosN(s1,s2:string; n:byte):byte;    { POS ab Stelle n              }
 Function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0     }
 function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
-Function ProgName:NameStr;                   { Name des Programms           }
+Function ProgName:string;                   { Name des Programms           }
 Function ProgPath:PathStr;                   { Pfad des Programms           }
 Function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
 Function QSum(const s:string):longint;             { Quersumme                    }
@@ -1398,11 +1398,11 @@ begin
 end;
 
 
-function progname:namestr;
+function progname:string;
 var ps : pathstr;
-    ds : dirstr;
-    ns : namestr;
-    es : extstr;
+    ds : string;
+    ns : string;
+    es : string;
 begin
   ps:=paramstr(0);
   if ps='' then progname:=''
@@ -1415,9 +1415,9 @@ end;
 
 function progpath:pathstr;
 var ps : pathstr;
-    ds : dirstr;
-    ns : namestr;
-    es : extstr;
+    ds : string;
+    ns : string;
+    es : string;
 begin
   ps:=paramstr(0);
   if ps='' then progpath:=''
@@ -1554,9 +1554,9 @@ end;
 
 
 function shortpath(path:pathstr; n:byte):pathstr;
-var ds : dirstr;
-    ns : namestr;
-    es : extstr;
+var ds : string;
+    ns : string;
+    es : string;
 begin
   fsplit(path,ds,ns,es);
   ds:=left(ds,n-length(ns+es));
@@ -1649,9 +1649,9 @@ end;
 
 
 function fitpath(path:pathstr; n:byte):pathstr;
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
+var dir  : string;
+    name : string;
+    ext  : string;
     p    : byte;
 begin
   if length(path)<=n then fitpath:=path
@@ -2224,6 +2224,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.11  2000/11/18 22:11:27  mk
+  - einige Dirname, extname, pathname in string geaendert
+
   Revision 1.37.2.10  2000/11/17 12:17:24  mk
   - cposx hat jetzt const-parameter
 

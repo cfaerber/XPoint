@@ -319,7 +319,7 @@ Procedure MakeBak(const n,newext:string);
 var bakname : string;
     f       : file;
     dir     : dirstr;
-    name    : namestr;
+    name    : string;
     ext     : extstr;
 begin
   assign(f,n);
@@ -485,7 +485,7 @@ end;
 
 function GetFileDir(const p:pathstr):dirstr;
 var d : dirstr;
-    n : namestr;
+    n : string;
     e : extstr;
 begin
   fsplit(p,d,n,e);
@@ -494,7 +494,7 @@ end;
 
 function GetFileName(const p:pathstr):string;
 var d : dirstr;
-    n : namestr;
+    n : string;
     e : extstr;
 begin
   fsplit(p,d,n,e);
@@ -503,7 +503,7 @@ end;
 
 function GetBareFileName(const p:pathstr):string;
 var d : dirstr;
-    n : namestr;
+    n : string;
     e : extstr;
 begin
   fsplit(p,d,n,e);
@@ -512,7 +512,7 @@ end;
 
 function GetFileExt(const p:pathstr):string;
 var d : dirstr;
-    n : namestr;
+    n : string;
     e : extstr;
 begin
   fsplit(p,d,n,e);
@@ -531,7 +531,7 @@ end;
 
 procedure addext(var fn:pathstr; ext:extstr);
 var dir  : dirstr;
-    name : namestr;
+    name : string;
     _ext : extstr;
 begin
   fsplit(fn,dir,name,_ext);
@@ -542,7 +542,7 @@ end;
 
 procedure adddir(var fn: pathstr; dir:dirstr);
 var _dir : dirstr;
-    name : namestr;
+    name : string;
     ext  : extstr;
 begin
   fsplit(fn,_dir,name,ext);
@@ -619,7 +619,7 @@ end;
 
 procedure WildForm(var s: pathstr);
 var dir : dirstr;
-    name: namestr;
+    name: string;
     ext : extstr;
     p   : byte;
 begin
@@ -716,6 +716,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.6  2000/11/18 22:11:26  mk
+  - einige Dirname, extname, pathname in string geaendert
+
   Revision 1.41.2.5  2000/11/10 11:30:41  mk
   - fixed Bug #116292: Mehrfachstart von XP abfangen
 

@@ -12,9 +12,7 @@
 {              Nodelisten, Tarifgruppen                             }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp10;
 
@@ -2035,6 +2033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2000/11/18 22:11:27  mk
+  - einige Dirname, extname, pathname in string geaendert
+
   Revision 1.10.2.2  2000/08/25 19:22:52  jg
   - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
     XP10.PAS

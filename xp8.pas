@@ -43,7 +43,7 @@ procedure FilescanReadFile;
 procedure FilescanCommands(cmd:shortint);
 
 
-function  IsServer(box:string; var fstype:byte):boolean;
+function  IsServer(const box:string; var fstype:byte):boolean;
 procedure FS_ReadList(msg:boolean);
 procedure FS_command(comm:string; request:byte);
 
@@ -57,7 +57,7 @@ function fileechocolfunc(var s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt, crc;
 
 const mapsbox : string[BoxNameLen] = '';
 
@@ -1584,6 +1584,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2000/11/18 22:11:28  mk
+  - einige Dirname, extname, pathname in string geaendert
+
   Revision 1.10.2.3  2000/06/29 16:47:00  mk
   - Fixes
 

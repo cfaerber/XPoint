@@ -655,7 +655,7 @@ type   textp  = ^text;
                      UnRAR                : string[50];
                    end;
 
-       PathPtr   = ^pathstr;
+       PathPtr   = ^string;
 
        DomainNodeP = ^domainnode;
        DomainNode = record
@@ -738,13 +738,13 @@ const
        ParQuiet   : boolean = false;   { keine GerÑusche        }
        ParTestres : boolean = true;    { Test auf residente Prg. }
        ParMaus    : boolean = false;   { Pseudo-Maus            }
-       ParPuffer  : pathstr = '';      { autom. Puffer einlesen }
+       ParPuffer  : string = '';      { autom. Puffer einlesen }
        ParPufED   : boolean = false;   { -> EmpfDat = ErstDat   }
        ParGelesen : boolean = false;   { ip-eingelesene Nachrichten auf }
        ParTiming  : byte    = 0;       {    'gelesen' setzen    }
        ParExit    : boolean = false;   { Programm beenden       }
        ParSetuser : string[50] = '';   { Username setzen        }
-       ParSendbuf : pathstr = '';      { Puffer automatisch versenden }
+       ParSendbuf : string = '';      { Puffer automatisch versenden }
        ParKey     : char    = ' ';     { autom. Tastendruck     }
        ParEmpfbest: boolean = false;   { Zusatzschalter fÅr /IPx }
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
@@ -761,9 +761,9 @@ const
        ParAutost  : string[12] = '';   { /autostart: }
        ParGebdat  : string[12] = 'gebuehr.dat';  { GebÅhrenzonenliste }
        ParGebdat2 : string[12] = 'tarife.dat';   { 2. Teil der " }
-       ParAV      : pathstr = '';      { Archiv-Viewer }
+       ParAV      : string = '';      { Archiv-Viewer }
        ParLanguage: string[4] = '';    { /l: Sprache }
-       ParFontfile: pathstr = '';      { /f: Fontdatei laden }
+       ParFontfile: string = '';      { /f: Fontdatei laden }
        ParNomem   : boolean = false;   { Speichertest Åbergehen }
        ParNoSmart : boolean = false;   { kein Schreibcache-Flush }
        ParLCD     : boolean = false;   { keine Int10/CharGen-Zugriffe }
@@ -830,14 +830,14 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        SwapFileName : string[12];
        helpfile     : string[12];     { XP.HLP     }
        keydeffile   : string[12];     { KEYDEF.CFG }
-       OwnPath      : pathstr;
-       ShellPath    : pathstr;
-       TempPath     : pathstr;
-       ExtractPath  : pathstr;
-       SendPath     : pathstr;
-       LogPath      : pathstr;
-       FilePath     : pathstr;
-       FidoPath     : pathstr;       { OwnPath+FidoDir }
+       OwnPath      : string;
+       ShellPath    : string;
+       TempPath     : string;
+       ExtractPath  : string;
+       SendPath     : string;
+       LogPath      : string;
+       FilePath     : string;
+       FidoPath     : string;       { OwnPath+FidoDir }
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
        EditLogpath  : pathptr;
@@ -1070,7 +1070,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ablsize     : array[0..ablagen-1] of longint;   { Dateigrî·en }
        AktDispmode : shortint;
        AktDisprec  : longint;
-       editname    : pathstr;        { Dateiname fÅr /Edit/Text }
+       editname    : string;        { Dateiname fÅr /Edit/Text }
        keymacros   : integer;        { Anzahl geladene Tastenmakros }
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
@@ -1153,6 +1153,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.15  2000/11/18 22:11:27  mk
+  - einige Dirname, extname, pathname in string geaendert
+
   Revision 1.54.2.14  2000/11/11 09:59:41  mk
   - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
   - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich
