@@ -349,7 +349,7 @@ var i,res : integer;
         if line[p]='\' then delete(line,p,1);
         inc(p);
         end;
-      parval:=left(line,p-1);
+      parval:=trim(left(line,p-1));
       if firstchar(parval)='"' then begin
         delfirst(parval);
         if lastchar(parval)='"' then dellast(parval);
@@ -621,6 +621,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.7  2002/03/08 23:14:14  my
+  JG:- Fix: Bei MIME-Multipart-Nachrichten, die ein Leerzeichen zwischen
+       der Boundary-Deklaration und dem folgenden Semikolon hatten, wurden
+       die einzelnen Nachrichtenteile nicht erkannt und somit der MIME-
+       Auswahldialog nicht angezeigt.
+
   Revision 1.15.2.6  2001/09/11 12:07:32  cl
   - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
 
