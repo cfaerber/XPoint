@@ -8220,8 +8220,7 @@ Wochentage:   Sa
           <command>GnuPG</command> (<acronym>GNU</acronym> Privacy
           Guard). Sie finden <command>GnuPG</command> auf <ulink
           url="http://www.gnupg.org/">http://www.gnupg.org/</ulink>.
-          Leider wird <command>GnuPG</command> von &xpname; derzeit
-          noch nicht untert&uuml;tzt.</para>
+          </para>
 
         <para>Leider gibt es bei der ganzen Sache aber auch einen
           Haken: Bevor Sie mit <command>pgp</command> arbeiten
@@ -8389,9 +8388,6 @@ Wochentage:   Sa
           <command>pgp</command>-Versionen funktionieren, sofern an
           diesen nichts Wesentliches ge&auml;ndert wurde, wie dies mit
           der Version f&uuml;nf geschehen ist.</para>
-
-        <para><command>GnuPG</command> wird von &xpname; nicht
-          unterst&uuml;tzt.</para>
 
       </sect2>
 
@@ -25307,6 +25303,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.15  2002/05/26 12:30:19  ma
+- GnuPG's supported
+
 Revision 1.14  2000/11/25 23:37:01  fe
 Ein bischen Zeug von xp.ihq importiert.
 
