@@ -314,6 +314,8 @@ end;
 {$I XPFM.INC}          { YooHoo - Mailer }
 
 function DoXPFM: integer;
+const
+  MessageBoxTitle: String = 'Fidomailer';
 begin
   TestConfig;
   InitVar;
@@ -326,7 +328,7 @@ begin
   end;
   Modem.CommObj:=CommObj;
   TextAttr:=col.colmailer;
-  rahmen2(DisplayWinX,DisplayWinX+DisplayTextWidth+4,DisplayWinY,DisplayWinY+DisplayTextHeight+4,'Fidomailer'); { Open a window :-) }
+  OpenBox(DisplayTextWidth+4, DisplayTextHeight+4, MessageBoxTitle,DisplayWinX, DisplayWinY, col.colmboxrahmen,col.colmbox);
   DisplayStatus(GetRepS2(30004,1,DestAddr),True);   { 'Anruf bei %s' }
   if addtxt<>'' then
     DisplayStatus(addtxt,True);
@@ -360,6 +362,7 @@ begin
   Dispose(CommObj,Done);
   if timediff<>0 then
     set_time(secsfrom70+timediff);
+  CloseBox;
   freeres;
   Debuglog('XPFM','Result code: '+strs(aresult),3);
   close(logf);
@@ -370,6 +373,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.4  2000/12/25 16:26:45  mk
+        - paint a nice window during fido poll
+
         Revision 1.3  2000/12/22 10:17:49  mk
         - compatibility update for VP
 
