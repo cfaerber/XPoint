@@ -358,7 +358,7 @@ begin
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
-  else fn:=UStr(trim(mid(s,p)));
+  else fn:=FUStr(trim(mid(s,p)));
   openinfile:=found and (fn<>'');
   if EOFinput then exit;
 end;
@@ -602,7 +602,7 @@ begin
     pushhp(75);
     useclip:=false;
     if ReadFilename(getres(2402),fn,true,useclip) then begin   { 'Zieldatei' }
-      if not multipos(':\',fn) then fn:=ExtractPath+fn;
+      if not multipos(_MPMask,fn) then fn:=ExtractPath+fn;
       if exist(fn) then o:=overwrite(fn,true,brk)
       else o:=true;
       if not exist(fn) or not brk then begin
@@ -658,6 +658,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/22 17:05:40  hd
+  - FUStr statt UStr
+  - multipos angepasst
+
   Revision 1.12  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 
