@@ -50,7 +50,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  Gebhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
+28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File listsù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
@@ -169,8 +169,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 23
 # Message window, menu "other"
-2  ^EditUser     ^U,^Rot13        ^X,^Hex Dump     ^H,^Date         ^D,^Print        ^T,^Mark,Wieder^vlg.    V,^Text file    ^F,B^inary file  ^I,indir.^Quote ^Q
-3  ,^Seek user    @U,See^k Subj.   @B
+2  ^EditUser       ^U,^Rot13          ^X,^Hex Dump       ^H,^Date           ^D,^Print          ^T,^Mark,M^ark(for reply) V,^Text file      ^F,B^inary file    ^I,indir.^Quote    ^Q
+3  ,^Seek user      @U,See^k Subj.     @B
 -
 
 
@@ -1037,7 +1037,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4   not enough disk space to pack messagebase file no %s
 5   ~- packing ...     %
 6   One moment please...     %
-7   nothing to delete
+7   Nothing to delete ...
 -
 452  new receive date:
 # 453 und 455 sind Menpunkte aus /Nachricht/Unversandt
@@ -1060,7 +1060,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    creating user list...     %
 6    creating newsgroup list...     %
 -
-458  NO unsent messages found ...
+458  There are NO unsent messages!
 + 459
 1    ~ (Text)
 2    ~ (binary)
@@ -2464,7 +2464,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 15   Phone fee
 16   Phone charges for %s
 -
-2610 NO unsent messages found ...
+2610 There are NO unsent messages!
 + 2611
 1    unsent messages
 2    Server           Messages         Bytes
@@ -2708,6 +2708,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8  Not possible in this net.
 9  Unknown server: %s
 10 UUCICO.EXE not found!
+11 ZQWK.EXE not found!
 
 +  10200
 1  wrong temp directory setting
