@@ -55,7 +55,7 @@ var x,y,i : byte;
     z     : taste;
 begin
   msglines:=ival(getres2(520,0));
-  msgbox(70,msglines+11,'',x,y);
+  msgbox(70,msglines+8,'',x,y);
   moff;
   wrt(x+3,y+1,'Open \\//     '+
               RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
@@ -78,12 +78,12 @@ begin
     until s='';
     end;
   mon;
-  sely:=y+msglines+9;
+  sely:=y+msglines+6;
   attrtxt(col.colmbox);
   mwrt(x+3,sely,sp(65));
   z:='';
   pushhp(1550);
-  n:=ReadButton(x+3,sely,2,'*'+getres2(520,30),2,true,z);
+  n:=ReadButton(x+3,sely,2,'*'+getres2(520,30),1, true,z);
   pophp;
   closebox;
   freeres;
@@ -120,6 +120,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/07/23 14:45:02  mk
+  - OpenXPInfo: Default Button corrected and Dialog resized
+
   Revision 1.26  2001/04/17 21:54:44  ma
   - replaced "XP"/"CrossPoint" by "OpenXP"
 
