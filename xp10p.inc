@@ -139,11 +139,11 @@ begin
     while not eof(t) do begin
       repeat                         { Kopf Åberlesen }
         readln(t,s);
-        if left(s,1)<>'#' then p:=cpos('=',s)
+        if LeftStr(s,1)<>'#' then p:=cpos('=',s)
         else p:=0;
       until eof(t) or (p>0);
       while p>0 do begin             { einmaligen Datenblock einlesen }
-      { if LowerCase(left(s,p-1))='waehrung' then
+      { if LowerCase(LeftStr(s,p-1))='waehrung' then
           Waehrung:=trim(mid(s,p+1)); }
         if eof(t) then s:=''
         else readln(t,s);
@@ -158,18 +158,18 @@ begin
           fillchar(phones^[anzahl],sizeof(phones^[anzahl]),0);
           with phones^[anzahl] do begin
             repeat
-              if LowerCase(left(s,p-1))='zone' then komment:=trim(mid(s,p+1));
+              if LowerCase(LeftStr(s,p-1))='zone' then komment:=trim(mid(s,p+1));
               readln(t,s);
               p:=cpos('=',s);
             until p=0;
             if not eof(t) then
               while trim(s)<>'' do begin     { Nummern einlesen }
-                s:=left(trim(s),254)+' ';
+                s:=LeftStr(trim(s),254)+' ';
                 while s<>'' do begin
                   p:=cpos(' ',s);
                   if anz<maxphone then begin
                     inc(anz);
-                    pa^[anz]:=left(s,p-1);
+                    pa^[anz]:=LeftStr(s,p-1);
                     end;
                   s:=trimleft(mid(s,p+1));
                   end;
@@ -251,8 +251,8 @@ begin
               inc(zeitbereiche);
               with zeitbereich[zeitbereiche] do begin
                 ss:=GetToken(s,' ');
-                von:=left(ss,5);
-                bis:=right(ss,5);
+                von:=LeftStr(ss,5);
+                bis:=RightStr(ss,5);
                 i:=0;
                 while (s<>'') and (i<xp10.anzahl) do begin
                   inc(i);
@@ -320,6 +320,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/10/17 10:05:46  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.11  2000/10/11 23:03:13  mk
   - Gebuehrenaenderung rueckgaengig gemacht
 

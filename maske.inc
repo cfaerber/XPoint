@@ -233,7 +233,7 @@ var ax,p,myp  : integer;
           p:=p^.next;
         if (p=nil) and (cont<>'') then begin    { „hnlichen Eintrag suchen }
           p:=selliste;
-          while (p<>nil) and (left(UpperCase(p^.el),length(cont))<>UpperCase(cont)) do
+          while (p<>nil) and (LeftStr(UpperCase(p^.el),length(cont))<>UpperCase(cont)) do
             p:=p^.next;
           if p<>nil then begin
             cont:=p^.el;
@@ -596,23 +596,23 @@ var ax,p,myp  : integer;
       s:=cont;
       if cpos(' ',s)>0 then exit;
       if counter=1 then begin
-        dat.t:=ival(left(s,2));
+        dat.t:=ival(LeftStr(s,2));
         dat.m:=ival(copy(s,4,2));
         if length(s)=8 then begin
-          dat.j:=ival(right(s,2));
+          dat.j:=ival(RightStr(s,2));
           if dat.j>=50 then inc(dat.j,1900)
           else inc(dat.j,2000);
           end
         else
-          dat.j:=ival(right(s,4));
+          dat.j:=ival(RightStr(s,4));
         if t='+' then incd(dat)
         else decd(dat);
         cont:=formi(dat.t,2)+'.'+formi(dat.m,2)+'.'+
                iifs(length(s)=8,formi(dat.j mod 100,2),formi(dat.j,4));
         end
       else begin
-        h:=ival(left(s,2));
-        m:=ival(right(s,2));
+        h:=ival(LeftStr(s,2));
+        m:=ival(RightStr(s,2));
         if t='+' then begin
           inc(m);
           if m>59 then begin
@@ -642,8 +642,8 @@ var ax,p,myp  : integer;
       else
         fnkn:=ord(t[2])-73;
       if fndef[fnkn]<>'' then
-        if right(fndef[fnkn],1)=';' then
-          keyboard(left(fndef[fnkn],length(fndef[fnkn])-1)+#13)
+        if RightStr(fndef[fnkn],1)=';' then
+          keyboard(LeftStr(fndef[fnkn],length(fndef[fnkn])-1)+#13)
         else
           keyboard(fndef[fnkn]);
       end;
@@ -924,7 +924,7 @@ begin   { readmask }
             begin                                             { Ersetzen }
               p:=1; ax:=0; replace:=false;
             end else
-              s:=left(cont,p+ax-1)+s+mid(cont,p+ax);
+              s:=LeftStr(cont,p+ax-1)+s+mid(cont,p+ax);
 
             p:=p+i;                                           {Cursorposition aktualisieren}
             if p>=len then
@@ -1076,6 +1076,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.28  2000/10/17 10:05:41  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.27  2000/08/08 13:18:13  mk
   - s[Length(s)] durch Lastchar ersetzt
 

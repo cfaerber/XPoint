@@ -257,7 +257,7 @@ begin
     wrt(31,2,forms('  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ',len+50));
     wrt(31,screenlines,forms('F1-Hilfe  F6-Makros  F9-DOS'
                               +dup(13+len,' ')
-                              +right(sp(10)+xp_xp,10),len+50));
+                              +RightStr(sp(10)+xp_xp,10),len+50));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -694,7 +694,7 @@ var ma     : map;
         if i=p then attrtxt($70)
         else attrtxt(7);
         gotoxy(x,y+i-1);
-        write('  ',left(mstr,max(0,hpos-1)));
+        write('  ',LeftStr(mstr,max(0,hpos-1)));
         if hpos>0 then begin
           if i<>p then attrtxt(15);
           write(mstr[hpos]);
@@ -1146,6 +1146,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:48  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/08/17 13:33:06  mk
   MO:- Farbsetup fuer Screen > 80 Zeichen angepasst
 

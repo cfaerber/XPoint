@@ -160,7 +160,7 @@ begin
       if lastdate=0 then ds:=zdate
       else ds:=longdat(lastdate);
       with dat0 do begin
-        j:=ival(left(ds,2));
+        j:=ival(LeftStr(ds,2));
         if j<=70 then inc(j,2000)
         else inc(j,1900);
         m:=ival(copy(ds,3,2));
@@ -264,7 +264,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (right(FileUpperCase(datei),4)=FileUpperCase('.msg')) and exist(datei) then
+          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) and exist(datei) then
             _era(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -331,7 +331,7 @@ var sr    : searchrec;
   begin
     p:=cpos('.',sr.name);
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiDatei,left(sr.name,p-1));
+    dbSeek(d,boiDatei,LeftStr(sr.name,p-1));
     if dbFound then
       NamePollbox:=dbReadStr(d,'boxname')
     else
@@ -442,7 +442,7 @@ var sr    : searchrec;
       readln(t1,s);
       p:=cpos(':',s);
       if p>0 then begin
-        hdr:=LowerCase(left(s,p-1));
+        hdr:=LowerCase(LeftStr(s,p-1));
         if (hdr='empfaenger') or (hdr='empfÑnger') or (hdr='to') then
           empf:=trim(mid(s,p+1)) else
         if (hdr='betreff') or (hdr='subject') then
@@ -457,7 +457,7 @@ var sr    : searchrec;
     if box<>'' then nt:=ntBoxNetztyp(box);
     attach:=(box<>'') and (datei<>'') and
             ((nt=nt_Fido) or
-             (nt=nt_UUCP) and (left(empf,16)='UUCP-Fileserver@'));
+             (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
     if empf='' then axerr(2,'') else    { 'EmpfÑnger fehlt' }
     if betr='' then axerr(3,'') else    { 'Betreff fehlt'   }
     if (box<>'') and not IsBox(box) then
@@ -513,9 +513,9 @@ var sr    : searchrec;
     p:=cpos('@',empf);
     pm:=(p>0);
     if pm then
-      empf:=trim(left(empf,p-1))+'@'+trim(mid(empf,p+1))
+      empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
     else
-      if left(empf,1)<>'/' then empf:='/'+empf;
+      if LeftStr(empf,1)<>'/' then empf:='/'+empf;
     EditAttach:=false;
     if DoSend(pm,datei,iifs(pm,'','A')+empf,betr,
               false,attach or not temp,false,false,temp,nil,s,s,sendShow) then begin
@@ -544,9 +544,9 @@ var sr    : searchrec;
 
   procedure SetCTL;
   begin
-    if left(sr.name,6)='EBEST.'   then ctlEbest:=true else
-    if left(sr.name,7)='EDATUM.'  then ctlErstDat:=true else
-    if left(sr.name,8)='GELESEN.' then ParGelesen:=true;
+    if LeftStr(sr.name,6)='EBEST.'   then ctlEbest:=true else
+    if LeftStr(sr.name,7)='EDATUM.'  then ctlErstDat:=true else
+    if LeftStr(sr.name,8)='GELESEN.' then ParGelesen:=true;
   end;
 
 begin
@@ -588,8 +588,8 @@ begin
       delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
-      if (left(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
-        (left(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
+      if (LeftStr(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
+        (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         delfile;
         end;
@@ -644,7 +644,7 @@ var ar   : autorec;
     name:= ExtractFileName(s);
     if dir='' then s:=name
     else if dir[2]=':' then
-      s:=left(dir,2)+name
+      s:=LeftStr(dir,2)+name
     else s:=getdrive+':'+name;
 {$ENDIF }
   end;
@@ -654,9 +654,9 @@ begin
   with ar do begin
     if typ='T' then typ:=' ';
     c:=iifs(odd(flags),'+ ','  ');
-    ldat:=left(fdat(longdat(lastdate)),5);
+    ldat:=LeftStr(fdat(longdat(lastdate)),5);
     if ldat='00.00' then ldat:='--.--';
-    sdat:=left(fdat(longdat(AutoNextDate(ar))),5);
+    sdat:=LeftStr(fdat(longdat(AutoNextDate(ar))),5);
     if (sdat='00.00') or (empf='') then sdat:='--.--';
     setfile(datei);
     AutoShow:=c+forms(datei,15)+typ+' '+ldat+'  '+sdat+'  '+
@@ -667,6 +667,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 

@@ -117,7 +117,7 @@ begin
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not CommObj^.SendString(left(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+left(s,p-1)+'"',2);
+        if not CommObj^.SendString(LeftStr(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+LeftStr(s,p-1)+'"',2);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
@@ -139,7 +139,7 @@ begin
   while (length(trim(s))>1) and not TimerObj.Timeout do begin
     p:=pos('\\',s);
     if p=0 then p:=length(s)+1;
-    cmd:=trim(left(s,p-1));
+    cmd:=trim(LeftStr(s,p-1));
     SendMultCommand:=SendCommand(cmd);
     s:=trim(mid(s,p+2));
     ProcessKeypresses(false);
@@ -156,8 +156,8 @@ function DialUp(Phonenumbers,ModemInit,ModemDial: string;
     if p=0 then
       NumberRotate:=Phonenumbers
     else begin
-      NumberRotate:=left(Phonenumbers,p-1);
-      Phonenumbers:=trim(mid(Phonenumbers,p))+' '+left(Phonenumbers,p-1);
+      NumberRotate:=LeftStr(Phonenumbers,p-1);
+      Phonenumbers:=trim(mid(Phonenumbers,p))+' '+LeftStr(Phonenumbers,p-1);
     end;
   end;
 
@@ -169,7 +169,7 @@ function DialUp(Phonenumbers,ModemInit,ModemDial: string;
     delete(ModemAnswer,1,p-1);
     p:=1;
     while(p<=length(ConnectString))and(ConnectString[p]>='0')and(ConnectString[p]<='9')do inc(p);
-    b:=ival(left(ConnectString,p-1));
+    b:=ival(LeftStr(ConnectString,p-1));
     if(b<300)or(115200 mod b<>0)then Bauddetect:=0 else Bauddetect:=b;
   end;
 
@@ -223,10 +223,10 @@ begin
                           Connected:=False;
                           if not TimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
-                            if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
+                            if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             DUDState:=SDModemAnswer; DisplayProc; {Ausgabe Modemantwort}
                             SleepTime(200);
-                            if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(left(UpperCase(ModemAnswer),7)='CARRIER'))or
+                            if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
                                 (CommObj^.Carrier and(not CommObj^.IgnoreCD))then begin {Connect!}
                               StateDialup:=SDConnect; DialUp:=True; Connected:=True;
                               DUDState:=StateDialup; DUDBaud:=BaudDetect(ModemAnswer); DisplayProc; {Ausgabe: Connect}
@@ -280,6 +280,9 @@ begin TimerObj.Init; DisplayProc:=VoidDisplayProc end.
 
 {
   $Log$
+  Revision 1.4  2000/10/17 10:05:42  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.3  2000/09/11 23:22:35  ma
   - Dialup Busy Fix
 

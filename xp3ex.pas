@@ -55,7 +55,7 @@ begin
   repeat
     p:=pos(s1,UpperCase(s));
     if p>0 then
-      s:=Left(s,p-1)+s2+mid(s, p + length(s1));
+      s:=LeftStr(s,p-1)+s2+mid(s, p + length(s1));
   until p=0;
 end;
 
@@ -88,21 +88,21 @@ begin
   if realname<>'' then begin
     p:=blankpos(realname);
     if p=0 then rps(s,'$VORNAME',realname)
-    else rps(s,'$VORNAME',left(realname,p-1));
+    else rps(s,'$VORNAME',LeftStr(realname,p-1));
     end
   else begin
     p:=blankpos(name);
-    if p>0 then rps(s,'$VORNAME',left(name,p-1))
+    if p>0 then rps(s,'$VORNAME',LeftStr(name,p-1))
     else if cpos('@',name)=0 then
       rps(s,'$VORNAME',TopAllStr(name))
-      else rps(s,'$VORNAME',TopAllStr(left(name,cpos('@',name)-1)));
+      else rps(s,'$VORNAME',TopAllStr(LeftStr(name,cpos('@',name)-1)));
     end;
   p:=pos('%',name);
   if p=0 then p:=pos('@',name);
   if p>0 then begin
-    rps(s,'$MUSER',left(name,p-1));
-    rps(s,'$TUSER',TopAllStr(left(name,p-1)));
-    if UpperCase(right(name,4))='.ZER' then
+    rps(s,'$MUSER',LeftStr(name,p-1));
+    rps(s,'$TUSER',TopAllStr(LeftStr(name,p-1)));
+    if UpperCase(RightStr(name,4))='.ZER' then
       delete(name, length(name)-4, 4); { dec(byte(name[0]),4);}
     rps(s,'$BOX',mid(name,p+1));
     end
@@ -115,8 +115,8 @@ end;
 
 procedure rpsdat(var s:string; txt:string; d:datetimest);
 begin
-  rps(s,txt,left(d,2)+' '+copy('JanFebMarAprMayJunJulAugSepOctNovDec',
-            ival(copy(d,4,2))*3-2,3)+' '+right(d,2));
+  rps(s,txt,LeftStr(d,2)+' '+copy('JanFebMarAprMayJunJulAugSepOctNovDec',
+            ival(copy(d,4,2))*3-2,3)+' '+RightStr(d,2));
 end;
 
 procedure rpsdate(var s:string);
@@ -124,11 +124,11 @@ begin
   rps(s, '$DAY2', '$TAG2');
   rps(s, '$DAY', '$TAG');
   rps(s, '$TIME', '$UHRZEIT');
-  rps(s,'$DATUM',left(date,6)+right(date,2));
+  rps(s,'$DATUM',LeftStr(date,6)+RightStr(date,2));
   if pos('$DATE',s)>0 then
     rpsdat(s,'$DATE',date);
-  rps(s,'$UHRZEIT',left(time,5));
-  rps(s,'$TAG2',left(zdow(zdate),2));
+  rps(s,'$UHRZEIT',LeftStr(time,5));
+  rps(s,'$TAG2',LeftStr(zdow(zdate),2));
   rps(s,'$TAG',zdow(zdate));
 end;
 
@@ -176,10 +176,10 @@ var size   : longint;
 
   procedure wrs(s:string);
   begin
-    s:=left(s,ScreenWidth)+#13#10;
+    s:=LeftStr(s,ScreenWidth)+#13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
-    if left(s,5)<>'-----' then lasttrenn:=false;
+    if LeftStr(s,5)<>'-----' then lasttrenn:=false;
   end;
 
   procedure wrslong(s:string);
@@ -187,7 +187,7 @@ var size   : longint;
     s:=s+#13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
-    if left(s,5)<>'-----' then lasttrenn:=false;
+    if LeftStr(s,5)<>'-----' then lasttrenn:=false;
   end;
 
   { dtyp: -1=Rot13, 1=QPC, 2=DES }
@@ -208,7 +208,7 @@ var size   : longint;
   begin
     if size>0 then begin
       if (dtyp>=1) then begin
-        if left(_brett,1)<>'U' then
+        if LeftStr(_brett,1)<>'U' then
           dbSeek(ubase,uiName,UpperCase(hdp^.absender))
         else
           dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));   { Nachricht in PM-Brett }
@@ -326,7 +326,7 @@ var size   : longint;
       empty:=true;
       end;
     if p>0 then with hdp^ do
-      if UpperCase(left(absender,8))='ZU_LANG_' then
+      if UpperCase(LeftStr(absender,8))='ZU_LANG_' then
         delete(qchar,p,1)
       else begin
         if cpos(' ',realname)>1 then qs:=trim(realname)
@@ -355,7 +355,7 @@ var size   : longint;
     if (p=0) or ((hdp^.netztyp<>nt_Maus) and (hdp^.netztyp<>nt_Fido)) then
       mausname:=s
     else
-      mausname:=trim(left(s,p-1))+' @ '+trim(mid(s,p+1));
+      mausname:=trim(LeftStr(s,p-1))+' @ '+trim(mid(s,p+1));
   end;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
@@ -511,7 +511,7 @@ var size   : longint;
       endspace:=(LastChar(reads)=' ') or eoln(t);
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
-      s:=left(reads,p);
+      s:=LeftStr(reads,p);
       if not iso1 and ConvIso and (s<>'') then begin
         convstr:= s;
         ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
@@ -570,13 +570,13 @@ var size   : longint;
         end;
         p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
-          if left(s,length(lastqc))=lastqc then
+          if LeftStr(s,length(lastqc))=lastqc then
             insert(stmp,s,p+1)               { einfgen }
           else
             FlushStmp;
           stmp:='';
         end;
-        LastQC:=left(s,p);
+        LastQC:=LeftStr(s,p);
         if (length(s)>=QuoteBreak) and
            ((lastchar(s)<#176) or (lastchar(s)>#223))  { Balkengrafik }
         then
@@ -638,7 +638,7 @@ var size   : longint;
         if lastchar(tn)='Q' then
           insert(' ',tn,length(tn));
         if cpos('-',vorwahl)>0 then
-          if left(tn,cpos('-',tn))='+'+left(vorwahl,cposx('-',vorwahl)) then
+          if LeftStr(tn,cpos('-',tn))='+'+LeftStr(vorwahl,cposx('-',vorwahl)) then
             tn:=NatVorwahl+mid(tn,cpos('-',tn)+1)
           else
             if firstchar(tn)='+' then
@@ -734,7 +734,7 @@ begin
           if pos('$MSGDATE',UpperCase(s))>0 then
             rpsdat(s,'$MSGDATE',fdat(datum));
           rps(s,'$ERSTZEIT',ftime(datum));
-          rps(s,'$ERSTTAG2',left(zdow(datum),2));
+          rps(s,'$ERSTTAG2',LeftStr(zdow(datum),2));
           rps(s,'$ERSTTAG',zdow(datum));
           rps(s,'$ERHALTEN',fdat(longdat(edat)));
           rps(s,'$MSGID',msgid);
@@ -835,7 +835,7 @@ begin
                                   { sieht nach einer Fido-Adresse aus ... }
                      GetNodeinfo(hdp^.absender,ni,0);
                      if ni.found then begin
-                       hdp^.realname:=left(ni.boxname,60-length(hdp^.absender));
+                       hdp^.realname:=LeftStr(ni.boxname,60-length(hdp^.absender));
                        if length(hdp^.absender)+length(hdp^.realname)+length(ni.standort)<60
                        then
                          hdp^.realname:=hdp^.realname+', '+ni.standort;
@@ -845,7 +845,7 @@ begin
                        iifs(hdp^.realname<>'','  ('+hdp^.realname+')',''));
                  end;
 
-    hdf_OEM    : if (hdp^.oem<>'') and (left(hdp^.oem,length(hdp^.empfaenger))
+    hdf_OEM    : if (hdp^.oem<>'') and (LeftStr(hdp^.oem,length(hdp^.empfaenger))
                      <>hdp^.empfaenger) then
                    wrs(gr(16)+hdp^.oem);         { 'Org.-Empf. : ' }
     hdf_OAB    : if hdp^.oab<>'' then            { 'Org.-Abs.  : ' }
@@ -856,7 +856,7 @@ begin
                     ((UpperCase(hdp^.pmReplyTo)<>UpperCase(hdp^.absender))) then   { 'Antwort an : ' }
                    wrs(gr(27)+hdp^.pmReplyTo);
 
-    hdf_BET    : wrs(gr(5)+left(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
+    hdf_BET    : wrs(gr(5)+LeftStr(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
     hdf_ZUSF   : if hdp^.summary<>'' then        { 'Zus.fassung: ' }
                    wrs(gr(23)+hdp^.summary);
     hdf_STW    : if hdp^.keywords<>'' then       { 'Stichworte : ' }
@@ -874,7 +874,7 @@ begin
                          dec(p);
                        if p=30 then p:=79-length(hs);
                        end;
-                     wrs(hs+left(s,p));
+                     wrs(hs+LeftStr(s,p));
                      delete(s,1,p);
                      hs:=gr(15);                 { sp(...) }
                      end;
@@ -1063,6 +1063,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/10/17 10:05:49  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.45  2000/09/04 14:04:15  ma
   - schneller Leerzeilen-Quote-Hack. Bitte bei Interesse sauber konfigurierbar machen.
 

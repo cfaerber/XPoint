@@ -79,7 +79,7 @@ begin
   hd:=''; InternBox:=DefaultBox;
   if StatBrett then
     if DoSend(false,fn,xp0.StatBrett,bez+getres(2600)+fdat(zdate)+    { 'statistik vom ' }
-              ', '+left(time,5),
+              ', '+LeftStr(time,5),
               false,false,false,false,false,nil,hd,hd,sendIntern) then
       SetUngelesen
     else
@@ -137,7 +137,7 @@ var brk       : boolean;
   begin
     if art=0 then begin
       p:=cpos('.',sys);
-      if right(sys,4)='.ZER' then
+      if RightStr(sys,4)='.ZER' then
         Delete(sys,length(sys)+1-4,4)
       else if (dbReadInt(mbase,'netztyp') and $ff)=nt_Fido then
         if p>0 then
@@ -304,7 +304,7 @@ begin
        marked or (dbReadInt(bbase,'gruppe')<>LocGruppe) then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(dbReadStr(bbase,'brettname'),2),40));
-      _brett:=left(dbReadStr(bbase,'brettname'),1)+
+      _brett:=LeftStr(dbReadStr(bbase,'brettname'),1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
@@ -324,7 +324,7 @@ begin
                 p:=cpos('@',absender);
                 end;
             until p=0;
-            count(left(absender,BoxNameLen),dbReadInt(mbase,'groesse'),0);
+            count(LeftStr(absender,BoxNameLen),dbReadInt(mbase,'groesse'),0);
             end
           else
             count(brett,dbReadInt(mbase,'groesse'),0);
@@ -395,7 +395,7 @@ begin
           write(t,i:4,'  ',forms(copy(name,2,40),40),bytes:6,msgs:10);
           wrsum(i,8);
           if hz>0 then writeln(t,hz:7)
-          else if hz<0 then writeln(t,right('     #'+strs(-hz),7))
+          else if hz<0 then writeln(t,RightStr('     #'+strs(-hz),7))
           else writeln(t);
           end;
       writeln(t,dup(78,'-'));
@@ -504,7 +504,7 @@ begin
     if nr>0 then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(dbReadStr(bbase,'brettname'),2),40));
-      _brett:=left(dbReadStr(bbase,'brettname'),1)+
+      _brett:=LeftStr(dbReadStr(bbase,'brettname'),1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
@@ -601,7 +601,7 @@ begin
   wdt:=ival(getres2(2609,0));
   if wdt=0 then wdt:=33;
   dialog(wdt,8,iifs(box='',getres2(2609,1),box),x,y);    { 'PostKosten' }
-  jahr:=ival(right(date,4));
+  jahr:=ival(RightStr(date,4));
   maddint (3,2,getres2(2609,2),jahr,5,4,1900,2999); mhnr(500);    { 'Gebhren fr das Jahr ' }
   statbrett:=false;
   maddbool(3,4,getres2(2609,3),statbrett);   { 'Ausgabe in /¯Statistik' }
@@ -756,7 +756,7 @@ begin
     if sr.size>0 then begin
 
 
-      inc(ppanz); pp_epp[ppanz].name:=left(sr.name,cpos('.',sr.name)-1);
+      inc(ppanz); pp_epp[ppanz].name:=LeftStr(sr.name,cpos('.',sr.name)-1);
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
       end;
@@ -910,7 +910,7 @@ var   zone     : ^zonea;
           nodes:=_nodes;
           end;
         end;
-      hostname:=left(ss,cposx(',',ss)-1);
+      hostname:=LeftStr(ss,cposx(',',ss)-1);
       for i:=1 to length(hostname) do
         if hostname[i]='_' then hostname[i]:=' ';
     end;
@@ -928,19 +928,19 @@ var   zone     : ^zonea;
       readln(nl,s);
       p:=cpos(',',s);
       if (s<>'') and (FirstChar(s)<>';') and (p>0) then begin
-        k:=LowerCase(left(s,p-1));
+        k:=LowerCase(LeftStr(s,p-1));
         if k='zone' then
           if zones=maxzones then ende:=true
           else begin
             delete(s,1,p);
             p:=cposx(',',s);
-            _z:=minmax(ival(left(s,p-1)),0,maxint);  { Zonennummer ermitteln }
+            _z:=minmax(ival(LeftStr(s,p-1)),0,maxint);  { Zonennummer ermitteln }
             inc(zones); zone^[zones].nr:=_z;
             delete(s,1,p);
             p:=cposx(',',s);
             for i:=1 to p-1 do                   { Zonenname ermitteln }
               if s[i]='_' then s[i]:=' ';
-            zone^[zones].name:=left(s,p-1);
+            zone^[zones].name:=LeftStr(s,p-1);
             zone^[zones].nodelist:=nls;
             newfile:=false;
             end
@@ -958,7 +958,7 @@ var   zone     : ^zonea;
               p:=cposx(',',s);
               testlnet;
               inc(nets);
-              _n:=minmax(ival(left(s,p-1)),0,maxint);
+              _n:=minmax(ival(LeftStr(s,p-1)),0,maxint);
               _nodes:=0;
               showzone;
               end
@@ -970,7 +970,7 @@ var   zone     : ^zonea;
                 p:=cposx(',',s);
                 end;
               while s<>'' do begin
-                k:=left(s,p-1);
+                k:=LeftStr(s,p-1);
                 UpString(k);
                 if (k<>'') and not multipos(':!-.',k) then begin
                   i:=1;
@@ -1158,16 +1158,16 @@ var x,y    : byte;
 
   procedure dats2fd(ds:datetimest; var dat:fdate);
   begin
-    dat.t:=ival(left(ds,2));
+    dat.t:=ival(LeftStr(ds,2));
     dat.m:=ival(copy(ds,4,2));
-    dat.j:=ival(right(ds,4));
+    dat.j:=ival(RightStr(ds,4));
   end;
 
   function dayssince(adate:datetimest):longint;
   var d1,d2 : fdate;
       n     : longint;
   begin
-    if right(adate,2)<'70' then insert('20',adate,7)
+    if RightStr(adate,2)<'70' then insert('20',adate,7)
     else insert('19',adate,7);
     dats2fd(adate,d1);
     dats2fd(typeform.date,d2);
@@ -1218,7 +1218,7 @@ begin
       reset(t); found:=false;
       while not eof(t) and not found do begin
         readln(t,s);
-        found:=(UpperCase(left(s,length(box)+9))='NETCALL '+UpperCase(box)+'=');
+        found:=(UpperCase(LeftStr(s,length(box)+9))='NETCALL '+UpperCase(box)+'=');
         end;
       if found then begin
         date:=copy(s,cpos('=',s)+1,8);
@@ -1254,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/10/17 10:06:01  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.25  2000/08/19 09:41:36  mk
   - Code aufgeraeumt
 

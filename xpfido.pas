@@ -409,11 +409,11 @@ var x,y        : byte;
       p:=cpos(',',s);
       end;
     if p>0 then begin
-      name:=left(s,p-1);
+      name:=LeftStr(s,p-1);
       p:=length(name);
       while (p>1) and (name[p]<>'_') do dec(p);
       if p>1 then
-        name:=mid(name,p+1)+' '+left(name,p-1);
+        name:=mid(name,p+1)+' '+LeftStr(name,p-1);
       for i:=1 to length(name) do
         if name[i]='_' then name[i]:=' ';
       name:= UpperCase(name); { UpString(name);}
@@ -788,7 +788,7 @@ begin
               if (ltyp=nlFDpointlist) and (k='Boss') then begin
                 ss:=mid(s,p+1);
                 p:=cposx(',',ss);
-                SplitFido(left(ss,p-1),fa,zone);
+                SplitFido(LeftStr(ss,p-1),fa,zone);
                 if fa.zone<>zone then begin
                   k:='Zone'; newnet:=true; end
                 else if fa.net<>net then begin
@@ -807,7 +807,7 @@ begin
             if (ltyp<>nlFDpointlist) or (k='Point') then begin
               delete(s,1,p);
               p:=cposx(',',s);
-              val(left(s,p-1),l,res);
+              val(LeftStr(s,p-1),l,res);
               node:=minmax(l,0,65535);
               end;
 
@@ -865,7 +865,7 @@ begin
                     newnet:=false;
                     delete(s,1,p);
                     p:=cpos(',',s);
-                    splitfido(left(s,p-1),fa,zone);
+                    splitfido(LeftStr(s,p-1),fa,zone);
                     np^[nodes].node:=fa.node;
                     np^[nodes].adr:=filepos(idf);
                     net:=fa.net;
@@ -1054,14 +1054,14 @@ var p : byte;
 begin
   if pos('unpublished',LowerCase(telefon))>0 then
     FormFidoPhone:=telefon
-  else if left(telefon,length(vorwahl))=vorwahl then begin
+  else if LeftStr(telefon,length(vorwahl))=vorwahl then begin
     delete(telefon,1,length(vorwahl));
-    if left(telefon,1)='-' then delfirst(telefon);
+    if LeftStr(telefon,1)='-' then delfirst(telefon);
     FormFidoPhone:=telefon;
     end
   else begin
     p:=cpos('-',vorwahl);
-    if left(telefon,p)=left(vorwahl,p) then
+    if LeftStr(telefon,p)=LeftStr(vorwahl,p) then
       FormFidoPhone:=NatVorwahl+mid(telefon,p+1)
     else
       FormFidoPhone:=intVorwahl+telefon;
@@ -1123,13 +1123,13 @@ begin
     s:=s+' ';
     repeat
       p:=cpos(' ',s);
-      ss:=left(s,p-1);
+      ss:=LeftStr(s,p-1);
       s:=trimleft(mid(s,p));
       p:=cpos(':',ss);
       if p=0 then
         val(ss,l,res)
       else begin
-        val(left(ss,p-1),l,res);
+        val(LeftStr(ss,p-1),l,res);
         if res=0 then val(mid(ss,p+1),l,res);
         end;
     until (res<>0) or (s='');
@@ -1229,11 +1229,11 @@ begin
       fn:=mid(s,p+1);
       findfirst(FidoDir+fn,ffAnyFile,sr);
       if (doserror=0) and (sr.size>0) then begin
-        node:=left(s,p-1);
+        node:=LeftStr(s,p-1);
         GetNodeinfo(node,ni,1);
         inc(anz);
         if cpos('.',fn)>0 then
-          fn:=left(fn,cpos('.',fn)-1);
+          fn:=LeftStr(fn,cpos('.',fn)-1);
         app_l(' '+forms(node,14)+' '+
               forms(iifs(ni.found,ni.boxname+', '+ni.standort,'???'),32)+
               '  '+fdate+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
@@ -1245,7 +1245,7 @@ begin
   if anz>0 then begin
     list(cr.brk);
     if not cr.brk then begin
-      cr.s:=trim(left(get_selection,15));
+      cr.s:=trim(LeftStr(get_selection,15));
       if not delfilelist and (copy(get_selection,17,4)<>'??? ') then
         keyboard(keycr+keyf2);
       end;
@@ -1328,7 +1328,7 @@ begin
     maddtext(3,5,getres2(2109,4),0);   { 'Status' }
     freeres;
     attrtxt(col.coldiahigh);
-    maddtext(12,2,iifs(ni.ispoint,ni.sysop,left(ni.boxname+', '+ni.standort,
+    maddtext(12,2,iifs(ni.ispoint,ni.sysop,leftStr(ni.boxname+', '+ni.standort,
                                             48-length(node)))+' ('+node+')',
                 col.coldiahigh);
     maddtext(12,3,ni.telefon,col.coldiahigh);
@@ -1346,7 +1346,7 @@ begin
       if flags and nfVFC<>0 then modem:=modem+' / V.Fast Class';
       if flags and nfV34<>0 then modem:=modem+' / V.34';
 
-      if left(modem,1)=' ' then delete(modem,1,3);
+      if LeftStr(modem,1)=' ' then delete(modem,1,3);
       if modem='' then modem:=strs(baud);
       maddtext(12,4,modem,col.coldiahigh); }
 
@@ -1387,7 +1387,7 @@ var files : string;
 begin
   files:='';
   GetReqFiles(MakeFidoAdr(fa,true),files);
-  if left(files,1)='>' then delfirst(files);
+  if LeftStr(files,1)='>' then delfirst(files);
   ff:=FidoFilename(fa)+'.REQ';
   if files<>'' then begin
     assign(t,ff);
@@ -1397,11 +1397,11 @@ begin
     repeat
       p:=cpos(' ',files);
       if p>0 then begin
-        _file:=trim(left(files,p));
+        _file:=trim(LeftStr(files,p));
         files:=trimleft(mid(files,p));
         p2:=cpos('/',_file);
         if p2=0 then writeln(t,_file)
-        else writeln(t,left(_file,p2-1)+' !'+mid(_file,p2+1));
+        else writeln(t,LeftStr(_file,p2-1)+' !'+mid(_file,p2+1));
         end;
     until p=0;
     close(t);
@@ -1431,7 +1431,7 @@ begin
       if s=adr then
         repeat
           readln(t,s);
-          if left(s,1)='>' then delfirst(s);
+          if LeftStr(s,1)='>' then delfirst(s);
           if s<>CrashID then files:=files+' '+s;
         until s=''
       else
@@ -1445,7 +1445,7 @@ end;
 
 function fstestmark(var s:string; block:boolean):boolean;
 begin
-  if (left(s,2)>'  ') and ((s<#176) or (s>#223)) then
+  if (LeftStr(s,2)>'  ') and ((s<#176) or (s>#223)) then
     fstestmark:=true
   else begin
     if not block then errsound;
@@ -1473,7 +1473,7 @@ begin
       s:=trim(s);
       if s[1]>='≥' then s:=trim(mid(s,2));
       if blankpos(s)>0 then
-        s:=left(s,blankpos(s)-1);
+        s:=LeftStr(s,blankpos(s)-1);
       cr.s:=cr.s+' '+s;
       s:=next_marked;
       end;
@@ -1500,10 +1500,10 @@ begin
       s:=trim(s);
       p:=cpos('=',s);
       if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then
-        if left(s,p-1)=node then begin
+        if LeftStr(s,p-1)=node then begin
           found:=true;
           delete(s,1,p);
-          if cpos(' ',s)>0 then s:=left(s,cpos(' ',s)-1);
+          if cpos(' ',s)>0 then s:=LeftStr(s,cpos(' ',s)-1);
           getFilelist:=FidoDir+s;
           end;
       end;
@@ -1527,7 +1527,7 @@ begin
   if brk then exit;
   node:=MakeFidoAdr(fa,true);
   getReqFiles(node,files);
-  if left(files,1)='>' then delfirst(files);
+  if LeftStr(files,1)='>' then delfirst(files);
   atonce:=false;
   maddstring(3,7,getres2(2112,1),files,50,254,'>'); mhnr(735);  { 'Dateien ' }
   freqlst:=GetFilelist(fa);
@@ -1682,7 +1682,7 @@ label ende;
 
   function overwrite(fn:string):boolean;
   begin
-    overwrite:=ReadJN(left(fn,40)+getres(2113),true);  { ' bereits vorhanden - Åberschreiben' }
+    overwrite:=ReadJN(LeftStr(fn,40)+getres(2113),true);  { ' bereits vorhanden - Åberschreiben' }
   end;
 
   function filetest(docopy:boolean; size:longint; path:string; fi:string):boolean;
@@ -1692,12 +1692,12 @@ label ende;
       filetest:=false
     else if docopy and exist(path+fi) and not overwrite(path+fi) then
       filetest:=false
-    else if right(fi,3)='.FL' then
+    else if RightStr(fi,3)='.FL' then
       filetest:=true
     else begin
       p:=cpos('.',fi);
       if p=0 then fi:=fi+'.FL'
-      else fi:=left(fi,p)+'FL';
+      else fi:=LeftStr(fi,p)+'FL';
       filetest:=(not exist(path+fi) or overwrite(path+fi));
       end;
   end;
@@ -1720,7 +1720,7 @@ label ende;
         s:=trim(s);
         if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
           p:=cpos('=',s);
-          if (p>0) and (left(s,p-1)<>node) and (mid(s,p+1)<>fi2) and
+          if (p>0) and (LeftStr(s,p-1)<>node) and (mid(s,p+1)<>fi2) and
              exist(FidoDir+mid(s,p+1)) then   { falsche EintrÑge killen }
             writeln(t2,s);
           end;
@@ -1745,19 +1745,19 @@ begin
   fi:=ExtractFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
-  if (p>0) and (ival(left(fi,p-1))>0) then begin
+  if (p>0) and (ival(LeftStr(fi,p-1))>0) then begin
     fillchar(fa,sizeof(fa),0);
     if not nodeopen then
       node:=''
     else begin
-      node:=strs(DefaultZone)+':'+strs(ival(left(fi,4)))+'/'+strs(ival(copy(fi,5,4)));
+      node:=strs(DefaultZone)+':'+strs(ival(LeftStr(fi,4)))+'/'+strs(ival(copy(fi,5,4)));
       getNodeinfo(node,ni,1);
       if not ni.found then
         if FindFidoAddress(fn,fa) then
           node:=MakeFidoAdr(fa,false)
         else
-          if ival(left(fi,1))>0 then
-            node:=left(fi,1)+':'+strs(ival(copy(fi,2,3)))+'/'+strs(ival(copy(fi,5,4)))
+          if ival(LeftStr(fi,1))>0 then
+            node:=LeftStr(fi,1)+':'+strs(ival(copy(fi,2,3)))+'/'+strs(ival(copy(fi,5,4)))
           else
             node:='';
       end;
@@ -1792,7 +1792,7 @@ begin
     copied:=true;
     end
   else if GetFiledir(fn)=FidoPath then begin   { ungepackt, in FIDO\ }
-    if right(fn,3)<>'.FL' then
+    if RightStr(fn,3)<>'.FL' then
       if not FileTest(false,0,FidoPath,fi) then goto ende;
     copied:=false;
     end
@@ -1808,10 +1808,10 @@ begin
     copied:=true;
     end;
 
-  if right(fi,3)<>'.FL' then begin
+  if RightStr(fi,3)<>'.FL' then begin
     p:=cpos('.',fi);
     if p=0 then fi2:=fi+'.FL'
-    else fi2:=left(fi,p)+'FL';
+    else fi2:=LeftStr(fi,p)+'FL';
     if exist(FidoPath+fi2) then
       _era(FidoPath+fi2);
     if not _rename(FidoPath+fi,FidoPath+fi2) and
@@ -1860,7 +1860,7 @@ begin
         s:=trim(s);
         p:=cpos('=',s);
         comment:=(s='') or (s[1]='#') or (s[1]=';') or (p=0);
-        if comment or (left(s,p-1)<>cr.s) then begin
+        if comment or (LeftStr(s,p-1)<>cr.s) then begin
           writeln(t2,s);
           if not comment then inc(nn);
           end
@@ -2012,7 +2012,7 @@ function FidoSeekfile:string;
     if test = true then
     begin
       { schreibe 1. Zeile und die node Nummer }
-      pTestWriteln(forms(sa[0],80)+left(sNodInf,p-1));
+      pTestWriteln(forms(sa[0],80)+LeftStr(sNodInf,p-1));
       nn:=1;
       while ( nn < BlockLength) and ( brk = false )   do
       begin
@@ -2033,11 +2033,11 @@ function FidoSeekfile:string;
   begin
     attrtxt(col.colmboxhigh);
     mwrt(x+13,y+2,forms(mid(sNodInf,p+1),12));  { Dateiname anzeigen }
-    getNodeinfo(left(sNodInf,p-1),ni^,1);
+    getNodeinfo(LeftStr(sNodInf,p-1),ni^,1);
     settextbuf(pFileListe^,tb^,tbs);
     reset(pFileListe^);
     begin                                  { write header}
-      sNodInf:=left(sNodInf,p-1)+' ';      { s:= 2:244/1278 }
+      sNodInf:=LeftStr(sNodInf,p-1)+' ';      { s:= 2:244/1278 }
       if ni^.found then sNodInf:=sNodInf+'('+ni^.boxname+', '+ni^.standort+', '+sFlistName  +')'
       else sNodInf:=sNodInf+'(??, '+sFlistName  +')';         { s:= 2:244/1278 (C-Box, Frankfurt, 02441278.FL}
       writeln(pOutput^,' ',' '+sNodInf);
@@ -2082,12 +2082,12 @@ begin       { FidoSeekfile:string;************************ }
   end;
   oldseek:=fidolastseek;                { icase+letzten Suchstring  }
   fidolastseek:=mid(fidolastseek,3);    { icase extrahieren }
-  iCase:=(left(oldseek,1)='J');         { icase     }
+  iCase:=(LeftStr(oldseek,1)='J');         { icase     }
   wCase:=(copy(oldseek,2,1)='J');       { Wcase     }
   {Anzeige initilisieren }
   dialog(57,6,getres2(2120,3),x,y);     { 'Dateien suchen' }
   if LastChar(fidolastseek)=#27 then
-     fidolastseek:=left(fidolastseek, length(fidolastseek)-1);
+     fidolastseek:=LeftStr(fidolastseek, length(fidolastseek)-1);
   maddstring(3,2,getres2(2120,4),fidolastseek,40,40,'');   { 'Suchbegriff ' }
   maddbool(3,4,getres2(2120, 5),iCase); { 'Schreibweise ignorieren' }
   maddbool(3,5,getres2(2120,11),wCase); { 'Nur ganze Wîrter suchen }
@@ -2177,7 +2177,7 @@ begin       { FidoSeekfile:string;************************ }
       end
       else
       begin
-       files:=files+' '+trim(left(sZeile,12));
+       files:=files+' '+trim(LeftStr(sZeile,12));
        sZeile:=next_marked;
       end;
     end;
@@ -2248,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.30  2000/08/21 06:51:45  mo
   -mainnodelist() liefert richtigen Wert
 

@@ -86,15 +86,15 @@ begin
         leer:=_mbrett<>_brett;
         end;
 
-      if leer and ((user and (left(brett,4)<>#0+'$/T')) or
-        (not user and (left(brett,3)<>'$/T'))) then
+      if leer and ((user and (LeftStr(brett,4)<>#0+'$/T')) or
+        (not user and (LeftStr(brett,3)<>'$/T'))) then
       begin
         loesch := dbReadNStr(d,nfeld);
         if not user then loesch:=copy(loesch,2,80);
         if adrbuch then
           if (dbReadInt(ubase,'userflags') and 4=0) and
              (dbXsize(ubase,'adresse')=0) then
-            if not ask or (ReadJNesc(getreps2(445,9,left(loesch,55)),true,brk)and not brk)
+            if not ask or (ReadJNesc(getreps2(445,9,LeftStr(loesch,55)),true,brk)and not brk)
             then begin                                    { '%s austragen' }
               dbSkip(d,1);
               next:=dbRecno(d);
@@ -111,7 +111,7 @@ begin
         if not adrbuch then
           if (not user or
              ((dbReadInt(d,'adrbuch')=0) and (dbReadInt(d,'userflags') and 5=1)))
-            and (not ask or (ReadJNesc(getreps2(445,10,left(loesch,60)),true,brk)and not brk))
+            and (not ask or (ReadJNesc(getreps2(445,10,LeftStr(loesch,60)),true,brk)and not brk))
           then begin                                      { '%s l”schen' }
             if (user and (aktdispmode in [1..4])) or
                (not user and (aktdispmode<=0)) then
@@ -311,7 +311,7 @@ begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
     disp := dbReadNStr(bbase,bb_brettname);
-    if left(disp,3)<>'$/T' then begin
+    if LeftStr(disp,3)<>'$/T' then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(disp,2),40));
       testdel(mbrettd(disp[1],bbase));
@@ -464,7 +464,7 @@ var x,y,yy  : byte;
     domove:=true;
     if dbReadInt(mbase,'netztyp') shr 24>0 then begin   { CrossPosting }
       rec:=dbRecno(mbase);
-      mid:=left(dbReadStr(mbase,'msgid'),4);
+      mid:=LeftStr(dbReadStr(mbase,'msgid'),4);
       domove:=not MsgOk;
       if domove then begin
         dbSeek(bezbase,beiMsgid,mid);
@@ -713,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:51  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/10/16 17:53:49  mk
   - LFN-Fix
 

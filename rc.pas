@@ -104,7 +104,7 @@ begin
   repeat
     inc(line);
     readln(t,s);
-    if left(s,1)='K' then begin
+    if LeftStr(s,1)='K' then begin
       s:=mid(s,3)+#13#10;
       if ofs+length(s)<127 then begin
         Move(s[1],header[ofs],length(s));
@@ -214,7 +214,7 @@ begin                   { procedure make }
                        p:=cpos(' ',s);                  { space nach lfd.Nr }
                        if p=0 then p:=cpos(#9,s);
                        if p=0 then p:=length(s)+1;
-                       nr:=ival(left(s,p-1));
+                       nr:=ival(LeftStr(s,p-1));
                        wrnr;                            { Bildschirmaugabe }
                        inc(anzahl);
                        res[anzahl].nummer:=nr;
@@ -329,6 +329,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.17  2000/10/17 10:05:43  mk
+        - Left->LeftStr, Right->RightStr
+
         Revision 1.16  2000/10/10 05:18:17  mk
         - Virtual Pascal Bugfixes (packed record)
 

@@ -82,7 +82,7 @@ var p,n,p1,i : byte;
       else
         Wrt2(' ');
       attrtxt(col.colbutton);
-      Wrt2(left(butt[i],butthigh[i]-1));
+      Wrt2(LeftStr(butt[i],butthigh[i]-1));
       attrtxt(col.colbuttonhigh);
       Wrt2(hot[i]);
       attrtxt(col.colbutton);
@@ -134,7 +134,7 @@ begin
         end
       else
         buttsp[n]:=0;
-      butt[n]:=left(buttons,p-1);
+      butt[n]:=LeftStr(buttons,p-1);
       buttons:= Mid(buttons,p+1);
       p:=pos('^',butt[n]);
       if p=0 then interr('Button: kein ShortKey!');
@@ -290,7 +290,7 @@ var width,height : byte;
         end
       else begin
         attrtxt(col.colselbox);
-        wrt(x+1,y+i,ch+left(sel[i],selhigh[i]-1));
+        wrt(x+1,y+i,ch+LeftStr(sel[i],selhigh[i]-1));
         attrtxt(col.colselhigh);
         Wrt2(sel[i][selhigh[i]]);
         attrtxt(col.colselbox);
@@ -330,7 +330,7 @@ begin
     p:=pos(',',auswahl);
     if p>0 then begin
       inc(n);
-      sel[n]:=left(auswahl,p-1);
+      sel[n]:=LeftStr(auswahl,p-1);
       auswahl:=Mid(auswahl,p+1);
       p:=pos('^',sel[n]);
       if p=0 then begin
@@ -415,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/10/17 10:05:46  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.15  2000/08/05 10:06:58  mk
   - Ansistring Verbesserungen
 

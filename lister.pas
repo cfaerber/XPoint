@@ -532,7 +532,7 @@ var gl,p,y    : shortint;
         gotoxy(l,o);
         write(a+p:5,lines:6);
         if xa=1 then write('     ')
-        else write(right('     +'+strs(xa-1),5));
+        else write(RightStr('     +'+strs(xa-1),5));
         write('  ');
         if (a=0) and more then write(#31)
         else if (a+gl>=lines) and (a>0) then write(#30)
@@ -1141,7 +1141,7 @@ end;
 
 procedure listheader(s:string);
 begin
-  alist^.txt:=left(s,40);
+  alist^.txt:=LeftStr(s,40);
 end;
 
 procedure listwrap(spalte:byte);
@@ -1314,6 +1314,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/10/17 10:05:40  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.35  2000/10/08 12:53:35  mk
   - Rot13 fuer Strings portiert
 

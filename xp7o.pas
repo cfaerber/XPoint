@@ -146,7 +146,7 @@ var f      : file;
     with hdp^ do begin
       pbox:='!?!';
       if (cpos('@',empfaenger)=0) and
-         ((netztyp<>nt_Netcall) or (left(empfaenger,1)='/'))
+         ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
       then begin
         dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
         if not dbFound then begin
@@ -219,7 +219,7 @@ begin
   close(f);
   dbSetIndex(mbase,mi);
   FreeHeaderMem(hdp);
-  inc(outemsgs,TestPuffer(left(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
+  inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
 end;
 
 
@@ -273,7 +273,7 @@ begin
     else writeln(t,', ',NC^.telefon);
 {     p:=cpos(' ',boxpar^.telefon);
       if p=0 then writeln(t,', ',boxpar^.telefon)
-      else writeln(t,', ',left(boxpar^.telefon,p-1));
+      else writeln(t,', ',LeftStr(boxpar^.telefon,p-1));
       end; }
     writeln(t);
     bytes:=getres(13);
@@ -372,7 +372,7 @@ begin
       if _fido or _uucp then
         repeat
           readln(log,s);
-        until (left(s,2)='--') or eof(log);
+        until (LeftStr(s,2)='--') or eof(log);
       while not eof(log) do begin
         readln(log,s);
         writeln(t,s);
@@ -435,7 +435,7 @@ var d         : DB;
       else _2d:=' -2d:'+strs(fPointNet);
       if (f4d or alias) and fTosScan then pc:=' -pc:1A'
       else pc:='';
-      if PacketPW then pw:=' -p:'+left(passwort,8)
+      if PacketPW then pw:=' -p:'+LeftStr(passwort,8)
       else pw:='';
       if LocalINTL then nli:=''
       else nli:=' -nli';
@@ -465,7 +465,7 @@ begin
       p:=blankpos(akas);
       if p=0 then p:=length(akas)+1;
       if p>3 then begin
-        box:=left(akas,p-1);
+        box:=LeftStr(akas,p-1);
         akas:=trim(mid(akas,p));
         dbSeek(d,boiName,UpperCase(box));
         if not dbfound then
@@ -483,11 +483,11 @@ begin
             alias:=(dbReadInt(d,'script') and 4<>0);
             with BoxPar^ do
               if alias then
-                OwnFidoAdr:=left(boxname,cpos('/',boxname))+pointname
+                OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
               else
                 OwnFidoAdr:=boxname+'.'+pointname;
             source:=bfile+'.PP';
-            dest:=formi(ival(left(dest,8))+1,8)+'.PKT';
+            dest:=formi(ival(LeftStr(dest,8))+1,8)+'.PKT';
             Convert;
             if exist(sout+dest) then begin
               inc(addpkts^.anzahl);
@@ -601,7 +601,7 @@ begin
         p:=pos('receiving',s);     { receiving Blafasel as BLAFASEL }
         s:=trim(mid(s,p+9));
         p:=blankpos(s);
-        source:=left(s,p-1);
+        source:=LeftStr(s,p-1);
         delete(s,1,p+3);
         dest:=trim(s);
         size:=_filesize(dest);
@@ -623,7 +623,7 @@ begin
             p:=cpos(',',s);
             delete(s,1,p+1);
             p:=blankpos(s);
-            size:=ival(left(s,p));
+            size:=ival(LeftStr(s,p));
             end;
           end    { of accepted }
         else if pos('refused',s)>0 then begin
@@ -777,6 +777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/10/17 10:05:55  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.28  2000/10/15 09:43:45  mk
   OH:- Datumsbezuege aktualisieren nur noch wenn noetig
 

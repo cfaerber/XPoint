@@ -294,7 +294,7 @@ label ende;
     seek(f,nr*BlockSize);
     blockread(f,buf^,BlockSize);
     GetFirstUser;
-    vname:=left(user.name,length(name));
+    vname:=LeftStr(user.name,length(name));
   end;
 
 begin
@@ -303,11 +303,11 @@ begin
   with fa do begin
     p:=cpos(',',username);         { Name formatieren }
     if p>0 then
-      name:=left(username,p-1)+' '+trim(mid(username,p+1))
+      name:=LeftStr(username,p-1)+' '+trim(mid(username,p+1))
     else begin
       p:=length(username);
       while (p>1) and (username[p]<>' ') do dec(p);
-      if p>1 then name:=mid(username,p+1)+' '+left(username,p-1)
+      if p>1 then name:=mid(username,p+1)+' '+LeftStr(username,p-1)
       else name:=username;
       end;
     end;
@@ -338,8 +338,8 @@ begin
       inc(l);
       ReadBlock(l);
       end;
-  until last or (left(user.name,length(name))>=name);
-  if (left(user.name,length(name))=name) then begin
+  until last or (LeftStr(user.name,length(name))>=name);
+  if (LeftStr(user.name,length(name))=name) then begin
     openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/APGD/');
     anz:=0;
     repeat
@@ -358,7 +358,7 @@ begin
             ReadBlock(l);
           end;
         end;
-    until (left(user.name,length(name))<>name) or (l>userblocks);
+    until (LeftStr(user.name,length(name))<>name) or (l>userblocks);
     if anz>0 then begin
       if anz=1 then
         s:=first_line
@@ -456,7 +456,7 @@ begin
         clwin(x+43, x+75, y+7, y+7); { eMAiL    }
       if ni^.found then with ni^ do begin
         attrtxt(col.coldiahigh);    { MH: 42 -> 65 }
-        wrt(x+10, y+2, left(BoxName + ', ' + Standort,65));
+        wrt(x+10, y+2, LeftStr(BoxName + ', ' + Standort,65));
         wrt(x+10, y+3, Sysop);
         wrt(x+10, y+4, Telefon);
         wrt(x+10, y+5, copy(MailString(FFlags, True),1,65)); { eMail l”schen }
@@ -572,11 +572,11 @@ label again, NewStart;
       inc(flags);
       flaganz[flags]:=0;
       p:=blankposx(s);
-      s2:=left(s,p-1);
+      s2:=LeftStr(s,p-1);
       while s2<>'' do begin
         if flaganz[flags]<andflags then begin
           inc(flaganz[flags]);
-          flag[flags,flaganz[flags]]:=','+left(s2,cposx(',',s2)-1)+',';
+          flag[flags,flaganz[flags]]:=','+LeftStr(s2,cposx(',',s2)-1)+',';
           end;
         delete(s2,1,cposx(',',s2));
         end;
@@ -607,10 +607,10 @@ label again, NewStart;
                        end;
 
       nlPoints24   : if k='HOST' then begin
-                       ss:=left(ss,cposx(',',ss)-1);  { Nodeadresse isolieren }
+                       ss:=LeftStr(ss,cposx(',',ss)-1);  { Nodeadresse isolieren }
                        p:=cpos('/',ss);
                        if p>0 then begin
-                         anet:=ival(left(ss,p-1));
+                         anet:=ival(LeftStr(ss,p-1));
                          anode:=ival(mid(ss,p+1));
                          end;
                        skip:=true;
@@ -619,7 +619,7 @@ label again, NewStart;
                        apoint:=nn;
 
       nlFDpointlist: if k='BOSS' then begin
-                       ss:=left(ss,cposx(',',ss)-1);
+                       ss:=LeftStr(ss,cposx(',',ss)-1);
                        splitfido(ss,fa,azone);
                        azone:=fa.zone; anet:=fa.net; anode:=fa.node;
                        skip:=true;
@@ -637,7 +637,7 @@ label again, NewStart;
   begin
     UpString(ts);
     p:=cposx(',',ss);
-    ntest:=(ts='') or (pos(ts,left(ss,p-1))>0);
+    ntest:=(ts='') or (pos(ts,LeftStr(ss,p-1))>0);
     delete(ss,1,p);
   end;
 
@@ -645,13 +645,13 @@ label again, NewStart;
   var p : byte;
   begin
     p:=cposx(',',s);
-    gets:=left(s,p-1);
+    gets:=LeftStr(s,p-1);
     delete(s,1,p);
   end;
 
   function testphone:boolean;
   begin
-    testphone:=(left(GetToken(ss,','),length(sphone))=sphone);
+    testphone:=(LeftStr(GetToken(ss,','),length(sphone))=sphone);
   end;
 
   function node_str:string;
@@ -725,10 +725,10 @@ again:
     end;
 
   sphone:=NB_Data^.telefon;    { Telefon in Nodelistenformat konvertieren }
-  if (IntVorwahl<>'') and (left(sphone,length(IntVorwahl))=IntVorwahl) then
+  if (IntVorwahl<>'') and (LeftStr(sphone,length(IntVorwahl))=IntVorwahl) then
     delete(sphone,1,length(IntVorwahl))
-  else if (NatVorwahl<>'') and (left(sphone,length(NatVorwahl))=NatVorwahl) then
-    sphone:=left(Vorwahl,cpos('-',vorwahl))+mid(sphone,length(NatVorwahl)+1);
+  else if (NatVorwahl<>'') and (LeftStr(sphone,length(NatVorwahl))=NatVorwahl) then
+    sphone:=LeftStr(Vorwahl,cpos('-',vorwahl))+mid(sphone,length(NatVorwahl)+1);
   ParseFlags;
 
   getmem(buf,bufsize);
@@ -767,11 +767,11 @@ again:
             inc(n);
             ss:=UpperCase(s);
             while cpos('_',ss)>0 do ss[cpos('_',ss)]:=' ';
-            k:=left(ss,cpos(',',ss)-1);
+            k:=LeftStr(ss,cpos(',',ss)-1);
             delete(ss,1,cpos(',',ss));
             if k<>'BOSS' then begin
               p:=cposx(',',ss);
-              nn:=minmax(ival(left(ss,p-1)),0,65535);
+              nn:=minmax(ival(LeftStr(ss,p-1)),0,65535);
               delete(ss,1,p);
               end;
             GetAddress(format,skip);     { akt. Adresse ermitteln }
@@ -885,6 +885,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.21  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.20  2000/08/10 08:49:43  mk
   - Fix: Fido...Nodelisten abfragen
     Direkte Nachricht an Suchergebnis schicken funktioniert wieder

@@ -219,7 +219,7 @@ procedure initdirs;
 
   procedure AddSepa(var APath: String);
   begin
-    if (right(APath,1)<>DirSepa) then                 { Path + / }
+    if (RightStr(APath,1)<>DirSepa) then                 { Path + / }
       APath:= APath+DirSepa
   end;
 
@@ -284,10 +284,10 @@ procedure initdirs;
 begin
   OwnPath:=progpath;
   if ownpath=''            then getdir(0,ownpath);
-  if right(ownpath,1)<>'\' then ownpath:=ownpath+'\';
+  if RightStr(ownpath,1)<>'\' then ownpath:=ownpath+'\';
   if cpos(':',ownpath)=0   then
   begin
-    if left(ownpath,1)<>'\' then
+    if LeftStr(ownpath,1)<>'\' then
       ownpath:='\'+ownpath;
     ownpath:=getdrive+':'+ownpath;
   end;
@@ -310,8 +310,8 @@ var i  : integer;
 
   function isl(ss:string):boolean;
   begin
-    isl:=('/'+ss=LowerCase(left(s,length(ss)+1))) or
-         ('-'+ss=LowerCase(left(s,length(ss)+1)));
+    isl:=('/'+ss=LowerCase(LeftStr(s,length(ss)+1))) or
+         ('-'+ss=LowerCase(LeftStr(s,length(ss)+1)));
   end;
 
   function ReplDP(s:string):string;   { Fido-Boxname: "_" -> ":" }
@@ -319,7 +319,7 @@ var i  : integer;
   begin
     p1:=cpos(':',s);
     p2:=cpos('_',s);
-    if (p2>0) and (((p1=0) or ((p2<p1) and (ival(left(s,p2-1))>0)))) then
+    if (p2>0) and (((p1=0) or ((p2<p1) and (ival(LeftStr(s,p2-1))>0)))) then
       s[p2]:=':';
     ReplDP:=s;
   end;
@@ -332,7 +332,7 @@ var i  : integer;
     if p=0 then
       ParNetcall:=s
     else begin
-      ParNetcall:=left(s,min(p-1,BoxNameLen));
+      ParNetcall:=LeftStr(s,min(p-1,BoxNameLen));
       ParNCtime:=formi(ival(copy(s,p+1,2)),2)+':'+formi(ival(copy(s,p+4,2)),2);
       end;
   end;
@@ -346,7 +346,7 @@ var i  : integer;
       writeln('fehlerhafte /user - Option')
     else begin
       s[p]:=' ';
-      ParSetuser:=left(s,sizeof(ParSetuser)-1);
+      ParSetuser:=LeftStr(s,sizeof(ParSetuser)-1);
       end;
   end;
 
@@ -370,7 +370,7 @@ var i  : integer;
     if j>0 then
     begin
       s3:=copy(s,j+1,i-j-1);  { Zwischen ? und ; }
-      if UpperCase(left(s3,4))='SUBJ' then
+      if UpperCase(LeftStr(s3,4))='SUBJ' then
       begin
         k:=cposX('&',s3);
         keyboard(copy(s3,9,k-9));
@@ -506,7 +506,7 @@ begin
   FindClose(sr);
   if ParDDebug then dbOpenLog('database.log');
   ListDebug:=ParDebug;
-  if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
+  if (LeftStr(ParAutost,4)<='0001') and (RightStr(ParAutost,4)>='2359') then
     ParAutost:='';
 end;
 
@@ -678,18 +678,18 @@ var   res  : integer;
   procedure TestDir(d:dirstr);
   begin
     if not IsPath(ownpath+d) then begin
-      mkdir(ownpath+left(d,length(d)-1));
+      mkdir(ownpath+LeftStr(d,length(d)-1));
       if ioresult<>0 then
-        interr(reps(getres(203),left(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
+        interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
       end;
   end;
 
   procedure TestDir2(d:dirstr);
   begin
     if not IsPath(d) then begin
-      mkdir(left(d,length(d)-1));
+      mkdir(LeftStr(d,length(d)-1));
       if ioresult<>0 then
-        interr(reps(getres(203),left(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
+        interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
       end;
   end;
 
@@ -895,7 +895,7 @@ begin
   free:=diskfree(0);
   if (free>=0) and (free<200000) then begin
     exitscreen(0);
-    writeln(getreps(205,left(OwnPath,2)));   { 'Fehler: zu wenig freier Speicher auf Laufwerk %s !' }
+    writeln(getreps(205,LeftStr(OwnPath,2)));   { 'Fehler: zu wenig freier Speicher auf Laufwerk %s !' }
     writeln;
     errsound; errsound;
     runerror:=false;
@@ -907,7 +907,7 @@ begin
       moff;
       wrt(x+3,y+1,getres2(206,1));   { 'WARNUNG!' }
       wrt(x+3,y+3,reps(getres2(206,2),trim(strsrn(free div $100000,0,1))));
-      wrt(x+3,y+4,reps(getres2(206,3),left(ownpath,2)));
+      wrt(x+3,y+4,reps(getres2(206,3),LeftStr(ownpath,2)));
       wrt(x+3,y+6,getres(12));   { 'Taste drcken ...' }
       freeres;
       mon;
@@ -952,7 +952,7 @@ begin
         end
       else
         registriert.tc:='A';
-      l:=ival(left(s,p-1));              { lfd. Nummer }
+      l:=ival(LeftStr(s,p-1));              { lfd. Nummer }
       if ((l>=4001) and (l<=4009)) or
          (l=800) or                      { Key in Cracker-Box aufgetaucht }
          (l=4088) or                     { Key auf CD-ROM aufgetaucht     }
@@ -979,7 +979,7 @@ begin
       l3:=l1 xor l2 xor CRC16strXP(reverse(strs(l)));
       delete(s,1,p);
       p:=cpos('-',s); if p=0 then p:=length(s)+1;
-      code:=ival(left(s,p-1));                { -Code }
+      code:=ival(LeftStr(s,p-1));                { -Code }
       if registriert.nr=0 then code:=-1;
       delete(s,1,p);
       case registriert.tc of
@@ -1032,7 +1032,7 @@ var p   : byte;
 begin
   p:=cpos('-',ParAutost);
   if p=0 then exit;
-  min:=ival(left(ParAutost,p-1));
+  min:=ival(LeftStr(ParAutost,p-1));
   f:=formi(min div 100,2)+':'+formi(min mod 100,2)+':00';
   min:=ival(mid(ParAutost,p+1));
   t:=formi(min div 100,2)+':'+formi(min mod 100,2)+':59';
@@ -1085,7 +1085,7 @@ begin
     else
       { 'Das Systemdatum liegt vor dem Datum des letzten Programmstarts.' }
       maddtext(3,2,getreps2(225,2,strs(maxdays)),0);
-    dat:=left(date,6)+right(date,2);
+    dat:=LeftStr(date,6)+RightStr(date,2);
     madddate(3,4,getres2(225,3),dat,false,false);   { 'Bitte best„tigen Sie das Datum: ' }
       mhnr(92);
     zaehler[1]:=30; zaehlx:=x+wdt-6; zaehly:=y-1;
@@ -1094,9 +1094,9 @@ begin
     readmask(brk);
     multi3:=m3s; hotkeys:=true;
     if not brk and mmodified then begin
-      t:=ival(left(dat,2));
+      t:=ival(LeftStr(dat,2));
       m:=ival(copy(dat,4,2));
-      j:=ival(right(dat,2));
+      j:=ival(RightStr(dat,2));
       if j<80 then inc(j,2000) else inc(j,1900);
       setdate(j,m,t);
       end;
@@ -1210,6 +1210,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2000/10/17 10:05:47  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.72  2000/10/15 08:50:06  mk
   - misc fixes
 

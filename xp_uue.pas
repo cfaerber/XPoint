@@ -224,7 +224,7 @@ begin
   end;
   repeat
     ReadInputLine;
-    found:=(left(s,5)='begin');
+    found:=(LeftStr(s,5)='begin');
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
@@ -283,7 +283,7 @@ begin
       until ((s<>'') and (s[1]='M')) or EOFinput
     else
       ReadInputLine;
-    ende:=(left(s,3)='end');
+    ende:=(LeftStr(s,3)='end');
     if length(s)>1 then
       if (s[1]<='_') and (s[1]>='!') and not ende then begin
         if length(s)<((ord(s[1])-32) div 3 * 4)+1 then begin
@@ -306,7 +306,7 @@ begin
   if bufp>0 then flushbuf;
   if not EOFinput then begin           { 'size' auswerten }
     ReadInputLine;
-    if left(s,4)='size' then begin
+    if LeftStr(s,4)='size' then begin
       size:=ival(mid(s,5));
       if (size>0) and (size<filesize(f2^)) then begin
         seek(f2^,size);
@@ -316,7 +316,7 @@ begin
     else
       {:  sum -r/size 49243/2336 section (from "begin" to "end")  }
       {:  sum -r/size 34783/1676 entire input file                }
-      while (left(s,12)='sum -r/size ') and not EOFinput do begin
+      while (LeftStr(s,12)='sum -r/size ') and not EOFinput do begin
         if pos('entire',s)>0 then begin
           s:=trim(mid(s,13));
           l:=ival(GetToken(s,'/'));   { Summe Åberlesen }
@@ -406,13 +406,13 @@ var tmp,fn   : string;
       extract_msg(0,'',tmp,false,0);
       assign(t,tmp); settextbuf(t,tb^,tbs);
       reset(t); s:='';
-      while not eof(t) and (left(s,8)<>'section ') do
+      while not eof(t) and (LeftStr(s,8)<>'section ') do
         readln(t,s);
       close(t);
-      if left(s,8)='section ' then begin
+      if LeftStr(s,8)='section ' then begin
         s:=trim(mid(s,9));
         p:=blankpos(s);
-        if p>0 then marklist[i].sortfld[fldSection]:=ival(left(s,p-1));
+        if p>0 then marklist[i].sortfld[fldSection]:=ival(LeftStr(s,p-1));
         end;
       if marklist[i].sortfld[fldSection]=0 then ok:=false;
       inc(i);
@@ -539,6 +539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.20  2000/08/22 23:25:17  mk
   MK+MO:- Ansistring-Bugfix
 

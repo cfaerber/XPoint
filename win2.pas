@@ -105,7 +105,7 @@ begin
   slan:=0;
   while p>0 do begin
     inc(slan);
-    slas[slan]:=left(sla,p-1);
+    slas[slan]:=LeftStr(sla,p-1);
     delete(sla,1,p);
     p:=pos(';',sla);
     end;
@@ -325,12 +325,12 @@ var   fb     : pathstr;
         end
       else
 {$ENDIF }
-      if right(s,1)=DirSepa then
+      if RightStr(s,1)=DirSepa then
         Wrt2(Forms(ConvertFilename(s), 58))
       else begin
         pa:=path;
         pathonly(pa);
-        if right(pa,1)<>DirSepa then pa:=pa+DirSepa;
+        if RightStr(pa,1)<>DirSepa then pa:=pa+DirSepa;
         findfirst(pa+s,ffanyfile,sr);
         if doserror<>0 then
           Wrt2(sp(59))
@@ -418,7 +418,7 @@ begin
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
     while p>0 do begin
       inc(pathn);
-      paths[pathn]:=path+left(dpath,p-1);
+      paths[pathn]:=path+LeftStr(dpath,p-1);
       delete(dpath,1,p);
       p:=pos(';',dpath);
       end;
@@ -665,7 +665,7 @@ begin
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((fn>0) and (t=keycr) and (right(f^[p+add],1)=DirSepa)) or chgdrive then
+    if ((fn>0) and (t=keycr) and (RightStr(f^[p+add],1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
@@ -680,7 +680,7 @@ begin
             path:=dir+f^[p+add]+name+ext
         else begin                        { Laufwerkswechsel }
           path:=dospath(ord(t[1]));
-          if right(path,1)<>DirSepa then path:=path+DirSepa;
+          if RightStr(path,1)<>DirSepa then path:=path+DirSepa;
           path:=path+name+ext;
           end;
         paths[i]:=path;
@@ -788,7 +788,7 @@ var   i,j     : integer;
       if (p[i]=' ') and (i in econt) then p[i]:='³';
       inc(i,3);
       end;
-    if pn<=gl then wrt(x1+2,y1+pn,left(p,wdt));
+    if pn<=gl then wrt(x1+2,y1+pn,LeftStr(p,wdt));
     pa^[pn]^:=p;
   end;
 
@@ -955,7 +955,7 @@ begin
                 while s[i]<>'Ä'do dec(i);
                 inc(i);
                 end;
-              s2:=left(s,i);
+              s2:=LeftStr(s,i);
               if p+a=pn then s:=sp(70)
               else s:=pa^[p+a+1]^;
               if (s[i]='À') or (s[i]='Ã') then s2[i]:='Ã'
@@ -1098,6 +1098,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:44  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/08/04 09:05:03  mk
   - Bugfix fuer Zugriff auf Leerstring
 

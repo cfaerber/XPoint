@@ -97,8 +97,10 @@ function iifs(b:boolean; s1,s2:string):string;  { IIF String                }
 function IntQSum(const l:longint):longint;         { Quersumme                    }
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
-function Left(const s: string; Count: integer): string;
-function Right(const s: string; Count: integer): string;
+{$IFNDEF FPC }
+function LeftStr(const s: string; Count: integer): string;
+function RightStr(const s: string; Count: integer): string;
+{$ENDIF }
 function LoCase(const c:char):char;                { LowerCase                    }
 function Max(const a,b:longint):longint;          { Maximum Integer              }
 function MaxR(const a,b:real):real;                { Maximum Real                 }
@@ -399,11 +401,11 @@ var s : string;
 begin
   s:=strsrn(r,vk,nk);
   if r>=1000000 then
-    s:=copy(s,3,vk-8)+'.'+copy(s,vk-5,3)+'.'+copy(s,vk-2,3)+','+right(s,nk)
+    s:=copy(s,3,vk-8)+'.'+copy(s,vk-5,3)+'.'+copy(s,vk-2,3)+','+RightStr(s,nk)
   else if r>=1000 then
-    s:=copy(s,2,vk-4)+'.'+copy(s,vk-2,3)+','+right(s,nk)
+    s:=copy(s,2,vk-4)+'.'+copy(s,vk-2,3)+','+RightStr(s,nk)
   else
-    s:=copy(s,1,vk)+','+right(s,nk);
+    s:=copy(s,1,vk)+','+RightStr(s,nk);
   if LastChar(s)=',' then
     s:=' '+copy(s,1,length(s)-1);
   strsrnp:=s;
@@ -643,34 +645,21 @@ begin
   s:= AnsiUpperCase(s);
 end;
 
-{$ifdef FPC}
+{$ifndef FPC}
 
-function Left(const s: string; n: integer): string;
+function LeftStr(const s:string; Count: Integer):string;
 begin
-  Left:= LeftStr(s, n);
+  LeftStr := Copy(S, 1, Count);
 end;
 
-function Right(const s: string; n: integer): string;
-begin
-  Right:= RightStr(s,n);
-end;
-
-{$else} { FPC }
-
-function Left(const s:string; Count: Integer):string;
-begin
-  Left := Copy(S, 1, Count);
-end;
-
-function Right(const s:string; Count: Integer):string;
+function RightStr(const s:string; Count: Integer):string;
 begin
    If Count>Length(S) then
      Count:=Length(S);
-   Right := Copy(S, 1 + Length(S) - Count, Count);
+   RightStr := Copy(S, 1 + Length(S) - Count, Count);
 end;
 
-{$endif} { FPC }
-
+{$endif}
 
 function Mid(const s:string; const n:integer):string;
 begin
@@ -723,7 +712,7 @@ function Hex(const l:integer; const n:integer):string;
 begin
   Hex:= IntToHex(l, n);
   {$IFDEF VP }
-    Hex := Right(Result, n);
+    Hex := RightStr(Result, n);
   {$ENDIF }
 end;
 
@@ -817,7 +806,7 @@ end;
 
 function center(const s:string; n:integer):string;
 begin
-  if length(s)>=n-1 then center:=left(s,n)
+  if length(s)>=n-1 then center:=LeftStr(s,n)
   else center:=sp((n-length(s))div 2)+s+sp((n-length(s)-1)div 2);
 end;
 
@@ -1013,7 +1002,7 @@ function TimeDiff(t1,t2:DateTimeSt):longint;    { Abstand in Sekunden  }
 
   function TimeSecs(var t:DateTimeSt):longint;
   begin
-    TimeSecs:=3600*ival(left(t,2))+60*ival(copy(t,4,2))+ival(right(t,2));
+    TimeSecs:=3600*ival(LeftStr(t,2))+60*ival(copy(t,4,2))+ival(RightStr(t,2));
   end;
 
 begin
@@ -1086,13 +1075,13 @@ begin
   if delimiter=' ' then begin
     s:=trim(s);
     p:=blankposx(s);
-    GetToken:=left(s,p-1);
+    GetToken:=LeftStr(s,p-1);
     delete(s,1,p);
     s:=TrimLeft(s);
     end
   else begin
     p:=posx(delimiter,s);
-    GetToken:=trim(left(s,p-1));
+    GetToken:=trim(LeftStr(s,p-1));
     s:=trim(mid(s,p+length(delimiter)));
     end;
 end;
@@ -1185,7 +1174,7 @@ end;
 function rforms(const s:string; const n:integer):string;    { String links mit ' ' auff.   }
 begin
   if length(s)>=n then
-    rforms:=right(s,n)
+    rforms:=RightStr(s,n)
   else
     rforms:=sp(n-length(s))+s;
 end;
@@ -1220,7 +1209,7 @@ begin
   conv('ö','U');
   conv('ê','E');
   conv('Ç','e');
-  s:=left(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben }
+  s:=LeftStr(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben }
 end;
 
 
@@ -1291,13 +1280,16 @@ end;
 
 procedure ZtoZCdatumNTZ(var d1,d2:string);
 begin
-  if ival(left(d1,2))<70 then d2:='20'+d1+'00W+0'
+  if ival(LeftStr(d1,2))<70 then d2:='20'+d1+'00W+0'
   else d2:='19'+d1+'00W+0';
 end;
 
 end.
 {
   $Log$
+  Revision 1.70  2000/10/17 10:05:43  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.69  2000/08/27 10:37:08  mk
   - UUZ ist jetzt intern
 

@@ -15,7 +15,7 @@ var p : byte;
 begin
   p:=pos('$FILE',UpperCase(prog));
   if p>0 then
-    repfile:=left(prog,p-1)+name+copy(prog,p+5,127)
+    repfile:=LeftStr(prog,p-1)+name+copy(prog,p+5,127)
   else
     repfile:=prog+' '+name;
 end;
@@ -52,8 +52,8 @@ var
       p:=blankposx(prog);
       p2:=71;
       while prog[p2]<>' ' do dec(p2);
-      mwrt(x+3,y+1,left(prog,p2-1));
-      mwrt(x+3+p,y+2,left(mid(prog,p2+1), 71-p));
+      mwrt(x+3,y+1,LeftStr(prog,p2-1));
+      mwrt(x+3+p,y+2,LeftStr(mid(prog,p2+1), 71-p));
       end;
     wkey(15,false);
     windmin:=w1; windmax:=w2;
@@ -233,7 +233,7 @@ begin
     pp:=pos('$TYPE',UpperCase(lf));
     if pp>0 then begin
       lt:=iif(listmsg,iif(listkommentar,2,1),0);
-      lf:=left(lf,pp-1)+strs(lt)+mid(lf,pp+5);
+      lf:=LeftStr(lf,pp-1)+strs(lt)+mid(lf,pp+5);
       end;
     shell(lf,ListerKB,1);
     if errorlevel in [100..110] then ExtListKeys;
@@ -355,7 +355,7 @@ begin
     if nachricht then pushhp(54);
     TED(name,reedit,keeplines,ed_ukonv);
     if nachricht then pophp;
-    if nachricht and (left(VarEditor,1)='*') then begin
+    if nachricht and (LeftStr(VarEditor,1)='*') then begin
       delfirst(VarEditor);
       shell(repfile(VarEditor,name),EditorKB,3);
       insert('*',VarEditor,1);
@@ -365,7 +365,7 @@ begin
   if bak<>'' then begin
     p:=pos('.',name);
     if p=0 then name:=name+'.'+bak
-    else name:=left(name,p)+bak;
+    else name:=LeftStr(name,p)+bak;
     if exist(name) then _era(name);      { .BAK l”schen }
     end;
 end;
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2000/10/17 10:05:47  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.40  2000/10/04 18:14:59  mk
   - AnsiString-Fix
 

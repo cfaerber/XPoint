@@ -154,13 +154,13 @@ var t    : text;
   begin
     p:=blankpos(s);
     if p>0 then begin
-      col.colmailer:=ival(left(s,p-1));
+      col.colmailer:=ival(LeftStr(s,p-1));
       s:=trim(mid(s,p));
       p:=blankpos(s);
       if p=0 then
         col.colmailerhi:=ival(s)
       else begin
-        col.colmailerhi:=ival(left(s,p-1));
+        col.colmailerhi:=ival(LeftStr(s,p-1));
         col.colmailerstat:=ival(mid(s,p+1));
         end;
       end;
@@ -171,7 +171,7 @@ var t    : text;
   begin
     p:=blankpos(s);
     if p=0 then p:=length(s)+1;
-    b:=ival(left(s,p-1));
+    b:=ival(LeftStr(s,p-1));
     s:=trim(mid(s,p+1));
   end;
 
@@ -196,10 +196,10 @@ begin
     readln(t,s0);
     s:=trim(s0);
     p:=cpos('=',s);
-    if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then
+    if (s<>'') and (LeftStr(s,1)<>';') and (LeftStr(s,1)<>'#') then
       if p=0 then StopError('Unknown option:  '+s)
       else begin
-        id:=lstr(trim(left(s,p-1)));
+        id:=lstr(trim(LeftStr(s,p-1)));
         s:=trim(mid(s,p+1));
         bool:=(ustr(s)<>'N');
         if id='language'   then language:=s else
@@ -286,7 +286,7 @@ begin
   if (Commandfile='') or not exist(CommandFile) then
     rerror(103); { 'UUCP Command file missing' }
   if comnr=0 then rerror(104);        { 'Port number missing' }
-  if right(FilePath,1)<>'\' then FilePath:=FilePath+'\';
+  if RightStr(FilePath,1)<>'\' then FilePath:=FilePath+'\';
   if not ValidFilename(FilePath+'1$2$3.9x9') then
     rerror(105);                      { 'Illegal File Path' }
   if (uulogfile<>'') and not validfilename(uulogfile) then
@@ -490,10 +490,10 @@ begin
     tb;
   until timeout(true) or break or
         ((recs<>'') and (recs[length(recs)] in [#0,#4,#10,#13]));
-  if left(recs,1)=^P then
+  if LeftStr(recs,1)=^P then
     delete(recs,1,1);
   if recs='' then GetStr:=''
-  else GetStr:=left(recs,length(recs)-1);
+  else GetStr:=LeftStr(recs,length(recs)-1);
   recs:='';
 end;
 
@@ -526,7 +526,7 @@ end;
 function Cval(s:string):longint;
 begin
   LoString(s);
-  if left(s,2)='0x' then Cval:=hexval(mid(s,3))
+  if LeftStr(s,2)='0x' then Cval:=hexval(mid(s,3))
   else Cval:=ival(s);
 end;
 
@@ -790,7 +790,7 @@ begin
   move(data,s[1],length(s));
   p:=cpos(#10,s);
   if p>0 then TruncStr(s,p-1);
-  if left(s,3)='#! ' then
+  if LeftStr(s,3)='#! ' then
     if copy(s,4,5)='rnews' then s:=getres2(2300,60) else      { 'ungepacktes Newspaket' }
     if copy(s,4,8)='cunbatch' then s:=getres2(2300,61) else   { 'gepacktes Newspaket (compress)' }
     if copy(s,4,8)='funbatch' then s:=getres2(2300,62) else   { 'gepacktes Newspaket (freeze)' }
@@ -798,22 +798,22 @@ begin
     if copy(s,4,8)='zunbatch' then s:=getres2(2300,63) else   { 'gepacktes Newspaket (gzip)' }
     s:=''
   else
-    if left(s,5)='HELO '  then s:=getres2(2300,64) else   { 'ungepacktes Mailpaket' }
-    if left(s,2)=#$1f#$9d then s:=getres2(2300,65) else   { 'gepackte Datei (compress)' }
-    if left(s,2)=#$1f#$9f then s:=getres2(2300,66) else   { 'gepackte Datei (freeze) }
-    if left(s,2)=#$1f#$8b then s:=getres2(2300,67) else   { 'gepackte Datei (gzip) }
+    if LeftStr(s,5)='HELO '  then s:=getres2(2300,64) else   { 'ungepacktes Mailpaket' }
+    if LeftStr(s,2)=#$1f#$9d then s:=getres2(2300,65) else   { 'gepackte Datei (compress)' }
+    if LeftStr(s,2)=#$1f#$9f then s:=getres2(2300,66) else   { 'gepackte Datei (freeze) }
+    if LeftStr(s,2)=#$1f#$8b then s:=getres2(2300,67) else   { 'gepackte Datei (gzip) }
     begin
       LoString(s);
-      if (left(s,5)='>from') or (left(s,4)='from') then begin
+      if (LeftStr(s,5)='>from') or (LeftStr(s,4)='from') then begin
         p:=pos('remote from',s);
         if p>0 then begin
           delete(s,1,blankpos(s));
-          user:=left(s,blankpos(s)-1);
+          user:=LeftStr(s,blankpos(s)-1);
           p2:=length(user);
           while (p2>0) and (user[p2]<>'!') do dec(p2);
           if p2>0 then begin
             s:=getres2(2300,68)+mid(user,p2+1)+'@';
-            user:=left(user,p2-1);
+            user:=LeftStr(user,p2-1);
             p2:=length(user);
             while (p2>0) and (user[p2]<>'!') do dec(p2);
             s:=s+mid(user,p2+1);
@@ -897,7 +897,7 @@ begin
   transdata.filesize:=filesize(f)-offset;
   if not ParDebug then
     WriteTransfer;         { Gr”áe anzeigen }
-  SendStr(left(strs(transdata.filesize)+dup(20,#0),20));   { L„nge senden }
+  SendStr(LeftStr(strs(transdata.filesize)+dup(20,#0),20));   { L„nge senden }
   if not NoCarrier then
     repeat
       blockread(f,buf,bufsize,rr);
@@ -1171,9 +1171,9 @@ begin
                     inc(len); chex[len]:=chr(b and $7f);
                     end;
                 chex[0]:=chr(len);
-                wrldebug('Got Checksum: '+left(chex,4)+'  expected: '+lstr(hex(chk,4)));
+                wrldebug('Got Checksum: '+LeftStr(chex,4)+'  expected: '+lstr(hex(chk,4)));
                 if timeout(true) or (chex[5]<>#13) or
-                   (hexval(left(chex,4))<>chk) then
+                   (hexval(LeftStr(chex,4))<>chk) then
                   fehler:=true
                 else
                   ende:=true;
@@ -1257,7 +1257,7 @@ begin
     'f','z' : result:=fz_SendCommand(s);
   end;
   if not result then begin
-    if blankpos(s)>0 then s:=left(s,blankpos(s)-1);
+    if blankpos(s)>0 then s:=LeftStr(s,blankpos(s)-1);
     LogError('error sending command "'+s+'"');
     end;
   SendCommand:=result;
@@ -1284,10 +1284,10 @@ begin
   n:=10;              { 10 x 1 Min. Timeout }
   repeat
     s:=GetCommand;
-    if (s<>'') and (left(s,1)<>c) then
+    if (s<>'') and (LeftStr(s,1)<>c) then
       wrldebug('unexpected command: '+s);
     dec(n);
-  until (left(s,1)=c) or (n=0) or nocarrier;
+  until (LeftStr(s,1)=c) or (n=0) or nocarrier;
   RepeatGetcommand:=s;
 end;
 
@@ -1374,9 +1374,9 @@ begin
   n:=5;
   repeat                     { warten auf ROK oder Fehlermeldung }
     s:=GetStr; dec(n);
-  until timeout(true) or (n=0) or (left(s,1)='R') or break;
+  until timeout(true) or (n=0) or (LeftStr(s,1)='R') or break;
   if break then exit;
-  if left(s,3)<>'ROK' then begin
+  if LeftStr(s,3)<>'ROK' then begin
     if s='RLOGIN' then s:=s+' - wrong login name';
     if nocarrier then
       LogError('connection terminated by remote site')
@@ -1394,9 +1394,9 @@ begin
   time(LoginTimeout);
   repeat
     s:=GetStr; dec(n);
-  until timeout(true) or (n=0) or (left(s,1)='P') or break;
+  until timeout(true) or (n=0) or (LeftStr(s,1)='P') or break;
   if break then exit;
-  if left(s,1)<>'P' then begin
+  if LeftStr(s,1)<>'P' then begin
     LogError('got '+s+' - aborting');
     exit;
     end;
@@ -1472,7 +1472,7 @@ label next,ende;
     if p>0 then s2:=trim(mid(s2,p)) else s:='';    { Mode entfernen }
     p:=blankpos(s2);
     if p=0 then p:=length(s2)+1;
-    size:=Cval(left(s2,p-1));
+    size:=Cval(LeftStr(s2,p-1));
   end;
 
 begin
@@ -1486,14 +1486,14 @@ begin
     if NoCarrier or break then goto ende;
     readln(t^,s);
 
-    if left(s,2)='S ' then begin       { ----- Datei senden }
+    if LeftStr(s,2)='S ' then begin       { ----- Datei senden }
       ti:=ticker;
       sf:=trim(mid(s,3));
       p:=blankpos(sf);
       if p>0 then begin
-        fn:=left(sf,p-1);
+        fn:=LeftStr(sf,p-1);
         sf:=mid(sf,p+1);
-        sf:=left(sf,blankpos(sf)-1);
+        sf:=LeftStr(sf,blankpos(sf)-1);
         end
       else
         fn:=sf;
@@ -1502,20 +1502,20 @@ begin
           if fn[p]='/' then fn[p]:='\';
         end
       else
-        fn:=XFerDir+fn[length(fn)-4]+'-'+right(fn,4)+'.OUT';
+        fn:=XFerDir+fn[length(fn)-4]+'-'+RightStr(fn,4)+'.OUT';
       if exist(fn) then begin
         if not SizeN and (pos('""',s)>0) then
-          s:=trim(left(s,pos('""',s)-1));
+          s:=trim(LeftStr(s,pos('""',s)-1));
         WrLog('+','sending '+fn+' as '+sf);
         if not SendCommand(s) then begin
           addtime(sendtime); goto ende; end;
         s2:=RepeatGetcommand('S');   { SY / SN }
         if s2='' then begin
           addtime(sendtime); goto ende; end;
-        if left(s2,2)='SY' then begin
+        if LeftStr(s2,2)='SY' then begin
           s2:=trim(mid(s2,4));
           p:=blankpos(s2);
-          if p>0 then s2:=left(s2,p-1);
+          if p>0 then s2:=LeftStr(s2,p-1);
           o:=Cval(s2);
           if not SendFile(fn,o) then begin
             addtime(sendtime); goto ende;
@@ -1527,10 +1527,10 @@ begin
           s2:=RepeatGetcommand('C');   { CY / CN }
           if s2='' then begin
             addtime(sendtime); goto ende; end;
-          if left(s2,2)='CN' then
+          if LeftStr(s2,2)='CN' then
             LogError('remote error: could not move file');
           end
-        else if left(s2,2)='SN' then begin
+        else if LeftStr(s2,2)='SN' then begin
           case s2[3] of
             '2' : begin
                     rmsg(getres2(2300,42));   { 'Fehler 2' }
@@ -1557,15 +1557,15 @@ begin
       addtime(sendtime);
       end else
 
-    if left(s,2)='R ' then begin       { ----- Datei anfordern }
+    if LeftStr(s,2)='R ' then begin       { ----- Datei anfordern }
       sf:=trim(mid(s,3));
       p:=blankpos(sf);
       if p=0 then goto next;
       fn:=trim(mid(sf,p+1));
-      sf:=left(sf,p-1);
+      sf:=LeftStr(sf,p-1);
       p:=blankpos(fn);
       if p=0 then goto next;
-      fn:=left(fn,p-1);
+      fn:=LeftStr(fn,p-1);
       if not validfilename(FilePath+fn) then begin
         logerror('invalid request destination file: '+fn);
         goto next;
@@ -1575,10 +1575,10 @@ begin
         if p=0 then
           fn:=fn+'.001'
         else
-          if right(fn,1)='9' then
-            fn:=left(fn,p)+formi(min(999,ival(mid(fn,p+1)))+1,3)
+          if RightStr(fn,1)='9' then
+            fn:=LeftStr(fn,p)+formi(min(999,ival(mid(fn,p+1)))+1,3)
           else
-            fn:=left(fn,length(fn)-1)+strs(ival(right(fn,1))+1);
+            fn:=LeftStr(fn,length(fn)-1)+strs(ival(RightStr(fn,1))+1);
         end;
       ti:=ticker;
       if SizeN then
@@ -1587,7 +1587,7 @@ begin
       if not SendCommand(s) then begin
         addtime(rectime); exit; end;
       s2:=GetCommand;
-      if left(s2,2)='RY' then begin
+      if LeftStr(s2,2)='RY' then begin
         wrlog(' ','request accepted');
         GetRequestFilesize;
         if RecFile(FilePath+fn,size) then begin
@@ -1599,9 +1599,9 @@ begin
           end;
         end
       else
-        if left(s2,3)='RN6' then
+        if LeftStr(s2,3)='RN6' then
           logerror('file too large')
-        else if left(s2,2)='RN' then
+        else if LeftStr(s2,2)='RN' then
           logerror('request refused or file not found')
         else
           logerror('unknown error');
@@ -1627,7 +1627,7 @@ begin
   repeat
     dec(n);
     if n=0 then exit;
-    s:=left(GetCommand,2);
+    s:=LeftStr(GetCommand,2);
   until (s='HN') or (s='HY') or NoCarrier or break;
   if not NoCarrier and not break then begin
     ok:=true;
@@ -1647,7 +1647,7 @@ function U2DOSfile(s:string):string;
 var i : integer;
     b : byte;
 begin
-  s:=s[1]+'-'+right(s,5);
+  s:=s[1]+'-'+RightStr(s,5);
   b:=0;
   for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
     if (s[i+4]>='A') and (s[i+4]<='Z') then
@@ -1686,7 +1686,7 @@ label ende;
       ss:=trim(mid(ss,pp+1));
       end;
     pp:=blankpos(ss);
-    if pp>0 then ss:=left(ss,pp-1);
+    if pp>0 then ss:=LeftStr(ss,pp-1);
     size:=Cval(ss);                  { size negotiation - Dateigr”áe }
   end;
 
@@ -1723,12 +1723,12 @@ begin
                 s:=trim(mid(s,2));
                 p:=blankpos(s);
                 if p>0 then begin
-                  source:=left(s,p-1);   { Quelldatei auf anderem Rechner }
+                  source:=LeftStr(s,p-1);   { Quelldatei auf anderem Rechner }
                   s:=trim(mid(s,p));
                   p:=blankpos(s);
                   if p>0 then begin
                     if SizeN then getFilesize;
-                    s:=left(s,p-1);
+                    s:=LeftStr(s,p-1);
                     end;
                   end;
                 if s='' then s:=source;
@@ -1744,7 +1744,7 @@ begin
                 else begin
                   tf:=ticker;
                   if not SendCommand('SY 0x0') then goto ende;
-                  if (left(s,2)='D.') or (left(s,2)='X.') then begin
+                  if (LeftStr(s,2)='D.') or (LeftStr(s,2)='X.') then begin
                     fn:=XFerDir+U2DOSfile(s);
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end

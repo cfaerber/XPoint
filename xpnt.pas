@@ -251,7 +251,7 @@ begin
       msgid[p]:=system.upcase(msgid[p]);
       inc(p);
       end;
-    formmsgid:=dbLongStr(CRC32Str(msgid))+left(msgid,15);
+    formmsgid:=dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
     end;
 end;
 
@@ -761,6 +761,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.17  2000/09/28 16:43:17  fe
   ZC-Defaultdomain von '.do.main' nach '.invalid' geaendert.  (RFC 2606)
 

@@ -65,7 +65,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
     while keywords<>'' do begin
       p:=cpos(',',keywords);
       if p=0 then p:=length(keywords)+1;
-      stw:=trim(left(keywords,p-1));
+      stw:=trim(LeftStr(keywords,p-1));
       if stw<>'' then wrs('Stichwort: '+stw);
       delete(keywords,1,p);
       end;
@@ -91,11 +91,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
     with hd do begin
       if not orgdate then
         if replaceetime then
-          zdatum:=iifs(ival(left(datum,2))<70,'20','19')+datum+'00W+0'
+          zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+datum+'00W+0'
         else
                   ZtoZCdatum(datum,zdatum);
       gb:=ntGrossBrett(netztyp) or (netztyp=nt_ZConnect);
-      if gb and (cpos('@',empfaenger)=0) and (left(empfaenger,2)<>'/Ø') then
+      if gb and (cpos('@',empfaenger)=0) and (LeftStr(empfaenger,2)<>'/Ø') then
         UpString(empfaenger);
       if nokop and (pmempfanz>1) then
         wrs('STAT: NOKOP');
@@ -131,8 +131,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       wrs('ROT: '+pfad);
       p1:=cpos(' ',PmReplyTo);
       if p1>0 then   { evtl. ÅberflÅssige Leerzeichen entfernen }
-        PmReplyTo:=left(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));
-      if (PmReplyTo<>'') and (left(PmReplyTo,length(absender))<>absender)
+        PmReplyTo:=LeftStr(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));
+      if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
                        then wrs('Antwort-an: '+PmReplyTo);
       if typ='B'       then wrs('TYP: BIN');
       if datei<>''     then wrs('FILE: ' +LowerCase(datei));
@@ -209,7 +209,7 @@ begin
     WriteZheader
   else begin
     wrs(hd.empfaenger);
-    wrs(left(hd.betreff,40));
+    wrs(LeftStr(hd.betreff,40));
     wrs(hd.absender);
     wrs(hd.datum);
     wrs(hd.pfad);
@@ -324,8 +324,8 @@ begin
     p:=cpos(' ',s);
     if p=0 then p:=cpos(#9,s);  { TAB }
     if p>0 then begin
-      komm:=left(trim(Mid(s,p)),30);
-      s:=left(s,p-1);
+      komm:=LeftStr(trim(Mid(s,p)),30);
+      s:=LeftStr(s,p-1);
       if komm='No' then komm:='';
       end;
     { UpString(s); }
@@ -382,7 +382,7 @@ begin
       if indirectquote and (hdp^.fido_to<>'') then
         xp0.fidoto:=hdp^.fido_to
       else
-        xp0.fidoto:=left(absender,minmax(p-1,0,35));
+        xp0.fidoto:=LeftStr(absender,minmax(p-1,0,35));
       if (netztyp=nt_Fido) and (cpos('#',xp0.fidoto)>0) then
         xp0.fidoto:=realname;
       end;
@@ -433,6 +433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/10/17 10:05:50  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.22  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 

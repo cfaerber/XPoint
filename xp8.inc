@@ -167,7 +167,7 @@ begin
   if brk then begin
     freeres; exit; end;
   if (echo<>'') and (echo<>'*') and (pos('/files/',LowerCase(echo))>0) then begin
-    s:=getreps2(852,5,left(echo,40));
+    s:=getreps2(852,5,LeftStr(echo,40));
     case ReadIt(max(length(s)+4,40),s,getres2(852,7),1,brk) of
       1 : begin end;
       2 : brk:=true;
@@ -184,7 +184,7 @@ begin
     ReadBoxPar(nt_Fido,dbReadStr(bbase,'pollbox'));
     rewrite(t);
     delete(echo,1,length(boxpar^.magicbrett));
-    if LowerCase(left(echo,6))='files/' then delete(echo,1,6);
+    if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
     writeln(t,'-',echo);
     close(t);
     SendFilescan(fn);
@@ -202,12 +202,12 @@ begin
           echo:= dbReadNStr(bbase,bb_brettname);
           delfirst(echo);
           if (UpperCase(dbReadStr(bbase,'pollbox'))=box) and
-             (left(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
+             (LeftStr(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
              and (pos('/files/',LowerCase(echo))>0)
           then begin
             if n=0 then rewrite(t);
             delete(echo,1,length(boxpar^.magicbrett));
-            if LowerCase(left(echo,6))='files/' then delete(echo,1,6);
+            if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
             writeln(t,'-',echo);
             inc(n);
             end;
@@ -328,6 +328,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/10/17 10:05:55  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.7  2000/07/27 10:13:04  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

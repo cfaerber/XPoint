@@ -346,7 +346,7 @@ begin
     reset(t);
     readln(t,s);
     close(t);
-    newdate:=ixdat(left(trim(s),10));
+    newdate:=ixdat(LeftStr(trim(s),10));
     end;
 end;
 
@@ -433,7 +433,7 @@ begin
     flags:=2;
     dbWrite(mbase,'halteflags',flags);
     end;
-  if left(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
+  if LeftStr(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=Mid(hd.empfaenger,9);
   ReadEmpflist:=false; ReadHeadDisk:=0;
   ReadKopList:=false;
@@ -817,17 +817,17 @@ var xch   : boolean;
 begin
   cnt:=0;
   Cut_QPC_DES(betr);
-  p:=pos('(war:',LowerCase(betr)); if p>0 then betr:=left(betr,p-1);
-  p:=pos('(was:',LowerCase(betr)); if p>0 then betr:=left(betr,p-1);
+  p:=pos('(war:',LowerCase(betr)); if p>0 then betr:=LeftStr(betr,p-1);
+  p:=pos('(was:',LowerCase(betr)); if p>0 then betr:=LeftStr(betr,p-1);
   repeat
     xch:=false;
     betr:=trim(betr);
     for i:=1 to ReAnz do
-      if UpperCase(left(betr,length(retyp[i])))=retyp[i] then begin
+      if UpperCase(LeftStr(betr,length(retyp[i])))=retyp[i] then begin
         inc(cnt); betr:=trim(copy(betr,length(retyp[i])+1,BetreffLen));
         xch:=true;
         end;
-    if UpperCase(left(betr,3))='RE^' then begin
+    if UpperCase(LeftStr(betr,3))='RE^' then begin
       p:=4;
       while (p<=length(betr)) and (betr[p]>='0') and (betr[p]<='9') do
         inc(p);
@@ -844,8 +844,8 @@ procedure ReplyText(var betr:string; rehochn:boolean);
 var cnt : integer;
 begin
   cnt:=ReCount(betr);
-  if (cnt=0) or (cnt>99) or not rehochn then betr:=left('Re: '+betr,betrefflen)
-  else betr:=left('Re^'+strs(cnt+1)+': '+betr,betrefflen);
+  if (cnt=0) or (cnt>99) or not rehochn then betr:=LeftStr('Re: '+betr,betrefflen)
+  else betr:=LeftStr('Re^'+strs(cnt+1)+': '+betr,betrefflen);
 end;
 
 
@@ -864,7 +864,7 @@ begin
 end;
 
 
-{ EQ-betreff = left(betreff)='*crypted*' and hexval(right(betreff))=orgGroesse }
+{ EQ-betreff = LeftStr(betreff)='*crypted*' and hexval(RightStr(betreff))=orgGroesse }
 {        oder  (betr = dbreadStr(mbase,betreff)) oder                         }
 
 function EQ_betreff(var betr:string):boolean;
@@ -874,11 +874,11 @@ var pmcrypted : boolean;
 begin
   Betreff := dbReadNStr(mbase,mb_betreff);
   betreff:=trimright(betreff);
-  b2:=trimright(left(betr,40));
-  pmcrypted:=(left(betr,length(PMC_ID))=PMC_ID);
-  EQ_betreff:=(pmcrypted and (hexval(right(betr,6))=dbReadInt(mbase,'groesse'))) or
-              (b2=betreff) or (b2=left(QPC_ID+betreff,40)) or
-              (b2=left(DES_ID+betreff,40));
+  b2:=trimright(LeftStr(betr,40));
+  pmcrypted:=(LeftStr(betr,length(PMC_ID))=PMC_ID);
+  EQ_betreff:=(pmcrypted and (hexval(RightStr(betr,6))=dbReadInt(mbase,'groesse'))) or
+              (b2=betreff) or (b2=LeftStr(QPC_ID+betreff,40)) or
+              (b2=LeftStr(DES_ID+betreff,40));
 end;
 
 
@@ -974,7 +974,7 @@ end;
 
 procedure brettslash(var s:string);
 begin
-  if left(s,1)<>'/' then s:='/'+s;
+  if LeftStr(s,1)<>'/' then s:='/'+s;
 end;
 
 
@@ -989,7 +989,7 @@ end;
 function QuoteSchab(pm:boolean):string;
 begin
   if pm then
-    if left(dbReadStr(mbase,'brett'),1)='A' then
+    if LeftStr(dbReadStr(mbase,'brett'),1)='A' then
       QuoteSchab:=QuotePriv
     else
       QuoteSchab:=QuotePMpriv
@@ -1000,7 +1000,7 @@ end;
 
 function vert_name(s:string):string;
 begin
-  if left(s,1)<>vert_char then
+  if LeftStr(s,1)<>vert_char then
     vert_name:=s
   else begin
     if cpos('@',s)>0 then truncstr(s,cpos('@',s)-1);
@@ -1010,7 +1010,7 @@ end;
 
 function vert_long(s:string):string;
 begin
-  if (left(s,1)='[') and (right(s,1)=']') then
+  if (LeftStr(s,1)='[') and (RightStr(s,1)=']') then
     vert_long:=vert_char+s+'@V'
   else
     vert_long:=s;
@@ -1028,7 +1028,7 @@ begin
     adr:=mid(adr,p+1);
     p:=cpos('.',adr);
     if p=0 then systemname:=adr
-    else systemname:=left(adr,p-1);
+    else systemname:=LeftStr(adr,p-1);
     end;
 end;
 
@@ -1042,7 +1042,7 @@ begin
           (pfad[p]<>';') and   { ";" wg. ProNet }
           (pfad[p]<>'@') do    { "@" wg. FidoNet-Domains }
       inc(p);
-    pfadbox:=trim(left(pfad,p-1));
+    pfadbox:=trim(LeftStr(pfad,p-1));
     end
   else begin
     p:=length(pfad);
@@ -1084,7 +1084,7 @@ function brettok(trenn:boolean):boolean;   { s. auch XP4D.INC.Write_Disp_Line }
 begin
   if dbEOF(bbase) or dbBOF(bbase) then
     brettok:=false
-  else if trennall and trenn and (left(dbReadStr(bbase,'brettname'),3)='$/T') then
+  else if trennall and trenn and (LeftStr(dbReadStr(bbase,'brettname'),3)='$/T') then
     brettok:=true
   else
     case readmode of
@@ -1103,7 +1103,7 @@ begin
   with frec do begin
     p1:=cpos('@',adr);
     if p1>0 then begin
-      username:=trim(left(adr,p1-1));
+      username:=trim(LeftStr(adr,p1-1));
       delete(adr,1,p1);
       end;
     adr:=trim(adr);
@@ -1116,7 +1116,7 @@ begin
       net:=DefaultNet;
       if p3>0 then begin
         if p3>1 then
-          node:=ival(left(adr,p3-1))
+          node:=ival(LeftStr(adr,p3-1))
         else
           node:=DefaultNode;
         point:=minmax(ival(mid(adr,p3+1)),0,65535);
@@ -1130,7 +1130,7 @@ begin
         if p1=0 then
           zone:=DefaultZone
         else
-          zone:=minmax(ival(left(adr,p1-1)),0,65535);
+          zone:=minmax(ival(LeftStr(adr,p1-1)),0,65535);
         net:=minmax(ival(copy(adr,p1+1,p2-p1-1)),0,65535);
         ispoint:=(p3>0);
         if ispoint then begin
@@ -1157,7 +1157,7 @@ begin
   p:=cpos(':',adr);
   if p=0 then p:=pos('/',adr);
   if p=0 then p:=pos('.',adr);
-  IsNodeAddress := ((p>0) and (ival(left(adr,p-1))>0)) or
+  IsNodeAddress := ((p>0) and (ival(LeftStr(adr,p-1))>0)) or
                    (ival(adr)>0) or (adr=',') or
                    ((p=1) and (ival(mid(adr,p+1))>0));
 end;
@@ -1206,7 +1206,7 @@ end;
 
 function compmimetyp(typ:string):string;
 begin
-  if left(typ,12)='application/' then
+  if LeftStr(typ,12)='application/' then
     compmimetyp:=LowerCase(mid(typ,12))
   else
     compmimetyp:=LowerCase(typ);
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.45  2000/10/17 10:05:49  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.44  2000/08/20 10:43:46  mk
   - Clearheader war nicht noetig, entfernt
 

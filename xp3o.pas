@@ -143,8 +143,8 @@ procedure auto_empfsel(var cr:CustomRec);        { Abfrage Brett/User dann Auswa
 var user : boolean;
 begin
   with cr do begin
-    user:=multipos('@',s) or (left(s,1)='[');
-    if not user and (left(s,1)<>'/') then begin
+    user:=multipos('@',s) or (LeftStr(s,1)='[');
+    if not user and (LeftStr(s,1)<>'/') then begin
       user:=(ReadIt(length(getres2(2721,2))+8,getres2(2721,1),getres2(2721,2),auto_empfsel_default,brk)=2);
       freeres;                        { 'Empf„nger:' / ' ^Brett , ^User ' }
       end
@@ -280,7 +280,7 @@ var _mBrett : string[5];
     d1,d2   : longint;
     mi      : word;
 begin
-  if left(_brett,1)='U' then exit;
+  if LeftStr(_brett,1)='U' then exit;
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miBrett);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -317,7 +317,7 @@ var _mBrett : string[5];
     flags   : byte;
     bug,mug : boolean;
 begin
-  if left(_brett,1)='U' then exit;
+  if LeftStr(_brett,1)='U' then exit;
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miGelesen);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -389,7 +389,7 @@ begin
   closebox;
   if not brk then begin
     newempf:=newbrett;
-    if left(dbReadStr(bbase,'brettname'),1)='1' then begin
+    if LeftStr(dbReadStr(bbase,'brettname'),1)='1' then begin
       delfirst(newempf);
       if pos('/',newempf)>0 then   { Boxname im PM-Brett }
         newempf[pos('/',newempf)]:='@'
@@ -492,7 +492,7 @@ begin
   dialog(58,5,getres2(323,1),x,y);  { 'Nachrichten in anderes Userbrett verlagern' }
   newuser:='';
   maddtext(3,2,getres2(323,2),0);   { 'von User' }
-  maddtext(16,2,left(dbReadStr(ubase,'username'),41),col.coldiahigh);
+  maddtext(16,2,LeftStr(dbReadStr(ubase,'username'),41),col.coldiahigh);
   maddstring(3,4,getres2(323,3),newuser,40,eAdrLen,'');  { 'nach User  ' }
   mhnr(72);
   mappcustomsel(seluser,false);
@@ -611,7 +611,7 @@ begin
       ReadHeader(hdp^,hds,true);
       if (hdp^.datei='') or (hds=-1) then begin
         Betreff := dbReadStr(mbase,'Betreff');
-        if left(betreff,length(EmpfBKennung))=EmpfBkennung then
+        if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         if recount(betreff)>0 then;  { entfernt Re^n }
         if pos(' ',betreff)=0 then fname:=betreff
@@ -848,7 +848,7 @@ begin
                        msgtyp,'  ',
                        fdat(longdat(dbReadInt(mbase,'origdatum'))),'  ',
                        forms(dbReadStr(mbase,'absender'),25),' ',
-                       left(dbReadStr(mbase,'betreff'),25));
+                       LeftStr(dbReadStr(mbase,'betreff'),25));
 
         8 : if checklst then begin
               if n>1 then
@@ -928,7 +928,7 @@ begin
     hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     with hdp^ do
-      if right(name,1)<>'@' then
+      if RightStr(name,1)<>'@' then
         empfaenger:=name
       else                               { PM-Brett }
         empfaenger:=name+mid(empfaenger,cpos('@',empfaenger)+1);
@@ -1026,7 +1026,7 @@ begin
       while (p>1) and (s[p]<>'!') do dec(p);
       if p=1 then p:=78-tl;
       end;
-    writeln(t,st,left(s,p));
+    writeln(t,st,LeftStr(s,p));
     st:=sp(tl);
     delete(s,1,p);
   until s='';
@@ -1045,11 +1045,11 @@ begin
   close(t);
   leer:='';
   betr:=hdp^.betreff;
-  if left(betr,length(empfbkennung))=empfbkennung then
+  if LeftStr(betr,length(empfbkennung))=empfbkennung then
     delete(betr,1,length(empfbkennung));
   if IS_QPC(betr) then delete(betr,1,length(QPC_ID));
   if IS_DES(betr) then delete(betr,1,length(DES_ID));
-  if left(betr,length(empfbkennung))=empfbkennung then
+  if LeftStr(betr,length(empfbkennung))=empfbkennung then
     delete(betr,1,length(empfbkennung));
   forcebox:=box;
   _bezug:=hdp^.msgid;
@@ -1067,7 +1067,7 @@ begin
   FreeHeaderMem(hdp);
   if cpos('@',empf)>0 then begin
     IsEbest:=true{auto};
-    if DoSend(true,tmp,empf,left('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
+    if DoSend(true,tmp,empf,LeftStr('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
               false,false,false,false,false,nil,leer,leer,sendShow) then;
     end;
   _era(tmp);
@@ -1293,9 +1293,9 @@ begin
     begin
       readln(t,s);
       UpString(s);
-      if left(s,4)='ABS:' then abs:=true;
-      if left(s,4)='EMP:' then emp:=true;
-      if left(s,4)='EDA:' then eda:=true;
+      if LeftStr(s,4)='ABS:' then abs:=true;
+      if LeftStr(s,4)='EMP:' then emp:=true;
+      if LeftStr(s,4)='EDA:' then eda:=true;
     end;
     close(t);
     ZC_puffer := abs and emp and eda;
@@ -1361,7 +1361,7 @@ var t1,t2 : text;
     ww    : boolean;
     ts    : string[80];
 begin
-  ts:=trim(s)+'='+left(date,6)+right(date,2)+' '+left(time,5);
+  ts:=trim(s)+'='+LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5);
   assign(t1,TimingDat);
   if not existf(t1) then begin
     rewrite(t1);
@@ -1375,7 +1375,7 @@ begin
     rewrite(t2);
     while not eof(t1) do begin
       readln(t1,s1);
-      if left(s1,length(s)+1)=s+'=' then begin
+      if LeftStr(s1,length(s)+1)=s+'=' then begin
         writeln(t2,ts);
         ww:=true;
         end
@@ -1473,8 +1473,8 @@ var betr : string;
     i, rr : word;
 begin
   Betr := dbReadNStr(mbase,mb_betreff);
-  if (left(betr,length(QPC_ID))<>QPC_ID) and
-     (left(betr,length(DES_ID))<>DES_ID) then
+  if (LeftStr(betr,length(QPC_ID))<>QPC_ID) and
+     (LeftStr(betr,length(DES_ID))<>DES_ID) then
     IsBinary:=(dbReadInt(mbase,'typ')=ord('B'))
   else begin
     fn:=TempS(dbReadInt(mbase,'msgsize'));
@@ -1496,6 +1496,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/10/17 10:05:49  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.36  2000/10/15 08:50:06  mk
   - misc fixes
 

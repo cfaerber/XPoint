@@ -190,12 +190,12 @@ var x,y      : byte;
 
   function isl(s:string):boolean;
   begin
-    isl:=left(hdp^.betreff,length(s))=s;
+    isl:=LeftStr(hdp^.betreff,length(s))=s;
   end;
 
   function LeftAbsender(s:string):boolean;
   begin
-    LeftAbsender:=(left(LowerCase(hdp^.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
+    LeftAbsender:=(LeftStr(LowerCase(hdp^.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
   end;
 
   procedure bearbeiteMsg(var id,abs,sender:string; cancel:boolean);
@@ -238,8 +238,8 @@ var x,y      : byte;
   begin
     if cancel and ((pos(reverse('nolybab!'),hdp^.pfad)>0) or
                    (pos(reverse('lebabr!'),hdp^.pfad)>0)) then exit;
-    if left(id,1)='<' then delfirst(id);
-    if right(id,1)='>' then dellast(id);
+    if LeftStr(id,1)='<' then delfirst(id);
+    if RightStr(id,1)='>' then dellast(id);
     if cpos('@',id)=0 then exit;
     crc:=MsgidIndex(id);
     hdp2 := AllocHeaderMem;
@@ -305,7 +305,7 @@ var x,y      : byte;
   begin
     with hdp^ do
       IsCancelMsg:=(attrib and attrControl<>0) and
-                   (LowerCase(left(control,7))='cancel ');
+                   (LowerCase(LeftStr(control,7))='cancel ');
   end;
 
   function isSupersedesMsg:boolean;
@@ -340,7 +340,7 @@ var x,y      : byte;
       IsSupportCfg:=
         (ntXPctl(netztyp) and NameOk and XPctlOk) or
         ((netztyp=nt_Maus) and (absender=inout.pm+'@LU') and
-         (left(betreff,11)=SupportCfg));
+         (LeftStr(betreff,11)=SupportCfg));
   end;
 
   procedure TestControlMessage;
@@ -350,26 +350,26 @@ var x,y      : byte;
     automessaging:=true;
     with hdp^ do begin
       if aufnehmen and
-        ( ((left(UpperCase(betreff),7)='BRETTER') or
+        ( ((LeftStr(UpperCase(betreff),7)='BRETTER') or
            (pos('your list',LowerCase(betreff))>0))
          and
-         stricmp(left(absender,length(mapsname)),mapsname) and
+         stricmp(LeftStr(absender,length(mapsname)),mapsname) and
          (empfaenger[1]='1') )
       or
-         ((left(absender,7)='SYSTEM@') and
-          ((left(UpperCase(betreff),11)='NETZBRETTER') or  { QuickMail }
+         ((LeftStr(absender,7)='SYSTEM@') and
+          ((LeftStr(UpperCase(betreff),11)='NETZBRETTER') or  { QuickMail }
            (UpperCase(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
            (pos('BRETTLISTE',UpperCase(betreff))>0)))      { ZQWK }
           then begin
         MapsReadList;
         end;
 
-      if (left(UpperCase(betreff),6)='FILES.') and (cpos('@',absender)>0) and
+      if (LeftStr(UpperCase(betreff),6)='FILES.') and (cpos('@',absender)>0) and
          (typ='T') then
       begin
         box:=copy(absender,cpos('@',absender)+1,20);
         if cpos('.',box)>0 then begin
-          box:=left(box,cpos('.',box)-1);
+          box:=LeftStr(box,cpos('.',box)-1);
           if IsServer(box,fstype) and (fstype<>3) then begin
             FS_Readlist(true);
             end;
@@ -428,7 +428,7 @@ var x,y      : byte;
 
   function logstr(s:string):string;
   begin
-    logstr:=left(date,6)+right(date,2)+' '+left(time,5)+' '+s;
+    logstr:=LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5)+' '+s;
   end;
 
   procedure pmCryptDecode;
@@ -774,7 +774,7 @@ begin
           tobrett:=archive or (copy(empfaenger,1,TO_len)=TO_ID);
           atp:=pos('@',empfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
-            if (left(empfaenger,1)<>'/') and (cpos('@',empfaenger)=0) then
+            if (LeftStr(empfaenger,1)<>'/') and (cpos('@',empfaenger)=0) then
               empfaenger:=empfaenger+'@'+pollbox+'.ZER';
             if cpos('@',empfaenger)>0 then
               if tobrett then
@@ -799,15 +799,15 @@ begin
               if empfaenger[2]='¯' then
                 empfaenger:='$'+empfaenger
               else
-                if (atp=0) and (left(empfaenger,1)='/') then
+                if (atp=0) and (LeftStr(empfaenger,1)='/') then
                   empfaenger:='A'+empfaenger
                 else begin
                   if atp=0 then empfaenger:='1/'+empfaenger
                   else
                     if UserBoxname then
-                      empfaenger:='1/'+left(empfaenger,atp-1)+'/'+mid(empfaenger,atp+1)
+                      empfaenger:='1/'+LeftStr(empfaenger,atp-1)+'/'+mid(empfaenger,atp+1)
                     else
-                      empfaenger:='1/'+left(empfaenger,atp-1);
+                      empfaenger:='1/'+LeftStr(empfaenger,atp-1);
                   pm:=true;
                   end;
 
@@ -839,21 +839,21 @@ begin
               dbReadN(ubase,ub_userflags,uflags);
               aufnehmen:=odd(uflags);
               end;
-          if left(empfaenger,1)<>'U' then begin
+          if LeftStr(empfaenger,1)<>'U' then begin
             dbSeek(bbase,biBrett,UpperCase(empfaenger));
             if not dbFound then begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
 
-                if left(empfaenger,1)<>'A' then grnr:=IntGruppe
+                if LeftStr(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
                   p0:=posn('/',seekbr,3);
                   if p0>0 then begin
-                    seekbr:=left(seekbr,p0-1);
+                    seekbr:=LeftStr(seekbr,p0-1);
                     if dbEOF(bbase) or
-                       (left(dbReadStr(bbase,'brettname'),length(seekbr))<>seekbr) then
+                       (LeftStr(dbReadStr(bbase,'brettname'),length(seekbr))<>seekbr) then
                       dbSeek(bbase,biBrett,UpperCase(seekbr));
                     end;
                   if dbEOF(bbase) then dbGoEnd(bbase);
@@ -861,7 +861,7 @@ begin
                   else dbReadN(bbase,bb_gruppe,grnr);
                   if grnr=IntGruppe then grnr:=NetzGruppe;
                   end;
-                if left(empfaenger,1)='1' then
+                if LeftStr(empfaenger,1)='1' then
                   haltezeit:=0
                 else begin
                   dbOpen(d,GruppenFile,1);
@@ -891,13 +891,13 @@ begin
               _brett:=mbrettd(empfaenger[1],bbase);
             end;
           { hier kein adrok: TO-User werden immer aufgenommen! }
-          if left(empfaenger,1)='U' then begin
+          if LeftStr(empfaenger,1)='U' then begin
             dbSeek(ubase,uiName,UpperCase(copy(empfaenger,2,80))); {Adreábuch-Eintrag}
             if not dbFound then begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
-              if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
+              if cpos('@',name)=0 then name:=LeftStr(name+'@'+pb+'.ZER',79);
               dbWriteNStr(ubase,ub_username,name);
               dbWriteNStr(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
@@ -917,12 +917,12 @@ begin
             end;
 
           IsGelesen:=ParGelesen or sendbuf or
-                     ((netztyp=nt_Maus) and (left(pm_bstat,1)='G')) or
+                     ((netztyp=nt_Maus) and (LeftStr(pm_bstat,1)='G')) or
                      (filterattr and fattrGelesen<>0) or
                      (pflags and pe_gelesen<>0);
 
           if aufnehmen then begin
-            if left(empfaenger,1)<>'U' then begin
+            if LeftStr(empfaenger,1)<>'U' then begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
               begin
@@ -1017,7 +1017,7 @@ begin
                (pgpflags and fPGP_encoded<>0) then
               DecPGP else
             if (firstchar(empfaenger)='1') and
-               (left(betreff,length(PMC_ID))=PMC_ID) then
+               (LeftStr(betreff,length(PMC_ID))=PMC_ID) then
               pmCryptDecode;
 
             msgsent:=true;
@@ -1158,6 +1158,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/10/17 10:05:49  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.31  2000/08/23 13:55:13  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst

@@ -54,7 +54,7 @@ var brk     : boolean;
       it  : boolean;
       buf : array[0..1023] of byte;
   begin
-    dat:=left(dat,6)+right(dat,2);
+    dat:=LeftStr(dat,6)+RightStr(dat,2);
     it:=false;
     assign(t,TimingDat);
     if existf(t) then begin
@@ -64,7 +64,7 @@ var brk     : boolean;
         readln(t,s);
         UpString(s);
         p:=cpos('=',s);
-        if (p>0) and (left(s,p-1)=UpperCase(tr.action)) and (copy(s,p+1,8)=dat) and
+        if (p>0) and (LeftStr(s,p-1)=UpperCase(tr.action)) and (copy(s,p+1,8)=dat) and
            (copy(s,p+10,5)>=von) and (copy(s,p+10,5)<=bis) then
             it:=true;
         end;
@@ -85,13 +85,13 @@ var brk     : boolean;
 
     function tf(s:string):string;
     begin
-      tf:=copy(s,4,2)+left(s,2);
+      tf:=copy(s,4,2)+LeftStr(s,2);
     end;
 
   begin
     anz:=0;
     i:=0;
-    dat:=tf(date); tim:=left(time,5);
+    dat:=tf(date); tim:=LeftStr(time,5);
     lastbox:='';
     while i<e.Count do
     begin   { -1 wegen Splitting }
@@ -104,7 +104,7 @@ var brk     : boolean;
           p:=cpos(' ',s);
           if p=0 then box:=''                  { Boxname isolieren }
           else box:=trim(mid(s,p));
-          if p>0 then s:=trim(left(s,p));
+          if p>0 then s:=trim(LeftStr(s,p));
           comm:=0;
           for j:=1 to comms do                   { Befehls-Nummer ermitteln }
             if UpperCase(s)=comstr[j] then comm:=j;
@@ -120,7 +120,7 @@ var brk     : boolean;
             crashtime:=false;
             UseBox:=DefFidoBox;
             if cpos(' ',box)>0 then begin  { ZEIT-Option }
-              box:=left(box,cpos(' ',box)-1);
+              box:=LeftStr(box,cpos(' ',box)-1);
               if (pos(' ZEIT',UpperCase(action))>0) or (pos(' TIME',UpperCase(action))>0)
               then
                 crashtime:=true;
@@ -203,15 +203,15 @@ var brk     : boolean;
         fn:=TempS(1000+dbRecCount(d)*200);
         assign(t,fn);
         rewrite(t);
-        ti:=left(time,5);
+        ti:=LeftStr(time,5);
         p:=cpos(' ',all);
         while p>0 do begin
-          box:=left(all,p-1);
+          box:=LeftStr(all,p-1);
           dbSeek(d,boiName,UpperCase(box));
           if dbFound then
             writeln(t,'+ '+ti+' 23:59 01.01. 31.12. þþþþþþþ NETCALL ',box);
           delete(all,1,p);
-          while left(all,1)=' ' do delete(all,1,1);
+          while LeftStr(all,1)=' ' do delete(all,1,1);
           p:=cpos(' ',all);
           end;
         close(t);
@@ -237,7 +237,7 @@ var brk     : boolean;
     while (i< e.Count) do
       if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin { liegen crashes oder request an}
         crash:=(copy(e[i],37,6)='CRASHS');  { es sollen offene crashs erledigt werden }
-        ss:=left(e.Strings[i],36);
+        ss:=LeftStr(e.Strings[i],36);
         if i<e.Count then e.Delete(i);      { crash aus der Liste entfernen }
         assign(t,ReqDat);
         if existf(t) then begin
@@ -282,14 +282,14 @@ var brk     : boolean;
     rewrite(t);
     assign(t2,CrashTemp);
     if (tnr=0) or not existf(t2) then begin
-      writeln(t,'+ '+left(time,5)+' 23:59 01.01. 31.12. þþþþþþþ CRASHS');
-      writeln(t,'+ '+left(time,5)+' 23:59 01.01. 31.12. þþþþþþþ REQUESTS');
+      writeln(t,'+ '+LeftStr(time,5)+' 23:59 01.01. 31.12. þþþþþþþ CRASHS');
+      writeln(t,'+ '+LeftStr(time,5)+' 23:59 01.01. 31.12. þþþþþþþ REQUESTS');
       end
     else begin
       reset(t2);
       while not eof(t2) do begin
         readln(t2,s);
-        writeln(t,'+ '+left(time,5)+' 23:59 01.01. 31.12. þþþþþþþ CRASH '+s);
+        writeln(t,'+ '+LeftStr(time,5)+' 23:59 01.01. 31.12. þþþþþþþ CRASH '+s);
         end;
       close(t2);
       _era(CrashTemp);
@@ -380,7 +380,7 @@ var brk     : boolean;
   function addtime(t:datetimest; sec:word):datetimest;
   var l : longint;
   begin
-    l:=ival(left(t,2))*3600+ival(copy(t,4,2))*60+ival(right(t,2))+sec;
+    l:=ival(LeftStr(t,2))*3600+ival(copy(t,4,2))*60+ival(RightStr(t,2))+sec;
     addtime:=formi(l div 3600,2)+':'+formi((l div 60)mod 60,2)+':'+
              formi(l mod 60,2);
   end;
@@ -435,7 +435,7 @@ var brk     : boolean;
        10 : ende:=true;          { END }
        11 : if DoDiffs(FilePath+'*.*',true)=0 then;     { NODEDIFFS }
       end;
-    if ok or (tl[1]^.bis<left(time,5)) then begin
+    if ok or (tl[1]^.bis<leftStr(time,5)) then begin
       dispose(tl[1]);
       dec(anz);
       if anz>0 then Move(tl[2],tl[1],anz*4);
@@ -468,9 +468,9 @@ var brk     : boolean;
   procedure addendtime(n:shortint);
   var h,m,s : integer;
   begin
-    h:=ival(left(endtime,2));
+    h:=ival(LeftStr(endtime,2));
     m:=ival(copy(endtime,4,2));
-    s:=ival(right(endtime,2));
+    s:=ival(RightStr(endtime,2));
     inc(s,n);
     if s<0 then begin
       s:=59; dec(m);
@@ -523,17 +523,17 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
     moment;
     parse_liste;
     if anz=0 then endtime:='24:00:00'
-    else endtime:=iifs(tl[1]^.von<=left(time,5),time,tl[1]^.von+':00');
+    else endtime:=iifs(tl[1]^.von<=LeftStr(time,5),time,tl[1]^.von+':00');
     closebox;
     msgbox(60,gl+4,getres2(1016,3)+iifs(callall,'',' / #'+strs(tnr)),x,y);   { 'Netcall-Automatik' }
-    mwrt(x+48,y,' '+left(ldate,6)+right(ldate,2)+' ');
+    mwrt(x+48,y,' '+LeftStr(ldate,6)+RightStr(ldate,2)+' ');
     anzeige:=true;
     initscs;
-    lsec:=right(time,2);
+    lsec:=RightStr(time,2);
 
     repeat                              { Die Groáe Schleife, Warten auf das n„chste Ereignis }
-      if right(time,2)<>lsec then begin { eine neue Sekunde angebrochen }
-        lsec:=right(time,2);            { lsec erneuern }
+      if RightStr(time,2)<>lsec then begin { eine neue Sekunde angebrochen }
+        lsec:=RightStr(time,2);            { lsec erneuern }
         dec(scsavecnt);                 { SreenSaveCounter }
         if scsavecnt=0 then begin
           if timediff(endtime,time)>10 then begin     { ist die Zeit bis zum n„hsten Ereignis > 10 sec }
@@ -600,9 +600,9 @@ begin
     s:=''; anz:=0;
     while not eof(t) do begin
       readln(t,s2);
-      if (left(s2,1)='!') and (s<>'') then
+      if (LeftStr(s2,1)='!') and (s<>'') then
         s:=forms(s,13)+mid(s2,2);
-      if (s2<>'') and (left(s2,1)<>'!') then begin
+      if (s2<>'') and (LeftStr(s2,1)<>'!') then begin
         if s<>'' then begin
           app_l(' '+s); s:=''; inc(anz);
           end;
@@ -610,7 +610,7 @@ begin
           case s2[1] of
             '^' : s:='<Ctrl '+trim(copy(s2,2,10))+'>';
             '_' : s:=trim(copy(s2,2,10));
-            else  s:=trim(left(s2,13));
+            else  s:=trim(LeftStr(s2,13));
           end;
         end;
       end;
@@ -631,7 +631,7 @@ begin
       closebox;
       if not brk then begin
         settap(ta);
-        keyboard(getmacro(trim(left(get_selection,12)),ta));
+        keyboard(getmacro(trim(LeftStr(get_selection,12)),ta));
         dispose(ta);
         end;
       end;
@@ -643,6 +643,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/10/17 10:05:45  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.12  2000/08/15 17:22:40  mk
   - Bereitschaft funktionsfaehig, Kommentare hinzugefuegt
 

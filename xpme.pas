@@ -132,7 +132,7 @@ begin
       readln(t,s);
       p:=cpos('=',s);
       if (s[1]<>'#') and (p>0) then
-        if LowerCase(left(s,p-1))='auswahlcursor' then
+        if LowerCase(LeftStr(s,p-1))='auswahlcursor' then
           hcursor:=(UpperCase(mid(s,p+1))='J');
     until eof(t);
     close(t);
@@ -326,8 +326,8 @@ begin
       inc(n);
       with ma^[n] do begin
         s:=Mid(s,p+1);
-        if left(s,2)<>'-,' then begin
-          mpnr:=hexval(left(s,3));
+        if LeftStr(s,2)<>'-,' then begin
+          mpnr:=hexval(LeftStr(s,3));
           delete(s,1,3);
           end
         else
@@ -350,7 +350,7 @@ begin
           hpos:=0;
         p2:=p3;
         if p2=0 then mstr:=s
-        else mstr:=left(s,p2-1);
+        else mstr:=LeftStr(s,p2-1);
         if hpos>0 then hkey:=UpCase(mstr[hpos])
         else hkey:=#255;
         if pos('ù',mstr)>0 then begin
@@ -384,7 +384,7 @@ begin
         s:=mstr;
         wrt2(' ');
         if hpos>1 then
-          Wrt2(left(s,hpos-1));
+          Wrt2(LeftStr(s,hpos-1));
         if i=nr then attrtxt(col.colmenuinvhi[0])
         else attrtxt(col.colmenuhigh[0]);
         wrt2(s[hpos]);
@@ -447,7 +447,7 @@ var ma    : map;
         else if not ma^[i].enabled then
           wrt(x+1,y+i,' '+forms(s,ml-1))
         else begin
-          wrt(x+1,y+i,check+left(s,hp-1));
+          wrt(x+1,y+i,check+LeftStr(s,hp-1));
           if i<>p then attrtxt(col.colmenuhigh[menulevel])
           else attrtxt(col.colmenuinvhi[menulevel]);
           wrt2(s[hp]);
@@ -750,6 +750,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.26  2000/09/09 15:41:28  hd
   - Fix: GetScreen* -> SysGetScreen*
 

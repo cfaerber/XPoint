@@ -53,21 +53,21 @@ begin
   while not eof(t) do begin
     readln(t,s);
     UpString(s);
-    if (left(s,18)='NODELIST=NODELIST.') and exist(FidoDir+mid(s,10))
+    if (LeftStr(s,18)='NODELIST=NODELIST.') and exist(FidoDir+mid(s,10))
     then
     begin
       New(Item); NodeList.Add(Item);
       with Item^ do
       begin
         listfile:='NODELIST.###';
-        number:=ival(right(s,3));
+        number:=ival(RightStr(s,3));
         updatefile:='NODEDIFF.###';
         updatearc:='NODEDIFF.A##';
         DoDiff:=true;
         format:=1;
         end;
       end
-    else if (left(s,10)='POINTLIST=') and exist(FidoDir+mid(s,11)) then begin
+    else if (LeftStr(s,10)='POINTLIST=') and exist(FidoDir+mid(s,11)) then begin
       p:=cpos('.',s);
       if p>0 then
       begin
@@ -75,7 +75,7 @@ begin
         with Item^ do
         begin
           listfile:=copy(s,11,p-10)+'###';
-          number:=ival(right(s,3));
+          number:=ival(RightStr(s,3));
           if (pointlistn<>'') and (pointdiffn<>'') then begin
             updatefile:=Pointdiffn+'.###';
             updatearc:=Pointdiffn+'.A##';
@@ -89,28 +89,28 @@ begin
         end;
       end
     else
-    if (left(s,9)='USERLIST=') then
+    if (LeftStr(s,9)='USERLIST=') then
     begin
       s:=trim(mid(s,10));
       p:=cpos(',',s);
-      if (p>0) and exist(FidoDir+left(s,p-1)) then
+      if (p>0) and exist(FidoDir+LeftStr(s,p-1)) then
       begin
         New(Item); NodeList.Add(Item);
         with Item^ do
         begin
-          listfile:=left(s,p-1);
+          listfile:=LeftStr(s,p-1);
           s:=trim(mid(s,p+1));
           p:=cpos('.',listfile);
           if (p>0) and (length(listfile)-p=3) and isnum(mid(listfile,p+1))
           then begin
             number:=ival(mid(listfile,p+1));
-            listfile:=left(listfile,p)+'###';
+            listfile:=LeftStr(listfile,p)+'###';
             end;
           p:=cpos(',',s);
           zone:=DefaultZone;
           if p=0 then format:=ival(s)
           else begin
-            format:=ival(left(s,p-1));
+            format:=ival(LeftStr(s,p-1));
             if format in [2,4] then      { Points24 / 4D-Pointlist }
               zone:=ival(mid(s,p+1))
             else begin
@@ -180,7 +180,7 @@ begin
       if p=0 then
         NLfilename:=listfile
       else
-        NLfilename:=left(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
+        NLfilename:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
     end;
 end;
 
@@ -204,7 +204,7 @@ begin
           readln(t,s);
           p:=cpos('=',s);
           if p>0 then begin
-            ss:=LowerCase(left(s,p-1));
+            ss:=LowerCase(LeftStr(s,p-1));
             s:=mid(s,p+1);
             if ss='listfile'       then listfile:=s else
             if ss='number'         then number:=minmax(ival(s),0,999) else
@@ -393,9 +393,9 @@ var fn      : string;
       n:=0;
       while (format=1) and (n<200) and not eof(t) do begin
         readln(t,s);
-        if left(s,5)='Boss,' then
+        if LeftStr(s,5)='Boss,' then
           format:=nlFDpointlist
-        else if left(s,6)='Point,' then begin
+        else if LeftStr(s,6)='Point,' then begin
           format:=nl4Dpointlist;
           NLItem.zone:=DefaultZone;
           end;
@@ -441,7 +441,7 @@ begin
           p:=cpos('.',listfile);
           if (p>0) and isnum(mid(listfile,p+1)) then begin
             number:=ival(mid(listfile,p+1));
-            listfile:=left(listfile,p)+'###';
+            listfile:=LeftStr(listfile,p)+'###';
             DoDiff:=true;
             end;
           format:=1;   { Nodelist }
@@ -509,11 +509,11 @@ var p : byte;
 begin
   p:=pos('###',fn);
   if p>0 then
-    ReplNr:=left(fn,p-1)+formi(number,3)+mid(fn,p+3)
+    ReplNr:=LeftStr(fn,p-1)+formi(number,3)+mid(fn,p+3)
   else begin
     p:=pos('##',fn);
     if p>0 then
-      ReplNr:=left(fn,p-1)+formi(number mod 100,2)+mid(fn,p+2)
+      ReplNr:=LeftStr(fn,p-1)+formi(number mod 100,2)+mid(fn,p+2)
     else
       ReplNr:=fn;
     end;
@@ -558,12 +558,12 @@ var diffdir  : string;
       writeln(logfile);
       logopen:=true;
       end;
-    writeln(logfile,left(date,6),right(date,2),' ',time,'  ',txt);
+    writeln(logfile,LeftStr(date,6),RightStr(date,2),' ',time,'  ',txt);
   end;
 
   function NextNumber(number:integer):integer;
   begin
-    NextNumber:=(number+6) mod iif(schaltj(ival(right(date,4))-1),366,365) + 1;
+    NextNumber:=(number+6) mod iif(schaltj(ival(RightStr(date,4))-1),366,365) + 1;
   end;
 
   procedure ExpandFilePath(var s:string);
@@ -587,7 +587,7 @@ var diffdir  : string;
   begin
     p:=pos('$FILE',UpperCase(processor));
     if p>0 then
-      processor:=left(processor,p-1)+ufile+mid(processor,p+5);
+      processor:=LeftStr(processor,p-1)+ufile+mid(processor,p+5);
     log(processor);
     shell(processor,600,1);
   end;
@@ -738,6 +738,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/10/17 10:05:58  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.18  2000/08/19 09:41:36  mk
   - Code aufgeraeumt
 

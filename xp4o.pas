@@ -103,7 +103,7 @@ var i : integer;
 begin
   if (length(s)=1) and (lastkey<>keybs) then begin
     for i:=4 downto 0 do
-      if upcase(s[1])=UpperCase(left(getres2(442,i),1)) then
+      if upcase(s[1])=UpperCase(LeftStr(getres2(442,i),1)) then
         s:=getres2(442,i);
     freeres;
     if length(s)>1 then _keyboard(keyend);
@@ -214,7 +214,7 @@ label ende;
     begin
       wrt(x+1,y+6+n,'String'); write(n); write(': ');
       write(seekstart[n]:2); write(','); write(seeklen[n]:2);
-      write(iifs(seeknot[n],' NOT ','     ')+chr($af)+left(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
+      write(iifs(seeknot[n],' NOT ','     ')+chr($af)+LeftStr(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
       end;
     wrt(x+1,y+17,'Length(sst)='); write(length(sst)); write('  i='); write(i);
     if spez then with srec^do
@@ -414,7 +414,7 @@ label ende;
     begin
       j:=0;
       repeat
-        seek:=left(mid(sst,seekstart[j]),seeklen[j]);
+        seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);
         found:=Intext(seek);
         found_not:=found and seeknot[j];
         if suchand and not found and seeknot[j] then found:=true;
@@ -495,7 +495,7 @@ label ende;
 
       j:=0;
       repeat
-        seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
+        seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
         found:=((igcase and (pos(seek,UpperCase(such))>0)) or
          (not igcase and (pos(seek,such)>0)));
         found_not:=found and seeknot[j];
@@ -516,7 +516,7 @@ label ende;
 
         j:=0;
         repeat
-          seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
+          seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
           found:=((igcase and (pos(seek,UpperCase(such))>0)) or
            (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
@@ -558,7 +558,7 @@ label ende;
   begin
     p:=cpos('@',s);
     if p=0 then userform:=s
-    else userform:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+    else userform:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
   end;
 
 
@@ -930,7 +930,7 @@ begin
     betr2:=trim(betr2);
     UkonvStr(betr2,Length(betr2));
     ll:=min(length(betr),length(betr2));
-    if (ll>0) and (UpperCase(left(betr,ll))=UpperCase(left(betr2,ll))) then
+    if (ll>0) and (UpperCase(LeftStr(betr,ll))=UpperCase(LeftStr(betr2,ll))) then
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
@@ -1422,12 +1422,12 @@ begin
   new(hdp);
   while doserror=0 do begin
     if crashs then begin
-      box:=strs(hexval(left(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
+      box:=strs(hexval(LeftStr(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
       { ^^^ nur fÅr Anzeige bei fehlerhaftem CP }
       zconnect:=true;
       end
     else begin
-      box:=file_box(nil,left(sr.name,pos('.',sr.name)-1));
+      box:=file_box(nil,LeftStr(sr.name,pos('.',sr.name)-1));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     dbSetIndex(mbase,miBrett);
@@ -1444,7 +1444,7 @@ begin
       else with hdp^ do begin
         _brett:='';
         if (cpos('@',empfaenger)=0) and
-           ((netztyp<>nt_Netcall) or (left(empfaenger,1)='/'))
+           ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
         then begin
           dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
           if not dbFound then fehlt
@@ -1528,7 +1528,7 @@ var hdp   : headerp;
   procedure apps(nr:word; s:string);
   begin
     inc(anz);
-    xxs[anz]:=getres2(459,nr)+' '+left(s,53);
+    xxs[anz]:=getres2(459,nr)+' '+LeftStr(s,53);
   end;
 
   function ddat:string;
@@ -1537,7 +1537,7 @@ var hdp   : headerp;
       if ddatum='' then
         ddat:=''
       else
-        ddat:=', '+copy(ddatum,7,2)+'.'+copy(ddatum,5,2)+'.'+left(ddatum,4)+
+        ddat:=', '+copy(ddatum,7,2)+'.'+copy(ddatum,5,2)+'.'+LeftStr(ddatum,4)+
               ', '+copy(ddatum,9,2)+':'+copy(ddatum,11,2)+':'+copy(ddatum,13,2);
   end;
 
@@ -1559,7 +1559,7 @@ var hdp   : headerp;
       for j:=1 to i do begin
         ReadHeadEmpf:=j;
         ReadHeader(hdp^,hds,false);
-        mwrt(x+3,y+1+j,left(empfaenger,72));
+        mwrt(x+3,y+1+j,LeftStr(empfaenger,72));
         end;
       wait(curoff);
       if rlist and (UpperCase(lastkey)='R') then keyboard('R');
@@ -1574,7 +1574,7 @@ var hdp   : headerp;
       p   : refnodep;
     procedure writeref(p:refnodep);
     begin
-      wrt(x+3,j,left(p^.ref,72));
+      wrt(x+3,j,LeftStr(p^.ref,72));
       inc(j);
     end;
     procedure showrefs(list:refnodep);
@@ -1598,7 +1598,7 @@ var hdp   : headerp;
       msgbox(ml,i+4,getres2(459,31),x,y);   { 'EmpfÑngerliste' }
       j:=y+2;
       showrefs(reflist);
-      wrt(x+3,y+i+1,left(ref,72));
+      wrt(x+3,y+i+1,LeftStr(ref,72));
       wait(curoff);
       if elist and (UpperCase(lastkey)='E') then keyboard('E');
       closebox;
@@ -1625,17 +1625,17 @@ begin
     apps(3,empfaenger);
     if fido_to<>'' then apps(4,fido_to);
     apps(5,betreff);
-    apps(6,left(absender,53));
+    apps(6,LeftStr(absender,53));
     if realname<>'' then apps(7,realname);
-    if organisation<>'' then apps(8,left(organisation,53));
-    if PmReplyTo<>'' then apps(9,left(PmReplyTo,53));
+    if organisation<>'' then apps(8,LeftStr(organisation,53));
+    if PmReplyTo<>'' then apps(9,LeftStr(PmReplyTo,53));
     apps(10,iifs(ntZDatum(netztyp),zdatum,datum)+
          iifs(datum<>'','  ('+fdat(datum)+', '+ftime(datum)+
          iifs(ntSec(netztyp),':'+copy(zdatum,13,2),'')+')',''));
-    apps(11,left(pfad,53));
+    apps(11,LeftStr(pfad,53));
     repeat
       pfad:=mid(pfad,54);
-      if pfad<>'' then apps(12,left(pfad,53));
+      if pfad<>'' then apps(12,LeftStr(pfad,53));
     until pfad='';
     if msgid<>''    then apps(13,msgid);
     if ref<>''      then apps(14,ref);
@@ -1664,11 +1664,11 @@ begin
                     getres2(459,iif(ntZConnect(netztyp),24,25))+netz+')',x,y);
     moff;
     for i:=1 to anz do begin
-      if left(xxs[i],1)=' ' then p:=0
+      if LeftStr(xxs[i],1)=' ' then p:=0
       else p:=cpos(':',xxs[i]);
       if p>0 then begin
         attrtxt(col.colmboxhigh);
-        wrt(x+3,y+i+1,left(xxs[i],p));
+        wrt(x+3,y+i+1,LeftStr(xxs[i],p));
         end;
       attrtxt(col.colmbox);
       wrt(x+3+p,y+i+1,mid(xxs[i],p+1));
@@ -1851,7 +1851,7 @@ begin
     enddialog;
     if brk then exit;
     UpString(dp);
-    if (dp<>'') and (right(dp,1)<>':') and (right(dp,1)<>'\') then
+    if (dp<>'') and (RightStr(dp,1)<>':') and (RightStr(dp,1)<>'\') then
       dp:=dp+'\';
     if not validfilename(dp+'test.$$1') then
       rfehler(433)   { 'ungÅltiges Verzeichnis' }
@@ -2014,7 +2014,7 @@ var d     : DB;
       dbSeek(bbase,biIntnr,copy(_brett,2,4));
       if dbFound then write(log,forms(copy(dbReadStr(bbase,'brettname'),2,40),32));
       end;
-    writeln(log,' ',left(dbReadStr(d,'betreff'),37));
+    writeln(log,' ',LeftStr(dbReadStr(d,'betreff'),37));
   end;
 
 begin
@@ -2245,7 +2245,7 @@ begin
   if not TestNodelist or not TestDefbox then exit;
   s := FMsgReqnode;
   p := cpos('.',s);
-  if (p>0) then node:=left(s,p-1)
+  if (p>0) then node:=LeftStr(s,p-1)
     else node:=s;
   files := '';
   u := ''; t := '';
@@ -2413,7 +2413,7 @@ begin
       _brett := dbReadStr(mbase,'Brett');
       DelBezug;
       dbDelete(mbase);
-      if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
+      if LeftStr(_brett,1)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
       setbrettgelesen(_brett);
@@ -2424,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/10/17 10:05:51  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.69  2000/09/28 03:30:48  mk
   - AnsiString-Fixes
 

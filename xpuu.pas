@@ -105,8 +105,8 @@ begin
       readln(t,s0);
       s:=trim(s0);
       p:=cpos('=',s);
-      if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then begin
-        id:=LowerCase(trim(left(s,p-1)));
+      if (s<>'') and (LeftStr(s,1)<>';') and (LeftStr(s,1)<>'#') then begin
+        id:=LowerCase(trim(LeftStr(s,p-1)));
         s:=trim(mid(s,p+1));
         if id='result'      then uucico:=ival(s) else
         if id='stopdialing' then ende:=(UpperCase(s)<>'N') else
@@ -123,6 +123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/10/17 10:06:01  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.10  2000/07/12 13:15:02  hd
   - Ansistring
 

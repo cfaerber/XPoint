@@ -59,7 +59,7 @@ begin
     reset(t1);
     while not eof(t1) do begin
       readln(t1,s);
-      if left(s,length(box)+1)=box+'=' then begin
+      if LeftStr(s,length(box)+1)=box+'=' then begin
         writeln(t2,box,'=',name); f:=true; end
       else
         writeln(t2,s);
@@ -88,7 +88,7 @@ var t    : text;
       p : byte;
   begin
     readln(t,s);
-    if (s='') or (left(s,2)='--') then
+    if (s='') or (LeftStr(s,2)='--') then
       typ:=#0
     else begin
       typ:=s[1];
@@ -96,20 +96,20 @@ var t    : text;
       txt:=mid(s,13);
       p:=cpos(' ',txt);
       if p=0 then first:=''
-      else first:=LowerCase(left(txt,p-1));
+      else first:=LowerCase(LeftStr(txt,p-1));
       end;
   end;
 
   function zdf(var zeit:string):string;
   begin
-    zdf:=right(date,2)+copy(date,4,2)+left(date,2)+left(zeit,2)+copy(zeit,4,2);
+    zdf:=RightStr(date,2)+copy(date,4,2)+LeftStr(date,2)+LeftStr(zeit,2)+copy(zeit,4,2);
   end;
 
   function getbytes:longint;
   var s : string[80];
   begin
     s:=trim(mid(txt,cpos(';',txt)+1));
-    getbytes:=ival(left(s,cpos('b',s)-1));
+    getbytes:=ival(LeftStr(s,cpos('b',s)-1));
   end;
 
   function getsecs:longint;
@@ -117,14 +117,14 @@ var t    : text;
   begin
     s:=trim(mid(txt,cpos(';',txt)+1));
     s:=trim(mid(s,cpos(',',s)+1));
-    getsecs:=ival(left(s,cpos('s',s)-1));
+    getsecs:=ival(LeftStr(s,cpos('s',s)-1));
   end;
 
   function tdiff(var t1,t2:datetimest):word;
   var s1,s2 : longint;
     function tcount(var t:datetimest):longint;
     begin
-      tcount:=3600*ival(left(t,2))+60*ival(copy(t,4,2))+ival(right(t,2));
+      tcount:=3600*ival(LeftStr(t,2))+60*ival(copy(t,4,2))+ival(RightStr(t,2));
     end;
   begin
     s1:=tcount(t1);
@@ -235,7 +235,7 @@ begin
       if isPacket(sr.name) then begin
         ImportDir:=FExpand(ImportDir);
         SetCurrentDir(OwnPath+XFerDir);
-        shell(left(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
+        shell(LeftStr(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
               500,1);
         { ^^ setzt Verzeichnis zurÅck! }
         if errorlevel<>0 then
@@ -394,7 +394,7 @@ label fn_ende,fn_ende0;
       writeln(t,'LogNew=',fidologfile);
       writeln(t,'Name=',username);
       if alias then
-        OwnAddr:=left(box,cpos('/',box))+pointname
+        OwnAddr:=LeftStr(box,cpos('/',box))+pointname
       else
         if f4d then OwnAddr:=box+'.'+pointname
         else OwnAddr:=strs(fa.zone)+':'+strs(fpointnet)+'/'+pointname;
@@ -460,7 +460,7 @@ label fn_ende,fn_ende0;
       if ZMoptions<>'' then writeln(t,'ZMOptions=',ZMoptions);
       write(t,'Text=');
       if komment='' then writeln(t,'Netcall  -  '+boxname)
-    { else writeln(t,left(komment,32-length(boxname)),' (',boxname,')'); }
+    { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
       else writeln(t,komment);
       writeln(t,'EMSI=',iifc(EMSIenable,'Y','N'));
       writeln(t,'SetTime=',iifc(gettime,'Y','N'));
@@ -504,7 +504,7 @@ label fn_ende,fn_ende0;
           if p=0 then p:=blankposx(s);
           new(fp);
           fp^.next:=rflist;
-          fp^.fn:=UpperCase(extractfilename(left(s,p-1)));
+          fp^.fn:=UpperCase(extractfilename(LeftStr(s,p-1)));
           DebugLog('XP7','xp7f: BuildIncoming file found: "'+fp^.fn+'"',4);
           rflist:=fp;
           end;
@@ -531,9 +531,9 @@ label fn_ende,fn_ende0;
       else begin
         match:=true;
         WildForm(wfn);
-        fn:=forms(left(fn,p-1),8)+forms(mid(fn,p),4);
+        fn:=forms(LeftStr(fn,p-1),8)+forms(mid(fn,p),4);
         p:=cpos('.',wfn);
-        if p>0 then wfn:=forms(left(wfn,p-1),8)+forms(mid(wfn,p),4);
+        if p>0 then wfn:=forms(LeftStr(wfn,p-1),8)+forms(mid(wfn,p),4);
         for i:=1 to length(fn) do
           if (wfn[i]<>'?') and (UpCase(fn[i])<>UpCase(wfn[i])) then
             match:=false;
@@ -544,7 +544,7 @@ label fn_ende,fn_ende0;
     files:=''; GetReqFiles(fa,files);
     if files<>'' then
       if keeprequests then begin
-        if left(files,1)='>' then delfirst(files);
+        if LeftStr(files,1)='>' then delfirst(files);
         nfiles:='';
         while files<>'' do begin
           fname:=GetToken(files,' ');  { nÑchster Dateiname ... }
@@ -611,7 +611,7 @@ begin
   Dos.findfirst(XFerDir+WildCard,AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
     sr.name:= UpperCase(sr.name);
-    if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
+    if isPacket(sr.name) or (RightStr(sr.name,4)='.PKT') then
       _era(XFerDir+sr.name);
     Dos.findnext(sr);
   end;
@@ -758,7 +758,7 @@ begin
       while not eof(f) and sh do begin
         inc(n);
         MakeHeader(true,f,0,0,hds,hdp^,ok,false);
-        empfaenger:=left(empfaenger,cpos('@',empfaenger)-1);
+        empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
         if empfaenger=lastempf then
           inc(count)
         else begin
@@ -776,7 +776,7 @@ begin
         seek(f,adr);
         end;
       close(f);
-      if n=1 then write(' (',left(hdp^.betreff,69-wherex),')');
+      if n=1 then write(' (',LeftStr(hdp^.betreff,69-wherex),')');
       if count>1 then write(' (',count,')');
       if not sh then write(', ...');
       mon;
@@ -786,7 +786,7 @@ begin
   moff; write(sp(72-wherex)); mon;
   if UpCase(s[3])='R' then begin
     ss:=''; GetReqFiles(trim(copy(s,6,18)),ss);
-    if left(ss,1)='>' then delfirst(ss);
+    if LeftStr(ss,1)='>' then delfirst(ss);
     mwrt(rdispx,rdispy+1,forms(ss,61));
     end
   else
@@ -928,8 +928,8 @@ begin
     reset(t);
     while not eof(t) and (length(fn)<12) do begin
       readln(t,s);
-      if left(s,length(_to)+12)=_to+'='+fn then
-        fn:=fn+strs((ival(right(s,1))+1)mod 10);
+      if LeftStr(s,length(_to)+12)=_to+'='+fn then
+        fn:=fn+strs((ival(RightStr(s,1))+1)mod 10);
       end;
     close(t);
     end;
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/10/17 10:05:54  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.28  2000/09/03 20:46:44  ma
   - Debuglogs
   - Ansistring-Anpassungen

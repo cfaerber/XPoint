@@ -108,7 +108,7 @@ begin
     closemask;
     closebox;
     if brk then exit;
-    if (right(fn,1)<>'\') and (right(fn,1)<>':') then
+    if (RightStr(fn,1)<>'\') and (RightStr(fn,1)<>':') then
       fn:=fn+'\';
     fn:=fn+'userbase.dat';
     if not exist(fn) then begin
@@ -144,9 +144,9 @@ begin
     read(f,r);
     with r do begin
       if nextfree=0 then begin
-        name:=left(name,79);
+        name:=LeftStr(name,79);
         if (typ=1) and getbretter and
-           (left(name,2)<>'/'#0) and (left(name,2)<>'/'#255) then begin
+           (LeftStr(name,2)<>'/'#0) and (LeftStr(name,2)<>'/'#255) then begin
           moff;
           write(#13#10'Brett:  ',name);
           mon;
@@ -169,7 +169,7 @@ begin
         if (typ=0) and getuser and
            ((useraufnahme<>1) or ((pos('%',name)=0) and (pos(':',name)=0)))
         then begin
-          if cpos('@',name)=0 then name:=left(name+'@'+DefaultBox+'.ZER',79);
+          if cpos('@',name)=0 then name:=LeftStr(name+'@'+DefaultBox+'.ZER',79);
           moff;
           write(#13#10'User:   ',name);
           mon;
@@ -264,7 +264,7 @@ begin
           MausLogFiles(1,false,box);
         exit;
         end;
-      if right(UpperCase(fn),4)='.QWK' then begin
+      if RightStr(UpperCase(fn),4)='.QWK' then begin
         nt:=nt_QWK;
         if DefFidoBox<>'' then box:=DefFidoBox
         else box:='';
@@ -276,7 +276,7 @@ begin
         close(t);
         if s=^A then nt:=nt_Magic else           { Puffertyp ermitteln }
         if cpos(#0,s)>0 then nt:=nt_Fido else
-        if left(s,1)='#' then nt:=nt_Maus else
+        if LeftStr(s,1)='#' then nt:=nt_Maus else
         if cpos('\',s)>0 then nt:=nt_Quick
         else nt:=nt_Netcall;
         if nt=nt_Fido then box:=DefFidoBox       { Vorgabe-Box ermitteln }
@@ -333,7 +333,7 @@ begin
                            iifs(nt=nt_Fido,' -t30',''),600,1);
                      if errorlevel=100 then begin
                        errorlevel:=0;
-                       s:=left(fn,length(fn)-4)+'.ZER';
+                       s:=LeftStr(fn,length(fn)-4)+'.ZER';
                        end;
                      end;
         nt_Netcall,
@@ -508,7 +508,7 @@ BEGIN
       SetLength(idzeile, 40);                  { Init }
       blockread(daten,idzeile[1],40,rr);
       SetLength(idzeile, rr);                  { Korrekt }
-      writeln(outfile,'-',left(idzeile,cpos(#13,idzeile)-1));
+      writeln(outfile,'-',LeftStr(idzeile,cpos(#13,idzeile)-1));
       Seek(daten,Seek_daten_merk);
       Seek(index,seek_index_merk);
       end;
@@ -676,8 +676,8 @@ begin
       readmask(brk);
       enddialog;
       if not brk then begin
-        if left(bretth,1)<>'/' then bretth:='/'+bretth;
-        if right(bretth,1)<>'/' then bretth:=bretth+'/';
+        if LeftStr(bretth,1)<>'/' then bretth:='/'+bretth;
+        if RightStr(bretth,1)<>'/' then bretth:=bretth+'/';
         shell(ZQWKBin+' -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fsplit(fn,dir,name,ext);
         fn:=name+'.ZER';
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:59  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
 

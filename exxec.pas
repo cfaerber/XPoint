@@ -54,7 +54,7 @@ begin
   if pp=0 then para:=''
   else begin
     para:=' '+trim(Mid(prog,pp+1));
-    prog:=left(prog,pp-1);
+    prog:=LeftStr(prog,pp-1);
   end;
   prog:=FileUpperCase(prog);
 
@@ -63,7 +63,7 @@ begin
   else begin
     if FileExists(prog) then dpath:=prog
     else dpath:=FileUpperCase(fsearch(prog,getenv('PATH')));
-    if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
+    if (RightStr(dpath,4)<>'.EXE') and (RightStr(dpath,4)<>'.COM') then
       dpath:='';
   end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
@@ -85,6 +85,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/10/17 10:05:39  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.29  2000/09/05 17:20:15  ma
   - Fix, DosError bei FPC 1.0 seltsam?
 

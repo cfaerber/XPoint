@@ -89,7 +89,7 @@ var   nt,n,mnt,
         readln(t,s);
         if (s<>'') and (firstchar(s)<>'#') then begin
           inc(feieranz);
-          feier[feieranz].t:=ival(left(s,2));
+          feier[feieranz].t:=ival(LeftStr(s,2));
           feier[feieranz].m:=ival(copy(s,4,2));
           j:=ival(copy(s,7,4));
           if j<80 then feier[feieranz].j:=j+2000
@@ -371,9 +371,9 @@ begin
   attrtxt(col.colmboxhigh);
   moff;
 {$IFDEF Linux}
-  wrt(x+21,y+2,'RAM         '+right('     ~/openxp',8));
+  wrt(x+21,y+2,'RAM         '+RightStr('     ~/openxp',8));
 {$ELSE }
-  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
+  wrt(x+21,y+2,'RAM         '+RightStr('     '+getres2(rnr,8)+' '+LeftStr(ownpath,2),8));
 {$ENDIF}
   wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
@@ -417,9 +417,9 @@ begin
   gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
     xpspace(XferDir)) div 1024 div 1024:8,' MB');
 {$IFDEF Linux}
-  wrt(x+30,y+13,right('     '+getres2(rnr,10),7)+'...');
+  wrt(x+30,y+13,RightStr('     '+getres2(rnr,10),7)+'...');
 {$ELSE}
-  wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
+  wrt(x+30,y+9,RightStr('     '+getres2(rnr,10),7)+'...');
 {$ENDIF}
   mon;
   freeres;
@@ -882,7 +882,7 @@ begin
       end
     else begin
       p2:=hexval(ParPass);
-      if (p2=0) or (p2 <> ((p shl 1) xor p xor (p shr 2) + 20*ival(left(date,2)))
+      if (p2=0) or (p2 <> ((p shl 1) xor p xor (p shr 2) + 20*ival(LeftStr(date,2)))
                            xor $ba3e) then
         if ParPasswd='' then
           Password:=TestPassword(false,false)
@@ -923,6 +923,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/10/17 10:05:52  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.36  2000/08/03 00:05:50  mk
   - Sternhimmel geht jetzt auch bei groesser 80 Zeichen ;-)
 

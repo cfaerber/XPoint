@@ -144,7 +144,7 @@ var  fname,
        if p=0 then
          s:=qvref
        else begin
-         s:=left(qvref,p-1);
+         s:=LeftStr(qvref,p-1);
          qvref:=copy(qvref,p+1,80);
        end;
        val(s,w,r);
@@ -241,7 +241,7 @@ var  fname,
      end else begin
        readln(t,st);
        if pos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
-       val(left(st,pos(' ',st)-1),last,res);
+       val(LeftStr(st,pos(' ',st)-1),last,res);
        if res<>0 then exiterr('Illegal LAST statement');
        val(mid(st,pos(' ',st)+1),next,res);
        if res<>0 then exiterr('Illegal NEXT statement');
@@ -410,6 +410,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2000/10/17 10:05:40  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.15  2000/10/10 05:18:17  mk
   - Virtual Pascal Bugfixes (packed record)
 

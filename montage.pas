@@ -114,9 +114,9 @@ var dat : fdate;
     res : integer;
 begin
   with dat do begin
-    val(left(d,2),t,res);
+    val(LeftStr(d,2),t,res);
     val(copy(d,4,2),m,res);
-    val(right(d,4),j,res);
+    val(RightStr(d,4),j,res);
     decd(dat);
     prevd:=formi(t,2)+'.'+formi(m,2)+'.'+formi(j,4);
     end;
@@ -128,9 +128,9 @@ var dat : fdate;
     res : integer;
 begin
   with dat do begin
-    val(left(d,2),t,res);
+    val(LeftStr(d,2),t,res);
     val(copy(d,4,2),m,res);
-    val(right(d,4),j,res);
+    val(RightStr(d,4),j,res);
     incd(dat);
     nextd:=formi(t,2)+'.'+formi(m,2)+'.'+formi(j,4);
     end;
@@ -189,6 +189,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/10/17 10:05:42  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.5  2000/04/30 15:54:21  mk
   - unbenutze globale Variable adow entfernt
 

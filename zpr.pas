@@ -285,7 +285,7 @@ begin
   err:=false;
   for i:=1 to paramcount do begin
     s:=trim(paramstr(i));
-    if length(left(s,1)) > 0 then
+    if length(LeftStr(s,1)) > 0 then
     begin    { ML 13.02.2000 Überprüfung nun mit paramchars }
       if s[1] in paramchars then begin
       delete(s,1,1);
@@ -410,7 +410,7 @@ begin
   if not ParRep then
     writeln('-keine-')
   else
-    if right(fo,3)='$$$' then writeln(fi)
+    if RightStr(fo,3)='$$$' then writeln(fi)
     else writeln(fo);
   if errfile then
     writeln('Fehlerdatei:  ',ferr);
@@ -454,7 +454,7 @@ begin
   close(f1);
   if ParRep then begin
     close(f2);
-    if right(fo,3)='$$$' then begin
+    if RightStr(fo,3)='$$$' then begin
       makebak(fi,'BAK');
       rename(f2,fi);
       if ioresult<>0 then error('"'+fi+'" konnte nicht berschrieben werden');
@@ -538,7 +538,7 @@ begin
       GetString;
       p:=cpos(':',s);
       if p>1 then begin
-        feld:=UpperCase(left(s,p-1));
+        feld:=UpperCase(LeftStr(s,p-1));
         if (fldanz<maxhdlines) or (feld='LEN') then begin
           if fldanz<maxhdlines then inc(fldanz);
           fldsize[fldanz]:=totallen;
@@ -682,7 +682,7 @@ begin
       if newlen<groesse then wr('Nachricht '+ww+'gekrzt',true)
       else wr('Nachricht '+ww+'vergr”áert',true);
       groesse:=newlen;
-      fld[LENpos]:=left(fld[LENpos],contpos[LENpos]-1)+strs(newlen);
+      fld[LENpos]:=LeftStr(fld[LENpos],contpos[LENpos]-1)+strs(newlen);
       end;
 end;
 
@@ -700,7 +700,7 @@ var i,j  : integer;
     if ParShowHd then begin
       s:=hd0.fld[n];
       for i:=1 to length(s) do if s[i]=#9 then s[i]:=' ';
-      wr(left('('+s+')',39),false);
+      wr(LeftStr('('+s+')',39),false);
       end;
   end;
 
@@ -736,13 +736,13 @@ var i,j  : integer;
       p:=cpos(':',zone);
       if p=0 then begin
         val(mid(zone,3),zh,res);
-        if res<>0 then zone:=left(zone,2)+'0';
+        if res<>0 then zone:=LeftStr(zone,2)+'0';
         end
       else begin
         val(copy(zone,3,p-3),zh,res);
         val(mid(zone,p+1),zm,res2);
         if res+res2<>0 then
-          zone:=left(zone,2)+strs(zh)+':'+formi(zm,2);
+          zone:=LeftStr(zone,2)+strs(zh)+':'+formi(zm,2);
         end;
      end;
 
@@ -750,7 +750,7 @@ var i,j  : integer;
      if cont+zone<>mid(fld[i],contpos[i]) then begin
        wr('Datum '+ww+'korrigiert',true);
        wrehd(i);
-       fld[i]:=left(fld[i],contpos[i]-1)+cont+zone;
+       fld[i]:=LeftStr(fld[i],contpos[i]-1)+cont+zone;
        end;
   end;
 
@@ -762,7 +762,7 @@ var i,j  : integer;
       wr('Leerzeichen '+ww+'aus '+headerindex[hd0.fldtype[i]].name+' entfernt',true);
       wrehd(i);
       with hd0 do
-        fld[i]:=left(fld[i],contpos[i]-1)+trim(left(cont,p1-1))+mid(cont,p1);
+        fld[i]:=LeftStr(fld[i],contpos[i]-1)+trim(LeftStr(cont,p1-1))+mid(cont,p1);
       end;
     if not _xpnt then begin
       if p1>0 then TruncStr(cont,p1-1);
@@ -808,7 +808,7 @@ var i,j  : integer;
   begin
     if cont='' then
       CheckEmpfEmpty
-    else if left(cont,length(TO_ID))<>TO_ID then begin
+    else if LeftStr(cont,length(TO_ID))<>TO_ID then begin
       error:=(cont[1]<>'/');
       if not _xpnt then begin
         j:=2;
@@ -857,7 +857,7 @@ var i,j  : integer;
         else begin
           wr('Dateipfad '+ww+'entfernt',true);
           wrehd(i);
-          fld[i]:=left(fld[i],contpos[i]-1)+mid(cont,p+1);
+          fld[i]:=LeftStr(fld[i],contpos[i]-1)+mid(cont,p+1);
           end;
       end;
   end;
@@ -871,7 +871,7 @@ var i,j  : integer;
       wr('PRIO '+ww+'korrigiert',true);
       wrehd(i);
       with hd0 do
-        fld[i]:=left(fld[i],contpos[i]-1)+'0';
+        fld[i]:=LeftStr(fld[i],contpos[i]-1)+'0';
       end;
   end;
 
@@ -880,17 +880,17 @@ var i,j  : integer;
       nr  : string;
       tok : boolean;
   begin
-    cont:=left(trim(cont),254)+' ';
+    cont:=LeftStr(trim(cont),254)+' ';
     repeat
       p:=blankpos(cont);
-      nr:=left(cont,p-1);
+      nr:=LeftStr(cont,p-1);
       cont:=trimleft(mid(cont,p+1));
       while (nr<>'') and (nr[1] in ['V','F','B','P']) do delfirst(nr);
       if nr[1]<>'+' then
         tok:=false
       else begin
         delfirst(nr);
-        if right(nr,1)='Q' then dellast(nr);
+        if RightStr(nr,1)='Q' then dellast(nr);
         tok:=true;
         for j:=1 to length(nr) do
           if not (nr[j] in ['0'..'9','-']) then
@@ -931,7 +931,7 @@ var i,j  : integer;
       with hd0 do begin
         if length(fld[i])=4 then s:=#9
         else s:='';
-        fld[i] := left(fld[i],contpos[i]-1) + s + iifs(l<0,'0',strs(ival(cont)));
+        fld[i] := LeftStr(fld[i],contpos[i]-1) + s + iifs(l<0,'0',strs(ival(cont)));
                      { statt ival(cont) darf nicht l verwendet werden, }
                      { wegen evtl. angeh„ngter Leerzeichen!            }
         end;
@@ -950,7 +950,7 @@ var i,j  : integer;
       with hd0 do begin
         if length(fld[i])=4 then s:=#9
         else s:='';
-        fld[i] := left(fld[i],contpos[i]-1) + s + '0';
+        fld[i] := LeftStr(fld[i],contpos[i]-1) + s + '0';
         end;
       end;
   end;
@@ -982,7 +982,7 @@ var i,j  : integer;
         end
       else if flag then                 { ist ein bekannter Header }
         for j:=1 to knownheaders do     { daraus geworden?         }
-          if UpperCase(left(fld[n],i-1))=headerindex[j].name then begin
+          if UpperCase(LeftStr(fld[n],i-1))=headerindex[j].name then begin
             fldtype[n]:=j;
             inc(hdfound[j]);
             end;
@@ -1070,7 +1070,7 @@ begin
           hdf_EMP, hdf_OEM,
           hdf_DISK             : if cpos('@',cont)>0 then AdrCheck(xpnt<>0)
                                  else BrettCheck(xpnt<>0);
-          hdf_KOP              : if left(cont,1)='/' then BrettCheck(false)
+          hdf_KOP              : if LeftStr(cont,1)='/' then BrettCheck(false)
                                  else AdrCheck(false);
           hdf_EDA, hdf_DDA,
           hdf_OEDA             : DateCheck;
@@ -1269,7 +1269,7 @@ begin
   halt(sgn(errmsgs));
 (* !! muá noch umgebaut werden
   finalization
-  if (right(fo,3)='$$$') then
+  if (RightStr(fo,3)='$$$') then
   begin     { evtl. Tempfile l”schen }
     assign(f2,fo);
     erase(f2);
@@ -1278,6 +1278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/10/17 10:06:02  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.26  2000/10/04 15:39:09  mk
   - Range-Check-Error in FldBezCheck beseitigt
 

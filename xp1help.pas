@@ -66,7 +66,7 @@ const kss : byte = 2;
       key:=LoCase(s[p]);
       end;
     attrtxt(col.colkeys);
-    Wrt2(left(s,p-1));
+    Wrt2(LeftStr(s,p-1));
     attrtxt(col.colkeyshigh);
     Wrt2(s[p]);
     attrtxt(col.colkeys);
@@ -162,7 +162,7 @@ const kss : byte = 2;
       if s[1]='~' then begin      { Ctrl-Zeichen }
         hitxt('^');
         s[1]:='^';
-        ks(left(s,p-1));
+        ks(LeftStr(s,p-1));
         with shortkey[shortkeys] do begin
           key:=chr(ord(upcase(s[2]))-64);
           dec(keypos);
@@ -171,7 +171,7 @@ const kss : byte = 2;
           end;
         end
       else
-        ks(left(s,p-1));
+        ks(LeftStr(s,p-1));
       delete(s,1,p);
     until s='';
   end;
@@ -354,7 +354,7 @@ var fks,fkn : integer;
   procedure wf(s:string);
   begin
     attrtxt(col.colkeyshigh);
-    Wrt2(left(s,pos('-',s)-1));
+    Wrt2(LeftStr(s,pos('-',s)-1));
     attrtxt(col.colkeys);
     Wrt2(copy(s,pos('-',s),60) + sp(spc));
   end;
@@ -404,6 +404,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/10/17 10:05:46  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.13  2000/10/09 22:14:45  ml
   - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
 

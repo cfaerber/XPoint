@@ -165,7 +165,7 @@ begin
   with frec do begin
     p1:=cpos('@',adr);
     if p1>0 then begin
-      username:=trim(left(adr,p1-1));
+      username:=trim(LeftStr(adr,p1-1));
       delete(adr,1,p1);
       end;
     adr:=trim(adr);
@@ -178,7 +178,7 @@ begin
       net:=2;
       if p3>0 then begin
         if p3>1 then
-          node:=ival(left(adr,p3-1))
+          node:=ival(LeftStr(adr,p3-1))
         else
           node:=0;
         point:=minmax(ival(mid(adr,p3+1)),0,65535);
@@ -192,7 +192,7 @@ begin
         if p1=0 then
           zone:=DefaultZone
         else
-          zone:=minmax(ival(left(adr,p1-1)),0,65535);
+          zone:=minmax(ival(LeftStr(adr,p1-1)),0,65535);
         net:=minmax(ival(copy(adr,p1+1,p2-p1-1)),0,65535);
         ispoint:=(p3>0);
         if ispoint then begin
@@ -218,7 +218,7 @@ begin
       if p=0 then
         NLfilename:=listfile
       else
-        NLfilename:=left(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
+        NLfilename:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
       end;
 end;
 
@@ -290,7 +290,7 @@ begin
           readln(t,s);
           p:=cpos('=',s);
           if p>0 then begin
-            ss:=lstr(left(s,p-1));
+            ss:=lstr(LeftStr(s,p-1));
             s:=mid(s,p+1);
             if ss='listfile'       then listfile:=s else
             if ss='number'         then number:=minmax(ival(s),0,999) else
@@ -504,6 +504,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.11  2000/08/29 21:03:39  mk
   - temporaere Workarounds fuer FPC Compiler/RTL-Bug
 

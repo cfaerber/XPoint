@@ -38,7 +38,7 @@ function NeuBenutzergruss:boolean;
     msgbox(73,msglines+7,'',x,y);
     moff;
     wrt(x+3,y+1,'Cross \\//    '+
-                 Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+                 RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
     wrt(x+3,y+2,'      //\\ Point');
     s:=x_copyright + ' ' + author_name;
     wrt(x+67-length(s),y+2,s);
@@ -84,6 +84,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.10  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.9  2000/07/21 17:39:57  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

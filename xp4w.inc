@@ -100,7 +100,7 @@ var mhd    : longint;
 begin
   GoP;
   rec:=disprec[p];
-  dispspec:='U'+left(dbReadStr(ubase,'username'),40);  { nur fÅr Anzeige }
+  dispspec:='U'+LeftStr(dbReadStr(ubase,'username'),40);  { nur fÅr Anzeige }
   _dispspec:=mbrettd('U',ubase);                       { abschneiden     }
   mhd:=abhdatum;
   dbReadN(ubase,ub_haltezeit,halten);
@@ -333,7 +333,7 @@ var s      : string;
 begin
   d1:=disprec[1];             { Mu· gesichert werden, da Zielfenster }
   GoP;
-  if left(dbReadStr(mbase,'brett'),1)='U' then
+  if LeftStr(dbReadStr(mbase,'brett'),1)='U' then
     fehler('In diesem Brett nicht mîglich.')
   else begin
     hdp := AllocHeaderMem;
@@ -359,7 +359,7 @@ begin
         end;
       oldds:=dispspec;
       _oldds:=_dispspec;
-      dispspec:='U'+left(s,40);
+      dispspec:='U'+LeftStr(s,40);
       _dispspec:=mbrettd('U',ubase);
       mhd:=abhdatum;
       dbReadN(ubase,ub_haltezeit,halten);
@@ -603,7 +603,7 @@ var fn     : string;
         dbWriteN(mbase,mb_gelesen,b);
         if dbReadInt(mbase,'netztyp') shr 24<>0 then begin  { Crossposting }
           rec:=dbRecno(mbase);
-          crc:=left(dbReadStr(mbase,'msgid'),4);
+          crc:=LeftStr(dbReadStr(mbase,'msgid'),4);
           mi:=dbGetIndex(bezbase); dbSetIndex(bezbase,beiMsgID);
           dbSeek(bezbase,beiMsgID,crc);     { alle Kopien auf 'gelesen' }
           if dbFound then begin
@@ -808,13 +808,13 @@ begin
 
                                                        {Einteilige nicht text/plain Message }
       if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
-         and (left(mimetyp,9)<>'multipart') then
+         and (LeftStr(mimetyp,9)<>'multipart') then
       begin
         multipart:=false;
         pushhp(94);
         listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
         app_l(forms(' '
-         + typname(left(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),25)
+         + typname(LeftStr(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),25)
          + '       ' + forms(mpdata.fname,23) + ' 1');
         app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
         listTp(SSP_Keys);
@@ -824,12 +824,12 @@ begin
         closebox;
         pophp;
         if brk then goto nextmsg;
-        if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
+        if copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) {'gesamte Na'}
           then viewer.prog:='';
 
       end else
         multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
-                 ( (mp=2) or (left(mimetyp,10)='multipart/') or
+                 ( (mp=2) or (LeftStr(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
       if multipart then
@@ -923,7 +923,7 @@ begin
         if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then begin
           GetKomflags(l,r,o,u);
           ldisp:=iifc(l,#27,' ')+iifc(o,#24,' ')+iifc(u,#25,' ')+iifc(r,#26,' ')
-                 +right(sp(40)+ldisp,36);
+                 +RightStr(sp(40)+ldisp,36);
           end;
         lksave:=listkommentar;
         listkommentar:=ntKomkette(netztyp);
@@ -1170,7 +1170,7 @@ begin
     else
       s:='  -  '+getreps(425,fdat(longdat(readdate)));  { 'Nachrichten seit dem %s' }
     end;
-    if UserSlash or (left(dispspec,1)>='A') or (copy(dispspec,2,1)<>'/') then
+    if UserSlash or (LeftStr(dispspec,1)>='A') or (copy(dispspec,2,1)<>'/') then
       b:=2
     else b:=3;
     mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
@@ -1242,7 +1242,7 @@ begin
     if not dbEOF(bbase) then begin
       s:= dbReadNStr(bbase,bb_brettname);
       delfirst(s);
-      if UpperCase(left(s,length(newsuch)))<>UpperCase(newsuch) then
+      if UpperCase(LeftStr(s,length(newsuch)))<>UpperCase(newsuch) then
         errsound
       else if ch<>'/' then
         suchok
@@ -1250,7 +1250,7 @@ begin
         pp:=pos('/',mid(s,length(newsuch)+1));
         if pp=0 then begin
           dbSeek(bbase,biBrett,'A'+UpperCase(s)+'/');
-          if not dbEOF(bbase) and (left(dbReadStr(bbase,'brettname'),length(s)+2)='A'+s+'/')
+          if not dbEOF(bbase) and (LeftStr(dbReadStr(bbase,'brettname'),length(s)+2)='A'+s+'/')
           then begin
             newsuch:=s+'/';
             suchok;
@@ -1259,7 +1259,7 @@ begin
             errsound;
           end
         else begin
-          newsuch:=left(s,pp+length(newsuch));
+          newsuch:=LeftStr(s,pp+length(newsuch));
           suchok;
           end;
         end
@@ -1279,12 +1279,12 @@ begin
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
           if dbEOF(ubase) then Exit;
           s:= dbReadNStr(ubase,ub_username);
-        until (adrb<>0) or (left(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
+        until (adrb<>0) or (LeftStr(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
         end
       else s:= dbReadNStr(ubase,ub_username);
 
-      if left(UpperCase(s),length(newsuch))<>UpperCase(newsuch) then
+      if LeftStr(UpperCase(s),length(newsuch))<>UpperCase(newsuch) then
         errsound
       else
         suchok;
@@ -1314,7 +1314,7 @@ var wvdat : longint;
     flags : byte;
 begin
   GoP;
-{   if left(dbReadStr(mbase,'brett'),1)='U' then
+{   if LeftStr(dbReadStr(mbase,'brett'),1)='U' then
     fehler('Wiedervorlage hier nicht mîglich!') }
   dbReadN(mbase,mb_unversandt,flags);
   if flags and 8 = 0 then begin
@@ -1329,7 +1329,7 @@ begin
     end;
   flags:=flags xor 8;
   dbWriteN(mbase,mb_unversandt,flags);
-  if left(dbReadStr(mbase,'brett'),1)<>'U' then
+  if LeftStr(dbReadStr(mbase,'brett'),1)<>'U' then
     RereadBrettdatum(dbReadStr(mbase,'brett'));
   aufbau:=true;
   if (dispmode<>11) and (dispmode<>12) and (p=1) then
@@ -1584,6 +1584,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2000/10/17 10:05:52  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.42  2000/10/16 08:31:03  mk
   - Ansistring-Fix
 

@@ -98,7 +98,7 @@ begin
       end
       else
       begin
-        reg[i].zone := ival(left(s, p - 1));
+        reg[i].zone := ival(LeftStr(s, p - 1));
         reg[i].region := ival(mid(s, p + 1));
       end;
       if reg[i].zone = 0 then
@@ -132,7 +132,7 @@ begin
   readln(t, s2);
   close(t);
   if s <> s2 then fehler('Falsche NodeDiff- oder NodeList-Version');
-  nl_new := left(nl_file, cpos('.', nl_file)) + right(nd_file, 3);
+  nl_new := LeftStr(nl_file, cpos('.', nl_file)) + RightStr(nd_file, 3);
 end;
 
 procedure processlist;
@@ -284,7 +284,7 @@ begin
       keep := false;
       if p > 1 then
       begin
-        ss := LowerCase(left(s, p - 1));
+        ss := LowerCase(LeftStr(s, p - 1));
         keep := (ss = 'host') or (ss = 'region') or (ss = 'zone');
         p2 := pos(',', mid(s, p + 1));
         if keep and (ss <> 'host') and (p2 > 0) then
@@ -330,6 +330,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/10/17 10:05:42  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.10  2000/07/09 08:35:12  mk
   - AnsiStrings Updates
 

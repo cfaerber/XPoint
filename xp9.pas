@@ -111,8 +111,8 @@ begin
     getdname:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
     end
   else
-    if validfilename(left(boxname,8)+BfgExt) then
-      getdname:=FileUpperCase(left(boxname,8))
+    if validfilename(LeftStr(boxname,8)+BfgExt) then
+      getdname:=FileUpperCase(LeftStr(boxname,8))
     else
       getdname:=FileUpperCase('box-0001');
 end;
@@ -159,7 +159,7 @@ begin
     testfidodir:=true
   else begin
     testfidodir:=false;
-    if right(s,1)<>DirSepa then s:=s+DirSepa;
+    if RightStr(s,1)<>DirSepa then s:=s+DirSepa;
     s:=FExpand(s);
     if s=OwnPath then
       rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
@@ -197,11 +197,11 @@ begin
   if UpArcNr<1 then exit;
   ls:=LowerCase(s);
   ext:='*';
-  if (left(ls,5)='pkarc') or (left(ls,5)='pkpak') then ext:='arc'
-  else if left(ls,3)='lha' then ext:='lzh'
-  else if left(ls,5)='pkzip' then ext:='zip'
-  else if left(ls,3)='arj' then ext:='arj'
-  else if (left(ls,4)='copy') and (getfield(UpArcNr)<>'txt') then ext:='';
+  if (LeftStr(ls,5)='pkarc') or (LeftStr(ls,5)='pkpak') then ext:='arc'
+  else if LeftStr(ls,3)='lha' then ext:='lzh'
+  else if LeftStr(ls,5)='pkzip' then ext:='zip'
+  else if LeftStr(ls,3)='arj' then ext:='arj'
+  else if (LeftStr(ls,4)='copy') and (getfield(UpArcNr)<>'txt') then ext:='';
   if ext<>'*' then setfield(UpArcNr,ext);
 end;
 
@@ -212,11 +212,11 @@ begin
   if DownArcNr<1 then exit;
   ls:=LowerCase(s);
   ext:='*';
-  if (left(ls,6)='pkxarc') or (left(ls,7)='pkunpak') then ext:='arc'
-  else if left(ls,3)='lha' then ext:='lzh'
-  else if left(ls,7)='pkunzip' then ext:='zip'
-  else if left(ls,3)='arj' then ext:='arj'
-  else if (left(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
+  if (LeftStr(ls,6)='pkxarc') or (LeftStr(ls,7)='pkunpak') then ext:='arc'
+  else if LeftStr(ls,3)='lha' then ext:='lzh'
+  else if LeftStr(ls,7)='pkunzip' then ext:='zip'
+  else if LeftStr(ls,3)='arj' then ext:='arj'
+  else if (LeftStr(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
   if ext<>'*' then setfield(DownArcNr,ext);
 end;
 
@@ -232,7 +232,7 @@ var ok   : boolean;
 begin
   progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
   path:=getenv('PATH');
-  if UpperCase(left(s+' ',7))='ZMODEM ' then
+  if UpperCase(LeftStr(s+' ',7))='ZMODEM ' then
 {$IFDEF UnixFS}
     begin
       if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
@@ -245,7 +245,7 @@ begin
 {$ENDIF}
   else
     fn:=trim(s);
-  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+  if cpos(' ',fn)>0 then fn:=LeftStr(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+UpperCase(fn)+'*','*COPY*DIR*PATH*')=0) then begin
 {$IFDEF UnixFS}
     ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
@@ -270,8 +270,8 @@ begin
     testmbretter:=false;
     end
   else begin
-    if right(s,1)<>'/' then s:=s+'/';
-    if left(s,1)<>'/' then s:='/'+s;
+    if RightStr(s,1)<>'/' then s:=s+'/';
+    if LeftStr(s,1)<>'/' then s:='/'+s;
     testmbretter:=true;
     end;
 end;
@@ -313,7 +313,7 @@ var p : byte;
 begin
   p:=cpos('@',s);
   if p>0 then
-    s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+    s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
 end;
 
 function testreplyto(var s:string):boolean;
@@ -394,7 +394,7 @@ procedure SetDomain(var s:string);
 begin
   if trim(s)<>'' then
     if DomainNt=nt_Fido then
-      while (left(s,1)='.') or (left(s,2)='@') do
+      while (LeftStr(s,1)='.') or (LeftStr(s,2)='@') do
         delfirst(s)
     else begin
       if s[1]<>'.' then
@@ -455,7 +455,7 @@ procedure fidotestpasslen(var s:string);
 begin
   if (getfield(EMSIfield)='N') and (length(getfield(4))>8) then begin
     rfehler(926);
-    setfield(4,left(getfield(4),8));
+    setfield(4,LeftStr(getfield(4),8));
     end;
 end;
 
@@ -536,8 +536,8 @@ begin
     repeat
       p:=blankpos(s2);
       if p=0 then p:=length(s2)+1;
-      if ntBoxNetztyp(left(s2,p-1))<>nt_Fido then begin
-        rfehler1(929,left(s2,p-1));  { '%s ist keine eingetragene Fido-Serverbox!' }
+      if ntBoxNetztyp(LeftStr(s2,p-1))<>nt_Fido then begin
+        rfehler1(929,LeftStr(s2,p-1));  { '%s ist keine eingetragene Fido-Serverbox!' }
         ok:=false;
         end;
       s2:=trim(mid(s2,p+1));
@@ -695,9 +695,9 @@ var d         : DB;
             s2 := dbReadStr(d,'extension');
             s3 := dbReadStr(d,'programm');
             if s3='' then s3:=getres(934)    { '(intern)' }
-            else if length(s3)>31 then s3:=left(s3,31)+'...';
+            else if length(s3)>31 then s3:=LeftStr(s3,31)+'...';
             s1:=extmimetyp(s1);
-            if left(s1,12)='application/' then s1:='appl.'+mid(s1,12);
+            if LeftStr(s1,12)='application/' then s1:='appl.'+mid(s1,12);
             s:=' '+forms(s1,26)+' '+forms(s2,6)+forms(s3,31);
           end;
     end;
@@ -1282,13 +1282,13 @@ var d         : DB;
       4 : nfeld:='kurzname';
     end;
     if c=#8 then
-      dnew:=left(directsel,length(directsel)-1)
+      dnew:=LeftStr(directsel,length(directsel)-1)
     else
       dnew:=directsel+c;
     dbSeek(d,1,UpperCase(dnew));
     if dbBOF(d) then
       dbGoTop(d);
-    if dbEOF(d) or (UpperCase(left(dbReadStr(d,nfeld),length(dnew)))<>UpperCase(dnew)) then
+    if dbEOF(d) or (UpperCase(LeftStr(dbReadStr(d,nfeld),length(dnew)))<>UpperCase(dnew)) then
       errsound
     else begin
       i:=1;
@@ -1569,13 +1569,13 @@ begin
       box:=UpperCase(s); user:=''; real:='';
       end
     else begin
-      box:=UpperCase(left(s,p-1));
+      box:=UpperCase(LeftStr(s,p-1));
       user:=trim(mid(s,p+1));
       p:=pos(' (',user);
       if p=0 then real:=''
       else begin
         real:=copy(user,p+2,length(user)-p-2);
-        user:=trim(left(user,p-1));
+        user:=trim(LeftStr(user,p-1));
         end;
       end;
     dbOpen(d,BoxenFile,1);
@@ -1647,13 +1647,13 @@ begin
       if DomainNt<0 then nt:=LowerCase(getfield(1))   { Netztyp als String }
       else nt:=LowerCase(ntName(DomainNt));
       if nt=LowerCase(ntName(nt_Maus)) then begin
-        if (length(s)>4) and (UpperCase(left(s,4))='MAUS') then
+        if (length(s)>4) and (UpperCase(LeftStr(s,4))='MAUS') then
           s:=mid(s,5);
-        if cpos('.',s)>0 then s:=left(s,cpos('.',s)-1);
-        s:=left(s,6);
+        if cpos('.',s)>0 then s:=LeftStr(s,cpos('.',s)-1);
+        s:=LeftStr(s,6);
         end
       else if nt=LowerCase(ntName(nt_Netcall)) then         { Domain abschneiden }
-        if right(s,4)='.ZER' then s:=left(s,length(s)-4)
+        if RightStr(s,4)='.ZER' then s:=LeftStr(s,length(s)-4)
         else
       else if (nt=LowerCase(ntName(nt_ZCONNECT))) or (nt=LowerCase(ntName(nt_UUCP))) then
         if cpos('.',s)>0 then truncstr(s,cpos('.',s)-1);
@@ -1751,6 +1751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2000/10/17 10:05:56  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.34  2000/07/23 13:24:12  hd
   - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
 

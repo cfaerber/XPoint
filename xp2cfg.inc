@@ -103,7 +103,7 @@ begin
       repeat
         p:=cpos(' ',s);
         if p>0 then begin
-          val(left(s,p-1),l,res);
+          val(LeftStr(s,p-1),l,res);
           delete(s,1,p);
           while (s<>'') and (s[1]=' ') do delfirst(s);
           if (res=0) and (l>=0) and (l<$100) then begin
@@ -371,7 +371,7 @@ begin
   ExtraktHeader.anz:=-1;
   s:=trim(s)+' ';
   while s<>'' do begin
-    ss:=left(s,blankpos(s)-1);
+    ss:=LeftStr(s,blankpos(s)-1);
     s:=mid(s,blankpos(s)+1);
     i:=0;
     while (i<=hddefs) and (ss<>hddef[i]) do inc(i);
@@ -744,7 +744,7 @@ var t   : text;
     write(t,'Header=');
     for i:=0 to extraktheader.anz do begin
       s:=getres2(222,extraktheader.v[i]);
-      write(t,left(s,blankpos(s)));
+      write(t,LeftStr(s,blankpos(s)));
       end;
     writeln(t);
   end;
@@ -1131,10 +1131,10 @@ var t       : text;
 
   begin
     nr:=ival(copy(s,4,1));
-    if (left(su,3)<>'COM') or (nr<1) or (nr>4) then
+    if (LeftStr(su,3)<>'COM') or (nr<1) or (nr>4) then
       getcommpar:=false
     else with COMn[nr] do begin
-      comnr:=left(s,5);
+      comnr:=LeftStr(s,5);
       s:=copy(s,6,80);
       su:=copy(su,6,80);
       dec(p,5);
@@ -1163,7 +1163,7 @@ var t       : text;
   var i,j,nr,p0 : shortint;
       ss        : string;
   begin
-    if left(su,5)<>'FKEY-' then
+    if LeftStr(su,5)<>'FKEY-' then
       getfkeys:=false
     else begin
       getfkeys:=true;
@@ -1176,29 +1176,29 @@ var t       : text;
         j:=ival(copy(su,p0,p-p0));
         end;
       if (nr<0) or (j<1) or (j>10) then
-        tfehler(getres(218)+left(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
+        tfehler(getres(218)+LeftStr(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
       else begin
         ss:=copy(s,p+3,200);     { 'P' Åberlesen }
         p0:=pos('~',ss);
         if p0>0 then with fkeys[nr]^[j] do begin
-          menue:=left(ss,p0-1);         { MenÅ-Anzeige }
+          menue:=LeftStr(ss,p0-1);         { MenÅ-Anzeige }
           ss:=copy(ss,p0+1,200);
           p0:=pos('~',ss);
           while (p0>0) and (pos('\',mid(ss,p0))>0) and
                 (pos('~',mid(ss,p0+1))>0) do
             inc(p0,pos('~',mid(ss,p0+1)));   { wegen kurzen Win95-Dateinamen }
           if p0>0 then begin
-            prog:=left(ss,p0-1);        { Programmname }
+            prog:=LeftStr(ss,p0-1);        { Programmname }
             ss:=copy(ss,p0+1,40);
             p0:=pos('~',ss);
             if p0>0 then begin
-              speicher:=ival(left(ss,p0-1));
+              speicher:=ival(LeftStr(ss,p0-1));
               ss:=copy(ss,p0+1,30);
               p0:=pos('~',ss);
               if p0>0 then begin
-                ntyp:=min(3,ival(left(ss,p0-1)));
+                ntyp:=min(3,ival(LeftStr(ss,p0-1)));
                 ss:=UpperCase(copy(ss,p0+1,30));
-                bname:=left(ss,1)='J';
+                bname:=LeftStr(ss,1)='J';
                 warten:=copy(ss,2,1)='J';
                 listout:=copy(ss,3,1)='J';
                 vollbild:=copy(ss,4,1)<>'N';
@@ -1216,7 +1216,7 @@ var t       : text;
   var p  : byte;
       s2 : string;
   begin
-    if (left(su,9)<'PMCRYPT1=') or (left(su,9)>'PMCRYPT'+strs(maxpmc)+'=') then
+    if (LeftStr(su,9)<'PMCRYPT1=') or (LeftStr(su,9)>'PMCRYPT'+strs(maxpmc)+'=') then
       getpmc:=false
     else begin
       getpmc:=true;
@@ -1227,19 +1227,19 @@ var t       : text;
         if p=0 then
           name:=s2
         else begin
-          name:=left(s2,p-1);
+          name:=LeftStr(s2,p-1);
           s2:=mid(s2,p+1);
           p:=pos('~',s2);
           if p=0 then
             encode:=s2
           else begin
-            encode:=left(s2,p-1);
+            encode:=LeftStr(s2,p-1);
             s2:=mid(s2,p+1);
             p:=pos('~',s2);
             if p=0 then
               decode:=s2
             else begin
-              decode:=left(s2,p-1);
+              decode:=LeftStr(s2,p-1);
               binary:=(s2[p+1]<>'N');
               end;
             end;
@@ -1251,7 +1251,7 @@ var t       : text;
   function getviewers:boolean;
   var p : byte;
   begin
-    if (left(su,8)<'VIEWER1=') or (left(su,8)>'VIEWER'+strs(maxviewers-defviewers)+'=')
+    if (LeftStr(su,8)<'VIEWER1=') or (LeftStr(su,8)>'VIEWER'+strs(maxviewers-defviewers)+'=')
     then
       getviewers:=false
     else begin
@@ -1260,7 +1260,7 @@ var t       : text;
         delete(su,1,8); delete(s,1,8);
         p:=cpos(',',su);
         if p>0 then begin
-          ext:=left(su,p-1);
+          ext:=LeftStr(su,p-1);
           prog:=mid(s,p+1);
           end;
         end;
@@ -1271,7 +1271,7 @@ var t       : text;
   var i : integer;
       p : byte;
   begin
-    if left(su,length(txt))<>txt then
+    if LeftStr(su,length(txt))<>txt then
       GetPmLimits:=false
     else begin
       GetPMLimits := true;  { MK 12/99 - Funktion liefert sonst undef. RÅckgabewert }
@@ -1280,7 +1280,7 @@ var t       : text;
       i:=0; p:=blankpos(su);
       while (p>0) and (i<maxpmlimits) do begin
         inc(i);
-        pmlimits[i,nr]:=ival(left(su,p-1));
+        pmlimits[i,nr]:=ival(LeftStr(su,p-1));
         su:=mid(su,p+1);
         p:=blankpos(su);
         end;
@@ -1542,7 +1542,7 @@ begin
           if Pos('=', s) > 0 then
             BadConfigLinesList.Add(s)
           else
-            TFehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
+            TFehler(getres(219)+LeftStr(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
       end;
     close(t);
@@ -1584,8 +1584,8 @@ begin
     ScreenWidth := MinMax(ConfigScreenWidth, 80, Cols);
 
     { if getenv(reverse('BPX'))<>LowerCase(hex(936,3)) then quit:=true; }
-    if left(QuoteChar,1)='"' then delfirst(quotechar);
-    if right(QuoteChar,1)='"' then dellast(quotechar);
+    if LeftStr(QuoteChar,1)='"' then delfirst(quotechar);
+    if RightStr(QuoteChar,1)='"' then dellast(quotechar);
     otherqcback:=otherquotechars;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
@@ -1609,7 +1609,7 @@ begin
     if aaa<>'' then
     begin
       UpString(aaa);
-      AAmsg:=left(aaa,1)='J';
+      AAmsg:=LeftStr(aaa,1)='J';
       AAbrett:=copy(aaa,2,1)='J';
       AAuser:=copy(aaa,3,1)='J';
       end;
@@ -1628,7 +1628,7 @@ begin
     if mheader='' then SetDefaultHeader
     else SetHeader(mheader);
     EditVollbild:=false;
-    if right(date,4)<'1996' then ZC_ISO:=false;
+    if RightStr(date,4)<'1996' then ZC_ISO:=false;
     end
   else begin
     SetDefaultHeader;
@@ -1660,7 +1660,7 @@ begin
           getx(su,  'tl-netcallalle',XSA_NetAlle)
         )
         then
-          tfehler(getres(219)+left(s,40),60);
+          tfehler(getres(219)+LeftStr(s,40),60);
         end;
       end;
     close(t);
@@ -1701,6 +1701,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.87  2000/10/17 10:05:48  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.86  2000/09/18 07:58:57  mw
   Voreinstellungen aktualisiert:
   - NewuserIBM ist jetzt eingeschaltet.

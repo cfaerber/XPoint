@@ -163,7 +163,7 @@ var p,p2  : byte;
       getstr:=s0; s0:='';
       end
     else begin
-      getstr:=left(s0,p-1);
+      getstr:=LeftStr(s0,p-1);
       s0:=trim(mid(s0,p+1));
       end;
   end;
@@ -185,7 +185,7 @@ var p,p2  : byte;
       off:=minmax(ival(copy(zone,2,p-2)),-13,13);
       moff:=minmax(ival(mid(zone,p+1)),0,59);
       end;
-    zone:=left(zone,2)+formi(abs(off),2)+iifs(moff<>0,':'+formi(moff,2),'');
+    zone:=LeftStr(zone,2)+formi(abs(off),2)+iifs(moff<>0,':'+formi(moff,2),'');
     dec(min,sgn(off)*moff);
     dec(h,off);
     while min<0  do begin  inc(min,60); dec(h); end;
@@ -227,12 +227,12 @@ begin
     else inc(j,1900);
   ti:=getstr;
   if pos(':',ti)=0 then
-    if length(ti)=4 then ti:=left(ti,2)+':'+right(ti,2)+':00'  { RFC 822 }
+    if length(ti)=4 then ti:=LeftStr(ti,2)+':'+RightStr(ti,2)+':00'  { RFC 822 }
     else ti:='00:00:00';
   zone:=getstr;
   if zone='' then zone:='W+0'
   else if (zone[1]='+') or (zone[1]='-') then begin
-    zone:='W'+left(zone,3)+':'+copy(zone,4,2);
+    zone:='W'+LeftStr(zone,3)+':'+copy(zone,4,2);
     if lastchar(zone)=':' then zone:=zone+'00';
     end
   else zone:='W+0';
@@ -332,7 +332,7 @@ var   hdp      : headerp;
           delete(s,p,1);     { Quote aufl”sen }
         inc(p);
         end;
-      parvalue:=trim(left(s,p-1));
+      parvalue:=trim(LeftStr(s,p-1));
       if lastchar(parvalue)='"' then dellast(parvalue);
       s:=trim(mid(s,p+1));
     end;
@@ -361,7 +361,7 @@ var   hdp      : headerp;
     if hdp^.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
       while not eof(t) and (n<100) and
-         ((LowerCase(left(s,13))<>'content-type:') or (left(bound,2)<>'--')) do begin
+         ((LowerCase(LeftStr(s,13))<>'content-type:') or (LeftStr(bound,2)<>'--')) do begin
         bound:=s;
         readln(t,s);
         inc(n);
@@ -523,7 +523,7 @@ var   hdp      : headerp;
     if length(fname)<len then
       fnform:=rforms(fname,len)
     else if length(fname)>len then
-      fnform:=left(fname,len-3)+'...'
+      fnform:=LeftStr(fname,len-3)+'...'
     else
       fnform:=fname;
   end;
@@ -762,6 +762,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.28  2000/10/15 08:50:07  mk
   - misc fixes
 

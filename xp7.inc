@@ -139,14 +139,14 @@ begin
       moff; write(chr(b)); mon; end;
     if (b=13) or (b=10) then begin
       if showconn and (recs<>'') and
-         (left(recs,2)<>'OK') and (left(recs,1)<>'0') and (left(recs,2)<>'AT') and
+         (LeftStr(recs,2)<>'OK') and (LeftStr(recs,1)<>'0') and (LeftStr(recs,2)<>'AT') and
          (recs<>'RINGING') and (recs<>'RRING') then begin
         moff;
         if net then write('  -  ');
         writeln(recs);
         mon;
         showconn:=false;
-        NC^.connstr:=left(recs,60);
+        NC^.connstr:=LeftStr(recs,60);
         if pos('connect',lrec)>0 then mwriteln;
         display:=ShowLogin;
         end
@@ -253,7 +253,7 @@ begin
   repeat
     p:=cpos('~',s);
     if p>0 then begin
-      sendstr(left(s,p-1));
+      sendstr(LeftStr(s,p-1));
       delete(s,1,p);
       mdelay(200);
       while received(comnr) do tb;
@@ -282,7 +282,7 @@ begin
     while (length(trim(s))>1) and not timeout(false) do begin
       p:=pos('\\',s);
       if p=0 then p:=length(s)+1;
-      sendcomm(trim(left(s,p-1)));
+      sendcomm(trim(LeftStr(s,p-1)));
       s:=trim(mid(s,p+2));
       end;
 end;
@@ -391,7 +391,7 @@ begin
     time(45);
     while not timeout(true) do begin
       tb; tkey;
-      if ((left(recs,9)='Ihr Anruf') or (pos('tschuess',lrec)>0) or
+      if ((LeftStr(recs,9)='Ihr Anruf') or (pos('tschuess',lrec)>0) or
           (pos('wiedersehen',lrec)>0)) and (zaehler[2]>2) then
         time(2);
       end;
@@ -475,9 +475,9 @@ begin
         zaehler[4]:=IdleTimeout;
         end;
       case logintyp of
-        ltGS    : login:=(right(lrec,10)='zu laden <') or
-                         (right(lrec,12)='zunamen ein:');
-        else      login:=(right(lrec,5)='ogin:');
+        ltGS    : login:=(RightStr(lrec,10)='zu laden <') or
+                         (RightStr(lrec,12)='zunamen ein:');
+        else      login:=(RightStr(lrec,5)='ogin:');
       end;
       if ((lrec='username:') or login) and (lcount>0) then begin
         startscreen:=false;
@@ -533,7 +533,7 @@ begin
         emptyrecs;
         dec(scount);
         end
-      else if ((right(lrec,9)='passwort:') or (right(lrec,9)='password:'))
+      else if ((RightStr(lrec,9)='passwort:') or (RightStr(lrec,9)='password:'))
              and (pcount>0) then
         begin
         moff;
@@ -576,7 +576,7 @@ begin
     retries:=retrylogin+2;
     repeat
       tb; tkey;
-    until ((left(lrec,7)='(8-n-1)') and (right(lrec,1)='>')) or timeout(true);
+    until ((LeftStr(lrec,7)='(8-n-1)') and (RightStr(lrec,1)='>')) or timeout(true);
     display:=ParDebug;
     if not timeout(true) then begin
       mwriteln;
@@ -1170,7 +1170,7 @@ var sr     : searchrec;
       reset(t);
       while not eof(t) do begin
         readln(t,s);
-        if left(LowerCase(s),4)='rep:' then
+        if LeftStr(LowerCase(s),4)='rep:' then
           RepExtension:=UpperCase(trim(mid(s,5)));
         end;
       close(t);
@@ -1202,7 +1202,7 @@ begin
           CallFilter(true,XFerDir+sr.name);
           if PufferEinlesen(XFerDir+sr.name,box,false,false,true,pe_Bad) then begin
             _era(XFerDir+sr.name);    { Eingabepuffer l”schen }
-            { _era(sysdir+left(sr.name,cpos('.',sr.name))+qwkext); } { QWK-Paket l”schen }
+            { _era(sysdir+LeftStr(sr.name,cpos('.',sr.name))+qwkext); } { QWK-Paket l”schen }
             end;
           findnext(sr);
         end;
@@ -1401,8 +1401,8 @@ begin
     p:=cpos(' ',telefon);
     if p=0 then GetTelefon:=telefon
     else begin                         { Nummern rotieren }
-      GetTelefon:=left(telefon,p-1);
-      telefon:=trim(mid(telefon,p))+' '+left(telefon,p-1);
+      GetTelefon:=LeftStr(telefon,p-1);
+      telefon:=trim(mid(telefon,p))+' '+LeftStr(telefon,p-1);
       end;
     end;
 end;
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/10/17 10:05:54  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.33  2000/10/08 11:12:13  mk
   - Verschiedene Dateinamen gross geschrieben
 

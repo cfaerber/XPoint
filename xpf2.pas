@@ -84,7 +84,7 @@ label ende;
   function IsTIC(name:string):boolean;
   begin
     UpString(name);
-    IsTIC:={((left(name,2)='TK') and} (UpperCase(right(name,4))='.TIC');
+    IsTIC:={((LeftStr(name,2)='TK') and} (UpperCase(RightStr(name,4))='.TIC');
   end;
 
   { True -> passende Datei ist vorhanden }
@@ -104,14 +104,14 @@ label ende;
       readln(t2,s);
       p:=blankpos(s);
       if p>0 then with hdp^,boxpar^ do begin
-        feld:=LowerCase(left(s,p-1));
+        feld:=LowerCase(LeftStr(s,p-1));
         s:=trim(mid(s,p));
         if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
         if feld='origin' then absender:='FileScan@'+s else
         if feld='file' then betreff:=FExpand(GetFileDir(fn)+s) else
         if feld='desc' then summary:=s else
         if (feld='path') and (blankpos(s)>0) then
-          pfad:=left(s,blankpos(s)-1)+'!'+pfad;
+          pfad:=LeftStr(s,blankpos(s)-1)+'!'+pfad;
         { if feld='date' then datum:=UNIX2Zdate(hexval(s)); }
         end;
       end;
@@ -145,9 +145,9 @@ begin
     readln(t,s);
     if (Copy(s,1,1)='*') and (pos('  rcvd ',LowerCase(s))>0) then begin
       s:=trim(mid(s,18));
-      s:=left(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
+      s:=LeftStr(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
       UpString(s);
-      if (hexval(left(extractfilename(s),8))<>0) or (left(extractfilename(s),4)='TO__')
+      if (hexval(LeftStr(extractfilename(s),8))<>0) or (LeftStr(extractfilename(s),4)='TO__')
       then begin   { m”gliches TIC-Paket? }
         at:=ArcType(s);
         if at<>0 then begin

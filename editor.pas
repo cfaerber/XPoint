@@ -430,15 +430,15 @@ begin
         LoString(s);
         p:=cpos('=',s);
         if p>0 then
-          if left(s,p-1)='rechterrand' then
+          if LeftStr(s,p-1)='rechterrand' then
             config.rechter_rand:=ival(mid(s,p+1))
-          else if left(s,p-1)='absatzende' then
+          else if LeftStr(s,p-1)='absatzende' then
             config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
-          else if left(s,p-1)='autoindent' then
+          else if LeftStr(s,p-1)='autoindent' then
             config.AutoIndent:=(mid(s,p+1)<>'n')
-          else if left(s,p-1)='persistentblocks' then
+          else if LeftStr(s,p-1)='persistentblocks' then
             config.PersistentBlocks:=(mid(s,p+1)<>'n')
-          else if left(s,p-1)='quotereflow' then
+          else if LeftStr(s,p-1)='quotereflow' then
             config.QuoteReflow:=(mid(s,p+1)<>'n');
         end;
       close(t);
@@ -1173,7 +1173,7 @@ var  dl         : displp;
           else begin
             banf2:=minmax(banfang-xoffset+1,1,250);
             bende2:=minmax(bende-xoffset+1,banf2,255);
-            s2:=left(s,banf2-1);
+            s2:=LeftStr(s,banf2-1);
             fwrt(x,y+i,s2);
             attrtxt(col.colmarked);
             s2:=copy(s,banf2,max(0,bende2-banf2));
@@ -1854,6 +1854,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/10/17 10:05:39  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.41  2000/10/15 15:20:17  mk
   JG:- Editor Funktion Glossary implementiert
 

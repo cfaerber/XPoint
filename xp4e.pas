@@ -121,7 +121,7 @@ procedure addbox(var s:string);
 var box : string;
 begin
   box:=getfield(pb_field);
-  s:=left(s,AdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
+  s:=LeftStr(s,AdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
 end;
 
 procedure FormFido(var s:string);  { lokal }
@@ -132,7 +132,7 @@ begin
   with fa do begin
     user:=username;
     if cpos('#',user)>0 then
-      user:=left(s,cposx('@',s)-1);
+      user:=LeftStr(s,cposx('@',s)-1);
     s:=user+'@'+iifs(zone<>0,strs(zone)+':','')+strs(net)+'/'+strs(node)+
        iifs(ispoint,'.'+strs(point),'');
     end;
@@ -193,7 +193,7 @@ begin
       if (pos('.',mid(s,p+1))=0) then
         s:=s+ntAutoDomain(pbox,false);
     if p>0 then
-      s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
+      s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1))
     else if (pb_netztyp=nt_fido) and nodeopen then
       usertest:=Testfido(s);
     end;
@@ -225,7 +225,7 @@ function writecode(var s:string):boolean;
 var cname : string;
 begin
   attrtxt(col.coldialog);
-  if (LowerCase(left(s,3))='pmc') and
+  if (LowerCase(LeftStr(s,3))='pmc') and
         ((length(s)>0) and (ival(LastChar(s)) in [1..maxpmc])) then begin
     cname:=pmcrypt[ival(LastChar(s))].name;
     if cname='' then cname:=getres(2700);    { 'noch nicht definiert' }
@@ -311,7 +311,7 @@ var x,y  : byte;
     farb : byte;
     AdrbuchDef: Integer;
 begin
-  if left(user,4)<>#0+'$/T' then
+  if LeftStr(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
     maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
@@ -325,7 +325,7 @@ begin
     brettfld:=-1;
     if edit then begin
       maddtext(3,4,getres2(2701,3),col.coldialog);    { 'User     ' }
-      maddtext(13,4,' '+left(user,41),col.coldiahigh);
+      maddtext(13,4,' '+LeftStr(user,41),col.coldiahigh);
       adp:=user;
       userfld:=-1;
       end
@@ -425,14 +425,14 @@ end;
 function test_verteiler(var s:string):boolean;
 begin
   s:=trim(s);
-  if left(s,1)<>'[' then s:='['+s;
-  if right(s,1)<>']' then s:=s+']';
+  if LeftStr(s,1)<>'[' then s:='['+s;
+  if RightStr(s,1)<>']' then s:=s+']';
   if length(s)<3 then begin
     errsound;
     test_verteiler:=false;
     end
   else begin
-    s:=left(s,min(39,length(s)-1))+right(s,1);
+    s:=LeftStr(s,min(39,length(s)-1))+RightStr(s,1);
     test_verteiler:=true;
     end;
 end;
@@ -579,12 +579,12 @@ var hdp      : headerp;
 
 begin
   GetMsgBrettUser:=true;
-  if MarkUnversandt and (left(dbReadStr(mbase,'brett'),1)='U') then begin
+  if MarkUnversandt and (LeftStr(dbReadStr(mbase,'brett'),1)='U') then begin
     hdp:= AllocHeaderMem;
     readheader(hdp^,hds,true);
     suchname:=hdp^.empfaenger;
     FreeHeaderMem(hdp);
-    if left(suchname,length(TO_ID))=TO_ID then
+    if LeftStr(suchname,length(TO_ID))=TO_ID then
       suchname:=mid(suchname,length(TO_ID)+1);
     end
   else
@@ -642,7 +642,7 @@ begin
       3..2+maxpmc : cod:='pmc-'+strs(typ-2);
     end;
   name:= dbReadStr(ubase,'username');
-  dialog(67,7,left(fuser(name),60),x,y);
+  dialog(67,7,LeftStr(fuser(name),60),x,y);
   wcy:=y+3;
   maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Paáwort ' }
   mnotrim;
@@ -667,7 +667,7 @@ begin
     if UpperCase(cod)='QPC' then typ:=1
     else if UpperCase(cod)='DES' then typ:=2
     else if UpperCase(cod)='PGP' then typ:=9
-    else typ:=2+ival(right(cod,1));
+    else typ:=2+ival(RightStr(cod,1));
     dbWrite(ubase,'codierer',typ);
     if pw<>'' then begin
       dbread(ubase,'adrbuch',adrb);
@@ -702,12 +702,12 @@ end;
 
 procedure setbrett(var s:string);
 begin
-  if left(s,1)<>'/' then
+  if LeftStr(s,1)<>'/' then
     if (pb_netztyp<>nt_Fido) or (cpos('/',s)>0) then
-      s:=left('/'+s,79)
+      s:=LeftStr('/'+s,79)
     else begin
       ReadBoxPar(0,pbox);
-      s:=left(BoxPar^.MagicBrett+s,79);
+      s:=LeftStr(BoxPar^.MagicBrett+s,79);
       end;
 end;
 
@@ -747,11 +747,11 @@ begin
   if not dbFound then dbGoTop(d);   { sollte nicht vorkommen! }
   grname:= dbReadStr(d,'name');
   dbClose(d);
-  askloc:=not edit or (left(brett,1)<>'$');
-  trenn:=(left(brett,3)='$/T');
+  askloc:=not edit or (LeftStr(brett,1)<>'$');
+  trenn:=(LeftStr(brett,3)='$/T');
   filter:=(flags and 4=0);
   pb_netztyp:=ntBoxNetztyp(box);
-  isfido:=(pb_netztyp=nt_Fido) and (left(brett,1)<>'$');
+  isfido:=(pb_netztyp=nt_Fido) and (LeftStr(brett,1)<>'$');
   dialog(57,iif(askloc or ParXX,iif(isfido,13,11),iif(trenn,5,iif(isfido,9,7))),
          getres2(2708,iif(edit,3,4)),x,y);   { 'Brett bearbeiten' / 'neues Brett anlegen' }
   userfld:=-1;
@@ -863,7 +863,7 @@ end;
 procedure mbsetvertreter(var s:string);
 begin
   if trim(s)<>'' then
-    if (cpos('@',s)=0) and (left(s,1)<>'/') then
+    if (cpos('@',s)=0) and (LeftStr(s,1)<>'/') then
       s:='/'+s;
 end;
 
@@ -888,7 +888,7 @@ var x,y,wdt  : byte;
     b        : byte;
 begin
   modibrett2:=false;
-  if left(dbReadStr(bbase,'brettname'),1)<'A' then begin
+  if LeftStr(dbReadStr(bbase,'brettname'),1)<'A' then begin
     rfehler(2712);
     exit;
     end;
@@ -1077,7 +1077,7 @@ begin
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
       dbWriteNStr(bbase,bb_adresse,origin);
-    if left(brett,1)='/' then brett:='A'+brett;
+    if LeftStr(brett,1)='/' then brett:='A'+brett;
     modin:=UpperCase(brett)<>UpperCase(dbReadStr(bbase,'brettname'));
     if modin then begin
       rec:=dbRecno(bbase);
@@ -1261,7 +1261,7 @@ else begin
               end
             else begin
               brett:= dbReadNStr(bbase,bb_brettname);
-              if left(brett,1)='A' then
+              if LeftStr(brett,1)='A' then
                 dbWriteN(bbase,bb_gruppe,grnr_found)
               else
                 rfehler1(2707,copy(brett,2,26));   { '%s ist internes Brett - Gruppe nicht „nderbar!' }
@@ -1325,7 +1325,7 @@ begin
         if not dbEOF(mbase) and (_brett=_brett2) then begin
           if user then brett:= dbReadNStr(ubase,ub_username)
           else brett:=mid(brett,2);
-          rfehler1(2708,left(brett,50));   { 'Brett %s ist nicht leer.' }
+          rfehler1(2708,LeftStr(brett,50));   { 'Brett %s ist nicht leer.' }
           { i:=bmarkanz; }
           end
         else
@@ -1373,7 +1373,7 @@ var ok    : boolean;
 
   function ShrinkEmpf(user,system:string):string;
   begin
-    ShrinkEmpf:=left(user,eAdrLen-length(system)-1)+'@'+system;
+    ShrinkEmpf:=LeftStr(user,eAdrLen-length(system)-1)+'@'+system;
   end;
 
 begin
@@ -1381,7 +1381,7 @@ begin
   oldpb:=pbox;
   verteiler:=false;
   newbrett:=false;
-  brett:=(left(s,1)='/') and (cpos('@',s)=0);
+  brett:=(LeftStr(s,1)='/') and (cpos('@',s)=0);
   if trim(s)='' then
     exit
   else if brett and _pmonly then begin
@@ -1390,9 +1390,9 @@ begin
     end
   else
     if brett then begin
-      if left(s,1)<>'/' then s:='/'+s;
+      if LeftStr(s,1)<>'/' then s:='/'+s;
       end
-    else if (left(s,1)='[') and (right(s,1)=']') then verteiler:=true
+    else if (LeftStr(s,1)='[') and (RightStr(s,1)=']') then verteiler:=true
     else begin
       if UpperCase(s)='SYSOP' then
         s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true))
@@ -1417,7 +1417,7 @@ begin
           if cpos('@',s)=0 then s:=s+'@';
           dbSeek(ubase,uiName,UpperCase(s));
           if not dbEOF(ubase) and
-             (UpperCase(s)=UpperCase(left(dbReadStr(ubase,'username'),length(s)))) then
+             (UpperCase(s)=UpperCase(LeftStr(dbReadStr(ubase,'username'),length(s)))) then
             s:= dbReadNStr(ubase,ub_username)
           else
             if cpos('@',s)=length(s) then begin
@@ -1428,7 +1428,7 @@ begin
         dbClose(d);
         end
       else if pos('.',mid(s,cpos('@',s)))=0 then
-        s:=left(s+ntAutoDomain(pbox,false),eAdrLen);
+        s:=LeftStr(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
   if ok and not verteiler then begin
     if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(UpperCase(s),1)) {ohne "/"}
@@ -1475,7 +1475,7 @@ begin
     end;
   p:=cpos('@',s);
   if p>0 then
-    s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+    s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
   testmailstring_nt:=pb_netztyp;
   if not verteiler then empftest:=OK and testmailstring(s)
   else begin
@@ -1573,12 +1573,12 @@ begin
   if pb then _keyboard(keydown);
   readmask(brk);
   sel_verteiler:=false;
-  betr:=left(trim(betr),ntBetreffLen(pb_netztyp));
+  betr:=LeftStr(trim(betr),ntBetreffLen(pb_netztyp));
   box:=pbox;
   enddialog;
   if (empf='') or (not brk and (betr='') and not ReadJN(getres(618),false))
     then brk:=true;                     { 'Nachricht ohne Betreff absenden' }
-  if (left(empf,1)='[') and (right(empf,1)=']') then
+  if (LeftStr(empf,1)='[') and (RightStr(empf,1)=']') then
     empf:=vert_char+empf+'@V';     { Verteilernamen anpassen }
 end;
 
@@ -1653,7 +1653,7 @@ begin
     brk:=false;
     case n of
       3 : readdate:=NewDate;
-      4 : readdate:=ixdat(left(Zdate,6)+'0000');
+      4 : readdate:=ixdat(LeftStr(Zdate,6)+'0000');
       5 : begin
             d:=fdat(longdat(readdate));
             EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,brk);   { 'Lesen ab Datum:' }
@@ -1663,7 +1663,7 @@ begin
             d:=ftime(longdat(readdate));
             EditTime(15,11+(screenlines-25)div 2,getres2(2720,4),d,brk);   { 'Lesen ab Uhrzeit:' }
             if not brk then begin
-              readdate:=ixdat(left(longdat(readdate),6)+copy(d,1,2)+copy(d,4,2));
+              readdate:=ixdat(LeftStr(longdat(readdate),6)+copy(d,1,2)+copy(d,4,2));
               showtime:=true;
               end;
           end;
@@ -1694,8 +1694,8 @@ begin
 {$ifndef UnixFS}
   { Laufwerksbuchstaben hinzufuegen }
   if cpos(':',dir)=0 then begin
-    if left(dir,1)<>DirSepa then dir:=DirSepa+dir;
-    dir:=left(dospath(0),2)+dir;
+    if LeftStr(dir,1)<>DirSepa then dir:=DirSepa+dir;
+    dir:=LeftStr(dospath(0),2)+dir;
   end;
 {$endif}
   ps:=fsbox(screenlines div 2 - 5,dir+WildCard,'',ExtractFileName(cr.s),true,false,false);
@@ -1708,10 +1708,10 @@ function auto_testempf(var s:string):boolean;
 var p : byte;
 begin
   p:=cpos('@',s);
-  if (s<>'') and (p=0) and (left(s,1)<>'/') and (left(s,1)<>'[') then
+  if (s<>'') and (p=0) and (LeftStr(s,1)<>'/') and (LeftStr(s,1)<>'[') then
     s:='/'+s
   else
-    if p>0 then s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+    if p>0 then s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
   auto_testempf:=true;
 end;
 
@@ -1836,7 +1836,7 @@ end;
 
 procedure atestdate(var s:string);
 begin
-  if smdl(ixdispdat(s),ixdat(left(zdate,6)+'0000')) then
+  if smdl(ixdispdat(s),ixdat(LeftStr(zdate,6)+'0000')) then
     s:='  .  .  ';
 end;
 
@@ -1879,7 +1879,7 @@ var x,y    : byte;
     if d='  .  .  ' then
       dl:=0
     else
-      dl:=ixdat(copy(d,7,2)+copy(d,4,2)+left(d,2)+'0000');
+      dl:=ixdat(copy(d,7,2)+copy(d,4,2)+LeftStr(d,2)+'0000');
   end;
 
 begin
@@ -1998,7 +1998,7 @@ begin
   AutoRead(ar);
   pushhp(77);
   nr:=ReadIt(31,getres(2727),getres(2728),   { 'Gew„hlten Eintrag l”schen?' / ' ^Ja , ^Nein , ^Datei ' }
-             iif(right(ar.datei,4)='.MSG',3,1),brk);
+             iif(RightStr(ar.datei,4)='.MSG',3,1),brk);
   pophp;
   if (not brk) and (nr<>2) then begin
     if nr=3 then begin
@@ -2403,7 +2403,7 @@ begin
         p:=pos(oldbox,dbReadStr(d,'adresse'));
         if p>0 then begin
           if anew='' then s:=''
-          else s:=left(dbReadStr(d,'adresse'),p-1)+anew+
+          else s:=LeftStr(dbReadStr(d,'adresse'),p-1)+anew+
                   mid(dbReadStr(d,'adresse'),p+length(oldbox));
           dbWriteStr(d,'adresse',s);
           end;
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/10/17 10:05:50  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.44  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 

@@ -183,7 +183,7 @@ begin
       repeat
         p:=cpos(' ',s);
         if p>0 then begin
-          val(left(s,p-1),l,res);
+          val(LeftStr(s,p-1),l,res);
           delete(s,1,p);
           while (s<>'') and (s[1]=' ') do delfirst(s);
           if (res=0) and (l>=0) and (l<$100) then begin
@@ -299,7 +299,7 @@ var p,n,p1,i : byte;
       else
         wrt2(' ');
       attrtxt(col.colbutton);
-      wrt2(left(butt[i],butthigh[i]-1));
+      wrt2(LeftStr(butt[i],butthigh[i]-1));
       attrtxt(col.colbuttonhigh);
       wrt2(hot[i]);
       attrtxt(col.colbutton);
@@ -352,7 +352,7 @@ begin
         end
       else
         buttsp[n]:=0;
-      butt[n]:=left(buttons,p-1);
+      butt[n]:=LeftStr(buttons,p-1);
       buttons:=copy(buttons,p+1,255);
       p:=pos('^',butt[n]);
       delete(butt[n],p,1);
@@ -403,6 +403,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.9  2000/09/09 15:41:28  hd
   - Fix: GetScreen* -> SysGetScreen*
 

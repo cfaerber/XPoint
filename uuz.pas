@@ -373,7 +373,7 @@ begin
     u2z := true;
     source := ''; dest := ''; OwnSite := '';
     for i := 2 to paramcount do
-      if left(paramstr(i), 1) = '-' then
+      if LeftStr(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         { Envelope-EmpfÑnger aus Received auslesen? }
@@ -408,7 +408,7 @@ begin
     if paramcount < 5 then raise Exception.Create('Falsche Parameterzahl');
     source := ''; dest := ''; _from := ''; _to := '';
     for i := 2 to paramcount do
-      if left(paramstr(i), 1) = '-' then
+      if LeftStr(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         if switch = 's' then
@@ -485,12 +485,12 @@ begin
   if not u2z then
   begin
     {$IFDEF UnixFS}
-    if (right(dest, 1) <> DirSepa) then
+    if (RightStr(dest, 1) <> DirSepa) then
       dest := ResolvePathname(dest + DirSepa)
     else
       dest := ResolvePathname(dest);
     {$ELSE}
-    if (right(dest, 1) <> ':') and (right(dest, 1) <> '\') then
+    if (RightStr(dest, 1) <> ':') and (RightStr(dest, 1) <> '\') then
       dest := dest + '\';
     {$ENDIF}
     if not IsPath(dest) then
@@ -520,7 +520,7 @@ end;
 
 function compmimetyp(typ: string): string;
 begin
-  if left(typ, 12) = 'application/' then
+  if LeftStr(typ, 12) = 'application/' then
     compmimetyp := LowerCase(mid(typ, 12))
   else
     compmimetyp := LowerCase(typ);
@@ -572,7 +572,7 @@ var
     begin
       p := cpos(',', keywords);
       if p = 0 then p := length(keywords) + 1;
-      stw := trim(left(keywords, p - 1));
+      stw := trim(LeftStr(keywords, p - 1));
       if stw <> '' then wrs('Stichwort: ' + stw);
       delete(keywords, 1, p);
     end;
@@ -587,8 +587,8 @@ begin
     for i := 0 to XOEM.Count - 1 do
     begin
       ml := min(length(xoem[i]), length(xempf[0]));
-      if (xoem[i] <> '') and (left(LowerCase(xoem[i]), ml) <>
-        left(LowerCase(xempf[0]), ml)) then
+      if (xoem[i] <> '') and (LeftStr(LowerCase(xoem[i]), ml) <>
+        LeftStr(LowerCase(xempf[0]), ml)) then
         wrs('OEM: ' + xoem[i]);
     end;
     if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
@@ -632,7 +632,7 @@ begin
     if sender <> '' then wrs('U-Sender: ' + sender);
     if control <> '' then
     begin
-      if LowerCase(left(control, 7)) = 'cancel ' then wrs('STAT: CTL');
+      if LowerCase(LeftStr(control, 7)) = 'cancel ' then wrs('STAT: CTL');
       wrs('CONTROL: ' + control);
     end;
     for i := 0 to ULine.Count - 1 do
@@ -690,7 +690,7 @@ var
     end
     else
     begin
-      getstr := left(s0, p - 1);
+      getstr := LeftStr(s0, p - 1);
       s0 := trim(mid(s0, p + 1));
     end;
   end;
@@ -715,7 +715,7 @@ var
       off := minmax(IVal(copy(zone, 2, p - 2)), -13, 13);
       moff := minmax(IVal(mid(zone, p + 1)), 0, 59);
     end;
-    zone := left(zone, 2) + formi(abs(off), 2) + iifs(moff <> 0, ':' +
+    zone := LeftStr(zone, 2) + formi(abs(off), 2) + iifs(moff <> 0, ':' +
       formi(moff, 2), '');
     dec(min, sgn(off) * moff);
     dec(h, off);
@@ -788,7 +788,7 @@ begin
   ti := getstr;
   if pos(':', ti) = 0 then
     if length(ti) = 4 then
-      ti := left(ti, 2) + ':' + right(ti, 2) + ':00' { RFC 822 }
+      ti := LeftStr(ti, 2) + ':' + RightStr(ti, 2) + ':00' { RFC 822 }
     else
       ti := '00:00:00';
   zone := getstr;
@@ -797,7 +797,7 @@ begin
   else
     if (zone[1] = '+') or (zone[1] = '-') then
   begin
-    zone := 'W' + left(zone, 3) + ':' + copy(zone, 4, 2);
+    zone := 'W' + LeftStr(zone, 3) + ':' + copy(zone, 4, 2);
     if lastchar(zone) = ':' then zone := zone + '00';
   end
   else
@@ -931,7 +931,7 @@ begin
     p := 1;
     while (p <= length(s)) and not (s[p] in ['/', ' ', #9]) do
       inc(p);
-    s1 := LowerCase(left(s, p - 1));
+    s1 := LowerCase(LeftStr(s, p - 1));
     if s1 = 'text' then
       ctype := tText
     else                                { --- Type }
@@ -964,7 +964,7 @@ begin
     begin
       while (p <= length(s)) and not (s[p] in [';', ' ', #9]) do
         inc(p);
-      subtype := LowerCase(left(s, p - 1)); { --- Subtype  }
+      subtype := LowerCase(LeftStr(s, p - 1)); { --- Subtype  }
       if p > 1 then delete(s, 1, p - 1);
       repeat                            { --- Parameter }
         p := 1;
@@ -975,7 +975,7 @@ begin
         begin
           while (p <= length(s)) and (s[p] <> '=') do
             inc(p);
-          s1 := LowerCase(trim(left(s, p - 1)));
+          s1 := LowerCase(trim(LeftStr(s, p - 1)));
           SkipWhitespace;
           if s <> '' then
           begin
@@ -983,7 +983,7 @@ begin
               repeat inc(p)until (p = length(s)) or (s[p] = '"')
             else
               repeat inc(p)until (p = length(s)) or (s[p] <= ' ');
-            value := trim(left(s, p));
+            value := trim(LeftStr(s, p));
             if lastchar(value) = ';' then
               dellast(value);
             inc(p);
@@ -1271,7 +1271,7 @@ begin
 
       { multipart/mixed outgoing }
 
-      if left(mimetyp, 10) = 'multipart/' then
+      if LeftStr(mimetyp, 10) = 'multipart/' then
       begin
         ctype := tMultipart;
         subtype := mid(mimetyp, 11);
@@ -1522,7 +1522,7 @@ var
     if (p > 0) and ((p2 = 0) or (p2 > cpos('>', s0))) then
     begin
       realname := copy(s0, p + 1, length(s0) - p - 1);
-      s0 := trim(left(s0, p - 1));
+      s0 := trim(LeftStr(s0, p - 1));
       p := pos('),', realname);         { mehrerer ","-getrennte Adressen }
       if p > 0 then truncstr(realname, p - 1);
     end;
@@ -1539,7 +1539,7 @@ var
           if p = 1 then
             realname := trim(mid(s0, p2 + 1))
           else
-            realname := trim(left(s0, p - 1));
+            realname := trim(LeftStr(s0, p - 1));
       end;
     end
     else
@@ -1576,7 +1576,7 @@ var
           if sto[pk] = '"' then _quote := not _quote;
         until ((sto[pk] = ',') and not _quote) or (pk = length(sto));
 
-        s0 := trim(left(sto, pk - 1));
+        s0 := trim(LeftStr(sto, pk - 1));
         sto := trim(mid(sto, pk + 1));
         if cpos('@', s0) = 0 then
         begin
@@ -1619,16 +1619,16 @@ var
           p := cpos('.', s0);
           if p > 0 then s0[p] := '/';   { '.' -> '/' }
         until p = 0;
-        if right(s0, 1) <> ',' then s0 := s0 + ',';
+        if RightStr(s0, 1) <> ',' then s0 := s0 + ',';
         while cpos(',', s0) > 0 do
         begin
           p := cpos(',', s0);
-          if LowerCase(left(s0, p - 1)) = 'poster' then
+          if LowerCase(LeftStr(s0, p - 1)) = 'poster' then
             pm_reply := true
           else
             if p > 5 then
           begin
-            Followup.Add('/' + left(s0, p - 1));
+            Followup.Add('/' + LeftStr(s0, p - 1));
           end;
           s0 := trim(mid(s0, p + 1));
         end;
@@ -1661,7 +1661,7 @@ var
         p := cpos(',', s0);
         if p = 0 then p := length(s0) + 1;
         if p > 2 then
-          XEmpf.Add('/' + left(s0, p - 1));
+          XEmpf.Add('/' + LeftStr(s0, p - 1));
         s0 := trim(mid(s0, p + 1));
       end;
   end;
@@ -1723,7 +1723,7 @@ var
     begin
       p := blankpos(s0);
       if p = 0 then p := length(s0) + 1;
-      GetRef(left(s0, p));
+      GetRef(LeftStr(s0, p));
       delete(s0, 1, p);
     end;
   end;
@@ -1739,7 +1739,7 @@ var
     if cpos('<', s0) = 1 then delete(s0, 1, 1);
 
     p := cpos('>', s0);
-    if p > 0 then s0 := Left(s0, p - 1);
+    if p > 0 then s0 := LeftStr(s0, p - 1);
 
     hd.ref := s0;
   end;
@@ -1772,7 +1772,7 @@ var
     from := GetRec('from ');
     { Envelope-EmpfÑnger ermitteln }
     if (hd.envemp='') and getrecenvemp then hd.envemp:=GetRec('for ');
-    if (by <> '') and (LowerCase(by) <> LowerCase(right(hd.pfad, length(by))))
+    if (by <> '') and (LowerCase(by) <> LowerCase(RightStr(hd.pfad, length(by))))
       then
     begin
       if hd.pfad <> '' then hd.pfad := hd.pfad + '!';
@@ -1830,7 +1830,7 @@ var
         p := cpos('?', s);
         if p > 0 then
         begin
-          {          cset:=LowerCase(left(s,min(8,p-1))); }
+          {          cset:=LowerCase(LeftStr(s,min(8,p-1))); }
           delete(s, 1, p);
           p := cpos('?', s);
           if p = 2 then
@@ -1887,7 +1887,7 @@ var
       if p = 1 then
       begin
         { keine Zahl: auf urgent/high, normal, low prÅfen }
-        s0 := LowerCase(left(s0, 3));
+        s0 := LowerCase(LeftStr(s0, 3));
         { laufzeitoptimierte Abfrage: das Wahrscheinlichste zuerst }
         if s0 = 'nor' then
           hd.priority := 3
@@ -1901,7 +1901,7 @@ var
       else
       begin
         { Zahl 1:1 konvertieren und auf 1..5 begrenzen }
-        s0 := left(s0, p - 1);
+        s0 := LeftStr(s0, p - 1);
         hd.priority := minmax(IVal(s0), 1, 5);
       end;
     end;
@@ -1930,7 +1930,7 @@ begin
       if p > 1 then
       begin
         s1 := s0;
-        zz := left(s0, p - 1);        { Identifier }
+        zz := LeftStr(s0, p - 1);        { Identifier }
         inc(p);
         while (p < length(s0)) and (s0[p] <= ' ') do
           inc(p);
@@ -2036,7 +2036,7 @@ begin
               homepage := s0
             else
 
-              if (zz <> 'xref') and (left(zz, 4) <> 'x-xp') then
+              if (zz <> 'xref') and (LeftStr(zz, 4) <> 'x-xp') then
               Uline.Add(s1);
         else
           if zz = 'from' then
@@ -2132,7 +2132,7 @@ begin
     else
       SetMailUser := mid(mailuser, rightpos('!', mailuser) + 1) + '@' + OwnSite
   else
-    SetMailUser := left(mailuser, cpos('@', mailuser)) + OwnSite;
+    SetMailUser := LeftStr(mailuser, cpos('@', mailuser)) + OwnSite;
 end;
 
 { UUCP-Mail -> ZCONNECT }
@@ -2163,13 +2163,13 @@ begin
           s[i] := LoCase(s[i]);
         if s[p - 1] <> ':' then
         begin
-          if (left(s, p - 1) = 'from') or (left(s, p - 1) = '>from') then
+          if (LeftStr(s, p - 1) = 'from') or (LeftStr(s, p - 1) = '>from') then
           begin
             s := trim(mid(s, p));           { Envelope-Absender }
             p := cpos(' ', s);
             if p > 0 then
             begin
-              hd.wab := left(s, p - 1);
+              hd.wab := LeftStr(s, p - 1);
               delete(s, 1, p);
               p := cpos('!', hd.wab);
               if cpos('!', hd.wab) > 0 then
@@ -2290,8 +2290,8 @@ begin
     setlength(s, 4);
     blockread(f, s[1], 4, rr);
     close(f);
-    if (left(s, 2) = #$1F#$9D) or (left(s, 2) = #$1F#$9F) or
-      (left(s, 2) = #$1F#$8B) then
+    if (LeftStr(s, 2) = #$1F#$9D) or (LeftStr(s, 2) = #$1F#$9F) or
+      (LeftStr(s, 2) = #$1F#$8B) then
     begin
       rename(f, fn + '.Z');
       case s[2] of
@@ -2320,10 +2320,10 @@ begin
     ende := false;
     repeat
       ReadString;
-      if UpperCase(left(s, 9)) = 'MAIL FROM' then
+      if UpperCase(LeftStr(s, 9)) = 'MAIL FROM' then
         hd.wab := GetAdr
       else                              { Envelope-From }
-        if UpperCase(left(s, 7)) = 'RCPT TO' then
+        if UpperCase(LeftStr(s, 7)) = 'RCPT TO' then
         hd.empfaenger := GetAdr;        { Envelope-To }
       ende := (bufpos >= bufanz) {or (s='QUIT')};
     until ende or (s = 'DATA') or (s = 'QUIT');
@@ -2338,7 +2338,7 @@ begin
           if ((p2 > 0) and (p2 < p1)) then
           begin
             p2 := p1 - 1;
-            wab := left(wab, p1 - 1);
+            wab := LeftStr(wab, p1 - 1);
             while wab[p2] <> '!' do
               dec(p2);                  { rechtes "!" suchen }
             p1 := p2 - 1;
@@ -2351,7 +2351,7 @@ begin
       write(#8#8#8#8#8, n: 5);
       repeat                            { UUCP-Envelope Åberlesen }
         ReadString;
-        nofrom := (LowerCase(left(s, 5)) <> 'from ') and (LowerCase(left(s, 5))
+        nofrom := (LowerCase(LeftStr(s, 5)) <> 'from ') and (LowerCase(LeftStr(s, 5))
           <> '>from');
       until nofrom;
       mempf := SetMailUser(hd.empfaenger);
@@ -2405,8 +2405,8 @@ end;
 
 function unbatch(s: string): boolean;
 begin
-  unbatch := (left(s, 11) = '#! cunbatch') or (left(s, 11) = '#! funbatch') or
-    (left(s, 11) = '#! gunbatch') or (left(s, 11) = '#! zunbatch');
+  unbatch := (LeftStr(s, 11) = '#! cunbatch') or (LeftStr(s, 11) = '#! funbatch') or
+    (LeftStr(s, 11) = '#! gunbatch') or (LeftStr(s, 11) = '#! zunbatch');
 end;
 
 { Newsbatch -> ZCONNECT }
@@ -2454,9 +2454,9 @@ begin
       newfn := fn + '.Z'
     else
       if freeze then
-      newfn := dir + name + left(ext, 2) + 'XZ'
+      newfn := dir + name + LeftStr(ext, 2) + 'XZ'
     else
-      newfn := dir + name + left(ext, 3) + 'Z';
+      newfn := dir + name + LeftStr(ext, 3) + 'Z';
     {$ENDIF}
     assign(f, newfn);
     rewrite(f, 1);
@@ -2492,8 +2492,8 @@ begin
     ReadString;
   end;
   n := 0;
-  if (left(s, 2) = '#!') or RawNews then
-    if (left(s, 8) <> '#! rnews') and not RawNews then
+  if (LeftStr(s, 2) = '#!') or RawNews then
+    if (LeftStr(s, 8) <> '#! rnews') and not RawNews then
     begin
       writeln(' - unbekanntes Batchformat');
       goto ende;
@@ -2577,7 +2577,7 @@ var
     i: integer;
     b: byte;
   begin
-    s := s[1] + '-' + right(s, 5);
+    s := s[1] + '-' + RightStr(s, 5);
     b := 0;
     for i := 0 to 3 do                  { Schreibweise in einem Byte codieren }
       if (s[i + 4] >= 'A') and (s[i + 4] <= 'Z') then
@@ -2603,7 +2603,7 @@ var
               p := blankpos(s);
               if p > 0 then
               begin
-                typ := left(s, p - 1); mailuser := trim(mid(s, p + 1));
+                typ := LeftStr(s, p - 1); mailuser := trim(mid(s, p + 1));
                 p := blankpos(mailuser);
                 if p > 0 then truncstr(mailuser, p - 1);
               end
@@ -2632,19 +2632,19 @@ var
     blockread(f, s[1], 12, rr);
     close(f);
     s[0] := chr(rr);
-    if left(s, 8) = '#! rnews' then
+    if LeftStr(s, 8) = '#! rnews' then
       FileType := 1
     else
       if unbatch(s) then                { '#! cunbatch' / '#! funbatch' }
       FileType := 2
     else
-      if left(UpperCase(s), 5) = 'HELO ' then
+      if LeftStr(UpperCase(s), 5) = 'HELO ' then
       FileType := 3
     else
-      if left(LowerCase(s), 5) = 'from ' then
+      if LeftStr(LowerCase(s), 5) = 'from ' then
       FileType := 4
     else
-      if left(LowerCase(s), 6) = '>from ' then
+      if LeftStr(LowerCase(s), 6) = '>from ' then
       FileType := 4
     else
       FileType := 0;
@@ -2669,7 +2669,7 @@ begin
       ConvertNewsfile(spath + sr.name, news);
     end
     else
-    if left(sr.name, 2) = 'X-' then
+    if LeftStr(sr.name, 2) = 'X-' then
     begin
       ReadXFile;                        { X.-file interpretieren }
       LoString(typ);
@@ -2728,15 +2728,15 @@ begin
   while (fn[p]<>'/') and (p>0) do dec(p);
   if p>0 then delete(fn,1,p);
   if fn='~' then fn:='';
-  if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
-    fn:=left(fn,length(fn)-5)+'TAZ';
+  if RightStr(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
+    fn:=LeftStr(fn,length(fn)-5)+'TAZ';
   p:=pos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);
   while (p>0) and (fn[p]<>'.') do dec(p);
   if p>1 then begin
-    fn:=left(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
+    fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
     dec(p);
     end;
   allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
@@ -2749,15 +2749,15 @@ begin
       fn[i]:='-';
   p:=cpos('.',fn);
   if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
-    name:=left(fn,8); ext:='';
+    name:=LeftStr(fn,8); ext:='';
     end
   else begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
-    name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
+    name:=LeftStr(fn,min(8,p-1)); ext:=mid(fn,p);
     end;
   if length(ext)=2 then n:=10
   else n:=1;
   while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
-    ext:=left(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
+    ext:=LeftStr(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
     inc(n);
     end;
   Unix2DOSfile:=name+ext;
@@ -2820,7 +2820,7 @@ var
           inc(p);
       end;
       if ss[p] = ' ' then dec(p);
-      uuz.s := left(ss, p);
+      uuz.s := LeftStr(ss, p);
       RFC1522form;
       wrs(f, txt + uuz.s);
       ss := trim(mid(ss, p + 1));
@@ -2847,9 +2847,9 @@ var
     p := cpos(':', zdate);
     if p = 0 then p := length(zdate) + 1;
 
-    ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + left(zdate,
+    ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + leftStr(zdate,
       2) +
-      left(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
+      LeftStr(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
       copy(zdate, 13, 2) + ' ' + zdate[16] + formi(IVal(copy(zdate, 17, p -
         17)), 2) +
       formi(IVal(mid(zdate, p + 1)), 2);
@@ -2927,7 +2927,7 @@ begin
         wrs(f, 'DATA');
       end
       else
-        wrs(f, 'From ' + left(s, p - 1) + ' ' + dat + ' remote from ' + mid(s, p
+        wrs(f, 'From ' + LeftStr(s, p - 1) + ' ' + dat + ' remote from ' + mid(s, p
           + 1));
       if (wab <> '') and (cpos('@', oem) > 0) and not smtp { (*1) - s.u. } then
         rfor := empfaenger
@@ -2936,9 +2936,9 @@ begin
       wrs(f, 'Received: by ' + mid(s, cpos('@', s) + 1) +
         iifs(programm <> '', ' (' + programm + ')', '') +
         iifs(rfor <> '', #10#9'  for ' + rfor + ';', ';'));
-      wrs(f, #9'  ' + left(date, 2) + ' ' + month(copy(date, 4, 2)) +
-        right(date, 4) + ' ' +
-        time + ' ' + right(dat, 5));    { akt. Datum/Uhrzeit }
+      wrs(f, #9'  ' + LeftStr(date, 2) + ' ' + month(copy(date, 4, 2)) +
+        RightStr(date, 4) + ' ' +
+        time + ' ' + RightStr(dat, 5));    { akt. Datum/Uhrzeit }
     end
     else
       wrs(f, 'Path: ' + addpath + pfad);
@@ -3207,8 +3207,8 @@ var
       wrs(f2, 'U ' + MailUser + ' ' + _from)
     else
       wrs(f2, 'U ' + NewsUser + ' ' + _from);
-    name := fn[1] + '.' + left(_from, 7) + iifc(mail or smtp, 'C', 'd') +
-      right(fn, 4);
+    name := fn[1] + '.' + LeftStr(_from, 7) + iifc(mail or smtp, 'C', 'd') +
+      RightStr(fn, 4);
     wrs(f2, 'F ' + name);
     wrs(f2, 'I ' + name);
     if smtp and csmtp then
@@ -3223,7 +3223,7 @@ var
       wrs(f2, 'C r' + sender + iifs(mail, ' ' + hd.empfaenger, ''));
     fs := filesize(f2);
     close(f2);
-    name2 := fn[1] + '.' + left(_to, 7) + 'D' + right(fn, 4);
+    name2 := fn[1] + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
     write(fc, 'S ', name2, ' ', name, ' ', iifs(mail or smtp, MailUser,
       NewsUser),
       ' - ', name2, ' 0666');
@@ -3231,8 +3231,8 @@ var
       writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'))
     else
       writeln(fc);
-    name2 := 'D.' + left(_to, 7) + 'X' + nr;
-    write(fc, 'S ', name2, ' X.', left(_from, 7), iifc(mail or smtp, 'C', 'd'),
+    name2 := 'D.' + LeftStr(_to, 7) + 'X' + nr;
+    write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(mail or smtp, 'C', 'd'),
       nr, ' ',
       iifs(mail or smtp, MailUser, NewsUser), ' - ', name2, ' 0666');
     if ParSize then
@@ -3297,7 +3297,7 @@ var
           end
           else
           begin
-            fromfile := left(s, p - 1);
+            fromfile := LeftStr(s, p - 1);
             tofile := trim(mid(s, p + 1));
           end;
           writeln(fc, 'R ', fromfile, ' ', tofile, ' ', FileUser, ' -');
@@ -3319,7 +3319,7 @@ var
 
   procedure ShortS;
   begin
-    s := left(s, max(0, integer(length(s)) - (fpos + bufpos - gs) + 2));
+    s := LeftStr(s, max(0, integer(length(s)) - (fpos + bufpos - gs) + 2));
   end;
 
   procedure CreateNewfile;
@@ -3429,7 +3429,7 @@ begin
       makeheader(true, f1, copycount, 0, hds, hd, ok, false);
       binmail := (hd.typ = 'B');
       if cpos('@', hd.empfaenger) > 0 then
-        if UpperCase(left(hd.empfaenger, length(server))) = server then
+        if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
           WrFileserver
         else
         begin
@@ -3494,6 +3494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/10/17 10:05:43  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.67  2000/10/15 08:50:06  mk
   - misc fixes
 

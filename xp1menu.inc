@@ -56,8 +56,8 @@ begin
       with ma^[n] do begin
         mstr:='';
         s:=Mid(s, p+1);
-        if nummern and (left(s,2)<>'-,') then begin
-          mpnr:=hexval(left(s,3));
+        if nummern and (LeftStr(s,2)<>'-,') then begin
+          mpnr:=hexval(LeftStr(s,3));
           delete(s,1,3);
           enabled:=(menable[nr] and (word(1) shl (mpnr and 15)))=0;
           end
@@ -82,7 +82,7 @@ begin
           hpos:=0;
         p2:=p3;
         if p2=0 then mstr:=s
-        else mstr:=left(s,p2-1);
+        else mstr:=LeftStr(s,p2-1);
         if hpos>0 then hkey:=UpCase(mstr[hpos])
         else hkey:=#255;
         if pos('ù',mstr)>0 then begin
@@ -144,7 +144,7 @@ begin
 
 {        Wrt2(' ');
         if hpos>1 then
-          Wrt2(left(s,hpos-1));
+          Wrt2(LeftStr(s,hpos-1));
         if i=nr then attrtxt(col.colmenuinvhi[0])
         else attrtxt(col.colmenuhigh[0]);
         Wrt2(s[hpos]);
@@ -189,7 +189,7 @@ procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
   mnu := LowerCase(mnu);
-  while LowerCase(left(menu[n],length(mnu)))<>mnu do inc(n);
+  while LowerCase(LeftStr(menu[n],length(mnu)))<>mnu do inc(n);
   p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]))+1;
 end;
 
@@ -219,7 +219,7 @@ begin
   p2:=pos(',',Mid(menu[n],p));
   if p2=0 then p2:=length(menu[n])+1
   else inc(p2,p+1);
-  menu[n]:=left(menu[n],p-1)+anew+Mid(menu[n],p2);
+  menu[n]:=LeftStr(menu[n],p-1)+anew+Mid(menu[n],p2);
 end;
 
 
@@ -246,10 +246,10 @@ begin
   if readfilename(getres(103),s,false,useclip) then begin  { Schablone bearbeiten }
 {$IFDEF UnixFS }
     addext(s,'xps');
-    if UpperCase(right(s,4))<>'.xps' then begin
+    if UpperCase(RightStr(s,4))<>'.xps' then begin
 {$ELSE }
     addext(s,'XPS');
-    if UpperCase(right(s,4))<>'.XPS' then begin
+    if UpperCase(RightStr(s,4))<>'.XPS' then begin
 {$ENDIF }
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
@@ -365,7 +365,7 @@ var ma    : map;
           else
             attrtxt(col.colmenuinvhi[menulevel]);
           Wrt(x+1+hp, y+i, s[hp]);
-{          wrt(x+1,y+i,check+left(s,hp-1));
+{          wrt(x+1,y+i,check+LeftStr(s,hp-1));
           if i<>p then
             attrtxt(col.colmenuhigh[menulevel])
           else
@@ -601,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/10/17 10:05:46  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.23  2000/10/11 14:44:13  mk
   - Menuepunkt Gebuehren abgeschaltet
 

@@ -52,7 +52,7 @@ var ccused   : array[1..maxcc] of boolean;
 
 function is_vname(var s:string):boolean;
 begin
-  is_vname:=(left(s,1)='[') and (right(s,1)=']');
+  is_vname:=(LeftStr(s,1)='[') and (RightStr(s,1)=']');
 end;
 
 procedure set_cce;
@@ -105,7 +105,7 @@ begin
       n:=0;
       p:=cpos('@',s);
       if p>0 then
-        s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
+        s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1))
       else begin
         dbOpen(d,PseudoFile,1);
         dbSeek(d,piKurzname,UpperCase(s));
@@ -121,7 +121,7 @@ begin
             exit;
             end
           else
-            if left(s,1)<>'/' then
+            if LeftStr(s,1)<>'/' then
               s:='/'+s;
           end;
         dbClose(d);
@@ -154,19 +154,19 @@ begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
         else s := dbReadNStr(ubase,ub_username);
-        if left(s,1)=vert_char
+        if LeftStr(s,1)=vert_char
           then s:=copy(s,2,length(s)-3);
         end
       else
         if (p>0) and not testmailstring(s) then
         begin
           cc_testempf:=false;
-          if left(s,1)=vert_char
+          if LeftStr(s,1)=vert_char
             then s:=copy(s,2,length(s)-3);
           exit;
           end
       else
-        if ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
+        if ReadJN(getres2(2202,iif(p=0,2,1))+': '+LeftStr(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
                   iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
         then begin                                           { 'neu anlegen' }
           if p=0 then begin
@@ -275,7 +275,7 @@ begin
               if (trim(s)<>'') and not is_vname(s) then
               begin
                 inc(cc_anz);
-                cc^[cc_anz]:=left(s,79);
+                cc^[cc_anz]:=LeftStr(s,79);
                 end;
             until eof(t) or is_vname(s) or (cc_anz>=maxcc-1);
             cc^[i]:=cc^[cc_anz];                               { Verteilernamen durch }
@@ -314,7 +314,7 @@ begin
         readln(t,s);
         if (trim(s)<>'') and not is_vname(s) then begin
           inc(cc_anz);
-          cc^[cc_anz]:=left(s,79);
+          cc^[cc_anz]:=LeftStr(s,79);
           end;
       until eof(t) or is_vname(s);
     close(t);
@@ -388,6 +388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.20  2000/08/13 21:47:32  mk
   - fuer Langname auf dbReadStr umgestellt
 

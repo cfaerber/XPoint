@@ -206,7 +206,7 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-        if left(dbReadStr(mbase,'brett'),1)<>'1' then
+        if LeftStr(dbReadStr(mbase,'brett'),1)<>'1' then
           disprec[1]:=0;
         end
       else
@@ -340,7 +340,7 @@ var t,lastt: taste;
             else begin
               s:= dbReadNStr(bbase,bb_brettname);
               wrongline:=(UpperCase(copy(s,2,length(ArchivBretter)))<>ArchivBretter) and
-                         (left(s,3)<>'$/T');
+                         (LeftStr(s,3)<>'$/T');
               end;
         0 : if brettall or dispext then
               wrongline:=false    { alle Bretter   }
@@ -544,7 +544,7 @@ var t,lastt: taste;
 
   function trennzeile:boolean;
   begin
-    trennzeile:=(left(dbReadStr(bbase,'brettname'),3)='$/T');
+    trennzeile:=(LeftStr(dbReadStr(bbase,'brettname'),3)='$/T');
   end;
 
   procedure gostart;
@@ -555,7 +555,7 @@ var t,lastt: taste;
               else begin
                 dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((UpperCase(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,-1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -612,7 +612,7 @@ var t,lastt: taste;
                 else dbSkip(bbase,-1);
                 dbSetIndex(bbase,mi);
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((UpperCase(left(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -903,7 +903,7 @@ var t,lastt: taste;
 
         else begin  { dispmode >= 10 }
           _empf:= dbReadStr(mbase,'brett');
-          if left(_empf,1)='U' then begin
+          if LeftStr(_empf,1)='U' then begin
             rfehler(405);   { 'Nachricht bitte als PM schicken' }
             exit;
             end
@@ -937,7 +937,7 @@ var t,lastt: taste;
         grnr:=brettgruppe;
       end;
     if pm and (cpos('@',empf)=0) then begin
-      fehler(getres(405)+left(empf,50));   { 'fehlerhafte Adresse: ' }
+      fehler(getres(405)+LeftStr(empf,50));   { 'fehlerhafte Adresse: ' }
       exit;
       end;
 
@@ -990,7 +990,7 @@ var t,lastt: taste;
       then goto ende;
       if reply then begin
         get_bezug(pm,rt,rtanz,betr,sData,IndirectQuote);
-        if pm and (left(betr,length(empfbkennung))=empfbkennung) then
+        if pm and (LeftStr(betr,length(empfbkennung))=empfbkennung) then
           delete(betr,1,2);  { EmpfBest. }
         if not pm and (rt='') then begin
           dbSeek(bbase,biBrett,UpperCase(empf));
@@ -1056,7 +1056,7 @@ var t,lastt: taste;
       if AutoArchiv and reply then begin
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if (left(dbReadStr(mbase,'brett'),1)='1') and
+        if (LeftStr(dbReadStr(mbase,'brett'),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -1076,7 +1076,7 @@ var t,lastt: taste;
   var hdp : headerp;
       hds : longint;
   begin
-    if (left(dispspec,1)='1') then
+    if (LeftStr(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       new(hdp);                     { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp^,hds,false);
@@ -2042,7 +2042,7 @@ begin
   for i:=1 to maxgl do dispbuf[i]:='';
   readmode:=DefReadmode;
   if readmode=rmHeute then
-    readdate:=ixdat(left(zdate,6)+'0000')
+    readdate:=ixdat(LeftStr(zdate,6)+'0000')
   else
     readdate:=newdate;
   nachweiter:=AAmsg;
@@ -2070,6 +2070,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/10/17 10:05:50  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.46  2000/10/10 05:10:12  mk
   JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
 

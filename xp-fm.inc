@@ -120,7 +120,7 @@ begin
     product:=prodcode;
     HiVersion:=Hi(version);
     LoVersion:=Lo(version);
-    SetZero(MyName,left(username,58-length(OwnDomain))+#0+OwnDomain,59);
+    SetZero(MyName,LeftStr(username,58-length(OwnDomain))+#0+OwnDomain,59);
     SetZero(SysopName,UserName,19);
     zone:=FA.zone;
     net:=FA.net;
@@ -141,14 +141,14 @@ begin
   if existf(t) then begin
     reset(t);
     s:=''; p:=1;
-    while not eof(t) and (hexval(left(s,p-1))<>pc) do begin
+    while not eof(t) and (hexval(LeftStr(s,p-1))<>pc) do begin
       readln(t,s); p:=max(1,pos(',',s));
     end;
-    if hexval(left(s,p-1))=pc then begin
+    if hexval(LeftStr(s,p-1))=pc then begin
       delete(s,1,p);
       p:=cpos(',',s);
       if p>0 then
-        ProductName:=left(s,p-1)
+        ProductName:=LeftStr(s,p-1)
       else
         Productname:='unknown';
     end;
@@ -634,7 +634,7 @@ var OtherData: String;
     i:=1;
     while i<=length(s) do begin
       if s[i]='\' then insert('5c',s,i+1)   { Backslash -> \5c }
-      else if s[i]>#$7e then s:=left(s,i-1)+'\'+LowerCase(hex(ord(s[i]),2))+mid(s,i+1);
+      else if s[i]>#$7e then s:=LeftStr(s,i-1)+'\'+LowerCase(hex(ord(s[i]),2))+mid(s,i+1);
       inc(i);
     end;
     Convert2SevenBit:=s;
@@ -704,9 +704,9 @@ begin
         mdelay(200);
       end;
     end else begin
-      while left(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
-      while(left(EMSIString,2)<>'**')and(EMSIString<>'')do delete(EMSIString,1,1);
-      if left(EMSIString,length(EMSI_DAT))=EMSI_DAT then begin
+      while LeftStr(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
+      while(LeftStr(EMSIString,2)<>'**')and(EMSIString<>'')do delete(EMSIString,1,1);
+      if LeftStr(EMSIString,length(EMSI_DAT))=EMSI_DAT then begin
         Debug.DebugLog('XPFM','Received EMSI_DAT',4);
         dl:=hexval(copy(EMSIString,length(EMSI_DAT)+1,4));    { Paketlaenge }
         hex4:=Copy(EMSIString,Length(EMSI_DAT)+1+4+dl,4);     { CRC }
@@ -869,6 +869,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/10/17 10:05:45  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.17  2000/07/14 00:00:40  ma
   - Kosmetik
   - Debuglogs aufgeraeumt

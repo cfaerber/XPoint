@@ -113,7 +113,7 @@ begin
   with frec do begin
     p1:=cpos('@',adr);
     if p1>0 then begin
-      username:=trim(left(adr,p1-1));
+      username:=trim(LeftStr(adr,p1-1));
       delete(adr,1,p1);
       end;
     adr:=trim(adr);
@@ -126,7 +126,7 @@ begin
       net:=243;
       if p3>0 then begin
         if p3>1 then
-          node:=ival(left(adr,p3-1))
+          node:=ival(LeftStr(adr,p3-1))
         else
           node:=0;
         point:=minmax(ival(mid(adr,p3+1)),0,65535);
@@ -140,7 +140,7 @@ begin
         if p1=0 then
           zone:=DefaultZone
         else
-          zone:=minmax(ival(left(adr,p1-1)),0,65535);
+          zone:=minmax(ival(LeftStr(adr,p1-1)),0,65535);
         net:=minmax(ival(copy(adr,p1+1,p2-p1-1)),0,65535);
         ispoint:=(p3>0);
         if ispoint then begin
@@ -158,7 +158,7 @@ procedure getpar;
 begin
   if paramcount<>3 then helppage;
   Yupdir:=UpperCase(paramstr(1));
-  if right(YupDir,1)<>'\' then YupDir:=YupDir+'\';
+  if RightStr(YupDir,1)<>'\' then YupDir:=YupDir+'\';
   if not ispath(YupDir) then
     error('ungltiges Verzeichnis: '+yupdir);
   if exist(YupDir+'MAILBASE\'+NetmailDB+'.DBF') then
@@ -360,6 +360,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/10/17 10:06:02  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.9  2000/09/29 11:27:43  fe
   Ungenutzte, lokale Variablen entfernt.
 

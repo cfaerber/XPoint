@@ -102,7 +102,7 @@ begin  { __ Suchmarke }
    -1,0 : begin
             s:= dbReadStr(bbase,'brettname');
             komm:= dbReadStr(bbase,'kommentar');
-            if left(s,3)='$/T' then begin                       { Trennzeile ? }
+            if LeftStr(s,3)='$/T' then begin                       { Trennzeile ? }
               if komm='' then
                 dispbuf[y]:='   '+dup(ScreenWidth-4,s[4])+' '   { ohne Kommentar }
               else
@@ -184,9 +184,9 @@ begin  { __ Suchmarke }
             komm:= dbReadNStr(ubase,ub_kommentar);
                                                         { Trennzeilenerkennung }
 
-           { if left(s,3)='$/T' then s:=#0+s; }         { Altes Trennzeichenformat unterstuetzen }
+           { if LeftStr(s,3)='$/T' then s:=#0+s; }         { Altes Trennzeichenformat unterstuetzen }
 
-            if left(s,4)=#0+'$/T' then begin
+            if LeftStr(s,4)=#0+'$/T' then begin
 
               if komm='' then                           { Trennzeile ohne Kommentar }
                 dispbuf[y]:='     '+dup(74+over80,s[5])+' '
@@ -289,7 +289,7 @@ begin  { __ Suchmarke }
             pp:=cpos('@',s0);
             fidoqwk:=(netztyp=nt_Fido) or (netztyp=nt_QWK);
             if ((netztyp=nt_Maus) or fidoqwk) and (pp>0) then
-              s:=left(s0,pp-1)+' @ '+mid(s0,pp+1)
+              s:=LeftStr(s0,pp-1)+' @ '+mid(s0,pp+1)
             else
               if showrealos and (dbReadStr(mbase,'name')<>'') and
                  ((dispmode<>11) or not markunversandt) then
@@ -297,27 +297,27 @@ begin  { __ Suchmarke }
               else begin
                 s:=s0;
                 if sabsender<>0 then begin
-                  if right(s,4)='.ZER' then delete(s, length(s)+1-4, 4); {dec(byte(s[0]),4);}
+                  if RightStr(s,4)='.ZER' then delete(s, length(s)+1-4, 4); {dec(byte(s[0]),4);}
                   case sabsender of
                     1 : if pp=0 then s:=TopAllStr(s)
-                        else s:=TopAllStr(left(s,pp-1))+'@'+copy(s,pp+1,length(s)-pp);
+                        else s:=TopAllStr(LeftStr(s,pp-1))+'@'+copy(s,pp+1,length(s)-pp);
                     2 : if pp=0 then s:=TopAllStr(s)
-                        else s:=TopAllStr(left(s,pp-1))+' @ '+copy(s,pp+1,length(s)-pp);
-                    3 : if pp>0 then s:=left(s,pp-1);
-                    4 : s:=TopAllStr(left(s,iif(pp>0,pp-1,length(s))));
-                    5 : if pp>0 then s:=forms(left(s,pp-1),16)+' '+copy(s,pp+1,length(s)-pp);
+                        else s:=TopAllStr(LeftStr(s,pp-1))+' @ '+copy(s,pp+1,length(s)-pp);
+                    3 : if pp>0 then s:=LeftStr(s,pp-1);
+                    4 : s:=TopAllStr(LeftStr(s,iif(pp>0,pp-1,length(s))));
+                    5 : if pp>0 then s:=forms(LeftStr(s,pp-1),16)+' '+copy(s,pp+1,length(s)-pp);
                     6 : if pp=0 then s:=TopAllStr(s)
-                        else s:=TopAllStr(forms(left(s,pp-1),16))+' '+copy(s,pp+1,length(s)-pp);
+                        else s:=TopAllStr(forms(LeftStr(s,pp-1),16))+' '+copy(s,pp+1,length(s)-pp);
                   end;
                 end;
               end;
             s1:= dbReadNStr(mbase,mb_betreff);
             if dispmode<>12 then begin                        { <> Kommentarbaum }
               if (netztyp=nt_Maus) and (mnt and $100<>0) then
-                s1:=left('-'+s1,40) else
+                s1:=LeftStr('-'+s1,40) else
               if ntKomkette(netztyp) and (mnt and $100<>0) and
-                 (LowerCase(left(s1,3))<>'re:') and (left(s1,3)<>'Re^') then
-                s1:=left('-'+s1,40);
+                 (LowerCase(LeftStr(s1,3))<>'re:') and (LeftStr(s1,3)<>'Re^') then
+                s1:=LeftStr('-'+s1,40);
             end;
             dbReadN(mbase,mb_OrigDatum,dat);
             if dispmode=10 then                    { 10=Nachrichten in DispBrett (auch To-Brett!)}
@@ -334,7 +334,7 @@ begin  { __ Suchmarke }
               if abs(tempd*12+ival(copy(s2,4,2))-1-(j*12+m-1)) > 11 then
                 sdat:=copy(s2,4,2)+'/'+copy(s2,7,2)
               else
-                sdat:=left(s2,5);
+                sdat:=LeftStr(s2,5);
               ulen:=iif(over80>2,27,25);    { wenn Platz fr vollen Username  }
               blen:=iif(over80>6,40,36);    { auch noch Platz fr den Betreff }
             { kein Datum anzeigen }
@@ -350,9 +350,9 @@ begin  { __ Suchmarke }
               pp:=cpos('@',s);
               s:=copy(s,pp+1,length(s)-pp);
               pp:=cpos('.',s);
-              if pp>0 then s:=left(s,pp-1);
+              if pp>0 then s:=LeftStr(s,pp-1);
               if hd.real_box<>'' then s:=hd.real_box;
-              if left(hd.empfaenger,length(TO_ID))=TO_ID then
+              if LeftStr(hd.empfaenger,length(TO_ID))=TO_ID then
                 s:=forms(mid(hd.empfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
               else
                 s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
@@ -461,7 +461,7 @@ begin  { __ Suchmarke }
                  then userflag[y]:=1
               else
                 if (cpos('@',dispspec)>0) and
-                   (UpperCase(left(s0,40))=UpperCase(copy(dispspec,2,min(40,length(s0)))))
+                   (UpperCase(LeftStr(s0,40))=UpperCase(copy(dispspec,2,min(40,length(s0)))))
                    then Userflag[y]:=1
                 else
                   if mnt and $1000<>0 then userflag[y]:=1;
@@ -599,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2000/10/17 10:05:50  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.37  2000/08/15 11:12:24  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 

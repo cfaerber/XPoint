@@ -1213,7 +1213,7 @@ procedure message(txt:string);
 var x,y : byte;
 begin
   msgbox(length(txt)+6,3,'',x,y);
-  mwrt(x+3,y+1,left(txt,screenwidth-6));
+  mwrt(x+3,y+1,LeftStr(txt,screenwidth-6));
 end;
 
 procedure rmessage(nr:word);
@@ -1306,7 +1306,7 @@ begin
   w1:=windmin; w2:=windmax;
   window(1,1,ScreenWidth,ScreenLines);
   msgbox(length(txt)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
-  mwrt(x+3,y+2,left(txt,screenwidth-6));
+  mwrt(x+3,y+2,LeftStr(txt,screenwidth-6));
   errsound;
   wait(curoff);
   closebox;
@@ -1365,7 +1365,7 @@ begin
   assign(f,Logpath+ErrlogFile);
   append(f);
   if ioresult<>0 then rewrite(f);
-  writeln(f,left(date,6),right(date,2),' ',time,' ',txt);
+  writeln(f,LeftStr(date,6),RightStr(date,2),' ',time,' ',txt);
   close(f);
   if ioresult<>0 then;   { Logpath k”nnte falsch gewesen sein }
 end;
@@ -1374,7 +1374,7 @@ procedure tfehler(txt:string; sec:integer);
 var x,y : byte;
 begin
   msgbox(length(txt)+16,5,_fehler_,x,y);
-  mwrt(x+3,y+2,left(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
+  mwrt(x+3,y+2,LeftStr(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
                formi(sec mod 60,2));
   GotoXY(WhereX-5, WhereY);
   errsound;
@@ -1423,7 +1423,7 @@ begin
   if ioresult<>0 then;
   if ResIsOpen then begin
     s:=getres2(12800,i);
-    if left(s,5)='fehlt' then ioerror:=otxt
+    if LeftStr(s,5)='fehlt' then ioerror:=otxt
     else ioerror:=s;
     end
   else
@@ -1475,7 +1475,7 @@ end;
 
 function ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
 begin
-  ixdispdat:=ixdat(right(dat,2)+copy(dat,4,2)+left(dat,2)+'0000');
+  ixdispdat:=ixdat(RightStr(dat,2)+copy(dat,4,2)+LeftStr(dat,2)+'0000');
 end;
 
 
@@ -1487,7 +1487,7 @@ end;
 
 function fdat(dat:string):string;             { Z-Datum -> Datum  }
 begin
-  fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+left(dat,2);
+  fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+LeftStr(dat,2);
 end;
 
 function zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
@@ -1495,7 +1495,7 @@ var j : word;
     d : datetimest;
     n : integer;
 begin
-  j:=ival(left(dat,2))+1900;
+  j:=ival(LeftStr(dat,2))+1900;
   if j<1970 then inc(j,100);
   schalt(j);
   d:=fdat(dat);
@@ -1687,8 +1687,8 @@ var p : byte;
 begin
   p:=pos('@',s);
   if p=0 then fuser:=s
-  { else fuser:=left(s,p-1)+' @ '+copy(s,p+1,80); }
-  else fuser:=left(s,p-1)+' @ '+right(s,length(s)-p+1);
+  { else fuser:=LeftStr(s,p-1)+' @ '+copy(s,p+1,80); }
+  else fuser:=LeftStr(s,p-1)+' @ '+RightStr(s,length(s)-p+1);
 end;
 
 function aufnahme_string:string;
@@ -1699,17 +1699,17 @@ end;
 
 function IS_QPC(var betreff:string):boolean;
 begin
-  IS_QPC:=(left(betreff,length(QPC_ID))=QPC_ID);     { QPC: }
+  IS_QPC:=(LeftStr(betreff,length(QPC_ID))=QPC_ID);     { QPC: }
 end;
 
 function IS_DES(var betreff:string):boolean;
 begin
-  IS_DES:=(left(betreff,length(DES_ID))=DES_ID);     { DES: }
+  IS_DES:=(LeftStr(betreff,length(DES_ID))=DES_ID);     { DES: }
 end;
 
 function IS_PMC(var betreff:string):boolean;
 begin
-  IS_PMC:=(left(betreff,length(PMC_ID))=PMC_ID);     { *crypted* }
+  IS_PMC:=(LeftStr(betreff,length(PMC_ID))=PMC_ID);     { *crypted* }
 end;
 
 
@@ -1881,7 +1881,7 @@ procedure _chdir(p:string);
 begin
   p:=trim(p);
   if p<>'' then begin
-    if (length(p)>1) and (right(p,1)=DirSepa) then
+    if (length(p)>1) and (RightStr(p,1)=DirSepa) then
       dellast(p);
     chdir(p);
     if ioresult<>0 then
@@ -2004,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.80  2000/10/17 10:05:45  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.79  2000/09/30 16:34:50  mk
   - SysSetBackIntensity
 

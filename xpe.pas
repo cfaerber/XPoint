@@ -442,15 +442,15 @@ begin
       p:=cpos('=',s);
       with config do
         if p>0 then
-          if left(s,p-1)='rechterrand' then
+          if LeftStr(s,p-1)='rechterrand' then
             config.rechter_rand:=ival(mid(s,p+1))
-          else if left(s,p-1)='absatzende' then
+          else if LeftStr(s,p-1)='absatzende' then
             config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
-          else if left(s,p-1)='autoindent' then
+          else if LeftStr(s,p-1)='autoindent' then
             config.AutoIndent:=(mid(s,p+1)<>'n')
-          else if left(s,p-1)='persistentblocks' then
+          else if LeftStr(s,p-1)='persistentblocks' then
             config.PersistentBlocks:=(mid(s,p+1)<>'n')
-          else if left(s,p-1)='quotereflow' then
+          else if LeftStr(s,p-1)='quotereflow' then
             config.QuoteReflow:=(mid(s,p+1)<>'n');
       end;
     close(t);
@@ -475,6 +475,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.20  2000/07/13 17:15:16  mk
   - noch einige ^String-spezifische Probleme beseitigt
 

@@ -85,7 +85,7 @@ var i : integer;
 begin
   exclude_time:=0;
   if forcepoll then exit;
-  t:=left(typeform.time,5);
+  t:=LeftStr(typeform.time,5);
   with boxpar^ do
     for i:=1 to excludes do
       if (t>=exclude[i,1]) and (t<=exclude[i,2]) then
@@ -268,8 +268,8 @@ label abbruch,ende0;
         ltFido     : begin
                        caller:=ARCmail(OwnFidoAdr,boxname);
                        called:='XXX$$$';
-                       upuffer:=left(date,2)+left(typeform.time,2)+
-                                copy(typeform.time,4,2)+right(typeform.time,2)+
+                       upuffer:=LeftStr(date,2)+LeftStr(typeform.time,2)+
+                                copy(typeform.time,4,2)+RightStr(typeform.time,2)+
                                 '.PKT';
                        dpuffer:='YYY$$$';
                        fidologfile:='';
@@ -309,9 +309,9 @@ label abbruch,ende0;
             exchange(downarcer,'$PUFFER','*.*');
           end;
         end;
-      if UpperCase(left(uploader+' ',7))='ZMODEM ' then
+      if UpperCase(LeftStr(uploader+' ',7))='ZMODEM ' then
         uploader:=ZM(uploader,true);
-      if UpperCase(left(downloader+' ',7))='ZMODEM ' then
+      if UpperCase(LeftStr(downloader+' ',7))='ZMODEM ' then
         downloader:=ZM(downloader,false);
       exchange(uploader,'$PORT',strs(bport));
       exchange(uploader,'$ADDRESS',hex(comn[bport].Cport,3));
@@ -322,7 +322,7 @@ label abbruch,ende0;
       if janusplus or (netztyp=nt_Pronet) then
         exchange(uploader,'$DOWNPATH','SPOOL')
       else
-        exchange(uploader,'$DOWNPATH',left(OwnPath,length(OwnPath)-1));
+        exchange(uploader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
       exchange(downloader,'$PORT',strs(bport));
       exchange(downloader,'$ADDRESS',hex(comn[bport].Cport,3));
       exchange(downloader,'$IRQ',strs(comn[bport].Cirq));
@@ -331,7 +331,7 @@ label abbruch,ende0;
       if janusplus or (netztyp=nt_Pronet) then
         exchange(downloader,'$DOWNPATH','SPOOL')
       else
-        exchange(downloader,'$DOWNPATH',left(OwnPath,length(OwnPath)-1));
+        exchange(downloader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
       bimodem:=ntExtProt(netztyp) and (pos('bimodem',LowerCase(uploader))>0);
       end;
   end;
@@ -492,7 +492,7 @@ begin                  { of Netcall }
     end;
 
   with BoxPar^ do
-    if alias then OwnFidoAdr:=left(boxname,cpos('/',boxname))+pointname
+    if alias then OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
     else OwnFidoAdr:=boxname+'.'+pointname;
   if crash then begin
     ppfile:=FidoFilename(CrashBox)+'.cp';
@@ -849,7 +849,7 @@ begin                  { of Netcall }
           if hayescomm and not relogin then begin                  { Anwahl }
             s:=comn[bport].MDial;
             while pos('\\',s)>0 do begin
-              sendcomm(left(s,pos('\\',s)-1));
+              sendcomm(LeftStr(s,pos('\\',s)-1));
               delete(s,1,pos('\\',s)+1);
               end;
             NC^.telefon:=GetTelefon;
@@ -1141,7 +1141,7 @@ begin                  { of Netcall }
                   {window(1,1,screenwidth,screenlines);}
                   end;
                 if (DownArcer<>'') and
-                   (not JanusP or (left(LowerCase(DownArcer),5)<>'copy ')) then
+                   (not JanusP or (LeftStr(LowerCase(DownArcer),5)<>'copy ')) then
                   shell(downarcer,500,1);      { Download-Packer }
                 SetCurrentDir(OwnPath);
                 if ltMultiPuffer(logintyp) then
@@ -1358,11 +1358,11 @@ var brk  : boolean;
   function timediff:string;
   var t1,t2,td : longint;
   begin
-    if zeit=left(time,5) then
+    if zeit=LeftStr(time,5) then
       timediff:='00:00:00'
     else begin
-      t1:=3600*ival(left(zeit,2))+60*ival(right(zeit,2));
-      t2:=3600*ival(left(time,2))+60*ival(copy(time,4,2))+ival(right(time,2));
+      t1:=3600*ival(LeftStr(zeit,2))+60*ival(RightStr(zeit,2));
+      t2:=3600*ival(LeftStr(time,2))+60*ival(copy(time,4,2))+ival(RightStr(time,2));
       if t1<t2 then inc(t1,24*60*60);
       td:=t1-t2;
       timediff:=formi(td div 3600,2)+':'+formi((td div 60) mod 60,2)+':'+
@@ -1372,7 +1372,7 @@ var brk  : boolean;
 
 begin
   if zeit='' then begin
-    zeit:=left(time,5);
+    zeit:=LeftStr(time,5);
     dialog(36,5,'',x,y);
     maddtime(3,2,getres2(704,1),zeit,false);   { 'autom. Netcall um ' }
     maddtext(31,2,getres2(704,2),0);   { 'Uhr' }
@@ -1411,7 +1411,7 @@ begin
       get(t,curoff);
       spop(hotkeys);
       if t=' ' then begin
-        zeit:=left(time,5);
+        zeit:=LeftStr(time,5);
         forcepoll:=true;
         end;
       ende:=(t=keyesc) or (t=mausunright);
@@ -1442,8 +1442,8 @@ begin
     if netcall(true,box,false,false,false) then
     else
   else with boxpar^ do begin
-    h:=ival(left(exclude[b,2],2));
-    m:=ival(right(exclude[b,2],2));
+    h:=ival(LeftStr(exclude[b,2],2));
+    m:=ival(RightStr(exclude[b,2],2));
     inc(m);
     if m>59 then begin
       m:=0; inc(h);
@@ -1463,9 +1463,9 @@ begin
     trfehler(716,30)   { 'fehlerhafte /ips:-Angabe' }
   else begin
     p2:=cpos('_',s);      { Fido: '_' -> ':' }
-    if (p2>0) and (p2<p) and (ival(left(s,p2-1))>0) then
+    if (p2>0) and (p2<p) and (ival(LeftStr(s,p2-1))>0) then
       s[p2]:=':';
-    box:=left(s,p-1);
+    box:=LeftStr(s,p-1);
     if not isbox(box) then
       trfehler1(709,box,30)    { 'unbekannte Box: %s }
     else begin
@@ -1521,7 +1521,7 @@ begin
       PackAll(parxpack);
   if ParAV<>'' then begin
     if not multipos('\:',parav) then begin
-      if right(shellpath,1)<>'\' then ParAV:='\'+ParAV;
+      if RightStr(shellpath,1)<>'\' then ParAV:='\'+ParAV;
       ParAV:=ShellPath+ParAV;
       end;
     if not exist(ParAV) then
@@ -1544,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/10/17 10:05:54  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.34  2000/09/28 03:25:20  mk
   - Bildschirm restaurieren nach Netcall
 

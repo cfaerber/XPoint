@@ -167,7 +167,7 @@ begin
       else if mid(s,2)='AUTOEXEC' then
         auto:=true
       else if s<>'*' then
-        rfehler1(21,left(s,50));   { 'UngÅltige Funktion:  %s' }
+        rfehler1(21,LeftStr(s,50));   { 'UngÅltige Funktion:  %s' }
       end
     else if s<>'' then begin
       p0:=pos('$FILE',UpperCase(s));
@@ -230,7 +230,7 @@ begin
     inc(i);
   if i<=keymacros then begin
     s:=macrodef[i];
-    if s[1]=#0 then t:=left(s,2)
+    if s[1]=#0 then t:=LeftStr(s,2)
     else t:=s[1];
     insert(mid(s,length(t)+1),forwardkeys,1);
     end;
@@ -239,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/10/17 10:05:59  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.11  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

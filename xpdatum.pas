@@ -51,9 +51,9 @@ begin
   val(copy(datum,7,2),h,res);
   inc(h,hours);
   if (h>=0) and (h<=23) then
-    datum:=left(datum,6)+formi(h,2)+mid(datum,9)
+    datum:=LeftStr(datum,6)+formi(h,2)+mid(datum,9)
   else begin
-    val(left(datum,2),j,res);
+    val(LeftStr(datum,2),j,res);
     if j<70 then inc(j,2000)
     else inc(j,1900);
     val(copy(datum,3,2),m,res);
@@ -98,7 +98,7 @@ begin
   addh:=ival(copy(timezone,3,p-3));
   if timezone[2]='-' then addh:=-addh;
   AddD(dat,-addh);
-  zdatum:=iifs(ival(left(datum,2))<70,'20','19')+dat+'00'+timezone;
+  zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+dat+'00'+timezone;
 end;
 
 procedure ZCtoZdatum(var zdatum, datum:string);
@@ -158,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.11  2000/08/09 09:57:02  mk
   - AnsiStringfix (Netcall laeuft jetzt hier durch)
 

@@ -137,7 +137,7 @@ begin
     FidoAbsAdr:=AltAdr
   else
     if aliaspt then
-      FidoAbsAdr:=left(box,cpos('/',box))+pointname
+      FidoAbsAdr:=LeftStr(box,cpos('/',box))+pointname
     else
       FidoAbsAdr:=box+'.'+pointname;
 end;
@@ -190,7 +190,7 @@ begin
       readln(t,s);
       if s<>'' then dec(n);
       end;
-    orishuffle:=left(s,54);
+    orishuffle:=LeftStr(s,54);
     close(t);
     end;
 end;
@@ -209,7 +209,7 @@ begin
     else
       s:='';
     if not pm then begin
-      if left(LowerCase(fidoname),8)='shuffle:' then
+      if LeftStr(LowerCase(fidoname),8)='shuffle:' then
         fidoname:=OriShuffle(trim(mid(fidoname,9)));
       s:=s+#13#10' * Origin: '+fidoname+' ('+FidoAbsAdr+')';
       end;
@@ -235,8 +235,8 @@ begin
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
   if (netztyp=nt_Maus) and not pm and (Developer or
-     ((right(LowerCase(empfaenger),11)<>'/maustausch') and
-       (right(LowerCase(empfaenger),6)<>'/mt.xp')) or
+     ((RightStr(LowerCase(empfaenger),11)<>'/maustausch') and
+       (RightStr(LowerCase(empfaenger),6)<>'/mt.xp')) or
        (registriert.r2 and not XP_ID_AMs)) then
     XpID:=false;
   XID:=iifs(XpID and (netztyp<>nt_Fido),XP_ID,'');
@@ -249,7 +249,7 @@ end;
 procedure showcode;
   function pmcode(c:byte):string;
   begin
-    pmcode:=left(pmcrypt[c-2].name,14);
+    pmcode:=LeftStr(pmcrypt[c-2].name,14);
   end;
 begin
   attrtxt(col.coldialog);
@@ -349,7 +349,7 @@ begin
   if trim(flags)='' then
     mwrt(x+35,y-iif(echomail,2,0),dup(41,'Ä'))
   else { x+33 -> x+35                 34 -> 41 }
-    mwrt(x+40,y-iif(echomail,2,0),right(dup(39,'Ä')+' '+flags,36));
+    mwrt(x+40,y-iif(echomail,2,0),RightStr(dup(39,'Ä')+' '+flags,36));
 end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 
 
@@ -541,7 +541,7 @@ var s   : string;
   begin
     p:=cpos('@',s);
     p2:=pos('.',mid(s,p+1));
-    if p2>0 then s:=left(s,p+p2)+'ZER';
+    if p2>0 then s:=LeftStr(s,p+p2)+'ZER';
   end;
 
   function IsBinary(var f:file):boolean;   { true -> Datei enth„lt }
@@ -628,7 +628,7 @@ begin
   if dbFound then fsname:= dbReadStr(d,'fs-name')
   else fsname:='';
   dbClose(d);
-  fileserver:=left(adresse,p-1)=fsname;
+  fileserver:=LeftStr(adresse,p-1)=fsname;
 end;
 
 function QuoteOK:boolean;
@@ -651,7 +651,7 @@ begin
     inc(n);
     readln(t,s);
     p:=cpos('>',s);
-    if ((p>0) and (p<5)) or (left(s,length(QChar))=QChar) then
+    if ((p>0) and (p<5)) or (LeftStr(s,length(QChar))=QChar) then
       inc(nq);
     end;
   close(t);
@@ -701,7 +701,7 @@ var f : file;
     i : integer;
   procedure wrs(s:string);
   begin
-    s:=left(s,253)+#13#10;
+    s:=LeftStr(s,253)+#13#10;
     blockwrite(f,s[1],length(s));
   end;
 begin
@@ -802,7 +802,7 @@ begin
       p:=cpos('@',absender);
       if p=0 then p:=length(absender)+1;
       if netztyp<>nt_ZCONNECT then
-        fidoto:=left(absender,min(35,p-1));
+        fidoto:=LeftStr(absender,min(35,p-1));
       end;
     if (sendflags and SendIQuote<>0) and (hdp^.fido_to<>'') then
       fidoto:=hdp^.fido_to;
@@ -851,7 +851,7 @@ end;
 procedure SetEBkennung;
 var haseb : boolean;
 begin
-  haseb:=(left(betreff,length(empfbkennung))=empfbkennung);
+  haseb:=(LeftStr(betreff,length(empfbkennung))=empfbkennung);
   if not ntEmpfBest(netztyp) then begin
     if flEB then begin
       if not haseb then betreff:=empfbkennung+betreff;
@@ -886,9 +886,9 @@ end;
 procedure SetLocalPM;
 var l : byte;
 begin
-  lokalPM:=(right(empfaenger,length(box)+4)=box+'.ZER') or
-           stricmp(right(empfaenger,length(box)+length(domain)),box+domain) or
-           stricmp(right(empfaenger,length(box)),box);
+  lokalPM:=(RightStr(empfaenger,length(box)+4)=box+'.ZER') or
+           stricmp(RightStr(empfaenger,length(box)+length(domain)),box+domain) or
+           stricmp(RightStr(empfaenger,length(box)),box);
   case netztyp of
     nt_Netcall,nt_ZCONNECT : l:=1;
     nt_Fido                : l:=2;
@@ -920,13 +920,13 @@ begin
   p:=cpos('@',empfaenger);
   if p=0 then
     ee:=getres2(609,1)     { '"@" fehlt!' }
-  else if (pos(' ',left(empfaenger,p))>0) and not ntNameSpace(netztyp) then
+  else if (pos(' ',LeftStr(empfaenger,p))>0) and not ntNameSpace(netztyp) then
     ee:=iifs(ReadJN(getres2(609,2),true),'','*')   { 'Warnung: Leerzeichen in Adresse! Trotzdem absenden' }
   else if steuerzeichen(empfaenger) then
     ee:=getres2(609,7)     { 'unerlaubte Steuerzeichen in Useradresse' }
   else
     case ntDomainType(netztyp) of
-        0 : if right(empfaenger,4)<>'.ZER' then begin
+        0 : if RightStr(empfaenger,4)<>'.ZER' then begin
               errsound;
               ee:=iifs(ReadJN(getres2(609,3),false),'','*');   { '.ZER in Adresse fehlt! Trotzdem absenden' }
               end;
@@ -1096,7 +1096,7 @@ var sum : longint;
     i   : integer;
 begin
   with hdp^ do
-    if exist(left(datum,6)+'.345') and stricmp(datei,SupportCfg) then begin
+    if exist(LeftStr(datum,6)+'.345') and stricmp(datei,SupportCfg) then begin
       sum:=0;
       for i:=1 to length(datum) do
         inc(sum,ord(datum[i])*7);
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.32  2000/10/17 10:05:53  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.31  2000/09/30 16:41:23  mk
   - QuoteOK-Bugfix fuer Prozentzahlen
 

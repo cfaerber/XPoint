@@ -57,7 +57,7 @@ var t1,t2 : text;
   begin
     write(t2,rmark,sp(rand-2+rand2+r2add));
     if r2add<>0 then begin
-      write(t2,left(buf,-r2add));
+      write(t2,LeftStr(buf,-r2add));
       delete(buf,1,-r2add);
       end;
     p:=breite+1-rand2;
@@ -66,12 +66,12 @@ var t1,t2 : text;
           ((buf[p]<>'/') or not (buf[p-1] in normchr)) and (p>0) do
       dec(p);
     if p<3 then begin
-      writeln(t2,left(buf,breite-rand2));
+      writeln(t2,LeftStr(buf,breite-rand2));
       delete(buf,1,breite-rand2);
       end
     else begin
       if buf[p]='/' then dec(p);
-      fs:=trim(left(buf,p));
+      fs:=trim(LeftStr(buf,p));
       delete(buf,1,p);
       if (buf<>'') and (buf[1]=' ') then
         delfirst(buf);
@@ -112,20 +112,20 @@ begin
     if s='>>|' then rmark:=iifs(nomark,'  ',' |')
     else if s='<<|' then endrm:=true
     else begin
-      if left(s,1)=#12 then begin
+      if LeftStr(s,1)=#12 then begin
         if buf<>'' then begin
           writeln(t2,rmark,sp(rand-2),buf); buf:=''; end;
         write(t2,s[1]);
         delete(s,1,1);
         end
-      else if left(s,2)='--' then begin
+      else if LeftStr(s,2)='--' then begin
         rand2:=ival(copy(s,3,2));
         if rand2>0 then begin
           r2add:=-rand2;
           delete(s,1,4);
           end;
         end
-      else if left(s,2)='++' then begin
+      else if LeftStr(s,2)='++' then begin
         rand2:=ival(copy(s,3,2));
         if rand2>0 then
           delete(s,1,4);
@@ -199,6 +199,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/10/17 10:05:38  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.8  2000/07/04 12:04:15  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

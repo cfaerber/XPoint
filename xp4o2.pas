@@ -97,7 +97,7 @@ end;
 procedure PackOne(fn:string);
 begin
   if cpos('.',fn)>0 then
-    fn:=left(fn,cpos('.',fn)-1);
+    fn:=LeftStr(fn,cpos('.',fn)-1);
   if not exist(fn+dbExt) then
     trfehler1(440,fn+dbExt,30)    { 'XPack - unbekannte Datei: %s' }
   else begin
@@ -148,9 +148,9 @@ var
       readln(t,s0);
       if (s0='---') or (s0='--') then n:=8;
       s:=UpperCase(s0);
-      quote:=(left(s,1)='>');
+      quote:=(LeftStr(s,1)='>');
       p:=cpos('@',s);
-      while (p>0) and (left(s,7)<>'MESSAGE') and (left(s,5)<>'FROM:') do begin
+      while (p>0) and (LeftStr(s,7)<>'MESSAGE') and (LeftStr(s,5)<>'FROM:') do begin
         p1:=p;
         while (p1>1) and (s[p1-1]<>' ') do dec(p1);
         while (p<length(s)) and (s[p+1]<>' ') do inc(p);
@@ -175,7 +175,7 @@ var
             pp:=cpos('@',user);
             ppp:=posn('.',user,pp+1);
             if (ppp>0) and (copy(user,ppp,4)='.zer') then
-              user:=left(user,ppp-1);   { p.mandrella@hot.zer.sub.org ... }
+              user:=LeftStr(user,ppp-1);   { p.mandrella@hot.zer.sub.org ... }
             UpString(user);
             end;
 
@@ -232,7 +232,7 @@ begin
                       { |- Seiteneffekt! }
         ml:=min(length(betreff),length(bezug));
         if ((ref<>'') and (dbReadStr(mbase,'msgid')=ref)) or
-           ((ref='') and (ml>2) and (UpperCase(left(betreff,ml))=left(bezug,ml)) and
+           ((ref='') and (ml>2) and (UpperCase(LeftStr(betreff,ml))=LeftStr(bezug,ml)) and
            ((user='') or (dbReadStr(mbase,'absender')=user)))
         then MsgAddmark;
         end;
@@ -430,7 +430,7 @@ var hdp    : headerp;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
           if recount(newbetr)=0 then;
-          if left(newbetr,35)<>left(betr,35) then
+          if LeftStr(newbetr,35)<>LeftStr(betr,35) then
             inc(flags,kflBetr);
           if (_brett[1]='U') or (_brett[1]='1') then
             inc(flags,kflPM)
@@ -450,7 +450,7 @@ var hdp    : headerp;
       else begin
         mid:=dbLongStr(nullid); nullid:=0;
         end;
-      dbSeek(bezbase,beiRef,left(mid,4));
+      dbSeek(bezbase,beiRef,LeftStr(mid,4));
       for i:=0 to 3 do
         ida[i]:=mid[4-i];
     end;
@@ -654,7 +654,7 @@ begin
   BezSeekKommentar:=false;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
-  mid:=left(dbReadStr(mbase,'msgid'),4);
+  mid:=LeftStr(dbReadStr(mbase,'msgid'),4);
   dbSeek(bezbase,beiRef,mid);
   if dbFound then begin
     dbReadN(bezbase,bezb_ref,ref);
@@ -691,7 +691,7 @@ begin
   _left:=false; _right:=false; up:=false; down:=false;
   if hds>1 then begin
     up:=(hdp^.ref<>'');
-    dbSeek(bezbase,beiRef,left(dbReadStr(mbase,'msgid'),4));
+    dbSeek(bezbase,beiRef,LeftStr(dbReadStr(mbase,'msgid'),4));
     down:=dbFound;
     if hdp^.ref<>'' then begin
       ref:=MsgidIndex(hdp^.ref);
@@ -761,12 +761,12 @@ begin
       for i:=0 to _ebene-2 do
         if lines and (1 shl i)<>0 then
           ss[i*komwidth+1]:='³';
-      if flags and kflLast<>0 then ss:=ss+left('ÀÄÄÄ',komwidth)
-      else ss:=ss+left('ÃÄÄÄ',komwidth);
+      if flags and kflLast<>0 then ss:=ss+LeftStr('ÀÄÄÄ',komwidth)
+      else ss:=ss+LeftStr('ÃÄÄÄ',komwidth);
       end;
     ss:=ss+s;
     if flags and (kflBetr+kflBrett)<>0 then
-      BaumBlatt:=forms(ss,len-min(length(bs+s1),35)-3)+'  '+left(bs+s1,35)+' '
+      BaumBlatt:=forms(ss,len-min(length(bs+s1),35)-3)+'  '+LeftStr(bs+s1,35)+' '
     else
       BaumBlatt:=forms(ss,len)
     end;
@@ -853,7 +853,7 @@ begin
       while (p<=length(s0)) and (pos('^'+UpCase(s0[p]),UpperCase(s))>0) do
         inc(p);
       if p<=length(s0) then
-        s:=s+','+left(s0,p-1)+'^'+mid(s0,p)
+        s:=s+','+LeftStr(s0,p-1)+'^'+mid(s0,p)
       else
         s:=s+','+s0;
       end;
@@ -887,6 +887,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/17 10:05:51  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.21  2000/07/23 10:01:02  mk
   - memavail wo moeglich rausgenommen
 

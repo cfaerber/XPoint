@@ -452,11 +452,11 @@ var j,m : longint;
     dat : longint;
     kdat: longint;
 begin
-  m:=ival(left(s,2)); j:=ival(right(s,2));
-  dat:=ival(right(date,4))*100 + ival(copy(date,4,2));
+  m:=ival(LeftStr(s,2)); j:=ival(RightStr(s,2));
+  dat:=ival(RightStr(date,4))*100 + ival(copy(date,4,2));
   if j<80 then kdat:=(j+2000)*100+m
   else kdat:=(j+1900)*100+m;
-  if (ival(left(s,2))<1) or (ival(left(s,2))>12) or
+  if (ival(LeftStr(s,2))<1) or (ival(LeftStr(s,2))>12) or
      (kdat<dat) or (kdat>dat+500) then begin
     hinweis('ungÅltiges Kreditkarten-GÅltigkeitsdatum');
     end;
@@ -514,8 +514,8 @@ var brk,modi : boolean;
     case dbReadInt(d,'netztyp') of
       nt_ZConnect : adr:=user+'@'+box+domain;
       nt_Maus     : adr:=user+' @ '+box;
-      nt_Fido     : if left(box,2)<>'2:' then adr:=''
-                    else if alias then adr:=user+' @ '+left(box,cpos('/',box))+point
+      nt_Fido     : if LeftStr(box,2)<>'2:' then adr:=''
+                    else if alias then adr:=user+' @ '+LeftStr(box,cpos('/',box))+point
                     else adr:=user+' @ '+box+'.'+point;
       nt_UUCP     : if alias then adr:=user+'@'+box+ntServerDomain(box)
                     else adr:=user+'@'+point+domain;
@@ -998,7 +998,7 @@ var brk,modi : boolean;
       WriteFormular:=true;
     with regdata do begin
       writeln(t);
-      writeln(t,lr,right(dup(50,'-')+' CrossPoint-Registrierung ['+verstr+']',62));
+      writeln(t,lr,RightStr(dup(50,'-')+' CrossPoint-Registrierung ['+verstr+']',62));
       writeln(t);
 
       if regweghin in [1,2] then begin   { Formular ausdrucken / speichern }
@@ -1069,7 +1069,7 @@ var brk,modi : boolean;
         writeln(t);
         writeln(t);
         writeln(t);
-        wrl(left(date,6)+right(date,2)+'  '+dup(36,'_'));
+        wrl(LeftStr(date,6)+RightStr(date,2)+'  '+dup(36,'_'));
         wrl('          (Unterschrift bei Postregistrierung)');
         end;
       if regweghin=3 then
@@ -1139,7 +1139,7 @@ var brk,modi : boolean;
               end;
         dbClose(d);
         if pos(' (',mto)>0 then
-          mto:=trim(left(mto,pos(' (',mto)-1));
+          mto:=trim(LeftStr(mto,pos(' (',mto)-1));
         SendEmail:=DoSend(true,tmp,mto,'XP-Registrierungsformular',
                           false,false,true,false,false,nil,header,header,0);
         _era(tmp);
@@ -1202,7 +1202,7 @@ var brk,modi : boolean;
         end;
       p:=pos(' (',regdata.regphone);
       if p>0 then
-        regdata.regphone:=trim(left(regdata.regphone,p-1));
+        regdata.regphone:=trim(LeftStr(regdata.regphone,p-1));
       writeln(t,'Phone=',regdata.regphone);
       writeln(t,'InPath=',FilePath);
       writeln(t,'MailPath=',ownpath+AutoxDir);
@@ -1397,7 +1397,7 @@ var x,y,i : byte;
       end
     else begin
       if ival(firstchar(code))>0 then
-        nr:=ival(left(code,cpos('-',code)-1))
+        nr:=ival(LeftStr(code,cpos('-',code)-1))
       else
         nr:=ival(copy(code,2,cpos('-',code)-2));
       if IsKomCode(nr) or IsOrgCode(nr) then begin
@@ -1443,7 +1443,7 @@ begin
   msgbox(70,msglines+8+iif(wait,3,0),'',x,y);
   moff;
   wrt(x+3,y+1,'Cross \\//    '+
-              Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+              RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
   s:=x_copyright + ' ' + author_name;
   wrt(x+67-length(s),y+2,s);
@@ -1457,11 +1457,11 @@ begin
     gotoxy(x+3,y+4+i);
     repeat
       p:=cposx('*',s);
-      Wrt2(left(s,p-1));
+      Wrt2(LeftStr(s,p-1));
       delete(s,1,p);
       p:=cposx('*',s);
       attrtxt(col.colmboxhigh);
-      Wrt2(left(s,p-1));
+      Wrt2(LeftStr(s,p-1));
       attrtxt(col.colmbox);
       delete(s,1,p);
     until s='';
@@ -1553,7 +1553,7 @@ begin
   msgbox(73,msglines+7,'',x,y);
   moff;
   wrt(x+3,y+1,'Cross \\//    '+
-              Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+              RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
   s:=x_copyright + ' ' + author_name;
   wrt(x+67-length(s),y+2,s);
@@ -1574,6 +1574,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/10/17 10:06:00  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.19  2000/09/29 11:30:38  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".

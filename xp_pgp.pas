@@ -75,7 +75,7 @@ begin
   assign(t,LogPath+'PGP.LOG');
   if existf(t) then append(t)
   else rewrite(t);
-  writeln(t,left(date,6),right(date,2),' ',time,'  ',s);
+  writeln(t,LeftStr(date,6),RightStr(date,2),' ',time,'  ',s);
   close(t);
   if ioresult<>0 then;
 end;
@@ -659,7 +659,7 @@ begin
   reset(t);
   repeat
     read(t,s);
-    found:=(left(LowerCase(s),15)='pgp-public-key:');
+    found:=(LeftStr(LowerCase(s),15)='pgp-public-key:');
     if not found then readln(t);
   until found or eof(t);
   if found then begin
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/10/17 10:05:57  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.26  2000/07/21 17:39:57  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

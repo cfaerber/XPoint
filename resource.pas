@@ -317,7 +317,7 @@ function reps(s1,s2:string):string;
 var p : byte;
 begin
   p:=pos('%s',s1);
-  if p>0 then reps:=left(s1,p-1)+s2+mid(s1,p+2)
+  if p>0 then reps:=LeftStr(s1,p-1)+s2+mid(s1,p+2)
   else reps:=s1;
 end;
 
@@ -337,6 +337,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.16  2000/10/17 10:05:43  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.15  2000/08/24 09:15:39  mk
   MO:- Bug in Resourcencaching behoben
 

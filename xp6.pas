@@ -326,7 +326,7 @@ var                                          { Format: 1105001824 }
  d:datetime;
 begin
   unpacktime(filetime(ownpath+'xp.exe'),d);
-  compiletime:=(formi(d.day,2)+formi(d.month,2)+right(formi(d.year,2),2)
+  compiletime:=(formi(d.day,2)+formi(d.month,2)+RightStr(formi(d.year,2),2)
     +formi(d.hour,2)+formi(d.min,2));
 end;
 {$ENDIF}
@@ -474,7 +474,7 @@ begin
     wrt(1,1,' ');
     if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79+screenwidth-80))
     else
-      if pm then Wrt2(forms(getres2(611,40)+left(empfaenger,p-1)+'@'+
+      if pm then Wrt2(forms(getres2(611,40)+LeftStr(empfaenger,p-1)+'@'+
                        mid(empfaenger,p+1),70+screenwidth-80)+sp(9))
       else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
                  iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
@@ -805,12 +805,12 @@ begin  { 05.02.2000 MH: 70 -> 78 f. Zurck }
   wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
   showcc; { 05.02.2000 MH: x+39 -> x+43 }
   attrtxt(col.coldiahigh);
-  kopkey:=left(getres2(611,16),1);
+  kopkey:=LeftStr(getres2(611,16),1);
   wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
   if empfaenger[1]=vert_char then
     wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
   else
-    wrt(x+14,y+2-fadd,left(uucpbrett(empfaenger,edis),52));
+    wrt(x+14,y+2-fadd,LeftStr(uucpbrett(empfaenger,edis),52));
 
   pgpkey:=getres2(611,50);
   if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
@@ -872,7 +872,7 @@ begin      {-------- of DoSend ---------}
     OrigBox:='';
   end;
 
-  if not pm and betreffbox and (left(empfaenger,1)<>'A') then
+  if not pm and betreffbox and (LeftStr(empfaenger,1)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht m”glich!' }
     goto xexit1;
@@ -960,7 +960,7 @@ fromstart:
       verteiler:=false;
       if fileserver(empfaenger) or _sendmaps then begin
         box:=mid(empfaenger,cpos('@',empfaenger)+1);
-        if cpos('.',box)>0 then box:=left(box,cpos('.',box)-1);
+        if cpos('.',box)>0 then box:=LeftStr(box,cpos('.',box)-1);
         if not isbox(box) then box:=DefaultBox;
         end
       else
@@ -1058,7 +1058,7 @@ fromstart:
   flMnet:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'mausnet');
   FidoBin:=binary and pm and
            ((netztyp=nt_Fido) or
-            ((netztyp=nt_UUCP) and (left(empfaenger,length(uuserver))=uuserver)));
+            ((netztyp=nt_UUCP) and (LeftStr(empfaenger,length(uuserver))=uuserver)));
   if FidoBin then begin
     if length(datei)>BetreffLen then begin
       rfehler(608);   { 'zu langer Datei-Pfad' }
@@ -1083,7 +1083,7 @@ fromstart:
           binary or TestXPointID)
      and (pm or not ntForceMailer(netztyp)) then
     XpID:=true;
-  if pm and (UpperCase(left(empfaenger,length(mapsname)))=mapsname) then
+  if pm and (UpperCase(LeftStr(empfaenger,length(mapsname)))=mapsname) then
     XpID:=false;
   if SendFlags and SendWAB<>0 then XpID:=false;
   { Bei Nachrichten, die mit N/W/O weitergeleitet wurden, darf keine
@@ -1099,14 +1099,14 @@ fromstart:
 }
 
   if pm and not ntEmpfBest(netztyp) then begin
-    flEB:=flEB or (left(betreff,length(EmpfBkennung))=EmpfBkennung);
+    flEB:=flEB or (LeftStr(betreff,length(EmpfBkennung))=EmpfBkennung);
     SetEBkennung;
   end;
   if not fileattach then
     ukstring(betreff);
   typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / '”ffentliche Nachricht' }
 
-  betreff:=left(betreff,betrlen);
+  betreff:=LeftStr(betreff,betrlen);
   if betreffbox then begin         { Betreff editieren }
     if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
     if binary then typ:=typ+getres2(611,5);   { ' (Bin„r)' }
@@ -1120,17 +1120,17 @@ fromstart:
     if empfaenger[1]=vert_char then
       Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
     else
-      Wrt2(left(uucpbrett(empfaenger,edis),bboxwid));
+      Wrt2(LeftStr(uucpbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
       if ccm^[ii].ccpm then
-        wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
+        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(cc^[ii],bboxwid))
       else
-        wrt(x+3+length(getres2(611,6)),y+2+ii,left(uucpbrett(ohnebox(ii),2),bboxwid));
+        wrt(x+3+length(getres2(611,6)),y+2+ii,LeftStr(uucpbrett(ohnebox(ii),2),bboxwid));
     if showempfs=15 then
       wrt(x+3+length(getres2(611,6)),y+17,'(...)');
     mon;
     openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
-    oldbetr:=left(betreff,20);
+    oldbetr:=LeftStr(betreff,20);
     maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
     msetvfunc(umlauttest); mhnr(86);
     if fidoam then begin
@@ -1148,21 +1148,21 @@ fromstart:
          not pm then goto xexit;
     end;
     if (_bezug<>'') and ntKomkette(netztyp) and
-                    (UpperCase(left(betreff,20))<>UpperCase(oldbetr)) then begin
+                    (UpperCase(LeftStr(betreff,20))<>UpperCase(oldbetr)) then begin
       pushhp(1501);
-      if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
+      if not ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
              ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
       begin
         _bezug:='';
         _orgref:='';
         DisposeReflist(_ref6list);
       end else
-        { betreff:=left(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
+        { betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
       pophp;
       if brk then goto xexit;
     end;
     if pm and not ntEmpfBest(netztyp) then begin
-      flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
+      flEB:=(LeftStr(betreff,length(EmpfBkennung))=EmpfBkennung);
       SetEBkennung;
     end;
   end;
@@ -1528,7 +1528,7 @@ fromstart:
 
     { --- 1. Schritt: Nachrichten-Inhalt erzeugen ---------------------- }
 
-    betreff:=left(betreff,betrlen);
+    betreff:=LeftStr(betreff,betrlen);
     if binary then
       fn:=datei
     else
@@ -1639,7 +1639,7 @@ fromstart:
       hdp^.distribution:=sData^.distribute;
     hdp^.quotestring:=sData^.quotestr;
     sendedat:=ixdat(zdate);
-    hdp^.datum:=iifs(ReplaceEtime,left(zdate,6)+'0000',zdate);
+    hdp^.datum:=iifs(ReplaceEtime,LeftStr(zdate,6)+'0000',zdate);
     case netztyp of
       nt_Magic  : hdp^.pfad:=box;
       nt_Quick,
@@ -1915,14 +1915,14 @@ fromstart:
           TruncStr(hdp^.absender,b-1);
         b:=cpos('@',hdp^.empfaenger);
         if (b>0) and (UpperCase(mid(hdp^.empfaenger,b+1))=box+'.ZER') then
-          hdp^.empfaenger:=left(hdp^.empfaenger,b-1);
+          hdp^.empfaenger:=LeftStr(hdp^.empfaenger,b-1);
         end;
       case docode of
         1 : begin
-              hdp^.betreff:=left(QPC_ID+hdp^.betreff,BetreffLen);
+              hdp^.betreff:=LeftStr(QPC_ID+hdp^.betreff,BetreffLen);
               inc(hdp^.attrib,AttrQPC);
             end;
-        2 : hdp^.betreff:=left(DES_ID+hdp^.betreff,BetreffLen);
+        2 : hdp^.betreff:=LeftStr(DES_ID+hdp^.betreff,BetreffLen);
       end;
       hdp^.typ:=iifs(newbin,'B','T');
       hdp^.groesse:=filesize(f);
@@ -2064,9 +2064,9 @@ begin
   useclip:=true;
   if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'Bin„rdatei' / 'Textdatei' versenden }
   then
-    if binary and (left(empf,length(xp_support))=xp_support) and
-       ((left(extractfilename(fn),4)='PDZM') or
-        (left(extractfilename(fn),3)='ZPR')) and not developer then
+    if binary and (LeftStr(empf,length(xp_support))=xp_support) and
+       ((LeftStr(extractfilename(fn),4)='PDZM') or
+        (LeftStr(extractfilename(fn),3)='ZPR')) and not developer then
       fehler('Bitte berlassen Sie das Versenden dieses Programms dem Programmautor!')
     else begin
 {$ifdef UnixFS}
@@ -2081,7 +2081,7 @@ begin
       begin
         {fsplit(fn,dir,name,ext);}
         if betr='' then betr:=ExtractFileName(fn)
-        else betr:=left(ExtractFilename(fn)+' ('+betr,39)+')';
+        else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
         new(sData);
         fillchar(sData^,sizeof(sData^),0);
         if aktdispmode in [10..19] then begin
@@ -2132,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.69  2000/10/17 10:05:52  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.68  2000/10/11 08:45:38  mk
   RB:- Fix fuer Ersetzt-Nachrichten
 

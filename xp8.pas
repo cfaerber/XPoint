@@ -486,15 +486,15 @@ var t     : text;
             map^[mm].code:=copy(s,41,4)
           else
             map^[mm].code:=trim(copy(s,41,6));
-          s:=trim(left(s,40));
-          if left(s,1)<>'/' then s:='/'+s;
+          s:=trim(LeftStr(s,40));
+          if LeftStr(s,1)<>'/' then s:='/'+s;
           while cpos(' ',s)>0 do s[cpos(' ',s)]:='_';
           map^[mm].name:=UpperCase(s);
           end
         else   { ProNet }
-          if left(s,1)<>';' then begin
+          if LeftStr(s,1)<>';' then begin
             inc(mm);
-            map^[mm].code:=left(s,4);
+            map^[mm].code:=LeftStr(s,4);
             map^[mm].name:=trim(mid(s,32));
             end;
         end;
@@ -547,7 +547,7 @@ var t     : text;
       while not eof(t) do begin
         readln(t,s);
         if pos(brett,UpperCase(s))>0 then
-          qwkbrett:=left(s,3);
+          qwkbrett:=LeftStr(s,3);
         end;
       close(t);
       end;
@@ -560,7 +560,7 @@ begin
     else
       GetDel(getreps(803,strs(bmarkanz)))   { '%s markierte Bretter abbestellen' }
   else
-    if left(brett,1)<>'A' then
+    if LeftStr(brett,1)<>'A' then
       nr:=3
     else
       GetDel(getreps(804,copy(brett,2,40)));   { '%s abbestellen' }
@@ -719,7 +719,7 @@ begin
     assign(t2,bfile+'.bl'); rewrite(t2);
     repeat
       if zok then begin
-        ss:=trim(left(s,40));
+        ss:=trim(LeftStr(s,40));
         while cpos(' ',ss)>0 do ss[cpos(' ',ss)]:='_';
         writeln(t2,forms(boxpar^.MagicBrett+ss,40),mid(s,41));
         end;
@@ -744,7 +744,7 @@ begin
     if (s[1]=';') or (s[32]<>'/') then
       writeln(t2,s)
     else
-      writeln(t2,left(s,31),left(BoxPar^.MagicBrett,length(Boxpar^.Magicbrett)-1),
+      writeln(t2,LeftStr(s,31),LeftStr(BoxPar^.MagicBrett,length(Boxpar^.Magicbrett)-1),
                  mid(s,32));
   until eof(t1);
   close(t1);
@@ -875,7 +875,7 @@ function BrettMark(var s:string; block:boolean):boolean;
 begin
   BrettMark:=false;
   if (trim(s)='') or
-     ((mapsnt=nt_Pronet) and ((s[8]='-') or (s[1] in [';','-']) or (left(s,4)='CODE')))
+     ((mapsnt=nt_Pronet) and ((s[8]='-') or (s[1] in [';','-']) or (LeftStr(s,4)='CODE')))
   then begin
     if not block then errsound;
     end
@@ -939,7 +939,7 @@ label again;
     if p=2 then begin
       s:=trim(mid(s,3)); p:=cpos(' ',s); end;
     if p=0 then p:=cpos(#9,s);
-    if p>0 then s:=left(s,p-1);
+    if p>0 then s:=LeftStr(s,p-1);
     if (s<>'') and (s[1]='+') then delfirst(s);
     if (s<>'') and (s[1]='*') then delfirst(s);
     p:=pos('....',s);         { direkt angeh„ngten Kommentar abschneiden }
@@ -957,14 +957,14 @@ label again;
       else
         writeln(t,trim(copy(s,41,6)))
     else if promaf then
-      writeln(t,left(s,4))
+      writeln(t,LeftStr(s,4))
     else if maus then begin
       p:=13;
       while (p<length(s)) and (s[p]<>' ') do inc(p);
       gr:=trim(copy(s,3,p-2));
-      if left(gr,1)='?' then delfirst(gr);    { geheime Gruppe }
+      if LeftStr(gr,1)='?' then delfirst(gr);    { geheime Gruppe }
       if (length(gr)=11) and (gr[10]=' ') then
-        gr:=trim(left(gr,length(gr)-1));
+        gr:=trim(LeftStr(gr,length(gr)-1));
       writeln(t,gr);
       end
     else if fido then begin
@@ -979,7 +979,7 @@ label again;
     else if qwk then begin
       if art=0 then write(t,'ADD ')
       else write(t,'DROP ');
-      writeln(t,left(s,3));
+      writeln(t,LeftStr(s,3));
       end
     else begin
       s:=trim(s);
@@ -988,7 +988,7 @@ label again;
       if p=0 then p:=pos(#9,s);
       if p>0 then
         if uucp then
-          s:=left(s,p-1)
+          s:=LeftStr(s,p-1)
         else begin
           if p<5 then
             s:=copy(s,p+1,80);
@@ -1020,11 +1020,11 @@ label again;
       if uucp then
         for i:=1 to length(s) do
           if s[i]='.' then s[i]:='/';
-      if maf then makebrett(trim(left(s,40)),n,box,netztyp,true) else
+      if maf then makebrett(trim(LeftStr(s,40)),n,box,netztyp,true) else
       if promaf then makebrett(trim(mid(s,32)),n,box,netztyp,true) else
       if maus then begin
         s:=trim(mid(s,3));
-        if left(s,1)='?' then delfirst(s);  { geheime Gruppen }
+        if LeftStr(s,1)='?' then delfirst(s);  { geheime Gruppen }
         makebrett(boxpar^.MagicBrett+s,n,box,netztyp,true);
         end else
       if fido then
@@ -1258,13 +1258,13 @@ var brk     : boolean;
     end;
     if user<>'' then begin
       p:=cpos('@',user);
-      if p>0 then user:=trim(left(user,p-1))+' @ '+trim(mid(user,p+1));
+      if p>0 then user:=trim(LeftStr(user,p-1))+' @ '+trim(mid(user,p+1));
       end;
     if gruppe<>'' then begin
       delete(gruppe,1,1);
       ReadBoxPar(0,box);
       with BoxPar^ do
-        if left(UpperCase(gruppe),length(MagicBrett))<>UpperCase(MagicBrett) then
+        if LeftStr(UpperCase(gruppe),length(MagicBrett))<>UpperCase(MagicBrett) then
           gruppe:=''
         else
           delete(gruppe,1,length(magicbrett));
@@ -1277,7 +1277,7 @@ var brk     : boolean;
     if brk then
       comm:=''
     else
-      comm:='GU'+user+right(comm,1)+gruppe;
+      comm:='GU'+user+RightStr(comm,1)+gruppe;
   end;
 
   function MausCRC(comm:string):boolean;
@@ -1454,14 +1454,14 @@ begin
     list(brk);
     closebox;
     if not brk then
-      comm:=trim(left(first_marked,iif(maus,9,iif(fido or uucp,16,21))));
+      comm:=trim(LeftStr(first_marked,iif(maus,9,iif(fido or uucp,16,21))));
     end;
   if not brk then begin
     if comm='BRETT +' then comm:='ADD'
     else if comm='BRETT -' then comm:='DEL';
     brk:=false;
     if not (area or request or maf or fido)
-       and ((left(comm,4)='LIST') and (comm<>'LIST SYSTEME')) and (defcom=0)
+       and ((LeftStr(comm,4)='LIST') and (comm<>'LIST SYSTEME')) and (defcom=0)
     then begin
       pushhp(69);
       if ReadJNesc(getres2(810,20),true,brk) then begin   { 'ausfhrliche Liste' }
@@ -1565,7 +1565,7 @@ var fn   : string;
     repeat
       p:=cpos(',',s);
       if p>0 then begin
-        writeln(t2,left(s,p-1));
+        writeln(t2,LeftStr(s,p-1));
         delete(s,1,p);
         end;
     until p=0;
@@ -1579,14 +1579,14 @@ begin
   reset(t);
   s:='';
   with BoxPar^ do begin
-    while not eof(t) and (left(s,length(pointname))<>pointname) do
+    while not eof(t) and (LeftStr(s,length(pointname))<>pointname) do
       readln(t,s);
     s:=trim(s); p:=cpos(':',s);
     if not eof(t) and (p>0) then begin
       assign(t2,BoxFilename(boxpar^.boxname)+'.BBL');
       rewrite(t2);
       delete(s,1,p);
-      while right(s,1)='\' do begin
+      while RightStr(s,1)='\' do begin
         dellast(s);
         WriteStr;
         readln(t,s);
@@ -1594,7 +1594,7 @@ begin
         end;
       p:=cpos('/',s); if p=0 then p:=cpos(':',s);
       if p>0 then begin
-        s:=left(s,p-1)+',';
+        s:=LeftStr(s,p-1)+',';
         WriteStr;
         end;
       close(t2);
@@ -1612,6 +1612,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/10/17 10:05:55  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.26  2000/09/11 17:13:54  hd
   - Kleine Arbeiten an NNTP
 

@@ -272,10 +272,10 @@ begin
                   p:=cpos('>',s);
                   if p=0 then s:=''
                   else begin
-                    if (p=7) and (left(s,4)='Ctrl') then
+                    if (p=7) and (LeftStr(s,4)='Ctrl') then
                       m:=m+chr(ord(s[6])-64)
                     else
-                      m:=m+extkey('<'+left(s,p),ta);
+                      m:=m+extkey('<'+LeftStr(s,p),ta);
                     delete(s,1,p);
                     end;
                   end;
@@ -308,7 +308,7 @@ begin
         case s[1] of
           '_' : tt:=s[2];
           '^' : tt:=chr(ord(UpCase(s[2]))-64);
-          '<' : tt:=extkey(trim(left(s,15)),ta);
+          '<' : tt:=extkey(trim(LeftStr(s,15)),ta);
         end;
       if tt<>'' then begin
         m:=getmacro(copy(s,26,200),ta);
@@ -358,7 +358,7 @@ begin
             e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24)      //Kommentar anh„ngen
           else
         else begin
-          lastIdx:=e.Add(left(s,filewidth));
+          lastIdx:=e.Add(LeftStr(s,filewidth));
         end;
     end;
     close(t);
@@ -377,7 +377,7 @@ begin
     1 : for i:=0 to e.Count-1 do
           writeln(t,e[i]);
     2 : for i:=0 to e.Count-1 do begin
-          writeln(t,trim(left(e.Strings[i],225)));
+          writeln(t,trim(LeftStr(e.Strings[i],225)));
           if mid(e.Strings[i],226)<>'' then
             writeln(t,'!',mid(e.Strings[i],226));
           end;
@@ -439,7 +439,7 @@ function __dateok(var s:string):boolean;
 begin
   monat[2].zahl:=29;
   __dateok:=(ival(copy(s,4,2))<=12) and (ival(copy(s,4,2))>=1) and
-            (ival(left(s,2))<=monat[ival(copy(s,4,2))].zahl);
+            (ival(LeftStr(s,2))<=monat[ival(copy(s,4,2))].zahl);
 end;
 
 function __timeok(var s:string):boolean;
@@ -480,7 +480,7 @@ begin
     end
   else begin
     box:='';
-    x:=trim(left(s,20));
+    x:=trim(LeftStr(s,20));
     end;
   UpString(x);
   if IsCommand(2,comms) then
@@ -619,7 +619,7 @@ var
                   end;
               end;
           2 : begin                           { Tastenmakros }
-                tt:=left(e.Strings[i+a-1],13);
+                tt:=LeftStr(e.Strings[i+a-1],13);
                 case tt[1] of
                   '_' : tt:=copy(tt,2,12)+' ';
                   '^' : tt:='<Ctrl '+tt[2]+'>     ';
@@ -701,7 +701,7 @@ var
       else begin
         for i:=1 to 7 do
           if wotag[i] then wot:=wot+','+wtage[i];
-        if left(wot,1)=',' then delete(wot,1,1);
+        if LeftStr(wot,1)=',' then delete(wot,1,1);
         end;
 
       // Umkopieren wegen AnsiStrings
@@ -860,7 +860,7 @@ var
     komm:=copy(s,226,24);
     maddstring(3,4,getres2(1006,3),komm,24,24,''); mhnr(549);  { s. EditMacro! } { 'Kommentar ' }
     maddtext(3,6,getres2(1006,4),0);   { 'Taste' }
-      { maddtext(12,4,left(s,12),col.coldiahigh); }
+      { maddtext(12,4,LeftStr(s,12),col.coldiahigh); }
     maddtext(3,8,getres2(1006,5),0);   { 'Makro' }
       maddtext(12,6,copy(s,26,40),col.coldiahigh);
     readmask(brk);
@@ -881,7 +881,7 @@ var
 
       spush(hotkeys,1);
       hotkeys:=false;
-      tt:=left(s,15);
+      tt:=LeftStr(s,15);
       readmkey(false,x+13,y+5,ta,tt);
 
       attrtxt(col.coldialog);
@@ -904,10 +904,10 @@ var
         until (t1<>keyf1) and keyok(ta,t1);
         if kb_shift and (t1=keybs) then begin
           if (ms<>'') then begin
-            if right(ms,1)='>' then
+            if RightStr(ms,1)='>' then
             begin
               setlength(ms, length(ms)-2);{dec(byte(ms[0]),2);}  { 2 wg. '>', '<' und '^' }
-              while (ms<>'') and (right(ms,1)<>'<') do
+              while (ms<>'') and (RightStr(ms,1)<>'<') do
                 Dellast(ms);
               Dellast(ms)
             end
@@ -970,7 +970,7 @@ var
     readmask(brk);
     enddialog;
     if not brk then begin
-      e.Strings[strIdx]:=left(e.Strings[strIdx],25)+s;
+      e.Strings[strIdx]:=LeftStr(e.Strings[strIdx],25)+s;
       if komm<>'' then
         e.Strings[strIdx]:=forms(e.Strings[strIdx],225)+komm;
       modi:=true;
@@ -983,7 +983,7 @@ var
       tt,ttt : string;
       ta     : tap;
   begin
-    tt:=left(e.Strings[strIdx],15);
+    tt:=LeftStr(e.Strings[strIdx],15);
     diabox(35,5,'',x,y);
     mwrt(x+20,y,' <Shift Esc> ');
     mwrt(x+3,y+2,getres(1008));   { 'neue Taste' }
@@ -1828,14 +1828,14 @@ var pfound: integer;
     with phones^[i] do
       for j:=1 to anz do begin
         s:=ph^[j];
-        if left(s,length(natvorwahl))=natvorwahl then
+        if LeftStr(s,length(natvorwahl))=natvorwahl then
           delete(s,1,length(natvorwahl));              { '0' entfernen }
         if cpos('-',s)=0 then
           s:=lvw+s;
         while cpos('*',s)>0 do
           delete(s,cpos('*',s),1);
-        if (exact and (left(telefon,length(s)+1)=s+'-') or
-            not exact and (left(telefon,length(s))=s))
+        if (exact and (LeftStr(telefon,length(s)+1)=s+'-') or
+            not exact and (LeftStr(telefon,length(s))=s))
            and (length(s)>lfound)
         then begin
           pfound:=i;
@@ -1851,8 +1851,8 @@ begin
     spush(e,manz*4);
     end;
   LoadPhonezones;
-  lvw:=left(vorwahl,cpos('-',vorwahl));   { eigene Landesvorwahl incl. "-" }
-  if left(telefon,cpos('-',vorwahl))=lvw then
+  lvw:=LeftStr(vorwahl,cpos('-',vorwahl));   { eigene Landesvorwahl incl. "-" }
+  if LeftStr(telefon,cpos('-',vorwahl))=lvw then
     BoxPar^.gebzone:=phones^[1].komment
   else
     BoxPar^.gebzone:=phones^[2].komment;
@@ -1907,15 +1907,15 @@ var i       : integer;
       while not eof(t) and (dow=0) do begin
         readln(t,s);
         if (firstchar(s)<>'#') and
-           (GetToken(s,' ')=left(startdate,6)+right(startdate,2)) then
+           (GetToken(s,' ')=LeftStr(startdate,6)+RightStr(startdate,2)) then
           dow:=7+ival(GetToken(s,' '));
         end;
       close(t);
       end;
     if (dow<1) or (dow>maxwotage) then begin
-      datum.t:=ival(left(startdate,2));
+      datum.t:=ival(LeftStr(startdate,2));
       datum.m:=ival(copy(startdate,4,2));
-      datum.j:=ival(right(startdate,4));
+      datum.j:=ival(RightStr(startdate,4));
       if IsBilligtag(datum) or IsFeiertag(datum) then
         dow:=8
       else
@@ -1936,10 +1936,10 @@ begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs
     dec(tag);
 
   if (zone>0) and (tag>0) then with tarif^[tag] do begin
-    h:=ival(left(starttime,2));
+    h:=ival(LeftStr(starttime,2));
     m:=ival(copy(starttime,4,2));
     s:=ival(copy(starttime,7,2));
-    starttime:=left(starttime,5);   { Sekunden abschneiden }
+    starttime:=LeftStr(starttime,5);   { Sekunden abschneiden }
     repeat                          { Z„hlschleife; wird pro Einheit }
       i:=zeitbereiche+1;            { einmal durchlaufen             }
       repeat
@@ -2050,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.41  2000/10/17 10:05:45  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.40  2000/10/11 23:03:12  mk
   - Gebuehrenaenderung rueckgaengig gemacht
 

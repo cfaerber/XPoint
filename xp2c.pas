@@ -164,7 +164,7 @@ begin
 {$IFDEF UnixFS}
   maddint(3,19,getres2(250,25),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk' }
 {$ELSE }
-  maddint(3,19,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
+  maddint(3,19,getreps2(250,16,LeftStr(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
 {$ENDIF }
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
@@ -481,7 +481,7 @@ function testexist(var s:string):boolean;
 var s2 : string;
 begin
   s2:=trim(s);
-  if left(s2,1)='*' then delfirst(s2);
+  if LeftStr(s2,1)='*' then delfirst(s2);
   if cpos(' ',s2)>0 then s2:=copy(s2,1,cpos(' ',s)-1);
   if (s2='') or (FSearch(s2,GetEnv('PATH'))<>'') then
     testexist:=true
@@ -968,7 +968,7 @@ var
     res : integer;
 begin
   s:=FileUpperCase(FExpand(s));
-  if (s<>'') and (right(s,1)<>DirSepa) then
+  if (s<>'') and (RightStr(s,1)<>DirSepa) then
     s:=s+DirSepa;
   if not validfilename(s+'1$2$3.xxx') then
     if ReadJN(getres2(262,1),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
@@ -1382,7 +1382,7 @@ begin
       TermCOM:=5 { MH: hinzugefgt }
     else
 {$ENDIF }
-    TermCOM:=ival(right(com,1));
+    TermCOM:=ival(RightStr(com,1));
     GlobalModified;
   end;
   enddialog;
@@ -1461,8 +1461,8 @@ procedure ViewerOptions;
 var x,y : byte;
     brk : boolean;
 begin
-  if right(viewer_save,1)='.' then viewer_save:=left(viewer_save,length(viewer_save)-1);
-  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1);
+  if RightStr(viewer_save,1)='.' then viewer_save:=LeftStr(viewer_save,length(viewer_save)-1);
+  if RightStr(viewer_lister,1)='.' then viewer_lister:=LeftStr(viewer_lister,length(viewer_lister)-1);
 
   dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
   maddtext(3,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
@@ -1493,6 +1493,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/10/17 10:05:47  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.56  2000/09/25 20:07:53  my
   - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
   - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.

@@ -98,7 +98,7 @@ var i,res : integer;
     else
     begin
       realname:=trim(copy(line,p+2,length(line)-p-2));
-      name:=left(line,p-1);
+      name:=LeftStr(line,p-1);
     end;
   end;
 
@@ -186,10 +186,10 @@ var i,res : integer;
     line:=trim(line)+' ';
     repeat
       p:=cpos(' ',line);
-      if left(line,p-1)='EB' then hd.attrib:=hd.attrib or attrIsEB else
-      if left(line,p-1)='PM-REPLY' then hd.pm_reply:=true else
-      if left(line,p-1)='NOKOP' then hd.nokop:=true else
-      if left(line,p-1)='CTL' then hd.attrib:=hd.attrib or attrControl;
+      if LeftStr(line,p-1)='EB' then hd.attrib:=hd.attrib or attrIsEB else
+      if LeftStr(line,p-1)='PM-REPLY' then hd.pm_reply:=true else
+      if LeftStr(line,p-1)='NOKOP' then hd.nokop:=true else
+      if LeftStr(line,p-1)='CTL' then hd.attrib:=hd.attrib or attrControl;
       line:=trimleft(mid(line,p+1));
     until line='';
   end;
@@ -301,20 +301,20 @@ var i,res : integer;
         if line[p]='\' then delete(line,p,1);
         inc(p);
         end;
-      parval:=left(line,p-1);
+      parval:=LeftStr(line,p-1);
       if firstchar(parval)='"' then begin
         delfirst(parval);
         if lastchar(parval)='"' then dellast(parval);
         end;
       line:=trim(mid(line,p+1));
-      if parname='boundary' then hd.boundary:=left(parval,70) else
-      if (parname='name') and (hd.datei='') then hd.datei:=left(parval,40) else
+      if parname='boundary' then hd.boundary:=LeftStr(parval,70) else
+      if (parname='name') and (hd.datei='') then hd.datei:=LeftStr(parval,40) else
 
       {$ifdef uuzmime}
-      if parname='type' then hd.mimereltyp:=left(parval,25) else
+      if parname='type' then hd.mimereltyp:=LeftStr(parval,25) else
       {$endif}
 
-      if (parname='charset') and (hd.x_charset='') then hd.x_charset:=left(parval,25);
+      if (parname='charset') and (hd.x_charset='') then hd.x_charset:=LeftStr(parval,25);
       end;
   end;
 
@@ -372,7 +372,7 @@ begin
           p:=cpos(':',line);
           if p<2 then ok:=false // Die ID muá mindestens ein Zeichen sein
           else begin
-            id:=left(line,p-1);
+            id:=LeftStr(line,p-1);
             {$ifdef ulines}
             id0:=id;
             {$endif }
@@ -472,7 +472,7 @@ begin
               if id = 'X-XP-BOX' then LRead(real_box) else
               if id = 'X-XP-PNT' then LRead(hd_point) else
               if id = 'X-XP-BST' then LRead(pm_bstat) else
-              if id = 'X-XP-ATT' then attrib:=hexval(left(line,4)) else
+              if id = 'X-XP-ATT' then attrib:=hexval(LeftStr(line,4)) else
               if id = 'X-XP-FTO' then LRead(fido_to) else
               if id = 'X-XP-MRP' then LRead(ReplyPath) else
               if id = 'X-XP-RGR' then LRead(ReplyGroup) else
@@ -535,7 +535,7 @@ begin
           if not ok and eof(f) then
             ok:=(groesse=0);          { letzte Msg hat L„nge 0 }
       until (line='') or not ok;
-      if ok and (attrib and attrQPC<>0) and (UpperCase(left(betreff,4))<>'QPC:') then
+      if ok and (attrib and attrQPC<>0) and (UpperCase(LeftStr(betreff,4))<>'QPC:') then
         betreff:='QPC:'+betreff;
       end
     else begin
@@ -562,6 +562,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/10/17 10:05:59  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.35  2000/09/28 03:11:01  mk
   - Move mit Laenge 0 verhindert
 

@@ -64,7 +64,7 @@ begin
       while (i<=length(betr)) and
             (betr[i] in ['A'..'Z','_','-','Ž','™','š','#','@','$','!','0'..'9','\']) do
         inc(i);
-      fn:=left(betr,min(i-1,iif(cpos('.',fn)>0,12,8)));
+      fn:=LeftStr(betr,min(i-1,iif(cpos('.',fn)>0,12,8)));
       end;
     setfn;
     extract_msg(ntyp,iifs(ntyp=3,QuoteMsk,''),fn,false,1);
@@ -211,9 +211,9 @@ begin
         appadr(s,6);                                 { 'Vertreter          :' }
         end;
     *)
-      s:=getres2(476,resn[1])+' '+left(adra[1],50);
+      s:=getres2(476,resn[1])+' '+LeftStr(adra[1],50);
       for i:=2 to anz do
-        s:=s+','+getres2(476,resn[i])+' '+left(adra[i],50);
+        s:=s+','+getres2(476,resn[i])+' '+LeftStr(adra[i],50);
       nr:=minisel(0,0,getres2(476,4),s,1);           { 'Empf„nger w„hlen ...' }
       freeres;
       if (nr>=1) and (nr<=anz) then
@@ -310,6 +310,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/10/17 10:05:52  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.15  2000/07/26 08:17:19  mk
   JG: - Crosspostings mit Shift+B: Beschraenkungen bei Verteilern, verschiedenen
     Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben.

@@ -160,10 +160,10 @@
   begin
     dbSeek(d,boiDatei,dname);
     if dbFound then begin
-      dname:=left(dname,6)+'01';
+      dname:=LeftStr(dname,6)+'01';
       repeat
         dbSeek(d,boiDatei,dname);
-        if dbFound then dname:=left(dname,6)+formi(ival(right(dname,2))+1,2);
+        if dbFound then dname:=LeftStr(dname,6)+formi(ival(RightStr(dname,2))+1,2);
       until not dbFound;
       end;
   end;
@@ -226,7 +226,7 @@
           if (nt=nt_UUCP) and exist('UUCP.SCR') then
             script:='UUCP.SCR';
           if nt=nt_Fido then begin
-            case ival(left(name,cpos(':',name)-1)) of
+            case ival(LeftStr(name,cpos(':',name)-1)) of
                8 : magicbrett:='/METRONET/';
                9 : magicbrett:='/VIRNET/';
               10 : magicbrett:='/BEATNET/';
@@ -658,7 +658,7 @@
           if schnitte='ISDN' then bport:=5
         else
 {$ENDIF }
-          bport:=ival(right(schnitte,1));
+          bport:=ival(RightStr(schnitte,1));
       enddialog;
       end;
   end;
@@ -1350,7 +1350,7 @@
           readln(t,s);
           inc(nmtn);
           nmta[nmtn].nr:=ival(GetToken(s,' '));
-          nmta[nmtn].name:=trim(left(s,30));
+          nmta[nmtn].name:=trim(LeftStr(s,30));
           end;
         close(t);
         erase(t);
@@ -1366,9 +1366,9 @@
         reset(t);
         while not eof(t) do begin
           readln(t,s);
-          if (ival(left(s,3))>0) or (left(s,3)='  0') then begin
+          if (ival(LeftStr(s,3))>0) or (LeftStr(s,3)='  0') then begin
             s:=trim(mid(s,5));
-            mappsel(false,trim(left(s,50)));   { Flags in BlueWave-Listen abschneiden }
+            mappsel(false,trim(LeftStr(s,50)));   { Flags in BlueWave-Listen abschneiden }
             end;
           end;
         close(t);
@@ -1424,7 +1424,7 @@
   begin
     dbGo(d,drec[p]);
     fn:= dbReadStr(d,'dateiname');
-    if fn='' then fn:=left(dbReadStr(d,'boxname'),8);
+    if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
     pushhp(131);
     nts:=''; // nts2:=getres2(927,3);   { ',^SysopMode' }
@@ -1694,6 +1694,9 @@
 
 {
   $Log$
+  Revision 1.27  2000/10/17 10:05:56  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.26  2000/10/10 05:53:45  mk
   - Edit QWK braucht kein Point und Modem-Eintrag
 

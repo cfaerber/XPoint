@@ -68,7 +68,7 @@ var t,t2 : text;
     if (p=0) or ((hdp^.netztyp<>nt_Maus) and (hdp^.netztyp<>nt_Fido)) then
       mausname:=s
     else
-      mausname:=trim(left(s,p-1))+' @ '+trim(mid(s,p+1));
+      mausname:=trim(LeftStr(s,p-1))+' @ '+trim(mid(s,p+1));
   end;
 
 begin
@@ -113,28 +113,28 @@ begin
   n:=0;
   anew:='';
   while not eof(t) do begin
-    if left(anew,1)='#' then begin
+    if LeftStr(anew,1)='#' then begin
       s:=anew; anew:='';
       end
     else begin
       repeat
         readln(t,s);
-        if fehlerflag and (left(s,1)='?') then
+        if fehlerflag and (LeftStr(s,1)='?') then
           writeln(t2,'Fehler   : ',mid(s,2));
-      until eof(t) or (left(s,1)<>'?');
+      until eof(t) or (LeftStr(s,1)<>'?');
       if fehlerflag then begin
         writeln(t2);
         fehlerflag:=false;
         end;
       s:=trim(s);
       end;
-    if (left(s,1)='#') and ((art=1) or (length(s)=11)) and not eof(t)
+    if (LeftStr(s,1)='#') and ((art=1) or (length(s)=11)) and not eof(t)
     then begin
       anew:='!';
-      while not eof(t) and (left(anew,1)='!') do   { Kommentare Åberlesen }
+      while not eof(t) and (LeftStr(anew,1)='!') do   { Kommentare Åberlesen }
         readln(t,anew);
       anew:=trim(anew);   { dies ist entweder eine ID oder ein Status }
-      if ((art<>2) and (left(anew,1)='=')) or ((art=2) and (left(anew,1)='?'))
+      if ((art<>2) and (LeftStr(anew,1)='=')) or ((art=2) and (LeftStr(anew,1)='?'))
       then begin
         delete(s,1,1);
         delete(anew,1,1);
@@ -205,8 +205,8 @@ begin
                   end;
               1 : with hdp^ do begin
                     if cpos('@',empfaenger)>0 then
-                      empfaenger:=left(empfaenger,cpos('@',empfaenger)-1);
-                    write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',left(datum,2),
+                      empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
+                    write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
                              '   ',forms(empfaenger,21),'  ',forms(betreff,30),'  ');
                     case pm_bstat[1] of
                       'Z' : writeln(t2,'zurÅckgest.');
@@ -228,7 +228,7 @@ begin
                     writeln(t2,'MessageID: ',msgid);
                     writeln(t2,'Fehler   : ',anew);
                     fehlerflag:=true;
-                    if (left(LowerCase(anew),10)='mitteilung') and
+                    if (LeftStr(LowerCase(anew),10)='mitteilung') and
                        (pos('nicht gefunden',LowerCase(anew))>0) then begin
                       rec:=GetBezug(msgid);
                       if rec>0 then begin
@@ -549,16 +549,16 @@ var  box    : string[BoxNameLen];
         p:=blankpos(s);
         if p>0 then begin
           i:=1;
-          while (i<=infos) and (UpperCase(left(s,p-1))<>info^[i].ID) do
+          while (i<=infos) and (UpperCase(LeftStr(s,p-1))<>info^[i].ID) do
             inc(i);
           if i<=infos then begin
             s:=trim(mid(s,p));
             p:=blankpos(s);
             if p>0 then begin
-              info^[i].intervall:=ival(left(s,p));
+              info^[i].intervall:=ival(LeftStr(s,p));
               s:=trim(mid(s,p));
               p:=blankpos(s);
-              info^[i].lastdate:=left(s,10);
+              info^[i].lastdate:=LeftStr(s,10);
               if p>0 then
                 info^[i].crc:=ival(mid(s,p));
               end;
@@ -710,7 +710,7 @@ var   info   : ^ia;
     begin
       p:=cpos(' ',s);
       if p=0 then p:=length(s)+1;
-      gets:=trim(left(s,p));
+      gets:=trim(LeftStr(s,p));
       s:=trim(mid(s,p));
     end;
 
@@ -744,7 +744,7 @@ var   info   : ^ia;
     reset(t);
     while not eof(t) do begin
       readln(t,s);
-      if left(s,1)='$' then begin
+      if LeftStr(s,1)='$' then begin
         p1:=cpos('=',s);
         p2:=cpos(' ',s);
         if (p1>4) and (p2>p1+1) then begin   { CRC vorhanden }
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/10/17 10:05:59  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.15  2000/07/21 21:17:49  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -139,7 +139,7 @@ initialization
   checkbreak:=false;
   readname;
 {$ifndef Linux}
-  if left(getenv('PROMPT'),4)='[XP]' then
+  if LeftStr(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('Zurck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
 {$endif}
@@ -167,6 +167,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.29  2000/10/17 10:06:02  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.28  2000/10/09 22:14:45  ml
   - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
 

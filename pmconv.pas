@@ -66,7 +66,7 @@ end;
 
 function compmimetyp(typ:string):string;
 begin
-  if left(typ,12)='application/' then
+  if LeftStr(typ,12)='application/' then
     compmimetyp:=LowerCase(mid(typ,12))
   else
     compmimetyp:=LowerCase(typ);
@@ -117,9 +117,9 @@ var p      : charrp;
   var rr   : word;
       size : longint;
   begin
-    if (left(hd.empfaenger,1)<>'/') and
-       (left(hd.empfaenger,length(TO_ID))<>TO_ID) and not hd.archive and
-       ((uname='') or (UpperCase(left(hd.empfaenger,length(uname)))<>UpperCase(uname)))
+    if (LeftStr(hd.empfaenger,1)<>'/') and
+       (LeftStr(hd.empfaenger,length(TO_ID))<>TO_ID) and not hd.archive and
+       ((uname='') or (UpperCase(LeftStr(hd.empfaenger,length(uname)))<>UpperCase(uname)))
     then begin
       if zconn then
         blockwrite(f2,xparc[1],length(xparc))
@@ -200,9 +200,9 @@ begin
     while (cpos(':',s)>0) and not eof(t) do begin
       readln(t,s);
       UpString(s);
-      if left(s,4)='ABS:' then abs:=true;
-      if left(s,4)='EMP:' then emp:=true;
-      if left(s,4)='EDA:' then eda:=true;
+      if LeftStr(s,4)='ABS:' then abs:=true;
+      if LeftStr(s,4)='EMP:' then emp:=true;
+      if LeftStr(s,4)='EDA:' then eda:=true;
       end;
     close(t);
     ZC_puffer:=abs and emp and eda;
@@ -228,6 +228,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/10/17 10:05:42  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.6  2000/09/30 14:48:53  fe
   Notduerftig zum Ubersetzen gebracht.
 

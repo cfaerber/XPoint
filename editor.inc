@@ -791,7 +791,7 @@ begin
     while (p<length(s)) and (s[p+1]='>') do inc(p);
     while (p<length(s)) and (s[p+1]=' ') do inc(p);
   end;
-  s:=left(s,p);
+  s:=LeftStr(s,p);
   GetQuote:=s;
 end;
 { /robo }
@@ -2227,7 +2227,7 @@ label sok;
       if menue[i]<>'-' then begin
         if i=p then attrtxt(col.colmenuinv)
         else attrtxt(col.colmenu);
-        wrt(mx+1,my+i,' '+left(menue[i],highp[i]-2));
+        wrt(mx+1,my+i,' '+LeftStr(menue[i],highp[i]-2));
         if i<>p then
           attrtxt(col.colmenuhi)
         else
@@ -2405,6 +2405,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/10/17 10:05:38  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.31  2000/10/15 15:20:17  mk
   JG:- Editor Funktion Glossary implementiert
 

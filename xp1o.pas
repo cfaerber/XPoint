@@ -130,7 +130,7 @@ begin
           if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
           case s[y] of '<', '>', '(', ')', '{', '}', '[', ']', '"' : x:=y-1; end;
         until x<>0;
-        s:=left(s,x);
+        s:=LeftStr(s,x);
         end;
       string2clip(s);
       ReadFilename:=false;
@@ -144,7 +144,7 @@ begin
 {$IFNDEF UnixFS }
        ((length(s)=2) and (s[2]=':')) or
 {$ENDIF }
-       (right(s,1)=DirSepa) then
+       (RightStr(s,1)=DirSepa) then
       s:=s+WildCard
     else if IsPath(s) then
       s:=s+DirSepa+WildCard;
@@ -558,9 +558,9 @@ begin
   SetCurrentDir(_to);
   if not GetDecomp(atyp,decomp) then exit;
   p:=pos('$ARCHIV',UpperCase(decomp));
-  decomp:=left(decomp,p-1)+_from+mid(decomp,p+7);
+  decomp:=LeftStr(decomp,p-1)+_from+mid(decomp,p+7);
   p:=pos('$DATEI',UpperCase(decomp));
-  shell(left(decomp,p-1)+dateien+mid(decomp,p+6),400,3);
+  shell(LeftStr(decomp,p-1)+dateien+mid(decomp,p+6),400,3);
   if not exist(_to+dateien) then
     tfehler('Datei(en) wurde(n) nicht korrekt entpackt!',30)
   else
@@ -605,7 +605,7 @@ end;
 
 function HasRef:boolean;
 begin
-  dbSeek(bezbase,beiRef,left(dbReadStr(mbase,'msgid'),4));
+  dbSeek(bezbase,beiRef,LeftStr(dbReadStr(mbase,'msgid'),4));
   HasRef:=dbFound;
 end;
 
@@ -630,7 +630,7 @@ var crc : string;
 begin
   if KK then begin
     pos:=dbRecno(mbase);
-    crc:=left(dbReadStr(mbase,'msgid'),4);
+    crc:=LeftStr(dbReadStr(mbase,'msgid'),4);
     mi:=dbGetIndex(bezbase); dbSetIndex(bezbase,beiMsgid);
     dbSeek(bezbase,beiMsgid,crc);
     ok:=dbfound;
@@ -695,11 +695,11 @@ end;
 
 procedure SeekLeftBox(var d:DB; var box:string);
 begin
-  if ((length(box)<=2) and (left(box,1)=left(DefFidoBox,1))) then
+  if ((length(box)<=2) and (LeftStr(box,1)=LeftStr(DefFidoBox,1))) then
     box:=DefFidoBox;
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound and (box<>'') and not dbEOF(d) and
-     (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then begin
+     (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then begin
     Box := dbReadStr(d,'boxname');
     dbSeek(d,boiName,UpperCase(box));
     end;
@@ -716,7 +716,7 @@ var dir  : dirstr;
   end;
 begin
   if cpos(' ',fn)>0 then
-    fn:=left(fn,cpos(' ',fn)-1);
+    fn:=LeftStr(fn,cpos(' ',fn)-1);
   fsplit(fn,dir,name,ext);
   if UpperCase(name+ext)='COPY' then
     fileda:=true
@@ -756,7 +756,7 @@ begin
   assign(f,fn);
   reset(f,1);
   if ioresult=0 then with dt do begin
-    year:=ival(left(ddatum,4));
+    year:=ival(LeftStr(ddatum,4));
     month:=ival(copy(ddatum,5,2));
     day:=ival(copy(ddatum,7,2));
     hour:=ival(copy(ddatum,9,2));
@@ -775,7 +775,7 @@ begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound or
-     (not dbEOF(d) and (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)))
+     (not dbEOF(d) and (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)))
   then
     box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
   dbClose(d);
@@ -813,7 +813,7 @@ begin
     repeat
       inc(n);
       p:=blankpos(tele);
-      tnr:=left(tele,p-1);
+      tnr:=LeftStr(tele,p-1);
       tele:=trimleft(mid(tele,p));
       endc:=['0'..'9'];
       if pos('V',tnr)>0 then include(endc,'Q');
@@ -912,11 +912,11 @@ function XPWinShell(prog:string; parfn:string; space:word;
       t       : text;
   begin
     PrepareExe:=0;
-    exepath:=left(prog,blankposx(prog)-1);
+    exepath:=LeftStr(prog,blankposx(prog)-1);
     ext:=GetFileExt(exepath);
     if ext='' then exepath:=exepath+'.exe';
     exepath:=fsearch(exepath,getenv('PATH'));
-    if not stricmp(right(exepath,4),'.exe') then
+    if not stricmp(RightStr(exepath,4),'.exe') then
       et:=ET_Unknown
     else
       et:=exetype(exepath);
@@ -929,10 +929,10 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
       if Delviewtmp then
       begin
-        if UpperCase(left(prog,5))<>'START' then prog:='start '+prog;
+        if UpperCase(LeftStr(prog,5))<>'START' then prog:='start '+prog;
         end
       else begin
-        if UpperCase(left(prog,6))='START ' then prog:=mid(prog,7);
+        if UpperCase(LeftStr(prog,6))='START ' then prog:=mid(prog,7);
         batfile:=TempExtFile(temppath,'wrun','.bat');
         assign(t,batfile);
         rewrite(t);
@@ -986,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/10/17 10:05:46  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.60  2000/10/11 09:01:31  mk
   - Resource 136 added
 

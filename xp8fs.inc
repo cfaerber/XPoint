@@ -69,7 +69,7 @@ var
 
 begin
   if msg then begin
-    if (left(UpperCase(dbReadStr(mbase,'betreff')),5)<>'FILES') and
+    if (LeftStr(UpperCase(dbReadStr(mbase,'betreff')),5)<>'FILES') and
        not ReadJN(getres(811),true) then   { 'Sind Sie sicher, daá das eine Fileliste ist' }
       exit;
     absender:= dbReadStr(mbase,'absender');
@@ -152,9 +152,9 @@ begin
                 repeat
                   if eof(t1) then s2:=''
                   else readln(t1,s2);
-                  if (s2<>'') and (left(s2,5)='     ') then
+                  if (s2<>'') and (LeftStr(s2,5)='     ') then
                     s:=s+' '+trim(s2);
-                until (s2='') or (left(s2,5)<>'     ');
+                until (s2='') or (LeftStr(s2,5)<>'     ');
                 wrl;
                 s:=s2;
                 if (s='') then readln(t1,s);
@@ -213,8 +213,8 @@ var fstyp : byte;   { 0=SendZMsg, 1=iMLS }
 function testmark(var s:string; block:boolean):boolean;
 begin
   if (s<>'') and
-     (((fstyp=0) and (left(s,1)<>'%') and (copy(s,2,1)=' ')) or
-      ((fstyp=1) and (left(s,5)<>'Name-') and (left(s,1)<>' ')) or
+     (((fstyp=0) and (LeftStr(s,1)<>'%') and (copy(s,2,1)=' ')) or
+      ((fstyp=1) and (LeftStr(s,5)<>'Name-') and (LeftStr(s,1)<>' ')) or
       ((fstyp=2) and (s<>'') and (s[1]>' ') and (s[1]<'°')) or
       ((fstyp=3) and (trim(s)<>''))) then
     testmark:=true
@@ -320,7 +320,7 @@ var d     : DB;
     else begin
       dbGo(ubase,selpos);
       adr:= dbReadNStr(ubase,ub_username);
-      if left(adr,1)=vert_char then begin
+      if LeftStr(adr,1)=vert_char then begin
         rfehler(814);    { 'Verteiler sind hier nicht erlaubt.' }
         brk:=true;
         end
@@ -400,7 +400,7 @@ var d     : DB;
       p : byte;
   begin
     s:=prev_line;
-    while (s<>#0) and (left(LowerCase(s),10)<>'directory ') do
+    while (s<>#0) and (LeftStr(LowerCase(s),10)<>'directory ') do
       s:=prev_line;
     if s=#0 then s:=''
     else begin
@@ -470,7 +470,7 @@ begin
               s:=s+' ';
               repeat
                 p:=blankpos(s);
-                writeln(t,left(s,p-1));
+                writeln(t,LeftStr(s,p-1));
                 s:=trimleft(mid(s,p));
               until s='';
               end
@@ -518,7 +518,7 @@ begin
                 while s<>#0 do begin
                   if fstyp=0 then
                     s:=trim(Mid(s,2));
-                  s:=left(s,pos(' ',s)-1);
+                  s:=LeftStr(s,pos(' ',s)-1);
                   fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
                   s:=next_marked;
                   end;
@@ -535,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/10/17 10:05:56  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.13  2000/08/08 13:18:15  mk
   - s[Length(s)] durch Lastchar ersetzt
 

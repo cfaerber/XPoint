@@ -172,11 +172,11 @@ var t    : text;
   begin
     p:=blankpos(s);
     if p>0 then begin
-      coltext:=ival(left(s,p-1));
+      coltext:=ival(LeftStr(s,p-1));
       s:=trim(mid(s,p));
       p:=blankpos(s);
       if p>0 then begin
-        colxfer:=ival(left(s,p-1));
+        colxfer:=ival(LeftStr(s,p-1));
         colstatus:=ival(mid(s,p+1));
       end;
     end;
@@ -192,10 +192,10 @@ begin
     readln(t,s0);
     s:=trim(s0);
     p:=pos('=',s);
-    if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then
+    if (s<>'') and (LeftStr(s,1)<>';') and (LeftStr(s,1)<>'#') then
       if p=0 then error('Unknown Command: '+s)
     else begin
-      id:=LowerCase(trim(left(s,p-1))); s:=trim(mid(s,p+1));
+      id:=LowerCase(trim(LeftStr(s,p-1))); s:=trim(mid(s,p+1));
       if id='language'   then language:=s else
       if id='logfile'    then logfile:=s else
       if id='lognew'     then begin logfile:=s; lognew:=true; end else
@@ -274,7 +274,7 @@ begin
     p3:=cpos('.',adr);
     if (p2<>0) and (p1<p2) and ((p3=0) or (p3>p2)) then begin
       if p1>0 then
-        zone:=minmax(ival(left(adr,p1-1)),0,65535);
+        zone:=minmax(ival(LeftStr(adr,p1-1)),0,65535);
       net:=minmax(ival(copy(adr,p1+1,p2-p1-1)),0,65535);
       if p3>0 then
         point:=minmax(ival(mid(adr,p3+1)),0,65535)
@@ -309,11 +309,11 @@ var perr : string;
 begin
   perr:=getres(100);
   if FilePath='' then rerror(112);    { 'InPath missing' }
-  if right(FilePath,1)<>'\' then FilePath:=FilePath+'\';
+  if RightStr(FilePath,1)<>'\' then FilePath:=FilePath+'\';
   if not ValidFilename(FilePath+'1$2$3.9x9') then
     rerror(101);                      { 'Illegal InPath' }
   if MailPath='' then rerror(102);    { 'MailPath missing' }
-  if right(MailPath,1)<>'\' then MailPath:=MailPath+'\';
+  if RightStr(MailPath,1)<>'\' then MailPath:=MailPath+'\';
   if not ValidFilename(MailPath+'1$2$3.9x9') then
     rerror(103);                      { 'Illegal MailPath' }
   if not ValidFilename(zmtempfile) then
@@ -418,7 +418,7 @@ begin
   inc(windmax,$1900);
   wrt(scx,scy,'Õ'+dup(wdt-2,'Í')+'¸');
   col(ColStatus);
-  wrt(scx+2,scy+1,left(#16+' '+txt,38));
+  wrt(scx+2,scy+1,LeftStr(#16+' '+txt,38));
 end;
 
 procedure PopWindow;
@@ -525,6 +525,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2000/10/17 10:05:45  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.24  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
 

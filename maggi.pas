@@ -139,7 +139,7 @@ var i : integer;
 
   function isl(t:string):boolean;
   begin
-    isl:=(left(s,length(t)+1)='-'+t) or (left(s,length(t)+1)='/'+t);
+    isl:=(LeftStr(s,length(t)+1)='-'+t) or (LeftStr(s,length(t)+1)='/'+t);
   end;
 
 begin
@@ -168,7 +168,7 @@ begin
     else if _is('on') then MausON:=false
     else if _is('kf') then mausKF:=false
     else if _is('it') then MausIT_Files:=true
-    else if (left(s,1)='/') or (left(s,1)='-') then parerr
+    else if (LeftStr(s,1)='/') or (LeftStr(s,1)='-') then parerr
     else if infile='' then infile:=s
     else if outfile='' then outfile:=s
     else if brettfile='' then brettfile:=s
@@ -227,7 +227,7 @@ begin
       readln(t,s);
       s:=trim(s);
       if (s<>'') and (s[1]<>'#') and
-         (not pronet or ((s[1]<>';') and (s[1]<>'-') and (left(s,4)<>'CODE')))
+         (not pronet or ((s[1]<>';') and (s[1]<>'-') and (LeftStr(s,4)<>'CODE')))
       then begin
         if cpos(' ',s)=0 then
           berror('Fehler in Brettdatei');
@@ -236,7 +236,7 @@ begin
           berror('zu viele EintrÑge in Brettdatei!');
         new(brettp[bretter]);
         if pronet then begin
-          brettp[bretter]^.code:=left(s,4);
+          brettp[bretter]^.code:=LeftStr(s,4);
           brettp[bretter]^.name:=trim(mid(s,32));
           end
         else begin
@@ -248,7 +248,7 @@ begin
           while (p>0) and (s[p]=' ') do dec(p);
           SetLength(s, p);
           { UpString(s); }
-          if left(s,1)<>'/' then s:=left('/'+s,40);
+          if LeftStr(s,1)<>'/' then s:=LeftStr('/'+s,40);
           while cpos(' ',s)>0 do
             s[cpos(' ',s)]:='_';
           brettp[bretter]^.name:=s;
@@ -301,7 +301,7 @@ begin
     p:=1;
     while (p<=length(pfad)) and (pfad[p]<>'!') do inc(p);
     if s<>'' then s:='!'+s;
-    s:=left(pfad,p-1)+s;
+    s:=LeftStr(pfad,p-1)+s;
     delete(pfad,1,p);
     end;
   reverse:=s;
@@ -366,8 +366,8 @@ var hd   : header;
   function ff(msgid:string):string;
   begin
     msgid:=trim(msgid);
-    if left(msgid,1)='<' then delfirst(msgid);
-    if right(msgid,1)='>' then dellast(msgid);
+    if LeftStr(msgid,1)='<' then delfirst(msgid);
+    if RightStr(msgid,1)='>' then dellast(msgid);
     ff:=msgid;
   end;
 
@@ -403,9 +403,9 @@ begin
     else begin
       fillchar(hd,sizeof(hd),0);
       rdln;
-      if left(s,1)<>'-' then begin
+      if LeftStr(s,1)<>'-' then begin
         fido_to:=trim(mid(s,5));
-        s:=UpperCase(left(s,4));
+        s:=UpperCase(LeftStr(s,4));
         if s='' then
           empfaenger:='/UNZUSTELLBAR'
         else begin
@@ -419,12 +419,12 @@ begin
         delete(s,1,1);
         p:=cpos(':',s);
         if p=0 then ok:=false
-        else empfaenger:=trim(mid(s,p+1))+'@'+trim(left(s,p-1));
+        else empfaenger:=trim(mid(s,p+1))+'@'+trim(LeftStr(s,p-1));
         end;
       if ok then begin
         rdln; absender:=trim(s);
-        rdln; while pos('@',left(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
-              absender:=trim(left(s,15))+'@'+absender;
+        rdln; while pos('@',LeftStr(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
+              absender:=trim(LeftStr(s,15))+'@'+absender;
               realname:=trim(mid(s,16));
               if pronet and ((length(realname)<3) or
                   ((length(realname)<10) and   { TopNET-Gate-Fehler beheben }
@@ -440,8 +440,8 @@ begin
         if s[1]<>'$' then
           s:=''
         else begin
-          mc:=UpperCase(left(s,11));
-          if (left(mc,2)='$ ') and (pos('NET',copy(mc,3,8))>0) then begin
+          mc:=UpperCase(LeftStr(s,11));
+          if (LeftStr(mc,2)='$ ') and (pos('NET',copy(mc,3,8))>0) then begin
             programm:=trim(mid(s,12));
             repeat
               p:=cpos('[',programm);
@@ -475,7 +475,7 @@ begin
             else begin
               p:=cpos(':',s);
               if p>0 then
-                absender:=mid(s,p+1)+'@'+left(s,p-1);
+                absender:=mid(s,p+1)+'@'+LeftStr(s,p-1);
               end;
             end else
           if mc='$ BETREFF :' then
@@ -513,8 +513,8 @@ begin
           if zdatum<>'' then
             wrs('EDA: '+zdatum)
           else
-            wrs('EDA: '+right(date,4)+copy(date,4,2)+left(date,2)+
-                        left(time,2)+copy(time,4,2)+copy(time,7,2)+'W+0');
+            wrs('EDA: '+RightStr(date,4)+copy(date,4,2)+LeftStr(date,2)+
+                        LeftStr(time,2)+copy(time,4,2)+copy(time,7,2)+'W+0');
           wrs('LEN: '+strs(groesse+adds));
           if programm<>'' then
             wrs('MAILER: '+programm);
@@ -557,8 +557,8 @@ end;
 
 function zdate:string;
 begin
-  zdate:=right(date,2)+copy(date,4,2)+copy(date,1,2)+
-         left(time,2)+copy(time,4,2);
+  zdate:=RightStr(date,2)+copy(date,4,2)+copy(date,1,2)+
+         LeftStr(time,2)+copy(time,4,2);
 end;
 
 procedure setzdate(var hd:header);
@@ -582,7 +582,7 @@ end;
 
 function compmimetyp(typ:string):string;
 begin
-  if left(typ,12)='application/' then
+  if LeftStr(typ,12)='application/' then
     compmimetyp:=LowerCase(mid(typ,12))
   else
     compmimetyp:=LowerCase(typ);
@@ -704,15 +704,15 @@ begin
           end
         else begin
           i:=cpos('@',empfaenger);
-          while pos('#',left(empfaenger,i))>0 do
+          while pos('#',LeftStr(empfaenger,i))>0 do
             empfaenger[cpos('#',empfaenger)]:='@';    { # -> @ }
           node:=mid(empfaenger,i+1);
           if cpos('.',node)>0 then
-            node:=left(node,cpos('.',node)-1);
+            node:=LeftStr(node,cpos('.',node)-1);
         { if (empfaenger='SYSTEM@'+node) then
-            empfaenger:='-'+left(empfaenger,i-1)+sp(16-i)
+            empfaenger:='-'+LeftStr(empfaenger,i-1)+sp(16-i)
           else }
-            empfaenger:='-'+node+':'+left(empfaenger,i-1)+sp(16-i);
+            empfaenger:='-'+node+':'+LeftStr(empfaenger,i-1)+sp(16-i);
           berr:=false;
           end;
         if berr then halferror:=true
@@ -725,21 +725,21 @@ begin
           i:=cpos('@',absender);
           node:=mid(absender,i+1);
           if cpos('.',node)>0 then
-            node:=left(node,cpos('.',node)-1);
+            node:=LeftStr(node,cpos('.',node)-1);
           if real_box='' then real_box:=node;
           if hd_point<>'' then node:=hd_point;
           wrs(node);                     { Absender-Node }
-          wrs(forms(left(absender,i-1),15)+realname);
+          wrs(forms(LeftStr(absender,i-1),15)+realname);
           if not magicnet or (length(betreff)<=25) then wrs(betreff)  { Betreff }
-          else wrs(left(betreff,24)+'>');
+          else wrs(LeftStr(betreff,24)+'>');
           wrs(^B);                       { Header-Ende   }
           if cpos('[',programm)>0 then
-            programm:=trim(left(programm,cpos('[',programm)-1));
+            programm:=trim(LeftStr(programm,cpos('[',programm)-1));
           if pronet then begin
             wrs('$ '+forms(netzname,8)+': '+node+' ['+programm+']');
             wrs('$ Route   : '+pfad);     { Boxname }
             wrs('$ Origin  : '+copy(datum,5,2)+'-'+copy(datum,3,2)+'-'+
-                left(zdatum,2)+left(datum,2)+' '+
+                LeftStr(zdatum,2)+LeftStr(datum,2)+' '+
                 copy(datum,7,2)+':'+copy(datum,9,2)+':'+copy(zdatum,13,2));
             wrs('$ MsgID   : '+msgid);
             if ref<>'' then wrs('$ Reply-ID: '+ref);
@@ -751,7 +751,7 @@ begin
               wrs('$ '+forms(netzname,8)+': '+hd_point+' ['+programm+']');
             wrs('$ Route   : '+pfad);      { Route        }
             wrs('$ Origin  : '+copy(datum,5,2)+'-'+copy(datum,3,2)+'-'+
-                left(zdatum,2)+left(datum,2)+' '+copy(datum,7,2)+':'+copy(datum,9,2));
+                LeftStr(zdatum,2)+LeftStr(datum,2)+' '+copy(datum,7,2)+':'+copy(datum,9,2));
             if realname<>'' then           { Realname      }
               wrs('$ Realname: '+realname);
             if msgids and (msgid<>'') then  { Message-ID   }
@@ -809,17 +809,17 @@ begin
       if pm then
         if zq then begin
           p2:=pos('.',mid(empfaenger,p1+1));
-          if p2>0 then empfaenger:=left(empfaenger,p1+p2-1);
+          if p2>0 then empfaenger:=LeftStr(empfaenger,p1+p2-1);
           end
         else
       else begin
-        if zq and (left(empfaenger,1)='/') then
+        if zq and (LeftStr(empfaenger,1)='/') then
           empfaenger:=mid(empfaenger,2);
         if not g_und_s then
           for i:=1 to length(empfaenger) do
             if empfaenger[i]='/' then empfaenger[i]:='\'
             else if empfaenger[i]='\' then empfaenger[i]:='/';
-        if not zq and (left(empfaenger,1)<>'/') then
+        if not zq and (LeftStr(empfaenger,1)<>'/') then
           empfaenger:='/'+empfaenger;
         end;
       if zq then begin
@@ -831,7 +831,7 @@ begin
           p1:=cpos('!',pfad);
           if p1>0 then pfad[p1]:=' ';
         until p1=0;
-        if not g_und_s and (pfad<>'') and (right(pfad,1)<>' ') then
+        if not g_und_s and (pfad<>'') and (RightStr(pfad,1)<>' ') then
           pfad:=pfad+' ';
         wrs(pfad);
         wrs(msgid);
@@ -846,7 +846,7 @@ begin
         repeat
           p1:=cpos(' ',pfad);
           if p1>0 then
-            pfad:=left(pfad,p1-1)+'!'+trim(mid(pfad,p1+1));
+            pfad:=LeftStr(pfad,p1-1)+'!'+trim(mid(pfad,p1+1));
         until p1=0;
         wrs('ROT: '+reverse(pfad));
         wrs('MID: '+msgid);
@@ -941,7 +941,7 @@ var hd     : header;
     begin
       p:=cpos(' ',s);
       if p=0 then p:=length(s)+1;
-      gets:=trim(left(s,p));
+      gets:=trim(LeftStr(s,p));
       s:=trim(mid(s,p));
     end;
 
@@ -953,7 +953,7 @@ var hd     : header;
     assign(t1,boxname+'.inf');
     reset(t1);
     if ioresult=0 then begin
-      today:=right(date,4)+copy(date,4,2)+left(date,2);
+      today:=RightStr(date,4)+copy(date,4,2)+LeftStr(date,2);
       while not eof(t1) do begin
         readln(t1,s);
         inf:=gets;
@@ -962,9 +962,9 @@ var hd     : header;
           dat:=gets;
           crc:=ival(gets);
           with _d do begin
-            t:=ival(left(dat,2));
+            t:=ival(LeftStr(dat,2));
             m:=ival(copy(dat,4,2));
-            j:=ival(right(dat,4));
+            j:=ival(RightStr(dat,4));
             end;
           for i:=1 to tage do
             incd(_d);
@@ -991,7 +991,7 @@ var hd     : header;
     n:=0;
     for i:=1 to length(s) do
       if s[i] in umlaute then inc(n);
-    UmlShort:=left(s,len-n);
+    UmlShort:=LeftStr(s,len-n);
   end;
 
   procedure uuencode;
@@ -1005,7 +1005,7 @@ var hd     : header;
   begin
     writeln(t,':Content-Type: UU1');
     if hd.ddatum<>'' then
-      writeln(t,':File-Date: ',left(hd.ddatum,14));
+      writeln(t,':File-Date: ',LeftStr(hd.ddatum,14));
     writeln(t,':');
     writeln(t,':Diese Nachricht beinhaltet eine uu-codierte BinÑrdatei. Verwenden Sie');
     writeln(t,':das Programm uudecode zum Decodieren.');
@@ -1014,7 +1014,7 @@ var hd     : header;
     writeln(t,':the original file.');
     writeln(t,':');
     writeln(t,':table');
-    writeln(t,':',left(map,32));
+    writeln(t,':',LeftStr(map,32));
     writeln(t,':',mid(map,33));
     writeln(t,':begin 644 ',iifs(hd.datei<>'',hd.datei,mid(zdate,3)+'.msg'));
     while size>0 do begin
@@ -1074,8 +1074,8 @@ var hd     : header;
   begin
     p:=cpos(':',zdate);
     if p=0 then p:=length(zdate)+1;
-    ZtoRFCdate:=copy(date,5,2)+' '+month(copy(date,3,2))+left(zdate,2)+
-         left(date,2)+' '+copy(date,7,2)+':'+copy(date,9,2)+':'+
+    ZtoRFCdate:=copy(date,5,2)+' '+month(copy(date,3,2))+LeftStr(zdate,2)+
+         LeftStr(date,2)+' '+copy(date,7,2)+':'+copy(date,9,2)+':'+
          copy(zdate,13,2)+' '+zdate[16]+formi(ival(copy(zdate,17,p-17)),2)+
          formi(ival(mid(zdate,p+1)),2);
   end;
@@ -1157,11 +1157,11 @@ begin
         if not mkoutfile then begin
           p1:=cpos('@',msgid);
           if p1=0 then p1:=length(msgid)+1;
-          msgid:=left(msgid,min(10,p1-1));
+          msgid:=LeftStr(msgid,min(10,p1-1));
           end;
         p1:=cpos('@',empfaenger);
         if (p1=0) and
-           not stricmp(left(UpperCase(empfaenger),length(bretth)),bretth) then
+           not stricmp(LeftStr(UpperCase(empfaenger),length(bretth)),bretth) then
           writeln(#13#10,'unbekannte Mausgruppe: ',empfaenger)
         else begin
           inc(nn);
@@ -1170,7 +1170,7 @@ begin
           komzu:=(attrib and attrQuoteTo<>0) or
                  (not mkoutfile and (p1>0) and (replypath<>boxname));
             { !!: "Kommentar zu" bei PM-Kommentar an andere Pollbox }
-          tomaus:=(ref='') and (UpperCase(left(empfaenger,5))='MAUS@');
+          tomaus:=(ref='') and (UpperCase(LeftStr(empfaenger,5))='MAUS@');
           if tomaus and (betreff='<Maus-Command>') then
             writeln(t,'#CMD')
           else if tomaus and (betreff='<Maus-Direct-Command>') then
@@ -1182,7 +1182,7 @@ begin
             if p1>0 then                  { PM }
               if (ref='') or (attrib and attrPmReply<>0) or komzu or mkoutfile
               then begin
-                writeln(t,'A',trim(left(empfaenger,p1-1)),' @ ',
+                writeln(t,'A',trim(LeftStr(empfaenger,p1-1)),' @ ',
                           trim(mid(empfaenger,p1+1)));
                 komzu:=(ref<>'');
                 end
@@ -1195,10 +1195,10 @@ begin
             if mkoutfile then begin
               p2:=cpos('@',absender);
               if p2<>0 then
-                absender:=left(absender,p2-1)+' @ '+mid(absender,p2+1);
+                absender:=LeftStr(absender,p2-1)+' @ '+mid(absender,p2+1);
               writeln(t,'V',absender);
               end;
-            writeln(t,'E',left(zdatum,2)+datum);
+            writeln(t,'E',LeftStr(zdatum,2)+datum);
             writeln(t,'W',betreff {UmlShort(betreff,30)});
             if (typ='B') and (attrib and attrMPbin<>0) then
               writeln(t,'M1.0; Content-Type: multipart/mixed; boundary="-"');
@@ -1216,7 +1216,7 @@ begin
                 if org_xref='' then writeln(t,'R',ref);
                 { fb: Wildwestverkettung nur bei G?K und PM. Ist nach
                 Maus-Specs. nicht nîtig, aber der KompatiblitÑt wegen }
-                if left(UpperCase(ReplyGroup),length(bretth))=bretth then
+                if LeftStr(UpperCase(ReplyGroup),length(bretth))=bretth then
                 {/fb}
                   writeln(t,':Kommentar zu ',ref,' in der Gruppe ',
                             UpperCase(mid(ReplyGroup,length(bretth)+1)));
@@ -1309,9 +1309,9 @@ var t1,log     : text;
   begin
     p:=cpos('@',s);
     if p=0 then
-      mausform:=left(s,79)
+      mausform:=LeftStr(s,79)
     else
-      mausform:=left(trim(left(s,p-1))+'@'+trim(mid(s,p+1)),79);
+      mausform:=LeftStr(trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1)),79);
   end;
 
   procedure appline(s:string; crlf:boolean);
@@ -1443,7 +1443,7 @@ begin
     typ:='T';
     lines:=0;
     keinbetreff:=true;
-    while (left(s,1)<>'#') and not eof(t1) do
+    while (LeftStr(s,1)<>'#') and not eof(t1) do
       readln(t1,s);
     if not eof(t1) then begin
       pm:=0;
@@ -1467,24 +1467,24 @@ begin
                   else begin
                     appline(s,eoln(t1));
                     if firstline then begin
-                      if left(LowerCase(s),13)='kommentar zu ' then begin
+                      if LeftStr(LowerCase(s),13)='kommentar zu ' then begin
                         ref:=trim(mid(s,14));
                         if cpos(' ',ref)>0 then
-                          ref:=left(ref,cpos(' ',ref)-1);
+                          ref:=LeftStr(ref,cpos(' ',ref)-1);
                         end
-                      else if (left(s,1)='-') and (cpos('@',s)>0) and (ref='')
+                      else if (LeftStr(s,1)='-') and (cpos('@',s)>0) and (ref='')
                       then begin
                         ref:=trim(mid(s,2));
                         if cpos(' ',ref)>0 then
-                          ref:=left(ref,cpos(' ',ref)-1);
+                          ref:=LeftStr(ref,cpos(' ',ref)-1);
                         end
-                      else if left(LowerCase(s),13)='followup-to: ' then
+                      else if LeftStr(LowerCase(s),13)='followup-to: ' then
                         AmReplyTo:=bretth+trim(mid(s,14))
-                      else if left(LowerCase(s),10)='reply-to: ' then
+                      else if LeftStr(LowerCase(s),10)='reply-to: ' then
                         PmReplyTo:=trim(mid(s,11))
                       else if LowerCase(s)='content-type: uu1' then
                         typ:='B'
-                      else if LowerCase(left(s,11))='file-date: ' then
+                      else if LowerCase(LeftStr(s,11))='file-date: ' then
                         ddatum:=trim(mid(s,12))
                       else
                         firstline:=false;
@@ -1495,17 +1495,17 @@ begin
                       end;
                   end;
             'A' : if empfaenger='' then empfaenger:=mausform(s);
-            'B' : begin pm_bstat:=left(s,15); inc(pm); end;
+            'B' : begin pm_bstat:=LeftStr(s,15); inc(pm); end;
             'E' : begin datum:=copy(s,3,10); ZtoZCdatumNTZ(datum,zdatum); end;
             'G' : empfaenger:=bretth+s;
             'O' : organisation:=s;
             'V' : absender:=mausform(s);
             'W' : begin betreff:=s; inc(pm); keinbetreff:=false; end;
             { Name des Gateway aus der dafÅr vorgesehenen Header-Zeile nehmen }
-            'Y' : gate:=left(s,80);
-            'I' : org_msgid:=left(s,120);
-            'R' : org_xref:=left(s,120);
-            'N' : realname:=left(s,40);
+            'Y' : gate:=LeftStr(s,80);
+            'I' : org_msgid:=LeftStr(s,120);
+            'R' : org_xref:=LeftStr(s,120);
+            'N' : realname:=LeftStr(s,40);
             'D' : if s<>'' then case s[1] of
                     'M' : distribution:='MausNet';
                     'L' : distribution:='lokal';
@@ -1517,8 +1517,8 @@ begin
                       mimect:=s;
                   end;
             { redundante Kommentar-Zeilen aus Outfile tilgen }
-            '>' : if (left(s,9)<>'boundary=') and (not mausKF) then begin
-                    parname:=LowerCase(trim(left(s,cposx(':',s)-1)));
+            '>' : if (LeftStr(s,9)<>'boundary=') and (not mausKF) then begin
+                    parname:=LowerCase(trim(LeftStr(s,cposx(':',s)-1)));
                     if (parname<>'mid') and (parname<>'rid') and
                        (parname<>'mime')
                        then appline(s,true);
@@ -1528,12 +1528,12 @@ begin
                        end;
                   end;
             {/fb}
-             '-' : ref:=left(s,120);
+             '-' : ref:=LeftStr(s,120);
           end;
           s:=c+s;
         end;
         readln(t1);
-      until (left(s,1)='#') or eof(t1);
+      until (LeftStr(s,1)='#') or eof(t1);
       if pm=2 then writeln(pmlog,msgid);
       if zdatum='' then begin
         datum:=zdate; setzdate(hd); end;
@@ -1550,7 +1550,7 @@ begin
           if msgid='HEAD' then
             killmsg:=true            { internes Infofile lîschen }
           else
-            if MausIT_files and (left(msgid,2)='IT') and (length(MsgID)=3)
+            if MausIT_files and (LeftStr(msgid,2)='IT') and (length(MsgID)=3)
             then begin
               WriteInfofile(boxname+'.'+msgid);    { ITI/ITG/ITB in Datei }
               killmsg:=true;                       { schreiben            }
@@ -1643,6 +1643,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/10/17 10:05:41  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.25  2000/09/30 16:51:41  fe
   Notduerftig uebersetzbar gemacht.
 

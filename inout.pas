@@ -795,7 +795,7 @@ begin
   mlm:=mauszul; mrm:=mauszur;
   r1:=retonfn; retonfn:=#1#1;
   enderded:=enno;
-  if left(li,2)='>>' then begin
+  if LeftStr(li,2)='>>' then begin
     autogr:=true;
     delete(li,1,2);
     end
@@ -917,17 +917,17 @@ begin
                    else
                      fnkn:=ord(a[2])-73;
                    if fndef[fnkn]<>'' then begin
-                     if right(fndef[fnkn],1)=';' then
-                       inss:=left(fndef[fnkn],length(fndef[fnkn])-1)
+                     if RightStr(fndef[fnkn],1)=';' then
+                       inss:=LeftStr(fndef[fnkn],length(fndef[fnkn])-1)
                      else
                        inss:=fndef[fnkn];
                      if einfueg then
-                       s:=left(left(s,p)+inss+mid(s,succ(p)),ml)
+                       s:=LeftStr(LeftStr(s,p)+inss+mid(s,succ(p)),ml)
                      else
-                       s:=left(left(s,p)+
+                       s:=LeftStr(LeftStr(s,p)+
                                inss+mid(s,succ(p)+length(inss)),ml);
                      p:=min(p+length(inss),length(s));
-                     if right(fndef[fnkn],1)=';' then
+                     if RightStr(fndef[fnkn],1)=';' then
                        a:=keycr;
                      end;
                  end else
@@ -1640,6 +1640,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.60  2000/10/17 10:05:40  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.59  2000/09/30 16:39:00  mk
   - SysSetBackIntensity
 

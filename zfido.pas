@@ -325,19 +325,19 @@ begin
     s:=UpperCase(paramstr(i));
     if (s='-ZF') or (s='/ZF') then direction:=1
     else if (s='-FZ') or (s='/FZ') then direction:=2
-    else if (left(s,2)='-H') or (left(s,2)='/H') then
+    else if (LeftStr(s,2)='-H') or (LeftStr(s,2)='/H') then
       bretter:=mid(paramstr(i),3)
-    else if (left(s,4)='-2D:') or (left(s,4)='/2D:') then begin
+    else if (LeftStr(s,4)='-2D:') or (LeftStr(s,4)='/2D:') then begin
       fakenet:=ival(mid(s,5));
       adr3d:=true;
       end
-    else if (left(s,3)='-W:') or (left(s,3)='/W:') then
+    else if (LeftStr(s,3)='-W:') or (LeftStr(s,3)='/W:') then
       xpwindow:=ival(mid(s,4))
-    else if (left(s,4)='-PC:') or (left(s,4)='/PC:') then
+    else if (LeftStr(s,4)='-PC:') or (LeftStr(s,4)='/PC:') then
       prodcode:=hexval(mid(s,5))
     else if (s='-NLI') or (s='/NLI') then
       LocalIntl:=false
-    else if (left(s,3)='-P:') or (left(s,3)='/P:') then
+    else if (LeftStr(s,3)='-P:') or (LeftStr(s,3)='/P:') then
       ppassword:=mid(s,4)
     else if (s='-R') or (s='/R') then
       DoRequest:=true
@@ -368,12 +368,12 @@ begin
         s:=trim(s);
         if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
           p:=cpos('=',s);
-          if LowerCase(left(s,p))='bretter=' then begin
+          if LowerCase(LeftStr(s,p))='bretter=' then begin
             s:=trim(mid(s,p+1));
             p:=blankpos(s);
             if p>0 then begin
               inc(bh_anz);
-              bretths[bh_anz].box:=left(s,p-1);
+              bretths[bh_anz].box:=LeftStr(s,p-1);
               bretths[bh_anz].bh:=trim(mid(s,p+1));
               end;
             end;   { bretter= }
@@ -407,7 +407,7 @@ begin
   with frec do begin
     p1:=cpos('@',adr);
     if p1>0 then begin
-      username:=trim(left(adr,min(35,p1-1)));
+      username:=trim(LeftStr(adr,min(35,p1-1)));
       delete(adr,1,p1);
       end;
     adr:=trim(adr);
@@ -416,7 +416,7 @@ begin
     p3:=cpos('.',adr);
     if (p2<>0) and (p1<p2) and ((p3=0) or (p3>p2)) then begin
       if p1>0 then
-        zone:=minmax(abs(ival(left(adr,p1-1))),0,65535);
+        zone:=minmax(abs(ival(LeftStr(adr,p1-1))),0,65535);
       net:=minmax(abs(ival(copy(adr,p1+1,p2-p1-1))),0,65535);
       ispoint:=(p3>0);
       if ispoint then
@@ -502,7 +502,7 @@ var b       : charr absolute buf;
     if p=0 then p:=80
     else
       realname:=trim(copy(line,p+2,min(length(line)-p-2,40)));
-    name:=left(line,min(79,p-1));
+    name:=LeftStr(line,min(79,p-1));
   end;
 
 begin
@@ -517,34 +517,34 @@ begin
         p:=cpos(':',line);
         if p=0 then ok:=false
         else begin
-          id:=left(line,p-1);
+          id:=LeftStr(line,p-1);
           UpString(id);
           line:=trim(mid(line,p+1));
-          if id='EMP' then empfaenger:=left(line,79) else
+          if id='EMP' then empfaenger:=LeftStr(line,79) else
           if id='ABS' then getname(absender,realname) else
-          if id='BET' then betreff:=left(line,72) else
+          if id='BET' then betreff:=LeftStr(line,72) else
           if id='ROT' then pfad:=line else
-          if id='MID' then MsgID:=left(line,midlen) else
+          if id='MID' then MsgID:=LeftStr(line,midlen) else
           if id='EDA' then begin
-                             zdatum:=left(line,17);
+                             zdatum:=LeftStr(line,17);
                              ZCtoZdatum(zdatum,datum);
                            end else
           if id='LEN' then val(line,groesse,res) else
           if id='BIN' then typ:='B' else
-          if id='FILE' then datei:=left(line,20) else
-          if id='BEZ'  then ref:=left(line,midlen) else
+          if id='FILE' then datei:=LeftStr(line,20) else
+          if id='BEZ'  then ref:=LeftStr(line,midlen) else
           if id='MAILER' then programm:=line else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
-          if id='F-TO' then fido_to:=left(line,36) else
+          if id='F-TO' then fido_to:=LeftStr(line,36) else
           if id='CRYPT' then pgpencode:=true else
           if id='SIGNED' then pgpsigned:=(pos('PGP',UpperCase(line))>0) else
           if id[1]='X' then
             if id='X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else
-            if id='X-XP-ATT' then attrib:=hexval(left(line,4)) else
-            if id='X-XP-FTO' then fido_to:=left(line,36) else
-            if id='X-XP-ORGMID' then org_msgid:=left(line,midlen) else
-            if id='X-XP-ORGREF' then org_xref:=left(line,midlen) else
-            if id='X-CHARSET' then x_charset:=left(line,25) else
+            if id='X-XP-ATT' then attrib:=hexval(LeftStr(line,4)) else
+            if id='X-XP-FTO' then fido_to:=LeftStr(line,36) else
+            if id='X-XP-ORGMID' then org_msgid:=LeftStr(line,midlen) else
+            if id='X-XP-ORGREF' then org_xref:=LeftStr(line,midlen) else
+            if id='X-CHARSET' then x_charset:=LeftStr(line,25) else
             if id='X-XP-CTL' then XPointCtl:=ival(line);
           line:='*';
           end;
@@ -584,7 +584,7 @@ var buffer : array[0..2047] of byte;
 
   function fdat(dat:string):string;             { Z-Datum -> Datum  }
   begin
-    fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+left(dat,2);
+    fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+LeftStr(dat,2);
   end;
 
 begin
@@ -728,7 +728,7 @@ var f1,f2   : file;
         fdate:=copy(datum,5,2)+' '+
                copy('JanFebMarAprMayJunJulAugSepOctNovDec',ival(
                     copy(datum,3,2))*3-2,3)+' '+
-               left(datum,2)+'  '+copy(datum,7,2)+':'+copy(datum,9,2)+':00'#0;
+               LeftStr(datum,2)+'  '+copy(datum,7,2)+':'+copy(datum,9,2)+':00'#0;
     end;
 
     procedure RepKlammer(var s:string);
@@ -753,7 +753,7 @@ var f1,f2   : file;
       pm:=(cpos('@',empfaenger)>0);
       uuadr:='';
       if not pm then begin
-        if left(UpperCase(empfaenger),length(bretter))<>UpperCase(bretter) then begin
+        if LeftStr(UpperCase(empfaenger),length(bretter))<>UpperCase(bretter) then begin
           writeln(' - unbekannte Brettebene: '+empfaenger+#7);
           WriteMessageHeader:=false;
           exit;
@@ -770,7 +770,7 @@ var f1,f2   : file;
         RepKlammer(empfaenger);
         p:=pos('#',empfaenger);
         if (p>0) and (pos('.',mid(empfaenger,p+1))>0) then begin
-          uuadr:=trim(left(empfaenger,p-1))+'@'+trim(mid(empfaenger,p+1));
+          uuadr:=trim(LeftStr(empfaenger,p-1))+'@'+trim(mid(empfaenger,p+1));
           p:=rightpos('@',uuadr);
           empfaenger:='UUCP'+mid(uuadr,p);
           truncstr(uuadr,p-1);
@@ -898,11 +898,11 @@ var f1,f2   : file;
       repeat
         p:=cpos(' ',betreff);
         if p>0 then begin
-          _file:=trim(left(betreff,p));
+          _file:=trim(LeftStr(betreff,p));
           betreff:=trimleft(mid(betreff,p));
           p2:=cpos('/',_file);
           if p2=0 then writeln(reqfile,UpperCase(_file))
-          else writeln(reqfile,UpperCase(left(_file,p2-1))+' !'+mid(_file,p2+1));
+          else writeln(reqfile,UpperCase(LeftStr(_file,p2-1))+' !'+mid(_file,p2+1));
         end;
       until p=0;
       end;
@@ -932,9 +932,9 @@ begin                   //ZFidoProc
     blockread(f1,buf^,readfirst,rr);
     makeheader(buf^,hds,hd,ok);
     if ok then
-      if DoRequest and (UpperCase(left(hd.empfaenger,length(XPrequest)+1))=UpperCase(XPrequest)+'@')
+      if DoRequest and (UpperCase(LeftStr(hd.empfaenger,length(XPrequest)+1))=UpperCase(XPrequest)+'@')
       then begin
-        if right(hd.empfaenger,length(reqnode))=reqnode then
+        if RightStr(hd.empfaenger,length(reqnode))=reqnode then
           WriteRequest;
         end
       else begin
@@ -1082,14 +1082,14 @@ label abbr;
   begin
     p:=cpos(':',s);
     if p>0 then begin
-      tozone:=minmax(ival(left(s,p-1)),0,65535);
+      tozone:=minmax(ival(LeftStr(s,p-1)),0,65535);
       delete(s,1,p);
       p:=cpos(' ',s);
       if p>0 then begin
         delete(s,1,p);
         p:=cpos(':',s);
         if p>0 then
-          fmzone:=minmax(ival(left(s,p-1)),0,65535);
+          fmzone:=minmax(ival(LeftStr(s,p-1)),0,65535);
         end;
       end;
   end;
@@ -1104,15 +1104,15 @@ label abbr;
     end;
 
   begin
-    if ival(left(s,2))=0 then begin { SEAdog-Format }
+    if ival(LeftStr(s,2))=0 then begin { SEAdog-Format }
       mon:=monster(copy(s,8,3));
       if mon='00' then
-        mon:=monster(left(s,3));
+        mon:=monster(LeftStr(s,3));
       fzdate:=copy(s,12,2)+mon+formi(ival(copy(s,5,2)),2)+
-              copy(s,length(s)-4,2)+right(s,2);
+              copy(s,length(s)-4,2)+RightStr(s,2);
       end
     else                       { Standard-Format }
-      fzdate:=copy(s,8,2)+monster(copy(s,4,3))+left(s,2)+copy(s,12,2)+
+      fzdate:=copy(s,8,2)+monster(copy(s,4,3))+LeftStr(s,2)+copy(s,12,2)+
               copy(s,15,2);
   end;
 
@@ -1270,10 +1270,10 @@ label abbr;
       while (p>0) and (s[p]<>' ') do dec(p);
       delete(s,1,p);
       p:=cpos(' ',s);
-      if p>0 then s:=left(s,p-1);
+      if p>0 then s:=LeftStr(s,p-1);
       if s[length(s)]=',' then dellast(s);
       p:=pos('@fidonet',LowerCase(s));
-      if p>0 then s:=left(s,p-1);
+      if p>0 then s:=LeftStr(s,p-1);
       getvia:=s;
       end;
   end;
@@ -1333,7 +1333,7 @@ label abbr;
     if p>0 then truncstr(s,p-1);    { (Realname) wegschneiden }
     p:=cpos('@',s);
     if (p>0) and (length(s)<60) then
-      fromu:=trim(left(s,p-1)+' # '+mid(s,p+1))
+      fromu:=trim(LeftStr(s,p-1)+' # '+mid(s,p+1))
     else begin
       fromu:=hd.realname;
       hd.realname:='';
@@ -1421,16 +1421,16 @@ begin
               topt:=minmax(ival(s),0,32767); istopt:=true; end else
             if tt.kenn=kIntl then getINTLzones   else
             if tt.kenn=kMsgi then
-              if left(s,2)='D:' then hd.msgid:=trim(mid(s,3))
+              if LeftStr(s,2)='D:' then hd.msgid:=trim(mid(s,3))
               else else
             if tt.kenn=kOrig then
-              if left(s,3)='ID:' then hd.org_msgid:=trim(mid(s,4)) else
-              if left(s,4)='REF:' then hd.org_xref:=trim(mid(s,5))
+              if LeftStr(s,3)='ID:' then hd.org_msgid:=trim(mid(s,4)) else
+              if LeftStr(s,4)='REF:' then hd.org_xref:=trim(mid(s,5))
               else else
             if tt.kenn=kRepl then begin
-              if left(s,2)='Y:' then
+              if LeftStr(s,2)='Y:' then
                 hd.ref:=trim(mid(s,3))
-              else if left(s,6)='YADDR ' then begin
+              else if LeftStr(s,6)='YADDR ' then begin
                 hd.realname:=fromu;
                 InternetAdresse(trim(mid(s,7)));
                 end;
@@ -1438,7 +1438,7 @@ begin
             if tt.kenn=kPID then
               hd.programm:=trim(s) else
             if tt.kenn=kFlag then
-              if (left(s,2)='S:') or (left(s,2)='S ') then begin
+              if (LeftStr(s,2)='S:') or (LeftStr(s,2)='S ') then begin
                 hd.fido_flags:=trim(mid(s,3));
                 if pos('RRQ',UpperCase(s))+pos('CFM',UpperCase(s))>0 then
                   hd.attrib:=hd.attrib or attrReqEB;
@@ -1449,11 +1449,11 @@ begin
                 end
               else else
             if tt.kenn=kChrs then
-              if left(s,1)=':' then
+              if LeftStr(s,1)=':' then
                 hd.x_charset:=trim(mid(s,2))
               else else
             if tt.kenn=kXPCt then
-              if left(s,2)='L:' then
+              if LeftStr(s,2)='L:' then
                 hd.XPointCtl:=ival(mid(s,3));
             end
           else
@@ -1517,7 +1517,7 @@ begin
         adr:=adr0+tearadr;
         seek(f1,adr);               { Footer bearbeiten }
         getrestofline;              { Tearline Åberlesen }
-        if trim(left(s,4))='---' then begin
+        if trim(LeftStr(s,4))='---' then begin
           prog2:=trim(mid(s,5));
           if prog2<>'' then
             if hd.programm='' then hd.programm:=prog2
@@ -1531,13 +1531,13 @@ begin
       while (adr<madr-1) do begin         { Origin bzw. ^AVIA suchen }
         seek(f1,adr);
         getrestofline;
-        if left(s,10)=' * Origin:' then begin
+        if LeftStr(s,10)=' * Origin:' then begin
           GetOrigin;
           hd.groesse:=adr-adr0;
           end
-        else if left(s,6)=^A'PATH:' then
+        else if LeftStr(s,6)=^A'PATH:' then
           hd.pfad:=hd.pfad+trim(mid(s,7))+' '
-        else if left(s,5)=^A'Via ' then begin
+        else if LeftStr(s,5)=^A'Via ' then begin
           hd.pfad:=hd.pfad+getvia(mid(s,6))+' ';
           if not via then begin
             hd.groesse:=adr-adr0-length(s)-1-lfs;
@@ -1565,7 +1565,7 @@ begin
             if p>0 then begin        { Absendenet/node aus ^APATH holen }
               s:=mid(hd.pfad,p+1);
               p:=cpos(' ',s);
-              if p>0 then s:=left(s,p-1);
+              if p>0 then s:=LeftStr(s,p-1);
               splitfido(s,origin);
               if zone=0 then zone:=phd.OrgZone;
               if zone=0 then zone:=phd.QOrgZone;
@@ -1590,9 +1590,9 @@ begin
         end;
 
       if not DelEmpty or (hd.groesse>0) then begin
-        if left(UpperCase(hd.x_charset),7)='LATIN-1' then
+        if LeftStr(UpperCase(hd.x_charset),7)='LATIN-1' then
           cxlate:=1
-        else if left(UpperCase(hd.x_charset),3)='MAC' then
+        else if LeftStr(UpperCase(hd.x_charset),3)='MAC' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1681,6 +1681,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/10/17 10:06:02  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.38  2000/10/04 21:44:28  mo
   - kleine Korrektur
 

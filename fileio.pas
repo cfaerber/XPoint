@@ -208,7 +208,7 @@ begin
   if multipos('?*',fname) or (trim(fname)='') then
     IsPath:=false
   else begin
-    if (fname='\') or (fname[length(fname)]=':') or (right(fname,2)=':\')
+    if (fname='\') or (fname[length(fname)]=':') or (RightStr(fname,2)=':\')
     then begin
       Dos.findfirst(fname+'*.*',ffAnyFile,sr);
       if doserror=0 then
@@ -358,7 +358,7 @@ begin
     res:=0;
     exit;
   end;
-  if right(path,1)<>DirSepa then path:=path+DirSepa;
+  if RightStr(path,1)<>DirSepa then path:=path+DirSepa;
   if validfilename(path+testfile) then
     res:=0
   else
@@ -371,8 +371,8 @@ begin
       res:=0;
       while (p<=length(path)) do begin
         while (p<=length(path)) and (path[p]<>DirSepa) do inc(p);
-        if not IsPath(left(path,p)) then begin
-          mkdir(left(path,p-1));
+        if not IsPath(LeftStr(path,p)) then begin
+          mkdir(LeftStr(path,p-1));
           if inoutres<>0 then begin
             res:=-ioresult;
             exit;
@@ -525,9 +525,9 @@ var dir : dirstr;
 begin
   fsplit(s,dir,name,ext);
   p:=cpos('*',name);
-   if p>0 then name:=left(name,p-1)+typeform.dup(9-p,'?');
+   if p>0 then name:=LeftStr(name,p-1)+typeform.dup(9-p,'?');
   p:=cpos('*',ext);
-   if p>0 then ext:=left(ext,p-1)+typeform.dup(5-p,'?');
+   if p>0 then ext:=LeftStr(ext,p-1)+typeform.dup(5-p,'?');
   s:=dir+name+ext;
 end;
 
@@ -596,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/10/17 10:05:39  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.51  2000/07/05 18:57:53  mk
   - AnsiString Updates
 

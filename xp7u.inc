@@ -38,10 +38,10 @@ begin
     reset(t);
     while not eof(t) do begin
       readln(t,s);
-      if left(s,4)='S D.' then begin
+      if LeftStr(s,4)='S D.' then begin
         s:=trim(mid(s,cpos(' ',s)));
-        s:=left(s,cpos(' ',s)-1);
-        w:=hexval(right(s,4));
+        s:=LeftStr(s,cpos(' ',s)-1);
+        w:=hexval(RightStr(s,4));
         end;
       end;
     close(t);
@@ -213,12 +213,12 @@ begin
       blockread(f1^,s[1],8);
       close(f1^);
       news:=(s='#! rnews');
-      if news or (left(s,5)='HELO ') then begin    { News/SMTPmail packen }
-        shell(left(boxpar^.UpArcer,p-1)+DestDir+sr.name+mid(boxpar^.UpArcer,p+7),
+      if news or (LeftStr(s,5)='HELO ') then begin    { News/SMTPmail packen }
+        shell(LeftStr(boxpar^.UpArcer,p-1)+DestDir+sr.name+mid(boxpar^.UpArcer,p+7),
               500,3);
         if not existf(f1^) then begin    { Datei wurde gepackt }
-          if freeze then assign(f1^,DestDir+left(sr.name,length(sr.name)-2)+'XZ')
-          else assign(f1^,DestDir+left(sr.name,length(sr.name)-1)+'Z');
+          if freeze then assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-2)+'XZ')
+          else assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-1)+'Z');
           if (errorlevel<>0) or not existf(f1^) then begin
             PackFehler;
             dispose(f1); dispose(f2);
@@ -295,8 +295,8 @@ begin
       reset(f1^,1);
       blockread(f1^,s[1],40,rr);
       s[0]:=chr(rr);
-      if (left(s,11)='#! cunbatch') or (left(s,11)='#! funbatch') or   { Datei entpacken }
-         (left(s,11)='#! gunbatch') or (left(s,11)='#! zunbatch')
+      if (LeftStr(s,11)='#! cunbatch') or (LeftStr(s,11)='#! funbatch') or   { Datei entpacken }
+         (LeftStr(s,11)='#! gunbatch') or (LeftStr(s,11)='#! zunbatch')
       then begin
         assign(f2^,XFerDir+sr.name+'.Z');
         rewrite(f2^,1);
@@ -308,8 +308,8 @@ begin
         end
       else begin
         close(f1^);
-        if (left(s,2)=#$1f#$9d) or (left(s,2)=#$1f#$9f) or
-           (left(s,2)=#$1f#$8b) then begin     { compressed/frozen SMTP o.„. }
+        if (LeftStr(s,2)=#$1f#$9d) or (LeftStr(s,2)=#$1f#$9f) or
+           (LeftStr(s,2)=#$1f#$8b) then begin     { compressed/frozen SMTP o.„. }
           rename(f1^,XFerDir+sr.name+'.Z');
           uncompress(sr.name,s[2]=#$9f,s[2]=#$8b);
           end;
@@ -469,6 +469,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/10/17 10:05:55  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.20  2000/08/27 10:37:10  mk
   - UUZ ist jetzt intern
 

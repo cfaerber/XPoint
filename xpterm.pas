@@ -252,7 +252,7 @@ begin
         p:=1;
         while (p<=length(ansiseq)) and (ansiseq[p]<>';') do inc(p);
         inc(parcount);
-        ansipar[parcount]:=minmax(ival(left(ansiseq,p-1)),0,255);
+        ansipar[parcount]:=minmax(ival(LeftStr(ansiseq,p-1)),0,255);
         delete(ansiseq,1,p);
         end;
       moff;
@@ -782,7 +782,7 @@ var t      : text;
     else begin
       p:=blankpos(s);
       if p=0 then p:=length(s)+1;
-      s0:=left(s,p-1);
+      s0:=LeftStr(s,p-1);
       s:=trim(mid(s,p+1));
       end;
   end;
@@ -1159,7 +1159,7 @@ var ip   : integer;
         0 : doit:=true;
         1 : begin
               par:=onstr;
-              doit:=(right(lrecs,length(par))=par);
+              doit:=(RightStr(lrecs,length(par))=par);
               if doit then begin
                 if log2<>nil then write(log2^,recs);
                 recs:=''; lrecs:='';
@@ -1180,7 +1180,7 @@ var ip   : integer;
                           repeat
                             tb;
                             testkey;
-                          until timeout or (right(lrecs,length(par))=par) or ende;
+                          until timeout or (RightStr(lrecs,length(par))=par) or ende;
                           if log2<>nil then write(log2^,recs);
                           recs:=''; lrecs:='';
                         end;
@@ -1302,6 +1302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/17 10:06:01  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.21  2000/09/30 19:54:44  ma
   - auf ObjCOM umgestellt
   - *grosses* Minenfeld: Bildschirmdarstellung noch kaputt,

@@ -112,19 +112,19 @@ label ende,nextpp;
     Xread(fn,false);
     assign(t,fn);
     reset(t);
-    gr:=left(getres2(612,4),5);        { 'Gr”áe' }
+    gr:=LeftStr(getres2(612,4),5);        { 'Gr”áe' }
     freeres;
     repeat
       readln(t,s);
-    until (left(s,5)=gr) or eof(t);
-    if left(s,5)<>gr then begin
+    until (LeftStr(s,5)=gr) or eof(t);
+    if LeftStr(s,5)<>gr then begin
       rfehler(618);                  { 'ungltige Versand-Nachricht!' }
       uvsXgroesse:=0;
       end
     else begin
       s:=trim(copy(s,pos(':',s)+1,20));
       if pos(' ',s)>0 then
-        s:=left(s,pos(' ',s)-1);
+        s:=LeftStr(s,pos(' ',s)-1);
       uvsXgroesse:=ival(s);
       end;
     close(t);
@@ -135,7 +135,7 @@ label ende,nextpp;
   var ml : byte;
   begin
     ml:=min(length(hdp0^.empfaenger),length(hdp^.empfaenger));
-    EQ_empf:=left(hdp0^.empfaenger,ml)=left(hdp^.empfaenger,ml);
+    EQ_empf:=LeftStr(hdp0^.empfaenger,ml)=LeftStr(hdp^.empfaenger,ml);
   end;
 
   procedure set_forcebox;
@@ -153,7 +153,7 @@ label ende,nextpp;
       if p>0 then begin
         bbox:=mid(abs,p+1);      { Box aus Absendername }
         p:=pos('.',bbox);
-        if p>0 then bbox:=left(bbox,p-1);
+        if p>0 then bbox:=LeftStr(bbox,p-1);
         if isbox(bbox) then forcebox:=bbox;
         end;
       end;
@@ -241,7 +241,7 @@ begin
   while (doserror=0) and not found do begin
     if crash then zconnect:=true
     else begin
-      box:=file_box(nil,left(sr.name,length(sr.name)-3));
+      box:=file_box(nil,LeftStr(sr.name,length(sr.name)-3));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     assign(f,ownpath+sr.name);
@@ -290,7 +290,7 @@ begin
   if empfnr>0 then begin
     dbReadN(mbase,mb_ablage,ablage);    { alle Crosspostings auf l”. + !UV }
     dbReadN(mbase,mb_adresse,madr);
-    crc:=left(dbReadStr(mbase,'msgid'),4);
+    crc:=LeftStr(dbReadStr(mbase,'msgid'),4);
     dbSeek(bezbase,beiMsgID,crc);
     while not dbEOF(bezbase) and (dbLongStr(dbReadInt(bezbase,'msgid'))=crc) do begin
       if dbReadInt(bezbase,'msgpos')<>rec then begin
@@ -430,7 +430,7 @@ begin
     else begin
       p:=cpos('@',s);
       if p=0 then s:=s+'@'+mauswlbox
-      else s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+      else s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
       end;
     dbClose(d);
     end;
@@ -494,7 +494,7 @@ label ende,again;
     procedure wrs(s:string);
     begin
       inc(asnum);
-      aas[asnum]:=left(s,120);
+      aas[asnum]:=LeftStr(s,120);
     end;
   begin
     asnum:=0;
@@ -559,7 +559,7 @@ label ende,again;
     rewrite(tf,1);
     hdp^.empfaenger:=Typeform.Mid(empf,2);
     if hdp^.msgid<>'' then
-      hdp^.msgid:=right(hdp^.msgid,1)+left(hdp^.msgid,length(hdp^.msgid)-1);
+      hdp^.msgid:=RightStr(hdp^.msgid,1)+LeftStr(hdp^.msgid,length(hdp^.msgid)-1);
     assign(f,fn);           { ^^ Rekursion vermeiden }
     reset(f,1);
     hdp^.groesse:=filesize(f);
@@ -626,7 +626,7 @@ label ende,again;
       assign(t,fn); rewrite(t);
       write(t,'#');
       if odd(dbReadInt(mbase,'unversandt')) then
-        writeln(t,left(hdp^.msgid,cpos('@',hdp^.msgid)-1))
+        writeln(t,LeftStr(hdp^.msgid,cpos('@',hdp^.msgid)-1))
       else
         writeln(t,hdp^.msgid);
       writeln(t,'BW');
@@ -680,8 +680,8 @@ label ende,again;
 
   function IsOempf(empf:string):boolean;
   begin
-    IsOempf:=(left(empf,length(oempf))=oempf) or
-             (left(empf,21)='## Originalempf„nger:');   { Kompatibilit„t zu XP 1.0-2.1 }
+    IsOempf:=(LeftStr(empf,length(oempf))=oempf) or
+             (LeftStr(empf,21)='## Originalempf„nger:');   { Kompatibilit„t zu XP 1.0-2.1 }
   end;
 
  :¼Çcedure GetOEmpflist;
@@ -710,8 +710,8 @@ begin
       exit;
       end else
     if mbNetztyp=nt_Maus then begin
-      if (left(dbReadStr(mbase,'brett'),1)<>'1') and
-         (left(dbReadStr(mbase,'brett'),1)<>'U') then
+      if (LeftStr(dbReadStr(mbase,'brett'),1)<>'1') and
+         (LeftStr(dbReadStr(mbase,'brett'),1)<>'U') then
         rfehler(628)     { 'Im MausNet nur bei PMs m”glich.' }
       else
         MausWeiterleiten;
@@ -720,7 +720,7 @@ begin
    if (typ=5) and (ArchivBretter<>'') then begin    { Test, ob Archivbretter }
      dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
      if dbEOF(bbase) or
-        (UpperCase(left(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
+        (UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
          'A'+UpperCase(ArchivBretter)) then begin
        rfehler(630);    { 'ungltige Archivbrett-Einstellung' }
        exit;
@@ -760,11 +760,11 @@ again:
   if hds=1 then goto ende;
   betr:=hdp^.betreff;
   binaermail:=(ntyp='B');
-  if left(betr,length(QPC_ID))=QPC_ID then begin
+  if LeftStr(betr,length(QPC_ID))=QPC_ID then begin
     betr:=copy(betr,length(QPC_ID)+1,BetreffLen);
     binaermail:=false;
     end
-  else if left(betr,length(DES_ID))=DES_ID then begin
+  else if LeftStr(betr,length(DES_ID))=DES_ID then begin
     betr:=copy(betr,length(DES_ID)+1,BetreffLen);
     binaermail:=false;
     end;
@@ -876,7 +876,7 @@ again:
                      ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
                      end;
                    if typ=3 then begin
-                     if left(ebrett,1)='A' then
+                     if LeftStr(ebrett,1)='A' then
                        get_re_n(dbReadInt(bbase,'gruppe'))
                      else begin
                        re_n:=rehochn; kein_re:=false;
@@ -917,9 +917,9 @@ again:
                    binaermail:=false;
                    if (hdp^.netztyp=nt_Maus) and (_brett[1]='A') then
                      sData^.ReplyGroup:=hdp^.empfaenger;
-                   fidoto:=left(hdp^.absender,35);
+                   fidoto:=LeftStr(hdp^.absender,35);
                    p:=cpos('@',fidoto);
-                   if p>0 then fidoto:=left(fidoto,p-1);
+                   if p>0 then fidoto:=LeftStr(fidoto,p-1);
                    _bezug:=hdp^.msgid;
                    _orgref:=hdp^.org_msgid;
                    _beznet:=hdp^.netztyp;
@@ -1149,7 +1149,7 @@ begin
   rewrite(tf,1);
   hdp^.empfaenger:=hdp^.absender;
   if hdp^.msgid<>'' then
-    hdp^.msgid:=right(hdp^.msgid,1)+left(hdp^.msgid,length(hdp^.msgid)-1);
+    hdp^.msgid:=RightStr(hdp^.msgid,1)+LeftStr(hdp^.msgid,length(hdp^.msgid)-1);
   assign(f,fn);           { ^^ Rekursion vermeiden }
   reset(f,1);
   hdp^.groesse:=filesize(f);
@@ -1220,11 +1220,11 @@ var i   : integer;
     rec : longint;
 begin
   brk:=false;
-  fpm:=(left(dbReadStr(mbase,'brett'),1)='1');
+  fpm:=(LeftStr(dbReadStr(mbase,'brett'),1)='1');
   rec:=dbRecno(mbase);
   if not fpm then begin               { 'Nachricht von %s archivieren' }
     pushhp(1500);
-    if ReadJN(getreps2(644,6,left(dbReadStr(mbase,'absender'),39)),true) then begin
+    if ReadJN(getreps2(644,6,LeftStr(dbReadStr(mbase,'absender'),39)),true) then begin
       message(getres2(644,7));        { 'Nachricht wird archiviert' }
       dbGo(mbase,rec);
       ArchivAMtoPM;
@@ -1253,7 +1253,7 @@ begin
         write(i:4);
         mon;
         dbGo(mbase,marked^[i].recno);
-        if left(dbReadStr(mbase,'brett'),1)='1' then begin
+        if LeftStr(dbReadStr(mbase,'brett'),1)='1' then begin
           MsgUnmark;
           Weiterleit(6,false)
           end;
@@ -1267,6 +1267,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/10/17 10:05:53  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.37  2000/10/16 09:32:38  mk
   SV:- Ersetzt-Header wird nun beim Weiterleiten geloescht
 

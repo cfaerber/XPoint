@@ -95,7 +95,7 @@ begin
       viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
       end
     else begin
-      gt:=left(typ,cposx('/',typ))+'*';
+      gt:=LeftStr(typ,cposx('/',typ))+'*';
       if SeekMime(gt) then begin
         viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
         if viewer.prog='' then viewer.prog:='*intern*';
@@ -147,7 +147,7 @@ begin
     else
       id:='';
     betreff:= dbReadNStr(mbase,mb_betreff);
-    if (left(id,3)='GIF') and SeekMime('image/gif') then begin
+    if (LeftStr(id,3)='GIF') and SeekMime('image/gif') then begin
       viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.ext:='gif';
@@ -200,8 +200,8 @@ end;
 
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
-var p         : byte;
-    prog      : string;  {Maximallaenge= Programmname+' '+Pfadstring(79)}
+var p         : Integer;
+    prog      : string;
     orgfn,fn1,
     parfn     : string;
     Dir: DirStr;
@@ -210,9 +210,10 @@ var p         : byte;
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
+
   if (not ValidFileName(orgfn) or exist(orgfn)) and (viewer.ext<>'') and
      (cpos('.',fn)>0) then
-    orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
+    orgfn:=ChangeFileExt(fn, '.' + viewer.ext);
 
   if not fileattach then
   begin
@@ -224,25 +225,21 @@ begin
   prog:=viewer.prog;
   orgfn:=iifs(fn1<>'',fn1,fn);
 
-                             {Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen }
+  // Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen
   if not fileattach and delviewtmp then
   Begin
     parfn:=TempS(_filesize(fn)+5000);
-    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8);
+    parfn:=LeftStr(parfn,length(parfn)-8)+'TMP-'+RightStr(parfn,8);
     end
   else parfn:=orgfn;
-                              {Korrekte File-extension verwenden}
 
-  FSplit(Parfn, Dir, Name, Ext);
-  ParFn := Dir + Name;
-
-  parfn:=parfn+iifs(viewer.ext='',ExtractFileExt(Orgfn),'.' + viewer.ext);
+  // Korrekte File-extension verwenden
+  ParFN := ChangeFileExt(ParFN, iifs(viewer.ext='',ExtractFileExt(Orgfn),'.'+viewer.ext));
   _rename(orgfn,parfn);
-
 
   p:=pos('$FILE',UpperCase(prog));
   if p=0 then prog:=prog+' '+parfn
-  else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
+  else prog:=LeftStr(prog,p-1)+parfn+mid(prog,p+5);
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
   if not XPWinShell(prog,parfn,600,1,fileattach) then
@@ -252,6 +249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/10/17 10:06:02  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.22  2000/10/16 08:30:37  mk
   - Bugfix fuer ViewFile, wenn File ohne Extension
 

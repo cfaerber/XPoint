@@ -195,7 +195,7 @@ var t      : text;
   var n : byte;
   begin
     get_exclude:=false;
-    if (left(su,10)='AUSSCHLUSS') then begin
+    if (LeftStr(su,10)='AUSSCHLUSS') then begin
       n:=ival(copy(s,11,1));
       if (n>=1) and (n<=excludes) then begin
         BoxPar^.exclude[n,1]:=copy(s,p+1,5);
@@ -213,7 +213,7 @@ begin
     with bp^ do
       while not eof(t) do begin
         readln(t,s);
-        if (s<>'') and (left(s,1)<>'#') then begin
+        if (s<>'') and (LeftStr(s,1)<>'#') then begin
           su:=UpperCase(s);
           p:=pos('=',s);
           if (p=0) or not (
@@ -321,7 +321,7 @@ begin
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',LastCall)
           ) then
-            trfehler1(901,left(s,35),30);   { 'Ungltige Box-Config-Angabe: %s' }
+            trfehler1(901,LeftStr(s,35),30);   { 'Ungltige Box-Config-Angabe: %s' }
           end;
         end;
     close(t);
@@ -575,6 +575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/10/17 10:05:56  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.22  2000/08/20 21:50:34  mo
   boxenparameter werden nun abgespeichert
 

@@ -25,15 +25,15 @@ begin
   while (fn[p]<>'/') and (p>0) do dec(p);
   if p>0 then delete(fn,1,p);
   if fn='~' then fn:='';
-  if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
-    fn:=left(fn,length(fn)-5)+'TAZ';
+  if RightStr(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
+    fn:=LeftStr(fn,length(fn)-5)+'TAZ';
   p:=pos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);
   while (p>0) and (fn[p]<>'.') do dec(p);
   if p>1 then begin
-    fn:=left(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
+    fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
     dec(p);
     end;
   allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
@@ -46,15 +46,15 @@ begin
       fn[i]:='-';
   p:=cpos('.',fn);
   if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
-    name:=left(fn,8); ext:='';
+    name:=LeftStr(fn,8); ext:='';
     end
   else begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
-    name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
+    name:=LeftStr(fn,min(8,p-1)); ext:=mid(fn,p);
     end;
   if length(ext)=2 then n:=10
   else n:=1;
   while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
-    ext:=left(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
+    ext:=LeftStr(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
     inc(n);
     end;
   Unix2DOSfile:=name+ext;

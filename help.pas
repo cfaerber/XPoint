@@ -439,7 +439,7 @@ begin
   if not NoHeader then begin
     wrt(x,y,'Hilfe: ');
     if headhigh and color then textcolor(15);
-    Wrt2(left(z^[1],wdt-7));
+    Wrt2(LeftStr(z^[1],wdt-7));
     attrtxt(NormColor);
     if length(z^[1])<wdt-7 then Wrt2(sp(wdt-7-length(z^[1])));
     wrt(x,y+1,dup(wdt,'Ä'));
@@ -455,7 +455,7 @@ begin
     begin
       gotoxy(x,yy);
       while p>0 do begin
-        Wrt2(left(s,p-1));
+        Wrt2(LeftStr(s,p-1));
         p2:=pos('>>',s); if p2=0 then p2:=length(s)+1;
         attrtxt(HighColor);
         Wrt2(copy(s,p+2,p2-p-2));
@@ -760,6 +760,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/10/17 10:05:39  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.24  2000/10/09 22:11:05  mk
   - Hilfe drucken stellt jetzt Hervorhebungen richtig dar (Bug #116196)
 

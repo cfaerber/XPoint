@@ -690,7 +690,7 @@ begin
       if p=0 then p:=cpos(#8,s);
       if p>0 then s[p]:=' ';
     until p=0;
-    cont:=left(s,maxl);
+    cont:=LeftStr(s,maxl);
     set_chml(amaskp^.felder,chml);
     end;
 end;
@@ -757,7 +757,7 @@ procedure Maddbool(x,y:byte; text:string; var b:boolean);
 begin
   if amaskp^.stat.checkbutts then begin
     text:=trimright(text);
-    if right(text,1)='?' then dellast(text);
+    if RightStr(text,1)='?' then dellast(text);
     end;
   setall(text,x,y,not amaskp^.stat.checkbutts);
   with lastfld^ do begin
@@ -1109,7 +1109,7 @@ begin
   testfield(nr);
   with amaskp^ do begin
     with fld[nr]^ do
-      cont:=left(newcont,maxlen);
+      cont:=LeftStr(newcont,maxlen);
     redispfields:=true;
     modified:=true;
     end;
@@ -1270,6 +1270,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2000/10/17 10:05:42  mk
+  - Left->LeftStr, Right->RightStr
+
   Revision 1.21  2000/07/27 10:12:59  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
