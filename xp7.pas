@@ -18,19 +18,10 @@ unit  xp7;
 interface
 
 uses
-  sysutils,
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
-      maske,maus2,montage,lister,resource,stack,
-{$IFDEF CAPI }
-  capi,
-{$ENDIF }
-      xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
+      {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
+      sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
+      fileio,inout,keys,winxp,maske,maus2,montage,lister,
+      resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
@@ -620,15 +611,6 @@ begin                  { of Netcall }
      exit;
      end;
 
-{$IFDEF CAPI }
-   if ISDN and not (CAPI_Installed and (CAPI_Register=0)) then begin
-     rfehler(740);   { 'ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert' }
-     dispose(NC);
-     dispose(addpkts);
-     exit;
-   end;
-{$ENDIF }
-
     { Ab hier kein exit mehr! }
 
     AppendEPP;
@@ -639,9 +621,6 @@ begin                  { of Netcall }
 
     showkeys(0);
     if net then begin
-{$IFDEF CAPI }
-      if ISDN then CAPI_suspend;
-{$ENDIF }
       assign(f,ppfile);
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP] then begin
         if not existf(f) then
@@ -711,48 +690,9 @@ begin                  { of Netcall }
         goto ende0;
         end;
       CallerToTemp;    { Maggi : OUT.ARC umbenennen }
-{$IFDEF CAPI }
-      if ISDN then CAPI_resume;
-{$ENDIF }
       end;   { if net and not Turbo-Box }
 
-    ComNr:=bport;
-    in7e1:=false; out7e1:=false;
-    fossiltest;
-    if not ISDN then begin
-      SetComParams(bport,fossil,Cport,Cirq);
-      if OStype<>OS_2 then
-        SaveComState(bport,cps);
-      SetTriggerLevel(tlevel);
-      if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
-      end;
-    Activate;
-    IgnCD:=IgCD; IgnCTS:=IgCTS;
-    IgnCTS := true; // !! Workaround fr nicht porierte UART
-    mdelay(300);
-    flushin;
-
-    if not IgnCTS then begin           { Modem an?  ISDN -> IgnCTS=true }
-      i:=3;
-      while not GetCTS(comnr) and (i>0) do begin
-        time(2);
-        while not GetCTS(comnr) and not timeout(false) do
-          tb;
-        if timeout(false) then begin
-          {window(1,1,screenwidth,screenlines);}
-          trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
-          twin;
-          writeln;
-          if waitkey=keyesc then i:=1;
-          end;
-        dec(i);
-        end;
-      if i=0 then begin
-        ende:=true;
-        if _fido then ReleaseC;
-        goto abbruch;
-        end;
-      end;
+    ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
 
     netcall:=false;
     display:=ParDebug;
@@ -760,10 +700,11 @@ begin                  { of Netcall }
     wahlcnt:=0; connects:=0;
     showkeys(17);
 
-    if net and _fido then begin       { --- FIDO - Mailer --------------- }
+       { ---------------------- FIDO - Mailer ---------------------- }
+
+    if net and _fido then begin
       fillchar(nc^,sizeof(nc^),0);
       inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      ReleaseC;
       cursor(curoff);
       inc(wahlcnt);
       case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
@@ -794,6 +735,37 @@ begin                  { of Netcall }
                     end;
       end;
     end;
+
+       { ---------------------- Andere Mailer ---------------------- }
+
+    fossiltest;
+    if not ISDN then begin
+      SetComParams(bport,fossil,Cport,Cirq);
+      if OStype<>OS_2 then SaveComState(bport,cps);
+      SetTriggerLevel(tlevel);
+      if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
+      end;
+    Activate; mdelay(300); flushin;
+    if not IgnCTS then begin           { Modem an?  ISDN -> IgnCTS=true }
+      i:=3;
+      while not GetCTS(comnr) and (i>0) do begin
+        time(2);
+        while not GetCTS(comnr) and not timeout(false) do tb;
+        if timeout(false) then begin
+          {window(1,1,screenwidth,screenlines);}
+          trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
+          twin;
+          writeln;
+          if waitkey=keyesc then i:=1;
+          end;
+        dec(i);
+        end;
+      if i=0 then begin
+        ende:=true;
+        if _fido then ReleaseC;
+        goto abbruch;
+        end;
+      end;
 
     recs:=''; lrec:='';
     showconn:=false;
@@ -846,25 +818,6 @@ begin                  { of Netcall }
       write(getres2(703,4),zeit);    { ' um ' }
       mon;
 
-{$IFDEF CAPI }
-      if ISDN then begin                      { ISDN-Anwahl }
-        CAPI_showmessages(true,false);
-        CAPI_debug:=ParDebug;
-        write(' ');
-        NC^.telefon:=GetTelefon;
-        case CAPI_dial(ISDN_EAZ,NC^.telefon,X75) of
-          1 : begin
-                writeln('  -  ',getres2(709,4));   { kein Freizeichen }
-                goto abbruch;
-              end;
-          2 : begin
-                writeln('  -  ',getres2(709,3));   { keine Verbindung }
-                goto abbruch;
-              end;
-        end;
-        end
-      else
-{$ENDIF CAPI }
       begin                              { Hayes-Anwahl }
         mdelay(150);
         flushin;   { Return verschlucken }
@@ -1327,11 +1280,6 @@ begin                  { of Netcall }
       end;
 
 ende0:
-{$IFDEF CAPI }
-    if ISDN then
-      CAPI_release     { bei ISDN-CAPI abmelden }
-    else
-{$ENDIF }
     if net and (OStype<>OS_2) then
       RestComState(bport,cps);
     comn[boxpar^.bport].fossil:=orgfossil;
@@ -1560,6 +1508,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/08/14 13:45:17  ma
+  - CAPI-IFDEFs entfernt, da CAPI bei Bedarf in ObjCOM verlagert
+    werden sollte; bisher nicht alle CAPI-Teile entfernt.
+  - Modeminitialisierung wieder hinter Fido-Netcall verlegt
+    (der ewige Kampf ;-)
+
   Revision 1.28  2000/08/13 23:25:47  mk
   - Bei Netcall wird das Modem nicht mehr getestet, da Routine noch nicht portiert
 
