@@ -94,7 +94,6 @@ function  testsysname(var s:string):boolean;
 function  testlogfile(var s:string):boolean;
 function  TestAKAservers(var s:string):boolean;
 function  testZCpointname(var s:string):boolean;
-function  JanusSwitch(var s:string):boolean;
 
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
@@ -653,32 +652,6 @@ begin
     rfehler1(930,us);    { 'Warnung: UngÅltige Zeichen im Pointname: %s' }
   testZCpointname:=true;  { (us=''); }
 end;
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
-function JanusSwitch(var s:string):boolean;
-var x,y, anz,i : integer;
-    t     : taste;
-begin
-  JanusSwitch:=true;
-  if LowerCase(getfield(downprotnr))='zmodem' then exit;
-  anz:=res2anz(932);
-  msgbox(63,anz+5,_hinweis_,x,y);
-  for i:=1 to anz do
-    wrt(x+3,y+1+i,getres2(932,i));
-  wrt(x+3,y+3+anz,getres(12));    { 'Taste drÅcken ...' }
-  errsound;
-  get(t,curon);
-  closebox;
-end;
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
-
-
 
 { Typ :  1=Boxen, 2=Gruppen, 3=Systeme, 4=Kurznamen, 5=MIME-Typen }
 { edit:  true=editieren, false=nur auswÑhlen                      }
@@ -2541,6 +2514,10 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.5  2002/11/01 13:35:28  ma
+  - reimplemented Janus+ switch, should solve problems with non-standard
+    servers
+
   Revision 1.45.2.4  2002/07/31 18:40:41  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now

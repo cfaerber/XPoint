@@ -54,6 +54,10 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   function isCompressedZCPacket(s: string): Boolean;
   var i,p: Integer;
   begin
+    if(not boxpar^.JanusPlus)then begin
+      result:=true;
+      exit;
+      end;
     s:=ExtractFilename(s);
     p:=cPos('.',s);
     result:=(UpperCase(Copy(s,2,1))='P')and(p<>0); { Janus+ }
@@ -251,6 +255,10 @@ end.
 
 {
   $Log$
+  Revision 1.11.2.3  2002/11/01 13:35:30  ma
+  - reimplemented Janus+ switch, should solve problems with non-standard
+    servers
+
   Revision 1.11.2.2  2002/08/03 16:31:46  mk
   - fixed unsendt-handling in client-mode
 
