@@ -1953,8 +1953,12 @@ begin
 end;
 
 procedure set_checkdate;
+var
+  Handle: Integer;
 begin
-  FileSetDate(NewDateFile, DateTimeToFileDate(Now));
+  Handle := FileOpen(NewDateFile, fmOpenReadWrite);
+  FileSetDate(Handle, DateTimeToFileDate(Now));
+  FileClose(Handle);
 end;
 
 
@@ -2093,6 +2097,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.6  2002/05/07 09:13:41  mk
+  - last checkin fixed for fpc
+
   Revision 1.147.2.5  2002/05/07 07:56:46  mk
   - fixed set_checkdate again
 
