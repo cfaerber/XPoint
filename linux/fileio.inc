@@ -42,7 +42,7 @@ var
   filename, path: string;
   i, j, k: integer;
 begin
-  filename:= Gestring(fn);           { Evtl. Pfad ignorieren }
+  filename:= ExtractFilename(fn);           { Evtl. Pfad ignorieren }
   if exist(fn) then begin               { -> Aktuelles Verzeichnis }
     existBin:= true;
     exit;
@@ -146,7 +146,7 @@ end;
 { path: Pfad mit '\' bzw. '/' am Ende! }
 
 procedure erase_all(path:string);
-  
+
   function parent_dir(s: string): boolean;
   begin
     case length(s) of
@@ -157,7 +157,7 @@ procedure erase_all(path:string);
       parent_dir:= (copy(s,1,2)<>'..');
     end;
   end;
-  
+
 var sr : searchrec;
     f  : file;
     er : integer;
@@ -476,15 +476,18 @@ begin
 end;
 
 {
-	$Log$
-	Revision 1.2  2000/07/05 09:09:29  hd
-	- Anpassungen AnsiString
-	- Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
-	  erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+        $Log$
+        Revision 1.3  2000/10/17 12:53:20  mk
+        - einige Funktionen auf Sysutils umgestellt
 
-	Revision 1.1  2000/06/30 13:48:11  hd
-	- Linux extrahiert
-	- fileio.inc fuer systemunabhaengige Routinen
-	- Linux: IsPath, era, erase_mask vereinfacht
-	
+        Revision 1.2  2000/07/05 09:09:29  hd
+        - Anpassungen AnsiString
+        - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
+          erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
+
+        Revision 1.1  2000/06/30 13:48:11  hd
+        - Linux extrahiert
+        - fileio.inc fuer systemunabhaengige Routinen
+        - Linux: IsPath, era, erase_mask vereinfacht
+
 }

@@ -92,9 +92,6 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode ”ffn.}
 procedure addext(var fn:string; ext:string);
 procedure adddir(var fn:string; dir:string);
 function  GetFileDir(p:string):string;
-function  Gestring(p:string):string;
-function  GetBareFileName(p:string):string;    { Filename ohne .ext }
-function  GetFileExt(p:string):string;         { Extension *ohne* "." }
 procedure WildForm(var s: string);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
@@ -149,7 +146,7 @@ var
   filename, path: string;
   i, j, k: integer;
 begin
-  filename:= Gestring(fn);           { Evtl. Pfad ignorieren }
+  filename:= ExtractFilename(fn);           { Evtl. Pfad ignorieren }
   if exist(fn) then begin               { -> Aktuelles Verzeichnis }
     existBin:= true;
     exit;
@@ -457,15 +454,6 @@ begin
   GetFileDir:=d;
 end;
 
-function Gestring(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(p,d,n,e);
-  Gestring:=n+e;
-end;
-
 function GetBareFileName(p:string):string;
 var d : dirstr;
     n : namestr;
@@ -473,15 +461,6 @@ var d : dirstr;
 begin
   fsplit(p,d,n,e);
   GetBareFileName:=n;
-end;
-
-function GetFileExt(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(p,d,n,e);
-  GetFileExt:=mid(e,2);
 end;
 
 function _rename(n1,n2:string):boolean;
@@ -596,6 +575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/10/17 12:53:18  mk
+  - einige Funktionen auf Sysutils umgestellt
+
   Revision 1.52  2000/10/17 10:05:39  mk
   - Left->LeftStr, Right->RightStr
 

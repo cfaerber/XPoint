@@ -1829,7 +1829,7 @@ begin
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
-    box:=(fsize>1024*1024) and (windmin=0) and (GetFileExt(FileName(f1))<>'$$$');
+    box:=(fsize>1024*1024) and (windmin=0) and (ExtractFileExt(FileName(f1))<>'.$$$');
     if box then begin
       MsgBox(56,5,getreps(134,extractfilename(FileName(f1))),x,y);
       attrtxt(col.colmboxhigh);
@@ -2004,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.81  2000/10/17 12:53:18  mk
+  - einige Funktionen auf Sysutils umgestellt
+
   Revision 1.80  2000/10/17 10:05:45  mk
   - Left->LeftStr, Right->RightStr
 

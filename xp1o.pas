@@ -903,7 +903,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
                  1 Windows-Programm
                  2 OS/2-Programm
   }
-  var ext     : string;
+  var
       exepath,
       batfile : string;
       et      : TExeType;
@@ -913,8 +913,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
   begin
     PrepareExe:=0;
     exepath:=LeftStr(prog,blankposx(prog)-1);
-    ext:=GetFileExt(exepath);
-    if ext='' then exepath:=exepath+'.exe';
+    if ExtractFileExt(exepath)='' then exepath:=exepath+'.exe';
     exepath:=fsearch(exepath,getenv('PATH'));
     if not stricmp(RightStr(exepath,4),'.exe') then
       et:=ET_Unknown
@@ -986,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/10/17 12:53:19  mk
+  - einige Funktionen auf Sysutils umgestellt
+
   Revision 1.61  2000/10/17 10:05:46  mk
   - Left->LeftStr, Right->RightStr
 

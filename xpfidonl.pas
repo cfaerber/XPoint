@@ -458,7 +458,7 @@ begin
             format:=2;
             detect:=true;
             end
-          else if getfileext(listfile)='PVT' then begin { Typvorgabe 'PVT-Liste' }
+          else if ExtractFileExt(listfile)='.PVT' then begin { Typvorgabe 'PVT-Liste' }
             updatefile:=listfile;
             format:=3;
             if FindFidoAddress(fn,fa) then begin
@@ -738,6 +738,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/10/17 12:53:19  mk
+  - einige Funktionen auf Sysutils umgestellt
+
   Revision 1.19  2000/10/17 10:05:58  mk
   - Left->LeftStr, Right->RightStr
 
