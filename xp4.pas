@@ -24,7 +24,7 @@ uses xpglobal,
 
 
 const
-  maxgl   = 60;
+  maxgl   = 55;
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -2741,6 +2741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.31  2001/05/18 09:11:52  mk
+  - maxgl auf 55 gestellt
+
   Revision 1.26.2.30  2001/05/17 15:14:54  mk
   - bix 60 Zeilen zugelassen
 
