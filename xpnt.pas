@@ -152,7 +152,7 @@ function ntDomainReply(nt:eNetz):boolean;      { Replys auf eig. Nachr. erkennba
 function ntZDatum(nt:eNetz):boolean;           { langes Datumsformat   }
 function ntAutoZer(nt:eNetz):boolean;          { .ZER-Pflicht          }
 function ntAutoDomain(box:string; ownbox:boolean):string;   { .Domain }
-function ntServerDomain(box:string):string;   { Domain des Servers    }
+function ntServerDomain(const box:string):string;   { Domain des Servers    }
 function ntDefaultDomain(nt:eNetz):string;     { Domain fuer neue Boxen }
 function ntGrossUser(nt:eNetz):boolean;        { User-Groáschreibung   }
 function ntGrossBrett(nt:eNetz):boolean;       { Bretter-Groáschreibung }
@@ -346,16 +346,13 @@ begin
 end;
 
 function ntBoxNetztyp(box:string):eNetz;
-var d  : DB;
 begin
   if box='' then box:=DefaultBox;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(boxbase,boiName,UpperCase(box));
   if dbFound then
-    dbRead(d,'netztyp',Result)
+    dbRead(boxbase,'netztyp',Result)
   else
     Result:=nt_Netcall;
-  dbClose(d);
 end;
 
 
@@ -436,37 +433,32 @@ begin
 end;
 
 function ntAutoDomain(box:string; ownbox:boolean):string;
-var d  : DB;
-    nt : eNetz; //shortint;
+var
+  nt : eNetz;
 begin
   ntAutoDomain:='';
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(boxbase,boiName,UpperCase(box));
   if dbFound then begin
-    dbRead(d,'netztyp',nt);
+    dbRead(boxbase,'netztyp',nt);
     if ntAutoZer(nt) then
       ntAutoDomain:='.ZER'
     else if (nt=nt_ZConnect) and not ownbox then
       ntAutoDomain:='.invalid'
     else
       if nt in netsRFC then
-        ntAutoDomain:=dbReadStr(d,'domain');
+        ntAutoDomain:=dbReadStr(boxbase,'domain');
     end;
-  dbClose(d);
 end;
 
-function ntServerDomain(box:string):string;   { Domain des Servers    }
-var d : DB;
+function ntServerDomain(const box:string):string;   { Domain des Servers    }
 begin
   ntServerDomain:='';
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(Boxbase,boiName,UpperCase(box));
   if dbFound then
-    if dbNetztyp(d)<>nt_UUCP then
+    if dbNetztyp(boxbase)<>nt_UUCP then
       ntServerDomain:=ntAutoDomain(box,true)
     else
-      ntServerDomain:=dbReadStr(d,'boxdomain');
-  dbClose(d);
+      ntServerDomain:=dbReadStr(boxbase,'boxdomain');
 end;
 
 
@@ -851,6 +843,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.61  2003/10/18 17:14:49  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.60  2003/08/28 23:23:57  mk
   - fixed typo
 

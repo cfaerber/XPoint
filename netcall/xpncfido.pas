@@ -76,20 +76,17 @@ var
   AKAs: string;
 
 function GetBoxData(boxname: string; var alias: boolean; var domain,bfile: string): boolean;
-var d: DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(BoxName));
-  if not dbFound then begin
-    dbClose(d);
+  dbSeek(boxbase,boiName,UpperCase(BoxName));
+  if not dbFound then
+  begin
     trfehler1(709,BoxName,60);
     result:=false;
     exit;
-    end;
-  bfile := dbReadStr(d,'dateiname');
-  domain := dbReadStr(d,'domain');
-  alias:=(dbReadInt(d,'script') and 4<>0);
-  dbClose(d);
+  end;
+  bfile := dbReadStr(boxbase,'dateiname');
+  domain := dbReadStr(boxbase,'domain');
+  alias:=(dbReadInt(boxbase,'script') and 4<>0);
   result:=true;
 end;
 
@@ -523,14 +520,13 @@ var i        : integer;
   end;
 
   function ProcessCrash(var Crash: boolean; var CrashOutBuffer: String): boolean;
-    procedure GetCrashBoxData(BoxName: string; bp: boxptr);
-    var d: DB;
+
+    procedure GetCrashBoxData(const BoxName: string; bp: boxptr);
     begin
-      dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,BoxName);
-      ReadBox(nt_Fido,dbReadStr(d,'dateiname'),bp);
-      dbClose(d);
+      dbSeek(Boxbase,boiName,BoxName);
+      ReadBox(nt_Fido,dbReadStr(Boxbase,'dateiname'),bp);
     end;
+
   var
     CrashBox: TFTNAddress;
     CrashPhone: String;
@@ -947,6 +943,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2003/10/18 17:14:52  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.40  2003/01/13 22:05:20  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

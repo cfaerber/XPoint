@@ -202,10 +202,9 @@ end;
 
 function imptestpollbox(var s:string):boolean;
 var
-  d : DB;
   nt: eNetz;
 begin
-  if SeekLeftBox(d, s, nt) then
+  if SeekLeftBox(s, nt) then
   begin
     Result := (impnt<>nt_QWK) or (nt in [nt_Fido,nt_QWK]);
     if not Result then
@@ -225,7 +224,6 @@ var t   : text;
     nt,ntcur  : eNetz;  //shortint; - include flags?
     x,y : Integer;
     brk : boolean;
-    d   : DB;
     box : string;
     red : boolean;
     eb  : boolean;
@@ -278,11 +276,10 @@ begin
         else box:=DefaultBox;
       end;
       if (box='') or ((nt<>nt_Netcall) and (nt<>nt_Fido)) then begin
-        dbOpen(d,BoxenFile,1);
-        while not dbEOF(d) and (dbNetztyp(d)<>nt) do
-          dbNext(d);
-        if not dbEOF(d) then box:= dbReadStr(d,'boxname');
-        dbClose(d);
+        dbGoTop(boxbase);
+        while not dbEOF(boxbase) and (dbNetztyp(boxbase)<>nt) do
+          dbNext(boxbase);
+        if not dbEOF(boxbase) then box:= dbReadStr(boxbase,'boxname');
       end;
 
       dialog(45,8,'',x,y);                     { Pollbox einlesen }
@@ -664,6 +661,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2003/10/18 17:14:48  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.53  2003/10/01 18:37:12  mk
   - simplyfied seeknextbox
 

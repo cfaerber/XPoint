@@ -259,7 +259,7 @@ begin
   while (rc=0) and not found do begin
     if crash then zconnect:=true
     else begin
-      box:=file_box(nil,LeftStr(sr.name,length(sr.name)-3));
+      box:=file_box(LeftStr(sr.name,length(sr.name)-3));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     assign(f,ownpath+sr.name);
@@ -1434,6 +1434,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2003/10/18 17:14:50  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.12  2003/08/30 22:19:27  cl
   - send window: select encryption and signature method
   - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

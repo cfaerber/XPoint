@@ -65,9 +65,9 @@ uses
 // ---------------------------------------------------------------------
 
 procedure FindOwnAddresses(Dest: TStrings);
-var   d: DB;
-    box: TXPServer;
-      s: String;
+var
+  box: TXPServer;
+  s: String;
 
   procedure add(addr: string);
   begin
@@ -78,22 +78,18 @@ var   d: DB;
 begin
   assert(assigned(Dest));
 
-  dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
-  try
-    while not dbEof (d) do
-    begin
-      box := TXPServer.CreateByDB(d);
-      try
-        s := box.UserDomain;
-        if s<>'' then add('@'+s) else add(box.AbsAddr);
-        add(box.EMail);
-      finally
-        box.Free;
-      end;
-      dbNext (d);
+  dbGoTop(boxbase);      { eigene Adressen aus Boxenkonfigurationen auslesen }
+  while not dbEof (Boxbase) do
+  begin
+    box := TXPServer.CreateByDB;
+    try
+      s := box.UserDomain;
+      if s<>'' then add('@'+s) else add(box.AbsAddr);
+      add(box.EMail);
+    finally
+      box.Free;
     end;
-  finally
-    dbClose (d);
+    dbNext (boxbase);
   end;
 end;
 
@@ -102,37 +98,36 @@ end;
 // ---------------------------------------------------------------------
 
 function IsOwnAddress(const address: string):boolean;
-var   d: DB;
-    box: TXPServer;
-    s,uaddress: String;
+var
+  box: TXPServer;
+  s,uaddress: String;
 
 begin
   UAddress := UpperCase(Address);
   Result := true;
 
-  dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
-  try
-    while not dbEof (d) do
-    begin
-      box := TXPServer.CreateByDB(d);
-      try
-        s := box.UserDomain;
-        if ((s<>'')and(UpperCase(s) = Mid(UAddress,1+RightPos('@',UAddress)))) or
-           (UpperCase(box.AbsAddr) = UAddress) or
-           (UpperCase(box.EMail) = UAddress) then exit;
-      finally
-        box.Free;
-      end;
-      dbNext (d);
+  dbGoTop(Boxbase);      { eigene Adressen aus Boxenkonfigurationen auslesen }
+  while not dbEof (Boxbase) do
+  begin
+    box := TXPServer.CreateByDB;
+    try
+      s := box.UserDomain;
+      if ((s<>'')and(UpperCase(s) = Mid(UAddress,1+RightPos('@',UAddress)))) or
+         (UpperCase(box.AbsAddr) = UAddress) or
+         (UpperCase(box.EMail) = UAddress) then exit;
+    finally
+      box.Free;
     end;
-  finally
-    dbClose (d);
+    dbNext (Boxbase);
   end;
   Result := false;
 end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.5  2003/10/18 17:14:50  mk
+// - persistent open database boxenfile (DB: boxbase)
+//
 // Revision 1.4  2003/01/07 00:56:47  cl
 // - send window rewrite -- part II:
 //   . added support for Reply-To/(Mail-)Followup-To

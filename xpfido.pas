@@ -1973,9 +1973,7 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
       case n of
         1 : begin
               _keyboard(adr+keycr);
-              dbOpen(d,BoxenFile,0);
-              if dbRecCount(d)>1 then _keyboard(keyup+DefFidoBox+keycr);
-              dbClose(d);
+              if dbRecCount(boxbase)>1 then _keyboard(keyup+DefFidoBox+keycr);
               msgdirect;
             end;
         2 : begin
@@ -3187,6 +3185,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2003/10/18 17:14:48  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.80  2003/08/24 21:43:38  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

@@ -378,16 +378,13 @@ var sr    : tsearchrec;
 
   function NamePollbox:string;
   var p : byte;
-      d : DB;
   begin
     p:=cpos('.',sr.name);
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiDatei,LeftStr(sr.name,p-1));
+    dbSeek(boxbase,boiDatei,LeftStr(sr.name,p-1));
     if dbFound then
-      NamePollbox:=dbReadStr(d,'boxname')
+      NamePollbox:=dbReadStr(boxbase,'boxname')
     else
       NamePollbox:='';
-    dbClose(d);
   end;
 
   function MausImport:boolean;
@@ -712,6 +709,9 @@ end;
 
 {
   $Log$
+  Revision 1.71  2003/10/18 17:14:47  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.70  2003/09/06 23:03:07  cl
   - send window - time-shifted sending of message
     cLOSES task #76792: Sendefenster: Datum

@@ -126,11 +126,10 @@ var p,p2 : byte;
     end;
     if server <> '' then
     begin
-      dbOpen (d, BoxenFile, 1);
-      dbSeek (d, boiName, UpperCase (server));
+      dbSeek (boxbase, boiName, UpperCase (server));
       if dbFound then
       begin
-        dbRead(d, 'netztyp', nt);
+        dbRead(boxbase, 'netztyp', nt);
         if not ntAdrCompatible (nt, cc_NT) then res := false;
         for i := 0 to cc_anz do
           if (ccm^[i].server <> '') and (not ntAdrCompatible (nt, ccm^[i].ccnt)) then res := false;
@@ -474,6 +473,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2003/10/18 17:14:47  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.42  2003/03/28 23:21:28  mk
   - loop variable for cc-handling changed from shortint to Integer
 

@@ -1590,12 +1590,7 @@ var i,o   : integer;
           writehd(dbp);
           close(f1);
           dbp:=nil;
-          assign(fi,fname+dbIxExt);
-          erase(fi);
-          if ioresult=0 then ;
-(*
-          halt(1);
-*)
+          DeleteFile(fname+dbIxExt);
           raise EXPDatabase.Create(1,'<DB> interner Fehler: '+fname+dbExt+' ist fehlerhaft!');
         end;
         if reccount>recs then begin
@@ -2611,6 +2606,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2003/10/18 17:14:41  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.68  2003/09/07 16:14:15  cl
   - dbHasField/dbAppendField now work with missing *.EB1
 

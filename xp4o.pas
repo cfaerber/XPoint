@@ -2612,7 +2612,7 @@ begin
       zconnect:=true;
       end
     else begin
-      box:=file_box(nil,LeftStr(sr.name,cPos('.',sr.name)-1));
+      box:=file_box(LeftStr(sr.name,cPos('.',sr.name)-1));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     dbSetIndex(mbase,miBrett);
@@ -3843,6 +3843,9 @@ end;
 
 {
   $Log$
+  Revision 1.163  2003/10/18 17:14:45  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.162  2003/09/29 18:26:17  mk
   - create .mid in client directory
     fixes #810685: Message-ID suchen (ALT+M)

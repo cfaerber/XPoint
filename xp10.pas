@@ -1867,21 +1867,20 @@ var
   { --- Eingabe --------------------------------------------------- }
 
   procedure getboxsel;
-  var d   : DB;
-      box : string;
+  var
+    box : string;
   begin
     boxsel1:='';
     boxsel2:='';
-    dbOpen(d,BoxenFile,1);
-    while not dbEOF(d) do begin
-      box:='ùNETCALL '+dbReadStr(d,'boxname');
+    dbGoTop(Boxbase);
+    while not dbEOF(Boxbase) do begin
+      box:='ùNETCALL '+dbReadStr(boxbase,'boxname');
       if length(boxsel1)<220 then
         boxsel1:=boxsel1+box
       else if length(boxsel2)<220 then
         boxsel2:=boxsel2+box;
-      dbNext(d);
-      end;
-    dbClose(d);
+      dbNext(Boxbase);
+    end;
     DeleteFirstChar(boxsel1);
     DeleteFirstChar(boxsel2);
   end;
@@ -2680,7 +2679,7 @@ var brk     : boolean;
   end;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
-  var d          : DB;
+  var
       fn         : String;
       t          : text;
       ti         : string;
@@ -2719,7 +2718,7 @@ var brk     : boolean;
       InitNetcallSpecial;
       if not datDa then exit;
     end;
-    dbOpen(d,BoxenFile,1);
+    dbGoTop(boxbase);
     if special then
     begin
       if auto then   { /nsp:1..20 (automatisch) }
@@ -2728,7 +2727,6 @@ var brk     : boolean;
         if trim(NetcallSpecialList[i]) = '' then
         begin
           trfehler1(1019,strs(i),60);  { 'NETCALL.DAT enthaelt keinen gueltigen Eintrag in Zeile %s!' }
-          dbClose(d);
           exit;
         end;
       end
@@ -2740,20 +2738,19 @@ var brk     : boolean;
         if (i > NetcallSpecialMax) then
         begin
           rfehler(1018);  { 'NETCALL.DAT enthaelt keine gueltigen Eintraege (Zeilen 1-20)!' }
-          dbClose(d);
           exit;
         end;
       end;
       all:=iifs(i>9,'',' ')+strs(i)+':  '+trim(NetcallSpecialList[i]);
     end
     else
-      while not dbEOF(d) do
+      while not dbEOF(boxbase) do
       begin
-        if dbReadInt(d,'script') and 2=0 then
+        if dbReadInt(boxbase,'script') and 2=0 then
         begin
-          currentbox := dbReadStr(d,'boxname');
-          nt := dbNetztyp(d);
-          ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+          currentbox := dbReadStr(boxbase,'boxname');
+          nt := dbNetztyp(boxbase);
+          ReadBox(nt,dbReadStr(boxbase,'dateiname'),boxpar);
           if nt=nt_Client  then          { RFC/Client? }
           begin
             clientbox := clientbox+' '+currentbox;
@@ -2761,7 +2758,7 @@ var brk     : boolean;
           end;
           if currentbox <> '' then all:=all+' '+currentbox;
         end;
-        dbNext(d);
+        dbNext(boxbase);
       end;
 
     if not special then all:=trim(all + clientbox);
@@ -2789,14 +2786,14 @@ var brk     : boolean;
         all:=UpperCase(trim(all))+' ';
 
       if not brk then begin
-        fn:=TempS(1000+dbRecCount(d)*200);
+        fn:=TempS(1000+dbRecCount(boxbase)*200);
         assign(t,fn);
         rewrite(t);
         ti:=LeftStr(time,5);
         p:=cpos(' ',all);
         while p>0 do begin
           box:=LeftStr(all,p-1);
-          dbSeek(d,boiName,UpperCase(box));
+          dbSeek(boxbase,boiName,UpperCase(box));
           if dbFound then
             writeln(t,'+ '+ti+' 23:59 01.01. 31.12. þþþþþþþ NETCALL ',box);
           delete(all,1,p);
@@ -2808,7 +2805,6 @@ var brk     : boolean;
         erase(t);
         end;
       end;
-    dbClose(d);
   end;
 
   procedure ResolveCrashs;   { s. auch XP7F.GetCrashbox! }
@@ -2820,7 +2816,6 @@ var brk     : boolean;
       ni  : NodeInfo;
       c,f : boolean;
       crash: boolean;
-      d   : DB;
   begin
     i:=0;                               //auch bei der Timingliste beginnen wir bei 0
     while (i< e.Count) do
@@ -2832,7 +2827,6 @@ var brk     : boolean;
         if existf(t) then begin
           reset(t);
           KeepNodeindexOpen;
-          dbOpen(d,BoxenFile,1);
           while not eof(t) do begin
             readln(t,adr);
             c:=false; f:=false;
@@ -2844,7 +2838,7 @@ var brk     : boolean;
             getNodeinfo(adr,ni,2);
             if ((not crash and f) or (crash and not f and c)) and  { aktuellen crash gefunden ?}
                ni.found and (e.Count<maxentries) then begin
-              dbSeek(d,boiName,adr);
+              dbSeek(boxbase,boiName,adr);
               if not dbFound then begin     { keine eingetragene Pollbox }
                 sc:=ss+'CRASH '+adr;
                 e.Insert(i, sc);
@@ -2852,7 +2846,6 @@ var brk     : boolean;
                 end;
               end;
             end;
-          dbClose(d);
           KeepNodeindexClosed;
           close(t);
           end;
@@ -3249,6 +3242,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.82  2003/10/18 17:14:42  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.81  2003/08/28 05:49:21  mk
   - misc code optimizations
 

@@ -87,16 +87,15 @@ type
     mtFeeder, mtPostmaster, mtNNTP, mtClient  //13..16
   );
 
-function mapstype(box:string):eMapsType;
-var d  : DB;
-    nt : eNetz;
+function mapstype(const box:string):eMapsType;
+var
+  nt : eNetz;
 begin
   Result := mtMaps;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(Boxbase,boiName,UpperCase(box));
   if dbFound then begin
-    mapsname:= dbReadStr(d,'nameomaps');     { muss vor MAF-Test stehen !! }
-    nt := dbNetztyp(d);
+    mapsname:= dbReadStr(boxbase,'nameomaps');     { muss vor MAF-Test stehen !! }
+    nt := dbNetztyp(boxbase);
     if ntMAF(nt) then
       mapstype:=mtMAF
     else if ntNude(nt) then
@@ -127,7 +126,6 @@ begin
     else if mapsname='SYSTEM' then
       mapstype:=mtGS  { G&S }
   end;
-  dbClose(d);
 end;
 
 function BoxHasMaps(const box:string):boolean;
@@ -223,7 +221,6 @@ var
       s       : string;
       syspos  : byte;
       first   : boolean;
-      d       : DB;
 
     procedure SetBrett(add:boolean; var bn:bnodep);
 
@@ -308,14 +305,12 @@ var
     close(t);
     assign(t,datei);                     { neue (Ab)Bestellung schreiben }
     ReadBoxPar(nt_UUCP,box);
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(box));
+    dbSeek(boxbase,boiName,UpperCase(box));
     rewrite(t);
     write(t,'system: ',boxpar^.pointname,
-                       iifs(boxpar^.BMdomain,dbReadStr(d,'domain'),''),#13#10);
+                       iifs(boxpar^.BMdomain,dbReadStr(boxbase,'domain'),''),#13#10);
     write(t,'passwd: ',boxpar^.AreaPW,#13#10);
     write(t,'sysentry: '); syspos:=30; first:=true;
-    dbClose(d);
     syswrite(root);
     write(t,#13#10);
     close(t);
@@ -341,23 +336,20 @@ var
   var tn    : string;
       t1,t2 : text;
       s     : string;
-      d     : DB;
       domain: string;
   begin
     ReadBoxpar(nt_Netcall,box);
     tn:=TempS(_filesize(datei)*2);
     assign(t1,datei); reset(t1);
     assign(t2,tn); rewrite(t2);
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(box));
-    if boxpar^.BMdomain then domain:=dbReadStr(d,'domain')
+    dbSeek(Boxbase,boiName,UpperCase(box));
+    if boxpar^.BMdomain then domain:=dbReadStr(Boxbase,'domain')
     else domain:='';
     case typ of
       1 : write(t2,'site ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
       2 : write(t2,'host ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
       3 : write(t2,'@id ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
     end;
-    dbClose(d);
     write(t2,#13#10);
     if (bef='ADD') or (bef='DEL') then begin
       if typ=3 then write(t2,'@append',#13#10);
@@ -835,7 +827,6 @@ var t     : text;
     box   : string;
     bfile : string;
     i,nr  : integer;
-    d     : DB;
     topen : boolean;
     maf   : boolean;
     maus  : boolean;
@@ -1002,14 +993,12 @@ begin
         else if uucp then write(t,newsgroup(brett),#13#10)
         else write(t,copy(brett,2,brettlen),#13#10)
       else begin
-        dbOpen(d,OwnPath+BoxenFile,1);
-        dbSeek(d,boiName,UpperCase(box));
+        dbSeek(boxbase,boiName,UpperCase(box));
         if dbFound then begin
-          bfile:= dbReadStr(d,'dateiname');
+          bfile:= dbReadStr(boxbase,'dateiname');
           ReadBrettliste;
           write(t,brettcode(copy(brett,2,40)),#13#10);
         end;
-        dbClose(d);
       end;
       if fido then
         write(t,'---',#13#10);
@@ -1023,11 +1012,11 @@ begin
         File_Abbestellen(box,fn);
       end;
     end else begin   { mehrere markierte Bretter }
-      dbOpen(d,OwnPath+BoxenFile,1);
+      dbGoTop(boxbase);
       topen:=false;
-      while not dbEOF(d) do begin
-        box:=dbReadStr(d,'boxname');
-        nt := dbNetztyp(d);
+      while not dbEOF(boxbase) do begin
+        box:=dbReadStr(boxbase,'boxname');
+        nt := dbNetztyp(boxbase);
         maf:=ntMAF(nt);
         quick:=ntQuickMaps(nt);
         maus:=ntNude(nt);
@@ -1037,7 +1026,7 @@ begin
         rfc:= (nt in netsRFC)and(not uucp);
         pronet:= nt=nt_Pronet;
         qwk:= nt=nt_QWK;
-        bfile:= dbReadStr(d,'dateiname');
+        bfile:= dbReadStr(boxbase,'dateiname');
         if maus or fido or qwk or uucp then
           ReadBox(nt_Netcall,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
@@ -1075,9 +1064,8 @@ begin
           if not rfc then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
         end;
-        dbSkip(d,1);
+        dbSkip(boxbase,1);
       end;
-      dbClose(d);
     end;
     if existf(t) then erase(t);
     dispose(map);
@@ -1149,7 +1137,6 @@ var
     box      : string;
     betreff  : string;
     bfile    : string;
-    d        : DB;
     //fido     : boolean;
     //turbo    : boolean;
     //uucp     : boolean;
@@ -1161,27 +1148,23 @@ begin
   absender:= dbReadNStr(mbase,mb_absender);
   betreff:= dbReadNStr(mbase,mb_betreff);
   box:=systemname(absender);
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(boxbase,boiName,UpperCase(box));
   if dbFound then
-    bfile:= dbReadStr(d,'dateiname')
+    bfile:= dbReadStr(boxbase,'dateiname')
   else
-    if automessaging then begin
+    if automessaging then
+    begin
       trfehler1(804,box,20);   { 'unbekannte Box (%s) - Brettliste wurde nicht eingelesen' }
-      dbClose(d);
       exit;
-      end
-    else begin
+    end else
+    begin
       box:=UniSel(usBoxes,false,'');
-      if box='' then begin
-        dbClose(d);
-        exit;
-        end
+      if box='' then
+        exit
       else
         bfile:=GetServerFilename(box, '');
-      end;
+    end;
 
-  dbClose(d);
   mt := mapstype(box);
   //fido:=(mapstype(box)=5);
   //turbo:=(mapstype(box)=9);
@@ -1233,7 +1216,6 @@ var
     bfile   : string;
     fn      : string;
     useclip : boolean;
-    d       : DB;
     //maggi   : boolean;
     //promaf  : boolean;
 begin
@@ -1244,10 +1226,8 @@ begin
   if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
   //maggi:=(mapstype(box)=mtMAF);    { MagicNet }
   //promaf:=(mapstype(box)=mtPronet);
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  bfile:= dbReadStr(d,'dateiname');
-  dbClose(d);
+  dbSeek(boxbase,boiName,UpperCase(box));
+  bfile:= dbReadStr(boxbase,'dateiname');
   ReadBox(nt_Netcall,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
   case mapstype(box) of
@@ -1331,7 +1311,7 @@ end;
 { art: 0=bestellen, 1=abbestellen, 2=Bretter anlegen, 3=Inhalt (EM), 4=Rescan }
 
 procedure MapsBrettliste(art:byte);
-var d      : DB;
+var
     box    : string;
     ask    : string;
     bretter: string;
@@ -1604,15 +1584,14 @@ begin
   else
     box:=mapsbox;
   if not BoxHasMaps(box) then exit;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(Boxbase,boiName,UpperCase(box));
   if dbFound then begin
-    fn:= dbReadStr(d,'dateiname');
+    fn:= dbReadStr(boxbase,'dateiname');
     if fn='' then
       rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte loeschen!' }
     else begin
-      netztyp:=dbNetztyp(d);
-      mapsname:= dbReadStr(d,'nameomaps');
+      netztyp:=dbNetztyp(boxbase);
+      mapsname:= dbReadStr(boxbase,'nameomaps');
       maf:=ntMAF(netztyp);
       promaf:=ntProMAF(netztyp);
       quick:=ntQuickMaps(netztyp);
@@ -1744,7 +1723,6 @@ begin
       end;
     end;
   end;
-  dbClose(d);
 end;
 
 
@@ -1755,7 +1733,6 @@ var brk     : boolean;
     domain  : string;
     t       : text;
     fn      : string;
-    d       : DB;
     area    : boolean;
     request : boolean;
     nt      : eNetz;
@@ -1874,12 +1851,10 @@ begin
   box:=UniSel(usBoxes,false,DefaultBox);
   if box='' then exit;
   if not BoxHasMaps(box) then exit;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  mapsname:= dbReadStr(d,'nameomaps');
-  nt := dbNetztyp(d);
-  domain:= dbReadStr(d,'domain');
-  dbClose(d);
+  dbSeek(Boxbase,boiName,UpperCase(box));
+  mapsname:= dbReadStr(Boxbase,'nameomaps');
+  nt := dbNetztyp(boxbase);
+  domain:= dbReadStr(boxbase,'domain');
   maf:=ntMAF(nt);
   ntQuickMaps(nt);
   maus:=ntNude(nt);
@@ -2923,7 +2898,6 @@ var
     box    : string;
     s      : string;
     brk    : boolean;
-    d      : DB;
     n,i    : longint;
     fn     : string;
     t      : text;
@@ -2986,11 +2960,11 @@ begin
     _era(fn);
     end
   else begin                            { markierte Bretter abbestellen }
-    dbOpen(d,BoxenFile,1);
-    while not dbEOF(d) do begin
-      if dbNetztyp(d)=nt_Fido then
+    dbGoTop(Boxbase);
+    while not dbEOF(Boxbase) do begin
+      if dbNetztyp(Boxbase)=nt_Fido then
       begin
-        box:= UpperCase(dbReadStr(d,'boxname'));
+        box:= UpperCase(dbReadStr(Boxbase,'boxname'));
         ReadBoxPar(nt_Fido,box);
         n:=0;
         for i:=0 to bmarkanz-1 do begin
@@ -3013,9 +2987,8 @@ begin
           SendFilescan(fn);
           end;
         end;
-      dbNext(d);
-      end;
-    dbClose(d);
+      dbNext(Boxbase);
+    end;
     SafeDeleteFile(fn);
   end;
 end;
@@ -3128,6 +3101,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2003/10/18 17:14:47  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.93  2003/10/06 16:01:34  mk
   - some little code optimizations (mostly added const parameters and
     use of new file system RTL functions)

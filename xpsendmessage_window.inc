@@ -138,7 +138,6 @@ end;
 procedure SetEncryptionField;
 var Methods : set_of_TSendEncryptionMethod;
     s: string;
-    i: integer;
     j: TSendEncryptionMethod;
 begin
   if FieldEncryption < 0 then exit;
@@ -156,7 +155,6 @@ begin
       begin
         if s<>'' then s := s + #$f9;
         s := s + GetRes2(610, Ord(j)+130);
-        Inc(i);
       end;
     end;
 
@@ -229,7 +227,6 @@ end;
 procedure SetSigningField;
 var Methods : set_of_TSendSigningMethod;
     s: string;
-    i: integer;
     j: TSendSigningMethod;
 begin
   if FieldSigning < 0 then exit;
@@ -247,7 +244,6 @@ begin
       begin
         if s<>'' then s := s + #$f9;
         s := s + GetRes2(610, Ord(j)+130);
-        Inc(i);
       end;
     end;
 
@@ -1713,7 +1709,6 @@ var Index: integer;
   procedure PM(email: TEmailAddress);
   var UFlags:   Integer;        // User flags
       UName:    string;         // Upper case name
-      Size:     Longint;
       D:        DB;
   label
       NoDB, BoxAgain;
@@ -2070,6 +2065,9 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.17  2003/10/18 17:14:50  mk
+// - persistent open database boxenfile (DB: boxbase)
+//
 // Revision 1.16  2003/10/02 20:50:13  cl
 // - TLister.OnDisplay now gets the full line to be displayed
 // - tweaks and optimisations for xp1.ListDisplay

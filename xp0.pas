@@ -783,6 +783,7 @@ var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        auto       : pointer = nil;     { automsg.db1            }
        bezbase    : pointer = nil;     { Bezugs-Datenbank       }
        mimebase   : pointer = nil;     { MIME-Typen-Datenbank   }
+       boxbase    : pointer = nil;     { Boxen-Datenbank        }
        runerror   : boolean = true;    { Runtime Error aufgetreten }
        Timing_Nr  : byte = 1;          { zuletzt eingegebene Nummer}
        ErrLevel   : byte = 0;          { bei Beenden ueber XP.PAS   }
@@ -1229,6 +1230,9 @@ implementation
 
 {
   $Log$
+  Revision 1.190  2003/10/18 17:14:41  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.189  2003/09/29 23:52:02  cl
   - alternative implementation of xp1.ListDisplay, fixes several problems
     (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)

@@ -2514,43 +2514,41 @@ end;
 { Stammbox anlegen, falls noch nicht vorhanden }
 
 procedure test_defaultbox;
-var d    : DB;
-    tmpS, dname: string;
+var
+  tmpS, dname: string;
 begin
   Debug.DebugLog('XP2','Check default system',DLDebug);
   tmpS:= UpperCase(DefaultBox);
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,tmpS);
+  dbSeek(boxbase,boiName,tmpS);
   if not dbFound then begin
     Debug.DebugLog('XP2','Default system <'+tmpS+'> not found!',debug.DLError);
-    if dbRecCount(d)=0 then begin
-      xpconfigedit.get_first_box(d);
-      dName := dbReadStr(d,'dateiname');
+    if dbRecCount(boxbase)=0 then begin
+      xpconfigedit.get_first_box(boxbase);
+      dName := dbReadStr(boxbase,'dateiname');
       end
     else begin
-      dbGoTop(d);
-      DefaultBox := dbReadStr(d,'boxname');
+      dbGoTop(boxbase);
+      DefaultBox := dbReadStr(boxbase, 'boxname');
       Debug.DebugLog('XP2','Default system: '+DefaultBox,DLDebug);
-      dName := dbReadStr(d,'dateiname');
+      dName := dbReadStr(boxbase,'dateiname');
       end;
     SaveConfig;
     end
   else
-    dName := dbReadStr(d,'Dateiname');
+    dName := dbReadStr(boxbase,'Dateiname');
   Debug.DebugLog('XP2','Default system: '+tmpS+', file: '+dname,DLDebug);
   if not FileExists(OwnPath+dname+extBfg) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(nt_Netcall,dname,boxpar);
   end;
   if deffidobox<>'' then begin
-    dbSeek(d,boiName,deffidobox);
+    dbSeek(boxbase,boiName,deffidobox);
     if not dbFound then
       deffidobox:=''
     else
-      HighlightName:=UpperCase(dbReadStr(d,'username'));
+      HighlightName:=UpperCase(dbReadStr(boxbase,'username'));
     if deffidobox<>'' then SetDefZoneNet;
   end;
-  dbClose(d);
   if abgelaufen1 then rfehler(213);
 end;
 
@@ -2749,32 +2747,31 @@ end;
 {$endif}
 
 procedure ReadDomainlist;
-var d   : DB;
+var
     dom : string;
     nt: eNetz;
 begin
   DomainList.Clear;
-  dbOpen(d,BoxenFile,0);
-  while not dbEOF(d) do
+  dbGoTop(boxbase);
+  while not dbEOF(boxbase) do
   begin
-    nt := dbNetztyp(d);
+    nt := dbNetztyp(boxbase);
     inc(ntused[nt]);
     if ntDomainReply(nt) then
     begin
       if nt in [nt_UUCP,nt_Client] then begin
-        dom:=LowerCase(dbReadStr(d,'fqdn'));
-        if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
+        dom:=LowerCase(dbReadStr(boxbase,'fqdn'));
+        if dom='' then dom:=LowerCase(dbReadStr(boxbase,'pointname')+dbReadStr(boxbase,'domain'));
       end
       else begin
-        dom:=LowerCase(dbReadStr(d,'fqdn'));
-        if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
-                                 dbReadStr(d,'domain'));
+        dom:=LowerCase(dbReadStr(boxbase,'fqdn'));
+        if dom='' then dom:=LowerCase(dbReadStr(boxbase,'pointname')+'.'+dbReadStr(boxbase,'boxname')+
+                                 dbReadStr(boxbase,'domain'));
       end;
       DomainList.Add(dom);
     end;
-    dbNext(d);
+    dbNext(boxbase);
   end;
-  dbClose(d);
 end;
 
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -2815,6 +2812,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.175  2003/10/18 17:14:43  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.174  2003/09/29 20:47:13  cl
   - moved charset handling/conversion code to xplib
 

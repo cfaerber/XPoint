@@ -696,7 +696,7 @@ begin
   wrd(4,MsgFile,mbase);
   wrd(5,BrettFile,bbase);
   wrd(6,UserFile,ubase);
-  wrd(7,BoxenFile,nil);
+  wrd(7,BoxenFile,boxbase);
   wrd(8,GruppenFile,nil);
   wrd(9,SystemFile,nil);
   wrd(10,AutoFile,auto);
@@ -977,6 +977,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2003/10/18 17:14:46  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.74  2003/09/29 20:47:13  cl
   - moved charset handling/conversion code to xplib
 

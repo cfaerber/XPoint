@@ -1114,9 +1114,11 @@ begin
     SendAttach_Analyze(pa,false,Signature,netztyp);
 end;
 
-end.
 {
   $Log$
+  Revision 1.28  2003/10/18 17:14:49  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.27  2003/09/29 20:47:14  cl
   - moved charset handling/conversion code to xplib
 
@@ -1124,3 +1126,4 @@ end.
   - added missing cvs log
 
 }
+end.

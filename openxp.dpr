@@ -166,7 +166,8 @@ uses
   crc in 'crc.pas',
   debug in 'debug.pas',
   direct in 'direct.pas',
-  hashes in 'xplib\hashes.pas';
+  hashes in 'xplib\hashes.pas',
+  xpspam in 'xpspam.pas';
 
 {$R *.res}
 

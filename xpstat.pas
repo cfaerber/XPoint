@@ -765,7 +765,6 @@ var sr       : tsearchrec;
     x,y,yy   : Integer;
     msgs     : longint;   { Anzahl Nachrichten in PP-File  }
     emsgs    : longint;   { Anzahl Nachrichten in EPP-File }
-    d        : DB;
     more     : boolean;
     crashs   : boolean;
     sumbytes : longint;
@@ -827,12 +826,11 @@ begin
   mwrt(x+3,y+2,getres2(2611,2));   { 'Box            Nachrichten        Bytes' }
   attrtxt(col.colmbox);
   yy:=y+4;
-  dbOpen(d,BoxenFile,1);
   for i:=1 to ppanz do begin
     msgs:=testpuffer(pp_epp[i].name+extBoxFile,false,attsize);
     emsgs:=testpuffer(pp_epp[i].name+extEBoxFile,false,eattsize);
     moff;
-    wrt(x+3,yy,forms(file_box(d,pp_epp[i].name),11));
+    wrt(x+3,yy,forms(file_box(pp_epp[i].name),11));
     if (msgs<0) or (emsgs<0) then
       Wrt2('      ' + getres2(2611,4))   { 'fehlerhafte Pufferdatei!!' }
     else
@@ -844,7 +842,6 @@ begin
     mon;
     inc(yy);
     end;
-  dbClose(d);
   if crashs then begin
     sumbytes:=0; summsgs:=0;
     if findfirst('*.cp',faAnyFile,sr)=0 then repeat
@@ -1171,7 +1168,6 @@ end;
 procedure AnrufStat;
 var x,y    : Integer;
     brk    : boolean;
-    d      : DB;
     t      : text;
     anz    : longint;
     box    : string;
@@ -1209,9 +1205,9 @@ var x,y    : Integer;
 
   function countbox:boolean;
   begin
-    countbox:= not (XSA_NetAlle and (dbReadInt(d,'script') and 2<>0)) and
-       (dbReadStr(d,'boxname')<>'99:99/99') and
-       (dbReadStr(d,'boxname')<>'99:99/98');
+    countbox:= not (XSA_NetAlle and (dbReadInt(boxbase,'script') and 2<>0)) and
+       (dbReadStr(boxbase,'boxname')<>'99:99/99') and
+       (dbReadStr(boxbase,'boxname')<>'99:99/98');
   end;
 
 begin
@@ -1225,25 +1221,24 @@ begin
   if XSA_NetAlle<>oldXSA then
     SaveConfig2;
 
-  dbOpen(d,BoxenFile,1);
-  anz:=dbRecCount(d);
-  while not dbEof(d) do begin
+  dbGoTop(Boxbase);
+  anz:=dbRecCount(Boxbase);
+  while not dbEof(Boxbase) do begin
     if not countbox then dec(anz);
-    dbNext(d);
+    dbNext(Boxbase);
     end;
-  dbGoTop(d);
+  dbGoTop(Boxbase);
   if (anz=0) or not FileExists(TimingDat) then begin
     rfehler(2608);          { 'keine Eintr„ge vorhanden' }
-    dbClose(d);
     exit;
-    end;
+  end;
 
   List := listbox(54,min(anz,screenlines-6),getres2(2614,1));
   assign(t,TimingDat);                             { 'Letzte Anrufe' }
   settextbuf(t,buf);
-  while not dbEOF(d) do begin
+  while not dbEOF(Boxbase) do begin
     if countbox then begin
-      box:= dbReadStr(d,'boxname');
+      box:= dbReadStr(Boxbase,'boxname');
       reset(t); found:=false;
       while not eof(t) and not found do begin
         readln(t,s);
@@ -1259,16 +1254,15 @@ begin
         else if diff>=100 then
           ds:=getreps2(2614,5,strs(system.round(diff/30.44)))  { 'vor %s Monaten' }
         else ds:=getreps2(2614,4,strs(diff));       { 'vor %s Tagen' }
-        List.AddLine(' '+forms(dbReadStr(d,'boxname'),16)+'  '+date+', '+time+'   '+
+        List.AddLine(' '+forms(dbReadStr(Boxbase,'boxname'),16)+'  '+date+', '+time+'   '+
               ds);
         end
       else
-        List.AddLine(' '+forms(dbReadStr(d,'boxname'),16)+'  --');
+        List.AddLine(' '+forms(dbReadStr(Boxbase,'boxname'),16)+'  --');
       close(t);
       end;
-    dbNext(d);
+    dbNext(Boxbase);
     end;
-  dbClose(d);
   freeres;
   pushhp(925);
   brk := List.Show;
@@ -1281,6 +1275,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2003/10/18 17:14:51  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.56  2003/09/16 23:21:03  mk
   - fixed off bye one in multistat
   - code cleanup

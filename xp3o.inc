@@ -105,7 +105,6 @@ var x,y      : Integer;
     uflags   : byte;
     aufnehmen: boolean;
     diff     : integer;
-    d        : DB;
     haltezeit: integer16;
     MsgCount : longint;
     brettlog,
@@ -679,13 +678,10 @@ var x,y      : Integer;
   end;
 
   procedure checkbox(var box :string);
-  var d :DB;
   begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(box));
+    dbSeek(boxbase,boiName,UpperCase(box));
     if dbFound then
-      Box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
-    dbClose(d);
+      Box := dbReadStr(boxbase,'boxname');  { -> korrekte Schreibweise des Systemnamens }
   end;
 
   function dummyid(inr: integer): string;
@@ -719,7 +715,7 @@ var
   spam_ok: boolean;             // whether spamicity has been calculated for current message
   is_spam: boolean;             // whether current message is spam
   is_ham:  boolean;
-  
+  d: DB;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag:=255; result:=false;
@@ -776,29 +772,27 @@ begin
       sysbetreff:='';
       end
     else begin
-      dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,UpperCase(pollbox));
+      dbSeek(boxbase,boiName,UpperCase(pollbox));
       if not dbFound then begin
         mapsname:=''; amvertreter:=''; pmvertreter:='';
         sysbetreff:='';
         end
       else begin
-        mapsname:= dbReadStr(d,'nameomaps');
-        AMvertreter:= dbReadStr(d,'AVertreter');
-        PMvertreter:= dbReadStr(d,'PVertreter');
-        dbSeek(d,boiName,UpperCase(amvertreter));
+        mapsname:= dbReadStr(boxbase,'nameomaps');
+        AMvertreter:= dbReadStr(boxbase,'AVertreter');
+        PMvertreter:= dbReadStr(boxbase,'PVertreter');
+        dbSeek(boxbase,boiName,UpperCase(amvertreter));
         if not dbFound then amvertreter:='';
-        dbSeek(d,boiName,UpperCase(pmvertreter));
+        dbSeek(boxbase,boiName,UpperCase(pmvertreter));
         if not dbFound then pmvertreter:='';
-        dbSeek(d,boiname,UpperCase(pollbox));
-        nt := dbNetztyp(d);
+        dbSeek(boxbase,boiname,UpperCase(pollbox));
+        nt := dbNetztyp(boxbase);
         if nt in netsRFC then
         begin
           ReadBoxPar(nt, pollbox);
           sysbetreff:=LowerCase(boxpar^.chsysbetr);
           end;
         end;
-      dbClose(d);
       end;
 
     moff;
@@ -1401,6 +1395,9 @@ end;
 
 {
   $Log$
+  Revision 1.110  2003/10/18 17:14:44  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.109  2003/10/06 16:01:33  mk
   - some little code optimizations (mostly added const parameters and
     use of new file system RTL functions)

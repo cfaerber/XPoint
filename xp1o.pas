@@ -55,8 +55,8 @@ procedure ExpandTabs(const fn1,fn2:string);
 
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
 function  UniExtract(_from,_to,dateien:string):boolean;
-function  g_code(s:string):string;
-function SeekLeftBox(var d:DB; var box:string; var nt: eNetz): Boolean;
+function  g_code(const s:string):string;
+function SeekLeftBox(var box:string; var nt: eNetz): Boolean;
 // get Boxfilename from Boxname, add Extension
 // Result is already FileUpperCase
 function GetServerFilename(const boxname: String; Extension: String): String;
@@ -70,7 +70,7 @@ procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(const fn:string):string;   { ZC-Dateidatum }
-procedure SetZCftime(const fn:string; const ddatum:string);
+procedure SetZCftime(const fn, ddatum:string);
 
 function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
@@ -624,37 +624,21 @@ begin
 end;
 
 function GetServerFilename(const boxname: String; Extension: String): String;
-var
-  d: DB;
 begin
-  try
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName, UpperCase(BoxName));
-    if dbFound then
-      Result := FileUpperCase(dbReadStr(d,'dateiname') + Extension)
-    else
-    begin
-      Result := '';
-      // raise exception
-    end;
-  finally
-    dbClose(d);
-  end;
+  dbSeek(Boxbase,boiName, UpperCase(BoxName));
+  if dbFound then
+    Result := FileUpperCase(dbReadStr(Boxbase,'dateiname') + Extension)
+  else
+    Result := '';
+    // raise exception
 end;
 
 procedure GetServerName(var box:string);
-var
-  d : DB;
 begin
-  try
-    dbOpen(d, BoxenFile, 1);
-    dbSeek(d, boiName, UpperCase(box));
-    if dbFound or
-      (not dbEOF(d) and (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box))) then
-      box := dbReadStr(d, 'boxname');  { -> korrekte Schreibweise des Systemnamens }
-  finally
-    dbClose(d);
-  end;
+  dbSeek(Boxbase, boiName, UpperCase(box));
+  if dbFound or
+    (not dbEOF(Boxbase) and (UpperCase(LeftStr(dbReadStr(Boxbase,'boxname'),length(box)))=UpperCase(box))) then
+    box := dbReadStr(Boxbase, 'boxname');  { -> korrekte Schreibweise des Systemnamens }
 end;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
@@ -765,34 +749,32 @@ begin
 end;
 
 
-function g_code(s:string):string;
+function g_code(const s:string):string;
 var i : integer;
 begin
+  SetLength(Result, Length(s));
   for i:=1 to length(s) do
-    s[i]:=chr(byte(s[i]) xor (i mod 7));
-  g_code:=s;
+    result[i]:=chr(byte(s[i]) xor (i mod 7));
 end;
 
 
-function SeekLeftBox(var d:DB; var box:string; var nt: eNetz): Boolean;
+function SeekLeftBox(var box:string; var nt: eNetz): Boolean;
 begin
-  dbOpen(d,BoxenFile,1);
   if ((length(box)<=2) and (FirstChar(box)=FirstChar(DefFidoBox))) then
     box := DefFidoBox;
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(boxbase,boiName,UpperCase(box));
   Result := dbFound;
-  if not Result and (box<>'') and not dbEOF(d) and
-     (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then
+  if not Result and (box<>'') and not dbEOF(boxbase) and
+     (UpperCase(LeftStr(dbReadStr(boxbase,'boxname'),length(box)))=UpperCase(box)) then
   begin
-    Box := dbReadStr(d,'boxname');
-    dbSeek(d,boiName,UpperCase(box));
+    Box := dbReadStr(boxbase,'boxname');
+    dbSeek(boxbase,boiName,UpperCase(box));
   end;
   if Result then
   begin
-    box := dbReadStr(d,'boxname');
-    dbRead(d,'netztyp', nt);
+    box := dbReadStr(boxbase,'boxname');
+    dbRead(boxbase,'netztyp', nt);
   end;
-  dbClose(d);
 end;
 
 
@@ -804,7 +786,7 @@ begin
     ZCFileTime := '';
 end;
 
-procedure SetZCftime(const fn:string; const ddatum: String);
+procedure SetZCftime(const fn, ddatum:string);
 var
   Date: TDateTime;
   fh: Integer;
@@ -929,7 +911,7 @@ function XPWinShell(prog:string; parfn:string; space:xpWord;
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
-  function exetype(fn:string):TExeType;
+  function exetype(const fn:string):TExeType;
   var f       : file;
       magic   : array[0..1] of char;
       magic2  : array[0..2] of char;
@@ -1068,6 +1050,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2003/10/18 17:14:43  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.124  2003/10/01 18:37:11  mk
   - simplyfied seeknextbox
 

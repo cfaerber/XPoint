@@ -2236,7 +2236,7 @@ end;
 
 
 procedure showusername;
-var d    : DB;
+var
     user : string;
     realname : string;
     nt       : eNetz;
@@ -2253,13 +2253,12 @@ var d    : DB;
 
 begin
   if dispusername and not startup then begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(DefaultBox));
+    dbSeek(boxbase,boiName,UpperCase(DefaultBox));
     showtline;
     if dbFound then begin
-      nt:=dbNetztyp(d);
-      realname:=iifs(ntRealname(nt),dbReadStr(d,'realname'),'');
-      user:=ComputeUserAddress(d);
+      nt:=dbNetztyp(boxbase);
+      realname:=iifs(ntRealname(nt),dbReadStr(boxbase,'realname'),'');
+      user:=ComputeUserAddress(boxbase);
       if realname <> '' then begin
         if (length(user)+length(realname)) <= screenwidth-7 then
           user := user + ' ('+realname+')'
@@ -2267,9 +2266,8 @@ begin
           user := user + ' ('+leftStr(realname,screenwidth-10-length(user))+'...)';
       end;
       mwrt(screenwidth-2-length(user),3,' '+user+' ');
-      end;
-    dbClose(d);
-    end
+    end;
+  end
   else
     showtline;
 end;
@@ -2995,7 +2993,8 @@ begin
     dbOpen(bbase,ownpath+brettFile,1);
     dbOpen(bezbase,ownpath+bezugFile,1);
     dbOpen(mimebase,ownpath+mimetFile,1);
-    end;
+    dbOpen(boxbase, ownpath+boxenfile,1);
+  end;
   opendb:=true;
 end;
 
@@ -3007,6 +3006,7 @@ begin
   if bbase<>nil then dbClose(bbase);
   if bezbase<>nil then dbClose(bezbase);
   if mimebase<>nil then dbClose(mimebase);
+  if boxbase<>nil then dbClose(boxbase);
   opendb:=false;
 end;
 
@@ -3018,6 +3018,7 @@ begin
     dbTempClose(bbase);
     dbTempClose(bezbase);
     dbTempClose(mimebase);
+    dbTempClose(boxbase);
     if miscbase<>nil then
       dbTempClose(miscbase);
     closed:=true;
@@ -3032,6 +3033,7 @@ begin
     dbTempOpen(bbase);
     dbTempOpen(bezbase);
     dbTempOpen(mimebase);
+    dbTempOpen(boxbase);
     if miscbase<>nil then
       dbTempOpen(miscbase);
     closed:=false;
@@ -3098,7 +3100,7 @@ begin
   if temppath='' then
     TempFree:=diskfree(0)
   else
-    TempFree:=diskfree(ord(temppath[1])-64);
+    TempFree:=diskfree(ord(FirstChar(temppath))-64);
 end;
 
 
@@ -3375,11 +3377,14 @@ end;
 
 {
   $Log$
+  Revision 1.200  2003/10/18 17:14:41  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.199  2003/10/07 09:13:10  mk
   - more fixes for last commit :(
 
   Revision 1.198  2003/10/07 09:09:53  mk
-  - fixed linux compile problem from last comitt
+  - fixed linux compile problem from last commit
 
   Revision 1.197  2003/10/06 16:01:32  mk
   - some little code optimizations (mostly added const parameters and

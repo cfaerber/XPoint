@@ -621,7 +621,7 @@ var p2 : byte;
 begin
   if prozent and (fsize>0) then
   begin
-    p2:=system.round(iif(adr<=0,0,adr) / fsize*100);
+//    p2:=system.round(iif(adr<=0,0,adr) * 100 div fsize);
     if p2<>proz then begin
       proz:=p2;
       write(#13,proz:4,'%');
@@ -1261,6 +1261,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2003/10/18 17:14:51  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.54  2003/08/24 21:43:40  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

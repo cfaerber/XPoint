@@ -571,14 +571,14 @@ end;
 {$ENDIF }
 
 function testvertreterbox(var s:string):boolean;
-var d  : DB;
-    nt : eNetz;
+var
+  nt: eNetz;
 begin
-  if s='' then  
+  if s='' then
     Result :=true
-  else 
+  else
   begin
-    if SeekLeftBox(d,s, nt) then
+    if SeekLeftBox(s, nt) then
     begin
       if fieldpos=amvfield then    { AM-Vertreterbox }
         Result := (DomainNt=nt)
@@ -1499,10 +1499,10 @@ begin { --- UniSel --- }
 
   case UniSelType of
     usBoxes: begin     { Boxen }
-          dbOpen(d,BoxenFile,1);
-          if not edit and (dbRecCount(d)=1) and (lastkey<>keyf2) then begin
-            unisel:=dbReadStr(d,'boxname');
-            dbClose(d);
+          d := Boxbase;
+          if not edit and (dbRecCount(boxbase)=1) and (lastkey<>keyf2) then
+          begin
+            unisel:=dbReadStr(boxbase,'boxname');
             exit;
           end;
           width:=67;
@@ -1709,7 +1709,8 @@ begin { --- UniSel --- }
       end;
     end;
 
-  if UniSelType <> usMimeTypes then begin
+  if not (UniSelType in [usMimeTypes, usBoxes]) then
+  begin
     dbClose(d);
     miscbase:=nil;
     end;
@@ -1756,7 +1757,6 @@ var x,y  : Integer;
     real : string;
     box  : string;
     p    : byte;
-    d    : DB;
     gross   : boolean;
     hasreal : boolean;
 begin
@@ -1778,17 +1778,16 @@ begin
         user:=trim(LeftStr(user,p-1));
         end;
       end;
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,box);
+    dbSeek(Boxbase,boiName,box);
     if not dbFound then
       rfehler1(918,box)   { 'SETUSER - Box "%s" unbekannt!' }
     else begin
-      hasreal:=ntRealname(dbNetztyp(d));
+      hasreal:=ntRealname(dbNetztyp(Boxbase));
       if user='' then begin
-        user:=dbReadStr(d,'username');
-        real:=dbReadStr(d,'realname');
+        user:=dbReadStr(boxbase,'username');
+        real:=dbReadStr(Boxbase,'realname');
         dialog(length(getres(930))+length(box)+35,iif(hasreal,5,3),'',x,y);
-        gross:=ntGrossUser(dbNetztyp(d));
+        gross:=ntGrossUser(dbNetztyp(Boxbase));
         maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fuer %s:' }
         mhnr(1502);
         if hasreal then
@@ -1799,8 +1798,8 @@ begin
       else
         brk:=false;
       if not brk then begin
-        dbWriteStr(d,'username',user);
-        if hasreal { and (real<>'') 29.07.96 } then dbWriteStr(d,'realname',real);
+        dbWriteStr(Boxbase,'username',user);
+        if hasreal { and (real<>'') 29.07.96 } then dbWriteStr(Boxbase,'realname',real);
         if box=DefFidoBox then begin
           HighlightName:=UpperCase(user);
           aufbau:=true;
@@ -1812,7 +1811,6 @@ begin
           end;
         end;
       end;
-    dbClose(d);
     showusername;
     end;
 end;
@@ -2178,7 +2176,7 @@ type box_array = array[0..maxboxen] of string;
 
 function BoxSelect(const entries:byte; boxlist:box_array; colsel2:boolean):string;
 const width = 51+BoxNameLen;
-var   d          : DB;
+var
       nt         : eNetz;
       x,y,height,
       i, sel_anz : integer;     { Anzahl der auszuwaehlenden Boxen }
@@ -2193,24 +2191,24 @@ begin
   height:=screenlines-17;
   if screenlines>30 then dec(height,2);
   if screenlines>40 then dec(height,2);
-  dbOpen(d,BoxenFile,1);
+  dbGoTop(Boxbase);
   sel_anz:=0;
   list := nil;  //prevent warning "list not initialized"
-  while not dbEOF(d) do
+  while not dbEOF(Boxbase) do
   begin
-    box:=dbReadStr(d,'Boxname');
+    box:=dbReadStr(Boxbase, 'Boxname');
     if own_Name <> '' then
       for i:=1 to entries do
         if uppercase(box)=uppercase(boxlist[i]) then  { Box schon ausgewaehlt?      }
           goto nextBox;                     { ...dann naechsten Datensatz }
-    dbRead(d,'Netztyp',nt);
+    dbRead(Boxbase,'Netztyp',nt);
     if ((nt=own_Nt) and (uppercase(box)<>UpperCase(own_Name)))   { passende Box gefunden }
       or (own_name='') then
     begin
       inc(sel_anz);
-      komm:=dbReadStr(d,'Kommentar');
-      if nt in netsRFC then user:=dbReadStr(d,'Email')
-      else user:=dbReadStr(d,'Username');
+      komm:=dbReadStr(Boxbase,'Kommentar');
+      if nt in netsRFC then user:=dbReadStr(Boxbase,'Email')
+      else user:=dbReadStr(Boxbase,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
       if sel_anz=1 then
@@ -2230,9 +2228,8 @@ begin
       List.Addline(boxline);
     end;
 nextBox:
-    dbNext(d);
+    dbNext(Boxbase);
   end;
-  dbClose(d);
   if sel_anz > 0 then       { Wenn Box(en) gefunden, Auswahl }
   begin
     if List.Show then
@@ -2247,7 +2244,7 @@ end;
 
 
 procedure EditAddServersList(var cr:customrec);
-var   d          : DB;
+var
       x,y     : integer;
       nt: eNetz;  // byte!
       t          : taste;
@@ -2432,18 +2429,15 @@ begin  { --- of EditAddServersList --- }
   s1:=trim(cr.s);
   if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
   begin                        { Wenn nicht, auf passende Boxen pruefen }
-    dbOpen(d,BoxenFile,1);
-    while not dbEOF(d) do
+    dbGoTOp(Boxbase);
+    while not dbEOF(boxbase) do
     begin
-      dbRead(d,'Netztyp',nt);
-      if (nt=own_Nt) and (uppercase(dbReadStr(d,'boxname')) <> UpperCase(own_Name)) then
-      begin                           { erste passende Box gefunden... }
-        dbClose(d);
+      dbRead(boxbase,'Netztyp',nt);
+      if (nt=own_Nt) and (uppercase(dbReadStr(boxbase,'boxname')) <> UpperCase(own_Name)) then
+                           { erste passende Box gefunden... }
         goto start;        { ...dann Schleife verlassen und los geht's }
-      end;
-      dbNext(d);
+      dbNext(boxbase);
     end;
-    dbClose(d);                          { keine passende Box gefunden }
     rfehler(953); { 'Keine (weiteren) hinzuzufuegenden Serverboxen vorhanden!' }
     exit;
   end;
@@ -2672,7 +2666,7 @@ end;
 
 
 function BfgToBox(s:string):string;
-var   d      : DB;
+var
       p      : Integer;
       s1     : string;              { BFG-Datei }
       fehler : string;
@@ -2703,7 +2697,6 @@ begin
     exit;
   end;
   s1:=''; Result := '';
-  dbOpen(d,BoxenFile,1);
   repeat
     p:=cpos(' ',s);
     if p=0 then s1:=s
@@ -2723,9 +2716,9 @@ begin
         break;
     end
     else begin
-      dbSeek(d,boidatei,uppercase(s1));
+      dbSeek(boxbase,boidatei,uppercase(s1));
       if dbFound then
-        Result := Result + dbReadStr(d,'boxname') + ' '
+        Result := Result + dbReadStr(boxbase,'boxname') + ' '
       else
       begin
         BfgToBoxOk:=false;
@@ -2739,19 +2732,16 @@ begin
       end;
     end;
   until p=0;
-  dbClose(d);
   Result := Trim(Result);
 end;
 
 // check s for correct and existing boxnames
 function BoxToBfg(var s:string):string;
 var
-  d: DB;
   i: Integer;
   BoxName: string;
 begin
   Result := '';
-  dbOpen(d, BoxenFile, 1);
   for i := 1 to WordCount(s) do
   begin
     BoxName := ExtractWord(i, s);
@@ -2759,14 +2749,13 @@ begin
       ConvertAddServersFehler(getreps2(10900, 69, BoxName)) { 'Ungueltiger Serverbox-Name: %s' }
     else
     begin
-      dbSeek(d,boiname,uppercase(BoxName));
+      dbSeek(boxbase,boiname,uppercase(BoxName));
       if dbFound then
-        Result := Result + dbReadStr(d,'dateiname') + ' '
+        Result := Result + dbReadStr(boxbase,'dateiname') + ' '
       else
         ConvertAddServersFehler(getreps2(10900, 62, BoxName)); { 'Serverbox "%s" existiert nicht!' }
     end;
   end;
-  dbClose(d);
   Result := Uppercase(Trim(Result));
 end;
 
@@ -2912,6 +2901,9 @@ end;
 
 {
   $Log$
+  Revision 1.71  2003/10/18 17:14:48  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.70  2003/10/03 11:35:06  mk
   - fixed addServersTest
 

@@ -942,10 +942,8 @@ begin                  { function Netcall }
     if not TestNodelist then exit;
     end;
 
-  dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(BoxName));
   if not dbFound then begin
-    dbClose(d);
     trfehler1(709,BoxName,60);   { 'unbekannte Box:  %s' }
     exit;
   end;
@@ -960,7 +958,6 @@ begin                  { function Netcall }
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
   BoxPar^._domain   := dbReadStr(d,'domain');  // Warum nicht aus bfg??
   komment := dbReadStr(d,'kommentar');
-  dbClose(d);
   Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
 
   if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_IMAP, nt_UUCP, nt_Client])then
@@ -1403,6 +1400,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2003/10/18 17:14:52  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.74  2003/09/07 19:09:49  mk
   - added missing netcall log for client systems
 

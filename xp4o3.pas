@@ -242,13 +242,10 @@ end;
 procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 var i,n    : integer;
     server : string;
-    d      : DB;
     ok     : boolean;
     e,s    : string;
     t:     Text;
-
 begin
-  dbOpen(d,BoxenFile,1);
   ok := true;
   brk:=false; n:=0;
   for i:=0 to bmarkanz-1 do begin
@@ -300,7 +297,6 @@ begin
       end;
     end;
   end; {for }
-  dbClose(d);
 
   if SendEmpfList.Count = 0 then brk:=true;
 
@@ -314,6 +310,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2003/10/18 17:14:46  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.43  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

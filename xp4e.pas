@@ -280,14 +280,13 @@ end;
 
 
 function testpollbox(var s:string):boolean;
-var d : DB;
 begin
   pbox:=s;
   if (aktdispmode=0) and (s='') then
     Result :=true
   else
   begin
-    Result := SeekLeftBox(d, pbox, pb_netztyp);
+    Result := SeekLeftBox(pbox, pb_netztyp);
     if not Result then
       rfehler(2702)    { 'unbekannte Serverbox - waehlen mit <F2>' }
     else
@@ -463,14 +462,13 @@ end;
 
 function vtestpollbox(var s:string):boolean;
 var
-  d : DB;
   dummy: eNetz;
 begin
   if s='' then
     vtestpollbox:=true
   else
   begin
-    Result := SeekLeftBox(d, s, dummy);
+    Result := SeekLeftBox(s, dummy);
     if not Result then
       rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
   end;
@@ -1555,13 +1553,12 @@ begin
 end;
 
 function dtestpollbox(var s:string):boolean;
-var d  : DB;
-    adr: string;
-{    orgnt : byte; }
+var
+  d  : DB;
+  adr: string;
 begin
-{  orgnt:=ntBoxNetztyp(pbox); }
   pbox:=s;
-  if not SeekLeftBox(d,pbox, pb_netztyp) then
+  if not SeekLeftBox(pbox, pb_netztyp) then
   begin
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,UpperCase(s));
@@ -1594,11 +1591,8 @@ procedure ReadDirect(txt:atext; var empf,betr,box:string; pmonly:boolean;
 var x,y: Integer;
     pb  : boolean;
     pba : integer;
-    d   : DB;
 begin
-  dbOpen(d,BoxenFile,0);
-  pb:=(dbRecCount(d)>1);
-  dbClose(d);
+  pb:=(dbRecCount(boxbase)>1);
   pba:=iif(pb,2,0);
   dialog(58,5+pba,txt,x,y);
   box:=DefaultBox; pbox:=DefaultBox;
@@ -1871,14 +1865,12 @@ end;
 
 
 function atestpollbox(var s:string):boolean;
-var
-  d: DB;
 begin
   if (s='') or (UpperCase(s)='*CRASH*') then
     Result :=true
   else
   begin
-    Result := SeekLeftBox(d, pbox, pb_netztyp);
+    Result := SeekLeftBox(pbox, pb_netztyp);
     if not Result then
       rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
   end;
@@ -2359,11 +2351,9 @@ begin
   closemask;
   if (newbox<>'') and not brk then begin
     oldbox:= UpperCase(oldbox); {UpString(oldbox);}
-    dbOpen(d,BoxenFile,1);                    { oldbox.Mapsname ermitteln }
-    dbSeek(d,boiName,UpperCase(oldbox));
+    dbSeek(boxbase,boiName,UpperCase(oldbox));
     if not dbFound then mapsname:=''
-    else mapsname:=UpperCase(dbReadStr(d,'nameomaps')+'@'+oldbox);
-    dbClose(d);
+    else mapsname:=UpperCase(dbReadStr(boxbase,'nameomaps')+'@'+oldbox);
     if mapsname<>'' then mapsname:=mapsname+UpperCase(ntAutoDomain(oldbox,true));
     RFCNetFlag:=iif(ntBoxNetztyp(newbox) in netsRFC,16,0);
     attrtxt(col.coldialog);
@@ -2441,6 +2431,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2003/10/18 17:14:45  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.110  2003/10/01 18:37:11  mk
   - simplyfied seeknextbox
 

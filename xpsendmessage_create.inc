@@ -1093,7 +1093,6 @@ var FidoOriginSav: string;
   procedure CreateInternalMessage(const Box: string);
   var EMP,KOP: TStringList;
        Server: TXPServer;
-      i: integer;
   begin
     FidoOriginSav := '';
 
@@ -1279,6 +1278,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.22  2003/10/18 17:14:49  mk
+// - persistent open database boxenfile (DB: boxbase)
+//
 // Revision 1.21  2003/09/07 14:49:42  cl
 // - send window: postpone message
 //   CLOESES task #76797: "Sendefenster: Parken"

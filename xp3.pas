@@ -85,7 +85,7 @@ function  vert_name(s:string):string;
 function  vert_long(const s:string):string;
 function  systemname(adr:string):string;
 function  pfadbox(zconnect:boolean; var pfad:String):string;
-function  file_box(d:DB; const dname:string):string;
+function  file_box(const dname:string):string;
 function  box_file(const box:string):string;
 function  brettok(trenn:boolean):boolean;
 function Addr2DB(const addr: string): string;
@@ -925,12 +925,9 @@ begin
 end;
 
 function isbox(const box:string):boolean;
-var d : DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(Boxbase,boiName,UpperCase(box));
   isbox:=dbFound;
-  dbClose(d);
 end;
 
 
@@ -1047,36 +1044,27 @@ begin
 end;
 
 
-function file_box(d:DB; const dname:string):string;
-var open : boolean;
+function file_box(const dname:string):string;
 begin
-  open:=(d<>nil);
-  if not open then
-    dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiDatei,UpperCase(dname));
+  dbSeek(Boxbase,boiDatei,UpperCase(dname));
   if dbFound then
-    file_box:=dbReadStr(d,'boxname')
+    file_box:=dbReadStr(Boxbase, 'boxname')
   else begin
     Debug.DebugLog('xp3','file_box: assigned server name not found (' + dname + ')!', DLWarning);
     file_box:=dname;
-    end;
-  if not open then
-    dbClose(d);
+  end;
 end;
 
 
 function box_file(const box:string):string;
-var d : DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(boxbase,boiName,UpperCase(box));
   if dbFound then
-    box_file:=dbReadStr(d,'dateiname')
+    box_file:=dbReadStr(boxbase,'dateiname')
   else begin
     Debug.DebugLog('xp3','box_file: assigned file name not found (' + box + ')!', DLWarning);
     box_file:=box;
     end;
-  dbClose(d);
 end;
 
 
@@ -1124,19 +1112,17 @@ end;
 
 
 procedure ReplaceVertreterbox(var box:string; pm:boolean);
-var d    : DB;
-    wbox : string;
+var
+  wbox : string;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
+  dbSeek(Boxbase,boiName,UpperCase(box));
   if dbFound then begin              { Test auf Vertreterbox }
     if pm then
-      wbox:= dbReadStr(d,'PVertreter')
+      wbox:= dbReadStr(Boxbase,'PVertreter')
     else
-      wbox:= dbReadStr(d,'AVertreter');
+      wbox:= dbReadStr(Boxbase,'AVertreter');
     if IsBox(wbox) then box:=wbox;
-    end;
-  dbClose(d);
+  end;
 end;
 
 
@@ -1180,6 +1166,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2003/10/18 17:14:44  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.93  2003/05/11 11:12:16  mk
   - use IsMailAddr when possible
 

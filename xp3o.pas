@@ -1112,17 +1112,14 @@ begin
 end;
 
 function getBoxAdresse(const box: string): string;
-var d: DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName, UpperCase(box));
+  dbSeek(boxbase,boiName, UpperCase(box));
   if dbFound then
-    result:= ComputeUserAddress(d)
+    result:= ComputeUserAddress(boxbase)
   else begin
     rfehler1(109,box);  { 'Unbekannte Serverbox:' %s }
     getBoxAdresse:='';
   end;
-  dbClose(d);
 end;
 
 procedure CancelMessage;
@@ -1563,6 +1560,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2003/10/18 17:14:44  mk
+  - persistent open database boxenfile (DB: boxbase)
+
   Revision 1.106  2003/10/06 16:01:33  mk
   - some little code optimizations (mostly added const parameters and
     use of new file system RTL functions)

@@ -34,7 +34,7 @@ type TXPServer = class
 { -- Creating -------------------------------------------------------- }
   public
     constructor Create;
-    constructor CreateByDB(d:DB);
+    constructor CreateByDB;
     constructor CreateByName(const name: string);
     constructor CreateByFileName(const name: string);
   protected
@@ -126,10 +126,10 @@ begin
   Clear;
 end;
 
-constructor TXPServer.CreateByDB(d:DB);
+constructor TXPServer.CreateByDB;
 begin
   Clear;
-  LoadByDB(d);
+  LoadByDB(Boxbase);
 end;
 
 constructor TXPServer.CreateByName(const name: string);
@@ -203,29 +203,17 @@ begin
 end;
 
 procedure TXPServer.LoadByName(const name: string);
-var d:DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  try
-    dbSeek(d,boiName,Uppercase(name));
-    if not dbFound then raise Exception.Create('dbSeek failed');
-    LoadbyDB(d);
-  finally
-    dbClose(d);
-  end;
+  dbSeek(Boxbase,boiName,Uppercase(name));
+  if not dbFound then raise Exception.Create('dbSeek failed');
+  LoadbyDB(Boxbase);
 end;
 
 procedure TXPServer.LoadByFileName(const name: string);
-var d:DB;
 begin
-  dbOpen(d,BoxenFile,1);
-  try
-    dbSeek(d,boiDatei,Uppercase(name));
-    if not dbFound then raise Exception.Create('dbSeek failed');
-    LoadbyDB(d);
-  finally
-    dbClose(d);
-  end;
+  dbSeek(Boxbase,boiDatei,Uppercase(name));
+  if not dbFound then raise Exception.Create('dbSeek failed');
+  LoadbyDB(Boxbase);
 end;
 
 { -------------------------------------------------------------------- }
@@ -405,6 +393,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.8  2003/10/18 17:14:50  mk
+// - persistent open database boxenfile (DB: boxbase)
+//
 // Revision 1.7  2003/03/30 23:09:15  mk
 // - fixed GetAbsAddr with uucp: use eMail as Result, when avialable
 //
