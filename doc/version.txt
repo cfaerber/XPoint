@@ -697,3 +697,6 @@ v3.2b/OpenXP  (16.12.2000)
    Nachrichten angezeigt u.„.). (Bug aus v3.12d)
 !  Anzeigeproblem bei Userauswahl mit <F2> und "A" beim Eintragen einer
    User-Vertreteradresse behoben. (Bug aus v3.12d)
+*  Config/Optionen/Sprache wieder aktiviert
+!  Extrahieren von MIME-Multipart-Attachments in Zwischenablage
+   funktioniert jetzt

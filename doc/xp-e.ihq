@@ -211,7 +211,7 @@ What is meant by "new" depends upon which "view-mode"
 is active. The "view-mode" may be changed by use of
 the "Show" command, which may be found on the
 "command-bar" just below the menu bar. For a full
-explanation of this feature, see [View-Mode]@50
+explanation of this feature, see [View-Mode].@50
 
 For further details of the Message Areas display, see
 [Message Areas Display] .....@4016
@@ -313,7 +313,7 @@ Keys in <<both>> "Read/Write" <<and>> "Special" mode:
 
   <<W>>          Manually add a new message area.
 
-<<Ctrl-W>>       Calls up the [Newsgroup List] to select@11907
+<<Ctrl-W>>       Calls up the [Newsgroup List] to select@11906
              several Newsgroups to add at once.
 
   <<L>>          Delete a message area. This is only
@@ -495,7 +495,7 @@ Bar and the Menu under "Other")
         time expires (<Insert>) also does it).
 
   <<L>>     Puts a message on "release to delete" so it
- <<Del>>    will be removed by the next [Re-Org]@10701
+ <<Del>>    will be removed by the next [Re-Org].@10701
 
   <<K>>     Kill (removes) the selected message
         <<immediately>> from the Data Base.
@@ -508,29 +508,30 @@ Bar and the Menu under "Other")
   <<R>>     Write a message. The Subject of the current
         message will be offered; the [reference link]@4014
         can be kept, but you write a new text. The
-        Message-Template from /Edit/Templates/[Head]@10801
+        Message-Template from /Edit/Templates/[Header]@10801
         will be used automatically.
 
 <<Ctrl-R>>  As "R", but the text of the current message
         will be pre-written with Quote signs into
         your message for Quoting. Template used from
-        /Edit/Templates/[PublicQuote].@10803
+        /Edit/Templates/[Quote (Pub)].@10803
 
 <<Shift-R>> If you mark (see above) several messages
         this will include the text from all of them
-        to quote. Template: [PublicQuote].@10803
+        to quote. Template: [Quote (Pub)].@10803
 
   <<P>>     As W above, but sends a [PM] to whom-@4000
         ever wrote the message.
-        Template: [PrivHead].@10802
+        Template: [Header (Priv)].@10802
 
 <<Ctrl-P>>  As Ctrl-R above but as [PM] (see P above)
-        Template: [PrivQuote] if quoting a public@10804
-        message, or [PrivPMQuote] if quoting a PM.@10805
+        Template: [Quote (Pub > Priv)] if quoting a@10804
+        public message, or [Quote (Priv)] if quoting@10805
+        a PM.
 
 <<Shift-P>> Write a [PM] answer with quoted message@4000
         on several marked messages similar to Shift-R
-        above. Template: [PrivQuote].@10804
+        above. Template: [Quote (Pub > Priv)].@10804
 
 <<Ctrl-F>>  Send a [text file] from disk to the@4002
         person who wrote the selected message.
@@ -596,7 +597,7 @@ Bar and the Menu under "Other")
 31
 <<Marked Messages
 
-(Color and "þ" indicates marked message.)
+(Colour and "þ" indicates marked message.)
 
 All marked messages are displayed. Messages may have
 been marked by hand, or through some search selection
@@ -631,13 +632,13 @@ also use <Space> instead of PgDn.
 
 <<Ctrl-E>>  unmarks everything.
 
-<<<Esc> >>  Exits the message reader.
+<<<Esc> >>  exits the message reader.
 
   <<I>>     shows the information in the message header.
 
   <<O>>     shows the hidden kludges.
 
-<<Alt-M>>   Starts the search for a MessageID.
+<<Alt-M>>   starts the search for a MessageID.
         The first marked textline is used as
         search-string. If there is a "<news:"-Tag
         in the marked line, only the MessagID
@@ -649,7 +650,7 @@ also use <Space> instead of PgDn.
         to the Main-Lister, showing the message
         where you started the search.
 
-<<Alt-V>>   like <<Alt+M>> but searching for text
+<<Alt-V>>   like <<Alt+M>> but searching for text.
 
 <<Alt-U>>   User-search. If a Textline is marked
         it will be used as search-string, else
@@ -677,17 +678,17 @@ also use <Space> instead of PgDn.
         the Node (Box) from which the message comes.
 
   <<C>>     toggles coloured <<bold>> Text on/off.
-        (see [/Config/External/Lister])@237
+        (see [/Config/External/Lister]).@237
 
-With <<P>>, <<Ctrl-P>>, <<R>> and <<Ctrl-R>> you can
-        answer directly to messages from inside the
-        message reader.
+With <<P>>, <<Ctrl-P>>, <<R>>, <<Ctrl-R>> and <<Ctrl-Q>> you can answer
+        directly to messages from inside the message
+        reader.
 
 <<When>> [reference links] <<available@4014
-<<(Maus, Fido):
+<<(Maus, ZConnect, Fido, Usenet):
 
   <<+>>     go to the next message in the
-        [reference link] (if any)@4014
+        [reference link] (if any).@4014
 
   <<->>     go to the original message in the
         reference link (as long as it's still in the
@@ -893,11 +894,11 @@ From left to right:
 
 @
 57
- <F7> and <F8> or with the left mouse click starts
- and ends marking a text block.
+<F7> and <F8> or with the left mouse click starts
+and ends marking a text block.
 
- Moving the cursor while <Shift> is pressed marks
- a text block, too.
+Moving the cursor while <Shift> is pressed marks
+a text block, too.
 
 <Ctrl-K><C> : Copy Block to Cursor position
 <Ctrl-K><V> : Move Block to Cursor position
@@ -1096,11 +1097,12 @@ sent.
         select functions by their hot-key letters.
 
 <<To:>>     Changes the recipient of the message.
-        Delete the current entry to choose (with <F2>)
+        Delete the current entry to choose with <F2>
         between users and newsgroups. You can also
         enter one of the pre-defined [short-names]@11605
         as defined under /Edit/Short names instead
         of the complete address.
+
         ATTENTION! Only experienced users should
         use this function.
 
@@ -1233,15 +1235,15 @@ Extract Directory [/Config/Path/Extract].@261
 With F2 you can copy to the Windows-Clipboard.
 
 <<Windows-Clipboard>>
-copies the marked Text to the Clipboard
+copies the marked text to the Clipboard.
 
 <<Win-Clipboard (URL)>>
-tries to generate a Internet-URL
+tries to generate an Internet-URL
 (ftp:// or http:// or www.) from the first marked
-line and copies it to the Windows-Clipboard.
+line and copies it to the Windows Clipboard.
 
 <<Win-Clipboard (MAIL)>>
-like before, but generates a Mail-Adress.
+like before, but generates a mail address.
 
 @
 75
@@ -3179,8 +3181,8 @@ automatically, and this setting decides which ones.
 Note: persons to whom you send a PM are also
 automatically put in the list.
 
-<<All>>     Puts all users in the user list.
-            (Use with care)
+<<All>>     Puts all users in the user list
+        (use with care).
 
 <<Z-Netz>>  Puts only users whose addresses contain
         no ":" or "%" signs into the user list.
@@ -3227,8 +3229,6 @@ Ctrl-U.
         questions asked.
 @
 217
-<<Archive prefix
-
 Which archive newsgroups should be displayed for
 selection when a message is selected for archiving
 with either /Message/Action/[Archive] or <Alt-A>.@12109
@@ -10296,18 +10296,15 @@ newsgroups.
 Parameters for time period and size definition can be
 entered
 @
-11708
-<<XPoint / Statistics / Charges
+11709
+<<XPoint / Statistics / Phone charges
 
 Analyses the log file XPOINT.LOG statistically and
 displays a summary of the accrued telephone charges.
 @
-11709
-Internal Test function - don't worry your pretty head
-about it, darling :-).
-@
 11710
-Internal debug function - meaningless for users
+Internal Test function - don't worry your pretty head
+about it, darling. :-)
 @
 11801
 ^^10605
@@ -10854,6 +10851,7 @@ options needed for the ZConnect-PGP function.
 @
 12601
 <<XPoint / Statistic / Phone fees / All
+
 An overview of telephone charges accrued over the
 year.
 @
@@ -11372,18 +11370,18 @@ special operating instructions for the databases on
 offer.
 @
 13601
-<<XPoint / Export / Userlist
+<<XPoint / Export / User list
 
 The list of all recorded users is exported to a file.
 @
 13602
-<<XPoint / Export / Newsgroup List
+<<XPoint / Export / Newsgroup list
 
 A list of all the newsgroups in CrossPoint is
 exported to a file.
 @
 13603
-<<XPoint / Export / Message List
+<<XPoint / Export / Message list
 
 Writes a list of all currently displayed messages to
 a file.
