@@ -1120,9 +1120,9 @@ restart:
         dbGoTop(mbase);
         brk:=false;
         while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
-          dbReadN(mbase,mb_brett,_brett);
-          if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
-                            ((bereich=2) and (_brett[1]='U')) then
+          _brett := dbReadNStr(mbase,mb_brett);
+          if (bereich=0) or ((bereich=1) and (FirstChar(_brett)='A')) or
+                            ((bereich=2) and (FirstChar(_brett)='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
             dbNext(mbase);            { Satz gel”scht wurde               }
@@ -1145,7 +1145,7 @@ restart:
                 end
               else begin
                 dbGo(bbase,bmarked^[i]);
-                dbReadN(bbase,bb_brettname,brett);
+                brett := dbReadNStr(bbase,bb_brettname);
                 TestBrett(mbrettd(brett[1],bbase));
                 end;
               inc(i);
@@ -1155,7 +1155,7 @@ restart:
         else
           case aktdispmode of
             -1..0 : begin
-                      dbReadN(bbase,bb_brettname,brett);
+                      brett := dbReadNStr(bbase,bb_brettname);
                       TestBrett(mbrettd(brett[1],bbase));
                     end;
              1..4 : TestBrett(mbrettd('U',ubase));
@@ -1207,8 +1207,8 @@ end;
 
 procedure betreffsuche;
 var betr,betr2   : string;
-    brett,_Brett : string[5];
- (*       ll     : integer; *) 
+    brett,_Brett : string;
+ (*       ll     : integer; *)
 
 begin
   moment;
@@ -1216,7 +1216,7 @@ begin
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
   UkonvStr(betr, Length(betr));
-  dbReadN(mbase,mb_brett,brett);
+  brett := dbReadNStr(mbase,mb_brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
   markanz:=0;
@@ -1231,7 +1231,7 @@ begin
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
-      dbReadN(mbase,mb_brett,_brett);
+      _brett := dbReadNStr(mbase,mb_brett);
   until dbEOF(mbase) or (_brett<>brett);
   closebox;
   signal;
@@ -1276,7 +1276,7 @@ var x,y,xx : Integer;
         dbSeek(mbase,miBrett,_brett+dat);
         mbrett:=_brett;
         while not dbEOF(mbase) and (mbrett=_brett) do begin
-          dbReadN(mbase,mb_brett,mbrett);
+          mbrett := dbReadNStr(mbase,mb_brett);
           if mbrett=_brett then MsgAddmark;
           dbSkip(mbase,1);
           end;
@@ -2971,6 +2971,9 @@ end;
 
 {
   $Log$
+  Revision 1.133  2002/02/10 13:10:25  mk
+  - fixed several ANSIString dbReadN
+
   Revision 1.132  2002/02/04 17:26:36  mk
   - after merge fixes
 
