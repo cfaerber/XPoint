@@ -1,15 +1,25 @@
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ --------------------------------------------------------------- }
+{ Ressourcen-Compiler }
 { $Id$ }
 
-{ Ressourcen-Compiler }
-{ 12/92, 06/93        }
-
-{$B-,A+,V-}
+{$I XPDEFINE.INC }
 
 uses  crt,dos,typeform,fileio;
 
 const open   : boolean = false;
-      maxblk = 4;                  { max. 4 Resourcen-Segmente }
-      maxres = 4096;               { max. Resourcen pro Block  }
+      maxblk  = 4;                  { max. 4 Ressourcen-Segmente }
+      maxres  = 4096;               { max. Ressourcen pro Block  }
+      version = '1.02';
+      date    = '2002-2003';
 
       flPreload = 1;
 
@@ -22,9 +32,9 @@ type  rblock = record
                  dummy    : longint;
                end;
       restype= record
-                 nummer : word;      { Bit 15 = aufgeteilte Resource   }
+                 nummer : word;      { Bit 15 = aufgeteilte Ressource  }
                  collect: word;      { die folgenden n Strings gehîren }
-               end;                  { zu dieser Resource              }
+               end;                  { zu dieser Ressource             }
 
 type  stringp= ^string;
       barr   = array[0..65300] of byte;
@@ -59,14 +69,30 @@ end;
 
 
 procedure InitVar;
-var p : byte;
+var outpath,dir : dirstr;
+           name : namestr;
+            ext : extstr;
 begin
+  fsplit(infile,dir,name,ext);
+  if ustr(ext)='.RES' then ext:='';
+  infile:=ustr(name)+iifs(ext='','.RQ',ustr(ext));
+  if paramstr(1)<>'' then writeln(infile);
+  if not exist(infile) then
+    fehler('"'+infile+'" not found.');
   assign(t,infile);
   settextbuf(t,tbuf,sizeof(tbuf));
   reset(t);
-  p:=length(infile);
-  while infile[p]<>'.' do dec(p);
-  assign(f,left(infile,p)+'RES');
+
+  outpath:='';
+  if (paramcount=2) then begin
+    outpath:=paramstr(2);
+    if outpath<>'' then
+      if outpath[length(outpath)]<>'\' then
+        outpath:=outpath+'\';
+  end;
+  if (outpath='') then outpath:=dir;
+
+  assign(f,outpath+name+'.RES');
   rewrite(f,1);
   open:=true;
   getmem(buf1,16384);
@@ -283,30 +309,32 @@ end;
 
 
 begin
+  clrscr;
+  writeln('Resource Compiler v'+version);
+  writeln('(c) 1991-2000 Peter Mandrella, (c) '+date+' OpenXP/16');
   writeln;
-  writeln('Ressource Compiler v1.01   PM 12/92, 06/93');
-  writeln;
+  write('Source File: ');
   infile:=paramstr(1);
-  if infile='' then begin
-    write('Source File: '); readln(infile);
-    end
-  else
-    writeln('Source File: ',infile);
-  writeln;
-  if trim(infile)<>'' then begin
-    UpString(infile);
-    if cpos('.',infile)=0 then
-      infile:=infile+'.RQ';
-    if not exist(infile) then
-      fehler('"'+infile+'" not found.');
+  if infile='' then readln(infile);
+  if trim(infile)<>'' then
+  begin
     InitVar;
     ReadHeader;
     Make;
     WriteBlocks;
-    end;
+  end;
 end.
+
 {
   $Log$
+  Revision 1.2.2.2  2003/01/26 00:30:23  my
+  MY: Source an Stand v1.03 (OpenXP/16 v3.40) adaptiert:
+      - Logik der Parameterbehandlung geÑndert und nach 'InitVar' verlagert.
+      - Bei öbergabe der Extension '.RES' wird diese ausgetauscht gegen '.RQ'.
+      - Kosmetik bei Versions- und Copyright-Strings analog IHS.
+      - Version '1.02'
+      - Copyright-Header hinzugefÅgt.
+
   Revision 1.2.2.1  2003/01/15 16:02:04  mw
   MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
         bei allen Quelldateien in die Dateien geschrieben.
