@@ -66,7 +66,7 @@ implementation  { ------------------------------------------------- }
 
 uses
   {$ifdef NCRT} XPCurses,{$endif}
-  Typeform,Maus2,XP0,XP1;
+  Typeform,Maus2,XP0,XP1,Debug;
 
 constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
@@ -117,6 +117,7 @@ begin
   s:=Format(fmt,args);
 
   if fmt<>'' then begin
+    Debug.DebugLog('xpmewi','Display: '+s,DLDebug);
     // if last message was "not important", it may be overwritten
     if LastMsgUnimportant then
       FLines.Delete(FLines.Count-1)
@@ -139,6 +140,10 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/18 16:20:06  ma
+  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
+    specification...
+
   Revision 1.4  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

@@ -190,7 +190,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
     if (p=0) or (Filename='.') or (Filename='..') then
       result:=false
     else
-      result:=(pos(copy(Filename,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
+      result:=(pos(copy(UpperCase(Filename),p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
               (FidoExtNamesPermitted or (pos(copy(Filename,p+3,1),'0123456789')>0));
   end;
 
@@ -896,6 +896,10 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/02/18 16:20:06  ma
+  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
+    specification...
+
   Revision 1.14  2001/02/12 23:43:25  ma
   - some fixes
 

@@ -139,12 +139,12 @@ begin
     FCommObj^.SendBlock(FrameSize,2,written);
     i:=0;
     while i<(FDataSize and $7fff)do begin
-      written:=FDataSize-i; if written>1024 then written:=1024;
+      written:=(FDataSize and $7fff)-i; if written>1024 then written:=1024;
       FCommObj^.SendBlock(Data[i+1],written,written);
       inc(i,written);
       end;
     if FDataSize<=$7fff then
-      Debug.DebugLog('ncfido','sent binkp data frame, size '+Strs(Swap(FDataSize)),DLDebug)
+      Debug.DebugLog('ncfido','sent binkp data frame, size '+Strs(FDataSize),DLDebug)
     else
       Debug.DebugLog('ncfido','sent binkp command frame '+Strs(Data[1])+' '+SCommandPar+', size '+strs(FDataSize and $7fff),DLDebug);
     end;
@@ -161,6 +161,7 @@ var
 
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  WriteIPC(mcVerbose,'Setting up connection...',[0]);
   repeat
     if LastState<>State then begin
       Debug.DebugLog('ncfido','binkp session setup state '+Strs(Ord(State)),DLDebug);
@@ -169,7 +170,7 @@ begin
     case State of
       WaitConn: begin
         BpF.SendCommandFrame(M_NUL,'SYS OpenXP test system');
-        BpF.SendCommandFrame(M_ADR,' '+ownaddr+'@fidonet');
+        BpF.SendCommandFrame(M_ADR,ownaddr+'@fidonet');
         State:=SendPasswd;
         end;
       SendPasswd: begin
@@ -218,8 +219,11 @@ type
   tRxState= (RxWaitF,RxAccF,RxReceD,RxWriteD,RxEOB,RxDone);
   tTxState= (TxGNF,TxTryR,TxReads,TxWLA,TxDone);
   tResult= (OK,Continue,Failure);
+const
+  sRxState: array[tRxState]of string= ('RxWaitF','RxAccF','RxReceD','RxWriteD','RxEOB','RxDone');
+  sTxState: array[tTxState]of string= ('TxGNF','TxTryR','TxReads','TxWLA','TxDone');
 var
-  State,LastState: tState; RxState,LastRxState: tRxState; TxState,LastTxState: tTxState;
+  State: tState; RxState,LastRxState: tRxState; TxState,LastTxState: tTxState;
   InBpF,OutBpF: tBinkpFrame; TheQueue: TList; PendingFiles: TStringList;
   RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
   TxFilename: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
@@ -233,7 +237,7 @@ var
   begin
     result:=OK;
     if LastRxState<>RxState then begin
-      Debug.DebugLog('ncfido','binkp rxstate '+Strs(Ord(RxState)),DLDebug);
+      Debug.DebugLog('ncfido','binkp rxstate '+sRxState[RxState],DLDebug);
       LastRxState:=RxState;
       end;
     case RxState of
@@ -241,7 +245,7 @@ var
         if not InBpF.IsReady then exit;
         case InBpF.FrameType of
           M_DATA: ; // ignore
-          M_ERR: begin WriteIPC(mcError,'Peer reported error',[0]); RxState:=RxDone; result:=Failure; exit; end;
+          M_ERR: begin WriteIPC(mcError,'Remote reported error',[0]); RxState:=RxDone; result:=Failure; exit; end;
           M_GET,M_GOT,M_SKIP: begin
             TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
@@ -256,9 +260,9 @@ var
         InBpF.ReadFromStream(False);
         end;
       RxAccF: begin
-        WriteIPC(mcInfo,'Receiving %s',[RxFilename]);
-        if FileExists(RxFilename)then begin // file exists
-          RxFileHandle:=FileOpen(RxFilename,fmOpenReadWrite);
+        WriteIPC(mcVerbose,'receiving %s',[RxFilename]);
+        if FileExists(FilePath+RxFilename)then begin // file exists
+          RxFileHandle:=FileOpen(FilePath+RxFilename,fmOpenReadWrite);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=FileSeek(RxFileHandle,0,fsFromEnd);
             OutBpF.SendCommandFrame(M_GET,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime)+' '+IntToStr(RxOffset));
@@ -268,7 +272,7 @@ var
             RxState:=RxWaitF;
             end;
           end else begin // file does not exist
-          RxFileHandle:=FileCreate(RxFilename);
+          RxFileHandle:=FileCreate(FilePath+RxFilename);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=0;
             RxState:=RxReceD;
@@ -284,7 +288,7 @@ var
         case InBpF.FrameType of
           M_DATA: begin
             RxState:=RxWriteD;
-            RxResult:=FileWrite(RxFileHandle,InBpF.Data[2],InBpF.DataSize-1);
+            RxResult:=FileWrite(RxFileHandle,InBpF.Data[1],InBpF.DataSize);
             result:=Continue
             end;
           M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
@@ -299,26 +303,31 @@ var
       RxWriteD: begin
         if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
         RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
+        WriteIPC(mcVerbose,'receiving %s %.0f%%',[RxFilename,RxFilePos/RxSize*100]);
         if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
         if RxFilePos=RxSize then begin
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
-          WriteIPC(mcInfo,'File %s received',[RxFilename]);
-          IncomingFiles.Add(RxFilename);
+          WriteIPC(mcInfo,'%s received',[RxFilename]);
+          IncomingFiles.Add(FilePath+RxFilename);
           end;
         if RxFilePos<RxSize then RxState:=RxReceD;
         end;
       RxEOB: begin
-        if (not InBpF.IsReady)or(TxState<>TxDone)then exit;
-        case InBpF.FrameType of
-          M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
-          M_GET,M_GOT,M_SKIP: begin
-            TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+        if TxState=TxDone then
+          RxState:=RxDone
+        else
+          if InBpF.IsReady then begin
+            case InBpF.FrameType of
+              M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
+              M_GET,M_GOT,M_SKIP: begin
+                TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+                end;
+              M_NUL: Log(lcInfo,InBpF.CommandPar);
+              end;
+            InBpF.ReadFromStream(False);
             end;
-          M_NUL: Log(lcInfo,InBpF.CommandPar);
-          end;
-        InBpF.ReadFromStream(False);
         end;
       RxDone: ;
       end;
@@ -343,7 +352,7 @@ var
             PendingFiles.Delete(iPending);
             if OutgoingFiles.Count>0 then OutgoingFiles.Delete(0);
             //** clean up file list handling
-            WriteIPC(mcInfo,'File %s sent',[s]);
+            WriteIPC(mcInfo,'sent %s',[s]);
             end;
         end;
       M_SKIP: begin
@@ -366,7 +375,7 @@ var
   begin
     result:=OK;
     if LastTxState<>TxState then begin
-      Debug.DebugLog('ncfido','binkp txstate '+Strs(Ord(TxState)),DLDebug);
+      Debug.DebugLog('ncfido','binkp txstate '+sTxState[TxState],DLDebug);
       LastTxState:=TxState;
       end;
     case TxState of
@@ -375,9 +384,10 @@ var
           OutBpF.SendCommandFrame(M_EOB,'');
           TxState:=TxWLA; result:=Continue;
           end else begin // still files to send
-          TxFilename:=OutgoingFiles[0];
+          TxFilename:=ExtractFilename(OutgoingFiles[0]);
           WriteIPC(mcInfo,'Sending %s',[TxFilename]);
-          TxFileHandle:=FileOpen(TxFilename,fmOpenRead);
+          TxFileHandle:=FileOpen(OutgoingFiles[0],fmOpenRead);
+          OutgoingFiles.Delete(0); //** should not be deleted here but in ProcessTheQueue
           if TxFileHandle>0 then begin // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
@@ -404,6 +414,7 @@ var
           FileClose(TxFileHandle);
           TxState:=TxGNF;
           PendingFiles.Add(TxFilename);
+          TxFilename:='';
           end else begin // still data to read
           TxState:=TxTryR;
           end;
@@ -415,19 +426,15 @@ var
           if RxState>=RxEOB then TxState:=TxDone else TxState:=TxWLA;
           end;
         end;
-      TxDone: ;
+      TxDone: if RxState=RxEOB then RxState:=RxDone; //** protocol description error
       end;
   end;
 
 begin
-  State:=WaitConn; LastState:=WaitConn;
+  State:=WaitConn;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create;
   repeat
-    if LastState<>State then begin
-      Debug.DebugLog('ncfido','binkp state '+Strs(Ord(State)),DLDebug);
-      LastState:=State;
-      end;
     case State of
       WaitConn: begin
         WriteIPC(mcInfo,'Initiating file transfer',[0]);
@@ -437,15 +444,15 @@ begin
         InBpF.ReadFromStream(False);
         end;
       Switch: begin
-        if (RxState=RxDone)and(TxState=TxDone)then begin
+        if ((RxState=RxDone)and(TxState=TxDone))or
+           ((RxState=RxWaitF)and(TxState=TxDone)and(not FCommObj^.Carrier))then begin
           WriteIPC(mcInfo,'File transfer complete',[0]);
           result:=0; State:=Done;
-          end;
-        if FCommObj^.CharAvail then
-          State:=Receive
-        else if FCommObj^.ReadyToSend(1024) then
-          State:=Transmit;
-        //** if timeout...
+          end else if FCommObj^.CharAvail then
+            State:=Receive
+          else if FCommObj^.ReadyToSend(1024) then
+            State:=Transmit;
+          //** if timeout...
         end;
       Receive: begin
           case BpReceive of
@@ -469,6 +476,10 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/02/18 16:20:06  ma
+  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
+    specification...
+
   Revision 1.4  2001/02/17 21:44:37  ma
   - BinkP protocol provisionally activated by "SetTime" ;-)
   - remote seems not to recognize binkp frames sent yet

@@ -206,7 +206,7 @@ end;
 function TFidomailer.PerformNetcall: Integer;
 var iTimer: Integer; Ende: Boolean;
 begin
-  result:=el_noconn; DebugBadge:='ncfido';
+  result:=el_noconn;
   if not Connect then exit;
 
   if SetTime then begin //** BinkP mailer
@@ -247,6 +247,10 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/02/18 16:20:06  ma
+  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
+    specification...
+
   Revision 1.14  2001/02/17 21:44:37  ma
   - BinkP protocol provisionally activated by "SetTime" ;-)
   - remote seems not to recognize binkp frames sent yet

@@ -54,8 +54,6 @@ type
     WaitForAnswer,FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
     FErrorMsg,FLogfileName,ReceivedUpToNow,ModemAnswer: String;
-    {this badge will be used by Log method, default 'ncmodem'}
-    DebugBadge: String;
 
     FPhonenumber: String;
     FLineSpeed: Longint;
@@ -194,7 +192,6 @@ begin
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
-  DebugBadge:='ncmodem';
 end;
 
 constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
@@ -415,7 +412,7 @@ procedure TModemNetcall.Log(c: Char; const s: String);
 begin
   if FLogfileOpened then
     writeln(FLogfile,c,' ',FormatDateTime('hh":"mm":"ss',Now),'  ',s);
-  DebugLog(DebugBadge,'Log: '+c+' '+s,dlInform);
+  DebugLog('ncmodem','Log: '+c+' '+s,dlInform);
 end;
 
 procedure TModemNetcall.Disconnect;
@@ -445,6 +442,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/02/18 16:20:06  ma
+  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
+    specification...
+
   Revision 1.13  2001/02/17 21:44:37  ma
   - BinkP protocol provisionally activated by "SetTime" ;-)
   - remote seems not to recognize binkp frames sent yet
