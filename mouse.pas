@@ -76,7 +76,7 @@ implementation
 
 {$IFDEF VP }
 uses
-  vpsyslow;
+  vpsyslow, maus2;
 {$ENDIF }
 
 const
@@ -275,6 +275,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.20  2000/10/25 17:32:12  fe
+  Abhaengigkeitsprobleme (hoffentlich) beseitigt.
+
   Revision 1.19  2000/10/24 17:37:24  fe
   Zirkulaere Abhaengigkeiten beseitigt.
 

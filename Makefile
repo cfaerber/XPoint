@@ -792,8 +792,8 @@ inout$(UNITEXT): inout.pas keys$(UNITEXT) maus2$(UNITEXT) \
 else
 
 inout$(UNITEXT): inout.pas keys$(UNITEXT) maus2$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -864,8 +864,8 @@ maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
 else
 
 maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -878,7 +878,8 @@ montage$(UNITEXT): montage.pas typeform$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-mouse$(UNITEXT): mouse.pas xpdefine.inc xpglobal$(UNITEXT)
+mouse$(UNITEXT): mouse.pas maus2$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 ncnntp$(UNITEXT): ncnntp.pas ipcclass$(UNITEXT) ncsocket$(UNITEXT) \
@@ -2576,6 +2577,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.31  2000/10/25 17:32:11  fe
+# Abhaengigkeitsprobleme (hoffentlich) beseitigt.
+#
 # Revision 1.30  2000/10/24 20:19:26  fe
 # Zirkulaere Abhaenhigkeiten entfernt.
 #

@@ -73,6 +73,9 @@ uses
 {$IFDEF VP}
      vpSysLow,
 {$ENDIF}
+{$ifndef NCRT}
+     winxp,
+{$endif}
      inout;
 
 const  maxinside = 25;
@@ -329,6 +332,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/25 17:32:12  fe
+  Abhaengigkeitsprobleme (hoffentlich) beseitigt.
+
   Revision 1.21  2000/10/24 20:19:27  fe
   Zirkulaere Abhaenhigkeiten entfernt.
 

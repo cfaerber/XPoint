@@ -276,6 +276,9 @@ procedure mdelay(msec:word);
 implementation
 
 uses
+{$ifndef NCRT }
+  winxp,
+{$endif}
   maus2;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
@@ -1640,6 +1643,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.62  2000/10/25 17:32:12  fe
+  Abhaengigkeitsprobleme (hoffentlich) beseitigt.
+
   Revision 1.61  2000/10/24 20:19:26  fe
   Zirkulaere Abhaenhigkeiten entfernt.
 
