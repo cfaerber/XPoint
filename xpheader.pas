@@ -167,6 +167,7 @@ begin
   MailCopies := TStringList.Create;
   MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
+  References.Duplicates := dupIgnore;
   XEmpf := TStringList.Create;
   XOEM := TStringList.Create;
   Clear;
@@ -295,6 +296,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/04/17 22:20:18  ma
+  - fixed: duplicated references were possible
+
   Revision 1.7  2001/04/10 17:38:01  mk
   - Stringlist Code cleanup
 
