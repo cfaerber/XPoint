@@ -403,7 +403,7 @@ begin
   { Nach dem Netcall Datumsbezge setzen, damit
     /¯Netzanruf korrekt in der Brettliste auftaucht }
   if Assigned(NC) then
-    if AutoDatumsBezuege and ((NC^.Recpack > 0) or (NC^.Recbuf >0)) then
+    if AutoDatumsBezuege and not NC^.Abbruch then
     begin
       window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
       bd_setzen(true);
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.4  2000/10/24 13:58:23  mk
+  - Datumsbezuege wieder korrigiert
+
   Revision 1.13.2.3  2000/10/15 09:43:27  mk
   OH:- Datumsbezuege aktualisieren nur noch wenn noetig
 
