@@ -241,7 +241,7 @@ begin
         iifs(IsKnownCharset(pa.FileCharset),pa.FileCharset,'IBM437'),
         iifs(IsKnownCharset(pa.ContentCharset),pa.ContentCharset,'ISO-8859-1') ));
 
-  if pa.FileEOL in [MimeEOLCR,MimeEOLLF] then
+  if (pa.FileEOL in [MimeEOLCR,MimeEOLLF]) and (not pa.isFile) then
     ConnectStream(outs,MimeCreateEolConverter(pa.FileEOL));
 
 
@@ -323,6 +323,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7.2.10  2004/09/26 10:46:08  mk
+// - fixed Bug #1034198: corrupted mime attatchments
+//
 // Revision 1.7.2.9  2003/09/29 19:08:31  mk
 // - another fix for #809655: 3.8.12. Multipart lässt sich nicht edieren
 //
