@@ -1,0 +1,708 @@
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ --------------------------------------------------------------- }
+
+
+{ CrossPoint - UniSel: Select/Test-Routinen fuer Unisel-Menues    }
+
+{ JG: Ausgelagert, da Unit die 64K-Groesse ueberschritten hat }
+
+{$I XPDEFINE.INC}
+{$O+,F+}
+
+unit xp9sel;
+
+interface
+
+uses
+  crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+  maus2,mouse,resource,xpglobal,
+     xp0,xp1,xp1o,xp1o2,xp1input,xp2c, lfn;
+
+procedure SelSchab(var cr:CustomRec);
+function  xp9_testbox(var s:string):boolean;
+function  xp9_setclientFQDN(var s:string):boolean;
+function  xp9_FQDNTest(var s:string):boolean;
+function  zidtest(var s:string):boolean;
+function  validfile(var s:string):boolean;
+function  testfidodir(var s:string):boolean;
+function  testqwkinfiles(var s:string):boolean;
+procedure set_uparcext(var s:string);
+procedure set_downarcext(var s:string);
+function  progtest(var s:string):boolean;
+function  testmbretter(var s:string):boolean;
+procedure gf_getntyp(var s:string);
+function  testbaud(var s:string):boolean;
+function  testbossnode(var s:string):boolean;
+procedure setfidoadr(var s:string);
+procedure ps_setempf(var s:string);
+function  notempty2(var s:string):boolean;
+function  testreplyto(var s:string):boolean;
+procedure uucp_getloginname(var s:string);
+function  testuucp(var s:string):boolean;
+procedure SetDomain(var s:string);
+procedure SetDomain2(var s:string);
+procedure testArcExt(var s:string);
+function  testscript(var s:string):boolean;
+procedure scripterrors(var s:string);
+procedure setpasswdfield(var s:string);
+procedure fidotestpasslen(var s:string);
+function  testvertreterbox(var s:string):boolean;
+function  testsysname(var s:string):boolean;
+function  testlogfile(var s:string):boolean;
+function  TestAKAservers(var s:string):boolean;
+function  testZCpointname(var s:string):boolean;
+function  JanusSwitch(var s:string):boolean;
+function  PPPClientPathTest(var s:string):boolean;
+function  PPPClientTest(var s:string):boolean;
+
+implementation
+
+uses
+  xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm;
+
+
+procedure SelSchab(var cr:CustomRec);
+var ps  : pathstr;
+    dir : dirstr;
+    name: namestr;
+    ext : extstr;
+begin
+  selcol;
+  ps:=fsbox(screenlines div 2 - 5,'*.xps','',cr.s+'.xps',false,false,false);
+  fsplit(ps,dir,name,ext);
+  cr.brk:=(name='');
+  if not cr.brk then cr.s:=name;
+end;
+
+
+function zidtest(var s:string):boolean;       { Pointdaten - Serienner }
+begin
+  if length(s)=4 then zidtest:=true
+  else begin
+    rfehler(903);    { 'Die Seriennummer mu· 4 Zeichen lang sein.' }
+    zidtest:=false;
+    end;
+end;
+
+
+function validfile(var s:string):boolean;     { Sysop-Mode }
+begin
+  if (trim(s)<>'') and not ValidFilename(s) then begin
+    rfehler(904);    { 'ungÅltiger Dateiname' }
+    validfile:=false
+    end
+  else
+    validfile:=true;
+end;
+
+function testfidodir(var s:string):boolean;   { Fido Sysop-Mode }
+var res : integer;
+begin
+  if s='' then
+    testfidodir:=true
+  else begin
+    testfidodir:=false;
+    if right(s,1)<>DirSepa then s:=s+DirSepa;
+    s:=FExpand(s);
+    if s=OwnPath then
+      rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
+    else
+      if IsPath(s) then
+        testfidodir:=true
+      else
+        if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
+        begin
+          mklongdir(s,res);
+          if res<0 then
+            rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
+          else
+            testfidodir:=true;
+          end;
+    end;
+end;
+
+function testqwkinfiles(var s:string):boolean;
+var
+    qd  : pathstr;
+begin
+  testqwkinfiles:=false;
+  if s<>'' then begin
+    qd:=GetFileDir(s);
+    testqwkinfiles:=testfidodir(qd);
+    s:=qd+getFileName(s);
+    end;
+end;
+
+procedure set_uparcext(var s:string);
+var ls  : string[60];
+    ext : string[3];
+begin
+  if UpArcNr<1 then exit;
+  ls:=lstr(s);
+  ext:='*';
+  if (left(ls,5)='pkarc') or (left(ls,5)='pkpak') then ext:='arc'
+  else if left(ls,3)='lha' then ext:='lzh'
+  else if left(ls,5)='pkzip' then ext:='zip'
+  else if left(ls,3)='arj' then ext:='arj'
+  else if (left(ls,4)='copy') and (getfield(UpArcNr)<>'txt') then ext:='';
+  if ext<>'*' then setfield(UpArcNr,ext);
+end;
+
+procedure set_downarcext(var s:string);
+var ls  : string[60];
+    ext : string[3];
+begin
+  if DownArcNr<1 then exit;
+  ls:=lstr(s);
+  ext:='*';
+  if (left(ls,6)='pkxarc') or (left(ls,7)='pkunpak') then ext:='arc'
+  else if left(ls,3)='lha' then ext:='lzh'
+  else if left(ls,7)='pkunzip' then ext:='zip'
+  else if left(ls,3)='arj' then ext:='arj'
+  else if (left(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
+  if ext<>'*' then setfield(DownArcNr,ext);
+end;
+
+function progtest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+    path : string[127];
+begin
+  progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
+  path:=getenv('PATH');
+  if ustr(left(s+' ',7))='ZMODEM ' then
+    fn:='ZM.EXE'
+  else
+    fn:=trim(s);
+  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+  if (fn<>'') and (pos('*'+ustr(fn)+'*','*COPY*DIR*PATH*')=0) then begin
+    fsplit(fn,dir,name,ext);
+    if ext<>'' then
+      ok:=fsearch(fn,path)<>''
+    else
+      ok:=(fsearch(fn+'.exe',path)<>'') or
+          (fsearch(fn+'.com',path)<>'') or
+          (fsearch(fn+'.bat',path)<>'');
+    if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+  end;
+end;
+
+function PPPClientTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+    s1: String;
+begin
+  PPPClientTest:=true;
+  fn:=trim(s);
+  if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+  if (fn<>'') then
+  begin
+    fsplit(fn,dir,name,ext);
+    ok := dir = '';
+    s1 := GetField(fieldpos-1);
+    if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+    { if ustr(s1) =  ustr(Dir) then Ok := true; }
+    if Dir = '$CLPATH+' then ok := true;
+    if not ok then
+    begin
+      rfehler1(936, UStr(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
+      PPPClientTest := false;
+    end else
+    begin
+      exchange(fn, '$CLPATH+', s1);
+      if ext<>'' then
+        ok:=fsearch(fn,ownpath)<>''
+      else
+        ok:=(fsearch(fn+'.exe',ownpath)<>'') or
+          (fsearch(fn+'.com',ownpath)<>'') or
+          (fsearch(fn+'.bat',ownpath)<>'');
+      if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+    end;
+  end;
+end;
+
+function PPPClientPathTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    res  : Integer;
+    path : string;
+    x,y  : byte;
+begin
+  PPPClientPathTest:=true;
+  fn:=trim(s);
+  if (fn<>'') then
+  begin
+    if right(s,1)<>DirSepa then s:=s+DirSepa;
+    if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
+    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+      and (Length(fn) > 0) and (fn[length(fn)] <> '.');
+    if not ok then
+    begin
+{      rfehler1(938, UStr(s));} { 'Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!' }
+      msgbox(62,6,_fehler_,x,y);
+      mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe mu· RELATIV sein und auf ein Verzeichnis EINE' }
+      mwrt(x+3,y+3,getres2(10900,38));   { 'Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!' }
+      errsound;
+      wait(curoff);
+      closebox;
+      freeres;
+      PPPClientPathTest := false;
+      Exit;
+    end;
+    if not IsPath(s) then
+      if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
+      begin
+        mklongdir(s,res);
+        if res<0 then
+        begin
+          PPPClientPathTest:=false;
+          rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
+        end;
+      end else
+        PPPClientPathTest:=false;
+  end else
+  begin
+    PPPClientPathTest:=false;
+    rfehler(939)           { 'Dieser Pfad darf nicht leer sein!' }
+  end;
+end;
+
+
+function testmbretter(var s:string):boolean;
+begin
+  if pp_da and (ustr(s)<>ustr(BoxPar^.MagicBrett)) then begin
+    s:=BoxPar^.MagicBrett;
+    rfehler(927);
+    testmbretter:=false;
+    end
+  else begin
+    if right(s,1)<>'/' then s:=s+'/';
+    if left(s,1)<>'/' then s:='/'+s;
+    testmbretter:=true;
+    end;
+end;
+
+function testbaud(var s:string):boolean;
+begin
+  if ival(s)=0 then testbaud:=false
+  else testbaud:=(115200 mod ival(s))=0;
+end;
+
+function testbossnode(var s:string):boolean;
+var fa : fidoadr;
+begin
+  testbossnode:=false;
+  if trim(s)='' then errsound
+  else begin
+    splitfido(s,fa,DefaultZone);
+    with fa do
+      if net+node=0 then errsound
+      else begin
+        s:=strs(zone)+':'+strs(net)+'/'+strs(node);
+        testbossnode:=true;
+        end;
+    end;
+end;
+
+procedure setfidoadr(var s:string);   { Gruppen-Adresse }
+var fa : FidoAdr;
+begin
+  if trim(s)<>'' then begin
+    splitfido(s,fa,2);
+    with fa do
+      s:=strs(zone)+':'+strs(net)+'/'+strs(node)+iifs(ispoint,'.'+strs(point),'');
+    end;
+end;
+
+procedure ps_setempf(var s:string);
+var p : byte;
+begin
+  p:=cpos('@',s);
+  if p>0 then
+    s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
+end;
+
+function testreplyto(var s:string):boolean;
+var p : byte;
+    d : DB;
+begin
+  if s='' then
+    testreplyto:=true
+  else begin                            { Wenns keine gueltige Adresse ist...}
+    p:=cpos('@',s);
+    if (p=0) or (pos('.',mid(s,p))=0) then
+    begin
+      dbOpen(d,PseudoFile,1);
+      dbSeek(d,piKurzname,ustr(s));
+      if dbFound then
+      begin
+        dbRead(d,'Langname',s);         { ists ein Kurzname ? }
+        dbclose(d);
+        testreplyto:=true;
+        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+          begin
+            rfehler(908);               { 'ungÅltige Adresse' }
+            testreplyto:=false;
+            end;
+        end
+      else begin
+        rfehler(908);     { 'ungÅltige Adresse' }
+        dbclose(d);
+        testreplyto:=false;
+        end;
+      end
+    else
+      testreplyto:=true;
+  end;
+end;
+
+procedure uucp_getloginname(var s:string);
+begin
+  if getfield(loginfld)='' then
+    setfield(loginfld,s);
+end;
+
+
+function testuucp(var s:string):boolean;
+var ok : boolean;
+    i  : integer;
+begin
+  ok:=false;
+  for i:=uup1 to uupl do
+    if i=fieldpos then
+      if s=_jn_[1] then ok:=true   { 'J' }
+      else
+    else
+      if getfield(i)=_jn_[1] then ok:=true;
+  testuucp:=ok;
+  if not ok then
+    rfehler(909);    { 'Mindestens ein Protokoll mu· eingeschaltet sein!' }
+end;
+
+
+procedure SetDomain(var s:string);
+begin
+  if trim(s)<>'' then
+    if DomainNt=nt_Fido then
+      while (left(s,1)='.') or (left(s,2)='@') do
+        delfirst(s)
+    else begin
+      if s[1]<>'.' then
+         s:='.'+s;
+      if (bDomainNt<>0) and (getfield(fieldpos+1)='') then
+        setfield(fieldpos+1,s);
+      end;
+end;
+
+procedure SetDomain2(var s:string);
+begin
+  if trim(s)<>'' then
+    if DomainNt=nt_Fido then
+      while (left(s,1)='.') or (left(s,2)='@') do
+        delfirst(s)
+    else begin
+      if s[1]<>'.' then
+         s:='.'+s;
+      end;
+end;
+
+
+procedure testArcExt(var s:string);
+begin
+  if (EditPnt=nt_Maus) and (s='TXT') then
+    s:='';
+end;
+
+function testscript(var s:string):boolean;
+var dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+begin
+  if trim(s)='' then
+    testscript:=true
+  else begin
+    fsplit(s,dir,name,ext);
+    if ext='' then s:=dir+name+'.scr';
+    if exist(s) then
+      testscript:=true
+    else begin
+      rfehler(22);     { 'Datei ist nicht vorhanden!' }
+      testscript:=false;
+      end;
+    end;
+end;
+
+procedure scripterrors(var s:string);
+begin
+  if (s<>'') and exist(s) and (RunScript(true,s,false,false,nil)<>0) then begin
+    rfehler(925);    { 'Syntaxfehler in Script' }
+    if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
+    end;
+end;
+
+{ Fileserver: Feldbezeichnung Ñndern }
+
+procedure setpasswdfield(var s:string);
+begin
+  setfieldtext(4,getres2(903,iif(ustr(s)=ustr(uuserver),7,6)));
+end;
+
+{ Fido: YooHoo-PW auf 8 Zeichen begrenzen }
+
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+procedure fidotestpasslen(var s:string);
+begin
+  if (getfield(EMSIfield)='N') and (length(getfield(4))>8) then begin
+    rfehler(926);
+    setfield(4,left(getfield(4),8));
+    end;
+end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
+
+function testvertreterbox(var s:string):boolean;
+var d  : DB;
+    nt : byte;
+    ok : boolean;
+begin
+  if s='' then testvertreterbox:=true
+  else begin
+    dbOpen(d,BoxenFile,1);
+    SeekLeftBox(d,s);
+    if dbFound then begin
+      dbRead(d,'boxname',s);
+      nt:=dbReadInt(d,'netztyp');
+      end;
+    dbClose(d);
+    if not dbFound then begin
+      rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+      testvertreterbox:=false;
+      end
+    else begin
+      if fieldpos=amvfield then    { AM-Vertreterbox }
+        ok:=(DomainNt=nt)
+      else                         { PM-Vertreterbox }
+        ok:=ntAdrCompatible(DomainNt,nt);
+      if not ok then rfehler(2713);
+      testvertreterbox:=ok;
+      end;
+    end;
+end;
+
+function testsysname(var s:string):boolean;
+begin
+  if trim(s)='' then begin
+    errsound;
+    testsysname:=false;
+    end
+  else
+    testsysname:=true;
+end;
+
+function testlogfile(var s:string):boolean;
+var fn : pathstr;
+begin
+  if s='' then
+    testlogfile:=true
+  else begin
+    if lstr(s)='logfile' then           { Diese Pruefung ist nun wirklich der Hit (hd) }
+      if s[1]='l' then s:=s+'.log'
+      else s:=s+'.LOG';
+    if not multipos(_MPMask,s) then
+      fn:=logpath+s
+    else
+      fn:=s;
+    if validfilename(fn) then
+      testlogfile:=true
+    else begin
+      rfehler(928);         { 'ungÅltiger Dateiname!' }
+      testlogfile:=false;
+      end;
+    end;
+end;
+
+
+function TestAKAservers(var s:string):boolean;
+var ok : boolean;
+    p  : byte;
+    s2 : string;
+begin
+  ok:=true;
+  if s<>'' then begin
+    s2:=s;
+    repeat
+      p:=blankpos(s2);
+      if p=0 then p:=length(s2)+1;
+      if ntBoxNetztyp(left(s2,p-1))<>nt_Fido then begin
+        rfehler1(929,left(s2,p-1));  { '%s ist keine eingetragene Fido-Serverbox!' }
+        ok:=false;
+        end;
+      s2:=trim(mid(s2,p+1));
+    until s2='';
+    end;
+  TestAKAservers:=ok;
+end;
+
+
+{ ZCONNECT-Pointname auf ungÅltige Zeichen ÅberprÅfen }
+
+function testZCpointname(var s:string):boolean;
+var us : string[40];
+    i  : integer;
+begin
+  us:='';
+  for i:=1 to length(s) do
+    if not (s[i] in ['A'..'Z','0'..'9','-']) and (cpos(s[i],us)=0) then
+    begin
+      if us<>'' then us:=us+', ';
+      us:=us+s[i];
+      end;
+  if us<>'' then
+    rfehler1(930,us);    { 'Warnung: UngÅltige Zeichen im Pointname: %s' }
+  testZCpointname:=true;  { (us=''); }
+end;
+
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+function JanusSwitch(var s:string):boolean;
+var x,y   : byte;
+    anz,i : integer;
+    t     : taste;
+begin
+  JanusSwitch:=true;
+  if lstr(getfield(downprotnr))='zmodem' then exit;
+  anz:=res2anz(932);
+  msgbox(63,anz+5,_hinweis_,x,y);
+  for i:=1 to anz do
+    wrt(x+3,y+1+i,getres2(932,i));
+  wrt(x+3,y+3+anz,getres(12));    { 'Taste drÅcken ...' }
+  errsound;
+  get(t,curon);
+  closebox;
+end;
+
+
+procedure gf_getntyp(var s:string);
+var uucp : boolean;
+begin
+  gf_fido:=(lstr(s)=lstr(ntName(nt_Fido)));
+  uucp:=(lstr(s)=lstr(ntName(nt_UUCP))) OR (lstr(s)=lstr(ntName(41)));
+  if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp then
+    set_chml(userfield,'')
+  else
+    set_chml(userfield,'>');
+  if uucp then
+    set_chml(fieldpos+1,'')
+  else
+    set_chml(fieldpos+1,'>');
+  setfieldtext(userfield,getres2(912,iif(lstr(s)=lstr(ntName(41)),12,3)));
+end;
+
+function xp9_testbox(var s:string):boolean;
+var nt : string[15];
+begin
+  if trim(s)='' then begin
+    rfehler(919);    { 'Bitte Boxname eingeben (Hilfe mit F1).' }
+    xp9_testbox:=false;
+    end
+  else
+    if gf_fido then
+      xp9_testbox:=testbossnode(s)
+    else begin
+      if DomainNt<0 then nt:=lstr(getfield(1))   { Netztyp als String }
+      else nt:=lstr(ntName(DomainNt));
+      if nt=lstr(ntName(nt_Maus)) then begin
+        if (length(s)>4) and (ustr(left(s,4))='MAUS') then
+          s:=mid(s,5);
+        if cpos('.',s)>0 then s:=left(s,cpos('.',s)-1);
+        s:=left(s,6);
+        end
+      else if nt=lstr(ntName(nt_Netcall)) then         { Domain abschneiden }
+        if right(s,4)='.ZER' then s:=left(s,length(s)-4)
+        else
+      else if (nt=lstr(ntName(nt_ZCONNECT))) or (nt=lstr(ntName(nt_UUCP))) then
+        if cpos('.',s)>0 then truncstr(s,cpos('.',s)-1);
+      xp9_testbox:=true;
+      end;
+end;
+
+function xp9_setclientFQDN(var s:string):boolean;
+var s1:string;
+     b:byte;
+     u:byte;
+begin
+  xp9_setclientFQDN:=false;
+  mclearsel(6);                    { FQDN = Feld 6 !!! }
+  if s='' then begin
+    errsound;
+    exit;
+    end;
+  b:=cpos('@',s);
+  if (b=0) or (cpos('@',mid(s,b+1))<>0)
+    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+   then begin
+     rfehler(908);
+     exit;
+     end;
+  xp9_setclientFQDN:=true;
+  s1:=s; s1[b]:='.';
+  for u:=cposx('_',s1) to length(s1) do
+    if s1[u]='_' then s1[u]:='-';
+  if lstr(mid(s1,b))='.t-online.de'
+    then insert('.dialin',s1,b);
+  mappendsel(6,false,s1);          { FQDN = Feld 6 !!! }
+end;
+
+function xp9_FQDNTest(var s:string):boolean;
+var
+  s1 : string;
+  b  : byte;
+begin
+   XP9_FQDNTest:=true;
+   s1:=mailstring(s,false);
+   for b:=1 to length(s1) do
+     case s1[b] of
+       '@'  :  s1[b]:='.';
+       '_'  :  s1[b]:='-';
+       end;
+   while (s1[1]='.') and (s1[0]<>#0) do
+     delete(s1,1,1);
+   if s1<>s then begin
+     errsound;
+     xp9_FQDNTest:=false;
+     end;
+   s:=s1;
+end;
+
+function notempty2(var s:string):boolean;
+begin
+  if trim(s)<>'' then
+    notempty2:=true
+  else begin
+    rfehler(920);    { 'Bitte Username eingeben (Hilfe mit F1).' }
+    notempty2:=false;
+    end;
+end;
+end.
