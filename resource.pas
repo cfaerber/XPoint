@@ -204,7 +204,7 @@ end;
 
 function GetRes(nr:word):string;
 var bnr,inr : word;
-    s       : string;
+    s       : shortstring;
 begin
   if not getnr(nr,bnr,inr) then
     GetRes:='fehlt: ['+strs(nr)+'] '
@@ -239,7 +239,7 @@ var bnr,inr  : word;
     size,ofs : word;
     p        : barrp;
     l,r,m,i  : word;
-    s        : string;
+    s        : shortstring;
 label ende;
   function fehlt:string;
   begin
@@ -347,6 +347,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/07 14:38:35  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.12  2000/07/05 09:27:09  hd
   - AnsiString-Anpassung
 

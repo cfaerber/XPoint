@@ -616,14 +616,19 @@ end;
 
 procedure test_defaultbox;
 var d    : DB;
-    dname: string;
+    tmpS,			{ Records in der DB sind shortstrings }
+    dname: shortstring;
 begin
 {$IFDEF Debug }
   dbLog('-- Boxen ÅberprÅfen');
 {$ENDIF }
+  tmpS:= UpperCase(DefaultBox);
   dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(DefaultBox));
+  dbSeek(d,boiName,tmpS);
   if not dbFound then begin
+    {$ifdef Debug}
+    dbLog('-- Defaultbox "'+tmpS+'" nicht gefunden');
+    {$endif}
     if dbRecCount(d)=0 then begin
       {$IFDEF EASY}
       if not NeuBenutzergruss then
@@ -639,23 +644,33 @@ begin
       end
     else begin
       dbGoTop(d);
-      dbRead(d,'boxname',DefaultBox);
+      dbRead(d,'boxname',tmpS);
+      DefaultBox:= tmpS;
       dbRead(d,'dateiname',dname);
       end;
     SaveConfig;
     end
   else
     dbRead(d,'Dateiname',dname);
+  {$ifdef Debug}
+  dbLog('-- Defaultbox: "'+tmpS+'"');
+  dbLog('-- Dateiname : "'+dname+'"');
+  {$endif}
   if not exist(OwnPath+dname+BfgExt) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(dname,boxpar);
-    end;
+  end;
   if deffidobox<>'' then begin
-    dbSeek(d,boiName,deffidobox);
-    if not dbFound then deffidobox:=''
-    else HighlightName:=UpperCase(dbReadStr(d,'username'));
-    if deffidobox<>'' then SetDefZoneNet;
+    dbSeek(d,boiName,tmpS);
+    deffidobox:= tmpS;
+    if not dbFound then 
+      deffidobox:=''
+    else begin
+      deffidobox:= tmpS;
+      HighlightName:=UpperCase(dbReadStr(d,'username'));
     end;
+    if deffidobox<>'' then SetDefZoneNet;
+  end;
   dbClose(d);
   if abgelaufen1 then rfehler(213);
 end;
@@ -963,17 +978,12 @@ var d   : DB;
     p   : DomainNodeP;
     dom : string;
 
-  function smaller(dl:DomainNodeP):boolean;
-  begin
-    smaller:=(dom<dl^.domain^);
-  end;
-
   procedure InsertIntoList(var dl:DomainNodeP);
   begin
     if dl=nil then
       dl:=p
     else
-      if smaller(dl) then
+      if (dom<dl^.domain) then
         InsertIntoList(dl^.left)
       else
         InsertIntoList(dl^.right);
@@ -1009,8 +1019,7 @@ begin
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
                                  dbReadStr(d,'domain'));
       end;
-      getmem(p^.domain,length(dom)+1);
-      p^.domain^:=dom;
+      p^.domain:=dom;
       p^.left:=nil;
       p^.right:=nil;
       insertintolist(DomainList);
@@ -1068,6 +1077,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/07/07 14:38:36  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.54  2000/07/07 11:00:32  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung

@@ -846,8 +846,9 @@ begin
   else begin
     r:=rahmen;
     if (text='*') or (text='-') then begin
-      setrahmen(0); text:='';
+      setrahmen(0); 
       tx1:=text[1];
+      text:='';
       end
     else
       tx1:=' ';
@@ -920,6 +921,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.43  2000/07/07 14:38:35  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.42  2000/07/04 12:04:18  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

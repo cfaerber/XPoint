@@ -1184,7 +1184,7 @@ end;
 
 
 function dbReadStr(dbp:DB; feld:dbFeldStr):string;
-var s: string;
+var s: shortstring;
 begin
   dbRead(dbp,feld,s);
   dbReadStr:=s;
@@ -1540,6 +1540,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/07/07 14:38:35  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.27  2000/07/07 10:18:40  mk
   - Assembler-Routinen entfernt
 

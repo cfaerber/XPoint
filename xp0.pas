@@ -924,7 +924,7 @@ type   textp  = ^text;
        DomainNodeP = ^domainnode;
        DomainNode = record
                       left,right : DomainNodeP;
-                      domain     : ^string;
+                      domain     : string;
                     end;
 
 
@@ -1570,6 +1570,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.68  2000/07/07 14:38:36  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.67  2000/07/07 11:00:31  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung

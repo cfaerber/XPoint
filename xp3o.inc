@@ -626,8 +626,8 @@ var x,y      : byte;
       delete(dom,1,cpos('@',dom));
       LoString(dom);
       p:=DomainList;
-      while (p<>nil) and (p^.domain^<>dom) do
-        if dom<p^.domain^ then p:=p^.left
+      while (p<>nil) and (p^.domain<>dom) do
+        if dom<p^.domain then p:=p^.left
         else p:=p^.right;
       IsOwnDomain:=(p<>nil);
       end;
@@ -1173,6 +1173,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/07/07 14:38:36  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.24  2000/07/05 15:46:47  hd
   - AnsiString
 

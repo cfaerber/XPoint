@@ -54,6 +54,7 @@ begin
     if p>0 then begin
       inc(n);
       with ma^[n] do begin
+        mstr:='';
         s:=copy(s,p+1,255);
         if nummern and (left(s,2)<>'-,') then begin
           mpnr:=hexval(left(s,3));
@@ -64,7 +65,7 @@ begin
           mpnr:=0;
           enabled:=true;
           end;
-        if s[1]='!' then begin      { MenÅ nicht verlassen? }
+        if (length(s)>0) and (s[1]='!') then begin      { MenÅ nicht verlassen? }
           keep:=true;
           delete(s,1,1);
           end
@@ -110,7 +111,7 @@ var i      : integer;
     x:   Integer;
 begin
   if mainmenu=nil then begin
-    new(mainmenu);
+    getmem(mainmenu,sizeof(menuarray));
     splitmenu(0,mainmenu,main_n,true);
     p:=2;
     for i:=1 to main_n do begin
@@ -173,7 +174,7 @@ end;
 
 procedure freemain;
 begin
-  dispose(mainmenu);
+  freemem(mainmenu, sizeof(menuarray));
   mainmenu:=nil;
 end;
 
@@ -431,7 +432,7 @@ begin
     menulevel:=0;
     if menurestart then enterkey:=mainmenu^[menustack[0]].hkey;
     end;
-  new(ma);
+  getmem(ma,sizeof(menuarray));
   splitmenu(nr,ma,n,true);
   if n=0 then begin    { leeres MenÅ durch XPME }
     dispose(ma);
@@ -590,7 +591,7 @@ begin
     end
   else showmain(0);
   menupos[nr]:=p;
-  dispose(ma);
+  freemem(ma,sizeof(menuarray));
 
   if t=keyesc then getmenu:=0
   else if t=keycr then getmenu:=get2
@@ -600,6 +601,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/07 14:38:36  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.16  2000/07/07 11:00:32  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung

@@ -1031,11 +1031,11 @@ begin
   cursor(curoff);
   window(1,1,80,25);
 {$ENDIF }
-  getmem(ma,sizeof(map));
+  getmem(ma,sizeof(menuarray));
   splitmenu(ZeilenMenue,ma,n,true);
   for i:=1 to n do
     if screenlines=ival(ma^[i].mstr) then menupos[ZeilenMenue]:=i;
-  freemem(ma,sizeof(map));
+  freemem(ma,sizeof(menuarray));
   set_helppos;
 end;
 
@@ -1060,7 +1060,7 @@ begin
     dbSeek(d,boiName,UpperCase(DefaultBox));
     showtline;
     if dbFound then begin
-      dbRead(d,'username',user);
+      user:= dbReadStr(d,'username');
       mwrt(screenwidth-2-length(user),3,' '+user+' ');
       end;
     dbClose(d);
@@ -2023,6 +2023,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/07/07 14:38:36  hd
+  - AnsiString
+  - Kleine Fixes nebenbei
+  - dbReadStr angepasst
+
   Revision 1.58  2000/07/07 11:00:32  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
