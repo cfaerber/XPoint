@@ -26,10 +26,9 @@ unit addresslist;
 
 uses classes
   {$IFDEF Delphi}
+  {$IFNDEF Kylix}
     , contnrs
   {$ENDIF}
-  {$IFDEF Kylix}
-    , contnrs
   {$ENDIF}
     , addresses;
 
@@ -754,6 +753,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.4  2002/04/20 13:56:54  ml
+// - kylix compatibility
+//
 // Revision 1.3  2002/04/17 20:22:47  mk
 // - removed unit strutils, not needed with delhpi6 and not available with fpc
 //

@@ -66,11 +66,11 @@ function RFCNormalizeAddress(const addr,domain:string):string;
 uses
   Typeform,
 {$IFDEF Delphi}
-//  {$IFDEF Kylix}
-//  IdGlobal,
-//  {$ELSE}
+  {$IFDEF Kylix}
+
+  {$ELSE}
   strutils,
-//  {$ENDIF}
+  {$ENDIF}
 {$ENDIF}
   SysUtils;
 
@@ -474,6 +474,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2002/04/20 13:56:54  ml
+// - kylix compatibility
+//
 // Revision 1.8  2002/04/14 22:19:59  cl
 // - added RFCQuotePhrase/RFCUnquotePhrase
 // - moved RFCReadAddress[List]/RFCWriteAddressList to addresslist.pas

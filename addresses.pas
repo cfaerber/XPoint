@@ -26,10 +26,9 @@ unit addresses;
 
 uses classes
   {$IFDEF Delphi}
+  {$IFNDEF Kylix}
     , contnrs
   {$ENDIF}
-  {$IFDEF Kylix}
-    , contnrs
   {$ENDIF}
   ;
 
@@ -815,6 +814,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.4  2002/04/20 13:56:54  ml
+// - kylix compatibility
+//
 // Revision 1.3  2002/04/19 16:51:43  cl
 // - fix for FPC
 //

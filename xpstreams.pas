@@ -128,11 +128,10 @@ procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
 uses
   xp1,fileio,sysutils
   {$IFDEF Delphi}
-//  {$IFDEF Kylix}
-//  ,IdGlobal
-//  {$ELSE}
+  {$IFDEF Kylix}
+  {$ELSE}
   ,strutils
-//  {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
   ,typeform
   ;

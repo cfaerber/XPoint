@@ -55,11 +55,11 @@ type
 
 uses SysUtils
   {$IFDEF Delphi}
-//  {$IFDEF Kylix}
-//  ,IdGlobal
-//  {$ELSE}
+  {$IFDEF Kylix}
+  ,typeform
+  {$ELSE}
   ,StrUtils
-//  {$ENDIF}
+  {$ENDIF}
   {$ENDIF}
   ;
 
@@ -253,6 +253,9 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2002/04/20 13:56:54  ml
+// - kylix compatibility
+//
 // Revision 1.7  2001/12/30 19:56:48  cl
 // - Kylix 2 compile fixes
 //
