@@ -10466,6 +10466,14 @@ Vorsicht: Einige Provider erlauben es nicht, die
 Absenderadresse bei Mail frei zu w„hlen. In diesem
 Fall benutzen Sie bitte den Umweg ber PM-Vertreter-
 Server oder Reply-To.
+
+Hinweis: Im Usenet (RFC) hat es sich als vorteilhaft
+herausgestellt, als <<E-Mail>> eine Wegwerfadresse 
+einzutragen, die nur sporadisch gelesen wird und die
+echte eigene E-Mail-Adresse unter <<Reply-To>> einzu-
+tragen. Dadurch wird ein Groáteil des Spams an die 
+Wegwerfadresse gesandt, w„hrend echte Antworten an 
+die Reply-To-Adresse gehen.
 @
 696
 ^^695
