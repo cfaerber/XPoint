@@ -375,7 +375,7 @@ var ax,p,myp  : integer;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
-        width:=max(width,length(p1^.el));
+        width:=max(width,min(length(p1^.el), ScreenWidth-10));
         if UpperCase(cont)=UpperCase(p1^.el) then p:=lines;
         p1:=p1^.next;
         end;
@@ -1094,6 +1094,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.30  2001/01/04 09:59:11  mk
+  - limited length of line to ScreenWidth - 10
+
   Revision 1.29  2000/12/29 22:29:04  mk
   CL:- fixes for UUCP config dialogue
 
