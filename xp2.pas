@@ -252,6 +252,9 @@ procedure initdirs;
 
   procedure GetLibDir;
   begin
+    {$ifdef UnixDevelop}
+    Libdir:= './';
+    {$else}
     LibDir := '/usr/lib/' + XPDirName;                    { Lib/Res-Verzeichnis }
     if not DirAvailableCheck(LibDir) then
     begin
@@ -267,6 +270,7 @@ procedure initdirs;
       end;
     end;
     AddSepa(LibDir);
+    {$endif}
   end;
 
 begin {initdirs}
@@ -1206,6 +1210,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/10/19 14:10:40  hd
+  - UnixDevelop eingefuegt
+
   Revision 1.74  2000/10/17 20:36:50  mk
   - Diskfree/Disksize von Longint auf Int64 umgestellt
 
