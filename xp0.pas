@@ -872,10 +872,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        EditSendpath : String;
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
-       DefaultViewer: string;  { Viewer fuer */* }
-       DefTextViewer: string;  { Viewer fuer text/* }
-       PtextViewer  : string;  { Viewer fuer text/plain }
-
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
@@ -1176,6 +1172,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.102  2000/11/18 21:42:17  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.101  2000/11/18 18:38:21  hd
   - Grundstruktur des Loggings eingebaut
 

@@ -462,65 +462,12 @@ end;
 { art: 0=normal, 1=Rot13, 2=HexDump }
 { mp:  0=kein Multipart, 1=Auto, 2=Multipart }
 
-{ Viewer-Prioritaet:   1. Viewer fuer passenden MIME-Typ }
-{                      2. interner Archiv-Viewer         }
-{                      3. externer Viewer fuer */*       }
-{                      4. Lister                         }
+{ Viewer-PrioritÑt:    1. Viewer fÅr passenden MIME-Typ }
+{                      2. interner Archiv-Viewer        }
+{                      3. externer Viewer fÅr */*       }
+{                      4. Lister                        }
 
-{ Ausschnitt aus der Mail 7nWPORiQUWB@jochen.gehring.dialin.t-online.de von
-  Jochen Gehring <Jochen.Gehring@t-online.de>:
-
-
-Zum verhalten bei Singlepart:
-
-die 600Zeilen Routine Readmsg in XP4W.INC sieht garnicht so riesig aus,
-ist aber ein wahnsinniges Gebastel das mit XP immer weiter gewachsen ist.
-Ohne den Code schritt fuer Schritt durchzutracen kann man oft nur raten,
-wann die Routine wohin springt. Da huscht ein File schon mal durch den einen
-Test durch, um von einem der drei folgenden, fast gleichartigen Tests
-abgefangen zu werden. Sinnvoll waere das ganze komplett neu zu schreiben,
-aber wer garantiert dann ob dann alles noch so funktioniert wie bisher ?
-(ich denke etzt an die verschiedenen File-Attach Varianten in Mailboxnetzen)
-
-Zum Verstaendnis: XP geht in etwa so vor:
-
-
-ist es ein File-Attach ?
-  J -> Dateinamen aus Betreff merken ------------------
-                                                       |
-existiert ein Mime-Header ?                            |
-  N -> In Datei Extrahieren und Viewertyp setzen ----  |
-                                                    |  |
-ist es Multipart ?                                  |  |
-  N -> Mimeauswahlfenster Emulieren -----------     |  |
-                                               |    |  |
-Mimeauswahlfenster darstellen                  |    |  |
-                                               |    |  |
-gewaehlten Mime-part in Datei extrahieren    <-     |  |
-                                                    |  |
-Dateinhalt in neue Datei dekodieren          <------   |
-                                                       |
-Ist es ein Fall fuer den Internen Viewer ?   <---------
-  J -> Archivviewer/Lister mit Datei Starten
-
-Existiert ein Viewertyp ?
-  J -> Zum Viewertyp passenden Viewer Waehlen
-  N -> Zur Dateiendung passenden Viewer waehlen
-
-Passt Dateiendung zum Viewer ?
-  N -> Dateiendung entsprechend setzen
-
-Viewer starten
-
-
-Und das ist jetzt grob vereinfacht, ohne die Sonderstellung
-von Dateiendung gegenueber Mime-typ, oder den Virenschutz,
-die die folgenden Tests dann kreativ durch umaendern des Viewertyps,
-Mimetyps oder Dateiendung umgehen...
-
-}
-
-procedure read_msg(art,mp:byte);
+procedure read_msg(ReadMessageType: TReadMessageType; ForceMultiPartType: TMultiPartType);
 var fn     : string;
     fn2    : string;
     typ    : char;
@@ -545,14 +492,14 @@ var fn     : string;
     abs    : string;
     miso   : boolean;
     rec    : longint;
-    multipart : boolean;
     mpdata : multi_part;
     mpselect : boolean;
     lastmpsel: boolean;
     mpart_nr : integer;    { anzuzeigender Nachrichtenteil }
     poppush  : boolean;
-    mimetyp  : string;
-    viewer   : ViewInfo;
+    MimeType: string;
+    MultiPartType: TMultiPartType;
+    MimeViewer: TMessageViewer;
                                            { Mailviren-Schutz }
 
   function fnform(fname:string; len:integer):string;
@@ -565,27 +512,27 @@ var fn     : string;
       fnform:=fname;
   end;
 
-  Procedure TestViralExtension;
+  procedure TestViralExtension(const Extension: String; Viewer: TMessageViewer);
   var x,y   : byte;
       t     : taste;
       s     : string;
   begin
-    if (viewer.ext='') and (viewer.prog<>'') and (viewer.prog <> '*intern*') then
+    // vor this file types always use internal viewer
+(*    if Pos(Extension,viewer_lister) <> 0 then Viewer.UseInternal
+    else
     begin
-      s:=UpperCase(ExtractFileExt(mpdata.fname))+'.';
-      if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0)) and (s <> '..') then
-        if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
-        else begin
-          diabox(45,6,'',x,y);
-          mwrt(x+2,y+1,LeftStr(s, Length(s)-1)+getres(2443));
-          mwrt(x+2,y+2,getres(2444));
-          t:='';
-          case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
-            0,2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
-            end;
-          closebox;
-          end;
+      if ((pos(Extension,viewer_save)=0) and (pos(Extension,viewer_danger)>0)) then
+      begin
+        diabox(45,6,'',x,y);
+        mwrt(x+2,y+1,LeftStr(s, Length(s)-1)+getres(2443));
+        mwrt(x+2,y+2,getres(2444));
+        t:='';
+        case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
+          0, 2 : viewer.Prog:=viewer_scanner;                   { Alternativ-Programm }
+        end;
       end;
+      closebox;
+    end; *)
   end;
 
   procedure CopyMsg;
@@ -778,135 +725,111 @@ begin
   d1_0:=false;
   briefsent:=false;
   mpselect:=true;
-  mpart_nr:=1;
   poppush:=true;
-  Fillchar(Viewer, Sizeof(Viewer), 0);
+  MimeViewer := TMessageViewer.Create;
 
   repeat                { +/- - Schleife }
     ende:=true;
+    MimeType := '';
+    fillchar(mpdata,sizeof(mpdata),0);
+    Arc := 0;
     GoP;
     aktdisprec:=dbRecno(mbase);
 
     { FileAttach -> Abfrage, ob Datei oder Text angezeigt werden soll }
 
     FileAttach:=(dbReadInt(mbase,'netztyp')and $200)<>0;
-    if FileAttach then begin
+    if FileAttach then
+    begin
       fn:=Readmsg_GetFilename;
       if not FileExists(fn) then
         FileAttach:=false
-      else if dbReadInt(mbase,'groesse')>4 then begin
-        pushhp(81);
-        brk:=false;
-        FileAttach:=ReadJNesc(getres(430),false,brk);   { 'Dateiinhalt anzeigen' }
-        pophp;
-        if brk then goto ende0;
+      else
+      begin
+        if dbReadInt(mbase,'groesse')>4 then
+        begin
+          pushhp(81);
+          brk:=false;
+          FileAttach:=ReadJNesc(getres(430),false,brk);   { 'Dateiinhalt anzeigen' }
+          pophp;
+          if brk then goto ende0;
         end;
+        fn2:=fn;
+        typ:='B';
+        mpart_nr:=1;
       end;
-
-    { Im folgenden Block werden die Variablen fn2, arc, typ, mpdata,    }
-    { mpart_nr und viewer entsprechend der gewaehlten Nachricht gesetzt: }
-
-    if FileAttach then begin
-      fn2:=fn;
-      GetExtViewer(fn2,viewer);
-      if viewer.prog<>'' then arc:=0
-      else begin
-        arc:=ArcType(fn);
-        if ArcRestricted(arc) then arc:=0;
-        end;
-      typ:='B';
-      fillchar(mpdata,sizeof(mpdata),0);
-      mpart_nr:=1;
-      end
-
-    else begin
+    end else
+    begin
       fn:=TempS(dbReadInt(mbase,'msgsize')+5000);
       dbReadN(mbase,mb_typ,typ);
-      if (typ='B') and (art<>2) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
-         ReadJN(getres(433),false) then begin     { 'Kommentar anzeigen' }
+
+      // has message a comment?
+      if (typ='B') and (ReadMessageType <> rmHexDump) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
+         ReadJN(getres(433),false) then
+      begin // show this comment
         ExtractKom(fn);
-        if listfile(fn,'Kommentar',true,false,0)=0 then;
+        listfile(fn,'Kommentar',true,false,0);
         _era(fn);
         goto ende0;
-        end;
-
-      mimetyp:= dbReadNStr(mbase,mb_mimetyp);
-      if (mimetyp='') and (mp<>0) and
-         ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
-        mimetyp:='multipart/mixed';
-      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
-
-      mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
-      GetDefaultViewer(mimetyp, Viewer);
-      GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
-      if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
-        GetMimeViewer(mimetyp,viewer);
-                                                       {Einteilige nicht text/plain Message }
-      if ((mp=1) or (mp=2)) and (mimetyp <>'') and (mimetyp<>'text/plain')
-        and (LeftStr(mimetyp,9)<>'multipart') then
-      begin
-        multipart:=false;
-        pushhp(94);
-        listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
-        app_l(forms(' '
-          + typname(LeftStr(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),30)
-          + '  ' + fnform(mpdata.fname,23) + ' 1');
-        app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
-        listTp(SSP_Keys);
-        ListSetStartpos(1);
-        list(brk);
-        closelist;
-        closebox;
-        pophp;
-        if brk then goto nextmsg;
-        if copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) {'gesamte Na'}
-          then viewer.prog:='*intern*';
-        Testviralextension;
-      end else
-      begin
-        Testviralextension;
-        multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
-                 ( (mp=2) or (LeftStr(mimetyp,10)='multipart/') or
-                   ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
-                 (mp<>0);
       end;
-      if multipart then
-      begin
-        pushhp(94);
-        if mpselect and pushed and poppush then begin
-          holen(pt); sichern(pt);
-          end;
-        SelectMultiPart(mpselect,mpart_nr,mp=2,mpdata,brk);
-        pophp;
-        if brk then goto nextmsg;
-        mpart_nr:=mpdata.part;
-        if mpdata.startline>0 then begin
-          if mpdata.typ<>'' then
-            mimetyp:=compmimetyp(mpdata.typ+'/'+mpdata.subtyp)
-          else
-            mimetyp:='text/plain';
 
-          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
-          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
-            GetMimeViewer(mimetyp,viewer);
-          Testviralextension;                    { Schutz vor Mail-Viren }
+      // identify type of the Message (not MIME, Singlepart or Multipart)
+      MultiPartType := mpNone;
+      MimeType  := dbReadNStr(mbase, mb_mimetyp);
+      if LeftStr(MimeType, 9) = 'multipart' then
+        MultiPartType := mpMulti
+      else
+        if (MimeType <> '') and (MimeType <> 'text/plain') then MultiPartType := mpSingle;
 
-          if viewer.prog<>'' then viewer.fn:=mpdata.fname;
+      // Singlepart Mime Message
+      case MultiPartType of
+      mpSingle:
+        begin
+          pushhp(94);
+          listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
+          app_l(forms(' '
+            + typname(LeftStr(MimeType,cpos('/', MimeType)-1),mid(Mimetype,cpos('/',MimeType)+1)),30)
+            + '  ' + fnform(mpdata.fname,23) + ' 1');
+          app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
+          ListTp(SSP_Keys);
+          ListSetStartpos(1);
+          List(brk);
+          Closelist;
+          Closebox;
+          pophp;
+          if brk then goto nextmsg;
+          // test if user has selected 'gesamte Nachricht'
+          if Copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
+        end;
+      mpMulti:
+        begin
+          pushhp(94);
+          if mpselect and pushed and poppush then begin
+            holen(pt); sichern(pt);
+            end;
+          SelectMultiPart(mpselect,mpart_nr, MultiPartType = mpMulti,mpdata,brk);
+          pophp;
+          if brk then goto nextmsg;
+          mpart_nr:=mpdata.part;
+          if mpdata.startline>0 then begin
+            if mpdata.typ<>'' then
+              MimeType := Compmimetyp(mpdata.typ+'/'+mpdata.subtyp)
+            else
+              MimeType := 'text/plain';
           end;
-      end
-      else begin
-        fillchar(mpdata,sizeof(mpdata),0);
-        mpart_nr:=1;
+        end;
       end;
 
       poppush:=true;
       ExtractSetMpdata(@mpdata);
-      extract_msg(iif(art=2,xTractDump,xTractHead),'',fn,false,iif(art=1,-1,1));
+      Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead),'',fn,false,
+        iif(MultiPartType = mpAuto,-1,1));
       if mpdata.code=mcodeBase64 then
         typ:='B';
 
-      if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
-         and (viewer.prog='') then begin       { keine Binaer-Versandmeldung }
+(*     if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
+         and (viewer.prog='') then
+      begin                        { keine BinÑr-Versandmeldung }
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
         GetExtViewer(GetMsgFilename,viewer);
@@ -920,28 +843,35 @@ begin
       else begin
         fn2:='';
         arc:=0;
-        end;
+        end; *)
+    end; // not FileAttach
 
-      if (viewer.prog='') and (arc=0) then begin
-        if mimetyp='' then
-          GetMimeViewer('text/plain',viewer);
-        if (viewer.prog='') and (mimetyp<>'') then
-          GetDefaultViewer(mimetyp,viewer);   { Viewer fuer */* }
-        end;
 
-      end;      { of not FileAttach }
+(*    !! Test auf Ctrl-H und oder Ctrl-Enter
+
+    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+    MimeViewer.GetFromExtension(mpdata.fname);     { Dateiendung hat bei Viewerauswahl }
+    if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
+      MimeViewer.GetFromMimeType(mimetyp);
+          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+            GetMimeViewer(mimetyp,viewer);
+          Testviralextension;                    { Schutz vor Mail-Viren }
+
+  *)
     { Nachricht anzeigen }
 
     nw:=NachWeiter;   { kann vom Lister veraendert werden }
     netztyp:=dbReadInt(mbase,'netztyp') and $ff;
-    if viewer.prog='*intern*' then viewer.prog:='';
-    if viewer.prog<>'' then begin      { externer Viewer }
-      if fn2='' then begin
+    if not MimeViewer.IsInternal then
+    begin                                        { externer Viewer }
+      if fn2='' then
+      begin
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
-        end;
-      if (viewer.fn='') then viewer.fn:=GetMsgFilename;
-      ViewFile(fn2,viewer,fileattach);
+      end;
+      // if (viewer.fn='') then viewer.fn:=GetMsgFilename;
+      // ViewFile(fn2,viewer,fileattach);
       lres:=0;
       end
     else
@@ -968,7 +898,7 @@ begin
         miso:=ConvIso;
         if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
           then ConvIso:=false;
-        lres:=Listfile(fn,ldisp,false,true,1+iif(art<>2,2,0));
+        lres:=Listfile(fn,ldisp,false,true,1+iif(MultiPartType <> mpMulti,2,0));
         ConvIso:=miso;
         listkommentar:=lksave;
         fnproc[0,3]:=dummyFN;
@@ -983,10 +913,11 @@ begin
 
     { aufrÑumen ... }
 
-    if not FileAttach then begin
-      if fn2<>'' then _era(fn2);    { Temp-Dateien loeschen }
+    if not FileAttach then
+    begin
+      if fn2<>'' then _era(fn2);    { Temp-Dateien lîschen }
       if FileExists(fn) then _era(fn);
-      end;
+    end;
     lastmpsel:=mpselect;
     mpselect:=false;
     _down:=NachWeiter;
@@ -1070,7 +1001,7 @@ begin
         end
       else
         case lres of
-          0 : if lastmpsel and multipart and (mpdata.parts>1) and
+          0 : (* if lastmpsel and multipart and (mpdata.parts>1) and
                  not mpdata.alternative
               then begin
                 SetGelesen;
@@ -1079,7 +1010,7 @@ begin
                 mpselect:=true;
                 ende:=false;
                 end
-              else begin
+              else *) begin
                 SetGelesen;
               nextmsg:
                 SetKK;
@@ -1098,6 +1029,7 @@ begin
 ende0:
   if pushed then holen(pt);
   if d1_0 then disprec[1]:=0;
+  MimeViewer.Free;
 end;
 
 procedure setmstat(newstat:byte);
@@ -1622,6 +1554,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.56  2000/11/18 21:42:18  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.55  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

@@ -81,7 +81,6 @@ procedure TestAutostart;
 procedure check_date;
 {$endif}
 procedure ReadDomainlist;
-procedure ReadDefaultViewers;
 
 procedure ShowDateZaehler;
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -1079,13 +1078,15 @@ begin
     multi3:=ShowDateZaehler; hotkeys:=false;
     readmask(brk);
     multi3:=m3s; hotkeys:=true;
-    if not brk and mmodified then begin
+    if not brk and mmodified then
+    begin
       t:=ival(LeftStr(dat,2));
       m:=ival(copy(dat,4,2));
       j:=ival(RightStr(dat,2));
       if j<80 then inc(j,2000) else inc(j,1900);
-      setdate(j,m,t);
-      end;
+      // !! not portable
+      // setdate(j,m,t);
+    end;
     enddialog;
     end;
 end;
@@ -1149,24 +1150,6 @@ begin
     copyright(true);
 end;
 
-procedure ReadDefaultViewers;
-
-  procedure SeekViewer(mimetyp:string; var viewer: string);
-  begin
-    dbSeek(mimebase,mtiTyp,UpperCase(mimetyp));
-    if not dbEOF(mimebase) and not dbBOF(mimebase) and
-       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then
-      viewer := dbReadNStr(mimebase,mimeb_programm)
-    else
-      viewer:= '';
-  end;
-
-begin
-  SeekViewer('*/*',DefaultViewer);
-  SeekViewer('text/*',DefTextViewer);
-  SeekViewer('text/plain',PTextViewer);
-end;
-
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }
 Begin
@@ -1191,6 +1174,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.87  2000/11/18 21:42:17  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.86  2000/11/18 18:38:21  hd
   - Grundstruktur des Loggings eingebaut
 

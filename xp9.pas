@@ -1146,10 +1146,6 @@ var d         : DB;
         rfehler(932);    { 'Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!' }
     until brk or (typ+ext<>'');
     enddialog;
-    if not brk then
-      if typ='text/plain' then PTextViewer := Prog else
-      if typ='text/*' then DefTextViewer := Prog else
-      if typ='*/*' then DefaultViewer := Prog;
     typ:=compmimetyp(typ);
   end;
 
@@ -1821,6 +1817,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.47  2000/11/18 21:42:18  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.46  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

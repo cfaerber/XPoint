@@ -1,6 +1,3 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
@@ -9,122 +6,26 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ CrossPoint - BinÑrfile-Viewer }
-
 {$I XPDEFINE.INC}
 
 unit xpview;
 
 interface
 
-uses xpglobal,sysutils,typeform,fileio,inout,database,xp0,xp1,xpnt;
+uses
+  xpglobal, sysutils;
 
-
-type viewinfo = record
-                  typ : string;
-                  ext : string;
-                  fn  : string;
-                  prog: string;
-                end;
-
-
-procedure GetExtViewer(fn:string; var viewer:viewinfo);
-procedure GetMimeViewer(typ:string; var viewer:viewinfo);
-procedure GetDefaultViewer(typ:string; var viewer:viewinfo);
+(*
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
-
 procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
 
+*)
+implementation
 
-implementation  { ---------------------------------------------------- }
+uses
+  database, xp0, typeform;
 
-uses xp1o;
-
-
-{ anhand der Dateierweiterung passenden Viewer aus MIMETYP.DB1 suchen }
-
-procedure GetExtViewer(fn:string; var viewer:viewinfo);
-var p : byte;
-begin
-  viewer.prog:='';
-  p:=rightpos('.',fn);
-  if (p>0) and (p<length(fn)) then begin
-    dbSeek(mimebase,mtiExt,UpperCase(mid(fn,p+1)));
-    if dbFound then begin
-      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
-      if viewer.prog='' then viewer.prog:='*intern*';
-      viewer.typ:='';
-      viewer.ext:=UpperCase(mid(fn,p+1));
-      viewer.fn:='';
-      end;
-    end;
-end;
-
-
-function SeekMime(typ:string):boolean;
-begin
-  dbSeek(mimebase,mtiTyp,UpperCase(typ));
-  SeekMime:=not dbBOF(mimebase) and not dbEOF(mimebase) and
-            stricmp(typ,dbReadStr(mimebase,'typ'));
-end;
-
-
-{ anhand des MIME-Typs passenden Viewer aus MIMETYP.DB1 suchen }
-
-procedure GetMimeViewer(typ:string; var viewer:viewinfo);
-var gt : string;
-begin
-  viewer.prog:='';
-  if typ='' then exit;
-  if stricmp(typ,'text/plain') then
-    if PTextViewer<>'' then
-    begin
-      viewer.prog:=PTextViewer;
-      if viewer.prog='' then viewer.prog:='*intern*';
-      viewer.ext:='txt';
-    end
-    else
-      if DefTextViewer<>'' then
-      begin
-        viewer.prog:=DefTextViewer;
-        if viewer.prog='' then viewer.prog:='*intern*';
-        viewer.ext:='';
-      end
-    else
-  else
-    if SeekMime(typ) then begin
-      viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
-      if viewer.prog='' then viewer.prog:='*intern*';
-      viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
-      end
-    else begin
-      gt:=LeftStr(typ,cposx('/',typ))+'*';
-      if SeekMime(gt) then begin
-        viewer.prog:= dbReadNStr(mimebase,mimeb_programm);
-        if viewer.prog='' then viewer.prog:='*intern*';
-        viewer.ext:= dbReadNStr(mimebase,mimeb_extension);
-        end;
-      end;
-  if viewer.prog<>'' then begin
-    viewer.typ:=typ;
-    viewer.fn:='';
-    end;
-end;
-
-
-{ Viewer fÅr */* ermitteln }
-
-procedure GetDefaultViewer(typ:string; var viewer:viewinfo);
-begin
-  if DefaultViewer<> '' then begin
-    viewer.prog:=DefaultViewer;
-    viewer.ext:='';
-    viewer.typ:=typ;
-    viewer.fn:='';
-    end;
-end;
-
-
+(*
 { BinÑrdatei auf GIF- und ILBM-Signatur testen;  }
 { Betreff auf Dateiextension testen              }
 
@@ -249,10 +150,14 @@ begin
   if not XPWinShell(prog,parfn,600,1,fileattach) then
   if not fileattach and (fn1<>'') then DeleteFile(parfn);
 end;
+  *)
 
 end.
 {
   $Log$
+  Revision 1.29  2000/11/18 21:42:19  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.28  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 

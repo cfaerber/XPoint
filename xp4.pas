@@ -59,7 +59,7 @@ implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
       xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister;
+      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -70,7 +70,13 @@ const suchch    = #254;
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
       DispStrSize       = 255;
 
+type
+  TReadMessageType = (rmNormal, rmRot13, rmHexDump);
+  TMultiPartType = (mpNone, mpAuto, mpSingle, mpMulti);
+
 type  dispra    = array[1..maxgl] of longint;
+
+
 
 var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
@@ -1796,11 +1802,11 @@ begin      { --- select --- }
                    end
                  else begin
                    if t=keycr then
-                     if kb_shift then read_msg(0,2)   { Shift-Enter }
-                     else read_msg(0,1) else          { Enter }
-                   if t=^J then read_msg(0,0) else    { Ctrl-Enter }
-                   if t=k2_cR then read_msg(1,0) else { 'R' - Rot13 }
-                   if t=k2_cH then read_msg(2,0) else { ^H }
+                     if kb_shift then read_msg(rmNormal, mpMulti)   { Shift-Enter }
+                     else read_msg(rmNormal, mpAuto) else          { Enter }
+                   if t=^J then read_msg(rmNormal, mpNone) else    { Ctrl-Enter }
+                   if t=k2_cR then read_msg(rmRot13, mpNone) else { 'R' - Rot13 }
+                   if t=k2_cH then read_msg(rmHexDump, mpNone) else { ^H }
                    if c=k2_I then begin GoP; msg_info; end else     { 'I' }
                    if c=k2_O then begin GoP; ShowHeader; end else   { 'O' }
                    if (c=k2_H) or (t=keyins) then setmstat(1) else  { 'H' }
@@ -2126,6 +2132,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/11/18 21:42:17  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.63  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

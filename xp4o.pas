@@ -76,7 +76,7 @@ procedure seek_cutspace(var s:string);
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
-     xp_pgp;
+     xp_pgp, viewer;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
       suchlen = 80;  {JG:06.02.00 wieder auf 80 gesetzt...}
@@ -1746,8 +1746,9 @@ var decomp : string;
     atyp   : shortint;
     spath  : string;
     ats    : shortint;
-    viewer : viewinfo;
+  MessageViewer: TMessageViewer;
 begin
+  MessageViewer := TMessageViewer.Create;
   ats:=arctyp_save;
   atyp:=abuf[arcbufp].arcer_typ;
   if atyp>arctypes then exit;  { ??? }
@@ -1786,8 +1787,9 @@ begin
       else begin
         newarc:=ArcType(TempPath+datei);
         if ArcRestricted(newarc) then newarc:=0;
-        if newarc=0 then begin
-          GetExtViewer(datei,viewer);
+        if newarc=0 then
+        begin
+(* 11         GetExtViewer(datei,viewer);
           if viewer.prog='' then TestGifLbmEtc(datei,false,viewer);
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
             ViewFile(TempPath+datei,viewer,false)
@@ -1802,8 +1804,8 @@ begin
             rfehler(432)   { 'Maximal 3 verschachtelte Archive moeglich!' }
           else begin
             decomp:=TempPath+datei;  { Stack sparen ... }
-            if ViewArchive(decomp,newarc)<>0 then;
-            end;
+            if ViewArchive(decomp,newarc)<>0 then; *)
+        end;
         if FileExists(temppath+datei) then
           _era(temppath+datei);
         end;
@@ -1815,6 +1817,7 @@ begin
   attrtxt(col.colarcstat);
   wrt(77,4,arcname[ats]);
   keyboard(keydown);
+  MessageViewer.Free;
 end;
 
 
@@ -2416,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.80  2000/11/18 21:42:18  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.79  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

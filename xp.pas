@@ -169,7 +169,6 @@ begin
 {$ENDIF }
       test_defaultgruppen;
       test_systeme;
-      ReadDefaultViewers;
       testtelefon(telefonnr);
 {$ifndef unix}
       check_date;
@@ -197,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.42  2000/11/18 21:42:17  mk
+  - implemented new Viewer handling class TMessageViewer
+
   Revision 1.41  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 
