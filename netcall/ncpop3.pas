@@ -163,8 +163,8 @@ end;
 
 destructor TPOP3.Destroy;
 begin
-  UIDLs.Destroy;
-  FAvailableUIDLs.Destroy;
+  UIDLs.Free;
+  FAvailableUIDLs.Free;
   inherited Destroy;
 end;
 
@@ -418,6 +418,9 @@ end;
 
 {
   $Log$
+  Revision 1.18.2.1  2003/04/25 17:30:09  mk
+  - use Free instead of Destroy
+
   Revision 1.18  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 
