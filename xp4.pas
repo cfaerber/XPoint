@@ -979,8 +979,9 @@ var t,lastt: taste;
       dbOpen(d,GruppenFile,1);
       dbSeek(d,giIntnr,dbLongStr(grnr));
       gfound:=dbFound;
-      if gfound then begin
-        // Roles: read sender identity overrides.
+      if gfound and
+         (ntBoxNetztyp(dbReadNStr(bbase,bb_pollbox)) IN [nt_POP3,nt_IMAP,nt_NNTP,nt_UUCP]) then begin
+        // Roles: Sender identity overrides (RFC net type only).
         // Some notes to this feature: xp6.DoSend is obviously intended for
         // *creating* messages, not *editing* them. Problem is that DoSend
         // overwrites many header entries with server defaults when
@@ -2160,6 +2161,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.85  2001/06/04 23:24:14  ma
+  - fixed: Roles affected other net types than RFC
+
   Revision 1.84  2001/06/04 17:31:37  ma
   - implemented role feature
 
