@@ -1,13 +1,17 @@
 // $Id$
 // 
 // $Log$
+// Revision 1.2  2003/03/16 18:55:27  cl
+// - started PasDoc documentation
+//
 // Revision 1.1  2003/01/28 10:42:26  cl
 // - Added statistical SPAM filter
 //
 //
 //// ^^ changes made by OpenXP project ^^ /////////////////////////////
 
-unit Hashes;
+{ Associative Arrays (Hashes, Delphi only) }
+unit hashes;
 
 {** Hash Library
 

@@ -1,32 +1,60 @@
-{   $Id$
+{ $Id$
 
-    Copyright (C) 2003 OpenXP/32 Team <http://www.openxp.de/>
-    Copyright (C) 2003 Claus F"arber <cl@openxp.de>
+  Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
+  see CVS log below for authors
 
-    This file is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License as
-    published by the Free Software Foundation; either version 2,
-    or (at your option) any later version.
+  This file is part of OpenXP/32 and XPLib.
 
-    This library is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied
-    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-    PURPOSE.  See the GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public
-    License along with this library; see the file COPYING.  If
-    not, write to the Free Software Foundation, 59 Temple Place -
-    Suite 330, Boston, MA 02111-1307, USA.
+  This file is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2, or (at your option) any later
+  version.
+
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  more details.
+  
+  You should have received a copy of the GNU General Public License along with
+  this library; see the file COPYING.  If not, write to the Free Software
+  Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+  As a special exception, the authors give permission for additional uses of
+  the text contained in its release of this library. 
+
+  The exception is that, if you link this library with other files to produce
+  an executable, this does not by itself cause the resulting executable to be
+  covered by the GNU General Public License. Your use of that executable is in
+  no way restricted on account of linking this library code into it. 
+
+  This exception does not however invalidate any other reasons why the
+  executable file might be covered by the GNU General Public License. 
+
+  This exception applies only to the code released by the authors within this
+  library. If you copy code from other Free Software Foundation releases into
+  a copy of this library, as the General Public License permits, the exception
+  does not apply to the code that you add in this way. To avoid misleading
+  anyone as to the status of such modified files, you must delete this
+  exception notice from them. 
+
+  If you write modifications of your own for this library, it is your choice
+  whether to permit this exception to apply to your modifications.  If you do
+  not wish that, delete this exception notice. 
 }
 
 {$I xpdefine.inc }
 
+{ @abstract(Unicode Line Break Properties (UTR#14).)
+  This unit implements the Unicode Line Break Properties and Algorithm 
+  described in Unicode Technical Report #14.
+}
 unit xpunicode_linebreak;
 
 { ---------------------------} interface { --------------------------- }
 
 uses classes,xpunicode;
 
+{ The Line Break Type character property. }
 type TUnicodeLineBreakType = (
   // UTF#14 Table
   UNICODE_BREAK_OP, UNICODE_BREAK_CL, UNICODE_BREAK_QU, UNICODE_BREAK_GL,
@@ -38,9 +66,21 @@ type TUnicodeLineBreakType = (
   UNICODE_BREAK_CR, UNICODE_BREAK_LF, UNICODE_BREAK_SP, UNICODE_BREAK_BK,
   UNICODE_BREAK_UNKNOWN );
 
+{ Returns the Line Break Type property @link(TUnicodeLineBreakType) 
+  of an @link(TUnicodeChar). }  
 function UnicodeCharacterLineBreakType(AUnicodeChar: TUnicodeChar): TUnicodeLineBreakType;
+
+{ Determines if a line break is allowed between two Unicode characters. }
 function UnicodeLineBreakAllowed(BeforeType, AfterType: TUnicodeLineBreakType; SPInbetween: boolean): boolean;
+
+{ @abstract(Line Breaker)
+
+  This class implements the line breaking algorithm. It supports input
+  in both UTF-8 and Single Byte Character Sets (SBCSs).
   
+  PLANNED: It also supports soft line breaks, i.e. overriding hard line 
+  breaks (CR/LF/CRLF) with a preceeding space (U+0020).  
+}  
 type TUnicodeLineBreaker = class
   private
     FCodePage: P8BitTable;
@@ -73,20 +113,37 @@ type TUnicodeLineBreaker = class
     procedure FAddLine(const Line: string);
 
   public
+    { Constructs a @link(TUnicodeLineBreaker). }
     constructor Create;
-  
+
+    { Sets the breaker to UTF-8 mode. }
     procedure SetUTF8;
+    { Sets the breaker to SBCS mode. }
     procedure SetCodePage(const CodePage: T8BitTable);
 
+    { Maximum width for output in columns (defaults to unlimited). }
     property MaxWidth: integer read FMaxWidth write FMaxWidth;
+    { Tabulator width in columns (defaults to 8). }
     property TabWidth: integer read FTabWidth write FTabWidth;
 //  property SoftBreaks: boolean read FSoftBreaks write FSoftBreaks;
 
   public  
-    procedure AddData(const data:string);  overload;
-    procedure AddData(data:TStrings);      overload;
-    procedure AddData(data:TStream);       overload;
+    { Reads text from a simple @link(string). No implicit line break
+      will be added. }
+    procedure AddData(const data:string); overload;
+    { Reads text from a @link(TStrings) object. An implicit line break 
+      is added to the end of each @link(string). }    
+    procedure AddData(data:TStrings); overload;
+    { Reads text from a @link(TStream). No implicit line breaks will 
+      be added. }
+    procedure AddData(data:TStream); overload;
 
+  public
+    { Object that reveices the output of the line breaker. 
+      This can be a @link(TStream) or @link(TStrings). 
+      A @link(TStream) will receive line breaks as CRLF (U+000D, 
+      U+000A), a @link(TStrings) will receive no line breaks (they are 
+      implicit between the elements). }
     property Sink: TObject read FSinkObj write FSetSinkObj;
   end;
 
@@ -195,6 +252,9 @@ begin
 
   CRSeen   := false;
   FFSeen   := false;
+
+  TabWidth := 8;
+  MaxWidth := MAXINT;  
 end;
 
 procedure TUnicodeLineBreaker.FSetSinkObj(AnObject: TObject);
@@ -223,7 +283,7 @@ procedure TUnicodeLineBreaker.AddData(data:TStrings);
 var i: integer;
 begin
   for i := 0 to data.Count-1 do
-    FAddData(nil,data[i]);
+    FAddData(nil,data[i]+#10);
 end;
 
 procedure TUnicodeLineBreaker.AddData(data:TStream);
@@ -545,6 +605,9 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2003/03/16 18:55:27  cl
+// - started PasDoc documentation
+//
 // Revision 1.2  2003/02/15 21:47:39  cl
 // - FPC/Linux compile fixes (FPC has problems with mixed-case filenames)
 //

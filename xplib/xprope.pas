@@ -1,42 +1,53 @@
-{   $Id$
+{ $Id$
 
-    TRopeStream - fast memory-based stream class based on the algorithms
-    presented in "Ropes: an Alternative to Strings" by Hans-J. Boehm,
-    Russ Atkinson and Michael Plass 
-    
-    References:
-      http://www.sgi.com/tech/stl/ropeimpl.html
-      http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/vol25/issue12/spe986.pdf
+  Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
+  see CVS log below for authors
 
-    This file Copyright (C) 2003 Claus F"arber <cl@openxp.de>
+  This file is part of OpenXP/32 and XPLib.
 
-    This file is free software; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2, or (at your option)
-    any later version.
+  This file is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2, or (at your option) any later
+  version.
 
-    This library is distributed in the hope that it will be useful, but
-    WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this library; see the file COPYING.  If not, write to the
-    Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-    02111-1307, USA.
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  more details.
+  
+  You should have received a copy of the GNU General Public License along with
+  this library; see the file COPYING.  If not, write to the Free Software
+  Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-    As a special exception, you may use this file as part of a free
-    software library without restriction. Specifically, if other files
-    instantiate templates or use macros or inline functions from this
-    file, or you compile this file and link it with other files to
-    produce an executable, this file does not by itself cause the
-    resulting executable to be covered by the GNU General Public
-    License.  This exception does not however invalidate any other
-    reasons why the executable file might be covered by the GNU General
-    Public License.
+  As a special exception, the authors give permission for additional uses of
+  the text contained in its release of this library. 
+
+  The exception is that, if you link this library with other files to produce
+  an executable, this does not by itself cause the resulting executable to be
+  covered by the GNU General Public License. Your use of that executable is in
+  no way restricted on account of linking this library code into it. 
+
+  This exception does not however invalidate any other reasons why the
+  executable file might be covered by the GNU General Public License. 
+
+  This exception applies only to the code released by the authors within this
+  library. If you copy code from other Free Software Foundation releases into
+  a copy of this library, as the General Public License permits, the exception
+  does not apply to the code that you add in this way. To avoid misleading
+  anyone as to the status of such modified files, you must delete this
+  exception notice from them. 
+
+  If you write modifications of your own for this library, it is your choice
+  whether to permit this exception to apply to your modifications.  If you do
+  not wish that, delete this exception notice. 
 }
 
 {$I xpdefine.inc }
+
+{ @abstract(Fast memory-based streams)
+  This unit implements @link(TRopeStream), a fast memory-based stream 
+  class. }
+unit xprope;
 
 {$IFDEF FPC}
   {$MODE Delphi}
@@ -49,13 +60,23 @@
   {$DEFINE SEEK64}
 {$ENDIF}
 
-unit xprope;
-
 { ---------------------------} interface { --------------------------- }
 
 uses classes;
 
 type
+  { @abstract(Fast memory-based stream class).
+  
+    Fast memory-based stream class based on the algorithms presented in 
+    "Ropes: an Alternative to Strings" by Hans-J. Boehm, Russ Atkinson 
+    and Michael Plass.
+    
+    http://www.sgi.com/tech/stl/ropeimpl.html
+    http://www.cs.ubc.ca/local/reading/proceedings/spe91-95/spe/vol25/issue12/spe986.pdf
+    
+    PLANNED: It can also fetch data from other streams and write changed
+    data back to this stream. This allows very efficient editing of 
+    large files on disk. }
   TRopeStream = class(TStream)
   private
     FRootNode: pointer;
@@ -63,17 +84,34 @@ type
     FLastNode: pointer;
 
   protected 
+    { Balances the tree. }  
     procedure Optimise;
+
+    { Sets size of the stream. Same as @link(TStream.SetSize). }
     procedure SetSize({$IFNDEF FPC}const{$ENDIF} NewSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}); override;
   
   public
-    constructor Create;
+    { Creates a new, empty instance. }
+    constructor Create; overload;
+    { Creates a new instance and copies the data from another 
+      @link(TRopeStream). The actual data will not be copied until it is 
+      changed in one stream (copy on write). }
+    constructor Create(otherRope: TRopeStream); overload;
+
+    { Deletes the instance. }    
     destructor Destroy; override;
-    
+
+    { Reads Data from the stream. Same as @link(TStream.Read). }
     function Read(var Buffer; Count: Longint): Longint; override;
+    { Writes Data to the stream. Same as @link(TStream.Write). }
     function Write(const Buffer; Count: Longint): Longint; override;
+    { Changes/returns the current position within the stream. 
+      Same as @link(TStream.Seek). }
     function Seek({$IFNDEF FPC}const{$ENDIF} Offset: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; Origin: {$IFDEF FPC}Word{$ELSE}TSeekOrigin{$ENDIF}): {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; override;
 
+    { Copies the data from another @link(TRopeStream). The actual data 
+      will not be copied until it is changed in one stream (copy on 
+      write). }
     procedure Assign(otherRope: TRopeStream);
   end;
 
@@ -162,14 +200,17 @@ begin
   Inc(node^.ReferenceCount);
 end;
 
+{$IFDEF DEBUG}
 procedure debug_out_node(const prefix1,prefix2,prefix3: string; node: TRopeNodeP); forward;
+{$ENDIF}  
 
 procedure release_node(node: TRopeNodeP);
 begin
   if not assigned(node) then exit;
-
+{$IFDEF DEBUG}
   debug_out_node('- ','  ','  ',Node);
   DebugLog('xprope','release node at address 0x'+Inttohex(Longint(pointer(node)),8),dlTrace);
+{$ENDIF}  
 
   Dec(node^.ReferenceCount);
   if (node^.ReferenceCount) <= 0 then begin
@@ -564,6 +605,13 @@ begin
   FPosition := 0;
 end;
 
+constructor TRopeStream.Create(otherRope: TRopeStream);
+begin
+  addref_node(TRopeNodeP(otherRope.FRootNode));
+  FRootNode := otherRope.FRootNode;
+  FPosition := otherRope.FPosition;
+end;
+
 destructor TRopeStream.Destroy;
 begin
   release_node(TRopeNodeP(FRootNode));
@@ -651,9 +699,10 @@ begin
   FPosition := otherRope.FPosition;
 end;
 
-end.
-
 // $Log$
+// Revision 1.6  2003/03/16 18:55:27  cl
+// - started PasDoc documentation
+//
 // Revision 1.5  2003/02/02 17:04:23  cl
 // - BUGFIX (FPC): EINVALIDPOINTER in Spamroutine 3.9/28.1.03 Win32
 //   see <8f6oLFbzo+D@doebe.li>
@@ -675,6 +724,4 @@ end.
 // Revision 1.1  2003/01/11 19:48:39  cl
 // - new class TRopeStream to replace TMemoryStream
 //
-//
-
-
+end.

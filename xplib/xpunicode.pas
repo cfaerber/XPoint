@@ -1,49 +1,135 @@
-{   $Id$
+{ $Id$
 
-    Copyright (C) 2003 OpenXP/32 Team <http://www.openxp.de/>
-    Copyright (C) 2003 Claus F"arber <cl@openxp.de>
+  Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
+  see CVS log below for authors
 
-    This file is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License as
-    published by the Free Software Foundation; either version 2,
-    or (at your option) any later version.
+  This file is part of OpenXP/32 and XPLib.
 
-    This library is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied
-    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-    PURPOSE.  See the GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public
-    License along with this library; see the file COPYING.  If
-    not, write to the Free Software Foundation, 59 Temple Place -
-    Suite 330, Boston, MA 02111-1307, USA.
+  This file is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2, or (at your option) any later
+  version.
+
+  This library is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  more details.
+  
+  You should have received a copy of the GNU General Public License along with
+  this library; see the file COPYING.  If not, write to the Free Software
+  Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+  As a special exception, the authors give permission for additional uses of
+  the text contained in its release of this library. 
+
+  The exception is that, if you link this library with other files to produce
+  an executable, this does not by itself cause the resulting executable to be
+  covered by the GNU General Public License. Your use of that executable is in
+  no way restricted on account of linking this library code into it. 
+
+  This exception does not however invalidate any other reasons why the
+  executable file might be covered by the GNU General Public License. 
+
+  This exception applies only to the code released by the authors within this
+  library. If you copy code from other Free Software Foundation releases into
+  a copy of this library, as the General Public License permits, the exception
+  does not apply to the code that you add in this way. To avoid misleading
+  anyone as to the status of such modified files, you must delete this
+  exception notice from them. 
+
+  If you write modifications of your own for this library, it is your choice
+  whether to permit this exception to apply to your modifications.  If you do
+  not wish that, delete this exception notice. 
 }
 
 {$I xpdefine.inc }
 
+{ @abstract(Unicode/UTF-8 Utilities)
+  Functions to handle Unicode characters and UTF-8 strings.
+
+  Note that there are three different "counts" associated with a 
+  Unicode string:
+  The number of columns a character/string occupies on a text-orientated
+  terminal. This is returned by @link(UnicodeCharacterWidth) and 
+  @link(UTF8StringWidth).
+  The number of Unicode characters a string represents. UTF-8 may 
+  represent a Unicode character by several octets and UTF-16 uses two 
+  16bit words for characters above U+FFFF. This value is returned by
+  @link(UTF8StringLength).  
+  The number of octets (UTF-8) or 16bit words (UTF-16) a string uses. 
+  This value is returned by the standard Delphi function 
+  @link(SetLength) and is used as the parameter to @link(UTF8NextChar) 
+  or @link(UTF8PrevChar).
+}
 unit xpunicode;
 
 { ---------------------------} interface { --------------------------- }
 
 uses classes;
 
+{ Unicode ------------------------------------------------------------ }
+
+{ Unicode character in the range U+0000..U+10FFFF. }
 type TUnicodeChar = 0..$10FFFF;
-type UTF8String = AnsiString;
 
-  P8BitTable = ^T8BitTable;
-  T8BitTable = packed array[Char] of TUnicodeChar;
+{ Pointer to @link(T8BitTable) }
+P8BitTable = ^T8BitTable;
+{ Mapping table for Single Byte Character Sets }
+T8BitTable = packed array[Char] of TUnicodeChar;
 
+{ Returns the width of a @link(TUnicodeChar) in display columns. }  
 function UnicodeCharacterWidth(AUnicodeChar: TUnicodeChar): integer;
 
+{ UTF-8 -------------------------------------------------------------- }
+
+{ String in UTF-8 Encoding. }
+type UTF8String = AnsiString;
+
+{ Returns the total width of a @link(TUTF8String) in display columns. }
 function UTF8StringWidth(const AUTF8String: UTF8String): integer;
+{ Returns the number of Unicode characters in a @link(TUTF8String). }
 function UTF8StringLength(const AUTF8String: UTF8String): integer;
 
+{ Advances the Position (octet count) to the next Unicode character in AUTF8String. }
 function UTF8NextChar(const AUTF8String: UTF8String; var Position: integer): boolean;
+{ Recess the Position (octet count) to the previous Unicode character in AUTF8String. }
 function UTF8PrevChar(const AUTF8String: UTF8String; var Position: integer): boolean;
+{ Returns the Unicode character starting at Position (octet count) and 
+  advances the Position to the next Unicode character in AUTF8String. }
 function UTF8GetCharNext(const AUTF8String: UTF8String; var Position: integer): TUnicodeChar;
+{ Returns the Unicode character starting at Position (octet count). }
 function UTF8GetChar(const AUTF8String: UTF8String; Position: integer): TUnicodeChar;
 
+{ UTF-16 ------------------------------------------------------------- }
+
+{ Widestring support is only available in Delphi/Kylix and FPC >= 1.1 }
+{$UNDEF HAS_WIDESTRING}
+{$IFDEF Delphi}{$DEFINE HAS_WIDESTRING}{$ENDIF}
+{$IFDEF FPC}{$IFNDEF ver1_0}{$DEFINE HAS_WIDESTRING}{$ENDIF}{$ENDIF}
+
+{$IFDEF HAS_WIDESTRING}
+{ String in UTF-16 Encoding. }
+type UTF16String = WideString;
+
+{ Returns the total width of a @link(TUTF16String) in display columns. }
+function UTF16StringWidth(const AUTF16String: UTF16String): integer;
+{ Returns the number of Unicode characters in a @link(TUTF16String). }
+function UTF16StringLength(const AUTF16String: UTF16String): integer;
+
+{ Advances the Position (octet count) to the next Unicode character in AUTF16String. }
+function UTF16NextChar(const AUTF16String: UTF16String; var Position: integer): boolean;
+{ Recess the Position (octet count) to the previous Unicode character in AUTF16String. }
+function UTF16PrevChar(const AUTF16String: UTF16String; var Position: integer): boolean;
+{ Returns the Unicode character starting at Position (octet count) and 
+  advances the Position to the next Unicode character in AUTF16String. }
+function UTF16GetCharNext(const AUTF16String: UTF16String; var Position: integer): TUnicodeChar;
+{ Returns the Unicode character starting at Position (octet count). }
+function UTF16GetChar(const AUTF16String: UTF16String; Position: integer): TUnicodeChar;
+{$ENDIF HAS_WIDESTRING}
+
 { ------------------------} implementation { ------------------------- }
+
+{ Unicode ------------------------------------------------------------ }
 
 function UnicodeCharacterWidth(AUnicodeChar: TUnicodeChar): integer;
 begin
@@ -130,6 +216,8 @@ begin
       result := 1;
   end; // case
 end;
+
+{ UTF-8 -------------------------------------------------------------- }
 
 function UTF8StringWidth(const AUTF8String: UTF8String): integer;
 var Position: Integer;
@@ -233,8 +321,91 @@ begin
   result := UTF8GetCharNext(AUTF8String,Temporary);
 end;
 
+{ UTF-16 ------------------------------------------------------------- }
+
+{$IFDEF HAS_WIDESTRING}
+function UTF16StringWidth(const AUTF16String: UTF16String): integer;
+var Position: integer;
+begin
+  Result := 0; Position := 1;
+  while(Position <= Length(AUTF16String)) do
+    Inc(Result,UnicodeCharacterWidth(UTF16GetCharNext(AUTF16String,Position)));
+end;
+
+function UTF16StringLength(const AUTF16String: UTF16String): integer;
+var Position: integer;
+begin
+  Result := 0;
+  for Position := 1 to Length(AUTF16String) do
+    if (Ord(AUTF16String[Position]) < $DC00) or 
+       (Ord(AUTF16String[Position]) > $DFFF) then
+      Inc(Result);
+end;
+
+function UTF16NextChar(const AUTF16String: UTF16String; var Position: integer): boolean;
+var Len: Integer;
+begin
+  Len := Length(AUTF16String);
+  if (Len = 0) or (Position<1) then
+    Position := 1
+  else
+    repeat
+      inc(Position)
+    until (Position>Len) or ((Ord(AUTF16String[Position]) < $DC00) or 
+       (Ord(AUTF16String[Position]) > $DFFF));
+  result := (Position<=Len);
+end;
+
+function UTF16PrevChar(const AUTF16String: UTF16String; var Position: integer): boolean;
+begin
+  if Position>0 then
+    repeat 
+      Dec(Position);
+    until (Position<=0) or ((Ord(AUTF16String[Position]) < $DC00) or 
+       (Ord(AUTF16String[Position]) > $DFFF));
+  Result := Position>0;
+end;
+
+function UTF16GetCharNext(const AUTF16String: UTF16String; var Position: integer): TUnicodeChar;
+begin
+  if ((Ord(AUTF16String[Position]) >= $D800) or 
+      (Ord(AUTF16String[Position]) <= $DBFF)) and
+     (Position < Length(AUTF16String)) and
+     ((Ord(AUTF16String[Position+1]) >= $DC00) or 
+      (Ord(AUTF16String[Position+1]) <= $DFFF)) then
+  begin
+    result := $10000 + 
+      (TUnicodeChar(Ord(AUTF16String[Position])) - $D800) shl 10 +
+      (TUnicodeChar(Ord(AUTF16String[Position+1])) - $DC00);
+    Inc(Position,2);
+  end else
+  
+  if ((Ord(AUTF16String[Position+1]) >= $DC00) or 
+      (Ord(AUTF16String[Position+1]) <= $DFFF)) then
+  begin
+    result := $FFFD;
+    Inc(Position);
+  end else
+
+  begin
+    result := TUnicodeChar(AUTF16String[Position]);
+    Inc(Position);
+  end;
+end;
+
+function UTF16GetChar(const AUTF16String: UTF16String; Position: integer): TUnicodeChar;
+var Temporary: integer;
+begin
+  Temporary := Position;
+  result := UTF16GetCharNext(AUTF16String,Temporary);
+end;
+{$ENDIF}
+
 //
 // $Log$
+// Revision 1.2  2003/03/16 18:55:27  cl
+// - started PasDoc documentation
+//
 // Revision 1.1  2003/02/13 14:27:11  cl
 // - Unicode support library:
 //   . character width
