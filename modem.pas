@@ -175,7 +175,7 @@ function DialUp(Phonenumbers,ModemInit,ModemDial: string;
 
 var
   StateDialup: tStateDialup;
-  iDial: Integer;
+  iDial: Integer; Connected: Boolean;
   CurrentPhonenumber: String;
 
 begin
@@ -220,18 +220,21 @@ begin
                               ModemAnswer:=''; WaitForAnswer:=true;
                             end;
                           until TimerObj.Timeout or(not WaitForAnswer);
-                          if not TimerObj.Timeout then begin {Kein Timeout: Connect oder Busy - und vor allem kein Userbreak.}
+                          Connected:=False;
+                          if not TimerObj.Timeout then begin
+                            {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
                             if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             DUDState:=SDModemAnswer; DisplayProc; {Ausgabe Modemantwort}
-                            SleepTime(500);
+                            SleepTime(200);
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(left(UpperCase(ModemAnswer),7)='CARRIER'))or
                                 (CommObj^.Carrier and(not CommObj^.IgnoreCD))then begin {Connect!}
-                              StateDialup:=SDConnect; DialUp:=True;
+                              StateDialup:=SDConnect; DialUp:=True; Connected:=True;
                               DUDState:=StateDialup; DUDBaud:=BaudDetect(ModemAnswer); DisplayProc; {Ausgabe: Connect}
                               if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
                               if not CommObj^.Carrier then SleepTime(1000);
                             end
-                          end else begin {Timeout oder Userbreak}
+                          end;
+                          if not Connected then begin {Timeout, Userbreak, Busy oder aehnliches}
                             DUDState:=SDNoConnect; DisplayProc; {Ausgabe: Keine Verbindung}
                             CommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
@@ -277,6 +280,9 @@ begin TimerObj.Init; DisplayProc:=VoidDisplayProc end.
 
 {
   $Log$
+  Revision 1.3  2000/09/11 23:22:35  ma
+  - Dialup Busy Fix
+
   Revision 1.2  2000/07/13 23:58:50  ma
   - Kosmetik
 
