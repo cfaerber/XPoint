@@ -1632,12 +1632,12 @@ numbers a la FIDO at the top.
 
 @
 131
-<<Point>>   The settings concerning your Point in
-        the server. These settings must correspond
-        with those in the server.
+<<Point>>   The settings specific to your Point for
+        this Server. These settings must correspond
+        with those which your BossNode gave you.
 
-<<Modem>>   Parameters governing the behaviour
-        of the modem during netcalls.
+<<Modem>>   Parameters governing the behaviour of the
+        modem during netcalls.
 
 <<Charges>> The information entered here allows XP
         to calculate (approximately) the telephone
@@ -7299,11 +7299,11 @@ feature. However, if messages to AreaFix are
 accepted, do NOT enable this feature.
 @
 705
-If the server offers a File Manager (Filescan), you
-can put its name and password here. Get the password
-from your sysop. It can be, but must not be, the same
-as your session password (point password), and/or
-your Area Manager password.
+If the Server offers a file-echo manager (AllFix), 
+you can put its name and password here. Get the 
+password from your BossNode. It can be, but doesn't 
+have to be, the same as your session password and/or
+your message area manager (AreaFix) password.
 @
 706
 ^^705
