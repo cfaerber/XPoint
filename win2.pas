@@ -726,28 +726,35 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (f^[p+add]^[1]='[') then
+        if (t=keycr) and (not kb_ctrl) and (f^[p+add]^[1]='[') then
+        begin
           t:=chr(ord(f^[p+add]^[2])-64);
-        chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
-                  (cpos(chr(ord(t[1])+64),drives)>0);
-        if chgdrive then begin    { Balken auf [LW:] positionieren }
-          i:=1;
-          while (i<=fn) and (f^[i]^<>'['+chr(ord(t[1])+64)+':]') do inc(i);
-          if (i<=fn) and (i<>p+add) then begin
-            while i-add<1 do dec(add,iif(vert,9,4));
-            while i-add>36 do inc(add,iif(vert,9,4));
-            p:=i-add;
-            display;
-            disp_p;
+          chgdrive:=xdir and (t>=^A) and (t<=^Z) and
+                    (cpos(chr(ord(t[1])+64),drives)>0);
+        end else
+        begin
+          chgdrive:=xdir and (t>=^A) and (t<=^Z) and kb_ctrl and
+                    (cpos(chr(ord(t[1])+64),drives)>0);
+          if chgdrive then    { Balken auf [LW:] positionieren }
+          begin
+            i:=1;
+            while (i<=fn) and (f^[i]^<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+            if (i<=fn) and (i<>p+add) then begin
+              while i-add<1 do dec(add,iif(vert,9,4));
+              while i-add>36 do inc(add,iif(vert,9,4));
+              p:=i-add;
+              display;
+              disp_p;
             end;
           end;
+        end;
       until (t=keyesc) or (t=keycr) or chgdrive;
-      end;
+    end;
     if ((fn>0) and (t=keycr) and (right(f^[p+add]^,1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i]^,dir,name,ext);
-        if t=keycr then                   { Pfadwechsel }
+        if (t=keycr) and not chgdrive then     { Pfadwechsel }
           if f^[p+add]^='..'+DirSepa then begin
             delete(dir,length(dir),1);
             while (dir<>'') and (dir[length(dir)]<>DirSepa) do
@@ -1184,6 +1191,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.19  2002/04/26 22:45:47  my
+  MY:- Fix: Ein Laufwerkswechsel auf Laufwerk M: mit <Ctrl-M>
+       funktionierte nicht, weil XP dies als <Enter> interpretierte und
+       die entsprechende Aktion (Verzeichniswechsel, Datei îffnen)
+       ausfÅhrte.
+
   Revision 1.16.2.18  2002/04/13 15:58:48  my
   MY[+SV]:- Sortierung in der Dateiauswahl-Box geÑndert: Erst
             Verzeichnisse, dann Dateien, dann Laufwerke.
