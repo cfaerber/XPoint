@@ -279,24 +279,11 @@ asm
 
 @2:      mov al,[si+bx]                 { im Text nach Anfang des Rests suchen }
          cmp al,es:[di+bp+1]
-         je @3 
+         je @ulgood
          cmp al,' '                     { Abbruch bei Wortende }        
          jb @nextb
          inc bx
          jmp @2
-        
-@3:      inc bx                         {Weitervergleichen bis naechster * oder Suchkeyende }
-         inc bp  
-         dec dl
-         jz @found                      { Bei Suchkeyende ist Suche erfolgreich }
-         mov al,es:[di+bp+1]                 
-         cmp al,[si+bx]                 { weiter im Text solange er passt }
-         je @3
-         cmp al,'?'                     { ...oder "?" - Wildcard greift }                     
-         je @3 
-         cmp al,'*'                     { bei neuem * - Wildcard diesen ueberspringen }
-         je @1
-         jmp @2                         { Textanfang erneut suchen }  
 
 
 
@@ -1279,6 +1266,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.15  2001/09/18 16:42:41  my
+  JG+MY:- Fix: Wildcard-Volltextsuche "*" hat Nachrichten gefunden, die
+          nicht haetten gefunden werden duerfen (es wurde nur das erste
+          Zeichen hinter dem "*" verglichen, wenn das Ende des
+          ueberprueften Worts nicht vor dem Ende des Suchbegriffs kam -
+          "b*el" fand "Bier" und "Birnen", aber nicht "Birne").
+
   Revision 1.25.2.14  2001/09/18 13:46:00  my
   JG:- Wildcard-Volltextsuche "*" bezieht sich nicht mehr auf einzelne
        Worte, sondern auf den gesamten String (Suche nach "d*t" findet
