@@ -243,9 +243,9 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
       else begin     { Netcall/Spezial (manuell) }
       { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
         i:=1;
-        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax) do
+        while (i <= NetcallSpecialMax) and (trim(NetcallSpecialList[i]) = '') do
           inc(i);
-        if trim(NetcallSpecialList[i]) = '' then
+        if (i > NetcallSpecialMax) then
         begin
           rfehler(1018);  { 'NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!' }
           dbClose(d);
@@ -751,6 +751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2002/02/21 00:16:48  ma
+  - fixed some Netcall/Special range check errors
+
   Revision 1.23  2002/02/09 18:33:31  mk
   - fixed range check error in MakeAllList
 
