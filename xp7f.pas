@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
       dos,dosx,typeform,montage,fileio,keys,maus2,
-      inout,lister,resource,maske, xpglobal,
+      inout,lister,resource,maske, xpglobal,debug,
       xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
 
@@ -137,6 +137,7 @@ var t    : text;
   end;
 
 begin
+  DebugLog('XP7','xp7f: WriteFidoNC '+logfile+' '+_box,4);
   if not exist(logfile) then exit;
   wahlcnt:=0;
   with NC^ do begin
@@ -194,6 +195,7 @@ begin
       end;
     close(t);
     end;
+  DebugLog('XP7','xp7f: SendNetzanruf',4);
   SendNetzanruf(boxpar^.RedialMax>1,crash);
 end;
 
@@ -489,7 +491,8 @@ label fn_ende,fn_ende0;
       begin
         readln(t,s);
         LoString(s);
-        if (s[1]='*') and
+        DebugLog('XP7','xp7f: BuildIncoming "'+s+'"',4);
+        if (Copy(s,1,1)='*') and
            ((pos('rcvd',s)>0) or (pos('skipped',s)>0)) and
            (pos(', error',s)=0) then begin
           if pos('rcvd',s)>0 then
@@ -502,6 +505,7 @@ label fn_ende,fn_ende0;
           new(fp);
           fp^.next:=rflist;
           fp^.fn:=UpperCase(extractfilename(left(s,p-1)));
+          DebugLog('XP7','xp7f: BuildIncoming file found: "'+fp^.fn+'"',4);
           rflist:=fp;
           end;
         end;
@@ -637,8 +641,7 @@ begin
       _era(addpkts^.addpkt[i]);
     end;
   case aresult of
-    EL_ok    : if not crash then
-                 wrtiming('NETCALL '+boxpar^.boxname);
+    EL_ok    : if not crash then wrtiming('NETCALL '+boxpar^.boxname);
     EL_break : goto fn_ende;
     EL_carrier:begin
                  trfehler(721,45);   { 'Fehler - bitte Modemeinstellungen (Carrier) ÅberprÅfen!' }
@@ -656,8 +659,7 @@ begin
     Moment;
     if not crash and packmail then SaveArcname(boxpar^.boxname,sendfile);
     BuildIncomingFilelist(FidoLogfile);
-    if request<>'' then
-      ProcessRequestResult(MakeFidoAdr(fa,true));
+    if request<>'' then ProcessRequestResult(MakeFidoAdr(fa,true));
     for i:=1 to addpkts^.akanz do
       if addpkts^.reqfile[i]<>'' then
         ProcessRequestResult(addpkts^.akabox[i]);
@@ -824,7 +826,7 @@ begin
         if s=CrashID then c:=true
         else if s<>'' then begin
           f:=true;
-          if s[1]='>' then old:=true;
+          if Copy(s,1,1)='>' then old:=true;
           end;
       until s='';
       inc(anz);
@@ -938,6 +940,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/09/03 20:46:44  ma
+  - Debuglogs
+  - Ansistring-Anpassungen
+
   Revision 1.27  2000/07/30 08:49:53  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
