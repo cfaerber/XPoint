@@ -64,7 +64,7 @@ end;
 procedure NoUUZ;
 begin
   window(1,1,80,25);
-  trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
+  trfehler(105,30);    { 'RFC-Konvertierer UUZ.EXE fehlt!' }
   twin;
 end;
 
@@ -83,21 +83,21 @@ begin
 end;
 
 
-  function filesum(fmask:string):longint;
-  var sum : longint;
-      sr  : searchrec;
-  begin
-    sum:=0;
-    findfirst(fmask,ffAnyFile,sr);
-    while doserror=0 do begin
-      inc(sum,sr.size);
-      findnext(sr);
-    end;
-    FindClose(sr);
-    filesum:=sum;
+function filesum(fmask:string):longint;
+var sum : longint;
+    sr  : searchrec;
+begin
+  sum:=0;
+  findfirst(fmask,ffAnyFile,sr);
+  while doserror=0 do begin
+    inc(sum,sr.size);
+    findnext(sr);
   end;
-{ Puffer in RFC-Files konvertieren }
+  FindClose(sr);
+  filesum:=sum;
+end;
 
+{ Puffer in RFC-Files konvertieren }
 procedure ZtoRFC(cleardir:boolean; source,destdir:pathstr);
 var sr    : searchrec;
     f1,f2 : ^file;
@@ -201,7 +201,7 @@ begin
   end;
   if errorlevel<>0 then exit;
   if (BoxPar^.uparcer='') or client then
-  begin             { Mail/News nicht packen }
+  begin                                  { Mail/News nicht packen }
     spufsize:=filesum(DestDir+'D*.OUT');
     spacksize:=spufsize;
     end
@@ -260,7 +260,6 @@ end;
 
 
 { RFC-Daten aus SPOOL\ konvertieren und einlesen }
-
 function ImportUUCPfromSpool(XFerDir:pathstr):boolean;
 var sr      : searchrec;
     f1,f2   : ^file;
@@ -427,13 +426,75 @@ begin
 end;
 
 
-procedure UUCPSysopTransfer;
+procedure RFCSysopTransfer;
 var
-  dummy    : longint;
-  s        : string;
-  error    : boolean;
-  inbound  : pathstr;
-  outbound : pathstr;
+  dummy      : longint;
+  s          : string;
+  sentError  : boolean;
+  _SysopMode : boolean;
+  _SysopInp  : pathstr;
+  _SysopOut  : pathstr;
+  inbound    : pathstr;
+  multibox   : boolean;
+  BoxParBack : BoxPtr;
+  bfileBack  : string[14];
+  ppfileBack : string[14];
+  eppfileBack: string[14];
+  boxBack    : string[BoxNameLen];
+  BFGNames   : string[160];
+  counter,p  : byte;
+  multi_out  : longint;    { Anzahl versandter  Nachrichten (Multibox) }
+  multi_in   : longint;    { Anzahl empfangener Nachrichten (Multibox) }
+
+  procedure backup_Pollbox;
+  begin
+    with boxpar^ do
+      if multibox then
+      begin
+        BFGNames:=ustr(trim(PPPAddServers));{ BoxPar^.PPPAddServers sichern }
+        BoxParBack:=BoxPar;                 { Box-Parameter Pollbox sichern }
+        bfileBack:=bfile;                   { BFG-Dateiname Pollbox sichern }
+        ppfileBack:=ppfile;                 { PP-Dateiname  Pollbox sichern }
+        eppfileBack:=eppfile;               { EPP-Dateiname Pollbox sichern }
+        boxBack:=box;                       { Boxname       Pollbox sichern }
+        new(boxpar);                        { Neuen Pointer setzen          }
+      end;
+  end;
+
+  procedure restore_Pollbox;
+  begin
+    if multibox then
+    begin
+      dispose(boxpar);                { Pointer zurÅcksetzen                }
+      BoxPar:=BoxParBack;             { Box-Parameter Pollbox zurÅcksichern }
+      bfile:=bfileBack;               { BFG-Dateiname Pollbox zurÅcksichern }
+      ppfile:=ppfileBack;             { PP-Dateiname  Pollbox zurÅcksichern }
+      eppfile:=eppfileBack;           { EPP-Dateiname Pollbox zurÅcksichern }
+      box:=boxBack;                   { Boxname       Pollbox zurÅcksichern }
+    end;
+  end;
+
+  procedure read_currentBox;
+  begin
+    inc(counter);
+    if multibox then
+    begin
+      if counter > 1 then             { 1 = Pollbox, > 1 = Multibox }
+      begin
+        p:=blankpos(BFGNames);
+        if p=0 then                   { letzter BFG-Dateiname }
+          bfile:=BFGNames
+        else begin
+          bfile:=left(BFGNames,p-1);
+          BFGNames:=trim(mid(BFGNames,p+1));
+        end;
+        box:=BfgToBox(bfile);
+        ppfile:=bfile+'.PP';
+        eppfile:=bfile+'.EPP';
+      end;
+      ReadBox(netztyp,bfile,BoxPar);  { Box-Parameter neu einlesen       }
+    end;                              { (auch bei Pollbox - counter = 1) }
+  end;
 
   procedure EmptyDir(const Dir, Mask: String);
   var
@@ -449,18 +510,17 @@ var
     FindClose(sr);
   end;
 
-  { ermitteln, welche Nachrichten nicht versandt wurden }
+  { MsgIDs unversandter Nachrichten (*.OUT) in UNSENT.ID schreiben }
   procedure GetUnversandtMessages;
   var
-    MsgFile: file;
-    IDFile: text;
-    s: String;
-    sr: SearchRec;
-    p: byte;
-    Found: boolean;
-    c : char;
+    MsgFile : file;
+    IDFile  : text;
+    s       : String;
+    sr      : SearchRec;
+    p       : byte;
+    found   : boolean;
+    c       : char;
   begin
-    Error := false;
     with BoxPar^ do
     begin
       Assign(IDFile, 'UNSENT.ID');
@@ -486,7 +546,7 @@ var
         begin
           p := cpos('<', s);
           Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
-          Error := true;
+          sentError := true;
         end;
         Findnext(sr);
       end;
@@ -513,49 +573,93 @@ var
    res: integer;
 
 begin
-  inmsgs:=0; outmsgs:=0; outemsgs:=0;
+  multi_out:=0; multi_in:=0;
+  NC^.Sendbuf := 0; NC^.Recbuf := 0;
+  sentError := false;
+  if not existBin(UUZBin) then
+  begin
+    trfehler(105,30);                { 'RFC-Konvertierer UUZ.EXE fehlt!' }
+    exit;
+  end;
+
+  (* Anmerkung:                                                      *)
+  (* ----------                                                      *)
+  (* 'outmsgs' werden gezÑhlt in ClearUnversandt (xp7o.pas)          *)
+  (* 'inmsgs'  werden gezÑhlt in PufferEinlesen  (xp3o.inc)          *)
+  (* .EPP wird an .PP angehÑngt Åber Aufruf von AppendEPP in xp7.pas *)
+  (* .EPP wird aus .PP entfernt Åber Aufruf von RemoveEPP (xp7.pas)  *)
+
+
   with boxpar^ do
   begin
-    inbound:=iifs(SysopMode,SysopInp,PPPSpool);
-    outbound:=iifs(SysopMode,SysopOut,PPPSpool);
-    if SysopMode then
-    begin
-      if not IsPath(SysopInp) then     { Verzeichnisse testen }
-      begin
-        trfehler(727,30);   { 'ungÅltiges Eingabeverzeichnis' }
-        exit;
-      end;
-      if not IsPath(SysopOut) then
-      begin
-        trfehler(728,30);   { 'ungÅltiges Ausgabeverzeichnis' }
-        exit;
-      end;
-    end else if client then
-    begin
-      MkLongDir(PPPSpool, res);
-      if IOResult = 0 then ;
-      if not IsPath(PPPSpool) then
-      begin
-        trfehler(728,44);     { 'ungÅltiges Spoolverzeichnis' }
-        exit;
-      end;
-      EmptyDir(PPPSpool, '*.IN');
-      EmptyDir(PPPSpool, '*.OUT');
-    end;
 
-    NC^.Sendbuf := _filesize(ppfile);
-    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
-    begin
-      testpuffer(ppfile,false,dummy);
-      twin;
-      cursor(curoff);
+    multibox:=client and (trim(PPPAddServers)<>'');
+    backup_Pollbox;                      { Pollbox-Umgebung sichern }
+    _SysopMode:=SysopMode;               { SysopMode      Pollbox merken }
+    _SysopInp:=SysopInp;                 { Sysop-Inbound  Pollbox merken }
+    _SysopOut:=SysopOut;                 { Sysop-Outbound Pollbox merken }
+    counter:=0;
 
-      ZtoRFC(false,ppfile,outbound);
-    end;
+    repeat
 
-    if client and (not SysopMode) then        { Client-Aufruf }
+      read_currentBox;                   { Daten der aktuellen Box lesen }
+
+      with boxpar^ do
+      begin
+
+        if _SysopMode then                 { Pollbox = SysopMode? }
+        begin
+          if not IsPath(_SysopInp) then    { Verzeichnisse testen }
+          begin
+            trfehler(727,30);   { 'ungÅltiges Eingabeverzeichnis' }
+            exit;
+          end;
+          if not IsPath(_SysopOut) then
+          begin
+            trfehler(728,30);   { 'ungÅltiges Ausgabeverzeichnis' }
+            exit;
+          end;
+        end else if client then
+        begin
+          WriteBox(bfile,BoxPar);         { "Client-Spool=" aktualisieren !! }
+          ReadBox(netztyp,bfile,BoxPar);  { Pollbox-Parameter neu einlesen   }
+          MkLongDir(PPPSpool, res);
+          if IOResult = 0 then ;
+          if not IsPath(PPPSpool) then
+          begin
+            trfehler(728,44);     { 'ungÅltiges Spoolverzeichnis' }
+            exit;
+          end;
+          EmptyDir(PPPSpool, '*.IN');
+          EmptyDir(PPPSpool, '*.OUT');
+        end;
+
+        { Da wir nicht sicher davon ausgehen kînnen, da· bei SysopMode *und* }
+        { Multiserver-Netcall bei den mitzusendenden Boxen 'SysopInp' und    }
+        { 'SysopOut' Åberhaupt eingetragen sind, legen wir in diesem Fall    }
+        { die Nachrichten *aller* Boxen im 'SysopOut' der pollenden Box ab.  }
+
+        if _filesize(ppfile) > 0 then             { -- Ausgabepaket -- }
+        begin
+          testpuffer(ppfile,false,dummy);
+          twin;
+          cursor(curoff);
+          ZtoRFC(false,ppfile,iifs(_SysopMode,_SysopOut,PPPSpool));
+          if client and (not _SysopMode) then
+            NC^.Sendbuf := NC^.Sendbuf +
+                           filesum(iifs(_SysopMode,_SysopOut,PPPSpool)+'*.OUT')
+          else
+            NC^.Sendbuf := NC^.Sendbuf + _filesize(ppfile);
+        end;
+
+      end;  { of boxpar (multibox) }
+
+    until (not multibox) or (multibox and (counter>1) and (p=0));
+
+    restore_Pollbox;                     { Pollbox-Umgebung restaurieren }
+
+    if client and (not _SysopMode) then       { Client-Aufruf }
     begin
-      NC^.Sendbuf:= filesum(outbound+'*.OUT');
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
       exchange(s, '$CLPATH+', PPPClientpath);
@@ -564,66 +668,137 @@ begin
       exchange(s, '$CLSPOOL', PPPSpool);
       attrtxt(col.colkeys);
       if XPdisplayed then
-        FWrt(64,Screenlines,xp_client);      { '       CrossPoint' }
+        FWrt(screenwidth-(length(xp_client)-1),Screenlines,xp_client); { 'CrossPoint' }
       shell(s,600,3);
       showscreen(false);
     end;
 
-    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
-    begin
-      window(1,1,80,25);
-      if not client then WriteUUnummer(uunum);
-      Moment;
-      RemoveEPP;
-      if client and (not SysopMode) then
-        GetUnversandtMessages;
-      ClearUnversandt(ppfile,box);
-      _era(ppfile);
-      if exist(eppfile) then _era(eppfile);
-      if client and (not SysopMode) then
-      begin
-        if Exist('UNSENT.PP') then
-         if filecopy('UNSENT.PP', ownpath+ppfile) then
-           _era('UNSENT.PP');
-        _era('UNSENT.ID');
-        EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. lîschen }
-        if error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
-      end;
-      Closebox;
-    end;
+    backup_Pollbox;                      { Pollbox-Umgebung sichern }
+    counter:=0;
 
-    if client then                         { -- Eingangspaket RFC/Client -- }
-    begin
-      if exist(inbound+'*.MSG') then
+    repeat   { mu· auch im (Multibox-)SysopMode mehrfach durchlaufen werden! }
+
+      outmsgs:=0; outemsgs:=0; 
+      read_currentBox;                   { Daten der aktuellen Box lesen }
+
+      with boxpar^ do                    { Unversandt-Handling }
       begin
-        NC^.Recbuf := filesum(inbound+'*.MSG');
-        if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
-        shell(UUZBin+' -uz -w:'+strs(screenlines)+iifs(PPPMailInUseEnvTo,
-          ' -UseEnvTo ',' ')+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
-        if nDelPuffer and (errorlevel=0) and
-          (testpuffer(dpuffer,false,dummy)>=0) then
-            EmptyDir(inbound, '*.MSG'); { entpackte Dateien lîschen }
-        CallFilter(true,dpuffer);
-      end;
-      if _filesize(dpuffer)>0 then
-      begin
-        if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
+
+        if exist(ppfile) then                       { -- Ausgabepaket -- }
         begin
-          _era(dpuffer);
-          if not SysopMode then RenameFiles
-          else EmptyDir(inbound, Wildcard);
+          window(1,1,80,25);
+          if not client then WriteUUnummer(uunum);
+          Moment;
+          RemoveEPP;
+          if client and (not _SysopMode) then
+            GetUnversandtMessages;
+          ClearUnversandt(ppfile,box);
+          multi_out:=multi_out + outmsgs;
+          _era(ppfile);
+          if exist(eppfile) then _era(eppfile);
+          if client and (not _SysopMode) then
+          begin
+            if exist('UNSENT.PP') then
+             if filecopy('UNSENT.PP', ownpath+ppfile) then
+               _era('UNSENT.PP');
+            _era('UNSENT.ID');
+            EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. lîschen }
+          end;
+          Closebox;
         end;
-      end;
-    end else
-      if exist(SysopInp+WildCard) then       { -- Eingangspaket RFC/UUCP -- }
-        if ImportUUCPfromSpool(SysopInp) then
-          EmptyDir(SysopInp, Wildcard);
 
+      end;  { of boxpar (multibox) }
+
+    until (not multibox) or (multibox and (counter>1) and (p=0));
+
+    restore_Pollbox;                     { Pollbox-Umgebung restaurieren }
+    backup_Pollbox;                      { Pollbox-Umgebung sichern }
+    counter:=0;
+
+    repeat            { wird im (Multibox-)SysopMode nur einmal durchlaufen! }
+
+        { Da wir nicht sicher davon ausgehen kînnen, da· bei SysopMode *und* }
+        { Multiserver-Netcall bei den mitzusendenden Boxen 'SysopInp' und    }
+        { 'SysopOut' Åberhaupt eingetragen sind, erwarten wir in diesem Fall }
+        { die eingegangenen Nachrichten *aller* Boxen im 'SysopInp' der      }
+        { pollenden Box.                                                     }
+
+      inmsgs:=0;
+      read_currentBox;                   { Daten der aktuellen Box lesen }
+
+      with boxpar^ do                    { Nachrichten einlesen }
+      begin
+
+        if client then                   { -- Eingangspaket RFC/Client -- }
+        begin
+          inbound:=iifs(_SysopMode,_SysopInp,PPPSpool);
+          if exist(inbound+'*.MSG') then
+          begin
+            shell(UUZBin+' -uz -w:'+strs(screenlines)+iifs(PPPMailInUseEnvTo,
+              ' -UseEnvTo ',' ')+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
+            if _SysopMode then
+              NC^.Recbuf := _filesize(dpuffer)
+            else
+              NC^.Recbuf := NC^.Recbuf + filesum(inbound+'*.MSG');
+            if nDelPuffer and (errorlevel=0) and
+              (testpuffer(dpuffer,false,dummy)>=0) then
+                EmptyDir(inbound, '*.MSG'); { empfangene Nachrichten lîschen }
+            CallFilter(true,dpuffer);
+          end;
+          if _filesize(dpuffer) > 0 then
+          begin
+            if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
+            begin
+              _era(dpuffer);
+              multi_in:=multi_in + inmsgs;
+              if _SysopMode then
+                EmptyDir(inbound, Wildcard)
+              else
+                RenameFiles;
+            end;
+          end;
+        end
+        else if _SysopMode then          { -- Eingangspaket RFC/UUCP -- }
+          if exist(_SysopInp+WildCard) then
+            if ImportUUCPfromSpool(_SysopInp) then
+              EmptyDir(_SysopInp, Wildcard);
+
+      end;  { of boxpar (multibox) }
+
+    until _SysopMode or (not multibox) or (multibox and (counter>1) and (p=0));
+
+    restore_Pollbox;                     { Pollbox-Umgebung restaurieren }
+
+    if sentError then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
+    if multibox then
+    begin
+      outmsgs:=multi_out;
+      inmsgs:=multi_in;
+    end;
+    if (not _SysopMode) and ((outmsgs + inmsgs) > 0) then
+      wrtiming('NETCALL ' + ustr(box));
     Netcall_connect:=true;
-  end;
+
+  end;   { of boxpar (Pollbox) }
 end;
 {
   $Log$
+  Revision 1.13.2.25  2002/03/08 23:09:16  my
+  MY:- RFC/Client: Multiserver-Netcall implementiert. Die aus- und
+       eingehenden Nachrichten der unter "D/B/E/C/ZusÑtzliche_Server"
+       eingetragenen Serverboxen werden bei einem Netcall mit verarbeitet.
+       Die aus- und eingehenden Nachrichten der zusÑtzlichen Serverboxen
+       werden in den spezifischen Spool-Verzeichnissen der jeweiligen
+       Serverboxen abgelegt bzw. erwartet. Ausnahme ist der SysopMode, bei
+       dem die ein- und ausgehenden Nachrichten *aller* Serverboxen in dem
+       Ein- bzw. Ausgangsverzeichnis der Box erwartet bzw. abgelegt
+       werden, fÅr die der SysopMode-Transfer durchgefÅhrt wird. Weitere
+       Details siehe Hilfe (z.B. ?/S/R/<Enter>).
+
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.13.2.24  2002/01/06 17:56:58  my
   MY:- Letzten Commit korrigiert: -UseEnvTo wird jetzt incoming (-uz) statt
        outgoing (-zu) aufgerufen.
