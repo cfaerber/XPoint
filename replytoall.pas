@@ -686,11 +686,11 @@ var RTAEmpfList : TRTAEmpfaengerList;
     { Adresse aus den vom Lister zurÅckgegeben Strings extrahieren }
 
     function getAdresse (const s :string) :String;
-    begin
-      Result := trim (copy (s, length (getres2 (476, 1)) + 3, 91)); //!!
-      if FirstChar(Result) = '*' then Delete(Result, 1, 1);
-      if FirstChar(Result)= '(' then Delete(Result, 1, 1);
-      if LastChar(Result) = ')' then SetLength(Result, Length(Result)-1);
+    begin                                           
+      Result := trim (Mid(s, Length(GetRes2 (476, 1)) + 3)); 
+      TrimFirstChar(Result, '*');
+      TrimFirstChar(Result, '(');
+      TrimLastChar(Result, ')');
     end;
 
     procedure markierteAdressenEntfernen (var userError :boolean);
@@ -980,6 +980,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2001/12/09 14:17:36  mk
+  - fixed little bug: some to adresses where cut at char 91
+
   Revision 1.23  2001/11/01 17:45:40  mk
   -SV: Statt der Stammbox wird nun der richtige Server angeboten (Dank an
     Jochen Gehring fuer die Codevorlage)
