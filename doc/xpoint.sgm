@@ -18121,6 +18121,2397 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
   </chapter>
 
+  <glossary>
+
+    <glossentry id="fidoc">
+
+      <glossterm><acronym>*C</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abgek&uuml;rzte Schreibweise f&uuml;r die diversen
+          Coordinators des <glossterm
+          linkend="fidonet">FidoNet</glossterm>. <acronym>NC</acronym>
+          (<glossterm linkend="network">Network</glossterm>
+          Coordinator), <acronym>RC</acronym> (<glossterm
+          linkend="region">Region</glossterm> Coordinator),
+          <acronym>ZC</acronym> (<glossterm
+          linkend="zone">Zone</glossterm> Coordinator),
+          <acronym>IC</acronym> (International Coordinator). Ihre
+          Aufgaben und Befugnisse sind in der <glossterm
+          linkend="policy">Policy</glossterm> definiert.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="ec">
+
+      <glossterm><acronym>*EC</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abgek&uuml;rzte Schreibweise f&uuml;r die diversen
+          EchomailCoordinators des <glossterm
+          linkend="fidonet">FidoNet</glossterm>.
+          <acronym>NEC</acronym>, <acronym>REC</acronym>,
+          <acronym>ZEC</acronym>. Aufgaben und Befugnisse sind in der
+          <glossterm linkend="echopolicy">Echopolicy</glossterm>
+          geregelt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="f3d4dadresse">
+
+      <glossterm>3d / 4d Adresse</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Eine
+          normale Fido-Adresse besteht aus mindestens drei Teilen,
+          n&auml;mlich
+          <replaceable>Zone</replaceable>:<replaceable>Network</replaceable>/<replaceable>Node</replaceable>.
+          Sofern noch eine Pointnummer dazukommt, spricht man von 4d
+          (4-dimensionaler) Adressierung. Der &Uuml;berwiegende Teil
+          der heute verwendeten Software beherrscht
+          4d-Adressierung.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="account">
+
+      <glossterm>Account</glossterm>
+
+      <glossdef>
+
+        <para>Benutzerkennung <abbrev>z.B.</abbrev> bei einem
+          <glossterm linkend="server">Server</glossterm> oder einem
+          <application>Unix</application>-Rechner.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="afaik">
+
+      <glossterm><acronym>AFAIK</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abk&uuml;rzung f&uuml;r <foreignphrase>as far as I
+          know</foreignphrase> (soweit ich wei&szlig;)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="aka">
+
+      <glossterm><acronym>AKA</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abk&uuml;rzung f&uuml;r <foreignphrase>also known
+          as</foreignphrase> (auch bekannt als). Im <glossterm
+          linkend="fidonet">FidoNet</glossterm> werden damit
+          normalerweise weitere Adressen einer <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> bezeichnet.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="area">
+
+      <glossterm>Area</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>-Begriff
+          f&uuml;r ein &ouml;ffentliches Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="artikel">
+
+      <glossterm>Artikel</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="usenet">Usenet</glossterm>-Begriff
+          f&uuml;r einen Beitrag in einem &ouml;ffentlichen
+          Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="backbone">
+
+      <glossterm>Backbone</glossterm>
+
+      <glossdef>
+
+        <para>(R&uuml;ckgrat); Ein <glossterm
+          linkend="server">Server</glossterm>, auf dem - innerhalb
+          eines bestimmten Bereiches - <glossterm
+          linkend="mail">Mail</glossterm> oder &ouml;ffentliche
+          Nachrichten zentral zusammenlaufem.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="backbonering">
+
+      <glossterm>BackBoneRing (<acronym>BBR</acronym>)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          &Auml;hnlich dem <glossterm
+          linkend="backbone">Backbone</glossterm>, nur dass bei dieser
+          Topologie die <glossterm
+          linkend="echomail">Echomail</glossterm> auf mehreren
+          Hauptsystemen zusammenl&auml;uft, und zwischen diesen
+          ausgetauscht wird. Also eine Art <quote>Zusammenschluss
+          mehrerer kleiner <glossterm
+          linkend="backbone">Backbones</glossterm></quote>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="bang">
+
+      <glossterm>Bang(-Pfad)</glossterm>
+
+      <glossdef>
+
+        <para>Nachrichtenroute in der Form
+          <computeroutput><replaceable>Server1</replaceable>!<replaceable>Server2</replaceable>!...</computeroutput></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="bbs">
+
+      <glossterm><acronym>BBS</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abk&uuml;rzung f&uuml;r <foreignphrase>Bulletin Board
+          System</foreignphrase>. Ein <glossterm
+          linkend="server">Server</glossterm>, der die Dienste
+          <glossterm linkend="mail">Mail</glossterm> und
+          Diskussionsforen anbietet.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="bcc">
+
+      <glossterm><acronym>BCC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Blind Carbon Copy</foreignphrase> - Kopie
+          einer Nachricht an weitere Empf&auml;nger, die f&uuml;r den
+          Originalempf&auml;nger nicht erkennbar ist.</para>
+
+        <glossseealso otherterm="cc">
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="body">
+
+      <glossterm>Body</glossterm>
+
+      <glossdef>
+
+        <para><quote>Benutzerteil</quote> einer Nachricht, im
+          Gegensatz zum <glossterm
+          linkend="header">Header</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="bombingrun">
+
+      <glossterm><foreignphrase>Bombing
+        Run</foreignphrase></glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Geroutete <glossterm linkend="cc"><foreignphrase>Carbon
+          Copies</foreignphrase</glossterm> an eine Vielzahl von
+          Empf&auml;ngern oder direkte <glossterm
+          linkend="netmail">Netmail</glossterm>-<quote>Bombardements</quote>
+          von einem <glossterm linkend="node">Node</glossterm> an
+          einen anderen. <foreignphrase>Bombing Runs</foreignphrase>
+          werden in der Regel als <glossterm
+          linkend="eabxab"><foreignphrase>excessively annoying
+          behaviour</foreignphrase></glossterm> empfunden, und
+          k&ouml;nnen f&uuml;r den absendenden <glossterm
+          linkend="node">Node</glossterm> zum Ausschluss aus dem
+          <glossterm linkend="fidonet">Fidonet</glossterm>
+          f&uuml;hren.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="boss">
+
+      <glossterm>Boss (BossSystem)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Boss ist ein <glossterm linkend="node">Node</glossterm> mit
+          <glossterm linkend="point">Points</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="brett">
+
+      <glossterm>Brett</glossterm>
+
+      <glossdef>
+
+        <para>Bezeichnung in verschiedenen Netzen f&uuml;r ein
+          &ouml;ffentliches Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="btw">
+
+      <glossterm><acronym>BTW</acronym></glossterm>
+
+      <glossdef>
+
+        <para>(<abbrev>engl.</abbrev>) <foreignphrase>by the
+          way</foreignphrase> - &uuml;brigens</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="bounce">
+
+      <glossterm>Bounce</glossterm>
+
+      <glossdef>
+
+        <para>Zur&uuml;cksenden einer unzustellbaren Nachricht.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="cancelmessage">
+
+      <glossterm>Cancel-Message</glossterm>
+
+      <glossdef>
+
+        <para>L&ouml;schnachricht zum nachtr&auml;glichen L&ouml;schen
+          einer verschickten Nachricht</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="cc">
+
+      <glossterm><acronym>CC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Carbon Copy</foreignphrase> - Kopie einer
+          Nachricht an weitere Empf&auml;nger.</para>
+
+        <glossseealso otherterm="bcc">
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="cfv">
+
+      <glossterm><acronym>CfV</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Call for Vote</foreignphrase> - Aufruf
+          zur Abstimmung, insbesondere zur Einrichtung eines neuen
+          Diskussionsforums im <glossterm
+          linkend="usenet">Usenet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="charta">
+
+      <glossterm>Charta</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="usenet">Usenet</glossterm>: Ein
+          kurzer Text, der das Thema eines Diskussionsforums
+          umschreibt.</para>
+
+        <glossseealso otherterm="rules">
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="client">
+
+      <glossterm>Client</glossterm>
+
+      <glossdef>
+
+        <para>Ein Rechner oder Programm der oder das bestimmte Dienste
+          eines <glossterm linkend="server">Servers</glossterm> in
+          Anspruch nimmt. <application>CrossPoint</application> ist
+          ein <glossterm linkend="mail">Mail</glossterm>- und
+          <glossterm linkend="netnews">News</glossterm>-Client.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="cm">
+
+      <glossterm><acronym>CM</acronym></glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          <foreignphrase>Continous Mail</foreignphrase>. Ein
+          <glossterm linkend="nodelist">Nodelist</glossterm>-Flag.
+          Zeigt an, dass die <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> in der Lage
+          ist, 24 Stunden am Tag <glossterm
+          linkend="mail">Mail</glossterm> anzunehmen.
+          (<acronym>CM</acronym> bedeuted nicht <glossterm
+          linkend="crash">Crashmail</glossterm> und steht mit
+          <glossterm linkend="crash">Crashmail</glossterm> auch nur
+          indirekt in Zusammenhang.)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="complaint">
+
+      <glossterm>Complaint (formal <abbrev>c.</abbrev>, official
+        <abbrev>c.</abbrev>)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Offizielle Beschwerde gegen einen anderen <glossterm
+          linkend="node">Node</glossterm>, wenn dieser gegen die
+          <glossterm linkend="policy">Policy</glossterm>
+          versto&szlig;en hat, <abbrev>bzw.</abbrev> wenn sein
+          Benehmen als <foreignphrase>excessively
+          annoying</foreignphrase> empfunden wurde.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="crash">
+
+      <glossterm>Crash (Crashmail)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          <glossterm linkend="netmail">Netmail</glossterm>, die direkt
+          an den Ziel-<glossterm linkend="node">Node</glossterm>
+          gesendet wird. Vorteil: schnell, sicher. Nachteil:
+          teuer.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="crossposting">
+
+      <glossterm>Crossposting</glossterm>
+
+      <glossdef>
+
+        <para>&Ouml;ffentliche Nachricht in mehreren Diskussionsforen,
+          die physikalisch nur einmal &uuml;bertragen wird. Sollte nur
+          sehr sparsam verwendet werden.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="domain">
+
+      <glossterm>Domain</glossterm>
+
+      <glossdef>
+
+        <para>Rechter Teil einer <glossterm
+          linkend="internet">Internet</glossterm>-<glossterm
+          linkend="mail">E-Mail</glossterm>-Adresse.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="downlink">
+
+      <glossterm>Downlink</glossterm>
+
+      <glossdef>
+
+        <para><glossterm>FidoNet</glossterm>: <glossterm
+          linkend="bbs">BBS</glossterm>, an die Nachrichten
+          weitergeleitet und von der Nachrichten geschickt werden.
+          <glossterm linkend="point">Points</glossterm> sind zwar
+          eigentlich Downlinks, werden aber selten so
+          bezeichnet.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="dupe">
+
+      <glossterm>Dupe</glossterm>
+
+      <glossdef>
+
+        <para>Nachrichten, die aufgrund eines technischen Fehlers
+          mehrfach verteilt werden. (von
+          <foreignphrase>duplicate</foreignphrase>)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="echo">
+
+      <glossterm>Echo</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>-Begriff
+          f&uuml;r ein &ouml;ffentliches Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="echomail">
+
+      <glossterm>Echomail</glossterm>
+
+      <glossdef>
+
+        <para><glossterm
+          linkend="fidonet">FidoNet</glossterm>-Bezeichnung f&uuml;r
+          einen Beitrag in einem &ouml;ffentlichen
+          Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="echopolicy">
+
+      <glossterm>Echopolicy (Echopol, EP1)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Die
+          Echopolicy (derzeit aktuell <ulink
+          url="http://www.was-is-fido.de/doks/echopol.txt"><abbrev>v.</abbrev>
+          1</ulink>) regelt alles, was mit <glossterm
+          linkend="echomail">Echomail</glossterm> zu tun hat. Sie
+          erg&auml;nzt die <glossterm
+          linkend="policy">Worldpolicy</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="emsi">
+
+      <glossterm><acronym>EMSI</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Electronic Mail Standard
+          Identification</foreignphrase>. Ein Verfahren, mit dem
+          Fido-<glossterm linkend="mailer">Mailer</glossterm>
+          untereinander die Informationen austauschen, die zum Aufbau
+          einer Session n&ouml;tig sind.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="eabxab">
+
+      <glossterm>Excessively annoying behaviour
+        (<acronym>EAB</acronym>, <acronym>XAB</acronym>)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          &uuml;berm&auml;&szlig;ig st&ouml;rendes Benehmen anderen
+          <glossterm linkend="node">Nodes</glossterm> gegen&uuml;ber.
+          Kann zum Ausschluss aus dem <glossterm
+          linkend="fidonet">FidoNet</glossterm> f&uuml;hren.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="excommunication">
+
+      <glossterm>Excommunication</glossterm>
+
+      <glossdef>
+
+        <para>Ausschluss eines <glossterm
+          linkend="node">Nodes</glossterm> aus dem
+          <glossterm>FidoNet</glossterm> aufgrund eines
+          Versto&szlig;es gegen die <glossterm
+          linkend="policy">Policy</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="expire">
+
+      <glossterm>Expire</glossterm>
+
+      <glossdef>
+
+        <para>Haltezeit&uuml;berschreitung von Nachrichten und Prozess
+          des L&ouml;schens von Nachrichten mit &uuml;berschrittener
+          Haltezeit.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fakenet">
+
+      <glossterm>Fakenet</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: ein
+          Fakenet ist eine nach Fido-Struktur aufgebaute <glossterm
+          linkend="fidoadresse">Adresse</glossterm>, die ein
+          <glossterm linkend="boss">Boss</glossterm> f&uuml;r seine
+          <glossterm linkend="point">Points</glossterm> verwendet,
+          sofern die verwendete Software keine <glossterm
+          linkend="f3d4dadresse">4d-Adressierung</glossterm>
+          beherrscht.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="faq">
+
+      <glossterm><acronym>FAQ</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Frequently Asked
+          Questions</foreignphrase> - eine Sammlung von h&auml;ufig
+          gestellten Fragen und Antworten darauf zu einem bestimmten
+          Thema. Im <glossterm linkend="usenet">Usenet</glossterm>
+          finden Sie <acronym>FAQ</acronym>s zu allen Themen im
+          <glossterm linkend="forum">Forum</glossterm> <ulink
+          url="news:news.answers">news.answers</ulink>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fidoabc">
+
+      <glossterm>Fido-ABC</glossterm>
+
+      <glossdef>
+
+        <para>Infos &uuml;ber's <glossterm
+          linkend="fidonet">FidoNet</glossterm> (nicht nur) f&uuml;r
+          Einsteiger. Ist als
+          <computeroutput>fido-abc.arj</computeroutput> bei vielen
+          <glossterm linkend="bbs"><acronym>BBS</acronym></glossterm>
+          per Download/<glossterm
+          linkend="request">FileRequest</glossterm>, &uuml;ber <ulink
+          url="http://www.was-ist-fido.de/doks/fido-abc.txt">http://www.was-ist-fido.de/doks/fido-abc.txt</ulink>
+          oder auf Anfrage auch in FIDOGUIDE.GER
+          erh&auml;ltlich.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fidoadresse">
+
+      <glossterm>Fido-Adresse</glossterm>
+
+      <glossdef>
+
+        <para>Eine Adresse im <glossterm
+          linkend="fidonet">Fidonet</glossterm> setzt sich zusammen
+          aus Zone, Network, <glossterm
+          linkend="node">Node</glossterm> und <abbrev>ggf.</abbrev>
+          <glossterm linkend="point">Point</glossterm>. Meistens kann
+          man anhand des <glossterm
+          linkend="network">Network</glossterm> auch auf die
+          <glossterm linkend="region">Region</glossterm>
+          schlie&szlig;en, dies muss aber nicht immer der Fall
+          sein. Beispiel f&uuml;r eine Adresse:</para>
+
+        <para><screen>
+2:2480/60.0
+|  |   | |
+|  |   | +----- Point (0 = Boss)
+|  |   +------- Node
+|  +----------- Network (die ersten beiden Ziffern = Region)
++-------------- Zone
+          </screen></para>
+
+        <para>Zu beachten ist die Form mit <computeroutput>: /
+          .</computeroutput></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="Followup">
+
+      <glossterm>Followup</glossterm>
+
+      <glossdef>
+
+        <para><glossterm
+          linkend="usenet">Usenet</glossterm>-Bezeichnung f&uuml;r
+          eine &ouml;ffentliche Antwort auf eine &ouml;ffentliche
+          Nachricht.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fidonet">
+
+      <glossterm>FidoNet</glossterm>
+
+      <glossdef>
+
+        <para>Das &auml;lteste und gr&ouml;&szlig;te
+          Hobbycomputernetz; ein Zusammenschluss von derzeit etwa
+          20.000 <glossterm linkend="server">Servern</glossterm>
+          (<foreignphrase><glossterm
+          linkend="node">Nodes</glossterm></foreignphrase>), die
+          untereinander meist in hierarchischer Topologie Nachrichten
+          (<glossterm linkend="netmail">Netmail</glossterm> und
+          <glossterm linkend="echomail">Echomail</glossterm>)
+          austauschen und dadurch weltweit Kontakte und
+          Informationsaustausch zwischen Nutzern erm&ouml;glichen. Die
+          Zahl der &uuml;ber FidoNet erreichbaren Nutzer ist nicht
+          einmal ann&auml;herungsweise sch&auml;tzbar, da die
+          <glossterm linkend="server">Server</glossterm> eine
+          h&ouml;chst unterschiedliche Anzahl Nutzer haben, und es
+          ungez&auml;hlte &Uuml;berg&auml;nge (<glossterm
+          linkend="gateway">Gateways</glossterm>) in sehr viele andere
+          Netze gibt.</para>
+
+        <para>Siehe: <ulink
+          url="http://www.fidonet.org/">http://www.fidonet.org/</ulink></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fidonews">
+
+      <glossterm>FidoNews / Fnews</glossterm>
+
+      <glossdef>
+
+        <para>Die <quote>Fido-Zeitung</quote> (in englischer Sprache).
+          Erscheint w&ouml;chentlich und beinhaltet Beitr&auml;ge zu
+          allen m&ouml;glichen Themen. Die Themen sind nicht
+          zwangsl&auml;ufig auf Fido beschr&auml;nkt. Einfach mal
+          reinschauen: <ulink
+          url="http://www.fidonews.org/">http://www.fidonews.org/</ulink></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fileecho">
+
+      <glossterm>Fileecho</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Eine
+          (abstrakte) <glossterm
+          linkend="area"><foreignphrase>Area</foreignphrase></glossterm>,
+          in der anstelle von <glossterm
+          linkend="echomail">Echomail</glossterm> Files verteilt
+          werden. Steht mit Fido nur insofern in Zusammenhang, als
+          dass viele Fido-<glossterm linkend="node">Nodes</glossterm>
+          auch Fileechos anbieten. Im Gegensatz zu Echoareas werden
+          Files in Fileechos <abbrev>i.d.R.</abbrev> nur von
+          bestimmten Stellen aus eingespeist. (vom Konzept her also
+          eher an <glossterm linkend="groupmail">Groupmail</glossterm>
+          angelehnt).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="flame">
+
+      <glossterm>Flame</glossterm>
+
+      <glossdef>
+
+        <para>Nachricht mit beleidigendem Inhalt. Sollte nach
+          M&ouml;glichkeit vermieden werden. (Einfachstes Hausmittel
+          zur Vermeidung: langsam bis Hundertausend z&auml;hlen, wenn
+          die Wut danach noch nicht verraucht ist, erstmal dr&uuml;ber
+          schlafen.)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="footer">
+
+      <glossterm>Footer</glossterm>
+
+      <glossdef>
+
+        <para><glossterm
+          linkend="fidonet">FidoNet</glossterm>-Bezeichnung f&uuml;r
+          eine <glossterm
+          linkend="signature">Signature</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="forum">
+
+      <glossterm>Forum</glossterm>
+
+      <glossdef>
+
+        <para>Ein &ouml;ffentliches Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fossil">
+
+      <glossterm><acronym>FOSSIL</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase><application>Fido</application>/<application>Opus</application>/<application>SEAdog</application>
+          Standard Interface Layer</foreignphrase>;
+          <acronym>DOS</acronym>-Treiber f&uuml;r die serielle
+          Schnittstelle. Wird von vielen
+          <acronym>DOS</acronym>-<acronym>DF&Uuml;</acronym>-Programmen
+          ben&ouml;tigt. G&auml;ngige FOSSILs:
+          <computeroutput>X00.SYS</computeroutput> und
+          <computeroutput>BNU.COM</computeroutput>.
+          <acronym>FOSSIL</acronym> wird auch als Treiber f&uuml;r
+          andere &Uuml;bertragungsmedien (<abbrev>z.B.</abbrev>
+          <acronym>ISDN</acronym>) verwendet. (<abbrev>z.B.</abbrev>
+          <application>cFos</application>)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fsc">
+
+      <glossterm><acronym>FSC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Vorschl&auml;ge f&uuml;r technische Verfahrensweisen.
+          Vorstufe zum <glossterm
+          linkend="fts"><acronym>FTS</acronym></glossterm>. Kann von
+          jedem erstellt werden. Werden auch oft schon verwendet,
+          bevor ein <acronym>FSC</acronym> zum <glossterm
+          linkend="fts"><acronym>FTS</acronym></glossterm> gemacht
+          wird, da es sich dabei meist um einen sehr langwierigen
+          Prozess handelt. Stellt allerdings keine
+          <quote>Normung</quote> wie die <glossterm
+          linkend="fts"><acronym>FTS</acronym></glossterm> dar.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="ftp">
+
+      <glossterm><acronym>FTP</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>File Transfer Protocol</foreignphrase> =
+          Datei&uuml;bertragungsprotokoll, das zur
+          Datei&uuml;bertragung im <glossterm
+          linkend="internet">Internet</glossterm> eingesetzt
+          wird.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="fts">
+
+      <glossterm><acronym>FTS</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase><glossterm
+          linkend="fidonet">FidoNet</glossterm> Technical
+          Standard</foreignphrase>. Legen verbindlich die technischen
+          Anforderungen an Fido-Software fest. Werden vom <glossterm
+          linkend="ftsc"><acronym>FTSC</acronym></glossterm> in Kraft
+          gesetzt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="ftsc">
+
+      <glossterm><acronym>FTSC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase><glossterm
+          linkend="fidonet">FidoNet</glossterm> Technical Standard
+          Comitee</foreignphrase>. Setzt sich zusammen aus
+          Programmierern von <glossterm
+          linkend="fidonet">FidoNet</glossterm>-Software.
+          Verabschiedet <glossterm
+          linkend="fts"><acronym>FTS</acronym>s</glossterm> und nimmt
+          <glossterm linkend="fsc"><acronym>FSC</acronym>s</glossterm>
+          entgegen.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="gabeln">
+
+      <glossterm><acronym>GABELN</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Versuch eines netzneutralen Begriffs f&uuml;r ein
+          &ouml;ffentliches Diskussionsforum (<glossterm
+          linkend="gruppe">Gruppen</glossterm>, <glossterm
+          linkend="area">Areas</glossterm>, <glossterm
+          linkend="brett">Bretter</glossterm>, <glossterm
+          linkend="echo">Echos</glossterm>, <glossterm
+          linkend="mailingliste">Listen</glossterm>, <glossterm
+          linkend="newsgroup">Newsgroups</glossterm>). Plural:
+          <acronym>GABELN</acronym>s</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="gateway">
+
+      <glossterm>Gateway</glossterm>
+
+      <glossdef>
+
+        <para>&Uuml;bergang zwischen zwei Netzen
+          (<abbrev>z.B.</abbrev> <glossterm
+          linkend="fidonet">FidoNet</glossterm> &lt;-&gt; <glossterm
+          linkend="mausnet">MausNet</glossterm>).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="groupmail">
+
+      <glossterm>Groupmail</glossterm>
+
+      <glossdef>
+
+        <para>Im <glossterm linkend="fidonet">FidoNet</glossterm> ein
+          Konzept der Echomailverteilung, bei dem die einzelnen
+          Nachrichten zuerst an einen <glossterm
+          linkend="moderator">Moderator</glossterm> geschickt werden,
+          der sie dann selektiert und ausgew&auml;hlte Nachrichten in
+          die <glossterm linkend="area">Area</glossterm> einspeist.
+          Die Einf&uuml;hrung von Groupmail ist im <glossterm
+          linkend="fidonet">FidoNet</glossterm> bisher aus
+          verschiedenen Gr&uuml;nden bereits mehrmals
+          gescheitert.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="gruppe">
+
+      <glossterm>Gruppe</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="mausnet">MausNet</glossterm>- und
+          <glossterm linkend="usenet">Usenet</glossterm>-Begriff
+          f&uuml;r ein &ouml;ffentliches Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="header">
+
+      <glossterm>Header</glossterm>
+
+      <glossdef>
+
+        <para>Der Teil einer Nachricht, der Steuerinformationen
+          enth&auml;lt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="hatch">
+
+      <glossterm>Hatch / hatchen</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Bezeichnung f&uuml;r das Einspeisen einer Datei in ein
+          <glossterm linkend="fileecho">Fileecho</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="host">
+
+      <glossterm>Host</glossterm>
+
+      <glossdef>
+
+        <para>Ein <glossterm linkend="server">Server</glossterm>,
+          insbesondere im <glossterm
+          linkend="internet">Internet</glossterm>. Im <glossterm
+          linkend="fidonet">FidoNet</glossterm>: Die oberste Ebene in
+          einem <glossterm
+          linkend="network">Network</glossterm>. Nimmt <glossterm
+          linkend="netmail">Netmail</glossterm> f&uuml;r das
+          <glossterm linkend="network">Network</glossterm>
+          an und leitet sie an die entsprechenden <glossterm
+          linkend="hub">Hubs</glossterm> weiter.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="hub">
+
+      <glossterm>Hub</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Hub ist die n&auml;chste Ebene nach dem <glossterm
+          linkend="host">Host</glossterm> in der Struktur des
+          <glossterm linkend="fidonet">FidoNet</glossterm>. An einen
+          Hub sind mehrere <glossterm linkend="node">Nodes</glossterm>
+          angeschlossen, er &uuml;bernimmt f&uuml;r die
+          angeschlossenen <glossterm linkend="node">Nodes</glossterm>
+          die Aufgaben eines <glossterm
+          linkend="netmail">Netmail</glossterm>-Verteilers.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="igate">
+
+      <glossterm>I-Gate (I/O-Gate)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          <foreignphrase>Regional Inbound Gateway</foreignphrase>;
+          zentrale Stelle f&uuml;r den Austausch von <glossterm
+          linkend="netmail">Netmail</glossterm> mit anderen <glossterm
+          linkend="region">Regions</glossterm>. <glossterm
+          linkend="netmail">Netmail</glossterm> f&uuml;r andere
+          <glossterm linkend="region">Regions</glossterm> wird also
+          ans eigene I-Gate geroutet von dort an die I-Gates der
+          verschiedenen <glossterm
+          linkend="region">Regions</glossterm> &uuml;bertragen. Die
+          Benutzung von I-Gates ist nat&uuml;rlich optional.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="imho">
+
+      <glossterm><acronym>IMHO</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abk&uuml;rzung f&uuml;r <foreignphrase>in my humble
+          opinion</foreignphrase> (meiner bescheidenen Meinung nach)
+          oder auch <foreignphrase>in my honest
+          opinion</foreignphrase> (meiner ehrlichen Meinung
+          nach).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="internet">
+
+      <glossterm>Internet</glossterm>
+
+      <glossdef>
+
+        <para>Schnelles, weltweites Online-Standleitungsnetz.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="irc">
+
+      <glossterm><acronym>IRC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Internet Relay Chat</foreignphrase> -
+          weltweites Chatsystem (System zur Online-Textkommunikation
+          per <acronym>DF&Uuml;</acronym>) im <glossterm
+          linkend="internet">Internet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="iso">
+
+      <glossterm><acronym>ISO</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>International Standardisation
+          Organisation</foreignphrase> - internationales
+          Normungsgremium. Speziell: <acronym>ISO</acronym>-8859-1 =
+          noch im (west-)europ&auml;ischen <glossterm
+          linkend="internet">Internet</glossterm> &uuml;blicher
+          Zeichensatz. <acronym>ISO</acronym>-10646 (Unicode) =
+          Universalzeichensatz, der in Zukunft
+          <acronym>ISO</acronym>-8859-1 und die vielen au&szlig;erhalb
+          (West-)Europas eingesetzten Zeichens&auml;tze abl&ouml;sen
+          wird.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="kludgelines">
+
+      <glossterm>Kludgelines (Kludges)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Optionale Steuer-/Verarbeitungsanweisungen im Messagetext,
+          die n&ouml;tig wurden, um neue M&ouml;glichkeiten nutzen zu
+          k&ouml;nnen, die im urspr&uuml;nglichen Format einer Message
+          nicht ber&uuml;cksichtigt waren. (<abbrev>z.B.</abbrev>
+          <computeroutput>FMPT</computeroutput>,
+          <computeroutput>TOPT</computeroutput>,
+          <computeroutput>CHRS</computeroutput>, ...)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="magicnames">
+
+      <glossterm>Magicnames (Magic)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: ein
+          Magicname ist ein einfach zu merkender Name, der bei einem
+          <glossterm linkend="request">Request</glossterm> verwendet
+          werden kann um ein bestimmtes File anzufordern. Die
+          g&auml;ngigsten Magics sind
+          <computeroutput>FILES</computeroutput> und
+          <computeroutput>NEW</computeroutput> oder
+          <computeroutput>NEWFILES</computeroutput>. Mit
+          <computeroutput>FILES</computeroutput> erh&auml;lt man bei
+          den meisten <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> eine Liste
+          aller requestbaren Dateien,
+          <computeroutput>NEWFILES</computeroutput> bringt
+          normalerweise eine Liste aller neuen Dateien, die beim
+          Zielsystem verf&uuml;gbar sind. Die Magics werden vom
+          jeweiligen Sysop vergeben und sind (bis auf obige Ausnahmen,
+          die einen Quasi-Standard darstellen) sehr unterschiedlich.
+          Allerdings ist kein Sysop verpflichtet, Magics
+          einzurichten.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mail">
+
+      <glossterm>Mail</glossterm>
+
+      <glossdef>
+
+        <para>Private Nachricht. In manchen Netzen eine allgemeine
+          Bezeichnung f&uuml;r Nachrichten (private und
+          &ouml;ffentliche).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mailonly">
+
+      <glossterm>Mail-Only (<acronym>MO</acronym>)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Mail-Only Systeme sind <glossterm
+          linkend="node">Nodes</glossterm>, die keine <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> betreiben,
+          sondern nur aus einem <glossterm
+          linkend="mailer">Mailer</glossterm> bestehen. Anrufe von
+          Online-Usern bei solchen Systemen sind deshalb
+          zwecklos.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mailbox">
+
+      <glossterm>Mailbox</glossterm>
+
+      <glossdef>
+
+        <para>Ein <glossterm linkend="server">Server</glossterm>, der
+          die Dienste <glossterm linkend="mail">Mail</glossterm> und
+          Diskussionsforen anbietet.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mailer">
+
+      <glossterm>Mailer</glossterm>
+
+      <glossdef>
+
+        <para>Im <glossterm linkend="internet">Internet</glossterm>
+          ein Synonym f&uuml;r <glossterm
+          linkend="mua"><acronym>MUA</acronym></glossterm> oder
+          <glossterm linkend="mta"><acronym>MTA</acronym></glossterm>.
+          Im <glossterm linkend="fidonet">FidoNet</glossterm> ein
+          Programm, das es dem Benutzer erm&ouml;glicht, mit anderen
+          Mailern automatisch Verbindung aufzunehmen und Nachrichten
+          und/oder Files auszutauschen. G&auml;ngige Mailer sind zur
+          Zeit: <application>Binkley Term</application>,
+          <application>FrontDoor</application>,
+          <application>Xenia</application>,
+          <application>T-Mail</application>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mailingliste">
+
+      <glossterm>Mailing-Liste</glossterm>
+
+      <glossdef>
+
+        <para>Nachrichtenverteiler f&uuml;r ein bestimmtes Thema;
+          quasi ein Diskussionsforum, das per <glossterm
+          linkend="mail">Mail</glossterm> abgewickelt wird.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mailprocessor">
+
+      <glossterm>Mailprocessor (Echomailprocessor, Tosser)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          sortiert die neu angekommenen Messages in die Messagebase
+          (<glossterm linkend="tossen">tossen</glossterm>) und
+          bereitet die eigenen Nachrichten zum Versenden vor
+          (scannen). Derzeit verbreitete Tosser:
+          <application>Scantoss</application>,
+          <application>Tosscan</application>,
+          <application>Imail</application>,
+          <application>Fmail</application>,
+          <application>Fastecho</application>,
+          <abbrev>u.v.a.</abbrev></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mausnet">
+
+      <glossterm>MausNet</glossterm>
+
+      <glossdef>
+
+        <para>Ein kleineres Hobbycomputernetz. Das MausNet bietet
+          <glossterm linkend="mail">Mail</glossterm> und
+          themenorientierte Diskussionsforen &uuml;ber &uuml;ber
+          ganz Deutschland verteilte <glossterm
+          linkend="server">Server</glossterm>
+          (<quote>M&auml;se</quote>) an.</para>
+
+        <para>Siehe: <ulink
+          url="http://www.maus.de/">http://www.maus.de/</ulink></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mime">
+
+      <glossterm><acronym>MIME</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Multipurpose Internet Mail
+          Extensions</foreignphrase> = <glossterm
+          linkend="internet">Internet</glossterm>-Standard zur
+          &Uuml;bertragung von bin&auml;ren Daten, internationalen
+          Sonderzeichen, gro&szlig;en Dateien und
+          Multimedia-Daten.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="moderator">
+
+      <glossterm>Moderator</glossterm>
+
+      <glossdef>
+
+        <para>Im <glossterm linkend="usenet">Usenet</glossterm>: In
+          einigen <glossterm
+          linkend="usenet">Usenet</glossterm>-Diskussionsforen
+          k&ouml;nnen Beitr&auml;ge nicht direkt ver&ouml;ffentlicht
+          werden, sondern m&uuml;ssen per <glossterm
+          linkend="mail">Mail</glossterm> an einen Moderator geschickt
+          werden, der &uuml;berpr&uuml;ft, ob sie der <glossterm
+          linkend="charta">Charta</glossterm> entsprechen, und
+          <abbrev>ggf.</abbrev> ver&ouml;ffentlicht.</para>
+
+        <para>Im <glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Moderator achtet darauf, dass in <quote>seiner</quote>
+          <glossterm
+          linkend="echomail">Echomail</glossterm>-<glossterm
+          linkend="area">Area</glossterm> die <glossterm
+          linkend="rules">Rules</glossterm> eingehalten werden. Bei
+          Verst&ouml;&szlig;en kann er den Ausschluss des betreffenden
+          <glossterm linkend="node">Nodes</glossterm> von der
+          <glossterm linkend="area">Area</glossterm>
+          veranlassen.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mta">
+
+      <glossterm><acronym>MTA</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Mail Transport Agent</foreignphrase> -
+          Program, das f&uuml;r den Transport von <glossterm
+          linkend="mail">Mail</glossterm> sorgt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="mua">
+
+      <glossterm><acronym>MUA</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Mail User Agent</foreignphrase> -
+          Programm zum Lesen und Schreiben von <glossterm
+          linkend="mail">Mails</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="netmail">
+
+      <glossterm>Netmail (Matrix)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Netmails sind nicht-&ouml;ffentliche Nachrichten die von
+          einem User an einen anderen gerichtet sind. Sie sind nicht
+          privat, da jeder <glossterm linkend="node">Node</glossterm>,
+          der die Netmail routet, sie theoretisch lesen kann.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="netnews">
+
+      <glossterm>NetNews</glossterm>
+
+      <glossdef>
+
+        <para>Synonym f&uuml;r <glossterm
+          linkend="usenet">Usenet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="network">
+
+      <glossterm>Network (Net)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Network ist ein Zusammenschluss von <glossterm
+          linkend="node">Nodes</glossterm>. Gem&auml;ss <glossterm
+          linkend="policy">Policy</glossterm> sollte ein Network einen
+          bestimmten geographischen Bereich abdecken. Jedes Network
+          besteht aus einem <glossterm
+          linkend="host">Host</glossterm>, <glossterm
+          linkend="hub">Hubs</glossterm> je nach Bedarf, und einer
+          unterschiedlichen Anzahl von <glossterm
+          linkend="node">Nodes</glossterm>. In Deutschland gibt es
+          derzeit (M&auml;rz 2000) etwa 30 Networks.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="news">
+
+      <glossterm>News</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="usenet">Usenet</glossterm>-Begriff
+          f&uuml;r die Gesamtheit der Beitr&auml;ge in
+          <glossterm
+          linkend="usenet">Usenet</glossterm>-Diskussionsforen.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="newsreader">
+
+      <glossterm>Newsreader</glossterm>
+
+      <glossdef>
+
+        <para>News-<glossterm linkend="client">Client</glossterm>;
+          Programm zum Lesen/Schreiben von &ouml;ffentlichen
+          Nachrichten, gelegentlich auch analog zu <glossterm
+          linkend="mua"><acronym>MUA</acronym></glossterm>
+          <quote><acronym>NUA</acronym></quote> (<foreignphrase>News
+          User Agent</foreignphrase>) genannt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="newsgroup">
+
+      <glossterm>Newsgroup</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="usenet">Usenet</glossterm>-Begriff
+          f&uuml;r ein &ouml;ffentliches
+          Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="nntp">
+
+      <glossterm>NNTP</glossterm>
+
+      <glossdef>
+
+        <para>Verfahren zur &Uuml;bertragung von &ouml;ffentlichen
+          Nachrichten im <glossterm
+          linkend="internet">Internet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="node">
+
+      <glossterm>Node</glossterm>
+
+      <glossdef>
+
+        <para>Ein Node ist unterste Ebene in der Struktur des
+          <glossterm linkend="fidonet">FidoNet</glossterm>. <glossterm
+          linkend="point">Points</glossterm> eines Node sind zwar von
+          der Art der Adressierung noch unter dem Node einzuordnen,
+          jedoch sind sie nicht Bestandteil des <glossterm
+          linkend="fidonet">FidoNet</glossterm>, sondern, ebenso wie
+          User, Teilnehmer.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="nodelist">
+
+      <glossterm>Nodelist</glossterm>
+
+      <glossdef>
+
+        <para>Die Nodelist ist das <quote>Telefonbuch</quote> des
+          <glossterm linkend="fidonet">FidoNet</glossterm>. In ihr
+          sind die Telefonnummern und <glossterm
+          linkend="fidonet">FidoNet</glossterm>-Adressen aller
+          <glossterm linkend="node">Nodes</glossterm> weltweit
+          aufgef&uuml;hrt. Die Nodelist (oder ein Auszug daraus) wird
+          vom <glossterm linkend="mailer">Mailern</glossterm>
+          ben&ouml;tigt, um mit anderen <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> Kontakt
+          aufnehmen zu k&ouml;nnen.</para>
+
+        <table id="nodelisteintraege">
+          <title>Nodelisteintr&auml;ge</title>
+
+          <tgroup cols="2">
+
+            <tbody>
+
+              <row>
+                <entry><abbrev>Okt.</abbrev> 1986</entry>
+                <entry>~1.200</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Aug.</abbrev> 1989</entry>
+                <entry>~6.100</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Mar.</abbrev> 1990</entry>
+                <entry>~7.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Jan.</abbrev> 1992</entry>
+                <entry>~14.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Okt.</abbrev> 1992</entry>
+                <entry>~19.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Jan.</abbrev> 1993</entry>
+                <entry>~21.500</entry>
+
+              </row>
+
+              <row>
+                <entry>Mai 1993</entry>
+                <entry>~24.400</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Jan.</abbrev> 1994</entry>
+                <entry>~29.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>Nov.</abbrev> 1994</entry>
+                <entry>~35.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>M&auml;r.</abbrev> 1995</entry>
+                <entry>~38.000</entry>
+
+              </row>
+
+              <row>
+                <entry><abbrev>M&auml;r.</abbrev> 2000</entry>
+                <entry>~20.000</entry>
+
+              </row>
+
+            </tbody>
+
+          </tgroup>
+
+        </table>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="offlinereader">
+
+      <glossterm>Offline Reader</glossterm>
+
+      <glossdef>
+
+        <para>Offline Reader sind <glossterm
+        linkend="mail">Mail</glossterm>- und/oder <glossterm
+        linkend="netnews">News</glossterm>-<glossterm
+        linkend="client">Clients</glossterm>, die es erm&ouml;glichen,
+        <glossterm linkend="mail">Mail</glossterm> und/oder <glossterm
+        linkend="netnews">News</glossterm> ohne eine st&auml;ndige
+        Online-Verbindung zu lesen. Die Nachrichten werden auf
+        Veranlassung des Nutzers automatisch mit dem <glossterm
+        linkend="server">Server</glossterm> ausgetauscht (<glossterm
+        linkend="poll">Pollen</glossterm>). Im <glossterm
+        linkend="fidonet">FidoNet</glossterm>: Eine Mittelstufe
+        zwischen Online-Nutzer und <glossterm
+        linkend="point">Point</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="offtopic">
+
+      <glossterm>Off Topic (<acronym>OT</acronym>)</glossterm>
+
+      <glossdef>
+
+        <para>Eine Nachricht oder ein Teil einer Nachricht, die vom
+          Thema her nicht in das Diskussionsforum passt, in die sie
+          geschrieben wurde. Gegenteil: On Topic
+          (<acronym>OT</acronym>)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="pgp">
+
+      <glossterm><application>PGP</application></glossterm>
+
+      <glossdef>
+
+        <para><application>Pretty Good Privacy</application> -
+          Programm zur Nachrichten-Verschl&uuml;sselung mit
+          asymetrischen Nachrichtenschl&uuml;sseln.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="policy">
+
+      <glossterm>Policy (Worldpolicy, P4)</glossterm>
+
+      <glossdef>
+
+        <para>Die Policy (derzeit aktuell: <ulink
+          url="http://www.was-ist-fido.de/doks/poli4ger.txt"><abbrev>v.</abbrev>
+          4.07</ulink>) stellt quasi die <quote>Satzung</quote> des
+          <glossterm linkend="fidonet">FidoNet</glossterm> dar.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="point">
+
+      <glossterm>Point</glossterm>
+
+      <glossdef>
+
+        <para>Eine alte Bezeichnung f&uuml;r <glossterm
+          linkend="offlinereader">Offline Reader</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="poll">
+
+      <glossterm>Poll (pollen)</glossterm>
+
+      <glossdef>
+
+        <para>Ist der automatische Austausch von Nachrichten mit einem
+          <glossterm linkend="server">Server</glossterm>. Die
+          Nachrichten liegen (meist in komprimierter Form) beim
+          <glossterm linkend="server">Server</glossterm> zur Abholung
+          bereit.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="quote">
+
+      <glossterm>Quote, quoten</glossterm>
+
+      <glossdef>
+
+        <para>Neudeutsch f&uuml;r: Zitat, zitieren von Teilen einer
+          Nachricht, auf die man sich bei einer Antwort bezieht. In
+          der Regel werden sie mit einem
+          <computeroutput>&gt;</computeroutput> am Zeilenanfang
+          markiert. Siehe: <ulink
+          url="http://learn.to/quote/">http://learn.to/quote/</ulink></para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="posting">
+
+      <glossterm>Posting</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="usenet">Usenet</glossterm>-Begriff
+          f&uuml;r (das Ver&ouml;ffentlichen) eine(s) Beitrags in
+          einem &ouml;ffentlichen Diskussionsforum.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="postmaster">
+
+      <glossterm>Postmaster</glossterm>
+
+      <glossdef>
+
+        <para>Ansprechpartner bei <glossterm
+          linkend="domain">Domains</glossterm> <abbrev>bzw.</abbrev>
+          <glossterm linkend="mail">Mail</glossterm>-<glossterm
+          linkend="server">Servern</glossterm> f&uuml;r
+          Adressierungsprobleme.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="ppp">
+
+      <glossterm><acronym>PPP</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Point to Point Protocol</foreignphrase> -
+          Verfahren zur Teilnahme am <glossterm
+          linkend="internet">Internet</glossterm> per
+          <hardware>Modem</hardware> oder
+          <acronym>ISDN</acronym>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="realname">
+
+      <glossterm>Realname</glossterm>
+
+      <glossdef>
+
+        <para>Der Name im wirklichen Leben.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="region">
+
+      <glossterm>Region</glossterm>
+
+      <glossdef>
+
+        <para>Ein Teil der hierarchischen <glossterm
+          linkend="fidonet">FidoNet</glossterm>-Struktur. Eine
+          Region ist in Europa <abbrev>i.d.R.</abbrev> identisch mit
+          einem Staat. Sie besteht normalerweise aus mehreren
+          <glossterm
+          linkend="network">Networks</glossterm>. Deutschland ist
+          Region 24.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="reply">
+
+      <glossterm>Reply</glossterm>
+
+      <glossdef>
+
+        <para>Eine private Antwort auf eine (&ouml;ffentliche oder
+          private) Nachricht.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="request">
+
+      <glossterm>Request (Freq, Filerequest)</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Filerequest ist ein Download mit Hilfe eines <glossterm
+          linkend="mailer">Mailers</glossterm>. Der Filerequest
+          erm&ouml;glicht es, ein File bei einer anderen <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm>
+          downzuloaden, ohne sich in die <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> einloggen
+          zu m&uuml;ssen. Das Zielsystem muss dazu allerdings Requests
+          erlauben, was nicht bei allen <glossterm
+          linkend="bbs"><acronym>BBS</acronym></glossterm> der Fall
+          ist.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="rfc">
+
+      <glossterm><acronym>RFC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Request for Comments</foreignphrase> -
+          Eine <glossterm
+          linkend="internet">Internet</glossterm>-Dokumenten-Reihe, in
+          denen auch die <glossterm
+          linkend="internet">Internet</glossterm>-Standard-Spezifikationen
+          enthalten sind. (Es gibt bis jetzt <abbrev>ca.</abbrev> 3000
+          davon.)</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="rfd">
+
+      <glossterm><acronym>RfD</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Request for Discussion</foreignphrase> -
+          Aufruf zur Diskussion, insbesondere zur Einrichtung einer
+          neuen <glossterm linkend="newsgroup">Newsgroup</glossterm>
+          im <glossterm linkend="usenet">Usenet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="rotfl">
+
+      <glossterm><acronym>ROTFL</acronym>
+        (<acronym>ROFL</acronym>)</glossterm>
+
+      <glossdef>
+
+        <para><abbrev>Abk.</abbrev> f&uuml;r <foreignphrase>rolling on
+          the floor, laughing</foreignphrase> (Sich vor Lachen auf dem
+          Bodem w&auml;lzen). Gibt's in den verschiedensten
+          Abwandlungen, bis hin zu
+          <quote><acronym>ROTFBMHOTWALMAO</acronym></quote> und
+          &auml;hnlichem.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="routing">
+
+      <glossterm>Routing</glossterm>
+
+      <glossdef>
+
+        <para>Nachrichtentransport &uuml;ber bestimmte Wege.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="rtfm">
+
+      <glossterm><acronym>RTFM</acronym></glossterm>
+
+      <glossdef>
+
+        <para>Abk&uuml;rzung f&uuml;r <foreignphrase>read the fucking
+          manual</foreignphrase>. Eine nicht unbedingt b&ouml;se
+          gemeinte Aufforderung, im Handbuch nachzulesen.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="rules">
+
+      <glossterm>Rules</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Die
+          Regeln, die f&uuml;r fast alle <glossterm
+          linkend="echomail">Echomail</glossterm>-<glossterm
+          linkend="area">Areas</glossterm> existieren und an die sich
+          jeder zu halten hat, der in einer <glossterm
+          linkend="area">Area</glossterm> schreiben will. Sie werden
+          vom jeweiligen <glossterm
+          linkend="moderator">Moderator</glossterm>
+          aufgestellt.</para>
+
+        <glossseealso otherterm="charta">
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="sendmail">
+
+      <glossterm><application>Sendmail</application></glossterm>
+
+      <glossdef>
+
+        <para>Ein popul&auml;rer <glossterm
+          linkend="mta"><acronym>MTA</acronym></glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="server">
+
+      <glossterm>Server</glossterm>
+
+      <glossdef>
+
+        <para>Ein Rechner oder ein Programm, der oder das bestimmte
+          Dienste bereitstellt (<abbrev>z.B.</abbrev> <glossterm
+          linkend="mail">Mail</glossterm>, <glossterm
+          linkend="news">News</glossterm>, <glossterm
+          linkend="www"><acronym>WWW</acronym></glossterm>, <glossterm
+          linkend="ftp"><acronym>FTP</acronym></glossterm>).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="signature">
+
+      <glossterm>Signature</glossterm>
+
+      <glossdef>
+
+        <para><quote>Unterschrift</quote> unter Nachrichten, oft
+          mehrere Zeilen lang. Signatures sollten nacht Konvention
+          nicht l&auml;nger als vier Zeilen sein.</para>
+
+        <para>Signatures sind im <glossterm
+          linkend="fidonet">FidoNet</glossterm> nicht gern gesehen (in
+          manchen <glossterm linkend="area">Areas</glossterm> sogar
+          explizit verboten), da hier die Originline die Aufgabe der
+          Signature erf&uuml;llt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="site">
+
+      <glossterm>Site</glossterm>
+
+      <glossdef>
+
+        <para>Ein Rechner oder ein lokales Netzwerk.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="smiley">
+
+      <glossterm>Smiley</glossterm>
+
+      <glossdef>
+
+        <para>Gebr&auml;uchliche Mittel zur Verdeutlichung von Ironie,
+          Sarkasmus, Entt&auml;uschung, <abbrev>usw.</abbrev> Die
+          gebr&auml;uchlichsten: <quote>:-)</quote> und
+          <quote>:-(</quote> (Zum Lesen den Kopf um 90 Grad nach links
+          neigen). Existieren in den verschiedensten
+          Variationen.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="smtp">
+
+      <glossterm><acronym>SMTP</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Simple Mail Transfer
+          Protocol</foreignphrase> - Verfahren zur &Uuml;bertragung
+          von <glossterm linkend="mail">Mail</glossterm> im <glossterm
+          linkend="internet">Internet</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="spam">
+
+      <glossterm>Spam</glossterm>
+
+      <glossdef>
+
+        <para>Sammelbezeichnung f&uuml;r Artikel die Werbung enthalten
+          oder in unverh&auml;ltnism&auml;&szlig;ig vielen <glossterm
+          linkend="forum">Foren</glossterm> geposted wurden,
+          <glossterm linkend="ube"><acronym>UBE</acronym></glossterm>
+          und <glossterm
+          linkend="uce"><acronym>UCE</acronym></glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="spooling">
+
+      <glossterm>Spooling</glossterm>
+
+      <glossdef>
+
+        <para>Bereitstellen versandfertiger Nachrichten/Dateien in
+          einem bestimmten Festplattenverzeichnis.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="subject">
+
+      <glossterm>Subject</glossterm>
+
+      <glossdef>
+
+        <para>Betreff einer Nachricht</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="summary">
+
+      <glossterm>Summary</glossterm>
+
+      <glossdef>
+
+        <para>Zusammenfassung einer Nachricht</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="supersedemessage">
+
+      <glossterm>Supersede-Message</glossterm>
+
+      <glossdef>
+
+        <para>Nachricht, die eine andere Nachricht ersetzt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="system">
+
+      <glossterm>System</glossterm>
+
+      <glossdef>
+
+        <para>Ein <glossterm linkend="server">Server</glossterm>
+          f&uuml;r <glossterm linkend="mail">Mail</glossterm> und/oder
+          <glossterm linkend="news">News</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="thread">
+
+      <glossterm>Thread</glossterm>
+
+      <glossdef>
+
+        <para>Diskussionsstrang; Bezeichnung f&uuml;r eine Reihe von
+          Nachrichten zu einem bestimmten Thema.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="tossen">
+
+      <glossterm>Tossen</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          Einsortieren von neuen Messages in die Messagebase. Wird vom
+          <glossterm linkend="mailprocessor">Mailprocessor</glossterm>
+          durchgef&uuml;hrt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="traffic">
+
+      <glossterm>Traffic</glossterm>
+
+      <glossdef>
+
+        <para>Nachrichtenaufkommen</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="ube">
+
+      <glossterm><acronym>UBE</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Unsolicited Bulk E-Mail</foreignphrase> -
+          unverlangt zugeschickte Massen-<glossterm
+          linkend="mail">E-Mail</glossterm>-Sendung.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="uce">
+
+      <glossterm><acronym>UCE</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Unsolicited Commercial
+          E-Mail</foreignphrase> - unverlangt zugeschickte
+          Werbe-<glossterm
+          linkend="mail">E-Mail</glossterm>-Sendung.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="uplink">
+
+      <glossterm>Uplink</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>:
+          <glossterm linkend="server">Server</glossterm>, von dem
+          Nachrichten abgeholt werden und an das die eigenen
+          Nachrichten geschickt werden. Bei <glossterm
+          linkend="point">Points</glossterm> ist Uplink synonym zu
+          <glossterm linkend="boss">Boss</glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="usenet">
+
+      <glossterm>Usenet</glossterm>
+
+      <glossdef>
+
+        <para>Ein popul&auml;res Konferenzsystem, das eine gro&szlig;e
+          Zahl themenorientierter Diskussionsforen zur Verf&uuml;gung
+          stellt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="uucico">
+
+      <glossterm><command>uucico</command></glossterm>
+
+      <glossdef>
+
+        <para>Programm zur <glossterm
+          linkend="uucp">UUCP</glossterm>-Nachrichten&uuml;bertragung</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="uucp">
+
+      <glossterm><command>UUCP</command></glossterm>
+
+      <glossdef>
+
+        <para>Nachrichten-Transportverfahren und -programm</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="uuencode">
+
+      <glossterm>UUencode</glossterm>
+
+      <glossdef>
+
+        <para>Veraltetes Verfahren, mit dem bin&auml;re Dateien im
+          ASCII-Format codiert werden k&ouml;nnen, um sie per
+          <glossterm linkend="mail">Mail</glossterm> zu
+          &uuml;bertragen. Inzwischen durch <glossterm
+          linkend="mime">MIME</glossterm> ersetzt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="www">
+
+      <glossterm><acronym>WWW</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>World Wide Web</foreignphrase>;
+          Popul&auml;rer <glossterm
+          linkend="internet">Internet</glossterm>-Informationsdienst.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="zcc">
+
+      <glossterm><acronym>ZCC</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Zone Coordinator Council</foreignphrase>.
+          Oberstes <quote>Gremium</quote> des <glossterm
+          linkend="fidonet">FidoNet</glossterm>, besteht aus den sechs
+          <glossterm
+          linkend="fidoc"><acronym>ZC</acronym>s</glossterm> und dem
+          <glossterm
+          linkend="fidoc"><acronym>IC</acronym></glossterm>.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="zmh">
+
+      <glossterm><acronym>ZMH</acronym></glossterm>
+
+      <glossdef>
+
+        <para><foreignphrase>Zone Mailing Hour</foreignphrase> -
+          <glossterm linkend="fidonet">FidoNet</glossterm>:
+          <acronym>ZMH</acronym> ist die Zeit, in der jeder
+          Fido-<glossterm linkend="node">Node</glossterm> f&uuml;r
+          Anrufe anderer <glossterm linkend="node">Nodes</glossterm>
+          offenstehen muss. W&auml;hrend dieser Zeit d&uuml;rfen keine
+          User in der Box zugelassen werden. Ausserdem darf kein
+          <glossterm linkend="request">Filerequest</glossterm> und
+          kein Echomailaustausch stattfinden. Die
+          <acronym>ZMH</acronym> ist exklusiv f&uuml;r den Austausch
+          von <glossterm linkend="netmail">Netmail</glossterm>
+          reserviert. Sie dauert in Europa von 2:30 - 3:30
+          <acronym>GMT</acronym> (entspricht 3:30 - 4:30
+          Mitteleurop&auml;ischer Zeit, <abbrev>bzw.</abbrev> 4:30 -
+          5:30 Mitteleurop&auml;ischer Sommerzeit).</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="zone">
+
+      <glossterm>Zone</glossterm>
+
+      <glossdef>
+
+        <para>Im <glossterm linkend="fidonet">FidoNet</glossterm> gibt
+          es derzeit sechs Zonen:</para>
+
+        <informaltable id="fidozonen">
+
+          <tgroup cols="2">
+
+            <tbody>
+
+              <row>
+                <entry>Zone 1:</entry><entry>Nordamerika</entry>
+                <entry>Zone 2:</entry><entry>Europa</entry>
+
+              </row>
+
+              <row>
+                <entry>Zone 3:</entry><entry>Ozeanien</entry>
+                <entry>Zone 4:</entry><entry>Lateinamerika</entry>
+
+              </row>
+
+              <row>
+                <entry>Zone 5:</entry><entry>Afrika</entry>
+                <entry>Zone 6:</entry><entry>Asien</entry>
+
+              </row>
+
+            </tbody>
+
+          </tgroup>
+
+        </informaltable>
+
+        <para>Eine <glossterm
+          linkend="fidoadresse">Adresse</glossterm> mit einer
+          gr&ouml;&szlig;eren Zonennummer geh&ouml;rt nicht zum
+          <glossterm linkend="fidonet">FidoNet</glossterm>, sondern zu
+          einem der unz&auml;hligen Netze, die auf Fido-Technik
+          basieren.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+    <glossentry id="zonegate">
+
+      <glossterm>Zonegate</glossterm>
+
+      <glossdef>
+
+        <para><glossterm linkend="fidonet">FidoNet</glossterm>: Ein
+          Zonegate ist die zentrale Stelle, die f&uuml;r eine Zone den
+          <glossterm linkend="netmail">Netmail</glossterm>-Austausch
+          mit anderen Zonen (&uuml;ber deren Zonegate)
+          erledigt.</para>
+
+      </glossdef>
+
+    </glossentry>
+
+  </glossary>
+
   <appendix label="A" id="an0a0000">
     <title>Aufruf-Parameter, Environment-Eintr&auml;ge und
       Errorlevel-R&uuml;ckgaben</title>
