@@ -122,10 +122,10 @@
     maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š');
     msetvfunc(xp9_testbox);
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
-    maddstring(3,6,getres2(912,8),realname,30,40,'A'+without(range('!','~'),' @<>/'));
+    maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/'));
     msetvfunc(notempty);
     maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
-               'A'+without(allchar,'()'+iifs(ntNamespace(nt),'',' ')));
+               'A'+without(allchar,'() '));
     msetvfunc(notempty);
     maddstring(3,10,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
            'A'+without(range('!','~'),' @<>/')); mhnr(30001);
@@ -855,7 +855,7 @@
     dbRead(d,'netztyp',nt);
     name:= dbReadStr(d,'boxname');
     dnAme:= dbReadStr(d,'dateiname');
-    user:= dbReadStr(d,'username');
+    user:= dbReadStr(d,'username'); // hier eMail
     komm:= dbReadStr(d,'kommentar');
     realname:= dbReadStr(d,'realname');
     fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
