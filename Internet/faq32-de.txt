@@ -21,22 +21,25 @@ OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>20
 Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version bietet <i>keine</i> graphische Oberfläche, also nicht wundern. Im folgenden die Einschränkungen der einzelnen Versionen:
 <ul>
 <li>DOS: Die integrierten Mail/Newsclients (NNTP/POP3/SMTP) funktionieren hier nicht, ebenso wie BinkP (Fido over IP). Die Bildschirmgröße läßt sich nicht völlig frei ändern, es werden nur die unter DOS üblichen Textmodi unterstützt. Für den Modemzugriff stehen die gewohnten Möglichkeiten zur Verfügung (also direkter Zugriff auf die Hardware und Fossil).</li>
-<li>Windows: Modemzugriff direkt über die Windows-ComPorts. Siehe FAQ/Allgemein: Man braucht bei USB-Modems etc. keine Umwege über Fossil machen. Fossil steht dementsprechend auch gar nicht zur Verfügung.</li>
-<li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX. ISDN-Karten werden über /dev/ttyIx wie normale Modems angesprochen, in ISDN4Linux ist ein AT-Emulator integriert. In der Boxenkonfiguration bedeutet "COM1" bei "Schnittstelle", daß die Konfiguration von "Gerät 1" unter Config/Modem... benutzt wird. Wie gesagt, demnächst wird in dieser Richtung aufgeräumt.
-<br /><i>Vorsicht: Es scheint Probleme zu geben, wenn OpenXP (Linux) auf einem FAT16-Laufwerk liegt (seltsame Abstürze).</i> Das Homeverzeichnis des OpenXP-Users sollte also das ext2-Dateisystem benutzen.</li>
+<li>Windows: Modemzugriff direkt über die Windows-COM-Ports. Siehe FAQ/Allgemein: Man braucht bei USB-Modems etc. keine Umwege über Fossil machen. Fossil steht dementsprechend auch gar nicht zur Verfügung.</li>
+<li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX. ISDN-Karten werden über /dev/ttyIx wie normale Modems angesprochen, in ISDN4Linux ist ein AT-Emulator integriert. In der Boxenkonfiguration bedeutet "COM1" bei "Schnittstelle", daß die Konfiguration von "Gerät 1" unter Config/Modem... benutzt wird.</li>
 </ul>
-Noch allgemein zum Modemzugriff:<br />
+
+Wie lasse ich OpenXP/32 unter Windows/Linux auf mein Modem/meine ISDN-Karte zugreifen?&nbsp;&nbsp;<small>2002-09-28</small>
 Mit der Umstellung im Netcall-Bereich wurden die alten Modemeinstellungen abgeschafft. Stattdessen gibt man
 jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
 aus den XP-Konfigurationsdateien auslesen. Änderungen am Config/Modem-Dialog sind in der Planung.
-<p>Die Einstellungen bezüglich des Modems sind nur für Fido, UUCP (Modembetrieb) und ZConnect relevant,
-Fido/UUCP over IP, NNTP und SMTP/POP3 benutzen den TCP/IP-Stack von Windows bzw. Linux. Für den Fall,
+<p><b>Die Einstellungen bezüglich des Modems sind nur für Fido, UUCP (Modembetrieb) und ZConnect relevant,
+Fido/UUCP over IP, NNTP und SMTP/POP3 benutzen den TCP/IP-Stack von Windows bzw. Linux.</b> Für den Fall,
 daß man keine Standleitung hat ;-), muß man also dem Betriebssystem klarmachen, wie es eine Internetverbindung
 herzustellen hat (DFÜ-Netzwerk bzw. pppd). Anleitungen hierzu gibt es vom jeweiligen Internetprovider bzw. auch
 zuhauf im <a href="http://www.google.de">Netz</a>.
-<br />Tip: Die Internetverbindung kann automatisch bei Bedarf hergestellt werden, siehe hierzu
+<br />Windows-Tip: Die Internetverbindung kann automatisch bei Bedarf hergestellt werden, siehe hierzu
 Start/Einstellungen/Systemsteuerung/Internetoptionen/Verbindungen.</p>
+<p>Damit OpenXP/32 (Windows) auf die ISDN-Karte/das USB-Modem/... zugreifen kann, muß das jeweilige Gerät einen virtuellen
+COM-Port bereitstellen. Fritz!-ISDN-Karten muß man dafür bei der Installation speziell konfigurieren, siehe 
+<a href="fritzconfig.jpg">Screenshot</a>.</p>
 
 Wie geht man mit dem Logging-Feature um?&nbsp;&nbsp;<small>2001-10-20</small>
 OpenXP/32 bietet die Möglichkeit, sehr ausführliche Debug-Logs zu erzeugen, die im Fehlerfall u.U. sehr einfach
