@@ -10,11 +10,7 @@
 
 Library xp_ntvdm;
 
-uses windows
-///////////////////////////////////////////////////////////////////
-,sysutils
-;
-///////////////////////////////////////////////////////////////////
+uses windows;
 
 { --- Imports from ntvdm.exe ------------------------------------ }
 
@@ -257,6 +253,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.6  2002/04/12 14:52:07  cl
+  - removed sysutils unit
+
   Revision 1.1.2.5  2002/04/12 14:50:11  cl
   - fixed GetVDMPointer
   - fixed mem_to_clip (called by String2Clip)
