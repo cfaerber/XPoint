@@ -993,7 +993,7 @@ begin
   wrt(x+40,y+10,mid(getres2(611,16),2));         { 'opien:' }
   mimepos:=x+(width-5-(length(getres2(611,17))+
              max(length(getres(602)),4)));
-  if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
+  if (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) and not binary then
   begin
     wrt(mimepos+1,y+10,mid(getres2(611,17),2));  { 'nhÑnge:' }
     showmp;
@@ -1003,7 +1003,7 @@ begin
   kopkey:=left(getres2(611,16),1);
   mimekey:=left(getres2(611,17),1);
   wrt(x+39,y+10,kopkey);             { 'K' / 'C' }
-  if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
+  if (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) and not binary then
     if SendFlags and SendWAB<>0 then
     begin
       attrtxt(col.coldialog);
@@ -1233,7 +1233,7 @@ begin
   if pm then begin
     fidoto:='';
     dbSeek(ubase,uiName,ustr(empfaenger));
-    if dbFound then begin                                 {Empfaenger Bekannt}
+    if dbFound then begin                               { Empfaenger bekannt }
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
       dbReadN(ubase,ub_pollbox,box);
@@ -1769,7 +1769,7 @@ fromstart:
                 if t=keyaltA then changeabs; { Absender aendern }
 
                 if (ustr(t)=mimekey) and (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) and
-                 not (SendFlags and SendWAB<>0) then
+                 not (SendFlags and SendWAB<>0) and not binary then
                 begin
                   mime_Attach:=MimeSendMenu;
                   showmp;
@@ -2395,9 +2395,9 @@ fromstart:
         AutoCrash:=CrashAdr;  { EmpfÑnger, evtl. ohne Point }
       end
     else
-      closebox;    { "Nachricht abschicken/speichern" }
+      closebox;    { Nachricht abschicken/speichern }
 
-    if msgCPanz>1 then begin    { cc-EpfÑnger bis auf einen Åberspringen }
+    if msgCPanz>1 then begin    { cc-EmpfÑnger bis auf einen Åberspringen }
       Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
       Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
@@ -2563,6 +2563,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.58  2002/04/25 22:15:20  my
+  MY:- Fix: Bei BinÑrnachrichten ("i" auf User-Brett) MIME-Multipart-
+       Versand im Sendefenster deaktiviert.
+
   Revision 1.39.2.57  2002/04/25 14:40:32  my
   MY:- Header 'X-XP-BOX' auch bei Fido schreiben (wegen forcebox-Handling,
        speziell N/W/R aus Unversandt-Brett)
