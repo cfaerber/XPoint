@@ -82,7 +82,7 @@ begin
     mcPanic:    s:='mcPanic';
   end;
 
-  DebugLog('netcall','IPC '+s+': '+Format(fmt,args),dlInform);
+  if fmt<>'' then DebugLog('netcall','IPC '+s+': '+Format(fmt,args),dlInform);
 {$ENDIF}
 end;
 
@@ -95,6 +95,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2001/03/20 12:17:17  ma
+        - fix: no debug log on WriteIPC(*,'',*)
+
         Revision 1.4  2001/03/20 00:12:40  cl
         - ENetcallTimeout
         - Debug logging of IPC output
