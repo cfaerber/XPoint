@@ -638,7 +638,7 @@ begin
   fis.Free;
 
     if PGPVersion=PGP2 then
-      RunPGP('-sab +textmode=off '+fi+OwnUserID+' -o '+fo)
+      RunPGP('-sat '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=PGP5 then
       RunPGP5('PGPS.EXE','-a -b '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=GPG then
@@ -1168,6 +1168,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2002/04/14 00:12:17  mk
+  - fixed signing of messages with pgp 2.x
+
   Revision 1.65  2002/04/06 17:07:48  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux
