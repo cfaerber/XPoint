@@ -178,7 +178,7 @@ begin
     ValidFileName:=false
   else begin
 {$IFDEF UnixFS}
-    assign(f, ResolvePathName(name));		{ ~/ aufloesen }
+    assign(f, ResolvePathName(name));           { ~/ aufloesen }
 {$ELSE}
     assign(f,name);
 {$ENDIF}
@@ -302,7 +302,7 @@ begin
   while doserror=0 do begin
     with sr do
       if (name[1]<>'.') then
-        if attr and Directory<>0 then
+        if attr and faDirectory<>0 then
           erase_all(path+name+DirSepa)
         else begin
           assign(f,path+name);
@@ -394,7 +394,7 @@ begin
     writeln(f,s);
     close(f);
 {$IFDEF UnixFS }
-    SetAccess(TempBatchFN, taUserRWX);		{ Ausfuehrbar machen }
+    SetAccess(TempBatchFN, taUserRWX);          { Ausfuehrbar machen }
 {$ENDIF }
   end;
   io:=ioresult; { Muss das doppelt sein? (hd) }
@@ -867,6 +867,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/05/17 16:11:03  ml
+  Zeilenanzahl aendern nun auch in Win32
+
   Revision 1.31  2000/05/14 12:21:42  hd
   - Anpassungen an UnixFS
 

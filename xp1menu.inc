@@ -22,7 +22,9 @@ begin
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
 {$IFDEF Ver32 }
       $015 : MenuHidden:=true; { Terminal }
+{$IFNDEF Win32 }
       $095 : MenuHidden:=true; { Zeilen }
+{$ENDIF }
 {$ENDIF }
       $097 : MenuHidden:=not exzconfig;              { Config/Anz./Pd-Zmodem }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
@@ -604,6 +606,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/05/17 16:11:04  ml
+  Zeilenanzahl aendern nun auch in Win32
+
   Revision 1.10  2000/05/03 20:35:44  hd
   - Anpassung an UnixFS (miscschab)
 

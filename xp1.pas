@@ -277,6 +277,9 @@ uses
 {$IFDEF BP }
   xpfonts,
 {$ENDIF }
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
   xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
@@ -1262,6 +1265,22 @@ end;
 procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
+{$IFDEF Win32 }
+  procedure SetScrXY(X,Y: Integer);
+  var
+    R: TSmallRect;
+    Size: TCoord;
+  begin
+    Size.X := X;
+    Size.Y := Y;
+    SetConsoleScreenBufferSize(OutHandle, Size);
+    R.Left   := 0;
+    R.Top    := 0;
+    R.Right  := Size.X - 1;
+    R.Bottom := Size.Y - 1;
+    SetConsoleWindowInfo(OutHandle, True, R);
+  end;
+{$ENDIF }
 begin
 {$IFDEF NCRT }
   screenlines:= GetScreenLines;
@@ -1284,6 +1303,7 @@ begin
       screenlines:=GetScreenlines;
     end;
 {$IFDEF Win32 }
+  SetScrXY(screenwidth,ScreenLines);
   ScreenLines := GetScreenLines;
 {$ENDIF }
   if (ParFontfile='') and not ParLCD then begin
@@ -2169,9 +2189,9 @@ begin
   dbReleaseCache;
   if not closed then closedatabases;
   if lockopen then begin
-    unlockfile(lockfile);
-    close(lockfile);
-    erase(lockfile);
+    fileio.unlockfile(xp0.lockfile);
+    close(xp0.lockfile);
+    erase(xp0.lockfile);
     if ioresult<>0 then ;
   end;
   if videotype>1 then setbackintensity;
@@ -2347,7 +2367,7 @@ begin
   gettime(dt.hour,dt.min,dt.sec,dummy);
   packtime(dt,pdt);
   if pdt shr 16 <> filetime(NewDateFile) shr 16 then
-    setfiletime(NewDateFile,pdt);
+    fileio.setfiletime(NewDateFile,pdt);
 end;
 
 
@@ -2405,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/05/17 16:11:04  ml
+  Zeilenanzahl aendern nun auch in Win32
+
   Revision 1.44  2000/05/17 10:23:14  oh
   -header.hdr wird bei Programmende geloescht
 
