@@ -6,10 +6,12 @@ Latest news on www.openxp.com...
 2003-08-01: OpenXP v3.8.11 beta available
 <a href="index.php4?file=download32-en.html">Download</a>
 +
-26. Juli 2003: Umbenennung von OpenXP/16
-OpenXP/16 wird seit Ende Juli 2003 unter der Leitung von Michael  
-Heydekamp als FreeXP unter freexp.de weiterentwickelt.
-<a href="http://www.freexp.de/news.php#freexp">Weiteres dazu...</a>
+26. Juli 2003: OpenXP/16 renamed to FreeXP
+Since end of July 2003, OpenXP/16 is developed as &quot;FreeXP&quot; under
+the coordination of Michael Heydekamp at <a href="http://www.freexp.de">freexp.de</a>.
+After a decision of Peter Mandrella, FreeXP is now Freeware as well and
+does thus not require a shareware registration anymore.
+<a href="http://www.freexp.de/news.php#freexp">More...</a>
 +
 2003-01-27: OpenXP/32 v3.8.8 beta available
 <a href="index.php4?file=download32-en.html">Download</a>
