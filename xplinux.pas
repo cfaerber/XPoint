@@ -28,7 +28,7 @@ uses
   linux,
   strings,
   sysutils,
-  xplinix;
+  xpglobal;
 
 const
   A_USER		= STAT_IRUSR or STAT_IWUSR;	{ User lesen/schreiben }
@@ -299,6 +299,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/05/13 11:01:28  hd
+  Fix: Falsche Unit
+
   Revision 1.11  2000/05/13 09:42:26  hd
   xpglobal wird benoetigt (Typen)
 
