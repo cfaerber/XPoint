@@ -87,6 +87,7 @@ type UTF8String = AnsiString;
 
 { Returns the total width of a @link(TUTF8String) in display columns. }
 function UTF8StringWidth(const AUTF8String: UTF8String): integer;
+
 { Returns the number of Unicode characters in a @link(TUTF8String). }
 function UTF8StringLength(const AUTF8String: UTF8String): integer;
 
@@ -403,6 +404,10 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2003/09/29 23:52:02  cl
+// - alternative implementation of xp1.ListDisplay, fixes several problems
+//   (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
+//
 // Revision 1.3  2003/08/26 22:56:18  cl
 // - fixes for Free PASCAL
 //

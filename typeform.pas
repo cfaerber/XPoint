@@ -914,7 +914,7 @@ begin
   Result := AddStart + Copy(s,StartPosition,Position-StartPosition) + AddEnd + Sp(Columns);
 
 {$IFDEF DEBUG}
-  assert(UTF8StringWidth(Result) = SaveColumns);
+//  assert(UTF8StringWidth(Result) = SaveColumns);
 {$ENDIF}
 end;
 
@@ -1390,7 +1390,6 @@ begin
   if pos(s1,mid(s2,n))=0 then PosN:=0
   else PosN:=pos(s1,mid(s2,n))+n-1;
 end;
-
 
 function center(const s:string; n:integer):string;
 begin
@@ -1973,15 +1972,26 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
-function FindURL(const s: String; var x, y: Integer): Boolean;
+function FindURL(const s: String; var x, y: Integer): Boolean; overload;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
     '-','_','#','=','&','%','@','$',',','+'];
+var
+  u: string;
 begin
-  x:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
-  if x=0 then x:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
-  if x=0 then x:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
-  if x=0 then x:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
+  u := UpperCase(s);
+              x := Pos('HTTP://',u); {WWW URL ?}
+  if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
+  if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
+  if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
+  if x=0 then x:=Pos('WWW.',u);      {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('HOME.',u);     {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('FTP.',u);      {oder FTP URL ohne HTTP:? }
+  if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
+  if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
+
   y:=x;
   Result := x <> 0;
   if Result then
@@ -2088,6 +2098,10 @@ end;
 
 {
   $Log$
+  Revision 1.142  2003/09/29 23:52:02  cl
+  - alternative implementation of xp1.ListDisplay, fixes several problems
+    (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
+
   Revision 1.141  2003/09/28 20:24:21  cl
   - fixed UTF8FormS
 

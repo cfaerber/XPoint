@@ -1215,8 +1215,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses : string;
 
-       AttrBuf: array[1..sizeof(Shortstring)] of SmallWord;
-
   // Speichert alle Zeilen in der Konfiguration, die nicht
   // erkannt und ausgewertet wurden, siehe xp2cfg.inc
   BadConfigLinesList: TStringList;
@@ -1231,6 +1229,10 @@ implementation
 
 {
   $Log$
+  Revision 1.189  2003/09/29 23:52:02  cl
+  - alternative implementation of xp1.ListDisplay, fixes several problems
+    (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
+
   Revision 1.188  2003/09/21 20:17:39  mk
   - rewrite of Listdisplay:
     removed Assemlber function MakeListDisplay, now

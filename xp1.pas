@@ -277,6 +277,8 @@ uses
   resource,crc,debug,  osdepend,
   xp1o,xp1o2,xp1help,xp1input,xpe,xpnt, xp3,
   direct,
+  xpunicode,
+  xpunicode_lbr,
   xpcharset;
 //mime;
 
@@ -385,7 +387,7 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-
+(*
 { Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
 { 2 = nach Startzeichen erlaubt }
@@ -518,7 +520,7 @@ const
             0  +      2 + 4              ,{ x }
             0  +      2 + 4              ,{ y }
             0  +      2 + 4              ,{ z }
-            0  +  1                      ,(* { *)
+            0  +  1                      ,( * { * )
             0                            ,{ | }
             0  +              8          ,{   }
             0                            ,{ ~ }
@@ -656,8 +658,119 @@ const
 { Variable in XP0.PAS: }
 { charbuf     : string[255];}
 { attrbuf     : array [1..255] of smallword;}
+*)
 
 procedure ListDisplay(x,y: Integer; var s: string);
+var Pos : integer;
+    OutPos : integer;
+    XPos : integer;
+    i : integer;
+
+    C, LastC : TUnicodeChar;
+    W : Integer;
+    B, LastB : TUnicodeLineBreakType;
+
+    HiChar : TUnicodeChar;
+    HiStart : Integer;
+    HiCount : Integer;
+
+    URL: boolean;
+    URLStart, URLEnd: integer;
+
+    DefaultAttr: SmallWord;
+
+  procedure _(Attr: SmallWord; ToPos: integer);
+  var s2: string;
+  begin
+    if ToPos <= OutPos then exit;
+    s2 := Copy(s,Outpos,ToPos-Outpos);
+    TextAttr := Attr;
+    // TODO: replace with a function that moves the cursor
+    FWrt(x+XPos,y,s2); Inc(XPos, UTF8StringWidth(s2));
+    OutPos := ToPos; if Pos <= OutPos then Pos := OutPos+1;
+  end;    
+
+begin
+  if not ListXHighlight then begin
+    FWrt(x,y,s);
+    exit;
+  end;
+
+  DefaultAttr := TextAttr;
+  Pos := 1; OutPos := 1; XPos := 0;
+
+  // put a space at the start
+  LastC := 32;
+  LastB := UNICODE_BREAK_SP;
+
+  // and at the end
+  s := s+' ';
+
+  URL := FindUrl(s, URLStart, URLEnd);
+
+  while Pos <= Length(s) do
+  begin
+    C := UTF8GetCharNext(s, Pos);
+    W := UnicodeCharacterWidth(C);
+    B := UnicodeCharacterLineBreakType(C);
+
+    if URL and (Pos >= URLStart) then begin
+      _(DefaultAttr,URLStart);
+      _(ListHiCol,  URLEnd);
+      URL := false;
+      HiChar := 0; // URLs break the highlighting
+    end else
+
+    if (HiChar<>0) and (C=HiChar) then
+    begin
+      // Count the delimiters seen
+      Inc(HiCount);
+    end else
+
+    if (HiChar<>0) and (LastC=HiChar) and not (B in [ UNICODE_BREAK_AL,
+      UNICODE_BREAK_ID,UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN,
+      UNICODE_BREAK_CM ]) and (Pos - HiStart - HiCount >= 2) then
+    begin
+      // replace continuations by ' '
+      if(HiCount > 1) then
+        for i := HiStart+1 to Pos-1 do
+          if Ord(s[i]) = HiChar then
+            s[i] := ' ';
+      _(DefaultAttr,HiStart-1);
+      Inc(OutPos); // ignore starting delimiter
+      _(ListHiCol,Pos-2);
+      Inc(OutPos); // ignore ending delimiter
+      s := s+ '  '; // add removed characters
+    end else
+
+    if (HiChar<>0) and not (B in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,
+      UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM,
+      UNICODE_BREAK_B2, UNICODE_BREAK_BA, UNICODE_BREAK_NU,
+      UNICODE_BREAK_BB, UNICODE_BREAK_HY ]) then
+    begin
+      // not a valid highlighting sequence, ignore
+      HiChar := 0;
+    end else
+
+    if (HiChar = 0) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
+      (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
+      UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
+    begin
+      HiStart := Pos;
+      HiCount := 0;
+      HiChar := C;
+    end;
+
+    LastC := C;
+    LastB := B;
+  end;
+
+  // the last char is the space inserted above and should not be output
+  _(DefaultAttr,Length(s)-1);
+end;
+
+(*
+procedure ListDisplayOld(x,y: Integer; var s: string);
 var
   i, j, j2, c, a, b,
   StartAttr, CountAttr: Integer;
@@ -734,6 +847,7 @@ begin
 
   Consolewrite(x, y, CharBuf);
 end;
+*)
 
 procedure interr(const txt:string);
 begin
@@ -3218,6 +3332,10 @@ end;
 
 {
   $Log$
+  Revision 1.194  2003/09/29 23:52:02  cl
+  - alternative implementation of xp1.ListDisplay, fixes several problems
+    (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
+
   Revision 1.193  2003/09/29 20:47:13  cl
   - moved charset handling/conversion code to xplib
 

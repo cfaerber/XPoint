@@ -132,9 +132,9 @@ procedure ClrScr;
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht veraendert }
 procedure SDisp(const x,y:xpWord; const s:string);
-
+(*
 procedure consolewrite(x,y: Integer; const s: String);
-
+*)
 
 { Routinen fuer 32 Bit Versionen, die den Zugriff auf den Bildschirm
   managen }
@@ -439,6 +439,7 @@ begin
 end;
 {$ENDIF NCRT }
 
+(*
 {$IFDEF Win32Console }
   procedure consolewrite(x,y: Integer; const s: String);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
@@ -467,6 +468,7 @@ end;
     end;
   end;
 {$ENDIF Win32 }
+*)
 
 {$IFNDEF NCRT}
 procedure Clreol;
@@ -1537,6 +1539,10 @@ end;
 
 {
   $Log$
+  Revision 1.100  2003/09/29 23:52:02  cl
+  - alternative implementation of xp1.ListDisplay, fixes several problems
+    (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
+
   Revision 1.99  2003/09/29 20:47:13  cl
   - moved charset handling/conversion code to xplib
 
