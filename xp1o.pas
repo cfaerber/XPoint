@@ -110,7 +110,7 @@ function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-    '-','_','#','=','&','%','@','$',','];
+    '-','_','#','=','&','%','@','$',',','+'];
 var x,y : Integer;
   brk : boolean;
   fn  : string;
@@ -1038,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2001/11/11 00:53:23  ma
+  - added '+' to URLChars
+
   Revision 1.102  2001/10/23 07:39:56  cl
   - ...and another range check error leaves the code
 
