@@ -116,9 +116,47 @@ XPOINT.DSL      Sylesheet fÅr Handbuch
 XP.IHQ          Quelltext der deutschen Online-Hilfe
 XP-E.IHQ        Quelltext der englischen Online-Hilfe
 *.DQ            Quelltexte der Dokumentation
+BESTELL.DOC     Bestellformulare
+LIZENZ.DOC      Die Sharewarelizenz von Crosspoint
+REGISTER.DOC    Registrierungsformular 
+FILES.TXT       Diese Datei (Beschreibung aller Dateien im Sourcearchiv)
+MAKE.TXT        Wie erstellt man aus dem Source ein lauff‰higes Crosspoint
+README.TXT      Kleiner Infotext
+SLIZENZ.TXT     Bedingungen fÅr die Nutzung des Quelltextes von Crosspoint
+VERSION.TXT     Versiongeschichte von Crosspoint
 
 DBFORM          Beschreibung der Datenbankfelder
 
+Verzeichnis .\beispiel
+----------------------
+gsbox.scr	Login-Script fuer GSMail
+madness.scr	Login-Script fuer Madness-Boxen
+magic.scr	Login-Script fuer MagicNET
+maus.scr	Login-Script fuer MAUS-Boxen
+o-magic.scr	Login-Script fuer MagicNET (Online)
+oz-netz.scr	Login-Script fuer Z-Netz (Online)
+pcsysop.scr	Login-Script fuer NetLand und PCNet
+privhead.xps	Schablone fuer nicht zitierte Mails
+qbrett.xps	Schablone fuer zitierte, oeff. Nachricht
+qpmpriv.xps	Schablone fuer zitierte Mails
+qpriv.xps	Schablone fuer als Mail zit. oeff. Nachrichten
+quark.scr	Login-Script fuer QUARK-Boxen
+quoteto.xps	Schablone fuer /Nachr./Weiterl./QuoteTo
+uucp.scr	Login-Script fuer UUCP
+z-netz.scr      Login-Script fuer Zerberus
+
+Verzeichnis .\samples (Englische Schablonen)
+--------------------------------------------
+empfbest.xps	Schablone fuer Empfangsbestaetigung
+header.xps      Schablone fuer Kîpfe neuer Nachrichten
+privhead.xps    Schablone fuer Kîpfe neuer privater Nachrichten
+privsig.xps     Schablone fuer Signaturen privater Nachrichten
+qbrett.xps      Schablone fuer zitierte, oeff. Nachricht
+qpmpriv.xps	Schablone fuer zitierte Mails
+qpriv.xps	Schablone fuer als Mail zit. oeff. Nachrichten
+quoteto.xps	Schablone fuer /Nachr./Weiterl./QuoteTo
+signatur.xps    Schablone fuer Signaturen oeff. Nachrichten
+weiter.xps	Schablone fuer weitergeleitete Nachrichten
 
 Dateiformate
 ------------
