@@ -46,8 +46,8 @@ var brk     : boolean;
     lsec    : string[2];
     f       : file;
 
-const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
-      NetcallEndeFlag   : string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
+const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
+      NetcallEndeFlag = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
@@ -221,15 +221,15 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
         i:=datLine;
         if trim(NetcallSpecialList[i]) = '' then
         begin
-          trfehler1(1019,strs(i+1),60);  { 'NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!' }
+          trfehler1(1019,strs(i),60);  { 'NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!' }
           dbClose(d);
           exit;
         end;
       end
       else begin     { Netcall/Spezial (manuell) }
       { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
-        i:=0;
-        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax-1) do
+        i:=1;
+        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax) do
           inc(i);
         if trim(NetcallSpecialList[i]) = '' then
         begin
@@ -238,7 +238,7 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
           exit;
         end;
       end;
-      all:=iifs(i>8,'',' ')+strs(i+1)+':  '+trim(NetcallSpecialList[i]);
+      all:=iifs(i>9,'',' ')+strs(i)+':  '+trim(NetcallSpecialList[i]);
     end
     else
       while not dbEOF(d) do
@@ -264,15 +264,15 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
         brk:=false
       else begin
         if special then
-          dialog(72,3,getres2(1016,4),x,y)     { 'Spezial-Netcall bei:' }
+          dialog(72,3,getres2(1024,1),x,y)     { 'Spezial-Netcall bei:' }
         else
           dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
-        maddstring(3,2,'',all,66,255,'>');
+        maddstring(3,2,'',all,66,255,'');
         if special then
-          for i:=0 to NetcallSpecialMax do
+          for i:=1 to NetcallSpecialMax do
             if trim(NetcallSpecialList[i]) <> '' then  { nur EintrÑge anzeigen, die nicht leer sind }
-              mappsel(false,iifs(i>8,'',' ')+strs(i+1)+':  '+
-               trim(NetcallSpecialList[i]));
+              mappsel(false,iifs(i>9,'',' ')+strs(i)+':  '+
+                      trim(NetcallSpecialList[i]));
         readmask(brk);
         enddialog;
         end;
@@ -738,6 +738,13 @@ end;
 
 {
   $Log$
+  Revision 1.4.2.7  2001/11/20 23:15:28  my
+  MY:- Variablen 'NetcallAlleFlag' und 'NetcallEndeFlag' => Konstanten
+  MY:- Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt dieselben
+       Routinen wie die Multiserverbetrieb-Konfiguration; ÅberflÅssige
+       Routinen und Deklarationen entfernt.
+  MY:- Anpassungen an umsortierte Ressourcen von Netcall/Spezial
+
   Revision 1.4.2.6  2001/11/11 23:27:45  my
   MY:- Fix: ReadBoxPar in 'MakeAllListe' ersetzt durch ReadBox - dadurch
        mehrfaches dbOpen/dbClose verhindert, da· mîglicherweise zu
