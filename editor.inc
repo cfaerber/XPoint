@@ -2016,7 +2016,7 @@ var   stxt  : string[MaxFindLen];
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
-      apd   : absatzp; { .robo }
+      apd   : absatzp;
       insap : absatzp;
       pos   : position;
       repall: boolean;
@@ -2041,10 +2041,11 @@ begin
     brk:=false; repall:=false;
     count:=0;
     repeat
-      sofs:=min(workpos+1,ActAbs^.size-dl^[scy].offset);
+      sofs:=min(workpos+1,ActAbs^.size) {-dl^[scy].offset)};
       ap:=ActAbs;
       repeat
         spos:=SeekStr(ap^.cont[sofs],ap^.size-sofs,stxt,igcase);
+      {   hinweis(strs(spos)+' / '+strs(sofs)+' / '+strs(ap^.size-sofs)); }
         if spos=-1 then begin
           ap:=ap^.next;
           sofs:=0;
@@ -2057,6 +2058,14 @@ begin
         pos.absatz:=ap;
         pos.offset:=spos+sofs;
         GotoPos(pos,1);
+
+        if not repall then begin
+          setblockmark(1);
+          Moveworkpos(workpos+length(stxt),ActAbs);
+          setblockmark(2);
+          Gotopos(pos,1);
+          end;   
+
         if ersetzen then with language^ do begin
           if aufbau then Display;
           if repall then begin
@@ -2080,8 +2089,8 @@ begin
             if insap=nil then brk:=true
             else begin
               FastMove(repby[1],insap^.cont,length(repby));
-              apd:=ActAbs; { .robo }
-              AbsDelete(apd,workpos,length(txt),false,true); { .robo }
+              apd:=ActAbs;
+              AbsDelete(apd,workpos,length(txt),false,true);
               Insert(insap,pos);
               MoveWorkpos(workpos+length(repby),ActAbs);
             end;
@@ -2296,6 +2305,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.9  2001/08/23 22:09:30  my
+  JG:- Search in Editor now marks the found term
+  JG:- If the search term was found in the second or any subsequent line
+       of a paragraph, the search was stuck at this place.
+
   Revision 1.10.2.8  2000/12/07 13:45:18  mk
   RB:- move cursor to end of block after block insert functions
 
