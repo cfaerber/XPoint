@@ -112,7 +112,7 @@ implementation  {-----------------------------------------------------}
 uses  xp3o,xp3ex,xpnt,xpovl;
 
 const
-  GlobalAblageOpen: Boolean = false;
+  GlobalAblageOpen : Boolean = false;
 var
   GlobalPuffer: file;
   GlobalLastPuffer: Byte;
@@ -195,55 +195,31 @@ function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
          boolean; assembler;
 
 { Bei "Umlautsensitiver" Suche (ae=„) muss der Key-String im AE/OE... Format und Upcase sein }
-
 asm
          push ds
          push bp
          cld
-         lds   si,adr
-         mov   cx,size
-         cmp   cx, 0
-         jz    @nfound
-         mov   dh,umlaut
-         cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
-         jne   @icase
-         cmp   igcase,0               { ignore case? }
-         jz    @case
+         lds si,adr
+         mov cx,size
+         mov dh,umlaut
+         cmp dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
+         jne @icase
+         cmp igcase,0               { ignore case? }
+         je @case
 
-@icase:  push  cx
-         push  si
-
-@cloop:  lodsb                        {  den kompletten Puffer in }
-         cmp   al,'„'
-         jnz   @no_ae
-         mov   al,''
-         jmp   @xl
-@no_ae:  cmp   al,'”'
-         jnz   @no_oe
-         mov   al,'™'
-         jmp   @xl
-@no_oe:  cmp   al,''
-         jnz   @no_ue
-         mov   al,'š'
-         jmp   @xl
-
-@no_ue:  cmp   al,'‚'
-         je    @is_eac
-         cmp   al,''
-         jne   @no_eac
-@is_eac: mov   al,'E'
-         jmp   @xl
-
-@no_eac: cmp   al,'a'                 {  UpperCase umwandeln }
-         jb    @noc
-         cmp   al,'z'
-         ja    @noc
-         sub   al,32
-@xl:     mov   [si-1],al
-@noc:    loop  @cloop
-         pop   si
-         pop   cx
-
+@icase:  push cx
+         push si
+         mov bh,0
+@cloop:  mov bl,[si]
+         cmp bl,'a'                         { erst ab 'a'... }
+         jb @noc
+         mov al,cs:[offset @lookup+bx-61h]  { Lookup-Table begint bei 'a'... }
+@xl:     mov [si],al
+@noc:    inc si
+         dec cx
+         jne @cloop
+         pop si
+         pop cx
 
 @case:   les   di,key
          sub   cl,es:[di]
@@ -263,44 +239,79 @@ asm
          jz    @found
          jmp   @sblp2
 
+@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
+         db '€šEƒ…†‡ˆ‰Š‹ŒE‘’“™•–—˜™š›œŸAIOU¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÅÆÇÈEÊËÌÍÎÏĞÑÒÓÔÕ™×ØÙÚÛšİŞáàáâãåæçèEêëìIîïğñòOôõ™÷øùUûšışÿ'
+
+{ Version OHNE ISO-Umlaute... }
+(* 
+         db '€šƒ…€ˆ‰Š‹Œ’’“™•–—˜™š›œŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ'
+*)
+
+
+
                                         {--------------}
 @testul:                                { WILDCARDS }
          mov ah,es:[di+bp+1]
          cmp ah,'?'                     { ? = Ein Zeichen beliebig }
          je @ulgood                     {--------------------------}
 
-
          cmp ah,'*'                     { * = mehrere Zeichen beliebig }
          jne @ultst                     { ---------------------------- }
                                            
 @1:      inc bp
          dec dl                         { Naechstes Suchkey-Zeichen laden }
-         jz @found                      { Kommt keines mehr, Suche erfolgreich }  
-
-@2:      mov al,[si+bx]                 { im Text nach Anfang des Rests suchen }
+         js @found                      { Kommt keines mehr, Suche erfolgreich }  
+          
+@2:      mov al,[si+bx]                 { im Text Nach Anfang des rests suchen }
          cmp al,es:[di+bp+1]
-         je @ulgood
+         push bp
+         je @3 
+         pop bp
          cmp al,' '                     { Abbruch bei Wortende }        
-         jb @nextb
+         jbe @nextb                     { JB waere Wortende... }
          inc bx
          jmp @2
+        
+@3:      inc bx                         {Weitervergleichen bis naechster * oder Suchkeyende }
+         inc bp  
+         dec dl
+         pop ax    {Stack-BP !}
+         js @found                      { Bei Suchkeyende ist Suche erfolgreich }
+         push ax
+         mov al,es:[di+bp+1]                 
+         cmp al,[si+bx]                 { weiter im Text solange er passt }
+         je @3
+         cmp al,'?'                     { ...oder "?" - Wildcard greift }                     
+         je @3 
+         call @_ultst                   { Umlautschreibweise beachten }
+         je @3
+         cmp al,'*'                     { bei neuem * - Wildcard diesen ueberspringen }
+         pop ax    {Stack raeumen}
+         je @1
+         mov bp,ax {BP=Pos. nach *}
+         jmp @2                         { Textanfang erneut suchen }  
+         
 
-
+@ultst:  call @_ultst
+         jne @nextb
+         inc bp                         { Wenn gefunden: Zeiger im Suchbegriff }
+         dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
+         jmp @ulgood                    { und oben weitermachen. }
 
                                         {--------------}
-@ultst:  cmp dh,0                       { UMLAUTSUCHE }
-         je @nextb                      { Aber nur wenn erwuenscht... }
+@_ultst: cmp dh,1                       { UMLAUTSUCHE }
+         je @_u1                        { Aber nur wenn erwuenscht... }
+         retn
 
-         mov ah,'E'
+@_u1:    mov ah,'E'
 
          cmp al,''                     { Wenn "" im Puffer ist, }
          jne @@1
          mov al,'A'
 @ultest: cmp ax,es:[di+bp+1]            { Dann auf "AE" Testen. }
-         jne @nextb
-         inc bp                         { Wenn gefunden: Zeiger im Suchbegriff }
-         dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
-         jmp @ulgood                    { und oben weitermachen. }
+         retn
 
 @@1:     cmp al,'™'
          jne @@2
@@ -316,15 +327,15 @@ asm
          jne @@4
          mov ax,'SS'                    { und "SS"... }
          jmp @ultest
-@@4:                                    {--------------}
+@@4:     retn                           {--------------}
 
 
-@nextb:  inc   si                       { Weitersuchen... }
+@nextb:  inc si                         { Weitersuchen... }
          dec cx
          jne @sblp1                     { 286er Loop geht nur +/- 127 Byte...}
-@nfound: xor   ax,ax
-         jmp   @ende
-@found:  mov   ax,1
+@nfound: xor ax,ax
+         jmp @ende
+@found:  mov ax,1
 @ende:   pop bp
          pop ds
 end;
@@ -441,7 +452,7 @@ var ok     : boolean;
     nopuffer: boolean;
 begin
   ok:=true;
-  dbReadN(mbase,mb_ablage,ablg);
+  dbRead(mbase,'ablage',ablg);  { KEIN 'dbReadN' VERWENDEN !!! }
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
   if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then
   begin
@@ -482,7 +493,7 @@ begin
       aufbau:=true;
       end;
     flags:=2;
-    dbWriteN(mbase,mb_halteflags,flags);
+    dbWrite(mbase,'halteflags',flags);  { KEIN 'dbWriteN' VERWENDEN !!! }
   end;
   if left(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=copy(hd.empfaenger,9,255);
@@ -540,7 +551,9 @@ begin
     dbReadN(mbase,mb_msgsize,size);
     dec(size,ofs);
     iso:=XReadIsoDecode and (dbReadInt(mbase,'typ')=ord('T')) and
-         (dbReadInt(mbase,'netztyp') and $2000<>0);
+         (dbReadInt(mbase,'netztyp') and $2000<>0) and
+       { (Doppel-)Konvertierung von MIME-Multiparts vom Typ 'T' verhindern }
+         not (dbReadInt(mbase,'flags') and 4<>0);
     while size>0 do begin
       blockread(GlobalPuffer,p^,min(bufs,size),rr);
       if inoutres<>0 then begin
@@ -1266,6 +1279,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.16  2002/03/08 22:59:56  my
+  MY+HG+JG:- WICHTIGER Bugfix (3 Beteiligte, 1 Monat Suche, 2 Codezeilen
+             ge„ndert): OpenXP/16 kann jetzt wieder eine Nachrichten-
+             Datenbank von XP v3.12 korrekt und ohne Stillstand des
+             Rechners konvertieren. Bug existent seit dem 12.08.2001.
+
+  JG:- Volltextsuche korrigiert;
+       - Wildcard-Suche zun„chst wieder auf alten Stand (nicht mehr
+         wortbergreifend, sondern nur innerhalb eines Wortes)
+         zurckgesetzt (Tempor„rfix, bis Routine neu geschrieben wird).
+       - Umlaute („,”,,á) werden jetzt auch in Nachrichten mit
+         ISO-Zeichensatz gefunden.
+
+  MY:- Fix: Bei "alten" MIME-Multipart-Nachrichten vom Typ 'T' findet
+       keine Doppelkonvertierung (xp3.XreadF und xpmime.ExtractMultiPart)
+       in den IBM-Zeichensatz mehr statt (Konvertierung in xp3.XreadF
+       verhindert).
+
   Revision 1.25.2.15  2001/09/18 16:42:41  my
   JG+MY:- Fix: Wildcard-Volltextsuche "*" hat Nachrichten gefunden, die
           nicht haetten gefunden werden duerfen (es wurde nur das erste
