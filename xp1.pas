@@ -202,22 +202,21 @@ function  fdat(const dat:string):string;             { Z-Datum -> Datum   }
 function  zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
 function  ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 function  Zdate:string;               { akt. Datum/Zeit im Z-Format }
-function  fuser(s:string):string;              { Spaces vor/hinter '@' }
+function  fuser(const s:string):string;              { Spaces vor/hinter '@' }
 function  aufnahme_string:string;
 
 function  MsgidIndex(mid:string):longint;      { case-insensitive CRC32 }
 
-function getb(var su:string; v:string; var b:byte):boolean;   { PARSER }
-function getc(var su:string; v:string; var c:char):boolean;
-function geti(var su:string; v:string; var i:integer):boolean;
-{ wie geti, allerdings mit 16 Bit Integer }
-function geti16(var su:string; v:string; var i:integer16):boolean;
-function getw(var su:string; v:string; var w:smallword):boolean;
-function getl(var su:string; v:string; var l:longint):boolean;
-function getx(var su:string; v:string; var b:boolean):boolean;
-function gets(var s,su:string; v:string; var ss:string; maxlen:byte):boolean;
-function getr(var su:string; v:string; var r:real):boolean;
-procedure exchange(var s:string; repl,by:string);
+function getb(const su, v:string; var b:byte):boolean;   { PARSER }
+function getc(const su, v:string;  var c:char):boolean;
+function geti(const su, v:string; var i:integer):boolean;
+function getw(const su, v:string; var w:smallword):boolean;
+function getl(const su, v:string; var l:longint):boolean;
+function getx(const su, v:string; var b:boolean):boolean;
+function gets(const s,su, v:string; var ss:string; maxlen:byte):boolean;
+function getr(const su, v:string; var r:real):boolean;
+
+procedure exchange(var s:string; const repl,by:string);
 
 function notempty(var s:string):boolean;
 
@@ -1557,7 +1556,7 @@ end;
 { === Parser-Routinen ============================ }
 
 { p ist immer<>0! }
-function scomp(var s1,s2 : string; p:byte):boolean;
+function scomp(const s1,s2 : string; p:byte):boolean;
 var p0,n : byte;
 begin
   repeat dec(p) until (s1[p]<>' ') or (p=0);   { rtrim }
@@ -1575,7 +1574,7 @@ begin
 end;
 
 
-function getb(var su:string; v:string; var b:byte):boolean;
+function getb(const su, v:string; var b:byte):boolean;
 var res : integer;
     p   : byte;
 begin
@@ -1587,7 +1586,7 @@ begin
   else getb:=false;
 end;
 
-function getc(var su:string; v:string; var c:char):boolean;
+function getc(const su, v:string; var c:char):boolean;
 var p : byte;
 begin
   p:=cpos('=',su);
@@ -1599,7 +1598,7 @@ begin
     Getc := false;
 end;
 
-function geti(var su:string; v:string; var i:integer):boolean;
+function geti(const su, v:string; var i:integer):boolean;
 var res : integer;
     p   : byte;
 begin
@@ -1611,19 +1610,7 @@ begin
   else geti:=false;
 end;
 
-function geti16(var su:string; v:string; var i:integer16):boolean;
-var res : integer;
-    p   : byte;
-begin
-  p:=cpos('=',su);
-  if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),i,res);
-    geti16:=(res=0);
-    end
-  else geti16:=false;
-end;
-
-function getw(var su:string; v:string; var w:smallword):boolean;
+function getw(const su, v:string; var w:smallword):boolean;
 var res : integer;
     p   : byte;
 begin
@@ -1635,7 +1622,7 @@ begin
   else getw:=false;
 end;
 
-function getl(var su:string; v:string; var l:longint):boolean;
+function getl(const su, v:string; var l:longint):boolean;
 var res : integer;
     p   : byte;
 begin
@@ -1647,7 +1634,7 @@ begin
   else getl:=false;
 end;
 
-function getr(var su:string; v:string; var r:real):boolean;
+function getr(const su, v:string; var r:real):boolean;
 var res : integer;
     p   : byte;
 begin
@@ -1659,7 +1646,7 @@ begin
   else getr:=false;
 end;
 
-function getx(var su:string; v:string; var b:boolean):boolean;
+function getx(const su, v:string; var b:boolean):boolean;
 var ss : string[1];
     p  : byte;
 begin
@@ -1678,7 +1665,7 @@ begin
   else getx:=false;
 end;
 
-function gets(var s,su:string; v:string; var ss:string; maxlen:byte):boolean;
+function gets(const s,su, v:string; var ss:string; maxlen:byte):boolean;
 var
     p   : byte;
 begin
@@ -1692,7 +1679,7 @@ begin
 end;
 
 
-function fuser(s:string):string;              { Spacec vor/hinter '@' }
+function fuser(const s:string):string;              { Spacec vor/hinter '@' }
 var p : byte;
 begin
   p:=cpos('@',s);
@@ -1954,7 +1941,7 @@ begin
 end;
 
 
-procedure exchange(var s:string; repl,by:string);
+procedure exchange(var s:string; const repl,by:string);
 var p : byte;
 begin
   p:=pos(ustr(repl),ustr(s));
@@ -2054,6 +2041,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.24  2001/08/28 08:05:13  mk
+  - removed GetI16, because unnecessary for 16 Bit
+  - optimized GetX functions, should improve startup speed
+
   Revision 1.48.2.23  2001/08/12 11:20:28  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

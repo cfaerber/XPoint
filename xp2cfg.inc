@@ -1386,8 +1386,8 @@ begin
           gets(s,su,'gifviewer',viewers^[1].prog,40) or
           gets(s,su,'lbmviewer',viewers^[2].prog,40) or
           gets(s,su,'pcxviewer',viewers^[3].prog,40) or
-          geti16(su,  'stdhaltezeit',stdhaltezeit) or
-          geti16(su,  'stduserhaltezeit',stduhaltezeit) or
+          geti(su,  'stdhaltezeit',stdhaltezeit) or
+          geti(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
@@ -1406,7 +1406,7 @@ begin
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
           gets(s,su,'UserAufnahme',userauf,10) or
-          geti16(su,  'NeuUsergruppe', Neuusergruppe) or
+          geti(su,  'NeuUsergruppe', Neuusergruppe) or
           gets(s,su,'Name_O''Maps',dummys,20) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
@@ -1751,6 +1751,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.26  2001/08/28 08:05:14  mk
+  - removed GetI16, because unnecessary for 16 Bit
+  - optimized GetX functions, should improve startup speed
+
   Revision 1.62.2.25  2001/08/11 22:43:53  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
