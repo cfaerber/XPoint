@@ -1875,7 +1875,7 @@ begin
               getmime(GetCTencoding)
             else
               if zz = 'control' then
-              control := s0
+              control := GetMsgId
             else
               Uline.Add('U-' + s1);
           'd':
@@ -3420,6 +3420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/10/06 14:21:51  mk
+  SV:- spitze Klammern werden bei eingehenden Cancels jetzt entfernt
+
   Revision 1.64  2000/09/25 17:52:30  mk
   - Typ wird nicht mehr auf Binaer gesetzt, wenn Msg B64 codiert ist
 
