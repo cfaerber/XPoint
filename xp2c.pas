@@ -294,7 +294,7 @@ var x,y        : byte;
     xids       : array[0..3] of string[6];
     RTAStrings : array[0..4] of str24;
     RTAErg     : str24;
-    UUCP_ZConnectUsed :boolean;
+    RFC_ZConnectUsed :boolean;
 
   function getRTAMode :str24;
   begin
@@ -329,13 +329,13 @@ var x,y        : byte;
   end;
 
 begin
-  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] > 0;
+  RFC_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_Client] + ntUsed[nt_ZConnect] > 0;
   for i:=0 to 3 do
     xids[i]:=getres2(252,i);        { 'nie','PMs','AMs','immer' }
-  if UUCP_ZConnectUsed then
+  if RFC_ZConnectUsed then
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
-  j := iif (UUCP_ZConnectUsed, 1, 0);
+  j := iif (RFC_ZConnectUsed, 1, 0);
   dialog(57,21+j,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
@@ -344,7 +344,7 @@ begin
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);   { 'Tage' }
 
-  if UUCP_ZConnectUsed then
+  if RFC_ZConnectUsed then
   begin
     RTAErg := getRTAMode;
     maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
@@ -397,7 +397,7 @@ begin
     else if ustr(atz)=ustr(getres2(252,55)) then AutoTimeZone:=55  { 'TZ/Datum' }
     else AutoTimeZone:=53;                                         { 'Datum'    }
     CheckTimeZone(false);
-    if UUCP_ZConnectUsed then setRTAMode;
+    if RFC_ZConnectUsed then setRTAMode;
     GlobalModified;
     end;
   enddialog;
@@ -1521,6 +1521,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.31  2001/12/21 16:51:27  my
+  MY:- Fix: RTA-Optionen wurden unter C/O/A nicht angeboten, wenn keine
+       UUCP- oder ZConnect-Boxen vorhanden waren (RFC/Client wurde nicht
+       berÅcksichtigt).
+
   Revision 1.39.2.30  2001/12/20 23:26:16  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
