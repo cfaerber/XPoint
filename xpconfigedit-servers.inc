@@ -1920,8 +1920,16 @@
                        nts:=getres2(927,3)+'^QWK,'; nts0:='';
                        nts2:=getres2(927,4)+getres2(927,6);  { ',^Transfer' }
                        end;
-        end;
-      end; 
+        nt_Pop3    : begin
+                       nts:=getres2(927,3)+getres2(927,11)+getres2(927,12);  nts0:=''; 
+                       nts2:=getres2(927,4);
+                     end;
+        nt_NNTP    : begin
+                       nts:=getres2(927,3)+getres2(927,13);  nts0:='';
+                       nts2:=getres2(927,4);
+                     end;
+      end;
+    end; 
     n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+nts+nts2,edb_pos);
                  { '^Point,^Modem,^GebÅhren,^Namen,'+nts+'^Diverses'+nts2 }
     freeres;
@@ -1951,10 +1959,12 @@
                 nt_Fido : EditFido(brk);
                 nt_QWK  : EditQWK(fn,brk);
                 nt_UUCP : EditUUCP(brk);
+                nt_POP3 : EditPOP3(brk);
+                nt_NNTP : EditNNTP(brk);
                 else      EditNet(brk);
               end;
-          6 : EditDiverses(nt,brk);
-          7 : EditSysopdaten(nt,brk);
+          6 : if nt = nt_POP3 then EditSMTP(brk) else EditDiverses(nt,brk);
+          7 : if nt = nt_POP3 then EditDiverses(nt, brk) else EditSysopdaten(nt,brk);
           end;
         end;
       if not brk then
@@ -2049,6 +2059,9 @@
 
 {
   $Log$
+  Revision 1.25  2001/09/07 21:58:27  mk
+  - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
+
   Revision 1.24  2001/09/07 13:54:23  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

@@ -2109,6 +2109,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Mail-/^News-Server,
 8    E^xterne Einstellungen,
 10   Externe Konfigurationsdatei laden
+11   ^POP3,
+12   ^SMTP,
+13   ^NNTP,
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3800,6 +3803,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.33  2001/09/07 21:58:27  mk
+# - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
+#
 # Revision 1.32  2001/09/06 22:01:13  mk
 # - client mode updates
 #
