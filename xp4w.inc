@@ -532,6 +532,17 @@ var fn     : string;
     mimetyp  : string;
     viewer   : ViewInfo;
                                            { Mailviren-Schutz }
+
+  function fnform(fname:string; len:integer):string;
+  begin
+    if length(fname)<len then
+      fnform:=rforms(fname,len)
+    else if length(fname)>len then
+      fnform:=LeftStr(fname,len-3)+'...'
+    else
+      fnform:=fname;
+  end;
+
   Procedure TestViralExtension;
   var x,y   : byte;
       t     : taste;
@@ -802,9 +813,11 @@ begin
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
-      GetMimeViewer(mimetyp,viewer);
+
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
-      Testviralextension;
+      GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+      if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+        GetMimeViewer(mimetyp,viewer);
 
                                                        {Einteilige nicht text/plain Message }
       if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
@@ -814,8 +827,8 @@ begin
         pushhp(94);
         listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
         app_l(forms(' '
-         + typname(LeftStr(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),25)
-         + '       ' + forms(mpdata.fname,23) + ' 1');
+          + typname(LeftStr(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),30)
+          + '  ' + fnform(mpdata.fname,23) + ' 1');
         app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
         listTp(SSP_Keys);
         ListSetStartpos(1);
@@ -1584,6 +1597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2000/10/18 23:53:38  mk
+  - misc. MIME-Viewer Bugfixes for Singlepart MIME
+
   Revision 1.43  2000/10/17 10:05:52  mk
   - Left->LeftStr, Right->RightStr
 
