@@ -23,17 +23,18 @@
 
 {$I XPDEFINE.INC }
 
+unit zcrfc;
+
 //{$IFDEF NCRT}
 //  {$UNDEF NCRT}
 //{$ENDIF}
-
-unit zcrfc;
 
 interface
 
 uses xpglobal,
   xp0,
   xp1,
+  xpnt,
   {$IFDEF unix}
   {$IFDEF fpc}
   linux,
@@ -55,7 +56,7 @@ uses xpglobal,
 {$IFDEF Delphi }
   Dos,
 {$ENDIF }
-  sysutils,classes,typeform,fileio,xpdatum,montage;
+  sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
 
 type
   TCompression = (
@@ -90,7 +91,7 @@ type
     procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
     procedure RFC1522form;                  { evtl. s mit quoted-printable codieren }
     procedure SetMimeData;
-    procedure WriteRFCheader(var f: file; mail: boolean);
+    procedure WriteRFCheader(f: TStream; mail,mpart: boolean);
 
     procedure Compress  (const fn: String; news:boolean; var ctype:TCompression);
     procedure DeCompress(fn: String; batch: boolean);
@@ -136,12 +137,46 @@ type
 
 procedure StartCommandlineUUZ;
 
+{ -------------------------- Unix line ends -------------------------- }
+
+type TCRLFtoLFStream = class(TStream)
+  private
+    FStream: TStream;
+    BytesWritten: LongInt;
+    LastCharWasCR: Boolean;
+  public
+    constructor Create(AnOtherStream: TStream);
+    destructor Destroy; override;
+
+    function Read(var Buffer; Count: Longint): Longint; override;
+    function Write(const Buffer; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+  end;
+
+{ ------------------- RFC 2821/976/977 Dot Escaping ------------------ }
+
+type TDotEscapeStream = class(TStream)
+  private
+    FStream: TStream;
+    BytesWritten: LongInt;
+    LastWasCRLF,LastWasCR: Boolean;
+  public
+    constructor Create(AnOtherStream: TStream);
+    destructor Destroy; override;
+    
+    function Read(var Buffer; Count: Longint): Longint; override;
+    function Write(const Buffer; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+  end;
+
 implementation
 
 uses
   xpheader, unicode, UTFTools, xpmakeheader,resource;
 
 const
+  cr: char = #13;
+
   bufsize = 65535;
   readEmpfList = true;
   xpboundary: string = '-';
@@ -166,8 +201,6 @@ const
   fPGP_haskey = $0100;                  { Nachricht enthaelt PGP-Key  }
   fPGP_comprom = $0200;                 { Nachricht enthaelt compromise }
 
-  nt_ZConnect = 2;
-  nt_RFC = 40;
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
   tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
@@ -180,12 +213,6 @@ const
   tAudio = 6;                           { basic                                }
   tVideo = 7;                           { mpeg                                 }
   tModel = 8;                           { model                                }
-
-  encBase64 = 1;                        { Content-Transfer-Encodings           }
-  encQP = 2;                            { quoted-printable                     }
-  enc8bit = 3;
-  enc7bit = 4;
-  encBinary = 5;
 
   rsmtp_command: array[TCompression] of string = (
     'rsmtp',
@@ -237,14 +264,6 @@ procedure ClearHeader;
 begin
   hd.Clear;
   Mail.Clear;
-end;
-
-function DecodeCharset(const s:string; cs: TUnicodeCharsets): String;
-begin
-  if cs in [csUnknown,csISO8859_1] then
-    Result := ISOToIBM(s)
-  else
-    Result := RecodeCharset(s,cs,csCP437)
 end;
 
 function unbatch(s: string): boolean; forward;
@@ -753,6 +772,8 @@ procedure TUUz.WriteHeader;
 var
   i: integer;
   ml: integer;
+  mtype : TMimeContentType;
+  mdisp : TMimeDisposition;
 
   procedure wrs(s: String);
   begin
@@ -835,7 +856,8 @@ begin
             wrs('DISKUSSION-IN: '+xempf[i])
       end
     end;
-    if typ = 'B' then wrs('TYP: BIN');
+    if typ = 'B' then wrs('TYP: BIN') else
+    if typ = 'M' then wrs('TYP: MIME');
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     for i := 0 to References.Count -1 do
@@ -858,7 +880,45 @@ begin
     if keywords <> '' then WriteStichworte(keywords);
     if summary <> '' then wrs('ZUSAMMENFASSUNG: ' + summary);
     if distribution <> '' then wrs('U-Distribution: ' + distribution);
-    if mime.boundary <> '' then wrs('X-XP-Boundary: ' + mime.boundary);
+    if charset<>'' then wrs('Charset: '+charset);
+    if x_charset<>'' then wrs('X-XP-Charset: '+x_charset);
+    if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
+
+      if (Boundary<>'') or (Mime.CType<>'') then
+      begin
+        mtype := TMimeContentType.Create(iifs(Mime.CType<>'',Mime.Ctype,'multipart/mixed'));
+        if boundary <>'' then mtype.boundary := boundary;
+
+        if typ='M' then begin
+          if x_charset=''  then mtype.charset := x_charset;
+
+          wrs('MIME-Type: '+mtype.AsString);
+          if(Mime.encoding<>MimeEncodingUnknown) then
+            wrs('MIME-Encoding: '+MimeEncodingNames[Mime.Encoding]);
+        end;
+
+        mtype.charset:=''; // confuses old CrossPoint/OpenXP/XP^2 versions
+        wrs('U-Content-Type: '+mtype.AsString);
+        mtype.Free;
+      end;
+
+      if (datei<>'') or (Mime.Disposition<>'') then
+      begin
+        mdisp := TMimeDisposition.Create(Mime.Disposition);
+        if Mime.Disposition='' then mdisp.Verb := iifs(typ='B','attachment','inline');
+        if length(mdisp.ParamValues['filename'])>0 then
+          with mdisp.Params['filename'] do begin
+            Value:=datei;
+            Charset:='IBM437';
+          end;
+        wrs('U-Content-Disposition: '+mdisp.AsString);
+        mdisp.Free;
+      end;
+
+      if Mime.Encoding<>MimeEncodingUnknown then begin
+        wrs ('U-Content-Transfer-Encoding: '+MimeEncodingNames[Mime.Encoding]);
+      end;
+
     if gateway <> '' then wrs('X-Gateway: ' + gateway);
     if sender<> '' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender);
     if control <> '' then
@@ -881,7 +941,7 @@ end;
                     Mon, 11 Jan 1992 01:02:03 GMT
                     Mon Jan 11, 1992 01:02:03 XYZ  }
 
-function RFC2Zdate(var s0: string): string;
+function RFC2Zdate(s0: string): string;
 const
   tzones = 52;
   tzone: array[0..tzones - 1, 0..1] of string[7] =
@@ -1111,204 +1171,50 @@ end;
 
 procedure GetCTencoding(var s: string);
 begin
-  LoString(s);
-  with hd.mime do
-    if s = '7bit' then
-      encoding := enc7bit
-    else
-      if s = '8bit' then
-      encoding := enc8bit
-    else
-      if s = 'quoted-printable' then
-      encoding := encQP
-    else
-      if s = 'base64' then
-      encoding := encBase64
-    else
-      if s = 'binary' then
-      encoding := encBinary
-    else
-      encoding := enc8bit;              { Default: 8bit }
+  hd.MIME.encoding:=MimeGetEncodingFromName(s);
 end;
 
-procedure GetContentType(var s: string);
+procedure GetContentType(const s: string);
 var
-  p: integer;
-  s1: string;
-  value: string;
-
-  procedure SkipWhitespace;
-  begin
-    inc(p);
-    while (p <= length(s)) and (s[p] in [' ', #9]) do
-      inc(p);                           { whitespaces ueberlesen }
-    delete(s, 1, p - 1);
-    p := 1;
-  end;
-
-  function filename: string;
-  var
-    p: integer;
-  begin
-    p := length(value);
-    while (p > 0) and not (value[p] in ['/', '\']) do
-      dec(p);
-    filename := mid(value, p + 1);
-  end;
-
+  pa : TMimeContentType;
 begin
-  with hd.mime do
-  begin
-    p := 1;
-    while (p <= length(s)) and not (s[p] in ['/', ' ', #9]) do
-      inc(p);
-    s1 := LowerCase(LeftStr(s, p - 1));
-    if s1 = 'text' then
-      ctype := tText
-    else                                { --- Type }
-      if s1 = 'application' then
-      ctype := tApplication
-    else
-      if s1 = 'multipart' then
-      ctype := tMultipart
-    else
-      if s1 = 'message' then
-      ctype := tMessage
-    else
-      if s1 = 'image' then
-      ctype := tImage
-    else
-      if s1 = 'audio' then
-      ctype := tAudio
-    else
-      if s1 = 'video' then
-      ctype := tVideo
-    else
-      if s1 = 'model' then
-      ctype := tModel
-    else
-      ctype := tApplication;            { Default: Application }
-    while (p <= length(s)) and (s[p] <> '/') do
-      inc(p);                           { / suchen }
-    SkipWhitespace;
-    if s <> '' then
-    begin
-      while (p <= length(s)) and not (s[p] in [';', ' ', #9]) do
-        inc(p);
-      subtype := LowerCase(LeftStr(s, p - 1)); { --- Subtype  }
-      if p > 1 then delete(s, 1, p - 1);
-      repeat                            { --- Parameter }
-        p := 1;
-        while (p <= length(s)) and (s[p] <> ';') do
-          inc(p);
-        SkipWhitespace;
-        if s <> '' then
-        begin
-          while (p <= length(s)) and (s[p] <> '=') do
-            inc(p);
-          s1 := LowerCase(trim(LeftStr(s, p - 1)));
-          SkipWhitespace;
-          if s <> '' then
-          begin
-            if FirstChar(s) = '"' then
-              repeat inc(p)until (p = length(s)) or (s[p] = '"')
-            else
-              repeat inc(p)until (p = length(s)) or (s[p] <= ' ');
-            value := trim(LeftStr(s, p));
-            if lastchar(value) = ';' then
-              dellast(value);
-            inc(p);
-            if FirstChar(Value) = '"' then UnQuote(value);
-            case ctype of
-              tText:
-                if s1 = 'charset' then charset := LowerCase(value);
-              tApplication:
-                if s1 = 'name' then
-                  hd.datei := filename
-                else
-                  if s1 = 'type' then
-                  filetype := value
-                else
-                  if s1 = 'x-date' then
-                  hd.ddatum := RFC2Zdate(value);
-              tMultipart:
-                if s1 = 'boundary' then boundary := value;
-              tMessage: ;
-            else
-              if s1 = 'x-filename' then
-                hd.datei := value
-              else
-                if s1 = 'x-date' then
-                hd.ddatum := RFC2Zdate(value);
-            end;
-          end;
-        end;
-      until s = '';
-    end;
-    if subtype = '' then
-      case ctype of
-        tText: subtype := 'plain';
-        tApplication: subtype := 'octet-stream';
-        tMultipart: subtype := 'mixed';
-        tMessage: subtype := 'rfc822';
-      end;
-    if (ctype = tText) and (charset = '') then charset := 'us-ascii';
-  end;
+  pa := TMimeContentType.Create(s);
+
+  hd.mime.ctype:=pa.AsString;
+  if (pa.boundary <>'') then hd.boundary := pa.boundary;
+  if (pa.ParamValues['name']<>'') and (hd.datei    ='') then hd.datei    := pa.ParamValues['name'];
+  if (pa.ParamValues['x-filename']<>'') and (hd.datei ='') then hd.datei := pa.ParamValues['x-filename'];
+  if (pa.Charset <>'') then hd.x_charset:= pa.Charset;
+  if (pa.ParamValues['x-date']<>'') then hd.ddatum := RFC2ZDate(pa.ParamValues['x-date']);
+  pa.free;
 end;
 
 procedure MimeAuswerten;
-var
-  ismime: boolean;
-  binary: boolean;
 begin
   with hd.mime do
   begin
-    ismime := (mversion <> '');
-    qprint := ismime and (encoding = encQP);
-    b64 := ismime and (encoding = encBase64);
-    binary := ismime and (not (ctype in [tText, tMultipart, tMessage]) or
-      ((encoding = encBinary) and (ctype <> tText)));
-    hd.typ := iifc(binary, 'B', 'T');
-    if (ctype = tText) and (charset <> '') and (charset <> 'us-ascii') and
-      (not IsKnownCharset(Charset)) then
-      hd.error := 'Unsupported character set: ' + charset;
+    qprint := (encoding = MimeEncodingQuotedPrintable);
+    b64 := (encoding = MimeEncodingBase64);
+
+    if Uppercase(LeftStr(ctype,10))='MULTIPART/' then
+      hd.typ:='M'
+    else if (encoding in [MimeEncoding7Bit,MimeEncoding8Bit])
+            or not MimeContentTypeIsEncodeable(ctype)
+            or MimeContentTypeNeedCharset(ctype) then
+      hd.typ:='T'
+    else
+      hd.typ:='B';
+
+    if MimeContentTypeNeedCharset(ctype) and
+      (not IsKnownCharset(hd.x_charset)) then
+      hd.error := 'Unsupported character set: ' + hd.x_charset;
   end;
-end;
-
-function UnQuotePrintable(const s:string; rfc2047:boolean):string;
-var p, b: Integer;
-  softbrk: boolean;
-begin
-    result := TrimRight(s);
-    softbrk := (lastchar(result) = '=');     { quoted-printable: soft line break }
-    if softbrk then dellast(result);
-
-    if rfc2047 then                     { RFC 2047: decode '_' to ' ' }
-      for p:=1 to length(result) do
-        if result[p] = '_' then result[p]:=' ';
-
-    p := cpos('=', result);
-    if p > 0 then
-      while p < length(result) - 1 do
-      begin
-        inc(p);
-        b := hexval(copy(result, p, 2));
-        if b > 0 then
-        begin
-          result[p - 1] := chr(b);
-          delete(result, p, 2);
-        end;
-        while (p < length(result)) and (result[p] <> '=') do
-          inc(p);
-      end;
-    if not(softbrk or rfc2047) then
-      result:=result+#13#10;
 end;
 
 procedure DecodeLine; {  inline; }       { MIME-quoted-printable/base64 -> 8bit }
 begin
   if qprint then
-    s:=UnquotePrintable(s,false)
+    s:=DecodeQuotedPrintable(s)
   else
   if b64 then
     s:=DecodeBase64(s)
@@ -1320,7 +1226,7 @@ procedure TUUz.MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
 var
   p: integer;
 begin
-  if not MakeQP or (hd.mime.encoding <> encQP) then exit;
+  if not MakeQP or (hd.mime.encoding <> MimeEncodingQuotedPrintable) then exit;
   p := 1;
   while p <= length(s) do
   begin                                 { qp-Codierung }
@@ -1395,93 +1301,57 @@ begin
   end;                                   { !!! IBM -> ASCII }
 end;
 
-procedure GetBinType(fn: String);      { vgl. MAGGI.PAS }
-var
-  p: integer;
-  ext: string;
-  t: text;
-  s: string;
-begin
-  with hd.mime do
-  begin
-    ctype := tApplication;
-    subtype := 'octet-stream';
-    p := rightpos('.', fn);
-    if p > 0 then
-    begin
-      ext := mid(fn, p + 1);
-      assign(t, 'mimetyp.cfg');
-      reset(t);
-      if ioresult = 0 then
-      begin
-        while not eof(t) do
-        begin
-          readln(t, s);
-          if (s <> '') and (firstchar(s) <> '#') and
-            stricmp(ext, GetToken(s, '=')) then
-            GetContentType(s);
-        end;
-        close(t);
-      end;
-    end;
-  end;
-end;
+// procedure GetBinType(fn: String);      { vgl. MAGGI.PAS }
+// begin
+//   { At this point, OpenXP should already have determined the content
+//     type! }
+//   hd.mime.ctype := 'application/octet-stream';
+// end;
 
 procedure TUUz.SetMimeData;
 var
-  i: Integer;
+  i : Integer;
 begin
   xpboundary := '----=_NextPart_';
   for i := 1 to 10 + random (20) do
     xpboundary := xpboundary + char (random (25) + byte ('A'));
+
   with hd, hd.mime do
   begin
-    mversion := '1.0';
+    if mversion='' then mversion := '1.0';
+
+    if (typ='M') or (UpperCase(LeftStr(ctype,10))='MULTIPART/') then
+    begin
+      xpboundary := hd.boundary;
+      if encoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
+        encoding := MimeEncoding7Bit;
+    end else
     if typ = 'T' then
     begin
-      if x_charset = '' then
-        encoding := enc7bit
-      else
+      if encoding=MimeEncodingUnknown then
+      begin
+        if x_charset = '' then
+          encoding := MimeEncoding7bit
+        else
         if MakeQP then
-        encoding := encQP
-      else
-        encoding := enc8bit;
-
-      { multipart/mixed outgoing }
-
-      if LeftStr(mimetyp, 10) = 'multipart/' then
-      begin
-        ctype := tMultipart;
-        subtype := mid(mimetyp, 11);
-        xpboundary := hd.boundary;
-      end
-      else
-      begin
-        ctype := tText;
-        subtype := 'plain';
+          encoding := MimeEncodingQuotedPrintable
+        else
+          encoding := MimeEncoding8bit;
       end;
 
-      charset := iifs(x_charset = '', 'us-ascii', x_charset);
-    end
-    else
-      if attrib and AttrMPbin <> 0 then
+      if ctype='' then ctype := 'text/plain';
+      if (charset='') or not IsKnownCharset(ZCCharsetToMime(charset)) then charset := 'IBM437';
+      if x_charset='' then x_charset := 'US-ASCII' else
+      if not IsKnownCharset(x_charset) then x_charset:='UTF-8';
+
+    end else // typ='B'
     begin
-      ctype := tMultipart;
-      subtype := 'mixed';
-      encoding := enc7bit;
-    end
-    else
-    begin
-      encoding := encBase64;
-      if datei = '' then
-      begin
-        ctype := tApplication;
-        subtype := 'octet-stream';
-      end
-      else
-        GetBinType(datei);
+      if encoding in [MimeEncodingUnknown,MimeEncodingBinary] then
+        encoding := MimeEncodingBase64;
+      if ctype='' then
+        ctype := 'application/octet-stream';
     end;
-  end;
+  end; // with
 end;
 
 { --- UUCP/RFC -> ZConnect ------------------------------------------ }
@@ -1633,48 +1503,6 @@ var
 
   drealn: string;
 
-  { Entfert RFC-Kommentare, ignoriert dabei auch quoted-strings }
-
-  function RFCRemoveComment(r0: string): string;
-  var
-    s, p, c: integer;
-    q: boolean;
-  begin
-    s := 1;
-    q := false;
-    c := 0;
-
-    while s <= length(r0) do
-    begin
-      case r0[s] of
-        '\': s := s + 1;                { skip one }
-        '"':
-          if c <= 0 then q := not q;    { toggle in-quote flag }
-        '(':
-          if not q then
-            if c <= 0 then
-            begin
-              c := 1; p := s;           { remeber start of comment }
-            end
-            else
-              c := c + 1;               { inc comment count }
-
-        ')':
-          if not q then
-            if c = 1 then
-            begin
-              delete(r0, p, s - p + 1); { remove comments }
-              s := p - 1;               { and reset pointer }
-              c := 0;
-            end
-            else
-              c := c - 1;               { dec comment count }
-      end;
-      s := s + 1;
-    end;
-    result:=r0
-  end;
-
   procedure getadr(line: string;var adr, realname: string);
   var
     p, p2: integer;
@@ -1753,7 +1581,7 @@ var
     i,p: integer;
   begin
     List.Clear;
-    line:=trim(rfcremovecomment(line));
+    line:=trim(rfcremovecomments(line));
     if line<>'' then begin
       if rightstr(line,1)<>',' then line:=line+',';
       while cpos(',',line)>0 do begin
@@ -1891,7 +1719,7 @@ var
 
   function GetMsgid: string;
   begin
-    s0:=RFCRemoveComment(Trim(s0));
+    s0:=RFCRemoveComments(Trim(s0));
     if firstchar(s0) = '<' then delfirst(s0);
     if lastchar(s0) = '>' then dellast(s0);
     GetMsgid := s0;
@@ -1920,7 +1748,7 @@ var
   var
     p: integer;
   begin
-    line:=RFCRemoveComment(line);
+    line:=RFCRemoveComments(line);
     while (line <> '') do
     begin
       p := blankpos(line);
@@ -1977,7 +1805,7 @@ var
   begin
     hd.Uline.Add('U-' + s1);
     { "(qmail id xxx invoked from network)" enthaelt "from " }
-    s0:=RFCRemoveComment(s0);
+    s0:=RFCRemoveComments(s0);
     by := GetRec('by ');
     from := GetRec('from ');
     { Envelope-Empfaenger ermitteln }
@@ -1997,112 +1825,16 @@ var
 
   procedure GetDate;
   begin
-    s0:=RFCRemoveComment(s0);
+    s0:=RFCRemoveComments(s0);
     hd.zdatum := RFC2Zdate(s0);
     ZCtoZdatum(hd.zdatum, hd.datum);
-  end;
-
-  { vollstaendig RFC-2047-Decodierung }
-
-  procedure RFC2047_Decode(var ss: string);
-  var p,q,r: longint;
-      e,t:   longint;
-      sd:    string;
-  label outer;
-
-  begin
-    p:=1;       { current scan position in ss      }
-    q:=1;       { start of data not copied into sd }
-    r:=1;       { last non-whitespace char in ss   }
-    sd:='';
-outer:
-    while p<=(length(ss)-9) do { 9 = minimum length for =?c?e?t?= }
-    begin
-      if(ss[p]='=')and(ss[p+1]='?')then // start marker
-      begin
-        (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
-        (*                     ^c          ^e                         ^t  *)
-
-        e:=p+2; while ss[e]<>'?' do { encoding position }
-        begin
-          if (e<=length(ss)-5) and (not(ss[e] in [#0..#32,'(',')','<','>','@',
-            ';',':','"',',','[',']','?','.','='])) then
-            e:=e+1
-          else
-          begin
-            if ss[e]='=' then
-              p:=e      { maybe a new start       }
-            else
-              p:=e+1;   { go ahead with next char }
-            goto outer;   { don't decode anything   }
-          end;
-        end; // while
-
-        e:=e+1; if(not(ss[e] in ['b','B','Q','q']))or(ss[e+1]<>'?')then
-        begin
-          p:=e;         { not a valid encoding    }
-          continue;     { don't decode anything   }
-        end;
-
-        t:=e+2; while ss[t]<>'?' do  { end marker position }
-        begin
-          if (t<=length(ss)-2) and(not(ss[t] in ['?',' ',#8,#10,#13])) then
-            t:=t+1
-          else
-          begin if length(s)<t then break; //** fix!
-            if s[t]='?' then
-              p:=t-1    { maybe a new start }
-            else
-              p:=t+1;   { go ahead with next char }
-            continue;   { don't decode anything   }
-          end;
-        end; // while
-
-        (* now copy unencoded text befor encoded-word *)
-
-        if (p>q) and { there is something to copy }
-           ( (q=0) or  { we are at the beginning (i.e. there was not already an encoded-word) }
-             (r>=q) )  { the last non-white-space character was not before the stop of the last encoded-word }
-        then
-          sd := sd + ISOtoIBM(copy(ss,q,p-q));
-
-        (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
-        (*                 ^p              ^e           ^e+2          ^t  *)
-
-        if ss[e] in ['B','b'] then { base64 }
-          sd := sd + DecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),GetCharsetFromName(Copy(ss,p+2,e-1-(p+2))))
-        else                       { quoted-printable }
-          sd := sd + DecodeCharset(UnquotePrintable(Copy(ss,e+2,t-(e+2)),true),GetCharsetFromName(Copy(ss,p+2,e-1-(p+2))));
-
-        p:=t+2;
-        q:=p;
-        Continue;
-      end else // start marker found
-      begin
-        p:=p+1;
-        if not(ss[p-1] in [' ',#10,#13,#8]) then
-          r:=p;
-      end;
-    end; // while
-
-    if (q>1) then   { there has actually something been decoded    }
-      ss := sd + ISOtoIBM(mid(ss,q))
-    else
-      ss := ISOtoIBM(ss);
-  end;
-
-  procedure GetMime(p: mimeproc);
-  begin
-    hd.Uline.Add('U-' + s1);
-    s0:=RFCRemoveComment(s0);
-    p(s0);
   end;
 
   procedure GetPriority;
   var p: integer;
   begin
     if hd.priority<>0 then exit;
-    s0:=RFCRemoveComment(s0);
+    s0:=RFCRemoveComments(s0);
     val(s0,hd.priority,p);
     if p>1 then begin // at least first char is a number
       s0:=LeftStr(s0,p-1); p:=IVal(s0);
@@ -2117,12 +1849,12 @@ outer:
 
   procedure GetVar(var r0, s0: string);
   begin
-    r0 := RfcRemoveComment(s0);
+    r0 := RfcRemoveComments(s0);
   end;
 
 begin
   zz := '';
-  hd.mime.ctype := tText;               { Default: Text }
+  hd.mime.ctype := 'text/plain';               { Default: Text }
   repeat
     ReadString;
     // fortgesetzte Zeile zusammenfassen
@@ -2148,10 +1880,10 @@ begin
               GetKOPs
             else
               if zz = 'content-type' then
-              getmime(GetContentType)
+              GetContentType(RFCRemoveComments(s0))
             else
               if zz = 'content-transfer-encoding' then
-              getmime(GetCTencoding)
+              Hd.Mime.Encoding := MimeGetencodingFromName(RFCRemoveComments(s0))
             else
               if zz = 'control' then
               control := GetMsgId
@@ -2219,7 +1951,7 @@ begin
               { X-No-Archive Konvertierung }
               if zz = 'x-no-archive' then
             begin
-              if LowerCase(RFCRemoveComment(s0)) = 'yes' then xnoarchive := true;
+              if LowerCase(RFCRemoveComments(s0)) = 'yes' then xnoarchive := true;
             end
             else
               if zz = 'x-priority' then
@@ -2259,7 +1991,7 @@ begin
             pfad := s0
           else
             if zz = 'mime-version' then
-            getmime(GetMimeVersion)
+            Hd.Mime.mversion:=RFCRemoveComments(s0)
           else
             { suboptimal }
             if zz = 'mail-copies-to' then begin
@@ -2302,7 +2034,7 @@ begin
             { grandson-of-1036 standard for former X-No-Archive }
             if zz = 'archive' then
             begin
-              if LowerCase(RFCRemoveComment(s0)) = 'no' then
+              if LowerCase(RFCRemoveComments(s0)) = 'no' then
                 xnoarchive := true;
             end
           else
@@ -2320,18 +2052,18 @@ begin
     if absender = '' then absender := 'Unknown@Sender';
     if UpperCase(wab) = UpperCase(absender) then
       wab := '';
-    RFC2047_Decode(betreff);
-    RFC2047_Decode(realname);
-    RFC2047_Decode(summary);
-    RFC2047_Decode(keywords);
-    RFC2047_Decode(organisation);
-    RFC2047_Decode(postanschrift);
-    RFC2047_Decode(fido_to);
+    betreff     := RFC2047_Decode(betreff,csCP437);
+    realname    := RFC2047_Decode(realname,csCP437);
+    summary     := RFC2047_Decode(summary,csCP437);
+    keywords    := RFC2047_Decode(keywords,csCP437);
+    organisation:= RFC2047_Decode(organisation,csCP437);
+    postanschrift:=RFC2047_Decode(postanschrift,csCP437);
+    fido_to     := RFC2047_Decode(fido_to,csCP437);
 
     for i := 0 to ULine.Count-1 do
     begin
       s := ULine[i];
-      RFC2047_Decode(s);
+      s := RFC2047_Decode(s,csCP437);
       ULine[i] := s;
     end;
 
@@ -2371,7 +2103,7 @@ var
   p, p2, p3: Integer;
   i: integer;
   c: char;
-  binaer,LastLineWasBlank,FirstLineHasBeenRead: boolean;
+  binaer,multi,LastLineWasBlank,FirstLineHasBeenRead: boolean;
   pfrec: ^filerec;
 begin
   if CommandLine then write('mail: ', fn);
@@ -2379,7 +2111,7 @@ begin
   while bufpos < bufanz do
   begin
     ClearHeader;
-    hd.netztyp:=nt_RFC;
+    hd.netztyp:=nt_UUCP;
     FirstLineHasBeenRead:=False;
     repeat                                { Envelope einlesen }
       p := 0;
@@ -2450,6 +2182,7 @@ begin
       ReadRFCheader(true, s);
       inc(mails);
       binaer := (hd.typ = 'B');
+      multi  := (hd.typ = 'M');
 
       if (mailuser='') and (hd.envemp<>'') then
       begin
@@ -2482,14 +2215,19 @@ begin
           Dec(hd.Lines)
         else // seems to be mbox format
           if LastLineWasBlank then
-            if LeftStr(s,5)='From ' then 
+            if LeftStr(s,5)='From ' then
               break
-            else 
+            else
               if LeftStr(s,6)='>From ' then
                 DelFirst(s);
         LastLineWasBlank:=(s=''); DecodeLine;
-        if (not binaer)and(hd.mime.ctype<>tMultipart)
-          then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
+        if not(binaer or multi) then
+        begin
+          s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
+          hd.charset:='IBM437';
+        end else
+          hd.charset:=MimeCharsetToZC(hd.x_charset);
+
         Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
@@ -2518,7 +2256,7 @@ var
   n: longint;
   p1, p2: integer;
   mempf: string;
-  binaer: boolean;
+  binaer,multi: boolean;
   nofrom: boolean;
   smtpende: boolean;
   pfrec: ^filerec;
@@ -2545,7 +2283,7 @@ begin
   OpenFile(fn);
   repeat
     ClearHeader;
-    hd.netztyp:=nt_RFC;
+    hd.netztyp:=nt_UUCP;
     repeat
       ReadString;
       if UpperCase(LeftStr(s, 9)) = 'MAIL FROM' then
@@ -2585,6 +2323,7 @@ begin
       mempf := SetMailUser(hd.empfaenger);
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
+      multi  := (hd.typ = 'M');
 
       if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
       begin
@@ -2620,8 +2359,13 @@ begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             delfirst(s);
           DecodeLine;           { haengt CR/LF an, falls kein Base64 }
-          if (not binaer)and(hd.mime.ctype<>tMultipart)
-            then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
+          if not(not binaer or multi) then
+          begin
+            s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
+            hd.charset:='IBM437';
+          end else
+            hd.charset:=MimeCharsetToZC(hd.x_charset);
+
           wrfs(s);
         end;
       end;
@@ -2649,7 +2393,7 @@ var
   size: longint; // Groesse des Headers in Byte
   fp, bp, n: longint;
   p: integer;
-  binaer: boolean;
+  binaer,multi: boolean;
   pfrec: ^filerec;
 label
   ende;
@@ -2679,7 +2423,7 @@ begin
       while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
         ReadString;
       p := pos('#! rnews', s);
-      if p > 1 then 
+      if p > 1 then
       begin
         delete(s, 1, p - 1);
         size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
@@ -2696,9 +2440,10 @@ begin
       inc(news);
       fp := fpos; bp := bufpos;
       ClearHeader;
-      hd.netztyp:=nt_RFC;
+      hd.netztyp:=nt_UUCP;
       ReadRFCheader(false, s);
       binaer := (hd.typ = 'B');
+      multi  := (hd.typ = 'M');
       seek(f1, fp); ReadBuf; bufpos := bp;
       repeat                        { Header ueberlesen }
         ReadString;
@@ -2723,8 +2468,13 @@ begin
           Dec(hd.lines);
         dec(Size, length(s) + eol);
         DecodeLine;
-        if (not binaer)and(hd.mime.ctype<>tMultipart)
-          then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
+        if not (binaer or multi) then
+        begin
+          s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
+          hd.charset:='IBM437';
+        end else
+          hd.charset:=MimeCharsetToZC(hd.x_charset);
+
         if not(NNTPSpoolFormat and(hd.lines=0))then begin // skip last '.' if NNTP spool format
           Mail.Add(s);
           inc(hd.groesse, length(s));
@@ -2963,13 +2713,17 @@ begin
     inc(uunumber);
 end;
 
-procedure wrs(var f: file; s: string);
+procedure wr(f:TStream;s:string);
 begin
-  s := s + #10;
-  blockwrite(f, s[1], length(s));
+  f.WriteBuffer(s[1], length(s));
 end;
 
-procedure TUUZ.WriteRFCheader(var f: file; mail: boolean);
+procedure wrs(f: TStream; s: string);
+begin
+  wr(f,s+#13#10);
+end;
+
+procedure TUUZ.WriteRFCheader(f: TStream; mail,mpart: boolean);
 const
   smtpfirst: boolean = true;
 var
@@ -3060,7 +2814,7 @@ var
     { bei Netztyp RFC Gruppennamen nicht nach }
     { lowercase wandeln wegen Macrosuff-Schrottnewsservern }
 
-    if hd.netztyp = nt_RFC then
+    if hd.netztyp in netsRFC then
       formnews := s
     else
       formnews := LowerCase(s);
@@ -3091,23 +2845,64 @@ var
     Wrs(f, s);
   end;
 
-  function maintype(ctype: byte): string;
+  procedure WriteMIME(is_main:Boolean);
+  var
+    mtype: TMimeContentType;
+    mdisp: TMimeDisposition;
   begin
-    case ctype of
-      tText: maintype := 'text';
-      tApplication: maintype := 'application';
-      tImage: maintype := 'image';
-      tMessage: maintype := 'message';
-      tMultipart: maintype := 'multipart';
-      tAudio: maintype := 'audio';
-      tVideo: maintype := 'video';
-      tModel: maintype := 'model';
-    else
-      maintype := 'application';
+    with hd do
+      with mime do
+      begin
+        mtype := TMimeContentType.Create(ctype);
+        mdisp := TMimeDisposition.Create(disposition);
+
+        if is_main and (mversion<>'') then
+          wrs(f, 'MIME-Version: ' + mversion);
+
+        datei := trim(datei);
+
+        if MType.NeedCharset then
+          mtype.Charset := MimeCharsetCanonicalName(x_charset);
+
+        if datei <> '' then
+          with mdisp.Params['filename'] do begin
+            value:=datei;
+            charset:='IBM437';
+          end;
+
+        if ddatum <> '' then
+          mdisp.Params['modification-date'].Value := ZtoRFCdate(copy(ddatum, 3, 10), ddatum +
+            'W+0');
+
+        if (is_main) and ((hd.attrib and AttrMPbin) <> 0) then
+        begin
+          mtype.AsString:='multipart/mixed';
+          mtype.Boundary:=xpboundary;
+          wrs(f, 'Content-Type: ' + mtype.AsFoldedString(76-14,76,#13#10,true));
+
+          if encoding in [MimeEncoding8Bit,MimeEncodingBinary] then
+          wrs(f,'Content-Transfer-Encoding: '+MimeEncodingNames[encoding]);
+        end else
+        begin
+          wrs(f, 'Content-Type: ' + mtype.AsFoldedString(76-14,76,#13#10,true));
+
+          if ((disposition<>'') and (UpperCase(disposition)<>'INLINE')) or (ddatum<>'') or (datei<>'') then
+            wrs(f, 'Content-Disposition: ' + mdisp.AsFoldedString(76-21,76,#13#10,true));
+
+          if encoding<>MimeEncoding7Bit then
+          wrs(f,'Content-Transfer-Encoding: '+MimeEncodingNames[encoding]);
+
+          if description<>'' then
+            WrLongline('Content-Description: ', description);
+        end;
+
+        mtype.Free;
+        mdisp.Free;
+      end;
     end;
-  end;
 
 begin
+  if not mpart then
   with hd do
   begin
     dat := ZtoRFCdate(datum, zdatum);
@@ -3206,6 +3001,14 @@ begin
         end;
         if s <> '' then wrref;
       end;
+      
+    if ersetzt <> '' then
+      wrs(f, 'Supersedes: <' + ersetzt + '>');
+    if expiredate <> '' then
+    begin
+      zctozdatum(expiredate,zcrfc.s);
+      wrs(f, 'Expires: ' + ztorfcdate(zcrfc.s,expiredate));
+    end;
 
     if attrib and attrControl <> 0 then
       wrs(f, 'Control: ' + betreff);
@@ -3220,17 +3023,15 @@ begin
       RFC1522form;
       wrs(f, 'Keywords: ' + zcrfc.s);
     end;
-    if summary <> '' then
-      WrLongline('Summary: ', summary);
 
     if not nomailer and (programm <> '') then
     begin
-      if mail then
-        wrs(f, 'X-Mailer: ' + programm)
-      else
-        wrs(f, 'X-Newsreader: ' + programm);
-      { User-Agent is new in grandson-of-1036 }
-      { wrs(f,'User-Agent: '+programm); }
+//      if mail then
+//        wrs(f, 'X-Mailer: ' + programm)
+//      else
+//        wrs(f, 'X-Newsreader: ' + programm);
+    // User-Agent is new in grandson-of-1036 }
+      wrs(f,'User-Agent: '+programm);
     end;
 
     { X-No-Archive Konvertierung }
@@ -3243,40 +3044,12 @@ begin
       for i := 0 to XLine.Count - 1 do
         Wrs(f, XLine[i]);
 
+    if (typ='M') or (not NoMIME and (mail or
+       (NewsMIME and ((x_charset <> '') or (typ='B'))) )) then
+      WriteMIME(true);
 
-    if not NoMIME and (mail or (NewsMIME and (x_charset <> ''))) then
-      with mime do
-      begin
-        wrs(f, 'MIME-Version: ' + mversion);
-        s := maintype(ctype) + '/' + subtype;
-        datei := trim(datei);
-        QuoteStr(datei, true);
-        case ctype of
-          tText: s := s + '; charset=' + charset;
-          tApplication:
-            if datei <> '' then s := s + '; name=' + datei;
-          tMultipart:
-            s := s + '; boundary="' + xpboundary + '"'
-              + iifs(mimereltyp = '', '', '; type="' + mimereltyp + '"');
-        else
-          if datei <> '' then s := s + '; x-filename=' + datei;
-        end;
-        xdate := (typ = 'B') and (ddatum <> '') and (attrib and AttrMPbin = 0);
-        if xdate then s := s + ';';
-        wrs(f, 'Content-Type: ' + s);
-        if xdate then
-          wrs(f, #9'      x-date="' + ZtoRFCdate(copy(ddatum, 3, 10), ddatum +
-            'W+0') + '"');
-        case encoding of
-          enc7bit: s := '7bit';
-          enc8bit: s := '8bit';
-          encQP: s := 'quoted-printable';
-          encBase64: s := 'base64';
-          encBinary: s := 'binary';
-        end;
-        if s <> '7bit' then
-          wrs(f, 'Content-Transfer-Encoding: ' + s);
-      end;
+    if summary <> '' then
+      WrLongline('Summary: ', summary);
 
     if not mail and (distribution <> '') then
       wrs(f, 'Distribution: ' + distribution);
@@ -3334,12 +3107,6 @@ begin
       wrs(f, 'X-Homepage: ' + homepage);
     if XPointCtl <> 0 then
       wrs(f, 'X-XP-Ctl: ' + strs(XPointCtl));
-    if ersetzt <> '' then
-      wrs(f, 'Supersedes: <' + ersetzt + '>');
-    if expiredate <> '' then begin
-        zctozdatum(expiredate,zcrfc.s);
-        wrs(f, 'Expires: ' + ztorfcdate(zcrfc.s,expiredate));
-      end;
     if fido_to <> '' then
     begin
       zcrfc.s := IbmToIso(fido_to);
@@ -3368,53 +3135,34 @@ begin
       wrs(f, zcrfc.s);
     end;
 
-    if not mail then
-      wrs(f, 'Lines: ' + strs(lines + iif(attrib and AttrMPbin <> 0, 16, 0)));
     for i := 0 to AddHd.Count - 1 do
       if AddHd.Objects[i] = Pointer(longint(mail)) then
         wrs(f, addhd[i]);
     wrs(f, '');
-    if attrib and AttrMPbin <> 0 then
+  end else // mpart
+  with hd do begin
+    if (attrib and AttrMPbin)<> 0 then
     begin
       { Anzahl der Zeilen incl. Trailer oben bei Lines einsetzen! }
       wrs(f, '--' + xpboundary);
       wrs(f, 'Content-Type: text/plain');
+      wrs(f, 'Content-Language: de,en');
       wrs(f, '');
-      wrs(f,
-        'Diese Nachricht enthaelt eine MIME-codierte Binaerdatei. Falls Ihr');
-      wrs(f,
-        'Mailer die Datei nicht decodieren kann, verwenden Sie dafuer bitte');
+      wrs(f, 'Diese Nachricht enthaelt eine MIME-codierte Binaerdatei. Falls Ihr');
+      wrs(f, 'Mailer die Datei nicht decodieren kann, verwenden Sie dafuer bitte');
       wrs(f, 'ein Tool wie ''munpack'' oder ''udec''.');
       wrs(f, '');
-      wrs(f,
-        'This message contains a MIME encoded binary file. If your mailer');
-      wrs(f,
-        'cannot decode the file, please use a decoding tool like ''munpack''.');
+      wrs(f, 'This message contains a MIME encoded binary file. If your mailer');
+      wrs(f, 'cannot decode the file, please use a decoding tool like ''munpack''.');
       wrs(f, '');
       wrs(f, '--' + xpboundary);
-      GetBinType(datei);
-      wrs(f, 'Content-Type: ' + maintype(mime.ctype) + '/' + mime.subtype +
-        iifs(datei <> '', '; name="' + datei + '"', '') +
-        iifs(ddatum <> '', ';', ''));
-      if ddatum <> '' then
-        wrs(f, #9'      x-date="' + ZtoRFCdate(copy(ddatum, 3, 10), ddatum + 'W+0')
-        + '"');
-      wrs(f, 'Content-Transfer-Encoding: base64');
-
-      { RFC 2183 }
-      wrs(f, 'Content-Disposition: attachment' +
-        iifs(datei <> '', '; filename="' + datei + '"', '') +
-        iifs(ddatum <> '', ';', ''));
-      if ddatum <> '' then
-        wrs(f, #9'      modification-date="' + ZtoRFCdate(copy(ddatum, 3, 10),
-        ddatum + 'W+0') + '"');
-
+      WriteMIME(false);
       wrs(f, '');
     end;
   end;
 end;
 
-procedure WriteRfcTrailer(var f: file);
+procedure WriteRfcTrailer(f: TStream);
 begin
   if hd.attrib and AttrMPbin <> 0 then
     wrs(f, '--' + xpboundary + '--');
@@ -3423,14 +3171,15 @@ end;
 procedure TUUZ.ZtoU;
 var
   hds, adr: longint;
-  fs, n, gs: longint;
+  fs, n, gs, i: longint;
   ok: boolean;
-  f: file;
+  f,f2,f3: TStream;
+  f0: TMemoryStream;
   fn: string;
   fc: text;
   server: string;                       { Adresse UUCP-Fileserver }
   files: longint;
-  binmail: boolean;
+//  binmail: boolean;
   copycount: integer;                   { fuer Mail-'CrossPostings' }
 
 type rcommand = (rmail,rsmtp,rnews);
@@ -3486,16 +3235,18 @@ type rcommand = (rmail,rsmtp,rnews);
     begin
       { queue execution file }
       nr := hex(NextUunumber, 4);
-      assign(f2, dest + 'X-' + nr + '.OUT');
-      rewrite(f2, 1);
+      f2 := TFileStream.Create(dest + 'X-' + nr + '.OUT',fmCreate);
+    try
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
 
       wrs(f2, 'F ' + name);
       wrs(f2, 'I ' + name);
       wrs(f2, 'C ' + command);
 
-      fs := filesize(f2);
-      close(f2);
+      fs := f2.Size;
+    finally
+      f2.Free; f2:=nil;
+    end;
 
       name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
       write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
@@ -3590,11 +3341,57 @@ type rcommand = (rmail,rsmtp,rnews);
   procedure CreateNewfile;
   begin
     fn := 'D-' + hex(NextUunumber, 4);
+
     if ppp then
-      assign(f2, dest)
+      f2 := TFileStream.Create(dest,fmCreate)
     else
-      assign(f2, dest + fn + '.OUT');
-    rewrite(f2, 1);
+      f2 := TFileStream.Create(dest + fn + '.OUT',fmCreate);
+  end;
+
+  procedure CopyEncodeMail(os:TStream;Count:Longint);
+  var o3,o4:TStream;
+  begin
+//    o1:=nil;
+//    o2:=nil;
+    o3:=nil;
+    o4:=nil;
+   try
+//    if dotEscape then
+//    begin
+//      o1 := TDotEscapeStream(os);
+//      os := o1;
+//    end;
+
+//    o2 := TCRLFtoLFStream.Create(os);
+//    os := o2;
+
+    if (hd.typ<>'M') and (hd.mime.encoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable]) then
+    begin
+      o3 := MimeCreateEncoder(hd.mime.encoding,os,hd.typ<>'B');
+      os := o3;
+    end;
+
+    if (hd.typ<>'M') and MimeContentTypeNeedCharset(hd.mime.ctype) and
+    ( LowerCase(MimeCharsetCanonicalName(ZCCharsetToMime(hd.charset))) <>
+      LowerCase(MimeCharsetCanonicalName(hd.x_charset)) ) then
+    begin
+      o4 := TCharsetEncodingStream.Create(os,ZCCharsetToMime(hd.charset),hd.x_charset);
+      os := o4;
+    end;
+
+    while Count>0 do
+    begin
+      blockread(f1,buffer,min(sizeof(buffer),count),bufanz);
+      os.WriteBuffer(buffer,bufanz);
+      dec(Count,BufAnz);
+    end;
+
+   finally
+    o4.Free;
+    o3.Free;
+//    o2.Free;
+//    o1.Free;
+   end;
   end;
 
 begin
@@ -3612,8 +3409,7 @@ begin
     close(f1); if not ppp then close(fc);
     exit;
   end;
-  assign(f, 'uuz.tmp');
-  rewrite(f, 1);
+
   server := UpperCase(UUserver + '@' + _to);
   files := 0;
 
@@ -3628,67 +3424,59 @@ begin
       close(f1);
       raise Exception.Create('fehlerhafter Eingabepuffer!');
     end;
-    binmail := (hd.typ <> 'T');
+//    binmail := (hd.typ <> 'T');
     if cpos('@', hd.empfaenger) = 0 then { AM }
-      if binmail and not NewsMIME then
-      begin
-        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
-      end else
+//      if binmail and not NewsMIME then
+//      begin
+//        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
+//      end else
       begin                             { AM }
         inc(n);if CommandLine then  write(#13'News: ', n);
         seek(f1, adr + hds);
-        if binmail then
-          hd.lines := (hd.groesse + 53) div 54 { Anzahl Base64-Zeilen }
-        else
-        begin
-          ReadBuf;                      { Zeilen zaehlen }
-          while fpos + bufpos < adr + hds + hd.groesse do
-          begin
-            ReadString;
-            inc(hd.lines);
-          end;
-        end;
+
+        f := TMemoryStream.Create;
+        f0 := TMemoryStream.Create;
+
         SetMimeData;
-        seek(f, 0);
-        WriteRFCheader(f, false);
+
+        f3 := TCRLFtoLFStream.Create(f0);
+        WriteRFCheader(f3, false,true);
         seek(f1, adr + hds);            { Text kopieren }
-        ReadBuf;
-        gs := adr + hds + hd.groesse;
-        outbufpos := 0;
-        if binmail then
-          while fpos + bufpos < gs do
-          begin
-            ReadBinString(gs - fpos - bufpos);
-            wrbuf(f);
-          end
-        else
-          while fpos + bufpos < gs do
-          begin
-            ReadString;
-            if fpos + bufpos > gs then ShortS;
-            zcrfc.s := IbmToISO(zcrfc.s);
-            if NewsMIME then MakeQuotedPrintable;
-            wrbuf(f);
-          end;
-        flushoutbuf(f);
-        WriteRfcTrailer(f);
-        truncate(f);
-        if not ppp then wrs(f2, '#! rnews ' + strs(filesize(f)));
-        seek(f, 0);
-        fmove(f, f2);
+        CopyEncodeMail(f3,hd.groesse);
+        WriteRfcTrailer(f3);
+        f3.Free;
+
+        hd.lines:=0;
+        for i:=0 to (f0.Size-1) do
+          if (PChar(f0.Memory)+i)^=#10 then
+            Inc(hd.lines);
+
+        f3 := TCRLFtoLFStream.Create(f);
+        WriteRfcHeader(f3,false,false);
+        f3.Free;
+
+        if not ppp then wr(f2,'#! rnews ' + strs(f.Size+f0.Size)+#10);
+
+        f.seek(0,soFromBeginning);
+        f0.seek(0,soFromBeginning);
+
+        CopyStream(f,f2);
+        CopyStream(f0,f2);
+
+        f.Free;
+        f0.Free;
       end;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  close(f2);
+  f2.Free; f2:=nil;
+
   if n = 0 then
-    erase(f2)
+    _era(iifs(ppp,dest,dest+fn+'.OUT'))
   else
   begin
     if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
   end;
-  close(f);
-  erase(f);
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
   if SMTP then CreateNewfile;
@@ -3698,7 +3486,6 @@ begin
       seek(f1, adr);
       ClearHeader;
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
-      binmail := (hd.typ = 'B');
       if cpos('@', hd.empfaenger) > 0 then
         if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
           WrFileserver
@@ -3707,37 +3494,26 @@ begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
           if not SMTP then
             CreateNewfile;
-          if binmail then
-            seek(f1, adr + hds);
           SetMimeData;
-          WriteRFCheader(f2, true);
+
+          if SMTP then begin
+            f3:=TCRLFtoLFStream.Create(f2);
+            f :=TDotEscapeStream.Create(f3);
+          end else
+            f :=TCRLFtoLFStream.Create(f2);
+
+          WriteRFCheader(f, true,false);
+          WriteRFCheader(f, true,true );
           seek(f1, adr + hds);          { Text kopieren }
-          ReadBuf;
-          gs := adr + hds + hd.groesse;
-          outbufpos := 0;
-          if binmail then
-            while fpos + bufpos < gs do
-            begin
-              ReadBinString(gs - fpos - bufpos);
-              wrbuf(f2);
-            end
-          else
-            while fpos + bufpos < gs do
-            begin
-              ReadString;
-              if fpos + bufpos > gs then ShortS;
-              if SMTP and (FirstChar(s) = '.') then s := '.' + s;
-              zcrfc.s := IBMToISO(zcrfc.s);
-              MakeQuotedPrintable;
-              wrbuf(f2);
-            end;
-          flushoutbuf(f2);
-          WriteRfcTrailer(f2);
+          CopyEncodeMail(f,hd.groesse);
+          WriteRfcTrailer(f);
+
+          f.Free;
+
           if SMTP then
-            wrs(f2, '.')                { Ende der Mail }
-          else
-          begin
-            close(f2);
+            f3.Free
+          else begin
+            f2.Free;
             QueueCompressfile(rmail);
           end;
         end;
@@ -3754,10 +3530,12 @@ begin
   end;
   if SMTP then
   begin
-    wrs(f2, 'QUIT');
-    close(f2);
+    if n <> 0 then
+      wr(f2, 'QUIT'#10);
+    if SMTP then
+      f2.Free;
     if n = 0 then
-      erase(f2)
+      _era(iifs(ppp,dest,dest+fn+'.OUT'))
     else
       if not ppp then QueueCompressFile(rsmtp);
   end;
@@ -3817,9 +3595,147 @@ begin
   end;
 end;
 
+{ -------------------------- Unix line ends -------------------------- }
+
+constructor TCRLFtoLFStream.Create(AnOtherStream: TStream);
+begin
+  FStream:=AnOtherStream;
+  BytesWritten:=0;
+  LastCharWasCR:=false;
+end;
+
+function TCRLFtoLFStream.Read(var Buffer; Count: Longint): Longint;
+begin
+  raise EStreamError.Create('Illegal stream operation.');
+end;
+
+function TCRLFtoLFStream.Write(const Buffer; Count: Longint): Longint;
+var I,Pos:Longint;
+begin
+  Result := 0;
+
+  if Count<=0 then
+    exit;
+
+  if LastCharWasCR and (PChar(@Buffer)^<>#10) then
+    FStream.WriteBuffer(cr,1);
+
+  for i:=1 to Count-1 do
+    if ((PChar(@Buffer)+i-1)^=#13) and
+       ((PChar(@Buffer)+i  )^=#10) then
+    begin
+      if i-Result-1>0 then
+        Inc(Result,FStream.Write((PChar(@Buffer)+Result)^,i-Result-1));
+      Inc(Result,1);
+      if Result<>i then
+        exit;
+    end;
+
+  LastCharWasCR := (PChar(@Buffer)+Count-1)^=#13;
+
+  if Count-Result>0 then
+    Inc(Result,FStream.Write((PChar(@Buffer)+Result)^,Count-Result-iif(LastCharWasCR,1,0)));
+
+  if LastCharWasCR then
+    Inc(Result);
+
+  Inc(BytesWritten,Result);
+end;
+
+function TCRLFtoLFStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+begin
+  Result := BytesWritten;
+  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
+     or ((Origin = soFromBeginning) and (Offset = Result))) then
+    raise EStreamError.Create('Invalid stream operation');
+end;
+
+destructor TCRLFtoLFStream.Destroy;
+begin
+  if LastCharWasCR then
+    FStream.WriteBuffer(cr,1);
+end;
+
+{ ------------------- RFC 2821/976/977 Dot Escaping ------------------ }
+
+constructor TDotEscapeStream.Create(AnOtherStream: TStream);
+begin
+  inherited Create;
+
+  FStream:=AnOtherStream;
+  BytesWritten:=0;
+  LastWasCRLF:=false;
+  LastWasCR:=false;
+end;
+
+destructor TDotEscapeStream.Destroy;
+const delim: array[0..4] of char = #13#10'.'#13#10;
+var o:integer;
+begin
+  o:=iif(LastWasCRLF,2,0);
+  FStream.WriteBuffer(delim[o],sizeof(delim)-o);
+  inherited Destroy;
+end;
+
+function TDotEscapeStream.Read(var Buffer; Count: Longint): Longint;
+begin
+  raise EStreamError.Create('Illegal stream operation.');
+end;
+
+function TDotEscapeStream.Write(const Buffer; Count: Longint): Longint;
+var I,Pos,Beg:Longint;
+begin
+  Result := 0;
+  Beg := 0;
+
+  for i:=0 to Count-1 do
+  begin
+    if LastWasCRLF and ((PChar(@Buffer)+i)^='.') then
+    begin
+      Inc(Beg,FStream.Write((PChar(@Buffer)+Beg)^,i-beg+1)-1);
+      if Beg<>i then exit; // write error
+    end;
+
+    LastWasCRLF:=((PChar(@Buffer)+i)^=#10) and LastWasCR;
+    LastWasCR  :=((PChar(@Buffer)+i)^=#13);
+  end;
+
+  if Count-Beg>0 then
+    Inc(Beg,FStream.Write((PChar(@Buffer)+Beg)^,Count-beg));
+
+  Result:=Beg;
+  Inc(BytesWritten,Result);
+end;
+
+function TDotEscapeStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+begin
+  Result := BytesWritten;
+  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
+     or ((Origin = soFromBeginning) and (Offset = Result))) then
+    raise EStreamError.Create('Invalid stream operation');
+end;
+
 end.
 {
   $Log$
+  Revision 1.71  2001/09/08 14:51:36  cl
+  - Conversion to RFC uses encoding and charset suggested by OpenXP (or user)
+  - Conversion to RFC now supports ZConnect-MIME (TYP: MIME)
+  - Conversion of message body to RFC completly rewritten.
+
+  - Conversion from RFC now does not try to decode multipart/messages
+    (and marks them as TYP: MIME)
+
+  - Moved MIME functions/types/consts to mime.pas
+  - Moved RFC2822 functions to rfc2822.pas
+  - More uniform naming of MIME functions/types/consts
+  - Moved Stream functions to xpstreams.pas
+  - optimized RecodeCharset to replace zcrfc.decodecharset
+  - cleaned up MIME-related fields in THeader
+  - THeader can now write itsself to streams
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.70  2001/09/07 23:24:55  ml
   - Kylix compatibility stage II
 
