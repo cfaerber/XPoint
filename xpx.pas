@@ -17,7 +17,7 @@ unit xpx;
 interface
 
 uses
-  ems, crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal;
+  ems, crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal, mcb;
 
 implementation
 
@@ -202,13 +202,32 @@ begin
     end;
 end;
 
+function xpshell:boolean; { true, wenn XP in seiner eigenen Shell gestartet wurde }
+var mcb:mcbp;
+    envseg:word;
+    s:string;
+begin
+  xpshell:=false;
+  mcb:=firstmcb;
+  repeat
+    s:=getmcbprog(mcb);
+{   if s='' then s:=getmcbenvprog(getmcbenvseg(mcb)); }
+{ FÅr DOS-Versionen kleiner 4.0 mÅsste man obige Zeile eigentlich aktivieren,
+  da ich es aber nicht mit DOS < 4.0 testen konnte, bin ich nicht sicher, ob
+  es 100%ig funktioniert.
+}
+    if (ustr(shortp(paramstr(0)))=ustr(s)) and (mcb^.psp_seg<>prefixseg)
+      then xpshell:=true;
+    mcb:=nextmcb(mcb);
+  until mcb^.id='Z';
+end;
 
 begin
   checkbreak:=false;
   if swap(dosversion)<MinVersion then
     stop('DOS Version '+MinVerStr+' oder hîher erforderlich.');
   readname;
-  if left(getenv('PROMPT'),4)='[XP]' then
+  if (left(getenv('PROMPT'),4)='[XP]') or xpshell then
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
   SetHandles;
@@ -251,6 +270,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.3  2000/11/21 22:40:37  mk
+  - MCB-Code von XP2 (Robert Boeck) hinzugefuegt um auf schon geladenes XP zu testen
+
   Revision 1.18.2.2  2000/07/01 11:17:27  mk
   - 32 Bit Teile entfernt
 
