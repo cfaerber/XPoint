@@ -609,7 +609,7 @@ begin
   MausLeseBest:=false;
   MausPSA:=true;
   ShowFidoEmpf:=true;
-  ShowRealnames:=false;
+  ShowRealnames:=true;
   ss_passwort:=false;
   NewsMIME:=true;
   MIMEqp:=false;
@@ -680,6 +680,7 @@ begin
   PGP_waitkey:=false;
   PGP_log:=false;
   PGP_signall:=false;
+  PGP_GPGEncodingOptions:='';
   PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
 end;
 
@@ -891,6 +892,7 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
+  writeln(t,'PGP-GPGEncodingOptions=',PGP_GPGEncodingOptions);
   writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
@@ -1498,6 +1500,7 @@ begin
           getx(su,  'pgp-logfile',PGP_log) or
           getx(su,  'pgp-signall',PGP_signall) or
           gets(s,su,'pgp-version',PGPVersion,5) or
+          gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions,120) or
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
           getx(su,  'defaultnokop',defaultnokop) or
@@ -1674,6 +1677,10 @@ end;
 
 {
   $Log$
+  Revision 1.114  2001/06/11 22:26:04  ma
+  - "show realnames" is standard now
+  - added GnuPG support
+
   Revision 1.113  2001/05/19 16:12:53  ma
   - removed XP_ID (shareware notice)
 
