@@ -106,7 +106,7 @@ function  FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
 procedure NodelistBrowser;
 
 procedure SetCrash(adr:string; insert:boolean);
-procedure SetRequest(const adr,files:string);  { '' -> Request lîschen }
+procedure SetRequest(const adr,files:string);  { '' -> Request loeschen }
 
 procedure NodelistIndex;
 procedure NodelistSeek;
@@ -139,8 +139,8 @@ const bersize   = 200;     { Max. Netze pro Bereich }
       maxnodes  = 3000;    { max Nodes / Net }
       maxpoints = 700;     { max Points / Node }
       nodekenn  = 'IDX'^Z;
-      MaxNamelen= 30;      { max. NamenslÑnge in Userindex }
-      blocksize = 1024;    { Blockgrî·e in Userindex }
+      MaxNamelen= 30;      { max. Namenslaenge in Userindex }
+      blocksize = 1024;    { Blockgroesse in Userindex }
 
 type  noderec = packed record
                   node : smallword;
@@ -316,8 +316,8 @@ var x,y        : Integer;
         if rr=bersize then begin
           while na^[bersize-add].sortl=na^[bersize-add-1].sortl do
             inc(add);
-          inc(add);    { letzes Netz in diesem Bereich kînnte = 1. Netz im }
-                       { nÑchsten sein..                                   }
+          inc(add);    { letzes Netz in diesem Bereich koennte = 1. Netz im }
+                       { naechsten sein..                                   }
           seek(tf,filepos(tf)-add*sizeof(netrec));
           end;
         r.fromnet:=na^[1].net;
@@ -440,7 +440,7 @@ var x,y        : Integer;
   procedure SortChunks;
   var ufpos  : byte;
       i,cc   : longint;
-      durchl : integer;   { Anzahl DurchlÑufe }
+      durchl : integer;   { Anzahl Durchlaeufe }
       nn     : integer;   { akt. Durcklauf }
 
     procedure MergeChunks(f0,f1:byte);
@@ -486,7 +486,7 @@ var x,y        : Integer;
     begin
       bufsize:=ubufmax*sizeof(userrec);
       bufanz:=bufsize div sizeof(userrec);
-      bufsize:=bufanz*sizeof(userrec);     { Grî·e abrunden }
+      bufsize:=bufanz*sizeof(userrec);     { Groesse abrunden }
       getmem(buf[1],bufsize);
       getmem(buf[2],bufsize);
       getmem(buf[3],bufsize);
@@ -520,7 +520,7 @@ var x,y        : Integer;
   begin
     spush(chunks,sizeof(chunks));
     durchl:=0;
-    while chunks>1 do begin    { zÑhlen }
+    while chunks>1 do begin    { zaehlen }
       i:=1; cc:=chunks;
       while i<chunks do begin
         inc(i,2); dec(cc); end;
@@ -613,16 +613,16 @@ var x,y        : Integer;
       if bufp=bufanz then ReadUbuf;
       with user do
         repeat
-          cuserp:=0;                                            { LÑnder der abzuspeichernden Daten }
+          cuserp:=0;                                            { Laender der abzuspeichernden Daten }
           { R-}
           b:=0; w:=min(length(name),length(lname));             { user.name, lname = name des letzten Eintrages}
           while (b<w) and (name[b+1]=lname[b+1]) do inc(b);     { aktueller username im letzten usernamen enthalten oder gleich? }
-          cuser[cuserp]:=b; inc(cuserp,2);                      { curser[0]= Anzahl der gleichen chars,curse[1] wird Åbersprungen inhalt adrf }
-          w:=length(name)-b;                                    { LÑnge des Namens (Anzahl der ungleichen Zeichen )}
-          cuser[cuserp]:=w; inc(cuserp);        { Name }        { curser[2]=LÑnge Namen, Zeiger+1}
+          cuser[cuserp]:=b; inc(cuserp,2);                      { curser[0]= Anzahl der gleichen chars,curse[1] wird uebersprungen inhalt adrf }
+          w:=length(name)-b;                                    { Laenge des Namens (Anzahl der ungleichen Zeichen )}
+          cuser[cuserp]:=w; inc(cuserp);        { Name }        { curser[2]=Laenge Namen, Zeiger+1}
           if w>0 then                                           { curser[3]=Anzahl derungleiche Zeichen }
             Move(name[b+1],cuser[cuserp],w);                    { Name nach curser[3] und}
-          inc(cuserp,w);                                        { Zeiger um LÑnge Namen erhîhen }
+          inc(cuserp,w);                                        { Zeiger um Laenge Namen erhoehen }
           lname:=name;                                          { aktuellen Namen in lname merken }
           adrf:=0;                                              { adrf:byte, bitfeld zum merken div. Eigenschaften }
           if (adr[0]>0) and (adr[0]<16) then    { Zone }        { passt user zone in 4 Bit }
@@ -654,7 +654,7 @@ var x,y        : Integer;
               cuser[cuserp]:=hi(adr[3]); inc(cuserp);
               end;
             end;
-          cuser[1]:=adrf;       { Adre·-Flag  bit 0  - net  in einem byte gespeichert }
+          cuser[1]:=adrf;       { Adress-Flag  bit 0  - net  in einem byte gespeichert }
                                 {             bit 1  - node in einem byte gespeichert }
                                 {             bit 2  - is node (keine point# gespeicheret }
                                 {             bit 3  - point in einem byte gespeichert }
@@ -669,19 +669,19 @@ var x,y        : Integer;
           if fadr<$1000000 then begin           { passt Adress in 3 byte }
             inc(cuser[2],$80);                  { ja, msb curser[2] setzen }
             Move(fadr,cuser[cuserp],3);         { ja, adresse nach cuser schieben }
-            inc(cuserp,3);                      { Zeiger erhîhen }
+            inc(cuserp,3);                      { Zeiger erhoehen }
             end
           else begin
             Move(fadr,cuser[cuserp],4);         { nein, 4-byte Adresse sichern }
             inc(cuserp,4);
             end;
           { R+}
-          ok:=(outp+cuserp+1)<=blocksize;       { blockgrî·e erreicht ? }
+          ok:=(outp+cuserp+1)<=blocksize;       { blockgroesse erreicht ? }
           if not ok then
             FlushOut                            { ja, block wegschreiben }
           else begin
             Move(cuser,bbuf^[outp],cuserp);     { cuser[], in den Block schreiben }
-            inc(outp,cuserp);                   { bytezÑhler erhîhen}
+            inc(outp,cuserp);                   { bytezaehler erhoehen}
             end;
         until ok;
       end;
@@ -971,7 +971,7 @@ begin
   wrmsg(getres2(2101,6));    { 'Userindex sortieren ...' }
   new(uf[1]); assign(uf[1]^,'users2.$$$');
   rewrite(uf[1]^,1);
-  SortChunks;    { schlie·t+lîscht uf[1]^ }
+  SortChunks;    { schliesst+loescht uf[1]^ }
   wrmsg(getres2(2101,7));    { 'Userindex packen ...      %' }
   assign(uf[1]^,UserIndexF);
   rewrite(uf[1]^,1);
@@ -1073,8 +1073,886 @@ begin
     end;
 end;
 
+{.$I xpf1.inc}   { Nodeliste auslesen/abfragen }
 
-{$I xpf1.inc}   { Nodeliste auslesen/abfragen }
+{ XPFIDO - Nodeliste auslesen/abfragen }
+
+procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
+var s  : string;
+    rr : Integer;
+
+  procedure SetInfo;
+  var p : byte;
+      x : string[10];
+    function getstr:string;
+    var i: byte;
+    begin
+      p:=cpos(',',s);
+      if p=0 then
+        getstr:=''
+      else
+      begin
+        for i:=p-1 downto 1 do
+          if s[i]='_' then s[i]:=' ';
+
+        getstr:=copy(s,1,p-1);
+        delete(s,1,p);
+      end;
+    end;
+  begin
+    with ni do begin
+      if LastChar(s)<>',' then s:=s+',';
+     { for p:=1 to length(s^) do       nach GetStr verschoben, damit im
+        if s^[p]='_' then s^[p]:=' ';  String FFlags '_' erhalten bleibt }
+      status:=getstr;
+      p:=cpos(',',s);
+      if p>0 then begin
+        if status='' then
+          status:=iifs(ispoint,'Point','Node');
+        delete(s,1,p);    { Nodenummer }
+        boxname:=getstr;
+        standort:=getstr;
+        sysop:=getstr;
+        telefon:=getstr;
+        baud:=minmax(ival(getstr),110,65535);
+        fflags:=s;
+        DeleteLastChar(fflags);    { Komma entfernen }
+        repeat
+          x:=getstr;
+          if x='V32B' then flags:=flags or nfV32b else
+          if x='V32' then flags:=flags or nfV32 else
+          if (x='HST') or (x='H14') then flags:=flags or nfHST else
+          if x='PEP' then flags:=flags or nfPEP else
+          if x='ZYX' then flags:=flags or nfZYXEL else
+          if x='H16' then flags:=flags or nfHST16 else
+          if pos('ISDN',x)>0 then flags:=flags or nfISDN else
+          { MK 01/00 Zeile eingefuegt, erkennt jetzt ISDN-Boxen richtig }
+          if (x='X75') then flags:=flags or nfISDN else
+          if (x='VFC') then flags:=flags or nfVFC else
+          if (x='V32T') then flags:=flags or nfTerbo else
+          if (x='V34') then flags:=flags or nfV34 else
+          if x='CM' then flags:=flags or nfCM else
+          if x='XA' then request:=rfWaZOO+rfUpWaz+rfBark+rfUpBark else
+          if x='XB' then request:=rfBark+rfUpBark+rfWaZOO else
+          if x='XC' then request:=rfBark+rfWaZOO+rfUpWaz else
+          if x='XP' then request:=rfBark+rfUpBark else
+          if x='XR' then request:=rfBark+rfWaZOO else
+          if x='XW' then request:=rfWaZOO else
+          if x='XX' then request:=rfWaZOO+rfUpWaz else
+          if x='MN' then flags:=flags and (not nfComp);
+        until x='';
+        end;
+      end;
+  end;
+
+begin           
+  ni.found:=false;                                             
+  if nfile>NodeList.Count-1 then exit;
+  assign(nodelf,FidoDir+NodeList.GetFilename(nfile));    //es kann ein nodelisten index von
+  resetfm(nodelf,fmRead);
+  if ioresult=0 then
+  begin
+    { reset(nodelf^,1);  !?!? }
+    seek(nodelf,adr);
+    SetLength(s,255);
+    blockread(nodelf,s[1],255,rr);
+    SetLength(s,rr);
+    SetLength(s,cpos(#13,s)-1);
+    SetInfo;
+    ni.found:=true;
+    close(nodelf);
+    end;
+end;
+
+
+{ Pointtyp: 0=nur Node, 1=Point/Node, 2=bei nicht gef. Point wiederholen }
+
+procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
+var fa     : fidoadr;
+    i,netp : integer;
+    bp     : ^netrecl;
+    banz   : word;
+    nanz   : word;
+    nadr,l : longint;
+    nfile  : byte;
+    np     : ^nodea;
+    found  : boolean;
+    _adr   : longint;
+    points : integer16;
+    pp     : ^pointa;
+
+label again;
+
+begin
+  fillchar(ni,sizeof(ni),0);
+  if not Nodelist.Open then exit;
+  splitfido(adr,fa,2);
+  if pointtyp=0 then fa.ispoint:=false;
+  if not nodelistopen then begin
+    reset(nodef,1);
+    if ioresult<>0 then exit;
+    end;
+again:
+  i:=bereiche;
+  while (i>0) and ((berliste^[i].fromzone>fa.zone) or
+                   ((berliste^[i].fromzone=fa.zone) and
+                    (berliste^[i].fromnet>fa.net))) do
+    dec(i);
+  fillchar(ni,sizeof(ni),0);
+  if i>0 then begin
+    new(bp);
+    seek(nodef,NX_adrnetx+berliste^[i].adr);
+    banz:=berliste^[i].anz;                     //Bereichsliste, array[1..maxber] of berrec
+    if banz>bersize then
+      writeln(getres(2121),#7);   { 'Fehler in Nodelisten-Index!' }
+    //alle netze einer Zone
+    blockread(nodef,bp^,banz*sizeof(netrec));   // bp netrecL   {net,zone,ant, dateiNo(fnr), flag (1=Pointliste), adr, sortl }
+    l:=$10000*fa.zone+fa.net;
+    {$R-}
+    netp:=1;
+    while (netp<=banz) and (bp^[netp].sortl<l) do
+      inc(netp);
+    repeat
+      found:=(netp<=banz) and (bp^[netp].sortl=l);
+      if found then begin
+        nanz:=bp^[netp].anz;
+        nadr:=bp^[netp].adr;
+        nfile:=bp^[netp].fnr;                           //der index fuer die nodeliste
+        ni.datei:=nfile;
+        end;
+      if found and (fa.ispoint=odd(bp^[netp].flags)) then begin
+        getmem(np,nanz*sizeof(noderec));
+        seek(nodef,nadr);
+        blockread(nodef,np^,nanz*sizeof(noderec));
+        i:=0;
+        while (i<nanz) and (np^[i].node<fa.node) do      //np bis zur Node# abklappern
+          inc(i);                                        //enthaelz nun den passenden Satz
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
+        if (i<nanz) and (np^[i].node=fa.node) then
+          _adr:=np^[i].adr                               //adresse zur Node#'12478'
+        else
+          _adr:=-1;
+        freemem(np,nanz*sizeof(noderec));
+        if (_adr>=0) and fa.ispoint then begin           //node gefunden aber point
+          seek(nodef,_adr);
+          blockread(nodef,points,2);
+          getmem(pp,points*sizeof(pointrec));
+          blockread(nodef,pp^,points*sizeof(pointrec));
+          i:=0;
+          while (i<points) and (pp^[i].point<fa.point) do
+            inc(i);
+          if (i<points) and (pp^[i].point=fa.point) then
+            _adr:=pp^[i].adr
+          else
+            _adr:=-1;
+          freemem(pp,points*sizeof(pointrec));
+          end;
+        if _adr>=0 then begin
+          ni.ispoint:=fa.ispoint;
+          ReadNData(nfile,_adr,ni);                     //Nodedaten nach ni auslesen
+          end;
+        end;
+      inc(netp);
+    until not found or ni.found;
+    dispose(bp);
+    end;
+  if (pointtyp=2) and not ni.found and fa.ispoint then begin
+    fa.ispoint:=false;
+    goto again;
+    end;
+  ni.ispoint:=fa.ispoint;
+  if not nodelistopen then
+    close(nodef);
+end;
+
+
+function IsFidoNode(const adr:string):boolean;
+var ni : NodeInfo;
+begin
+  GetNodeInfo(adr,ni,1);
+  IsFidoNode:=ni.found;
+end;
+
+
+procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
+type ubufa  = array[0..blocksize-1] of byte;
+var  f     : file;
+     name  : string;
+     vname : string;
+     s     : string;
+     p,x,y : Integer;
+     buf   : ^ubufa;
+     bufp  : word;
+     l,r,m : longint;
+     user  : UserRec;
+     last  : boolean;
+     anz   : longint;
+     brk   : boolean;
+     height: word;
+     List: TLister;
+
+label ende;
+
+  function getbyte:byte;
+  begin
+    getbyte:=buf^[bufp];
+    inc(bufp);
+  end;
+
+  procedure GetNextUser;
+  var flags,b : byte;
+      not0    : boolean;        { User nicht aus Nodeliste 0 }
+      adr3    : boolean;        { 3-Byte-Dateioffset }
+  begin
+    with user do begin
+      name[0]:=chr(getbyte);    { n Zeichen uebernehmen }
+      flags:=getbyte;
+      b:=getbyte;
+      not0:=(b and $40)=0;
+      adr3:=(b and $80)<>0;
+      b:=b and $3f;
+      if b>0 then begin            { restlichen Namen kopieren }
+        if b+length(name)>MaxNameLen then begin
+          rfehler(2120);   { 'Fehler im Nodelisten-Userindex' }
+          b:=MaxNameLen-length(name);
+          end;
+        Move(buf^[bufp],name[length(name)+1],b);
+        inc(byte(name[0]),b);
+        inc(bufp,b);
+        end;
+      adr[0]:=flags shr 4;         { Adresse ermitteln }
+      if adr[0]=0 then begin
+        adr[0]:=getbyte;        { getrennte Auswertung, wegen umgekehrter }
+        inc(adr[0],256*getbyte);    { Auswertung durch Compiler! }
+        end;
+      adr[1]:=getbyte;
+      if not odd(flags) then inc(adr[1],256*getbyte);
+      adr[2]:=getbyte;
+      if flags and 2=0 then inc(adr[2],256*getbyte);
+      if flags and 4<>0 then
+        adr[3]:=0
+      else begin
+        adr[3]:=getbyte;
+        if flags and 8=0 then inc(adr[3],256*getbyte);
+        end;
+      if not0 then fnr:=getbyte    { Datei-Nummer }
+      else fnr:=0;
+      b:=iif(adr3,3,4);            { Datei-Offset }
+      fadr:=0;
+      Move(buf^[bufp],fadr,b);
+      inc(bufp,b);
+      last:=buf^[bufp]=$ff;
+      end;
+  end;
+
+  procedure GetFirstUser;
+  begin
+    bufp:=0;
+    user.name:='';
+    GetNextUser;
+  end;
+
+  procedure ReadBlock(nr:longint);
+  begin
+    seek(f,nr*BlockSize);
+    blockread(f,buf^,BlockSize);
+    GetFirstUser;
+    vname:=LeftStr(user.name,length(name));
+  end;
+
+begin
+  fillchar(ni,sizeof(ni),0);
+  if UserBlocks=0 then exit;    { keien Nodelisten -> leerer Index }
+  with fa do begin
+    p:=cpos(',',username);         { Name formatieren }
+    if p>0 then
+      name:=LeftStr(username,p-1)+' '+trim(mid(username,p+1))
+    else begin
+      p:=length(username);
+      while (p>1) and (username[p]<>' ') do dec(p);
+      if p>1 then name:=mid(username,p+1)+' '+LeftStr(username,p-1)
+      else name:=username;
+      end;
+    end;
+  name:=trim(name);
+  if name='' then exit;
+  UpString(name);
+  assign(f,UserIndexF);
+  reset(f,1);
+  new(buf);
+  l:=1; r:=UserBlocks;
+  repeat
+    m:=(l+r)div 2;
+    ReadBlock(m);
+    if vname<name then l:=m
+    else r:=m;
+  until (r-l<2) or (vname=name);
+  if (name<>vname) and (l<m) then ReadBlock(l)
+  else l:=m;
+  if name<vname then goto ende;
+  while (name=vname) and (l>1) do begin
+    dec(l);
+    ReadBlock(l);
+    end;
+  repeat
+    while not last and (user.name<name) do
+      GetNextUser;
+    if (user.name<name) and (l<userblocks) then begin
+      inc(l);
+      ReadBlock(l);
+      end;
+  until last or (LeftStr(user.name,length(name))>=name);
+  if (LeftStr(user.name,length(name))=name) then
+  begin
+    List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/APGD/');
+    anz:=0;
+    repeat
+      with user do
+      begin
+        ReadNdata(fnr,fadr,ni);
+        List.AddLine(' '+forms(TopAllStr(user.name),22)+'  '+
+              forms(strs(adr[0])+':'+strs(adr[1])+'/'+strs(adr[2])+
+              iifs(adr[3]=0,'','.'+strs(adr[3])),15)+' '+
+              forms(iifs(adr[3]=0,ni.boxname+', '+ni.standort,ni.standort),32));
+        inc(anz);
+        if not last then
+          GetNextUser
+        else begin
+          inc(l);
+          if l<=userblocks then
+            ReadBlock(l);
+          end;
+        end;
+    until (LeftStr(user.name,length(name))<>name) or (l>userblocks);
+    if anz>0 then begin
+      if anz=1 then
+        s:=List.FirstLine
+      else begin
+        selbox(76,min(anz+2,screenlines-6),'',x,y,true);
+        height:=min(anz+2,screenlines-6)-2;
+        List.SetSize(x+1,x+74,y+1,y+height);
+        List.SetArrows(x,y+1,y+height,col.colselbox,col.colselbox,'≥');
+        listboxcol(list);
+        pushhp(80);
+        brk := List.Show;
+        pophp;
+        closebox;
+        if brk then s:=''
+        else s:=List.GetSelection;
+        end;
+      if s<>'' then begin
+        SplitFido(trim(copy(s,26,15)),fa,DefaultZone);
+        GetNodeinfo(trim(copy(s,26,15)),ni,1);
+        end
+      else
+        ni.found:=false;
+      end;
+    List.Free;
+  end;
+
+ende:
+  close(f);
+  dispose(buf);
+end;
+
+
+procedure NodelistSeek;
+const active : boolean = false;
+var x,y,b: Integer;
+    brk  : boolean;
+    ni   : ^NodeInfo;
+    adr  : string;
+    fa   : fidoadr;
+    first: boolean;
+    NlItem :TNodeListItem;
+begin
+  if active or not TestNodelist or DisableAltN then exit;
+  new(ni);
+  active:=true;
+  diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
+  if NodeList.GetMainNodelist>0 then begin
+    NlItem:=nodelist.Items[NodeList.GetMainNodelist];
+    attrtxt(col.coldiarahmen);
+    //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
+    mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
+    attrtxt(col.coldialog);
+    end;
+  mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }
+  mwrt(x+3, y+3, GetRes2( 2100, 4));     { Sysop }
+  mwrt(x+3, y+4, GetRes2( 2100, 5));     { TelNr }
+  mwrt(x+3, y+5, GetRes2( 2100, 6));     { Flags }
+  mwrt(x+3, y+7, GetRes2( 2100, 3));     { ~⁄ƒƒƒØ [                    ] }
+  mwrt(x+35, y+7, GetRes2( 2100, 10));   { eMAiL }
+  mwrt(x+35, y+8, GetRes2( 2100, 9));    { Status }
+  mwrt(x+55, y+8, GetRes2( 2100, 8));    { Datei }
+  adr:='';
+  first:=true;
+  TempOpen;
+  repeat
+    if first and (aktdispmode in [10..19]) then begin
+      dbGo(mbase,AktDisprec);
+      if not dbEOF(mbase) and not dbBOF(mbase) and (mbNetztyp=nt_Fido) then begin
+        splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
+        adr:=MakeFidoAdr(fa,false);
+        brk:=false;
+        end;
+      end;
+    if not first or (adr='') then begin
+      pushhp(750);
+      ReadString(x+3, y+8, Forms(GetRes2( 2100, 7), 6), adr, 20, 20, '', brk);
+      pophp;                   { AKAƒƒØ }
+      end;
+    first:=false;
+    if not brk then begin
+      if not isNodeAddress(adr) then begin
+        fa.username:=adr;
+        getNodeUserInfo(fa,ni^);
+        end
+      else begin
+        splitfido(adr,fa,DefaultZone);
+        adr:=MakeFidoAdr(fa,true);
+        GetNodeinfo(adr,ni^,1);
+        end;
+      attrtxt(col.coldialog);
+      moff;
+    clwin(x+10, x+75, y+2, y+5); { Oberer Block }
+     clwin(x+43, x+51, y+8, y+8); { Status      }
+      clwin(x+62, x+73, y+8, y+8); { Datei      }
+       clwin(x+11, x+30, y+7, y+7); { AKA [ ]   }
+        clwin(x+43, x+75, y+7, y+7); { eMAiL    }
+      if ni^.found then with ni^ do begin
+        attrtxt(col.coldiahigh);
+        wrt(x+10, y+2, LeftStr(BoxName + ', ' + Standort,65));
+        wrt(x+10, y+3, Sysop);
+        wrt(x+10, y+4, Telefon);
+        wrt(x+10, y+5, copy(MailString(FFlags, True),1,65)); { eMail loeschen }
+        wrt(x+11, y+7, MakeFidoAdr(fa, True));
+        b := cpos('@', FFlags);
+        if b = 0 then FFlags := '';
+        wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
+        wrt(x+43, y+8, Status);
+        wrt(x+62, y+8, NodeList.GetFilename(datei));
+        end;
+      mon;
+      end;
+  until brk;
+  freeres;
+  closebox;
+  dispose(ni);
+  active:=false;
+end;
+
+
+{ --- Nodelist-Browser ---------------------------------------------- }
+
+var  rdispx,rdispy : byte;
+
+procedure ShowRQ(s:string);
+var ni  : NodeInfo;
+    add : byte;
+begin
+  GetNodeinfo(copy(s,39,17),ni,1);
+  add:=max(length(getres2(2131,30)),length(getres2(2131,32)));
+  attrtxt(col.colselbox);
+  if ni.ispoint then begin
+    mwrt(rdispx,rdispy,getres2(2131,33));    { 'Sysop' }
+    mwrt(rdispx+54-length(getres2(2131,34)),rdispy-1,getres2(2131,34));
+    end                                      { 'Pointliste' }
+  else begin
+    mwrt(rdispx,rdispy,getres2(2131,30));    { 'Sysop' }
+    mwrt(rdispx+54-length(getres2(2131,31)),rdispy-1,getres2(2131,31));
+    end;                                     { 'Nodeliste' }
+  mwrt(rdispx,rdispy+1,getres2(2131,32));    { 'Flags' }
+  mwrt(rdispx,rdispy-1,getres2(2131,35));    { 'Status' }
+  attrtxt(col.colselhigh);
+  if ni.found then begin
+    mwrt(rdispx+add+2,rdispy,forms(iifs(ni.ispoint,ni.boxname,ni.sysop),33));
+    mwrt(rdispx+55,rdispy-1,forms(NodeList.GetFilename(ni.datei),12));
+    mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65));
+    mwrt(rdispx+7,rdispy-1,forms(ni.status,12));
+    end
+  else begin
+    mwrt(rdispx+add+2,rdispy,sp(33));
+    mwrt(rdispx+55,rdispy-1,sp(12));
+    mwrt(rdispx+add+2,rdispy+1,sp(65));
+    mwrt(rdispx+7,rdispy-1,sp(12));
+    end;
+end;
+
+
+procedure NodelistBrowser;
+
+const orflags  = 10;
+      andflags = 5;
+
+type NodeBrec = record
+                  nodeadr : string;
+                  sysop   : string;
+                  boxname : string;
+                  standort: string;
+                  telefon : string;
+                  flags   : string;
+                  fnl,snl,
+                  pl      : boolean;
+                end;
+     NodeBRP  = ^NodeBrec;
+
+const NB_data : NodeBRP = nil;
+      bufsize = 2048;
+
+type
+  tAndFlags = array[1..andflags] of String;
+var   x,y,h   : Integer;
+      brk     : boolean;
+      flag    : array[1..orflags] of tAndFlags;
+      k       : string;
+      sphone  : string;    { in Nodelistenformat konvertierte Tel.Nr. }
+      adr     : string;
+      flaganz : array[1..orflags] of byte;
+      flags   : byte;     { Anzahl or-Flags }
+      i       : integer;
+      t       : text;
+      s,ss    : string;
+      buf     : pointer;
+      found,n : longint;
+      p       : byte;
+      nn      : word;
+      azone,                   { aktuelle Nodeadresse beim Suchen }
+      anet,
+      anode,
+      apoint  : word;
+      lastnet : word;
+      skip    : boolean;
+      ni      : nodeinfo;
+      d       : DB;
+      List: TLister;
+
+label again, NewStart;
+
+  procedure ParseFlags;
+  var s,s2 : string; 
+      p    : Integer;
+  begin
+    flags:=0;
+    s:=nb_data^.flags;
+    while (s<>'') and (flags<orflags) do begin
+      inc(flags);
+      flaganz[flags]:=0;
+      p:=blankposx(s);
+      s2:=LeftStr(s,p-1);
+      while s2<>'' do begin
+        if flaganz[flags]<andflags then begin
+          inc(flaganz[flags]);
+          flag[flags,flaganz[flags]]:=','+LeftStr(s2,cposx(',',s2)-1)+',';
+          end;
+        delete(s2,1,cposx(',',s2));
+        end;
+      s:=trim(mid(s,p+1));
+      end;
+  end;
+
+  procedure GetAddress(format:integer; var skip:boolean);
+  var p  : Integer;
+      fa : FidoAdr;
+  begin
+    skip:=false;
+    case format of
+      nlNodelist,
+      nl4Dpointlist: if k='ZONE' then begin
+                       azone:=nn; anet:=nn; anode:=nn;
+                       skip:=(format=nl4Dpointlist);
+                       end
+                     else if (k='HOST') or (k='REGION') then begin
+                       anet:=nn; anode:=0;
+                       skip:=(format=nl4Dpointlist);
+                       end
+                     else if k='POINT' then
+                       apoint:=nn
+                     else begin
+                       anode:=nn;
+                       skip:=(format=nl4Dpointlist);
+                       end;
+
+      nlPoints24   : if k='HOST' then begin
+                       ss:=LeftStr(ss,cposx(',',ss)-1);  { Nodeadresse isolieren }
+                       p:=cpos('/',ss);
+                       if p>0 then begin
+                         anet:=ival(LeftStr(ss,p-1));
+                         anode:=ival(mid(ss,p+1));
+                         end;
+                       skip:=true;
+                       end
+                     else if (k='') or (k='PVT') then
+                       apoint:=nn;
+
+      nlFDpointlist: if k='BOSS' then begin
+                       ss:=LeftStr(ss,cposx(',',ss)-1);
+                       splitfido(ss,fa,azone);
+                       azone:=fa.zone; anet:=fa.net; anode:=fa.node;
+                       skip:=true;
+                       end
+                     else if (k='') or (k='PVT') then
+                       apoint:=nn;
+
+      nlNode      : if (k='') or (k='PVT') then apoint:=nn;
+
+    end;  { case }
+  end;
+
+  function ntest(ts:string):boolean;
+  var p : byte;
+  begin
+    UpString(ts);
+    p:=cposx(',',ss);
+    ntest:=(ts='') or (pos(ts,LeftStr(ss,p-1))>0);
+    delete(ss,1,p);
+  end;
+
+  function gets:string;
+  var p : byte;
+  begin
+    p:=cposx(',',s);
+    gets:=LeftStr(s,p-1);
+    delete(s,1,p);
+  end;
+
+  function testphone:boolean;
+  begin
+    testphone:=(LeftStr(GetToken(ss,','),length(sphone))=sphone);
+  end;
+
+  function node_str:string;
+  begin
+    if apoint=0 then
+      node_str:=strs(azone)+':'+strs(anet)+'/'+strs(anode)
+    else
+      node_str:=strs(azone)+':'+strs(anet)+'/'+strs(anode)+'.'+strs(apoint);
+  end;
+
+  function testaddress(var s:string):boolean;
+  begin
+    if s='' then
+      testaddress:=true
+    else
+      testaddress:=(pos(s,node_str)>0);
+  end;
+
+  function testflags:boolean;
+  var i,j   : integer;
+      _s    : string;
+  begin
+    _s:=','+ss+',';
+    if flags=0 then
+      testflags:=true
+    else begin
+      i:=0;
+      repeat
+        inc(i);
+        j:=1;
+        while (j<=flaganz[i]) and (pos(flag[i,j],_s)>0) do
+          inc(j);
+      until (i>flags) or (j>flaganz[i]);
+      testflags:=(i<=flags) and (j>flaganz[i]);
+      end;
+  end;
+
+begin
+  if not TestNodelist then exit;
+  if not assigned(NB_Data) then begin
+    new(NB_data);
+    fillchar(NB_data^,sizeof(NB_Data^),0);
+    NB_data^.fnl:=true; NB_data^.snl:=true;
+    end;
+
+again:
+  dialog(ival(getres2(2131,0)),17,getres2(2131,1),x,y); { 'Nodelisten durchsuchen' }
+  with NB_Data^ do begin
+    maddstring(3,2,getres2(2131,2),sysop,30,30,'');     { 'Sysop' }
+      mhnr(950);
+      mnotrim;
+    maddstring(3,3,getres2(2131,3),standort,30,30,'');  { 'Standort' }
+      mnotrim;
+    maddstring(3,4,getres2(2131,4),boxname,30,30,'');   { 'Boxname' }
+      mnotrim;
+    maddstring(3,6,getres2(2131,5),nodeadr,20,20,'0123456789:/.'); { 'Nodeadresse' }
+    maddstring(3,7,getres2(2131,6),telefon,20,20,'0123456789-');   { 'Telefon' }
+    maddstring(3,9,getres2(2131,8),flags,30,65,'>');  {MH: 40>65}{ unbedenklich } { 'Flags' }
+    maddbool (3,11,getres2(2131,9),fnl);   { 'FidoNet-Nodeliste durchsuchen' }
+    maddbool (3,12,getres2(2131,10),snl);  { 'sonstige Nodelisten durchsuchen' }
+      mhnr(956);
+    maddbool (3,13,getres2(2131,11),pl);   { 'Pointlisten durchsuchen' }
+      mhnr(956);
+    readmask(brk);
+    closemask;
+    end;
+  if brk then begin
+    closebox;
+    freeres;
+    exit;
+    end;
+
+  sphone:=NB_Data^.telefon;    { Telefon in Nodelistenformat konvertieren }
+  if (IntVorwahl<>'') and (LeftStr(sphone,length(IntVorwahl))=IntVorwahl) then
+    delete(sphone,1,length(IntVorwahl))
+  else if (NatVorwahl<>'') and (LeftStr(sphone,length(NatVorwahl))=NatVorwahl) then
+    sphone:=LeftStr(Vorwahl,cpos('-',vorwahl))+mid(sphone,length(NatVorwahl)+1);
+  ParseFlags;
+
+  getmem(buf,bufsize);
+  attrtxt(col.coldialog);
+  mwrt(x+2,y+14,getres2(2131,20));   { 'Datei:' }
+  mwrt(x+2,y+15,getres2(2131,21));   { 'Netz:'  }
+  mwrt(x+28,y+14,getres2(2131,22));  { 'Eintraege:' }
+  mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
+  List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
+  found:=0; n:=0;
+  for i:=0 to NodeList.Count - 1 do
+    with TNodeListItem(Nodelist.Items[i]),NB_Data^ do
+      if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
+          (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
+          (pl and (fformat<>nlNodelist))) and
+         FileExists(FidoDir+NodeList.GetFilename(i))
+      then begin
+        attrtxt(col.coldiahigh);
+        mwrt(x+10,y+14,forms(NodeList.GetFilename(i),12));
+        assign(t,FidoDir+NodeList.GetFilename(i));
+        settextbuf(t,buf^,bufsize);
+        reset(t);
+        if zone<>0 then azone:=zone   { Start-Nodeadresse setzen }
+        else azone:=DefaultZone;
+        apoint:=0;
+        if fformat=nlNode then begin
+          anet:=net; anode:=node;
+          end
+        else begin
+          anet:=0; anode:=0;
+          end;
+        lastnet:=65535;
+        while not eof(t) and not brk do begin
+          readln(t,s);
+          if (s<>'') and (s[1]<>';') and (cpos(',',s)>0) then begin
+            inc(n);
+            ss:=UpperCase(s);
+            while cpos('_',ss)>0 do ss[cpos('_',ss)]:=' ';
+            k:=LeftStr(ss,cpos(',',ss)-1);
+            delete(ss,1,cpos(',',ss));
+            if k<>'BOSS' then begin
+              p:=cposx(',',ss);
+              nn:=minmax(ival(LeftStr(ss,p-1)),0,65535);
+              delete(ss,1,p);
+              end;
+            GetAddress(fformat,skip);     { akt. Adresse ermitteln }
+            if anet<>lastnet then
+              mwrt(x+10,y+15,forms(strs(azone)+':'+strs(anet),15));
+            lastnet:=anet;
+            if n mod 100=0 then
+              mwrt(x+38,y+14,strsn(n,7));
+            if not skip and
+               ntest(boxname) and
+               ntest(standort) and
+               ntest(sysop) and
+               testphone and
+               testaddress(nodeadr) and
+               testflags
+            then begin
+              inc(found);
+              mwrt(x+38,y+15,strsn(found,7));
+              gets; gets;  { Nodetyp und -nummer ueberlesen }
+              while cpos('_',s)>0 do s[cpos('_',s)]:=' ';
+              ni.boxname:=gets; ni.standort:=gets;
+              ni.sysop:=gets; ni.telefon:=gets;
+              with ni do
+                List.AddLine(' '+forms(iifs(apoint<>0,sysop,boxname)+', '+standort,35)+
+                      '  '+forms(node_str,17)+' '+FormFidoPhone(telefon));
+              end;
+            end;
+          testbrk(brk);
+          end;   { not eof }
+        close(t);
+        end;
+  freemem(buf,bufsize);
+  closebox;
+
+  if found=0 then
+  begin
+    List.Free;
+    if not brk then
+    begin
+      rfehler(2126);        { 'Es wurden keine passenden Eintraege gefunden.' }
+      goto again;
+    end;
+  end;
+
+  if found>0 then begin
+    xp1.signal;
+    h:=min(found+6,screenlines-6);
+    selbox(76,h,'',x,y,true);
+    dec(h,5);
+    rdispx:=x+2; rdispy:=y+h+2;
+    attrtxt(col.colselrahmen);
+    mwrt(x,rdispy-2,hbar(76));
+    List.SetSize(x+1,x+74,y+1,y+h-1);
+    listboxcol(list);
+    List.SetArrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
+    List.OnShowLines := ShowRQ;
+    List.OnKeyPressed := listext;
+    listmakros:=0;
+    repeat
+NewStart:                  { nach Break im AltN-Screen hier einspringen }
+      pushhp(958);
+      brk := List.Show;
+      pophp;
+      n:=0;
+      if not brk then begin
+        GetNodeInfo(copy(List.GetSelection,39,18),ni,2);
+        if not ni.found then
+          errsound
+        else begin
+          adr:=ni.sysop + ' @ ' +trim(copy(List.GetSelection,39,18));
+          if ni.ispoint then s:=adr
+          else s:=ni.boxname + ', ' +adr;
+          pushhp(959);
+          n:=ReadIt(max(length(s)-4,length(getres(2132)))+11,s,
+             getres(2132),    { ' ^Nachricht , ^Request , ^Info , ^Zurueck ' }
+             1,brk);
+          pophp;
+          brk:=false;
+          end;
+        end;
+    until brk or (n=1) or (n=2) or (n=3);
+
+      if n<>3 then begin  { Break aus AltN-Screen hier nicht zulassen }
+        List.Free;
+        closebox;
+      end;
+
+    if not brk then
+      case n of
+        1 : begin
+              _keyboard(adr+keycr);
+              dbOpen(d,BoxenFile,0);
+              if dbRecCount(d)>1 then _keyboard(keyup+DefFidoBox+keycr);
+              dbClose(d);
+              msgdirect;
+            end;
+        2 : begin
+              _keyboard(keycr);
+              AutoCrash:=FidoRequest(trim(mid(adr,cpos('@',adr)+1)),'');
+            end;
+
+        3 : begin   { AltN-Screen aufrufen und Aka uebergeben }
+              _keyboard(trim(copy(List.GetSelection,39,18))+keycr);
+                NodeListSeek;          { AltN-Screen starten }
+              goto newstart;           { Zurueck zur Liste    }
+            end;
+
+      end;
+    end;
+
+  freeres;
+end;
 
 
 procedure NodelistIndex;
@@ -1100,7 +1978,7 @@ begin
     rfehler(2125);    { 'Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.' }
     exit;
     end;
-  dialog(57,3,getres2(2104,1),x,y);   { 'Nodelist einschrÑnken' }
+  dialog(57,3,getres2(2104,1),x,y);   { 'Nodelist einschraenken' }
   s:=ShrinkNodes;
   maddstring(3,2,getres2(2104,2),s,35,100,'0123456789 :');  { 'Zonen/Regionen ' }
   readmask(brk);
@@ -1109,7 +1987,7 @@ begin
     if s='' then begin
       ShrinkNodes:='';
       SaveConfig2;
-      message(getres2(2104,3));  { 'EinschrÑnkungen gelîscht - ggf. Nodeliste neu einlesen.' }
+      message(getres2(2104,3));  { 'Einschraenkungen geloescht - ggf. Nodeliste neu einlesen.' }
       wait(curoff);
       closebox;
       freeres;
@@ -1130,7 +2008,7 @@ begin
         end;
     until (res<>0) or (s='');
     if res<>0 then
-      fehler(getres2(2104,4))   { 'ungÅltige Eingabe' }
+      fehler(getres2(2104,4))   { 'ungueltige Eingabe' }
     else begin
       ShrinkNodes:=s2;
       SaveConfig2;
@@ -1206,7 +2084,7 @@ var t   : text;
 
 begin
   List := listbox(73,15,getres(iif(delfilelist,2105,2106)));
-  assign(t,FileLists);          { 'Fileliste lîschen','File Request' }
+  assign(t,FileLists);          { 'Fileliste loeschen','File Request' }
   reset(t);
   anz:=0;
   KeepNodeindexOpen;
@@ -1288,7 +2166,7 @@ begin
       fa.username:=node;
       getNodeUserInfo(fa,ni);
       end;
-    if not ni.found then begin      { dÅrfte eigentlich nicht passieren.. }
+    if not ni.found then begin      { duerfte eigentlich nicht passieren.. }
       rfehler(2116);   { 'unbekannte Nodeadresse' }
       brk:=true;
       end
@@ -1296,7 +2174,7 @@ begin
       ShrinkPointToNode(fa,ni);
       node:=MakeFidoAdr(fa,true);
       if request and (ni.request and rfWaZOO=0) then
-        brk:=not ReadJN(getres(2108),true);  { 'Laut Nodelist kein Request bei dieser Box mîglich - trotzdem versuchen' }
+        brk:=not ReadJN(getres(2108),true);  { 'Laut Nodelist kein Request bei dieser Box moeglich - trotzdem versuchen' }
       if not brk and (ni.flags and nfCM=0) and (pos('Kratzenberg',ni.sysop)>0)
       then begin
         msgbox(ival(getres2(2126,0)),res2anz(2126)+4,_hinweis_,xx,yy);
@@ -1358,7 +2236,7 @@ end;
 function testDefbox:boolean;
 begin
   if DefFidoBox='' then
-    rfehler(2118);   { 'keine Fido-Stammbox gewÑhlt (Edit/Boxen)' }
+    rfehler(2118);   { 'keine Fido-Stammbox gewaehlt (Edit/Boxen)' }
   testDefbox:=(DefFidobox<>'');
 end;
 
@@ -1529,7 +2407,7 @@ begin
   doreq:=(files<>'');
   if not brk then begin
     if not doreq then begin
-      message(getres2(2112,3));  { 'Request-Anforderung lîschen ...' }
+      message(getres2(2112,3));  { 'Request-Anforderung loeschen ...' }
       SetRequest(node,'');
       end
     else begin
@@ -1580,7 +2458,7 @@ begin
         end;
       end;
     close(t1);
-    erase(t1);   { alte ReqDat lîschen }
+    erase(t1);   { alte ReqDat loeschen }
     end;
   if insert or (files<>'') then begin
     writeln(t2,adr);
@@ -1594,7 +2472,7 @@ begin
 end;
 
 
-procedure SetRequest(const adr,files:string);   { '' -> Request lîschen }
+procedure SetRequest(const adr,files:string);   { '' -> Request loeschen }
 var t1,t2   : text;
     s       : string;
     crash   : boolean;
@@ -1621,7 +2499,7 @@ begin
         end;
       end;
     close(t1);
-    erase(t1);   { alte ReqDat lîschen }
+    erase(t1);   { alte ReqDat loeschen }
     end;
   if crash or (files<>'') then begin
     writeln(t2,adr);
@@ -1672,7 +2550,7 @@ label ende;
 
   function overwrite(fn:string):boolean;
   begin
-    overwrite:=ReadJN(LeftStr(fn,40)+getres(2113),true);  { ' bereits vorhanden - Åberschreiben' }
+    overwrite:=ReadJN(LeftStr(fn,40)+getres(2113),true);  { ' bereits vorhanden - ueberschreiben' }
   end;
 
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
@@ -1730,7 +2608,7 @@ label ende;
         if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
           p:=cpos('=',s);
           if (p>0) and (LeftStr(s,p-1)<>node) and (mid(s,p+1)<>fi2) and
-             FileExists(FidoDir+mid(s,p+1)) then   { falsche EintrÑge killen }
+             FileExists(FidoDir+mid(s,p+1)) then   { falsche Eintraege killen }
             writeln(t2,s);
           end;
         end;
@@ -1830,8 +2708,8 @@ begin
   UpdateReqdat;
   truncstr(fidolastseek,1);
   SaveConfig2;
-  if copied and ReadJN(reps(getres2(2117,9),fn),true) then begin  { '%s lîschen' }
-    message(reps(getres2(2117,10),fn));   { 'Lîsche %s ...' }
+  if copied and ReadJN(reps(getres2(2117,9),fn),true) then begin  { '%s loeschen' }
+    message(reps(getres2(2117,10),fn));   { 'Loesche %s ...' }
     _era(fn);
     mdelay(300);
     closebox;
@@ -1857,8 +2735,8 @@ begin
     NodeSelProc(cr);
     pophp;
     if cr.brk then exit;
-    if ReadJN(reps(getres(2118),cr.s),false) then begin   { 'Fileliste fÅr %s lîschen' }
-      rmessage(2119);   { 'Lîsche Fileliste ...' }
+    if ReadJN(reps(getres(2118),cr.s),false) then begin   { 'Fileliste fuer %s loeschen' }
+      rmessage(2119);   { 'Loesche Fileliste ...' }
       nn:=0;
       assign(t1,FileLists); reset(t1);
       assign(t2,FidoDir+'request.$$$'); rewrite(t2);
@@ -1879,7 +2757,7 @@ begin
       if nn>0 then
         rename(t2,FileLists)
       else
-        erase(t2);    { keine Listen Åbrig }
+        erase(t2);    { keine Listen uebrig }
       mdelay(200);
       closebox;
       end;
@@ -1888,13 +2766,13 @@ end;
 
 
 
-{ File Suche in Fido Requstlisten mit bis zu fÅnf Suchbegriffen  }
+{ File Suche in Fido Requstlisten mit bis zu fuenf Suchbegriffen  }
 function FidoSeekfile:string;
   const
     seekfile         = 'fileseek.dat';
     maxbuf           = 20;
     SearchStr_maxIdx = 4;
-    iCase : boolean = true;                 { Gro·-Kleinschreibung  }
+    iCase : boolean = true;                 { Gross-Kleinschreibung  }
     wCase : boolean = true;                 { Suche nur ganze Worte }
     _sep             = '/&';                { der Seperator 2-Beyte }
 
@@ -1921,7 +2799,7 @@ function FidoSeekfile:string;
     label
        ende;
 
- {true, wenn der Substring in dem zu durchsuchenden String vollstÑndig enthalten ist }
+ {true, wenn der Substring in dem zu durchsuchenden String vollstaendig enthalten ist }
  { _pos= die Startposition des Vorhandenen SubStrings!!! }
   function fInStr( var SubStr: string; var s : string; var _pos: integer) :boolean;
   begin
@@ -2010,7 +2888,7 @@ function FidoSeekfile:string;
           if wCase = false then  test:=true         { ignore, Ganzes Wort}
           else test:=fInStr( sSub, sZeile, _pos );  { noch auf ganzes Wort testen }
         end;
-        inc(n);                                     { nÑchste Zeile }
+        inc(n);                                     { naechste Zeile }
       end; { while ( n < apos)   do } { alle Zeilen durchtesten }
       {Begriff im Bolck nicht gefunden, dann raus }
       if test =false then exit;
@@ -2026,7 +2904,7 @@ function FidoSeekfile:string;
         pTestWriteln(sa[nn] ); {Zeile des Blockes speichern }
         inc(nn);
       end;
-      inc(anz_FileFound);      {Erhîhe Anzahl der gefunden  }
+      inc(anz_FileFound);      {Erhoehe Anzahl der gefunden  }
       mwrt(x+13,y+3,strsn(anz_FileFound,5));
     end;
     if KeyPressed then
@@ -2051,7 +2929,7 @@ function FidoSeekfile:string;
       writeln(pOutput,' ',' '+typeform.dup(length(sNodInf),'ƒ'));
       writeln(pOutput);
     end;
-    apos:=0;                                    { ZeilenzÑhler ungÅltig setzen}
+    apos:=0;                                    { Zeilenzaehler ungueltig setzen}
     beginSafe:=false;
     while not eof(pFileListe) and (not brk) do               {'FIDO\22441278.fl'}
     begin
@@ -2065,10 +2943,10 @@ function FidoSeekfile:string;
         begin
           { Block testen und ggf. speichern }
           pTestBlock( apos );
-          apos:=0;  { setze ZeilenZÑhler auf Start }
+          apos:=0;  { setze ZeilenZaehler auf Start }
         end;
       end; { if (ss[1]>' ') and ( (ss[1]<#176)or( ss[1]>#223) ) then }
-      if ( apos <= maxbuf) and  ( beginSafe ) then { im gÅltigen Bereich}
+      if ( apos <= maxbuf) and  ( beginSafe ) then { im gueltigen Bereich}
       begin
         sa[apos]:=sZeile;  { speicher String in Array }
         inc(apos);
@@ -2096,15 +2974,15 @@ begin       { FidoSeekfile:string;************************ }
      fidolastseek:=LeftStr(fidolastseek, length(fidolastseek)-1);
   maddstring(3,2,getres2(2120,4),fidolastseek,40,40,'');   { 'Suchbegriff ' }
   maddbool(3,4,getres2(2120, 5),iCase); { 'Schreibweise ignorieren' }
-  maddbool(3,5,getres2(2120,11),wCase); { 'Nur ganze Wîrter suchen }
-  readmask(brk);                        {  Dialog anzeigen/ausfÅhren }
+  maddbool(3,5,getres2(2120,11),wCase); { 'Nur ganze Woerter suchen }
+  readmask(brk);                        {  Dialog anzeigen/ausfuehren }
   enddialog;
   pTestSeekStr( fidolastseek);           {teste den String auf Korrektheit}
   fidolastseek:=iifc(icase,'J','N')+iifc(Wcase,'J','N')+fidolastseek; {Ja or Nein + Suchbegriff }
 
   if brk or (fidolastseek='') then goto ende;
 
-  if icase then seek:=UpperCase(mid(fidolastseek,3)) {seek, enthÑlt nun den suchstring}
+  if icase then seek:=UpperCase(mid(fidolastseek,3)) {seek, enthaelt nun den suchstring}
   else          seek:=mid(fidolastseek,3);
   pInitSearchStr;                       { zerlege Suchstring}
 
@@ -2125,7 +3003,7 @@ begin       { FidoSeekfile:string;************************ }
     writeln(pOutput);
     assign(pFileListCfg,FileLists);
     reset(pFileListCfg);
-    while ( not eof(pFileListCfg)) and (not brk) do       {noch EintrÑge in der cfg.datei}
+    while ( not eof(pFileListCfg)) and (not brk) do       {noch Eintraege in der cfg.datei}
     begin
       readln(pFileListCfg,sNodInf); sNodInf:=trim(sNodInf);
       p:=cpos('=',sNodInf);
@@ -2170,7 +3048,7 @@ begin       { FidoSeekfile:string;************************ }
     begin
       if mid(sZeile,81)<>sNodInf then  { Request bei zwei Boxen! }
       begin
-        fehler(getres2(2120,10));      { 'kein gleichzeitiger Request bei mehreren Boxen mîglich' }
+        fehler(getres2(2120,10));      { 'kein gleichzeitiger Request bei mehreren Boxen moeglich' }
         sZeile:=#0;                    { Schleife abbrechen }
       end
       else
@@ -2255,6 +3133,9 @@ end;
 
 {
   $Log$
+  Revision 1.71  2002/12/09 14:37:21  dodi
+  - merged include files, updated comments
+
   Revision 1.70  2002/07/25 20:43:56  ma
   - updated copyright notices
 

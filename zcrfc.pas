@@ -23,7 +23,7 @@
 
 {$I xpdefine.inc }
 
-unit zcrfc;                                      
+unit zcrfc;
 
 //{$IFDEF NCRT}
 //  {$UNDEF NCRT}
@@ -31,32 +31,8 @@ unit zcrfc;
 
 interface
 
-uses xpglobal,
-  xp0,
-  xp1,
-  xpnt,
-  {$IFDEF unix}
-  {$IFDEF fpc}
-  linux,
-  {$ENDIF }
-  XPLinux,
-  {$ENDIF }
-  {$IFDEF NCRT }
-  xpcurses,                             { Fuer die Sonderzeichen an der Console }
-  {$ENDIF }
-{$IFDEF Win32 }
-  xpwin32,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-{$IFDEF OS2 }
-  xpos2,
-{$ENDIF }
-{$IFDEF Delphi }
-  Dos,
-{$ENDIF }
-  sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
+uses
+  classes;
 
 type
   TCompression = (
@@ -67,7 +43,7 @@ type
     compress_freeze);     { frozen       }
 
   TUUZ = class
-  private 
+  private
     smtpfirst: boolean;
   protected
     f1, f2: file;                         { Quell/Zieldatei     }
@@ -168,7 +144,7 @@ type TDotEscapeStream = class(TStream)
   public
     constructor Create(AnOtherStream: TStream);
     destructor Destroy; override;
-    
+
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
@@ -177,7 +153,32 @@ type TDotEscapeStream = class(TStream)
 implementation
 
 uses
-  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
+  sysutils,
+  {$IFDEF unix}
+  {$IFDEF fpc}
+  linux,
+  {$ENDIF }
+  XPLinux,
+  {$ENDIF }
+  {$IFDEF NCRT }
+  xpcurses,                             { Fuer die Sonderzeichen an der Console }
+  {$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
+{$IFDEF Delphi }
+  Dos,
+{$ENDIF }
+  xp0, xp1, xpnt,
+  typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams,
+  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist,
+  xpglobal;
 
 const
   cr: char = #13;
@@ -188,7 +189,7 @@ const
 
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
-  tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
+  tspecials2 = tspecials + ' ';         { RFC1341-Special Chars   }
 
   rsmtp_command: array[TCompression] of string = (
     'rsmtp',
@@ -525,12 +526,12 @@ procedure tuuz.testfiles;
 begin
   if not Exist(Source) then raise Exception.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
-    raise Exception.Create('ungÅltige Zieldatei: ' + dest);
+    raise Exception.Create('ungueltige Zieldatei: ' + dest);
   if not u2z and not ppp then
   begin
     Dest := IncludeTrailingPathDelimiter(Dest);
     if not IsPath(dest) then
-      raise Exception.Create('ungÅltiges Zielverzeichnis: ' + dest);
+      raise Exception.Create('ungueltiges Zielverzeichnis: ' + dest);
   end;
 end;
 
@@ -2646,7 +2647,54 @@ end;
 { fn:         Unix-Dateiname, evtl. incl. Pfad                   }
 { destdir<>'' -> Namenskollision in diesem Verzeichnis vermeiden }
 
-{$I xpfiles.inc }
+{.$I xpfiles.inc }
+
+function Unix2DOSfile(fn,destdir: String): String;
+var p,i     : byte;
+    allowed : set of char;
+    name, ext: string;
+    n       : word;
+begin
+  UpString(fn);
+  p:=length(fn);
+  while (fn[p]<>'/') and (p>0) do dec(p);
+  if p>0 then delete(fn,1,p);
+  if fn='~' then fn:='';
+  if RightStr(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
+    fn:=LeftStr(fn,length(fn)-5)+'TAZ';
+  p:=cPos(':',fn);
+  if (p>0) and (p<length(fn)) then        { device: entfernen }
+    delete(fn,1,p);
+  p:=length(fn);
+  while (p>0) and (fn[p]<>'.') do dec(p);
+  if p>1 then begin
+    fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kuerzen }
+    dec(p);
+    end;
+  allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9']; //todo: use predefined set
+  for i:=1 to p do
+    if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }
+      fn[i]:='-';
+  allowed:=allowed+['.'];
+  for i:=max(1,p) to length(fn) do   { Extension nach DOS konvertieren }
+    if not (fn[i] in allowed) then
+      fn[i]:='-';
+  p:=cpos('.',fn);
+  if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kuerzen }
+    name:=LeftStr(fn,8); ext:='';
+    end
+  else begin                    { Datei mit Extension auf 8+3 zeichen kuerzen }
+    name:=LeftStr(fn,min(8,p-1)); ext:=mid(fn,p);
+    end;
+  if length(ext)=2 then n:=10
+  else n:=1;
+  while (destdir<>'') and (n<999) and FileExists(destdir+name+ext) do begin
+    ext:=LeftStr(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
+    inc(n);
+    end;
+  Unix2DOSfile:=name+ext;
+end;
+
 
 function TUUZ.NextUunumber: word;
 begin
@@ -3706,6 +3754,9 @@ end;
 
 {
   $Log$
+  Revision 1.121  2002/12/09 14:37:22  dodi
+  - merged include files, updated comments
+
   Revision 1.120  2002/12/08 12:35:41  mk
   - removed line-header detection for mails again
 
