@@ -334,6 +334,9 @@ function SetColorPair(att: integer): integer;
 procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
 procedure RestoreWindow(var win: TWinDesc);
 
+{ SigHandler für Xterm-Resizing, HUP etc. }
+procedure SigHandler(Sig : Integer); cdecl;
+
 procedure Scroll(w: TWinDesc; mode: boolean);
 
 implementation
@@ -345,6 +348,7 @@ uses
 {$endif}
   keys,
   xp0,                  { ScreenLines }
+  xp1,                  { CloseDatabases }
   typeform;             { ISOTab }
 
 
@@ -1336,6 +1340,28 @@ end;
 
 { Unit-Interna --------------------------------------------------------- }
 
+{ Sig Handler is called, when a SIG is called by Linux }
+procedure SigHandler(Sig : Integer);
+begin
+  case Sig of
+    SIGWINCH		     : { when XTerm is Resized }
+	      begin
+		 endwin;
+		 refresh;
+		 getmaxyx(stdscr,MaxRows,MaxCols);
+		 ScreenLines := SysGetScreenLines;
+		 ScreenWidth := SysGetScreenCols;
+	      end;
+    SIGHUP, SIGQUIT, SIGKILL : 
+    begin
+       clrscr;
+       closedatabases;
+       runerror:=false;
+       halt(0);
+    end;
+  end;
+end;
+
 { exit procedure to ensure curses is closed up cleanly }
 procedure EndXPCurses;
 begin
@@ -1501,7 +1527,10 @@ begin
   ScreenLines :=  SysGetScreenLines;
 
   ESCDELAY:= 100;               { 100 ms }
-
+  Linux.SigNal(SIGWINCH, @SigHandler);
+  Linux.SigNal(SIGHUP, @SigHandler);
+  Linux.SigNal(SIGQUIT, @SigHandler);
+  Linux.SigNal(SIGKILL, @SigHandler);
 
   { set the unit exit procedure }
   ExitSave:= ExitProc;
@@ -1520,6 +1549,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/04/23 20:45:40  ml
+  - Sig-Int Handler for Linux (SIGKILL, SIGHUP, SIGQUIT)
+  - XTerm-Resizing is now recognized by openxp - repaint works not completely yet
+
   Revision 1.45  2001/04/23 18:32:28  ml
   - Helpscreen now uses full terminal in Linux
 
