@@ -864,7 +864,7 @@ var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
     size         : smallword;
-    halten       : integer;
+    halten, adr  : integer;
     flags        : byte;
     brk          : boolean;
     rec          : longint;
@@ -883,6 +883,7 @@ begin
   dbRead(ubase,'pollbox',pollbox);
   dbRead(ubase,'haltezeit',halten);
   dbRead(ubase,'userflags',flags);
+  dbRead(ubase,'Adrbuch',adr);
   rec:=dbRecno(ubase);
   edituser(getres(2710),user,adresse,komm,pollbox,halten,flags,true,brk);
   dbGo(ubase,rec);
@@ -893,6 +894,9 @@ begin
     dbWrite(ubase,'pollbox',pollbox);
     dbWrite(ubase,'haltezeit',halten);
     dbWrite(ubase,'userflags',flags);
+    { fix fuer Probleme mit Releases 3.20b und 3.20c }
+    if (adr <> 0) and (adr <> 1) then adr := 1;
+    dbWrite(ubase,'Adrbuch',adr);
     dbFlushClose(ubase);
     if msgbrett then
       dbFlushClose(ubase)
@@ -2200,6 +2204,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.6  2000/12/25 18:59:29  mk
+  - Usergruppe auf 0 oder 1 setzen
+
   Revision 1.9.2.5  2000/11/06 00:42:04  mk
   - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
 
