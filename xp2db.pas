@@ -27,7 +27,10 @@ unit xp2db;
 interface
 
 uses
-{$IFDEF NCRT }
+{$IFDEF Linux }
+{$IFDEF Kylix }
+  xplinux,
+{$ENDIF }
   xpcurses,
 {$ENDIF }
       typeform,fileio,inout,keys,datadef,database,databaso,
@@ -942,6 +945,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.38  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

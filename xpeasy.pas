@@ -9,7 +9,7 @@
 
 {$I xpdefine.inc}
 
-unit XpEasy;
+unit xpeasy;
 
 interface
 
@@ -82,6 +82,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.16  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.15  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

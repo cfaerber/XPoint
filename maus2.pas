@@ -27,7 +27,7 @@ unit  maus2;
 interface
 
 uses
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncurses,{$else}ncurses,{$endif} {$endif}
+  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
   {$IFDEF Win32} Windows,xpcrt, {$ENDIF}
   typeform,mouse,keys,xpglobal,debug;
 
@@ -555,6 +555,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2001/10/15 09:04:21  ml
+  - compilable with Kylix ;-)
+
   Revision 1.39  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

@@ -105,6 +105,17 @@
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
+{$IFDEF Kylix }
+  {$APPTYPE CONSOLE}
+  {$DEFINE Ver32 }
+  {$DEFINE Int64 }
+  {$DEFINE i386}
+  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
+{$ENDIF }
+
 {$IFDEF i386}
   {$DEFINE LittleEndian}
 {$ELSE}
@@ -215,6 +226,9 @@
 
 {
   $Log$
+  Revision 1.72  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.71  2001/10/11 15:27:02  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 

@@ -1502,6 +1502,7 @@ begin
 
   { TextMode(LastMode); }
 
+{$IFNDEF Kylix}
   { Redirect the standard output }
   assigncrt(Output);
   Rewrite(Output);
@@ -1510,14 +1511,23 @@ begin
   assigncrt(Input);
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
+{$ENDIF}
 
   ScreenLines :=  SysGetScreenLines;
 
   ESCDELAY:= 100;               { 100 ms }
+
+{$IFDEF Kylix}
+  libc.signal(SIGWINCH, @SigHandler);
+  libc.signal(SIGHUP, @SigHandler);
+  libc.signal(SIGQUIT, @SigHandler);
+  libc.signal(SIGKILL, @SigHandler);
+{$ELSE}
   Linux.SigNal(SIGWINCH, @SigHandler);
   Linux.SigNal(SIGHUP, @SigHandler);
   Linux.SigNal(SIGQUIT, @SigHandler);
   Linux.SigNal(SIGKILL, @SigHandler);
+{$ENDIF}
 
   { set the unit exit procedure }
   ExitSave:= ExitProc;
@@ -1534,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.54  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

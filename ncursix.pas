@@ -1384,6 +1384,9 @@ begin
    begin
      Y:=win^._maxy+1;
      X:=Win^._maxx+1;
+     {!!!!!!!!! überprüfen!}
+     Y := 24;
+     X := 80;
    end;
 end;
 
@@ -1742,6 +1745,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.3  2001/09/27 21:22:25  ml
   - Kylix compatibility stage IV
 

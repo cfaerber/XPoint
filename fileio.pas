@@ -28,7 +28,13 @@ unit fileio;
 interface
 
 {$ifdef unix}
-uses sysutils, {$IFDEF FPC } Linux, {$ENDIF }xplinux,xpglobal,typeform;
+uses sysutils,
+{$IFDEF Kylix}
+  libc,
+{$ELSE}
+  Linux,
+{$ENDIF }
+  xplinux,xpglobal,typeform;
 {$else }
 uses sysutils,xpglobal,typeform
   {$ifdef vp} ,vpusrlow {$endif}
@@ -221,7 +227,11 @@ begin
     cmAllRWE : fm:= STAT_IRWXU or STAT_IRWXG or STAT_IRWXO;
   end; { case }
   { Mode setzen }
+{$IFDEF Kylix}
+  result:= chmod(PChar(fn), fm) <> 0;
+{$ELSE}
   result:= chmod(fn, fm);
+{$ENDIF}
 end;
 {$else}
 begin result:=true end;
@@ -589,6 +599,7 @@ function setfiletime(fn:string; newtime:longint): boolean;
 var
   fh: longint;
 begin
+{$IFNDEF Kylix}
   fh:= FileOpen(fn, fmOpenWrite);
   if fh > 0 then
   begin
@@ -596,6 +607,9 @@ begin
     FileClose(fh);
   end else
     result:= false;
+{$ELSE}
+  result:= (FileSetDate(fn, newtime) = 0);
+{$ENDIF}
 end;
 
 function GetBareFileName(const p:string):string;
@@ -667,6 +681,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2001/10/15 09:04:21  ml
+  - compilable with Kylix ;-)
+
   Revision 1.106  2001/10/07 17:09:11  cl
   - removed import of xp0 (causes rc.exe/ihs.exe compiled with FPC 1.0.0
     to crash).

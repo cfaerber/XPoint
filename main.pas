@@ -30,7 +30,14 @@ procedure StartOpenXP;
 implementation
 
 uses
-  {$IFDEF unix} linux,xplinux, {$ENDIF }
+  {$IFDEF unix}
+  {$IFDEF Kylix}
+  libc,
+  {$ELSE}
+  linux,
+  {$ENDIF}
+  xplinux,
+  {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
   zmodem,Sysutils,xpglobal, debug,
@@ -198,6 +205,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/10/15 09:04:21  ml
+  - compilable with Kylix ;-)
+
   Revision 1.5  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

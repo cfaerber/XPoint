@@ -1,5 +1,7 @@
 program openxp;
 
+{$I xpdefine.inc }
+
 {%File 'xpmecol.inc'}
 {%File 'databas2.inc'}
 {%File 'database.inc'}
@@ -139,12 +141,13 @@ uses
   xpstat in 'xpstat.pas',
   xpterminal in 'xpterminal.pas',
   xpview in 'xpview.pas',
-  xpwin32 in 'xpwin32.pas',
   xpx in 'xpx.pas',
   zcrfc in 'zcrfc.pas',
   OSDepend in 'osdepend.pas',
   SysUtils,
 {$IFNDEF Kylix}
+  xpcrt in 'xpcrt.pas',
+  xpwin32 in 'xpwin32.pas',
   ZModem in 'netcall\zmodem.pas',
   ncgeneric in 'netcall\ncgeneric.pas',
   NCModem in 'netcall\ncmodem.pas',
@@ -187,7 +190,6 @@ uses
   objcom in 'ObjCOM/objcom.pas',
   Ringbuff in 'ObjCOM/ringbuff.pas',
 {$ENDIF}
-  xpcrt in 'xpcrt.pas',
   archive in 'archive.pas',
   xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
@@ -198,7 +200,7 @@ uses
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
   mime in 'mime.pas';
 
-{$R *.RES}
+{$R *.res}
 begin
   StartOpenXP;
 end.

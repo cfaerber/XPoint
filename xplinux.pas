@@ -47,13 +47,21 @@ uses
   SysUtils,
   xpglobal;
 
-{$IFNDEF FPC }
+{$IFDEF Kylix}
 const
-  STAT_IRUSR = S_IRUSR;
-  STAT_IWUSR = S_IWUSR;
-  STAT_IXUSR = S_IXUSR;
-  STAT_IRWXU = S_IRWXU;
-{$ENDIF }
+  STAT_IWUSR            = S_IWUSR;
+  STAT_IWGRP            = S_IWGRP;
+  STAT_IWOTH            = S_IWOTH;
+  STAT_IRUSR            = S_IRUSR;
+  STAT_IRGRP            = S_IRGRP;
+  STAT_IROTH            = S_IROTH;
+  STAT_IXUSR            = S_IXUSR;
+  STAT_IXGRP            = S_IXGRP;
+  STAT_IXOTH            = S_IXOTH;
+  STAT_IRWXU            = S_IRWXU;
+  STAT_IRWXG            = S_IRWXG;
+  STAT_IRWXO            = S_IRWXO;
+{$ENDIF}
 
 const                           { Common Environment-Vars }
   envHome               = 'HOME';
@@ -101,7 +109,7 @@ procedure SetAccess(p: string; ta: TTestAccess);
 function Diskfree(drive: byte): LongInt;
 function DiskSize(drive: byte): LongInt;
 function FileGetAttr(filename: string): Integer;
-procedure FileSetAttr(filename: string; Attr: Integer);
+function FileSetAttr(filename: string; Attr: Integer): Integer;
 {$ENDIF}
 
 { Zugriffe ueber /proc/* ----------------------------------------------- }
@@ -257,17 +265,25 @@ begin
   if (ioresult<>0) then
     MakeDir:= false
   else
+{$IFDEF Kylix}
+    MakeDir:= chmod(PChar(p), a) = 0;
+{$ELSE}
     MakeDir:= chmod(p, a);
+{$ENDIF}
 end;
 
 function TestAccess(p: String; ta: TTestAccess): boolean;
 var
+{$IFDEF Kylix}
+  info: TStatBuf;
+{$ELSE}
   info: stat;
+{$ENDIF}
 begin
 {$IFDEF FPC }
   if not (fstat(p, info)) then
 {$ELSE }
-  if Lnxstat(PChar(StrP(p)), info) <> 0 then
+  if stat(PChar(p), info) <> 0 then
 {$ENDIF }
     TestAccess:= false
   else with info do begin
@@ -293,6 +309,16 @@ end;
 
 procedure SetAccess(p: string; ta: TTestAccess);
 begin
+{$IFDEF Kylix}
+  case ta of
+    taUserR:   chmod(PChar(p), STAT_IRUSR);
+    taUserW:   chmod(PChar(p), STAT_IWUSR);
+    taUserRW:  chmod(PChar(p), STAT_IRUSR or STAT_IWUSR);
+    taUserRWX: chmod(PChar(p), STAT_IRWXU);
+    taUserX:   chmod(PChar(p), STAT_IXUSR);
+    taUserRX:  chmod(PChar(p), STAT_IRUSR or STAT_IXUSR);
+  end;
+{$ELSE}
   case ta of
     taUserR:   chmod(p, STAT_IRUSR);
     taUserW:   chmod(p, STAT_IWUSR);
@@ -301,6 +327,7 @@ begin
     taUserX:   chmod(p, STAT_IXUSR);
     taUserRX:  chmod(p, STAT_IRUSR or STAT_IXUSR);
   end;
+{$ENDIF}
 end;
 
 function ResolvePathName(p: string): string;
@@ -449,7 +476,11 @@ end;
 
 function SysExec(const Path, CmdLine: String): Integer;
 begin
+{$IFDEF Kylix}
+  result:= libc.System(PChar(AddDirSepa(path)+CmdLine));
+{$ELSE}
   result:= Linux.Shell(AddDirSepa(path)+CmdLine);
+{$ENDIF}
 end;             
 
 {$IFDEF Kylix }
@@ -471,9 +502,10 @@ begin
   Result := 0
 end;
 
-procedure FileSetAttr(filename: string; Attr: Integer);
+function FileSetAttr(filename: string; Attr: Integer): Integer;
 begin
   {Todo1: get FileSetAttr in Kylix !!!!!!!!!}
+  Result := 0;
 end;
 
 {$ENDIF}
@@ -485,6 +517,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
   Revision 1.28  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

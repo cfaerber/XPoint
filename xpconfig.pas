@@ -23,7 +23,7 @@
 
 {$I xpdefine.inc}
 
-unit XPConfig;
+unit xpconfig;
 
 interface
 
@@ -206,6 +206,9 @@ end;
 end.
 {
 $Log$
+Revision 1.3  2001/10/15 09:04:22  ml
+- compilable with Kylix ;-)
+
 Revision 1.2  2001/09/10 15:58:03  ml
 - Kylix-compatibility (xpdefines written small)
 - removed div. hints and warnings
