@@ -167,7 +167,6 @@
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
       mhnr(192);
     maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/')); { 'Realname' }
-      msetvfunc(notempty);
       mhnr(194);
     maddstring(3,8,getres2(912,12),user,30,AdrLen,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));  { 'eMail-Adr.' }
@@ -2121,6 +2120,9 @@
 
 {
   $Log$
+  Revision 1.34  2001/10/10 20:14:12  mk
+  - allow empty realname (as described in online help)
+
   Revision 1.33  2001/10/05 20:55:02  ma
   - initial number of newsgroup postings to fetch now independent
     of maximum number to fetch
