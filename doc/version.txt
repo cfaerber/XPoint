@@ -727,3 +727,111 @@ v3.20d/OpenXP  (01.01.2001)
 +  Suche nach mehreren Message-IDs gleichzeitig m”glich (s. Hilfe).
 !  Bei Message-ID-Suche aus einer Liste markierter Nachrichten heraus
    Auswahlfeld "Bretter" ausgeblendet (wie bei den anderen Suchen auch).
+
+v3.21/OpenXP/16  (xx.02.2003)
+-----------------------------
+  !  Beim Drcken von <Backspace> am Beginn einer Quotezeile wurde kein
+     Leerzeichen hinzugefgt, wenn die Zeile eingerckt war.
+  +  Suche im Editor markiert jetzt die aktuell gefundene Stelle.
+  !  Wenn im Editor der Suchbegriff ab der zweiten Zeile eines Absatzes
+     auftauchte, hing die Suche an dieser Fundstelle fest. (Bug aus v3.12d)
+  !  Fehler beim Abspeichern der Editor-Optionen behoben.
+  *  In der Hilfe k”nnen jetzt alle (Sonder-)Zeichen dargestellt werden.
+  *  Maggi: Betreffzeile auf 250 Zeichen verl„ngert.
+  !  Fehler bei Maskenausgaben von mehr als 70 Zeichen behoben.
+  *  RFC: "To:"- und "Cc:"-Header, die l„nger als 255 Zeichen sind, werden
+     jetzt korrekt und vollst„ndig umgewandelt. (Bug aus v3.12d)
+  !  Nachricht/Weiterleiten/Original von ”ffentlichen Nachrichten erzeugt
+     jetzt keinen falschen Absender mehr. (Bug aus v3.12d)
+  !  Fehler in Base64-Decodierung beseitigt (z.T. wurden mehr Zeichen
+     decodiert als vorhanden waren).
+  *  RFC: "Xref"-Header bleiben erhalten.
+  +  Schalter unter Config/Optionen/Netze/Verschiedenes/Fido:
+     "OpenXP-Version in Tearline schreiben"
+  !  Bug beim Anpassen der Datumsbezge des Netzanruf-Bretts nach Netcall
+     beseitigt. (Bug aus v3.12d)
+  -  Deshalb Option "Datumsbezge nach Netcall anpassen" unter
+     Config/Optionen/Netcall entfernt.
+  !  Ansehen des Nachrichtenkopfes mit "O" nach <Ctrl-PgUp> und
+     <Ctrl-PgDn> bzw. + und - im Lister berschrieb den Bildschirmeintrag,
+     auf den der Cursorbalken in der Nachrichtenbersicht gebl„ttert
+     wurde, mit der Nachricht, bei der der Lister gestartet wurde.
+     (Bug aus v3.12d)
+  !  Fehler bei Textsuche und leerem Suchstring behoben.
+  *  Beim automatischen Anlegen unbekannter User (z.B. bei <Ctrl-P>)
+     erscheint jetzt der User-Dialog (verhindert das unbemerkte Zuweisen
+     eines falschen Servers). XP schl„gt als Server den Server des Bretts
+     vor, in dem sich die Nachricht befindet (statt wie bisher die
+     Stammbox).
+  !  Beim Einlesen von Nachrichten mit Absendern l„nger als 80 Zeichen
+     wurden die Userflags (Priorit„t, Filter, Empfbest.) des letzten DB-
+     Eintrags verwendet (dBSeek ging ins Leere, weil der Eintrag gr”áer 80
+     Zeichen nicht gefunden werden kann). Adresse wird jetzt auf eAdrLen
+     (79 Zeichen) gekrzt. (Bug aus v3.12d)
+  !  Nach Aufruf der User-Auswahl mit <F2> (z.B. Weiterleiten/User oder
+     Nachricht/Direkt) und Umschalten auf Alle ("A") war nach Absenden der
+     Nachricht und Wechsel in die User-šbersicht mit <Tab> die User-Anzeige
+     verstmmelt. (Bug aus v3.12d)
+  !  Noch einen Fehler beim Setzen des Brett-Gelesen-Flags beseitigt.
+  !  Lister-Positionsflag wird jetzt immer aktualisiert.
+  !  Fehler bei Brett-Weiterschaltung behoben. (Bug aus v3.12d)
+  !  Uralt-Bug beseitigt: Es war m”glich, im Sendefenster eine Fido-Box
+     als Server fr eine RFC-Nachricht auszuw„hlen. (Bug aus v3.12d)
+  !  Nach Meldung "Schreiben in dieses Brett nicht m”glich" wird die Liste
+     der Kopienempf„nger geleert (Uralt-Bug, der zu "Geisterempf„ngern"
+     fhren konnte). (Bug aus v3.12d)
+  #  Teile von DoSend ausgelagert.
+  !  Crash bei Fido/File_Areas/Abbestellen und leerer Nachrichtendatenbank
+     beseitigt. (Bug aus v3.12d)
+  !  Crash bei WAB-Headern mit mehr als 80 Zeichen beseitigt.
+  !  MIME-Multipart-Nachrichten, die Zeilen mit mehr als 255 Zeichen
+     enthalten, werden jetzt korrekt angezeigt.
+  !  Windows-Crash beim Beenden von XP nach Fido-Netcall oder Verwendung
+     des XP-Terminals auf schnellen Rechnern beseitigt (COM-Port wird
+     jetzt korrekt zurckgesetzt). (Bug aus v3.12d)
+  #  Interne Code-Optimierungen
+  *  Ressourcen und Hilfe angepaát, wo erforderlich.
+  !  Diskussion-In: wurde beim Weiterleiten mit N/W/K bzw. N/W/D
+     bernommen. Wird jetzt gel”scht.
+  !  Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo
+           verfremden, da sie sonst doppelt in aktiver Form
+           vorhanden w„ren.
+  *  Vervollst„ndigung der Programm- und Sourcepakete:
+           - Beispiele fr Schablonen und Loginscripte
+           - UUCICO (UUCP-Mailer) aufgenommen
+           - Make-Batchdatei ins Sourcepaket aufgenommen
+  !  Abstrze bei mehr als 46 Zeilen Bildschirmgr”áe beseitigt
+  +  Maximale Bildschirmgr”áe ist jetzt 50 Zeilen
+  !  Fix fr Uralt-Bug: Das Eintragen eines Kopienempf„ngers ("k" im
+         Sendefenster) mit einer anderen Serverbox als der des Empf„ngers
+         sowie anschlieáendes Erzwingen des Versendens ber eine gemeinsame
+         Serverbox ("o" im Sendefenster) konnte zu abenteuerlichen Effekten
+         fhren (Absturz, H„nger, duplizierte Nachrichten).
+  !  Der Nachrichtentext von RFC-Nachrichten wird jetzt nur noch
+     dann vom IBM- in den ISO1-Zeichensatz konvertiert, wenn er nicht
+     schon im ISO1-Zeichensatz vorlag. Siehe Schlter ISO-Zeichensatz
+     unter C/O/N/V Z-Netz: (Betrifft: Alle die einen exterenen Client
+     nutzen, der RFC-Nachrichten verschickt, aber innerhalb von Xp
+     als Sysopmode-ZCONNECT-Box gefhrt wird).
+  !  Die Mailerzeile wird beim Konvertieren in ZCONNECT jetzt immer
+     als MAILER: geschrieben, und nicht mehr als Mailer:
+  !  Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt
+     *immer* vom IBM- in den ISO1-Zeichensatz konvertiert (vorher
+     geschah dies nur, wenn der Header "CHARSET: ISO1" nicht vorhanden
+     war).
+  *  Programmbezeichnung ist jetzt Openxp/16, statt Openxp, da sich die
+     Programmiererteams der 16 Bit und der 32 Bit Version getrennt haben.
+     Die 16 Bit Version wird jetzt durch Openxp/16 weiterentwickelt.
+  *  Systemname in PM-Brettern ist nun Default.
+  !  Wird das automaische Anlegen eines Users beim Beantworten
+     einer Nachricht (z.B. bei gesetztem Reply-To) abgebrochen, so
+     wird der User jetzt auch wirklich nicht angelegt.
+
+Hinweis: Das vorliegende Programmpaket ist die voraussichtlich letzte
+         Version von Openxp/16 die noch auf einem 8086/8088 aka XT l„uft,
+         sofern dafr compiliert.
+
+         Openxp/16 Version 3.40 wird aufgrund einer Vielzahl von nderungen
+         die einen 386 voraussetzen nur noch auf einem Rechner der mindestens
+         ein 386er ist , laufen.
+
