@@ -17,17 +17,23 @@ unit objcom;
 
 uses
   classes,
-  ringbuff,osdepend
-     {$IFDEF DOS32},Ports,DOS{$ENDIF}
-     {$IFDEF Win32},Windows,WinSock{$ENDIF}
-     {$IFDEF Unix}
-       {$IFDEF fpc},Linux,sockets{$ENDIF}
-       {$IFDEF Kylix},libc,KernelIoctl{$ENDIF}
-     {$ENDIF}
-     {$IFDEF OS2},OCThread
-       {$IFDEF VIRTUALPASCAL},OS2Base{$ELSE},OS2Def,DosCalls{$ENDIF}
-     {$ENDIF}
-     {$IFDEF Go32V2},Go32{$ENDIF};
+{$IFDEF xpio}
+  xpinout,
+{$ELSE}
+  osdepend,
+{$ENDIF}
+{$IFDEF DOS32}Ports,DOS,{$ENDIF}
+{$IFDEF Win32}Windows,WinSock,{$ENDIF}
+{$IFDEF Linux}
+  {$IFDEF fpc}Linux,sockets,{$ENDIF}
+  {$IFDEF Kylix}libc,KernelIoctl,{$ENDIF}
+{$ENDIF}
+{$IFDEF OS2}OCThread,
+  OS2Def,DosCalls,
+{$ENDIF}
+{$IFDEF Go32V2}Go32,{$ENDIF}
+  ringbuff,
+  xpglobal;
 
 type SliceProc = procedure;
 
@@ -504,6 +510,9 @@ end
 
 {
   $Log$
+  Revision 1.34  2003/01/01 18:56:52  dodi
+  - new xpinout API
+
   Revision 1.33  2003/01/01 16:19:45  mk
   - changes to made FreeBSD-Version compilable
 
