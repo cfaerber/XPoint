@@ -63,7 +63,37 @@ type
     procedure Disconnect; virtual;
   end;
 
+{ Get first phone number in list and rotate list }
+function GetNextPhonenumber(var Phonenumbers: string): string;
+{ Count phone numbers in list }
+function CountPhonenumbers(Phonenumbers: string): integer;
+
 implementation
+
+function GetNextPhonenumber(var Phonenumbers: string): string;
+var p : byte;
+begin
+  PhoneNumbers:=trim(Phonenumbers);
+  p:=Pos(' ',Phonenumbers);
+  if p=0 then result:=Phonenumbers
+  else begin
+    result:=LeftStr(Phonenumbers,p-1);
+    Phonenumbers:=trim(mid(Phonenumbers,p))+' '+LeftStr(Phonenumbers,p-1);
+    end;
+  end;
+end;
+
+function CountPhonenumbers(Phonenumbers: string): integer;
+var n : integer;
+begin
+  Phonenumbers:=trim(Phonenumbers);
+  n:=1;
+  while pos(' ',Phonenumbers)>0 do begin
+    Phonenumbers:=trim(mid(Phonenumbers,cpos(' ',Phonenumbers)));
+    inc(n);
+    end;
+  result:=n;
+end;
 
 constructor TModemNetcall.Create;
 begin
@@ -338,6 +368,12 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/01/10 16:31:26  ma
+  - added phone number functions
+  - todo: add class communication methods (perhaps in netcall class already)
+    because standardized transfer logging should make things *by far* easier
+    than they were
+
   Revision 1.1  2001/01/07 01:15:40  ma
   - perhaps playground concept proves useful
 
