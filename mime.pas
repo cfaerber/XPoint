@@ -718,26 +718,37 @@ begin
 end;
 
 { ---------------- Simple Content Encoding Functions ----------------- }
-
+// performance critical!
 function DecodeBase64(const s: String):String;
 var
-  b1, b2, b3, b4: byte;
-  p1, pad: integer;
+  p1: integer;
 
   function nextbyte: byte;
-  var p: integer;
+  var
+    p, l: integer;
   begin
-    result:=0;
-    if p1>length(s)then exit;
-    repeat
-      p := Base64DecodingTable[byte(s[p1])];
-      inc(p1);
-    until (p >= 0) or (p1 > length(s));
-    if p>=0 then result:=p;
+    l := Length(s);
+    if p1 <= l then
+    begin
+      repeat
+        p := Base64DecodingTable[byte(s[p1])];
+        inc(p1);
+      until (p >= 0) or (p1 > l);
+      if p>=0 then
+        Result:=Byte(p)
+      else
+        Result := 0;
+    end else
+    begin
+      Result := 0;
+      exit;
+    end;
   end;
 
+var
+  b1, b2, b3, b4: byte;
+  i, pad: Integer;
 begin
-  result := '';
   if length(s) >= 3 then
   begin
     if LastChar(s) = '=' then
@@ -759,16 +770,21 @@ begin
         pad := 0;
     end;
 
-    p1 := 1;
+    p1 := 1; i := 0;
+    SetLength(Result, Length(s) * 3 div 4 + 3); // precalulate decoded length
     while p1 <= length(s) do
     begin
       b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
-      result := result + chr(b1 shl 2 + b2 shr 4);
-      result := result + chr((b2 and 15) shl 4 + b3 shr 2);
-      result := result + chr((b3 and 3) shl 6 + b4);
+      Inc(i);
+      Result[i] := chr(b1 shl 2 + b2 shr 4);
+      Inc(i);
+      Result[i] := chr((b2 and 15) shl 4 + b3 shr 2);
+      Inc(i);
+      Result[i] :=  chr((b3 and 3) shl 6 + b4);
     end;
-    SetLength(result,Length(result)-pad);
-  end;
+    SetLength(Result, i-pad);
+  end else
+    Result := s;
 end;
 
 function DecodeQuotedPrintable_Internal(const s:string; rfc2047:boolean):string;
@@ -1235,6 +1251,9 @@ end;
 
 //
 // $Log$
+// Revision 1.17  2002/02/25 17:49:16  mk
+// - faster DecodeBase64
+//
 // Revision 1.16  2002/02/22 18:29:59  cl
 // - added windows-1250
 //
