@@ -30,6 +30,7 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
+  linux,
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
@@ -1009,6 +1010,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.87  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.86  2001/07/31 16:18:40  mk
   - removed some unused variables
   - changed some LongInt to DWord

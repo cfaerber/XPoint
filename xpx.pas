@@ -30,6 +30,7 @@ uses
   xpglobal,
 {$IFDEF unix}
   xplinux,
+  linux,
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
@@ -178,6 +179,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.43  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

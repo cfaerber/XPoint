@@ -27,7 +27,7 @@ unit xp2;
 interface
 
 uses
-  {$IFDEF unix} xplinux,{$ENDIF}
+  {$IFDEF unix} xplinux, xpcurses, linux, {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
   {$IFDEF DOS32} xpdos32, {$ENDIF }
   {$IFDEF OS2} xpos2, {$ENDIF }
@@ -1090,6 +1090,9 @@ end.
 
 {
   $Log$
+  Revision 1.116  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.115  2001/08/01 09:06:23  cl
   - renamed openxp.res to openxp.rsp
 

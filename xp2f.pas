@@ -125,23 +125,32 @@ begin
   modi:=false;
   repeat
     moff;
-    for i:=1 to anzahl do begin
-      if i=p then attrtxt(col.colsel2bar)
-      else attrtxt(col.colsel2box);
-      with fkeys[typ]^[i] do begin
+    for i:=1 to anzahl do
+    begin
+      if i=p then
+	attrtxt(col.colsel2bar)
+      else
+	attrtxt(col.colsel2box);
+      with fkeys[typ]^[i] do
+      begin
         wrt(x+1,y+1+i,' '+forms(txt+strs(i),length(txt)+3));
-        if menue+prog='' then Wrt2(sp(67))
-        else begin
+        if menue+prog='' then
+	  Wrt2(sp(67))
+	else
+	begin
           Wrt2(' ' + forms(menue,14) + ' ' + forms(prog,26));
           if copy(prog,1,1)='*' then
             Wrt2(sp(18) + chk(autoexec) + '      ')
           else
-            Wrt2(' ' + forms(getres2(240,ntyp+7),10) +
-            Format(' %s %s %s %s  ', [chk(bname), chk(warten), chk(listout), chk(autoexec){,
-              speicher}]));
-          end;
-        end;
+	     Wrt2(' ' + forms(getres2(240,ntyp+7),10)
+		  + ' ' + chk(bname)
+		  + ' ' + chk(warten)
+		  + ' ' + chk(listout)
+		  + ' ' + chk(autoexec){
+		  + ' ' + IntToStr(speicher)});
+	end;
       end;
+    end;
     mon;
     repeat
       if auswahlcursor then begin
@@ -697,7 +706,8 @@ var ma     : map;
   begin
     moff;
     for i:=1 to n do
-      with ma^[i] do begin
+      with ma^[i] do
+      begin
         if i=p then
           attrtxt($70)
         else
@@ -1156,6 +1166,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.27  2001/07/28 12:04:11  mk
   - removed crt unit as much as possible
 

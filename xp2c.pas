@@ -27,7 +27,7 @@ unit xp2c;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF }
+  {$IFDEF NCRT}xpcurses, linux,{$ENDIF }
   sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
   printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
   xpglobal;
@@ -1442,6 +1442,9 @@ end.
 
 {
   $Log$
+  Revision 1.95  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.94  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

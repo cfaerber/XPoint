@@ -29,7 +29,11 @@ unit replytoall;
 
 interface
 
-uses xpglobal,typeform,fileio,inout,winxp,keys,maske,datadef,database,
+uses xpglobal,
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
+typeform,fileio,inout,winxp,keys,maske,datadef,database,
   resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6, maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
@@ -1050,6 +1054,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.7  2001/08/02 21:21:04  mk
   - now using function is_mailaddress from xpconfigedit.pas instead of adrOkay
   - removed function adrOkay

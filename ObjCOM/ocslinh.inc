@@ -3,7 +3,7 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type TSerialStream = Object(TCommStream)
+type TSerialStream = class(TCommStream)
         constructor Create;
         destructor Destroy; override;
 
@@ -26,7 +26,7 @@ type TSerialStream = Object(TCommStream)
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); override;
         procedure SetDtr(State: Boolean); override;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); override;
-        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean; override;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean; { override;}
         procedure PurgeInBuffer; override;
         procedure PurgeOutBuffer; override;
 
@@ -39,6 +39,9 @@ type TSerialStream = Object(TCommStream)
 
 {
   $Log$
+  Revision 1.6  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.5  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

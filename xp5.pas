@@ -35,6 +35,7 @@ uses
 {$IFDEF unix}
   linux,
   xplinux,
+  xpcurses,
 {$ENDIF}
   xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,datadef,database,
   maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob, OSDepend;
@@ -948,6 +949,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.53  2001/07/31 16:18:40  mk
   - removed some unused variables
   - changed some LongInt to DWord

@@ -30,6 +30,9 @@ uses xpglobal,
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
 {$IFDEF DOS32 }
   xpdos32,
 {$ENDIF }
@@ -2197,6 +2200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.96  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.95  2001/07/28 12:04:12  mk
   - removed crt unit as much as possible
 

@@ -30,7 +30,11 @@ uses
   sysutils,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,Classes,fidoglob;
+  xpglobal,
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
+Classes,fidoglob;
 
 
 const sendIntern = 1;     { force Intern              }
@@ -2097,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.122  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.121  2001/07/31 16:18:40  mk
   - removed some unused variables
   - changed some LongInt to DWord

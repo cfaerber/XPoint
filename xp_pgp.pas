@@ -28,6 +28,9 @@ interface
 
 uses
   sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader,
+{$IFDEF unix}
+  linux,
+{$ENDIF}
   xp0,xp1;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
@@ -133,7 +136,7 @@ procedure RunPGP5(exe,par:string);
 var path : string;
     pass,batch : string;
     {$ifdef unix}
-    dir, name, ext: string;
+    dir, name, ext: shortstring;
     {$endif}
 begin
   {$ifdef unix}
@@ -840,6 +843,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.38  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

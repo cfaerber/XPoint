@@ -30,6 +30,9 @@ interface
 uses
   xpglobal,
   sysutils, osdepend,
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
   keys,clip,mouse,eddef, encoder, Lister;
 
 
@@ -1681,6 +1684,9 @@ end.
 
 {
   $Log$
+  Revision 1.57  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.56  2001/07/31 16:18:38  mk
   - removed some unused variables
   - changed some LongInt to DWord

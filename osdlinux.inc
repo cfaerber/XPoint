@@ -32,8 +32,21 @@
 
 { implementation of the interface }
 
+procedure SysDelay(MS: Longint);
+var
+  StartTime, ActualTime: TDateTime;
+begin
+  StartTime := Time;
+  repeat
+    ActualTime := Time;
+  until ((StartTime + MS) >= ActualTime);
+end;
+
 {
         $Log$
+        Revision 1.2  2001/08/03 21:40:42  ml
+        - compilable with fpc (linux)
+
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 

@@ -40,7 +40,7 @@ type TCommStream = class(TStream)
         destructor Destroy; override;
 
         function Read(var Buffer; Count: Longint): Longint; override;
-        function Write(const Buffer; Count: Longint): Longint; override;
+        function Write(var Buffer; Count: Longint): Longint; {override;}
         function Seek(Offset: Longint; Origin: Word): Longint; override;
 
   (* --- CommObj interface ----------------------------------------------- *)
@@ -141,7 +141,7 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TCommStream.Write(const Buffer; Count: Longint): Longint;
+function TCommStream.Write(var Buffer; Count: Longint): Longint;
 begin
   SendBlock(Buffer,Count,Result);
 end;
@@ -471,6 +471,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2001/08/03 21:40:43  ml
+  - compilable with fpc (linux)
+
   Revision 1.23  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

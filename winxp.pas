@@ -32,7 +32,7 @@ uses
   windows,
 {$ENDIF }
 {$IFDEF unix}
-  xplinux, strings,
+  xplinux, strings, xpcurses,
 {$ENDIF }
 {$IFDEF VP }
   vpsyslow,
@@ -368,6 +368,7 @@ begin
   end;
 {$ENDIF Win32 }
 
+{$IFNDEF NCRT}
 procedure Clreol;
 begin
   FillScreenLine(WhereX, WhereY, ' ', ScreenWidth-WhereX);
@@ -414,6 +415,7 @@ begin
   GotoXY(1, 1);
 end;
 
+{$ENDIF}
 
 procedure SDisp(const x,y:word; const s:string);
 {$IFDEF Win32 }
@@ -1012,6 +1014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.58  2001/07/28 12:39:56  mk
   - removed unused unit strings
 

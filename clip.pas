@@ -60,7 +60,7 @@ uses
   xp0,
 {$ifdef unix}
   linux,
-  fileio;
+  fileio,
   xplinux;
 {$else}
 {$IFDEF Win32 }
@@ -335,6 +335,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2001/08/03 21:40:42  ml
+  - compilable with fpc (linux)
+
   Revision 1.30  2001/07/31 13:10:30  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
