@@ -1176,8 +1176,10 @@ begin
     s:=DecodeQuotedPrintable(s)
   else
   if b64 then
-    s:=DecodeBase64(s)
-  else
+  begin
+    s:=DecodeBase64(s);
+    if s = '' then s:=s+#13#10;
+  end else
     s:=s+#13#10;
 end;
 
@@ -3708,6 +3710,10 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.21  2002/10/13 11:47:17  mk
+  - fixed converting news files with base64 encoding and empty lines
+    see <8YjoOQphsaB@MSchiff.gmx.de>
+
   Revision 1.97.2.20  2002/08/25 23:58:32  cl
   - BUGFIX: <3D6386F1.8EBE067C@expires-2002-08-31.arcornews.de>
             UUCP.Modul sendet keine Newspakete?
