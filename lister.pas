@@ -194,7 +194,7 @@ uses
   {$IFDEF NCRT }
   xpcurses,
   {$ENDIF }
-  xpunicode_linebreak,
+  xpunicode_lbr,
   typeform,
   charmaps,     // for CP 437 map
   inout, maus2, winxp, resource,
@@ -1104,6 +1104,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.84  2003/08/05 23:34:34  cl
+  - xpunicode_linebreak was too long unit name for FPC/1.0.6 on Linux
+
   Revision 1.83  2003/05/10 15:44:30  mk
   - show two more lines when listing messages after PgDown
 

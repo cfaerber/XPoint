@@ -48,7 +48,7 @@
   This unit implements the Unicode Line Break Properties and Algorithm 
   described in Unicode Technical Report #14.
 }
-unit xpunicode_linebreak;
+unit xpunicode_lbr;
 
 { ---------------------------} interface { --------------------------- }
 
@@ -627,6 +627,9 @@ end;
 
 //
 // $Log$
+// Revision 1.1  2003/08/05 23:34:34  cl
+// - xpunicode_linebreak was too long unit name for FPC/1.0.6 on Linux
+//
 // Revision 1.4  2003/04/27 22:24:33  cl
 // - TUnicodeLineBreaker.FlushData added
 // - TUnicodeLineBreaker.Destroy calls FlushData
