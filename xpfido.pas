@@ -1084,8 +1084,8 @@ end;
 
 function MainNodelist:integer;
 begin
-  Result := NodeList.Count;
-  while (Result>=0) and (PNodeListItem(nodelist[Result-1])^.listfile<>'NODELIST.###') do
+  Result := NodeList.Count-1;
+  while (Result>=0) and (PNodeListItem(nodelist[Result])^.listfile<>'NODELIST.###') do
     dec(Result);
 end;
 
@@ -2248,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/08/21 06:51:45  mo
+  -mainnodelist() liefert richtigen Wert
+
   Revision 1.29  2000/08/19 08:56:24  mk
   MO:- Source ausfuehrlich kommentiert
 
