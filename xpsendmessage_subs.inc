@@ -68,7 +68,7 @@ begin
       if pm then
         rpsuser(s,empfaenger,sdata^.empfrealname);
       rpsdate(s);
-      if s<>sigsep then writeln(t2,s);
+      if s<>sigsep then write(t2,s+#13#10);
       end;
     close(t);
     close(t2);
@@ -1104,6 +1104,10 @@ end;
 
 {
   $Log$
+  Revision 1.12  2001/10/26 01:22:17  ma
+  - fixed: Signature line endings were not correct with Unix
+    (should be CRLF)
+
   Revision 1.11  2001/10/17 10:19:52  mk
   - decode/docode byte instead of ShortInt
 
