@@ -50,6 +50,9 @@ implementation  { --------------------------------------------------- }
 {$IFNDEF BP }
 
 uses
+{$ifdef Linux}
+  Linux,
+{$endif}
   sysutils;
 
 {$IFDEF FPC }
@@ -69,19 +72,27 @@ var
     para  : string;
     dpath : string;
 begin
+{$ifdef UnixFS}
+{$ifdef Linux}
+  { ToDo: Prompt Modifizieren (vielleicht) }
+  ErrorLevel:= Shell(prog);
+{$else}
+  {$error Please implement this function for your OS }
+{$endif}
+{$else}
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
     para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
   end;
-  prog:=ustr(prog);
+  prog:=fustr(prog);
 
   if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
     dpath:=''
   else begin
     if FileExists(prog) then dpath:=prog
-    else dpath:=UStr(fsearch(prog,getenv('PATH')));
+    else dpath:=fUStr(fsearch(prog,getenv('PATH')));
     if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
       dpath:='';
   end;
@@ -97,6 +108,7 @@ begin
   { Wir nicht sauber belegt, also von Hand machen }
   DosError :=0;
   { Alle anderen Fehler k”nnen in 32 Bit nicht auftreten }
+{$endif}
   Xec := ExecOk;
 end;
 
@@ -495,6 +507,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/06/20 18:21:17  hd
+  - Xec angepasst (teilweise) / Linux
+
   Revision 1.19  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
