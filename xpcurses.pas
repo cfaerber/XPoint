@@ -188,18 +188,18 @@ const
       (Sequenz: #27#91#56#94;    ncCode: 429; DosCode : #0#117), { Ctrl-End }
       (Sequenz: #27#91#54#59#53#126;    ncCode: 430; DosCode : #0#118), { Ctrl-PgDn }
       (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132), { Ctrl-PgUp }
-      (Sequenz: #27#79#72;       ncCode: 432; DosCode : #0#71),  { Home on NetBSD }
-      (Sequenz: #27#79#70;       ncCode: 433; DosCode : #0#79),  { End on NetBSD }
+      (Sequenz: #27#79#72;          ncCode: 432; DosCode : #0#71),   { Home on NetBSD }
+      (Sequenz: #27#79#70;          ncCode: 433; DosCode : #0#79),   { End on NetBSD }
       (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
       (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
-      (Sequenz: #27#91#49#59#53#67; ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#91#49#59#53#68; ncCode: 437; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
-      (Sequenz: #27#91#49#59#53#67; ncCode: 438; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#91#49#59#53#68; ncCode: 439; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
-      (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
-      (Sequenz: #27#0#77;           ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#0#79;           ncCode: 437; DosCode : #0#115)   { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#0#77;           ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
+      (Sequenz: #27#0#75;           ncCode: 437; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
+      (Sequenz: #27#79#99;          ncCode: 438; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
+      (Sequenz: #27#79#100;         ncCode: 439; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
+      (Sequenz: #27#79#53#67;       ncCode: 440; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
+      (Sequenz: #27#79#53#68;       ncCode: 441; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
+      (Sequenz: #27#0#77;           ncCode: 442; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
+      (Sequenz: #27#0#79;           ncCode: 443; DosCode : #0#115)   { Ctrl+Cursor left on Linux }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -1438,7 +1438,7 @@ begin
     LastWindMax:= WindMax;
     win.x:= 0; win.y:= 0;
     win.isRel:= false;
-
+    
     NCursesRegisterKeys;
 
 (*
@@ -1554,6 +1554,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.13  2003/09/06 15:58:28  mk
+  - fixed garbage from last checkins
+
   Revision 1.64.2.12  2003/09/05 18:19:51  mk
   - added more codes for ctrl-left and ctrl-right
 
