@@ -10,7 +10,7 @@
 
 Library xp_ntvdm;
 
-uses windows,sysutils,strings;
+uses windows;
 
 { --- Imports from ntvdm.exe ------------------------------------ }
 
@@ -253,6 +253,9 @@ end.
 
 { 
   $Log$
+  Revision 1.1.2.2  2001/07/02 21:11:09  mk
+  - removed unused units
+
   Revision 1.1.2.1  2001/07/02 20:43:04  mk
   - NTVDM Interface
 
