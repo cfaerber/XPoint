@@ -634,7 +634,7 @@ begin
       assign(t,fn);
       if append then system.append(t)
       else rewrite(t);
-      for i:=1 to lines do begin
+      for i:=1 to lines-1 do begin
         readln(input,s);
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
@@ -665,7 +665,7 @@ begin
       if lines>500 then { MK 01.02.2000 Auf 500 Zeilen angepasst }
         rmessage(2442);    { 'decodiere BinÑrdatei ...' }
 
-      for i:=1 to lines do
+      for i:=1 to lines-1 do
       begin
         readln(input,s);
         DecodeBase64;
@@ -701,6 +701,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/01 23:41:48  mk
+  - ExtractMultiPart decodiert jetzt eine Zeile weniger
+
   Revision 1.6  2000/02/22 15:51:20  jg
   Bugfix fÅr "O" im Lister/Archivviewer
   Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
