@@ -177,6 +177,7 @@ var x,y   : Integer;
     bera            : array[0..4] of string;
     stata           : array[0..5] of string;
     typa            : array[0..4] of string;
+    RegExpr: TRegExpr;
 
 
     suchand           : boolean;
@@ -317,7 +318,6 @@ label ende;
       ofs  : longint;
       wsize: word;
       TempKey: ShortString;
-      RegExpr: TRegExpr;
       s: String;
   begin
     dbReadN(mbase,mb_msgsize,size);
@@ -335,12 +335,10 @@ label ende;
         TempKey := Key;
         if RegEx then
         begin
-          RegExpr := TRegExpr.Create;
           RegExpr.Expression := key;
           SetLength(s, wsize);
           Move(p^, s[1], wsize);
           InText := RegExpr.Exec(s);
-          RegExpr.Free;
         end else
         Intext:=TxtSeek(p,wsize,Tempkey,igcase,umlaut);
       end else
@@ -476,13 +474,13 @@ label ende;
           else begin
             ReadHeader(hdp,hds,false);
             end;
-        if umlaut then begin                    {JG: Umlaute anpassen}
+        if umlaut then begin                    { Umlaute anpassen}
           UkonvStr(betr2,Length(betr2));
           UkonvStr(user2,Length(user2));
           UkonvStr(realn,Length(realn));
           UkonvStr(hdp.fido_to,Length(hdp.fido_to));
           end;
-        if igcase then begin                    {JG: Ignore Case}
+        if igcase then begin                    { Ignore Case}
           UpString(betr2);
           UpString(user2);
           UpString(realn);
@@ -518,8 +516,13 @@ label ende;
       j:=0;
       repeat
         seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
-        found:=((igcase and (pos(seek,UpperCase(such))>0)) or
-         (not igcase and (pos(seek,such)>0)));
+        if RegEx then 
+        begin 
+          RegExpr.Expression := Seek;
+          Found := RegExpr.Exec(Such);
+        end else
+          found:=((igcase and (pos(seek,UpperCase(such))>0)) or
+           (not igcase and (pos(seek,such)>0)));
         found_not:=found and seeknot[j];
         if suchand and not found and seeknot[j] then found:=true;
         inc(j);
@@ -539,8 +542,15 @@ label ende;
         j:=0;
         repeat
           seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
-          found:=((igcase and (pos(seek,UpperCase(such))>0)) or
-           (not igcase and (pos(seek,such)>0)));
+
+          if RegEx then 
+          begin 
+            RegExpr.Expression := Seek;
+            Found := RegExpr.Exec(Such);
+          end else
+            found:=((igcase and (pos(seek,UpperCase(such))>0)) or
+             (not igcase and (pos(seek,such)>0)));
+
           found_not:=found and seeknot[j];
           if suchand and not found and seeknot[j] then found:=true;
           inc(j);
@@ -588,6 +598,7 @@ label ende;
 {--# Suche #--}
 
 begin
+  RegExpr := TRegExpr.Create;
   for i:=0 to 4 do bera[i]:=getres2(442,i);
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
@@ -921,7 +932,8 @@ begin
 ende:                               { Suche gescheitert/abgebrochen }
     suche:=false;
     CloseBox;
-    end;
+  end;
+  RegExpr.Free;
   freeres;
 end;
 { R+}
@@ -2427,6 +2439,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.106  2001/08/29 19:30:38  mk
+  - added regex search for special search functions
+
   Revision 1.105  2001/08/28 13:24:35  mk
   - added support for regular expressions
 
