@@ -11,23 +11,15 @@
 { CrossPoint - Verarbeitung von Pointdaten }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit  xp3;
 
 interface
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,datadef,database,montage,resource,
-      xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum;
+  xpglobal, crt, dos,typeform,fileio,inout,datadef,database,montage,
+  resource,xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -116,195 +108,6 @@ implementation  {-----------------------------------------------------}
 
 uses  xp3o,xp3ex,xpnt;
 
-
-{$IFDEF ver32}
-procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:smallword); assembler; {&uses ebx, esi, edi}
-asm
-         mov   edi,passpos
-         xor   ebx, ebx
-         mov   bx,[edi]
-         mov   edi,data
-         mov   edx,size
-         mov   esi,passwd
-         mov   ch,[esi]                 { Paáwort-L„nge }
-         mov   cl,4                     { zum Nibble-Tauschen }
-         mov   ah,decode
-         cld
-
-@QPClp:  mov   al,[edi]                { Original-Byte holen }
-         or    ah,ah                   { decodieren ? }
-         jnz   @code1
-         rol   al,cl                   { Nibbles vertauschen }
-@code1:  xor   al,[esi+ebx]              { Byte codieren }
-         inc   bl
-         cmp   bl,ch                   { am PW-Ende angekommen? }
-         jbe   @pwok
-         mov   bl,1                    { PW-Index auf 1 zurcksetzen }
-@pwok:   or    ah,ah                   { codieren? }
-         jz    @code2
-         rol   al,cl                   { Nibbles vertauschen }
-@code2:  stosb
-         dec   edx                     { n„chstes Byte }
-         jnz   @QPClp
-
-         mov   edi,passpos              { neuen PW-Index speichern }
-         mov   [edi],bx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
-         boolean;assembler;
-asm
-         push ebp
-         cld
-         mov   esi,adr
-         mov   ecx,size
-         mov   dh,umlaut
-         cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
-         jne   @icase
-         cmp   igcase,0               { ignore case? }
-         jz    @case
-
-@icase:  push  ecx
-         push  esi
-
-@cloop:  lodsb                        {  den kompletten Puffer in }
-         cmp   al,'„'
-         jnz   @no_ae
-         mov   al,'Ž'
-         jmp   @xl
-@no_ae:  cmp   al,'”'
-         jnz   @no_oe
-         mov   al,'™'
-         jmp   @xl
-@no_oe:  cmp   al,''
-         jnz   @no_ue
-         mov   al,'š'
-         jmp   @xl
-
-@no_ue:  cmp   al,'‚'
-         je    @is_eac
-         cmp   al,''
-         jne   @no_eac
-@is_eac: mov   al,'E'
-         jmp   @xl
-
-@no_eac: cmp   al,'a'                 {  UpperCase umwandeln }
-         jb    @noc
-         cmp   al,'z'
-         ja    @noc
-         sub   al,32
-@xl:     mov   [esi-1],al
-@noc:    loop  @cloop
-         pop   esi
-         pop   ecx
-
-@case:   mov   edi,key
-         sub   cl,[edi]
-         sbb   ch,0
-         jc    @nfound                 { key >= L„nge }
-         inc   ecx
-
-@sblp1:  xor   ebx,ebx                 { Suchpuffer- u. String-Offset }
-         xor   ebp,ebp
-         mov   dl,[edi]              { Key-L„nge }
-@sblp2:  mov   al,[esi+ebx]
-@acctst: cmp   al,[edi+ebp+1]
-         jnz   @testul
-@ulgood: inc   ebx                    { Hier gehts weiter nach Erfolgreichem Umlautvergleich }
-         inc   ebp
-         dec   dl
-         jz    @found
-         jmp   @sblp2
-                                        {--------------}
-@testul: cmp dh,0                       { UMLAUTSUCHE }
-         je @nextb                       { Aber nur wenn erwuenscht... }
-
-         mov ah,'E'
-
-         cmp al,'Ž'                     { Wenn "Ž" im Puffer ist, }
-         jne @@1
-         mov al,'A'
-@ultest: cmp ax,[edi+ebp+1]            { Dann auf "AE" Testen. }
-         jne @nextb
-         inc ebp                        { Wenn gefunden: Zeiger im Suchbegriff }
-         dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
-         jmp @ulgood                    { und oben weitermachen. }
-
-@@1:     cmp al,'™'
-         jne @@2
-         mov al,'O'                     { "OE"... }
-         jmp @ultest
-
-@@2:     cmp al,'š'
-         jne @@3
-         mov al,'U'                     { "UE"... }
-         jmp @ultest
-
-@@3:     cmp al,'á'
-         jne @@4
-         mov ax,'SS'                    { und "SS"... }
-         jmp @ultest
-@@4:                                    {--------------}
-
-@nextb:  inc   esi                       { Weitersuchen... }
-         loop  @sblp1
-@nfound: xor   eax,eax
-         jmp   @ende
-@found:  mov   eax,1
-@ende:   pop ebp
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure Iso1ToIBM(var data; size:word); assembler;
-asm
-          mov    ecx,size
-          jecxz  @noconv1
-          mov    edi,data
-          mov    ebx,offset ISO2IBMtab - 128
-          cld
-@isolp1:  mov    al,[edi]
-          or     al,al
-          jns    @ii1
-          xlat
-@ii1:     stosb
-          loop   @isolp1
-@noconv1:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure IBMToIso1(var data; size:word); assembler;
-asm
-          mov    ecx,size
-          jecxz  @noconv2
-          mov    edi,data
-          mov    ebx,offset IBM2ISOtab
-          cld
-@isolp2:  mov    al,[edi]
-          xlat
-          stosb
-          loop   @isolp2
-@noconv2:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-{$ELSE}
-
-{ JG:17.02.00 Prozeduren aus XP3.ASM integriert }
-{ jetzt in TYPEFORM.PAS: procedure Rot13(var data; size:word); assembler; }
 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword); assembler;
@@ -422,8 +225,45 @@ asm
          jmp   @sblp2
 
                                         {--------------}
-@testul: cmp dh,0                       { UMLAUTSUCHE }
-         je @nextb                       { Aber nur wenn erwuenscht... }
+@testul:                                { WILDCARDS }
+         mov ah,es:[di+bp+1]
+         cmp ah,'?'                     { ? = Ein Zeichen beliebig }
+         je @ulgood                     {--------------------------}
+
+
+         cmp ah,'*'                     { * = mehrere Zeichen beliebig }
+         jne @ultst                     { ---------------------------- }
+                                           
+@1:      inc bp
+         dec dl                         { Naechstes Suchkey-Zeichen laden }
+         jz @found                      { Kommt keines mehr, Suche erfolgreich }  
+
+@2:      mov al,[si+bx]                 { im Text Nach Anfang des rests suchen }
+         cmp al,es:[di+bp+1]
+         je @3 
+         cmp al,' '                     { Abbruch bei Wortende }        
+         jbe @nextb
+         inc bx
+         jmp @2
+        
+@3:      inc bx                         {Weitervergleichen bis naechster * oder Suchkeyende }
+         inc bp  
+         dec dl
+         jz @found                      { Bei Suchkeyende ist Suche erfolgreich }
+         mov al,es:[di+bp+1]                 
+         cmp al,[si+bx]                 { weiter im Text solange er passt }
+         je @3
+         cmp al,'?'                     { ...oder "?" - Wildcard greift }                     
+         je @3 
+         cmp al,'*'                     { bei neuem * - Wildcard diesen ueberspringen }
+         je @1
+         jmp @2                         { Textanfang erneut suchen }  
+
+
+
+                                        {--------------}
+@ultst:  cmp dh,0                       { UMLAUTSUCHE }
+         je @nextb                      { Aber nur wenn erwuenscht... }
 
          mov ah,'E'
 
@@ -454,7 +294,8 @@ asm
 
 
 @nextb:  inc   si                       { Weitersuchen... }
-         loop  @sblp1
+         dec cx
+         jne @sblp1                     { 286er Loop geht nur +/- 127 Byte...}
 @nfound: xor   ax,ax
          jmp   @ende
 @found:  mov   ax,1
@@ -495,8 +336,6 @@ asm
           loop   @isolp2
 @noconv2:
 end;
-
-{$ENDIF}
 
 
 { Datum des letzten Puffer-Einlesens ermitteln }
@@ -649,11 +488,6 @@ var p        : pointer;
 
 label ende;
 begin
-  {$IFDEF BP }
-    bufs:=min(maxavail-10000,50000);
-  {$ELSE }
-    bufs:=65536;
-  {$ENDIF }
   dbReadN(mbase,mb_ablage,ablage);
   assign(puffer,aFile(ablage));
   reset(puffer,1);
@@ -662,7 +496,7 @@ begin
     XReadIsoDecode:=false;
     exit;
     end;
-  getmem(p,bufs);
+  Bufs := GetMaxMem(p, 2048, 32768);
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
   if dbReadInt(mbase,'msgsize') and $8000<>0 then begin  { KOM vorhanden }
@@ -1407,6 +1241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.2  2000/07/02 13:44:14  mk
+  JG: - Volltextsuche mit Wildcards implementiert
+
   Revision 1.25.2.1  2000/06/24 14:16:32  mk
   - 32 Bit Teile entfernt, Fixes
 
