@@ -364,7 +364,7 @@ begin
         writeln(t,getres2(700,40));  { UUCP-Logfile }
       writeln(t);
       assign(log,iifs(_maus,mauslogfile,fidologfile));
-      reset(log);
+      fm_ro; reset(log); fm_rw;
       if _fido or _uucp then
         repeat
           readln(log,s);
@@ -772,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.6  2000/11/11 10:03:42  mk
+  - Logfile Readonly oeffnen
+
   Revision 1.13.2.5  2000/11/01 10:58:04  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
