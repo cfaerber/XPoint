@@ -33,7 +33,7 @@ uses
   {$IFDEF unix} linux,xplinux, {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
-  modem,zmodem,Sysutils,xpglobal, debug,
+  zmodem,Sysutils,xpglobal, debug,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
      xp1o,
@@ -198,6 +198,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.4  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

@@ -43,7 +43,7 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 { Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
 procedure SysSetBackIntensity;
 // Returns the used Codepage in form of the Unicode charset
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
 // Execute an externel program
@@ -139,7 +139,7 @@ begin
   VioSetState(State, 0);
 end;
 
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 begin
   Result := csCP437;
 end;
@@ -189,6 +189,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.9  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

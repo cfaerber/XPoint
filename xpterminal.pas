@@ -29,7 +29,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   maske,
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,objcom,Modem,Debug;
+  resource,xpglobal,xp0,xp1,xp1o2,xp1input,objcom,Debug,OSDepend;
 
 procedure termscr;
 procedure telnet;
@@ -69,6 +69,7 @@ var termlines    : byte;
     open_log     : boolean;
     in7e1,out7e1 : boolean;
     is_telnet    : boolean;
+    CommObj      : TCommStream;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
     ansiseq      : string;
@@ -425,13 +426,25 @@ begin
 end;
 
 procedure aufhaengen;
+var i: integer;
 begin
   moff;
   writeln;
   attrtxt(15); write(getres(2004)); attrtxt(7);   { trenne Verbindung }
   writeln;
   mon;
-  Modem.Hangup;
+  CommObj.PurgeInBuffer; CommObj.SetDTR(False);
+  SysDelay(500); for i:=1 to 6 do if(not CommObj.IgnoreCD)and CommObj.Carrier then SysDelay(500);
+  CommObj.SetDTR(True); SysDelay(500);
+  if CommObj.ReadyToSend(3)then begin
+    CommObj.SendString('+++',False);
+    for i:=1 to 4 do if((not CommObj.IgnoreCD)and CommObj.Carrier)then SysDelay(500);
+    SysDelay(100);
+  end;
+  if CommObj.ReadyToSend(6)then begin
+    CommObj.SendString('AT H0'#13,True);
+    SysDelay(1000);
+  end;
 end;
 
 // Modem-Befehl senden, wertet \\ aus, z.B. ATZ\\ATI1
@@ -460,7 +473,6 @@ begin
 
   CommObj:=CommInit('serial port:' + IntToStr(BoxPar^.BPort) + ' speed:' +
     IntToStr(BoxPar^.Baud));
-  Modem.CommObj:=CommObj;
   Result:=Assigned(CommObj);
 end;
 
@@ -548,7 +560,6 @@ var
 {$ENDIF }
 begin
   ende:=false;
-  Modem.CommObj:=CommObj;
 {$IFDEF NCRT }
   MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
   Scroll(win, true);
@@ -736,6 +747,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.10  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

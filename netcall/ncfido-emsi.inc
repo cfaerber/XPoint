@@ -138,7 +138,7 @@ begin
     if EMSIString='' then begin
       if Timers[TI_EMS1].Timeout then begin
         FCommObj.SendString(EMSI_HBT+#13,False);
-        SleepTime(200);
+        SysDelay(200);
       end;
     end else begin
       while LeftStr(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
@@ -154,7 +154,7 @@ begin
           FCommObj.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
           Output(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
-          SleepTime(150); FCommObj.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
+          SysDelay(150); FCommObj.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
       end;
     end;
@@ -205,6 +205,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.3  2001/08/11 23:06:43  mk
   - changed Pos() to cPos() when possible
 

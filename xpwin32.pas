@@ -58,7 +58,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  Typeform, SysUtils, Math, windows, winxp;
+  Typeform, SysUtils, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -238,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.21  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

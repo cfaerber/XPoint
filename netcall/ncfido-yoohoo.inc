@@ -143,7 +143,7 @@ begin
             end;
             if FCommObj.CharAvail then begin
               c:=FCommObj.GetChar;
-              if c=#13 then begin SleepTime(1000); state:=2 end;
+              if c=#13 then begin SysDelay(1000); state:=2 end;
             end;
             if Timers[ti_CRs].Timeout then begin
               Timers[ti_CRs].SetTimeout(2);
@@ -169,9 +169,9 @@ begin
               if Timers[ti_Sync].Timeout then begin
                 FCommObj.PurgeInBuffer;
                 if UseEMSI then begin
-                  FCommObj.SendString(EMSI_INQ+#13,False); SleepTime(60);      { EMSI INQ   }
+                  FCommObj.SendString(EMSI_INQ+#13,False); SysDelay(60);      { EMSI INQ   }
                 end;
-                FCommObj.SendChar(YooHoo); SleepTime(60);         { YooHoo INQ }
+                FCommObj.SendChar(YooHoo); SysDelay(60);         { YooHoo INQ }
                 FCommObj.SendChar(TSync);                      { FTS-1 INQ  }
                 Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
@@ -245,7 +245,7 @@ begin
       Output(mcError,getres2(30004,20)+' #%d',[retrycount]);   { 'Hello-Sendefehler' }
       DebugLog('ncfido','yoohoo hello send error',DLError);
     end;
-    SleepTime(200);
+    SysDelay(200);
   until Timers[ti_Hello].Timeout or (c=ACK) or (RetryCount=10);
   if RetryCount=10 then
     fmSH:=0
@@ -291,7 +291,7 @@ begin
                 if b=$1f then state:=5
               end
             else begin
-              SleepTime(50);
+              SysDelay(50);
               if not FCommObj.Carrier then
                 state:=99
               else
@@ -423,11 +423,14 @@ procedure TFidomailer.fmS;          { FTS-001 / FTS-007 }
 begin
   Output(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
   log(lcInfo,'sType: FTS-0001');
-  SleepTime(2000);
+  SysDelay(2000);
 end;
 
 {
   $Log$
+  Revision 1.5  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.4  2001/08/11 23:06:43  mk
   - changed Pos() to cPos() when possible
 

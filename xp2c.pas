@@ -91,6 +91,7 @@ implementation  {----------------------------------------------------}
 
 uses
   {$ifdef Win32} xpwin32, {$endif}
+  {$ifdef Dos32} xpdos32, {$endif}
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
@@ -1506,6 +1507,9 @@ end;
 
 {
   $Log$
+  Revision 1.108  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.107  2001/09/19 18:05:08  cl
   - implemented option "PGP/MIME" in "Config/Extern/PGP"
 

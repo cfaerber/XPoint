@@ -26,7 +26,6 @@ unit xpnczconnect;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE} xpcrt,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes, osdepend;
 
@@ -252,6 +251,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.9  2001/09/07 23:21:11  ma
   - fixed: CALLER.* was not recognized as incoming packet
 

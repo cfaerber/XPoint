@@ -27,19 +27,8 @@ unit  maus2;
 interface
 
 uses
-{$ifdef NCRT}
-  xplinux,
-  xpcurses,
-{$IFDEF Kylix}
-  ncursix,
-{$ELSE}
-  ncurses,
-{$ENDIF}
-{$endif}
-{$IFDEF Win32}
-  Windows,
-  xpcrt,
-{$ENDIF}
+  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncurses,{$else}ncurses,{$endif} {$endif}
+  {$IFDEF Win32} Windows,xpcrt, {$ENDIF}
   typeform,mouse,keys,xpglobal,debug;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
@@ -98,9 +87,7 @@ procedure mint(intsource,tasten,x,y,mx,my:word);
 implementation
 
 uses
-{$ifndef NCRT}
-     winxp,
-{$endif}
+     {$ifndef NCRT} winxp, {$endif}
      inout,
      xp0,
      SysUtils;
@@ -116,7 +103,8 @@ const  maxinside = 25;
        lmb    : DWORD   = 0;
 {$ENDIF Win32}
 
-var    
+var
+  kx,ky  : integer;           { Koordinaten der letzten Aktion }
   inside : array[1..maxinside,0..3] of byte;
   insen  : array[1..maxinside,0..2] of boolean;
 
@@ -350,7 +338,7 @@ var
         if not usemulti2 and not keypressed then begin
       {$else}
         {$IFNDEF Delphi }
-        if not usemulti2 and not crt.keypressed then
+        if not usemulti2 and not keypressed then
         {$ENDIF }
       begin
       {$endif}
@@ -567,6 +555,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.38  2001/09/27 21:22:25  ml
   - Kylix compatibility stage IV
 

@@ -62,9 +62,10 @@ type
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
-xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr,
-{$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}
-{$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},xpcrt{$ENDIF};
+xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr
+{$IFDEF Unix} ,xpcurses {$ENDIF}
+{$IFDEF Win32} ,xpwin32 {$ENDIF}
+{$IFDEF DOS32} ,xpdos32 {$ENDIF};
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
 {                                                                              }
@@ -342,6 +343,7 @@ begin
       Log('=','Connected with: '+Phonenumber);
       TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+Phonenumber+')'
     end
+{$IFDEF Sockets}
     else if CommObj is TRawIPStream then 
     begin
       ip := TIP.Create;
@@ -352,6 +354,7 @@ begin
 	ip.AsString+', Port: '+StrS(TRawIPStream(CommObj).RemotePort));
       ip.Free;
     end;
+{$ELSE};{$ENDIF}
 
   try
     case InitHandshake of
@@ -1120,6 +1123,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.16  2001/09/08 16:29:45  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

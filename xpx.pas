@@ -47,9 +47,9 @@ procedure InitXPXUnit;
 implementation
 
 uses
-  {$ifdef Win32} xpwin32, {$endif}
-  log,
-  xp2;
+  {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF DOS32} xpdos32, {$ENDIF}
+  log,xp2;
 
 const starting : boolean = true;
 
@@ -179,6 +179,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.47  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 

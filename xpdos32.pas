@@ -30,7 +30,7 @@ unit xpdos32;
 interface
 
 uses
-  UTFTools;
+  UTFTools,MIME;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;
@@ -46,7 +46,7 @@ procedure SysSetBackIntensity;
 function SysGetMaxDrive:char;
 function SysGetDriveType(drive:char):byte;
 // Returns the used Codepage in form of the Unicode charset
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 function SysOutputRedirected: boolean;
 // Execute an external program; return errorlevel of called program if
 // successful. Return negative value if an error occurred (program not found).
@@ -688,7 +688,7 @@ begin
   end;
 end;
 
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 begin
   Result := csCP437;
 end;
@@ -725,6 +725,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.14  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

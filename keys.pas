@@ -28,17 +28,10 @@ interface
 
 uses
   xpglobal,
-{$ifdef NCRT}
-  xpcurses,
-{$else}
-  xpcrt,
-{$endif}
-{$IFDEF DOS32 }
-  go32,
-{$ENDIF }
-{$IFDEF VP }
-  vpsyslow,
-{$ENDIF }
+  {$ifdef NCRT} xpcurses, {$endif}
+  {$ifdef Win32} xpcrt, {$endif}
+  {$IFDEF DOS32} go32, crt, {$ENDIF}
+  {$IFDEF VP} vpsyslow, {$ENDIF}
   typeform;
 
 type   taste   = string[2];
@@ -150,10 +143,10 @@ var    func_proc : func_test;
 
 function  keypressed:boolean;
 function  readkey:char;
-{$IFNDEF NCRT }
-var
-  lastscancode : byte;
-{$ENDIF }
+
+{$IFNDEF NCRT}
+var lastscancode : byte;
+{$ENDIF}
 
 procedure keyboard(const s:string);        { s and forwardkeys anh„ngen            }
 procedure _keyboard(const s:string);       { s vorne an forwardkeys anh„ngen       }
@@ -173,10 +166,9 @@ procedure InitKeysUnit;
 
 implementation  { ---------------------------------------------------------- }
 
-{$IFDEF Win32 }
-uses
-  Windows;
-{$ENDIF }
+{$IFDEF Win32}
+uses Windows;
+{$ENDIF}
 
 const
   lshift = 2;
@@ -394,6 +386,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.47  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

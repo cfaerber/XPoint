@@ -170,8 +170,7 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  keys, {$IFDEF NCRT} xpcurses,{$ELSE} xpcrt, {$ENDIF}
-  xpglobal,sysutils,typeform,debug,xpprogressoutputwindow, fileio;
+  fileio,keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
@@ -263,7 +262,7 @@ begin
         WaitForAnswer:=false;
       end;
     end else if c<>#0 then ReceivedUpToNow:=ReceivedUpToNow+c;
-  end else SleepTime(2);
+  end else SysDelay(2);
 end;
 
 procedure TModemNetcall.ProcessKeypresses(AcceptSpace:boolean);
@@ -302,7 +301,7 @@ begin
       if p>0 then begin
         if not FCommObj.SendString(LeftStr(s,p-1),True)then
           DebugLog('ncmodem','Sending failed, received "'+FCommObj.ErrorStr+'"',DLWarning);
-        delete(s,1,p); SleepTime(1000);
+        delete(s,1,p); SysDelay(1000);
       end;
     until p=0;
     if not FCommObj.SendString(s+#13,True)then
@@ -312,7 +311,7 @@ begin
       ProcessIncoming; ProcessKeypresses(false);
     until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
     if EchoTimer.Timeout then ModemAnswer:='';
-    SleepTime(200); EchoTimer.Done;
+    SysDelay(200); EchoTimer.Done;
     SendCommand:=ModemAnswer; DebugLog('ncmodem','SendCommand: Got modem answer "'+ModemAnswer+'"',DLDebug);
   end;
 end;
@@ -373,8 +372,8 @@ begin
                       Output(mcInfo,'Init modem',[0]);
                       FTimerObj.SetTimeout(TimeoutModemInit);
                       if CommandInit='' then begin
-                        FCommObj.SendString(#13,False); SleepTime(150);
-                        FCommObj.SendString(#13,False); SleepTime(300);
+                        FCommObj.SendString(#13,False); SysDelay(150);
+                        FCommObj.SendString(#13,False); SysDelay(300);
                         SendCommand('AT',1); ProcessKeypresses(false);
                       end;
                       Output(mcInfo,'Init modem 2',[0]);
@@ -404,7 +403,7 @@ begin
                           if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
                             Output(mcInfo,'%s',[ModemAnswer]);
-                            SleepTime(200);
+                            SysDelay(200);
                             if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             if LeftStr(ModemAnswer,7)='CONNECT' then begin
                               {Connect!}
@@ -413,14 +412,14 @@ begin
                               FConnectString:=ModemAnswer; FConnected:=True;
                               FLineSpeed:=Bauddetect(FConnectString);
                               Log(lcConnect,FConnectString);
-                              if not FCommObj.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-                              if not FCommObj.Carrier then SleepTime(1000);
+                              if not FCommObj.Carrier then SysDelay(500);  { falls Carrier nach CONNECT kommt }
+                              if not FCommObj.Carrier then SysDelay(1000);
                             end
                           end;
                           if not result then begin {Timeout, Userbreak, Busy oder aehnliches}
                             Output(mcInfo,'No connect',[0]);
                             FPhonenumber:='';
-                            FCommObj.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
+                            FCommObj.SendString(#13,False); SysDelay(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
                           end;
               end;
@@ -484,12 +483,12 @@ begin
     Output(mcInfo,'Hanging up',[0]);
     DebugLog('ncmodem','Hangup',DLInform);
     FCommObj.PurgeInBuffer; FCommObj.SetDTR(False);
-    SleepTime(500); for i:=1 to 6 do if(not FCommObj.IgnoreCD)and FCommObj.Carrier then SleepTime(500);
-    FCommObj.SetDTR(True); SleepTime(500);
+    SysDelay(500); for i:=1 to 6 do if(not FCommObj.IgnoreCD)and FCommObj.Carrier then SysDelay(500);
+    FCommObj.SetDTR(True); SysDelay(500);
     if FCommObj.ReadyToSend(3)then begin
       FCommObj.SendString('+++',False);
-      for i:=1 to 4 do if((not FCommObj.IgnoreCD)and FCommObj.Carrier)then SleepTime(500);
-      SleepTime(100);
+      for i:=1 to 4 do if((not FCommObj.IgnoreCD)and FCommObj.Carrier)then SysDelay(500);
+      SysDelay(100);
     end;
     if FCommObj.ReadyToSend(6)then
       FCommObj.SendString('AT H0'#13,True);
@@ -526,6 +525,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.8  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

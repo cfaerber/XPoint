@@ -28,16 +28,10 @@ interface
 
 uses
   sysutils,
-{$IFDEF Win32 }
-  windows,
-{$ENDIF }
-{$IFDEF unix}
-  xplinux,
-  xpcurses,
-{$ENDIF }
-{$IFDEF VP }
-  vpsyslow,
-{$ENDIF }
+  {$IFDEF Win32 } windows, {$ENDIF }
+  {$IFDEF DOS32} crt, {for GotoXY} {$ENDIF}
+  {$IFDEF unix} xplinux,xpcurses, {$ENDIF }
+  {$IFDEF VP } vpsyslow, {$ENDIF }
   OsDepend, keys,inout,maus2,typeform, xpglobal;
 
 const
@@ -159,8 +153,7 @@ procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 
 {$IFDEF Win32 }
-var
-    { EnthÑlt das Fensterhandle fÅr die Console }
+var { EnthÑlt das Fensterhandle fÅr die Console }
     OutHandle     : THandle;
 {$ENDIF }
 
@@ -287,6 +280,10 @@ begin
 end; { Wrt }
 {$ENDIF }
 
+{$IFDEF DOS32}
+type TCoord= record x,y: integer end;
+{$ENDIF}
+
 {$IFNDEF NCRT }
 procedure FWrt(const x,y:word; const s:string);
 var
@@ -381,12 +378,16 @@ var
 begin
   WhereX := X;
   WhereY := Y;
-
+{$IFDEF Win32}
   FillChar(Curinfo, SizeOf(Curinfo), 0);
   CurInfo.X := X - 1;
   CurInfo.Y := Y - 1;
 
   SetConsoleCursorPosition(OutHandle, CurInfo);
+{$ENDIF}
+{$IFDEF DOS32}
+  CRT.GotoXY(X,Y);
+{$ENDIF}
 end;
 
 Procedure TextColor(Color: Byte);
@@ -1014,6 +1015,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.62  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

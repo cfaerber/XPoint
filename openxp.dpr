@@ -68,7 +68,6 @@ uses
   maske in 'maske.pas',
   maus2 in 'maus2.pas',
   MD5 in 'md5.pas',
-  Modem in 'modem.pas',
   montage in 'montage.pas',
   mouse in 'mouse.pas',
   ndiff in 'ndiff.pas',

@@ -25,17 +25,8 @@ unit mouse;
 interface
 
 uses
-{$IFDEF Win32}
-  windows,
-{$ELSE}
-{$IFDEF NCRT}
-{$IFDEF Kylix}
-  ncursix,
-{$ELSE}
-  ncurses,
-{$ENDIF}
-{$ENDIF}
-{$ENDIF}
+  {$IFDEF Win32} windows,xpcrt, {$ENDIF}
+  {$IFDEF NCRT} {$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$ENDIF}
   xpglobal,
   debug,
   sysutils,
@@ -89,7 +80,7 @@ function UpdateMouseStatus: Taste;
 implementation
 
 {$IFDEF Win32}
-uses xpcrt,maus2;
+uses maus2;
 var LastEvent: MOUSE_EVENT_RECORD;
 {$ELSE}
 {$IFDEF NCRT}
@@ -274,6 +265,9 @@ initialization
 
 {
   $Log$
+  Revision 1.31  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.30  2001/09/27 21:22:25  ml
   - Kylix compatibility stage IV
 

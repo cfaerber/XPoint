@@ -28,7 +28,7 @@ unit ncfido;
 
 interface
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,fileio;
+uses ncmodem,timer,fidoglob,xpglobal,classes,fileio,osdepend;
 
 type
   hellor = record
@@ -95,8 +95,7 @@ type
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses, {$ELSE} xpcrt, {$ENDIF}
-  zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom,md5;
+  keys,zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom,md5;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -242,6 +241,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.6  2001/08/10 19:13:01  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

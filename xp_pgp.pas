@@ -65,6 +65,7 @@ implementation  { --------------------------------------------------- }
 
 uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
+  {$ifdef DOS32} xpdos32, {$endif}
   {$IFDEF Kylix}
   libc,
   {$ENDIF}
@@ -1161,6 +1162,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/10/01 19:32:00  ma
+  - compiles again (DOS32)
+
   Revision 1.55  2001/09/29 10:49:46  ma
   - fixed: PGP signing
 

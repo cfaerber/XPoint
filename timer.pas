@@ -46,20 +46,11 @@ type
 function  Calibrate: LongInt;
 function  GetTicks: LongInt;
 procedure WaitTime (Milliseconds: Real); {Busy loop}
-procedure SleepTime(Milliseconds: Real); {Idle loop}
 
 implementation
 
 uses
-  SysUtils,
-  {$IFDEF Win32}
-  Windows,
-  {$ELSE}
-  {$IFDEF NCRT}
-  XPCurses,
-  {$ENDIF}
-  {$ENDIF}                              {for Delay/Sleep}
-  debug, xpglobal;
+  SysUtils, OSDepend, debug, xpglobal;
 
 const
   SecsPerDay = 60 * 60 * 24;
@@ -68,11 +59,6 @@ const
 
 var
   Speed: LongInt; Calibrated: Boolean;
-
-procedure SleepTime(Milliseconds: Real);
-begin
-  {$IFDEF Win32}Sleep(Round(Milliseconds)){$ELSE}Delay(Round(Milliseconds)){$ENDIF}
-end;
 
 function GetTicks: LongInt;
 var
@@ -147,6 +133,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.20  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -85,7 +85,8 @@ function XPWinShell(prog:string; parfn:string; space:word;
 implementation
 
 uses
-  {$ifdef Win32} xpwin32, {$endif}
+  {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF DOS32} xpdos32, {$ENDIF}
   StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
 
 
@@ -1037,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.99  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

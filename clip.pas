@@ -57,23 +57,15 @@ procedure ClipToFile(fn:TFilename);
 implementation  { ---------------------------------------------------- }
 
 uses
-  xp0,
-{$IFDEF unix}
-{$IFDEF fpc}
-  linux,
-{$ELSE}
-  libc,  
-{$ENDIF}
-  xplinux,
-{$ELSE}
-{$IFDEF Win32 }
-  windows,
-{$ENDIF }
-{$IFDEF VP }
-  vpsyslow,
-{$ENDIF }
-{$endif}
-  fileio;
+  xp0,fileio
+  {$IFDEF unix}
+    {$IFDEF fpc} ,linux
+    {$ELSE} ,libc {$ENDIF}
+    ,xplinux
+  {$ELSE}
+    {$IFDEF Win32 } ,windows {$ENDIF }
+    {$IFDEF VP } ,vpsyslow {$ENDIF }
+  {$endif};
 
 {$ifdef UseClipFile }
 function ClipFilename: TFilename;
@@ -336,6 +328,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2001/10/01 19:30:09  ma
+  - compiles again (DOS32)
+
   Revision 1.36  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -170,7 +170,7 @@ begin
 end;
 
 // -------------------------------------------------------------------
-//   Create En/Decoder class instance from TUnicodeCharsets
+//   Create En/Decoder class instance from TMimeCharsets
 // -------------------------------------------------------------------
 
 function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
@@ -261,6 +261,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.10  2001/10/01 19:30:09  ma
+// - compiles again (DOS32)
+//
 // Revision 1.9  2001/09/10 15:58:01  ml
 // - Kylix-compatibility (xpdefines written small)
 // - removed div. hints and warnings

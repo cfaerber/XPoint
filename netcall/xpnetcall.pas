@@ -585,6 +585,7 @@ end;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
 var pold,name,ext,i: string;
+{$IFDEF DOS32} eext: string; {$ENDIF}
     j,mlen: integer;
 begin
 {$IFDEF VP}
@@ -1354,6 +1355,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.35  2001/09/08 16:29:46  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -15,10 +15,8 @@ unit zmodem;
 interface
 
 uses
- {$IFDEF Delphi}
- dos,
- {$ENDIF }
- xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes;
+ {$IFDEF Delphi} dos, {$ENDIF }
+ xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes, OSDepend;
 
 const
   ZBUFSIZE = 8192;
@@ -128,7 +126,9 @@ var
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses, xplinux,{$ELSE} xpcrt,{$ENDIF}
+  {$IFDEF Unix} xpcurses, xplinux, {$ENDIF}
+  {$IFDEF Win32} xpcrt, {$ENDIF}
+  {$IFDEF DOS32} crt, {$ENDIF}
   SysUtils, Debug, CRC, fileio;
 
 var TimerObj: tTimer;
@@ -709,7 +709,7 @@ begin
   for n := 1 to 8 do
   begin
     Z_SendByte(CAN);
-    SleepTime(100) { the pause seems to make reception of the sequence }
+    SysDelay(100) { the pause seems to make reception of the sequence }
   end; { more reliable                                     }
 
   for n := 1 to 10 do
@@ -734,7 +734,7 @@ begin
     case p[n] of
       {$IFDEF Final}221: SendBreak(modemkanal); {$ENDIF}
       222:
-        SleepTime(2000)
+        SysDelay(2000)
     else
       Z_SendByte(p[n])
     end;
@@ -2058,7 +2058,7 @@ begin
 
   AddLogMessage('Sent binheader ' + HeaderName(htype), DLDebug);
   if (htype <> ZDATA) then
-    SleepTime(500)
+    SysDelay(500)
 end;
 
 (*************************************************************************)
@@ -2121,7 +2121,7 @@ begin
   if (frameend = ZCRCW) then
   begin
     Z_SendByte(17);
-    SleepTime(500)
+    SysDelay(500)
   end;                                  (* of IF *)
 
 end;                                    (* of SZ_SendData *)
@@ -2143,7 +2143,7 @@ begin
         begin
           Z_SendByte(Ord('O'));
           Z_SendByte(Ord('O'));
-          SleepTime(500);
+          SysDelay(500);
           Exit
         end;
       ZCAN,
@@ -2532,7 +2532,7 @@ begin
     SZ_SendBinaryHeader(ZFILE, txhdr);
     SZ_SendData(txbuf, fheaderlen, ZCRCW);
 
-    SleepTime(500);
+    SysDelay(500);
 
     repeat
       c := Z_GetHeader(rxhdr);
@@ -2731,6 +2731,9 @@ begin
 
 {
   $Log$
+  Revision 1.25  2001/10/01 19:35:02  ma
+  - compiles again (DOS32)
+
   Revision 1.24  2001/09/08 18:46:44  cl
   - small bug/compiler warning fixes
 
