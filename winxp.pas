@@ -394,11 +394,21 @@ asm
 end;
 {$ELSE }
 procedure clwin(l,r,o,u:word);
+{$IFDEF Linux }
+var
+  win : pWINDOW;
+begin 
+   win:= newwin (u-o+1,r-l+1,o-1,l);
+   init_pair(1,(Textattr and $8f),(Textattr and $7f) shr 4);
+   wattr_set(win, COLOR_PAIR(1));
+   wclear(win);
+{$ELSE }
 var
   i: Integer;
 begin
   for i := o to u do
     FillScreenLine(l, i, ' ', r-l+1);
+{$ENDIF }
 end;
 {$ENDIF }
 
@@ -530,7 +540,7 @@ end;
   var
     s: String;
   begin
-    Move(@CharBuf[1], s, num);
+    System.Move(@CharBuf[1], s, num);
     s[0] := char(byte(num));
     FWrt(x, y, s);
   end;
@@ -1221,6 +1231,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/04/17 14:32:04  ml
+  xpme wieder unter linux kompilierbar
+
   Revision 1.21  2000/04/13 12:48:33  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
