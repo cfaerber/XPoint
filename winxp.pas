@@ -1080,6 +1080,9 @@ begin
   case cs of
     csUTF8:       result := 65001;
     csCP437:      result := 437;
+    csCP850:      result := 850;
+    csCP857:      result := 857;
+    csCP858:      result := 858;
     csCP866:      result := 866;
     csCP1251:     result := 1251;
     csCP1252:     result := 1252;
@@ -1103,6 +1106,9 @@ begin
   case cp of
     65001: result := csUTF8;
     437:   result := csCP437;
+    850:   result := csCP850;
+    857:   result := csCP857;
+    858:   result := csCP858;
     866:   result := csCP866;
     1251:  result := csCP1251;
     1252:  result := csCP1252;
@@ -1483,6 +1489,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2002/02/20 22:28:24  cl
+  - added all known charsets to known codepages
+
   Revision 1.80  2002/01/30 22:08:49  mk
   - parameter validation for SetConsoleCursorPosition
 
