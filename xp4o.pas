@@ -243,9 +243,9 @@ label ende;
      and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
     begin
       n:=0;
-      seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
+      seek:=trim(sst);                                 { Leerzeichen vorne und hinten, }
       i:=length(seek);
-      while seek[i]='"' do dec(i);                  { Und Ausrufezeichen hinten abschneiden }
+      while (seek[i]='"') and (i <> 0) do dec(i);      { Und Ausrufezeichen hinten abschneiden }
       truncstr(seek,i);
       if seek<>'' then begin
         i:=1;
@@ -276,7 +276,7 @@ label ende;
 
       if suchanz=1 then suchand:=true;
       m:=0;
-      for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }
+      for n:=0 to suchanz-1 do        { Teilstrings Umsortieren: NOT zuerst }
       begin
         if (seeknot[n]=true) and (seeklen[n]<>0) then
         begin
@@ -2423,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/08/08 09:23:54  mk
+  - Bugfixes fuer Suche
+
   Revision 1.62  2000/08/08 00:03:57  mk
   - TxtSeek auf Shortstring umgetsellt
 
