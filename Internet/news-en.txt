@@ -1,5 +1,8 @@
 Latest news on www.openxp.com...
 
+2003-08-23: OpenXP needs Help
+<a href="https://sourceforge.net/people/?group_id=3766">More on Sourceforge...</a>
++
 2003-08-01: OpenXP v3.8.11 beta available
 <a href="index.php4?file=download32-en.html">Download</a>
 +
