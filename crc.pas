@@ -17,7 +17,7 @@ function UpdCRC32(octet: byte; crc: longint) : longint;
 {Explizit: CRC wird blockweise berechnet}
 function CRC16Block(var data; size:smallword): smallword;
 { Das L„ngenbyte wird mit einbezogen }
-function CRC16StrXP(s:string): smallword;
+function CRC16StrXP(s:shortstring): smallword;
 { Hier wird nur der String selbst genutzt }
 function CRC16Str(s:string): smallword;
 
@@ -109,7 +109,7 @@ begin
   CRC16Block:=c16;
 end;
 
-function Crc16StrXP(s:string):smallword;
+function Crc16StrXP(s:shortstring):smallword;
 begin
   Crc16StrXP:=_CRC16(s,length(s)+1);
 end;
@@ -210,6 +210,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/08/01 09:25:30  mk
+  - AnsiString in CRC16StrXP beseitigt
+
   Revision 1.4  2000/06/23 15:59:09  mk
   - 16 Bit Teile entfernt
 
