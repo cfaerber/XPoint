@@ -166,16 +166,14 @@ begin
   Result := false;
 end;
 
-// Execute an external program
-function SysExec(const Path, CmdLine: String): Integer;
+function RTLexec(const path : string;const comline : string; var DosExitCode: Word): Integer;
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
   Proc : THandle;
-  l: Integer;
+  l    : DWORD;
   AppPath,
   AppParam : array[0..255] of char;
-  DosError : Integer;
 begin
   FillChar(SI, SizeOf(SI), 0);
   SI.cb:=SizeOf(SI);
@@ -184,26 +182,33 @@ begin
   AppPath[Length(Path)]:=#0;
   AppParam[0]:='-';
   AppParam[1]:=' ';
-  Move(CmdLine[1],AppParam[2],length(Cmdline));
-  AppParam[Length(CmdLine)+2]:=#0;
+  Move(ComLine[1],AppParam[2],length(Comline));
+  AppParam[Length(ComLine)+2]:=#0;
   if not CreateProcess(PChar(@AppPath), PChar(@AppParam),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
    begin
-//!!     DosError:=Last2DosError(GetLastError);
+     Result := GetLastError;
      exit;
    end
   else
-   DosError:=0;
+    Result := 0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-{$IFNDEF Delphi }
   if WaitForSingleObject(Proc, Infinite) <> $ffffffff then
     GetExitCodeProcess(Proc,l)
   else
-    l :=-1;
-{$ENDIF }
+    l:=DWord(-1);
   CloseHandle(Proc);
-//!  LastDosExitCode:=l;
+  DosExitCode:=l and $FFFF;
+end;
+
+function SysExec(const Path, CmdLine: String): Integer;
+var
+  TempError: Integer;
+  DosExitCode: Word;
+begin
+  TempError := RTLExec(Path, CmdLine, DosExitCode);
+  if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 
 Function GetEnv(envvar: string): string;
@@ -233,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2001/07/29 12:08:06  mk
+  - fixed SysExec
+
   Revision 1.17  2001/07/28 12:54:44  mk
   - added some defines for Delphi compatibility
 
