@@ -29,6 +29,7 @@ uses Unicode,mime;
 {$IFDEF Linux }
 {$I charsets/cp437.inc }
 {$I charsets/cp850.inc }
+{$I charsets/cp857.inc }
 {$I charsets/cp858.inc }
 {$I charsets/cp866.inc }
 {$I charsets/cp1251.inc }
@@ -52,6 +53,7 @@ uses Unicode,mime;
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
 {$I charsets\cp850.inc }
+{$I charsets\cp857.inc }
 {$I charsets\cp858.inc }
 {$I charsets\cp1251.inc }
 {$I charsets\cp1252.inc }
@@ -81,6 +83,7 @@ begin
   case CharSet of
     csCP437: Result := CP437Transtable;
     csCP850: Result := CP850Transtable;
+    csCP857: Result := CP857Transtable;
     csCP858: Result := CP858Transtable;
     csCP866: Result := CP866Transtable;
     csCP1251: Result := CP1251Transtable;
@@ -107,6 +110,9 @@ end.
 
 //
 // $Log$
+// Revision 1.4  2002/01/04 23:24:24  cl
+// - added MS-DOS Codepage 857 (Multilingual Latin 5)
+//
 // Revision 1.3  2002/01/04 22:34:32  cl
 // - added IBM codepages 850 and 858
 // - moved Get8BitTable to unit charmaps

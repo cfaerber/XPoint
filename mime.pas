@@ -181,7 +181,7 @@ type
   // Unicode transformations
     csUTF8, 	  csUTF7, 
   // DOS/IBM codepages
-    csCP437, 	  csCP850,      csCP858,      csCP866, 
+    csCP437, 	  csCP850,      csCP857,      csCP858,      csCP866, 
   // Windows codepages    
     csCP1251, 	  csCP1252, 	csCP1255,
   // ISO/ANSI charsets
@@ -196,7 +196,7 @@ type
 const
   MimeCharsetNames: array[TMIMECharsets] of String = (
     'UTF-8',      'UTF-7',
-    'IBM437',     'IBM850',     'IBM858',     'IBM866', 
+    'IBM437',     'IBM850',     'IBM857',     'IBM858',     'IBM866', 
     'windows-1251', 'windows-1252', 'windows-1255',
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
     'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
@@ -1215,6 +1215,9 @@ end;
 
 //
 // $Log$
+// Revision 1.14  2002/01/04 23:24:24  cl
+// - added MS-DOS Codepage 857 (Multilingual Latin 5)
+//
 // Revision 1.13  2002/01/04 22:34:32  cl
 // - added IBM codepages 850 and 858
 // - moved Get8BitTable to unit charmaps
