@@ -419,69 +419,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.2  2003/01/25 08:30:51  mw
+  MW: - Log-Kosmetik
+
   Revision 1.1.2.1  2003/01/25 08:00:01  mw
   MW: - IHS32 angefgt, da der 16Bit Hilfecompiler nicht funktioniert.
-
-  Revision 1.21  2000/11/26 10:40:53  mk
-  - neue Hilfe mit Querverweisen in langen Texten
-
-  Revision 1.20  2000/11/15 23:37:34  fe
-  Corrected some string things.
-
-  Revision 1.19  2000/11/13 18:57:56  mk
-  - Limit der maximalen Zeilen auf 500 gesetzt
-
-  Revision 1.18  2000/11/12 22:30:12  mk
-  - fixed some linux and other problems
-
-  Revision 1.17  2000/11/12 11:04:21  mk
-  - some Limits increased
-
-  Revision 1.16  2000/10/17 10:05:40  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.15  2000/10/10 05:18:17  mk
-  - Virtual Pascal Bugfixes (packed record)
-
-  Revision 1.14  2000/07/14 11:58:53  ma
-  - Kosmetik: Kein clrscr etc.
-
-  Revision 1.13  2000/07/13 11:01:37  ma
-  - wieder kompilierbar; Sysutils hinzugefuegt
-
-  Revision 1.12  2000/07/04 12:04:16  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.11  2000/07/02 14:24:48  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.10  2000/06/22 19:53:26  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.9  2000/05/02 19:13:58  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.8  2000/04/29 16:57:54  hd
-  Linux-Anpassung
-
-  Revision 1.7  2000/04/27 22:59:28  mk
-  - 32 Bit fixes
-
-  Revision 1.6  2000/04/26 15:36:44  mk
-  - IHS auf 32 Bit portiert
-
-  Revision 1.5  2000/04/13 12:48:31  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
 }

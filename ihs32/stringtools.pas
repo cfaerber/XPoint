@@ -54,28 +54,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.1.2.2  2003/01/25 08:30:51  mw
+  MW: - Log-Kosmetik
+
   Revision 1.1.2.1  2003/01/25 08:00:02  mw
   MW: - IHS32 angefÅgt, da der 16Bit Hilfecompiler nicht funktioniert.
-
-  Revision 1.2  2000/11/17 00:20:02  mk
-  - fixed a bug in DateTimeToZCDateTime
-
-  Revision 1.1  2000/11/16 13:34:09  hd
-  - Bitte, bitte, alle Dateinamen klein schreiben
-
-  Revision 1.1  2000/11/16 12:35:47  mk
-  - Unit Stringtools added
-
-  Revision 1.4  2000/08/15 23:04:31  mk
-  - Routine zum holen aller Mail hinzugefuegt
-
-  Revision 1.3  2000/08/15 15:08:10  mk
-  - FPort wird jetzt auch bei Create initialisiert
-
-  Revision 1.2  2000/08/06 10:18:04  mk
-  - Abolen der Mails testweise implementiert
-
-  Revision 1.1  2000/08/03 06:57:11  mk
-  - POP3 bis auf das holen der Nachricht fertig
-
 }

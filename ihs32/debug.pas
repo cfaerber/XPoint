@@ -192,41 +192,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.2  2003/01/25 08:30:51  mw
+  MW: - Log-Kosmetik
+
   Revision 1.1.2.1  2003/01/25 08:00:01  mw
   MW: - IHS32 angefÅgt, da der 16Bit Hilfecompiler nicht funktioniert.
-
-  Revision 1.9  2000/11/22 08:02:37  mk
-  - made compilable
-
-  Revision 1.8  2000/11/21 10:08:11  ma
-  - not logging by default in snapshots anymore
-
-  Revision 1.7  2000/11/19 22:34:27  mk
-  - fixed some compile bugs
-  - applyed source code formatting
-
-  Revision 1.6  2000/11/19 12:50:45  ma
-  - now aware of general DEBUG mode (IFDEF DEBUG...)
-  - debug files other than set by environment may be used
-
-  Revision 1.5  2000/11/08 17:38:45  hd
-  - Fix: fehlendes FindClose
-
-  Revision 1.4  2000/08/17 13:36:17  mk
-  - Anpassung fuer VP
-
-  Revision 1.3  2000/07/13 23:58:50  ma
-  - Kosmetik
-
-  Revision 1.2  2000/06/29 13:00:49  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.1  2000/06/19 20:15:34  ma
-  - wird erstmal nur fuer den neuen XP-FM benoetigt
-
 }

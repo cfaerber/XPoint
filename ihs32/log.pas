@@ -219,27 +219,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.1.2.2  2003/01/25 08:30:51  mw
+        MW: - Log-Kosmetik
+
         Revision 1.1.2.1  2003/01/25 08:00:01  mw
         MW: - IHS32 angefÅgt, da der 16Bit Hilfecompiler nicht funktioniert.
-
-        Revision 1.6  2000/11/19 18:00:37  ma
-        - newline removed, my fault.
-
-        Revision 1.5  2000/11/19 17:52:13  ma
-        - added newline declaration missing (Win32)
-
-        Revision 1.4  2000/11/19 16:56:47  hd
-        - Little Change
-        - TLogModul: Adds a modul name to the log string
-
-        Revision 1.3  2000/11/18 23:32:40  mk
-        - modified format-parameter  to  for Virtual Pascal compatibility
-
-        Revision 1.2  2000/11/18 18:38:21  hd
-        - Grundstruktur des Loggings eingebaut
-
-        Revision 1.1  2000/11/18 17:55:43  hd
-        - Neue Klasse: TLog
-          - Soll das Logging uebernehmen
-
 }
