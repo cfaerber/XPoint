@@ -1178,8 +1178,10 @@ end;
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
 begin
+{
   resizeterm(Lines, Cols);
   refresh;
+}
 end;
 
 { Unit-Interna --------------------------------------------------------- }
@@ -1294,6 +1296,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/09/09 15:40:45  hd
+  - Fix: MakeWindow-Exception
+
   Revision 1.23  2000/08/05 12:40:54  hd
   - Erweiterte Fehlerausgabe in MakeWindow
 
