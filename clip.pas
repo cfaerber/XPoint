@@ -64,7 +64,6 @@ uses
     ,xplinux
   {$ELSE}
     {$IFDEF Win32 } ,windows {$ENDIF }
-    {$IFDEF VP } ,vpsyslow {$ENDIF }
   {$endif};
 
 {$ifdef UseClipFile }
@@ -107,40 +106,20 @@ begin
     MemHandle := GetClipboardData(cf_OEMText);
     P := GlobalLock(MemHandle);
     if Assigned(P) then
+    begin
       SetString(Result, PChar(p), StrLen(p));
-    GlobalUnlock(MemHandle);
+      GlobalUnlock(MemHandle);
+    end;
     CloseClipBoard;
   end else
     Result := '';
 end;
-{$ELSE }
-{$IFDEF VP }
-var
-  P: Pointer;
-  Size: Integer;
-  Str: String;
-begin
-  if SysClipCanPaste then
-  begin
-    p := SysClipPaste(Size);
-    if Assigned(P) then
-    begin
-      Size := StrLen(P);
-      SetLength(Str, Size);
-      Move(P^, Str[1], Size);
-    end;
-    Clip2String := Str;
-    Freemem(p);
-  end else
-    Clip2String := '';
-end;  { Clipboardinhalt als String }
 {$ELSE }
 begin
   Clip2String := '';
 end;
 {$ENDIF }
 {$ENDIF }
-{$endif}
 
 procedure String2Clip(var Str: String);             { String ins Clipboard }
 {$ifdef UseClipFile }
@@ -166,31 +145,27 @@ begin
  if OpenClipboard(0) then
  begin
     EmptyClipboard;
-    // Allocate a shared block of memory
-    MemHandle := GlobalAlloc(gmem_Moveable or gmem_DDEShare, Length(Str)+1);
-    Q := GlobalLock(MemHandle);
-    // Copy clipboard data across
     if Str <> '' then
+    begin
+      // Allocate a shared block of memory
+      MemHandle := GlobalAlloc(gmem_Moveable, Length(Str)+1);
+      Q := GlobalLock(MemHandle);
+      // Copy clipboard data across
       Move(Str[1], Q^, Length(Str));
-    Q[Length(Str)]:=#0;
-    GlobalUnlock(MemHandle);
-    // Insert data into clipboard
-    SetClipboardData(cf_OEMText, MemHandle);
-    GlobalFree(MemHandle);
+      Q[Length(Str)]:=#0;
+      GlobalUnlock(MemHandle);
+      // Insert data into clipboard
+      SetClipboardData(cf_OEMText, MemHandle);
+      GlobalFree(MemHandle);
+    end;
   end;
   CloseClipboard;
 end;
 {$ELSE }
-{$IFDEF VP }
-begin
-  SysClipCopy(PChar(Str[1]), SizeOf(Str));
-end;
-{$ELSE }
 begin
 end;
 {$ENDIF }
 {$ENDIF }
-{$endif}
 
 procedure FileToClip(fn:TFilename);
 {$ifdef UseClipFile }
@@ -218,7 +193,7 @@ begin
     begin
       EmptyClipboard;
       // Allocate a shared block of memory
-      MemHandle := GlobalAlloc(gmem_Moveable or gmem_DDEShare, FileSize(f)+1);
+      MemHandle := GlobalAlloc(gmem_Moveable, FileSize(f)+1);
       Q := GlobalLock(MemHandle);
       BlockRead(f,q^,FileSize(f));
       Q[FileSize(f)]:=#0;
@@ -232,28 +207,10 @@ begin
   end;
 end;
 {$ELSE }
-{$IFDEF VP }
-var
-  f: file;
-  p: pchar;
-begin
-  assign(f, fn);
-  reset(f, 1);
-  if ioresult=0 then
-  begin
-    GetMem(p, FileSize(f));
-    BlockRead(f, p^, FileSize(f));
-    SysClipCopy(p, FileSize(f));
-    FreeMem(p);
-  end;
-  Close(f);
-end;
-{$ELSE }
 begin
 end;
 {$ENDIF }
 {$ENDIF }
-{$endif}
 
 procedure ClipToFile(fn:TFilename);
 {$ifdef UseClipFile }
@@ -289,38 +246,18 @@ begin
   end;
 end;
 {$ELSE }
-{$IFDEF VP }
-var
-  P: Pointer;
-  Size: Integer;
-  Str: String;
-  f: File;
-begin
-  if SysClipCanPaste then
-  begin
-    p := SysClipPaste(Size);
-    if Assigned(P) then
-    begin
-      Assign(f, fn);
-      Rewrite(f, 1);
-      if IOResult = 0 then
-      begin
-        BlockWrite(f, p, Size);
-        Close(f);
-      end;
-    end;
-    Freemem(p);
-  end;
-end;
 {$ELSE }
 begin
 end;
 {$ENDIF }
 {$ENDIF }
-{$endif}
 
 {
   $Log$
+  Revision 1.38.2.3  2004/05/09 00:19:49  mk
+  - removed VP code
+  - improved errorhandling for Win32 clipboard
+
   Revision 1.38.2.2  2003/10/05 14:38:52  mk
   - fixed # 818085: 3.8.12.xx Totalabsturz im Lister
 
