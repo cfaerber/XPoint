@@ -220,13 +220,14 @@ end;
 
 procedure mwrt(x,y:byte; const txt:string);
 begin
+  GotoXY(x, y); 
   if maus_cursor then
   begin
     mausaus;
-    Wrt(x, y, txt);
+    Write(txt);
     mausan;
   end else
-    Wrt(x, y, txt);
+    Write(txt);
 end;
 
 procedure interr(const txt:string);
@@ -324,6 +325,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.4  2001/12/30 11:43:55  mk
+  - letze Aenderung in MWrt rueckgaengig gemacht
+
   Revision 1.14.2.3  2001/12/18 18:56:57  mk
   - Wrt() statt Write() in MWrt() nutzen
 
