@@ -126,13 +126,13 @@ var x,y      : byte;
     cust_header : custheadstr;
 
   function puffer_ok:boolean;
-  var ok : boolean;
+  var ok : boolean; lastsubj,lastmid: string;
   begin
     moff;
     mstr:=getres(331);
     FWrt(x+2,y+2,mstr);    { 'Puffer berprfen...' }
     mon;
-    MsgCount:=0; adr:=0;
+    MsgCount:=0; adr:=0; lastsubj:=''; lastmid:='';
     repeat
       inc(MsgCount);
       if MsgCount mod 10=0 then
@@ -143,14 +143,18 @@ var x,y      : byte;
       end;
       seek(f,adr);
       makeheader(zconnect,f,0,0,hdsize,hdp,ok,true, true);
-      inc(adr,hdsize+hdp.groesse);
+      if ok then begin
+        inc(adr,hdsize+hdp.groesse);
+        lastsubj:=hdp.betreff; lastmid:=hdp.msgid;
+        end;
     until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zus„tzliche }
     if (MsgCount>0) then begin
       moff;
       FWrt(x+3+length(mstr),y+2,strs(MsgCount));
       mon;
     end;
-    puffer_ok:=ok and (adr<=fs+8);
+    result:=ok and (adr<=fs+8);
+    if not result then Debug.DebugLog('xp3o','Last correct message: '+lastsubj+', '+lastmid+', filepos now '+inttostr(adr),DLError);
     diff:=min(maxint,max(0,fs-adr));
   end;
 
@@ -1216,6 +1220,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/04/07 11:38:22  ma
+  - better debug log in puffer_ok
+
   Revision 1.49  2001/02/28 14:25:45  mk
   - removed some tainted comments
 
