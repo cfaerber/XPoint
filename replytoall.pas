@@ -637,7 +637,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
   const leadingchar = #7;      { Das Zeichen durch das RTA-Empfaenger kenntlich gemacht werden }
   var abs, s    :String;
       anz       :integer;      { Anzahl der Adressen im Fenster }
-      h         :word;         { Hoehe des Fensters/Listers }
+      h         :integer;         { Hoehe des Fensters/Listers }
       x,y       : Integer;
       brk       :boolean;
       auswahl   :string[110];
@@ -989,6 +989,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.33  2002/12/14 07:31:28  dodi
   - using new types
 

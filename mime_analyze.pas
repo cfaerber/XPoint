@@ -26,7 +26,7 @@ unit mime_analyze;
 
 uses
   classes,
-  xpglobal, //todo: word, is System.word in this unit
+  xpglobal, 
   mime;
 
 type TMimeAnalyzer = class(TStream)
@@ -63,7 +63,7 @@ type TMimeAnalyzer = class(TStream)
     function GEncodingSafeForSigned(Enc:TMimeEncoding):Boolean;
     function GEolAllowed(Enc:TMimeEol):Boolean;
 
-    function GMagic16:           Word;
+    function GMagic16:           unsigned16;
     function GMagic32:           Cardinal;
 
   public
@@ -72,7 +72,7 @@ type TMimeAnalyzer = class(TStream)
     procedure SetSize(NewSize: Longint); override;
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    function Seek(Offset: Longint; Origin: unsigned16): Longint; override;
 
     property GuessedCharset:    String          read GuessCharset;
     property GuessedEOL:        TMimeEOL        read GuessEOL;
@@ -92,7 +92,7 @@ type TMimeAnalyzer = class(TStream)
     property IsLatin1:          Boolean         read GIsLatin1;
     property IsLatin1DOS:       Boolean         read GIsLatin1DOS;
 
-    property Magic16:           Word            read GMagic16;
+    property Magic16:           unsigned16            read GMagic16;
     property Magic32:           Cardinal        read GMagic32;
   end;
 
@@ -113,7 +113,7 @@ begin
   raise EStreamError.Create('Invalid stream operation');
 end;
 
-function TMimeAnalyzer.Seek(Offset: Longint; Origin: System.Word): Longint;
+function TMimeAnalyzer.Seek(Offset: Longint; Origin: unsigned16): Longint;
 begin
   if ((Origin = soFromCurrent)   and (Offset = 0)) or
      ((Origin = soFromEnd)       and (Offset = 0)) or
@@ -492,7 +492,7 @@ begin
     result := MimeEncodingBase64;
 end;
 
-function TMimeAnalyzer.GMagic16: Word;
+function TMimeAnalyzer.GMagic16: unsigned16;
 begin
   Result:=(Ord(FFileStart[0]) shl 8) or Ord(FFileStart[1]);
 end;
@@ -562,6 +562,9 @@ end;
 
 //
 // $Log$
+// Revision 1.11  2002/12/21 05:37:51  dodi
+// - removed questionable references to Word type
+//
 // Revision 1.10  2002/12/06 14:27:26  dodi
 // - updated uses, comments and todos
 //

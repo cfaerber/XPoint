@@ -57,7 +57,7 @@ function UUCPNetcall(boxname: string;
                      DeleteSpoolFiles: TStringList):shortint;
                      
 var
-  UUNum         :word;         { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
+  UUNum         :unsigned16;         { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
   CmdFile       :string;
 
   (* Nummer in UUNUMMER.DAT lesen/schreiben *)
@@ -501,6 +501,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.22  2002/12/21 05:38:07  dodi
+  - removed questionable references to Word type
+
   Revision 1.21  2002/12/14 22:43:41  dodi
   - fixed some hints and warnings
 

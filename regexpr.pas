@@ -334,7 +334,7 @@ procedure TRegExpr.Error (s : PChar);
  end; { of procedure TRegExpr.Error
 --------------------------------------------------------------}
 
-function NEXT (p : PChar) : word;
+function NEXT (p : PChar) : integer;
  begin
   Result := (ord ((p + 1)^) ShL 8) + ord ((p + 2)^);
  end; { of function NEXT

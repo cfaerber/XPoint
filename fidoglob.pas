@@ -64,8 +64,8 @@ const
 type
         FidoAdr = record
                 username   : string;  { darf aber nach FTS nicht > 36 sein (incl #0) }
-                zone,net   : word;
-                node,point : word;
+                zone,net   : xpWord;
+                node,point : xpWord;
                 ispoint    : boolean;
                 end;
 
@@ -75,7 +75,7 @@ type
         protected
                 fListfile   : string;    { Nodelisten-Datei      }
                 fnumber     : integer;   { akt. Nummer           }
-                fzone,fnet,fnode : word;
+                fzone,fnet,fnode : xpWord;
                 fsort       : longint;  // Temporaerfeld
 
         public
@@ -89,9 +89,9 @@ type
                 property  Listfile    :string   read fListfile   write fListfile;
                 property  number      :integer  read fnumber     write fnumber;
                 property  format      :byte     read fformat     write fformat;
-                property  zone        :word     read fzone       write fzone;
-                property  net         :word     read fnet        write fnet;
-                property  node        :word     read fnode       write fnode;
+                property  zone        :xpWord     read fzone       write fzone;
+                property  net         :xpWord     read fnet        write fnet;
+                property  node        :xpWord     read fnode       write fnode;
                 property  updatefile  : string  read fupdatefile write fupdatefile;
                 property  processor   : string  read fprocessor  write fprocessor;
                 property  updatearc   : string  read fupdatearc  write fupdatearc;
@@ -122,12 +122,12 @@ type
               end;
         ///////////////////////////////////////////////////////////////////////
 
-procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
+procedure splitfido(adr:string; var frec:fidoadr; defaultzone:xpWord);
 
 var
-        DefaultZone : word;           { Fido - eigene Zone }
-        DefaultNet  : word;           {      - eigenes Net }
-        DefaultNode : word;           {      - eigener Node}
+        DefaultZone : xpWord;           { Fido - eigene Zone }
+        DefaultNet  : xpWord;           {      - eigenes Net }
+        DefaultNode : xpWord;           {      - eigener Node}
 
 
 implementation
@@ -278,7 +278,7 @@ end;
 ///////////////////////////////////////////////////////////////////////////////
 //
 
-procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
+procedure splitfido(adr:string; var frec:fidoadr; defaultzone:xpWord);
 var
   p1,p2,p3 : Integer;
 begin
@@ -329,6 +329,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/12/21 05:37:49  dodi
+  - removed questionable references to Word type
+
   Revision 1.20  2002/12/06 14:27:26  dodi
   - updated uses, comments and todos
 

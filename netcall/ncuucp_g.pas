@@ -54,7 +54,7 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
    (* send *)
     procedure SendControlPacket(xxx,yyy:byte);
     procedure SendDataPacket(nr:byte);
-    function  PutDataPacket(var data; size:word; noshort:boolean):byte;
+    function  PutDataPacket(var data; size:xpWord; noshort:boolean):byte;
     function  WaitAcknowledge(all:boolean):boolean;
 
    (* receive *)
@@ -69,8 +69,8 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
     Recv_SeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
     Recv_WinSize  : byte;   { eigene Window-Recv Groesse, 1..7 }
     Send_WinSize  : byte;   { Window-Recv Groesse der Gegenseite, 1..7  }
-    Send_BufSize  : word;   { 32..4096 }
-    Recv_BufSize  : word;   { 32..4096 }
+    Send_BufSize  : xpWord;   { 32..4096 }
+    Recv_BufSize  : xpWord;   { 32..4096 }
     Send_BufSizeLog2 : byte; { max. Groesse der ausgehenden Pakete, 0..7 }
     Recv_BufSizeLog2 : byte; { max. Groesse der eingehenden Pakete, 0..7 }
     Buffer    : array[0..7] of CP_Buffer;
@@ -330,10 +330,10 @@ end;
 
 { --- ringbuffer to handle error correction --------------------------------- }
 
-function TUUCProtocolG.PutDataPacket(var data; size:word; noshort:boolean):byte;
+function TUUCProtocolG.PutDataPacket(var data; size:xpWord; noshort:boolean):byte;
 var ssize,w : SmallWord;
     short   : boolean;
-    ofs     : word;
+    ofs     : xpWord;
 begin
   DebugLog('uucp-g','Queuing data packet #'+Strs(Send_SeqNr),dlInform);
 
@@ -457,7 +457,7 @@ var n,size,i,j   : integer;
     w            : smallword;
     off,sub      : integer;
     AckEach      : boolean;
-    blksize      : word;
+    blksize      : xpWord;
     CtlHeader    : CP_Header;
     LastAck      : integer;
 
@@ -612,7 +612,7 @@ end;
 
 procedure TUUCProtocolG.SendCommand(s:string);   { Befehl senden }
 var ofs  : byte;
-    size : word;
+    size : xpWord;
 begin
   DebugLog('uucp-g','Sending Command: '+s,dlInform);
 
@@ -666,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2002/12/21 05:38:06  dodi
+  - removed questionable references to Word type
+
   Revision 1.2  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

@@ -32,12 +32,12 @@ procedure OpenResource(const fn:string; preloadmem:longint);
 procedure CloseResource;
 function  ResIsOpen:boolean;
 
-function  GetRes(nr:word):string;
-function  GetRepS(nr:word; const txt:String):string;
-function  GetRes2(nr1,nr2:word):string;
-function  GetReps2(nr1,nr2:word; const txt:string):string;
-function  Res2Anz(nr:word):word;
-function  IsRes(nr:word):boolean;
+function  GetRes(nr:xpWord):string;
+function  GetRepS(nr:xpWord; const txt:String):string;
+function  GetRes2(nr1,nr2:xpWord):string;
+function  GetReps2(nr1,nr2:xpWord; const txt:string):string;
+function  Res2Anz(nr:xpWord):xpWord;
+function  IsRes(nr:xpWord):boolean;
 procedure FreeRes;                        { Cluster freigeben }
 function  reps(const s1,s2:string):string;
 
@@ -72,18 +72,18 @@ type
       tindex = packed array[0..maxindex-1,0..1] of smallword;
 
 var
-      clnr   : word  = $ffff;    { geladener Cluster }
+      clnr   : xpWord  = $ffff;    { geladener Cluster }
       ResourceOpen : Boolean = false;
 
 var   block  : packed array[1..maxblocks] of rblock;
-      blocks : word;
+      blocks : xpWord;
       index  : packed array[1..maxblocks] of ^tindex;
       FH: Integer;
 
-      clsize : word;         { Cluster-Groesse }
+      clsize : xpWord;         { Cluster-Groesse }
       clindex: ^tindex;      { Cluster-Index  }
       clcont : barrp;        { Cluster-Inhalt }
-      clcsize: word;         { Groesse des Inhalts }
+      clcsize: xpWord;         { Groesse des Inhalts }
       clbnr  : integer;
 
 
@@ -152,8 +152,8 @@ begin
 end;
 
 
-function getnr(nr:word; var bnr,inr:word):boolean;
-var l,r,m : word;
+function getnr(nr:xpWord; var bnr,inr:xpWord):boolean;
+var l,r,m : xpWord;
 begin
   getnr:=false;
   bnr:=1;
@@ -177,7 +177,7 @@ begin
 end;
 
 
-function rsize(bnr,inr:word):word;
+function rsize(bnr,inr:xpWord):xpWord;
 begin
   with block[bnr] do
     if inr<anzahl-1 then
@@ -187,8 +187,8 @@ begin
 end;
 
 
-function GetRes(nr:word):string;
-var bnr,inr : word;
+function GetRes(nr:xpWord):string;
+var bnr,inr : xpWord;
     s       : shortstring;
 begin
   if not getnr(nr,bnr,inr) then begin
@@ -221,11 +221,11 @@ begin
 end;
 
 
-function GetRes2(nr1,nr2:word):string;
-var bnr,inr  : word;
-    size,ofs : word;
+function GetRes2(nr1,nr2:xpWord):string;
+var bnr,inr  : xpWord;
+    size,ofs : xpWord;
     p        : barrp;
-    l,r,m,i  : word;
+    l,r,m,i  : xpWord;
     s        : shortstring;
 label ende;
   function fehlt:string;
@@ -290,8 +290,8 @@ begin
 end;
 
 
-function Res2Anz(nr:word):word;
-var bnr,inr : word;
+function Res2Anz(nr:xpWord):xpWord;
+var bnr,inr : xpWord;
 begin
   if getnr(nr,bnr,inr) then
     with block[bnr] do begin
@@ -308,8 +308,8 @@ begin
     Res2Anz:=0;
 end;
 
-function IsRes(nr:word):boolean;
-var bnr,inr : word;
+function IsRes(nr:xpWord):boolean;
+var bnr,inr : xpWord;
 begin
   IsRes:=getnr(nr,bnr,inr);
 end;
@@ -323,12 +323,12 @@ begin
   else reps:=s1;
 end;
 
-function GetRepS(nr:word; const txt:String):string;
+function GetRepS(nr:xpWord; const txt:String):string;
 begin
   GetReps:=reps(getres(nr),txt);
 end;
 
-function GetReps2(nr1,nr2:word; const txt:string):string;
+function GetReps2(nr1,nr2:xpWord; const txt:string):string;
 begin
   GetReps2:=reps(getres2(nr1,nr2),txt);
 end;
@@ -351,6 +351,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.29  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

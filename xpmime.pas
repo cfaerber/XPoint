@@ -27,8 +27,8 @@ unit xpmime;
 
 interface
 
-uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
-      xp0,xp1,xpkeys,utftools,Mime;
+uses  sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
+      xp0,xp1,xpkeys,utftools,Mime,xpglobal;
 
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
@@ -65,6 +65,7 @@ function RFC2Zdate(s0:string):string;
 implementation  { --------------------------------------------------- }
 
 uses
+  classes,
   {$IFDEF Win32 }
   xpwin32,
   {$ENDIF }
@@ -77,7 +78,6 @@ uses
   {$IFDEF OS2 }
   xpos2,
   {$ENDIF }
-  classes, 
   xpstreams,
   xp1o,xp3,xp3o,xp3ex;
 
@@ -169,7 +169,7 @@ end;
 
 function RFC2Zdate(s0:string):string;
 var p,p2  : byte;
-    t,m,j : word;
+    t,m,j : integer;
     h,min,s : integer;
     ti    : string;
     zone  : string;
@@ -885,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.64  2002/12/21 05:38:02  dodi
+  - removed questionable references to Word type
+
   Revision 1.63  2002/07/25 20:43:57  ma
   - updated copyright notices
 

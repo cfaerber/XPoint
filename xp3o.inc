@@ -60,7 +60,7 @@ end;
 { Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
 
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
-                         sendbuf,ebest:boolean; pflags:word):boolean;
+                         sendbuf,ebest:boolean; pflags:xpWord):boolean;
 
 const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
@@ -165,7 +165,7 @@ var x,y      : Integer;
 {
   procedure writemsg;
   var size : longint;
-      rr   : word;
+      rr   : xpWord;
   begin
     dbWriteN(mbase,mb_ablage,ablage);
     dbWriteN(mbase,mb_adresse,padr);
@@ -1303,6 +1303,9 @@ end;
 
 {
   $Log$
+  Revision 1.101  2002/12/21 05:37:56  dodi
+  - removed questionable references to Word type
+
   Revision 1.100  2002/12/14 07:31:32  dodi
   - using new types
 

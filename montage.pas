@@ -27,7 +27,7 @@ interface
 uses
   sysutils,
   typeform,
-  xpglobal; //todo: word
+  xpglobal;
 
 var //Februar hat variable Zahl von Tagen
        monat : Array[1..12] of record
@@ -145,7 +145,7 @@ end;
 { Algorithmus zur Wochentagberechnung nach DOS 11/87, S. 86 }
 
 function ddow(dd:fdate):byte;
-var nt  : word;
+var nt  : integer;
 begin
   with dd do
     if (t>0)and(m>0)and(j>0) then { MK 01/00 falls Record leer, wird 1 (Mo) zurÅckgegeben }
@@ -200,6 +200,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.16  2002/12/13 11:51:58  cl
   - fixed Range Check Error
 

@@ -136,12 +136,12 @@ var brk       : boolean;
     marked    : boolean;
     von,bis   : datetimest;
     vonl,bisl : longint;
-    sysmax: word; { Userwahl maximale Systeme }
+    sysmax: xpWord; { Userwahl maximale Systeme }
     n,i       : integer;
     ende      : boolean;
     _brett    : string;
     st        : ^statarr;
-    smax,snum : word;          { maximale Systeme / Anzahl Systeme }
+    smax,snum : xpWord;          { maximale Systeme / Anzahl Systeme }
     absender  : string;
     t         : text;
     fn        : string;
@@ -590,7 +590,7 @@ var box     : string;
     x,y,wdt : Integer;
     brk     : boolean;
     monate  : boolean;
-    jahr    : word;
+    jahr    : xpWord;
     monat   : byte;
     tag     : byte;
     fn      : string;
@@ -870,8 +870,8 @@ var x,y   : Integer;
     fn    : string;
     t     : text;
     buf   : pointer;
-    bufs  : word;
-    _z,_n : word;
+    bufs  : xpWord;
+    _z,_n : xpWord;
     nls   : byte;   { Laufvariable fÅr Nodelisten }
 
 const maxzones = 250;
@@ -910,7 +910,7 @@ var   zone     : ^zonea;
        s        : string;
        ende     : boolean;
        i        : integer;
-       _nodes   : word;      { Grî·e aktuelles Netz }
+       _nodes   : xpWord;      { Grî·e aktuelles Netz }
        k        : string;
        hostname : string;
        newfile  : boolean;
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/12/21 05:38:03  dodi
+  - removed questionable references to Word type
+
   Revision 1.53  2002/12/14 07:31:41  dodi
   - using new types
 

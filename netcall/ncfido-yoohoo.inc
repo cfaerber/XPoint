@@ -61,7 +61,7 @@ begin
   end;
 end;
 
-function TFidomailer.ProductName(pc:word):string;
+function TFidomailer.ProductName(pc:xpWord):string;
 var t : text;
     s : string;
     p : byte;
@@ -256,7 +256,7 @@ end;
 
 function TFidomailer.fmRH(state:byte):boolean;   { Receive Hello Packet }
 
-var crc    : word;
+var crc    : unsigned16;  //was:word(=integer), but is used for CRC16
     errors : byte;
     b      : byte;
     readhbytes: longint;
@@ -429,6 +429,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2002/12/21 05:38:06  dodi
+  - removed questionable references to Word type
+
   Revision 1.7  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

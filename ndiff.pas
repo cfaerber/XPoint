@@ -41,8 +41,8 @@ const
 
 type
   regrec = record
-    zone: word;
-    region: word;                       { 0 = ganze Zone }
+    zone: xpWord;
+    region: xpWord;                       { 0 = ganze Zone }
   end;
 
 var
@@ -339,6 +339,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.21  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

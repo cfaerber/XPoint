@@ -41,7 +41,7 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : word;       { 1=aktiv, 2=loeschen, 4=Aenderung, 8=supersede }
+                  flags   : xpWord;       { 1=aktiv, 2=loeschen, 4=Aenderung, 8=supersede }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
                   lastmid : string;     { letzte verwendete mid }
@@ -426,13 +426,13 @@ var sr    : tsearchrec;
       s     : string;
       err   : boolean;
       temp  : boolean;
-      bs    : word;
+      bs    : xpWord;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
       nt    : eNetz;
       sData : TSendUUData;
 
-    procedure axerr(nr:word; txt:string);
+    procedure axerr(nr:xpWord; txt:string);
     begin
       tfehler(getres2(2200,1)+getreps2(2200,nr,txt),tfs);   { 'AutoExec-Fehler: ' }
       freeres;
@@ -698,6 +698,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2002/12/21 05:37:59  dodi
+  - removed questionable references to Word type
+
   Revision 1.61  2002/12/16 01:05:13  dodi
   - fixed some hints and warnings
 

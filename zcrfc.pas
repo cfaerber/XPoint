@@ -32,7 +32,8 @@ unit zcrfc;
 interface
 
 uses
-  classes;
+  classes,
+  xpglobal;
 
 type
   TCompression = (
@@ -79,7 +80,7 @@ type
     source, dest: String;                { Quell-/Zieldateien  }
     _from, _to: string;                   { UUCP-Systemnamen }
     OwnSite: string;             { fuer Empfaengeradresse von Mails }
-    uunumber: word;                       { fortlaufende Hex-Paketnummer }
+    uunumber: unsigned16;                       { fortlaufende Hex-Paketnummer }
     CommandFile:string;      { name of C- file }
     MailUser: string;        { fuer U-Zeile im X-File }
     NewsUser: string;
@@ -110,7 +111,7 @@ type
     destructor Destroy; override;
     procedure testfiles;
     procedure GetPar;
-    function NextUunumber: word;
+    function NextUunumber: unsigned16;
     procedure ZtoU;
     procedure UtoZ;
     property DeleteFiles: TStringList read FDeleteFiles;
@@ -131,7 +132,7 @@ type TCRLFtoLFStream = class(TStream)
 
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    function Seek(Offset: Longint; Origin: unsigned16): Longint; override;
   end;
 
 { ------------------- RFC 2821/976/977 Dot Escaping ------------------ }
@@ -147,7 +148,7 @@ type TDotEscapeStream = class(TStream)
 
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    function Seek(Offset: Longint; Origin: unsigned16): Longint; override;
   end;
 
 implementation
@@ -177,8 +178,7 @@ uses
 {$ENDIF }
   xp0, xp1, xpnt,
   typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams,
-  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist,
-  xpglobal;
+  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
 
 const
   cr: char = #13;
@@ -988,7 +988,7 @@ const
 
 var
   p, p2: integer;
-  t, m, j: word;
+  t, m, j: integer;
   h, min, s: integer;
   ti: datetimest;
   zone: string;
@@ -2662,7 +2662,7 @@ function Unix2DOSfile(fn,destdir: String): String;
 var p,i     : byte;
     allowed : set of char;
     name, ext: string;
-    n       : word;
+    n       : integer;
 begin
   UpString(fn);
   p:=length(fn);
@@ -2705,7 +2705,7 @@ begin
 end;
 
 
-function TUUZ.NextUunumber: word;
+function TUUZ.NextUunumber: unsigned16;
 begin
   NextUunumber := uunumber;
   if uunumber = 65535 then
@@ -3686,7 +3686,7 @@ begin
   Inc(BytesWritten,Result);
 end;
 
-function TCRLFtoLFStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+function TCRLFtoLFStream.Seek(Offset: Longint; Origin: unsigned16): Longint;
 begin
   Result := BytesWritten;
   if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
@@ -3751,7 +3751,7 @@ begin
   Inc(BytesWritten,Result);
 end;
 
-function TDotEscapeStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+function TDotEscapeStream.Seek(Offset: Longint; Origin: unsigned16): Longint;
 begin
   Result := BytesWritten;
   if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
@@ -3761,6 +3761,9 @@ end;
 
 {
   $Log$
+  Revision 1.126  2002/12/21 05:38:03  dodi
+  - removed questionable references to Word type
+
   Revision 1.125  2002/12/16 01:05:14  dodi
   - fixed some hints and warnings
 

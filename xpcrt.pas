@@ -86,7 +86,7 @@ var
   DoingNumChars: Boolean;
   DoingNumCode: Byte;
 
-Function RemapScanCode (ScanCode, CtrlKeyState: Word; keycode: DWord): byte;
+Function RemapScanCode (ScanCode, CtrlKeyState: xpWord; keycode: DWord): byte;
   { Several remappings of scancodes are necessary to comply with what
     we get with MSDOS. Special Windows keys, as Alt-Tab, Ctrl-Esc etc.
     are excluded }
@@ -299,6 +299,9 @@ initialization
 
 {
   $Log$
+  Revision 1.24  2002/12/21 05:38:00  dodi
+  - removed questionable references to Word type
+
   Revision 1.23  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

@@ -174,7 +174,7 @@ type    proctype  = procedure;
 
 var     lastioerror : integer = 0;
         mustfind    : boolean = true;
-        cacheanz    : word    = 0;
+        cacheanz    : xpWord    = 0;
         dl          : boolean = false;
         indexver    : byte    = 0;
 
@@ -248,6 +248,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/12/21 05:37:49  dodi
+  - removed questionable references to Word type
+
   Revision 1.24  2002/12/12 11:58:38  dodi
   - set $WRITEABLECONT OFF
 

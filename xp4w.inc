@@ -1293,7 +1293,7 @@ procedure suchchar(ch:char);
 var s       : string;
     adrb,pp : byte;
     newsuch : string;
-      indx  : word;
+      indx  : integer;
   procedure suchok;
   begin
     suchst:=newsuch;
@@ -1776,6 +1776,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.107  2002/12/21 05:37:59  dodi
+  - removed questionable references to Word type
+
   Revision 1.106  2002/12/14 07:31:34  dodi
   - using new types
 

@@ -573,7 +573,7 @@
       _conn_mode: string;
       pronet : boolean;
       zc     : boolean;
-      pnr    : word;     { Fido - Pointnummer }
+      pnr    : xpWord;     { Fido - Pointnummer }
       xx,yy  : byte;
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
       Ue,Uz  : boolean;  { UUCP-e, UUCP-z }
@@ -2375,6 +2375,9 @@
 
 {
   $Log$
+  Revision 1.66  2002/12/21 05:38:00  dodi
+  - removed questionable references to Word type
+
   Revision 1.65  2002/12/14 07:31:37  dodi
   - using new types
 

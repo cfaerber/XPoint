@@ -26,7 +26,7 @@ interface
 
 uses
   {$IFDEF Win32} windows, {$ENDIF}
-  xpglobal, //todo: word
+  xpglobal,
   keys, //taste, IFDEF NCRT in interface!
   typeform;
 
@@ -50,7 +50,7 @@ type   mausstat   = record
                       tasten : integer;
                       x,y    : integer;
                     end;
-       mausintp   = procedure(intsource,tasten,x,y,mx,my:word);
+       mausintp   = procedure(intsource,tasten,x,y,mx,my:xpWord);
 
 
 var    maus,mausda : boolean;
@@ -62,9 +62,9 @@ procedure mausaus;                       { Mauscursor ausschalten   }
 procedure getmaus(var stat:mausstat);    { Mauszustand ermitteln    }
 procedure setmaus(x,y: integer);         { neue Mausposition setzen }
 
-function mausx:word;      { Maus-X-Koordinate holen }
-function mausy:word;      { Maus-Y-Koordinate holen }
-function maust:word;      { Maustastenzustand holen }
+function mausx:xpWord;      { Maus-X-Koordinate holen }
+function mausy:xpWord;      { Maus-Y-Koordinate holen }
+function maust:xpWord;      { Maustastenzustand holen }
 
 {$IFDEF Win32}
 function UpdateMouseStatus(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-function mausx:word;
+function mausx:xpWord;
 begin
 {$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
@@ -164,7 +164,7 @@ begin
   DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
 end;
 
-function mausy:word;
+function mausy:xpWord;
 begin
 {$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
@@ -183,7 +183,7 @@ begin
   DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
 end;
 
-function maust:word;
+function maust:xpWord;
 begin
 {$IFDEF Debug}{$R-}{$ENDIF}
 {$IFDEF Win32}
@@ -278,6 +278,9 @@ initialization
 
 {
   $Log$
+  Revision 1.38  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.37  2002/12/07 17:50:23  dodi
   updated uses for NCRT
 

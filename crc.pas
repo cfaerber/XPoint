@@ -12,7 +12,7 @@ uses
 
 {Iterativ: CRC wird jeweils fuer ein Byte aktualisiert}
 function UpdCRC16(cp: byte; crc: smallword): smallword;
-function UpdCRC32(octet: byte; crc: DWord) : DWord; 
+function UpdCRC32(octet: byte; crc: DWord) : DWord;
 
 {Explizit: CRC wird blockweise berechnet}
 function CRC16Block(var data; size:smallword): smallword;
@@ -21,7 +21,7 @@ function CRC16StrXP(s:shortstring): smallword;
 { Hier wird nur der String selbst genutzt }
 function CRC16Str(s:string): smallword;
 
-function CRC32Block(var data; size: word): longint;
+function CRC32Block(var data; size: Dword): longint;
 function CRC32Str(s: string): longint;
 
 implementation
@@ -211,7 +211,7 @@ begin
   CRC32Str := CRC_Reg;
 end;
 
-function crc32block(var data; size:word):longint;
+function crc32block(var data; size:Dword):longint;
 begin
   CRC_Reg := 0;
   CCITT_CRC32_calc_block(data, size);
@@ -220,6 +220,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/12/21 05:37:48  dodi
+  - removed questionable references to Word type
+
   Revision 1.10  2002/04/22 10:04:22  mk
   - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
 

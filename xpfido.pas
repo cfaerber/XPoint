@@ -66,10 +66,10 @@ type  nodeinfo = record
                    standort : string; { 03.02.2000 MH: 40 -> 65 }{ unbedenklich }
                    sysop    : string;
                    telefon  : string;
-                   baud     : word;
+                   baud     : xpWord;
                    fflags   : string; { MH: 40 -> 80 } { unbedenklich }
-                   flags    : word;
-                   request  : word;
+                   flags    : xpWord;
+                   request  : xpWord;
                    datei    : byte;     { Nummer der Nodeliste }
                  end;
 
@@ -201,7 +201,7 @@ type  bereichlst = array[1..maxber] of berrec;
 var   nodelistopen : boolean = false;
 
 var   NX_adrnetx   : longint;
-      bereiche     : word;
+      bereiche     : xpWord;
       berliste     : ^bereichlst;
       nodef        : file;
       nodelf       : file;
@@ -220,22 +220,22 @@ var x,y        : Integer;
     s          : string;
     k          : string;
     ss         : string;
-    zone,net   : word;
-    node,nodes : word;
+    zone,net   : xpWord;
+    node,nodes : xpWord;
     l          : longint;
     liste,ltyp : byte;
     np         : ^nodea;
     tb         : pointer;
     newnet     : boolean;
-    new_net    : word;
-    new_zone   : word;
+    new_net    : xpWord;
+    new_zone   : xpWord;
     fpos       : longint;
     res        : integer;
-    nets       : word;
+    nets       : xpWord;
     _netr      : netrec;
     nbuffer    : array[1..nbuffers] of netrec;
     ll         : byte;
-    bufnets    : word;
+    bufnets    : xpWord;
     ixh        : idxheader;
     fa         : FidoAdr;
     points     : integer;
@@ -299,7 +299,7 @@ var x,y        : Integer;
       r    : berrec;
       na   : ^netrecl;
       rr   : Integer;
-      add  : word;
+      add  : xpWord;
       bpos : longint;
   begin
     new(na);
@@ -351,7 +351,7 @@ var x,y        : Integer;
   const ubufsize = 100;
   type  ubufa    = array[0..ubufsize-1] of UserRec;
   var   ubuf     : ^ubufa;
-        ubufs    : word;
+        ubufs    : xpWord;
         lusers   : longint;
 
     procedure FlushUbufs;
@@ -384,7 +384,7 @@ var x,y        : Integer;
     inc(chunks);
   end;
 
-  procedure AppUser(zone,net,_node,point:word; fpos:longint);
+  procedure AppUser(zone,net,_node,point:xpWord; fpos:longint);
   var name : string;
       i    : integer;
 
@@ -446,10 +446,10 @@ var x,y        : Integer;
     procedure MergeChunks(f0,f1:byte);
     const ubufmax = 1000;
     type  ubufa   = array[0..ubufmax-1] of userrec;
-    var bufsize   : word;
-        bufanz    : word;
+    var bufsize   : xpWord;
+        bufanz    : xpWord;
         buf       : array[1..3] of ^ubufa;
-        bp        : array[1..3] of word;
+        bp        : array[1..3] of xpWord;
         anz,banz  : array[1..2] of longint;
         ranz      : array[1..2] of longint;   { schon gelesene User }
         pos       : array[1..2] of longint;
@@ -562,13 +562,13 @@ var x,y        : Integer;
   var   bbuf      : ^block;
         ubuf      : ^ubufa;
         uihd      : udxheader;
-        bufp,bufanz:word;
+        bufp,bufanz:xpWord;
         lname     : string[MaxNamelen];
         user      : UserRec;
         cuser     : array[0..50] of byte;       { komprimierter User-Record }
         cuserp    : byte;
-        outp      : word;                       { Position in bbuf }
-        w         : word;
+        outp      : xpWord;                       { Position in bbuf }
+        w         : xpWord;
         b,adrf    : byte;
         nn        : longint;
         ok        : boolean;
@@ -697,7 +697,7 @@ var x,y        : Integer;
 
   procedure SortNodes(l,r:integer);
   var i,j : integer;
-      x   : word;
+      x   : xpWord;
       w   : noderec;
   begin
     i:=l; j:=r;
@@ -732,7 +732,7 @@ var x,y        : Integer;
     bufnets:=0;
   end;
 
-  procedure AppPoint(pnode:word);
+  procedure AppPoint(pnode:xpWord);
   begin
     if points<maxpoints then begin
       pp^[points].point:=node;
@@ -1166,8 +1166,8 @@ procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
 var fa     : fidoadr;
     i,netp : integer;
     bp     : ^netrecl;
-    banz   : word;
-    nanz   : word;
+    banz   : xpWord;
+    nanz   : xpWord;
     nadr,l : longint;
     nfile  : byte;
     np     : ^nodea;
@@ -1279,13 +1279,13 @@ var  f     : file;
      s     : string;
      p,x,y : Integer;
      buf   : ^ubufa;
-     bufp  : word;
+     bufp  : xpWord;
      l,r,m : longint;
      user  : UserRec;
      last  : boolean;
      anz   : longint;
      brk   : boolean;
-     height: word;
+     height: xpWord;
      List: TLister;
 
 label ende;
@@ -1615,12 +1615,12 @@ var   x,y,h   : Integer;
       buf     : pointer;
       found,n : longint;
       p       : byte;
-      nn      : word;
+      nn      : xpWord;
       azone,                   { aktuelle Nodeadresse beim Suchen }
       anet,
       anode,
-      apoint  : word;
-      lastnet : word;
+      apoint  : xpWord;
+      lastnet : xpWord;
       skip    : boolean;
       ni      : nodeinfo;
       d       : DB;
@@ -2783,7 +2783,7 @@ function FidoSeekfile:string;
     anz_FileFound, p : longint;
     tb               : pointer;
     scp              : scrptr;
-    tbs              : word;
+    tbs              : xpWord;
     ni               : ^nodeinfo;
     files            : string;
     len              : byte;
@@ -3126,6 +3126,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2002/12/21 05:38:01  dodi
+  - removed questionable references to Word type
+
   Revision 1.73  2002/12/16 01:05:13  dodi
   - fixed some hints and warnings
 

@@ -294,7 +294,7 @@ begin
   Z_ToUnixDate := s
 end;
 
-function monthlen(j,m:word):word;
+function monthlen(j,m:integer):integer;
 begin
   case m of
     1 : monthlen:=31;
@@ -2498,6 +2498,9 @@ begin
 
 {
   $Log$
+  Revision 1.31  2002/12/21 05:38:07  dodi
+  - removed questionable references to Word type
+
   Revision 1.30  2002/12/16 01:05:15  dodi
   - fixed some hints and warnings
 

@@ -620,7 +620,7 @@ var t,lastt: taste;
   end;
 
   procedure _goend;
-  var mi : word;
+  var mi : integer;
   begin
     case dispmode of
         -1  : if not ArchivWeiterleiten or (ArchivBretter='') then
@@ -1941,7 +1941,7 @@ var t,lastt: taste;
     if not ball then Changebrettall;
   end;
 
-  procedure wrm(nr:word);
+  procedure wrm(nr:integer);
   begin
     mwrt(2,5+ya,getres(nr));
   end;
@@ -2757,6 +2757,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2002/12/21 05:37:56  dodi
+  - removed questionable references to Word type
+
   Revision 1.134  2002/12/14 07:31:33  dodi
   - using new types
 

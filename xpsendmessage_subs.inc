@@ -121,7 +121,7 @@ function TSendUUData.GetSigData: string;
 var TmplFile: string;
     t       : text;
     s       : string;
-    num,n   : word;
+    num,n   : xpWord;
     Buf: array[0..4095] of Char;
 const
     sigsep = '-*-';
@@ -188,7 +188,7 @@ function TSendUUData.GetHeadData: string;
 var TmplFile: string;
     t       : text;
     s       : string;
-(*    num,n   : word; *)
+(*    num,n   : xpWord; *)
     Buf: array[0..4095] of Char;
 const
     sigsep = '-*-';
@@ -436,7 +436,7 @@ function orishuffle(fn:string):string;
 var t     : text;
     s     : string;
     buf   : array[0..511] of byte;
-    num,n : word;
+    num,n : xpWord;
 begin
   assign(t,fn);
   if not existf(t) then
@@ -648,10 +648,10 @@ const rev = 'C';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
     t,m,j   : smallword;
     h,mm,s,ss: smallword;
-    dat     : word;
-    count   : word;
-    rand    : word;
-    csum    : word;
+    dat     : xpWord;
+    count   : xpWord;
+    rand    : xpWord;
+    csum    : xpWord;
     _domain : string;
     local_part : string[20];
 
@@ -676,7 +676,7 @@ begin
                      formi(t,2)+formi(m,2)+formi(j,4)+'_013@'+box+';'+ { ProNet }
                      pointname+domain; { X/HHMMSSssDDMMYYYY_KKK@BOX;NR.pro }
     else begin
-      count:=word(inr and $ffff);
+      count:=xpWord(inr and $ffff);
       rand:=random($1000);
       csum:=crc16strXP(username);
       (*
@@ -1016,10 +1016,10 @@ end;
 
 procedure DateSendIt;
 var dat   : longint;
-    flags : word;
+    flags : xpWord;
     typ   : char;
     empf  : string;
-    mon   : word;
+    mon   : xpWord;
 begin
   rmessage(608);    { 'Nachricht speichern...' }
   repeat
@@ -1304,6 +1304,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/12/21 05:38:02  dodi
+  - removed questionable references to Word type
+
   Revision 1.31  2002/12/14 07:31:40  dodi
   - using new types
 

@@ -167,7 +167,7 @@ var f      : file;
     ok     : boolean;
     _brett : string;
     _mbrett: string;
-    mi     : word;
+    mi     : integer;
     zconnect: boolean;
     i      : integer;
     ldummy : longint;
@@ -1255,7 +1255,7 @@ end;
 
 procedure EinzelNetcall(BoxName:string);
 var b   : byte;
-    h,m : word;
+    h,m : integer;
 begin
   if BoxName='' then begin
     BoxName:=UniSel(1,false,DefaultBox);         { zu pollende BoxName abfragen }
@@ -1371,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2002/12/21 05:38:07  dodi
+  - removed questionable references to Word type
+
   Revision 1.65  2002/12/14 22:43:41  dodi
   - fixed some hints and warnings
 

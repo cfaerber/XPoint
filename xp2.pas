@@ -2630,7 +2630,7 @@ end;
 procedure TestAutostart;
 var p   : byte;
     f,t : string;
-    min : word;
+    min : xpWord;
 begin
   p:=cpos('-',ParAutost);
   if p=0 then exit;
@@ -2669,7 +2669,7 @@ var
     x,y  : Integer;
     brk  : boolean;
     dat  : datetimest;
-//    j    : word;
+//    j    : xpWord;
     m3s  : procedure;
 begin
   // diff in days
@@ -2774,6 +2774,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.154  2002/12/21 05:37:55  dodi
+  - removed questionable references to Word type
+
   Revision 1.153  2002/12/14 22:43:37  dodi
   - fixed some hints and warnings
 

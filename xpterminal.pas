@@ -414,9 +414,9 @@ begin
   multi2;
 end;
 
-procedure mdelay(msec:word; show:boolean);   { genaues Delay }
+procedure mdelay(msec:integer; show:boolean);   { genaues Delay }
 var t      : longint;
-    i,n    : word;
+    i,n    : integer;
 begin
   n:=system.round(msec/54.925401155);
   for i:=1 to n do begin
@@ -747,6 +747,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/12/21 05:38:03  dodi
+  - removed questionable references to Word type
+
   Revision 1.14  2002/12/14 07:31:41  dodi
   - using new types
 

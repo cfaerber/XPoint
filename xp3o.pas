@@ -27,7 +27,8 @@ unit xp3o;
 interface
 
 uses
-  maske;
+  maske,
+  xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
@@ -59,7 +60,7 @@ procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 procedure NeuerEmpfaenger(name:string);
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
-                         sendbuf,ebest:boolean; pflags:word):boolean;
+                         sendbuf,ebest:boolean; pflags:xpWord):boolean;
 procedure AppPuffer(const Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
 procedure CancelMessage;
@@ -91,8 +92,7 @@ uses
   datadef,database,typeform,fileio,inout,keys,maus2,xpheader,osdepend,resource,
   printerx,xp0,xp1,xp1o2,xp1input,
   xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
-  xpmakeheader,xpsendmessage,xpsendmessage_rta,
-  xpglobal;
+  xpmakeheader,xpsendmessage,xpsendmessage_rta;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -239,7 +239,7 @@ var d1,d2        : longint;
     recs,n         : longint;
     flags          : byte;
     gelesen        : byte;
-    bi,mi          : word;
+    bi,mi          : xpWord;
 begin
   recs:=dbRecCount(bbase);
   n:=100;
@@ -302,7 +302,7 @@ end;
 procedure RereadBrettdatum(_brett:string);
 var _mBrett : string[5];
     d1,d2   : longint;
-    mi      : word;
+    mi      : xpWord;
 begin
   if FirstChar(_brett)='U' then exit;
   mi:=dbGetIndex(mbase);
@@ -337,7 +337,7 @@ end;
 
 procedure RereadUngelesen(_brett:string);
 var _mBrett : string[5];
-    mi      : word;
+    mi      : xpWord;
     flags   : byte;
     bug,mug : boolean;
 begin
@@ -395,7 +395,7 @@ var x,y     : Integer;
     rec     : longint;
     modihead: boolean;
     n       : longint;
-    mi      : word;
+    mi      : xpWord;
 begin
   rec:=dbRecno(bbase);
   dialog(58,7,getres2(322,1),x,y);   { 'Nachrichten in anderes Brett verlagern' }
@@ -506,7 +506,7 @@ var x,y      : Integer;
     _olduser,_newuser,_user: string;
     rec,rec2 : longint;
     n        : longint;
-    mi       : word;
+    mi       : xpWord;
     adrb     : byte;
 begin
   if (dbReadInt(ubase,'userflags') and 4<>0) then begin
@@ -1559,6 +1559,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2002/12/21 05:37:56  dodi
+  - removed questionable references to Word type
+
   Revision 1.99  2002/12/14 07:31:32  dodi
   - using new types
 

@@ -27,13 +27,13 @@ unit xp1help;
 interface
 
 uses
-  xpglobal; //todo: word -> Integer?
+  xpglobal;
 
 const maxhelpst = 20;
 var   inithlp : boolean = false;
       helpstp : shortint = 1;
 
-var   helpst  : array[1..maxhelpst] of word;
+var   helpst  : array[1..maxhelpst] of xpWord;
       XPdisplayed: boolean = false;   { 'CrossPoint' rechts unten angezeigt }
 
 procedure showkeys(nr:integer);
@@ -41,7 +41,7 @@ procedure showlastkeys;
 procedure hilfe;
 procedure hilfealt;
 procedure dispfunctionkeys(editor:boolean);
-procedure do_help(n:word);
+procedure do_help(n:xpWord);
 
 
 implementation  { --------------------------------------------------- }
@@ -163,7 +163,7 @@ procedure showkeys(nr:integer);
     dec(shortkeys);
   end;
 
-  procedure kstr(nr:word);
+  procedure kstr(nr:xpWord);
   var s : string;
       p : byte;
   begin
@@ -302,7 +302,7 @@ begin
   showkeys(lastkeys);
 end;
 
-procedure do_help(n:word);
+procedure do_help(n:xpWord);
 var
       x,y  : Integer;
       hlp  : string;
@@ -419,6 +419,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/12/21 05:37:54  dodi
+  - removed questionable references to Word type
+
   Revision 1.36  2002/12/12 11:58:43  dodi
   - set $WRITEABLECONT OFF
 

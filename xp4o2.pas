@@ -41,7 +41,7 @@ function  BezSeek(back:boolean):boolean;
 function  BezSeekBezug:boolean;
 function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
-function  BaumBlatt(Ofs:byte; bezpos:word; var s,s1:string):string; //todo: word=Integer
+function  BaumBlatt(Ofs:byte; bezpos:integer; var s,s1:string):string;
 procedure ClearReplyTree;
 
 procedure SetLanguage;
@@ -757,7 +757,7 @@ end;
 
 { s=User, s1=Betreff }
 
-function BaumBlatt(ofs:byte; bezpos:word; var s,s1:string):string;
+function BaumBlatt(ofs:byte; bezpos:integer; var s,s1:string):string;
 var ss : string[255];
     i  : integer;   { muss longint sein, damit (1 shl i) longint ist }
     p  : Integer;
@@ -929,6 +929,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2002/12/21 05:37:58  dodi
+  - removed questionable references to Word type
+
   Revision 1.60  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

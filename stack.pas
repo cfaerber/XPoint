@@ -29,7 +29,7 @@ interface
 uses
   xpglobal;
 
-procedure spush(var x; size:word);
+procedure spush(var x; size:xpWord);
 procedure spop(var x);
 
 implementation
@@ -37,7 +37,7 @@ implementation
 type  stp = ^ste;
       ste = record
               inhalt : pointer;
-              groesse: word;
+              groesse: xpWord;
               adr    : pointer;    { fuer Integritaets-Test }
               next   : stp;
               last   : stp;
@@ -55,7 +55,7 @@ end;
 {$ENDIF }
 
 
-procedure spush(var x; size:word);
+procedure spush(var x; size:xpWord);
 var p : stp;
 begin
   new(p);
@@ -94,6 +94,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.14  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

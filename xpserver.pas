@@ -279,10 +279,10 @@ function TXPServer.CreateMessageID(inr: Longint):string;
 const rev = 'C';   { Revision des MsgID-Algorithmus }
 var t,m,j   : smallword;
     h,mm,s,ss: smallword;
-    dat     : word;
-    count   : word;
-    rand    : word;
-    csum    : word;
+    dat     : xpWord;
+    count   : xpWord;
+    rand    : xpWord;
+    csum    : xpWord;
     _domain : string;
     local_part : string[20];
 
@@ -309,7 +309,7 @@ begin
 //                   pointname+domain; { X/HHMMSSssDDMMYYYY_KKK@BOX;NR.pro }
     else 
       begin
-        count:=word(inr and $ffff);
+        count:=xpWord(inr and $ffff);
         rand:=random($1000);
         csum:=crc16strXP(username);
      
@@ -339,6 +339,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.3  2002/12/21 05:38:03  dodi
+// - removed questionable references to Word type
+//
 // Revision 1.2  2002/12/14 07:31:41  dodi
 // - using new types
 //

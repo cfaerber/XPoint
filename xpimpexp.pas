@@ -378,12 +378,12 @@ procedure MakeOutfile(var box:string; path:string);
 const EndOfLine = 13;
       EndOfMsg  = 10;
       bufsize   = 4096;
-type  MsgITyp   = WORD;
-      MsgCrcTyp = WORD;
+type  MsgITyp   = xpWord;
+      MsgCrcTyp = xpWord;
       Msg_Index = RECORD
                     LfCrc: MsgCrcTyp;
                     HeaderSize,      { Header-Gr”áe }
-                    MsgSize: WORD;   { Msg-Gr”áe in Bytes }
+                    MsgSize: xpWord;   { Msg-Gr”áe in Bytes }
                     DIndex: LongINT;
                     KommentarZu,
                     Antwort,
@@ -666,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/12/21 05:38:02  dodi
+  - removed questionable references to Word type
+
   Revision 1.50  2002/12/14 07:31:38  dodi
   - using new types
 

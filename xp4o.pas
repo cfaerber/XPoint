@@ -1684,11 +1684,11 @@ var x,y,yy  : Integer;
     reo     : boolean;
     bufa    : array[1..maxbufs] of record
                                      bp   : pointer;
-                                     size : word;
+                                     size : xpWord;
                                    end;
     bufs    : byte;
     break   : boolean;
-    mi      : word;
+    mi      : xpWord;
     voll    : boolean;        { kein Platz fuer eine ode mehrere Abl. }
     errflag : boolean;
 
@@ -2378,7 +2378,7 @@ var fname   : String;
     sortbox    : boolean;
     sort      : byte;
     ab,ab1     : longint;
-    dbindex    : word;
+    dbindex    : xpWord;
     s          : string[80];
     sa,sa1     : string [20];
 
@@ -2688,7 +2688,7 @@ var hdp   : Theader;
     t     : taste;
     s     : atext;
 
-  procedure apps(nr:word; s:string);
+  procedure apps(nr:xpWord; s:string);
   begin
     inc(anz);
     xxs[anz]:=getres2(459,nr)+' '+LeftStr(s,53);
@@ -3103,7 +3103,7 @@ var
   ar   : ArchRec;
   lm   : byte;
 
-  function dt(d,t:word):string;
+  function dt(d,t:xpWord):string;
   begin
     dt:=formi(d and 31,2)+'.'+formi((d shr 5) and 15,2)+'.'+
         formi((d shr 9+80)mod 100,2)+'  '+
@@ -3738,6 +3738,9 @@ end;
 
 {
   $Log$
+  Revision 1.152  2002/12/21 05:37:57  dodi
+  - removed questionable references to Word type
+
   Revision 1.151  2002/12/14 07:31:34  dodi
   - using new types
 

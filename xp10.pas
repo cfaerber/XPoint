@@ -260,7 +260,7 @@ end;
 
 function getflags(s:string):byte;
 var fl,i : byte;
-    f    : word;
+    f    : integer;
 begin
   f:=1; fl:=0;
   for i:=1 to 8 do begin
@@ -573,7 +573,7 @@ var pa    : phoneap;
       end;
   end;
 
-  procedure x7(nr:word);
+  procedure x7(nr:integer);
   begin
     xs('7-'+strs(nr));
   end;
@@ -2253,7 +2253,7 @@ function CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
 var i       : integer;
     dow,tag : integer;    { 1 = Mo }
     zone    : integer;
-    h,m     : word;
+    h,m     : integer;
     s,sum   : real;
     manz    : integer;
 
@@ -2976,7 +2976,7 @@ var brk     : boolean;
         active:=(von<=time) and (time<=bis+':59');
   end;
 
-  function addtime(t:datetimest; sec:word):datetimest;
+  function addtime(t:datetimest; sec:integer):datetimest;
   var l : longint;
   begin
     l:=ival(LeftStr(t,2))*3600+ival(copy(t,4,2))*60+ival(RightStr(t,2))+sec;
@@ -3261,6 +3261,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.79  2002/12/21 05:37:53  dodi
+  - removed questionable references to Word type
+
   Revision 1.78  2002/12/14 22:43:37  dodi
   - fixed some hints and warnings
 

@@ -35,7 +35,7 @@ uses
 
 procedure DES_PW(keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
-                   size:word; x,y:byte);
+                   size:xpWord; x,y:byte);
 
 implementation  {--------------------------------------------}
 
@@ -401,7 +401,7 @@ end;
 
 
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
-                   size:word; x,y:byte);
+                   size:xpWord; x,y:byte);
 var i,j,n : integer;
     nn,tt : longint;
     p,pn  : integer;
@@ -427,6 +427,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/12/21 05:37:59  dodi
+  - removed questionable references to Word type
+
   Revision 1.19  2002/12/14 07:31:36  dodi
   - using new types
 

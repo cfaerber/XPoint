@@ -885,7 +885,7 @@ end;
 { Positionszeiger in Absatz auf naechsten Zeilenbeginn bewegen }
 { Offset muss auf Zeilenanfang zeigen!                         }
 
-function Advance(ap:absatzp; offset,rand:word):integer;
+function Advance(ap:absatzp; offset,rand:xpWord):integer;
 var zlen : integer;   { Zeilenlaenge }
 begin
   with ap^ do
@@ -1086,7 +1086,7 @@ var  dl         : displp;
 
     procedure SetAbsCol;
     var p,p0 : byte;
-        s    : word;
+        s    : xpWord;
         qn   : integer;
         pdiff: integer;
     begin
@@ -2109,7 +2109,7 @@ var  dl         : displp;
 
   procedure DELchar;              { DEL - Zeichen loeschen }
   var ap,ap2,apnew : absatzp;
-      ss,size1,wp  : word;
+      ss,size1,wp  : xpWord;
       addspaces    : integer;
       wpa          : absatzp;
       QuoteCharCount: Integer;    { Anzahl Quotezeichen fuer Quote-Reflow }
@@ -2216,7 +2216,7 @@ var  dl         : displp;
   end;
 
   procedure WortLinksLoeschen;    { Wort links loeschen }
-  var wp,wpnew: word;
+  var wp,wpnew: xpWord;
       wpa             : absatzp;
   begin
     if workpos=0 then
@@ -2506,7 +2506,7 @@ var  dl         : displp;
 
   procedure Insert(var blk:absatzp; var endpos:position);
   var ap,ap2,ap3,apn : absatzp;
-      ss             : word;
+      ss             : xpWord;
       wp             : integer;
       spaces         : integer;
   begin
@@ -2983,8 +2983,8 @@ var  dl         : displp;
 
   procedure BlockDrucken;
   var ap,endap   : absatzp;
-      ofs,endofs : word;
-      nofs       : word;
+      ofs,endofs : xpWord;
+      nofs       : xpWord;
       s          : string;
   begin
     with e^ do begin
@@ -3134,7 +3134,7 @@ var  dl         : displp;
   var
         stxt  : string;
         spos  : integer;
-        sofs  : word;
+        sofs  : xpWord;
         ap    : absatzp;
         insap : absatzp;
         pos   : position;
@@ -3391,7 +3391,7 @@ var  dl         : displp;
 
   procedure Einstellungen;
   var brk      : boolean;
-      wp,o,nxo : word;
+      wp,o,nxo : xpWord;
   begin
     with e^ do
       if @Procs.CfgFunc=nil then
@@ -4016,6 +4016,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.91  2002/12/21 05:37:49  dodi
+  - removed questionable references to Word type
+
   Revision 1.90  2002/12/14 22:43:36  dodi
   - fixed some hints and warnings
 

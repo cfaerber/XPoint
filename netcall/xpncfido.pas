@@ -806,7 +806,7 @@ end;
 function GetCrashbox:string;
 var x,y : Integer;
     brk : boolean;
-    anz : word;
+    anz : xpWord;
     t   : text;
     s   : string;
     adr : string;
@@ -814,7 +814,7 @@ var x,y : Integer;
     c,f : boolean;
     old : boolean;    { zurÅckgestellter Request }
     fa  : FidoAdr;
-    h   : word;
+    h   : xpWord;
     List: TLister;
 
 label again;
@@ -922,6 +922,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2002/12/21 05:38:07  dodi
+  - removed questionable references to Word type
+
   Revision 1.38  2002/12/05 19:36:22  dodi
   - removed ambiguous word type
 

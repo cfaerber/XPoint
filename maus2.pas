@@ -30,7 +30,7 @@ uses
   {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
   {$IFDEF Win32} Windows, {$ENDIF}
   keys, //taste, in interface for NCRT
-  xpglobal; //todo: word
+  xpglobal; 
 
 const mausleft    = #0#240;       { links gedrueckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -79,7 +79,7 @@ function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var Sp
 {$IFDEF NCRT}
 function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
 {$ELSE}
-procedure mint(intsource,tasten,x,y,mx,my:word);
+procedure mint(intsource,tasten,x,y,mx,my:xpWord);
 {$ENDIF}
 {$ENDIF}
 
@@ -98,8 +98,8 @@ uses
 const  maxinside = 25;
 
 var    koo_da : boolean = false;   { Koordinaten abholbereit }
-       lx     : word    = 255;     { letzte Maus-Textcursor-Positionen }
-       ly     : word    = 255;
+       lx     : xpWord    = 255;     { letzte Maus-Textcursor-Positionen }
+       ly     : xpWord    = 255;
        dbcl   : byte    = mausdbl_norm;
        istack : byte    = 0;
 {$IFDEF Win32}
@@ -113,7 +113,7 @@ var
   inside : array[1..maxinside,0..3] of byte;
   insen  : array[1..maxinside,0..2] of boolean;
 
-function has_moved(x,y:word): boolean;
+function has_moved(x,y:xpWord): boolean;
 begin
   result:=((lx<>x)or(y<>ly))
           and((lx<>255)and(ly<>255));
@@ -122,7 +122,7 @@ end;
 
 function auto_move: boolean;
 var nn:boolean;
-    yy:word;
+    yy:xpWord;
 begin
   yy:=_mausy;
 
@@ -322,7 +322,7 @@ begin
   result:=rr;
 end;
 {$ELSE}
-procedure mint(intsource,tasten,x,y,mx,my:word);
+procedure mint(intsource,tasten,x,y,mx,my:xpWord);
 
 const tick       : longint = 0;
 var
@@ -558,6 +558,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.51  2002/12/12 11:58:40  dodi
   - set $WRITEABLECONT OFF
 

@@ -58,13 +58,13 @@ type   arcpath = string[79];
                    ende     : boolean;       { keine weiteren Dateien }
                    adr      : longint;       { Adresse der naechsten Datei }
                    method   : string[10];
-                   datum    : word;          { im DOS-Format }
-                   uhrzeit  : word;          { im DOS-Format }
+                   datum    : xpWord;          { im DOS-Format }
+                   uhrzeit  : xpWord;          { im DOS-Format }
                    orgsize  : longint;       { Groesse der Original-Datei }
                    compsize : longint;       { komprimierte Groesse       }
                    path     : arcpath;       { Pfad ohne Dateiname }
                    name     : string;
-                   attrib   : word;          { DOS-Attribute }
+                   attrib   : xpWord;          { DOS-Attribute }
                  end;
 
 
@@ -247,10 +247,10 @@ type archd = packed record
 
 
 var  dwcnum : longint;    { Anzahl DirEintraege }
-     dwcsize: word;       { Groesse der Eintraege }
+     dwcsize: xpWord;       { Groesse der Eintraege }
 
 
-function monthlen(j,m:word):word;
+function monthlen(j,m:xpWord):xpWord;
 begin
   case m of
     1 : monthlen:=31;
@@ -269,7 +269,7 @@ end;
 
 { Sekunden seit 1970 in DOS-Timestamp umwandeln }
 
-procedure GetDateFrom70(secs:longint; var datum,uhrzeit:word);
+procedure GetDateFrom70(secs:longint; var datum,uhrzeit:xpWord);
 const tagsec = 24*60*60;
 var dt   : TDateTime;
     ts   : TTimeStamp;
@@ -325,7 +325,7 @@ var f    : file;
     typ  : longint;
     sfx  : boolean;
     sadr : longint;
-    fm   : word;
+    fm   : xpWord;
 
 label ende;
 
@@ -844,18 +844,18 @@ const maxbuf = 60000;
 var f1,f2 : file;
     rr    : Integer;
     p     : pointer;
-    ps    : word;
+    ps    : xpWord;
     fsrec : record
-              ofs  : word;   { Laenge MOD 512 }
-              secs : word;   { Laenge DIV 512 + 1 }
+              ofs  : xpWord;   { Laenge MOD 512 }
+              secs : xpWord;   { Laenge DIV 512 + 1 }
             end;
-    arcofs : word;
+    arcofs : xpWord;
     pkch   : array[0..1] of char;
 
   function SetLocalZipHeaders: Boolean; { MK 01/2000 Proz->Funk }
   var s   : string;
       b,p : byte;
-      n,i : word;
+      n,i : xpWord;
       adr : longint;
       rr  : Integer;
       rec : record
@@ -941,6 +941,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/12/21 05:37:48  dodi
+  - removed questionable references to Word type
+
   Revision 1.34  2002/12/04 16:56:55  dodi
   - updated uses, comments and todos
 

@@ -27,7 +27,7 @@ interface
 uses
   datadef;  //dbIndexCRec
 
-procedure wkey(sec:word; count:boolean);  //todo: word -> Integer
+procedure wkey(sec:integer; count:boolean);
 function  DruckWiederholen:boolean;
 procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
@@ -44,7 +44,7 @@ uses
   xpglobal;
 
 
-procedure wkey(sec:word; count:boolean);
+procedure wkey(sec:integer; count:boolean);
 var t,t0   : longint;
     rest   : longint;
     last   : integer;
@@ -220,6 +220,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/12/21 05:37:54  dodi
+  - removed questionable references to Word type
+
   Revision 1.25  2002/12/12 11:58:43  dodi
   - set $WRITEABLECONT OFF
 

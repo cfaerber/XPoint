@@ -35,10 +35,10 @@ uses
 
 procedure dbSetICP(p:dbIndexCProc);
 procedure dbICproc(var icr:dbIndexCRec);                  { Default-ICP }
-procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
+procedure dbAllocateFL(var flp:dbFLP; feldanz:xpWord);
 procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
-procedure dbSetindexcache(pages:word);     { 1..MaxCache }
+procedure dbSetindexcache(pages:xpWord);     { 1..MaxCache }
 procedure dbReleasecache;
 procedure dbEnableIndexCache;
 procedure dbDisableIndexCache;
@@ -47,7 +47,7 @@ procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 {------------------------------------------------------- Datenbanken ---}
 
 function  dbHasField(const filename:string; const feldname:dbFeldStr):boolean;
-procedure dbOpen(var dbp:DB; name:dbFileName; flags:word);
+procedure dbOpen(var dbp:DB; name:dbFileName; flags:xpWord);
 procedure dbClose(var dbp:DB);
 procedure dbFlushClose(var dbp:DB);
 procedure dbTempClose(var dbp:DB);
@@ -71,9 +71,9 @@ procedure dbGoEnd(dbp:DB);
 
 {---------------------------------------------------- Suchen & Index ---}
 
-procedure dbSetIndex(dbp:DB; indnr:word);
-function  dbGetIndex(dbp:DB):word;
-procedure dbSeek(dbp:DB; indnr:word; const key:string);
+procedure dbSetIndex(dbp:DB; indnr:xpWord);
+function  dbGetIndex(dbp:DB):xpWord;
+procedure dbSeek(dbp:DB; indnr:xpWord; const key:string);
 function  dbFound:boolean;
 function  dbIntStr(i:integer16):string;
 function  dbLongStr(l:longint):string;
@@ -105,15 +105,15 @@ procedure dbReadXX (dbp:DB; const feld:dbFeldStr; var size:longint; const datei:
                     append:boolean);
 procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
-procedure dbWriteX (dbp:DB; const feld:dbFeldStr; size:word; var data);
+procedure dbWriteX (dbp:DB; const feld:dbFeldStr; size:xpWord; var data);
 procedure dbWriteXX(dbp:DB; const feld:dbFeldStr; const datei:string);
 
 procedure dbFlush(dbp:DB);
 procedure dbStopHU(dbp:DB);
 procedure dbRestartHU(dbp:DB);
 
-function  dbReadUserflag(dbp:DB; nr:byte):word;          { nr=1..8 }
-procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
+function  dbReadUserflag(dbp:DB; nr:byte):xpWord;          { nr=1..8 }
+procedure dbWriteUserflag(dbp:DB; nr:byte; value:xpWord);
 
 { Neue Funktionen wg. AnsiString }
 
@@ -122,7 +122,7 @@ function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
 
 procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
-procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:word; const s: string);
+procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:xpWord; const s: string);
 
 {--------------------------------------------- interne Routinen --------}
 
@@ -152,7 +152,7 @@ end;
 
 { Platz fuer feldanz Felder belegen }
 
-procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
+procedure dbAllocateFL(var flp:dbFLP; feldanz:xpWord);
 begin
   getmem(flp,2+sizeof(dbFeldTyp)*(feldanz+1));   { +1 wg. INT_NR }
   flp^.felder:=feldanz;
@@ -180,9 +180,9 @@ begin
 end;
 
 
-procedure getkey(dbp:DB; indnr:word; old:boolean; var key:string); forward;
-procedure insertkey(dbp:DB; indnr:word; const key:string); forward;
-procedure deletekey(dbp:DB; indnr:word; const key:string); forward;
+procedure getkey(dbp:DB; indnr:xpWord; old:boolean; var key:string); forward;
+procedure insertkey(dbp:DB; indnr:xpWord; const key:string); forward;
+procedure deletekey(dbp:DB; indnr:xpWord; const key:string); forward;
 
 
 { Datensatz schreiben }
@@ -271,9 +271,9 @@ begin
 end;
 
 
-procedure findkey(dbp:DB; indnr:word; searchkey:string; rec:boolean;
+procedure findkey(dbp:DB; indnr:xpWord; searchkey:string; rec:boolean;
                   var data:longint); forward;
-procedure AllocNode(dbp:DB; indnr:word; var np:inodep); forward;
+procedure AllocNode(dbp:DB; indnr:xpWord; var np:inodep); forward;
 procedure FreeNode(var np:inodep); forward;
 procedure ReadNode(offs:longint; var np:inodep); forward;
 
@@ -532,7 +532,7 @@ end;
 
 { Cache-Seiten allokieren }
 
-procedure dbSetindexcache(pages:word);
+procedure dbSetindexcache(pages:xpWord);
 begin
   cacheanz:=pages;
   getmem(cache,pages*sizeof(cachepage));
@@ -557,7 +557,7 @@ begin
   dbReleaseCache;
 end;
 
-procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
+procedure cache_read(dbp:DB; irsize:xpWord; offs:longint; var data);
 var
   s,i,sp : integer;
   TempCachePage: PCachepage;
@@ -616,7 +616,7 @@ begin
 end;
 
 
-procedure cache_write(dbp:DB; irsize:word; offs:longint; var data);
+procedure cache_write(dbp:DB; irsize:xpWord; offs:longint; var data);
 var i,sp : integer;
     s    : longint;
 begin
@@ -656,8 +656,8 @@ end;
 
 { Platz fuer Index-Knoten auf Heap belegen }
 
-procedure AllocNode(dbp:DB; indnr:word; var np:inodep);
-var size: word;
+procedure AllocNode(dbp:DB; indnr:xpWord; var np:inodep);
+var size: xpWord;
 begin
   with dp(dbp)^.index^[indnr] do begin
     size:=16+(nn+1)*sizeof(inodekey);
@@ -752,7 +752,7 @@ end;
 procedure WriteNode(var np:inodep);
 var rbuf : barrp;
     wp   : ^smallword absolute rbuf;
-    i,o  : word;
+    i,o  : xpWord;
 begin
   with np^, dp(db_p)^ do begin
       getmem(rbuf,irsize);
@@ -771,7 +771,7 @@ end;
 
 { einzelnen Index in Header schreiben }
 
-procedure writeindf(dbp:DB; indnr:word);
+procedure writeindf(dbp:DB; indnr:xpWord);
 begin
   with dp(dbp)^ do begin
     seek(fi,32*indnr);
@@ -782,7 +782,7 @@ end;
 
 { Datensatz in Indexdatei belegen }
 
-procedure AllocateIrec(dbp:DB; indnr:word; var adr:longint);
+procedure AllocateIrec(dbp:DB; indnr:xpWord; var adr:longint);
 begin
   with dp(dbp)^,index^[indnr] do
       if firstfree=0 then adr:=filesize(fi)
@@ -797,7 +797,7 @@ end;
 
 { Datensatz in Indexdatei freigeben }
 
-procedure ReleaseIrec(dbp:DB; indnr:word; adr:longint);
+procedure ReleaseIrec(dbp:DB; indnr:xpWord; adr:longint);
 var l : longint;
 begin
   with dp(dbp)^ , index^[indnr] do begin
@@ -847,7 +847,7 @@ end;
 
 { Key zusammensetzen }
 
-procedure getkey(dbp:DB; indnr:word; old:boolean; var key:string);
+procedure getkey(dbp:DB; indnr:xpWord; old:boolean; var key:string);
 var i,j : byte;
     s   : string;
     r   : real;
@@ -895,7 +895,7 @@ end;
 
 { Index-Schluessel 'key' in Index Nr. 'indnr' von Datenbank 'dbp' einfuegen }
 
-procedure insertkey(dbp:DB; indnr:word; const key:string);
+procedure insertkey(dbp:DB; indnr:xpWord; const key:string);
 
 var bf        : inodep;
     risen     : boolean;
@@ -1002,7 +1002,7 @@ end;
 
 { Index-Schluessel 'key' aus Index Nr. 'indnr' von Datenbank 'dbp' loeschen }
 
-procedure deletekey(dbp:DB; indnr:word; const key:string);
+procedure deletekey(dbp:DB; indnr:xpWord; const key:string);
 var z         : longint;
     underflow : boolean;
     bf        : inodep;
@@ -1188,7 +1188,7 @@ end;
 { Satznummer 'data' gesucht.                                       }
 { Falls gefunden, ist found=true und data=Satznummer.              }
 
-procedure findkey(dbp:DB; indnr:word; searchkey:string; rec:boolean;
+procedure findkey(dbp:DB; indnr:xpWord; searchkey:string; rec:boolean;
                   var data:longint);
 
 var bf   : inodep;
@@ -1306,7 +1306,7 @@ var icr : dbIndexCRec;
   var i      : integer;
       p      : byte;
       fn     : dbFeldStr;
-      upflag : word;
+      upflag : xpWord;
       fnr    : integer;
       if_flag: boolean;
       key    : string;
@@ -1444,7 +1444,7 @@ end;
 { unabhaengig von dbSeek (lastindex kann <> actindex sein) }
 { indnr=0 -> physikalische Reihenfolge bei offenem Index  }
 
-procedure dbSetIndex(dbp:DB; indnr:word);
+procedure dbSetIndex(dbp:DB; indnr:xpWord);
 begin
   korr_actindex(dbp);
   with dp(dbp)^ do
@@ -1457,7 +1457,7 @@ begin
 end;
 
 
-function dbGetIndex(dbp:DB):word;
+function dbGetIndex(dbp:DB):xpWord;
 begin
   dbGetINdex:=dp(dbp)^.actindex;
 end;
@@ -1467,7 +1467,7 @@ end;
 { Ergebnis kann mit dbFound abgefragt werden. Ist found=false, aber  }
 { auch EOF=False, dann ist der naechst*groessere* Satz gueltig.         }
 
-procedure dbSeek(dbp:DB; indnr:word; const key:string);
+procedure dbSeek(dbp:DB; indnr:xpWord; const key:string);
 var x : longint;
 begin
   dbFlush(dbp);
@@ -1540,7 +1540,7 @@ end;
 { xflag und ixflag werden erst *nach* erfolgreichem Oeffnen der }
 { Dateien gesetzt, um bei IOErrors Folgefehler zu vermeiden.   }
 
-procedure dbOpen(var dbp:DB; name:dbFileName; flags:word);
+procedure dbOpen(var dbp:DB; name:dbFileName; flags:xpWord);
 var i,o   : integer;
     fld   : dbfeld;
     xxflag: boolean;
@@ -2361,7 +2361,7 @@ procedure dbReadXX(dbp:DB; const feld:dbFeldStr; var size:longint; const datei:s
                    append:boolean);
 var l    : longint;
     f    : file;
-    s: word;
+    s: xpWord;
     rr: Integer;
     p    : pointer;
 begin
@@ -2397,7 +2397,7 @@ end;
 procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
 var l    : longint;
-    s: word;
+    s: xpWord;
     rr: Integer;
     p    : pointer;
 begin
@@ -2452,7 +2452,7 @@ end;
 
 { Aus Speicher in externe Datei schreiben }
 
-procedure dbWriteX(dbp:DB; const feld:dbFeldStr; size:word; var data);
+procedure dbWriteX(dbp:DB; const feld:dbFeldStr; size:xpWord; var data);
 var adr,ss: longint;
 begin
   with dp(dbp)^ do begin
@@ -2466,7 +2466,7 @@ begin
     end;
 end;
 
-procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:word; const s: string);
+procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:xpWord; const s: string);
 var
   s0: shortstring;
 begin
@@ -2506,12 +2506,12 @@ begin
 end;
 
 
-function dbReadUserflag(dbp:DB; nr:byte):word;          { nr=1..8 }
+function dbReadUserflag(dbp:DB; nr:byte):xpWord;          { nr=1..8 }
 begin
   dbReadUserflag:=dp(dbp)^.hd.userflags[nr];
 end;
 
-procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
+procedure dbWriteUserflag(dbp:DB; nr:byte; value:xpWord);
 begin
   dp(dbp)^.hd.userflags[nr]:=value;
   writehd(dbp);
@@ -2599,6 +2599,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2002/12/21 05:37:48  dodi
+  - removed questionable references to Word type
+
   Revision 1.62  2002/12/14 07:31:26  dodi
   - using new types
 

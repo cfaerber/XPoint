@@ -153,7 +153,7 @@ type   EdColrec = record
 
        EdConfig = record
                     absatzendezeichen : char;
-                    rechter_rand      : word;
+                    rechter_rand      : xpWord;
                     AutoIndent        : boolean;
                     PersistentBlocks  : boolean;
                     QuoteReflow       : boolean;
@@ -183,6 +183,9 @@ implementation
 
 {
   $Log$
+  Revision 1.20  2002/12/21 05:37:49  dodi
+  - removed questionable references to Word type
+
   Revision 1.19  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

@@ -110,7 +110,7 @@ var hd    : dbheader;
     ehd   : dbdheader;
     f     : file;
     i     : integer;
-    size  : word;
+    size  : integer;
     fld   : dbFeld;
     xflag : boolean;
 begin
@@ -209,7 +209,7 @@ procedure dbAppendField(const filename:string; feld:dbFeldTyp);
 var d       : DB;
     df      : dbfeld;
     i       : longint;
-    newsize : word;
+    newsize : integer;
     irec    : dbIndexCRec;
 begin
   dbOpen(d,filename,0);
@@ -257,7 +257,7 @@ procedure dbDeleteField(const filename:string; const feldname:dbFeldStr);
 var fnr     : integer; { muß integer sein, da fkt -1 zurückgeben kann }
     d       : DB;
     irec    : dbIndexCRec;
-    newsize : word;
+    newsize : integer;
     i       : longint;
     df      : dbfeld;
 begin
@@ -433,6 +433,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/12/21 05:37:48  dodi
+  - removed questionable references to Word type
+
   Revision 1.23  2002/12/06 14:27:26  dodi
   - updated uses, comments and todos
 

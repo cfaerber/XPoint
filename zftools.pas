@@ -45,7 +45,7 @@ var   infile    : string = '';       { kann Wildcard enthalten }
       toadr     : string = '';
       direction : byte = 0;           { 1 = Z->F, 2 = F->Z }
       bretter   : string = '';
-      fakenet   : word = 0;
+      fakenet   : xpWord = 0;
       adr3d     : boolean = false;
       ppassword : string = '';
       LocalINTL : boolean = true;
@@ -64,8 +64,8 @@ const ReadFirst = 2500;
 
 type  FidoAdr  = record
                    username   : string;
-                   zone,net   : word;
-                   node,point : word;
+                   zone,net   : xpWord;
+                   node,point : xpWord;
                    ispoint    : boolean;
                  end;
 
@@ -87,8 +87,8 @@ type  FidoAdr  = record
                    programm   : string;         { Mailer-Name }
                    datei      : string;         { Dateiname }
                    prio       : byte;           { 10=direkt, 20=Eilmail }
-                   attrib     : word;           { Attribut-Bits }
-                   filterattr : word;
+                   attrib     : xpWord;           { Attribut-Bits }
+                   filterattr : xpWord;
                    fido_to    : string;
                    fido_flags : string;
                    charset,x_charset  : string;
@@ -601,7 +601,7 @@ end;
 
 procedure WriteHeader(var hd:zheader; var f:file);
 var buffer : array[0..2047] of byte;
-    ofs    : word;
+    ofs    : xpWord;
     i      : integer;
 
   procedure writebuffer;
@@ -691,7 +691,7 @@ var f1,f2   : file;
     reqnode : string;
     x,y     : Integer;
 
-  procedure wrw(w:word);
+  procedure wrw(w:xpWord);
   begin
     blockwrite(f2,w,2);
   end;
@@ -1044,10 +1044,10 @@ var f1,f2  : file;
                     dp    : char);
              end;
     ende   : boolean;
-    fmpt   : word;  isfmpt: boolean;
-    topt   : word;  istopt: boolean;
-    fmzone : word;
-    tozone : word;
+    fmpt   : xpWord;  isfmpt: boolean;
+    topt   : xpWord;  istopt: boolean;
+    fmzone : xpWord;
+    tozone : xpWord;
     s      : string;
     origin : fidoadr;
     madr   : longint;
@@ -1055,7 +1055,7 @@ var f1,f2  : file;
     lfs    : byte;        { LF's am Zeilenende bei GetString }
     prog2  : string;
     brt2   : string;  { <- bretter }
-    zone   : word;
+    zone   : xpWord;
     box    : string;
     pok    : boolean;
     msgbuf : charrp;      { Puffer fuer kompletten Nachrichteninhalt }
@@ -1163,7 +1163,7 @@ label abbr;
               copy(s,15,2);
   end;
 
-  function seek0(var buf; smallsize: LongWord):word; assembler; {&uses edi} { suche #0 }
+  function seek0(var buf; smallsize: LongWord):xpWord; assembler; {&uses edi} { suche #0 }
   asm
     mov  ecx, smallsize
     mov  edi, buf
@@ -1179,7 +1179,7 @@ label abbr;
   end;
   {$ENDIF }
 
-  function seekt(var buf; size: LongWord):word; assembler; {&uses edi } { suche _'---'_ }
+  function seekt(var buf; size: LongWord):xpWord; assembler; {&uses edi } { suche _'---'_ }
   asm
         mov ecx, size
         mov edi, buf
@@ -1811,6 +1811,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.35  2002/12/21 05:38:04  dodi
+        - removed questionable references to Word type
+
         Revision 1.34  2002/12/14 07:31:41  dodi
         - using new types
 

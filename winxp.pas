@@ -77,7 +77,6 @@ const
 type  selproc = procedure(var sel:slcttyp);
 
 type  TxpHandle = byte; //0..maxpull
-      TWord = integer;  //todo: adjust or remove, as appropriate
 
 var   wpstack  : array[1..maxpush] of TxpHandle;
       wpp      : byte;
@@ -85,14 +84,14 @@ var   wpstack  : array[1..maxpush] of TxpHandle;
       warrcol  : byte;        { Farbe fuer Pfeile          }
       selp     : selproc;
 
-procedure clwin(l,r,o,u:TWord);
+procedure clwin(l,r,o,u:xpWord);
 
 procedure rahmen1(li,re,ob,un: Integer; const txt:string);    { Rahmen ³ zeichen       }
 procedure rahmen2(li,re,ob,un: Integer; const txt:string);    { Rahmen º zeichnen      }
 procedure rahmen3(li,re,ob,un: Integer; const txt:string);    { Special-Rahmen         }
 procedure rahmen1d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ³ zeichen }
 procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen º zeichnen}
-procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:TWord; const txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:xpWord; const txt:string);
 procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 
 procedure setrahmen(n:shortint);                 { Rahmenart fuer wpull+ setzen }
@@ -100,8 +99,8 @@ function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: TxpHandle);
 procedure wrest(handle: TxpHandle);
-procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:TWord;
-  abs1:boolean; var n:TWord; var brk:boolean);
+procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:xpWord;
+  abs1:boolean; var n:xpWord; var brk:boolean);
 procedure seldummy(var sel:slcttyp);
 procedure wpush(x1,x2,y1,y2: integer; text:string);
 procedure wpushs(x1,x2,y1,y2: integer; text:string);
@@ -129,9 +128,9 @@ procedure ClrScr;
 
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht veraendert }
-procedure SDisp(const x,y:TWord; const s:string);
+procedure SDisp(const x,y:xpWord; const s:string);
 
-procedure consolewrite(x,y:TWord; num: Integer);
+procedure consolewrite(x,y:xpWord; num: Integer);
 
 
 { Routinen fuer 32 Bit Versionen, die den Zugriff auf den Bildschirm
@@ -313,7 +312,7 @@ begin
 end;
 {$ENDIF }
 
-procedure clwin(l,r,o,u:TWord);
+procedure clwin(l,r,o,u:xpWord);
 var
   i: Integer;
 begin
@@ -433,7 +432,7 @@ end;
 {$ENDIF NCRT }
 
 {$IFDEF Win32Console }
-  procedure consolewrite(x,y:TWord; num: Integer);  { 80  Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:xpWord; num: Integer);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
     OutRes: ULong;                            { Auf Konsole ausgeben....}
@@ -442,7 +441,7 @@ end;
     Num := Win32_Wrt(WritePos,Copy(charbuf,1,num));
     WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
-  procedure consolewrite(x,y:TWord; num: Integer);  { Num = Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:xpWord; num: Integer);  { Num = Chars in xp0.charpuf (String) }
   var
     i, j: Integer;                        
   begin
@@ -512,7 +511,7 @@ end;
 
 {$ENDIF}
 
-procedure SDisp(const x,y:TWord; const s:string);
+procedure SDisp(const x,y:xpWord; const s:string);
 {$IFDEF Win32Console }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
@@ -669,7 +668,7 @@ end;
 {$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
-procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:TWord; const txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:xpWord; const txt:string);
 var la           : byte;
     ls,rs,os,us,
     i,nx,ny,del  : byte;
@@ -856,7 +855,7 @@ end;
 {$ENDIF }
 
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-var i,j : TWord;
+var i,j : xpWord;
     xch : boolean;
     sa  : slcttyp;
     l   : pntslcta;
@@ -876,12 +875,12 @@ begin
 end;
 
 
-procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:TWord;
-  abs1:boolean; var n:TWord; var brk:boolean);
+procedure wslct(anz:integer; ta:pntslcta; handle:TxpHandle; pos:xpWord;
+  abs1:boolean; var n:xpWord; var brk:boolean);
 
 var z          : taste;
     i,po,pon   : integer;
-    wsize      : TWord;
+    wsize      : xpWord;
     pa,pan     : integer;
     ende       : boolean;
     ox         : integer;
@@ -1528,6 +1527,9 @@ end;
 
 {
   $Log$
+  Revision 1.92  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.91  2002/12/14 07:31:28  dodi
   - using new types
 

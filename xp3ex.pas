@@ -470,7 +470,7 @@ var size   : longint;
     end;
   end;
 
-  function gr(nr:word):string;
+  function gr(nr:integer):string;
   begin
     gr:=getres2(361,nr);
   end;
@@ -1232,6 +1232,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.102  2002/12/21 05:37:55  dodi
+  - removed questionable references to Word type
+
   Revision 1.101  2002/12/16 14:53:11  mk
   - fixed compiler warning
 

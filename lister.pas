@@ -56,12 +56,12 @@ type
 
   TLister = class;
 
-  TListerConvertEvent = procedure(var buf; Size: word) of object; { fuer Zeichensatzkonvert. }
+  TListerConvertEvent = procedure(var buf; Size: xpWord) of object; { fuer Zeichensatzkonvert. }
   TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
-  TListerDisplayLineEvent = procedure(x, y: word; var s: string);
+  TListerDisplayLineEvent = procedure(x, y: xpWord; var s: string);
   TListerColorEvent = function(const s: string; line: longint): byte;
 
   { moegliche Optionen fuer den Lister                             }
@@ -381,7 +381,7 @@ var
   f: file;
   s: string;
   p: ^ListerCharArray;
-  ps: word;
+  ps: xpWord;
   rp: Integer;
   rr: Integer;
   fm: byte;
@@ -1149,6 +1149,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.76  2002/12/21 05:37:50  dodi
+  - removed questionable references to Word type
+
   Revision 1.75  2002/12/14 09:25:17  dodi
   - removed gpltools and encoder units
 

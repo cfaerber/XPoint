@@ -44,10 +44,10 @@ const maxpages = 1200;
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
 function  inithelp(name:string; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
-procedure sethelppos(_x,_y,height:word);
+procedure sethelppos(_x,_y,height:sysWord);
 procedure help_printable(printchar:taste; pinit,pexit:string);
 
-procedure IHS(page:word);
+procedure IHS(page:sysWord);
 procedure releasehelp;
 
 
@@ -97,7 +97,7 @@ var f         : file;
     x,y       : integer;
     pages,
     ixp,ap,
-    illp      : word;
+    illp      : sysWord;
     noheader  : boolean;
     tabmode   : boolean;
 
@@ -106,7 +106,7 @@ var f         : file;
     dodecode,
     headhigh  : boolean;
 
-    last,next : word;
+    last,next : sysWord;
     qvws      : byte;
     qvw       : ^qvt;
     lines     : integer;
@@ -114,7 +114,7 @@ var f         : file;
     z         : ^zt;
     wdt,hgh   : integer;
 
-    pst       : array[1..maxpst] of word;
+    pst       : array[1..maxpst] of sysWord;
     qst       : array[1..maxpst] of byte;
     ast       : array[1..maxpst] of integer;
     pstp      :integer;
@@ -237,7 +237,7 @@ begin
 end;
 
 
-procedure sethelppos(_x,_y,height:word);
+procedure sethelppos(_x,_y,height:sysWord);
 begin
   x:=_x; y:=_y; hgh:=height;
 end;
@@ -257,14 +257,14 @@ end ['EAX', 'EBX', 'ECX'];
 end;
 {$ENDIF }
 
-procedure loadpage(nr:word; pstentry:boolean);
+procedure loadpage(nr:sysWord; pstentry:boolean);
 type buft    = array[1..32768] of byte;
-var  size    : word;
+var  size    : sysWord;
      buf     : ^buft;
      i,sl,ps : integer;
-     p,p1    : word;
+     p,p1    : sysWord;
      s       : string;
-     l,r,m   : word;
+     l,r,m   : sysWord;
      lc      : char;
      res     : integer;
      wd      : byte;
@@ -497,8 +497,8 @@ begin
 end;
 
 
-procedure IHS(page:word);
-var lp      : word;
+procedure IHS(page:sysWord);
+var lp      : sysWord;
     la,i    : integer;
     t       : taste;
     uc      : char;
@@ -521,7 +521,7 @@ var lp      : word;
 
   function noother:boolean;
   var other : boolean;
-      i     : word;
+      i     : sysWord;
   begin
     other:=false;
     for i:=1 to qvws do
@@ -529,7 +529,7 @@ var lp      : word;
     noother:=not other;
   end;
 
-  procedure searchsame(add:shortint; var nr:word);
+  procedure searchsame(add:shortint; var nr:sysWord);
   begin
     nr:=qvp;
     repeat
@@ -540,7 +540,7 @@ var lp      : word;
     if nr=qvp then nr:=0;
   end;
 
-  procedure searchother(add:shortint; var nr:word);
+  procedure searchother(add:shortint; var nr:sysWord);
   begin
     nr:=qvp;
     repeat
@@ -550,9 +550,9 @@ var lp      : word;
     until qvw^[nr].y<>qvw^[qvp].y;
   end;
 
-  procedure searchlowdist(var nr:word);
-  var y,i : word;
-      d   : word;
+  procedure searchlowdist(var nr:sysWord);
+  var y,i : sysWord;
+      d   : sysWord;
   begin
     y:=qvw^[nr].y;
     d:=99;
@@ -564,7 +564,7 @@ var lp      : word;
   end;
 
   procedure goup;
-  var nr : word;
+  var nr : sysWord;
   begin
     if noother then goleft
     else begin
@@ -576,7 +576,7 @@ var lp      : word;
   end;
 
   procedure godown;
-  var nr : word;
+  var nr : sysWord;
   begin
     if noother then goright
     else begin
@@ -785,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.51  2002/12/21 05:37:50  dodi
+  - removed questionable references to Word type
+
   Revision 1.50  2002/12/12 11:58:39  dodi
   - set $WRITEABLECONT OFF
 

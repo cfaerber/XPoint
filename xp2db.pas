@@ -99,13 +99,13 @@ end;
 
 procedure initdatabase;
 var flp : dbFLP;
-    fnr : word;
+    fnr : xpWord;
     i   : integer;
     t   : text;
     dd  : DB;
 
 
-  procedure initflp(nr:word);
+  procedure initflp(nr:xpWord);
   begin
     dbAllocateFL(flp,nr);
     fnr:=0;
@@ -842,12 +842,12 @@ begin
     AppS('pmreplyto',80);  AppS('pmfqdn',60);
 
     AppS('QuoteChar',QuoteLen);
-    
+
     AppS('QuoteToMsk',8);
     AppS('PMKopf',8);
     AppS('PMSignatur',8);
     AppS('PMQuoteMsk',8);
-        
+
     dbCreate(GruppenFile,flp);
     dbReleaseFL(flp);
     end
@@ -997,6 +997,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2002/12/21 05:37:55  dodi
+  - removed questionable references to Word type
+
   Revision 1.47  2002/12/14 07:31:31  dodi
   - using new types
 

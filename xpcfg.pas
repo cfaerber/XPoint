@@ -340,7 +340,7 @@ function MakeSection(cs: TCfgSection): PCfgEntry;
 var
   r: PCfgEntry;
   i,j: integer;
-  ro: word;
+  ro: integer;
 begin
   r:= e;
   while (r^.next<>nil) do                       { Ganz ans Ende }
@@ -496,6 +496,9 @@ finalization
 
 {
   $Log$
+  Revision 1.17  2002/12/21 05:38:00  dodi
+  - removed questionable references to Word type
+
   Revision 1.16  2002/12/12 11:51:05  dodi
   - set $WRITEABLECONT OFF, updated finalization
 

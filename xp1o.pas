@@ -30,7 +30,8 @@ uses
   typeform, //atext
   keys, //taste
   lister, xpheader,
-  datadef;  //DB
+  datadef,  //DB
+  xpglobal;
 
 var   ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
@@ -74,7 +75,7 @@ function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
-function XPWinShell(prog:string; parfn:string; space:word;
+function XPWinShell(prog:string; parfn:string; space:xpWord;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
@@ -94,8 +95,7 @@ uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   stringtools,fileio,inout,maus2,printerx,database,maske,archive,resource,clip,
-  xp0,xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue,
-  xpglobal;
+  xp0,xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
 
 
 // get one line from lister, check for marked lines
@@ -919,7 +919,7 @@ end;
 { Bei Windows-Programmen wird direkt ueber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
-function XPWinShell(prog:string; parfn:string; space:word;
+function XPWinShell(prog:string; parfn:string; space:xpWord;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
@@ -1065,6 +1065,9 @@ end;
 
 {
   $Log$
+  Revision 1.117  2002/12/21 05:37:54  dodi
+  - removed questionable references to Word type
+
   Revision 1.116  2002/12/14 07:31:30  dodi
   - using new types
 

@@ -1813,8 +1813,7 @@ end;
 
 { functions to convert from/to MSB and LSB }
 
-Function Swap16(X : Word) : Word; {$IFNDEF Delphi} inline; {$ENDIF }
-//todo: word
+Function Swap16(X : smallword) : smallword; {$IFNDEF Delphi} inline; {$ENDIF }
 Begin
   result:=(X and $ff) shl 8 + (X shr 8)
 End;
@@ -1902,6 +1901,9 @@ end;
 
 {
   $Log$
+  Revision 1.126  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.125  2002/12/14 09:25:18  dodi
   - removed gpltools and encoder units
 

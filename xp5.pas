@@ -118,8 +118,8 @@ var   nt,n,mnt,
       xjj,xmm,xtt : integer;
       z           : taste;
       y,m,d       : smallword;
-      lm,lj       : word;
-      jj,mm,tt    : word;
+      lm,lj       : xpWord;
+      jj,mm,tt    : xpWord;
       di          : string;
       code        : integer;
 
@@ -131,7 +131,7 @@ var   nt,n,mnt,
   procedure ReadFeier;
   var t : text;
       s : string;
-      j : word;
+      j : xpWord;
   begin
     assign(t,feierDat);
     feieranz:=0;
@@ -552,7 +552,7 @@ var
       endss:=false;
   end;
 
-  procedure sdelay(n:word);
+  procedure sdelay(n:xpWord);
   var t:longint;
   begin
     n:=n div 2;
@@ -774,14 +774,14 @@ end;
 
 { 0 = kein Passwort }
 
-function U8:word;
+function U8:xpWord;
 begin
   u8:=(dbReadUserflag(mbase,8) shr 3) xor
       ((dbReadUserflag(mbase,8) shl 2) and $ffff);
 end;
 
 procedure InitPWsystem;
-var w : word;
+var w : xpWord;
 begin
   w:=random($ffff)+1;
   dbWriteUserflag(mbase,8,w);
@@ -789,12 +789,12 @@ begin
   dbWriteUserflag(mbase,2,U8);
 end;
 
-function ReadPassword(main:boolean):word;
+function ReadPassword(main:boolean):xpWord;
 begin
   ReadPassword:=dbReadUserflag(mbase,iif(main,1,2)) xor U8;
 end;
 
-procedure WritePassword(main:boolean; p:word);
+procedure WritePassword(main:boolean; p:xpWord);
 begin
   dbWriteUserflag(mbase,iif(main,1,2),p xor U8);
   if p<>0 then
@@ -806,7 +806,7 @@ begin
   closebox;
 end;
 
-function csum(s:string):word;
+function csum(s:string):xpWord;
 var i   : integer;
     sum : longint;
 begin
@@ -878,7 +878,7 @@ end;
 procedure EditPassword;
 var x,y  : Integer;
 var brk  : boolean;
-    p    : word;
+    p    : xpWord;
     main : boolean;
     typ  : string;
     i    : integer;
@@ -982,6 +982,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2002/12/21 05:37:59  dodi
+  - removed questionable references to Word type
+
   Revision 1.69  2002/12/12 11:58:48  dodi
   - set $WRITEABLECONT OFF
 

@@ -1150,7 +1150,7 @@ var d         : DB;
       fspass : string;
       convert: string;
       brk    : boolean;
-      w      : word;
+      w      : xpWord;
       b      : byte;
   begin
     name:=''; komm:='';
@@ -1187,7 +1187,7 @@ var d         : DB;
       fspass : string;
       convert: string;
       brk    : boolean;
-      w      : word;
+      w      : xpWord;
       typ    : byte;
   begin
     dbGo(d,drec[p]);
@@ -2642,7 +2642,7 @@ var   p,i,j,
       box_anz    : byte;
       nt        : eNetz;
       boxlen,
-      bfglen     : word;
+      bfglen     : xpWord;
       s1         : string;
       d          : DB;
       boxlist    : array[1..maxboxen] of string;
@@ -3129,6 +3129,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2002/12/21 05:38:00  dodi
+  - removed questionable references to Word type
+
   Revision 1.57  2002/12/16 01:05:13  dodi
   - fixed some hints and warnings
 

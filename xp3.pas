@@ -47,7 +47,7 @@ procedure UBUnmark(rec:longint);
 procedure XreadF(ofs:longint; var f:file);
 procedure XreadS(ofs:longint; s:TStream);
 procedure Xread(const fn:string; append:boolean);
-procedure XmemRead(ofs:word; var size: Integer; var data);
+procedure XmemRead(ofs:xpWord; var size: Integer; var data);
 procedure Xwrite(const fn:string);
 
 procedure Cut_QPC_DES(var betr:string);
@@ -575,7 +575,7 @@ begin
   close(f);
 end;
 
-procedure XmemRead(ofs:word; var size: Integer; var data);
+procedure XmemRead(ofs:xpWord; var size: Integer; var data);
 var
   ablage   : byte;
 begin
@@ -591,7 +591,7 @@ begin
     fillchar(data,size,0);
 end;
 
-{procedure XmemRead(ofs:word; var size: Integer; var data);
+{procedure XmemRead(ofs:xpWord; var size: Integer; var data);
 var
   ablage   : byte;
   f: Integer;
@@ -1183,6 +1183,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/12/21 05:37:55  dodi
+  - removed questionable references to Word type
+
   Revision 1.89  2002/12/14 07:31:31  dodi
   - using new types
 

@@ -495,13 +495,13 @@ type   textp  = ^text;
        cpsrec     = record
                       SaveLineControl  : byte;
                       SaveModemControl : byte;
-                      SaveDivisor      : word;
+                      SaveDivisor      : xpWord;
                       SaveIntEnable    : byte;
                       SaveIntmask      : byte;
                     end;
        ComRec = record
                   Fossil : boolean;
-                  Cport  : word;        { UART-Adresse   }
+                  Cport  : xpWord;        { UART-Adresse   }
                   Cirq   : byte;        { 0..7           }
                   MCommInit : string;  { ObjCOM-Comminit-String }
                   MInit  : string;
@@ -694,7 +694,7 @@ type   textp  = ^text;
                                   bname    : boolean;  { $FILE aus Betreff }
                                   ntyp     : byte;   { xp3.extract_msg.typ }
                                   listout  : boolean;  { Ausgabe an Lister }
-                                  speicher : word;       { 50 .. 500 KByte }
+                                  speicher : xpWord;       { 50 .. 500 KByte }
                                   vollbild : boolean;
                                   autoexec : boolean;
                                 end;
@@ -744,7 +744,7 @@ type   textp  = ^text;
 var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1);
-       menable : array[0..menus] of word = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+       menable : array[0..menus] of xpWord = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0);
        checker : array[0..menus] of byte = (0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,0,
@@ -774,7 +774,7 @@ var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        screenwidth: Integer = 80;      { Bildschirmspalten      }
        ConfigScreenLines:byte = 25;    { Config-Bildzeilen (wg. /z: }
        ConfigScreenWidth:byte = 80;      { Config-Bildschirmspalten }
-       OrgVideomode:word    = 3;
+       OrgVideomode:xpWord    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
        fidolastseek:string  = '';      { Fido/Fileliste/Suchen  }
        abgelaufen1: boolean = false;   { Betaversion ist abgelaufen }
@@ -867,7 +867,7 @@ var    showungelesen : boolean = true;   { Bretter mit ungel. Nachrichten auch m
        UserAutoCreate  : boolean = false; { Unbekannte User beim Beantworten und }
                                           { Archivieren ohne RÅckfrage anlegen   }
 
-       Boundary_Counter: Word = 0;
+       Boundary_Counter: xpWord = 0;
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1160,7 +1160,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _fehler_    : string;
        _hinweis_   : string;
        _days_      : string;        { 'Monatag Dienstag ... ' }
-       _daylen_    : word;
+       _daylen_    : xpWord;
        StatBrett,                    { /ªStatistik  }
        UnvBrett,                     { /ªUnversandt }
        NetBrett    : string;     { /ªNetzanruf  }
@@ -1193,7 +1193,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses : string;
 
-{ Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
+{ Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attributen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
   charbuf     : shortstring;                 { Nicht zu klein :-) }
@@ -1213,6 +1213,9 @@ implementation
 
 {
   $Log$
+  Revision 1.171  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.170  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

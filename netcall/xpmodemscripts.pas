@@ -112,7 +112,7 @@ var t      : text;
     stringflag : boolean;
     ok     : boolean;
 
-  procedure serror(nr:word; txt:string);
+  procedure serror(nr:integer; txt:string);
   begin
     writeln(errlog,getreps2(2010,0,strs(line))+getreps2(2010,nr,txt));
     ok:=false;
@@ -464,7 +464,7 @@ var ip   : integer;
     sp   : integer;
     ExecuteScriptRes: shortint;
 
-  procedure RunError(nr:word);
+  procedure RunError(nr:integer);
   begin
     xp1.fehler(getres2(2011,3)+' '+getres2(2011,nr)+#7);
     logerror(getres2(2011,3)+' '+getres2(2011,nr));
@@ -670,6 +670,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/12/21 05:38:06  dodi
+  - removed questionable references to Word type
+
   Revision 1.11  2002/12/14 07:31:45  dodi
   - using new types
 

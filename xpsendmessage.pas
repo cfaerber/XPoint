@@ -372,7 +372,7 @@ uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
   xpsendmessage_internal, xpstreams, addresses, 
   xpserver;
 
-procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
+procedure ukonv(typ:byte; var data; var bytes:integer); assembler; {&uses ebx, esi, edi}
 asm
          xor   edx, edx
          mov   edi,bytes
@@ -2032,6 +2032,9 @@ finalization
 
 {
   $Log$
+  Revision 1.68  2002/12/21 05:38:02  dodi
+  - removed questionable references to Word type
+
   Revision 1.67  2002/12/14 07:31:39  dodi
   - using new types
 

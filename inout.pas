@@ -103,7 +103,7 @@ var    fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
 
        mausl      : char     = #13;       { linke Maustaste                }
        mausr      : char     = #27;       { rechte Maustaste               }
-       mausst     : word     = 3;         { Maske fuer Maustaste            }
+       mausst     : xpWord     = 3;         { Maske fuer Maustaste            }
        mauszuo    : boolean  = true;      { Fraigabe fuer Maus oben         }
        mauszuu    : boolean  = true;      { Freigabe fuer Maus unten        }
        mauszul    : boolean  = true;      { Freigabe fuer Maus links        }
@@ -240,13 +240,13 @@ Procedure readrescue(x,y:byte; VAR r:Real; VAR brk:Boolean);
 Procedure edform(cx,cy:byte; VAR dt:datetimest;
                  f1,f2: datetimest; VAR art:shortint);
 Procedure eddate(x,y:byte; VAR d:datetimest; VAR art:shortint);
-Procedure edmonth(x,y:byte; VAR m:datetimest; VAR defm,defj:word;
+Procedure edmonth(x,y:byte; VAR m:datetimest; VAR defm,defj:xpWord;
                    var art:shortint);
 Procedure edtime(x,y:byte; VAR t:datetimest; VAR art:shortint);
 
 { Feld-Editier-Funktionen }
 
-procedure editsf(liste:pntslcta; n:word; var brk:boolean);
+procedure editsf(liste:pntslcta; n:xpWord; var brk:boolean);
 procedure dummyproc(var s:string; var ok:boolean);
 procedure dummyed(x,y:byte; var s:string; var p:shortint; var en:EndeEdTyp);
 procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
@@ -254,7 +254,7 @@ procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
 Procedure mausiniti;                 { Maus nach Bildschirmmitte             }
 procedure dummyFN;
 {$IFNDEF NCRT }
-procedure mdelay(msec:word);
+procedure mdelay(msec:xpWord);
 {$ENDIF }
 
 procedure InitInOutUnit;
@@ -304,7 +304,7 @@ var    ca,ce       : integer;
        mwr,mwu     : byte;
 {$ENDIF }
        cursp       : shortint;
-       sec         : word;
+       sec         : xpWord;
        mx,my       : integer;      { Maus-Koordinaten }
        st1         : byte;
        fnpactive   : array[0..3,1..10] of boolean;
@@ -313,7 +313,7 @@ var    ca,ce       : integer;
        autolast    : longint;   { Get: Tick des letzten AutoUp/Down }
 
 { Bild-Speicheradresse     }
-function memadr(x,y:byte):word;forward;
+function memadr(x,y:byte):xpWord;forward;
 
 // time critical
 function ticker:longint;
@@ -764,7 +764,7 @@ end;
 {$IFNDEF NCRT }
 Procedure disphard(x,y:byte; s:string);
 var
-    TempAttr: Word;
+    TempAttr: xpWord;
 begin
   TempAttr := TextAttr;
   TextAttr := dphback;
@@ -1382,7 +1382,7 @@ begin
 end;
 
 
-Procedure edmonth(x,y:byte; VAR m:datetimest; VAR defm,defj:word;
+Procedure edmonth(x,y:byte; VAR m:datetimest; VAR defm,defj:xpWord;
                   var art:shortint);
 
 begin
@@ -1394,11 +1394,11 @@ begin
 end;
 
 
-procedure editsf(liste:pntslcta; n:word; var brk:boolean);
+procedure editsf(liste:pntslcta; n:xpWord; var brk:boolean);
 
 var px,ml,i : byte;
     en      : endeedtyp;
-    p       : word;
+    p       : xpWord;
 
   procedure clearout;
   var i,l : byte;
@@ -1546,7 +1546,7 @@ begin
 {$ENDIF}
 end;
 
-Function memadr(x,y:byte):word;
+Function memadr(x,y:byte):xpWord;
 begin
   memadr:=2*pred(x)+2*ScreenWidth*pred(y);
 end;
@@ -1602,9 +1602,9 @@ end;
 
 { msec = 0 -> laufende Timeslice freigeben }
 {$IFNDEF NCRT }
-procedure mdelay(msec:word);   { genaues Delay }
+procedure mdelay(msec:xpWord);   { genaues Delay }
 var t      : longint;
-    i,n    : word;
+    i,n    : xpWord;
 
   procedure idle;
   begin
@@ -1682,6 +1682,9 @@ end;
 
 {
   $Log$
+  Revision 1.101  2002/12/21 05:37:50  dodi
+  - removed questionable references to Word type
+
   Revision 1.100  2002/12/16 14:58:35  mk
   - fixed compiler warnings
 

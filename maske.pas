@@ -102,7 +102,7 @@ procedure mdummyp(var inhalt:string);               { Dummy fuer Test0   }
 function  mdummyf(var inhalt:string):boolean;       { Dummy fuer Test1/2 }
 function  qdummyf(brk,modif:boolean):boolean;       { Dummy fuer QuitFN  }
 
-procedure maskShiftF2(p:testproc;helpnr:word);
+procedure maskShiftF2(p:testproc;helpnr:xpWord);
 
 {--------------- Masken-Einstellungen -------------}
 { beziehen sich auf die jeweils aktuelle Maske und }
@@ -341,14 +341,14 @@ var   mask    : array[0..maxmask] of maskp;
       redisptext   : boolean;
 
       ShiftF2Proc : testProc;
-      ShiftF2Help : word;
+      ShiftF2Help : xpWord;
 
 
 { Feldtypen:   1=String, 2=Short, 3=Byte, 4=Integer, 5=Word, 6=Long,
                7=Real, 8=Datum (tt.mm.jj oder tt.mm.jjjj),
                9=Uhrzeit (hh:mm oder hh:mm:ss), 10=Boolean (J/N)  }
 
-procedure maskShiftF2(p:testproc;helpnr:word);
+procedure maskShiftF2(p:testproc;helpnr:xpWord);
 begin
     ShiftF2Proc:=p;
     ShiftF2help:=helpnr;
@@ -1405,6 +1405,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.46  2002/12/21 05:37:51  dodi
+  - removed questionable references to Word type
+
   Revision 1.45  2002/12/14 07:31:27  dodi
   - using new types
 

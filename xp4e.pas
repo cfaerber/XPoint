@@ -1828,8 +1828,8 @@ begin
   s:=tagstring(taglong(s));
 end;
 
-function monword(s:string):word;
-var i,w : word;
+function monword(s:string):xpWord;
+var i,w : xpWord;
 begin
   if (s='') or (UpperCase(s)=UpperCase(getres(2724))) then   { 'ALLE' }
     monword:=$fff
@@ -1843,8 +1843,8 @@ begin
     end;
 end;
 
-function monstring(w:word):string;
-var i : word;
+function monstring(w:xpWord):string;
+var i : xpWord;
     s : string;
 begin
   if w=$fff then
@@ -2465,6 +2465,9 @@ end;
 
 {
   $Log$
+  Revision 1.104  2002/12/21 05:37:57  dodi
+  - removed questionable references to Word type
+
   Revision 1.103  2002/12/16 01:05:12  dodi
   - fixed some hints and warnings
 

@@ -105,7 +105,7 @@ const maxs = 5;
 var  pntl  : pntslcta;
      sr    : tsearchrec;
      rc    : integer;
-     n     : Tword;  //var parameter!
+     n     : xpWord;  //var parameter!
      lnum   : Integer;
      handle : TxpHandle;  //Integer;
      p      : Integer;
@@ -902,7 +902,7 @@ var   i,j     : integer;
   end;
 
   procedure display;
-  var i : word;
+  var i : integer;
   begin
     for i:=1 to gl do
       if i+a<=pn then
@@ -1152,6 +1152,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2002/12/21 05:37:52  dodi
+  - removed questionable references to Word type
+
   Revision 1.57  2002/12/14 07:31:28  dodi
   - using new types
 

@@ -34,31 +34,31 @@ uses
 
 type
   hellor = record
-                 signal         : word;   { = 'o'     }
-                 hello_version  : word;   { = 1       }
-                 product        : word;
-                 HiVersion      : word;
-                 LoVersion      : word;
+                 signal         : xpWord;   { = 'o'     }
+                 hello_version  : xpWord;   { = 1       }
+                 product        : xpWord;
+                 HiVersion      : xpWord;
+                 LoVersion      : xpWord;
                  MyName         : array[0..59] of char;
                  SysopName      : array[0..19] of char;
-                 zone           : word;
-                 net            : word;
-                 node           : word;
-                 point          : word;
+                 zone           : xpWord;
+                 net            : xpWord;
+                 node           : xpWord;
+                 point          : xpWord;
                  my_password    : array[0..7] of char;
                  reserved2      : array[0..7] of byte;
-                 capabilities   : word;
+                 capabilities   : xpWord;
                  reserved3      : array[0..11] of byte;
                end;
 
 type
   TFidomailer = class(TModemNetcall)
   protected
-    hello: record h: hellor; crc: word end;
+    hello: record h: hellor; crc: xpWord end;
     aresult: integer; fa: FidoAdr;
 
     procedure InitHelloPacket;
-    function ProductName(pc:word):string;
+    function ProductName(pc:xpWord):string;
     function fmSS(state:byte):byte;    { 0=brk, 1=FTS-001, 2=YooHoo, 3=EMSI }
     function fmSH:byte;     { Send Hello Packet }
     function fmRH(state:byte):boolean;   { Receive Hello Packet }
@@ -147,7 +147,7 @@ end;
 var   tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
 const tagsec = 86400;  { 24*60*60 }
 
-procedure setfeb(y:word);
+procedure setfeb(y:xpWord);
 begin
   if schaltj(y) then
     tage[2]:=29
@@ -176,8 +176,8 @@ begin
 end;
 
 (*procedure set_time(secs:longint);
-var y,m : word;
-    h,min,s: word;
+var y,m : xpWord;
+    h,min,s: xpWord;
 begin
   if secs<0 then exit;
   y:=1970;
@@ -243,6 +243,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/12/21 05:38:06  dodi
+  - removed questionable references to Word type
+
   Revision 1.12  2002/12/12 11:58:56  dodi
   - set $WRITEABLECONT OFF
 

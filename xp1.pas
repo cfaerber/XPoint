@@ -64,10 +64,10 @@ type mprec     = record
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
 {$IFDEF NCRT }
-     scrptr    = word;  { Handle }
+     scrptr    = xpWord;  { Handle }
 {$ELSE }
      scrptr    = record
-                   scsize  : word;
+                   scsize  : xpWord;
                    p       : pointer;
                  end;
 {$ENDIF }
@@ -96,8 +96,8 @@ procedure CondClearKeybuf;
 procedure sichern(var sp:scrptr);
 procedure holen(var sp:scrptr);
 
-procedure hlp(nr:word);             { setzt helpst[helpstp] }
-procedure pushhp(nr:word);
+procedure hlp(nr:xpWord);             { setzt helpst[helpstp] }
+procedure pushhp(nr:xpWord);
 procedure pophp;
 procedure freehelp;
 
@@ -129,8 +129,8 @@ procedure enddialog;
 procedure closebox;
 procedure moment;
 procedure message(const txt:string);
-procedure rmessage(nr:word);
-procedure WaitIt(txt:atext; p:proc; sec:word);
+procedure rmessage(nr:xpWord);
+procedure WaitIt(txt:atext; p:proc; sec:xpWord);
 procedure WriteClipFile(fn:string);
 procedure selcol;
 procedure file_box(var name:string; changedir:boolean);
@@ -140,24 +140,24 @@ procedure errsound;
 function  _errsound:boolean;
 procedure signal;              { s. Config/Anzeige/Hilfen }
 procedure fehler(const txt:string);
-procedure rfehler(nr:word);
-procedure rfehler1(nr:word; txt:string);
+procedure rfehler(nr:xpWord);
+procedure rfehler1(nr:xpWord; txt:string);
 procedure hinweis(const txt:string);
 function  mfehler(b:boolean; const txt:string):boolean;
 function  fehlfunc(const txt:string):boolean;
 procedure logerror(const txt:string);
 procedure tfehler(const txt:string; sec:integer);
-procedure trfehler(nr:word; sec:integer);
-procedure trfehler1(nr:word; const txt:string; sec:integer);
+procedure trfehler(nr:xpWord; sec:integer);
+procedure trfehler1(nr:xpWord; const txt:string; sec:integer);
 procedure afehler(const txt:string; auto:boolean);
-procedure arfehler(nr:word; auto:boolean);
+procedure arfehler(nr:xpWord; auto:boolean);
 procedure interr(const txt:string);
 function  ioerror(i:integer; const otxt:atext):atext;
 
-procedure shell(const prog:string; space:word; cls:shortint);  { externer Aufruf }
+procedure shell(const prog:string; space:xpWord; cls:shortint);  { externer Aufruf }
 
 { Execute an external program and add any files created in current dir to SL }
-function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+function ShellNTrackNewFiles(prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    utf8:boolean;
@@ -795,7 +795,7 @@ end; { of MakeListdisplay }
 {$ENDIF }
 
 
-procedure ListDisplay(x,y:word; var s:string);
+procedure ListDisplay(x,y:xpWord; var s:string);
 var
   s0: shortstring;
 begin
@@ -850,12 +850,12 @@ end;
 
 { Online-Hilfe (s. auch xp1help.pas) }
 
-procedure hlp(nr:word);
+procedure hlp(nr:xpWord);
 begin
   helpst[helpstp]:=nr;
 end;
 
-procedure pushhp(nr:word);
+procedure pushhp(nr:xpWord);
 begin
   if helpstp>=maxhelpst then
     interr('PushHP: Overflow')
@@ -938,7 +938,7 @@ again:
         if nummern and (LeftStr(s,2)<>'-,') then begin
           mpnr:=hexval(LeftStr(s,3));
           delete(s,1,3);
-          enabled:=(menable[nr] and (word(1) shl (mpnr and 15)))=0;
+          enabled:=(menable[nr] and (xpWord(1) shl (mpnr and 15)))=0;
           end
         else begin
           mpnr:=0;
@@ -1073,8 +1073,8 @@ end;
 
 procedure setenable(mnu,nr:byte; flag:boolean);
 begin
-  if flag then menable[mnu]:=menable[mnu] and not (word(1) shl nr)
-  else menable[mnu]:=menable[mnu] or (word(1) shl nr);
+  if flag then menable[mnu]:=menable[mnu] and not (xpWord(1) shl nr)
+  else menable[mnu]:=menable[mnu] or (xpWord(1) shl nr);
 end;
 
 
@@ -1622,7 +1622,7 @@ var   trackpath : boolean = false;
   cls:   0=nicht loeschen; 1=loeschen, 2=loeschen+Hinweis, 3=Mitte loeschen
          -1=loeschen/25 Zeilen, 4=loeschen/nicht sichern,
          5=nicht loeschen/nicht sichern }
-procedure shell(const prog:string; space:word; cls:shortint);
+procedure shell(const prog:string; space:xpWord; cls:shortint);
 
   { returned: errorlevel called program returned if call successful
     negative errorlevel if program not found }
@@ -1788,7 +1788,7 @@ begin
 end;
 
 { Execute an external program and add any files created in current dir to SL }
-function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+function ShellNTrackNewFiles(prog:string; space:xpWord; cls:shortint; SL: TStringList): Integer;
 var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
 begin
   curdir:=GetCurrentDir;
@@ -1881,7 +1881,7 @@ var
     pp     : byte;
     lt     : byte;
     lfirst : byte;     { Startzeile Lister }
-    lofs   : word;     { Ladeposition Datei }
+    lofs   : xpWord;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
     wrapb  : boolean;  { Backup no_ListWrapToggle }
 
@@ -2329,7 +2329,7 @@ begin
 end;
 
 
-procedure WaitIt(txt:atext; p:proc; sec:word);
+procedure WaitIt(txt:atext; p:proc; sec:xpWord);
 begin
   message(txt);
   p;
@@ -2345,7 +2345,7 @@ begin
   mwrt(x+3,y+1,LeftStr(txt,screenwidth-6));
 end;
 
-procedure rmessage(nr:word);
+procedure rmessage(nr:xpWord);
 begin
   message(getres(nr));
 end;
@@ -2432,7 +2432,7 @@ begin
   _fehler(txt,false);
 end;
 
-procedure rfehler(nr:word);
+procedure rfehler(nr:xpWord);
 var s : string;
 begin
   if lastchar(forwardkeys)=#13 then forwardkeys:=copy(forwardkeys,1,length(forwardkeys)-1);
@@ -2443,7 +2443,7 @@ begin
   pophp;
 end;
 
-procedure rfehler1(nr:word; txt:string);
+procedure rfehler1(nr:xpWord; txt:string);
 begin
   txt:=getreps2(10000+100*(nr div 100),nr mod 100,txt);
   freeres;
@@ -2496,7 +2496,7 @@ begin
   closebox;
 end;
 
-procedure trfehler(nr:word; sec:integer);
+procedure trfehler(nr:xpWord; sec:integer);
 begin
   pushhp(20000+nr);
   tfehler(getres2(10000+100*(nr div 100),nr mod 100),sec);
@@ -2504,7 +2504,7 @@ begin
   freeres;
 end;
 
-procedure trfehler1(nr:word; const txt:string; sec:integer);
+procedure trfehler1(nr:xpWord; const txt:string; sec:integer);
 begin
   freeres;
   pushhp(20000+nr);
@@ -2520,7 +2520,7 @@ begin
     fehler(txt);
 end;
 
-procedure arfehler(nr:word; auto:boolean);
+procedure arfehler(nr:xpWord; auto:boolean);
 begin
   if auto then
     trfehler(nr,20)
@@ -2637,7 +2637,7 @@ begin
 end;
 
 function zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
-var j : word;
+var j : xpWord;
     d : datetimest;
     n : integer;
 begin
@@ -3267,6 +3267,9 @@ end;
 
 {
   $Log$
+  Revision 1.168  2002/12/21 05:37:53  dodi
+  - removed questionable references to Word type
+
   Revision 1.167  2002/12/14 07:31:29  dodi
   - using new types
 

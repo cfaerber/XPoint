@@ -127,6 +127,11 @@ type
   {$endif}
     smallword =  unsigned16;  //todo: drop and use unsigned16 wherever required
 
+//todo: replace all usages of these temporary types by something more appropriate
+type
+    xpWord =     integer;     //used in all units which used xpglobal
+    sysWord =    unsigned16;  //used in all units which didn't use xpglobal
+
 const
 {$IFDEF UnixFS }
   DirSepa  = '/';
@@ -213,6 +218,9 @@ begin
 
 {
   $Log$
+  Revision 1.73  2002/12/21 05:38:01  dodi
+  - removed questionable references to Word type
+
   Revision 1.72  2002/12/05 19:36:21  dodi
   - removed ambiguous word type
 
