@@ -78,11 +78,11 @@ in CrossPoint:
 <<CrossPoint - Support
 
 OpenXP/16 users can get extensive support whenever
-they might be facing problems and/or have questions.
-It doesn't make any difference if you're a registered
-user (see [Licence Conditions]) or if you're still@6
+faced with problems and/or have questions. It doesn't
+make any difference whether you're a registered user
+(see [Licence Conditions]) or if you're still@6
 evaluating CrossPoint, your questions will still be
-welcome. If you are facing a problem that cannot be
+welcome. If you're facing a problem that cannot be
 solved with the online help, please feel free to use
 one of the following channels:
 
@@ -90,8 +90,8 @@ one of the following channels:
 þ  Post your question to one of the following support
    forums:
 
-   FidoNet    <<CROSSPOINT.OPENXP16.GER>> (German)
-              <<XPOINT>>                  (International)
+   FidoNet    <<XPOINT>>                  (International)
+              <<CROSSPOINT.OPENXP16.GER>> (German)
               <<CROSSPOINT.GER>>          (German)
               <<CROSSPOINT.EXPERT.GER>>   (German)
 
@@ -101,11 +101,11 @@ one of the following channels:
    eMail      <<support\@openxp16.de>>    (Mailing list)
 
    Please note that you're welcome to post in English
-   in the German UseNet forum.
+   in the German forums.
 
    Almost all participants in these forums are
    experienced CrossPoint users, therefore, you
-   should almost certainly find a solution for your
+   should almost certainly find a solution to your
    problems. Should your Server not carry the
    respective forum, please contact your SysOp.
    He/she should be able to get it for you.
@@ -123,7 +123,7 @@ one of the following channels:
               news.kannofant.de and news.t-online.de
               (both port 119).
 
-              Alternatively you can post your bug
+              Alternatively, you can post your bug
               report to <<de.comm.software.crosspoint>>,
               which is a forum for all CrossPoint
               versions and should be available at
@@ -131,7 +131,7 @@ one of the following channels:
 
               The OpenXP/16 developer newsgroup
               (<<crosspoint.openxp16.pub.developer>>)
-              is also publicly accessible, but it
+              is also publicly accessible but it
               should not be used for bug reports and
               such. This group is available at the
               news server news.kannofant.de *only*.
@@ -139,44 +139,53 @@ one of the following channels:
    Internet   eMail to: <<support\@openxp16.de
               With this address you have access to
               the OpenXP/16 mailing list to which
-              the developers are subscribed to as
-              well and which you may join yourself
-              if you wish: To do this, write an eMail
-              to "<<listserver\@kruemel.org>>" with the
+              the developers are also subscribed and
+              which you may join yourself if you
+              wish. To do this, write an eMail to
+              "<<listserver\@kruemel.org>>" with the
               text in the message body (not in the
               subject!) "<<subscribe openxp16-list>>".
               Unsubscribing from the list is done the
-              same way with using the message text
+              same way by using the message text
               "<<unsubscribe openxp16-list>>".
 
    WWW        <<http://www.openxp16.de/
-              (to be completed)
+              (under construction)
 
-   Fido       Echomail in: <<CROSSPOINT.OPENXP16.GER
-              Here you are - via a gate - connected
-              to the general newsgroup of OpenXP/16
-              (see under "Usenet"): All echomails
+   Fido       Echomail in: <<XPOINT>>
+              Although not directly linked to the
+              OpenXP/16 developers, the echo
+              moderator is in <<very>> regular contact
+              with them and will gladly pass on any
+              bug reports. The echo is on the R24,
+              R25 and Z1 echomail backbones and so
+              there should be no problems getting the
+              echo.
+
+              <<CROSSPOINT.OPENXP16.GER>>
+              Here, you are connected via a gate to
+              the general newsgroup of OpenXP/16
+              (see under "Usenet"). All echomails
               that you write to this area are "gated"
-              to the newsgroup, all Usenet postings
-              in this newsgroup are vice versa gated
-              to the area.
+              to the newsgroup and all Usenet
+              postings in this newsgroup are gated
+              to the echomail area.
 
               <<CROSSPOINT.OPENXP16.GER>> is not an
-              official Fido Area - ask your SysOp to
-              get it for you (it is at least on the
-              R24 backbone) if he doesn't offer it
-              already, or contact Christian von Busse
-              (<<2:240/2188>>), who runs the Gate and
-              delivers the area to the BBR.
+              official Fido Area - ask your SysOp if
+              he can get it for you (it is at least
+              available on the R24 backbone).
+              Alternatively, contact Christian von
+              Busse (<<2:240/2188>>), who runs the Gate
+              and delivers the area to the BBR.
 
-              Of course you can also send your bug
-              report to the international <<XPOINT>> area
-              or to the general German CrossPoint
-              areas <<CROSSPOINT.GER>> and/or
-              <<CROSSPOINT.EXPERT.GER>>; however you
-              should be aware that response may take
-              longer and that not that many deve-
-              lopers will see your bug report.
+              Of course, you can also send bug
+              reports to the general German
+              CrossPoint areas <<CROSSPOINT.GER>> and/or
+              <<CROSSPOINT.EXPERT.GER>>. However, you
+              should be aware that responses may take
+              longer and that not that many
+              developers will see your bug report.
 
 
 <<IMPORTANT:
@@ -184,8 +193,8 @@ When you are posting problems and/or questions, you
 should ALWAYS indicate your CrossPoint version. If
 you have a crash, please ALWAYS give the precise
 message you saw when CrossPoint crashed. Information
-about your Hardware and your Operating System can
-also be helpful (and are sometimes simply necessary).
+about your hardware and your Operating System can
+also be helpful (and are sometimes very necessary).
 
 
 þ  There are also some interesting homepages about
@@ -193,7 +202,7 @@ also be helpful (and are sometimes simply necessary).
 
 <<         http://www.openxp16.de/
          (Homepage of OpenXP/16; there you will find
-         further links to CrossPoint related sites in
+         further links to CrossPoint related sites on
          the World Wide Web.)
 
 <<         http://www.openxp.de/
@@ -202,7 +211,7 @@ also be helpful (and are sometimes simply necessary).
 
 <<         http://www.xp2.de/
          (Homepage of the XP2 Team that is developing
-         an own 16-bit version and which cooperates
+         its own 16-bit version and which cooperates
          with OpenXP/16.)
 
 <<         http://xpoint.da.ru/
@@ -214,7 +223,6 @@ also be helpful (and are sometimes simply necessary).
 <<         http://www.crosspoint.de/
          (Official XP Homepage of Peter Mandrella,
          the original CrossPoint author.)
-
 @
 6
 <<CrossPoint - Licence Conditions
