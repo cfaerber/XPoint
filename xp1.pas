@@ -769,6 +769,7 @@ begin
   moff;
   cm_wl(txt);
   runerror:=false;
+  Debug.DebugLog('xp1','Internal error: '+txt,DLError);
   halt(1);
 end;
 
@@ -2043,6 +2044,9 @@ end.
 
 {
   $Log$
+  Revision 1.111  2001/07/28 14:34:15  ma
+  - added some debug logs
+
   Revision 1.110  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

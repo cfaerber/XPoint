@@ -33,7 +33,7 @@ uses
 {$ELSE }
 {$IFNDEF Delphi }  crt,{$ENDIF }
 {$endif}
-  typeform, mouse,keys, xpglobal;
+  typeform,mouse,keys,xpglobal,debug;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -253,6 +253,7 @@ procedure interr(txt:string);
 begin
   moff;
   writeln('<MAUS> ',txt);
+  Debug.DebugLog('maus2','Internal error: '+txt,DLError);
   halt(1);
 end;
 
@@ -344,6 +345,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/07/28 14:34:15  ma
+  - added some debug logs
+
   Revision 1.25  2001/07/28 12:54:44  mk
   - added some defines for Delphi compatibility
 
