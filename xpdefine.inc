@@ -92,6 +92,7 @@
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
+  {$DEFINE i386 }
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -249,6 +250,9 @@
 
 {
   $Log$
+  Revision 1.78.2.5  2002/07/26 08:10:45  mk
+  - added i386 to FPC (for 1.1)
+
   Revision 1.78.2.4  2002/06/15 14:27:56  mk
   - O- with delphi to avoid various crashes in asm function
 
