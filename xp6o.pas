@@ -205,6 +205,7 @@ label ende,nextpp;
   end;
 
 begin
+  Box := '';
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1=0 then begin
     rfehler(619);              { 'keine unversandte Nachricht!' }
