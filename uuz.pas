@@ -1733,6 +1733,42 @@ var p,i   : integer; { byte -> integer }
       end;
   end;
 
+{ Entfert RFC-Kommentare, ignoriert dabei auch quoted-strings }
+  procedure RFCRemoveComment(var r0:string);
+  var s,p,c   : integer;
+          q   : boolean;
+  begin
+    s:=1;
+    q:=false;
+    c:=0;
+
+    while s<=length(r0) do
+    begin
+      case r0[s] of
+        '\' : s:=s+1;			{ skip one }
+	'"' : if c<=0 then q:=not q;	{ toggle in-quote flag }
+	'(' : if not q then
+	        if c<=0 then
+		  begin
+		    c:=1; p:=s;		{ remeber start of comment }
+		  end
+		else
+		  c:=c+1;		{ inc comment count }
+		
+	')' : if not q then
+	        if c=1 then
+		  begin
+		    delete(r0,p,s-p+1); { remove comments }
+		    s:=p-1;		{ and reset pointer }
+		    c:=0;
+		  end
+		else
+		  c:=c-1;		{ dec comment count }
+      end;
+      s:=s+1;
+    end;
+  end;
+
   procedure GetAdr(var adr,realname:string);
   var p,p2 : byte;
   begin
@@ -1842,6 +1878,7 @@ var p,i   : integer; { byte -> integer }
   var p : byte;
   begin
     if mail or (cpos('@',s0)>0) then exit;
+    RFCRemoveComment(s0);
     s0:=trim(s0);
     if s0<>'' then with hd do begin
       repeat
@@ -1877,6 +1914,7 @@ var p,i   : integer; { byte -> integer }
 
   begin
     if mail then exit;
+    RFCRemoveComment(s0);
     s0:=trim(s0);
     replslash(s0);
     for i:=1 to manz do
@@ -1924,6 +1962,7 @@ var p,i   : integer; { byte -> integer }
 
   procedure GetMsgid;
   begin
+    RFCRemoveComment(s0);
     if s0[1]='<' then delete(s0,1,1);
     if s0[length(s0)]='>' then
       dec(byte(s0[0]));
@@ -1953,6 +1992,7 @@ var p,i   : integer; { byte -> integer }
   var i,p : integer;
   begin
     if mail and (hd.ref<>'') then exit;
+    RFCRemoveComment(s0);
     i:=1;
     while (s0<>'') or (i<=manz) do begin
       if s0='' then begin
@@ -2010,6 +2050,8 @@ var p,i   : integer; { byte -> integer }
     end;
   begin
     appUline('U-'+s1);
+    { "(qmail id xxx invoked from network)" enth„lt "from " }
+    RFCRemoveComment(s0);
     by:=GetRec('by ');
     from:=GetRec('from ');
     { Envelope-Empf„nger ermitteln }
@@ -2026,6 +2068,7 @@ var p,i   : integer; { byte -> integer }
 
   procedure GetDate;
   begin
+    RFCRemoveComment(s0);
     hd.zdatum:=RFC2Zdate(s0);
     ZCtoZdatum(hd.zdatum,hd.datum);
   end;
@@ -2112,6 +2155,7 @@ var p,i   : integer; { byte -> integer }
   procedure GetMime(p:mimeproc);
   begin
     AppUline('U-'+s1);
+    RFCRemoveComment(s0);
     p(s0);
   end;
 
@@ -2130,6 +2174,7 @@ var p,i   : integer; { byte -> integer }
   var p: integer;
   begin
     if hd.priority = 0 then begin  { nur ersten X-Priority Header beachten }
+      RFCRemoveComment(s0);
       p := 1;
       { nur Zahl am Anfang beachten: }
       while (s0 [p] in ['0'..'9']) and (p <= length (s0)) do inc (p);
@@ -2180,6 +2225,13 @@ var p,i   : integer; { byte -> integer }
 {$ENDIF}
   end;
 
+{ read a variable and remove comments }
+procedure GetVar(var r0,s0:string);
+begin
+  RfcRemoveComment(s0);
+  r0:=s0;
+end;
+
 begin
   manz:=0;
   hd.mime.ctype:=tText;   { Default: Text }
@@ -2224,7 +2276,7 @@ begin
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
-             if zz='distribution' then distribution:=s0
+             if zz='distribution' then GetVar(distribution,s0)
              else AppUline('U-'+s1);
         'r': if zz='references'   then GetReferences else
              if zz='received'     then GetReceived else
@@ -2233,14 +2285,15 @@ begin
              else AppUline('U-'+s1);
         's': if zz='subject'      then GetBetreff(false) else
              if zz='sender'       then GetAdr(sender,drealn) else
-             if zz='supersedes'   then ersetzt:=s0 else
-             if zz='summary'      then summary:=s0
+             if zz='supersedes'   then GetVar(ersetzt,s0) else
+             if zz='summary'      then GetVar(summary,s0)
              else AppUline('U-'+s1);
         'x': if zz='x-gateway'    then gateway:=s0 else
              if zz='x-mailer'     then programm:=s0 else
              if zz='x-newsreader' then programm:=s0 else
              if zz='x-news-reader'then programm:=s0 else
              if zz='x-software'   then programm:=s0 else
+
              if zz='x-z-post'     then postanschrift:=s0 else
              if zz='x-zc-post'    then postanschrift:=s0 else
              if zz='x-z-telefon'  then telefon:=s0 else
@@ -2249,6 +2302,7 @@ begin
 
              { X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
+	       RFCRemoveComment(s0);
                if LStr(s0)='yes' then xnoarchive:=true;
              end else
 
@@ -2267,6 +2321,8 @@ begin
              if zz='in-reply-to'  then GetInReplyto else
              if zz='followup-to'  then getFollowup else
              if zz='newsreader'   then programm:=s0 else
+             { User-Agent is new in grandson-of-1036 }
+             if zz='user-agent'   then programm:=s0 else
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz<>'lines'       then AppUline('U-'+s1);
@@ -3081,19 +3137,19 @@ begin
 
     if not nomailer and (programm<>'') then
     begin
-      if mail then
+     if mail then
         wrs(f,'X-Mailer: ' + programm)
       else
         wrs(f,'X-Newsreader: ' + programm);
+        { User-Agent is new in grandson-of-1036 }
+        { wrs(f,'User-Agent: '+programm); }
     end;
 
-    { 03.09.1999 robo - X-No-Archive Konvertierung }
+    { X-No-Archive Konvertierung }
     if xnoarchive then wrs(f,'X-No-Archive: yes');
-    { /robo }
 
-    { 07.02.2000 robo - X-Priority Konvertierung }
+    { X-Priority Konvertierung }
     if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
-    { /robo }
 
     if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then
     with mime do begin
@@ -3104,10 +3160,8 @@ begin
       case ctype of
         tText        : s:=s+'; charset='+charset;
         tApplication : if datei<>''  then s:=s+'; name='+datei;
-        { 03.02.2000 robo }
         tMultipart   : s:=s+'; boundary="'+xpboundary+'"'
                           +iifs(mimereltyp='','','; type="'+mimereltyp+'"');
-        { /robo }
         else           if datei<>''  then s:=s+'; x-filename='+datei;
       end;
       xdate:=(typ='B') and (ddatum<>'') and (attrib and AttrMPbin=0);
@@ -3181,6 +3235,13 @@ begin
             iifs(ddatum<>'',';',''));
       if ddatum<>'' then wrs(f,#9'      x-date="'+ZtoRFCdate(copy(ddatum,3,10),ddatum+'W+0')+'"');
       wrs(f,'Content-Transfer-Encoding: base64');
+
+      { RFC 2183 }
+      wrs(f,'Content-Disposition: attachment'+
+            iifs(datei<>'','; filename="'+datei+'"','')+
+            iifs(ddatum<>'',';',''));
+      if ddatum<>'' then wrs(f,#9'      modification-date="'+ZtoRFCdate(copy(ddatum,3,10),ddatum+'W+0')+'"');
+
       wrs(f,'');
     end;
   end;
@@ -3513,6 +3574,11 @@ end.
 
 {
   $Log$
+  Revision 1.31  2000/06/03 17:53:03  mk
+  CL: - Verbesserte Kompatibilität mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
+  - Erkennung von User-Agent
+  - Content-Disposition (RFC 2183) wird erzeugt.
+
   Revision 1.30  2000/05/16 15:20:32  hd
   - Kleinere, unvollstaendige Anpassungen (UnixFS)
 
