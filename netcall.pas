@@ -34,6 +34,8 @@ uses
 
 type
   ENetcall 		= class(Exception);	{ Allgemein (und Vorfahr) }
+  ENetcallHangup	= class(ENetcall);
+  ENetcallBreak		= class(ENetcall);
 
 type
   TNetcall = class
@@ -75,9 +77,12 @@ end;
 end.
 {
 	$Log$
+	Revision 1.3  2001/03/16 17:08:33  cl
+	- ENetcallHangup/ENetcallBreak classes
+
 	Revision 1.2  2000/07/25 18:02:18  hd
 	- NNTP-Unterstuetzung (Anfang)
-
+	
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
 	
