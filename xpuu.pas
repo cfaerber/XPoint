@@ -11,9 +11,7 @@
 { CrossPoint - UUCICO-Interface }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit  xpuu;
 
@@ -34,7 +32,7 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_senderr = 3;
       uu_recerr  = 4;
 
-function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
+function uucico(const CommandFile:pathstr; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 
@@ -45,7 +43,7 @@ const  ConfigFile = 'UUCICO.CFG';
        ResultFIle = 'UUCICOR.TMP';
 
 
-function uucico(CommandFile:pathstr; start:longint; var ende:boolean;
+function uucico(const CommandFile:pathstr; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 var t        : text;
@@ -122,6 +120,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2001/08/12 08:46:47  mk
+  - added const parameters
+
   Revision 1.6  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

@@ -22,19 +22,19 @@ interface
 uses
   xpglobal,ems,typeform,fileio;
 
-procedure OpenResource(fn:string; preloadmem:longint);
+procedure OpenResource(const fn:string; preloadmem:longint);
 procedure CloseResource;
 function  ResEmspages:word;
 function  ResIsOpen:boolean;
 
 function  GetRes(nr:word):string;
-function  GetRepS(nr:word; txt:String):string;
+function  GetRepS(nr:word; const txt:String):string;
 function  GetRes2(nr1,nr2:word):string;
-function  GetReps2(nr1,nr2:word; txt:string):string;
+function  GetReps2(nr1,nr2:word; const txt:string):string;
 function  Res2Anz(nr:word):word;
 function  IsRes(nr:word):boolean;
 procedure FreeRes;                        { Cluster freigeben }
-function  reps(s1,s2:string):string;
+function  reps(const s1,s2:string):string;
 
 
 implementation  { --------------------------------------------------- }
@@ -75,7 +75,7 @@ var   block  : packed array[1..maxblocks] of rblock;
       clbnr  : integer;
 
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln('<RES> Error: ',txt);
   halt(1);
@@ -99,7 +99,7 @@ end;
 
 { preloadmem: soviel Bytes Heap soll mindestens freibleiben }
 
-procedure OpenResource(fn:string; preloadmem:longint);
+procedure OpenResource(const fn:string; preloadmem:longint);
 var i  : integer;
     pg : byte;
     fm : byte;
@@ -329,9 +329,7 @@ begin
   if getnr(nr,bnr,inr) then
     with block[bnr] do begin
       if loaded then begin
-{$IFDEF BP }
         if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
         FastMove(rptr^[index[bnr]^[inr,1]],nr,2);
         end
       else begin
@@ -351,7 +349,7 @@ begin
 end;
 
 
-function reps(s1,s2:string):string;
+function reps(const s1,s2:string):string;
 var p : byte;
 begin
   p:=pos('%s',s1);
@@ -359,12 +357,12 @@ begin
   else reps:=s1;
 end;
 
-function GetRepS(nr:word; txt:String):string;
+function GetRepS(nr:word; const txt:String):string;
 begin
   GetReps:=reps(getres(nr),txt);
 end;
 
-function GetReps2(nr1,nr2:word; txt:string):string;
+function GetReps2(nr1,nr2:word; const txt:string):string;
 begin
   GetReps2:=reps(getres2(nr1,nr2),txt);
 end;
@@ -372,6 +370,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2001/08/12 08:50:38  mk
+  - added const parameters
+
   Revision 1.7.2.2  2000/08/24 23:21:19  mk
   - Typo beseitigt
 

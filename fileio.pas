@@ -37,7 +37,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
 
-function  AddDirSepa(p: pathstr): pathstr; { Verz.-Trenner anhaengen }
+function  AddDirSepa(const p: pathstr): pathstr; { Verz.-Trenner anhaengen }
 Function  exist(const n:string):boolean;         { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
@@ -66,7 +66,7 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode ”ffn.}
 function  FileLock(var datei:file; from,size:longint):boolean;
 procedure FileUnLock(var datei:file; from,size:longint);
 
-procedure addext(var fn:pathstr; ext:extstr);
+procedure addext(var fn:pathstr; const ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
 function  GetFileDir(const p:pathstr):dirstr;
 function  GetFileName(const p:pathstr):string;
@@ -92,7 +92,7 @@ var
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
-function  AddDirSepa(p: pathstr): pathstr;
+function  AddDirSepa(const p: pathstr): pathstr;
 var
   cwd: pathstr;
 begin
@@ -103,8 +103,7 @@ begin
     begin
       if (length(p)=2) and (p[2]=':') then
       begin	{ Nur C: ? }
-        p:= UStr(p);
-        getdir(Ord(p[1])-64,cwd);		{ -> Akt. Verz. ermitteln }
+        getdir(Ord(UpCase(p[1]))-64,cwd);		{ -> Akt. Verz. ermitteln }
 	AddDirSepa:= AddDirSepa(cwd);
       end else
         AddDirSepa:= p+DirSepa;
@@ -222,7 +221,7 @@ Function IsPath(name:PathStr):boolean;         { Pfad vorhanden ? }
 var sr : searchrec;
 begin
   name:=trim(name);
-  if multipos('?*',name) or (trim(name)='') then
+  if multipos('?*',name) or (name='') then
     IsPath:=false
   else begin
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
@@ -540,7 +539,7 @@ end;
 
 { Extension anh„ngen, falls noch nicht vorhanden }
 
-procedure addext(var fn:pathstr; ext:extstr);
+procedure addext(var fn:pathstr; const ext:extstr);
 var dir  : dirstr;
     name : string;
     _ext : extstr;
@@ -753,6 +752,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.16  2001/08/12 08:46:46  mk
+  - added const parameters
+
   Revision 1.41.2.15  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 
