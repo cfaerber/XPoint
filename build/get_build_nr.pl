@@ -27,8 +27,8 @@
 
   while (<InFile>) {
 
-    if (s/\%version\%/$MAINVER\.$SUBVER/ig) { print $_; }
-    if (s/\%release\%/$BUILD/ig) { print $_; }
+    if (s/\%version\%/$MAINVER\.$SUBVER/ig) {  }
+    if (s/\%release\%/$BUILD/ig) {  }
 
     print OutFile;
   }
