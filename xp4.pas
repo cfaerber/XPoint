@@ -1078,7 +1078,7 @@ var t,lastt: taste;
       if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
-        fillchar(mpdata,sizeof(qmpdata),0);
+        fillchar(mpdata,sizeof(mpdata),0);
         mpdata.fname := fn;
         SelectMultiPart(true,1,false,mpdata,brk);
 
@@ -2129,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/12/19 19:48:13  mk
+  - groesse bei Fillchar(mpdata) korrigiert
+
   Revision 1.74  2000/12/19 19:06:17  mk
   - Crash bei Strg-Q auf Mail behoben (Bug von FE)
 
