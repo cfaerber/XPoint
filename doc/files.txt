@@ -35,12 +35,12 @@ beispiel/maus.scr	Login-Script fuer MAUS-Boxen
 beispiel/o-magic.scr	Login-Script fuer MagicNET (Online)
 beispiel/oz-netz.scr	Login-Script fuer Z-Netz (Online)
 beispiel/pcsysop.scr	Login-Script fuer NetLand und PCNet
-beispiel/privhead.xps	Schablone fuer ???
-beispiel/qbrett.xps	Schablone fuer ???
-beispiel/qpmpriv.xps	Schablone fuer ???
-beispiel/qpriv.xps	Schablone fuer ???
+beispiel/privhead.xps	Schablone fuer nicht zitierte Mails
+beispiel/qbrett.xps	Schablone fuer zitierte, oeff. Nachricht
+beispiel/qpmpriv.xps	Schablone fuer zitierte Mails
+beispiel/qpriv.xps	Schablone fuer als Mail zit. oeff. Nachrichten
 beispiel/quark.scr	Login-Script fuer QUARK-Boxen
-beispiel/quoteto.xps	Schablone fuer ???
+beispiel/quoteto.xps	Schablone fuer /Nachr./Weiterl./QuoteTo
 beispiel/uucp.scr	Login-Script fuer UUCP
 beispiel/xpmailto.reg	???
 beispiel/z-netz.scr	Login-Script fuer Z-Netz
