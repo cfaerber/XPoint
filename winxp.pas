@@ -1453,6 +1453,7 @@ begin
   GetMem(LocalScreen, SizeOf(LocalScreen^));
 {$ENDIF }
 
+{$IFDEF Win32}
 {$IFDEF Win32Console }
   { Consolenhandle holen }
   OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
@@ -1468,6 +1469,7 @@ begin
     Exit;
   end;
 {$ENDIF }
+{$ENDIF }
 
   SavedExitProc:= ExitProc;
   ExitProc:= @ExitWinXPUnit;
@@ -1475,6 +1477,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2002/01/12 14:42:13  cl
+  - Kylix 2 compile fixes
+
   Revision 1.76  2002/01/12 14:13:17  cl
   - Kylix 2 compile fix
 

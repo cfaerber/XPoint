@@ -67,7 +67,9 @@ uses
      ndiff,    { nodelist diff      }
      replytoall,
      zftools,
+{$IFDEF Win32}
      windows,
+{$ENDIF}     
      zcrfc;    { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
@@ -99,7 +101,9 @@ label ende;
 var
   pwcnt:byte;
   pwrc:boolean;
+{$IFDEF Win32}
   AMessage: TMsg;
+{$ENDIF }
 begin
  try
   if StartInternalTools then Exit;
@@ -230,6 +234,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/01/12 14:42:13  cl
+  - Kylix 2 compile fixes
+
   Revision 1.10  2002/01/12 11:10:12  mk
   - Win32 GUI Part I
 
