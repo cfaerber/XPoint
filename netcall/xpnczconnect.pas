@@ -59,7 +59,9 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
     p:=cPos('.',s);
     result:=(UpperCase(Copy(s,2,1))='P')and(p<>0);
     if result then
-      for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9']);
+      for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9'])
+    else
+      result:=UpperCase(Copy(s,1,7))='CALLER.';
   end;
 
 var x,y: Integer;
@@ -250,6 +252,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/09/07 23:21:11  ma
+  - fixed: CALLER.* was not recognized as incoming packet
+
   Revision 1.8  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 
