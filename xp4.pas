@@ -102,20 +102,23 @@ begin
 end;
 
 procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
-var b     : byte;                              { wenn keine ungelesenen Nachrichten }
+var b    : byte;                               { wenn keine ungelesenen Nachrichten }
+    nope : boolean;
+    rec  : longint;
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
-    if not dbEOF(mbase) and
-        ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
-          then begin
-              dbSeek(bbase,biIntnr,mid(brett,2));
-                  if dbFound then begin
-                        dbReadN(bbase,bb_flags,b);
-                              b:=b and (not 2);   { keine ungelesenen Nachrichten mehr }
-                                    dbWriteN(bbase,bb_flags,b);
-                                          end;
-                                              end;
-                                              end;
+  if dbEOF(mbase) then nope:=true
+    else nope:=((dbReadStr(mbase,'brett')<>brett)
+      or (dbReadInt(mbase,'gelesen')<>0));
+  rec:=dbrecno(bbase);
+  dbSeek(bbase,biIntnr,mid(brett,2));
+  if dbFound then begin
+    dbReadN(bbase,bb_flags,b);
+    if nope then b:=b and (not 2) else b:=b or 2;
+    dbWriteN(bbase,bb_flags,b);
+  end;
+  dbgo(bbase,rec);
+end;
 
 
 procedure fido_msgrequest;
@@ -2021,6 +2024,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.17  2001/06/10 14:33:39  mk
+  JG:- Fixed SetBrettgelesen (Index Gruppe nicht gefunden)
+
   Revision 1.6.2.16  2001/05/18 09:10:14  mk
   - maxgl wieder auf 46 gestellt
 
