@@ -768,9 +768,15 @@ asm
 @taende:    pop eax
             mov ecx,edx
             popa
+            ret // do not remove (problems with fpc)!
 {-------------------------}
 @ende:
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
 end; { of MakeListdisplay }
+{$ENDIF }
+
 
 
 procedure ListDisplay(x,y:word; var s:string);
@@ -2091,6 +2097,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.2  2002/05/01 16:37:37  mk
+  - fixed last commit
+
   Revision 1.147.2.1  2002/04/30 08:54:33  mk
   - removed unnecessary ret
 
