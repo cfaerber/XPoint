@@ -128,7 +128,6 @@ type
 
     ParSize: boolean ;             { Size negotiation }
     ParECmd: boolean ;
-//    ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
     constructor create;
     destructor Destroy; override;
@@ -294,7 +293,6 @@ begin
   FileUser:= 'root';
   OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
-//  ClearSourceFiles := false;
   CommandLine := false;
   nomailer:= false;
   uunumber:= 0;
@@ -719,13 +717,13 @@ again:
   Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
 {$ENDIF}
 
-{$IFNDEF UnixFS}  { argh }
+//{$IFNDEF UnixFS}  { argh }
   if (ctype=compress_freeze) and (not existf(f1)) then
     if FileExists(Dest+fn+'X') then
       renamefile(Dest+fn+'X',Dest+fn) else
     if FileExists(Dest+fn+'XZ') then
       renamefile(Dest+fn+'XZ',Dest+fn);
-{$ENDIF}
+//{$ENDIF}
 
   if batch then goto again;
 end;
@@ -2136,7 +2134,7 @@ var
   end;
 
 begin
-  n := 0;
+  n := 0;                     
   if CommandLine then write('mail: ', fn);
   DeCompress(fn,false);
   if not fileexists(fn) then
@@ -2466,7 +2464,7 @@ var
 var
   s1: String;
 begin
-  Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s', 
+  Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s',
     [Source, Dest, _From, _To]), DLDebug);
   assign(f2,dest);
   rewrite(f2,1);
@@ -2479,12 +2477,12 @@ begin
   begin
   try
     s1 := ExtractFileExt(sr.name);
+    // BAK-Dateien überspringen
+    if s1 = FileUpperCase('.bak') then Continue;
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
     begin
       ConvertMailfile(spath + sr.name, '', mails);
-//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
-//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
       DeleteFiles.Add(spath+sr.name);
     end
     else
@@ -2492,8 +2490,6 @@ begin
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
-//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
-//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
       DeleteFiles.Add(spath+sr.name);
     end
     else
@@ -2521,13 +2517,6 @@ begin
         else
           raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
 
-//      if ClearSourceFiles then begin
-//        DeleteFile(spath+sr.name);
-//        DeleteFile(spath+dfile);
-//      end else begin
-//        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
-//        RenameFile(spath+dfile,  spath+dfile  +'.BAK');
-//      end;
         DeleteFiles.Add(spath+sr.name);
         DeleteFiles.Add(spath+dfile);
 
@@ -2543,8 +2532,6 @@ begin
       end;
       inc(n);
 
-//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
-//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
       DeleteFiles.Add(spath+sr.name);
     end;
   except on Ex:Exception do
@@ -3062,9 +3049,7 @@ type rcommand = (rmail,rsmtp,rnews);
     nr: string;
     fs: longint;
     ct: TCompression;
-    i: integer;
-    empfs: TStringList;
-    
+
   begin
 
     case t of
@@ -3567,6 +3552,10 @@ end;
 
 {
   $Log$
+  Revision 1.100  2002/05/05 22:29:43  mk
+  - removed unused code
+  - fixed "Puffer fehlt" error
+
   Revision 1.99  2002/04/19 16:51:43  cl
   - fix for FPC
 
