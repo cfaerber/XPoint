@@ -344,6 +344,12 @@ function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
 function CVal(const s:string):longint;             { C Value Integer - nnnn/0nnn/0xnnn }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
+function ExtractWord(n: Cardinal; const S: String) : String;
+function WordPosition(N : Cardinal; const S: String; Delim: Char;
+                      var Pos : Cardinal) : Boolean;
+function ExtractWordEx(n: Cardinal; const S: String; Delim: Char): String;
+function WordCount(const S: String): Integer;
+function WordCountEx(const S, Delims: String): Integer;
 function FileName(var f):string;                { Dateiname Assign             }
 // Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function FirstChar(const s:string):char;
@@ -639,6 +645,156 @@ begin
   end;
 end;
 
+function ExtractWord(n: Cardinal; const S: String) : String;
+begin
+  Result := ExtractWordEx(n, s, ' ');
+end;
+
+function WordPosition(N : Cardinal; const S: String; Delim: Char;
+                      var Pos : Cardinal) : Boolean;
+var
+  Count : Longint;
+  I     : Longint;
+begin
+  Count := 0;
+  I := 1;
+  Result := False;
+
+  while (I <= Length(S)) and (Count <> LongInt(N)) do begin
+    {skip over delimiters}
+    while (I <= Length(S)) and (Delim = S[I]) do
+      Inc(I);
+
+    {if we're not beyond end of S, we're at the start of a word}
+    if I <= Length(S) then
+      Inc(Count);
+
+    {if not finished, find the end of the current word}
+    if Count <> LongInt(N) then
+      while (I <= Length(S)) and not (Delim = S[I]) do
+        Inc(I)
+    else begin
+      Pos := I;
+      Result := True;
+    end;
+  end;
+end;
+
+function ExtractWordEx(n: Cardinal; const S: String; Delim: Char): String;
+var
+  C : Cardinal;
+  I, J   : Longint;
+begin
+  Result := s;
+  if WordPosition(N, S, Delim, C) then begin
+    I := C;
+    {find the end of the current word}
+    J := I;
+    while (I <= Length(S)) and not
+           (Delim = S[I]) do
+      Inc(I);
+    SetLength(Result, I-J);
+    Move(S[J], Result[1], I-J);
+  end;
+end;
+
+
+type
+  LStrRec = record
+    AllocSize : Longint;
+    RefCount  : Longint;
+    Length    : Longint;
+  end;
+
+
+const
+  StrOffset = SizeOf(LStrRec);
+
+  function CharExistsL(const S : AnsiString; C : AnsiChar) : Boolean; register;
+  {-Count the number of a given character in a string. }
+asm
+  push  ebx
+  xor   ecx, ecx
+  or    eax, eax
+  jz    @@Done
+  mov   ebx, [eax-StrOffset].LStrRec.Length
+  or    ebx, ebx
+  jz    @@Done
+  jmp   @@5
+
+@@Loop:
+  cmp   dl, [eax+3]
+  jne   @@1
+  inc   ecx
+  jmp   @@Done
+
+@@1:
+  cmp   dl, [eax+2]
+  jne   @@2
+  inc   ecx
+  jmp   @@Done
+
+@@2:
+  cmp   dl, [eax+1]
+  jne   @@3
+  inc   ecx
+  jmp   @@Done
+
+@@3:
+  cmp   dl, [eax+0]
+  jne   @@4
+  inc   ecx
+  jmp   @@Done
+
+@@4:
+  add   eax, 4
+  sub   ebx, 4
+
+@@5:
+  cmp   ebx, 4
+  jge   @@Loop
+
+  cmp   ebx, 3
+  je    @@1
+
+  cmp   ebx, 2
+  je    @@2
+
+  cmp   ebx, 1
+  je    @@3
+
+@@Done:
+  mov   eax, ecx
+  pop   ebx
+end;
+
+function WordCount(const S: String): Integer;
+begin
+  Result := WordCountEx(S, ' ');
+end;
+
+function WordCountEx(const S, Delims: String): Integer;
+var
+  I    : Integer;
+  SLen : Integer;
+begin
+  Result := 0;
+  I := 1;
+  SLen := Length(S);
+
+  while I <= SLen do begin
+    while (I <= SLen) and CharExistsL(Delims, S[I]) do
+      Inc(I);
+
+    {if we're not beyond end of S, we're at the start of a word}
+    if I <= SLen then
+      Inc(Result);
+
+    {find the end of the current word}
+    while (I <= SLen) and not CharExistsL(Delims, S[I]) do
+      Inc(I);
+  end;
+end;
 
 function Sp(const n:integer):string;
 begin
@@ -1703,6 +1859,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.9  2003/08/31 15:52:59  mk
+  - added WordCount and WordCountEx
+
   Revision 1.107.2.8  2003/08/25 22:37:12  mk
   - corrected commend for trimlastchar
 
