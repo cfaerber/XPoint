@@ -101,7 +101,7 @@ one of the following channels:
    eMail      <<support\@openxp16.de>>    (Mailing list)
 
    Please note that you're welcome to post in English
-   also in the German forums.
+   in the German UseNet forum.
 
    Almost all participants in these forums are
    experienced CrossPoint users, therefore, you
@@ -755,8 +755,8 @@ Replying to messages:
         line (marked with <Space>) to request from
         the Node (Box) from which the message comes.
 
-   <<C>>    Toggles coloured <<bold>> Text on/off
-        (see [/Config/External/Lister]).@237
+   <<C>>    Toggles coloured <<bold>> Text on/off.
+        (see [/Config/External/Lister])@237
 
 <<When>> [reference links] <<available@4014
 <<(Maus, Fido):
@@ -2830,13 +2830,12 @@ CrossPoint into the Box Software on the same machine.
         values):
 
 <<Input file>>
-
 The name of the file which CrossPoint has to read
 in to "receive" a netcall. <<Note>> after being read
 in, this file will be deleted!
 
-<<Output file>>
 
+<<Output file>>
 The name of the file where the puffer with the
 outgoing messages should be put.
 
@@ -2862,20 +2861,17 @@ files to or from some place on your hard disk.
         values):
 
 <<Inbound directory>>
-
 This is the directory from which CrossPoint will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
 <<Outbound directory>>
-
 CrossPoint puts all outgoing PKT files in this
 directory. If you set the "pack output data" switch
 the packets will be packed (amazing!). You can
 transfer these packets to this mailbox by some other
 method, or do anything else you want.
-
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
@@ -2886,17 +2882,15 @@ so make sure they are deleted as necessary!
         existent values):
 
 <<Inbound Packets>>
-
 Enter the path and name for the QWK packets, which
 XP should import for a /Netcall/Single operation.
 eg.
-    C:\INBOUND\*.QWK
+   C:\INBOUND\*.QWK
+
 
 <<Outbound directory>>
-
 This is the directory where XP will put the REP files
 with the reply messages.
-
 @
 8036
 These are settings if you do not want XP to transfer
@@ -2932,8 +2926,8 @@ See also the chapter "Sysop Mode" in UUCP.DOC.
 
 @
 8037
-<<Start programme>>
 
+<<Start programme>>
 You can enter here the name of a programme or
 DOS command which will be started at the beginning
 of every Sysop-Mode netcall. This is important if
@@ -3533,7 +3527,6 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailInPassword=>>" in
 your server configuration file <server>.BFG.
-
 @
 30136
 As already stated under [Envelope address] the "real"@30133
@@ -3591,6 +3584,7 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailInAPOP=>>" in
 your server configuration file <server>.BFG.
+
 @
 30150
 Name of the Server for outgoing mail, commonly known
@@ -3654,7 +3648,6 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-MailFallback=>>" in
 your server configuration file <server>.BFG.
-
 @
 30153
 The 'envelope address' for outgoing mail. If you
@@ -3818,7 +3811,6 @@ setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
 is written to the keyname "<<Client-NewsFallback=>>" in
 your server configuration file <server>.BFG.
-
 @
 30173
 Your user name, which is used for NNTP authentication
@@ -4536,13 +4528,30 @@ New Users will be placed in this [Usergroup]@8069
 
 @
 8069
-Here, you can organise Users into groups. This allows 
-the User-window to be sorted alphabetically into 
-Groups. Groups with lower numbers will not be sorted, 
-whilst Groups with higher numbers will be placed at 
+Here, you can organise Users into groups. This allows
+the User-window to be sorted alphabetically into
+Groups. Groups with lower numbers will not be sorted,
+whilst Groups with higher numbers will be placed at
 the end of the User-list.
 
 Valid Usergroup numbers are in the range 1 - 99
+@
+8075
+This setting is used to colour-highlight messages
+from specific users.
+
+For this to work, priority colours must have been
+previously defined in /Config/Display/Colors/Messages
+
+Valid levels are:
+
+<<0>> - normal user
+<<1>> - highest priority
+<<2>> - high priority
+<<4>> - low prority
+<<5>> - lowest priority
+
+These settings only apply to <<public>> messages.
 
 @
 213
@@ -4753,8 +4762,8 @@ full-screen mode is always used.
         reading.
 @
 233
-<<[x]>>     Lines longer than 80 characters will be
-        wrapped for display into lines of 80
+<<[x]>>     Lines longer than 80 characters will be 
+        wrapped for display into lines of 80 
         characters.
 
         However, since this splitting occurs before
@@ -4939,7 +4948,7 @@ For Germany it would be:
     <<W+1>>   for Winter time
     <<S+2>>   for Summer time
 
-And for New York it would be:
+For New York it would be:
     <<W-5>>   for Winter time
     <<S-6>>   for Summer time
 
@@ -5104,6 +5113,7 @@ future reference.
 <<[x]>>     Archive PMs. But not automatically. The
         question is asked on every PM if it should be
         archived.
+
 
 <<[ ]>>     PMs are not archived, no questions asked.
 @
@@ -5416,18 +5426,18 @@ changed at any time whilst viewing a message list by
 pressing <Ctrl-A>
 @
 845
-<<[x]>> ->  New messages are shown on top of the Message
-        Reading Window. The older a message is, the
-        more down below you will find it.
+<<[x]>> ->  New messages are shown at the top of the 
+        message list. The older a message is, the
+        further down the list it will be.
 
-<<[ ]>> ->  The display is as in previous versions of
-        XP: Old messages on top, older ones at the
-        bottom.
+<<[ ]>> ->  Messages will be listed as in previous 
+        versions of XP, i.e. old messages at the top, 
+        newer ones at the bottom.
 @
 280
-The screen saver blanks the screen if no key is 
+The screen saver blanks the screen if no key is
 pressed for the number of seconds entered here.
-The minimum value is "5", whilst "0" deactivates the 
+The minimum value is "5", whilst "0" deactivates the
 screen saver.
 
 You can test the screen saver any time with <Alt-1>
@@ -6102,7 +6112,7 @@ DOS Path or you enter the full path to them. COM and
 EXE programmes will be started quicker if you specify
 the extension as well.
 
-You can pass parameters (if needed) to these
+You can pass parameters (if needed) to these 
 programmes in the normal way by specifying them after 
 the command. You can use the <<$FILE>> macro to pass 
 the current file name.
@@ -7640,16 +7650,16 @@ rejected.
 Enter the name of your main Server. You can add more
 Servers <<and>> change your main Server later.
 
-The Net Name is the short form of the Server name, as
+The Net name is the short form of the Server name, as
 it appears in your User name.
 
 For <<RFC/Client>> Servers, you can use any name.
 
-In Fido, enter the Node address of your BossNode, in
+For <<Fido>>, enter the Node address of your BossNode, in
 the form Zone:Net/Node.
 @
 681
-Enter the type of Network your main Server belongs
+Enter the type of Network your primary Server belongs
 to. You can press <F2> to call up a pick-list to
 select from. Possible entries are:
 
@@ -7668,8 +7678,9 @@ select from. Possible entries are:
 <<Z-Netz>>      old Z-Netz and ComLink
 @
 682
-Your Username for this Server. This will usually be
-your <<OWN>> name.
+Your Username for this Server.
+
+For FidoNet, this should be your <<OWN>> name.
 @
 690
 <<Fido
@@ -8634,7 +8645,7 @@ you wish:
         position you want the line to appear, and
         press <Enter>. <Esc> aborts.
 
-<<Delete>>  does not display the selected line any
+<<Delete>>   Does not display the selected line any
          more.
 
 Confirm your changes with <<OK>>. With <<Esc>> >you can
@@ -8929,7 +8940,7 @@ Select <<no>> if you want to separate the reply from
 the thread (reference link).
 @
 1502
-Enter the user name that shall be used as the sender
+Enter the user name that should be used as the sender
 of messages which you send out through this server.
 It is the same name which can be entered under
 /Edit/Server/Edit/Names.
@@ -9242,13 +9253,13 @@ you. :-] Yer'r on yer own, pal..
 <<Message / Search
 
 The search menu contains several options for
-searching the data base for messages fitting given
+searching the messagebase for messages matching given
 criteria.
 
-Found messages are marked, and displayed in a window.
-They remain marked until unmarked with <Ctrl-E>.
-During the search, you can break off by pressing
-<Esc>.
+Matching messages are marked and displayed in a 
+window and remain marked until unmarked with 
+<Ctrl-E>. During the search, you can abort by
+pressing <Esc>.
 
 Depending on available memory, the maximum number of
 messages that can be marked as "found" (ie. fitting
@@ -10283,7 +10294,6 @@ connection per modem already exists (if the server is
 ready for it). If your server permits the relogin
 command, it will do a logoff, but does not hang up
 and presents the mask again for a login.
-
 Exit your terminal programme <<(do not hang up)>> and
 start CrossPoint then Netcall/Relogin. CrossPoint
 does not reset the modem or dial, but begins by
@@ -10448,7 +10458,6 @@ groups, but you can add as many others as you wish.
 @
 11604
 <<Edit / Systems
-
 This menu entry serves to hold various attributes and
 functions for systems (boxes). At present the
 following details can be recorded:
@@ -10684,7 +10693,7 @@ you wish to subscribe to.
 
 Under this hideous unenglish (;-) expression one
 understands cancelling newsgroups that one no longer
-wishes to receive.
+wishes  to receive.
 
 Will first ask you if you want to cancel the
 currently selected newsgroup. If not, you can elect
