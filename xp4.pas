@@ -214,9 +214,9 @@ label selende;
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
 {        don't know whats this for :-(
-         if you comment this out, Alt-p in reply trees points does an esc afterwards
+         if you comment this out, Alt-p in reply trees points does an esc afterwards }
          if LeftStr(dbReadStr(mbase,'brett'),1)<>'1' then
-          disprec[1]:=0; }
+          disprec[1]:=0;
         end
       else
         GoP;
@@ -2129,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/12/06 21:34:18  mk
+  - removed false fix for Bug #117117
+
   Revision 1.69  2000/12/03 12:38:22  mk
   - Header-Record is no an Object
 
