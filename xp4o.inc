@@ -83,13 +83,7 @@ begin
         dbReadN(mbase,mb_brett,_mbrett);
         leer:=_mbrett<>_brett;
         end;
- 
-      if user and (left(brett,3)='$/T') then     { User Trennzeilenformat aktualisieren }
-      begin
-        brett:=#0+brett;
-        dbwriteN(ubase,ub_username,brett);
-        end;
- 
+  
       if leer and ((user and (left(brett,4)<>#0+'$/T')) or
         (not user and (left(brett,3)<>'$/T'))) then 
       begin
@@ -717,6 +711,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/05/04 16:13:36  jg
+  - Konvertierung des Userfenster Trennzeilenformat jetzt Automatisch
+    Funktion nur Sinnvoll fuer Umstieg von Beta 23 auf Beta 24+ ....
+
   Revision 1.12  2000/05/03 04:39:21  jg
   - Bugfix Bretreorg verschont jetzt wieder Trennzeilen
 
