@@ -458,6 +458,7 @@ var size   : longint;
     function GetQCpos:byte;
     var p,q : byte;
     begin
+      QuoteOffset:=0;
       p:=cpos('>',s);
       if p>5 then p:=0
       else if p>0 then begin
@@ -1032,6 +1033,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.3  2000/05/18 22:32:18  mk
+  JG: Quoten-Bugfix (1.17)
+
   Revision 1.10.2.2  2000/05/08 18:19:42  jg
   - Bugfix: Leerzeichen nach Quotezeichen auch beim Zeilenumbruch beachten
 
