@@ -1768,9 +1768,9 @@ begin
             KeepNodeindexClosed;
             if nodeopen then CloseNodeIndex;
             if NL_anz=0 then begin
-              ExErase(NodeIndexF);
-              ExErase(UserIndexF);
-              ExErase(NodelistCfg);
+              DeleteFile(NodeIndexF);
+              DeleteFile(UserIndexF);
+              DeleteFile(NodelistCfg);
               nodeopen:=false;
               end
             else begin
@@ -2023,6 +2023,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/20 13:36:39  hd
+  - ExErase entfernt (DeleteFile ist in SysUtils)
+  - AnsiString und 32-Bit
+  - Fix: Copy(x,y,255) kopiert evtl. nur noch einen Teilstring.
+
   Revision 1.20  2000/07/13 17:15:15  mk
   - noch einige ^String-spezifische Probleme beseitigt
 

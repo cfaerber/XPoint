@@ -205,7 +205,7 @@ function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
 function  ixdat(s:shortstring):longint;           { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
-function  ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
+function  ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
 
 function  fdat(dat:string):string;             { Z-Datum -> Datum   }
@@ -225,7 +225,7 @@ function geti16(var su:string; v:string; var i:integer16):boolean;
 function getw(var su:string; v:string; var w:smallword):boolean;
 function getl(var su:string; v:string; var l:longint):boolean;
 function getx(var su:string; v:string; var b:boolean):boolean;
-function gets(var s,su:string; v:string; var ss:string; maxlen:byte):boolean;
+function gets(var s,su:string; v:string; var ss:string; maxlen: cardinal):boolean;
 function getr(var su:string; v:string; var r:real):boolean;
 procedure exchange(var s:string; repl,by:string);
 
@@ -245,7 +245,6 @@ procedure ExitPrinter;
 function  TempFree:longint;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
 procedure _era(fn:string);
-procedure ExErase(fn:string);
 procedure _chdir(p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
@@ -1512,7 +1511,7 @@ begin
            formi((l shr 4) and 63,2);
 end;
 
-function ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
+function ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
 begin
   ixdispdat:=ixdat(right(dat,2)+copy(dat,4,2)+left(dat,2)+'0000');
 end;
@@ -1708,9 +1707,8 @@ begin
   else getx:=false;
 end;
 
-function gets(var s,su:string; v:string; var ss:string; maxlen:byte):boolean;
-var
-    p   : byte;
+function gets(var s,su:string; v:string; var ss:string; maxlen: cardinal):boolean;
+var p : cardinal;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then
@@ -1727,7 +1725,8 @@ var p : byte;
 begin
   p:=pos('@',s);
   if p=0 then fuser:=s
-  else fuser:=left(s,p-1)+' @ '+copy(s,p+1,80);
+  { else fuser:=left(s,p-1)+' @ '+copy(s,p+1,80); }
+  else fuser:=left(s,p-1)+' @ '+right(s,length(s)-p+1);
 end;
 
 function aufnahme_string:string;
@@ -1754,14 +1753,18 @@ end;
 
 { Datum des letzten Netcalls merken }
 
-procedure write_lastcall(dat:String);
+procedure write_lastcall(dat:string);
 var t : text;
+    s : shortstring;
 begin
   assign(t,ownpath+NewDateFile);
   rewrite(t);
   writeln(t,dat);
   close(t);
-  if readmode=rmNeues then readdate:=ixdat(dat);
+  if readmode=rmNeues then begin
+    s:= dat;
+    readdate:=ixdat(s);
+  end;
 end;
 
 
@@ -1775,6 +1778,7 @@ end;
 
 function notempty(var s:string):boolean;
 begin
+{$hint Seiteneffekt. Waere zu eleminieren }
   if trim(s)='' then errsound;
   notempty:=(trim(s)<>'');
 end;
@@ -1904,17 +1908,9 @@ end;
 
 
 procedure _era(fn:string);
-var f : file;
 begin
-  assign(f,fn);
-  erase(f);
-  if ioresult<>0 then
-    trfehler1(4,UpperCase(fn),30);   { 'Kann '+UpperCase(fn)+' nicht l”schen!?' }
-end;
-
-procedure ExErase(fn:string);
-begin
-  if exist(fn) then _era(fn);
+  if not DeleteFile(fn) then
+    trfehler1(4,'"'+FileUpperCase(fn)+'"',30);   { 'Kann "'+FileUpperCase(fn)+'" nicht l”schen!?' }
 end;
 
 procedure _chdir(p:string);
@@ -1942,10 +1938,12 @@ end;
 
 
 procedure exchange(var s:string; repl,by:string);
-var p : byte;
+var p : cardinal;	{ Cardinal ist am besten geeignet }
 begin
   p:=pos(UpperCase(repl),UpperCase(s));
-  if p>0 then s:=copy(s,1,p-1)+by+copy(s,p+length(repl),255);
+  { if p>0 then s:=copy(s,1,p-1)+by+copy(s,p+length(repl),255); 
+    hd/2000-07-20, notwendig wegen unbegrenzter Laenge von Ansistring }
+  if p>0 then s:=copy(s,1,p-1)+by+right(s,length(s)-(p+length(repl)));
 end;
 
 
@@ -2036,6 +2034,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.66  2000/07/20 13:36:39  hd
+  - ExErase entfernt (DeleteFile ist in SysUtils)
+  - AnsiString und 32-Bit
+  - Fix: Copy(x,y,255) kopiert evtl. nur noch einen Teilstring.
+
   Revision 1.65  2000/07/19 10:44:07  hd
   - Fix: Offset-Fehler in MakeListDisplay
 
