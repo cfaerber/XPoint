@@ -631,10 +631,14 @@ var ar   : autorec;
       ext  : extstr;
   begin
     fsplit(s,dir,name,ext);
+{$IFDEF UnixFS }
+    s:= name+ext;
+{$ELSE }
     if dir='' then s:=name+ext
     else if dir[2]=':' then
       s:=left(dir,2)+name+ext
       else s:=getdrive+':'+name+ext;
+{$ENDIF }
   end;
 
 begin
@@ -655,6 +659,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/09 13:14:06  hd
+  - UnixFS: getdrive entfernt
+
   Revision 1.9  2000/04/30 20:24:01  mk
   - FindClose an falscher Stelle
 
