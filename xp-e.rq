@@ -1205,14 +1205,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 520
 # number of lines
 0    8
-1    Thank you for using CrossPoint.  Please note that  CrossPoint is
-2    NOT free software. It is shareware and you must register after a
-3    30-day evaluation period. For further information including pri-
-4    ces and a registration form read the file *BESTELL.DOC*.
+1    Thank you for using CrossPoint. Please note that CrossPoint is
+2    NOT free software, it is shareware and you must register after a
+3    30-day evaluation period. For further information, including
+4    prices and a registration form, read the file *REG_ENG.TXT*.
 5
-6    If you have any questions, problems or suggestions concerning XP
-7    feel free to contact the CrossPoint support hotline.  E-Mail ad-
-8    dresses are listed in *XPOINT.TXT*.
+6    If you have any questions, problems or suggestions concerning XP,
+7    please feel free to post in either the FidoNet echo XPOINT or the
+8    German newsgroup de.comm.software.crosspoint
 19   License No:~
 #
 20   Choose "Continue" if you agree to these terms of license.
