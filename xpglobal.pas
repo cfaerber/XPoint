@@ -33,12 +33,11 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.9';          { Versionnr. - steht nur an dieser Stelle }
-  subver      = '7';
+  mainver     = '3.9.7';        { Versionnr. - steht nur an dieser Stelle }
 
 {$I version.inc }
 
-  verstr      = mainver + '.' + subver + '-' + buildver; 
+  verstr      = mainver + '-' + buildver; 
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -189,6 +188,9 @@ begin
 
 {
   $Log$
+  Revision 1.83  2003/10/13 19:49:04  mk
+  - complete string mainver
+
   Revision 1.82  2003/10/09 19:49:58  mk
   - new automatic build number system
 
