@@ -8,7 +8,11 @@ Name: openxp
 %define version 3.8.0
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -gl -CX -XX -FU. -FuObjCOM -Funetcall -Fl.
+# -CX for Releases only
+#%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fl.
+# for snapshots
+%define ppcopts -gl -O0 -FU. -FuObjCOM -Funetcall -Fl.
+#%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
 %define toolsppcopts -gl -FU. -FuObjCOM -Funetcall -Fl.
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
