@@ -1548,11 +1548,13 @@ var dat    : longint;
         end;
      
       GoPos(p2);
-      repeat 
-        inc(p2);
-        dbnext(bbase); 
+      repeat
+        dbnext(bbase);
+        if not wrongline then inc(p2);
         if not (dbBOF(bbase) or dbEOF(bbase)) then s := dbReadNStr(bbase,bb_brettname);
-      until dbBOF(bbase) or dbEOF(bbase) or (LeftStr(s,3)<>'$/T'); {keine Trennzeile anspringen }
+      until dbBOF(bbase) or dbEOF(bbase) or (not wrongline and (LeftStr(s,3)<>'$/T'));
+                                              {keine Trennzeile anspringen }
+      if readmode<>0 then dec(p2);
 
       if (dbBOF(bbase) or dbEOF(bbase))
       then begin
@@ -1771,6 +1773,21 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.99  2002/04/10 08:38:50  mk
+  JG:- Fixes Brett-Weiterschalter:
+       1) Wenn im Anzeigemodus "Nur Bretter anzeigen, die auf den aktiven
+          Lesemodus passen" alle Nachrichten eines Bretts gelesen waren
+          und das Brett verlassen wurde, sprang der Brett-Weiterschalter
+          im Ungelesen-Modus ein Brett zu weit (weil das Brett jetzt nicht
+          mehr auf den Lesemodus paáte und daher aus der Anzeige
+          verschwand).
+       2) Wenn in derselben Konstellation auf das verlassene Brett eine
+          Trennzeile folgte, und zwischen dieser und der n„chsten
+          Trennzeile sich nur Bretter befanden, die nicht auf den aktiven
+          Lesemodus passten, landete der Cursor auf der n„chsten
+          Trennzeile (genauer: auf der Stelle, an der in der
+          Komplettanzeige ("A") das n„chste Brett liegen w?rde).
+
   Revision 1.98  2002/04/08 23:02:16  mk
   MY:- Der 983. Nachrichten-Weiterschalter-Fix: Wenn bei einer MIME-
        Multipart-Nachricht der Lister mit <Backspace> verlassen wurde, war
