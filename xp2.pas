@@ -74,17 +74,14 @@ end;
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
 var s    : string;
     i,ml : byte;
-    n    : byte;
 begin
   freemem(menu[2],length(menu[2]^)+1);
   s:=''; ml:=14;
-  n:=0;
   for i:=1 to 10 do
     with fkeys[0]^[i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
-        inc(n);
         end;
   if s<>'' then s:=',-'+s;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
@@ -1003,6 +1000,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.23  2001/09/06 18:42:40  mk
+  - removed unused variable n from zusatz_menu
+
   Revision 1.45.2.22  2001/08/12 09:05:39  mk
   - removed xpeasy
 
