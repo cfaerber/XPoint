@@ -484,13 +484,11 @@ var x,y,fm   : byte;
                  dat : longint;
                end;
       empfnr : integer;
-      xx,yy  : byte;
   begin
     moff;
-    msgbox(25,5,'',xx,yy);
-    Wrt(xx+2,yy+2,getres(332)); { 'Bezugsverkettung...' }
-    xx:=WhereX+1; yy:= WhereY;
-    FWrt(xx,yy,'0%');
+    mstr:= getres(332);
+    FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
+    FWrt(x+3+length(mstr),y+5,'0%');
     mon;
     reset(f,1);
     fs:=filesize(f);
@@ -525,15 +523,17 @@ var x,y,fm   : byte;
           end;
         inc(empfnr);
       until empfnr>hdp^.empfanz;
-      moff;
-      FWrt(xx,yy,StrS(n*100 div msgcount)+'%');
-      mon;
+      if ((n mod 5)=0) then begin
+        moff;
+        FWrt(x+3+length(mstr),y+5,StrS(n*100 div msgcount)+'%');
+        mon;
+      end;
       inc(adr,hdp^.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
     dbRestartHU(bezbase);
     dbFlush(bezbase);
     close(f);
-    closebox;
+    FWrt(x+3+length(mstr),y+5,'100%');
   end;
 
   procedure wrll(l:longint);
@@ -574,9 +574,12 @@ begin
   inmsgs:=0;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
-  msgbox(60,7,getres(333),x,y);    { 'Puffer einlesen' }
-  attrtxt(col.colmbox);
   zconnect:=ZC_puffer(puffer);
+  if (zconnect) then
+    msgbox(60,7,getres(333),x,y)	{ 'Puffer einlesen' }
+  else
+    msgbox(60,8,getres(333),x,y);
+  attrtxt(col.colmbox);
   assign(f,puffer);
   reset(f,1);
   fs:=filesize(f);
@@ -1091,6 +1094,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/05/15 10:03:04  hd
+  Bezuege im gleichen Fenster beim Puffereinlesen
+
   Revision 1.16  2000/05/14 17:05:36  hd
   - Beim Puffereinlesen wird nur noch die %-Zahl gezeigt.
     Die Funktionen hinsichtlich PGP/DES beim Einlesen konnte ich
