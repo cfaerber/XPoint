@@ -285,9 +285,11 @@ begin
   maddbool(3,7,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
   maddbool(3,8,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
   maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+{$IFNDEF Unix }
   mset1func(SetTimezone);
+{$ENDIF }
   maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
-{$IFNDEF unix}
+{$IFNDEF Unix}
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
@@ -1378,6 +1380,9 @@ end.
 
 {
   $Log$
+  Revision 1.82  2001/01/20 15:33:21  mk
+  - fixed Timezonefield in Unix Versions
+
   Revision 1.81  2001/01/15 23:27:35  mk
   - removed Editorkb, Listerkb
 
