@@ -699,16 +699,16 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 database$(UNITEXT): database.pas databas1.inc databas2.inc \
 	database.inc datadef$(UNITEXT) datadef1$(UNITEXT) \
-	inout$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xplinux$(UNITEXT)
+	fileio$(UNITEXT) inout$(UNITEXT) typeform$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 database$(UNITEXT): database.pas databas1.inc databas2.inc \
 	database.inc datadef$(UNITEXT) datadef1$(UNITEXT) \
-	inout$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+	fileio$(UNITEXT) inout$(UNITEXT) typeform$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2625,6 +2625,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.43  2000/11/15 23:13:00  fe
+# Fixed dependencies.
+#
 # Revision 1.42  2000/11/15 00:08:08  fe
 # Dependencies fixed.
 #
