@@ -308,7 +308,7 @@ end;
 
 procedure getpar;
 var i    : integer;
-    s    : string;
+    s,so : string;
     warn : boolean;
     t    : text;
     p    : byte;
@@ -322,7 +322,8 @@ var i    : integer;
 begin
   warn:=false;
   for i:=1 to paramcount do begin
-    s:=UpperCase(paramstr(i));
+    so:= ParamStr(i);
+    s:=UpperCase(so);
     if (s='-ZF') or (s='/ZF') then direction:=1
     else if (s='-FZ') or (s='/FZ') then direction:=2
     else if (LeftStr(s,2)='-H') or (LeftStr(s,2)='/H') then
@@ -350,8 +351,8 @@ begin
     else if (s[1]='-') or (s[1]='/') then
       warnung('ungÅltiger Schalter: '+paramstr(i))
     else
-      if infile='' then infile:=s
-      else if outfile='' then outfile:=s
+      if infile='' then infile:=so
+      else if outfile='' then outfile:=so
       else if fromadr='' then fromadr:=s
       else if toadr='' then toadr:=s
       else warnung('ungÅltiger Parameter: '+paramstr(i));
@@ -441,7 +442,11 @@ begin
 end;
 
 procedure MoveToBad(fn:pathstr);
+{$ifdef UnixFS }
+const BadDir = 'bad/';
+{$else}
 const BadDir = 'BAD\';
+{$endif}
 var
     dir  : dirstr;
     name : namestr;
@@ -830,7 +835,9 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: XP '+mid(programm,cpos(' ',programm)+2));
+        wrs(^A'PID: OpenXP '+mid(programm,cpos(' ',programm)+2))
+      else
+        wrs(^A'PID: OpenXP'+betastr+' '+verstr+pformstr);
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1688,6 +1695,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/11/09 18:51:41  hd
+  - Anpassungen an Linux
+
   Revision 1.40  2000/10/28 07:50:53  mo
   -ANSI-String Bug umschifft
 

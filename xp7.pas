@@ -555,7 +555,7 @@ begin                  { of Netcall }
       if _fido then begin
         if not existBin(ZFidoBin) then begin
           trfehler(101,esec); exit; end;    { 'ZFIDO.EXE fehlt! }
-        if not exist('XP-FM.EXE') then begin
+        if not existBin(XPFMBin) then begin
           trfehler(104,esec); exit; end;    { 'XP-FM.EXE fehlt!' }
         end;
       if (logintyp=ltQWK) and not existBin(ZQWKBin) then begin
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/11/09 18:51:42  hd
+  - Anpassungen an Linux
+
   Revision 1.39  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

@@ -28,7 +28,11 @@
 program xp_fm;
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+{$IFDEF NCRT}
+  xpcurses,
+{$ELSE}
+  crt,
+{$ENDIF}
   sysutils,dos,typeform,resource,fileio,xpdiff,xpglobal,
   montage,inout,winxp,crc,ObjCOM,Modem,ZModem,Timer,Debug;
 
@@ -525,6 +529,9 @@ end.
 
 {
   $Log$
+  Revision 1.26  2000/11/09 18:51:42  hd
+  - Anpassungen an Linux
+
   Revision 1.25  2000/10/17 10:05:45  mk
   - Left->LeftStr, Right->RightStr
 

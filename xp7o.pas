@@ -434,7 +434,7 @@ var d         : DB;
       else pw:='';
       if LocalINTL then nli:=''
       else nli:=' -nli';
-      shell('ZFIDO.EXE -zf -r -h'+MagicBrett+_2d+pc+nli+pw+' '+source+' '+
+      shell(ZFidoBin + ' -zf -r -h'+MagicBrett+_2d+pc+nli+pw+' '+source+' '+
             sout+dest+' '+OwnFidoAdr+' '+boxname,300,screen);
       if f then _era(source);
       end;
@@ -772,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/11/09 18:51:42  hd
+  - Anpassungen an Linux
+
   Revision 1.33  2000/11/01 11:01:15  mk
   - Autodatumsbezuege jetzt immer in Netcall
 

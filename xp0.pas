@@ -287,12 +287,14 @@ const
 {$IFDEF UnixFS}
        MaggiBin         : string        = 'maggi';
        UUCICOBin        : string        = 'uucico';
+       XPFMBin          : string        = 'xp-fm';
        Yup2PktBin       : string        = 'yup2pkt';
        ZFidoBin         : string        = 'zfido';
        ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
        UUCICOBin        = 'UUCICO.EXE';
+       XPFMBin          = 'XP-FM.EXE';
        Yup2PktBin       = 'YUP2PKT.EXE';
        ZFidoBin         = 'ZFIDO.EXE';
        ZQWKBin          = 'ZQWK.EXE';
@@ -1169,6 +1171,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.98  2000/11/09 18:51:42  hd
+  - Anpassungen an Linux
+
   Revision 1.97  2000/11/02 21:27:04  fe
   bzip2 support added.
 

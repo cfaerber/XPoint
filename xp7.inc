@@ -50,8 +50,8 @@ begin
         BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
       else if (((not (_fido or uucp) or (UpArcer<>'')) and
                 ((not uucp and (pos('$UPFILE',UpperCase(UpArcer))=0)) or
-                 (pos('$PUFFER',UpperCase(UpArcer))=0))) or
-              (pos('$DOWNFILE',UpperCase(DownArcer))=0)) then
+                 (pos('$PUFFER',FileUpperCase(UpArcer))=0))) or
+              (pos('$DOWNFILE',FileUpperCase(DownArcer))=0)) then
         BoxParOk:=getres2(706,4)    { 'unvollst„ndige Packer-Angaben' }
       else if ntDownarcPath(netztyp) and not FindDownarcer then
         BoxparOk:=getres2(706,6)
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2000/11/09 18:51:42  hd
+  - Anpassungen an Linux
+
   Revision 1.36  2000/10/28 15:34:17  mk
   - Workaround for VP Bug
 

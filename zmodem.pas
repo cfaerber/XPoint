@@ -67,7 +67,14 @@ PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication o
 
 IMPLEMENTATION
 
-USES Crt,Dos,Timer,Debug,CRC;
+USES
+{$ifdef NCRT}
+  XPCurses,
+{$else}
+  Crt,
+{$endif}
+  Dos,
+  Timer,Debug,CRC;
 
   CONST
     DiskBufferSize = $7FFF;
@@ -116,7 +123,7 @@ BEGIN {$I-}
      BlockWrite(f,diskbuffer,bufferpos);
      bufferpos:=0;
    END;  (* of IF *)
-   Move (buff,diskbuffer [bufferpos],bytes);
+   System.Move (buff,diskbuffer [bufferpos],bytes);
    INC (bufferpos,bytes);
    Z_WriteFile := (IOresult = 0)
 END; {$I+}
@@ -228,12 +235,24 @@ VAR
    dt: DateTime;
    secspast, datenum: LONGINT;
    n: WORD;
+{$ifdef Unix}
+{$ifdef FPC}
+   y, m, d: longint; { Var parameter must match exactly }
+{$endif}
+{$endif}
 BEGIN
    secspast := LONGINT(0);
    FOR n := 1 TO Length(s) DO
       secspast := (secspast SHL 3) + Ord(s[n]) - $30;
    datenum := (secspast DIV 86400) + c1970;
+{$ifdef Unix}
+{$ifdef FPC}
+   JulianDNToGregorian(datenum,y,m,d);
+   dt.year:= y; dt.month:= m; dt.day:= d;
+{$else}
    JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
+{$endif}
+{$endif}
    secspast := secspast MOD 86400;
    dt.hour := secspast DIV 3600;
    secspast := secspast MOD 3600;
@@ -2375,7 +2394,7 @@ BEGIN
        FOR n:=1 TO Length (s) DO IF (s [n] IN ['A'..'Z']) THEN s [n]:=Chr (Ord (s [n]) + $20);
 
        FillChar (txbuf,ZBUFSIZE,0);
-       Move (s [1],txbuf [0],Length (s));
+       System.Move (s [1],txbuf [0],Length (s));
        fheaderlen:=Length (s);
      END ELSE BEGIN
        TransferName:=''; TransferSize:=0; TransferTotalTime:=1; TransferPath:='';
@@ -2448,6 +2467,9 @@ END.
 
 {
   $Log$
+  Revision 1.5  2000/11/09 18:51:41  hd
+  - Anpassungen an Linux
+
   Revision 1.4  2000/10/29 16:18:25  fe
   Mit VPC uebersetzbar gemacht.
 
