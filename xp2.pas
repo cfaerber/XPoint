@@ -417,6 +417,9 @@ var s : string;
 
 begin
   helpfile:=getres(1);
+{$IFDEF UnixFS}
+   lostring(helpfile);
+{$ENDIF}
   keydeffile:=getres(2);
   _fehler_:=getres2(11,1);
   _hinweis_:=getres2(11,2);
@@ -1135,6 +1138,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/05/19 13:48:00  ml
+  Hilfedatei wird jetzt gefunden (xp.hlp)
+
   Revision 1.39  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 
