@@ -307,11 +307,11 @@ begin
     end;
 
     {$IFDEF XMSOVR } 
-    if ((EmsTest) and (not noovrbuf)) then begin
+    if ((EmsTest) and (not noovrbuf) and ((emstotal*16)>2040)) then begin
       OvrInitEMS;
       xmsovrbuf:=false;
     end 
-    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf)) then
+    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (xmst>2040)) then
       OvrInitXMS
     else xmsovrbuf:=false; 
     {$ELSE }
@@ -343,6 +343,11 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.20  2003/01/18 07:40:42  mw
+  MW: - XP versucht jetzt nicht mehr den Overlay-Buffer im
+        EMS bzw. XMS anzulegen, wenn weniger als 2040 KB
+        des jeweiligen Speichers vorhanden ist.
+
   Revision 1.18.2.19  2003/01/17 17:01:26  mw
   MW: - Make XT-Version compile again (Part 1)
 
