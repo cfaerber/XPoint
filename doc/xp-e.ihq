@@ -6214,6 +6214,32 @@ The most important are:
 (CrossPoint supports WaZOO-FileRequests).
 
 @
+751
+The current Fido Nodelist flags are:
+
+<<Modem>>    V32   = CCITT V.32, 9600 bps
+         V32B  = CCITT V.32bis, 14400 bps
+         V34   = ITU V.34, 28800 bps
+         VFC   = V.Fast Class, 28800 bps
+         HST   = USR HST, 14400 bps
+         H16   = USR HST, 16800 bps
+         PEP   = Telebit PEP, with 18000 bps
+         MNP   = MNP error correction
+         V42   = CCITT V.42 error correction
+         ZYX   = ZyXEL 16800 bps
+
+<<ISDN>>     ISDNB = V.110, 38400 bps
+         ISDNC = X.75, 64000 bps
+
+<<Mail>>     CM   = Accepts continuous mail
+         MN   = Does NOT accept compressed mail
+
+<<FileReq>>  XA   = All types of File Request
+         XX   = WaZOO file requests ONLY
+
+(CrossPoint supports WaZOO File requests).
+
+@
 760
 Enter the name of the server from which the
 message packet comes, or the name of a box with the
@@ -6988,6 +7014,88 @@ programme or batch file with the macro <<$FILE>>.
 <<[x]>> -> Update files will be deleted after being
        processed.
 @
+950
+Enter your search criteria here. Between the
+different fields, it is possible to do an "AND" type
+of search. If you enter "Bloggs" in the Sysop field
+and enter "ZYX" in the Flags field, XP will search
+for all occurences of the name "Bloggs" <<and>> the
+modem flag "ZYX".
+
+<<Sysop, Location, BBS name
+
+    These are the appropriate Node/Pointlist fields.
+    For Points, enter the Point name in the "SysOp"
+    field -- the "BBS name" has no significance.
+    You can, as with all XP's search functions,
+    search through as many text-lines as you want.
+
+<<Node address
+
+    This is the Fido Node address in the form
+    Zone:Net/Node[.Point]. You can also enter part of
+    an address here, e.g. "2:" for Europe, "2:25" for
+    the UK or ".80" for all Points with a Point
+    number of 80.
+
+<<Phone
+
+    Here, you can enter either a phone number or a
+    part of a phone number. You will have to enter
+    the full phone number manually or for a part
+    of a phone number, you could enter "01274-" for
+    all Nodes in Bradford or "0049-" for all Nodes in
+    Germany.
+@
+951
+^^950
+@
+952
+^^950
+@
+953
+^^950
+@
+954
+^^950
+@
+955
+In this field, you can enter either one or more
+nodelist [flags]. If you enter more than one flag@751
+and seperate each one with a "," an "AND" type of
+search will take place but if you seperate each flag
+with a <space>, an "OR" type of search will take
+place.
+
+Examples:
+
+<<VFC>>       Search for systems with VFC modems
+
+<<V34,H16>>   Search for systems with USR Dual
+          Standard modems
+
+<<XA XX>>     Search for systems that will accept
+          file requests from XP
+
+<<ISDNC,XA ISDNC,XX>>   Search for ISDN systems that
+          accept file requests from XP
+@
+956
+<<[x]   Search FidoNet nodelist
+
+      If you have installed a FidoNet nodelist with
+      the name NODELIST.\###, this will be searched
+      through.
+
+<<[x]   Search other nodelists
+
+      Searches through all nodelists <<except>> a
+      FidoNet nodelist.
+
+<<[x]   Search pointlists
+
+      Searches through Pointlists only.
+@
 1500
 Select <<Yes>> to archive a copy of the selected
 message in the user's newsgroup. In this way you can
@@ -7314,8 +7422,8 @@ be sent, use [/Message/Outgoing/Edit]@10401
 <<Message / Action
 
 This menu contains various options for sending a
-message, already in the message base, either to 
-another person or to another newsgroup. See the 
+message, already in the message base, either to
+another person or to another newsgroup. See the
 online help for the individual menu items.
 @
 10308
@@ -9359,11 +9467,19 @@ automatically. This function is just in case
 something should happen; you can force a re-index.
 
 @
-13005
-Some statistics from your node list.
+13006
+<<Fido / Nodelists / Statistics>>
+
+Some statistics from your nodelist.
+@
+13007
+<<Fido / Nodelists / Search>>
+
+A very comprehensive "tool" for searching the
+nodelist for matching criteria.
 @
 13008
-<<Fido / Nodelists / Find
+<<Fido / Nodelists / Find>>
 
 You can browse the data for Fido nodes. Enter the
 node address in the usual form <Zone>:<Net>/<Node>.
@@ -9371,7 +9487,7 @@ If you leave off the zone and even the net,
 CrossPoint will take the zone and net of your main
 Fido server (Bossnode) as default.
 
-Instead of an address you can enter the name of a
+Instead of an address, you can enter the name of a
 sysop or point. Enter the surname, first part of the
 surname or the full name.
 @
