@@ -2359,11 +2359,12 @@ begin
     Size := 0;
     if not RawNews then
     begin
-// TODO: BUG
       while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
         ReadString;
-      p := pos('#! rnews', s);
-      if p > 1 then
+      // RFC so 1036
+      // batch-header  = "#! rnews " article-size eol
+      p := pos('#! rnews ', s);
+      if p = 1 then
       begin
         delete(s, 1, p - 1);
         size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
@@ -2391,14 +2392,16 @@ begin
       seek(f1, fp); ReadBuf; bufpos := bp;
       repeat                        { Header ueberlesen }
         ReadString;
-        //** clean up: ignore size if line count is given
-        dec(size, length(s) + eol);
+
+        // RFC so1036
+        // The article size is a  decimal count of the octets in the article, counting each EOL as one
+        // octet regardless of how it is actually represented.
+        dec(size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
 
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
 
-      //** clean up: ignore size if line count is given
       while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
         ReadString;
@@ -2410,7 +2413,7 @@ begin
           end
         else // standard format
           Dec(hd.lines);
-        dec(Size, length(s) + eol);
+        dec(Size, length(s) + MinMax(Eol, 0, 1));
         DecodeLine;
         if recode then
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
@@ -3635,6 +3638,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.8  2002/05/24 06:54:29  mk
+  - fixed handling of size parameter for messages
+
   Revision 1.97.2.7  2002/05/20 07:55:43  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 
