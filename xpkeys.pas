@@ -162,8 +162,7 @@ begin
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
-          if listfile(fn,fn,true,false,false,0)<>0 then
-          else
+          repeat until listfile(fn,fn,true,false,false, 0) <> -4
         else
           rfehler(20);   { '*LIST: Datei nicht vorhanden!' }
         end
@@ -249,6 +248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2002/01/09 02:17:00  mk
+  MY: - Ctrl-W toggles word wrap in message lister
+
   Revision 1.20  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

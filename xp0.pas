@@ -842,6 +842,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
        Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
+       ListWrapBack : boolean = true;     { Backup von ListWrap zum Umschalten }
 
        PGP2 = '2.6.x';
        PGP5 = '5.x';
@@ -1205,6 +1206,9 @@ implementation
 
 {
   $Log$
+  Revision 1.152  2002/01/09 02:16:59  mk
+  MY: - Ctrl-W toggles word wrap in message lister
+
   Revision 1.151  2002/01/06 19:31:43  ma
   - getX now supports searching for multiple keys
     (provides backwards compatibility in case of changed key names)

@@ -738,6 +738,29 @@ var fn     : string;
 
 label ende0,nextmsg;
 
+(*  Exit-Codes Lister:
+
+    -128 bis -5 = Lister mit Fehlerton beenden
+
+    -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
+    -3  = Kommentarbaum anzeigen
+    -2  = Wiedervorlageflag umschalten
+    -1  = <->
+     0  = <Esc>
+     1  = <+>
+     2  = <Links>
+     3  = <Rechts>
+     4  = Quote erstellen entsprechend "Listkey"
+     5  = Keine Aktion, Lister mit der Nachricht neu starten,
+          auf der in der Nachrichtenbersicht der Cursorbalken steht,
+          bzw. mit der der Lister zuletzt ge”ffnet wurde
+          (Kommentarbaumbewegungen werden rckg„ngig gemacht).
+     6  = <Ctrl-PgUp>
+     7  = <Ctrl-PgDn>
+
+    8 bis 127 = Lister mit Fehlerton beenden *)
+
+
 begin
   pushed:=false;
   first:=true;
@@ -986,17 +1009,28 @@ begin
     begin
       rec:=disprec[1];
       wiedervorlage;
-      if p=1 then begin    {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
+      if p=1 then begin      {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
         disprec[1]:=rec;
         dpp:=rec;
-        end;
+      end;
       ende:=false;
-      end
+    end
+
+    else if lres = -4 then ende:=false    { "O" oder <Ctrl-W> im Lister }
 
     else begin
+
+      if lres = -3 then     { Bezugsbaum "#" aus Lister heraus anzeigen }
+      begin
+        showscreen(true);
+        Bezugsbaum;
+        lres:=5;
+      end;
+
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
         lres:=0;}  { !! ungelesen-Mode }
-      if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then begin
+      if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then
+      begin
         if lres<6 then SetGelesen;
         case lres of
           -1 : if BezSeekBezug then ende:=false;         { - }
@@ -1019,14 +1053,15 @@ begin
           then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
 
         if lres<6 then
-          if not ende then begin
+          if not ende then
+          begin
             {GrabP;} kk:=true; disprec[p]:=dbRecno(mbase);
             mpart_nr:=1;
             if u_read then aufbau:=true;
-            end
+          end
           else begin
             if lres <> -4 then errsound; ende:=false; {-4 (Sub-) Listerende ohne Aktion }
-            end;
+          end;
         end
       else
         case lres of
@@ -1611,6 +1646,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.88  2002/01/09 02:17:00  mk
+  MY: - Ctrl-W toggles word wrap in message lister
+
   Revision 1.87  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

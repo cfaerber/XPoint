@@ -758,6 +758,7 @@ begin
   writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
+  ListWrapBack:=ListWrap;
   writeln(t,'ViewerSave=',viewer_save);
   writeln(t,'ViewerLister=',viewer_lister);
   writeln(t,'ViewerVirscan=',viewer_scanner);
@@ -1605,6 +1606,7 @@ begin
     TrimFirstChar(QuoteChar, '"');
     TrimLastChar(QuoteChar, '"');
     otherqcback:=otherquotechars;
+    ListWrapBack:=ListWrap;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
     if UpperCase(userauf)='ALLE' then UserAufnahme:=0
@@ -1718,6 +1720,9 @@ begin
 
 {
   $Log$
+  Revision 1.136  2002/01/09 02:17:00  mk
+  MY: - Ctrl-W toggles word wrap in message lister
+
   Revision 1.135  2002/01/06 19:31:44  ma
   - getX now supports searching for multiple keys
     (provides backwards compatibility in case of changed key names)

@@ -43,6 +43,8 @@ uses
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
       ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
+      ListShowSeek  : boolean = false;
+      ListWrapToggle: boolean = false;   { fÅr Wortumbruch-Umschaltung }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -335,6 +337,14 @@ begin
   if UpCase(c)=k4_F then                                 { 'F' }
     ListXHighlight:=not ListXHighlight;
 
+  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
+
+  if c = ^W then                                              { '^W' = Umbruch togglen }
+  begin
+    listwrap:=not listwrap;
+    ListWrapToggle:=true;
+    ex(-4);
+  end;
 
   if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
   begin
@@ -357,10 +367,14 @@ begin
       otherquotechars:=not otherquotechars;
     end;
 
+   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)
      or (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
-  else begin
-  if t = keyaltm then                                       { ALT+M = Suche MessageID }
+  else
+  begin
+    Nr:=dbrecno(mbase);
+
+    if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
       if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
@@ -385,6 +399,8 @@ begin
       if s='' then s:=dbReadStrN(mbase,mb_absender);
       if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
+
+    dbgo(mbase,nr);
   end;
 
   if listmakros=16 then   { Archiv-Viewer }
@@ -1038,6 +1054,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2002/01/09 02:16:59  mk
+  MY: - Ctrl-W toggles word wrap in message lister
+
   Revision 1.105  2001/12/30 19:56:48  cl
   - Kylix 2 compile fixes
 
