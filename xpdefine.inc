@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -249,6 +249,9 @@
 
 {
   $Log$
+  Revision 1.78.2.3  2002/06/12 08:44:12  mk
+  - debug modus switched off
+
   Revision 1.78.2.2  2002/05/05 22:43:14  mk
   - use correct case for 'bak' extension
 
