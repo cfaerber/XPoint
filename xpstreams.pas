@@ -107,6 +107,10 @@ type TCoDecStream = class(TConnectableStream)
   TPartialStream = class(TConnectableStream)
   private
     FStart,FEnd: Longint;
+
+  protected
+    procedure Connect(AnOtherStream:TStream); virtual;
+    
   public
     constructor Create(AStart,AnEnd: Longint);
     function Read(var Buffer; Count: Longint): Longint; override;
@@ -305,6 +309,12 @@ begin
   result := OtherStream.Seek(Offset,soFromBeginning) - FStart;
 end;
 
+procedure TPartialStream.Connect(AnOtherStream:TStream);
+begin
+  inherited Connect(AnotherStream);
+  FOtherStreamStartPos := 0;
+end;
+
 { ---------------- Streams that can own other streams ---------------- }
 
 constructor TConnectableStream.Create;
@@ -318,7 +328,7 @@ procedure TConnectableStream.Connect(AnOtherStream:TStream);
 begin
   if FDestroyOtherStream and assigned(FOtherStream) then
   begin
-    SetSize(0);
+//  SetSize(0);
     FOtherStream.Free;
   end;
 
@@ -331,8 +341,8 @@ end;
 
 destructor TConnectableStream.Destroy;
 begin
-  if assigned(FOtherStream) then
-    SetSize(0);
+//if assigned(FOtherStream) then
+//  SetSize(0);
 
   if assigned(FOtherStream) and FDestroyOtherStream then
     FOtherStream.Free;
