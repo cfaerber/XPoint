@@ -312,8 +312,9 @@ var x,y  : byte;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
-    AdrbuchDef  :byte;
+    OldAdr: byte;
 begin
+  OldAdr := Adr;
   new(adp);
   if left(user,4)<>#0+'$/T' then
   begin
@@ -359,7 +360,6 @@ begin
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
-    adrbuchdef:=adr;
     mhnr(8069);
     end
 
@@ -374,9 +374,9 @@ begin
   readmask(brk);
   if not brk then
   begin
-    if (adrbuchdef<>0) and (adr=0) then
+    if (OldAdr <> 0) and (adr=0) then { Adr ge„ndert von ungleich 0 zu 0 }
      if not readJN(GetRes(2738),false) then
-       adr:=adrbuchdef;
+       Adr:= OldAdr; { doch nicht? Dann zurcksetzen }
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
@@ -2419,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.19  2001/09/05 23:19:35  mk
+  - fixed uninialized AdrbuchDef (now OldAdr) in EditUser
+
   Revision 1.25.2.18  2001/08/26 22:17:15  mk
   - fixed Crash with addresses longer then 80 chars, when xp try to add a domain name
 
