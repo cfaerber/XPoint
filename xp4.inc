@@ -343,7 +343,6 @@ begin
             4 : MapsCommands(0);
             6 : MapsReadList;
             7 : MapsReadFile;
-            8 : MausEditInfos;
           end;
 
      20 : case m1 of           { Fileserver }
@@ -808,6 +807,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2002/02/10 14:54:06  mk
+  - removed menu entry for MausEditInfos
+
   Revision 1.38  2002/01/22 19:15:29  mk
   - after 3.40 merge fixes
 
