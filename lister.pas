@@ -800,7 +800,7 @@ begin
   repeat
     display;
     showstat;
-    if Assigned (FOnShowLines) then FOnShowLines(GetSelection);
+    if Assigned(FOnShowLines) then FOnShowLines(GetSelection);
     (*      mauszuo:=(pl<>nil) and (pl^.prev<>nil);
           mauszuu:=(pl<>nil) and (pl^.next<>nil); *)
     mauszul := false; mauszur := false;
@@ -819,7 +819,7 @@ begin
 
     (*      if (t>=mausfirstkey) and (t<=mauslastkey) then
              Maus_bearbeiten; *)
-    FOnKeyPressed(Self, t);
+    if Assigned(FonKeyPressed) then FOnKeyPressed(Self, t);
 
     if Lines.Count > 0 then
     begin                             { Liste nicht leer }
@@ -1083,6 +1083,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.42  2000/12/25 20:30:20  mk
+  - test if Event functions are not nil
+
   Revision 1.41  2000/12/25 14:02:40  mk
   - converted Lister to class TLister
 
