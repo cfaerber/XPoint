@@ -40,43 +40,49 @@ type
 
 const
   // returnErrors of GetMessage
-  nntpMsg_GroupnotFound     = 411;
-  nntpMsg_noGroupSelected   = 412;
-  nntpMsg_noArticleSelected = 420;
-  nntpMsg_wrongArticleNr    = 423;
-  nntpMsg_nosuchArticle     = 430;
-  nntpMsg_AuthRequired      = 480;
-  nntpMsg_PassRequired      = 381;
+  nntpMsg_GroupnotFound      = 411;
+  nntpMsg_noGroupSelected    = 412;
+  nntpMsg_noArticleSelected  = 420;
+  nntpMsg_wrongArticleNr     = 423;
+  nntpMsg_nosuchArticle      = 430;
+  nntpMsg_EndSign            = #13#10+'.'#13#10;
 
+  nntp_AuthRequired          = 480;
+  nntp_PassRequired          = 381;
+  nntp_NotConnected          = -1;
+
+  nntp_PostPleaseSend        = 340;
+  nntp_PostPostingNotAllowed = 440;
+  nntp_PostPostingFailed     = 441;
+  nntp_PostArticlePosted     = 240;
 
 type
   TNNTP = class(TSocketNetcall)
 
   protected
 
-    FServer             : string;               { Server-Software }
-    FUser, FPassword    : string;               { Identifikation }
+    FServer             : string;               { server-software }
+    FUser, FPassword    : string;               { identification }
 
     FGroupName: String;
     EstimateNr,
     FirstNr,
     LastNr: Integer;
+    FReadOnly           : Boolean;
+
+    procedure InitVars; override;
   public
-
-    constructor Create;
-    constructor CreateWithHost(s: string);
-
     property Server: string read FServer;
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
 
-    { Verbindung herstellen }
+    { open connection to server }
     function Connect: boolean; override;
 
-    { Abmelden }
+    { close connection }
     procedure DisConnect; override;
 
-    { Anmelden (wird von Connect aufgerufen) }
+    { authentificate (called by Connect) }
     function  Login: boolean;
 
     { -------- NNTP-Zugriffe }
@@ -93,10 +99,21 @@ type
     { Message vom server holen }
     function GetMessage(msgNr: Integer; Message: TStringList): Integer; virtual;
     
+    { Message vom server holen }
+    function PostMessage(Message: TStringList): Integer; virtual;
+    
+    { next 3 only available after selecting Group }
+    { first Message of this group hold by server }
     property FirstMessage: Integer read FirstNr;
+    { last Message of this group hold by server }
     property LastMessage: Integer read LastNr;
+    { selected group }
     property GroupName: String read FGroupName;
 
+    { Posting allowed if ReadOnly = false }
+    property ReadOnly: Boolean read FReadOnly;
+
+    { contains actual ErrorCode }
     property ErrorCode: Integer read FErrorCode;
   end;
 
@@ -131,24 +148,21 @@ resourcestring
   res_msg2            = 'Artikel %d geholt';
   res_msg3            = 'Fehler beim Holen von Artikel %d';
 
+  res_post1            = 'post article';
+  res_post2            = 'article posted';
+  res_post3            = 'Fehler %d beim Holen von Artikel';
+
   res_auth            = 'Authentifikation benötigt';
 
 
-constructor TNNTP.Create;
+procedure TNNTP.InitVars;
 begin
-  inherited Create;
-  FUser:='';
-  FPassword:='';
-  FServer:= '';
-end;
-
-constructor TNNTP.CreateWithHost(s: string);
-begin
-  inherited CreateWithHost(s);
+  inherited InitVars;
   FPort:= DefaultNNTPPort;
   FUser:='';
   FPassword:='';
   FServer:= '';
+  FReadOnly := true;
 end;
 
 function TNNTP.Login: boolean;
@@ -163,7 +177,7 @@ begin
       SWritelnFmt('AUTHINFO USER %s PASS %s', [FUser, FPassword]);
       SReadLn(s);
       FErrorCode := ParseResult(s);
-      if FErrorCode = nntpMsg_PassRequired then     { some servers use another syntax... }
+      if FErrorCode = nntp_PassRequired then     { some servers use another syntax... }
       begin
         SWritelnFmt('AUTHINFO PASS %s', [FPassword]);
         SReadLn(s);
@@ -183,6 +197,8 @@ var
 begin
   Result:= false;
 
+  FReadOnly := true;
+
   WriteIPC(mcInfo,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
@@ -199,9 +215,10 @@ begin
     exit;
   end else
   begin
-  if s = '' then
+  if s <> '' then
     WriteIPC(mcError,res_connect4, [0]);  // verbunden
     FServer:= Copy(s,5,length(s)-5);
+    if pos('POSTING OK', UpperCase(s)) <> 0 then FReadOnly := false;
   end;
 
   { Anmelden }
@@ -393,7 +410,7 @@ begin
         WriteIPC(mcInfo,res_group3, [AGroupName]);
         raise ENNTP.create(Format(res_group3, [AGroupName]));
       end;
-      nntpMsg_AuthRequired : begin
+      nntp_AuthRequired : begin
         WriteIPC(mcInfo, res_auth, [0]);
         raise ENNTP.create(res_auth);
       end;
@@ -410,7 +427,7 @@ var
   Error: Integer;
   s: String;
 begin
-  Result := -1;
+  Result := nntp_NotConnected;
   if Connected then
   begin
     // select one newsgroup
@@ -436,11 +453,56 @@ begin
   end;
 end;
 
+function TNNTP.PostMessage(Message: TStringList): Integer;
+{  res_post1            = 'post article';
+  res_post2            = 'article posted';
+  res_post3            = 'Fehler %d beim Holen von Artikel';
+  nntp_PostPleaseSend        = 340;
+  nntp_PostPostingNotAllowed = 440;
+  nntp_PostPostingFailed     = 441;
+  nntp_PostArticlePosted     = 240;}
+var
+  Error, I: Integer;
+  s: String;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    WriteIPC(mcInfo,res_post1, [0]);
+    SWriteln('POST');
+    SReadln(s);
+    Error := ParseResult(s);
+    case Error of
+      nntp_PostPleaseSend : begin
+	 for I := 0 to Message.Count - 1 do
+	    SWriteln(Message[I]);
+	 SWriteln(nntpMsg_EndSign);
+      end
+      else begin
+	 WriteIPC(mcInfo,res_post3, [Error]);
+	 Result := Error;
+	 exit;
+      end;
+    end;
 
+    SReadln(s);
+    Error := ParseResult(s);
+    if Error =   nntp_PostArticlePosted then
+       Result := 0
+    else
+       Result := Error;
+
+    WriteIPC(mcInfo,res_post2, [0]);
+  end;
+end;
 
 end.
 {
   $Log$
+  Revision 1.15  2000/12/28 00:44:52  ml
+  - nntp-posting implemented
+  - ReadOnly-flag for nntp-servers
+
   Revision 1.14  2000/12/27 00:51:00  ml
   - userauth (user + passwd) works now with inn
   - getting newsmail works

@@ -70,7 +70,7 @@ type
     FErrorMsg           : string;       { Fehlertext }
     FErrorCode          : Integer;      { SocketError-Code }
 
-    procedure InitVars;
+    procedure InitVars; virtual;
     procedure SActive(b: boolean);
     procedure SPort(i: integer);
     function FGetTimeout: Integer;
@@ -377,6 +377,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/12/28 00:44:52  ml
+  - nntp-posting implemented
+  - ReadOnly-flag for nntp-servers
+
   Revision 1.15  2000/12/26 12:09:01  mk
   - clear FAddr before use
 
