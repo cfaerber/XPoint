@@ -182,6 +182,7 @@ xpfm-e.rq	englisches Sprachmodul fuer Fido-Mailer
 xpfnt1.obj	Bildschirmfonts
 xpfnt2.obj	Bildschirmfonts
 xpfnt3.obj	Bildschirmfonts
+xpfonts.inc	Bildschirmfonts
 xpfonts.pas	Bildschirmfonts
 xpftnadr.pas	???
 xpglobal.pas	???
