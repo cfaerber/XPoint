@@ -280,6 +280,7 @@ var
   info: stat;
 {$ENDIF}
 begin
+  TestAccess := false;
 {$IFDEF FPC }
   if not (fstat(p, info)) then
 {$ELSE }
@@ -508,9 +509,14 @@ end;
 begin
   InitLogStream;
 {$endif}
+
+{$Warnings OFF}
 end.
 {
   $Log$
+  Revision 1.31  2001/10/21 12:49:57  ml
+  - removed some warnings
+
   Revision 1.30  2001/10/16 13:11:56  mk
   - simplyfied ResolvePathName
 

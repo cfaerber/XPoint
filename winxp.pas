@@ -124,7 +124,7 @@ procedure ClrScr;
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
 
-procedure consolewrite(x,y:word; num:dword);
+procedure consolewrite(x,y:word; num: Integer);
 
 
 { Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
@@ -342,7 +342,7 @@ begin
     WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
     WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
-  procedure consolewrite(x,y:word; num:dword);  { Num = Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:word; num: Integer);  { Num = Chars in xp0.charpuf (String) }
   var
     i, j: Integer;
   begin
@@ -447,8 +447,10 @@ begin
   ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, OutRes);
   c := aChr; Attr := aAttr;
 {$ELSE }
+{$IFDEF DOS32}
   var
     w: SmallWord;
+{$ENDIF}
   begin
     {$IFDEF VP }
       c := SysReadCharAt(x-1, y-1);
@@ -998,14 +1000,15 @@ begin
 end;
 
 procedure InitWinXPUnit;
+{$IFNDEF NCRT }
 var
   i: byte;
 begin
-{$IFDEF NCRT }
-  FillChar(pullw, sizeof(pullw), 0);
-{$ELSE }
   for i:=1 to maxpull do
     pullw[i].free:=true;
+{$ELSE }
+begin
+  FillChar(pullw, sizeof(pullw), 0);
 {$ENDIF }
   rahmen:=1;
   fnproc[3,10]:=DummyFN;
@@ -1027,6 +1030,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2001/10/21 12:49:57  ml
+  - removed some warnings
+
   Revision 1.65  2001/10/21 12:33:54  ml
   - killed local constant
   - fix for range-error

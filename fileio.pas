@@ -225,6 +225,8 @@ begin
     cmAllRE  : fm:= STAT_IRWXU or STAT_IRGRP or STAT_IXGRP or STAT_IROTH or STAT_IXOTH;
     cmAllRW  : fm:= STAT_IRWUSR or STAT_IRWGRP or STAT_IRWOTH;
     cmAllRWE : fm:= STAT_IRWXU or STAT_IRWXG or STAT_IRWXO;
+    else
+      fm:= STAT_IRWUSR or STAT_IRWGRP;
   end; { case }
   { Mode setzen }
 {$IFDEF Kylix}
@@ -596,10 +598,10 @@ begin
 end;
 
 function setfiletime(fn:string; newtime:longint): boolean;
+{$IFNDEF Kylix}
 var
   fh: longint;
 begin
-{$IFNDEF Kylix}
   fh:= FileOpen(fn, fmOpenWrite);
   if fh > 0 then
   begin
@@ -608,6 +610,7 @@ begin
   end else
     result:= false;
 {$ELSE}
+begin
   result:= (FileSetDate(fn, newtime) = 0);
 {$ENDIF}
 end;
@@ -681,6 +684,9 @@ end;
 
 {
   $Log$
+  Revision 1.109  2001/10/21 12:49:57  ml
+  - removed some warnings
+
   Revision 1.108  2001/10/20 17:26:39  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
