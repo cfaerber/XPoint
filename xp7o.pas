@@ -29,7 +29,7 @@ uses
   ZFTools,      { ZFido-Unit }
 {$endif}
   winxp,typeform,inout,fileio,datadef,database,resource,maus2,
-      uart, archive,xp0,xp1,xp7,xp_iti,debug;
+      archive,xp0,xp1,xp7,xp_iti,debug;
 
 procedure ttwin;
 procedure twin;
@@ -326,7 +326,7 @@ begin
       sum:=sum div 2;  { wegen Gesamtzeit }
       if endtime<>'' then begin
         writeln(t);
-        if gebCfos and comn[comnr].fossil and (GetCfosCharges(comnr)>0)
+(*        if gebCfos and comn[comnr].fossil and (GetCfosCharges(comnr)>0)
         then begin
           kosten:=GetCfosCharges(comnr)*Einheitenpreis;
           cfos:=', cFos';
@@ -335,7 +335,7 @@ begin
           kosten:={* laeuft noch nicht wieder CalcGebuehren(conndate,conntime,sum)}0;
           DebugLog('XP7','xp7o: CalcGebuehren omitted',4);
           cfos:='';
-          end;
+          end;       *)
         if kosten>0 then
           writeln(t,getres2(700,1),'(',boxpar^.gebzone,cfos,  { 'Telefonkosten ' }
                     '):  ',waehrung,'  ',kosten:0:2);
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/11/30 14:27:42  mk
+  - Removed Unit UART
+
   Revision 1.40  2000/11/20 19:54:11  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 

@@ -91,49 +91,19 @@ end;
 
 function timeout(ctest:boolean):boolean;
 begin
-  timeout:=(zaehler[2]=0) or (not IgnCD and ctest and not carrier(comnr));
-end;
-
-procedure mdelay(ms:word);
-begin
-  if not ISDN then
-{$IFDEF NCRT }
-    xpcurses.mdelay(ms);
-{$ELSE }
-    inout.mdelay(ms);
-{$ENDIF }
+  timeout:=(zaehler[2]=0) or (not IgnCD and ctest {!!and not carrier(comnr)} );
 end;
 
 procedure flushin;
 begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_flushinput
-  else
-{$ENDIF CAPI }
-    flushinput(comnr);
+ //!!  flushinput(comnr);
 end;
-
-function carrier(bport:byte):boolean;
-begin
-{$IFDEF CAPI }
-  if ISDN then
-    carrier:=CAPI_Carrier
-  else
-{$ENDIF }
-    carrier:=uart.carrier(bport);
-end;
-
 
 procedure testbyte;
 var b : byte;
     l : integer;
 begin
-{$IFDEF CAPI }
-   if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
-{$ELSE }
-   if receive(comnr,b) then
-{$ENDIF }
+(*!!   if receive(comnr,b) then
    begin
     if in7e1 then b:=b and $7f;
     if display then begin
@@ -171,7 +141,7 @@ begin
         end;
       end;
     zaehler[4]:=IdleTimeout;
-    end;
+    end; *)
 end;
 
 procedure tb;
@@ -194,13 +164,8 @@ begin
             end;
     else begin
       if out7e1 then SetParity(byte(c),true);
-{$IFDEF CAPI }
-      if ISDN then
-        CAPI_SendStr(c)
-      else
-{$ENDIF }
-        if IgnCTS then SendByte(comnr,byte(c))
-          else HSendByte(comnr,byte(c));
+(*        if IgnCTS then SendByte(comnr,byte(c))
+          else HSendByte(comnr,byte(c)); *)
       end;
     end;
   end;
@@ -217,8 +182,8 @@ begin
     for i:=1 to length(s) do begin
       testbyte;
       if out7e1 then SetParity(byte(s[i]),true);
-      if IgnCTS then SendByte(comnr,byte(s[i]))
-      else HSendByte(comnr,byte(s[i]));
+//!!      if IgnCTS then SendByte(comnr,byte(s[i]))
+//      else HSendByte(comnr,byte(s[i]));
       end;
 end;
 
@@ -248,7 +213,7 @@ end;
 procedure sendcomm(s:string);
 var p : byte;
 begin
-  flushin;
+(*  flushin;
   recs:=''; lrec:='';
   if not HayesComm or ISDN then exit;
   repeat
@@ -273,13 +238,12 @@ begin
     esctime0;
   until (zaehler[3]=0) or timeout(false) or (recs='');   { auf CR warten }
   if display then writeln;
-  mdelay(500);
+  mdelay(500);             *)
 end;
 
 procedure sendmstr(s:string);
 var p : byte;
 begin
-  if not ISDN then
     while (length(trim(s))>1) and not timeout(false) do begin
       p:=pos('\\',s);
       if p=0 then p:=length(s)+1;
@@ -314,28 +278,14 @@ end;
 procedure sb(b:byte);
 begin
   if out7e1 then SetParity(b,true);
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_SendStr(char(b))
-  else
-{$ENDIF }
-    if IgnCTS then SendByte(comnr,b)
-    else HSendByte(comnr,b);
+//    if IgnCTS then SendByte(comnr,b)
+//    else HSendByte(comnr,b);
 end;
 
 procedure aufhaengen;
 var n,i : byte;
 begin
-  display:=ParDebug;
-{$IFDEF CAPI }
-  if ISDN then begin
-    time(100);
-    if not CAPI_hangup then writeln('ISDN/CAPI hanup error');
-    NC^.hanguptime:=100-zaehler[2];   { +1 fÅr Rundungsfehler }
-    NC^.endtime:=zdate;
-    end
-  else
-{$ENDIF }
+(*  display:=ParDebug;
     if HayesComm then begin
       n:=5;
       time(100);
@@ -377,12 +327,12 @@ begin
     else begin
       NC^.hanguptime:=0;
       NC^.endtime:=zdate;
-      end;
+      end; *)
 end;
 
 procedure MausAuflegen;
 begin
-  if IgnCD then begin
+(*!!  if IgnCD then begin
     NC^.hanguptime:=0;
     NC^.endtime:=zdate;
     mdelay(2000);
@@ -402,7 +352,7 @@ begin
       NC^.hanguptime:=60-zaehler[2];   { +1 fÅr Rundungsfehler }
       NC^.endtime:=zdate;
       end;
-    end;
+    end; *)
 end;
 
 procedure TimeoutStop1;
@@ -674,25 +624,15 @@ end;
 
 procedure Activate;
 begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_resume
-  else
-{$ENDIF }
-  ActivateCom(comnr,10000,COMn[comnr].u16550);
+  // !!ActivateCom(comnr,10000,COMn[comnr].u16550);
 end;
 
 procedure ReleaseC;
 var p : ScrPtr;
 begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_suspend
-  else
-{$ENDIF }
   begin
     sichern(p);
-    ReleaseCom(comnr);
+//    ReleaseCom(comnr);
     holen(p);
   end;
 end;
@@ -1375,16 +1315,19 @@ end;
 
 procedure FossilTest;
 begin
-  if comn[comnr].fossil and not FOSSILdetect then begin
+(*  if comn[comnr].fossil and not FOSSILdetect then begin
     {window(1,1,80,25);}
     trfehler(732,esec);   { 'Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber' }
     twin;
-    writeln;
+    writeln; *)
     comn[comnr].fossil:=false;
-    end;
+//    end;
 end;
 {
   $Log$
+  Revision 1.48  2000/11/30 14:27:42  mk
+  - Removed Unit UART
+
   Revision 1.47  2000/11/25 18:28:31  fe
   Fixed some bugs.
 

@@ -498,6 +498,14 @@ type   textp  = ^text;
        bmarklist= array[0..maxbmark-1] of longint;
        bmarkp   = ^bmarklist;
 
+
+       cpsrec     = record
+                      SaveLineControl  : byte;
+                      SaveModemControl : byte;
+                      SaveDivisor      : word;
+                      SaveIntEnable    : byte;
+                      SaveIntmask      : byte;
+                    end;
        ComRec = record
                   Fossil : boolean;
                   Cport  : word;        { UART-Adresse   }
@@ -1173,6 +1181,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.104  2000/11/30 14:27:41  mk
+  - Removed Unit UART
+
   Revision 1.103  2000/11/20 19:54:09  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 

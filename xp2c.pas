@@ -27,7 +27,7 @@ uses
 {$IFDEF CAPI }
   capi,
 {$ENDIF CAPI }
-     printerx,mouse,maus2,uart,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+     printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
      xpglobal;
 
 procedure options;
@@ -73,7 +73,6 @@ function testarc(var s:string):boolean;
 function testenv(var s:string):boolean;
 function testhayes(var s:string):boolean;
 {$ifndef Unix}
-function testfifo(var s:string):boolean;
 function testfossil(var s:string):boolean;
 {$endif}
 function testpostanschrift(var s:string):boolean;
@@ -828,42 +827,13 @@ begin
 end;
 
 function testfossil(var s:string):boolean;
-var p : scrptr;
-    b : boolean;
 begin
-  if (oldfossil=_jn_[2]) and (s=_jn_[1]) then begin
-    sichern(p);            { wegen BNU }
-    b:=FOSSILdetect;
-    holen(p);
-    if not b then fehler(getres2(261,14));
-    end
-  else
-    b:=true;
-  testfossil:=b;
-  b:=(s=_jn_[2]) or ((s=_jn_[1]) and not b);
+  (* !! implement this for dos32
   SetFieldEnable(2,b);
   SetFieldEnable(3,b);
   SetFieldEnable(10,b);
   SetFieldEnable(12,b);
-  SetFieldEnable(13,b and (getfield(12)=_jn_[1]));
-end;
-
-function testfifo(var s:string):boolean;
-begin
-  ua[1]:=hexval(getfield(2));
-  if (s=_jn_[2]) or (ComType(1)=Uart16550A) then
-    testfifo:=true
-  else begin
-    errsound;
-    testfifo:=ReadJn(getres2(261,12),false);   { 'Sicher? XP hat keinen 16550A erkannt!' }
-    end;
-end;
-
-{ Prozedurvariable, s wird nicht ben”tigt }
-function SetTrigger(var s:string):boolean;
-begin
-  SetTrigger:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
-  SetFieldEnable(13,(getfield(1)=_jn_[2]) and (s=_jn_[1]));
+  SetFieldEnable(13,b and (getfield(12)=_jn_[1])); *)
 end;
 
 procedure ModemConfig;
@@ -913,7 +883,7 @@ begin
 {$else}
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
     if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
-    if not fossildetect then fossil:=false;
+//    if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
     oldfossil:=iifc(fossil,_jn_[1],_jn_[2]);
     mset1func(testfossil);
@@ -939,8 +909,8 @@ begin
     maddbool(28,12,getres2(261,10),Ring);            { 'RING-Erkennung' }
       mhnr(961);
     maddbool(28,13,getres2(261,11),u16550);          { '16550A-FIFO'    }
-    mset1func(SetTrigger);
-    msetvfunc(TestFifo);
+//    mset1func(SetTrigger);
+//    msetvfunc(TestFifo);
     if fossil then mdisable;
     maddint (28,14,getres2(261,18),tlevel,3,2,2,14); { 'FIFO-Triggerlevel' }
     mappsel(true,'2ù4ù8ù14');
@@ -1519,6 +1489,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/11/30 14:27:41  mk
+  - Removed Unit UART
+
   Revision 1.69  2000/11/25 01:35:56  mk
   - Weiterschalter sofort uebernehmen
 

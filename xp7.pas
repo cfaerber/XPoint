@@ -23,7 +23,7 @@ uses
 {$ELSE}
   crt,
 {$ENDIF }
-  sysutils,xpglobal,typeform,uart,datadef,database,
+  sysutils,xpglobal,typeform,datadef,database,
   fileio,inout,keys,winxp,maske,maus2,montage,lister,zcrfc,debug,
   resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
@@ -31,7 +31,6 @@ uses
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
 procedure netcall_at(zeit:datetimest; box:string);
 procedure EinzelNetcall(box:string);
-procedure DropAllCarrier;
 
 function  AutoMode:boolean;
 
@@ -64,19 +63,6 @@ uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
-
-
-procedure DropAllCarrier;
-var p : ScrPtr;
-begin
-  if comnr<=4 then begin
-    sichern(p);
-    ActivateCom(comnr,512,false);
-    DropDtr(comnr);
-    ReleaseCom(comnr);
-    holen(p);
-    end;
-end;
 
 
 function exclude_time:byte;
@@ -536,10 +522,10 @@ begin                  { of Netcall }
   NumCount:=TeleCount; NumPos:=1;
   FlushClose;
   with boxpar^,ComN[boxpar^.bport] do begin
-    if relogin and not ISDN and not IgCD and not carrier(bport) then begin
+(*    if relogin and not ISDN and not IgCD and not carrier(bport) then begin
       rfehler(711);    { 'Keine Verbindung!' }
       exit;
-      end;
+      end; *)
     if once then
       RedialMax:=NumCount;
     if net then begin
@@ -757,8 +743,8 @@ begin                  { of Netcall }
          { ---------------------- Andere Mailer ---------------------- }
 
       fossiltest;
-      if not ISDN then begin
-        SetComParams(bport,fossil,Cport,Cirq);
+(*      if not ISDN then begin
+        !! SetComParams(bport,fossil,Cport,Cirq);
         if OStype<>OS_2 then SaveComState(bport,cps);
         SetTriggerLevel(tlevel);
         if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
@@ -783,7 +769,7 @@ begin                  { of Netcall }
           if _fido then ReleaseC;
           goto abbruch;
           end;
-        end;
+        end; *)
 
       recs:=''; lrec:='';
       showconn:=false;
@@ -884,7 +870,7 @@ begin                  { of Netcall }
             tb;
             esctime0;
             if recs='' then XpIdle;
-          until (IgnCD and (recs<>'')) or (not IgnCD and carrier(bport))
+          until (IgnCD and (recs<>'')) or (not IgnCD {and carrier(bport)})
                 or timeout(false) or busy;
           write(back7,sp(7),back7,#8);
           if timeout(true) or
@@ -893,11 +879,11 @@ begin                  { of Netcall }
             moff;
             if timeout(true) then writeln('  -  ',noconnstr);
             mon;
-            dropdtr(comnr);
+            // !!dropdtr(comnr);
             mdelay(100);
-            setdtr(comnr);
+            (*setdtr(comnr);
             sendstr(#13); mdelay(200);
-            sendstr(#13); mdelay(200);
+            sendstr(#13); mdelay(200); *)
             flushin;
             goto abbruch;
             end;
@@ -1245,8 +1231,8 @@ begin                  { of Netcall }
           end;
 
         if not ende then begin
-          if (logintyp=ltUUCP) and (ISDN or not ComActive(comnr)) then
-            Activate;              { wurde durch UUCPnetcall() abgeschaltet }
+//          if (logintyp=ltUUCP) and (ISDN or not ComActive(comnr)) then
+//            Activate;              { wurde durch UUCPnetcall() abgeschaltet }
           if net then callertotemp;
           showkeys(iif(net,16,18));
           attrtxt(7);
@@ -1268,9 +1254,9 @@ begin                  { of Netcall }
               else ende:=(c=#27);
               end
             else                   { ISDN: Ring=false }
-              if (redialwait-zaehler[2]>1) and ring and rring(comnr) then
+(*              if (redialwait-zaehler[2]>1) and ring and rring(comnr)then
                 RingSignal   { ^^^ RING-Peak bei bestimmtem Modem amfangen }
-              else
+              else *)
                 XpIdle;
           until timeout(false) or ende;
           moff;
@@ -1282,13 +1268,13 @@ begin                  { of Netcall }
       if not _fido then begin
         if FileExists(caller) and ((logintyp<>ltMagic) or ndelpuffer) then
           _era(caller);
-        if not ISDN and (net or not carrier(bport)) and ComActive(comnr)
+(*        if not ISDN and (net or not carrier(bport)) and ComActive(comnr)
         then begin
           DropDtr(comnr);
           { DropRts(comnr); - Vorsicht, ZyXEL-Problem }
           end;
         if ISDN or ComActive(comnr) then
-          ReleaseC;
+          ReleaseC; *)
         end;
       if logopen then close(netlog^);
       if netlog<>nil then begin
@@ -1298,8 +1284,8 @@ begin                  { of Netcall }
         end;
 
   ende0:
-      if(net and (OStype<>OS_2))and(not _fido)then RestComState(bport,cps);
-      comn[boxpar^.bport].fossil:=orgfossil;
+(*      if(net and (OStype<>OS_2))and(not _fido)then RestComState(bport,cps);
+      comn[boxpar^.bport].fossil:=orgfossil; *)
     end else begin { not LoginTyp ltNNTP, ltPOP, ltIMAP }
       { --------------------------------------------------------------- }
       { 'Neue' Protokolle                                               }
@@ -1539,6 +1525,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/11/30 14:27:42  mk
+  - Removed Unit UART
+
   Revision 1.45  2000/11/19 17:53:34  ma
   - renamed existBin to ExecutableExists
 

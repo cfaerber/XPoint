@@ -638,7 +638,7 @@ begin
   window(1,1,screenwidth,screenlines);
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
-    DropAllCarrier;
+    // DropAllCarrier;
     trfehler1(720,strs(aresult),10);   { 'interner Fehler (%s) im Fido-Mailer' }
     aresult:=EL_break;
     end;
@@ -952,6 +952,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/11/30 14:27:42  mk
+  - Removed Unit UART
+
   Revision 1.38  2000/11/25 18:28:31  fe
   Fixed some bugs.
 

@@ -46,7 +46,7 @@ uses xpx,
 {$IFDEF OS2 }
      os2base,
 {$ENDIF }
-     typeform,uart,keys,fileio,inout,help,datadef,
+     typeform,keys,fileio,inout,help,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,objcom,modem,
      zmodem,
@@ -111,7 +111,6 @@ begin
   InitInOutUnit;                { InOut }
   InitKeysUnit;                 { Keys }
   InitMouseUnit;                { Mouse }
-  InitUARTUnit;                 { UART }
   InitObjComUnit;               { ObjCOM }
   InitModemUnit;                { Modem }
   InitZModemUnit;               { ZModem }
@@ -214,6 +213,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.44  2000/11/30 14:27:41  mk
+  - Removed Unit UART
+
   Revision 1.43  2000/11/19 18:22:53  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

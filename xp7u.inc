@@ -362,7 +362,7 @@ begin
     if not comn[comnr].fossil then Activate;
     end;
   aufhaengen;
-  DropDtr(comnr);
+  // !!DropDtr(comnr);
   ReleaseC;
   if (res<>uu_nologin) and (res<>uu_parerr) then
     WriteUUnummer(uunum);
@@ -440,6 +440,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/11/30 14:27:43  mk
+  - Removed Unit UART
+
   Revision 1.26  2000/11/19 17:53:34  ma
   - renamed existBin to ExecutableExists
 
