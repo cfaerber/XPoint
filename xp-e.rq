@@ -1828,9 +1828,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 27   GNU-unzipper     ~
 28   Zmodem options   ~
 # UUCP
-30   max. UUCP-g packet size ~
-31   max. UUCP-g window size    ~
-62   maximum file size       ~
+30   max. UUCP-g packet size~
+31   max. UUCP-g window size   ~
+62   maximum file size      ~
+64   Batched SMTP Mode ~
+65   offùSMTP/UUCPùSMTP/PPP
 32   variable UUCP-g packet size
 60   force send packet size
 61   7/E/1 login
@@ -1867,8 +1869,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Turbo
 55   Get news
 56   Serial no
-64   Batched SMTP Mode  ~
-65   offùSMTP/UUCPùSMTP/PPP
 66   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
 + 921
 0    59
