@@ -29,7 +29,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3   Nachricht,031^Suchenù5,032E^xtraktù12,033^Unversandtù4,034^Alleù14,035^ndernù22,036^Weiterleitenù21,-,038Brett^managerù19,039^Fileserverù20,03aP^GPù40,03b^Direkt
 4   Unversandt,041^Editieren,042^ndern,043^L”schen,044^Statistik,045^Zeigen
 5   Suchen,051^Volltext,052^Betreff,053^User       @U,054^Spezial,055^Wiedervlg.,056^Markiert,057^EntMark.   ^E,058Message-^ID
-6   Config,061^Optionenù28,062E^Xternù24,063^Pfade,064^Anzeigeù9,065^Modemù18,066^Drucker,067^Tastenù23,068^Zusatz-Men,069^Sichern     @S
+6   Config,061^Optionenù28,062E^Xternù24,063^Pfade,064^Anzeigeù9,065^Modem,066^Drucker,067^Tastenù23,068^Zusatz-Men,069^Sichern     @S
 7   Wartung,071^Reorganisation,072^Packen,073^BrettReorg,074^UserReorg,075^Adreábuch,076Dupes ^l”schen,-,078^Server-Wechsel,079S^onstigesù33
 8   Schablonen,081!^Kopf,082!^PrivKopf,083!^BrettQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Weiterleit,088!^Erneut,-,08a!^Signatur,08b!Pr^ivSignatur,08c!Emp^fBest.,08d!^L”schnachr.,08e!S^onstige
 9   Anzeige,091^Farben,092^Bretter,093^Nachrichten,094^Kopf,095^Zeilen,096^Diverses,098^Hilfen
@@ -41,7 +41,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 15  Netcall,0f1^Einzeln,0f2^Alle,0f3^Letzte Anrufe,0f4^Uhrzeit,0f5^Relogin,0f6^Online,-,0f8^Bereitschaft,0f9^Timing-Liste
 16  Edit,101^Schablonenù8,102^Boxen,103^Gruppen,104S^ysteme,105^Kurznamen,106^AutoVersand,108^Viewer,107^Textdatei   @E
 17  Status,111^Speicher,112^Nachrichten,113^Datenbank,11a^Fragmente,-,115^Gruppen,116S^Ysteme,117^Bretter,-,119G^ebhrenù26
-18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
+#18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen,138^Maus-Infos
 20  Fileserver,141^Bestellen,142^Senden,143^Listeù27,144^Hilfe,145^Transfer,146S^ervice
 21  Weiter,151^Kopie,152^Original,153^EditTo,154^QuoteTo,-,156^Best„tigung,157^L”schen,158Er^Setzen,159e^Rneut     @R,15a^Archiv     @A,15bUser-^PM    @P
@@ -3297,11 +3297,18 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3 **B
 -
 
+# --- Aenderungen der alten Menu-Struktur
++ 30001
+1 Schnitstellen
+2 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4)
+3 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4),^ISDN (CAPI)
+-
+
 # --- NNTP-Untersttzung
 
 + 30010
 # Gruppenliste
-1 ^Alle Gruppen,^Neue Gruppen,A^bbrechen
+1 ^Alle Gruppen,^Neue Gruppen,^Untergruppen,A^bbrechen
 2 Das kann dauern! Wollen Sie das wirklich
 3 ~ - Gruppenliste holen
 4 Vorgang......:
@@ -3498,6 +3505,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.76  2000/11/10 13:20:45  hd
+# - COM-Ports aus dem Menu extrahiert
+#
 # Revision 1.75  2000/11/02 21:27:04  fe
 # bzip2 support added.
 #

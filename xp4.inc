@@ -213,6 +213,7 @@ begin
 
       6 : case m1 of           { Config }
             3 : path_config;
+            5 : ModemConfig;
             6 : DruckConfig;
             8 : begin EditFkeys(0); menurestart:=true; end;
             9 : CfgSave;
@@ -298,7 +299,7 @@ begin
           end;
 
      18 : case m1 of
-            1..4 : ModemConfig(m1);
+            1..4 : ModemConfig;
 {$IFDEF CAPI }
             5    : IsdnConfig;
 {$ENDIF CAPI }
@@ -595,6 +596,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/11/10 13:20:45  hd
+  - COM-Ports aus dem Menu extrahiert
+
   Revision 1.24  2000/09/30 16:42:56  mk
   - CAZ fuer DOS32
 

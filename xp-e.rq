@@ -30,7 +30,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
-6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
+6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modem,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines,096M^isc,098^Accessibility
@@ -42,7 +42,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
 16  Edit,101^Templatesù8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone chargesù26
-18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
+#18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
 20  Fileserver,141^Request,142^Send,143^Listù27,144^Help,145^Transfer,146S^ervice
 21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Supersede,159^Repost      @R,15a^Archive     @A,15bUser-^PM     @P
@@ -3192,11 +3192,18 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3 **B
 -
 
+# --- Changes on the basic menu structure
++ 30001
+1 Choose COM-Port
+2 Serial ^1 (COM1),Serial ^2 (COM2), Serial ^3 (COM3), Serial ^4 (COM4)
+3 Serial ^1 (COM1),Serial ^2 (COM2), Serial ^3 (COM3), Serial ^4 (COM4),^ISDN
+-
+
 # --- NNTP ------------------------------------------------------------
 
 + 30010
 # Groups
-1 ^All groups,^New groups,^Cancel
+1 ^All groups,^New groups,^Subgroups,^Cancel
 2 This takes a while. Are you sure
 3 ~ - Fetch Group List
 4 Action.......:
@@ -3393,6 +3400,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.104  2000/11/10 13:20:45  hd
+# - COM-Ports aus dem Menu extrahiert
+#
 # Revision 1.103  2000/11/04 22:36:28  mk
 # - updated with changes from Martin Foster in xp2
 #

@@ -43,7 +43,11 @@ procedure brett_config;
 procedure NachrichtenanzeigeCfg;
 procedure MiscAnzeigeCfg;
 procedure AccessibilityOptions;
-procedure ModemConfig(nr:byte);
+{$ifdef Unix}
+procedure ModemConfig;
+{$else}
+procedure ModemConfig;
+{$endif}
 procedure path_config;
 procedure ArcOptions;
 procedure DruckConfig;
@@ -68,8 +72,10 @@ function testexist(var s:string):boolean;
 function testarc(var s:string):boolean;
 function testenv(var s:string):boolean;
 function testhayes(var s:string):boolean;
+{$ifndef Unix}
 function testfifo(var s:string):boolean;
 function testfossil(var s:string):boolean;
+{$endif}
 function testpostanschrift(var s:string):boolean;
 function testurl(var s:string):boolean;
 function testtimezone(var s:string):boolean;
@@ -826,7 +832,12 @@ begin
   menurestart:=brk;
 end;
 
+{$ifdef Unix}
+procedure ModemConfig;
+begin
 
+end;
+{$else}
 function testfossil(var s:string):boolean;
 var p : scrptr;
     b : boolean;
@@ -866,11 +877,22 @@ begin
   SetFieldEnable(13,(getfield(1)=_jn_[2]) and (s=_jn_[1]));
 end;
 
-procedure ModemConfig(nr:byte);
+procedure ModemConfig;
+const
+{$ifdef CAPI}
+  txt_nr = 3;
+{$else}
+  txt_nr = 2;
+{$endif}
 var brk  : boolean;
     x,y  : byte;
     pstr : string;
+    nr   : integer; { Number of Com-Port }
 begin
+  nr:= minisel(0,0,
+        getres2(30001,1),         { 'Schnittstellen }
+        getres2(30001,txt_nr),1); { 'Seriell ^1 (COM1),...' }
+  if nr=-1 then exit;
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
     if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
@@ -918,6 +940,7 @@ begin
     end;
   menurestart:=brk;
 end;
+{$endif} { Unix }
 
 {$IFDEF CAPI }
 procedure TestCapiInt(var s:string);
@@ -1492,6 +1515,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/11/10 13:20:45  hd
+  - COM-Ports aus dem Menu extrahiert
+
   Revision 1.59  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
