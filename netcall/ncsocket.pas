@@ -87,7 +87,7 @@ type
     procedure DisConnect; virtual;
 
     { Strukturen freigeben }
-    procedure Free; override;
+    destructor Destroy; override;
         
   end;
 
@@ -125,12 +125,13 @@ begin
   FConnected:= False;
 end;
 
-procedure TSocketNetcall.Free;
+destructor TSocketNetcall.Destroy;
 begin
   if FConnected then
     DisConnect;
   Host.Clear;
   FPort:= 0;
+  inherited destroy;
 end;
 
 procedure TSocketNetcall.SPort(i: integer);
@@ -207,7 +208,10 @@ end;
 end.
 {
 	$Log$
+	Revision 1.2  2000/07/25 18:02:18  hd
+	- NNTP-Unterstuetzung (Anfang)
+
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
-
+	
 }

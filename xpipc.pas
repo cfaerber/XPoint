@@ -14,71 +14,68 @@
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+   Created on July, 25st 2000 by Hinrich Donner <hd@tiro.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{ Abstrakte Klasse TNetcall }
+{ CrossPoint - NNTP }
 
 {$I XPDEFINE.INC}
 
-unit NetCall;
+unit xpipc;
 
 interface
 
 uses
-  xpglobal,		{ Nur wegen der Typendefinition }
-  IPCClass,		{ TIPC }
-  sysutils;
+  XPGlobal,
+  IPCClass,
+  SysUtils;
+
 
 type
-  ENetcall 		= class(Exception);	{ Allgemein (und Vorfahr) }
-
-type
-  TNetcall = class
+  TXPIPC = class(TIPC)
   
-  protected
-    
   public
 
-    IPC		: TIPC;
+    x,y,maxlength: integer;
 
     constructor Create;
 
-    destructor Destroy; override;
-    
-    procedure WriteIPC(mc: TMsgClass; fmt: string; args: array of const); virtual;
+    { Gibt eine Meldung aus }
+    procedure WriteFmt(mc: TMsgClass; fmt: string; args: array of const); override;
   
   end;
 
-implementation
 
-constructor TNetcall.Create;
+implementation  { ------------------------------------------------- }
+
+uses
+  TypeForm,
+  WinXP,
+{$ifdef NCRT}
+  XPCurses,
+{$endif}
+  Maus2,
+  XP0;  
+
+constructor TXPIPC.Create;
 begin
-  inherited Create;
-  IPC:= nil;
+  x:= 0; y:= 0; maxlength:= 0;
 end;
 
-procedure TNetcall.WriteIPC(mc: TMsgClass; fmt: string; args: array of const);
+procedure TXPIPC.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
 begin
-  if IPC<>nil then
-    IPC.WriteFmt(mc,fmt,args);
-end;
-
-destructor TNetcall.Destroy;
-begin
-  if IPC<>nil then
-    IPC.Free;
+  if (x<>0) and (y<>0) and (maxlength<>0) then begin
+    MWrt(x,y,Sp(maxlength));
+    MWrt(x,y,Copy(Format(fmt,args),1,maxlength));
+  end;
 end;
 
 end.
 {
 	$Log$
-	Revision 1.2  2000/07/25 18:02:18  hd
+	Revision 1.1  2000/07/25 18:02:19  hd
 	- NNTP-Unterstuetzung (Anfang)
 
-	Revision 1.1  2000/07/25 12:52:24  hd
-	- Init
-	
 }

@@ -302,7 +302,7 @@ end;
 {$ENDIF }
 function ntNoMaps(nt:byte):boolean;
 begin
-  ntNoMaps:=false;
+  ntNoMaps:= nt in [nt_POP3];
 end;
 {$IFDEF FPC }
   {$HINTS ON }
@@ -759,6 +759,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/07/25 18:02:19  hd
+  - NNTP-Unterstuetzung (Anfang)
+
   Revision 1.14  2000/07/25 12:54:02  hd
   - Kleine Anpassung an NNTP
 

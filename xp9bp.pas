@@ -299,7 +299,8 @@ begin
 	    gets(s,su,'NNTP-Host',nntp_ip,255) or
 	    geti(su,  'NNTP-Port',nntp_port) or
 	    gets(s,su,'NNTP-ID',nntp_id,255) or
-	    gets(s,su,'NNTP-Password',nntp_pwd,255)
+	    gets(s,su,'NNTP-Password',nntp_pwd,255) or
+	    getr(su,  'Letzte Verbindung',LastCall)
           ) then
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
           end;
@@ -428,6 +429,7 @@ begin
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
     if nntp_id<>'' then writeln(t,'NNTP-ID=',nntp_id);
     if nntp_pwd<>'' then writeln(t,'NNTP-Password=',nntp_pwd);
+    if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
     end;
   close(t);
 end;
@@ -540,6 +542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/25 18:02:19  hd
+  - NNTP-Unterstuetzung (Anfang)
+
   Revision 1.18  2000/07/23 13:24:12  hd
   - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
 

@@ -18,7 +18,7 @@ unit xp0;
 interface
 
 uses
-  dos,typeform,keys,xpglobal, classes;
+  dos,typeform,keys,xpglobal, classes,sysutils;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -525,10 +525,11 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigrî·e / KB }
-		  nntp_ip   : string;	{ NNTP: IP oder Domain }
-		  nntp_port : integer;	{ NNTP: Port, default: 119 }
-		  nntp_id   : string;	{ NNTP: User-ID, falls noetig }
-		  nntp_pwd  : string;	{ NNTP: Password, wenn noetig }
+		  nntp_ip   : string;		{ NNTP: IP oder Domain }
+		  nntp_port : integer;		{ NNTP: Port, default: 119 }
+		  nntp_id   : string;		{ NNTP: User-ID, falls noetig }
+		  nntp_pwd  : string;		{ NNTP: Password, wenn noetig }
+		  LastCall  : TDateTime;	{ Letzter Call }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -1090,6 +1091,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.80  2000/07/25 18:02:18  hd
+  - NNTP-Unterstuetzung (Anfang)
+
   Revision 1.79  2000/07/23 13:24:12  hd
   - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
 

@@ -46,7 +46,7 @@ type
 
     constructor Create;
 
-    procedure Free; virtual;
+    destructor Destroy; override;
     
     procedure WriteIPC(mc: TMsgClass; fmt: string; args: array of const); virtual;
   
@@ -66,7 +66,7 @@ begin
     IPC.WriteFmt(mc,fmt,args);
 end;
 
-procedure TNetcall.Free;
+destructor TNetcall.Destroy;
 begin
   if IPC<>nil then
     IPC.Free;
@@ -75,7 +75,10 @@ end;
 end.
 {
 	$Log$
+	Revision 1.2  2000/07/25 18:02:18  hd
+	- NNTP-Unterstuetzung (Anfang)
+
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
-
+	
 }

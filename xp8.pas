@@ -57,7 +57,7 @@ function fileechocolfunc(var s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xpnntp,xp9bp,xp9,xpnt;
 
 const mapsbox : string = '';
 
@@ -1170,6 +1170,7 @@ var brk     : boolean;
     nt      : byte;
     maf     : boolean;
     maus    : boolean;
+    nntp    : boolean;
     info    : MausInfAP;
     infos   : integer;
     fido    : boolean;
@@ -1289,8 +1290,9 @@ begin
   fido:=ntAreamgr(nt);
   gs:=(nt=nt_GS);
   uucp:=(nt=nt_UUCP);
+  nntp:=(nt=nt_NNTP);
+  if (nntp) or (uucp) then ReadBoxPar(nt,box);
   if uucp then begin
-    ReadBoxpar(nt,box);
     gup:=(boxpar^.BMtyp=bm_gup);
     autosys:=(boxpar^.BMtyp=bm_autosys);
     feeder:=(boxpar^.BMtyp=bm_feeder);
@@ -1306,6 +1308,11 @@ begin
           rfehler(818);
           exit;
           end;
+  end;
+  if nntp then begin
+    if not GetNNTPList(box,boxpar) then
+      rfehler(830); { 'Gruppenliste konnte nicht uebertragen werden' }
+    exit;
   end;
   area:=(mapsname='AREAFIX');
   request:=(mapsname='REQUEST');
@@ -1589,6 +1596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/25 18:02:18  hd
+  - NNTP-Unterstuetzung (Anfang)
+
   Revision 1.19  2000/07/21 20:56:29  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
