@@ -857,11 +857,9 @@ begin
   dbWriteNStr(ubase,ub_username,absender);
   dbWriteNStr(ubase,ub_pollbox,pollbox);
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-  b:=1;
   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-  if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
-    inc(b,8); { Netzunabh„ngige Useraufnahme }
-  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
+  b := 1 + iif(newuseribm,0,8);
+  dbWriteN(ubase,ub_userflags, b);  { aufnehmen }
 end;
 
 
@@ -1220,6 +1218,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.49  2000/11/30 14:38:09  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.48  2000/11/14 15:51:29  mk
   - replaced Exist() with FileExists()
 

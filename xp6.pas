@@ -1468,11 +1468,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         dbWriteStr(ubase,'pollbox',box);
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
-        b:=1;
         dbWrite(ubase,'adrbuch',NeuUserGruppe);
-        { if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
-        { UserFlags: 8=ASCII }
-      if not newuseribm then inc(b,8); { NewUserIBM beruecksichtigen }
+        b:=1+iif(newuseribm,0,8);;
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
@@ -2109,6 +2106,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.81  2000/11/30 14:38:09  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.80  2000/11/25 10:31:47  mk
   - some fixes for new SendUUData
 

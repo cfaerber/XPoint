@@ -1061,10 +1061,10 @@ again:
                    ReplaceVertreterbox(pollbox,true);
                  dbWriteNStr(ubase,ub_pollbox,pollbox);
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-                 b:=1;
+                 b:=1+iif(newuseribm,0,8);;
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
                  dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adressbuch }
-                 end
+               end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
                  if b=0 then begin
@@ -1284,6 +1284,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/11/30 14:38:10  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.47  2000/11/25 10:31:47  mk
   - some fixes for new SendUUData
 
