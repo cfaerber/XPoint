@@ -2437,7 +2437,7 @@ begin
   List.OnKeypressed := ArcSpecial;
   showkeys(11);
   attrtxt(col.colarcstat);
-  mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
+  mwrt(1,4,forms(getres(464), ScreenWidth));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
   inc(arcbufp);
   with ar do begin
     arctyp_save:=arctyp;
@@ -3017,6 +3017,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.9  2003/09/17 15:27:49  mk
+  - fixed drawing of status line in archiv viewer for screen width > 80
+
   Revision 1.138.2.8  2003/08/23 17:34:29  mk
   - improved adding of new message ids
 
