@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - HauptmenÅ }
@@ -26,6 +27,8 @@ const Nachricht = 3;     { /Nachricht }
       Fileliste = 27;    { Fido / Filelisten }
       Sonstiges = 33;    { Wartung / Sonstiges }
       PGP       = 40;    { Nachricht / PGP }
+      Hilfe     = 41;    { /? }
+      Spezial   = 42;    { ? / Spezielle Themen }
 var
     unversandt : byte;
     nachrichten: boolean;
@@ -115,10 +118,12 @@ end;
 procedure menuopt(t:taste);
 const
   lastmenusel : integer = 0;
-var m,m1     : integer;
-    nix      : string[20];
-    adr      : string[20];
-    oldlines : byte;
+var m,m1      : integer;
+    nix       : string[20];
+    adr       : string[20];
+    oldlines  : byte;
+    longmenu  : boolean;
+
 begin
   menurestart:=false;
   repeat
@@ -133,6 +138,12 @@ begin
     mauszuo:=true; mauszuu:=true;
     nix:='';
     m1:=m and 15;
+    longmenu:=false;
+    if m >=$1000 then begin   { m= $1xxx: Menuepunkt ueber 13 }
+      dec(m,$1000);
+      inc(m1,4);                       
+      longmenu:=true;
+      end;
     case m div 16 of
       1 : case m1 of           { XPoint }
             1 : copyright(false);
@@ -144,10 +155,10 @@ begin
       2 : case m1 of           { Zusatz }
                1 : kalender;
                2 : FileArcViewer('');
-           5..14 : begin
+           5..24 : begin
                      getfilename:=_getfilename;
                      isempty:=empty; _p:=p;
-                     prog_call(0,m1-4);
+                     prog_call(iif(longmenu,4,0),m1-4);
                    end;
           end;
 
@@ -164,10 +175,10 @@ begin
           end;
 
       5 : case m1 of           { Suchen }
-            1 : if Suche(getres(414),'','') then select(11);   { 'Volltext' }
+            1 : if Suche(getres(414),'','') then select(11);         { 'Volltext' }
             2 : if Suche(getres(415),'Betreff','') then select(11);  { 'Betreff' }
             3 : if Suche(getres(416),'Absender','') then select(11); { 'User' }
-            4 : if Suche(getres(417),'*','') then select(11);  { 'Spezial' }
+            4 : if Suche(getres(417),'*','') then select(11);        { 'Spezial' }
             5 : SucheWiedervorlage;
             6 : if markanz=0 then
                   rfehler(415)   { 'Keine Nachrichten markiert!' }
@@ -197,17 +208,16 @@ begin
             8 : ChangePollbox;
           end;
 
-      9 : case m1 of           { Anzeige }
+   {  8 in Xp1Menu.inc/Menu_keep  ( Edit/Schablonen )} 
+
+      9 : case m1 of             { Anzeige }
             1 : CfgColors;
-            2 : brett_config;  { Bretter }
+            2 : brett_config;    { Bretter }
             3 : NachrichtenanzeigeCfg;
             4 : begin UniEdit(4); menurestart:=true; end;
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
                   shell('zconfig.exe',200,1);
-{$IFDEF Ver32 } { Eine Fehlerabfrage wird nicht gemacht, also Fehler lîschen }
-                  doserror := 0;
-{$ENDIF }
                   menurestart:=true;
                 end;
             8 : AccessibilityOptions;
@@ -230,7 +240,10 @@ begin
             showlastkeys;
             aufbau:=true;
             if screenlines<>oldlines then
+            begin
               GlobalModified;
+              zusatz_menue;
+            end;
           end;
 
      12 : case m1 of
@@ -241,6 +254,8 @@ begin
             4 : extrakt(4,aktdispmode,rdmode);
             5 : extrakt(3,aktdispmode,rdmode);
           end;
+
+   { 13 in xp1menu.inc/Menu_keep    (Extrakt/Als...) }
 
      14 : case m1 of
             7 : msgall(8,aktdispmode,rdmode);       { Nachricht/Alle }
@@ -465,6 +480,33 @@ begin
             6 : PGP_EditKey;
             7 : PGP_RemoveID;
           end;
+     41 : begin                 { ? }
+            case m1 of  
+              1 : begin 
+                    pushkey(keyesc);
+                    pushkey(keyf1);
+                    end;
+              2 : hilfealt;
+              3 : do_help(2);
+              4 : do_help(3);
+              5 : do_help(13);
+              6 : begin
+                    pushkey(keyesc);
+                    pushkey(keyF6);
+                    end; 
+              8 : About;
+            end;
+            menurestart:=true;
+          end;
+     42 : begin                    { Spezielle Themen }
+            case m1 of  
+              1 : do_help(1010);   { PGP-VerschlÅsselung }
+              2 : do_help(12);     { CrossPoint und Mailinglisten }
+              3 : do_help(30100);  { RFC/Client - Allgemeines }
+              4 : do_help(11);     { CrossPoint als Standard-Mailer in Windows }
+            end;
+            menurestart:=true;
+          end;
 
     end;
   until leaveconfig or not menurestart or (t=keyf4);
@@ -475,7 +517,7 @@ procedure Maus_Auswertung(ya:shortint; var t:taste);
 const lasty  : integer = 0;
       shortp : shortint = 0;
 var x,y : integer;
-    n   : shortint;
+    n,i : shortint;
 
   procedure page;
   begin
@@ -515,24 +557,123 @@ var x,y : integer;
       else begin
         ks1:=1; ks2:=-keyspot;
         end;
-      ofs:=155+2*keypos;
+      if shortp<=maxskeys then ofs:=155+2*keypos 
+      else begin
+        ofs:=160*(screenlines-1)+2*keypos-1;
+        if keypos=0 then ks1:=0;
+        end;
       moff;
       for x:=1 to keylen+2 do
         if (x>ks1) and (x-1<=ks2) then
-{$IFDEF BP }
           mem[base:ofs+2*x]:=c2
         else
           mem[base:ofs+2*x]:=c1;
-{$ELSE }
- ; { Hier wird von den MenÅpunkten das Attribut geÑndert }
-{$ENDIF}
       mon;
       end;
   end;
 
+  { Funktionstastenhandling fuer letzte Bildschirmzeile }
+
+  function getfkeyfromscreen(x,y,mode:byte):byte; assembler;
+  asm
+         push ds 
+         mov ds,vbase
+         xor bx,bx  
+         mov bl,x
+         dec bx
+         shl bx,1                 { BX=(X-1)*2 }
+         mov al,y
+         dec ax
+         mov ah,160
+         mul ah
+         mov di,ax                { DI=160*(y-1) }
+         cmp byte ptr [bx+di],' '
+         jne @1
+   @bye: mov ax,0
+         jmp @end
+
+   @1:   mov al,[bx+di]           { Es wurde auf Zeichen geklickt }
+         cmp al,' '                   
+         je @2
+         sub bx,2
+         jns @1
+    
+   @2:   cmp mode,0               { Schalter-Anfang gefunden } 
+         je @getkey 
+         mov ah,' '
+         cmp mode,1
+         je @getlen
+         mov ah,'-'
+         cmp mode,2
+         je @getlen 
+
+
+   @getpos:                       { Modus 3 : Anfangsposition }
+         cmp bl,0
+         jnl @@2
+         mov bx,0 
+   @@2:  shr bx,1
+         mov al,bl
+         jmp @end
+    
+
+   @getlen:                       { Modus 2 : Hotkeylaenge / Modus 1 : Highlightlaenge }
+         mov al,-1 
+         cmp bl,-2
+         jne @@1 
+         dec ax 
+   @@1:  add bx,2
+         inc al
+         cmp byte ptr [bx+di],ah
+         jne @@1
+         jmp @end
+
+
+   @getkey:                       { Modus 0 : Taste Zurueckliefern }
+         mov ah,[bx+di+2]
+         mov al,[bx+di+4]
+         mov cl,[bx+di+6]
+         mov ch,[bx+di+8]
+          mov dl,58           {  59+x = Fx }
+         cmp ah,'F'
+         je @3   
+         mov dl,83            {  83+x = ShiftFx }
+         cmp ah,'S'
+         je @3
+         mov dl,93            {  93+x = CtrlFx } 
+         cmp ah,'C'
+         je @3
+         mov dl,103
+         cmp ah,'A'           { 103+x = AltFx }
+         jne  @bye
+
+   @3:   cmp al,'1'           { erste Ziffer }
+         jb @bye
+         cmp al,'9'
+         ja @bye
+         and al,0fh
+         cmp cl,'-'
+         je @4
+         cmp ch,'-'
+         jne @bye
+    
+         cmp cl,'0'           { evtl. 2. Ziffer }
+         jb @bye
+         cmp cl,'9'
+         ja @bye
+         and cl,0fh        
+         mov ah,al            
+         mov al,cl
+         aad
+
+   @4:   add al,dl            
+         mov ah,0
+   @end: pop ds 
+  end;  
+   
 begin
   maus_gettext(x,y);
-  if y=2 then begin
+  if y=2 then begin                                                 {2. Menueleiste }
     n:=ShortkeyPos(x);
     if t=mausunleft then begin
       if (n>0) and (n=shortp) then t:=shortkey[n].key;
@@ -540,16 +681,74 @@ begin
         dispshort(false); shortp:=0;
         end;
       end else
-    if (t=mausleft) or (t=mausldouble) then begin
+    if (t=mausleft) or (t=mausldouble) or ((t=mauslmoved) and (shortp>0))
+    then begin
+      if t=mauslmoved then dispshort(false);
       if n>0 then begin
         shortp:=n;
         dispshort(true);
         end;
       end else
-    if (t=mauslmoved) and (shortp>0) then
-      dispshort(n=shortp);
+  {  if (t=mauslmoved) and (shortp>0) then
+      dispshort(n=shortp); }
     end
-  else begin
+ 
+ else if y=screenlines then                                      { untere Menueleiste } 
+  begin
+   if (t=mausunright) and (shortp=maxskeys+1) then begin         {Rechtsklick}
+      dispshort(false); shortp:=0; 
+      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+        if (shortkey[maxskeys+1].key='?') then About;
+        end
+     else begin
+       n:=getfkeyfromscreen(x,y,0);
+       if n>83 then begin
+         for i:=0 to ((n-4) mod 10)-1 do pushkey(keydown); 
+         pushkey(keycr); 
+         EditFkeys(((n-4) div 10)-7);
+         end;
+       end
+     end else
+
+   if (t=mausunleft) and (shortp=maxskeys+1) then begin          {Linksklick}
+      dispshort(false); shortp:=0;
+      if (XPdisplayed) and (x>(80-length(xp_xp))) then begin
+        if (shortkey[maxskeys+1].key='?') then pushkey(keyaltc);
+        end
+      else begin  
+        t:=#0+char(getfkeyfromscreen(x,y,0));
+        if t<>shortkey[maxskeys+1].key then t:=#0#0; 
+        if (t=keyf1) or (t=keyF9)
+        then begin
+          pushkey(t);
+          t:=#0#0;
+          end;   
+        end;     
+      end else
+    if (t=mausleft) or (t=mausright) or ((shortp=maxskeys+1)    {Rechts/Links gehalten}                    
+        and ((t=mauslmoved) or (t=mausrmoved))) 
+    then begin
+      if (t=mauslmoved) or (t=mausrmoved) then dispshort(false);
+      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+        shortp:=maxskeys+1;
+        shortkey[maxskeys+1].key:='?'; 
+        shortkey[maxskeys+1].keylen:=length(xp_xp)+1;
+        shortkey[maxskeys+1].keyspot:=0;
+        shortkey[maxskeys+1].keypos:=79-length(xp_xp);
+        dispshort(true);
+        end
+      else if getfkeyfromscreen(x,y,0)>0 then begin
+        shortp:=maxskeys+1;
+        shortkey[maxskeys+1].key:=#0+char(getfkeyfromscreen(x,y,0)); 
+        shortkey[maxskeys+1].keylen:=getfkeyfromscreen(x,y,1);
+        shortkey[maxskeys+1].keyspot:=-getfkeyfromscreen(x,y,2);
+        shortkey[maxskeys+1].keypos:=getfkeyfromscreen(x,y,3);
+        dispshort(true);
+        end;
+      end;
+    end
+
+  else begin                                                        { Hauptfenster }
     if shortp<>0 then begin
       dispshort(false);
       if t=mausunleft then
@@ -559,8 +758,8 @@ begin
     if (y>=4+ya) and (y<screenlines-1) then begin
       if (t=mausright) {or (t=mausrmoved)} then t:=keyesc else
       if (t=mausleft) or (t=mauslmoved) then
-        if (x>2) and (x<79) then p:=y-3-ya else
-        page
+        if (x>2) and (x<79) then p:=y-3-ya
+        else page
       else
         if t=mausldouble then
           if (x>2) and (x<79) then
@@ -570,15 +769,32 @@ begin
               t:=keycr
           else page;
       end else
-    if t=mausleft then begin
+    if (t=mausleft) then begin
       if y=1 then t:=mainkey(x);
       end;
     end;
   lasty:=y;
   mauskey:=(t<mausfirstkey) or (t>mauslastkey);
 end;
-{ 
+
+{
   $Log$
+  Revision 1.14.2.3  2001/09/16 20:25:06  my
+  JG+MY:- Untere Funktionstasten-Leiste ist jetzt mausbedienbar.
+          Linksklick auf "CrossPoint/OpenXP" f¸hrt das Makro <Alt-C> aus,
+          Rechtsklick bringt About-Dialog ("‹ber OpenXP").
+
+  JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verf¸gung).
+
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.14.2.2  2001/08/12 11:20:31  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
