@@ -82,6 +82,7 @@ function cc_testempf(var s:string):boolean;
 var p,p2 : byte;
     n    : longint;
     d    : DB;
+    s2   : String;
 begin
   if trim(s)='' then begin
     if ccte_nobrett then errsound;
@@ -120,13 +121,24 @@ begin
       if ntZonly and (p>0) and (pos('.',mid(s,p+1))=0) then
         s:=s+'.ZER';
       if p=0 then
+      begin
         if ccte_nobrett then begin
           rfehler(2251);    { 'ungltige Adresse' }
           cc_testempf:=false;
           exit;
           end
-        else
-          dbSeek(bbase,biBrett,'A'+ustr(s))
+        else dbSeek(bbase,biBrett,'A'+ustr(s));
+        if not dbfound then
+        begin
+          s2:=s;
+          repeat
+            p:=cpos('.',s2);
+            if p>0 then s2[p]:='/';
+          until p=0;
+          dbSeek(bbase,biBrett,'A'+ustr(s2));
+           if dbfound then s:=s2;    
+          end;                  
+        end     
       else
         dbSeek(ubase,uiName,ustr(s));
       if dbFound then begin
@@ -327,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/29 09:30:17  jg
+  -Bugfix Brettnameneingaben mit "." bei Empfaenger und Kopien im Sendefenster
+
   Revision 1.6  2000/02/20 09:51:39  jg
   - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
     und verbunden mit selbrett/seluser
