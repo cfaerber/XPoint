@@ -40,7 +40,7 @@ var
 implementation
 
 uses
-  Windows;
+  Debug, Windows, SysUtils;
 
 const
   TextRecNameLength = 256;
@@ -106,6 +106,9 @@ const
     ($77, $8D, $84, $8E, $73, $8F, $74, $4E, $75, $91, $76, $92, $93);
 
 begin
+{$IFDEF Debug }
+//  Debug.DebugLog('xpcrt', Format('RemapScanCode: %d %d %d', [ScanCode, CtrlKeyState, KeyCode]), 2);
+{$ENDIF Debug }
   AltKey := ((CtrlKeyState AND
             (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
   CtrlKey := ((CtrlKeyState AND
@@ -158,6 +161,9 @@ begin
     // Function keys
     $57..$58: inc(Scancode, $2E); // F11 and F12
   end;
+{$IFDEF Debug }
+//  Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), 2);
+{$ENDIF Debug }
   Result := ScanCode;
 end;
 
@@ -181,7 +187,7 @@ begin
               begin
                  { Alt key is VK_MENU }
                  { Capslock key is VK_CAPITAL }
-
+                                      
                  AltKey := ((Buf.Event.KeyEvent.dwControlKeyState AND
                             (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
                  if not(Buf.Event.KeyEvent.wVirtualKeyCode in [VK_SHIFT, VK_MENU, VK_CONTROL,
@@ -189,8 +195,13 @@ begin
                                                       VK_SCROLL]) then
                    begin
                       keypressed:=true;
+{$IFDEF Debug }
+//  with Buf.Event.KeyEvent do 
+//    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), 2);
+{$ENDIF Debug }
 
                       if (ord(buf.Event.KeyEvent.AsciiChar) = 0) or
+                        (ord(buf.Event.KeyEvent.AsciiChar) = $E0)  or
                         (buf.Event.KeyEvent.dwControlKeyState=2) then
                         begin
                            SpecialKey := TRUE;
