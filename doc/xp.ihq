@@ -6450,6 +6450,17 @@ Neu ins Adre·buch aufgenommene User werden dieser
 
 @
 8069
+Hier weisen Sie dem User eine beliebige Adre·buch-
+gruppe zu. Minimalwert ist <<1>>, Maximalwert ist <<99>>.
+
+Nach welchen Kriterien Sie Ihre Adre·buchgruppen
+organisieren, bleibt vîllig Ihnen Åberlassen. So
+kînnen Sie z.B. allen Usern einer bestimmten Box
+oder eines bestimmten Netztyps (ZConnect, RFC, Fido
+usw.) jeweils eine gemeinsame Adre·buchgruppe zuwei-
+sen, ganz private Kriterien (<<{012}>>/<<{011}>>) <<:-)>> anlegen oder
+jede beliebige Kombination davon.
+
 Die User-öbersicht ist im Anzeigemodus "Adre·buch"
 nach diesen Gruppen geordnet. Gruppen mit niedrigen
 Nummern werden ganz oben angezeigt, Gruppen mit hohen
@@ -6462,13 +6473,6 @@ Innerhalb jeder Gruppe sind die User nach dem Modus
 sortiert, den Sie mit der Taste <<O>> bzw. unter
 /Config/Optionen/Allgemeines ("User-öbersicht nach
 Serverbox sortieren") eingestellt haben.
-
-Wenn man bestimmte User (oder Pseudo-User wie
-Areafix) in der User-öbersicht zusammengruppieren
-will, mu· man sie nur in dieselbe Adre·buchgruppe
-stecken.
-
-Minimalwert ist <<1>>, Maximalwert ist <<99>>.
 
 Die Adre·buchgruppe <<0>> hingegen besagt nichts weiter
 als: der User ist zwar in der Datenbank vorhanden,
@@ -8786,9 +8790,10 @@ Buchstabenfolge ein:
 <<i>>  Gro·-/Kleinschreibung ignorieren (statt <<i>> kann
    auch <<u>> verwendet werden).
 
-<<Ñ>>  Umlaut-insensitive (ae=Ñ, oe=î, ue=Å, ss=· usw.)
-   Suche (statt <<Ñ>> kann auch <<î>> oder <<Å>> verwendet
-   werden).
+<<Ñ>>  Umlaut-insensitive (ae=Ñ, oe=î, ue=Å, ss=·) Suche
+   (statt <<Ñ>> kann auch <<î>> oder <<Å>> verwendet werden).
+   Diese Option beinhaltet automatisch die Option <<i>>
+   (Gro·-/Kleinschreibung ignorieren).
 
 <<a>>  <<A>>ND-VerknÅpfung: <<ALLE>> im Suchbegriff angegebenen
    Worte (bzw. in "" eingeschlossenen Phrasen) mÅssen
@@ -14336,8 +14341,9 @@ angebotenen Befehle erstellen keine Nachricht an ein
 Steuerprogramm auf dem News-Server, sondern werden
 direkt lokal ausgefÅhrt.
 
-  <<Sortieren>>  Die Brettliste wird alphabetisch
-             sortiert.
+  <<Sortieren>>  Die Brettliste wird alphabetisch sor-
+             tiert (hierzu mu· das Programm RPSORT
+             im XP-Verzeichnis vorhanden sein).
 
   <<Abgleich>>   CrossPoint verwaltet die bestellten
              Gruppen in der Brettliste <<<Box>.BL >>bzw.
