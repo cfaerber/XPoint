@@ -289,8 +289,9 @@ begin
 {$IFDEF BP }
         if emspages>0 then EmsEinblenden(bnr);
 {$ENDIF }
-        if inr<>clnr then begin
-          if clnr<>$ffff then FreeRes;
+        if (inr<>clnr) or (bnr<>clbnr) then
+        begin
+          FreeRes;
           size:=rsize(bnr,inr);
           ofs:=index[bnr]^[inr,1];
           if loaded then begin
@@ -386,6 +387,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/08/24 09:13:11  mk
+  MO:- Bug in Resourcencaching behoben
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
