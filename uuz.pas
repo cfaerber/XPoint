@@ -623,6 +623,7 @@ begin
     for i := 0 to AddRef.Count -1 do
       wrs('BEZ: ' + addref[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
+    if expiredate <> '' then wrs('LDA: ' + expiredate);
     if error <> '' then wrs('ERR: ' + error);
     if programm <> '' then wrs('MAILER: ' + programm);
     if xnoarchive then wrs('U-X-NO-ARCHIVE: yes');
@@ -2085,6 +2086,9 @@ begin
           else
             if zz = 'encrypted' then
             pgpflags := iif(UpperCase(s0) = 'PGP', fPGP_encoded, 0)
+          else
+            if zz = 'expires' then
+            expiredate := RFC2Zdate(s0)
           else
             if zz = 'priority' then
             GetPriority
@@ -3559,8 +3563,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.72  2000/11/05 19:03:58  fe
-  Added some Gatebau 97 stuff.
+  Revision 1.73  2000/11/05 20:14:13  fe
+  Added LDA/Expires.
 
   Revision 1.71  2000/11/04 22:04:53  fe
   Added a few little things for Gatebau 97 and grandson-of-1036.

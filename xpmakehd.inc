@@ -464,6 +464,7 @@ begin
             if id = 'VER'    then GetName(vertreter,dummy) else
             if id = 'CONTROL' then control := Line  else
             if id = 'ERSETZT' then ersetzt := Line else
+            if id = 'LDA' then expiredate := line else
             if id = 'F-TO' then fido_to := line else
             {$ifdef ulines}
             if leftstr(id,2) = 'F-' then
@@ -568,8 +569,8 @@ begin
 end;
 {
   $Log$
-  Revision 1.37  2000/11/05 19:03:58  fe
-  Added some Gatebau 97 stuff.
+  Revision 1.38  2000/11/05 20:14:13  fe
+  Added LDA/Expires.
 
   Revision 1.36  2000/10/17 10:05:59  mk
   - Left->LeftStr, Right->RightStr

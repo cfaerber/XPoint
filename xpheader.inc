@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -54,7 +54,7 @@ type
     PmReplyTo: string;                  { Antwort-An    }
     AmReplyTo: string;                  { Diskussiom-In }
     amrepanz: integer;                  { Anzahl Diskussion-in's }
-    komlen: longint;                    { --- ZCONNECT --- Kommentar-L„nge }
+    komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     ckomlen: longint;                   { Crypt-Content-KOM }
     datei: string;                      { Dateiname                  }
     ddatum: string;                     { Dateidatum, jjjjmmtthhmmss }
@@ -73,6 +73,7 @@ type
     x_charset: string;                  { --- RFC -------------------- }
     keywords: string;
     summary: string;
+    expiredate: string;                 { Expires / LDA }
     priority: byte;                     { Priority: 1, 3, 5 }
     distribution: string;
     pm_reply: boolean;                  { Followup-To: poster }
@@ -108,6 +109,9 @@ type
 
 {
   $Log$
+  Revision 1.5  2000/11/05 20:14:13  fe
+  Added LDA/Expires.
+
   Revision 1.4  2000/09/21 16:22:21  mk
   - ZFido wieder compilierbar
 
