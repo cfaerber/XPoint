@@ -1155,7 +1155,7 @@ var n,w    : shortint;
     b      : byte;
     filter : boolean;
     flags  : byte;
-    uucp   : byte;
+    RFCNetFlag   : byte;
     sperre : boolean;    { Brett - Schreibsperre }
 begin
   if user then dispdat:=ubase
@@ -1172,7 +1172,7 @@ begin
     5   : w:=37;
     6   : if user then w:=46
           else w:=37;
-else begin
+   else begin
     freeres;
     exit;
     end;
@@ -1239,7 +1239,7 @@ else begin
   readmask(brk);
   enddialog;
   if not brk then begin
-    if n=2 then uucp:=iif(ntBoxNetztyp(s)=nt_UUCP,16,0);
+    if n=2 then RFCNetFlag:=iif(ntBoxNetztyp(s) in netsRFC,16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
@@ -1249,7 +1249,7 @@ else begin
               dbWriteStr(dispdat,'pollbox',s);
               if not user then begin
                 dbRead(dispdat,'flags',flags);
-                flags:=flags and (not 16)+uucp;
+                flags:=flags and (not 16)+RFCNetFlag;
                 dbWrite(dispdat,'flags',flags);
                 end;
             end;
@@ -2323,7 +2323,7 @@ var
     localuser       : boolean;
     autov,pseudos   : boolean;
     nn              : longint;
-    x,y,i,uucp,flags: Integer;
+    x,y,i,RFCNetFlag,flags: Integer;
     brk             : boolean;
     d               : DB;
     mi,p            : shortint;
@@ -2353,7 +2353,7 @@ begin
     else mapsname:=UpperCase(dbReadStr(d,'nameomaps')+'@'+oldbox);
     dbClose(d);
     if mapsname<>'' then mapsname:=mapsname+UpperCase(ntAutoDomain(oldbox,true));
-    uucp:=iif(ntBoxNetztyp(newbox)=nt_UUCP,16,0);
+    RFCNetFlag:=iif(ntBoxNetztyp(newbox) in netsRFC,16,0);
     attrtxt(col.coldialog);
     wrt(x+2,y+10,getres2(2734,7));    { 'Bretter' }
     wrt(x+2,y+11,getres2(2734,8));    { 'User'    }
@@ -2377,7 +2377,7 @@ begin
               wrt(x+10,y+9+i,strsn(nn,4));
               dbWriteStr(d,'pollbox',newbox);
               if i=1 then begin
-                flags:=dbReadInt(d,'flags') and (not 16) + uucp;
+                flags:=dbReadInt(d,'flags') and (not 16) + RFCNetFlag;
                 dbWrite(d,'flags',flags);
                 end;
               end;
@@ -2431,6 +2431,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/09/01 15:22:51  ma
+  - net type handling fixes
+
   Revision 1.67  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 
