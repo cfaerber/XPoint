@@ -84,7 +84,7 @@ const
       RFC1522     : boolean = false;         { Headerzeilen gem. RFC1522 codieren }
 { Envelope-EmpfÑnger aus Received auslesen? }
       getrecenvemp: boolean = false;
-      ppp         : boolean = false;         { -ppp (fÅr UKA* etc.) }
+      client         : boolean = false;         { -client (fÅr UKA* etc.) }
       MailUser    : string[30] = 'mail';     { fuer U-Zeile im X-File }
       NewsUser    : string[30] = 'news';
       FileUser    : string[30] = 'root';
@@ -380,8 +380,8 @@ begin
           MakeQP:=true else
         if switch='1522' then
           RFC1522:=true else
-        if switch='ppp' then
-          ppp:=true else
+        if switch='client' then
+          client:=true else
         if switch='lfn' then
           EnableLFN else
         if switch[1]='u' then begin
@@ -2900,7 +2900,7 @@ begin
       else s:=wab;
       p:=cpos('@',s);
       if SMTP then begin
-        if smtpfirst or ppp then begin
+        if smtpfirst or client then begin
           wrs(f,'HELO '+mid(s,p+1));
           smtpfirst:=false;
         end;
@@ -3285,14 +3285,14 @@ begin
   assign(f1,source);
   reset(f1,1);
   adr:=0; n:=0;
-  if not ppp then begin
+  if not client then begin
     assign(fc,dest+'C-'+hex(NextUunumber,4)+'.OUT');   { "C."-File }
     rewrite(fc);
   end;
   if filesize(f1)<10 then
   begin
     close(f1);
-    if not ppp then close(fc);
+    if not client then close(fc);
     exit;
   end;
   assign(f,'uuz.tmp');
@@ -3300,10 +3300,10 @@ begin
   server:=ustr(UUserver+'@'+_to);
   files:=0;
 
-  ldstr:=iifs(ppp,'N','D-');
-  ovrwrt:=iifb(ppp,false,true);
+  ldstr:=iifs(client,'N','D-');
+  ovrwrt:=iifb(client,false,true);
 
-  if not ppp then CreateNewfile;           { 1. Durchgang: News }
+  if not client then CreateNewfile;           { 1. Durchgang: News }
   fs:=filesize(f1);
   repeat
     seek(f1,adr);
@@ -3319,7 +3319,7 @@ begin
         writeln(#13'BinÑrnachricht <',hd.msgid,'> wird nicht konvertiert')
       else begin   { AM }
         inc(n); write(#13'News: ',n);
-        if ppp then CreateNewFile;
+        if client then CreateNewFile;
         seek(f1,adr+hds);
         if binmail then
           hd.lines:=(hd.groesse+53) div 54    { Anzahl Base64-Zeilen }
@@ -3353,30 +3353,30 @@ begin
         flushoutbuf(f);
         WriteRfcTrailer(f);
         truncate(f);
-        if not ppp then wrs(f2,'#! rnews '+strs(filesize(f)));
+        if not client then wrs(f2,'#! rnews '+strs(filesize(f)));
         seek(f,0);
         fmove(f,f2);
-        if ppp then close(f2);
+        if client then close(f2);
       end;
     disposeempflist(empflist);
     inc(adr,hds+hd.groesse);
   until adr>fs-10;
   empflist:=nil;
-  if not ppp then close(f2);
+  if not client then close(f2);
   if n=0 then begin
-    if not ppp then erase(f2);
+    if not client then erase(f2);
   end
   else begin
-    if not ppp then MakeXfile('news');
+    if not client then MakeXfile('news');
     writeln;
   end;
   close(f); erase(f);
 
   adr:=0; n:=0;                     { 2. Durchgang: Mail }
 
-  ldstr:=iifs(ppp,'M','D-');
+  ldstr:=iifs(client,'M','D-');
 
-  if SMTP and not ppp then CreateNewfile;
+  if SMTP and not client then CreateNewfile;
   repeat
     copycount:=1;
     repeat
@@ -3385,11 +3385,11 @@ begin
       binmail:=(hd.typ='B');
       if cpos('@',hd.empfaenger)>0 then
         if ustr(left(hd.empfaenger,length(server)))=server then begin
-          if not ppp then WrFileserver;
+          if not client then WrFileserver;
         end
         else begin
           inc(n); write(#13'Mails: ',n);
-          if not SMTP or ppp then
+          if not SMTP or client then
             CreateNewfile;
           if binmail then
             seek(f1,adr+hds);
@@ -3417,14 +3417,14 @@ begin
           WriteRfcTrailer(f2);
           if SMTP then begin
             wrs(f2,'.');          { Ende der Mail }
-            if ppp then begin
+            if client then begin
               wrs(f2,'QUIT');
               close(f2);
             end;
           end
           else begin
             close(f2);
-            if not ppp then MakeXfile('mail');
+            if not client then MakeXfile('mail');
           end;
         end;
       disposeempflist(empflist);
@@ -3436,14 +3436,14 @@ begin
   if n>0 then writeln;
   if files>0 then
     writeln('Files: ',files);
-  if SMTP and not ppp then begin
+  if SMTP and not client then begin
     wrs(f2,'QUIT');
     close(f2);
     if n=0 then erase(f2)
-    else if not ppp then MakeXfile('smtp');
+    else if not client then MakeXfile('smtp');
   end;
   close(f1);
-  if not ppp then close(fc);
+  if not client then close(fc);
 end;
 
 
@@ -3472,6 +3472,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.37  2001/04/19 15:03:04  mk
+  - -client
+
   Revision 1.35.2.36  2001/04/09 16:12:16  mk
   - MAILER: gross geschrieben
 
@@ -3484,7 +3487,7 @@ end.
   - weitere arbeiten am Client-Modus
 
   Revision 1.35.2.33  2001/01/10 17:39:01  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - client-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
   Revision 1.35.2.32  2001/01/07 15:41:00  mk
   - removed last patches (LFN)
@@ -3514,10 +3517,10 @@ end.
   - nicht auf Zieldatei testen, sondern anhaengen
 
   Revision 1.35.2.23  2000/12/22 20:32:16  mk
-  - fix fuer -ppp
+  - fix fuer -client
 
   Revision 1.35.2.22  2000/12/19 22:09:54  mk
-  RB:- Option -ppp implementiert
+  RB:- Option -client implementiert
 
   Revision 1.35.2.21  2000/12/12 11:30:26  mk
   - FindClose hinzugefuegt

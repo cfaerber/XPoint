@@ -555,7 +555,7 @@ type   textp  = ^text;
                   UUprotos  : string[10];  { UUCP: m”gl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
-                  PPPSmtp   : boolean;     { UUCP: SMTP PPP Mode       }
+                  ClientSmtp   : boolean;  { UUCP: SMTP Client Mode    }
                   PPPMode   : Boolean;     { PPP Mode Switch           }
                   PPPClient : string[60];  { PPP Client                }
                   PPPSpool  : string[60];  { PPP Spool                 }
@@ -1151,6 +1151,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.30  2001/04/19 15:03:05  mk
+  - -client
+
   Revision 1.54.2.29  2001/04/09 16:47:17  mk
   - arbeiten am Client-Modus
 

@@ -175,7 +175,7 @@ begin
     if not TempPPPMode then
     begin
       if SizeNego then opt:='-s ';
-      if UUSmtp or PPPSmtp then
+      if UUSmtp or ClientSmtp then
         if UpArcer='' then opt:=opt+'-SMTP '
         else if pos('freeze',lstr(uparcer))>0 then opt:=opt+'-fSMTP '
         else if pos('gzip',lstr(uparcer))>0 then opt:=opt+'-zSMTP '
@@ -185,7 +185,7 @@ begin
     begin
       opt := opt + '-SMTP '
     end;
-    if PPPSmtp or TempPPPMode then opt := opt+'-ppp ';
+    if ClientSmtp or TempPPPMode then opt := opt+'-client ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
@@ -618,6 +618,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.15  2001/04/19 15:03:05  mk
+  - -client
+
   Revision 1.13.2.14  2001/04/14 10:07:01  mk
   - Anpassungen Client-Modus
 

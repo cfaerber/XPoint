@@ -143,7 +143,7 @@ begin
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
-    PPPSmtp := false;
+    ClientSmtp := false;
     PPPMode := false;
     PPPClient := '';
     PPPSpool := '';
@@ -281,7 +281,7 @@ begin
             getx(su,  'UU-ForcePacketSize',forcepacketsize) or
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
-            getx(su,  'UU-SMTP-PPP', PPPSmtp) or
+            getx(su,  'UU-SMTP-Client', ClientSmtp) or
             gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
             getx(su,  'Client-Mode', PPPMode) or
             gets(s,su,'Client-Exec', PPPClient, 60) or
@@ -423,7 +423,7 @@ begin
     writeln(t,'UU-ForcePacketSize=',jnf(forcepacketsize));
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     writeln(t,'UU-SMTP=',jnf(uusmtp));
-    writeln(t,'UU-SMTP-PPP=', jnf(PPPSmtp));
+    writeln(t,'UU-SMTP-Client=', jnf(ClientSmtp));
     writeln(t,'Client-Mode=', Jnf(PPPMode));
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
@@ -555,6 +555,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.11  2001/04/19 15:03:06  mk
+  - -client
+
   Revision 1.10.2.10  2001/04/11 07:54:25  mk
   - weitere Arbeiten am Client-Modus
 

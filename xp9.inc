@@ -396,7 +396,7 @@
     with boxpar^ do
     begin
       if UUSmtp then TempSmtp := 'SMTP/UUCP'
-        else if PPPSmtp then TempSmtp := 'SMTP/PPP'
+        else if ClientSmtp then TempSmtp := 'SMTP/Client'
         else TempSmtp := Copy(getres2(920,65), 1, Pos('ù', Getres2(920,65))-1);
       case nt of
         nt_Maus : begin
@@ -631,9 +631,9 @@
         if Uz then uuprotos:=uuprotos+'z';
         if Uf then uuprotos:=uuprotos+'f';
         if Ue then uuprotos:=uuprotos+'e';
-        UUSmtp := false; PPPSmtp := false;
+        UUSmtp := false; ClientSmtp := false;
         if TempSmtp = 'SMTP/UUCP' then UUSmtp := true else
-        if TempSmtp = 'SMTP/PPP' then PPPSmtp := true;
+        if TempSmtp = 'SMTP/Client' then ClientSmtp := true;
       end;
     end;
     enddialog;
@@ -1401,6 +1401,9 @@
 
 {
   $Log$
+  Revision 1.10.2.20  2001/04/19 15:03:06  mk
+  - -client
+
   Revision 1.10.2.19  2001/04/14 21:10:41  mk
   - Client-Modus verbessern
 
