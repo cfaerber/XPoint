@@ -240,6 +240,7 @@ begin
       finally
         List.Free;
       end;
+      POP.Disconnect; // first try, do when no execption occours
     except
       on E: EPOP3 do begin
         POWindow.WriteFmt(mcError, E.Message, [0]);
@@ -256,19 +257,19 @@ begin
       on E: Exception do begin
         POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
         result:= false;
-        {$IFDEF DEBUG } 
+        {$IFDEF DEBUG }
           // crash in Debug-Versions to give line information
-          raise; 
-        {$ENDIF }        
-        end; 
+          raise;
+        {$ENDIF }
+        end;
     end;
-    POP.Disconnect;
 
     if POP.UIDLs.Count>0 then
       POP.UIDLs.SaveToFile(UIDLFileName)
     else
       DeleteFile(UIDLFileName);
   finally
+    POP.Disconnect; // seconds try if there was an exception handled
     POP.Free;
   end;
   ProcessIncomingFiles(IncomingFiles);
@@ -286,6 +287,10 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.6  2003/04/28 08:39:18  mk
+  - do POP.Disconnect in try except block first time, to give
+    helpful error messages instead of a crash
+
   Revision 1.32.2.5  2003/04/25 17:31:57  mk
   - changed order of try finally blocks a little bit
 
