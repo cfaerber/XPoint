@@ -477,8 +477,8 @@ procedure THeader.WriteZConnect(stream:TStream);
       writeln_s(stream,'ROT: '+pfad);
 
       p1:=cpos(' ', ReplyTo);
-      if p1>0 then
-        ReplyTo := LeftStr(s, p1-1) + ' ' + trim(mid(s,p1+1));
+      if p1>0 then { evtl. ueberfluessige Leerzeichen entfernen }
+        ReplyTo := LeftStr(ReplyTo, p1-1) + ' ' + trim(mid(ReplyTo,p1+1));
       if (ReplyTo <> '') and (LeftStr(ReplyTo,Length(absender)) <> absender) then
         writeln_s(stream,'ANTWORT-AN: '+ ReplyTo);
       if typ='B'       then writeln_s(stream,'TYP: BIN') else
@@ -1013,6 +1013,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2002/05/12 17:58:59  ma
+  - fixed: Reply-To handling was broken if real name specified in Reply-To
+
   Revision 1.27  2002/04/14 22:33:10  cl
   - New address handling, supports To, CC, and BCC
   - Nearly complete rewrite of DoSend's message creation
