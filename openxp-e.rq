@@ -591,7 +591,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Interrupt login screen
 4    Hayes commands
 5    Rename CALLED
-6    Delete netcall file after importing
+6    Delete mail packets after importing
 7    Convert all Z-Netz addresses to upper case
 8    Warning!
 9    You may deactivate this option only if you don't use a modem and
@@ -3374,7 +3374,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME-Types or File-Extensions are not allowed!
 35 Standard entry can not be modified
-36 This box is configured for TCP/IP.
+36 This Server is configured for TCP/IP
 # The string in the following two lines must not exceed 56 characters:
 37 Path must be RELATIVE and point to a directory ONE level
 38 DIRECTLY below the XP directory!
@@ -3987,6 +3987,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.18  2004/08/25 20:10:14  mf
+# - 254.6 changed.
+# - 10900.36 changed.
+#
 # Revision 1.49.2.17  2004/07/16 22:53:55  mk
 # - fixed headeronly for NNTP
 #
