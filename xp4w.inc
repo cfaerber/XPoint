@@ -72,7 +72,7 @@ begin
 end;
 
 procedure gethdat(abhzeit:integer);
-var t,m,j: rtlword;
+var t,m,j: smallword;
     tt   : integer;
 begin
   if abhzeit=0 then
@@ -1621,6 +1621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.54  2000/11/17 00:15:47  mk
+  - Virtual Pascal compatibility updates
+
   Revision 1.53  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 

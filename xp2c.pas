@@ -948,7 +948,7 @@ begin
     if not brk and mmodified then
     begin
 {$ifndef Unix}
-      Cport:=hexval(pstr)
+      Cport:=hexval(pstr);
 {$endif}
       { if fossil then IgCTS := not foscts; ??? }
       GlobalModified;
@@ -1517,6 +1517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/11/17 00:15:47  mk
+  - Virtual Pascal compatibility updates
+
   Revision 1.65  2000/11/16 20:41:47  hd
   - DOS Unit entfernt
 

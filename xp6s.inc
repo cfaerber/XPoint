@@ -365,8 +365,8 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 function MessageID:string;
 const rev = 'B';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
-    t,m,j   : rtlword;
-    h,mm,s,ss: rtlword;
+    t,m,j   : smallword;
+    h,mm,s,ss: smallword;
     dat     : word;
     count   : word;
     rand    : word;
@@ -728,7 +728,7 @@ function DateSend:boolean;
 var brk      : boolean;
     x,y      : byte;
     mind     : fdate;
-    dd,mm,yy : rtlword;
+    dd,mm,yy : smallword;
 begin
   if AutoActive then    { dÅrfte nicht vorkommen }
     DateSend:=false
@@ -1140,6 +1140,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.37  2000/11/17 00:15:48  mk
+  - Virtual Pascal compatibility updates
+
   Revision 1.36  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 

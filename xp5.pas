@@ -66,7 +66,7 @@ const rx = 42;
 var   nt,n,mnt,
       xjj,xmm,xtt : integer;
       z           : taste;
-      y,m,d       : rtlword;
+      y,m,d       : smallword;
       lm,lj       : word;
       jj,mm,tt    : word;
       di          : string;
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/11/17 00:15:48  mk
+  - Virtual Pascal compatibility updates
+
   Revision 1.43  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 

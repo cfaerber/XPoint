@@ -66,7 +66,7 @@ var
     mnt     : longint;
     netztyp : byte;
     _brett  : string;
-    t,m,j   : rtlword;
+    t,m,j   : smallword;
     tempd: integer;
     fileatt : boolean;
     dflags  : string;
@@ -599,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2000/11/17 00:15:47  mk
+  - Virtual Pascal compatibility updates
+
   Revision 1.41  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 
