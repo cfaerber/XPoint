@@ -77,6 +77,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyins  : taste = #0#82;
        keycins : taste = #0#146;
        keydel  : taste = #0#83;
+       keycdel : taste = #0#147;
 
        keyesc  : taste = #27;       { sonstige Tasten }
        keybs   : taste = #8;
@@ -162,8 +163,19 @@ end;
 
 
 function keypressed:boolean;
+var key_pressed:boolean;
 begin
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
+  if enhKBsupport then
+  asm
+    mov key_pressed,false
+    mov ah,11h
+    int 16h
+    jz @@nokey
+    mov key_pressed,true
+  @@nokey:
+  end
+  else key_pressed:=crt.keypressed;
+  keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
 end;
 
 function readkey:char;
@@ -179,9 +191,7 @@ begin
       highbyte:=0;
     end
     else begin
-    {$IFDEF BP }
-      if enhKBsupport then
-      begin
+      if enhKBsupport then begin
         asm
           mov ah,10h
           int 16h
@@ -198,7 +208,7 @@ begin
           mov @result,al
           mov lastscancode,ah
         end;
-      end
+      end  
       else begin
         asm
           xor ah,ah
@@ -211,10 +221,8 @@ begin
           mov lastscancode,ah
         end;
       end;
-{$ELSE }
-      readkey:=crt.readkey;
-{$ENDIF }
     end;
+{    readkey:=crt.readkey; }
 end;
 
 
@@ -383,11 +391,10 @@ begin
   kb_alt:=kbstat and alt<>0;
 end;
 
-{$IFDEF BP }
 procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
   asm
     mov bh,0fh  { Z„hler }
-  @@loop:
+  @@loop:  
     mov ah,5
     mov cx,0ffffh { in Puffer }
     int 16h
@@ -399,23 +406,27 @@ procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
     jnz @@loop
     mov enhKBsupport,false
     jmp @@nein
-  @@ja:
+  @@ja:    
     mov enhKBsupport,true
   @@nein:
-end;
-{$ENDIF }
-
+  end;
+ 
 begin
   forwardkeys:='';
   func_proc:=func_dummy;
-{$IFDEF BP }
   TestKeyInt;
-{$ENDIF }
 end.
 {
   $Log$
-  Revision 1.8  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.7.2.1  2000/03/25 15:28:10  mk
+  - URL-Erkennung im Lister erkennt jetzt auch
+    einen String der mit WWW. beginnt als URL an.
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
+    ZConnect und Sysoppoll aufgerufen
+  - PGP Bugs behoben (bis 1.10)
+  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+  - <Ctrl Del>: Wort rechts loeschen
+  - Persistene Bloecke sind im Editor jetzt default
 
   Revision 1.7  2000/02/29 19:44:38  rb
   Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt

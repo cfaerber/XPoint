@@ -1069,9 +1069,9 @@ With F2 you can copy to the Windows-Clipboard.
 copies the marked Text to the Clipboard
 
 <<Win-Clipboard (URL)>> 
-tries to generate a Internet-URL (FTP:// or HTTP://)
-from the first marked line and copies this to the
-Clipboard
+tries to generate a Internet-URL 
+(FTP:// or HTTP:// or WWW.) from the first marked
+line and copies it to the Windows-Clipboard.
 
 <<Win-Clipboard (MAIL)>> 
 like before, but generates a Mail-Adress.

@@ -59,8 +59,7 @@ function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
 {$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; 
-                    cls:shortint; Fileattach:boolean):boolean;
+function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 {$ENDIF}
 
@@ -114,6 +113,7 @@ begin
       s:=first_marked;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
+      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }   
       if y<>0 then begin
         s:=mid(s,y); x:=0;                                      
         repeat
@@ -875,8 +875,8 @@ end;
 { Bei Windows-Programmen wird direkt Åber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
-function XPWinShell(prog:string; parfn:pathstr; space:word;
-                    cls:shortint; Fileattach:boolean):boolean;
+{$IFNDEF Delphi5}
+function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 var w1,w2: word;
 
@@ -909,30 +909,23 @@ var w1,w2: word;
     os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
-    if win then begin        
-
-      if getenv('DELVTMP')<>'' then 
-      begin
-        if ustr(left(prog,5))<>'START' then prog:='start '+prog;
-        end
-      else begin
-        batfile:=TempExtFile(temppath,'wrun','.bat');
-        assign(t,batfile);
-        rewrite(t);
-        writeln(t,'@echo off');
-        writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
-        writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
-        writeln(t);
-        writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
-        writeln(t,'echo.');
-        writeln(t,'start '+iifs(fileattach,'','/wait ')+prog);
-        if not fileattach then writeln(t,'del '+parfn);
-        writeln(t,'del '+batfile);
-        close(t);
-        if winnt then
-          prog:='cmd /c start cmd /c '+batfile
-          else prog:='start command /c '+batfile
-        end;
+    if win then begin
+      batfile:=TempExtFile('','wrun','.bat');
+      assign(t,batfile);
+      rewrite(t);
+      writeln(t,'@echo off');
+      writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
+      writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
+      writeln(t);
+      writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
+      writeln(t,'echo.');
+      writeln(t,'start /wait '+prog);
+      writeln(t,'del '+parfn);
+      writeln(t,'del '+batfile);
+      close(t);
+      if winnt then
+        prog:='cmd /c start cmd /c '+batfile
+        else prog:='start command /c '+batfile;
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -951,7 +944,7 @@ var w1,w2: word;
       close(t);
       prog:=batfile;
       PrepareExe:=2;
-    end;
+    end;  
   end;
 
 begin
@@ -960,35 +953,25 @@ begin
      0 : begin                      { DOS-Programm aufrufen }
            shell(prog,space,cls);
            XPWinShell:=false;
-         end;
+         end;  
      1 : shell(prog,space,0);       { Windows-Programm aufrufen }
-  {$IFDEF BP }
      2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
-  {$ENDIF }
-  end;
+  end;  
 end;
+{$ENDIF}
 
 end.
 {
   $Log$
-  Revision 1.24  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.23  2000/03/04 18:34:18  jg
-  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
-    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
-
-  Revision 1.22  2000/03/04 15:48:48  jg
-  - Externe Windowsviewer, DELVTEMP-Modus:
-    "start" wird nicht mehr zu "start start"
-    Programmname wird wieder uebernommen.
-
-  Revision 1.21  2000/03/04 12:39:36  jg
-  - weitere Aenderungen fuer externe Windowsviewer
-    Umgebungsvariable DELVTMP
-
-  Revision 1.20  2000/03/04 11:07:32  jg
-  - kleine Aenderungen am Tempfilehandling fuer externe Windowsviewer
+  Revision 1.19.2.1  2000/03/25 15:28:11  mk
+  - URL-Erkennung im Lister erkennt jetzt auch
+    einen String der mit WWW. beginnt als URL an.
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
+    ZConnect und Sysoppoll aufgerufen
+  - PGP Bugs behoben (bis 1.10)
+  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+  - <Ctrl Del>: Wort rechts loeschen
+  - Persistene Bloecke sind im Editor jetzt default
 
   Revision 1.19  2000/03/03 20:26:40  rb
   Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert

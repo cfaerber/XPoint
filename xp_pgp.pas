@@ -53,8 +53,8 @@ const savekey : pathstr = '';
   JG 08.01.00: Routine optimiert }
 
 function testbin(var bdata; rr:word):boolean; assembler;
+{$IFDEF BP }
 asm
-{$IFNDEF Ver32 }
          push ds
          mov   cx,rr
          lds   si,bdata
@@ -67,8 +67,21 @@ asm
        {  adc ax,ax }                      { C=0: false, c=1: true }
          sbb ax,ax
          pop ds
-{$ENDIF}
 end;
+{$ELSE }
+asm
+         mov   ecx,rr
+         mov   esi,bdata
+         cld
+@tbloop: lodsb
+         cmp   al,9                     { BinÑrzeichen 0..8, ja: c=1 }
+         jb    @tbend                  { JB = JC }
+         loop  @tbloop
+@tbend:  mov eax, 0
+       {  adc ax,ax }                      { C=0: false, c=1: true }
+         sbb eax,eax
+end ['EAX', 'ECX', 'ESI'];
+{$ENDIF}
 
 procedure LogPGP(s:string);
 var t : text;
@@ -92,17 +105,17 @@ begin
     if path<>'' then begin
       if lastchar(path)='\' then dellast(path);
       path:=fsearch('PGP.EXE',path);
-      end;
+    end;
     if path='' then
       path:=fsearch('PGP.EXE',getenv('PATH'));
-    end;
+  end;
   if path='' then
     trfehler(3001,30)    { 'PGP fehlt oder ist nicht per Pfad erreichbar.' }
   else begin
     shellkey:=PGP_WaitKey;
     shell(path+iifs(PGPbatchmode,' +batchmode ',' ')+par,500,1);
     shellkey:=false;
-    end;
+  end;
 end;
 
 { 07.01.2000 oh: PGP 5.x KompatibilitÑt eingebaut }
@@ -134,7 +147,7 @@ begin
     end;
     shell(path+iifs(PGPbatchmode,batch,' ')+par,500,1);
     shellkey:=false;
-    end;
+  end;
 end;
 { /oh }
 
@@ -250,7 +263,7 @@ var tmp  : pathstr;
     b    : byte;
     nt   : longint;
     t    : string[20];
-    uid  : string[80];
+{    uid  : string[80]; !!}
 
   procedure StripOrigin;
   begin
@@ -285,12 +298,14 @@ begin
   if PGPVersion=PGP2
     then t:=iifs(hd.typ='T','t',' +textmode=off')
     else t:=iifs(hd.typ='T','t',' -t');
-    
+
+{  
   if PGP_UserID<>'' then begin
     if PGPVersion=PGP2 then uid:=' -u '+IDform(PGP_UserID)
                        else uid:=IDform(PGP_UserID)
   end else uid:='';
-  
+}
+
   { --- codieren --- }
   if encode and not sign then begin                     
     if PGPVersion=PGP2 then
@@ -301,16 +316,16 @@ begin
   { --- signieren --- }
   end else if not encode and sign then begin            
     if PGPVersion=PGP2 then
-      RunPGP('-esa'+t+' '+filename(source)+' -o '+tmp { +uid } )
+      RunPGP('-sa'+t+' '+filename(source)+' -o '+tmp )
     else                                                  
-      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp { +uid } );
+      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp );
   
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
-      RunPGP('-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} )
+      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else
-      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} ); 
+      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp);
   end;
   
   if fido_origin<>'' then AddOrigin;
@@ -437,6 +452,7 @@ var tmp,tmp2 : pathstr;
     orgsize  : longint;
     b        : byte;
     l        : longint;
+    pass     : string;
 
   procedure WrSigflag(n:byte);
   var l : longint;
@@ -457,27 +473,35 @@ begin
   if sigtest then
     PGP_WaitKey:=true;
 
-  if PGPVersion=PGP2 then
-    RunPGP(tmp+' -o '+tmp2)
-  else
+  if PGPVersion=PGP2 then begin
+    { Passphrase nicht bei Signaturtest }
+    if not sigtest then begin
+      pass:=GetEnv('PASSPHRASE');
+      if pass<>'' then pass:='"'+pass+'"';
+    end;
+    { Passphrase nur bei PGP 2.x uebergeben... }
+    RunPGP(tmp+' '+pass+' -o '+tmp2)
+    { ... RUNPGP5 hÑngt sie selbst mit an, falls nîtig. }
+  end else
     RunPGP5('PGPV.EXE',tmp+' -o '+tmp2);
+    
   if sigtest then begin
     PGP_WaitKey:=false;
     if exist(tmp) then _era(tmp);
-    if exist(tmp2) then _era(tmp2);
-    exit;
   end;
-  if not exist(tmp2) then
-    if sigtest then
+  
+  { Oops, keine Ausgabedatei: }  
+  if not exist(tmp2) then begin
+    if sigtest then begin
       if errorlevel=18 then begin
         trfehler(3007,7);  { 'PGP meldet ungÅltige Signatur!' }
         WrSigflag(2);      { Signatur fehlerhaft }
-        end
-      else
+      end else
         trfehler(3007,6)   { 'öberprÅfung der PGP-Signatur ist fehlgeschlagen' }
-    else
+    end else
       trfehler(3004,5)     { 'PGP-Decodierung ist fehlgeschlagen.' }
-  else begin
+  { Ausgabedatei korrekt geschrieben: }
+  end else begin
     PGP_BeginSavekey;
     orgsize:=hdp^.groesse;
     hdp^.groesse:=_filesize(tmp2);
@@ -487,16 +511,18 @@ begin
     if hdp^.ccharset<>'' then begin
       hdp^.charset:=ustr(hdp^.ccharset);
       hdp^.ccharset:='';
-      end;
-    if sigtest or (errorlevel=18) then
+    end;
+    { Signaturtest oder Fehler: }
+    if sigtest or (errorlevel=18) then begin
+      { Fehler: }
       if errorlevel<>0 then begin
         hdp^.pgpflags := hdp^.pgpflags or fPGP_sigerr;
         WrSigflag(2);
-        end
-      else begin
+      end else begin
         hdp^.pgpflags := hdp^.pgpflags or fPGP_sigok;
         WrSigflag(1);
-        end;
+      end
+    end;
     rewrite(f,1);          { alte Datei Åberschreiben }
     WriteHeader(hdp^,f,reflist);
     assign(f2,tmp2);
@@ -513,16 +539,17 @@ begin
       dbReadN(mbase,mb_netztyp,l);
       l:=l or $4000;                      { "s"-Flag }
       dbWriteN(mbase,mb_netztyp,l);
-      end
-    else begin
+    end else begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                          { "c"-Flag }
       dbWriteN(mbase,mb_unversandt,b);
-      end;
+    end;
     hdp^.groesse:=orgsize;
     PGP_EndSavekey;
-    end;
+  end;
+  { AufrÑumen: }
   if exist(tmp) then _era(tmp);
+  if exist(tmp) then _era(tmp2);
 end;
 
 
@@ -698,7 +725,16 @@ end;
 end.
 {
   $Log$
-  Revision 1.6.2.1  2000/03/07 00:20:43  mk
+  Revision 1.6.2.2  2000/03/25 15:28:11  mk
+  - URL-Erkennung im Lister erkennt jetzt auch
+    einen String der mit WWW. beginnt als URL an.
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
+    ZConnect und Sysoppoll aufgerufen
+  - PGP Bugs behoben (bis 1.10)
+  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+  - <Ctrl Del>: Wort rechts loeschen
+  - Persistene Bloecke sind im Editor jetzt default
+
   OH: PGP-Fixes
 
   Revision 1.6  2000/02/19 11:40:08  mk

@@ -830,6 +830,7 @@ var f1,f2 : file;
     fn    : pathstr;
     dummy : longint;
     ft    : longint;
+    TempPPFileName: String;
 
   procedure RemoveMausmark;   { Schlu·zeile mit '#' entfernen }
   var s  : string[10];
@@ -866,7 +867,9 @@ begin
     end else
       rewrite(f2,1);
 
+    { Merken, da der Outfilter ihn verÑndern kann }
     assign(f1,ppfile);
+
     if (logintyp=ltMaus) and not existf(f1) then
     begin
       rewrite(f1,1); close(f1); { fÅr leeres INFILE }
@@ -874,6 +877,19 @@ begin
 
     if existf(f1) then
     begin
+      { Ausgangsfilter auch fÅr ZConnect aufrufen, aber nur
+        wenn ein Puffer da ist. Originalfile lîschen }
+      if logintyp = ltZConnect then
+      begin
+        ClrScr;
+        writeln('"', ppfile, '" wird jetzt konvertiert'); readln;
+        TempPPFileName := ppfile;
+        if OutFilter(ppfile) then _era(TempPPFileName);
+        writeln('"', ppfile, '" ist das Ergebnis');
+        Writeln('"', tempppfilename, '" wurde gelîscht'); readln;
+        Assign(f1, ppfile); { neuen Namen merken }
+      end;
+
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then
       begin
         fn:=TempS(_filesize(ppfile)+10000);
@@ -892,29 +908,36 @@ begin
         end;
         assign(f1,fn);
       end;
+
+      { Puffer vor Reset(f1, 1) testen, da sonst sharing violation }
+
+      outmsgs:=testpuffer(ppfile,false,dummy);
+
       reset(f1,1);
       NC^.sendbuf:=filesize(f1);
       if logintyp=ltMaus then
         RemoveMausmark;
+      Writeln('Jetzt wird "', ppfile, '" an "', sysopout, '" rangehangen'); readln;
       fmove(f1,f2);            { .PP an Ausgabepuffer hÑngen }
       close(f1);
       close(f2);
-      { MK 01/00 erst nach geschlossenen Puffer ausfÅhren,
-      { da sonst shareing violation }
-      outmsgs:=testpuffer(ppfile,false,dummy);
+
       Moment;
+
       outmsgs:=0;
       RemoveEPP;
       ClearUnversandt(ppfile,box);
       closebox;
+
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then erase(f1);
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
       end
     else begin
       close(f2);
-      end;
+    end;
     if _filesize(SysopOut)=0 then _era(SysopOut);
+
     fn:=SysopInp;
     assign(f1,fn);
     if not existf(f1) then begin
@@ -1433,6 +1456,16 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.1  2000/03/25 15:28:11  mk
+  - URL-Erkennung im Lister erkennt jetzt auch
+    einen String der mit WWW. beginnt als URL an.
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
+    ZConnect und Sysoppoll aufgerufen
+  - PGP Bugs behoben (bis 1.10)
+  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+  - <Ctrl Del>: Wort rechts loeschen
+  - Persistene Bloecke sind im Editor jetzt default
+
   Revision 1.5  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

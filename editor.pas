@@ -1632,6 +1632,7 @@ var  dl         : displp;
     if t=^G      then b:=EditfDEL         else    { WS-Zweitbelegung }
     if t=keyf5   then b:=EditfAbsatzmarke else
     if t=^T      then b:=EditfDelWordRght else
+    if t=keycdel then b:=EditfDelWordRght else
     if t=^Y      then b:=EditfDelLine     else
     if t=^P      then b:=EditfCtrlPrefix  else
     if t=keyf3   then b:=EditfWrapOff     else
@@ -1880,8 +1881,15 @@ end;
 end.
 {
   $Log$
-  Revision 1.9.2.1  2000/03/20 11:29:48  mk
-  - Persistene Bloecke im Editor sind jetzt default
+  Revision 1.9.2.2  2000/03/25 15:28:10  mk
+  - URL-Erkennung im Lister erkennt jetzt auch
+    einen String der mit WWW. beginnt als URL an.
+  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
+    ZConnect und Sysoppoll aufgerufen
+  - PGP Bugs behoben (bis 1.10)
+  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+  - <Ctrl Del>: Wort rechts loeschen
+  - Persistene Bloecke sind im Editor jetzt default
 
   Revision 1.9  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
