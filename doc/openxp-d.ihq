@@ -4314,8 +4314,6 @@ nur EINE.
 
 <<Edit>>     bearbeitet die gew„hlte Gruppe
 
-<<Fido>>     bearbeitet Fido-spezifische Einstellungen
-
 <<OK>>       verl„át das Gruppenfenster
 
 <<Hinweis:>> Die Gruppen-Nummern werden von XP fortlau-
@@ -4371,6 +4369,33 @@ dann automatisch eine Konvertierung in den dort
 
 @
 205
+<<Re^n:>>   ->  Beim Antworten auf Nachrichten wird dem
+            Betreff ein "Re:" vorangestellt. Mehrere
+            "Re:"s werden zu "Re^n" zusammengefaát,
+            wobei n die Anzahl der "Re"s ist.
+
+<<Re:>>     ->  Es wird immer nur ein einzelnes "Re:"
+            erzeugt.
+
+<<nein>>    ->  Es wird kein "Re:" erzeugt; vorhandene
+            "Re:"s werden beim Antworten entfernt.
+
+<<Vorgabe>> ->  Es gilt die Einstellung unter /Config
+            /Optionen/Nachrichten
+
+Bei ZConnect und im Usenet wird nur ein einzelnes
+"Re:" verwendet, und im MausNet bleibt der Betreff
+beim Antworten unver„ndert. Im FidoNet wird manchmal
+mit "Re:", meist jedoch ohne gearbeitet.
+
+Diese Einstellung gilt nicht fr ZConnect, MausNet
+Usenet und fr pers"nliche Nachrichten. Im MausNet
+wird grunds„tzlich kein "Re:" verwendet, im Usenet,
+bei ZConnect und bei allen pers"nlichen Nachrichten
+wird immer ein einfaches "Re:" vorangestellt.
+
+@
+206
 Dies sind die (Datei-)Namen der
 
 ş Briefkopf-Schablone (<<Kopf>>, Default: HEADER)
@@ -4393,38 +4418,14 @@ mit /Edit/Schablonen/Sonstige oder mit jedem belie-
 bigen Editor bearbeiten.
 
 @
-206
-^^205
-@
 207
-^^205
-@
-208
-<<Re^n:>>   ->  Beim Antworten auf Nachrichten wird dem
-            Betreff ein "Re:" vorangestellt. Mehrere
-            "Re:"s werden zu "Re^n" zusammengefaát,
-            wobei n die Anzahl der "Re"s ist.
+<<Allgemein>>: Einstellungen wie maximale Nachrichten-
+           gr”áe, Sonderzeichen etc.
 
-<<Re:>>     ->  Es wird immer nur ein einzelnes "Re:"
-            erzeugt.
+<<RFC>>: Einstellungen zur eigenen Identit„t bei Inter-
+     net Mail bzw. News.
 
-<<nein>>    ->  Es wird kein "Re:" erzeugt; vorhandene
-            "Re:"s werden beim Antworten entfernt.
-
-<<Vorgabe>> ->  Es gilt die Einstellung unter /Config
-            /Optionen/Nachrichten
-
-Bei ZConnect und im Usenet wird nur ein einzelnes
-"Re:" verwendet, und im MausNet bleibt der Betreff
-beim Antworten unver„ndert. Im FidoNet wird manchmal
-mit "Re:", meist jedoch ohne gearbeitet.
-
-Diese Einstellung gilt nicht fr ZConnect, MausNet
-Usenet und fr pers”nliche Nachrichten. Im MausNet
-wird grunds„tzlich kein "Re:" verwendet, im Usenet,
-bei ZConnect und bei allen pers”nlichen Nachrichten
-wird immer ein einfaches "Re:" vorangestellt.
-
+<<Fido>>: Brettspezifischer Origin.
 @
 209
 W„hlen Sie die gewnschte Brettgruppe, oder brechen
@@ -7676,6 +7677,28 @@ grnden zu „lteren XP-Versionen vorhanden. Falls Sie
 ber eine Box Nachrichten unter verschiedenen AKAs
 absenden m”chten, verwenden Sie bitte die in FIDO.
 DOC, Kapitel 2.5 beschriebene Methode.
+@
+695
+Hier k”nnen Sie Einstellungen zur Identit„t machen,
+die Sie beim Schreiben bzw. Antworten in Bretter
+benutzen wollen, die dieser Gruppe angeh”ren.
+
+Wenn Sie Felder leer lassen, werden die Standard-
+einstellungen des jeweiligen Servers benutzt.
+
+Vorsicht: Einige Provider erlauben es nicht, die
+Absenderadresse bei Mail frei zu w„hlen. In diesem
+Fall benutzen Sie bitte den Umweg ber PM-Vertreter-
+Server oder Reply-To.
+@
+696
+^^695
+@
+697
+^^695
+@
+698
+^^695
 @
 700
 Der Name des Brettbestell-Verwalters der Box; in der

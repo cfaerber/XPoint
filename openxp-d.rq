@@ -1723,7 +1723,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 
-# --- XP9 -------------------------------------------------------------
+# --- XPConfigEdit -------------------------------------------------------------
 
 900  Verzeichnis ist nicht vorhanden. Neu anlegen
 + 901
@@ -1735,20 +1735,28 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    Name
 5    Limit  ~
 6    Halten:~
-7    Tg.
+7    Tage
 8    Sonderz.
-9    ~    Kopf
-10   ~   Quote
-11   ~Signatur
+9    Kopf   ~
+10   Quote  ~
+11   Signatur
 15   Vorgabe
 16   Re^n:
 17   Re:
 18   nein
 20   Replies~
+21   ^Allgemein,^RFC,^Fido
 + 902
 1    Fido-Einstellungen
 2    Origin~
 3    Adresse
+10   RFC-Einstellungen
+11   ”ffentliche Nachrichten
+12   private Nachrichten
+13   Realname
+14   E-Mail ~
+15   Reply-To
+16   FQDN   ~
 + 903
 # Fensterbreite
 0    50
@@ -1775,7 +1783,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Boxen
 907  ~^Neu , ^L”schen , ^W„hlen , ^Edit , Netz^typ ,  ^OK ~
 # Brettgruppen
-908  ~^Neu , ^L”schen , ^Edit , ^Fido , ^OK~
+908  ~^Neu , ^L”schen , ^Edit , ^OK~
 # Systeme, Kurznamen
 909  ~^Neu , ^L”schen , ^Edit , ^OK~
 910  Username:~
@@ -3653,6 +3661,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.13  2001/06/04 17:23:06  ma
+# - made changes necessary for role feature
+#
 # Revision 1.12  2001/05/19 16:12:53  ma
 # - removed XP_ID (shareware notice)
 #
