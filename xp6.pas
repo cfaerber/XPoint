@@ -1583,6 +1583,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             hdp.absender:=username+'@'+box+';'+pointname;
             hdp.real_box:=box;
           end;
+      8 : hdp.absender:=username;
     end;
     hdp.realname:=realname;
     if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData^.onetztyp,netztyp)
@@ -2101,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.105  2001/04/05 14:58:12  ml
+  -Fix: absender doesnt end with @ anymore
+
   Revision 1.104  2001/03/27 12:27:44  mk
   - ops, fixed last commit
 

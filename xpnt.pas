@@ -338,7 +338,8 @@ begin
     10,11    : ntDomainType:=2;   { @POINT }
     20,31,90 : ntDomainType:=3;   { @BOX }
     30       : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
-    40,50,51 : ntDomainType:=6;   { @point.domain }
+    40       : ntDomainType:=6;   { @point.domain }
+    50,51,52 : ntDomainType:=8;   { }
   else
     ntDomainType:=0;
   end;
@@ -757,6 +758,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2001/04/05 14:58:12  ml
+  -Fix: absender doesnt end with @ anymore
+
   Revision 1.20  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
