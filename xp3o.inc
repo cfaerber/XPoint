@@ -250,8 +250,6 @@ var x,y      : Integer;
     end;
 
   begin
-    if cancel and ((pos(reverse('nolybab!'),hdp.pfad)>0) or
-                   (pos(reverse('lebabr!'),hdp.pfad)>0)) then exit;
     TrimFirstChar(id, '<');
     TrimLastChar(id, '>');
     if cpos('@',id)=0 then exit;
@@ -798,6 +796,7 @@ begin
       msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
+        hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.empfaenger;
         { Schalter maildelxpost beachten }
@@ -1228,6 +1227,10 @@ end;
 
 {
   $Log$
+  Revision 1.73  2001/09/15 00:09:28  cl
+  - BUGFIX: Header cleared for every new message
+  - BUGFIX: Cancels with certain sites in path not executed
+
   Revision 1.72  2001/09/14 20:03:06  cl
   - fixed flags for PufferEinlesen
 
