@@ -2023,15 +2023,15 @@ end;
 procedure FastMove(var Source, Dest; const Count: WORD); assembler;
 asm
         mov  cx, count
-        or   cx, cx        { Nichts zu kopieren? }
-        jz   @ende
+(*      or   cx, cx        { Nichts zu kopieren? }
+        jz   @ende *)      { MY: Auskommentiert - laut JG ÅberflÅssig }
 
         mov  bx, ds
         les  di, dest
         lds  si, source
-
         cld
-        shr  cx, 1
+
+@fast:  shr  cx, 1
         db $0F,$92,$C2     { setc dl }
         shr  cx, 1
         db $66
@@ -2072,31 +2072,64 @@ begin
   GetMaxMem := Size;
 end;
 
-procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
-  var i,j,k:integer;
-      sc:record case integer of
-           0: (s:string[6]);
-           1: (b:array[0..6] of byte);
-         end;
-      ucs:longint;
-  begin
-    for i:=1 to length(s) do if byte(s[i]) and $80=$80 then begin
-      k:=0;
-      for j:=0 to 7 do
-        if byte(s[i]) and ($80 shr j)=($80 shr j) then inc(k) else break;
-      sc.s:=copy(s,i,k);
-      if length(sc.s)=k then begin
-        delete(s,i,k-1);
-        for j:=0 to k-1 do sc.b[1]:=sc.b[1] and not ($80 shr j);
-        for j:=2 to k do sc.b[j]:=sc.b[j] and $3f;
-        ucs:=0;
-        for j:=0 to k-1 do ucs:=ucs or (longint(sc.b[k-j]) shl (j*6));
-        if (ucs<$00000080) or (ucs>$000000ff) { nur Latin-1 }
-          then s[i]:='?'
-          else s[i]:=char(iso2ibmtab[byte(ucs)]);
+
+procedure UTF82IBM(var s:string);
+const  s_rest    : string[6] = '';
+var    i,n       : integer;
+       utf_value : longint;
+begin
+  if s_rest<>'' then begin            { Evtl. Rest von vorherigem String dazunehmen } 
+    s:=s_rest+s;
+    s_rest:=''; 
+    end;
+ for i:=1 to length(s) do 
+  if s[i] >= #$80 then begin 
+    asm  mov di,i                     { 1. Byte: gesetzte Hi-Bits = Anzahl Bytes }
+         les bx,s
+         mov al,byte ptr es:[bx+di] 
+         xor cx,cx
+     @1: inc cx
+         shl al,1
+         jc @1
+     @2: mov ax,cx
+         dec ax
+         mov n,ax 
+       end;  
+    if length(s) < i+n then begin     
+      s_rest:=mid(s,i);               { Wenn String zu kurz war (Base64) }
+      truncstr(s,i-1);                { Rest merken und abschneiden }
+      break;
+      end 
+    else begin
+      asm
+          push ds
+          lds si,s                    { Weiter Dekodieren wenn alles im String ist }
+          add si,i
+          mov cx,n
+          inc cx
+          db 66h
+          xor bx,bx
+          lodsb                       { 1. Byte: gesetzte Hi Bits loeschen }
+          shl al,cl                  
+          shr al,cl
+          mov bl,al
+          sub cl,2  
+      @1: db 66h                      { Jedes weitere Byte enthaelt 6 Bit (Low Endian) }
+          shl bx,6
+          lodsb
+          and al,$3f
+          or bl,al
+          loop @1
+          db 66h
+          mov word ptr utf_value,bx
+          pop ds  
+        end;             
+      delete(s,i,n-1);
+      if (utf_value<$80) or (utf_value>$ff) then s[i]:='∞'
+        else s[i]:=char(iso2ibmtab[utf_value]);
       end;
     end;
-  end;
+end;
 
 
 { RFC 1521, see www.rfc.net }
@@ -2210,6 +2243,15 @@ procedure UTF72IBM(var s:string); { by robo; nach RFC 2152 }
   end.
 {
   $Log$
+  Revision 1.37.2.26  2002/03/08 23:17:29  my
+  JG:- öberflÅssige PrÅfung ("Nichts zu kopieren?") in 'FastMove'
+       entfernt.
+
+  JG:- Fix: Wenn bei einem gleichzeitig base64- und UTF-8-codierten Text
+       ein zu zwei Zeichen codiertes Sonderzeichen (Umlaut u.Ñ.) auf zwei
+       verschiedene Zeilen umbrochen wurde, wurde dieses nicht korrekt
+       decodiert (Routine UTF82IBM komplett neu geschrieben).
+
   Revision 1.37.2.25  2001/11/20 23:08:04  my
   MY:- Lizenz-Header aktualisiert
 
