@@ -48,7 +48,7 @@
   {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
-{$IFDEF FPC }             { Freepascal >= 1.0.2 }
+{$IFDEF FPC }             { Freepascal >= 1.0 }
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
@@ -56,28 +56,87 @@
   {$ENDIF }
   {$MODE Delphi }
   {$ASMMODE Intel }
+  {$GOTO ON }
+  {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
-  {$C-,H+,I-,M-,P-,Q-,R-,T-,V-,X+}
-  {$IFNDEF Linux}
-    {$S-}
-  {$ENDIF}
+  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
-  {$HINTS OFF}
+  {$DEFINE i386 }
+  // writable const noch definieren
+{$ENDIF }
+
+{$IFDEF Delphi }
+  {$IFDEF GUI }
+    {$APPTYPE GUI }
+  {$ELSE }
+    {$APPTYPE CONSOLE }
+  {$ENDIF }
+  {$DEFINE Ver32 }
+  {$DEFINE Int64 }
+  {$DEFINE i386}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
+{$ENDIF }
+
+{$IFDEF Kylix }
+  {$APPTYPE CONSOLE }
+  {$DEFINE Ver32 }
+  {$DEFINE Int64 }
+  {$DEFINE i386}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
 {$ENDIF }
 
 {$IFDEF DebugInfo }
+  {$IFDEF Delphi }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
+  {$ENDIF }
+  {$IFDEF Kylix }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
+  {$ENDIF }
   {$IFDEF VirtualPascal }
     {$D+,LocInfo+}
   {$ENDIF }
 {$ENDIF }
+
 
 {$IFDEF Debug }
   {$IFDEF VirtualPascal }
     {$Q+,R+,S+,W+,Optimize-}
   {$ENDIF }
   {$IFDEF FPC }
-    {$Q+,R-,S+}
-    {$C+}                 { Assertion support }
+    {$IFNDEF Linux }
+      {$S+}               { Stack Checking }
+    {$ENDIF }
+    {$C+}                 { Assertation support }
+    {$D+}
+    {$M+}                 { Typeinfo for RTTI }
+    {$L+}                 { Local Symbols }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
+    {$Y+}                 { Browser Informations }
+  {$ENDIF }
+  {$IFDEF Delphi }
+    {$O-}
+    {$C+}                 { Assertation support }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
+  {$ENDIF }
+{$ELSE }
+  {$IFDEF FPC }
+    {$IFNDEF Linux }
+      {$S-}               { Stack Checking }
+    {$ENDIF }
+    {$C-,M-,Q-,R-,Y-}
   {$ENDIF }
 {$ENDIF }
 
@@ -105,6 +164,9 @@
 
 {
   $Log$
+  Revision 1.11  2003/01/07 11:07:50  mk
+  - added some fpc and kylix defines
+
   Revision 1.10  2003/01/01 16:19:45  mk
   - changes to made FreeBSD-Version compilable
 
