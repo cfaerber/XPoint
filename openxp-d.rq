@@ -1134,6 +1134,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    auch Kommentare exportieren
 5    erzeuge Userliste...     %
 6    erzeuge Brettliste...     %
+7    nach Gruppen ordnen
+8    nach Serverbox sortieren
+9    nur User im Adreßbuch exportieren
+10   Sortierung aus Brettübersicht beibehalten
 -
 458  Keine unversandten Nachrichten vorhanden!
 + 459
@@ -4022,6 +4026,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.64  2002/07/22 09:50:23  mk
+# - added missing resources 457.7-10
+#
 # Revision 1.63  2002/07/21 11:51:01  ma
 # - new feature: kill/prevent dupes when sorting in messages
 #   (in fact a replaceown variant)
