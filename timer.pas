@@ -4,21 +4,24 @@ unit Timer;
 
 { $Id$ }
 
-{Timer unit. Also provides delay routines. Timer object is secure for delays shorter than 12h.}
+{Timer unit. Also provides delay routines. }
 
 interface
 
 type
   tTimer = object
+  private
+    InitTicks, TimeOutTicks: TDateTime;
+  public
     constructor Init;
     destructor Done;
     function Timeout: Boolean;
-    function SecsToTimeout: Real;       {Seconds to timeout}
-    function ElapsedSec: Real;          {Seconds since initialization}
+    // number of seconds until timeout
+    function SecsToTimeout: Double;
+    function ElapsedSec: Double;          {Seconds since initialization}
     procedure Start;                    {Reinitialize ('ElapsedSec:=0'}
-    procedure SetTimeout(TimeoutSec: Real);  {Method Timeout will be true TimeoutSec after calling this method}
-  private
-    InitTicks, TimeoutTicks: LongInt;
+    // method Timeout will be true TimeoutSec after calling this method}
+    procedure SetTimeout(TimeoutSec: Double);
   end;
 
 function Calibrate: LongInt;            {Busy loop}
@@ -42,6 +45,8 @@ uses
   debug, xpglobal;
 
 const
+  SecsPerDay = 60 * 60 * 24;
+  OneSecondFract = 1 / SecsPerDay;
   qLoops = 100; TickCap = 8640000; CLKTICKS = 100;
 
 var
@@ -65,53 +70,36 @@ begin
   Start; SetTimeout(0)
 end;
 
-destructor tTimer.Done;
+destructor TTimer.Done;
 begin
 end;
 
 procedure tTimer.Start;
 begin
-  InitTicks := GetTicks
+  InitTicks := Now;
 end;
 
-procedure tTimer.SetTimeout(TimeoutSec: Real);  {Berücksichtigt Nullrückstellung um Mitternacht}
+procedure tTimer.SetTimeout(TimeoutSec: Double);
 begin
   if (TimeoutSec > 0) and (TimeoutSec < 0.07) then
     DebugLog('Timer', 'Timeout set critically low.', 1);
-  TimeoutTicks := (GetTicks + Round(TimeoutSec * CLKTICKS) + 6) mod TickCap
+  // Timeout is now + TimeOutSec seconds
+  TimeoutTicks := Now + TimeoutSec * OneSecondFract
 end;
 
-function tTimer.SecsToTimeout: Real; {funktioniert nur bis 12h Intervall zuverlässig}
-var
-  T: LongInt;
+function TTimer.SecsToTimeout: Double;
 begin
-  T := GetTicks;
-  if TimeoutTicks > T then              {Timeout vermutlich in der Zukunft}
-    if (TimeoutTicks - T) > (TickCap div 2) then  {doch in der Vergangenheit, aber Reset seitdem}
-      SecsToTimeout := (Real(T) + TickCap - Real(TimeoutTicks)) / CLKTICKS
-    else                                {tatsächlich in der Zukunft}
-      SecsToTimeout := (TimeoutTicks - Real(T)) / CLKTICKS
-  else                                  {Timeout vermutlich in der Vergangenheit}
-    if (T - TimeoutTicks) > (TickCap div 2) then  {doch in der Zukunft, aber Reset kommt}
-    SecsToTimeout := (TimeoutTicks + TickCap - Real(T)) / CLKTICKS
-  else
-    SecsToTimeout := (TimeoutTicks - Real(T)) / CLKTICKS;
+  Result := (TimeOutTicks - Now) * SecsPerDay;
 end;
 
 function tTimer.Timeout: Boolean;
 begin
-  Timeout := GetTicks >= TimeoutTicks
+  Timeout := Now >= TimeoutTicks;
 end;
 
-function tTimer.ElapsedSec: Real;
-var
-  T: LongInt;
+function tTimer.ElapsedSec: Double;
 begin
-  T := GetTicks;
-  if T < InitTicks then
-    ElapsedSec := (TickCap - InitTicks + Real(T)) / CLKTICKS
-  else
-    ElapsedSec := (Real(T) - InitTicks) / CLKTICKS
+  Result := (Now - InitTicks) * SecsPerDay;
 end;
 
 function Calibrate: LongInt;
@@ -142,6 +130,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2000/12/25 16:02:29  mk
+  - fixed floating point crashes
+
   Revision 1.14  2000/11/19 22:34:27  mk
   - fixed some compile bugs
   - applyed source code formatting
