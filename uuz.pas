@@ -29,9 +29,10 @@ uses  xpglobal,
   ems,
 {$ENDIF }
 {$IFDEF Linux }
-  xpcurses,
-{$ELSE }
-  crt,
+  XPLinux,
+{$ENDIF }
+{$IFDEF NCRT }
+  xpcurses,		{ Fuer die Sonderzeichen an der Console }
 {$ENDIF }
   dos,typeform,fileio, xpdatum,montage;
 
@@ -3537,6 +3538,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2000/05/05 15:27:58  ml
+  zpr und uuz wieder unter linux lauffähig (ncrt)
+
   Revision 1.24  2000/05/04 10:26:03  mk
   - UUZ teils auf HugeString umgestellt
 

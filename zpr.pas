@@ -224,27 +224,13 @@ begin
   writeln;
 end;
 
+procedure helppage;
 {$IFDEF Linux }
 { ML 26.02.2000 Linux benutzt kein Carriage Return... }
-procedure helppage;
 const crlf = #10;
-begin
-   writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
-          crlf,
-          'Schalter:  -f   Fehler in ZPR.LOG aufzeichnen'+crlf+
-          StrDosToLinux('           -h   strenge Headerzeilen-öberprÅfung')+crlf,
-          StrDosToLinux('           -l   defekte Nachrichten lîschen')+crlf+
-          '           -r   Puffer reparieren'+crlf+
-          StrDosToLinux('           -w   Warnungen unterdrÅcken')+crlf,
-          '           -z   fehlerhafte Zeilen anzeigen'+crlf,
-          crlf,
-          '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben'
-           );
-  halt(2);
-end;
-{$ELSE}
-procedure helppage;
+{$ELSE}   
 const crlf = #13#10;
+{$ENDIF}   
 begin
    writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
           crlf,
@@ -259,7 +245,6 @@ begin
            );
   halt(2);
 end;
-{$ENDIF}
 
 procedure error(txt:string);
 begin
@@ -1370,6 +1355,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/05/05 15:27:57  ml
+  zpr und uuz wieder unter linux lauff‰hig (ncrt)
+
   Revision 1.13  2000/05/02 19:14:04  hd
   xpcurses statt crt in den Units
 
