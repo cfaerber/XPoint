@@ -123,6 +123,11 @@
 
 {$IFDEF Ver32 }
   {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
+  {$DEFINE NOEMS } { Kein EMS/XMS-Speicher vorhanden (hd) }
+{$ENDIF }
+
+{$IFDEF DPMI }
+  {$DEFINE NOEMS }	 { Kein EMS vorhanden }
 {$ENDIF }
 
 {$IFDEF DOS32 }
@@ -143,7 +148,14 @@
 
 { --- ErklÑrungen der selbst gesetzen Defines --- }
 
-{ LocalSceeen
+{
+  NOEMS
+  
+  Soll an den Stellen verwendet werden, an denen heute eine doppelte
+  Abfrage (DPMI/Ver32) notwendig waere. Wird automatisch gesetzt, wenn
+  DPMI bzw. Ver32 definiert ist (hd)
+  
+  LocalSceeen
 
   Jede Routine, die in den Bildschirmspeicher schreibt, aktualisiert einen
   internen Puffer um die énderung fÅr das Restaurieren von Fensterhinter-
@@ -160,18 +172,18 @@
 
   NCRT
 
-  Baut auf den Units OCRT, NCRT, PANEL und NCURSES auf. Dient als Interface
-  zur Konsole bei z.B. Linux. Ob es mit Curses-Versionen unter Windows oder
-  OS/2 laeuft, bliebe zu testen. Die Units sind bei FreePascal unter
-  Packages. Die aktuellen Sources bekommt man bei www.cncware.com/fpc.html.
-  Die Units sind hier direkt in den Source-Tree eingepflegt, damit eine
-  getestete Version vorhanden ist.
+  Baut auf der Curses-Lib auf. Dient als Interface zur Konsole bei z.B. 
+  Linux. Ob es mit Curses-Versionen unter Windows oder OS/2 laeuft, bliebe
+  zu testen. Die Units sind bei FreePascal unter Packages.
 
 }
 
 
 {
   $Log$
+  Revision 1.26  2000/05/08 13:32:00  hd
+  - Neues Symbol: NOEMS. Wird bei Ver32 und bei DPMI gesetzt
+
   Revision 1.25  2000/05/06 17:29:24  mk
   - DOS DPMI32 Portierung
 
