@@ -416,7 +416,7 @@ begin
         if length(line)>2 then begin
           if line[1]<' ' then delfirst(line);    { gegen LF's o.„. }
           p:=cpos(':',line);
-          if p=0 then ok:=false
+          if p<2 then ok:=false
           else begin
             id:=left(line,p-1);
             {$ifdef ulines}
@@ -604,6 +604,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.1  2000/08/10 13:14:29  mk
+  - Pruefung ob Header vor dem Doppelpunkt eine ID enthaelt eingebaut
+
   Revision 1.15  2000/06/04 18:10:28  sv
   - Maggi wieder kompilierbar
 
