@@ -43,7 +43,7 @@ const
 implementation  { ---------------------------------------------------- }
 
 uses
-  fileio, typeform, crt;
+  xp0, fileio, typeform, crt;
 
 const
   Multiplex = $2f;
@@ -383,7 +383,7 @@ function Clip2String(maxlen,oneline:byte):String;
 var t: text;
     s: String;
 begin
-  if ClipAvailable then Clip2String:=_Clip2String(maxlen,oneline)
+  if Clipboard then Clip2String:=_Clip2String(maxlen,oneline)
   else begin
     s:='';
     assign(t,ClipFileName);
@@ -460,7 +460,7 @@ end;
 procedure String2Clip(var str:string);
 var t: text;
 begin
-  if ClipAvailable then _String2Clip(str)
+  if Clipboard then _String2Clip(str)
   else begin
     assign(t,ClipFileName);
     rewrite(t);
@@ -674,10 +674,25 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.22  2002/05/28 22:27:50  my
+  MY:- Statt auf die Funktion 'ClipAvailable' wird jetzt auf die ohnehin
+       schon in XP2CFG.INC gesetzte Variable 'Clipboard' geprÅft.
+
+  MY:- Log des vorletzten Commits vervollstÑndigt.
+
   Revision 1.19.2.21  2002/05/28 21:36:45  my
-  MY: Ein paar IOResult- und close()-Anweisungen sauberer gestaltet.
+  MY: Ein paar IOResult- und close()-Routinen sauberer gestaltet.
 
   Revision 1.19.2.20  2002/05/25 21:55:12  my
+  MY:- Fix: Die Funktion 'ClipAvailable' (Clipboard verfÅgbar?) liefert
+       jetzt wieder nur noch dann 'true' zurÅck, wenn wirklich ein
+       Windows(NT)-Clipboard verfÅgbar ist.
+
+  JG:- Fix: Das Windows-Clipboard wird jetzt nach Benutzung immer
+       geschlossen (anderenfalls konnte es passieren, da· das Clipboard
+       zwar noch in XP, jedoch nicht mehr in Windows benutzt werden
+       konnte).
+
   MY:- Fix: Das interne Clipboard (Datei "CLIP.TXT") funktioniert speziell
        im Editor jetzt auch unter Linux DOS-Emu (dort stÅrzte XP bisher
        ab) und unter Windows NT/2000/XP (dort wurde der Clipboard-Inhalt
