@@ -99,6 +99,7 @@ const
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
 {$ENDIF }
 
+{$IFDEF UnixFS }
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
        XFerDir_    = 'spool';         { eingehende Mailbatches }
        XFerDir     = XFerDir_+DirSepa;
@@ -126,11 +127,37 @@ const
        BfgExt      = '.bfg';           { Boxen-Config-File }
        QfgExt      = '.qfg';           { QWK-Config-File   }
        SwapExt     = '.swp';
-{$IFDEF UnixFS}
        BatchExt    = '.sh';
 {$ELSE}
-       BatchExt    = '.bat';
-{$ENDIF}
+       PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
+       XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
+       XFerDir     = XFerDir_+DirSepa;
+       JanusDir_   = XFerDir+'JANUS';
+       JanusDir    = JanusDir_+DirSepa;
+       FidoDir_    = 'FIDO';
+       FidoDir     = FidoDir_+DirSepa;{ Nodelists }
+       InfileDir   = 'FILES'+DirSepa; { Default: Filerequests }
+       AutoxDir    = 'AUTOEXEC'+DirSepa;    { AutoStart-Daten }
+       BadDir      = 'BAD'+DirSepa;
+
+       HeaderFile  = 'HEADER.XPS';     { Schablonen-Dateien }
+       HeaderPriv  = 'PRIVHEAD.XPS';
+       SignatFile  = 'SIGNATUR.XPS';
+       PrivSignat  = 'PRIVSIG.XPS';
+       QuoteMsk    = 'QBRETT.XPS';
+       QuotePriv   = 'QPRIV.XPS';
+       QuotePMpriv = 'QPMPRIV.XPS';
+       QuoteToMsk  = 'QUOTETO.XPS';
+       WeiterMsk   = 'WEITER.XPS';
+       ErneutMsk   = 'ERNEUT.XPS';
+       EB_Msk      = 'EMPFBEST.XPS';
+       CancelMsk   = 'CANCEL.XPS';
+
+       BfgExt      = '.BFG';           { Boxen-Config-File }
+       QfgExt      = '.QFG';           { QWK-Config-File   }
+       SwapExt     = '.SWP';
+       BatchExt    = '.BAT';
+{$ENDIF }
 
 {$IFDEF UnixFS }
        MsgFile     = 'msgs';           { DB1-Dateinamen }
@@ -144,19 +171,6 @@ const
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
        MimetFile   = 'mimetyp';
-{$ELSE }
-       MsgFile     = 'MSGS';           { DB1-Dateinamen }
-       BrettFile   = 'BRETTER';
-       UserFile    = 'USER';
-       BoxenFile   = 'BOXEN';
-       GruppenFile = 'GRUPPEN';
-       SystemFile  = 'SYSTEME';
-       DupeFile    = 'DUPEKILL';       { temporÑr in XP4O.DupeKill }
-       AutoFile    = 'AUTOMSG';
-       PseudoFile  = 'PSEUDOS';
-       BezugFile   = 'BEZUEGE';
-       MimetFile   = 'MIMETYP';
-{$ENDIF }
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
@@ -199,11 +213,67 @@ const
        UUCPlog     = 'xpuucp.log';     { uucico-Logfile  }
        ScerrLog    = 'scerrors.log';   { Script-Fehler   }
        NetcallLog  = 'netcall.log';    { Netcall-Logfile }
+{$ELSE }
+       MsgFile     = 'MSGS';           { DB1-Dateinamen }
+       BrettFile   = 'BRETTER';
+       UserFile    = 'USER';
+       BoxenFile   = 'BOXEN';
+       GruppenFile = 'GRUPPEN';
+       SystemFile  = 'SYSTEME';
+       DupeFile    = 'DUPEKILL';       { temporÑr in XP4O.DupeKill }
+       AutoFile    = 'AUTOMSG';
+       PseudoFile  = 'PSEUDOS';
+       BezugFile   = 'BEZUEGE';
+       MimetFile   = 'MIMETYP';
+
+       CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
+       Cfg2File    = 'XPOINT2.CFG';
+       Cfg3File    = 'OPENXP.CFG';      { NEue cfg mit Sektionen }
+       ColCfgfile  = 'XPOINT.COL';
+       NewDateFile = 'NEUES.DAT';
+       MsgTempFile = 'MSG.TMP';
+       AblagenFile = 'MPUFFER.';
+       UncryptedFile = 'CRYPT.MSG';
+       CryptedFile = 'CRYPT.ENC';
+       TimingFile  = 'TIMING.';
+       TimingDat   = 'TIMING.DAT';
+       KilledDat   = 'REORG.DAT';
+       CCfile      = 'VERTEIL.DAT';
+       FidoCfg     = 'FIDO.CFG';
+       OldNLCfg    = FidoDir+'NODELIST.CFG';
+       NodelistCfg = FidoDir+'NODELST.CFG';
+       NodeindexF  = FidoDir+'NODELIST.IDX';
+       UserindexF  = FidoDir+'NODEUSER.IDX';
+       ARCmailDat  = 'ARCMAIL.DAT';
+       FileLists   = FidoDir+'FILELIST.CFG';
+       ReqDat      = 'REQUEST.DAT';    { Crashs + Requests }
+       RegDat      = 'REGDAT.XP';
+       UUnumdat    = 'UUNUMMER.DAT';
+       FeierDat    = 'FEIERTAG.DAT';
+       PGPkeyfile  = 'PGP-KEY.BIN';
+       menufile    = 'XPMENU.DAT';
+       CrashTemp   = 'CRASH.TMP';
+
+       ErrlogFile  = 'ERRORS.LOG';     { LogFiles }
+       Logfile     = 'XPOINT.LOG';
+       BiLogFile   = 'LOGFILE';        { fÅr BiModem-öbertragung }
+       BrettlogFile= 'BRETTER.LOG';    { automatisch angelegte Bretter }
+       UserlogFile = 'USER.LOG';       { automatisch angelegte User }
+       DupeLogfile = 'DUPES.LOG';      { s. XP4.DupeKill }
+       MausLogfile = 'MAUS.LOG';       { MAGGI: MausTausch-Logfile }
+       MausPmLog   = 'MAUSPM.LOG';     { MAGGI: MausTausch-PM-Logfile }
+       MausStLog   = 'MAUSSTAT.LOG';   { MAGGI: MausTausch-Nachrichtenstati }
+       FidoLog     = 'XPFIDO.LOG';     { XP-FM-Logfile   }
+       UUCPlog     = 'XPUUCP.LOG';     { uucico-Logfile  }
+       ScerrLog    = 'SCERRORS.LOG';   { Script-Fehler   }
+       NetcallLog  = 'NETCALL.LOG';    { Netcall-Logfile }
+{$ENDIF }
+
 
 {$IFDEF UnixFS }
        TempBatchFN = 'tmpbatch';
 {$ELSE }
-       TempBatchFN = 'tmp.bat';        { Temp. Batchdatei (siehe fileio) }
+       TempBatchFN = 'TMP.BAT';        { Temp. Batchdatei (siehe fileio) }
 {$ENDIF }
 
                                        { Namen der Exe-Dateien }
@@ -1093,6 +1163,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.90  2000/10/06 20:17:57  mk
+  - Dateinamen in Grossschreibung geaendert
+
   Revision 1.89  2000/09/24 04:46:18  mk
   - Joker bei ValidDirCh hinzugefuegt
 
