@@ -1000,41 +1000,44 @@ restart:
   end;
   if not brk then
   begin
-    if (trim(s1) = '') then s2 := WildCard else s2 := s1;
-    if (cpos(':',s2) = 2) or (cpos(DirSepa, s2) = 1) then
-      s2 := FExpand(s2)
-    else s2 := FExpand(cdir + s2);
-    if ((length(s2)=2) and (s2[2]=':'))
-      or (Lastchar(s2)=DirSepa) then
-      s2 := FExpand(s2 + WildCard)
-    else
-    if IsPath(s2) then
-      s2 := FExpand(s2 + DirSepa + WildCard);
-    fsplit(s2,dir,name,ext);
-    if not IsPath(dir) then
+    if not (Pos('start ', lstr(s1)) = 1) then
     begin
-      rfehler1(952,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
-      goto restart;
-    end;
-    if multipos('*?',s2) then
-    begin
-      selcol;
-      pushhp(89);
-      s2:=fsbox(actscreenlines div 2 - 5,s2,'','',subs,false,false);
-      pophp;
-      if s2 <> '' then   { <Esc> gedrÅckt? }
+      if (trim(s1) = '') then s2 := WildCard else s2 := s1;
+      if (cpos(':',s2) = 2) or (cpos(DirSepa, s2) = 1) then
+        s2 := FExpand(s2)
+      else s2 := FExpand(cdir + s2);
+      if ((length(s2)=2) and (s2[2]=':'))
+        or (Lastchar(s2)=DirSepa) then
+        s2 := FExpand(s2 + WildCard)
+      else
+      if IsPath(s2) then
+        s2 := FExpand(s2 + DirSepa + WildCard);
+      fsplit(s2,dir,name,ext);
+      if not IsPath(dir) then
       begin
-        fsplit(s2,dir,name,ext);
-        if dir=cdir then s1:=name+ext else s1:=s2;
+        rfehler1(952,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
+        goto restart;
       end;
-      goto restart;
+      if multipos('*?',s2) then
+      begin
+        selcol;
+        pushhp(89);
+        s2:=fsbox(actscreenlines div 2 - 5,s2,'','',subs,false,false);
+        pophp;
+        if s2 <> '' then   { <Esc> gedrÅckt? }
+        begin
+          fsplit(s2,dir,name,ext);
+          if dir=cdir then s1:=name+ext else s1:=s2;
+        end;
+        goto restart;
+      end;
+      if (s2<>'') and (IsDevice(s2) or not ValidFilename(s2)) then
+      begin
+        rfehler(3);   { 'UngÅltiger Pfad- oder Dateiname!' }
+        goto restart;
+      end;
+      s1 := s2;
     end;
-    if (s2<>'') and (IsDevice(s2) or not ValidFilename(s2)) then
-    begin
-      rfehler(3);   { 'UngÅltiger Pfad- oder Dateiname!' }
-      goto restart;
-    end;
-    s1 := s2;
     ReadExtCfgFilename := (s1<>'');
   end else
     ReadExtCfgFilename := false;
@@ -1821,6 +1824,11 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.27  2002/01/02 23:15:50  my
+  MY:- Es kann jetzt bei D/B/E/X auch der Windows-Befehl "start [/w]"
+       verwendet werden (es findet dann keine weitere PrÅfung auf Existenz
+       des aufgerufenen Programms mehr statt).
+
   Revision 1.1.2.26  2001/12/26 23:53:22  my
   MY:- Vorbereitender Fix fÅr Multiserver-Netcall: Inhalt der an
        'BfgToBox' Åbergebenen Variable 's' wird nicht mehr verÑndert (es
