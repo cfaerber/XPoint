@@ -61,7 +61,7 @@ procedure EdSetScreenwidth(w:byte);         { globale Einstellungen }
 function  EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
                  NeuerAbsatzUmbruch:byte; iOtherQuoteChars:boolean):ECB;
 function  EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
-function  EdEdit(ed:ECB):EdToken;
+function  EdEdit(ed:ECB; const nachricht,senden:boolean):EdToken;
 function  EdSave(ed:ECB):boolean;
 procedure EdExit(var ed:ECB);               { Release }
 
@@ -1006,7 +1006,7 @@ begin
 end;
 
 
-function EdEdit(ed:ECB):EdToken;
+function EdEdit(ed:ECB; const nachricht,senden:boolean):EdToken;
 const dispnoshow : boolean = false;
 type displist   = array[1..maxgl] of record
                                        absatz : absatzp;
@@ -1487,7 +1487,11 @@ var  dl         : displp;
         editfSaveSetup    : EinstellungenSichern;
         editfSave         : if EdSave(ed) then;
         editfSaveQuit     : SpeichernEnde;
-        editfBreak        : Quit;
+        editfBreak        : begin
+                              EditNachricht:=nachricht;
+                              SendNachricht:=senden;
+                              Quit;
+                            end;
 
         editfGlossary     : Glossary;
       end;
@@ -1832,6 +1836,12 @@ end.
 
 {
   $Log$
+  Revision 1.25.2.20  2002/03/17 21:48:17  my
+  MY:- Fix: Wenn w„hrend des Editierens einer Nachricht mit <Alt-E> eine
+       externe Datei editiert wurde, dann wurde beim Verlassen der
+       Nachricht diese ebenfalls als Datei behandelt (kein 'Parken'-
+       Button, falscher Dialog "Datei wurde ge„ndert").
+
   Revision 1.25.2.19  2001/12/05 23:18:56  my
   MY:- 2 initialized consts => consts
 

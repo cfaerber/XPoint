@@ -29,7 +29,7 @@ Var   EditNachricht : boolean;
       Skip4parken   : boolean;
 
 procedure TED(const fn:string; reedit:boolean; keeplines:byte;
-              ukonv,nachricht,senden:boolean);
+              ukonv:boolean; const nachricht,senden:boolean);
 procedure SigEdit(const datei:string);
 procedure EditText;
 procedure Notepad;
@@ -38,7 +38,7 @@ function  EditGetBetreff:string;
 
 function  EditKeyFunc(var t:taste):boolean;
 
-function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
+function  EditQuitfunc(ed:ECB):taste;               { Speichern: J/N/Esc }
 function  EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
@@ -86,7 +86,7 @@ end;
 {$ENDIF }
 
 
-function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
+function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/(P/)Esc }
 var brk : boolean;
 begin
   if EditNachricht and SendNachricht then 
@@ -249,7 +249,7 @@ end;
 
 
 procedure TED(const fn:string; reedit:boolean; keeplines:byte;
-              ukonv,nachricht,senden:boolean);
+              ukonv:boolean; const nachricht,senden:boolean);
 const EditFusszeile = false;
 var   ed     : ECB;
       p      : scrptr;
@@ -265,8 +265,6 @@ begin
     EdSetConfig(EdCfg);
     end;
   EditSetLangData;
-  EditNachricht:=Nachricht;
-  SendNachricht:=Senden;
   mt:=m2t;
   if keeplines>0 then begin
     mb:=dphback; if Nachricht then dphback:=col.coledithead;
@@ -285,7 +283,7 @@ begin
   if doautosave then EdAutosave;
   doautosave:=false;
   maus_pushinside(1,screenwidth,1,screenlines);
-  if EdEdit(ed)=0 then;
+  if EdEdit(ed,nachricht,senden)=0 then;
   EdGetConfig(EdCfg);
   maus_popinside;
   if keeplines>0 then dphback:=mb;
@@ -481,6 +479,12 @@ end.
 
 {
   $Log$
+  Revision 1.16.2.6  2002/03/17 21:48:17  my
+  MY:- Fix: Wenn w„hrend des Editierens einer Nachricht mit <Alt-E> eine
+       externe Datei editiert wurde, dann wurde beim Verlassen der
+       Nachricht diese ebenfalls als Datei behandelt (kein 'Parken'-
+       Button, falscher Dialog "Datei wurde ge„ndert").
+
   Revision 1.16.2.5  2001/10/22 23:05:35  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
