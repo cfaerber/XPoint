@@ -876,7 +876,7 @@ begin
     if distribution<>''  then wrs('U-Distribution: '+distribution);
     if mime.boundary<>'' then wrs('X-XP-Boundary: '+mime.boundary);
     if gateway<>''    then wrs('X-Gateway: '+gateway);
-    if sender<>''     then wrs('U-Sender: '+sender);
+    if sender<>''     then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender);
     for i:=1 to ulines do
       wrs(uline^[i]);
     wrs('X-XP-NTP: '+strs(netztyp));
@@ -3558,6 +3558,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.15  2001/07/09 16:48:06  my
+  JG:- Fix: if sender<>'' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender)
+       (prevents creation of wrong ABS headers when doing N/W/O with News)
+
   Revision 1.8.2.14  2001/07/01 23:08:13  mk
   - Fehler in Base64 Dekodierung beseitigt
 
