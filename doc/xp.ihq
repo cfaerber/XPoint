@@ -3492,6 +3492,12 @@ sollten Sie m”glichst darauf achten, daá ein ">" im
 Quotezeichen vorhanden ist, weil dies vielen Program-
 men zum Erkennen von Quote-Zeilen dient.
 
+Durch Angabe eines "%" im Quotestring werden auch
+Leerzeilen vom Quotezeichen angefhrt (ansonsten
+bleiben sie einfach leer). Dieses Feature wird
+demn„chst an passenderer Stelle konfigurierbar
+sein.
+
 @
 211
 Ab dieser Spalte erfolgt beim Zitieren ("quoten")

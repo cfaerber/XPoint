@@ -172,6 +172,7 @@ var size   : longint;
     mpsize  : longint;
     mehdl, mehds : integer;
     TempKopien: TStringList;
+    QuoteEmptyLines: boolean;
 
   procedure wrs(s:string);
   begin
@@ -316,6 +317,8 @@ var size   : longint;
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
       end;
+    p:=cpos('%',qchar); QuoteEmptyLines:=p>0; if QuoteEmptyLines then delete(qchar,p,1);
+    {* Schneller Hack: Konfigurierbares Quoten von Leerzeilen, sauberer machen! }
     p:=cpos('@',qchar);
     empty:=false;
     if p=0 then begin
@@ -530,7 +533,7 @@ var size   : longint;
         if blanklines>0 then
           if (p=0) { or not IniQuote } then  { n„chste Zeile war nicht gequotet }
             for i:=1 to blanklines do    { -> Leerzeilen mitquoten          }
-              wrslong(qchar)
+              if QuoteEmptyLines then wrslong(qchar)else wrslong('')
           else
             wrslong('');                 { sonst Leerzeilen nicht quoten }
         blanklines:=0;
@@ -1060,6 +1063,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/09/04 14:04:15  ma
+  - schneller Leerzeilen-Quote-Hack. Bitte bei Interesse sauber konfigurierbar machen.
+
   Revision 1.44  2000/08/23 13:55:13  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst
