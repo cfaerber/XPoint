@@ -988,8 +988,8 @@ begin
   writeln(t,'ISDN1-Int=$',hex(ISDN_Int,2));
   writeln(t,'ISDN1-EAZ=',ISDN_EAZ);
   writeln(t,'ISDN1-Controller=',ISDN_controller);
-  writeln(t,'ISDN1-MSN-Incoming',ISDN_Incoming);
-  writeln(t,'ISDN1-MSN-Outgoing',ISDN_Outgoing);
+  writeln(t,'ISDN1-MSN-Incoming=',ISDN_Incoming);
+  writeln(t,'ISDN1-MSN-Outgoing=',ISDN_Outgoing);
 
   wrhd(10);
   writeln(t,'AutoUpload=',jnf(AutoUpload));
@@ -1475,8 +1475,8 @@ begin
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
-          gets(s,su,'isdn1-MSN-incoming',ISDN_outgoing, 30) or
-          gets(s,su, 'isdn1-msn-outgoing', isdn_incoming, 30) or
+          gets(s,su,'ISDN1-MSN-Incoming', ISDN_incoming, 10) or
+          gets(s,su,'ISDN1-MSN-Outgoing', ISDN_outgoing, 10) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
           getx(su,  'maildelxpost',maildelxpost) or
@@ -1684,6 +1684,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.106  2001/02/13 10:36:14  mk
+  - fixed ISDN1-MSN-Incoming/Outgoing
+
   Revision 1.105  2001/02/11 20:59:22  mk
   - added isdn1-msn-incoming/outing to cfg
 
