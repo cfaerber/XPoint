@@ -64,25 +64,12 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFNDEF VirtualPascal }
-  {$IFNDEF FPC }
-     {$IFNDEF Delphi }
-       {$IFNDEF Kylix }
-        !! Only Freepascal, Delphi, Kylix and Virtual Pascal is supported
-        {$ENDIF }
-     {$ENDIF }
-  {$ENDIF }
-{$ENDIF }
-
-{$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
-  {$DEFINE VP }
-  {$DEFINE Ver32 }
-  {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode+,AlignData+,AlignRec+,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
-  {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
-  {$IFDEF CPU86}
-    {$DEFINE i386} (* FreePascal compatible *)
-  {$ENDIF}
+{$IFNDEF FPC }
+   {$IFNDEF Delphi }
+     {$IFNDEF Kylix }
+      !! Only Freepascal, Delphi and Kylix are supported
+      {$ENDIF }
+   {$ENDIF }
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 1.0 }
@@ -100,6 +87,7 @@
   {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
+  // writable const noch definieren
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -111,11 +99,10 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
-  {$WRITEABLECONST OFF} { use var instead of const }
 {$ENDIF }
 
 {$IFDEF Kylix }
@@ -123,11 +110,10 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
-  {$WRITEABLECONST OFF} { use var instead of const }
 {$ENDIF }
 
 {$DEFINE i386}
@@ -138,9 +124,6 @@
 {$ENDIF}
 
 {$IFDEF DebugInfo }
-  {$IFDEF VirtualPascal }
-    {$D+,LocInfo+}
-  {$ENDIF }
   {$IFDEF Delphi }
     {$D+}                 { Debug-Informationen }
     {$L+}                 { Locale Symbole }
@@ -154,9 +137,6 @@
 {$ENDIF }
 
 {$IFDEF Debug }
-  {$IFDEF VirtualPascal }
-    {$Q+,R+,S+,W+,Optimize-}
-  {$ENDIF }
   {$IFDEF FPC }
     {$IFNDEF Linux }
       {$S+}               { Stack Checking }
@@ -263,6 +243,9 @@
 
 {
   $Log$
+  Revision 1.87  2002/12/22 13:30:59  mk
+  - removed VirtualPascal support
+
   Revision 1.86  2002/12/12 12:08:16  mk
   - set WRITABLECONST only for Delphi and Kylix
 
