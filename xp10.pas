@@ -544,11 +544,11 @@ var
   function eanzahl:integer;
   begin
     case typ of
-      2: result:=e.Count;           //Timingliste or TastenMakros
-      5: result:=Nodelist.Count;
-      6: result:=tables;               //Tarif
-      end;
-     eanzahl:= result;
+      5: Result:=Nodelist.Count;
+      6: Result:=tables;               //Tarif
+    else
+      Result := E.Count;
+    end;
   end;
 
   function daytxt(nr:integer):string;    { Tarife: 'Mo-Fr' etc. }
@@ -598,12 +598,15 @@ var
         Wrt2(sp(width))
       else begin
         case typ of
+
           1 : begin                               { Timingliste }
-                str2time(e.Strings[i+a-1],tr);    { e.Strings Lesen -1 ba 0 bassierend}
+                if e.Count > 0 then
+                begin str2time(e.Strings[i+a-1],tr); { e.Strings Lesen -1 ba 0 bassierend}
                 with tr do begin
                   write(' ',iifc(active,'+',' '),' ',von,'-',bis,'  ',vond,'-',
                   bisd,'  ',copy(e.Strings[i+a-1],29,8),'  ',forms(action,33));
                   end;
+                end;
               end;
           2 : begin                           { Tastenmakros }
                 tt:=left(e.Strings[i+a-1],13);
@@ -2035,6 +2038,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.33  2000/08/14 21:26:10  mk
+  - Bug in eanzahl() behoben
+
   Revision 1.32  2000/08/14 14:45:14  mk
   MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
 
