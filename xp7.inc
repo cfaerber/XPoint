@@ -912,6 +912,7 @@ end;
 procedure FidoSysopTransfer;
 var dummy : longint;
     i     : integer;
+    dir   : TDirectory;
 
   procedure ferror(nr:word);
   begin
@@ -1020,14 +1021,26 @@ begin { FidoSysopTransfer }
           if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
       end;
 
-    if FileExists(SysopInp+WildCard) then begin             { -- Eingangspaket -- }
-      erase_mask(xp0.XFerDir+WildCard);
-      CopyPKTs;
-      if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
-        erase_mask(BoxPar^.sysopinp+WildCard);
+      dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
+      if dir.Count>0 then begin
+        for i:=0 to dir.Count-1 do
+          if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then
+            _era(dir.LongName[i]);
+        if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
+          for i:=0 to dir.Count-1 do
+            if FileExists(BoxPar^.sysopinp+dir.Name[i]) then
+              _era(BoxPar^.sysopinp+dir.Name[i]);
+      end;
+      dir.Free;
+
+//    if not isEmptyDir(SysopInp) then begin   { -- Eingangspaket -- }
+//      erase_mask(xp0.XFerDir+WildCard);
+//      CopyPKTs;
+//      if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
+//        erase_mask(BoxPar^.sysopinp+WildCard);
         //EmptySysin;
       {window(1,1,80,25);}
-      end;
+//      end;
     if DoDiffs(FilePath+'*.*',true)=0 then;
     Netcall_connect:=true;
     end;
@@ -1325,6 +1338,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.50  2000/12/08 11:17:01  hd
+  - Add: Sysop-Call (Incoming) on Fido Packets works propper
+    (the screen output doesn't). The ZFido is integrated to
+    OpenXP. For use this you need to recompile the source
+    with 'Develop' set.
+
   Revision 1.49  2000/12/03 12:38:25  mk
   - Header-Record is no an Object
 

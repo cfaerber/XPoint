@@ -59,7 +59,8 @@ var Netcall_connect : boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
+uses direct,
+     xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -1525,6 +1526,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/12/08 11:17:01  hd
+  - Add: Sysop-Call (Incoming) on Fido Packets works propper
+    (the screen output doesn't). The ZFido is integrated to
+    OpenXP. For use this you need to recompile the source
+    with 'Develop' set.
+
   Revision 1.47  2000/12/03 12:38:25  mk
   - Header-Record is no an Object
 

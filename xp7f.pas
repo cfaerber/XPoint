@@ -46,7 +46,7 @@ procedure ShowRQ(s:string);
 
 implementation   { -------------------------------------------------- }
 
-uses xpheader, xp3,xp3o;
+uses direct,xpheader,xp3,xp3o;
 
 
 procedure SaveArcname(var box,name:string);
@@ -207,7 +207,8 @@ function isPacket(name:string):boolean;
 var p : byte;
 begin
   p:=cpos('.',name);
-  if p=0 then isPacket:=false
+  if (p=0) or (name='.') or (name='..') then
+    isPacket:=false
   else
     IsPacket:=(pos(copy(name,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
               (boxpar^.ExtPFiles or (pos(copy(name,p+3,1),'0123456789')>0));
@@ -217,6 +218,81 @@ end;
 { gepackte Daten aus ImportDir + PKT-Files aus SpoolDir einlesen }
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
+{$ifdef Develop}
+const fpuffer = 'FPUFFER';
+var p       : byte;
+    i,rc    : integer;
+    via     : string;
+    dir     : TDirectory;
+begin
+  FidoImport:=false;
+  with BoxPar^ do begin
+    ttwin; attrtxt(7); moff; clrscr; mon;
+    p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
+    if p>0 then delete(downarcer,p,7);
+    p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
+    { using wildcard does not require case sensetive }
+    dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
+    window(1,1,screenwidth,screenlines); attrtxt(7);
+    for i:= 0 to dir.Count-1 do begin
+      if isPacket(dir.name[i]) then begin
+        ImportDir:=ExpandFilename(ImportDir);
+        SetCurrentDir(OwnPath+XFerDir);
+        shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
+        { ^^ setzt Verzeichnis zurÅck! }
+        if errorlevel<>0 then
+          MoveToBad(ImportDir+dir.name[i]);
+        end;
+    end;
+    dir.Free;
+    ttwin;
+    { Read only files }
+    dir:= TDirectory.Create(XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
+    if not(dir.isEmpty) then begin
+      for i:=0 to dir.Count-1 do begin
+        rc:=DoZFido(2,                  { FTS -> ZC }
+                    MagicBrett,         { root group }
+                    dir.LongName[i],    { in file }
+                    fpuffer,            { out file }
+                    '',                 { packet from }
+                    '',                 { allways for me :-) }
+                    FPointNet,          { Fakenet }
+                    passwort,           { Password }
+                    '',                 { no PC needed }
+                    true,               { INTL }
+                    KeepVia,            { VIA lines }
+                    false,              { is not a request }
+                    FidoDelEmpty);      { delete empty messages? }
+
+        if rc<>0 then
+          trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
+        else if nDelPuffer then
+          _era(dir.LongName[i]);
+      end; { for }
+      NC^.recbuf:=_filesize(fpuffer);
+      CallFilter(true,fpuffer);
+      if _filesize(fpuffer)>0 then
+        { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
+{
+        if PufferEinlesen(fpuffer,box,false,false,true,
+                          iif(multipos('*',boxpar^.akas),pe_ForcePfadbox,
+                          pe_Bad))
+}
+        if PufferEinlesen(fpuffer,box,false,false,true,
+                          iif(length(trim(boxpar^.akas))>0,
+                          pe_ForcePfadbox or pe_Bad,pe_Bad))
+        { /robo }
+        then begin
+          _era(fpuffer);
+          FidoImport:=true;
+        end;
+    end else begin
+      if FileExists(fpuffer) then _era(fpuffer);
+      CallFilter(true,fpuffer);
+    end;
+  end; { with }
+end;
+{$else}
 const fpuffer = 'FPUFFER';
 var p       : byte;
     sr      : tsearchrec;
@@ -231,9 +307,12 @@ begin
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
     rc:= findfirst(ImportDir+WildCard,faAnyFile,sr);
+    { Was fuer ein Quatsch: rc ist immer 0, wenn es ein
+      gueltiges Unterverzeichnis ist (wegen ".."). Und
+      die Verzeichnisse wurden beim Start geprueft. }
     clrflag:=(rc=0);
     if clrflag then begin
-      window(1,1,screenwidth,screenlines); attrtxt(7);
+    window(1,1,screenwidth,screenlines); attrtxt(7);
       end;
     while rc=0 do begin
       if isPacket(sr.name) then begin
@@ -297,7 +376,7 @@ begin
       end;
     end;
 end;
-
+{$endif} { Develop }
 
 { bei Crashs steht in BOX der eigene BossNode, und in BoxPar^.BOXNAME  }
 { der angerufene Node                                                  }
@@ -952,6 +1031,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/12/08 11:17:01  hd
+  - Add: Sysop-Call (Incoming) on Fido Packets works propper
+    (the screen output doesn't). The ZFido is integrated to
+    OpenXP. For use this you need to recompile the source
+    with 'Develop' set.
+
   Revision 1.40  2000/12/03 12:38:25  mk
   - Header-Record is no an Object
 
