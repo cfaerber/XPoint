@@ -2243,7 +2243,7 @@ begin
       end;
     ReadString(true);
     if (s<>'') and ((s[1]=' ') or (s[1]=#9)) then
-      if length(s0)+length(s)<254 then
+      if (length(s0)+length(s)<254) and (manz=0) then
         s0:=s0+' '+trim(s)                      { fortgesetzte Zeile }
       else if manz<maxmore then begin
         if (manz=0) or (length(smore[manz])+length(s)>253) then begin
@@ -3574,6 +3574,9 @@ end.
 
 {
   $Log$
+  Revision 1.35  2000/06/21 20:40:25  mk
+  RB: - Bugfix fuer fortgesetzte Headerzeilen
+
   Revision 1.34  2000/06/10 20:15:09  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
