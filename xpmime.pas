@@ -435,10 +435,13 @@ var   hdp      : headerp;
           hdline:=lstr(GetToken(s,':'));
           if hdline='content-transfer-encoding' then
             _encoding:=lstr(s)
-          else if hdline='content-type' then begin
+          else
+          if hdline='content-type' then
+          begin
             ctype:=lstr(GetToken(s,'/'));
             subtype:=lstr(GetToken(s,';'));
-            while s<>'' do begin
+            while s<>'' do
+            begin
               GetParam;
               if (ctype='multipart') and (parname='boundary') then
                 subboundary:=parvalue
@@ -446,7 +449,15 @@ var   hdp      : headerp;
                 filename:=parvalue
               else if (parname='x-date') then
                 filedate:=RFC2Zdate(parvalue);
-              end;
+            end;
+          end else
+            { Manchmal ist der Dateiname nur im disposition-Teil enthalten }
+            if (hdline='content-disposition') and (filename = '') then
+            begin
+              parname:=lstr(GetToken(s,'='));
+              if firstchar(s)='"' then delfirst(s);
+              if lastchar(s)='"' then dellast(s);
+              if (pos('name', parname) >0) then filename:=s;
             end;
         until endhd or eof(t);
 
@@ -715,6 +726,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/05 14:20:08  mk
+  - erweiterte Filenamenerkennung bei MIME-Mails
+
   Revision 1.11  2000/04/22 23:29:55  mk
   - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
   - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
