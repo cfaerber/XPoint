@@ -858,9 +858,9 @@
       fullClientDir := IncludeTrailingPathDelimiter(fullClientDir);
       cfgfile := trim(ClientExternalConfig);
 
-      { Hier wird nur der Wert ClientExternalCnofig aus <Boxname>.BFG string-  }
-      { technisch aufbereitet und an ReadExtCfgFilename in xp9sel.pas  }
-      { Åbergeben. Die eigentlichen PrÅfungen finden dann dort statt.  }
+      { Hier wird nur der Wert ClientExternalConfig aus <Boxname>.BFG string- }
+      { technisch aufbereitet und an ReadExtCfgFilename in xpconfigedit.pas   }
+      { Åbergeben. Die eigentlichen PrÅfungen finden dann dort statt.         }
 
       { Dateinamen im oder unterhalb des XP-Verzeichnisses werden in   }
       { der <Boxname>.BFG mit dem vorangestellten String "<XP>\",      }
@@ -873,8 +873,8 @@
       { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if LeftStr(cfgfile, 5) = ('<XP>' + DirSepa) then
-        cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
+      if UpperCase(LeftStr(cfgfile, 5)) = ('<XP>' + DirSepa) then
+        cfgfile := OwnPath + MID(cfgfile, 6);
       pushhp(30129);
       { 'Externe Konfigurationsdatei laden' }
       if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
@@ -2077,6 +2077,12 @@
 
 {
   $Log$
+  Revision 1.16  2001/08/03 07:52:42  mk
+  EditExtern:
+  - added UpperCase
+  - fixed Comment
+  - Changed some Copy to MID
+
   Revision 1.15  2001/08/02 22:22:43  mk
   - EditExtern: filename of a non-existing file is written to
     <server>.BFG only if the user confirmed file creation *and*
