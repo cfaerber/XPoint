@@ -1156,21 +1156,25 @@ begin
       19 : if ReadJN(getres(242),true) then   { 'Standard-Farbeinstellungen wiederherstellen' }
              defaultcolors;
       20 : savecolors;
-      21 : n:=0;
+      21 : n:=-1;
     end;
-  until n=0;
+  until n<=0;
   freeres;
   pophp;
   setcolors;
   m2t:=true;
   showscreen(false);
   aufbau:=true;
+  menurestart:=(n=0);
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.8  2000/04/29 14:01:00  jg
+  - Config/Anzeige/Farbe beachtet "Menue bei ESC verlassen" Einstellung.
+
   Revision 1.7  2000/04/28 14:52:52  jg
   - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
     Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
