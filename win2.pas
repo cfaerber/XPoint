@@ -476,7 +476,7 @@ begin
         if f[i][1]>=#125 then
         begin
           f[i] := Mid(f[i],2);
-          if f[i][1]<>'[' then
+          if FirstChar(f[i])<>'[' then
             f[i]:=f[i]+DirSepa;
         end;
 
@@ -1091,6 +1091,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/27 21:02:49  mk
+  MO:- use FistChar in FSBox
+
   Revision 1.32  2000/12/14 10:39:29  mk
   - Char-Upcase bei Suche nach Dateien in FSBox
 
