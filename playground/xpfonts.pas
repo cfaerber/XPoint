@@ -324,6 +324,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.1.1.2  2001/10/20 11:52:47  mw
+
+  - Playground fÅr Openxp/16
+
   Revision 1.1.1.1  2001/10/20 11:48:34  mw
 
   - Playground fuer Openxp/16
