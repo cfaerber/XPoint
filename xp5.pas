@@ -52,6 +52,7 @@ procedure kalender;
 const rx = 42;
       ry = 8;
 
+
       cal_active : boolean = false;
       maxfeier   = 50;
 
@@ -61,6 +62,8 @@ var   nt,n,mnt,
       y,m,d,w     : rtlword;
       lm,lj       : word;
       jj,mm,tt    : word;
+      di          : string[6];
+      code        : integer;
 
       cal         : string[15];
       feier       : array[1..maxfeier] of fdate;
@@ -131,12 +134,10 @@ var   nt,n,mnt,
         if (fd.t>4) and (fd.t<15) and (fd.m=10) and (fd.j=1582) then
            begin
              j:=j+10;        {Bugfix MW 02/2000}
-             {if (fd.t>11) then i:=i-1;}
-             {if (fd.t=11) then le:=le-1;}
-             write(j:2);     {Bugfix MW 02/2000}
-           end               {Achtung: Experimential}
-        else                 {Zustand , keine Gewähr auf Richtigkeit}
-          begin              {vor dem 15.10.1583}
+             write(j:2);
+           end
+        else
+          begin
              if j>n then write('  ') else write(j:2);
           end;               { }
         end;
@@ -180,6 +181,21 @@ var   nt,n,mnt,
         3 : t:=keyrght;
       end;
       end;
+  end;
+
+function key2str(h:taste):string;
+  begin
+   key2str:='';
+   if h=key0 then key2str:='0';     {Codewandlungen von Keystring nach String}
+   if h=key1 then key2str:='1';
+   if h=key2 then key2str:='2';
+   if h=key3 then key2str:='3';
+   if h=key4 then key2str:='4';
+   if h=key5 then key2str:='5';
+   if h=key6 then key2str:='6';
+   if h=key7 then key2str:='7';
+   if h=key8 then key2str:='8';
+   if h=key9 then key2str:='9';
   end;
 
 begin
@@ -279,7 +295,36 @@ begin
       if mm=13 then begin
         mm:=1; jj:=min(3000,succ(jj));  {Erweiterung von 2999 auf 3000 von MW 01/2000}
         end;
-      end;
+      end
+    else if (z=key0) or (z=key1) then begin
+        attrtxt(col.colutihigh);
+        moff;
+        gotoxy(rx+4,ry+1);
+        di:=key2str(z);               {Jetzt kann der Kalender auch durch }
+        write(cal,' ',di,'      ');
+        repeat                        {freies Eingeben des Monats + Jahres }
+          get(z,curoff);              {bedient werden}
+          di:=di+key2str(z);
+          gotoxy(rx+4,ry+1);
+          write(cal,' ',di,'     ');
+        until Length(di)=2;           {Erweiterung von MW 04/2000}
+        val(di,mm,code);
+        di:='';
+        repeat
+          get(z,curoff);
+          di:=di+key2str(z);
+          gotoxy(rx+4,ry+1);
+          write(cal,' ',mm:2,'/',di,'   ');
+        until Length(di)=4;
+        val(di,jj,code);
+        di:='';
+        if mm>12 then mm:=12;
+        if mm=0 then mm:=1;
+        if jj>3000 then jj:=3000;
+        if jj=0 then jj:=1;
+        mon;
+        attrtxt(col.colutility);     { }
+       end;
   until (z=keyesc) or (z=keycr)or (z=keyaltk);
   closebox;
   pophp;
@@ -1038,6 +1083,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/04/06 09:04:17  mk
+  MW: - Datumseingabe in Kalender
+
   Revision 1.17  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

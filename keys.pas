@@ -111,6 +111,10 @@ const  keyf1   = #0#59;             { Funktionstasten }
        GreyMinus = 74;
        GreyPlus  = 78;
 
+       key0 = #48;                 { Tasten 0-9}
+       key1 = #49;       key2 = #50;       key3 = #51;
+       key4 = #52;       key5 = #53;       key6 = #54;
+       key7 = #55;       key8 = #56;       key9 = #57;
 
 { Es kann eine Prozedur zur Behandlung von Funktionstasten definiert werden. }
 { Diese wird nach jedem Tastendruck durch 'func_proc(t)' aufgerufen. Falls   }
@@ -461,6 +465,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/04/06 09:04:17  mk
+  MW: - Datumseingabe in Kalender
+
   Revision 1.14  2000/03/22 19:43:01  rb
   <Ctrl Del>: Wort rechts l”schen
 
