@@ -558,24 +558,20 @@ begin
   COMn[4].cPort:=$2e8; COMn[4].cIRQ:=3;
   for i:=1 to 5 do
     with COMn[i] do begin
-      getmem(Minit,32);
+      { ACHTUNG: Hier mu· bei Getmem die LÑnge des Strings + 1 angegeben
+        werden. }
+      getmem(Minit,4);
       Minit^:='ATZ';
-      {alt: Minit^:='ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1';}
-      {F¸r den Modeminit reicht idR. ein ATZ
-      MW 04/2000}
       getmem(Mexit,1);
       Mexit^:='';
       getmem(MDial,5);
       MDial^:='ATDT';
-      {alt: MDial^:='ATDP';}
-      {Alle Telefonanschl¸sse in D sind tonwahlf‰hig !!!
-      Und zwar schon seit Ende 1997  MW 04/2000}
       Warten:=5;
       ring:=true;
       postsperre:=true;
       UseRTS:=true;
       tlevel:=8;
-      end;
+    end;
   COMn[5].IgCTS:=true;    { Dummy-COM fÅr ISDN }
   COmn[5].UseRTS:=true;
   COMn[5].Ring:=false;
@@ -1658,6 +1654,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/04/26 06:48:49  mk
+  - RTE 217 bei MInit behoben
+
   Revision 1.35  2000/04/24 11:28:54  mk
   - 32 Bit: Drucken funktioniert jetzt
 
