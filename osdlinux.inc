@@ -26,7 +26,13 @@
 
 { OS specific uses }
 
-uses xpcurses, linux;
+uses xpcurses, 
+  {$IFDEF Kylix }
+    libc
+  {$ELSE }
+    linux
+  {$ENDIF }
+  ;
 
 { local declarations }
 
@@ -97,6 +103,9 @@ end;
 
 {
         $Log$
+        Revision 1.8  2003/08/27 23:49:12  mk
+        - use libc instead of linux for Kylix
+
         Revision 1.7  2003/08/26 17:36:26  mk
         - added linux to uses
 
