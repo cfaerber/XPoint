@@ -4359,6 +4359,14 @@ wahl) umgestellt wurde. Bei Nebenstellenanlagen
 funktioniert dagegen meist nur Tonwahl.
 @
 295
+Hier werden die Angaben der seriellen Schnittstelle
+eingetragen, die benutzt werden soll. Beispiele
+werden mit F2 angezeigt, sie sollten selbsterklaerend
+sein. Die Comminit-Angaben werden fuer die Teile
+von OpenXP benutzt, die bereits auf ObjCOM umgestellt
+sind (bisher: Fidomailer, Terminal).
+@
+296
 Wenn Sie unglcklicher Besitzer eines postzugelasse-
 nen Modems sind, muá zwischen mehreren W„hlversuchen
 jeweils eine Pause von mindestens 30 Sekunden liegen.
@@ -4371,7 +4379,7 @@ gen zwischen Anrufversuchen bei mehreren Nummern des
 gleichen Servers nur eine Pause von 5 Sekunden ein-
 gelegt.
 @
-296
+297
 Normalerweise signalisiert das Modem eine erfolgrei-
 che Verbindungsaufnahme durch das CD-Signal (Carrier
 Detect). Falls Ihr Modem aus irgendwelchen Grnden
@@ -4385,7 +4393,7 @@ Sie sollten auf jeden Fall versuchen, das Problem zu
 beheben, das zum Fehlen des CD-Signals fhrt. Bei
 Fido-Netcalls MUSS die CD-Erkennung korrekt arbeiten!
 @
-297
+298
 Normalerweise signalisiert das Modem durch das CTS-
 Signal (Clear To Send), daá es empfangsbereit ist.
 Falls die CTS-Leitung im Modemkabel nicht beschaltet
@@ -4401,13 +4409,13 @@ bleme sind schwer vorherzusagen. Sie sollten in jedem
 Fall versuchen, das Problem zu beseitigen, das zum
 Fehlen des CTS-Signals fhrt.
 @
-298
+299
 Falls w„hrend Festplattenzugriffen Daten-šbertra-
 gungsfehler ("CRC error" o.„.) auftreten, sollten
 Sie diesen Schalter aktivieren. Dies gilt insbe-
 sondere fr Enhanced-IDE-Festplatten.
 @
-299
+300
 <<Alle Netztypen auáer Fido:
 
 Falls w„hrend der Wartezeit zwischen zwei Netcalls

@@ -262,7 +262,7 @@ begin
         if nDelPuffer then
           Dos.findfirst(XFerDir+'*.*',ffAnyFile,sr)
         else begin
-          Dos.findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
+          Dos.findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l"schen  }
           if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
           end;
         while doserror=0 do begin
@@ -408,7 +408,8 @@ label fn_ende,fn_ende0;
       if ParDebug then writeln(t,'Debug=Y');
       if registriert.r2 then writeln(t,'SN=R/'+strs(registriert.nr))
       else writeln(t,'SN=unregistered');
-      if hayescomm and (ModemInit+minit<>'') then begin
+      writeln(t,'CommInit=',MCommInit);
+      if hayescomm and (ModemInit+MInit<>'') then begin
         write(t,'ModemInit=');
         if (ModemInit<>'') and (minit<>'') then
           writeln(t,minit+'\\'+ModemInit)
@@ -549,7 +550,7 @@ label fn_ende,fn_ende0;
           pw:=mid(fname,p+1);          { Paáwort isolieren }
           truncstr(fname,p-1);
           if cpos('.',fname)=0 then
-            fname:='';                 { Magic Name -> l”schen }
+            fname:='';                 { Magic Name -> l"schen }
           fp:=rflist;
           while (fname<>'') and (fp<>nil) do begin
             if match(fname,fp^.fn) then
@@ -709,7 +710,7 @@ begin
   if s='' then
     rfehler1(742,adr)    { 'Unbekannter Fido-Node: %s' }
   else
-    if ReadJN(getreps(725,adr),true) then   { 'Unbekannter Fido-Node: %s. - Request l”schen' }
+    if ReadJN(getreps(725,adr),true) then   { 'Unbekannter Fido-Node: %s. - Request l"schen' }
       SetRequest(adr,'');
 end;
 
@@ -944,6 +945,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/12 16:49:42  ma
+  - Comminit-String-Konfigurationseintrag hinzugefuegt
+
   Revision 1.21  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

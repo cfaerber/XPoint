@@ -3996,6 +3996,13 @@ Possibilities are:
 
 @
 295
+Serial port parameters can be entered here. Examples
+are displayed if you press F2. These parameters are
+used by OpenXP parts that have been modified to use
+ObjCOM already (Fidomailer, Terminal).
+
+@
+296
 If enabled, the modem will pause between dialing for
 the length of time that you have specified in
 "/Edit/Server/Edit/Modem".
@@ -4004,7 +4011,7 @@ If disabled, the modem will pause for 5 seconds
 between dialing.
 
 @
-296
+297
 <<[+]>>     Ignore state of CD (carrier detect).
 
 Most modems indicate a correct connect by switching
@@ -4029,7 +4036,7 @@ For Fido Netcalls, the CD function <<MUST>> work
 correctly anyway.
 
 @
-297
+298
 <<[+]>>     Ignore state of CTS (Clear To Send).
 
 The modem switches the CTS line to show the local
@@ -4049,11 +4056,11 @@ the modem getting lost, with unpredictable results.
 You should attempt to get the CTS to work.
 
 @
-298
+299
 To help eliminate CRC errors, enable this option.
 
 @
-299
+300
 <<All Net types EXCEPT Fido
 
 <<[x]>>  Use ring signal line

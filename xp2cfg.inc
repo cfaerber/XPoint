@@ -535,6 +535,7 @@ begin
       Minit:='ATZ';
       Mexit:='';
       MDial:='ATDT';
+      MCommInit:='Serial Port:'+StrS(i)+' Speed:115200';
       Warten:=5;
       ring:=true;
       postsperre:=true;
@@ -985,6 +986,7 @@ begin
       writeln(t,'COM',i,'-Init=',MInit);
       writeln(t,'COM',i,'-Exit=',MExit);
       writeln(t,'COM',i,'-Dial=',MDial);
+      writeln(t,'COM',i,'-CommInit=',MCommInit);
       writeln(t,'COM',i,'-Warten=',Warten);
       writeln(t,'COM',i,'-IgnoreCD=',jnf(IgCD));
       writeln(t,'COM',i,'-IgnoreCTS=',jnf(IgCTS));
@@ -1141,6 +1143,7 @@ var t       : text;
                     gets(s,su,'Init',MInit,200) or
                     gets(s,su,'Exit',MExit,200) or
                     gets(s,su,'Dial',MDial,100) or
+                    gets(s,su,'CommInit',MCommInit,100) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
                     getx(su,'IgnoreCTS',igcts) or
@@ -1687,6 +1690,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.76  2000/07/12 16:49:42  ma
+  - Comminit-String-Konfigurationseintrag hinzugefuegt
+
   Revision 1.75  2000/07/12 15:27:01  hd
   - Ansistring
 

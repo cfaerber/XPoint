@@ -862,6 +862,7 @@ end;
 { Prozedurvariable, s wird nicht benîtigt }
 function SetTrigger(var s:string):boolean;
 begin
+  SetTrigger:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
   SetFieldEnable(13,(getfield(1)=_jn_[2]) and (s=_jn_[1]));
 end;
 
@@ -891,8 +892,9 @@ begin
     maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
     maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'WÑhlbefehl ' }
     mappsel(false,'ATDT˘ATDP˘ATDT0W˘ATDP0W');
-    {Weitere Dialstrings eingefuegt (Telefonanlagen) MW 04/2000}
-    maddbool (3,10,getres2(261,16),postsperre); { 'postkompatible WÑhlpause' }
+    maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
+    mappsel(false,'Serial Port:'+strs(Cport)+' Speed:115200˘Serial IO:3f8 IRQ:4 Speed:115200˘Fossil Port:'+strs(nr)+' Speed:115200');
+    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible WÑhlpause' }
     maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
     maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
     maddbool (3,14,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
@@ -1392,6 +1394,7 @@ end;
 
 function testpgpexe(var s:string):boolean;
 begin
+  testpgpexe:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
   if (s=_jn_[1]) and (fsearch('PGP.EXE',getenv('PGPPATH'))='') and
                      (fsearch('PGP.EXE',getenv('PATH'))='') then begin
     rfehler(217);    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -1401,6 +1404,7 @@ end;
 
 function testxpgp(var s:string):boolean;
 begin
+  testxpgp:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
   if (s=_jn_[1]) and (getfield(1)=_jn_[2]) then begin
     rfehler(218);    { 'Aktivieren Sie zuerst die ZCONNECT-PGP-UnterstÅtzung! }
     s:=_jn_[2];
@@ -1490,6 +1494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/07/12 16:49:42  ma
+  - Comminit-String-Konfigurationseintrag hinzugefuegt
+
   Revision 1.45  2000/07/12 14:43:45  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

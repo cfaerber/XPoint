@@ -426,6 +426,7 @@ type   textp  = ^text;
                   Fossil : boolean;
                   Cport  : word;        { UART-Adresse   }
                   Cirq   : byte;        { 0..7           }
+                  MCommInit : string;  { ObjCOM-Comminit-String }
                   MInit  : string;
                   MExit  : string;
                   MDial  : string;     { W„hlbefehl     }
@@ -1408,6 +1409,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.75  2000/07/12 16:49:42  ma
+  - Comminit-String-Konfigurationseintrag hinzugefuegt
+
   Revision 1.74  2000/07/12 14:43:43  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank
