@@ -234,26 +234,6 @@ begin
 end;
 
 
-Procedure MakeBak(n,newext:string);
-var bakname : string;
-    f       : file;
-    res     : integer;
-begin
-  assign(f,n);
-  if cpos('.',n)=0 then bakname:=n+'.'+newext
-  else bakname:=copy(n,1,pos('.',n))+newext;
-  assign(f,bakname);
-  {$I-}
-    setfattr(f,archive);
-    erase(f);
-    res:=ioresult;
-  {$I+}
-  assign(f,n);
-  setfattr(f,archive);
-  rename(f,bakname);
-end;
-
-
 function ZC_puffer(fn:pathstr):boolean;
 var t : text;
     z : boolean;
@@ -299,6 +279,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.2.3  2001/09/07 13:37:06  mk
+  - removed makebak (is included fileio)
+
   Revision 1.3.2.2  2001/08/24 15:53:26  mw
 
   - Small Code-Cleanup
