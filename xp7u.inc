@@ -456,7 +456,7 @@ begin
       if exist(eppfile) then _era(eppfile);
       end;
 
-    if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
+    if exist(SysopInp+WildCard) or SmtpPPP then                   { -- Eingangspaket -- }
       if ImportUUCPfromSpool(SysopInp) then
         EmptySysin;
     Netcall_connect:=true;
@@ -464,6 +464,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.4  2001/01/02 17:06:15  mk
+  - bei UUCP den Eingangsfilter auch anwerfen wenn kein Pollpaket vorhanden und PPP Option eingeschaltet ist
+
   Revision 1.13.2.3  2000/12/20 18:09:21  mk
   - Schalter fuer PPP-Option von UUZ
 
