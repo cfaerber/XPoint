@@ -800,6 +800,7 @@ begin
           multi2; initscs;
 
           attrtxt(col.colmboxhigh);
+          truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
           dbSeek(ubase,uiName,ustr(absender));
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
@@ -1142,6 +1143,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.4  2001/08/27 08:27:26  mk
+  JG+MY:- Fix: When auto-creating a user with an address longer than 80
+          chars the user flags (Prio, Filter, Return Receipt) of the last
+          DB entry were used (dbSeek couldn't find the address with more
+          than 80 chars). Address string is truncated to eAdrLen now.
+
   Revision 1.6.2.3  2000/11/30 14:15:03  mk
   - fixed NewUserIBM when adding new uesers
 
