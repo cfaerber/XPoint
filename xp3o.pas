@@ -1049,7 +1049,7 @@ begin
 
   if auto and FileExists(EB_msk) then begin    { nur bei autom. EB }
     writeln(t);
-    writeln(t,'--');
+    writeln(t,'-- ');
     assign(t2,EB_msk);     { EB-Signatur anhaengen }
     reset(t2);
     while not eof(t2) do begin
@@ -1508,6 +1508,9 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/08/01 17:00:20  mk
+  - fixed signature, Bug #589617 3.8: Signaturabtrenner bei EB ist "--"
+
   Revision 1.92  2002/07/31 19:26:21  ma
   - user=>email db field code synchronized with v3.8
     (does not need re-entering email address when upgrading from old
