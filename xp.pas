@@ -48,8 +48,8 @@ uses xpx,
 {$ENDIF }
      dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
-     printerx,crc16,resource,stack,clip,eddef,editor,feiertag,
-     xpdiff,xpdatum,xpcrc32, xpglobal,
+     printerx,crc,resource,stack,clip,eddef,editor,feiertag,
+     xpdiff,xpdatum,xpglobal,
 {$IFDEF CAPI }
      capi,
 {$ENDIF }
@@ -231,6 +231,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.28  2000/06/19 20:17:42  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.27  2000/05/10 16:37:25  mk
   - Filehandles fuer OS/2 setzen
 

@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
       dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
-      resource,printerx,xp0,xp1,xp1o2,xp1input,xpcrc32,xpdatum, xpglobal;
+      resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
@@ -1478,6 +1478,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/06/19 20:19:56  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.20  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)

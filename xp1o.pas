@@ -27,7 +27,7 @@ uses
   crt,
 {$ENDIF }
   dos,dosx,typeform,keys,fileio,inout,maus2,lister,
-  printerx, datadef,database,maske,archive,resource,clip, xp0,xpcrc32;
+  printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : pathstr = '';
@@ -990,6 +990,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/06/19 20:19:12  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.39  2000/05/09 20:02:51  jg
   - Externe Viewer: OS2/DOS Hybridprogramme die nicht unter OS/2
     gestartet werden, werden als DOS-Programme behandelt.

@@ -28,7 +28,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
+  dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal;
 
 implementation
 
@@ -98,7 +98,7 @@ begin
     readln(t,code);
     close(t);
     if (ioresult=0) and
-       (ival(code)=sqr(crc32(reverse(name)) and $ffff)) then begin
+       (ival(code)=sqr(CRC32Str(reverse(name)) and $ffff)) then begin
       XP_xp:=name;
       XP_name := '## '+name+' '+verstr+betastr;
       XP_origin := '--- '+name;
@@ -316,6 +316,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/06/19 20:23:05  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.17  2000/05/15 13:56:53  hd
   - Linux: Env-Var XPHOME uebersteuert nun die Vorgabe ~/.openxp
 

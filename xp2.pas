@@ -30,7 +30,7 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
 {$ENDIF}
   xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-     databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
+     databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
      resource,montage, xpglobal,
      xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
 
@@ -1148,6 +1148,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/06/19 20:19:32  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.44  2000/06/02 16:28:36  ml
   Linux: Die Ressourcen werden nun im Programmverzeichnis gesucht, nicht im ~/openxp-Verzeichnis
 

@@ -26,7 +26,7 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
   crt,
 {$ENDIF }
       dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
-      resource,help, xpglobal, xp0,xp1,xp1input,xpnt,xpcrc32;
+      resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
 
 { Deklaration des Kommentarbaums in XP0 }
 
@@ -891,6 +891,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/19 20:20:21  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

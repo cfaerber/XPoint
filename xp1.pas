@@ -35,7 +35,7 @@ uses
 {$ENDIF }
   dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,xpcrc32, xpglobal;
+  resource,xp0,crc,xpglobal;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -2421,7 +2421,7 @@ begin
     mid[p]:=system.upcase(mid[p]);
     inc(p);
     end;
-  MsgidIndex:=CRC32(mid);
+  MsgidIndex:=CRC32Str(mid);
 end;
 
 
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/06/19 20:18:17  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.47  2000/06/05 16:16:22  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

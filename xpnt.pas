@@ -21,7 +21,7 @@ unit xpnt;
 
 interface
 
-uses   xp0,typeform,datadef,database,xpcrc32;
+uses   xp0,typeform,datadef,database,crc;
 
 const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_ZConnect  = 2;         { XRef: XP3, XP6       }
@@ -248,7 +248,7 @@ begin
       msgid[p]:=system.upcase(msgid[p]);
       inc(p);
       end;
-    formmsgid:=dbLongStr(CRC32(msgid))+left(msgid,15);
+    formmsgid:=dbLongStr(CRC32Str(msgid))+left(msgid,15);
     end;
 end;
 
@@ -745,6 +745,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/06/19 20:22:48  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.8  2000/06/10 20:15:12  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)

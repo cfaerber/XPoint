@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
      dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
-     xp0,xp1,xp1input,xpcrc32,xp_iti, xpglobal;
+     xp0,xp1,xp1input,crc,xp_iti, xpglobal;
 
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
@@ -822,6 +822,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/19 20:22:32  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.7  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

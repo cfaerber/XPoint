@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,keys,datadef,database,maske,
-  crc16,lister, winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
+  crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
 procedure Unversandt(edit,modi:boolean);
@@ -1254,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/06/19 20:22:13  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.19  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)

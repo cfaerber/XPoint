@@ -27,7 +27,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,inout,keys,datadef,database,maske,crc16,lister,
+     dos,typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
      winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
      xpglobal;
 
@@ -2248,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/06/19 20:21:46  ma
+  - von CRC16/XPCRC32 auf Unit CRC umgestellt
+
   Revision 1.38  2000/06/13 16:57:56  jg
   - Empfaenger-aendern im Sendefenster:
     Bugfix:  Verteiler funktioieren jetzt wieder
