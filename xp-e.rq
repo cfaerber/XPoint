@@ -2368,6 +2368,53 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    add to list
 -
 
+# --- UUCICO ----------------------------------------------------------
+
++2300
+1    Protocol: UUCP-
+2    /
+3    bytes
+4    bytes/s
+
+5    File name:
+6    File type:
+7    Transfer'd:
+
+8    Total: 
+9    files
+
+10   unknown  
+
+11   Receive: ~
+12   Transmit:~
+
+60   plain news batch
+61   compressed news batch (compress)
+62   compressed news batch (freeze)
+63   compressed news batch (gzip)
+64   compressed news batch (bzip2)
+70   email from~
+71   plain SMTP batch
+
+77   file transfer
+78   data file
+79   command file
+
+80   compressed file (compress)
+81   compressed file (freeze)
+82   compressed file (gzip)
+83   compressed file (bzip2)
+
+102 permission denied or file error
+104 unable to create temporary file
+105 temporary file could not be moved into the final location
+106 file too large to transfer at the moment
+107 file too large to ever transfer
+108 file already received previously
+109 unable to open another channel
+110 file too large
+-
+
 
 # --- XP_UUE-----------------------------------------------------------
 
@@ -3620,6 +3667,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.126  2001/03/16 23:03:21  cl
+# - UUCICO ressource strings
+#
 # Revision 1.125  2001/03/14 20:46:02  mk
 # - removed registration routines
 #

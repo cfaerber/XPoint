@@ -2428,7 +2428,52 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    unbekanntes Brett
 3    neu anlegen
 -
+# --- UUCICO ----------------------------------------------------------
 
++2300
+1    Protokoll: UUCP-
+2    /
+3    Bytes
+4    Bytes/s
+
+5    Dateiname:
+6    Dateiart:
+7    öbertragen:
+
+8    Gesamt:
+9    Dateien
+
+10   unbekannt
+
+11   Senden:  ~
+12   Empfangen:
+
+60   ungepacktes Newspaket
+61   gepacktes Newspaket (compress)
+62   gepacktes Newspaket (freeze)
+63   gepacktes Newspaket (gzip)
+64   gepacktes Newspaket (bzip2)
+70   E-Mail von~
+71   ungepacktes Mailpaket
+
+77   Dateitransfer
+78   Datendatei
+79   Steuerdatei
+
+80   gepackte Datei (compress)
+81   gepackte Datei (freeze)
+82   gepackte Datei (gzip)
+83   gepackte Datei (bzip2)
+
+102 Zugriff verweigert oder Dateifehler
+104 TemporÑre Datei konnte nicht erstellt werden
+105 TemporÑre Datei konnte nicht an endgÅltige Position verschoben werden
+106 Datei zu groî, um derzeit Åbertragen werden zu kînnen
+107 Datei zu groî, um jemals Åbertragen werden zu kînnen
+108 Datei wurde schon empfangen
+109 Neuer Kanal kann nicht geîffnet werden
+110 Datei zu groî
+-
 
 # --- XP_UUE, XPIMPEXP, XPMIME ----------------------------------------
 
@@ -3596,6 +3641,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.101  2001/03/16 23:03:21  cl
+# - UUCICO ressource strings
+#
 # Revision 1.100  2001/03/14 20:46:01  mk
 # - removed registration routines
 #
