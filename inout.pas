@@ -698,8 +698,8 @@ var
   c: Char;
 begin
   brk := false;
-  // to not use macro keys at this point
-  if (forwardkeys = '') and keypressed then
+  // to not process #27 in macro at this point
+  if not ((forwardkeys <> '') and (forwardkeys[1] = #27)) and keypressed then
   begin
     c := ReadKey;
     if c = #27 then 
@@ -1669,6 +1669,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.4  2003/04/02 17:11:20  mk
+  - do not process #27 in testbrk while using macros
+
   Revision 1.89.2.3  2003/04/02 17:01:46  mk
   - do not process
 
