@@ -122,6 +122,9 @@ uses  xpnt,xp2,xp3,xp4e,
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}   
+{$IFDEF Linux}
+  linux, // for stat & fsstat
+{$ENDIF}
 xpfidonl;
 
 
@@ -1151,7 +1154,7 @@ begin
     if not FileExists('NDIFF.EXE') then
       rfehler(103)   { 'NDIFF.EXE fehlt!' }
     else begin
-      shell('NDIFF.EXE -s '+FidoDir+NodeList.GetFilename(i)+' '+ShrinkNodes,250,3);
+      xp1.shell('NDIFF.EXE -s '+FidoDir+NodeList.GetFilename(i)+' '+ShrinkNodes,250,3);
       if errorlevel<>0 then
         rfehler(2114)   { 'Fehler beim Bearbeiten der Nodelist' }
       else
@@ -1681,17 +1684,20 @@ label ende;
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
   var
     p       : Integer;
+{$IFDEF Linux}
+    fs : statfs;
+  begin
+    fsstat(path,fs);
+    
+    if ((int64(fs.bavail)*int64(fs.bsize))<=size)
+{$ELSE}
     driveNr : Integer;
   begin
-     driveNr := 0;
-{$IFDEF Linux}
-{$IFDEF fpc}
-     driveNr := SysUtils.AddDisk(Path);
-{$ENDIF}     
-{$ELSE}
      driveNr := ord(FirstChar(Path))-64;
+
+    if (diskfree(driveNr)<=size)
 {$ENDIF}
-    if (diskfree(driveNr)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
+                                 and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
@@ -2042,7 +2048,7 @@ function FidoSeekfile:string;
       if ni^.found then sNodInf:=sNodInf+'('+ni^.boxname+', '+ni^.standort+', '+sFlistName  +')'
       else sNodInf:=sNodInf+'(??, '+sFlistName  +')';         { s:= 2:244/1278 (C-Box, Frankfurt, 02441278.FL}
       writeln(pOutput^,' ',' '+sNodInf);
-      writeln(pOutput^,' ',' '+dup(length(sNodInf),'Ä'));
+      writeln(pOutput^,' ',' '+typeform.dup(length(sNodInf),'Ä'));
       writeln(pOutput^);
     end;
     apos:=0;                                    { Zeilenz„hler ungltig setzen}
@@ -2117,9 +2123,9 @@ begin       { FidoSeekfile:string;************************ }
     assign(pOutput^,seekfile);
     rewrite(pOutput^);
     len:=length(getres2(2120,9))+3;
-    writeln(pOutput^,' ',' '+dup(len+length(seek),'Í'));
+    writeln(pOutput^,' ',' '+typeform.dup(len+length(seek),'Í'));
     writeln(pOutput^,' ',' '+getres2(2120,9),' "',mid(fidolastseek,3),'"');   { 'Dateisuche nach' .. }
-    writeln(pOutput^,' ',' '+dup(len+length(seek),'Í'));
+    writeln(pOutput^,' ',' '+typeform.dup(len+length(seek),'Í'));
     writeln(pOutput^);
     assign(pFileListCfg^,FileLists);
     reset(pFileListCfg^);
@@ -2136,7 +2142,7 @@ begin       { FidoSeekfile:string;************************ }
       end;
     end;
     saveconfig2;
-    signal;
+    xp1.signal;
     close(pFileListCfg^);
     close(pOutput^);
     if brk then
@@ -2256,6 +2262,13 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.59  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

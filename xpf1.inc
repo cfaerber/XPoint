@@ -832,7 +832,7 @@ again:
   end;
 
   if found>0 then begin
-    signal;
+    xp1.signal;
     h:=min(found+6,screenlines-6);
     selbox(76,h,'',x,y,true);
     dec(h,5);
@@ -901,6 +901,13 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
+  Revision 1.38  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.37  2001/09/08 16:29:39  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

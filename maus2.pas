@@ -30,6 +30,7 @@ uses
 {$ifdef NCRT}
   xplinux,
   xpcurses,
+  ncurses,
 {$ELSE }
 {$IFNDEF Delphi }  crt,{$ENDIF }
 {$endif}
@@ -82,7 +83,11 @@ procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
 {$IFDEF Win32}
 function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
 {$ELSE}
+{$IFDEF NCRT}
+function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
+{$ELSE}
 procedure mint(intsource,tasten,x,y,mx,my:word);
+{$ENDIF}
 {$ENDIF}
 
 { -------------------------------------------------------------------- }
@@ -120,10 +125,10 @@ end;
 
 function auto_move: boolean;
 var nn:boolean;
-    xx,yy:word;
+    yy:word;
 begin
   yy:=_mausy;
-  
+
   nn:=autoup or autodown;
   inout.autoup:=(yy<inside[istack,2]);
   inout.autodown:=(yy>inside[istack,3]);
@@ -137,22 +142,23 @@ var keyout: boolean;
     i: integer;
     moved: boolean;
     xx,yy: word;
+    wdist: Integer16;
 const
     was_inside:boolean=false;
 
   procedure put(NewKey:taste);
-    procedure make_room;
-    begin
-      if length(forwardkeys)>20 then
-        if forwardkeys[length(forwardkeys)-1]=#0 then
-          SetLength(forwardkeys, Length(forwardkeys)-2)
-        else
-          DeleteLastChar(forwardkeys);
-    end;
+//    procedure make_room;
+//    begin
+//      if length(forwardkeys)>20 then
+//        if forwardkeys[length(forwardkeys)-1]=#0 then
+//          SetLength(forwardkeys, Length(forwardkeys)-2)
+//        else
+//          DeleteLastChar(forwardkeys);
+//    end;
   begin
     if KeyOut then
     begin
-      make_room;
+//      make_room;
       forwardkeys := forwardkeys + NewKey;
     end else
     begin
@@ -195,6 +201,7 @@ begin
     begin
       Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
       if ((dwButtonState and 1)<>0) and ((lmb and 1)=0) then put(mausldouble);
+      if ((dwButtonState and 2)<>0) and ((lmb and 2)=0) then put(mausright);
       lmb:=dwButtonState;
     end else
     if (dwEventFlags and MOUSE_MOVED)<>0 then // mouse moved
@@ -214,22 +221,116 @@ begin
         else
           put(mausmoved);
     end else
-    if (dwEventFlags and 4 {MOUSE_WHEELED} )<>0 then         // mouse wheel
+    if (dwEventFlags and 4 {=MOUSE_WHEELED} )<>0 then         // mouse wheel
     begin
-      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
+      wdist:=Integer16(dwButtonState shr 16);
+      if wdist<0 then wdist:=wdist-60 else wdist:=wdist+60;
+      wdist:=wdist div 120;
+      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s,distance=%d)',[hex(dwButtonState,8),wdist]), DLTrace);
 
-      if Integer16(dwButtonState shr 16)>0 then
-        for i:=0 to Min(Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
+      if wdist>0 then
+        for i:=1 to wdist do
           put(mauswheelup)
       else
-        for i:=0 to Min(-Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
+        for i:=1 to -wdist do
           put(mauswheeldn);
     end else
       Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(dwButtonState,8)]), DLTrace);
   end;
   result:=keyout;
 end;
+{$ELSE}
+{$IFDEF NCRT}
+function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
+var rr: taste;
+    xx,yy: word;
+    bs:mmask_t;
+const
+    was_inside:boolean=false;
 
+  procedure put(NewKey:taste);
+  begin
+    if rr='' then
+      rr:=NewKey
+    else
+      Forwardkeys:=Forwardkeys+NewKey;
+  end;
+
+begin
+  rr:='';
+  bs:=Event.BState;
+
+  if has_moved(Event.x,Event.y) then
+  begin
+    if (Buttons and 1)<>0 then
+    begin
+      if (istack>0) and was_inside then
+        auto_move
+      else
+        put(mauslmoved);
+    end else
+    if (Buttons and 2)<>0 then
+      put(mausrmoved)
+    else
+      put(mausmoved);
+  end;
+
+  if (BS and BUTTON1_PRESSED)<>0 then
+  begin
+    put(mausleft);
+    Buttons:=Buttons or 1;
+
+    if (istack>0) then
+    begin
+      maus_gettext(xx,yy);
+      was_inside:=(xx>=inside[istack,0]) and (xx<=inside[istack,1]) and
+                  (yy>=inside[istack,2]) and (yy<=inside[istack,3]);
+    end else
+      was_inside:=false;
+  end;
+
+  if (Event.BState and BUTTON1_RELEASED)<>0 then
+  begin
+    if (Buttons and 1)= 0 then put(mausleft);
+    put(mausunleft);
+    Buttons:=Buttons and (not 1);
+  end;
+
+  if (BS and BUTTON1_DOUBLE_CLICKED)<>0 then
+  begin
+    put(mausldouble);
+    Buttons:=Buttons and (not 1);
+  end;
+
+  if (BS and (BUTTON1_CLICKED or BUTTON1_TRIPLE_CLICKED))<>0 then
+  begin
+    put(mausleft);
+    put(mausunleft);
+    Buttons:=Buttons and (not 1);
+  end;
+
+  if (BS and BUTTON3_PRESSED)<>0 then
+  begin
+    put(mausright);
+    Buttons:=Buttons or 2;
+  end;
+
+  if (BS and BUTTON3_RELEASED)<>0 then
+  begin
+    if (Buttons and 2)= 0 then put(mausright);
+    put(mausunright);
+    Buttons:=Buttons and (not 2);
+  end;
+
+  if (BS and (BUTTON3_CLICKED or BUTTON3_DOUBLE_CLICKED or BUTTON3_TRIPLE_CLICKED))<>0 then
+  begin
+    put(mausright);
+    put(mausunright);
+    Buttons:=Buttons and (not 2);
+  end;
+
+  result:=rr;
+end;
 {$ELSE}
 procedure mint(intsource,tasten,x,y,mx,my:word);
 
@@ -315,15 +416,18 @@ begin
       end;
 end;
 {$ENDIF}
+{$ENDIF}
 
 procedure maus_tasten_an;
 begin
+  DebugLog('maus2','maus_tasten_an',dlTrace);
   maus_tasten:=true;
   lx:=255; ly:=255;
 end;
 
 procedure maus_tasten_aus;
 begin
+  DebugLog('maus2','maus_tasten_aus',dlTrace);
   maus_tasten:=false;
 end;
 
@@ -334,12 +438,9 @@ end;
 
 procedure maus_gettext(var x,y:integer);
 begin
-{$IFDEF Win32}
   x:=mausx div 8+1;
   y:=mausy div 8+1;
-{$ELSE}
-  x:=255;y:=255;
-{$ENDIF}
+  DebugLog('maus2',Format('maus_gettext(x:=%d,y:=%d)',[x,y]),dlTrace);
 end;
 
 procedure mon;
@@ -377,7 +478,7 @@ end;
 procedure maus_pushinside(l,r,o,u:byte);
 begin
   if istack=maxinside then
-    raise Exception.Create('Mouse stack overflow')
+    raise Exception.Create('maus2'#0'Mouse stack overflow')
   else begin
     inc(istack);
     maus_setinside(l,r,o,u);
@@ -395,7 +496,7 @@ end;
 procedure maus_popinside;
 begin
   if istack=0 then
-    raise Exception.Create('Mouse stack overflow')
+    raise Exception.Create('maus2'#0'Mouse stack overflow')
   else begin
     autoupenable:=insen[istack,0];
     autodownenable:=insen[istack,1];
@@ -406,14 +507,15 @@ end;
 
 function _mausx:integer;
 begin
-  _mausx:=mausx div 8+1;
+  Result:=mausx div 8+1;
+  DebugLog('maus2',Format('_mausx: %dex',[Result]),dlTrace);
 end;
 
 function _mausy:integer;
 begin
-  _mausy:=mausy div 8+1;
+  Result:=mausy div 8+1;
+  DebugLog('maus2',Format('_mausy: %dex',[Result]),dlTrace);
 end;
-
 
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
@@ -447,6 +549,13 @@ end;
 
 {
   $Log$
+  Revision 1.33  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.32  2001/09/16 17:56:01  ma
   - adjusted debug levels
 

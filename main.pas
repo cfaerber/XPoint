@@ -33,7 +33,7 @@ uses
   {$IFDEF unix} linux,xplinux, {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
-  modem,zmodem,Sysutils,xpglobal,
+  modem,zmodem,Sysutils,xpglobal, debug,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
      xp1o,
@@ -60,7 +60,7 @@ uses
      ndiff,    { nodelist diff      }
      replytoall,
      zcrfc;    { RFC<->ZConnect     }
-  
+
 function StartInternalTools: Boolean;
 var
   Prog: String;
@@ -85,6 +85,7 @@ label ende;
 var pwcnt:byte;
     pwrc:boolean;
 begin
+ try
   if StartInternalTools then Exit;
 
 { Init the units }
@@ -187,10 +188,23 @@ ende:
   closeresource;
   runerror:=false;
   halt(errlevel);
+ except
+  on E:Exception do begin
+    DebugLogException(E);
+    raise;
+  end;
+ end;
 end;
 
 {
   $Log$
+  Revision 1.4  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.3  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 

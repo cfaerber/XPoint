@@ -350,6 +350,8 @@ procedure SigHandler(Sig : Integer); cdecl;
 
 procedure Scroll(w: TWinDesc; mode: boolean);
 
+{ Verschiedenes ------------------------------------------------------ }
+
 implementation
 
 uses
@@ -357,7 +359,9 @@ uses
   SysUtils,             { FormatDateTime etc. }
   FileIO,
 {$endif}
+  debug,
   keys,
+  mouse,
   xp0,                  { ScreenLines }
   xp1,                  { CloseDatabases }
   typeform;             { ISOTab }
@@ -382,12 +386,6 @@ var
    LastTextAttr: byte;                  { Letzte gesetzte Farbe }
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
-{$ifdef Debug}
-   __F: Text;                           { Log-File }
-
-const
-   __isopen: boolean = false;           { Log-File }
-{$endif}
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -505,13 +503,10 @@ begin
   win.Cols:= x2-win.x; win.Rows:= y2-win.y;
   { Fenster erzeugen }
   win.wHnd:= newwin(win.Rows, win.Cols, win.y, win.x);
-{$IFDEF Debug}
-  if __isopen then begin
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' Creating window (XPCurses::MakeWindow)');
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' x1=',x1,', x2=',x2,', y1=',y1,', y2=',y2);
-  end;
-  if win.wHnd=nil then halt(1);
-{$ENDIF }
+
+  Debug.DebugLog('xpcurses',Format('MakeWindow(x1=%d,x2=%d,y1=%d,y2=%d)',[x1,x2,y1,y2]),dlDebug);
+  Assert(Assigned(win.wHnd),'xpcurses'#0'MakeWindow failed');
+
   win.isRel:= false;
   win.isEcho:= false;
   { Panel verbinden }
@@ -556,10 +551,8 @@ begin
   update_panels;
   { Refresh erzwingen }
   wrefresh(ActWin.wHnd);
-{$IFDEF Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' RestoreWindow');
-{$ENDIF }
+
+  Debug.DebugLog('xpcurses',' RestoreWindow',dlInform);
 end;
 
 
@@ -805,6 +798,7 @@ end;
  Note: Make sure that keypad(win,true) has been issued prior to use.
        ( nWindow does this )
  ---------------------------------------------------------------------}
+
 function Readkey: char;
 
   function TranslateESCSeq(Code : Integer): String;
@@ -816,16 +810,7 @@ function Readkey: char;
         if Code = keyESCSeqs[I].ncCode then
         begin
            Result := keyESCSeqs[I].DosCode;
-{$IFDEF Debug}
-           if __isopen then
-           begin
-             Write(__F,FormatDateTime('hh:nn:ss',Now),
-                     Format(' Translating KeySequence: [%d] to ', [Code]));
-             for I := 1 to Length(Result) do
-               write(__F, '[', Ord(Result[I]), ']');
-               writeln(__F);
-           end;
-{$ENDIF}
+           Debug.DebugLog('xpcurses',Format('Translating KeySequence: [%d] to ', [Code]),dlTrace);
            exit;
         end;
   end;
@@ -837,14 +822,10 @@ function Readkey: char;
      Result := InChar;
      I := Ord(InChar);
      if (I > 128) and (PrefChar <> #0) then
-     begin	
+     begin
 	Result := Chr(IBM2ISOTab[I]);
-{$IFDEF Debug}
-           if __isopen then
-             Writeln(__F,FormatDateTime('hh:nn:ss',Now),
-                    Format(' Key translated: [%d] => [%d] prefchar=[%d]',
-		            [Ord(InChar), Ord(Result), Ord(PrefChar)]));
-{$ENDIF}
+        Debug.DebugLog('xpcurses',Format('Key translated: [%d] => [%d] prefchar=[%d]',
+		            [Ord(InChar), Ord(Result), Ord(PrefChar)]),dlTrace);
      end;
      PrefChar := Result;
   end;
@@ -854,31 +835,36 @@ var
   l      : longint;
   I      : Integer;
   DosSeq : String;
+label again;
 begin
   if not __isInit then InitXPCurses;
   b:= IsEcho;
   noecho;
+
+again:
   l:= wgetch(BaseWin.wHnd);
-{$IFDEF Debug}
-           if __isopen then
-             Writeln(__F,FormatDateTime('hh:nn:ss',Now),
-                     Format(' Key pressed: [%d] = ''%c''', [l, chr(l)]));
-{$ENDIF}
+  Debug.DebugLog('xpcurses',Format('wgetch: %d',[Integer(l)]),DLTrace);
 
   { if it's an extended key, then map to the IBM values }
-  if (l > 255) then  // is it a ncurses-special key?
+  if (l > 255) or (l=KEY_MOUSE) then  // is it a ncurses-special key?
   begin
-     DosSeq := TranslateESCSeq(l);
-     
-     if Length(DosSeq) = 0 then
-       DosSeq := #27;
+     if l=KEY_MOUSE then
+       DosSeq := UpdateMouseStatus
+     else
+       DosSeq := TranslateESCSeq(l);
 
-     ReadKey:= DosSeq[1];              // first char is result
+     if Length(DosSeq) = 0 then
+       Goto again;
+
+     Result:= DosSeq[1];              // first char is result
      PrefChar := #0;
-     for I := 2 to Length(DosSeq) do   // other chars pushed to process later
-       ungetch(ord(DosSeq[I]));
+
+     if Length(DosSeq)>=2 then
+       Forwardkeys:=Mid(DosSeq,2)+Forwardkeys;
   end else
-    Readkey:= TranslateSpecialChar(chr(ord(l)));
+    Result:= TranslateSpecialChar(chr(ord(l)));
+
+  Debug.DebugLog('xpcurses',Format('ReadKey: %d',[Integer(Result)]),DLTrace);
   if (b) then echo;
 end;
 
@@ -1038,20 +1024,14 @@ begin
   if (ActWin.wHnd <> BaseWin.wHnd) then begin
     if (ActWin.pHnd <> nil) then
       del_panel(ActWin.pHnd);
-{$IFDEF DEBUG }
-    if (ActWin.wHnd = nil) then begin
-      writeln('Error in Windowhandling (XPCurses::TextMode)');
-      halt(1);
-    end;
-{$ENDIF }
+    Assert(Assigned(ActWin.wHnd),'xpcurses'#0'Error in Windowhandling (XPCurses::TextMode)');
+
     if (ActWin.wHnd <> nil) then
       delwin(ActWin.wHnd);
     system.Move(BaseWin, ActWin, sizeof(TWinDesc));
   end;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' TextMode');
-{$endif}
+  DebugLog('xpcurses','XPCurses::TextMode',dlDebug);
+
   LastMode := mode;
   DirectVideo := true;
   CheckSnow := true;
@@ -1209,13 +1189,10 @@ function VideoType: byte;
 begin
   if not __isInit then InitXPCurses;
   if (has_colors = 0) then
-    VideoType:= 7
+    Result := 7
   else
-    VideoType:= 3;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Videotype');
-{$endif}
+    Result := 3;
+  DebugLog('xpcurses',Format('Videotype:%d',[Integer(Result)]),dlTrace);
 end;
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
@@ -1223,10 +1200,8 @@ end;
 procedure Window(x1, y1, x2, y2: integer);
 begin
   if not __isInit then InitXPCurses;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Window(',x1,',',x2,',',y1,',',y2,')');
-{$endif}
+  DebugLog('xpcurses',Format('Window(%d,%d,%d,%d)',[x1,x2,y1,y2]),dlTrace);
+
   Exit;
   { Aus INOUT.PAS uebernommen }
   mwl:=x1; mwr:=x2;
@@ -1260,50 +1235,36 @@ begin
   wrefresh(BaseWin.wHnd);
   GotoXY(x0, y0);
   SetTextAttr(ta);
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Display Hard');
-{$endif}
+
+  DebugLog('xpcurses',Format('Display Hard(%d,%d,''%s'')',[x,y,s]),dlTrace);
 end;
 
 procedure CursorOn;
 begin
   if not __isInit then InitXPCurses;
   curs_set(1);
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor On');
-{$endif}
+  DebugLog('xpcurses','Cursor On',dlTrace);
 end;
 
 procedure CursorBig;
 begin
   if not __isInit then InitXPCurses;
   curs_set(2);
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor Big');
-{$endif}
+  DebugLog('xpcurses','Cursor Big',dlTrace);
 end;
 
 procedure CursorOff;
 begin
   if not __isInit then InitXPCurses;
   curs_set(0);
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Cursor Off');
-{$endif}
+  DebugLog('xpcurses','Cursor Off',dlTrace);
 end;
 
 procedure mDelay(msec: word);
 begin
   if not __isInit then InitXPCurses;
   napms(msec);
-{$ifdef .Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Delay=',msec,' ms');
-{$endif}
+  DebugLog('xpcurses',Format('MDelay(%u {ms})',[msec]),dlTrace);
 end;
 
 { XPWIN32.PAS-Plagiat -------------------------------------------------- }
@@ -1313,10 +1274,7 @@ begin
   if not __isInit then InitXPCurses;
   getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenLines:= MaxRows;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetScreenLines=',MaxRows);
-{$endif}
+  DebugLog('xpcurses',Format('SysGetScreenLines: %d',[MaxRows]),dlTrace);
 end;
 
 function SysGetScreenCols: integer;
@@ -1324,10 +1282,7 @@ begin
   if not __isInit then InitXPCurses;
   getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenCols:= MaxCols;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetScreenLines=',MaxCols);
-{$endif}
+  DebugLog('xpcurses',Format('SysGetScreenCols: %d',[MaxCols]),dlTrace);
 end;
 
 { Ermittelt die gr”áte Ausdehnung des Screens, die in Abh„ngigkeit
@@ -1338,10 +1293,7 @@ begin
   getmaxyx(stdscr,MaxRows,MaxCols);
   Lines:= MaxRows;
   Cols:= MaxCols;
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysGetMaxScreenSize(Lines=',MaxRows,',Cols=',MaxCols,')');
-{$endif}
+  DebugLog('xpcurses',Format('SysGetMaxScreenSize(Lines:=%d,Cols:=%d)',[MaxRows,MaxCols]),dlTrace);
 end;
 
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
@@ -1352,10 +1304,7 @@ begin
   resizeterm(Lines, Cols);
   refresh;
 }
-{$ifdef Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' SysSetScreenSize(Lines=',Lines,',Cols=',Cols,') (Not implemented)');
-{$endif}
+  DebugLog('xpcurses',Format('SysSetScreenSize(Lines=%d,Cols=%d)',[Lines,Cols]),dlDebug);
 end;
 
 procedure SysSetBackIntensity;
@@ -1395,13 +1344,8 @@ end;
 procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
+  DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
 {$ifdef Debug}
-  if __isopen then begin
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' Curses is going down.');
-    WriteLn(__F);
-    CloseFile(__F);
-    __isopen:=false;
-  end;
   writeln;
   writeln('This message is visible only in the debug version!');
   write('Please press enter...');
@@ -1429,6 +1373,7 @@ var
   i : integer;
   s : String[MaxESCSeq];
   w : PWindow;
+  m : mmask_t;
 
   procedure NCursesRegisterKeys;
   var
@@ -1443,6 +1388,7 @@ var
        end;
   end;
 begin
+  DebugLog('xpcurses','StartCurses: Starting up Curses.',dlDebug);
   { save the current terminal settings }
   tcGetAttr(STDIN,tios);
   { Curses starten }
@@ -1476,6 +1422,7 @@ begin
     win.isRel:= false;
 
     NCursesRegisterKeys;
+
 (*
      { define the the alt'd keysets for ncurses }
     { alt/a .. alt/z }
@@ -1493,29 +1440,26 @@ begin
     s:= #27+'='+#0; define_key(@s[1],502); { alt/= }
     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
 *)
-{$ifdef Debug}
-                 { ~/ does not work anywhere }
-    AssignFile(__F,AddDirSepa(Getenv('HOME')) + '.curses.log');  
-    System.Rewrite(__F);
-    if ioresult=0 then begin
-      __isopen:= true;
-      WriteLn(__F,'------------------- Curses-Init-Log on ',FormatDateTime('dd.mm.yyyy hh:nn:ss', Now));
-      WriteLn(__F,'      NCurses Version ',NCURSES_VERSION_MAJOR,'.',
-              NCURSES_VERSION_MINOR,' Patch ',NCURSES_VERSION_PATCH);
-      WriteLn(__F,'      MaxCols=',MaxCols,', MaxRows=',MaxRows,', MaxColors=',COLORS);
-      WriteLn(__F,'      TabSize=',TABSIZE,', Esc Delay=',ESCDELAY,' Baudrate=',baudrate);
-      WriteLn(__F,'      Has Colors: ',boolean(has_colors));
-    end;
-{$endif}
+
+    Debug.DebugLog('xpcurses',Format('NCurses version %d.%d.p%d',
+      [NCURSES_VERSION_MAJOR,NCURSES_VERSION_MINOR,NCURSES_VERSION_PATCH]),dlDebug);
+    Debug.DebugLog('xpcurses',Format('MaxCols=%d, MaxRows=%d, MaxColors=%d, TabSize=%d',
+      [MaxCols,MaxRows,COLORS,TABSIZE]),dlDebug);
+    Debug.DebugLog('xpcurses',Format('Esc Delay=%d, Baudrate=%d, Has Colors=%s',
+      [ESCDELAY,baudrate,iifs(has_colors<>0,'yes','no')]),dlDebug);
+
+    { initialize mouse }
+    m:=NCurses.MouseMask(
+      ALL_MOUSE_EVENTS       or
+      REPORT_MOUSE_POSITION,nil);
+    Debug.DebugLog('xpcurses',Format('MouseMask=%s',[Hex(m,8)]),dlDebug);
+    maus:=m<>0;
+
   end;
 end;
 
 procedure InitXPCurses;
 begin
-{$IFDEF Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' InitXPCurses (repeated!!!!)');
-{$ENDIF }
   if __isInit=true then exit;
   __isInit:= true;              { Flag setzen }
 
@@ -1528,7 +1472,6 @@ begin
     writeln('Curses cannot be loaded!');
     halt(1);
   end;
-
 
   { Am Anfang ist die Basis auch Aktuell }
   system.Move(BaseWin, ActWin, sizeof(TWinDesc));
@@ -1564,20 +1507,25 @@ begin
   { set the unit exit procedure }
   ExitSave:= ExitProc;
   ExitProc:= @EndXPCurses;
+
 end;
 
 procedure DoneXPCurses;
 begin
-{$IFDEF Debug}
-  WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' DoneXPCurses');
-{$ENDIF }
   { Noch ein SubWindow vorhanden= }
   EndXPCurses;
 end;
-   
+
 end.
 {
   $Log$
+  Revision 1.53  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.52  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -170,7 +170,7 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  {$IFDEF NCRT} xpcurses,{$ELSE} xpcrt, {$ENDIF}
+  keys, {$IFDEF NCRT} xpcurses,{$ELSE} xpcrt, {$ENDIF}
   xpglobal,sysutils,typeform,debug,xpprogressoutputwindow, fileio;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
@@ -269,8 +269,16 @@ end;
 procedure TModemNetcall.ProcessKeypresses(AcceptSpace:boolean);
 var c : char;
 begin
-  if keypressed then begin
-    c:=readkey;
+  if keys.keypressed then begin
+    c:=keys.readkey;
+
+    if c=#0 then case keys.readkey of
+      #243 {mausunright}: c:=#27;
+      #241 {mausunleft}:  c:=' ';
+      #248 {mauswheelup}: c:='+';
+      #249 {mauswheeldn}: c:='-';
+    end;
+
     case c of
       #27 : begin
               FTimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
@@ -279,7 +287,6 @@ begin
       '+' : FTimerObj.SetTimeout(FTimerObj.SecsToTimeout+1);
       '-' : if FTimerObj.SecsToTimeout>1 then FTimerObj.SetTimeout(FTimerObj.SecsToTimeout-1);
       ' ' : if AcceptSpace then FTimerObj.SetTimeout(0);
-      #0: readkey;
     end;
   end;
 end;
@@ -519,6 +526,13 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.7  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

@@ -611,6 +611,7 @@ begin
     initscs;
 
 {$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
+{$IFNDEF NCRT}  {NCurses uses wgetch}
     if UseMulti2 then begin
       repeat
         st1:=kbstat;
@@ -672,14 +673,15 @@ begin
         end;
       end
     else
+{$ENDIF NCRT}
 {$ENDIF Win32}
     begin
       key_pressed:=true;
 
     end;
 
-    z := ReadKey;
-    if z=#0 then z:=z+ReadKey;
+    z := Keys.ReadKey;
+    if z=#0 then z:=z+Keys.ReadKey;
 
     cursor(curoff);
     lastkey:=z;
@@ -1664,6 +1666,13 @@ end;
 
 {
   $Log$
+  Revision 1.79  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.78  2001/09/16 17:56:01  ma
   - adjusted debug levels
 

@@ -148,9 +148,9 @@ var    func_proc : func_test;
 
        forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }
 
-{$IFNDEF NCRT }
 function  keypressed:boolean;
 function  readkey:char;
+{$IFNDEF NCRT }
 var
   lastscancode : byte;
 {$ENDIF }
@@ -198,10 +198,19 @@ end;
 {$ENDIF }
 
 { keypressed ist in xpcurses definiert. }
-{$IFNDEF NCRT }
+
 function keypressed:boolean;
 begin
-  keypressed:=(forwardkeys<>'') or xpcrt.keypressed;
+  keypressed:=(forwardkeys<>'') or
+  {$IFDEF Win32}
+    xpcrt.keypressed;
+  {$ELSE}
+  {$IFDEF NCRT}
+    xpcurses.keypressed;
+  {$ELSE}
+    crt.keypressed;
+  {$ENDIF}
+  {$ENDIF}
 end;
 
 function readkey:char;
@@ -210,17 +219,25 @@ begin
     readkey:=forwardkeys[1];
     forwardkeys:=Mid(forwardkeys,2);
   end else
-    readkey:=xpcrt.readkey;
+  {$IFDEF Win32}
+    Result := xpcrt.readkey;
+  {$ELSE}
+  {$IFDEF NCRT}
+    Result := xpcurses.readkey;
+  {$ELSE}
+    Result := crt.readkey;
+  {$ENDIF}
+  {$ENDIF}
+{$IFDEF Win32 }
   if (Result = #9) and (GetAsyncKeyState(VK_SHIFT) < 0) then
   begin
-    ReadKey := #0;
+    Result := #0;
     {$IFDEF FPC }
       _Keyboard(#148);
     {$ELSE }
       _Keyboard(#15);
     {$ENDIF }
   end;
-{$IFDEF Win32 }
   // Scan Numeric Block keys *, - and +
   Lastscancode:=0;
   if GetAsyncKeyState(VK_Multiply) < 0 then
@@ -231,7 +248,6 @@ begin
     LastScanCode := GreyPlus;
 {$ENDIF }
 end;
-{$ENDIF } { NCRT }
 
 procedure keyboard(const s:string);
 begin
@@ -245,6 +261,7 @@ end;
 
 procedure clearkeybuf;
 begin
+  forwardkeys:='';
   while keypressed do readkey;
 end;
 
@@ -377,6 +394,13 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.46  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

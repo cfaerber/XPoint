@@ -278,7 +278,9 @@ begin
   Debug.DebugLog('xpcrt', Format('ReadKey: %d', [Integer(Result)]), DLTrace);
 end;
 
-initialization
+procedure do_initialization;
+var mode:DWORD;
+begin
 {$IFNDEF FPC }
   StdInputHandle := GetStdHandle(STD_INPUT_HANDLE);
 {$ENDIF }
@@ -287,10 +289,28 @@ initialization
     SetConsoleCP(437);
     SetConsoleOutputCP(437);
   end;
+
+  mouse.maus:=GetSystemMetrics(SM_MOUSEPRESENT)<>0;
+
+  if mouse.maus then
+    if GetConsoleMode(StdInputHandle,mode) then
+      if (mode and ENABLE_MOUSE_INPUT)=0 then
+        SetConsoleMode(StdInputHandle,mode or ENABLE_MOUSE_INPUT);
+end;
+
+initialization
+  do_initialization;
 end.
 
 {
   $Log$
+  Revision 1.13  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.12  2001/09/16 17:56:01  ma
   - adjusted debug levels
 

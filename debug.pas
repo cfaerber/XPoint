@@ -27,7 +27,7 @@ unit debug;
 
 interface
 
-uses xpglobal;
+uses xpglobal,sysutils;
 
 const         {Loglevels proposed are}
   DLNone = 0;
@@ -51,6 +51,10 @@ procedure DebugLog(Badge, Message: string; Level: Integer);
 {Write a debug message to logfile if level is less or equal badge level.
  Badge is an identifier for the program portion that creates the message.
  For example DebugLog('Coreroutine','Finished section 1',1) }
+
+procedure DebugLogException(e:Exception);
+{Write a debug message for e to logfile with level dlError; the message
+ may be a simple message or badge+#0+message }
 
 procedure SetLoglevel(Badge: string; Level: Integer);
 {Sets badge level. Messages for badge are logged only if level is
@@ -80,7 +84,7 @@ uses
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF Dos32} xpdos32, {$ENDIF}
-  SysUtils,TypeForm;
+  TypeForm;
 
 const
   qLogbadges = 50;
@@ -105,7 +109,10 @@ begin
     Logbadges[I].Badge := Badge; S := GetEnv(PChar(Badge));
     if S = '' then S := GetEnv('DEFAULT');
     if S = '' then Str(DLDefault,S);
-    Val(S, Logbadges[I].Level, Temp); FindBadge := I
+    Val(S, Logbadges[I].Level, Temp);
+    // NB: This must be after we set the data, so a recursive call will find it
+    DebugLog('debug',Format('debug level for %s is %d',[LogBadges[i].Badge,LogBadges[i].Level]),DLNone);
+    FindBadge := I
   end
   else
     if Logbadges[I].Badge = Badge then
@@ -141,6 +148,25 @@ begin
     end;
     If IOResult <> 0 then;; (* clear io error *)
   end;
+end;
+
+procedure DebugLogException(e:Exception);
+var i:integer;
+    badge,message:string;
+begin
+  i:=CPos(#0,e.message);
+
+  if i>0 then
+  begin
+    badge:=LeftStr(e.message,i-1);
+    message:=Mid(e.message,i+1);
+  end else
+  begin
+    badge:='';
+    message:=e.message;
+  end;
+
+  DebugLog(badge,Format('%s: %s',[e.classname,message]),dlError);
 end;
 
 procedure SetLoglevel(Badge: string; Level: Integer);
@@ -231,6 +257,13 @@ finalization
 
 {
   $Log$
+  Revision 1.24  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.23  2001/09/15 19:52:14  cl
   - added DLTrace=DLDebug+1
 

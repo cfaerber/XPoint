@@ -25,7 +25,19 @@ unit mouse;
 interface
 
 uses
-  xpglobal {$IFDEF Win32},windows{$ENDIF};
+{$IFDEF Win32}
+  windows,
+{$ELSE}
+{$IFDEF NCRT}
+  ncurses,
+{$ENDIF}
+{$ENDIF}
+  xpglobal,
+  debug,
+  sysutils,
+  strutils,
+  typeform,
+  keys;
 
 const  mausLinks  = 0;     { linke Taste    }
        mausRechts = 1;     { rechte Taste   }
@@ -65,6 +77,10 @@ function maust:word;      { Maustastenzustand holen }
 
 {$IFDEF Win32}
 function UpdateMouseStatus(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
+{$ELSE}
+{$IFDEF NCRT}
+function UpdateMouseStatus: Taste;
+{$ENDIF}
 {$ENDIF}
 
 implementation
@@ -72,6 +88,12 @@ implementation
 {$IFDEF Win32}
 uses xpcrt,maus2;
 var LastEvent: MOUSE_EVENT_RECORD;
+{$ELSE}
+{$IFDEF NCRT}
+uses xpcurses,maus2;
+var MouseEvent: NCurses.MEVENT;
+    MouseButtons: Cardinal;
+{$ENDIF}
 {$ENDIF}
 
 const
@@ -83,29 +105,13 @@ begin
 end;
 
 procedure mausan;
-{$IFDEF Win32}
-var stat: Windows.DWORD;
-{$ENDIF}
 begin
-{$IFDEF Win32}
-  if Windows.GetConsoleMode(StdInputHandle,stat) then
-    if (stat and ENABLE_MOUSE_INPUT)=0 then
-      Windows.SetConsoleMode(StdInputHandle,stat or ENABLE_MOUSE_INPUT);
-{$ENDIF}
-  mausda := false;
+  // only neccessary under DOS
 end;
 
 procedure mausaus;
-{$IFDEF Win32}
-var stat: Windows.DWORD;
-{$ENDIF}
 begin
-{$IFDEF Win32}
-  if Windows.GetConsoleMode(StdInputHandle,stat) then
-    if (stat and ENABLE_MOUSE_INPUT)<>0 then
-      Windows.SetConsoleMode(StdInputHandle,stat and (not DWORD(ENABLE_MOUSE_INPUT)));
-{$ENDIF}
-  mausda := false;
+  // only neccessary under DOS
 end;
 
 procedure getmaus(var stat:mausstat);
@@ -117,6 +123,15 @@ begin
     stat.Y := LastEvent.dwMousePosition.Y * 8;
     stat.tasten := LastEvent.dwButtonState;
   end else
+{$ELSE}
+{$IFDEF NCRT}
+  if mausda then
+  begin
+    stat.x := MouseEvent.X * 8;
+    stat.Y := MouseEvent.Y * 8;
+    stat.tasten := MouseButtons;
+  end else
+{$ENDIF}
 {$ENDIF}
   begin
     stat.x := 0;
@@ -129,22 +144,34 @@ function mausx:word;
 begin
 {$IFDEF Win32}
   if Mausda then
-    MausX := LastEvent.dwMousePosition.X * 8
+    Result := LastEvent.dwMousePosition.X * 8
   else
 {$ELSE}
-  MausX := 0;
+{$IFDEF NCRT}
+  if mausda then
+    Result := MouseEvent.X * 8
+  else
 {$ENDIF}
+{$ENDIF}
+  Result := 0;
+  DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
 end;
 
 function mausy:word;
 begin
 {$IFDEF Win32}
   if Mausda then
-    MausY := LastEvent.dwMousePosition.Y * 8
+    Result := LastEvent.dwMousePosition.Y * 8
   else
 {$ELSE}
-  MausY := 0;
+{$IFDEF NCRT}
+  if mausda then
+    Result := MouseEvent.Y * 8
+  else
 {$ENDIF}
+{$ENDIF}
+    Result := 0;
+  DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
 end;
 
 function maust:word;
@@ -153,9 +180,14 @@ begin
   if Mausda then
     Result := LastEvent.dwButtonState
   else
-{$ELSE }
-  Result := 0;
-{$ENDIF }
+{$IFDEF NCRT}
+  if mausda then
+    Result := MouseButtons
+  else
+{$ENDIF}
+{$ENDIF}
+    Result := 0;
+  DebugLog('mouse',Format('Maust: %s',[Hex(Result,2)]),dlTrace);
 end;
 
 procedure setmaus(x,y: integer);
@@ -181,19 +213,63 @@ begin
   else
     Result := false;
 end;
+{$ELSE}
+{$IFDEF NCRT}
+function UpdateMouseStatus: Taste;
+begin
+  mausda:=false;
+
+  if (NCurses.GetMouse(MouseEvent)<>0 {OK}) then
+  begin
+    Debug.DebugLog('maus2', 'no valid mouse event', DLTrace);
+    result:='';
+    exit;
+  end;
+
+  Debug.DebugLog('maus2', Format('mouse event (id=%d,x=%d,y=%d,bstate=0x%s)',[MouseEvent.id,MouseEvent.x,MouseEvent.y,hex(MouseEvent.Bstate,8)]), DLTrace);
+
+//  if NCurses.mouse_trafo(@(MouseEvent.X),@(MouseEvent.Y),0)=0 {FALSE} then
+//  begin
+//    DebugLog('maus2','could not convert coordinates',DLTrace);
+//    result:='';
+//    exit;
+//  end;
+//
+//  Debug.DebugLog('maus2', Format('translated mouse event coordinates (x=%d,y=%d)',[MouseEvent.x,MouseEvent.y]), DLTrace);
+
+  mausda:=true;
+
+  Result := maus_set_keys(MouseEvent,MouseButtons);
+
+  if not maus_tasten then
+    Result := '';
+end;
+{$ENDIF}
 {$ENDIF}
 
 initialization
 {$IFDEF Win32}
-    maus:=true;
+  // maus wird von xpcrt gesetzt
 {$ELSE}
-    maus:=false;
+{$IFDEF NCRT}
+  // maus wird von xpcurses gesetzt
+{$ELSE}
+  maus:=false;
 {$ENDIF}
-    mausda:=false;
-    mausswapped:=false;
+{$ENDIF}
+
+  mausda:=false;
+  mausswapped:=false;
 
 {
   $Log$
+  Revision 1.27  2001/09/17 16:29:17  cl
+  - mouse support for ncurses
+  - fixes for xpcurses, esp. wrt forwardkeys handling
+
+  - small changes to Win32 mouse support
+  - function to write exceptions to debug log
+
   Revision 1.26  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 
