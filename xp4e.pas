@@ -1378,7 +1378,10 @@ begin
   newbrett:=false;
   brett:=(left(s,1)='/') and (cpos('@',s)=0);
   if trim(s)='' then
+  begin
+    empftest := true;
     exit
+  end
   else if brett and _pmonly then begin
     rfehler(2709);    { 'Direktnachricht an ein Brett ist NICHT m”glich' }
     ok:=false;
@@ -2419,6 +2422,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.20  2001/09/07 02:09:16  mk
+  - empftest result is defined now, when s is empty
+
   Revision 1.25.2.19  2001/09/05 23:19:35  mk
   - fixed uninialized AdrbuchDef (now OldAdr) in EditUser
 
