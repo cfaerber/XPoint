@@ -1116,7 +1116,7 @@ begin
                 SetGelesen;
               nextmsg:
                 SetKK;
-//              if not aufbau then write_disp_line(p,0,true);
+                if not aufbau then write_disp_line(p,0,true);
                 if _down then
                   GoDown;
                 NachWeiter:=nw;
@@ -1774,6 +1774,10 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.99.2.6  2003/09/06 13:53:42  cl
+  - BUGFIX: display line not updated when message status changed in lister
+    See <8tEHCQ0y3TB@ferdy.wiesibox.de> "Snapshot vom 04.09."
+
   Revision 1.99.2.5  2003/08/31 20:49:43  cl
   - backport of small fixes from MAIN branch:
 
