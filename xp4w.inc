@@ -495,12 +495,15 @@ var fn     : pathstr;
   begin
     if (viewer.ext='') and (viewer.prog<>'') then
     begin
-      s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.';
-      if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
-        if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
-        else begin
+      s:=ustr('.' + GetFileExt(mpdata.fname)+'.');
+      if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0))
+        and (s <> '..') then
+        if pos(s,viewer_lister)>1 then
+          Viewer.Prog:=''           { Interner Lister }
+        else
+        begin
           diabox(45,6,'',x,y);
-          mwrt(x+2,y+1,s+getres(2443));
+          mwrt(x+2,y+1,Left(s, Length(s)-1)+getres(2443));
           mwrt(x+2,y+2,getres(2444));
           t:='';
           case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
@@ -1546,6 +1549,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.9  2000/10/19 07:24:47  mk
+  - optische Korrektur fuer TestViralExtension
+
   Revision 1.25.2.8  2000/10/18 23:36:29  mk
   - verschiedene MIME-Viewer Bugfixes
 
