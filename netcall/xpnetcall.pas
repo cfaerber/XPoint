@@ -936,7 +936,7 @@ var NetcallLogfile,CrashBoxName: String;
 
 begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','function Netcall',DLInform);
-  netcall:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
+  result:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
 
   if not FidoCrash then begin
     if BoxName='' then
@@ -1049,10 +1049,10 @@ begin                  { function Netcall }
 
   netcalling:=true;
   showkeys(0);
-  netcall:=false;
   connects:=0;
   IncomingFiles:=TStringList.Create;
   xp3o.ForceRecipient:= '';
+  result:=false;
 
   {------------------------- call appropriate mailer ------------------------}
   Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
@@ -1067,13 +1067,13 @@ begin                  { function Netcall }
       nt_Fido: begin
         Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
         case FidoNetcall(BoxName,Boxpar,FidoCrash,sysopmode,NetcallLogfile,IncomingFiles) of
-          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
           EL_senderr,
           EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-          EL_break  : begin Netcall:=false; end;
-        else begin Netcall:=true; end;
+          EL_break  : begin result:=false; end;
+        else begin result:=true; end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
         end; {case nt_Fido}
@@ -1081,13 +1081,13 @@ begin                  { function Netcall }
       nt_ZConnect: begin
         Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
         case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
-          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
           EL_senderr,
           EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-          EL_break  : begin  Netcall:=false; end;
-        else begin Netcall:=true end;
+          EL_break  : begin  result:=false; end;
+        else begin result:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
         end; {case nt_ZConnect}
@@ -1095,13 +1095,13 @@ begin                  { function Netcall }
       nt_UUCP: begin
         Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
         case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
-          EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+          EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
           EL_senderr,
           EL_nologin: begin Netcall_connect:=true; inc(connects); end;
-          EL_break  : begin  Netcall:=false; end;
-        else begin Netcall:=true end;
+          EL_break  : begin  result:=false; end;
+        else begin result:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
         end; {case nt_UUCP}
@@ -1111,19 +1111,21 @@ begin                  { function Netcall }
         if Boxpar^.SMTPAfterPop then
         begin
           netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles);
-          netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile) or netcall_connect;
-
+          if SendSMTPMails(BoxName,bfile,BoxPar,PPFile)then
+            if netcall_connect then result:= true;
         end
         else begin
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles) or netcall_connect;
+          if GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles)then
+            if netcall_connect then result:= true;
         end;
       end; {case nt_POP3}
 
       nt_NNTP: begin
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
         netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
-        netcall_connect:= GetNNTPMails(BoxName,Boxpar,IncomingFiles) or netcall_connect;
+        if GetNNTPMails(BoxName,Boxpar,IncomingFiles)then
+          if netcall_connect then result:= true;
       end;
 
       else
@@ -1355,6 +1357,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/10/15 20:46:13  ma
+  - fixed: Netcall/All did not work properly with internal RFC net types
+
   Revision 1.37  2001/10/15 13:12:26  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
