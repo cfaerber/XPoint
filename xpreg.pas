@@ -1441,7 +1441,7 @@ begin
   wrt(x+3,y+1,'Cross \\//    '+
               Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
-  s:=x_copyright + ' ' + author_name;
+  s:='OpenXP ' + x_copyright + ' by ' + author_name;
   wrt(x+67-length(s),y+2,s);
 
   if registriert.r2 then begin
@@ -1566,6 +1566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.2  2000/12/06 09:44:08  mk
+  - OpenXp vor dem (c)
+
   Revision 1.6.2.1  2000/06/01 15:17:04  mk
   - Unnoetigen Parameter in Multi2 entfernt
 
