@@ -548,7 +548,7 @@ var fn     : string;
       t     : taste;
       s     : string;
   begin
-//    if (viewer.ext='') and (viewer.prog<>'') then
+    if (viewer.ext='') and (viewer.prog<>'') then
     begin
       s:=UpperCase(ExtractFileExt(mpdata.fname))+'.';
       if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0)) and (s <> '..') then
@@ -1597,6 +1597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.46  2000/10/19 15:10:07  mk
+  - Fix fuer TestViralExtension
+
   Revision 1.45  2000/10/19 12:56:21  mk
   - bei Singlepart MIME und ganze Nachricht den internen Viewer nutzen
 
