@@ -9425,8 +9425,11 @@ verwenden.
 @
 1010
 Hier geben Sie an, welcher "Familie" die von Ihnen
-verwendete PGP-Version angeh”rt. Nachfolgend dazu
-einige Hinweise:
+verwendete PGP-Version angeh”rt. PGP muá installiert
+und per DOS-Pfad (PATH oder PGPPATH) erreichbar sein.
+
+Nachfolgend einige Hinweise zu PGP:
+
 
 <<PGP - Versions- und Detailinformationen
 
@@ -9435,6 +9438,7 @@ a) Informationen ber und b) Versionen von PGP, auf
 die hier nicht alle im Detail ersch”pfend eingegangen
 werden kann. Zusammenfassend mnden diese in folgende
 Aussagen zum Thema PGP (Stand November 2000):
+
 
 þ  Wenn Sie PGP ausschlieálich in Verbindung mit
    CrossPoint einsetzen, verwenden Sie eine der Ver-
@@ -9651,13 +9655,13 @@ Aussagen zum Thema PGP (Stand November 2000):
    <<PGPFW658Win32.zip>>
    Komplettversion (fast 8 MB) mit allem Drum und
    Dran, enth„lt auch eine Kommandozeilen-Version.
-   Lauff„hig unter Windows 9x/2000/NT.
+   Lauff„hig unter Windows 9x/ME/2000/NT.
 
    <<PGPcmdln_6.5.8_Win32_FW.zip>>
    Kommandozeilen-Version pur, rund 2,5 MB. Hinweis:
-   Diese Version l„uft auch unter Windows 9x, obwohl
-   in der dem Paket beiliegenden WhatsNew.txt nur von
-   Windows 2000/NT die Rede ist.
+   Diese Version l„uft auch unter Windows 9x/ME,
+   obwohl in der dem Paket beiliegenden WhatsNew.txt
+   nur von Windows 2000/NT die Rede ist.
 
    Beide Versionen laufen *nicht* unter reinem DOS!
 
