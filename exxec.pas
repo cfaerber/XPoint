@@ -46,80 +46,8 @@ function Xec(var prog:string; space,envspace:word; var prompt:string;
 
 implementation  { --------------------------------------------------- }
 
-
-{$IFNDEF BP }
-
 uses
-{$ifdef Linux}
-  Linux,
-{$endif}
-  sysutils;
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
-function Xec(var prog:string; space,envspace:word; var prompt:string;
-             var errorlevel:word):byte;
-
-  function environment:string;
-  begin
-    if envspace=0 then environment:=''
-    else environment:=' /E:'+strs(envspace);
-  end;
-var
-    pp    : byte;
-    para  : string;
-    dpath : string;
-begin
-{$ifdef UnixFS}
-{$ifdef Linux}
-  { ToDo: Prompt Modifizieren (vielleicht) }
-  ErrorLevel:= Shell(prog);
-{$else}
-  {$error Please implement this function for your OS }
-{$endif}
-{$else}
-  pp:=pos(' ',prog);
-  if pp=0 then para:=''
-  else begin
-    para:=' '+trim(copy(prog,pp+1,255));
-    prog:=left(prog,pp-1);
-  end;
-  prog:=fustr(prog);
-
-  if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
-    dpath:=''
-  else begin
-    if FileExists(prog) then dpath:=prog
-    else dpath:=fUStr(fsearch(prog,getenv('PATH')));
-    if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
-      dpath:='';
-  end;
-  if (para<>'') and (para[1]<>' ') then para:=' '+para;
-  if dpath='' then begin
-    para:=environment+' /c '+prog+para;
-    dpath:=getenv('comspec');
-  end;
-  SwapVectors;
-  Exec(dpath, para);
-  SwapVectors;
-  ErrorLevel := DOSExitCode;
-  { Wir nicht sauber belegt, also von Hand machen }
-  DosError :=0;
-  { Alle anderen Fehler k”nnen in 32 Bit nicht auftreten }
-{$endif}
-  Xec := ExecOk;
-end;
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
-
-{$ELSE }
-
-uses ems,xms;
+  ems,xms;
 
 procedure defresiprog;
 begin
@@ -359,12 +287,7 @@ var regs  : registers;
   begin
     Dos.FindFirst(s,ffAnyfile,sr);
     exist:=doserror=0;
-    {$IFDEF Ver32 }
-      FindClose(sr);
-    {$ENDIF }
   end;
-
-  {.$define usebatch}
 
 begin
   Xec:=ExecOk;
@@ -398,16 +321,10 @@ begin
   end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
 
-  {$ifndef usebatch}
-    if dpath='' then begin
-      para:=environment+' /c '+prog+para;
-      dpath:=getenv('comspec');
-    end;
-  {$else}
-    dpath:=getenv('comspec');
-    WriteBatch(prog+para);
-    para:=environment+' /c tmp.bat';
-  {$endif}
+   if dpath='' then begin
+     para:=environment+' /c '+prog+para;
+     dpath:=getenv('comspec');
+   end;
 
   {$IFNDEF DPMI}
     paras:=memw[prefixseg:2]-prefixseg+1;
@@ -493,12 +410,7 @@ begin
     FastMove(p^,freeptr^,fs);
     freemem(p,fs);
   end;
-  {$ifdef usebatch}
-  if exist('tmp.bat') then era('tmp.bat');
-  {$endif}
 end;
-
-{$ENDIF }
 
 begin
 {$IFDEF BP }
@@ -507,6 +419,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.1  2000/08/02 16:04:04  mk
+  - 80/127 Zeichen Limit wieder eingefuegt
+
   Revision 1.20  2000/06/20 18:21:17  hd
   - Xec angepasst (teilweise) / Linux
 
