@@ -386,8 +386,8 @@ end;
 procedure BezBaum(var betr:string);
 var hdp    : headerp;
     hds    : longint;
-    bez    : longint;
-    mi,n   : shortint;
+    bez,n  : longint;
+    mi     : shortint;
     brett  : string[5];
     nullid : longint;
     realmaxkom : word;
@@ -925,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.9  2001/01/03 18:08:07  mk
+  - fix fuer BezBaum mit extrem groáen Datenbanken
+
   Revision 1.11.2.8  2000/12/18 11:26:28  mk
   - maxavail statt memavail bei Kommentarbaumstart abfragen
 
