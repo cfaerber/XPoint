@@ -160,6 +160,25 @@ begin  { __ Suchmarke }
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             dbReadN(ubase,ub_username,s);
             dbReadN(ubase,ub_kommentar,komm);
+                                                     { Trennzeilenerkennung }
+
+            if left(s,3)='$/T' then begin
+              if komm='' then
+                dispbuf[y]^:='   '+dup(76,s[4])+' '
+              else
+                case trennkomm of
+                  1 : dispbuf[y]^:='   '+komm+' '+dup(76-length(komm),s[4]);
+                  2 : begin
+                        dispbuf[y]^:='   '+dup((74-length(komm))div 2,s[4])+' '+
+                                     komm+' ';
+                        dispbuf[y]^:=dispbuf[y]^+dup(80-length(dispbuf[y]^),s[4]);
+                      end;
+                  3 : dispbuf[y]^:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
+                end;
+              markflag[y]:=2;
+              end
+            else begin
+
             dbReadN(ubase,ub_adrbuch,ab);
             dbReadN(ubase,ub_userflags,uflags);
             abc:=iifc(ab<>0,'û',' ')+iifc(odd(uflags),' ','#');
@@ -228,6 +247,7 @@ begin  { __ Suchmarke }
             dispbuf[y]^:=forms(dispbuf[y]^,80);
 
           end;
+        end;
           
   10..12: begin { NACHRICHTENLISTE }
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';

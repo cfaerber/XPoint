@@ -285,8 +285,8 @@ angezeigt.
 
  <cr>  zeigt den Inhalt des gew„hlten PM-Brettes
 
-   A   wechselt den Anzeige-Modus zwischen allen 
-       und den im Adressbuch eingetragenen Usern.
+   A   wechselt den Anzeige-Modus zwischen dem
+       Adressbuch, und der Anzeige aller User.
 
    O   wechselt die Anordnung der Userbretter.
        M”gliche Einstellungen sind:
@@ -366,7 +366,13 @@ angezeigt.
 
   ^V   Userbretter verknpfen (Nachr. verschieben)
 
-L und E beziehen sich auf alle markierten User.
+  ^T   Trennzeile im Adressbuch einfgen
+
+  ^P   User in andere Adressbuchgruppe verschieben
+
+
+Die Funktionen L, E, ^T und ^P beziehen sich 
+auf alle markierten User.
 
 
 <<User-Anzeige

@@ -130,7 +130,7 @@ begin
   dbSeek(mbase,miBrett,_brett);
   if dbEOF(mbase) then _mbrett:=''
   else dbReadN(mbase,mb_brett,_mbrett);
-  if (ab=1) and (_mbrett=_brett) then begin
+  if (ab<>0) and (_mbrett=_brett) then begin
     rfehler(416);  { 'Im Brett dieses Users sind noch Nachrichten vorhanden!' }
     exit;
     end;

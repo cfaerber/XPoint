@@ -50,7 +50,9 @@ procedure auto_fileinfo;
 
 procedure _AlphaBrettindex;
 procedure MoveBretter;
+procedure MoveUser;
 procedure Bretttrennung;
+procedure Usertrennung;
 procedure ChangePollbox;
 
 procedure copy_address(var s:string);
@@ -276,45 +278,57 @@ var x,y  : byte;
     ebs  : boolean;
 begin
   new(adp);
-  dialog(57,13,txt,x,y);
-  maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
-  pb_field:=fieldpos;                     { 'Server   ' }
-  mappcustomsel(BoxSelProc,false);
-  mset0proc(pb_wrntyp);
-  msetvfunc(testpollbox);
-  pb_netztyp:=ntBoxNetztyp(pollbox);
-  maddtext(36,2,getres2(2701,2),0);       { 'Netztyp' }
-  ntyp_y:=y+1;
-  brettfld:=-1;
-  if edit then begin
-    maddtext(3,4,getres2(2701,3),col.coldialog);    { 'User     ' }
-    maddtext(13,4,' '+left(user,41),col.coldiahigh);
-    adp^:=user;
-    userfld:=-1;
+  if left(user,3)<>'$/T' then
+  begin  
+    dialog(57,13,txt,x,y);
+    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
+    pb_field:=fieldpos;                     { 'Server   ' }
+    mappcustomsel(BoxSelProc,false);
+    mset0proc(pb_wrntyp);
+    msetvfunc(testpollbox);
+    pb_netztyp:=ntBoxNetztyp(pollbox);
+    maddtext(36,2,getres2(2701,2),0);       { 'Netztyp' }
+    ntyp_y:=y+1;
+    brettfld:=-1;
+    if edit then begin
+      maddtext(3,4,getres2(2701,3),col.coldialog);    { 'User     ' }
+      maddtext(13,4,' '+left(user,41),col.coldiahigh);
+      adp^:=user;
+      userfld:=-1;
+      end
+    else begin
+      maddstring(3,4,getres2(2701,3),user,40,eAdrLen,'');    { 'User     ' }
+      msetvfunc(usertest); mset3proc(copy_address); mhnr(420);
+      userfld:=fieldpos;
+      end;
+    maddstring(3,6,getres2(2701,4),adresse,40,eAdrLen,'');   { 'Adresse  ' }
+      mhnr(421);
+    adrfieldpos:=fieldpos;
+    mappcustomsel(seluser,false);
+    msetvfunc(usertest);
+    msetprocs(get_address,get_address);
+    set_ubrett;
+    maddstring(3,8,getres2(2701,5),komm,30,30,''); mhnr(422);    { 'Kommentar' }
+    uml:=(flags and 8=0);
+    maddbool(3,10,getres2(2701,8),uml);      { 'Umlaute' }
+    filt:=not odd(flags); mhnr(424);
+    maddbool(3,11,getres2(2701,9),filt);   { 'Nachrichtenfilter' }
+    ebs:=(flags and 16<>0);
+    maddbool(3,12,getres2(2701,10),ebs);   { 'EmpfangsbestÑtigungen' }
+    maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
+    maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
+    maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
+    mhnr(8069);
     end
-  else begin
-    maddstring(3,4,getres2(2701,3),user,40,eAdrLen,'');    { 'User     ' }
-    msetvfunc(usertest); mset3proc(copy_address); mhnr(420);
-    userfld:=fieldpos;
+
+  else begin { Trennzeile }
+    dialog(57,7,txt,x,y);
+    maddtext(3,2,getres2(2701,3),0);                   { 'User' }
+    maddtext(14,2,getres2(2708,8),col.coldiahigh);     { 'Trennzeile' }
+    maddstring(3,4,getres2(2708,9),komm,30,30,''); mhnr(401); { 'Kommentar' } 
+    maddint(3,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);  { 'Adressbuchgruppe' }  
     end;
-  maddstring(3,6,getres2(2701,4),adresse,40,eAdrLen,'');   { 'Adresse  ' }
-    mhnr(421);
-  adrfieldpos:=fieldpos;
-  mappcustomsel(seluser,false);
-  msetvfunc(usertest);
-  msetprocs(get_address,get_address);
-  set_ubrett;
-  maddstring(3,8,getres2(2701,5),komm,30,30,''); mhnr(422);    { 'Kommentar' }
-  uml:=(flags and 8=0);
-  maddbool(3,10,getres2(2701,8),uml);      { 'Umlaute' }
-  filt:=not odd(flags); mhnr(424);
-  maddbool(3,11,getres2(2701,9),filt);   { 'Nachrichtenfilter' }
-  ebs:=(flags and 16<>0);
-  maddbool(3,12,getres2(2701,10),ebs);   { 'EmpfangsbestÑtigungen' }
-  maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
-  maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
-  maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
-  mhnr(8069);
+
   readmask(brk);
   if not brk then
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
@@ -2047,6 +2061,47 @@ begin
 end;
 
 
+procedure Usertrennung;
+var x,y   : byte;
+    brk   : boolean;
+    oldtc : string[1];
+    s     : string[AdrLen];
+    rec   : longint;
+    rec2  : longint;
+    ab    : integer;
+    komm  : string[30];
+begin
+  oldtc:=trennchar;
+  dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfÅgen' }
+  komm:='';
+  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);  
+  mappsel(false,'ƒ˘Õ˘˘∞˘±˘Ø˘Æ˘˙˘˛');              { 'Trennzeichen ' }
+  mnotrim;
+  msetvfunc(tnotempty);
+  maddstring(3,4,getres2(2731,3),komm,30,30,'');   { 'Kommentar    ' }
+  readmask(brk);
+  enddialog;
+  if not brk then begin
+    rec:=dbRecno(ubase);
+    dbAppend(ubase);
+    rec2:=dbRecno(ubase);
+    s:='$/T'+trennchar;
+    dbWriteN(ubase,ub_username,s);
+    dbWriteN(ubase,ub_kommentar,komm);
+    s:=#0;
+    dbWriteN(ubase,ub_pollbox,s);
+    dbGo(ubase,rec);
+    dbreadN(ubase,ub_adrbuch,ab);
+    dbgo(ubase,rec2);
+    dbWriteN(ubase,ub_adrbuch,ab);
+    aufbau:=true;
+    if trennchar<>oldtc then
+      SaveConfig;      { Trennzeichen merken }
+    end;
+end;
+
+
+
 procedure MoveBretter;
 var rec,nr : longint;
     step   : integer;
@@ -2096,6 +2151,39 @@ begin
     end;
 end;
 
+procedure MoveUser;
+var rec    : longint;
+    ab     : integer;
+    i      : integer;
+begin
+  if (bmarkanz=0) or ReadJN(getreps(iif(bmarkanz=1,2732,2733),strs(bmarkanz)),true)
+  then if bmarkanz>90 then          { '%s markierte Bretter verschieben' }
+    rfehler(2710)   { 'Es kînnen maximal 90 Bretter gleichzeitig verschoben werden.' }
+  else begin
+    rec:=dbRecno(ubase);
+    wlpos:=rec; wltrenn:=true;
+    i:=bmarkanz; 
+    select(3);    { loescht bmarkanz!!! }
+    bmarkanz:=i; 
+    if selpos>0 then begin
+      dbGo(ubase,selpos);
+      dbreadN(ubase,ub_adrbuch,ab);
+      if bmarkanz=0 then begin
+        dbGo(ubase,rec);
+        dbWriteN(ubase,ub_adrbuch,ab);
+        end
+      else begin
+        moment;
+        for i:=0 to bmarkanz-1 do begin
+          dbGo(ubase,bmarked^[i]);
+          dbwriteN(ubase,ub_adrbuch,ab);
+          end;
+        closebox;
+        end;
+      aufbau:=true;
+      end;
+    end;
+  end;
 
 procedure ChangePollbox;
 var oldbox,newbox   : string[BoxNameLen];
@@ -2213,6 +2301,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/15 21:22:46  jg
+  - Trennzeilen fuer Userfenster eingebaut (STRG+T im Spezialmenue)
+  - STRG+P im UserSpezialmenue (Position) verschiebt wie P im Brett-SpezialMenue
+    einen oder mehrere Markierte User in eine andere Adressbuchgruppe.
+
   Revision 1.12  2000/04/15 09:58:00  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

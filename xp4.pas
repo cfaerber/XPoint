@@ -1610,6 +1610,9 @@ begin      { --- select --- }
                  if dispext then begin
                    if (c=k1_H) or (t=keyins) then neuer_user;    { 'H' }
                    if c=k1_V then neuer_verteiler;               { 'V' }
+                   if c=k0_cT then begin GoP; usertrennung; end; { '^T' }  
+                   if c=^P  then begin                            { '^P' }
+                     GoP; MoveUser; setall; end; 
                    if not empty then begin
                      if (c=k1_L) or (t=keydel) then              { 'L' }
                        if isverteiler then verteiler_loeschen
@@ -1619,12 +1622,14 @@ begin      { --- select --- }
                                       if isverteiler then verteiler_aendern
                                       else user_aendern(false)
                                     else multiedit(true);
-                     if (c='+') and keinverteiler then add_haltezeit(1);
-                     if (c='-') and keinverteiler then add_haltezeit(-1);
-                     if c=k1_cV then _verknuepfen(false);        { ^V }
+                     if markflag[p]<>2 then begin
+                       if (c='+') and keinverteiler then add_haltezeit(1);
+                       if (c='-') and keinverteiler then add_haltezeit(-1);
+                       if c=k1_cV then _verknuepfen(false);        { ^V }
+                       end;
                      end;
                    end
-                 else if not empty then begin
+                 else if not empty and (markflag[p]<>2) then begin
                    if t[1]=k1_B  then brief_senden(false,true,false,0); { 'b' }
                    if t[1]=k2_SB then brief_senden(false,true,true,0);  { 'B' }
                    if c=k1_I  then datei_senden(true,true);       { 'I' }
@@ -1633,13 +1638,19 @@ begin      { --- select --- }
                      if c='+' then usersprung(true) else
                      if c='-' then usersprung(false);
                    end;
-                 if not empty then begin
-                   if (t=keycr) or (t=^J) then
-                     if isverteiler then edverteiler
-                     else usermsg_window;
-                   if (c=k1_R) and keinverteiler then change_adressbuch;
-                   if (c=k1_P) and keinverteiler then edit_password(false);
-                   if c=' ' then _mark_;                         { 'P' }
+                 if not empty then begin                   
+                   if markflag[p]<>2 then 
+                   begin
+                     if ((t=keycr) or (t=^J)) then
+                       if isverteiler then edverteiler
+                       else usermsg_window;
+                     if (c=k1_R) and keinverteiler then change_adressbuch;
+                     if (c=k1_P) and keinverteiler then edit_password(false);
+                     end;
+                   if c=' ' then begin                    
+                     if markflag[p]<>2 then _mark_                         { 'P' }
+                     else pushkey(keydown);
+                     end;
                    if c=k1_cE then _unmark_;                    { ^E }
                    if (t=keyaltu) and keinverteiler then usersuche(true);
                    if c=k1_cW then userweiter:=not userweiter;  { ^W }
@@ -1989,6 +2000,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/15 21:22:46  jg
+  - Trennzeilen fuer Userfenster eingebaut (STRG+T im Spezialmenue)
+  - STRG+P im UserSpezialmenue (Position) verschiebt wie P im Brett-SpezialMenue
+    einen oder mehrere Markierte User in eine andere Adressbuchgruppe.
+
   Revision 1.10  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
