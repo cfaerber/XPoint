@@ -149,6 +149,7 @@ const
        extHelp     = '.hlp';
        extXps      = '.xps';
        extOut      = '.out';
+       extBak      = '.bak';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -189,6 +190,7 @@ const
        extHelp     = '.HLP';
        extXps      = '.XPS';
        extOut      = '.OUT';
+       extBak      = '.BAK';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -966,7 +968,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_Tearline  : boolean;
        UserSlash    : boolean;
-       BAKext       : string;
+       EditorBAKext : string;        // extension for files backupd up from the editor
        keepedname   : boolean;
        pmcrypt      : array[1..maxpmc] of
                         record
@@ -1228,6 +1230,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.2  2002/05/20 07:55:41  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.158.2.1  2002/05/06 17:58:51  mk
   - use correct file name case (.bak, .out) with linux
 

@@ -91,7 +91,7 @@ var
     procedure CleanSpool;
     begin
       erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*' + ExtOut); (* delete old output files *)
-      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.' + BakExt); (* delete old input files  *)
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*' + ExtBak); (* delete old input files  *)
       CreateDir(IncludeTrailingPathDelimiter(DestDir));
     end;
 
@@ -506,6 +506,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.17.2.2  2002/05/20 07:55:44  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.17.2.1  2002/05/06 17:58:54  mk
   - use correct file name case (.bak, .out) with linux
 

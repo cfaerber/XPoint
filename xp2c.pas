@@ -624,7 +624,7 @@ begin
 {$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
   msetvfunc(testexecutable);
-  maddstring(3,4,getres2(256,8),BAKext,3,3,'>');      { 'Backup-Dateierweiterung  ' }
+  maddstring(3,4,getres2(256,8),EditorBakExt,3,3,'>');      { 'Backup-Dateierweiterung  ' }
   
   maddstring(3,6,getres2(256,14),EditCharset,12,MAXINT,''); { 'Zeichensatz  ' }
   mappsel(false,getres2(256,{$ifdef Unix}15{$else}16{$endif}));
@@ -1547,6 +1547,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.1  2002/05/20 07:55:41  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.127  2002/04/06 13:52:35  mk
   - fixed SetTimezone
     (fixes crash while changing 'Erstellungszeit' in Config/Optionen/Nachrichten

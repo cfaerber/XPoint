@@ -474,8 +474,8 @@ begin
     shell(repfile(VarEditor,name),0,-1);
     shell25:=ms;
     removeeof(name);
-    bak:=BAKext;
-    end
+    bak := EditorBakExt;
+  end
   else begin
     if nachricht then pushhp(54);
     TED(name,reedit,keeplines,ed_ukonv,nachricht,senden);
@@ -495,6 +495,9 @@ end;
 { Achtung! ShellPath kann mit oder ohne '\' am Ende sein! }
 
 procedure dosshell;
+{$IFDEF DPMI }
+const ShellBatch = 'DPMISHELL.BAT';
+{$ENDIF }
 
   {$IFNDEF DPMI}
   function environment:string;
@@ -511,20 +514,23 @@ begin
     SetCurrentDir(ShellPath);
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
-    {$IFDEF Unix }
-      shell(getenv('SHELL'),0, 2);
-    {$ELSE }
+    {$IFDEF DPMI}
+      assign(t,TempPath+ShellBatch);
+      rewrite(t);
+      writeln(t,'@set prompt=[XP] '+getenv('PROMPT'));
+      writeln(t,'@',getenv('COMSPEC'));
+      close(t);
+      shell(TempPath+ShellBatch,620,2);
+      _era(TempPath+ShellBatch);
+    {$ELSE}
       shell(getenv('COMSPEC')+environment,640,2);
-    {$ENDIF }
+    {$ENDIF}
     trackpath:=false;
     end;
 {
   $Log$
-  Revision 1.78  2002/04/20 08:43:48  mk
-  - fixed syntax error in last commit
-
-  Revision 1.77  2002/04/18 21:21:12  mk
-  - fixed Bug #502625, shell with linux
+  Revision 1.76.2.1  2002/05/20 07:55:41  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
 
   Revision 1.76  2002/03/25 22:03:08  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert

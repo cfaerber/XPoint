@@ -469,7 +469,7 @@ begin
   BAKext:= 'bak';
   EditCharset:='ISO-8859-1';
 {$ELSE }
-  BAKext:='BAK';
+  EditorBakExt:='BAK';
   EditCharset:='IBM437';
 {$ENDIF }
   keepedname:=false;
@@ -821,7 +821,7 @@ begin
   writeln(t,'DruckRand=',DruckLira);
   writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
   writeln(t,'UserSlash=',jnf(UserSlash));
-  writeln(t,'EditBackup=',BAKext);
+  writeln(t,'EditBackup=', EditorBakExt);
   writeln(t,'EditCharset=',EditCharset);
   writeln(t,'KeepEdName=',jnf(keepedname));
   writeln(t,'AbsenderAnzeige=',sabsender);
@@ -1367,7 +1367,7 @@ begin
                     getx(su,  'Edit25',edit25) or
                     getx(su,  'EditVollbild',editvollbild) or
                     getb(su,  'ExtEditor',exteditor) or
-                    xp1.gets(s,su,'EditBackup',BAKext) or
+                    xp1.gets(s,su,'EditBackup', EditorBakExt) or
                     xp1.gets(s,su,'EditCharset',EditCharset) or
                     xp1.getw(su,  'Environment',envspace) or
                     getx(su,  'EigeneMsgsHalten',haltown) or
@@ -1706,6 +1706,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.1  2002/05/20 07:55:41  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.144  2002/03/03 23:17:59  mk
   - more simplification of readconfig
 

@@ -535,7 +535,7 @@ var
 begin
   result:=false;
   if not FileExists(n) then exit;
-  BakName := ChangeFileExt(n, '.' + FileUpperCase(NewExt));
+  BakName := ChangeFileExt(n, FileUpperCase(NewExt));
   if FileExists(BakName) then
   begin
     {$IFNDEF UnixFS }
@@ -713,6 +713,9 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.2  2002/05/20 07:55:40  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.116.2.1  2002/05/13 21:26:18  ma
   - added comment
 

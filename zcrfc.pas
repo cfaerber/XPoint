@@ -2540,7 +2540,7 @@ var
   end;
 
 var
-  srExt: String; // file extension of sr.name
+  s1: String; // file extension of sr.name
 begin
   Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s',
     [Source, Dest, _From, _To]), DLDebug);
@@ -2554,18 +2554,18 @@ begin
   while sres = 0 do
   begin
   try
-   srExt := ExtractFileExt(sr.name);
-    // BAK, OUT-Dateien überspringen
-    if (srExt = '.' + BakExt) or
-       (srExt = ExtOut) then Continue;
+    s1 := ExtractFileExt(sr.name);
+    // BAK-Dateien überspringen
+    if s1 = FileUpperCase(ExtBak) then Continue;
+    if not (UpperCase(RightStr(sr.name,4))='.OUT') then
 
-    if srExt = '.mail' then
-    begin                                                                       
+    if ExtractFileExt(sr.name) = '.mail' then
+    begin
       ConvertMailfile(spath + sr.name, '', mails);
       DeleteFiles.Add(spath + sr.name);
     end
     else
-    if (srExt = '.news') or (NNTPSpoolFormat) then
+    if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
@@ -3635,6 +3635,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.7  2002/05/20 07:55:43  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.97.2.6  2002/05/19 13:08:12  mk
   - backported client netcall
 

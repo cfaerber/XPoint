@@ -1180,7 +1180,7 @@ begin
       trfehler(805,60)    { 'UngÅltige Absenderangabe' }
     else begin
       message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
-      makebak(bfile+extBl,BakExt);
+      makebak(bfile+extBl,ExtBak);
       fn:=TempS(dbReadInt(mbase,'msgsize'));
       extract_msg(xTractMsg,'',fn,false,0);
       ExpandTabs(fn,FileUpperCase(bfile+extBl));
@@ -2152,6 +2152,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.3  2002/05/20 07:55:42  mk
+  - fixed backup extension: now ExtBak and EditorExtBak
+
   Revision 1.70.2.2  2002/05/05 22:43:14  mk
   - use correct case for 'bak' extension
 
