@@ -109,7 +109,7 @@ begin
   case videotype of
     0,1 : setmenu(11,'Zeilen,0b125');
     2   : setmenu(11,'Zeilen,0b125,0b226,0b329,0b431,0b535,0b638,0b743,0b850');
-    3   : setmenu(11,'Zeilen,0b125,0b226,0b328,0b430,0b533,0b636,0b740,0b844,0b950');
+    3   : setmenu(11,'Zeilen,0b125,0b226,0b328,0b430,0b533,0b636,0b740,0b844,0b950,0ba60');
   end;
   FreeRes;
 end;
@@ -1150,6 +1150,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.6  2000/09/30 16:28:00  mk
+  - VESA 80x60-Zeilenmodus
+
   Revision 1.45.2.5  2000/08/28 23:35:54  mk
   - LFN in uses hinzugefuegt
 

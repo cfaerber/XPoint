@@ -169,6 +169,40 @@ begin
   getscreenlines:=vlines;
 end;
 
+procedure SetVesaText;
+type
+  VESAInfoBlockRec = record
+    Signatur: LongInt;
+    VersionLo, VersionHi: Byte;
+    OEMString: Pointer;
+    Capabitilities: LongInt;
+    VideoModi: Pointer;
+    FuellBytes: array[0..243] of Byte;
+  end;
+var
+  Status: Word;
+  InfoBlock: VESAInfoBlockRec;
+begin
+  { VESA Installationscheck }
+  asm
+	mov ax, seg InfoBlock
+	mov es, ax
+	mov di, offset InfoBlock
+	mov ah, $4f
+	mov al, 0              { Funktion 0: FÑhigkeit der Karte abfragen }
+	int 10h
+	mov Status, ax
+  end;
+  if not (Status = $4f) then Exit;
+  asm
+	mov ah, $4f
+	mov al, 2          { Funktion 2: VESA-Modus setzen }
+	mov bx, $108       { 80x60 Zeilen Modus }
+	int 10h
+	mov Status, ax
+  end;
+end;
+
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
 { unterstÅtzte Werte:                                   }
 { Herc/CGA:  25                                         }
@@ -204,6 +238,7 @@ begin
             41..44 : setuserchar(9);
             45..50 : setuserchar(8);
             51..57 : setuserchar(7);
+            60: SetVesaText;
           end;
         end;
   end;
@@ -227,6 +262,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.7  2000/09/30 16:28:00  mk
+  - VESA 80x60-Zeilenmodus
+
   Revision 1.20.2.6  2000/08/27 17:17:48  jg
   - LoadFont, LoadFontFile und setuserchar von VIDEO nach XPFONTS verlagert
   - XP Verwendet jetzt einen internen 8x14 Zeichensatz (XPFONTS.INC)

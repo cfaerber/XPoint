@@ -32,7 +32,7 @@ procedure FontBroadway14;
 procedure Font8x14;
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
-procedure setuserchar(height:byte); 
+procedure setuserchar(height:byte);
 
 implementation  { ------------------------------------------------------ }
 
@@ -292,7 +292,7 @@ begin
       {$ENDIF }
       p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
       end
-    else begin 
+    else begin
       p:=@Font8x14;               { 14er Font aktivieren }
       inc(longint(p));
       p1:=p^;
@@ -305,7 +305,7 @@ begin
       10 : make10;
        9 : make9;
        7 : make7;
-     else fastmove(p1^,p2^,4096);           
+     else fastmove(p1^,p2^,4096);
     end;
     LoadFont(height,p2^);
     {$IFDEF DPMI }
@@ -319,6 +319,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.4.2  2000/09/30 16:28:01  mk
+  - VESA 80x60-Zeilenmodus
+
   Revision 1.5.4.1  2000/08/27 17:17:48  jg
   - LoadFont, LoadFontFile und setuserchar von VIDEO nach XPFONTS verlagert
   - XP Verwendet jetzt einen internen 8x14 Zeichensatz (XPFONTS.INC)
