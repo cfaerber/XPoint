@@ -1976,6 +1976,8 @@ begin      { --- select --- }
              end;
   end;
 
+  if dispmode=10 then setbrettgelesen(_dispspec);
+
 selende:
   wlpos:=0; wltrenn:=false;
   disprec[1]:=oldrec;
@@ -2050,6 +2052,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/08/01 10:34:11  mk
+  JG: - Ungelesen-Workarround "Setbrettgelesen"
+        jetzt auch beim Verlassen der Nachrichtenliste.
+
   Revision 1.39  2000/07/27 10:13:02  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
