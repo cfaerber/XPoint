@@ -100,11 +100,13 @@
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
   {$DEFINE Sockets }     { Sockets vorhanden }
+  {$DEFINE Unix }        { Linux is a Unix Platform }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
+  {$DEFINE Unix }        { FreeBSD is a Unix Platform }
 {$ENDIF }
 
 { --- ErklÑrungen der selbst gesetzen Defines --- }
@@ -125,6 +127,10 @@
   Dateinamen, die von OpenXP erzeugt oder benutzt werden, mÅssen immer
   komplett klein geschrieben sein.
 
+  Unix
+
+  Should be used on all Unix like platforms like FreeBSD and Linux.
+
   NCRT
 
   Baut auf der Curses-Lib auf. Dient als Interface zur Konsole bei z.B.
@@ -136,6 +142,9 @@
 
 {
   $Log$
+  Revision 1.56  2000/11/01 15:24:56  mk
+  - added FreeBSD-Support
+
   Revision 1.55  2000/10/15 08:50:07  mk
   - misc fixes
 
