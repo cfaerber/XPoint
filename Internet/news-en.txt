@@ -1,6 +1,6 @@
 Latest news on www.openxp.com...
 
-2002-04-21: OpenXP/32 v3.7.8 beta available
+2002-04-30: OpenXP/32 v3.8.0 beta available
 <a href="index.php4?file=download32-en.html">Download</a>
 +
 2002-03-27: OpenXP/16 at <a href="http://www.openxp16.de">OpenXP16.de</a> from now on

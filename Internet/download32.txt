@@ -1,5 +1,5 @@
-*OpenXP/32 v3.7.8 Beta<br /><small>bzw. Linux Alpha</small>
-OpenXP/32 v3.7.8 Beta<br /><small>OpenXP/32 (Linux) is alpha</small>
+*OpenXP/32 v3.8.0 Beta<br /><small>bzw. Linux Alpha</small>
+OpenXP/32 v3.8.0 Beta<br /><small>OpenXP/32 (Linux) is alpha</small>
 /openxp/oxp32win.rar
 Win32-Version [RAR]
 Win32 version [RAR]
