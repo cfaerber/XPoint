@@ -1060,7 +1060,7 @@ begin
       if ParFontfile<>'' then
         XPFont
       else
-      if ShellInit then
+      if (getscreenlines <> screenlines) and ShellInit then
       begin
         sichern(sp);
         if not m3 then setvideomode(3);
@@ -2032,6 +2032,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.9  2000/12/18 23:35:14  mk
+  - Zeilenzahl wird jetzt nach Shell nochmals ausgelesen
+
   Revision 1.48.2.8  2000/12/17 23:34:41  mk
   - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
 
