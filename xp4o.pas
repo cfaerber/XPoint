@@ -1379,12 +1379,12 @@ var _brett   : string[5];
 begin
   if uvs_active then exit;
   crashs:=false;
-  findfirst('*.pp',AnyFile,sr);
+  findfirst('*.pp',dos.Archive,sr);
   if doserror<>0 then begin
     {$IFDEF Ver32 }
       FindClose(sr);
     {$ENDIF}
-    findfirst('*.cp',AnyFile,sr);
+    findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
     end;
   markanz:=0;
@@ -1462,11 +1462,11 @@ begin
       {$IFDEF Ver32 }
       FindClose(sr);
       {$ENDIF}
-      findfirst('*.cp',AnyFile,sr);
+      findfirst('*.cp',dos.Archive,sr);
       crashs:=true;
     end;
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
   dispose(hdp);
@@ -2394,6 +2394,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/04/15 18:21:33  mk
+  - FindFirst-Fixes
+
   Revision 1.31  2000/04/13 12:48:37  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
