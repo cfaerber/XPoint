@@ -134,6 +134,7 @@ begin
     // Diese Žnderungen speichern wir auch in der Config ab
     ConfigScreenLines := ScreenLines;
     ConfigScreenWidth := ScreenWidth;
+    SetScreenSize;
     lines(screenlines,fnkeylines);
     showscreen(false);
     XPhilite:=0;
@@ -594,6 +595,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/07/31 15:07:24  mk
+  - SetScreenSize wird nach Aendern der Bildschirmgroesse aufgerufen
+
   Revision 1.22  2000/07/31 09:56:55  mk
   - ConfigScreenWidth und passende Logik hinzugefuegt
 
