@@ -3,17 +3,17 @@ FAQ zu OpenXP 3.70
 Netcalls gehen nicht mehr!
 Der Netcall-Teil von OpenXP 3.70 wird z.Zt. stark überarbeitet.
 Im Moment gehen nur der Fido-(Sysop)-Netcall und UUCP.
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 SMTP/IMAP/NNTP geht nicht!
 Im Moment geht nur POP3 und das Holen der Newsgrouplisten über NNTP.
 Die anderen Protokolle sind noch nicht fertig.
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 Die Gebührenberechnung funktioniert nicht.
 Wurde abgeschaltet; bei Gelegenheit und wenn sich ein Programmierer
 dafür findet, wird sie wieder eingebaut.
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 Die Mouse geht nicht.
 Die Mouse wurde - wie vieles im alten XP - nachträglich "dazuprogrammiert".
@@ -26,7 +26,7 @@ Umstellung ist aber auf keinen Fall in den nächsten Monaten zu
 rechnen, im Moment gibt es noch nicht einmal eine passende
 freie Codebibliothek dafür, und wir werden sowas nicht auch noch
 machen ;-).
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 Was bringen die Umstellungen im Netcall-Bereich?
 Unterstützung von Linux; stabilerer und sauberer Betrieb unter
@@ -36,7 +36,7 @@ sind, siehe
 <a href="http://www.linuxdoc.org/HOWTO/mini/Linux-Modem-Sharing.html">
 Linux-Modem-Sharing-Howto</a>); Unterstützung
 von Netcalls over IP (Netcalls über das Internet).
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 Wie stelle ich mein Modem ein/wie benutze ich Fossil?
 Mit der Umstellung im Netcall-Bereich wurden die alten
@@ -46,7 +46,7 @@ Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten
 nur für externe Programme wie PPP-Clients etc.; Fossil
 wird nur unter Dos unterstützt, Telnet nur unter Win32.
-<br><small>2001-01-16</small>
+<br /><small>2001-01-16</small>
 
 Warum ist die Win32-Version bei mir so langsam?
 Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
@@ -55,4 +55,4 @@ zu spielen und vor allem den Vollbildmodus zu meiden;
 unter WinNT/2000 ist die Win32-Version angemessen schnell,
 dort werden Konsolenprogramme nicht so stiefmütterlich
 behandelt.
-<br><small>2001-01-17</small>
+<br /><small>2001-01-17</small>

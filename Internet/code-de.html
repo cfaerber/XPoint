@@ -1,84 +1,99 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/Profiles/voyager-loose">
+<head>
+<title></title>
+</head>
+<body>
 <h2>Infos f&uuml;r Entwickler</h2>
 
 <h3>Allgemeines</h3>
-OpenXP wird von einem mehreren Entwicklern gleichzeitig gepflegt. Daraus
-ergibt sich, da&szlig; jeder Entwickler sich an ein paar Regeln halten
-mu&szlig;, damit die Weiterentwicklung z&uuml;gig ablaufen kann und so
-wenig Fehlerquellen wie m&ouml;glich entstehen.
 
-<p>Zur Koordinierung des Projektes existiert die
-<A HREF="http://mail1.sourceforge.net/mailman/listinfo/openxp-dev">OpenXP-Dev Maillingliste</A>. 
+OpenXP wird von einem mehreren Entwicklern gleichzeitig gepflegt. Daraus ergibt
+sich, da&szlig; jeder Entwickler sich an ein paar Regeln halten mu&szlig;,
+damit die Weiterentwicklung z&uuml;gig ablaufen kann und so wenig Fehlerquellen
+wie m&ouml;glich entstehen. 
+
+<p>Zur Koordinierung des Projektes existiert die <a
+href="http://mail1.sourceforge.net/mailman/listinfo/openxp-dev">OpenXP-Dev
+Maillingliste</a>.</p>
 
 <p><a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi">cvsWeb</a> kann
 benutzt werden, um das CVS-Repository und die Logs einzusehen (Login und
-Password "cvs").
+Password "cvs").</p>
 
-<p>OpenXP ist mit <a href="http://www.freepascal.org">FreePascal</a> und
-<a href="http://www.vpascal.com">Virtual Pascal</a> kompilierbar.
-<br>Die aktuellen Versionen der Compiler liegen auf dem
-<a href="ftp://ftp.openxp.de/pascal">OpenXP-ftp-Server</a>.
+<p>OpenXP ist mit <a href="http://www.freepascal.org">FreePascal</a> und <a
+href="http://www.vpascal.com">Virtual Pascal</a> kompilierbar.  <br /> Die
+aktuellen Versionen der Compiler liegen auf dem <a
+href="ftp://ftp.openxp.de/pascal">OpenXP-ftp-Server</a>.</p>
 
 <h3>Lizenztechnisches</h3>
 
 <b>OpenXP ist ein Open-Source-Projekt. Das hei&szlig;t, da&szlig; die
 eingebrachten &Auml;nderungen im Rahmen der jeweiligen Lizenz ggf. ohne
-R&uuml;ckfrage in anderen Projekten weiterverwendet werden k&ouml;nnen!</b>
+R&uuml;ckfrage in anderen Projekten weiterverwendet werden k&ouml;nnen!</b> 
 
 <h3>Den aktuellen Code beziehen</h3>
 
-Verwendet wird f&uuml;r die Verwaltung des Sourcecodes das Versionsmanagementsystem
-<A HREF="http://www.cvshome.com">CVS</A>. Eine Windows und OS/2-Version des Tools
-befindet sich auf dem <A HREF="ftp://ftp.openxp.de/openxp/tools">ftp-Server</A>.
+Verwendet wird f&uuml;r die Verwaltung des Sourcecodes das
+Versionsmanagementsystem <a href="http://www.cvshome.com">CVS</a>. Eine Windows
+und OS/2-Version des Tools befindet sich auf dem <a
+href="ftp://ftp.openxp.de/openxp/tools">ftp-Server</a>. 
 
 <p>Die "Master"-Kopie der Quelltexte, die sich auf dem CVS-Server befindet,
 wird "Repository" genannt; die Kopie davon auf dem eigenen Rechner "Working
 Directory". CVS sorgt daf&uuml;r, da&szlig; beide Versionen synchron gehalten
-werden.
+werden.</p>
 
-<p>Befindet sich CVS im Pfad, kann man mit folgenden Befehlen ein Working
-Directory anlegen:
-<br><FONT FACE="Courier New, Courier, mono">cvs -d :pserver:<i>username</i>@fries7-73.stw.uni-jena.de:/usr/local/cvs login</FONT>
-<br>Es wird daraufhin ein Passwort verlangt; ein Gastzugang ist als User "cvs" mit
-Passwort "cvs" m&ouml;glich. Das Passwort wird in ~/.cvspass gespeichert (bei
-nicht-Unix-Systemen mu&szlig; vorher mit "set home=<i>directory</i>" ein
-Homeverzeichnis festgelegt werden) und mu&szlig; nach dem Login nicht mehr
-angegeben werden.
-<br>Mit
-<br><FONT FACE="Courier New, Courier, mono">cvs -d :pserver:<i>username</i>@fries7-73.stw.uni-jena.de:/usr/local/cvs checkout openxp</FONT>
-<br>legt man schlie&szlig;lich in "./openxp" das Working Directory an.
-Im Working Directory kann nach Herzenslust herumgespielt werden.
-Der l&auml;ngliche Parameter -d mu&szlig; ab jetzt nicht mehr angegeben werden,
-da CVS den CVS-Server in den CVS-Unterverzeichnissen des Working Directories
-vermerkt.
+<p>Befindet sich CVS im Pfad, kann man mit folgenden Befehlen ein Working Directory anlegen:
+<br />
+<tt>cvs -d :pserver:<var>username</var>@fries7-73.stw.uni-jena.de:/usr/local/cvs login</tt>
+<br />
+Es wird daraufhin ein Passwort verlangt; ein Gastzugang ist als User "cvs" mit Passwort "cvs" m&ouml;glich. Das Passwort wird in ~/.cvspass gespeichert (bei nicht-Unix-Systemen mu&szlig; vorher mit "set home=<var>directory</var>" ein Homeverzeichnis festgelegt werden) und mu&szlig; nach dem Login nicht mehr angegeben werden.
+<br />
+Mit
+<br />
+<tt>cvs -d :pserver:<var>username</var>@fries7-73.stw.uni-jena.de:/usr/local/cvs checkout openxp</tt>
+<br />
+legt man schlie&szlig;lich in "./openxp" das Working Directory an. Im Working Directory kann nach Herzenslust herumgespielt werden. Der l&auml;ngliche Parameter -d mu&szlig; ab jetzt nicht mehr angegeben werden, da CVS den CVS-Server in den CVS-Unterverzeichnissen des Working Directories vermerkt.</p>
 
-<p>Um das Working Directory auf den Stand des Repositories zu bringen, kann
-man ein
-<br><FONT FACE="Courier New, Courier, mono">cvs update</FONT>
-<br>machen. Evtl. schon durchgef&uuml;hrte lokale &Auml;nderungen werden
-dabei nicht &uuml;berschrieben sondern mit den Neuerungen aus dem Repository
-erg&auml;nzt.
+<p>Um das Working Directory auf den Stand des Repositories zu bringen, kann man ein
+<br />
+<tt>cvs update</tt>
+<br />
+machen. Evtl. schon durchgef&uuml;hrte lokale &Auml;nderungen werden dabei nicht &uuml;berschrieben sondern mit den Neuerungen aus dem Repository erg&auml;nzt.</p>
 
-<p>Um eigene &Auml;nderungen in das Repository einzubringen, braucht man
-einen CVS-Account mit Schreibrechten (der Gastzugang reicht daf&uuml;r also
-nicht ;-). Dann kann man ein
-<br><font face="Courier New, Courier, mono">cvs commit <i>file</i></font>.
-<br>machen; daraufhin wird eine Logmessage von CVS verlangt.
+<p>Um eigene &Auml;nderungen in das Repository einzubringen, braucht man einen CVS-Account mit Schreibrechten (der Gastzugang reicht daf&uuml;r also nicht ;-). Dann kann man ein
+<br />
+<tt>cvs commit <var>file</var></tt>.
+<br />
+machen; daraufhin wird eine Logmessage von CVS verlangt.</p>
 
-<p>Weitere Tips u.a. zu CVS unter "Hinweise" (siehe Links).
+<p>Weitere Tips u.a. zu CVS unter "Hinweise" (siehe Links).</p>
 
 <h3>Buch-Empfehlungen</h3>
-<TABLE WIDTH="75%" BORDER="1">
-<TR><TD><A HREF="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"><IMG SRC="1556154844_m.gif" BORDER="0"><BR> 
-</A><A HREF="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"> 
-Jetzt bestellen!</A></TD><TD>Ein absoulter Klassiker ist Code Complete von Steve 
-McConnell. Ich empfehle dieses Buch jedem, der Software entwickelt.</TD></TR>
-<TR><TD><A HREF="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"><IMG SRC="1576104907_l.gif" BORDER="0"><BR> 
-</A><A HREF="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"> 
-Jetzt bestellen!</A> </TD><TD><P>Dieses Buch behandelt zwei gro&szlig;e Themen: 
-</P><P>1. Open Source Software: Es werden Hinweise f&uuml;r das durchf&uuml;hren 
-von Open Source Projekten gegeben<BR>2. CVS: Das Versionsmanagement-System wird 
-komplett bis hin zur Administration erl&auml;utert</P></TD></TR></TABLE><p><hr> 
-<p><img src= 
-"http://cgicounter.kundenserver.de/cgi-bin/cnt?clsid=fbd3392f1f13ed524c740ca04dec22161"> 
-<a href="http://www.libranet.com/petition.html"><img src="linux.gif" width="90" 
-height="30" border="0" alt="Sign The Linux Driver Petition"></a><br> 
+
+<table width="75%" border="1">
+<tr>
+<td><a href="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"><img src="1556154844_m.gif" border="0" /></a>
+<br />
+<a href="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt">Jetzt bestellen!</a></td>
+<td>Ein absoulter Klassiker ist Code Complete von Steve McConnell. Ich empfehle dieses Buch jedem, der Software entwickelt.</td>
+</tr>
+
+<tr>
+<td><a href="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"><img src="1576104907_l.gif" border="0" />
+<br />
+</a> <a href="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt">Jetzt bestellen!</a></td>
+<td>
+<p>Dieses Buch behandelt zwei gro&szlig;e Themen:</p>
+
+<p>1. Open Source Software: Es werden Hinweise f&uuml;r das durchf&uuml;hren von Open Source Projekten gegeben
+<br />
+2. CVS: Das Versionsmanagement-System wird komplett bis hin zur Administration erl&auml;utert</p>
+</td>
+</tr>
+</table>
+
+<hr />
+<p><img src="http://cgicounter.kundenserver.de/cgi-bin/cnt?clsid=fbd3392f1f13ed524c740ca04dec22161" /> <a href="http://www.libranet.com/petition.html"><img src="linux.gif" width="90" height="30" border="0" alt="Sign The Linux Driver Petition" /></a></p>
+
