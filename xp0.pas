@@ -109,10 +109,7 @@ const  {$IFDEF DPMI}
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
-       DirSepa     = '/';            { Trennzeichen im Verzeichnisbaum }
        BaseDir	   = 'openxp/';	     { Basisverzeichnis }
-{$ELSE }
-       DirSepa     = '\';
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1138,6 +1135,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.39  2000/05/09 13:12:44  hd
+  - DirSepa -> xpglobal.pas
+
   Revision 1.38  2000/05/08 18:22:49  hd
   - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
 
