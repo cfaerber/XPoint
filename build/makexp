@@ -1,21 +1,38 @@
 #!/bin/bash
 echo "Starting $0 $*"
+# must be started in main source dir for desired version
+# insert call of extract script for version (from xpglobal.pas) here
+cd build
+eval $(get_build_nr.pl)
+mainversion=$OPENXP_MAINVER
+subversion=$OPENXP_SUBVER
+buildnr=$OPENXP_BUILD
+# example: version = 3.8.12-1
+# mainversion has to be 3.8 in this example
+# subversion has to be 12 in this example
+# buildnr has to be 1 in this example
+version="$mainversion"."$subversion"-"$buildnr"
 scriptdir=/home/boettger/openxp/script/
-versiondir=/home/boettger/openxp/"$1"/
+versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
-subversion="$1".0
+#subversion="$1".0
+echo $version
+echo $sourcedir
+#exit 1
 cd "$sourcedir"
 #sleep 5
-case "$1" in
+case "$mainversion" in
     3.8)
-       echo "Version $1 "
+       echo "Version $mainversion "
        #fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        fpcopts='-gl -Ci -Co -Cr -Ct -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcoptscross='-gl -Ci -Co -Cr -Ct -XX -Fu./ObjCOM -Fu./netcall -FU../output -Fl../output'
        echo "fpc option $fpcopts"
        ;;
     3.9)
-       echo "Version $1 "
-       fpcopts='-Ci -Co -Cr -Ct -gl -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       echo "Version $mainversion "
+       fpcopts='-Ci -Co -Cr -Ct -gl -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcoptscross='-Ci -Co -Cr -Ct -gl -Fu./ObjCOM -Fu./netcall -Fu./xplib -FU../output -Fl../output'
        echo "fpc options $fpcopts"
        ;;
     *) 
@@ -25,34 +42,59 @@ case "$1" in
 esac
 ##fpc -B -Ci -Co -Cr -Ct -O2 -Op2 openxp
 ##ppc386 -B -Ci -Co -Cr -Ct -OG3p3r openxp
-echo "Compiling version $1 with option $fpcopts"
-fpc -B $fpcopts openxp 2> compile-$subversion.err | tee compile-$subversion.log
-
-case "$1" in
+echo "Compiling version $version with option $fpcopts"
+fpc -B $fpcopts openxp 2> compile-$version.err | tee compile-$version.log
+##
+echo Crosscompiling 
+#fpc -B $fpcoptscross -Fudos32 -TGO32V2 -FD/opt/cross/dos/i386-go32/bin -oopenxp-dos.exe openxp 2> compile-$version-dos.err | tee compile-$version-dos.log
+#fpc -B $fpcoptscross -Fuos2 -Fudos32 -TOS2 -FD/opt/cross/win32/i386-mingw32/bin -oopenxp-os2.exe openxp 2> compile-$version-os2.err | tee compile-$version-os2.log
+#fpc -B $fpcoptscross -TNETBSD -FD/opt/cross/netbsd/i386-netbsd/bin -oopenxp-netbsd openxp 2> compile-$version-netbsd.err | tee compile-$version-netbsd.log
+#fpc -B $fpcoptscross -TFREEBSD -FD/opt/cross/freebsd/i386-freebsd/bin -oopenxp-freebsd openxp 2> compile-$version-freebsd.err | tee compile-$version-freebsd.log
+#fpc -B $fpcoptscross -TWin32 -FD/opt/cross/win32/i386-mingw32/bin -oopenxp-win.exe openxp 2> compile-$version-win.err | tee compile-$version-win.log
+###
+case "$mainversion" in
     3.8)
-       echo " Compress (UPX) Version $1 "
-       #upx --best openxp
+       echo " Compress (UPX) Version $version "
+       #upx --best -k openxp
        ;;
     3.9)
-       echo "no compression for Version $1 "
+       echo "no compression for Version $version "
        ;;
     *)
        echo "Unknown version, no compression "
        ;;
 esac
-grep -i warning compile-"$subversion".log > warning-"$subversion".log
-grep -i hint compile-"$subversion".log > hint-"$subversion".log
-grep -i note compile-"$subversion".log > note-"$subversion".log
-grep Error compile-"$subversion".log > error-"$subversion".log
-grep Fatal compile-"$subversion".log > fatal-"$subversion".log
+grep -i warning compile-"$version".log > warning-"$version".log
+grep -i hint compile-"$version".log > hint-"$version".log
+grep -i note compile-"$version".log > note-"$version".log
+grep  "Error:" compile-"$version".log > error-"$version".log
+grep  Fatal compile-"$version".log > fatal-"$version".log
+cat error-"$version".log fatal-"$version".log > compile-fpc-error-"$version".log
+### Crosscompiler
+cat compile-"$version"-dos.log compile-"$version"-dos.err > fpc-dos-"$version".log
+cat compile-"$version"-win.log compile-"$version"-win.err > fpc-win-"$version".log
+cat compile-"$version"-os2.log compile-"$version"-os2.err > fpc-os2-"$version".log
+cat compile-"$version"-netbsd.log compile-"$version"-netbsd.err > fpc-netbsd-"$version".log
+cat compile-"$version"-freebsd.log compile-"$version"-freebsd.err > fpc-freebsd-"$version".log
+######
+zip -9 fpc-linux-"$version"-logs.zip compile-fpc-error-"$version".log fatal-"$version".log error-"$version".log note-"$version".log hint-"$version".log warning-"$version".log fpc-dos-"$version".log fpc-win-"$version".log fpc-os2-"$version".log fpc-netbsd-"$version".log fpc-freebsd-"$version".log
 #fpc $fpcopts -Fl"$versiondir"output -O2 -OG3p3r -CX- -XX rc
-fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX rc
-fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX ihs
-/usr/local/bin/dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-"$subversion".err | tee compile-kylix-"$subversion".log
-grep -i warning compile-kylix-"$subversion".err > warning-kylix-"$subversion".log
-grep -i hint compile-kylix-"$subversion".err > hint-kylix-"$subversion".log
-grep -i note compile-kylix-"$subversion".err > note-kylix-"$subversion".log
-grep Error compile-kylix-"$subversion".err > error-kylix-"$subversion".log
-grep -i Fatal compile-kylix-"$subversion".err > fatal-kylix-"$subversion".log
-
+echo compiling ihs and rc
+#fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX rc
+#fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX ihs
+fpc $fpcopts rc
+fpc $fpcopts ihs
+#echo Path = $PATH
+#echo `which as`
+echo Starting Kylix3
+source /opt/kylix3/bin/kylixpath
+/usr/local/bin/dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-"$version".err | tee compile-kylix-"$version".log
+grep -i warning compile-kylix-"$version".err > warning-kylix-"$version".log
+grep -i hint compile-kylix-"$version".err > hint-kylix-"$version".log
+grep -i note compile-kylix-"$version".err > note-kylix-"$version".log
+grep "Error" compile-kylix-"$version".err > error-kylix-"$version".log
+grep Fatal compile-kylix-"$version".err > fatal-kylix-"$version".log
+rm compile-kylix-error-"$version".log
+cat error-kylix-"$version".log fatal-kylix-"$version".log > compile-kylix-error-"$version".log
+zip -9 kylix-"$version"-logs.zip compile-kylix-error-"$version".log fatal-kylix-"$version".log error-kylix-"$version".log note-kylix-"$version".log hint-kylix-"$version".log warning-kylix-"$version".log
 echo "Finished $0"
