@@ -367,6 +367,7 @@ begin
       maddstring(3,4,getres2(2701,3),user,40,eAdrLen,'');    { 'User     ' }
       msetvfunc(usertest); mset3proc(copy_address); mhnr(420);
       userfld:=fieldpos;
+      adp^:=user;
       end;
     maddstring(3,6,getres2(2701,4),adresse,40,eAdrLen,'');   { 'Adresse  ' }
       mhnr(421);
@@ -2512,6 +2513,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.28  2002/10/09 11:49:33  my
+  JG:- Bei erstmaliger Benutzung des User-Anlegedialogs nach Programmstart
+       strzte XP mit einem RTE ab, wenn sich der Cursor noch im Feld
+       "Server" befand und mit der Maus der Pfeil rechts neben "Adresse"
+       angeklickt wurde. Nach Verlassen der Userliste mit <Esc> oder
+       <Enter> fhrte jede weitere Taste zum Absturz (Variable 'adp^' war
+       nicht initialisiert).
+
   Revision 1.25.2.27  2002/04/27 19:58:40  my
   MY:- Beim Editieren von Usern/Brettern wird der Name im Eingabefeld
        "Server" in der Schreibweise dargestellt, in der er in der
