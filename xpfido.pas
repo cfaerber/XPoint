@@ -778,7 +778,7 @@ begin
           readln(nf,s);
           ll:=length(s);
           p:=cpos(',',s);
-          if (s[1]<>';') and (p>0) then begin
+          if ( FirstChar(s)<>';') and (p>0) then begin
             if (p=1) or (ltyp=nlNode) then begin
               if ltyp=nlFDpointlist then k:='Point'
               else k:='';
@@ -2242,6 +2242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/12/09 16:00:29  mo
+  - string[1] nach FirstChar
+
   Revision 1.36  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 
