@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Editor }
@@ -18,13 +19,15 @@ unit xpe;
 interface
 
 uses
-  crt, dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
-  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10, lfn;
+  crt,dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
+  eddef,editor,xpglobal,xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10,lfn;
 
 
 const EditXkeyfunc : EdTProc = nil;
+Var   EditNachricht : boolean;  
+      Skip4parken   : boolean;
 
-procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv,nachricht:boolean);
 procedure SigEdit(const datei:string);
 procedure EditText;
 procedure Notepad;
@@ -47,9 +50,10 @@ implementation  {--------------------------------------------------------}
 
 uses  xp1,xp6;
 
-const edbetreff : ^string = nil;
-      doautosave: boolean = false;
-
+const edbetreff     : ^string = nil;
+      doautosave    : boolean = false;
+      inited        : boolean = false;
+ 
 var
       edbmaxlen : byte;      { maximale Betreffl„nge }
       EdCfg     : EdConfig;
@@ -83,11 +87,26 @@ end;
 function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 var brk : boolean;
 begin
-  case ReadIt(length(getres2(2500,2))+9,getres2(2500,1),getres2(2500,2),1,brk) of
-    0 : EditQuitFunc:=keyesc;
-    1 : EditQuitFunc:=_jn_[1];
-    2 : EditQuitFunc:=_jn_[2];
-  end;
+  if EditNachricht then 
+  begin 
+     {skip4parken:=false; }
+     case ReadIt(length(getres2(2500,4))+11,getres2(2500,3),getres2(2500,4),1,brk) of
+       0,4 : EditQuitFunc:=keyesc;
+       1   : EditQuitFunc:=_jn_[1];
+       2   : EditQuitFunc:=_jn_[2];
+       3   : begin
+               skip4parken:=true;
+               EditQuitFunc:=_jn_[1];
+               end; 
+       end;
+     end
+   else begin
+     case ReadIt(length(getres2(2500,2))+9,getres2(2500,1),getres2(2500,2),1,brk) of
+       0,3 : EditQuitFunc:=keyesc;
+       1   : EditQuitFunc:=_jn_[1];
+       2   : EditQuitFunc:=_jn_[2];
+       end;
+     end; 
   freeres;
 end;
 
@@ -107,13 +126,12 @@ end;
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 var useclip : boolean;
 begin
-  if save then fn:='' else fn:=SendPath+WildCard;
+  if save then fn:='' else fn:=SendPath+'*.*';
   useclip:=false;          { 'Block speichern' / 'Block laden' }
   if readfilename(getres(iif(save,2504,2505))
                   +iifs(uuenc,' '+getres(2509),'')
                   ,fn,true,useclip) then begin
-    if not multipos('\:',fn)
-      then fn:=sendpath+fn;
+    if not multipos('\:',fn) then fn:=sendpath+fn;
     end
   else
     fn:='';
@@ -149,10 +167,6 @@ begin
   freeres;
 end;
 
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
-
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
 var x,y : byte;
     ec  : string[1];
@@ -162,15 +176,11 @@ begin
     maddint(3,2,getres2(2508,2),rechter_rand,5,2,60,77);  { 'rechter Rand  ' }
     mhnr(8063);
     ec:=absatzendezeichen;
-    maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
+    maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Absatzendezeichen' }
     mappsel(false,'úù'#20'ùþù®ù'#17'ù ');
     maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrcken' }
-    { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bl”cke' }
-    { /oh }
-    { 10.02.2000 robo }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
-    { /robo }
     readmask(brk);
     enddialog;
     if not brk then begin
@@ -236,9 +246,8 @@ begin
 end;
 
 
-procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
-const inited : boolean = false;
-      EditFusszeile = false;
+procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv,nachricht:boolean);
+const EditFusszeile = false;
 var   ed     : ECB;
       p      : scrptr;
       mb     : byte;
@@ -253,21 +262,21 @@ begin
     EdSetConfig(EdCfg);
     end;
   EditSetLangData;
+  EditNachricht:=Nachricht;
   mt:=m2t;
   if keeplines>0 then begin
-    mb:=dphback; dphback:=col.coledithead;
+    mb:=dphback; if Nachricht then dphback:=col.coledithead;
     m2t:=true;
     Disp_DT;
     end
   else
     m2t:=false;
-  { screenwidth/screenlines (hd) }
-  ed:=EdInit(1,screenwidth,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
+  ed:=EdInit(1,80,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
   if EdLoadFile(ed,fn,reedit,{iif(reedit,}1{,0)}) then;
   sichern(p);
   if EditFusszeile then DispFunctionkeys(true);
   EdSetTProc(ed,EditKeyFunc);
-  { EdPointswitch(deutsch);  Yuppie-Schalter }
+ (* EdPointswitch(deutsch); { Yuppie-Schalter } *)
   EdSetUkonv(ukonv);
   if doautosave then EdAutosave;
   doautosave:=false;
@@ -279,6 +288,13 @@ begin
   m2t:=mt;
   holen(p);
   EdExit(ed);
+  if Nachricht and Skip4parken then
+  begin
+    if deutsch then
+      Pushkey('p')
+    else
+      Pushkey('a');
+  end;
 end;
 
 
@@ -372,11 +388,7 @@ begin
   useclip:=true;
   pushhp(11607);
   if readfilename(getres(2502),s,true,useclip) then begin   { 'Text bearbeiten' }
-{$IFDEF UnixFS }
-    if not multipos(DirSepa,s)
-{$ELSE }
     if not multipos(DirSepa+':',s)
-{$ENDIF }
       then s:=sendpath+s;
     editname:=s;
     EditFile(s,false,false,0,false);
@@ -446,10 +458,7 @@ begin
 
   EditCfgFunc(config,brk);         { Menue aufrufen }
 
-  if not brk then
-  begin            { und Aenderungen speichern }
-    edCfg := Config;
-    EdSetConfig(edCfg);
+  if not brk then begin            { und Aenderungen speichern }
     rewrite(t);
     with Config do begin
       writeln(t,'RechterRand=',rechter_rand);
@@ -460,12 +469,21 @@ begin
       end;
     close(t);
     end;
+  inited:=false;
   menurestart:=brk;
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.16.2.4  2001/09/16 20:35:22  my
+  JG+MY:- Beim Editieren von Nachrichten gibt es im "Änderungen
+          speichern?"-Dialog die Option "Parken", die direkt ein "P" ans
+          Sendefenster weiterleitet.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.16.2.3  2001/08/11 20:16:30  mk
   - added const parameters if possible, saves about 2.5kb exe
 
