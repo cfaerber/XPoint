@@ -23,16 +23,16 @@ begin
     2 : for i:=iif(user,1,2) to length(s) do
           s[i]:=LoCase(s[i]);
   end;
-  if not user and (cpos('/',s)>0) and newsgroupdisp
-     and (((s[1]='A') and (flags and 16<>0)) or newsgroupdispall)  
+  if not user and (cpos('/',s)>0)  and newsgroupdisp
+     and (((s[1]='A') and (flags and 16<>0)) or newsgroupdispall)
   then begin
     if newsgroupdispall and (s[2]='/') then delete(s,2,1);
-    if s[1]='1' then begin
+    if (s[1]='1') or (cpos(':',s)>0) then begin
       i:=cpos('/',s);
-      if i>2 then s[i]:='@';
+      if (i>2) and (cpos('@',s)=0) then s[i]:='@';
     end else
       for i:=3 to length(s) do
-        if s[i]='/' then s[i]:='.'; 
+        if s[i]='/' then s[i]:='.';
     end;
 end;
 
@@ -587,6 +587,10 @@ end;
 
 {
   $Log$
+  Revision 1.27.2.9  2001/11/12 17:06:50  my
+  JG:- Anzeigebug gefixt (Fido-User wurden im ge”ffneten User-Brett als
+       z.B. "2:2433.401.460" statt "2:2433/401.460" angezeigt).
+
   Revision 1.27.2.8  2001/10/16 18:37:25  my
   MY+JG:- Letzten Commit etwas besser abgesichert
 
