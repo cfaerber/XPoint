@@ -38,7 +38,7 @@ const
   {$ENDIF}
 {$ENDIF }
 
-  author_name = 'OpenXP Team';
+  author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
   x_copyright = '(c) 2000';
 
@@ -101,6 +101,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7.2.7  2000/12/06 09:43:16  mk
+  - OpenXP-Team mit Bindestrich in der Mitte
+
   Revision 1.7.2.6  2000/08/06 10:00:00  mk
   - Versionsaenderung auf 3.20a
 
