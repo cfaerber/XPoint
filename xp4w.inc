@@ -706,7 +706,7 @@ var fn     : string;
   procedure SetKK;
   begin
     if kk then
-      disprec[p]:=dpp;
+      disprec[p]:=dp;
     kk:=false;
     GoP;
   end;
@@ -1006,12 +1006,12 @@ begin
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
                  SetKK; GoMsgBack;
-                 GoP;
+                 GoP; dp := dbRecNo(mbase);
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
                  SetKK; GoMsgForth;
-                 GoP;
+                 GoP; dp := dbRecNo(mbase);
                  ende:=false;
                end;
           end;
@@ -1611,6 +1611,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.72  2001/06/02 22:08:30  mk
+  JG:- fixed last commit
+
   Revision 1.71  2001/05/30 21:19:46  mk
   JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn> and +/-
        the message that has been entered with the last <Ctrl-Pg*> was replaced in
