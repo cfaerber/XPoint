@@ -350,7 +350,8 @@ begin
     end;
   repeat
     ReadInputLine;
-    found:=(left(s,5)='begin');
+    found:=(left(s,6)='begin ') and (firstchar(trim(mid(s,7)))='6') and
+           (length(trim(s)) > 10);
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
@@ -667,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.5  2002/03/11 20:38:55  my
+  JG+MY:- Erkennung fr UUE-Boundary sauberer gemacht
+
   Revision 1.13.2.4  2001/09/16 20:40:00  my
   JG+MY:- UUDECODE: Richtiges Hilfe-Fenster auch aus Lister heraus; Hilfe
           überarbeitet; Bugfix für Aufruf aus Lister: Datenbank am Ende
