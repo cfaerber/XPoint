@@ -311,6 +311,7 @@ var
   p, i          : integer;              { -----"------- }
   RCList        : TStringList;          { .rc-File }
   RCFilename    : String;
+  FillStr       : String;
   oArticle      : integer;
 begin
   { ProgressOutputXY erstellen }
@@ -366,7 +367,11 @@ begin
        ArticleIndex := 0;
 
       NNTP.SelectGroup(Group);
-      MWrt(x+15,y+3,'aus Gruppe: ' + Group);
+
+      FillStr := '';
+      For i := 0 to 40 - length(Group) do
+        FillStr := FillStr + ' ';
+      MWrt(x+3,y+3,'aus Gruppe: ' + Group + FillStr);
 
       if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
@@ -404,6 +409,9 @@ end.
 
 {
         $Log$
+        Revision 1.13  2001/04/12 13:59:30  ml
+        - better view at groupstatus
+
         Revision 1.12  2001/04/12 00:13:19  ml
         - Groupname is now shown while downloading nntp
 
