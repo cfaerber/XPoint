@@ -20,37 +20,6 @@ Außerdem wird bei einigen Nachrichten zwar das M im Lister angezeigt,
 das Fenster erscheint aber nicht. Dann wird nur der Plain-Text Teil
 angezeigt.
 
----------------------
-
-From gohel@basicguru.com Thu Dec 30 01:00:00 1999
-
-Des weiteren ist es mit dem vorliegendem UUZ (auch das von Robert)
-nicht möglich, die eingetroffenen MIME-Parts wieder komplett in
-RFC's zu exportieren, um sie z.B. in einem externen Viewer anzusehen.
-UUZ erstellt immer eine "text/plain" Mail, obwohl das entsprechende
-XP-Boundary vorhanden ist. Dieser Effekt ist mir zwar seit der v3.12
-von UUZ bekannt, ich dachte aber das es einfach am fehlenden bzw.
-noch nicht bekannten XP-Flag für die Rückkonvertierung liegen wird.
-Dem ist aber nun nicht so (Robert, irgendwelche Idden). :-(
-
----------------------
-
-From: Toast_r@Topmail.de (Christian Dirks)
-Newsgroups: de.comm.software.crosspoint
-Subject: Nochwas für die WishList
-Date: 31 Dec 1999 13:34:00 +0100
-
-Hi *.*,
-
-mir ist da grade wieder ein schon bekanntes, und kürzlich erst
-wieder angesprochenes Übel aufgefallen:
-
-Könnte man dem Editor nicht mal abgewöhnen, ein einzelnes Space
-hinter zwei einsamen '-' in einer Zeile abzuschneiden ?
-
-So riesig kann der Aufwand dafür doch garnich sein, oder ? ;)
-
-
 ---------------
 Gabs da eingentlich schonmal 'ne Äußerung von Peter zu, ob die Y2K-Fixes
 in der 3.2 auch schon drin waren ?
