@@ -3123,13 +3123,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 33 Liste muá die entsprechende Funktion beim externen Client
 34 aktiviert sein und die bisherige Newsgroup-Liste gel”scht
 35 werden (siehe Nachricht/Brettmanager/Sonstiges).
+36 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
 # XP8.INC
 50 Keine Filescan-Nachricht gew„hlt!
 51 %s ist kein eingetragener Fido-Server!
 52 %s ist keine Fido-Box!
 53 Keine Fileecho-Liste fr %s vorhanden!
-54 Diese Funktion wird beim Netztyp RFC/Client nicht untersttzt.
-
 
 +  10900
 1  Ungltige Box-Config-Angabe: %s

@@ -3075,12 +3075,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 appropriate function of the external client must be acti-
 34 vated and the previous newsgroup list has to be deleted
 35 (see Message/Message_Area_Manager/Others).
+36 Sort of newsgroup list was not successful!
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
 52 %s is no Fido server!
 53 There is no file echo list for %s.
-54 This function is not supported with net type RFC/Client.
 
 +  10900
 1  Invalid server configuration line: %s
