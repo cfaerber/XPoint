@@ -697,7 +697,7 @@ v3.20b/OpenXP  (18.12.2000)
    wurden "falsche" Nachrichten angezeigt u.„.). (Bug aus v3.12d)
 !  Anzeigeproblem bei Userauswahl mit <F2> und "A" beim Eintragen einer
    User-Vertreteradresse behoben. (Bug aus v3.12d)
-*  Config/Optionen/Sprache wieder aktiviert
+*  Config/Optionen/Sprache wieder aktiviert.
 !  Extrahieren von MIME-Multipart-Attachments in Zwischenablage
    funktioniert jetzt
 
@@ -705,13 +705,23 @@ v3.20b/OpenXP  (18.12.2000)
 v3.20c/OpenXP  (20.12.2000)
 ---------------------------
 !  Bei <Ctrl-B> auf ”ffentlicher Nachricht konnte der Eindruck
-   entstehen, das System sei "eingeschlafen"
+   entstehen, das System sei "eingeschlafen".
 !  PushHP Overflow beseitigt, konnte zu Problemen bei intensiver
-   Benutzung der Online-Hilfe fhren (Bug aus v3.12d)
+   Benutzung der Online-Hilfe fhren. (Bug aus v3.12d)
 
 
-v3.20d/OpenXP  (2x.12.2000)
+v3.20d/OpenXP  (31.12.2000)
 ---------------------------
-!  Bugfix: User wurden bei der Neuaufnahme manchmal ans Ende sortiert
-   (diese User k”nnen in der User-šbersicht mit "S"pezial/"E"dit und
-   <Ctrl-Enter> "repariert" werden)
+
+!  User wurden bei der Neuaufnahme manchmal ans Ende sortiert (diese
+   User k”nnen in der User-šbersicht mit "S"pezial/"E"dit und <Ctrl-
+   Enter> "repariert" werden).
+!  Crash im Lister bei 0-Byte-Nachrichten, festehendem Nachrichtenkopf
+   und Mausklick unterhalb des Nachrichtenkopfes beseitigt.
+!  Ein paar „ltere kleine Bugs in der Spezial-Suche behoben.
+!  Nachrichten/Weiterleiten/Kopie von Fido-Nachrichten erzeugt keine
+   "doppelten" Tearlines und Origins mehr (die der Originalnachricht
+   werden ver„ndert). (Bug aus v3.12d)
+!  Beim Hinzufgen eines neuen Users konnte XP abstrzen, wenn im Feld
+   "Adresse" die <F2>-Auswahl benutzt wurde und sich noch kein User in
+   der Datenbank befand.

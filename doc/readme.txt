@@ -67,4 +67,4 @@
 
 
 
-     Letzte Žnderung, 16.12.2000
+     Letzte Žnderung, 31.12.2000
