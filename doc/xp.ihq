@@ -6771,8 +6771,10 @@ Datei an beliebigen Tagen bei Žnderung verschickt
 werden soll.
 @
 580
-<<[x]>> -> Die Nachricht ersetzt die alte Nachricht
-       (Supersedes, nur <<RFC>>)
+<<[x]>> -> <<RFC>>: Die Nachricht ersetzt die alte Nachricht
+       ("Supersedes").
+
+       Siehe auch: [Nachrichten/Weiterleiten/Ersetzen]@12108
 @
 581
 Hier kann ein einzelnes Datum angegeben werden, zu
