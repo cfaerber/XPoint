@@ -2015,9 +2015,7 @@ var t       : text;
   end;
 
 var
-{$IFDEF unix}
   dummytz: string;
-{$ENDIF }
   EntryFound: Boolean;
   userauf : string;
   dummys  : string;
@@ -2228,15 +2226,11 @@ begin
                     getb(su,  'savetype',SaveType) or
                     getx(su,  'shell-showpar',ShellShowpar) or
                     getx(su,  'shell-waitkey',ShellWaitkey) then EntryFound := true;
-            'T': if xp1.gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }
+            'T': begin
+                 if xp1.gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }
                     xp1.gets(s,su,'Trennzeichen',trennchar) or
                     getx(su,  'TrennzeilenAlle',trennall) or
                     xp1.gets(s,su,'Telefon',telefonnr) or
-          {$IFDEF unix}
-                    xp1.gets(su,su,'timezone',dummytz) or
-          {$ELSE }
-                    xp1.gets(su,su,'timezone',TimeZone) or
-          {$ENDIF }
                     getb(su,  'termport',TermCOM) or
                     getl(su,  'termbaud',TermBaud) or
                     getx(su,  'termstatus',TermStatus) or
@@ -2244,6 +2238,11 @@ begin
                     getb(su,  'trennkommentar',trennkomm) or
                     getx(su,  'terminalbios',termbios) or
                     getx(su,  'tonsignal',tonsignal) then EntryFound := true;
+                    if AutomaticTimeZone then
+                      if xp1.gets(su,su,'timezone',dummytz) then EntryFound := true
+                    else
+                      if xp1.gets(su,su,'timezone',TimeZone) then EntryFound := true;
+                 end;
             'U': if xp1.gets(s,su,'UserAufnahme',userauf) or
                     xp1.gets(s,su,'UnARC',unpacker.unarc) or
                     xp1.gets(s,su,'UnLZH',unpacker.unlzh) or
@@ -2783,6 +2782,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.165  2003/08/26 05:37:41  mk
+  - added AutomaticTimeZone const and removed $IFDEFs
+
   Revision 1.164  2003/08/25 22:43:29  mk
   - simplyfied cutting of ':' from mcustomheader
 
