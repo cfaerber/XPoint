@@ -1842,13 +1842,13 @@ end;
 
 procedure _era(const Filename:string);
 begin
-  if not sysutils.DeleteFile(Filename) then
+  if (FileName <> '')  and not sysutils.DeleteFile(Filename) then
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
 end;
 
 procedure SafeDeleteFile(const Filename: String);
 begin
-  if FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
+  if (FileName <> '') and FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
 end;
 
@@ -2043,6 +2043,9 @@ end;
 
 {
   $Log$
+  Revision 1.139  2002/01/30 22:58:12  mk
+  - test for empty FileName in SafeDeleFilename and _era
+
   Revision 1.138  2002/01/22 19:15:27  mk
   - after 3.40 merge fixes
 
