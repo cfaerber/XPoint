@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - allg. Routinen }
@@ -41,7 +41,7 @@ type mprec     = record
                    keep    : boolean;   { MenÅ nicht verlassen }
                    mpnr    : integer;   { Nummer des MenÅpunkts }
                  end;
-     menuarray = array[1..22] of mprec;
+     menuarray = array[1..23] of mprec; {22->23 fuer 20 Zusatzmenueeintraege}
      map       = ^menuarray;
      scrptr    = record
                    scsize  : word;
@@ -86,6 +86,7 @@ var printlines : longint;
     rbx,rby    : byte;                { Cursorposition fÅr ReadButton     }
     hidden     : ^ahidden;            { Liste der unsichtbaren MenÅpkte.  }
     anzhidden  : integer;             { Anzahl der unsichtbaren MenÅpkte. }
+    listseekcol: byte;
 
 
 procedure showstack;                  { Stack/Heap-Anzeige im Debug-Mode }
@@ -110,8 +111,8 @@ procedure pophp;
 procedure freehelp;
 
 procedure setenable(mnu,nr:byte; flag:boolean);
-procedure setmenup(const mnu:string; nr:byte; const anew:string);
-procedure setmenupos(const mnu:string; newpos:byte);
+procedure setmenup(mnu:string; nr:byte; const anew:string);
+procedure setmenupos(mnu:string; newpos:byte);
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
 procedure SetExtraktMenu;
@@ -243,13 +244,19 @@ procedure cm_wl(const s:string);                    { Writeln              }
 procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
+procedure ListDisplay(x,y:word; var s:string); far;
 
 procedure SetBrettGelesen(const brett:string);       { Ungelesenflag des Bretts loeschen }
+
+{$IFDEF Snapshot}
+  function compiletime:string;
+{$ENDIF}
 
 implementation  {-------------------------------------------------------}
 
 uses
-  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings,xp3,xpovl;
+  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xp2f,xp4o,xpe,exxec,xpnt,strings,
+  xp3,xpovl;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -610,7 +617,7 @@ const
 var
   dispbuf: array[1..164] of byte;  {82 Zeichen und 82 Attribute}
 
-procedure ListDisplay(x,y:word; var s:string); far; assembler;
+procedure ListDisplay(x,y:word; var s:string); assembler;
 
 asm
             les di,s
@@ -630,20 +637,24 @@ asm
             mov [bx],ax
             add bx,2
             loop @dcopylp
-            mov al,' '                     { Abgrenzung rechts }
+            mov al,' '                    { Abgrenzung rechts }
             mov [bx],ax
             pop cx
 
-            cmp ListXhighlight,0           { keine Hervorhebungen? }
+            cmp ListXhighlight,0          { keine Hervorhebungen? }
             jz @nodh
             mov al,'*'
-            call @testattr                 { sichert cx }
+            call @testattr                { sichert cx }
             mov al,'_'
             call @testattr
-            mov   al,'/'
-            call  @testattr
+         (* mov al,'/'
+            call @testattr *)
 
-@nodh:      mov ax,base                   { dispbuffer -> Bildschirm }
+@nodh:      cmp ListShowSeek,0
+            je @nosu
+            call @testsuch
+
+@nosu:      mov ax,base                   { dispbuffer -> Bildschirm }
             mov es,ax
             mov ax,y
             dec ax
@@ -670,15 +681,15 @@ asm
             mov cx,dx
             xor si,si
 
-@talp1:     cmp al,byte ptr dispbuf[si]            { Startzeichen checken }
+@talp1:     cmp al,byte ptr dispbuf[si]           { Startzeichen checken }
             jne @tanext1
 
              mov bl,byte ptr dispbuf[si-2]
-             test byte ptr delimiters[bx],1        { Byte vor Startzeichen ok? }
+             test byte ptr delimiters[bx],1       { Byte vor Startzeichen ok? }
              jz @tanext1
              mov bl,byte ptr dispbuf[si+2]
-             test byte ptr delimiters[bx],2        { Byte vor Startzeichen ok? }
-             jnz @tastart                          { Startzeichen gefunden }
+             test byte ptr delimiters[bx],2       { Byte vor Startzeichen ok? }
+             jnz @tastart                         { Startzeichen gefunden }
 
 @tanext1:   add si,2
             loop @talp1
@@ -686,18 +697,18 @@ asm
 
             {-----------}
 
-@tastart:   mov di,si                              { Di = Byte nach Startzeichen }
+@tastart:   mov di,si                             { Di = Byte nach Startzeichen }
             dec cx
             jz @taende
-            dec cx                                 { min. ein Zeichen Abstand }
+            dec cx                                { min. ein Zeichen Abstand }
             jz @taende
-            add si,4                               { dann Endzeichen Checken }
+            add si,4                              { dann Endzeichen Checken }
 
 @talp2:     cmp al,byte ptr dispbuf[si]
             jne @tanext2
 
              mov bl,byte ptr dispbuf[si-2]
-             test byte ptr delimiters[bx],4        { Byte vor Endzeichen ok? }
+             test byte ptr delimiters[bx],4       { Byte vor Endzeichen ok? }
              jz @tanext2
              mov bl,byte ptr dispbuf[si+2]
              test byte ptr delimiters[bx],8       { Byte nach Endzeichen ok? }
@@ -713,16 +724,16 @@ asm
             mov cx,si
             sub cx,di
             shr cx,1
-            dec cx                                 { cx <- Anzahl hervorgeh. Zeichen }
+            dec cx                                { cx <- Anzahl hervorgeh. Zeichen }
             mov ah,listhicol
 
-@tacopy1:   mov al,byte ptr dispbuf[di+2]          { hervorgehobenen Text eins nach }
-            mov word ptr dispbuf[di],ax            { vorne kopieren; Farbe tauschen }
+@tacopy1:   mov al,byte ptr dispbuf[di+2]         { hervorgehobenen Text eins nach }
+            mov word ptr dispbuf[di],ax           { vorne kopieren; Farbe tauschen }
             add di,2
             loop @tacopy1
 
             pop cx
-            dec cx                                 { restliche Zeichen }
+            dec cx                                { restliche Zeichen }
             jz @addspace
 
 @tacopy2:   mov ax,word ptr dispbuf[di+4]
@@ -730,17 +741,226 @@ asm
             add di,2
             loop @tacopy2
 
-@addspace:  mov byte ptr dispbuf[di],' '           { 2 Leerzeichen anhÑngen }
+@addspace:  mov byte ptr dispbuf[di],' '          { 2 Leerzeichen anhÑngen }
             mov byte ptr dispbuf[di+2],' '
             pop ax
-            jmp @ta1                               { ... und das Ganze nochmal }
+            jmp @ta1                              { ... und das Ganze nochmal }
 
 
 @taende:    pop ax
             mov cx,dx
             retn
 
+{-------------------------}                   { Letzte Suchbegriffe markieren }
+
+@testsuch:  mov bl,suchanz
+            and bx,0ffh  
+            je @bye                           { Wenn Suchanz=0 dann Abbruch }
+
+
+{----------}                                  { Alle Einzelsuchbegriffe suchen }
+
+@sstloop:   dec bx
+            js @bye
+            cmp byte ptr seeknot[bx],0        { bei NOT-Verknuepfung ueberspringen }
+            jne @sstloop                           
+
+            push cx                           { Anzahl Zeichen in Screenpuffer-Zeile }
+            xor ax,ax
+            mov si,ax       
+            mov al,byte ptr seekstart[bx]
+            mov di,ax                         { DI=Seekstart[i] } 
+            mov dx,word ptr sst[di]           { DL=sst[seekstart[i] }
+
+@1:         mov al,byte ptr dispbuf[si]       { Im Screenpuffer nach erstem Buchst. suchen }
+            cmp al,dl
+            je @2
+            cmp dl,'?'            
+            je @2
+            cmp dl,'*'                        { Wildcards? }
+            je @2
+            call @igcase                      { evtl. Gross-/Kleinschreibung? }
+            je @2
+            call @ulscan
+            jne @3 
+@2:         call @compare                     { Gefunden -> Weiter vergleichen }
+@3:         add si,2
+            dec cx                            { ansonsten weiter im Screenpuffer }
+            jne @1
+
+            pop cx
+            or bx,bx
+            jns @sstloop                      { Weitermachen fuer alle Suchbegriffe }
+@bye:       retn
+
+
+{----------}                                  { erster Buchstabe passt -> weiter vergleichen }   
+
+@compare:
+            push di
+            push dx
+            push cx 
+            push bx  
+            push si                     
+            mov cl,byte ptr seeklen[bx]       { CL=Seeklen[i] }
+            mov ch,cl
+            call @ulscan
+            jne @seekloop 
+            inc di
+            dec cl
+            dec ch 
+
+@seekloop:  mov bl,0
+            inc di 
+            dec cl
+            je @good                          { Alles passt, wenn Suchstring zuende ist }
+
+@seek2:     add si,2
+            cmp si,160
+            je @@0
+@s1:        mov dx,word ptr sst[di]
+            cmp dl,'*'                        { Wildcard vorbereiten }
+            jne @s2
+            mov bl,1
+            dec ch
+            inc di 
+            dec cl
+            je @good
+            jmp @s1
+ 
+@s2:        mov al,byte ptr dispbuf[si]
+            cmp al,dl
+            je @seekloop
+            call @igcase                      { evtl. Gross-/Kleinschreibung? }
+            je @seekloop                      { vergleichen, solange alles zusammenpasst }
+            call @umlaut
+            je @seekloop   
+            cmp dl,'?'                        { Wildcard? } 
+            je @seekloop             
+            cmp bl,1
+            jne @@0
+            inc ch
+            jmp @seek2
+
+@@0:        pop si                  
+            pop bx
+            pop cx
+            pop dx
+            pop di                            { ansonsten Abbruch }          
+            retn 
+
+@good:      pop si                            { Suchbegriff gefunden: im Screen markieren }                 
+            mov cl,ch
+            mov ah,listseekcol
+
+@@1:        mov al,byte ptr dispbuf[si]       { Farbe neu setzen }
+            mov word ptr dispbuf[si],ax
+            dec cl                            { bis Ende des Begriffs }         
+            je @@2 
+            add si,2
+            cmp si,160                        { oder Bildschirmrand erreicht ist.}
+            jne @@1
+
+@@2:        pop bx
+            pop cx 
+            pop dx 
+            pop di
+            retn            
+
+
+{----------}
+
+@igcase:    mov ah,byte ptr igcase            { Gross-/Kleinschreibung ignorieren? }
+            cmp ah,1                          { Noe? Dann passt's nicht. }
+            jne @icend
+
+@ic_ue:     cmp al,'Å'
+            jb @ic_az
+            jne @ic_ae
+            cmp dl,'ö'
+            retn 
+@ic_ae:     cmp al,'Ñ'
+            jne @ic_oe
+            cmp dl,'é'
+            retn
+@ic_oe:     cmp al,'î'
+            jne @ic_az
+            cmp dl,'ô'
+            retn
+@ic_az:     push ax
+            and al,0dfh                       { Igcase }
+            cmp al,'A'                        { zwischen A und Z? }
+            jb @ic_end                        { Wenn nicht, dann ist's auch nicht gleich...}
+            cmp al,'Z'
+            ja @ic_end
+            cmp al,dl
+@ic_end:    pop ax           
+@icend:     retn 
+
+
+
+{---------}
+
+@umlaut:    push dx
+            cmp al,'Å'                        { Koennte es ein Umlaut sein? }
+            jb @ulend
+            mov ah,byte ptr umlaut            { Umlaute ignorieren aktiv? }
+            cmp ah,1 
+            jne @ulend
+            cmp dh,'E'                        { wenn's in SST kein Umlaut ist, Schluss }
+            je @ul1
+
+            cmp al,'·'
+            jne @ulend
+            cmp dx,'SS'
+            je @ulfound
+            pop dx
+            retn
+          
+
+@ul1:       call @ulscan
+            jne @ulend
+
+
+@ulfound:   inc di 
+            dec cl
+            dec ch
+            jne @u1
+            mov cl,1
+@u1:        cmp al,al  
+
+@ulend:     pop dx
+            retn
+
+{---------}
+
+@ulscan:    cmp al,'·'
+            je @ss
+            cmp al,'Ñ'
+            je @ae
+            cmp al,'é'
+            je @ae
+            cmp al,'î'
+            je @oe
+            cmp al,'ô'
+            je @oe
+            cmp al,'Å'
+            je @ue
+            cmp al,'ö'
+            jne @ulsend
+
+
+@ue:        cmp dx,'EU'
+            retn 
+@ss:        cmp dx,'SS'
+            retn
+@ae:        cmp dx,'EA'
+            retn
+@oe:        cmp dx,'EO'
+@ulsend:    retn
+
 {-------------------------}
+
 @ende:
 end; { of Listdisplay }
 
@@ -752,11 +972,13 @@ begin
   halt(1);
 end;
 
+
 procedure sound(hz:word);
 begin
   if not ParQuiet then
     crt.sound(hz);
 end;
+
 
 procedure blindon(total:boolean);
 var mf : boolean;
@@ -793,10 +1015,12 @@ end;
 
 { Online-Hilfe (s. auch xp1help.pas) }
 
+
 procedure hlp(nr:word);
 begin
   helpst[helpstp]:=nr;
 end;
+
 
 procedure pushhp(nr:word);
 begin
@@ -807,6 +1031,7 @@ begin
     helpst[helpstp]:=nr;
     end;
 end;
+
 
 procedure pophp;
 begin
@@ -877,6 +1102,7 @@ begin
     mon;
   end;
 end;
+
 
 procedure holen(var sp:scrptr);
 begin
@@ -2036,11 +2262,51 @@ begin                                          { mehr vorhanden sind. }
   dbgo(bbase,rec);
 end;
 
+{$IFDEF Snapshot}
+function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
+var                               { Format: 1105001824 }
+ d:datetime;
+begin
+  unpacktime(filetime(paramstr(0)),d);
+  compiletime:=(formi(d.day,2)+formi(d.month,2)+right(formi(d.year,2),2)
+    +formi(d.hour,2)+formi(d.min,2));
+end;
+{$ENDIF}
+
 {$I xp1cm.inc}
 
 end.
 {
   $Log$
+  Revision 1.48.2.25  2001/09/16 20:18:05  my
+  JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
+          Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
+          Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
+          <Tab> springt der Cursorbalken die n‰chste Zeile mit einem
+          markierten Suchbegriff an.
+
+  JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
+          Suchoptionen (z.B. umlautunabh‰ngige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verf¸gbar. "Alte" Suchfunktionen
+          jetzt ¸ber <Ctrl-S> (fr¸her "S") bzw. wie bisher ¸ber <Shift-S>
+          erreichbar.
+
+  JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verf¸gung).
+
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  JG+MY:- Brettmanager: Text-Markiersuche mit "S" (analog zu Lister),
+          Ein-/Ausschalten der markierten Suchbegriffe mit "E", "alte"
+          Suchfunktionen jetzt ¸ber <Ctrl-S> (fr¸her "S") bzw. wie bisher
+          ¸ber <Shift-S> erreichbar.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.48.2.24  2001/08/28 08:05:13  mk
   - removed GetI16, because unnecessary for 16 Bit
   - optimized GetX functions, should improve startup speed
