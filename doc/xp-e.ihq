@@ -3232,8 +3232,8 @@ this entry can normally be left blank.
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
-is written to the keyname "<<Telefon=>>" in your server
-configuration file <server>.BFG.
+is written to the keyname "<<Client-Phone=>>" in your
+server configuration file <server>.BFG.
 @
 30112
 Here you can enter a string (a user name for
@@ -3247,8 +3247,8 @@ this entry can normally be left blank.
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
-is written to the keyname "<<LoginName=>>" in your server
-configuration file <server>.BFG.
+is written to the keyname "<<Client-Login=>>" in your
+server configuration file <server>.BFG.
 @
 30113
 Enter the password required for authentication when
@@ -3261,8 +3261,8 @@ this entry can normally be left blank.
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
 client or client kit if this is the case. The setting
-is written to the keyname "<<Passwort=>>" in your server
-configuration file <server>.BFG.
+is written to the keyname "<<Client-Password=>>" in your
+server configuration file <server>.BFG.
 @
 30200
 (ToDo: RFC/Client - netcall procedure and further

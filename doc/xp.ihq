@@ -3545,19 +3545,17 @@ Zweifelsfall fragen Sie bitte den Systembetreiber.
 Die Unterschiede zwischen den einzelnen SMTP-Modi
 lassen sich in folgender Tabelle veranschaulichen:
 
-            ³     Mails     ³      News     ³ Steuer-
- SMTP-Modus ³  (Dateiname)  ³  (Dateiname)  ³ dateien
-ÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍ
-            ³mehrere Dateien³eine Datei     ³
-<<aus>>         ³D-<<nnnn>>.OUT     ³D-<<nnnn>>.OUT     ³   ja
-ÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄ
-            ³eine Datei     ³eine Datei     ³
-<<SMTP/UUCP>>   ³D-<<nnnn>>.OUT     ³D-<<nnnn>>.OUT     ³   ja
-ÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄ
-            ³mehrere Dateien³mehrere Dateien³
-<<SMTP/Client>> ³M<<nnnn>>.OUT      ³N<<nnnn>>.OUT      ³  nein
-ÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄ
-               <<nnnn>>=fortlaufende vierstellige Zahl
+ SMTP-Modus: ³    <<aus>>     ³ <<SMTP/UUCP>>  ³ <<SMTP/Client>>
+ÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍ
+Dateiname(n) ³ D-<<nnnn>>.OUT ³ D-<<nnnn>>.OUT ³ M<<nnnn>>.OUT
+Mails        ³ (mehrere)  ³ (eine)     ³ (mehrere)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ
+Dateiname(n) ³ D-<<nnnn>>.OUT ³ D-<<nnnn>>.OUT ³ N<<nnnn>>.OUT
+News         ³ (eine)     ³ (eine)     ³ (mehrere)
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ
+Steuerdateien³     ja     ³     ja     ³    nein
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄ
+               <<nnnn>> = fortlaufende vierstellige Zahl
 
 @
 8018
@@ -4872,7 +4870,7 @@ herstellt, kann dieses Feld i.d.R. leer bleiben.
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner "<<Telefon=>>"
+datei <Box>.BFG unter dem Bezeichner "<<Client-Phone=>>"
 gespeichert.
 @
 30112
@@ -4889,7 +4887,7 @@ herstellt, kann dieses Feld i.d.R. leer bleiben.
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner "<<LoginName=>>"
+datei <Box>.BFG unter dem Bezeichner "<<Client-Login=>>"
 gespeichert.
 @
 30113
@@ -4905,8 +4903,8 @@ herstellt, kann dieses Feld i.d.R. leer bleiben.
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
 mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
-datei <Box>.BFG unter dem Bezeichner "<<Passwort=>>"
-gespeichert.
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-Password=>>" gespeichert.
 @
 30200
 <<RFC/Client: Netcall-Ablauf und weitere Details
@@ -5008,8 +5006,9 @@ fende vierstellige Zahl.
    liegen und werden beim n„chsten Netcall gel”scht.
 
 <<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers,
-   den UUZ bei einem Netcall im Client-Modus aus den
-   eingegangenen RFC-Nachrichten erstellt.
+   den UUZ bei einem Netcall einer RFC/Client-
+   Serverbox aus den eingegangenen RFC-Nachrichten
+   erstellt.
 
 <<<Box>.BL>> oder <<<Box>.GR>>  Die Gesamtliste aller vorhan-
    denen Bretter (Newsgroups) einer Serverbox - liegt
@@ -8719,15 +8718,16 @@ Geben Sie den Namen des Users ein, der aufgenommen
 oder ausgeschlossen werden soll.
 @
 680
-Geben Sie den Netznamen Ihrer Stammbox ein. Es k”nnen
-sp„ter beliebig viele weitere Boxen erfaát oder eine
-andere Stammbox festgelegt werden.
+Geben Sie den Netznamen Ihrer Stammbox bzw. Ihres
+Servers ein. Es k”nnen sp„ter beliebig viele weitere
+Boxen/Server erfaát oder ein(e) andere(r) Stammbox/
+-server festgelegt werden.
 
 Der Netzname ist der Kurzname der Box, der in Ihrer
 Useradresse verwendet wird.
 
-Beim Netztyp <<RFC/Client>> k”nnen Sie einen beliebigen
-Namen verwenden.
+Beim Netztyp <<RFC/Client>> k”nnen Sie eine beliebige
+Bezeichnung als Servername verwenden.
 
 Bei FidoNet-Boxen setzen Sie hier bitte die Node-
 adresse der Box ein, in der Form Zone:Netz/Node.
@@ -13263,11 +13263,11 @@ Gelegentlich kann es auch vorkommen, daá Brettmana-
 ger-Befehle mit einigen Minuten Verz”gerung abgear-
 beitet werden.
 
-Im Client-Modus einer RFC/UUCP-Box wird mit diesem
-Befehl die Gesamtliste der vorhandenen Newsgroups
-gel”scht und (sofern vom eingebundenen Client unter-
-sttzt und dort aktiviert) beim n„chsten Netcall vom
-Newsserver automatisch eine aktuelle Gesamtliste
+Bei Serverboxen vom Netztyp <<RFC/Client>> wird mit
+diesem Befehl die Gesamtliste der vorhandenen News-
+groups gel”scht und (sofern vom eingebundenen Client
+untersttzt und dort aktiviert) beim n„chsten Netcall
+vom Newsserver automatisch eine aktuelle Gesamtliste
 angefordert.
 
 @
@@ -13338,8 +13338,6 @@ nur eine kleie Auswahl von Befehlen.
   <<help>>    fordert einen Hilfetext zur manuellen Be-
           dienung von Changesys an.
 
-  Im Client-Modus wird diese Funktion nicht untersttzt.
-
 @
 11906
 <<Nachricht / Brettmanager / Liste einlesen
@@ -13386,7 +13384,7 @@ Die "maschinenlesbare Gruppenliste" wird von Cross-
 Point fr das Bestellen von Brettern verwendet.
 @
 11910
-<<RFC (nur Client-Modus)
+<<RFC/Client
 
 Geben Sie hier an, wieviele Artikel der mit *diesem*
 Bestellvorgang bestellte(n) Newsgroup(s) angefordert
