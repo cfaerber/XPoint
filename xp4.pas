@@ -67,7 +67,7 @@ implementation  {----------------------------------------------------}
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
-      xpmakeheader, replytoall;
+      xpmakeheader, replytoall, mime;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -1186,11 +1186,11 @@ var t,lastt: taste;
       if brk then goto ende;
     end;
 
-    if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
+    if DoSend(pm,fn,true,false,empf,betr,true,false,true,true,true,sData,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
-    then 
+    then
     begin
-      if AutoArchiv and reply then 
+      if AutoArchiv and reply then
       begin
 {*}     dispRec := saveDispRec^;
 {*}     p := savePos;
@@ -1217,7 +1217,7 @@ var t,lastt: taste;
     pgdown:=false;
   ende:
     force_quotemsk:='';
-    SaveDeleteFile(fn);
+//    if FileExists(fn) then _era(fn);
     setall;
     SendEmpfList.Clear;
     freesenduudatamem(sdata);
@@ -2244,6 +2244,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.105  2001/09/08 14:30:08  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.104  2001/09/07 13:54:20  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

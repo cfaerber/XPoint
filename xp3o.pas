@@ -1082,10 +1082,10 @@ begin
   Hdp.Free;
   if cpos('@',empf)>0 then begin
     IsEbest:=true{auto};
-    if DoSend(true,tmp,empf,LeftStr('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
-              false,false,false,false,false,nil,leer,leer,sendShow) then;
+    if DoSend(true,tmp,true,false,empf,LeftStr('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
+              false,false,false,false,false,nil,leer,sendShow) then;
     end;
-  _era(tmp);
+//  _era(tmp);
   freeres;
 end;
 
@@ -1173,8 +1173,8 @@ begin
                     empf:=hdp.empfaenger;
                     SendEmpfList.Assign(EmpfList);
                     EmpfList.Clear;
-                    if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
-                              '>',false,false,false,false,true,nil,leer,leer,
+                    if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
+                              '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
                   end;
       nt_Maus   : begin
@@ -1184,10 +1184,10 @@ begin
                     writeln(t,'#',hdp.msgid);
                     writeln(t,'BX');
                     close(t);
-                    if DoSend(true,fn,'MAUS@'+box,'<Maus-Direct-Command>',
-                              false,false,false,false,false,nil,leer,leer,
+                    if DoSend(true,fn,true,false,'MAUS@'+box,'<Maus-Direct-Command>',
+                              false,false,false,false,false,nil,leer,
                               sendShow) then;
-                    _era(fn);
+//                    _era(fn);
                   end;
       nt_ZConnect:begin
                     ControlMsg:=true;
@@ -1197,8 +1197,8 @@ begin
                     empf:=hdp.empfaenger;
                     SendEmpfList.Assign(EmpfList);
                     EmpfList.Clear;
-                    if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
-                              '>',false,false,false,false,true,nil,leer,leer,
+                    if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
+                              '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
                   end;
     end;
@@ -1219,6 +1219,7 @@ var
     d      : DB;
     fn     : string;
     sData  : SendUUptr;
+    sFlags : Word;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten koennen nicht ersetzt werden.' }
@@ -1288,9 +1289,15 @@ begin
   empf:=hdp.empfaenger;
   SendEmpfList.Assign(EmpfList);
   EmpfList.Clear;
-  if DoSend(false,fn,'A'+empf,_betreff,
-            true,false,true,false,true,sData,leer,leer,
-            0) then;
+
+  sFlags:=0;
+  sData^.orghdp:=hdp;
+  if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
+    sFlags:=sFlags or SendMPart;
+
+  if DoSend(false,fn,false,false,'A'+empf,_betreff,
+            true,false,true,false,true,sData,leer,
+            sFlags) then;
   Hdp.Free;
   freesenduudatamem(sData)
 end;
@@ -1521,6 +1528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2001/09/08 14:28:47  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.71  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

@@ -25,9 +25,9 @@ var leer : string;
 begin
   leer:='';
   forcebox:=boxpar^.boxname;
-  if DoSend(true,fn,BoxPar^.filescanner+'@'+boxpar^.boxname,
+  if DoSend(true,fn,false,false,BoxPar^.filescanner+'@'+boxpar^.boxname,
             boxpar^.FilescanPW,false,false,false,false,false,
-            nil,leer,leer,0) then;
+            nil,leer,0) then;
 end;
 
 
@@ -345,6 +345,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2001/09/08 14:32:15  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.17  2001/09/07 13:54:22  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

@@ -212,7 +212,7 @@ begin
               1 : with hdp do begin
                     if cpos('@',empfaenger)>0 then
                       empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
-                    write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
+                    System.write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
                              '   ',forms(empfaenger,21),'  ',forms(betreff,30),'  ');
                     case pm_bstat[1] of
                       'Z' : writeln(t2,'zurckgest.');
@@ -265,16 +265,16 @@ begin
     s:='';
     if n>0 then
       if art=2 then begin
-        if SendPMmessage('MausTausch-Fehlerbericht',tfn,box) then;
+        if SendPMmessage('MausTausch-Fehlerbericht',tfn,true,box) then;
         end
       else begin
         InternBox:=box;
         empf:='$/¯Mausstatus';
-        if DoSend(false,tfn,empf,'PM-Status vom '+date,
-                false,false,false,false,false,nil,s,s,sendIntern+sendShow) then
+        if DoSend(false,tfn,true,false,empf,'PM-Status vom '+date,
+                false,false,false,false,false,nil,s,sendIntern+sendShow) then
           SetUngelesen;
         end;
-    _era(tfn);
+//    _era(tfn);
     end;
   Hdp.Free;
 end;
@@ -416,10 +416,10 @@ begin
         close(t);
         leer:='';
         rec:=dbRecno(mbase);
-        if DoSend(true,fn,'MAUS@'+hdp.pfad,'<Maus-Direct-Command>',
-                  false,false,false,false,false,nil,leer,leer,0) then;
+        if DoSend(true,fn,true,false,'MAUS@'+hdp.pfad,'<Maus-Direct-Command>',
+                  false,false,false,false,false,nil,leer,0) then;
         dbGo(mbase,rec);
-        erase(t);
+//      erase(t);
         end;
       spop(m2t);
       end;
@@ -686,10 +686,11 @@ begin
     if _filesize(fn)>0 then begin
       leer:='';
       forcebox:=box;
-      if DoSend(true,fn,'MAUS@'+box,'<Maus-Direct-Command>',
-                false,false,false,false,false,nil,leer,leer,0) then;
-      end;
-    _era(fn);
+      if DoSend(true,fn,true,false,'MAUS@'+box,'<Maus-Direct-Command>',
+                false,false,false,false,false,nil,leer,0) then;
+      end
+    else
+      _era(fn);
     end;
 end;
 
@@ -818,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2001/09/08 14:38:29  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.31  2001/09/07 13:54:24  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

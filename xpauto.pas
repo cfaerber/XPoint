@@ -254,8 +254,8 @@ begin
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:=allocsenduudatamem;
       if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
-      if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
-                sData,leer,leer,sendShow) then begin
+      if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
+                sData,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
@@ -516,10 +516,10 @@ var sr    : tsearchrec;
     else
       if LeftStr(empf,1)<>'/' then empf:='/'+empf;
     EditAttach:=false;
-    if DoSend(pm,datei,iifs(pm,'','A')+empf,betr,
-              false,attach or not temp,false,false,temp,nil,s,s,sendShow) then begin
-      if temp or (delfile and (datei<>'')) then
-        DeleteFile(datei);
+    if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
+              false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
+//      if temp or (delfile and (datei<>'')) then
+//        DeleteFile(datei);
       SendMsg:=true;
       end;
   end;
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/09/08 14:34:33  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.41  2001/09/07 13:54:23  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

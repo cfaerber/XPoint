@@ -415,8 +415,8 @@ begin
   hf:='';
   _sendmaps:=true;
   forcebox:=box;
-  if DoSend(true,datei,mapsname+'@'+box+ntServerDomain(box),bef,
-            false,false,false,false,false,nil,hf,hf,0) then;
+  if DoSend(true,datei,false,false,mapsname+'@'+box+ntServerDomain(box),bef,
+            false,false,false,false,false,nil,hf,0) then;
   _sendmaps:=false;
 end;
 
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2001/09/08 14:32:56  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.56  2001/09/07 13:54:22  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

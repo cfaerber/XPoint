@@ -371,16 +371,16 @@ var d     : DB;
   begin
     if isbox(fs) then domain:=ntServerDomain(fs)
     else domain:='.ZER';
-    if DoSend(true,fn,fname+'@'+fs+domain,comm,
-              false,false,false,false,false,nil,hd,hd,0) then;
+    if DoSend(true,fn,false,false,fname+'@'+fs+domain,comm,
+              false,false,false,false,false,nil,hd,0) then;
   end;
 
   procedure uucomm(comm:string);
   begin
     forcebox:=fs;
     KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
-    if DoSend(true,fn,fname+'@'+fs+ntServerDomain(fs),comm,
-              false,false,false,false,false,nil,hd,hd,0) then;
+    if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),comm,
+              false,false,false,false,false,nil,hd,0) then;
   end;
 
   procedure UUsendfile;
@@ -402,9 +402,9 @@ var d     : DB;
       close(t);
       xpsendmessage.EditAttach:=false; xpsendmessage.noCrash:=true;
       KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
-      if DoSend(true,fn,fname+'@'+fs+ntServerDomain(fs),
+      if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),
                 expandfilename(source),
-                false,true,false,false,false,nil,hd,hd,0) then;
+                false,true,false,false,false,nil,hd,0) then;
       end;
   end;
 
@@ -559,6 +559,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2001/09/08 14:32:56  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.25  2001/09/07 13:54:22  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
