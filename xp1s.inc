@@ -20,22 +20,77 @@ begin
     repfile:=prog+' '+name;
 end;
 
-
-{ prog:  Programmname. Falls nicht per PATH erreichbar, dann wird
-         ein COMMAND /C gestartet
-  cls:   0=nicht l”schen; 1=l”schen, 2=l”schen+Hinweis, 3=Mitte l”schen
-         -1=l”schen/25 Zeilen, 4=l”schen/nicht sichern,
-         5=nicht l”schen/nicht sichern }
-
 const trackpath : boolean = false;
 
-
+{ call of external program. errorlevel returned in gloval var errorlevel.
+  errorlevel is negative if call was not performed (program not found).
+  prog may be a batch file or using pipes. program extension MAY be specified
+  as well as program path.
+  CAUTION: Automatically chdirs back to "ownpath"!
+  cls:   0=nicht loeschen; 1=loeschen, 2=loeschen+Hinweis, 3=Mitte loeschen
+         -1=loeschen/25 Zeilen, 4=loeschen/nicht sichern,
+         5=nicht loeschen/nicht sichern }
 procedure shell(prog:string; space:word; cls:shortint);
-{ Externer Aufruf, Errorlevelrueckgabe in global Errorlevel }
-var
-  sm2t     : boolean;
-  maussave : mausstat;
-  sp       : scrptr;
+
+  { returned: errorlevel called program returned if call successful
+    negative errorlevel if program not found }
+  function Xec(command:string; const prompt:string):Integer;
+
+  {$ifdef UnixFS}
+  {$ifdef Unix}
+  begin
+    Debug.TempCloseLog(False);
+    Result:=Linux.Shell(command);
+    Debug.TempCloseLog(True);
+    Debug.DebugLog('xp1s','called program "'+command+'": result '+
+                   strs(Result),iif(Result=0,DLInform,DLError));
+  end;
+  {$else}
+  {$error Please implement this function for your OS}
+  {$endif}
+  {$else} // OS is Dos, Win or OS2
+  var
+    pp    : byte;
+    parameters,commandsave : string;
+    callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
+  begin
+    pp:=pos(' ',command);
+    if pp=0 then parameters:=''
+    else begin
+      parameters:=trim(Mid(command,pp+1));
+      command:=LeftStr(command,pp-1);
+    end;
+    command:=FileUpperCase(command);
+  
+    callviacli:=(pos('|',parameters)>0) or (pos('>',parameters)>0) or (pos('<',parameters)>0);
+    if not callviacli then begin
+      commandsave:=command;
+      if not FileExists(command)then
+        if Pos('.',ExtractFileName(command))=0 then begin // no file extension specified
+          command:=FileUpperCase(fileSearch(commandsave+'.EXE','.'+DirSepa+getenv('PATH')));
+          if not FileExists(command)then
+            command:=FileUpperCase(fileSearch(commandsave+'.COM','.'+DirSepa+getenv('PATH')));
+          if not FileExists(command)then
+            begin command:=commandsave; callviacli:=true end; // a last chance...
+          end
+        else begin // file extension is specified
+          command:=FileUpperCase(fileSearch(commandsave,'.'+DirSepa+getenv('PATH')));
+          if not FileExists(command)then
+            begin command:=commandsave; callviacli:=true end; // a last chance...
+        end;
+    end;
+    if callviacli then begin
+      parameters:=' /c '+command+' '+parameters;
+      command:=getenv('comspec');
+    end;
+
+    Debug.TempCloseLog(False);
+    Result:=SysExec(command, parameters);
+    Debug.TempCloseLog(True);
+    Debug.DebugLog('xp1s','called program "'+command+'" with parameters "'+parameters+'": result '+
+                   strs(Result),iif(Result=0,DLInform,DLError));
+  end;
+  {$endif}
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -60,6 +115,11 @@ var
     closebox;
     restcursor;
   end;
+
+var
+  sm2t     : boolean;
+  maussave : mausstat;
+  sp       : scrptr;
 
 begin
   if (ParDebFlags and 1<>0) or ShellShowpar then
@@ -94,10 +154,7 @@ begin
   end;
   cursor(curon);
 
-  ExecDeutsch:=deutsch;
-
   Errorlevel := Xec(prog,'[XP]');
-  DebugLog('xp1','called "'+prog+'", result '+strs(Errorlevel),iif(Errorlevel=0,DLInform,DLError));
 
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
@@ -415,6 +472,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/01/05 18:35:03  ma
+  - moved Exxec unit into XP1 unit
+
   Revision 1.46  2001/01/04 23:16:40  ma
   - refined debug logs
 
