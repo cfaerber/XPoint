@@ -3077,8 +3077,9 @@ begin
         end;
         if s<>'' then wrref;
       end;
-    if attrib and attrControl<>0 then
-      wrs(f,'Control: '+betreff);
+    if (attrib and attrControl<>0) and (Pos ('cancel ',control)<>0) then
+      Insert ('<',control,8);
+      wrs(f,'Control: '+control+'>');
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
@@ -3535,6 +3536,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.7  2000/09/07 12:56:53  sv
+  - Cancelerstellung ueberarbeitet
+
   Revision 1.35.2.6  2000/08/28 23:15:00  mk
   - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
 

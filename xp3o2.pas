@@ -132,9 +132,9 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if ntMaxRef(netztyp)>1 then
         WriteReflist(reflist,1);
       if ref<>'' then wrs('BEZ: '+ref);
-      if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then begin
+      if (attrib and attrControl<>0) and (hd.netztyp IN [nt_ZConnect,nt_UUCP]) then begin
         wrs('STAT: CTL');
-        wrs('CONTROL: cancel <'+ref+'>');
+        wrs('CONTROL: cancel '+ref);
       end;
       wrs('ROT: '+pfad);
       p1:=cpos(' ',PmReplyTo);
@@ -443,6 +443,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.1  2000/09/07 12:56:53  sv
+  - Cancelerstellung ueberarbeitet
+
   Revision 1.9  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
