@@ -34,6 +34,7 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_QWK       = 31;
        nt_UUCP      = 40;
        nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp } 
+       nt_UUCP_U    = 42;        { dito fuer RFC/UUCP-Auswahl, nur fuer Namen-Anzeige }
 
        ltNetcall    = 0;         { Login/Transfer-Typen }
        ltZConnect   = 2;         { XRef: XP7            }
@@ -426,7 +427,8 @@ begin
     nt_Maus     : ntName:='MausTausch';
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
-    nt_UUCP     : ntName:='RFC/UUCP';
+    nt_UUCP     : ntName:='RFC';
+    nt_UUCP_U   : ntName:='RFC/UUCP';
     nt_UUCP_C   : ntName:='RFC/Client';
   else
     ntName:='???';
@@ -755,6 +757,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.9.2.4  2001/07/11 01:49:33  my
+  JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
+       in Edit User and Edit Message Area dialogues
+
   Revision 1.9.2.3  2001/06/13 02:10:10  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and

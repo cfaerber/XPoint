@@ -145,8 +145,9 @@ var d         : DB;
   var i : integer;
   begin
     Netz_Typ:=ntName(nt_Netcall);
-    if nt=41 then Netz_Typ:=ntName(41)
-    else for i:=0 to enetztypen-1 do
+    if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
+    else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U)
+    else for i:=1 to enetztypen-1 do
       if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
   end;
 
@@ -1190,7 +1191,8 @@ restart:
   ntyp:=ntName(nt_UUCP_C); nt:=nt_UUCP_C;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   mappsel(true,ntname(41));
-  for i:=0 to enetztypen-1 do
+  mappsel(true,ntname(42));
+  for i:=1 to enetztypen-1 do
     if (ntnr[i] in ntAllowed) then
       mappsel(true,ntName(ntnr[i]));
   mset3proc(gf_getntyp);
@@ -1284,6 +1286,10 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.28  2001/07/11 01:49:33  my
+  JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
+       in Edit User and Edit Message Area dialogues
+
   Revision 1.19.2.27  2001/07/01 15:43:34  my
   SV:- moved RTA code to new unit xp4rta.pas
 
