@@ -46,7 +46,11 @@
 
 { --- ab hier sind keine Žnderungen n”tig --- }
 
-{$IFDEF VER130 }
+{$IFDEF VER130 }          { Delphi 5.0 }
+  {$DEFINE Delphi }
+{$ENDIF }
+
+{$IFDEF VER140 }          { Delphi 6.0 }
   {$DEFINE Delphi }
 {$ENDIF }
 
@@ -90,7 +94,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
 
-  {$DEFINE i386} (* Delphi only exists on Pentium+ *)
+  {$DEFINE i386}
 {$ENDIF }
 
 {$IFDEF i386}
@@ -200,6 +204,9 @@
 
 {
   $Log$
+  Revision 1.66  2001/07/28 12:22:09  mk
+  - added support for Delphi 6
+
   Revision 1.65  2001/03/24 12:45:33  mk
   - added compiler define INLINE
 
