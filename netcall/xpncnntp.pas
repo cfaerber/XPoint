@@ -374,6 +374,7 @@ begin
         end;
         if List.Count > 0 then SaveNews(true);
       end;
+      Dec(ArticleIndex); 
 
       List.Clear;
       if FileExists(MidFilename) then
@@ -424,6 +425,9 @@ end;
 
 {
         $Log$
+        Revision 1.53  2003/09/05 18:43:23  mk
+        - added Dec(ArticleIndex) at end of poll to correct ArticleIndex in *.rc
+
         Revision 1.52  2003/09/05 17:03:42  mk
         - fixed bug with to large ArticleIndex
 
