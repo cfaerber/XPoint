@@ -29,7 +29,7 @@ interface
 uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
-const maxcc = 50;
+const maxcc = 126;
       ccte_nobrett : boolean = false;
       cc_NT :byte = 0;
       _UserAutoCreate : boolean = false;  { User ohne RÅckfrage anlegen }
@@ -469,6 +469,9 @@ end;
 
 {
   $Log$
+  Revision 1.33.2.3  2003/03/28 06:51:08  mk
+  - maxcc is now 126 instead of 50
+
   Revision 1.33.2.2  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 
