@@ -193,7 +193,7 @@ function  alldrives: string;
 
 implementation  { ------------------------------------------------------- }
 
-uses xp0;
+//uses xp0;
 
 {$ifdef unix}
 const
@@ -430,7 +430,7 @@ begin
   if ExtractFileExt(fn)='' then begin
     result:=FindFile(fn+'.exe');
     if result='' then result:=FindFile(fn+'.com');
-    if result='' then result:=FindFile(fn + extBatch);
+    if result='' then result:=FindFile(fn +'.bat' { extBatch} );
     end
   else result:=FindFile(fn);
   {$else}
@@ -667,6 +667,10 @@ end;
 
 {
   $Log$
+  Revision 1.106  2001/10/07 17:09:11  cl
+  - removed import of xp0 (causes rc.exe/ihs.exe compiled with FPC 1.0.0
+    to crash).
+
   Revision 1.105  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
