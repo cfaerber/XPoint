@@ -1,0 +1,46 @@
+Grobentwurf eines Mailinglisten-Managers:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Beim Einlesen wird auf Hinweise gesucht, dass es sich um die
+Nachricht einer Mailingliste handelt.
+
+=> unbekannte Mailingliste: neu anlegen, Daten übernehmen
+=> bekannte Mailingliste: entsprechend handeln (z.B. in Brett verschieben)
+
+Beim Erzeugen von Nachrichten wird die Adresse der Mailingliste
+eingesetzt (bzw. ein evt. vorhandener Mail-Followup-To-Header
+ausgewertet.
+
+Mailinglisten können vereinfacht bestellt und abbestellt werden.
+
+Datenbank:
+- Submission-Adresse
+
+- Brett
+
+- Typ:
+    RFC xxxx/yyyy
+    ezmlm
+    Mailman
+    Majordomo
+    Smartlist
+    LISTSERV
+    ...
+
+- Passwort (z.B. Mailman)
+  
+- URL fürs Bestellen
+- URL fürs Abbestellen
+- URL für ...
+
+- Status:
+    BESTELLT			- Mailingliste bestellt
+    NICHT BESTELLT		- Mailingliste abbestellt
+    WIRD BESTELLT		- Bestellnachricht verschickt
+    WIRD BESTELLT (BESTÄTIGT)	- Bestellnachricht bestätigt
+    WIRD ABBESTELLT		- Abbestellnachricht verschickt
+    WIRD ABBESTELLT (BESTÄTIGT)	- Abbestellnachricht bestätigt
+
+- E-Mail-Adresse	\ vgl. Roles-
+- Realname		/ Feature
+
+$Id$
