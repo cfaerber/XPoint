@@ -708,7 +708,7 @@ var f1,f2   : file;
   end;
 
   procedure MakePacketHeader;
-  var dummy : rtlword;
+  var dummy : smallword;
       phd   : pheader;
   begin
     fillchar(phd,sizeof(phd),0);
@@ -1790,6 +1790,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.6  2000/11/19 00:11:49  mk
+        - rtlword -> smallword
+
         Revision 1.5  2000/11/16 13:45:24  hd
         - Dos-Unit entfernt
 
