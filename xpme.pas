@@ -97,7 +97,7 @@ var t  : text;
     s  : string;
     i  : integer;
 begin
-  if not exist('xp.res') and not exist('xp-d.res') then begin
+  if not fileexists('xp.res') and not fileexists('xp-d.res') then begin
     wrlogo;
     writeln('Fehler: ''xp-d.res'' nicht gefunden.'#7);
     writeln;
@@ -114,7 +114,7 @@ begin
     end
   else
     s:='xp-d.res';
-  if not exist(s) then
+  if not fileexists(s) then
     error(s+' fehlt!');
   OpenResource(s,10000);
   ropen:=true;
@@ -759,6 +759,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/11/14 22:35:05  fe
+  Replaced "exist()" by "fileexists()".
+
   Revision 1.29  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

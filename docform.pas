@@ -193,12 +193,15 @@ begin
     rand:=ival(bs);
     if rand=0 then halt(1);
     end;
-  if not exist(infile) then stop('Eingabedatei nicht vorhanden');
+  if not fileexists(infile) then stop('Eingabedatei nicht vorhanden');
   if not validfilename(outfile) then stop('ungltige Ausgabedatei');
   xlate;
 end.
 {
   $Log$
+  Revision 1.10  2000/11/14 22:35:05  fe
+  Replaced "exist()" by "fileexists()".
+
   Revision 1.9  2000/10/17 10:05:38  mk
   - Left->LeftStr, Right->RightStr
 

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -9,9 +9,9 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ Fido-Mailer fÅr CrossPoint }
-{ (c) 06/92 by PM            }
-{ (c) 2000 OpenXP-Team       }
+{ Fido-Mailer fuer CrossPoint }
+{ (c) 06/92 by PM             }
+{ (c) 2000 OpenXP-Team        }
 
 {Debugfaehig: Environmentvariablen
  DEBUG=C:\LOGFILE.TXT
@@ -275,7 +275,7 @@ begin
         end;
     end;
   DebugLog('XPFM','Port initialization: '+CommInitString,1);
-  if exist('RTS.FM') then UseRTS:=true;
+  if fileexists('RTS.FM') then UseRTS:=true;
 end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
@@ -301,8 +301,8 @@ end;
 
 procedure SetLanguage;
 begin
-  if not exist(FileUpperCase('xpfm-'+language+'.res')) then language:='e';
-  if not exist(FileUpperCase('xpfm-'+language+'.res')) then
+  if not fileexists(FileUpperCase('xpfm-'+language+'.res')) then language:='e';
+  if not fileexists(FileUpperCase('xpfm-'+language+'.res')) then
     error(FileUpperCase('xpfm-*.res')+' not found');
   OpenResource(FileUpperCase('xpfm-'+language+'.res'),40000);
   resopen:=true; nocarrier:=getres(195);
@@ -336,7 +336,7 @@ begin
   if not validfilename(logfile) then
     rerror1(104,UpperCase(logfile));     { 'Illegal logfile name: %s' }
 {  for i:=1 to sendfiles do
-    if not exist(sendfile[i]) then
+    if not fileexists(sendfile[i]) then
       rerror1(105,sendfile[i]);}    {* Ueberpruefung wieder einfuegen 'File missing:  %s' }
   if username='' then rerror(106);  { 'Name missing' }
   if OwnAddr='' then rerror(107);   { 'Address missing' }
@@ -361,7 +361,7 @@ begin
 end;
 
 function CountPhoneNumbers:integer;
-{Anzahl angegebene Telefonnummern z‰hlen}
+{Anzahl angegebene Telefonnummern zaehlen}
 var n : integer;
     s : string;
 begin
@@ -381,7 +381,7 @@ begin
   if not (existBin('rz')) then error(getres(118));
   if not (existBin('sz')) then error(getres(119));
 {$else}
-  if not exist(zmprog) then zmprog:=fsearch(zmprog,getenv('PATH'));
+  if not fileexists(zmprog) then zmprog:=fsearch(zmprog,getenv('PATH'));
   if zmprog='' then error(getres(115));   { 'ZM.EXE fehlt' }
   if ModemPort=0 then
     case ModemLine of
@@ -485,7 +485,7 @@ begin
     SDWaitForNextCall: if LastState=SDWaitForNextCall then
                          DisplayTime(System.Round(DUDTimer))
                        else
-                         DisplayStatus(getres(165),True);   { 'warte auf n‰chsten Anruf ...' }
+                         DisplayStatus(getres(165),True);   { 'warte auf naechsten Anruf ...' }
     SDUserBreak: DisplayStatus(getres(160),True); { 'abgebrochen' }
   end;
   LastState:=DUDState;
@@ -555,6 +555,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2000/11/14 22:35:05  fe
+  Replaced "exist()" by "fileexists()".
+
   Revision 1.28  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 
@@ -595,9 +598,9 @@ end.
 
   Revision 1.18  2000/06/29 13:00:52  mk
   - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - OS/2 Version laeuft wieder
+  - Jochens 'B' Fixes uebernommen
+  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
   - Modeminitialisierung wieder an alten Platz gelegt
   - verschiedene weitere fixes
 

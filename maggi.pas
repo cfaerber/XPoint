@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -46,14 +46,14 @@ const nt_ZConnect  = 2;
       boxname   : string[20] = '';
       msgids    : boolean = false;   { MagicNET - MsgID's }
       mausinfos : boolean = false;   { Infofiles bestellen / BOX.INF }
-      g_und_s   : boolean = false;   { keine Brettslashs Ñndern }
-      maxmaus   : Int64 = 0;       { vorgegebene Maximalgrî·e }
+      g_und_s   : boolean = false;   { keine Brettslashs aendern }
+      maxmaus   : Int64 = 0;         { vorgegebene Maximalgroesse }
       mkoutfile : boolean = false;   { OUTFILE statt INFILE erzeugen }
       mausOE    : boolean = true;
       mausPSA   : boolean = true;
-      mausON    : boolean = true;    { îffentl. Nachrichten anfordern }
-      mausKF    : boolean = true;    { fb: Filter f?r Kommentare }
-      MausIT_files : boolean = false;   { ITI/ITG -> Box.IT* }
+      mausON    : boolean = true;    { oeffentl. Nachrichten anfordern }
+      mausKF    : boolean = true;    { fb: Filter fuer Kommentare }
+      MausIT_files : boolean = false;{ ITI/ITG -> Box.IT* }
 
       attrMPbin   = $0040;            { Multipart-Binary           }
       attrReqEB   = $1000;            { EB anfordern               }
@@ -84,7 +84,7 @@ var   f1,f2     : file;
 
 
 const
-  { wird zum Einlesen der Customizable Headerlines benîtigt }
+  { wird zum Einlesen der Customizable Headerlines benoetigt }
       mheadercustom : array[1..2] of string = ('','');
 
 procedure logo;
@@ -264,7 +264,7 @@ end;
 
 procedure testfiles;
 begin
-  if not exist(infile) then error('Eingabedatei nicht vorhanden');
+  if not fileexists(infile) then error('Eingabedatei nicht vorhanden');
   if not validfilename(outfile) then error('ungÅltige Ausgabedatei');
 end;
 
@@ -308,7 +308,7 @@ begin
 end;
 
 procedure MZ(pronet:boolean);
-const maxmlines = 10;   { max. $-Zeilen, die in Z-Text Åbernommen werden }
+const maxmlines = 10;   { max. $-Zeilen, die in Z-Text uebernommen werden }
       readfirst = 2000;
 type buf = array[0..readfirst-1] of byte;
 var hd   : header;
@@ -360,7 +360,7 @@ var hd   : header;
           inc(l); s[l]:=chr(b); end;
       until (b=13) or (bpos>=bsize);
     SetLength(s, l);
-    { if b=13 then getb; }    { LF Åberlesen }
+    { if b=13 then getb; }    { LF ueberlesen }
   end;
 
   function ff(msgid:string):string;
@@ -484,7 +484,7 @@ begin
             if multipos('sl',mid(s,12)) then
               inc(attrib,attrReqEB);
             end
-          else if (s<>'') and (mlanz<maxmlines) then begin   { unbekannte Zeile Åbernehmen }
+          else if (s<>'') and (mlanz<maxmlines) then begin   { unbekannte Zeile uebernehmen }
             inc(mlanz);
             mline[mlanz]:=mid(s,3);
             end;
@@ -721,7 +721,7 @@ begin
           write(#13,'Nachrichten: ',nn);
           alias:=(real_box='');
           wrs(^A);                       { ^A            }
-          wrs(empfaenger);               { EmpfÑnger     }
+          wrs(empfaenger);               { Empfaenger     }
           i:=cpos('@',absender);
           node:=mid(absender,i+1);
           if cpos('.',node)>0 then
@@ -887,7 +887,7 @@ var hd     : header;
     bufpos : word;
     buf    : barrp;
     size   : longint;
-    pmb    : boolean;  { PM-BestÑtigung }
+    pmb    : boolean;  { PM-Bestaetigung }
     tomaus : boolean;  { evtl. Steuernachricht }
     komzu  : boolean;
     umlaute: set of char;
@@ -948,7 +948,7 @@ var hd     : header;
   begin
     new(info);
     MausReadITI(boxname,info,infos);
-    _iti:=MausIT_files and not exist(boxname+'.iti');
+    _iti:=MausIT_files and not fileexists(boxname+'.iti');
     if _iti then writeln(t,':ITI -1');
     assign(t1,boxname+'.inf');
     reset(t1);
@@ -1138,14 +1138,14 @@ begin
   umlaute:=['Ñ','î','Å','é','ô','ö','·'];
   writeln(t,'#CMD');
   if MausON then
-    writeln(t,':ON');     { îffentliche Msgs abrufen }
+    writeln(t,':ON');     { oeffentliche Msgs abrufen }
   writeln(t,':PN');       { private Msgs abrufen     }
   if MausOE then
-    writeln(t,':OE');     { eigene Nachrichten nicht zurÅcksenden }
+    writeln(t,':OE');     { eigene Nachrichten nicht zuruecksenden }
   if MausPSA then
     writeln(t,':PSN');    { Bearbeitungsstati anfordern }
   if maxmaus>0 then
-    writeln(t,':M ',maxmaus);     { maximale Outfile-Grî·e vorgeben }
+    writeln(t,':M ',maxmaus);     { maximale Outfile-Groesse vorgeben }
 { writeln(t,':REN'); }
   if mausinfos then
     get_infofiles;
@@ -1215,7 +1215,7 @@ begin
               if komzu then begin
                 if org_xref='' then writeln(t,'R',ref);
                 { fb: Wildwestverkettung nur bei G?K und PM. Ist nach
-                Maus-Specs. nicht nîtig, aber der KompatiblitÑt wegen }
+                Maus-Specs. nicht noetig, aber der Kompatiblitaet wegen }
                 if LeftStr(UpperCase(ReplyGroup),length(bretth))=bretth then
                 {/fb}
                   writeln(t,':Kommentar zu ',ref,' in der Gruppe ',
@@ -1395,7 +1395,7 @@ var t1,log     : text;
     { R+}
     while (pos('size ',tbuf[i].s)<>1) do inc(i);
     s:=trim(mid(tbuf[i].s,5));
-    bufp:=min(bufp,ival(s));   { echte Grî·e }
+    bufp:=min(bufp,ival(s));   { echte Groesse }
     wrs('LEN: '+strs(bufp));
     wrs('');
     blockwrite(f2,buf^,bufp);
@@ -1501,7 +1501,7 @@ begin
             'O' : organisation:=s;
             'V' : absender:=mausform(s);
             'W' : begin betreff:=s; inc(pm); keinbetreff:=false; end;
-            { Name des Gateway aus der dafÅr vorgesehenen Header-Zeile nehmen }
+            { Name des Gateway aus der dafuer vorgesehenen Header-Zeile nehmen }
             'Y' : gate:=LeftStr(s,80);
             'I' : org_msgid:=LeftStr(s,120);
             'R' : org_xref:=LeftStr(s,120);
@@ -1548,7 +1548,7 @@ begin
           empfaenger:='/ØMausinfo';    { s. auch XP0.MausInfoBrett }
           absender:='MausInfo@'+boxname;
           if msgid='HEAD' then
-            killmsg:=true            { internes Infofile lîschen }
+            killmsg:=true            { internes Infofile loeschen }
           else
             if MausIT_files and (LeftStr(msgid,2)='IT') and (length(MsgID)=3)
             then begin
@@ -1569,7 +1569,7 @@ begin
           if absender='' then absender:='Absender fehlt?!@'+boxname;
           wrs('EMP: '+empfaenger);
           if cpos('@',absender)=0 then
-            absender:=absender+'@'+boxname;  { fÅr lokale Quark-Nachrichten }
+            absender:=absender+'@'+boxname;  { fuer lokale Quark-Nachrichten }
           if realname='' then
             wrs('ABS: '+absender)
           else
@@ -1643,6 +1643,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/11/14 22:35:05  fe
+  Replaced "exist()" by "fileexists()".
+
   Revision 1.27  2000/10/17 20:36:49  mk
   - Diskfree/Disksize von Longint auf Int64 umgestellt
 
@@ -1726,6 +1729,6 @@ end.
   MK: * Code weiter gesaeubert
 
   Revision 1.5  2000/02/15 21:06:52  mk
-  RB: [40] in [realnlen] ge‰ndert
+  RB: [40] in [realnlen] geaendert
 
 }

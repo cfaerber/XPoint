@@ -317,7 +317,7 @@ begin  {programm}
   if trim(infile)<>'' then begin
     if RightPos('.',infile)=0 then
       infile:=infile+FileUpperCase('.rq');
-    if not exist(infile) then
+    if not fileexists(infile) then
       fehler('"'+infile+'" not found.');
     if (mid(infile, RightPos('.',infile)+1) <> FileUpperCase('rq')) then
       fehler('"'+infile+'" wrong extension');
@@ -329,6 +329,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.18  2000/11/14 22:35:05  fe
+        Replaced "exist()" by "fileexists()".
+
         Revision 1.17  2000/10/17 10:05:43  mk
         - Left->LeftStr, Right->RightStr
 

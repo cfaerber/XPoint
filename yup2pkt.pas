@@ -34,7 +34,7 @@ type  pheader =  record                       { Fido - Packet-header }
                    PrdCodL    : byte;         { Lo(ProductCode) }
                    HiVersion  : byte;         { Haupt-Versionsnummer }
                    Password   : array[0..7] of char;   { -> = 0 }
-                   QOrgZone   : word;         { fÅr einige Fido-Mailer.. }
+                   QOrgZone   : word;         { fuer einige Fido-Mailer.. }
                    QDestZone  : word;
                    fill       : word;         { = 0 }
                    CapValid   : word;         { = $100 }
@@ -161,11 +161,11 @@ begin
   if RightStr(YupDir,1)<>'\' then YupDir:=YupDir+'\';
   if not ispath(YupDir) then
     error('ungÅltiges Verzeichnis: '+yupdir);
-  if exist(YupDir+'MAILBASE\'+NetmailDB+'.DBF') then
+  if fileexists(YupDir+'MAILBASE\'+NetmailDB+'.DBF') then
     YupDir:=YupDir+'MAILBASE\';
-  if not exist(YupDir+NetmailDB+'.DBF') then
+  if not fileexists(YupDir+NetmailDB+'.DBF') then
     error('Keine Yuppie-Mailbase im angegebenen Verzeichnis gefunden.');
-  if not exist(YupDir+AreaDB+'.DBF') then
+  if not fileexists(YupDir+AreaDB+'.DBF') then
     error('Keine AREABASE vorhanden.');
   outfile:=UpperCase(paramstr(2));
   if not validfilename(outfile) then
@@ -326,7 +326,7 @@ begin
     begin
       WrArea(area);
       fn:='AREA'+formi(n,4);
-      if not exist(YupDir+fn+'.DBF') then
+      if not fileexists(YupDir+fn+'.DBF') then
         writeln(#8#8#8#8#8,'fehlt!')
       else
         ConvertArea(n,fn,area);
@@ -360,6 +360,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/11/14 22:35:05  fe
+  Replaced "exist()" by "fileexists()".
+
   Revision 1.10  2000/10/17 10:06:02  mk
   - Left->LeftStr, Right->RightStr
 
