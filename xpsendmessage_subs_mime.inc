@@ -231,7 +231,7 @@ begin
 
 
   // presize the output stream to improve speed (reduces memory allocations)
-  (TNullCodecStream(outs).otherstream as TMemoryStream).Size := Trunc(Ins.Size * 1.4);
+  TNullCodecStream(outs).OtherStream.Size := Ins.Size;
   CopyStream(ins,outs);
 
   ins.Free;
@@ -307,6 +307,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2002/06/10 08:07:42  mk
+// - improved memory preallocation for outstream (see last fix)
+//
 // Revision 1.8  2002/06/05 17:49:24  mk
 // <CVS: ----------------------------------------------------------------------
 //
