@@ -1911,7 +1911,7 @@ begin
     unpacktime(sr.time,dt);
     gotoxy(x+11,y+4);
     with dt do
-      write(formi(day,2),'.',formi(month,2),'.',year mod 100,', ',
+      write(formi(day,2),'.',formi(month,2),'.',formi(year mod 100,2),', ',
             formi(hour,2),':',formi(min,2),':',formi(sec,2));
     end;
   wrt(x+3,y+6,getres(12));    { 'Taste drÅcken ...' }
@@ -2197,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.2  2000/04/30 19:16:47  mk
+  - Y2K-Fix fuer Info in Autoversand, nur optisch
+
   Revision 1.9.2.1  2000/03/10 00:10:08  mk
   Fix: Autoversand/Hinzufuegen benoetigt keinen Dateinamen mehr
 
