@@ -747,6 +747,7 @@ begin
   mpselect:=true;
   mpart_nr:=1;
   poppush:=true;
+  Fillchar(Viewer, Sizeof(Viewer), 0);
 
   repeat                { +/- - Schleife }
     ende:=true;
@@ -1583,6 +1584,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2000/10/16 08:31:03  mk
+  - Ansistring-Fix
+
   Revision 1.41  2000/10/09 16:27:00  mk
   JG:- Read_msg kommentiert
 
