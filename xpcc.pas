@@ -237,13 +237,14 @@ begin
   openmask(x,x+59,y+1,y+h,false);
 { SortCCs(cc,cc_anz); }
   small:=iifs(ntZonly and not smallnames,'>','');
-  for i:=1 to maxcc - 1 do begin
+  for i:=1 to maxcc - 1 do
+  begin
     maddstring(2,i,strsn(i,3)+'.',cc^[i],50,eAdrLen,small);
     mappcustomsel(auto_empfsel,false);
     mset1func(cc_test1);
     msetvfunc(cc_testempf);
     ccused[i]:=(cc^[i]<>'');
-    end;
+  end;
   maskdontclear;
   for i:=cc_anz+2 to maxcc - 1 do
     setfieldenable(i,false);
@@ -280,7 +281,7 @@ begin
           repeat
             readln(t,s)
           until eof(t) or (ustr(s)=ustr(cc^[i]));
-          if not eof(t) then                                   { wenn gefunden... }                            
+          if not eof(t) then                                   { wenn gefunden... }
           begin                      
             repeat
               readln(t,s);                                     { auslesen und anhaengen }
@@ -400,6 +401,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.7  2001/10/16 18:39:17  my
+  MY:- Nur etwas Code-Kosmetik, ÅberflÅssige Blanks entfernt etc.
+
   Revision 1.15.2.6  2001/08/12 11:20:39  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
