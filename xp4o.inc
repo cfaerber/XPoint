@@ -41,8 +41,8 @@ var x,y,xx  : Integer;
   begin
     attrtxt(col.coldiahigh);
     moff;
-    gotoxy(xx,y+1); write(n:5);
-    gotoxy(xx,y+2); write(gel:5);
+    Wrt(xx,y+1, Format('%5d', [n]));
+    Wrt(xx,y+2, Format('%5d', [gel]));
     mon;
   end;
 
@@ -161,12 +161,12 @@ var x,y,wdt: Integer;
   begin
     attrtxt(col.colmboxhigh);
     moff;
-    gotoxy(x+wdt+3,y+4); write(n:7);
-    gotoxy(x+wdt+3,y+5); write(ndel:7);
-    gotoxy(x+wdt+3,y+6); write(nbesch:7);
-    gotoxy(x+wdt+12,y+4); write(bt div 1024:7);
-    gotoxy(x+wdt+12,y+5); write(dbt div 1024:7);
-    gotoxy(x+wdt+12,y+6); write(bbt div 1024:7);
+    Wrt(x+wdt+3,y+4, Format('%7d', [n]));
+    Wrt(x+wdt+3,y+5, Format('%7d', [ndel]));
+    Wrt(x+wdt+3,y+6, Format('%7d', [nbesch]));
+    Wrt(x+wdt+12,y+4, Format('%7d', [bt div 1024]));
+    Wrt(x+wdt+12,y+5, Format('%7d', [dbt div 1024]));
+    Wrt(x+wdt+12,y+6, Format('%7d', [bbt div 1024]));
     mon;
   end;
 
@@ -706,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2001/08/05 22:27:32  mk
+  - Write changed to Wrt
+
   Revision 1.37  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 
