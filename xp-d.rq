@@ -3174,17 +3174,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 #
 39 Pfad darf nicht leer sein!
 40 Es muá ein Username oder eine eMail-Adresse angegeben werden!
-# Der String in den folgenden sieben Zeilen darf max. 57 Zeichen lang sein:
+# Der String in den folgenden sechs Zeilen darf max. 57 Zeichen lang sein:
 41 Diese Einstellungen sind nur wirksam, wenn sie von Ihrem
 42 Client oder Client-Kit ausgewertet werden.
-# Leerzeile 10900,43 nicht entfernen!
-43
-44 Ihr Client untersttzt und/oder erfordert m”glicherweise
-45 weitere Einstellungen, die Sie in einer externen Konfigu-
-46 rationsdatei im Client-Verzeichnis vornehmen mssen.
-47 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
-48 Client-Verzeichnis "%s" ist nicht vorhanden!
-49 Verzeichnis "%s" ist nicht vorhanden!
+43 Ihr Client untersttzt und/oder erfordert m”glicherweise
+44 weitere Einstellungen, die Sie in einer externen Konfigu-
+45 rationsdatei im Client-Verzeichnis vornehmen mssen.
+46 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
+#
+47 Client-Verzeichnis "%s" ist nicht vorhanden!
+48 Verzeichnis "%s" ist nicht vorhanden!
 
 +  11000
 1  unbekannter Befehl
@@ -3336,33 +3335,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 5   Fehler beim Auslesen des PGP-Keys.
 6   šberprfung der PGP-Signatur ist fehlgeschlagen.
 7   PGP meldet ungltige Signatur!
--
-
-# --- XP-Easy Modus ---------------------------------------------------
-+   14000
-#   Zeilenanzahl
-0   10
-1   Willkommen als neuer Benutzer
-2   Als allererstes muessen sie noch einige Einstellungen taetigen
-3   Hierzu gehoeren u.a. auch die Einstellungen rund um den verwendeten
-4   Server. Hierzu gibt es zwei Moeglichkeiten
-5   Sie koennen alles klassisch in den Menues des Hauptprogramms
-6   einstellen oder den neuen XP-Easy Modus benutzen.
-7   Dieser Xp-Easy Modus fragt sie einfach nacheinander nach allem
-8   was unbedingt von CrossPoint benoetigt wird
-9
-10  Bitte waehlen Sie jetzt Ihren Konfigurationsmodus
-30  ~^XP-Easy , ^Klassik-Config~
-
-+   14001
-#   Zeilenanzahl
-0   6
-1   Erstmal haben Sie die M”glichkeit ihre Adresse , Telefonnummer
-2   Homepageadresse und Postanschrift einzugeben.
-3   Diese Angaben sind rein freiwillig , sie werden aber in Kopf
-4   jeder Nachricht (bzw. wenn sie nur bei PMs anklicken nur
-5   bei E-Mail (PMs)) aufgefhrt. Bedenken Sie dies bitte wenn
-6   Sie hier was eintragen.
 -
 
 # --- Systemabh„ngig --------------------------------------------------

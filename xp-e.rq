@@ -3123,19 +3123,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # The string in the following two lines must not exceed 56 characters:
 37 Path must be RELATIVE and point to a directory ONE level
 38 DIRECTLY below the XP directory!
+#
 39 This path must not be empty!
 40 User name or eMail address required!
-# The string in the following seven lines must not exceed 57 characters:
+# The string in the following six lines must not exceed 57 characters:
 41 These settings only take effect if they are interpreted
 42 by your client or client kit.
-# do not delete blank line in 10900,43!
-43
-44 Your client may support and/or require further settings,
-45 which would then have to be entered in an external confi-
-46 guration file in the client directory.
-47 Please consult the client documentation for more details.
-48 Client directory "%s" not found!
-49 Directory "%s" not found!
+43 Your client may support and/or require further settings,
+44 which would then have to be entered in an external confi-
+45 guration file in the client directory.
+46 Please consult the client documentation for more details.
+#
+47 Client directory "%s" not found!
+48 Directory "%s" not found!
 
 +  11000
 1  unknown command

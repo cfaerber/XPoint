@@ -804,7 +804,7 @@
       fullClientDir := FExpand(pppClientPath);
       if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
       begin
-        rfehler1(948,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
+        rfehler1(947,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
         pushkey('e'); pushkey('c');
         exit;
       end;
@@ -896,14 +896,12 @@
       if not brk then
       begin
         msgbox(63,12,_hinweis_,x,y);
-        mwrt(x+3,y+2,getres2(10900,41));   { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
-        mwrt(x+3,y+3,getres2(10900,42));   { 'Client oder Client-Kit ausgewertet werden.             '   }
-        mwrt(x+3,y+4,getres2(10900,43));
-        mwrt(x+3,y+5,getres2(10900,44));   { 'Ihr Client unterstÅtzt und/oder erfordert mîglicherweise'  }
-        mwrt(x+3,y+6,getres2(10900,45));   { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
-        mwrt(x+3,y+7,getres2(10900,46));   { 'rationsdatei vornehmen mÅssen.'                            }
-        mwrt(x+3,y+8,getres2(10900,43));
-        mwrt(x+3,y+9,getres2(10900,47));   { 'NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
+        mwrt(x+3,y+2,getres2(10900,41));         { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
+        mwrt(x+3,y+3,getres2(10900,42)+#13+#10); { 'Client oder Client-Kit ausgewertet werden.             '   }
+        mwrt(x+3,y+5,getres2(10900,43));         { 'Ihr Client unterstÅtzt und/oder erfordert mîglicherweise'  }
+        mwrt(x+3,y+6,getres2(10900,44));         { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
+        mwrt(x+3,y+7,getres2(10900,45)+#13+#10); { 'rationsdatei vornehmen mÅssen.'                            }
+        mwrt(x+3,y+9,getres2(10900,46));         { 'NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
         errsound;
         wait(curoff);
         closebox;
@@ -1861,6 +1859,11 @@
 
 {
   $Log$
+  Revision 1.10.2.44  2001/08/12 11:45:57  my
+  - optimized code a bit, removed unnecessary resources, adjusted resource
+    numbers
+  - removed XPEasy resources
+
   Revision 1.10.2.43  2001/08/12 11:20:38  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
