@@ -156,7 +156,7 @@ begin
     p0:=p;
     qn:=0;
     repeat
-       while (p<=length(s)) and (p-p0<6) and
+       while (s <> '') and (p<=length(s)) and (p-p0<6) and
        (
          (s[p]<>'>') and
          (not OtherQuoteChars or not (s[p] in QuoteCharSet))
@@ -164,7 +164,7 @@ begin
        do inc(p);
       pdiff:=p-p0;
 
-      if (p<=length(s)) and (s[p]='>') or
+      if (s <> '') and (p<=length(s)) and (s[p]='>') or
          (OtherQuoteChars and (s[p] in QuoteCharSet)) then
       begin
         inc(qn);
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/10/04 18:14:59  mk
+  - AnsiString-Fix
+
   Revision 1.39  2000/10/03 15:44:50  mk
   - Fix fuer restaurierung des Screens nach DOS-Shell
 
