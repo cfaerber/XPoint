@@ -27,6 +27,7 @@ uses
   linux,
   xplinux,
   xpglobal,
+  debug,
   typeform;
 {$else }
 uses
@@ -638,6 +639,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.85  2000/11/19 22:29:36  hd
+  - fix: missing uses-statement
+
   Revision 1.84  2000/11/19 17:51:56  ma
   - GetEnv works again under Win32. Proper replacement of
     Dos.GetEnv will be used at request if Dos is *really*
