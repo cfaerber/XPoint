@@ -2256,9 +2256,9 @@ begin
                     getx(su,  'terminalbios',termbios) or
                     getx(su,  'tonsignal',tonsignal) then EntryFound := true;
                     if AutomaticTimeZone then
-                      if xp1.gets(su,su,'timezone',dummytz) then EntryFound := true
+                      if xp1.gets(s,su,'TimeZone',dummytz) then EntryFound := true
                     else
-                      if xp1.gets(su,su,'timezone', XpTimeZone) then EntryFound := true;
+                      if xp1.gets(s,su,'TimeZone', XpTimeZone) then EntryFound := true;
                  end;
             'U': if xp1.gets(s,su,'UserAufnahme',userauf) or
                     xp1.gets(s,su,'UnARC',unpacker.unarc) or
@@ -2814,6 +2814,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.172  2003/09/16 14:12:24  mk
+  - fixed #799307: zweimal 'TimeZone' in xpoint.cfg
+
   Revision 1.171  2003/09/11 22:30:06  mk
   - added special color for signatures
 
