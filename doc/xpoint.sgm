@@ -20525,7 +20525,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
               <entry><cmdsynopsis><command>maggi</command> <arg
                 choice="req">-mz</arg> <arg
                 choice="req">-nMagicNET</arg> <arg
-                choice="optional">-312</arg> <arg
+                choice="opt">-312</arg> <arg
                 choice="req"><replaceable>Magic-Puffer</replaceable></arg>
                 <arg
                 choice="req"><replaceable>Z-Puffer</replaceable></arg>
@@ -20556,7 +20556,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
               <entry><cmdsynopsis><command>maggi</command> <arg
                 choice="req">-zm</arg> <arg
                 choice="req">-nMagicNET</arg> <arg
-                choice="optional">-312</arg> <arg
+                choice="opt">-312</arg> <arg
                 choice="req"><replaceable>Z-Puffer</replaceable></arg>
                 <arg
                 choice="req"><replaceable>Magic-Puffer</replaceable></arg>
