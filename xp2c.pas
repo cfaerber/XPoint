@@ -1157,7 +1157,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,17,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,17,10),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
