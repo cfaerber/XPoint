@@ -372,7 +372,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { Letzte Zeile im letzen Part wird sonst unterschlagen }
-      if not isbound inc(n);
+      if not isbound then inc(n);
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -723,6 +723,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.6  2000/07/30 07:59:52  mk
+  - Schreibfehler beseitigt
+
   Revision 1.7.2.5  2000/07/27 16:17:21  mk
   - Endlich korrekte Behandlung der letzen Zeile im letzen Part von MIME-Mails
 
