@@ -19,9 +19,23 @@ unit xpdatum;
 
 interface
 
-uses typeform,montage, xpglobal;
+uses
+{$IFDEF Linux }
+  linux,
+  sysutils,
+{$ENDIF } 
+  typeform,
+  montage,
+  xpglobal;
 
+{$IFNDEF Linux }
 const timezone      : string[7] = 'W+1';
+{$ELSE }
+{ Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
+  Diese wird hier verwendet. Es sollte auch klappen, dass ein Zeitzonen-
+  wechsel ohne manuelle Konfiguration beruecksichtigt wird. }
+function TimeZone: string[7];
+{$ENDIF }
 
 procedure ZtoZCdatum(var datum,zdatum:string);
 procedure ZCtoZdatum(var zdatum, datum:string);
@@ -102,9 +116,50 @@ begin
   datum:=dat;
 end;
 
+{$IFDEF Linux }
+function TimeZone: string[7];
+var
+  tzBase, tzMinutes, tzHours: LongInt;
+  isNegative: boolean;
+  s: string[7];
+begin
+  { Abweichung in positiven Minuten darstellen }
+  if (tzseconds < 0) then begin
+    isNegative:= true;
+    tzBase:= tzseconds div -60;
+  end else begin
+    isNegative:= false;
+    tzBase:= tzseconds div 60;
+  end;
+  { Minuten sind der Rest von Stunden }
+  tzMinutes:= tzBase mod 60;
+  { Stunde hat 60 Minuten }
+  tzHours:= tzBase div 60;
+  
+  if (tzdaylight) then
+    s:= 'S'
+  else
+    s:= 'W';
+  { Negativ-Abweichung zu UTC? }
+  if (isNegative) then
+    s:= s + '-';
+  { Minuten? }
+  if (tzMinutes <> 0) then begin
+    s:= s + ':';
+    if (tzMinutes < 10) then		{ Kenne zwar keine solche Zone, aber wer weiss }
+      s:= s + '0';
+    s:= s + IntToStr(tzMinutes);
+  end;
+  TimeZone:= s;
+end;
+{$ENDIF }
+
 end.
 {
   $Log$
+  Revision 1.4  2000/05/02 20:27:54  hd
+  - Dynamische Festlegung der Zeitzone unter Linux
+
   Revision 1.3  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
