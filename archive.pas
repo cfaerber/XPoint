@@ -219,19 +219,19 @@ type archd = record
               end;
 
      rarhd  = record
-                crc       : word;
+                crc       : smallword;
                 hdtype    : byte;
-                flags     : word;
-                hdsize    : word;
-                compsize  : longint;
-                orgsize   : longint;
+                flags     : smallword;
+                hdsize    : smallword;
+                compsize  : integer32;
+                orgsize   : integer32;
                 OS        : byte;
                 filecrc   : longint;
-                dostime   : word;
-                dosdate   : word;
+                dostime   : smallword;
+                dosdate   : smallword;
                 extver    : byte;
                 method    : char;
-                namelen   : word;
+                namelen   : integer16;
                 attrib    : longint;
                 name      : shortstring;
               end;
@@ -599,12 +599,12 @@ var buffer : array[0..511] of byte;
 label again;
 
   procedure zname(var fname);
-  type ba  = string;
+  type ba  = shortstring;
   var  b,p : byte;
        s   : string;
   begin
     with ar do begin
-      b:=0;
+       b:=0;
       while ba(fname)[b]<>#0 do inc(b);
       SetLength(s, b);
       Move(fname,s[1],b); {s[0]:=chr(b);}
@@ -985,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/08/09 08:56:55  mk
+  MO:- AnsiString-Fixes fuer Rar-Archive
+
   Revision 1.16  2000/08/08 13:18:12  mk
   - s[Length(s)] durch Lastchar ersetzt
 
