@@ -70,7 +70,7 @@ const  {$IFDEF DPMI}
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 250;
+       BetreffLen  = 70;
        DateLen     = 11;
        midlen      = 120;
        AKAlen      = 127;
@@ -78,9 +78,7 @@ const  {$IFDEF DPMI}
        PostadrLen  = 80;             { Postadresse }
        TeleLen     = 100;            { Telefon }
        HomepageLen = 90;             { WWW-Homepage }
-       { 01/2000 oh }
        CustHeadLen = 60;             { Customizable Header-Lines }
-       { /oh }
        hdErrLen    = 60;
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
@@ -1075,6 +1073,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.4  2000/08/03 09:52:24  mk
+  - Subjektlaenge auf 70 Zeichen angepasst
+
   Revision 1.10.2.3  2000/06/04 11:09:10  mk
   - programm-Zeile von 40 auf 255 Zeichen verlaengert
 
