@@ -185,7 +185,7 @@ var
   RFCFileDummy  : String;
 begin
   RFCFileDummy := RFCFile + 'D-0001.OUT';
-  DeleteFile(RFCFileDummy);
+  SafeDeleteFile(RFCFileDummy);
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
   if not FileExists(RFCFileDummy) then exit;
@@ -367,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.42  2002/07/22 10:06:03  mk
+        - do not try to delete non existing files (RFCFileDummy)
+
         Revision 1.41  2002/05/26 15:06:34  ma
         - fixed: outgoing postings were marked "sent" even if not accepted by server
 
