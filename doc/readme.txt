@@ -7,7 +7,7 @@
      offizielle Version nach v3.12 wurde allerdings von Peter Mandrella
      selbst nie ver”ffentlicht.
 
-     Das OpenXP-Team legt mit OpenXP 3.20b nach fast genau einj„hriger
+     Das OpenXP-Team legt mit OpenXP 3.20d nach fast genau einj„hriger
      Arbeit, etlichen Betaversionen, "Release Candidates" und der ersten
      Release v3.20 die (voraussichtlich) endgltige und letzte Release
      der Version 3.20 vor. Sie enth„lt nur wenige neue Features im
@@ -18,7 +18,7 @@
      Die nderungen im Detail k”nnen der Datei VERSION.TXT entnommen
      werden.
 
-     In diesem Archiv sind alle Dateien von CrossPoint/OpenXP v3.20b
+     In diesem Archiv sind alle Dateien von CrossPoint/OpenXP v3.20d
      einschlieálich des UUCP- und des Fido-Moduls enthalten; das QWK-
      Modul der v3.12 kann weiterhin verwendet werden.
 
