@@ -931,15 +931,15 @@ again:
                        rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
                        goto ende;
                      end;
-                     if ((empf<>'') and (zg_flags and 32=0)) then begin
-{ true=Userbrett  }    pm:=cpos('@',empf)>0;
-{ Brettvertreter  }    if not pm then begin
-                         dbReadN(bbase,bb_pollbox,pollbox);
-                         if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_Client,nt_ZConnect]) then begin
-                           Am_ReplyTo:=empf;
-                           dbReadN(bbase,bb_brettname,empf);
-                         end else empf:='A'+empf;
-                       end;
+{ true=Userbrett  }  pm:=cpos('@',empf)>0;
+                     if ((empf<>'') and (zg_flags and 32=0)) and not pm then
+                     begin
+{ Brettvertreter  }   dbReadN(bbase,bb_pollbox,pollbox);
+                      if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_Client,nt_ZConnect]) then begin
+                        Am_ReplyTo:=empf;
+                        dbReadN(bbase,bb_brettname,empf);
+                      end
+                        else empf:='A'+empf;
                      end else dbReadN(bbase,bb_brettname,empf);
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht m”glich' }
@@ -1346,6 +1346,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.21  2002/01/10 22:24:36  mk
+  - Bugfix: Alt-A auf Brett mit Vertreter und Schreibsperre verschluckte
+    die zu archivierende Nachricht
+
   Revision 1.20.2.20  2001/12/20 23:38:39  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
