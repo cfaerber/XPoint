@@ -33,7 +33,7 @@ procedure write_disp_line(y,p:shortint; show:boolean);
 const hf : array[0..4] of char = ' +-Aù';
       uv : array[0..13] of char = ' !*'#19'z23456789#';
       ge : array[0..1] of char = '> ';
-      wv : array[0..4] of char = ' cwws';
+      wv : array[0..5] of char = ' cwwsS';
 
 var
     s,s0    : string[81];
@@ -261,9 +261,16 @@ begin  { __ Suchmarke }
             dbReadN(mbase,mb_flags,flags);
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
+(*          
             if (wvl=0) and
-               ((mnt and $4000<>0) or (flags and 3<>0)) then
+                ((mnt and $4000<>0) or (flags and 3<>0)) then  
               wvl:=4;    { 's' - signierte Nachricht }
+*)
+            if (wvl=0) and (mnt and $4000<>0) then begin 
+              if (flags and 1<>0) then wvl:=5;  { 'S' - 'good' signierte Nachricht }
+              if (flags and 2<>0) then wvl:=4;  { 's' - 'bad' signierte Nachricht }
+            end;
+            
             dbReadN(mbase,mb_Halteflags,hflags);
             dbReadN(mbase,mb_gelesen,gelesen);
             if unvers and 32<>0 then unvers:=4

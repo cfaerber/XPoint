@@ -47,7 +47,10 @@ implementation  { --------------------------------------------------- }
 
 uses  xp3,xp3o,xp3o2,xp3ex,xp6,xpcc,xpnt;
 
-const savekey : pathstr = '';
+const
+  savekey : pathstr = '';
+  flag_PGPSigOk = $01;    
+  flag_PGPSigErr = $02;    
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben
   JG 08.01.00: Routine optimiert }
@@ -537,63 +540,67 @@ begin
     if exist(tmp) then _era(tmp);
     if exist(_source) then _era(_source);
   end;
-
   { Oops, keine Ausgabedatei: }
   if not exist(tmp2) then begin
+    { Signaturtest-Fehler }
     if sigtest then begin
       if errorlevel=18 then begin
         trfehler(3007,7);  { 'PGP meldet ungÅltige Signatur!' }
-        WrSigflag(2);      { Signatur fehlerhaft }
+        WrSigflag(flag_PGPSigErr);      { Signatur fehlerhaft }
       end else
         trfehler(3007,6)   { 'öberprÅfung der PGP-Signatur ist fehlgeschlagen' }
+    { Dekodierungs-Fehler }
     end else
-      trfehler(3004,5)     { 'PGP-Decodierung ist fehlgeschlagen.' }
+      trfehler(3004,5);     { 'PGP-Decodierung ist fehlgeschlagen.' }
   { Ausgabedatei korrekt geschrieben: }
   end else begin
-    PGP_BeginSavekey;
-    orgsize:=hdp^.groesse;
-    hdp^.groesse:=_filesize(tmp2);
-    hdp^.komlen:=hdp^.ckomlen; hdp^.ckomlen:=0;
-    hdp^.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp^.crypttyp:='';
-    hdp^.pgpflags:=hdp^.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
-    if hdp^.ccharset<>'' then begin
-      hdp^.charset:=ustr(hdp^.ccharset);
-      hdp^.ccharset:='';
+    if not SigTest then begin
+      PGP_BeginSavekey;
+      orgsize:=hdp^.groesse;
+      hdp^.groesse:=_filesize(tmp2);
+      hdp^.komlen:=hdp^.ckomlen; hdp^.ckomlen:=0;
+      hdp^.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp^.crypttyp:='';
+      hdp^.pgpflags:=hdp^.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
+      if hdp^.ccharset<>'' then begin
+        hdp^.charset:=ustr(hdp^.ccharset);
+        hdp^.ccharset:='';
+      end;
     end;
     { Signaturtest oder Fehler: }
     if sigtest or (errorlevel=18) then begin
       { Fehler: }
       if errorlevel<>0 then begin
         hdp^.pgpflags := hdp^.pgpflags or fPGP_sigerr;
-        WrSigflag(2);
+        WrSigflag(flag_PGPSigErr);
       end else begin
         hdp^.pgpflags := hdp^.pgpflags or fPGP_sigok;
-        WrSigflag(1);
+        WrSigflag(flag_PGPSigOk);
       end
     end;
-    rewrite(f,1);          { alte Datei Åberschreiben }
-    WriteHeader(hdp^,f,reflist);
-    assign(f2,tmp2);
-    reset(f2,1);
-    fmove(f2,f);
-    close(f2);
-    close(f);
-    if exist(tmp2) then _era(tmp2);
-    Xwrite(tmp);
-    wrkilled;
-    dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-    dbWriteN(mbase,mb_groesse,hdp^.groesse);
+    
     if sigtest then begin
       dbReadN(mbase,mb_netztyp,l);
-      l:=l or $4000;                      { "s"-Flag }
+      l:=l or $4000;                      { Flag fÅr 'Signatur vorhanden' }
       dbWriteN(mbase,mb_netztyp,l);
     end else begin
+      rewrite(f,1);          { alte Datei Åberschreiben }
+      WriteHeader(hdp^,f,reflist);
+      assign(f2,tmp2);
+      reset(f2,1);
+      fmove(f2,f);
+      close(f2);
+      close(f);
+      if exist(tmp2) then _era(tmp2);
+      Xwrite(tmp);
+      wrkilled;
+      dbWriteN(mbase,mb_typ,hdp^.typ[1]);
+      dbWriteN(mbase,mb_groesse,hdp^.groesse);
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                          { "c"-Flag }
       dbWriteN(mbase,mb_unversandt,b);
+      hdp^.groesse:=orgsize;
+      PGP_EndSavekey;
     end;
-    hdp^.groesse:=orgsize;
-    PGP_EndSavekey;
   end;
   { AufrÑumen: }
   if exist(tmp) then _era(tmp);
@@ -674,11 +681,11 @@ begin
       if n=30 then begin
         blockwrite(f,dec,30);
         n:=0;
-        end;
+      end;
     until p>length(s);
     if n>0 then blockwrite(f,dec,n);
     close(f);
-    end;
+  end;
   close(t);
 end;
 
@@ -760,7 +767,7 @@ begin
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
     if exist(tmp) then _era(tmp);
-    end;
+  end;
   dispose(hdp);
 end;
 
@@ -776,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.5  2000/05/07 17:22:41  mk
+  - Signatur testen loescht Signatur nicht mehr; s/S eingebaut
+
   Revision 1.6.2.4  2000/04/18 20:22:03  mk
   JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
