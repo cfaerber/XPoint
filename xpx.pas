@@ -297,9 +297,7 @@ begin
 
     {Lightweight-Readpar}
     noovrbuf:=false;
-    {$IFDEF XMSOVR }
     xmsovrbuf:=false; 
-    {$ENDIF }
     for i:=1 to paramcount do begin     
       if ((paramstr(i)='/?') and (not noovrbuf)) then noovrbuf:=true;
       if ((ustr(left(paramstr(i),4))='/AV:') and (not noovrbuf)) then noovrbuf:=true;
@@ -309,10 +307,13 @@ begin
     end;
 
     {$IFDEF XMSOVR } 
-    if ((EmsTest) and (not noovrbuf)) then
-      OvrInitEMS
+    if ((EmsTest) and (not noovrbuf)) then begin
+      OvrInitEMS;
+      xmsovrbuf:=false;
+    end 
     else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf)) then
-      OvrInitXMS;
+      OvrInitXMS
+    else xmsovrbuf:=false; 
     {$ELSE }
     if ((EmsTest) and (not noovrbuf)) then
       OvrInitEMS;
@@ -342,6 +343,17 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.18  2003/01/17 09:10:41  mw
+  MW: - Variable xmsovrbuf ist nun nur noch dann true, wenn das
+        Overlay wirklich ins XMS geladen wurde.
+        (wird auf false gesetzt, wenn trotz Kommadoparameter
+        /xmsovr das Overlay nicht ins XMS gelîaden wird.
+        Dies geschied, wenn EMS zur VerfÅgung steht [ dann wird
+        das Overlay ins EMS geladen, egal ob /xmsovr gesetzt
+        oder nicht] oder /AV: oder /? als Kommadoparameter
+        gesetzt wurde [dann wird gar kein Overlay-Buffer
+        verwendet].
+
   Revision 1.18.2.17  2003/01/16 23:30:33  my
   MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
       - betastr an einigen Stellen ergÑnzt
