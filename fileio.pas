@@ -114,6 +114,16 @@ uses
   linux;
 {$endif}
 
+{$ifdef UnixFS }
+const
+  DirSepa		= '/';
+  WildCard		= '*';
+{$else}
+const
+  DirSepa		= '\';
+  WildCard		= '*.*';
+{$endif}
+
 {$IFDEF BP }
 var
   ShareDa : boolean;
@@ -196,9 +206,9 @@ begin
 {$IFDEF UnixFS }
     { Laufwerksbuchstaben gibt es nicht, aber immer das
       Wurzelverzeichnis }
-    if (name='/') then
+    if (name=DirSepa) then
       IsPath:= true
-    else if (name[length(name)]='/') then
+    else if (name[length(name)]=DirSepa) then
       dellast(name);
     findfirst(name,Directory,sr);
     IsPath:=(doserror=0) and (sr.attr and directory<>0);
@@ -274,20 +284,12 @@ procedure erase_all(path:pathstr);
 var sr : searchrec;
     f  : file;
 begin
-{$IFDEF UnixFS }
-  findfirst(path+'*',anyfile-VolumeID,sr);
-{$ELSE }
-  findfirst(path+'*.*',anyfile-VolumeID,sr);
-{$ENDIF }
+  findfirst(path+WildCard,anyfile-VolumeID,sr);
   while doserror=0 do begin
     with sr do
       if (name[1]<>'.') then
         if attr and Directory<>0 then
-{$IFDEF UnixFS }
-          erase_all(path+name+'/')
-{$ELSE }
-          erase_all(path+name+'\')
-{$ENDIF }
+          erase_all(path+name+DirSepa)
         else begin
           assign(f,path+name);
           if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
@@ -298,11 +300,7 @@ begin
   {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
-{$IFDEF UnixFS }
-  if pos('/',path)<length(path) then begin
-{$ELSE }
-  if pos('\',path)<length(path) then begin
-{$ENDIF }
+  if pos(DirSepa,path)<length(path) then begin
     dellast(path);
     rmdir(path);
   end;
@@ -388,35 +386,19 @@ begin
     res:=0;
     exit;
   end;
-{$IFDEF UnixFS }
-  if right(path,1)<>'/' then path:=path+'/';
-{$ELSE }
-  if right(path,1)<>'\' then path:=path+'\';
-{$ENDIF }
+  if right(path,1)<>DirSepa then path:=path+DirSepa;
   if validfilename(path+testfile) then
     res:=0
   else
-{$IFDEF UnixFS }
-    if pos('/',path)<=1 then begin
-{$ELSE }
-    if pos('\',path)<=1 then begin
-{$ENDIF }
+    if pos(DirSepa,path)<=1 then begin
       mkdir(path);
       res:=-ioresult;
     end
     else begin
-{$IFDEF UnixFS }
-      p:=iif(path[1]='/',2,1);
-{$ELSE }
-      p:=iif(path[1]='\',2,1);
-{$ENDIF }
+      p:=iif(path[1]=DirSepa,2,1);
       res:=0;
       while (p<=length(path)) do begin
-{$IFDEF UnixFS }
-        while (p<=length(path)) and (path[p]<>'/') do inc(p);
-{$ELSE }
-        while (p<=length(path)) and (path[p]<>'\') do inc(p);
-{$ENDIF }
+        while (p<=length(path)) and (path[p]<>DirSepa) do inc(p);
         if not IsPath(left(path,p)) then begin
           mkdir(left(path,p-1));
           if inoutres<>0 then begin
@@ -562,11 +544,7 @@ var _dir : dirstr;
 begin
   fsplit(fn,_dir,name,ext);
   if _dir='' then begin
-{$IFDEF UnixFS }
-    if dir[length(dir)]<>'/' then dir:=dir+'/';
-{$ELSE }
-    if dir[length(dir)]<>'\' then dir:=dir+'\';
-{$ENDIF }
+    if dir[length(dir)]<>DirSepa then dir:=dir+DirSepa;
     insert(dir,fn,1);
   end;
 end;
@@ -801,6 +779,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/05/08 19:02:30  hd
+  - Bedingte Compilierung optimiert
+
   Revision 1.28  2000/05/06 17:11:53  hd
   - $I- eingefuegt
 
