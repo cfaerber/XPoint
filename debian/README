@@ -1,0 +1,21 @@
+			OpenXP/32
+			---------
+
+The OpenXP packages have a special format (compatible with Debian
+Policy):
+
+   <upstream-version>-<debian-revision>[+<date>]
+
+<debian-revision> is ``0'' if there has not been a Debian release
+for <upstream-version>.
+The <date> part is *only* used for daily snapshots.
+
+There are meta-packages you might want to install, which depend on
+utilities often needed for certain network types (especially
+archivers/compressors):
+
+  openxp-tools-ftn	Tools for FidoNet/FTN support.
+  openxp-tools-uucp	Tools for (built-in) UUCP support.
+  openxp-tools-zconnect	Tools for ZConnect/Zerberus support.
+
+  $Id$
