@@ -1,4 +1,4 @@
-unit Ringbuffer;
+unit Ringbuff;
 {$I-,R-,S-,Q-}
 (*
 **
@@ -142,6 +142,9 @@ end. { bufunit }
 
 {
   $Log$
+  Revision 1.2  2000/10/02 03:16:41  mk
+  - made ObjCOM Virtual Pascal compatible
+
   Revision 1.1  2000/06/22 17:30:02  mk
   - initial release
   - please keep comments in English

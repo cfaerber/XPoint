@@ -20,7 +20,7 @@ unit ObjCOM;
 
 {$IFDEF FPC}{$HINTS OFF}{$ENDIF}
 
-uses Ringbuffer
+uses Ringbuff
 {$IFDEF VirtualPascal},Use32{$ENDIF}
 {$IFDEF Go32v2},Ports{$ENDIF};
 
@@ -75,7 +75,7 @@ type tCommObj = Object
 
 Type tpCommObj = ^tCommObj;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$DEFINE TCP} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF }
 {$IFDEF Linux} {$I OCSLinh.inc} {$DEFINE TCP} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$DEFINE TCP} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDosh.inc} {$I OCFDosh.inc} {$DEFINE Fossil} {$ENDIF}
@@ -394,7 +394,7 @@ begin
   ConnType:=CUnknown;
   {$IFDEF Fossil} if pos('FOSSIL',UpStr(S))=1 then ConnType:=CFossil; {$ENDIF}
   {$IFDEF TCP} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet; {$ENDIF}
-  if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial; 
+  if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial;
   if ConnType<>CUnknown then
     begin
       IPort:=1; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False;
@@ -440,6 +440,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2000/10/02 03:16:41  mk
+  - made ObjCOM Virtual Pascal compatible
+
   Revision 1.4  2000/09/29 23:17:21  ma
   - cleaned up compiler directives
   - added Linux support

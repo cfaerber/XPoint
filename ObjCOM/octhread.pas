@@ -302,7 +302,7 @@ function TThreadsObj.CreateThread(StackSize    : Longint;
                                   CallProc,
                                   Parameters   : Pointer;
                                   CreationFlags: Longint): Boolean;
-{$IFDEF OS2}var ReturnCode: Longint;{$ENDIF}
+{$IFDEF VirtualPascal}var ReturnCode: Longint;{$ENDIF}
 begin
  {$IFNDEF VirtualPascal}
   {$IFDEF WIN32}
@@ -329,7 +329,7 @@ begin
   {$ENDIF}
 
   {$IFDEF LINUX}
-    
+
   {$ENDIF}
 
 
@@ -390,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/10/02 03:16:41  mk
+  - made ObjCOM Virtual Pascal compatible
+
   Revision 1.2  2000/09/11 22:58:37  ma
   - Kosmetik
 

@@ -6,6 +6,11 @@ unit Timer;
 
 interface
 
+{$IFDEF VP }
+uses
+  use32;
+{$ENDIF }
+
 TYPE
         tTimer= OBJECT
                         CONSTRUCTOR Init;
@@ -26,8 +31,10 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 
 IMPLEMENTATION
 
-USES Dos,Debug
-{$IFDEF Win32},Windows{$else},CRT{$endIF}; {for Delay/Sleep}
+USES Dos,
+{$IFDEF Win32}Windows,{$else}CRT,{$endIF} {for Delay/Sleep}
+  debug;
+
 
 CONST qLoops= 100; TickCap= 8640000; CLKTICKS=100;
 
@@ -38,7 +45,11 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-  H,M,S,S100: word;
+{$IFDEF VP }
+  H,M,S,S100: Word;
+{$ELSE }
+  H,M,S,S100: Integer;
+{$ENDIF }
 begin
   GetTime(H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
@@ -65,14 +76,14 @@ begin
  T:=GetTicks;
  if TimeoutTicks>T then {Timeout vermutlich in der Zukunft}
   IF(TimeoutTicks-T)>(TickCap DIV 2)then {doch in der Vergangenheit, aber Reset seitdem}
-   SecsToTimeout:=Real(T+TickCap-TimeoutTicks)/CLKTICKS
+   SecsToTimeout:=(Real(T)+TickCap-Real(TimeoutTicks))/CLKTICKS
   else {tatsächlich in der Zukunft}
-   SecsToTimeout:=Real(TimeoutTicks-T)/CLKTICKS
+   SecsToTimeout:=(TimeoutTicks-Real(T))/CLKTICKS
  else {Timeout vermutlich in der Vergangenheit}
   IF(T-TimeoutTicks)>(TickCap DIV 2)then {doch in der Zukunft, aber Reset kommt}
-   SecsToTimeout:=Real(TimeoutTicks+TickCap-T)/CLKTICKS
+   SecsToTimeout:=(TimeoutTicks+TickCap-Real(T))/CLKTICKS
   else
-   SecsToTimeout:=Real(TimeoutTicks-T)/CLKTICKS;
+   SecsToTimeout:=(TimeoutTicks-Real(T))/CLKTICKS;
 end;
 
 FUNCTION tTimer.Timeout: Boolean;
@@ -83,9 +94,9 @@ var T: LongInt;
 begin
  T:=GetTicks;
  if T<InitTicks THEN
-  ElapsedSec:=Real(TickCap-InitTicks+T)/CLKTICKS
+  ElapsedSec:=(TickCap-InitTicks+Real(T))/CLKTICKS
  else
-  ElapsedSec:=Real(T-InitTicks)/CLKTICKS
+  ElapsedSec:=(Real(T)-InitTicks)/CLKTICKS
 end;
 
 FUNCTION Calibrate: LongInt;
@@ -111,6 +122,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/10/02 03:16:41  mk
+  - made ObjCOM Virtual Pascal compatible
+
   Revision 1.7  2000/09/12 12:40:17  fe
   rtlword-"Fix" wieder zurueckgenommen.  Mmh.
 
