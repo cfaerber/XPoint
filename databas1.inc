@@ -8,7 +8,6 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{$IFDEF BP }
 procedure setemscache;
 var i : integer;
 begin
@@ -16,17 +15,14 @@ begin
     for i:=0 to 3 do                { EMS einblenden }
       EmsPage(dbEMShandle,i,i);
 end;
-{$ENDIF }
-
 
 { Cache-Seiten allokieren }
 
-(* Routine wird von Peter nicht benutzt }
 procedure dbSetindexcache(pages:word);
 begin
   if pages>maxcache then error('Zu viele Cache-Seiten');
   cacheanz:=pages;
-  if _ems and emstest and (emsavail>=4) then begin
+  if emstest and (emsavail>=4) then begin
     EmsAlloc(4,dbEMShandle);
     cache:=ptr(emsbase,0);
     setemscache;
@@ -38,7 +34,6 @@ begin
     end;
   fillchar(cache^,pages*sizeof(cachepage),0);
 end;
-*)
 
 procedure dbReleasecache;
 begin
@@ -269,6 +264,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.1  2000/08/23 13:53:49  mk
+  - const-Parameter genutzt wo moeglich
+
   Revision 1.10  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

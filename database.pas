@@ -18,9 +18,7 @@ unit database;
 interface
 
 uses xpglobal,
-{$IFDEF BP }
   ems,
-{$ENDIF }
   dos, typeform,datadef, inout;
 
 {------------------------------------------------------- Allgemeines ---}
@@ -30,8 +28,7 @@ procedure dbICproc(var icr:dbIndexCRec);                  { Default-ICP }
 procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
 procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
-(* Routine wird nicht benutzt
-procedure dbSetindexcache(pages:word);     { 1..61 } *)
+procedure dbSetindexcache(pages:word);     { 1..61 }
 procedure dbReleasecache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
@@ -1600,14 +1597,10 @@ begin
       rewrite(f,1);
     if l>0 then
     begin
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=min(32768, l);
       getmem(p,s);
       repeat
-        blockread(fe,p^,min(s,l),rr);
+        blockread(fe,p^,s,rr);
         blockwrite(f,p^,rr);
         dec(l,rr);
       until l=0;
@@ -1634,14 +1627,10 @@ begin
     size:=l;
     if l>0 then
     begin
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=min(32768, l);
       getmem(p,s);
       repeat
-        blockread(fe,p^,min(s,l),rr);
+        blockread(fe,p^,s,rr);
         blockwrite(datei,p^,rr);
         dec(l,rr);
       until l=0;
@@ -1714,14 +1703,10 @@ begin
     if size>0 then begin
       seek(fe,adr+1);
       blockwrite(fe,size,4);
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=min(32768, size);
       getmem(p,s);
       repeat
-        blockread(f,p^,min(s,size),rr);
+        blockread(f,p^,s,rr);
         blockwrite(fe,p^,rr);
         dec(size,rr);
       until size=0;
@@ -1771,7 +1756,7 @@ begin
 end;
 
 {$S-}
-procedure _closelog; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure _closelog; far;
 
 begin
   exitproc:=oldexit;
@@ -1854,6 +1839,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.2  2000/08/23 13:53:49  mk
+  - const-Parameter genutzt wo moeglich
+
   Revision 1.22.2.1  2000/08/22 09:27:00  mk
   - Allgemeine Performance erhoeht
 
