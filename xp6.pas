@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen }
@@ -315,17 +316,6 @@ begin
   pgpo_keytest:=true;
 end;
 
-{$IFDEF Snapshot}
-function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-var                                          { Format: 1105001824 }
- d:datetime;
-begin
-  unpacktime(filetime(paramstr(0)),d);
-  compiletime:=(formi(d.day,2)+formi(d.month,2)+right(formi(d.year,2),2)
-    +formi(d.hour,2)+formi(d.min,2));
-end;
-{$ENDIF}
-
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
 { empfaenger: der Empfaenger (User oder x/Brett)                             }
@@ -447,7 +437,7 @@ label xexit,xexit1,xexit2,fromstart,ReadAgain;
 function uucpbrett(s:string; edis:byte):string;
 var i : integer;
 begin
-  if (edis=1) or (netztyp<>nt_UUCP) or not NewsgroupDisp then
+  if (edis=1) or ((netztyp<>nt_UUCP) and not Newsgroupdispall) or not NewsgroupDisp then
     uucpbrett:=mid(s,edis)
   else begin
     delete(s,1,2);
@@ -462,7 +452,7 @@ var p      : byte;
 
     cc_hand,  cc_size : word;
     ccm_hand,ccm_size : word;
-  (*  ma_hand,  ma_size : word; *)
+ (* ma_hand,  ma_size : word; *)
     xmsstored         : boolean;
 
   procedure store_arrays;     { Arrays ins XMS sichern und Speicher freigeben }
@@ -1034,6 +1024,76 @@ begin
   close(f);
 end;
 
+
+procedure editbetreff;                             { Betreff editieren }
+var        ii : integer;
+      oldbetr : string[betrefflen];
+begin         
+  if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
+  if binary then typ:=typ+getres2(611,5);   { ' (BinÑr)' }
+  fidoam:=ntEditBrettempf(netztyp) and not pm;
+  bboxwid:=min(betrlen,54);
+  showempfs:=min(cc_anz,15);
+  diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
+  mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'EmpfÑnger  ' }
+  attrtxt(col.coldiahigh);
+  moff;
+  if empfaenger[1]=vert_char then
+    Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
+  else
+    Wrt2(left(uucpbrett(empfaenger,edis),bboxwid));
+    for ii:=1 to min(showempfs,14) do
+    if ccm^[ii].ccpm then
+      wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
+    else
+      wrt(x+3+length(getres2(611,6)),y+2+ii,left(uucpbrett(ohnebox(ii),2),bboxwid));
+  if showempfs=15 then
+    wrt(x+3+length(getres2(611,6)),y+17,'(...)');
+  mon;
+  openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
+  oldbetr:=betreff;
+  maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
+  msetvfunc(umlauttest); mhnr(86);
+  if fidoam then begin
+    maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
+    mhnr(90);
+  end;
+  readmask(brk);
+  closemask;
+  closebox;
+  betreff:=trim(betreff);
+  if brk then exit;                  { --> Abbruch bei Betreffmaske }
+  if betreff='' then begin
+    brk:=true;
+    if not pm then rfehler(635);  { 'Nachricht mu· einen Betreff haben' }
+    if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
+       not pm then exit;
+    brk:=false;
+  end;
+  if (_bezug<>'') and ntKomkette(netztyp) and
+                  (ustr(betreff)<>ustr(oldbetr)) then begin
+    pushhp(1501);
+    if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff geÑndert - Verkettung beibehalten' }
+           ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
+    begin
+      _bezug:='';
+      _orgref:='';
+      DisposeReflist(_ref6list);
+    end else         
+      if RFC_AddOldBetreff and (netztyp=nt_UUCP) then begin
+        ReCount(Oldbetr);
+        betreff:=left(betreff+' (was: '+oldbetr,betrlen-1)+')';
+        end;
+    pophp;
+    if brk then exit;
+  end;
+  if pm and not ntEmpfBest(netztyp) then begin
+    flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
+    SetEBkennung;
+  end;
+end;
+
+
 procedure DoSendInit1;
 begin
   DoSend:=false;
@@ -1339,65 +1399,11 @@ fromstart:
   typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / 'îffentliche Nachricht' }
 
   betreff:=left(betreff,betrlen);
-  if betreffbox then begin         { Betreff editieren }
-    if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
-    if binary then typ:=typ+getres2(611,5);   { ' (BinÑr)' }
-    fidoam:=ntEditBrettempf(netztyp) and not pm;
-    bboxwid:=min(betrlen,54);
-    showempfs:=min(cc_anz,15);
-    diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
-    mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'EmpfÑnger  ' }
-    attrtxt(col.coldiahigh);
-    moff;
-    if empfaenger[1]=vert_char then
-      Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
-    else
-      Wrt2(left(uucpbrett(empfaenger,edis),bboxwid));
-    for ii:=1 to min(showempfs,14) do
-      if ccm^[ii].ccpm then
-        wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
-      else
-        wrt(x+3+length(getres2(611,6)),y+2+ii,left(uucpbrett(ohnebox(ii),2),bboxwid));
-    if showempfs=15 then
-      wrt(x+3+length(getres2(611,6)),y+17,'(...)');
-    mon;
-    openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
-    oldbetr:=left(betreff,20);
-    maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
-    msetvfunc(umlauttest); mhnr(86);
-    if fidoam then begin
-      maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
-      mhnr(90);
+
+  if betreffbox then begin
+    editbetreff;
+    if brk then goto xexit; 
     end;
-    readmask(brk);
-    closemask;
-    closebox;
-    betreff:=trim(betreff);
-    if brk then goto xexit;            { --> Abbruch bei Betreffmaske }
-    if betreff='' then begin
-      if not pm then rfehler(635);  { 'Nachricht mu· einen Betreff haben' }
-      if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
-         not pm then goto xexit;
-    end;
-    if (_bezug<>'') and ntKomkette(netztyp) and
-                    (ustr(left(betreff,20))<>ustr(oldbetr)) then begin
-      pushhp(1501);
-      if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff geÑndert - Verkettung beibehalten' }
-             ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
-      begin
-        _bezug:='';
-        _orgref:='';
-        DisposeReflist(_ref6list);
-      end else
-        { betreff:=left(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
-      pophp;
-      if brk then goto xexit;
-    end;
-    if pm and not ntEmpfBest(netztyp) then begin
-      flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
-      SetEBkennung;
-    end;
-  end;
 
   orgftime:=filetime(datei);
   if edit then begin
@@ -1847,6 +1853,8 @@ fromstart:
     end;
     if (force_absender='') or (hdp^.absender=force_absender)
       then hdp^.realname:=realname
+    else if (netztyp=nt_fido) or (netztyp=nt_maus)
+      then hdp^.absender:=trim(force_absender)
     else begin
        hdp^.absender:=(left(force_absender,cposx(' ',force_absender)-1));
        n:=cpos('(',force_absender);
@@ -2381,6 +2389,33 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.39  2001/09/16 20:31:59  my
+  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh‰ngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei ƒnderung des
+          Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
+          automatisch angeh‰ngt.
+
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  JG+MY:- Undokumentierte Funktion <Alt-A> im Sendefenster (Absender
+          ‰ndern) ¸bernahm den Absender nicht korrekt, wenn bei einer
+          Fido-Nachricht mit <F2> ein anderer Fido-Absender ausgew‰hlt
+          wurde.
+
+  JG+MY:- DoSend: Betreffabfrage ausgelagert als "EditBetreff"
+          (Prozedurrumpfgrˆﬂe)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.39.2.38  2001/08/29 16:21:14  my
   - Fix: first character of PM recipient in temp file HEADER.HDR is not
     truncated anymore (whatever HEADER.HDR might be needed for)
