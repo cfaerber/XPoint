@@ -518,6 +518,7 @@ begin
       rr0:=rr;
       ukonv(umlaute,p^,rr);   { ver„ndert evtl. rr }
       inc(fs,rr-rr0);
+      if iso then IbmToIso1(p^,rr);
       end;
     if code=-1 then Rot13(p^,rr);
     blockwrite(f2^,p^,rr);
@@ -1201,6 +1202,20 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.17  2002/05/09 22:42:23  my
+  JG:- Fix: Bei MIME-Multipart-Nachrichten in ein Brett mit Einstellung
+      "ASCII" oder an einen User mit deaktiviertem Umlaut-Schalter fand
+      keine Zeichensatzkonvertierung IBM=>ISO statt, weil XP f„lschlicher-
+      weise davon ausging, daá die Nachricht aufgrund der Einstellung
+      keine Sonderzeichen enthalten k”nne. Da XP aber gleichzeitig
+      vers„umt hat, 8bit-Zeichen, die durch Quoten oder durch Einfgen des
+      Clipboard-Inhalts in den Nachrichtentext gelangen konnten, in ASCII-
+      Zeichen zu wandeln, konnte es passieren, daá eine MIME-Multipart-
+      Nachricht mit Sonderzeichen im IBM-Zeichensatz, aber mit ISO-
+      Zeichensatzdeklaration versandt wurde. Es erfolgt jetzt immer eine
+      IBM=>ISO-Konvertierung, eine Konvertierroutine IBM=>ASCII wird
+      folgen.
+
   Revision 1.18.2.16  2002/04/24 19:12:32  sv
   SV[+MY]:- Umfangreiche Bugfixes bei der Auswahl einer anderen Serverbox
             mit "o" im Sendefenster (sog. "forcebox"), speziell RFC und
