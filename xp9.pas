@@ -396,6 +396,18 @@ begin
       end;
 end;
 
+procedure SetDomain2(var s:string);
+begin
+  if trim(s)<>'' then
+    if DomainNt=nt_Fido then
+      while (left(s,1)='.') or (left(s,2)='@') do
+        delfirst(s)
+    else begin
+      if s[1]<>'.' then
+         s:='.'+s;
+      end;
+end;
+
 
 procedure testArcExt(var s:string);
 begin
@@ -1766,6 +1778,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.12  2000/12/03 14:06:57  mk
+  - Serverdom mit Punkt
+
   Revision 1.19.2.11  2000/11/23 01:00:43  mk
   - Meldung: Standardeintrag kann nicht editiert werden hinzugefuegt
 

@@ -94,6 +94,7 @@
       bDomainNt:=nt;
       maddstring(3,yy,getres2(912,10),bdomain,30,60,        { 'Serverdomain' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(8034);
+      mset3proc(SetDomain2);
       inc(yy,2);
       end
     else
@@ -1332,6 +1333,9 @@
 
 {
   $Log$
+  Revision 1.10.2.4  2000/12/03 14:06:58  mk
+  - Serverdom mit Punkt
+
   Revision 1.10.2.3  2000/10/05 20:29:49  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
