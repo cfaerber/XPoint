@@ -79,7 +79,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader,
      xp_pgp, viewer;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 1000;
+      suchlen = 255;
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -2407,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.92  2001/01/05 16:07:58  mo
+  -suchlen von 1000 auf 255, type byte
+
   Revision 1.91  2001/01/04 10:11:20  mk
   - max search length is now 1000 instead of 73
 
