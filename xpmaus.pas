@@ -813,8 +813,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/11/03 09:55:41  mk
+  - removed illegal character
+
   Revision 1.18  2000/11/02 15:33:28  fe
-  Added forgotten "}".
+  Added forgotten }
 
   Revision 1.17  2000/10/26 12:06:34  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
