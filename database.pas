@@ -1336,6 +1336,7 @@ function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
 var
   s: shortstring;
 begin
+  s:= '';
   if size > 255 then size:= 255; { An ShortString anpassen }
   dbReadX(dbp, feld, size, s);
   dbReadXStr:= s;
@@ -1618,6 +1619,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/06/10 18:57:53  ma
+  - fixed: Empty strings were not read correctly
+
   Revision 1.45  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
