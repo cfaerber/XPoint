@@ -1255,8 +1255,8 @@ fromstart:
             pm:=false;
             Internbox:={default}box;
             sData.EmpfList.Clear;
-            sData.Empf1Address:=UnvBrett;
-            // empfaenger:=UnvBrett;
+            empfaddr:=UnvBrett;
+            intern:=true;
             parken:=true;
             betreffbox:=false; edit:=false; sendbox:=false;
             sendFlags:=sendFlags or sendIntern;
@@ -1448,6 +1448,9 @@ finalization
 
 {
   $Log$
+  Revision 1.63  2002/08/09 22:24:07  cl
+  - Fixed [ 587426 ] /»Unversandt funktioniert nicht
+
   Revision 1.62  2002/08/09 22:17:39  cl
   - Fixed #588187 3.9: keine UseNet Postings
 
