@@ -1236,7 +1236,7 @@ var  dl         : displp;
   end;
 
 
-  {$I editor.inc}
+  {$I EDITOR.INC}
 
   function PosCoord(pos:position; disp:byte):longint; forward;
 
@@ -1380,7 +1380,7 @@ var  dl         : displp;
         editfWordLeft     : WortLinks;
         editfWordRight    : WortRechts;
 
-        editfLastpos      : GotoPos(lastpos,0);
+        editfLastpos      : GotoPos(lastpos, drBoth);
         editfMark1        : SetMarker(1);
         editfMark2        : SetMarker(2);
         editfMark3        : SetMarker(3);
@@ -1391,8 +1391,8 @@ var  dl         : displp;
         editfGoto3        : GotoMarker(3);
         editfGoto4        : GotoMarker(4);
         editfGoto5        : GotoMarker(5);
-        editfGotoBStart   : GotoPos(e^.block[1].pos,0);
-        editfGotoBEnd     : GotoPos(e^.block[2].pos,0);
+        editfGotoBStart   : GotoPos(e^.block[1].pos, drBoth);
+        editfGotoBEnd     : GotoPos(e^.block[2].pos, drBoth);
 
         editfFind         : Suchen(false,false);
         editfFindReplace  : Suchen(false,true);
@@ -1752,26 +1752,27 @@ begin
 end;
 
 procedure Glossary_ed(Self: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
-const locked:boolean=false;
+const 
+  locked:boolean=false;
 begin
-  if (UpperCase(t)='E') and not locked then begin
+  if (UpperCase(t)='E') and not locked then 
+  begin
     locked:=true;
     EditFile(FileUpperCase('glossary.cfg'),false,false,0,false);
     locked:=false;
     t:=keyesc;
     pushkey(keyctcr);
-    end;
+  end;
 end;
 
 initialization
   AktEd := nil;
 finalization
-end.
 
 {
   $Log$
-  Revision 1.61  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
+  Revision 1.62  2001/09/08 09:51:31  mk
+  - quote reflow reimplmented
 
   Revision 1.60  2001/09/06 10:37:27  mk
   - added keys shift-ins and shift-del in Editor
@@ -1818,3 +1819,5 @@ end.
   Revision 1.47  2000/11/14 15:51:26  mk
   - replaced Exist() with FileExists()
 }
+end.
+

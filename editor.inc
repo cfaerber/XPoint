@@ -467,8 +467,7 @@ begin
     ZeichenRechts(false); if aufbau then NoDisplay; end;
 end;
 
-{ dir: 0=beide, -1=rÅckwÑrts, 1=vorwÑrts }
-procedure GotoPos(p:position; dir:shortint);    { beliebige Position anspringen }
+procedure GotoPos(p:position; SearchBackward: Boolean);    { beliebige Position anspringen }
 var p0      : position;
     i,n,add : integer;
     ap      : absatzp;
@@ -477,10 +476,11 @@ var p0      : position;
     touch1  : boolean;   { erste Blockmarkierung gesehen ... }
     touch2  : boolean;   { zweite Blockmarkierung gesehen    }
 begin
-  if p.absatz=nil then exit;
+  if not Assigned(p.absatz) then exit;
   TruncAbs(ActAbs);
   NoDisplay;
-  with e^ do begin
+  with e^ do 
+  begin
     GetPosition(p0);
     i:=1;
     while (i<=gl) and (dl^[i].absatz<>p.absatz) do inc(i);
@@ -498,42 +498,52 @@ begin
         end;
       scy:=i;
       end
-    else begin
-      if dir=1 then
+    else 
+    begin
+      b1:=block[1].pos.absatz;
+      b2:=block[2].pos.absatz;
+      touch1:=false; 
+      touch2:=false;
+      l := 0; // fix false warning
+
+      if not SearchBackward then
         ap:=nil
-      else begin
-        b1:=block[1].pos.absatz;
-        b2:=block[2].pos.absatz;
+      else 
+      begin
         ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rÅckwÑrts suchen }
-        touch1:=false; touch2:=false;
-        while (ap<>p.absatz) and assigned(ap) do begin
+        while (ap<>p.absatz) and assigned(ap) do 
+        begin
           ap:=ap^.prev;
           if ap=b1 then touch1:=true;
           if ap=b2 then touch2:=true;
           if assigned(ap) then inc(l,alines(ap));
-          end;
         end;
-      if assigned(ap) then begin
+      end;
+
+      if assigned(ap) then 
+      begin
         firstpar:=ap; firstline:=alines(ap); scy:=1;
         dec(startline,l);
         if touch1 then block[1].disp:=2;
         if touch2 then block[2].disp:=2;
         KorrBlockScrolled(false);
         NoDisplay;
-        end
-      else if (dl^[gl].absatz=nil) or (dl^[gl].absatz^.next=nil) then
-        exit
-      else begin                                  { .. vorwÑrts suchen }
-        if dir=-1 then exit;
+      end
+      else 
+        if (dl^[gl].absatz=nil) or (dl^[gl].absatz^.next=nil) then
+          exit
+      else 
+      begin                                  { .. vorwÑrts suchen }
         l:=alines(dl^[gl].absatz)-dl^[gl].zeile;
         ap:=dl^[gl].absatz^.next;
         touch1:=false; touch2:=false;
-        while (ap<>p.absatz) and assigned(ap) do begin
+        while (ap<>p.absatz) and assigned(ap) do 
+        begin
           inc(l,alines(ap));
           ap:=ap^.next;
           if ap=b1 then touch1:=true;
           if ap=b2 then touch2:=true;
-          end;
+        end;
         if ap=nil then exit;
         i:=Advance(ap,0,rrand); n:=1; add:=1;
         while (i<=p.offset) and (add<>0) do begin    { Zeile suchen }
@@ -571,7 +581,7 @@ end;
 
 procedure GotoMarker(n:byte);
 begin
-  GotoPos(e^.block[n+2].pos,0);
+  GotoPos(e^.block[n+2].pos, drBoth);
 end;
 
 
@@ -621,7 +631,7 @@ begin
     NoDisplay;
     while (scy<=gl) and (dl^[scy].absatz<>wpos.absatz) do inc(scy);
     if dl^[scy].absatz<>wpos.absatz then
-       GotoPos(wpos,0)
+       GotoPos(wpos, drBoth)
     else
       while (scy<gl) and (Advance(wpos.absatz,dl^[scy].offset,rrand)<wpos.offset) do
         inc(scy);
@@ -781,14 +791,44 @@ begin
     end;
 end;
 
+{ see GetQChar in xp3ex.pas }
+function GetQuote(ap:absatzp):string;
+var 
+  p,q : Integer;
+begin
+  if e^.Config.QuoteReflow and Assigned(ap) then 
+  begin
+    p:= ap^.size;
+    SetString(Result, ap^.cont, p);
+  
+    p:=cpos('>', Result);
+    if p > 5 then 
+      p:=0
+    else 
+      if p>0 then 
+      begin
+        repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
+          q:=p+1;     { ermitteln                                    }
+          while (q<=length(Result)) and (q-p<=4) and (Result[q]<>'>') do
+            inc(q);
+          if (q<=length(Result)) and (Result[q]='>') then p:=q;
+        until q>p;
+        while (p<length(Result)) and (Result[p+1]='>') do inc(p);
+        while (p<length(Result)) and (Result[p+1]=' ') do inc(p);
+      end;
+    Result := LeftStr(Result, p)
+  end else
+    Result := '';
+end;
+
 procedure NewLine;              { Enter - Absatz einfÅgen }
 var ap,ap2   : absatzp;
     wp       : integer;
     copysize : integer;
     delsp    : integer;
     spaces   : integer;
-    quotes   : integer;  { Anzahl Quotezeichen }
-    quotec   : string;   { Quotezeichen }
+    QuoteCharCount: integer;  { Anzahl Quotezeichen fuer Quote-Reflow }
+    QuoteChars: string;       { Quotezeichen im aktuellen Absatz }
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -806,36 +846,46 @@ begin
       copysize:=max(0,ap^.size-wp);
       spaces:=0;
       delsp:=0;
-      quotec:='';
-      quotes:=length(quotec);
+      { Quote-Reflow }
+      if not kb_shift then 
+      begin
+        QuoteChars := GetQuote(ap);
+        if (QuoteChars <>'') and (wp>= Length(TrimRight(QuoteChars))) then 
+        begin
+          delsp:=wp;
+          while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
+          dec(delsp,wp);
+        end;
+      end else 
+        QuoteChars := '';
+      QuoteCharCount := Length(QuoteChars);
       if wp>=ap^.size
-        then quotes:=0; { kein Reflow bei Zeilenende }
-      if quotes>wp then quotes:=0;
-      if config.autoindent and (quotes=0) then begin
+        then QuoteCharCount:=0; { kein Reflow bei Zeilenende }
+      if QuoteCharCount>wp then QuoteCharCount:=0;
+      if config.autoindent and (QuoteCharCount=0) then begin
         while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
           inc(spaces);
         if spaces>=wp then spaces:=0;
       end;
-      if createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
+      if createacopy(ap,ap2,wp-spaces-QuoteCharCount,copysize+spaces+QuoteCharCount)
       then begin
         if spaces>0 then
           fillchar(ap2^.cont,spaces,' ')
-        else if quotes>0 then
-          Move(quotec[1],ap2^.cont[0],quotes);
+        else if QuoteCharCount>0 then
+          Move(QuoteChars[1],ap2^.cont[0],QuoteCharCount);
         if assigned(ap^.next) then
           ap^.next^.prev:=ap2;
         ap2^.next:=ap^.next;
         ap^.next:=ap2;
         ap2^.prev:=ap;
-        blockabssplit(ap,ap,ap2,wp,spaces+quotes-delsp);
+        blockabssplit(ap,ap,ap2,wp,spaces+QuoteCharCount-delsp);
         ap:=AbsDelete(ap,wp,copysize,false,false);
         su(ap);
         su(ap2);
         KorrBlockScrolled(false);
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
-        moveworkpos(spaces,actabs);           { JG: 27.04.00 Cursor an Zeilenanfang }
-        {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
+        moveworkpos(spaces,actabs);           { Cursor an Zeilenanfang }
         modified:=true;
         aufbau:=true;
         end;
@@ -851,6 +901,9 @@ var ap,ap2,apnew : absatzp;
     ss,size1,wp  : word;
     addspaces    : integer;
     wpa          : absatzp;
+    QuoteCharCount: Integer;    { Anzahl Quotezeichen fuer Quote-Reflow }
+    QuoteCharsActAbs,           { Quotezeichen f¸r aktuellen Absatz }
+    QuoteCharsNextAbs: string;  { Quotezeichen f¸r n‰chsten Absatz }
 begin
   with e^ do begin
     ap:=ActAbs;
@@ -863,38 +916,57 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
+        if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
+          then if not (ap^.cont[ap^.size-1] in ['-','/'])
+                  and (ap^.next^.cont[0]<>' ') then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu gro·' }
-        else begin   { AbsÑtze zusammenhÑngen }
+        else 
+        begin   { AbsÑtze zusammenhÑngen }
+          { Quote-Reflow }
+          if Config.QuoteReflow then 
+          begin
+            QuoteCharsActAbs := GetQuote(ap);
+            QuoteCharsNextAbs := GetQuote(ap^.next);
+            QuoteCharCount := Length(QuoteCharsActAbs);
+            if (QuoteCharCount>0) and (Trim(QuoteCharsActAbs)=Trim(QuoteCharsNextAbs)) then 
+            begin
+              ap2:=ap^.next;
+              AbsDelete(ap2,0,Length(QuoteCharsNextAbs),false,true);
+              dec(ss, Length(QuoteCharsNextAbs));
+            end;
+          end;
           apnew:=AllocAbsatz(ss);
           wpa:=apnew;
           copyflags(ap,apnew);
           ap2:=ap^.next;
           blockabsinsert(ap,apnew,maxint,maxint);
           blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
-          if assigned(ap^.prev) then begin
+          if assigned(ap^.prev) then 
+          begin
             apnew^.prev:=ap^.prev;
             ap^.prev^.next:=apnew;
-            end;
-          if assigned(ap2^.next) then begin
+          end;
+          if assigned(ap2^.next) then 
+          begin
             apnew^.next:=ap2^.next;
             ap2^.next^.prev:=apnew;
-            end;
+          end;
           size1:=ap^.size;
           Move(ap^.cont,apnew^.cont,size1);
           fillchar(apnew^.cont[size1],addspaces,32);
           Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
           absatzwechsel(ap,apnew,false);
-          ap:=FreeAbsatz(ap);
-          ap2:=FreeAbsatz(ap2);
+          FreeAbsatz(ap);
+          FreeAbsatz(ap2);
           KorrBlockScrolled(true);
           modified:=true;
-          end;
         end;
+      end;
     MoveWorkpos(wp,wpa);
     aufbau:=true;
-    end;
+  end;
 end;
 
 procedure BackSpace;            { Backspace - Zeichen lîschen }
@@ -914,42 +986,40 @@ begin
 end;
 
 procedure WortRechtsLoeschen;   { Wort rechts lîschen }
-var wp,wpnew,size : integer;
-    wpa           : absatzp;
+var 
+  wp,wpnew,size: integer;
 begin
   size:=ActAbs^.size;
   if workpos>=size then
     DELchar
   else with e^ do begin
-    wpa:=ActAbs;
     wp:=workpos;
     wpnew:=workpos;
     while (wpnew<size) and not (ActAbs^.cont[wpnew] in TrennZeich) do
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
-    wpa:=AbsDelete(ActAbs,wp,wpnew-wp,true,true);
-    MoveWorkpos(wp,wpa);
+    MoveWorkpos(wp, AbsDelete(ActAbs,wp,wpnew-wp,true,true));
     aufbau:=true;
   end;
 end;
 
 procedure WortLinksLoeschen;    { Wort links lîschen }
-var wp,wpnew{,size }: word;
+var wp,wpnew: word;
     wpa             : absatzp;
 begin
   if workpos=0 then
     BackSpace
   else if workpos>ActAbs^.size then
     zeilenende
-  else with e^ do begin
-    wpa:=ActAbs;
-{    size:=ActAbs^.size;    MK 06.02.00 Zuweisung unnîtig  }
+  else with e^ do 
+  begin
     wp:=workpos;
     wpnew:=workpos;
     while (wpnew>0) and not (ActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
-    if wpnew=workpos then dec(wpnew);
+    if wpnew=workpos then 
+      dec(wpnew);
     wpa:=AbsDelete(ActAbs,wpnew,wp-wpnew,true,true);
     MoveWorkPos(wpnew,wpa);
     aufbau:=true;
@@ -970,16 +1040,11 @@ begin
       if assigned(ActAbs^.prev) then
         ActAbs^.prev^.next:=ActAbs^.next;
       ActAbs^.next^.prev:=ActAbs^.prev;
-      if memavail-asize-16>minfree then begin    { Dellisten-Eintrag }
-        apd:=AllocAbsatz(0);
-        copyflags(ActAbs,apd);
-        ActAbs^.next:=apd; ActAbs^.prev:=nil;  { leeren Absatz anhÑngen }
-        apd^.prev:=ActAbs;
-        AddDelEntry(ActAbs);
-      end
-      else begin
-        FreeAbsatz(ActAbs);
-      end;
+      apd:=AllocAbsatz(0);
+      copyflags(ActAbs,apd);
+      ActAbs^.next:=apd; ActAbs^.prev:=nil;  { leeren Absatz anhÑngen }
+      apd^.prev:=ActAbs;
+      AddDelEntry(ActAbs);
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
@@ -999,26 +1064,6 @@ begin
     AbsDelete(ActAbs,wp,size-wp,true,true);
     aufbau:=true;
   end;
-end;
-
-
-procedure Juppheidi(ap:absatzp; wp:integer);   { Yuppie -> Oops! }
-var s : string[10];
-begin
-  if wp>=6 then begin
-    s[0]:=#6;
-    Move(ap^.cont[wp-6],s[1],6);
-    { Sollen wir das bei Gelegenheit nicht mal
-      von Yuppie auf XP2 aendern?! }
-    if s='Yuppie' then begin
-      s:='Oops!';
-      Move(s[1],ap^.cont[wp-6],5);
-      if ap^.size>wp then
-        Move(ap^.cont[wp],ap^.cont[wp-1],ap^.size-wp);
-      dec(ap^.size);
-      MoveWorkpos(wp-1,nil);
-      end;
-    end;
 end;
 
 procedure ZeichenEinfuegen(fast:boolean);     { Texteingabe }
@@ -1052,7 +1097,6 @@ begin
         ap^.cont[wp]:=t[1];
         inc(ap^.size);
         MoveWorkpos(wp+1,nil);
-        if pointswitch and (t[1]='e') then Juppheidi(ap,wp+1);
         end
       else
           if ap^.size+spaces>=maxabslen then
@@ -1069,7 +1113,6 @@ begin
               Move(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
             FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
-            if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1);
             end;
       if not fast then KorrBlockScrolled(false);
       end;
@@ -1339,16 +1382,16 @@ begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
-      GotoPos(pos,0);
+      GotoPos(pos, drBoth);
     end;
   end;
 end;
 
 function CopyBlock:absatzp;    { Kopie des markierten Blocks anlegen }
-var tsize      : longint;
-    ap         : absatzp;
-    ap0,ap1,ap2: absatzp;
-    ss         : integer;
+var 
+  ap         : absatzp;
+  ap0,ap1,ap2: absatzp;
+  ss         : integer;
 begin
   with e^ do
     if blockinverse then
@@ -1363,14 +1406,14 @@ begin
         end;
       CopyBlock:=ap;
       end
-    else begin
-      tsize:=0;
+    else 
+    begin
       ap:=block[1].pos.absatz;
       repeat
-        inc(tsize,ap^.size+asize+16);
         ap:=ap^.next;
       until (ap=block[2].pos.absatz) or (ap=nil);
-      if assigned(ap) then begin
+      if assigned(ap) then 
+      begin
         ap:=block[1].pos.absatz;
         ss:=ap^.size-block[1].pos.offset;
         ap0:=AllocAbsatz(ss); ap1:=ap0;             { Startabsatz }
@@ -1475,9 +1518,9 @@ var ap1,ap2,ap    : absatzp;
         if block[1].disp=1 then begin
           SeitenAnfang; Zeilenanfang; end
         else
-          GotoPos(block[1].pos,0)
+          GotoPos(block[1].pos, drBoth)
       else if assigned(wp.absatz) then
-        GotoPos(wp,0);
+        GotoPos(wp, drBoth);
   end;
 
 begin
@@ -1765,16 +1808,14 @@ end;
 { Markierten Block als String zurueckgeben }
 
 function Marked2String:string;
-Var len : byte;
-     s  : string;
+var 
+  len : Integer;
 begin
   with e^ do
   begin
-    if block[2].pos.offset-block[1].pos.offset > 255 then len:=255
-    else len:=block[2].pos.offset-block[1].pos.offset;
-    SetLength(s, Len);
-    Move(block[1].pos.absatz^.cont[block[1].pos.offset],s[1],len);
-    marked2string:=s;
+    len:=block[2].pos.offset-block[1].pos.offset;
+    SetLength(Result, Len);
+    Move(block[1].pos.absatz^.cont[block[1].pos.offset],Result[1],len);
   end;
 end;
 
@@ -1863,12 +1904,12 @@ begin
     begin
       if not (blockinverse or blockhidden)  { Markierung loeschen }
       then begin
-        gotopos(block[1].pos,0);
+        gotopos(block[1].pos, drBoth);
         BlockLoeschen;
         end;
       ap:=LoadBlock(FileUpperCase('glossary.tmp'),true,2,rrand);
       Insert(ap,p);
-      gotopos(p,0);
+      gotopos(p, drBoth);
       end;
     Blockhidden:=true;
     Aufbau:=true;
@@ -1929,13 +1970,13 @@ begin
         inc(count);
         pos.absatz:=ap;
         pos.offset:=spos+sofs;
-        GotoPos(pos,1);
+        GotoPos(pos, drForward);
 
         if not repall then begin
           setblockmark(1);
           Moveworkpos(workpos+length(stxt),ActAbs);
           setblockmark(2);
-          Gotopos(pos,1);
+          Gotopos(pos, drForward);
           end;   
 
         if ersetzen then with language^ do begin
@@ -2173,6 +2214,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/09/08 09:51:31  mk
+  - quote reflow reimplmented
+
   Revision 1.46  2001/08/27 08:20:26  mk
   JG:- Search in Editor now *marks* the found term
   JG:- If the search term was found in the second or any subsequent line

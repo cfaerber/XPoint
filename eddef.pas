@@ -124,6 +124,8 @@ const  EditfLeft        = 1;          { Cursor links                   }
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
+       drBoth = true; // Both search Directions in GotoPos
+       drForward = false; // Only Forward search
 
 type   EdColrec = record
                     coltext,colstatus,colmarked,
@@ -174,11 +176,15 @@ type   EdColrec = record
                   end;
 
 
+
 implementation
 
 end.
 {
   $Log$
+  Revision 1.13  2001/09/08 09:51:31  mk
+  - quote reflow reimplmented
+
   Revision 1.12  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
