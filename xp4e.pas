@@ -11,9 +11,7 @@
 { Overlay-Unit mit Editierroutinen u.a. }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp4e;
 
@@ -140,13 +138,18 @@ begin
     end;
 end;
 
-procedure copy_address(var s:string);
+procedure form_address(var s: String);
 begin
   if cpos('@',s)=0 then
     AddBox(s)
   else
     if pb_netztyp=nt_Fido then
       FormFido(s);
+end;
+
+procedure copy_address(var s:string);
+begin
+  form_address(s);
   adp^:=s;
 end;
 
@@ -179,28 +182,40 @@ begin
 end;
 
 function usertest(var s:string):boolean;
-var p : byte;
+var
+  p: byte;
+  NewS, TestS: String;
 begin
   if trim(s)='' then
     if fieldpos=adrfieldpos then
       usertest:=true
-    else begin
+    else
+    begin
       errsound;
       usertest:=false;
-      end
-  else begin
+    end
+  else
+  begin
     usertest:=true;
-    p:=cpos('@',s);
+    NewS := s;
+    p:=cpos('@', NewS);
     if p>0 then
-      if (cpos('.',mid(s,p+1))=0) then
-        { Adresse darf nicht l„nger als 79 Zeichen sein }
-        if Length(s + ntAutoDomain(pbox,false)) <= eAdrLen then
-          s:=s+ntAutoDomain(pbox,false);
+      if (cpos('.',mid(NewS,p+1))=0) then
+        NewS:=NewS+ntAutoDomain(pbox,false);
     if p>0 then
-      s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
+      NewS:=trim(left(NewS,p-1))+'@'+trim(mid(NewS,p+1))
     else if (pb_netztyp=nt_fido) and nodeopen then
-      usertest:=Testfido(s);
-    end;
+      usertest:=Testfido(NewS);
+    TestS := NewS; { copy_address ver„ndert String, retten }
+    form_address(TestS);
+    if Length(TestS) > eAdrLen then
+    begin
+      Fehler('Das Feld ist '+strs(Length(TestS)-eAdrLen) + 'Zeichen zu lang');
+      UserTest := false;
+      exit;
+    end else
+      s := NewS;
+  end;
 end;
 
 function testmailstring(var s:string):boolean;
@@ -1419,7 +1434,7 @@ begin
             dbReadN(ubase,ub_username,s)
           else
             if cpos('@',s)=length(s) then begin
-              dellast(s);
+              DelLast(s);
               s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true));
               end;
           end;
@@ -1726,7 +1741,7 @@ begin
     for i:=1 to 7 do
       if wotage and (1 shl (i-1))<>0 then
         wot:=wot+copy(_wotag_,2*i-1,2)+',';
-    if wot<>'' then dellast(wot);
+    if wot<>'' then DelLast(wot);
     wostring:=wot;
     end;
 end;
@@ -1771,7 +1786,7 @@ begin
   for i:=1 to 31 do
     if l and (1 shl (i-1))<>0 then
       s:=s+strs(i)+',';
-  if s<>'' then dellast(s);
+  if s<>'' then DelLast(s);
   tagstring:=s;
 end;
 
@@ -1806,7 +1821,7 @@ begin
     for i:=1 to 12 do
       if w and (1 shl (i-1))<>0 then
         s:=s+strs(i)+',';
-    if s<>'' then dellast(s);
+    if s<>'' then DelLast(s);
     monstring:=s;
     end;
 end;
@@ -2422,6 +2437,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.21  2001/09/10 18:14:03  mk
+  - changed usertest
+
   Revision 1.25.2.20  2001/09/07 02:09:16  mk
   - empftest result is defined now, when s is empty
 
