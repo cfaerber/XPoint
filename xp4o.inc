@@ -137,9 +137,6 @@ end;
 
 
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
-type datt = record
-              t,m,j : smallword;
-            end;
 var x,y,wdt: byte;
     n,ndel,
     nbesch : longint;
@@ -148,7 +145,7 @@ var x,y,wdt: byte;
     disp   : string;
     hzeit  : integer16;
     hzahl  : boolean;
-    dat    : datt;
+    dat    : TDateTime;
     bi     : shortint;
 
   procedure display;
@@ -168,7 +165,6 @@ var x,y,wdt: byte;
   var _mbrett : string;
       haltedat: longint;
       edat    : longint;
-      dd      : datt;
       msize   : longint;
       groesse : longint;
       hflags  : byte;
@@ -204,18 +200,8 @@ var x,y,wdt: byte;
 
     if hzahl or (hzeit=0) then
       haltedat:=0
-    else begin
-      dd:=dat;                           { Haltedatum berechnen }
-      dec(dd.t,hzeit-1);
-      while dd.t<1 do begin
-        dec(dd.m);
-        if dd.m=0 then begin
-          dd.m:=12; dec(dd.j);
-          end;
-        inc(dd.t,monat[dd.m].zahl);
-        end;
-      haltedat:=ixdat(formi(dd.j mod 100,2)+formi(dd.m,2)+formi(dd.t,2)+'0000');
-      end;
+    else
+      haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit) + '0000');
     nzahl:=1;
 
     hdp := AllocHeaderMem;
@@ -276,6 +262,8 @@ var x,y,wdt: byte;
     FreeHeaderMem(hdp);
   end;
 
+var
+  t, m, j: smallword;
 begin
   if dbRecCount(mbase)=0 then begin
     rfehler(420);   { 'keine Nachrichten vorhanden!' }
@@ -291,7 +279,7 @@ begin
   n:=0; ndel:=0; nbesch:=0;
   bt:=0; dbt:=0; bbt:=0;
   getablsizes;
-  decodedate(now,dat.j,dat.m,dat.t);
+  Dat := Now;
   bi:=dbGetIndex(bbase);
   dbSetIndex(bbase,biBrett);
   dbGoTop(bbase);
@@ -706,6 +694,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/11/20 10:49:59  mk
+  - now computing date with tdatetime
+
   Revision 1.27  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 
