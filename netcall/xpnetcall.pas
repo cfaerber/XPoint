@@ -32,7 +32,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
   sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
   maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
-  xp1input,xp2c,xp3o2,xp6,xpdiff,xpuu,zftools,fidoglob,
+  xp1input,xp2c,xp3o2,xp6,xpdiff,xpncuucp,zftools,fidoglob,
   classes,archive,xp3ex,xpterminal;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
@@ -841,7 +841,7 @@ begin                  { function Netcall }
   domain := dbReadStr(d,'domain');
   dbClose(d);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_UUCP])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
     end;
@@ -961,7 +961,7 @@ begin                  { function Netcall }
           SendNetzanruf(NetcallLogFile);
           end; {case ltZConnect}
 
-(*        ltUUCP: begin
+        ltUUCP: begin
           Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
           case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
@@ -973,7 +973,7 @@ begin                  { function Netcall }
           else begin Netcall:=true end;
             end; {case}
           SendNetzanruf(NetcallLogFile);
-          end; {case ltUUCP} *)
+          end; {case ltUUCP}
 
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
@@ -1206,6 +1206,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/03/24 23:09:43  cl
+  - enabled UUCP
+
   Revision 1.8  2001/03/24 13:08:56  mk
   - made compilable under DOS32
 
