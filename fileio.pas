@@ -478,13 +478,19 @@ begin
 end;
 
 function IsPath(const fname:string):boolean;
+{$IFNDEF Delphi }
 var
   curdir: string;
+{$ENDIF }
 begin
+{$IFDEF Delphi }
+  Result := DirectoryExists(fname);
+{$ELSE }
   if fname='' then begin result:=true; exit end;
   curdir:= GetCurrentDir;
   result:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
+{$ENDIF }
 end;
 
 function copyfile(srcfn, destfn:string):boolean;
@@ -713,6 +719,10 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.4  2002/07/26 08:06:25  mk
+  - use system function DirectoryExists in IsPath instead of own function
+    with Delphi
+
   Revision 1.116.2.3  2002/07/21 20:14:32  ma
   - changed copyright from 2001 to 2002
 
