@@ -27,9 +27,6 @@ INTERFACE
 
 uses 
   xpglobal, 
-{$ifdef NCRT}
-  oCrt,
-{$endif}
   dos;
 
 function  GetDrive:char;
@@ -437,6 +434,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/04/30 17:55:58  hd
+  Keine crt-Unit, keine nCrt-Unit! :-)
+
   Revision 1.15  2000/04/30 15:37:30  mk
   - crt-Unit aus uses entfernt
 
