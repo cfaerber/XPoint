@@ -457,8 +457,7 @@ begin
     ZeichenRechts(false); if aufbau then NoDisplay; end;
 end;
 
-{ dir: 0=beide, -1=rÅckwÑrts, 1=vorwÑrts }
-procedure GotoPos(p:position; dir:shortint);    { beliebige Position anspringen }
+procedure GotoPos(p:position; SearchBackward: Boolean);    { beliebige Position anspringen }
 var p0      : position;
     i,n,add : integer;
     ap      : absatzp;
@@ -493,7 +492,7 @@ begin
       b1:=block[1].pos.absatz;
       b2:=block[2].pos.absatz;
       touch1:=false; touch2:=false;
-      if dir=1 then
+      if not SearchBackward then
         ap:=nil
       else begin
         ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rÅckwÑrts suchen }
@@ -515,7 +514,6 @@ begin
       else if (dl^[gl].absatz=nil) or (dl^[gl].absatz^.next=nil) then
         exit
       else begin                                  { .. vorwÑrts suchen }
-        if dir=-1 then exit;
         l:=alines(dl^[gl].absatz)-dl^[gl].zeile;
         ap:=dl^[gl].absatz^.next;
         touch1:=false; touch2:=false;
@@ -562,7 +560,7 @@ end;
 
 procedure GotoMarker(n:byte);
 begin
-  GotoPos(e^.block[n+2].pos,0);
+  GotoPos(e^.block[n+2].pos, drBoth);
 end;
 
 
@@ -612,7 +610,7 @@ begin
     NoDisplay;
     while (scy<=gl) and (dl^[scy].absatz<>wpos.absatz) do inc(scy);
     if dl^[scy].absatz<>wpos.absatz then
-       GotoPos(wpos,0)
+       GotoPos(wpos, drBoth)
     else
       while (scy<gl) and (Advance(wpos.absatz,dl^[scy].offset,rrand)<wpos.offset) do
         inc(scy);
@@ -1396,7 +1394,7 @@ begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
-      GotoPos(pos,0);
+      GotoPos(pos, drBoth);
     end;
   end;
 end;
@@ -1532,9 +1530,9 @@ var ap1,ap2,ap    : absatzp;
         if block[1].disp=1 then begin
           SeitenAnfang; Zeilenanfang; end
         else
-          GotoPos(block[1].pos,0)
+          GotoPos(block[1].pos, drBoth)
       else if assigned(wp.absatz) then
-        GotoPos(wp,0);
+        GotoPos(wp, drBoth);
   end;
 
 begin
@@ -1876,7 +1874,7 @@ begin
       bskorr(2,3);
     end;
     { Cursor auf Blockanfang setzen }
-    gotopos(block[1].pos,0);
+    gotopos(block[1].pos, drBoth);
     ap:=ActAbs;
     saveumbr:=ap^.umbruch;
     ap^.umbruch:=true;
@@ -2106,12 +2104,12 @@ begin
     begin
       if not (blockinverse or blockhidden)  { Markierung loeschen }
       then begin
-        gotopos(block[1].pos,0);
+        gotopos(block[1].pos, drBoth);
         BlockLoeschen;
         end; 
       ap:=LoadBlock('GLOSSARY.TMP',true,2,rrand);
       Insert(ap,p);
-      gotopos(p,0);
+      gotopos(p, drBoth);
       end;
     Blockhidden:=true;
     Aufbau:=true;
@@ -2170,13 +2168,13 @@ begin
         inc(count);
         pos.absatz:=ap;
         pos.offset:=spos+sofs;
-        GotoPos(pos,1);
+        GotoPos(pos, drForward);
 
         if not repall then begin
           setblockmark(1);
           Moveworkpos(workpos+length(stxt),ActAbs);
           setblockmark(2);
-          Gotopos(pos,1);
+          Gotopos(pos, drForward);
           end;   
 
         if ersetzen then with language^ do begin
@@ -2414,6 +2412,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.22  2001/09/06 16:15:58  mk
+  - optimized GotoPos
+
   Revision 1.19.2.21  2001/09/06 15:53:52  mk
   - fixed possible uninitialized variables
 

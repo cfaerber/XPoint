@@ -1420,7 +1420,7 @@ var  dl         : displp;
         editfWordLeft     : WortLinks;
         editfWordRight    : WortRechts;
 
-        editfLastpos      : GotoPos(lastpos,0);
+        editfLastpos      : GotoPos(lastpos, drBoth);
         editfMark1        : SetMarker(1);
         editfMark2        : SetMarker(2);
         editfMark3        : SetMarker(3);
@@ -1431,8 +1431,8 @@ var  dl         : displp;
         editfGoto3        : GotoMarker(3);
         editfGoto4        : GotoMarker(4);
         editfGoto5        : GotoMarker(5);
-        editfGotoBStart   : GotoPos(e^.block[1].pos,0);
-        editfGotoBEnd     : GotoPos(e^.block[2].pos,0);
+        editfGotoBStart   : GotoPos(e^.block[1].pos, drBoth);
+        editfGotoBEnd     : GotoPos(e^.block[2].pos, drBoth);
 
         editfFind         : Suchen(false,false);
         editfFindReplace  : Suchen(false,true);
@@ -1810,6 +1810,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.16  2001/09/06 16:15:58  mk
+  - optimized GotoPos
+
   Revision 1.25.2.15  2001/09/06 10:43:54  mk
   - Robos Blockmarieren mit Shift wesentlich vereinfacht, spart 1kb Exe
     (Rückportiert von 32 Bit)

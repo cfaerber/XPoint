@@ -116,6 +116,9 @@ const  EditfLeft        = 1;          { Cursor links                   }
        
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
+       drBoth = true; { Both search Directions in GotoPos }
+       drForward = false; { Only Forward search }
+
 
 type   EdColrec = record
                     coltext,colstatus,colmarked,
@@ -171,6 +174,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5.2.4  2001/09/06 16:15:58  mk
+  - optimized GotoPos
+
   Revision 1.5.2.3  2001/07/01 15:42:12  my
   SV:- moved unit to overlay
 
