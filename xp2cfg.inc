@@ -623,9 +623,10 @@ begin
   ListFixedhead:=false;
   MaggiVerkettung:=false;
   ExtraktHeader.anz:=0;
-{$IFNDEF unix}
-  Xptimezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
-{$ENDIF }
+  if AutomaticTimeZone then
+    XpTimeZone := GetTimeZone
+  else
+    XpTimeZone := iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
   AutoTIC:=true;
   shellshowpar:=false;
   shellwaitkey:=false;
@@ -1719,6 +1720,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.17  2003/09/16 23:51:10  mk
+  - set correct standard value for XPTimeZone
+
   Revision 1.144.2.16  2003/09/16 14:10:56  mk
   - fixed 799307: zweimal 'TimeZone' in xpoint.cfg
 

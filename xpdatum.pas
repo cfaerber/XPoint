@@ -41,9 +41,6 @@ uses
 var
   XpTimeZone: String;
 
-const
-  StandardTimezone = 'W+1';
-
 procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
 
 procedure ZtoZCdatum(var datum,zdatum:string);
@@ -215,6 +212,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.5  2003/09/16 23:51:10  mk
+  - set correct standard value for XPTimeZone
+
   Revision 1.21.2.4  2003/08/31 15:51:30  mk
   - renamed Timezone to XpTimezone, avoids problems with linux
     function with the same name (kylix)
@@ -303,10 +303,5 @@ end;
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
-initialization
-  if AutomaticTimeZone then
-    XpTimeZone := GetTimeZone
-  else
-    XpTimeZone := StandardTimeZone;
 end.
 
