@@ -52,7 +52,6 @@ procedure setmenus;
 procedure freemenus;
 
 procedure initvar;
-procedure SetNtAllowed;
 procedure readconfig;
 procedure saveconfig;
 procedure SaveConfig2;
@@ -1091,6 +1090,9 @@ end.
 
 {
   $Log$
+  Revision 1.114  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.113  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

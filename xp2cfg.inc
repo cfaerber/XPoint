@@ -249,15 +249,6 @@ begin
 end;
 
 
-procedure SetNtAllowed;
-begin
-  ntAllowed:={$ifndef DOS32}[nt_ZConnect,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3];
-             {$else}[nt_ZConnect,nt_Fido,nt_UUCP];{$endif}
-  developer:=FileExists('developer');
-  exclude(ntAllowed,nt_Pronet);
-end;
-
-
 procedure initvar;
 begin
   {$IFDEF unix }
@@ -343,7 +334,6 @@ begin
   postadresse:='';
   telefonnr:='';
   wwwHomepage:='';
-  SetNtAllowed;
   fidobin:=FileExists('fido-bin');
   Clipboard:=ClipAvailable;
   new(viewers);
@@ -1707,6 +1697,9 @@ end;
 
 {
   $Log$
+  Revision 1.117  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.116  2001/07/27 22:51:29  mk
   - fixed some Freepascal compile problems
 

@@ -858,7 +858,6 @@ var s  : string;
     freemenus;               { MenÅs neu belegen              }
     setmenus;
     freemain;
-    SetNtAllowed;
     readkeydefs;
     closebox;
     showscreen(false);
@@ -934,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.39  2001/07/28 12:04:13  mk
   - removed crt unit as much as possible
 

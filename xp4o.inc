@@ -692,12 +692,10 @@ begin
     mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu l”schen' }
   DisableDOS:=false;
   signal;
-  if not developer then begin
-    Rerout(false,'MELDUNGEN',true);
-    Rerout(false,'UPDATES',true);
-    Rerout(true,'MELDUNGEN',true);
-    Rerout(true,'UPDATES',true);
-    end;
+  Rerout(false,'MELDUNGEN',true);
+  Rerout(false,'UPDATES',true);
+  Rerout(true,'MELDUNGEN',true);
+  Rerout(true,'UPDATES',true);
   SysDelay(500);
   closebox;
   freeres;
@@ -708,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.36  2001/07/28 12:04:12  mk
   - removed crt unit as much as possible
 

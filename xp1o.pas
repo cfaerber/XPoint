@@ -667,9 +667,6 @@ begin
             end;
           end;
         end;
-      end
-    else if developer then begin
-//      sound(4000); delay(5); nosound;
       end;
     dbSetIndex(bezbase,mi);
     end;
@@ -1014,6 +1011,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.85  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.84  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

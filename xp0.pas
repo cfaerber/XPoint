@@ -809,7 +809,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {$ENDIF }
 
        MoreMode   : boolean = true;
-       Developer  : boolean = false;
 {$IFDEF UnixFS }
        SupportCfg : string  = 'support.cfg';
 {$ELSE }
@@ -1097,7 +1096,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        shortkey    : array[1..maxskeys] of KeyRec;
        shortkeys   : shortint;
        AutoCrash   : string;     { Crash automatisch starten; *.. -> normaler Netcall }
-       ntAllowed   : set of byte;    { zulaessige Netztypen }
        extheadersize : integer;      { groesse des Kopfes bei xp3.extract_msg() }
        extHdLines  : integer;        { Anzahl Kopfzeilen bei Extrakt mit Kopf }
        fidobin     : boolean;        { Binaernachrichten im FidoNet moeglich }
@@ -1184,6 +1182,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.132  2001/07/29 12:54:55  ma
+  - removed Developer and ntAllowed variables
+
   Revision 1.131  2001/07/27 18:10:11  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again
