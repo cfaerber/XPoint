@@ -331,61 +331,6 @@ begin
 end;
 
 
-{$IFDEF DPMI}
-
-procedure memstat;
-const rnr = 500;
-var
-    x,y  : byte;
-{$IFDEF BP }
-    ems  : longint;
-{$ENDIF }
-    os2  : boolean;
-    win  : boolean;
-    lnx  : boolean;
-    free : longint;
-begin
-  win:=(WinVersion>0);
-  win := true;
-  msgbox(45,iif(win,12,11),getres2(rnr,1),x,y);
-  attrtxt(col.colmboxhigh);
-  moff;
-  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
-  wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
-  wrt(x+4,y+5,xp_xp);             { CrossPoint }
-  wrt(x+4,y+6,getres2(rnr,4));    { frei }
-  os2:=lo(dosversion)>=10;
-  lnx:=DOSEMuVersion <> '';
-  wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
-  if win then
-    wrt(x+4,y+9,'Windows'+getres2(rnr,7));
-  attrtxt(col.colmbox);
-{  gotoxy(x+19,y+4); write(regs.ax:4,' KB');  - freier Speicher }
-{  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB'); - XP-Speicher }
-  gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-  gotoxy(x+32,y+4);
-{$IFNDEF Ver32 }
-  if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-{$ENDIF }
-  gotoxy(x+32,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-                          xpspace(XferDir)) / $100000:6:1,' MB');
-  gotoxy(x+32,y+6);
-{$IFDEF BP }
-  free:=dfree;
-  if free>=0 then write((free / $100000):6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-{$ENDIF }
-  WriteVer(os2,win,lnx,x+22,y+8);
-  wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
-  mon;
-  freeres;
-  wait(curon);
-  closebox;
-end;
-
-{$ELSE}
-
 procedure memstat;
 const rnr = 500;
 type so = record
@@ -404,68 +349,57 @@ begin
   msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
-  wrt(x+19,y+2,'DOS-RAM        EMS          XMS        '+
+  wrt(x+19,y+2,'   DOS-RAM      EMS         XMS        '+
                right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
   wrt(x+4,y+4,getres2(rnr,2));   { gesamt }
   wrt(x+4,y+5,xp_xp);            { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfÅgbar }
   os2:=lo(dosversion)>=10;
-{$IFDEF BP }
   lnx:=DOSEmuVersion <> '';
-{$ENDIF }
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
   attrtxt(col.colmbox);
   intr($12,regs);
-  gotoxy(x+19,y+4); write(regs.ax:4,' KB');
-{$IFNDEF ver32}
-  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
-  gotoxy(x+19,y+6); write(memavail div 1024:4,' KB');
-  gotoxy(x+19,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
-{$ENDIF}
+  gotoxy(x+22,y+4); write(regs.ax:4,' KB');
+  gotoxy(x+22,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
+  gotoxy(x+22,y+6); write(memavail div 1024:4,' KB');
+  gotoxy(x+22,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
   { (ovrheaporg+3) div 64:4, ' KB'); }
-{$IFDEF BP }
   if emstest then
   begin
-    gotoxy(x+31,y+4);
-    { 29.01.2000 Stefan Vinke, RTE 215 bei 64 MB EMS }
+    gotoxy(x+32,y+4);
     write(longint(emstotal)*16:5,' KB');
     ems:=0;
     if (OvrEmshandle<>0) and (OvrEmsHandle<>$ffff) then
       inc(ems,EmsHandlePages(OvrEmshandle)*16);
     if dbEMShandle<>0 then inc(ems,EmsHandlePages(dbEMShandle)*16);
     inc(ems,resemspages*16);
-    gotoxy(x+31,y+5); write(ems:5,' KB');
-    gotoxy(x+31,y+6); write(emsavail*16:5,' KB');
+    gotoxy(x+32,y+5); write(ems:5,' KB');
+    gotoxy(x+32,y+6); write(emsavail*16:5,' KB');
   end;
   if xmstest then begin
     gotoxy(x+44,y+4); write(xmstotal:5,' KB');
     gotoxy(x+44,y+5); write(0:5,' KB');
     gotoxy(x+44,y+6); write(xmsavail:5,' KB');
     end;
-{$ENDIF }
   gotoxy(x+57,y+4);
-{$IFNDEF ver32}
   if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
-{$ENDIF }
   gotoxy(x+57,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                           xpspace(XferDir)) / $100000:6:1,' MB');
   free:=dfree;
   gotoxy(x+57,y+6);
   if free>=0 then write(free / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+21,y+9);
+  WriteVer(os2,win,lnx,x+24,y+9);
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,10,9),getres2(rnr,9)+'...');
   mon;
   freeres;
   wait(curon);
   closebox;
 end;
-
-{$ENDIF}
 
 
 { USER.EB1 - Fragmentstatistik, nur deutsche Version }
@@ -1020,6 +954,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.5  2000/12/17 00:14:35  mk
+  - optische Korrekturen an der Speicherstatistik
+
   Revision 1.9.2.4  2000/11/17 22:34:37  mk
   - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
 
