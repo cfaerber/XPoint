@@ -53,7 +53,7 @@ Function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren  
 Function Even(const l:longint):boolean;            { not odd()                    }
 Function FileName(var f):string;                { Dateiname Assign             }
 Function FirstChar(const s:string):char;           { s[1]                         }
-Function fitpath(path:pathstr; n:byte):pathstr;   {+ Pfad evtl. abk걊zen    }
+Function fitpath(path:string; n:byte):pathstr;   {+ Pfad evtl. abk걊zen    }
 Function FormI(const i:longint; const n:Byte):string;    { i-->str.; bis n mit 0 auff.  }
 Function HBar(const len:byte):string;              { 쳐컴컴컴컴...컴컴컴컴캑      }
 Function Hex(const l:longint; const n:byte):string;      { Hex-Zahl mit n Stellen       }
@@ -1687,22 +1687,36 @@ begin
 end;
 
 
-function fitpath(path:pathstr; n:byte):pathstr;
-var dir  : string;
-    name : string;
-    ext  : string;
-    p    : byte;
+function fitpath(path:string; n:byte):pathstr;
+var dir      : string;
+    name     : string;
+    ext      : string;
+    p        : byte;
+    wasLFN   : boolean;
+    shortdir : boolean;
 begin
   if length(path)<=n then fitpath:=path
   else begin
+    wasLFN:=LFNEnabled;
+    if not LFNEnabled then EnableLFN;
+    shortdir:=false;
     fsplit(path,dir,name,ext);
-    while length(dir)+length(name)+length(ext)+4>n do begin
-      p:=length(dir)-1;
-      while dir[p]<>DirSepa do dec(p);
-      dir:=left(dir,p);
-      end;
-    fitpath:=dir+'...'+DirSepa+name+ext;
+    if length(ext) > 7 then ext:=left(ext,4)+'...';  { 3 Stellen immer behalten }
+    while length(dir)+length(name)+length(ext) > n do
+    begin
+      if (dir<>'') and (CountChar(DirSepa,dir) > 1) then
+      begin
+        shortdir:=true;
+        p:=length(dir)-1;
+        while dir[p]<>DirSepa do dec(p);
+        dir:=left(dir,p);
+      end
+      else
+        name:=left(name,n-(length(dir)+length(ext)+iif(shortdir,4,0)+5))+'[...]';
     end;
+    fitpath:=iifs(shortdir,dir+'...'+DirSepa,dir)+name+ext;
+    if not wasLFN then DisableLFN;
+  end;
 end;
 
 
@@ -2031,6 +2045,15 @@ end;
   end.
 {
   $Log$
+  Revision 1.37.2.28  2002/03/27 19:46:02  my
+  MY:- Fix Archiv-Viewer: Wenn die zu entpackende Datei bereits vorhanden
+       und der Dateiname l꼗ger war als die in der Fehlermeldung "xyz
+       existiert schon. 쉇erschreiben?" darzustellende (und daher zu
+       k걊zende) L꼗ge des Dateinamens, dann hing XP in einer
+       Endlosschleife fest. Der Name wird jetzt in der Reihenfolge
+       Erweiterung, Pfad, Dateiname gek걊zt. Dieser Fix betrifft auch alle
+       anderen Stellen, an denen die Routine 'fitpath' verwendet wird.
+
   Revision 1.37.2.27  2002/03/13 23:05:41  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entr걅pelt,
             von Redundanzen befreit, korrigiert und erweitert:
