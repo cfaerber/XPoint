@@ -310,7 +310,7 @@ var x,y  : byte;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
-    AdrbuchDef  : byte;
+    AdrbuchDef  : Integer;
 begin
   new(adp);
   if left(user,4)<>#0+'$/T' then
@@ -2411,6 +2411,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.6  2000/10/03 15:47:42  mk
+  - Bugfix fuer RangeCheck-Problem in EditUser
+
   Revision 1.25.2.5  2000/10/03 02:36:13  my
   JG:- Beim Editieren von Usern mit Adressbuchgruppe "0" bleibt
        diese erhalten und wird nicht in "1" geaendert.
