@@ -744,7 +744,7 @@ procedure DateSendIt;
 var dat   : longint;
     flags : word;
     typ   : char;
-    empf  : string[AdrLen];
+    empf  : string;
     mon   : word;
 begin
   rmessage(608);    { 'Nachricht speichern...' }
@@ -1121,6 +1121,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/06/12 09:14:53  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.21  2002/05/26 12:26:12  ma
   - using "email" db field instead of "user" db field for email now
     email may be longer than 30 chars now

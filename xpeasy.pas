@@ -67,11 +67,11 @@ function NeuBenutzergruss:boolean;
       maddtext(3,i+1,getres2(14001,i),col.coldialog);
     end;
 
-    maddstring(3,3+msglines,getres2(252,103),postadresse,47,PostadrLen,'');   { 'Postanschrift ' }
+    maddstring(3,3+msglines,getres2(252,103),postadresse,47,MaxInt,'');   { 'Postanschrift ' }
     msetvfunc(TestPostanschrift);
-    maddstring(3,4+msglines,getres2(252,104),telefonnr,47,TeleLen,'>VFBQP +-0123456789');
+    maddstring(3,4+msglines,getres2(252,104),telefonnr,47,MaxInt,'>VFBQP +-0123456789');
     msetvfunc(TestTelefon);                                 { 'Telefon       ' }
-    maddstring(3,5+msglines,getres2(252,105),wwwHomepage,47,Homepagelen,range(' ','~'));
+    maddstring(3,5+msglines,getres2(252,105),wwwHomepage,47,MaxInt,range(' ','~'));
     msetvfunc(TestUrl);
     maddbool(3,7+msglines,getres2(252,109),adrpmonly);   { 'Adresse, Telefon und Homepage nur in PMs' }
     readmask(brk);
@@ -81,6 +81,9 @@ function NeuBenutzergruss:boolean;
   end;
 {
   $Log$
+  Revision 1.18  2002/06/12 09:14:52  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.17  2002/02/21 13:52:33  mk
   - removed 21 hints and 28 warnings
 

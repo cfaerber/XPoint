@@ -537,7 +537,7 @@ var x,y      : Integer;
   end;
 
   procedure DecPGP;
-  var s : string[AdrLen];
+  var s : string;
       sp: scrptr;
   begin
     s:=hdp.Firstempfaenger;
@@ -1267,6 +1267,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/06/12 09:14:51  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.89  2002/06/03 09:05:07  mk
   - added more debug logs for Bezugsverkettung
 

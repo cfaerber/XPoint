@@ -744,7 +744,7 @@ var f,f2     : file;
 
 procedure editbetreff;                             { Betreff editieren }
 var        ii : integer;
-      oldbetr : string[betrefflen];
+      oldbetr : string;
             s : string;
            sl : integer;
 
@@ -1422,6 +1422,9 @@ finalization
 
 {
   $Log$
+  Revision 1.53  2002/06/12 09:14:53  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.52  2002/05/26 12:26:12  ma
   - using "email" db field instead of "user" db field for email now
     email may be longer than 30 chars now

@@ -71,16 +71,11 @@ const
        BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fuer }
        BrettLen    = 81;             { die entsprechenden Felder ver-  }
        eBrettLen   = 79;             { wendet werden                   }
-       AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 70;
+       BetreffLen  = MaxInt;
        DateLen     = 11;
-       midlen      = 160;
        AKAlen      = 127;
        OrgLen      = 80;             { Organisation }
-       PostadrLen  = 80;             { Postadresse }
-       TeleLen     = 100;            { Telefon }
-       HomepageLen = 90;             { WWW-Homepage }
        CustHeadLen = 60;             { Customizable Header-Lines }
        hdErrLen    = 60;
        ViewprogLen = 70;             { Kommandozeile fuer ext. Viewer }
@@ -1229,6 +1224,9 @@ implementation
 
 {
   $Log$
+  Revision 1.163  2002/06/12 09:14:50  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.162  2002/05/26 12:16:22  ma
   - replaced dbLog by standard log routines
 

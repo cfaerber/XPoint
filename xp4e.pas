@@ -132,7 +132,7 @@ procedure addbox(var s:string);
 var box : string;
 begin
   box:=getfield(pb_field);
-  s:=LeftStr(s,AdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
+  s:=LeftStr(s,eAdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
 end;
 
 procedure FormFido(var s:string);  { lokal }
@@ -2509,6 +2509,9 @@ end;
 
 {
   $Log$
+  Revision 1.92  2002/06/12 09:14:51  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.91  2002/05/01 17:31:05  mk
   MY:- Beim Editieren von Usern/Brettern wird der Name im Eingabefeld
        "Server" in der Schreibweise dargestellt, in der er in der

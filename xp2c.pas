@@ -439,11 +439,11 @@ begin
   dialog(ival(getres2(252,100)),8,getres2(252,101),x,y);  { 'Adreáeinstellungen (ZCONNECT / RFC)' }
   maddstring(3,2,getres2(252,102),orga,47,OrgLen,'');    { 'Organisation  ' }
     mhnr(1040);
-  maddstring(3,3,getres2(252,103),postadresse,47,PostadrLen,'');   { 'Postanschrift ' }
+  maddstring(3,3,getres2(252,103),postadresse,47,MaxInt,'');   { 'Postanschrift ' }
   msetvfunc(TestPostanschrift);
-  maddstring(3,4,getres2(252,104),telefonnr,47,TeleLen,'>VFBQP +-0123456789');
+  maddstring(3,4,getres2(252,104),telefonnr,47,MaxInt,'>VFBQP +-0123456789');
   msetvfunc(TestTelefon);                                 { 'Telefon       ' }
-  maddstring(3,5,getres2(252,105),wwwHomepage,47,Homepagelen,range(' ','~'));
+  maddstring(3,5,getres2(252,105),wwwHomepage,47,MaxInt,range(' ','~'));
   msetvfunc(TestUrl);
   maddbool(3,7,getres2(252,109),adrpmonly);   { 'Adresse, Telefon und Homepage nur in PMs' }
   readmask(brk);
@@ -1549,6 +1549,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2002/06/12 09:14:50  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.130  2002/05/20 07:47:56  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

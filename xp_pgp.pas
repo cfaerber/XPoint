@@ -785,7 +785,7 @@ begin
     else     user:='';
   end;
   dialog(58,3,getres2(3001,1),x,y);   { 'PGP-Key anfordern bei ...' }
-  maddstring(3,2,'',user,52,AdrLen,''); mhnr(93);
+  maddstring(3,2,'',user,52,eAdrLen,''); mhnr(93);
   mappcustomsel(seluser,false);
   ccte_nobrett:=true;
   msetvfunc(cc_testempf);
@@ -1168,6 +1168,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2002/06/12 09:14:51  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.67  2002/04/14 13:19:06  mk
   - fixed signing with Pgp 6.5.8
 

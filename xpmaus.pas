@@ -286,8 +286,8 @@ var brett  : string[5];
     x,y    : Integer;
     rec    : longint;
     maus   : string[BoxNameLen];
-    betreff: string[BetreffLen];
-    abs    : string[AdrLen];
+    betreff: string;
+    abs    : string;
     loesch : byte;
     n      : longint;
     info   : MausInfAP;
@@ -819,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/06/12 09:14:53  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.37  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 

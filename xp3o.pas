@@ -109,7 +109,7 @@ var p        : scrptr;
     pollbox  : string[BoxNameLen];
     zg_flags : integer;
     size     : Integer;
-    adresse  : string[AdrLen];
+    adresse  : string;
 begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
   with cr do begin
     sichern(p);
@@ -1533,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/06/12 09:14:51  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.87  2002/05/21 15:24:05  ma
   - more debug logs
   - fixed hints and warnings

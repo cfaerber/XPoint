@@ -109,7 +109,7 @@
       bDomainNt:=0;
     if nt=nt_uucp then               { RFC/UUCP eMail-Adresse vereinfacht }
     begin
-      maddstring(3,yy,getres2(912,12),email,30,AdrLen,''); mhnr(30001);
+      maddstring(3,yy,getres2(912,12),email,30,eAdrLen,''); mhnr(30001);
       inc(yy,2);
       end;
     if fqdom then
@@ -2369,6 +2369,9 @@
 
 {
   $Log$
+  Revision 1.55  2002/06/12 09:14:52  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
   Revision 1.54  2002/05/26 12:26:11  ma
   - using "email" db field instead of "user" db field for email now
     email may be longer than 30 chars now
