@@ -2567,6 +2567,22 @@ MY:
   XP4O.PAS
 
 
++--------------+
+|  02.04.2003  |
++--------------+
+
+MY:
+- Fix: Dateidatum und -uhrzeit von NEUES.DAT werden jetzt beim Programm-
+  start immer auf den aktuellen Wert gesetzt (Datum und Uhrzeit *in*
+  NEUES.DAT bleiben unverndert!). Grund: Wenn die Meldung "Seit dem
+  letzten Programmstart sind mehr als 14 Tage vergangen" erschien und XP
+  beendet wurde, ohne daแ in dieser Session das Einlesen eines Puffers
+  stattgefunden hatte, dann erschien die Meldung beim nchsten Programm-
+  start wieder, auch wenn der letzte XP-Start u.U. nur ein paar Minuten
+  zurcklag.
+  XP2B.PAS
+
+
 ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 
 
