@@ -41,6 +41,9 @@ const
   lcInfo = ' ';
 
 type
+  { The state we are in when sending commands to the modem }
+  TModemAnswerState = (SMExpectingEcho, SMExpectingAnswer, SMDone);
+
   { This is the base class for all netcall types using dialup techniques.
     As ObjCOM provides the communications channel, all comm types ObjCOM
     provides are possible, even communication via IP (useful for example
@@ -52,8 +55,9 @@ type
     FTimerObj: tpTimer;
     FConnected,FActive: Boolean;
     FPhonenumbers: String;
-    WaitForAnswer,FGotUserBreak: Boolean;
+    FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
+    ModemAnswerState: TModemAnswerState;
     FErrorMsg,FLogfileName,FCommInit,ReceivedUpToNow,ModemAnswer: String;
 
     FPhonenumber: String;
@@ -67,8 +71,8 @@ type
     function Activate: Boolean;
 
     {Process incoming bytes from modem: store in ReceivedUpToNow or move
-     all bytes received yet to ModemAnswer and set WaitForAnswer to False
-     if WaitForAnswer was True.}
+     all bytes received yet to ModemAnswer and set ModemAnswerState
+     accordingly. }
     procedure ProcessIncoming;
 
     {Process keypresses:
@@ -79,7 +83,7 @@ type
 
     {Send command to modem. Wait max TimeoutModemAnswer seconds for answer.
      Return answer if received in time; if not received store in
-     ReceivedUpToNow, set WaitForAnswer to True and return empty string.}
+     ReceivedUpToNow, set ModemAnswerState<>SMDone and return empty string.}
     function SendCommand(s:string; TimeoutModemAnswer: real): String;
 
     {Send multiple commands separated by '\\'. Return last modem answer. See
@@ -204,7 +208,7 @@ constructor TModemNetcall.CreateWithCommInitAndProgressOutput(const aCommInit: s
 begin
   inherited Create;
   FConnected:=False; FActive:=False; FErrorMsg:=''; ProgressOutput:=aProgressOutput; FCommInit:=aCommInit;
-  WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
+  ModemAnswerState:=SMDone; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
@@ -260,10 +264,18 @@ begin
   if FCommObj.CharAvail then begin
     c:=FCommObj.GetChar;
     if (c=#13) or (c=#10) then begin
-      if WaitForAnswer and(ReceivedUpToNow<>'') then begin
-        ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
-        DebugLog('ncmodem','Modem answer: "'+ModemAnswer+'"',DLDebug);
-        WaitForAnswer:=false;
+      case ModemAnswerState of
+        SMExpectingEcho: begin
+                           ModemAnswerState:=SMExpectingAnswer;
+                           ReceivedUpToNow:='';
+                         end;
+        SMExpectingAnswer: begin
+                             if ReceivedUpToNow<>'' then begin
+                               ModemAnswerState:=SMDone;
+                               ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
+                               DebugLog('ncmodem','Modem answer: "'+ModemAnswer+'"',DLDebug);
+                             end;
+                           end;
       end;
     end else if c<>#0 then ReceivedUpToNow:=ReceivedUpToNow+c;
   end else SysDelay(2);
@@ -285,7 +297,7 @@ begin
 
     case c of
       #27 : begin
-              FTimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
+              FTimerObj.SetTimeout(0); ModemAnswerState:=SMDone; ReceivedUpToNow:='';
               DebugLog('ncmodem','User break',DLWarning); FGotUserBreak:=true;
             end;
       '+' : FTimerObj.SetTimeout(FTimerObj.SecsToTimeout+1);
@@ -304,17 +316,15 @@ begin
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not FCommObj.SendString(LeftStr(s,p-1),True)then
-          DebugLog('ncmodem','Sending failed, received "'+FCommObj.ErrorStr+'"',DLWarning);
+        FCommObj.SendString(LeftStr(s,p-1),false);
         delete(s,1,p); SysDelay(1000);
       end;
     until p=0;
-    if not FCommObj.SendString(s+#13,True)then
-      DebugLog('ncmodem','Sending failed, received "'+FCommObj.ErrorStr+'"',DLWarning);
-    EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
+    FCommObj.SendString(s+#13,false);
+    EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; ModemAnswerState:=SMExpectingEcho;
     repeat
       ProcessIncoming; ProcessKeypresses(false);
-    until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
+    until EchoTimer.Timeout or (ModemAnswerState=SMDone); {Warte auf Antwort}
     if EchoTimer.Timeout then ModemAnswer:='';
     SysDelay(200); EchoTimer.Done;
     SendCommand:=ModemAnswer; DebugLog('ncmodem','SendCommand: Got modem answer "'+ModemAnswer+'"',DLDebug);
@@ -402,7 +412,7 @@ begin
                           repeat
                             ProcessIncoming; ProcessKeypresses(false);
                             Output(mcVerbose,'',[0]);
-                          until FTimerObj.Timeout or(not WaitForAnswer);
+                          until FTimerObj.Timeout or(ModemAnswerState=SMDone);
                           TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwElapsedTime;
                           TProgressOutputWindow(ProgressOutput).TimerToUse:=@TProgressOutputWindow(ProgressOutput).Timer;
                           result:=False;
@@ -440,7 +450,7 @@ begin
                                ProcessIncoming; ProcessKeypresses(true);
                                if Pos('RING',ModemAnswer)<>0 then begin
                                  Output(mcInfo,'Ring detected',[0]);
-                                 WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWaitTime);
+                                 ModemAnswerState:=SMExpectingAnswer; FTimerObj.SetTimeout(RedialWaitTime);
                                end;
                              until FTimerObj.Timeout;
                              TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwElapsedTime;
@@ -497,7 +507,7 @@ begin
       SysDelay(100);
     end;
     if FCommObj.ReadyToSend(6)then
-      FCommObj.SendString('AT H0'#13,True);
+      FCommObj.SendString('AT H0'#13,false);
     end;
   FConnected:=False;
 end;
@@ -528,6 +538,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2003/05/11 10:49:25  ma
+  - fixed: Modem routines expected command echo on (I)
+
   Revision 1.16  2002/12/28 20:11:08  dodi
   - start keyboard input redesign
 
