@@ -580,19 +580,20 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) modem$(UNITEXT) \
-	montage$(UNITEXT) resource$(UNITEXT) timer$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xp-fm.inc \
-	xpcurses$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
-	xpglobal$(UNITEXT) zmodem$(UNITEXT)
+	montage$(UNITEXT) objcomunit resource$(UNITEXT) \
+	timer$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp-fm.inc xpcurses$(UNITEXT) xpdefine.inc \
+	xpdiff$(UNITEXT) xpglobal$(UNITEXT) zmodem$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) modem$(UNITEXT) \
-	montage$(UNITEXT) resource$(UNITEXT) timer$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xp-fm.inc xpdefine.inc \
-	xpdiff$(UNITEXT) xpglobal$(UNITEXT) zmodem$(UNITEXT)
+	montage$(UNITEXT) objcomunit resource$(UNITEXT) \
+	timer$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp-fm.inc xpdefine.inc xpdiff$(UNITEXT) xpglobal$(UNITEXT) \
+	zmodem$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -894,8 +895,8 @@ maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
-modem$(UNITEXT): modem.pas debug$(UNITEXT) timer$(UNITEXT) \
-	typeform$(UNITEXT) xpdefine.inc
+modem$(UNITEXT): modem.pas debug$(UNITEXT) objcomunit \
+	timer$(UNITEXT) typeform$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 montage$(UNITEXT): montage.pas typeform$(UNITEXT) xpdefine.inc \
@@ -2298,23 +2299,24 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	maus2$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
-	xp10$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
-	xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) xp9bp$(UNITEXT) \
-	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xpkeys$(UNITEXT)
+	maus2$(UNITEXT) objcomunit resource$(UNITEXT) \
+	typeform$(UNITEXT) uart$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
+	xp9bp$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpkeys$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 xpterm$(UNITEXT): xpterm.pas database$(UNITEXT) datadef$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	maus2$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
-	xp10$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
-	xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) xp9bp$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT) xpkeys$(UNITEXT)
+	maus2$(UNITEXT) objcomunit resource$(UNITEXT) \
+	typeform$(UNITEXT) uart$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
+	xp9bp$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xpkeys$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2362,7 +2364,8 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
-zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) timer$(UNITEXT)
+zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
+	objcomunit timer$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 # ObjCOM-Unit
@@ -2601,6 +2604,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.34  2000/10/29 13:31:40  fe
+# Abhaengigkeiten aktualisiert bzw. korrigiert.
+#
 # Revision 1.33  2000/10/27 16:14:29  fe
 # uucico notduerftig uebersetzbar gemacht.
 #
