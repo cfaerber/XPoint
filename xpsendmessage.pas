@@ -846,8 +846,10 @@ var f,f2     : file;
     rewrite(f);
     writeln(f,'TYP: ',typ);
     writeln(f,'BOX: ',box);
-  {  writeln(f,'NETZTYP: ',netztyp); }
-    writeln(f,'EMPF: ',copy(empfaenger,2,99));
+    if cpos('@',empfaenger)=0 then
+      writeln(f,'EMPF: ',copy(empfaenger,2,99))
+    else
+      writeln(f,'EMPF: ',copy(empfaenger,1,99));
     writeln(f,'FIDOTO: ',fidoto);
     writeln(f,'BETREFF: ',betreff);
     close(f);
@@ -2140,6 +2142,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.3  2001/08/29 17:08:12  mk
+  - Fix: first character of PM recipient in temp file HEADER.HDR is not
+    truncated anymore (whatever HEADER.HDR might be needed for)
+
   Revision 1.2  2001/08/23 11:15:04  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
