@@ -689,8 +689,10 @@ begin
               doaltfunc(i);
   until z<>'!!';
 
-  Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d','#%d'),
-    [Integer(ord(z[1])),Integer(ord(z[2]))]), dlTrace);
+  Debug.DebugLog('inout',
+    Format('Get: '+iifs(length(z)=2,'#%d#%d',
+                   iifs(z[1]>#32,'#%d (%2:s)','#%d')),
+    [Integer(ord(z[1])),Integer(ord(z[2])),z[1]]), dlTrace);
 end;
 
 Procedure testbrk(var brk:boolean);
@@ -1668,6 +1670,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/05/12 17:57:43  ma
+  - added clear text keypress debug info
+
   Revision 1.89  2002/02/21 17:14:41  mk
   - linux compile fix
 
