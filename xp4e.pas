@@ -2096,8 +2096,7 @@ begin
   else begin
     wrt(x+11,y+3,trim(strsrnp(_filesize(fn),15,0))+getres(13));   { ' Bytes' }
     dt := FileDateToDateTime(sr.time);
-    gotoxy(x+11,y+4);
-    write(DateToStr(dt), ', ', TimeToStr(dt));
+    wrt(x+11,y+4, DateToStr(dt) + ', ' + TimeToStr(dt));
   end;
   wrt(x+3,y+6,getres(12));    { 'Taste druecken ...' }
   mon;
@@ -2452,6 +2451,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2003/08/23 20:02:12  mk
+  - write()->wrt() for autosend file info
+
   Revision 1.106  2003/05/11 11:12:18  mk
   - use IsMailAddr when possible
 
