@@ -416,7 +416,7 @@ var ok     : boolean;
     empfnr : smallword; { MK 06.02.00 }
     nopuffer: boolean;
 begin
-  fillchar(hd,sizeof(hd),0);
+  {  fillchar(hd,sizeof(hd),0); Wird von makeheader nochmal gemacht }
   ok:=true;
   dbRead(mbase,'ablage',ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
@@ -1241,6 +1241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.4  2000/08/20 10:42:51  mk
+  - kleine Performanceverbesserungen
+
   Revision 1.25.2.3  2000/07/26 09:32:35  mk
   - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
 

@@ -399,11 +399,7 @@ begin
     DisposeReflist(reflist);
   {$endif}
   fillchar(hd,sizeof(hd),0);
-  {$IFDEF BP }
-    bufsize:=min(maxavail-500,iif(zconnect,1024,512));
-  {$ELSE }
-    bufsize := 1024;
-  {$ENDIF }
+  bufsize:=2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
   with hd do
@@ -604,6 +600,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.2  2000/08/20 10:42:51  mk
+  - kleine Performanceverbesserungen
+
   Revision 1.15.2.1  2000/08/10 13:14:29  mk
   - Pruefung ob Header vor dem Doppelpunkt eine ID enthaelt eingebaut
 
