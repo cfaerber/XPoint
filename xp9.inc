@@ -830,30 +830,32 @@
   end;
 
   procedure EditExtern(const bfg:string; var brk:boolean);
-  var cfgfile       : string[MaxLenPathname];
+  var extcfg_file   : string[MaxLenPathname];
       s1,s2,prg     : string[MaxLenPathname];
-      n             : byte;
+      p             : byte;
       fullClientDir : dirstr;
       dir           : dirstr;
       name          : namestr;
-      ext           : extstr;
-      uext          : extstr;
-      exec          : boolean;
+      ext,uext      : extstr;
+      DOSExec       : boolean;
+      WinExec       : boolean;
   label restart;
 
     procedure save_boxpar;
     begin
       with boxpar^ do begin
-        if not (ustr(cfgfile) = ustr(pppExternCfg)) then
+        if not (ustr(extcfg_file) = ustr(pppExternCfg)) then
         begin
-          pppExternCfg := cfgfile;
+          pppExternCfg := extcfg_file;
           WriteBox(bfg,boxpar);
         end;
       end;
     end;
 
   begin
-    with boxpar^ do begin
+    s1:=''; s2:='';
+    with boxpar^ do
+    begin
       fullClientDir := FExpand(pppClientPath);
       if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
       begin
@@ -863,7 +865,8 @@
       end;
       if not (right(fullClientDir,1) = DirSepa) then
         fullClientDir := fullClientDir + DirSepa;
-      cfgfile := trim(pppExternCfg);
+      if LFNEnabled then fullClientDir := GetLongName(fullClientDir);
+      extcfg_file := trim(pppExternCfg);
 
       { Hier wird nur der Wert pppExternCfg aus <Boxname>.BFG string-  }
       { technisch aufbereitet und an ReadExtCfgFilename in xp9sel.pas  }
@@ -880,59 +883,77 @@
       { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if ustr(left(cfgfile,5))='<XP>' + DirSepa then
-        cfgfile:= ownpath + Mid(cfgfile,6);
-      if LFNEnabled then cfgfile := GetLongName(cfgfile);
+      if ustr(left(extcfg_file,5))='<XP>' + DirSepa then
+        extcfg_file:= ownpath + Mid(extcfg_file,6);
+      { Wenn Datei ohne Pfad im XP- *und* im Client-Verzeichnis vorhanden }
+      { sein sollte, wÅrde 'GetLongName' immer das XP-Verzeichnis als     }
+      { Pfad ermitteln. Deshalb fÅgen wir vor 'GetLongName' das Client-   }
+      { Verzeichnis hinzu und entfernen es nach 'GetLongName' wieder.     }
+      if not ((cpos(':',extcfg_file) = 2) or (cpos(DirSepa, extcfg_file) = 1)) then
+        extcfg_file:= fullClientDir + extcfg_file;
+      if LFNEnabled then extcfg_file := GetLongName(extcfg_file);
+      fsplit(extcfg_file,dir,name,ext);
+      if dir=fullClientDir then extcfg_file := name + ext;
       pushhp(30180);
       { 'Externe Konfigurationsdatei laden' }
 {*}   restart:
-      exec:=false;
-      if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
+      WinExec:=false; DOSExec:=false;
+      if ReadExtCfgFilename(getres2(927,10),extcfg_file,fullClientDir,true) then
       begin
-        if cfgfile = '' then
+        if extcfg_file = '' then   { Feld mit <Ctrl-Del> gelîscht }
         begin
           save_boxpar;
           goto restart;
         end;
-        s1:=cfgfile;
-        n:=cpos(' ',s1);       { Auf Leerzeichen prÅfen }
-        if n <> 0 then
+        if Pos('start ', lstr(extcfg_file)) = 1 then
         begin
-          s1:=left(cfgfile,n-1);
-          s2:=trim(mid(cfgfile,n));
-        end;
-        fsplit(s1,dir,name,ext);
-        uext:=ustr(ext);
-        if (uext = '.EXE') or (uext = '.COM') or (uext = '.BAT') then
-        begin
-          exec:=true;
-          if not exist(s1) then
-          begin
-            rfehler1(907,s1);  { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
-            goto restart;
-          end
-          else begin
-            prg:=cfgfile;
-            exchange(prg,'$CONFIG',bfg);
-            shell(prg,600,1);
-          end;
+          WinExec:=true;
+          s2:=extcfg_file;
         end
         else begin
-          if not exist(cfgfile) then
+          p:=blankpos(extcfg_file);  { Auf Leerzeichen prÅfen }
+          if p=0 then s2:=extcfg_file
+          else begin
+            s2:=left(extcfg_file,p-1);
+            s1:=trim(mid(extcfg_file,p));
+          end;
+          fsplit(s2,dir,name,ext);
+          uext:=ustr(ext);
+          if (uext='.EXE') or (uext='.COM') or (uext='.BAT') then
+          begin
+            DOSExec:=true;
+            if not exist(s2) then
+            begin
+              rfehler1(907,s2);  { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+              goto restart;
+            end
+          end;
+        end;
+        If WinExec or DOSExec then
+        begin
+          prg:=extcfg_file;
+          exchange(prg,'$CONFIG',bfg);
+          shell(prg,600,1);
+        end
+        else begin
+          if not exist(extcfg_file) then
             if not ReadJN(getres(2725),false) then  { 'Datei nicht vorhanden - neu anlegen' }
               goto restart;
-          EditFile(cfgfile,false,false,false,0,false);
+          EditFile(extcfg_file,false,false,false,0,false);
         end;
-        if not exec then s1:=cfgfile;
-        if not exist(s1) then exit;
-        if LFNEnabled then s1 := GetShortName(s1);
-        if ustr(dir) = ustr(fullClientDir) then
-          s1 := name + ext
-        else
-        if ustr(left(dir, Length(ownpath))) = ustr(ownpath) then
-          s1 := '<XP>' + mid(s1, Length(ownpath));
-        if exec then s1 := s1+' '+s2;
-        cfgfile:=trim(s1);
+        if not WinExec then
+        begin
+          if not DOSExec then s2:=extcfg_file;
+          if not exist(s2) then exit;
+          if LFNEnabled then s2 := GetShortName(s2);
+          if ustr(dir) = ustr(fullClientDir) then
+            s2 := name + ext
+          else
+          if ustr(left(dir, Length(ownpath))) = ustr(ownpath) then
+            s2 := '<XP>' + mid(s2, Length(ownpath));
+          if DOSExec then s2 := s2+' '+s1;
+        end;
+        extcfg_file:=trim(s2);
         save_boxpar;
       end;
       freeres;
@@ -2118,6 +2139,21 @@
 
 {
   $Log$
+  Revision 1.10.2.53  2002/01/02 23:14:36  my
+  MY:- Fix RFC/Client: Wenn bei D/B/E/X ein externes Config-Programm ohne
+       Parameter $CONFIG angegeben wurde, war eine Variable nicht
+       initialisiert und schrieb ZeichenmÅll in den Åbergebenen String
+       (und somit auch in die <Box>.BFG).
+
+  MY:- Fix RFC/Client: Wenn bei D/B/E/X eine Datei im Client-Verzeichnis
+       (ohne Pfad) angegeben wurde, die auch im XP-Verzeichnis vorhanden
+       war, dann wurde stattdessen die Datei im XP-Verzeichnis verwendet
+       (wegen GetLongName).
+
+  MY:- Es kann jetzt bei D/B/E/X auch der Windows-Befehl "start [/w]"
+       verwendet werden (es findet dann keine weitere PrÅfung auf Existenz
+       des aufgerufenen Programms mehr statt).
+
   Revision 1.10.2.52  2001/12/20 15:08:26  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
