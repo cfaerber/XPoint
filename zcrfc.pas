@@ -741,12 +741,12 @@ again:
   if batch then
   begin
     setlength(s,11);
-    blockread(f,s,11,rr);       { read #! xxunbatch }
+    blockread(f,s[1],11,rr);       { read #! xxunbatch }
     if (rr<11) or eof(f) or (not unbatch(s)) then begin close(f); exit; end; // no batch
     repeat
-      blockread(f,s,1,rr);
+      blockread(f,s[1],1,rr);
       if (rr<1) or eof(f) then begin close(f); exit; end; // oops;
-    until s[0]=#10;
+    until s[1]=#10;
     spos:=filepos(f);
   end;
 
@@ -3844,6 +3844,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/03/26 23:18:17  cl
+  - fix for news batch decompression
+
   Revision 1.40  2001/03/26 22:57:28  cl
   - moved compression routines from xpncuucp to zcrfc/uuz
   - fixed decompression
