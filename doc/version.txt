@@ -1,0 +1,699 @@
+Versionsgeschichte von CrossPoint
+=================================
+
+Die Versionsgeschichte der Versionen 0.8 bis 2.0 ist auf Anfrage bei
+Peter Mandrella erhÑltlich (fÅr die Historiker ;-). Die folgende Liste
+ist streng chronologisch aufgebaut und dient zur exakten Dokumentation
+aller ProgrammÑnderungen.
+
+Die Versionsgeschichte zum Fido- und UUCP-Modul bis v3.2 befindet sich
+in FIDO.TXT und UUCP.TXT.
+
+
+v1.0  (21.01.1992)
+v1.1  (25.02.1992)
+v1.2  (28.04.1992)
+v1.21 (13.05.1992)
+v2.0  (03.11.1992)
+
+
+v2.01 beta  (07.12.1992)
+------------------------
+o  /Edit/Boxen/Edit/Diverses/Eingangsfilter
+o  /Config/Optionen/Netze/Puffer_nach_Einlesen_lîschen
+o  /Config/Anzeige/Nachr./UnEscape gilt jetzt auch fÅr Schablonen
+o  /Edit/Boxen/Edit/Sysopmode/Netzanruf-Bericht
+o  Windows-Clipboard-UnterstÅtzung (s. Anhang E)
+o  /Nachricht/Alle/Lesen im 'ungelesen'-Mode
+o  MagicNET: die MAF-Funktionen unterstÅtzen jetzt beide Åblichen
+             MAF-Brettlistenformate
+o  AUTOEXEC-Verzeichnis (s. Kap. 7.6)
+o  /Config/Extern/Viewer: benutzerdefinierte Dateitypen
+o  Bedienung Åberarbeitet
+   - /Fido/Optionen werden nicht mehr automatisch gesichert
+   - Bei /Nachricht/Suchen/... genÅgt zur Auswahl des Such-Brett-
+     bereichs die Eingabe des Anfangsbuchstabens.
+   - Kurznamen sind bei /N/D jetzt auch im Server-Feld mîglich
+   - Kurznamen bei Verteiler-Eingabe mîglich
+   - <Ctrl-L> im Lister lîscht Nachricht, ohne Lister zu verlassen
+   - Entmarkieren von Nachrichten in Anzeige markierter Nachrichten
+o  /Edit/Gruppen: Einstellung fÅr den Wegfall von "Re:"
+o  neu Farbeinstellung: Lister/Nachrichtenkopf
+o  /Zusatz/Archiv-Viewer
+o  Parameter /av: (s. Anhang A)
+o  Tastenmakro-Auswahl mit <F6>
+o  Weiterleiten/Archivieren mehrerer markierter Nachrichten
+o  ZConnect: Eil/Direktmails (s. Kap. 3.5)
+o  Bretthaltezeiten wahlweise in Tagen oder Nachrichtenanzahl
+o  /N/Suchen/Spezial: suchen nach ungelesenen Nachrichten
+o  Neues Schablonen-Makro $VPSEUDO ($Vorname statt $TUser)
+o  /Config/Anzeige/Diverses/Auswahlcursor
+o  /Config/Optionen/Netze/nur_Z-Netz wird jetzt gespeichert..
+o  Maus: - beliebig lange Textzeilen in eingehenden Nachrichten
+         - /Config/Optionen/Netze/OUTFILE-Grî·e begrenzen
+         - Anpassung von MAGGI an QUARK (:-)
+énderungen
+o  MenÅpunkt "an MAPS" umbenannt in "Brettmanager"
+o  /Netcall/Alle ruft immer alle Nummern einer Box an, bevor es zur
+   nÑchsten wechselt
+Bugfixes
+o  Fehler bei Suche + Usernamen > 60 Zeichen beseitigt
+o  Telefonnummern-EintrÑge mit mehr als 30 Zeichen
+o  Ausstieg bei leerer Brett-/Systemstatistik beseitigt
+o  Fehler beim Umstieg von XP 1.0 auf XP 2.x beseitigt
+o  Fehler bei Suche in markierten (User)Brettern beseitigt
+o  Ausstieg bei /Edit/Kurznamen (keine Namen vorhanden + Cursor-
+   bewegung) beseitigt
+o  DICKER Bug :-( in der internen Overlay-Verwaltung beseitigt
+o  Ausstieg beim Eingeben neuer Kopien-EmpfÑnger beseitigt
+o  öberprÅfung des Nachrichtenlimits bei nachbearbeiteten AMs
+o  Einstellung "IBM-Umlaute" bei neu angelegten Usern
+o  Lister-Tastenmakros fÅr "+" und "-" funktionieren jetzt
+o  Maus: Fehler beim Versenden von Reply-Kopien beseitigt
+o  Maus: manuelle EmpfangsbestÑtigungen auf îffentliche Nachrichten
+o  Maus/Fido: Anlegen von Brettern mit <Ctrl-H>
+o  ZConnect: Lîschen und Reorganisation von Crosspostings
+o  Speicherleck in der Farb-Konfiguration beseitigt
+
+
+v2.1  (25.12.1992)
+------------------
+o  *SETUSER behÑlt Schreibweise bei
+o  neue Windows-Icons (in XPICONS.DLL)
+o  +/-/Space in Timinglisten, analog zu Einzelnetcalls
+o  Maus: /XPoint/Import/MauTau-Nachrichten
+o  Maus: /Config/Optionen/Netze/LesebestÑtigungen
+o  ZConnect/MagicNET: /Config/Anzeige/Nachrichten/Realname_anzeigen
+o  Verzîgerung in Modembefehlen mit "~" (1 Sekunde)
+o  <Ctrl-PgUp/PgDn> wechselt bei kommentarverketteten Nachrichten
+   im Lister zwischen im Brett aufeinanderfolgenden Nachrichten
+o  Schablonen-Makros $RNAME und $(RNAME)  (s. auch Kap. 3.6)
+énderungen
+o  MsgID-Erzeugung bei ZCONNECT
+o  Rechtschreibkorrektur: "Stati" umbenannt in "Status"
+Bugfixes
+o  MsgID- und Pfad-Erzeugung fÅr GS-Mailbox
+o  Fehler von v2.01 (uudecode, /Nachricht/Alle) beseitigt
+
+
+v2.15 beta  (03.08.1993)
+------------------------
+o  /Config/Anzeige/Diverses/Startpa·wort_abfragen (Screensaver)
+o  QuickMail: Einstellbarer Loginname (Default: NET410)
+o  IRQ 8-15
+o  ZConnect/Fido/MagicNet: BetrefflÑnge auf 70 Zeichen erhîht
+o  neuer Netztyp "UUCP/RFC"
+   - /Nachricht/Weiterleiten/Lîschen und /Edit/Schablonen/Lîsch.
+   - Einstellungen bei /Config/Optionen/Netze/Verschiedenes
+   - s. UUCP.TXT
+o  <Ctrl-N> schaltet Realname-Anzeige um (ZConnect, MagicNET, RFC)
+o  /Nachricht/Brettmanager/Datei_einlesen
+o  Maus: Wahlweise Abfrage nach dem neuen Status von gelesenen PMs
+         (einstellbar bei /Config/Optionen/Netze)
+o  Archiv-Viewer unterstÅtzt Squeeze (SQZ)
+o  /Nachricht/Weiterleiten/Original (RFC, ZCONNECT)
+o  /Netcall/Einzeln startet wÑhrend Ausschlu·zeiten /Netcall/Uhrzeit
+o  Parameter /n:* fÅr /Netcall/Alle
+o  Maus: Logfile-Fehlerberichte werden kommentiert in die PM gelegt
+o  /N/Weiterleiten/EditTo verwendet Weiterleit-Schablone
+o  Z(u)griffs-Option im Brettfenster (Spezial-Modus)
+o  ZConnect/RFC: Schalter "Zusatz" im Sendefenster
+o  Login-Scriptprogrammierung (s. Abschnitt VIII)
+o  UntermenÅ /Config/Optionen/Netze
+o  Maus: /Nachricht/Weiterleiten/Lîschen
+o  Schablonen $DATE und $MSGDATE (entspricht $DATUM und $ERSTELLT)
+o  neue Swap-Routine eingebaut; mehr freier Speicher in DOS-Shell
+o  MAPS-Befehl STATUS (Zerberus 5.x)
+o  "U" im Nachrichtenfenster berÅcksichtigt Vertreteradressen
+o  Alt-P archiviert jetzt auch AMs (als Kopie)
+o  Befehl END zum Beenden von Timinglisten
+o  +/- in der Userliste springt zum nÑchsten/letzten markierten User
+o  Nachrichten ohne Betreff mîglich (nach RÅckfrage)
+o  /Config-MenÅ wird bei <Esc> nicht mehr vollstÑndig verlassen
+o  *SETUSER fragt wahlweise nach dem Username (s. Kap. 5.7)
+o  *SETUSER Ñndert wahlweise auch den Realname
+o  Parameter /f: zum Laden von Schriften (s. Anhang A)
+o  Suchbegriff im Lister bleibt erhalten
+o  Netcall-Logfile (s. /Config/Optionen/Netcall)
+o  Unbegrenzte EMS-UnterstÅtzung im internen Lister
+o  zusÑtzliche AUTOEXEC-Steuernachrichten (s. Kap. 7.6)
+o  Smartdrive-Cache wird automatisch geleert; Parameter /sd
+o  neuer interner Editor; Tastenmakros im Editor
+o  FOSSIL-Treiber-UnterstÅtzung (s. /Config/Modem/..)
+o  /XPoint/Import/QWK-Paket
+o  CrossTerm vollstÑndig gegen falsche ANSI-Codes stabilisiert
+o  Kommentarbaumgrî·e auf max. 5000 Nachrichten erhîht
+o  Schalter fÅr Autoexec-Verzeichnis bei /Config/Tasten/..
+o  Vertreterboxen bei /Edit/Boxen/Edit/Diverses
+o  Z-Netz: NCB-Mail-Fileserver-UnterstÅtzung
+o  MausNet: BinÑrnachrichten
+o  /Nachricht/Brettmanager/Liste_anfordern
+o  Crosspostings (s. Kap. 4.6)
+o  ZConnect: Schalter "User@Point.domain" (fÅr Sysops..)
+o  einstellbarer Nachrichtenkopf (/Config/Anzeige/Kopf)
+o  Funktionstasten im Terminal
+o  ZCONNECT: Telefonnummer und Postanschrift (/C/Optionen/Nachr.)
+énderungen
+o  Umstellung auf BP7 (Congratulations to Borland!)
+o  Timing-Befehl PACKEN umbenannt in PACK
+o  Umstellung auf Mehrsprachigkeit; beliebige Sprachmodule einbind-
+   bar
+Bugfixes
+o  Fido-Bugfixes: s. FIDO.TXT
+o  AUTOEXEC/IPS (s. Kap. 7.6)
+o  Lîschen von Temp-Dateien beim Weiterleiten mehrerer Nachrichten
+o  diverse Kleinigkeiten
+o  "ungelesen"-Brettmarkierungen bei /ips
+o  Nachricht/Direkt: Fehler bei zu langer EmpfÑngeradresse behoben
+o  Fehler bei /Nachricht/Alle/Entfernen im Kommentarbaum beseitigt
+o  Lister-Makros mit "w" und "d" funktionieren jetzt
+o  VerknÅpfen von PM-Brettern
+o  geparkte Nachrichten behalten den korrekten Netztyp
+o  gelegentlicher Ausstieg bei /C/T/M und /F/G beseitigt
+o  bei Shift-P-Quotes geht die Antwort jetzt an den korrekten User
+o  /ØNetzanruf-Brett erhÑlt korrekte "ungelesen"-Markierung
+o  Eingabefeld bei /Netcall/Uhrzeit verlÑngert
+o  Maus: Korrektur beim Einlesen von Message-IDs
+o  Netcallzeit-Berechnung bei manuell abgebrochenem Netcall
+o  /Wartung/Sonstiges/Server-Wechsel lÑ·t Server des Brettmanagers
+   unverÑndert
+
+
+v2.91 beta  (02.11.1993)
+------------------------
+o  Spezialsuche behÑlt Suchbegriffe
+o  /Nachricht/Alle/Drucken
+o  pmCrypt-Decodierung optimiert
+o  pmCrypt fÅr ZCONNECT und MausTausch
+o  Schablonenmakro $NEWSGROUP
+o  erweiterte Schnittstelle fÅr externe Lister (s. Kap. 7.7)
+o  /N/Suchen/Spezial: Typ = FAttach (Fido-File-Ataches suchen)
+o  ZCONNECT/JANUS-Netcalls mit mehreren Puffern pro Archiv
+o  ZERBERUS-MAPS-Befehl 'PM LOESCHEN'
+o  markieren von Quotezeilen im Lister
+o  Screen-Saver bei Timinglisten
+o  /Config/Extern/Lister/*Hervorhebung*
+o  /Config/Extern/Lister/feststehender Nachrichtenkopf
+o  Maus: TumTausch-Script fÅr Madness-Boxen (MADNESS.SCR)
+o  UUCP: Sysop-Mode
+
+
+v2.92 beta  (07.11.1993)
+------------------------
+o  Nachrichtenpakete mitsenden lassen (s. Kap. 7.8)
+
+
+v2.93 beta  (13.12.1993)
+------------------------
+o  pmCrypt-Codierung: neues Makro $USER
+o  Sysop-Mode: Start- und Endprogramm
+o  "Antwort-An" (Reply-To) wird bei Empfangsbest. berÅcksichtigt
+o  /Nachricht/Extrakt/uudecode von mehreren markierten Nachrichten
+o  Archiv-Viewer unterstÅtzt neues PKZIP-SFX-Format
+o  WÑhlbefehl von Edit/Boxen/Edit/Modem nach Config/Modem verlagert
+o  Editor: Ctrl-Q-Y lîscht bis Absatzende
+o  Schalter /LCD - behebt Anzeigeprobleme auf Laptops
+o  "F" schaltet Hervorhebungen im Lister ein/aus
+o  /C/Optionen/Netze: optionale MagicNET-Kommentarverkettung
+o  <F4> wiederholt letzten MenÅbefehl
+o  Quoteumbruch Åberarbeitet
+o  /Config/Anzeige/Farben/Verschiedenes/Bildrand
+o  "12:00-Schalter" umgewandelt in 00:00-Schalter
+o  Online-Hilfe fÅr ca. 150 Fehlermeldungen
+o  /Config/Optionen/Nachrichten/Zeitzone (ZCONNECT, RFC)
+o  Zusatztool-Schnittstelle fÅr internen Editor (s. Online-Hilfe zu
+   /Config/Extern/Editor/Editor)
+Bugfixes
+o  Speichern der Einstellungen im internen Editor
+o  /Config/Optionen/Nachrichten/Telefon akzeptiert jetzt alle kor-
+   rekten Eingaben
+o  diverse Kleinigkeiten
+o  $PORT und $ADDRESS im Download-Protokoll
+o  Fehler beim éndern von Servernamen beseitigt
+o  diverse andere Fehler von v2.92 beseitigt
+
+
+v2.94 beta  (22.02.1994)
+------------------------
+o  neues Funktionstasten-Makro *EDIT
+o  Einstellung "binÑr" bei /Config/Extern/pmCrypt
+o  interner Editor: - <Ctrl-K><S> oder <Alt-3> wechselt Schreibweise
+                    - WordStar-Cursorfunktionen (^S/D/E/X) eingebaut
+                    - <Ctrl-O><S> entfÑllt
+o  Environment-Eintrag XPSWAP (s. Anhang A)
+
+
+v3.0  (22.03.1994)
+------------------
+o  MausTausch: Wahlweise nur PMs pollen (s. Edit/Boxen/Edit/Maus)
+o  geÑnderte Einstellungen werden wahlweise automatisch gesichert
+   (s. /Config/Optionen/Bedienung)
+o  GS-Box: mehrere PKT-Dateien werden von XP verarbeitet (unbedingt
+           UPDATE.TXT beachten!)
+o  MagicNET: pmCrypt-Codierung (nur ASCII)
+o  Parameter /l und /df (s. Anhang A)
+o  diverse Bugfixes
+
+
+v3.02  (21.04.1994)
+-------------------
+o  Z-Netz: Connectline- und MyBBS-Brettlisten werden jetzt korrekt
+           verarbeitet
+Bugfixes
+o  FILES-Problem bei SHARE+QEMM behoben
+o  Bildzeileneinstellung und Einstellung "externen Editor verwenden
+   fÅr ..." wird jetzt bei entsprechender Einstellung auch automa-
+   tisch gesichert
+o  Entpacker-Problem bei ungepackter ZCONNECT-öbertragung behoben
+o  Fehler bei /Nachricht/Suchen/Wiedervorlage beseitigt
+o  Fehler beim Trennen der Verkettung bei geÑndertem Betreff behoben
+o  Endlosschleife beim Wiederholen von Config-Einstellungen mit <F4>
+   beseitigt
+o  Datumsauswertung in Timinglisten korrigiert
+o  diverse Kleinigkeiten korrigiert
+
+
+
++ = neues Feature       ! = Bugfix
+* = énderung            # = interne énderung
+- = Wegfall
+
+
+v3.1  (24.09.1995)
+------------------
++  Ctrl-R schaltet Rot13-Codierung im Nachrichtenlister ein/aus
+*  Usersuche, User- und Brettreorganisation sind abbrechbar
++  /Netcall/Letzte Anrufe
++  Schalter "Rollen am Bildrand" bei /Config/Optionen/Lister
++  fehlerhafte bzw. nicht einlesbare Nachrichtenpakete werden im
+   Unterverzeichnis BAD abgelegt
++  Notizseite (Alt-T)
++  Spezialsuche nach Nachrichtengrî·e
++  Crossposting-Filter bei /Config/Optionen/Nachrichten
++  RAR-Entpacker-UnterstÅtzung eingebaut
+!  <F4> kann keine deaktivierten MenÅpunkte mehr aufrufen
++  Systemdatums-PlausibilitÑtstest bei Programmstart
++  ZCONNECT/RFC: Replys auf eigene Nachrichten werden farblich
+                 hervorgehoben.
+*  Crosspostings auf maximal 15 Bretter beschrÑnkt
+*  es werden keine neuen Bretter mehr durch Crosspostings angelegt
+!  kleiner Bug im Lister (ÅberflÅssige Leerzeilen) beseitigt
+!  Abschaltung des Lister-Umbruchs unter /C/X/Lister funktioniert
+   jetzt wieder; Links-/RechtsblÑttern mit <Ctrl-Cursortasten>
++  Makros in Signaturschablonen
++  Signatur-Wechsler (s. Kap. 3.6)
+*  MagicNET: Fehlertoleranz beim Verarbeiten von MagicNet-Puffern
+             erhîht
+!  MagicNET: mehr als 1000 Bretter
+!  MausTausch: lange Gruppennamen bei Brettbestellungen
++  /Config/Modem/...: RTS verwenden, FIFO-Triggerlevel, QuÑlpause
+*  Der Zustand der seriellen Schnittstelle wird vor Netcalls
+   gesichert und danach wiederhergestellt.
++  /XPoint/Registrierung
++  /Config/Optionen/Allgemeines: Auslagern in XMS
++  mehrzeilige WÑhlbefehle (Trennen mit "\\")
++  MausTausch: nicht gefundene Mails werden automatisch mit "Wild-
+               westverkettung" neu verschickt
+*  MausTausch: Nachricht/Weiterleiten/Erneut erzeugt "Wildwestverk."
+#  MausTausch: RÅckgabe der langen ID (I-Zeile -> R-Zeile)
+   énderungen bei /Config/Optionen/Netze/Verschiednes:
+-     Schalter "nur Z-Netz" (wird jetzt automatisch erkannt)
+-     Schalter "AM-Crosspostings"
++     Schalter "ZCONNECT: ISO-Zeichensatz"
+-  /XPoint/Import/MauTau
++  /Edit/Boxen/Edit/Modem: minimale cps-Rate
+*  kein Re^n mehr bei ZCONNECT und bei PMs
++  GS-Mailbox: /Edit/Boxen/Edit/Point: Loginname
++  ZConnect: /Edit/Boxen/Edit/Point: Janus Plus
+*  Telefonkostenberechnung Åberarbeitet und auf 1996 vorbereitet
++  /Config/Optionen/GebÅhren..
+-  /Fido/GebÅhren
+*  WartungsmenÅ umgruppiert
++  Verbesserungen im QWK-Teil
++  zusÑtzliche Einstellungen bei /Edit/Boxen/Edit/QWK
++  Suche nach gelesenen Nachrichten
++  /Config/Anzeige/Diverses: Screensaver - schwarzschalten
++  /Config/Anzeige/PD-Zmodem
++  MausTausch: ITI-Auswertung (zusÑtzliche Infofiles)
++  /Edit/Boxen/Edit/Ausgangsfilter
+!  Fehler beim BlÑttern im Ungelesen-Mode behoben
+   /XPoint/Terminal:
++     PD-Zmodem-Autodownload und -Autoupload
++     Einstellungen mit Alt-O
+!  UUdecode-Fehler behoben (falsche DateilÑnge)
+*  /Nachricht/Alle/... abbrechbar
+*  VerknÅpfen von Brettern abbrechbar
++  /Config/Extern/Shell: Parameter anzeigen; Warten auf Tastendruck
++  ZCONNECT u.a.: PGP-UnterstÅtzung (s. Kap. 5.12)
++     /Config/Extern/PGP
++     /Nachricht/PGP..
++     Schalter 'PGP' im Sendefenster
+-  /Config/Anzeige/Nachrichten/UnEscape
+!  ZCONNECT: Fehler beim Anzeigen von BinÑrnachrichten mit Kommentar
+             behoben
+-  Schalter /gd
++  Realname wird bei Usersuche berÅcksichtigt
+!  Fehler bei Kommentarbaum-Neuaufbau behoben
++  /X/Import/Puffer: Schalter "Nachrichten als 'gelesen' markieren"
+!  Gro·schreibung bei ZCONNECT-Brettnamen
+!  Fido: Nach BlÑttern mit +/-/etc. im Lister zeigt Alt-N den
+         richtigen Node an
+#  MausTausch: PSN statt PSA (nur geÑnderte Bearbeitungsstatus wer-
+               den angefordert)
++  ZCONNECT: bei Antworten auf Fido-Brettnachrichten wird F-TO
+             (Fido-BrettempfÑnger) erzeugt
+!  Nachrichtenstatistik-Fehler (negative Prozentangabe) behoben
+*  Wartung/Sonstiges/Nachrichten_prÅfen verbessert
+*  ZCONNECT: Kleinschreibung in Pa·wîrtern mîglich
+!  Fehler bei Brettantwortumleitung behoben (alle Netztypen au·er
+   ZCONNECT und RFC)
+*  Nachricht/Suchen/Zeigen in .../Markiert umbenannt
+!  Quoteumbruch-Fehler bei sehr langen Wîrtern behoben
+*  Dokumentation Åberarbeitet
++  ZCONNECT: UnterstÅtzung des neuen MAPS-Standards
+*  einheitliche Taste zum Drucken von Nachrichten: <Ctrl-D>
+!  Speicherleck beim Archivieren von AMs behoben
+*  Einstellungen fÅr internen Lister nach /C/O/Lister verlagert
+*  fehlertoleranterer UU-Decode
+
+
+v3.11  (09.04.1996)
+-------------------
+!  HÑnger beim Abbruch von Programmfunktionen behoben, die Åber ein
+   Makro aufgerufen wurden [als Patch fÅr XP 3.1 verfÅgbar]
+!  Zmodem-Up/Download im Terminal funktioniert jetzt auch ohne
+   FOSSIL-Treiber [als Patch fÅr XP 3.1 verfÅgbar]
+!  interner Fehler im Lister behoben
+!  diverse Fehler im internen Terminal behoben
+!  Fehler bei der Auswahl einer User-Vertreteradresse mit <F2>
+   behoben
+!  Fehler im Kommentarbaum behoben ("<MAUS> Stack-öberlauf")
+!  UUdecode: AnhÑngen an vorhandene Datei
+!  kein automatischer PGP-Keyversand bei AMs
++  /Config/Extern/PGP: Protokoll fÅr automatische Aktionen
++  /Config/Optionen/Netcall: Nachrichtenmarkierungen nach Netcall
+                             aufheben
+!  Buss- und Bettag ist kein bundeseinheitlicher Feiertag mehr
++  /Nachricht/éndern/Hervorhebung
+!  Meldung "nicht genÅgend EMS-Speicher" im Lister, obwohl genÅgend
+   Speicher vorhanden ist
+*  ZCONNECT: Standarddomain zer.sub.org entfernt
+*  Probleme mit SMC-Schnittstellen-Chipsatz behoben
+!  Brett-Ungelesen-Markierung nach /Nachricht/Alle/...
+!  seltener Fehler bei Funktionstastenanzeige behoben
+!  Fehler bei PGP-signierten Nachrichten mit mehreren EmpfÑngern
+   behoben
+!  Fehler bei ZCONNECT/Janus+ und bidirektionalem Protokoll behoben
+!  Fehler bei Netzanruf-Anzeige behoben
+!  Fehler im Terminal (Abbruch bei Alt-X nach /Netcall/Online) beh.
++  Tastenmakros im Terminal
++  ZCONNECT: NOKOP (s. /Config/Optionen/Netze/Verschiedenes)
+!  TemporÑrdateien nach Ansehen von ZCONNECT-Kommentaren werden
+   gelîscht
+!  quoten markierter Zeilen aus QPC/DES-codierten Nachrichten
+*  Mitsenden von EPP-Dateien bei Sysopmode-Netcall
+!  korrekte Einheiten bei GebÅhrenstatistik
+!  neue GebÅhrentabellen korrigiert
++  /Config/Optionen/GebÅhren/Sonstiges: cFos-GebÅhrenÅbernahme
++  QWK: /Edit/Boxen/Edit/QWK/EMail-Echo
++  QWK: F3-Filerequest
+*  ZCONNECT: Realname wird bei Quote-Initialen berÅcksichtigt
+*  Tarifzonen werden bei GebÅhreneingabe nicht mehr sortiert
+#  MausTausch: Distribution auf D-Zeile umgestellt
+*  Wiedervorlage-Flag wird bei PM-Archivierung entfernt
+!  Scrollfehler im Terminal behoben
++  automatische EmpfangsbestÑtigungen je User einstellbar
+!  Absturz auf Microsoft-Netzwerken (I/O-Fehler 5) behoben
++  /XPoint/Import/Userliste
++  getrennt erhÑltlicher MenÅeditor (s. Kap. 3.4)
++  Fido/QWK: indirekter Brettquote mit Ctrl-Q
++  /Config/Anzeige/Diverses: BlindenunterstÅtzung
+*  bei /Nachricht/Direkt ist jetzt auch bei eingetragenen Usern die
+   Wahl eines anderen Servers mîglich
+*  Screensaver-Pa·worteingabe wird nach 30 Sekunden abgebrochen
++  XMS-UnterstÅtzung im Lister (XMS mu· bei /Config/Optionen
+   /Allgemeines aktiviert sein)
+!  keine PM-ArchivierungsrÅckfrage, wenn keine PMs markiert sind
+!  Fehler bei Ctrl-PgUp/PgDn im Kommentarbaum-Lister behoben
+!  QWK: korrekte Brettebene beim HinzufÅgen von Brettern via
+        Brettliste
+!  Anzeige von Åber 100% bei Reorganisation korrigiert
++  /Config/Optionen/Lister: verschiedenfarbige Quoteebenen
+!  ZCONNECT: PGP-Key im Header wird beim éndern oder Decodieren von
+   Nachrichten nicht mehr gegen eigenen Key ausgetauscht
+*  "GebÅhrenberechnung" in "GebÅhrenabschÑtzung" umbenannt
++  /Config/Anzeige/Bretter: Trennzeilenkommentar
++  /Config/Anzeige/Diverses: Stromsparmodus (VESA-DPMS)
+*  ZCONNECT/Janus+: nach Abbruch mÅssen nicht mehr alle Dateien neu
+   Åbertragen werden
++  zusÑtzlicher Script-Befehl: BREAK
+*  XPoint/Statistik/GebÅhren: DM/Zeile statt Einheiten/Zeile
+!  Fehler in der FOSSIL-Schnitstelle / Problem mit NTFOSS behoben
+*  fehlertolerantere Reorganisation
+
+
+v3.11 pl1  (Patch vom 12.05.1996)
+---------------------------------
+!  Ausstieg in Gruppenstatistik bei 0 KByte Daten behoben
+!  Anzeige des Logfilenamens im Terminal
+!  Mauszeiger verschwindet nicht mehr bei /Config/Optionen/Pa·wort
+!  Fehler bei ZCONNECT/Janus+ behoben (Abbruch beim Senden)
+!  beim Abschalten von MenÅpunkten mit XPME stimmen deaktivierte
+   MenÅpunkte
+!  Lister: Fehler beim Suchen in extrem gro·en Dateien behoben
+
+
+v3.11 pl2  (Patch vom 12.06.1996)
+---------------------------------
+!  Nach Anwendung von Patch 1 waren einige MenÅpunkte anwÑhlbar,
+   die eigentlich deaktiviert sein mÅ·ten.
+!  Beim Start von einer Partition mit einer Grî·e von 2 GB oder
+   mehr meldete XP "zu wenig freier Speicherplatz".
+
+
+v3.12  (12.12.1999)
+-------------------
+!  Jahr-2000-Problem bei der Nachrichten-Wiedervorlage behoben
+!  Jahr-2028-Problem bei der Nachrichtensuche und bei Brett- und
+   Systemstatistik behoben
++  Schalter zum Nachbestellen eines Registrierungscode bei
+   XPoint/Registrierung hinzugefÅgt
+
+
+v3.12c  (19.12.1999)
+--------------------
+!  Workaround fÅr Jahr-2028-Problem bei der Wiedervorlage
+   eingebaut
+
+
+v3.12d  (22.12.1999)
+--------------------
+!  Fehler bei der öberarbeitung alter Wiedervorlage-Nachrichten
+   korrigiert
+
+
+v3.2/OpenXP  (05.08.2000)
+-------------------------
+!  öberlauf in GebÅhrenstatistik bei Åber 2 GB Daten behoben
++  /Config/Optionen/Terminal
+!  PGP-Signatur bleibt bei /N/U/é und /N/W/R erhalten
++  XPGP.BAT - siehe Kap. 5.12
++  /Config/Anzeige/Hilfen
+!  Zeitzone wird beim Archivieren von Nachrichten nicht mehr geÑndert
+!  Jahr-2000-Probleme behoben
+*  MausTausch: Keine NachrichtenbestÑtigungen statt automatischer
+               BestÑtigungen
+#  rechter Teil der Message-ID wird case-insensitiv behandelt
+!  Betreffsuche berÅcksichtigt mehr als 40 Zeichen
++  /Config/Optionen/Allg.: Kommentare aus Brettliste Åbernehmen
++  /Config/Optionen/Allg.: Umlaute fÅr neue User zulassen
++  cFos-GebÅhrenÅbernahme wird im Netzanrufbericht gekennzeichnet
++  /Config/Optionen/Adressen: Homepage
++  /Config/Optionen/Adressen: nur in PMs
++  /Config/Anzeige/Kopf: Homepage
+*  /Config/Optionen/Netze/Verschiedenes/NOKOP ->
+     /Config/Optionen/Nachrichten/Blindkopien
++  CrossPoint verhindert, da· es mehrmals gleichzeitig gestartet wird
+!  Korrektur beim UUdecode mehrteiliger Dateien
+!  Fehler beim Umbruch der Pfadanzeige im Nachrichtenlister behoben
+!  Ausstieg beim BlÑttern im Ungelesen-Mode in der Nachrichten-Åbersicht
+   behoben
+!  Funktionstastenaufruf von Programmen mit "~" im Verzeichnisnamen
++  von MS-Mail/News vermurkste "AW:"-Betreffs werden in "Re:"
+   umgewandelt
+!  Speicherleck im internen Terminal behoben
+!  XP funktioniert jetzt auf Partitionen Åber 2 GB
+!  Ausstieg bei Pentium Pro / Pentium II ab 200 MHz behoben (auch als
+   Patch fÅr XP 3.11 verfÅgbar)
+*  MausTausch: redundante Headerzeilen aus Text entfernt
+!  korrekte Online-Hilfe bei MenÅpunkt-Auswahl via Hotkey
+*  verbesserte MIME-UnterstÅtzung:
++    automatisches Zerlegen und Decodieren von mehrteiligen MIME-
+     Nachrichten
++    /Nachricht/Extrakt/MIME-Decode
+-    /Config/Extern/Viewer
++    /Edit/Viewer
++    /Config/Anzeige/Kopf: Nachrichtenteil
++    /Nachricht/Suchen/Spezial: Typ "Multipart"
++    /C/O/E/Verschiedenes: BinÑrmails als Attachments
+!  MausTausch: 5000-Zeilen-BeschrÑnkung aufgehoben (Voraussetzung:
+   genÅgend freier XMS-Speicher)
+!  viele, viele kleine Bugs beseitigt, die nur in unwahrscheinlichen
+   FÑllen auftreten konnten
+!  zwei Fehler beseitigt, die das Terminal ins Nirvana schickten
+!  Edit/Viewer erlaubt auch die Eingabe von "/" als MIME-Typ
+!  Beim Schlie·en der Datenbanken konnte XP abstÅrzen
+*  Kalender umfa·t jetzt das komplette 3. Jahrtausend
+*  Sigdashes ("-- ") werden im Editor nicht mehr zerstîrt
+*  Umbenennung  von /junk zu /ØNix, um es von der Pseudo-Newsgroup junk
+   zu unterscheiden
++  In Statistik/Systeme und Statistik/Bretter kann jetzt die maximale
+   Anzahl der Systeme/Bretter ausgewÑhlt werden
+*  In der Statistik die maximale Anzahl von Systemen von 3500 auf 4500
+   erhîht
+!  COM-Druckerports konnten im Config-Dialog nicht ausgewÑhlt werden
++  Unter Config/Optionen/Allgemeines kann man jetzt einstellen,
+   da· auch : und | als Quote-Zeichen interpretiert werden
+*  Als Druckerports sind nur noch LPT 1-3 auswÑhlbar
+!  XP stÅrzte ab, wenn eine Datei beim Exportieren nicht Åberschrieben
+   werden konnte
+!  Probleme im Sysop-Poll bei nicht vorhandenem Ausgangspuffer
+   behoben
++  PGP 5.x (Kommandozeilenversion) wird jetzt richtig unterstÅtzt
++  Unter /Config/Anzeige/Kopf kann man jetzt auch zwei selbstdefinierte
+   Header-Zeilen einfÅgen, festgelegt durch /Config/Anzeige/Diverses
++  Config/Optionen/Netcall hat einen neuen Schalter, der direkt nach dem
+   Netcall die DatumsbezÅge anpassen lÑ·t
+!  Mauser konnten ab und an in der Linux DOS-Emulation einen RTE 215
+   erleben
++  Editor-Tasten erweitert: Markieren mit <Shift-Cursor>, Block lîschen
+   mit <Del>, Block kopieren/ausschneiden mit <Ctrl-Ins>/<Shift-Del>,
+   Block einfÅgen mit <Shift-Ins>
+!  Fehler in MAGGI behoben
++  Config/Optionen/Lister bietet jetzt an, den Lister mit DrÅcken der
+   <Enter>-Taste zu verlassen
++  auch Mails (nicht nur News) kînnen jetzt auf Crosspostings per
+   MenÅpunkt unter Config/Optionen/Nachrichten gefiltert werden
+!  Fehler in der Wochentagsberechnung behoben
+#  Volltextsuche optimiert und beschleunigt
++  Nachricht/Suchen/MessageID
++  Integration der Suchfunktion in den Lister
+     <Alt-M> MessageID
+     <Alt-V> Volltext
+     <Alt-B> Betreff
+     <Alt-U> User
+!  XPoint/Statistik/Speicher fÅhrte bei zuviel Speicher zu Fehlern
++  neues Quotezeichn "&"
++  Im Editor kann man mit <Ctrl-K><U> eine Datei einfÅgen, die direkt
+   UUencodet wird
+!  Viele Bugs (>10) im Lister entfernt
+!  öberschreiben des Speichers in der Suchen-Funktion verhindert
++  Der Inhalt der Windows-Zwischenablage kann jetzt mit <Ctrl-V> und
+   <Ctrl-Ins> in jede Eingabemaske eingefÅgt werden
+*  Leerzeichen zwischen Quotezeichen werden gelîscht
++  O, I und G funktionieren auch im Lister
++  Config/Optionen/Nachrichten hat den neuen Schalter "Fragen bei
+   Antwort-an", also Auswertung des besagten Headers
++  Unter Nachricht/Direkt kann man per <F2> aus der Userliste wÑhlen
++  Im Sendefenster kann mit "/" oder "m" der EmpfÑnger nachtrÑglich
+   geÑndert werden
+!  Archiv-Erkennung verbessert
+!  UnzÑhlige Bugfixes
+!  Datenbank-Problem beim Netcall behoben
+*  Editor komplett Åberarbeitet
++  Quote-Reflow (s. Kapitel 6.2)
+!  Der Absturz beim Einlesen von Puffern in bestimmten FÑllen tritt nicht
+   mehr auf
++  Beim Exportieren in die Windows-Zwischenablage kann jetzt auch nur
+   ein URL oder eine Mail-Adresse extrahiert werden
+#  Viele Routinen umgeschrieben und optimiert
+!  Mehrfache Auswertung der Kommandozeile verhindert
++  UmlautunabhÑngigkeit bei den Suchfunktionen "User", "Betreff" und
+   "Fido-EmpfÑnger"
+!  Zwischenablage-Routinen gesÑubert
+*  Die Brettvertreteradresse erlaubt jetzt auch Kurznamen und die
+   direkte Userauswahl mit <F2>
+!  Darstellungsfehler in Listboxen (z.B. Edit/Boxen) behoben
+!  Beim éndern des Lesen-Status einer Nachricht verabschiedete sich
+   CrossPoint
++  AND/OR-VerknÅpfung in der Suche mîglich (s. Kapitel 3.9)
++  Rechenzeitfreigabe verbessert:
+     Automatische Freigabe unter OS/2, Windows und der DOSEmu von
+      Linux
+     Uhr wird trotz Freigabe angezeigt
+     Neue Schalter:
+       /w0 keine Freigabe
+       /w bzw. /W1 Verhalten wie bei automatischer Erkennung
+       /w2 Freigabe wie in Versionen vor 3.2
+*  text/html wird mit ISO-Zeichensatz exportiert
+!  Ein eventueller Filter wurde beim SysOp-Netcall an einer ZConnect-Box
+   nicht ausgefÅhrt
+
+
+v3.2b/OpenXP  (16.12.2000)
+--------------------------
+*  Komplett Åberarbeitete, korrigierte und ergÑnzte Ressourcen und
+   Online-Hilfe (Deutsch und Englisch)
+!  Ungelesen-Bug beim (K)illen von Nachrichten aus der Liste markierter
+   Nachrichten behoben, evtl. Allround-Fix fÅr Ungelesen-Probleme in
+   dieser Ecke (Bug aus v3.12d).
+!  Lister-Suchfunktionen (<Alt-M> usw.) sind jetzt deaktiviert, wenn die
+   Liste markierter Nachrichten aktiv ist (Absturzgefahr!).
+!  Bugfix fÅr Quote-Reflow mit mehreren Zeilen, die lÑnger sind als die
+   unter Config/Optionen/Allgemeines eingestellte ZeilenlÑnge
+!  Hotkey fÅr Drucken funktionierte nicht, wenn in der User-öbersicht
+   ein User ausgewÑhlt war (Bug aus v3.12d)
+!  Share-Test modifiziert, da AbstÅrze mit Novell Client32 (Bug aus
+   v3.12d)
+*  Test auf Lockfile verbessert
+!  Alten Fehler im Ressourcen-Caching beseitigt (Bug aus v3.12d)
+!  UUZ: Decodierung verschiedener quoted-printable-codierter
+   Headerzeilen (Bug aus v3.12d)
+!  Bug #116196: Drucken der Hilfe stellt jetzt die Hervorhebungen
+   richtig dar (Bug aus v3.12d)
++  Mehrere UUcodierte Dateien in einer Nachricht werden jetzt erkannt
+   und extrahiert (Feature aus 3.30.x)
+!  MIME-Viewer-Routinen komplett Åberarbeitet (korrekte und konsistente
+   Behandlung von Multi- und Singlepart, Quote-Verhalten, Binary-
+   Erkennung, usw. usf.) (Bugs aus v3.20)
+!  Routinen in /Edit/Viewer Åberarbeitet (Eintrag von mehreren
+   identischen MIME-Typen ist nicht mehr erlaubt, Standardeintrag kann
+   nicht mehr editiert werden, usw.) (Bugs aus v3.20)
+!  Bug #116155: Im Bildschirmauszug wurden versteckte Schalter in
+   Dialogen gezeigt (Bug aus v3.12d)
+!  Bug #116197: Kopieren und EinfÅgen im Editor unterschlÑgt letztes
+   Zeilenende/Leerzeile (Bug aus v3.12d)
+!  Bug #116156: Bei Mehrfach-Quotes wurde z.T. die falsche Schablone
+   verwendet (Bug aus v3.12d)
+#  Bug #116186: Limits im Kommentarbaum auf 3840 (statt 5000)
+   Nachrichten und 98 (statt 30) Ebenen geÑndert
+!  Bei der URL-Erkennung wurden zuviele Zeichen als URL interpretiert
+!  Bug #109282: Fido: N/W/K produziert doppelte Tearlines/Origins
+*  Handbuch Åberarbeitet und Glossar hinzugefÅgt
+!  Korrekte Behandlung von '-' und '/' als Trennzeichen und an
+   verschiedenen anderen Stellen im Editor
+!  Bug #116657: Verschiedene Crashs bei Servernamen lÑnger als 15
+   Zeichen (Bug aus v3.12d) beseitigt
+!  Bug #119897: <Ctrl-E> funktionierte nicht bei Anzeige der markierten
+   Nachrichten (Bug aus v3.12d)
+!  Bug #116188: Beim Weiterleiten wurden Vertreteradressen und
+   Schreibsperre nicht beachtet (Bug aus v3.12d)
+*  Fido-Tearline enthÑlt jetzt keine XP-Werbung mehr
+*  MIME-Erkennung fÅr Schrott-Nachrichten von Microsoft Outlook
+   verbessert
+!  Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten (Bug
+   aus v3.12d)
+!  Bug #116162: "U" in der NachrichtenÅbersicht wechselte nicht immer
+   zum richtigen User (Bug aus v3.12d)
+!  Config/Optionen/Bedienung: die énderungen an den Weiterschalter-
+   Optionen werden jetzt sofort aktiv, nicht erst nach Neustart (Bug aus
+   v3.12d)
+!  Verschiedene Bugfixes (Crash im Editor, Cursor ans Ende nach
+   BlockeinfÅgeoperationen, UUZ, Clipboard)
+!  Einstellung 'Umlaute fÅr neue User zulassen' wurde hin und wieder
+   nicht beachtet (Bug aus v3.20)
+!  mehrere Bugs und Seiteneffekte beim Archivieren mit <Alt-P> beseitigt
+   (Kommentarbaum wurde stellenweise verlassen, es wurden "falsche"
+   Nachrichten angezeigt u.Ñ.). (Bug aus v3.12d)
+!  Anzeigeproblem bei Userauswahl mit <F2> und "A" beim Eintragen einer
+   User-Vertreteradresse behoben. (Bug aus v3.12d)
