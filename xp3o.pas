@@ -845,7 +845,7 @@ begin
     if (aktdispmode=11) or (aktdispmode=12) or (_b=_brett) then begin
       attrtxt(col.colmboxhigh);
       moff;
-      gotoxy(x+24,y+2); write(ii+1:4);
+      Wrt(x+24,y+2, Format('%4d', [ii+1]));
       mon;
       case art of
         5 : begin   { Lesen }
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/08/02 22:48:10  mk
+  - Write -> Wrt()
+
   Revision 1.61  2001/07/28 12:04:11  mk
   - removed crt unit as much as possible
 
