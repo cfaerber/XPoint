@@ -472,7 +472,7 @@ begin
 end;
 
 procedure CopyStream(InStream,OutStream:TStream);
-var b: array [1..32768] of char;
+var b: array [1..65536] of char;
     n: longint;
 begin
   while InStream is TNullCodecStream do
