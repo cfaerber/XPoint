@@ -1325,7 +1325,7 @@ begin
       result:=result+#13#10;
 end;
 
-procedure DecodeLine; inline;        { MIME-quoted-printable/base64 -> 8bit }
+procedure DecodeLine; {  inline; }       { MIME-quoted-printable/base64 -> 8bit }
 begin
   if qprint then
     s:=UnquotePrintable(s,false)
@@ -3821,6 +3821,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/04/10 15:55:48  ml
+  - inline produced accessviolations under vp
+
   Revision 1.48  2001/04/09 16:07:00  mk
   - fixed some bugs
 
