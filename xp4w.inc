@@ -897,7 +897,7 @@ begin
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
       end;
-      ViewFile(fn2, MimeViewer, Fileattach);
+      MimeViewer.ViewFile(fn2, Fileattach);
       lres:=0;
       end
     else
@@ -1607,6 +1607,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.83  2001/10/11 09:00:40  mk
+  - external viewer files now with correct file extension
+
   Revision 1.82  2001/10/10 22:04:09  mk
   - enabled use of external mime viewers again
 

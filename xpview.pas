@@ -29,8 +29,6 @@ uses
 
 (*
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo); *)
-procedure ViewFile(const fn:string; Viewer: TMessageViewer; Fileattach:boolean);
-
 
 implementation
 
@@ -115,54 +113,14 @@ begin
 end;
 
 *)
-procedure ViewFile(const fn:string; Viewer: TMessageViewer; Fileattach:boolean);
-var p         : Integer;
-    prog,
-    orgfn,
-    fn1,
-    parfn,
-    Dir,
-    Name,
-    Ext       : string;
-begin
-  fn1:='';
-  orgfn:=fn;
-
-  if not fileattach then
-  begin
-  if stricmp(fn,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
-    then orgfn:=TempS(_filesize(fn)+5000);
-    if copyfile(fn,orgfn) then fn1:=orgfn;
-    end;
-
-  prog:=viewer.prog;
-  orgfn:=iifs(fn1<>'',fn1,fn);
-
-  // Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen
-  if not fileattach and delviewtmp then
-  Begin
-    parfn:=TempS(_filesize(fn)+5000);
-    parfn:=LeftStr(parfn,length(parfn)-8)+'TMP-'+RightStr(parfn,8);
-    end
-  else parfn:=orgfn;
-
-  // Korrekte File-extension verwenden
-  ParFN := ChangeFileExt(ParFN, ExtractFileExt(Orgfn));
-  RenameFile(orgfn,parfn);
-
-  p:=pos('$FILE',UpperCase(prog));
-  if p=0 then prog:=prog+' '+parfn
-  else prog:=LeftStr(prog,p-1)+parfn+mid(prog,p+5);
-(*  urep(prog,'$TYPE',viewer.typ);
-  urep(prog,'$EXT',viewer.ext); *)
-  if not XPWinShell(prog,parfn,600,1,fileattach) then
-  if not fileattach and (fn1<>'') then DeleteFile(parfn);
-end;
 
 
 end.
 {
   $Log$
+  Revision 1.33  2001/10/11 09:00:40  mk
+  - external viewer files now with correct file extension
+
   Revision 1.32  2001/10/10 22:04:10  mk
   - enabled use of external mime viewers again
 

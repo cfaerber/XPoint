@@ -1892,7 +1892,7 @@ begin
           if MessageViewer.IsInternal then
             ListFile(TempPath+datei,datei,true,false,0)
           else
-            ViewFile(TempPath+datei,MessageViewer,false);
+            MessageViewer.ViewFile(TempPath+datei,false);
           end
         else
           if arcbufp=max_arc then
@@ -2514,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2001/10/11 09:00:40  mk
+  - external viewer files now with correct file extension
+
   Revision 1.117  2001/10/10 22:04:09  mk
   - enabled use of external mime viewers again
 
