@@ -199,7 +199,7 @@ var
   s: String;
   i: Integer;
 begin
-  SWriteln(SMTPFROMSIGN + EnvelopeFrom);
+  SWriteln(SMTPFROMSIGN + '<' + EnvelopeFrom + '>');
   SReadln(s);
   case ParseResult(s) of
     553: raise ESMTP.Create(res_connect6);  // sender field not properly set
@@ -293,6 +293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2001/09/25 01:51:00  ma
+  - fixed: Certain servers rejected "mail from:" line
+
   Revision 1.12  2001/09/08 15:01:55  cl
   - Moved MIME functions/types/consts to mime.pas
 
