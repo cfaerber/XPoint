@@ -103,7 +103,7 @@ function SysExec(const Path, CmdLine: String): Integer;
 
 function MakeDir(p: string; a: longint): boolean;
 function TestAccess(p: string; ta: TTestAccess): boolean;
-function ResolvePathName(p: string): string;
+function ResolvePathName(const p: string): string;
 procedure SetAccess(p: string; ta: TTestAccess);
 {$IFDEF Kylix }
 function Diskfree(drive: byte): LongInt;
@@ -330,19 +330,13 @@ begin
 {$ENDIF}
 end;
 
-function ResolvePathName(p: string): string;
-var
-  s: string;
+function ResolvePathName(const p: string): string;
 begin
-  if (Length(p)=0) then
-    s:= ''
-  else
-    s:= iifs((p[1]='~'),getenv(envHome)+copy(p,2,length(p)-1),''+p);
+  Result := iifs(FirstChar(p) ='~', getenv(envHome)+mid(p, 2), p);
 {$ifdef UseSysLog}
-  if (s<>'') then
-    XPDebugLog('Resolved: "'+p+'" -> "'+s+'"');
+  if (Result <>'') then
+    XPDebugLog('Resolved: "'+p+'" -> "' + Result + '"');
 {$ENDIF}
-  ResolvePathName:=s;
 end;
 
 { Zugriffe ueber /proc/* ----------------------------------------------- }
@@ -517,6 +511,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2001/10/16 13:11:56  mk
+  - simplyfied ResolvePathName
+
   Revision 1.29  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
