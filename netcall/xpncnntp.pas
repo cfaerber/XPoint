@@ -248,6 +248,7 @@ var
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname;
       uu.ClearSourceFiles := true;
+      uu.NNTPSpoolFormat := true;
       uu.utoz;
     end;
     uu.free;
@@ -321,11 +322,14 @@ begin
       For i := 0 to 40 - length(Group) do
         FillStr := FillStr + ' ';
 
-      if bp^.NNTP_MaxNews > 0 then
-      begin
-        if (NNTP.LastMessage - ArticleIndex) > (bp^.NNTP_MaxNews) then
-          ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
-      end;
+      if ArticleIndex<0 then
+        Inc(ArticleIndex,NNTP.LastMessage)
+      else
+        if bp^.NNTP_MaxNews > 0 then
+        begin
+          if (NNTP.LastMessage - ArticleIndex) > (bp^.NNTP_MaxNews) then
+            ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
+        end;
 
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
       oArticle:=ArticleIndex;
@@ -359,6 +363,10 @@ end.
 
 {
         $Log$
+        Revision 1.20  2001/04/27 10:18:27  ma
+        - added "-n" feature in .rc file
+        - using "new" NNTP spool format
+
         Revision 1.19  2001/04/23 06:57:45  ml
         - NNTP-BoxPar for getting last X Mails
 
