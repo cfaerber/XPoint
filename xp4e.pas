@@ -348,7 +348,7 @@ begin
   if left(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
-    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(423);
+    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,''); mhnr(423);
     pb_field:=fieldpos;                     { 'Server   ' }
     mappcustomsel(BoxSelProc,false);
     mset0proc(pb_wrntyp);
@@ -2512,6 +2512,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.27  2002/04/27 19:58:40  my
+  MY:- Beim Editieren von Usern/Brettern wird der Name im Eingabefeld
+       "Server" in der Schreibweise dargestellt, in der er in der
+       Datenbank abgelegt ist.
+
   Revision 1.25.2.26  2001/12/20 23:38:38  my
   MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
        Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
