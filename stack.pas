@@ -16,13 +16,16 @@ unit stack;
 
 interface
 
+uses
+  xpglobal;
+
 procedure spush(var x; size:word);
 procedure spop(var x);
 
 implementation
 
 uses
-  TypeForm, xpglobal;
+  TypeForm;
 
 type  stp = ^ste;
       ste = record
@@ -91,6 +94,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/04/30 16:07:09  mk
+  - xpglobal in den Interface-Teil vorgezogen
+
   Revision 1.4  2000/04/30 15:55:46  mk
   - Debugcode nur noch bei $DEF Debug
 
