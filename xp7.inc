@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 function BoxParOk:string;
@@ -96,6 +97,23 @@ var uucp : boolean;
       end;
     end;
 
+  function ChkAddServers:boolean;
+  var s : string;
+  begin
+    ChkAddServers:=true;
+    own_Name:=ustr(box);  { 'volles Programm' durchtesten }
+    own_Nt:=netztyp;
+    showErrors:=false;    { keine Einzel-Fehlermeldungen  }
+    with boxpar^ do
+    begin
+      s:=BfgToBox(PPPAddServers);
+      if BfgToBoxOk then
+        ChkAddServers:=addServersTest(s)
+      else
+        ChkAddServers:=false;
+    end;
+  end;
+
 begin
   uucp:=(logintyp=ltUUCP);
   with BoxPar^ do
@@ -107,22 +125,25 @@ begin
     begin
       if TempPPPMode then
       begin
+
         if (PPPClientPath = '') then
-          BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
+          BoxParOk := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
         else if not ChkPPPClientPath then
-          BoxParOK := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
+          BoxParOk := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
         else if (PPPClient = '') then
-          BoxParOK := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
+          BoxParOk := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
         else if not ChkPPPClient then
-          BoxParOK := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
+          BoxParOk := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
+        else if not ChkAddServers then
+          BoxParOk := getres2(706,11)   { 'Zus„tzliche Server nicht OK' }
         else
-          BoxParOK := '';
+          BoxParOk := '';
       end else
       begin
         if sysopinp='' then
-          BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
+          BoxParOk:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
         else if sysopout='' then
-          BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
+          BoxParOk:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
         else
           BoxParOk:='';
       end;
@@ -1519,6 +1540,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.14  2001/11/20 23:19:29  my
+  MY:- Netcall-Testroutine (BoxParOk) gefixt (wird nur noch einmal
+       durchlaufen) und an Multiserverbetrieb angepaát
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.24.2.13  2001/08/11 22:43:56  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
