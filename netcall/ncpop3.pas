@@ -96,7 +96,10 @@ resourcestring
   res_connect1          = 'Versuche %s zu erreichen...';
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
-  res_connect4          = 'Verbunden';
+  res_connect4          = 'Verbunden mit %s';
+
+  res_loginplaintext    = 'UnverschlÅsselter Login';
+  res_apoplogin         = 'Sicherer Login (APOP)';
 
   res_disconnect        = 'Trenne Verbindung...';
 
@@ -134,6 +137,7 @@ begin
 
     case FTimestamp='' of
       true: begin // no APOP login possible
+         Output(mcInfo,res_loginplaintext,[0]);
          SWritelnFmt('USER %s', [FUser]);
          SReadLn(s);
 
@@ -157,6 +161,7 @@ begin
          end;
 
       false: begin // use APOP
+         Output(mcInfo,res_apoplogin,[0]);
          SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
          SReadLn(s);
 
@@ -174,11 +179,10 @@ end;
 function TPOP3.Connect: boolean;
 var
   s   : string;
-  code: integer;
 begin
   Result := false;
 
-  Output(mcInfo,res_connect1, [Host.Name]);
+  Output(mcVerbose,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
 
@@ -193,7 +197,7 @@ begin
     exit;
   end else
   begin
-    Output(mcError,res_connect4, [0]); // Verbunden
+    Output(mcInfo,res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
     if (pos('<',s)<pos('@',s))and(pos('@',s)<pos('>',s)) then // APOP timestamp found
       FTimestamp:=Trim(Mid(s,pos('<',s)))
@@ -212,8 +216,6 @@ begin
 end;
 
 procedure TPOP3.DisConnect;
-var
-  s: string;
 begin
   Output(mcInfo,res_disconnect,[0]);
   if Connected then
@@ -245,9 +247,7 @@ begin
 end;
 
 function TPOP3.Retr(ID: Integer; List: TStringList): boolean;
-var
-  s: String;
-  p: Integer;
+var s: string;
 begin
   Result := false;
   if Connected then
@@ -270,7 +270,6 @@ end;
 function TPOP3.Dele(ID: Integer): boolean;
 var
   s: String;
-  p: Integer;
 begin
   Result := false;
   if Connected then
@@ -287,14 +286,14 @@ function TPOP3.RetrAll(List: TStringList): boolean;
 var
   i: Integer;
 begin
+  result:=true;
   for i := 1 to FMailCount do
-    Retr(i, List)
+    result:=result and Retr(i, List)
 end;
 
 function TPOP3.RSet: boolean;
 var
   s: String;
-  p: Integer;
 begin
   Result := false;
   if Connected then
@@ -311,6 +310,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2001/04/16 14:28:25  ma
+  - using ProgrOutputWindow now
+
   Revision 1.8  2001/04/15 13:02:25  ma
   - implemented APOP secure login
 

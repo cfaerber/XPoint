@@ -40,17 +40,21 @@ implementation  { ------------------------------------------------- }
 
 uses
   NCSMTP,NCPOP3,                  { TNetcall, TSocketNetcall }
-  xpprogressoutputxy,             { TProgressOutputXY }
-  resource,
+  progressoutput,xpprogressoutputwindow,
 {$ifdef NCRT}
   XPCurses,
 {$endif}
   typeform,
   InOut,
-  Maus2,                        { MWrt }
   xp1,                          { dialoge }
   xpnetcall,
   zcrfc;
+
+{$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
+  res_smtpinit          = '%s Mails verschicken';
+  res_pop3init          = '%s Mails holen';
+  res_mailstat          = '%d Mails in %d Bytes';
+  res_getmail           = 'Hole Mail Nr. %d';
 
 function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
@@ -83,41 +87,24 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 
 var
   SMTP          : TSMTP;                { Socket }
-  ProgressOutputXY: TProgressOutputXY;    { ProgressOutputXY }
-  x,y           : byte;                 { Fenster-Offset }
-  f             : text;                 { Zum Speichern }
-  i             : integer;              { -----"------- }
+  POWindow      : TProgressOutputWindow;{ ProgressOutput }
   List          : TStringList;
-  aFile         : string;
 begin
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
   if FileExists(RFCFile) then
   begin
     { ProgressOutput erstellen }
-    ProgressOutputXY:= TProgressOutputXY.Create;
+    POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_smtpinit,[BoxName]),True);
     { Host und ... }
     SMTP:= TSMTP.CreateWithHost(bp^.smtp_ip);
     { IPC erstellen }
-    SMTP.ProgressOutput:= ProgressOutputXY;
+    SMTP.ProgressOutput:= POWindow;
     { ggf. Zugangsdaten uebernehmen }
     if (bp^.smtp_id<>'') and (bp^.smtp_pwd<>'') then begin
       SMTP.User:= bp^.smtp_id;
       SMTP.Password:= bp^.smtp_pwd;
     end;
-    { Fenster oeffnen }
-    diabox(70,11,BoxName+' SMTP Mails verschicken',x,y);
-    Inc(x,3);
-    MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-    MWrt(x,y+4,getres2(30010,5));                 { 'SMTP-Status..: ' }
-    MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-    MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-    MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-    MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-    MWrt(x+15,y+6,bp^.smtp_ip);
-    { IPC einrichten }
-    ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
-     { Verbinden }
 
     try
       List := TStringList.Create;
@@ -125,15 +112,11 @@ begin
 
       SMTP.Connect(SMTP.GetFQDomain(List));
 
-      { Name und IP anzeigen }
-      MWrt(x+15,y+6,SMTP.Host.Name+' ['+SMTP.Host.AsString+']');
-      MWrt(x+15,y+8,FormS(SMTP.Server,50));
-      MWrt(x+15,y+2,'Mails senden');
-
       SMTP.PostPlainRFCMails(List);
 
       SMTP.Disconnect;
     except
+      mdelay(2000);
       trfehler(831,31);
       result:= false;
     end;
@@ -144,7 +127,6 @@ begin
       if FileExists(PPFile)then _era(PPFile);
       if FileExists(RFCFile)then _era(RFCFile);
     end;
-    closebox;
   end;
 end;
 
@@ -181,49 +163,31 @@ var
 
 var
   POP           : TPOP3;                { Socket }
-  ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
-  x,y           : byte;                 { Fenster-Offset }
-  f             : text;                 { Zum Speichern }
+  POWindow      : TProgressOutputWindow;{ ProgressOutput }
 begin
-  { ProgressOutputXY erstellen }
-  ProgressOutputXY:= TProgressOutputXY.Create;
+  { POWindow erstellen }
+  POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
   { Host und ... }
   POP:= TPOP3.CreateWithHost(bp^.pop3_ip);
-  { ProgressOutputXY erstellen }
-  POP.ProgressOutput:= ProgressOutputXY;
+  { POWindow erstellen }
+  POP.ProgressOutput:= POWindow;
   { ggf. Zugangsdaten uebernehmen }
   if (bp^.pop3_id<>'') and (bp^.pop3_pwd<>'') then begin
     POP.User:= bp^.pop3_id;
     POP.Password:= bp^.pop3_pwd;
   end;
-  { Fenster oeffnen }
-  diabox(70,11,BoxName+' POP3 Mails holen',x,y);
-  Inc(x,3);
-  MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-  MWrt(x,y+4,getres2(30010,5));                 { 'POP3-Status..: ' }
-  MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-  MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-  MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-  MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-  MWrt(x+15,y+6,bp^.pop3_ip);
-  { ProgressOutputXY einrichten }
-  ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
   try
     result:= true;
     List := TStringList.Create;
     POP.Connect;
-    { Name und IP anzeigen }
-    MWrt(x+15,y+6,POP.Host.Name+' ['+POP.Host.AsString+']');
-    MWrt(x+15,y+8,FormS(POP.Server,50));
-    MWrt(x+15,y+2,'Statistik holen');
     POP.Stat;
 
-    MWrt(x+15,y+2, IntToStr(POP.MailCount) + ' Mails in ' + IntToStr(POP.MailSize) + ' Bytes');
+    POWindow.WriteFmt(mcInfo,res_mailstat,[POP.MailCount,POP.MailSize]);
 
     for i := 1 to POP.MailCount do
     begin
-      MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(i) + '             ');
+      POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
       POP.Retr(i, List);
       if BoxPar^.Pop3_Clear then POP.Dele(I);
       // UUZ muá erweitert werden,wenn das funktionieren soll
@@ -240,13 +204,15 @@ begin
   List.Free;
   POP.Free;
   ProcessIncomingFiles(IncomingFiles);
-  closebox;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.10  2001/04/16 14:28:25  ma
+  - using ProgrOutputWindow now
+
   Revision 1.9  2001/04/13 00:14:40  ma
   - ClrUnversandt parameters fixed (ppfile, box*name*)
 

@@ -133,29 +133,24 @@ resourcestring
   res_connect1          = 'Versuche %s zu erreichen...';
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
-  res_connect4          = 'Verbunden';
+  res_connect4          = 'Verbunden mit %s';
 
   res_disconnect        = 'Trenne Verbindung...';
 
   res_list1             = 'Setze Lese-Modus...';
   res_list2             = 'Kann nicht mit %s kommunizieren!';
   res_list3             = '%s gibt die Liste nicht frei!';
-  res_list4             = '%d gelesen';
+  res_list4             = '%d Newsgroupnamen gelesen';
   res_list5             = 'Suche Beschreibung fuer %s...';
 
-  res_group1            = 'setze Gruppe %s';
-  res_group2            = 'Gruppe %s gesetzt';
-  res_group3            = 'Gruppe %s nicht gefunden';
+  res_groupnotfound     = 'Gruppe %s nicht gefunden';
 
-  res_msg1            = 'hole Artikel %d, Zeile %d';
-  res_msg2            = 'Artikel %d geholt';
-  res_msg3            = 'Fehler beim Holen von Artikel %d';
+  res_msg1              = 'hole Artikel %d, Zeile %d';
+  res_msg3              = 'Fehler beim Holen von Artikel %d';
 
-  res_post1            = 'post article';
-  res_post2            = 'article posted';
-  res_post3            = 'Fehler %d beim Holen von Artikel';
+  res_posterror         = 'Fehler %d beim Holen des Artikels';
 
-  res_auth            = 'Authentifikation benötigt';
+  res_auth              = 'Authentifikation benötigt';
 
 
 procedure TNNTP.InitVars;
@@ -202,7 +197,7 @@ begin
 
   FReadOnly := true;
 
-  Output(mcInfo,res_connect1, [Host.Name]);
+  Output(mcVerbose,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
 
@@ -219,7 +214,7 @@ begin
   end else
   begin
   if s <> '' then
-    Output(mcError,res_connect4, [0]);  // verbunden
+    Output(mcInfo,res_connect4, [Host.Name]);  // verbunden
     FServer:= Copy(s,5,length(s)-5);
     if pos('POSTING OK', UpperCase(s)) <> 0 then FReadOnly := false;
   end;
@@ -255,7 +250,7 @@ begin
   { Verbinden }
   if Connected then
   begin
-    Output(mcInfo,res_list5,[group]);
+    Output(mcVerbose,res_list5,[group]);
     SWriteln('MODE READER');
     SReadln(s);
     { if not (ParseResult(s) in [200..299]) then begin }        { !! FPC-Bug # 1135 }
@@ -306,7 +301,7 @@ begin
   aList.Duplicates:= dupIgnore;
   if Connected then
   begin
-    Output(mcInfo,res_list1,[0]);
+    Output(mcVerbose,res_list1,[0]);
     SWriteln('MODE READER');                            { Modus setzen }
     SReadln(s);
     code:= ParseResult(s);
@@ -345,7 +340,7 @@ begin
         Result:= false;
       end; { case }
     until code<>-1;                                     { Bis zum Ende lesen }
-    Output(mcInfo,res_list4, [aList.Count]);
+    Output(mcVerbose,res_list4, [aList.Count]);
 
     { Dieses Unterroutine ist noch sehr ineffizient.
       Es waere sinnvoll, eine zweite Verbindung zum NNTP
@@ -405,13 +400,12 @@ begin
   if Connected then
   begin
     // select one newsgroup
-    Output(mcInfo,res_group1, [AGroupName]);
     SWriteln('GROUP '+ AGroupName);
     SReadln(s);
     case ParseResult(s) of
       nntpMsg_GroupnotFound : begin
-        Output(mcInfo,res_group3, [AGroupName]);
-        raise ENNTP.create(Format(res_group3, [AGroupName]));
+        Output(mcError,res_groupnotfound, [AGroupName]);
+        raise ENNTP.create(Format(res_groupnotfound, [AGroupName]));
       end;
       nntp_AuthRequired : begin
         Output(mcInfo, res_auth, [0]);
@@ -420,7 +414,6 @@ begin
     end;
     FGroupName := AGroupName;
     GetGroupInfo(s);
-    Output(mcInfo,res_group2, [AGroupName]);
   end;
 end;
 
@@ -440,17 +433,17 @@ begin
     Error := ParseResult(s);
     if Error > 400 then
     begin
-      Output(mcInfo,res_msg3, [msgNr]);
+      Output(mcError,res_msg3, [msgNr]);
       Result := Error;
       exit;
     end;
 
-    Timer.Init; Timer.SetTimeout(1); iLine:=0;
+    Timer.Init; Timer.SetTimeout(5); iLine:=0;
     SReadln(s);
     repeat
       inc(iLine);
       if Timer.Timeout then begin
-        Output(mcInfo,res_msg1, [msgNr,iLine]);
+        Output(mcVerbose,res_msg1, [msgNr,iLine]);
         Timer.SetTimeout(1);
         end;
       if (s <> '') and (s[1] = '.') then
@@ -463,7 +456,6 @@ begin
     Timer.Done;
 
     Result := 0;
-    Output(mcInfo,res_msg2, [msgNr]);
   end;
 end;
 
@@ -482,7 +474,6 @@ begin
   Result := nntp_NotConnected;
   if Connected then
   begin
-    Output(mcInfo,res_post1, [0]);
     SWriteln('POST');
     SReadln(s);
     Error := ParseResult(s);
@@ -493,7 +484,7 @@ begin
          SWriteln(nntpMsg_EndSign);
       end
       else begin
-         Output(mcInfo,res_post3, [Error]);
+         Output(mcError,res_posterror, [Error]);
          Result := Error;
          exit;
       end;
@@ -505,8 +496,6 @@ begin
        Result := 0
     else
        Result := Error;
-
-    Output(mcInfo,res_post2, [0]);
   end;
 end;
 
@@ -518,7 +507,6 @@ begin
   Result := nntp_NotConnected;
   if Connected then
   begin
-    Output(mcInfo,res_post1, [0]);
     SWriteln('POST');
     SReadln(s);
     Error := ParseResult(s);
@@ -545,14 +533,15 @@ begin
        Result := 0
     else
        Result := Error;
-
-    Output(mcInfo,res_post2, [0]);
   end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.21  2001/04/16 14:28:25  ma
+  - using ProgrOutputWindow now
+
   Revision 1.20  2001/04/09 09:12:20  ma
   - cosmetics
 

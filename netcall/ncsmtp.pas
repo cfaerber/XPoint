@@ -95,9 +95,8 @@ resourcestring
   res_connect1          = 'Versuche %s zu erreichen...';
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
-  res_connect4          = 'Verbunden';
+  res_connect4          = 'Verbunden mit %s';
   res_connect5          = 'Mail von %s an %s konnte nicht versendet werden';
-  res_connect6          = 'Mail von %s an %s erfolreich versendet';
 
   res_disconnect        = 'Trenne Verbindung...';
 
@@ -125,7 +124,6 @@ end;
 function TSMTP.Login: boolean;
 var
   s: string;
-  Error: Integer;
 begin
   Result := false;
   // Eine Authorisierung muá erst noch geschrieben werden
@@ -149,13 +147,12 @@ end;
 function TSMTP.Connect(AFQDomain: String): boolean;
 var
   s   : string;
-  code: integer;
 begin
   Result := false;
 
   FFQDomain := AFQDomain;
 
-  Output(mcInfo,res_connect1, [Host.Name]);
+  Output(mcVerbose,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
 
@@ -170,7 +167,7 @@ begin
     exit;
   end else
   begin
-    Output(mcError,res_connect4, [0]); // Verbunden
+    Output(mcError,res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
   end;
 
@@ -185,8 +182,6 @@ begin
 end;
 
 procedure TSMTP.DisConnect;
-var
-  s: string;
 begin
   Output(mcInfo,res_disconnect,[0]);
   if Connected then
@@ -304,6 +299,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2001/04/16 14:28:25  ma
+  - using ProgrOutputWindow now
+
   Revision 1.5  2001/04/13 01:14:30  ma
   - fixed: double sending of '.'
 

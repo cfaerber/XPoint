@@ -40,8 +40,9 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 implementation  { ------------------------------------------------- }
 
 uses
-  NCSocket,NCNNTP,              { TNetcall, TSocketNetcall, TNNTP }
-  xpprogressoutputxy,   { TProgressOutputXY }
+  NCNNTP,
+  progressoutput,
+  xpprogressoutputwindow,
   resource,
 {$ifdef NCRT}
   XPCurses,
@@ -50,11 +51,17 @@ uses
   zcrfc,
   typeform,
   xpnetcall,
-  Maus2,                        { MWrt }
   xp1,                          { dialoge }
   database,
   datadef,
   xp1input;                     { JN }
+
+{$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
+  res_getgrouplistinit  = '%s Newsgroupliste holen';
+  res_postnewsinit      = '%s News senden';
+  res_getnewsinit       = '%s News holen';
+  res_setnewsgroup      = 'Newsgroup %s (%d von %d)';
+  res_getposting        = 'Hole Posting %d von %d';
 
 function GetServerFilename(boxname: string; var bfile: string): boolean;
 var d: DB;
@@ -75,9 +82,8 @@ end;
 function GetAllGroups(BoxName: string; bp: BoxPtr): boolean;
 var
   NNTP          : TNNTP;                { Socket }
-  ProgressOutputXY: TProgressOutputXY;  { ProgressOutput }
+  POWindow      : TProgressOutputWindow;{ ProgressOutput }
   List          : TStringList;          { Die Liste }
-  x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
   i             : integer;              { -----"------- }
   bfile         : string;               { Server file name (without extension) }
@@ -86,50 +92,31 @@ begin
     result:= true;
     exit;
   end;
-  { ProgressOutputXY erstellen }
-  ProgressOutputXY:= TProgressOutputXY.Create;
+  { POWindow erstellen }
+  POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getgrouplistinit,[BoxName]),True);
   { Host und ... }
   NNTP:= TNNTP.CreateWithHost(bp^.nntp_ip);
   { ... Port uebernehmen }
   if bp^.nntp_port>0 then
     NNTP.Port:= bp^.nntp_port;
-  { ProgressOutputXY erstellen }
-  NNTP.ProgressOutput:= ProgressOutputXY;
+  { ProgressOutput erstellen }
+  NNTP.ProgressOutput:= POWindow;
   { ggf. Zugangsdaten uebernehmen }
   if (bp^.nntp_id<>'') and (bp^.nntp_pwd<>'') then begin
     NNTP.User:= bp^.nntp_id;
     NNTP.Password:= bp^.nntp_pwd;
   end;
-  { Fenster oeffnen }
-  diabox(70,11,BoxName+getres2(30010,3),x,y);       { BoxName+' - Gruppenliste holen' }
-  Inc(x,3);
-  MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-  MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
-  MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-  MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-  attrtxt(col.colMboxHigh);
-  MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-  MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-  MWrt(x+15,y+6,bp^.nntp_ip);
-  { ProgressOutputXY einrichten }
-  ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
   try
     if not NNTP.Connect then raise Exception.Create('');
-    { Name und IP anzeigen }
-    MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
-    MWrt(x+15,y+8,Copy(NNTP.Server,1,50));
-    MWrt(x+15,y+2,getres2(30010,10));           { Liste anfordern }
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
     if GetServerFilename(BoxName,bfile) and NNTP.List(List,false) then begin
-      MWrt(x+15,y+2,Format(getres2(30010,11),[List.Count])); { Liste speichern (%d Gruppen) }
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
       assign(f,FileUppercase(bfile+'.bl'));
       rewrite(f);
-      List.Sort;
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
       close(f);
@@ -144,7 +131,6 @@ begin
     result:= true;
   end;
   NNTP.Free;
-  closebox;
 end;
 
 function GetNewGroups(BoxName: string; bp: BoxPtr): boolean;
@@ -194,13 +180,9 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 
 var
   NNTP          : TNNTP;                { Socket }
-  ProgressOutputXY: TProgressOutputXY;    { ProgressOutputXY }
-  x,y           : byte;                 { Fenster-Offset }
-  f             : text;                 { Zum Speichern }
-  i             : integer;              { -----"------- }
+  POWindow      : TProgressOutputWindow;{ ProgressOutput }
   List          : TStringList;
-  aFile         : string;
-  RFCFileDummy : String;
+  RFCFileDummy  : String;
 begin
   ZtoRFC(bp,PPFile,RFCFile);
   RFCFileDummy := RFCFile + 'D-0001.OUT';
@@ -208,39 +190,22 @@ begin
   if FileExists(RFCFileDummy) then
   begin
     { ProgressOutput erstellen }
-    ProgressOutputXY:= TProgressOutputXY.Create;
+    POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_postnewsinit,[BoxName]),True);
     { Host und ... }
     NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
     { IPC erstellen }
-    NNTP.ProgressOutput:= ProgressOutputXY;
+    NNTP.ProgressOutput:= POWindow;
     { ggf. Zugangsdaten uebernehmen }
     if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
       NNTP.User:= bp^.NNTP_id;
       NNTP.Password:= bp^.NNTP_pwd;
     end;
-    { Fenster oeffnen }
-    diabox(70,11,BoxName+' NNTP Mails verschicken',x,y);
-    Inc(x,3);
-    MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-    MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
-    MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-    MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-    MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-    MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-    MWrt(x+15,y+6,bp^.NNTP_ip);
-    { IPC einrichten }
-    ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
     { Verbinden }
     try
       result:= true;
       List := TStringList.Create;
       List.LoadFromFile(RFCFileDummy);
       NNTP.Connect;
-
-      { Name und IP anzeigen }
-      MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
-      MWrt(x+15,y+8,FormS(NNTP.Server,50));
-      MWrt(x+15,y+2,'Mails senden');
 
       NNTP.PostPlainRFCMessages(List);
 
@@ -258,12 +223,10 @@ begin
       RFCFileDummy := RFCFile + 'X-0002.OUT';
       if FileExists(RFCFileDummy)then _era(RFCFileDummy);
       end;
-    closebox;
   end;
   RFCFileDummy := RFCFile + 'C-0000.OUT';
   if FileExists(RFCFileDummy)then _era(RFCFileDummy);
 end;
-
 
 function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
 var
@@ -305,43 +268,29 @@ var
    end;
 
 var
-  NNTP           : TNNTP;                { Socket }
-  ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
-  x,y           : byte;                 { Fenster-Offset }
-  f             : text;                 { Zum Speichern }
+  NNTP          : TNNTP;                { Socket }
+  POWindow      : TProgressOutputWindow;{ ProgressOutput }
   p, i          : integer;              { -----"------- }
   RCList        : TStringList;          { .rc-File }
   RCFilename    : String;
   FillStr       : String;
   oArticle      : integer;
 begin
-  { ProgressOutputXY erstellen }
-  ProgressOutputXY:= TProgressOutputXY.Create;
+  { POWindow erstellen }
+  POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getnewsinit,[BoxName]),True);
   { Host und ... }
   NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
-  { ProgressOutputXY erstellen }
-  NNTP.ProgressOutput:= ProgressOutputXY;
+  { ProgressOutput erstellen }
+  NNTP.ProgressOutput:= POWindow;
   { ggf. Zugangsdaten uebernehmen }
   if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
     NNTP.User:= bp^.NNTP_id;
     NNTP.Password:= bp^.NNTP_pwd;
   end;
-  { Fenster oeffnen }
-  diabox(70,11,BoxName+' NNTP Mails holen',x,y);
-  Inc(x,3);
-  MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-  MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
-  MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-  MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-  MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-  MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-  MWrt(x+15,y+6,bp^.NNTP_ip);
 
   GetServerFilename(BoxName,RCFilename); // add error handling
   RCFilename:=FileUpperCase(RCFilename+'.rc');
 
-  { ProgressOutputXY einrichten }
-  ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
   try
     result:= true;
@@ -349,9 +298,6 @@ begin
     RCList := TStringList.Create;
     RCList.LoadFromFile(RCFilename);
     NNTP.Connect;
-    { Name und IP anzeigen }
-    MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
-    MWrt(x+15,y+8,FormS(NNTP.Server,50));
 
     for RCIndex := 0 to RCList.Count - 1 do
     begin
@@ -367,12 +313,12 @@ begin
       end else
        ArticleIndex := 0;
 
+      POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
       NNTP.SelectGroup(Group);
 
       FillStr := '';
       For i := 0 to 40 - length(Group) do
         FillStr := FillStr + ' ';
-      MWrt(x+3,y+3,'aus Gruppe: ' + Group + FillStr);
 
       if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
@@ -381,8 +327,7 @@ begin
       while ArticleIndex < NNTP.LastMessage do
       begin
         Inc(ArticleIndex);
-        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex-oArticle) + '/' +
-                      IntToStr(NNTP.LastMessage-oArticle) + '             ');
+        POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
 
         NNTP.GetMessage(ArticleIndex, List);
         if List.Count > 10000 then
@@ -403,13 +348,15 @@ begin
   List.Free;
   NNTP.Free;
   ProcessIncomingFiles(IncomingFiles);
-  closebox;
 end;
 
 end.
 
 {
         $Log$
+        Revision 1.16  2001/04/16 14:28:25  ma
+        - using ProgrOutputWindow now
+
         Revision 1.15  2001/04/13 22:15:46  mk
         - catch socket errors while fetching the group list
 
