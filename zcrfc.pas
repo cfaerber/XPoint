@@ -219,8 +219,6 @@ var
   RawNews: Boolean;
   // Enthaelt die eigentliche Nachricht
   Mail: TStringList;
-  // Liste der Empfaenger
-  empflist: TStringList;
   TempS: ShortString;
   t: tstringlist;
 
@@ -321,7 +319,6 @@ begin
 
   // zusaetzliche Headerzeilen einlesen
   AddHd := TStringList.Create;
-  EmpfList := TStringList.Create;
   Mail := TStringList.Create;
 
   hd := THeader.Create;
@@ -331,12 +328,14 @@ begin
   rh('MAIL.RFC', true);
 
   FDeleteFiles := TStringList.Create;
+
+  xpmakeheader.ReadEmpfList := true;
+  ReadKopList := true;
 end;
 
 destructor TUUZ.Destroy;
 begin
   AddHd.Free;
-  EmpfList.Free;
   Mail.Free;
   Hd.Free;
   FDeleteFiles.Free;
@@ -458,7 +457,7 @@ begin
           if switch = '1522' then
           RFC1522 := true
         else
-          if switch = 'ppp' then
+          if (switch = 'ppp') or (switch = 'client') then
           ppp := true
         else
           if switch[1] = 'u' then
@@ -493,7 +492,7 @@ begin
   if not FileExists(source) then raise Exception.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
-  if not u2z then
+  if not u2z and not ppp then
   begin
     {$IFDEF UnixFS}
     if (RightStr(dest, 1) <> DirSepa) then
@@ -3432,7 +3431,7 @@ begin
         if UpperCase(LeftStr(hd.empfaenger, length(server))) = server then
           WrFileserver
         else
-        begin
+        begin   
           inc(n); if CommandLine then write(#13'Mails: ', n);
           if not SMTP then
             CreateNewfile;
@@ -3659,6 +3658,9 @@ end;
 
 {
   $Log$
+  Revision 1.87  2001/12/23 23:26:00  mk
+  - fixed multible EmfpList and problems with CCs (outgoing, witz uuz -smtp)
+
   Revision 1.86  2001/12/21 21:25:18  cl
   BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
   SEE ALSO: <8FIVnDgocDB@3247.org>

@@ -353,6 +353,7 @@ begin
   bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
+  EmpfList.Clear;
   with hd do
     if ZConnect then begin
       netztyp:=nt_ZConnect;
@@ -584,6 +585,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2001/12/23 23:26:00  mk
+  - fixed multible EmfpList and problems with CCs (outgoing, witz uuz -smtp)
+
   Revision 1.19  2001/10/23 18:55:47  ma
   - added small debug log, there have been many errors connected with
     this in the past
