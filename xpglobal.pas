@@ -16,7 +16,7 @@ const
   verstr      = 'v3.30.7';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
-  author_name = 'OpenXP Team';
+  author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
   x_copyright = '(c) 2000';
 
@@ -83,6 +83,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.9  2000/12/06 09:41:20  mk
+  - OpenXP-Team mit Bindestrich in der Mitte
+
   Revision 1.29.2.8  2000/11/17 19:43:44  mk
   - Versionsnummer auf 3.30.7 geaendert
 
