@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Offset der Cursorposition in dl^[scy].absatz; kann gr”áer }
@@ -36,7 +37,7 @@ begin
     end;
 end;
 
-function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
+function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
          forward;
 
 procedure TruncAbs(ap:absatzp);
@@ -54,7 +55,7 @@ begin
         dec(p);
       if p<size then
       begin
-        if AbsDelete(ap,p,size-p,false,true)<>nil then; { .robo }
+        if AbsDelete(ap,p,size-p,false,true)<>nil then;
         aufbau:=true;
       end;
     end;
@@ -713,7 +714,7 @@ begin
     end;
 end;
 
-function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
+function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
 var apnew : absatzp;
 begin
   AbsDelete:=ap;
@@ -826,6 +827,11 @@ begin
       if not kb_shift then
       begin
         quotec:=GetQuote(ap);
+        if (wp>0) and (quotec<>'') and (length(quotec)>wp) then
+        begin
+          wp:=length(quotec);
+          copysize:=max(0,ap^.size-wp);
+        end;
         if (quotec<>'') and (wp>=length(rtrim(quotec))) then begin
           delsp:=wp;
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
@@ -842,7 +848,8 @@ begin
           inc(spaces);
         if spaces>=wp then spaces:=0;
       end;
-      if memtest(ap^.size) and createacopy(ap,ap2,wp-spaces-quotes+delsp,copysize+spaces+quotes-delsp)
+      if memtest(ap^.size) and 
+       createacopy(ap,ap2,wp-spaces-quotes+delsp,copysize+spaces+quotes-delsp)
       then begin
         if spaces>0 then
           fillchar(ap2^.cont,spaces,' ')
@@ -862,7 +869,7 @@ begin
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
         { Quote-Reflow }
-         moveworkpos(spaces,actabs);          { JG: 27.04.00 Cursor an Zeilenanfang }
+         moveworkpos(spaces,actabs);          { Cursor an Zeilenanfang              }
         {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
         modified:=true;
         aufbau:=true;
@@ -961,7 +968,7 @@ end;
 
 procedure WortRechtsLoeschen;   { Wort rechts l”schen }
 var wp,wpnew,size : integer;
-    wpa,ap        : absatzp; { .robo }
+    wpa,ap        : absatzp;
 begin
   size:=ActAbs^.size;
   if workpos>=size then
@@ -974,8 +981,8 @@ begin
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
-    ap:=ActAbs; { .robo }
-    wpa:=AbsDelete(ap,wp,wpnew-wp,true,true); { .robo }
+    ap:=ActAbs;
+    wpa:=AbsDelete(ap,wp,wpnew-wp,true,true);
     MoveWorkpos(wp,wpa);
     aufbau:=true;
   end;
@@ -983,7 +990,7 @@ end;
 
 procedure WortLinksLoeschen;    { Wort links l”schen }
 var wp,wpnew{,size }: word;
-    wpa,ap        : absatzp; { .robo }
+    wpa,ap        : absatzp;
 begin
   if workpos=0 then
     BackSpace
@@ -997,21 +1004,21 @@ begin
     while (wpnew>0) and not (ActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
     if wpnew=workpos then dec(wpnew);
-    ap:=ActAbs; { .robo }
-    wpa:=AbsDelete(ap,wpnew,wp-wpnew,true,true); { .robo }
+    ap:=ActAbs;
+    wpa:=AbsDelete(ap,wpnew,wp-wpnew,true,true);
     MoveWorkPos(wpnew,wpa);
     aufbau:=true;
   end;
 end;
 
 procedure ZeileLoeschen;        { akt. Zeile l”schen }
-var apd,ap : absatzp; { .robo }
+var apd,ap : absatzp;
     bc     : boolean;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
     if (ActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
-      ap:=ActAbs; { .robo }
-      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+      ap:=ActAbs;
+      AbsDelete(ap,dl^[scy].offset,LineLength,true,true);
     end
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz l”schen }
       absatzwechsel(ActAbs,ActAbs^.next,false);
@@ -1027,16 +1034,16 @@ begin
         AddDelEntry(ActAbs);
       end
       else begin
-        ap:=ActAbs; { .robo }
-        FreeAbsatz(ap); { .robo }
+        ap:=ActAbs;
+        FreeAbsatz(ap);
       end;
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
     end
     else begin                     { 3. Fall: Zeile aus Absatz l”schen }
-      ap:=ActAbs; { .robo }
-      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+      ap:=ActAbs;
+      AbsDelete(ap,dl^[scy].offset,LineLength,true,true);
     end;
   aufbau:=true;
 end;
@@ -1044,27 +1051,28 @@ end;
 procedure AbsatzRechtsLoeschen;
 var
   wp,size : integer;
-  ap      : absatzp; { .robo }
+  ap      : absatzp;
 begin
   size:=ActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
-    ap:=ActAbs; { .robo }
-    AbsDelete(ap,wp,size-wp,true,true); { .robo }
+    ap:=ActAbs;
+    AbsDelete(ap,wp,size-wp,true,true);
     aufbau:=true;
   end;
 end;
 
-
+(*
 procedure Juppheidi(ap:absatzp; wp:integer);   { Yuppie -> Oops! }
 var s : string[10];
+ xp2 : boolean;
 begin
   if wp>=6 then begin
     s[0]:=#6;
     FastMove(ap^.cont[wp-6],s[1],6);
     if s='Yuppie' then begin
       s:='Oops!';
-      FastMove(s[1],ap^.cont[wp-6],5);
+      FastMove(s[1],ap^.cont[wp-6],3);
       if ap^.size>wp then
         Move(ap^.cont[wp],ap^.cont[wp-1],ap^.size-wp);
       dec(ap^.size);
@@ -1072,6 +1080,7 @@ begin
       end;
     end;
 end;
+*)
 
 procedure ZeichenEinfuegen(fast:boolean);     { Texteingabe }
 const u1 : string[7] = '„”Ž™šá';
@@ -1104,7 +1113,7 @@ begin
         ap^.cont[wp]:=t[1];
         inc(ap^.size);
         MoveWorkpos(wp+1,nil);
-        if pointswitch and (t[1]='e') then Juppheidi(ap,wp+1);
+       (* if pointswitch and (t[1]='e') then Juppheidi(ap,wp+1); *)
         end
       else
         if memtest(ap^.size+spaces+1) then
@@ -1122,7 +1131,7 @@ begin
               FastMove(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
             FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
-            if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1);
+          (*  if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1); *)
             end;
       if not fast then KorrBlockScrolled(false);
       end;
@@ -1137,7 +1146,7 @@ begin
   ZeichenEinfuegen(false);
 end;
 
-procedure Insert(var blk:absatzp; var endpos:position); forward; { .robo }
+procedure Insert(var blk:absatzp; var endpos:position); forward;
 
 procedure tabulator;
 var n,i   : byte;
@@ -1264,7 +1273,6 @@ begin
     end;
 end;
 
-
 procedure ZeileMarkieren;
 begin
   with e^ do begin
@@ -1299,16 +1307,17 @@ begin
     end;
 end;
 
+
 { Block an Cursorposition einfgen; Blockzeiger auf Ende zurckliefern }
 { blk^ wird freigegeben!                                               }
 
-procedure Insert(var blk:absatzp; var endpos:position); { .robo }
+procedure Insert(var blk:absatzp; var endpos:position);
 var ap,ap2,ap3,apn : absatzp;
     ss             : word;
     wp             : integer;
     spaces         : integer;
 begin
-  endpos.absatz:=nil; { .robo }
+  endpos.absatz:=nil;
   if blk=nil then exit;
   ap:=ActAbs;
   spaces:=EndSpaces;
@@ -1318,7 +1327,7 @@ begin
     if ss>maxabslen then
       error(2)     { 'Absatz zu groá }
     else if memtest(ss)
-    and assigned(blk) { .robo }
+    and assigned(blk)
     then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
@@ -1347,7 +1356,7 @@ begin
       FreeBlock(blk);
     end
     else if memtest(ap^.size+blk^.size+apn^.size+3*asize+spaces)
-    and assigned(blk) { .robo }
+    and assigned(blk)
     then begin
       ap2:=AllocAbsatz(blk^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
@@ -1385,12 +1394,12 @@ begin
   aufbau:=true;
 end;
 
-procedure InsertWithMark(var ap:absatzp); { .robo }
+procedure InsertWithMark(var ap:absatzp);
 var pos : position;
 begin
   if assigned(ap) then begin
     Insert(ap,pos);
-    if assigned(pos.absatz) then begin { .robo }
+    if assigned(pos.absatz) then begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
@@ -1462,7 +1471,7 @@ begin
     errsound
   else begin
     Insert(ap,endp);
-    if assigned(endp.absatz) then begin { .robo }
+    if assigned(endp.absatz) then begin
       SetBlockMark(1);
       SetBlock(2,endp.absatz,endp.offset,2);
       KorrBlockScrolled(false);
@@ -1546,7 +1555,7 @@ begin
     spaces:=EndSpaces;
     inblk:=InBlock;
     recount:=false;
-    CutBlock := nil; { MK 12/99 Sicherheitshalber immer ersteinmal nil }
+    CutBlock := nil; { sicherheitshalber immer erstmal nil }
     if blockinverse or blockhidden then begin
       errsound;
       end
@@ -1637,10 +1646,10 @@ begin
 end;
 
 procedure BlockKopieren;     { Ctrl-K-C }
-var ap : absatzp; { .robo }
+var ap : absatzp;
 begin
-  ap:=CopyBLock; { .robo }
-  InsertWithMark(ap); { .robo }
+  ap:=CopyBLock;
+  InsertWithMark(ap);
 end;
 
 procedure BlockEinAus;
@@ -1698,37 +1707,32 @@ begin
     if blockinverse or blockhidden then
       errsound
     else
-      if ClipAvailable then begin
-        if SaveBlock(block[1].pos,block[2].pos,EdTempFile,rrand,false,true,false) then
+    (* if ClipAvailable then *) begin 
+        if SaveBlock(block[1].pos,block[2].pos,ClipFileName,rrand,false,true,false) then
         begin
-          FileToClip(EdTempFile);
+          FileToClip(ClipFileName);
           { if exist(EdTempFile) then era(EdTempFile); }
           if cut then begin
             ap:=CutBlock; Freeblock(ap); end;
-          end;
-        end
-      else begin
+         end;
+        end;
+   (*    else begin
         FreeBlock(Clipboard);
         if cut then Clipboard:=CutBlock
         else Clipboard:=CopyBlock;
-        end;
+        end; *)
 end;
 
 
 procedure BlockClpEinfuegen;
-var ap : absatzp; { .robo }
+var ap : absatzp;
 begin
   with e^ do
-    if Clipavailable then begin
-      ClipToFile(EdTempFile);
-      ap :=LoadBlock(EdTempFile,false,0,rrand); { .robo }
-      InsertWithMark(ap); { .robo }
-      { if exist(EdTempFile) then era(EdTempFile); }
-    end
-    else begin
-      InsertWithMark(Clipboard);
-      Clipboard:=CopyBlock;
-    end;
+  begin
+    ClipToFile(ClipFileName);
+    ap :=LoadBlock(ClipFileName,false,0,rrand);
+    InsertWithMark(ap);
+  end;
 end;
 
 
@@ -1737,7 +1741,7 @@ var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
-    Procs.FileProc(e,fn,false,false); { 04.02.2000 robo }
+    Procs.FileProc(e,fn,false,false);
     if fn<>'' then
       if not exist(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
@@ -1748,13 +1752,12 @@ begin
   end;
 end;
 
-{ 31.01.2000 robo }
 procedure BlockUUeEinlesen;
 var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
-    Procs.FileProc(e,fn,false,true); { 04.02.2000 robo }
+    Procs.FileProc(e,fn,false,true);
     if fn<>'' then
       if not exist(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
@@ -1764,7 +1767,6 @@ begin
       end;
   end;
 end;
-{ /robo }
 
 procedure BlockSpeichern;
 var fn : string;
@@ -1773,7 +1775,7 @@ begin
     if blockinverse or blockhidden then
       errsound
     else begin
-      Procs.FileProc(e,fn,true,false); { 04.02.2000 robo }
+      Procs.FileProc(e,fn,true,false);
       if fn<>'' then begin
         if not exist(fn) then t:='J'
         else t:=Procs.Overwrite(e,fn);
@@ -1822,7 +1824,7 @@ end;
 
 { Block reformatieren }
 
-procedure BlockFormatieren; { by Robo }
+procedure BlockFormatieren;
 var ap,ap2    : absatzp;
     apnew     : absatzp;
     fp        : integer;
@@ -2032,8 +2034,8 @@ var ap : absatzp;
       lsi  : byte;
       brk  : boolean;
   begin
-    ScanGlossary:=false;  
-    assign(t,'GLOSSARY.CFG');
+    ScanGlossary:=false;
+    assign(t,EdGlossaryFile);
     reset(t);
     if IoResult<>0 then errsound  { Keine Glossary Datei? }
     else begin
@@ -2059,7 +2061,7 @@ var ap : absatzp;
             if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,31))
             end;
         until eof(t);
-        listtp(glossary_ed); {Taste E Abfragen}
+        listtp(glossary_ed);
         list(brk);
         s2:=get_selection;
         lsi:=cpos('<',s2)-1;
@@ -2078,16 +2080,16 @@ var ap : absatzp;
         pophp;
         end;
        
-      if not brk then 
+      if not brk then
       begin
         assign(t1,'GLOSSARY.TMP');     { Kuerzel gefunden, Text kopieren }
         rewrite(t1);
-        readln(t, s); write(t1,s);
-        while not EOF(t) and (FirstChar(s) <> '>') do
-        begin
-          readln(t,s);
-          if FirstChar(s) <> '>' then Write(t1, #13#10, s);
-        end;
+        readln(t,s);
+        Repeat        
+          if (s<>'') and (s[1]<>'>') then Write(t1,s);
+          readln(t,s); 
+          if (s='') or (s[1]<>'>') then writeln(t1);       
+        Until Eof(t) or ((s<>'') and (s[1]='>'));  
         close(t1);
         ScanGlossary:=true;
         end;
@@ -2112,7 +2114,7 @@ begin
       gotopos(p, drBoth);
       end;
     Blockhidden:=true;
-    Aufbau:=true;
+    Aufbau:=true;	
     end;
 end; 
 
@@ -2127,7 +2129,7 @@ var   stxt  : string[MaxFindLen];
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
-      apd   : absatzp; { .robo }
+      apd   : absatzp;
       insap : absatzp;
       pos   : position;
       repall: boolean;
@@ -2200,8 +2202,8 @@ begin
             if insap=nil then brk:=true
             else begin
               FastMove(repby[1],insap^.cont,length(repby));
-              apd:=ActAbs; { .robo }
-              AbsDelete(apd,workpos,length(txt),false,true); { .robo }
+              apd:=ActAbs;
+              AbsDelete(apd,workpos,length(txt),false,true);
               Insert(insap,pos);
               MoveWorkpos(workpos+length(repby),ActAbs);
             end;
@@ -2349,14 +2351,16 @@ sok:  case p of
         2 : LocalMenu:=EditfCutBlock;
         3 : LocalMenu:=EditfPasteBlock;
         4 : LocalMenu:=EditfReadBlock;
-        { 03.02.2000 robo }
         5 : LocalMenu:=EditfReadUUeBlock;
         6 : LocalMenu:=EditfWriteBlock;
-        8 : LocalMenu:=EditfWrapOff;
-        9 : LocalMenu:=EditfWrapOn;
-       11 : LocalMenu:=EditfSetup;
+        8 : LocalMenu:=EditfFind;
+        9 : LocalMenu:=EditfFindReplace;
+       10 : LocalMenu:=editfFindRepeat;
+       12 : LocalMenu:=EditfWrapOff;
+       13 : LocalMenu:=EditfWrapOn;
+       15 : LocalMenu:=EditfSetup;
+       17 : LocalMenu:=EditfBreak;
        { 12 : LocalMenu:=EditfSaveSetup; }
-        { /robo }
       else  LocalMenu:=0;
       end;
     wpop;
@@ -2410,8 +2414,22 @@ begin
         end;
       end;
 end;
+
 {
   $Log$
+  Revision 1.19.2.23  2001/09/16 20:34:46  my
+  JG+MY:- Editor-Menü (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugefügt
+
+  JG+MY:- Quotereflow verfeinert: <Enter> mitten in Quotezeichen
+          entspricht <Enter> am Ende von Quotezeichen
+
+  JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
+          Windows-Clipboard nicht verfügbar ist. Altes Editor-RAM-
+          Clipboard deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.19.2.22  2001/09/06 16:15:58  mk
   - optimized GotoPos
 
