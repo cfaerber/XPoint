@@ -46,7 +46,7 @@ begin
   writeln;
   writeln('----------------  Nodelist Processor ', verstr, betastr);
   writeln;
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -340,6 +340,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/07/02 10:42:59  mk
+  - pformstr entfernt
+
   Revision 1.6  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

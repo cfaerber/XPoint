@@ -365,7 +365,7 @@ begin
   rewrite(output);
   writeln;
   writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   Writeln;
 end;
@@ -1814,6 +1814,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.1  2000/07/02 10:43:01  mk
+  - pformstr entfernt
+
   Revision 1.21  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

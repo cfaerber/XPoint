@@ -179,7 +179,7 @@ var t : text;
 begin
   assign(t,''); rewrite(t);
   writeln(t);
-  writeln(t,'XP-FM  Fido Mailer ',verstr,pformstr, betastr, ' (c) ''93-99 by Peter Mandrella');
+  writeln(t,'XP-FM  Fido Mailer ',verstr,betastr, ' (c) ''93-99 by Peter Mandrella');
   writeln(t);
   if FOSSILdetect then begin
     writeln(t,'FOSSIL driver detected');
@@ -1030,6 +1030,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.1  2000/07/02 10:42:59  mk
+  - pformstr entfernt
+
   Revision 1.14  2000/06/20 22:22:21  ma
   - letzte Version des alten Mailers
 

@@ -68,7 +68,7 @@ procedure wrlogo;
 begin
   writeln;
   writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -754,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.1  2000/07/02 10:43:00  mk
+  - pformstr entfernt
+
   Revision 1.20  2000/05/14 17:22:51  hd
   - Linux: Manuelle Init. der XPCurses
 

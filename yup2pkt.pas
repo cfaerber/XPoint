@@ -93,7 +93,7 @@ procedure logo;
 begin
   writeln;
   writeln('Yuppie-Mailbase -> PKT - Konvertierer, Peter Mandrella, 12/92');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -366,6 +366,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.4.1  2000/07/02 10:43:01  mk
+  - pformstr entfernt
+
   Revision 1.3  2000/03/03 13:24:45  mk
   YUP2PKT compilierbar gemacht und in Distribution aufgenommen
 

@@ -364,7 +364,7 @@ begin
 {$endif}
   writeln;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -3574,6 +3574,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.1  2000/07/02 10:42:59  mk
+  - pformstr entfernt
+
   Revision 1.35  2000/06/21 20:40:25  mk
   RB: - Bugfix fuer fortgesetzte Headerzeilen
 

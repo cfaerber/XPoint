@@ -181,7 +181,7 @@ procedure logo;
 begin
   writeln;
   writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -1831,6 +1831,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.1  2000/07/02 10:42:59  mk
+  - pformstr entfernt
+
   Revision 1.15  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

@@ -170,7 +170,7 @@ begin
   writeln('ZPR - ZCONNECT(R)-Pufferreparierer - Freeware');
   writeln('(c) 1994-96 by Peter Mandrella <p.mandrella@ldb.han.de>');
   Writeln;
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -1287,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.2  2000/07/02 10:43:01  mk
+  - pformstr entfernt
+
   Revision 1.14.2.1  2000/06/22 17:13:46  mk
   - 32 Bit Teile entfernt
 
