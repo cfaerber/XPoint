@@ -65,7 +65,7 @@ type
     function Connect(AFQDomain: String): boolean;
 
     { Abmelden }
-    procedure DisConnect; override;
+    procedure Disconnect; override;
 
     { Anmelden (wird von Connect aufgerufen) }
     function  Login: boolean;
@@ -78,6 +78,8 @@ type
   end;
 
 implementation
+
+uses typeform, encoder, md5;
 
 const
   DefaultSMTPPort       = 25;
@@ -97,6 +99,7 @@ resourcestring
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
   res_connect4          = 'Verbunden mit %s';
   res_connect5          = 'Mail von %s an %s konnte nicht versendet werden';
+  res_connect6          = 'Absenderfeld wurde abgelehnt';
 
   res_disconnect        = 'Trenne Verbindung...';
 
@@ -126,22 +129,30 @@ var
   s: string;
 begin
   Result := false;
-  // Eine Authorisierung mu· erst noch geschrieben werden
-  if Connected then
-  begin
-    if FFQDomain = '' then
-      FFQDomain := 'localhost';
-    SWriteln(SMTPHELOSIGN + ' ' + FFQDomain);
-    SReadln(s);
+  if not Connected then exit;
 
-    if ParseResult(s) <> 250 then
-    begin
-      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-      DisConnect;
-      exit;
+  if FFQDomain = '' then
+    FFQDomain := 'localhost';
+
+  SWriteln(SMTPHELOSIGN + ' ' + FFQDomain);
+  SReadln(s);
+  if ParseResult(s) <> 250 then
+    raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+
+  if FUser <> '' then begin // SMTP Auth, currently only CRAM-MD5 implemented
+    SWriteln('AUTH CRAM-MD5');
+    SReadln(s);
+    if ParseResult(s) <> 334 then
+      raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    Delete(s, 1, Pos(' ', s));
+    s:= User + ' ' + LowerCase(CRAM_MD5(Password, DecodeBase64(s)));
+    SWriteln(EncodeBase64(s[1], length(s)));
+    SReadln(s);
+    if ParseResult(s) <> 235 then
+      raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
     end;
-    Result := true;
-  end;
+
+  Result := true;
 end;
 
 function TSMTP.Connect(AFQDomain: String): boolean;
@@ -161,32 +172,24 @@ begin
   FServer := s;
 
   if ParseResult(s) <> 220 then // RÅckmeldung auswerten
-  begin
-    Output(mcError,res_connect2, [ErrorMsg]); // Unerreichbar
-    DisConnect;
-    exit;
-  end else
-  begin
+    raise ESMTP.CreateFmt(res_connect2, [ErrorMsg]) // Unerreichbar
+  else begin
     Output(mcError,res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
   end;
 
   { Anmelden }
   if not Login then
-  begin
-    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    DisConnect;
-    exit;
-  end;
+    raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
   Result:= true;
 end;
 
-procedure TSMTP.DisConnect;
+procedure TSMTP.Disconnect;
 begin
   Output(mcInfo,res_disconnect,[0]);
   if Connected then
     SWriteln('QUIT');
-  inherited DisConnect;
+  inherited Disconnect;
 end;
 
 procedure TSMTP.PostMail(Mail: TStringList; const From, ToStr: String);
@@ -196,30 +199,22 @@ var
 begin
   SWriteln(SMTPFROMSIGN + From);
   SReadln(s);
-  if ParseResult(s) <> 250 then
-  begin
-    Output(mcError,res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
-    DisConnect;
-    exit;
+  case ParseResult(s) of
+    553: raise ESMTP.Create(res_connect6);  // sender field not properly set
+    250: ;
+  else
+    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
   end;
 
   SWriteln(SMTPTOSIGN + ToStr);
   SReadln(s);
   if ParseResult(s) <> 250 then
-  begin
-    Output(mcError,res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
-    DisConnect;
-    exit;
-  end;
+    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
 
   SWriteln(SMTPDATASIGN);
   SReadln(s);
   if ParseResult(s) <> 354 then
-  begin
-    Output(mcError,res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
-    DisConnect;
-    exit;
-  end;
+    raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
 
   if FromLine = -1 then FromLine := 0;
   if ToLine = -1   then ToLine := Mail.Count - 1;
@@ -231,11 +226,7 @@ begin
   swriteln('.');
   sreadln(s);
   if ParseResult(s) <> 250 then
-  begin
-    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    DisConnect;
-    exit;
-  end;
+    raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
 end;
 
 function TSMTP.ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
@@ -299,6 +290,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2001/05/27 14:27:22  ma
+  - cleaned up exceptions (beware, there seem to be bugs in VP, use FPC
+    instead)
+  - implemented SMTP auth (currently only CRAM-MD5)
+
   Revision 1.6  2001/04/16 14:28:25  ma
   - using ProgrOutputWindow now
 

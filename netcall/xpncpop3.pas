@@ -94,42 +94,56 @@ var
   List          : TStringList;
 begin
   if bp^.smtp_ip='' then exit; // exit immediately if no server specified
+  DeleteFile(RFCFile);
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
-  if FileExists(RFCFile) then
-  begin
-    { ProgressOutput erstellen }
-    POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_smtpinit,[BoxName]),True);
-    { Host und ... }
-    SMTP:= TSMTP.CreateWithHost(bp^.smtp_ip);
-    { IPC erstellen }
-    SMTP.ProgressOutput:= POWindow;
-    { ggf. Zugangsdaten uebernehmen }
-    if (bp^.smtp_id<>'') and (bp^.smtp_pwd<>'') then begin
-      SMTP.User:= bp^.smtp_id;
-      SMTP.Password:= bp^.smtp_pwd;
-    end;
+  if not FileExists(RFCFile) then exit;
 
-    try
-      List := TStringList.Create;
-      List.LoadFromFile(RFCFile);
+  { ProgressOutput erstellen }
+  POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_smtpinit,[BoxName]),True);
+  { Host und ... }
+  SMTP:= TSMTP.CreateWithHost(bp^.smtp_ip);
+  { IPC erstellen }
+  SMTP.ProgressOutput:= POWindow;
+  { ggf. Zugangsdaten uebernehmen }
+  if (bp^.smtp_id<>'') and (bp^.smtp_pwd<>'') then begin
+    SMTP.User:= bp^.smtp_id;
+    SMTP.Password:= bp^.smtp_pwd;
+  end;
 
-      SMTP.Connect(SMTP.GetFQDomain(List));
+  try
+    List := TStringList.Create;
+    List.LoadFromFile(RFCFile);
 
-      SMTP.PostPlainRFCMails(List);
+    SMTP.Connect(SMTP.GetFQDomain(List));
 
+    SMTP.PostPlainRFCMails(List);
+
+    SMTP.Disconnect;
+  except
+    on E: ESMTP do begin
+      POWindow.WriteFmt(mcError, E.Message, [0]);
       SMTP.Disconnect;
-    except
-      POWindow.WriteFmt(mcError,res_noconnect,[0]);
       result:= false;
-    end;
-    List.Free;
-    SMTP.Free;
-    if result then begin
-      ClearUnversandt(PPFile,BoxName);
-      if FileExists(PPFile)then _era(PPFile);
-      if FileExists(RFCFile)then _era(RFCFile);
-    end;
+      end;
+    on E: ESocketNetcall do begin
+      POWindow.WriteFmt(mcError, res_noconnect, [0]);
+      SMTP.Disconnect;
+      result:= false;
+      end
+    else begin
+      POWindow.WriteFmt(mcError, res_strange, [0]);
+      SMTP.Disconnect;
+      result:= false;
+      end;
+  end;
+
+  List.Free;
+  SMTP.Free;
+  if result then begin
+    ClearUnversandt(PPFile,BoxName);
+    if FileExists(PPFile)then _era(PPFile);
+    if FileExists(RFCFile)then _era(RFCFile);
   end;
 end;
 
@@ -220,14 +234,23 @@ begin
 //    SaveMail;
     POP.Disconnect;
   except
-    on E: EPOP3 do
+    on E: EPOP3 do begin
       POWindow.WriteFmt(mcError, E.Message, [0]);
-    on E: ESocketNetcall do
-      POWindow.WriteFmt(mcError, res_noconnect, [0])
-    else
+      POP.Disconnect;
+      result:= false;
+      end;
+    on E: ESocketNetcall do begin
+      POWindow.WriteFmt(mcError, res_noconnect, [0]);
+      POP.Disconnect;
+      result:= false;
+      end
+    else begin
       POWindow.WriteFmt(mcError, res_strange, [0]);
-    result:= false;
+      POP.Disconnect;
+      result:= false;
+      end;
   end;
+
   if POP.UIDLs.Count>0 then
     POP.UIDLs.SaveToFile(UIDLFileName)
   else
@@ -241,6 +264,11 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/05/27 14:27:22  ma
+  - cleaned up exceptions (beware, there seem to be bugs in VP, use FPC
+    instead)
+  - implemented SMTP auth (currently only CRAM-MD5)
+
   Revision 1.16  2001/05/23 23:55:04  ma
   - full UIDL support (needs testing)
   - cleaned up exceptions
