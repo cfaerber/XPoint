@@ -1277,10 +1277,7 @@ begin
   if markpos=nil then
     next_marked:=#0
   else
-    if EmsPtr(markpos)^.cont='' then
-      next_marked:=' '
-    else
-      next_marked:=EmsPtr(markpos)^.cont;
+    next_marked:=EmsPtr(markpos)^.cont;
   linepos:=markpos;
 end;
 
@@ -1306,10 +1303,7 @@ begin
     if markpos=nil then
       first_marked:=#0
     else
-      if EmsPtr(markpos)^.cont='' then
-        first_marked:=' '
-      else
-        first_marked:=EmsPtr(markpos)^.cont;
+      first_marked:=EmsPtr(markpos)^.cont;
     end;
   linepos:=markpos;
 end;
@@ -1389,6 +1383,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/18 14:57:45  mk
+  - Keine Leerzeichen mehr in Leerzeilen
+
   Revision 1.25  2000/07/13 10:23:43  mk
   - Zeiger auf Strings entfernt
 
