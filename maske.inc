@@ -276,7 +276,7 @@ var ax,p,myp  : integer;
         8 : v:=v and testdate;
         9 : v:=v and testtime(len,cont);
       end;
-      v:=v and test2(cont);
+      valid:=v and test2(cont);
     end;
   end;
 
@@ -888,7 +888,11 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten;
 
+        if (t=^J) and not quitfn(false,modified) then t:='';
+        if (t=keyesc) and not quitfn(true,modified) then t:='';
+
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
+
         if (t=keyup) or (t=keystab) then
           if yp>1 then movefield(-1)
           else
@@ -1158,6 +1162,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.43  2002/02/04 16:26:53  mk
+  - more after merge fixes
+
   Revision 1.42  2002/02/03 22:20:19  mk
   - fixed some display errors
 
