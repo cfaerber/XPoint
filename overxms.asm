@@ -171,7 +171,9 @@ CopyUnitToXms PROC
         MOV    Word Ptr [XmsMove.DestOffset+2], BX
         MOV    AH, 11
         LEA    SI, XmsMove
+        PUSH   BX
         CALL   [XmsDriver]
+        POP    BX
 
 ;  Bump code size
 
@@ -321,4 +323,10 @@ OvrInitXMS ENDP
 
 Code       ENDS
            END
+
+;~~~~~~~~~~~~~~~~~~~
+; 08.03.03  JM  wegen des EMM386 von NovelDos 7.0, der das Register BX
+                bei der šBergabe einer 32-Bit Adresse in BX:DI
+                beim Kopieren von Units aus der Overlaydatei ins XMS nullt,
+                wird in Zeile 174/176 das Register BX gesichert
 
