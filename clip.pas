@@ -101,25 +101,17 @@ end;
 var
   P: Pointer;
   MemHandle: HGlobal;
-  Size: Integer;
-  Str: String;
 begin
   if OpenClipboard(0) then
   begin
     MemHandle := GetClipboardData(cf_OEMText);
     P := GlobalLock(MemHandle);
     if Assigned(P) then
-    begin
-      // !! Das kann vereinfacht werden
-      Size := StrLen(P);
-      SetLength(Str, Size);
-      Move(P^, Str[1], Size);
-    end;
-    Clip2String := Str;
+      SetString(Result, PChar(p), StrLen(p));
     GlobalUnlock(MemHandle);
     CloseClipBoard;
   end else
-    Clip2String := '';
+    Result := '';
 end;
 {$ELSE }
 {$IFDEF VP }
@@ -328,6 +320,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/12/09 14:21:49  mk
+  - simplyfied clip2string
+
   Revision 1.37  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 
