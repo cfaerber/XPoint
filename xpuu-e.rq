@@ -1,0 +1,69 @@
+K XP UUCICO v3.0 resource file
+K English
+
+13  ~bytes
+
+# ----- Fehler in UUCICO.CFG
+
+100 Parameter error:~
+101 Server name missing
+102 Node name missing
+103 UUCP Command file missing
+104 Port number missing
+105 Illegal File Path
+106 Illegal logfile name: %s
+107 Illegal baud rate
+
+# ----- UUCICO
+
++ 2300
+1    Server
+2    Protocol
+3    Using UUCP protocol: %s (of %s)
+4    Packet size
+5    Online time
+6    Packet size...:~
+7    Window size...:~
+8    Invalid window size: 0
+
+10   Sending
+11   Receiving
+12   Files
+13   Transferred
+14   Total
+15   File size
+16   Time left
+17   Block size
+18   Throughput         cps
+19   Total              cps
+20   Errors
+
+30   closing UUCP connection ...
+31   Timeout
+32   ~- error
+33   Error!
+34   File ok.
+35   ~- terminated
+36   Break.
+37   No common protocol (remote supports %s)
+38   Using size negotiation
+39   Resending packet %s
+
+42   Error 2
+44   Error 4 - called system can't create temporary file
+46   Error 6 - not enough disk space on called system
+48   Error 8 - file does already exist
+
+50   Disconnecting ...
+51   <Esc> - user break
+
+60   uncompressed news batch
+61   compressed news batch
+62   frozen news batch
+63   g-zipped news batch
+64   uncompressed mail batch
+65   compressed file
+66   frozen file
+67   g-zipped file
+68   mail from~
+-
