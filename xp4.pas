@@ -2109,7 +2109,6 @@ begin      { --- select --- }
 
         if (t=mauswheelup) and (disprec[gl]<>0) then
         begin
-          mwrt(40,1,LeftStr(Format('UP:   p=%d komofs=%d',[p,komofs])+dup(40,' '),40));
           GoPos(1);
           for i:=1 to 3 do
             if not Back then
@@ -2129,7 +2128,6 @@ begin      { --- select --- }
 
         if (t=mauswheeldn) and (disprec[gl]<>0) then
         begin
-          mwrt(40,1,LeftStr(Format('DOWN: p=%d komofs=%d',[p,komofs])+dup(40,' '),40));
           GoPos(gl);
           for i:=1 to 3 do
             if not Forth then
@@ -2283,6 +2281,9 @@ end;
 
 {
   $Log$
+  Revision 1.109  2001/09/18 20:33:06  cl
+  - oops, removed private debug code
+
   Revision 1.108  2001/09/18 20:30:15  cl
   - mouse wheel support in 'brett'/message/user screens
 
