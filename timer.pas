@@ -27,7 +27,8 @@ unit Timer;
 interface
 
 type
-  tTimer = object
+  TPTimer = ^TTimer;
+  TTimer = object
   private
     InitTicks, TimeOutTicks: TDateTime;
   public
@@ -42,9 +43,9 @@ type
     procedure SetTimeout(TimeoutSec: Double);
   end;
 
-function Calibrate: LongInt;            {Busy loop}
-procedure WaitTime(Milliseconds: Real);
-
+function  Calibrate: LongInt;            
+function  GetTicks: LongInt;
+procedure WaitTime (Milliseconds: Real); {Busy loop}
 procedure SleepTime(Milliseconds: Real); {Idle loop}
 
 implementation
@@ -148,6 +149,10 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/03/19 12:19:21  cl
+  - put GetTicks into interface
+  - TPTimer = ^TTimer
+
   Revision 1.16  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
