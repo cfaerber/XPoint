@@ -1,20 +1,32 @@
+<p>
 <h2>Letzte Änderungen an OpenXP/32</h2>
 
 <h3>v3.9.x (Entwicklerzweig)</h3> 
 <ul>
   <li>alle Fixes und &Auml;nderungen der 3.8.x</li>
-  <li>2002-05-26 ma: E-Mail-Adresse wird jetzt im "richtigen" Datenbankfeld gespeichert, kann dadurch länger als 30 Zeichen sein. <br /><b>E-Mail-Adressen müssen in Boxeneinstellungen neu eingegeben werden.</b></li>
+  <li>2002-05-26 ma: E-Mail-Adresse wird jetzt im "richtigen" Datenbankfeld gespeichert, 
+    kann dadurch länger als 30 Zeichen sein. <br />
+    <b>E-Mail-Adressen müssen in Boxeneinstellungen neu eingegeben werden.</b></li>
   <li>2002-05-07 ma: SMTP AUTH PLAIN und LOGIN eingebaut (bisher nur CRAM-MD5)</li>
   <li>2002-04-14 cl: <b>Komplett neues Adresshandling</b> ("richtiger" CC/BCC-Support 
-    etc.)</li>
+    etc.), siehe </li>
   <li>2002-05-30: mk: Der Lister erkennt automatisch UTF-8 codierte Textdateien 
     (an den drei ersten Magic-Bytes) und stellt diese richtig dar (nat&uuml;rlich 
     inkl. des Euro-Zeichens)</li>
   <li>2002-06-05 mk: openxp.exe ist jetzt mit Delphi erstellt, die FPC-Version 
     hei&szlig;t openxp_fpc.exe. Bitte vor Bugreports immer beide Versionen testen</li>
-  <li>2002-06-12 mk: maximale Länge des Betreffs von von 70 Zeichen auf unendlich angehoben (nur in RFC-Netzen), weitere Limits für bestimmte Eingaben (Telefon, Homepage, Postadresse) komplett etnfernt</li>
+  <li>2002-06-12 mk: maximale Länge des Betreffs von von 70 Zeichen auf unendlich 
+    angehoben (nur in RFC-Netzen), weitere Limits für bestimmte Eingaben (Telefon, 
+    Homepage, Postadresse) komplett etnfernt</li>
   <li>2002-06-23 cl: weitere Änderungen für neues Adresshandling</li>
-  <li>2002-06-30 mk: verschiedene nicht initialisierte Variablen gefixt, behebt möglicherweise Probleme bei der Erkennung des optimalen Zeichensatzes einer Nachricht</li>
+  <li>2002-06-30 mk: verschiedene nicht initialisierte Variablen gefixt, behebt 
+    möglicherweise Probleme bei der Erkennung des optimalen Zeichensatzes einer 
+    Nachricht</li>
+  <li>2002-07-22 mk: Die Liste der markierten Nachrichten wurde intern auf eine 
+    dynamische Liste umgestellt, damit existiert kein Limit der gleichzeitig markierten 
+    Nachrichten mehr</li>
+  <li>2002-07-22 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=500572&group_id=3766&atid=103766">#500572</a>: 
+    Der Dupekill lässt sich jetzt mit ESC abbrechen 
 </ul>
 
 <hr noshade size="1"/>
@@ -22,10 +34,14 @@
 <h3>v3.8.x (Anwenderzweig)</h3>
 
 <ul>
-  <li>2002-07-18 ma: Diverse kleinere Fixes (Fido: FD-Pointlisten-Lookup, NNTP: Brettmanager/Bretter abbestellen, Kosmetik)</li>
-  <li>2002-07-17 ma: SMTP Auth Login/Plain eingebaut (bisher nur CRAM-MD5) [von v3.9 übernommen]</li>
+  <li>2002-07-18 ma: Diverse kleinere Fixes (Fido: FD-Pointlisten-Lookup, NNTP: 
+    Brettmanager/Bretter abbestellen, Kosmetik)</li>
+  <li>2002-07-17 ma: SMTP Auth Login/Plain eingebaut (bisher nur CRAM-MD5) [von 
+    v3.9 übernommen]</li>
   <li>2002-07-07 ma: Fixes in Sachen Fido-over-IP im Zusammenspiel mit Argus</li>
   <li>2002-07-01 my: Neue IBM->ISO-Konvertiertabelle</li>
+  <li>2002-07-22 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=496988&group_id=3766&atid=103766">#496988</a>: 
+    Linux: Dateirechte bei Pufferimport</li>
 </ul>
 
 <p><b>ab 5.06.2002 v3.8.6</b></p>
@@ -42,7 +58,7 @@
     von Nachrichten beseitigt</li>
 </ul>
 
-<p><b>ab 20.05.2002 v3.8.5</b> 
+<p><b>ab 20.05.2002 v3.8.5</b></p>
 
 <ul>
   <li>2002-05-19 mk: Sprachwechsel &uuml;ber Config/Optionen/Sprache und Anzeige der Kommandozeilen-Hilfe funktionieren jetzt auch unter Linux</li>
@@ -50,7 +66,7 @@
   <li>2002-05-19 mk: Client-Netcall implementiert</li>
 </ul>
 
-<p><b>ab 14.05.2002 v3.8.4</b>
+<p><b>ab 14.05.2002 v3.8.4</b></p>
 
 <ul>
   <li>2002-05-13 ma: Bugfix: Autoexec-Verzeichnis wurde nicht bearbeitet</li>
@@ -58,13 +74,13 @@
   <li>2002-05-12 ma: Bugfix: Reply-To wurde nicht richtig gesetzt, falls Realname im Reply-To angegeben</li>
 </ul>
 
-<p><b>ab 7.05.2002 v3.8.1</b> 
+<p><b>ab 7.05.2002 v3.8.1</b></p>
 
 <ul>
   <li>2002-05-04 ma: ZConnect/Janus-Bugfix (eingehende CALLED.* wurde nicht entpackt)</li>
 </ul>
 
-<p><b>ab 21.04.2002 v3.7.8 beta</b>
+<p><b>ab 21.04.2002 v3.7.8 beta</b></p>
 
 <ul>
   <li>ma: Schalter Config/Optionen/Netze/Verschiedenes/"Alten Betreff anhängen" 
@@ -84,6 +100,6 @@
   <li>my: '#' im Lister ruft Kommentarbaum auf (noch nicht komplett)</li>
   <li><b>Übernahme vieler Features aus OpenXP/16</b></li>
 </ul>
-<p><b>1.01.2002 v3.7.6 beta</b> 
-<p><b>21.10.2001 v3.7.4 beta</b> 
-<p><b>22.06.2000 v3.70.1 beta</b>
+<p><b>1.01.2002 v3.7.6 beta</b></p>
+<p><b>21.10.2001 v3.7.4 beta</b></p>
+<p><b>22.06.2000 v3.70.1 beta</b></p>
