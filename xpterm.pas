@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -23,7 +24,7 @@ uses
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
-      resource,xpglobal, xp0,xp1,xp1o2,xp1input;
+      resource,xpglobal, xp0,xp1,xp1o2,xp1input, lfn;
 
 
 function RunScript(test:boolean; scriptfile:pathstr;
@@ -1610,6 +1611,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/10/17 00:16:45  mk
+  - LFN Unit hinzugefuegt (Bug #112966)
+
   Revision 1.10.2.1  2000/10/15 09:28:09  mk
   - LFN fixes
 

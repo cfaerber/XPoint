@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,10 +12,7 @@
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
 {$I XPDEFINE.INC }
-
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp4o;
 
@@ -23,7 +21,7 @@ interface
 uses
   crt, dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
      lister,archive,maus2,winxp,printerx,resource,xpglobal,
-     xp0,xp1,xp1o2,xp1help,xp1input;
+     xp0,xp1,xp1o2,xp1help,xp1input, lfn;
 
 
 var  such_brett  : string[5];    { fÅr Suche im gewÑhlten Brett }
@@ -2431,6 +2429,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.9  2000/10/17 00:16:44  mk
+  - LFN Unit hinzugefuegt (Bug #112966)
+
   Revision 1.47.2.8  2000/10/15 09:28:07  mk
   - LFN fixes
 

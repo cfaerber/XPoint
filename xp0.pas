@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -16,7 +17,7 @@ unit xp0;
 
 interface
 
-uses   dos,typeform,keys,xpglobal;
+uses   dos,typeform,keys,xpglobal, lfn;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -1160,6 +1161,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.10  2000/10/17 00:16:43  mk
+  - LFN Unit hinzugefuegt (Bug #112966)
+
   Revision 1.54.2.9  2000/10/16 10:19:10  mk
   - Fixes fuer LFN
 

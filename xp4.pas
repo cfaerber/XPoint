@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,30 +12,19 @@
 { CrossPoint - Hauptmodul }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp4;
 
 interface
 
 uses xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
-  archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
+  crt, dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
+  archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input, lfn;
 
 
 const
-{$IFDEF BP }
   maxgl   = 46;
-{$ELSE }
-  maxgl   = 60;
-{$ENDIF }
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -2080,6 +2070,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.9  2000/10/17 00:16:44  mk
+  - LFN Unit hinzugefuegt (Bug #112966)
+
   Revision 1.26.2.8  2000/10/10 05:10:27  mk
   JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
 

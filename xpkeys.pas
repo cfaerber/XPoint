@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,16 +12,14 @@
 { (Funktions)tasten & Makros }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F+}
-{$ENDIF }
+{$F+}
 
 unit xpkeys;
 
 interface
 
 uses
-  xpglobal, dos,typeform,fileio,inout,keys,resource,xp0,xp1;
+  xpglobal, dos,typeform,fileio,inout,keys,resource,xp0,xp1, lfn;
 
 
 type  getf_func   = function(nr,nn:byte):pathstr;
@@ -242,6 +241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/10/17 00:16:45  mk
+  - LFN Unit hinzugefuegt (Bug #112966)
+
   Revision 1.6  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
