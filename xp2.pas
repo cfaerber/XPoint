@@ -1052,7 +1052,6 @@ begin
     copyright(true);
 end;
 
-
 procedure testlock;
 const
   LockString: String = 'Isn''t this a beautiful lockfile?';
@@ -1063,8 +1062,8 @@ begin
   if ParNolock then exit;
   LockDenied := false;
   assign(lockfile, 'LOCKFILE');
-  filemode:=FMRW + FMDenyWrite;
-  rewrite(lockfile);
+  filemode:=FMWrite + FMDenyBoth;
+  rewrite(lockfile, 1);
   if IOResult <> 0 then
     LockDenied := true
   else
@@ -1073,8 +1072,15 @@ begin
     if IOResult <> 0 then
       LockDenied := true
     else
-      if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
+    begin
+      Close(lockfile);
+      Reset(lockfile, 1);
+      if IOResult <> 0 then
+        LockDenied := true
+      else
+        if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
         (IOResult <> 0) then LockDenied := true;
+    end;
   end;
   if LockDenied then
   begin
@@ -1089,7 +1095,6 @@ begin
   lockopen:=true;
   FileMode := FMRW; { Filemode restaurieren! }
 end;
-
 
 procedure ReadDefaultViewers;
 
@@ -1117,6 +1122,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.7  2000/11/13 18:50:24  mk
+  - some improvments and fixes for lockfile handling
+
   Revision 1.15.2.6  2000/11/10 11:29:10  mk
   - fixed Bug #116292: Mehrfachstart von XP abfangen
 
