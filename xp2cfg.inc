@@ -1062,7 +1062,7 @@ end;
 procedure readconfig;
 var t       : text;
     s,su    : string;
-    p       : byte;
+    i, p    : byte;
     userauf : string[10];
     dummys  : string;
     dummyb  : boolean;
@@ -1502,6 +1502,10 @@ begin
       end;
     close(t);
 
+    for i:=1 to 2 do
+      if mheadercustom[i][length(mheadercustom[i])]=':' then
+        delete(mheadercustom[i],length(mheadercustom[i]),1);
+
     extrakttyp:=defextrakttyp;
     if ParZeilen>0 then begin
       cfgscrlines:=screenlines;
@@ -1598,6 +1602,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/03/15 13:57:30  mk
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
+
   Revision 1.17  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

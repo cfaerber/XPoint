@@ -657,7 +657,7 @@ begin
 end;
 
 procedure MiscAnzeigeCfg;
-var x,y    : byte;
+var i,x,y    : byte;
     brk,du : boolean;
 begin
   dialog(36,13,'',x,y);
@@ -670,17 +670,22 @@ begin
   maddbool(3,7,getres2(260,3),ss_passwort);   { 'Startpaáwort abfragen' }
   du:=dispusername;
   maddbool(3,9,getres2(260,4),dispusername);  { 'Username anzeigen' }
-  
+
   maddstring(3,11,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
   maddstring(3,12,getres2(260,14),mheadercustom[2],19,19,''); { 'userdef. Kopfzeile 2' }
-  
+
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
     scsavetime:=scrsaver;
     if dispusername<>du then showusername;
+
+    for i:=1 to 2 do
+      if mheadercustom[i][length(mheadercustom[i])]=':' then
+        delete(mheadercustom[i],length(mheadercustom[i]),1);
+
     GlobalModified;
-    end;
+  end;
   enddialog;
   menurestart:=brk;
 end;
