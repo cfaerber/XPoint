@@ -93,35 +93,42 @@ var ax,p,myp  : integer;
         with fld[i]^ do
           if (yy0>=a+1) and (yy<=a+un) then begin
             if enabled or (not disnodisp) then begin
-              if not enabled then begin
+              if not enabled then { not enabled }
+	      begin
                 attrtxt(stat.col.ColBack);
                 wrt(xx2,yy-a,l+sp(len)+l);
-                if stat.mausarrows and hassel then Wrt2(' ')
-                else if checkbutt then Wrt2('  ');
+                if stat.mausarrows and hassel then 
+		  Wrt2(' ')
+                else 
+		if checkbutt then 
+		  Wrt2('  ');
                 attrtxt(stat.col.ColFeldInput);
-                end
-              else if checkbutt then begin
+              end { not enabled }
+              else if checkbutt then begin { enabled, checkbutt }
                 attrtxt(stat.col.colbuttons);
-                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1],'x',' ')+'] ');
-                end
-              else begin
+                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1],#$9E,' ')+'] ');
+              end { enabled, checkbutt }
+              else begin { enabled, not checkbutt }
                 attrtxt(stat.col.colfeldinput);
                 wrt(xx2,yy-a,l+forms(cont,len));
-                if stat.arrowspace and enabled then begin
-                  if length(cont)>len then begin
+                if stat.arrowspace and enabled then 
+		begin
+                  if length(cont)>len then 
+		  begin
                     attrtxt(stat.col.ColArrows);
                     Wrt2(#16);
-                    end
+                  end
                   else
                     Wrt2(' ');
-                  if stat.mausarrows and hassel then begin
+                  if stat.mausarrows and hassel then 
+		  begin
                     attrtxt(stat.col.colback);
                     Wrt2(#25);
-                    end;
                   end;
-                end;
-              end;
-            end
+                end; { stat.arrowspace and enabled }
+              end; { enabled, not checkbutt }
+            end; { enabled or (not dispnodisp) } 
+          end { (yy0>=a+1) and (yy<=a+un) }
           else
             if yy0<a+1 then ua:=true
             else da:=true;
@@ -275,7 +282,7 @@ var ax,p,myp  : integer;
         moff;
         if checkbutt then begin
           attrtxt(stat.col.colbuttons);
-          Wrt2(' [' + iifc(cont=yesno[1],'x',' ') + '] ');
+          Wrt2(' [' + iifc(cont=yesno[1],#$9E,' ') + '] ');
           end
         else begin
           if stat.arrowspace then begin
@@ -366,7 +373,7 @@ var ax,p,myp  : integer;
         end;
     end;
 
-  begin
+  begin { procedure select }
     brk:=false;
     with amaskp^,afld^ do begin
       width:=4; lines:=0;       { Minimale Breite: 4 }
@@ -743,7 +750,7 @@ var ax,p,myp  : integer;
       end;
   end;
 
-begin   { readmask }
+begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   newfld:=true; redisplay:=true;
   mzu:=mauszuu; mzo:=mauszuo;
   mzl:=mauszul; mzr:=mauszur;
@@ -778,33 +785,42 @@ begin   { readmask }
 
     maussel:=false;
     poutside:=false;
-    repeat
-      if redisplay then begin
+    repeat { main loop }
+
+      if redisplay then 
+      begin
         attrtxt(col.ColBack);
-        if rahmentyp=4 then begin
+        if rahmentyp=4 then 
+	begin
           moff;
           if a>0 then wrt(rl,ro,'Ö'+dup(rr-rl-1,'Ä')+'·')
           else wrt(rl,ro,'É'+dup(rr-rl-1,'Í')+'»');
           if maxyy0-a>un-ob+1 then wrt(rl,ru,'Ó'+dup(rr-rl-1,'Ä')+'½')
           else wrt(rl,ru,'È'+dup(rr-rl-1,'Í')+'¼');
           mon;
-          end;
-        if not dontclear then clwin(li,re,ob,un);
+        end;
+        if not dontclear then  
+	  clwin(li,re,ob,un);
         redisplay:=false;
         redispfields:=true;
         redisptext:=true;
-        end;
-      if redispfields then begin
+      end;
+	
+      if redispfields then 
+      begin
         ClearFields;
         showfldnames;
         FldDisplay;
-        if @userdisp<>nil then userdisp;
+        if @userdisp<>nil then 
+	  userdisp;
         redispfields:=false;
-        end;
-      if redisptext then begin
+      end;
+      
+      if redisptext then 
+      begin
         textdisplay;
         redisptext:=false;
-        end;
+      end;
 
       afld:=fld[yp];
       with afld^ do begin
@@ -852,8 +868,6 @@ begin   { readmask }
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten;
 
-        if (t=^J) and not quitfn(false,modified) then t:='';
-        if (t=keyesc) and not quitfn(true,modified) then t:='';
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
         if (t=keyup) or (t=keystab) then
           if yp>1 then movefield(-1)
@@ -1066,6 +1080,10 @@ begin   { readmask }
           p:=1; ax:=0;
           replace:=false;
           end;
+
+        if (t=^J) and not quitfn(false,modified) then t:='';
+        if (t=keyesc) and not quitfn(true,modified) then t:='';
+
         if ((t=^J) or ((t=keyesc) and keeponesc)) then begin
           myp:=yp;
           yp:=1;
@@ -1078,7 +1096,7 @@ begin   { readmask }
             end;
           end;
         end;
-    until (t=keyesc) or (t=^J);
+    until (t=keyesc) or (t=^J); { main loop }
     exitmask;
 
     if dopush then wpop;
@@ -1091,9 +1109,13 @@ begin   { readmask }
     editing:=false;
     end;
   help_page:=helpsave;
-end;   { readmask }
+end;   { readHmask }
 {
   $Log$
+  Revision 1.31  2001/03/04 23:15:34  cl
+  - reformatted some code and added comments
+  - fixed bug: quitfn not called under certain circumstances
+
   Revision 1.30  2001/01/04 09:59:11  mk
   - limited length of line to ScreenWidth - 10
 
