@@ -507,6 +507,8 @@ var
     FindClose(sr);
   end;
 
+  var
+   res: integer;
 begin
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do
@@ -523,7 +525,7 @@ begin
       end;
     end else
     begin
-      MkDir(PPPSpool);
+      MkLongDir(PPPSpool, res);
       if IOResult = 0 then ;
       if not IsPath(PPPSpool) then begin
         trfehler(728,44);   { 'ungÅltiges Spoolverzeichnis' }
@@ -618,6 +620,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.16  2001/04/23 18:43:24  mk
+  - Spoolverzeichnis auch in versch. Unterverzeichnissen anlegen
+
   Revision 1.13.2.15  2001/04/19 15:03:05  mk
   - -client
 

@@ -334,6 +334,8 @@ var t : text;
     jnf:=iifc(b,'J','N');
   end;
 
+var
+ res: Integer;
 begin
   assign(t,UStr(OwnPath+dateiname+BfgExt));
   rewrite(t);
@@ -430,7 +432,7 @@ begin
     writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
     if PPPMode then
     begin
-      MkDir(OwnPath + XFerDir + Dateiname);
+      MkLongDir(OwnPath + XFerDir + Dateiname, Res);
       if IOResult = 0 then ;
     end;
     writeln(t,'Client-AddServers=', PPPAddServers);
@@ -555,6 +557,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.12  2001/04/23 18:45:03  mk
+  - Spoolverzeichnis auch in versch. Unterverzeichnissen anlegen
+
   Revision 1.10.2.11  2001/04/19 15:03:06  mk
   - -client
 
