@@ -319,34 +319,35 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 24   ~          /pw:xxx  Startpaáwort xxx bergeben
 25   ~          /nb      Warnhinweis bei Beta-Versionen abschalten
 26   ~          /z:nn    stellt nn Bildschirmzeilen ein
-27   ~          /l:X     Sprache w„hlen (z.B. /l:D fr Deutsch)
-28
-29   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-30   ~          /user:BOX:NAME   Username bei BOX setzen
-31   ~          /ip:PUFFER       liest den angegebenen Puffer ein
-32   ~          /ipe:PUFFER      liest Puffer mit Empfangsdatum = Erstelldatum ein
-33   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-34   ~          /eb              Empfangsbest„tigungen (Zusatzschalter fr /ip..)
-35   ~          /g               tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein
-36   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
-37   ~          /n:*             Netcall bei allen Boxen
-38   ~          /nr:BOX          Relogin-Netcall bei BOX
-39   ~          /t:n             Timing-Liste Nr. n ausfhren
-40
-41   ~          /r               Nachrichten-Reorganisation durchfhren
-42   ~          /pack            /Wartung/Packen durchfhren
-43   ~          /xpack           Automatisches Packen durchfhren
-44   ~          /ss              Screensaver aktivieren
-45
-46   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-47   ~          /f:<Datei>       Schriftdatei laden
-48   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
-49
-50   ~          /d       Programm im Debug-Mode starten
-51   ~          /df:1    Externe Aufrufbefehle anzeigen
-52   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
-53
-54   ~          /x       Programm beenden
+27   ~          /menu    mit XPME gesperrte Menpunkte vorbergehend einblenden
+28   ~          /l:X     Sprache w„hlen (z.B. /l:D fr Deutsch)
+29
+30   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+31   ~          /user:BOX:NAME   Username bei BOX setzen
+32   ~          /ip:PUFFER       liest den angegebenen Puffer ein
+33   ~          /ipe:PUFFER      liest Puffer mit Empfangsdatum = Erstelldatum ein
+34   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+35   ~          /eb              Empfangsbest„tigungen (Zusatzschalter fr /ip..)
+36   ~          /g               tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein
+37   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
+38   ~          /n:*             Netcall bei allen Boxen
+39   ~          /nr:BOX          Relogin-Netcall bei BOX
+40   ~          /t:n             Timing-Liste Nr. n ausfhren
+41
+42   ~          /r               Nachrichten-Reorganisation durchfhren
+43   ~          /pack            /Wartung/Packen durchfhren
+44   ~          /xpack           Automatisches Packen durchfhren
+45   ~          /ss              Screensaver aktivieren
+46
+47   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+48   ~          /f:<Datei>       Schriftdatei laden
+49   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.TXT)
+50
+51   ~          /d       Programm im Debug-Mode starten
+52   ~          /df:1    Externe Aufrufbefehle anzeigen
+53   ~          /df:2    Nach externem Programmaufruf auf Tastendruck warten
+54
+55   ~          /x       Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
