@@ -172,7 +172,7 @@ function IBMToISO(const s: String): String;
 function ConvertFileName(const s:string): String;
 // siehe XPDTAUM !?
 procedure ZtoZCdatumNTZ(var d1,d2:string);
-procedure DecodeBase64(var s: String);
+function  DecodeBase64(const s: String):String;
 
 function HostToLittleEndian16(host:smallword):smallword; 
 function LittleEndianToHost16(host:smallword):smallword; 
@@ -1325,7 +1325,7 @@ begin
 end;
 
 { RFC 1521, see www.rfc.net }
-procedure DecodeBase64(var s: String);
+function DecodeBase64(const s: String):String;
 const
   b64tab: array[0..127] of shortint =
   (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -1356,9 +1356,8 @@ var
   end;
 
 begin
-  if length(s) < 4 then
-    s := ''
-  else
+  result := '';
+  if length(s) >= 3 then
   begin
     if LastChar(s) = '=' then
       if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
@@ -1367,16 +1366,15 @@ begin
         pad := 1
     else
       pad := 0;
-    p1 := 1; p2 := 1;
+    p1 := 1;
     while p1 <= length(s) do
     begin
       b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
-      s[p2] := chr(b1 shl 2 + b2 shr 4);
-      s[p2 + 1] := chr((b2 and 15) shl 4 + b3 shr 2);
-      s[p2 + 2] := chr((b3 and 3) shl 6 + b4);
-      inc(p2, 3);
+      result := result + chr(b1 shl 2 + b2 shr 4);
+      result := result + chr((b2 and 15) shl 4 + b3 shr 2);
+      result := result + chr((b3 and 3) shl 6 + b4);
     end;
-    SetLength(s, p2 - 1 - pad);
+    SetLength(result,Length(result)-pad);
   end;
 end;
 
@@ -1421,6 +1419,14 @@ function LittleEndianToHost32(host:    dword):    dword; begin result:=swap32(ho
 end.
 {
   $Log$
+  Revision 1.83  2001/04/09 13:18:15  cl
+  - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
+  - zcrfc.pas: regognition of all known charsets for news and smtp batches
+  - typeform.pas: Changed DecodeBase64 from var-procedure to function.
+  - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
+  - utftools.pas: Optimized Charset recoders
+  - utftools.pas: added charset aliases from IANA database
+
   Revision 1.82  2001/03/16 16:58:40  cl
   - Little/Big-Endian conversion/macros
   - GetTokenC (token terminated by on of several chars instead of string)

@@ -703,7 +703,7 @@ begin
       for i:=1 to lines do
       begin
         readln(input,s);
-        DecodeBase64(s);
+        s:=DecodeBase64(s);
         if s <> '' then blockwrite(f,s[1],length(s));
       end;
 
@@ -738,6 +738,14 @@ end.
 
 {
   $Log$
+  Revision 1.45  2001/04/09 13:18:15  cl
+  - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
+  - zcrfc.pas: regognition of all known charsets for news and smtp batches
+  - typeform.pas: Changed DecodeBase64 from var-procedure to function.
+  - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
+  - utftools.pas: Optimized Charset recoders
+  - utftools.pas: added charset aliases from IANA database
+
   Revision 1.44  2001/02/25 15:15:19  ma
   - shortened logs
   - added GPL headers

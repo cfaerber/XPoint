@@ -38,10 +38,10 @@ type
 const
   KnownCharsetCount = 19;
   KnownCharsetNames: array[0..KnownCharsetCount] of String = (
-    'UTF-8', 'windows-437', 'windows-866',  'windows-1251',  'windows-1252',  'windows-1255',
+    'utf-8', 'windows-437', 'windows-866',  'windows-1251',  'windows-1252',  'windows-1255',
     'iso-8859-1', 'iso-8859-2', 'iso-8859-3', 'iso-8859-4', 'iso-8859-5',
     'iso-8859-6', 'iso-8859-7', 'iso-8859-8', 'iso-8859-9', 'iso-8859-10',
-    'iso-8859-13', 'iso-8859-14', 'iso-8859-15', 'UTF-7');
+    'iso-8859-13', 'iso-8859-14', 'iso-8859-15', 'utf-7');
 
 function IsKnownCharset(Charset: String): Boolean;
 function GetCharsetFromName(Charset: String): TUnicodeCharsets;
@@ -49,7 +49,30 @@ function GetCharsetFromName(Charset: String): TUnicodeCharsets;
 function Convert8BitToUTF(Str: String; CharSet: TUnicodeCharsets): String;
 function ConvertUTFTo8Bit(Str: String; CharSet: TUnicodeCharsets): String;
 
+function CreateUTF8Encoder(Charset: TUnicodeCharsets): TUTF8Encoder;
+function CreateUTF8Decoder(Charset: TUnicodeCharsets): TUTF8Decoder;
+
+function RecodeCharset(const s: String; cs_from,cs_to: TUnicodeCharsets): String;
+
 implementation
+
+uses
+  SysUtils;
+
+// -------------------------------------------------------------------
+//   UTF-8 (null encoder)
+// -------------------------------------------------------------------
+
+type
+  TUTF8NullEncoder = class(TUTF8Encoder)
+  public
+    function Encode(const Source: String): UTF8String; override;
+  end;
+
+  TUTF8NullDecoder = class(TUTF8Decoder)
+  public
+    function Decode(const Source: PUTF8Char): String; override;
+  end;
 
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -70,11 +93,14 @@ implementation
 {$I charsets\8859_14.inc }
 {$I charsets\8859_15.inc }
 
+{$I charsets\aliases.inc }
+
 function IsKnownCharset(Charset: String): Boolean;
 var
   i: Integer;
 begin
   Result := false;
+  Charset:=LowerCase(ResolveCharsetAlias(Charset));
   for i := 0 to KnownCharsetCount do
     if Charset = KnownCharsetNames[i] then
     begin
@@ -88,6 +114,7 @@ var
   i: Integer;
 begin
   Result := csUnknown;
+  Charset:=LowerCase(ResolveCharsetAlias(Charset));
   for i := 0 to KnownCharsetCount do
     if Charset = KnownCharsetNames[i] then
     begin
@@ -120,32 +147,97 @@ begin
   end;
 end;
 
-function Convert8BitToUTF(Str: String; CharSet: TUnicodeCharsets): String;
-var
-  Encoder: TUTF8Encoder;
+// -------------------------------------------------------------------
+//   UTF-8 (null encoder)
+// -------------------------------------------------------------------
+
+function TUTF8NullEncoder.Encode(const Source: String): UTF8String;
 begin
-  if CharSet in [csUniCode, csUnKnown] then
-  begin
-    Result := Str;
-    Exit;
+  result:=source;
+end;
+
+function TUTF8NullDecoder.Decode(const Source: PUTF8Char): String;
+begin
+  result:=UTF8String(source);
+end;
+
+// -------------------------------------------------------------------
+//   Create En/Decoder class instance from TUnicodeCharsets
+// -------------------------------------------------------------------
+
+function CreateUTF8Encoder(Charset: TUnicodeCharsets): TUTF8Encoder;
+begin
+  case Charset of
+    csUnicode:   result:=TUTF8NullEncoder.Create;
+    csISO8859_1: result:=TAnsiUTF8Encoder.Create;
+    else         result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
   end;
-  Encoder := T8BitUTF8Encoder.Create(GetT8BitTable(CharSet));
-  Result := Encoder.Encode(Str);
-  Encoder.Free;
+end;
+
+function CreateUTF8Decoder(Charset: TUnicodeCharsets): TUTF8Decoder;
+begin
+  case Charset of
+    csUnicode:   result:=TUTF8NullDecoder.Create;
+    csISO8859_1: result:=TAnsiUTF8Decoder.Create;
+    else         result:=T8BitUTF8Decoder.Create(GetT8BitTable(Charset));
+  end;
+end;
+
+// -------------------------------------------------------------------
+//   Generic charset conversion
+// -------------------------------------------------------------------
+
+var UTF8_Encoders: array[TUnicodeCharsets] of TUTF8Encoder;
+    UTF8_Decoders: array[TUnicodeCharsets] of TUTF8Decoder;
+
+function RecodeCharset(const s: String; cs_from,cs_to: TUnicodeCharsets): String;
+begin
+  if not assigned(UTF8_Decoders[cs_to  ]) then
+    UTF8_Decoders[cs_to  ]:=CreateUTF8Decoder(cs_to  );
+  if not assigned(UTF8_Encoders[cs_from]) then
+    UTF8_Encoders[cs_from]:=CreateUTF8Encoder(cs_from);
+
+  Result := UTF8_Decoders[cs_to].Decode(PUTF8Char(
+      UTF8_Encoders[cs_from].Encode(s)));
+end;
+
+function Convert8BitToUTF(Str: String; CharSet: TUnicodeCharsets): String;
+begin
+  if not assigned(UTF8_Encoders[CharSet]) then
+    UTF8_Encoders[CharSet]:=CreateUTF8Encoder(CharSet);
+  Result := PUTF8Char(UTF8_Encoders[CharSet].Encode(str));
 end;
 
 function ConvertUTFTo8Bit(Str: String; CharSet: TUnicodeCharsets): String;
-var
-  Decoder: TUTF8Decoder;
 begin
-  if CharSet in [csUniCode, csUnKnown] then
-  begin
-    Result := Str;
-    Exit;
-  end;
-  Decoder := T8BitUTF8Decoder.Create(GetT8BitTable(CharSet));
-  Result := Decoder.Decode(PUTF8Char(Str));
-  Decoder.Free;
+  if not assigned(UTF8_Decoders[CharSet]) then
+    UTF8_Decoders[CharSet]:=CreateUTF8Decoder(CharSet);
+  Result := UTF8_Decoders[CharSet].Decode(PUTF8Char(str));
 end;
 
+var cs:TUnicodeCharsets;
+
+initialization
+  for cs := low(UTF8_Encoders) to high(UTF8_Encoders) do
+  begin
+    UTF8_Encoders[cs]:=nil;
+    UTF8_Decoders[cs]:=nil;
+  end;
+
+finalization
+  for cs := low(UTF8_Encoders) to high(UTF8_Encoders) do
+  begin
+    if assigned(UTF8_Encoders[cs]) then UTF8_Encoders[cs].Free;
+    if assigned(UTF8_Decoders[cs]) then UTF8_Decoders[cs].Free;
+  end;
 end.
+
+// $Log$
+// Revision 1.3  2001/04/09 13:18:15  cl
+// - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
+// - zcrfc.pas: regognition of all known charsets for news and smtp batches
+// - typeform.pas: Changed DecodeBase64 from var-procedure to function.
+// - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
+// - utftools.pas: Optimized Charset recoders
+// - utftools.pas: added charset aliases from IANA database
+//

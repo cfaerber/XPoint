@@ -144,24 +144,6 @@ implementation
 uses
   xpheader, unicode, UTFTools, xpmakeheader,resource;
 
-{$I charsets\cp437.inc }
-{$I charsets\cp866.inc }
-{$I charsets\cp1251.inc }
-{$I charsets\cp1252.inc }
-{$I charsets\cp1255.inc }
-{$I charsets\8859_2.inc }
-{$I charsets\8859_3.inc }
-{$I charsets\8859_4.inc }
-{$I charsets\8859_5.inc }
-{$I charsets\8859_6.inc }
-{$I charsets\8859_7.inc }
-{$I charsets\8859_8.inc }
-{$I charsets\8859_9.inc }
-{$I charsets\8859_10.inc }
-{$I charsets\8859_13.inc }
-{$I charsets\8859_14.inc }
-{$I charsets\8859_15.inc }
-
 const
   bufsize = 65535;
   readEmpfList = true;
@@ -260,63 +242,12 @@ begin
   Mail.Clear;
 end;
 
-function UTF8ToIBM(s: String): String;
-var
-  UTFDecoder: T8BitUTF8Decoder;
+function DecodeCharset(const s:string; cs: TUnicodeCharsets): String;
 begin
-  // !! Optimieren: nicht bei jeder Zeile neu erstellen
-  UTFDecoder := T8BitUTF8Decoder.Create(CP437TransTable);
-  Result := UTFDecoder.Decode(PUTF8Char(s));
-  UTFDecoder.Free;
-end;
-
-procedure UTF7ToIBM(var s: String); { nach RFC 2152 }
-begin
-  // !! Routine von RB entfernt, wegen GPL Kompatibilit„t
-end;
-
-function RecodeString(s: String; TransTable: T8BitTable): String;
-var
-  Encoder: TUTF8Encoder;
-  Decoder: TUTF8Decoder;
-begin
-  // !! Optimieren: nicht bei jeder Zeile neu erstellen
-  Encoder := T8BitUTF8Encoder.Create(TransTable);
-  Decoder := T8BitUTF8Decoder.Create(CP437TransTable);
-
-  Result := Decoder.Decode(PUTF8Char(Encoder.Encode(s)));
-
-  Decoder.Free;
-  Encoder.Free;
-end;
-
-function DecodeCharset(s: String): String;
-begin
-  // Optimieren, das die Abfrage nicht fuer jede Zeile neu gemacht wird
-  with hd.mime do
-  begin
-    if charset='iso-8859-1' then Result := ISOToIBM(s) else
-    if charset='iso-8859-2' then Result := RecodeString(s, ISO8859_2TransTable) else
-    if charset='iso-8859-3' then Result := RecodeString(s, ISO8859_3TransTable) else
-    if charset='iso-8859-4' then Result := RecodeString(s, ISO8859_4TransTable) else
-    if charset='iso-8859-5' then Result := RecodeString(s, ISO8859_5TransTable) else
-    if charset='iso-8859-6' then Result := RecodeString(s, ISO8859_6TransTable) else
-    if charset='iso-8859-7' then Result := RecodeString(s, ISO8859_7TransTable) else
-    if charset='iso-8859-8' then Result := RecodeString(s, ISO8859_8TransTable) else
-    if charset='iso-8859-9' then Result := RecodeString(s, ISO8859_9TransTable) else
-    if charset='iso-8859-10' then Result := RecodeString(s, ISO8859_10TransTable) else
-    if charset='iso-8859-13' then Result := RecodeString(s, ISO8859_13TransTable) else
-    if charset='iso-8859-14' then Result := RecodeString(s, ISO8859_14TransTable) else
-    if charset='iso-8859-15' then Result := RecodeString(s, ISO8859_15TransTable) else
-    if charset='windows-866' then Result := RecodeString(s, CP866Transtable) else
-    if charset='windows-1251' then Result := RecodeString(s, CP1251Transtable) else
-    if charset='windows-1252' then Result := RecodeString(s, CP1252Transtable) else
-    if charset='windows-1255' then Result := RecodeString(s, CP1255Transtable) else
-    if charset='utf-8' then Result := UTF8ToIBM(s) else
-    if charset='utf-7' then UTF7ToIBM(s) else
-    if hd.mime.ctype <> tMultipart then Result := ISOToIBM(s) else
-    Result := s;
-  end;
+  if cs in [csUnknown,csISO8859_1] then
+    Result := ISOToIBM(s)
+  else
+    Result := RecodeCharset(s,cs,csCP437)
 end;
 
 function unbatch(s: string): boolean; forward;
@@ -1364,45 +1295,45 @@ begin
   end;
 end;
 
-procedure UnQuotePrintable;             { MIME-quoted-printable/base64 -> 8bit }
-var
-  p, b: Integer;
+function UnQuotePrintable(const s:string; rfc2047:boolean):string;
+var p, b: Integer;
   softbrk: boolean;
-
-  procedure AddCrlf;                    { CR/LF an s anhaengen }
-  begin
-    s := s + #13#10;
-  end;
-
-
 begin
-  if qprint then
-  begin
-    s := TrimRight(s);
-    softbrk := (lastchar(s) = '=');     { quoted-printable: soft line break }
-    if softbrk then dellast(s);
-    p := cpos('=', s);
+    result := TrimRight(s);
+    softbrk := (lastchar(result) = '=');     { quoted-printable: soft line break }
+    if softbrk then dellast(result);
+
+    if rfc2047 then                     { RFC 2047: decode '_' to ' ' }
+      for p:=1 to length(result) do
+        if result[p] = '_' then result[p]:=' ';
+
+    p := cpos('=', result);
     if p > 0 then
-      while p < length(s) - 1 do
+      while p < length(result) - 1 do
       begin
         inc(p);
-        b := hexval(copy(s, p, 2));
+        b := hexval(copy(result, p, 2));
         if b > 0 then
         begin
-          s[p - 1] := chr(b);
-          delete(s, p, 2);
+          result[p - 1] := chr(b);
+          delete(result, p, 2);
         end;
-        while (p < length(s)) and (s[p] <> '=') do
+        while (p < length(result)) and (result[p] <> '=') do
           inc(p);
       end;
-    if not softbrk then
-      AddCrlf;
-  end
+    if not(softbrk or rfc2047) then
+      result:=result+#13#10;
+end;
+
+procedure DecodeLine; inline;        { MIME-quoted-printable/base64 -> 8bit }
+begin
+  if qprint then
+    s:=UnquotePrintable(s,false)
   else
-    if b64 then
-    DecodeBase64(s)
+  if b64 then
+    s:=DecodeBase64(s)
   else
-    AddCrlf;
+    s:=s+#13#10;
 end;
 
 procedure TUUz.MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
@@ -2103,78 +2034,92 @@ var
     ZCtoZdatum(hd.zdatum, hd.datum);
   end;
 
-  { vollstaendig RFC-1522-Decodierung }
+  { vollstaendig RFC-2047-Decodierung }
 
-  procedure MimeIsoDecode(var ss: string);
-  var
-    p1, p2, p, i: INteger;
-    code: char;
-    qp: boolean;
+  procedure RFC2047_Decode(var ss: string);
+  var p,q,r: longint;
+      e,t:   longint;
+      sd:    string;
+
   begin
-    for i := 1 to length(ss) do
-      if ss[i] = #9 then ss[i] := ' ';
+    p:=1;       { current scan position in ss      }
+    q:=1;       { start of data not copied into sd }
+    r:=1;       { last non-whitespace char in ss   }
+    sd:='';
 
-    repeat
-      p1 := pos('=?', ss);
-      if p1 > 0 then
+    while p<=(length(ss)-9) do { 9 = minimum length for =?c?e?t?= }
+    begin
+      if(ss[p]='=')and(ss[p+1]='?')then // start marker
       begin
-        p2 := p1 + 5;
-        i := 0;
-        while (i < 3) and (p2 < length(ss)) do
+        (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
+        (*                     ^c          ^e                         ^t  *)
+
+        e:=p+2; while ss[e]<>'?' do { encoding position }
         begin
-          if ss[p2] = '?' then inc(i);
-          inc(p2);
-        end;
-        while (p2 < length(ss))
-          and ((ss[p2] <> '=') or (ss[p2 - 1] <> '?')) do
-          inc(p2);
-        if (i < 3) or (ss[p2] <> '=') then
-          p2 := 0
-        else
-          dec(p2);
-      end;
-      if (p1 > 0) and (p2 > 0) then
-      begin
-        s := copy(ss, p1 + 2, p2 - p1 - 2);
-        delete(ss, p1, p2 - p1 + 2);
-        {        cset:='iso-8859'; }
-        p := cpos('?', s);
-        if p > 0 then
-        begin
-          {          cset:=LowerCase(LeftStr(s,min(8,p-1))); }
-          delete(s, 1, p);
-          p := cpos('?', s);
-          if p = 2 then
+          if (e<=length(ss)-5) and (not(ss[e] in [#0..#32,'(',')','<','>','@',
+            ';',':','"',',','[',']','?','.','='])) then
+            e:=e+1
+          else
           begin
-            code := UpCase(FirstChar(s));
-            delete(s, 1, 2);
-            qp := qprint;
-            case code of
-              'Q':
-                begin
-                  for i := 1 to length(s) do
-                    if s[i] = '_' then s[i] := ' ';
-                  qprint := true; s := s + '=';
-                  UnquotePrintable;
-                end;
-              'B':
-                begin
-                  qprint := false; b64 := true;
-                  UnquotePrintable;
-                end;
-            end;
+            if ss[e]='=' then
+              p:=e      { maybe a new start       }
+            else
+              p:=e+1;   { go ahead with next char }
+            continue;   { don't decode anything   }
           end;
-          qprint := qp;
-        end;
-        { if cset='iso-8859' then
-            ISO2IBM; }
-        insert(s, ss, p1);
-      end;
-    until (p1 = 0) or (p2 = 0);
+        end; // while
 
-    ss := ISOtoIBM(ss);
-    for i := 1 to length(ss) do
-      if ss[i] < ' ' then ss[i] := ' ';
+        e:=e+1; if(not(ss[e] in ['b','B','Q','q']))or(ss[e+1]<>'?')then
+        begin
+          p:=e;         { not a valid encoding    }
+          continue;     { don't decode anything   }
+        end;
+
+        t:=e+2; while ss[t]<>'?' do  { end marker position }
+        begin
+          if (t<=length(ss)-2) and(not(ss[t] in ['?',' ',#8,#10,#13])) then
+            t:=t+1
+          else
+          begin
+            if s[t]='?' then
+              p:=t-1    { maybe a new start }
+            else
+              p:=t+1;   { go ahead with next char }
+            continue;   { don't decode anything   }
+          end;
+        end; // while
+
+        (* now copy unencoded text befor encoded-word *)
+
+        if (p>q) and { there is something to copy }
+           ( (q=0) or  { we are at the beginning (i.e. there was not already an encoded-word) }
+             (r>=q) )  { the last non-white-space character was not before the stop of the last encoded-word }
+        then
+          sd := sd + ISOtoIBM(copy(ss,q,p-q));
+
+        (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
+        (*                 ^p              ^e           ^e+2          ^t  *)
+
+        if ss[e] in ['B','b'] then { base64 }
+          sd := sd + DecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),GetCharsetFromName(Copy(ss,p+2,e-1-(p+2))))
+        else                       { quoted-printable }
+          sd := sd + DecodeCharset(UnquotePrintable(Copy(ss,e+2,t-(e+2)),true),GetCharsetFromName(Copy(ss,p+2,e-1-(p+2))));
+
+        p:=t+2;
+        q:=p;
+        Continue;
+      end else // start marker found
+      begin
+        p:=p+1;
+        if not(ss[p-1] in [' ',#10,#13,#8]) then
+          r:=p;
+      end;
+    end; // while
+
+    if (q>1) then   { there has actually something been decoded    }
+      ss := sd + ISOtoIBM(mid(ss,q))
+    else
+      ss := ISOtoIBM(ss);
   end;
 
   procedure GetMime(p: mimeproc);
@@ -2409,18 +2354,18 @@ begin
     if absender = '' then absender := 'Unknown@Sender';
     if UpperCase(wab) = UpperCase(absender) then
       wab := '';
-    MimeIsoDecode(betreff);
-    MimeIsoDecode(realname);
-    MimeIsoDecode(summary);
-    MimeIsoDecode(keywords);
-    MimeIsoDecode(organisation);
-    MimeIsoDecode(postanschrift);
-    MimeIsoDecode(fido_to);
+    RFC2047_Decode(betreff);
+    RFC2047_Decode(realname);
+    RFC2047_Decode(summary);
+    RFC2047_Decode(keywords);
+    RFC2047_Decode(organisation);
+    RFC2047_Decode(postanschrift);
+    RFC2047_Decode(fido_to);
 
     for i := 0 to ULine.Count-1 do
     begin
       s := ULine[i];
-      MimeIsoDecode(s);
+      RFC2047_Decode(s);
       ULine[i] := s;
     end;
 
@@ -2561,8 +2506,9 @@ begin
       while (bufpos < bufanz) and (hd.Lines > 0) do
       begin
         ReadString; Dec(hd.Lines);
-        UnQuotePrintable;
-        if not binaer then s := DecodeCharset(s);
+        DecodeLine;
+        if (not binaer)and(hd.mime.ctype<>tMultipart)
+          then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
         Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
@@ -2679,7 +2625,7 @@ begin
         begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             delfirst(s);
-          UnquotePrintable;             { haengt CR/LF an, falls kein Base64 }
+          DecodeLine;             { haengt CR/LF an, falls kein Base64 }
           inc(hd.groesse, length(s));
         end;
       end;
@@ -2694,8 +2640,9 @@ begin
         begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             delfirst(s);
-          UnQuotePrintable;             { haengt CR/LF an, falls kein Base64 }
-          if not binaer then s := ISOtoIBM(s);
+          DecodeLine;           { haengt CR/LF an, falls kein Base64 }
+          if (not binaer)and(hd.mime.ctype<>tMultipart)
+            then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
           wrfs(s);
         end;
       end;
@@ -2788,8 +2735,9 @@ begin
           begin                         { Groesse des Textes berechnen }
             ReadString; Dec(hd.lines);
             dec(Size, length(s) + eol);
-            UnQuotePrintable;
-            if not binaer then s := ISOtoIBM(s);
+            DecodeLine;
+            if (not binaer)and(hd.mime.ctype<>tMultipart)
+              then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
             Mail.Add(s);
             inc(hd.groesse, length(s));
           end;
@@ -3870,6 +3818,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/04/09 13:18:14  cl
+  - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
+  - zcrfc.pas: regognition of all known charsets for news and smtp batches
+  - typeform.pas: Changed DecodeBase64 from var-procedure to function.
+  - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
+  - utftools.pas: Optimized Charset recoders
+  - utftools.pas: added charset aliases from IANA database
+
   Revision 1.46  2001/04/08 23:04:58  ma
   - fixed: sometimes the last line of a posting showed up in the next
     posting's header
