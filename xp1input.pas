@@ -346,8 +346,8 @@ begin
         selhigh[n]:=p;
         hot[n]:=sel[n][p];
         end;
-      ml:=max(ml,length(sel[n]));
-      end;
+      ml:=max(max(ml,length(sel[n])),max(ml,length(txt))+1);
+    end;
   until p=0;
   hot[0]:=chr(n);
   checker:=(startpos<0); startpos:=abs(startpos);
@@ -438,6 +438,10 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/03/31 17:45:04  mk
+  - Matthias Stübner: determinate dialog widht in MiniSel from Header and Items
+    instead of Items only
+
   Revision 1.29  2002/02/12 21:47:50  ma
   - finally fixed EditDate.
     rev 1.26/1.27 code changes should be rewritten.
