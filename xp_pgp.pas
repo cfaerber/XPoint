@@ -646,6 +646,10 @@ begin
     try
       repeat
         s:=Trim(readln_s(fis));
+      until s='-----BEGIN PGP SIGNATURE-----';
+
+      repeat
+        s:=Trim(readln_s(fis));
         if UpperCase(LeftStr(s,5))='HASH:' then
         begin
           s:=Mid(s,6);
@@ -654,6 +658,10 @@ begin
           exit;
         end;
       until s='';
+
+
+
+
     except
       s:='';
     end;
@@ -1074,6 +1082,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2001/09/10 17:26:46  cl
+  - imporved detection of HASH method used
+
   Revision 1.51  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
