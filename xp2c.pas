@@ -1521,9 +1521,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.32  2001/12/21 17:20:09  my
+  MY:- Text des letzten Commits korrigiert.
+
   Revision 1.39.2.31  2001/12/21 16:51:27  my
-  MY:- Fix: RTA-Optionen wurden unter C/O/A nicht angeboten, wenn keine
-       UUCP- oder ZConnect-Boxen vorhanden waren (RFC/Client wurde nicht
+  MY:- Fix: RTA-Optionen wurden unter C/O/N nicht angeboten, wenn keine
+       UUCP- oder ZConnect-Box vorhanden war (RFC/Client wurde nicht
        berÅcksichtigt).
 
   Revision 1.39.2.30  2001/12/20 23:26:16  my
