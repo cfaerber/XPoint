@@ -11,9 +11,7 @@
 { Editor v1.0   PM 05/93 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+,A+}
-{$ENDIF }
+{$O+,F+,A+}
 
 unit editor;
 
@@ -21,13 +19,7 @@ interface
 
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,keys,clip,mouse,eddef, encoder;
+  xpglobal, crt, dos,keys,clip,mouse,eddef, encoder;
 
 
 const EdTempFile  : pathstr = 'TED.TMP';
@@ -172,7 +164,6 @@ asm
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
                db    'å','ç','é','è','ê','í','í','ì','ô'
   @start:
-{$IFDEF BP }
          push  ds
          lds   si,data
          push  si     { robo }
@@ -231,73 +222,11 @@ asm
   @sende:
          pop   ds
 end;
-{$ELSE }
-         mov    esi,data
-         push   esi     { robo }
-         mov    edi,s
-         mov    ecx,len
-         mov    al,[edi]              { ax:=length(s) - < 127! }
-         cbw
-         inc   ecx
-         sub   ecx,eax
-         jbe   @nfound
-         mov   dh,igcase
-
-  @sblp1:
-         xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
-         mov   dl,[edi]                { Key-LÑnge }
-  @sblp2:
-         mov   al,[esi+ebx]
-         or    dh,dh                   { ignore case (gro·wandeln) ? }
-         jz    @noupper
-         cmp   al,'a'
-         jb    @noupper
-         cmp   al,'z'
-         ja    @umtest
-         and   al,0dfh
-         jmp   @noupper                { kein Sonderzeichen }
-  @umtest:
-         cmp   al,128
-         jb    @noupper
-         cmp   al,148
-         ja    @noupper
-         push  ebx
-         mov   ebx,offset @uppertab-128
-         segcs
-         xlat
-         pop   ebx
-  @noupper:
-         cmp   al,[edi+ebx+1]
-         jnz   @nextb
-         inc   ebx
-         dec   dl
-         jz    @found
-         jmp   @sblp2
-  @nextb:
-         inc   esi
-         loop  @sblp1
-
-  @nfound:
-         pop   esi     { robo }
-         mov   eax,-1
-         jmp   @sende
-  @found:
-         mov   eax,esi
-         pop   esi
-         sub   eax,esi
-  @sende:
-{$IFDEF FPC }
-end ['EBX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-{$ENDIF }
 
 
 function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi}
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
-{$IFDEF BP }
             push  ds
             lds   si,data
             mov   bx,zlen
@@ -347,59 +276,7 @@ asm
   @ufound:
             mov   ax,bx
             pop ds
-{$ELSE }
-            mov   esi,data
-            movzx ebx,zlen
-  @floop:
-            mov   al,[esi+ebx]
-            cmp   al,' '               { ' ' -> unbedingter Umbruch }
-            jz    @ufound
-
-            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
-            jnz   @testslash           {        Zeichen folgt: }
-            mov   al,[esi+ebx+1]
-            cmp   al,'0'               { '0'..'9' }
-            jb    @fnext
-            cmp   al,'9'
-            jbe   @ufound
-            cmp   al,'A'               { 'A'..'Z' }
-            jb    @fnext
-            cmp   al,'Z'
-            jbe   @ufound
-            cmp   al,'a'               { 'a'..'z' }
-            jb    @fnext
-            cmp   al,'z'
-            jbe   @ufound
-            cmp   al,'Ä'               { 'Ä'..'•' }
-            jb    @fnext
-            cmp   al,'•'
-            jbe   @ufound
-            jmp   @fnext
-
-  @testslash:
-            cmp   ebx,1
-            ja    @testslash2
-            mov   ebx,0
-            jmp   @ufound
-  @testslash2:
-            cmp   al,'/'               { '/' -> Umbruch, falls kein }
-            jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [esi+ebx-1],' '
-            jz    @fnext
-            cmp   byte ptr [esi+ebx-1],'-'
-            jnz   @ufound
-
-  @fnext:
-            dec   ebx
-            jnz   @floop
-  @ufound:
-            mov   eax,ebx
-{$ENDIF }
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ESI'];
-{$ELSE }
 end;
-{$ENDIF }
 
 procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
@@ -446,10 +323,6 @@ begin
     end;
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
 function EddefQuitfunc(ed:ECB):taste;
 begin
   EddefQuitfunc:=AskJN(ed,1,language^.ja);
@@ -479,11 +352,6 @@ begin
   errsound;
 end;
 
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
-
-{ 04.02.2000 robo }
 { procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
 procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
 { /robo }
@@ -749,19 +617,11 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
 function memtest(size:longint):boolean;
 
   function memfull:boolean;
   begin
-{$IFDEF BP }
     memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
-{$ELSE }
-    memfull:=false;
-{$ENDIF }
   end;
 
 begin
@@ -776,10 +636,6 @@ begin
   end else
     memtest:=true;
 end;
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 function allocabsatz(size:integer):absatzp;
 var p  : absatzp;
@@ -836,7 +692,7 @@ var mfm   : byte;
     isize : word;
     sbrk  : boolean;
     root  : absatzp;
-{    endcr : boolean;   }       { CR am Dateiende }
+    endcr : boolean;          { CR am Dateiende }
     endlf : boolean;          { LF am Zeilenende }
     srest : boolean;
     pp    : byte;
@@ -862,13 +718,9 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
     filemode:=mfm;
-{$IFDEF VP }
-    p := ptr(1);
-{$ELSE }
     p:=ptr(1,1);
-{$ENDIF }
     tail:=nil;
-{    endcr:=false; }
+    endcr:=false;
     srest:=false;
     while (srest or not eof(t)) and assigned(p) do begin
       isize:=0;
@@ -899,7 +751,7 @@ begin
           end;
         end;
       if eoln(t) and not srest then begin
-{        endcr:=not eof(t); }
+        endcr:=not eof(t);
         readln(t);
         end;
       p:=AllocAbsatz(isize);
@@ -914,11 +766,12 @@ begin
     close(t);
     freemem(tbuf,4096);
     freemem(ibuf,maxabslen);
-{    if endcr then begin
+    if endcr then
+    begin
       p:=AllocAbsatz(0);
       p^.umbruch:=(umbruch<>0);
       AppP;
-      end; }
+    end;
     if ioresult<>0 then error(3);
     end;
   LoadBlock:=root;
@@ -956,11 +809,7 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); reset(t,1);
     filemode:=mfm;
-{$IFDEF VP }
-    p := ptr(1);
-{$ELSE }
     p:=ptr(1,1);
-{$ENDIF }
     tail:=nil;
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
     while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
@@ -2034,6 +1883,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.7  2000/10/25 06:22:29  mk
+  - fixes Bug #116197, last CRLF in LoadBlock
+
   Revision 1.25.2.6  2000/10/15 08:56:11  mk
   - nochmals Grossschreibung Dateinamen Glossary-Funktion
 
