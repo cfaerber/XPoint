@@ -164,8 +164,8 @@ H2T ?= w3m
 TEX ?= tex
 PDFTEX ?= pdftex
 DVIPS ?= dvips
-INSTALLDIR ?= install -m 755 -d
-INSTALL_DATA ?= install -b -V existing -p -m 644
+INSTALLDIR ?= install -d -v -m 755
+INSTALL_DATA ?= install -v -p -m 644
 DOCFORM ?= ../docform
 IHS ?= ../ihs
 
@@ -231,7 +231,7 @@ TXT += $(OLDDOCFILES) xpoint.txt
 dbdirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(dbdir)$(SEP))))
 entdirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(entdir)$(SEP))))
 jadedirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(jadedir)$(SEP))))
-moddirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(moddir)$(SEP)docbook$(SEP))))
+moddirq = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(moddir)$(SEP))))
 
 ifeq ($(MAKEHB),yes)
 all: xpoint.txt $(HELPFILES) $(OLDDOCFILES)
@@ -245,9 +245,57 @@ fulldoc: xpoint.txt xpoint.htm xpoint.rtf xpoint.tex xpoint.dvi \
 $(HELPFILES): %.hlp: %.ihq
 	$(IHS) $*
 
+ifeq ($(MAKEHB),yes)
+
 xpoint.txt: xpoint.htm
 	$(H2T) $(H2TFLAGS) xpoint.htm > xpoint.tmp
 	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+
+else
+
+# dumme Trickserei, damit "make install" bei "MAKEHD=no" richtig
+# funktioniert
+
+ifeq (,$(dbdir))
+
+xpoint.txt: xpoint.sgm xpoint.dsl
+	$(error Variable "dbdir" muss gesetzt werden)
+
+else
+ifeq (,$(entdir))
+
+xpoint.txt: xpoint.sgm xpoint.dsl
+	$(error Variable "entdir" muss gesetzt werden)
+
+else
+ifeq (,$(jadedir))
+
+xpoint.txt: xpoint.sgm xpoint.dsl
+	$(error Variable "jadedir" muss gesetzt werden)
+
+else
+ifeq (,$(moddir))
+
+xpoint.txt: xpoint.sgm xpoint.dsl
+	$(error Variable "moddir" muss gesetzt werden)
+
+else
+
+xpoint.txt: xpoint.sgm xpoint.dsl
+	$(SED) 's/@DBDIR@/$(dbdirq)/' xpoint.cat > xpoint.tmp
+	$(SED) 's/@ENTDIR@/$(entdirq)/' xpoint.tmp > xpoint.tm1
+	$(SED) 's/@JADEDIR@/$(jadedirq)/' xpoint.tm1 > xpoint.tm2
+	$(SED) 's/@MODDIR@/$(moddirq)/' xpoint.tm2 > catalog
+	$(JADE) -c catalog -d xpoint.dsl#html -t sgml xpoint.sgm > xpoint.tmp
+	$(SED) 's/&#13;//g' xpoint.tmp > xpoint.htm
+	-$(TIDY) $(TIDYFLAGS) xpoint.htm
+	$(H2T) $(H2TFLAGS) xpoint.htm > xpoint.tmp
+	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+endif
+endif
+endif
+endif
+endif
 
 xpoint.htm: xpoint.sgm xpoint.dsl catalog
 	$(JADE) -c catalog -d xpoint.dsl#html -t sgml xpoint.sgm > xpoint.tmp
@@ -400,6 +448,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.17  2000/11/22 20:57:54  fe
+# Fixed FreeBSD install and install with "MAKEHD=no".
+#
 # Revision 1.16  2000/11/03 21:25:28  fe
 # docform params corrected.
 #
