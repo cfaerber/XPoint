@@ -214,6 +214,8 @@ type  OrgStr  = string[orglen];
                   control    : string[150];
                   { Envelope-EmpfÑnger }
                   envemp     : string[AdrLen];
+                  { Delivered-To-EmpfÑnger }
+                  delivTo    : string[AdrLen];
 
                 end;
       charr   = array[0..65530] of char;
@@ -1882,6 +1884,16 @@ var p,i   : integer; { byte -> integer }
       end;
   end;
 
+  procedure GetDeliveredTo;
+  begin
+    appUline(s1);
+    hd.delivTo:=mailstring(s0,false);
+    if cpos('@',hd.delivTo)=0 then   { Wenn keine Mailadresse im Header }
+      hd.delivTo:=''                 { dann Header leeren               }
+    else
+      if left(lstr(hd.delivTo),6)='alias-' then hd.delivTo:=mid(hd.delivTo,7);
+  end;
+
   procedure GetDate;
   begin
     RFCRemoveComment(s0);
@@ -2046,6 +2058,7 @@ begin
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
              if zz='envelope-to'  then envemp:=s0 else
+             if zz='u-delivered-to' then GetDeliveredTo else
              if zz<>'lines'       then AppUline('U-'+s1);
         end; { case }
         end;
@@ -2288,7 +2301,9 @@ begin
       until nofrom;
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
-      if (hd.envemp <> '') and UseEnvTo then mempf := hd.envemp;
+      if UseEnvTo then
+        if (hd.envemp <> '') then mempf:=hd.envemp
+        else if (hd.delivTo <> '') then mempf:=hd.delivTo;
       binaer:=(hd.typ = 'B') or (hd.typ = 'M');
       if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
@@ -3349,6 +3364,15 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.64  2002/03/29 15:29:50  my
+  MY:- Support des Headers "U-Delivered-To" fÅr eingehende SMTP-Mails
+       implementiert: Bei Angabe des Schalters "-UseEnvTo" (beim Netztyp
+       RFC/Client zu aktivieren Åber "D/B/E/N/Envelope-Header_auswerten")
+       wird statt des SMTP-Headers "RCPT TO" die im (letzten) Header
+       "U-Delivered-To" befindliche Mail-Adresse in den ZConnect-Header
+       "EMP:" geschrieben. Falls zusÑtzlich ein "(X-)Envelope-To"-Header
+       vorhanden ist, hat dieser Vorrang.
+
   Revision 1.35.2.63  2002/03/13 23:05:41  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
             von Redundanzen befreit, korrigiert und erweitert:
