@@ -34,7 +34,7 @@ uses
   Classes;
 
 function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles, DeleteSpoolFiles: TStringList): boolean;
-function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; EMail, PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
 
@@ -62,7 +62,7 @@ uses
 
   res_strange           = 'Interner Fehler: '; // just in case...
 
-function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
+function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; EMail, PPFile: String): boolean;
 
   const RFCFile= 'SMTPTEMP';
 
@@ -119,7 +119,7 @@ begin
   try
     List.LoadFromFile(RFCFile);
     SMTP.Connect(SMTP.GetFQDomain(List));
-    SMTP.PostPlainRFCMails(List, bp^.UserName);
+    SMTP.PostPlainRFCMails(List, EMail);
   except
     on E: ESMTP do begin
       POWindow.WriteFmt(mcError, E.Message, [0]);
@@ -278,6 +278,10 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.3  2002/08/12 12:07:17  ma
+  - fix: SMTP Envelope from was not set correctly (causing some servers
+    to refuse mails)
+
   Revision 1.32.2.2  2002/08/03 16:31:46  mk
   - fixed unsendt-handling in client-mode
 

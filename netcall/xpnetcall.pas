@@ -658,6 +658,7 @@ var
     bfile      : string;
     ppfile     : string;
     eppfile    : string;
+    email      : string;
     d          : DB;
     i          : integer;
 
@@ -928,6 +929,7 @@ begin                  { function Netcall }
     exit;
     end;
   bfile := dbReadStr(d,'dateiname');
+  email := dbReadStr(d,'email');
   ppfile:=bfile+extBoxFile;
   eppfile:=bfile+extEBoxFile;
   dbRead(d,'netztyp',netztyp);
@@ -1095,11 +1097,11 @@ begin                  { function Netcall }
         if Boxpar^.SMTPAfterPop then
         begin
           netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles);
-          if SendSMTPMails(BoxName,bfile,BoxPar,PPFile)then
+          if SendSMTPMails(BoxName,bfile,BoxPar,email,PPFile)then
             if netcall_connect then result:= true;
         end
         else begin
-          netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,email,PPFile);
           if GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles)then
             if netcall_connect then result:= true;
         end;
@@ -1371,6 +1373,10 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.8  2002/08/12 12:07:17  ma
+  - fix: SMTP Envelope from was not set correctly (causing some servers
+    to refuse mails)
+
   Revision 1.52.2.7  2002/08/04 11:40:25  mk
   - fixed AV in ClearUnversandt
 
