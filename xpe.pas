@@ -385,11 +385,16 @@ begin
   if keepedname then
     s:=editname
   else
-    s:=sendpath+'*.*';
+    s:=sendpath+WildCard;
   useclip:=true;
   pushhp(11607);
   if readfilename(getres(2502),s,true,useclip) then begin   { 'Text bearbeiten' }
-    if not multipos('\:',s) then s:=sendpath+s;
+{$IFDEF UnixFS }
+    if not multipos(DirSepa,s)
+{$ELSE }
+    if not multipos(DirSepa+':',s)
+{$ENDIF }
+      then s:=sendpath+s;
     editname:=s;
     EditFile(s,false,false,0,false);
     if useclip then WriteClipfile(s);
@@ -475,6 +480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/09 13:13:10  hd
+  - UnixFS: EditText angepasst
+
   Revision 1.14  2000/05/07 10:42:04  hd
   - Linux: Variable Fensterbreite
 
