@@ -24,7 +24,7 @@ uses
 {$else}
   crt,
 {$endif}
-  mouse,keys, xpglobal;
+  typeform, mouse,keys, xpglobal;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -103,16 +103,14 @@ var
       if forwardkeys[length(forwardkeys)-1]=#0 then
         SetLength(forwardkeys, Length(forwardkeys)-2)
       else
-        SetLength(forwardkeys, Length(forwardkeys)-1);
-    forwardkeys[length(forwardkeys)+1]:=#0;
-    forwardkeys[length(forwardkeys)+2]:=char(b);
-    SetLength(forwardkeys, Length(forwardkeys)+2);
-{$ifdef NCRT}
-    if not usemulti2 and not keypressed then begin
-{$else}
-    if not usemulti2 and not crt.keypressed then begin
-{$endif}
-      SetLength(t, 1); {t[0]:=#1;} t[1]:=#31;
+        DelLast(forwardkeys);
+      forwardkeys := forwardkeys + #0 + Char(b);
+      {$ifdef NCRT}
+        if not usemulti2 and not keypressed then begin
+      {$else}
+        if not usemulti2 and not crt.keypressed then begin
+      {$endif}
+      t := #31;
       pushkeyv(t);
       end;
     koo_da:=true;
@@ -331,6 +329,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/31 20:28:32  mk
+  - Bugfix fuer AnsiStrings in Forwardkeys
+
   Revision 1.19  2000/07/22 22:22:50  mk
   - um einen real()-Typecast Compilerbug drumrumprogrammeirt
 
