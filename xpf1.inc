@@ -35,7 +35,7 @@ var s  : string;
     end;
   begin
     with ni do begin
-      if s[length(s)]<>',' then s:=s+',';
+      if LastChar(s)<>',' then s:=s+',';
      { for p:=1 to length(s^) do       nach GetStr verschoben, damit im
         if s^[p]='_' then s^[p]:=' ';  String FFlags '_' erhalten bleibt }
       status:=getstr;
@@ -882,6 +882,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.17  2000/08/05 10:06:59  mk
+  - Ansistring Verbesserungen
+
   Revision 1.16  2000/08/01 08:40:41  mk
   - einige String-Parameter auf const geaendert
 

@@ -120,8 +120,7 @@ var p,n,p1,i : byte;
 begin
   spenter:=(firstchar(buttons)='*');
   if spenter then delfirst(buttons);
-  SetLength(buttons, Length(buttons)+1); { inc(byte(buttons[0])); }
-  buttons[length(buttons)]:=',';
+  Buttons := Buttons + ',';
   n:=0;
   repeat
     p:=pos(',',buttons);
@@ -416,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/08/05 10:06:58  mk
+  - Ansistring Verbesserungen
+
   Revision 1.14  2000/07/21 17:39:52  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

@@ -866,7 +866,7 @@ begin
     rewrite(t2);
     while not eof(t1) do begin
       readln(t1,s);
-      while (s[length(s)]=' ') do SetLength(s, Length(s)-1);  { Spaces wegschneiden }
+      TrimRight(s);  { Spaces hinten wegschneiden }
       repeat
         p:=pos(#9,s);              { TABs expandieren }
         if p>0 then begin
@@ -981,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/08/05 10:06:58  mk
+  - Ansistring Verbesserungen
+
   Revision 1.54  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

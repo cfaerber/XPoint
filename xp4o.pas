@@ -2265,15 +2265,16 @@ begin
     while (k<Length(s)) do begin
       t:=''; v:=#0;
       { Nach dem ersten erlaubten Zeichen suchen }
-      while (Length(s)>0) {(byte(s[0])>0)}
-      and not (s[1] in ['a'..'z','A'..'Z','0'..'9','@','!','$','^']) do begin
-          v:=s[1];
-          delete(s,1,1);
+      while (Length(s)>0) and
+        not (s[1] in ['a'..'z','A'..'Z','0'..'9','@','!','$','^']) do
+      begin
+        v:=s[1];
+        delete(s,1,1);
         continue
       end;
       { Vor dem Dateinamen muá ein Trennzeichen stehen }
       if (v<>#0) then if not (v in [#32,'"','<','>','¯','®','(','[','{',',',';',':','_','*']) then begin
-        while (Length(s)>0) {(byte(s[0])>0) }
+        while (Length(s)>0)
         and not (s[1] in [#32,'"','<','>','¯','®','(','[','{','_','*']) do begin
           delete(s,1,1);
           continue
@@ -2292,10 +2293,9 @@ begin
       { Auf den Dateinamen muá ein Trennzeichen folgen }
       if (s<>'') then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
 
-      if (mark and (t[Length(t){byte(t[0])}] in ['_','*'])) then SetLength(t,Length(t)-1); {dec(byte(t[0]));}
+      if (mark and (LastChar(t) in ['_','*'])) then DelLast(t);
+      while LastChar(t) in ['.','!','?','/'] do DelLast(t);
 
-      {while (byte(t[0])>0) and (t[byte(t[0])] in ['.','!','?','/']) do dec(byte(t[0]));}
-      while (Length(t)>0) and (t[LEngth(t)] in ['.','!','?','/']) do DelLast(t);
       if (Length(t)<2) then continue;
       k:=0;
       for ic:=1 to Length(t) do if t[ic]='.' then inc(k);
@@ -2421,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/08/05 10:06:58  mk
+  - Ansistring Verbesserungen
+
   Revision 1.60  2000/08/03 00:06:47  mk
   - Crash bei leeren Suchoptionen beseitigt
 

@@ -1643,10 +1643,14 @@ fromstart:
     end;
     dbAppend(mbase);            { neue mbase.INT_NR fr MessageID }
     hdp^.msgid:=MessageID;
+
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
+    begin
       hdp^.ref:=_bezug;
-    if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
-      hdp^.org_xref:=_orgref;
+      if ntOrigID(netztyp) then
+        hdp^.org_xref:=_orgref;
+    end;
+
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
@@ -2117,6 +2121,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/08/05 10:06:59  mk
+  - Ansistring Verbesserungen
+
   Revision 1.57  2000/07/29 14:32:30  mk
   JG: - Dialogbox-Bug beseitigt
 

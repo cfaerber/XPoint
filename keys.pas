@@ -229,12 +229,9 @@ end;
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 begin
-  SetLength(t,1);
-  t[1]:=readkey;
-  if t[1]=#0 then begin
-    SetLength(t,2); {t[0]:=#2;}
-    t[2]:=readkey;
-  end;
+  t := readkey;
+  if t[1]=#0 then
+    t := t + readkey;
   func_proc(t);
 end;
 
@@ -266,7 +263,6 @@ const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
                   0,0,0,0,0,0,0,0,0,0,0,0,4,3,0,0);                  { 255 }
 
 begin
-  { !! PrÅfen }
   if t[1]<>#0 then t[2]:=chr(scancode[ord(t[1])]);
   forwardkeys := forwardkeys + t[1] + t[2];
 end;
@@ -289,14 +285,10 @@ end;
 {$IFNDEF Win32 }
 function kbstat: byte;     { lokal }
 begin
-  {$IFDEF VP }
-    kbstat := SysTVGetShiftState;
+  {$IFDEF DOS32 }
+    kbstat:=mem[$40:$17];
   {$ELSE }
-    {$IFDEF DOS32 }
-      kbstat:=mem[$40:$17];
-    {$ELSE }
-      kbstat := 0; { !! }
-    {$ENDIF }
+    kbstat := 0; { !! }
   {$ENDIF }
 end;
 {$ENDIF }
@@ -346,6 +338,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/08/05 10:06:58  mk
+  - Ansistring Verbesserungen
+
   Revision 1.27  2000/07/21 21:17:43  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
