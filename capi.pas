@@ -30,7 +30,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
-  crt
+  crt,
 {$ENDIF }
   inout;    { CRT wird nur fÅr CAPI_test() benîtigt }
 
@@ -1381,6 +1381,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/06/19 20:13:09  ma
+  - Syntaxfehler im uses-Teil behoben
+
   Revision 1.7  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 
