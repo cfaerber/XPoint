@@ -58,7 +58,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
 
 procedure select(dispmode:shortint);
 procedure mainwindow;
-procedure SetBrettGelesen(brett:string);
+procedure SetBrettGelesen(const brett:string);
 
 const
   markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
@@ -149,7 +149,7 @@ begin
   end;
 end;
 
-procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+procedure SetBrettGelesen(const brett:string);       { Ungelesenflag des Bretts loeschen }
 var b    : byte;                               { wenn keine ungelesenen Nachrichten }
     nope : boolean;
     rec  : longint;
@@ -420,14 +420,14 @@ var t,lastt: taste;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
         if not dbEOF(mbase) then
-          if dbReadInt(mbase,'gelesen')=0 then
+          if dbReadIntN(mbase, mb_gelesen)=0 then
             dbSkip(mbase,1)
           else begin
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,1);
               if not dbEOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
-            until dbEOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
+            until dbEOF(mbase) or (dbReadIntN(mbase, mb_gelesen)=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
@@ -467,14 +467,14 @@ var t,lastt: taste;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
         if not dbBOF(mbase) then
-          if dbReadInt(mbase,'gelesen')=0 then
+          if dbReadIntN(mbase,mb_gelesen)=0 then
             dbSkip(mbase,-1)
           else begin
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,-1);
               if not dbBOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
-            until dbBOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
+            until dbBOF(mbase) or (dbReadIntN(mbase,mb_gelesen)=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
@@ -2344,6 +2344,9 @@ end;
 
 {
   $Log$
+  Revision 1.122.2.4  2002/09/09 09:02:43  mk
+  - added const parameters
+
   Revision 1.122.2.3  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 

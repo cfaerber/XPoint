@@ -39,7 +39,7 @@ procedure SendMaps(bef:string; var box,datei:string);
 procedure MapsDelBrett(brett:string);
 procedure MapsReadList;
 procedure MapsReadFile;
-procedure ReadPromafList(fn:string; var bfile:string);
+procedure ReadPromafList(const fn:string; var bfile:string);
 procedure MapsBrettliste(art:byte);
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
 procedure GetSysfile;
@@ -1102,7 +1102,7 @@ begin
   close(t1);
 end;
 
-procedure ReadPromafList(fn:string; var bfile:string);
+procedure ReadPromafList(const fn:string; var bfile:string);
 var t1,t2 : text;
     s     : string;
 begin
@@ -2177,6 +2177,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.8  2002/09/09 09:02:44  mk
+  - added const parameters
+
   Revision 1.70.2.7  2002/08/01 17:50:02  mk
   - fixed
     589620: 3.8: NNTP:Bestellung einer bestellten NG

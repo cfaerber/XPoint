@@ -47,7 +47,7 @@ procedure memstat;
 procedure fragstat;
 procedure scsaver;
 procedure scsescape;
-procedure TimedScsaver(endtime:string);
+procedure TimedScsaver(const endtime:string);
 procedure DatabaseStat;
 procedure ScreenShot;
 procedure xp32welcome;
@@ -58,14 +58,14 @@ function  Password:boolean;
 procedure InitPWsystem;
 
 function reorgdate:datetimest;
-function timingdate(s1:string):datetimest;
+function timingdate(const s1:string):datetimest;
 
 implementation  {-----------------------------------------------------}
 {$IFDEF Kylix}
   uses libc;
 {$ENDIF}
 
-function timingdate(s1:string):datetimest;
+function timingdate(const s1:string):datetimest;
 var t   : text;
     s   : string;
     fnd : boolean;
@@ -503,7 +503,7 @@ end;
 
 { Screen Saver }
 
-procedure TimedScsaver(endtime:string);
+procedure TimedScsaver(const endtime:string);
 
 const maxstars = 40;
       scactive : boolean = false;
@@ -971,6 +971,9 @@ end;
 
 {
   $Log$
+  Revision 1.64.2.2  2002/09/09 09:02:43  mk
+  - added const parameters
+
   Revision 1.64.2.1  2002/07/21 20:14:37  ma
   - changed copyright from 2001 to 2002
 
