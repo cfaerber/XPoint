@@ -390,8 +390,15 @@ begin
       Delete(S,1,7); {delete 'Serial'/'Fossil'/'Telnet' from string}
       if(ConnType=CTelnet){$IFDEF Linux}or(ConnType=CSerial){$ENDIF}then begin
         PTag:=Pos(' ',S);
-        if PTag<>0 then begin SPort:=Copy(S,1,PTag-1); Delete(S,1,PTag)end
-          else begin SPort:=S; S:='' end;
+        if PTag<>0 then
+	begin
+	   SPort:=Copy(S,1,PTag-1);
+	   Delete(S,1,PTag)
+	end
+	else begin
+	   SPort:=S;
+	   S:=''
+	end;
       end;
       S:=UpStr(S); Res:=0;
       while(S<>'')and(Res=0)do begin
@@ -432,6 +439,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/01/20 20:00:44  ml
+  - telnet compilable - not yet ful functionally
+
   Revision 1.17  2001/01/20 17:36:26  ml
   - linuxextension of telnet-obj
 

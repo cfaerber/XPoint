@@ -70,7 +70,8 @@ var
   Temp,Res: Integer;
 
 begin
-  Connect:=False; FillChar(SAddr,SizeOf(SAddr),0);
+  Connect:=False; 
+  FillChar(SAddr,SizeOf(SAddr),0);
 
   // Resolve host
   Temp:=Pos(':',Dest);
@@ -94,7 +95,7 @@ begin
 
   // Connect socket
   SAddr.Family:=AF_INET;
-  if Sockets.Connect(SHandle,SAddr,SizeOf(SAddr)) then
+  if not Sockets.Connect(SHandle,SAddr,SizeOf(SAddr)) then
     begin ErrorStr:='Error connecting socket'; exit end;
 
   SOpened:=True; Connect:=True;
@@ -234,6 +235,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.2  2001/01/20 20:00:44  ml
+  - telnet compilable - not yet ful functionally
+
   Revision 1.1  2001/01/20 17:36:26  ml
   - linuxextension of telnet-obj
 
