@@ -376,6 +376,7 @@ end;
 procedure SetDefault;
 var i,j : integer;
 begin
+  Enable_UTF8:=false;
   defextrakttyp:=1;
   brettanzeige:=0;
   showmsgdatum:=true;
@@ -745,6 +746,7 @@ begin
   writeln(t,'## ',getres2(214,1));   { 'CrossPoint - Konfigurationsdatei' }
   writeln(t,'## ',getres2(214,2));   { 'Benutzereinstellungen' }
   wrhd(3);                           { 'allgemeine Einstellungen' }
+  writeln(t,'Enable-UTF8=',jnf(Enable_UTF8));
   writeln(t,'ExtraktTyp=',defExtraktTyp);
   writeln(t,'Brettanzeige=',brettanzeige);
   writeln(t,'Showungelesen=',jnf(showungelesen));
@@ -1320,6 +1322,7 @@ begin
           getpmc or
           getviewers or
           getb(su,  'ExtraktTyp',defextrakttyp) or
+          getx(su,  'Enable-UTf8',Enable_UTF8) or
           getb(su,  'Brettanzeige',brettanzeige) or
           getx(su,  'ShowUngelesen',showungelesen) or
           getx(su,  'ShowMsgdatum',showmsgdatum) or
@@ -1709,6 +1712,9 @@ begin
 
 {
   $Log$
+  Revision 1.132  2002/01/03 19:11:41  cl
+  - added config option for internal preliminal UTF-8 support
+
   Revision 1.131  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

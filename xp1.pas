@@ -174,6 +174,7 @@ procedure shell(const prog:string; space:word; cls:shortint);  { externer Aufruf
 function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
+                   utf8:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(fn:string);
 procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
@@ -265,6 +266,9 @@ uses
     ncurses,
   {$ENDIF}
 {$ENDIF }
+  mime,
+  utftools,
+  unicode,
   direct;
 
 { Diese Tabelle konvertiert NUR ™š„”á !    }
@@ -2063,6 +2067,9 @@ end;
 
 {
   $Log$
+  Revision 1.134  2002/01/03 19:11:41  cl
+  - added config option for internal preliminal UTF-8 support
+
   Revision 1.133  2001/12/26 00:49:00  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
   - added SafeMakeBat
