@@ -826,7 +826,7 @@ begin
     end;
 
   if not FileExists(GruppenFile+dbExt) then begin     { GRUPPEN: Brettgruppen }
-    initflp(18);
+    initflp(23);
     AppS('name',30);
     AppX('haltezeit',dbTypeInt,2,4);
     AppX('MsgLimit',dbTypeInt,4,10);
@@ -998,6 +998,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/12/21 20:18:00  cl
+  - fixed error on fresh start, see <6d.5369a42.2b35e770@aol.com>
+
   Revision 1.49  2002/12/21 19:50:55  cl
   - BUGFIX: [ 654207 ] 3.9.x: Neuaufbau *.IX1 geht nicht.
     (see also <8cGvlMlZcDD@3247.org>)
