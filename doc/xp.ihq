@@ -217,35 +217,38 @@ richten und Bretteinstellungen.
        Bretter schreiben.
 
    E   eine vorbereitete Textdatei in das gew„hlte
-       Brett absenden
+       Brett absenden.
 
-   I   eine Bin„rdatei in das gew„hlte Brett senden
+   I   eine Bin„rdatei in das gew„hlte Brett senden.
 
    L   W„hlt den gewnschten Lesemodus. Ein  am
        linken Brettrand zeigt an, daá das Brett Nach-
-       richten enth„lt, die dem gew„hlten Lese-Modus
+       richten enth„lt, die dem gew„hlten Lesemodus
        entsprechen.
 
    A   schaltet zwischen Anzeige aller Bretter und
-       Anzeige der Bretter, die auf den Lese-Modus
+       Anzeige der Bretter, die auf den Lesemodus
        zutreffen, um.
 
-   U   schaltet die zus„tzliche Anzeige der Bretter 
-       mit ungelesenen Nachrichten Ein/Aus:
+   U   schaltet die zus„tzliche Anzeige der Bretter
+       mit ungelesenen Nachrichten ein/aus (ist ohne
+       Wirkung im Lesemodus 'Ungelesen'). Die Be-
+       deutung der Symbole ist dann:
 
-        steht dann fr "Nur gelesene, zum Lesemodus
-       passende Nachrichten". 
-       Sind sowohl ungelesene Nachrichten im Brett,
-       als auch welche die zum Lesemodus passen
-       (oder beides gleichzeitig), steht ein ¯
-       am linken Brettrand. 
-       Trifft der Lesemodus nicht auf das Brett zu,
-       aber es enth„lt ungelesene Nachrichten,
-       steht ein dnner Pfeil davor.
+        Brett enth„lt nur zum aktiven Lesemodus
+         passende Nachrichten.
+       ¯ Brett enth„lt sowohl zum aktiven Lesemodus
+         passende als auch ungelesene Nachrichten.
+       > Brett enh„lt ungelesene, aber keine auf den
+         aktiven Lesemodus passenden Nachrichten.
+         (Anmerkung: das Zeichen ">" symbolisiert
+         einen nach rechts gerichteten dnnen Pfeil
+         (auch als Ctrl-Z bekannt), der sich hier
+         aber leider nicht darstellen l„át.)
 
-   +   springt zum n„chsten zutreffenden Brett
+   +   springt zum n„chsten zutreffenden Brett.
 
-   -   springt zum vorigen zutreffenden Brett
+   -   springt zum vorigen zutreffenden Brett.
 
   ^W   schaltet die automatische Weiterschaltung ein
        bzw. aus.
@@ -314,8 +317,8 @@ angezeigt.
 
  <cr>  zeigt den Inhalt des gew„hlten PM-Brettes
 
-   A   wechselt den Anzeige-Modus zwischen dem
-       Adressbuch, und der Anzeige aller User.
+   A   wechselt den Anzeige-Modus zwischen Adreábuch
+       und Anzeige aller User.
 
    O   wechselt die Anordnung der Userbretter.
        M”gliche Einstellungen sind:
@@ -337,7 +340,7 @@ angezeigt.
        ihn aus dem Adreábuch aus.
 
    S   schaltet zwischen Schreib/Lese- und Bearbei-
-       tungsmodus um
+       tungsmodus um.
 
    P   dient zum Einstellen von Paáw”rtern und Co-
        dierverfahren. Allen Usern, fr die ein Paá-
@@ -388,22 +391,21 @@ angezeigt.
 
 <<Funktionen im Bearbeitungsmodus ("Spezial-Modus")
 
-   H   neuen User anlegen (hinzufgen)
+   H   neuen User anlegen (hinzufgen).
 
-   V   neuen Verteiler anlegen
+   V   neuen Verteiler anlegen.
 
    L   User bzw. Verteiler aus der Liste l”schen -
        bei Usern nur m”glich, falls im Brett des
-       Users keine Nachrichten vorhanden sind
+       Users keine Nachrichten vorhanden sind.
 
-   E   User- bzw. Verteiler-Daten bearbeiten
+   E   User- bzw. Verteiler-Daten bearbeiten.
 
-  ^V   Userbretter verknpfen (Nachr. verschieben)
+  ^V   Userbretter verknpfen (Nachr. verschieben).
 
-  ^T   Trennzeile im Adressbuch einfgen
+  ^T   Trennzeile im Adreábuch einfgen.
 
-  ^P   User in andere Adreábuchgruppe verschieben
-
+  ^P   User in andere Adreábuchgruppe verschieben.
 
 Die Funktionen L, E, ^T und ^P beziehen sich
 auf alle markierten User.
@@ -413,7 +415,7 @@ auf alle markierten User.
 
 û P      ì   1 HOT      GHOSTWRITER\@HOT-II.ZER
 û  *     ì   1 HOT      GHOSTWRITER\@HOT.ZER
- ##P      30  2 HOT      KNALL\@PENG.ZER
+ ##P     30   2 HOT      KNALL\@PENG.ZER
 ³³³³     ³   ³ ³        ³
 ³³³³     ³   ³ ³        ÀÄÄ Name/Adresse des Users
 ³³³³     ³   ³ ÀÄÄÄÄ Server fr Mail an diesen User
@@ -452,8 +454,9 @@ tergeleitet werden soll. Mit <Enter> wird die Auswahl
 best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
-um, "O" schaltet die Sortierung nach Boxen um.
-Mit Ctrl-Y wird zur n„chsten Trennzeile gesprungen.
+um, "O" schaltet die Sortierung nach Usernamen oder
+Boxen um. Mit <Ctrl-Y> wird zur n„chsten Trennzeile
+gesprungen.
 
 @
 24
@@ -478,8 +481,8 @@ Folgende Funktionen stehen zur Verfgung:
   ^D   Druckt die gew„hlte Nachricht; siehe auch
        [/Config/Drucker].@10606
 
-   ##   zeigt bei Fido/MausNet-Nachrichten den Kommen-
-       tarbaum an.
+   ##   zeigt bei Fido-/MausNet-Nachrichten den
+       Kommentarbaum an.
 
   ^W   schaltet die automatische Weiterschaltung
        beim Lesen ein bzw. aus.
@@ -494,7 +497,6 @@ Folgende Funktionen stehen zur Verfgung:
        Empf„nger- und Absenderanzeige um.
 
  AltL  W„hlt einen anderen Lesemodus.
-
 
  <Sp>  markiert die gew„hlte Nachricht. Es k”nnen
        mehrere Nachrichten in verschiedenen Brettern
@@ -670,7 +672,7 @@ verwendet werden.
   die letzte Suche.
 
 <<S>> wie <<s>>, jedoch unter Beachtung von Groá- und
-  Kleinschreibung
+  Kleinschreibung.
 
 <<M>> schaltet den Markier-Balken ein bzw. aus; Sie k”n-
   nen dann mit <Space> Zeilen oder mit <F7>/<F8>
@@ -738,13 +740,13 @@ Der Lister wird mit <Esc> verlassen.
 <<V>> schaltet "Wiedervorlage" fr die angezeigte
   Nachricht ein/aus.
 
-<<F3>>  Fido-Request von Dateien, die Sie mit "M" +
-    <Space> markiert haben. Voraussetzung ist, daá
-    Sie die angezeigte Nachricht aus dem FidoNet
-    erhalten haben.
+<<F3>> Fido-Request von Dateien, die Sie mit "M" +
+   <Space> markiert haben. Voraussetzung ist, daá
+   Sie die angezeigte Nachricht aus dem FidoNet
+   erhalten haben.
 
-<<F>>   schaltet farbliche *Hervorhebungen* ein/aus
-    (siehe [/Config/Extern/Lister]).@237
+<<F>> schaltet farbliche *Hervorhebungen* ein/aus
+  (siehe [/Config/Optionen/Lister]).@237
 
 <<Q>>   schaltet um, ob ":" und "|" als Quote-Zeichen
     interpretiert werden oder nicht.
@@ -756,8 +758,8 @@ in der Nachrichten-šbersicht direkt auf Nachrichten
 antworten.
 
 <<Backspace>> verl„át den Lister, ohne daá der Auswahl-
-  balken auf die n„chste Nachricht springt, unabh„n-
-  gig von der Einstellung bei /Config/Opt./Bedienung.
+balken auf die n„chste Nachricht springt, unabh„ngig
+von der Einstellung bei /Config/Optionen/Bedienung.
 
 
 <<Bei kommentarverketteten Nachrichten (Maus, Fido):
@@ -1000,9 +1002,6 @@ markiert.
 <Ctrl-Enter>: Textbaustein-Krzel auswerten
               ([Glossary]-Funktion)@64
 
-<Ctrl+Enter>: Textbaustein-Krzel auswerten
-              ([Glossary]-Funktion)@64
- 
 Tasten auf dem Ziffernblock:
 
 *  kopiert markierten Block in die Zwischenablage
@@ -1114,53 +1113,62 @@ durch Halten der rechten Maustaste.
 <<[x] autom. einrcken>>
   Auch als Auto-Indent bekannt. Beim Drcken von
   <Return> wird die nachfolgende Zeile automatisch
-  um die gleiche Anzahl von Leerzeichen eingerckt,
+  um die gleiche Anzahl von Leerzeichen eingerckt
   wie die vorhergehende.
 
 <<[x] persistente Bl”cke>>
   Markierte Bl”cke werden durch Tastendruck nicht
   entmarkiert oder berschrieben. Sinnvoll, wenn
-  man die Wordstartasten fr Blockoperationen ver-
-  wenden m”chte.
+  man die Wordstar-Tastenkombinationen fr Block-
+  operationen verwenden m”chte.
 
 <<[x] Quote-Reflow>>
   Beim Umbrechen oder Zusammenfgen von gequoteten
-  Zeilen werden die Quotezeichen mit bercksichtigt.
-  Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
+  Zeilen werden die Quotezeichen mit bercksichtigt
+  (siehe auch ['Block reformatieren'] (<Ctrl-B>)).@61
 
 @
 64
 <<Glossary>>
---------
 
-Mit dieser Funktion k”nnen Sie oft ben”tigte
-Textbausteine aus einem Menue w„hlen, bzw.
-direkt als Krzel im Editor eingeben.
+Mit dieser Funktion k”nnen Sie oft ben”tigte Text-
+bausteine aus einem Men w„hlen oder direkt als
+Krzel im Editor eingeben.
 
-Berhrt der Cursor beim drcken von Ctrl+Enter
-eine Zeichenkette, wird diese als Krzel angesehen
-und ersetzt. Wird kein entsprechender Textbaustein
-gefunden, (oder der Cursor berhrt nichts),
-Erscheint ein Popupmenue, aus dem ein Textbaustein
-gew„hlt werden kann.
+Steht der Cursor beim Drcken von <Ctrl-Enter> un-
+mittelbar hinter oder inmitten einer Zeichenkette,
+wird diese als Krzel angesehen und durch den ent-
+sprechenden Textbaustein ersetzt. Wird kein entspre-
+chender Textbaustein gefunden (oder steht der
+Cursor nicht hinter oder inmitten einer Zeichen-
+kette), erscheint ein PopUp-Men, aus dem mit den
+Cursortasten ein Textbaustein gew„hlt werden kann.
 
-Um diese Funktion zu konfigurieren, muss eine Datei
-namens GLOSSARY.CFG im XP-Verzeichnis angelegt werden.
-In dieser Datei werden dann die Textbausteine
-nach folgenden Regeln konfiguriert:
+Um diese Funktion nutzen zu k”nnen, muá eine Datei
+GLOSSARY.CFG im XP-Verzeichnis existieren. In
+dieser Datei werden dann die Textbausteine nach
+folgenden Regeln aufgenommen:
 
-Am Anfang einer Zeile kennzeichnet eine in >..<
-eingeschlossene Zeichenkette ein Krzel,
-(Gross/Kleinschreibung ist dabei egal).
-Alle folgenden Zeilen geh”ren dann zum Entsprechenden
-Textbaustein, bis wieder eine Zeile gefunden wird,
-die mit ">" beginnt. Diese Ende-Kennung kann das
-n„chste Krzel sein, oder nur das Ende des Blocks
-oder einen Kommentar kennzeichnen.
+- Am Anfang einer Zeile kennzeichnet eine in ">"
+  und "<" eingeschlossene Zeichenkette das Krzel
+  fr den Textbaustein (Groá-/Kleinschreibung
+  spielt dabei keine Rolle).
 
-Mit Den Cursortasten wird ein Textbaustein ausgew„hlt
-Mit <<E>> im Glossary-Men kann die Datei GLOSSARY.CFG
-Editiert werden.
+- Alle folgenden Zeilen geh”ren dann zum entspre-
+  chenden Textbaustein - bis zur n„chsten Zeile, die
+  mit ">" beginnt. Diese Ende-Kennung kann der
+  Beginn des n„chsten Krzels sein (dann muá ein "<"
+  am Ende derselben Zeile folgen), oder nur das
+  Ende des Blocks kennzeichnen oder auch einen
+  Kommentar einleiten (in den letzten beiden F„llen
+  darf kein "<" am Ende derselben Zeile stehen).
+
+- Leerzeilen auáerhalb eines Textblocks werden
+  ignoriert und dienen nur der besseren šbersicht.
+
+
+Mit <<E>> im PopUp-Men kann die Datei GLOSSARY.CFG
+direkt editiert werden.
 
 
 Beispieldatei:
@@ -1168,18 +1176,31 @@ Beispieldatei:
 ___________________________
 
 >mfg<
-Mit Freundlichen Grssen
+Mit freundlichen Gráen
+
+
+>Ausgeschnittene Quotebl”cke (incl. Enter)
+>..<
+
+
+[...]
+
 
 >
 
 >--<
 
--_-_-_- [Schnipp ] _-_-_-_-_
+-_-_-_- [Schnipp] _-_-_-_-_
 
 >xp<
 Crosspoint
+
 >oxp<
 OpenXP
+>
+
+>home<
+http://www.openxp.de
 >
 
 >pm<
@@ -1188,73 +1209,69 @@ Peter Mandrella
 
 >sig<
 
-Dies ist eine tolle
- Signatur!
+Ich hasse Signaturen!
 >
 ___________________________
 
-Am Besten, Sie experimentieren einfach etwas
-mit den M”glichkeiten dieses Features.
 @
 8063
   Geben Sie hier die Spalte ein, in der der Text
-  automatisch umgebrochen werden soll.
+  automatisch umbrochen werden soll.
 @
 8064
-  Mit diesem Zeichen wird intern im Editor
-  das Absatzende markiert.
-
+  Mit diesem Zeichen wird das Absatzende markiert.
 @
 8065
 <<[x]>> -> Beim Drcken von <Return> wird die
        nachfolgende Zeile automatisch um die
-       gleiche Anzahl von Leerzeichen eingerckt,
-       wie die vorhergehende. (Auto-Indent)
+       gleiche Anzahl von Leerzeichen eingerckt
+       wie die vorhergehende (Auto-Indent).
 @
 8066
 <<[x]>> -> Markierte Bl”cke werden durch Tasten-
        druck nicht entmarkiert oder berschrieben.
-       Sinnvoll, wenn man die Wordstartasten fr
-       Blockoperationen verwenden m”chte.
+       Sinnvoll, wenn man die Wordstar-Tastenkombi-
+       nationen fr Blockoperationen verwenden
+       m”chte.
 @
 8067
 <<[x]>> -> Beim Umbrechen oder Zusammenfgen von
        gequoteten Zeilen werden die Quotezeichen
-       mit bercksichtigt. Siehe auch
-       ['Block reformatieren'] (<Ctrl B>).@61
+       mit bercksichtigt (siehe auch
+       ['Block reformatieren'] (<Ctrl-B>)).@61
 @
 65
 Mit den Cursortasten kann zwischen verschiedenen
 Jahren und Monaten gebl„ttert werden. Das aktuelle
 Datum wird hervorgehoben angezeigt.
 
-Der Kalender kann jederzeit mit <Alt K> aufgerufen
-werden.
+Mit <PgUp>/<PgDn>, <Pos1>/<End> sowie <Ins>/<Del>
+kann in gr”áeren Zeitintervallen (10, 100, 1000
+Jahre) gebl„ttert werden.
 
-Mit Bild hoch/runter , Pos1/Home / Ende sowie
-Einf /Entf kann um mehrere Jahre (10,100,1000)
-gebl„ttert werden.
-
-Durch die Zifferntasten kann Monat und Jahr
-direkt eingestellt werden. Eingabe muá dann
-inkl. fhrender Nullen erfolgen.
-z.B. 012000 fr Januar 2000.
+Mit den Zifferntasten kann Monat und Jahr direkt
+eingestellt werden. Die Eingabe muá dann inkl.
+fhrender Nullen erfolgen (z.B. 012000 fr Januar
+2000).
 
 Insgesamt umfaát der Kalender die Jahre 1-3000.
+
+Der Kalender l„át sich jederzeit mit <Alt-K>
+aufrufen.
 @
 66
-<<Alt O>>     Einstellungen
+<<Alt-O>>     Einstellungen
 
-<<Alt L>>     ”ffnet/schlieát das Logfile.
-<<Alt H>>     trennt die Verbindung (HangUp).
-<<Alt D>>     schaltet die Statuszeile ein/aus
-<<Ctrl Home>> l”scht den Bildschirm
+<<Alt-L>>     ”ffnet/schlieát das Logfile.
+<<Alt-H>>     trennt die Verbindung (HangUp).
+<<Alt-D>>     schaltet die Statuszeile ein/aus.
+<<Ctrl-Home>> l”scht den Bildschirm.
 
 <<PgUp>>      Upload
 <<PgDn>>      Download
 
 <<F9>>        DOS-Shell
-<<Alt X>>     verl„át CrossTerm, *ohne* aufzulegen.
+<<Alt-X>>     verl„át CrossTerm, *ohne* aufzulegen.
 @
 67
 Dies ist der Inhalt der gew„hlten Archivdatei. Es
@@ -1338,15 +1355,15 @@ soll.
 <<Emp.>>    Der Empf„nger der Nachricht wird ge„ndert.
         Wird der aktuelle Eintrag gel”scht, kann mit
         <F2> zwischen Brett und Usern gew„hlt werden.
-        ACHTUNG ! Bitte berdenken Sie vor dem
-        Benutzen dieser Funktion, ob Sie damit nicht
+        ACHTUNG! Bitte berdenken Sie vor der Benut-
+        zung dieser Funktion, ob Sie damit nicht
         andere Netzteilnehmer ver„rgern k”nnten.
         
-        Normalerweise werden auch "Kopien-an" Eintr„ge
-        durch diese Funktion gel”scht. Ist das nicht
-        erwnscht, muss die <<Shift-Taste>> gehalten
-        werden, wenn der Schalter bet„tigt wird.
-        (Also Shift+M oder Shift+Mausklick) 
+        Normalerweise werden auch "Kopien-an"-Ein-
+        tr„ge durch diese Funktion gel”scht. Ist
+        das nicht erwnscht, muá die <<Shift-Taste>>
+        gehalten werden, wenn der Schalter bet„tigt
+        wird (also Shift-M oder Shift-Mausklick).
 
 <<Betreff>> „ndert den Betreff.
 
@@ -1392,15 +1409,15 @@ soll.
 <<Crash>>   (Fido) legt die Nachricht zum Direktversand
         mit [/Fido/Crash] ab.@13104
 
-<<Prio>>    (ZConnect) legt die Priorit„t von PMs fest.
+<<Prio>>    (ZCONNECT) legt die Priorit„t von PMs fest.
         Direktmails werden von der Box per Direkt-
         Anruf zum Zielsystem verschickt, Eilmails
         werden von der Box *sofort* per Direktanruf
         abgeschickt. Das Versenden von Eil/Direkt-
         mails ist gebhrenpflichtig!
 
-<<Zusatz>>  (ZConnect/Usenet) erm”glicht die Eingabe di-
-        verser zus„tzlicher Informationen.
+<<Zusatz>>  (ZCONNECT/Usenet) erm”glicht die Eingabe
+        diverser zus„tzlicher Informationen.
 
 <<PGP>>     (ZCONNECT u.a.) erm”glicht das Signieren der
         Nachricht mit PGP und das Anfordern oder
@@ -1417,7 +1434,7 @@ soll.
 
 <<Weitere Funktionen:
 
-<<Ctrl-K>>  (ZConnect, RFC/UUCP) schaltet die Nachrich-
+<<Ctrl-K>>  (ZCONNECT, RFC/UUCP) schaltet die Nachrich-
         tenmarkierung "Blindkopie" (Blind Carbon
         Copy) ein/aus. Diese bewirkt, daá bei PMs
         mit mehreren Empf„ngern die einzelnen Emp-
@@ -1461,7 +1478,7 @@ Sie ihn mit <F2>. Alle Nachrichten aus dem gew„hlten
 Quell-Userbrett werden in das Ziel-Userbrett ver-
 schoben, ausgenommen unversandte Nachrichten.
 
-Die Schreibweise (Groá/Kleinschreibung) des Namens
+Die Schreibweise (Groá-/Kleinschreibung) des Namens
 spielt keine Rolle.
 @
 73
@@ -1484,21 +1501,20 @@ Wenn Sie den Dateinamen ohne Pfad angeben, legt XP
 die Datei im Extrakt-Verzeichnis ([/Config/Pfade/Ext.])@261
 ab.
 
-Mit F2 kommen sie zur Auswahl fr das
-Windows-Clipboard.
+Mit <F2> kommen sie zur Auswahl fr das Windows-
+Clipboard (Zwischenablage).
 
 <<Windows-Clipboard>>
-kopiert den markierten Text ins Clipboard
+Kopiert den markierten Text ins Clipboard.
 
 <<Win-Clipboard (URL)>>
-versucht aus der ersten markierten Zeile eine
-Internet-URL (FTP:// oder HTTP:// oder WWW.)
-auszuschneiden, und kopiert diese ins
-Windows Clipboard.
+Versucht aus der ersten markierten Zeile eine
+Internet-URL ("ftp://" oder "http://" oder "www.")
+auszuschneiden, und kopiert diese ins Clipboard.
 
 <<Win-Clipboard (MAIL)>>
 Analog zur vorherigen Funktion, nur wird hier
-versucht eine Mailadresse zu generieren.
+versucht, eine eMail-Adresse zu extrahieren.
 
 @
 75
@@ -2959,7 +2975,7 @@ Nachrichten aufrufen soll. šber das Makro $PUFFER
 kann der Name der einzulesenden Datei bergeben
 werden; bei Z-Netz-(alt)-Netcalls hat diese Datei
 Z-Netz-Format, bei allen anderen Netzen (und bei
-ZConnect-Boxen) hat sie ZConnect-Format.
+ZCONNECT-Boxen) hat sie ZCONNECT-Format.
 
 Das Programm kann die Datei verarbeiten, „ndern,
 kopieren, oder beliebige andere Aktionen durchfhren.
@@ -2973,7 +2989,7 @@ Hinweise:
 ş  Das Programm wird auch aufgerufen, wenn keine
    Nachrichten empfangen wurden. In diesem Fall wird
    der Name einer leeren Pufferdatei bergeben. Leere
-   ZConnect-Puffer sind 0 Bytes groá, leere Z-Netz-
+   ZCONNECT-Puffer sind 0 Bytes groá, leere Z-Netz-
    Puffer bis zu 8 Bytes (4 Leerzeilen). Defekte
    Mailboxprogramme erzeugen u.U. auch leere ZCON-
    NECT-Puffer von bis zu 16 Bytes.
@@ -3171,7 +3187,7 @@ und Nachname).
 195
 (N„heres zu Domains: s. Handbuch, Kapitel 1.3).
 
-<<ZConnect:>>
+<<ZCONNECT:>>
 
 Geben Sie einen gltigen Domainnamen der Box ein.
 Der Domainname ist der Teil Ihrer Z-Netz-Adresse
@@ -3432,12 +3448,11 @@ Wahlweise k”nnen Sie statt des "\@" auch "$" verwen-
 den; dann wird bei Namen ohne Trennung gar keine
 Initiale erzeugt.
 
-Als ganz besonderes Schmankerl wurde noch "&" fr
-die Initialen eingebaut. "&" funktioniert wie "$",
-nur mit dem Zusatz, daá auch dann keine Initialen
-erzeugt werden, wenn ein "\#" im Absender vorkommt.
-Das ist fr Nutzer eines Usenet<->Fido-Gateways
-interessant.
+Als spezielles Quote-Zeichen steht Ihnen noch "&"
+zur Verfgung. "&" funktioniert wie "$", mit dem
+Unterschied, daá auch dann keine Initialen erzeugt
+werden, wenn ein "\#" im Absender vorkommt. Das ist
+fr Nutzer eines Usenet<->Fido-Gateways interessant.
 
 Das Standard-Quotezeichen ist "> ". Bei nderungen
 sollten Sie m”glichst darauf achten, daá ein ">" im
@@ -3474,6 +3489,7 @@ Achtung: Bei Einstellung "Alle" oder "Z-Netz" kann
 die Userdatenbank sehr schnell sehr groá werden!
 Mit /Wartung/UserReorg werden die nicht ben”tigten
 Adressen wieder aus der Datenbank entfernt.
+
 @
 8068
 Neu aufgenommene User werden dieser
@@ -3481,7 +3497,7 @@ Neu aufgenommene User werden dieser
 
 @
 8069
-Adreábuchgruppe:
+<<Adreábuchgruppe>>
 
 Das Userfenster wird vor dem alphabetischen Sortieren
 nach diesen Gruppen geordnet. Gruppen mit niedrigen
@@ -3495,16 +3511,16 @@ man sie nur in dieselbe Adreábuchgruppe stecken.
 Minimalwert ist 1, Maximalwert ist 99.
 @
 8075
-Priorit„t:
+<<Priorit„t>>
 
-Diese Einstellung ist als "humane" Alternative 
-zum Filter (Nachrichten dieses Users werden
-dunkel dargestellt) oder zum Hervorheben von 
-Nachrichten wichtiger Personen gedacht.
+Diese Einstellung ist als "humane" Alternative zum
+Filter (Nachrichten dieses Users werden dunkel dar-
+gestellt) oder zum Hervorheben von Nachrichten
+wichtiger Personen gedacht.
 
-Der hier eingestellte Wert entspricht der
-unter Config/Anzeige/Farben/Nachrichten
-eingestellten Priori„ts-Farbe.
+Der hier eingestellte Wert entspricht der unter
+Config/Anzeige/Farben/Nachrichten eingestellten
+Priorit„ts-Farbe.
 
 gltige Werte sind:
 
@@ -3665,7 +3681,6 @@ wie Quote-Zeichen behandelt werden sollen.
 Diese Einstellung gilt sowohl fr den Lister als
 auch fr den Editor. Sie l„át sich im Lister jeder-
 zeit mit der Taste "Q" umschalten.
-
 @
 225
 So viele Megabytes Festplattenplatz ben”tigt Cross-
@@ -4266,7 +4281,7 @@ Spalten            USERNAME         BOXNAME
 Splt./klein        Username         BOXNAME
 @
 842
-<<ZConnect / Fido / MausNet:>>
+<<ZCONNECT / Fido / MausNet:>>
 
 <<[x]>> -> Im Kommentarbaum, der im Nachrichtenfenster
        mit "##" aktiviert wird, werden alle Useradres-
@@ -4276,7 +4291,7 @@ Diese Einstellung kann auch im Kommentarbaum mit "A"
 nicht-permanent ge„ndert werden.
 @
 843
-<<ZConnect / MagicNET:>>
+<<ZCONNECT / MagicNET:>>
 
 <<[x]>> -> Bei der Nachrichtenanzeige innerhalb von
        Brettern wird statt der Absenderadresse der
@@ -4964,15 +4979,15 @@ eintragen!
 <<[x]>> -> Bei Nachrichten an diesen User werden auto-
        matisch Empfangsbest„tigungen angefordert.
 
-<<[ ]>> -> Empfagsbest„tigungen k”nnen manuell mit "E"
+<<[ ]>> -> Empfangsbest„tigungen k”nnen manuell mit "E"
       im Absendefenster angefordert werden.
 @
 427
 So viele Tage werden die Nachrichten im PM-Brett
-dieses Users aufbewahrt. Alle Nachrichten, also
-auch die selbstgeschriebenen, die „lter sind und nicht
+dieses Users aufbewahrt. Alle Nachrichten (auch
+die selbstgeschriebenen!), die „lter sind und nicht
 mit "H" auf Halten gesetzt wurden, werden bei der
-n„chsten Reorganisation gel”scht.Stichtag ist das
+n„chsten Reorganisation gel”scht. Stichtag ist das
 Eingangsdatum der Nachricht.
 
 Mit 0 wird der User auf unendliche Haltezeit gesetzt.
@@ -5620,14 +5635,14 @@ Aktionen sind:
 
 @
 530
-Geben Sie hier den Suchbegriff ein. Mit <F2>
-bekommen Sie eine Auswahl der drei zuletzt
-benutzten Suchbegriffe.
+Geben Sie hier den Suchbegriff ein. Mit <F2> erhal-
+ten Sie eine Auswahl der drei zuletzt benutzten
+Suchbegriffe.
 
-Wenn Sie die Suchoptionen "a" oder "o" nicht ver-
-wenden, wird exakt nach dem Text gesucht, der
-hier eingegeben wurde (natrlich unter Berck-
-sichtigung der Suchoptionen "i" und "„").
+Wenn Sie die Suchoptionen "a" oder "o" nicht verwen-
+den, wird exakt nach dem Text gesucht, der hier ein-
+gegeben wurde (natrlich unter Bercksichtigung der
+Suchoptionen "i" und "„").
 
 
 Bei AND/OR-verknpften Suchl„ufen (mit den Such-
@@ -5656,21 +5671,21 @@ Fritz" noch "fischt" vorkommt.
 
 Allgemeine Funktionen in Texteingabe-Feldern:
 
-<<Ctrl-V>> oder <<Shift-Ins>> fgt die Windows-
-         Zwischenablage (Clipboard) ein. Ein Fehler-
-         ton bedeutet, daá der Clipboard-Inhalt zu
-         groá ist oder nicht existiert.
+<<Ctrl-V>> oder <<Shift-Ins>> fgt die Windows-Zwischenab-
+       lage (Clipboard) ein. Ein Fehlerton bedeutet,
+       daá der Clipboard-Inhalt zu groá ist oder
+       nicht existiert.
 
 <<Ctrl-C>> oder <<Ctrl-Ins>> kopiert den Inhalt des Text-
-         felds in das Clipboard.
+       felds in das Clipboard.
 
 <<Ctrl-G>> wandelt die Eingabe in Groábuchstaben um.
 
 <<Ctrl-K>> wandelt die Eingabe in Kleinbuchstaben um.
 
 <<Ctrl-X>> erzeugt eine gemischte Schreibweise: der
-         erste Buchstabe jedes Wortes wird groá ge-
-         schrieben, der Rest klein.
+       erste Buchstabe jedes Wortes wird groá ge-
+       schrieben, der Rest klein.
 
 @
 531
@@ -6653,7 +6668,7 @@ bestimmte User oder Bretter senden.
 
 <<Anzeige im Kurznamen-Fenster:
 
- pm          pm\@daisy.de
+ pm          peter\@mandrella.de
  zyxel       /T-NETZ/ZYXEL-KUMMERKASTEN    MEINEBOX
  rbabel      rbabel\@babylon.pfm-mainz.de
  ³           ³                             ³
@@ -7109,7 +7124,7 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[X]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neueren
        Mail-Clients im Internet verstanden.
@@ -7163,7 +7178,7 @@ einer passenden Decodersoftware decodieren.
 Diese Einstellung gilt nur fr neu versandte Nach-
 richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
-/Nachricht/Unversandt/l”schen l”schen und neu sen-
+/Nachricht/Unversandt/L”schen l”schen und neu sen-
 den.
 
 @
@@ -7178,7 +7193,7 @@ den.
 <<[x]>> -> CrossPoint bernimmt zus„tzlich zu den Datei-
        namen auch <<Magics>> mit in die Liste der zu
        requestenden Dateien. Magics sind Kurznamen
-       fr einzelne oder eine Sammlung mehrerer
+       fr einzelne (oder eine Sammlung mehrerer)
        Dateien, die sich regelm„áig „ndern (k”nnen),
        z.B. PGPOS2 fr die aktuelle Version des
        Programms PGP fr OS/2 oder FILES fr die
@@ -7203,7 +7218,7 @@ wird die Tarifzone dagegen unter /Edit/Boxen/Edit
 <<L”schen>>   gew„hlte Tarifzone l”schen
 <<Edit>>      gew„hlte Tarifzone bearbeiten
 <<Sichern>>   nderungen sichern
-<<Ok>>        Eingabe beenden
+<<OK>>        Eingabe beenden
 
 Falls Sie CrossPoint vor dem 1.1.96 installiert
 haben, sind die alten, bis Ende 1995 gltigen Tarif-
@@ -7354,8 +7369,8 @@ zum Anzeigen diverser Dateiformate verwenden soll.
 821
 Usenet: Geben sie hier den MIME-Typ ein, fr den
 dieser Eintrag gelten soll. Der MIME-Typ ist die
-MIME-Beschreibung dieser Dateiart im Body (Textteil)
-der Nachricht (z.B. <<image/gif>>).
+MIME-Beschreibung dieses Dateityps im Body (Text-
+teil) der Nachricht (z.B. <<image/gif>>).
 
 Wird eine entsprechende MIME-Nachricht empfangen,
 kann diese mit dem hier eingetragenen Viewer-
@@ -7367,8 +7382,8 @@ Geben sie hier die Dateierweiterung ein.
 
 Wird eine Bin„rnachricht, eine MIME-Nachricht mit
 entsprechendem Inhalt (Usenet) oder ein File Attach
-(FidoNet) empfangen, kann diese mit dem hier einge-
-tragenen Viewer-Programm betrachtet werden.
+(FidoNet) empfangen, kann diese(r) mit dem hier ein-
+getragenen Viewer-Programm betrachtet werden.
 
 Beachten Sie, daá bei ber das Z-Netz verschickten
 Bin„rnachrichten der Betreff der Nachricht nicht
@@ -7377,29 +7392,37 @@ und die Erkennung von Dateiformaten anhand des
 Dateinamens daher im Z-Netz nicht in allen F„llen
 funktioniert.
 
+
 Hinweise:
+
 Wenn Sie einen HTML-Viewer eintragen (MIME-Typ
-<<text/html>>), dann sollten Sie <<htm>> als Dateinamen-
-erweiterung angeben, da sonst der externe Viewer u.
-U. die tempor„re Datei nicht als HTML-Datei erkennt.
+<<text/html>>), dann sollten Sie <<htm>> als Datei-
+erweiterung angeben, da sonst der externe Viewer die
+tempor„re Datei u.U. nicht als HTML-Datei erkennt.
 
-Wenn Sie bei einem Multiformat-Mime-Typ
-keine Dateiendung eintragen, k”nnen Allround-Viewer
-wie "START" unter Windows benutzt werden, 
-um immer automatisch den passenden Viewer zu verwenden.
+Wenn Sie bei einem Multiformat-MIME-Typ keine Datei-
+erweiterung eintragen, k”nnen sie unter Windows den
+Befehl "start" verwenden, um immer automatisch die
+Datei an den passenden Viewer zu bergeben (das ist
+der Viewer, der in Windows fr den entsprechenden
+Dateityp registriert ist).
 
-Siehe dazu auch [Viewer-Sicherheitseinstellungen.]@8072
+Beispiel: <muá noch erg„nzt werden>
+
+Siehe dazu auch: [Viewer-Sicherheitseinstellungen]@8072
 
 @
 823
 Geben Sie hier an, welches Programm CrossPoint zum
-Anzeigen der Dateiart verwenden soll.
+Anzeigen des angegebenen Dateityps verwenden soll.
 
 Das Programm muá sich im aktuellen Verzeichnis
-befinden, oder ber einen Pfad erreichbar sein.
+befinden, ber den DOS-Pfad erreichbar sein, oder
+Sie mssen den vollst„ndigen Zugriffspfad angeben.
+
 Das Programm wird automatisch aktiviert, sobald Sie
-eine Bin„r- oder MIME-Nachricht anw„hlen,
-die die passende Dateiart enth„lt.
+eine Bin„r- oder MIME-Nachricht anw„hlen, die den
+passenden Dateityp enth„lt.
 
 Wenn Sie als Parameter das Makro $FILE verwenden,
 wird es durch den Namen der Datei ersetzt. An-
@@ -7407,81 +7430,86 @@ sonsten setzt XP den Namen der Datei als ersten
 Parameter hinter dem Programmnamen ein.
 
 Falls Sie als Viewer eine Batchdatei eintragen, muá
-der Name der Datei voll ausgeschrieben werden, incl.
-".BAT".
+der Name der Datei vollst„ndig  ausgeschrieben wer-
+den, inkl. der Erweiterung ".BAT".
+
 @
 8071
-Wenn Dateien mit externen Viewerprogrammen ge”ffnet
-sind, kann mit Crosspoint weitergearbeitet werden.
-um die angezeigten tempor„r-Dateien zu l”schen,
-gibt es zwei Vorgehensweisen:
+Wenn unter Windows Dateien mit externen Viewer-
+Programmen ge”ffnet werden, kann parallel mit
+CrossPoint weitergearbeitet werden. Um die hierbei
+angelegten Tempor„rdateien zu l”schen, gibt es zwei
+m”gliche Vorgehensweisen:
 
-<<[ ]>> -> Es wird zusaetzlich zum Viewer-Programm
-       eine Batchdatei ge”ffnet, die wartet bis
-       das Viewer-Programm beendet wird und dann 
+<<[ ]>> -> Es wird zus„tzlich zum Viewer-Programm
+       eine Batchdatei gestartet, die wartet, bis
+       das Viewer-Programm beendet wird und dann
        sich selbst und die Tempor„rdatei l”scht.
 
-<<[X]>> -> Crosspoint l”scht die Tempor„rdatei
-        erst beim n„chsten Programmstart.
+<<[X]>> -> CrossPoint l”scht die Tempor„rdatei
+       erst beim n„chsten Programmstart.
 @
 8072
-<<Ungef„hrliche Dateiendungen>>
+<<Sichere Dateierweiterungen>>
 
-Wenn bei Mime-Viewer Eintr„gen keine Dateiendung
-angegeben wird, k”nnen Multiformat-Mimetypen
-(z.B Application/octet-stream) mit einem 
-Allround-Viewer angesehen werden. Unter Windows
-bietet sich dazu der Befehl "START" an.
+Wenn bei den Einstellungen fr externe Viewer
+(<<Edit/Viewer>>) ein MIME-Typ ohne Dateierweite-
+rung angegeben wurde, k”nnen Nachrichten im MIME-
+Multiformat (z.B. <<Application/octet-stream>>) mit
+einem Allround-Viewer betrachtet werden. Unter
+Windows bietet es sich an, hierfr den Befehl
+"start" zu verwenden, der die Datei automatisch
+an den passenden (fr den fr den jeweiligen Datei-
+typ registrierten) Viewer bergibt.
 
-Allerdings besteht bei dieser Funktion die
-Gefahr, dass Mail-Viren und andere gef„hrliche
-Dateien direkt ausgefhrt werden.
+Allerdings besteht bei dieser Funktion die Gefahr,
+daá Mail-Viren oder andere gef„hrliche Dateien
+direkt ausgefhrt werden.
 
-Zum Schutz davor kommt bei allen Dateieendungen
-die nicht in dieser Liste eingetragen sind,
-eine Sicherheitsabfrage, bevor die Dateien 
-ge”ffnet werden.
+Um dies zu verhindern, fragt CrossPoint bei allen
+Dateien mit Erweiterungen, die <<nicht>> in dieser
+Liste enthalten sind, vorher nach, ob die Dateien
+ge”ffnet werden sollen.
 
-Wird diese Abfrage mit "Nein" beantwortet, 
-wird der interne Lister bzw das unten eingetragene 
-[Viewerprogramm fuer Verd„chtige Dateien]@8074
-benutzt, um die Datei anzusehen.
+Wird diese Abfrage mit "Nein" beantwortet, wird der
+interne Lister (bzw. das weiter unten einzutragende
+[Viewer-Programm fr verd„chtige Dateien]) verwendet,@8074
+um die Datei zu betrachten.
 
-Die Dateieendungen mssen incl. Punkt 
-eingegeben werden (also ".HTM" nicht nur "HTM")
-Folgende Dateiformate sind zu gef„hrlich, 
-und werden in dieser Liste ignoriert:
+Die Dateierweiterungen mssen inkl. Punkt eingegeben
+werden (also ".HTM" statt nur "HTM"). Folgende
+Dateiformate sind zu gef„hrlich und werden deshalb
+in dieser Liste ignoriert:
 .EXE .COM .BAT .BTM .CMD .PIF .LNK .INF .REG
 
 Siehe auch: 
-[Lister-Dateiendungen]@8073
+[Lister-Dateierweiterungen]@8073
 @
 8073
-<<Lister-Dateiendungen>>
+<<Lister-Dateierweiterungen>>
 
-Dateien in Multiformat-Mimetyp Mails, 
-die eine dieser Dateiendungen haben, werden immer 
-mit dem XP-internen Lister/Viewer ge”ffnet.
+Dateien in MIME-Multiformat-Mails, die eine dieser
+Dateierweiterungen haben, werden immer mit dem
+XP-internen Lister/Viewer ge”ffnet.
 
 Siehe auch: 
-[Ungef„hrliche Dateiendungen]@8072
-[Viewerprogramm fuer Verd„chtige Dateien]@8074 
+[Ungef„hrliche Dateierweiterungen]@8072
+[Viewer-Programm fr verd„chtige Dateien]@8074
 @
 8074
-<<Viewerprogramm fuer Verd„chtige Dateien>>
+<<Viewer-Programm fr verd„chtige Dateien>>
 
-Wenn die Sicherheitsabfrage bei Multiformat-
-Mimetypen mit "Nein" beantwortet wird,
-wird das hier eingetragene Programm gestartet
-(z.B ein Virenscanner...)
+Wenn die Sicherheitsabfrage bei MIME-Multiformat-
+Nachrichten mit "Nein" beantwortet wird, wird das
+hier eingetragene Programm gestartet (z.B. ein
+Virenscanner ...).
 
-Ist hier nichts eingetragen, wird die
-Datei mit dem XP-Internen Lister/Viewer angezeigt.
+Ist hier nichts eingetragen, wird die Datei mit dem
+XP-internen Lister/Viewer angezeigt.
 
 Siehe auch:
-[Lister-Dateiendungen]@8073
-[Ungef„hrliche Dateiendungen]@8072
-
+[Lister-Dateierweiterungen]@8073
+[Ungef„hrliche Dateierweiterungen]@8072
 
 @
 830
@@ -7578,7 +7606,7 @@ Ist die Schreibsperre abgeschaltet und eine Vertre-
 teradresse eingetragen, so gibt es zwei M”glichkei-
 ten:
 
-<<ZConnect, Usenet:>>
+<<ZCONNECT, Usenet:>>
 
 Alle ”ffentlichen Antworten auf Nachrichten, die Sie
 in dieses Brett schreiben, werden an den Vertreter
@@ -8325,29 +8353,28 @@ ten Keys manuell einzulesen.
        Absendefenster signiert werden.
 @
 1018
-Geben Sie hier die "User-ID" (Netzadresse) aus Ihrem
-Public Key (oder besser die Key-ID im Hexformat) an.
+Geben Sie hier die "User ID" (Netzadresse) aus Ihrem
+Public Key (oder besser die KeyID im Hexformat) an.
 Falls Ihr Key mehrere Netzadressen enth„lt, geben Sie
 eine davon an. Die Adresse sollte exakt die gleiche
-Schreibweise wie im PGP-Key haben, d.h.
+Schreibweise wie im PGP-Key haben, d.h.:
 
      Vorname Nachname <user\@do.main>
      
-Wir empfehlen die Verwendung der Hex-ID, die sie
-erhalten, wenn sie z.B. pgp -kv (UserID) eingeben:
+Empfehlenswert ist die Verwendung der KeyID, die Sie
+erhalten, wenn Sie z.B. pgp -kv <UserID> eingeben:
 
-  F:>pgp -kv rom@mind
+  F:>pgp -kv theo\@tester
 
   Type Bits/KeyID    Date       User ID
-  pub  1024/C39C5085 1995/06/15 Oliver Hertel
-                                Oliver Hertel
+  pub  1024/08154711 1995/11/11 Theo Tester
+                                Theo Tester
   1 matching key found.
 
 Tragen sie in das Feld dann 0x fr Hex, gefolgt von
-der KeyID ein: 0xC39C5085. DOS kommt mit sehr langen
-Aufrufzeilen beim Starten der Command.com nicht
-zurecht, daher ist die Verwendung dieses Krzels
-sinnvoll.
+der KeyID ein: 0xC39C5085. Da die L„nge von Kommando-
+zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
+diese Form der User ID zu verwenden.
 
 @
 1020
@@ -9082,8 +9109,8 @@ fachen.
 <<Nachricht / Direkt
 
 Hier k”nnen Sie eine Nachricht direkt an einen User
-oder ein Brett senden. Ohne den Empf„nger vorher in
-Brett oder Userliste anlegen zu mssen. 
+oder ein Brett senden, ohne den Empf„nger vorher in
+der Brett- oder Userliste anlegen zu mssen.
 
 <<Server:>>    Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
@@ -9095,14 +9122,15 @@ Brett oder Userliste anlegen zu mssen.
            wird dieses Feld automatisch gesetzt.
             
 
-<<Empf„nger>>  Der Name des Users. CrossPoint erg„nzt
-           den Namen bei Bedarf automatisch um Box-
-           namen oder ".ZER". Noch nicht angelegte
-           User oder Bretter sind an der Hervor-
-           hebung des Wortes "Empf„nger" zu erkennen.
+<<Empf„nger>>  Der Name des Users oder des Bretts
+           (Area, Newsgroup). CrossPoint erg„nzt den
+           Namen bei Bedarf automatisch um Boxnamen
+           oder ".ZER". Noch nicht angelegte User
+           oder Bretter sind an der Hervorhebung des
+           Wortes "Empf„nger" zu erkennen.
 
-           Brettnamen gebe Sie hier ein, indem Sie
-           "/" als erstes Zeichen verwenden.
+           Um einen Brettnamen einzugeben, mssen
+           Sie "/" als erstes Zeichen verwenden.
 
 <<Betreff>>    Der gewnschte Betreff der Nachricht.
 
@@ -9343,8 +9371,8 @@ tionen ber Funktionstasten m”glich. Z.Zt. gilt dies
 fr das Durchfhren von Netcalls (*NETCALL-Option)
 und die Reorganisation (*REORG).
 
-Alles Weitere steht in der Hilfe zu den einzelnen
-Eingabefeldern ("E" drcken..).
+Alles weitere steht in der Hilfe zu den einzelnen
+Eingabefeldern ("E" drcken).
 @
 10701
 <<Wartung / Reorganisation
@@ -9768,9 +9796,9 @@ wandeln. Zus„tzlicher Text zu Beginn oder Ende der
 Nachricht wird dabei ignoriert. Das Decodieren von
 mehreren, markierten Teilnachrichten ist m”glich.
 
-Um selbst UUE-codierte Dateien zu verschicken,
-w„hlen Sie im Editormen (ereichbar durch F10
-oder rechten Mausklick) die Option <<Laden UUE>>
+Um selbst UU-codierte Dateien zu verschicken,
+w„hlen Sie im Editormen (erreichbar durch <F10>
+oder rechten Mausklick) die Option <<Laden UUE>>.
 
 Falls Sie Dateien per ZCONNECT verschicken, brauchen
 Sie diese nicht zu codieren: Die Gateways nehmen
@@ -10152,7 +10180,7 @@ Schablonen erlaubt:
   $ERHALTEN  -  .. und das Empfangsdatum
   $MSGID     -  die Message-ID der Bezugsnachricht
 
-Die folgenden Makros gelten nur fr ZConnect und
+Die folgenden Makros gelten nur fr ZCONNECT und
 Magic-kompatible Netze:
 
   $RNAME     -  der Realname des Absenders der
@@ -10674,17 +10702,18 @@ richt[/Unversandt/Edit] zu verwenden ist.@10401
 12205
 <<Nachricht / ndern / Typ
 
-Diese Funktion „ndert den Typ einer Nachricht.
-aus einer Textnachricht wird eine Bin„rnachricht (B)
-aus einer Bin„rnachricht wird Multipart-Mime (M)
-und aus Multipart-Mime wird wieder eine Textnachricht.
+Diese Funktion „ndert den Typ einer Nachricht: Aus
+einer Textnachricht wird eine Bin„rnachricht (B),
+aus einer Bin„rnachricht wird eine Multipart-MIME-
+Nachricht (M), und aus einer Multipart-MIME-Nach-
+richt wird wieder eine Textnachricht.
 
 Diese nderung betrifft NUR die XP-Datenbank; der
 Puffer-Kopf der Nachricht bleibt also unver„ndert.
 Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
 die als Textnachrichten verschickt wurden und daher
 nicht vom Archiv-Viewer erkannt werden, bzw. fr
-Multipart-Mime-Nachrichten, die wegen fehlerhaften 
+Multipart-MIME-Nachrichten, die wegen fehlerhafter
 Headerzeilen nicht als MIME erkannt wurden.
 @
 12206
@@ -10883,6 +10912,25 @@ Der eingebaute Lister von CrossPoint wird zum Anzei-
 gen von Nachrichten, Brettlisten, Dateilisten etc.
 verwendet. Hier finden Sie alle Einstellungen, die
 den internen Lister betreffen.
+@
+12813
+<<Config / Optionen / Editor
+
+Hier k”nnen Sie die (wenigen) Einstellungen fr den
+eingebaute. Editor vornehmen. Dieselben Optionen
+erhalten Sie auch im Editor selbst mit <F10>/O bzw.
+mit <Ctrl-O><R>.
+@
+12814
+<<Config / Optionen / Viewer
+
+Hier haben Sie die M”glichkeit, einige Einstellungen
+(vor allem Sicherheitseinstellungen) fr das Be-
+trachten von Bin„r- und MIME-Nachrichten vorzunehmen.
+
+Welcher Viewer fr welchen Dateityp zust„ndig ist,
+k”nnen Sie unter /Edit/Viewer bestimmen.
+
 @
 12804
 <<Config / Optionen / Nachrichten
@@ -11748,7 +11796,7 @@ niert es allerdings nur, wenn die Nachricht noch
 nicht die Box verlassen hat.
 @
 20318
-Nur ”ffentliche ZConnect- und RFC-Nachrichten k”nnen
+Nur ”ffentliche ZCONNECT- und RFC-Nachrichten k”nnen
 ersetzt werden.
 @
 20319
@@ -12006,7 +12054,7 @@ len Sie es erneut mit <Cursor oben> an und drcken
 Sie dann B, um eine neue Nachricht zu schreiben.
 @
 20447
-Nur Nachrichten, die bereits versendet wurden,
+Nur Nachrichten, die bereits versandt wurden,
 k”nnen mit [Nachricht/Weiterleiten/Ersetzen] ersetzt@12108
 werden. Unversandte Nachrichten k”nnen mit
 [Nachricht/Unversandt/Edit] ge„ndert werden.@10401
