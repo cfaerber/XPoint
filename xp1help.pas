@@ -225,6 +225,7 @@ begin
         end;
     8 : begin             { User-Weiterleitfenster }
           ks(getres2(20,10));    { '^Alle' }
+          ks(getres2(20,22));    { 'S^uche' }
           kscr(getres2(20,9));   { 'best„tigen' }
           ksesc;
         end;
@@ -296,10 +297,10 @@ begin
   if not inithlp then
 {$IFDEF UnixFS}
     if not inithelp(DocDir+helpfile,
-		    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+                    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
 {$ELSE}
     if not inithelp(DocDir+helpfile,
-		    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+                    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
 {$ENDIF}
     begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
@@ -410,6 +411,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/12/08 01:24:04  mk
+  MH:- Usersuche bei Auswahl ueber F2 moeglich
+
   Revision 1.16  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
 
