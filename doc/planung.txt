@@ -1,0 +1,87 @@
+(c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de
+
+$Id$
+
+
+Strategieplanung fr die weiteren Versionen von OpenXP
+
+Version 3.20 - Release geplant im 2. Quartal 2000
+~~~~~~~~~~~~
+Ziele:
+  - Extrem stabil laufende Version, die von allen Usern von 3.12d genutzt
+    werden kann
+  - Keine groáen neuen Funktionen, aber implementierung kleiner, h„ufig
+    gefragter Featurewnsche
+  - DOS-16 Bit Version und einige Tools 32 Bit fr DOS, Win32, OS/2, Linux
+Ablauf:
+  - Betatest, bis eine grundlegend stabile Version vorhanden ist
+  - Danach zwei Versionen mit Debug-Informationen und ausschlieálich
+    Bug-Fixes
+  - N„chste Beta ohne Debug-Informationen
+  - Wenn diese Version ausreichend stabil ist, wird eine Beta-Version
+    erzeugt, die keine Debug-Informationen und keinen Beta-Hinweis mehr
+    tr„gt (Releasce Candidate 1)
+  - Ab hier wird ein absoluter Code Freeze gemacht und ein neuer CVS-Branch
+    angelegt, damit die Weiterentwicklung parallel an der 3.21 fortschreiten
+    kann
+  - Es wird ca. aller 2-3 Wochen ein neuer RC herausgebracht, bei dem
+    ausschlieálich aufgetretene Fehler beseitigt werden
+  - Am Anfang des RC-Zyklus ist es noch m”glich, Dokumentationsupdates
+    einzubinden bzw. das Distributionsarchiv leicht anzupassen
+  - Die Release-Version wird dann die letzte RC-Version sein, wobei
+    ausschlieálich die Versionnummer ge„ndert wird
+
+
+Version 3.30 - Release geplant noch im Jahr 2000
+~~~~~~~~~~~~
+Ziele:
+  - Gr”áere Feature-Updates, die von den Usern gefragt werden
+  - Bessere Internet-Integration
+  - Einbau eines Standard und Expertenmodus, um Usern den Einstieg in das
+    komplexe OpenXP-Projekt zu erm”glichen
+  - Quick-Konfigurationsmodus, um in sp„testens 5 Minuaten
+    die Internet-Dienste seitens OpenXP nutzen zu k”nnen
+  - Parallel dazu eine Portierung auf die 32 Bit Platformen
+  - Integration von UUZ in das Hauptprogramm um einen transparenteren
+    Mailtransport zu gew„hrleisten
+Ablauf:
+  - Release-Zyklus wie bei 3.20
+
+Version 4.0 - Release irgendwann 2001
+~~~~~~~~~~~
+Zeile:
+  - Weiterentwicklung der 32 Bit-Versionen
+  - DOS-16 Bit DOS Version wird nicht mehr weitergefhrt, um gr”áere
+    Freiheiten und Stabilit„t der 32 Bit Versionen zu erreichen
+  - Wichtigstes Ziel: Problemlose Integration der Internet-Dienste
+    Mail und News ber POP3
+
+Version 5.0 - Release noch in diesem Leben
+~~~~~~~~~~~
+Zeile:
+  - sind noch zu definieren
+  - Umsetzung komplett Objektorientiert und direkt fr grafische
+    Oberfl„chen
+  - Untersttzung erweiterter Features, wie IMAP
+
+
+
+Konkrete Planungen fr die Programmentwicklung
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+POP3/SMTP/NNTP
+ - Entwicklung eines objektorientieren, von XP v”llig unabh„ngigen,
+   auf den drei groáen Platformen (evtl. sogar mit DOS 32 Bit) Interface
+   welches einen TCIP/IP-Socket bereitstellt
+   Autor: Markus K„mmerer & Team
+ - Entwicklung von drei Klassen fr die Dienste POP3, SMPT, NNTP,
+   ebenfalls von XP unabh„nig
+   Autor: Markus K„mmerer & Team
+ - Entwicklung einer Interface-Schicht von XP zu den drei o.g. Klassen,
+   Konfiguration direkt in XP
+   Autor: Team
+
+
+$Log$
+Revision 1.1  2000/02/17 09:49:42  mk
+Strategietext fuer Zukunftsplanung hinugefuegt
+
