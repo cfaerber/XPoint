@@ -1927,11 +1927,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    LightNET-Login
 5    Netzname~
 6    Bretter ~
-7    Absender User@Point.ZER
+7    Absender Username@Pointname.ZER
 8    Vertreter~
 9    Brettmanager   ~
 10   ... Pa·wort    ~
-12   Absender User@Point.domain
+12   Absender Username@Pointname.Domain
 + 926
 0    42
 1    Fido-Einstellungen
@@ -1961,7 +1961,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Pa·wort~
 7    vollstÑndige Domain
 8    Sysfile-Betreff~
-9    Absender User@Server.domain
+9    Absender Username@Boxname.Domain
 + 929
 1    Es sind Polldaten fÅr diese Box vorhanden (%s.PP)
 2    - Netztyp kann nicht geÑndert werden.  Versenden oder
