@@ -5,7 +5,7 @@ Infos zu CVS
 <li>Logeintr&auml;ge: Bitte darauf achten, da&szlig; die Logs auch im Kontext
 Sinn ergeben. Also lieber mehrere einzelne Commits als ein gro&szlig;es, bei dem
 man dann aber f&uuml;r die einzelnen Dateien die Logeintr&auml;ge vergessen kann.
-Das CVS-Log sollte eine Kurzzusammenfassung des Diffs sein, da&szlig; die
+Das CVS-Log sollte eine Kurzzusammenfassung des Diffs sein, das die
 &Auml;nderung widerspiegelt.</li>
 <li>cvs diff -u -r (rev1) -r (rev2) (datei) gibt ein Diff aus, in dem steht, welche
 &Auml;nderungen von Revision1 zu Revision2 der Datei vorgenommen wurden; ohne

@@ -39,20 +39,22 @@ function ShowHeader($title) {
 
 	// now the body follows
 	echo("<body bgcolor=\"white\" text=\"black\">\n");
-	echo("\n<table width=\"100%\"><tr>\n<td width=\"75\" align=\"right\" valign=\"bottom\">&nbsp;</td>");
-	echo("\n<td align=\"center\" valign=\"middle\"><h1><a name=\"top\">OpenXP</a></h1></td>");
-	echo("\n<td width=\"75\" align=\"right\" valign=\"bottom\"><small>");
+	echo("\n<table width=\"100%\"><tr>\n<td width=\"75\">&nbsp;</td>");
 	// link to the other language
 	if ($language == "de") {
-		echo("<a href=\"http://www.openxp.com/\">English</a>");
+	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP Projekt Homepage</a></h1></td>");
+	  echo("\n<td width=\"75\" align=\"right\">");
+	  echo("<small><a href=\"http://www.openxp.com/\">English</a></small>");
 	} else {
-		echo("<a href=\"http://www.openxp.de/\">Deutsch</a>");
+	  echo("\n<td align=\"center\"><h1><a name=\"top\">OpenXP project homepage</a></h1></td>");
+	  echo("\n<td width=\"75\" align=\"right\">");
+	  echo("<small><a href=\"http://www.openxp.de/\">Deutsch</a></small>");
 	};
-	echo("</small></td></tr></table>");
-	echo("<hr noshade=\"noshade\"/>");
+	echo("</td></tr></table>");
+	echo("<hr noshade=\"noshade\" size=\"1\" />");
 
 	// open main table
-	echo("\n<table border=\"0\" cellspacing=\"0\" cellpadding=\"5\"><tr>");
+	echo("\n<table border=\"0\" cellspacing=\"0\" cellpadding=\"10\"><tr>");
 	// build site map
 	echo("\n<td align=\"left\" valign=\"top\" width=\"140\">");
 	// now underlaying a blue table and then set the header
@@ -96,7 +98,7 @@ function ShowFooter() {
 		echo("<a href=\"#top\">Top</a>\n");
 	};
 	echo("</td><td align=\"right\">");
-	echo("<small>Published by the <a href=\"mailto:info@openxp.de\">OpenXP team</a></small>\n");
+	echo("<small>Published by <a href=\"mailto:dev@openxp.de\">OpenXP team</a></small>\n");
 	// close the doc
 	echo("</td></tr></table></body>\n</html>\n");
 };
@@ -185,7 +187,7 @@ function ShowNews($newsfile,$genindex) {
 	      $headline=fgets($pnfile,1000);
 	    } while((trim($headline)!="")and(!feof($pnfile)));
 	  }
-	  echo("\n</ul>\n<hr />");
+	  echo("\n</ul>\n<hr noshade=\"noshade\" size=\"1\" />");
 	  rewind($pnfile);
 	  fgets($pnfile,200); fgets($pnfile,10);
 	}
@@ -247,7 +249,7 @@ function ShowDownloadTable($downfile) {
 	    }
 	  } else {
 	    if ($fhandle)
-	      $fsize = sprintf("(%01.2f MB)", (ftp_size($fhandle, $line)/1024/1024));
+	      $fsize = sprintf("%01.2f MB", (ftp_size($fhandle, $line)/1024/1024));
 	    else
 	      $fsize = ""; // no ftp connection made
 
@@ -264,7 +266,9 @@ function ShowDownloadTable($downfile) {
 	      fgets($pdfile,200);
 	      $fdesc=fgets($pdfile,200);
 	    }
-	    echo("\n<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">".htmlspecialchars($fdesc)."</a> ".$fsize);
+	    echo("\n".htmlspecialchars($fdesc));
+	    echo(" (<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">FTP</a>/");
+	    echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ".$fsize.")");
 	    fgets($pdfile,20); // skip empty line
 	  }
 	}

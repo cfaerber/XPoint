@@ -1,5 +1,4 @@
 FAQ zu OpenXP 3.40
 
-Wie gehe ich mit den Usergruppen im Adreßbuch um?
+Wie gehe ich mit den Usergruppen im Adreßbuch um?&nsbp;&nbsp;<small>2001-01-28</small>
 ...ist in der Onlinehilfe beim Eintrag zur Funktion "R" erläutert :-).
-<br /><small>2001-01-28</small>

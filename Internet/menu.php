@@ -7,11 +7,11 @@ $indexname = "index.php4";
 
 $Menu = array(
 	0 => array("de"	=> "Hauptseite",	// German Title
-		"en" 	=> "Home",	// English
+		"en" 	=> "Mail",	// English
 		"url"   => $indexname . "?file=main-" . $language . ".html",
 		"sub"	=> false),		// sub menu?
-	1 => array("de"	=> "News",
-		"en" 	=> "News",
+	1 => array("de"	=> "Newsarchiv",
+		"en" 	=> "News archive",
 		"url"   => $indexname . "?news=news-" . $language . ".txt&genindex=0",
 		"sub"	=> true),
 	2 => array("de"	=> "FAQ",
@@ -35,7 +35,7 @@ $Menu = array(
 		"sub"	=> false),
 	7 => array("de"	=> "Handbuch",
 		"en" 	=> "Manual",
-		"url"	=> $indexname . "?file=handbuch/index.html",
+//		"url"	=> $indexname . "?file=de/handbuch/index.html",
 		"sub"	=> false),
 	8 => array("de"	=> "Kontakt",
 		"en" 	=> "Contact",
@@ -51,7 +51,7 @@ $Menu = array(
 		"sub"	=> true),
 	11 => array("de"	=> "3.40",
 		"en" 	=> "3.40",
-		"url"	=> $indexname . "?file=log330.html",
+		"url"	=> $indexname . "?file=log340.html",
 		"sub"	=> true),
 	12 => array("de"	=> "3.70",
 		"en" 	=> "3.70",

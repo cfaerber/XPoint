@@ -1,15 +1,13 @@
 Allgemeine OpenXP-FAQ
 
-Ich habe vermutlich einen Fehler/Bug entdeckt.
+Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-01-18</small>
 Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
 <br />Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe "Kontakt"). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
-<br /><small>2001-01-18</small>
 
-Ich habe einen Vorschlag für ein neues Feature.
+Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
-<br /><small>2001-01-18</small>
 
-Was muß ich bei der Umstellung von XP auf OpenXP beachten?
+Was muß ich bei der Umstellung von XP auf OpenXP beachten?&nbsp;&nbsp;<small>2001-01-16</small>
 Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
 Konfigurationsdateien nichts ;-). Die Datenbank-Indexdateien werden
 automatisch neu aufgebaut, das kann etwas dauern. Die neu aufgebaute
@@ -18,41 +16,33 @@ auf XP 3.12 oder früher ist also ohne Backup nicht möglich (es gibt
 aber keine Probleme mit der XP2-Datenbank).
 <br />Beim Umstieg auf OpenXP 3.70 ergeben sich einige Änderungen, dort
 in der FAQ nachsehen.
-<br /><small>2001-01-16</small>
 
-Was ist beim Wechsel zwischen XP2 und OpenXP zu beachten?
+Was ist beim Wechsel zwischen XP2 und OpenXP zu beachten?&nbsp;&nbsp;<small>2001-01-17</small>
 Zur Sicherheit sollte man sich eine Kopie der Konfigurationsdateien
 (*.cfg, *.bfg) anlegen. Die Datenbanken sind kompatibel.
-<br /><small>2001-01-17</small>
 
-Ich habe UKAW/UKA_PPP installiert, seitdem kriege ich wieder eine Registrierungsaufforderung.
+Ich habe UKAW/UKA_PPP installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-01-17</small>
 Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder auf eine freie OpenXP-Version warten.
-<br /><small>2001-01-17</small>
 
-Was ist der Unterschied zwischen Betaversion, Snapshot und Release Candidate (RC)?
+Was ist der Unterschied zwischen Betaversion, Snapshot und Release Candidate (RC)?&nbsp;&nbsp;<small>2001-01-19</small>
 Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das sich noch in der Entwicklung befindet. Ein Snapshot ist die aktuellste Entwicklerversion und kann sehr instabil sein oder auch Schaden anrichten (!). Ein Release Candidate ist eine Programmversion, die - wie der Name schon sagt :-) - als Kandidat für eine stabile Anwenderversion gehandelt wird.
 <br />Als Anwender sollte man von Snapshots und wenn nicht unbedingt nötig auch von Betaversionen die Finger lassen.
 <br />Betatester sind herzlich eingeladen, die Betaversionen zu testen und Hinweise auf Fehler in der Mailingliste kundzutun :-).
-<br /><small>2001-01-19</small>
 
-Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?
+Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?&nbsp;&nbsp;<small>2001-01-17</small>
 Dazu wird ein Client für XP benötigt. Siehe "Links". In OpenXP 3.70 werden Mail und News integriert.
-<br /><small>2001-01-17</small>
 
-Warum gibt es zwei Entwickler-Teams?
+Warum gibt es zwei Entwickler-Teams?&nbsp;&nbsp;<small>2001-01-16</small>
 Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe "Links") gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.
-<br /><small>2001-01-16</small>
 
-Wo finde ich eine Version, die noch auf einem 286er läuft?
+Wo finde ich eine Version, die noch auf einem 286er läuft?&nbsp;&nbsp;<small>2001-01-18</small>
 Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <a href="ftp://ftp.openxp.de/openxp">FTP-Server</a>). Von OpenXP 3.40 wird es auch eine 286er-Version geben, sobald eine Release verfügbar ist.
-<br /><small>2001-01-18</small>
 
-Wie kriege ich (Open)XP mit ISDN zum Laufen?
+Wie kriege ich (Open)XP mit ISDN zum Laufen?&nbsp;&nbsp;<small>2001-01-28</small>
 ISDN-Karten stellen CAPI zur Verfügung, manchmal auch eine Win-Comport-Emulation. Bietet der Treiber nur CAPI, muß man für OpenXP/DOS einen CAPI-nach-Fossil-Konverter wie cFos/DOS (siehe "Links") installieren. cFos/Win geht auch, allerdings hat man dann wiederum nur einen Win-Comport, auf den OpenXP/DOS nicht zugreifen kann; man muß also zusätzlich noch einen Win-Comport-nach-Fossil-Konverter wie z.B. WinFossil (wieder siehe "Links") installieren.
 <br />Bei OpenXP/Win32 entfallen diese umständlichen Basteleien, da es direkt auf die Win-Comports zugreifen kann. Im Idealfall (der ISDN-Treiber bringt eine Comport-Emulation mit) braucht man also überhaupt keine Zusatzsoftware.
 <br />Unter Linux wird eine ISDN-Karte über /dev/ttyIx sowieso immer exakt wie ein Modem angesprochen, auch hier entfällt also die ganze Problematik.
-<br /><small>2001-01-28</small>
 
-Kann ich OpenXP mit ADSL nutzen?
+Kann ich OpenXP mit ADSL nutzen?&nbsp;&nbsp;<small>2001-01-16</small>
 Ja. ;-)
-<br /><small>2001-01-16</small>
+<br />
