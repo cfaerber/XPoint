@@ -1230,7 +1230,7 @@ begin
   if left(dbReadStr(mbase,'brett'),1)<>'U' then
     RereadBrettdatum(dbReadStr(mbase,'brett'));
   aufbau:=true;
-  if (dispmode<>11) and (dispmode<>12) and (p=1) and (disprec[2]<>0) then
+  if (dispmode<>11) and (dispmode<>12) and (p=1) then
     disprec[1]:=disprec[2];
 end;
 
