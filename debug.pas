@@ -1,11 +1,14 @@
 { $Id$ }
 
+{$I XPDEFINE.INC }
+
 unit Debug;
 
 {Debug logfile unit for development issues}
-{$h+} {using ANSIStrings}
 
 INTERFACE
+
+uses xpglobal;
 
 {Messages will be logged only if environment variable DEBUG exists
  pointing to a file. If file starts with *, the logfile will be
@@ -52,7 +55,7 @@ END;
 
 PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
 VAR
-  H,M,S,S100,C: Integer;
+  H,M,S,S100,C: RTLWord;
 BEGIN
   IF NOT Logging THEN Exit;
   C:=FindBadge(Badge);
@@ -102,6 +105,9 @@ END.
 
 {
   $Log$
+  Revision 1.4  2000/08/17 13:36:17  mk
+  - Anpassung fuer VP
+
   Revision 1.3  2000/07/13 23:58:50  ma
   - Kosmetik
 
