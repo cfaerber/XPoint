@@ -659,23 +659,23 @@ var x,y      : Integer;
       msgpos := dbReadIntN(bezbase,bezb_msgpos);
       if not dbDeleted(mbase, msgpos) then
       begin
-        dbGo(mbase, msgpos);
         flags := 0;
+        dbGo(mbase, msgpos);
         if not dbBOF(mBase) and not dbEOF(mbase) then
-          dbReadN(mbase,mb_flags,flags); { get message flags }
-        if (flags and 256 <> 0)or
-           (boxpar^.ReplaceDupes) then
         begin
-          debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
-          if not dbBOF(mBase) and not dbEOF(mbase) then
-            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag)
-          else
-            ReplaceOwnHoldFlag := 0;
-          wrkilled; { Ablage auf jeden Fall reorganisieren }
-          DelBezug;
-          dbDelete(mbase);
-          result:= (flags and 256 <> 0);
-        end;
+          dbReadN(mbase,mb_flags,flags); { get message flags }
+          if (flags and 256 <> 0) or
+            (boxpar^.ReplaceDupes) then
+          begin
+            debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
+            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+            wrkilled; { Ablage auf jeden Fall reorganisieren }
+            DelBezug;
+            dbDelete(mbase);
+            result:= (flags and 256 <> 0);
+          end;
+        end else
+          debug.debuglog('xp3o','Error in KillSameMsgId: dbGo to bad message',dltrace);
       end;
     end;
   end;
@@ -1298,6 +1298,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.18  2003/11/30 23:16:03  mk
+  - better fix than last comitt
+
   Revision 1.83.2.17  2003/11/30 23:11:44  mk
   - prevent database error in KillSameMsgId
 
