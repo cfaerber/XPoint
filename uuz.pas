@@ -1170,7 +1170,12 @@ begin
 end;
 
 procedure SetMimeData;
+var
+  i: Integer;
 begin
+  xpboundary := '----=_NextPart_';
+  for i := 1 to 10 + random (20) do
+    xpboundary := xpboundary + char (random (25) + byte ('A'));
   with hd, hd.mime do
   begin
     mversion := '1.0';
@@ -3383,6 +3388,7 @@ begin
 end;
 
 begin
+  Randomize;
   logo;
   initvar;
   getpar;
@@ -3397,6 +3403,9 @@ end.
 
 {
   $Log$
+  Revision 1.43  2000/07/12 07:57:05  mk
+  RB:- XPBoundary Default in SetMimeData
+
   Revision 1.42  2000/07/09 13:21:56  mk
   - UUZ nutzt jetzt xpheader.inc
 
