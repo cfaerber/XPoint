@@ -359,7 +359,7 @@ end;
 { Nachrichten mit defekter Gr”áe werden auf 'l”schen' gesetzt    }
 
 procedure MsgReorg;
-const tmp     = 'reorg.$$$';
+const tmp     = 'REORG.$$$';
       maxbufs = 20;
 var x,y,yy  : byte;
     lastproz: byte;
@@ -720,6 +720,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14.2.1  2000/10/16 17:52:57  mk
+  - LFN-Fix
+
   Revision 1.14  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
