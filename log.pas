@@ -34,7 +34,7 @@ const
 type
   TLog = class
     protected
-    
+
       FFilename         : string;
       FHandle           : text;
       FCanWrite         : boolean;
@@ -58,7 +58,7 @@ type
       procedure Close; virtual;
       function  Open: boolean; virtual;
       procedure Log(l: integer; const s: string); virtual;
-      
+
   end;
 
 implementation
@@ -66,7 +66,7 @@ implementation
 uses
   XPGlobal,
   SysUtils;
-  
+
 const
   llChars: array[llNone..llDebug] of char = (' ','?','!','>','$');
 
@@ -151,7 +151,7 @@ begin
   if not FisOpen then
     Open;
   if FisOpen then begin
-    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now) + Format(' %c %s', [llChars[l], s]));
+    WriteLn(FHandle, FormatDateTime('hh:mm:ss',now) + Format(' %s %s', [llChars[l], s]));
     Close;
   end;
 end;
@@ -185,6 +185,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/11/18 23:32:40  mk
+        - modified format-parameter  to  for Virtual Pascal compatibility
+
         Revision 1.2  2000/11/18 18:38:21  hd
         - Grundstruktur des Loggings eingebaut
 
