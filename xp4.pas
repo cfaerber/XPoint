@@ -56,6 +56,7 @@ const suchch    = #254;
       closeflag : boolean = false; { TClose -> Dateien schlieáen     }
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
+      ubpos         : longint = 0;      { aktuelle UserBase-Position }
 
 type  dispstr   = string[81];
       specstr   = string[81];
@@ -72,7 +73,6 @@ var   disprec   : dispra;
       dispbuf   : array[1..maxgl] of ^dispstr;
       markflag  : array[1..maxgl] of byte;  { 0=nix, 1=mark, 2=trenn }
       userflag  : array[1..maxgl] of boolean;
-      ubpos     : string[BrettLen];   { aktuelle UserBase-Position }
       ub_p      : shortint;
 
       UserDispmode : shortint;   { 1=AdrBuch, 2=Alle }
@@ -1378,10 +1378,9 @@ begin      { --- select --- }
       disprec[1]:=dbRecno(bbase);
     end;
 
-  if ((dispmode>=1) and (dispmode<=2)) and (ubpos<>'') then begin
-    dbSeek(ubase,uiName,ustr(ubpos));
-    if not dbEOF(ubase) then
-      disprec[1]:=dbRecNo(ubase);
+  if ((dispmode>=1) and (dispmode<=2)) and (ubpos<>0) then begin
+    dbgo(ubase,ubpos);
+    disprec[1]:=ubpos;
     end;
 
   ende:=false;
@@ -1909,12 +1908,10 @@ begin      { --- select --- }
   if not quit and ((dispmode>=1) and (dispmode<=4)) then begin
     _unmark_;
     if dispmode=2 then UserSwitch;
-    if disprec[1]=0 then ubpos:=''
-    else begin
-      dbGo(ubase,disprec[1]);
-      dbRead(ubase,'Username',ubpos);
-      ub_p:=p;
-      end;
+
+    ubpos:=disprec[1];
+    if ubpos<>0 then ub_p:=p; 
+
     end;
 
   case dispmode of
@@ -1983,7 +1980,7 @@ begin
   nachweiter:=AAmsg;
   brettweiter:=AAbrett; userweiter:=AAuser;
   set_allmode:=false;
-  ubpos:=''; ub_p:=1;
+  ubpos:=0; ub_p:=1;
   wlpos:=0; wltrenn:=false;
   abhdatum:=0;
   showtime:=false;
@@ -2005,6 +2002,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/16 16:12:50  jg
+  - Userfenster Positionsmerker von String auf Longint umgewandelt
+    um Probleme mit Namen der Trennzeilen zu vermeiden
+
   Revision 1.13  2000/04/16 13:26:42  jg
   - Diverse kleine Schoenheitsmakel an Userfenster Trennzeilen beseitigt
 
