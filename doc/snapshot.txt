@@ -1,40 +1,102 @@
-ÚÄ Hinweise ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-³                                                       ³
-³  An die Benutzer dieses OpenXP-Snapshots (v3.40 RC3)  ³
-³                                                       ³
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-Die nachfolgend aufgelisteten Features, Funktionen, Fixes und nderungen
-sind erst seit kurzer Zeit in OpenXP enthalten - bitte intensiv testen.
-Bei einem Teil der nderungen handelt es sich um Features, die Jochen
-Gehring im Laufe der letzten 1 1/2 Jahre entwickelt hat.
-
-Bitte auch testen, ob die brigen XP-Funktionen weiterhin problemlos
-funktionieren!
-
-Der Einbau weiterer Features, die ich zun„chst zurckgestellt habe, ist
-geplant. Je nach verfgbarer Zeit reiche ich diese bei Gelegenheit nach.
-
-Bugreports, Kommentare und Vorschl„ge fr diese Version bitte in die
-OpenXP-Mailingliste, nach de.comm.software.crosspoint, CROSSPOINT.GER
-oder CROSSPOINT.EXPERT.GER, oder an mich per Mail.
-
-Michael Heydekamp    <my@openxp.de>
-                     <michael.heydekamp@t-online.de>
-                     2:2433/460
-                     2:2433/401.460
-
-OpenXP-Mailingliste: <dev@openxp.de> (fr Nicht-Abonnenten)
+ÉÍ SNAPSHOT.TXT ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+º                                                          º
+º  An die Benutzer dieses OpenXP/16-Snapshots (v3.40 RC3)  º
+º                                                          º
+ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
 
 
-Dsseldorf, den 31.08.2001 (letzter Update: 21.12.2001)
+Vorwort:  Die Weiterentwicklung der 16-bit-Version von OpenXP wurde
+========  aufgrund einer einvernehmlichen Absprache zwischen allen
+          Beteiligten restrukturiert und wird seit Januar 2002 unter dem
+          Namen "OpenXP/16" und der verantwortlichen Leitung von Michael
+          Heydekamp fortgefhrt. OpenXP/16 ist damit organisatorisch vom
+          OpenXP-Team, das nur noch die 32-bit-Version (OpenXP/32)
+          entwickelt, getrennt und unter eigenen Kontakten (s.u.)
+          erreichbar.
+
+          OpenXP/16 ist kein "Team" und kein "Projekt", sondern versteht
+          sich als lose und projektbergreifende Kooperation einzelner
+          XP-Entwickler und weiterer Mitwirkender. Ziel ist u.a., durch
+          die Losl”sung von der strikten Bindung an eine bestimmte
+          Organisationsform die Zusammenarbeit auch mit "fremden"
+          Entwicklern zu erleichtern und damit Ressourcen zu bndeln und
+          zu optimieren.
+
+          Letztendlich sollen und werden alle XP-Versionen davon
+          profitieren, fr OpenXP/16 selbst ist es eine wesentliche
+          Grundlage, das bereits erreichte Niveau hinsichtlich
+          Bedienbarkeit, Funktionalit„t, Bugfreiheit und Userakzeptanz
+          weiter zu verbessern.
+
+          Wer mit dazu beitragen m”chte (nicht notwendigerweise als
+          Entwickler, Mitarbeit wird in allen Bereichen ben”tigt), ist
+          herzlich willkommen.
 
 
-------------------------------------------------------------------------
+
+OpenXP/16 - Kontakte
+====================
+
+Mailingliste:  openxp16-list@kruemel.org
+-------------  (Die Liste muá per eMail bei listserver@kruemel.org
+                bestellt werden, im Nachrichtentext (nicht im Betreff!)
+                ist der Befehl "subscribe openxp16-list" anzugeben.
+                Keine Anrede oder andere Einleitungen voranstellen!)
 
 
-Neue/ge„nderte Features und Funktionen
-======================================
+Newsgroups:    crosspoint.openxp16.pub.allgemein
+-----------    (Spezifische Newsgroup fr OpenXP/16, zu beziehen ber
+                news.kannofant.de oder news.t-online.de, beide Port 119)
+
+               crosspoint.openxp16.pub.developer
+               (Entwickler-Newsgroup, *nur* ber news.kannofant.de zu
+                beziehen)
+
+               de.comm.software.crosspoint
+               (Allgemeine CrossPoint-Gruppe fr alle XP-Versionen)
+
+
+eMail:         support@openxp16.de
+------         (Wird an Mailingliste weitergeleitet)
+
+Internet:      http://www.openxp16.de
+---------
+
+FTP:           ftp://ftp.openxp16.de
+----
+
+FidoNet:       CROSSPOINT.OPENXP16.GER
+--------       (Fido<->Usenet-Gate zur OpenXP/16-Newsgroup
+                crosspoint.openxp16.pub.allgemein)
+
+               CROSSPOINT.GER
+               CROSSPOINT.EXPERT.GER
+               (allgemeine CrossPoint-Areas fr alle XP-Versionen)
+
+               2:2433/460 (Netmail geroutet, Crashmail nur zur ZMH)
+
+
+
+Allgemeines zu dieser Datei
+===========================
+
+Die jeweils aktuellsten nderungen ab Januar 2002 befinden sich,
+chronologisch geordnet und mit den Krzeln der jeweiligen Entwickler
+versehen, ganz am Schluá der Datei.
+
+Alle vorherigen nderungen, die bis Dezember 2001 noch im Rahmen des
+OpenXP-Teams stattgefunden haben, sind weitgehend thematisch gegliedert
+und befinden sich direkt im Anschluá an diesen Text.
+
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                ³
+³  nderungen bis Dezember 2001  ³
+³                                ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ OpenXP-Team ÄÙ
 
 
 
@@ -100,7 +162,7 @@ Editor
 
 - Beim Editieren von Nachrichten gibt es im "nderungen speichern?"-
   Dialog die Option "Parken", die direkt ein "P" ans Sendefenster
-  weiterleitet.
+  weiterleitet und so die Nachricht im ¯Unversandt-Brett ablegt.
   XP1.PAS, XP1S.INC, XP1MENU.INC, XP4.PAS, XP4.INC, XP4E.PAS, XP4O.PAS,
   XP6.PAS, XP8.PAS, XP9.INC, XP10.PAS, XPE.PAS, XPKEYS.PAS, EDITOR.PAS,
   XP-D.RQ, XP-E.RQ
@@ -161,7 +223,8 @@ Nachrichten-Suchfunktionen (Lister-Suchfunktionen siehe unter Lister)
 
 - Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter.
 
-- Message-ID-Suche: Suchoptionen sind wieder verfgbar.
+- Message-ID-Suche: Suchoptionen sind wieder verfgbar (a,o,m,s,k
+  funktionieren auch dort).
 
 - max. Anzahl der Teil-Suchbegriffe auf 20 erh”ht.
 
@@ -396,9 +459,9 @@ Allgemeine Bedienung und Sonstiges
   stehenlassen zu k”nnen).
   XP10.INC, XP.IHQ
 
-- Neue Funktion "/Netcall/Spezial", die einen Netcall fr eine beliebige
+- Neue Funktion /Netcall/Spezial, die einen Netcall fr eine beliebige
   Anzahl von Boxen in beliebiger Reihenfolge ausfhrt. Es sind 20
-  verschiedene Eintr„ge m”glich, die unter "Netcall/Spezial-Liste"
+  verschiedene Eintr„ge m”glich, die unter /Netcall/Spezial-Liste
   konfiguriert werden (die Daten werden in NETCALL.DAT gespeichert).
   Funktion ist auch ber neuen Kommandozeilenparameter "/nsp:1..20"
   erreichbar, der einen /Netcall/Spezial fr den als Parameter
@@ -419,8 +482,7 @@ Allgemeine Bedienung und Sonstiges
   Server und D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert,
   Details siehe Mens und Hilfe; umfangreiche Auswahl- und Testroutinen.
   In den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
-  editierten Box jedoch die BFG-Namen der ausgew„hlten Boxen(en)
-  abgelegt. Netcall-Teil steht noch aus.
+  editierten Box jedoch die BFG-Namen der ausgew„hlten Box(en) abgelegt.
   XP0.PAS, XP1.PAS, XP7.INC, XP9.INC, XP9.PAS, XP9BP.PAS, XP9SEL.PAS,
   XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
@@ -463,10 +525,11 @@ Allgemeine Bedienung und Sonstiges
 
 - RFC/Client: Bei D/B/E/X (Externe Einstellungen) kann jetzt auch ein
   Programmname (EXE, COM, BAT) eingetragen und mit <Enter> gestartet
-  werden (alle anderen Dateien werden in den Editor geladen). Der
-  Boxname (ohne Dateierweiterung .BFG) kann mit $CONFIG als Parameter
-  bergeben werden. Mit <Ctrl-Del> kann der in <Box>.BFG gespeicherte
-  Dateiname entfernt werden.
+  werden (alle anderen Dateien werden in den Editor geladen). Die Angabe
+  des Windows-Befehls "start [/w]" ist m”glich. Der Boxname (ohne
+  Dateierweiterung .BFG) kann mit $CONFIG als Parameter bergeben
+  werden. Mit <Ctrl-Del> kann der in <Box>.BFG gespeicherte Dateiname
+  entfernt werden.
   XP9.PAS, XP9.INC, XP9SEL.PAS, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ,
   XP.IHQ, XP-E.IHQ
 
@@ -488,11 +551,12 @@ Allgemeine Bedienung und Sonstiges
   RFC/Client mehr erforderlich. :-)
   XP0.PAS, XP2.PAS, XP2DB.PAS, XP6.PAS, XP.IHQ
 
-- Sysop-Mode wird jetzt ber einen Schalter aktiviert/deaktiviert.
-  Dadurch kein L”schen bzw. Neueintragen der Verzeichnisdaten beim
-  Umschalten mehr erforderlich. Bei Serverboxen, bei denen in alten
-  Versionen bisher der Sysop-Mode aktiviert war, muá der Schalter
-  einmal manuell aktiviert werden.
+- Der Sysop-Mode wird jetzt ber einen Schalter unter /Edit/Boxen/Edit/
+  SysopMode aktiviert bzw. deaktiviert. Dadurch ist kein L”schen bzw.
+  Neueintragen der Verzeichnisdaten beim Umschalten mehr erforderlich.
+  Bei Serverboxen, bei denen in vorherigen Versionen bisher der Sysop-
+  Mode aktiviert war, muá der Schalter nach dem Update daher einmal
+  manuell aktiviert werden.
   XP0.PAS, XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP9.INC,
   XP9BP.PAS, XP9SEL.PAS, XP.IHQ, XP-E.IHQ
 
@@ -505,8 +569,12 @@ Allgemeine Bedienung und Sonstiges
   XPCC.PAS, XP_PGP.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 - Schalter "News-Archivierung verhindern" wieder nach /Config/Optionen/
-  Netze/Verschiedenes verlagert.
+  Netze/Verschiedenes verlagert (wegen Platzmangel unter C/O/A).
   XP2C.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+- UUZ: Kommandozeilen-Parameter "-UseEnvTo" (fr Schalter "D/B/E/N/
+  Envelope-To_auswerten") implementiert und UUZ-Hilfe berarbeitet.
+  XP7U.INC, UUZ.PAS
 
 
 
@@ -622,16 +690,32 @@ Bugfixes
   und RFC/UUCP) sowie eMail-Adresse (RFC/UUCP und RFC/Client).
   XP3O.PAS
 
+- Datenbank-Crash bei leerer Nachrichten-Datenbank und Nachricht an User
+  behoben.
+  XP4.PAS
+
+- Windows XP wird unter X/S/S nicht mehr als Windows 2000 angezeigt.
+  XP5.PAS
+
+- Beim Archivieren von Nachrichten mit <Alt-A> wird die archivierte
+  Nachricht nicht mehr verschluckt, wenn das Brett eine Vertreteradresse
+  hat und die Schreibsperre aktiviert ist.
+  XP6O.PAS
+
+- UUZ: Endlosschleife bei defekten Nachrichten, bei denen alle
+  relevanten Header fehlen, behoben.
+  UUZ.PAS
+
 
 
 Interne nderungen
 ==================
 
-- šbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay).
+- šbergabe der Nachrichten-Flags nach LISTER.PAS verlagert (Overlay).
   XP1S.INC, LISTER.PAS
 
-- DoSend: Betreffabfrage ausgelagert als "EditBetreff".
-  (Prozedurrumpfgr”áe)
+- DoSend: Betreffabfrage ausgelagert als "EditBetreff"
+  (Prozedurrumpfgr”áe).
   XP6.PAS
 
 - DOSEmuVersion nach CLIP.PAS verlagert (Overlay).
@@ -658,3 +742,555 @@ Interne nderungen
   Bildaufbau in DOS-Boxen von Windows 2000/XP.
   XP1INPUT.PAS, XP1MENU.INC, XP9SEL.PAS, XP10.PAS, MASKE.INC, MAUS2.PAS,
   WINXP.PAS
+
+- Einige "cpos(' ',s)" ge„ndert in "blankpos(s)".
+  XP9SEL.PAS
+
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                             ³
+³  nderungen ab Januar 2002  ³
+³                             ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ OpenXP/16 ÄÙ
+
+
+01.01.2002-08.03.2002
+---------------------
+
+MY:
+- RFC/Client: Multiserver-Netcall implementiert. Die aus- und
+  eingehenden Nachrichten der unter "D/B/E/C/Zus„tzliche_Server"
+  eingetragenen Serverboxen werden bei einem Netcall mit verarbeitet.
+  Die aus- und eingehenden Nachrichten der zus„tzlichen Serverboxen
+  werden in den spezifischen Spool-Verzeichnissen der jeweiligen
+  Serverboxen abgelegt bzw. erwartet. Ausnahme ist der SysopMode, bei
+  dem die ein- und ausgehenden Nachrichten *aller* Serverboxen in dem
+  Ein- bzw. Ausgangsverzeichnis der Box erwartet bzw. abgelegt werden,
+  fr die der SysopMode-Transfer durchgefhrt wird. Weitere Details
+  siehe Hilfe (z.B. ?/S/R/<Enter>).
+  XP7.PAS, XP7U.INC, XP.IHQ
+
+
+MY:
+- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+  kompatibel und gleichzeitig komplett berarbeitet und erweitert:
+  - Beim Netztyp RFC/Client muá, bei RFC/UUCP kann eine gltige und
+    vollst„ndige eMail-Adresse statt des Usernamens bergeben werden;
+  - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+  - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+    wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope nicht
+    leer sein (= gel”scht werden);
+  - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+    Zeichen vergr”áert (bei externen Befehlen sind max. 127 Zeichen
+    zul„ssig);
+  - Hinweismeldung "Username: <neuer Username>" am Schluá der Routine
+    zeigt jetzt komplette Adresse an und bercksichtigt Alias-Points
+    (RFC/UUCP und ZConnect).
+  Weitere Details siehe Hilfe.
+  XP0.PAS, XP1.PAS, XP2CFG.INC, XP2F.PAS, XP9SEL.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
+
+MY:
+- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert und
+  berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  anzeigen"):
+  - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain wird
+    angezeigt;
+  - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+  - Realname wird in Klammern angezeigt (falls es sich um einen Netztyp
+    mit Realnames handelt) und ggf. automatisch gekrzt, wenn die
+    Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen ist;
+  - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige der
+    Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+    Wechsel aktualisiert.
+  XP1.PAS, XP9.INC, XP-D.RQ, XP-E.RQ
+
+
+MY:
+- Routine zum Ermitteln der eigenen Adresse bei Cancel- und Supersedes-
+  Nachrichten fr RFC/Client sauberer gestaltet.
+  XP3O.PAS
+
+
+MY:
+- Anzeige der Absenderadresse im Rahmen der Box-Konfigurationsdialoge
+  (z.B. D/B/E/M) korrigiert und berarbeitet:
+  - Vollst„ndige Adresse inkl. Domain wird angezeigt;
+  - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+  - Zu lange Adressen werden der Breite des Dialogs entsprechend
+    gekrzt.
+  XP9.INC
+
+
+MK:
+- Kleine Codeoptimierung/Variableneinsparung.
+  XP4O.PAS, XPKEYS.PAS
+
+
+MK:
+- Interne nderung: Einige const-Parameter bei dbReadXXX verwendet.
+  XP4O.PAS
+
+
+MY+HG+JG:
+- WICHTIGER Bugfix (3 Beteiligte, 1 Monat Suche, 2 Codezeilen ge„ndert):
+  OpenXP/16 kann jetzt wieder eine Nachrichten-Datenbank von XP v3.12
+  korrekt und ohne Stillstand des Rechners konvertieren. Bug existent
+  seit dem 12.08.2001. Special thanks to MK fr den Bug und to HG frs
+  unermdliche Testen.
+  XP3.PAS
+
+
+MY:
+- Bugfix RFC/Client: Mehrere Fehler im Brettmanager behoben. An vier
+  Stellen wurde bei Boxnamen l„nger als 8 Zeichen nicht der korrekte
+  Dateiname der Brettliste bzw. RC-Datei bergeben, beim Bestellen/
+  Abbestellen von Newsgroups konnte es vorkommen, daá XP die Brettliste
+  nicht finden konnte, weil das Client-Verzeichnis nicht bergeben
+  wurde (Nachwehe der Umstellung von RFC/Client auf einen eigenen
+  Netztyp).
+  XP8.PAS
+
+
+MY:
+- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W> funktioniert
+  jetzt auch in der Anzeige des Nachrichtenkopfs ("o"), in Nachrichten
+  mit KOM-Header und bei der Anzeige von Dateien in Archiven. Funktion
+  bei der Anzeige des Archivinhalts deaktiviert (weil dort v”llig
+  berflssig und nur hinderlich).
+  XP1O.PAS, XP1S.INC, XP4O.PAS, XP4W.INC
+
+
+MY:
+- Bei Nachrichten mit KOM-Header erscheint keine berflssige Abfrage
+  "Kommentar anzeigen?" mehr, wenn man im Lister aus der Anzeige des
+  Nachrichtenkopfs ("o") zum Nachrichtentext zurckkehrt, bzw. wenn man
+  die Nachricht aus dem Lister heraus mit "v" auf Wiedervorlage setzt.
+  XP4W.INC
+
+
+JG+MY:
+- Fix: Beim Kopieren/Einfgen von "nichts" (0 Bytes) bzw. Leer- oder
+  Steuerzeichen in das bzw. aus dem Clipboard wird kein Zeichensalat
+  mehr erzeugt (Z„hlerunterlauf beim Abschneiden). "String2Clip" in
+  Anlehnung an Code von JG optimiert und vereinfacht.
+  CLIP.PAS
+
+
+JG:
+- šberflssige Prfung ("Nichts zu kopieren?") in 'FastMove' entfernt.
+  TYPEFORM.PAS
+
+
+JG:
+- Fix Nachrichten-Lesefenster: Spalte Realname wird bei <Ctrl-N> bzw.
+  aktivierter Option "C/A/N/Realname_anzeigen,_falls_vorhanden" nicht
+  mehr um 5 Stellen gekrzt, wenn das Brett zu einem Netztyp geh”rt, bei
+  dem der Realname gleichzeitig Bestandteil der Adresse ist (Fido, Maus,
+  QWK).
+  XP4D.INC
+
+
+MY:
+- Fix: Fehler bei Fido-Netcalls behoben. Wenn der SysopMode deaktiviert,
+  im Feld "Ausgangsverzeichnis" aber noch ein Verzeichnisname
+  eingetragen war, dann wurde dieses Verzeichnis auch bei Netcalls
+  verwendet, die nicht im SysopMode durchgefhrt wurden (Folge der
+  Einfhrung des neuen SysopMode-Schalters).
+  XP7O.PAS
+
+
+MY:
+- Fix: Ein Wechsel im Sendefenster ("o") von einer RFC/Client- zu einer
+  RFC/UUCP-Box oder umgekehrt ist auch bei ”ffentlichen Nachrichten
+  jetzt wieder m”glich (Nachwehe der Umstellung von RFC/Client auf einen
+  eigenen Netztyp).
+  XP6.PAS
+
+
+MY:
+- Bugfix RFC/Client: Schalter "Rckfrage vor Anwahl", "Rckfrage vor
+  Auflegen" und "Verbindungsstatus halten" unter D/B/E/C wurden nicht
+  gespeichert.
+  XP9.INC
+
+
+MY:
+- Bugfixes/nderungen bei der Neuanlage einer RFC/Client-Serverbox:
+  - Im Feld "Zus„tzliche Server" konnte es vorkommen, daá die Taste <F2>
+    die Routine und den Auswahldialog fr /Netcall/Spezial aufrief.
+  - Die Namen und Ports der Mail- und News-Server werden nur noch dann
+    automatisch von der Serverbox bernommen, auf der der Cursorbalken
+    im Boxauswahl-Dialog stand, wenn es sich bei dieser Box auch um eine
+    RFC/Client-Serverbox handelte.
+  XP9.INC
+
+
+JG:
+- "šberspringen-Bug" gefixt: Im Lesemodus "Alle" sprang der Cursorbalken
+  in der Brett-šbersicht auf das erste Brett zurck, wenn man das letzte
+  auf dem Bildschirm sichtbare Brett mit <Esc> verlassen hatte.
+  XP4W.INC
+
+
+JG:
+- Wenn im Brettmanager eine Markiersuche mit "s" durchgefhrt wurde und
+  die eingestellte Farbe fr Zeilen- und Wortmarkierung identisch war,
+  dann blieb der Cursorbalken nach Drcken von <Tab> nicht nur auf den
+  markierten Suchergebnissen, sondern auch auf bestellten Brettern
+  stehen.
+  XP1.PAS, LISTER.PAS
+
+
+JG:
+- Fix: Das Springen zum n„chsten/vorherigen markierten User mittels "+"
+  und "-" funktioniert jetzt auch ber mehrere Adreábuchgruppen hinweg.
+  XP4W.INC
+
+
+MY:
+- Fix: Quotezeichenbehandlung bei RFC/Client korrigiert (jetzt wieder
+  mit der von RFC/UUCP identisch).
+  XP3EX.PAS
+
+
+MY:
+- RFC/Client: <F2>-Auswahl bei "D/B/E/C/Client-Aufruf" um Eintrag
+  "UKAW.BAT $CONFIG" erweitert.
+  XP9.INC
+
+
+MY:
+- Kritischen Uralt-Bug aus August 2000 behoben: Beim Errechnen der
+  freien Festplattenkapazit„t konnte es in seltenen F„llen vorkommen,
+  daá falsche bzw. negative Werte geliefert wurden (Dinge wie Filelisten
+  einlesen funktionierten dann z.B. schlicht nicht). Simple Ursache fr
+  diesen eigentlich schon l„ngst gefixten Bug: Die in 08/2000 wegen der
+  Untersttzung langer Dateinamen hinzugefgte Unit LFN.PAS enthielt
+  eigene Funktionen 'diskfree' und 'disksize', die nicht den
+  korrigierten Funktionen gleichen Namens in FILEIO.PAS entsprachen.
+  Units wie z.B. XPFIDO.PAS verwendeten dann die Funktionen aus LFN.PAS
+  statt der gefixten aus FILEIO.PAS...  L”sung: 'diskfree' und
+  'disksize' in der Unit LFN.PAS deaktiviert (auskommentiert).
+  LFN.PAS
+
+
+MY:
+- Kommandozeilen-Parameter "/nomem" (Prfung auf freie Festplatten-
+  kapazit„t abschalten) dokumentiert.
+  XP-D.RQ, XP-E.RQ, XP.IHQ
+
+
+MY:
+- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+  OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+  aktualisiert.
+  XP1HELP.PAS, XP2C.PAS, XP2F.PAS, XP4.INC, XP4.PAS, XP5.PAS, XP7U.INC,
+  XPGLOBAL.PAS, XPIMPEXP.PAS, XPREG.PAS, XPX.PAS, MAGGI.PAS, NDIFF.PAS,
+  UUCICO.PAS, UUZ.PAS, XP-FM.PAS, XPME.PAS, YUP2PKT.PAS, ZFIDO.PAS,
+  ZPR.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+
+RB:
+- Fix fr UUZ-Absturz bei "kaputten"  Reference-Headern (ohne
+  schlieáende spitze Klammern) korrigiert: String wird nicht mehr
+  abgeschnitten, sondern es bleibt die volle L„nge erhalten.
+  UUZ.PAS
+
+
+JG:
+- Fix: Textteile einer MIME-Multipart-Nachricht, die gleichzeitig
+  base64- und UTF-codiert sind, werden jetzt in den IBM-Zeichensatz
+  konvertiert (und daher korrekt angezeigt).
+  XPMIME.PAS
+
+
+JG:
+- Fix: Wenn bei einem gleichzeitig base64- und UTF-8-codierten Text ein
+  zu zwei Zeichen codiertes Sonderzeichen (Umlaut u.„.) auf zwei
+  verschiedene Zeilen umbrochen wurde, wurde dieses nicht korrekt
+  decodiert (Routine UTF82IBM komplett neu geschrieben).
+  TYPEFORM.PAS
+
+
+JG:
+- Fix: Wenn unter Edit/Viewer ein MIME-Typ mit einer Archiv-Datei-
+  erweiterung (z.B. ZIP), aber ohne Viewerprogramm (Viewer "(intern)")
+  eingetragen war und ein Nachrichtenteil einer MIME-Multipart-Nachricht
+  mit dieser Dateierweiterung ge”ffnet wurde, dann wurde nicht der
+  Inhalt des Archivs, sondern der Bin„rinhalt der Archivdatei
+  angezeigt.
+  XP4W.INC
+
+
+JG:
+- Volltextsuche korrigiert;
+  - Wildcard-Suche zun„chst wieder auf alten Stand (nicht mehr
+    wortbergreifend, sondern nur innerhalb eines Wortes) zurckgesetzt
+    (Tempor„rfix, bis Routine neu geschrieben wird).
+  - Umlaute („,”,,á) werden jetzt auch in Nachrichten mit
+    ISO-Zeichensatz gefunden.
+  XP3.PAS
+
+
+JG:
+- Uhr im Archiv-Viewer wird jetzt in der Statuszeile statt in der ersten
+  Textzeile angezeigt und bei der Anzeige von Dateien, die sich *in*
+  einem Archiv befinden, wird jetzt auch die richtige Uhr des Archiv-
+  Viewers (statt der falschen des Nachrichten-Listers) benutzt.
+  XP1S.INC, LISTER.PAS
+
+
+JG+RB+MY:
+- Zeichensatzkonvertierung bei der Anzeige von MIME-Multipart-
+  Nachrichten berarbeitet und korrigiert. Eine Konvertierung in den
+  IBM-Zeichensatz findet jetzt nur noch dann statt, wenn es sich bei dem
+  jeweiligen Nachrichtenteil
+  - um einen Content-Type 'text/*', und
+  - *nicht* um den Content-Type 'text/html', und
+  - *nicht* um einen Dateianhang, und
+  - um einen der ISO-8859-Zeichens„tze oder einen anderen von XP
+    untersttzten Zeichensatz handelt, oder wenn der Nachrichtenteil
+    keine Zeichensatzdeklaration enth„lt (letzteres ist notwendig wegen
+    diverser kaputter Outlook-Versionen, die keinen Charset-Header
+    erzeugen).
+  Nicht mehr blind konvertiert werden daher u.a. Nachrichtenteile, deren
+  Zeichensatz XP unbekannt ist, sowie HTML- und Datei-Anh„nge. Bei der
+  Auswahl "gesamte Nachricht" bzw. bei <Ctrl-Enter> findet ebenfalls
+  keine Konvertierung (mehr) statt.
+  XPMIME.PAS
+
+
+MY:
+- Fix: Bei "alten" MIME-Multipart-Nachrichten vom Typ 'T' findet keine
+  Doppelkonvertierung (xp3.XreadF und xpmime.ExtractMultiPart) in den
+  IBM-Zeichensatz mehr statt (Konvertierung in xp3.XreadF verhindert).
+  XP3.PAS
+
+
+MY:
+- Fix: Nachricht/ndern/Text wird jetzt auch bei "alten" MIME-Multipart-
+  Nachrichten vom Typ 'T' verhindert. Die entsprechende Fehlermeldung
+  hat jetzt einen zutreffenden Text.
+  XP4O.PAS, XP-D.RQ, XP-E.RQ
+
+
+JG+MY:
+- Fix: MIME-Singlepart-Nachrichten vom Content-Type 'text/html' werden
+  jetzt nicht mehr in den IBM-Zeichensatz konvertiert und daher bei
+  Darstellung mit externen HTML-Viewern korrekt angezeigt. Andere
+  Content-Types werden dann konvertiert, wenn einer der ISO-8859-
+  Zeichens„tze oder ein anderer von XP untersttzter Zeichensatz
+  vorliegt, oder wenn der Nachrichtenteil keine Zeichensatzdeklaration
+  enth„lt (letzteres ist notwendig wegen diverser kaputter Outlook-
+  Versionen, die keinen Charset-Header erzeugen).
+  UUZ.PAS
+
+
+JG:
+- Fix: Bei MIME-Multipart-Nachrichten, die ein Leerzeichen zwischen der
+  Boundary-Deklaration und dem folgenden Semikolon hatten, wurden die
+  einzelnen Nachrichtenteile nicht erkannt und somit der MIME-Auswahl-
+  dialog nicht angezeigt.
+  XPMAKEHD.INC
+
+
+MY:
+- Workaround fr UKAW-Quirk: Da UKAW bei D/B/E/N/Max._Artikel_je_Gruppe
+  den Wert "0" nicht als "kein Limit" sondern als "keine Postings
+  empfangen" interpretiert, wird jetzt bei der Neuanlage einer
+  RFC/Client-Serverbox der H”chstwert "99999" als Standardwert
+  eingesetzt.
+  XP9BP.PAS, XP9.INC
+
+
+MA:
+- Fix: Theoretisch m”glichen Crash bei /Netcall/Spezial und NETCALL.DAT
+  mit 20 oder mehr Leerzeilen behoben (gefunden durch Range Check...).
+  XP10.INC
+
+
+RB:
+- Fix: Bei "gefalteten" Headern wird beim "Entfalten" der Zeilenumbruch
+  und die anschlieáenden Leerzeichen jetzt nur noch durch *ein*
+  Leerzeichen ersetzt.
+  UUZ.PAS
+
+
+JG:
+- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+  (Priorit„t, PGP-signiert usw.) jetzt erhalten.
+  XP6O.PAS
+
+
+JG:
+- Fix: Beim ™ffnen von Singlepart-Bin„rnachrichten wurde bei bestimmten
+  Konstellationen unter Edit/Viewer die Fehlermeldung "Fehler beim
+  Dateizugriff :-(" erzeugt (Viewer wurde nicht korrekt initialisiert)
+  und der MIME-Typ hatte f„lschlicherweise Vorrang vor der Datei-
+  erweiterung.
+  XP4W.INC
+
+
+MY:
+- šberflssige Prozedur 'Do_XPHilite' entfernt, 400 Bytes gespart. :)
+  XP4.PAS, XP4D.INC
+
+
+RB:
+- Fix fr RFC-1522-Codierung ("MIME in Headerzeilen verwenden"):
+  'RFC1522form' codiert jetzt nicht mehr blind den gesamten String,
+  sondern nur noch den Teil vom ersten bis zum letzten Wort, in dem ein
+  Sonderzeichen vorkommt, das codiert werden muá (Ann„herung an Praxis
+  von Mozilla und anderen).
+  UUZ.PAS
+
+
+JG+MY:
+- Fix: Der Content-Type-Header wird jetzt auch bei ausgehenden MIME-
+  Multipart-Postings nicht mehr entfernt, sofern ein Boundary-Header
+  existiert (vorher war das nur dann der Fall, wenn die Nachricht
+  Umlaute enthielt). Dadurch jetzt korrekter Versand von MIME-Multipart-
+  Nachrichten auch in Newsgroups gew„hrleistet.
+  UUZ.PAS
+
+
+JG+MY:
+- Fix: Beim ndern des Empf„ngers im Sendefenster konnte es zu Problemen
+  ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu anlegen?") kommen,
+  wenn es sich z.B. um Fido-Bretter mit Brettebenen handelte und unter
+  /Config/Anzeige/Bretter die Punktschreibweise fr alle Bretter gew„hlt
+  war. Zusatz-Fix fr pr„zisere Anzeige und Bestimmung der Brettebene im
+  Sendefenster implementiert.
+  XPCC.PAS, XP6.PAS
+
+
+MY:
+- Optik-Fix: Wenn ein Brett (z.B. Mailingliste) den String "OpenXP/16"
+  oder "OpenXP/32" enth„lt, wird der Schr„gstrich in der Brettanzeige
+  und der Quote-Schablone $NEWSGROUP an dieser Stelle nicht mehr durch
+  einen Punkt ersetzt.
+  XP3EX.PAS, XP4D.INC
+
+
+JG:
+- Fix MIME-Multipart-Nachrichten: Bei Nachrichtenteilen vom Typ
+  "text/plain" ohne Zeichensatzdeklaration war es vom Zufall abh„ngig,
+  ob eine Zeichensatzkonvertierung stattfindet oder nicht (Charset-
+  Variable war nicht initialisiert).
+  XPMIME.PAS
+
+
+JG:
+- Fix: Bei der Prfung, ob eine neu erstellte Nachricht Umlaute enth„lt,
+  wird jetzt auch die Signatur einbezogen und daher auch dann der
+  korrekte Zeichensatz deklariert, wenn zwar der Nachrichtentext keine
+  Umlaute enth„lt, die Signatur aber doch.
+  XP6S.INC
+
+
+JG+MY:
+- Fix: Beim Einfgen eines Clipboard-Inhalts, der mit einem Windows-
+  Programm erstellt wurde (z.B. interner Lister des Windows Commander),
+  konnte es passieren, daá hinter dem eigentlichen String Zeichenmll
+  eingefgt wurde (Clipboard-Inhalt muá in diesem Fall vorw„rts nach #0
+  durchsucht werden, nicht rckw„rts). Fehlermeldung "Clipboard-Inhalt
+  ist zu groá" in Ressource verlagert.
+  CLIP.PAS, XP-D.RQ, XP-E.RQ
+
+
+JG+MY:
+- Fix: Bei Nachrichten in eine RFC-Newsgroup, die zu einer Brettgruppe
+  mit der Sonderzeichen-Einstellung "ASCII" geh”rt, werden zwar Umlaute
+  im Editor zu "ae" usw. gewandelt, nicht aber z.B. Akzent- oder andere
+  Hi-ASCII-Zeichen. Da gleichzeitig die Prfung, ob die Nachricht
+  Sonderzeichen enth„lt, gar nicht durchlaufen wurde, wurde nicht der
+  korrekte Zeichensatz "ISO-8859-1" deklariert, obwohl die Nachricht
+  Sonderzeichen enthielt.
+  XP6.PAS
+
+
+JG:
+- Fix Brettweiterschalter: Wenn im Lesemodus "Alles" nach mehr als 127
+  (zu berspringenden) Trennzeilen doch noch ein Brett kam, bestand eine
+  Chance von ca. 70%, daá dieses Brett nicht angesprungen wurde
+  (berlaufener Shortint-Counter, gefunden durch Range Check...).
+  XP4W.INC
+
+
+JG:
+- Fix: Tempor„rdateien werden jetzt auch dann korrekt gel”scht, wenn sie
+  sich nicht im aktuellen Verzeichnis befinden (Pfad wurde nicht
+  bergeben und der Befehl unter plain DOS wegen des Backslashs am Ende
+  auch nicht korrekt ausgefhrt).
+  XP.PAS, XP2B.PAS
+
+
+JG+MY:
+- Fix Nachrichtenweiterschalter: Nach Verlassen des MIME-Auswahldialogs
+  mit <Esc> konnte es passieren, daá nur noch genau einmal (und dann nie
+  wieder) zur n„chsten Nachricht gesprungen wurde.
+  XP4.PAS, XP4W.INC
+
+
+MY:
+- "news.kannofant.de" zur Liste der mit <F2> ausw„hlbaren News-Server
+  hinzugefgt.
+  SERVERS.DAT
+
+
+MY:
+- Nachrichtentyp 'M' erg„nzt.
+  DBFORM.TXT
+
+
+MY:
+- Hinweis auf neuen SysopMode-Schalter erg„nzt.
+  UPDATE.TXT
+
+
+MY:
+- Auf die Schnelle ein paar Anpassungen an OpenXP/16.
+README.TXT
+
+
+ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+OpenXP/16: Entwickler und weitere aktiv Mitwirkende
+===================================================
+
+MY: Michael Heydekamp      (Entwicklung, Online-Hilfe, Initiator)
+JG: Jochen Gehring         (Entwicklung, Beratung [jgXP])
+SV: Stefan Vinke           (Entwicklung, Beratung)
+AS: Andreas Seybold        (Entwicklung)
+RB: Robert B”ck            (Entwicklung, Beratung [XP2-Team])
+MH: Martin Max Huckenbeck  (Entwicklung, Beratung [XP2-Team])
+OH: Oliver Hertel          (Entwicklung, Beratung [XP2-Team])
+MM: Maik Mller            (Entwicklung, Beratung [XP2-Team])
+ST: Steve Tell             (Webseite, User/Tester, Bugfinder,
+                            Ideengeber)
+HH: Heiko Hamann           (Webseite, User/Tester, Bugfinder,
+                            Ideengeber, evtl. sporadische Entwicklung)
+JM: Joachim Merkel         (User/Tester, Bugfinder, Ideengeber, evtl.
+                            sporadische Entwicklung, ZC/RFC-Konformit„t)
+HG: Harald Gerber          (User/Tester, Bugfinder, Ideengeber)
+JP: Jan Peters             (User/Tester, Bugfinder, Ideengeber)
+JS: Jan Selmer             (User/Tester, Bugfinder, Ideengeber)
+HG: Helmut Guetschow       (User/Tester, Bugfinder, Ideengeber)
+SF: Stefan Frank           (User/Tester, Bugfinder, Ideengeber)
+JA: Johann Addicks         (User/Tester, Bugfinder, Ideengeber)
+AA: Andreas Andre          (User/Tester, Bugfinder, Ideengeber)
+TJ: Thomas Jacoby          (User/Tester, Bugfinder, Ideengeber)
+FH: Frank Hennig           (User/Tester, Bugfinder, Ideengeber)
+KK: Klaus-Peter Kleinsimon (User/Tester, Bugfinder, Ideengeber)
+AB: Andreas Bauer          (User/Tester, Bugfinder, Ideengeber, evtl.
+                            sporadische Entwicklung)
+AS: Alfred Schroeder       (User/Tester, Bugfinder, Ideengeber)
+HT: Hans-Jrgen T„nzer     (User/Tester, Bugfinder, Ideengeber)
+MK: Markus K„mmerer        (Gelegentliche Bugfixes [OpenXP/32])
+MA: Malte Kiesel           (Gelegentliche Bugfixes [OpenXP/32])
