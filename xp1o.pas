@@ -196,6 +196,7 @@ var s     : string;
     useclip: boolean;
     nr    : longint;
     i     : integer;
+    um2old: boolean; {Speicher fuer Original-Usemulti2}
     
   procedure ex(i:shortint);
   begin
@@ -307,8 +308,22 @@ begin
   begin
 
     if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
-    if upcase(c) = 'O' then ShowHeader;                       { 'O' fuer Lister }
- end;
+
+    if upcase(c) = 'O' then                                   { 'O' fuer Lister }
+    begin   
+     if listvollbild then
+     begin
+      um2old:=usemulti2;
+      usemulti2:=false;  {Verhindern das Uhr zwischendurch erscheint}
+      end;
+     ShowHeader;                                               
+     if listvollbild then 
+     begin
+       usemulti2:=um2old;
+       m2t:=false;     {Uhr auslassen...}
+       end; 
+     end;
+    end;
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
   begin                                                     
@@ -983,6 +998,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/03/02 17:07:02  jg
+  - Schoenheitsfix: bei "O" aus Vollbildlister
+    wird Uhr nicht mehr aktiviert.
+
   Revision 1.15  2000/02/28 11:06:37  mk
   - Peters Kommentar zum Dummy-Quoten eingefuegt
 
