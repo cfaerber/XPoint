@@ -1157,7 +1157,7 @@ begin
     binary:=ismime and (not (ctype in [tText,tMultipart,tMessage]) or
                         ((encoding=encBinary) and (ctype<>tText)));
     (* set typ='M' for pass-through message types *)
-    mpart :=ismime and ctype=[tMultipart,tMessage];
+    mpart :=ismime and (ctype in [tMultipart,tMessage]);
     hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
     charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
@@ -2273,7 +2273,7 @@ begin
     s[1]:=c;
     ReadRFCheader(true,s);
     (* no decoding for MIME multipart messages *)
-    binaer:=(hd.typ in ['B','M']);
+    binaer:=(hd.typ = 'B') or (hd.typ = 'M');
 
     if (mailuser='') and (hd.envemp<>'') then begin
       if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
@@ -2400,7 +2400,7 @@ begin
       until nofrom;
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
-      binaer:=(hd.typ in ['B','M']);
+      binaer:=(hd.typ = 'B') or (hd.typ = 'M');
       if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
         hd.xoem:=hd.xempf;
@@ -2542,7 +2542,7 @@ begin
           hd.netztyp:=nt_RFC;
           ReadString(true);
           ReadRFCheader(false,s);
-          binaer:=(hd.typ=['B','M']);
+          binaer:=(hd.typ = 'B') or (hd.typ = 'M');
           seek(f1,fp); ReadBuf; bufpos:=bp;
           repeat                           { Header Åberlesen }
             ReadString(true);
@@ -3296,7 +3296,7 @@ begin
       close(f1);
       error('fehlerhafter Eingabepuffer!');
     end;
-    binmail:=not hd.typ in ['T','M'];
+    binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
     mpart  :=hd.typ='M';
     if cpos('@',hd.empfaenger)=0 then      { AM }
       if binmail and not NewsMIME then
@@ -3368,7 +3368,7 @@ begin
     repeat
       seek(f1,adr);
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
-      binmail:=not hd.typ in ['T','M'];
+      binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
       mpart  :=hd.typ='M';
       if cpos('@',hd.empfaenger)>0 then
         if ustr(left(hd.empfaenger,length(server)))=server then begin
@@ -3459,6 +3459,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.53  2001/09/16 21:19:27  mk
+  - fixed fuer letzten checkin, uuz wieder compilierbar
+
   Revision 1.35.2.52  2001/09/11 12:07:31  cl
   - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
 
