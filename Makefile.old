@@ -1,0 +1,111 @@
+# Generated automatically from Makefile.in by configure.
+# $Id$
+#  
+#  Makefile.in -- OpenXP autoconf build system
+#  
+#  This software is part of the OpenXP project (www.openxp.de).
+#  Copyright (c) 2000 by the OpenXP Team.
+#  Created on 2002-01-13 by Claus F"arber <claus@faerber.muc.de>
+#  
+#  This is free software; you can redistribute it and/or modify it
+#  under the terms of the Lesser GNU General Public License (LGPL) as
+#  published by the Free Software Foundation; either version 2,
+#  or (at your option) any later version.
+#  
+#  The software is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See LGPL
+#  for more details.
+#  
+#  You should have received a copy of the LGPL along with this
+#  software; see the file lgpl.txt. If not, write to the
+#  Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# --- variables -------------------------------------------------------
+SHELL	= /bin/sh
+
+srcdir	= .
+
+PPC	= ppc386
+PPC_FLAGS	=
+PPC_LOCAL_FLAGS =
+
+EXEEXT 	= 
+
+OPENXP	= openxp
+RC	= rc
+IHS	= ihs
+
+UNITS	=
+INCLUDES= config.inc
+
+# --- files -----------------------------------------------------------
+RESSOURCE_FILES=$(patsubst openxp-%.rq,openxp-%.res,$(wildcard openxp-*.rq))
+
+# --- abstract targets ------------------------------------------------
+all: $(OPENXP) $(RESSOURCE_FILES)
+
+# --- cleaning --------------------------------------------------------
+mostlyclean:
+	rm -f $(OPENXP) openxp-*.res *.dcu *.ppu *.o
+
+clean: mostlyclean
+	rm -f $(RC) $(IHS)
+
+distclean: clean
+	rm -f Makefile config.cache config.status config.h config.inc config.log
+
+maintainer-clean: distclean
+	rm -f configure
+
+# --- install/uninstall -----------------------------------------------
+install:
+install-strip:
+uninstall:
+
+# --- main programme --------------------------------------------------
+openxp$(EXEEXT): openxp.pas $(UNITS) $(INCLUDES)
+	$(PPC) $(PPC_FLAGS) $<
+
+# --- ressources ------------------------------------------------------
+openxp-%.res: openxp-%.rq rc$(EXEEXT)
+	$(RC) $<
+
+rc$(EXEEXT): rc.pas $(UNITS) $(INCLUDES)
+	$(PPC) $(PPC_LOCAL_FLAGS) $<
+
+# --- in-programme help -----------------------------------------------
+
+ihs$(EXEEXT): ihs.pas $(UNITS) $(INCLUDES)
+	$(PPC) $(PPC_LOCAL_FLAGS) $<
+
+# --- autoconf configuration PASCAL adaptions -------------------------
+config.inc: config.h
+	sed							\
+	  -e "s/^[^#].*/\/\/&/" 				\
+	  -e "s/^#\(.*\)/{\$$\1}/"				\
+	  -e "s/^\(\/\/[	 ]*\)\/[\/\*]/\1  /" 		\
+	  -e "s/\*\/[ 	]*$$//"					\
+	  -e "s/[ 	]*$$//"					\
+	$< >$@
+
+# --- maintainer only -------------------------------------------------
+# --- (taken from autoconf documentation) -----------------------------
+${srcdir}/configure: configure.in $(wildcard aclocal.m4)
+	cd ${srcdir} && autoconf
+
+config.h: config.h.in config.status
+	./config.status
+
+Makefile: Makefile.in config.status
+	./config.status
+
+config.status: configure
+	./config.status --recheck
+
+# ---------------------------------------------------------------------
+#
+# $Log$
+# Revision 1.1  2002/01/13 21:51:37  cl
+# - moved Makefile to Makefile.old
+#
