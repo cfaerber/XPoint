@@ -291,12 +291,7 @@ begin
   holen(p);
   EdExit(ed);
   if Nachricht and Skip4parken then
-  begin
-    if deutsch then
-      Pushkey('p')
-    else
-      Pushkey('a');
-  end;
+    pushkey(copy(getres2(611,30),1,1));
 end;
 
 
@@ -479,6 +474,9 @@ end.
 
 {
   $Log$
+  Revision 1.16.2.7  2002/04/19 15:51:30  my
+  MY:- Taste fr "Parken" im Editor wird jetzt aus Ressource ausgelesen
+
   Revision 1.16.2.6  2002/03/17 21:48:17  my
   MY:- Fix: Wenn w„hrend des Editierens einer Nachricht mit <Alt-E> eine
        externe Datei editiert wurde, dann wurde beim Verlassen der
