@@ -346,7 +346,7 @@ var Written,ReadBytes,I: Longint; Echo: ShortString;
 begin
   if ExpectEcho then PurgeInBuffer;
   SendBlock(Temp[1], Length(Temp), Written);
-  if ExpectEcho then begin
+  if (ExpectEcho) and (Written>0) then begin
     i:=0; while(CharCount<Written)and(i<CommandTimeout)do
       begin SleepTime(100); inc(i,100); Str(CharCount,Echo); DebugLog('ObjCOM','Waiting '+Echo,3)end;
     if CharCount<Written then Written:=CharCount;
@@ -452,6 +452,12 @@ end.
 
 {
   $Log$
+  Revision 1.13  2000/12/27 13:23:33  hd
+  - Fix: Modem: if echo requiered function tried to get -1 bytes
+  - Fix: DSR not checked
+  - Fix: zmodem asked ioresult which was always undefined (mostly not zero)
+  - Fido-Poll with Linux works but not nice.
+
   Revision 1.12  2000/11/19 18:22:53  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

@@ -273,8 +273,14 @@ begin
     for i:=1 to 4 do if((not CommObj^.IgnoreCD)and CommObj^.Carrier)then SleepTime(500);
     SleepTime(100);
   end;
-  if CommObj^.ReadyToSend(6)then begin CommObj^.SendString('AT H0'#13,True); SleepTime(1000)end;
-  Hangup:=CommObj^.SendString('AT'+#13,True);
+  if CommObj^.ReadyToSend(6)then begin
+    CommObj^.SendString('AT H0'#13,True);
+    SleepTime(1000);
+  end;
+  if CommObj^.ReadyToSend(3)then
+    result:= CommObj^.SendString('AT'+#13,True)
+  else
+    result:= false;
 end;
 
 procedure VoidDisplayProc; begin end; {Dummy-Anzeigeprozedur fuer Dialup}
@@ -289,6 +295,12 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/12/27 13:23:33  hd
+  - Fix: Modem: if echo requiered function tried to get -1 bytes
+  - Fix: DSR not checked
+  - Fix: zmodem asked ioresult which was always undefined (mostly not zero)
+  - Fido-Poll with Linux works but not nice.
+
   Revision 1.7  2000/12/25 18:47:27  mk
   - Variable GotUserBreak initalisieren
 

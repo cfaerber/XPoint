@@ -151,19 +151,17 @@ var
   sr: TSearchRec;
   rc: integer;
 begin
-  {$I-}
-  rc := FindFirst(pathname, faArchive, sr);
+  rc := FindFirst(pathname, faAnyFile-faDirectory, sr);
   FindClose(sr);
-  if (rc <> 0) or (IOresult <> 0) then
-  begin
-    Z_FindFile := FALSE;
-    Exit
+  if rc<>0 then begin
+    result:= FALSE;
+    Exit;
   end;
-  name := sr.Name;
-  size := sr.Size;
-  time := sr.Time;
-  Z_FindFile := TRUE
-end; {$I+}
+  name:= sr.Name;
+  size:= sr.Size;
+  time:= sr.Time;
+  result:= TRUE
+end;
 
 procedure Z_SetFTime(var f: file; time: LONGINT);
 var
@@ -2727,6 +2725,12 @@ end.
 
 {
   $Log$
+  Revision 1.13  2000/12/27 13:23:33  hd
+  - Fix: Modem: if echo requiered function tried to get -1 bytes
+  - Fix: DSR not checked
+  - Fix: zmodem asked ioresult which was always undefined (mostly not zero)
+  - Fido-Poll with Linux works but not nice.
+
   Revision 1.12  2000/12/25 18:47:27  mk
   - Variable GotUserBreak initalisieren
 

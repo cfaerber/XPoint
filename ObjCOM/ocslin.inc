@@ -168,6 +168,8 @@ end; { func. tSerialObj.GetChar }
 procedure tSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
   Written:= fdWrite(SHandle,Block,BlockLen);
+  if Written<0 then                             { 0 indicates an error }
+    Written:= 0;
 end; { proc. tSerialObj.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -286,8 +288,11 @@ end; { proc. tSerialObj.PurgeOutBuffer }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tSerialObj.ReadyToSend(BlockLen: Longint): Boolean;
+var
+  State: longint;
 begin
-  ReadyToSend := True;
+  ioctl(SHandle, TIOCMGET, @State);
+  result:= (State and TIOCM_DSR)<>0;
 end; { func. ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -309,6 +314,12 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.6  2000/12/27 13:23:33  hd
+  - Fix: Modem: if echo requiered function tried to get -1 bytes
+  - Fix: DSR not checked
+  - Fix: zmodem asked ioresult which was always undefined (mostly not zero)
+  - Fido-Poll with Linux works but not nice.
+
   Revision 1.5  2000/12/18 00:06:17  ma
   - fixed GetBpsrate (reported 0 all the time)
   - fixed SetLine (ignored CR, tios not zero-filled on beginning)
