@@ -114,7 +114,6 @@ function Log(const b,r:real):real;           { allg. Logarithmus            }
 function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
 function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
-function LStr(const s:string):string;              { LowerString                  }
 function Max(const a,b:longint):longint;          { Maximum Integer              }
 function MaxR(const a,b:real):real;                { Maximum Real                 }
 function MaxS(const a,b:string):string;            { Maximum String               }
@@ -160,10 +159,9 @@ function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gro·         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
 function UpCase(const c:char):char;                { int. UpCase                  }
-function UStr(const s:String):String;              { UpperString                  }
 function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
 { Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
-function FUStr(const s:string):string;
+function FileUpperCase(const s:string):string;
 function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
 
 Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
@@ -440,7 +438,6 @@ end;
 
 
 function Time:DateTimeSt;
-VAR stu,min,sec,du :rtlword;
 begin
   Time:= FormatDateTime('hh:nn:ss', Now);
 end;
@@ -752,383 +749,24 @@ end;
 {$ENDIF}
 
 
-function FUStr(const s:string):string;
+function FileUpperCase(const s:string):string;
 begin
 {$IFDEF UnixFS }
-  FUStr := s;
+  FileUpperCase := s;
 {$ELSE }
-  FUStr := UStr(s);
+  FileUpperCase := UpperCase(s);
 {$ENDIF }
 end;
 
-{$ifdef noasm}
-
-Procedure LoString(var s:string);
-var i : integer;
+procedure LoString(var s:string);
 begin
-  for i:=1 to length(s) do
-    s[i]:=LoCase(s[i]);
+  s:= LowerCase(s);
 end;
 
-
-Procedure UpString(var s:string);
-var i : integer;
+procedure UpString(var s:string);
 begin
-  for i:=1 to length(s) do
-    s[i]:=UpCase(s[i]);
+  s:= UpperCase(s);
 end;
-
-
-function UStr(const s: AnsiString): AnsiString;
-var i,l : integer;
-    r : string;                 { Result bzw. UStr klappt nicht bei allen Compilern }
-begin
-  l:= length(s);                { Nicht zweimal zaehlen }
-  SetLength(r, l);
-  for i:=1 to l do
-    r[i]:=UpCase(s[i]);
-  UStr:= r;
-end;
-
-
-function LStr(const s:string):string;
-var i,l : integer;
-    r : string;
-begin
-  l:= lenght(s);
-  SetLength(r, l);
-  for i:=1 to l do
-    r[i]:=LoCase(s[i]);
-  LStr:= r;
-end;
-
-{$else}
-
-{$ifdef ver32}
-
-procedure LoString (var s: string); {&uses ebx,edi} assembler;
-  asm
-    mov ebx,s
-    movzx ecx,byte ptr [ebx]
-    jecxz @lostr_ende
-    mov edi,ecx
-  @lostr_next:
-    mov al,byte ptr [ebx+edi]
-    cmp al,'A'
-    jnae @lostr_weiter
-    cmp al,'Z'
-    jnbe @lostr_auml
-    add byte ptr [ebx+edi],32
-    jmp @lostr_weiter
-  @lostr_auml:
-
-{$ifndef windows}
-
-    cmp al,'é'
-    jne @lostr_ouml
-    mov byte ptr [ebx+edi],'Ñ'
-    jmp @lostr_weiter
-  @lostr_ouml:
-    cmp al,'ô'
-    jne @lostr_uuml
-    mov byte ptr [ebx+edi],'î'
-    jmp @lostr_weiter
-  @lostr_uuml:
-    cmp al,'ö'
-    jne @lostr_eacute
-    mov byte ptr [ebx+edi],'Å'
-    jmp @lostr_weiter
-  @lostr_eacute:
-    cmp al,'ê'
-    jne @lostr_aring
-    mov byte ptr [ebx+edi],'Ç'
-    jmp @lostr_weiter
-  @lostr_aring:
-    cmp al,'è'
-    jne @lostr_aelig
-    mov byte ptr [ebx+edi],'Ü'
-    jmp @lostr_weiter
-  @lostr_aelig:
-    cmp al,'í'
-    jne @lostr_ntilde
-    mov byte ptr [ebx+edi],'ë'
-    jmp @lostr_weiter
-  @lostr_ntilde:
-    cmp al,'•'
-    jne @lostr_ccedil
-    mov byte ptr [ebx+edi],'§'
-    jmp @lostr_weiter
-  @lostr_ccedil:
-    cmp al,'Ä'
-    jne @lostr_weiter
-    mov byte ptr [ebx+edi],'á'
-
-{$else}
-
-    cmp al,192
-    jnae @lostr_weiter
-    cmp al,221
-    jnbe @lostr_weiter
-    add byte ptr [ebx+edi],32
-
-{$endif}
-
-  @lostr_weiter:
-    dec edi
-    jnz @lostr_next
-  @lostr_ende:
-{$ifdef FPC }
-  end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$else}
-  end;
-{$endif}
-
-procedure UpString (var s: string); {&uses ebx,edi} assembler;
-  asm
-    mov ebx,s
-    movzx ecx,byte ptr [ebx]
-    jecxz @upstr_ende
-    mov edi,ecx
-  @upstr_next:
-    mov al,byte ptr [ebx+edi]
-    cmp al,'a'
-    jnae @upstr_weiter
-    cmp al,'z'
-    jnbe @upstr_auml
-    sub byte ptr [ebx+edi],32
-    jmp @upstr_weiter
-  @upstr_auml:
-
-{$ifndef windows}
-
-    cmp al,'Ñ'
-    jne @upstr_ouml
-    mov byte ptr [ebx+edi],'é'
-    jmp @upstr_weiter
-  @upstr_ouml:
-    cmp al,'î'
-    jne @upstr_uuml
-    mov byte ptr [ebx+edi],'ô'
-    jmp @upstr_weiter
-  @upstr_uuml:
-    cmp al,'Å'
-    jne @upstr_eacute
-    mov byte ptr [ebx+edi],'ö'
-    jmp @upstr_weiter
-  @upstr_eacute:
-    cmp al,'Ç'
-    jne @upstr_aring
-    mov byte ptr [ebx+edi],'ê'
-    jmp @upstr_weiter
-  @upstr_aring:
-    cmp al,'Ü'
-    jne @upstr_aelig
-    mov byte ptr [ebx+edi],'è'
-    jmp @upstr_weiter
-  @upstr_aelig:
-    cmp al,'ë'
-    jne @upstr_ntilde
-    mov byte ptr [ebx+edi],'í'
-    jmp @upstr_weiter
-  @upstr_ntilde:
-    cmp al,'§'
-    jne @upstr_ccedil
-    mov byte ptr [ebx+edi],'•'
-    jmp @upstr_weiter
-  @upstr_ccedil:
-    cmp al,'á'
-    jne @upstr_weiter
-    mov byte ptr [ebx+edi],'Ä'
-
-{$else}
-
-    cmp al,224
-    jnae @upstr_weiter
-    cmp al,253
-    jnbe @upstr_weiter
-    sub byte ptr [ebx+edi],32
-
-{$endif}
-
-  @upstr_weiter:
-    dec edi
-    jnz @upstr_next
-  @upstr_ende:
-{$ifdef FPC }
-  end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$else}
-  end;
-{$endif}
-
-{$else}
-
-procedure LoString (var s: string); assembler;
-  asm
-    les bx,[s[0]]
-    mov cl,es:[bx]
-    xor ch,ch
-    jcxz @lostr_ende
-    mov di,cx
-  @lostr_next:
-    mov al,byte ptr es:[bx+di]
-    cmp al,'A'
-    jnae @lostr_weiter
-    cmp al,'Z'
-    jnbe @lostr_auml
-    add byte ptr es:[bx+di],32
-    jmp @lostr_weiter
-  @lostr_auml:
-
-{$ifndef windows}
-
-    cmp al,'é'
-    jne @lostr_ouml
-    mov byte ptr es:[bx+di],'Ñ'
-    jmp @lostr_weiter
-  @lostr_ouml:
-    cmp al,'ô'
-    jne @lostr_uuml
-    mov byte ptr es:[bx+di],'î'
-    jmp @lostr_weiter
-  @lostr_uuml:
-    cmp al,'ö'
-    jne @lostr_eacute
-    mov byte ptr es:[bx+di],'Å'
-    jmp @lostr_weiter
-  @lostr_eacute:
-    cmp al,'ê'
-    jne @lostr_aring
-    mov byte ptr es:[bx+di],'Ç'
-    jmp @lostr_weiter
-  @lostr_aring:
-    cmp al,'è'
-    jne @lostr_aelig
-    mov byte ptr es:[bx+di],'Ü'
-    jmp @lostr_weiter
-  @lostr_aelig:
-    cmp al,'í'
-    jne @lostr_ntilde
-    mov byte ptr es:[bx+di],'ë'
-    jmp @lostr_weiter
-  @lostr_ntilde:
-    cmp al,'•'
-    jne @lostr_ccedil
-    mov byte ptr es:[bx+di],'§'
-    jmp @lostr_weiter
-  @lostr_ccedil:
-    cmp al,'Ä'
-    jne @lostr_weiter
-    mov byte ptr es:[bx+di],'á'
-
-{$else}
-
-    cmp al,192
-    jnae @lostr_weiter
-    cmp al,221
-    jnbe @lostr_weiter
-    add byte ptr es:[bx+di],32
-
-{$endif}
-
-  @lostr_weiter:
-    dec di
-    jnz @lostr_next
-  @lostr_ende:
-  end;
-
-procedure UpString (var s: string); assembler;
-  asm
-    les bx,[s[0]]
-    mov cl,es:[bx]
-    xor ch,ch
-    jcxz @upstr_ende
-    mov di,cx
-  @upstr_next:
-    mov al,byte ptr es:[bx+di]
-    cmp al,'a'
-    jnae @upstr_weiter
-    cmp al,'z'
-    jnbe @upstr_auml
-    sub byte ptr es:[bx+di],32
-    jmp @upstr_weiter
-  @upstr_auml:
-
-{$ifndef windows}
-
-    cmp al,'Ñ'
-    jne @upstr_ouml
-    mov byte ptr es:[bx+di],'é'
-    jmp @upstr_weiter
-  @upstr_ouml:
-    cmp al,'î'
-    jne @upstr_uuml
-    mov byte ptr es:[bx+di],'ô'
-    jmp @upstr_weiter
-  @upstr_uuml:
-    cmp al,'Å'
-    jne @upstr_eacute
-    mov byte ptr es:[bx+di],'ö'
-    jmp @upstr_weiter
-  @upstr_eacute:
-    cmp al,'Ç'
-    jne @upstr_aring
-    mov byte ptr es:[bx+di],'ê'
-    jmp @upstr_weiter
-  @upstr_aring:
-    cmp al,'Ü'
-    jne @upstr_aelig
-    mov byte ptr es:[bx+di],'è'
-    jmp @upstr_weiter
-  @upstr_aelig:
-    cmp al,'ë'
-    jne @upstr_ntilde
-    mov byte ptr es:[bx+di],'í'
-    jmp @upstr_weiter
-  @upstr_ntilde:
-    cmp al,'§'
-    jne @upstr_ccedil
-    mov byte ptr es:[bx+di],'•'
-    jmp @upstr_weiter
-  @upstr_ccedil:
-    cmp al,'á'
-    jne @upstr_weiter
-    mov byte ptr es:[bx+di],'Ä'
-
-{$else}
-
-    cmp al,224
-    jnae @upstr_weiter
-    cmp al,253
-    jnbe @upstr_weiter
-    sub byte ptr es:[bx+di],32
-
-{$endif}
-
-  @upstr_weiter:
-    dec di
-    jnz @upstr_next
-  @upstr_ende:
-  end;
-
-{$endif}
-
-function UStr(const s:string):string;
-  var _s:string;
-  begin
-    _s:=s;
-    UpSTring(_s);
-    UStr:=_s;
-  end;
-
-function LStr(const s:string):string;
-  var _s:string;
-  begin
-    _s:=s;
-    LoString(_s);
-    LStr:=_s;
-  end;
-
-{$endif}
 
 function UStrHuge(const s: HugeString): HugeString;
 var
@@ -1445,7 +1083,7 @@ end;
 function TopStr(const s:string):string;
 begin
   if s='' then TopStr:=''
-  else TopStr:=UpCase(s[1])+LStr(copy(s,2,254));
+  else TopStr:=UpCase(s[1])+LowerCase(copy(s,2,254));
 end;
 
 
@@ -1958,6 +1596,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/07/04 11:40:12  hd
+  - UStr, LStr entfernt
+  - FUStr in FileUpperCase umbenannt
+  - Die anderen Dateien folgen in 30 Minuten, bitte solange keine Updates
+    committen!!!!!!
+
   Revision 1.46  2000/07/03 18:15:46  mk
   - Left/Right deutlich vereinfacht
 
