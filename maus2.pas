@@ -165,7 +165,7 @@ begin
   begin
     if dwEventFlags=0 then                              // single click
     begin
-      Debug.DebugLog('maus2', Format('mouse button (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
+      Debug.DebugLog('maus2', Format('mouse button (buttons=0x%s)',[hex(Integer(dwButtonState),8)]), DLTrace);
       if ((dwButtonState and 2)<>0) and ((lmb and 2)=0) then put(mausright) else
       if ((dwButtonState and 2)=0) and ((lmb and 2)<>0) then put(mausunright);
 
@@ -189,14 +189,14 @@ begin
     end else
     if (dwEventFlags and DOUBLE_CLICK)<>0 then          // double click
     begin
-      Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
+      Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(Integer(dwButtonState),8)]), DLTrace);
       if ((dwButtonState and 1)<>0) and ((lmb and 1)=0) then put(mausldouble);
       if ((dwButtonState and 2)<>0) and ((lmb and 2)=0) then put(mausright);
       lmb:=dwButtonState;
     end else
     if (dwEventFlags and MOUSE_MOVED)<>0 then // mouse moved
     begin
-      Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
+      Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(Integer(dwButtonState),8)]), DLTrace);
       if not has_moved(mausx,mausy) then
         if ((dwButtonState and 1)<>0) then
         begin
@@ -213,7 +213,7 @@ begin
       wdist:=Integer16(dwButtonState shr 16);
       if wdist<0 then wdist:=wdist-60 else wdist:=wdist+60;
       wdist:=wdist div 120;
-      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s,distance=%d)',[hex(dwButtonState,8),wdist]), DLTrace);
+      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s,distance=%d)',[hex(Integer(dwButtonState),8),wdist]), DLTrace);
 
       if wdist>0 then
         for i:=1 to wdist do
@@ -222,7 +222,7 @@ begin
         for i:=1 to -wdist do
           put(mauswheeldn);
     end else
-      Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(dwButtonState,8)]), DLTrace);
+      Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(Integer(dwButtonState),8)]), DLTrace);
   end;
   result:=keyout;
 end;
@@ -554,6 +554,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2001/10/17 20:49:14  cl
+  - Fixed range check error w/ hex function
+
   Revision 1.41  2001/10/17 12:07:28  ma
   - fixed range check errors
 
