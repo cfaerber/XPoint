@@ -45,7 +45,7 @@ jetzt einen "CommInit"-String an (Config/Modem...).
 Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten
 nur für externe Programme wie PPP-Clients etc.; Fossil
-wird nur unter Dos unterstützt, Telnet nur unter Win32.
+wird nur unter DOS unterstützt, Telnet nur unter Win32.
 <br /><small>2001-01-16</small>
 
 Warum ist die Win32-Version bei mir so langsam?

@@ -1,7 +1,7 @@
 Allgemeine OpenXP-FAQ
 
 Ich habe vermutlich einen Fehler/Bug entdeckt.
-Es existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
+Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
 <br />Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe "Kontakt"). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
 <br /><small>2001-01-18</small>
 
@@ -48,7 +48,7 @@ Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <
 <br /><small>2001-01-18</small>
 
 Wie kriege ich OpenXP mit ISDN zum Laufen?
-Für Dos gibt es nur die Möglichkeit, einen Fossil-Treiber wie cFos (siehe "Links") zu installieren und XP den Fossil-Treiber benutzen zu lassen.
+Für DOS gibt es nur die Möglichkeit, einen Fossil-Treiber wie cFos (siehe "Links") zu installieren und XP den Fossil-Treiber benutzen zu lassen.
 Unter Windows sind CAPI-Hayes-Konverter meistens in den ISDN-Treibern integriert; bei Linux sowieso. Falls sich ein Programmierer mit Ahnung in Sachen CAPI-Programmierung findet, wäre auch eine direkte Unterstützung problemlos einzubauen.
 <br /><small>2001-01-16</small>
 

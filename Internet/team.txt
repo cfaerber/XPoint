@@ -15,8 +15,8 @@ Misc, Assembler
 
 Helmut Hullen
 <a href="mailto:hh@openxp.de">hh</a>
-ehemals ToDo-Liste; wird jetzt bei Sourceforge gef&uuml;hrt
-formerly ToDo list which is located at Sourceforge now
+ehemals ToDo-Liste; wird jetzt bei SourceForge gef&uuml;hrt
+formerly ToDo list which is located at SourceForge now
 
 Hinrich Donner
 <a href="mailto:hd@openxp.de">hd</a>
