@@ -109,7 +109,7 @@ begin
   FillChar(ReadOL, SizeOf(ReadOL), 00);
   FillChar(WriteOL, SizeOf(WriteOL), 00);
 
-  if NOT SetupComm(GetHandle, 256, 256) then
+  if NOT SetupComm(GetHandle,2048,2048) then
     begin
       LastError := GetLastError;
       ErrorStr := 'Error setting up communications buffer: #'+IntToStr(LastError){ + ' / '+SysErrorMessage(LastError)};
@@ -124,7 +124,6 @@ end; { proc. tSerialObj.OpenQuick }
 
 function tSerialObj.OpenKeep(Comport: Byte): Boolean;
 var TempSave   : THandle;
-    CommTimeOut: TCommTimeOuts;
     Security   : Windows.TSECURITYATTRIBUTES; {?!}
     LastError  : Longint;
 begin
@@ -157,7 +156,7 @@ begin
   if Result then   { Make sure that "CharAvail" isn't going to wait }
     begin
       InitDelayTimes;
-      Result:=SetupComm(GetHandle, 256, 256);
+      Result:=SetupComm(GetHandle,2048,2048);
       ErrorStr:='Error setting up comm buffer: #'+IntToStr(GetLastError);
     end;
 
@@ -316,10 +315,8 @@ end; { proc. tSerialObj.SetDtr }
 
 function tSerialObj.GetBpsRate: Longint;
 var DCB   : TDCB;
-    BPSID : Longint;
 begin
   GetCommState(GetHandle, DCB);
-
   GetBpsRate := dcb.Baudrate;
 end; { func. tSerialObj.GetBpsRate }
 
@@ -415,6 +412,10 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.5  2001/01/03 22:30:17  ma
+  - enlarged win buffer size to 2048 bytes
+  - removed some unused variables
+
   Revision 1.4  2000/11/17 19:48:23  ma
   - no more threads, working again
 
