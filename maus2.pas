@@ -36,6 +36,7 @@ uses
 {$endif}
 {$IFDEF Win32}
   Windows,
+  xpcrt,
 {$ENDIF}
   typeform,mouse,keys,xpglobal,debug;
 
@@ -415,15 +416,35 @@ end;
 {$ENDIF}
 
 procedure maus_tasten_an;
+{$IFDEF Win32}
+var mode:DWORD;
+{$ENDIF}
 begin
   DebugLog('maus2','maus_tasten_an',dlTrace);
+{$IFDEF Win32}
+  mouse.maus:=GetSystemMetrics(SM_MOUSEPRESENT)<>0;
+  if mouse.maus then
+    if GetConsoleMode(StdInputHandle,mode) then
+      if (mode and ENABLE_MOUSE_INPUT)=0 then
+        SetConsoleMode(StdInputHandle,mode or ENABLE_MOUSE_INPUT);
+  maus_tasten:=mouse.maus;
+{$ELSE}
   maus_tasten:=true;
+{$ENDIF}
   lx:=255; ly:=255;
 end;
 
 procedure maus_tasten_aus;
+{$IFDEF Win32}
+var mode:DWORD;
+{$ENDIF}
 begin
   DebugLog('maus2','maus_tasten_aus',dlTrace);
+{$IFDEF Win32}
+  if GetConsoleMode(StdInputHandle,mode) then
+    if (mode and ENABLE_MOUSE_INPUT)<>0 then
+      SetConsoleMode(StdInputHandle,mode and not DWORD(ENABLE_MOUSE_INPUT));
+{$ENDIF}
   maus_tasten:=false;
 end;
 
@@ -545,6 +566,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2001/09/19 15:59:12  cl
+  - maus_tasten_an/aus now sets Win32 console mode
+
   Revision 1.34  2001/09/18 20:29:19  cl
   - fixed scrolling with pressed mouse button
 
