@@ -204,15 +204,12 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
                        const Decompressor: String;
                        boxpar: boxptr);
 
-  function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
-  var p : byte;
+  function isCompressedFidoPacket(const Filename: string): Boolean;
+  var ext: string;
   begin
-    p:=cpos('.',Filename);
-    if (p=0) or (Filename='.') or (Filename='..') then
-      result:=false
-    else
-      result:=(pos(copy(UpperCase(Filename),p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
-              (FidoExtNamesPermitted or (pos(copy(Filename,p+3,1),'0123456789')>0));
+    Ext:=ExtractFileExt(Filename);
+    result:=(pos(copy(UpperCase(Ext),1,3),'.MO.TU.WE.TH.FR.SA.SU')>0) and
+            (boxpar^.ExtPFiles or (pos(copy(Ext,4,1),'0123456789')>0));
   end;
 
 const fpuffer = 'FPUFFER';
@@ -228,7 +225,7 @@ begin
     NewFiles:=TStringList.Create; iFile:=0;
     while iFile<=(FilesToProcess.Count-1) do begin
       aFile:=FilesToProcess[iFile];
-      if isCompressedFidoPacket(aFile,false) then begin
+      if isCompressedFidoPacket(aFile) then begin
         Debug.DebugLog('xpncfido',aFile+' is compressed packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,ExtractFileName(aFile)));
 
@@ -847,6 +844,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/04/19 23:27:51  ma
+  - fixed: compressed packets were not recognized if '.' in path
+
   Revision 1.8  2001/04/03 13:25:41  ma
   - cleaned up fido aka handling
 
