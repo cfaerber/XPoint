@@ -576,7 +576,6 @@ begin
   if nr>0 then wpop
   else showmain(0);
   menupos[nr]:=p;
-  dispose(ma);
 
   if nr>0 then begin
     i:=1;
@@ -584,6 +583,8 @@ begin
       inc(i);
     EnableUpper:=(i<=n);
     end;
+
+  dispose(ma);
 
   if t=keyesc then getmenu:=0
   else if t=keycr then getmenu:=get2
@@ -701,6 +702,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/03/04 01:23:24  mk
+  Bug in XPME beseitigt und Code portiert
+
   Revision 1.3  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
