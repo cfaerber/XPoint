@@ -608,7 +608,7 @@ var s : string;
   end;
 
 begin
-  helpfile:=getres(1);
+  helpfile:=getres2(1,1);
 {$IFDEF UnixFS}
    lostring(helpfile);
 {$ENDIF}
@@ -2792,6 +2792,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.157  2003/03/30 11:03:13  cl
+  - missing commit for new ressource file format,
+    see <8ij6qW3bJeD@wombat.dyn.han.de>
+
   Revision 1.156  2003/03/16 19:02:06  cl
   - initial support for langage files in encodings different from CP437
 
