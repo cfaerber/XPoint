@@ -19,23 +19,12 @@ interface
 uses
   xpglobal, dos, typeform, fileio;
 
-const ExecOk      = 0;
-      ExecSwaperr = 1;
-      ExecSwapweg = 2;
-      ExecSwapre  = 3;
-
-      ExecTestres : boolean = true;
-      ExecSwapfile: pathstr = 'SWAPFILE.$$$';
-      ExecDeutsch : boolean = true;
-
-var
-  ExecResident : procedure;
+const
+  ExecDeutsch : boolean = true;
 
 
-{ 0=ok, 1=Swap-Fehler }
-
-function Xec(var prog:string; space,envspace:word; var prompt:string;
-             var errorlevel:word):byte;
+// RÅckgabewert: ErrorLevel
+function Xec(prog:string; const prompt:string):Integer;
 
 
 implementation  { --------------------------------------------------- }
@@ -46,14 +35,7 @@ uses
 {$endif}
   sysutils;
 
-function Xec(var prog:string; space,envspace:word; var prompt:string;
-             var errorlevel:word):byte;
-
-  function environment:string;
-  begin
-    if envspace=0 then environment:=''
-    else environment:=' /E:'+strs(envspace);
-  end;
+function Xec(prog:string; const prompt:string):Integer;
 var
     pp    : byte;
     para  : string;
@@ -85,23 +67,24 @@ begin
   end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
   if dpath='' then begin
-    para:=environment+' /c '+prog+para;
+    para:=' /c '+prog+para;
     dpath:=getenv('comspec');
   end;
   SwapVectors;
   Exec(dpath, para);
   SwapVectors;
-  ErrorLevel := DOSExitCode;
+  Result := DOSExitCode;
   { Wir nicht sauber belegt, also von Hand machen }
   DosError :=0;
-  { Alle anderen Fehler kînnen in 32 Bit nicht auftreten }
-{$endif}
-  Xec := ExecOk;
+{$ENDIF }
 end;
 
 end.
 {
   $Log$
+  Revision 1.25  2000/08/14 20:41:22  mk
+  - Exec-Routinen besser auf 32 Bit Bedingungen angepasst
+
   Revision 1.24  2000/07/20 16:49:56  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

@@ -196,10 +196,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
   2  None
   3  PMs
 -
-109  TSR program detected - aborting..
-110  Error while swapping memory on disk.
-111  Swap file lost!?
-112  Error reading swap file
 113  Type EXIT to return to CrossPoint.
 115  Error while executing program.
 116  DOS shell is not possible right now.

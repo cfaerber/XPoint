@@ -21,17 +21,8 @@ begin
 end;
 
 
-procedure Resiprog;
-begin
-  if ExecTestres then
-    interr(getres(109));  { Residentes Programm geladen! CrossPoint wird beendet.. }
-end;
-
-
 { prog:  Programmname. Falls nicht per PATH erreichbar, dann wird
          ein COMMAND /C gestartet
-  space: benîtigter Speicherplatz in KByte (wenn weniger Platz ist,
-         wird aber auch nur weniger freigemacht..). 640 -> Maximum.
   cls:   0=nicht lîschen; 1=lîschen, 2=lîschen+Hinweis, 3=Mitte lîschen
          -1=lîschen/25 Zeilen, 4=lîschen/nicht sichern,
          5=nicht lîschen/nicht sichern }
@@ -40,11 +31,11 @@ const trackpath : boolean = false;
 
 
 procedure shell(prog:string; space:word; cls:shortint);  { Externer Aufruf }
-var sm2t     : boolean;
-    _xp_     : string;
-    maussave : mausstat;
-    sp       : scrptr;
-    de       : integer;
+var
+  sm2t     : boolean;
+  maussave : mausstat;
+  sp       : scrptr;
+  ErrorLevel: Integer;
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -71,84 +62,67 @@ var sm2t     : boolean;
   end;
 
 begin
-  de:=0;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
-  begin
-    { trackpath:=(dospath(0)+'\'=OwnPath) or (dospath(0)=shellpath); }
-    getmaus(maussave);
-    xp_maus_aus;
-    if (cls<>4) and (cls<>5) then begin
-      sichern(sp);
-      savecursor;
-      end;
-    TempClose;
-    freehelp;
+  getmaus(maussave);
+  xp_maus_aus;
+  if (cls<>4) and (cls<>5) then begin
+    sichern(sp);
+    savecursor;
+    end;
+  TempClose;
+  freehelp;
 
-    { -> evtl. normaler Video-Mode }
-    sm2t:=m2t;
-    attrtxt(7);
-    case abs(cls) of
-      1,2,4 : begin
-                clrscr;
-                m2t:=false;
-              end;
-      3   : begin
-              clwin(1,ScreenWidth,4,screenlines-2);
-              gotoxy(1,5);
+  { -> evtl. normaler Video-Mode }
+  sm2t:=m2t;
+  attrtxt(7);
+  case abs(cls) of
+    1,2,4 : begin
+              clrscr;
+              m2t:=false;
             end;
-    end;
-    if (cls=2) or (cls=-1) then begin
-      if shell25 and (screenlines>25) then
-        { setvideomode(3) };
-      if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurÅck zu CrossPoint. }
-      end;
-    cursor(curon);
+    3   : begin
+            clwin(1,ScreenWidth,4,screenlines-2);
+            gotoxy(1,5);
+          end;
+  end;
+  if (cls=2) or (cls=-1) then
+  begin
+    if shell25 and (screenlines>25) then
+      SysSetScreenSize(25, 80);
+    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurÅck zu CrossPoint. }
+  end;
+  cursor(curon);
 
-    if (getenv('XPSWAP')<>'') and validfilename(getenv('XPSWAP')) then
-      ExecSwapfile:=getenv('XPSWAP')
-    else
-      ExecSwapfile:=TempPath+SwapFileName;
+  ExecDeutsch:=deutsch;
 
-    ExecTestres:=ParTestres;
-    _xp_:='[XP]';
-    ExecDeutsch:=deutsch;
+  Errorlevel := Xec(prog,'[XP]');
 
-    ExecResident:=resiprog;
-    case Xec(prog,space,envspace,_xp_,errorlevel) of
-      ExecSwaperr : begin
-                      tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
-                      doserror:=0;
-                    end;
-      ExecSwapweg : interr(getres(111));  { SWAP-File nicht mehr vorhanden! }
-      ExecSwapre  : interr(ioerror(ioresult,getres(112)));  { Fehler beim Lesen des SWAP-Files }
-    end;
+  if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
+  begin
+    if deutsch and (random<0.02) then write('Pressen Sie einen SchlÅssel ...')
+    else write(getres(12));  { Taste drÅcken ... }
+    m2t:=false;
+    pushhp(51);
+    clearkeybuf;
+    wait(curon);
+    pophp;
+    m2t:=true;
+    shellkey:=false;
+  end;
 
-    de:=doserror;
+  setbackintensity;
+  cursor(curoff);
+  if (cls<>4) and (cls<>5) then holen(sp);
+  m2t:=sm2t;
+  Disp_DT;
+  if (cls<>4) and (cls<>5) then restcursor;
+  SetScreenSize;
 
-    if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then begin
-      if deutsch and (random<0.02) then write('Pressen Sie einen SchlÅssel ...')
-      else write(getres(12));  { Taste drÅcken ... }
-      m2t:=false;
-      pushhp(51);
-      clearkeybuf;
-      wait(curon);
-      pophp;
-      m2t:=true;
-      shellkey:=false;
-      end;
+  xp_maus_an(maussave.x,maussave.y);
 
-    setbackintensity;
-    cursor(curoff);
-    if (cls<>4) and (cls<>5) then holen(sp);
-    m2t:=sm2t;
-    Disp_DT;
-    if (cls<>4) and (cls<>5) then restcursor;
-    xp_maus_an(maussave.x,maussave.y);
-
-    if (de<>0) and (de<>4) then
-      fehler(ioerror(de,getres(115)));
-    end;                            { Fehler bei Programm-Aufruf }
+  if (ErrorLevel<>0) and (ErrorLevel<>4) then
+    fehler(ioerror(ErrorLevel,getres(115)));   { Fehler bei Programm-Aufruf }
 
   if trackpath then
     getdir(0,shellpath);
@@ -437,6 +411,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/08/14 20:41:22  mk
+  - Exec-Routinen besser auf 32 Bit Bedingungen angepasst
+
   Revision 1.34  2000/08/04 22:12:48  mk
   MO: - Nachrichtenanzeige im Lister, headerzeilen > 80
 
