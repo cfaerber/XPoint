@@ -406,7 +406,11 @@ begin
     fsplit(path,dir,name,ext);
     if xdir then begin
       doppelpunkt:=false;
+{$IFDEF UnixFS}
+      rc:= findfirst(dir+WildCard,faAnyFile,sr);
+{$ELSE}
       rc:= findfirst(dir+WildCard,faDirectory+faArchive,sr);
+{$ENDIF}
       while rc=0 do
       begin
         if (sr.name<>'.') and ((sr.attr and faDirectory)<>0) then
@@ -1098,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/04/18 11:01:13  ml
+  - fixed FileSelectDialog in Linux (it shows files now! ;-)
+
   Revision 1.35  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
