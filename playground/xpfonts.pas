@@ -324,8 +324,9 @@ end;
 end.
 {
   $Log$
-  Revision 1.1  2001/10/20 11:48:34  mw
-  Initial revision
+  Revision 1.1.1.1  2001/10/20 11:48:34  mw
+
+  - Playground fuer Openxp/16
 
   Revision 1.5.4.4  2000/11/16 18:09:50  mk
   - 26 Zeilen-Modus geht wieder (nur ein kleiner Typo)
