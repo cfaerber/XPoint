@@ -100,6 +100,7 @@ type
     rtlword =    longint;     { 32 Bit bei VP }
     variant =    pointer; // Naja...
     Int64 =      longint; // Ohje...
+    Cardinal =   longint;
   {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
@@ -198,6 +199,9 @@ end.
 
 {
   $Log$
+  Revision 1.55  2001/08/02 22:47:57  mk
+  - added Cardinal for VP
+
   Revision 1.54  2001/07/31 13:10:35  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
