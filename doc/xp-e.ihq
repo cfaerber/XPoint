@@ -879,12 +879,11 @@ The following selection criteria are available:
 <<Today>>  Displays messages that came in on the current
        date.
 
-<<Date>>   Displays messages that came in after a certain
-       date, which you may specify.
-
-<<Time>>   You can fine tune the date above to specify
-       a time of day. This allows more precise
-       filtering.
+<<Date/Time>>  Displays messages that came in after the
+       specified date/time. If the selection bar
+       stands on a message you may directly take over
+       the timestamp of this message by activating
+       the respective switch.
 
 <<Save>>   Saves a set time as a dummy time for the last
        Netcall. Thus, you can save the time at which
@@ -1191,7 +1190,7 @@ The following information is shown:
         packing. Stored means not compressed.
 
 On the right of the status line is the Packer Type:
-ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP or ZOO.
+ARC, ARJ, DWC, HYP, LZH, PAK, RAR, SQZ, ZIP or ZOO
 are recognised.
 
 <<Enter>>   loads the selected file in the message
@@ -1558,13 +1557,26 @@ reports all incoming messages as "read".
 
 @
 94
-A complete message may be made up of many lines.
-Cursor over the desired line and press <Enter> to
-either read the message or display the contents of
-the file. Pressing <<X>> will save the file to disk.
+This is either a MIME multipart message, or it is a
+singlepart message of a MIME type for which a MIME
+viewer has been defined under [/Edit/Viewer].@821
 
-To view the complete original message, cursor over
-"Whole Message" and press <Enter>.
+Press <Enter> to view the selected part with the
+defined MIME viewer. To view the selected part with
+XP's internal message reader, press <Ctrl-Enter> or
+<Space>.
+
+Pressing <<X>> will save the selected part to disk
+or to the Clipboard.
+
+To view the complete message, select "Whole Message"
+and press <Enter>. If the message should not be in
+the IBM character set, it will nevertheless in this
+case not be converted as the several parts can be in
+different character sets.
+
+<<Note:>> In this pick-list menu the macros defined for
+the Archive Viewer do apply.
 
 @
 101
@@ -5471,6 +5483,16 @@ Note: This setting applies to display only; when
 entering newsgroup names you must always use the
 Z-Netz form (as in /Alt/Tasteless/Jokes).
 @
+274
+ToDo: Separator comment (\@274)
+@
+275
+ToDo: (Usenet groups with ".")
+      ... applies to all Message Areas (\@275)
+@
+276
+ToDo: Combined Unread mode (\@276)
+@
 840
 <<[x]>>     The message date will be displayed in the
         message overview.
@@ -6219,7 +6241,8 @@ This is the command to start the program.
 There are two possibilities;
 
   a)  an external DOS program (max. 127 characters)
-  b)  an internal XP-Function   (max. 200 characters)
+  b)  an internal XP Function (max. 200 characters)
+
 
 <<External Programs>> are any .COM, .EXE or .BAT
 program. They should be in the XP directory, in the
@@ -6227,17 +6250,28 @@ DOS Path or you enter the full path to them. COM and
 EXE programs will be started quicker if you specify
 the extension as well.
 
-You can pass parameters (if needed) to these 
+You can pass parameters (if needed) to these
 programs in the normal way by specifying them after
-the command. You can use the <<$FILE>> macro to pass 
-the current file name.
+the command. You can use the <<$FILE>> macro to pass
+the current file name or the <<$ASK>> macro to enter
+parameters.
 
 For example, if you are specifying the Archive shell
-SHEZ, you can enter SHEZ.EXE $FILE here. Now,
+SHEZ, you can enter <<SHEZ.EXE $FILE>> here. Now,
 whenever you have an archived Message selected, you
 can select this "Tools" menu option, and SHEZ will be
 started, showing you the details of the file you had
 selected.
+
+If you use <<$ASK>> here, a dialogue will pop up upon
+pressing the function key, where you can enter one or
+more parameters. These will be passed to the executed
+program. This way you can for instance create a macro
+that copies an URL from the message reader to the
+clipboard, exits the lister, "presses" the function
+key, pastes the URL to the dialogue and thus executes
+Internet Explorer with this URL. :-)
+
 
 <<Internal XP Functions>> start with a "<<*>>" in the first
 position, followed by the XP command. They are NOT
@@ -6424,7 +6458,6 @@ display, try setting this switch.
         action the AUTOEXEC directory.
 @
 448
-
 Enter here how many kilobytes memory the program
 requires as a minimum. CrossPoint then attempts to
 make this much memory available when starting the
@@ -6433,6 +6466,10 @@ program.
 If your PC does not have EMS or a RAM Disk available
 for fast swapping out of unused XP data, this option
 is useful to minimise the time required for swapping.
+@
+449
+Enter here the parameters that shall be passed to
+the executed program.
 @
 450
 The start date for the statistic. Messages dated
@@ -9581,13 +9618,10 @@ The combined search is a combination of Text, Sender
 and Subject search, with extra options.
 @
 10505
-<<Message / Search / Marked(for reply)
+<<Message / Search / Marked (for reply)
 
 CrossPoint searches out and displays all messages
 that have been marked for replying to later.
-
-Note: Marked messages in PM Archive newsgroups will
-      NOT be found!
 
 Messages which have been marked for replying to later
 (indicated by a "w" in the [message window]) can be@4014
@@ -13492,16 +13526,37 @@ For [details] of how to do things, press <Enter>.@30
 <<Message Areas Display in "Normal" Mode
 <<--------------------------------------
 
-   /PBNET/PB-ANNOUNCE
-   /FIDO/XPOINT
-   ¯Unsent
-  /Alt/Tasteless/Jokes
-  /Soc/Culture/British
- ³
- ÀÄÄÄÄÄÄ Message areas containing new messages,
-         dependant upon which "View" mode is active.
+    ¯Unsent
+ þ /PBNET/PB-ANNOUNCE
+  ¯ /FIDO/XPOINT
+  {026} /Alt/Tasteless/Jokes
+ þ  /Soc/Culture/British
+ ³³ ³³
+ ³³ ³ÀÄÄ  Message area name
+ ³³ ÀÄÄÄ  A preceding "¯" denotes an internal
+ ³³       CrossPoint message area
+ ³³           
+ ³ÀÄÄÄ <<>>  Message area contains messages that match
+ ³        the active view mode, but have all been
+ ³        read already. (<<+>>)
+ ³     <<¯>>  Message area contains messages that match
+ ³        the active view mode and that are still
+ ³        unread. (<<+>>)
+ ³     <<{026}>>  Message area contains unread messages,
+ ³        but no messages that match the active
+ ³        view mode. (<<+>>)
+ ³     <<*>>  Message area contains messages that have
+ ³        been marked for later reply, but no
+ ³        messages that match the active view mode
+ ³        or that are still unread.
+ ³ 
+ ÀÄÄÄÄ <<þ>>  Message area is marked
 
-    "¯"  Denotes an internal message area.
+(<<+>>) Further information about message area markings
+    depending on the option "[Combined Unread Mode]"@276
+    under /Config/Display/Message_Areas und the
+    active view mode see there.
+
 
 <<Message Area Display in "Special" Mode
 <<--------------------------------------

@@ -1266,26 +1266,32 @@ markierten Bretter.
 
 <<Brettanzeige im Schreib-/Lesemodus
    
+    ¯Unversandt
  ş /Z-NETZ/BILDUNG/UNI
   ¯ /Z-NETZ/KOORDINATION/DISKUSSION
   {026} /Z-NETZ/DATENSCHUTZ/ALLGEMEINES
  ş  /Z-NETZ/DATENSCHUTZ/G10
- ³³  ³
- ³³  ÀÄÄ  Brettname
- ³³           
+ ³³ ³³
+ ³³ ³ÀÄÄ  Brettname
+ ³³ ÀÄÄÄ  Ein "¯" vor dem Brettnamen bezeichnet ein
+ ³³       internes CrossPoint-Brett.
+ ³³
  ³ÀÄÄÄ <<>>  Brett enth„lt auf den aktiven Lesemodus
  ³        passende Nachrichten, die aber bereits
- ³        alle gelesen sind. (<<*>>)
+ ³        alle gelesen sind. (<<+>>)
  ³     <<¯>>  Brett enth„lt Nachrichten, die sowohl auf
  ³        den aktiven Lesemodus passen als auch
- ³        ungelesen sind. (<<*>>)
+ ³        ungelesen sind. (<<+>>)
  ³     <<{026}>>  Brett enth„lt ungelesene, aber keine auf
  ³        den aktiven Lesemodus passenden Nach-
- ³        richten. (<<*>>)
+ ³        richten. (<<+>>)
+ ³     <<*>>  Brett enth„lt Wiedervorlage-Nachrichten,
+ ³        jedoch weder ungelesene noch auf den
+ ³        aktiven Lesemodus passende Nachrichten.
  ³ 
  ÀÄÄÄÄ <<ş>>  Brett ist markiert
 
-(<<*>>) N„heres zu Brettmarkierungen in Abh„ngigkeit von
+(<<+>>) N„heres zu Brettmarkierungen in Abh„ngigkeit von
     der Option "[kombinierter Ungelesen-Modus]" unter@276
     /Config/Anzeige/Bretter und dem aktiven Lesemodus
     siehe dort.
@@ -2478,7 +2484,8 @@ werden u.a. folgende Informationen angezeigt:
            gelegt ist.
 
 Rechts in der Statuszeile steht die Art des Archivs,
-also ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP oder ZOO.
+also ARC, ARJ, DWC, HYP, LZH, PAK, RAR, SQZ, ZIP
+oder ZOO.
 
 <<<Enter> >> l„dt die gew„hlte Datei in den Lister.
 
@@ -2936,13 +2943,31 @@ Public-Key sie anfordern m”chten, oder w„hlen Sie
 mit <<<F2> >>eine Adresse aus.
 @
 94
-Die gew„hlte Nachricht besteht aus mehreren Teilen.
-Mit <<<Enter> >>w„hlen Sie den gewnschten Teil aus, den
-Sie anzeigen bzw. beantworten m”chten, mit <<X>> schrei-
-ben Sie ihn in eine Datei.
+Die gew„hlte Nachricht besteht aus mehreren Teilen
+(MIME-Multipart), oder es handelt sich um eine
+einteilige Nachricht, fr deren MIME-Typ unter
+[/Edit/Viewer] ein MIME-Viewer eingetragen ist.@821
 
-Um die komplette Originalnachricht anzuzeigen bzw.
-zu beantworten, w„hlen Sie "gesamte Nachricht".
+Mit <<<Enter> >>w„hlen Sie den gewnschten Teil aus, den
+Sie mit dem eingetragenen MIME-Viewer anzeigen
+m”chten. Mit <<<Ctrl-Enter> >>oder <<<Space> >>k”nnen Sie
+anstelle des MIME-Viewers die Anzeige im XP-Lister
+erzwingen.
+
+Mit <<X>> schreiben Sie den gew„hlten Teil in eine Datei
+oder ins Clipboard.
+
+Um die komplette Originalnachricht anzuzeigen, w„hlen
+Sie "gesamte Nachricht". Wenn die Nachricht in einem
+anderen als dem IBM-Zeichensatz vorliegt, findet in
+diesem Fall dennoch keine Zeichensatzkonvertierung
+statt, weil die einzelnen Teile der Nachricht aus
+mehreren unterschiedlichen Zeichens„tzen bestehen
+k”nnen.
+
+<<Hinweis:>> In diesem Auswahlmen sind die fr den
+Archiv-Viewer definierten Makros gltig.
+
 @
 101
 Alle eingelesenen Nachrichten erhalten eine interne
@@ -8329,11 +8354,11 @@ Diese Einstellung gilt auch fr die User-Anzeige.
 <<[ ]>> -> Alle Bretter werden in der Z-Netz-Schreibweise
        mit "<</>>" als Trennzeichen angezeigt.
 
-Bitte beachten Sie, daá diese Einstellung NUR die An-
-zeige betrifft; bei der Eingabe von Brettnamen und
-der Schnellsuche (einzuleiten mit "<</>>" oder "<<.>>" in
-der Brett-šbersicht) mssen Sie immer die ZConnect-
-Schreibweise verwenden.
+Bitte beachten Sie, daá diese Einstellung NUR die
+Anzeige betrifft; bei der Eingabe von Brettnamen und
+bei der Schnellsuche ("<</>>" oder "<<.>>" in der Brett-
+šbersicht) mssen Sie immer die ZConnect-Schreibweise
+verwenden.
 @
 274
 <<links>>  -> Der Kommentar von Brett-Trennzeilen wird
@@ -8389,6 +8414,10 @@ Schreibweise verwenden.
        <<{026}>>  Brett enth„lt ungelesene, aber keine
           auf den aktiven Lesemodus passenden
           Nachrichten.
+
+       <<*>>  Brett enth„lt Wiedervorlage-Nachrichten,
+          jedoch weder ungelesene noch auf den
+          aktiven Lesemodus passende Nachrichten.
 
        Im Lesemodus "Alles" wird die Brettmarkierung
        <<>> zwecks besserer šbersichtlichkeit entfernt
@@ -9233,6 +9262,7 @@ Hier gibt es zwei Eingabem”glichkeiten:
   a)  ein externes Programm    (max. 127 Zeichen)
   b)  eine interne XP-Funktion (max. 200 Zeichen)
 
+
 <<Externe Programme>> sind beliebige .COM-, .EXE- oder
 .BAT-Dateien, die im XP-Verzeichnis liegen oder per
 DOS-Pfad erreichbar sind. EXE- und COM-Programme
@@ -9240,15 +9270,27 @@ werden deutlich schneller ausgefhrt, wenn Sie die
 Erweiterung ".EXE" oder ".COM" mit angeben. Hinter
 dem Programmnamen k”nnen beliebige Parameter ange-
 geben werden. Auáerdem ist die Verwendung des <<$FILE>>-
-Makros m”glich.
+und des <<$ASK>>-Makros m”glich.
 
 Nehmen wir z.B. an, daá Sie den Archiv-Verwalter SHEZ
 einbinden m”chten. Dann geben Sie als Programmname
-einfach  SHEZ $FILE  an. Nun k”nnen Sie eine belie-
+einfach <<SHEZ $FILE>> an. Nun k”nnen Sie eine belie-
 bige Bin„rnachricht w„hlen und die entsprechende
 Funktionstaste bzw. den Menpunkt w„hlen - dann
 schreibt XP die gew„hlte Nachricht in eine Datei und
 bergibt den Namen der Datei an SHEZ.
+
+Wenn Sie hier <<$ASK>> angeben, erscheint beim Drcken
+der Funktionstaste ein Eingabedialog, in dem Sie
+einen oder mehrere Parameter angeben k”nnen. Diese
+werden dann bei der Ausfhrung an das Programm
+bergeben. So k”nnen Sie z.B. ein Makro schreiben,
+das einen URL im Nachrichten-Lister ins Clipboard
+legt, den Lister verl„át, die hier definierte Funk-
+tionstaste "drckt", den URL in den Eingabedialog
+kopiert und so den Internet Explorer mit dem ber-
+gebenen URL startet. :-)
+
 
 <<Interne Funktionen>> beginnen immer mit einem "<<*>>"; sie
 sind *nicht* innerhalb von CrossTerm verfgbar:
@@ -9446,6 +9488,10 @@ Wenn Ihr Rechner nicht ber EMS, XMS oder Ramdisk
 verfgt, dann ist diese Option recht ntzlich, um
 die ben”tigte Zeit zum Auslagern des Datenbereichs
 zu minimieren.
+@
+449
+Geben Sie hier den/die Parameter an, die dem auszu-
+fhrenden Programm bergeben werden sollen.
 @
 450
 Das Anfangsdatum der Statistik - alle Nachrichten
