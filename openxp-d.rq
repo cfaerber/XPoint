@@ -3120,7 +3120,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 +  10100
 2  Netcallkonvertierer MAGGI.EXE fehlt!
-3  NDIFF.EXE fehlt!
 6  Datei nicht vorhanden
 7  Fehler beim Schreiben von %s
 8  In diesem Netz nicht m”glich!
@@ -3894,6 +3893,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.44  2001/11/22 10:39:57  mk
+# - NDIFF is intern, removed test for ndiff.exe
+#
 # Revision 1.43  2001/10/07 17:12:30  cl
 # - added charset recoding for external editors
 #   and corresponding config option

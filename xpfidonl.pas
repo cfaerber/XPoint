@@ -391,10 +391,6 @@ var diffdir  : string;
       fm    : byte;
   begin
     UDiff:=false;
-    if not FileExists('NDIFF.EXE') then begin
-      rfehler(103);    { 'NDIFF.EXE fehlt!' }
-      exit;
-      end;
     if not FileExists(FidoDir+NodeList.GetFilename(i)) then exit;
     fm:=filemode; filemode:=0;
     assign(t,FidoDir+NodeList.GetFilename(i));          { 1. Zeile vergleichen }
@@ -409,7 +405,7 @@ var diffdir  : string;
       end;
     chdir(fidodir_);
     log(NodeList.GetFilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
-    shell(OwnPath+'NDIFF.EXE '+NodeList.GetFilename(i)+' '+ufile,250,3);
+    shell(OwnPath+'OPENXP NDIFF.EXE '+NodeList.GetFilename(i)+' '+ufile,250,3);
     if errorlevel>0 then begin
       arfehler(2112,auto);    { 'Fehler beim Bearbeiten der Node-/Pointdiff' }
       log(getres2(2130,4));   { dito }
@@ -530,6 +526,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2001/11/22 10:39:58  mk
+  - NDIFF is intern, removed test for ndiff.exe
+
   Revision 1.39  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

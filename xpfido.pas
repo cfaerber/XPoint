@@ -1155,16 +1155,14 @@ var i : integer;
 begin
   i:=NodeList.GetMainNodelist;
   if (i>0) and Nodelist.Open and (trim(ShrinkNodes)<>'') then
-    if not FileExists('NDIFF.EXE') then
-      rfehler(103)   { 'NDIFF.EXE fehlt!' }
-    else begin
-      xp1.shell('NDIFF.EXE -s '+FidoDir+NodeList.GetFilename(i)+' '+ShrinkNodes,250,3);
-      if errorlevel<>0 then
-        rfehler(2114)   { 'Fehler beim Bearbeiten der Nodelist' }
-      else
-        if indizieren then
-          MakeNodelistIndex;
-      end;
+  begin
+    xp1.shell(OwnPath + 'OPENXP NDIFF.EXE -s '+FidoDir+NodeList.GetFilename(i)+' '+ShrinkNodes,250,3);
+    if errorlevel<>0 then
+      rfehler(2114)   { 'Fehler beim Bearbeiten der Nodelist' }
+    else
+      if indizieren then
+        MakeNodelistIndex;
+  end;
 end;
 
 
@@ -2266,6 +2264,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2001/11/22 10:39:58  mk
+  - NDIFF is intern, removed test for ndiff.exe
+
   Revision 1.65  2001/11/18 12:31:22  mk
   - fixed some file case problems with fido file lists
 
