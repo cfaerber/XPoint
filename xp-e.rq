@@ -50,7 +50,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
+28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File lists˘32,1f3File ^Areas˘38,1f4^Crash,1f5^Nodelists˘30,1f6^Options
@@ -281,9 +281,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 14   ^Text,^Highlighted,^Inverse
 15   ^Text,^Highlighted,^Reference,^Selected Reference
 16   ^Message Header,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,^highlighted,^Quote,H^ighlited quote
-17   ^Head,^Head highlighted^Status line,^Text,^Quote,^Marked,^End marker,M^enu,Me^nu keys,Menu ^Bar,^selected key
+17   ^Head,^Status line,^Text,^Quote,^Marked,^End marker,M^enu,Me^nu keys,Menu ^Bar,^selected key
 18   ^Text,^Data,^Status line
-19   Level ^1,Level ^2,Level^3,Level ^4,Level ^5,Level ^6,Level ^7,Level^8,Level ^9
+19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
 -
 + 202
 1    Syntax:    XP [/Opt1 /Opt2 ...]
@@ -581,7 +581,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # window width
 0    46
 1    Internal message reader options
-4    Internal message reader - full screen
+4    Full screen
 5    Line break in column 80
 6    Show reference arrows
 7    Fixed message header display
@@ -591,7 +591,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   AutoScrolling
 12   Multi-coloured quotes
 13   Exit message reader with <Return>
-14   Display clock in message reader
+14   Display clock
 #
 20   51
 21   External lister options
@@ -1856,27 +1856,27 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    Connect time: ~
 6    sec.
 + 923
-# Window width of fido and UUCP sysp-mode
+# Window width of Fido and UUCP SysOp Mode
 0    59
-# Window with of other sysop-modes
+# Window width of other SysOp Modes
 1    57
 2    Sysop Mode
-3    Input directory ~
-4    Output directory~
+3    Inbound directory ~
+4    Outbound directory~
 5    Input file  ~
 6    Output file ~
 7    /ØNetcall report
 8    Name without @BOX
-9    Pack output data
+9    Pack outbound mail
 # Position of 923.8
 10   31
 # QWK
-12   Input packets  ~
-13   Ouput directory~
+12   Inbound packets  ~
+13   Outbound directory~
 14   Transfer
 #
-20   Start program
-21   End program ~
+20   Start programme
+21   End programme ~
 + 924
 0    58
 1    Miscellaneous Options
