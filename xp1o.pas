@@ -239,6 +239,7 @@ var s     : string;
     setenable(3,8,true);   {Nachricht/Brettmannager}
     setenable(3,9,true);   {N/Fileserver}
     setenable(3,11,true);  {N/Direkt}
+    ex(5);
   end;
 {/JG}
 
@@ -326,14 +327,12 @@ begin
   begin
     s:=mailstring(getline,false);
     if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-    ex(5)                                                   { Weiter im Lister }
-    end ;
+    end;
 
   if t = keyaltv then                                        { ALT+V = Suche text }
   begin
     s:=getline; 
     if Suche(getres(414),'',s) then Showfromlister;
-    ex(5)
     end;
 
   if t = keyaltb then                                        { Alt+B = Betreff }
@@ -341,7 +340,6 @@ begin
     s:=getline;
     if s='' then s:=dbreadstr(mbase,'Betreff');
     if Suche(getres(415),'Betreff',s) then Showfromlister;
-    ex(5)
     end;
 
   if t = keyaltu then                                        { Alt+U = User }
@@ -349,7 +347,6 @@ begin
     s:=mailstring(getline,false);
     if s='' then s:=dbreadstr(mbase,'Absender');    
     if Suche(getres(416),'Absender',s) then Showfromlister;
-    ex(5)
     end;
 
 
@@ -971,6 +968,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/04/21 20:05:00  jg
+  - MiniBugfixes: Suchfunktionen im Lister: Verhalten bei ESC
+
   Revision 1.33  2000/04/21 14:45:08  jg
   - Lister: Auswertung von markierten Zeilen / Markierbalken
     bei Suchfunktionen und Stringuebergabe verbessert.
