@@ -70,12 +70,36 @@ end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+{$IFDEF Linux}
+  type THostEnt = record
+    h_Name     : pchar;   { Official name }
+    h_Aliases  : ppchar;  { Null-terminated list of aliases}
+    h_Addrtype : longint; { Host address type }
+    h_Length   : longint; { Length of address }
+    h_Addr_list: ppchar;  { null-terminated list of adresses }
+  end;
+  PHostEnt = ^THostEnt;
+
+  const INADDR_NONE    = $FFFFFFFF;
+        SOCKET_ERROR   = -1;
+	INVALID_SOCKET = -1;
+
+  {$LINKLIB c}
+  function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+  function inet_addr(Name:PChar): Cardinal; cdecl; external;
+  function htons(host:Word): Word; cdecl; external;
+{$ENDIF}
+
 function TRawIPObj.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
 type
     PCardinal  = ^Cardinal;
     PPCardinal = ^PCardinal;
 var
+{$IFDEF WIN32}
     Addr:     TSockAddrIn;
+{$ELSE}
+    Addr:     TInetSockAddr;
+{$ENDIF}
     DestHE:   PHostEnt;
     DestHEP:  PPCardinal; { really }
     DestIP:   array [0..15] of Cardinal;
@@ -93,7 +117,7 @@ begin
   if DestIP[DestIPNr] <> INADDR_NONE then
     DestIPnr := 1
   else begin
-    DestHE:={$IFDEF WIN32}WinSock{$ELSE}inet{$ENDIF}.GetHostByName(PChar(DestHost));
+    DestHE:={$IFDEF WIN32}WinSock.{$ENDIF}GetHostByName(PChar(DestHost));
     if DestHE = nil then begin SetErrorStr('Host not found'); exit; end;
     with DestHE^ do begin
       if (h_addrtype<>AF_INET) or (h_length<>sizeof(Cardinal)) then
@@ -115,14 +139,14 @@ begin
     exit; 
   end;
 
-  Addr.sin_family      := AF_INET;
-  Addr.sin_port        := htons(DestPort);
+  addr.{$IFDEF WIN32}sin_family{$ELSE}family{$ENDIF} := AF_INET;
+  addr.{$IFDEF WIN32}sin_port  {$ELSE}port  {$ENDIF} := htons(DestPort);
 
   for c:=0 to DestIPNr-1 do
   begin
-    Addr.sin_addr.s_addr := DestIP[c];
+    addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c];
 
-    if 0={$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
+    if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
     begin SOpened:=True; ConnectIP:=True; exit; end
   end;
 
@@ -166,7 +190,7 @@ begin
   if GetHandle <> INVALID_SOCKET then
   begin
     {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.ShutDown(SHandle,2);
-    {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.CloseSocket(SHandle);
+    {$IFDEF WIN32}WinSock.CloseSocket(SHandle){$ENDIF}
     SHandle := INVALID_SOCKET;
   end;
   SOpened:=False;
@@ -196,7 +220,7 @@ procedure tRawIPObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
 
-  Written:=WinSock.send(SHandle,Block,BlockLen,0);
+  Written:={$IFDEF WIN32}WinSock{$ELSE}Sockets{$ENDIF}.send(SHandle,Block,BlockLen,0);
   if not Written > 0 then
   begin
     SetErrorStr('SendBlock');
@@ -263,7 +287,6 @@ begin
       Reads := Reads + rr;
     end;
   end; {while}
-
 end; { proc. tRawIPObj.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -279,9 +302,8 @@ end; { func. tRawIPObj.CharAvail }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRawIPObj._CharCount: Integer;
-var   Reads: Integer;
-      SSet:  TFDSet;
-const NilTm: TTimeVal = (tv_sec:0;tv_usec:0);
+var   SSet:  TFDSet;
+const NilTm: TTimeVal = {$IFDEF WIN32}(tv_sec:0;tv_usec:0){$ELSE}(sec:0;usec:0){$ENDIF};
 begin
 {$IFNDEF VP} { - VPascal has crippled Winsock - }
   FD_ZERO(SSet); FD_SET (SHandle,SSet);
@@ -289,15 +311,15 @@ begin
   SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
 {$ENDIF}
 
-  case {$IFDEF Win32}WinSock.{$ENDIF}select(1,@SSet,nil,nil,@NilTm) of
-    0:            begin Reads:=0; end;
-    SOCKET_ERROR: begin Reads:=0; SetErrorStr('CharCount'); SOpened:=false; end;
-  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,@Reads)
-                     {$ELSE}sockets.ioctl(SHandle,FIONREAD,Reads){$ENDIF} <> 0 then
-                    begin Reads:=0; SetErrorStr('CharCount'); SOpened:=false; end
-                  else if Reads=0 then SOpened:=false; (* select said readable *)
+  case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
+    0:            begin Result:=0; end;
+    SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
+  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,@Result)<>0
+                     {$ELSE}not ioctl(SHandle,FIONREAD,@Result){$ENDIF} then
+                    begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
+                  else if Result=0 then SOpened:=false; (* select said readable *)
   end;
-  result:=Reads;
+  DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlInform);
 end; { func. TTelnetObj.CharAvail }
 
 function tRawIPObj.CharCount: Integer;
@@ -324,6 +346,7 @@ begin
   end;
   
   result := SBufEnd-SBufBeg + rr;
+  DebugLog('ObjCOM','CharCount: '+IntToStr(result)+' bytes',dlInform);
 end; { func. TTelnetObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -364,8 +387,8 @@ var     InFree_size,OutFree_size: Integer;
 begin
   InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
   OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
-  if {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.getsockopt(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFDEF VP}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
-  if {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.getsockopt(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFDEF VP}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
 end; { proc. TTelnetObj.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -390,6 +413,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.7  2001/03/28 22:24:55  cl
+  - Linux compatibility
+
   Revision 1.6  2001/03/28 17:31:04  cl
   - improved TCP/IP performance
 

@@ -28,7 +28,7 @@ type tRawIPObj = Object(TCommObj)
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
         function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
-	function  GetDriverInfo: String;
+	function  GetDriverInfo: String;virtual;
         private
         procedure SetErrorStr(prefix: string);
         procedure _ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
@@ -42,23 +42,11 @@ type tRawIPObj = Object(TCommObj)
 
 Type tpRawIPObj = ^tRawIPObj;
 
-{$IFDEF Linux}
-  { THostEnt Object }
-  THostEnt = record
-    h_Name     : pchar;   { Official name }
-    h_Aliases  : ppchar;  { Null-terminated list of aliases}
-    h_Addrtype : longint; { Host address type }
-    h_Length   : longint; { Length of address }
-    h_Addr_list: ppchar;  { null-terminated list of adresses }
-  end;
-  PHostEnt = ^THostEnt;
-
-  {$LINKLIB c}
-  function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
-{$ENDIF}
-
 {
   $Log$
+  Revision 1.4  2001/03/28 22:24:55  cl
+  - Linux compatibility
+
   Revision 1.3  2001/03/28 17:31:05  cl
   - improved TCP/IP performance
 
