@@ -48,6 +48,8 @@ procedure InitResourceUnit;
 
 implementation  { --------------------------------------------------- }
 
+uses debug;
+
 const maxblocks = 4;
       maxindex  = 4096;   { max. Strings pro Block }
       flPreload = 1;
@@ -199,8 +201,10 @@ function GetRes(nr:word):string;
 var bnr,inr : word;
     s       : shortstring;
 begin
-  if not getnr(nr,bnr,inr) then
-    GetRes:='fehlt: ['+strs(nr)+'] '
+  if not getnr(nr,bnr,inr) then begin
+    GetRes:='fehlt: ['+strs(nr)+'] ';
+    Debug.DebugLog('resource','resource missing: '+strs(nr),dlWarning);
+    end
   else
     with block[bnr] do begin
       SetLength(s, rsize(bnr,inr)); {s[0]:=chr(rsize(bnr,inr));}
@@ -237,6 +241,7 @@ label ende;
   function fehlt:string;
   begin
     fehlt:='fehlt: ['+strs(Nr1)+'.'+strs(nr2)+'] ';
+    Debug.DebugLog('resource','resource missing: '+strs(nr1)+'.'+strs(nr2),dlWarning);
   end;
 begin
   if not getnr(nr1,bnr,inr) then
@@ -358,6 +363,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2001/05/13 13:10:41  ma
+  - added missing resource debug warnings
+
   Revision 1.19  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
