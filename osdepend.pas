@@ -30,9 +30,6 @@ uses
 {$ifdef Win32}
   Windows,
 {$endif}
-{$IFDEF DOS32 }
-  Crt,
-{$ENDIF }
   Classes, SysUtils;
 
 { Consts }
@@ -75,6 +72,9 @@ implementation
 
 {
         $Log$
+        Revision 1.12  2003/08/27 18:58:23  mk
+        - removed uses crt
+
         Revision 1.11  2003/08/26 05:37:41  mk
         - added AutomaticTimeZone const and removed $IFDEFs
 
