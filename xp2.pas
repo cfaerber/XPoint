@@ -1032,6 +1032,7 @@ begin
     end;                          
     enddialog;
     end;
+  set_checkdate;
 end;
 {$endif}
 
@@ -1100,6 +1101,16 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142.2.3  2003/04/02 22:07:07  mk
+  MY:- Fix: Dateidatum und -uhrzeit von NEUES.DAT werden jetzt beim
+       Programmstart immer auf den aktuellen Wert gesetzt (Datum und
+       Uhrzeit *in* NEUES.DAT bleiben unveraendert!). Grund: Wenn die
+       Meldung "Seit dem letzten Programmstart sind mehr als 14 Tage
+       vergangen" erschien und XP beendet wurde, ohne dass in dieser
+       Session das Einlesen eines Puffers stattgefunden hatte, dann
+       erschien die Meldung beim naechsten Programmstart wieder, auch wenn
+       der letzte XP-Start u.U. nur ein paar Minuten zuruecklag.
+
   Revision 1.142.2.2  2002/07/21 20:14:35  ma
   - changed copyright from 2001 to 2002
 
