@@ -12,6 +12,7 @@ function BoxParOk:string;
 var uucp : boolean;
 
   function FindDownarcer:boolean;
+  {* currently not working}
   begin
     chdir(XferDir_);
     with boxpar^ do
@@ -53,8 +54,8 @@ begin
                  (pos('$PUFFER',FileUpperCase(UpArcer))=0))) or
               (pos('$DOWNFILE',FileUpperCase(DownArcer))=0)) then
         BoxParOk:=getres2(706,4)    { 'unvollst„ndige Packer-Angaben' }
-      else if ntDownarcPath(netztyp) and not FindDownarcer then
-        BoxparOk:=getres2(706,6)
+//      else if ntDownarcPath(netztyp) and not FindDownarcer then
+//        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
       else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
         BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
       else
@@ -1384,6 +1385,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2000/11/17 20:18:01  ma
+  - disabled FindDownarcer as it's not working
+
   Revision 1.43  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 
