@@ -234,7 +234,7 @@ var brk    : boolean;
     attrtxt(listheadercol);
     for i:=1 to exthdlines do begin
       readln(t,s);
-      if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79))
+      if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80))
       else mwrt(1,lfirst,dup(ScreenWidth,'Ä'));
       inc(lfirst);
       inc(lofs,length(s)+2);
@@ -310,7 +310,7 @@ begin
     pushhp(39);
     if _maus and listscroller and listvollbild then begin
       attrtxt(col.colliststatus);
-      mwrt(1,lfirst,sp(80));
+      mwrt(1,lfirst,sp(ScreenWidth));
       end;
 
     if listmsg then
@@ -437,6 +437,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/08/04 22:12:48  mk
+  MO: - Nachrichtenanzeige im Lister, headerzeilen > 80
+
   Revision 1.33  2000/08/01 20:14:32  mk
   - ResetVideo entfernt
 
