@@ -150,7 +150,7 @@ var i,res : integer;
       begin
         p:=pos(' (',s); if p>0 then SetLength(s, p-1);
       end;
-      if hd.empfanz+1=empfnr then
+      if (hd.empfanz+1=empfnr) or ((empfnr=0) and (hd.empfanz=0)) then
         hd.empfaenger:=s
       else
         Empflist.Add(s);
@@ -585,6 +585,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2001/12/26 01:08:36  cl
+  - BUGFIX: "Brett mit unvers. Nachr. nicht mehr vorhanden!"
+
   Revision 1.20  2001/12/23 23:26:00  mk
   - fixed multible EmfpList and problems with CCs (outgoing, witz uuz -smtp)
 
