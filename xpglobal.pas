@@ -76,6 +76,7 @@ type
       integer =    longint;
       word =       longint; { = signed }
       dword =      longint; { = signed }
+      rtlword =    longint;     { 32 Bit bei FPC }
     {$ENDIF }
     {$IFDEF FPC }
       { FreePascal, 32 Bit }
@@ -84,9 +85,10 @@ type
       integer32 =  longint;
       { Unter FPC ist ein Integer standardmÑ·ig 16 Bit gro· }
 {     integer =    longint; }
-{     word =       longint; } { = signed }
+      word =       longint;  { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
+      rtlword =    system.word; { 16 Bit bei FPC }
     {$endif}
   {$ELSE}
     { Borland Pascal bis Version 8, 16 Bit }
@@ -96,6 +98,7 @@ type
     smallint =   integer;
     smallword =  word;
     dword =      longint; { Vorsicht: siehe oben! }
+    rtlword =    system.word; { 16 Bit bei FPC }
   {$ENDIF}
 
 
@@ -111,6 +114,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/03/24 08:35:30  mk
+  - Compilerfaehigkeit unter FPC wieder hergestellt
+
   Revision 1.16  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 

@@ -449,14 +449,14 @@ end;
 
 
 Function Time:DateTimeSt;
-VAR stu,min,sec,du :word;
+VAR stu,min,sec,du :rtlword;
 begin
   gettime(stu,min,sec,du);
   time:=formi(stu,2)+':'+formi(min,2)+':'+formi(sec,2);
 end;
 
 Function Date:DateTimeSt;
-VAR  ta,mo,ja,wt :word;
+VAR  ta,mo,ja,wt: rtlword;
 begin
   getdate(ja,mo,ta,wt);
   date:=formi(ta,2)+'.'+formi(mo,2)+'.'+strs(ja);
@@ -2143,6 +2143,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/03/24 08:35:30  mk
+  - Compilerfaehigkeit unter FPC wieder hergestellt
+
   Revision 1.23  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 

@@ -193,7 +193,7 @@ end;
 
 procedure TestCD;
 var f    : file;
-    attr : word;
+    attr : rtlword;
 begin
   assign(f,paramstr(0));
   getfattr(f,attr);
@@ -271,6 +271,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/24 08:35:30  mk
+  - Compilerfaehigkeit unter FPC wieder hergestellt
+
   Revision 1.8  2000/03/24 00:03:39  rb
   erste Anpassungen fr die portierung mit VP
 
