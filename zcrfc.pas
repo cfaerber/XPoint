@@ -480,7 +480,10 @@ begin
           ppp := true
         else
           if switch = 'client' then
-          client := true
+          begin
+            ppp := true;
+            client := true;
+          end
         else
           if switch[1] = 'u' then
         begin
@@ -3654,6 +3657,9 @@ end;
 
 {
   $Log$
+  Revision 1.113  2002/08/03 09:10:30  mk
+  - set -ppp when -client is set
+
   Revision 1.112  2002/08/01 17:56:48  mk
   - added "-client" to help page
   - fixed creation of outgoing news with -client
