@@ -745,7 +745,7 @@ var t   : text;
     typ : string;
     ext : string;
 begin
-  assign(t,'mimetyp.cfg');
+  assign(t, MimeCfgFile);
   rewrite(t);
   writeln(t,'# ',getres(728));   { 'tempor„re MAGGI- und UUZ-Konfigurationsdatei' }
   writeln(t);
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/10/08 11:12:13  mk
+  - Verschiedene Dateinamen gross geschrieben
+
   Revision 1.32  2000/08/15 16:51:02  mk
   - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
 

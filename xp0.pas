@@ -175,6 +175,7 @@ const
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
        Cfg3File    = 'openxp.cfg';      { NEue cfg mit Sektionen }
+       MimeCfgFile = 'mimetyp.cfg';
        ColCfgfile  = 'xpoint.col';
        NewDateFile = 'neues.dat';
        MsgTempFile = 'msg.tmp';
@@ -199,6 +200,7 @@ const
        PGPkeyfile  = 'pgp-key.bin';
        menufile    = 'xpmenu.dat';
        CrashTemp   = 'crash.tmp';
+       GlossaryTemp= 'glossary.tmp';
 
        ErrlogFile  = 'errors.log';     { LogFiles }
        Logfile     = 'xpoint.log';
@@ -229,6 +231,7 @@ const
        CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
        Cfg2File    = 'XPOINT2.CFG';
        Cfg3File    = 'OPENXP.CFG';      { NEue cfg mit Sektionen }
+       MimeCfgFile = 'MIMETYP.CFG';
        ColCfgfile  = 'XPOINT.COL';
        NewDateFile = 'NEUES.DAT';
        MsgTempFile = 'MSG.TMP';
@@ -253,6 +256,7 @@ const
        PGPkeyfile  = 'PGP-KEY.BIN';
        menufile    = 'XPMENU.DAT';
        CrashTemp   = 'CRASH.TMP';
+       GlossaryTemp= 'GLOSSARY.TMP';
 
        ErrlogFile  = 'ERRORS.LOG';     { LogFiles }
        Logfile     = 'XPOINT.LOG';
@@ -1163,6 +1167,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.91  2000/10/08 11:12:13  mk
+  - Verschiedene Dateinamen gross geschrieben
+
   Revision 1.90  2000/10/06 20:17:57  mk
   - Dateinamen in Grossschreibung geaendert
 
