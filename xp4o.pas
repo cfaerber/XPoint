@@ -875,7 +875,7 @@ begin
           if aktdispmode<11 then
           begin                                         // Nachrichten oder Userbersicht
             i:=0;
-            uu:=(aktdispmode>0) or (aktdispmode<10);    // nicht in Brettbersicht
+            uu:=(aktdispmode>0) and (aktdispmode<10);   // nicht in Brettbersicht
             while (i<bmarkanz) and not brk do begin
               if uu then begin                          // in Userbersicht
                 dbGo(ubase,bmarked^[i]);
@@ -2514,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2001/10/12 23:27:07  mk
+  - fixed search with marked areas/users
+
   Revision 1.118  2001/10/11 09:00:40  mk
   - external viewer files now with correct file extension
 
