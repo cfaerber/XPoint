@@ -179,7 +179,7 @@ begin
     PPPNewsPass:= '';
     PPPNewsList:= true;
     PPPNewsMaxLen:= 0;
-    PPPNewsMax:= 0;
+    PPPNewsMax:= 99999;
     PPPExternCfg:= '';
     UUprotos:='Ggz';
     efilter:='';
@@ -658,6 +658,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.27  2002/03/08 23:11:52  my
+  MY:- Workaround fÅr UKAW-Quirk: Da UKAW bei D/B/E/N/Max._Artikel_je
+       Gruppe den Wert "0" nicht als "kein Limit" sondern als "keine
+       Postings empfangen" interpretiert, wird jetzt bei der Neuanlage
+       einer RFC/Client-Serverbox der Hîchstwert "99999" als Standardwert
+       eingesetzt.
+
   Revision 1.10.2.26  2001/12/20 15:08:27  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
