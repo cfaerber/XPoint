@@ -176,22 +176,22 @@ begin
     conn_ip:='';                      { UUCP: IP oder Domain }
     conn_port:=0;                     { UUCP: Port }
 
-    nntp_ip:='news';             { Default IP }
+    nntp_ip:='news.domain.de';   { Default IP }
     nntp_port:= 119;             { Port }
     nntp_id:= '';                { User-ID }
     nntp_pwd:= '';               { PAssword }
 
-    pop3_ip := 'pop3';                  { POP3: IP oder Domain }
+    pop3_ip := 'pop3.domain.de';        { POP3: IP oder Domain }
     pop3_id := '';                      { POP3: User-ID, falls noetig }
     pop3_pwd  := '';                    { POP3: Passwort, falls noetig }
     pop3_clear := true;                 { POP3: Nachrichten loeschen }
     pop3_APOP := true;                  { POP3: APOP benutzen }
     pop3_OnlyNew := true;               { POP3: nur neue Mail holen }
 
-    SMTP_ip := 'smtp';                  { SMTP: IP oder Domain }
+    SMTP_ip := 'mail.domain.de';        { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
     SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
-    SmtpAfterPOP := false;              { SMTP: Vorher POP3 Login noetig }
+    SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
   end;
   nt_bpar(nt,bp^);
 end;
@@ -487,14 +487,14 @@ begin
     if nntp_id<>''   then writeln(t,'NNTP-ID=',nntp_id);
     if nntp_pwd<>''  then writeln(t,'NNTP-Password=',nntp_pwd);
     //////////////////////////////////
-    if pop3_ip <>''  then writeln(t,'POP3-IP=',pop3_ip);
+    writeln(t,'POP3-IP=',pop3_ip);
     if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
     if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
     if not pop3_clear then writeln(t,'POP3Clear=N');
     if not pop3_APOP then writeln(t,'POP3APOP=N');
     if not pop3_OnlyNew then writeln(t,'POP3OnlyNew=N');
 
-    if smtp_ip <>''  then writeln(t,'SMTP-IP=',smtp_ip);
+    writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
     if SmtpAfterPOP  then writeln(t,'SmtpAfterPOP=J');
@@ -613,6 +613,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/04/20 22:07:09  ma
+  - SMTP/POP3 server entries can now be left empty
+
   Revision 1.35  2001/04/16 16:43:26  ml
   - pop3 now only gets new mail
   - added switch in pop3-boxconfig for getting only new mail

@@ -91,6 +91,7 @@ var
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   List          : TStringList;
 begin
+  if bp^.smtp_ip='' then exit; // exit immediately if no server specified
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
   if FileExists(RFCFile) then
@@ -166,6 +167,7 @@ var
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   FirstMail     : Integer;
 begin
+  if bp^.pop3_ip='' then exit; // exit immediately if no server specified
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
   { Host und ... }
@@ -217,6 +219,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/04/20 22:07:10  ma
+  - SMTP/POP3 server entries can now be left empty
+
   Revision 1.13  2001/04/16 18:13:29  ma
   - ProgOutWin now pauses a bit on closing
     (some seconds if an error occured, one second if not)
