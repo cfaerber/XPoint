@@ -125,37 +125,44 @@ var icr : dbIndexCRec;
   end;
 
 begin
-  with dp(dbp)^ do begin
+  with dp(dbp)^ do
+  begin
     fsplit(fname,_d,_n,_e);
     icr.df:=_n+_e;
     assign(fi,fname+dbIxExt);
-    mfm:=filemode; filemode:=$42;
-    reset(fi,1);
-    blockread(fi,ixhd,sizeof(ixhd));
-    filemode:=mfm;
-    if ioresult<>0 then CreateIndex(dbp)
-    else begin
-      if ixhd.magic<>ix_magic then
-        error('fehlerhafte Indexdatei: '+fname+dbIxExt);
-      getmem(index,sizeof(ixfeld)*ixhd.indizes);
-      blockread(fi,index^,sizeof(ixfeld)*ixhd.indizes);
-      for i:=1 to ixhd.indizes do
-        with index^[i] do begin
-          if feldanz and $80<>0 then begin
-            feldanz:=feldanz and $7f;
-            icr.command:=icIndex;
-            icr.indexnr:=i;
-            ICP(icr);
-            if keysize<>icr.indexsize then
-            error('Index(datei?) fehlerhaft!');
-            ifunc:=icr.indexfunc;
+    if not FileExists(fname +dbIxExt) then
+      CreateIndex(dbp)
+    else
+    begin
+      mfm:=filemode; filemode:=$42;
+      reset(fi,1);
+      blockread(fi,ixhd,sizeof(ixhd));
+      filemode:=mfm;
+      if ioresult<>0 then
+        CreateIndex(dbp)
+      else begin
+        if ixhd.magic<>ix_magic then
+          error('fehlerhafte Indexdatei: '+fname+dbIxExt);
+        getmem(index,sizeof(ixfeld)*ixhd.indizes);
+        blockread(fi,index^,sizeof(ixfeld)*ixhd.indizes);
+        for i:=1 to ixhd.indizes do
+          with index^[i] do begin
+            if feldanz and $80<>0 then begin
+              feldanz:=feldanz and $7f;
+              icr.command:=icIndex;
+              icr.indexnr:=i;
+              ICP(icr);
+              if keysize<>icr.indexsize then
+              error('Index(datei?) fehlerhaft!');
+              ifunc:=icr.indexfunc;
+              end;
+            for j:=1 to feldanz do
+              feldp^.feld[ifeldnr[j] and $fff].indexed:=true;
             end;
-          for j:=1 to feldanz do
-            feldp^.feld[ifeldnr[j] and $fff].indexed:=true;
-          end;
+        end;
       end;
-    lastindex:=0; actindex:=0;
-    end;
+      lastindex:=0; actindex:=0;
+  end;
   dbSetIndex(dbp,1);
 end;
 
@@ -253,6 +260,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.12.2.2  2002/07/26 08:03:58  mk
+  - if there is no database index, do not try to open anymore, instead
+    create new index
+
   Revision 1.12.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 
