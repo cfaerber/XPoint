@@ -221,7 +221,11 @@ begin
       readln(infile,line);
       if line='' then header_end:=true;
       if (not header_end) and (ustr(left(line,26))='CONTENT-TRANSFER-ENCODING:')
-        then if lstr(trim(mid(line,27)))='quoted-printable' then part_CTE:=QP
+        then if lstr(trim(mid(line,27)))='quoted-printable'
+          then begin
+            part_CTE:=QP;
+            line:='Content-Transfer-Encoding: 8bit';
+            end
           else if lstr(trim(mid(line,27)))='base64' then part_CTE:=B64;
       if (not header_end) and (ustr(left(line,13))='CONTENT-TYPE:')
         then begin
@@ -572,6 +576,12 @@ end;
 
 {
   $Log$
+  Revision 1.1.2.2  2002/04/20 13:46:11  my
+  JG:- Fix: Beim Weiterleiten von MIME-Multipart-Nachrichten mit quoted-
+       printable-codierten Textteilen wurden diese zwar korrekt decodiert
+       und nach 8bit gewandelt, waren aber weiterhin als qp-codierte
+       7bit-Anh„nge deklariert.
+
   Revision 1.1.2.1  2002/04/19 16:38:06  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
