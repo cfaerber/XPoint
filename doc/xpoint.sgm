@@ -7,7 +7,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 
 <!ENTITY xpname "<application>CrossPoint/OpenXP</application>">
-<!ENTITY xpversion "4.0">
+<!ENTITY xpversion "3.40">
 
 <!ENTITY maggibinfilename "maggi.exe">
 <!ENTITY ndiffbinfilename "ndiff.exe">
@@ -25321,6 +25321,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.3.2.15  2000/12/07 14:52:11  mk
+- Versionsnummer auf 3.40 geaendert
+
 Revision 1.3.2.14  2000/11/25 23:52:07  fe
 Ein bischen Zeug von xp.ihq importiert.
 
