@@ -2432,7 +2432,9 @@ begin
         dec(size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
 
-      while (Size > 0) do
+      if hd.Lines = 0 then
+        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
+      while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
         ReadString;
         if NNTPSpoolFormat then begin
@@ -3713,6 +3715,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.26  2003/06/22 11:06:54  mk
+  - removed last fix, the fix does not work for internal raw format
+
   Revision 1.97.2.25  2003/06/16 20:35:00  mk
   - do not use Header Lines anymore in news
 
