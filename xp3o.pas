@@ -870,7 +870,7 @@ begin
     end;
   if aktdispmode=10 then begin
     RereadBrettdatum(_brett);
-    RereadUngelesen(_brett);
+    if art>4 then RereadUngelesen(_brett);
     if rdmode=1 then _keyboard(keyhome);
     end;
   if (art=6) and (aktdispmode=12) then begin
@@ -1478,6 +1478,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.1  2000/07/29 07:40:48  jg
+  - Brett-Gelesen-bug bei Nachricht/Alle behoben
+
   Revision 1.21  2000/06/19 20:19:56  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 
