@@ -33,7 +33,7 @@ procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 implementation  { --------------------------------------------------- }
 
-uses xp1,xp1input;
+uses xp1,xp1input, winxp, sysutils;
 
 
 procedure wkey(sec:word; count:boolean);
@@ -56,7 +56,7 @@ again:
     rest:=system.round((t0-ticker)/18.2);
     if count and (rest mod 60<>last) then begin
       moff;
-      Fwrt(WhereX,WhereY,Format('%.2d:%.2d',[rest div 60,rest mod 60]));
+      FWrt(WhereX,WhereY,Format('%.2d:%.2d',[rest div 60,rest mod 60]));
       mon;
       last:=rest mod 60;
       end;
@@ -213,6 +213,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/01/21 12:12:16  mk
+  - added some units winxp, sysutils in uses
+
   Revision 1.14  2001/01/21 09:39:45  mk
   - removed special Unix handing for FWrt in Wkey()
 
