@@ -17,7 +17,23 @@
 		
 		Unter X darf die Groesse der Konsole nach dem
 		Programmstart nicht mehr geaendert werden.
-	
+
+	XP	OpenXP ist im absoluten Alpha-Stadium! Jede Verwendung
+		kann nur auf eigene Gefahr und mit der Wahrscheinlichkeit
+		von Fehlern erfolgen. Sie mussen sich bewusst sein, dass
+		die vorliegende Portierung nicht abgeschlossen ist, und
+		auch vielfach keine Ruecksicht auf Linux-Besonderheiten
+		nimmt.
+
+		Die Linux-Version legt die Datenbanken und anderen Dateien
+		im Verzeichnis '$HOME/openxp/' an. Wenn Sie bestehende
+		Daten verwenden moechten, so muessen Sie zunaechst einen
+		symbolischen Link auf die Daten legen. Angenommen, Ihre
+		XP-Installation befindet sich im Verzeichnis '/pub/usera/xp',
+		dann erstellen Sie den Link mit folgendem Befehl:
+		
+		ln -s /pub/usera/xp ~/openxp
+
 	XPME	Bis auf die dargestellten Schwierigkeiten bei der
 	        Ausgabe von Schriftzeichen bei Konsolen/Fonts, die
 		nicht ISO-8859-1-kompatibel sind, sollte das Tool
