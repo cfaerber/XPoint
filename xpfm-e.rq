@@ -21,6 +21,8 @@ K English
 115 ZM.EXE not found
 116 Error: CTS low
 117 Could not initialize comport
+118 Missing 'rz' (ZModem)
+119 Missing 'sz' (ZModem)
 
 # ----- Dialing
 

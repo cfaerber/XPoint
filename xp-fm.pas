@@ -65,7 +65,9 @@ const aresult    : byte = 0;
       SetTime   : boolean = false;
       SendTrx   : boolean = false;
       ExtfNames : boolean = true;
+{$ifndef UnixFS}
       zmprog    : string = 'zm.exe';
+{$endif}
       Tarifzone : string = '';
 
       ModemLine : byte       = 1;       { COMn }
@@ -121,6 +123,13 @@ var   FilesToSend  : String;
 { --- Allgemeine Routinen ------------------------------------------- }
 
 procedure logo;
+{$ifdef Unix}
+begin
+  writeln;
+  writeln('XP-FM  Fido Mailer ',verstr,pformstr, betastr, ' (c) ''93-99 by Peter Mandrella');
+  writeln('(c) 2000 OpenXP Team');
+  writeln;
+{$else}
 var t : text;
 begin
   assign(t,''); rewrite(t);
@@ -129,6 +138,7 @@ begin
   writeln(t,'(c) 2000 OpenXP Team');
   writeln(t);
   close(t);
+{$endif}
 end;
 
 procedure helppage;
@@ -291,9 +301,10 @@ end;
 
 procedure SetLanguage;
 begin
-  if not exist('XPFM-'+language+'.RES') then language:='E';
-  if not exist('XPFM-'+language+'.RES') then error('XPFM-*.RES not found');
-  OpenResource('XPFM-'+language+'.RES',40000);
+  if not exist(FileUpperCase('xpfm-'+language+'.res')) then language:='e';
+  if not exist(FileUpperCase('xpfm-'+language+'.res')) then
+    error(FileUpperCase('xpfm-*.res')+' not found');
+  OpenResource(FileUpperCase('xpfm-'+language+'.res'),40000);
   resopen:=true; nocarrier:=getres(195);
 end;
 
@@ -363,6 +374,11 @@ end;
 
 procedure InitVar;
 begin
+{$ifdef UnixFS}
+  { Search for standard Linux components }
+  if not (existBin('rz')) then error(getres(118));
+  if not (existBin('sz')) then error(getres(119));
+{$else}
   if not exist(zmprog) then zmprog:=fsearch(zmprog,getenv('PATH'));
   if zmprog='' then error(getres(115));   { 'ZM.EXE fehlt' }
   if ModemPort=0 then
@@ -375,6 +391,7 @@ begin
       1,3 : IRQ:=4;
       2,4 : IRQ:=3;
     end;
+{$endif}
   scx:=15;
   scy:=GetScreenlines div 2 - 6;
   if SysName='' then SysName:=UserName;
@@ -529,6 +546,9 @@ end.
 
 {
   $Log$
+  Revision 1.27  2000/11/09 19:44:30  hd
+  - Anpassungen an Linux
+
   Revision 1.26  2000/11/09 18:51:42  hd
   - Anpassungen an Linux
 

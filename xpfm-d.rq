@@ -21,6 +21,8 @@ K Deutsch
 115 ZM.EXE fehlt
 116 kein CTS-Signal
 117 Fehler bei Portinitialisierung
+118 'rz' fehlt (ZModem)
+119 'sz' fehlt (ZModem)
 
 # ----- Anwahl
 

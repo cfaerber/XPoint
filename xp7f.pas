@@ -619,7 +619,7 @@ begin
 
   ttwin;
   FidoNetcall:=EL_noconn;
-  shell('XP-FM.EXE '+FidoCfg,300,4);         { --- Anruf --- }
+  shell(XPFMBin+' '+FidoCfg,300,4);         { --- Anruf --- }
   aresult:=errorlevel;
 {  if carrier(comnr) and not comn[comnr].IgCD then
     aufhaengen; }
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/11/09 19:44:30  hd
+  - Anpassungen an Linux
+
   Revision 1.31  2000/10/22 21:59:00  mk
   - case of .pp and .epp is now UnixFS dependent
 
