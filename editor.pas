@@ -695,16 +695,15 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
     filemode:=mfm;
-{$IFDEF VP }
-    p := ptr(1);
-{$ELSE }
 {$IFDEF FPC }
-{$IFDEF VER1_1 }
+  {$IFDEF VER1_1 }
     p:= pointer(1);
-{$ELSE}
+  {$ELSE}
     p:=ptr(1,1);
+  {$ENDIF }
 {$ENDIF }
-{$ENDIF }
+{$IFDEF Delphi }
+    p := Pointer(1);
 {$ENDIF }
     tail:=nil;
     endcr:=false;
@@ -1817,6 +1816,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.72  2001/12/22 22:16:31  mk
+  - fix for Delphi
+
   Revision 1.71  2001/12/04 10:17:53  mk
   - fixed persistent blocks
 
