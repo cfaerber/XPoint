@@ -1074,6 +1074,7 @@ again:
                xpsendmessage._replyPath:=hdp.replypath;
                xpsendmessage._pmReply:=(hdp.attrib and attrPmReply<>0);
                xpsendmessage.ControlMsg:=(hdp.attrib and attrControl<>0);
+               forcebox:=hdp.real_box;
                sdata:= TSendUUData.Create;
                with sData do
                begin
@@ -1361,6 +1362,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.4  2002/07/09 13:26:42  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my)
+
   Revision 1.21.2.3  2002/05/12 17:30:17  ma
   - fixed: editing Reply-To on unsent messages was broken
   - fixed: Reply-To handling was broken if real name specified in Reply-To
