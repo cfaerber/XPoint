@@ -3434,7 +3434,7 @@ verlassen m”chten.
 217
 Hier k”nnen Sie festlegen, welche Bretter beim Archi-
 vieren von Nachrichten mit /Nachricht/Weiterleiten
-[/Archiv] oder mit <Alt A> angezeigt werden sollen.@12109
+[/Archiv] oder mit <Alt A> angezeigt werden sollen.@12110
 Ist dieses Eingabefeld leer, dann werden immer ALLE
 Bretter als Archiv-Ziel angeboten. Ansonsten werden
 nur die Bretter angezeigt, die mit dem eingegebenen
@@ -3453,7 +3453,7 @@ Dann geben Sie als Archiv-Bretter einfach nur /A/ an.
 @
 218
 Stellen Sie <<[x]>> ein, wenn mit /Nachricht/Weiter-
-leiten [/Archiv] oder mit <Alt A> archivierte Nachrich-@12109
+leiten [/Archiv] oder mit <Alt A> archivierte Nachrich-@12110
 ten anschlieáend auf "L”schen" gesetzt werden sollen.
 @
 8070
@@ -9013,7 +9013,7 @@ richt doch nicht verschicken m”chten, dann k”nnen
 Sie diese hier l”schen.
 
 Eine versehentlich gel”schte Nachricht wird mit
-[/Nachricht/Weiterleiten/eRneut] "reaktiviert".@12108
+[/Nachricht/Weiterleiten/eRneut] "reaktiviert".@12109
 @
 10404
 <<Nachricht / Unversandt / Statistik
@@ -9379,7 +9379,7 @@ Siehe auch:  [interner Editor]@54
 <<Edit / Schablonen / Erneut
 
 Die Erneut-Schablone wird beim erneuten Senden von
-Nachrichten mit [/Nachricht/Weiterleiten/Erneut] ver-@12108
+Nachrichten mit [/Nachricht/Weiterleiten/Erneut] ver-@12109
 wendet. Sie kann s„mtliche [Makros] enthalten.@11650
 @
 10810
@@ -9420,7 +9420,7 @@ Siehe auch:  [interner Editor]@54
 <<Edit / Schablonen / L”schnachricht
 
 Hier kann der Text bearbeitet werden, den CrossPoint
-beim Versenden von [UUCP-Cancel-Nachrichten] verwendet.@12107
+beim Versenden von [Cancel-Nachrichten] verwendet.@12107
 @
 10814
 <<Edit / Schablonen / Sonstige
@@ -10425,8 +10425,8 @@ Und bei Brettnachrichten auáerdem
 12107
 <<Nachricht / Weiterleiten / L”schen
 
-<<RFC/UUCP:>>  Dieser Menpunkt erzeugt eine L”schnach-
-richt ("Cancel-Nachricht") fr die gew„hlte, von
+<<ZCONNECT / RFC:>>  Dieser Menpunkt erzeugt eine L”sch-
+nachricht ("Cancel-Nachricht") fr die gew„hlte, von
 Ihnen geschriebene Brettnachricht. Auf diese Weise
 kann eine bereits verschickte Nachricht nachtr„glich
 gel”scht werden. Eine Cancel-Nachricht nimmt den
@@ -10434,13 +10434,26 @@ gleichen Weg wie die zu l”schende Nachricht, und
 berall dort, wo die Nachrichten aufeinandertreffen,
 wird die Originalnachricht entfernt.
 
+Siehe auch: [Nachricht/Weiterleiten/Ersetzen]@12108
+
 <<MausNet:>>   Mit diesem Menpunkt k”nnen Sie eine
 verschickte Nachricht nachtr„glich l”schen. Dies
 funktioniert allerdings nur, wenn die Nachricht von
 der Box noch nicht ins Netz versandt wurde.
-
 @
 12108
+<<Nachricht / Weiterleiten / Ersetzen
+
+<<ZCONNECT / RFC:>> Wenn Sie eine ”ffentliche Nach-
+richt abgeschickt haben und Ihnen im Nachhinein
+auff„llt, dass Ihre Nachricht Fehler enth„lt, dann
+k”nnen Sie mit diesem Menpunkt eine Nachricht er-
+zeugen, die Ihre alte Nachricht ersetzt (RFC:
+"Supersedes").
+
+Siehe auch: [Nachricht/Weiterleiten/L”schen]@12107
+@
+12109
 <<Nachricht / Weiterleiten / Erneut
 
 Hier wird einfach die gew„hlte Nachricht noch einmal
@@ -10454,7 +10467,7 @@ stellt.
 Auáerdem k”nnen Sie hiermit eine in /¯Unversandt ge-
 parkte Nachricht absenden.
 @
-12109
+12110
 <<Nachricht / Weiterleiten / Archiv
 
 Die Archiv-Funktion kopiert die gew„hlte Nachricht in
@@ -10463,7 +10476,7 @@ kann unter /Config/Optionen/Allgemeines/Archiv-Bret-
 ter angegeben werden. Die Nachricht wird mit einem
 Archivierungsvermerk versehen.
 @
-12110
+12111
 <<Nachricht / Weiterleiten / User-PM
 
 Dieser Menpunkt hat zwei Funktionen: Er dient einer-
@@ -11593,6 +11606,14 @@ Usenet und im MausNet m”glich. Im MausNet funktio-
 niert es allerdings nur, wenn die Nachricht noch
 nicht die Box verlassen hat.
 @
+20318
+Nur ”ffentliche ZConnect- und RFC-Nachrichten k”nnen
+ersetzt werden.
+@
+20319
+Sie k”nnen nur Nachrichten ersetzen, die Sie auch
+selbst geschrieben haben!
+@
 20402
 Es ist zuwenig Arbeitsspeicher vorhanden, um einen
 Fido-Request durchzufhren. Dies kann z.B. daran
@@ -11842,6 +11863,12 @@ ist, k”nnen Sie natrlich nicht darauf antworten.
 Verlassen Sie das Brett stattdessen mit <Esc>, w„h-
 len Sie es erneut mit <Cursor oben> an und drcken
 Sie dann B, um eine neue Nachricht zu schreiben.
+@
+20447
+Nur Nachrichten, die bereits versendet wurden,
+k”nnen mit [Nachricht/Weiterleiten/Ersetzen] ersetzt@12108
+werden. Unversandte Nachrichten k”nnen mit
+[Nachricht/Unversandt/Edit] ge„ndert werden.@10401
 @
 20450
 Sie haben dieses Brett im <<S>>pezialmodus mit der Z<<u>>-

@@ -3106,7 +3106,7 @@ Valid Usergroup numbers are in the range 1 - 99
 
 Which archive newsgroups should be displayed for
 selection when a message is selected for archiving
-with either /Message/Forward/[Archive] or <Alt-A>.@12109
+with either /Message/Forward/[Archive] or <Alt-A>.@12110
 
 You need only enter the first part of the name and
 all matching names will be shown.
@@ -3126,7 +3126,7 @@ newsgroups only to be displayed for selection.
 
 @
 218
-<<[x]>>     Messages sent to [Archive] will be set to@12109
+<<[x]>>     Messages sent to [Archive] will be set to@12110
         "delete" to avoid storing them twice.
 
 
@@ -7371,7 +7371,7 @@ abort the send, with this menu entry. The message is
 still there, but will not be sent.
 
 If you change you mind again, you can reactivate it
-with [/Message/Forward/Repost].@12108
+with [/Message/Forward/Repost].@12110
 @
 10404
 <<Message / Outgoing / Statistic
@@ -7845,7 +7845,7 @@ See also:  [internal Editor]@54
 <<Edit / Templates / Cancel
 
 This is the default template for your signature to
-[UUCP Cancel messages].@12107
+[Cancel messages].@12107
 
 You can define different signature for each newsgroup
 group with /Edit/Group/Edit/Template, but you have to
@@ -8878,7 +8878,7 @@ And for Newsgroup messages additionally
 12107
 <<Message / Action / Cancel
 
-<<RFC/UUCP:>>  Sends out a cancel message for the
+<<ZCONNECT / RFC:>>  Sends out a cancel message for the
 selected newsgroup message, as long as it was written
 by you. In this way a message already sent out can be
 deleted. The cancel message takes the same route as
@@ -8891,9 +8891,11 @@ See also [/Config/Opt./Nets/Cancel-Messages].@798
 <<MausNet:>>   This only cancels an already sent
 message, if it has not gone from the server into the
 net.
-
 @
 12108
+
+@
+12109
 <<Message / Action / Repost
 
 The selected message will be resent (reposted) to the
@@ -8903,7 +8905,7 @@ that text will be put in front of the message.
 Also use this for sending messages you have "parked"
 in your newsgroup /¯Unsent
 @
-12109
+12110
 <<Message / Action / Archive
 <<or <Alt-A>
 
@@ -8912,7 +8914,7 @@ selected message to one of your [archive newsgroups].@217
 You will be allowed to select which one.
 An archive-note is also added to the message text.
 @
-12110
+12111
 <<Message / Action / User-PM
 
 Has 2 purposes.
