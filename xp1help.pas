@@ -357,7 +357,7 @@ var fks,fkn : integer;
     hilfe,
     makros  : string[10];
 
-  procedure wf(s:string);
+  procedure wf(const s:string);
   begin
     attrtxt(col.colkeyshigh);
     Wrt2(left(s,cpos('-',s)-1));
@@ -410,6 +410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.5  2001/12/18 14:06:59  mk
+  - const parameter für wf()
+
   Revision 1.7.2.4  2001/12/18 13:06:55  mk
   - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
 
