@@ -471,14 +471,14 @@ begin
     wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
     p:=cpos('@',empfaenger);
     wrt(1,1,' ');
-    if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
+    if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79+screenwidth-80))
     else
       if pm then Wrt2(forms(getres2(611,40)+left(empfaenger,p-1)+'@'+
-                       mid(empfaenger,p+1),70)+sp(9))
+                       mid(empfaenger,p+1),70+screenwidth-80)+sp(9))
       else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
                  iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
-                      getres2(611,43)+fidoto,''),70)+sp(9));
-    wrt(1,2,' '+forms(getres2(611,42)+betreff,79));   { 'Betreff:      ' }
+                      getres2(611,43)+fidoto,''),70+screenwidth-80)+sp(9));
+    wrt(1,2,' '+forms(getres2(611,42)+betreff,79 + screenwidth-80));   { 'Betreff:      ' }
     mon;
     end;
   if pushpgdn then pushkey(keycpgd);
@@ -2126,6 +2126,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.61  2000/08/23 07:49:20  mo
+  - Betreffzeile im editor für screenwidth > 80 angepasst
+
   Revision 1.60  2000/08/22 14:02:40  mk
   - SendenDefault in Shortint geaendert
 
