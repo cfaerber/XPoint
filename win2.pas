@@ -287,7 +287,7 @@ var   fb     : pathstr;
       Wrt2(sp(14))
     else begin
       s:=f^[n+add];
-      Wrt2(' ' + forms(ConvertFileName(s), 12) + ' ');
+      Wrt2(' ' + forms(s, 12) + ' ');
     end;
     mon;
   end;
@@ -355,7 +355,7 @@ var   fb     : pathstr;
           with t do
           begin
             s2 := Trim(strsrnp(sr.size,12,0));
-            Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
+            Wrt2(forms(s,45 - Length(s2)) + '  ' + s2 + '  ' +
                { PM 01/00 Y2K-Patch für Dateidaten von 1.1.2000 bis 31.12.2009 }
                  formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)
                  {,'       ',formi(hour,2),':',formi(min,2),':',formi(sec,2)});
@@ -505,7 +505,7 @@ begin
       else normattr:=fsb_rcolor;
       end;
     iit;
-    rahmen1(9,71,y,y+height,ConvertFileName(dpath),xtext);
+    rahmen1(9,71,y,y+height,dpath,xtext);
     if fsb_info then
       mwrt(9,y+height-2,'Ã'+dup(61,'Ä')+'´');
     normattr:=na; invattr:=ia;
@@ -1113,6 +1113,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.1  2000/06/24 14:16:32  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.16  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

@@ -22,14 +22,9 @@ unit xp6;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-     dos,typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
-     winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
-     xpglobal;
+  crt, dos, typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
+  winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
+  xpglobal;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfhrliche Sendeanzeige }
@@ -119,115 +114,6 @@ implementation  { --------------------------------------------------- }
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
 
-{$IFDEF Ver32 }
-
-procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
-asm
-         xor   edx, edx
-         mov   edi,bytes
-         mov   ecx,[edi]
-         jcxz  @ende
-         mov   edi, data
-         lea   esi,[edi+1500]
-         cld
-         mov   bl,typ
-         cmp   bl,2                    { ISO? }
-         jz    @isolp
-
-@uklp:   mov   al,[esi]              { IBM -> ASCII }
-         cmp   al,'„'
-         jnz   @noae
-         mov   ax,'ea'
-         jmp   @conv
-@noae:   cmp   al,'”'
-         jnz   @nooe
-         mov   ax,'eo'
-         jmp   @conv
-@nooe:   cmp   al,''
-         jnz   @noue
-         mov   ax,'eu'
-         jmp   @conv
-@noue:   cmp   al,'Ž'
-         jnz   @no_ae
-         mov   ax,'eA'
-         jmp   @conv
-@no_ae:  cmp   al,'™'
-         jnz   @no_oe
-         mov   ax,'eO'
-         jmp   @conv
-@no_oe:  cmp   al,'š'
-         jnz   @no_ue
-         mov   ax,'eU'
-         jmp   @conv
-@no_ue:  cmp   al,'á'
-         jnz   @noconv
-         mov   ax,'ss'
-@conv:   stosw
-         inc   edx
-         cmp   edx,1500
-         jz    @ende                    { Konvertierpuffer voll :-( }
-         inc   esi
-         loop  @uklp
-         jmp   @ende
-@noconv: stosb
-         inc   esi
-         loop  @uklp
-         jmp   @ende
-
-@isolp:  mov   al,[esi]
-         inc   esi
-         stosb
-         loop  @isolp
-
-@ende:   mov   edi,bytes
-         add   [edi],edx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-function  testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
-asm
-         mov   ecx,rr
-         mov   esi,bdata
-         cld
-@tbloop: lodsb
-         cmp   al,9
-         jb    @is_bin                  { Bin„rzeichen 0..8 }
-         cmp   al,127
-         jae   @is_bin                  { "bin„r"zeichen 127..255 }
-         cmp   al,32
-         jae   @no_bin                  { ASCII-Zeichen 32..126 }
-         cmp   al,13
-         jbe   @no_bin                  { erlaubte Zeichen 9,10,12,13 }
-@is_bin: mov   eax,1                    { TRUE: Bin„rzeichen gefunden }
-         jmp   @tbend
-@no_bin: loop  @tbloop
-         mov   eax,ecx                  { FALSE: nix gefunden }
-@tbend:
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-function  ContainsUmlaut(var s:string):boolean;
-var
-  i: Integer;
-begin
-  ContainsUmlaut := false;
-  for i := 1 to Length(s) do
-    if s[i] > #127 then
-    begin
-      Containsumlaut := true;
-      break;
-    end;
-end;
-
-{$else }
-
-{ MK 11.01.2000 In Inline-Assembler konvertiert }
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
          mov   dx,0
@@ -330,8 +216,6 @@ asm
 @cu_ende: mov   ax,cx
          pop ds
 end;
-
-{$ENDIF }
 
 procedure ukstring(var s:string);
 const du : string[14] = 'aeoeueAeOeUess';
@@ -2248,6 +2132,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.1  2000/06/24 14:16:34  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.39  2000/06/19 20:21:46  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

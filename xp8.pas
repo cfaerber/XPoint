@@ -1129,6 +1129,7 @@ begin
             end;
           if fido then writeln(t,'---');
           close(t);
+          CloseList; { Liste schlie·en, damit mehr Speicher frei ist }
           if art=3 then
             verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
           case art of
@@ -1143,8 +1144,9 @@ begin
           end
         else
           BretterAnlegen;
-        end;
-      closelist;
+        end
+      else
+        closelist; { Lister hier noch bei BRK schlie·en }
       freeres;
       aufbau:=true;
       end;
@@ -1583,6 +1585,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.1  2000/06/24 14:16:35  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.10  2000/05/04 10:33:00  mk
   - unbenutzer TurboBox Code entfernt
 

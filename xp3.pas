@@ -750,12 +750,7 @@ var f,puffer : file;
     p        : pointer;
     bs,rr    : word;
 begin
-  {$IFDEF BP }
-    bs:=min(maxavail-10000,50000);
-  {$ELSE }
-    bs:=65536;
-  {$ENDIF }
-  getmem(p,bs);
+  bs := GetMaxMem(p, 1024, 32768);
   dbReadN(mbase,mb_ablage,ablage);
   dbReadN(mbase,mb_msgsize,oldsize);
   dbReadN(mbase,mb_adresse,oldadr);
@@ -786,8 +781,6 @@ begin
   freemem(p,bs);
 end;
 
-
-{ R-}
 procedure seekmark(rec:longint; var found:boolean; var x:integer);
 var l,r,m : integer;
 begin
@@ -1414,6 +1407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.1  2000/06/24 14:16:32  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.25  2000/06/05 16:16:22  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

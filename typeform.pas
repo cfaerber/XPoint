@@ -207,9 +207,10 @@ procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 function DOSEmuVersion: String;
 {$ENDIF }
 function IsoToIbm(s:string): String;            { Konvertiert ISO in IBM Zeichnen }
-{ Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
-  Zeichensatz konvertiert }
-function ConvertFileName(s:string): String;
+{ Holt so viel Speicher wie mîglich, mindestens aber MinMen und
+  gibt im Fehlerfalle eine Fehlermeldung aus. RÅckgabewert ist
+  der tatsÑchlich allocierte Speicher }
+function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 
 { ================= Implementation-Teil ==================  }
 
@@ -1329,43 +1330,6 @@ begin
   mid:=copy(s,n,255);
 end;
 {$ELSE }
-{$ifdef ver32}
-{ 01.02.2000 robo - 32 Bit}
-function Mid(const s:string; const n:byte): string; {&uses esi,edi} assembler;
-asm
-        cld
-        mov     edi, @result
-        mov     esi, s
-        xor     edx, edx
-        xor     ecx, ecx
-        lodsb
-        cmp     al, n
-        jnb @3
-        mov     al, cl              { n > als LÑnge von s }
-        stosb
-        jmp @2
-@3:     mov     dl, al
-        sub     al, n
-        inc     al
-        jnbe @4
-        dec     al                  { StringlÑnge 255, n = 0 }
-@4:     cmp     al, dl
-        jc      @1
-        mov     al, dl
-@1:     mov     cl, al
-        stosb
-        sub     edx, ecx
-        add     esi, edx
-        rep     movsb
-@2:
-{$ifdef FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$else}
-end;
-{$endif}
-{ /robo }
-
-{$else}
 function Mid(const s:string; const n:byte): string; assembler;
 asm
         mov     bx, ds
@@ -1395,7 +1359,6 @@ asm
         rep movsb
 @2:     mov     ds, bx
 end;
-{$endif}
 {$ENDIF}
 
 Function trim(s:string):string;
@@ -2079,37 +2042,6 @@ begin
     rforms:=sp(n-length(s))+s;
 end;
 
-{$ifdef ver32}
-
-{ 01.02.2000 robo - 32 Bit }
-{ 06.02.2000 MK - Optimiert }
-
-procedure FastMove(var Source, Dest; const Count: WORD); {&uses esi,edi} assembler;
-asm
-        mov  ecx, count
-        mov  eax, ecx
-        sar  ecx, 2
-        js   @ende
-
-        mov  esi, source
-        mov  edi, dest
-
-        cld
-        rep movsd
-        mov ecx, eax
-        and ecx, $03
-        rep movsb
-@ende:
-{$ifdef FPC }
-end ['EAX', 'ECX', 'ESI', 'EDI'];
-{$else}
-end;
-{$endif}
-
-{ /robo }
-
-{$else}
-
 {$IFDEF NO386 }
 { JG+MK+de.comp.lang.assembler.x86: Superschnelle MOVE-Routine }
 procedure FastMove(var Source, Dest; const Count: WORD); assembler;
@@ -2159,8 +2091,6 @@ asm
 end;
 
 {$ENDIF }
-{$ENDIF }
-
 
 procedure UkonvStr(var s:string;len:byte);
 var s2 : string;
@@ -2199,22 +2129,12 @@ end;
 { ROT13 Kodierung }
 procedure Rot13(var data; size: word); {&uses edi} assembler;
 asm
-{$IFDEF BP }
          les   di,data
          mov   cx,size
          jcxz  @ende
-{$ELSE }
-         mov   edi, data
-         mov   ecx, size
-         jecxz @ende
-{$ENDIF }
          cld
   @rotlp:
-{$IFDEF BP }
          mov   al,es:[di]
-{$ELSE }
-         mov   al, [edi]
-{$ENDIF }
          cmp   al,'A'
          jb    @rot
          cmp   al,'Z'
@@ -2237,14 +2157,9 @@ asm
          stosb
          loop  @rotlp
   @ende:
-{$ifdef FPC }
-end ['EAX', 'ECX', 'EDI'];
-{$else}
 end;
-{$endif}
 
 
-{$IFDEF BP }
 function DOSEmuVersion: String;
 const
   DOSEMU_MAGIC_STRING       = '$DOSEMU$';
@@ -2260,7 +2175,6 @@ begin
     DOSEmuVersion:= StrS(DOSEMU_VersionPos[4]) + '.' +
       StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
 end;
-{$ENDIF }
 
 function IsoToIbm(s:string): String;
 var
@@ -2272,18 +2186,26 @@ begin
       IsoToIBM[i] := chr(iso2ibmtab[byte(s[i])])
 end;
 
-function ConvertFileName(s:string): String;
+function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
+var
+  Size: Integer;
 begin
-  {$IFDEF Win32 }
-    ConvertFileName := ISOToIBM(s);
-  {$ELSE }
-    ConvertFileName := s;
-  {$ENDIF }
+  if MinMem > (MaxAvail + MaxAvail div 10) then
+  begin
+    Writeln('Nicht genÅgend Speicher');
+    Halt(1);
+  end;
+  Size := Min(MaxAvail - MaxAvail div 10, MaxMem);
+  GetMem(p, Size);
+  GetMaxMem := Size;
 end;
 
 end.
 {
   $Log$
+  Revision 1.37.2.1  2000/06/24 14:16:31  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.37  2000/06/16 14:51:09  hd
   - Neue Funktion: CountChar: Zaehlt das Vorkommen eines Zeichens
 

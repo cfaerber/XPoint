@@ -67,7 +67,7 @@ const  {$IFDEF DPMI}
        BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fÅr }
        BrettLen    = 81;             { die entsprechenden Felder ver-  }
        eBrettLen   = 79;             { wendet werden                   }
-       AdrLen      = 120;
+       AdrLen      = 80;
        eAdrLen     = 79;
        BetreffLen  = 70;
        DateLen     = 11;
@@ -77,9 +77,7 @@ const  {$IFDEF DPMI}
        PostadrLen  = 80;             { Postadresse }
        TeleLen     = 100;            { Telefon }
        HomepageLen = 90;             { WWW-Homepage }
-       { 01/2000 oh }
        CustHeadLen = 60;             { Customizable Header-Lines }
-       { /oh }
        hdErrLen    = 60;
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
@@ -1192,6 +1190,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.1  2000/06/24 14:16:32  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.54  2000/06/20 18:17:48  hd
   - Neue Konstanten: UUZBin, UUCICOBin
   - Neue Variable: TermDevice, default: modem

@@ -60,6 +60,7 @@ const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
       markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
       closeflag : boolean = false; { TClose -> Dateien schlie·en     }
+      nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
@@ -1726,8 +1727,14 @@ begin      { --- select --- }
                  if c=k2_S then spezialmenue;         { 'S'pezial-MenÅ }
                  if empty then begin
                    if t[1]=k2_b then
-                     rfehler(446);   { 'Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...' }
-                   end
+                   begin
+                     pushkey('b');
+                     t:=keyesc;
+                     c:=#0;
+                     nobrettweiter:=true;
+                     end;
+                 { rfehler(446); } { 'Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...' }
+                 end
                  else begin
                    if t=keycr then
                      if kb_shift then read_msg(0,2)   { Shift-Enter }
@@ -2051,6 +2058,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.1  2000/06/24 14:16:33  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.26  2000/06/12 15:07:49  hd
   - DispStr angepasst
 

@@ -1292,7 +1292,7 @@ var dat    : longint;
           end;
         end;
       end;
-    if not kb_ctrl and weiter and Forth then begin
+    if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1319,6 +1319,7 @@ var dat    : longint;
         t:=keyend; lastt:=''; end;
       aufbau:=true;
       end;
+    nobrettweiter:=false;
   end;
 
 begin
@@ -1495,6 +1496,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.1  2000/06/24 14:16:34  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.25  2000/06/12 19:52:15  mk
   - Datei enthält jetzt Loginfos
 

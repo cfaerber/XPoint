@@ -450,11 +450,7 @@ var p     : ^barr;
     rr: word;
     rr0   : word;
 begin
-  {$IFDEF BP }
-  siz:=min(maxavail-10000,32768);
-  {$ELSE }
-  size := 32768;
-  {$ENDIF }
+  siz:=min(maxavail-4096,32768);
   getmem(p,siz);
   fm_ro; reset(f^,1); fm_rw;
   seek(f^,ofs);
@@ -1131,6 +1127,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.1  2000/06/24 14:16:35  mk
+  - 32 Bit Teile entfernt, Fixes
+
   Revision 1.18  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
