@@ -84,6 +84,9 @@ end;
 
 function ReadFilename(txt:atext; var s:pathstr; subs:boolean;
                       var useclip:boolean):boolean;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+    '-','_','#','=','&','%','@','$'];
 var x,y : byte;
     brk : boolean;
     fn  : string[20];
@@ -93,12 +96,10 @@ begin
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,78,'');   { Dateiname: }
   if useclip then begin
-{JG:10.02.00}
     mappsel(false,'Windows-Clipboard');
     mappsel(false,'Win-Clipboard (URL)');
     mappsel(false,'Win-Clipboard (MAIL)');
     end;
-{/JG}
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -121,16 +122,14 @@ begin
       if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
-      if y<>0 then begin
-        s:=mid(s,y); x:=0; y := 0;
-        repeat
-          inc (y);                                           {Ende der URL suchen...}
-          if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
-          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']', '"': x:=y-1; end;
-        until x<>0;
-        s:=left(s,x);
-        end;
-      string2clip(s);                                       
+      if y<>0 then
+      begin
+        s:=mid(s,y);
+        y:=1;
+        while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+        s:=left(s,y-1);
+      end;
+      string2clip(s);
       ReadFilename:=false;
       exit;
       end
@@ -204,40 +203,40 @@ var s     : string;
     useclip: boolean;
     nr    : longint;
     i     : integer;
-    
+
   procedure ex(i:shortint);
   begin
     listexit:=i;
     t:=keyesc;
   end;
 
-{JG:28.01.00}         
+{JG:28.01.00}
   procedure ShowfromLister;
-  begin   
+  begin
     showscreen(true);      {Menuepunkte die Probleme machen koennten deaktivieren:}
 
     setenable(0,1,false);  {XPOINT}
     setenable(0,2,false);  {Wartung}
     setenable(0,4,false);  {Netcall}
-    setenable(0,5,false);  {Fido} 
+    setenable(0,5,false);  {Fido}
     setenable(0,6,false);  {Edit}
     setenable(0,7,false);  {Config}
     setenable(3,8,false);  {Nachricht/Brettmannager}
-    setenable(3,9,false);  {N/Fileserver}     
-    setenable(3,11,false); {N/Direkt} 
+    setenable(3,9,false);  {N/Fileserver}
+    setenable(3,11,false); {N/Direkt}
 
     attrtxt(col.ColKeys);
     mwrt(screenwidth-9,screenlines,' Lister ! ');
     attrtxt(col.ColMenu[0]);
-    mwrt(1,1,dup(Screenwidth,' '));   
+    mwrt(1,1,dup(Screenwidth,' '));
     normtxt;
-   
+
     select(11);            {Suchergebnis zeigen}
 
     setenable(0,1,true);   {XPOINT wieder einschalten}
     setenable(0,2,true);   {Wartung}
     setenable(0,4,true);   {Netcall}
-    setenable(0,5,true);   {Fido} 
+    setenable(0,5,true);   {Fido}
     setenable(0,6,true);   {Edit}
     setenable(0,7,true);   {Config}
     setenable(3,8,true);   {Nachricht/Brettmannager}
@@ -318,7 +317,7 @@ begin
     if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
-    begin   
+    begin
       ShowHeader;
       ex(5);
       end;
@@ -462,29 +461,29 @@ var f1,f2 : file;
     time  : longint;
     res   : integer;
 begin
-  if (fexpand(fn1)=fexpand(fn2)) and exist(fn1) then 
+  if (fexpand(fn1)=fexpand(fn2)) and exist(fn1) then
   begin
     filecopy:=true;
     exit;
   end;
-    
+
   { 07.01.2000 oh
     Wo nichts ist, braucht auch nichts kopiert werden. Folgender Fix
     vermeidet die Fehlermeldung 'Fehler %s beim Kopieren von %s'
     beim Sysop-Poll ohne vorhandenen Ausgangspuffer:
-    07.01.2000 MK 
+    07.01.2000 MK
     byte(fn[0]) Referenzen in length(fn) geändert, Source formatiert
   }
   if not exist(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
     { Datei ist Ausgangspuffer: }
-    if UStr(copy(fn1,length(fn1)-2,3))='.PP' then 
+    if UStr(copy(fn1,length(fn1)-2,3))='.PP' then
     begin
       filecopy:=false;
       exit;
     end;
   { /oh }
-    
+
   assign(f1,fn1);
   reset(f1,1);
   getftime(f1,time);
@@ -976,6 +975,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.8  2000/11/01 11:20:34  mk
+  RB:- URL-Erkennung verbessert
+
   Revision 1.19.2.7  2000/10/13 12:29:35  mk
   JG:- verschiedene ungueltige Tasten im Kommentarbaum ausgeschaltet
 
