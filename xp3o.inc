@@ -981,7 +981,7 @@ begin
                 dbWriteN(bbase,bb_ldatum,_datum);      { Datum der neuesten Msg }
               end;
             dbAppend(mbase);
-            mnt:=netztyp;
+            mnt:=netztyp and $FF;
             if References.Count > 0 then inc(mnt,$100); // rÅckwÑrtsverkettet
             if attrib and attrFile<>0 then inc(mnt,$200);
             if pm_reply then inc(mnt,$400);
@@ -992,7 +992,7 @@ begin
               (filterattr and fattrHilite<>0)
             then
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
-            if charset='iso1' then inc(mnt,$2000);
+            if UpperCase(charset)='ISO1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
             Debug.DebugLog('xp3o','subject "'+betreff+'", msgid "'+msgid+'"',DLDebug);
             dbWriteN(mbase,mb_netztyp,mnt);
@@ -1228,6 +1228,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2001/09/14 20:03:06  cl
+  - fixed flags for PufferEinlesen
+
   Revision 1.71  2001/09/08 23:30:58  cl
   - fixed last fix
 
