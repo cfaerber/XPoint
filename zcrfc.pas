@@ -72,11 +72,12 @@ type
     procedure SetMimeData;
     procedure WriteRFCheader(var f: file; mail: boolean);
   public
-     u2z: boolean;                         { Richtung; mail/news }
+    u2z: boolean;                         { Richtung; mail/news }
     source, dest: String;                { Quell-/Zieldateien  }
     _from, _to: string;                   { UUCP-Systemnamen }
     OwnSite: string;             { fuer Empfaengeradresse von Mails }
     uunumber: word;                       { fortlaufende Hex-Paketnummer }
+    CommandFile:string;      { name of C- file }
     MailUser: string;        { fuer U-Zeile im X-File }
     NewsUser: string;
     FileUser: string;
@@ -3404,7 +3405,9 @@ var
           if p = 0 then
           begin
             fromfile := s;
-            tofile := Unix2DOSfile(s, '');
+	    (* will be handeled by UUCICO *)
+            (* tofile := Unix2DOSfile(s, ''); *)
+	    tofile := s;
           end
           else
           begin
@@ -3446,7 +3449,8 @@ begin
   adr := 0; n := 0;
   if not ppp then
   begin
-    assign(fc, dest + 'C-' + hex(NextUunumber, 4) + '.OUT'); { "C."-File }
+    CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + '.OUT');
+    assign(fc, CommandFile); { "C."-File }
     rewrite(fc);
   end;
   if filesize(f1) < 10 then
@@ -3661,6 +3665,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/03/03 19:54:05  cl
+  - name of created command file is now a readable property of TUUZ
+  - leave file name conversion of requested files to UUCICO
+
   Revision 1.33  2001/03/02 10:22:49  mk
   - removed/modified non GPL code
 
