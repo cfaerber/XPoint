@@ -154,12 +154,15 @@ ${srcdir}/Makefile: Makefile.in configure
 
 autoconf: ${srcdir}/configure
 
-${srcdir}/configure: configure.in $(wildcard aclocal.m4)
+${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 	cd ${srcdir} && autoconf
 
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.11  2003/05/15 11:07:43  cl
+# - fixed configure.in => configure.ac
+#
 # Revision 1.10  2003/02/21 19:32:13  cl
 # - Moved configure.in to configure.ac
 #
