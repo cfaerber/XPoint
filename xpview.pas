@@ -227,11 +227,12 @@ begin
   if not fileattach and delviewtmp then
   Begin
     parfn:=TempS(_filesize(fn)+5000);      
-    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8)
+    parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8);
     end
   else parfn:=orgfn; 
                               {Korrekte File-extension verwenden}  
-  parfn:=left(parfn,rightpos('.',parfn)-1)+'.'+iifs(viewer.ext='','TMP',viewer.ext);
+  parfn:=left(parfn,rightpos('.',parfn))+
+    iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
@@ -246,6 +247,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/03/28 05:13:23  jg
+  - Externe/Viewer bei fehlender Dateiendung im Viewer Eintrag
+    wird jetzt die des Original-Filenamen verwendet.
+
   Revision 1.14  2000/03/14 15:15:42  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
