@@ -1951,23 +1951,7 @@ xexit1:
   dispose(f); dispose(f2);
   dispose(fn); dispose(fn2); dispose(fn3);
 xexit2:
-  forcebox:=''; forceabs:='';
-  sendfilename:=''; sendfiledate:='';
-  _bezug:=''; _orgref:=''; _beznet:=-1; _replypath:='';
-  fidoto:=BrettAlle;
-  flCrash:=false;
-  flEB:=false; IsEbest:=false;
-  flQto:=false;
-  flMloc:=false; flMnet:=false;
-  _pmReply:=false;
-  NoCrash:=false;
-  FileAttach:=false; EditAttach:=true;
-  msgprio:=0;
-  rfcprio:=0; { MH 07.02.2000 }
-  ControlMsg:=false;
-  DisposeReflist(_ref6list);
-  NewbrettGr:=0;
-  oldmsgpos:=0; oldmsgsize:=0;
+  dosendexit1;
 end;
 
 
@@ -2059,6 +2043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.13  2001/01/01 20:44:58  mk
+  - Routinenteile von DoSend ausgelagert
+
   Revision 1.7.2.12  2001/01/01 11:32:48  mk
   - letzten Fix in dieser Version entfernt, da nicht noetig
 
