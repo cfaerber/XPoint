@@ -2629,6 +2629,7 @@ begin
     end;
     findnext(sr);
   end;
+  findclose(sr);
   if n > 0 then writeln;
   writeln('Mails:', mails: 6);
   writeln('News :', news: 6);
@@ -3419,6 +3420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/09/22 16:49:53  mk
+  - fehlendes Findclose hinzugefuegt
+
   Revision 1.62  2000/09/21 16:19:10  mk
   RB:- (X-)-Envelope-To-Unterstützung
      - QP Decode fuer verschiedene Header
