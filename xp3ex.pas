@@ -750,9 +750,13 @@ begin
       for hdln:=0 to ExtraktHeader.anz  do
         case ExtraktHeader.v[hdln] of
 
-    hdf_Trenn :  if not lasttrenn then begin
+    hdf_Trenn :  if not lasttrenn then begin                     { Trennzeile }
                    if hdln=ExtraktHeader.anz then TestSoftware;
-                   wrs(dup(iif(art=xTractHead,70,72)+ScreenWidth-80,'-'));    { Trennzeile }
+                   if( length(VarLister) <> 0 ) then             { wenn externer Lister verwendet wird }
+                     wrs(dup(iif(art=xTractHead,70,72),'-'))
+                   else
+                     wrs(dup(ScreenWidth,'Ä'));                  { interner Lister }
+
                    lasttrenn:=true;
                  end;
 
@@ -1056,6 +1060,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/08/17 12:10:14  mk
+  MO: Headerzeilenlaenge fuer Screen > 80 Zeichen angepasst
+
   Revision 1.42  2000/08/15 11:12:24  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 

@@ -208,8 +208,7 @@ var brk    : boolean;
     attrtxt(listheadercol);
     for i:=1 to exthdlines do begin
       readln(t,s);
-      if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80))
-      else mwrt(1,lfirst,dup(ScreenWidth,'Ä'));
+      mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
@@ -411,6 +410,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/08/17 12:10:14  mk
+  MO: Headerzeilenlaenge fuer Screen > 80 Zeichen angepasst
+
   Revision 1.35  2000/08/14 20:41:22  mk
   - Exec-Routinen besser auf 32 Bit Bedingungen angepasst
 
