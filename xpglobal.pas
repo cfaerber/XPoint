@@ -13,8 +13,8 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.20';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = '';           { '' oder ' beta' }
+  verstr      = 'v3.20a';  { Versionnr. - steht nur an dieser Stelle }
+  betastr     = '';        { '' oder ' beta' }
 
 {$IFDEF VER32 }
   {$IFDEF Win32 }
@@ -101,6 +101,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7.2.6  2000/08/06 10:00:00  mk
+  - Versionsaenderung auf 3.20a
+
   Revision 1.7.2.5  2000/07/23 09:43:30  mk
   - Versionsaenderung auf 3.20
 
