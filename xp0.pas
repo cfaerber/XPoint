@@ -626,7 +626,6 @@ type   textp  = ^text;
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
                   // Client Mode
-                  ClientMode: Boolean;              { RFC/Client switch             }
                   ClientPath: string;               { Client Client-Pfad            }
                   ClientExec: string;               { Client Client-Aufruf          }
                   ClientAddServers: string;         { Client Add Servers            }
@@ -1200,6 +1199,9 @@ implementation
 
 {
   $Log$
+  Revision 1.145  2001/11/24 20:29:24  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.144  2001/10/17 10:07:37  ml
   - use integer for cursorpos to prevent range errors
 

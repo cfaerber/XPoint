@@ -81,7 +81,7 @@ var mapsname : string;
 function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
 var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
     nt : byte;                       { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
-begin                                { 13=Feeder, 14=postmaster, 15=online    }
+begin                                { 13=Feeder, 14=postmaster, 15=online, 16=client  }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound then
@@ -97,6 +97,8 @@ begin                                { 13=Feeder, 14=postmaster, 15=online    }
       mapstype:=4
     else if ntAreamgr(nt) then
       mapstype:=5
+    else if nt = nt_Client then
+      mapstype := 16
     else if (nt=nt_UUCP) then begin
       ReadBoxpar(nt,box);
       case Boxpar^.BMtyp of
@@ -802,6 +804,7 @@ var t     : text;
     fido  : boolean;
     gs    : boolean;
     uucp  : boolean;
+    client: Boolean;
     postmaster : boolean;
     pronet: boolean;
     qwk   : boolean;
@@ -923,7 +926,7 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; pronet:=false; qwk:=false;
+      uucp:=false; pronet:=false; qwk:=false; client := false;
       postmaster:=false;
       case mapstype(box) of
         2 : maf:=true;
@@ -935,7 +938,8 @@ begin
         8 : pronet:=true;
        10 : qwk:=true;
        11..13 : uucp:=true;
-       14 : begin uucp:=true; postmaster:=true; end;
+       14: begin uucp:=true; postmaster:=true; end;
+       16: client:= true;
       end;
       rewrite(t);
       if quick or (uucp and postmaster) then
@@ -971,14 +975,16 @@ begin
       if fido then
         writeln(t,'---');
       close(t);
-      if not (uucp and boxpar^.ClientMode) then SendMaps('DEL',box,fn)
-      else begin
+      if not Client then 
+        SendMaps('DEL',box,fn)
+      else 
+      begin
         rewrite(t);
         writeln(t,newsgroup(brett));
         close(t);
         File_Abbestellen(box,fn);
-        end;
-      end
+      end;
+    end
     else begin   { mehrere markierte Bretter }
       dbOpen(d,OwnPath+BoxenFile,1);
       while not dbEOF(d) do begin
@@ -1028,7 +1034,7 @@ begin
           if fido then
             writeln(t,'---');
           close(t);
-          if not (uucp and boxpar^.ClientMode) then SendMaps('DEL',box,fn)
+          if not client then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
           topen:=false;
           end;
@@ -1494,7 +1500,8 @@ begin
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then begin
+  if dbFound then 
+  begin
     fn:= dbReadStr(d,'dateiname');
     netztyp:=dbReadInt(d,'netztyp');
     mapsname:= dbReadStr(d,'nameomaps');
@@ -1506,19 +1513,18 @@ begin
     gs:=(netztyp=nt_GS);
     uucp:=(netztyp=nt_UUCP);
     nntp := (netztyp=nt_NNTP);
+    ppp := (netztyp = nt_Client);
     if uucp then begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
-      ppp := BoxPar^.ClientMode;
-    end else
-      ppp := false;
+    end;
     qwk:=(netztyp=nt_QWK);
     end
   else begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
-    uucp:=false; promaf:=false; qwk:=false; postmaster:=false;
+    uucp:=false; promaf:=false; qwk:=false; postmaster:=false; ppp := false;
     netztyp:=0;
     end;
   dbClose(d);
@@ -1778,15 +1784,14 @@ begin
   gs:=(nt=nt_GS);
   uucp:=(nt=nt_UUCP);
   nntp:=(nt=nt_NNTP);
+  ppp := (nt=nt_Client);
   if (nntp) or (uucp) then ReadBoxPar(nt,box);
   if uucp then begin
     gup:=(boxpar^.BMtyp=bm_gup);
     autosys:=(boxpar^.BMtyp=bm_autosys);
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
-    ppp := BoxPar^.ClientMode;
-  end else
-    ppp := false;
+  end;
   promaf:=ntProMaf(nt);
   case defcom of
     0 : if (not ppp) and (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
@@ -2102,6 +2107,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2001/11/24 20:29:24  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.62  2001/10/10 20:38:52  mk
   - removed (unnecessary) ScreenWidth from Lister option VSC
   - use correct scrollbar position with more than 80 screen columns

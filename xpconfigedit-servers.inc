@@ -260,23 +260,19 @@
       nt,i : byte;
       b    : byte;
       pc,pp,ps,cldup,clphn,cllog,clpas : string;
-      pppm : boolean;
   begin                
     dbGo(d,drec[p]);
     fn := dbReadStr(d,'dateiname');
     ReadBox(0, fn, boxpar);
-    pppm:=boxpar^.Clientmode;
     if empty then
       nt:=nt_Client
-    else begin
+    else 
       dbRead(d,'netztyp',nt);
-      if (nt=nt_UUCP) and pppm then nt:=nt_Client;
-    end;
-    ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
+    ReadNetztyp(getres(914),nt,brk); 
+    if brk then exit;   { 'neue Box' }
     
     if nt<>nt_Client then
     begin
-      pppM:=false;
       pp:='';
       pc:='';
       ps:='';
@@ -292,8 +288,6 @@
       boxpar^.ClientNewsPort:='';
       end
     else begin
-      pppM:=true;
-      nt:=nt_UUCP;
       pp:=boxpar^.ClientPath;
       pc:=boxpar^.ClientExec;
       ps:=boxpar^.ClientAddServers;
@@ -319,13 +313,14 @@
     boxpar^.ClientNewsUser:='';
     boxpar^.ClientNewsPass:='';
 
-    if pppm then
-      _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_Client)))
-    else
-      if nt in [nt_NNTP, nt_POP3, nt_IMAP] then
+    case nt of
+      nt_Client:
+        _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_Client)));
+      nt_NNTP, nt_POP3, nt_IMAP: 
         INetNameRead(nt,name,user,komm,real,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
         NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
+    end;    
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
       dbSeek(d,boiName,UpperCase(name));
       if dbFound then rfehler(921)   { 'Box ist bereits vorhanden' }
@@ -346,13 +341,12 @@
         boxpar^.ClientPhone:=clphn;
         boxpar^.ClientLogin:=cllog;
         boxpar^.ClientPass:=clpas;
-        boxpar^.ClientMode:=pppm;
         boxpar^.boxname:=name;
         boxpar^.username:=user;
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;
         boxpar^.passwort:=iifs(deutsch,'GEHEIM','SECRET');
-        if pppm then boxpar^.ClientMailInEnv:=email;
+        boxpar^.ClientMailInEnv:=email;
         boxpar^.telefon:='';
         nt_bpar(nt,boxpar^);
         if boxpar^.prototyp='' then
@@ -956,34 +950,34 @@
     dialog(ival(getres2(921,0)),9+add,kompname,x,y);
     with boxpar^ do begin
       maddint(3,2,getres2(921,1),connwait,5,4,1,1000);       { 'Warten auf Verbindung' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30130) else mhnr(160);
+      if nt=nt_Client then mhnr(30130) else mhnr(160);
       if not fido then
         maddint(3,3,getres2(921,2),loginwait,5,4,1,1000);    { 'Warten auf Login     ' }
-        if (nt=nt_UUCP) and ClientMode then mhnr(30131) else mhnr(161);
+        if nt=nt_Client then mhnr(30131) else mhnr(161);
       maddint(3,4+add,getres2(921,3),redialwait,5,4,2,1000); { 'WÑhlpause           ' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30132) else mhnr(162);
+      if nt=nt_Client then mhnr(30132) else mhnr(162);
       maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale WÑhlversuche' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30133) else mhnr(163);
+      if nt=nt_Client then mhnr(30133) else mhnr(163);
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
-        if (nt=nt_UUCP) and ClientMode then mhnr(30134) else mhnr(164);
+        if nt= nt_Client then mhnr(30134) else mhnr(164);
         if (nt<>nt_UUCP) then
           maddint(35,3,getres2(921,6),packwait,5,4,1,9999);  { 'Warten auf Daten' }
         end;
       maddint(35,4+add,getres2(921,7),connectmax,5,4,1,10);   { 'max. Connects  ' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30135) else mhnr(166);
+      if nt=nt_Client then mhnr(30135) else mhnr(166);
       maddint(35,5+add,getres2(921,8),mincps,5,4,0,9999);    { 'min. cps-Rate   ' }
       if (nt=nt_UUCP) or not (fido or stricmp(uploader,'ZMODEM') or
                                       stricmp(downloader,'ZMODEM')) then
         mdisable;
       maddstring(3,7+add,getres2(921,9),modeminit,41,60,''); { 'Modem-Init ' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30136) else mhnr(168);
+      if nt=nt_Client then mhnr(30136) else mhnr(168);
       schnitte:='COM'+strs(bport);
       maddstring(3,9+add,getres2(921,10),schnitte,4,4,'');   { 'Schnittstelle ' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30137) else mhnr(169);
+      if nt=nt_Client then mhnr(30137) else mhnr(169);
       mappsel(true,'COM1˘COM2˘COM3˘COM4');
       maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'Uebertragungsrate:' }
-      if (nt=nt_UUCP) and ClientMode then mhnr(30138) else mhnr(170);
+      if nt=nt_Client then mhnr(30138) else mhnr(170);
       mappsel(false,'300˘1200˘2400˘4800˘9600˘19200˘38400˘57600˘115200');
       msetvfunc(testbaud);
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
@@ -1273,19 +1267,23 @@
       if (nt=nt_Fido) or (nt=nt_UUCP) then begin
         fl:=3; el:=35;
         maddstring(3,2,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
-        if nt=nt_UUCP then begin
-          if ClientMode then mhnr(30150) else mhnr(8036);
-          end
-        else mhnr(183);
+        case nt of
+          nt_UUCP: mhnr(8036);
+          nt_Client: mhnr(30150);
+        else
+          mhnr(183);
+        end;
         msetvfunc(testfidodir);
 
         maddstring(3,4,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
-        if nt=nt_UUCP then begin
-          if ClientMode then mhnr(30150) else mhnr(8036);
-          end
-        else mhnr(183);
+        case nt of
+          nt_UUCP: mhnr(8036);
+          nt_Client: mhnr(30150);
+        else
+          mhnr(183);
+        end;
         msetvfunc(testfidodir);
-        end
+      end
       else if nt=nt_QWK then begin
         fl:=12; el:=33;
         maddstring(3,2,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
@@ -1908,7 +1906,7 @@
                          +getres2(927,10)       { ^Diverse }
                          +getres2(927,4);       { ,^Transfer }
                    end;
-      nt_UUCP:     if not BoxPar^.ClientMode then begin
+      nt_UUCP:   begin
                      pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
@@ -1917,7 +1915,8 @@
                          +getres2(927,28)       { ^UUCP, }
                          +getres2(927,10)       { ^Diverse }
                          +getres2(927,11);      { ,^Sysop-Mode }
-                   end else begin
+                   end;
+      nt_Client:     begin
                      pushhp(131);
                      nts:='^Client,'
                          +getres2(927,40)       { Mail-/^News-Server, }
@@ -1980,7 +1979,7 @@
                         3: EditDiverses(nt,brk);
                         4: EditSysopdaten(nt,brk);
                       end;
-        nt_UUCP     : if not BoxPar^.ClientMode then case n of
+        nt_UUCP     : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
 //                      3: EditGebuehren(brk);
@@ -1988,7 +1987,8 @@
                         4: EditUUCP(brk);
                         5: EditDiverses(nt,brk);
                         6: EditSysopdaten(nt,brk);
-                      end else case n of
+                      end;
+       nt_Client    : case n of
                         1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
                         2 : EditTransport(nt,brk);
                         3 : EditExtern(fn,brk);
@@ -2072,15 +2072,12 @@
       dbRead(d,'netztyp',nt); 
       fn := dbReadStr(d,'dateiname');
       ReadBoxPar(nt,fn);
-      if (Boxpar^.ClientMode) and (nt = nt_UUCP) then nt:=nt_Client;  
       nt1:=nt;
       Box := dbReadStr(d,'boxname');
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
-         ReadJN(getreps2(929,5,box),true) then begin
-                       { 'Mîchten Sie den Netztyp fÅr %s wirklich Ñndern' }
-        Boxpar^.ClientMode:=nt=nt_Client;
-        if nt=nt_Client then nt:=nt_UUCP;
+         ReadJN(getreps2(929,5,box),true) then 
+      begin { 'Mîchten Sie den Netztyp fÅr %s wirklich Ñndern' }
         WriteBox(fn,BoxPar);
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
@@ -2098,6 +2095,9 @@
 
 {
   $Log$
+  Revision 1.40  2001/11/24 20:29:25  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.39  2001/11/24 17:27:34  mk
   - some little client mode fixes
 

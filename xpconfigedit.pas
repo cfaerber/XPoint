@@ -702,11 +702,6 @@ var d         : DB;
             s3 := dbReadStr(d,'Kommentar');
             dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
-            if nt=nt_UUCP then  { Pseudo-Netztyp RFC/Client }
-            begin
-              ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-              if Boxpar^.ClientMode then nt:= nt_Client; 
-            end;   
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
             {$IFDEF Unix }
@@ -1271,7 +1266,6 @@ var x,y  : Integer;
     ntyp : string;
     nt   : byte;
     i,b : integer;
-    pppm : boolean;
 label restart;
 begin
 restart:
@@ -1295,12 +1289,6 @@ restart:
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
-  pppm:=false;
-  if LowerCase(ntyp)=LowerCase(ntName(nt_Client)) then
-  begin
-    ntyp:=ntName(nt_UUCP);
-    pppm:=true;
-  end;
   for i:=0 to High(SupportedNetTypes) do
     if LowerCase(ntyp)=LowerCase(ntName(SupportedNetTypes[i])) then
       nt:= SupportedNetTypes[i];
@@ -1309,7 +1297,7 @@ restart:
   email:='';
 
   dom:=ntDefaultDomain(nt);
-  if pppm then 
+  if nt = nt_Client then 
   begin
     email:=user;
     if not IsMailaddress(email) then
@@ -1350,7 +1338,7 @@ restart:
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
-    else      if not pppm then boxpar^.pointname:=''
+    else      if not nt = nt_Client then boxpar^.pointname:=''
               else 
               begin
                 b := cpos('@', eMail);
@@ -1362,7 +1350,6 @@ restart:
   dbFlushClose(d);
   boxpar^.boxname:=name;
   boxpar^.username:=user;
-  boxpar^.ClientMode:=pppm;
   boxpar^._Domain:=dom;
   if (nt=nt_UUCP) and FileExists('uucp.scr') then
     boxpar^.script:=FileUpperCase('uucp.scr');
@@ -1633,6 +1620,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2001/11/24 20:29:25  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.28  2001/11/24 16:20:36  mk
   - reenabled client mode again
 

@@ -790,9 +790,9 @@ var
   uucp : boolean;
 begin
   uucp:=(netztyp=nt_UUCP);
+  TempPPPMode := (netztyp = nt_Client);
   with BoxPar^ do
   begin
-    TempPPPMode := ClientMode;
     if SysopInp+SysopOut<>'' then TempPPPMode := false;
     SysopMode:=(SysopInp+SysopOut<>'');
     if SysopMode then
@@ -1357,6 +1357,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2001/11/24 20:29:26  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.38  2001/10/15 20:46:13  ma
   - fixed: Netcall/All did not work properly with internal RFC net types
 

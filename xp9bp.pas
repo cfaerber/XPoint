@@ -197,7 +197,6 @@ begin
     SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
 
     // Client Mode
-    ClientMode:= false;
     ClientPath:= '';
     ClientExec := '';
     ClientAddServers:= '';
@@ -384,7 +383,6 @@ begin
             getr(su,  'Letzte Verbindung',double(LastCall)) or
 
             // Client Mode
-            getx(su,  'Client-Mode', ClientMode) or
             gets(s,su,'Client-Path', ClientPath) or
             gets(s,su,'Client-Exec', ClientExec) or
             gets(s,su,'Client-AddServers', ClientAddServers) or
@@ -445,13 +443,13 @@ begin
     rfehler(902);     { 'ungueltiger Boxname!' }
     exit;
     end;
-  with
-  bp^ do begin
+  with bp^ do 
+  begin
     writeln(t,'Boxname=',boxname);
     writeln(t,'Pointname=',pointname);
     writeln(t,'Username=',username);
     writeln(t,'Domain=',_domain);
-    writeln(t,'FQDN=',_fqdn);  {16.01.00 HS}
+    writeln(t,'FQDN=',_fqdn);  
     writeln(t,'Passwort=',passwort);
     writeln(t,'Telefon=',telefon);
     writeln(t,'ZerbID=',zerbid);
@@ -564,7 +562,6 @@ begin
     ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
 
-    writeln(t,'Client-Mode=', jnf(ClientMode));
     writeln(t,'Client-Path=', ClientPath);
     writeln(t,'Client-Exec=', ClientExec);
     writeln(t,'Client-AddServers=', ClientAddServers);
@@ -572,11 +569,8 @@ begin
     writeln(t,'Client-Phone=', ClientPhone);
     writeln(t,'Client-Login=', ClientLogin);
     writeln(t,'Client-Password=', ClientPass);
-    if ClientMode then
-    begin
-      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
-      CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
-    end;
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    if Trim(XFerDir) <> '' then CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
     writeln(t,'Client-ExternalConfig=', ClientExternalConfig);
     writeln(t,'Client-MailInServer=', ClientMailInServer);
     writeln(t,'Client-MailInEnvelope=', ClientMailInEnv);
@@ -694,6 +688,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/11/24 20:29:25  mk
+  - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
+
   Revision 1.54  2001/10/05 20:55:02  ma
   - initial number of newsgroup postings to fetch now independent
     of maximum number to fetch
