@@ -877,6 +877,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ScrollLock   : boolean;       { umschaltbarer Scroll-Mode }
        GrossWandeln : boolean;       { Adressen in Groáschreibung wandeln }
        HaltOwn      : boolean;
+       HaltOwnPM    : boolean;
        DispUsername : boolean;
        SaveUVS      : boolean;       { AutoPark }
        EmpfBest     : boolean;       { autom. Empfangsbest„tigungen }
@@ -1094,6 +1095,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.87  2000/08/26 08:47:42  mk
+  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.86  2000/08/15 12:52:57  mk
   - Boxenkonfiguration fuer NNTP/POP3/SMTP verfeinert
 

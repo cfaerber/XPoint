@@ -304,7 +304,7 @@ var x,y : byte;
 begin
   for i:=0 to 3 do
     xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
-  dialog(57,20,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
+  dialog(57,21,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergr”áe fr Bin„rnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
@@ -312,9 +312,10 @@ begin
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
   maddbool(3,7,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
-  maddbool(3,8,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+  maddbool(3,8,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
+  maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
-  maddbool(3,9,getres2(252,16),rehochn);        { 'Re^n verwenden' }
+  maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
 {$IFNDEF Linux }
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
@@ -325,16 +326,16 @@ begin
   maddstring(36,9,'## XP ## ',xid,7,7,'');
   for i:=3 downto 0 do
     mappsel(true,xids[i]);   { 'immerùAMsùPMsùnie' }
-  maddbool(3,11,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /¯Unversandt' }
-  maddbool(3,12,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
-  maddbool(3,13,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
-  maddbool(3,14,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,15,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
-  maddbool(3,16,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
-  maddbool(3,17,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
-  maddint (3,19,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit ber ' }
+  maddbool(3,12,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /¯Unversandt' }
+  maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
+  maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
+  maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
+  maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
+  maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
+  maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
+  maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit ber ' }
   maddtext(9+length(getres2(252,24)),19,getres2(252,25),0);  { 'Empf„ngern l”schen' }
-  maddbool(3,20,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1492,6 +1493,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/08/26 08:47:42  mk
+  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.53  2000/08/15 11:12:23  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 

@@ -573,6 +573,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
+  haltownpm:=false; 
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -853,6 +854,7 @@ begin
   writeln(t,'HayesBefehle=',jnf(hayescomm));
   writeln(t,'GrossWandeln=',jnf(grosswandeln));
   writeln(t,'EigeneMsgsHalten=',jnf(haltown));
+  writeln(t,'EigenePMsHalten=',jnf(haltownPM));
   writeln(t,'ShowUsername=',jnf(dispusername));
   writeln(t,'SaveUnversandt=',jnf(SaveUVS));
   writeln(t,'EmpfangsBestaetigung=',jnf(empfbest));
@@ -1413,6 +1415,7 @@ begin
           getx(su,  'HayesBefehle',hayescomm) or
           getx(su,  'GrossWandeln',grosswandeln) or
           getx(su,  'EigeneMsgsHalten',haltown) or
+          getx(su,  'EigenePMsHalten',haltownPM) or
           getx(su,  'ShowUsername',dispusername) or
           getx(su,  'SaveUnversandt',SaveUVS) or
           getx(su,  'EmpfangsBestaetigung',EmpfBest) or
@@ -1698,6 +1701,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.85  2000/08/26 08:47:43  mk
+  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.84  2000/08/15 11:12:23  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 

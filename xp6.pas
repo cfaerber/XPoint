@@ -1788,7 +1788,7 @@ fromstart:
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
       else if not (HaltOwn and (sendbox or _verteiler))
-        or pm then b:=0;                { Eigene Nachrichten Halten gilt nicht fuer Mails }
+        or (pm and not HaltOwnPM) then b:=0; { Eigene Nachrichten Halten gilt nicht fuer Mails }
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
@@ -2126,6 +2126,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.63  2000/08/26 08:47:43  mk
+  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.62  2000/08/23 13:55:14  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst
