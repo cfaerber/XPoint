@@ -16,7 +16,7 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-uses  xpglobal, dos,typeform,xpdatum,xpovl;
+uses  xpglobal, dos,typeform,xpdatum,xpovl,fileio;
 
 const
       readfirst = 2500;
@@ -279,6 +279,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.2.4  2001/09/17 07:38:17  mw
+
+  - PMCONV wieder compilierbar ( fileio eingetragen )
+
   Revision 1.3.2.3  2001/09/07 13:37:06  mk
   - removed makebak (is included fileio)
 
