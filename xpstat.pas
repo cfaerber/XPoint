@@ -11,9 +11,6 @@
 { CrossPoint - Statistik-Routinen }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpstat;
 
@@ -287,11 +284,7 @@ begin
     dbSeek(bbase,biBrett,'A');
     ende:=dbEOF(bbase);
     end;
-  {$IFDEF BP }
-    smax:=min(maxrec,(maxavail-20000) div sizeof(statrec));
-  {$ELSE }
-    smax:=maxrec;
-  {$ENDIF }
+  smax:=maxrec;
   smax:=min(sysmax, smax); { Nur bis Anzahl der gew„hlten Systeme }
   getmem(st,smax*sizeof(statrec));
   fillchar(st^,smax*sizeof(statrec),0);
@@ -770,9 +763,7 @@ begin
       end;
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   dos.findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
@@ -787,9 +778,7 @@ begin
       end;
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   more:=(ppanz>screenlines-11);
   if more then dec(ppanz);
   for i:=1 to ppanz-1 do                       { Bubble-Sort Boxen }
@@ -835,9 +824,7 @@ begin
       inc(sumbytes,sr.size+attsize);
       dos.findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
     inc(yy);
     end;
@@ -1113,11 +1100,7 @@ begin
   writeln(t,dup(length(getres2(2612,26))+8,'-'));
   writeln(t);
   writeln(t);
-  {$IFDEF BP }
-    bufs:=min(maxavail-2000,16384);
-  {$ELSE }
-    bufs:=16384;
-  {$ENDIF }
+  bufs:=16384;
   getmem(buf,bufs);
 
   new(zone); zones:=0;
@@ -1270,6 +1253,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/06/22 19:53:33  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.14  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

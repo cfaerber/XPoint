@@ -28,7 +28,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{.$DEFINE Snapshot}
+{$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -40,8 +40,10 @@
   prozedur enthalten sein }
 {$DEFINE NeedReg }
 
-{$IFDEF BP }
-  !!! 32 Bit Compiler wird benîtigt
+{$IFNDEF VirtualPascal }
+  {$IFNDEF FPC }
+    !! Im Moment wird nur FreePascal und Virtual Pascal unterstÅtzt
+  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF VER130 }          { Delphi 5 }
@@ -130,6 +132,9 @@
 
 {
   $Log$
+  Revision 1.32  2000/06/22 19:53:32  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.31  2000/06/22 17:14:12  mk
   - 16 Bit Teile entfernt
 

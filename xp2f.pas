@@ -878,11 +878,7 @@ begin
   y:=screenlines-16;
   attrtxt(7);
   clwin(1,27,y-1,y+16);
-  if videotype<2 then begin
-    b:=b and $7f; nn:=7;
-    end
-  else
-    nn:=15;
+  nn:=15;
   yp:=b and 15;
   xp:=b div 16;
   if xp>7 then begin
@@ -926,18 +922,6 @@ begin
   pophp;
   if t=keyesc then begin
     b:=mb; ssp; end;
-end;
-
-
-procedure NextBorder;
-begin
-  if videotype=0 then
-    rfehler(216)        { 'Bei Hercules-Grafikkarten nicht m”glich!' }
-  else
-    col.colborder:=(col.colborder+1) mod iif(videotype<2,16,64);
-{$IFDEF BP }
-  SetXPborder;
-{$ENDIF }
 end;
 
 procedure CfgColors;
@@ -1013,7 +997,6 @@ begin
                1 : cset(coltline);
                2 : cset(colarcstat);
                3 : cset(colmapsbest);
-               4 : NextBorder;
              end;
            until m=0;
        7 : repeat    { Bretter/User }
@@ -1181,13 +1164,16 @@ begin
   showscreen(false);
   aufbau:=true;
   menurestart:=(n=0);
-  wpop;           
+  wpop;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.13  2000/06/22 19:53:31  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.12  2000/05/19 19:48:54  mk
   - C/A/F baut jetzt den Bildschirm wieder korrekt auf
 

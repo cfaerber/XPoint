@@ -11,9 +11,6 @@
 { PGP-Codierung }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit  xp_pgp;
 
@@ -49,29 +46,10 @@ uses  xp3,xp3o,xp3o2,xp3ex,xp6,xpcc,xpnt;
 
 const
   savekey : string = '';
-  flag_PGPSigOk = $01;    
-  flag_PGPSigErr = $02;    
-
-{ MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben
-  JG 08.01.00: Routine optimiert }
+  flag_PGPSigOk = $01;
+  flag_PGPSigErr = $02;
 
 function testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
-{$IFDEF BP }
-asm
-         push ds
-         mov   cx,rr
-         lds   si,bdata
-         cld
-@tbloop: lodsb
-         cmp   al,9                     { BinÑrzeichen 0..8, ja: c=1 }
-         jb    @tbend                  { JB = JC }
-         loop  @tbloop
-@tbend:  mov ax, 0
-       {  adc ax,ax }                      { C=0: false, c=1: true }
-         sbb ax,ax
-         pop ds
-end;
-{$ELSE }
 asm
          mov   ecx,rr
          mov   esi,bdata
@@ -88,7 +66,6 @@ end ['EAX', 'ECX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
-{$ENDIF}
 
 procedure LogPGP(s:string);
 var t : text;
@@ -595,7 +572,7 @@ begin
         WrSigflag(flag_PGPSigOk);
       end
     end;
-    
+
     if sigtest then begin
       dbReadN(mbase,mb_netztyp,l);
       l:=l or $4000;                      { Flag fÅr 'Signatur vorhanden' }
@@ -801,6 +778,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/06/22 19:53:32  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.19  2000/05/08 22:15:55  oh
   -PGP 2.6.x: einmal war ein Space vor dem t drin, zweimal nicht. Angeglichen. Fix fuer den vorherigen Fix.
 

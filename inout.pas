@@ -21,10 +21,6 @@ UNIT inout;
 
 {$I XPDEFINE.INC }
 
-{$IFDEF BP }
-  {$O-,F+}
-{$ENDIF }
-
 {  ==================  Interface-Teil  ===================  }
 
 INTERFACE
@@ -177,7 +173,6 @@ procedure SetSeconds(sec,flash:boolean);        { Sekundenanzeige ein/aus }
 Procedure multi2;                               { vorgeg. Backgr.-Prozess }
 Procedure initscs;                              { Screen-Saver init       }
 
-procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
 {$IFNDEF NCRT }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
 {$ENDIF }
@@ -274,8 +269,7 @@ procedure mdelay(msec:word);
 
 { ================= Implementation-Teil ==================  }
 
-IMPLEMENTATION
-
+implementation
 
 uses
   maus2, winxp;
@@ -309,29 +303,19 @@ var    ca,ce,ii,jj : byte;
 function memadr(x,y:byte):word;forward;
 
 function ticker:longint;
-{$IFDEF Ver32 }
 var
   h, m, s, hund : rtlword;
-{$ENDIF }
 begin
-{$IFDEF Ver32 }
   GetTime(h, m, s, hund);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
     (hund / (100 / TickFreq)));
-{$ELSE }
-  ticker:=meml[Seg0040:$6c];
-{$ENDIF}
 end;
 
 { !! Diese Funktion lieft mit and $70 nur CAPSLock zurÅck,
   das kann nicht sinn der Sache sein. Mu· geprÅft werden }
 function kbstat:byte;     { lokal }
 begin
-{$IFDEF BP }
-  kbstat:=mem[Seg0040:$17] and $70;
-{$ELSE }
   kbstat := 0;
-{$ENDIF }
 end;
 
 {$IFNDEF NCRT }
@@ -347,61 +331,43 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-{$IFDEF BP }
-Procedure CurLen(a,e:byte); assembler;
-asm
-  mov ah, 1
-  mov ch, a
-  mov cl, e
-  int $10
-end;
-{$ENDIF }
-
 Procedure Cursor(t:curtype);
 {$IFDEF Win32 }
 var
   Info: TConsoleCursorInfo;
 {$ENDIF }
 begin
-{$IFDEF BP }
+{$IFDEF Win32 }
   case t of
-    curnorm : curlen(ca,ce);
-    cureinf : curlen(max(ca-4,1),ce);
-    curoff  : curlen(ca+$20,ce);
+    curnorm: begin
+               Info.bVisible := true;
+               Info.dwSize := 15;
+             end;
+    cureinf: begin
+               Info.bVisible := true;
+               Info.dwSize := 100;
+             end;
+    curoff:  begin
+               Info.bVisible := false;
+               Info.dwSize := 50;
+             end;
   end;
+  SetConsoleCursorInfo(Outhandle, Info);
 {$ELSE }
-  {$IFDEF Win32 }
-    case t of
-      curnorm: begin
-                 Info.bVisible := true;
-                 Info.dwSize := 15;
-               end;
-      cureinf: begin
-                 Info.bVisible := true;
-                 Info.dwSize := 100;
-               end;
-      curoff:  begin
-                 Info.bVisible := false;
-                 Info.dwSize := 50;
-               end;
-    end;
-    SetConsoleCursorInfo(Outhandle, Info);
-  {$ELSE }
-    {$IFDEF FPC }
-        case t of
-          curnorm : Cursoron;
-          cureinf : CursorBig;
-          curnone,
-          curoff  : CursorOff;
-        end;
-    {$ENDIF }
-    {$IFDEF VP }
+  {$IFDEF FPC }
       case t of
-        curnorm : SysTVSetCurType(-85, -100, true);
-        cureinf : SysTVSetCurType(0, -100, true);
-        curoff  : SysTVSetCurType(-100, -100, false);
+        curnorm : Cursoron;
+        cureinf : CursorBig;
+        curnone,
+        curoff  : CursorOff;
       end;
-    {$ENDIF }
+  {$ENDIF }
+  {$IFDEF VP }
+    case t of
+      curnorm : SysTVSetCurType(-85, -100, true);
+      cureinf : SysTVSetCurType(0, -100, true);
+      curoff  : SysTVSetCurType(-100, -100, false);
+    end;
   {$ENDIF }
 {$ENDIF }
   lastcur:=t;
@@ -413,19 +379,6 @@ end;
 
 Procedure GetCur(var a,e,x,y:byte);
 begin
-{$IFDEF BP }
-  asm
-        mov ah, 3
-        mov bh, 0
-        int $10
-        and ch, $7f
-        les di, a
-        mov es:[di], ch
-        and cl, $7f
-        les di, e
-        mov es:[di], cl
-  end;
-{$ENDIF }
   x :=wherex; y:=wherey;
 end;
 
@@ -448,9 +401,6 @@ begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
   gotoxy(sx[cursp],sy[cursp]);
-{$IFDEF BP }
-  curlen(sa[cursp],se[cursp]);
-{$ENDIF }
   dec(cursp);
   if cursp<1 then cursp:=maxsave;
 end;
@@ -740,37 +690,9 @@ begin
   until z<>'!!';
 end;
 
-{$IFDEF BP }
-function BiosWord(off:word):word;
-begin
-  BiosWord:=memw[Seg0040:off];
-end;
-{$ENDIF}
-
 Procedure testbrk(var brk:boolean);
-{$IFDEF BP }
-const k1     = $1a;
-      k2     = $1c;
-      bstart = $80;
-      bend   = $82;
-var   t      : taste;
-      k      : word;
-begin
-  brk:=false;
-  if BiosWord(k1)<>BiosWord(k2) then begin
-    k:=BiosWord(k1);
-    while (k<>BiosWord(k2)) and not brk do begin
-      t:=chr(mem[Seg0040:k]);
-    { if t=#0 then t:=t+chr(mem[$40:k+1]);  Sondertasten hier nicht nîtig }
-      brk:=(t=keyesc);
-      inc(k,2); if k>BiosWord(bend) then k:=BiosWord(bstart);
-      end;
-    if brk then clearkeybuf;
-    end;
-{$ELSE }
 begin
   brk := false;
-{$ENDIF }
 end;
 
 
@@ -813,52 +735,21 @@ end;
 
 {$IFNDEF NCRT }
 Procedure clrscr;
-{$ifndef ver32}
-var regs : registers;
-{$endif}
 begin
-  {$ifndef ver32}
-  regs.ax:=$500;      { Video-Seite 0 setzen }
-  intr($10,regs);
-  {$endif}
   crt.clrscr;
 end;
 {$ENDIF }
 
-(* schon in win definiert - falls gebraucht, unit winxp einbinden!
-Procedure Wrt(x,y:byte; s:string);
-begin
-  gotoxy(x,y);
-  write(s);
-end;
-*)
-
 {$IFNDEF NCRT }
 Procedure disphard(x,y:byte; s:string);
 var
-{$IFDEF BP }
-  offx : word;
-  i    : byte;
-  back : word;
-{$ENDIF }
     TempAttr: Word;
 begin
-{$IFDEF Ver32 }
   TempAttr := TextAttr;
   TextAttr := dphback;
-{$ENDIF }
   moff;
-{$IFDEF BP }
-  back:=dphback shl 8;
-  offx:=memadr(x,y);
-  for i:=1 to length(s) do begin
-    memw[base:offx]:=byte(s[i])+back;
-    inc(offx,2);
-  end;
-{$ELSE }
   FWrt(x, y, s);
   TextAttr := TempAttr;
-{$ENDIF}
   mon;
 end;
 {$ENDIF }
@@ -1530,12 +1421,6 @@ begin
   en:=enabbr;
 end;
 
-{$IFDEF BP}
-procedure dummy; interrupt;
-begin
-end;
-{$ENDIF}
-
 {$IFDEF FPC }
   {$HINTS ON }
 {$ENDIF }
@@ -1604,37 +1489,8 @@ begin
 end;
 
 procedure chalt;
-{$IFDEF BP }
-var x,y : byte;
-    regs: registers;
-    buf : array[1..512] of byte;
-begin
-  sound(9000);
-  attrtxt(7);
-  clrscr;
-  cursor(curoff);
-  checkbreak:=false;
-  setintvec(9,@dummy);
-  repeat
-    x:=random(78)+2; y:=random(25)+1;
-    memw[base:memadr(x,y)]:=ord('.')+$f00;
-    delay(25);
-    memw[base:memadr(x,y)]:=32+$f00;
-    if random>0.8 then
-    {$IFNDEF DPMI}
-    with regs do begin
-      ax:=$201;
-      cx:=256*random(10)+1;
-      dx:=0;
-      es:=seg(buf); bx:=ofs(buf);
-      intr($13,regs);
-      end;
-    {$ENDIF}
-  until false;
-{$ELSE }
 begin
   Halt(0);
-{$ENDIF}
 end;
 
 
@@ -1651,10 +1507,6 @@ end;
 
 
 Function CopyChr(x,y:byte):char;
-{$IFDEF BP }
-begin
-  CopyChr:=chr(mem[base:(2*x-2) + 2*zpz*(y-1)]);
-{$ELSE }
 {$IFDEF NCRT }
 begin
   CopyChr:= '?'; { <--- Notfalls doch wieder LocalScreen }
@@ -1665,7 +1517,6 @@ var
 begin
   GetScreenChar(x, y, c, Attr);
   CopyChr := c;
-{$ENDIF}
 {$ENDIF}
 end;
 
@@ -1709,30 +1560,6 @@ begin
   if check<>chkn then chalt;
 end;
 
-
-{$IFDEF BP }
-procedure testcga;
-var regs : registers;
-begin
-  with regs do begin   { s. PC Intern 2.0, S. 347 }
-    ah:=$12;
-    bl:=$10;
-    intr($10,regs);
-    cga:=(bl=$10);
-    end;
-end;
-
-procedure getzpz;
-var regs : registers;
-begin
-  regs.ah:=$f;
-  intr($10,regs);
-  zpz:=regs.ah;
-end;
-
-{$ENDIF }
-
-
 procedure waitkey(x,y:byte);
 var t : taste;
 begin
@@ -1761,20 +1588,9 @@ var t      : longint;
 
   procedure idle;
   begin
-{$IFDEF BP }
-    case int15delay of
-      2 : intr($28,regs);
-      3 : inline($b8/$00/$00/$99/$fb/$f4/$35/$ca/$90);
-      4 : with regs do begin
-            ax:=$1680;
-            if meml[0:$2f*4]<>0 then intr($2f,regs);
-          end;
-    end;
-{$ELSE }
   {$IFDEF Win32 }
     Sleep(1);
   {$ENDIF }
-{$ENDIF }
   end;
 
 begin
@@ -1802,15 +1618,6 @@ begin
 end;
 {$endif}
 {$ENDIF } { NCRT }
-
-procedure IoVideoInit;
-begin
-{$IFDEF BP }
-  color:=(mem[Seg0040:$49]<>7);
-  if color then testcga;
-  getzpz;
-{$ENDIF}
-end;
 
 begin
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
@@ -1842,7 +1649,6 @@ begin
   cursp:=0;
   multi3:=dummyFN;
   memerror:=dummyFN;
-  IoVideoInit;
   fillchar(zaehler,sizeof(zaehler),0);
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
@@ -1852,6 +1658,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.38  2000/06/01 16:03:04  mk
   - Verschiedene Aufraeumarbeiten
 

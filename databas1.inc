@@ -186,7 +186,6 @@ begin
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
-{$IFDEF Ver32 }
       { Expand-Node Pascal Version }
       anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
@@ -195,9 +194,7 @@ begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
       end;
-{$ELSE }
-      expand_node(rbuf,np);
-{$ENDIF }
+      {  expand_node(rbuf,np); }
       freemem(rbuf,irsize);
      end;
 end;
@@ -269,6 +266,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.10  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -171,32 +171,6 @@ END;
 
 procedure CCITT_CRC32_calc_Block(var block; size: word);
                                 {&uses ebx,esi,edi} assembler;  {  CRC-32  }
-{$IFDEF BP }
-asm
-     mov bx, word ptr CRC_reg
-     mov dx, word ptr CRC_reg+2
-     mov dx, bx
-     les di, block
-     mov si, size
-     or  si, si
-     jz  @u4
-@u3: mov al, byte ptr es:[di]
-     mov cx, 8
-@u1: rcr al, 1
-     rcr dx, 1
-     rcr bx, 1
-     jnc @u2
-     xor bx, $8320
-     xor dx, $edb8
-@u2: loop @u1
-     inc di
-     dec si
-     jnz @u3
-     mov word ptr CRC_reg, bx
-     mov word ptr CRC_reg+2, dx
-@u4:
-end;
-{$ELSE }
 asm
      mov ebx, CRC_Reg
      mov edi, block
@@ -220,7 +194,6 @@ end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
-{$ENDIF }
 
 function CRC32Str(s: string) : longint;
 begin
@@ -241,6 +214,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.2  2000/06/19 23:14:47  mk
   - CRCFile rausgenommen, verschiedenes
 

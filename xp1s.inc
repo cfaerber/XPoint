@@ -111,7 +111,7 @@ begin
     end;
     if (cls=2) or (cls=-1) then begin
       if shell25 and (screenlines>25) then
-        setvideomode(3);
+        { setvideomode(3) };
       if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurÅck zu CrossPoint. }
       end;
     cursor(curon);
@@ -519,6 +519,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/06/22 19:53:30  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.24  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

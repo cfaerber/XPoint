@@ -14,18 +14,9 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
 {$IFDEF Win32 }
   {$R ICONS.RES }
 {$ENDIF }
-
-{$IFDEF BP }
-  {$F+}
-  {$M 32768,131072,655360}
-{$ENDIF}
 
 {$IFDEF OS2 }
   {$M 131072,524288}
@@ -50,9 +41,6 @@ uses xpx,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpglobal,
-{$IFDEF CAPI }
-     capi,
-{$ENDIF }
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
      xp1o,
@@ -105,26 +93,6 @@ uses xpx,
 {$ENDIF }
      xpimpexp; { Import/Export      }
 
-{$IFNDEF Ver32 } { Bei 32 Bit brauchen wir keine Overlays }
-{$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
-{$O clip}    {$O editor}  {$O databaso} {$O feiertag}
-{$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
-{$O xp1help}
-{$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
-{$O xp3o}    {$O xp3o2}   {$O xp3ex}
-{$O xp4}     {$O xp4e}    {$O xp4o}     {$O xp4o2}    {$O xp4o3}
-{$O xpauto}  {$O xp5}     {$O xpreg}    {$O xp6}      {$o xp6o}
-{$O xp7}     {$O xp7o}    {$O xp7f}
-{$O xpuu}    {$O xp8}     {$O xp9}      {$O xp9bp}    {$O xp10}    {$O xpe}
-{$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
-{$O xpfido}  {$O xpf2}    {$O xpfidonl}
-{$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
-{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
-{$IFDEF CAPI }
-{$O capi }
-{$ENDIF }
-{$ENDIF }
-
 label ende;
 
 var pwcnt:byte;
@@ -166,9 +134,6 @@ begin
       chdir(ownpath);
       end;
     testdiskspace;
-    {$IFDEF BP }
-    testfilehandles;
-    {$ENDIF }
     {$IFDEF OS2 }
       DosSetMaxFH(255);
     {$ENDIF }
@@ -213,9 +178,6 @@ begin
       if not AutoMode then     { in XP7 }
         mainwindow;
       AutoStop;
-{$IFDEF BP }
-      FlushSmartdrive(true);
-{$ENDIF }
       closedatabases;
       exitscreen(iif(ParNojoke,0,1));
       delete_tempfiles;
@@ -231,6 +193,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.30  2000/06/22 19:53:29  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.29  2000/06/19 23:14:47  mk
   - CRCFile rausgenommen, verschiedenes
 

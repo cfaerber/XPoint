@@ -15,9 +15,6 @@
 { RAR, UC2 08/94               }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit archive;
 
@@ -986,11 +983,7 @@ begin
     if pkch<>'PK' then inc(arcofs);   { altes PKZIP-SFX-Format }
     seek(f1,arcofs);
     end;
-{$IFDEF BP }
-  ps:=min(maxavail-1000,maxbuf);
-{$ELSE }
   ps := maxbuf;
-{$ENDIF}
   getmem(p,ps);
   assign(f2,copy(name,1,length(name)-3)+ArcName[abs(typ)]);
   rewrite(f2,1);
@@ -1024,6 +1017,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/22 19:53:23  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.10  2000/05/02 17:48:07  mk
   - Unit crt komplett rausgenommen, da unnoetig
 

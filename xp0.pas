@@ -88,15 +88,9 @@ const  {$IFDEF DPMI}
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
        patchlevel  : string[13] = '*patchlevel*0';
-{$IFDEF Ver32 }
        xp_xp       : string[10] = 'OpenXP';
        xp_name     : string[30] = '## OpenXP '+verstr+betastr;  { fÅr ZConnect-Header }
        xp_origin   : string[15] = '--- OpenXP';
-{$ELSE }
-       xp_xp       : string[10] = 'CrossPoint';
-       xp_name     : string[30] = '## CrossPoint '+verstr+betastr;  { fÅr ZConnect-Header }
-       xp_origin   : string[15] = '--- CrossPoint';
-{$ENDIF }
        xp_short    : string[2]  = 'XP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
@@ -109,7 +103,7 @@ const  {$IFDEF DPMI}
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
-       BaseDir	   = '.openxp/';     { Basisverzeichnis }
+       BaseDir     = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
@@ -143,9 +137,9 @@ const  {$IFDEF DPMI}
        QfgExt      = '.qfg';           { QWK-Config-File   }
        SwapExt     = '.swp';
 {$IFDEF UnixFS}
-       BatchExt	   = '.sh';
+       BatchExt    = '.sh';
 {$ELSE}
-       BatchExt	   = '.bat';
+       BatchExt    = '.bat';
 {$ENDIF}
 
 {$IFDEF UnixFS }
@@ -176,7 +170,7 @@ const  {$IFDEF DPMI}
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
-       Cfg3File	   = 'openxp.cfg';	{ NEue cfg mit Sektionen }
+       Cfg3File    = 'openxp.cfg';      { NEue cfg mit Sektionen }
        ColCfgfile  = 'xpoint.col';
        NewDateFile = 'neues.dat';
        MsgTempFile = 'msg.tmp';
@@ -219,24 +213,24 @@ const  {$IFDEF DPMI}
 {$IFDEF UnixFS }
        TempBatchFN = 'tmpbatch';
 {$ELSE }
-       TempBatchFN = 'tmp.bat';	       { Temp. Batchdatei (siehe fileio) }
+       TempBatchFN = 'tmp.bat';        { Temp. Batchdatei (siehe fileio) }
 {$ENDIF }
 
-				       { Namen der Exe-Dateien }
+                                       { Namen der Exe-Dateien }
 {$IFDEF UnixFS}
-       MaggiBin		: pathstr	= 'maggi';
-       UUCICOBin	: pathstr	= 'uucico';
-       UUZBin		: pathstr	= 'uuz';
-       Yup2PktBin	: pathstr	= 'yup2pkt';
-       ZFidoBin		: pathstr	= 'zfido';
-       ZQWKBin		: pathstr	= 'zqwk';
+       MaggiBin         : pathstr       = 'maggi';
+       UUCICOBin        : pathstr       = 'uucico';
+       UUZBin           : pathstr       = 'uuz';
+       Yup2PktBin       : pathstr       = 'yup2pkt';
+       ZFidoBin         : pathstr       = 'zfido';
+       ZQWKBin          : pathstr       = 'zqwk';
 {$ELSE}
-       MaggiBin		= 'MAGGI.EXE';
-       UUCICOBin	= 'UUCICO.EXE';
-       UUZBin		= 'UUZ.EXE';
-       Yup2PktBin	= 'YUP2PKT.EXE';
-       ZFidoBin		= 'ZFIDO.EXE';
-       ZQWKBin		= 'ZQWK.EXE';
+       MaggiBin         = 'MAGGI.EXE';
+       UUCICOBin        = 'UUCICO.EXE';
+       UUZBin           = 'UUZ.EXE';
+       Yup2PktBin       = 'YUP2PKT.EXE';
+       ZFidoBin         = 'ZFIDO.EXE';
+       ZQWKBin          = 'ZQWK.EXE';
 {$ENDIF}
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
@@ -389,7 +383,7 @@ type   textp  = ^text;
                   ColListQuote  : ColQArr; { Quote-Zeilen + Maps"J" }
                   ColListScroll : byte;   { vertikaler Scroller     }
                   ColListHeader : byte;   { Nachrichtenkopf         }
-                  ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg} 
+                  ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg}
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : ColQArr; { Quote / *hervorgehoben* }
                   ColEditText   : byte;   { Editor, normaler Text   }
@@ -801,7 +795,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParGebdat2 : string[12] = 'tarife.dat';   { 2. Teil der " }
        ParAV      : pathstr = '';      { Archiv-Viewer }
        ParLanguage: string[4] = '';    { /l: Sprache }
-       ParFontfile: pathstr = '';      { /f: Fontdatei laden }
        ParNomem   : boolean = false;   { Speichertest Åbergehen }
        ParNoSmart : boolean = false;   { kein Schreibcache-Flush }
        ParLCD     : boolean = false;   { keine Int10/CharGen-Zugriffe }
@@ -821,10 +814,10 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        SupportCfg : string[12] = 'SUPPORT.CFG';
 {$ENDIF }
        UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
-       
+
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
-                         { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }                                  
+                         { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }
 
        viewer_danger : string[37] = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
        viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
@@ -1072,7 +1065,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoUpload   : boolean;       { CrossTerm - PD-Zmodem-Autoupload }
        AutoDownload : boolean;       { Autodownload }
        TermCOM      : byte;          { Schnittstelle }
-       TermDevice   : string;	     { Device fuer das Terminal }
+       TermDevice   : string;        { Device fuer das Terminal }
        TermBaud     : longint;       { Baudrate }
        TermStatus   : boolean;       { Statuszeile }
        TermInit     : string[40];    { Modem-Init }
@@ -1177,14 +1170,12 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
-{$IFDEF Ver32}
 {$IFDEF NCRT}
-       charbuf	   : string[254];		  { Nicht zu klein :-) }
-       attrbuf	   : array [1..254] of smallword;
+       charbuf     : string[254];                 { Nicht zu klein :-) }
+       attrbuf     : array [1..254] of smallword;
 {$ELSE }
        charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
-{$ENDIF}
 {$ENDIF}
 
 implementation
@@ -1192,6 +1183,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.55  2000/06/22 19:53:29  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.54  2000/06/20 18:17:48  hd
   - Neue Konstanten: UUZBin, UUCICOBin
   - Neue Variable: TermDevice, default: modem

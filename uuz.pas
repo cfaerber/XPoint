@@ -18,20 +18,9 @@
   {$UNDEF NCRT}
 {$ENDIF}
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF BP }
-  {$M 16384,$a000,655360}
-{$ENDIF }
-
 program uuz;
 
 uses  xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
 {$IFDEF Linux }
   linux,
   XPLinux,
@@ -49,26 +38,13 @@ const
       realnlen    = 120;              { L„nge Realname }
       adrlen      = realnlen;
       hderrlen    = 60;
-{$IFDEF Ver32 }
       maxemp      = 500;
       maxulines   = 200;              { max. zus„tzliche U-Zeilen }
       maxmore     = 50;               { max. String's pro RFC-Headerzeile }
       maxrefs     = 50;               { max. gespeicherte References }
       maxfollow   = 20;               { max. Followup-To-Zeilen }
-{$ELSE }
-      maxemp      = 50;
-      maxulines   = 60;               { max. zus„tzliche U-Zeilen }
-      maxmore     = 15;               { max. String's pro RFC-Headerzeile }
-      maxrefs     = 20;               { max. gespeicherte References }
-      maxfollow   = 10;               { max. Followup-To-Zeilen }
-{$ENDIF }
-{$IFDEF BP }
-      bufsize     = 16384;
-      outbufsize  = 16384;
-{$ELSE }
       bufsize     = 32768;
       outbufsize  = 32768;
-{$ENDIF }
       BetreffLen  = 250;
       readempflist= true;
       postadrlen  = 80;
@@ -108,9 +84,6 @@ const
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
 {$ENDIF}
-{$IFDEF BP }
-      SwapFileName= 'uuz.swp';
-{$ENDIF }
       UUserver    = 'UUCP-Fileserver';
       tspecials   = '()<>@,;:\"/[]?=';       { RFC822-Special Chars    }
       tspecials2  = tspecials+' ';           { RFC1341-Speical Chars   }
@@ -183,11 +156,7 @@ type  OrgStr  = string[orglen];
                   absender   : string[realnlen];
                   datum      : string[11];    { Netcall-Format }
                   zdatum     : string[22];    { ZConnect-Format }
-{$IFDEF BP }
-                  pfad,pfad2 : string;        { Netcall-Format }
-{$ELSE }
                   pfad       : HugeString;        { Netcall-Format }
-{$ENDIF }
                   msgid,ref  : string[midlen];{ ohne <> }
                   ersetzt    : string[midlen];{ ohne <> }
                   addrefs    : integer;
@@ -292,7 +261,6 @@ const
       { Wird zum Einlesen der Customizable Headerlines ben”tigt }
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-{$IFDEF Ver32 }
 procedure IBM2ISO;
 var
   i: Integer;
@@ -301,26 +269,6 @@ begin
     for i := 1 to Length(s) do
       s[i] := Char(IBM2ISOTab[byte(s[i])]);
 end;
-{$ELSE }
-procedure IBM2ISO; assembler;
-asm
-     cld
-     mov   bx, offset IBM2ISOtab
-     mov   si, offset s
-     lodsb                           { Stringl„nge }
-     mov   cl,al
-     mov   ch,0
-     jcxz  @@2
-@@1: lodsb
-     xlat
-     mov   [si-1],al
-     loop  @@1
-@@2:
-end;
-{$ENDIF }
-
-
-{$IFDEF Ver32 }
 
 procedure ISO2IBM;
 var
@@ -331,31 +279,6 @@ begin
       if s[i] > #127 then
         s[i] := Char(ISO2IBMTab[byte(s[i])]);
 end;
-
-{$ELSE }
-
-procedure ISO2IBM; assembler;
-asm
-     cld
-     mov   bx,offset ISO2IBMtab - 128
-     mov   si,offset s
-     lodsb                           { Stringl„nge }
-     mov   cl,al
-     mov   ch,0
-     jcxz  @@2
-@@1: lodsb
-     cmp   al,127
-     ja    @@3
-     loop  @@1
-     jmp   @@2
-@@3: xlat
-     mov   [si-1],al
-     loop  @@1
-@@2:
-end;
-
-{$ENDIF }
-
 procedure logo;
 begin
    {$ifndef linux}         { ML 25.03.2000  workaround für Linux - Outputumleitung mgl. }
@@ -545,229 +468,9 @@ end;
 { --- Shell --------------------------------------------------------- }
 
 procedure shell(prog:string; space:word);  { Externer Aufruf }
-{$IFNDEF BP }
 begin
   Exec(prog, '');
 end;
-{$ELSE }
-{$ifndef ver55}
-  const freeptr : pointer = nil;
-{$endif}
-type so = record
-            o,s : word;
-          end;
-var regs  : registers;
-    p     : pointer;
-    fs    : word;
-    brk   : boolean;
-    paras : word;            { belegte Paragraphs von M2  }
-    free  : word;            { freie Paras nach Set Block }
-    envir : array[0..1023+18] of byte;    { neues Environment }
-    dpath : pathstr;
-    para  : string;
-    pp    : byte;
-    sm2t  : boolean;
-
-    swapfile : file;
-    swappars : word;        { auszulagernde Paragraphen }
-    EMShandle: word;        { EMS-Handle, oder 0        }
-    heapfree : word;
-    swapok   : boolean;
-
-
-  function memfree:word;
-  var regs : registers;
-  begin
-    with regs do begin
-      ah:=$48;                { Test, ob residentes Prog. geladen }
-      bx:=$ffff;
-      msdos(regs);
-      memfree:=bx;
-      end;
-  end;
-
-  procedure SwapOut(swapp,count:word);
-  var page,spar,rr : word;
-  begin
-    if EmsAvail>=count div 1024 +1 then
-    begin
-      EMSAlloc(count div 1024+1,EMShandle);
-      page:=0;
-      repeat
-        EmsPage(EMShandle,0,page);
-        if count>=1024 then spar:=1024
-        else spar:=count;
-        FastMove(mem[swapp:0],mem[emsbase:0],spar*16);
-        inc(swapp,spar);
-        dec(count,spar);
-        inc(page);
-      until count=0;
-      swapok:=true;
-      end
-    else begin
-      EmsHandle:=0;
-      assign(swapfile,SwapFileName);
-      rewrite(swapfile,1);
-      repeat
-        blockwrite(swapfile,mem[swapp:0],min(count,$ff0)*16,rr);
-        if (count>0) and (rr=0) then
-          inoutres:=101;
-        inc(swapp,rr div 16);
-        dec(count,rr div 16);
-      until (count=0) or (inoutres<>0);
-      close(swapfile);
-      if inoutres=0 then
-        setfattr(swapfile,readonly);
-      swapok:=inoutres=0;
-      if not swapok then begin
-        error('Fehler beim Speicherauslagern!');
-        if existf(swapfile) then erase(swapfile);
-        end;
-      end;
-  end;
-
-  procedure SwapIn(swapp,count:word);
-  var rr,page,spar : word;
-  begin
-    if emshandle<>0 then begin
-      page:=0;
-      repeat
-        EmsPage(EMShandle,0,page);
-        if count>=1024 then spar:=1024
-        else spar:=count;
-        FastMove(mem[emsbase:0],mem[swapp:0],spar*16);
-        inc(swapp,spar);
-        dec(count,spar);
-        inc(page);
-      until count=0;
-      EmsFree(EMShandle);
-      end
-    else begin
-      setfattr(swapfile,0);
-      reset(swapfile,1);
-      if ioresult<>0 then error('SWAP-File nicht mehr vorhanden!');
-      { swapp:=so(heapptr).s-swappars+2; count:=swappars; }
-      repeat
-        blockread(swapfile,mem[swapp:0],min(count,$ff0)*16,rr);
-        inc(swapp,rr div 16);
-        dec(count,rr div 16);
-      until (count=0) or (rr=0) or (inoutres<>0);
-      if (count<>0) or (inoutres<>0) then
-        error('Fehler beim Lesen des SWAP-Files');
-      close(swapfile);
-      erase(swapfile);
-      end;
-  end;
-
-  { MK Funktion ist eigentlich sinnlos, rausnehmen ? }
-{
-  procedure geterrorlevel;
-  var
-    regs : registers;
-  begin
-    errorlevel:=lo(dosexitcode);
-    if errorlevel=0 then begin
-      regs.ah:=$4d;
-      msdos(regs);
-      errorlevel:=regs.al;
-      end;
-  end;
-}
-
-begin
-  doserror:=0;
-  {$IFDEF BP }
-  if maxavail<$8000 then
-    writeln('Zu wenig freier Speicher fr externen Programmaufruf!')
-  else
-  {$ENDIF }
-  begin
-    pp:=pos(' ',prog);
-    if pp=0 then para:=''
-    else begin
-      para:=' '+trim(copy(prog,pp+1,127));
-      prog:=left(prog,pp-1);
-      end;
-    prog:=ustr(prog);
-
-    {$IFDEF DPMI}
-      exec(prog,para);
-    {$ELSE}
-
-      if so(freeptr).o>0 then          { Gr”áe der Free-Liste ermitteln }
-        fs:=$1000a-so(freeptr).o
-      else
-        fs:=0;
-      if fs>0 then begin               { Freeliste sichern }
-        getmem(p,fs);
-        FastMove(freeptr^,p^,fs);
-        end;
-
-
-      paras:=memw[prefixseg:2]-prefixseg+1;
-      space:=(space+1)*64;   { KB -> Paragraphs, + 1 extra-KB }
-      heapfree:=prefixseg+paras-so(heapptr).s;
-      swapok:=true;
-      if (heapfree>=space) or (so(heapptr).s-ovrheaporg<64) then
-        swappars:=0
-      else begin
-        swappars:=min(space-heapfree,so(heapptr).s-ovrheaporg-2);
-        SwapOut(so(heapptr).s-swappars+2,swappars);
-        end;
-
-      if swapok then begin
-        with regs do begin
-          ah:=$4a;          { set block }
-          bx:=so(heapptr).s+3-prefixseg-swappars;
-          es:=prefixseg;
-          msdos(regs);                   { Speicher freigeben }
-          end;
-        free:=memfree;
-
-        if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
-          dpath:=''
-        else begin
-          if exist(prog) then dpath:=prog
-          else dpath:=UStr(fsearch(prog,getenv('PATH')));
-          if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
-            dpath:='';
-          end;
-        swapvectors;
-        if (para<>'') and (para[1]<>' ') then para:=' '+para;
-        if dpath<>'' then
-          exec(dpath,para)
-        else
-          exec(getenv('comspec'),' /c '+prog+iifs(para<>'',para,''));
-        swapvectors;
-{        geterrorlevel; }
-
-        with regs do begin
-          ah:=$4a;                { Speicherblock wieder herstellen }
-         { bx:=paras;  - klappt nicht bei DR-DOS 3.41 }
-          bx:=$ffff;
-          es:=prefixseg;
-          msdos(regs);
-          ah:=$4a;
-          es:=prefixseg;
-          msdos(regs);
-          end;
-
-        if swappars>0 then SwapIn(so(heapptr).s-swappars+2,swappars);
-        end;  { is swapok }
-
-      if fs>0 then begin
-        FastMove(p^,freeptr^,fs);
-        freemem(p,fs);
-        end;
-
-    {$ENDIF}    { not DPMI }
-
-    if doserror<>0 then
-      error('Fehler '+strs(doserror)+' bei Programm-Aufruf');
-    end;
-end;
-
-{$ENDIF }
 
 
 procedure fmove(var f1,f2:file);
@@ -879,16 +582,7 @@ begin
     wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
     if wab<>'' then wrs('WAB: '+wab);
     wrs('BET: '+betreff);
-{$IFDEF BP }
-    if pfad2='' then
-      wrs('ROT: '+pfad)
-    else begin              { Pfad > 255 Zeichen }
-      ss:='ROT: ';
-      wrfs(ss); wrfs(pfad); wrs(pfad2);
-    end;
-{$ELSE } { Unter 32 Bit ist Pfad lang genug }
     wrs('ROT: '+pfad);
-{$ENDIF }
     wrs('MID: '+msgid);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
@@ -1114,12 +808,12 @@ begin
 end;
 
 
-procedure GetMimeVersion(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetMimeVersion(var s:string);
 begin
   hd.mime.mversion:=s;
 end;
 
-procedure GetCTencoding(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetCTencoding(var s:string);
 begin
   LoString(s);
   with hd.mime do
@@ -1132,7 +826,7 @@ begin
 end;
 
 
-procedure GetContentType(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetContentType(var s:string);
 var p     : byte;
     s1    : string[30];
     value : string;
@@ -1240,26 +934,9 @@ var p,b     : byte;
     softbrk : boolean;
 
   procedure AddCrlf; { CR/LF an s anh„ngen }
-{$IFDEF BP }
-  assembler;
-  asm
-    mov bl,byte ptr s[0]
-    mov bh,0
-    cmp bx,255
-    jz  @@1
-    inc bx
-    mov byte ptr s[bx],13
-    cmp bx,255
-    jz  @@1
-    inc bx
-    mov byte ptr s[bx],10
-@@1:mov byte ptr s[0],bl
-  end;
-{$ELSE }
   begin
     s := s + #13#10;
   end;
-{$ENDIF }
 
   procedure DecodeBase64;
   const b64tab : array[0..127] of byte =
@@ -1506,7 +1183,7 @@ procedure ReadString(umbruch:boolean);
 const l : Integer = 0;
       c : char = #0;
 
-  procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
+  procedure reload;
   begin
     if eof(f1) then { ok:=false }
     else ReadBuf;
@@ -1518,15 +1195,9 @@ const l : Integer = 0;
     if bufpos=bufanz then reload;
   end;
 
-{$IFNDEF Ver32 }
-const
-      savedi : word = 0;
-      savebx : word = 0;
-{$ENDIF }
 begin
   lasteol:=(eol>0);
   eol:=0;
-{$IFDEF Ver32 }
   l:=0;
   SetLength(s,MaxSLen);
   while (bufpos<bufanz) and (buffer[bufpos]<>#10) and
@@ -1545,59 +1216,6 @@ begin
     inc(eol);
     IncPos;
     end;
-{$ELSE  }
-   asm
-     mov   si,bufpos
-     mov   di,0                    { l:=0 }
-     mov   dl,umbruch
-     mov   bx,word ptr maxslen
-     mov   dh,byte ptr maxslen+2   { maxslen>$ffff -> dh<>0 }
-     or    dh,byte ptr maxslen+3
-     mov   cx,bufanz
-@@1: cmp   si,cx                   { bufpos>=bufanz? }
-     jae   @@8                     { Ende der Eingabedatei }
-     or    dh,dh                   { l<maxslen? }
-     jnz   @@2
-     cmp   di,bx
-     jae   @@8
-@@2: or    dl,dl                   { not umbruch or .. }
-     jz    @@3
-     cmp   di,253                  { .. l<253 }
-     jae   @@8
-@@3: mov   al,byte ptr buffer[si]
-     inc   si                      { c:=buffer[bufpos] }
-     cmp   al,13
-     jz    @@4
-     cmp   al,10                   { eol-Zeichen? }
-     jz    @@4
-     cmp   di,253                  { max. Stringl„nge erreicht? }
-     ja    @@5
-     inc   di                      { inc(l)  }
-     mov   byte ptr s+di,al        { s[l]:=c }
-     jmp   @@5
-@@4: inc   eol
-@@5: cmp   si,cx                   { bufpos = bufanz? }
-     jb    @@7
-     push  ax
-     mov   savebx,bx
-     mov   savedi,di
-     mov   bufpos,si
-     mov   bufanz,cx
-     push  cs
-     call  reload                  { nachladen }
-     mov   si,bufpos
-     mov   cx,bufanz
-     mov   di,savedi
-     mov   bx,savebx
-     pop   ax
-@@7: cmp   al,10
-     jnz   @@1
-
-@@8: mov   ax,di
-     mov   byte ptr s,al           { s[0]:=char(l) }
-     mov   bufpos,si
-   end;
-{$ENDIF }
   MaxSlen:=255;
 end;
 
@@ -1622,47 +1240,6 @@ var   b1,b2,b3,p : byte;
 begin
   if (bytesleft>54) and (bufpos<bufanz-54) then
   asm
-{$IFDEF BP }
-      cld
-      mov   si,offset buffer
-      add   si,bufpos
-      mov   dx,18                { 18 byte-Tripel konvertieren }
-      mov   cl,2
-      mov   bx,offset b64chr
-      mov   di,offset s[1]
-      mov   ax,ds
-      mov   es,ax
- @@1: lodsb                      { Byte 1 }
-      mov   ah,al
-      lodsb                      { Byte 2 }
-      shr   ax,1
-      rcr   ch,1
-      shr   ax,1
-      rcr   ch,1
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 7..2/1 }
-      mov   al,ch
-      shr   ax,cl
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 1..0/1 + Bit 7..4/2 }
-      lodsb                      { Byte 3 }
-      shr   ah,cl
-      shr   ah,cl
-      shl   ax,cl
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 3..0/2 + Bit 7..6/3 }
-      mov   al,ah
-      shr   al,cl
-      xlat
-      stosb                      { Bit 5..0/3 }
-      dec   dx
-      jnz   @@1
-      mov   byte ptr s[0],72
-      add   bufpos,54
-{$ELSE }
       cld
       mov   esi,offset buffer
       add   esi,bufpos
@@ -1701,7 +1278,6 @@ begin
       jnz   @@1
       mov   byte ptr s[0],72
       add   bufpos,54
-{$ENDIF}
   end else
   begin
     p:=0;
@@ -2160,12 +1736,7 @@ var p,i   : integer; { byte -> integer }
   procedure GetPath;
   begin
     hd.pfad:=s0;
-{$IFDEF BP }
-    if manz>0 then hd.pfad2:=smore[1]
-    else hd.pfad2:='';
-{$ELSE }
     if manz>0 then hd.pfad :=hd.pfad + smore[1];
-{$ENDIF }
   end;
 
   procedure GetPriority;  { robo: X-Priority konvertieren }
@@ -2194,20 +1765,6 @@ var p,i   : integer; { byte -> integer }
 
   procedure LoZZ; assembler; {&uses esi }     { LoString(zz);  -  zz<>'' }
   asm
-{$IFDEF BP }
-      cld
-      mov   si,offset zz
-      lodsb
-      mov   cl,al
-      mov   ch,0
- @@1: lodsb
-      cmp   al,'A'
-      jb    @@2
-      cmp   al,'Z'
-      ja    @@2
-      add   byte ptr [si-1],32
-@@2:  loop  @@1
-{$ELSE }
       cld
       mov   esi,offset zz
       lodsb
@@ -2220,7 +1777,6 @@ var p,i   : integer; { byte -> integer }
       ja    @@2
       add   byte ptr [esi-1],32
 @@2:  loop  @@1
-{$ENDIF}
   end;
 
 { read a variable and remove comments }
@@ -3276,12 +2832,7 @@ var hds,adr : longint;
 
   procedure wrbuf(var f:file);
   begin
-  {$IFDEF BP }
-    if length(s)<255 then inc(byte(s[0]));
-    s[length(s)]:=#10;
-  {$ELSE }
     s := s + #10;
-  {$ENDIF }
     if outbufpos+length(s)>=outbufsize then
       FlushOutbuf(f);
     FastMove(s[1],outbuf^[outbufpos],length(s));
@@ -3574,6 +3125,9 @@ end.
 
 {
   $Log$
+  Revision 1.36  2000/06/22 19:53:27  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.35  2000/06/21 20:40:25  mk
   RB: - Bugfix fuer fortgesetzte Headerzeilen
 

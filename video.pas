@@ -16,7 +16,7 @@
 (*  7/91                                                   *)
 (***********************************************************)
 
-UNIT video;
+unit video;
 
 {$I XPDEFINE.INC}
 
@@ -38,12 +38,6 @@ const DPMS_On       = 0;    { Monitor an }
       vlines : word = 25;                  { Anzahl Bildzeilen   }
 {$ENDIF }
 var  vbase  : word;                        { Screen-Base-Adresse }
-
-{$IFNDEF NCRT }
-function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
-{$ENDIF }
-function  GetVideoMode:byte;
-procedure SetVideoMode(mode:byte);
 
 procedure SetBackIntensity;                { heller Hintergrund setzen }
 
@@ -75,26 +69,6 @@ var
 
 {- BIOS-Routinen ----------------------------------------------}
 
-{ Grafikkarte ermitteln: 0=Herc, 1=CGA, 2=EGA, 3=VGA
-  und in vtype speichern }
-{$IFNDEF NCRT }
-procedure GetVideotype;
-begin
-  vtype := 3;                     { immer VGA in 32 Bit Systemen }
-end;
-
-function  VideoType:byte;
-begin
-  VideoType := vtype;
-end;
-
-{$ENDIF } {NCRT }
-
-{ BIOS-Mode-Nr. setzen }
-procedure SetVideoMode(mode:byte); assembler;
-asm
-end;
-
 { hellen Hintergr. akt. }
 
 procedure SetBackIntensity;
@@ -114,11 +88,6 @@ begin
   {$ENDIF }
 end;
 
-
-function getvideomode:byte;
-begin
-   getVideoMode := 3; { VGA }
-end;
 
 {$IFNDEF NCRT }
 
@@ -145,13 +114,12 @@ end;
 
 {$ENDIF } { NCRT }
 
-{$IFNDEF NCRT }
-begin
-  getvideotype;
-{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.22  2000/06/22 19:53:28  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.21  2000/06/22 16:11:28  mk
   - 16 Bit Teile entfernt
 

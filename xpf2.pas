@@ -11,9 +11,6 @@
 { Fido-Modul, Teil 2 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpf2;
 
@@ -176,9 +173,7 @@ begin
                 _era(FilePath+'TICK\'+sr.name);
                 Dos.findnext(sr);
               end;
-              {$IFDEF Ver32}
               FindClose(sr);
-              {$ENDIF}
             end;
           end;   { of TIC-File vorhanden }
         end;   { at>0 }
@@ -194,9 +189,7 @@ ende:
       _era(FilePath+sr.name);
     Dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 
   close(f);
   if _filesize(tmp)>0 then

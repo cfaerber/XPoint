@@ -18,17 +18,12 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
-
-
-UNIT help;
+unit help;
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses
   xpglobal,
@@ -335,9 +330,6 @@ laden:
       xout:=x;
       end;
   lines:=1; fillchar(z^,sizeof(z^),0);
-  {$IFDEF BP }
-    if memavail<2*size then exit;
-  {$ENDIF }
   getmem(buf,size);
   blockread(f,buf^,size);
   testio;
@@ -782,6 +774,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.13  2000/06/05 16:16:20  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

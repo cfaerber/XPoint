@@ -17,9 +17,6 @@ unit xpx;
 interface
 
 uses
-{$IFDEF BP }
-  ems,
-{$ENDIF }
 {$IFDEF Linux }
   xplinux,
 {$ENDIF }
@@ -32,24 +29,10 @@ uses
 
 implementation
 
-{$IFDEF BP }
-  {$IFDEF DPMI}
-  const MinVersion = $330;
-        MinVerStr  = '3.3';
-        MaxHandles = 31;
-  {$ELSE}
-  uses  overlay;
-  const MinVersion = $300;
-        MinVerStr  = '3.0';
-        MaxHandles = 30;
-  var   handles    : array[1..maxhandles] of byte;
-  {$ENDIF}
-{$ENDIF}
-
 const starting : boolean = true;
 
-var oldexit : pointer;
-
+var
+  oldexit : pointer;
 
 procedure stop(txt:string);
 begin
@@ -107,70 +90,6 @@ begin
     end;
 end;
 
-{$IFDEF BP }
-procedure SetHandles;
-var i    : integer;
-    regs : registers;
-begin
-  {$IFNDEF DPMI }
-    for i:=1 to maxhandles do
-      handles[i]:=$ff;
-    for i:=1 to 5 do
-      handles[i]:=mem[PrefixSeg:$18+pred(i)];
-    MemW[PrefixSeg:$32] := MaxHandles;
-    MemW[PrefixSeg:$34] := Ofs(handles);
-    MemW[PrefixSeg:$36] := Seg(handles);
-  {$ELSE}
-    with regs do begin
-      ah:=$67;
-      bx:=maxhandles;
-      msdos(regs);
-      if flags and fcarry<>0 then
-        writeln('Warnung: Fehler beim Anfordern von File Handles!');
-      end;
-  {$ENDIF}
-end;
-{$ENDIF }
-
-{$IFDEF BP }
-procedure TestOVR;
-var ft   : longint;
-    c,cc : char;
-begin
-  if not exist('xp.ovr') then
-    stop('Die Datei XP.OVR fehlt!');
-  ft:=filetime('xp.exe');
-  if (ft<>0) and (abs(ft-filetime('xp.ovr'))>=60) then begin
-    writeln;
-    writeln('WARNUNG: Das Dateidatum von XP.OVR stimmt nicht mit dem von XP.EXE');
-    writeln('         Åberein. XP.OVR stammt offenbar von einer anderen '+xp_xp+'-');
-    writeln('         Version. Bitte spielen Sie das Programm aus einem '+xp_xp+'-');
-    writeln('         Originalarchiv neu auf! Wenn Sie das Programm jetzt fortsetzen,');
-    writeln('         wird es wahrscheinlich abstÅrzen.');
-    writeln;
-    writeln('         Falls Sie nach einem Neuaufspielen wieder die gleiche Fehler-');
-    writeln('         meldung erhalten, ist Ihr Rechner mîglicherweise mit einem');
-    writeln('         Virus infiziert.');
-    writeln;
-    write(#7'Programm fortsetzen (J/N)? ');
-    c:='N';
-    repeat
-      write(c,#8);
-      cc:=readkey;
-      case cc of
-        #0 : if readkey='' then;
-        'j','J' : c:='J';
-        'n','N' : c:='N';
-      end;
-    until (cc=#13) or (cc=#27);
-    writeln;
-    if (cc=#27) or (c='N') then begin
-      runerror:=false;
-      halt(1);
-      end;
-    end;
-end;
-{$ENDIF }
 
 function _deutsch:boolean;
 var t : text;
@@ -187,7 +106,7 @@ end;
 
 
 {$S-}
-procedure setpath; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure setpath;
 begin
   if ioresult = 0 then ;
   GoDir(shellpath);
@@ -230,17 +149,10 @@ end;
 
 begin
   checkbreak:=false;
-{$IFDEF BP } { Die Abfrage der DOS-Version ist nur bei 16 Bit sinnvoll }
-  if swap(dosversion)<MinVersion then
-    stop('DOS Version '+MinVerStr+' oder hîher erforderlich.');
-{$ENDIF }
   readname;
   if left(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
-{$IFDEF BP }
-  SetHandles;
-{$ENDIF }
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
     GoDir(progpath);
@@ -251,38 +163,17 @@ begin
 {$ENDIF}
   mausunit_init;
   logo;
-{$IFDEF BP }            { alles andere sind sowieso 32 Bit Versionen }
-  {$IFNDEF NO386 }      { Die XT Version darf hier nicht testen }
-  if Test8086 < 2 then
-  begin
-    Writeln('OpenXP lÑuft in dieser Version erst ab 386er CPUs mit CoProzessor.');
-    Writeln('Eine XT-Version kann von der Homepage http://www.openxp.de bezogen werden.');
-    runerror := false;
-    Halt(1);
-  end;
-  {$ENDIF }
-{$ENDIF }
-
-{$IFDEF BP }      { Unter 32 Bit haben wir keine Overlays }
-  {$IFNDEF DPMI}     { mit DPMI auch nicht }
-    TestOVR;
-    OvrInit('xp.ovr');
-    if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
-      OvrInitEMS;
-    OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
-  {$ENDIF}
-{$ENDIF}
 
 {$IFDEF UnixFS }
-  OwnPath:=GetEnv(ResolvePathName(envXPHome));		{ XPHOME=~/.openxp }
+  OwnPath:=GetEnv(ResolvePathName(envXPHome));          { XPHOME=~/.openxp }
   if (OwnPath='') then begin
-    OwnPath:=GetEnv('HOME');		{ HOME= }
+    OwnPath:=GetEnv('HOME');            { HOME= }
     if (OwnPath='') then begin
       WriteLn('Need the environment variable ''HOME''!');
       WriteLn;
       Halt(2);
     end;
-    if (right(OwnPath,1)<>DirSepa) then			{ $HOME/openxp/ }
+    if (right(OwnPath,1)<>DirSepa) then                 { $HOME/openxp/ }
       OwnPath:= OwnPath+DirSepa+BaseDir
     else
       OwnPath:= OwnPath+BaseDir;
@@ -290,12 +181,12 @@ begin
     if (right(OwnPath,1)<>DirSepa) then
       OwnPath:= OwnPath+DirSepa;
   end;
-  if not (IsPath(OwnPath)) then				{ Existent? }
-    if not (MakeDir(OwnPath, A_USERX)) then begin	{ -> Nein, erzeugen }
+  if not (IsPath(OwnPath)) then                         { Existent? }
+    if not (MakeDir(OwnPath, A_USERX)) then begin       { -> Nein, erzeugen }
       WriteLn('Can''t create ''',OwnPath,'''.');
       Halt(2);
     end;
-  if not (TestAccess(OwnPath, taUserRWX)) then begin	{ Ich will alle Rechte :-/ }
+  if not (TestAccess(OwnPath, taUserRWX)) then begin    { Ich will alle Rechte :-/ }
     WriteLn('I need read, write and search rights on ''',OwnPath,'''.');
     Halt(2);
   end;
@@ -316,6 +207,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/06/22 19:53:33  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.18  2000/06/19 20:23:05  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

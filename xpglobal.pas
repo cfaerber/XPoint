@@ -16,7 +16,6 @@ const
   verstr      = 'v3.70.1';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
-{$IFDEF VER32 }
   {$IFDEF Win32 }
   pformstr    = ' Win/32';    { 32 Bit Windows mit FPC oder VP }
   {$ENDIF }
@@ -29,14 +28,6 @@ const
   {$IFDEF Dos32 }
   pformstr    = ' DOS/32';    { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
-
-{$ELSE}
-  {$IFDEF DPMI}
-  pformstr    = ' DOS/XL';    { 16 Bit DPMI mit Borland Pascal }
-  {$ELSE}
-  pformstr    = ' DOS/16';    { 16 Bit Realmode mit Borland Pascal }
-  {$ENDIF}
-{$ENDIF }
 
   author_name = 'OpenXP Team';
   author_mail = 'dev@openxp.de';
@@ -70,59 +61,42 @@ type
 
   }
 
-  {$IFDEF VER32 }
-    {$ifdef virtualpascal}
-      { Virtual Pascal, 32 Bit }
-      integer8 =   shortint;
-      integer16 =  smallint;
-      integer32 =  longint;
-      integer =    longint;
-      word =       longint; { = signed }
-      dword =      longint; { = signed }
-      rtlword =    longint;     { 32 Bit bei VP }
-    {$ENDIF }
-    {$IFDEF FPC }
-      { FreePascal, 32 Bit }
-      integer8 =   shortint;
-      integer16 =  system.smallint;
-      integer32 =  longint;
-      { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-      integer =    longint;
-      word =       longint;  { = signed }
-      smallword =  system.word;
-      dword =      Cardinal; { = signed }
-      rtlword =    system.word; { 16 Bit bei FPC }
-    {$endif}
-  {$ELSE}
-    { Borland Pascal bis Version 8, 16 Bit }
+  {$ifdef virtualpascal }
+    { Virtual Pascal, 32 Bit }
     integer8 =   shortint;
-    integer16 =  integer;
+    integer16 =  smallint;
     integer32 =  longint;
-    smallint =   integer;
-    smallword =  word;
-    dword =      longint; { Vorsicht: siehe oben! }
+    integer =    longint;
+    word =       longint; { = signed }
+    dword =      longint; { = signed }
+    rtlword =    longint;     { 32 Bit bei VP }
+  {$ENDIF }
+  {$IFDEF FPC }
+    { FreePascal, 32 Bit }
+    integer8 =   shortint;
+    integer16 =  system.smallint;
+    integer32 =  longint;
+    { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
+    integer =    longint;
+    word =       longint;  { = signed }
+    smallword =  system.word;
+    dword =      Cardinal; { = signed }
     rtlword =    system.word; { 16 Bit bei FPC }
-  {$ENDIF}
+  {$endif}
 
   { Der Typ HugeString enth„lt in der 16 Bit Version einen normalen,
     auf 255 Zeichen begrenzten String, in den 32 Bit Versionen
     einen Hugestring mit bis zu 2 GB L„nge }
-  {$IFDEF BP }
-    HugeString = String;
-  {$ELSE }
-    HugeString = AnsiString;
-  {$ENDIF }
+  HugeString = AnsiString;
 
-{$IFDEF Ver32 }
 const
   MaxInt = MaxLongint;
-{$ENDIF }
 
 const
 {$IFDEF UnixFS }
   DirSepa  = '/';
   WildCard = '*';
-  _MPMask  = '/';	{ Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
+  _MPMask  = '/';       { Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
 {$ELSE }
   DirSepa  = '\';
   WildCard = '*.*';
@@ -130,13 +104,8 @@ const
 {$ENDIF }
 
 const
-{$IFDEF Ver32 }
   MaxLenFilename = 255;
   MaxLenPathname = 255;
-{$ELSE }
-  MaxLenFilename = 13;
-  MaxLenPathname = 79;
-{$ENDIF }
 
 implementation
 
@@ -150,6 +119,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/06/22 19:53:32  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.30  2000/06/22 14:58:02  mk
   - Versionsnummer auf 3.70.1 angepasst
 

@@ -117,11 +117,7 @@ begin
   for i:=0 to menus do
     if (i<>11) then setmenu(i,getres2(10,i));
   zusatz_menue;
-  case videotype of
-    0,1 : setmenu(11,'Zeilen,0b125');
-    2   : setmenu(11,'Zeilen,0b125,0b226,0b329,0b431,0b535,0b638,0b743,0b850');
-    3   : setmenu(11,'Zeilen,0b125,0b226,0b328,0b430,0b533,0b636,0b740,0b844,0b950');
-  end;
+  setmenu(11,'Zeilen,0b125,0b226,0b328,0b430,0b533,0b636,0b740,0b844,0b950');
   FreeRes;
 end;
 
@@ -249,10 +245,7 @@ var i  : integer;
 
   procedure SetZeilen(z:byte);
   begin
-    case videotype of
-      2 : if z in [25,26,29,31,35,38,43,50] then ParZeilen:=z;
-      3 : if z in [25,26,28,30,33,36,40,44,50] then ParZeilen:=z;
-    end;
+    if z in [25,26,28,30,33,36,40,44,50] then ParZeilen:=z;
   end;
 
   procedure ParAuswerten;
@@ -313,7 +306,6 @@ var i  : integer;
     if isl('av:') then ParAV:=mid(s,5) else
     if isl('autostart:') then ParAutost:=mid(s,12) else
     if isl('l:')  then ParLanguage:=lstr(mid(s,4)) else
-    if isl('f:') then ParFontfile:=ustr(mid(s,4)) else
     if _is('nomem')then ParNomem:=true else
     if _is('sd')   then ParNoSmart:=true else
     if _is('lcd')  then ParLCD:=true else
@@ -384,9 +376,6 @@ begin
   {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
-  if VideoType<2 then ParFontfile:='';
-  if (ParFontfile<>'') and (ParFontfile[1]<>'*') then
-    ParFontfile:=FExpand(ParFontfile);
   if ParDebug then Multi3:=ShowStack;
   if ParDDebug then dbOpenLog('database.log');
   ListDebug:=ParDebug;
@@ -488,7 +477,7 @@ var lf : string[12];
     ca : char;
 {$IFDEF UnixFS }
     CurDirBackup: String;
-{$ENDIF UnixFS }   
+{$ENDIF UnixFS }
 
   procedure WrLf;
   begin
@@ -501,7 +490,7 @@ begin { loadresource }
 {$IFDEF UnixFS }                            { Ressourcen im Programmverzeichnis suchen }
   CurDirBackup := GetCurrentDir;
   SetCurrentDir(ExtractFilePath(Paramstr(0)));
-{$ENDIF UnixFS }   
+{$ENDIF UnixFS }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
@@ -563,7 +552,7 @@ begin { loadresource }
   if ParHelp then HelpScreen;
 {$IFDEF UnixFS }
   SetCurrentDir(CurDirBackup);
-{$ENDIF UnixFS }   
+{$ENDIF UnixFS }
 end;
 
 
@@ -1148,6 +1137,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/06/22 19:53:30  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.45  2000/06/19 20:19:32  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

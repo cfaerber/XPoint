@@ -11,9 +11,6 @@
 { --- Fido - Netcall ------------------------------------------------- }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp7f;
 
@@ -242,9 +239,7 @@ begin
         end;
       Dos.findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     if clrflag then ttwin;
 
     if exist(XFerDir+'*.PKT') then begin
@@ -268,9 +263,7 @@ begin
           _era(XFerDir+sr.name);
           Dos.findnext(sr);
         end;
-        {$IFDEF Ver32}
         FindClose(sr);
-        {$ENDIF}
       end;
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
@@ -613,9 +606,7 @@ begin
       _era(XFerDir+sr.name);
     Dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 
   ttwin;
   FidoNetcall:=EL_noconn;
@@ -942,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/22 19:53:31  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.13  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

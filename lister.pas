@@ -11,9 +11,6 @@
 { Lister - PM 11/91 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit lister;
 
@@ -27,9 +24,6 @@ uses
   crt,
 {$ENDIF }
   typeform,
-{$IFDEF BP }
-  xms, ems,
-{$ENDIF }
   fileio,inout,maus2,keys,winxp;
 
 const ListHelpStr : string[8] = 'Hilfe';
@@ -75,9 +69,6 @@ type  liste   = pointer;
 { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
 procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
-{$IFDEF BP }
-procedure ListInitEMS(kb:longint);
-{$ENDIF }
 procedure SetListsize(_l,_r,_o,_u:byte);
 procedure app_l(ltxt:string);           { Zeile anh„ngen }
 procedure list_convert(cp:listConvert);
@@ -189,13 +180,9 @@ type  liststat= record
 
 
 const inited  : boolean = false;
-{$IFDEF ver32}
 var
       alist : lrp; {= 0; }
 const
-{$ELSE }
-      alist   : lrp = ptr(0,0);
-{$ENDIF}
       mcursor : boolean = false;   { Auswahlcursor fr Blinde }
 
 var   lstack  : array[0..maxlst] of record
@@ -207,19 +194,11 @@ var   lstack  : array[0..maxlst] of record
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
-{$IFDEF BP }
-      lEmsPage: word;      { aktuelle Seite fr app_l }
-      lEmsOffs: word;      { aktueller Offset fr app_l }
-      lXmsPage: word;
-      lXmsOffs: word;
-      EmsBSeg : word;
-{$ENDIF }
       MemFlag : byte;      { Ziel fr app_l: 0=Heap, 1=EMS, 2=XMS, 3=full }
 
 
 
 
-{$IFDEF ver32}
 procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler; {&uses all}
 var
   bxsave,cxsave : dword;
@@ -325,124 +304,6 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-{$ELSE}
-
-{ Externes File (z.b Fileliste) fuer Anzeige mit Lister vorbereiten }
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; assembler;
-var
-  bxsave,cxsave : word;
-asm
-         les    si,buf
-         inc    si
-         mov    cx,rr
-         jcxz   @ende
-         mov    bx,1
-         mov    dh,0
-         mov    ah,wrap                { Wrap-Spalte }
-         or     ah,ah
-         jnz    @llp
-         mov    ah,255
-
-@llp:    mov    dx,0                   { Stringl„ngen-Z„hler }
-         mov    bx,0
-@llp2:   mov    di,0
-         cmp    byte ptr es:[si+bx],13 { CR ? }
-         jz     @crlf
-         cmp    byte ptr es:[si+bx],10 { LF ? }
-         jnz    @nocr
-         mov    di,1                   { Kennung fr LF -> n„chstes Zeichen }
-                                       { NICHT berlesen }
-@crlf:   or     di,di
-         jnz    @islf
-         cmp    cx,1                   { CR ist letztes Byte         }
-         jz     @noapp                 { -> keine Leerzeile erzeugen }
-@islf:   mov    es:[si-1],dl           { L„ngenbyte davorschreiben   }
-         call near ptr @appcall
-@noapp:  inc    dx
-         dec    cx
-         jz     @nocrlf                { Block endete mit CR oder LF }
-         add    si,dx
-         cmp    di,1
-         jz     @llp
-         cmp    byte ptr es:[si],10    { LF ? }
-         jnz    @llp                   { nein, dann n„chste Zeile lesen }
-         inc    si                     { LF berlesen }
-         dec    cx
-         jnz    @llp                   { endet Zeile nicht auf LF ? }
-
-@ende:   les    di,rp
-         mov    word ptr es:[di],1
-         jmp @the_end
-
-@nocr:   inc    dx                     { ein Zeichen weiter }
-         inc    bx
-         dec    cx
-         jnz    @no0
-@nocrlf: cmp    di,1                   { endete Block auf LF ? }
-         jz     @ende
-         mov    cx,dx                  { unvollst„ndige Zeile kopieren }
-         jcxz   @norest
-         mov    di,word ptr buf
-         inc    di
-@cloop:  mov    al,es:[si]
-         mov    es:[di],al
-         inc    si
-         inc    di
-         loop   @cloop
-@norest: les    di,rp
-         inc    dx
-         mov    es:[di],dx             { Offset fr n„chsten Block }
-         jmp @the_end
-
-@no0:    cmp    dl,ah                  { max. L„nge erreicht? }
-         jb     @llp2
-         cmp    byte ptr es:[si+bx],13 { folgt ein CR? }
-         jz     @llp2
-
-         mov    dh,dl
-         mov    bxsave,bx
-         mov    cxsave,cx
-@cutlp:  cmp    byte ptr es:[si+bx-1],' '   { Trennzeichen? }
-         jz     @clok
-         dec    dl
-         dec    bx
-         inc    cx
-         cmp    dl,20
-         ja     @cutlp
-         mov    dl,dh
-         mov    bx,bxsave
-         mov    cx,cxsave
-
-@clok:   mov    dh,0
-         mov    es:[si-1],dl           { L„ngenbyte = wrap }
-         call near ptr @appcall
-         add    si,dx
-         jmp    @llp
-
-@appcall:
-         push   ax
-         push   bx
-         push   cx
-         push   dx
-         push   si
-         push   di
-         push   es
-         push   es                    { Adresse des Strings auf den Stack }
-         dec    si
-         push   si
-         call far ptr app_l           { Zeile an Liste anh„ngen }
-         pop    es
-         pop    di
-         pop    si
-         pop    dx
-         pop    cx
-         pop    bx
-         pop    ax
-         retn
-@the_end:
-end;
-{$ENDIF}
-
 {$IFDEF FPC }
   {$HINTS OFF }
 {$ENDIF }
@@ -524,9 +385,6 @@ procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
 begin
   if not inited then init;
   if lstackp>=maxlst then interr('Overflow');
-{$IFDEF BP }
-  lstack[lstackp].emsb:=emsbseg;
-{$ENDIF }
   inc(lstackp);
   new(lstack[lstackp].l);
   alist:=lstack[lstackp].l;
@@ -563,40 +421,12 @@ begin
     end;
   mmm:=0;
   memflag:=0;
-{$IFDEF BP }
-  EmsBSeg:=$ffff;
-{$ENDIF }
 end;
 
 function EmsPtr(p:lnodep):lnodep;
-{$IFNDEF BP }
 begin
   EmsPtr := p;
 end;
-{$ELSE }
-var sseg : word;
-begin
-  {$ifndef DPMI}
-    sseg := seg(p^) and $f000;
-    if sseg=EmsBseg then begin
-      EmsPage(alist^.EmsHandle,0,seg(p^)-emsbase);
-      EmsPtr:=ptr(emsbase,ofs(p^));
-      end
-    else if sseg=0 then
-      if p=nil then EmsPtr:=nil
-      else with alist^ do begin
-        if XmsPage<>seg(p^) then begin
-          XmsWrite(XmsHandle,XmsPtr^,longint(XmsPage)*XmsPagesize,XmsPagesize);
-          XmsPage:=seg(p^);
-          XmsRead(XmsHandle,XmsPtr^,longint(XmsPage)*XmsPagesize,XmsPagesize);
-          end;
-        EmsPtr:=ptr(seg(XmsPtr^),ofs(XmsPtr^)+ofs(p^));
-        end
-    else
-  {$endif}
-    EmsPtr:=p;
-end;
-{$ENDIF }
 
 procedure closelist;
 var lnp : lnodep;
@@ -612,22 +442,10 @@ begin
       freemem(last,lnodelen+length(last^.cont));
       last:=lnp;
     end;
-{$IFDEF BP }
-    if EmsPages>0 then
-      EmsFree(EmsHandle);
-    if XmsPages>0 then
-    begin
-      XmsFree(XmsHandle);
-      freemem(XmsPtr,XmsPagesize);
-    end;
-{$ENDIF }
   end;
   dispose(lstack[lstackp].l);
   dec(lstackp);
   alist:=lstack[lstackp].l;
-{$IFDEF BP }
-  emsbseg:=lstack[lstackp].emsb;
-{$ENDIF }
 end;
 
 
@@ -644,20 +462,6 @@ var p  : byte;
     lt:=length(ltxt);
     case memflag of
       0 : getmem(lnp,lnodelen+lt);
-{$IFDEF BP } { Wir untersttzen nur in BP XMS/EMS }
-      1 : begin
-            if lEMSoffs+lnodelen+lt>=16384 then begin
-              inc(lEMSpage); lEMSoffs:=0; end;
-            lnp:=ptr(emsbase+lEMSpage,lEmsOffs);
-            inc(lEmsOffs,lnodelen+lt);
-          end;
-      2 : begin
-            if lXMSoffs+lnodelen+lt>=XmsPagesize then begin
-              inc(lXMSpage); lXMSoffs:=0; end;
-            lnp:=ptr(lXMSpage,lXmsOffs);     { lXMSpage < $1000 ! }
-            inc(lXmsOffs,lnodelen+lt);
-          end;
-{$ENDIF }
       3 : begin
             writeln('LIST: internal memory allocation error');
             halt(1);
@@ -708,19 +512,6 @@ begin
                 else memflag:=2;
                 lastheap:=last;
               end;
-{$IFDEF BP }
-        1 : if lEMSpage>=EmsPages-1 then
-              if xmspages>0 then
-                memflag:=2
-              else begin
-                memfull;
-                memflag:=3;
-                end;
-        2 : if lXMSpage>=XmsPages-1 then begin
-              memfull;
-              memflag:=3;
-            end;
-{$ENDIF }
       end;
     mmm:=0;
     end;
@@ -747,37 +538,6 @@ begin
   alist^.startpos:=sp;
 end;
 
-{$IFDEF BP }
-procedure ListInitEMS(kb:longint);
-begin
-  with alist^ do begin
-    if EmsPages>0 then exit;   { EMS schon belegt!? }
-    EmsPages:=EmsAvail;
-    if EmsPages>0 then dec(EmsPages);
-    if EmsPages>0 then begin
-      EmsPages:=min(EmsPages,(kb+15)div 16+1);
-      EmsAlloc(EmsPages,EmsHandle);
-      EmsBseg:=emsbase and $f000;
-      end;
-    end;
-  lEMSpage:=0; lEMSoffs:=0;
-  with alist^ do
-    if not ListUseXms or (EmsPages*16>=kb) or (memavail<2*XmsPagesize) then
-      XmsPages:=0
-    else begin
-      XmsPages:=min($1000,XmsAvail div XmsPageKB);
-      if XmsPages>0 then dec(XmsPages);
-      if XmsPages>0 then begin
-        XmsPages:=min(XmsPages,(kb-16*EmsPages+XmsPageKB-1)div XmsPageKB+1);
-        XmsHandle:=XmsAlloc(XmsPages*XmsPageKB);
-        if XmsResult<>0 then XmsPages:=0
-        else getmem(XmsPtr,XmsPagesize);
-        XmsPage:=0;
-        end;
-      end;
-  lXMSpage:=0; lXMSoffs:=1;    { bei Offset 1 beginnen, wg. NIL-Pointer }
-end;
-{$ENDIF }
 
 procedure list_readfile(fn:string; ofs:word);
 type barr = array[0..65000] of byte;
@@ -789,14 +549,6 @@ var f  : file;
     rr: word;
     fm    : byte;
 begin
-{$IFDEF BP }
-  if (memavail+longint(EmsAvail)*16384+longint(XmsAvail)*1024<MinListMem+2000)
-    or (maxavail<6000) then
-  begin
-    app_l('zu wenig freier DOS-Speicher, um Datei anzuzeigen');
-    exit;
-  end;
-{$ENDIF }
   with alist^ do
   begin
     txt:=fitpath(ustr(fn),40);
@@ -809,10 +561,6 @@ begin
     rp:=1;
     if ioresult=0 then begin
       seek(f,ofs);
-{$IFDEF BP }
-      if filesize(f)*2.5>memavail then
-        ListInitEMS(filesize(f) div 400 - memavail div 2500);
-{$ENDIF }
       repeat
         blockread(f,p^[rp],ps-rp,rr);
         if (@ConvProc<>nil) and (rr>0) then ConvProc(p^[rp],rr);
@@ -1653,6 +1401,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.19  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

@@ -1293,29 +1293,13 @@ begin
   cursor(curoff);
   window(1,1,screenwidth,screenlines);
 {$ELSE }
-  if (videotype<2) or ParLCD then
-    screenlines:=25
-  else
-    if ParFontfile<>'' then
-    begin
-  {$IFDEF BP }
-      XPFont;
-  {$ENDIF }
-      screenlines:=GetScreenlines;
-    end;
+  screenlines:=GetScreenlines;
 {$IFDEF Win32 }
   SetScrXY(screenwidth,ScreenLines);
   ScreenLines := GetScreenLines;
 {$ENDIF }
-  if (ParFontfile='') and not ParLCD then begin
-    if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
-    then begin
-      setvideomode(3);
-      IoVideoInit;
-      end;
-     if (screenlines<>25) or (screenlines<>getscreenlines) then
-      setscreenlines(screenlines);
-    end;
+  if (screenlines<>25) or (screenlines<>getscreenlines) then
+     setscreenlines(screenlines);
   iosclines:=screenlines;
   crline:=screenlines;
   actscreenlines:=screenlines;
@@ -1375,8 +1359,7 @@ begin
   lines(screenlines,1);
 {$ENDIF }
   clrscr;
-  if (videotype>1) and not ParMono then
-    setbackintensity;
+  setbackintensity;
 {$IFDEF BP }
   SetXPborder;
 {$ENDIF }
@@ -1400,7 +1383,6 @@ begin
   attrtxt(7);
   gotoxy(1,4);
   xp_maus_an(mausdefx,mausdefy);
-  if newmode then startvideotype:=videotype;
 end;
 
 
@@ -1409,26 +1391,9 @@ end;
 procedure resetvideo;
 var m3 : boolean;
 begin
-  if startvideotype>0 then begin
-    m3:=true;
-    if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
-    else m3:=false;
-    if (videotype>1) and not ParLCD then
-{$IFDEF BP }
-      if ParFontfile<>'' then
-        XPFont
-      else
-{$ENDIF }
-      if getscreenlines<>screenlines then begin
-        if not m3 then setvideomode(3);
-        setscreenlines(screenlines);
-        setmauswindow(0,639,0,screenlines*8-1);
-        end;
-    end;
-  if (videotype>1) and not ParMono then setbackintensity;
-{$IFDEF BP }
-  SetXPborder;
-{$ENDIF }
+  setscreenlines(screenlines);
+  setmauswindow(0,639,0,screenlines*8-1);
+  setbackintensity;
 end;
 
 
@@ -1442,9 +1407,6 @@ begin
     setborder16(0);
 {$ENDIF }
   clrscr;
-  SetVideoMode(OrgVideomode);
-{ screenlines:=25;
-  setscreensize(false); }
   if deutsch then
     case joke of
       1 : cm_wl('Vielen Dank. Sie haben ein einfaches Pointprogramm sehr glÅcklich gemacht.');
@@ -2195,10 +2157,7 @@ begin
     erase(xp0.lockfile);
     if ioresult<>0 then ;
   end;
-  if videotype>1 then setbackintensity;
-{$IFDEF BP }
-  setcbreak(orgcbreak);
-{$ENDIF}
+  setbackintensity;
 end;
 {$IFDEF Debug }
   {$S+}
@@ -2430,6 +2389,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/06/22 19:53:29  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.48  2000/06/19 20:18:17  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

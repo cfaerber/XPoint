@@ -17,9 +17,6 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit win2;
 
@@ -175,18 +172,10 @@ end;
 function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
 
 const
-{$IFDEF Ver32 }
   maxf   = 8192;
-{$ELSE }
-  maxf   = 1024;
-{$ENDIF }
-      maxs   = 5;
+  maxs   = 5;
 type
-{$IFDEF Ver32 }
-  fnst   = HugeString;
-{$ELSE }
-  fnst   = string[13];
-{$ENDIF }
+  fnst   = AnsiString;
       ft     = array[1..maxf+36] of fnst;
       txst   = string[70];
 var   fb     : pathstr;
@@ -337,11 +326,7 @@ var   fb     : pathstr;
       else
 {$ENDIF }
       if right(s,1)=DirSepa then
-{$IFDEF BP }
-        Wrt2(sp(59))
-{$ELSE }
         Wrt2(Forms(ConvertFilename(s), 58))
-{$ENDIF }
       else begin
         pa:=path;
         pathonly(pa);
@@ -1113,6 +1098,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/06/22 19:53:28  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.16  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

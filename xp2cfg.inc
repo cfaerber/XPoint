@@ -147,7 +147,7 @@ begin
 {$ENDIF }
   assign(t,colcfgfile);
   if not existf(t) then exit;
-  msk:=iif(getvideomode<=2,$7f,$ff);
+  msk:=$ff;
   settextbuf(t,buf);
   reset(t);
   while not eof(t) do with col do begin
@@ -252,7 +252,7 @@ begin
         colmsgsprio4:=colmsgs; colmsgsprio5:=colmsgs;
         end;
       if (collistheaderhigh=7) and (collistheader<>7)
-        then collistheaderhigh:=collistheader;   
+        then collistheaderhigh:=collistheader;
     end;
   close(t);
 end;
@@ -316,7 +316,6 @@ begin
   getcbreak(orgcbreak);
   setcbreak(false);
 {$ENDIF }
-  OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
 {$IFDEF BP }
@@ -341,16 +340,16 @@ begin
 
   { Standard-Sektion fuer die neue Cfg-Datei vorbereiten }
   case OSType of
-    os_dos:				{ DOS }
+    os_dos:                             { DOS }
       MySection:= csDos;
-    os_linux:				{ Linux }
+    os_linux:                           { Linux }
       begin
         MySection:= csLinux;
-	UseNewCfg:= true;		{ Brauche eigene cfg }
+        UseNewCfg:= true;               { Brauche eigene cfg }
       end;
-    os_2:				{ OS/2 }
+    os_2:                               { OS/2 }
       MySection:= csOS2;
-    os_windows:				{ Windows }
+    os_windows:                         { Windows }
       MySection:= csWin;
   end;
 
@@ -425,16 +424,6 @@ begin
   Clipboard:=not IsDPMI and ClipAvailable;
   new(viewers);
   new(unpacker);
-
-  if (ParFontfile<>'') and (ParFontfile[1]<>'*') and not exist(ParFontfile)
-  then begin
-    ParFontfile:=ParFontfile+'.FNT';
-    if not exist(ParFontfile) then begin
-      writeln;
-      writeln(getreps(220,ParFontfile),#7);
-      ParFontfile:='';
-      end;
-    end;
 
   domainlist:=nil;
   exzconfig:=exist('zconfig.exe') and exist('zm.exe');
@@ -546,10 +535,10 @@ begin
     UnZOO:='zoo -e $ARCHIV $DATEI';
     UnZIP:='unzip $ARCHIV $DATEI';
     UnARJ:='unarj e $ARCHIV $DATEI';
-    UnPAK:='pak e $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnDWC:='dwc e $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnHYP:='hyper -x $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnSQZ:='sqz e $ARCHIV $DATEI';	{ Nicht geprueft }
+    UnPAK:='pak e $ARCHIV $DATEI';      { Nicht geprueft }
+    UnDWC:='dwc e $ARCHIV $DATEI';      { Nicht geprueft }
+    UnHYP:='hyper -x $ARCHIV $DATEI';   { Nicht geprueft }
+    UnSQZ:='sqz e $ARCHIV $DATEI';      { Nicht geprueft }
     UnRAR:='unrar e $ARCHIV $DATEI';
 {$ELSE }
     UnARC:='pkxarc $ARCHIV $DATEI';
@@ -843,7 +832,7 @@ begin
   dbLog('-- Konfiguration sichern');
 {$ENDIF }
 {$IFDEF UnixFS}
-  oldf:= exist(ownpath+cfgfile);	{ Merken, ob die Datei existierte }
+  oldf:= exist(ownpath+cfgfile);        { Merken, ob die Datei existierte }
 {$ENDIF }
   assign(t,ownpath+cfgfile);
   rewrite(t);
@@ -895,8 +884,8 @@ begin
   writeln(t,'ReHochN=',jnf(rehochn));
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
-  if (OSType<>os_linux) then begin		{ DOS-Einstellungen nicht veraendern! }
-    if fustr(temppath)<>fustr(ownpath) then	{ FUStr wie UStr, wenn nicht UnixFS }
+  if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
+    if fustr(temppath)<>fustr(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
@@ -1106,8 +1095,8 @@ begin
   close(t);
 
 {$IFDEF UnixFS}
-  if not (oldf) then				{ chmod nur, wenn die Datei neu }
-    SetAccess(ownpath+cfgfile, taUserRW);	{ ansonsten nicht }
+  if not (oldf) then                            { chmod nur, wenn die Datei neu }
+    SetAccess(ownpath+cfgfile, taUserRW);       { ansonsten nicht }
 {$ENDIF }
 
   if (UseNewCfg) then begin
@@ -1115,12 +1104,12 @@ begin
       writeln('Interer Fehler');
       halt(2);
     end;
-    PutCfg('TempDir',temppath,MySection,31013);		
-    PutCfg('ExtractDir',extractpath,MySection,31014);	
+    PutCfg('TempDir',temppath,MySection,31013);
+    PutCfg('ExtractDir',extractpath,MySection,31014);
     PutCfg('SendfileDir',sendpath,MySection,31015);
     PutCfg('LogDir',logpath,MySection,31016);
     PutCfg('FileDir',filepath,MySection,31017);
-    PutCfg('TermDevice',TermDevice,csLinux,31018);	{ Terminal-Device }
+    PutCfg('TermDevice',TermDevice,csLinux,31018);      { Terminal-Device }
     CloseCfg;
   end;
   freeres;
@@ -1459,7 +1448,7 @@ begin
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
           { /oh }
           getb(su,  'screenlines',screenlines) or
-          gets(s,su,'tempdir',temppath,79) or		{ Wg. case sensetive }
+          gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
           gets(s,su,'sendfiledir',sendpath,79) or
           gets(s,su,'logdir',logpath,79) or
@@ -1678,7 +1667,7 @@ begin
     p:=0;
     for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
     if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-    
+
     UsrFeldTausch:=UStr(UsrFeldTausch);
     { (F)lags mssen immer vorne stehen }
     i:=pos('F',UsrFeldTausch); if (i>1) then begin
@@ -1816,6 +1805,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.63  2000/06/22 19:53:30  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.62  2000/06/20 18:19:36  hd
   - TermDevice Auswerten (Section: Linux)
 

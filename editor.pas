@@ -11,9 +11,6 @@
 { Editor v1.0   PM 05/93 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+,A+}
-{$ENDIF }
 
 unit editor;
 
@@ -179,66 +176,6 @@ asm
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
                db    'å','ç','é','è','ê','í','í','ì','ô'
   @start:
-{$IFDEF BP }
-         push  ds
-         lds   si,data
-         push  si     { robo }
-         les   di,s
-         mov   cx,len
-         mov   al,es:[di]              { ax:=length(s) - < 127! }
-         cbw
-         inc   cx
-         sub   cx,ax
-         jbe   @nfound
-         mov   dh,igcase
-
-  @sblp1:
-         xor   bx,bx                   { Suchpuffer- u. String-Offset }
-         mov   dl,es:[di]              { Key-LÑnge }
-  @sblp2:
-         mov   al,[si+bx]
-         or    dh,dh                   { ignore case (gro·wandeln) ? }
-         jz    @noupper
-         cmp   al,'a'
-         jb    @noupper
-         cmp   al,'z'
-         ja    @umtest
-         and   al,0dfh
-         jmp   @noupper                { kein Sonderzeichen }
-  @umtest:
-         cmp   al,128
-         jb    @noupper
-         cmp   al,148
-         ja    @noupper
-         push  bx
-         mov   bx,offset @uppertab-128
-         segcs
-         xlat
-         pop   bx
-  @noupper:
-         cmp   al,es:[di+bx+1]
-         jnz   @nextb
-         inc   bx
-         dec   dl
-         jz    @found
-         jmp   @sblp2
-  @nextb:
-         inc   si
-         loop  @sblp1
-
-  @nfound:
-         pop   si     { robo }
-         mov   ax,-1
-         jmp   @sende
-  @found:
-         mov   ax,si
-{         sub   ax,offset data } { robo }
-         pop   si     { robo }
-         sub   ax,si  { robo }
-  @sende:
-         pop   ds
-end;
-{$ELSE }
          mov    esi,data
          push   esi     { robo }
          mov    edi,s
@@ -298,63 +235,11 @@ end ['EBX', 'ESI', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
-{$ENDIF }
 
 
 function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi}
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
-{$IFDEF BP }
-            push  ds
-            lds   si,data
-            mov   bx,zlen
-
-  @floop:
-            mov   al,[si+bx]
-            cmp   al,' '               { ' ' -> unbedingter Umbruch }
-            jz    @ufound
-
-            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
-            jnz   @testslash           {        Zeichen folgt: }
-            mov   al,[si+bx+1]
-            cmp   al,'0'               { '0'..'9' }
-            jb    @fnext
-            cmp   al,'9'
-            jbe   @ufound
-            cmp   al,'A'               { 'A'..'Z' }
-            jb    @fnext
-            cmp   al,'Z'
-            jbe   @ufound
-            cmp   al,'a'               { 'a'..'z' }
-            jb    @fnext
-            cmp   al,'z'
-            jbe   @ufound
-            cmp   al,'Ä'               { 'Ä'..'•' }
-            jb    @fnext
-            cmp   al,'•'
-            jbe   @ufound
-            jmp   @fnext
-
-  @testslash:
-            cmp   bx,1
-            ja    @testslash2
-            mov   bx,0
-            jmp   @ufound
-  @testslash2:
-            cmp   al,'/'               { '/' -> Umbruch, falls kein }
-            jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [si+bx-1],' '
-            jz    @fnext
-            cmp   byte ptr [si+bx-1],'-'
-            jnz   @ufound
-
-  @fnext:
-            dec   bx
-            jnz   @floop
-  @ufound:
-            mov   ax,bx
-            pop ds
-{$ELSE }
             mov   esi,data
             movzx ebx,zlen
   @floop:
@@ -401,7 +286,6 @@ asm
             jnz   @floop
   @ufound:
             mov   eax,ebx
-{$ENDIF }
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ESI'];
 {$ELSE }
@@ -756,37 +640,14 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
 function memtest(size:longint):boolean;
-
-  function memfull:boolean;
-  begin
-{$IFDEF BP }
-    memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
-{$ELSE }
-    memfull:=false;
-{$ENDIF }
-  end;
-
 begin
-  while assigned(delroot) and memfull do
+(*  while assigned(delroot) and memfull do
     FreeLastDelEntry;
   if memfull and assigned(Clipboard) then
-    FreeBlock(Clipboard);
-  if memfull then begin
-    if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
-    memerrfl:=true;
-    memtest:=false;
-  end else
-    memtest:=true;
+    FreeBlock(Clipboard); *)
+  memtest:=true;
 end;
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 function allocabsatz(size:integer):absatzp;
 var p  : absatzp;
@@ -2025,6 +1886,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.25  2000/05/06 17:29:19  mk
   - DOS DPMI32 Portierung
 

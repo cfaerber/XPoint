@@ -16,7 +16,7 @@ unit xp_des;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -122,8 +122,6 @@ const IP : array[1..64] of byte =
 
 var x,buf : stream;    { buf = Puffer; nur fÅr Assembler-Routinen ! }
     k     : array[1..16] of stream;
-
-{$IFDEF ver32}
 
 procedure make_stream(var source, dest); assembler; {&uses esi, edi}
 asm
@@ -292,161 +290,6 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-{$ELSE }
-
-procedure make_stream(var source:sts; var dest:stream); assembler;
-asm
-             push ds
-             lds     si,source
-             les     di,dest
-
-             mov     dh,8
-@mstl1:       mov     ch,1
-             mov     cl,0
-             mov     dl,8
-@mstl2:       mov     al,[si]
-             and     al,ch
-             and     cl,cl
-             jz      @nodiv
-             shr     al,cl
-@nodiv:       mov     es:[di],al
-             inc     di
-             shl     ch,1
-             inc     cl
-             dec     dl
-             jnz     @mstl2
-             inc     si
-             dec     dh
-             jnz     @mstl1
-             pop ds
-end;
-
-procedure permutate(var stream:stream; codeofs:word; n:integer); assembler;
-asm
-             mov     si,codeofs
-             mov     di,offset buf
-             les     bx,  stream
-             dec     bx              { Array-Offset }
-             mov     cx,n
-             cld
-
-@perloop:    lodsb
-             seges
-             xlat
-             mov     [di],al
-             inc     di
-             loop    @perloop
-
-             mov     si,offset buf
-             mov     di,bx
-             inc     di
-             mov     cx,n
-             rep     movsb
-end;
-
-procedure make_comp(source:stream; var dest:sts); assembler;
-asm
-             push    ds
-             lds     si,source
-             les     di,dest
-
-             mov     dh,8
-@mkklp1:      mov     ch,0
-             mov     cl,0
-             mov     dl,8
-@mkklp2:      mov     al,[si]
-             and     cl,cl
-             jz      @nomult
-             shl     al,cl
-@nomult:     add     ch,al
-             inc     cl
-             inc     si
-             dec     dl
-             jnz     @mkklp2
-             mov     es:[di],ch
-             inc     di
-             dec     dh
-             jnz     @mkklp1
-             pop     ds
-end;
-
-procedure Xs(var s1:stream; var s2:stream; n:integer); assembler;
-asm
-             push ds
-             les     di,s1
-             lds     si,s2
-             cld
-
-             mov     cx,n
-@Xslp:        lodsb
-             xor     es:[di],al
-             inc     di
-             loop    @Xslp
-             pop ds
-end;
-
-procedure F2(var s:stream; var s2:stream); assembler;
-asm
-             mov     cx,0
-@F2lp:        push    cx
-             shl     cx,1
-             mov     dx,cx
-             shl     cx,1
-             add     cx,dx
-             les     si,s
-             mov     bx,cx
-
-             {Set6 }
-             mov     cx,600h
-             mov     dl,0
-@sb6lp:       mov     al,es:[si+bx]
-             and     cl,cl
-             jz      @no6mult
-             shl     al,cl
-@no6mult:     add     dl,al
-             inc     cl
-             inc     bl
-             dec     ch
-             jnz     @sb6lp
-             mov     al,dl
-
-
-             pop     bx
-             push    bx
-             mov     cl,6
-             shl     bx,cl
-             mov     ah,0
-             add     bx,ax
-             mov     dl, byte ptr Sn[bx]
-             les     di,s2
-             pop     bx
-             push    bx
-             shl     bx,1
-             shl     bx,1
-
-             {Set4}
-             mov     cx,400h
-             mov     dh,1
-@s4lp:        mov     al,dl
-             and     al,dh
-             and     cl,cl
-             jz      @no4div
-             shr     al,cl
-@no4div:      mov     es:[di+bx],al
-             inc     di
-             shl     dh,1
-             inc     cl
-             dec     ch
-             jnz     @s4lp
-
-             pop     cx
-             inc     cx
-             cmp     cx,8
-             jb      @F2lp
-end;
-
-{$ENDIF}
-
 procedure sleft(var s:stream; n:integer);
 var i : integer;
     h : byte;
@@ -569,6 +412,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/06/22 19:53:31  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.9  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 

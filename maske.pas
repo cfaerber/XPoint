@@ -11,9 +11,6 @@
 { Maskeneditor; V1.1 08/91, 05/92 PM }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit  maske;
 
@@ -1296,6 +1293,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.8  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

@@ -12,15 +12,6 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF BP }
-  {$A+}
-  {$M 16384,40000,40000}
-{$ENDIF }
-
 uses
   dos, typeform,fileio, xpglobal;
 
@@ -340,6 +331,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/06/22 19:53:27  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.6  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

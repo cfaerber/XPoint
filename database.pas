@@ -11,9 +11,6 @@
 { Datenbank-Routinen, PM 10/91 }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F-,O-}
-{$ENDIF }
 {$R-}
 
 unit database;
@@ -21,9 +18,6 @@ unit database;
 interface
 
 uses xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
   dos, typeform,datadef, inout;
 
 {------------------------------------------------------- Allgemeines ---}
@@ -121,85 +115,8 @@ uses
 {$ENDIF }
   datadef1;
 
-{ MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
-{ JG 22.05.00: Fuer BP 386+ Versionen erstellt}
 procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
-{$IFDEF BP }
- {$IFDEF NO386}
-asm
-         push ds
-         les   di, nodep
-         lds   si, rbuf
-         mov   dl,es:[di+2]            { Keysize }
-         mov   dh,0
-         add   dx,9                    { plus LÑngenbyte plus Ref/Data }
-         mov   bx,136                  { (264) sizeof(inodekey); }
-         sub   bx,dx
-         add   di,14
-         cld
-         lodsw                         { Anzahl SchlÅssel im Node }
-         stosw                         { Anzahl speichern }
-{        cmp   ax,4  }                 { Fehlerhafte Anzahl?? }
-{        jbe   noerr }
-{        mov   ax,4  }
-@noerr:  mov   cx,4                    { Ref+Data von key[0] Åbertragen }
-         rep   movsw
-         mov   cx,ax
-         jcxz  @nokeys
-         add   di,128                  { (256) key[0].keystr Åberspringen }
-{ MK 09.01.2000 Loop aufgerollt und Register benutzt }
-         mov   ax, cx
-@exlp:   mov   cx, dx
-         rep   movsb                   { Ref, Data und Key Åbertragen }
-         add   di, bx
-         dec   ax
-         jnz   @exlp
-@nokeys: pop ds
-end;
-
- {$ELSE} {Expand_node BP+386}
-asm
-         push ds
-         les di,nodep
-         lds si,rbuf
-         mov dl,es:[di+2]              { Keysize }
-         mov dh,0
-         add dx,9                      { plus LÑngenbyte plus Ref/Data }
-         mov bx,136                    { (264) sizeof(inodekey); }
-         sub bx,dx
-         add di,14
-         cld
-         lodsw                         { Anzahl SchlÅssel im Node }
-         stosw                         { Anzahl speichern }
-         db 66h                        { Ref+Data von key[0] Åbertragen }
-         movsw
-         db 66h
-         movsw
-
-         cmp ax,0
-         je @nokeys
-         add di,128                    { (256) key[0].keystr Åberspringen }
-
-@exlp:   mov cx,dx
-         shr cx,2                      { Ref, Data und Key Åbertragen }
-         db 66h
-         rep movsw                     { rep movsd }
-         jnc @even2
-         movsw
-@even2:  test dl,1
-         je @even
-         movsb
-@even:
-         add di,bx
-         dec ax
-         jnz @exlp
-
-@nokeys: pop ds
-end;
-
- {$ENDIF}
-
-{$ELSE } {!!! Hier mu· noch mal ÅberprÅft werden } {Expand_node VER32}
+{!!! Hier mu· noch mal ÅberprÅft werden } {Expand_node }
 asm
          mov   edi, nodep
          mov   esi, rbuf
@@ -230,67 +147,8 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
-{$ENDIF }
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler; {&uses ebx, esi, edi }
-{$IFDEF BP }
- {$IFDEF NO386 }
-asm
-         xor   cx,cx
-         les   di,cache
-         mov   bx,word ptr dbp
-         mov   dx,word ptr dbp+2
-         mov   si,word ptr ofs
-         mov   ax,word ptr ofs+2
-
-@sc_lp:  cmp   byte ptr es:[di],0      { not used? }
-         jz    @nextc
-         cmp   es:[di+1],bx            { dbp gleich? }
-         jnz   @nextc
-         cmp   es:[di+3],dx
-         jnz   @nextc
-         cmp   es:[di+5],si            { ofs gleich? }
-         jnz   @nextc
-         cmp   es:[di+7],ax
-         jz    @cfound
-@nextc:  add   di,1080                 { sizeof(cachepage) }
-         inc   cx
-         cmp   cx,cacheanz
-         jb    @sc_lp
-@cfound: les   di,i
-         mov   es:[di],cx
-end;
-
- {$ELSE }  {Seek_cache BP + 386 }
-asm
-         push ds
-         mov cx,0
-         db 66h
-         mov bx,word ptr dbp
-         db 66h
-         mov dx,word ptr ofs
-         lds di,cache
-
-@sc_lp:  cmp byte ptr [di],0           { not used? }
-         je @nextc
-         db 66h
-         cmp [di+1],bx                 { dbp gleich? }
-         jne @nextc
-         db 66h
-         cmp [di+5],dx                 { ofs gleich? }
-         je @cfound
-@nextc:  add di,1080                   { sizeof(cachepage) }
-         inc cx
-         cmp cx,cacheanz
-         jb @sc_lp
-
-@cfound: les di,i
-         mov es:[di],cx
-         pop ds
-end;
- {$ENDIF }
-
-{$ELSE }  { Seek_cache Ver32 }
 asm
          xor   ecx, ecx
          mov   edi, cache
@@ -314,76 +172,8 @@ end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
-{$ENDIF }
 
 procedure seek_cache2(var _sp:integer); assembler; {&uses ebx, edi}
-{$IFDEF BP }
- {$IFDEF NO386}
-asm
-         les   di,cache
-         mov   ax,0ffffh               { s := maxlongint }
-         mov   dx,ax
-         mov   bx,0                    { sp:=0 }
-         mov   cx,0                    { i:=0 }
-
-@clp:    cmp   byte ptr es:[di],0      { not used ? }
-         jz    @sc2ok
-         cmp   es:[di+11],dx           { cache^[i].lasttick < s ? }
-         ja    @nexti
-         jb    @smaller
-         cmp   es:[di+9],ax
-         jae   @nexti
-@smaller:mov   ax,es:[di+9]            { s:=cache^[i].lasttick }
-         mov   dx,es:[di+11]
-         mov   bx,cx                   { sp:=i; }
-@nexti:  add   di,1080
-         inc   cx
-         cmp   cx,cacheanz
-         jb    @clp
-         jmp   @nofree
-
-@sc2ok:  mov   bx,cx                   { sp:=i }
-@nofree: les   di,_sp
-         mov   es:[di],bx
-end;
-
- {$ELSE}  { Seek_cache2 BP + 386 }
-asm
-         push ds
-         lds di,cache
-         db 66h
-         xor ax,ax
-         mov bx,ax                     { sp:=0 }
-         mov cx,ax                     { i:=0 }
-         db 66h
-         dec ax                        { EAX = -1 / s := maxlongint }
-
-@clp:    cmp byte ptr [di],0          { not used ? }
-         je @sc2ok
-
-         db 66h
-         mov dx,[di+9]
-         db 66h
-         cmp dx,ax                    { cache^[i].lasttick < s ? }
-         jae @nexti
-         db 66h
-         mov ax,dx                    { s:=cache^[i].lasttick }
-         mov bx,cx                    { sp:=i; }
-
-@nexti:  add di,1080
-         inc cx
-         cmp cx,cacheanz
-         jb @clp
-         jmp @nofree
-
-@sc2ok:  mov bx,cx                     { sp:=i }
-@nofree: les di,_sp
-         mov es:[di],bx
-         pop ds
-end;
- {$ENDIF}
-
-{$ELSE }  { Seek_cache2 Ver32 }
 asm
          mov   edi, cache
          xor   eax, eax                { EAX = 0 }
@@ -412,7 +202,6 @@ asm
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ELSE }
 end;
-{$ENDIF }
 {$ENDIF }
 
 procedure dbSetICP(p:dbIndexCProc);
@@ -990,9 +779,6 @@ begin
       freemem(recbuf,hd.recsize);
     dbReleaseFL(feldp);
     end;
-{$IFDEF BP }
-  setemscache;
-{$ENDIF }
   if cacheanz > 0 then { MK 01/00 - Cachegrî·e mîglicherweise 0, dann nicht ausfÅhren!}
     for i:=0 to cacheanz-1 do
      if cache^[i].dbp=dbp then cache^[i].used:=false;
@@ -1603,11 +1389,7 @@ begin
       rewrite(f,1);
     if l>0 then
     begin
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=65536;
       getmem(p,s);
       repeat
         blockread(fe,p^,min(s,l),rr);
@@ -1637,11 +1419,7 @@ begin
     size:=l;
     if l>0 then
     begin
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=65536;
       getmem(p,s);
       repeat
         blockread(fe,p^,min(s,l),rr);
@@ -1717,11 +1495,7 @@ begin
     if size>0 then begin
       seek(fe,adr+1);
       blockwrite(fe,size,4);
-      {$IFDEF BP }
-        s:=min(maxavail-10000,32768);
-      {$ELSE }
-        s:=65536;
-      {$ENDIF }
+      s:=65536;
       getmem(p,s);
       repeat
         blockread(f,p^,min(s,size),rr);
@@ -1774,8 +1548,7 @@ begin
 end;
 
 {$S-}
-procedure _closelog; {$IFNDEF Ver32 } far; {$ENDIF }
-
+procedure _closelog;
 begin
   exitproc:=oldexit;
   if ioresult<>0 then;
@@ -1784,7 +1557,6 @@ end;
 {$IFDEF Debug }
   {$S+}
 {$ENDIF }
-
 
 {=====================================================================}
 
@@ -1857,6 +1629,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.22  2000/06/05 16:16:20  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

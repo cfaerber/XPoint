@@ -11,9 +11,6 @@
 { Nachrichten-Autoversandt; Autoexec }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpauto;
 
@@ -145,9 +142,7 @@ var mmask     : array[1..12] of boolean;
       amodi:=false
     else
       amodi:=sr.time<>ar.lastfd;
-{$IFDEF Ver32}
     FindClose(sr);
-{$ENDIF}
   end;
 
 begin
@@ -397,9 +392,7 @@ var sr    : searchrec;
             _era(AutoxDir+sr.name);
             dos.findnext(sr);
           end;
-          {$IFDEF Ver32}
           FindClose(sr);
-          {$ENDIF}
         end;
         _era('FPUFFER');
       end;
@@ -433,11 +426,7 @@ var sr    : searchrec;
     SendMsg:=false;
     empf:=''; betr:='';
     box:=''; datei:='';
-    {$IFDEF BP }
-      bs:=min(maxavail-10000,8192);
-    {$ELSE }
-      bs := 8192;
-    {$ENDIF }
+    bs := 8192;
     getmem(buf,bs);
     assign(t1,AutoxDir+sr.name);
     settextbuf(t1,buf^,bs);
@@ -608,9 +597,7 @@ begin
         end;
       end;
     ParGelesen:=mgel;
-    {$IFDEF Ver32 }
     FindClose(sr);
-    {$ENDIF}
   end;
 end;
 
@@ -673,6 +660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/22 19:53:32  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.13  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

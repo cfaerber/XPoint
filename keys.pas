@@ -13,10 +13,6 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF BP }
-  {$F+}
-{$ENDIF }
-
 unit keys;
 
 interface
@@ -173,10 +169,6 @@ const
   ctrl   = 4;
   alt    = 8;
 
-{$IFDEF BP }
-  enhKBsupport: boolean = false;
-{$ENDIF }
-
   highbyte : byte = 0;
 
 {$IFDEF FPC }
@@ -194,26 +186,8 @@ end;
 { keypressed ist in xpcurses definiert. }
 {$IFNDEF NCRT }
 function keypressed:boolean;
-{$IFDEF BP }
-var
-  key_pressed:boolean;
-{$ENDIF }
 begin
-{$IFDEF BP }
-  if enhKBsupport then
-  asm
-    mov key_pressed,false
-    mov ah,11h
-    int 16h
-    jz @@nokey
-    mov key_pressed,true
-  @@nokey:
-  end
-  else key_pressed:=crt.keypressed;
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
-{$ELSE }
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
-{$ENDIF }
 end;
 
 function readkey:char;
@@ -228,40 +202,8 @@ begin
       readkey:=chr(highbyte);
       highbyte:=0;
     end
-    else begin
-    {$IFDEF BP }
-      if enhKBsupport then
-      asm
-          mov ah,10h
-          int 16h
-          cmp al,0
-          jz @@is_ekey
-          cmp al,0e0h
-          jne @@isnt_ekey
-          cmp ah,0
-          jz @@isnt_ekey
-        @@is_ekey:
-          mov highbyte,ah
-          mov al,0
-        @@isnt_ekey:
-          mov @result,al
-          mov lastscancode,ah
-      end
-      else
-      asm
-          xor ah,ah
-          int 16h
-          cmp al,0
-          jnz @@weiter
-          mov highbyte,ah
-        @@weiter:
-          mov @result,al
-          mov lastscancode,ah
-      end;
-{$ELSE }
+    else
       readkey:=crt.readkey;
-{$ENDIF }
-    end;
 end;
 {$ENDIF } { NCRT }
 
@@ -323,33 +265,10 @@ const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
                   0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,                  { 239 }
                   0,0,0,0,0,0,0,0,0,0,0,0,4,3,0,0);                  { 255 }
 
-{$IFDEF BP }
-var adr   : word;
-
-const start = $80;
-      stop  = $82;
-{$ENDIF}
-
 begin
-{$IFDEF BP }
-  asm
-    cli
-  end;
-  if t[1]<>#0 then t[2]:=chr(scancode[ord(t[1])]);
-  adr:=mem[Seg0040:$1c]+2;
-  if adr>=memw[Seg0040:stop] then adr:=memw[Seg0040:start];
-  if adr<>mem[Seg0040:$1a] then begin
-    FastMove(t[1],mem[Seg0040:mem[Seg0040:$1c]],2);
-    mem[Seg0040:$1c]:=adr;
-    end;
-  asm
-    sti
-  end;
-{$ELSE }
   { !! PrÅfen }
   if t[1]<>#0 then t[2]:=chr(scancode[ord(t[1])]);
   forwardkeys := forwardkeys + t[1] + t[2];
-{$ENDIF}
 end;
 
 {$IFDEF FPC }
@@ -364,27 +283,19 @@ end;
 
 function ScrollMode:boolean;
 begin
-{$IFDEF BP }
-  ScrollMode:=odd(mem[Seg0040:$17] shr 4);
-{$ELSE }
-  ScrollMode := false;
-{$ENDIF }
+  ScrollMode := false; { noch portieren }
 end;
 
 {$IFNDEF Win32 }
 function kbstat: byte;     { lokal }
 begin
-  {$IFDEF BP }
-    kbstat:=mem[Seg0040:$17];
+  {$IFDEF VP }
+    kbstat := SysTVGetShiftState;
   {$ELSE }
-    {$IFDEF VP }
-      kbstat := SysTVGetShiftState;
+    {$IFDEF DOS32 }
+      kbstat:=mem[$40:$17];
     {$ELSE }
-      {$IFDEF DOS32 }
-        kbstat:=mem[$40:$17];
-      {$ELSE }
-        kbstat := 0; { !! }
-      {$ENDIF }
+      kbstat := 0; { !! }
     {$ENDIF }
   {$ENDIF }
 end;
@@ -417,37 +328,15 @@ begin
 {$ENDIF }
 end;
 
-{$IFDEF BP }
-procedure TestKeyInt;assembler; { Funktion $10,$11 vorhanden ? }
-  asm
-    mov bh,0fh  { ZÑhler }
-  @@loop:
-    mov ah,5
-    mov cx,0ffffh { in Puffer }
-    int 16h
-    mov ah,10h
-    int 16h
-    cmp ax,0ffffh { richtig gelesen ? }
-    je @@ja
-    dec bh
-    jnz @@loop
-    mov enhKBsupport,false
-    jmp @@nein
-  @@ja:
-    mov enhKBsupport,true
-  @@nein:
-end;
-{$ENDIF }
-
 begin
   forwardkeys:='';
   func_proc:=func_dummy;
-{$IFDEF BP }
-  TestKeyInt;
-{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.22  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.21  2000/06/04 22:02:02  mk
   - Shift-Keys in DOS32 und OS/2 Version implementiert
 

@@ -13,11 +13,6 @@ unit mouse;
 
 {$I XPDEFINE.INC }
 
-{$IFDEF DPMI16 }
-  {$C fixed,preload,permanent}
-{$ENDIF}
-
-
 {  ==================  Interface-Teil  ===================  }
 
 interface
@@ -71,10 +66,6 @@ function maust:word;      { 3: Maustastenzustand holen }
 
 procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);     { 7/8 }
 
-{$IFDEF BP }
-procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);     { 12 }
-procedure ClearMausInt;
-{$ENDIF }
 {$IFDEF VP }
 procedure InitMouseThread;
 procedure DoneMouseThread;
@@ -93,114 +84,23 @@ uses
 
 const
       intset  : boolean = false;
-{$IFDEF BP }
-      stsize  : word    = 0;      { Gr”áe des Stacks }
-      mausint = $33;
-{$ENDIF }
 
 var   oldexit : pointer;
-{$IFDEF BP }
-      mstack  : pointer;        { Stack f. Maus-Handler }
-      int_call: mausintp;       { Adresse des Handlers  }
-      ssave1, ssave2: SmallWord;
-{$ENDIF }
 
 
-{$IFNDEF ver32}
-procedure mausintproc; far; assembler;
-asm
-         pushf
-         push  ds
-         push  bp
-         mov   bp,seg @data            { Turbo-Datensegment setzen }
-         mov   ds,bp
 
-         cmp   stsize,0                { kein eigener Stack? }
-         jz    @nost1
-         mov   ssave1,sp       { Stack sichern }
-         mov   ssave2,ss
-         mov   bp,word ptr mstack+2    { Handler-Stack setzen }
-         inc   bp
-         mov   ss,bp
-         mov   bp,word ptr mstack
-         add   bp,stsize
-         sub   bp,16
-         and   bp,0fffeh
-         mov   sp,bp
-
-@nost1:  push  ax
-         push  bx
-         push  cx
-         push  dx
-         push  si
-         push  di
-         push  es
-
-         push  ax                      { ax: Interrupt-Quelle }
-         push  bx                      { bx: Tastenstatus }
-         push  cx                      { cx: X-Koordinate }
-         push  dx                      { dx: Y-Koordinate }
-         push  si                      { si: Mickey-X-Koordinate }
-         push  di                      { di: Mickey-Y-Koordinate }
-         call  dword ptr int_call      { Handler aufrufen }
-
-         pop   es
-         pop   di
-         pop   si
-         pop   dx
-         pop   cx
-         pop   bx
-         pop   ax
-
-         cmp   stsize,0
-         jz    @nost2
-         mov   sp,ssave1       { Stack wiederherstellen }
-         mov   ss,ssave2
-@nost2:  pop   bp
-         pop   ds
-         popf
-end;
-
-{$ENDIF}
-
-procedure mausinit; assembler;
-asm
-{$IFDEF BP }
-  xor ax,ax
-  cmp maus,false
-  je @1
-  int mausint
-@1:
-{$ENDIF }
+procedure mausinit;
+begin
 {$IFDEF VP}
-  mov mausda,true
+  {$IFDEF Win32 }
+    mausda := true;
+  {$ELSE }
+    mausda := false;
+   {$ENDIF }
 {$ELSE}
-  mov mausda,false
+  mausda := false;
 {$ENDIF }
 end;
-
-{$IFDEF BP }
-procedure mausan; assembler;
-asm
-  cmp maus,false
-  je @1
-  mov ax,1
-  int mausint
-  mov mausda,true
-@1:
-end;
-
-procedure mausaus; assembler;
-asm
-  cmp maus,false
-  je @1
-  mov ax,2
-  int mausint
-  mov mausda,false
-@1:
-end;
-
-{$ELSE }
 
 procedure mausan;
 begin
@@ -218,8 +118,6 @@ begin
   mausda := false;
 end;
 
-{$ENDIF }
-
 procedure getmaus(var stat:mausstat);
 {$IFDEF VP }
 var
@@ -227,15 +125,6 @@ var
 {$ENDIF }
 begin
   if maus then
-{$IFDEF BP }
-  asm
-    mov ax,3
-    int mausint
-    les di,stat
-    mov es:[di],bx
-    mov es:[di+2],cx
-    mov es:[di+4],dx
-{$ELSE }
   begin
     {$IFDEF VP }
       SysTVGetMouseEvent(Event);
@@ -246,7 +135,6 @@ begin
         tasten := event.smebuttons;
       end;
     {$ENDIF }
-{$ENDIF }
   end else
   with stat do
   begin
@@ -255,51 +143,6 @@ begin
     tasten := 0;
   end;
 end;
-
-{$IFDEF BP }
-function mausx:word; assembler;
-asm
-  xor ax,ax
-  cmp maus,false
-  je @1
-  mov ax,3
-  int mausint
-  mov ax,cx
-@1:
-end;
-
-function mausy:word; assembler;
-asm
-  xor ax,ax
-  cmp maus,false
-  je @1
-  mov ax,3
-  int mausint
-  mov ax,dx
-@1:
-end;
-
-function maust:word; assembler;
-asm
-  cmp maus,false
-  je @1
-  mov ax,3
-  int mausint
-  mov ax,bx
-  cmp mausswapped,false
-  je @1
-  mov cx,bx
-  and ax,4
-  and bx,1
-  shl bx,1
-  and cx,2
-  shr cx,1
-  or ax,bx
-  or ax,cx
-@1:
-end;
-
-{$ELSE }
 
 function mausx:word;
 {$IFDEF VP }
@@ -343,124 +186,26 @@ begin
   {$ENDIF }
 end;
 
-{$ENDIF }
-
-procedure setmaus(x,y: integer16); assembler;
-asm
-{$IFDEF BP }
-  cmp maus,false
-  je @1
-  mov ax,4
-  mov cx,x
-  mov dx,y
-  int mausint
-@1:
-{$ENDIF }
-end;
-
-
-procedure setmauswindow(xmin,xmax,ymin,ymax:integer16); assembler;
-asm
-{$IFDEF BP }
-  cmp maus,false
-  je @1
-  mov ax,7
-  mov cx,xmin
-  mov dx,xmax
-  int mausint
-  mov ax,8
-  mov cx,ymin
-  mov dx,ymax
-  int mausint
-@1:
-{$ENDIF }
-end;
-
-{$IFDEF BP }
-{ Interrupt-Routine setzen                        }
-{ intmask: Interrupt-Maske; siehe intX-Konstanten }
-{ intproc: aufzurufender Interrupt-Handler        }
-{ ssize  : Stack-Gr”áe                            }
-procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);
-begin
-  if maus then begin
-    int_call:=intproc;
-    asm
-      cli
-    end;
-    if stsize>0 then freemem(mstack,stsize);
-    {$IFDEF DPMI}
-      stsize:=0;
-    {$ELSE}
-      stsize:=ssize;
-    {$ENDIF}
-    if stsize>0 then getmem(mstack,stsize);
-    asm
-      mov ax,12
-      mov cx,intmask
-      mov dx,seg mausintproc
-      mov es,dx
-      mov dx,offset mausintproc
-      int mausint
-      mov intset,true
-      sti
-    end;
-  end;
-end;
-
-procedure dummyproc(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure setmaus(x,y: integer16);
 begin
 end;
 
-procedure ClearMausInt;
-begin
-  if intset then
-    SetMausInt(0,dummyproc,0);
-  intset:=false;
-end;
-{$ENDIF }
 
-{$IFDEF BP }
-procedure testmaus; assembler;
-asm
-  mov ah,035h
-  mov al,mausint
-  int 021h         { DOS Get Interrupt Vector -> ES:BX }
-  mov ax,es
-  or ax,bx         { NIL? }
-  jnz @1
-  mov al,es:[bx]
-  cmp al,0cfh
-  jne @1
-  mov maus,false
-  jmp @3
-@1:
-  mov ax,3
-  mov bx,0ffffh
-  int mausint
-  mov al,false
-  cmp bx,0ffffh
-  je @2
-  inc al
-@2:
-  mov maus,al
-@3:
+procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);
+begin
 end;
-{$ENDIF }
+
+
 
 {$S-}
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure newexit;
 begin
   exitproc:=oldexit;
   if intset then
   begin
-{$IFDEF BP }
-    ClearMausInt;
-{$ELSE }
   {$IFDEF VP }
     SysTVDoneMouse(true);
   {$ENDIF }
-{$ENDIF }
   end;
   if mausda then mausaus;
 end;
@@ -478,10 +223,6 @@ var
 begin
   if not minit then
   begin
-{$IFDEF BP }
-    testmaus;
-    if maus then mausinit;
-{$ELSE }
     {$IFDEF VP }
       if SysTVDetectMouse <> 0 then
       begin
@@ -490,7 +231,6 @@ begin
       end else
         Maus := false;
     {$ENDIF }
-{$ENDIF }
     mausda:=false;
     oldexit:=exitproc;
     exitproc:=@newexit;
@@ -554,6 +294,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/06/22 19:53:27  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.13  2000/06/01 16:03:04  mk
   - Verschiedene Aufraeumarbeiten
 

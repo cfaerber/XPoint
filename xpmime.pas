@@ -6,14 +6,11 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id }
+{ $Id$ }
 
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpmime;
 
@@ -41,13 +38,9 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
-{$IFDEF Ver32 }
-  {$H+}
-{$ENDIF }
+{$H+}
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
-{$IFDEF Ver32 }
-  {$H-}
-{$ENDIF }
+{$H-}
 
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
@@ -114,7 +107,7 @@ begin
 end;
 
 
-procedure SMP_Keys(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure SMP_Keys(var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if ustr(t)='X' then
@@ -566,9 +559,7 @@ end;
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
-{$IFDEF Ver32 }
-  {$H+}
-{$ENDIF }
+{$H+}
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 const bufsize = 2048;
 
@@ -726,6 +717,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/06/22 19:53:32  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.12  2000/05/05 14:20:08  mk
   - erweiterte Filenamenerkennung bei MIME-Mails
 

@@ -212,19 +212,6 @@ var  fname,
 
      procedure encode; assembler; {&uses esi}
      asm
-{$IFDEF BP }
-                mov si, offset gstr
-                cld
-                lodsb
-                mov cl, al
-                mov ch, 0
-                mov al, [xx]
-@a:              xor [si],al
-                add al, 125
-                inc si
-                loop @a
-                mov [xx], al
-{$ELSE }
                 mov esi, offset gstr
                 cld
                 lodsb
@@ -236,7 +223,6 @@ var  fname,
                 inc esi
                 loop @a
                 mov [xx], al
-{$ENDIF }
 {$IFDEF FPC }
      end ['ecx', 'esi'];
 {$ELSE }
@@ -428,6 +414,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/06/22 19:53:26  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.9  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

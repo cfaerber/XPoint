@@ -23,14 +23,6 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF BP }
-  {$M 16384,30000,40000}
-{$ENDIF }
-
 program xp_fm;
 
 uses
@@ -121,9 +113,6 @@ var   sendfile  : array[1..maxfiles] of pathptr;
       starty    : byte;
       scx,scy   : Byte;     { linke obere Fensterecke }
       scrsave   : pointer;
-{$IFDEF BP }
-      scrbase   : word;
-{$ENDIF }
       mx,my     : byte;
       displine  : array[1..gl] of string[width];
       disppos   : byte;
@@ -210,16 +199,6 @@ var t    : text;
 begin
   if paramcount<>1 then Helppage;
   sendfiles:=0;
-{$IFNDEF Ver32}
-  if mem[Seg0040:$49]<>7 then begin
-    ColText:=$70; ColStatus:=$7e; ColXfer:=$7f;
-    scrbase:=SegB800;
-  end
-  else begin
-    ColText:=7; ColStatus:=$f; ColXFer:=$f;
-    scrbase:=SegB000;
-  end;
-{$ENDIF }
   assign(t,paramstr(1));
   reset(t);
   if ioresult<>0 then error('CommandFile missing: '+ustr(paramstr(1)));
@@ -388,24 +367,8 @@ begin
 end;
 
 function getscreenlines:byte;
-{$IFDEF BP }
-var regs : registers;
-{$ENDIF }
 begin
-{$IFDEF BP }
-  with regs do begin
-    dl:=0;
-    ax:=$1130;
-    bh:=0;
-    intr($10,regs);
-    if (dl<24) or (dl>49) then
-      getscreenlines:=25
-    else
-      getscreenlines:=dl+1;
-  end;
-{$ELSE }
    getscreenlines:=25
-{$ENDIF }
 end;
 
 function CountPhoneNumbers:integer;
@@ -492,41 +455,22 @@ begin
 end;
 
 procedure PushWindow;
-{$IFDEF BP }
-var i : integer;
-{$ENDIF }
 begin
   Cursor(curoff);
   mx:=wherex; my:=wherey;
   getmem(scrsave,scsize);
-{$IFDEF BP }
-  FastMove(mem[scrbase:pred(scy)*160],scrsave^,scsize);
-{$ENDIF }
   col(ColText);
   window(scx,scy,scx+wdt-1,scy+hgh-1);
   clrscr;
   window(1,1,80,25);
   inc(windmax,$1900);
   wrt(scx,scy,'Õ'+dup(wdt-2,'Í')+'¸');
-{$IFDEF BP }
-  for i:=scy+1 to scy+hgh-1 do begin
-    wrt(scx,i,'³'); wrt(scx+wdt-1,i,'³');
-    mem[scrbase:(i-1)*160+(scx+wdt)*2-1]:=8;
-  end;
-  wrt(scx,scy+hgh-1,'Ô'+dup(wdt-2,'Í')+'¾');
-  wrt(scx,scy+2,'Ã'+dup(wdt-2,'Ä')+'´');
-  for i:=scx+1 to scx+wdt do
-    mem[scrbase:(scy+hgh-1)*160+(i*2)-1]:=8;
-{$ENDIF BP }
   col(ColStatus);
   wrt(scx+2,scy+1,left(#16+' '+txt,38));
 end;
 
 procedure PopWindow;
 begin
-{$IFDEF BP }
-  FastMove(scrsave^,mem[scrbase:pred(scy)*160],scsize);
-{$ENDIF }
   freemem(scrsave,scsize);
   gotoxy(mx,my);
   Cursor(curnorm);
@@ -813,9 +757,6 @@ end;
 
 {$I XP-FM.INC}          { YooHoo - Mailer }
 
-{$IFDEF BP }
-  {$F+,S-}
-{$ENDIF }
 procedure newexit;
 begin
   if ioresult<>0 then;
@@ -824,9 +765,6 @@ begin
   Cursor(curnorm);
   exitproc:=oldexit;
 end;
-{$IFDEF BP }
-  {$F+,S+}
-{$ENDIF }
 
 
 begin
@@ -876,6 +814,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2000/06/22 19:53:29  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.15  2000/06/22 17:29:20  mk
   - sprechendere Variablen- und Prozedurnamen
   - auf Unit ObjCOM/Timer/Debug umgestellt

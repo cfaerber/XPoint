@@ -21,9 +21,6 @@ interface
 
 uses
   xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
   typeform,fileio;
 
 procedure OpenResource(fn:string; preloadmem:longint);
@@ -85,16 +82,6 @@ begin
   halt(1);
 end;
 
-{$IFDEF BP }
-procedure EmsEinblenden(nr:integer);
-var i : byte;
-begin
-  for i:=0 to block[nr].emspages-1 do
-    emspage(block[nr].emshandle,i,i);
-end;
-{$ENDIF }
-
-
 {$S-}
 procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
@@ -108,9 +95,6 @@ end;
 
 procedure OpenResource(fn:string; preloadmem:longint);
 var i  : integer;
-{$IFDEF BP }
-    pg : byte;
-{$ENDIF }
     fm : byte;
 begin
   if f<>nil then
@@ -132,17 +116,6 @@ begin
     blockread(f^,index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-{$IFDEF BP }
-      pg:=(longint(block[i].contsize)+$3fff) div $4000;
-      if emsavail>=pg then begin
-        EmsAlloc(pg,block[i].emshandle);
-        block[i].emspages:=pg;
-        block[i].loaded:=true;
-        block[i].rptr:=ptr(emsbase,0);
-        EmsEinblenden(i);
-        end
-      else
-{$ENDIF }
         if memavail-block[i].contsize>preloadmem then begin
           getmem(block[i].rptr,block[i].contsize);
           block[i].loaded:=true;
@@ -168,11 +141,6 @@ begin
   close(f^);
   dispose(f);
   for i:=1 to blocks do with block[i] do begin
-{$IFDEF BP }
-    if emspages>0 then
-      emsfree(emshandle)
-    else
-{$ENDIF }
       if loaded then
         freemem(rptr,contsize);
     freemem(index[i],anzahl*4);
@@ -243,9 +211,6 @@ begin
     with block[bnr] do begin
       s[0]:=chr(rsize(bnr,inr));
       if loaded then begin
-{$IFDEF BP }
-        if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
         FastMove(rptr^[index[bnr]^[inr,1]],s[1],length(s));
         end
       else begin
@@ -287,9 +252,6 @@ begin
       error('['+strs(nr1)+']: no split page')
     else
       with block[bnr] do begin
-{$IFDEF BP }
-        if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
         if inr<>clnr then begin
           if clnr<>$ffff then FreeRes;
           size:=rsize(bnr,inr);
@@ -344,9 +306,6 @@ begin
   if getnr(nr,bnr,inr) then
     with block[bnr] do begin
       if loaded then begin
-{$IFDEF BP }
-        if emspages>0 then EmsEinblenden(bnr);
-{$ENDIF }
         FastMove(rptr^[index[bnr]^[inr,1]],nr,2);
         end
       else begin
@@ -387,6 +346,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/22 19:53:27  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.7  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

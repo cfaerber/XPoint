@@ -13,10 +13,6 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF DPMI16 }
-  {$C fixed,preload,permanent}
-{$ENDIF}
-
 unit  maus2;
 
 interface
@@ -67,7 +63,7 @@ function  _mausy:integer;
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
                              var _unit:longint);
-procedure mint(intsource,tasten,x,y,mx,my:word); {$IFDEF BP } far; {$ENDIF }
+procedure mint(intsource,tasten,x,y,mx,my:word);
 
 { -------------------------------------------------------------------- }
 
@@ -179,14 +175,9 @@ end;
 
 procedure maus_tasten_an;
 begin
-{$IFDEF BP }
-  if not tan then
-    setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1,mint,2048);
-{$ENDIF }
 {$IFDEF VP }
   InitMouseThread;
 {$ENDIF }
-
   tan:=true;
   lx:=255; ly:=255;
 end;
@@ -194,10 +185,6 @@ end;
 
 procedure maus_tasten_aus;
 begin
-{$IFDEF BP }
-  if tan then
-    clearmausint;
-{$ENDIF }
 {$IFDEF VP }
   DoneMouseThread;
 {$ENDIF }
@@ -236,7 +223,6 @@ end;
 
 procedure mwrt(x,y:byte; txt:string);
 begin
-{$IFDEF Ver32 }
   if maus_cursor then
   begin
     mausaus;
@@ -244,16 +230,6 @@ begin
     mausan;
   end else
     Wrt(x, y, txt);
-{$ELSE }
-  gotoxy(x,y);
-  if maus_cursor then
-  begin
-    mausaus;
-    write(txt);
-    mausan;
-  end else
-    write(txt);
-{$ENDIF }
 end;
 
 procedure interr(txt:string);
@@ -351,6 +327,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/06/22 19:53:27  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.14  2000/05/17 18:45:33  mk
   - Wieder unter allen Platformen compilierbar
 

@@ -11,9 +11,6 @@
 { DATABASE.PAS: Overlay-Teil }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit databaso;
 
@@ -139,7 +136,7 @@ begin
       end;
     close(f);
 {$IFDEF UnixFS }
-    SetAccess(filename+dbExt, taUserRW);	{ User Read/Write }
+    SetAccess(filename+dbExt, taUserRW);        { User Read/Write }
 {$ENDIF }
     end;
 
@@ -433,6 +430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.7  2000/05/09 15:52:40  hd
   - UnixFS: Access-Mode eingefuegt
 

@@ -10,10 +10,6 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
 { Yuppie Mailbase -> Fido-PKT }
 
 uses xpglobal, dos, typeform, fileio, dbase;
@@ -366,6 +362,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/06/22 19:53:33  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.3  2000/03/03 13:24:45  mk
   YUP2PKT compilierbar gemacht und in Distribution aufgenommen
 

@@ -18,9 +18,7 @@ unit fileio;
 interface
 
 uses
-{$IFDEF Ver32 }
   sysutils,
-{$ENDIF }
 {$ifdef Linux }
   linux,
   xplinux,
@@ -63,11 +61,11 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
 
-function  AddDirSepa(p: pathstr): pathstr;	{ Verz.-Trenner anhaengen }
+function  AddDirSepa(p: pathstr): pathstr;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
-function  existBin(fn: pathstr): boolean;	{ Datei vorhanden (PATH)  }
+function  existBin(fn: pathstr): boolean;       { Datei vorhanden (PATH)  }
 Function  ValidFileName(name:PathStr):boolean;  { gÅltiger Dateiname ?    }
 Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
 function  TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen      }
@@ -84,9 +82,6 @@ Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
 
-{$IFDEF BP }
-function  diskfree(drive:byte):longint;         { 2-GB-Problem umgehen    }
-{$ENDIF }
 function  exetype(fn:pathstr):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
@@ -120,11 +115,6 @@ const
   PathSepaChar          = ';';
 {$ENDIF}
 
-{$IFDEF BP }
-var
-  ShareDa : boolean;
-{$ENDIF }
-
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
 function  AddDirSepa(p: pathstr): pathstr;
@@ -142,10 +132,10 @@ begin
 {$ELSE}
     begin
       if (length(p)=2) and (p[2]=':') then
-      begin	{ Nur C: ? }
+      begin     { Nur C: ? }
         p:= UStr(p);
-        getdir(Ord(p[1])-64,cwd);		{ -> Akt. Verz. ermitteln }
-	AddDirSepa:= AddDirSepa(cwd);
+        getdir(Ord(p[1])-64,cwd);               { -> Akt. Verz. ermitteln }
+        AddDirSepa:= AddDirSepa(cwd);
       end else
         AddDirSepa:= p+DirSepa;
     end
@@ -158,20 +148,20 @@ end;
 { Sucht die Datei 'fn' in folgender Reihenfolge:
   - Aktuelle Verzeichnis
   - Startverzeichnis der aktuellen Programmdatei
-  - Environment-Var PATH 
+  - Environment-Var PATH
 }
 function  existBin(fn: pathstr): boolean;
 var
-  envpath: string;			{ Opps, bug in brain. PATH kann > 256 sein }
+  envpath: string;                      { Opps, bug in brain. PATH kann > 256 sein }
   filename, path: PathStr;
   i, j, k: integer;
 begin
-  filename:= GetFileName(fn);		{ Evtl. Pfad ignorieren }
-  if exist(fn) then begin		{ -> Aktuelles Verzeichnis }
+  filename:= GetFileName(fn);           { Evtl. Pfad ignorieren }
+  if exist(fn) then begin               { -> Aktuelles Verzeichnis }
     existBin:= true;
     exit;
   end;
-  path:= ProgPath;			{ -> Startverzeichnis }
+  path:= ProgPath;                      { -> Startverzeichnis }
   if path<>'' then begin
     if exist(AddDirSepa(path)+filename) then begin
       existBin:= true;
@@ -191,10 +181,10 @@ begin
     if path<>'' then
       if exist(AddDirSepa(path)+filename) then begin
         existBin:= true;
-	exit;
+        exit;
       end;
   end;
-  if envpath<>'' then begin		{ Noch was ueber ? }
+  if envpath<>'' then begin             { Noch was ueber ? }
     if exist(AddDirSepa(envpath)+filename) then
       existBin:= true
     else
@@ -217,9 +207,7 @@ begin
     Dos.FindNext(sr);
     ex:=(doserror=0);
   end;
-  {$IFDEF Ver32 }
-    Dos.FindClose(sr);
-  {$ENDIF }
+  Dos.FindClose(sr);
   exist:=ex;
 end;
 
@@ -308,9 +296,7 @@ begin
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
 {$ENDIF }
-{$ifdef ver32 }
-    findclose(sr);
-{$endif}
+  findclose(sr);
   end;
 end;
 
@@ -320,11 +306,7 @@ var bufs,rr:word;
     buf:pointer;
     f1,f2:file;
 begin
-  {$IFDEF BP }
-    bufs:=min(maxavail,32768);
-  {$ELSE }
-    bufs:=65536;
-  {$ENDIF }
+  bufs:=65536;
   getmem(buf,bufs);
 {$IFDEF UnixFS}
   assign(f1,ResolvePathName(srcfn));
@@ -370,9 +352,7 @@ begin
     era(getfiledir(s)+sr.name);
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
 end;
 
 { path: Pfad mit '\' bzw. '/' am Ende! }
@@ -389,9 +369,7 @@ begin
   { Auf keinen Fall das XP-Verzeichnis lîschen! }
   Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
   er:=doserror;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
   if (er=0) then exit;
   { Oops, XPVerzeichnis erwischt! }
@@ -412,9 +390,7 @@ begin
         end;
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   if cpos(DirSepa,path)<length(path) then begin
     dellast(path);
     rmdir(path);
@@ -498,7 +474,6 @@ begin
     SetAccess(TempBatchFN, taUserRWX);          { Ausfuehrbar machen }
 {$ENDIF }
   end;
-  io:=ioresult; { Muss das doppelt sein? (hd) }
   io:=ioresult;
 end;
 
@@ -586,9 +561,7 @@ begin
     _filesize:=0
   else
     _filesize:=sr.size;
-  {$ifdef ver32 }
   findclose(sr);
-  {$endif}
 end;
 
 procedure MakeFile(fn:pathstr);
@@ -618,9 +591,7 @@ begin
     filetime:=sr.time
   else
     filetime:=0;
-  {$ifdef ver32 }
   findclose(sr);
-  {$endif}
 end;
 
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
@@ -749,62 +720,35 @@ end;
 {$ENDIF }
 
 function lock(var datei:file; from,size:longint):boolean;
-{$IFDEF ver32 }
 begin
   {$ifdef vp }
-  lock:=SysLockFile(datei,from,size)=0;
+    lock:=SysLockFile(datei,from,size)=0;
   {$else}
-  (* Aus unbekannten GrÅnden funktioniert das ganze unter Windows 95
-     nicht, wohl aber unter Windows NT
-    Lock := Windows.LockFile(FileRec(Datei).Handle,
-    Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
-  {$ifdef UnixFS}                     { Filelocking fÅr Linux }
-  lock := flock (datei, LOCK_SH);
-  {$ELSE }
-  Lock := true;
-  {$endif}
-{$ENDIF}
-{$ELSE }
-var regs : registers;
-begin
-  if Shareda then with regs do begin
-    ax:=$5c00;
-    bx:=filerec(datei).handle;
-    cx:=from shr 16; dx:=from and $ffff;
-    si:=size shr 16; di:=size and $ffff;
-    msdos(regs);
-    lock:=flags and fcarry = 0;
-  end
-  else
-    lock:=true;
-{$ENDIF }
+    (* Aus unbekannten GrÅnden funktioniert das ganze unter Windows 95
+       nicht, wohl aber unter Windows NT
+      Lock := Windows.LockFile(FileRec(Datei).Handle,
+      Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
+    {$ifdef UnixFS}                     { Filelocking fÅr Linux }
+      lock := flock (datei, LOCK_SH);
+    {$ELSE }
+      Lock := true;
+    {$endif}
+  {$endif }
 end;
 
 procedure unlock(var datei:file; from,size:longint);
-{$IFDEF ver32 }
 begin
  {$ifdef vp }
   if SysUnLockFile(datei,from,size)=0 then ;
  {$else}
-  {$ifdef win32}
-  Windows.UnLockFile(FileRec(Datei).Handle,
-    Lo(From), Hi(From), Lo(Size), Hi(Size));
-  {$endif}
-  {$ifdef UnixFS}                 { ML 25.03.2000    Filelocking f¸r Linux }
-  flock(Datei, LOCK_UN);
-  {$endif}
+   {$ifdef win32}
+      Windows.UnLockFile(FileRec(Datei).Handle,
+        Lo(From), Hi(From), Lo(Size), Hi(Size));
+   {$endif}
+   {$ifdef UnixFS}                 { ML 25.03.2000    Filelocking f¸r Linux }
+     flock(Datei, LOCK_UN);
+   {$endif}
  {$endif}
-{$ELSE }
-var regs : registers;
-begin
-  if shareda then with regs do begin
-    ax:=$5c01;
-    bx:=filerec(datei).handle;
-    cx:=from shr 16; dx:=from and $ffff;
-    si:=size shr 16; di:=size and $ffff;
-    msdos(regs);
-  end;
-{$ENDIF }
 end;
 
 {$IFDEF FPC }
@@ -821,36 +765,6 @@ procedure unlockfile(var datei:file);
 begin
   unlock(datei,0,maxlongint);
 end;
-
-
-procedure TestShare;
-{$IFDEF Ver32 }
-begin
-end;
-{$ELSE}
-var regs : registers;
-begin
-  fillchar(regs,sizeof(regs),0);
-  with regs do begin
-    ax:=$5c00;
-    di:=1;
-    msdos(regs);
-    if flags and fcarry=0 then begin
-      ax:=$5c01;
-      msdos(regs);
-    end;
-    ShareDa:=(ax<>1);
-  end;
-  { Weiterer Installcheck fÅr Share, um Probleme mit einem Plain
-    DR-DOS zu umgehen }
-  with regs do
-  begin
-    ax:=$1000;
-    intr($2f, regs);
-    if al <> $ff then ShareDa := false;
-  end;
-end;
-{$ENDIF}
 
 procedure resetfm(var f:file; fm:byte);
 var fm0 : byte;
@@ -883,28 +797,6 @@ end;
 { - bei bestimmten Cluster/Sektorgrî·en-Kombinationen        }
 {   liefern diskfree und disksize falsche Werte              }
 { Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
-{$IFDEF BP }
-function diskfree(drive:byte):longint;
-var l,ll : longint;
-    regs : registers;
-begin
-  regs.ah := $36;
-  regs.dl := drive;
-  msdos(regs);
-  if regs.ax=$ffff then
-    l:=0
-  else begin
-    l:=longint(regs.ax)*regs.bx;   { Secs/Cluster * Free Clusters }
-    if regs.cx>=512 then
-      ll:=(l div 2)*(regs.cx div 512)
-    else
-      ll:=(l div 1024)*regs.cx;
-    if ll>=2097152 then l:=maxlongint
-    else l:=l*regs.cx;
-  end;
-  diskfree:=l;
-end;
-{$ENDIF }
 
 function exetype(fn:pathstr):TExeType;
 var f       : file;
@@ -936,7 +828,7 @@ begin
   else if odd(hdadr) then
     exetype:=ET_DOS
   else
-  begin { MK 01/00 Fix fÅr LZEXE gepackte Dateien }
+  begin { Fix fÅr LZEXE gepackte Dateien }
     if (hdadr > 0) and (hdadr < FileSize(f)-54) then
     begin
       seek(f,hdadr);
@@ -962,11 +854,12 @@ begin
   if ioresult<>0 then;
 end;
 
-begin
-  TestShare;
 end.
 {
   $Log$
+  Revision 1.42  2000/06/22 19:53:25  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.41  2000/06/20 18:22:27  hd
   - Kleine Aenderungen
 

@@ -10,15 +10,13 @@
 { $Id$ }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit clip;
 
 interface
 
-uses xpglobal, dos;
+uses
+  xpglobal, dos;
 
 function ClipAvailable:boolean;                    { Clipboard verfÅgbar }
 function Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
@@ -27,22 +25,10 @@ procedure String2Clip(var str: String);            { STring ins Clipboard}
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
 
-{$IFDEF BP }
-function  WinVersion:smallword;                 { Windows >= 3.0      }
-
-function  SmartInstalled:boolean;
-function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
-function  SmartSetCache(drive,b:byte):boolean;  { 0=nope, 1=read, 2=write }
-procedure SmartResetCache;
-procedure SmartFlushCache;
-{$ENDIF }
-
 implementation  { ---------------------------------------------------- }
 
 uses
-{$IFDEF Ver32 }
   strings,
-{$ENDIF }
 {$IFDEF Win32 }
   windows,
 {$ENDIF }
@@ -51,18 +37,9 @@ uses
 {$ENDIF }
   typeform;
 
-{$IFDEF BP }
-const
-  Multiplex = $2f;
-  cf_Oemtext   = 7;
-  maxfile   = 65520;
-{$ENDIF }
-
 type
   ca  = array[0..65530] of char;
   cap = ^ca;
-
-{$IFDEF ver32}
 
 function ClipAvailable:boolean;
 begin
@@ -268,394 +245,12 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-{$ELSE}
-
-function WinVersion:smallword;assembler;      { Windows-Version abfragen }
-asm
-              mov    ax,1600h
-              int    Multiplex
-              cmp    al,0
-              jz     @NoWin
-              cmp    al,20
-              ja     @NoWin
-              cmp    al,1
-              jz     @Win386
-              cmp    al,0ffh
-              jz     @Win386
-              xchg   al,ah
-              jmp    @WinOk
-@Win386:      mov    ax,200h
-              jmp    @WinOk
-@NoWin:       xor    ax,ax
-@WinOk:
-end;
-
-
-function ClipAvailable:boolean; assembler;    { wird Clipboard unterstÅtzt? }
-asm
-              mov    ax,1700h
-              int    multiplex
-              sub    ax,1700h
-              jz     @ca1
-              mov    al,1
-@ca1:
-end;
-
-
-function ClipOpen:boolean; assembler;         { Clipboard îffnen }
-asm
-              mov    ax,1701h
-              int    multiplex
-              or     ax,ax
-              jz     @c1
-              mov    ax,1
-@c1:
-end;
-
-
-function ClipClose:boolean; assembler;        { Clipboard schlie·en }
-asm
-              mov    ax,1708h
-              int    multiplex
-              or     ax,ax
-              jz     @c1
-              mov    ax,1
-@c1:
-end;
-
-
-procedure ClipEmpty; assembler;       { Clipboard lîschen }
-asm
-              mov    ax,1702h
-              int    multiplex
-end;
-
-
-function ClipCompact(desired:longint):longint; assembler;     { Platz ermitteln }
-asm
-              mov    ax,1709h
-              mov    cx,word ptr desired
-              mov    si,word ptr desired+2
-              int    multiplex               { Ergebnis in DX:AX }
-end;
-
-
-function ClipWrite2(format:word; lsize:longint; var ldata):boolean; near; assembler;
-asm
-              mov ax,1703h
-              mov dx,format
-              mov si,word ptr lsize+2             { lsize ist zwar longint }
-              mov cx,word ptr lsize               { aber es werden maximal 64K genutzt }
-              les bx,ldata
-
-              cmp cx,0ffffh
-              je @1                               {Text MUSS mit #0 enden !!!!}
-              mov di,cx
-              mov byte ptr es:[bx+di],0
-              inc cx
-@1:
-              int multiplex
-              or ax,ax
-              jz @cw1
-              mov ax,1
-@cw1:
-end;
-
-
-
-function ClipGetDatasize(format:word):longint; assembler;
-asm
-              mov    ax,1704h
-              mov    dx,format
-              int    multiplex         { liefert Ergebnis in DX:AX }
-end;
-
-
-function ClipRead(format:word; var ldata):boolean; assembler;   { Daten lesen }
-asm
-              mov    ax,1705h
-              mov    dx,format
-              mov    es,word ptr ldata+2
-              mov    bx,word ptr ldata
-              int    multiplex
-              or     ax,ax
-              jz     @cr1
-              mov    ax,1
-@cr1:
-end;
-
-
-function Clip2String(maxlen,oneline:byte):String; assembler;  {JG:06.02.00 Jetzt String!}
-{ JG: 3.2.00   Text aus Clipboard direkt als Pascal String uebergeben                    }
-{              Maximallaenge, Einzeilig ( <>0: CR/LF wird in Space umgewandelt)  }
-
-asm           les bx,@result
-              mov word ptr es:[bx],0              { leerstring bei Fehler }
-
-              mov ax,1700h                        { Clipboard verfuegbar ? }
-              int multiplex
-              cmp ax,1700h
-              mov di,0                            { Clipb. nicht schliessen, wenn nicht da.}
-              je @nope
-
-              mov ax,1701h                        { Clipboard îffnen }
-              int multiplex
-              push ax                             { Aktuellen Clipboardstatus merken }
-
-              mov ax,1704h                        { Datengroesse Ermitteln }
-              mov dx,cf_Oemtext
-              int multiplex                       { DX:AX }
-              pop di                              { Clipboardstatus }
-
-              cmp al,0                            { Abbruch bei }
-              je @nope                            { leerem Testclipboard }
-              or dl,ah
-              cmp dx,0                            { oder mehr als 256 Zeichen }
-              jne @nope
-
-              les bx,@result
-              inc bx
-              push ax                             { Textlaenge, Start und   }
-              push bx                             { Clipboardstatus sichern }
-              push di
-
-              mov ax,1705h                        { Text aus Clipboard anhaengen }
-              mov dx,cf_Oemtext
-              int multiplex
-
-              pop di
-              pop si                              { SI= Textstart }
-              pop bx
-              mov bh,0                            { BX=Textlaenge laut Windows }
-              inc bx                              { ( gerundet auf 32Byte )    }
-
-@@1:          dec bx
-              cmp byte ptr es:[si+bx-1],' '       { Ab Textende Rueckwaerts }
-              jb @@1                              { Fuell-Nullen und Steuerzeichen loeschen }
-
-              cmp bl,maxlen                       { Stringlaenge auf Maximallaenge kuerzen }
-              jna @1
-              mov bl,maxlen
-@1:           mov es:[si-1],bl
-
-              cmp oneline,0                       { Wenn alles in eine Zeile soll... }
-              je @bye
-@@2:          cmp byte ptr es:[si+bx],' '         { Steuerzeichen in Spaces Umwandeln }
-              jnb @@3
-              mov byte ptr es:[si+bx],' '
-@@3:          dec bx
-              jns @@2
-              jmp @bye
-
-@nope:        mov ah,2                            { Fehler: }
-              mov dl,7                            { BEEP }
-              int 21h
-
-@Bye:         cmp di,0                            { Wenn clipboard nicht auf war }
-              je @jup
-              mov ax,1708h                        { wieder schliessen }
-              int multiplex
-@jup:
-end;
-
-{ String ins Clipboard kopieren}
-
-procedure String2Clip(var Str: String); assembler;
-asm
-              mov ax,1700h                        { Clipboard verfuegbar ? }
-              int multiplex
-              cmp ax,1700h
-              je @end
-
-              mov ax,1701h                        { Clipboard îffnen }
-              int multiplex
-              push ax                             { Aktuellen Clipboardstatus merken }
-
-              mov ax,1702h
-              int multiplex                       { Clipboard leeren}
-
-              les bx,str
-              mov si,0
-              mov cx,si
-              mov cl,es:[bx]                      {Stringlaenge -> si:cx}
-              inc bx                              {Textstart    -> es:bx}
-
-              cmp cl,255
-              je @1                               {Text MUSS mit #0 enden !!!!}
-              mov di,cx
-              mov byte ptr es:[bx+di],0
-              inc cx
-@1:
-              mov ax,1703h                        {String Ins Clipboard schreiben...}
-              mov dx,cf_Oemtext                   {Als OEMTEXT}
-              int multiplex
-
-              pop ax
-              or ax,ax                            { Wenn clipboard nicht auf war }
-              je @end
-              mov ax,1708h                        { wieder schliessen }
-              int multiplex
-@end:
-end;
-
-function ClipWrite(format:word; size:longint; var data):boolean;  { Schreiben }
-begin
-  if ClipCompact(size)>=size then
-    ClipWrite:=ClipWrite2(format,size,data)
-  else
-    ClipWrite:=false;
-end;
-
-procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Windows-Clipboard schicken }
-var f  : file;
-    p  : pointer;
-    bs : word;
-    rr : word;
-begin
-  if ClipAvailable and ClipOpen then
-  begin
-    assign(f,fn);
-    reset(f,1);
-    if ioresult=0 then
-    begin
-      if maxavail>maxfile then
-        bs:=maxfile
-      else
-        bs:=maxavail;
-      getmem(p,bs);
-      blockread(f,p^,bs,rr);
-      ClipEmpty;
-      ClipWrite(cf_Oemtext,rr,p^);
-      ClipClose;
-      freemem(p,bs);
-    end;
-    close(f);
-  end;
-end;
-
-procedure ClipToFile(fn:pathstr);       { Win-Clipboardinhalt als File speichern }
-var f  : file;
-    p  : cap;
-    bs : longint;
-    s  : string[40];
-    bp : longint;
-begin
-  assign(f,fn);
-  rewrite(f,1);
-  if ioresult=0 then begin
-    if ClipAvailable and ClipOpen then begin
-      bs:=ClipGetDatasize(cf_OemText);
-      if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }
-        s:='Clipboard-Inhalt ist zu umfangreich'#13#10;   { groesser als Clipfile oder  }
-        blockwrite(f,s[1],length(s));                     { freier Speicher ist         }
-        if clipclose then;                                { Clipboard trotzdem Schliessen }
-        end
-      else
-        if bs>0 then begin
-          getmem(p,bs);
-          if ClipRead(cf_Oemtext,p^) then begin
-            bp:=bs;
-            while (bp>0) and (p^[bp-1]=#0) do dec(bp);
-            blockwrite(f,p^,bp);
-            end;
-          if ClipClose then;
-          freemem(p,bs);
-          end;
-      end;
-    close(f);
-    end;
-end;
-
-{ Smartdrive vorhanden? }
-
-function SmartInstalled:boolean;
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$4a10;
-    bx:=0;                { installation check }
-    intr($2f,regs);
-    SmartInstalled:=(ax=$BABE);
-    end;
-end;
-
-
-{ Cache-Status abfragen }
-
-function SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$4a10;
-    bx:=3;
-    bp:=drive;
-    dl:=0;                { get status }
-    intr($2f,regs);
-    if (ax<>$BABE) or (dl=$ff) then
-      SmartCache:=0
-    else if dl and $40=0 then SmartCache:=2
-    else if dl and $80=0 then SmartCache:=1
-    else SmartCache:=0;
-    end;
-end;
-
-
-{ Cache-Status setzen }
-
-function SmartSetCache(drive,b:byte):boolean;  { 0=nope, 1=read, 2=write }
-var regs : registers;
-  procedure sfunc(nr:byte);
-  begin
-{$IFNDEF Ver32 }
-    with regs do begin
-      ax:=$4a10;
-      bx:=3;
-      bp:=drive;
-      dl:=nr;
-      intr($2f,regs);
-      SmartSetcache:=(ax=$BABE) and (dl<>$ff);
-      end;
-{$ENDIF }
-  end;
-begin
-  case b of
-    0 : sfunc(2);          { turn off read cache }
-    1 : begin
-          sfunc(1);        { turn on read cache }
-          sfunc(4);        { turn off write cache }
-        end;
-    2 : begin
-          sfunc(1);        { turn on read cache }
-          sfunc(3);        { turn on write cache }
-        end;
-  end;
-end;
-
-
-{ Schreib-Cache leeren }
-
-procedure SmartResetCache; assembler;
-asm
-  mov ax, $4a10
-  mov bx, 2
-  int $2f
-end;
-
-
-{ Read-Cache-Inhalt verwerfen, Schreibcache leeren }
-
-procedure SmartFlushCache; assembler;
-asm
-  mov ax, $4a10
-  mov bx, 2
-  int $2f
-end;
-
-{$ENDIF }
-
 end.
 {
   $Log$
+  Revision 1.20  2000/06/22 19:53:24  mk
+  - 16 Bit Teile ausgebaut
+
   Revision 1.19  2000/06/01 16:03:04  mk
   - Verschiedene Aufraeumarbeiten
 
