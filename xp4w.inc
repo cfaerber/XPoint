@@ -709,6 +709,7 @@ begin
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
+      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }  
       GetMimeViewer(mimetyp,viewer);
 
       multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
