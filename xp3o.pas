@@ -629,21 +629,21 @@ begin
     if art<>1 then fname:=''
     else begin
       ReadHeader(hdp,hds,true);
-      if (hdp.datei='') or (hds=-1) then begin
+      if (hdp.datei='') or (hds=-1) then
+      begin
         Betreff := dbReadStrN(mbase,mb_betreff);
         if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         Recount(betreff); { entfernt Re^n }
-        if cPos(' ',betreff)=0 then fname:=betreff
-        else fname:=copy(betreff,1,cPos(' ',betreff)-1);
-        end
-      else
+        fname:=betreff
+      end else
         fname:=hdp.datei;
       i:=1;                            { ungueltige Zeichen entfernen }
       fName := FileUpperCase(fname);
       DebugLog('xp3o','Raw filename: '+fname, DLDebug);
       while i<=length(fname) do
-        if pos(fname[i],'_^$~!#%-{}()@''`.'+range('A','Z')+'0123456789Ž™š')>0 then
+        if pos(fname[i],' _^$~!#%-{}()@''`.'+range('A','Z')
+          {$IFDEF UnixFS}+range('a','z'){$ENDIF}+'0123456789Ž™š')>0 then
           inc(i)
         else
           delete(fname,i,1);
@@ -651,7 +651,7 @@ begin
       if p>0 then
         for i:=p+1 to length(fname) do
           if fname[i]='.' then fname[i]:='_';
-      end;
+    end;
     if etyp=xTractQuote then schab:=QuoteMsk
     else schab:='';
     text:=reps(getres2(324,art),strs(markanz));
@@ -1533,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2001/12/31 14:44:24  mk
+  - fixed Bug #497273, suggestes filename with N/E/N
+
   Revision 1.79  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
