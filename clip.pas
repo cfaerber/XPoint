@@ -87,7 +87,7 @@ var
 begin
   if OpenClipboard(0) then
   begin
-    MemHandle := GetClipboardData(cf_Text);
+    MemHandle := GetClipboardData(cf_OEMText);
     P := GlobalLock(MemHandle);
     if Assigned(P) then
     begin
@@ -147,7 +147,7 @@ begin
     Q[Length(Str)]:=#0;
     GlobalUnlock(MemHandle);
     // Insert data into clipboard
-    SetClipboardData(cf_Text, MemHandle);
+    SetClipboardData(cf_OEMText, MemHandle);
     GlobalFree(MemHandle);
   end;
   CloseClipboard;
@@ -184,7 +184,7 @@ begin
       Q[FileSize(f)]:=#0;
       GlobalUnlock(MemHandle);
       // Insert data into clipboard
-      SetClipboardData(cf_Text, MemHandle);
+      SetClipboardData(cf_OEMText, MemHandle);
       GlobalFree(MemHandle);
     end;
     CloseClipboard;
@@ -223,7 +223,7 @@ var
 begin
   if OpenClipboard(0) then
   begin
-    MemHandle := GetClipboardData(cf_Text);
+    MemHandle := GetClipboardData(cf_OEMText);
     P := GlobalLock(MemHandle);
     if Assigned(P) then
     begin
@@ -645,6 +645,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/04/30 12:45:21  mk
+  - Umlaute stimmen jetzt unter Win32
+
   Revision 1.15  2000/04/30 12:35:17  mk
   - Memory Leak in Windows Clipboard gefixt
 
