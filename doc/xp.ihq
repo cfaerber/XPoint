@@ -12650,8 +12650,9 @@ einzelnen sowieso) eine andere Serverbox ausw„hlen.
 Beim Aufbau der Empf„nger-Auswahlliste geht XP wie
 folgt vor:
 
-ş Ungltige Adressen (kein "<<\@>>", kein "<<.>>" hinter "<<@>>")
-  werden verworfen und nicht angezeigt;
+ş Ungltige Adressen (dem Format <<User>>\@<<Domain>>.<<TLD>>
+  nicht entsprechend) werden verworfen und nicht
+  angezeigt;
 
 ş In den Nachrichten-Headern vorhandene doppelte
   Adressen ('Dupes') werden gefiltert;
