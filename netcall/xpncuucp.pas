@@ -89,7 +89,7 @@ var
     begin
       erase_mask(AddDirSepa(DestDir)+'*.OUT'); (* delete old output files *)
       erase_mask(AddDirSepa(DestDir)+'*.BAK'); (* delete old input files  *)
-      CreateMultipleDirectories(AddDirSepa(DestDir));
+      CreateDir(AddDirSepa(DestDir));
     end;
 
     function RunoutFilter:boolean;
@@ -500,6 +500,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/09/08 20:21:06  cl
+  - replaced CreateMultipleDirs with CreateDirs
+
   Revision 1.11  2001/07/30 19:07:44  cl
   - support of UUCP E command for outgoing messages
 
