@@ -5934,21 +5934,19 @@ server.
 Short name selector -- z.Zt. nicht in Gebrauch
 @
 720
-Enter the dialling prefix used in your country for
-making international calls. In Germany it is "00"
+Enter the dialing prefix used in your country for
+making international calls. In England it is "00"
 @
 721
 Enter the prefix you use when making long distance
-inland calls. In Germany and many other countries
-this is "0". You tend not to notice because it is
-always given as part of the area code ("0681" is
-really "0"  plus "681" area code)
+inland calls. In England and many other countries
+this is "0".
 @
 722
-Enter your own dialling code, without the "0" but
+Enter your own dialing code, without the "0" but
 with the international code for *your* country from
-outside. Germany is 49, so if you are in SaarbrÅcken
-in Germany ("normally" 0681), enter 49-681.
+outside. England is 44, so if you are in Bradford in
+in England ("normally" 01274), enter 44-1274.
 @
 723
 If CrossPoint is to use a point list in POINTS24 or
@@ -5979,14 +5977,14 @@ deleted by hand, even when they are automatically
 imported. (FileReq see /Config/Paths)
 @
 726
-<<[x]>>  All in-going messages with 0 Bytes will be
-     deleted.
+<<[x]>>  All incoming 0-byte messages will be
+      deleted.
 
 This switch is intended for users who receive all
 message packets as File Attaches (see FIDO.DOC).
 
 It saves deleting the empty messages by hand.
-However, for normal use, it means in-going File
+However, for normal use, it means incoming File
 Attaches go unnoticed.
 @
 727
@@ -6009,24 +6007,21 @@ the file they accompany.
 
 @
 728
-All Fido Area Messages are addressed to someone, even
-if only "everybody". If you write a new message to an
-area ("W" in the Area window), the entry here will be
-suggested as default "recipient". It is usual to put
-"All" here, for general messages.
+Booooooh!! :-))
+@
+718
+All Fido messages carry hidden kludges. Normally, XP
+does not display these hidden kludges but by pressing
+"O" whilst reading a message, the hidden kludges will
+be shown. If you never wish to see these hidden
+kludges, you may "check" the box here -> <<[X]>>.
+However, you may sometimes wish to see the hidden
+kludges and if so, leave the box "uncheked" -> <<[ ]>>.
 @
 729
-<<[ ]>>   The point list to be imported has the
-      POINTS24 format usual in Germany.
-
-<<[x]>>   The point list has the 4D format. This
-      format is the most widespread, and is used also
-      in many [Fido-Compatible nets].@4009
-
-Note: It is important to set this setting <<before>>
-you import your point list. If the setting was
-wrong, the NodeList must be re-indexed using
-/Fido/Nodelist/Index.
+Every new echomail message that you write must have
+a recipient and that recipient may be defined here.
+The usual default recipient is "All".
 @
 730
 Enter the node address or the name of the sysop of
