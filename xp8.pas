@@ -644,7 +644,7 @@ var t1,t2    : text;
         push si
         lodsb
         mov cx,ax
-        mov bl,0
+        mov bx,ax
         mov dx,' *'
   @1:   lodsb                    { Brettnamenende suchen }
         cmp al,dh
@@ -2167,6 +2167,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.27  2001/07/21 15:56:24  mk
+  - fixed possible memory corruption in assembler proc. Reformat_UKA_Brett
+
   Revision 1.10.2.26  2001/07/21 13:24:00  mk
   - added some const parameters
 
