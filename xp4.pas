@@ -156,14 +156,12 @@ begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
   if dbEOF(mbase) then nope:=true
     else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
-  if nope then begin
-    dbSeek(bbase,biIntnr,mid(brett,2));
-    if dbFound then begin
-      dbReadN(bbase,bb_flags,b);
-      b:=b and (not 2);   { keine ungelesenen Nachrichten mehr }
-      dbWriteN(bbase,bb_flags,b);
-      end;
-    end;
+  dbSeek(bbase,biIntnr,mid(brett,2));
+  if dbFound then begin
+    dbReadN(bbase,bb_flags,b);
+    if nope then b:=b and (not 2) else b:=b or 2;
+    dbWriteN(bbase,bb_flags,b);
+  end
 end;
 
 { ----- Hauptmenue ---------------------------------------------------- }
@@ -2137,6 +2135,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2001/05/23 10:30:49  mk
+  JG:- ungelesen-fix
+
   Revision 1.82  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

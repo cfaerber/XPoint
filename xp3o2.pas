@@ -43,7 +43,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xpnt,xpdatum,xp_pgp, xpmakeheader;
+uses xp3,xp3o,xp4, xpnt,xpdatum,xp_pgp, xpmakeheader;
 
 
 procedure WriteHeader(var hd:theader; var f:file);
@@ -441,6 +441,8 @@ begin
   dbWriteN(mbase,mb_gelesen,b);
   RereadBrettdatum(dbReadStr(mbase,'brett'));
   dbGo(mbase,rec);
+  setbrettgelesen(dbReadStr(mbase,'brett'));
+  dbGo(mbase,rec);
 end;
 
 
@@ -457,6 +459,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/05/23 10:30:49  mk
+  JG:- ungelesen-fix
+
   Revision 1.38  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
