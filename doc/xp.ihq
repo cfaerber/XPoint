@@ -4218,11 +4218,12 @@ Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Nachrichtenliste fest. Jeder
 Buchstabe muá <<genau einmal>> vorkommen, ansonsten
 wird auf die Standardeinstellung (FGDAEB) zurck-
-gesetzt.
+gesetzt. Die Flags (F) werden immer automatisch
+nach vorne sortiert.
 
        Die Buchstaben stehen fr
 
-       F  Flags
+       F  Flags           (immer erstes Zeichen!)
        G  Gr”áe
        D  Datum
        A  Absender
@@ -4234,10 +4235,12 @@ Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Userliste fest. Jeder Buchstabe
 muá <<genau einmal>> vorkommen, ansonsten wird auf
 die Standardeinstellung (FHGBAK) zurckgesetzt.
+Die Flags (F) werden immer automatisch nach vorne
+sortiert.
 
        Die Buchstaben stehen fr
 
-       F  Flags
+       F  Flags           (immer erstes Zeichen!)
        H  Halten
        G  Adreábuch-Gruppe
        B  Box
