@@ -914,7 +914,7 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: XP/OXP '+mid(programm,cpos(' ',programm)+2));
+        wrs(^A'PID: CrossPoint/OpenXP '+mid(programm,cpos(' ',programm)+2));
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1809,6 +1809,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.6  2000/12/11 09:59:29  mk
+  - PID auf CrossPoint/OpenXP geaendert
+
   Revision 1.21.2.5  2000/10/18 08:49:40  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 
