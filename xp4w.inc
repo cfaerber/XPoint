@@ -773,7 +773,7 @@ begin
 
   repeat                { +/- - Schleife }
     nw:=NachWeiter;     { kann vom Lister verÑndert werden }
-    _down:=NachWeiter and nw_mp and not ((rdmode=1) and (dispmode=10));
+    _down:=NachWeiter and nw_mp;
     ende:=true;
     GoP;
     aktdisprec:=dbRecno(mbase);
@@ -1763,6 +1763,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.41  2002/04/20 17:27:25  my
+  MY:- Fix: Im Ungelesen-Modus wurde bei MIME-Multipart-Nachrichten trotz
+       aktiviertem Nachrichten-Weiterschalter nicht zur nÑchsten Nachricht
+       weitergeschaltet (fÑlschlicherweise von JG Åbernommenen Codeteil
+       entfernt).
+
   Revision 1.25.2.40  2002/04/13 08:50:06  my
   MY:- Log des letzten Commits komplettiert.
 
