@@ -142,7 +142,6 @@ begin
       gtest;
       goto ende;
     end;
-    ChangeTboxSN;  { alte IST-Box-Seriennummer -> Config-File }
     test_pfade;
     readkeydefs;
     if not parmono then
@@ -153,7 +152,7 @@ begin
     showscreen(true);
     DelTmpfiles('*.$$$');
     if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
-    if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}     
+    if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
       DelTmpfiles('TMP-????.*');
       chdir(temppath);
       DelTmpfiles('TMP-????.*');
@@ -222,6 +221,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.25  2000/05/04 10:32:57  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.24  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

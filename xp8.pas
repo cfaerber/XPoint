@@ -99,8 +99,6 @@ begin                                { 13=Feeder, 14=postmaster               }
       end
     else if (nt=nt_Pronet) then
       mapstype:=8
-    else if (nt=nt_Turbo) then
-      mapstype:=9
     else if nt=nt_QWK then
       mapstype:=10
     else
@@ -448,7 +446,6 @@ var t     : text;
     maus  : boolean;
     quick : boolean;
     fido  : boolean;
-    turbo : boolean;
     gs    : boolean;
     uucp  : boolean;
     postmaster : boolean;
@@ -573,7 +570,7 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; turbo:=false; pronet:=false; qwk:=false;
+      uucp:=false; pronet:=false; qwk:=false;
       postmaster:=false;
       case mapstype(box) of
         2 : maf:=true;
@@ -583,7 +580,6 @@ begin
         6 : gs:=true;
         7 : uucp:=true;
         8 : pronet:=true;
-        9 : turbo:=true;
        10 : qwk:=true;
        11..13 : uucp:=true;
        14 : begin uucp:=true; postmaster:=true; end;
@@ -591,7 +587,8 @@ begin
       rewrite(t);
       if quick or (uucp and postmaster) then
         wr_btext(t,true,uucp);
-      if maus or fido or turbo or qwk then begin
+      if maus or fido or qwk then
+      begin
         ReadBoxPar(0,box);
         if copy(ustr(brett),2,length(boxpar^.magicbrett))=ustr(boxpar^.magicbrett)
         then
@@ -634,11 +631,10 @@ begin
         fido:=ntAreaMgr(dbReadInt(d,'netztyp'));
         gs:=(dbReadInt(d,'netztyp')=nt_GS);
         uucp:=(dbReadInt(d,'netztyp')=nt_UUCP);
-        turbo:=(dbReadInt(d,'netztyp')=nt_Turbo);
         pronet:=(dbReadInt(d,'netztyp')=nt_Pronet);
         qwk:=(dbReadInt(d,'netztyp')=nt_QWK);
         dbRead(d,'dateiname',bfile);
-        if maus or fido or turbo or qwk or uucp then
+        if maus or fido or qwk or uucp then
           ReadBox(0,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
@@ -650,7 +646,7 @@ begin
               if maf or pronet then ReadBrettliste;
               end;
             dbReadN(bbase,bb_brettname,brett);
-            if maus or fido or turbo or qwk then begin
+            if maus or fido or qwk then begin
               if copy(ustr(brett),2,length(boxpar^.magicbrett))=
                  ustr(boxpar^.magicbrett)
               then
@@ -908,7 +904,6 @@ var d      : DB;
     quick  : boolean;
     maus   : boolean;
     fido   : boolean;
-    turbo  : boolean;
     gs     : boolean;
     uucp   : boolean;
     changesys  : boolean;
@@ -986,7 +981,7 @@ label again;
             s:=copy(s,1,pos(' ',s)-1);
           end;
       if s='' then exit;
-      if not (quick or gs or uucp or turbo) and (s[1]<>'/') then
+      if not (quick or gs or uucp) and (s[1]<>'/') then
         write(t,'/');  { Euromail }
       writeln(t,s);
       end;
@@ -1017,8 +1012,6 @@ label again;
         if left(s,1)='?' then delfirst(s);  { geheime Gruppen }
         makebrett(boxpar^.MagicBrett+s,n,box,netztyp,true);
         end else
-      if turbo then
-        makebrett(boxpar^.magicbrett+s,n,box,netztyp,true) else
       if fido then
         makebrett(boxpar^.MagicBrett+fidobrett(s),n,box,netztyp,true)
       else if qwk then
@@ -1060,13 +1053,12 @@ begin
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
       end;
-    turbo:=(netztyp=nt_Turbo);
     qwk:=(netztyp=nt_QWK);
     end
   else begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
-    uucp:=false; turbo:=false; promaf:=false; qwk:=false; postmaster:=false;
+    uucp:=false; promaf:=false; qwk:=false; postmaster:=false;
     netztyp:=0;
     end;
   dbClose(d);
@@ -1079,7 +1071,7 @@ begin
     if not exist(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
-      if fido or maus or turbo or qwk then
+      if fido or maus or qwk then
         ReadBoxpar(netztyp,box);
       OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
                  'APGD/'+iifs(_maus,'VSC:080/',''));
@@ -1176,7 +1168,6 @@ var brk     : boolean;
     infos   : integer;
     fido    : boolean;
     gs      : boolean;
-    turbo   : boolean;
     uucp,gup: boolean;
     autosys : boolean;
     feeder  : boolean;
@@ -1299,7 +1290,6 @@ begin
     feeder:=(boxpar^.BMtyp=bm_feeder);
     postmaster:=(boxpar^.BMtyp=bm_postmaster);
     end;
-  turbo:=(nt=nt_Turbo);
   promaf:=ntProMaf(nt);
   case defcom of
     0 : if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
@@ -1324,7 +1314,6 @@ begin
     else if autosys then lines:=5
     else if feeder then lines:=5
     else lines:=4
-  else if turbo then lines:=1
   else lines:=18;
   if maus then begin
     new(info);
@@ -1341,7 +1330,6 @@ begin
                  else if autosys then comm:='newsgroups'
                  else if feeder then comm:='@active'
                  else comm:='getgroups' else
-    if turbo then comm:='BRETTLISTE' else
     if promaf then comm:='REQUEST'
     else comm:='LIST VERBOSE BRETTER *';
     brk:=false;
@@ -1409,8 +1397,6 @@ begin
         app('setsys',getres2(810,63));
         app('help',getres2(810,61));
         end
-    else if turbo then
-      app('BRETTLISTE','Brettliste anfordern')
     else begin
       app('HILFE *',getres2(810,1));          { 'Hilfe zu allen MAPS-Befehlen' }
       app('HILFE <Thema>',getres2(810,2));    { 'Hilfe zu einem Befehl' }
@@ -1424,7 +1410,7 @@ begin
       app('LIST ALL',getres2(810,8));         { 'User-, Brett- und Systemliste' }
       app('LIST BRETTER',getres2(810,9));     { 'Brettliste' }
       end;
-    if not (maf or maus or fido or gs or uucp or turbo) then begin
+    if not (maf or maus or fido or gs or uucp) then begin
       if not request then app('LIST USER',getres2(810,11));   { 'Userliste' }
       app('LIST MY BRETTER',getres2(810,12));   { 'bestellte Bretter' }
       if not request then app('LIST OTHER BRETTER',getres2(810,13));   { 'nicht bestellte Bretter' }
@@ -1597,6 +1583,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/04 10:33:00  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.9  2000/05/03 00:21:23  mk
   - unbenutzte Units aus uses entfernt
 

@@ -76,6 +76,7 @@ type DateTimeSt = string[11];
 
 Function Bin(l:longint; n:byte):string;      { Bin-Zahl mit n Stellen       }
 Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
+Function BlankposHuge(var s:Hugestring):Integer;        { Position von ' ' oder #9     }
 Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
 Function Center(const s:string; n:byte):string;    { String auf n Zchn. zentrieren}
 Function CPos(c:char; const s:string):byte;    { schnelles POS fÅr CHARs      }
@@ -182,7 +183,9 @@ procedure SetLength(var s: String; size: Longint); { LÑnge von S setzen }
 Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
 Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
 Procedure delfirst(var s:string);            { ersten Buchstaben lîschen    }
+Procedure delfirstHuge(var s:Hugestring);            { ersten Buchstaben lîschen    }
 Procedure dellast(var s:string);             { letzten Buchstaben lîschen   }
+procedure DellastHuge(var s:HugeString);
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
 Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
@@ -1524,10 +1527,20 @@ begin
   delete(s,1,1);
 end;
 
+Procedure delfirstHuge(var s:Hugestring);            { ersten Buchstaben lîschen    }
+begin
+  delete(s,1,1);
+end;
+
 
 procedure dellast(var s:string);
 begin
   if s<>'' then dec(byte(s[0]));
+end;
+
+procedure DellastHuge(var s:HugeString);
+begin
+  if s<>'' then SetLength(s, Length(s)-1);
 end;
 
 
@@ -1755,6 +1768,16 @@ begin
   if p1=0 then blankpos:=p2
   else if p2=0 then blankpos:=p1
   else blankpos:=min(cpos(' ',s),cpos(#9,s));
+end;
+
+Function BlankposHuge(var s:Hugestring):Integer;  { Position von ' ' oder #9     }
+var p1,p2 : Integer;
+begin
+  p1:=cpos(' ',s);
+  p2:=cpos(#9, s);
+  if p1=0 then blankposHuge:=p2
+  else if p2=0 then blankposHuge:=p1
+  else blankposHuge:=min(cpos(' ',s),cpos(#9,s));
 end;
 
 
@@ -2223,6 +2246,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/05/04 10:32:55  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.32  2000/05/01 08:49:28  mk
   - Tippfehler :-(
 

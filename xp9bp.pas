@@ -82,7 +82,6 @@ begin
                    pointname:='01';
                    downloader:='gsz.exe portx $ADDRESS,$IRQ rz';
                  end;
-      nt_Turbo : MagicBrett:='/IST/';
     end;
 end;
 
@@ -280,7 +279,6 @@ begin
             gets(s,su,'Ausgangsfilter',aFilter,60) or
             getx(su,  'SysopNetcall',sysopnetcall) or
             getx(su,  'SysopPacken',sysoppack) or
-            getw(su,  'SerienNR',seriennr) or
             gets(s,su,'NetcallScript',script,50) or
             gets(s,su,'OnlineScript',o_script,50) or
             getx(su,  'Brettmails',brettmails) or
@@ -382,7 +380,6 @@ begin
     writeln(t,'Ausgangsfilter=',aFilter);
     writeln(t,'SysopNetcall=',jnf(sysopnetcall));
     writeln(t,'SysopPacken=',jnf(sysoppack));
-    if seriennr<>0 then writeln(t,'SerienNR=',seriennr);
     writeln(t);
     writeln(t,'FidoFakenet=',fpointnet);
     writeln(t,'Fido4Dadr=',jnf(f4d));
@@ -529,6 +526,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/04 10:33:00  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.6  2000/04/23 07:58:54  mk
   - OS/2-Portierung
 

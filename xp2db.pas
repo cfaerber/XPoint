@@ -841,7 +841,6 @@ begin
     if (not registriert.uucp and (dbReadInt(dd,'netztyp')=nt_UUCP)) or
        (not registriert.non_uucp and (dbReadInt(dd,'netztyp')<>nt_UUCP)) then
       reg_hinweis:=true;
-    { if dbReadInt(dd,'netztyp')=nt_Turbo then DataQuest:=true; }
     dbNext(dd);
     end;
   dbClose(dd);
@@ -876,6 +875,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/04 10:32:58  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.9  2000/05/03 20:36:54  hd
   - Anpassungen an UnixFS
 

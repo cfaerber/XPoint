@@ -26,11 +26,11 @@
       yy   : byte;
   begin
     DomainNt:=nt;
-    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_Turbo];
+    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
     dom:=(nt=nt_ZConnect) or (nt=nt_Magic) or (nt=nt_Pronet) or (nt=nt_Fido) or (nt=nt_UUCP);
     fqdom:=(nt=nt_ZConnect) or (nt=nt_UUCP);  {Eingabe fÅr FQDN nur bei ZConnect und UUCP}
     bdom:=(nt=nt_UUCP);
-    map:=(nt<>nt_Maus) and (nt<>nt_Fido) and (nt<>nt_Turbo) and (nt<>nt_UUCP)
+    map:=(nt<>nt_Maus) and (nt<>nt_Fido) and (nt<>nt_UUCP)
          and (nt<>nt_QWK);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
@@ -72,8 +72,7 @@
     if real then begin                                  { 'Realname  ' }
       maddstring(3,yy,getres2(912,8),realname,30,40,
                  iifs(ntRealUmlaut(nt),'',without(range(' ',#126),'()')));
-      if nt=nt_Turbo then mhnr(8038)
-      else mhnr(194);
+      mhnr(194);
       inc(yy,2);
       end;
     if dom then begin
@@ -207,8 +206,6 @@
             end;
           if (nt=nt_UUCP) and exist('UUCP.SCR') then
             script:='UUCP.SCR';
-          if nt=nt_Turbo then
-            magicbrett:='/'+name+'/';
           if nt=nt_Fido then begin
             case ival(left(name,cpos(':',name)-1)) of
                8 : magicbrett:='/METRONET/';
@@ -349,7 +346,6 @@
       pname  : string[25];
       add    : shortint;
       fido   : boolean;
-      turbo  : boolean;
       uucp   : boolean;
       pronet : boolean;
       zc     : boolean;
@@ -367,7 +363,6 @@
     dbRead(d,'pointname',pname);
     dbRead(d,'script',flags);
     fido:=(nt=nt_Fido);
-    turbo:=(nt=nt_Turbo);
     uucp:=(nt=nt_UUCP);
     pronet:=(nt=nt_Pronet);
     zc:=(nt=nt_ZConnect);
@@ -377,7 +372,6 @@
                      xx:=56; yy:=18;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_Turbo   : begin xx:=56; yy:=7; end;
       nt_UUCP    : yy:=18;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
@@ -394,10 +388,6 @@
                     maddint(3,2,getres2(920,2),pnr,5,5,0,32767); mhnr(151);  { 'Pointnummer' }
                     maddint(3,3,getres2(920,3),fPointNet,5,5,0,32767);  { 'Pointnetz  ' }
                   end;
-        nt_Turbo: begin
-                    pname:=dbReadStr(d,'username');
-                    maddstring(3,2,getres2(920,4),passwort,10,10,''); mhnr(141);
-                  end;                                    { 'Pa·wort' }
         nt_Pronet:begin
                     maddstring(3,2,getres2(920,5),telefon,20,60,''); mhnr(142);
                     malltrim;                             { 'Telefon ' }
@@ -417,7 +407,7 @@
                   end;                                       { 'Pa·wort  ' }
       end;
       if not pronet then begin
-        maddstring(iif(fido or turbo,27,38),2,getres2(920,12),telefon,
+        maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
                    iif(fido,18,17),60,'');                   { 'Telefon'  }
         mhnr(142);
         malltrim;
@@ -443,7 +433,7 @@
         end;
 
       add:=iif(nt=nt_Maus,0,1);
-      if not (fido or turbo or uucp) then begin
+      if not (fido or uucp) then begin
         br:=iif(pronet,30,41);
         maddstring(3,4+add,getres2(920,20),uploader,br,100,''); mhnr(144);
           mappsel(false,'Zmodem˘gsz.exe portx $ADDRESS,$IRQ sz $UPFILE˘'+
@@ -469,7 +459,7 @@
         br:=iif(uucp,41,31);
         end;
 
-      if not (turbo) then begin
+      begin
         maddstring(3,7+add,getres2(920,23),uparcer,br,60,''); mhnr(146);
           if uucp then begin                        { 'Upload-Packer     ' }
             mappsel(false,'compress -vf -b12 $PUFFER˘compress -vf -b16 $PUFFER˘freeze -vif $PUFFER˘gzip -vf $PUFFER');
@@ -568,10 +558,6 @@
           UpArcNr:=0; DownArcNr:=0;
           end;
         end;
-      if turbo then begin                            { 'Seriennr. ' }
-        maddint(3,4,getres2(920,56),seriennr,5,4,0,9999); mhnr(8041);
-        maddbool(3,6,getres2(920,55),Brettmails); mhnr(8040);
-        end;                    { 'Brettnachrichten anfordern' }
       end;
     freeres;
     EditPnt:=nt;
@@ -617,7 +603,7 @@
       maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale WÑhlversuche' }
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
-        if (nt<>nt_Turbo) and (nt<>nt_UUCP) then
+        if (nt<>nt_UUCP) then
           maddint(35,3,getres2(921,6),packwait,5,4,1,9999);  { 'Warten auf Daten' }
         end;
       maddint(35,4+add,getres2(921,7),connectmax,5,4,1,10); mhnr(166);  { 'max. Connects  ' }
@@ -955,7 +941,6 @@
                         _brett:=true; _brettm:=true;
                         width:=40;
                       end;
-        nt_Turbo    : _brett:=true;
         nt_QWK      : _brett:=true;
       end;
       dialog(width,iif(_nname,2,0)+iif(_alias,1,0)+iif(_mids,2,0)+iif(_brett,2,0)+
@@ -1229,7 +1214,6 @@
       nt_Magic   : nts:='M^agicNET,';
       nt_Pronet  : nts:='P^ronet,';
       nt_Fido    : nts:='^Fido,';
-      nt_Turbo   : begin nts:='^Turbo-Box,'; nts2:=''; end;
       nt_UUCP    : begin nts:='^RFC/UUCP,'; { nts2:=''; } end;
       nt_QWK     : begin
                      nts:='^QWK,'; nts0:=''; nts2:=getres2(927,4);  { ',^Transfer' }

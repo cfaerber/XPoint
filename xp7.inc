@@ -45,8 +45,7 @@ begin
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
          (telefon='') or (telefon='08-15') then
         BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
-      else if ntPackPuf(netztyp) and
-              (((not (_fido or uucp) or (UpArcer<>'')) and
+      else if (((not (_fido or uucp) or (UpArcer<>'')) and
                 ((not uucp and (pos('$UPFILE',ustr(UpArcer))=0)) or
                  (pos('$PUFFER',ustr(UpArcer))=0))) or
               (pos('$DOWNFILE',ustr(DownArcer))=0)) then
@@ -55,8 +54,6 @@ begin
         BoxparOk:=getres2(706,6)
       else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
         BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
-      else if (logintyp=ltTurbo) and not developer and (boxpar^.seriennr=0) then
-        BoxParOk:=getres2(706,7)    { 'Seriennr. bei Edit/Boxen/Edit/Point fehlt!' }
       else
         BoxParOk:='';
     end;
@@ -465,7 +462,6 @@ begin
           end;
       if zaehler[4]=0 then begin
         case logintyp of
-        { ltTurbo : sendstr('37'#13);  IST-Box-Hack }
           ltUUCP  : sendstr(#13);
         end;
         zaehler[4]:=IdleTimeout;
@@ -473,7 +469,6 @@ begin
       case logintyp of
         ltGS    : login:=(right(lrec,10)='zu laden <') or
                          (right(lrec,12)='zunamen ein:');
-        ltTurbo : login:=(lrec='name:');
         else      login:=(right(lrec,5)='ogin:');
       end;
       if ((lrec='username:') or login) and (lcount>0) then begin
@@ -496,7 +491,6 @@ begin
                         if loginname='' then loginname:='NET410';
                         sendstr(loginname+#13);
                       end;
-            ltTurbo : sendstr(user+#13);
           else begin
             if JanusPlus then janus:='JANUS2'
             else janus:='JANUS';
@@ -513,11 +507,8 @@ begin
           end
         else begin
           mdelay(200);
-          if logintyp=ltTurbo then
-            sendstr(iifs(cpos('_',user)=0,user,left(user,cpos('_',user)-1))+#13)
-          else
-            sendstr(user+#13);
-          end;
+          sendstr(user+#13);
+        end;
         emptyrecs;
         dec(retries);
         dec(lcount);
@@ -534,17 +525,15 @@ begin
         emptyrecs;
         dec(scount);
         end
-      else if ((right(lrec,9)='passwort:') or (right(lrec,9)='password:') or
-               ((logintyp=ltTurbo) and (lrec='kennwort:'))) and
-              (pcount>0) then begin
+      else if ((right(lrec,9)='passwort:') or (right(lrec,9)='password:'))
+             and (pcount>0) then
+        begin
         moff;
         if not Display then write(crlf,getres(711));  { 'Paáwort...' }
         mon;
         mdelay(200);
-        case logintyp of
-          ltTurbo : endbef:='befehl:';
-          ltUUCP  : endbef:=^P'shere';
-        end;
+        if logintyp = ltUUCP then
+          endbef:=^P'shere';
         if net then begin
           sendstr(passwort+#13);
           if (logintyp=ltQuick) or (logintyp=ltGS) then lrec:='running arc'
@@ -831,7 +820,7 @@ begin
   f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
   CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
   if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
-  errorlevel:=0; 
+  errorlevel:=0;
 end;
 
 procedure SysopTransfer;
@@ -1448,6 +1437,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/05/04 10:32:59  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.17  2000/04/23 13:35:00  jg
   - Fix?: beim Zconnect-Ausgangsfilter-Aufruf wird Errorlevel=0 gesetzt.
 

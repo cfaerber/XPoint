@@ -349,7 +349,7 @@ var x,y,fm   : byte;
          ((left(absender,7)='SYSTEM@') and
           ((left(ustr(betreff),11)='NETZBRETTER') or  { QuickMail }
            (ustr(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
-           (pos('BRETTLISTE',ustr(betreff))>0)))      { TurboBox, ZQWK }
+           (pos('BRETTLISTE',ustr(betreff))>0)))      { ZQWK }
           then begin
         showbetreff;
         w0;
@@ -1005,13 +1005,13 @@ begin
             dbWriteN(mbase,mb_halteflags,flags);
                                                     { Prioritaeten in anderer Farbe.... }
             if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
-            else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    } 
+            else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    }
             else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
-            else if hdp^.Priority=1 then mbflags:=8      { hoechste   }    
+            else if hdp^.Priority=1 then mbflags:=8      { hoechste   }
 
             else if zconnect and (hdp^.Prio>0) then      { und fuer Zconnect ....  }
-              if hdp^.Prio<=10 then mbflags:=16          { hoch     }      
-              else mbflags:=8                            { hoechste }  
+              if hdp^.Prio<=10 then mbflags:=16          { hoch     }
+              else mbflags:=8                            { hoechste }
             else mbflags:=0;
 
             mbflags:=mbflags or iif(boundary<>'',4,0);
@@ -1180,6 +1180,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/05/04 10:32:58  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.13  2000/04/28 22:30:10  jg
   - Diverse Verbesserungen beim Versenden mit Priority
   - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail

@@ -349,7 +349,6 @@ begin
     nt_Maus     : DefaultMaps:='MAUS';    { nicht editierbar! }
     nt_Fido     : DefaultMaps:='Areafix';
     nt_UUCP     : DefaultMaps:='changesys';
-    nt_Turbo    : DefaultMaps:='SYSTEM';
     nt_QWK      : DefaultMaps:='ZQWK';
   else            DefaultMaps:='SYSOP';   { Quick, Turbo }
   end;
@@ -1681,9 +1680,6 @@ begin
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'Netztyp der Box und Ihren Usernamen ein:' }
   name:=''; user:='';
   ntyp:=ntName(nt_ZCONNECT); nt:=nt_ZCONNECT;
-  if not (nt in ntAllowed) then begin    { unreg. Turbobox-Version }
-    ntyp:='Turbo-Box'; nt:=nt_Turbo;
-    end;
   maddstring(3,5,getres2(911,3),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   for i:=0 to enetztypen-1 do
     if (ntnr[i] in ntAllowed) then
@@ -1721,7 +1717,6 @@ begin
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
-    nt_Turbo  : boxpar^.magicbrett:='/'+name+'/';
     else        boxpar^.pointname:='';
   end;
   dbWrite(d,'Pointname',boxpar^.pointname);
@@ -1745,6 +1740,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/04 10:33:00  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.16  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 

@@ -53,7 +53,6 @@ procedure cfgsave;       { mit Fenster }
 procedure GlobalModified;
 function  AskSave:boolean;
 procedure read_regkey;   { registriert? }
-procedure ChangeTboxSn;  { alte IST-BOX-Seriennr -> Config-File }
 procedure test_pfade;
 procedure test_defaultbox;
 procedure test_defaultgruppen;
@@ -903,26 +902,6 @@ begin
 end;
 
 
-procedure ChangeTboxSN;
-var d : DB;
-begin
-  if (registriert.nr>=5000) and (registriert.nr<=5999) then begin
-    dbOpen(d,BoxenFile,0);
-    while not dbEOF(d) do begin
-      if dbReadInt(d,'netztyp')=nt_Turbo then begin
-        ReadBox(nt_Turbo,dbReadStr(d,'dateiname'),BoxPar);
-        boxpar^.seriennr:=registriert.nr;
-        WriteBox(dbReadStr(d,'dateiname'),BoxPar);
-        end;
-      dbNext(d);
-      end;
-    dbClose(d);
-    fillchar(registriert,sizeof(registriert),0);
-    _era(RegDat);
-    end;
-end;
-
-
 procedure DelTmpfiles(fn:string);
 var sr : searchrec;
 begin
@@ -1118,6 +1097,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/05/04 10:32:57  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.33  2000/05/03 17:15:39  hd
   - Kleinschreibung der Dateinamen (duerfte keine Probleme geben :-/) (loadresource)
   - ustr durch lstr bei ParLanguage ersetzt (readpar)

@@ -203,7 +203,7 @@ label abbruch,ende0;
   end;
 
   {$I xp7.inc}         { diverse Unterfunktionen    }
-  {$I xp7u.inc}        { TurboBox- und UUCP-Netcall }
+  {$I xp7u.inc}        { UUCP-Netcall }
 
   function ZM(cmd:string; upload:boolean):string;
   var s : string[127];
@@ -244,8 +244,7 @@ label abbruch,ende0;
     with BoxPar^ do begin
       case logintyp of
         ltNetcall,             { Namen mÅssen ohne Pfade sein! }
-        ltZConnect,
-        ltTurbo    : begin
+        ltZConnect: begin
                        caller:='CALLER.'+uparcext;
                        called:='CALLED.'+downarcext;
                        upuffer:=PufferFile;
@@ -470,11 +469,6 @@ begin                  { of Netcall }
   logintyp:=ntTransferType(netztyp);
   _maus:=(logintyp=ltMaus);
   _fido:=(logintyp=ltFido);
-  _turbo:=(logintyp=ltTurbo);
-  if _turbo then begin
-    fehler('Dieser Netztyp wird nicht mehr unterstÅtzt.');
-    exit;
-    end;
   _uucp:=(logintyp=ltUUCP);
   pronet:=(logintyp=ltMagic) and (netztyp=nt_Pronet);
   janusp:=(logintyp=ltZConnect) and BoxPar^.JanusPlus;
@@ -635,7 +629,7 @@ begin                  { of Netcall }
     mwriteln;
 
     showkeys(0);
-    if net and ntPackPuf(netztyp) then begin
+    if net then begin
 {$IFDEF CAPI }
       if ISDN then CAPI_suspend;
 {$ENDIF }
@@ -983,11 +977,6 @@ begin                  { of Netcall }
 
       if ende then goto abbruch;
 
-  (*  if net and _turbo then begin            { --- TURBO-BOX Mailer }
-        LogExternal(getres(720));
-        TurboNetcall;
-        goto abbruch;
-        end; *)
       if net and (logintyp=ltUUCP) then begin    { --- UUCICO }
         LogExternal(getres(719));
         Netcall := UUCPnetcall;
@@ -1561,8 +1550,11 @@ end;
 
 
 end.
-{ 
+{
   $Log$
+  Revision 1.10  2000/05/04 10:32:59  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.9  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 

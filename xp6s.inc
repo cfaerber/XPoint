@@ -880,7 +880,7 @@ begin
     nt_Magic               : l:=5;
     nt_Quick,nt_GS         : l:=6;
   else begin
-    maxsize:=0; exit;      { nt_Pronet (s. SizeOK), nt_turbo }
+    maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
     end;
   end;
   maxsize:=pmlimits[l,iif(lokalPM,2,1)];
@@ -1124,6 +1124,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.15  2000/05/04 10:32:59  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.14  2000/04/28 22:30:10  jg
   - Diverse Verbesserungen beim Versenden mit Priority
   - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail

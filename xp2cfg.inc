@@ -238,19 +238,19 @@ begin
         end
       else if s1='border' then
         getb(colborder)
-      else if s1='priority' then 
+      else if s1='priority' then
       begin
-        getb(colmsgsprio1); getb(colmsgsprio2); 
-        getb(colmsgsprio4); getb(colmsgsprio5);   
-        end 
+        getb(colmsgsprio1); getb(colmsgsprio2);
+        getb(colmsgsprio4); getb(colmsgsprio5);
+        end
       else
         tfehler(getres(213)+ustr(s1),60);  { 'ungÅltige Farbkonfiguration:  ' }
       end;
-      if (colmsgsprio1=7) and (colmsgsprio2=7) and (colmsgsprio5=7) and (colmsgs<>7) 
+      if (colmsgsprio1=7) and (colmsgsprio2=7) and (colmsgsprio5=7) and (colmsgs<>7)
       then begin
-        colmsgsprio1:=colmsgs; colmsgsprio2:=colmsgs; 
+        colmsgsprio1:=colmsgs; colmsgsprio2:=colmsgs;
         colmsgsprio4:=colmsgs; colmsgsprio5:=colmsgs;
-        end;   
+        end;
     end;
   close(t);
 end;
@@ -301,7 +301,6 @@ begin
   else
     ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP];
   developer:=exist('developer');
-  {if not exist('turbobox') then} exclude(ntAllowed,nt_Turbo);
   exclude(ntAllowed,nt_Pronet);
 end;
 
@@ -768,7 +767,7 @@ begin
   { 01/2000 oh }
   PGPVersion:=PGP2;
   AutoDatumsBezuege:=false;
-  { /oh }  
+  { /oh }
 end;
 
 
@@ -1715,6 +1714,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47  2000/05/04 10:32:57  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.46  2000/05/03 20:36:08  hd
   - Default-Editor unter Linux: pico
   - ustr durch fustr ersetzt

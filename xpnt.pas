@@ -33,7 +33,6 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_Fido      = 30;
        nt_QWK       = 31;
        nt_UUCP      = 40;
-       nt_Turbo     = 90;        { TurboBox             }
 
        ltNetcall    = 0;         { Login/Transfer-Typen }
        ltZConnect   = 2;         { XRef: XP7            }
@@ -42,7 +41,6 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        ltGS         = 8;
        ltMaus       = 6;
        ltFido       = 7;
-       ltTurbo      = 9;
        ltUUCP       = 10;
        ltQWK        = 11;
 
@@ -81,7 +79,6 @@ function ntAdrCompatible(n1,n2:byte):boolean; { umleitbare PM-Adresse }
 function ntEmpfBest(nt:byte):boolean;         { EB-Flag im Header     }
 function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
 function ntNameSpace(nt:byte):boolean;        { Leerzeichen in Usernamen }
-function ntDataQuestBetreff(nt:byte):boolean; { Betreff bei DB-Abfrage   }
 function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
 function ntBrettEmpfUsed:boolean;             { Netztypen mit Fido-To vorh. }
 function ntEditbrettEmpf(nt:byte):boolean;    { dito, aber editierbar }
@@ -114,7 +111,6 @@ function ntRelogin(nt:byte):byte;             { Relogin-Netcall m”glich }
 function ntOnline(nt:byte):boolean;           { Online-Anruf m”glich  }
 function ntNetcall(nt:byte):boolean;          { Netcall m”glich }
 function ntOnePW(nt:byte):boolean;            { Point-PW = Online-PW  }
-function ntPackPuf(nt:byte):boolean;          { gepackte šbertragung m”gl. }
 function ntDownarcPath(nt:byte):boolean;      { Entpacker muá im Pfad liegen }
 function ntExtProt(nt:byte):boolean;          { externes š.-Protokoll }
 function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
@@ -162,7 +158,7 @@ end;
 function ntBinary(nt:byte):boolean;
 begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
-                    nt_UUCP,nt_Turbo]) or
+                    nt_UUCP]) or
             (fidobin and (nt=nt_Fido));
 end;
 
@@ -192,7 +188,7 @@ begin
     nt_Maus     : ntMessageID:=3;     { 0815@BOX }
     nt_Fido     : ntMessageID:=4;     { net:zone/node.point[@domain] xxxxxxxx }
     nt_UUCP     : ntMessageID:=5;     { @point.do.main }
-  else  { Turbo, QWK }
+  else  { QWK }
     ntMessageID:=1;
   end;
 end;
@@ -200,7 +196,7 @@ end;
 
 { Replys auf eigene Nachrichten werden anhand der BEZ-Domain erkannt: }
 
-function ntDomainReply(nt:byte):boolean;  
+function ntDomainReply(nt:byte):boolean;
 begin
   ntDomainReply:=(ntMessageID(nt) in [2,5]);
 end;
@@ -268,7 +264,6 @@ begin
     30  : ntTransferType:=ltFido;
     31  : ntTransferType:=ltQWK;
     40  : ntTransferType:=ltUUCP;
-    90  : ntTransferType:=ltTurbo;
   end;
 end;
 
@@ -311,7 +306,7 @@ end;
 
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 begin
-  ntMapsOthers:=(nt<>nt_Quick) and (nt<>nt_Turbo) and (nt<>nt_Pronet) and
+  ntMapsOthers:=(nt<>nt_Quick) and (nt<>nt_Pronet) and
                 (nt<>nt_QWK);
 end;
 
@@ -427,7 +422,6 @@ begin
     nt_Maus     : ntName:='MausTausch';
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
-    nt_Turbo    : ntName:='Turbo-Box';
     nt_UUCP     : ntName:='RFC/UUCP';
   else
     ntName:='???';
@@ -441,8 +435,7 @@ function ntRelogin(nt:byte):byte;
 begin
   case nt of
     nt_Fido,nt_QWK : ntRelogin:=0;
-    nt_GS,nt_Turbo,
-    nt_UUCP        : ntRelogin:=1;
+    nt_GS,nt_UUCP  : ntRelogin:=1;
     else             ntRelogin:=2;
   end;
 end;
@@ -460,13 +453,13 @@ end;
 
 function ntOnePW(nt:byte):boolean;
 begin
-  ntOnePW:=(nt=nt_Maus) or (nt=nt_Turbo);
+  ntOnePW:=(nt=nt_Maus);
 end;
 
 function ntKomkette(nt:byte):boolean;
 begin
   ntKomkette:=
-    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet,nt_Turbo])
+    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet])
     or ((nt=nt_Magic) and MaggiVerkettung);
 end;
 
@@ -475,15 +468,6 @@ function ltVarBuffers(lt:byte):boolean;       { variable Puffernamen }
 begin
   ltVarBuffers:=(lt=ltFido);   { evtl. ltUsenet }
 end;
-
-(*     { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
-function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }
-begin
-  ntUserIBMchar:=newuseribm or
-                 ((nt<>nt_Fido) and (nt<>nt_QWK) and (nt<>nt_Turbo) and
-                  (nt<>nt_UUCP));
-end;
-*)
 
 function ntRfcCompatibleID(nt:byte):boolean;
 begin
@@ -526,27 +510,10 @@ begin
 end;
 
 
-function ntPackPuf(nt:byte):boolean;          { gepackte šbertragung m”gl. }
-begin
-  ntPackPuf:=(nt<>nt_Turbo);
-end;
-
 function ntDownarcPath(nt:byte):boolean;      { Entpacker muá im Pfad liegen }
 begin
   ntDownarcPath:=(nt=nt_Fido) or (nt=nt_ZConnect);
 end;
-
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-function ntDataQuestBetreff(nt:byte):boolean; { Betreff bei DB-Abfrage   }
-begin
-  ntDataQuestBetreff:=false;  { (nt=nt_Turbo); }
-end;
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
 begin
@@ -567,7 +534,7 @@ end;
 
 function ntRealname(nt:byte):boolean;         { Realnames m”glich }
 begin
-  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_Turbo];
+  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
 end;
 
 
@@ -599,7 +566,6 @@ begin
   case nt of
     nt_Netcall : ntBetreffLen:=40;
   { nt_Maus    : ntBetreffLen:=30; }
-    nt_Turbo   : ntBetreffLen:=40;
     nt_Magic   : ntBetreffLen:=60;
   { nt_QWK     : ntBetreffLen:=25; }
     nt_Pronet  : ntBetreffLen:=40;
@@ -634,7 +600,7 @@ end;
 
 function ntExtProt(nt:byte):boolean;          { externes š.-Protokoll }
 begin
-  ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_Turbo,nt_QWK]);
+  ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_QWK]);
 end;
 
 {$IFDEF FPC }
@@ -643,7 +609,7 @@ end;
 function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
 begin
 {$IFDEF CAPI }
-  ntISDN:=true; { MK 28.01.2000: CAPI-Support eingeschaltet }
+  ntISDN:=true; { CAPI-Support eingeschaltet }
 {$ELSE }
   ntISDN:=false;
 {$ENDIF }
@@ -672,7 +638,7 @@ begin
     nt_QWK     : ntBoxnameLen:=15;
     nt_UUCP    : ntBoxnameLen:=20;
   else
-    ntBoxnameLen:=8;   { Netcall, Turbo }
+    ntBoxnameLen:=8;   { Netcall }
   end;
 end;
 
@@ -739,7 +705,7 @@ end;
 
 function ntGrossPW(nt:byte):boolean;       { Paáwort muá groágeschr. werden }
 begin
-  ntGrossPW:=(nt in [nt_Netcall,nt_Magic,nt_Pronet,nt_Quick,nt_GS,nt_Turbo]);
+  ntGrossPW:=(nt in [nt_Netcall,nt_Magic,nt_Pronet,nt_Quick,nt_GS]);
 end;
 
 
@@ -753,7 +719,7 @@ end;
 
 function ntBrettebene(nt:byte):boolean;       { Netztyp mit Brettebene }
 begin
-  ntBrettebene := (nt in [nt_Fido,nt_Maus,nt_QWK,nt_Magic,nt_Pronet,nt_Turbo]);
+  ntBrettebene := (nt in [nt_Fido,nt_Maus,nt_QWK,nt_Magic,nt_Pronet]);
 end;
 
 
@@ -774,6 +740,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/05/04 10:33:01  mk
+  - unbenutzer TurboBox Code entfernt
+
   Revision 1.6  2000/02/21 22:48:02  mk
   MK: * Code weiter gesaeubert
 
