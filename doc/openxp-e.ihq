@@ -7090,15 +7090,17 @@ supported.
 660
 Enter the Network type for this Server:
 
-<<RFC/UUCP>>    for UseNet, SubNet etc.
+<<RFC/Client>>  Third-party mail/news client
 
-<<Fido>>        for Fido and compatible Nets
+<<POP3/SMTP>>   Receiving/sending eMail
 
-<<QWK>>         makes XP into a QWK Offline Reader
+<<NNTP>>        Receiving/sending newsgroups
 
-<<ZConnect>>    new Z-Netz format and compatibles
+<<RFC/UUCP>>    For UseNet, SubNet etc.
 
-<<Z-Netz>>      old Z-Netz and ComLink
+<<Fido>>        For Fido and compatible Nets
+
+<<ZConnect>>    New Z-Netz format and compatibles
 
 @
 670
