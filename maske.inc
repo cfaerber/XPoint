@@ -458,8 +458,9 @@ var ax,p,myp  : integer;
         if autotrim<>0 then begin               { altes Feld verlassen ... }
           s:=cont^;
           if autotrim=1 then
-            while s[length(s)]=' ' do
-              dec(byte(s[0]))
+	    s:= TrimRight(s)
+            { while s[length(s)]=' ' do
+              dec(byte(s[0])) }
           else
             s:=trim(s);
           if (s<>cont^) and (xtest1(s)) then;
@@ -654,7 +655,11 @@ var ax,p,myp  : integer;
       arrows  : integer;
       ok      : boolean;
       infield : boolean;
+{$ifdef hasHugeString}
+      s       : string;
+{$else}
       s       : string[1];
+{$endif}
   begin
     with amaskp^ do begin
       maus_gettext(mx,my);
@@ -1068,6 +1073,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.19  2000/07/05 09:27:08  hd
+  - AnsiString-Anpassung
+
   Revision 1.18  2000/07/04 12:04:17  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -94,7 +94,7 @@ type archd = record
                dosdate  : word;
                attrib   : word;
                namelen  : byte;
-               path     : string;
+               path     : shortstring;
              end;
 
      ziphd = record
@@ -109,7 +109,7 @@ type archd = record
                orgsize  : longint;
                namelen  : word;
                eflen    : word;
-               path     : string;
+               path     : shortstring;
              end;
 
      zoorec  = record
@@ -128,7 +128,7 @@ type archd = record
                  deleted  : boolean;
                  commadr  : longint;
                  commlen  : word;
-                 name     : string;
+                 name     : shortstring;
                end;
 
      arjrec  = record
@@ -150,7 +150,7 @@ type archd = record
                  nameadr  : word;
                  attrib   : word;
                  hostdata : word;
-                 name     : string;   { evtl. 4 Bytes Ext-FilePos }
+                 name     : shortstring;   { evtl. 4 Bytes Ext-FilePos }
                end;
 
      dwchd   = record
@@ -181,7 +181,7 @@ type archd = record
                  dosdate  : word;
                  chksum   : longint;
                  attrib   : byte;
-                 name     : string;
+                 name     : shortstring;
               end;
 
      sqzrec = record
@@ -199,7 +199,7 @@ type archd = record
                        dosdate  : word;
                        attrib   : byte;
                        crc32    : longint;
-                       name     : string);
+                       name     : shortstring);
               end;
 
      tarrec = record
@@ -233,7 +233,7 @@ type archd = record
                 method    : char;
                 namelen   : word;
                 attrib    : longint;
-                name      : string;
+                name      : shortstring;
               end;
 
 
@@ -311,7 +311,7 @@ var f    : file;
                0 : (b    : byte;
                     ofs  : word;   { L„nge MOD 512 }
                     secs : word);  { L„nge DIV 512 + 1 }
-               1 : (s:string);
+               1 : (s:shortstring);
            end;
     typ  : longint;
     sfx  : boolean;
@@ -606,7 +606,8 @@ label again;
     with ar do begin
       b:=0;
       while ba(fname)[b]<>#0 do inc(b);
-      Move(fname,s[1],b); s[0]:=chr(b);
+      SetLength(s, b);
+      Move(fname,s[1],b); {s[0]:=chr(b);}
       p:=pos('/',s);
       if p=0 then p:=pos('\',s);
       if p=0 then begin
@@ -633,7 +634,7 @@ label again;
   var l   : longint;
  {      res : integer;           MK 12/99 }
   begin
-    while (s<>'') and (s[length(s)]<'0') do dec(byte(s[0]));
+    while (s<>'') and (s[length(s)]<'0') do SetLength(s, Length(s)-1); {dec(byte(s[0]));}
     while (s<>'') and (s[1]=' ') do delete(s,1,1);
     l:=0;
     while s<>'' do begin      { oktal-Value berechnen }
@@ -915,7 +916,7 @@ var f1,f2 : file;
     b:=min(255,filesize(f2));
     seek(f2,filesize(f2)-b);
     blockread(f2,s[1],b);
-    s[0]:=chr(b);
+    SetLength(s, b); {s[0]:=chr(b);}
     p:=pos('PK'#5#6,s);  { End of CentDir }
     if p=0 then begin
       SetLocalZipHeaders:=false;
@@ -984,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/05 09:27:08  hd
+  - AnsiString-Anpassung
+
   Revision 1.14  2000/07/04 17:33:22  mk
   - stapelweise ungenutze Routinen entfernt
 

@@ -745,14 +745,22 @@ const dsfiles : longint = 0;
 var   i,j     : integer;
       econt   : set of byte;
       glc     : char;
+{$ifdef hasHugeString}
+      sn      : string;
+{$else}
       sn      : string[12];
+{$endif}
       memerr  : boolean;
       gl,wdt  : byte;
       t,t2    : taste;
       p,a,am  : integer;
       xp      : integer;
+{$ifdef hasHugeString}
+      vn      : string;
+{$else}
       vn      : string[12];
-      s,s2    : pathstr;
+{$endif}
+      s,s2    : string;
       stat    : diskstat;
 
   procedure pmsg(s:string);
@@ -1099,6 +1107,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/05 09:27:09  hd
+  - AnsiString-Anpassung
+
   Revision 1.19  2000/07/04 12:04:18  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

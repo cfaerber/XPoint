@@ -210,7 +210,7 @@ begin
     GetRes:='fehlt: ['+strs(nr)+'] '
   else
     with block[bnr] do begin
-      s[0]:=chr(rsize(bnr,inr));
+      SetLength(s, rsize(bnr,inr)); {s[0]:=chr(rsize(bnr,inr));}
       if loaded then begin
         Move(rptr^[index[bnr]^[inr,1]],s[1],length(s));
         end
@@ -292,7 +292,7 @@ begin
           size:=clindex^[i+1,1]-clindex^[i,1]
         else
           size:=clcsize-clindex^[i,1];
-        s[0]:=chr(size);
+        SetLength(s, size); { s[0]:=chr(size); }
         Move(clcont^[clindex^[i,1]],s[1],size);
       ende:
         GetRes2:=s;
@@ -347,6 +347,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/05 09:27:09  hd
+  - AnsiString-Anpassung
+
   Revision 1.11  2000/07/04 12:04:18  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

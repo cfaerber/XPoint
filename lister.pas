@@ -547,8 +547,9 @@ begin
       until eof(f);
       close(f);
       if rp>1 then begin     { den Rest der letzten Zeile noch anh„ngen.. }
+        SetLength(s, rp-1);
         Move(p^[1],s[1],rp-1);
-        s[0]:=chr(rp-1);
+        {s[0]:=chr(rp-1); }
         app_l(s);
         end;
       end;
@@ -557,7 +558,12 @@ begin
 end;
 
 procedure list(var brk:boolean);
-const suchstr : string[40] = '';
+const
+{$ifdef hasHugeString}
+      suchstr : string = '';
+{$else}
+      suchstr : string[40] = '';
+{$endif}
       suchcase: boolean = false;    { true -> Case-sensitiv }
 var gl,p,y    : shortint;
     dispa     : shortint;
@@ -618,7 +624,11 @@ var gl,p,y    : shortint;
   procedure display;
   var i  : integer;
       pp : lnodep;
+{$ifdef hasHugeString}
+      s  : string;
+{$else}
       s  : string[100];
+{$endif}
       b  : byte;
   begin
     with alist^ do begin
@@ -1380,6 +1390,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/05 09:27:08  hd
+  - AnsiString-Anpassung
+
   Revision 1.23  2000/07/04 12:04:16  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
