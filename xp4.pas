@@ -1413,12 +1413,12 @@ again:
       readOEMList := true;      { OEM-Header auslesen }
       readheader (hdp^, hds, false);
 
-      if (RTAMode and 4 = 4) or (RTAMode and 8 = 8) or (RTAMode and 64 = 64) then
-      begin
-        addList (RTAEmpfList, xp3.empfList, 9);
-        addList (RTAEmpfList, hdp^.oemList, 8);
-        addList (RTAEmpfList, hdp^.kopien, 3);
-      end;
+      addList (RTAEmpfList, xp3.empfList, 9);
+      addList (RTAEmpfList, hdp^.oemList, 8);
+      addList (RTAEmpfList, hdp^.kopien, 3);
+
+      if (RTAMode and 4 = 0) and (RTAMode and 8 = 0) and (RTAMode and 64 = 0) then
+        disposeRTAEmpfList (RTAEmpfList);
 
       checkVertreterAdressen (RTAEmpfList);
 
@@ -2772,6 +2772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.28  2001/04/28 17:11:33  sv
+  - fixed bug that occured, if user had disabled RTA
+
   Revision 1.26.2.27  2001/04/28 15:47:34  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
