@@ -125,6 +125,8 @@ var x,y      : Integer;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
     ReplaceOwnHoldFlag: byte;
+    MsgIdsRead: TStringList;
+    dummy    : integer;
     cust_header : custheadstr;
 
   function puffer_ok:boolean;
@@ -648,28 +650,26 @@ var x,y      : Integer;
     MsgPos: Integer;
   begin
     result:= false;
-    if Aufnehmen then
+    dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
+    if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
     begin
-      dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
-      if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
+      // message with same msgid found in db
+      msgpos := dbReadIntN(bezbase,bezb_msgpos);
+      if not dbDeleted(mbase, msgpos) then
       begin
-        // message with same msgid found in db
-        msgpos := dbReadIntN(bezbase,bezb_msgpos);
-        if not dbDeleted(mbase, msgpos) then
+        dbGo(mbase, msgpos);
+        flags := 0;
+        if not dbBOF(mBase) and not dbEOF(mbase) then
+          dbReadN(mbase,mb_flags,flags); { get message flags }
+        if (flags and 256 <> 0)or
+           (boxpar^.ReplaceDupes) then
         begin
-          dbGo(mbase, msgpos);
-          flags := 0;
-          if not dbBOF(mBase) and not dbEOF(mbase) then
-            dbReadN(mbase,mb_flags,flags); { get message flags }
-          if (flags and 256 <> 0)or
-             (boxpar^.ReplaceDupes) then
-          begin
-            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
-            wrkilled; { Ablage auf jeden Fall reorganisieren }
-            DelBezug;
-            dbDelete(mbase);
-            result:= (flags and 256 <> 0);
-          end;
+          debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
+          dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+          wrkilled; { Ablage auf jeden Fall reorganisieren }
+          DelBezug;
+          dbDelete(mbase);
+          result:= (flags and 256 <> 0);
         end;
       end;
     end;
@@ -681,8 +681,8 @@ var
   nt: Byte;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
-  inmsgs:=0; ReplaceOwnHoldFlag := 255;
-  puffereinlesen:=false;
+  inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
+  MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
   if (zconnect) then
@@ -813,6 +813,8 @@ begin
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.FirstEmpfaenger;
+        Debug.DebugLog('xp3o','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
+
         { Schalter maildelxpost beachten }
         if (hdp.Empfaenger.Count > maxcrosspost)
         and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then begin
@@ -916,9 +918,10 @@ begin
             if not dbFound then
             begin
               // AM for a group not yet existing
-              if (Empfaenger.Count>1) or (attrib and AttrControl<>0) then
-                // crossposting or cancel msg, drop
-                aufnehmen:=false
+              if (Empfaenger.Count>1) or (attrib and AttrControl<>0) then begin
+                debug.debuglog('xp3o','crossposting or cancel msg',dltrace);
+                aufnehmen:=false;
+                end
               else if aufnehmen then begin
                 // create new group
                 if FirstChar(Firstempfaenger)<>'A' then grnr:=IntGruppe
@@ -963,6 +966,7 @@ begin
             if aufnehmen then
               _brett:=mbrettd(FirstChar(FirstEmpfaenger),bbase);
             end;
+
           { hier kein adrok: TO-User werden immer aufgenommen! }
           if FirstChar(FirstEmpfaenger)='U' then begin
             dbSeek(ubase,uiName,UpperCase(copy(FirstEmpfaenger,2,80))); {Adreábuch-Eintrag}
@@ -989,8 +993,14 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
-          if(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes)then
-            OwnMessageReplaced:= KillSameMsgId
+          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))then begin
+            OwnMessageReplaced:= KillSameMsgId;
+            if BoxPar^.ReplaceDupes and MsgIdsRead.Find(msgid,dummy)then begin
+              // this msg already showed up in this buffer
+              aufnehmen:=false;
+              debug.debuglog('xp3o','dupe (multiple times in buffer)',dltrace);
+              end;
+            end
           else
             OwnMessageReplaced:= False;
 
@@ -1024,7 +1034,7 @@ begin
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
             if UpperCase(charset)='ISO1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
-            Debug.DebugLog('xp3o','subject "'+betreff+'", msgid "'+msgid+'"',DLDebug);
+
             dbWriteN(mbase,mb_netztyp,mnt);
             dbWriteNStr(mbase,mb_betreff,betreff);
             dbWriteNStr(mbase,mb_absender,absender);
@@ -1141,6 +1151,8 @@ begin
       until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
 
       Debug.DebugLog('xp3o','ok, next message',DLDebug);
+      if BoxPar^.ReplaceDupes then
+        MsgIdsRead.Add(hdp.msgid);
       inc(adr,hdp.groesse+hdsize);
       inc(padr,hdp.groesse+hdsize);
       inc(inmsgs);
@@ -1150,6 +1162,7 @@ begin
         mon;
       end;
     until adr>=fs-3;     { 3 Byte Toleranz }
+    MsgIdsRead.Destroy;
 
     Debug.DebugLog('xp3o','index built',DLInform);
     moff;
@@ -1265,6 +1278,10 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.9  2002/08/10 10:31:17  ma
+  - dupekill when sorting in messages detects dupes in same buffer now
+    (really kills crossposting dupes :-)
+
   Revision 1.83.2.8  2002/08/05 22:51:40  mk
   - read boxPar with other boxtypes as ntUUCP, too
     allows ReplaceOwn and ReplaceDupe for all RFC boxtypes

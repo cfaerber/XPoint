@@ -84,7 +84,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,classes,
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}  
@@ -1508,6 +1508,10 @@ end;
 
 {
   $Log$
+  Revision 1.85.2.5  2002/08/10 10:31:17  ma
+  - dupekill when sorting in messages detects dupes in same buffer now
+    (really kills crossposting dupes :-)
+
   Revision 1.85.2.4  2002/08/01 16:59:59  mk
   - fixed signature, Bug #589617 3.8: Signaturabtrenner bei EB ist "--"
 
