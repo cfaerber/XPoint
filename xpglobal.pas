@@ -133,13 +133,13 @@ const
   MaxLenPathname = 255;
 {$ELSE }
   MaxLenFilename = 13;
-  MaxLenPathname = 72; { <- ist das richtig fuer DOS? }
+  MaxLenPathname = 79;
 {$ENDIF }
 
 implementation
 
 begin
-  {$IFDEF Debug }
+  {$IFDEF Beta }
     {$IFDEF FPC }
        Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
         ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
@@ -148,6 +148,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/05/13 09:31:35  mk
+  - Debugstringausgabe unter FPC
+
   Revision 1.25  2000/05/09 13:14:32  hd
   - DirSepa abhaengig von UnixFS, ebenso WildCard
   - MaxLenFilename/-Pathname eingefuehrt (bitte DOS etc. anpassen)
