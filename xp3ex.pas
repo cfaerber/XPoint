@@ -1064,9 +1064,11 @@ begin
         erase(decf);
         end;
       end;
-    if (hdp.netztyp=nt_Fido) and (art=xTractMsg)
-      then if ExtCliptearline then Clip_Tearline
-                              else if ExtChgTearline then Chg_Tearline;
+    if (hdp.netztyp=nt_Fido) and (art=xTractMsg) then
+      if ExtCliptearline then
+        Clip_Tearline
+      else
+        if ExtChgTearline then Chg_Tearline;
     close(f);
     Hdp.Free;
   end;
@@ -1079,6 +1081,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/12/29 10:32:26  mk
+  - fixed Bug #109282: Fido: N/W/K
+
   Revision 1.56  2000/12/27 22:36:35  mo
   -new class TfidoNodeList
 
