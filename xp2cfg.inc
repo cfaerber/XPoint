@@ -1512,11 +1512,16 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
+    {$IFDEF Ver32 }
+      ScreenLines := 25; { !! Keine Žnderungsm”glichkeit bis jetzt }
+    {$ENDIF }
+
     extrakttyp:=defextrakttyp;
     if ParZeilen>0 then begin
       cfgscrlines:=screenlines;
       screenlines:=ParZeilen;
       end;
+
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
@@ -1608,6 +1613,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/03/25 16:29:29  mk
+  - 32 Bit: Zeilenzahl fest auf 25 gestellt
+
   Revision 1.20  2000/03/25 11:46:10  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
   - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
