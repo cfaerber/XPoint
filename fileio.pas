@@ -77,7 +77,6 @@ procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen  }
 function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
 Procedure era(s:string);                        { Datei l”schen           }
 procedure erase_mask(s:string);                 { Datei(en) l”schen       }
-procedure erase_all(path:string);              { L”schen mit Subdirs     }
 function  _rename(n1,n2:string):boolean;       { L”schen mit $I-         }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:string);                 { Leerdatei erzeugen      }
@@ -266,44 +265,6 @@ begin
   FindClose(sr);
 end;
 
-{ path: Pfad mit '\' bzw. '/' am Ende! }
-
-procedure erase_all(path:string);
-var sr : searchrec;
-    f  : file;
-    er : integer;
-begin
-
-  { Auf keinen Fall das XP-Verzeichnis l”schen! }
-  Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
-  er:=doserror;
-  FindClose(sr);
-  { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
-  if (er=0) then exit;
-  { Oops, XPVerzeichnis erwischt! }
-  if (ownpath=path) then exit;
-  { Oops, Rootverzeichnis erwischt! }
-  if ((path='\') or (path='/')) then exit;
-
-  Dos.findfirst(path+WildCard,anyfile-VolumeID,sr);
-  while (doserror=0) do begin
-    with sr do
-      if (name[1]<>'.') then
-        if attr and Directory<>0 then
-          erase_all(path+name+DirSepa)
-        else begin
-          assign(f,path+name);
-          if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
-          erase(f);
-        end;
-    dos.findnext(sr);
-  end;
-  FindClose(sr);
-  if cpos(DirSepa,path)<length(path) then begin
-    dellast(path);
-    rmdir(path);
-  end;
-end;
 
 Procedure MakeBak(n,newext:string);
 var bakname : string;
@@ -569,6 +530,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/10/19 12:57:43  mk
+  - deleted unused function erase_all
+
   Revision 1.55  2000/10/17 20:36:13  mk
   - falschen Kommentar zu Disksize/Diskfree entfernt
 

@@ -143,57 +143,6 @@ begin
   FindClose(sr);
 end;
 
-{ path: Pfad mit '\' bzw. '/' am Ende! }
-
-procedure erase_all(path:string);
-
-  function parent_dir(s: string): boolean;
-  begin
-    case length(s) of
-      0: parent_dir:= false;
-      1: parent_dir:= s[1]<>'.';
-      2: parent_dir:= (s<>'..') and (s<>'./');
-    else
-      parent_dir:= (copy(s,1,2)<>'..');
-    end;
-  end;
-
-var sr : searchrec;
-    f  : file;
-    er : integer;
-begin
-  path:= ResolvePathName(path);
-
-  { Auf keinen Fall das XP-Verzeichnis l”schen! }
-  Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
-  er:=doserror;
-  FindClose(sr);
-  { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
-  if (er=0) then exit;
-  { Oops, XPVerzeichnis erwischt! }
-  if (ownpath=path) then exit;
-  { Oops, Rootverzeichnis erwischt! }
-  if path=DirSepa then exit;
-
-  findfirst(path+WildCard,anyfile-VolumeID,sr);
-  while (doserror=0) do begin
-    if not parent_dir(sr.name) then
-      if sr.attr and Directory<>0 then
-        erase_all(path+sr.name+DirSepa)
-      else begin
-        assign(f,path+sr.name);
-        if sr.attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
-          erase(f);
-      end;
-    findnext(sr);
-  end;
-  FindClose(sr);
-  if cpos(DirSepa,path)<length(path) then begin
-    dellast(path);
-    rmdir(path);
-  end;
-end;
-
 procedure MakeBak(n,newext:string);
 var bakname : string;
     f       : file;
@@ -470,6 +419,9 @@ end;
 
 {
         $Log$
+        Revision 1.6  2000/10/19 12:57:31  mk
+        - deleted unused function erase_all
+
         Revision 1.5  2000/10/18 12:21:34  hd
         - Unter Linux wieder compilierbar
 
