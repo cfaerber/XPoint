@@ -4,17 +4,18 @@
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
    later version.
-  
+
    The software is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
    Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+   Modified on July, 23st 2000 by Markus K„mmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
@@ -28,34 +29,34 @@ unit IPAddr;
 interface
 
 uses
-  xpglobal,		{ Nur wegen der Typendefinition }
-  Sockets,		{ Socket-Interface }
+  xpglobal,             { Nur wegen der Typendefinition }
+  Sockets,              { Socket-Interface }
   sysutils;
 
 
 type
-  EIP			= class(Exception);	{ Allgemein (und Vorfahr) }
-  EIPRangeError		= class(EIP);		{ i not in [1..4] }
-  EIPAddrTyp		= class(EIP);		{ Unbekannter Adresstyp }
-  EIPNoIPv4		= class(EIP);		{ Kein IP v4 }
+  EIP                   = class(Exception);     { Allgemein (und Vorfahr) }
+  EIPRangeError         = class(EIP);           { i not in [1..4] }
+  EIPAddrTyp            = class(EIP);           { Unbekannter Adresstyp }
+  EIPNoIPv4             = class(EIP);           { Kein IP v4 }
 
 type
   TIP = class
 
   protected
 
-    FName	: string;	{ FQDN }
-    FIP		: longint;	{ Raw-IP }
-    FResolved	: boolean;	{ Aufgeloest (aufloesbar) }
-    FAutoResolve: boolean;	{ Automatisches aufloesen? }
+    FName       : string;       { FQDN }
+    FIP         : longint;      { Raw-IP }
+    FResolved   : boolean;      { Aufgeloest (aufloesbar) }
+    FAutoResolve: boolean;      { Automatisches aufloesen? }
 
     function  GAsString: string;
     function  GAtom(i: integer): integer;
-    
+
     procedure SAutoResolve(b: boolean);
     procedure SName(s: string);
     procedure SRaw(i: longint);
-    
+
   public
 
     constructor Create;
@@ -66,7 +67,7 @@ type
 
     { Name gibt den Namen zurueck }
     property Name: string read FName write SName;
-    
+
     { Die IP als String }
     property AsString: string read GAsString;
 
@@ -75,11 +76,11 @@ type
     property AutoResolve: boolean read FAutoResolve write SAutoResolve;
 
     { Raw behandelt die IP als Longint }
-    property Raw: longint read FIP write SRaw;    
+    property Raw: longint read FIP write SRaw;
 
     { Adresse aufgeloset }
     property Resolved: boolean read FResolved;
-    
+
     { Loeschen vorhandener Daten }
     procedure Clear; virtual;
 
@@ -90,7 +91,6 @@ implementation
 {$ifdef Win32}
 uses
   WinSock;
-{$fatal WinSock enthaelt gethostbyname, aber Du musst sie mal pruefen }
 {$endif}
 
 {$ifdef Linux}
@@ -100,17 +100,17 @@ uses
 type
   { THostEnt Object }
   THostEnt = record
-    Name     : pchar;   { Official name }
-    Aliases  : ppchar;  { Null-terminated list of aliases}
-    Addrtype : longint; { Host address type }
-    Addrlen  : longint; { Length of address }
-    Addrlist : ppchar;  { null-terminated list of adresses }
+    h_Name     : pchar;   { Official name }
+    h_Aliases  : ppchar;  { Null-terminated list of aliases}
+    h_Addrtype : longint; { Host address type }
+    h_Length   : longint; { Length of address }
+    h_Addr_list: ppchar;  { null-terminated list of adresses }
   end;
   PHostEnt = ^THostEnt;
 
 function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
-
 {$endif}
+
 constructor TIP.Create;
 begin
   inherited Create;
@@ -143,14 +143,16 @@ begin
   FName:= s;
   if FAutoResolve then begin
     hostinfo:= gethostbyname(PChar(s));
-    if hostinfo<>nil then with hostinfo^ do begin
-      if (AddrType<>AF_INET) then
-        raise EIPAddrTyp.Create('Unknown address typ: '+IntToStr(AddrType)
+    if hostinfo<>nil then
+    with hostinfo^ do
+    begin
+      if (h_AddrType<>AF_INET) then
+        raise EIPAddrTyp.Create('Unknown address typ: '+IntToStr(h_AddrType)
               +', expected '+IntToStr(AF_INET)+'!');
       FIP:= 0;
-      if (AddrLen<>4) then
+      if (h_Length<>4) then
         raise EIPNoIPv4.Create('This is not an IPv4 address!');
-      Move(Addrlist^^,FIP,Addrlen);
+      Move(h_Addr_list^^,FIP,h_Length);
       FResolved:= true;
     end;
   end;
@@ -191,8 +193,11 @@ end;
 
 end.
 {
-	$Log$
-	Revision 1.1  2000/07/23 17:09:32  hd
-	- Neue Klasse: TIP
+        $Log$
+        Revision 1.2  2000/07/23 22:00:57  mk
+        - modified variable names THostEnt to work as well under Win32
+
+        Revision 1.1  2000/07/23 17:09:32  hd
+        - Neue Klasse: TIP
 
 }
