@@ -701,7 +701,13 @@ begin
 {$IFDEF VP }
     p := ptr(1);
 {$ELSE }
+{$IFDEF FPC }
+{$IFDEF VER1_1 }
+    p:= pointer(1);
+{$ELSE}
     p:=ptr(1,1);
+{$ENDIF }
+{$ENDIF }
 {$ENDIF }
     tail:=nil;
     endcr:=false;
@@ -801,7 +807,13 @@ begin
 {$IFDEF VP }
     p := ptr(1);
 {$ELSE }
+{$IFDEF FPC }
+{$IFDEF VER1_1 }
+    p:=pointer(1);
+{$ELSE }
     p:=ptr(1,1);
+{$ENDIF }
+{$ENDIF }
 {$ENDIF }
     tail:=nil;
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
@@ -1857,6 +1869,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/12/04 17:55:57  hd
+  - Workaround for FPC 1.1
+
   Revision 1.48  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 
