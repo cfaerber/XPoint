@@ -695,7 +695,7 @@ var size   : longint;
     ohfill:=s;
   end;
 
-Label Exit;
+Label ExitL;
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
   TempKopien := TStringList.Create;
@@ -715,7 +715,7 @@ begin
       rewrite(f,1);
       close(f);
       Hdp.Free;
-      Goto Exit;
+      Goto ExitL;
     end;
       if append then begin
       reset(f,1);
@@ -1095,7 +1095,7 @@ begin
     Hdp.Free;
   end;
   freeres;
-Exit:
+ExitL:
   ExtCliptearline:=true;
   ExtChgtearline:=false;
   TempKopien.Free;
@@ -1103,6 +1103,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2001/09/24 21:56:07  mk
+  - fpc compile fix
+
   Revision 1.80  2001/09/21 16:16:48  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 
