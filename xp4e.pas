@@ -956,7 +956,8 @@ begin
   pollbox:= dbReadStr(ubase,'pollbox');
   dbRead(ubase,'haltezeit',halten);
   dbRead(ubase,'userflags',flags);
-  dbRead(ubase,'Adrbuch',adr);
+  if Pollbox='' then adr:=NeuUsergruppe {Bei neuem User Standard-Adressbuchgruppe}
+    else dbRead(ubase,'Adrbuch',adr);
   rec:=dbRecno(ubase);
   edituser(getres(2710),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
   dbGo(ubase,rec);
@@ -2415,6 +2416,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/08/18 07:49:49  mk
+  JG: - beim Neuanlegen von Usern mit Strg+U wird jetzt
+    die Standard-Addressbuchgruppe benutzt
+
   Revision 1.39  2000/08/14 14:43:26  mk
   - Kommentar hinzugefuegt
 
