@@ -361,7 +361,7 @@ end;
 { Nachrichten mit defekter Gr”áe werden auf 'l”schen' gesetzt    }
 
 procedure MsgReorg;
-const tmp     = 'reorg.$$$';
+const tmp     = 'REORG.$$$';
       maxbufs = 20;
 var x,y,yy  : byte;
     lastproz: byte;
@@ -638,7 +638,7 @@ begin
           lastproz:=101;
           reset(f1,1);
           f1s:=filesize(f1);
-          assign(f2,tmp);  { muá wg. rename jedesmal neu assigned werden! }
+          assign(f2,FileUpperCase(tmp));  { muá wg. rename jedesmal neu assigned werden! }
           rewrite(f2,1);
           newadr:=0;
           dbGoTop(mbase);
@@ -713,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/10/16 17:53:49  mk
+  - LFN-Fix
+
   Revision 1.22  2000/08/02 23:26:16  mk
   - dbReadN mit String-Problem beseitigt
 
