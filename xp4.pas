@@ -899,7 +899,7 @@ var t,lastt: taste;
           end;
         end else
         begin
-          for i:= 1 to OrgHdp.Empfaenger.Count-1 do 
+          for i:= 1 to OrgHdp.Empfaenger.Count-1 do
             if CPos('@',OrgHdp.Empfaenger[i])=0 then begin
               news := true; break;
             end;
@@ -910,7 +910,7 @@ var t,lastt: taste;
         // -- Private Antwort ------------------------------------------
         if pm then begin
           //-- Mail-Reply-To overwrites Reply-To -----------------------
-          if orghdp.UMailReplyTo<>'' then 
+          if orghdp.UMailReplyTo<>'' then
           begin
             AddAddressList(orghdp.UMailReplyTo,   atTo);
           end else
@@ -996,7 +996,7 @@ var t,lastt: taste;
         
         if orghdp.netztyp<>nt_maus then
           if gflags and 6=6 then ReCount(orghdp.Betreff)   { Re's abschneiden }
-          else ReplyText(orghdp.Betreff,(gflags and 6=0) or 
+          else ReplyText(orghdp.Betreff,(gflags and 6=0) or
                                        ((gflags and 6=2) and ReHochN))
         else
           Cut_QPC_DES(orghdp.Betreff);
@@ -1007,8 +1007,16 @@ var t,lastt: taste;
         sData.distribute:=orghdp.distribution;
         orghdp.organisation := '';
 
-        if (quote in [3,4]) then sData.fidoto := orghdp.Fido_to
-        else                     sData.fidoto := orghdp.Realname;        
+        if (quote in [3,4]) then
+        begin
+          sData.fidoto := orghdp.Fido_to;
+        end else
+        begin
+          p:=cpos('@', OrgHdp.absender);
+          if p=0 then
+            p:= Length(OrgHdp.Absender)+1;
+          sData.fidoto:=LeftStr(OrgHdp.absender, minmax(p-1,0,35));
+        end;
 
         sData.References.Assign(orghdp.References);
         sData.References.Add(orghdp.msgid);
@@ -1023,7 +1031,7 @@ var t,lastt: taste;
           if QuoteMask='' then
             QuoteMask := iifs(news,iifs(pm,QuotePriv,QuoteMsk),QuotePMPriv);
 
-          if QuoteString<>'' then begin 
+          if QuoteString<>'' then begin
             QuoteOld := xp0.QuoteChar;
             xp0.QuoteChar := QuoteString; end;
 
@@ -2868,6 +2876,9 @@ end;
 
 {
   $Log$
+  Revision 1.142  2003/05/01 11:51:03  mk
+  - fixed #704019: Empfänger "Alle" bei Fido-Antworten
+
   Revision 1.141  2003/04/25 21:11:16  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
