@@ -514,55 +514,52 @@ forwarded. Confirm <Enter> or abort with <Esc>.
 ^^23
 @
 30
-<<Message Reading window
+<<Message reading window
 
-<<see also>>  [ message display ]  <<(Press <Enter>)@4015
+(<<See also:>> [ Message display ] )@4015
 
 Note: only those messages are actually displayed
-which match the conditions set by "View", in the
+which match the conditions set by "View" in the
 Newsgroup display. The current view-mode is shown
-in the first line in the window (after the Newsgroup
+in the first line of the window (after the Newsgroup
 name).
 
-The following functions are available: (see also Menu
-Bar and the Menu under "Other")
+The following functions are available:
 
-<<<Enter> >>displays the text of the current message
+<<<Enter> >>Displays the text of the current message
         under the cursor.
 
- <<##>>     shows the [ reference link ]  where@4014
-        available.
+ <<##>>      Shows the[ reference link ]  where available.@4014
 
-<<Ctrl-W>>  toggles automatic jumping to the next
-        message.
+<<Ctrl-W>>  Toggles automatic jumping to the next message.
 
 <<<Esc> >>  Go back 1 menu level to the Newsgroup or User
         overview. Holding down Ctrl at the same time
-        will stop  a jump to the next Newsgroup/User
+        will stop a jump to the next Newsgroup/User
 
-<<A>>       toggles to showing all Messages stored in the
+<<A>>       Toggles showing all messages stored in the
         Newsgroup, regardless of the current "View"
-        mode. In a display of marked Messages toggles
-        between  sender and recipient display.
+        mode. In a display of marked messages,
+        toggles between sender and recipient display.
 
-<<<Sp> >>   Marks the message where the cursor currently
-        is. <<Messages can remain simultaneously>>
-      <<marked in several news groups!>>
+<<<Space> >>Marks the message under the cursor.
+        <<Messages can remain simultaneously marked in>>
+        <<several newsgroups!>>
 
 <<Ctrl-E>>  Unmarks <<all>> marked messages.
 
-   <<H>>    Puts a message to "permanent hold" so it
+   <<H>>    Puts a message on "permanent hold" so it
  <<Ins>>    won't be removed by [Re-Org] when its normal@10701
-        time expires (<Insert>) also does it).
+        time expires.
 
   <<L>>     Puts a message on "release to delete" so it
  <<Del>>    will be removed by the next [Re-Org]@10701
 
    <<K>>    Kill (removes) the selected message
-        <<immediately>> from the Data Base.
+        <<immediately>> from the message base.
 
-   <<E>>    finds if possible the first message with the
-        title (subject) of the current message for
+   <<E>>    Finds, if possible, the first message with
+        the subject of the current message for
         reference. If more than one seems plausible,
         all will be marked.
 
@@ -577,31 +574,30 @@ Bar and the Menu under "Other")
         your message for Quoting. Template used from
         /Edit/Templates/[PublicQuote].@10803
 
-<<shift-R>> If you mark (see above) several messages
+<<Shift-R>> If you mark (see above) several messages
         this will include the text from all of them
         to quote. Template: [PublicQuote].@10803
 
-   <<P>>    As W above, but sends a [PM] to whom-@4000
-        ever wrote the message.
-        Template: [PrivHead].@10802
+   <<P>>    As W above but sends a [PM] to whoever@4000
+        wrote the message. Template: [PrivHead].@10802
 
 <<Ctrl-P>>  As Ctrl-R above but as [PM] (see P above)
         Template: [PrivQuote] if quoting a public@10804
         message, or [PrivPMQuote] if quoting a PM.@10805
 
-<<shift-P>> Write a [PM] answer with quoted message@4000
-        on several marked messages similar to shift-R
+<<Shift-P>> Write a [PM] reply with quoted message on@4000
+        several marked messages, similar to Shift-R
         above. Template: [PrivQuote].@10804
 
-<<Ctrl-F>>  Send a [text file] from disk to the@4002
+<<Ctrl-F>>  Send a[ text file ] from disk to the@4002
         person who wrote the selected message.
 
-<<Ctrl-I>>  Send a [binary file] to the person who@4002
+<<Ctrl-I>>  Send a[ binary file ] to the person who@4002
         the selected message.
 
-   <<U>>    switches to [PM] Newsgroup of the sender@4000
-        of the current selected message, if he is in
-        it. If not, use Ctrl-U.
+   <<U>>    Switches to [PM] Newsgroup of the sender of@4000
+        the current selected message, if he is in it. 
+        If not, use Ctrl-U.
 
 <<Ctrl-U>>  Edits the data in your user list of the sender
         of the current selected message, if present.
@@ -635,7 +631,7 @@ Bar and the Menu under "Other")
         the /Message/Search/Marked(for reply) option.
 
 <<Ctrl-T>>  Prints the current selected message.
-        see also [/Config/Printer].@10606
+        (See also: [/Config/Printer] ).@10606
 
 <<Alt-P>>   Archives a PM <<from>> someone in his
         respective PM Newsgroup.
@@ -650,20 +646,17 @@ Bar and the Menu under "Other")
 <<<F4> >>   Repeats the last command selected from menu.
 
 <<<F6> >>   Select a macro
-
-<<see also>>  [ message display ]  <<(Press <Enter>)@4015
-
 @
 31
-<<Marked Messages
+<<Marked messages
 
-(Color and "þ" indicates marked message.)
+("<<þ>>" indicates a marked message.)
 
 All marked messages are displayed. Messages may have
-been marked by hand, or through some search selection
+been marked by hand or through some search process.
 
-You can operate on this list just as if it were a
-normal [Newsgroup Window], with the same functions@30
+You can treat this list just as if it were a normal 
+[Newsgroup Window].@30
 @
 39
 <<Message Reader
@@ -6250,9 +6243,9 @@ DOS Path or you enter the full path to them. COM and
 EXE programs will be started quicker if you specify
 the extension as well.
 
-You can pass parameters (if needed) to these
+You can pass parameters (if needed) to these 
 programs in the normal way by specifying them after
-the command. You can use the <<$FILE>> macro to pass
+the command. You can use the <<$FILE>> macro to pass 
 the current file name or the <<$ASK>> macro to enter
 parameters.
 
@@ -13526,7 +13519,7 @@ For [details] of how to do things, press <Enter>.@30
 <<Message Areas Display in "Normal" Mode
 <<--------------------------------------
 
-    ¯Unsent
+   ¯Unsent
  þ /PBNET/PB-ANNOUNCE
   ¯ /FIDO/XPOINT
   {026} /Alt/Tasteless/Jokes
@@ -13535,27 +13528,26 @@ For [details] of how to do things, press <Enter>.@30
  ³³ ³ÀÄÄ  Message area name
  ³³ ÀÄÄÄ  A preceding "¯" denotes an internal
  ³³       CrossPoint message area
- ³³           
- ³ÀÄÄÄ <<>>  Message area contains messages that match
- ³        the active view mode, but have all been
- ³        read already. (<<+>>)
- ³     <<¯>>  Message area contains messages that match
- ³        the active view mode and that are still
+ ³³
+ ³ÀÄÄÄ <<>>  Message area contains messages which match
+ ³        the active view mode and which have all
+ ³        been read. (<<+>>)
+ ³     <<¯>>  Message area contains messages which match
+ ³        the active view mode and which are still
  ³        unread. (<<+>>)
- ³     <<{026}>>  Message area contains unread messages,
- ³        but no messages that match the active
+ ³     <<{026}>>  Message area contains unread messages
+ ³        but contains none which match the active
  ³        view mode. (<<+>>)
- ³     <<*>>  Message area contains messages that have
- ³        been marked for later reply, but no
- ³        messages that match the active view mode
- ³        or that are still unread.
- ³ 
+ ³     <<*>>  Message area contains messages which have
+ ³        been marked for later reply but none which
+ ³        match the active view mode or which are
+ ³        still unread.
+ ³
  ÀÄÄÄÄ <<þ>>  Message area is marked
 
 (<<+>>) Further information about message area markings
-    depending on the option "[Combined Unread Mode]"@276
-    under /Config/Display/Message_Areas und the
-    active view mode see there.
+    dependant on the option "[Combined Unread Mode]"@276
+    may be found under /Config/Display/Message_Areas.
 
 
 <<Message Area Display in "Special" Mode
