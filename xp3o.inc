@@ -553,12 +553,13 @@ var x,y      : Integer;
   procedure Bezugsverkettung;
   var n      : longint;
       c1,c2  : longint;
-      ll     : record
+      ll     : packed record
                  l   : longint;
                  dat : longint;
                end;
       empfnr : integer;
   begin
+    Debug.DebugLog('xp3o','start Bezugsverkettung',DLInform);
     moff;
     mstr:= getres(332);
     FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
@@ -581,7 +582,7 @@ var x,y      : Integer;
           empfnr:=hdp.Empfaenger.Count+1;                { Crossposting-Filter }
           continue;
         end;
-        blockread(pfile,ll,8);
+        blockread(pfile,ll, Sizeof(ll));
         if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
         begin
           c1:=MsgidIndex(hdp.msgid);
@@ -604,6 +605,7 @@ var x,y      : Integer;
     dbFlush(bezbase);
     close(f);
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
+    Debug.DebugLog('xp3o','end Bezugsverkettung',DLInform);
   end;
 
   procedure wrll(l:longint);
@@ -1249,6 +1251,10 @@ end;
 
 {
   $Log$
+  Revision 1.86  2002/05/23 22:49:01  mk
+  - added debug logs for 'Bezugsverkettung'
+  - fixed record size bug in Bezugsverkettung
+
   Revision 1.85  2002/05/21 15:24:05  ma
   - more debug logs
   - fixed hints and warnings
