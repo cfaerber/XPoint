@@ -86,7 +86,7 @@ const  {$IFDEF DPMI}
        ResMinmem   = 340000;
        realnlen = 40;                { robo 01/00 L„nge der Realnames }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
-       UsrFelderMax = 5;             { max. Feldzahl in der Userliste }
+       UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
        patchlevel  : string[13] = '*patchlevel*0';
 {$IFDEF Ver32 }
@@ -774,7 +774,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
-       UsrFeldDef = 'FHBAK'; { Standardreihenfolge: Feldtausch Userliste }
+       UsrFeldDef = 'FHRBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
        { /oh }
 
@@ -1108,6 +1108,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.26  2000/04/15 12:37:57  oh
+  - User/Nachrichten/Kommentarbaum-Listenanzeige verbessert, Feld Adressbuch in Userliste eingefuegt
+
   Revision 1.25  2000/04/15 09:57:59  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

@@ -149,6 +149,14 @@ begin  { __ Suchmarke }
           end;
     1,2,
     3,4 : begin { USERLISTE }
+    
+           { LÑngen:
+             FLAGS   4
+             ADRBUCH 2
+             PBOX    9
+             HZEIT   4
+            }            
+    
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             dbReadN(ubase,ub_username,s);
             dbReadN(ubase,ub_kommentar,komm);
@@ -161,15 +169,13 @@ begin  { __ Suchmarke }
             vert:=(uflags and 4<>0);
             dbReadN(ubase,ub_haltezeit,hzeit);
 
+            { (F)lags }
             if vert then begin
               { Verteiler }
               s := vert_name(s);
-              { Haltezeit hier ins Flag-Feld einfuegen (F ist richtig!) }
-              taus[pos('F',UsrFeldTausch)] := strsn(hzeit,3)+' '; { Laenge 4 }
-            end else begin
-              { Flags }
+              taus[pos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
+            end else
               taus[pos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
-            end;
 
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
@@ -177,45 +183,52 @@ begin  { __ Suchmarke }
             kuerzen := false;
             if dispext then begin
             { Anzeige/Spezial }
-              kuerzen := true; { wir brauchen mehr platz, also Felder kuerzen }
+              kuerzen := true; { wir brauchen mehr Platz, also Felder kuerzen }
               dbReadN(ubase,ub_pollbox,pbox);
               brettform(s,0,true);
-              if vert then
-                { KEINE Haltezeit bei Verteiler }
-                taus[pos('H',UsrFeldTausch)] := '      '
-              else
-                { Haltezeit bei Usern }
-                taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
+              
+              { (H)altezeit }
+              taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
 
-              { BOX }
+              { (B)OX }
               taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
+              
+              { Ad(r)essbuch-Nummer }
+              taus[pos('R',UsrFeldTausch)] := strsn(ab,2);
             end;
-
-            { Verteilername bzw. Adresse }
+            
+            { Falls (S)pezial EIN, dann mu· der folgende Resttext um
+              20 Zeichen gekÅrzt werden: }
+            
+            { Verteilername bzw. (A)dresse }
             taus[pos('A',UsrFeldTausch)]
               := Forms(s,
-                iif(pos('A',UsrFeldTausch)<pos('K',UsrFeldTausch),
-                    max(44-iif(kuerzen,9,0),length(s)),
-                    74+9-max(39,length(komm))-iif(kuerzen,8,0)
+                   { Adresse vor Kommentar: beide kÅrzen, sonst nur Adresse }
+                   iif(pos('K',UsrFeldTausch)>pos('A',UsrFeldTausch),
+                     44-iif(kuerzen,12,0),
+                     44-iif(kuerzen,20,0)
                    )
-              );
-
-            { Kommentar }
+                 );
+              
+            { (K)ommentar }
             taus[pos('K',UsrFeldTausch)]
               := Forms(komm,
-                iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
-                    max(30,length(komm)),
-                    74-max(35,length(s))-iif(kuerzen,8+9,0)
+                   { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
+                   iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
+                     30,
+                     30-iif(kuerzen,8,0)
                    )
-              );
+                 );
 
             { Felder zusammenkopieren }
             dispbuf[y]^:=taus[1];
             for tausc := 2 to UsrFelderMax do if (taus[tausc]<>'') then
               dispbuf[y]^:=dispbuf[y]^+iifs(length(taus[tausc])>0,' ','')+taus[tausc];
+            { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen und Åbergeben }
             dispbuf[y]^:=forms(dispbuf[y]^,80);
 
           end;
+          
   10..12: begin { NACHRICHTENLISTE }
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
             dbReadN(mbase,mb_absender,s0);
@@ -330,7 +343,7 @@ begin  { __ Suchmarke }
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
 
-              { Flags }
+              { (F)lags }
               taus[pos('F',MsgFeldTausch)] := dflags;
               if (pos('F',MsgFeldTausch)>1) then begin
                 if (
@@ -341,19 +354,21 @@ begin  { __ Suchmarke }
                        
                     ) then taus[pos('F',MsgFeldTausch)] := ' '+dflags;
               end;
-              { Groesse }
+              
+              { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
-              { Datum }
+              
+              { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
                                               iifs(pos('D',MsgFeldTausch)<>1,' ','')+
                                               sdat,'');
-              { Absender }
+              { (A)bsender }
               taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
                                               forms(s,19);
-              { Empfaenger }
+              { (E)mpfaenger }
               taus[pos('E',MsgFeldTausch)] := iifs(pos('E',MsgFeldTausch)<>1,' ','')+
                                               forms(s0,19);
-              { Betreff }
+              { (B)etreff }
               taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
                                               forms(s1,iif(showmsgdatum,22-
                                               iif(pos('D',MsgFeldTausch)<>1,0,1),28));
@@ -365,40 +380,28 @@ begin  { __ Suchmarke }
               { Kommentarbaum }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
+                if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
               end else begin
               
-              { Flags }
+              { (F)lags }
               taus[pos('F',MsgFeldTausch)] := iifs(pos('F',MsgFeldTausch)<>1,' ','')+
                                               dflags;
-              { Groesse }
+              { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
-              { Datum }
+              
+              { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
                                               iifs(pos('D',MsgFeldTausch)<>1,' ','')+
                                               sdat,'');
-              { Absender }
+              { (A)bsender }
               taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
                                               forms(s,ulen);
-              { Betreff }
+              { (B)etreff }
               taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
                                               forms(s1,iif(showmsgdatum,blen-
                                               iif(pos('D',MsgFeldTausch)<>1,0,1),blen));
 
-(*            
-                { Flags }
-                taus[pos('F',MsgFeldTausch)] := dflags;
-                { Groesse }
-                taus[pos('G',MsgFeldTausch)] := siz;
-                { Datum }
-                taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-                { Absender }
-                taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)>1,' ','')+
-                                                forms(s,ulen);
-                { Betreff }
-                taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)>1,' ','')+
-                                                forms(s1,blen);
-*)                                             
               end;
 
               if fidoqwk and (_brett[1]='A') and
@@ -418,6 +421,7 @@ begin  { __ Suchmarke }
               dispbuf[y]^ := taus[1];
               for tausc := 2 to MsgFelderMax do if (taus[tausc]<>'') then
                 dispbuf[y]^:=dispbuf[y]^+taus[tausc];
+              { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen und Åbergeben }
               dispbuf[y]^:=forms(dispbuf[y]^,80);
             end;
           end;
