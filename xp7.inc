@@ -136,6 +136,8 @@ begin
           BoxParOk := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
         else if not ChkAddServers then
           BoxParOk := getres2(706,11)   { 'ZusÑtzliche Server nicht OK' }
+        else if (PPPMailInServer <> '') and (PPPMailInEnv = '') then
+          BoxParOk := getres2(706,12)   { 'Envelope-Adresse fehlt' }
         else
           BoxParOk := '';
       end else
@@ -1540,6 +1542,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.15  2001/12/11 17:48:30  my
+  MY:- Netcall RFC/Client: Fehlende Envelope-Adresse (Mail-in) fÅhrt zu
+       Fehler und bricht Netcall ab.
+
   Revision 1.24.2.14  2001/11/20 23:19:29  my
   MY:- Netcall-Testroutine (BoxParOk) gefixt (wird nur noch einmal
        durchlaufen) und an Multiserverbetrieb angepa·t
