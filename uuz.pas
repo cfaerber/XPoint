@@ -28,20 +28,7 @@
 
 program uuz;
 
-uses  xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-{$IFDEF Linux }
-  linux,
-  XPLinux,
-{$ENDIF }
-{$IFDEF NCRT }
-  xpcurses,             { Fuer die Sonderzeichen an der Console }
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio, xpdatum,montage;
+uses  xpglobal, lfn, ems, crt, dos,typeform,fileio, xpdatum,montage;
 
 const
       midlen      = 160;
@@ -353,6 +340,7 @@ begin
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
+  writeln('zu/uz:        -LFN    =  Support Long Filenames');
   halt(1);
 end;
 
@@ -377,21 +365,17 @@ begin
         switch:=lstr(mid(paramstr(i),2));
         if left(switch,2)='w:' then
           XpWindow:=minmax(ival(mid(switch,3)),15,60) else
-        { 31.01.2000 robo - Envelope-Empf„nger aus Received auslesen? }
+        { Envelope-Empf„nger aus Received auslesen? }
         if switch='graberec' then
           getrecenvemp:=true else
-        { /robo }
+        if switch='lfn' then
+          EnableLFN else
         if switch='r' then
           shrinkheader:=true;
         end
       else
-{$IFDEF Linux}
-        if source=''  then source:=paramstr(i) else
-        if dest=''    then dest:=paramstr(i) else
-{$ELSE}
         if source=''  then source:=ustr(paramstr(i)) else
         if dest=''    then dest:=ustr(paramstr(i)) else
-{$ENDIF}
         if OwnSite='' then OwnSite:=paramstr(i);
     end
   else begin
@@ -419,6 +403,8 @@ begin
           MakeQP:=true else
         if switch='1522' then
           RFC1522:=true else
+        if switch='lfn' then
+          EnableLFN else
         if switch[1]='u' then begin
           MailUser:=mid(paramstr(i),3);
           NewsUser:=Mailuser;
@@ -3549,6 +3535,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.5  2000/08/28 22:52:06  mk
+  - LFN-Unterstuetzung freigeschaltet
+
   Revision 1.35.2.4  2000/08/25 22:25:15  mk
   - Update auf aktuellere Typeform
 
