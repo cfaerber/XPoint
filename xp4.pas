@@ -32,7 +32,7 @@ uses xpglobal,
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
+  sysutils,typeform,fileio,inout,winxp,keys,maske,datadef,database,
   archive,montage,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
@@ -2124,6 +2124,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/11/16 21:31:05  hd
+  - DOS Unit entfernt
+
   Revision 1.61  2000/11/15 23:00:40  mk
   - updated for sysutils and removed dos a little bit
 

@@ -23,8 +23,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
- sysutils,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
-      win2,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
+  sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp,
+  win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3;
 
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
@@ -2041,7 +2041,8 @@ procedure auto_fileinfo;
 var x,y : byte;
     ar  : AutoRec;
     fn  : string;
-    sr  : searchrec;
+    sr  : tsearchrec;
+    rc  : integer;
     dt  : TDateTime;
 begin
   AutoRead(ar);
@@ -2054,9 +2055,9 @@ begin
   mwrt(x+3,y+4,getres2(2729,4));    { 'Datum:' }
   attrtxt(col.colmbox);
   mwrt(x+11,y+2,fitpath(fn,56));
-  findfirst(fn,ffAnyFile,sr);
+  rc:= findfirst(fn,faAnyFile,sr);
   moff;
-  if doserror<>0 then
+  if rc<>0 then
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
   else begin
     wrt(x+11,y+3,trim(strsrnp(_filesize(fn),15,0))+getres(13));   { ' Bytes' }
@@ -2423,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.50  2000/11/15 23:00:41  mk
   - updated for sysutils and removed dos a little bit
 

@@ -24,8 +24,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes,
-      resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
+  typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes,
+  resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
 
 { Deklaration des Kommentarbaums in XP0 }
 
@@ -927,6 +927,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.27  2000/11/14 15:51:31  mk
   - replaced Exist() with FileExists()
 

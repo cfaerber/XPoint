@@ -239,7 +239,7 @@ begin
             7 : begin
                   shell('zconfig.exe',200,1);
                   { !! Eine Fehlerabfrage wird nicht gemacht, also Fehler l”schen }
-                  doserror := 0;
+                  // doserror := 0;
                   menurestart:=true;
                 end;
             8 : AccessibilityOptions;
@@ -596,6 +596,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/11/16 21:31:05  hd
+  - DOS Unit entfernt
+
   Revision 1.25  2000/11/10 13:20:45  hd
   - COM-Ports aus dem Menu extrahiert
 

@@ -138,7 +138,7 @@ end;
 
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
 type datt = record
-              t,m,j : integer;
+              t,m,j : smallword;
             end;
 var x,y,wdt: byte;
     n,ndel,
@@ -150,13 +150,6 @@ var x,y,wdt: byte;
     hzahl  : boolean;
     dat    : datt;
     bi     : shortint;
-
-  procedure getdatum;
-  var t,m,j,dow : rtlword;
-  begin
-    getdate(j,m,t,dow);
-    dat.t:=t; dat.m:=m; dat.j:=j;
-  end;
 
   procedure display;
   begin
@@ -298,7 +291,7 @@ begin
   n:=0; ndel:=0; nbesch:=0;
   bt:=0; dbt:=0; bbt:=0;
   getablsizes;
-  getdatum;
+  decodedate(now,dat.j,dat.m,dat.t);
   bi:=dbGetIndex(bbase);
   dbSetIndex(bbase,biBrett);
   dbGoTop(bbase);
@@ -713,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.26  2000/11/14 15:51:30  mk
   - replaced Exist() with FileExists()
 

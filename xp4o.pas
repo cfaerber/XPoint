@@ -24,9 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,inout,keys,montage,maske,datadef,database,
-     lister,archive,maus2,winxp,printerx,resource,xpglobal,
-     xp0,xp1,xp1o2,xp1help,xp1input;
+  typeform,fileio,inout,keys,montage,maske,datadef,database,
+  lister,archive,maus2,winxp,printerx,resource,xpglobal,
+  xp0,xp1,xp1o2,xp1help,xp1input;
 
 
 var  such_brett  : string;    { fÅr Suche im gewÑhlten Brett }
@@ -1388,7 +1388,8 @@ end;
 procedure zeige_unversandt;
 var _brett   : string;
     _mbrett  : string;
-    sr       : searchrec;
+    sr       : tsearchrec;
+    rc       : integer;
     f        : file;
     hdp      : headerp;
     hds      : longint;
@@ -1402,25 +1403,20 @@ var _brett   : string;
     zconnect : boolean;
     crashs   : boolean;
 
-  procedure fehlt;
-  begin
-    rfehler(426);   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
-  end;
-
 begin
   if uvs_active then exit;
   crashs:=false;
-  dos.findfirst('*'+BoxFileExt,dos.Archive,sr);
-  if doserror<>0 then
+  rc:= findfirst('*'+BoxFileExt,faArchive,sr);
+  if rc<>0 then
   begin
     FindClose(sr);
-    dos.findfirst('*.cp',dos.Archive,sr);
+    rc:= findfirst('*.cp',faArchive,sr);
     crashs:=true;
   end;
   markanz:=0;
   moment;
   hdp := AllocHeaderMem;
-  while doserror=0 do begin
+  while rc=0 do begin
     if crashs then begin
       box:=strs(hexval(LeftStr(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
       { ^^^ nur fÅr Anzeige bei fehlerhaftem CP }
@@ -1447,13 +1443,13 @@ begin
            ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
         then begin
           dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
-          if not dbFound then fehlt
+          if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           else _brett:='A'+dbLongStr(dbReadInt(bbase,'int_nr'));
           end
         else begin
           dbSeek(ubase,uiName,UpperCase(empfaenger+
                  iifs(pos('@',empfaenger)>0,'','@'+box+'.ZER')));
-          if not dbFound then fehlt
+          if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
           end;
         if _brett<>'' then begin
@@ -1481,17 +1477,17 @@ begin
               dbSkip(mbase,-1);
             until uvf or dbBOF(mbase) or (_brett<>_mbrett);
           if not uvf then
-            fehlt;
+            rfehler(426);   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           end;
         inc(adr,groesse+hds);
         end;
       end;
     close(f);
-    findnext(sr);
-    if (doserror<>0) and not crashs then
+    rc:= findnext(sr);
+    if (rc<>0) and not crashs then
     begin
       FindClose(sr);
-      dos.findfirst('*.cp',dos.Archive,sr);
+      rc:= findfirst('*.cp',faArchive,sr);
       crashs:=true;
     end;
   end;
@@ -1894,7 +1890,7 @@ var ar   : ArchRec;
   begin
     with ar do
       if (OrgSize>0) and (OrgSize >= CompSize) then
-        prozent:=strsrn(ar.CompSize/ar.OrgSize*100,3,1)
+        prozent:=strsrn(ar.CompSize/ar.OrgSize*100.0,3,1)
       else
         prozent:='     ';
   end;
@@ -1959,11 +1955,11 @@ var useclip : boolean;
     lm      : byte;
 begin
   if (fn='') or multipos('?*',fn) then begin
-    if fn='' then fn:='*.*';
+    if fn='' then fn:=WildCard;
     useclip:=false;
     if not ReadFilename(getres(465),fn,true,useclip) then   { 'Archivdatei' }
       exit;
-    fn:=FExpand(fn);
+    fn:=ExpandFileName(fn);
     end;
   if FileExists(fn) then begin
     arc:=ArcType(fn);
@@ -2419,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.77  2000/11/15 23:00:41  mk
   - updated for sysutils and removed dos a little bit
 

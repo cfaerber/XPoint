@@ -66,7 +66,7 @@ var
     mnt     : longint;
     netztyp : byte;
     _brett  : string;
-    t,m,j,d : rtlword;
+    t,m,j   : rtlword;
     tempd: integer;
     fileatt : boolean;
     dflags  : string;
@@ -327,7 +327,7 @@ begin  { __ Suchmarke }
             { Datum anzeigen }
             if showmsgdatum then begin
               s2:=fdat(longdat(dat));
-              getdate(j,m,t,d);
+              decodedate(now,j,m,t);
 
               tempd := ival(copy(s2,7,2));
               if tempd < 70 then inc(tempd, 2000) else inc(tempd, 1900);
@@ -599,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.40  2000/11/12 11:34:05  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

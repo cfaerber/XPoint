@@ -72,13 +72,13 @@ begin
 end;
 
 procedure gethdat(abhzeit:integer);
-var t,m,j,dow : rtlword;
-    tt        : integer;
+var t,m,j: rtlword;
+    tt   : integer;
 begin
   if abhzeit=0 then
     abhdatum:=0
   else begin
-    getdate(j,m,t,dow); tt:=t;
+    decodedate(now,j,m,t); tt:=t;
     dec(tt,abhzeit-1);
     while tt<1 do begin
       dec(m);
@@ -1621,6 +1621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.53  2000/11/16 21:31:06  hd
+  - DOS Unit entfernt
+
   Revision 1.52  2000/11/14 15:51:31  mk
   - replaced Exist() with FileExists()
 
