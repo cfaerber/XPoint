@@ -22,7 +22,7 @@ unit archive;
 interface
 
 uses
-  xpglobal, sysutils, dos, typeform, montage;
+  xpglobal, sysutils, typeform, montage;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -263,8 +263,8 @@ end;
 
 procedure GetDateFrom70(secs:longint; var datum,uhrzeit:word);
 const tagsec = 24*60*60;
-var dt   : DateTime;
-    l    : longint;
+var dt   : TSystemTime;
+    ts   : TTimeStamp;
 begin
   with dt do begin
     year:=1970;
@@ -282,12 +282,12 @@ begin
         end;
       day:=secs div tagsec + 1; secs:=secs mod tagsec;
       hour:=secs div 3600;      secs:=secs mod 3600;
-      min:=secs div 60;         sec:=secs mod 60;
+      minute:=secs div 60;         second:=secs mod 60;
       end;
     end;
-  packtime(dt,l);
-  uhrzeit:=l and $ffff;
-  datum:=l shr 16;
+  ts:= DateTimeToTimeStamp(SystemTimeToDateTime(dt));
+  uhrzeit:= ts.time;
+  datum:= ts.date;
 end;
 
 { negativer Wert: SFX }
@@ -648,9 +648,9 @@ label again;
 
   procedure CalcUnixTime(s:string; var zeit,datum:word);
   const  tagsec = 24*60*60;
-  var dt   : DateTime;
+  var dt   : TSystemTime;
+      ts   : TTimeStamp;
       secs : longint;
-      l    : longint;
       tage : word;
 
     function monthlen(j,m:word):word;
@@ -691,12 +691,12 @@ label again;
           end;
         day:=secs div tagsec + 1; secs:=secs mod tagsec;
         hour:=secs div 3600;      secs:=secs mod 3600;
-        min:=secs div 60;         sec:=secs mod 60;
+        minute:=secs div 60;      second:=secs mod 60;
         end;
       end;
-    packtime(dt,l);
-    zeit := l and $ffff;
-    datum := l shr 16;
+    ts:= DateTimeToTimeStamp(SystemTimeToDateTime(dt));
+    zeit:= ts.time;
+    datum:= ts.date;
   end;
 
 begin
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/11/15 17:29:52  hd
+  - Unit DOS entfernt
+
   Revision 1.21  2000/10/26 12:59:57  mk
   - Fixed Bug #112798: Lange Dateinamen in Archiven
 
