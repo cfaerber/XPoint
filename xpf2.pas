@@ -143,7 +143,7 @@ begin
   count:=0;
   while not eof(t) do begin        { gepackte TIC-Files auswerten }
     readln(t,s);
-    if (s[1]='*') and (pos('  rcvd ',LowerCase(s))>0) then begin
+    if (Copy(s,1,1)='*') and (pos('  rcvd ',LowerCase(s))>0) then begin
       s:=trim(mid(s,18));
       s:=left(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
       UpString(s);
