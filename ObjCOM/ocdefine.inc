@@ -60,10 +60,9 @@
   {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$H+,I-,M-,P-,T-,V-,X+}
+  {$H+,I-,J+,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
-  // writable const noch definieren
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -75,7 +74,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -164,6 +163,9 @@
 
 {
   $Log$
+  Revision 1.7.2.5  2003/01/11 13:10:24  mk
+  - J+ for ObjCOM
+
   Revision 1.7.2.4  2003/01/09 22:22:44  mk
   - updated to version 1.11 from HEAD-Branch
 
