@@ -818,8 +818,8 @@ begin
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
   FQDN := iifs(sData^.FQDN='',dbReadStr(d,'fqdn'),sData^.FQDN);
-  if sData^.replyto.count=0 then
-    sdata^.replyto.add(dbReadStr(d,'ReplyTo'));
+  if sData^.replyto <> '' then
+    sdata^.replyto := dbReadStr(d,'ReplyTo');
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp=nt_UUCP) and (umlaute=2) then
     umlaute:=0;
@@ -962,7 +962,7 @@ var x,y : Integer;
     brk : boolean;
     asc : string[120];
     sml : string[1];
-    tmpReplyTo, tmpFollowUp: string;
+    tmpFollowUp: string;
 begin
   case netztyp of
     nt_ZConnect : y:=iif(pm,5,9);
@@ -989,12 +989,7 @@ begin
       mset3proc(firstslash);
       inc(y,2);
       end;
-    { suboptimal }
-    if replyto.count>0 then
-      tmpReplyTo :=replyto[0]
-    else
-      tmpReplyTo := '';
-    maddstring(3,y,getres2(616,5),tmpReplyTo,40,eAdrLen,asc); mhnr(851);
+    maddstring(3,y,getres2(616,5),ReplyTo,40,eAdrLen,asc); mhnr(851);
     mappcustomsel(seluser,false);           { 'PM-Antworten an  ' }
     msetvfunc(testReplyTo);
     inc(y,2);
@@ -1014,10 +1009,7 @@ begin
   readmask(brk);
   if not brk then
   with sData^ do
-  begin
-    if ReplyTo.Count > 0 then ReplyTo[0] := tmpReplyTo;
     if FollowUp.Count > 0 then FollowUp[0] := tmpFollowUp;
-  end;
   enddialog;
 end;
 
@@ -1115,6 +1107,10 @@ end;
 
 {
   $Log$
+  Revision 1.57  2001/07/27 18:10:14  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.56  2001/07/23 16:05:21  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -86,7 +86,7 @@ implementation  {---------------------------------------------------}
 
 uses
   {$IFDEF unix}xplinux,{$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts;
+  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -1078,6 +1078,8 @@ begin { --- UniSel --- }
     miscbase:=nil;
     end;
   closebox;
+  if (typ = 1) and edit then
+    askRTA (false);
 end;
 
 
@@ -1490,6 +1492,10 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/07/27 18:10:14  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.6  2001/07/23 16:05:23  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -1078,7 +1078,7 @@ begin
   if FirstChar(_br)='A' then _pmReply:=true;
   empf:=hdp.empfbestto;
   { suboptimal }
-  if (empf='') and (hdp.replyto.count>0) then empf:=hdp.replyto[0];
+  if empf='' then empf:=hdp.replyto;
   if empf='' then empf:=hdp.wab;
   if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
   then
@@ -1525,6 +1525,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/07/27 18:10:12  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.59  2001/07/23 16:05:19  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

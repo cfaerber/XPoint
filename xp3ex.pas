@@ -867,8 +867,9 @@ begin
                    wrs(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
     hdf_WAB    : if hdp.wab<>'' then            { 'Weiterleit.: ' }
                    wrs(gr(17)+hdp.wab+iifs(hdp.war<>'','  ('+hdp.war+')',''));
-    hdf_ANTW  :  for i:=0 to hdp.replyto.count-1 do
-                   wrs(gr(27)+hdp.replyto[i]);           { 'Antwort an : ' }
+    hdf_ANTW  : if (hdp.ReplyTo<>'') and
+                  ((UpperCase(Hdp.ReplyTo) <> UpperCase(hdp.absender))) then   { 'Antwort an : ' }
+                   wrs(gr(27)+hdp.ReplyTo);
 
     hdf_BET    : wrs(gr(5)+LeftStr(hdp.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
     hdf_ZUSF   : if hdp.summary<>'' then        { 'Zus.fassung: ' }
@@ -1066,6 +1067,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2001/07/27 18:10:12  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.69  2001/07/20 13:22:45  mk
   - shortened header line by two chars to avoid overlapping with scroll bar
 

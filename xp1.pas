@@ -2020,7 +2020,6 @@ begin
   fillchar(sdata^, sizeof(senduudata), 0);
   with sdata^ do begin
     followup:=tstringlist.create;
-    ReplyTo := TStringList.Create;
     References := TStringlist.Create;
   end
 end;
@@ -2030,7 +2029,6 @@ begin
   if sdata<>nil then
   with sdata^ do begin
     followup.free;
-    replyto.free;
     References.Free;
   end;
   freemem(sdata);
@@ -2059,6 +2057,10 @@ end.
 
 {
   $Log$
+  Revision 1.109  2001/07/27 18:10:11  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.108  2001/07/23 18:02:37  ma
   - fixed: Error messages were not displayed correctly
 

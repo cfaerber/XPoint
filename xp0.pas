@@ -472,6 +472,15 @@ type   textp  = ^text;
        bmarklist= array[0..maxbmark-1] of longint;
        bmarkp   = ^bmarklist;
 
+       RTAEmpfaengerP =^RTAEmpfaengerT;
+       RTAEmpfaengerT = record
+                          empf          :string;
+                          RTAEmpf,
+                          vertreter,
+                          userUnbekannt :boolean;
+                          typ           :byte;
+                          next          :RTAEmpfaengerP;
+                        end;
 
        cpsrec     = record
                       SaveLineControl  : byte;
@@ -1128,6 +1137,32 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _wotag_     : string;     { 'MoDiMiDoFrSaSo' }
        _jn_        : string;      { 'JN' }
 
+       { Die Variable RTAMode gibt an, unter welchen Bedingungen sich
+         das "EmpfÑnger wÑhlen"-Fenster îffnet.
+
+         Bitmaske:  11111111
+                    ||  ||||
+                    ||  |||\- OAB/WAB-Header vorhanden
+                    ||  ||\-- Reply-To-EmpfÑnger vorhanden
+                    ||  |\--- KOP/OEM/EMP vorhanden
+                    ||  \---- RTA
+                    ||
+                    |\------- immer
+                    \-------- erster Start nach neuer Version }
+
+       RTAMode     : byte;
+
+       { Mit RTAStandard kann man festlegen, ob der Standard im
+         'EmpfÑnger wÑhlen"-Dialog auf 'alle' oder auf der ersten
+         Adresse liegt. 'true' -> 'alle'; 'false' -> erste Adresse }
+
+       RTAStandard : boolean;
+
+       { Die ausgelesenen Mailadressen werden bei RTA zu den eigenen Adressen
+         hinzugefÅgt, bzw. wieder entfernt. RTANoOwnAdresses hat Vorrang! }
+
+       RTAOwnAddresses, RTANoOwnAddresses : string;
+
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
@@ -1149,6 +1184,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.131  2001/07/27 18:10:11  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.130  2001/07/21 16:02:10  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

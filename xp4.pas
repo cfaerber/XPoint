@@ -896,7 +896,7 @@ var t,lastt: taste;
         // ma, 2001-06-03
 
         if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
-        and not askreplyto
+        and not (RTAMode and 2 = 2)
         then begin
           empf:= dbReadStr(dispdat,'absender');
           if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
@@ -1004,8 +1004,7 @@ var t,lastt: taste;
           // but this leads to problems with other net types.
           sdata^.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
           sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
-          sdata^.replyto.add(dbReadStr(d,iifs(pm,'pmreplyto','amreplyto')));
-          if sdata^.replyto[0]='' then sdata^.replyto.delete(0);
+          sdata^.replyto := dbReadStr(d,iifs(pm,'pmreplyto','amreplyto'));
           sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
           end;
         end;
@@ -1154,6 +1153,7 @@ var t,lastt: taste;
         dbseek(bbase,biIntnr,mid(_empf,2));
         if dbfound then DefaultBox := dbreadStr(bbase,'pollbox');
       end;
+      ReplaceVertreterbox(defaultbox, true);
       brk:=not CC_testempf(empf);
       defaultbox:=origdb;
       if brk then goto ende;
@@ -1197,8 +1197,8 @@ var t,lastt: taste;
     begin                           { Bei PM ohne Replyto }
       hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp,hds,false);
-      if (hdp.replyto.count=0) or ((hdp.empfanz=1) and
-        (hdp.replyto.count > 0) and (hdp.empfaenger=hdp.replyto[0])) then
+      if (hdp.Followup.Count = 0) or ((hdp.empfanz=1) and
+               (hdp.empfaenger=hdp.FollowUp[0])) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
@@ -2202,6 +2202,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.94  2001/07/27 18:10:12  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.93  2001/07/10 09:05:48  mk
   JG:- Fix (of an extremely ancient and annoying behaviour): When
        creating an (e.g. Reply-To) user upon replying to a message

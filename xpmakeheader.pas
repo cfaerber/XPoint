@@ -448,8 +448,7 @@ begin
             if id = 'STAT'   then GetStat else
             if id = 'CHARSET'then GetCharset(hd.charset) else
             if id = 'ERR'    then error := line else
-{            if id = 'ANTWORT-AN' then GetName(PmReplyTo,dummy) else }
-            if id = 'ANTWORT-AN' then replyto.add(line) else
+            if id = 'ANTWORT-AN' then GetName(ReplyTo,dummy) else
 {            if id = 'DISKUSSION-IN' then GetFollowup else }
             if id = 'DISKUSSION-IN' then begin
               if cpos('@',line) = 0 then
@@ -571,6 +570,10 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/07/27 18:10:15  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.7  2001/04/18 11:02:13  ma
   - using StrgList.IndexOf instead of Find, Find only works on sorted
     Strglists.

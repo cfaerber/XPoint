@@ -905,7 +905,7 @@ fromstart:
         if dbReadInt(ubase,'userflags') and 16<>0 then
           flEB:=true;
         size:=0;
-        if dbXsize(ubase,'adresse')=0 then adresse:=''
+        if (dbXsize(ubase,'adresse')=0) or sdata.RTAHasSetVertreter then adresse:=''
         else adresse:= dbReadXStr(ubase,'adresse',size);
         _brett:=mbrettd('U',ubase);
         if adresse<>'' then begin
@@ -1301,7 +1301,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
-                      sData^.replyto.clear;
+                      sData^.replyto := '';
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -1595,8 +1595,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if netztyp=nt_Magic then
       hdp.hd_point:=pointname;
-    if sData^.replyto.count>0 then
-      hdp.replyto.assign(sData^.replyto);
+    hdp.replyto := sData^.Replyto;
     if (not pm) and (sData^.followup.count>0) then
       hdp.followup.assign(sData^.followup);
     hdp.Keywords:=sData^.keywords;
@@ -1663,11 +1662,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     else
       if not pm and (netztyp in [nt_Fido,nt_QWK]) then hdp.fido_to:=brettalle;
     hdp.attrib:=iif(pm and flEB,attrReqEB,0);
-    if IsEbest then with hdp do begin
+    if IsEbest then with hdp do
+    begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
-      if netztyp=nt_UUCP then begin
-        if (followup.count=0) and (absender<>'') then
-          replyto.add(absender);
+      if netztyp=nt_UUCP { !!and BoxPar.EB_Daemon }then
+      begin
+        if ReplyTo='' then ReplyTo:=absender;
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
           realname:=realname+'''';
@@ -1712,11 +1712,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       with sData^.orghdp do begin
         { hdp.zdatum:=zdatum; hdp.orgdate:=true;  !! Unversandt/* !! }
         hdp.organisation:=organisation;
-        hdp.ReplyTo.AddStrings(ReplyTo);
+        hdp.ReplyTo := ReplyTo;
         hdp.datei:=datei; hdp.ddatum:=ddatum;
         end;
     if _sendmaps then
-      hdp.replyto.clear;
+      hdp.replyto := '';
     SetXpointCtl;
     if cc_anz=0 then     { Anzahl der Crossposting-EMPS ermitteln }
       msgCPanz:=0
@@ -2109,6 +2109,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.118  2001/07/27 18:10:13  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.117  2001/07/23 16:05:20  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

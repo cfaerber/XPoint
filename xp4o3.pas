@@ -187,22 +187,21 @@ var hdp : THeader;
 begin
   hdp:= THeader.Create;
   ReadHeader(hdp,hds,false);
-  { suboptimal }
-  if (hdp.replyto.count>0) and not askreplyto then
-    abs:=hdp.replyto[0]
+  if (hdp.replyto <> '') and not askreplyto then
+    abs:=hdp.replyto
   else begin
     wabok:=(pos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
-    if (hds=1) or ((hdp.wab='') and (hdp.oem='') and (hdp.replyto.count=0)) or
-                  ((hdp.wab='') and (hdp.oem=hdp.vertreter) and (hdp.replyto.count=0)) or
-                  (not wabok and (hdp.oem='') and (hdp.replyto.count=0))
+    if (hds=1) or ((hdp.wab='') and (hdp.oem='') and (hdp.replyto <> '')) or
+                  ((hdp.wab='') and (hdp.oem=hdp.vertreter) and (hdp.replyto <> '')) or
+                  (not wabok and (hdp.oem='') and (hdp.replyto = ''))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp.realname;
       end
     else begin
       anz:=0;
-      if hdp.replyto.count>0 then
-        appadr(hdp.replyto[0],7);                   {'Reply-To-Empfaenger :' }
+      if hdp.replyto <> '' then
+        appadr(hdp.replyto,7);                   {'Reply-To-Empfaenger :' }
       if hdp.wab<>'' then appadr(hdp.absender,1)    { 'Original-Absender  :' }
       else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
@@ -316,6 +315,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/07/27 18:10:13  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.24  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -797,9 +797,8 @@ begin
     wrs('EDA: ' + zdatum);
     wrs('LEN: ' + strs(groesse));
 
-    for i:=0 to replyto.count-1 do
-      if ReplyTo[i] <> Absender then // only if adress is not the sender himself
-        wrs('ANTWORT-AN: '+replyto[i]);
+    if ReplyTo <> Absender then // only if adress is not the sender himself
+      wrs('ANTWORT-AN: '+replyto);
 
     if pm_reply then begin
       wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }
@@ -807,17 +806,15 @@ begin
         if (mailcopies.count=1) and ((lowercase(mailcopies[0])='nobody') or
           (lowercase(mailcopies[0])='never')) then begin
           wrs('U-Mail-Copies-To: '+mailcopies[0]);
-          if replyto.count>0 then
-            for i:=0 to replyto.count-1 do
-              wrs('DISKUSSION-IN: '+replyto[i])
+          if ReplyTo <> '' then
+              wrs('DISKUSSION-IN: '+replyto)
           else
-            if absender<>'' then
+            if Absender<>'' then
               wrs('DISKUSSION-IN: '+absender)
         end else
           for i:=0 to mailcopies.count-1 do
             wrs('DISKUSSION-IN: '+mailcopies[i])
-      else if replyto.count>0 then
-        for i:=0 to replyto.count-1 do
+      else if ReplyTo <> '' then
           wrs('DISKUSSION-IN: '+replyto[i])
       else
         if absender<>'' then
@@ -2178,10 +2175,7 @@ begin
               GetReceived
             else
               if zz = 'reply-to' then
-              begin
-                GetAdr(s0,TempS,drealn);
-                replyto.add(TempS)
-              end
+                GetAdr(s0, ReplyTo,drealn)
             else
               if zz = 'return-receipt-to' then
               GetAdr(s0,EmpfBestTo,drealn)
@@ -2341,8 +2335,8 @@ begin
     end;
 
     if pm_reply then
-      if replyto.count>0 then
-        MailCopies.AddStrings(ReplyTo)
+      if replyto <> '' then
+        MailCopies.Add(ReplyTo)
       else
         Mailcopies.Add(Absender);
 
@@ -3316,8 +3310,8 @@ begin
       t:=tstringlist.create;
       t.Assign(MailCopies);
       T.duplicates := dupIgnore;
-      if replyto.count>0 then
-        T.AddStrings(replyto)
+      if replyto = '' then
+        T.Add(replyto)
       else
         t.Add(Absender);
       wrs(f, 'Reply-To: '+newsgroupsline(t));
@@ -3325,8 +3319,8 @@ begin
       t.free
     end else
     begin
-      if replyto.count>0 then
-        wrs(f, 'Reply-To: '+newsgroupsline(replyto));
+      if replyto <> '' then
+        wrs(f, 'Reply-To: ' + replyto);
       if followup.count>0 then
         wrs(f, 'Followup-To: '+newsgroupsline(followup));
       if mailcopies.count>0 then
@@ -3335,8 +3329,8 @@ begin
 
     if mail and (attrib and attrReqEB <> 0) then
       wrs(f, 'Return-Receipt-To: ' + iifs(empfbestto <> '', empfbestto,
-        iifs(wab <> '', wab, iifs(replyto.count = 0, absender,
-          newsgroupsline(replyto)))));
+        iifs(wab <> '', wab, iifs(replyto = '', absender,
+          replyto))));
     if mail and (pgpflags and fPGP_encoded <> 0) then
       wrs(f, 'Encrypted: PGP');
     if postanschrift <> '' then
@@ -3829,6 +3823,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/07/27 18:10:15  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.59  2001/07/09 08:44:59  mk
   - prevent creation of wrong ABS headers when doing N/W/O with News
 

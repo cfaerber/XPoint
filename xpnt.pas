@@ -137,6 +137,8 @@ function ntNoMaps(nt:byte):boolean;           { kein Maps-Service     }
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
 
+function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
+
 function ltVarBuffers(lt:byte):boolean;       { variable Puffernamen  }
 
 function formmsgid(msgid:string):string;
@@ -748,12 +750,21 @@ begin
   ntFilename := (nt in [nt_ZConnect,nt_UUCP]);
 end;
 
+function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
+begin
+  ntReplyToAll := (nt in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
+end;
+
 
 begin
   fillchar(ntused,sizeof(ntused),0);
 end.
 {
   $Log$
+  Revision 1.26  2001/07/27 18:10:15  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.25  2001/07/22 21:05:19  mk
   - fixed double RFC/UUCP in Edit/Boxen/Neu
   - renamed ntnr to NetTypes and removed eNetztypen

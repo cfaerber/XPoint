@@ -130,18 +130,11 @@ procedure WriteHeader(var hd:theader; var f:file);
       end;
       wrs('ROT: '+pfad);
 
-      i := replyto.count -1;
-
-      for i:=0 to replyto.count-1 do
-      begin
-        s := replyto[i];
-        p1:=cpos(' ',s);
-        if p1>0 then
-          s:=LeftStr(s,p1-1)+' '+trim(mid(s,p1+1));
-{       if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
-                       then wrs('Antwort-an: '+PmReplyTo);}
-        if s <> '' then wrs('ANTWORT-AN: '+s);
-      end;
+      p1:=cpos(' ', ReplyTo);
+      if p1>0 then
+        ReplyTo := LeftStr(s, p1-1) + ' ' + trim(mid(s,p1+1));
+      if (ReplyTo <> '') and (LeftStr(ReplyTo,Length(absender)) <> absender) then
+        wrs('ANTWORT-AN: '+ ReplyTo);
       if typ='B'       then wrs('TYP: BIN');
       if datei<>''     then wrs('FILE: ' +LowerCase(datei));
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
@@ -150,10 +143,8 @@ procedure WriteHeader(var hd:theader; var f:file);
       if prio<>0       then wrs('PRIO: '  +strs(prio));
       if organisation<>'' then wrs('ORG: '+organisation);
       if attrib and attrReqEB<>0 then
-        if wab<>''       then wrs('EB: '+wab) else
-        if replyto.count > 0 then
-          for i:=0 to replyto.count-1 do
-            wrs('EB: '+replyto[i])
+        if wab <> ''     then wrs('EB: ' + wab) else
+        if ReplyTo <> '' then wrs('EB: ' + replyto)
         else
           wrs('EB:');
       if attrib and attrIsEB<>0  then wrs('STAT: EB');
@@ -407,12 +398,8 @@ begin
 
     if pm then
     begin
-      if replyto.count>0
-        then
-          repto:=replyto[0]
-        else
-          repto:='';
-      reptoanz:=0;
+      repto := ReplyTo;
+      reptoanz := 0;
     end
     else
       if (followup.count=0) or
@@ -459,6 +446,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/07/27 18:10:12  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.41  2001/07/20 14:41:47  ma
   - fixed: X-No-Archive did not work with NNTP
 

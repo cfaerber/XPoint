@@ -354,7 +354,7 @@ begin
     with sData^ do
     begin
       followup.assign(hdp.followup);
-      replyto.assign(hdp.replyto);
+      ReplyTo := Hdp.replyto;
       References.Assign(hdp.References);
       Keywords:=hdp.Keywords;
       Summary:=hdp.Summary;
@@ -1041,7 +1041,7 @@ again:
                with sData^ do
                begin
                  followup.assign(hdp.followup);
-                 replyto.assign(hdp.replyto);
+                 ReplyTo := Hdp.ReplyTo;
                  References.Assign(Hdp.References);
                  Keywords:=hdp.Keywords;
                  Summary:=hdp.Summary;
@@ -1295,6 +1295,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2001/07/27 18:10:14  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.62  2001/07/23 16:05:21  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -85,7 +85,7 @@ procedure TestQC(var s:string);
 implementation  {----------------------------------------------------}
 
 uses
-  xp1o,xp2,xp4o2,xp9bp;
+  xp1o,xp2,xp4o2,xp9bp, xpnt;
 
 const
   MaxProtocols = 2;
@@ -279,9 +279,49 @@ end;
 procedure msgoptions;
 var x,y : Integer;
     brk : boolean;
-    i   : byte;
-    xnr : byte;
+    i,j: Integer;
+    RTAStrings :array[0..4] of string;
+    RTAErg :string;
+    UUCP_ZConnectUsed :boolean;
+
+  function getRTAMode : String;
+  begin
+    if RTAMode = 64 then        { immer }
+      getRTAMode := getres2 (252, 40)
+    else if RTAMode = 15 then   { Kopienempf. u. Antwort-an }
+      getRTAMode := getres2 (252, 41)
+    else if RTAMode = 13 then   { KopienempfÑnger }
+      getRTAMode := getres2 (252, 42)
+    else if RTAMode = 3 then    { Antwort-an }
+      getRTAMode := getres2 (252, 43)
+    else if RTAmode = 0 then    { nie }
+      getRTAMode := getres2 (252, 44)
+    else                        { benutzerdefiniert }
+      getRTAMode := getres2 (252, 50)
+  end;
+
+  procedure setRTAMode;
+  begin
+    if RTAErg = getres2 (252, 40) then
+      RTAMode := 64             { immer }
+    else if RTAErg = getres2 (252, 41) then
+      RTAMode := 15             { Kopienempf. u. Antwort-an }
+    else if RTAErg = getres2 (252, 42) then
+      RTAMode := 13             { KopienempfÑnger }
+    else if RTAErg = getres2 (252, 43) then
+      RTAMode := 3              { Antwort-an }
+    else if RTAErg = getres2 (252, 44) then
+      RTAMode := 0;             { nie }
+    { Wenn der User 'benutzerdefiniert gewÑhlt hat, dann bleibt diese
+      Einstellung erhalten }
+  end;
+
 begin
+  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] > 0;
+  if UUCP_ZConnectUsed then
+    for i := 0 to 4 do
+      RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
+  j := iif (UUCP_ZConnectUsed, 1, 0);
   dialog(57,21,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
@@ -289,9 +329,20 @@ begin
   maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   { 'Tage' }
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
+  if UUCP_ZConnectUsed then
+  begin
+    RTAErg := getRTAMode;
+    maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
+    for i := 0 to 4 do
+      mappsel (true, RTAStrings[i]);
+    if RTAErg = getres2 (252, 50) then
+      mappsel (true, getres2 (252, 50));         { 'benutzerdefiniert' }
+    mhnr (258);
+  end;
   maddbool(3,7,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
   maddbool(3,8,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
   maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+
 {$IFNDEF Unix }
   mset1func(SetTimezone);
 {$ENDIF }
@@ -306,7 +357,6 @@ begin
   maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
   maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
@@ -315,7 +365,10 @@ begin
   freeres;
   readmask(brk);
   if not brk and mmodified then
+  begin
+    if UUCP_ZConnectUsed then setRTAMode;
     GlobalModified;
+  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1388,6 +1441,10 @@ end.
 
 {
   $Log$
+  Revision 1.92  2001/07/27 18:10:11  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.91  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

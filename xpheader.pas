@@ -71,7 +71,7 @@ type
     postanschrift: string;
     telefon: string;
     homepage: string;
-    replyto: tstringlist;               { Antwort-An    }
+    ReplyTo: String;                    { Antwort-An, "Reply-To:'    }
     followup: tstringlist;              { Diskussion-In }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     ckomlen: longint;                   { Crypt-Content-KOM }
@@ -133,8 +133,8 @@ type
   end;
 
   SendUUdata = record
+                     Replyto    : String;
                      followup   : TStringlist;
-                     replyto    : TStringlist;
                      References : TStringList;
                      keywords   : string;
                      summary    : string;
@@ -152,6 +152,7 @@ type
                      SenderRealname,
                      SenderMail,
                      FQDN : string;  { overriding standards in DoSend if set }
+                     RTAHasSetVertreter: Boolean;
                    end;
       SendUUptr   = ^SendUUdata;
 
@@ -165,7 +166,6 @@ begin
   XLIne := TStringList.Create;
   fLine := TStringList.Create;
   zLIne := TStringList.Create;
-  ReplyTo := TStringList.Create;
   Followup := TStringList.Create;
   MailCopies := TStringList.Create;
   MailCopies.Duplicates := dupIgnore;
@@ -204,8 +204,8 @@ begin
   postanschrift:= '';
   telefon:= '';
   homepage:= '';
-  replyto.clear;;               { Antwort-An    }
-  followup.clear;;              { Diskussion-In }
+  ReplyTo := '';
+  followup.clear;;
   komlen := 0;
   ckomlen := 0;
   datei:= '';                      { Dateiname                  }
@@ -280,7 +280,6 @@ begin
   XLine.Free;
   fLine.Free;
   zLine.Free;
-  ReplyTo.Free;
   Followup.Free;
   Mailcopies.free;
   inherited destroy;
@@ -299,6 +298,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/07/27 18:10:15  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.9  2001/06/04 17:31:37  ma
   - implemented role feature
 

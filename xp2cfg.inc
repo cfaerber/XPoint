@@ -682,6 +682,10 @@ begin
   PGP_signall:=false;
   PGP_GPGEncodingOptions:='';
   PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
+  RTAMode := 128 + 13;        { RTA und/oder WAB vorhanden    }
+  RTAStandard := true;
+  RTAOwnAddresses := nil;
+  RTANoOwnAddresses := nil;
 end;
 
 
@@ -907,6 +911,11 @@ begin
   writeln(t,'UsrFeldTausch=',UsrFeldTausch);
   writeln(t,'Magics=',jnf(Magics));
   writeln(t,'Brettkommentar=',jnf(brettkomm));
+  writeln (t, 'RTA-Mode=',RTAMode);
+  if not RTAStandard then
+    writeln (t, 'RTA-Standard=', jnf (RTAStandard));
+  writeln (t, 'RTA-OwnAddresses=', RTAOwnAddresses);
+  writeln (t, 'RTA-NoOwnAddresses=', RTANoOwnAddresses);
 
   // Alle nicht erkannten Zeilen werden jetzt wieder eingefÅgt
   for i := 0 to BadConfigLinesList.Count -1  do
@@ -1260,7 +1269,7 @@ var t       : text;
     if LeftStr(su,length(txt))<>txt then
       GetPmLimits:=false
     else begin
-      GetPMLimits := true;  { MK 12/99 - Funktion liefert sonst undef. RÅckgabewert }
+      GetPMLimits := true;
       delete(su,1,length(txt));
       su:=trim(su)+' ';
       i:=0; p:=blankpos(su);
@@ -1280,6 +1289,18 @@ var t       : text;
     fsplit(tf,dir,name,ext);
     SwapFileName:=name+SwapExt;
   end;
+
+  function getRTAAdressen :boolean;
+  begin
+    if gets (s, su, 'RTA-OwnAddresses', RTAOwnAddresses, 0) then
+      getRTAAdressen := true
+    else
+    if gets (s, su, 'RTA-NoOwnAddresses', RTANoOwnAddresses, 0) then
+      getRTAAdressen := true
+    else
+      getRTAAdressen := false;
+  end;
+
 {$IFDEF unix}
 var
   dummytz: string;
@@ -1520,7 +1541,11 @@ begin
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin) or
           getx(su,  'delviewtmp',delviewtmp) or
-          getx(su,  'ignoresupcancel',ignoreSupCancel))
+          getx(su,  'ignoresupcancel',ignoreSupCancel) or
+          getb(su,  'RTA-Mode', RTAMode) or
+          getx(su,  'askreplyto',askreplyto) or
+          getx(su,  'RTA-Standard', RTAStandard) or
+          getRTAAdressen)
         then
           // Zeile wurde nicht erkannt und wird fÅr das spÑtere
           // Neuschreiben der Config aufgehoben
@@ -1532,6 +1557,11 @@ begin
         end;
       end;
     close(t);
+
+    if askReplyTo then
+      if RTAMode and 2 = 0 then inc (RTAMode, 2);
+
+    askreplyTo := (RTAMode and 2 = 2);
 
     if lastchar(viewer_save)<>'.' then viewer_save:=Viewer_save+'.';
     if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
@@ -1677,6 +1707,10 @@ end;
 
 {
   $Log$
+  Revision 1.115  2001/07/27 18:10:11  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.114  2001/06/11 22:26:04  ma
   - "show realnames" is standard now
   - added GnuPG support

@@ -51,11 +51,12 @@ uses
      xp8,      { 'maps & Filesercer }
      xp10,     { Timing-Lst./Makros }
      xpe,      { Editor             }
-     xpterminal,{ CrossTerm          }
+     xpterminal,{ CrossTerm         }
      xpfido,   { Nodelist u.a.      }
      xpfidonl, { Nodelist-Config    }
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
+     replytoall,
      zcrfc;    { RFC<->ZConnect     }
 
 
@@ -145,7 +146,7 @@ begin
         exitscreen(0);
         goto Ende;
       end;
-{$IFDEF Beta } { MK 25.01.2000 Betameldung anzeigen, /nb schaltet diese ab }
+{$IFDEF Beta } { /nb schaltet Betameldung ab }
       if not ParNoBeta and (ParTiming = 0) then
       begin
         BetaMessage;
@@ -157,6 +158,8 @@ begin
         end;
       end;
 {$ENDIF }
+      if parTiming = 0 then
+        askRTA (true);     { Bei neuer Version RTA-Konfiguration abfragen }
       test_defaultgruppen;
       test_systeme;
       testtelefon(telefonnr);
@@ -187,6 +190,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/07/27 18:10:10  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.2  2001/05/16 01:59:15  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 

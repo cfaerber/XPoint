@@ -1616,8 +1616,7 @@ begin
     apps(6,LeftStr(absender,53));
     if realname<>'' then apps(7,realname);
     if organisation<>'' then apps(8,LeftStr(organisation,53));
-    { suboptimal }
-    if replyto.count>0 then apps(9,LeftStr(replyto[0],53));
+    if Replyto <> '' then apps(9,LeftStr(replyto,53));
     apps(10,iifs(ntZDatum(netztyp),zdatum,datum)+
          iifs(datum<>'','  ('+fdat(datum)+', '+ftime(datum)+
          iifs(ntSec(netztyp),':'+copy(zdatum,13,2),'')+')',''));
@@ -2411,6 +2410,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.97  2001/07/27 18:10:12  mk
+  - ported Reply-To-All from 3.40, first part, untested
+  - replyto is now string instead of TStringList again
+
   Revision 1.96  2001/07/23 16:05:20  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)
