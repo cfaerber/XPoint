@@ -48,7 +48,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Supersede,159^Repost      @R,15a^Archive     @A,15bUser-^PM     @P
 22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
-24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
+24  Extern,181^Message Reader,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
@@ -527,7 +527,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 24   Double click
 25   Leave config menu on <Esc>
 26   Save       ~
-27   Acoustic signal in message/newsgroup/user list
+27   Audible warnings
 # save config
 40   automatic
 41   manual
@@ -636,8 +636,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Display clock
 #
 20   51
-21   External lister options
-22   Lister~
+21   External message reader options
+22   Reader:~
 23   KBytes:
 + 256
 # window width
@@ -2010,8 +2010,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 14   Transfer
 15   Enable QWK Transfer
 #
-20   Start programme
-21   End programme ~
+20   Start program
+21   End program ~
 + 924
 0    58
 1    Miscellaneous Options
