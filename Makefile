@@ -183,9 +183,7 @@ export DEBUG
 export contribdir
 export RM
 
-# maggi uebersetzt nicht
-#BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
-BIN = ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
+BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
 COMPBIN = $(BIN) docform ihs rc
 RES = xp-d xp-e xpfm-d xpfm-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
@@ -1421,6 +1419,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.9  2000/09/30 16:52:38  fe
+# maggi.pas ist jetzt uebersetzbar.
+#
 # Revision 1.8  2000/09/30 14:49:22  fe
 # pmconv.pas jetzt uebersetzbar.
 #
