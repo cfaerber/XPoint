@@ -88,7 +88,7 @@ end;
 
 procedure addList (var orginalList :RTAEmpfaengerP; newList: TStringList; const typ :byte);
 var neu :RTAEmpfaengerP;
-    loesch: TStringList;
+    i: Integer;
 begin
   if NewList.Count = 0 then exit;
 
@@ -113,22 +113,22 @@ begin
     orginalList := neu;
   end;
 
-  while newList.Count > 0 do      { Einzelne Elemente in die neue Liste kopieren }
+  // Einzelne Elemente in die neue Liste kopieren }
+  for i := 0 to NewList.Count - 1 do 
   begin
-    if newList[0] <> '' then    { Leerstrings sind keine Adressen! }
+    if newList[i] <> '' then    { Leerstrings sind keine Adressen! }
     begin
       new (neu^.next);
       neu := neu^.next;
-      neu^.empf := newList[0];
+      neu^.empf := newList[i];
       neu^.typ := typ;
       neu^.RTAEmpf := false;
       neu^.vertreter := false;
       neu^.userUnbekannt := false;
       neu^.next := nil;
     end;
-    newList.Delete(0);
   end;
-
+  NewList.Clear;
 end;
 
 { RTA-EmpfÑngerlisten freigeben }
@@ -545,7 +545,6 @@ var RTAEmpfList :RTAEmpfaengerP;
 
   procedure checkVertreterAdressen (var list :RTAEmpfaengerP);
   var lauf :RTAEmpfaengerP;
-      s    :str90;
   begin
     lauf := list;
     while assigned (lauf) do
@@ -557,8 +556,8 @@ var RTAEmpfList :RTAEmpfaengerP;
     absenderHasVertreter := getVertreter (hdp.absender);
     absenderIsUnknown := userUnbekannt (hdp.absender);
 
-{    pmReplyToHasVertreter := getVertreter (hdp.ReplyTo);
-    pmReplyToIsUnknown := userUnbekannt (hdp.ReplyTo); }
+    pmReplyToHasVertreter := getVertreter (hdp.ReplyTo);
+    pmReplyToIsUnknown := userUnbekannt (hdp.ReplyTo); 
 
     wabHasVertreter := getVertreter (hdp.wab);
     wabIsUnknown := userUnbekannt (hdp.wab);
@@ -577,7 +576,6 @@ var RTAEmpfList :RTAEmpfaengerP;
   var unbekannteUser, lauf, vor :RTAEmpfaengerP;
       brett :string[5];
       box :string;
-      res :boolean;
       anz :integer;
       auswahl :byte;
 
@@ -683,62 +681,39 @@ var RTAEmpfList :RTAEmpfaengerP;
       serverDialog := auswahl;
     end;
 
-    function checkAnzahl :boolean;
-    var lauf :RTAEmpfaengerP;
-        anz :integer;
-        ersterEmpfWirdErsetzt :boolean;
-    begin
-      lauf := RTAEmpfList;
-      anz := 0;
-      ersterEmpfWirdErsetzt := eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte;
-      while assigned (lauf) do
-      begin if lauf^.RTAEmpf then inc (anz); lauf := lauf^.next; end;
-      if anz > iif (ersterEmpfWirdErsetzt, 126, 125) then
-      begin
-        rfehler1 (748, formI (iif (ersterEmpfWirdErsetzt, anz, anz + 1), 0));
-          { Max. 126 EmpfÑnger erlaubt (ausgewÑhlt: %s)! (Hilfe mit F1) }
-        checkAnzahl := false;
-      end else
-        checkAnzahl := true;
-    end;
-
   begin
     result := true;
     getPollBox;
     getUnbekannteUser;
-    if checkAnzahl then
+    if assigned (unbekannteUser) then
     begin
-      if assigned (unbekannteUser) then
-      begin
-        lauf := unbekannteUser;
-        anz := 0;
-        while assigned (lauf) do
-        begin inc (anz); lauf := lauf^.next; end;
-        auswahl := ServerDialog (box, anz);
+      lauf := unbekannteUser;
+      anz := 0;
+      while assigned (lauf) do
+      begin inc (anz); lauf := lauf^.next; end;
+      auswahl := ServerDialog (box, anz);
 
-        case auswahl of
-          0,4: result := false;
-          1:   PollBoxZuweisen (box);
-          2:   UserDialog (box);
-        end;
+      case auswahl of
+        0,4: result := false;
+        1:   PollBoxZuweisen (box);
+        2:   UserDialog (box);
       end;
-      if result and eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte then
-                                  { Bei RTA wird eine eigene Adresse als         }
-      begin                       { "erster EmpfÑnger" durch eine fremde ersetzt }
-        lauf := RTAEmpfList;
-        vor := nil;
-        while not lauf^.RTAEmpf do
-          removefromList (RTAEmpfList, vor, lauf);
-        if assigned (RTAEmpfList) then
-        begin
-          empf := RTAEmpfList^.empf;
-          vor := RTAEmpfList;
-          RTAEmpfList := RTAEmpfList^.next;
-          dispose (vor);
-        end;
+    end;
+    if result and eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte then
+                                { Bei RTA wird eine eigene Adresse als         }
+    begin                       { "erster EmpfÑnger" durch eine fremde ersetzt }
+      lauf := RTAEmpfList;
+      vor := nil;
+      while not lauf^.RTAEmpf do
+        removefromList (RTAEmpfList, vor, lauf);
+      if assigned (RTAEmpfList) then
+      begin
+        empf := RTAEmpfList^.empf;
+        vor := RTAEmpfList;
+        RTAEmpfList := RTAEmpfList^.next;
+        dispose (vor);
       end;
-    end else
-      result := false;
+    end;
     checkEmpf := result;
     disposeRTAEmpfList (unbekannteUser);
   end;
@@ -787,12 +762,11 @@ var RTAEmpfList :RTAEmpfaengerP;
 
     procedure adressenHinzufuegen;
 
-      procedure add (const s :str90; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
-      var s1 :string;
+      procedure add(const s :str90; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
       begin
-{!        List.AddLine (iifs (RTAEmpf and RTAEmpfaengerVorhanden, leadingChar, ' ') + getres2 (476, typ) +
+        List.AddLine (iifs (RTAEmpf and RTAEmpfaengerVorhanden, leadingChar, ' ') + getres2 (476, typ) +
           iifs (not vertreter and not userUnbekannt, '  ', iifs (vertreter xor userUnbekannt, ' ', '')) +
-          iifs (vertreter, '*', '') + iifs (userUnbekannt, '(', '') + s + iifs (userUnbekannt, ')', '')); }
+          iifs (vertreter, '*', '') + iifs (userUnbekannt, '(', '') + s + iifs (userUnbekannt, ')', '')); 
         inc (anz);
       end;
 
@@ -929,10 +903,10 @@ var RTAEmpfList :RTAEmpfaengerP;
     selbox (65, h, getres2 (476, 4), x, y, true);  { 'EmpfÑnger wÑhlen' }
     dec(h,2);
     attrtxt(col.colselrahmen);
-{  !!SetListsize(x + 1, x + 63, y + 1, y + h);
-    listboxcol;
-    listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
-    listSetStartPos (iif (RTAEmpfaengerVorhanden, iif (RTAStandard, 1, 3), 2)); }
+    List.SetSize(x + 1, x + 63, y + 1, y + h);
+    listboxcol(List);
+    List.SetArrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
+    List.StartPos := iif(RTAEmpfaengerVorhanden, iif (RTAStandard, 1, 3), 2); 
 again:
     pushhp (3000);
     brk := List.Show;
@@ -940,7 +914,7 @@ again:
     if brk then abs := '' else
     begin
       auswahlMarkierte := false;
-//!!      auswahl := trim (get_selection);
+      auswahl := trim (List.GetSelection);
       abs := getAdresse (auswahl);
       if auswahl = getres2 (476,10) then      { 'alle' }
       begin
@@ -948,9 +922,8 @@ again:
         if replyTo <> '' then
           abs := replyTo
         else
-{          dbRead (dispdat, 'absender', abs);}
           abs := hdp.absender;
-//        if list_markanz <> 0 then
+        if List.SelCount <> 0 then
         begin
           markierteAdressenEntfernen (usererror);
           if userError then goto again;
@@ -958,12 +931,12 @@ again:
       end
       else if auswahl = getres2(476,11) then  { 'markiert' }
       begin
-//        if list_markanz = 0 then
+        if List.SelCount = 0 then
         begin
           rfehler(743);                       { 'Keine EintrÑge markiert!' }
-          //listSetStartPos (iif (RTAEmpfaengerVorhanden, 2, 1));
+          List.StartPos :=  iif (RTAEmpfaengerVorhanden, 2, 1);
           goto again;
-        end; //else
+        end else
         begin
           auswahlMarkierte := true;
           disposeRTAEmpfList (RTAEmpfList);
@@ -983,7 +956,7 @@ again:
         if abs = '' then
         begin
           rfehler(746);                       { 'UngÅltige Auswahl' }
-          // listSetStartPos (iif (RTAEmpfaengerVorhanden, 2, 1));
+          List.StartPos := iif (RTAEmpfaengerVorhanden, 2, 1);
           disposeRTAEmpfList (RTAEmpfList);
           saveList (savedList, RTAEmpfList);
           goto again;
@@ -1020,7 +993,7 @@ begin
   readheader (hdp, hds, false);
 
   addList (RTAEmpfList, empfList, 9);
-//!!  addList (RTAEmpfList, hdp.oemList, 8);
+//  addList (RTAEmpfList, hdp.oemList, 8);
   addList (RTAEmpfList, hdp.kopien, 3);
 
   if (RTAMode and 4 = 0) and (RTAMode and 8 = 0) and (RTAMode and 64 = 0) then
@@ -1050,10 +1023,12 @@ begin
   freeEigeneAdressenBaum (eigeneAdressenBaum);
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.9  2001/08/11 10:24:46  mk
+  - numerous RTA fixes
+
   Revision 1.8  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 
@@ -1084,3 +1059,5 @@ end.
   - replyto is now string instead of TStringList again
 
 }
+end.
+

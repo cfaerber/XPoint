@@ -67,7 +67,7 @@ implementation  {----------------------------------------------------}
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer,
-      xpmakeheader;
+      xpmakeheader, replytoall;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -723,6 +723,7 @@ var t,lastt: taste;
       mqfirst : longint;
       mpdata  : multi_part;
       origdb  : string;
+      adresseAusgewaehlt :boolean;
 
   label ende;
 
@@ -844,6 +845,7 @@ var t,lastt: taste;
   var rnetztyp: byte;
 
   begin
+    adresseAusgewaehlt := false;
     fn:=TempS(2000);
     GoP;
     if reply then netztyp:=mbNetztyp
@@ -886,22 +888,31 @@ var t,lastt: taste;
     else begin
       if (quote=2) and (markanz>0) and not MsgMarked then
         dbGo(mbase,marked^[0].recno);
-      if pm then begin
-        // Needed for roles. This is somewhat tricky, I hope there are no side
-        // effects (seeking in bbase...).
-        dbSeek(bbase,biIntnr,mid(dbReadStr(mbase,'brett'),2));
-        if dbFound then dbReadN(bbase,bb_gruppe,brettgruppe);
-        // ma, 2001-06-03
+      if pm then 
+      begin
+        if reply and ntReplyToAll (dbReadInt (mbase, 'netztyp')) then
+        begin
+          DoReplyToAll (brk, adresseAusgewaehlt, empf, realname, dispdat);
+          if brk or (empf = '') then exit;
+        end else
+        begin
+          // Needed for roles. This is somewhat tricky, I hope there are no side
+          // effects (seeking in bbase...).
+          // !! Check, because RTA implementation
+          dbSeek(bbase,biIntnr,mid(dbReadStr(mbase,'brett'),2));
+          if dbFound then dbReadN(bbase,bb_gruppe,brettgruppe);
+          // ma, 2001-06-03
 
-        if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
-        and not (RTAMode and 2 = 2)
-        then begin
-          empf:= dbReadStr(dispdat,'absender');
-          if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
-          end
-        else begin
-          empf:=GetWABreplyEmpfaenger(realname);
-          if empf='' then exit;
+          if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
+          and not (RTAMode and 2 = 2)
+          then begin
+            empf:= dbReadStr(dispdat,'absender');
+            if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
+            end
+          else begin
+            empf:=GetWABreplyEmpfaenger(realname);
+            if empf='' then exit;
+            end
           end
         end
       else begin
@@ -976,6 +987,7 @@ var t,lastt: taste;
     if pm then sigf:=PrivSignat
     else sigf:=SignatFile;
     sdata:=allocsenduudatamem;
+    if adresseAusgewaehlt then sdata^.RTAHasSetVertreter := true;
     if quote=2 then sdata^.quotestr:=qchar;
 
     // process group settings and stuff
@@ -1071,7 +1083,7 @@ var t,lastt: taste;
           end;
         if (rt<>'') and ((rt<>empf) or (rtanz>1)) then
         begin
-          if not askreplyto or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
+          if not adresseAusgewaehlt  or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
           if not pm then begin
             if rtanz>1 then
               AddMultipleFollowups;
@@ -2200,6 +2212,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.97  2001/08/11 10:24:47  mk
+  - numerous RTA fixes
+
   Revision 1.96  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

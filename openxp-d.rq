@@ -1162,11 +1162,15 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 476
 1    Original-Absender  :~
 2    Weiterleit-Absender:~
-3    Original-Empf„nger :~
+3    Kopien-Empf„nger   :~
 4    Empf„nger w„hlen...
 5    Absender           :~
 6    Vertreter          :~
 7    Reply-To-Empf„nger :~
+8    Original-Empf„nger :~
+9    Empf„nger          :~
+10   --- alle (ohne eigene und ohne markierte Adressen) ---
+11   --- markierte ---
 -
 
 # XP4E: s. 2700
@@ -3228,6 +3232,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 42 Unbekannter Fido-Node: %s
 43 Keine Eintr„ge markiert!
 44 Das Ger„t kann nicht angesprochen werden!
+46 Ungltige Auswahl
+47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!
 
@@ -3805,6 +3811,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.27  2001/08/11 10:24:46  mk
+# - numerous RTA fixes
+#
 # Revision 1.26  2001/08/11 09:02:13  mk
 # - resized some fields in Config/Optionen/Nachrichten
 #
