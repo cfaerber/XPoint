@@ -180,6 +180,7 @@ const  {$IFDEF DPMI}
        MausStLog   = 'MAUSSTAT.LOG';   { MAGGI: MausTausch-Nachrichtenstati }
        FidoLog     = 'XPFIDO.LOG';     { XP-FM-Logfile   }
        UUCPlog     = 'XPUUCP.LOG';     { uucico-Logfile  }
+       ClientLog   = 'XPCLIENT.LOG';   { Client-Logfile  }
        ScerrLog    = 'SCERRORS.LOG';   { Script-Fehler   }
        NetcallLog  = 'NETCALL.LOG';    { Netcall-Logfile }
 
@@ -1192,6 +1193,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.35  2001/06/19 01:27:44  my
+  - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
+    netcall report if found in the client directory
+
   Revision 1.54.2.34  2001/06/16 15:19:43  my
   - New server configuration parameter "Client-Phone", "Client-Login"
     and "Client-Password"

@@ -340,7 +340,7 @@ begin
     if TempPPPMode then
     begin
       abbruch:=false;
-      writeln(t,getreps2(700,43,strsn(sendbuf,7)));   { 'Sendepuffer: %s Bytes' }
+      writeln(t,getreps2(700,43,strsn(sendbuf,7)));  { 'Sendepuffer:    %s Bytes' }
       writeln(t,getreps2(700,44,strsn(recbuf,7)));   { 'Empfangspuffer: %s Bytes' }
     end else
     if sysopmode then
@@ -408,10 +408,11 @@ begin
     writeln(t,getres2(700,33),inmsgs:7);   { 'eingehende Nachrichten:' }
     if outemsgs>0 then
       writeln(t,getres2(700,42),outemsgs:7);  { 'mitverschickte Nachr.  :' }
-    if logopen then begin            { Online-Logfile anh„ngem }
+    if logopen then begin            { Online-Logfile anh„ngen }
       writeln(t);
       writeln(t,getres2(700,41));    { Logfile }
       writeln(t);
+      flush(netlog^);
       close(netlog^);
       reset(netlog^);
       while not eof(netlog^) do begin
@@ -422,17 +423,20 @@ begin
       logopen:=false;
       end;
     if (_maus and exist(mauslogfile)) or
-       ((_fido or _uucp) and exist(fidologfile)) then
+       ((_fido or _uucp) and exist(fidologfile)) or
+       (TempPPPMode and exist(ClientLogFile)) then
     begin
       writeln(t);
       if _maus then
         writeln(t,getres2(700,35))   { MausTausch-Logfile }
       else if _fido then
         writeln(t,getres2(700,36))   { Fido-Logfile }
+      else if TempPPPMode then
+        writeln(t,getres2(700,45))   { Client-Logfile }
       else
         writeln(t,getres2(700,40));  { UUCP-Logfile }
       writeln(t);
-      assign(log,iifs(_maus,mauslogfile,fidologfile));
+      assign(log,iifs(_maus,mauslogfile,iifs(TempPPPMode,ClientLogFile,fidologfile)));
       fm_ro; reset(log); fm_rw;
       if _fido or _uucp then
         repeat
@@ -444,6 +448,7 @@ begin
         end;
       close(log);
       end;
+    flush(t);
     close(t);
     inwin:=windmin>0;
     if inwin then begin
@@ -843,6 +848,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.15  2001/06/19 01:27:44  my
+  - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
+    netcall report if found in the client directory
+
   Revision 1.13.2.14  2001/01/30 10:01:23  mk
   - weitere arbeiten am Client-Modus
 

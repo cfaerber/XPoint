@@ -55,6 +55,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      SysopMode : boolean;
      komment   : string[35];
      fidologfile: string[12];
+     ClientLogFile: string[79];
     _turbo     : boolean;
     _uucp      : boolean;
     netlog     : textp;
@@ -67,6 +68,10 @@ implementation
 end.
 { 
   $Log$
+  Revision 1.3.2.1  2001/06/19 01:27:44  my
+  - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
+    netcall report if found in the client directory
+
   Revision 1.3  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

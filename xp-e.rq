@@ -1492,7 +1492,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 32   Average        :
 33   incoming messages:
 34   outgoing messages:
-35   -------------------- MausTausch-Logfile --------------------
+35   -------------------- MausTausch Logfile --------------------
 36   ----------------------- Fido Logfile -----------------------
 37   Direct call to~
 38   ~(error)
@@ -1502,6 +1502,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 42   additional outgoing messages:
 43   Send packet     : %s Bytes
 44   Received packet : %s Bytes
+45   ---------------------- Client Logfile ----------------------
 -
 701  Netcalls not allowed between %s and %s!
 # wrong server config

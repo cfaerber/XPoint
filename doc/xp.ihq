@@ -5005,10 +5005,9 @@ fende vierstellige Zahl.
    sten Netcall im Spool-Verzeichnis der Serverbox
    liegen und werden beim nÑchsten Netcall gelîscht.
 
-<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers,
-   den UUZ bei einem Netcall einer RFC/Client-
-   Serverbox aus den eingegangenen RFC-Nachrichten
-   erstellt.
+<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers, den
+   UUZ bei einem Netcall einer RFC/Client-Serverbox
+   aus den eingegangenen RFC-Nachrichten erstellt.
 
 <<<Box>.BL>> oder <<<Box>.GR>>  Die Gesamtliste aller vorhan-
    denen Bretter (Newsgroups) einer Serverbox - liegt
@@ -5022,64 +5021,73 @@ fende vierstellige Zahl.
    (Newsgroups) einer Serverbox - liegt immer im
    Client-Verzeichnis.
 
+<<XPCLIENT.LOG>>  Diese Datei hÑngt CrossPoint nach jedem
+   Netcall an den Netzanrufbericht an, sofern vorhan-
+   den. Die Datei wird im Client-Verzeichnis erwartet
+   und nach Verarbeitung gelîscht.
 
-<<Ablauf eines Netcalls
+
+<<Ablauf eines RFC/Client-Netcalls
 
 Der Netcall einer RFC/Client-Serverbox lÑuft in
 folgenden Einzelschritten ab:
 
-1. <<Lîschen>> aller *.IN (= beim letzten Netcall erfolg-
-   reich eingelesene Nachrichten) im Spool-Verzeich-
-   nis <XP>\SPOOL\<Box> - noch in diesem Verzeichnis
-   befindliche *.MSG sind beim letzten Netcall nicht
-   erfolgreich eingelesen worden und werden daher
-   *nicht* gelîscht, sondern am Ende des aktuellen
-   Netcalls mit eingelesen.
+ 1. <<Lîschen>> aller *.IN (= beim letzten Netcall
+    erfolgreich eingelesene Nachrichten) im Spool-
+    Verzeichnis <XP>\SPOOL\<Box> - noch in diesem
+    Verzeichnis befindliche *.MSG sind beim letzten
+    Netcall nicht erfolgreich eingelesen worden und
+    werden daher *nicht* gelîscht, sondern am Ende
+    des aktuellen Netcalls mit eingelesen.
 
-2. <<Ausgangsfilter>> - Filtern des Ausgangspuffers (nur,
-   wenn ausgehende Nachrichten vorhanden und Aus-
-   gangsfilter eingetragen).
+ 2. <<Ausgangsfilter>> - Filtern des Ausgangspuffers
+    (nur, wenn ausgehende Nachrichten vorhanden und
+    Ausgangsfilter eingetragen).
 
-3. <<ZC->RFC-Konvertierung>> der ausgehenden Nachrichten
-   durch UUZ und Ablegen der konvertierten Nach-
-   richten (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im
-   Spool-Verzeichnis <XP>\SPOOL\<Box> (nur, wenn
-   ausgehende Nachrichten vorhanden).
+ 3. <<ZC->RFC-Konvertierung>> der ausgehenden Nachrichten
+    durch UUZ und Ablegen der konvertierten Nach-
+    richten (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im
+    Spool-Verzeichnis <XP>\SPOOL\<Box> (nur, wenn
+    ausgehende Nachrichten vorhanden).
 
-   Im "[Multiserverbetrieb]" werden auch die Nachrich-@30109
-   ten der Server, die bei einem Netcall einer Ser-
-   verbox mitgesendet werden sollen, konvertiert und
-   in dem Spool-Verzeichnis der Serverbox abgelegt,
-   fÅr die der Netcall durchgefÅhrt wird.
+    Im "[Multiserverbetrieb]" werden auch die Nachrich-@30109
+    ten der Server, die bei einem Netcall einer Ser-
+    verbox mitgesendet werden sollen, konvertiert und
+    in dem Spool-Verzeichnis der Serverbox abgelegt,
+    fÅr die der Netcall durchgefÅhrt wird.
 
-4. <<Aufruf des externen Clients>> (ab hier gibt XP die
-   Kontrolle an das externe Programm ab). Der Client
-   mu· die im Spool-Verzeichnis liegenden Nachrichten
-   (*.OUT) versenden, erfolgreich versendete Nach-
-   richten lîschen, und eingehende Nachrichten als
-   Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im Spool-
-   Verzeichnis <XP>\SPOOL\<Box> ablegen.
+ 4. <<Aufruf des externen Clients>> (ab hier gibt XP die
+    Kontrolle an das externe Programm ab). Der Client
+    mu· die im Spool-Verzeichnis liegenden Nachrich-
+    ten (*.OUT) versenden, erfolgreich versendete
+    Nachrichten lîschen, und eingehende Nachrichten
+    als Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im
+    Spool-Verzeichnis <XP>\SPOOL\<Box> ablegen.
 
-5. <<Unversandt-Handling>> - CrossPoint prÅft das Spool-
-   Verzeichnis <XP>\SPOOL\<Box> auf unversandte Nach-
-   richten (*.OUT), erstellt anhand der Message-IDs
-   ein neues Pollpaket (<Box>.PP), lîscht die *.OUT-
-   Dateien und entfernt in der Nachrichtendatenbank
-   bei den Åbrigen (= versandten) Nachrichten den
-   Unversandt-Status.
+ 5. <<Unversandt-Handling>> - CrossPoint prÅft das Spool-
+    Verzeichnis <XP>\SPOOL\<Box> auf unversandte
+    Nachrichten (*.OUT), erstellt anhand der Message-
+    IDs ein neues Pollpaket (<Box>.PP), lîscht die
+    *.OUT-Dateien und entfernt in der Nachrichten-
+    datenbank bei den Åbrigen (= versandten) Nach-
+    richten den Unversandt-Status.
 
-6. <<RFC->ZC-Konvertierung>> der eingegangenen Nachrich-
-   ten und Erstellen des Eingangspuffers (CLPUFFER).
+ 6. <<RFC->ZC-Konvertierung>> der eingegangenen Nachrich-
+    ten und Erstellen des Eingangspuffers (CLPUFFER).
 
-7. <<Eingangsfilter>> - Filtern des Eingangspuffers (nur,
-   wenn eingegangene Nachrichten vorhanden und Ein-
-   gangsfilter eingetragen).
+ 7. <<Eingangsfilter>> - Filtern des Eingangspuffers
+    (nur, wenn eingegangene Nachrichten vorhanden und
+    Eingangsfilter eingetragen).
 
-8. <<Einlesen>> des Eingangspuffers.
+ 8. <<Einlesen>> des Eingangspuffers.
 
-9. <<Umbenennen>> der erfolgreich eingelesenen Nachrich-
-   ten im Spool-Verzeichnis <XP>\SPOOL\<Box> von
-   *.MSG nach *.IN.
+ 9. <<Umbenennen>> der erfolgreich eingelesenen Nach-
+    richten im Spool-Verzeichnis <XP>\SPOOL\<Box>
+    von *.MSG nach *.IN.
+
+10. Schreiben des <<Netzanrufberichts>> mit AnhÑngen der
+    Datei XPCLIENT.LOG (im Client-Verzeichnis). Die
+    Datei wird anschlie·end gelîscht.
 
 
 <<Nachrichtenkonvertierung ZC<->RFC mit UUZ
@@ -5164,7 +5172,8 @@ den Schaltern aufgerufen:
          - Es werden keine UUCP-Steuerdateien ('C-
            und X-Dateien', siehe UUCP.TXT) erzeugt.
 
-
+@
+30201
 <<Der interne Brettmanager
 
 CrossPoint bietet auch fÅr den Netztyp RFC/Client

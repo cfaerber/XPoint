@@ -54,7 +54,7 @@ type  addpktrec    = record
 
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
-    TempPPPMode: boolean;
+    TempPPPMode     : boolean;
 
 
 implementation  {---------------------------------------------------}
@@ -569,9 +569,13 @@ begin                  { of Netcall }
         RemoveEPP;
         if (SysopEnd<>'') and (not TempPPPMode) then shell(SysopEnd,600,1);
         if SysopNetcall or TempPPPMode then   { in BoxPar }
+        begin
+          ClientLogFile:=PPPClientPath+ClientLog;
           sendnetzanruf(false,false);
+          end;
         dispose(NC);
         dispose(addpkts);
+        if TempPPPMode and exist(ClientLogFile) then _era(ClientLogFile);
         aufbau:=true;
         exit;
         end
@@ -1282,7 +1286,7 @@ begin                  { of Netcall }
             end
           else                   { ISDN: Ring=false }
             if (redialwait-zaehler[2]>1) and ring and rring(comnr) then
-              RingSignal   { ^^^ RING-Peak bei bestimmtem Modem amfangen }
+              RingSignal   { ^^^ RING-Peak bei bestimmten Modems abfangen }
             else
               XpIdle;
         until timeout(false) or ende;
@@ -1548,6 +1552,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.12  2001/06/19 01:27:44  my
+  - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
+    netcall report if found in the client directory
+
   Revision 1.16.2.11  2001/04/16 11:23:45  mk
   - Puffer umbenannt
 

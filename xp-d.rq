@@ -1542,6 +1542,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 42   mitverschickte Nachr. :
 43   Sendepuffer:    %s Bytes
 44   Empfangspuffer: %s Bytes
+45   ---------------------- Client-Logfile ----------------------
 -
 701  Netcalls zwischen %s und %s nicht erlaubt!
 # falsche Boxkonfiguration
