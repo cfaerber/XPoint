@@ -482,7 +482,6 @@ const maxstars = 40;
 
 var 
     p       : scrptr;
-    mattr   : byte;
     star    : array[1..maxstars] of record
                   x,y,state,xs : byte;
                 end;
@@ -622,7 +621,6 @@ begin
     end;
     initscs;
     Holen(p);
-    textattr:=mattr;
     restcursor;
   until topen;
   col.colborder:=mborder;
@@ -945,9 +943,11 @@ begin
   closebox;
 end;
 
-end.
 {
   $Log$
+  Revision 1.56  2001/09/06 18:48:12  mk
+  - fixed use of mattr in TimedScsaver
+
   Revision 1.55  2001/08/10 20:57:59  mk
   - removed some hints and warnings
   - fixed some minior bugs
@@ -1127,3 +1127,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+
