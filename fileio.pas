@@ -253,7 +253,7 @@ begin
       if fname[length(fname)]='\' then
         dellast(fname);
       findfirst(fname,Directory,sr);
-      IsPath:=((doserror=0) or (doserror=18)) and (sr.attr and directory<>0);
+      IsPath:=(doserror=0) or (doserror=18);
     end;
   findclose(sr);
   end;
@@ -605,6 +605,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/11/09 18:12:22  mk
+  - ispath corrections
+
   Revision 1.61  2000/11/09 15:27:02  mk
   - Compilierfaehigkeit wiederhergestellt
 
