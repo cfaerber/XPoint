@@ -753,6 +753,7 @@ begin
   AutoUpload:=true;
   AutoDownload:=true;
   TermCOM:=0;
+  TermDevice:='modem';
   TermBaud:=0;
   TermStatus:=true;
   {Modeminit angepasst MW 04/2000}
@@ -1114,11 +1115,12 @@ begin
       writeln('Interer Fehler');
       halt(2);
     end;
-    PutCfg('TempDir',temppath,MySection,31013);
-    PutCfg('ExtractDir',extractpath,MySection,31014);
+    PutCfg('TempDir',temppath,MySection,31013);		
+    PutCfg('ExtractDir',extractpath,MySection,31014);	
     PutCfg('SendfileDir',sendpath,MySection,31015);
     PutCfg('LogDir',logpath,MySection,31016);
     PutCfg('FileDir',filepath,MySection,31017);
+    PutCfg('TermDevice',TermDevice,csLinux,31018);	{ Terminal-Device }
     CloseCfg;
   end;
   freeres;
@@ -1799,6 +1801,8 @@ begin
     if (s='') then PutCfg('SendfileDir',sendpath,MySection,31015) else sendpath:= s;
     s:= GetCfg('LogDir',MySection);
     if (s='') then PutCfg('LogDir',logpath,MySection,31016) else logpath:= s;
+    s:= GetCfg('TermDevice',csLinux);
+    if (s='') then PutCfg('TermDevice',TermDevice,csLinux,31018) else TermDevice:= s;
     CloseCfg;
   end;
 
@@ -1812,6 +1816,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62  2000/06/20 18:19:36  hd
+  - TermDevice Auswerten (Section: Linux)
+
   Revision 1.61  2000/06/10 20:16:06  sv
   - C/O/N/"News nicht archivieren lassen" per default ausgeschaltet
 
