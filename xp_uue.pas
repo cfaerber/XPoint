@@ -1,19 +1,18 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - UUDecode }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp_uue;
 
@@ -21,12 +20,7 @@ unit xp_uue;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,database,maus2,resource,
+      crt,dos,typeform,fileio,inout,database,maus2,resource,
       xp0,xp1,xp1o,xp1o2,xp1input, xpglobal;
 
 
@@ -492,6 +486,7 @@ var tmp,fn   : pathstr;
     hds      : longint;
     o        : boolean;
     Filenr   : byte;
+    dBpos    : longint;
 
   procedure SortFor(fld:integer);
   var i,j : integer;
@@ -551,10 +546,13 @@ var tmp,fn   : pathstr;
 
 begin
   if not testmem(30000,false) then exit;
+  dbpos:=dbrecno(mbase);
   if markanz=0 then
     decmark:=false
   else begin
+    pushhp(11202);
     decmark:=ReadJNesc(GetReps(2403,strs(markanz)),true,brk);  { '%s markierte Nachrichten decodieren' }
+    pophp;
     if brk then exit;
     if decmark and (markanz>maxuumark) then begin
       rfehler1(2404,strs(maxuumark));   { 'Es k”nnen maximal %s markierte Einzelteile decodiert werden.' }
@@ -642,6 +640,7 @@ begin
   _era(tmp);
   freemem(outbuf,obufsize);
   freemem(inbuf,ibufsize);
+  dbgo(mbase,dbpos);
 end;
 
 
@@ -668,6 +667,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.4  2001/09/16 20:40:00  my
+  JG+MY:- UUDECODE: Richtiges Hilfe-Fenster auch aus Lister heraus; Hilfe
+          überarbeitet; Bugfix für Aufruf aus Lister: Datenbank am Ende
+          auf alte Nachricht zurücksetzen
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.13.2.3  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 
