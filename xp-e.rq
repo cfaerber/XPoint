@@ -1,7 +1,7 @@
 K CrossPoint v3.40 resource file
 K English
-K (c) '93-99 Peter Mandrella
-K (c) '2000-01 OpenXP Team, www.openxp.de
+K (c) 1993-99 Peter Mandrella
+K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 
 # Online Help File, Key Macros
 1 XP-E.HLP
@@ -14,15 +14,15 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 # --- Menus -----------------------------------------------------------
 
 # Main menu hot keys: Messages, Others, AutoSend
-7 X˘MNFDCT
-8 XRMNFDCT
-9 XR˘NFDC˘
+7 X˘MNFDCT?
+8 XRMNFDCT?
+9 XR˘NFDC˘?
 
 + 10
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
 #          darf *nicht* Åbersetzt werden. Es wird von XP nur intern verwendet
 #          und nicht angezeigt.
-0   Main,001^XPoint˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2
+0   Main,001^XPoint˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2,009^?˘41
 1   XPoint,011^Register,012^Import˘10,013^Export˘36,014^Statistics˘17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Search˘5,032E^xtract˘12,033^Unsent˘4,034^All˘14,035^Change˘22,036Ac^tion˘21,-,038News/Echo ^Manager˘19,039F^ileserver˘20,03aP^GP˘40,03b^Direct
@@ -31,7 +31,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 6   Config,061^Options˘28,062E^xternal˘24,063^Paths,064^Display˘9,065^Modem˘18,066P^rinter,067^Keys˘23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^sc˘33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
-9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines˘11,096M^isc,098^Accessibility,097^PD-Zmodem
+9   Anzeige,091^Colors,092^Message Areas,093M^essages,094^Header,095^Lines˘11,096M^isc,098^Accessibility,097^PD-Zmodem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
 11  Zeilen,0b125
@@ -62,6 +62,8 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 38  Filescan,261^Subscribe,262^Unsubscribe,263^Get list,264^Import list,265Import ^File,266^Others
 39  Tarifzonen,271^Zones,272^Fees,273^Holidays,274^Misc
 40  PGP,281^Request key,282^Import key,283^Decode message,284^Test signature,-,286^Edit key,287^Remove UserID
+41  ?,291^Current           F1,292^Previous Topic   @F1,-,293Help Con^tents   2*F1,294^Help on Help,-,295XP ^Usage,296Current ^Macros    F6,-,297^Special Topics..˘42,-,298^About OpenXP
+42  Spezial,2a1^PGP Encryption,2a2XP and ^Mailing lists,2a3Net type ^RFC/Client,2a4XP as ^Windows Mailer
 # Tools Menu
 100 021^Calendar
 101 022^Archive Viewer
@@ -95,7 +97,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 21   December
 # Lister
 22   Help
-23   Seach for:~
+23   Search for:~
 24   Searching...
 25   * not found *
 -
@@ -107,7 +109,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 + 20
 0    mark
 # Newsgroups, Users, Newsgroups/Special, Users/Special
-1    ^All ^Write T^extfile B^inary ^Special S^how:
+1    ^All ^Write T^ext B^in ^Special See^k S^how:
 2    ^All S^ort ^Write T^ext B^inary ^Special See^k Address-^book ^PW
 3    Ne^w De^lete ^Edit ^Join M^ove ~Split ^Access ^Special
 4    ^All S^ort Ne^w CarbonCop^y De^l ^Edit ^Spec. Addr.-^book ^PW
@@ -131,7 +133,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 20   Start call
 # Fileserver
 21   order
-22 See^k
+22   See^k
 
 + 22
 # Keys in Newsgroup window:
@@ -585,6 +587,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 13   remove unnessecary header lines
 14   use references
 15   binary messages as "attachments"
+16   Append old subject
 17   Magics in <F3> file request
 18   OpenXP version in tear line
 + 254
@@ -647,18 +650,20 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 4    Show command line
 5    Wait for key
 + 258
-# Newsgroup/User display
+# Message Area/User display
 # window width
-0    36
+0    43
 1    normal
 2    special
 3    small
-5    Newsgroup display
-6    "/" for PM newsgroups
+5    Message Area display
+6    "/" for PM Message Areas
 7    Split lines in "All" mode
-8    Newsgroup display~
+8    Message Area display~
 9    Usenet groups with "."
-10   separator comment~
+10   Separator comment   ~
+11   ... applies to all Message Areas
+12   combined Unread mode
 21   left
 22   middle
 23   right
@@ -670,12 +675,13 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 4    name/small
 5    Columns
 6    Col./small
-10   Messsage display
+10   Message display
 11   Message date
 12   User names  ~
 13   Show complete user addresses in reference tree
 14   Show realnames, if possible
 15   Show recipients of echomail messages (FidoNet)
+16   New messages on top
 + 260
 1    Screen-saver (sec.) ~
 2    Scroll out
@@ -691,8 +697,8 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 12   additional sound signals
 13   Headline 1
 14   Headline 2
-15   Message-list column order
-16   User list column order  ~
+15   Column order Message Reading Window
+16   Column order User-Overview        ~
 + 261
 # Window width
 0    50
@@ -1006,6 +1012,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 435  no newsgroups with new messages
 436  no newsgroups with unread messages
 437  MessageID
+438  (mark) Text
 
 # XP4O
 + 441
@@ -1029,6 +1036,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 18   No messages found
 19   from~
 20   to  ~
+21   Search Library
 -
 + 442
 0    All
@@ -1087,7 +1095,11 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 6   One moment please...     %
 7   nothing to delete
 -
-452  new receive date:
++ 452
+# 452,1 must start with "N"!
+1   New receive date:
+2   Use creation date
+-
 # 453 und 455 sind MenÅpunkte aus /Nachricht/Unversandt
 453  Change
 454  new Subject:
@@ -1158,10 +1170,12 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 7    ~at~
 -
 + 467
-1    User-(mark)-Search
+1    (mark) User
 2    Search for:
 3    Searching     %        found..:
 4    no matching users found
+5    (mark) Message Area
+6    no matching Message Areas found
 -
 468  Newsgroup index no
 469  Type of net: ~
@@ -1185,6 +1199,9 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 11   --- marked ---
 -
 
+# XP4W
++ 480
+1    Usergroup:
 
 # --- XP5 -------------------------------------------------------------
 
@@ -1284,7 +1301,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 7    an official release version of CrossPoint. If you have questions
 8    about the OpenXP project or wish to make suggestions, please
 9    feel free to send a message to one of the addresses listed
-10   in the online help (press <F1>, <F1>, S, <Enter> within XP).
+10   in the online help (press *<F1>*, *<F1>*, *S*, *<Enter>* within XP).
 11
 12   Choose "Continue", to use this beta version.
 30   ~^Continue , ^Cancel~
@@ -2458,8 +2475,10 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 # --- XPE -------------------------------------------------------------
 
 + 2500
-1    File was changed
+1    File was changed.
 2    ~^Save , ^Don't save , ^Cancel~
+3    Message was changed.
+4    ~^Save , ^Don't save , P^ark , ^Cancel~
 + 2501
 0    Note
 # Number of text lines:
@@ -2487,28 +2506,34 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 23   Printing...
 # menu
 30   Block
-31   ^Copy        *
-32   C^ut         -
-33   ^Insert      +
-34   ^Read      ^KR
-35   R^ead UUE  ^KU
-36   ^Write     ^KW
+31   ^Copy          *
+32   C^ut           -
+33   ^Insert        +
+34   ^Read        ^KR
+35   R^ead UUE    ^KU
+36   ^Write       ^KW
 37   -
-38   ^Wrap off   F3
-39   W^rap on    F4
-40   -
-41   ^Options   ^OR
+38   ^Search      ^QF
+39   Re^place     ^QA
+40   Search ^next  ^L
+41   -
+42   ^Wrap off     F3
+43   W^rap on      F4
+44   -
+45   ^Options     ^OR
+46   -
+47   ^Quit        Esc
 -
 2504 Save block
 2505 Read block
 + 2506
 0    42
-1    Find
+1    Search
 2    Text ~
 3    Ignore case
 10   50
-11   Find & Replace
-12   Seek for  ~
+11   Search & Replace
+12   Search for~
 13   Replace by~
 -
 2507 New subject:~
@@ -2667,7 +2692,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 2713 Name of newsgroup has changed - adjust message headers
 2714 One moment please ...
 + 2715
-1    ^Comment,^Server,^Hold time,^Umlauts,^Filter,^Group
+1    ^Comment,^Server,^Hold time,^Umlauts,^Filter,^Group,^Priority,^Receipt Request,^Address,^Delete
 2    ^Comment,^Server,^Hold time,^Group,^Filter,^Access
 3    Edit %s marked Users
 4    Edit %s marked newsgroups
@@ -2675,7 +2700,7 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 6    Server  ~
 7    Msgs.
 8    Days
-9    Hold time:~
+9    Hold time~
 10   use IBM umlauts
 11   Group  ~
 12   Message filter
@@ -2690,10 +2715,12 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 -
 2719 Private message
 + 2720
-1    ^All,^Unread,^New,^Today,^Date,T^ime
+1    ^All,^Unread,^New,^Today,^Reorg.,^Date/Time
 2    ,^Save
+2720,3 must not start with "N"!
 3    Read from date:
-4    Read from time:
+4    Time:
+5    Take from message
 + 2721
 1    To:
 2    ~^Newsgroup , ^User~
