@@ -385,19 +385,18 @@ begin
   while (rr > 0) and                            { data is pending and   }
     ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) do    { room in buffer        }
   begin
+    if SBufBeg >= SBufEnd then
+    begin
+      SBufBeg := Low(SBuffer);
+      SBufEnd := Low(SBuffer);
+    end;      
+  
     if(SBufBeg > Low(SBuffer)) and              { data not at start and }
       ((SBufEnd+rr)>(High(SBuffer)+1)) then     { not enough room at end}
     begin
-      if SBufBeg<SBufEnd then
-      begin
-        Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
-        SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
-        SBufBeg :=                     Low(SBuffer);
-      end else
-      begin
-        SBufBeg := Low(SBuffer);
-        SBufEnd := Low(SBuffer);
-      end;      
+      Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
+      SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
+      SBufBeg :=                     Low(SBuffer);
     end;
 
     rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
@@ -614,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2001/10/23 07:12:07  cl
+  - changed last fix to better solution
+
   Revision 1.14  2001/10/23 06:48:56  cl
   - yet another range check error fix
 
