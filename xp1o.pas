@@ -90,7 +90,7 @@ var x,y : byte;
 const
     lastpath : pathstr = '';
     urlchars : set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-               '-','_','#','=','&','%','@','$'];
+               '-','_','#','=','&','%','@','$','+'];
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
@@ -1020,6 +1020,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.22  2001/11/10 16:22:28  my
+  MY:- "+" zu urlchars hinzugefÅgt (vorher wurden URLs mit "+" abgeschnitten)
+
   Revision 1.40.2.21  2001/09/16 20:18:50  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
