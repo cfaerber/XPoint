@@ -383,11 +383,12 @@ label ende;
   begin
     dbReadN(mbase,mb_halteflags,flags);
     case statb of
-       0 : StatOk:=true;
      1,2 : StatOK:=(statb=flags);
        3 : StatOK:=(flags=1) or (flags=2);
        4 : StatOK:=(dbReadInt(mbase,'gelesen')=0);
        5 : StatOK:=(dbReadInt(mbase,'gelesen')<>0);
+     else
+       {0 : }StatOk:=true;
     end;
   end;
 
@@ -784,13 +785,14 @@ begin
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then UkonvStr(sst,Length(sst));                        {JG:15.02.00}
+      if umlaut then UkonvStr(sst,Length(sst));                      
       if igcase then UpString(sst);
     {  end;}
 
 {--Start der Suche--}
 
-    if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
+    if (suchfeld='MsgID') and NOT MID_teilstring then 
+    begin                                             {-- Suche: Message-ID  --}
       suche:=false;
       if not brk then begin
         markanz:=0;
@@ -2174,22 +2176,26 @@ begin
       Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
       Wrt(x+35, y+4, Format('%4d', [nf]));
       UName := dbReadNStr(ubase,ub_username);
-      if pos(suchst,UpperCase(uname))>0 then begin
+      if pos(suchst,UpperCase(uname))>0 then 
+      begin
         UBAddmark(dbRecno(ubase));
         if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
           UserMarkSuche:=true;
-        if uname<sname then begin
+        if uname<sname then 
+        begin
           sname:=uname;
           spos:=dbRecno(ubase);
-          end;
-        inc(nf);
         end;
+        inc(nf);
+      end;
       dbNext(ubase);
       if n mod 16=0 then testbrk(brk);
-      end;
+    end;
     dbSetIndex(ubase,mi);
-    if sname<>#255 then dbGo(ubase,spos)
-    else dbGo(ubase,rec);
+    if sname<>#255 then  // irgnore warning, sname is correctly initialized
+      dbGo(ubase,spos)
+    else 
+      dbGo(ubase,rec);
     aufbau:=true;
     end;
   closebox;
@@ -2436,10 +2442,13 @@ begin
       end;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.108  2001/09/06 18:54:35  mk
+  - removed some warnings
+  - formatted source
+  - added comment about false compiler warning
+
   Revision 1.107  2001/08/31 14:44:37  mk
   - changed TxtSeek for Delphi/Kylix compatiblity
 
@@ -2800,3 +2809,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+
