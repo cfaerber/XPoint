@@ -1051,37 +1051,45 @@
       av,pv : string[20];
   begin
     add:=0;
-    dialog(ival(getres2(924,0)),
-           14+iif(nt=nt_UUCP,1,0)+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
+    if (nt=nt_uucp) and boxpar^.pppMode then
+      dialog(ival(getres2(924,0)),11,getres2(924,1),x,y)
+    else
+      dialog(ival(getres2(924,0)),
+             14+iif(nt=nt_UUCP,1,0)+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     dbRead(d,'AVertreter',av);
     dbRead(d,'PVertreter',pv);
     nall:=(flags and 2=0);
     with boxpar^ do begin
-      maddtext(3,2,getres2(924,2),col.coldiahigh);    { 'Online-Anruf' }
-      maddstring(20,2,getres2(924,3),o_passwort,25,25,''); mhnr(187);  { 'Paáwort ' }
-      maddstring(20,3,getres2(924,4),o_logfile,25,60,''); { 'Logfile ' }
-      msetvfunc(testlogfile);
-      maddstring(20,4,getres2(924,13),o_script,25,50,''); { 'Script'   }
-      msetvfunc(testscript); mhnr(8030);
-      mset3proc(scripterrors);
-      if ntNetcall(nt) then begin
-        maddtext(3,6,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
-        maddtext(20,6,getres2(924,14),0);               { 'Ausschluá-' }
-        maddtext(20,7,getres2(924,15),0);               { 'zeiten:'    }
-        x2:=42+length(getres2(924,6));
-        for i:=1 to excludes do begin
-          maddtime(32,5+i,getres2(924,6),exclude[i,1],false); mhnr(189);  { 'von' }
-          maddtime(x2,5+i,getres2(924,7),exclude[i,2],false); mhnr(189);  { 'bis' }
-          end;
-        inc(add,excludes+1);
-        if nt<>nt_Fido then begin
-          maddstring(20,7+excludes,getres2(924,13),script,25,50,'');  { 'Script' }
-          msetvfunc(testscript); mhnr(8031);
-          mset3proc(scripterrors);
-          inc(add,2);
+      if not ((nt=nt_uucp) and boxpar^.pppMode) then
+      begin
+        maddtext(3,2,getres2(924,2),col.coldiahigh);    { 'Online-Anruf' }
+        maddstring(20,2,getres2(924,3),o_passwort,25,25,''); mhnr(187);  { 'Paáwort ' }
+        maddstring(20,3,getres2(924,4),o_logfile,25,60,''); { 'Logfile ' }
+        msetvfunc(testlogfile);
+        maddstring(20,4,getres2(924,13),o_script,25,50,''); { 'Script'   }
+        msetvfunc(testscript); mhnr(8030);
+        mset3proc(scripterrors);
+        if ntNetcall(nt) then begin
+          maddtext(3,6,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
+          maddtext(20,6,getres2(924,14),0);               { 'Ausschluá-' }
+          maddtext(20,7,getres2(924,15),0);               { 'zeiten:'    }
+          x2:=42+length(getres2(924,6));
+          for i:=1 to excludes do begin
+            maddtime(32,5+i,getres2(924,6),exclude[i,1],false); mhnr(189);  { 'von' }
+            maddtime(x2,5+i,getres2(924,7),exclude[i,2],false); mhnr(189);  { 'bis' }
+            end;
+          inc(add,excludes+1);
+          if nt<>nt_Fido then begin
+            maddstring(20,7+excludes,getres2(924,13),script,25,50,'');  { 'Script' }
+            msetvfunc(testscript); mhnr(8031);
+            mset3proc(scripterrors);
+            inc(add,2);
+            end;
           end;
         end;
+      if (nt=nt_uucp) and boxpar^.pppMode then
+        add:=-4;
       maddtext(3,6+add,getres2(924,8),col.coldiahigh);  { 'Filter' }
       maddstring(20,6+add,getres2(924,9),eFilter,25,60,''); mhnr(199);  { 'Eingang' }
       maddstring(20,7+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
@@ -1561,7 +1569,7 @@
     freeres;
     if n<>0 then edb_pos:=abs(n);
     if n>0 then begin
-      if boxpar^.pppmode then 
+      if (nt=nt_uucp) and boxpar^.pppMode then 
       begin
         case n of
           1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
@@ -1687,6 +1695,9 @@
 
 {
   $Log$
+  Revision 1.10.2.28  2001/06/19 01:24:45  my
+  - RFC/Client: removed superfluos items in Edit/Servers/Edit/Misc.
+
   Revision 1.10.2.27  2001/06/16 15:19:43  my
   - New server configuration parameter "Client-Phone", "Client-Login"
     and "Client-Password"
