@@ -1167,11 +1167,10 @@ end;
 end.
 {
   $Log$
-  Revision 1.16.2.15  2002/04/07 22:40:01  my
-  SV:- Fix: Speicherleck bei Laufwerks-/Verzeichniswechsel in
-       Dateiauswahl-Fenster (fsbox) beseitigt (es wurde nur der Speicher
-       des jeweils zuletzt angezeigten Verzeichnisses wieder freigegeben).
+  Revision 1.16.2.16  2002/04/07 22:41:04  my
+  MY:- Commit-Text korrigiert.
 
+  Revision 1.16.2.15  2002/04/07 22:40:01  my
   JG[+MY]:- Sicherheits-Fix: Bei der Reservierung des Speichers fr den
             Dateinamen im Dateiauswahl-Fenster wird jetzt sicherheits-
             halber vorher geprft, ob der angeforderte Speicher berhaupt
