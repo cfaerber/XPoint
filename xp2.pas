@@ -31,6 +31,9 @@ uses
 {$IFDEF DOS32 }
   xpdos32,
 {$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
   sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
@@ -1077,6 +1080,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/08/01 18:13:49  mk
+  - XPOS2 hinzugefuegt
+
   Revision 1.65  2000/07/27 10:13:00  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
