@@ -309,7 +309,7 @@ end;
 
 
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten: Integer16; adr:byte; var flags:byte; edit:boolean;
+                   var halten: Integer16; var adr:byte; var flags:byte; edit:boolean;
                    var brk:boolean);
 var x,y: Integer;
     filt : boolean;
@@ -2431,6 +2431,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2001/09/05 22:55:13  mk
+  - changed adr parameter in EditUser back to var
+
   Revision 1.68  2001/09/01 15:22:51  ma
   - net type handling fixes
 
