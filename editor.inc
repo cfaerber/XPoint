@@ -800,9 +800,10 @@ procedure NewLine;              { Enter - Absatz einfÅgen }
 var ap,ap2   : absatzp;
     wp       : integer;
     copysize : integer;
+    delsp    : integer;
     spaces   : integer;
-    quotes   : integer;  { 10.02.2000 robo - Anzahl Quotezeichen }
-    quotec   : string;   { 10.02.2000 robo - Quotezeichen }
+    quotes   : integer;  { Anzahl Quotezeichen }
+    quotec   : string;   { Quotezeichen }
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -819,10 +820,17 @@ begin
       wp:=workpos;
       copysize:=max(0,ap^.size-wp);
       spaces:=0;
-      { 10.02.2000 robo - Quote-Reflow }
-      if config.QuoteReflow xor kb_shift
-        then quotec:=GetQuote(ap)
-        else quotec:='';
+      delsp:=0;
+      { Quote-Reflow }
+      if config.QuoteReflow xor kb_shift then begin
+        quotec:=GetQuote(ap);
+        if quotec<>'' then begin
+          delsp:=wp;
+          while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
+          dec(delsp,wp);
+        end;
+      end
+      else quotec:='';
       quotes:=length(quotec);
       if wp>=ap^.size
         then quotes:=0; { kein Reflow bei Zeilenende }
@@ -832,31 +840,28 @@ begin
           inc(spaces);
         if spaces>=wp then spaces:=0;
       end;
-      if memtest(ap^.size) and createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
-      { /robo }
+      if memtest(ap^.size) and createacopy(ap,ap2,wp-spaces-quotes+delsp,copysize+spaces+quotes-delsp)
       then begin
         if spaces>0 then
           fillchar(ap2^.cont,spaces,' ')
-        { 10.02.2000 robo - Quote-Reflow }
+        { Quote-Reflow }
         else if quotes>0 then
           fastmove(quotec[1],ap2^.cont[0],quotes);
-        { /robo }
         if assigned(ap^.next) then
           ap^.next^.prev:=ap2;
         ap2^.next:=ap^.next;
         ap^.next:=ap2;
         ap2^.prev:=ap;
-        blockabssplit(ap,ap,ap2,wp,spaces+quotes);
+        blockabssplit(ap,ap,ap2,wp,spaces+quotes-delsp);
         ap:=AbsDelete(ap,wp,copysize,false,false);
         su(ap);
         su(ap2);
         KorrBlockScrolled(false);
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
-        { 14.02.2000 robo - Quote-Reflow }
+        { Quote-Reflow }
          moveworkpos(spaces,actabs);          { JG: 27.04.00 Cursor an Zeilenanfang }
         {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
-        { /robo }
         modified:=true;
         aufbau:=true;
         end;
@@ -886,11 +891,12 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
+        if (addspaces=0) and (ap^.size>0) then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu gro·' }
         else if memtest(ss) then begin   { AbsÑtze zusammenhÑngen }
-          { 15.02.2000 robo - Quote-Reflow }
+          { Quote-Reflow }
           if config.QuoteReflow then begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
@@ -2403,6 +2409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.6  2000/07/31 21:54:40  mk
+  RB:- Quotereflow verfeinert
+
   Revision 1.19.2.5  2000/07/25 18:12:37  jg
   - Glossary: "E" im Glossary-Popup erlaubt es die GLOSSARY.CFG zu Editieren
 
