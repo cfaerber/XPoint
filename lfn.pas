@@ -212,6 +212,8 @@ const
 var
   {-Zeigt auf die Kommandozeile (siehe EXREDIR.PAS)}
   ParamPtr : ^String;
+  {-Flags}
+  LFNEnabled: boolean;
 
 function ParamLine : String;
   {-Liefert die komplette Kommandozeile zurÅck}
@@ -402,8 +404,6 @@ var
   {-Die Adressen der gepatchten Routinen}
   PatchAddr : array[PatchType] of Pointer;
   Regs : Registers;
-  {-Flags}
-  LFNEnabled: boolean;
 
 const
   On = True;
