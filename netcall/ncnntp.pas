@@ -35,6 +35,7 @@ uses
 
 type
   ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
+  ENNTP_Group_not_found = ENNTP;
 
 const
   // returnErrors of GetMessage
@@ -413,7 +414,7 @@ begin
     case i of
       nntpMsg_GroupnotFound : begin
         Output(mcError,res_groupnotfound, [AGroupName]);
-        raise ENNTP.create(Format(res_groupnotfound, [AGroupName]));
+        raise ENNTP_Group_not_found.create(Format(res_groupnotfound, [AGroupName]));
       end;
       nntp_AuthRequired : begin
         Output(mcError, res_auth, [0]);
@@ -547,6 +548,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2003/08/15 19:56:37  mk
+  - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
+
   Revision 1.42  2003/07/30 11:52:42  cl
   - BUGFIX: sending multiple messages via NNTP did not work.
 

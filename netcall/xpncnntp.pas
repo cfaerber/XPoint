@@ -331,7 +331,12 @@ begin
          ArticleIndex := -bp^.nntp_initialnewscount;
 
         POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
-        NNTP.SelectGroup(Group);
+        try
+          NNTP.SelectGroup(Group);
+        except
+          on E: ENNTP_Group_not_found do
+            Continue;
+        end;
 
         if ArticleIndex<0 then // "-n": fetch n articles
           Inc(ArticleIndex,NNTP.LastMessage)
@@ -410,6 +415,9 @@ end;
 
 {
         $Log$
+        Revision 1.47  2003/08/15 19:56:37  mk
+        - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
+
         Revision 1.46  2003/08/04 22:48:17  mk
         - removed Edit/netze/verschiedens/mime in news
 
