@@ -78,8 +78,16 @@ end;
 function getsize:boolean;
 var i:integer;
 begin
-  fs:=0; for i:=0 to parts.count-1 do
-    inc(fs,TSendAttach_Part(parts[i]).FileSize);
+
+{ TODO: Bessere, genauere Berechnung! }
+
+  fs:=0; 
+
+  if not partsex then
+    fs := _filesize(datei)
+  else
+    for i:=0 to parts.count-1 do
+      inc(fs,TSendAttach_Part(parts[i]).FileSize);
 
   if ((parts.Count<=0) or
      ((parts.Count=1) and (TSendAttach_Part(parts[0]).FileSize=0)))
@@ -206,10 +214,13 @@ begin
 end;
 
 procedure calc_hdsize;
+
 begin
   addsize:=0;
+
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
+    
   inc(addsize,length(fido_origin));
 { if flMnet then inc(addsize,length(MausNet)+2);
   if flMloc then inc(addsize,length(MausLoc)+2); }
@@ -1104,6 +1115,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2001/12/23 10:07:36  cl
+  - file size shown correctly
+
   Revision 1.12  2001/10/26 01:22:17  ma
   - fixed: Signature line endings were not correct with Unix
     (should be CRLF)
