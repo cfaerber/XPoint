@@ -131,7 +131,7 @@ const
        CancelMsk   = 'cancel.xps';
 
        extBfg      = '.bfg';           { Boxen-Config-File }
-       extQfq      = '.qfg';           { QWK-Config-File   }
+       extQfg      = '.qfg';           { QWK-Config-File   }
        extSwap     = '.swp';
        extBatch    = '.sh';
        extBoxfile  = '.pp';
@@ -1194,6 +1194,9 @@ implementation
 
 {
   $Log$
+  Revision 1.138  2001/09/07 18:02:50  ml
+  - compilable with fpc in linux
+
   Revision 1.137  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

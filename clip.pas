@@ -60,7 +60,7 @@ uses
   xp0,
 {$ifdef unix}
   linux,
-  xplinux;
+  xplinux,
 {$else}
 {$IFDEF Win32 }
   windows,
@@ -68,9 +68,8 @@ uses
 {$IFDEF VP }
   vpsyslow,
 {$ENDIF }
-  fileio;
 {$endif}
-
+  fileio;
 
 {$ifdef UseClipFile }
 function ClipFilename: TFilename;
@@ -334,6 +333,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/09/07 18:02:50  ml
+  - compilable with fpc in linux
+
   Revision 1.32  2001/09/06 19:28:57  mk
   - removed unsed unit fileio from uses
 
