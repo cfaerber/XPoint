@@ -983,7 +983,6 @@ Bitte w„hlen Sie das gewnschte Brett. Mit <<<Enter> >>
 wird die Auswahl best„tigt, mit <<<Esc> >>abgebrochen.
 
 <<<Ctrl-Y> >>springt zur n„chsten Trennzeile.
-
 @
 20
 <<Brett-šbersicht
@@ -1196,14 +1195,14 @@ angezeigt.
 
 <<Funktionen im Schreib-/Lesemodus
 
-   <<b>>     schickt einen Brief an den gew„hlten User
+   <<B>>     schickt einen Brief an den gew„hlten User
          bzw. an alle Empf„nger im gew„hlten Vertei-
          ler. Dazu wird der bei /Config/Extern/Editor
          eingetragene Editor verwendet.
 
-   <<B>>     schickt einen Brief als Crossposting an alle
-         markierten User. Dies ist nur bei ZCONNECT-
-         Servern m”glich.
+<<<Shift-B> >>schickt einen Brief als Crossposting an
+         alle markierten User. Dies ist nur bei
+         ZCONNECT-Servern m”glich.
 
    <<E>>     schickt eine vorbereitete Textdatei an den
          gew„hlten User bzw. die Verteiler-Empf„nger.
@@ -1228,7 +1227,8 @@ angezeigt.
 
    <<E>>     User- bzw. Verteiler-Daten bearbeiten
 
-<<<Ctrl-V> >>Userbretter verknpfen (Nachr. verschieben)
+<<<Ctrl-V> >>Userbretter verknpfen (Nachrichten in
+         anderes Userbrett verschieben)
 
 <<<Ctrl-T> >>Trennzeile im Adreábuch einfgen
 
@@ -1875,19 +1875,22 @@ oder <<<Alt-G> >> ([Glossary]-Funktion).@64
 Zwischenablage-Funktionen:
 
 <<<Ctrl-Ins> >>   kopiert markierten Block in die
-oder <<*>>        Zwischenablage
+oder <<*>>        (interne/externe) Zwischenablage
 
 <<<Shift-Del> >>  verschiebt markierten Block in die
-oder <<->>        Zwischenablage
+oder <<->>        (interne/externe) Zwischenablage
 
-<<<Shift-Ins> >>  fgt Zwischenablage an Cursorposition
-oder <<+>>        ein
+<<<Shift-Ins> >>  fgt (interne/externe) Zwischenablage
+oder <<+>>        an Cursorposition ein
+
+Bei Verwendung von <<*>>, <<->> und <<+>> mssen Sie die Tasten
+auf dem numerischen Ziffernblock benutzen.
 
 Diese Zwischenablage arbeitet unabh„ngig von den b-
 rigen Blockoperationen. Falls XP unter einem Be-
 triebssystem arbeitet, das eine eigene Zwischenab-
 lage zur Verfgung stellt (z.B. Windows, OS/2), wird
-diese verwendet.
+diese verwendet, ansonsten die XP-interne.
 
 @
 58
@@ -1918,7 +1921,7 @@ Verfgung:
     <<<Ctrl-Q><Y> >>     : bis Absatzende l”schen
     <<<Alt-Y> >>         : bis Textende l”schen (*)
 
-Gel”schte Textteile werden zwischengespeichert, so
+Gel”schte Textteile werden zwischengespeichert, so-
 lange der Hauptspeicher ausreicht, und k”nnen mit
 <<<Ctrl-U> >>wiederhergestellt werden.
 
@@ -2343,8 +2346,8 @@ soll.
 
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
-dies, daá mehrere Nachrichen-Kopien ber unterschied-
-liche Server verschickt werden.
+dies, daá mehrere Nachrichten-Kopien ber unter-
+schiedliche Server verschickt werden.
 
 @
 69
@@ -8883,7 +8886,7 @@ auf einer RAM-Disk ab.
 891
 Geben Sie an, wo und unter welchem Namen die Datei
 im Zielsystem abgelegt werden soll. Bei vielen UUCP-
-Systemen gengt der Angabe des Dateinamens; die
+Systemen gengt die Angabe des Dateinamens; die
 Datei landet dann automatisch im Verzeichnis fr
 eingehende Nachrichten. Bei anderen Systemen muá
 das komplette Zielverzeichnis (i.d.R. ~/incoming)
@@ -13771,7 +13774,7 @@ L”schen beim n„chsten Netcall zu schtzen!
 Im Fido-Mailer ist ein Fehler aufgetreten. Melden
 Sie die exakte Fehleradresse, sofern sie auf dem
 Bildschirm erkennbar ist, bitte zusammen mit Ihrer
-Fido-Point-Konfiguration an den Programmierer!
+Fido-Point-Konfiguration an das OpenXP-Team!
 @
 20721
 Siehe Kapitel "Kleine Modemkunde" im Anhang des
@@ -14336,7 +14339,7 @@ PGP erhalten Sie in der CrossPoint-Supportbox
 (s. Handbuch) oder in jeder anderen gutsortierten
 Mailbox, im Internet z.B. auf der "International
 PGP Home Page": http://www.ifi.uio.no/pgp/.
-Verwenden Sie PGP Version 2.6 oder h”her!
+Verwenden Sie PGP Version 2.6.3!
 @
 23002
 PGP hat die Nachricht nicht codiert. Aktivieren Sie
