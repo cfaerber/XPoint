@@ -125,10 +125,6 @@ CrossPoint is <<NOT>> free software, it is shareware.
 You may test it without cost for up to 30 days from
 first installation but if you wish to use it after
 that, you must register the programme.
-
-You will find details of how to register in the file
-<<REG_ENG.TXT>> included in the English distribution
-archive.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -7262,10 +7258,6 @@ registration number here, registers your version of
 CrossPoint. If you don't have a registration key,
 exit by pressing <Esc> and CrossPoint will remain
 unregistered.
-
-You will find details of how to register in the file
-REG_ENG.TXT, which is included in the CrossPoint
-package.
 @
 10102
 <<XPoint / Import
@@ -9376,8 +9368,8 @@ can set a Main Password to stop somebody else
 setting a start password and locking you out!
 
 <<IMPORTANT!>>  Do not forget your Password!
-If you forget a password, you will have to call me
-under the number listed in REG_ENG.TXT
+If you forget your password, you will have to contact
+the author.
 @
 12810
 <<Config / Options / Language
