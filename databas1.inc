@@ -49,7 +49,7 @@ end;
 
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var
-  s, i,sp : integer;
+  s,i,j,sp : integer;
   TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
@@ -59,17 +59,16 @@ begin
       end
     else
     begin
-      i:=cacheanz-1;
-
+      i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
       TempCachePage := @cache^[i]; // MUCH faster8!
-      while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used)
-        and (i>0) do
+      while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used) do
       begin
         Dec(i);
+        if i<0 then break;
         TempCachePage := @cache^[i];
       end;
 
-      if i>0 then
+      if i>=0 then
       begin
         Move(cache^[i].page,data,irsize);
         cache^[i].lasttick:=ticker;
@@ -80,15 +79,20 @@ begin
 
         s:=maxlongint;
         sp:=0;
-        i:=cacheanz-1;
-        while (i>=0) and (cache^[i].used) do
-        with Cache^[i] do
+
+        i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
+        TempCachePage := @cache^[i];
+        while TempCachePage.used do 
         begin
-          if lasttick<s then begin
-            s:=lasttick;
-            sp:=i;
+          with TempCachePage^ do 
+            if lasttick<s then 
+            begin
+              s:=lasttick;
+              sp:=i;
             end;
           Dec(i);
+          if i<0 then break;
+          TempCachePage := @cache^[i];
         end;
         if i>=0 then sp:=i;
 
@@ -207,7 +211,7 @@ var rbuf : barrp;
     i,o: integer;
 {$ENDIF }
 begin
-  with np^, dp(db_p)^ do
+  with np^,dp(db_p)^ do
   begin
       getmem(rbuf,irsize);
       filepos:=offs;
@@ -240,8 +244,7 @@ var rbuf : barrp;
     wp   : ^smallword absolute rbuf;
     i,o  : word;
 begin
-  with np^ do
-    with dp(db_p)^ do begin
+  with np^, dp(db_p)^ do begin
       getmem(rbuf,irsize);
       wp^:=anzahl;
       Move(key[0].data,rbuf^[2],8);
@@ -271,8 +274,7 @@ end;
 
 procedure AllocateIrec(dbp:DB; indnr:word; var adr:longint);
 begin
-  with dp(dbp)^ do
-    with index^[indnr] do
+  with dp(dbp)^,index^[indnr] do
       if firstfree=0 then adr:=filesize(fi)
       else begin
         adr:=firstfree;
@@ -288,8 +290,7 @@ end;
 procedure ReleaseIrec(dbp:DB; indnr:word; adr:longint);
 var l : longint;
 begin
-  with dp(dbp)^ do
-    with index^[indnr] do begin
+  with dp(dbp)^ , index^[indnr] do begin
       l:=firstfree;
       firstfree:=adr;
       writeindf(dbp,indnr);
@@ -299,6 +300,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2002/09/30 12:19:23  cl
+  - BUGFIX <8Wv6bW53cDC@3247.org>: some errors introduced by perf. improvements
+
   Revision 1.23  2002/09/09 08:42:32  mk
   - misc performance improvements
 
