@@ -1081,7 +1081,7 @@
       maddstring(3,10,getres2(928,8),chsysbetr,30,50,'');   { 'Sysfile-Betreff ' }
         mhnr(658);
       alias:=(dbReadInt(d,'script') and 4<>0);
-      maddbool(3,12,getres2(928,9),alias);  { 'Absender User@Server.Domain' }
+      maddbool(3,12,getres2(928,9),alias);  { 'Absender User@Server.Serverdomain' }
         mhnr(655);
       freeres;
       readmask(brk);
@@ -1332,6 +1332,10 @@
 
 {
   $Log$
+  Revision 1.10.2.3  2000/10/05 20:29:49  fe
+  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
+  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
+
   Revision 1.10.2.2  2000/09/25 03:46:22  mk
   - Loginfo hinzugefuegt
 

@@ -520,7 +520,7 @@ var brk,modi : boolean;
       nt_Fido     : if left(box,2)<>'2:' then adr:=''
                     else if alias then adr:=user+' @ '+left(box,cpos('/',box))+point
                     else adr:=user+' @ '+box+'.'+point;
-      nt_UUCP     : if alias then adr:=user+'@'+box+domain
+      nt_UUCP     : if alias then adr:=user+'@'+box+ntServerDomain(box)
                     else adr:=user+'@'+point+domain;
       else          adr:='';
     end;
@@ -1577,6 +1577,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/10/05 20:29:49  fe
+  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
+  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
+
   Revision 1.10.2.1  2000/07/01 09:22:59  mk
   - Mailerstringanpassungen
 

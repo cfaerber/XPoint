@@ -1670,7 +1670,8 @@ fromstart:
       4 : hdp^.absender:=username+'@'+FidoAbsAdr;
       5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            hdp^.absender:=username+'@'+iifs(aliaspt,box,pointname)+domain;
+            hdp^.absender:=username+'@'+
+	      iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
             hdp^.real_box:=box;
           end;
       7 : begin
@@ -2196,6 +2197,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.10  2000/10/05 20:29:49  fe
+  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
+  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
+
   Revision 1.39.2.9  2000/09/30 14:17:26  my
   JG:- Fix: Aufnahme von Usern ins Adreﬂbuch, wenn diese schon
        in der Datenbank sind, auch bei CCs

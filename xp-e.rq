@@ -1908,9 +1908,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Reply to ~
 9    newsgroup manager~
 10   ... passsword    ~
-11   sysfile subject  ~
 12   Sender User@Point.domain
-13   Sender User@Server.domain
 + 926
 0    42
 1    Fido Options
@@ -1940,7 +1938,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    Password~
 7    Complete domain
 8    Sysfile subject~
-9    Sender = user@server.domain
+9    Sender = user@server.serverdomain
 + 929
 1    There is still a data packet for this box (%s.PP)
 2    - type of net cannot be changed. Please send or delete
