@@ -1228,7 +1228,7 @@ begin
 
   NewCP := GetCPfromCharset(NewCharset);
   IsUnicode := (NewCP = 65000) or (NewCP = 65001) or (NewCP = 1200);
-  if IsUnicode then NewCP := 1252;
+  if IsUnicode then NewCP := 1200;
   SetConsoleOutputCP(NewCP);
   TrueOutputCP := GetConsoleOutputCP;
   convertersOK := false;
@@ -1395,6 +1395,9 @@ end;
 
 {
   $Log$
+  Revision 1.73  2002/01/03 21:41:16  cl
+  - fix for Windows NT/2k/XP full screen mode
+
   Revision 1.72  2002/01/02 15:33:51  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset
