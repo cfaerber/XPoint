@@ -1398,10 +1398,13 @@ var brk      : boolean;
   var brk : boolean;
 
     procedure del_it;
+    var
+      Item: PNodeListItem;
     begin
       if a+p<anzahl then
       begin
-        Dispose(PNodeListItem(NodeList[a+p-1]));
+        Item := NodeList[a+p-1];
+        Dispose(Item);
         NodeList.Delete(a+p-1);
         dec(anzahl);
         modi:=true;
@@ -2013,6 +2016,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/08/01 16:29:56  mk
+  - FPC Kompatibliltaet erhoeht
+
   Revision 1.23  2000/08/01 08:40:40  mk
   - einige String-Parameter auf const geaendert
 
