@@ -539,10 +539,6 @@ begin                  { of Netcall }
         trfehler(102,esec);                 { 'MAGGI.EXE fehlt!' }
         exit;
         end;
-      if _fido then begin
-        if not ExecutableExists(ZFidoBin) then begin
-          trfehler(101,esec); exit; end;    { 'ZFIDO.EXE fehlt! }
-        end;
       if (logintyp=ltQWK) and not ExecutableExists(ZQWKBin) then begin
         trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
       New(NC);
@@ -1524,6 +1520,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/12/25 20:07:21  mk
+  - removed test for zfido.exe
+
   Revision 1.50  2000/12/25 16:26:26  mk
   - do not clear window in fido poll
 
