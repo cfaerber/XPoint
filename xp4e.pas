@@ -316,8 +316,9 @@ var x,y: Integer;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
-    AdrbuchDef: Byte;
+    OldAdr: Byte;
 begin
+  OldAdr := adr;
   if LeftStr(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
@@ -363,7 +364,6 @@ begin
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
-    adrbuchdef:=adr;
     mhnr(8069);
     end
 
@@ -378,9 +378,9 @@ begin
   readmask(brk);
   if not brk then
   begin
-    if (adrbuchdef<>0) and (adr=0) then
+    if (OldAdr<>0) and (adr=0) then // Adr was changed from <> 0 to 0
      if not readJN(GetRes(2738),false) then
-       adr:=adrbuchdef;
+       adr:= OldAdr; 
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
@@ -2433,6 +2433,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2001/09/05 23:17:30  mk
+  - EditUser: renamed AdrbuchDef to OldAdr; OldAdr is now always valid
+
   Revision 1.71  2001/09/05 23:13:12  mk
   - corrected position of netname in EditUser if columncount > 80
 
