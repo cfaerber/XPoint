@@ -8342,32 +8342,33 @@ Point that CrossPoint should dial.
 Enter the Node/Point number of the Node or Point,
 in the form "Zone:Net/Node.<Point>", for whom you
 wish to look up information. Alternatively, you can
-enter the name of the SysOp or Point. If you leave
-out the Zone and even the Net, CrossPoint assumes
-these from your main Fido Server.
+enter the name (or part of a name) of the SysOp or
+Point. If you leave out the Zone and even the Net,
+OpenXP/16 ascertains this information from your main
+Fido Server.
 
-The line "Flags" contains various information about
+The "Flags" line contains various information about
 the Node and its modem type.
 
 The most important are:
 
 
-<<Modem>>    V32  = CCITT V.32, 9600 bps
+<<Modem>>     V32 = CCITT V.32, 9600 bps
          V32B = CCITT V.32bis, 14400 bps
-         HST  = USR HST, 14400 bps
-         H16  = USR HST, 16800 bps
-         PEP  = Telebit PEP, bis 18000 bps
-         MNP  = Error correction MNP
-         V42  = Error correction CCITT V.42
-         ZYX  = ZyXEL 16800 bps
+          HST = USR HST, 14400 bps
+          H16 = USR HST, 16800 bps
+          PEP = Telebit PEP, bis 18000 bps
+          MNP = Error correction MNP
+          V42 = Error correction CCITT V.42
+          ZYX = ZyXEL 16800 bps
 
-<<Mail>>     CM   = 24 Hours
-         MN   = no packed (ARC) mails possible
+<<Mail>>       CM = accepts continuous mail
+           MN = does NOT accept compressed mail
 
-<<FileReq>>  XA   = all types of File Request
-         XX   = only Requests to WaZOO-Standard
+<<FileReq>>    XA = accepts all types of file request
+           XX = accepts WaZOO file requests only
 
-(CrossPoint supports WaZOO-FileRequests).
+( <<OpenXP/16 supports WaZOO file requests>> ).
 
 @
 751
@@ -8390,10 +8391,10 @@ The current Fido Nodelist flags are:
 <<Mail>>     CM   = Accepts continuous mail
          MN   = Does NOT accept compressed mail
 
-<<FileReq>>  XA   = All types of File Request
+<<FileReq>>  XA   = All types of file request
          XX   = WaZOO file requests ONLY
 
-(CrossPoint supports WaZOO File requests).
+( <<OpenXP/16 supports WaZOO File requests>> ).
 
 @
 760
@@ -9310,18 +9311,19 @@ Press ...
 
    <<S>>      to start a new nodelist search.
 
-<<<Enter> >>  to write a message to the selected user
-          or to f'request a file from the selected
-          BBS. Due to safety reasons this function is
-          disabled under certain circumstances.
+<<<Enter> >>  to write a message to the selected SysOp
+          or to request a file from the selected
+          system. Due to safety reasons, this 
+          function is disabled under certain 
+          circumstances.
 
-<<<Ctrl-S> >> to start a (mark) text search. (Sorry, this
-          key is inconsistent with the one in the
-          message reader, but <<S>> is already used.)
+<<<Ctrl-S> >> to start a (marked) text search. (Sorry, 
+          this key is inconsistent with the one in 
+          the message reader but <<S>> is already used.)
 
- <<<Tab> >>   to jump to the next marked search term.
+ <<<Tab> >>   to jump to the next marked search item.
 
-   <<E>>      to switch marking of search terms on/off.
+   <<E>>      to switch marking of search items on/off.
 
    <<W>>      to write the list to a text file (or to
           the clipboard).
@@ -9332,7 +9334,7 @@ Press ...
 
 @
 959
-<<Mail>>        Write a message to this User
+<<Mail>>        Write a message to this SysOp
 
 <<Request>>     Make a file request to this system
 
