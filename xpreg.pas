@@ -148,19 +148,17 @@ begin
   moff;
   attrtxt(col.colmboxhigh);
   wrt(x+15+addxInf,y+2,'\\//');
-  wrt(x+15+addxInf,y+3,'//\\');
+  wrt(x+15+addxInf,y+3,'//\\' );
   wrt(x+3+addxVer,y+5,ver);
   {$IFDEF Snapshot}
-    wrt(x+3+addxVer,y+6,'Snapshot: '+compiletime);
+    wrt(x+2+addxVer,y+6,'Snapshot: '+compiletime);
   {$ENDIF}
   attrtxt(col.colmbox);
-  wrt(x+9+addxInf,y+2,'Cross');
-  wrt(x+20+addxInf,y+3,'Point');
-  wrt(x+3+addxInf,y+7+addy,'(c) 1992-99  '+pm);
-  wrt(x+3+addxInf,y+8+addy,x_copyright+'  '+author_name);
-//wrt(x+3+addxInf,y+10+addy,'Fido : '+author_fido);
+  wrt(x+9+addxInf,y+2,'Open');
+  wrt(x+21+addxInf,y+3,'XP');
+  wrt(x+3+addxInf,y+7+addy,'(c) 1992-99   '+pm);
+  wrt(x+3+addxInf,y+8+addy,x_copyright+' '+author_name);
   wrt(x+3+addxInf,y+11+addy,'eMail: '+author_mail);
-//wrt(x+3+addxInf,y+12+addy,'WWW  : '+author_url);
   mon;
   ReadButton(x+12+addxInf,y+14+addy,1,'*   ^OK   ',1,true,z);
   closebox;
@@ -169,6 +167,9 @@ end;
 
 {
   $Log$
+  Revision 1.35.2.2  2003/10/18 17:02:38  mk
+  - changed About Dialog
+
   Revision 1.35.2.1  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 
