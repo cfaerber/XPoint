@@ -2038,7 +2038,7 @@ var ap : absatzp;
       brk  : boolean;
   begin
     ScanGlossary:=false;  
-    assign(t,'glossary.cfg');
+    assign(t,'GLOSSARY.CFG');
     reset(t);
     if IoResult<>0 then errsound  { Keine Glossary Datei? }
     else begin
@@ -2410,6 +2410,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.8  2000/10/08 11:10:55  mk
+  - GLOSSARY.TMP gross geschrieben
+
   Revision 1.19.2.7  2000/08/12 11:21:16  mk
   JG:- Quotereflow Fix
 
