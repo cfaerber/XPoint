@@ -1149,6 +1149,7 @@ begin      {-------- of DoSend ---------}
   if not pm and betreffbox and (left(empfaenger,1)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht m”glich!' }
+    disposeempflist(sendempflist);
     goto xexit1;
   end;
 
@@ -2248,6 +2249,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.29  2001/06/05 20:33:50  my
+  JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
+       ("Internal newsgroup - writing not allowed!"). Ancient bug
+       that could lead to "ghost CC recipients", but that did not
+       occur anymore - obviously due to some RTA code somewhere.
+
   Revision 1.39.2.28  2001/04/28 15:47:35  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
