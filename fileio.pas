@@ -81,6 +81,10 @@ var ShareDa : boolean;
 
 
 Function exist(n:string):boolean;
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
     ex : boolean;
 begin
@@ -92,10 +96,11 @@ begin
     end;
   exist:=ex;
 end;
+{$ENDIF}
 
 Function existf(var f):Boolean;
-var
-  fm : byte;
+var d  : integer;
+    fm : byte;
 begin
   fm:=filemode;
   filemode:=$40;
@@ -103,7 +108,7 @@ begin
   existf:=(ioresult=0);
   close(file(f));
   filemode:=fm;
-  if ioresult = 0 then ;
+  d:=ioresult;
 end;
 
 
@@ -138,6 +143,11 @@ end;
 
 
 Function IsPath(name:PathStr):boolean;         { Pfad vorhanden ? }
+{$IFDEF WIN32}
+begin
+  IsPath := true;
+end;
+{$ELSE}
 var sr : searchrec;
 begin
   name:=trim(name);
@@ -160,6 +170,7 @@ begin
       end;
     end;
 end;
+{$ENDIF}
 
 Procedure era(s:string);
 var f : file;
@@ -170,6 +181,10 @@ end;
 
 
 procedure erase_mask(s:string);                 { Datei(en) lîschen }
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
 begin
   findfirst(s,0,sr);
@@ -178,10 +193,15 @@ begin
     findnext(sr);
     end;
 end;
+{$ENDIF}
 
 { path: Pfad mit '\' am Ende! }
 
 procedure erase_all(path:pathstr);
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
     f  : file;
 begin
@@ -203,6 +223,7 @@ begin
     rmdir(path);
     end;
 end;
+{$ENDIF}
 
 Function ReadOnlyHidden(name:PathStr):boolean;
 var f    : file;
@@ -314,6 +335,10 @@ end;
 
 
 function _filesize(fn:pathstr):longint;
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
 begin
   findfirst(fn,0,sr);
@@ -322,6 +347,7 @@ begin
   else
     _filesize:=sr.size;
 end;
+{$ENDIF}
 
 procedure MakeFile(fn:pathstr);
 var t : text;
@@ -335,6 +361,10 @@ begin
 end;
 
 function filetime(fn:pathstr):longint;
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
 begin
   findfirst(fn,AnyFile,sr);
@@ -343,8 +373,13 @@ begin
   else
     filetime:=0;
 end;
+{$ENDIF}
 
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var f : file;
 begin
   assign(f,fn);
@@ -353,6 +388,7 @@ begin
   close(f);
   if ioresult<>0 then;
 end;
+{$ENDIF}
 
 procedure setfileattr(fn:pathstr; attr:word);   { Dateiattribute setzen }
 var f : file;
@@ -399,6 +435,10 @@ end;
 
 
 procedure move_mask(source,dest:pathstr; var res:integer);
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var sr : searchrec;
 begin
   res:=0;
@@ -411,10 +451,15 @@ begin
     findnext(sr);
     end;
 end;
+{$ENDIF}
 
 { Extension anhÑngen, falls noch nicht vorhanden }
 
 procedure addext(var fn:pathstr; ext:extstr);
+{$IFDEF WIN32}
+begin
+end;
+{$ELSE}
 var dir  : dirstr;
     name : namestr;
     _ext : extstr;
@@ -422,6 +467,7 @@ begin
   fsplit(fn,dir,name,_ext);
   if _ext='' then fn:=dir+name+'.'+ext;
 end;
+{$ENDIF}
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
@@ -508,7 +554,7 @@ end;
 
 
 procedure TestShare;
-{$IFDEF WIN32ˇ}
+{$IFDEF WIN32}
 begin
 end;
 {$ELSE}

@@ -19,11 +19,7 @@ unit database;
 
 interface
 
-uses xpglobal,
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-dos, typeform,datadef;
+uses xpglobal, dos, typeform,ems,datadef;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -794,9 +790,7 @@ begin
       freemem(recbuf,hd.recsize);
     dbReleaseFL(feldp);
     end;
-{$IFDEF BP }
   setemscache;
-{$ENDIF }
   if cacheanz > 0 then { MK 01/00 - Cachegrî·e mîglicherweise 0, dann nicht ausfÅhren!}
     for i:=0 to cacheanz-1 do
      if cache^[i].dbp=dbp then cache^[i].used:=false;
@@ -1558,17 +1552,14 @@ begin
     close(dblogfile);
 end;
 
-{$S-}
-procedure _closelog; {$IFNDEF Ver32 } far; {$ENDIF }
-
+{$F+,S-}
+procedure _closelog;
 begin
   exitproc:=oldexit;
   if ioresult<>0 then;
   dbCloseLog;
 end;
-{$IFDEF Debug }
-  {$S+}
-{$ENDIF }
+{$F-,S+}
 
 
 {=====================================================================}

@@ -10,9 +10,7 @@
 { CrossPoint: DBs packen, Kommentarbaum u.a. }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp4o2;
 

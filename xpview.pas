@@ -10,9 +10,7 @@
 { CrossPoint - Bin„rfile-Viewer }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpview;
 

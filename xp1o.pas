@@ -10,9 +10,7 @@
 { Overlay-Teil zu xp1 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp1o;
 
@@ -276,7 +274,8 @@ begin
 
    if t = keyaltm then begin                                   { ALT+M = Suche MessageID }
          if list_markanz=0 then global_suchstring:=''          {Nullstring ohne Markierung}
-           else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
+           else begin global_suchstring:=first_marked;
+                global_suchstring:=mailstring(global_suchstring); end;
          if Suche(getres(437),'MsgID@','') then ShowfromLister;   { gefundene Nachr. zeigen }
          ex(5)                                                    { Weiter im Lister }
          end ;
@@ -303,7 +302,8 @@ begin
   if t = keyaltu then begin                                     { Alt+U = User }
          if list_markanz=0 then
             global_suchstring:=dbreadstr(mbase,'Absender')
-            else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
+            else begin global_suchstring:=first_marked;
+                 global_suchstring:=mailstring(global_suchstring); end;
          if Suche(getres(416),'Absender@','') then Showfromlister;
          ex(5)
          end;

@@ -10,9 +10,7 @@
 { CrossPoint - BoxPar verwalten }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp9bp;
 

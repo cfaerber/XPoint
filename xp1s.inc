@@ -20,7 +20,7 @@ begin
 end;
 
 
-procedure Resiprog; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure Resiprog; far;
 begin
   if ExecTestres then
     interr(getres(109));  { Residentes Programm geladen! CrossPoint wird beendet.. }
@@ -46,6 +46,11 @@ var sm2t     : boolean;
     maussave : mausstat;
     sp       : scrptr;
     de       : integer;
+{$IFDEF OPro }
+    PathName       : Dos.ComStr;
+    CommandTail    : Dos.ComStr;
+    OldEndOfHeap   : Pointer;
+{$ENDIF }
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -123,6 +128,45 @@ begin
     ExecUseEms:=SwapToEms;
     ExecUseXms:=SwapToXms;
 
+{$IFDEF Opro} { MK 12/99-01/00 }
+    {allocate EMS/XMS/open swap file}
+    if not PrepareExecWithSwap(HeapPtr, ExecSwapfile) then begin
+       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
+       doserror:=0;
+    end else
+    begin
+      {Pathname is the full pathname for COMMAND.COM}
+      PathName := GetEnv('COMSPEC');
+
+      {if Command is empty, we're doing a shell}
+      {we're asking COMMAND.COM to execute the command}
+      CommandTail := '/C '+ Prog;
+
+      {Save the current pointer to the end of the heap}
+      OldEndOfHeap := HeapEnd;
+      HeapEnd := HeapPtr;
+
+      {save current vectors and put originals back}
+      SwapVectors;
+
+      {Call swapping EXEC function}
+      writeln(prog);
+      writeln(pathname);
+      writeln(commandtail);
+      ExecWithSwap(Pathname, CommandTail);
+
+      {restore our vectors}
+      SwapVectors;
+
+      {Put heap end back where it was}
+      HeapEnd := OldEndOfHeap;
+
+      {If we get to here, our function result is in DosError}
+
+      {give back EMS/delete swap file}
+      RemoveExecWithSwap;
+    end;
+{$ELSE }
     case Xec(prog,space,envspace,_xp_,errorlevel) of
       ExecSwaperr : begin
                       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
@@ -131,7 +175,7 @@ begin
       ExecSwapweg : interr(getres(111));  { SWAP-File nicht mehr vorhanden! }
       ExecSwapre  : interr(ioerror(ioresult,getres(112)));  { Fehler beim Lesen des SWAP-Files }
     end;
-
+{$ENDIF }
     de:=doserror;
 
     if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then begin
@@ -166,7 +210,7 @@ begin
 end;
 
 
-function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
+function listcolor(var s:string; line:longint):byte; far;
 var p,p0,ml : byte;
     qn,pdiff: integer;
 begin

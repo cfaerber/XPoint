@@ -1,7 +1,6 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -17,9 +16,7 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 
 
@@ -89,6 +86,7 @@ var f         : file;
     tabmode   : boolean;
 
     pa        : ^pageadr;
+    invers,
     blocksatz,
     dodecode,
     headhigh  : boolean;
@@ -161,7 +159,7 @@ end;
 function inithelp(name:pathstr; xh,yh:byte;
                   invers,blocksatz,headline:boolean):boolean;
 
-var ixadr : longint;
+var ixadr,i : longint;
     fm      : byte;
 
 begin
@@ -192,6 +190,7 @@ begin
     testio;
 
     x:=xh; y:=yh;
+    help.invers:=invers;
     help.blocksatz:=blocksatz;
     headhigh:=headline;
     ap:=0;
@@ -226,35 +225,22 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
-{ MK 06.01.2000 Von Inline in ASM 16 und 32 Bit konvertiert }
-procedure decode(buf:pointer; size:word); assembler;
-asm
-{$IFDEF Ver32 }
-        mov ecx, size
-        mov ebx, buf
-        mov al, 7
-@lp:    xor [ebx], al
-        add al, 125
-        inc ebx
-        loop @lp;
-{$ELSE }
-        mov cx, size
-        les bx, buf
-        mov al, 7
-@lp:    xor es:[bx], al
-        add al, 125
-        inc bx
-        loop @lp;
-{$ENDIF }
-(* inline($59/          {      pop  cx         }
+
+procedure decode(buf:pointer; size:word);
+{$IFNDEF ver32}
+
+inline($59/          {      pop  cx         }
        $5b/          {      pop  bx         }
        $07/          {      pop  es         }
        $b0/$07/      {      mov  al,7       }
        $26/$30/$07/  { lp:  xor  es:[bx],al }
        $04/$7d/      {      add  al,125     }
        $43/          {      inc  bx         }
-       $e2/$f8);     {      loop lp         } *)
+       $e2/$f8);     {      loop lp         }
+{$ELSE}
+begin
 end;
+{$endif}
 
 procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..30000] of byte;
@@ -768,4 +754,7 @@ begin
     end;
 end;
 
+
 end.
+
+

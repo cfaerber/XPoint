@@ -10,16 +10,14 @@
 { CrossPoint - StartUp }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp2;
 
 interface
 
 uses crt,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-     databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
+     databaso,maske,video,help,ems,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
      xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum;
 
@@ -1017,7 +1015,6 @@ end;
 procedure testlock;
 var i : integer;
 begin
-{$IFDEF BP } { !! Diese Routine mu· noch portiert werden }
   if ParNolock then exit;
   assign(lockfile, 'lockfile');
   filemode:=FMRW + FMDenyWrite;
@@ -1036,7 +1033,6 @@ begin
   lockopen:=true;
   { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
   FileMode := FMRW;
-{$ENDIF }
 end;
 
 

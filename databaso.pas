@@ -10,15 +10,13 @@
 { DATABASE.PAS: Overlay-Teil }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit databaso;
 
 interface
 
-uses xpglobal, dos,typeform,datadef;
+uses xpglobal, dos, ems, typeform,datadef;
 
 
 procedure dbCreate(filename:dbFileName; flp:dbFLP);

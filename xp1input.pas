@@ -10,9 +10,7 @@
 { CrossPoint - Eingaberoutinen }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp1input;
 

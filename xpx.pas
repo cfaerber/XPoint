@@ -15,11 +15,7 @@ unit xpx;
 
 interface
 
-uses
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-  crt, dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
+uses ems,crt, dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
 
 implementation
 
@@ -179,8 +175,8 @@ begin
 end;
 
 
-{$S-}
-procedure setpath; {$IFNDEF Ver32 } far; {$ENDIF }
+{$F+,S-}
+procedure setpath;
 var i : integer;
 begin
   i:=ioresult;
@@ -193,9 +189,7 @@ begin
     end;
   exitproc:=oldexit;
 end;
-{$IFDEF Debug }
-  {$S+}
-{$ENDIF }
+{$F-,S+}
 
 
 procedure TestCD;
@@ -254,7 +248,7 @@ begin
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF BP }      { Unter 32 Bit haben wir keine Overlays }
+{$IFNDEF Ver32}      { Unter 32 Bit haben wir keine Overlays }
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
     OvrInit('xp.ovr');

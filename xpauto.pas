@@ -10,9 +10,7 @@
 { Nachrichten-Autoversandt; Autoexec }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpauto;
 
@@ -134,6 +132,8 @@ var mmask     : array[1..12] of boolean;
 
   function amodi:boolean;
   var fn : pathstr;
+      f  : file;
+      t  : longint;
       sr : searchrec;
   begin
     fn:=ar.datei;
@@ -386,7 +386,7 @@ var sr    : searchrec;
 {
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(multipos('*',BoxPar^.akas),pe_ForcePfadbox,0)) then begin
-}
+}                          
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
@@ -522,7 +522,7 @@ var sr    : searchrec;
   end;
 
   function SendPuffer:boolean;
-  var
+  var p   : byte;
       box : string[BoxNameLen];
   begin
     SendPuffer:=false;

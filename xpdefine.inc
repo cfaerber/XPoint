@@ -6,6 +6,11 @@
 { Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
 { --------------------------------------------------------------- }
 
+{ Wenn gesetzt, werden an manchen stellen Routinen aus Object Professional
+  von TurbuPower-Software eingesetzt. }
+
+{.$DEFINE OPro }
+
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
@@ -74,6 +79,10 @@
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
+  {$ELSE }
+    {$IFNDEF OS2 }
+      {$DEFINE Win32 }
+    {$ENDIF }
   {$ENDIF }
   {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$MODE TP }

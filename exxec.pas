@@ -10,16 +10,13 @@
 { Exec-Swapper }
 
 {$I XPDEFINE.INC }
-
-{$IFDEF BP }
-  {$F+}
-{$ENDIF }
+{$F+}
 
 unit  exxec;
 
 interface
 
-uses xpglobal, dos, typeform;
+uses xpglobal, dos,ems,xms,typeform;
 
 const ExecOk      = 0;
       ExecSwaperr = 1;
@@ -32,8 +29,7 @@ const ExecOk      = 0;
       ExecSwapfile: pathstr = 'SWAPFILE.$$$';
       ExecDeutsch : boolean = true;
 
-var
-  ExecResident : procedure;
+var   ExecResident : procedure;
 
 
 { 0=ok, 1=Swap-Fehler }
@@ -43,19 +39,6 @@ function Xec(var prog:string; space,envspace:word; var prompt:string;
 
 
 implementation  { --------------------------------------------------- }
-
-{$IFNDEF BP }
-
-function Xec(var prog:string; space,envspace:word; var prompt:string;
-             var errorlevel:word):byte;
-begin
-  Xec := ExecOk;
-  Exec(prog, '');
-end;
-
-{$ELSE }
-
-uses ems,xms;
 
 procedure defresiprog;
 begin
@@ -74,9 +57,10 @@ var EmsFlag    : boolean;
 
 
 
+{$IFNDEF ver32}
 function exec2(var dpath,para:string; swapstart,swapmore:word; envir:pointer):word;
-external;
-{$L exxec.obj}
+external;  {$L exxec.obj}
+{$ENDIF}
 
 
 function Xec(var prog:string; space,envspace:word; var prompt:string;
@@ -115,6 +99,7 @@ var regs  : registers;
       o,b        : word;
       s          : string;
   begin
+{$IFNDEF ver32}
     eseg:=memw[prefixseg:$2c];
     esize:=memw[eseg-1:3]*16;
     if esize<=1024 then begin
@@ -137,6 +122,7 @@ var regs  : registers;
       end
     else
       newenv:=nil;
+{$ENDIF}
   end;
 
   function memfree:word;
@@ -155,6 +141,7 @@ var regs  : registers;
       dest         : longint;
       XmsNeeded    : word;
   begin
+{$IFNDEF ver32}
     EmsFlag:=ExecUseEms and (EmsAvail>=count div 1024 +1 + swapmore div 1024 +2);
     if EmsFlag then begin
       EMSAlloc(count div 1024+1 + swapmore div 1024 +2,EMShandle);
@@ -219,6 +206,7 @@ var regs  : registers;
           end;
         end;
       end;
+{$ENDIF}
   end;
 
   procedure SwapIn(swapp,count:word);
@@ -228,6 +216,7 @@ var regs  : registers;
     if emshandle<>0 then begin
       page:=0;
       repeat
+{$IFNDEF ver32}
         EmsPage(EMShandle,0,page);
         if count>=1024 then spar:=1024
         else spar:=count;
@@ -235,15 +224,20 @@ var regs  : registers;
         inc(swapp,spar);
         dec(count,spar);
         inc(page);
+{$ENDIF}
       until count=0;
+{$IFNDEF ver32}
       EmsFree(EMShandle);
+{$ENDIF}
       end
     else if xmshandle>0 then begin
       src:=0;
       repeat
         if count>=2048 then spar:=2048
         else spar:=count;
+{$IFNDEF ver32}
         XmsRead(XmsHandle,mem[swapp:0],src,spar*16);
+{$ENDIF}
         inc(swapp,spar);
         dec(count,spar);
         inc(src,32768);
@@ -251,6 +245,7 @@ var regs  : registers;
       XmsFree(XmsHandle);
       end
     else begin
+{$IFNDEF ver32}
       setfattr(swapfile,0);
       reset(swapfile,1);
       if ioresult<>0 then begin
@@ -258,15 +253,20 @@ var regs  : registers;
         Xec:=ExecSwapweg;
         exit;
         end;
+{$ENDIF}
       { swapp:=so(heapptr).s-swappars+2; count:=swappars; }
       repeat
+{$IFNDEF ver32}
         blockread(swapfile,mem[swapp:0],min(count,$ff0)*16,rr);
+{$ENDIF}
         inc(swapp,rr div 16);
         dec(count,rr div 16);
       until (count=0) or (rr=0) or (inoutres<>0);
       if (count<>0) or (inoutres<>0) then begin
         swapok:=false;
+{$IFNDEF ver32}
         Xec:=ExecSwapre;
+{$ENDIF}
         exit;
         end;
       close(swapfile);
@@ -299,6 +299,7 @@ var regs  : registers;
   end;
 
 begin
+{$IFNDEF ver32}
   Xec:=ExecOk;
 
   if so(freeptr).o>0 then          { Gr”áe der Free-Liste ermitteln }
@@ -358,6 +359,7 @@ begin
     orgenv:=memw[prefixseg:$2c];
     set_newenv;
     {$IFNDEF DPMI}
+    {$IFNDEF Ver32}
       with regs do begin
         ah:=$4a;          { set block }
         bx:=so(heapptr).s+3-prefixseg-swappars;
@@ -375,6 +377,7 @@ begin
       end
     else
       fileanz:=0;
+    {$ENDIF}
     {$ENDIF}
 
     swapvectors;
@@ -418,12 +421,9 @@ begin
     FastMove(p^,freeptr^,fs);
     freemem(p,fs);
     end;
+{$ENDIF}
 end;
 
-{$ENDIF }
-
 begin
-{$IFDEF BP }
   ExecResident:=DefResiprog;
-{$ENDIF }
 end.

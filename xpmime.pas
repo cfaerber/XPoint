@@ -10,9 +10,7 @@
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpmime;
 
@@ -103,11 +101,13 @@ begin
 end;
 
 
-procedure SMP_Keys(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
+{$F+}
+procedure SMP_Keys(var t:taste);
 begin
   if ustr(t)='X' then
     m_extrakt(mf^[ival(mid(get_selection,57))]);
 end;
+{$F-}
 
 
 { Datumsformate:         11 Jan 92 01:02 +nnnn

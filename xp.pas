@@ -19,12 +19,12 @@
 
 {$IFDEF BP }
   {$F+}
-  {$M 40000,150000,655360}
+  {$M 32768,150000,655360}
 {$ENDIF}
 
 program xp;
 
-uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+uses ems,xms,xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc16,resource,stack,clip,eddef,editor,capi,feiertag,
      xdelay,xpdiff,xpdatum,xpcrc32, xpglobal,

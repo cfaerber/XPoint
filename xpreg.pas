@@ -1,7 +1,6 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,15 +10,13 @@
 { Registrierung }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpreg;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,
+uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,ems,xms,
       video,datadef,database,maus2,maske,xdelay,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
@@ -1575,3 +1572,4 @@ begin
 end;
 
 end.
+

@@ -10,9 +10,7 @@
 { CrossPoint - Hotkey-Anzeige und Online-Hilfe }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp1help;
 

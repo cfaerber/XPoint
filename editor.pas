@@ -10,9 +10,7 @@
 { Editor v1.0   PM 05/93 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+,A+}
-{$ENDIF }
+{$O+,F+,A+}
 
 unit editor;
 
@@ -82,6 +80,10 @@ const maxgl     = 60;
       screenwidth : byte = 80;
       message   : string[40] = '';
       ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
+      findstr   : string[maxfindlen] = '';
+      replaceby : string[maxfindlen] = '';
+      findigcase: boolean = true;
+      replaceask: boolean = true;
 
 type  charr    = array[0..65500] of char;
       charrp   = ^charr;
@@ -312,7 +314,7 @@ asm
             cmp   byte ptr [di+bx-1],'-'
             jnz   @ufound
 
-  @fnext:
+  @fnext:      
             dec   bx
             jnz   @floop
   @ufound:     
@@ -730,6 +732,7 @@ end;
 {           2 = alles mit Umbruch laden                             }
 
 function LoadBlock(fn:pathstr; sbreaks:boolean; umbruch,rrand:byte):absatzp;
+const bufsize = 8192;
 var mfm   : byte;
     s     : string;
     t     : text;
@@ -870,7 +873,7 @@ begin
         blockread(t,ibuf^,blen,b_read);
         encode_UU(ibuf^,b_read,s);
       end;
-
+          
       p:=AllocAbsatz(length(s));
       if p<>nil then begin
         p^.umbruch:=true;
@@ -1007,13 +1010,13 @@ begin
         if (size<>3) or (cont[0]<>'-') or (cont[1]<>'-') or (cont[2]<>' ') then
           { Signaturtrenner, nicht anfassen }
         while (size>0) and (cont[size-1]=' ') do dec(size);
-        while (ofs<min(size,ofse)) do
+        while (ofs<min(size,ofse)) do 
         begin
           nxo:=Advance(ap,ofs,rand);
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
-          if nxo<min(size,ofse) then
+          if nxo<min(size,ofse) then 
           begin
-            blockwrite(f,spc[1],3); cr:=true;
+            blockwrite(f,spc[1],3); cr:=true; 
           end else
             cr:=false;
             ofs:=nxo;

@@ -11,9 +11,7 @@
 {              Nodelisten, Tarifgruppen                             }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp10;
 
@@ -232,7 +230,7 @@ end;
 
 function getflags(s:string):byte;
 var fl,i : byte;
-    f    : word;
+    f    : w/rd;
 begin
   f:=1; fl:=0;
   for i:=1 to 8 do begin

@@ -612,7 +612,6 @@ begin
   NewsMIME:=false;
   MIMEqp:=false;
   RFC1522:=false;
-  NoArchive:=true; {!MH:}
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -916,7 +915,6 @@ begin
   writeln(t,'NewsMIME=',jnf(NewsMIME));
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
-  writeln(t,'NoArchive=',jnf(NoArchive)); {!MH:}
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
@@ -963,7 +961,7 @@ begin
       writeln(t,'COM',i,'-TriggerLevel=',tlevel);
       writeln(t,'COM',i,'-Waehlsperre=',jnf(postsperre));
       if i<4 then writeln(t);
-      end; { 04.02.2000 MH: ISDN-Daten sichern: aktiviert! }
+      end; (* 04.02.2000 MH: ISDN-Daten sichern: aktiviert! *)
   writeln(t,'ISDN1-Int=$',hex(ISDN_Int,2));
   writeln(t,'ISDN1-EAZ=',ISDN_EAZ);
   writeln(t,'ISDN1-Controller=',ISDN_controller);
@@ -1414,7 +1412,6 @@ begin
           getx(su,  'NewsMIME',NewsMIME) or
           getx(su,  'MIMEqp',MIMEqp) or
           getx(su,  'RFC1522',RFC1522) or
-          getx(su,  'NoArchive',NoArchive) or {!MH:}
           getx(su,  'FidoDelEmpty',FidoDelEmpty) or
           getx(su,  'KeepVia',keepvia) or
           getx(su,  'ZCrossPostings',dummyb) or

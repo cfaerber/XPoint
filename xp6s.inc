@@ -8,7 +8,6 @@
 { --------------------------------------------------------------- }
 
 (* 05.02.2000 MH: Durch Erweiterung des Sendefenster Verschiebung notwendig *)
-(* 06.02.2000 MH: RFC-Priority *)
 
 { Unterroutinen fÅr XP6.PAS }
 
@@ -330,11 +329,6 @@ begin
   case msgprio of
     10 : flags:=flags+getres2(604,iif(length(flags)<20,6,7));  { 'Direktmail ' / 'Direkt ' }
     20 : flags:=flags+getres2(604,iif(length(flags)<20,8,9));  { 'Eilmail ' / 'Eilmail ' }
-  end;
-  case rfcprio of      { 06.02.2000 MH: RFC: X-Priority  }
-     1 : flags:=flags+getres2(604,14);          { 'Hoch '}
-     3 : flags:=flags+getres2(604,15);        { 'Normal '}
-     5 : flags:=flags+getres2(604,16);       { 'Niedrig '}
   end;
   if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
   if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
@@ -1106,22 +1100,4 @@ begin
         inc(sum,ord(msgid[i])*3);
       XpointCtl:=sum*1000+random(1000);
       end;
-end;
-
-procedure getprio; (* MH: RFC: X-Priority: 1, 3, 5            *)
-var x,y : byte;
-    brk : boolean; (* MH: 06.02.2000                          *)
-    prio: string[7];
-begin
-  dialog(ival(getres2(272,0)),3,getres2(272,1),x,y);  { 'Sende-PrioritÑt' }
-   prio:='Normal'; rfcprio:=3; { somit erst beim ersten mal aktiv }
-  maddstring(3,2,getres2(272,2),prio,7,7,'');  { 'PrioritÑt ' }
-  mappsel(true,'Hoch˘Normal˘Niedrig');
-  readmask(brk);
-  if not brk and mmodified then begin
-   if prio='Hoch' then rfcprio:=1 else
-    if prio='Normal' then rfcprio:=3 else
-     if prio='Niedrig' then rfcprio:=5;
-    end;
-  enddialog;
 end;

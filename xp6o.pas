@@ -8,9 +8,7 @@
 { --------------------------------------------------------------- }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp6o;
 
@@ -666,7 +664,7 @@ label ende,again;
              (left(empf,21)='## Originalempf„nger:');   { Kompatibilit„t zu XP 1.0-2.1 }
   end;
 
-  procedure GetOEmpflist;
+ :¼Çcedure GetOEmpflist;
   var s : string;
   begin
     repeat

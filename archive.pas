@@ -14,9 +14,7 @@
 { RAR, UC2 08/94               }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit archive;
 
@@ -365,16 +363,15 @@ label ende;
   function TestLZH:boolean;
   var lbuf  : array[0..255] of byte;
       rr    : word;
-{      chk,i : byte; }
+      chk,i : byte;
       meth  : string[5];
   begin
     seek(f,sadr);
     blockread(f,lbuf,256,rr);
-{    chk:=0;         MK 06.02.00 Programmteil abgesch., da im Original
-                                 das Ergebnis von chk garnicht benutzt wird
+    chk:=0;
     for i:=2 to lbuf[0]-1 do
       chk:=(chk+lbuf[i]) mod $100;
-    meth:='     '; }
+    meth:='     ';
     FastMove(lbuf[2],meth[1],5);
 
 {    TestLZH:=((chk=lbuf[1]) and (meth[1]='-') and (meth[5]='-')) or

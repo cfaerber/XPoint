@@ -11,9 +11,7 @@
 { v0.9  30/01/93              }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 { todo: - eingehende Rufnummern merken                        }
 {       - gelegentliche šberprfung, ob Verbindung noch steht }
@@ -107,7 +105,9 @@ procedure EventHandler; far; external;
 
 
 
-const
+const local_timeout  = 5;             { Warten auf Antwort von Vermittlung }
+      remote_timeout = 20;            { Warten auf Antwort von Remote }
+
       CapiMaxmess  : byte = 40;       { max. Messages im Empfangspuffer }
       CapiWindows  : byte = 2;        { Windowgr”áe                     }
       CapiFramelen : word = 2048;     { max. Blockgr”áe - 128..2048     }
@@ -431,7 +431,7 @@ begin
 end;
 
 
-procedure PutMessage(command:smallword);  { Paramterblock erzeugen ... }
+procedure PutMessage(command:word);  { Paramterblock erzeugen ... }
 begin
   outmsgbuf.Appl_ID:=ApplID;         { Appl-ID }
   outmsgbuf.command:=hi(command);    { Command }
@@ -447,7 +447,7 @@ begin
   inc(outmsgptr);
 end;
 
-procedure PutWord(w:smallword);
+procedure PutWord(w:word);
 begin
   outmsgbuf.mdata[outmsgptr]:=lo(w);
   outmsgbuf.mdata[outmsgptr+1]:=hi(w);
@@ -1257,7 +1257,7 @@ end;
 
 var oldexit : pointer;
 
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
+{$F+} procedure newexit; {$F-}
 begin
   exitproc:=oldexit;
   if state>=10 then begin

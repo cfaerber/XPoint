@@ -15,17 +15,14 @@
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:shortint;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
 var i,o,res : integer;
     s       : string[20];
     dummy   : string[40];
     p    : byte;
-    id   : String[30];
-{$ifdef ulines}
-    id0  : string[30];
-{$endif }
+    id,id0  : string[30];
     buf     : charrp;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
@@ -382,9 +379,7 @@ begin
           if p=0 then ok:=false
           else begin
             id:=left(line,p-1);
-            {$ifdef ulines}
             id0:=id;
-            {$endif }
             tc:=line[p+1];
             for i:=1 to length(id) do         { UpperCase }
               if (id[i]>='a') and (id[i]<='z') then
@@ -482,16 +477,13 @@ begin
               if id = 'X-XP-ARC' then archive:=true else
               if id = 'X-HOMEPAGE' then LRead(homepage,HomepageLen) else
 
-              { 06.09.1999 robo - X-No-Archive Konvertierung }
+{ 06.09.1999 robo - X-No-Archive Konvertierung }
+
               if id = 'X-NO-ARCHIVE' then begin
                 if LStr(line)='yes' then xnoarchive:=true;
               end else
-              { /robo }
-              
-              { 07.02.2000 robo - X-Priority Konvertierung }
-              if id = 'X-PRIORITY' then priority:=minmax(ival(line),1,5) else
-              { /robo }
-              
+ 
+{ /robo }
               if tc=' ' then
                 if id = 'X-XP_F'   then filterattr:=minmax(ival(line),0,65535);
 

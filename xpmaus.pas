@@ -10,9 +10,7 @@
 { CrossPoint - MausNet }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpmaus;
 
@@ -773,7 +771,7 @@ var   info   : ^ia;
     close(t);
   end;
 
-{  procedure InfosOhneCRC;
+  procedure InfosOhneCRC;
   var i,j : integer;
   begin
     for i:=1 to _infos do
@@ -784,7 +782,7 @@ var   info   : ^ia;
         if j>0 then
           info^[j].lastdate:=date;
         end;
-  end;       }
+  end;
 
   procedure writeinfofiles;
   var t : text;

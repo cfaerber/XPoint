@@ -143,7 +143,7 @@ entwicklung von CrossPoint durch das OpenXp-Projekt
 finden Sie auf:
 
         http://www.openxp.de
-        oder Request bei 2:248/2004
+	oder Request bei 2:248/2004
 
 Die offizielle Support-Mailbox im FidoNet ist Max
 Raabe's Klystron BBS:
@@ -1180,18 +1180,12 @@ soll.
         fÑnger nicht sehen kînnen, wer die Nachricht
         erhalten hat.
 
-<<<Esc> >>  die Nachricht wird verworfen. Sie ist aller-
+<Esc>   die Nachricht wird verworfen. Sie ist aller-
         dings noch nicht endgÅltig gelîscht, sondern
         liegt unter dem Namen LASTMSG im TemporÑrver-
         zeichnis. Wenn Sie /Config/Opt/Nachrichten
         /../ØUnversandt eingeschaltet haben, wird die
         Nachricht automatisch geparkt (s.o.).
-
-<</>>       Der EmpfÑnger der Nachricht wird geÑndert.
-        Wird der aktuelle Eintrag gelîscht, kann mit
-        <F2> zwischen Brett und Usern gewÑhlt werden.
-        ACHTUNG ! Diese Funktion sollte nur von 
-        erfahrenen Usern Benutzt werden.          
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, da· mehrere Nachrichen-Kopien Åber unterschied-
@@ -4711,7 +4705,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
 446
 <<[x]>> -> Die Ausgabe des aufgerufenen Programms wird
        an den Lister weitergeleitet. Dies funktio-
-       .iert nur, wenn die Ausgaben des Programms
+       niert nur, wenn die Ausgaben des Programms
        umleitbar sind; z.B bei allen DOS-Befehlen.
        Im Zweifelsfall hilft nur Ausprobieren.
 
@@ -10489,14 +10483,13 @@ gelîscht und aus der Datei FILELIST.CFG ausgetragen.
 <<Fido / Filelisten / Suchen
 
 Hier kînnen Sie alle vorhandenen Filelisten nach
-bestimmten Begriffen oder Dateinamen durchsu-
-chen und anschlie·end die Dateien  requesten.
+einem bestimmten Begriff oder Dateinamen durchsu-
+chen und, falls gewÅnscht, die gefundenen Dateien
+requesten.
 
-Wollen Sie nach meheren Begriffen suchen so trennen 
-sie die Begriffe mit: /&. Beispiel:
-            Haus/&Tuer
-findet Dateien die "Haus" UND "Tuer" in der 
-Filebeschreibung enthalten.
+Wenn Sie den zuletzt eingegebenen Suchbegriff Åber-
+nehmen, zeigt XP sofort das zwischengespeicherte
+Ergebnis der letzten Filelisten-Suche an.
 @
 13301
 <<Wartung / Sonstiges / Neuaufbau Verkettung

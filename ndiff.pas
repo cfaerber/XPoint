@@ -76,10 +76,12 @@ var i : integer;
   procedure TestEx(fn:pathstr);
   var t : text;
   begin
+    {$I-}
     assign(t,fn);
     reset(t);
     if ioresult<>0 then fehler(ustr(fn)+' ist nicht vorhanden.');
     close(t);
+    {$I+}
   end;
 
 begin
@@ -142,6 +144,7 @@ var t1,t2,t3   : text;
     dir        : dirstr;
     name       : namestr;
     ext        : extstr;
+    lastcmd    : char;
 
   procedure pfehler(txt:string);
   begin
@@ -153,10 +156,11 @@ begin
   writeln(nl_file,' + ',nd_file,' -> ',nl_new);
   fs:=_filesize(nl_file);
   fsplit(nl_file,dir,name,ext);
-  assign(t1,nl_file); settextbuf(t1,buf1); reset(t1);
-  assign(t2,nd_file); settextbuf(t2,buf2); reset(t2); readln(t2, s);
+  assign(t1,nl_file);  settextbuf(t1,buf1); reset(t1);
+  assign(t2,nd_file);  settextbuf(t2,buf2); reset(t2); readln(t2);
   assign(t3,dir+Temp); settextbuf(t3,buf3); rewrite(t3);
   adr:=0; pp:=-1;
+  {$I-}
   while not eof(t2) do begin
     ppn:=adr*100 div fs;
     if ppn<>pp then begin
@@ -167,21 +171,23 @@ begin
     n:=ival(mid(s,2));
     case s[1] of
       'D' : for i:=1 to n do begin
-              readln(t1,s);
-              inc(adr,length(s)+2);
+              readln(t1,s); inc(adr,length(s)+2);
+              lastcmd:='D';
             end;
       'A' : for i:=1 to n do begin
               readln(t2,s);
               writeln(t3,s);
+              lastcmd:='A';
             end;
       'C' : for i:=1 to n do begin
               readln(t1,s);
-              writeln(t3,s);
               inc(adr,length(s)+2);
+              writeln(t3,s);
+              lastcmd:='C';
             end;
     else    begin
-              writeln(#13,'fehlerhafte Zeile wird entfernt:   ', s);
-              exit;
+              writeln(#13,'fehlerhafte Zeile wird entfernt:');
+              writeln('  ',s);
             end;
     end;
     if ioresult<>0 then
@@ -189,20 +195,22 @@ begin
     end;
   if not eof(t1) then
     pfehler('fehlerhafte Nodediff oder Nodelist');
+  {$I+}
   close(t1);
   close(t2);
   close(t3);
   erase(t1);
 
   assign(t1,nl_new);
+  {$I-}
   reset(t1);                     { schon da ??? }
   if ioresult=0 then begin
     close(t1); erase(t1); end;   { dann weg damit }
+  {$I+}
   rename(t3,nl_new);
   writeln(#13'ok.  ');
 end;
 
-(*
 procedure WriteCfg;
 var t1,t2 : text;
     s     : string;
@@ -212,8 +220,10 @@ begin
   assign(t2,'cfg.$$$');
   rewrite(t2);
   assign(t1,'nodelist.cfg');            { Update NODELIST.CFG }
+  {$I-}
   reset(t1);
   if ioresult=0 then begin
+    {$I+}
     while not eof(t1) do begin
       readln(t1,s);
       p:=cpos('=',s);
@@ -231,20 +241,22 @@ begin
     close(t1);
     end;
   close(t2);
-  erase(t1);
+  {$I-} erase(t1); {$I+}
   if ioresult<>0 then;
   rename(t2,'nodelist.cfg');
 end;
-*)
+
 procedure KillIndex;
 var t : text;
 begin
   assign(t,'nodelist.idx');             { Delete NODELIST.IDX }
+  {$I-}
   reset(t);
   if ioresult=0 then begin
     close(t);
     erase(t);
     end;
+  {$I+}
 end;
 
 
@@ -336,3 +348,4 @@ begin
     end;
   KillIndex;
 end.
+

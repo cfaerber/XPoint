@@ -733,7 +733,8 @@ end;
 
 { Exit-Prozedur }
 
-procedure comexit; {$IFNDEF Ver32 } far; {$ENDIF }
+{$F+}
+procedure comexit;
 var i : byte;
 begin
   exitproc:=exitsave;
@@ -743,6 +744,7 @@ begin
       releasecom(i);
       end;
 end;
+{$F-}
 
 
 {--- Daten senden / empfangen ----------------------------------------}
@@ -752,7 +754,7 @@ end;
 procedure FossilFill(no:byte);
 var regs : registers;
 begin
-{$IFNDEF Ver32}
+{$IFNDEF WIN32}
   with regs do begin
     ah:=$18; cx:=bufsize[no] - 16;    { Platz fÅr PutByte lassen }
     es:=seg(buffer[no]^); di:=ofs(buffer[no]^);

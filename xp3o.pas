@@ -10,9 +10,7 @@
 { Overlay-Teil von XP3: Nachrichten-Verwaltung }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp3o;
 

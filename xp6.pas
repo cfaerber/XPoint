@@ -7,14 +7,12 @@
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
 
-{ MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen }
+(* MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen *)
 
 { Nachrichten versenden, weiterleiten, unversandt-bearbeiten }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp6;
 
@@ -53,7 +51,6 @@ const sendIntern = 1;     { force Intern              }
       FileAttach: boolean = false;
       EditAttach: boolean = true;
       msgprio   : byte    = 0;           { ZConnect-Prio }
-      rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: }
       ControlMsg: boolean = false;
       newbrettgr: longint = 0;           { Gruppe fÅr neues Brett }
       flCrash   : boolean = false;
@@ -718,42 +715,14 @@ begin
   if modi then TestXpostings(false);
 end;
 
-{JG:06.02.00}
-  Procedure changeempf;                         {Empfaenger der Mail aendern}
-  begin                 
-    pm:=cpos('@',empfaenger)>0;
-    if pm then adresse:=empfaenger  
-      else adresse:=left(uucpbrett(empfaenger,2),bboxwid);    
-    if not pm and (Netztyp=nt_fido) then y:=y-2;           {Zeile fuer Fidoempf beachten}
-    openmask(x+13,x+13+51+2,y+2,y+2,false);
-    maskrahmen(0,0,0,0,0);
-    maddstring(1,1,'',adresse,52,adrlen,'');
-    mappcustomsel(auto_empfsel,false);
-    readmask(brk);
-    closemask;
-    attrtxt(col.coldiahigh);
-    mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
-   
-    if cc_testempf(adresse) then begin 
-      if cpos('@',adresse)=0 then adresse:='A'+adresse;
-      empfaenger:=adresse;
-      end;  
-    pm:=cpos('@',empfaenger)>0;
-    end;
-{/JG}
 
 { ausgelagert, weil Prozedurrumpf zu gro·: }
 
 procedure DisplaySendbox;
-begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
+begin  (* 05.02.2000 MH: 70 -> 78 f. ZurÅck *)
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
-{JG:06.02.00}
-  attrtxt(col.coldiahigh);  
-  wrt(x+75,y+2,'/');                 { * = Empfaenger aendern }   
-  attrtxt(col.coldialog);
-{/JG}
   if echomail then begin
     wrt(x+3,y+4,getres2(611,11));    { 'An' }
     inc(y,2);
@@ -762,13 +731,13 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
   wrt(x+3,y+8,getres2(611,14));      { 'Grî·e'   }
   wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
-  showcode; { 05.02.2000 MH: 38 > 42 }
+  showcode; (* 05.02.2000 MH: 38 > 42 *)
   attrtxt(col.coldialog);
   wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
-  showcc; { 05.02.2000 MH: x+39 -> x+43 }
+  showcc; (* 05.02.2000 MH: x+39 -> x+43 *)
   attrtxt(col.coldiahigh);
   kopkey:=left(getres2(611,16),1);
-  wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }              { 'K' }
+  wrt(x+42,y+8,kopkey);  (* 05.02.2000 MH: 38 > 42 *) { 'K' }              { 'K' }
   if empfaenger[1]=vert_char then
     wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
   else
@@ -848,8 +817,8 @@ fromstart:
   fidoname:='';
 
   ch:=' ';
-  if pm then begin  { MH: IBM=0, ASCII=1, ISO=2 }
-   if ntUserIBMchar(netztyp) then umlaute:=0 { MH: NewUserIBM berÅcksichtigen }
+  if pm then begin  (* MH: IBM=0, ASCII=1, ISO=2 *)
+   if ntUserIBMchar(netztyp) then umlaute:=0 (* MH: NewUserIBM berÅcksichtigen *)
     else umlaute:=1;
     fidoto:='';
     dbSeek(ubase,uiName,ustr(empfaenger));
@@ -1135,7 +1104,7 @@ fromstart:
       if spezial then begin
         spezial:=false;
         attrtxt(col.coldialog);
-        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. ZurÅck }
+        mwrt(x+1,y+11,sp(76)); (* 05.02.2000 MH: 67 -> 76 f. ZurÅck *)
         end;
     ReadAgain:
       n:=1;
@@ -1154,20 +1123,19 @@ fromstart:
                         abs(n),true,t);
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
         case netztyp of
-          nt_Fido : if n=7 then n:=11        { PGP         }
-                    else if n=8 then n:=0;   { MH: ZurÅck  }
-          nt_Maus : if n=8 then n:=0         { ZurÅck      }
+          nt_Fido : if n=7 then n:=11        (* PGP         *)
+                    else if n=8 then n:=0;   (* MH: ZurÅck  *)
+          nt_Maus : if n=8 then n:=0         (* ZurÅck      *)
                     else if n>5 then inc(n);
-          nt_ZConnect :  if n=6 then n:=9    { Prio        }
-                    else if n=7 then n:=10   { Zusatz      }
-                    else if n=8 then n:=11   { PGP         }
-                    else if n=9 then n:=0;   { MH: ZurÅck  }
-          nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio}
-                      else if n=7 then n:=10 { Zusatz      }
-                      else if n=8 then n:=11 { MH: PGP-Sig }
-                      else if n=9 then n:=0; { ZurÅck      }
-          else      if n=6 then n:=0;        { ZurÅck      }
-        end; { 05.02.2000 MH: ZurÅck-Button in allen Netztypen }
+          nt_ZConnect :  if n=6 then n:=9    (* Prio        *)
+                    else if n=7 then n:=10   (* Zusatz      *)
+                    else if n=8 then n:=11   (* PGP         *)
+                    else if n=9 then n:=0;   (* MH: ZurÅck  *)
+          nt_UUCP : if n=6 then n:=10        (* Zusatz      *)
+                      else if n=7 then n:=11 (* MH: PGP-Sig *)
+                      else if n=8 then n:=0; (* ZurÅck      *)
+          else      if n=6 then n:=0;        (* ZurÅck      *)
+        end; (* 05.02.2000 MH: ZurÅck-Button in allen Netztypen *)
         if n=0 then n:=-1;
         if n>0 then inc(n,10)
         else begin
@@ -1186,7 +1154,7 @@ fromstart:
         if n=4 then begin
           spezial:=true;
           attrtxt(col.coldialog);
-          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. ZurÅck }
+          mwrt(x+1,y+11,sp(76)); (* 05.02.2000 MH: 68 -> 76 f. ZurÅck *)
           goto ReadAgain;
           end;
         if n<0 then begin
@@ -1324,11 +1292,6 @@ fromstart:
                 rfehler(615);
        20   : EditSdata;
        21   : SendPgpOptions;
-       22   : begin                    { 06.02.2000 MH: RFC-Priority }
-               if netztyp<>nt_uucp then rfehler(622);
-                getprio;
-               showflags;
-              end
 
       else    if n<0 then begin
                 n:=abs(n);
@@ -1345,18 +1308,6 @@ fromstart:
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
                   end;
-
-                {JG:06.02.00}                         { Empfaenger nachtraeglich aendern }
-                if t='/' then begin
-                   Changeempf;
-                   betreffbox:=false; edit:=false; sendbox:=true;
-                   SendDefault:=senden; 
-                   pophp;
-                   closebox;
-                   goto fromstart;
-                   end;
-                {/JG}
-
                 end;
       end;
     until senden>=0;
@@ -1604,8 +1555,6 @@ fromstart:
       end
     else if (netztyp=nt_UUCP) and not adrpmonly then
       hdp^.homepage:=wwwHomepage^;
-    hdp^.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: }
-    hdp^.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }
     hdp^.datei:=sendfilename;
     hdp^.ddatum:=sendfiledate;
     if FidoTo<>'' then
@@ -1937,7 +1886,6 @@ xexit2:
   NoCrash:=false;
   FileAttach:=false; EditAttach:=true;
   msgprio:=0;
-  rfcprio:=0; { MH 07.02.2000 }
   ControlMsg:=false;
   DisposeReflist(_ref6list);
   NewbrettGr:=0;

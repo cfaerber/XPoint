@@ -10,9 +10,7 @@
 { Interne Screenfonts }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpfonts;
 

@@ -555,7 +555,6 @@ K (c) '93-98 Peter Mandrella
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
 15   BinÑrnachrichten als "Attachments"
-16   News nicht auf DejaNews archivieren
 + 254
 1    Netcall-Optionen
 2    Login-Bild zeigen
@@ -759,11 +758,6 @@ K (c) '93-98 Peter Mandrella
 9    alle Nachrichten signieren
 10   PGP auch fÅr RFC/UUCP verwenden
 11   PGP auch fÅr Fido verwenden
-+ 272
-# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5 / X-MSMail-Prio.: High, Norm., Low
-0    25
-1    Sende-PrioritÑt
-2    PrioritÑt ~
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -1284,9 +1278,6 @@ K (c) '93-98 Peter Mandrella
 11   PGP-Sig~
 12   PGP-Req~
 13   BK~
-14   Hoch~
-15   Normal~
-16   Niedrig~
 -
 605  DES-Codierung...     %
 + 606
@@ -1345,7 +1336,7 @@ K (c) '93-98 Peter Mandrella
 # ZConnect
 22   ^Parken,^Datum, ^EB ,o^hneSig,l^îsch.,P^rio,Z^usatz,P^GP,^ZurÅck
 # Usenet
-23   ^Parken,^Datum, ^EB ,o^hneSig,l^îsch.,P^rio,Z^usatz,P^GP,^ZurÅck
+23   ^Parken,^Datum, ^EB ,o^hneSig,l^îschen,Z^usatz,P^GP,^ZurÅck
 # sonst.
 24   ^Parken,^Datum, ^EB ,o^hneSig,l^îschen,^ZurÅck
 25   JNI˘BOCT
@@ -1384,7 +1375,6 @@ K (c) '93-98 Peter Mandrella
 619  war
 620  Teste auf Crosspostings ...
 621  Origin-Datei fehlt: %s
-622  In diesem Netz nicht mîglich
 
 # XP6.INC
 640  Puffer Åberarbeiten...

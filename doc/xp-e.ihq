@@ -1005,13 +1005,6 @@ decided if and how a message will actually be sent
         name <<LASTMSG>> (only as long as no other
         message has been written!).
 
-<</>>       Changes the recipient of the message.
-        Delete the current entry to choose (with <F2>)
-        between users and newsgroups.
-        ATTENTION! only experienced users should 
-        use this function.       
-
-
 If the <<server>> is shown in <<brackets>>, it means that
 several copies of the message will be sent over
 <<different servers>>.

@@ -10,9 +10,7 @@
 { CrossPoint - Verarbeitung von Pointdaten }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$F+,O+}
 
 unit  xp3;
 
@@ -57,7 +55,7 @@ procedure DisposeEmpflist(var list:empfnodep);
 
 procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
                          var realname:string);
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:shortint;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
@@ -233,7 +231,7 @@ var ok     : boolean;
     ablg   : byte;
     flags  : byte;
     errstr : string[30];
-    empfnr : smallword; { MK 06.02.00 }
+    empfnr : shortint;
     nopuffer: boolean;
 begin
   fillchar(hd,sizeof(hd),0);

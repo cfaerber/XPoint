@@ -1,7 +1,6 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -16,13 +15,13 @@
 (*                                                         *)
 (***********************************************************)
 
-UNIT EMS;
-
 {$I XPDEFINE.INC}
 
-{$IFNDEF BP }
-  !! Diese Routine kann nur unter Borland Pascal compiliert werdenÿ
-{$ENDIF }
+UNIT EMS;
+
+{$IFNDEF VER32 }
+  {$O-}
+{$ENDIF}
 
 
 {  ==================  Interface-Teil  ===================  }
@@ -61,6 +60,41 @@ function EmsTest:boolean;
 begin
   emstest:=emsok;
 end;
+
+{$IFDEF VER32 }
+
+function  EmsTotal:word;
+begin
+end;
+
+function  EmsAvail:word;
+begin
+end;
+
+function  EmsHandlePages(handle:word):word;
+begin
+end;
+
+function  EmsVersion:byte;
+begin
+end;
+
+procedure EmsAlloc(pages:word; var handle:word);
+begin end;
+
+procedure EmsPage(handle:word; phy:byte; log:word);
+begin end;
+
+procedure EmsFree(handle:word);
+begin end;
+
+procedure EmsSaveMap(handle:word);
+begin end;
+
+procedure EmsRestoreMap(handle:word);
+begin end;
+
+{$ELSE }
 
 procedure emsint(var regs:registers);
 begin
@@ -190,6 +224,10 @@ begin
   emsint(regs);
 end;
 
+{$ENDIF }
+
 begin
+{$IFNDEF Ver32 }
   emsinit;
+{$ENDIF }
 end.

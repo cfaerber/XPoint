@@ -249,6 +249,7 @@ begin
     end;
 {$ENDIF }
   assign(t,paramstr(1));
+  {$I-}
   reset(t);
   if ioresult<>0 then error('CommandFile missing: '+ustr(paramstr(1)));
   while not eof(t) do begin

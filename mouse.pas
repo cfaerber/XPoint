@@ -630,7 +630,7 @@ begin
 end;
 
 
-procedure dummyproc(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure dummyproc(intsource,tasten,x,y,mx,my:word); far;
 begin
 end;
 
@@ -736,7 +736,7 @@ asm
 end;
 
 {$S-}
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure newexit; far;
 begin
   exitproc:=oldexit;
   if intset then
