@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { CrossPoint - Deklarationen }
@@ -861,6 +862,13 @@ const
                                           { Archivieren ohne RÅckfrage anlegen   }
        SaveKom         : boolean = false; { XP3EX.extract_msg Kommentar (KOM:) extrahieren }
 
+       AltGr_N_pressed : boolean = false; { Hotkey <AltGr-N> gedrÅckt? (Nodeliste durchsuchen) }
+
+       NodelistBrowserButtonsDisabled : boolean = false; { beim Erstellen von Nachrichten Buttons }
+                                                         { im Nodelist-Browser abschalten         }
+       IsNodelistBrowserMsg : boolean = false; { Nachricht aus Nodelist-Browser heraus erzeugt }
+       IsNodelistBrowserReq : boolean = false; { F'Request aus Nodelist-Browser heraus erzeugt }
+                                               { => Fehlermeldung bei <Alt-N> und <AltGr-N>    }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1241,6 +1249,12 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.62  2003/03/17 22:55:17  my
+  MY:- Variablen fÅr Nodelist-Browser deklariert (um den Browser bzw.
+       bestimmte Funktionen deaktivieren zu kînnen).
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.54.2.61  2003/01/19 09:08:24  mw
   MW: - Sprachmodulversion ist jetzt 14 (wegen neuer Headergrî·e)
         (keine Auswirkungen fÅr Benutzer)
