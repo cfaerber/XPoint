@@ -11,6 +11,7 @@
 { Exec-Swapper }
 
 {$I XPDEFINE.INC }
+{.$define debugtofile}
 
 {$IFDEF BP }
   {$F+}
@@ -74,7 +75,7 @@ begin
   else begin
     para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
-    end;
+  end;
   prog:=ustr(prog);
 
   if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
@@ -84,12 +85,12 @@ begin
     else dpath:=UStr(fsearch(prog,getenv('PATH')));
     if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
       dpath:='';
-    end;
+  end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
   if dpath='' then begin
     para:=environment+' /c '+prog+para;
     dpath:=getenv('comspec');
-    end;
+  end;
   SwapVectors;
   Exec(dpath, para);
   SwapVectors;
@@ -352,6 +353,8 @@ var regs  : registers;
     {$ENDIF }
   end;
 
+  {$ifdef debugtofile}{$i dbug.inc}{$endif}
+
 begin
   Xec:=ExecOk;
   if so(freeptr).o>0 then          { Gr”áe der Free-Liste ermitteln }
@@ -366,9 +369,9 @@ begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
-    para:=' '+trim(copy(prog,pp+1,127));
+    para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
-    end;
+  end;
   prog:=ustr(prog);
 
   if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
@@ -378,12 +381,12 @@ begin
     else dpath:=UStr(fsearch(prog,getenv('PATH')));
     if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
       dpath:='';
-    end;
+  end;
   if (para<>'') and (para[1]<>' ') then para:=' '+para;
   if dpath='' then begin
     para:=environment+' /c '+prog+para;
     dpath:=getenv('comspec');
-    end;
+  end;
 
   {$IFNDEF DPMI}
     paras:=memw[prefixseg:2]-prefixseg+1;
@@ -400,7 +403,7 @@ begin
       swapmore:={0;}  max(0,space-heapfree-swappars);
       {writeln(swapmore);}
       SwapOut(swapstart,swappars);
-      end;
+    end;
   {$ELSE}
     swapok:=true;
     swappars:=0;
@@ -416,7 +419,7 @@ begin
         bx:=so(heapptr).s+3-prefixseg-swappars;
         es:=prefixseg;
         msdos(regs);                   { Speicher freigeben }
-        end;
+      end;
       free:=memfree;
 
     if memw[prefixseg:$36]<>prefixseg then begin   { Filehandletabelle }
@@ -425,11 +428,12 @@ begin
       memw[prefixseg:$32]:=20;
       memw[prefixseg:$34]:=$18;
       memw[prefixseg:$36]:=prefixseg;
-      end
-    else
+    end else
       fileanz:=0;
     {$ENDIF}
 
+    {$ifdef debugtofile}dBugLog(dpath+' '+para);{$endif}
+  
     swapvectors;
     if swapmore=0 then
       exec(dpath,para)
@@ -437,13 +441,13 @@ begin
       doserror:=0;
       inoutres:=Exec2(dpath,para,swapstart,swapmore,newenv);
       if ioresult<>0 then Xec:=ExecSwaperr;
-      end;
+    end;
     swapvectors;
     {$IFNDEF DPMI}
     if fileanz>0 then begin
       memw[prefixseg:$32]:=fileanz;
       meml[prefixseg:$34]:=fileptr;
-      end;
+    end;
     {$ENDIF}
     geterrorlevel;
     memw[prefixseg:$2c]:=orgenv;
@@ -459,7 +463,7 @@ begin
           ah:=$4a;
           es:=prefixseg;
           msdos(regs);
-          end;
+        end;
       swapok:=true;
       if swappars>0 then SwapIn(swapstart,swappars);
       if not swapok then exit;
@@ -470,7 +474,7 @@ begin
   if fs>0 then begin
     FastMove(p^,freeptr^,fs);
     freemem(p,fs);
-    end;
+  end;
 end;
 
 {$ENDIF }
@@ -482,6 +486,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/04 15:24:47  oh
+  -Parameter-Stringbegrenzung aufgehoben
+
   Revision 1.12  2000/04/26 18:31:21  mk
   - Para auf 255 vergroessert
 
