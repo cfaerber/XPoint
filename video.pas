@@ -53,7 +53,7 @@ procedure SetVideoMode(mode:byte);
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
 {$ENDIF }
-procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
+procedure SetBackIntensity;                { heller Hintergrund setzen }
 
 {$IFDEF BP }
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
@@ -78,6 +78,9 @@ uses
 {$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
+{$ENDIF }
+{$IFDEF OS2 }
+  os2base,
 {$ENDIF }
    fileio;
 {$ENDIF }
@@ -180,15 +183,31 @@ end;
 {$ENDIF}
 
 { hellen Hintergr. akt. }
-procedure SetBackIntensity(hell:boolean); assembler;
-asm
 {$IFDEF BP }
+procedure SetBackIntensity; assembler;
+asm
          mov    ax,1003h
-         mov    bl,hell
-         xor    bl,1
+         xor    bl,bl
          int    $10
-{$ENDIF }
 end;
+{$ELSE }
+procedure SetBackIntensity;
+{$IFDEF OS2 }
+var
+  State: VioIntensity;
+{$ENDIF }
+begin
+  {$IFDEF OS2 }
+    with State do
+    begin
+      cb := 6;
+      rType := 2;
+      fs := 1;
+    end;
+    VioSetState(State, 0);
+  {$ENDIF }
+end;
+{$ENDIF }
 
 {$IFDEF BP }
 procedure LoadFont(height:byte; var data);
@@ -554,6 +573,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/13 08:42:41  mk
+  - Kleinere Portierungen
+
   Revision 1.18  2000/05/06 15:57:03  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

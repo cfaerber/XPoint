@@ -56,7 +56,7 @@ type mprec     = record
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
 {$IFDEF NCRT }
-     scrptr    = word;	{ Handle }
+     scrptr    = word;  { Handle }
 {$ELSE }
      scrptr    = record
                    scsize  : word;
@@ -1352,9 +1352,9 @@ begin
   lines(screenlines,1);
 {$ENDIF }
   clrscr;
-{$IFDEF BP }
   if (videotype>1) and not ParMono then
-    setbackintensity(true);
+    setbackintensity;
+{$IFDEF BP }
   SetXPborder;
 {$ENDIF }
   with col do begin
@@ -1402,8 +1402,8 @@ begin
         setmauswindow(0,639,0,screenlines*8-1);
         end;
     end;
+  if (videotype>1) and not ParMono then setbackintensity;
 {$IFDEF BP }
-  if (videotype>1) and not ParMono then setbackintensity(true);
   SetXPborder;
 {$ENDIF }
 end;
@@ -2172,12 +2172,14 @@ begin
     erase(lockfile);
     if ioresult<>0 then ;
   end;
+  if videotype>1 then setbackintensity;
 {$IFDEF BP }
-  if videotype>1 then setbackintensity(false);
   setcbreak(orgcbreak);
 {$ENDIF}
 end;
-{$S+}
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 procedure showstack;
 {$IFDEF BP }
@@ -2401,6 +2403,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/05/13 08:42:41  mk
+  - Kleinere Portierungen
+
   Revision 1.42  2000/05/10 10:31:01  hd
   - Linux: sichern/holen angepasst
 
