@@ -269,10 +269,10 @@ label ende;
           quotes:=not quotes and (sst[i]='"');         { -"- Modus umschalten }
           if (not quotes) then inc(i);
           inc(n);
-          end;
+        end;
         if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
         suchanz:=n;
-        end;
+      end;
 
       if suchanz=1 then suchand:=true;
       m:=0;
@@ -307,6 +307,7 @@ label ende;
   var size : longint;
       ofs  : longint;
       wsize: word;
+      TempKey: ShortString;
   begin
     dbReadN(mbase,mb_msgsize,size);
     if size=0 then begin   { leerer Datensatz - vermutlich durch RuntimeError }
@@ -320,7 +321,8 @@ label ende;
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
         if umlaut then upstring(key);          { Umlaut-Suche automatisch Case_insensitiv }
-        Intext:=TxtSeek(p,wsize,key,igcase,umlaut);
+        TempKey := Key;
+        Intext:=TxtSeek(p,wsize,Tempkey,igcase,umlaut);
         end
       else
         Intext:=false;
@@ -2421,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/08/08 00:03:57  mk
+  - TxtSeek auf Shortstring umgetsellt
+
   Revision 1.61  2000/08/05 10:06:58  mk
   - Ansistring Verbesserungen
 
