@@ -225,8 +225,7 @@ function CPos(c: char; const s: string): byte; {&uses edi} assembler;
 asm
          cld
          mov    edi,s
-         xor    ecx, ecx
-         mov    cl,[edi]
+         movzx  ecx,byte ptr [edi]
          jecxz  @notf            { s='' -> nicht gefunden }
          inc    ecx
          mov    edx,ecx          { lÑnge merken }
@@ -864,14 +863,14 @@ end;
 procedure LoString (var s: string); {&uses ebx,edi} assembler;
   asm
     mov ebx,s
-    xor ecx,ecx
-    mov cl,[ebx]
+    movzx ecx,byte ptr [ebx]
     jecxz @lostr_ende
     mov edi,ecx
   @lostr_next:
-    cmp byte ptr [ebx+edi],'A'
+    mov al,byte ptr [ebx+edi]
+    cmp al,'A'
     jnae @lostr_weiter
-    cmp byte ptr [ebx+edi],'Z'
+    cmp al,'Z'
     jnbe @lostr_auml
     add byte ptr [ebx+edi],32
     jmp @lostr_weiter
@@ -879,43 +878,50 @@ procedure LoString (var s: string); {&uses ebx,edi} assembler;
 
 {$ifndef windows}
 
-    cmp byte ptr [ebx+edi],'é'
+    cmp al,'é'
     jne @lostr_ouml
     mov byte ptr [ebx+edi],'Ñ'
+    jmp @lostr_weiter
   @lostr_ouml:
-    cmp byte ptr [ebx+edi],'ô'
+    cmp al,'ô'
     jne @lostr_uuml
     mov byte ptr [ebx+edi],'î'
+    jmp @lostr_weiter
   @lostr_uuml:
-    cmp byte ptr [ebx+edi],'ö'
+    cmp al,'ö'
     jne @lostr_eacute
     mov byte ptr [ebx+edi],'Å'
+    jmp @lostr_weiter
   @lostr_eacute:
-    cmp byte ptr [ebx+edi],'ê'
+    cmp al,'ê'
     jne @lostr_aring
     mov byte ptr [ebx+edi],'Ç'
+    jmp @lostr_weiter
   @lostr_aring:
-    cmp byte ptr [ebx+edi],'è'
+    cmp al,'è'
     jne @lostr_aelig
     mov byte ptr [ebx+edi],'Ü'
+    jmp @lostr_weiter
   @lostr_aelig:
-    cmp byte ptr [ebx+edi],'í'
+    cmp al,'í'
     jne @lostr_ntilde
     mov byte ptr [ebx+edi],'ë'
+    jmp @lostr_weiter
   @lostr_ntilde:
-    cmp byte ptr [ebx+edi],'•'
+    cmp al,'•'
     jne @lostr_ccedil
     mov byte ptr [ebx+edi],'§'
+    jmp @lostr_weiter
   @lostr_ccedil:
-    cmp byte ptr [ebx+edi],'Ä'
+    cmp al,'Ä'
     jne @lostr_weiter
     mov byte ptr [ebx+edi],'á'
 
 {$else}
 
-    cmp byte ptr [ebx+edi],192
+    cmp al,192
     jnae @lostr_weiter
-    cmp byte ptr [ebx+edi],221
+    cmp al,221
     jnbe @lostr_weiter
     add byte ptr [ebx+edi],32
 
@@ -923,11 +929,10 @@ procedure LoString (var s: string); {&uses ebx,edi} assembler;
 
   @lostr_weiter:
     dec edi
-    or edi,edi
     jnz @lostr_next
   @lostr_ende:
 {$ifdef FPC }
-  end ['EBX', 'ECX', 'EDI'];
+  end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$else}
   end;
 {$endif}
@@ -935,14 +940,14 @@ procedure LoString (var s: string); {&uses ebx,edi} assembler;
 procedure UpString (var s: string); {&uses ebx,edi} assembler;
   asm
     mov ebx,s
-    xor ecx,ecx
-    mov cl,[ebx]
+    movzx ecx,byte ptr [ebx]
     jecxz @upstr_ende
     mov edi,ecx
   @upstr_next:
-    cmp byte ptr [ebx+edi],'a'
+    mov al,byte ptr [ebx+edi]
+    cmp al,'a'
     jnae @upstr_weiter
-    cmp byte ptr [ebx+edi],'z'
+    cmp al,'z'
     jnbe @upstr_auml
     sub byte ptr [ebx+edi],32
     jmp @upstr_weiter
@@ -950,43 +955,50 @@ procedure UpString (var s: string); {&uses ebx,edi} assembler;
 
 {$ifndef windows}
 
-    cmp byte ptr [ebx+edi],'Ñ'
+    cmp al,'Ñ'
     jne @upstr_ouml
     mov byte ptr [ebx+edi],'é'
+    jmp @upstr_weiter
   @upstr_ouml:
-    cmp byte ptr [ebx+edi],'î'
+    cmp al,'î'
     jne @upstr_uuml
     mov byte ptr [ebx+edi],'ô'
+    jmp @upstr_weiter
   @upstr_uuml:
-    cmp byte ptr [ebx+edi],'Å'
+    cmp al,'Å'
     jne @upstr_eacute
     mov byte ptr [ebx+edi],'ö'
+    jmp @upstr_weiter
   @upstr_eacute:
-    cmp byte ptr [ebx+edi],'Ç'
+    cmp al,'Ç'
     jne @upstr_aring
     mov byte ptr [ebx+edi],'ê'
+    jmp @upstr_weiter
   @upstr_aring:
-    cmp byte ptr [ebx+edi],'Ü'
+    cmp al,'Ü'
     jne @upstr_aelig
     mov byte ptr [ebx+edi],'è'
+    jmp @upstr_weiter
   @upstr_aelig:
-    cmp byte ptr [ebx+edi],'ë'
+    cmp al,'ë'
     jne @upstr_ntilde
     mov byte ptr [ebx+edi],'í'
+    jmp @upstr_weiter
   @upstr_ntilde:
-    cmp byte ptr [ebx+edi],'§'
+    cmp al,'§'
     jne @upstr_ccedil
     mov byte ptr [ebx+edi],'•'
+    jmp @upstr_weiter
   @upstr_ccedil:
-    cmp byte ptr [ebx+edi],'á'
+    cmp al,'á'
     jne @upstr_weiter
     mov byte ptr [ebx+edi],'Ä'
 
 {$else}
 
-    cmp byte ptr [ebx+edi],224
+    cmp al,224
     jnae @upstr_weiter
-    cmp byte ptr [ebx+edi],253
+    cmp al,253
     jnbe @upstr_weiter
     sub byte ptr [ebx+edi],32
 
@@ -994,11 +1006,10 @@ procedure UpString (var s: string); {&uses ebx,edi} assembler;
 
   @upstr_weiter:
     dec edi
-    or edi,edi
     jnz @upstr_next
   @upstr_ende:
 {$ifdef FPC }
-  end ['EBX', 'ECX', 'EDI'];
+  end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$else}
   end;
 {$endif}
@@ -1013,9 +1024,10 @@ procedure LoString (var s: string); assembler;
     jcxz @lostr_ende
     mov di,cx
   @lostr_next:
-    cmp byte ptr es:[bx+di],'A'
+    mov al,byte ptr es:[bx+di]
+    cmp al,'A'
     jnae @lostr_weiter
-    cmp byte ptr es:[bx+di],'Z'
+    cmp al,'Z'
     jnbe @lostr_auml
     add byte ptr es:[bx+di],32
     jmp @lostr_weiter
@@ -1023,43 +1035,50 @@ procedure LoString (var s: string); assembler;
 
 {$ifndef windows}
 
-    cmp byte ptr es:[bx+di],'é'
+    cmp al,'é'
     jne @lostr_ouml
     mov byte ptr es:[bx+di],'Ñ'
+    jmp @lostr_weiter
   @lostr_ouml:
-    cmp byte ptr es:[bx+di],'ô'
+    cmp al,'ô'
     jne @lostr_uuml
     mov byte ptr es:[bx+di],'î'
+    jmp @lostr_weiter
   @lostr_uuml:
-    cmp byte ptr es:[bx+di],'ö'
+    cmp al,'ö'
     jne @lostr_eacute
     mov byte ptr es:[bx+di],'Å'
+    jmp @lostr_weiter
   @lostr_eacute:
-    cmp byte ptr es:[bx+di],'ê'
+    cmp al,'ê'
     jne @lostr_aring
     mov byte ptr es:[bx+di],'Ç'
+    jmp @lostr_weiter
   @lostr_aring:
-    cmp byte ptr es:[bx+di],'è'
+    cmp al,'è'
     jne @lostr_aelig
     mov byte ptr es:[bx+di],'Ü'
+    jmp @lostr_weiter
   @lostr_aelig:
-    cmp byte ptr es:[bx+di],'í'
+    cmp al,'í'
     jne @lostr_ntilde
     mov byte ptr es:[bx+di],'ë'
+    jmp @lostr_weiter
   @lostr_ntilde:
-    cmp byte ptr es:[bx+di],'•'
+    cmp al,'•'
     jne @lostr_ccedil
     mov byte ptr es:[bx+di],'§'
+    jmp @lostr_weiter
   @lostr_ccedil:
-    cmp byte ptr es:[bx+di],'Ä'
+    cmp al,'Ä'
     jne @lostr_weiter
     mov byte ptr es:[bx+di],'á'
 
 {$else}
 
-    cmp byte ptr es:[bx+di],192
+    cmp al,192
     jnae @lostr_weiter
-    cmp byte ptr es:[bx+di],221
+    cmp al,221
     jnbe @lostr_weiter
     add byte ptr es:[bx+di],32
 
@@ -1067,7 +1086,6 @@ procedure LoString (var s: string); assembler;
 
   @lostr_weiter:
     dec di
-    or di,di
     jnz @lostr_next
   @lostr_ende:
   end;
@@ -1080,9 +1098,10 @@ procedure UpString (var s: string); assembler;
     jcxz @upstr_ende
     mov di,cx
   @upstr_next:
-    cmp byte ptr es:[bx+di],'a'
+    mov al,byte ptr es:[bx+di]
+    cmp al,'a'
     jnae @upstr_weiter
-    cmp byte ptr es:[bx+di],'z'
+    cmp al,'z'
     jnbe @upstr_auml
     sub byte ptr es:[bx+di],32
     jmp @upstr_weiter
@@ -1090,43 +1109,50 @@ procedure UpString (var s: string); assembler;
 
 {$ifndef windows}
 
-    cmp byte ptr es:[bx+di],'Ñ'
+    cmp al,'Ñ'
     jne @upstr_ouml
     mov byte ptr es:[bx+di],'é'
+    jmp @upstr_weiter
   @upstr_ouml:
-    cmp byte ptr es:[bx+di],'î'
+    cmp al,'î'
     jne @upstr_uuml
     mov byte ptr es:[bx+di],'ô'
+    jmp @upstr_weiter
   @upstr_uuml:
-    cmp byte ptr es:[bx+di],'Å'
+    cmp al,'Å'
     jne @upstr_eacute
     mov byte ptr es:[bx+di],'ö'
+    jmp @upstr_weiter
   @upstr_eacute:
-    cmp byte ptr es:[bx+di],'Ç'
+    cmp al,'Ç'
     jne @upstr_aring
     mov byte ptr es:[bx+di],'ê'
+    jmp @upstr_weiter
   @upstr_aring:
-    cmp byte ptr es:[bx+di],'Ü'
+    cmp al,'Ü'
     jne @upstr_aelig
     mov byte ptr es:[bx+di],'è'
+    jmp @upstr_weiter
   @upstr_aelig:
-    cmp byte ptr es:[bx+di],'ë'
+    cmp al,'ë'
     jne @upstr_ntilde
     mov byte ptr es:[bx+di],'í'
+    jmp @upstr_weiter
   @upstr_ntilde:
-    cmp byte ptr es:[bx+di],'§'
+    cmp al,'§'
     jne @upstr_ccedil
     mov byte ptr es:[bx+di],'•'
+    jmp @upstr_weiter
   @upstr_ccedil:
-    cmp byte ptr es:[bx+di],'á'
+    cmp al,'á'
     jne @upstr_weiter
     mov byte ptr es:[bx+di],'Ä'
 
 {$else}
 
-    cmp byte ptr es:[bx+di],224
+    cmp al,224
     jnae @upstr_weiter
-    cmp byte ptr es:[bx+di],253
+    cmp al,253
     jnbe @upstr_weiter
     sub byte ptr es:[bx+di],32
 
@@ -1134,7 +1160,6 @@ procedure UpString (var s: string); assembler;
 
   @upstr_weiter:
     dec di
-    or di,di
     jnz @upstr_next
   @upstr_ende:
   end;
@@ -2246,6 +2271,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/06/01 08:02:23  mk
+  RB: - Assembler-Verbesserungen
+
   Revision 1.35  2000/05/09 13:11:00  hd
   - DirSepa eingebaut
 
