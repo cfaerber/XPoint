@@ -102,7 +102,7 @@ const  {$IFDEF DPMI}
        BaseDir	   = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
-       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1178,6 +1178,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.7  2000/09/24 04:45:51  mk
+  - Joker bei ValidDirCh hinzugefuegt
+
   Revision 1.54.2.6  2000/08/26 07:56:17  jg
   - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 
