@@ -27,7 +27,9 @@ unit  maus2;
 interface
 
 uses
+  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
   {$IFDEF Win32} Windows, {$ENDIF}
+  keys, //taste, in interface for NCRT
   xpglobal; //todo: word
 
 const mausleft    = #0#240;       { links gedrueckt  }
@@ -87,12 +89,11 @@ implementation
 
 uses
   SysUtils,
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
   {$ifndef NCRT} winxp, {$endif}
   {$IFDEF Win32} xpcrt, {$ENDIF}
   inout,
   xp0,
-  typeform,mouse,keys,debug;
+  typeform,mouse,debug;
 
 const  maxinside = 25;
 
@@ -559,6 +560,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/12/08 09:48:44  dodi
+  - updated uses for NCRT
+
   Revision 1.48  2002/12/04 16:56:59  dodi
   - updated uses, comments and todos
 
