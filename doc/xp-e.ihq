@@ -1449,9 +1449,31 @@ when editing this text part.
 @
 8079
 <<Sending/Forwarding of MIME multipart messages
-(RFC and ZConnect)
+(RFC, ZConnect)
+
+(ZConnect users should also read the
+"[References for ZConnect users]"!)@8080
 
 ToDo: comprehensive explanation, \@8079
+@
+8080
+<<MIME multipart messages:
+<<References for ZConnect users
+
+ToDo: comprehensive explanation, \@8080
+@
+8090
+The net type of the selected Server is incompatible
+with the address format of the new recipient. The
+Server will thus be resetted and the message will
+be sent to the Server(s) the recipient(s) belong to.
+@
+8091
+The net type of the selected Server is incompatible
+with the address format of the new recipient who
+shall receive a copy of the message. The Server will
+thus be resetted and the message will be sent to the
+Server(s) the recipient(s) belong to.
 @
 69
 <<Yes>>  -> CrossPoint attaches the attribute VERBOSE
@@ -5123,6 +5145,10 @@ and a path to a (subsequently) non existent file.
 
 Setting zero "0" here sets no limit; binary files
 of any size will be stored complete.
+
+<<Note:>> This option is ignored when sending
+[MIME multipart messages] - file attaches will be@8079
+completely stored in the message body there always.
 @
 241
 The standard hold time which is set by default for
@@ -8462,28 +8488,29 @@ See XPOINT.DOC; "Crosspostings".
      1341 for public messages (news), to signal the
      use of umlauts and other special characters.
 
-
 <<[ ]>>  MIME is only used for PMs, as its
      specification actually defines. For news
      CrossPoint uses the non standardised lines
      "X-Charset:".
 @
 797
+<<[ ]>>  Special characters are sent 1:1 (in ISO-8859-1-
+      character set).
+
 <<[x]>>  CrossPoint uses a special system called
      "quoted printable" to code umlauts and other
      special characters so that older systems in the
      net can transport them correctly.
 
+"quoted printable" is supported by most systems in
+the meantime.
 
-<<[ ]>>  Special characters are sent 1:1 (in ISO-8859-1-
-      character set).
+No matter if this option is enabled, CrossPoint does
+translate INCOMING "quoted printable" code correctly!
 
-Set this option OFF, at least at first. "Quoted
-printable" is not used by many systems, making your
-messages in all the others pretty unreadable.
-
-CrossPoint does however translate INCOMING "quoted
-printable" code correctly!
+<<Note:>> This option is ignored when sending
+[MIME multipart messages] - those will *never*@8079
+be coded "quoted printable".
 
 @
 798
@@ -12588,6 +12615,26 @@ the new version into the net.
 20627
 It is only possible to forward messages under the
 original sender in ZConnect, RFC/UUCP and in MausNet.
+@
+20629
+You are attempting to either ...
+
+a) send the message to a Server whose net type is
+   incompatible with the address format of the
+   recipient, or
+
+b) your message has several recipients who do not
+   all belong to the same or a compatible net type.
+
+In both cases it is not possible to change the Server
+the message is sent to respectively you can not force
+the message to be sent to a common server for all
+recipients.
+
+ZConnect and RFC are compatible net types, all other
+net types supported by XP are compatible only with
+theirselves.
+
 @
 20630
 The Archive newsgroups entered under

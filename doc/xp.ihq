@@ -2623,12 +2623,12 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          unerwnscht!
 
 <<Anhang>>   (RFC, ZConnect) h„ngt eine(n) Datei/Text im
-         MIME-Multipart-Format an die Nachricht an.
+         [MIME-Multipart-Format] an die Nachricht an.@8079
          Sie k”nnen beliebig viele Dateien anh„ngen.
          Fr die Deklaration des "Content-Type" (im
          Dialog als "Anhang-Typ" bezeichnet) der
          einzelnen MIME-Nachrichtenteile wird, sofern
-         vorhanden, die unter <</Edit/Viewer>> definierte
+         vorhanden, die unter [/Edit/Viewer] definierte@821
          Zuordnung der jeweiligen Dateierweiterung
          zum entsprechenden MIME-Typ verwendet.
 
@@ -2789,7 +2789,10 @@ Sonderzeichen.
 @
 8079
 <<Versand/Weiterleitung von MIME-Multipart-Nachrichten
-(RFC und ZConnect)
+(RFC, ZConnect)
+
+(ZConnect-User sollten auch die
+"[Hinweise fr ZConnect-User]" lesen!)@8080
 
 Diese im April 2002 in OpenXP/16 v3.40 neu implemen-
 tierte Funktion behebt ein jahrelanges Manko von
@@ -2832,6 +2835,12 @@ mit groáen Datei-Anh„ngen aufbl„hen zu mssen.
 Nachfolgend einige Detail- und technische Hinter-
 grundinformationen zum Versand von MIME-Multipart-
 Nachrichten mit CrossPoint:
+
+
+ş  CrossPoint erstellt MIME-Multipart-Nachrichten
+   ausschlieálich vom Typ "<<multipart/mixed>>", kann
+   aber Nachrichten jedes beliebigen Typs weiter-
+   leiten (z.B. "multipart/alternative").
 
 
 ş  Das <<Anh„ngen>> von Dateien oder Textteilen an eine
@@ -2894,20 +2903,40 @@ Nachrichten mit CrossPoint:
      Fehlermeldung quittiert.
 
 
+ş  <<Der "Content-Type" (Anhang-Typ)
+
+   Jedem Nachrichtenteil wird ein "Content-Type"
+   zugewiesen. Dazu verwendet XP die Zuordnungen der
+   einzelnen Dateierweiterungen zu den jeweiligen
+   MIME-Typen (z.B. "<<gif>>" => "<<image/gif>>"), die unter
+   [/Edit/Viewer] definiert wurden.@821
+
+   Existiert fr die jeweilige Dateierweiterung keine
+   Zuordnung, dann verwendet XP in der Regel den Typ
+   "<<application/octet-stream>>". Bei Dateien mit der
+   Erweiterung .TXT wird hingegen immer der Typ
+   "<<text/plain>>" und bei solchen mit der Erweiterung
+   .HTM immer der Typ "<<text/html>>" verwendet.
+
+
 ş  <<Zeichens„tze, Codierungen und MIME-Boundaries:
 
    Der Nachrichtentext sowie alle Textanh„nge werden
-   beim Absenden der Nachricht vom <<IBM-Zeichensatz>>,
+   beim Absenden der Nachricht vom <<IBM>>-Zeichensatz,
    mit dem CrossPoint intern arbeitet, in den im
    Internet blichen Zeichensatz <<ISO-8859-1>> konver-
    tiert. Dies sollte bei der Erstellung von Texten
    bercksichtigt werden, denn dadurch gehen (wie bei
    allen RFC-Nachrichten) z.B. die IBM-typischen
    Rahmenzeichen verloren, die berwiegend durch
-   Bindestriche u.„. ersetzt werden.
+   Bindestriche u.„. ersetzt werden. Eine Codierung
+   nach dem "<<quoted-printable>>"-Verfahren erfolgt
+   *nicht*, selbst wenn der entsprechende Schalter
+   unter [/Config/Optionen/Netze/Verschiedenes] akti-@797
+   viert sein sollte.
 
    Dateianh„nge (auch Textdateien) hingegen werden
-   immer einer <<base64-Codierung>> unterzogen. Nur so
+   immer einer <<base64>>-Codierung unterzogen. Nur so
    ist sichergestellt, daá die Datei im unver„nderten
    Originalzustand den Empf„nger erreicht.
 
@@ -2915,63 +2944,149 @@ Nachrichten mit CrossPoint:
    Nachrichten, wobei hier einige Besonderheiten und
    Regeln zu beachten sind:
 
-   - base64-codierte Dateianh„nge werden unver„ndert
-     bernommen und weitergeleitet.
-
    - Bei Textanh„ngen wertet CrossPoint die Zeichen-
      satzdeklaration im Content-Type-Header des je-
      weiligen Nachrichtenteils der weiterzuleitenden
-     Nachricht aus. Hier sind mehrere F„lle zu unter-
-     scheiden:
+     Nachricht aus.
 
-     a) Handelt es sich um einen Zeichensatz der
-        ISO-8859-Familie, wird dieser in den IBM-
-        Zeichensatz konvertiert und kann daher
-        problemlos im Editor bearbeitet werden. Falls
-        der Text quoted-printable-codiert war, wird
-        er vorher decodiert. Beim Absenden der Nach-
-        richt im Sendefenster wird der Text in den
-        ISO-Zeichensatz re-konvertiert und mit der
-        Original-Zeichensatzdeklaration versandt.
+     Dabei sucht XP zun„chst immer nach dem ersten
+     Textteil, der in einem IBM- oder ISO-8859-Zei-
+     chensatz vorliegt. Dieser Teil wird von XP als
+     der eigentliche Nachrichtentext betrachtet, ggf.
+     quoted-printable-decodiert, in den IBM-Zeichen-
+     satz konvertiert und an den Anfang der Gesamt-
+     nachricht gesetzt. Er kann dann mit N/U/E oder
+     "<<T>>" im Sendefenster wie jede andere Nachricht
+     auch im Editor bearbeitet werden. Beim Absenden
+     der Nachricht im Sendefenster wird der Text in
+     den Zeichensatz ISO-8859-1 konvertiert und mit
+     dieser Zeichensatzdeklaration versandt.
 
-     b) Nachrichtenteile in einem IBM-Zeichensatz
+     Enth„lt die weitergeleitete Nachricht keinen
+     Textteil mit einem von XP bei ausgehenden Nach-
+     richten untersttzten Zeichensatz, dann setzt
+     CrossPoint einen Dummy-Textteil an den Anfang
+     der Gesamtnachricht.
+
+     Bei der Zeichensatzbehandlung etwaiger weiterer
+     Textteile sind mehrere F„lle zu unterscheiden:
+
+     a) Liegt der Textteil in einem Zeichensatz der
+        <<ISO-8859>>-Familie vor, wird er genauso behan-
+        delt wie schon oben fr den ersten Textteil
+        beschrieben.
+
+     b) Nachrichtenteile in einem <<IBM>>-Zeichensatz
         werden nicht konvertiert (weil unn”tig) und
         k”nnen ebenfalls im Editor bearbeitet werden.
         Im Unterschied zu Fall a) erfolgt hier jedoch
         auch beim Absenden keine Konvertierung in den
-        ISO-Zeichensatz, sondern der Anhang wird im
+        ISO1-Zeichensatz, sondern der Anhang wird im
         unkonvertierten Zustand und mit der ursprng-
         lichen IBM-Zeichensatzdeklaration versandt.
 
      c) Bei Zeichens„tzen, die von XP fr ausgehende
         Nachrichten nicht untersttzt werden (selbst
-        wenn dies - wie bei Windows-1252 - fr ein-
+        wenn dies - wie bei <<Windows-1252>> - fr ein-
         gehende Nachrichten der Fall ist), erfolgt
         keine Konvertierung in den IBM-Zeichensatz.
         Soll ein solcher Nachrichtenteil im Editor
         bearbeitet werden, l„át CrossPoint dies nach
         Rckfrage zu, jedoch sollte man hier die
-        nderung oder Eingabe von Sonderzeichen
-        vermeiden.
+        nderung oder Eingabe von Sonderzeichen wie
+        Umlauten o.„. vermeiden. Der Versand erfolgt
+        unkonvertiert und mit der ursprnglichen
+        Zeichensatzdeklaration.
+
+   - <<base64>>-codierte Dateianh„nge werden unver„ndert
+     bernommen und weitergeleitet.
 
    - Bei weitergeleiteten Nachrichten werden die
-     MIME-Boundaries (Erkennungszeilen fr die ein-
-     zelnen Nachrichtenteile) der Originalnachricht
-     immer gegen das XP-eigene Boundary ausgetauscht.
+     MIME-<<Boundary>>-Delimiter (Trennzeilen zur Erken-
+     nung der einzelnen Nachrichtenteile) der Origi-
+     nalnachricht immer durch den XP-spezifischen
+     Delimiter ersetzt und der Header entsprechend
+     angepaát. In MIME-Anh„ngen, die „hnlich einem
+     Verzeichnisbaum weitere geschachtelte Teile ent-
+     halten, bleiben deren Boundary-Delimiter erhal-
+     ten. XP erzeugt solche rekursiven Strukturen
+     nicht selbst, kann sie aber zur Darstellung im
+     Lister auswerten und weiterleiten.
 
-   - Der erste Textteil einer weitergeleiteten Nach-
-     richt wird von XP immer als der eigentliche
-     Nachrichtentext betrachtet und an den Anfang der
-     Nachricht gesetzt. Dieser Teil kann mit N/U/E
-     oder "T" im Sendefenster wie jede andere Nach-
-     richt auch bearbeitet werden.
+@
+8080
+<<MIME-Multipart-Nachrichten:
+<<Hinweise fr ZConnect-User
 
-     Enth„lt die weitergeleitete Nachricht keinen
-     Textteil oder wird der Zeichensatz von XP fr
-     ausgehende Nachrichten nicht untersttzt, dann
-     setzt CrossPoint einen Dummy-Textteil an den
-     Anfang der Nachricht.
+Fr den Versand von MIME-Multipart-Nachrichten gibt
+es trotz mehrfacher Anl„ufe noch immer keinen
+ZConnect-Standard, und nach Lage der Dinge wird es
+auch nie einen geben.
 
+Gleichwohl zeigt die t„gliche Praxis, daá MIME-Multi-
+part-Versand mit ZConnect-Boxen (meistens) funktio-
+niert. Daher untersttzt OpenXP/16 diese Funktion
+zwar auch fr den Netztyp ZConnect, kann aber im
+Unterschied zu RFC-Netztypen nicht sicherstellen, daá
+die Nachrichten auch korrekt transportiert werden und
+beim Empf„nger als gltige und standardkonforme MIME-
+Multipart-Nachrichten erkannt werden k”nnen.
+
+ZConnect-User, die MIME-Multipart-Nachrichten mit XP
+versenden, sollten sich ber folgende Dinge im klaren
+sein:
+
+ş  Der Versand ber ZConnect<=>RFC-Gates funktioniert
+   recht zuverl„ssig - allerdings nur dann, wenn das
+   oder die beteiligten Gate(s) die RFC-MIME-Header
+   unver„ndert weiterreichen. Ist das nicht der Fall,
+   kann der RFC-Empf„nger bzw. dessen Software die
+   Nachricht mit ziemlicher Sicherheit nicht als
+   gltige MIME-Multipart-Nachricht erkennen. Bei
+   Problemen sind hier die Gatebetreiber die rich-
+   tigen Ansprechpartner.
+
+ş  Der Versand innerhalb der ZConnect-Welt sollte
+   problemlos funktionieren. Ob der Empf„nger eine
+   MIME-Multipart-Nachricht allerdings auch korrekt
+   als solche erkennen kann, h„ngt alleine von dessen
+   verwendeter Software ab (CrossPoint-Anwender sind
+   hier auf der sicheren Seite :-)).
+
+ş  MIME-Multipart-Nachrichten enthalten oft Zeichen-
+   s„tze und Codierungen, die von der vom Empf„nger
+   verwendeten Software nicht unbedingt untersttzt
+   werden (speziell wenn es sich um weitergeleitete
+   Nachrichten handelt). Ggf. mssen Sie selbst (z.B.
+   durch Export und Re-Import von Nachrichtenteilen)
+   dafr sorgen, daá Ihre Nachricht auf Empf„nger-
+   seite lesbar ist.
+
+<<Hinweis:>> OpenXP/16 untersttzt <<nicht>> den nie ber das
+Entwurfsstadium hinausgekommen Vorschlag der Einfh-
+rung eines ZConnect-Headers "<<TYP: MIME>>", anhand des-
+sen eine MIME-Multipart-Nachricht als solche identi-
+fiziert werden k”nnte. Gate- oder Anwender-Software,
+die diesen Header zwingend voraussetzt, wird mit den
+von XP erzeugten MIME-Multipart-Nachrichten vermut-
+lich wenig bis nichts anfangen k”nnen.
+
+@
+8090
+Der Netztyp der von Ihnen gew„hlten Serverbox ist
+inkompatibel mit der Adressierung des neuen
+Empf„ngers. Die Serverbox wird daher zurckgesetzt
+und die Nachricht wird an die Serverbox(en) versandt,
+die dem/den jeweiligen Empf„nger(n) zugewiesen
+ist/sind.
+@
+8091
+Der Netztyp der von Ihnen gew„hlten Serverbox ist
+inkompatibel mit der Adressierung des hinzugefgten
+Kopien-Empf„ngers. Die Serverbox wird daher zurck-
+gesetzt und die Nachricht wird an die Serverbox(en)
+versandt, die dem/den jeweiligen Empf„nger(n) zuge-
+wiesen ist/sind.
 @
 69
 <<Ja>>  ->  CrossPoint fgt dem MAPS-Befehl das Attribut
@@ -7937,6 +8052,12 @@ als Versandmeldung gespeichert.
 
 0  ->  kein Speicherlimit; Bin„rnachrichten belie-
        biger Gr”áe werden komplett gespeichert.
+
+<<Hinweis:>> Bitte beachten Sie, daá diese Option beim
+Versand von [MIME-Multipart-Nachrichten] ignoriert@8079
+wird. Dateianh„nge werden derzeit dort immer
+komplett in der Nachricht gespeichert.
+
 @
 241
 Die Standard-Bretthaltezeit dient als Vorgabe beim
@@ -12171,23 +12292,26 @@ sollten Sie auch die Adreá-Groáwandlung unter
 
 @
 797
+<<[ ]>> -> Sonderzeichen werden 1:1 (im ISO-8859-1-
+       Zeichensatz) verschickt.
+
 <<[x]>> -> Vereinfacht ausgedrckt: CrossPoint verwendet
        ein spezielles Verfahren namens "quoted-prin-
        table", um Umlaute und andere Sonderzeichen
        so zu codieren, daá sie auch von „lteren
        Systemen im Netz korrekt transportiert werden.
 
-<<[ ]>> -> Sonderzeichen werden 1:1 (im ISO-8859-1-
-       Zeichensatz) verschickt.
-
-Diese Option sollten Sie vorerst abgeschaltet las-
-sen. "quoted-printable" wird erst von sehr wenigen
-Systemen beherrscht, und fr alle anderen Teilnehmer
-werden Ihre Nachrichten dadurch ziemlich unleserlich.
+"quoted-printable" wird inzwischen von den meisten
+Systemen beherrscht.
 
 Unabh„ngig von dieser Einstellung werden alle ein-
 gehenden, als "quoted-printable" codierten Texte
 korrekt verarbeitet.
+
+<<Hinweis:>> Bitte beachten Sie, daá diese Option beim
+Versand von [MIME-Multipart-Nachrichten] ignoriert@8079
+wird und dort *keine* "quoted-printable"-Codierung
+stattfindet.
 
 @
 798
@@ -18479,6 +18603,27 @@ zuerst mit /Nachricht/ndern/Text.
 Das Weiterleiten von Nachrichten mit Originalab-
 sender ist nur bei ZConnect, bei RFC/UUCP und im
 MausNet m”glich.
+@
+20629
+Sie versuchen entweder ...
+
+a) die Nachricht ber eine Serverbox zu versenden,
+   deren Netztyp inkompatibel mit der Adressierung
+   des Empf„ngers ist, oder
+
+b) Ihre Nachricht hat mehrere Empf„nger, die nicht
+   alle demselben bzw. einem kompatiblen Netztyp
+   angeh”ren.
+
+In beiden F„llen kann die Serverbox, ber die die
+Nachricht versandt wird, nicht ge„ndert werden bzw.
+es ist nicht m”glich, den Versand ber eine gemein-
+same Serverbox fr alle Empf„nger zu erzwingen.
+
+Die Netztypen RFC und ZConnect sind miteinander kom-
+patibel, alle anderen von XP untersttzten Netztypen
+sind nur mit sich selbst kompatibel.
+
 @
 20630
 Die bei /Config/Optionen/Allgemeines eingestellten
