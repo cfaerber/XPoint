@@ -509,6 +509,7 @@ var   hdp      : headerp;
         level:=1;
         typ:=#0'gesamt' {getres2(2440,10)};  { 'gesamte Nachricht' }
         subtyp:='';
+        charset:='us-ascii';
         code:=mcodeNone;
         fname:='';
         startline:=1;
@@ -719,6 +720,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.27  2002/03/17 22:00:35  my
+  JG:- Fix: Wenn beim Lesen von MIME-Multipart-Nachrichten die Auswahl
+       "gesamte Nachricht" getroffen wurde, wurde je nach zuf„lligem
+       Inhalt der Variable 'charset' die Nachricht mal in den IBM-
+       Zeichensatz konvertiert und mal nicht.
+
   Revision 1.12.2.26  2002/03/14 17:34:46  my
   MY:- Das Decodieren von RFC-1522-codierten Dateinamen in Attachments
        klappte nicht (Anweisung eine Zeile zu tief einkopiert).
