@@ -743,7 +743,7 @@ var t,lastt: taste;
     end;
 
     procedure SikMsg;
-    const sikmsg = 'lastmsg';
+    const sikmsg = 'LASTMSG';
     var f : file;
     begin
       assign(f,fn);
@@ -2133,6 +2133,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.26  2000/12/24 16:52:09  mk
+  - lastmsg gross geschrieben
+
   Revision 1.26.2.25  2000/12/19 19:47:11  mk
   - groesse bei Fillchar(mpdata) korrigiert
 
