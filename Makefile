@@ -418,7 +418,11 @@ RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
 	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr \
-	glossary.cfg xpmailto.reg
+	glossary.cfg
+
+ifneq (,$(findstring $(OS),dos32 win32))
+EXAMPLES += xpmailto.reg
+endif
 
 ifeq ($(OS),win32)
 RST = ipaddr ncnntp ncpop3 ncsmtp
@@ -2315,8 +2319,8 @@ xpview$(UNITEXT): xpview.pas database$(UNITEXT) dosx$(UNITEXT) \
 	xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-xpwin32$(UNITEXT): xpwin32.pas typeform$(UNITEXT) utftools$(UNITEXT) \
-	winxp$(UNITEXT) xpdefine.inc
+xpwin32$(UNITEXT): xpwin32.pas utftools$(UNITEXT) winxp$(UNITEXT) \
+	xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 ifneq (,$(findstring $(OS),freebsd linux))
@@ -2351,10 +2355,10 @@ $(RESFILES): %.res: %.rq rc$(EXEEXT)
 
 # Dokumentation
 
-documentation:
+documentation: docform$(EXEEXT) ihs$(EXEEXT)
 	$(MAKE) -C doc
 
-fulldoc:
+fulldoc: docform$(EXEEXT) ihs$(EXEEXT)
 	$(MAKE) -C doc fulldoc
 
 # Installation
@@ -2575,6 +2579,10 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.28  2000/10/24 14:50:43  fe
+# Abhaengigkeiten aktualisiert.
+# Kleine Verbesserungen.
+#
 # Revision 1.27  2000/10/24 11:13:04  fe
 # xpmailto.reg eingetragen.
 #
