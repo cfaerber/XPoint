@@ -1736,7 +1736,10 @@ begin
   y:=iif(mauskey,4,10+(screenlines-25)div 2);
   n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit' }
              -(readmode+1));
-  if (n>0) and ((readmode>=4) or (n<>readmode+1)) then begin
+
+  if (n>0) and ((readmode>=4) or (n<>readmode+1)) or
+    (readmode = 3) then // allow to change readmode 'heute', see #500563
+  begin
     showtime:=false;
     brk:=false;
     case n of
@@ -2506,6 +2509,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/04/18 21:14:19  mk
+  - fixed Bug #500563
+
   Revision 1.89  2002/04/14 22:26:56  cl
   - changes for new address handling
 
