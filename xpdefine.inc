@@ -94,7 +94,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -207,6 +207,9 @@
 
 {
   $Log$
+  Revision 1.68  2001/07/31 16:48:48  mk
+  - disabled optimization for delphi
+
   Revision 1.67  2001/07/31 16:18:41  mk
   - removed some unused variables
   - changed some LongInt to DWord
