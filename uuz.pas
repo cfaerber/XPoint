@@ -30,12 +30,11 @@ uses xpglobal,
   {$ELSE }
   crt,
   {$ENDIF }
-  sysutils, dos, typeform, fileio, xpdatum, montage;
+  sysutils, classes, dos, typeform, fileio, xpdatum, montage;
 
 const
   bufsize = 65536;
   readempflist = true;
-  maxaddhds = 50;
   xpboundary: string = '-';
 
   attrFile = $0010;                     { File Attach }
@@ -134,9 +133,9 @@ var
   qprint, b64: boolean;                 { MIME-Content-TT's (ReadRFCheader) }
   qprchar: set of char;
   addpath: string;
-  addhd: array[1..maxaddhds] of string;
-  addhdmail: array[1..maxaddhds] of boolean;
-  addhds: integer;
+  // Speichert zus„tzliche Headertypen, Object-Pointer speichert Boolean
+  // true wenn mail, false wenn keine Mail
+  addhd: TStringList;
 
   envemp: string;                       { Envelope-Empf„nger }
 
@@ -324,7 +323,7 @@ var
     begin
       assign(t, fn);
       reset(t);
-      while not eof(t) and (addhds < maxaddhds) do
+      while not eof(t) do
       begin
         readln(t, s);
         s := trim(s);
@@ -332,11 +331,7 @@ var
           if cpos(':', s) < 3 then
             writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
           else
-          begin
-            inc(addhds);
-            addhd[addhds] := s;
-            addhdmail[addhds] := mail;
-          end;
+            AddHd.AddObject(s, Pointer(mail));
       end;
       close(t);
     end;
@@ -361,13 +356,14 @@ begin
   else
     addpath := '';
 
-  addhds := 0;                          { zus„tzliche Headerzeilen einlesen }
+  AddHd := TStringList.Create;          { zus„tzliche Headerzeilen einlesen }
   rh('NEWS.RFC', false);
   rh('MAIL.RFC', true);
 end;
 
 procedure donevar;
 begin
+  AddHd.Free;
   freemem(outbuf, bufsize);
   dispose(uline);
 end;
@@ -2999,8 +2995,8 @@ begin
     end;
     if not mail then
       wrs(f, 'Lines: ' + strs(lines + iif(attrib and AttrMPbin <> 0, 16, 0)));
-    for i := 1 to addhds do
-      if mail = addhdmail[i] then
+    for i := 0 to AddHd.Count - 1 do
+      if AddHd.Objects[i] = Pointer(mail) then
         wrs(f, addhd[i]);
     wrs(f, '');
     if attrib and AttrMPbin <> 0 then
@@ -3403,6 +3399,9 @@ end.
 
 {
   $Log$
+  Revision 1.44  2000/07/20 20:10:58  mk
+  - AddHd in eine Stringlist umgewandelt
+
   Revision 1.43  2000/07/12 07:57:05  mk
   RB:- XPBoundary Default in SetMimeData
 
