@@ -195,7 +195,6 @@ procedure TestCD;
 var f    : file;
     attr : smallword;
 begin
-{$IFNDEF WIN32}
   assign(f,paramstr(0));
   getfattr(f,attr);
   if attr and ReadOnly<>0 then begin
@@ -213,7 +212,6 @@ begin
       halt(1);
       end;
     end;
-{$ENDIF}
 end;
 
 
@@ -273,6 +271,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

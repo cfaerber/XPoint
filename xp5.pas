@@ -317,6 +317,7 @@ end;
 procedure writever(os2,win,lnx:boolean; x,y:byte);
 begin
   gotoxy(x,y);
+{$IFDEF BP }
   if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
   else if lnx then write(lo(lnxversion),'.',hi(lnxversion))
   else begin
@@ -326,6 +327,7 @@ begin
       write(hi(winversion):2,'.',formi(lo(winversion),2));
       end;
     end;
+{$ENDIF }
 end;
 
 
@@ -344,6 +346,7 @@ var
     free : longint;
 begin
   win:=(WinVersion>0);
+  win := true;
   msgbox(45,iif(win,12,11),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
@@ -408,7 +411,9 @@ begin
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfÅgbar }
   os2:=lo(dosversion)>=10;
+{$IFDEF BP }
   lnx:=lnxversion>0;
+{$ENDIF }
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
@@ -1005,6 +1010,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.8  2000/03/01 23:49:03  rb
   Rechenzeitfreigabe komplett Åberarbeitet
 

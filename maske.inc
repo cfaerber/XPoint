@@ -30,7 +30,7 @@ var ax,p,myp  : integer;
     fwd       : boolean;
     maussel   : boolean;
     poutside  : boolean;
-    adiff     : integer;
+    { adiff     : integer; }
     moretext  : boolean;
     lasttexty : byte;
     gl        : byte;
@@ -158,7 +158,6 @@ var ax,p,myp  : integer;
 
     function testdate:boolean;
     var t,m,j : word;
-     s: string;
     begin
       with feld^ do
         if pempty and (cont^=mask) then
@@ -1071,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.11  2000/03/02 18:32:23  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.10  2000/03/01 13:17:41  jg
   - Ukonv Aufrufe benutzen jetzt High() fuer Maxlaenge
   - STRG + INS funktioniert in Texteingabefeldern wie STRG+C

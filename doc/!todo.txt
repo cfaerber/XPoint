@@ -1,18 +1,9 @@
 $Id$
 
-
 Abgeschickt von Helmut Guetschow am 01 Januar, 2000 um 09:46:10
 
-Hallo!
-
-Kann man hier auch noch Vorschläge für XP3.20 los werden?
-
-Gleich mal das für mich wichtige:
-
--unter edit/gruppen sollte damit auch festlegbar sein das beim quoten, immer X-XP-FTO: All gesetzt wird.
-
-MfG HG
-
+-unter edit/gruppen sollte damit auch festlegbar sein das beim quoten, 
+immer X-XP-FTO: All gesetzt wird.
 
 ###########################################################
 
@@ -141,28 +132,6 @@ From: robo@munich.netsurf.de (Robert Boeck)
 Date: 03 Jan 2000 00:00:00 +0000
 --------
 
-EMP: pm@daisy.de
-EMP: /de/comm/software/crosspoint
-ABS: rene@flatta.in-berlin.de (René Kacza)
-BET: Re: AUFRUF! Bugliste/Wunschliste XP
-EDA: 19980304000000W+1
-MID: LAST-Liste.Bug.u.Wunsch19980304000000@flatta.in-berlin.de
-BEZ: 6lNncLtU2TB@flatta.in-berlin.de
-ROT: flatta.in-berlin.de!rene
-ORG: Private Site from IN-Berlin
-POST: Wernsdorferstrasse 43; 15751 Niederlehme
-TELEFON: V+49-3375-503337Q
-X_C:
-X-XP-NTP: 40
-X-Charset: ISO-8859-1
-X-XP-BOX: kwcom
-X-XP-ARC:
-U-Supersedes: <6mpbyZuE2TB@flatta.in-berlin.de>
-LEN: 12246
-
-Anbei die dritte und letzte Liste, die hier zusammengestellt ist.
-Alle User haben eine EB: von mir bekommen, teilweise sogar Antworten.
-
 Die folgende Liste hat von mir eine Wertung bekommen.
 Die Wertung erfolgt mit 1 - 5 abwaerts nach jedem horizontalen
 '+++++++++++++++++++++++++++' :-))
@@ -222,7 +191,6 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
 
 - Suchfunktion
   - mit Wildcards
-  - mit Verknuepfungen
 
 - Darstellung von markierten Nachrichten in verschiedenen Farben (derzeit
   nur rot moeglich)
@@ -238,9 +206,6 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
 - Wahlweises CarbonCopy EMP: Eintraege als Crosspost-Uebernahme
   # wird nicht gehen, weil die Funktion dafuer komplett umgeschrieben
   # werden muss.
-
-* Anzeige der noch unversandten Mails und News
-  # Nachricht Unversandt Zeigen ???
  
 - Eine bessere PGP Schluesselverwaltung waere auch nicht schlecht.
   - alte Schluesseleintraege entfernen.
@@ -514,65 +479,12 @@ Wiedergesehen,
               Ulf
 
 
-------------------------------------------------------
-
-From L.WILLMS@LINK-F.frankfurt.org Fri Feb 25 09:06:00 2000
-Lines: 21
-Newsgroups: de.comm.software.crosspoint
-Message-ID: <7ZWyhcFmwIB@lf155.link-f.frankfurt.org>
-From: L.WILLMS@LINK-F.frankfurt.org (Luko Willms)
-Path: uni-berlin.de!fu-berlin.de!unlisys!news.snafu.de!News.IPN.de!link-f.frankfurt.org!not-for-mail
-Subject: Wunsch: Baumdarstellung auch bei unvollstaendigen Bezuegen
-Date: Fri, 25 Feb 2000 09:06:00 +0100
-X-Mailer: CrossPoint v3.12d R/A19648
-X-Gateway: ZCONNECT IPN-B.de [OdoConnect v0.76MB05#1]
-X-ZC-POST: =?ISO-8859-1?Q?Nu=DFzeil_54=3B_D-60433_Frankfurt=2FMain?=
-X-ZC-TELEFON: V+49-69-529208Q F+49-69-519886
-X-ZC-PGP-Key-Avail: 
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-Xref: uni-berlin.de de.comm.software.crosspoint:39299
-
-   Es gibt da offensichtlich einige Newsreader, die löschen ältere  
-Bezugsreferenzen, wenn die Ketten für diese Software zu lang werden  
-("sind sie zu lang, bist du zu schwach").
-
-   XP jedoch beharrt auf vollständigen Referenzen (BEZ: Header) und  
-kann von einem Aushang mit derart unvollständigen Bezügen den Baum  
-nicht mehr richtig aufbauen; vor allem geht die Positionierung auf die  
-jeweilige Ausgangsnachricht, bei der man # gedrückt hat, verloren.
-
-   Es wäre hilfreich, auch mit solcher unvollständigen Information  
-noch komplette Bäume aufbauen zu können.
-
-MfG,
-Lüko Willms
-/--------- L.WILLMS@LINK-F.frankfurt.org -- Alle Rechte vorbehalten --
-
-"Kein Land kann seine Probleme in dieser globalisierten Welt allein
-auf sich gestellt lösen. Entweder wir retten uns alle zusammen oder
-wir gehen zusammen unter. Heute mehr denn je gilt das Wort von José
-Martí: Das Vaterland ist die ganze Menschheit."
-               - Fidel Castro, Caracas (Veneuzuela), 3. Februar 1999
-
+##########################################################################################
 From L.WILLMS@LINK-F.frankfurt.org Fri Feb 25 09:07:00 2000
 Lines: 13
 Newsgroups: de.comm.software.crosspoint
 Message-ID: <7ZWyhxumwIB@lf155.link-f.frankfurt.org>
 From: L.WILLMS@LINK-F.frankfurt.org (Luko Willms)
-Path: uni-berlin.de!fu-berlin.de!unlisys!news.snafu.de!News.IPN.de!link-f.frankfurt.org!not-for-mail
-Subject: Wunsch: Cancel als Bezugsreferenz verarbeiten
-Date: Fri, 25 Feb 2000 09:07:00 +0100
-X-Mailer: CrossPoint v3.12d R/A19648
-X-Gateway: ZCONNECT IPN-B.de [OdoConnect v0.76MB05#1]
-X-ZC-POST: =?ISO-8859-1?Q?Nu=DFzeil_54=3B_D-60433_Frankfurt=2FMain?=
-X-ZC-TELEFON: V+49-69-529208Q F+49-69-519886
-X-ZC-PGP-Key-Avail: 
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-Xref: uni-berlin.de de.comm.software.crosspoint:39300
 
    XP sollte den Verweis auf eine Message-ID durch ein "CMSG CANCEL  
 <mid>" wie eine normale Bezugsreferenz verarbeiten, damit man mit der  
@@ -580,95 +492,9 @@ Baumdarstellung durch # oder durch "G" sich diese ansehen kann.
 
 MFG
 Lüko Willms
-/--------- L.WILLMS@LINK-F.frankfurt.org -- Alle Rechte vorbehalten --
-
-"Regierung aus dem Volke, durch das Volk und für das Volk"
-   - Abraham Lincoln, Ansprache in Gettysburg, 19.11.1863
-"... was in die revolutionäre Sprache von heute übersetzt heißt:
-eine Regierung von Arbeitern, durch Arbeiter und für Arbeiter"
-   - Fidel Castro, November 1994
-
-
-#########################################################################################
-
-From kpk@gmx.net Sat Feb 26 12:59:00 2000
-Path: uni-berlin.de!fu-berlin.de!news-fra.pop.de!news.csl-gmbh.net!newsfeed.dpn.de!news-out1.f.gtn.com!news-in2.f.gtn.com!news-in1.d.gtn.com!news!kpk
-From: kpk@gmx.net (Klaus P. Kleinsimon)
-Newsgroups: de.comm.software.crosspoint
-Subject: s:feature
-Date: 26 Feb 2000 12:59:00 +0100
-Organization: kpk.privat.org
-Lines: 22
-Message-ID: <7ZaprJnVZqB@kpk.gmx.net>
-NNTP-Posting-Host: as2-008.rp-plus.de
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-X-Trace: news.rp-plus.de 951566426 21255 149.221.236.136 (26 Feb 2000 12:00:26 GMT)
-X-Complaints-To: abuse@rp-plus.de
-NNTP-Posting-Date: 26 Feb 2000 12:00:26 GMT
-X-Newsreader: CrossPoint v3.20.021beta DOS/16 R/C1
-X-No-Archive: yes
-Xref: uni-berlin.de de.comm.software.crosspoint:39329
-
-
-XP beh=E4lt die von mir gesendeten Nachrichten zweimal in der  
-messagebase. Ein Exemplar ist das hier geschriebene und das zweite  
-ist (etwas sp=E4ter) das aus den usenet wiederum empfangene.
-
-Das zweite ist wichtiger. Es enth=E4lt Daten dar=FCber, auf welchem Weg  
-es wann wohin gegangen ist.
-
-Wenn ich aber den DUPEKILL laufen lasse, wird dieses wichtigere  
-Exemplar auf *l=F6schen* gesetzt und das andere bleibt nach der  
-Reorganisation erhalten.
-
-Das haette ich gerne *umgekehrt*!
-
-Wenn das jetzt auch noch ein paar andere von Euch sich w=FCnschen,  
-dann bauen die Entwickler das bestimmt so ein :-)))
-
-(Falls es bereits "in Entwicklung" ist, dann bedanke ich mich!)
-
-Gruss von Klaus Peter
-
 
 ##########################################################################
 From stefan.vinke@gmx.de Sun Feb 27 21:05:00 2000
-Return-path: <sentto-398616-2453-mk=happyarts.de@returns.onelist.com>
-Envelope-to: mk@happyarts.de
-Delivery-date: Sun, 27 Feb 2000 22:06:12 +0100
-Received: from [208.48.218.11] (helo=hi.egroups.com)
-	by mx01.kundenserver.de with smtp (Exim 2.12 #2)
-	id 12PAsy-0000Jl-00
-	for mk@happyarts.de; Sun, 27 Feb 2000 22:05:53 +0100
-X-eGroups-Return: sentto-398616-2453-mk=happyarts.de@returns.onelist.com
-Received: from [10.1.10.39] by hi.egroups.com with NNFMP; 27 Feb 2000 21:05:46 -0000
-Received: (qmail 3367 invoked from network); 27 Feb 2000 21:05:44 -0000
-Received: from unknown (10.1.10.26) by m5.onelist.org with QMQP; 27 Feb 2000 21:05:44 -0000
-Received: from unknown (HELO mailout06.sul.t-online.de) (194.25.134.19) by mta1.onelist.com with SMTP; 27 Feb 2000 21:05:42 -0000
-Received: from fmrl01.sul.t-online.de  by mailout06.sul.t-online.de with smtp  id 12PAsh-0007eE-01; Sun, 27 Feb 2000 22:05:35 +0100
-Received: from gmx.de (0522173720-0001@[62.158.126.118]) by fmrl01.sul.t-online.de with smtp id 12PAsY-1t4i0XC; Sun, 27 Feb 2000 22:05:26 +0100
-Received: by gmx.de (CrossPoint v3.13 SV R/C22601); 27 Feb 2000 22:05:18 +0200
-To: xpdeveloper@onelist.com
-Message-ID: <7ZgfB8qma5B@gmx.de>
-X-Mailer: CrossPoint v3.13 SV R/C22601, via SMTP (UKAW v1.72g)
-X-Sender: 0522173720-0001@t-dialin.net
-MIME-Version: 1.0
-Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
-Delivered-To: mailing list xpdeveloper@onelist.com
-Precedence: bulk
-List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@onelist.com>
-Date: 27 Feb 2000 22:05:00 +0200
-X-eGroups-From: stefan.vinke@gmx.de (Stefan Vinke)
-From: stefan.vinke@gmx.de
-Reply-To: xpdeveloper@onelist.com
-Subject: [XPDEV] Fehler bei Sprachenumstellung
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-From: stefan.vinke@gmx.de
-
 Moin, moin!
 
 XP stuerzt u.U. beim Umstellen der Sprache im Configmenue mit dieser  
@@ -723,13 +549,6 @@ Hallo,
 
 ein Bug??? und ein Wunsch zur beta21:
 
-- wenn ich mir Abschnitte von MIME-Nachrichten ansehe, dann habe ich  
-teilweise Muell (wirre Zeichen) am Ende des jeweiligen Abschnittes.
-
-Es schien meist bei Nachrichten mit teilw. base64-Codierung aufzutreten.
-Ich bin dem aber noch nicht weiter nachgegangen.
-Ob's dann beim Export was ausmacht, habe ich auch noch nicht probiert.
-
 - die MID-Suche ist rasant schnell :-)
 Ich wuerd mir aber noch alternativ eine langsame Teilstringsuche  
 wuenschen.
@@ -737,7 +556,4 @@ BTW die Optionen bewirken ja nichts, kann/sollte man sie ausblenden?
 
 Robinton
 
-
---
-Jetzt kommen die sieben mageren Jahre, dann hoert die gute Zeit auf.
 

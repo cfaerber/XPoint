@@ -335,9 +335,11 @@ var i  : integer;
   end;
 
 begin
-  { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" } 
-  if (winversion>0) or (lo(dosversion)>=20) or (lnxversion>0) 
+  { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
+{$IFDEF BP }
+  if (winversion>0) or (lo(dosversion)>=20) or (lnxversion>0)
     then ParWintime:=1;
+{$ENDIF }
   extended:=exist('xtended.15');
   findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
   while doserror=0 do begin
@@ -1086,6 +1088,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.14  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.13  2000/03/02 00:17:23  rb
   Hilfe bei XP /? fÅr Rechenzeitfreigabe Åberarbeitet
 

@@ -5,7 +5,7 @@
 {                                                                 }
 { Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
 { --------------------------------------------------------------- }
-{ $Id }
+{ $Id$ }
 
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
@@ -16,7 +16,7 @@
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
   Code der EXE-Datei nicht }
 
-{.$DEFINE DebugInfo }
+{$DEFINE DebugInfo }
 
 { Keine Assembler-Routine verwenden. Ein Gegenpart in Pascal mu·
   existieren }
@@ -111,6 +111,9 @@
 
 {
   $Log$
+  Revision 1.10  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.9  2000/02/28 08:57:05  mk
   - Version auf 3.20 RC1 geandert
 

@@ -293,7 +293,7 @@ procedure initvar;
 var i    : integer;
     rp   : ^boolean;
 begin
-    {$IFNDEF WIN32}
+  {$IFNDEF WIN32}
   checkbreak:=false;
   getcbreak(orgcbreak);
   setcbreak(false);
@@ -301,6 +301,7 @@ begin
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
+{$IFDEF BP }
   if (ParWintime=1) and (ParOS2=0)
     then Int15delay:=4
     else Int15delay:=ParOS2;
@@ -308,6 +309,17 @@ begin
   else if lnxversion>0 then OStype:=os_linux
   else if Winversion>0 then OStype:=os_windows
   else OStype:=os_dos;
+{$ELSE }
+  {$IFDEF Linux }
+    OSType := os_Linux;
+  {$ENDIF }
+  {$IFDEF OS2 }
+    OSType := os_2;
+  {$ENDIF }
+  {$IFDEF OS2 }
+    OSType := os_windows;
+  {$ENDIF }
+{$ENDIF }
 
   setcolors;
   masksetwrapmode(endonlast);
@@ -1590,6 +1602,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.11  2000/03/01 23:49:02  rb
   Rechenzeitfreigabe komplett Åberarbeitet
 

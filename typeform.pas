@@ -171,7 +171,9 @@ procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr)
 {$ENDIF }
 procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
+{$IFDEF BP }
 function lnxversion:word;                      { Dosemu-Version (analog zu dosversion), sonst 0 }
+{$ENDIF }
 { ================= Implementation-Teil ==================  }
 
 IMPLEMENTATION
@@ -2155,6 +2157,8 @@ asm
   @ende:
 end;
 
+{$IFDEF BP }
+{ Erkennt die Version des DOSEmu, wenn XP darin gestartet wird }
 function lnxversion:word;
 var biosdate:string[8];
     vseg:word;
@@ -2174,12 +2178,16 @@ begin
     @nodosemu:
     end;
     lnxversion:=vseg;
-  end;  
+  end;
 end;
+{$ENDIF }
 
 end.
-{ 
+{
   $Log$
+  Revision 1.16  2000/03/02 18:32:23  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.15  2000/03/01 22:30:20  rb
   Dosemu-Erkennung eingebaut
 

@@ -1436,7 +1436,7 @@ begin
   freeres;
 
   if not ende then
-    if netcall(true,box,false,false,false) then;
+    netcall(true,box,false,false,false);
 {$IFNDEF Delphi5 } forcepoll:=false; {$ENDIF }
 end;
 
@@ -1557,6 +1557,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.7  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

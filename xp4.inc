@@ -250,8 +250,8 @@ begin
             2 : AutoTiming(0,true,false);                    { Alle    }
             3 : AnrufStat;                                   { Letzte Anrufe }
             4 : netcall_at('','');                           { Um..    }
-            5 : if netcall(true,'',false,true,false) then;   { Relogin }
-            6 : if netcall(false,'',false,false,false) then; { Online  }
+            5 : netcall(true,'',false,true,false);           { Relogin }
+            6 : netcall(false,'',false,false,false);         { Online  }
             8 : AutoTiming(0,false,false);
             9 : UniEdit(1);
           end;
@@ -572,6 +572,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.6  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
+
   Revision 1.5  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

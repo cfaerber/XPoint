@@ -189,30 +189,7 @@ ende:
 end.
 {
   $Log$
-  Revision 1.8  2000/02/20 20:46:17  jg
-  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
-  Todo aktualisiert
-
-  Revision 1.7  2000/02/20 17:22:09  ml
-  Kommentare in MsgAddMark hinzugefuegt
-
-  Revision 1.6  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.5  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
-}
-{
-  $Log$
-  Revision 1.8  2000/02/20 20:46:17  jg
-  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
-  Todo aktualisiert
-
-  Revision 1.7  2000/02/20 17:22:09  ml
-  Kommentare in MsgAddMark hinzugefuegt
-
-  Revision 1.6  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
+  Revision 1.9  2000/03/02 18:32:24  mk
+  - Code ein wenig aufgeraeumt
 
 }
