@@ -23,6 +23,19 @@ unit ncfido;
 
 interface
 
+uses ncmodem;
+
+type
+  TFidoNetcall = class(TModemNetcall)
+
+  protected
+
+  public
+
+  end;
+
+implementation
+
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
       Zed_Zapper = $0008;
@@ -934,6 +947,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/01/19 18:00:00  ma
+  - added TUUCPNetcall sources (from uucico)
+
   Revision 1.1  2001/01/10 16:30:49  ma
   - todo: build a real standalone unit not relying too much on
     xp* units (as it's part of the netcall class tree)
