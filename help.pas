@@ -464,11 +464,8 @@ begin
     else s:=z^[i+add]^;
     p:=pos('<<',s);
     yy:=y+i+iif(NoHeader,-1,2);
-    if p=0 then begin
-      fillchar(s[length(s)+1],80,32);
-      s[0]:=chr(wdt);
-      fwrt(x,yy,s);
-  end
+    if p=0 then
+      fwrt(x,yy,FormS(s, wdt))
     else begin
       gotoxy(x,yy);
       while p>0 do begin
@@ -782,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.1  2000/07/17 13:30:40  mk
+  - Fillchar eliminiert und Code vereinfacht
+
   Revision 1.13  2000/06/05 16:16:20  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
