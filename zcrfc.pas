@@ -2888,7 +2888,7 @@ begin
         RenameFile(spath+sr.name,spath+sr.name+'.BAK');
     end
     else
-    if ExtractFileExt(sr.name) = '.news' then
+    if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
@@ -3829,6 +3829,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/06/13 10:37:52  ma
+  - fixed: News files using integrated client spool format were incorrectly
+    processed if NNTPSpoolFormat was true, but file ext not ".news".
+  - ToDo: A generic format chooser variable should be implemented.
+
   Revision 1.57  2001/05/30 21:22:55  mk
   JG:- 'Xref' headers are not thrown away anymore
 
