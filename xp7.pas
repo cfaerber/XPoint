@@ -18,10 +18,14 @@ unit  xp7;
 interface
 
 uses
-      {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
-      sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
-      fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,debug,
-      resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
+{$IFDEF NCRT}
+  xpcurses,
+{$ELSE}
+  crt,
+{$ENDIF }
+  sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
+  fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,debug,
+  resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
@@ -707,8 +711,11 @@ begin                  { of Netcall }
 
     netcall:=false;
 
-    if not (LoginTyp in [ltNNTP, ltPOP3, ltIMAP]) then
-    begin
+    if not (LoginTyp in [ltNNTP, ltPOP3, ltIMAP]) then begin
+      { --------------------------------------------------------------- }
+      { bisherige Netcall-Typen                                         }
+      { --------------------------------------------------------------- }
+      
       ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
 
 
@@ -1299,10 +1306,18 @@ begin                  { of Netcall }
   ende0:
       if(net and (OStype<>OS_2))and(not _fido)then RestComState(bport,cps);
       comn[boxpar^.bport].fossil:=orgfossil;
-    end else // not LoginTyp ltNNTP, ltPOP, ltIMAP
-    begin
-      // Hier Netcallroutinen fÅr die Socket-Boxen
+    end else begin { not LoginTyp ltNNTP, ltPOP, ltIMAP }
+      { --------------------------------------------------------------- }
+      { 'Neue' Protokolle                                               }
+      { --------------------------------------------------------------- }
 
+      case LoginTyp of
+        ltPOP3: begin
+                  trfehler(799,30); 
+                end;
+      else
+        trfehler(799,30); { 'Funktion nicht implementiert' }
+      end; { case }
 
     end;
 
@@ -1530,6 +1545,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/09/25 16:27:51  hd
+  - 'Nicht implementiert eingefuegt'
+
   Revision 1.32  2000/09/05 17:25:13  ma
   - kein RestComState fuer Fido
 

@@ -3015,6 +3015,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 41 L”schen Sie das Unterverzeichnis "%s"!
 42 Unbekannter Fido-Node: %s
 43 Keine Eintr„ge markiert!
+# Hinweis auf fehlende Implementation
+99 Funktion ist noch nicht implementiert!
 
 +  10800
 1  Diese Box untersttzt keine Brettbestell-Funktionen.

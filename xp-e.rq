@@ -2944,6 +2944,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 41 Delete the subdirectory "%s"!
 42 Unknown node: %s
 43 No entries marked!
+# Not available
+99 Function not implemented yet!
 
 +  10800
 1  This server offers no automatic subscribing functions.
