@@ -295,11 +295,11 @@ begin
   attrtxt(col.coldialog);
   if spezial then begin
     mwrt(x+3,y+10,getres2(603,1));   { 'Spezial..  ' }
-    mwrt(x+42,y+10,'               ');
+    mwrt(x+39,y+10,'               ');
     end (* 05.02.2000 MH: x+38 -> x+42 *)
   else begin
     mwrt(x+3,y+10,getres2(603,2));   { 'Absenden..' }
-    mwrt(x+42,y+10,getres2(603,3));  { 'Žndern..' }
+    mwrt(x+39,y+10,getres2(603,3));  { 'Žndern..' }
     end;
 end;
 
@@ -1136,6 +1136,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.9.2.1  2000/04/18 20:08:06  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt
+
   Revision 1.9  2000/03/01 09:24:30  mk
   HS: - FQDN jetzt auch bei UUCP-Boxen
 

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Eingaberoutinen }
 
@@ -101,11 +102,11 @@ var p,n,p1,i : byte;
     if (yy=y) and (xx>=x) then begin
       _x:=x;
       i:=1;
-      while (i<=n) and (xx>=_x+length(butt[i])+2) do begin
+      while (i<=n) and (xx>=_x+length(butt[i])+2+buttsp[i]) do begin
         inc(_x,length(butt[i])+buttsp[i]+abs+2);
         inc(i);
         end;
-      if (i<=n) and (xx>=_x) then
+      if (i<=n) and (xx>=_x+buttsp[i]) then
         if (t=mausleft) or (t=mauslmoved) then begin
           p:=i; t:=#0; end else
         if t=mausunleft then t:=hot[i];
@@ -414,4 +415,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.4.2.1  2000/04/18 20:08:05  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt
 
+}

@@ -771,11 +771,17 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
+<<<<<<< xp6.pas
 {JG:06.02.00}
   attrtxt(col.coldiahigh);  
   wrt(x+75,y+2,'/');                 { * = Empfaenger aendern }   
+=======
+(*{JG:06.02.00}
+  attrtxt(col.coldiahigh);
+  wrt(x+4,y+2,'m');                 { * = Empfaenger aendern }
+>>>>>>> 1.19
   attrtxt(col.coldialog);
-{/JG}
+{/JG} *)
   if echomail then begin
     wrt(x+3,y+4,getres2(611,11));    { 'An' }
     inc(y,2);
@@ -1212,6 +1218,18 @@ fromstart:
           mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. ZurÅck }
           goto ReadAgain;
           end;
+
+        if (n=5) or (t='/') then    { Empfaenger aendern? } 
+        begin
+          Changeempf;
+          betreffbox:=false; edit:=false; sendbox:=true;
+          SendDefault:=senden; forcebox:='';
+          pophp;
+          closebox;
+          goto fromstart;
+          end
+        else if n>5 then dec(n); { Ansonsten eins zurueckzaehlen fuer alte Keys}
+
         if n<0 then begin
           p:=pos(UpCase(t[1]),getres2(611,30));   { PDEHôRMLG }
           case p of
@@ -1369,6 +1387,7 @@ fromstart:
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
                   end;
+<<<<<<< xp6.pas
 
                 {JG:06.02.00}                         { Empfaenger nachtraeglich aendern }
                 if t='/' then begin
@@ -1381,6 +1400,8 @@ fromstart:
                    end;
                 {/JG}
 
+=======
+>>>>>>> 1.19
                 end;
       end;
     until senden>=0;
@@ -2059,6 +2080,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/04/18 20:08:05  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt
+
   Revision 1.7.2.1  2000/04/09 17:04:47  mk
   JG: Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
 
