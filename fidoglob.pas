@@ -95,6 +95,8 @@ type
                 property  processor   : string  read fprocessor  write fprocessor;
                 property  updatearc   : string  read fupdatearc  write fupdatearc;
                 property  DoDiff      : boolean read fDoDiff     write fDoDiff;
+
+
           end;
         ///////////////////////////////////////////////////////////////////////
         //Nodelisten Verwaltung
@@ -129,10 +131,9 @@ var
 implementation
 ///////////////////////////////////////////////////////////////////////////////
 // begin TNodList
-
 constructor TNodeList.Create;
 begin
-        //fEntries:=TList.Create;
+        inherited Create;;
         fOpen:=false;                   // Nodelist(en) vorhanden & geoeffnet
 end;
 procedure TNodeList.LoadConfigFromFile;       { NODELST.CFG laden }
@@ -143,7 +144,6 @@ var t     : text;
     fa    : fidoadr;
     NlItem: TNodeListItem;
 begin
-  create;                               // standard constructor
   assign(t,NodelistCfg);
   if existf(t) then begin
     reset(t);
@@ -312,6 +312,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/01/08 07:37:10  mo
+  -Add inherited,  delete wrong create -TnodeList(Tlist)
+
   Revision 1.11  2001/01/07 20:03:02  mo
   no message
 
