@@ -459,8 +459,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/06/12 21:22:27  my
+  - added more meaningful description for "ungelesen-fix" of 01/05/23
+
   Revision 1.39  2001/05/23 10:30:49  mk
   JG:- ungelesen-fix
+  (Amended description by my: Unread flag of /Netcall ("/Netzanruf")
+  message area should now always be set correctly => "Update date
+  entries after netcall" under C/O/C should not be necessary anymore.)
 
   Revision 1.38  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
