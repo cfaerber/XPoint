@@ -2039,38 +2039,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 31   max. UUCP-g-Fenstergr”áe  ~
 62   maximale Dateigr”áe    ~
 32   variable UUCP-g-Paketgr”áe
-60   Ausgangspaketgr”áe vorgeben
-61   Login mit 7/E/1
-# RFC/Client
-80   Client-Einstellungen
-81   Server
-82   Kommentar
-83   eMail-Adresse
-84   Realname    ~
-85   Vertreter   ~
-86   FQDN        ~
-87   Client-Verzeichnis
-88   Client-Aufruf    ~
-89   Zus„tzliche Server
-90   Zugang ~
-91   Telefon~
-92   Login  ~
-93   Paáwort~
-100  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
-101  pop.t-online.deúpop.gmx.netúpop3.nexgo.deúmail.epost.deúpop3.epost.deúpop3.web.deúpop.compuserve.deúpop.mail.yahoo.deúpop.addcom.deúpop.tiscalinet.deúpop.worldonline.deúpop3.planetinternet.deúpop.kundenserver.deúmail.komtel.net
-102  Mail-Server fr ausgehende Mail (SMTP)
-103  mailto.t-online.deúsmtprelay.t-online.deúmail.gmx.netúmail.nexgo.deúpostman.nexgo.deúmail.epost.deúsmtp.web.deúsmtp.compuserve.deúsmtp.mail.yahoo.deúsmtp.addcom.deúsmtp.tiscalinet.deúsmtp.worldonline.deúmailhost.planetinternet.deúsmtp.kundenserver.de
-
-
-
-úmail.komtel.net
-104  News-Server (NNTP)
-105  news.t-online.deúnews.cis.dfn.deúnews.nexgo.deúxnews.nexgo.deúnews.compuserve.deúnews.tiscali.deúnews.worldonline.deúnews.planetinternet.deúnews.komtel.net
-106  Servername     ~
-107  Envelope-Adresse
-108  Benutzername   ~
-109  Paáwort        ~
-110  Port
 33   G-Protokoll
 34   g-Protokoll
 35   Dateigr”áe bertragen
@@ -2078,10 +2046,52 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 37   z-Protokoll
 38   f-Protokoll
 39   e-Protokoll
-66   t-Protokoll
+60   Ausgangspaketgr”áe vorgeben
+61   Login mit 7/E/1
 63   a-Protokoll
 64   i-Protokoll
 65   j-Protokoll
+66   t-Protokoll
+# RFC/Client
+80   Client-Einstellungen
+81   Server
+82   Name
+83   Kommentar
+84   User
+85   eMail-Adresse
+86   Realname    ~
+87   Vertreter   ~
+88   FQDN        ~
+89   Client
+90   Client-Verzeichnis
+91   Client-Aufruf    ~
+92   Zus„tzliche Server
+93   Verbindung/Login
+94   Name   ~
+95   Telefon~
+96   Login  ~
+97   Paáwort~
+98   Rckfrage vor Anwahl
+99   Rckfrage vor Auflegen
+100  Verbindungsstatus halten
+110  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
+111  Mail-Server fr ausgehende Mail (SMTP)
+112  News-Server (NNTP)
+113  Servername     ~
+114  Port
+115  Protok.
+116  Fallback-Server~
+117  Envelope-Adresse
+118  Benutzername   ~
+119  Paáwort        ~
+120  Envelope-Header auswerten
+121  Mail auf Server belassen
+122  APOP-Authentifizierung
+123  SMTP after POP
+124  SMTP-Login nach RFC 2554
+125  Newsgroup-Liste pflegen
+126  Max. Artikelgr”áe (KB)  ~
+127  Max. Artikel je Gruppe~
 #
 40   Packer-Extension ~
 # ProNet:
@@ -3979,6 +3989,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.56  2002/04/06 14:25:34  mk
+# - fixed Edit/Boxen/RFClient-Dialog
+#
 # Revision 1.55  2002/04/03 22:58:09  mk
 # - added resource 10700,49 (for /nsp)
 #

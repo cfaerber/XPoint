@@ -238,8 +238,8 @@
       msetvfunc(PPPClientpathTest);
     maddstring(3,13,getres2(920,91),ClientClient,41,
       MaxLenPathname,'');                                   { Client-Aufruf }
-      mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG¨UKAW.BAT /M $CLPATH $CONFIG¨UKAX.BAT /M $CLPATH $CONFIG¨' +
-       'UKA_Client.BAT /M $CLPATH $CONFIG¨start /w $CLPATH+XPNEWS.EXE $CONFIG¨$CLPATH+XPNEWS.EXE $CONFIG');
+      mappsel(false,'UKAW.BAT $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAD.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
+       'UKA_PPP.BAT /M $CLPATH $CONFIGùstart /w $CLPATH+XPNEWS.EXE $CONFIGù$CLPATH+XPNEWS.EXE $CONFIG');
       msetvfunc(PPPClienttest);
     serverNames:=BfgToBox(ClientAddServers);
     maddstring(3,14,getres2(920,92),serverNames,41,255,     { 'Zusätzliche Server' }
@@ -262,9 +262,9 @@
     maddbool(35,19,'',ClientKeepConnectStatus);
     maddtext(41,19,getres2(920,100),0);                     { 'Verbindungsstatus halten' }
 
-    maddtext(0,4,'+'+dup(66,'-')+'¦', 0);  { Linie }
-    maddtext(0,10,'+'+dup(66,'-')+'¦', 0); { Linie }
-    maddtext(0,15,'+'+dup(66,'-')+'¦', 0); { Linie }
+    maddtext(0,4,'Ã'+dup(66,'Ä')+'´', 0);  { Linie }
+    maddtext(0,10,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
+    maddtext(0,15,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
 
     freeres;
     readmask(brk);
@@ -2361,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.47  2002/04/06 14:25:34  mk
+  - fixed Edit/Boxen/RFClient-Dialog
+
   Revision 1.46  2002/02/10 14:23:56  mk
   - misc 3.40 update fixes
 

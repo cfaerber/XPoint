@@ -1958,32 +1958,45 @@ K (c) '2000 OpenXP Team, www.openxp.de
 31   max. UUCP-g window size    ~
 62   maximum file size       ~
 32   variable UUCP-g packet size
-# RFC/Client
 80   Client settings
 81   Server
-82   Comment ~
-83   eMail address
-84   Real name   ~
-85   Reply to    ~
-86   FQDN        ~
-87   Client directory ~
-88   Client call      ~
-89   Additional servers
-90   Dial-Up~
-91   Phone  ~
-92   Login  ~
-93   Password
-100  Mail server for incoming mail (POP3/SMTP/IMAP)
-101  mail.btinternet.com
-102  Mail server for outgoing mail (SMTP)
-103  mail.btinternet.com
-104  News server (NNTP)
-105  news.btinternet.com
-106  Server name    ~
-107  Envelope address
-108  User name      ~
-109  Password       ~
-110  Port
+82   Name
+83   Comment ~
+84   User
+85   eMail address
+86   Real name   ~
+87   Reply to    ~
+88   FQDN        ~
+89   Client
+90   Client directory ~
+91   Client call      ~
+92   Additional servers
+93   Connection/Login
+94   Dial-Up~
+95   Phone  ~
+96   Login  ~
+97   Password
+98   Ask before Dial
+99   Ask before Disconnect
+100  Keep connect status
+110  Mail server for incoming mail (POP3/SMTP/IMAP)
+111  Mail server for outgoing mail (SMTP)
+112  News server (NNTP)
+113  Server name    ~
+114  Port
+115  Protoc.
+116  Fallback server~
+117  Envelope address
+118  User name      ~
+119  Password       ~
+120  Use Envelope Header
+121  Keep mail on server
+122  APOP Authentication
+123  SMTP after POP
+124  SMTP Login acc. RFC 2554
+125  Update Newsgroup list
+126  Max. article length (KB)~
+127  Max. articles per group
 60   force send packet size
 61   7/E/1 login
 33   G protocol
@@ -3967,6 +3980,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49  2002/04/06 14:25:34  mk
+# - fixed Edit/Boxen/RFClient-Dialog
+#
 # Revision 1.48  2002/04/03 22:58:09  mk
 # - added resource 10700,49 (for /nsp)
 #
