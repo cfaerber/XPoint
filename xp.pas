@@ -114,7 +114,6 @@ begin
   InitObjComUnit;               { ObjCOM }
   InitModemUnit;                { Modem }
   InitZModemUnit;               { ZModem }
-  InitPrinterXUnit;             { PrinterX }
   InitResourceUnit;             { Resource }
   InitWinXPUnit;                { WinXP }
   InitMaskeUnit;                { Maske }
@@ -213,6 +212,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.45  2000/12/03 22:23:08  mk
+  - Improved Printing Support
+
   Revision 1.44  2000/11/30 14:27:41  mk
   - Removed Unit UART
 

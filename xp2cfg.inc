@@ -329,12 +329,10 @@ begin
   altproc[7].funktion:=Notepad;
   shortkeys:=0;
   scsaveadr:=scsaver;
-  prterror:=DruckWiederholen;
   hlp(1);
-  DefaultZone:=2;    {alt: 2}
-  DefaultNet:=248;   {alt: 243}
-  DefaultNode:=2004; {alt: 97}
-  {Node 2:243/97 existiert nicht mehr}
+  DefaultZone:=2;
+  DefaultNet:=248;
+  DefaultNode:=2004;
   nodeopen:=false;
   kludges:=true;
   gAKAs:='';
@@ -1586,18 +1584,7 @@ begin
     else if UpperCase(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
-(*
-    { In 32 Bit Versionen ist lst am Anfang nicht geîffnet, das
-      schlie·en wÅrde zu einem IOResult 103 fÅhren }
-    close(lst);                           { Drucker-Schnitte }
-*)
     DruckLPT:=min(5,max(DruckLpt,1));
-{$IFNDEF FPC }
-  { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
-    bis jetzt kein bekannter WorkArround }
-    AssignLst(DruckLPT-1);
-    rewrite(lst);
-{$ENDIF }
     if aaa<>'' then
     begin
       UpString(aaa);
@@ -1693,6 +1680,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.96  2000/12/03 22:23:08  mk
+  - Improved Printing Support
+
   Revision 1.95  2000/11/20 19:54:10  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 

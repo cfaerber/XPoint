@@ -1126,13 +1126,6 @@ begin
     { COM-Drucker wurden nicht selektiert }
     for i := 1 to high(lpts) do
       if lpt = lpts[i] then DruckLPT := i;
-{$IFNDEF FPC }
-  { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
-    bis jetzt kein bekannter WorkArround }
-    close(lst);
-    assignlst(DruckLPT-1);
-    rewrite(lst);
-{$ENDIF }
     GlobalModified;
   end;
   enddialog;
@@ -1489,6 +1482,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/12/03 22:23:08  mk
+  - Improved Printing Support
+
   Revision 1.70  2000/11/30 14:27:41  mk
   - Removed Unit UART
 

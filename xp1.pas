@@ -959,7 +959,9 @@ end;
 procedure InitPrinter;
 begin
   checklst:=true;
+  xlatger:=false;
   printlines:=0;
+  OpenLst(DruckLPT);
   write(lst,PrintString(DruckInit));
 end;
 
@@ -980,8 +982,9 @@ end;
 procedure ExitPrinter;
 begin
   write(lst,PrintString(DruckExit));
+  write(lst, #26);
+  CloseLst;
 end;
-
 
 {$I xp1s.inc}    { Shell }
 
@@ -2071,6 +2074,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.96  2000/12/03 22:23:08  mk
+  - Improved Printing Support
+
   Revision 1.95  2000/12/03 12:38:20  mk
   - Header-Record is no an Object
 

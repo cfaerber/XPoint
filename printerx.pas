@@ -83,47 +83,30 @@ type  perrfunc  = function:boolean;
 }
 
 var  checklst,xlatger : boolean;
-     lst              : text;
-     prterror         : perrfunc;
+     lst             : text;
 
-Procedure assignlst(d:word);
-Function  PrintString(s:string):string;
-
-procedure InitPrinterXUnit;
-
-{ ================= Implementation-Teil ==================  }
+procedure OpenLst(Port: Integer);
+procedure CloseLst;
+function  PrintString(s:string):string;
 
 implementation
 
+uses
+  SysUtils;
 
-type textbuf = array[0..126] of char;
+type
+  textbuf = array[0..126] of char;
 
-
-function prtorgerror:boolean;
-var handle : word;
-    c      : char;
-    z      : taste;
+procedure OpenLst(Port: Integer);
 begin
-  wpull(22,59,9,14,'',handle);
-  savecursor;
-  inout.cursor(curoff);
-  mwrt(25,11,'     Drucker nicht bereit !');
-  mwrt(25,12,'(W)iederholen oder (A)bbrechen ?');
-  inout.cursor(curoff);
-  write(#7);
-  repeat
-    get(z,curoff);
-    c:=UpCase(z[1]);
-  until (c='W') or (c='A');
-  wrest(handle);
-  restcursor;
-  prtorgerror:=(c='A');
+  Assign(lst, 'lpt' + IntToStr(Port));
+  ReWrite(lst);
+  if IOResult = 0 then ;
 end;
 
-procedure assignlst(d:word);
+procedure CloseLst;
 begin
-  Assign(lst, 'lpt' + Chr(Ord('1')+d));
-  if IOResult = 0 then ;
+  Close(lst);
 end;
 
 
@@ -162,16 +145,12 @@ begin
   PrintString:= r;
 end;
 
-procedure InitPrinterXUnit;
-begin
-  checklst:=true;
-  xlatger:=false;
-  prterror:=prtorgerror;
-end;
-
 end.
 {
   $Log$
+  Revision 1.16  2000/12/03 22:23:08  mk
+  - Improved Printing Support
+
   Revision 1.15  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 
