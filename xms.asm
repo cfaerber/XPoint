@@ -1,7 +1,7 @@
 ; ---------------------------------------------------------------
 ; Dieser Quelltext ist urheberrechtlich geschuetzt.
 ; (c) 1991-1999 Peter Mandrella
-; (c) 2003      OpenXP/16, http://www.openxp16.de
+; (c) 2003      OpenXP/16
 ;
 ; CrossPoint ist eine eingetragene Marke von Peter Mandrella.
 ;
@@ -95,88 +95,69 @@ XmsTotal   endp
 ;XmsAvail  proc     far
 ;          mov      ax,0
 ;          cmp      xmsok,1
-;          jnz      e2                ; exit
-;          mov      ah,8              ; xmsavail (orig. version)
-;          call     dword ptr xmscall
-;          cmp      ax,1              ; < 1 Kb free EMB
-;          jng      e2                ; exit
-;          mov      cx,1
-;          push     cx                ; s flag
-;          mov      dx,32768          ; 32 Mb
-;          push     dx                ; s flag size
+;          jne      e2                ; exit
+;          mov      dx,0
+;          push     dx
+;          mov      cx,163            ; 163*100=16300 (16 Mb = 16384 Kb)
 ;e21:      pop      dx                ; repeat
-;          push     dx                  ; s flag size
+;          add      dx,100              ; progression 100 Kb
+;          push     dx
 ;          mov      ah,9                ; xmsallocate
 ;          call     dword ptr xmscall   ; handle in dx
 ;          call     errcheck
 ;          cmp      ax,1                ; 2. errcheck
 ;          je       e22                 ; ok
 ;          cmp      bl,0a0h             ; all xms reserved
-;          jne      ec22                ; break
-;          pop      ax                  ; s flag
-;          pop      bx                  ; s empty
-;          xor      bx,bx
-;          push     bx                  ; s flag
-;          push     ax                  ; s flag size
-;          jmp      e220
+;          je       e23                 ; break
+;          jmp      ec22                ; break
 ;e22:      mov      ah,10               ; xmsfree (handle in dx)
 ;          call     dword ptr xmscall
 ;          call     errcheck
 ;          cmp      ax,1                ; 2. errcheck
 ;          jne      ec22                ; break
-;e220:     pop      dx                  ; s flag
-;          mov      ax,32768
-;          shr      ax,cl               ; division
-;          jz       e23               ; exit
-;          pop      bx                  ; s empty
-;          cmp      bl,1
-;          je       e20
-;          sub      dx,ax
-;          inc      bl
-;          push     bx                  ; s flag
-;          jmp      e200
-;e20:      push     bx                  ; s flag
-;          add      dx,ax
-;e200:     push     dx                  ; s flag size
-;          inc      cl
-;          jmp      e21               ; again
+;          dec      cx                  ; 0 = exit
+;          jne      e21               ; until max. ca. 16 Mb
+;          jmp      e23
 ;ec22:     pop      dx
-;          pop      dx
 ;          mov      dx,0
 ;          mov      ax,0              ; set available XMS = 0
 ;          jmp      e2                ; exit
-;e23:      pop      bx                ; s empty
+;e23:      pop      dx
+;          sub      dx,100
 ;          mov      ax,dx
-;          cmp      bl,1
-;          je       e2                ; exit
-;          sub      ax,1
 ;e2:       ret
 ;XmsAvail  endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;;;;;; (version from JG) ;;;;;;;;
+;;;;; ((modified) version from JG) ;;;;;;;;
 ; function XmsAvail:word; external;
 
 XmsAvail  proc     far
-          mov ax,0
-          cmp xmsok,1
-          jnz e2
-          mov ah,8
-          call dword ptr xmscall
-          mov di,dx
-          mov si,ax
-          mov ah,9
-          call dword ptr xmscall
-          cmp ax,1
-          mov ax,si
-          jne e2
-          mov ah,0ah
-          call dword ptr xmscall
-          mov ax,di
+          mov      ax,0
+          cmp      xmsok,1
+          jnz      e2
+          mov      ah,8
+          call     dword ptr xmscall
+          mov      di,dx
+          mov      si,ax
+          mov      ah,9
+          call     dword ptr xmscall
+          cmp      ax,1
+          je       e20                ; ok
+          mov      di,16384           ; 16 Mb
+          mov      dx,di
+          mov      ah,9
+          call     dword ptr xmscall
+          cmp      ax,1
+          mov      ax,si
+          jne      e2
+e20:      mov      ah,0ah
+          call     dword ptr xmscall
+          mov      ax,di
 e2:       ret
 XmsAvail  endp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;::::::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ; function  XmsAlloc(KB:word):word; external;
@@ -280,29 +261,6 @@ XmsWrite  endp
 
           end
 
-
-;~~~~~~~~~~~~~~~~~~~
-; MY 18.04.03
-; - Neues XmsAvail von JG eingebaut (Zitat aus Mail):
-;   - Gr”sse abfragen (DX=Gesamt, AX=gr”sster freier Block)
-;   - trotzdem gesamten Speicher anfordern
-;   - Wenn's klappt: Block wieder freigeben und "gesamten Speicher"
-;     melden, ansonsten "gr”ssten freien Block" melden
-;   Das muss reichen, Win32+ kann immer den "gesamten freien Speicher"
-;   liefern, egal was es als "gr”ssten freien Block" meldet, und
-;   jenseits von Win9x lgen die XMS-Funktionen nicht.
-;
-; (Anm. MY: Diese Routine ist sprbar schneller als die vorherige von JM)
-
-; JM 18.04.03
-; - Optimierung des (neuen) XmsAvail:
-;   Ermittlung des freien Speichers durch versuchte Reservierung
-;   und Freigabe erfolgt jetzt in Intervallen, die ausgehend
-;   von einem Anfangswert von 32 Mb in jeweils halbierten Stcken
-;   vergr”áert oder verkleinert werden.
-;   Zugleich kann damit ein Block von max. 65535 Kb (ca. 64 Mb)
-;   geprft werden.
-
 ; JM 14.04.03
 ; - Bezeichnung in "Routinen fr XMS.PAS" geaendert (war EMS.PAS)
 ; - Neue Function XmsAvail:
@@ -318,3 +276,28 @@ XmsWrite  endp
 ;     ermittelt werden koennte.
 ;   - der als verfgbar gemeldete XMS-Speicher ist bei Erreichen
 ;     des max. Werts immer nur der mind. verfgbare XMS-Speicher.
+
+; MY 16.04.03
+; - Neues XmsAvail von JG eingebaut (Zitat aus Mail):
+;   - Gr”sse abfragen (DX=Gesamt, AX=gr”sster freier Block)
+;   - trotzdem gesamten Speicher anfordern
+;   - Wenn's klappt: Block wieder freigeben und "gesamten Speicher"
+;     melden, ansonsten "gr”ssten freien Block" melden
+;   Das muss reichen, Win32+ kann immer den "gesamten freien Speicher"
+;   liefern, egal was es als "gr”ssten freien Block" meldet, und
+;   jenseits von Win9x lgen die XMS-Funktionen nicht.
+
+; JM 23.04.03
+; - modifiziertes (JG-) xmsavail
+;   - Wie bisher wird zuerst mit XmsTotal, der gesamte als frei
+;     (DX=Gesamt. AX=gr”áter freier Block) gemeldete Speicher angefordert.
+;   - Wird der nicht reserviert (da u.U. mehr als 16 Mb gesamt freier
+;     XMS-Speicher gemeldet werden, aber Win2K, WinXP, dennoch "nur"
+;     max. 16 Mb EMB reserviert, wogegen Win9x i.A. alles reserviert),
+;     - wird nicht gleich der gr”áte als verfgbar (in AX) ausgewiesene
+;       Block gemeldet (weil ebenfalls u.U. ein gr”áeren Wert
+;       als 16 Mb von Win2K, WinXP dem XMS-Treiber bergeben wurde),
+;     - sondern genau 16 Mb angefordert und im  Erfolgsfall als gr”áter,
+;       verfgbar freier Block an XPoint zurckgegeben.
+;   - Erst wenn das nicht klappt, wird der ursprnglich gr”áte, freie
+;     Block an XPoint gemeldet.
