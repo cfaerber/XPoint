@@ -388,7 +388,7 @@ begin
 
   for n := 1 to 5 do begin
     s:=GetUUStr;
-    if s='' then exit;
+    if s='' then continue;
     if s[1]='R' then break;
   end;
 
@@ -1010,6 +1010,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/03/28 22:26:22  cl
+  - better UUCP startup roboustness/error handling
+
   Revision 1.4  2001/03/26 22:51:04  cl
   - proper shutdown with some protocols (ignore errors due to hangup)
   - range check fix for VPascal
