@@ -1546,10 +1546,6 @@ begin
     for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
     if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
 
-    {$IFDEF Ver32 }
-      ScreenLines := 25; { !! Keine Žnderungsm”glichkeit bis jetzt }
-    {$ENDIF }
-
     extrakttyp:=defextrakttyp;
     if ParZeilen>0 then begin
       cfgscrlines:=screenlines;
@@ -1648,6 +1644,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.27  2000/04/10 00:43:03  oh
   - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
 

@@ -1221,7 +1221,7 @@ begin
     p:=pos('=',s);
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
-      findfirst(FidoDir+fn,0,sr);
+      findfirst(FidoDir+fn,AnyFile,sr);
       if (doserror=0) and (sr.size>0) then begin
         node:=left(s,p-1);
         GetNodeinfo(node,ni,1);
@@ -2245,6 +2245,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/13 12:48:40  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.11  2000/03/14 15:15:42  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

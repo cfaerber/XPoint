@@ -1,7 +1,7 @@
-{$I XPDEFINE.INC }
-
 UNIT CRC16;
 
+{$I XPDEFINE.INC }
+{$R-}
 
 INTERFACE
 
@@ -74,7 +74,6 @@ BEGIN { UpdCrc }
    UpdCrc16 := crctab[((crc SHR 8) AND 255)] XOR (crc SHL 8) XOR cp
 END;
 
-
 function _CRC16(var data; size:smallword):smallword;
 type ba = array[0..65530] of byte;
 var c16,i : smallword;
@@ -113,6 +112,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/13 12:48:30  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.5  2000/03/14 15:15:34  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

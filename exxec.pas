@@ -344,7 +344,7 @@ var regs  : registers;
   function exist(s:string):boolean;
   var sr : searchrec;
   begin
-    findfirst(s,0,sr);
+    findfirst(s,Anyfile,sr);
     exist:=doserror=0;
     {$IFDEF Ver32 }
       findclose(sr);
@@ -481,6 +481,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/04/13 12:48:31  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.8  2000/03/14 15:15:35  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -750,7 +750,7 @@ var sr       : searchrec;
     w        : pprec;
 begin
   ppanz:=0;
-  findfirst('*.pp',0,sr);
+  findfirst('*.pp',AnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .PP-Files }
     if sr.size>0 then begin
 
@@ -764,7 +764,7 @@ begin
   {$IFDEF virtualpascal}
   FindClose(sr);
   {$ENDIF}
-  findfirst('*.epp',0,sr);
+  findfirst('*.epp',AnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
       truncstr(sr.name,cpos('.',sr.name)-1);
@@ -819,7 +819,7 @@ begin
     end;
   dbClose(d);
   if crashs then begin
-    findfirst('*.cp',0,sr);
+    findfirst('*.cp',AnyFile,sr);
     sumbytes:=0; summsgs:=0;
     while doserror=0 do begin
       inc(summsgs,testpuffer(sr.name,false,attsize));
@@ -1257,6 +1257,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/13 12:48:41  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.7  2000/03/25 15:45:00  jg
   -Statistik/Systeme: Nummer auf 4 Stellen angepasst
 

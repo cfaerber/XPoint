@@ -99,7 +99,7 @@ var sr    : searchrec;
 
  procedure DelAll(fn:string);
  begin
-    findfirst(DestDir+fn,0,sr);
+    findfirst(DestDir+fn,AnyFile,sr);
     while doserror=0 do begin
       assign(f1^,DestDir+sr.name);
       erase(f1^);
@@ -150,7 +150,7 @@ var sr    : searchrec;
       sr  : searchrec;
   begin
     sum:=0;
-    findfirst(fmask,0,sr);
+    findfirst(fmask,AnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
@@ -205,7 +205,7 @@ begin
     if freeze then cunb:='#! funbatch'#10
     else if gzip then cunb:='#! gunbatch'#10
     else cunb:='#! cunbatch'#10;
-    findfirst(DestDir+'D*.OUT',0,sr);
+    findfirst(DestDir+'D*.OUT',AnyFile,sr);
     while doserror=0 do begin
       inc(spufsize,sr.size);
       assign(f1^,DestDir+sr.name);
@@ -283,7 +283,7 @@ var sr      : searchrec;
 
 begin
   ImportUUCPfromSpool:=false;
-  findfirst(XFerDir+'D*.',0,sr);   { Datenfiles - ohne Extension }
+  findfirst(XFerDir+'D*.',AnyFile,sr);   { Datenfiles - ohne Extension }
   if doserror=0 then begin
     twin;
     clrscr;
@@ -326,7 +326,7 @@ begin
     window(1,1,80,25);
     shell('UUZ.EXE -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
-    findfirst(XFerDir+'*.0??',0,sr);
+    findfirst(XFerDir+'*.0??',AnyFile,sr);
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
@@ -334,7 +334,7 @@ begin
     {$IFDEF virtualpascal}
     FindClose(sr);
     {$ENDIF}
-    findfirst(XFerDir+'D*',0,sr);   { Åbriggebliebene D-Files sicherstellen }
+    findfirst(XFerDir+'D*',AnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
     while doserror=0 do begin
       if sr.attr and dos.Archive<>0 then
         MoveToBad(XFerDir+sr.name);
@@ -429,7 +429,7 @@ var dummy : longint;
   procedure EmptySysin;
   var sr : searchrec;
   begin
-    findfirst(BoxPar^.sysopinp+'*.*',0,sr);
+    findfirst(BoxPar^.sysopinp+'*.*',AnyFile,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
@@ -476,6 +476,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.6  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

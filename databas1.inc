@@ -186,7 +186,7 @@ begin
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
-(* {$IFDEF Ver32 }
+{$IFDEF Ver32 }
       { Expand-Node Pascal Version }
       anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
@@ -195,9 +195,9 @@ begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
       end;
-{$ELSE } *)
+{$ELSE }
       expand_node(rbuf,np);
-(* {$ENDIF } *)
+{$ENDIF }
       freemem(rbuf,irsize);
      end;
 end;
@@ -269,8 +269,16 @@ begin
 end;
 {
   $Log$
-  Revision 1.9  2000/04/04 21:01:19  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+  Revision 1.10  2000/04/13 12:48:30  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
   Revision 1.8  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig

@@ -826,7 +826,7 @@ end;
 
 
 procedure SysopTransfer;
-var f1,f2,f3 : file;
+var f1,f2 : file;
     fn    : pathstr;
     dummy : longint;
     ft    : longint;
@@ -975,7 +975,7 @@ end;
 procedure EmptySpool(filemask:string);
 var sr : searchrec;
 begin
-  findfirst(XFerDir+filemask,0,sr);
+  findfirst(XFerDir+filemask,AnyFile,sr);
   while doserror=0 do begin
     _era(XFerDir+sr.name);
     findnext(sr);
@@ -1448,6 +1448,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/04/13 12:48:38  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.11  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

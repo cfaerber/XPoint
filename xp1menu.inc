@@ -111,6 +111,7 @@ procedure showmain(nr:shortint);
 var i      : integer;
     s      : string[20];
     p      : byte;
+    x:   Integer;
 begin
   if mainmenu=nil then begin
     new(mainmenu);
@@ -130,22 +131,33 @@ begin
     with mainmenu^[i] do begin
       hmpos[i]:=wherex+1;
       if enabled then begin
-        if nr=i then attrtxt(col.colmenuinv[0])
-        else attrtxt(col.colmenu[0]);
+        if nr=i then
+          attrtxt(col.colmenuinv[0])
+        else
+          attrtxt(col.colmenu[0]);
         s:=mstr;
-        write(' ');
+        Wrt2(' ' + s + ' ');
+        if i=nr then
+          attrtxt(col.colmenuinvhi[0])
+        else
+          attrtxt(col.colmenuhigh[0]);
+        x := WhereX;
+        Wrt(x-Length(s)+hpos-2, 1, s[hpos]);
+        GotoXY(x,1);
+
+{        Wrt2(' ');
         if hpos>1 then
-          write(left(s,hpos-1));
+          Wrt2(left(s,hpos-1));
         if i=nr then attrtxt(col.colmenuinvhi[0])
         else attrtxt(col.colmenuhigh[0]);
-        write(s[hpos]);
+        Wrt2(s[hpos]);
         if i=nr then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
-        write(copy(s,hpos+1,20),' ');
+        Wrt2(copy(s,hpos+1,20) + ' '); }
         end
       else begin
         attrtxt(col.colmenudis[0]);
-        write(' ',mstr,' ');
+        Wrt2(' ' + mstr + ' ');
         end;
       end;
   mon;
@@ -339,15 +351,26 @@ var ma    : map;
           wrt(x+1,y+i,check+forms(s,ml-1))
         else if not ma^[i].enabled then
           wrt(x+1,y+i,' '+forms(s,ml-1))
-        else begin
-          wrt(x+1,y+i,check+left(s,hp-1));
-          if i<>p then attrtxt(col.colmenuhigh[menulevel])
-          else attrtxt(col.colmenuinvhi[menulevel]);
-          write(s[hp]);
-          if i<>p then attrtxt(col.colmenu[menulevel])
-          else attrtxt(col.colmenuinv[menulevel]);
-          write(forms(copy(s,hp+1,40),ml-hp-1));
-          end;
+        else
+        begin
+          Wrt(x+1,y+i, forms(check+s,ml));
+          if i<>p then
+            attrtxt(col.colmenuhigh[menulevel])
+          else
+            attrtxt(col.colmenuinvhi[menulevel]);
+          Wrt(x+1+hp, y+i, s[hp]);
+{          wrt(x+1,y+i,check+left(s,hp-1));
+          if i<>p then
+            attrtxt(col.colmenuhigh[menulevel])
+          else
+            attrtxt(col.colmenuinvhi[menulevel]);
+          Wrt2(s[hp]);
+          if i<>p then
+            attrtxt(col.colmenu[menulevel])
+          else
+            attrtxt(col.colmenuinv[menulevel]);
+          Wrt2(forms(copy(s,hp+1,40),ml-hp-1));  }
+          end
         end;
       mon;
       end;
@@ -572,6 +595,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.8  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

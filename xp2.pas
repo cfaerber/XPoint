@@ -475,7 +475,7 @@ var lf : string[12];
 begin
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('XP-*.RES',0,sr);
+  findfirst('XP-*.RES', AnyFile, sr);
   assign(t,'XP.RES');
   reset(t);
   if ioresult<>0 then
@@ -568,10 +568,10 @@ var   res  : integer;
 
 begin
   EditLogpath:=nil;
-  TestDir2(logpath);     {MW 04/2000}
-  TestDir2(temppath);    {MW 04/2000}
-  TestDir2(extractpath); {MW 04/2000}
-  TestDir2(sendpath);    {MW 04/2000}
+  TestDir2(logpath);
+  TestDir2(temppath);
+  TestDir2(extractpath);
+  TestDir2(sendpath);
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then begin
@@ -902,7 +902,7 @@ end;
 procedure DelTmpfiles(fn:string);
 var sr : searchrec;
 begin
-  findfirst(fn,0,sr);
+  findfirst(fn,AnyFile,sr);
   while doserror=0 do begin
     _era(sr.name);
     findnext(sr);
@@ -1103,6 +1103,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.24  2000/04/08 13:33:14  mk
   MW: Defaultwerte angepasst und aktualisiert
 

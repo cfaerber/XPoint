@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Hotkey-Anzeige und Online-Hilfe }
 
@@ -62,13 +63,14 @@ const kss : byte = 2;
       key:=LoCase(s[p]);
       end;
     attrtxt(col.colkeys);
-    write(left(s,p-1));
+    Wrt2(left(s,p-1));
     attrtxt(col.colkeyshigh);
-    write(s[p]);
+    Wrt2(s[p]);
     attrtxt(col.colkeys);
-    write(copy(s,p+1,30));
-    if kss=2 then write('  ')
-    else write(' ');
+    if kss = 2 then
+      Wrt2(copy(s,p+1,30) + '  ')
+    else
+      Wrt2(copy(s,p+1,30) + ' ')
   end;
 
   procedure AddSK(pos,len,spot:shortint; _key:taste);
@@ -86,11 +88,11 @@ const kss : byte = 2;
 
   procedure ende(s1,s2:string);
   begin
-    write(sp(79-length(s1)-length(s2)-wherex));
+    Wrt2(sp(79-length(s1)-length(s2)-wherex));
     attrtxt(col.colkeyshigh);
-    write(s1);
+    Wrt2(s1);
     attrtxt(col.colkeys);
-    write(s2,'  ');
+    Wrt2(s2 + '  ');
   end;
 
   procedure ksesc;
@@ -103,24 +105,24 @@ const kss : byte = 2;
   begin
     AddSK(wherex,1,1,'+');
     attrtxt(col.colkeyshigh);
-    write('+');
+    Wrt2('+');
     attrtxt(col.colkeys);
-    write('/');
+    Wrt2('/');
     AddSK(wherex,1,1,'-');
     attrtxt(col.colkeyshigh);
-    write('-');
+    Wrt2('-');
     attrtxt(col.colkeys);
   end;
 
   procedure tabkey;
   begin
     attrtxt(col.colkeys);
-    write(sp(69-wherex));
+    Wrt2(sp(69-wherex));
     addsk(wherex,3,-3,keytab);
     attrtxt(col.colkeyshigh);
-    write('Tab');
+    Wrt2('Tab');
     attrtxt(col.colkeys);
-    write(' / ');
+    Wrt2(' / ');
     addsk(wherex,4,1,'q');
     ende('Q','uit');
   end;
@@ -128,7 +130,7 @@ const kss : byte = 2;
   procedure hitxt(s:string);
   begin
     attrtxt(col.colkeyshigh);
-    write(s);
+    Wrt2(s);
   end;
 
   procedure ksmark;
@@ -177,9 +179,9 @@ begin
   gotoxy(1,2);
   attrtxt(col.colkeys);
   moff;
-  write('  ');
+  Wrt2('  ');
   case abs(nr) of
-    0 : write(sp(78));
+    0 : Wrt2(sp(78));
     1 : begin       { Brettfenster }
           kstr(1);  { ^Alle ^Brief T^extfile B^in„r ^Spezial ^Lesen: }
           lesemodepos:=wherex-1;
@@ -256,7 +258,7 @@ begin
         end;
    15 : begin             { Netcall - Anwahl }
           plusminus;
-          write(getres2(20,18));   { ' Zeit' }
+          Wrt2(getres2(20,18));   { ' Zeit' }
           ksesc;
         end;
    16 : begin             { Netcall - Warten }
@@ -354,9 +356,9 @@ var fks,fkn : integer;
   procedure wf(s:string);
   begin
     attrtxt(col.colkeyshigh);
-    write(left(s,pos('-',s)-1));
+    Wrt2(left(s,pos('-',s)-1));
     attrtxt(col.colkeys);
-    write(copy(s,pos('-',s),60),sp(spc));
+    Wrt2(copy(s,pos('-',s),60) + sp(spc));
   end;
 
 begin
@@ -392,9 +394,9 @@ begin
   attrtxt(col.colkeys);
   XPdisplayed:=(wherey=screenlines) and (wherex<=70);
   if XPdisplayed then
-    write(sp(81-length(xp_xp)-wherex),xp_xp)   { 'CrossPoint' }
+    Wrt2(sp(81-length(xp_xp)-wherex) + xp_xp)   { 'CrossPoint' }
   else
-    if wherey=screenlines then write(sp(81-wherex));
+    if wherey=screenlines then Wrt2(sp(81-wherex));
   mon;
   dec(windmax,$100);
   fnkeylines:=1;
@@ -402,4 +404,17 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

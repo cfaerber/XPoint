@@ -239,7 +239,7 @@ end;
 procedure erase_mask(s:string);                 { Datei(en) l”schen }
 var sr : searchrec;
 begin
-  findfirst(s,0,sr);
+  findfirst(s,Anyfile,sr);
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
@@ -402,7 +402,7 @@ end;
 function _filesize(fn:pathstr):longint;
 var sr : searchrec;
 begin
-  findfirst(fn,0,sr);
+  findfirst(fn,AnyFile,sr);
   if doserror<>0 then
     _filesize:=0
   else
@@ -505,7 +505,7 @@ begin
   res:=0;
   if lastchar(dest)<>'\' then
     dest:=dest+'\';
-  findfirst(source,0,sr);
+  findfirst(source,AnyFile,sr);
   while doserror=0 do begin
     if not _rename(getfiledir(source)+sr.name,dest+sr.name) then
       inc(res);
@@ -795,6 +795,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/04/13 12:48:31  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.19  2000/03/28 08:38:28  mk
   - Debugcode in Testshare entfernt
 

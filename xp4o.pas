@@ -157,11 +157,11 @@ var x,y   : byte;
     bretter : string[8];
 
     suchstring      : string[SuchLen];
-    typc,c          : char;
+    typc          : char;
     statb           : byte;
     _vondat,_bisdat : longint;
     minsize,maxsize : longint;
-    igcase,sword    : boolean;
+    igcase          : boolean;
     umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}
     bereich         : shortint;
     _brett          : string[5];
@@ -172,12 +172,12 @@ var x,y   : byte;
 
 
     suchand           : boolean;
-    seeklen,seekstart : array[0..9] of byte; 
-    seeknot           : array[0..9] of boolean;     
-    suchanz           : byte;     
-    seek              : string[suchlen];    
-    found             : boolean;   
- 
+    seeklen,seekstart : array[0..9] of byte;
+    seeknot           : array[0..9] of boolean;
+    suchanz           : byte;
+    seek              : string[suchlen];
+    found             : boolean;
+
 label ende;
 
 
@@ -717,7 +717,6 @@ begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
     umlaut:=multipos('„”',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
-    sword :=pos('w',lstr(suchopt))>0;
     bereich:=0;
     for i:=1 to 4 do
       if ustr(bretter)=ustr(bera[i]) then bereich:=i;
@@ -1361,7 +1360,6 @@ var _brett   : string[5];
     sr       : searchrec;
     f        : file;
     hdp      : headerp;
-    rr       : word;
     hds      : longint;
     ok       : boolean;
     adr,fsize: longint;
@@ -1381,9 +1379,12 @@ var _brett   : string[5];
 begin
   if uvs_active then exit;
   crashs:=false;
-  findfirst('*.pp',0,sr);
+  findfirst('*.pp',AnyFile,sr);
   if doserror<>0 then begin
-    findfirst('*.cp',0,sr);
+    {$IFDEF Ver32 }
+      FindClose(sr);
+    {$ENDIF}
+    findfirst('*.cp',AnyFile,sr);
     crashs:=true;
     end;
   markanz:=0;
@@ -1458,10 +1459,10 @@ begin
     close(f);
     findnext(sr);
     if (doserror<>0) and not crashs then begin
-      {$IFDEF virtualpascal}
+      {$IFDEF Ver32 }
       FindClose(sr);
       {$ENDIF}
-      findfirst('*.cp',0,sr);
+      findfirst('*.cp',AnyFile,sr);
       crashs:=true;
     end;
   end;
@@ -1687,7 +1688,7 @@ var fn  : pathstr;
     f   : file;
     hdp : headerp;
     hds : longint;
-    lm  : Byte;                  { Makrozwischenspeicher... }    
+    lm  : Byte;                  { Makrozwischenspeicher... }
 begin 
   new(hdp);
   ReadHeader(hdp^,hds,true);
@@ -1705,7 +1706,7 @@ begin
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
-  dispose(hdp);    
+  dispose(hdp);
 end;
 
 
@@ -2275,7 +2276,12 @@ begin
       if (pos('**',t)>0) then continue;
       if (pos('.-',t)>0) then continue;
       if (pos('-.',t)>0) then continue;
-      if not lMagics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
+      if not magics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
+
+      { Magic mode? }
+      if (u='MAGIC') or (u='MAGICS') or (u='REQUEST') then begin
+        Magics:=true; continue
+      end;
 
       { Passwort suchen, erkennen und speichern }
       p1:='';
@@ -2388,6 +2394,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/04/13 12:48:37  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.30  2000/04/10 00:43:04  oh
   - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
 

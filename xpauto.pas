@@ -140,7 +140,7 @@ var mmask     : array[1..12] of boolean;
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
-    findfirst(fn,0,sr);
+    findfirst(fn,AnyFile,sr);
     if doserror<>0 then
       amodi:=false
     else
@@ -314,7 +314,7 @@ var sr    : searchrec;
 
   function find(ext:string):boolean;
   begin
-    if first then findfirst(AutoxDir+'*.'+ext,0,sr)
+    if first then findfirst(AutoxDir+'*.'+ext,AnyFile,sr)
     else findnext(sr);
     first:=(doserror<>0);
     find:=not first;
@@ -388,7 +388,7 @@ var sr    : searchrec;
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
-          findfirst(AutoxDir+'*.PKT',0,sr);
+          findfirst(AutoxDir+'*.PKT',AnyFile,sr);
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
             findnext(sr);
@@ -655,6 +655,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -1097,12 +1097,23 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
 {$ENDIF}
- 
+
 implementation
 
 end.
 {
   $Log$
+  Revision 1.23  2000/04/13 12:48:34  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.22  2000/04/10 00:43:03  oh
   - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
 

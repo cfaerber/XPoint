@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XP7 - zus„tzlicher Overlay-Teil }
 
@@ -652,7 +653,7 @@ begin
   mon;
   assign(f1,dest);
   if existf(f1) then _era(dest);
-  findfirst(fmask,0,sr);
+  findfirst(fmask,AnyFile,sr);
   if doserror=0 then begin
     rewrite(f1,1);
     cursor(curon);
@@ -697,7 +698,7 @@ var sr : searchrec;
 begin
   { ToDo }
   packetsize:=0;
-  findfirst(XferDir+'*.*',0,sr);
+  findfirst(XferDir+'*.*',AnyFile,sr);
   while doserror=0 do begin
     inc(packetsize,sr.size);
     findnext(sr);
@@ -716,7 +717,7 @@ var sr   : searchrec;
     last : string[12];
     arc  : shortint;
 begin
-  findfirst(XferDir+'*.*',0,sr);
+  findfirst(XferDir+'*.*',AnyFile,sr);
   if doserror=0 then begin
     while doserror=0 do begin
       last:=sr.name;
@@ -767,6 +768,18 @@ begin
     end;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.6  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

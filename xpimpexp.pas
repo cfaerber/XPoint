@@ -598,7 +598,7 @@ var ypath : pathstr;
       sum : longint;
   begin
     sum:=0;
-    findfirst(ypath+'*.DBT',0,sr);
+    findfirst(ypath+'*.DBT',AnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
@@ -698,6 +698,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/13 12:48:40  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.7  2000/03/30 14:05:05  mk
   - unnötigen Debugcode entfernt
 

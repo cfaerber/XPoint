@@ -6,8 +6,9 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ 04.02.2000 MH: Im Terminal ISDN hinzugefÅgt }
+{ $Id$ }
 { CrossPoint - Config bearbeiten }
+
 
 {$I XPDEFINE.INC }
 {$IFDEF BP }
@@ -651,12 +652,16 @@ end;
 
 function dpmstest(var s:string):boolean;
 begin
+{$IFDEF BP }
   if (s=_jn_[2]) or SetVesaDpms(DPMS_On) then
     dpmstest:=true
   else begin
     rfehler(219);     { 'Ihre Grafikkarte unterstÅtzt kein VESA-DPMS.' }
     dpmstest:=false;
     end;
+{$ELSE }
+    dpmstest:=false;
+{$ENDIF }
 end;
 
 procedure MiscAnzeigeCfg;
@@ -1376,4 +1381,17 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.19  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

@@ -10,11 +10,13 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfhrliche Map-Datei erstellt werden. Žndert den
-  Code der EXE-Datei nicht }
+  Code der EXE-Datei nicht
+  Unter Virtual Pascal werden Informationen ber die Zeilennummern
+  gespeichert, vergr”áert die EXE-Datei etwas. }
 
 {$DEFINE DebugInfo }
 
@@ -34,6 +36,10 @@
 {.$DEFINE CAPI }
 
 { --- ab hier sind keine Žnderungen n”tig --- }
+
+{ Grunds„tzlich muá ersteinmal in jeder Version die Registrierungs-
+  prozedur enthalten sein }
+{$DEFINE NeedReg }
 
 {$IFDEF VER70 }
   {$DEFINE BP }   { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
@@ -61,6 +67,7 @@
   {$DEFINE Win32 }
   {$DEFINE Delphi }
   {$A+,B-,C-,D+,E-,F-,G+,H-,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U+,V-,W-,X+,Y-,Z1}
+  {$UNDEF NeedReg }
 {$ENDIF }
 
 {$IFDEF __CON__ } { Nur fr TMT Pascal >= 3.30 }
@@ -73,20 +80,23 @@
 {$IFDEF VirtualPascal }  { Virtual Pascal ab 2.0 }
   {$DEFINE VP }
   {$DEFINE Ver32 }
-  {$B-,H-,I-,J+,P+,Q-,R-,T-,V-,W-,X+,Z-}
+  {$B-,D-,H-,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
+  {$UNDEF NeedReg }
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 0.99.14 }
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
+    {$UNDEF DPMI }
   {$ENDIF }
   {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$MODE TP }
   {$ASMMODE Intel }
   {$GOTO ON }
+  {$UNDEF NeedReg }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -115,6 +125,17 @@
 
 {
   $Log$
+  Revision 1.16  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.15  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

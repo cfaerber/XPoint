@@ -672,8 +672,11 @@ var f1,f2   : file;
   end;
 
   procedure MakePacketHeader;
-  var dummy : smallword;
+  var dummy : rtlword;
       phd   : pheader;
+{$IFDEF VP }
+      aYear, aMonth, aDay, aHour, aMin, aSec: Word;
+{$ENDIF }
   begin
     fillchar(phd,sizeof(phd),0);
     with phd do begin
@@ -686,8 +689,15 @@ var f1,f2   : file;
         OrgNet:=_from.net;
         end;
       DestNode:=_to.node;
+{$IFDEF VP }
+      getdate(ayear,amonth,aday,dummy);
+      gettime(ahour,amin,asec,dummy);
+      Year := aYear; Month := aMonth -1; Day := aDay -1;
+      Hour := aHour, Min := aMin; Sec := aSec;
+{$ELSE }
       getdate(year,month,day,dummy); dec(month);
       gettime(hour,min,sec,dummy);
+{$ENDIF }
       PktVer:=2;
       DestNet:=_to.net;
       PrdCodL:=lo(prodcode);
@@ -1629,7 +1639,7 @@ var sr  : searchrec;
     fst : boolean;
 begin
   FSplit(infile,d,n,e);
-  findfirst(infile,0,sr);
+  findfirst(infile,AnyFile,sr);
   fst:=true;
   while doserror=0 do begin
     FidoZfile(d+sr.name,not fst);
@@ -1665,6 +1675,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/04/13 12:48:42  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.7  2000/03/16 10:14:25  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert

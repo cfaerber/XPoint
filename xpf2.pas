@@ -164,7 +164,7 @@ begin
             if UniExtract(s,FilePath+'TICK\','*.*') and
                exist(FilePath+'TICK\'+name1) then begin
               _era(s);
-              FindFirst(FilePath+'TICK\*.TIC',0,sr);
+              FindFirst(FilePath+'TICK\*.TIC',AnyFile,sr);
               while doserror=0 do begin       { .TIC-Files verarbeiten }
                 if ProcessTICfile(FilePath+'TICK\'+sr.name) then;
                 _era(FilePath+'TICK\'+sr.name);
@@ -182,7 +182,7 @@ begin
 ende:
   close(t);
 
-  findfirst(FilePath+'*.TIC',0,sr);    { ungepackte TIC-Files }
+  findfirst(FilePath+'*.TIC',AnyFile,sr);    { ungepackte TIC-Files }
   while doserror=0 do begin
     if ProcessTICfile(FilePath+sr.name) then
       _era(FilePath+sr.name);

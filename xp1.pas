@@ -1225,21 +1225,26 @@ procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
 begin
-  if (videotype<2) or ParLCD then screenlines:=25
-  else if ParFontfile<>'' then
-  begin
-{$IFDEF BP }
-    XPFont;
+  if (videotype<2) or ParLCD then
+    screenlines:=25
+  else
+    if ParFontfile<>'' then
+    begin
+  {$IFDEF BP }
+      XPFont;
+  {$ENDIF }
+      screenlines:=GetScreenlines;
+    end;
+{$IFDEF Win32 }
+  ScreenLines := GetScreenLines;
 {$ENDIF }
-    screenlines:=GetScreenlines;
-  end;
   if (ParFontfile='') and not ParLCD then begin
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then begin
       setvideomode(3);
       IoVideoInit;
       end;
-    if (screenlines<>25) or (screenlines<>getscreenlines) then
+     if (screenlines<>25) or (screenlines<>getscreenlines) then
       setscreenlines(screenlines);
     end;
   iosclines:=screenlines;
@@ -2318,6 +2323,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/04/13 12:48:34  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.27  2000/04/11 16:38:42  jg
   - Config/Optionen/Editor
   - Hilfe der Editoroptionen jetzt kontextsensitiv

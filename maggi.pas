@@ -34,13 +34,13 @@
   {$M 20000,50000,655360}
 {$ENDIF }
 
-uses  dos,
+uses dos,
 {$IFDEF BP }
   xms,
 {$ENDIF }
-  typeform,fileio,montage,xpdatum,xp_iti, xpglobal, inout;
+  crt, typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
-const       nt_ZConnect=2;
+const nt_ZConnect=2;
       OrgLen    = 80;
       hderrlen  = 40;
       BetreffLen= 70;
@@ -116,7 +116,7 @@ type  charr       = array[0..65530] of char;
                  datei      : string[40];    { Dateiname }
                  prio       : byte;          { 10=direkt, 20=Eilmail }
                  oem,oab,wab: string[90];
-                 oar,war    : string[realnlen]; 
+                 oar,war    : string[realnlen];
                  real_box   : string[20];    { X-XP-BOX: Absendebox }
                  hd_point   : string[25];    { X-XP-PNT: Pointname  }
                  pm_bstat   : string[20];    { X-XP-BST: Bearb.-Status }
@@ -214,10 +214,7 @@ var
     i      : integer;
 begin
   writeln('Fehler: ',txt);
-  for i:=1 to 18 do begin
-    t:=ticker;
-    repeat until ticker<>t;
-  end;
+  delay(1000);
   halt(1);
 end;
 
@@ -1854,6 +1851,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/04/13 12:48:31  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.7  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

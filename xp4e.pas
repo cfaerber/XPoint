@@ -1902,7 +1902,7 @@ begin
   mwrt(x+3,y+4,getres2(2729,4));    { 'Datum:' }
   attrtxt(col.colmbox);
   mwrt(x+11,y+2,fitpath(fn,56));
-  findfirst(fn,0,sr);
+  findfirst(fn,AnyFile,sr);
   moff;
   if doserror<>0 then
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
@@ -2197,6 +2197,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/13 12:48:36  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.10  2000/03/10 00:09:08  mk
   Fix: Autoversand/Hinzufuegen benoetigt keinen Dateinamen mehr
 

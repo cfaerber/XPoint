@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Eingaberoutinen }
 
@@ -72,23 +73,23 @@ var p,n,p1,i : byte;
       bpx[i]:=wherex;
       if i=p then begin
         attrtxt(col.colbuttonarr);
-        write(#16);
+        Wrt2(#16);
         end
       else
-        write(' ');
+        Wrt2(' ');
       attrtxt(col.colbutton);
-      write(left(butt[i],butthigh[i]-1));
+      Wrt2(left(butt[i],butthigh[i]-1));
       attrtxt(col.colbuttonhigh);
-      write(hot[i]);
+      Wrt2(hot[i]);
       attrtxt(col.colbutton);
-      write(copy(butt[i],butthigh[i]+1,40));
+      Wrt2(copy(butt[i],butthigh[i]+1,40));
       if i=p then begin
         attrtxt(col.colbuttonarr);
-        write(#17);
+        Wrt2(#17);
         attrtxt(col.colbutton);
         end
       else
-        write(' ');
+        Wrt2(' ');
       gotoxy(wherex+abs,wherey);
       end;
     mon;
@@ -290,9 +291,9 @@ var width,height : byte;
         attrtxt(col.colselbox);
         wrt(x+1,y+i,ch+left(sel[i]^,selhigh[i]-1));
         attrtxt(col.colselhigh);
-        write(sel[i]^[selhigh[i]]);
+        Wrt2(sel[i]^[selhigh[i]]);
         attrtxt(col.colselbox);
-        write(forms(copy(sel[i]^,selhigh[i]+1,255),ml-selhigh[i]+1));
+        Wrt2(forms(copy(sel[i]^,selhigh[i]+1,255),ml-selhigh[i]+1));
         end;
       end;
     mon;
@@ -414,4 +415,17 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

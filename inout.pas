@@ -463,7 +463,7 @@ begin
     end;
 end;
 
-{&optimize-}
+{&optimize+}
 Procedure multi2;
 var h,m,s,s100 : rtlword;
     i          : integer16;
@@ -1761,8 +1761,6 @@ begin
 {$ENDIF}
 end;
 
-var
- i: Integer;
 begin
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
   normtxt;
@@ -1798,6 +1796,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/04/13 12:48:31  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.23  2000/04/04 21:01:21  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

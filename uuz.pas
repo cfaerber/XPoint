@@ -552,15 +552,11 @@ begin
   rh('MAIL.RFC',true);
 end;
 
-{ 28.01.2000 robo }
 procedure donevar;
-{ durch initvar belegten Heap bei Programmende wieder freigeben }
-{ ist zwar nicht unbedingt n”tig, aber sauberer }
-  begin
-    freemem(outbuf,outbufsize);
-    dispose(uline);
-  end;
-{ /robo }
+begin
+  freemem(outbuf,outbufsize);
+  dispose(uline);
+end;
 
 procedure testfiles;
 begin
@@ -2784,7 +2780,7 @@ begin
   outbufpos:=0;
   spath:=GetFileDir(source);
   n:=0;
-  findfirst(source,0,sr);
+  findfirst(source,AnyFile,sr);
   while doserror=0 do begin
     if left(sr.name,2)='X-' then begin
       ReadXFile;                          { X.-file interpretieren }
@@ -3508,12 +3504,22 @@ begin
   if XpWindow>0 then SetWindow;
   if u2z then UtoZ
   else ZtoU;
-{ 28.01.2000 robo }
   donevar;
-{ /robo }
 end.
+
 {
   $Log$
+  Revision 1.17  2000/04/13 12:48:32  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.16  2000/04/04 21:01:22  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

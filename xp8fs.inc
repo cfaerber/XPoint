@@ -245,7 +245,7 @@ begin
     end
   else begin
     if not multipos('*?',s) then begin
-      findfirst(s,0,sr);
+      findfirst(s,AnyFile,sr);
       if (s[length(s)]<>'\') and (doserror<>0) then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
@@ -534,6 +534,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

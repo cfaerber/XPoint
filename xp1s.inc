@@ -168,13 +168,13 @@ end;
 {$IFDEF BP }
 Function DosStartSession(Var Data:TStartData):Word; Assembler;
  Asm
-	mov	ah, $64
-	mov	bx, $0025
-	mov	cx, $636C
-	push	ds
-	lds	si, Data
-	int	$21
-	pop	ds
+        mov     ah, $64
+        mov     bx, $0025
+        mov     cx, $636C
+        push    ds
+        lds     si, Data
+        int     $21
+        pop     ds
  End;
 
 Procedure Start_OS2(Programm,Parameter,Title:String);
@@ -280,7 +280,7 @@ var brk    : boolean;
     lt     : byte;
     lfirst : byte;     { Startzeile Lister }
     lofs   : word;     { Ladeposition Datei }
-    dphb   : byte;     { Uhr Hintergrundfarbe Backup }         
+    dphb   : byte;     { Uhr Hintergrundfarbe Backup }
 
   procedure ShowMsgHead;
   var t : text;
@@ -317,17 +317,17 @@ begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
     if listvollbild then begin                      { Bei Vollbild-lister : }
-      if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }   
-      else begin      
+      if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }
+      else begin
         dphb:=dphback;
         if ListFixedhead then                      {   Wenn fester Header }
-          dphback:=col.collistheader               {   dann Uhr aktiv mit Headerfarbe } 
+          dphback:=col.collistheader               {   dann Uhr aktiv mit Headerfarbe }
         else begin
           dphback:=col.colliststatus;              {   bei freiem Header }
           timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
-          end;                                    
+          end;
         end;
-      end;   
+      end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
@@ -365,7 +365,7 @@ begin
     if listvollbild and listuhr and ListMsg then begin
      dphback:=dphb;                        {Uhrfarbe reseten}
      if not Listfixedhead then timey:=1;   {Und evtl. Position}
-     end;  
+     end;
    m2t:=true;
     if savescr then holen(p);
     closelist;
@@ -373,7 +373,7 @@ begin
   exthdlines:=0;
   llh:=false;
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
-    then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten } 
+    then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
   listfile:=listexit;
 end;
 
@@ -441,7 +441,6 @@ procedure dosshell;
 {$IFDEF DPMI }
 const ShellBatch = 'DPMISHELL.BAT';
 {$ENDIF }
-var t : text;
 
   {$IFNDEF DPMI}
   function environment:string;
@@ -474,6 +473,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/04/13 12:48:35  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.18  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
     neue Einstellung wird dann auch beim Quoten verwendet

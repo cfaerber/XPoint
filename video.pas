@@ -26,9 +26,10 @@ UNIT video;
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
-uses  xpglobal, dos,dosx;
+uses
+  xpglobal, dos,dosx;
 
 const DPMS_On       = 0;    { Monitor an }
       DPMS_Standby  = 1;    { Stromsparstufe 1 }
@@ -48,11 +49,11 @@ procedure SetVideoMode(mode:byte);
 {$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
-procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
 {$ENDIF }
-function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
+procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
 
 {$IFDEF BP }
+function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 {$ENDIF }
@@ -62,7 +63,7 @@ procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
 
 { ================= Implementation-Teil ==================  }
 
-IMPLEMENTATION
+implementation
 
 uses
 
@@ -70,6 +71,9 @@ uses
   {$IFDEF DPMI }
   WinAPI,
   {$ENDIF}
+{$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
 {$ENDIF }
   inout;
 
@@ -164,15 +168,20 @@ asm
          int    $10
 end;
 
+{$ENDIF}
+
 { hellen Hintergr. akt. }
 procedure SetBackIntensity(hell:boolean); assembler;
 asm
+{$IFDEF BP }
          mov    ax,1003h
          mov    bl,hell
          xor    bl,1
          int    $10
+{$ENDIF }
 end;
 
+{$IFDEF BP }
 procedure LoadFont(height:byte; var data);
 var regs    : registers;
     DPMIsel : word;
@@ -197,9 +206,7 @@ begin
     {$ENDIF}
     end;
 end;
-{$ENDIF}
 
-{$IFDEF BP }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 var p  : pointer;
     sr : searchrec;
@@ -209,7 +216,7 @@ var p  : pointer;
     f  : file;
 begin
   if vtype<2 then exit;
-  findfirst(fn,0,sr);
+  findfirst(fn,AnyFile,sr);
   if (doserror=0) and (sr.size mod 256<=8) and (sr.size<65536) then begin
     h:=sr.size div 256;
     ofs:=sr.size mod 256;
@@ -226,9 +233,7 @@ begin
       end;
     end;
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 procedure make15; assembler;
 asm
          push ds
@@ -488,9 +493,7 @@ end;
 function getscreenlines:byte;
 {$IFDEF BP }
 var regs : registers;
-{$ENDIF }
 begin
-{$IFDEF BP }
   if vtype<2 then
     vlines:=25
   else with regs do begin
@@ -499,12 +502,21 @@ begin
     intr($10,regs);
     vlines:=dl+1;
     end;
-{$ENDIF }
   getscreenlines:=vlines;
+{$ELSE }
+{$IFDEF Win32 }
+  begin
+    vlines := Win32GetScreenLines;
+    GetScreenLines := vlines;
+{$ELSE }
+begin
+  GetScreenLines := 25;
+{$ENDIF }
+{$ENDIF }
 end;
 
-function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 {$IFDEF BP }
+function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 var regs : registers;
 begin
   with regs do begin
@@ -514,16 +526,25 @@ begin
     intr($10,regs);
     SetVesaDPMS:=(ax=$4f);
     end;
-{$ELSE }
-begin
-{$ENDIF }
 end;
+{$ENDIF }
 
 begin
   getvideotype;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/13 12:48:33  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.12  2000/04/04 21:01:22  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

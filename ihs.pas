@@ -2,6 +2,7 @@
 { Rel. 1.01 (c) 11/89 PM  }
 {      1.02 (c) 03/90     }
 {      1.1  (c) 01/91     }
+{ $Id$ }
 
 {$R-,S-}
 
@@ -392,4 +393,19 @@ end.
   pg*6  Index-Liste:
         je Seite: 2 Bytes Seitennr.
                   4 Bytes Adresse (absolutes Dateioffset)
+}
+
+{
+  $Log$
+  Revision 1.5  2000/04/13 12:48:31  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
 }

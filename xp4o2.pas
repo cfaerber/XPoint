@@ -768,30 +768,30 @@ begin
     end;
 end;
 
-                                         
+
 (*
 {
-Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug: 
+Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
 
-wenn XP mit Englischen Resourcen geladen wurde 
+wenn XP mit Englischen Resourcen geladen wurde
 (ob aus xp.res oder per Parameter /l:e ist egal)
-gibt es bei der ausfuehrung von "Freemain" einen RTE 204. 
+gibt es bei der ausfuehrung von "Freemain" einen RTE 204.
 ist kein EMS vorhanden gibt es unter Win98 einen GPF.
-Beim Start mit deutschen Resourcen funktioniert Die Routine 
-einwandfrei (auch mehrmaliger Wechsel zwischen D und E...)  
+Beim Start mit deutschen Resourcen funktioniert Die Routine
+einwandfrei (auch mehrmaliger Wechsel zwischen D und E...)
 ob die Deutschen Resourcen XP-E.RES oder XP.D.RES heissen ist egal.
 Der Wechsel zwischen zwei deutschen Resourcen klappt einwandfrei.
--> Filegroessen/Speicher Problem oder Fehler in XP-E.RES ?  
+-> Filegroessen/Speicher Problem oder Fehler in XP-E.RES ?
 
 Siehe auch xp2.pas und xp4.inc
 }
-                                                                 
+
 procedure SetLanguage;
 const maxs = 20;
 var s  : string;
     p  : byte;
     t  : text;
-    sr : searchrec; 
+    sr : searchrec;
     s0 : string[40];
     sn : integer;
     sa : array[1..maxs] of string[12];
@@ -833,7 +833,7 @@ var s  : string;
 
 begin
   s:='';
-  findfirst('XP-*.RES',0,sr);
+  findfirst('XP-*.RES',AnyFile,sr);
   sn:=0;
   while doserror=0 do begin
     assign(t,sr.name);
@@ -886,6 +886,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/13 12:48:37  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.6  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert
   - Sprachabfrage bei allererstem Start eingebaut

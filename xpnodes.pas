@@ -6,6 +6,7 @@
 
 { fÅr CrossPoint ab Version 3.1    }
 { Heapspeicherbedarf: ca. 10 KByte }
+{ $Id$ }
 
 {$I XPDEFINE.INC}
 {$O+,F+}
@@ -592,4 +593,17 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/04/13 12:48:41  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

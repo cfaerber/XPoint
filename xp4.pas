@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Hauptmodul }
 
@@ -23,7 +24,12 @@ uses xpglobal,
   archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
-const maxgl   = 46;
+const
+{$IFDEF BP }
+  maxgl   = 46;
+{$ELSE }
+  maxgl   = 60;
+{$ENDIF }
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -1962,4 +1968,17 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.9  2000/04/13 12:48:36  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

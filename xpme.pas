@@ -10,6 +10,8 @@
 
 { CrossPoint-MenÅeditor }
 
+{$I XPDEFINE.INC }
+
 uses
 {$IFDEF Linux }
   xplinux, ncurses,
@@ -64,7 +66,7 @@ begin
     writeln(StrDosToLinux('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware'));
 {$ELSE }
   writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
-{$ENDIF }   
+{$ENDIF }
   writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
@@ -78,7 +80,7 @@ begin
    writeln('Fehler: ',StrDosToLinux(txt),#7);
 {$ELSE }
    writeln('Fehler: ',txt,#7);
-{$ENDIF }   
+{$ENDIF }
   if ropen then CloseResource;
   halt;
 end;
@@ -157,9 +159,7 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
-{$IFDEF BP }
   setbackintensity(true);
-{$ENDIF }
   attrtxt(col.colmenu[0]);
   wrt2(sp(80));
   attrtxt(col.colback);
@@ -203,11 +203,16 @@ end;
 
 procedure errsound;
 begin
+{$IFDEF VP }
+  PlaySound(1000,25);
+  PlaySound(780,25);
+{$ELSE }
   sound(1000);
   delay(25);
   sound(780);
   delay(25);
   nosound;
+{$ENDIF }
 end;
 
 
@@ -234,9 +239,13 @@ end;
 
 procedure click;
 begin
+{$IFDEF VP }
+  PlaySound(4000,10);
+{$ELSE }
   sound(4000);
   delay(10);
   nosound;
+{$ENDIF }
 end;
 
 
@@ -249,7 +258,7 @@ begin
       dec(i);
     if (i>anzhidden) or (hidden[i]<>nr) then begin
       if i<=anzhidden then
-	 System.Move(hidden[i],hidden[i+1],(anzhidden+1-i)*sizeof(hidden[1]));
+         System.Move(hidden[i],hidden[i+1],(anzhidden+1-i)*sizeof(hidden[1]));
       hidden[i]:=nr;
       inc(anzhidden);
       click;
@@ -344,7 +353,7 @@ var i      : integer;
 begin
 {$IFDEF Linux }
   setsyx(0,1);
-{$ENDIF }       
+{$ENDIF }
   if mainmenu=nil then begin
     new(mainmenu);
     splitmenu(0,mainmenu,main_n);
@@ -356,7 +365,7 @@ begin
       hmpos[i]:=ncurses.getcurx(stdscr)+1;
 {$ELSE }
       hmpos[i]:=wherex+1;
-{$ENDIF }       
+{$ENDIF }
       if enabled then begin
         if nr=i then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
@@ -374,7 +383,7 @@ begin
       else begin
         if nr=i then attrtxt(col.colmenuseldis[0])
         else attrtxt(col.colmenudis[0]);
-	 Wrt2(' '+mstr+' ');
+         Wrt2(' '+mstr+' ');
         end;
       end;
 end;
@@ -732,10 +741,21 @@ begin
   if saved then writeln('énderungen wurden gesichert.'#10);
 {$IFDEF Linux }
    DoneNCurses;
-{$ENDIF }   
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.12  2000/04/13 12:48:41  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.11  2000/04/09 13:27:07  ml
   Diverse ƒnderungen zu Bildschirmausgabe unter linux (XPME)
 

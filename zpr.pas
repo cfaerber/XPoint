@@ -1367,10 +1367,22 @@ begin
   CheckRepair;
   closefiles;
   statistik;
+  dispose(hd0); dispose(hd1);
   halt(sgn(errmsgs));
 end.
 {
   $Log$
+  Revision 1.11  2000/04/13 12:48:42  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.10  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

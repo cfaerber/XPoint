@@ -220,7 +220,7 @@ begin
     p:=pos('$PUFFER',ustr(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',ustr(downarcer));       { immer > 0 ! }
-    findfirst(ImportDir+'*.*',0,sr);
+    findfirst(ImportDir+'*.*',AnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
       window(1,1,80,25); attrtxt(7);
@@ -254,9 +254,9 @@ begin
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
         if nDelPuffer then
-          findfirst(XFerDir+'*.*',0,sr)
+          findfirst(XFerDir+'*.*',AnyFile,sr)
         else begin
-          findfirst(XFerDir+'*.pkt',0,sr);    { .PKT - Dateien l”schen  }
+          findfirst(XFerDir+'*.pkt',AnyFile,sr);    { .PKT - Dateien l”schen  }
           if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
           end;
         while doserror=0 do begin
@@ -601,7 +601,7 @@ begin
     end;
 
   window(1,1,80,25);
-  findfirst(XFerDir+'*.*',0,sr);            { SPOOL leeren }
+  findfirst(XFerDir+'*.*',AnyFile,sr);            { SPOOL leeren }
   while doserror=0 do begin
     UpString(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
@@ -936,6 +936,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/13 12:48:38  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

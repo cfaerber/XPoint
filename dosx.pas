@@ -232,7 +232,9 @@ function alldrives:string;
 
 var b : byte;
     s : string;
+{$IFDEF BP }
     c : char;
+{$ENDIF }
 {$IFDEF Ver32 }
     Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
     i: integer;
@@ -418,6 +420,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/13 12:48:30  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.11  2000/03/25 00:29:22  mk
   - GetDriveType und AllDrives jetzt sauber portiert
 

@@ -82,7 +82,7 @@ procedure FWrt(const x,y:word; const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
-{$IFDEF Win32 }
+{$IFDEF Ver32 }
 procedure consolewrite(x,y:word; num:dword);
 {$ENDIF }
 {$ENDIF }
@@ -120,10 +120,15 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
 
 {$ENDIF }
 
+{$IFDEF Win32 }
+var
+    { EnthÑlt das Fensterhandle fÅr die Console }
+    OutHandle     : THandle;
+{$ENDIF }
 
 { ========================= Implementation-Teil =========================  }
 
-IMPLEMENTATION
+implementation
 
 uses xp0;
 
@@ -151,11 +156,8 @@ var pullw   : array[1..maxpull] of record
                                      free       : boolean;
                                    end;
     rahmen  : shortint;
+    oldexit : pointer;
 
-{$IFDEF Win32 }
-    { EnthÑlt das Fensterhandle fÅr die Console }
-    OutHandle     : THandle;
-{$ENDIF }
 
 {$IFDEF BP }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean); assembler;
@@ -414,7 +416,7 @@ begin
 begin
   gotoxy(x,y);
   write(s);
-{$ELSE }   
+{$ELSE }
 begin
   FWrt(x, y, s);
   GotoXY(x+Length(s), y);
@@ -422,7 +424,7 @@ begin
 {$ENDIF }
 end; { Wrt }
 
-   
+
 {$IFDEF BP }
 procedure FWrt(const x,y:word; const s:string); assembler;
 asm
@@ -464,7 +466,7 @@ begin
    setsyx(y-1,x);
    refresh;
    StrDispose(p);
-end;   
+end;
 {$ELSE}
 procedure FWrt(const x,y:word; const s:string);
 var
@@ -507,21 +509,32 @@ end;
 {$ENDIF}
 {$ENDIF }
 
-{$IFDEF Win32}
-procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
-var                                           { Attribute in xp0.attrbuf (Array of smallword)}
-  WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
-  OutRes: LongInt;                            { Auf Konsole ausgeben....}
-begin 
-  WritePos.X := x-1; WritePos.Y := y-1;
-{$IFDEF FPC }
-  WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, @OutRes);
-  writeConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, @OutRes);   
+{$IFDEF Ver32}
+{$IFDEF Win32 }
+  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
+  var                                           { Attribute in xp0.attrbuf (Array of smallword)}
+    WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
+    OutRes: LongInt;                            { Auf Konsole ausgeben....}
+  begin
+    WritePos.X := x-1; WritePos.Y := y-1;
+  {$IFDEF FPC }
+    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, @OutRes);
+    writeConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, @OutRes);
+  {$ELSE }
+    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
+    WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);
+  {$ENDIF}
+  end;
 {$ELSE }
-  WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
-  WriteConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, OutRes);
-{$ENDIF} 
-end;
+  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
+  var
+    s: String;
+  begin
+    Move(@CharBuf[1], s, num);
+    s[0] := char(byte(num));
+    FWrt(x, y, s);
+  end;
+{$ENDIF }
 {$Endif}
 
 
@@ -609,7 +622,7 @@ begin
    mvaddstr(y-1, x, p);
    refresh;
    StrDispose(p);
-end;   
+end;
 {$ELSE }
 {$IFDEF Win32 }
   var
@@ -1178,10 +1191,19 @@ begin
     end;
 end;
 
+procedure DoneVar;
+begin
+  exitproc:=oldexit;
+{$IFDEF Ver32 }
+  FreeMem(LocalScreen);
+{$ENDIF }
+end;
 
 var
   i: byte;
 begin
+  oldexit:=exitproc;
+  exitproc:=@DoneVar;
   for i:=1 to maxpull do
     pullw[i].free:=true;
   rahmen:=1;
@@ -1199,55 +1221,15 @@ begin
 end.
 {
   $Log$
-  Revision 1.20  2000/04/09 13:27:06  ml
-  Diverse ƒnderungen zu Bildschirmausgabe unter linux (XPME)
-
-  Revision 1.19  2000/04/09 06:51:56  jg
-  - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
-  - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
-
-  Revision 1.18  2000/04/04 21:01:22  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.17  2000/04/04 10:33:56  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.16  2000/04/02 11:18:23  ml
-  Ver32 SDISP war ohne const - jetzt wieder kompilierbar
-
-  Revision 1.15  2000/03/25 20:22:20  mk
-  - kleinere Anpassungen fuer Linux
-
-  Revision 1.14  2000/03/24 00:03:39  rb
-  erste Anpassungen fÅr die portierung mit VP
-
-  Revision 1.13  2000/03/20 11:26:21  mk
-  - SDisp-Routine teilweise nach Win32 portiert
-
-  Revision 1.12  2000/03/14 15:15:37  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.11  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.10  2000/03/08 01:33:15  mk
-  - Kopieren von rechteckigen Bildschirmbereichen hinzugefuegt
-
-  Revision 1.8  2000/03/04 22:41:37  mk
-  LocalScreen fuer xpme komplett implementiert
-
-  Revision 1.7  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.6  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
+  Revision 1.21  2000/04/13 12:48:33  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }

@@ -225,14 +225,24 @@ end;
 
 procedure mwrt(x,y:byte; txt:string);
 begin
+{$IFDEF Ver32 }
+  if maus_cursor then
+  begin
+    mausaus;
+    Wrt(x, y, txt);
+    mausan;
+  end else
+    Wrt(x, y, txt);
+{$ELSE }
   gotoxy(x,y);
-  if maus_cursor then begin
+  if maus_cursor then
+  begin
     mausaus;
     write(txt);
     mausan;
-    end
-  else
+  end else
     write(txt);
+{$ENDIF }
 end;
 
 procedure interr(txt:string);
@@ -329,6 +339,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/13 12:48:32  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.8  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

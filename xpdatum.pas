@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Datumsroutinen fÅr XP, MAGGI, ZFIDO }
 
@@ -18,7 +19,7 @@ unit xpdatum;
 
 interface
 
-uses typeform,montage;
+uses typeform,montage, xpglobal;
 
 const timezone      : string[7] = 'W+1';
 
@@ -101,6 +102,18 @@ begin
   datum:=dat;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.3  2000/04/13 12:48:39  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
+}

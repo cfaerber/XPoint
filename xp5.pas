@@ -20,7 +20,9 @@ unit xp5;
 interface
 
 uses  xpglobal,
-      {$IFDEF virtualpascal}sysutils,{$endif}
+      {$IFDEF virtualpascal}
+        sysutils,vpsyslow,
+      {$endif}
       crt,dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
 {$IFDEF BP }
@@ -339,7 +341,7 @@ var sr  : searchrec;
 begin
   mon;
   sum:=0;
-  findfirst(dir+'*.*',0,sr);
+  findfirst(dir+'*.*',AnyFile,sr);
   while doserror=0 do begin
     inc(sum,sr.size);
     findnext(sr);
@@ -520,11 +522,17 @@ begin
   wrt(x+4,y+8,'Linux' + getres2(rnr,7));
 {$ENDIF }
   attrtxt(col.colmbox);
+{$IFDEF VP }
+  gotoxy(x+19,y+6); write(memavail div 1024 div 1024:5,' MB');
+  gotoxy(x+31,y+4); write(SysDiskSizeLong(0) / 1024 / 1024:8:0,' MB');
+  gotoxy(x+31,y+6); write(SysDiskFreeLong(0) / 1024 / 1024:8:0,' MB');
+{$ELSE }
   gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
   gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
+  gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+{$ENDIF }
   gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
     xpspace(XferDir)) div 1024 div 1024:8,' MB');
-  gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
   wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
   mon;
   freeres;
@@ -730,7 +738,9 @@ begin
   SetXPborder;
 {$ENDIF }
   scactive:=true;
+{$IFDEF BP }
   if vesa_dpms and SetVesaDPMS(DPMS_Suspend) then;
+{$ENDIF }
   et:=(endtime<'24');
   repeat
     tempclose;
@@ -773,7 +783,9 @@ begin
   SetXPborder;
 {$ENDIF }
   scactive:=false;
+{$IFDEF BP }
   if vesa_dpms and SetVesaDpms(DPMS_On) then;
+{$ENDIF }
 end;
 
 
@@ -1085,6 +1097,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/04/13 12:48:38  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.19  2000/04/06 09:12:46  mk
   MW: - weiteres Update Datumseingabe in Kalender
 

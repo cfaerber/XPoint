@@ -79,8 +79,8 @@ var ax,p,myp  : integer;
               if not enabled then begin
                 attrtxt(stat.col.ColBack);
                 wrt(xx2,yy-a,l+sp(len)+l);
-                if stat.mausarrows and hassel then write(' ')
-                else if checkbutt then write('  ');
+                if stat.mausarrows and hassel then Wrt2(' ')
+                else if checkbutt then Wrt2('  ');
                 attrtxt(stat.col.ColFeldInput);
                 end
               else if checkbutt then begin
@@ -96,7 +96,7 @@ var ax,p,myp  : integer;
                     write(#16);
                     end
                   else
-                    write(' ');
+                    Wrt2(' ');
                   if stat.mausarrows and hassel then begin
                     attrtxt(stat.col.colback);
                     write(#25);
@@ -258,21 +258,21 @@ var ax,p,myp  : integer;
         moff;
         if checkbutt then begin
           attrtxt(stat.col.colbuttons);
-          write(' [',iifc(cont^=yesno[1],'x',' '),'] ');
+          Wrt2(' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
           end
         else begin
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            write(iifc(ax>0,#17,' '));
+            Wrt2(iifc(ax>0,#17,' '));
             end;
           attrtxt(stat.col.ColFeldActive);
           if replace then attrtxt(stat.col.ColFeldMarked);
-          write(copy(cont^,ax+1,len));
+          Wrt2(copy(cont^,ax+1,len));
           attrtxt(stat.col.ColFeldActive);
-          write(dup(len-length(cont^)+ax,stat.fillchar));
+          Wrt2(dup(len-length(cont^)+ax,stat.fillchar));
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            write(iifc(length(cont^)-ax>len,#16,' '));
+            Wrt2(iifc(length(cont^)-ax>len,#16,' '));
             end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
@@ -916,28 +916,28 @@ begin   { readmask }
             else
                                                               { JG: Clipboard fuer Menues }
 
-	  if (t=^C) or (t=keycins) then string2clip(cont^);   { STRG+C / STRG+INS = kopieren }
-          
-	  if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
+          if (t=^C) or (t=keycins) then string2clip(cont^);   { STRG+C / STRG+INS = kopieren }
+
+          if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
             if replace then
             begin                                             { Ersetzen }
               s^:=clip2string(maxlen,1);
-	      i:=length(s^);
-	      p:=1; ax:=0; replace:=false;
+              i:=length(s^);
+              p:=1; ax:=0; replace:=false;
               end
-            else begin                                        { Einfuegen }     
+            else begin                                        { Einfuegen }
               s^:=clip2string(maxlen-length(cont^),1);
-	      i:=length(s^);
-	      s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
+              i:=length(s^);
+              s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
               end;
-            p:=p+i;					      {Cursorposition aktualisieren} 		 
-	    if p>=len then
+            p:=p+i;                                           {Cursorposition aktualisieren}
+            if p>=len then
             begin
               ax:=ax+p-len;
               p:=len;
-              end;		
-	    if xtest1(s^) then cont^:=s^;
-	    end;
+              end;
+            if xtest1(s^) then cont^:=s^;
+            end;
 
         if (t=keypgup) then
           if yp>1 then begin
@@ -1070,6 +1070,17 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.12  2000/04/13 12:48:32  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.11  2000/03/02 18:32:23  mk
   - Code ein wenig aufgeraeumt
 

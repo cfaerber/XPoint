@@ -84,7 +84,7 @@ type
     {$IFDEF FPC }
       { FreePascal, 32 Bit }
       integer8 =   shortint;
-      integer16 =  integer;
+      integer16 =  system.smallint;
       integer32 =  longint;
       { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
       integer =    longint;
@@ -104,6 +104,10 @@ type
     rtlword =    system.word; { 16 Bit bei FPC }
   {$ENDIF}
 
+{$IFDEF Ver32 }
+const
+  MaxInt = MaxLongint;
+{$ENDIF }
 
 implementation
 
@@ -117,6 +121,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/04/13 12:48:40  mk
+  - Anpassungen an Virtual Pascal
+  - Fehler bei FindFirst behoben
+  - Bugfixes bei 32 Bit Assembler-Routinen
+  - Einige unkritische Memory Leaks beseitigt
+  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
+  - fehlende CVS Keywords in einigen Units hinzugefuegt
+  - ZPR auf VP portiert
+  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
+  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
+
   Revision 1.20  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
