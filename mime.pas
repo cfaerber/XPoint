@@ -792,7 +792,6 @@ begin
   Decoder := CreateUTF8Decoder(DestCharset);
 end;
 
-
 constructor TCharsetCodecStream.Create(SourceCharset,DestCharset:String);
 begin
   Create(MimeGetCharsetFromName(SourceCharset),
@@ -820,9 +819,8 @@ begin raise EReadError.Create('Stream does not support reading.'); end;
 function TCharsetEncoderStream.Write(const Buffer; Count: Longint): Longint;
 var buf:string;
 begin
-  SetLength(buf,Count);
-  Move(Buffer,buf[1],count);
-  buf := Decoder.Decode(PUTF8Char(Encoder.Encode(buf)));
+  SetLength(buf,Count); Move(Buffer,buf[1],count);
+  buf := Decoder.Decode(Encoder.Encode(buf));
   OtherStream.WriteBuffer(buf[1],Length(buf));
   inc(FPosition,Count);
   Result := Count;
@@ -1201,6 +1199,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2001/12/30 18:15:10  cl
+// - additional fixes/adaptions for last commit
+//
 // Revision 1.9  2001/11/28 09:35:51  mk
 // - fixed range check error
 //
