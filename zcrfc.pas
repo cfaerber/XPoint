@@ -418,7 +418,7 @@ var
   i: integer;
   switch: string;
 begin
-  if (LowerCase(paramstr(2)) <> '-uz') and (LowerCase(paramstr(1)) <> '-zu')
+  if (LowerCase(paramstr(2)) <> '-uz') and (LowerCase(paramstr(2)) <> '-zu')
     then raise Exception.Create('Falsche Parameterzahl');
   if LowerCase(paramstr(2)) = '-uz' then
   begin
@@ -3719,6 +3719,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/01/02 15:08:24  mk
+  - fixed GetPar
+
   Revision 1.21  2000/12/31 15:13:41  mk
   - overwrite destination file
 
