@@ -901,8 +901,8 @@ begin
 
     hdf_MID    : if hdp.msgid<>'' then
                    wrs(gr(8)+hdp.msgid);        { 'Message-ID : ' }
-    hdf_BEZ    : if hdp.ref<>'' then            { 'Bezugs-ID  : ' }
-                   wrs(gr(19)+hdp.ref+iifs(hdp.refanz=0,'',', ...'));
+    hdf_BEZ    : with hdp do if References.Count > 0 then            { 'Bezugs-ID  : ' }
+                   wrs(gr(19)+References[References.Count-1]+iifs(hdp.References.Count=1,'',', ...'));
 
     hdf_EDA    : wrs(gr(9)+copy(zdow(hdp.datum),1,2)+' '+fdat(hdp.datum)+', '+  { 'Datum      : ' }
                      ftime(hdp.datum)+iifs(hdp.datum<>longdat(edat),'  ('+
@@ -1085,6 +1085,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/01/02 10:05:24  mk
+  - implemented Header.References
+
   Revision 1.59  2000/12/31 15:09:33  mk
   - Erhaten: zeigt Uhrzeit an
 

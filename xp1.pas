@@ -2039,7 +2039,8 @@ begin
   fillchar(sdata^, sizeof(senduudata), 0);
   with sdata^ do begin
     followup:=tstringlist.create;
-    replyto:=tstringlist.create
+    ReplyTo := TStringList.Create;
+    References := TStringlist.Create;
   end
 end;
 
@@ -2048,7 +2049,8 @@ begin
   if sdata<>nil then
   with sdata^ do begin
     followup.free;
-    replyto.free
+    replyto.free;
+    References.Free;
   end;
   freemem(sdata);
   sdata:= nil
@@ -2075,6 +2077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.98  2001/01/02 10:05:23  mk
+  - implemented Header.References
+
   Revision 1.97  2000/12/25 14:02:40  mk
   - converted Lister to class TLister
 

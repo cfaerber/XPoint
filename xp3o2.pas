@@ -19,7 +19,7 @@ interface
 uses sysutils,classes, typeform,datadef,database,resource,xp0,xp6, xpheader,
   xpglobal,xp1;
 
-procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
+procedure WriteHeader(var hd:theader; var f:file);
 procedure SetBrettindex;
 procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; box:string; netztyp:byte;
@@ -36,26 +36,12 @@ implementation  { ---------------------------------------------------- }
 uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
 
 
-procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
+procedure WriteHeader(var hd:theader; var f:file);
 
   procedure wrs(s:string);
   begin
     s:= s+#13+#10;
     blockwrite(f,s[1],length(s));
-  end;
-
-  procedure WriteBez(node:refnodep);
-  begin
-    wrs('BEZ: '+node^.ref);
-  end;
-
-  procedure WriteReflist(node:refnodep; ebene:integer);
-  begin
-    if node<>nil then begin
-      WriteReflist(node^.next,ebene+1);
-      if (ebene<ntMaxRef(hd.netztyp)-1) or (node^.next=nil) then
-        WriteBez(node);
-      end;
   end;
 
   procedure WriteStichworte(keywords:string);
@@ -87,6 +73,7 @@ procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
     i: Integer;
     s: String;
     gb : boolean;
+    MaxRef: Integer;
   begin
     with hd do begin
       if not orgdate then
@@ -122,9 +109,11 @@ procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
       wrs('EDA: '+zdatum);
       wrs('MID: '+msgid);
       if ersetzt<>'' then wrs('ersetzt: '+ersetzt);
-      if ntMaxRef(netztyp)>1 then
-        WriteReflist(reflist,1);
-      if ref<>'' then wrs('BEZ: '+ref);
+
+      // MaxRef := Min(ntMaxRef(hd.Netztyp), References.Count);
+      for i := 0 to References.Count - 1 do
+        wrs('BEZ: '+ References[i]);
+
       if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then begin
         wrs('STAT: CTL');
         wrs('CONTROL: cancel <'+ref+'>');
@@ -424,11 +413,8 @@ begin
              else repto := '';
            reptoanz:=followup.count;
          end;
-    if not pm then begin
-      AddToReflist(hd.ref);
-      _ref6list:=reflist;
-      reflist:=nil;
-      end;
+    if not pm then
+      sData^.References.Assign(hd.References);
     sData^.keywords:=keywords;
     sData^.distribute:=distribution;
     end;
@@ -461,6 +447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/02 10:05:25  mk
+  - implemented Header.References
+
   Revision 1.33  2000/12/30 15:59:27  mk
   - fixed another Bug from Frank Ellert in Get_bezug
 

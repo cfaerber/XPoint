@@ -376,7 +376,7 @@ begin
     if sign then inc(hd.pgpflags,iif(encode,fPGP_signed,fPGP_clearsig));
     assign(f,fn);
     rewrite(f,1);
-    WriteHeader(hd,f,_ref6list);          { neuen Header erzeugen }
+    WriteHeader(hd,f);                   { neuen Header erzeugen }
     assign(f2,tmp);
     reset(f2,1);
     fmove(f2,f);                          { ... und codierte Datei dranhaengen }
@@ -580,7 +580,7 @@ begin
       dbWriteN(mbase,mb_netztyp,l);
     end else begin
       rewrite(f,1);          { alte Datei ueberschreiben }
-      WriteHeader(hdp,f,reflist);
+      WriteHeader(hdp,f);
       assign(f2,tmp2);
       reset(f2,1);
       fmove(f2,f);
@@ -779,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/02 10:05:26  mk
+  - implemented Header.References
+
   Revision 1.33  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 

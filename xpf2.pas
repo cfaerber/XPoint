@@ -127,7 +127,7 @@ label ende;
         inc(count);
         msgid:=datum+'.'+strs(count)+'.Tick@'+boxpar^.boxname;
         fido_to:=summary;
-        WriteHeader(hdp,f,nil);
+        WriteHeader(hdp,f);
         ProcessTICfile:=true;
         end;
       end;

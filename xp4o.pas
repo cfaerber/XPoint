@@ -1049,7 +1049,7 @@ begin
       rewrite(f,1);
       { ClearPGPflags(hdp); }
       hdp.orgdate:=true;
-      WriteHeader(hdp,f,reflist);
+      WriteHeader(hdp,f);
       XreadF(hds,f);   { den Nachrichtentext anhaengen ... }
       close(f);
       Xwrite(fn);
@@ -1110,7 +1110,7 @@ begin
     hdp.charset:='';
     { ClearPGPflags(hdp); }
     hdp.orgdate:=true;
-    WriteHeader(hdp,f2,reflist);   { ..Header in neues Tempfile.. }
+    WriteHeader(hdp,f2);          { ..Header in neues Tempfile.. }
     reset(f,1);
     fmove(f,f2);                  { ..den Text dranhaengen.. }
     close(f); erase(f);
@@ -1572,34 +1572,17 @@ var hdp   : Theader;
   var ml  : byte;
       i,j : integer;
       x,y : byte;
-      p   : refnodep;
-    procedure writeref(p:refnodep);
-    begin
-      wrt(x+3,j,LeftStr(p^.ref,72));
-      inc(j);
-    end;
-    procedure showrefs(list:refnodep);
-    begin
-      if list<>nil then begin
-        showrefs(list^.next);
-        writeref(list);
-        end;
-    end;
   begin
     ml:=length(getres2(459,31))+8;
-    with hdp do begin
-      p:=reflist;
-      while p<>nil do begin
-        ml:=max(ml,length(p^.ref)+6);
-        p:=p^.next;
-        end;
-      ml:=max(ml,length(ref)+6);
+    with hdp do
+    begin
+      for i := 0 to References.Count - 1 do
+        ml:=max(ml,length(References[i])+6);
       ml:=min(ml,72);
-      i:=min(refanz,screenlines-8);
+      i:=min(References.Count,screenlines-8);
       msgbox(ml,i+4,getres2(459,31),x,y);   { 'Empfaengerliste' }
-      j:=y+2;
-      showrefs(reflist);
-      wrt(x+3,y+i+1,LeftStr(ref,72));
+      for i := 0 to References.Count - 1 do
+        wrt(x+3,y+2+i,LeftStr(References[i],72));
       wait(curoff);
       if elist and (UpperCase(lastkey)='E') then keyboard('E');
       closebox;
@@ -1640,7 +1623,7 @@ begin
       if pfad<>'' then apps(12,LeftStr(pfad,53));
     until pfad='';
     if msgid<>''    then apps(13,msgid);
-    if ref<>''      then apps(14,ref);
+    if References.Count > 0 then apps(14, References[References.Count-1]);
     if pm_bstat<>'' then apps(15,pm_bstat);
     apps(16,typstr(typ,mimetyp));
     if programm<>'' then apps(17,programm);
@@ -1685,7 +1668,7 @@ begin
     attrtxt(col.colmboxhigh); wrt(x+40,y+anz+3,getres2(459,28));  { 'Ablagedatei  :' }
     attrtxt(col.colmbox);     write('MPUFFER.',dbReadInt(mbase,'ablage'));
     elist:=(empfanz>1);
-    rlist:=(refanz>1);
+    rlist:=(References.Count>1);
     if elist then s:=' (E='+getres2(459,30)
     else s:='';
     if rlist then begin
@@ -2424,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.90  2001/01/02 10:05:25  mk
+  - implemented Header.References
+
   Revision 1.89  2001/01/02 09:29:38  mo
   -Kommentare hinzugefügt und ergänzt
 

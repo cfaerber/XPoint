@@ -53,7 +53,6 @@ const sendIntern = 1;     { force Intern              }
       sendfiledate   : string = '';
       force_quotemsk : string = '';
       CrosspostBox   : string = '';
-      _ref6list : refnodep = nil;
       _beznet   : shortint = -1;         { Netztyp der Bezugsnachricht }
       _pmReply  : boolean = false;
       IsEbest   : boolean = false;
@@ -1134,7 +1133,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       begin
         _bezug:='';
         _orgref:='';
-        DisposeReflist(_ref6list);
+        sdata^.References.Clear;
       end else
         { betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
       pophp;
@@ -1627,7 +1626,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
     begin
-      hdp.ref:=_bezug;
+      sData^.References.Add(_bezug);
       if ntOrigID(netztyp) then
         hdp.org_xref:=_orgref;
     end;
@@ -1725,7 +1724,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     rewrite(f2,1);
     for ii:=1 to msgCPanz-1 do
       EmpfList.Add(cc^[ii]);
-    WriteHeader(hdp,f2,_ref6list);
+    hdp.References.Assign(sData^.References);
+    WriteHeader(hdp,f2);
 {    hdsize:=filepos(f2); }
     fmove(f,f2);
     close(f);
@@ -1902,7 +1902,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       hdp.groesse:=filesize(f);
       for ii:=1 to msgCPanz-1 do
         Empflist.Add(cc^[ii]);
-      WriteHeader(hdp,f2,_ref6list);
+      WriteHeader(hdp,f2);
       fmove(f,f2);
       close(f); close(f2);
       if (docode=1) or (docode=2) then
@@ -1996,7 +1996,6 @@ xexit2:
   msgprio:=0;
   rfcprio:=0;
   ControlMsg:=false;
-  DisposeReflist(_ref6list);
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
 end; {------ of DoSend -------}
@@ -2101,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.87  2001/01/02 10:05:25  mk
+  - implemented Header.References
+
   Revision 1.86  2000/12/31 11:51:50  mk
   JG:- eigene PMs halten fix
 

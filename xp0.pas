@@ -452,12 +452,6 @@ type   textp  = ^text;
        AdrStr      = string;
        CustHeadStr = string;
 
-       refnodep= ^refnode;             { Datentyp fuer Reference-Liste }
-       refnode = record
-                   next  : refnodep;
-                   ref   : string;
-                 end;
-
        markrec  =  record
                      recno : longint;
                      datum : longint;
@@ -1128,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.115  2001/01/02 10:05:23  mk
+  - implemented Header.References
+
   Revision 1.114  2000/12/31 14:49:03  mk
   - Tearlineschalter in Config/Optionen/Netze
 

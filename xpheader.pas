@@ -60,7 +60,6 @@ type
     pfad: string;                       { Netcall-Format               }
     msgid, ref: string;                 { ohne <>                      }
     ersetzt: string;                    { ohne <>                      }
-    refanz: integer;                    { Anzahl BEZ-Zeilen            }
     typ: string;                        { T / B                        }
     crypttyp: string;                   { '' / T / B                   }
     charset: string;
@@ -133,8 +132,9 @@ type
   end;
 
   SendUUdata = record
-                     followup   : tstringlist;
-                     replyto    : Tstringlist;
+                     followup   : TStringlist;
+                     replyto    : TStringlist;
+                     References : TStringList;
                      keywords   : string;
                      summary    : string;
                      distribute : string;
@@ -186,9 +186,7 @@ begin
   orgdate := false;
   pfad := '';
   msgid := '';
-  ref:= '';                 { ohne <>                      }
   ersetzt:= '';                    { ohne <>                      }
-  refanz := 0;                   { Anzahl BEZ-Zeilen            }
   typ:= '';                        { T / B                        }
   crypttyp:= '';                   { '' / T / B                   }
   charset:= '';
@@ -277,6 +275,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/01/02 10:05:27  mk
+  - implemented Header.References
+
   Revision 1.3  2000/12/30 17:47:41  mk
   - renamed AddRef to References
 

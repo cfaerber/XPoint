@@ -491,7 +491,7 @@ var x,y      : byte;
         assign(f2,tmp);
         rewrite(f2,1);
         ClearPGPflags(hdp);
-        WriteHeader(hdp,f2,reflist);    { neuer Header }
+        WriteHeader(hdp,f2);             { neuer Header }
         seek(f,hds2);
         fmove(f,f2);                     { + decodierter Text }
         close(f); close(f2);
@@ -555,15 +555,14 @@ var x,y      : byte;
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
         { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp.empfanz>maxcrosspost then begin }
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
-        { /robo }
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
         blockread(pfile,ll,8);
-        if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then begin
+        if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
+        begin
           inc(nbez);
           c1:=MsgidIndex(hdp.msgid);
           if hdp.ref='' then c2:=0
@@ -573,7 +572,7 @@ var x,y      : byte;
           dbWriteN(bezbase,bezb_msgid,c1);
           dbWriteN(bezbase,bezb_ref,c2);
           dbWriteN(bezbase,bezb_datum,ll.dat);
-          end;
+        end;
         inc(empfnr);
       until empfnr>hdp.empfanz;
       if ((n mod 5)=0) then begin
@@ -1159,6 +1158,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2001/01/02 10:05:24  mk
+  - implemented Header.References
+
   Revision 1.40  2000/12/05 14:58:09  mk
   - AddNewUser
 

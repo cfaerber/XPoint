@@ -937,7 +937,7 @@ begin
     assign(f1,fn);
     rewrite(f1,1);
     { ClearPGPflags(hdp); }
-    WriteHeader(hdp,f1,reflist);
+    WriteHeader(hdp,f1);
     XReadF(hds,f1);
     close(f1);
     XWrite(fn);
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/01/02 10:05:24  mk
+  - implemented Header.References
+
   Revision 1.46  2000/12/30 12:44:56  mk
   - fixed crash in seluser
 

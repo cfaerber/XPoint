@@ -130,28 +130,14 @@ var i,res : integer;
     inc(hd.empfanz);
   end;
 
-  {$ifdef allrefs}
-
-  procedure GetRef;             { Die letzte Referenz befindet sich *immer* }
-  begin                         { in hd.ref. Die vorletzte steht in         }
-    with hd do begin            { reflist^.ref, die davor in reflist^.next^ }
-      if ref<>'' then           { .ref etc.                                 }
-        AddToReflist(ref);
-      ref := line;
-      inc(refanz);
-    end;
-  end;
-
-  {$else}
   procedure GetRef;
   begin
     with hd do
-      if ref='' then
-        Ref := Line
-      else
-        References.Insert(0, Line);
+    begin
+      References.Add(Line);
+      Ref := Line
+    end;
   end;
-  {$endif}
 
   procedure GetKop;
   begin
@@ -337,9 +323,6 @@ var i,res : integer;
 
 begin
   ok:=true;
-  {$ifdef allrefs}
-    DisposeReflist(reflist);
-  {$endif}
   hd.Clear;
   bufsize := 2048;
   getmem(buf,bufsize);
@@ -574,6 +557,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2001/01/02 10:05:27  mk
+  - implemented Header.References
+
   Revision 1.41  2000/12/30 17:47:41  mk
   - renamed AddRef to References
 

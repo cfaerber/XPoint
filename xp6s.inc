@@ -576,7 +576,7 @@ begin
     AddZer(empfaenger);
     end;
   hdp.netztyp:=nt_Netcall;
-  WriteHeader(hdp,f2,nil);
+  WriteHeader(hdp,f2);
   seek(f,hds);
   fmove(f,f2);
   close(f); close(f2);
@@ -605,7 +605,7 @@ begin
                   hex(dbReadInt(mbase,'groesse'),6);
       hd.typ:=iifc(bin,'B','T');
       inc(hd.attrib,AttrPmcrypt);
-      WriteHeader(hd,f2,_ref6list);
+      WriteHeader(hd,f2);
       fmove(f,f2);
       close(f2);
       SetCryptFlag;
@@ -1160,6 +1160,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.43  2001/01/02 10:05:26  mk
+  - implemented Header.References
+
   Revision 1.42  2000/12/31 14:49:04  mk
   - Tearlineschalter in Config/Optionen/Netze
 

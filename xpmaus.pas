@@ -50,7 +50,7 @@ var t,t2 : text;
     fn, tfn, s, anew, old, msgid, empf : string;
     stop : boolean;
     l    : longint;
-    hdp  : Theader;
+    hdp  : THeader;
     hds  : longint;
     f    : file;
     mi   : shortint;
@@ -103,9 +103,7 @@ begin
     tfn:='';
   x:=wherex-3; y:=wherey;
   reset(t);
-{$IFNDEF Ver32 }
-  system.hdp := AllocHeaderMem;
-{$ENDIF }
+  hdp := THeader.Create;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiMsgID);
 
@@ -184,7 +182,7 @@ begin
               fn:=TempS(hdp.groesse+hds+5000);
               assign(f,fn);
               rewrite(f,1);          { neue Nachricht erzeugen }
-              WriteHeader(hdp,f,nil);
+              WriteHeader(hdp,f);
               XreadF(hds,f);
               close(f);
               Xwrite(fn);            { .. und in die Ablage einlesen }
@@ -813,6 +811,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/01/02 10:05:27  mk
+  - implemented Header.References
+
   Revision 1.22  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 

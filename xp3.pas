@@ -31,7 +31,6 @@ const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
       ReadHeadDisk : shortint = 0;           { Diskussion-In }
-      reflist      : refnodep = nil;         { Reference-Liste, rÅckwÑrts! }
       ReadEmpflist : boolean  = false;
       ReadKopList  : boolean  = false;
       NoPM2AMconv  : boolean  = false;
@@ -58,8 +57,6 @@ procedure Xwrite(fn:string);
 procedure Cut_QPC_DES(var betr:string);
 function  ReCount(var betr:string):integer;
 procedure ReplyText(var betr:string; rehochn:boolean);
-procedure DisposeReflist(var list:refnodep);
-procedure AddToReflist(ref:string);
 
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
@@ -349,29 +346,6 @@ begin
     end;
 end;
 
-
-procedure DisposeReflist(var list:refnodep);
-var p : refnodep;
-begin
-  while list<>nil do begin
-    p:=list^.next;
-    dispose(list);
-    list:=p;
-    end;
-end;
-
-procedure AddToReflist(ref:string);
-var p : refnodep;
-begin
-  if ref<>'' then begin
-    new(p);
-    p^.next:=reflist;
-    p^.ref:=ref;
-    reflist:=p;
-    end;
-end;
-
-{$define allrefs}
 {$define convbrettempf}
 {$define pgp}
 {$define ulines }
@@ -390,7 +364,6 @@ var ok     : boolean;
     empfnr : smallword;
     nopuffer: boolean;
 begin
-  // ClearHeader(@hd); Wird von makeheader auch ausgefÅhrt
   ok:=true;
   dbRead(mbase,'ablage',ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
@@ -1172,6 +1145,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.53  2001/01/02 10:05:24  mk
+  - implemented Header.References
+
   Revision 1.52  2000/12/27 22:36:35  mo
   -new class TfidoNodeList
 

@@ -326,8 +326,6 @@ begin
     xp6._bezug:=hdp0.ref;
     xp6._orgref:=hdp0.org_xref;
     xp6._beznet:=hdp0.netztyp;
-    xp6._ref6list:=reflist;
-    reflist:=nil;
     xp6._replyPath:=hdp0.replypath;
     xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
     xp6.flQTo:=(hdp.attrib and attrQuoteTo<>0);
@@ -347,6 +345,7 @@ begin
     begin
       followup.assign(hdp.followup);
       replyto.assign(hdp.replyto);
+      References.Assign(hdp.References);
       Keywords:=hdp.Keywords;
       Summary:=hdp.Summary;
       Distribute:=hdp.Distribution;
@@ -566,7 +565,7 @@ label ende,again;
     hdp.groesse:=filesize(f);
     hdp.betreff:=betr;
     hdp.orgdate:=true;
-    Writeheader(hdp,tf,reflist);
+    Writeheader(hdp,tf);
     fmove(f,tf);
     dbAppend(mbase);
     mnt:=hdp.netztyp;
@@ -824,7 +823,7 @@ again:
             hdp.charset:='';
             hdp.orgdate:=true;
             rewrite(f,1);
-            WriteHeader(hdp,f,reflist);
+            WriteHeader(hdp,f);
             close(f);
             if not binaermail then begin
               append(t);
@@ -940,9 +939,8 @@ again:
                    _bezug:=hdp.msgid;
                    _orgref:=hdp.org_msgid;
                    _beznet:=hdp.netztyp;
-                   AddToReflist(hdp.ref);
-                   _ref6list:=reflist;
-                   reflist:=nil;
+                   sData^.References.Assign(Hdp.References);
+                   sData^.References.Add(hdp.ref+'aus xp6o.weiterleit');
                    flQto:=true;
                    end;
                  if typ in [1,7] then begin
@@ -1015,8 +1013,6 @@ again:
                _bezug:=hdp.ref;
                _orgref:=hdp.org_xref;
                _beznet:=hdp.netztyp;
-               _ref6list:=reflist;
-               reflist:=nil;
                fidoto:=hdp.fido_to;
                flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
                flEB:=(hdp.attrib and attrReqEB<>0);
@@ -1027,9 +1023,12 @@ again:
                xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
                xp6.ControlMsg:=(hdp.attrib and attrControl<>0);
                sdata:=allocsenduudatamem;
-               with sData^ do begin
+               with sData^ do
+               begin
                  followup.assign(hdp.followup);
                  replyto.assign(hdp.replyto);
+                 References.Assign(Hdp.References);
+                 References.Add(hdp.ref);
                  Keywords:=hdp.Keywords;
                  Summary:=hdp.Summary;
                  Distribute:=hdp.Distribution;
@@ -1040,7 +1039,7 @@ again:
                  onetztyp:=hdp.netztyp;
                  quotestr:=hdp.quotestring;
                  ersetzt:=hdp.ersetzt;
-                 end;
+               end;
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
                  inc(SendFlags,SendPGPsig);
@@ -1169,7 +1168,7 @@ begin
   reset(f,1);
   hdp.groesse:=filesize(f);
   hdp.orgdate:=true;
-  Writeheader(hdp,tf,reflist);
+  Writeheader(hdp,tf);
   fmove(f,tf);
   dbAppend(mbase);
   mnt:=hdp.netztyp;
@@ -1282,6 +1281,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/01/02 10:05:25  mk
+  - implemented Header.References
+
   Revision 1.51  2000/12/27 22:36:33  mo
   -new class TfidoNodeList
 
