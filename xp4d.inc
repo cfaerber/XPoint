@@ -392,7 +392,7 @@ begin  { __ Suchmarke }
                                               forms(s1,iif(showmsgdatum,22-
                                               iif(pos('D',MsgFeldTausch)<>1,0,1),28));
 
-              If (HighlightName=ustr(s0)) or (mnt and $1000<>0) then Userflag[y]:=1;
+              userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
                
 
             end else begin
@@ -428,8 +428,8 @@ begin  { __ Suchmarke }
               if flags and 56=32 then userflag[y]:=5        { niedrigste }                                   
               else if flags and 56=24 then userflag[y]:=4   { niedrige   }
               else if flags and 56=16 then userflag[y]:=3   { hohe       }
-              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }  
-              
+              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }          
+
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name')))
                  then userflag[y]:=1              
