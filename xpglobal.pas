@@ -29,7 +29,7 @@ interface
 
 const
   verstr      = 'v3.70.3';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';      { '' oder ' beta' }
+  betastr     = ' beta';      { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
   pformstr    = ' Win/32';    { 32 Bit Windows mit FPC oder VP }
@@ -179,6 +179,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.50  2000/12/11 10:59:36  mk
+  - fixed comment of betastr
+
   Revision 1.49  2000/12/06 09:43:42  mk
   - OpenXP-Team mit Bindestrich in der Mitte
 
