@@ -1622,9 +1622,10 @@ end;
 initialization
 {$IFDEF NCRT}
   InitXPCurses;
-{$ENDIF}
+{$else}
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
   normtxt;
+{$endif}
   chml[1]:=range(#32,#126)+range(#128,#255);
   chml[3]:='1234567890 ';
   chml[2]:=chml[3]+'.,';
@@ -1659,6 +1660,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.58  2000/09/10 15:11:52  hd
+  - Fix: Farbe unter Linux
+
   Revision 1.57  2000/09/08 16:12:06  hd
   - Init-Reihenfolge
 

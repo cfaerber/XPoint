@@ -369,7 +369,7 @@ var
   atts: longint;
 begin
   if not __isInit then InitXPCurses;
-  atts:= COLOR_PAIR(SetColorPair(att));
+  atts:= color_pair(SetColorPair(att));
   if IsBold(att) then
     atts:= atts or A_BOLD;
   if (att and $80) = $80 then
@@ -520,7 +520,7 @@ begin
   WhereXY(x0, y0);
   wmove(BaseWin.wHnd, y-1, x-1);
   ta:= TextAttr;
-  wattr_set(BaseWin.wHnd, CursesAtts(TextAttr));
+  wattrset(BaseWin.wHnd, CursesAtts(TextAttr));
   for i:= 1 to Length(s) do
     { ToDo: Andere Consolen unterstuetzen }
     waddch(BaseWin.wHnd, CvtToISOConsole(s[i]));
@@ -578,12 +578,8 @@ end;
 
 procedure SetTextAttr(attr: byte);
 begin
-{$IFDEF Debug}
-  if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' SetTextAttr ',attr,'->',CursesAtts(attr));
-{$ENDIF }
   if not __isInit then InitXPCurses;
-  wattr_set(ActWin.wHnd, CursesAtts(attr));
+  wattrset(ActWin.wHnd, CursesAtts(attr));
   TextAttr:= attr;
   LastTextAttr:= attr;
 end;
@@ -1302,9 +1298,9 @@ begin
     exit;
   end else begin
     StartCurses:= true;
+    savetty;			{ tty sichern }
     if has_colors<>0 then
       start_color;              { Farbe aktivieren }
-    savetty;			{ tty sichern }
     cbreak;                    { disable keyboard buffering }
     raw;                       { disable flow control, etc. }
     noecho;                    { do not echo keypresses }
@@ -1409,6 +1405,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/09/10 15:11:52  hd
+  - Fix: Farbe unter Linux
+
   Revision 1.26  2000/09/10 13:21:20  hd
   - Propi.-Log-Features
   - Darstellung temporaer nur schwarz/weiss
