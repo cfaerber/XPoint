@@ -19,10 +19,18 @@ interface
 
 uses dos, typeform,datadef, xpglobal;
 
-const   db_magic: ShortString  = 'DB1'^Z;
+const
+{$IFNDEF VP }
+        db_magic: ShortString  = 'DB1'^Z;
         eb_magic: ShortString  = 'EB1'^Z;
         ix_magic: ShortString  = 'IX1'^Z;
         nomagic: ShortString   = #0#0#0#0;
+{$ELSE }
+        db_magic = 'DB1'^Z;
+        eb_magic = 'EB1'^Z;
+        ix_magic = 'IX1'^Z;
+        nomagic = #0#0#0#0;
+{$ENDIF }
 
         rflagDeleted = 1;     { Datensatz-Flag fÅr gelîschten Satz }
 
@@ -217,6 +225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/08/29 21:03:39  mk
+  - temporaere Workarounds fuer FPC Compiler/RTL-Bug
+
   Revision 1.10  2000/08/29 19:43:54  ml
   - workaround f¸r ƒnderung im fpc: Vergleich von array of char und
     Ansistring funktioniert nicht

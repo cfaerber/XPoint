@@ -72,7 +72,11 @@ const MaxNodelists = 100;
       maxber    = 300;
       maxnodes  = 3000;    { max Nodes / Net }
       maxpoints = 700;     { max Points / Node }
+{$IFDEF VP }
       nodekenn  = 'IDX'^Z;
+{$ELSE }
+      nodekenn: Shortstring  = 'IDX'^Z;
+{$ENDIF }
 
       nodeopen  : boolean = false;
       xpdir     : string[80] = '';
@@ -500,6 +504,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/08/29 21:03:39  mk
+  - temporaere Workarounds fuer FPC Compiler/RTL-Bug
+
   Revision 1.10  2000/07/13 10:23:48  mk
   - Zeiger auf Strings entfernt
 
