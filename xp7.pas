@@ -286,7 +286,8 @@ label abbruch,ende0;
                        dpuffer:='CLPUFFER';
                      end;
       end;
-      if not logintyp in [ltUUCP,ltClient] then begin
+      if not (logintyp in [ltUUCP,ltClient]) then
+      begin
         {if _fido and sysopmode then
           exchange(uparcer,'$PUFFER',OwnPath+upuffer)
         else} if pronet then
@@ -294,14 +295,15 @@ label abbruch,ende0;
         else
           exchange(uparcer,'$PUFFER',upuffer);
         exchange(uparcer,'$UPFILE',caller);
-        if not _fido then begin
+        if not _fido then
+        begin
           exchange(downarcer,'$DOWNFILE',called);
           if not ltMultiPuffer(logintyp) then
             exchange(downarcer,'$PUFFER',dpuffer)
           else
             exchange(downarcer,'$PUFFER','*.*');
-          end;
         end;
+      end;
       if ustr(left(uploader+' ',7))='ZMODEM ' then
         uploader:=ZM(uploader,true);
       if ustr(left(downloader+' ',7))='ZMODEM ' then
@@ -627,6 +629,7 @@ begin                  { of Netcall }
         exit;
       end;
 
+      hinweis('vor Aufruf SetFilenames');
       SetFilenames;
 
       if exist(upuffer) then _era(upuffer);  { evtl. alte PUFFER l”schen }
@@ -1612,6 +1615,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.22  2001/12/22 22:58:03  my
+  MY:- Fix: ZConnect- und andere Netcalls gingen nicht ($UP/DOWNFILE und
+       Konsorten wurden nicht 'exchanged').
+
   Revision 1.16.2.21  2001/12/20 15:06:10  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
