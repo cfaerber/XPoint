@@ -43,7 +43,7 @@ begin
   uvse:=true; uvsl:=true;
   setenable(Weiter,10,true);
   if (dispmode=10) and not empty then begin
-    dbReadN(mbase,mb_brett,_brett);
+    _brett:= dbReadNStr(mbase,mb_brett);
     if _brett[1]='U' then setenable(Weiter,10,false);    { PM-Archiv }
     dbReadN(mbase,mb_unversandt,unversandt);
     dbReadN(mbase,mb_typ,mtyp);
@@ -102,13 +102,13 @@ begin
   aufbau:=true;
 end;
 
-(*                       { Ausgeklammert, siehe auch xp4o2.pas und xp2.pas }
+{ Ausgeklammert, siehe auch xp4o2.pas und xp2.pas 
 procedure _SetLanguage;
 begin
   SetLanguage;
   setmainkeys(dispmode);
 end;
-*)
+}
 
 procedure MenuConfigAnzeigeZeilen;
 var
@@ -372,7 +372,7 @@ begin
            12 : adroptions;
             6 : netcalloptions;
             9 : EditPassword;
-        (* 10 : _SetLanguage; *)
+        {  10 : _SetLanguage; }
            11 : TerminalOptions;
           end;
 
@@ -515,12 +515,12 @@ var x,y : integer;
         end;
       ofs:=155+2*keypos;
       moff;
-(*    for x:=1 to keylen+2 do
+{    for x:=1 to keylen+2 do
         if (x>ks1) and (x-1<=ks2) then
           mem[base:ofs+2*x]:=c2
         else
           mem[base:ofs+2*x]:=c1;
-       Hier wird von den Menpunkten das Attribut ge„ndert *)
+       Hier wird von den Menpunkten das Attribut ge„ndert }
       mon;
       end;
   end;
@@ -574,6 +574,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/07/09 16:41:00  hd
+  - Ansistring
+    - Bis xp4w - Bretter bearbeiten
+    - Evtl. Noch Probleme mit Mime, wg. FillChar auf AnsiString
+  - Weitere Anpassungen noch notwendig!
+
   Revision 1.18  2000/07/06 08:58:45  hd
   - AnsiString
 

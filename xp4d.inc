@@ -96,8 +96,8 @@ var
 begin  { __ Suchmarke }
   case aktdispmode of
    -1,0 : begin
-            dbRead(bbase,'brettname',s);
-            dbRead(bbase,'kommentar',komm);
+            s:= dbReadStr(bbase,'brettname');
+            komm:= dbReadStr(bbase,'kommentar');
             if left(s,3)='$/T' then begin
               if komm='' then
                 dispbuf[y]:='   '+dup(76,s[4])+' '
@@ -116,7 +116,7 @@ begin  { __ Suchmarke }
             else begin
               dbReadN(bbase,bb_LDatum,dat);
               dbReadN(bbase,bb_flags,flags);
-              dbReadN(bbase,bb_pollbox,pbox);
+              pbox:= dbReadNStr(bbase,bb_pollbox);
               markflag[y]:=iif(UBmarked(dbRecno(bbase)),1,0);
               markc:=iifc(markflag[y]<>0,suchch,' ');
               brettform(s,flags,false);
@@ -161,8 +161,8 @@ begin  { __ Suchmarke }
             }
 
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
-            dbReadN(ubase,ub_username,s);
-            dbReadN(ubase,ub_kommentar,komm);
+            s:= dbReadNStr(ubase,ub_username);
+            komm:= dbReadNStr(ubase,ub_kommentar);
                                                      { Trennzeilenerkennung }
 
            { if left(s,3)='$/T' then s:=#0+s; }       { Altes Trennzeichenformat unterstuetzen }
@@ -209,7 +209,7 @@ begin  { __ Suchmarke }
             if dispext then begin
             { Anzeige/Spezial }
               kuerzen := true; { wir brauchen mehr Platz, also Felder kuerzen }
-              dbReadN(ubase,ub_pollbox,pbox);
+              pbox:= dbReadNStr(ubase,ub_pollbox);
               brettform(s,0,true);
 
               { (H)altezeit }
@@ -253,14 +253,17 @@ begin  { __ Suchmarke }
               if (dispbuf[y]<>'') then dispbuf[y]:=dispbuf[y]+' ';
               dispbuf[y]:=dispbuf[y]+taus[tausc];
             end;
-            { Sicherheitshalber nochmal auf 80 Zeichen krzen }
-            dispbuf[y]:=forms(dispbuf[y],80);
+            { Sicherheitshalber nochmal auf x Zeichen krzen }
+	    if (ScreenWidth>DispStrSize) then
+              dispbuf[y]:=forms(dispbuf[y],DispStrSize)
+	    else
+              dispbuf[y]:=forms(dispbuf[y],ScreenWidth);
 
           end;
         end;
   10..12: begin { NACHRICHTENLISTE }
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
-            dbReadN(mbase,mb_absender,s0);
+            s0:= dbReadNStr(mbase,mb_absender);
             dbReadN(mbase,mb_netztyp,mnt);
             fileatt:=(mnt and $200<>0);
             netztyp:=mnt and $ff;
@@ -272,7 +275,7 @@ begin  { __ Suchmarke }
             else
               if showrealos and (dbReadStr(mbase,'name')<>'') and
                  ((dispmode<>11) or not markunversandt) then
-                dbReadN(mbase,mb_name,s)
+                s:= dbReadNStr(mbase,mb_name)
               else begin
                 s:=s0;
                 if sabsender<>0 then begin
@@ -290,7 +293,7 @@ begin  { __ Suchmarke }
                   end;
                 end;
               end;
-            dbReadN(mbase,mb_betreff,s1);
+            s1:= dbReadNStr(mbase,mb_betreff);
             if dispmode<>12 then begin
               if (netztyp=nt_Maus) and (mnt and $100<>0) then
                 s1:=left('-'+s1,40) else
@@ -334,7 +337,7 @@ begin  { __ Suchmarke }
               else
                 s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
             end;
-            dbReadN(mbase,mb_brett,_brett);
+            _brett:= dbReadNStr(mbase,mb_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
             if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then begin
               inc(ulen,blen-pp);
@@ -378,7 +381,7 @@ begin  { __ Suchmarke }
             if fidoqwk and (dispmode=10) and
                dispfto and (_brett[1]='A') then begin
               if cpos('@',s)>0 then SetLength(s, cpos('@',s)-1); {s[0]:=chr(cpos('@',s)-1);}
-              dbReadN(mbase,mb_name,s0);
+              s0:= dbReadNStr(mbase,mb_name);
 
               { (F)lags }
               taus[pos('F',MsgFeldTausch)] := dflags;

@@ -52,7 +52,7 @@ begin
         if dbEOF(ubase) then dbGoTop(ubase);
         end;
       end;
-    dbReadN(ubase,ub_username,n);
+    n:= dbReadNStr(ubase,ub_username);
     if (dispmode=1) or (dispmode=3) then begin    { Adre·buch }
       dbSeek(ubase,uiAdrbuch,#1+UpperCase(n));
       if dbEOF(ubase) then disprec[1]:=0
@@ -137,7 +137,7 @@ begin
   _brett:=mbrettd('U',ubase);
   dbSeek(mbase,miBrett,_brett);
   if dbEOF(mbase) then _mbrett:=''
-  else dbReadN(mbase,mb_brett,_mbrett);
+  else _mbrett:= dbReadNStr(mbase,mb_brett);
   if (ab<>0) and (_mbrett=_brett) then begin
     rfehler(416);  { 'Im Brett dieses Users sind noch Nachrichten vorhanden!' }
     exit;
@@ -180,12 +180,10 @@ begin
   GoP;
   _user:=mbrettd('U',ubase);
   dbSeek(mbase,miBrett,_user);
-  if not dbEOF(mbase) then
-    dbRead(mbase,'Brett',_brett);
-  if not dbEOF(mbase) and (_user=_brett) then
-    rfehler(416)
-  else
-    udelete;
+  if not dbEOF(mbase) then _brett:= dbReadStr(mbase,'Brett')
+  else _brett:= '';
+  if not dbEOF(mbase) and (_user=_brett) then rfehler(416)
+  else udelete;
 end;
 
 procedure edit_password(msgbrett:boolean);
@@ -206,17 +204,17 @@ begin
   disprec[1]:=rec;
 end;
 
-Procedure TrennzeilenSuche;
-var   uname  : string;
+procedure TrennzeilenSuche;
+var   uName   : string;
       rec     : longint;
 begin
   dbgo(dispdat,disprec[1]);
   dbnext(dispdat);
   repeat
-    if dispmode<=0 then dbreadn(bbase,bb_brettname,uname)
-      else dbReadN(ubase,ub_username,uname);
+    if dispmode<=0 then uName:= dbReadNStr(bbase,bb_brettname)
+    else uName:= dbReadNStr(ubase,ub_username);
     dbnext(dispdat);
-  Until dbEOF(dispdat) or (pos('$/T',UpperCase(uname))>0);
+  until dbEOF(dispdat) or (pos('$/T',UpperCase(uname))>0);
   if not dbEOF(dispdat) then dbskip(dispdat,-1);
   rec:=dbRecno(dispdat);
   disprec[1]:=rec;
@@ -256,7 +254,7 @@ procedure verteiler_loeschen;
 var name : string;
 begin
   GoP;
-  dbReadN(ubase,ub_username,name);
+  name:= dbReadNStr(ubase,ub_username);
   name:=vert_name(name);
   if ReadJN(getreps(418,name),true) then begin   { 'Verteiler %s lîschen' }
     del_verteiler(name);
@@ -280,14 +278,16 @@ begin
     keinverteiler:=true;
 end;
 
-procedure usersprung(vor:boolean);   { zum nÑchsten/letzten markierten User }
+procedure UserSprung(vor: boolean);   { zum nÑchsten/letzten markierten User }
 var rec,n : longint;
+
   procedure incn;
   begin
     inc(n);
     if n=gl then rmessage(432);
   end;
-begin
+
+begin { UserSprung }
   GoP;
   n:=0;
   if vor then
@@ -343,7 +343,7 @@ begin
       if dbFound then s:=hdp^.PmReplyTo;
       end;
     if s='' then
-      dbReadN(mbase,mb_absender,s);   { auch auf mbase arbeitet.     }
+      s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
     dispose(hdp);
     dbSeek(ubase,uiName,UpperCase(s));
     if not dbFound then
@@ -351,10 +351,10 @@ begin
     else begin
       if dbXsize(ubase,'adresse')>0 then begin  { Vertreteradresse? }
         size:=0;
-        dbReadX(ubase,'adresse',size,s);
+        s:= dbReadXStr(ubase,'adresse',size);
         dbSeek(ubase,uiName,UpperCase(s));
         if not dbFound then
-          dbReadN(mbase,mb_absender,s);
+          s:= dbReadNStr(mbase,mb_absender);
         end;
       oldds:=dispspec;
       _oldds:=_dispspec;
@@ -532,7 +532,7 @@ var fn     : string;
     dbReadN(mbase,mb_unversandt,flags);
     rflag:=false;
     if (b=0) or ((nt=nt_Maus) and (flags and 32<>0)) then begin
-      dbReadN(mbase,mb_brett,brett);       { ^^ Maus-zurÅckgestellt }
+      brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurÅckgestellt }
       if (nt=nt_Maus) and MausLeseBest and ((brett[1]='1') or (brett[1]='U'))
       then
         if briefsent then begin
@@ -560,7 +560,7 @@ var fn     : string;
                 dbGo(mbase,rec2);
                 b:=1;
                 dbWriteN(mbase,mb_gelesen,b);
-                dbReadN(mbase,mb_brett,brett);
+                brett:= dbReadNStr(mbase,mb_brett);
                 dbSeek(mbase,miGelesen,brett+#0);
                 if not dbEOF(mbase) and
                    ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
@@ -742,7 +742,7 @@ begin
         goto ende0;
         end;
 
-      dbReadN(mbase,mb_mimetyp,mimetyp);
+      mimetyp:= dbReadNStr(mbase,mb_mimetyp);
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
@@ -833,7 +833,7 @@ begin
       if arc=0 then begin              { Lister }
         if (dbReadInt(mbase,'netztyp')and $ff in [nt_Fido,nt_QWK]) then begin
           fnproc[0,3]:=Fido_Msgrequest;
-          dbReadN(mbase,mb_absender,abs);
+          abs:= dbReadNStr(mbase,mb_absender);
           FMsgReqnode:=mid(abs,cpos('@',abs)+1);
           end;
         if not pushed then begin
@@ -1158,7 +1158,7 @@ begin
   if (dispmode<1) then begin
     dbSeek(bbase,biBrett,'A'+UpperCase(newsuch));
     if not dbEOF(bbase) then begin
-      dbReadN(bbase,bb_brettname,s);
+      s:= dbReadNStr(bbase,bb_brettname);
       delfirst(s);
       if UpperCase(left(s,length(newsuch)))<>UpperCase(newsuch) then
         errsound
@@ -1196,11 +1196,11 @@ begin
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
           if dbEOF(ubase) then Exit;
-          dbReadN(ubase,ub_username,s);
+          s:= dbReadNStr(ubase,ub_username);
         until (adrb<>0) or (left(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
         end
-      else dbReadN(ubase,ub_username,s);
+      else s:= dbReadNStr(ubase,ub_username);
 
       if left(UpperCase(s),length(newsuch))<>UpperCase(newsuch) then
         errsound
@@ -1501,6 +1501,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/07/09 16:41:00  hd
+  - Ansistring
+    - Bis xp4w - Bretter bearbeiten
+    - Evtl. Noch Probleme mit Mime, wg. FillChar auf AnsiString
+  - Weitere Anpassungen noch notwendig!
+
   Revision 1.31  2000/07/09 11:55:31  hd
   - AnsiString
 
