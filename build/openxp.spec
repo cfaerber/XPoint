@@ -34,7 +34,7 @@ BuildArchitectures: i386
 Requires: ncurses
 #Obsoletes:
 %description
-OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
+OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
 
 %prep
 
