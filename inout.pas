@@ -342,20 +342,42 @@ end;
 {$ENDIF }
 
 Procedure Cursor(t:curtype);
+{$IFDEF Win32 }
+var
+  Info: TConsoleCursorInfo;
+{$ENDIF }
 begin
 {$IFDEF BP }
   case t of
     curnorm : curlen(ca,ce);
-    curoff  : curlen(ca+$20,ce);
     cureinf : curlen(max(ca-4,1),ce);
+    curoff  : curlen(ca+$20,ce);
   end;
 {$ELSE }
-  {$IFDEF FPC }
+  {$IFDEF Win32 }
     case t of
-      curnorm : CursorOn;
-      curoff  : CursorOff;
-      cureinf : CursorBig;
+      curnorm: begin
+                 Info.bVisible := true;
+                 Info.dwSize := 15;
+               end;
+      cureinf: begin
+                 Info.bVisible := true;
+                 Info.dwSize := 100;
+               end;
+      curoff:  begin
+                 Info.bVisible := false;
+                 Info.dwSize := 50;
+               end;
     end;
+    SetConsoleCursorInfo(Outhandle, Info);
+  {$ELSE }
+    {$IFDEF FPC }
+      case t of
+        curnorm : Cursoron;
+        cureinf : CursorBig;
+        curoff  : CursorOff;
+      end;
+    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
   lastcur:=t;
@@ -1796,6 +1818,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/04/13 17:20:37  mk
+  - Cursortypen setzen unter DOS und Win32 implementiert
+
   Revision 1.24  2000/04/13 12:48:31  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
