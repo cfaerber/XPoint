@@ -9,8 +9,8 @@
 
 
                   -------------------------------
-                  Cross \\//     Version 3.2 BETA
-                        //\\ Point            DOS
+                  Cross \\//     Version 3.7 BETA
+                        //\\ Point
                   ¯  universelle Pointsoftware  ®
                   -------------------------------
 
@@ -40,6 +40,9 @@
 
                     (c) 1993-99 Peter Mandrella
 
+                    (c) 2000 OpenXP Projekt Team
+
+$Id$
 
 Inhalt
 ====================================================================
@@ -101,7 +104,6 @@ verschiedener Netze, und der Fido-Teil nimmt dabei den gr”áten Raum ein.
 Zu verdanken ist dies vor allem Burkard Schoof, der mich ununterbrochen mit
 neuen Ideen und Anmerkungen zur Fido-Implementation versorgt hat.
 
->>|
 Das FidoNet ist das „lteste und gr”áte aller Mailboxnetze und kann daher auch
 mit den meisten Besonderheiten aufwarten. Wegen der groáen Anzahl spezieller
 Fido-Features habe ich mich dazu entschlossen, alle ausschlieálich das FidoNet
@@ -109,15 +111,12 @@ betreffenden Dinge in diesem Text zusammenzufassen. Er soll und kann
 nicht das Handbuch ersetzen, sondern dient nur als Erg„nzung und
 als Schnelleinstiegshilfe fr Fido. Zum Verst„ndnis des CrossPoint-Konzeptes
 sollten Sie zumindest die Grundlagenkapitel des Handbuchs lesen.
-<<|
 
->>|
 Fr den Fido-Teil von CrossPoint gelten die gleichen Shareware-Lizenzbedingungen
 wie fr das restliche Programm. Genaueres hierzu finden Sie in LIZENZ.TXT. 
 Ebenso wie fr das Handbuch gilt auch fr diesen Text,
 daá Auszge daraus mit Quellenangabe in Mailboxnetzen ver”ffentlicht werden
 drfen.
-<<|
 
 So, kommen wir nun endlich zur Hauptsache - zum Einsatz von CrossPoint im
 FidoNet. Wenn Sie bereits Erfahrung mit anderer Fido-Pointsoftware und fundierte
@@ -126,10 +125,8 @@ Installation fortfahren. Als Fido-Neuuser sollten Sie Teil 1 dieses Textes
 zumindest kurz berfliegen, da ich die dort erkl„rten Konzepte und Begriffe
 als bekannt voraussetzen werde.
 
->>|
 Bei Problemen erreichen Sie das Team in den bekannten Support-Echos (s.
 Handbuch, Kapitel 1.3).
-<<|
 
 Peter Mandrella,
 September 1992 - September 1995 
@@ -146,12 +143,10 @@ fr ihre wertvolle Mitarbeit.
 1.1  FidoNet - Aufbau und Adressierung
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>|
 Fido ist ein internationales Mailboxnetz aus z.Zt. ca. 20.000 Systemen,
 Tendenz derzeit sinkend. Um in einem Netz dieser Gr”áenordnung die šbersicht zu
 behalten, ist es streng hierarchisch gegliedert, und innerhalb jeder Ebene
 werden Nummern zur Adressierung verwendet.
-<<|
 An oberster Stelle stehen die ZONEN, die im Wesentlichen den Kontinenten
 entsprechen. Z.Zt. gibt es die 6 Zonen Nordamerika (1), Europa (2), Ozeanien (3),
 Lateinamerika (4), Afrika (5) und Asien (6). Die Zonen sind in REGIONEN gegliedert,
@@ -173,7 +168,6 @@ des Users und aus Zone, Netz, Node und evtl. Pointnummer zusammen. Beispiel:
 
              Christian Faulhammer @ 2:2452/125.16
 
->>|
 Diese Adresse bedeutet, daá ich mich in Europa befinde, und daá ich meine
 Daten von Node Nr. 125 - dem Last Outpost in Herzogenrath - des Netzes 2452 beziehe.
 Wie Sie sehen, taucht die Region nicht innerhalb der Adresse auf, sondern ist
@@ -181,7 +175,6 @@ Teil der Netznummer. Die 16 schlieálich ist meine Pointnummer innerhalb der Box.
 Bei Usern, die kein Point sind, sondern ihr Daten "online" abholen, entf„llt
 die Pointnummer (n„heres zum Unterschied zwischen Online-Usern und Points finden
 Sie im Handbuch, Kap. 1.9).
-<<|
 
 
 ş 4D oder 2D?
@@ -219,10 +212,8 @@ zur Spaltung der Region in die beiden sogenannten Teile "Fido Classic" (alte
 Nummern) und "Fido Light" (neue Nummern). Ein Austausch von Netmails (PMs)
 zwischen Teilnehmern der beiden Netze war nicht mehr m”glich.
 
->>|
 Inzwischen sind die Streitigkeiten beigelegt, und die beiden Netze
 wieder zusammengewachsen.
-<<|
 
 
 
@@ -280,10 +271,8 @@ Node dessen Nummer, Name, Standort, Name des Sysops, Telefonnummer und einige
 zus„tzliche Informationen.
 
 Alle Node-Informationen werden zentral gesammelt und einmal pro Woche in Form
->>|
 einer neuen Nodeliste ver”ffentlicht. Weil die Liste so groá ist (z.Zt. ca. 1,6
 MB), w„re es recht teuer, jedesmal die gesamte Liste zu bertragen. Daher wird 
-<<|
 jeweils aus der neuen und der vorausgegangenen Nodelist eine Differenz-Datei 
 (engl. diff file) erstellt, die nur Informationen ber neue, weggefallene und 
 ge„nderte Nodes enth„lt. Jeder Fido-Node und -Point kann sich nun anhand der 
@@ -353,11 +342,9 @@ II   Installation und Bedienung
 ====================================================================
 
 
->>|
 Dieser Abschnitt enth„lt Informationen, die speziell die Installation und
 Nutzung von CrossPoint im FidoNet betreffen. Ausfhrlichere Informationen zu
 Installation und Benutzung finden Sie im Handbuch.
-<<|
 
 
 
@@ -371,14 +358,12 @@ Zum Einsatz von CrossPoint im FidoNet ben”tigen Sie drei Dinge:
 ş  einen Entpacker, z.B. PKUNZIP
 ş  einen ARC-Entpacker, z.B. PKXARC
 
->>|
 Packer und Entpacker k”nnen auch in einem Programm enthalten sein, z.B. LHA
 oder ARJ. Welchen Packer Sie verwenden, mssen Sie mit Ihrem Sysop absprechen.
 Darber hinaus werden *keine* weiteren Programme ben”tigt - kein sogenannter
 "Fossil-Treiber" (vgl. auch Anhang F des Handbuchs), kein "Tosser" oder
 "Scanner" und auch kein NodeDiff-Bearbeiter. Alle diese Dinge sind bereits im
 CrossPoint-Paket enthalten.
-<<|
 
 Wenn Sie CrossPoint zum ersten Mal starten, fragt es drei Eingaben ab:
 
@@ -446,7 +431,6 @@ unter der Nodenummer 89 schreiben, dann lautet Ihre Adresse 12:345/89.
 2.2  Netzanruf
 ~~~~~~~~~~~~~~
 
->>|
 Wenn alle Daten korrekt eingegeben sind, k”nnen Sie Netzanrufe bei Ihrem
 Bossnode durchfhren. Verwenden Sie dazu den Menpunkt /Netcall/Einzeln. Wenn
 der Netzanruf nicht funktioniert, lesen Sie bitte zun„chst in Kapitel 3.1
@@ -454,7 +438,6 @@ des Handbuchs nach; dort sind die h„ufigsten, allgemeinen Fehlerursachen
 beschrieben. Evtl. kann auch die Datei XPFIDO.LOG Aufschluá geben, in der der
 Fido-Mailer (Netcall-Modul) von CrossPoint ein genaues Protokoll des Anrufs
 aufzeichnet.
-<<|
 
 Nach erscheinen von CrossPoint Version 2.0 hat sich herausgestellt, daá es im
 FidoNet wesentlich mehr m”gliche Fehlerursachen gibt als in allen anderen
@@ -477,14 +460,12 @@ ist.
 --9 Problem: Sie erhalten nur dann Daten von der Box, wenn Sie selbst
 Nachrichten verschicken.
 
->>|
 --9 Ursache: Ein Fehler im Zmodem des Fido-Mailers von CrossPoint (bis
 Version 3.12d) im Zusammenspiel mit dem fehlerintoleranten Verhalten vieler
 anderer Fido-Mailer.
 
 --11L”sung:  Das Problem sollte bei Version 3.2 nicht mehr auftreten, aber aktivieren
 Sie sicherheitshalber unter Edit/Boxen/Edit/Point den Punkt "leeres Paket senden".
-<<|
 
 --9 Problem: Es tauchen gelegentlich Nachrichten auf, die ausschlieálich aus
 "Mll-Zeichen" bestehen. Auch Absender und Betreff sind unbrauchbar.
@@ -506,13 +487,11 @@ Anwahl m”glich.
 
 --9 Problem: Der Fido-Mailer meldet einen "EMSI_NAK"-Fehler.
 
->>|
 --9 Ursache: Bei der šbertragung Ihrer Daten (Pointnumer, Paáwort etc.) zur
 Mailbox, oder bei der šbertragung der Mailboxdaten zu Ihnen, sind Fehler
 aufgetreten. M”glicherweise sind einzelne Zeichen an der seriellen Schnittstelle
 verloren gegangen (s. Handbuch, Anhang F). XP wird versuchen, die šbertragung
 zu wiederholen.
-<<|
 
 
 
@@ -567,18 +546,14 @@ geschickt, und beim zweiten Anruf sollten Sie eine Brettliste erhalten, die
 in einem PM-Brett unter Ihrem Namen abgelegt wird. Diese Brettliste mssen Sie
 anschlieáend ausw„hlen und mit /Nachricht/Brettmanager/Liste_einlesen aktivieren.
 
->>|
 Sp„ter sollten Sie in regelm„áigen Abst„nden eine neue Liste anfordern, um
 immer den aktuellen Brettbestand der Box zu kennen. Dies l„át sich auch ber
 die AutoVersand-Funktion automatisieren (s. Handbuch, Kap. 5.10).
-<<|
 
 
 ş Bestellen/Abbestellen und Verwalten von Brettern
 
->>|
 s. Handbuch, Kap. 3.2
-<<|
 
 
 ş Probleme mit d'Bridge
@@ -632,17 +607,16 @@ erh„ltlich sind.
 2.4  Brettgruppen: Umlaute, Origins und Echo-AKAs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>|
 In Kapitel 4.1 des Handbuchs ist die Verwendung von Brettgruppen beschrieben.
 šber diese Brettgruppen werden verschiedene Dinge eingestellt, die fr die
 Verwendung von XP im FidoNet mehr oder weniger wichtig sind, insbesondere die
 Umlautwandlung, Origin-Zeilen und Echo-AKA-Adressen.
-<<|
 
 Brettgruppen werden unter /Edit/Gruppen verwaltet. Sie sollten zumindest eine
 Gruppe fr das FidoNet anlegen und je nach Bedarf weitere Gruppen hinzufgen.
 Die Gruppen werden aktiviert, indem Sie sie im Brett-Editierfenster ("S"pezial
-/ "E"dit) eintragen. Durch Markieren mit <Space> kann auch die Gruppenzugeh”rigkeit
+/ "E"dit) eintragen. Durch Markieren mit <Space<<|
+> kann auch die Gruppenzugeh”rigkeit
 mehrerer Bretter gleichzeitig ge„ndert werden. <Ctrl G> markiert alle Bretter
 einer Gruppe.
 
@@ -654,18 +628,14 @@ unerwnscht oder sogar verboten. Nachrichten sollten nur Standard-ASCII-Zeichen
 enthalten; Umlaute sollten als "ae", "oe" usw. geschrieben werden. Innerhalb
 der Brettgruppen-Einstellung k”nnen Sie den Zeichensatz w„hlen (Eingabefeld
 "Sonderz."). Stellen Sie ihn fr die Standard-Fido-Brettgruppe auf "ASCII" ein
->>|
 - CrossPoint wird dann alle Umlaute w„hrend des Schreibens Ihrer Nachrichten 
-<<|
 DIN-gem„á konvertieren (ae, oe, ue, Ae, Oe, Ue, ss). Falls Sie in Echos schreiben, 
 in denen IBM-Sonderzeichen erlaubt sind, z.B. spezielle IBM-Echos, sollten Sie fr
 diese Echos eine zweite Brettgruppe mit Zeichensatz-Einstellung "IBM" anlegen.
 
 Die Umlautwandlung kann brigens auch fr einzelne User im User-Editierfenster
 ein- oder ausgeschaltet werden. Standardm„áig ist die Wandlung fr alle Fido-User
->>|
 eingeschaltet, konfiguriert wird dieses Verhalten ber Config/Optionen/Allgemeines.
-<<|
 
 ş Origins
 
@@ -937,7 +907,6 @@ Dateiinhalt angezeigt.
 2.7  Adressierung von Internet-Gateways
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>|
 Zwischen dem FidoNet und dem Usenet/Internet bestehen zahlreiche Verbindungen
 ber Gateways. Wie in Kapitel 1.8 des Handbuchs beschrieben ist, werden
 die Useradressen der Nachrichten beim šbergang am Gateway in ein fr das
@@ -946,7 +915,6 @@ FidoNet und Internet/Usenet (also Netzen mit sogenannter "Domainadressierung")
 besteht allerdings das Problem, daá die erzeugte Adresse zu lang ist, um sie
 in einem Fido-Nachrichtenkopf unterbringen zu k”nnen. Daher wird sie an den
 Beginn des Nachrichtentextes gesetzt.
-<<|
 
 Lautet die Adresse des Absenders
 
@@ -1038,10 +1006,8 @@ Node/Pointliste aktiviert" oder "eine oder mehrere Nodeliste und/oder Pointliste
 aktiviert". Der erste von beiden ist der Grundzustand. Um CrossPoint in den
 zweiten Zustand zu berfhren, mssen Sie sich zun„chst bei Ihrem Bossnode
 eine aktuelle Nodeliste besorgen und diese im Programm einbinden.
->>|
 Meistens k”nnen Sie die aktuelle ber NODELIST oder NODELIST.ZIP requesten
 (s. Kapitel 3.3).
-<<|
 
 W„hlen Sie dazu unter /Fido/Nodelisten/Verwalten den Schalter "Neu" und
 geben Sie den Name der Datei an, oder w„hlen ihn aus der Dateiliste. Falls
@@ -1120,14 +1086,12 @@ einbinden" bei /Fido/Optionen aktiviert haben, sucht XP nach jedem Fido-Netzanru
 im Unterverzeichnis FILES nach neuen, eingegangenen Update-Dateien und bindet
 sie ein.
 
->>|
 --2 - automatisch per Timing-Liste: Falls Ihnen das Einbinden und Neuindizieren
 nach dem Netzanruf zu lange dauert, und Ihr Rechner eh nachts mit dem Abarbeiten
 einer Timing-Liste (s. Handbuch, Kap. 5.3) besch„ftigt ist, empfiehlt sich
 die Update-Bearbeitung durch durch die Timing-Liste. Verwenden Sie dazu den
 Timing-Befehl "NODEDIFFS", und deaktivieren Sie den oben erw„hnten Schalter
 "Updates automatisch einbinden".
-<<|
 
 --2 - manuell ber den Menpunkt /Fido/Nodelisten/Update_einbinden
 
@@ -1317,7 +1281,6 @@ dadurch auch die Request-Anforderung gel”scht.
 
 ş zurckgestellte File Requests
 
->>|
 CrossPoint berprft nach Beendigung eines File Requests, ob die gewnschten
 Dateien angekommen sind. Wenn eine oder mehrere Dateien fehlen, bleibt die
 Request-Anforderung bestehen und kann - wie oben beschrieben - ber /Fido/Crash
@@ -1326,7 +1289,6 @@ File Requests sind bei /Fido/Crash mit einem kleinen "r" markiert. Sie werden
 bei automatischen Requests ber den Timinglisten-Befehl CRASHS (s. Handbuch,
 Kap. 5.3) ignoriert, sodaá bei unbeaufsichtigten Betrieb nicht immer wieder
 die gleiche Datei angefordert wird.
-<<|
 
 Achtung: Wenn Sie Dateien ber Magics bestellen, kann XP nach dem
 Anruf nicht berprfen, ob die gewnschten Dateien tats„chlich angekommen sind,
@@ -1395,7 +1357,6 @@ ACHTUNG! File Requests ber das Netz sind *nicht* m”glich - Requests, die nicht
 an Ihren Bossnode gerichtet sind, *mssen* daher per Crash abgeschickt werden;
 andernfalls wird CrossPoint sie vor dem Absenden gnadenlos vernichten.
 
->>|
 Das interessante an Request-Mails ist die Tatsache, daá Sie sie als ganz
 normale AutoVersand-Nachrichten (s. Handbuch, Kap. 5.10) verschicken lassen
 k”nnen; vergessen Sie dabei nicht den Server "*CRASH*" fr Requests, die nicht
@@ -1404,7 +1365,6 @@ Autoversamd"). Fr die šbergabe von Paáw”rtern gilt das gleiche wie fr "normale
 Requests: H„ngen Sie das Paáwort, getrennt durch einen "/", unmittelbar an den
 Dateinamen an. Die Anzahl der Request-Nachrichten w„hrend eines Netcalls ist
 beliebig; die Kombination von Mail-Request und manuellem Request ist m”glich.
-<<|
 
 Beispiel: Sie m”chten einmal im Monat bei 1:1/20 die aktuelle Liste der
 FTSC-Spezifikationen (technische Fido-Standards) bestellen. Legen Sie dazu
@@ -1462,14 +1422,12 @@ internationalen Vorwahlen muá nur der L„ndercode, gefolgt von einem "-"
 und optional einer Vorwahl, angegeben werden. Genaueres zur Tarifzonen-Eingabe
 finden Sie in der Online-Hilfe.
 
->>|
 Durch die Liberalisierung des Telefonmarktes ist eine Gebhrenerfassung durch
 CrossPoint alleine sehr schwierig. Es gibt aber ein Tool namens XPCbC von Jan
 Neumann, das die Auswahl anderer Anbieter vor jedem Netcall zul„sst und auch
 sehr komfortabel Statistiken erstellt. Fragen Sie in den Support-Echos nach
 und erkundigen Sie sich gleichzeitig nach einer Vorwahldatei fr ihren Bereich,
 um die Tarifzone korrekt ermitteln zu k”nnen.
-<<|
 
 
 
@@ -1477,7 +1435,6 @@ um die Tarifzone korrekt ermitteln zu k”nnen.
 3.5  Crash/Request per Timing-Liste und AutoVersand
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
->>|
 Wie bereits beschrieben, werden Crash- und Request-Anforderungen von XP gespeichert
 und k”nnen mit /Fido/Crash einzeln gestartet werden. Vergiát man aber, die
 Anrufe auszufhren, bleiben die Anforderungen liegen - das ist vor allem dann
@@ -1485,7 +1442,6 @@ Anrufe auszufhren, bleiben die Anforderungen liegen - das ist vor allem dann
 ist es recht unpraktisch, jeden Anruf einzeln starten zu mssen. Daher gibt es
 eigene Timinglisten-Befehle (n„heres zu Timing-Listen: s. Handbuch, Kap. 5.3),
 um alle noch ausstehenden Crash Mails oder File Requests abzusenden.
-<<|
 
 
 ş CRASHS und REQUESTS
@@ -1523,12 +1479,10 @@ Nodeadresse noch das Schlsselwort "ZEIT" anh„ngen, also z.B.
 
 ş Crash Mails per AutoVersand
 
->>|
 Crash Mails lassen sich nicht nur automatisch verschicken, sondern auch automatisch
 erzeugen. Legen Sie dazu einfach eine AutoVersand-Nachricht an und tragen Sie
 als Serverbox "*CRASH*" ein. N„heres zu AutoVersand-Nachrichten ist im Handbuch,
 Kap. 5.10 beschrieben.
-<<|
 
 Auf „hnlichem Wege k”nnen Sie auch File Requests bei beliebigen Boxen automatisch
 erzeugen lassen; eine genauere Beschreibung finden Sie im vorausgehenden Kapitel.
@@ -1548,7 +1502,6 @@ sollten Sie sich die sogenannten FTS- und FSC-Texte (FidoNet Technical Standards
 / FidoNet Standard Committee) besorgen. CrossPoint bercksichtigt z.Zt. die
 folgenden Standards:
 ::Und?
->>|
     FTS-0001:  das grundlegende Fido-Nachrichtenformat (PKT-Dateien)
     FTS-0004:  der Aufbau von Echomail
     FTS-0006:  das YooHoo-Verbindungsprotokoll; WaZOO Filerequests
@@ -1562,7 +1515,6 @@ folgenden Standards:
     FSC-0054:  die ^aCHARSET-Zeile
     FSC-0056:  das EMSI-Verbindungsprotokoll
     FSC-0057:  Areafix-Befehle
-<<|
 
 Die FTSC-Productcode-Nummer (vom FidoNet Technical Standards Committee vergebene
 Produktnummer) von CrossPoint ist E9h.
@@ -1716,10 +1668,8 @@ Folgende Angaben sind optional:
                   fault: D). Es muá ein passendes Sprachmodul mit
                   Namen XPFM-l.RES vorhanden sein, wobei "l" fr das
                   Sprachkennzeichen steht, z.B. XPFM-D.RES.
->>|
     Colors        Farben fr Text, šbertragungsdaten und Systemname;
                   Format wie in XPOINT.COL (s. Handbuch, Kap. 7.2)
-<<|
     LogFile       Name des Logfiles, an das Logdaten angeh„ngt wer-
                   den sollen
     LogNew        Name des Logfiles, das berschrieben werden soll
@@ -1842,15 +1792,11 @@ C.  Glossar
 
 Der folgende Text beschreibt die am h„ufigsten im FidoNet verwendeten
 Abkrzungen und Begriffe. Er stammt von Andy Kreuzer @ 2:2480/60, zus„tzliche
->>|
 Untersttzung zum Fido-Netz allgemein finden Sie im Echo FIDOGUIDE.GER.
-<<|
 
 
 [rev.19, apr 95]
->>|
 [correctection by Christian Faulhammer, mar 2000]
-<<|
 
 *C
 --
@@ -2026,10 +1972,8 @@ ver”ffentlicht.
 Fido-ABC
 --------
 Infos ber's FidoNet (nicht nur) fr Einsteiger. Ist als FIDO-ABC.ARJ bei
->>|
 vielen Systemen per Download/FileRequest oder auf Anfrage auch in FIDOGUIDE.GER
 erh„ltlich.
-<<|
 
 
 FidoNet
@@ -2077,10 +2021,8 @@ FOSSIL
 Fido/Opus/SEAdog Standard Interface Layer; Low-Level Treiber fr die serielle
 Schnittstelle. Wird von nahezu allen (DOS-)Mailern ben”tigt. G„ngige Fossils:
 X00.SYS und BNU.COM
->>|
 Aber auch ein Begriff fr ein Programm, das einer Software (z.B. CrossPoint)
 die ISDN-Karte als Modem vorspielt. Beliebt und bekannt ist vor allem cFos.
-<<|
 
 
 FSC
@@ -2236,9 +2178,7 @@ Mai  93 ~24.400
 Jan. 94 ~29.000
 Nov. 94 ~35.000
 Mar. 95 ~38.000
->>|
 Mar. 2000 ~20.000
-<<|
 
 
 Offline Reader (QWK-Reader)
@@ -2670,7 +2610,6 @@ o  Wartezeit fr empfangene Dateien von 1,5 auf 3 Minuten verdop-
 3.12  (12.12.99)
 !  Pentium-II-Fix
 
->>|
 3.2
 +  Anzeige des Nodestatus bei File Requests
 +  Anzeige der Tarifzone im Mailer bei Crashs
@@ -2700,5 +2639,4 @@ o  Wartezeit fr empfangene Dateien von 1,5 auf 3 Minuten verdop-
    (entspricht <Alt N>) anzeigen lassen
 +  Suchw”rter fr Filelisten werden jetzt auch als ganze W”rter,
    nicht nur als Teil betrachtet
-<<|
 
