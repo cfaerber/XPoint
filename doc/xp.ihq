@@ -1,4 +1,4 @@
-CrossPoint v3.30
+CrossPoint v3.40
 15 6
 53 19
 2 1
@@ -28,6 +28,7 @@ Keine Hilfe verfgbar.
 3
 <<°°°°°°°°°°°°°°°°°°°°°°°°°  Bedienung der Online-Hilfe
 
+
 Aktivieren der Online-Hilfe:
 
 <<<F1> >>     zeigt zu jedem Programmteil passende Hilfe-
@@ -37,6 +38,7 @@ Aktivieren der Online-Hilfe:
           an. Mehrfaches Drcken von <<<Alt-F1> >>bl„t-
           tert zu den vorherigen Hilfeseiten zurck.
 
+
 Innerhalb einer Hilfeseite:
 
 <<<F1> >>     Hilfe-Inhaltsverzeichnis
@@ -44,6 +46,8 @@ Innerhalb einer Hilfeseite:
 <<<Ctrl-D> >> druckt die angezeigte Hilfeseite aus. Es
           gelten die Drucker-Einstellungen unter
           [/Config/Drucker].@10606
+
+<<<Esc> >>    schlieát das Hilfefenster.
 
 Groáe Hilfeseiten, die mehrere Bildschirmseiten um-
 fassen, erkennen Sie an einer ge„nderten Rahmenform -
@@ -59,6 +63,26 @@ gelangen mit <<<Enter> >>zur passenden Hilfeseite. Mit
 <<<Alt-F1> >>geht's wieder zurck zur vorhergehenden
 Seite.
 
+
+Maussteuerung in der Hilfe:
+
+<<Linksklick
+
+  Ein Linksklick auf einen [Querverweis] ruft die@7000
+  entsprechende Hilfeseite auf.
+
+  Wenn Sie auáerhalb des Hilfefensters linksklicken,
+  wird die anzeigte Hilfeseite je nach Position des
+  Mauscursors nach oben oder unten gescrollt.
+
+<<Rechtsklick>>
+
+  Ein Rechtsklick innerhalb des Hilfefensters ruft
+  das vorherige Hilfethema auf.
+
+  Klicken sie auáerhalb des Hilfefensters mit der
+  rechten Maustaste, wird die Hilfe geschlossen.
+
 @
 4
 <<CrossPoint - Hotkeys
@@ -66,50 +90,23 @@ Seite.
 Die folgenden Tasten k”nnen Sie (fast) berall in
 CrossPoint verwenden:
 
-   <<<F1> >>      Hilfe
-   <<<Alt-F1> >>  letzte Hilfe
+   <<<F1> >>      kontextsensitive Hilfe
+   <<<Alt-F1> >>  vorheriges Hilfethema
    <<<F9> >>      DOS-Shell
+   <<<F4> >>      letzte Men-Aktion wiederholen
+   <<<F6> >>      aktuelle Makro-Auswahl anzeigen
    <<<Alt-F4> >>  Programm beenden
 
    <<<Alt-K> >>   Kalender
    <<<Alt-E> >>   Editor
-   <<<Alt-T> >>   Notizseite
+   <<<Alt-T> >>   Notizseite (Datei NOTEPAD)
    <<<Alt-I> >>   Bildschirmauszug in Datei
-   <<<Alt-1> >>   Bild dunkelschalten
+   <<<Alt-1> >>   Bildschirmschoner aktivieren
 
-   <<<Alt-N> >>   Fido-Nodelist abfragen
+   <<<Alt-N> >>   Fido-Nodeliste abfragen
 
 
-Allgemeine Hotkeys in Texteingabe-Feldern:
-
-   <<<Ctrl-G> >>  wandelt die Eingabe in Groábuch-
-              staben um.
-
-   <<<Ctrl-K> >>  wandelt die Eingabe in Kleinbuch-
-              staben um.
-
-   <<<Ctrl-X> >>  erzeugt eine gemischte Schreibweise:
-              der erste Buchstabe jedes Wortes wird
-              groá geschrieben, der Rest klein.
-
-   <<<Ctrl-C> >>  oder <<<Ctrl-Ins> >>kopiert den Inhalt
-              des Textfelds in die Zwischenablage
-              (Clipboard).
-
-   <<<Ctrl-V> >>  oder <<<Shift-Ins> >>fgt den Inhalt der
-              Zwischenablage ein. Ein Tonsignal be-
-              deutet, daá der Clipboard-Inhalt zu
-              groá ist oder nicht existiert.
-
-<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
-Zwischenablage verwendet, die das jeweilige Betriebs-
-system (Windows, OS/2 etc.) zur Verfgung stellt.
-Stellt das Betriebssystem keine Zwischenablagefunk-
-tion zur Verfgung (wie z.B. DOS), oder kann die zur
-Verfgung stehende Zwischenablage nicht von DOS-Pro-
-grammen angesprochen werden (Windows 2000/NT), ver-
-wendet CrossPoint eine interne Zwischenablage (die
-Tempor„rdatei CLIPBRD.TMP).
+Siehe auch: [Tastenfunktionen in Texteingabe-Feldern]@8076
 
 @
 5
@@ -998,6 +995,60 @@ Auch die Haltezeit des (Pseudo-)Users spielt fr das
 Ersetzen lokaler Kopien keine Rolle.
 
 @
+13
+<<°°°°°°°°°°°°°°° Bedienung der CrossPoint-Hauptfenster
+
+
+[Hilfe]@3
+
+[Brett-šbersicht]@20
+
+[User-šbersicht]@21
+
+[Nachrichten-Lesefenster]@30
+
+[Lister]@39
+
+[Editor]@54
+
+[Hotkeys]@4
+
+[Tastenfunktionen in Texteingabe-Feldern]@8076
+
+
+Fr den Aufruf von Menpunkten und Funktionen in
+CrossPoint haben Sie folgende M”glichkeiten:
+
+ş In Mens und Eingabefeldern bewegen Sie den Cursor
+  mit den Cursortasten oder <<<Tab> >>an die gewnschte
+  Stelle und best„tigen die Auswahl bzw. Eingabe mit
+  <<<Enter> >>- die Menleiste selbst wird mit <<<F10>
+  aktiviert, mit <<<Esc> >>gelangen Sie eine Menebene
+  zurck. Eingabedialoge werden entweder mit <<<Esc>
+  abgebrochen oder mit <<<Ctrl-Enter> >>best„tigt
+  (stattdessen kann natrlich auch der gesamte Dialog
+  mit <<<Enter> >>bis zum letzten Eingabefeld des Dialogs
+  "durchwandert" werden).
+
+ş Menfunktionen erreichen Sie am schnellsten ber
+  Hotkeys - tippen Sie hierfr die hervorgehobenen
+  Buchstaben (z.B <<N>>/<<U>>/<<L>> fr /Nachricht/Unversandt/
+  L”schen).
+
+ş Wenn Sie lieber die Maus benutzen:
+  Ein Linksklick wirkt wie <<<Enter> >>und l”st die ent-
+  sprechende Aktion bzw. Funktion aus, ein Rechts-
+  klick entspricht <<<Esc> >>und bringt Sie eine Men-
+  ebene zurck. Eingabedialoge k”nnen Sie mit einem
+  Linksklick auáerhalb des Dialogs best„tigen oder
+  mit einem Rechtsklick auáerhalb des Dialogs ab-
+  brechen.
+
+  Falls sie eine 3-Tasten-Maus besitzen und einen
+  entsprechenden Treiber installiert haben, wird die
+  mittlere Maustaste als Doppelklick links gewertet.
+
+@
 19
 Bitte w„hlen Sie das gewnschte Brett. Mit <<<Enter> >>
 wird die Auswahl best„tigt, mit <<<Esc> >>abgebrochen.
@@ -1040,7 +1091,11 @@ richten und Bretteinstellungen.
 <<<Ctrl-Y> >>springt zur n„chsten Trennzeile.
 
    <</>>     Schnellsuche - etwas schneller und komfor-
-         tabler geht's auch mit dem Punkt "<<.>>".
+         tabler geht's auch mit dem Punkt (<<.>>). Unab-
+         h„ngig von der eingestellten Brettanzeige
+         unter [/Config/Anzeige/Bretter] muá immer die@273
+         ZConnect-Schreibweise mit "<</>>" als Trenn-
+         zeichen verwendet werden.
 
   <<<F4> >>  wiederholt letzten Menbefehl.
 
@@ -1064,27 +1119,19 @@ richten und Bretteinstellungen.
    <<I>>     eine Bin„rdatei in das gew„hlte Brett
          senden
 
-   <<L>>     w„hlt den gewnschten Lesemodus. Ein  am
-         linken Brettrand zeigt an, daá das Brett
-         Nachrichten enth„lt, die dem gew„hlten Lese-
-         modus entsprechen.
+   <<L>>     w„hlt den gewnschten Lesemodus. Ein <<¯>>, <<>>
+         oder <<{026}>> am linken Brettrand zeigt an, daá das
+         Brett Nachrichten enth„lt, die dem gew„hlten
+         Lesemodus entsprechen bzw. daá es ungelesene
+         Nachrichten enth„lt (siehe Hinweise unten).
 
    <<A>>     schaltet zwischen Anzeige aller Bretter und
          Anzeige der Bretter, die auf den Lesemodus
          zutreffen, um.
 
-   <<U>>     schaltet die zus„tzliche Anzeige der Bretter
-         mit ungelesenen Nachrichten ein/aus (ohne
-         Wirkung im Lesemodus 'Ungelesen'). Die Be-
-         deutung der Symbole ist dann:
-
-          Brett enth„lt nur zum aktiven Lesemodus
-           passende Nachrichten.
-         ¯ Brett enth„lt sowohl zum aktiven Lesemodus
-           passende als auch ungelesene Nachrichten.
-         {026} Brett enth„lt ungelesene, aber keine
-           auf den aktiven Lesemodus passenden
-           Nachrichten.
+   <<U>>     sucht und markiert alle zu einem oder
+         mehreren Suchbegriff(en) passenden Bretter
+         (siehe "[Brett-(markier)-Suche]").@731
 
    <<+>>     springt zum n„chsten zutreffenden Brett.
 
@@ -1099,7 +1146,8 @@ richten und Bretteinstellungen.
    <<H>>     neues Brett anlegen (hinzufgen)
 
 <<<Ctrl-H> >>mehrere Bretter aus Brettliste w„hlen und
-         neu anlegen
+         neu anlegen (<<<Ctrl-H> >>ist brigens mit der
+         Taste <<<Backspace> >>identisch).
 
    <<L>>     l”scht ein vorhandenes Brett. Dies ist nur
          m”glich, wenn im Brett keine Nachrichten
@@ -1124,6 +1172,41 @@ richten und Bretteinstellungen.
 
 Die Funktionen <<L>>, <<E>> und <<P>> beziehen sich auf alle
 markierten Bretter.
+
+
+<<Brettanzeige im Schreib-/Lesemodus
+   
+ ş /Z-NETZ/BILDUNG/UNI
+  ¯ /Z-NETZ/KOORDINATION/DISKUSSION
+  {026} /Z-NETZ/DATENSCHUTZ/ALLGEMEINES
+ ş  /Z-NETZ/DATENSCHUTZ/G10
+ ³³  ³
+ ³³  ÀÄÄ  Brettname
+ ³³           
+ ³ÀÄÄÄ <<>>  Brett enth„lt auf den aktiven Lesemodus
+ ³        passende Nachrichten, die aber bereits
+ ³        alle gelesen sind. (<<*>>)
+ ³     <<¯>>  Brett enth„lt Nachrichten, die sowohl auf
+ ³        den aktiven Lesemodus passen als auch
+ ³        ungelesen sind. (<<*>>)
+ ³     <<{026}>>  Brett enth„lt ungelesene, aber keine auf
+ ³        den aktiven Lesemodus passenden Nach-
+ ³        richten. (<<*>>)
+ ³ 
+ ÀÄÄÄÄ <<ş>>  Brett ist markiert
+
+(<<*>>) N„heres zu Brettmarkierungen in Abh„ngigkeit von
+    der Option "[kombinierter Ungelesen-Modus]" unter@276
+    /Config/Anzeige/Bretter und dem aktiven Lesemodus
+    siehe dort.
+
+    Wenn diese Option deaktiviert ist, werden nur die
+    Bretter mit einer Markierung (<<>>) versehen, die
+    auf den aktiven Lesemodus passende Nachrichten
+    enthalten.
+
+    Im Lesemodus "Alles" wird die Brettmarkierung <<>>
+    zwecks besserer šbersichtlichkeit deaktiviert.
 
 
 <<Brettanzeige im Bearbeitungsmodus
@@ -1175,6 +1258,14 @@ angezeigt.
          liste, Adreábuchgruppen bleiben im Modus
          "alle User" unbercksichtigt.
 
+<<<Alt-A> >> erlaubt in der Adreábuch-Ansicht den Zugriff
+         auf die User, die nicht im Adreábuch einge-
+         tragen sind (Adreábuchgruppe 0). Die User
+         bleiben nach Adreábuchgruppen sortiert, die
+         nicht im Adreábuch befindlichen User mit der
+         Adreábuchgruppe 0 werden als erste Gruppe
+         angezeigt.
+
    <<O>>     wechselt die Anordnung der Userbretter.
          M”gliche Einstellungen sind:
          - sortiert nach Usernamen
@@ -1211,19 +1302,29 @@ angezeigt.
          selte Nachrichten geschickt werden.
 
    <</>>     Schnellsuche - etwas schneller und komfor-
-         tabler geht's auch mit dem Punkt "<<.>>".
+         tabler geht's auch mit dem Punkt (<<.>>).
 
 <<<Ctrl-G> >>markiert alle User, die zur gleichen Gruppe
          geh”ren wie der gew„hlte User.
 
-<<<Ctrl-Y> >>springt zur n„chsten Trennzeile (nur im
-         Anzeige-Modus "Adreábuch").
+   <<##>>     Fordert zur Eingabe einer Adreábuchgruppe
+         auf, diese wird direkt angesprungen. Exi-
+         stiert die angegebene Gruppe nicht, wird die
+         n„chsth”here Gruppe angesprungen (nur in der
+         Adreábuch-Ansicht).
+
+<<<Ctrl-##> >>springt die n„chsth”here Adreábuchgruppe an
+         (nur in der Adreábuch-Ansicht).
+
+<<<Ctrl-Y> >>springt zur n„chsten Trennzeile (nur in der
+         Adreábuch-Ansicht).
 
 <<<Ctrl-W> >>schaltet die automatische Weiterschaltung
          ein bzw. aus.
 
-   <<U>>     sucht und markiert alle passenden User zu
-         einem Suchbegriff.
+   <<U>>     sucht und markiert alle zu einem oder
+         mehreren Suchbegriff(en) passenden User
+         (siehe "[User-(markier)-Suche]").@73
 
 <<<Alt-U> >> sucht alle Nachrichten des gew„hlten Users.
 
@@ -1299,10 +1400,10 @@ alle markierten User.
 Die Groá- bzw. Kleinschreibung der Usernamen kann
 unter /Config/Anzeige/Bretter ge„ndert werden.
 
-Weiterhin besteht die M”glichkeit, die Reihenfolge
-der verschiedenen Felder beliebig zu „ndern. Dies
-ist ber /Config/Anzeige/Hilfen im Feld
-[Feldtausch Userliste] m”glich.@1033
+Des weiteren besteht die M”glichkeit, die Darstellung
+der verschiedenen Felder beliebig zu „ndern. Dies ist
+unter /Config/Anzeige/Hilfen mit der Einstellung
+[Feldtausch User-šbersicht] m”glich.@1036
 
 <<Verteiler-Anzeige
 
@@ -1360,8 +1461,8 @@ Folgende Funktionen stehen zur Verfgung:
          mit der Auswahl "gesamte Nachricht" im MIME-
          Auswahlfenster).
 
-<<<Ctrl-D> >>druckt die gew„hlte Nachricht; siehe auch
-         [/Config/Drucker].@10606
+<<<Ctrl-D> >>oder <<R>> druckt die gew„hlte Nachricht; siehe
+         auch [/Config/Drucker].@10606
 
    <<##>>     zeigt bei Fido-, MausNet-, ZConnect- und
          Usenet-Nachrichten den Kommentarbaum an.
@@ -1374,7 +1475,7 @@ Folgende Funktionen stehen zur Verfgung:
          beim Lesen ein bzw. aus.
 
  <<<Esc> >>  zurck zur Brett- bzw. Userbersicht.
-         Gleichzeitiges Drcken von <<<Ctrl> >>verhin-
+         Gleichzeitiges Drcken von <<<Shift> >>verhin-
          dert das Weiterspringen zum n„chsten Brett/
          User.
 
@@ -1540,10 +1641,10 @@ Eine Zahl statt des unversandt-Zeichens (!) gibt bei
 Nachrichten mit mehreren Empf„ngern die Empf„nger-
 anzahl an. \# steht fr mehr als 9 Empf„nger.
 
-Weiterhin besteht die M”glichkeit, die Reihenfolge
-der verschiedenen Felder beliebig zu „ndern. Dies
-ist ber /Config/Anzeige/Hilfen im Feld
-[Feldtausch Nachrichtenliste] m”glich.@1032
+Des weiteren besteht die M”glichkeit, die Darstellung
+der verschiedenen Felder beliebig zu „ndern. Dies ist
+unter /Config/Anzeige/Hilfen mit der Einstellung
+[Feldtausch Nachrichten-Lesefenster] m”glich.@1035
 
 (*) N„heres zu Fido-Crashs: Siehe FIDO.TXT.
 
@@ -1567,16 +1668,32 @@ kann mit <<<Ctrl-links/rechts> >>der Text seitlich ge-
 bl„ttert werden. Statt <<<PgDn> >>kann auch <<<Space> >>
 verwendet werden.
 
-<<S>> sucht einen anzugebenden Begriff. Groá-/Klein-
-  schreibung werden dabei ignoriert. <<<Tab> >>wiederholt
-  die letzte Suche.
+<<S>> sucht im angezeigten Text einen oder mehrere anzu-
+  gebende Begriffe, und markiert diese alle gleich-
+  zeitig. Sie k”nnen die [Suchoptionen] <<i>> (Groá-/Klein-@531
+  schreibung ignorieren), <<u>> (umlaut-unabh„ngige
+  Suche, beinhaltet <<i>>) sowie <<s>> und <<k>> verwenden, alle
+  brigen Suchoptionen werden ignoriert. Mit <<<Tab> >>
+  springt der Cursorbalken die n„chste Zeile an, die
+  einen markierten Suchbegriff enth„lt, <<M>> schaltet
+  den Cursorbalken wieder ab.
 
-<<<Shift-S> >>wie <<S>>, jedoch unter Beachtung von Groá- und
-  Kleinschreibung.
+<<<Ctrl-S> >>sucht einen einzelnen anzugebenden Begriff,
+  Groá-/Kleinschreibung wird dabei ignoriert. Mit
+  <<<Ctrl-Tab> >>oder <<<Shift-Tab> >>wird die letzte Suche
+  wiederholt.
 
-<<M>> schaltet den Markier-Balken ein bzw. aus; Sie k”n-
-  nen dann mit <<<Space> >>Zeilen oder mit <<<F7> >>/ <<<F8> >>
-  Textbl”cke zum Drucken markieren.
+<<<Shift-S> >>wie <<<Ctrl-S> >>- jedoch unter Beachtung von
+  Groá- und Kleinschreibung.
+
+Die Funktionen <<<Ctrl-/Shift-S> >>/ <<<Ctrl-/Shift-Tab> >>
+und <<S>> / <<<Tab> >>k”nnen unabh„ngig voneinander benutzt
+werden.
+
+
+<<M>> schaltet den Markier-Balken ein bzw. aus; mit
+  <<<Space> >>k”nnen dann Zeilen oder mit <<<F7> >>/ <<<F8> >>
+  Textbl”cke zum Drucken markiert werden.
 
 <<D>> oder <<<Ctrl-D> >>druckt die markierten Zeilen aus.
   Wenn nichts markiert ist, wird der gesamte Text
@@ -1593,8 +1710,6 @@ Der Lister wird mit <<<Esc> >>verlassen.
 
 
 <<Nachrichten-Lister
-
-<<G>> springt zur Bezugsnachricht (Alternative zu <<->>).
 
 <<I>> zeigt den Inhalt des Nachrichtenkopfes an.
 
@@ -1661,6 +1776,10 @@ ten Suchl„ufe gilt:
 <<F>> schaltet farbliche *Hervorhebungen* ein/aus
   (siehe [/Config/Optionen/Lister]).@237
 
+<<E>> schaltet die Markierung der letzten Suchbegriffe,
+  die mit <<S>> oder durch eine Datenbanksuche markiert
+  wurden, ein/aus.
+
 <<Q>> schaltet um, ob ":" und "|" als Quote-Zeichen
   interpretiert werden oder nicht.
 
@@ -1678,10 +1797,15 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 <<Bei kommentarverketteten Nachrichten (Maus, Fido,
 <<ZConnect, Usenet):
 
+<<##>> zeigt den Kommentarbaum zur aktuellen Nachricht an.
+  Nach Verlassen des Kommentarbaums mit <<<Esc> >>kehrt
+  XP zur aktuellen Nachricht zurck.
+
 <<+>> springt zum ersten Kommentar der Nachricht, falls
   vorhanden.
 
-<<->> springt zur Bezugsnachricht, falls vorhanden.
+<<->> oder <<G>> springt zur Bezugsnachricht, falls
+  vorhanden.
 
 <<<Ctrl-PgUp> >>springt zur chronologisch vorausgehenden
   Nachricht im gleichen Brett.
@@ -1770,44 +1894,49 @@ sondern nur eine bestimmte Auswahl davon. Daher kann
 bei CrossPoint zwischen verschiedenen Nachrichten-
 Lesemodi gew„hlt werden:
 
-<<Alles>>     Es werden s„mtliche Nachrichten angezeigt.
+<<Alles>>      Es werden s„mtliche Nachrichten angezeigt.
 
-<<Ungelesen>> Es werden nur ungelesene Nachrichten ange-
-          zeigt.
+<<Ungelesen>>  Es werden nur ungelesene Nachrichten
+           angezeigt.
 
-<<Neues>>     selektiert alle Nachrichten seit dem letz-
-          ten Netcall oder Puffer-Einlesen. Leere
-          Puffer werden dabei allerdings NICHT be-
-          rcksichtigt.
+<<Neues>>      selektiert alle Nachrichten seit dem letz-
+           ten Netcall oder Puffer-Einlesen. Leere
+           Puffer werden dabei allerdings NICHT be-
+           rcksichtigt.
 
-<<Heute>>     selektiert alle Nachrichten, die am heu-
-          tigen Tag eingegangen sind.
+<<Heute>>      selektiert alle Nachrichten, die am heu-
+           tigen Tag eingegangen sind.
 
-<<Datum>>     Hier k”nnen Sie selbst w„hlen, ab welchem
-          (Eingangs-)Datum die Nachrichten angezeigt
-          werden sollen.
+<<Reorg.>>     Es werden alle Nachrichten angezeigt, die
+           seit der letzten Reorganisation eingegan-
+           gen sind.
 
-<<Zeit>>      Dies ist die Feinabstimmung zum Lesedatum.
-          Sie ist recht ntzlich, wenn Sie mehrere
-          Netcalls pro Tag durchfhren.
+<<Datum/Zeit>> Hier k”nnen Sie selbst w„hlen, ab welchem
+           (Eingangs-)Datum/-Uhrzeit die Nachrichten
+           angezeigt werden sollen. Steht der Mar-
+           kierbalken auf einer Nachricht, k”nnen Sie
+           durch Aktivierung des Schalters direkt das
+           Eingangsdatum der Nachricht als Lesemodus
+           bernehmen.
 
-<<Sichern>>   Speichert den eingestellten Lesezeitpunkt
-          als Zeitpunkt des letzten Netcalls. Wenn
-          Sie z.B. zwei Netcalls durchfhren, aber
-          alle eingegangenen Nachrichten als "Nach-
-          richten seit dem letzten Netcall" behandelt
-          werden sollen, dann stellen Sie mit der
-          <<Zeit>>-Option den Zeitpunkt des ersten Net-
-          calls ein, und speichern Sie den Zeitpunkt
-          mit <<Sichern>>.
+<<Sichern>>    Speichert den eingestellten Lesezeitpunkt
+           als Zeitpunkt des letzten Netcalls. Wenn
+           Sie z.B. zwei Netcalls durchfhren, aber
+           alle eingegangenen Nachrichten als "Nach-
+           richten seit dem letzten Netcall" behan-
+           delt werden sollen, dann stellen Sie mit
+           der <<Datum/Zeit>>-Option den Zeitpunkt des
+           ersten Netcalls ein, und speichern Sie den
+           Zeitpunkt mit <<Sichern>>.
 
 Bei der Eingabe von Datum oder Uhrzeit kann mit den
 Tasten <<+>> und <<->> tages- bzw. minutenweise gebl„ttert
 werden.
 
-<<Hinweis:>> Mit der Taste <<U>> in der Brettbersicht
-k”nnen Sie einen kombinierten Lesemodus aus dem der-
-zeit aktiven und dem <<Ungelesen>>-Modus einstellen.
+<<Hinweis:>> Mit der Option [kombinierter Ungelesen-Modus]@276
+unter /Config/Anzeige/Bretter k”nnen Sie eine Kombi-
+nation aus dem jeweilig aktiven Lesemodus und dem
+<<Ungelesen>>-Modus erzeugen.
 
 @
 51
@@ -1843,6 +1972,8 @@ Mit <<<Enter> >>wird die gew„hlte Farbe best„tigt, mit
 Farbe bleibt unver„ndert.
 @
 54
+<<Editor
+
 Eine ausfhrliche Anleitung zum Editor finden Sie im
 Handbuch. Die Online-Hilfe besteht haupts„chlich
 aus einer Befehlsbersicht.
@@ -1922,25 +2053,35 @@ Textblock.
 oder <<<Alt-G> >> ([Glossary]-Funktion).@64
 
 
-Zwischenablage-Funktionen:
+Zwischenablage-Funktionen (Clipboard):
 
 <<<Ctrl-Ins> >>   kopiert markierten Block in die
-oder <<*>>        (interne/externe) Zwischenablage
+<<<Ctrl-C> >>     (interne/externe) Zwischenablage
+oder <<*>>
 
 <<<Shift-Del> >>  verschiebt markierten Block in die
-oder <<->>        (interne/externe) Zwischenablage
+<<<Ctrl-X> >>     (interne/externe) Zwischenablage
+oder <<->>
 
 <<<Shift-Ins> >>  fgt (interne/externe) Zwischenablage
-oder <<+>>        an Cursorposition ein
+<<<Ctrl-V> >>     an Cursorposition ein
+oder <<+>>
 
 Bei Verwendung von <<*>>, <<->> und <<+>> mssen Sie die Tasten
 auf dem numerischen Ziffernblock benutzen.
 
-Diese Zwischenablage arbeitet unabh„ngig von den b-
-rigen Blockoperationen. Falls XP unter einem Be-
-triebssystem arbeitet, das eine eigene Zwischenab-
-lage zur Verfgung stellt (z.B. Windows, OS/2), wird
-diese verwendet, ansonsten die XP-interne.
+<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
+Zwischenablage verwendet, die das jeweilige Betriebs-
+system (Windows, OS/2 etc.) zur Verfgung stellt.
+Stellt das Betriebssystem keine Zwischenablagefunk-
+tion zur Verfgung (wie z.B. DOS), oder kann die zur
+Verfgung stehende Zwischenablage nicht von XP ge-
+nutzt werden, verwendet CrossPoint eine interne
+Zwischenablage, die nur innerhalb von XP funktioniert
+(die Datei CLIP.TXT).
+
+Die Zwischenablage arbeitet unabh„ngig von den b-
+rigen Blockoperationen des Editors.
 
 @
 58
@@ -1969,13 +2110,13 @@ Verfgung:
     <<<Ctrl-Y> >>        : Zeile l”schen
     <<<Ctrl-K><Y> >>     : Block l”schen
     <<<Ctrl-Q><Y> >>     : bis Absatzende l”schen
-    <<<Alt-Y> >>         : bis Textende l”schen (*)
+    <<<Alt-Y> >>         : bis Textende l”schen (<<*>>)
 
 Gel”schte Textteile werden zwischengespeichert, so-
 lange der Hauptspeicher ausreicht, und k”nnen mit
 <<<Ctrl-U> >>wiederhergestellt werden.
 
-(*) Bei einigen deutschen DOS-Tastaturtreibern sind
+(<<*>>) Bei einigen deutschen DOS-Tastaturtreibern sind
     <<<Alt-Y> >>und <<<Alt-Z> >>vertauscht.
 
 @
@@ -2022,10 +2163,16 @@ durch Halten der rechten Maustaste.
             ³ Laden UUE    <<^KU>> ³
             ³ Speichern    <<^KW>> ³
             ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ Suchen       <<^QF>> ³
+            ³ Ersetzen     <<^QA>> ³
+            ³ Weitersuchen  <<^L>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
             ³ Umbruch aus   <<F3>> ³
             ³ Umbruch ein   <<F4>> ³
             ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
             ³ [Optionen]     <<^OR>> ³@63
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ Beenden      <<Esc>> ³
             ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
 @
@@ -2056,7 +2203,7 @@ durch Halten der rechten Maustaste.
 
 @
 64
-<<Editor - Glossary>>
+<<Editor - Glossary
 
 Mit dieser Funktion k”nnen Sie oft ben”tigte Text-
 bausteine aus einem Men w„hlen oder direkt als
@@ -2440,15 +2587,28 @@ Die Schreibweise (Groá-/Kleinschreibung) des Namens
 spielt keine Rolle.
 @
 73
-Geben Sie einen beliebigen Namensteil an, nach dem
-die Userliste durchsucht werden soll. Alle zutref-
-fenden User werden markiert. Suchen nach "\@HOT.ZER"
-sucht und markiert alle erfaáten User der HOT.
+<<User-(markier)-Suche
+
+Geben Sie hier einen (oder mehrere) Namensteil(e) an,
+nach dem/denen die Userliste durchsucht werden soll.
+Alle zutreffenden User werden markiert. Es stehen die
+[Suchoptionen] <<i>>, <<u>>, <<a>>, <<o>>, <<s>> und <<k>> zur Verfgung.@531
 
 Achtung: Bereits vorhandene Markierungen werden nicht
-gel”scht! Auf diese Weise k”nnen Sie z.B. die User
-mehrerer Boxen markieren. Evtl. mssen also vorher
-markierte User mit <<<Ctrl-E> >>ent-markiert werden.
+gel”scht! Evtl. mssen also vorher markierte User mit
+<<<Ctrl-E> >>ent-markiert werden.
+@
+731
+<<Brett-(markier)-Suche
+
+Geben Sie hier einen (oder mehrere) Namensteil(e) an,
+nach dem/denen die Brettliste durchsucht werden soll.
+Alle zutreffenden Bretter werden markiert. Es stehen
+die [Suchoptionen] <<i>>, <<u>>, <<a>>, <<o>>, <<s>> und <<k>> zur Verfgung.@531
+
+Achtung: Bereits vorhandene Markierungen werden nicht
+gel”scht! Evtl. mssen also vorher markierte Bretter
+mit <<<Ctrl-E> >>ent-markiert werden.
 @
 74
 Geben Sie den Namen an, unter dem die markierten
@@ -2479,10 +2639,10 @@ Zwischenablage verwendet, die das jeweilige Betriebs-
 system (Windows, OS/2 etc.) zur Verfgung stellt.
 Stellt das Betriebssystem keine Zwischenablagefunk-
 tion zur Verfgung (wie z.B. DOS), oder kann die zur
-Verfgung stehende Zwischenablage nicht von DOS-Pro-
-grammen angesprochen werden (Windows 2000/NT), ver-
-wendet CrossPoint eine interne Zwischenablage (die
-Tempor„rdatei CLIPBRD.TMP).
+Verfgung stehende Zwischenablage nicht von XP ge-
+nutzt werden, verwendet CrossPoint eine interne
+Zwischenablage, die nur innerhalb von XP funktioniert
+(die Datei CLIP.TXT).
 
 @
 75
@@ -6478,6 +6638,8 @@ Userliste aufgenommen werden:
         Gateways ins Z-Netz gelangen, herausgefil-
         tert.
 
+<<Keine>>   schaltet die Aufnahme von Usern ab.
+
 <<PMs>>     nimmt nur User auf, die Ihnen eine PM
         schreiben.
 
@@ -6495,6 +6657,8 @@ Neu ins Adreábuch aufgenommene User werden dieser
 8069
 Hier weisen Sie dem User eine beliebige Adreábuch-
 gruppe zu. Minimalwert ist <<1>>, Maximalwert ist <<99>>.
+Mit <<<F2> >>k”nnen Sie eine Auswahl aus den aktuell
+bereits verwendeten Adreábuchgruppen treffen.
 
 Nach welchen Kriterien Sie Ihre Adreábuchgruppen
 organisieren, bleibt v”llig Ihnen berlassen. So
@@ -6519,13 +6683,15 @@ Serverbox sortieren") eingestellt haben.
 
 Die Adreábuchgruppe <<0>> hingegen besagt nichts weiter
 als: der User ist zwar in der Datenbank vorhanden,
-aber nicht im Adreábuch eingetragen. Sie k”nnen mit
-der Taste <<A>> in den Anzeigemodus "alle User" wechseln
-und so solche nicht im Adreábuch eingetragenen User
-in der User-šbersicht sichtbar machen. Dort k”nnen
-Sie einzelnen Usern dann entweder eine andere Adreá-
-buchgruppe zuweisen (der User wird dann ins Adreábuch
-aufgenommen), oder Sie drcken einfach <<R>>: der User
+aber nicht im Adreábuch eingetragen. Sie k”nnen ent-
+weder mit der Taste <<A>> in die Ansicht "alle User"
+wechseln oder mit <<<Alt-A> >>den Zugriff auf die User
+der Adreábuchgruppe <<0>> freischalten und so solche
+nicht im Adreábuch eingetragenen User in der User-
+šbersicht sichtbar machen. Dort k”nnen Sie einzelnen
+Usern dann entweder eine andere Adreábuchgruppe
+zuweisen (der User wird dann ins Adreábuch aufge-
+nommen), oder Sie drcken einfach <<R>>: der User
 wird dann ins Adreábuch aufgenommen und erh„lt die
 Adreábuchgruppe, die unter /Config/Optionen/Allge-
 meines/Standard-Adreábuchgruppe eingestellt ist.
@@ -7320,6 +7486,10 @@ internen Terminal per ZModem downgeloadet wurden.
 270
 Spezial-Bretter und PM-Bretter werden mit "/" zu
 Beginn des Brettnamens dargestellt.
+
+Diese Einstellung ist ohne Bedeutung, wenn die Option
+"Usenet-Gruppen mit "." ... fr alle Bretter" akti-
+viert ist.
 @
 271
 <<[x]>> -> Brett-Trennzeilen werden immer angezeigt.
@@ -7349,11 +7519,13 @@ Diese Einstellung gilt auch fr die User-Anzeige.
        Usenet blichen Punktschreibweise angezeigt.
 
 <<[ ]>> -> Alle Bretter werden in der Z-Netz-Schreibweise
-       mit "/" als Trennzeichen angezeigt.
+       mit "<</>>" als Trennzeichen angezeigt.
 
 Bitte beachten Sie, daá diese Einstellung NUR die An-
-zeige betrifft; bei der Eingabe von Brettnamen mssen
-Sie immer die Z-Netz-Schreibweise verwenden.
+zeige betrifft; bei der Eingabe von Brettnamen und
+der Schnellsuche (einzuleiten mit "<</>>" oder "<<.>>" in
+der Brett-šbersicht) mssen Sie immer die ZConnect-
+Schreibweise verwenden.
 @
 274
 <<links>>  -> Der Kommentar von Brett-Trennzeilen wird
@@ -7364,6 +7536,68 @@ Sie immer die Z-Netz-Schreibweise verwenden.
 
 <<rechts>> -> Der Kommentar von Brett-Trennzeilen wird
           rechtsbndig angezeigt.
+@
+275
+Diese Einstellung ist eine Erweiterung der vorherigen
+und kann nur mit ihr zusammen aktiviert werden:
+
+<<[x]>> -> Es wird eine fr alle Bretter gltige Brett-
+       schreibweise aktiviert: 
+
+       - Die ZConnect-blichen "<</>>" werden durch
+         Punkte ersetzt, fhrende "<</>>" entfallen.
+
+       - In PM-Brettern wird der erste "<</>>" durch "<<\@>>"
+         ersetzt.
+
+Bitte beachten Sie, daá diese Einstellung NUR die An-
+zeige betrifft; bei der Eingabe von Brettnamen und
+der Schnellsuche (einzuleiten mit "<</>>" oder "<<.>>" in
+der Brett-šbersicht) mssen Sie immer die ZConnect-
+Schreibweise verwenden.
+@
+276
+<<[x]>> -> Es wird eine Kombination aus dem jeweilig
+       aktiven Lesemodus und dem Ungelesen-Modus
+       erzeugt. Es gibt dann drei Varianten von
+       Brettmarkierungen:
+
+       <<>>  Brett enth„lt auf den aktiven Lesemodus
+          passende Nachrichten, die aber bereits
+          alle gelesen sind.
+
+       <<¯>>  Brett enth„lt ...
+
+          - Nachrichten, die sowohl auf den aktiven
+            Lesemodus passen als auch ungelesen sind,
+
+          - <<und/oder>> es enth„lt sowohl ungelesene
+            Nachrichten (unabh„ngig davon, ob sie auf
+            den aktiven Lesemodus passen oder nicht)
+            als auch Nachrichten, die auf den aktiven
+            Lesemodus passen (unabh„ngig davon, ob
+            sie gelesen sind oder nicht).
+
+       <<{026}>>  Brett enth„lt ungelesene, aber keine
+          auf den aktiven Lesemodus passenden
+          Nachrichten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+       Bretter mit ungelesenen Nachrichten werden je-
+       doch weiterhin mit der Markierung <<¯>> versehen.
+       Im kombinierten Ungelesen-Modus sind also die
+       Lesemodi "Alles" und "Ungelesen" identisch.
+
+<<[ ]>> -> XP versieht nur die Bretter mit einer Mar-
+       kierung (<<>>), die auf den aktiven Lesemodus
+       passende Nachrichten enthalten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+
 @
 840
 <<[x]>> -> Bei der Nachrichten-šbersicht wird das Er-
@@ -7429,6 +7663,15 @@ Diese Einstellung wird erst nach einem Programmneu-
 start wirksam. Sie kann innerhalb jedes Fido-Brettes
 mit <<<Ctrl-A> >>umgeschaltet werden.
 @
+845
+<<[ ]>> -> Die Anzeige erfolgt wie bei frheren XP-
+       Versionen: Alte Nachrichten stehen oben,
+       neuere Nachrichten unten.
+
+<<[x]>> -> Neue Nachrichten werden im Nachrichten-
+       Lesefenster oben angezeigt. Je „lter eine
+       Nachricht ist, desto weiter unten steht sie.
+@
 280
 Der Screen-Saver (Bildschirmschoner) schaltet den
 Bildschirm dunkel, falls fr die angegebene Sekun-
@@ -7484,7 +7727,7 @@ steht normalerweise kein VESA-DPMS zur Verfgung.
        bei der gew„hlten Stammbox angezeigt.
 
 Dieses Feature ist ntzlich, wenn Sie mit *SETUSER
-oder Parameter "/user" arbeiten.
+oder dem Parameter "/user" arbeiten.
 @
 287
 Haben sie unter /Config/Anzeige/Kopf die Zeile
@@ -7518,40 +7761,6 @@ gesucht und der Text dahinter angezeigt.
        Bildschirmhintergrund ausgeblendet.
 @
 1032
-Die Sortierung der Buchstaben legt die Sortierung
-der Felder in der Nachrichtenliste fest. Jeder
-Buchstabe muá <<genau einmal>> vorkommen, ansonsten
-wird auf die Standardeinstellung (FGDAEB) zurck-
-gesetzt. Die Flags (F) werden immer automatisch
-nach vorne sortiert.
-
-       Die Buchstaben stehen fr:
-
-       <<F>>  Flags           (immer erstes Zeichen!)
-       <<G>>  Gr”áe
-       <<D>>  Datum
-       <<A>>  Absender
-       <<E>>  Empf„nger
-       <<B>>  Betreff
-@
-1033
-Die Sortierung der Buchstaben legt die Sortierung
-der Felder in der Userliste fest. Jeder Buchstabe
-muá <<genau einmal>> vorkommen, ansonsten wird auf
-die Standardeinstellung (FHGBAK) zurckgesetzt.
-Die Flags (F) werden immer automatisch nach vorne
-sortiert.
-
-       Die Buchstaben stehen fr:
-
-       <<F>>  Flags           (immer erstes Zeichen!)
-       <<H>>  Halten
-       <<G>>  Adreábuch-Gruppe
-       <<B>>  Box
-       <<A>>  Adresse/Verteiler
-       <<K>>  Kommentar
-@
-1034
 <<[x]>> -> Die Ausgaben im internen Terminal werden
        nicht direkt auf den Bildschirm geschrieben,
        sondern laufen ber BIOS-Funktionen. Dies
@@ -7559,17 +7768,61 @@ sortiert.
        thesizers, ist allerdings langsamer als die
        direkte Ausgabe.
 @
-1035
+1033
 <<[x]>> -> Das Ende von l„nger dauernden Funktionen wie
        z.B. dem Packen von Nachrichten oder Such-
        funktionen wird durch ein Tonsignal angezeigt.
 @
-1036
+1034
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
        Aufblinken des Bildschirmrahmens erg„nzt.
 
 Wenn XP in einem Windows- oder OS/2-Fenster l„uft,
 ist diese Einstellung ohne Wirkung.
+@
+1035
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder im Nachrichten-Lesefenster fest. Jeder
+Buchstabe darf <<genau einmal>> vorkommen. Wenn Sie
+einen Buchstaben weglassen, wird das entsprechende
+Feld nicht angezeigt; beim Weglassen groáer Felder
+(Absender, Empf„nger, Betreff) wird die Anzeige der
+brigen Felder entsprechend verbreitert.
+
+       Die Buchstaben stehen fr:
+
+       <<F>>  Flags
+       <<G>>  Gr”áe
+       <<D>>  Datum
+       <<A>>  Absender
+       <<E>>  Empf„nger (nur bei Fido-Brettnachrichten)
+       <<B>>  Betreff
+
+Mit <<<F2> >>k”nnen Sie die Standard-Einstellung wieder-
+herstellen.
+
+@
+1036
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder in der User-šbersicht fest. Jeder Buch-
+stabe darf <<genau einmal>> vorkommen. Wenn Sie einen
+Buchstaben weglassen, wird das entsprechende Feld
+nicht angezeigt; beim Weglassen groáer Felder (Box,
+Adresse, Kommentar) wird die Anzeige der brigen
+Felder entsprechend verbreitert.
+
+       Die Buchstaben stehen fr:
+
+       <<F>>  Flags
+       <<H>>  Halten
+       <<B>>  Box
+       <<G>>  Adreábuch-Gruppe
+       <<A>>  Adresse/Verteiler
+       <<K>>  Kommentar
+
+Mit <<<F2> >>k”nnen Sie die Standard-Einstellung wieder-
+herstellen.
+
 @
 290
 Dies ist die physikalische Adresse der gew„hlten se-
@@ -8759,9 +9012,17 @@ Aktionen sind:
 
 @
 530
-Geben Sie hier den Suchbegriff ein. Mit <<<F2> >>erhal-
-ten Sie eine Auswahl der drei zuletzt benutzten
-Suchbegriffe.
+Geben Sie hier einen (oder mehrere) Suchbegriff(e)
+ein. Mit <<<F2> >>erhalten Sie eine Auswahl der 15
+zuletzt benutzten Suchbegriffe. Diese werden in der
+Datei SEEK.TXT zwischengespeichert und stehen beim
+n„chsten Programmstart wieder zur Verfgung.
+
+Mit <<<Shift-F2> >>erhalten Sie Zugriff auf die
+[Suchbegriffs-Bibliothek] (Datei SEEKLIB.TXT).@534
+Existiert diese Datei noch nicht, k”nnen Sie sie
+anlegen, indem Sie den aktuellen Suchbegriff mit
+der [Suchoption] <<k>> in die Bibliothek kopieren.@531
 
 
 <<Message-ID-Suche>>
@@ -8772,83 +9033,194 @@ st„ndige Message-ID anzugeben. Message-IDs, die Leer-
 zeichen enthalten, mssen in Anfhrungszeichen (<<">>)
 eingeschlossen werden. Die Suche nach mehreren
 Message-IDs gleichzeitig ist m”glich, wenn Sie diese
-mit Leerzeichen getrennt hintereinander eingeben.
+mit Leerzeichen getrennt hintereinander eingeben und
+die [Suchoption] <<a>> oder <<o>> verwenden.@531
 
 
-<<Volltext-, Betreff- und User-Suche>>
+<<Textsuchen (Volltext, Betreff, User und Teilstring-
+<<Suche in Message-IDs, Markiersuche im Lister)
 
-Wenn Sie die Suchoptionen <<a>> oder <<o>> nicht verwenden,
+Wenn Sie die [Suchoptionen] <<a>> oder <<o>> nicht verwenden,@531
 wird exakt nach dem Text gesucht, der hier eingege-
 ben wurde (natrlich unter Bercksichtigung der Such-
 optionen <<i>> und <<u>>). Es wird auch nach Wortteilen
-gesucht ("name" findet "Username" und auch "Namens-
-tag").
+gesucht ("name" findet "Username" und "Namenstag").
 
 
-Bei AND/OR-verknpften Suchl„ufen (mit den Such-
-optionen <<a>> bzw. <<o>>) k”nnen mehrere Begriffe durch
-Einschlieáen in Anfhrungszeichen (<<">>) zu einem Such-
-begriff zusammengefaát werden:
-
-"Fischers Fritz" fischt "frische Fische"
-
-... sucht dann z.B. nach:
-
-"Fischers Fritz"
-"fischt"
-"frische Fische"
-
-
-Mit einer Tilde ("<<~>>") am Beginn des Suchbegriffs wird
-bestimmt, daá der Suchbegriff NICHT gefunden werden
-darf:
-
-~"Fischers Fritz" ~fischt frische Fische
-
-... sucht dann z.B. nach allen Eintr„gen, in denen
-"frische" und/oder "Fische", aber weder "Fischers
-Fritz" noch "fischt" vorkommt.
-
-
-Es k”nnen auch Platzhalter (Wildcards) verwendet
+Bei der Volltext-Suche und der Markiersuche im Lister
+k”nnen auch Platzhalter ("Wildcards") verwendet
 werden:
 
 <<?>> = Platzhalter fr ein einzelnes Zeichen
-<<*>> = Platzhalter fr eine Zeichenkette (die auch leer
-    sein kann)
+<<*>> = Platzhalter fr eine Zeichenkette (die
+    auch leer sein kann)
 
-Fi???e
+        <<Fi???e
 
 ... findet z.B. "Fische" und "Finale", aber nicht
 "Filme" oder "Filterzigarette", w„hrend
 
-F*sche
+        <<F*sche
 
 ... sowohl "Fische", "Fr”sche", "Flasche" als auch
 "Filterzigarettenaschenbecher" findet (und auch
 "Fsche", falls dieses Wort vorkommen wrde).
 
+
+Bei AND/OR-verknpften Suchl„ufen ([Suchoptionen] <<a>>@531
+bzw. <<o>>) k”nnen mehrere Begriffe durch Einschlieáen
+in Anfhrungszeichen (<<">>) zu einem Suchbegriff zusam-
+mengefaát werden:
+
+        "<<Fischers Fritz>>" <<fischt>> "<<frische Fische>>"
+
+... sucht dann z.B. nach:
+
+        "<<Fischers Fritz>>"
+        "<<fischt>>"
+        "<<frische Fische>>"
+
+
+Wenn ein Suchbegriff nicht vorhanden sein darf,
+stellen sie diesem eine Tilde ("<<~>>") voran:
+
+        ~"<<Fischers Fritz>>" ~<<fischt frische Fische
+
+... sucht dann z.B. nach allen Nachrichten, in denen
+"frische" und/oder "Fische", aber weder "Fischers
+Fritz" noch "fischt" vorkommt.
+
+
+Alle zutreffenden Suchbegriffe im Text der gefundenen
+Nachrichten werden im [Lister] automatisch markiert;@39
+die Anzeige der Markierung kann dort mit <<E>> aus- und
+eingeschaltet werden.
+
+Bitte beachten Sie auch die allgemeinen
+[Tastenfunktionen in Texteingabe-Feldern].@8076
+
+@
+8076
+<<Tastenfunktionen in Texteingabe-Feldern
+
+
+   <<<Ctrl-G> >>  wandelt die Eingabe in Groábuch-
+              staben um.
+
+   <<<Ctrl-K> >>  wandelt die Eingabe in Kleinbuch-
+              staben um.
+
+   <<<Ctrl-X> >>  erzeugt eine gemischte Schreibweise:
+              der erste Buchstabe jedes Wortes wird
+              groá geschrieben, der Rest klein.
+
+   <<<Ctrl-T> >>  l”scht den Text ab aktueller Cursor-
+              position bis zum n„chsten Wort. 
+
+   <<<Ctrl-Y> >>  l”scht den gesamten Feldinhalt.
+
+   <<<Ctrl-A> >>  markiert den Feldinhalt. Wird danach
+              ein Zeichen eingegeben, wird der Feld-
+              inhalt berschrieben. Eine Cursorbewe-
+              gung entfernt die Markierung.
+
+   <<<Ctrl-C> >>  oder <<<Ctrl-Ins> >>kopiert den Inhalt
+              des Textfelds in die Zwischenablage
+              (Clipboard).
+
+   <<<Ctrl-V> >>  oder <<<Shift-Ins> >>fgt den Inhalt der
+              Zwischenablage ein. Ein Tonsignal be-
+              deutet, daá der Clipboard-Inhalt zu
+              groá ist oder nicht existiert.
+
+<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
+Zwischenablage verwendet, die das jeweilige Betriebs-
+system (Windows, OS/2 etc.) zur Verfgung stellt.
+Stellt das Betriebssystem keine Zwischenablagefunk-
+tion zur Verfgung (wie z.B. DOS), oder kann die zur
+Verfgung stehende Zwischenablage nicht von XP ge-
+nutzt werden, verwendet CrossPoint eine interne
+Zwischenablage, die nur innerhalb von XP funktioniert
+(die Datei CLIP.TXT).
+
+
+Siehe auch: [Hotkeys]@4
+
 @
 531
 Geben Sie hier die gewnschten Suchoptionen als
-Buchstabenfolge ein:
+Buchstabenfolge ein. Mit <<<F2> >>haben Sie Zugriff auf
+die letzten fnf von Ihnen verwendeten Options-
+Kombinationen (Datei OPTIONS.TXT).
 
-<<i>>  Groá-/Kleinschreibung ignorieren.
+
+<<Gltige Optionen fr Text- (Volltext, Betreff, User
+<<und Teilstring in Message-IDs) und Markier-Suchen
+
+<<i>>  Groá-/Kleinschreibung ignorieren
 
 <<u>>  Umlaut-unabh„ngige (ae=„, oe=”, ue=, ss=á) Suche.
    Diese Option beinhaltet automatisch die Option <<i>>
-   (Groá-/Kleinschreibung ignorieren).
+   (Groá-/Kleinschreibung ignorieren). Statt <<u>> kann
+   auch <<„>>, <<”>> oder <<>> verwendet werden.
 
-<<a>>  <<A>>ND-Verknpfung: <<ALLE>> im Suchbegriff angegebenen
+<<l>>  Durchsucht nur die Nachrichten, die auf den
+   aktiven Lesemodus (z.B. Lesen: Heute) zutreffen.
+   Ungltig bei allen Markiersuchen.
+
+
+<<Gltige Optionen nur fr Volltext-Suche
+
+<<h>>  Header-Suche: Suchbegriff wird nur im
+   Nachrichten-Header gesucht.
+
+<<g>>  Gesamt-Suche: Suchbegriff wird in der
+   gesamten Nachricht (Header und Text) gesucht.
+
+Wenn Sie weder <<h>> noch <<g>> verwenden, wird nur der
+Nachrichtentext (Body) durchsucht.
+
+
+<<Gltige Optionen fr (fast) alle Suchen
+
+<<a>>  <<A>>ND-Verknpfung: <<alle>> im Suchbegriff angegebenen
    Worte (bzw. in "" eingeschlossenen Phrasen) mssen
-   bei der Suche gefunden werden.
+   bei der Suche gefunden werden. Ungltig bei Text-
+   Markiersuche im Lister.
 
-<<o>>  <<O>>R-Verknpfung: Es gengt, wenn mindestens
-   <<EINE(S)>> der angegebenen Worte/Phrasen gefunden
-   wird.
+<<o>>  <<O>>R-Verknpfung: Es gengt, wenn mindestens <<eine(s)>>
+   der angegebenen Worte/Phrasen gefunden wird.
+   Ungltig bei Text-Markiersuche im Lister.
 
-Wenn Sie keine Suchoption wnschen, dann l”schen Sie
-diese (z.B. mit <<<Del> >>oder der Leertaste).
+<<m>>  Bereits markierte Nachrichten nicht entmarkieren:
+   Wenn Sie die Suche <<nicht>> aus einer Liste bereits
+   markierter Nachrichten (Anzeige eines Suchergeb-
+   nisses oder durch Nachricht/Suchen/Markiert zur
+   Anzeige gebracht) heraus gestartet haben, werden
+   bei einer neuen Suche die bereits markierten Nach-
+   richten normalerweise wieder entmarkiert. Mit der
+   Suchoption <<m>> bleiben die vorherigen Nachrichten-
+   markierungen erhalten, und die neu gefundenen
+   Nachrichten werden an die Liste der bereits mar-
+   kierten Nachrichten angeh„ngt. Eine Suche mit der
+   Option <<m>> stellt also eine "nachtr„gliche" ODER-
+   Verknpfung dar. Ungltig bei allen Markiersuchen.
+
+<<s>>  L”scht alle bisherigen Eintr„ge in der
+   [Suchbegriff-History] (<<<F2> >>/ SEEK.TXT).@530
+
+<<k>>  šbernimmt (kopiert) den aktuellen [Suchbegriff]@530
+   in die [Suchbegriffs-Bibliothek] (<<<Shift-F2> >>/@534
+   SEEKLIB.TXT).
+
+Bei Verwendung der Optionen <<s>> und <<k>> werden etwaige
+andere Suchoptionen ignoriert - statt einer Suche
+wird nur die betreffende Aktion ausgefhrt.
+
+
+Fr alle Suchoptionen gilt: Ungltige Optionen werden
+ignoriert; wenn Sie keine Suchoption wnschen, dann
+l”schen Sie diese (z.B. mit <<<Del> >>oder Leertaste).
 
 @
 532
@@ -8868,21 +9240,54 @@ soll:
 533
 <<[ ]>> -> Sehr schnelle Suche ber Bezugsdatenbank. Es
        muá die komplette Message-ID angegeben werden,
-       Teilstring-Suche oder Verknpfungen sind nicht
-       m”glich. Die Suche nach mehreren Message-IDs
-       gleichzeitig ist jedoch m”glich, wenn Sie
-       diese mit Leerzeichen getrennt hintereinander
-       eingeben.
+       Die Suche nach mehreren Message-IDs gleich-
+       zeitig ist m”glich, wenn Sie diese mit Leer-
+       zeichen getrennt hintereinander eingeben und
+       die [Suchoption] <<a>> oder <<o>> verwenden. Als weite-@531
+       re Optionen stehen Ihnen noch <<m>>, <<s>> und <<k>> zur
+       Verfgung.
 
 <<[x]>> -> Langsamere Suche ber Nachrichten-Header. Es
        k”nnen (wie z.B. bei der Betreffsuche) Teil-
-       strings gesucht, Suchoptionen benutzt und zu
-       durchsuchende Bretter gew„hlt werden.
+       strings gesucht, alle fr Textsuchen gltigen
+       [Suchoptionen] verwendet und die zu durchsuchen-@531
+       den Bretter gew„hlt werden.
 
 
 Fr beide Optionen gilt: Message-IDs, die Leerzeichen
 enthalten, mssen in Anfhrungszeichen (<<">>) einge-
 schlossen werden.
+
+@
+534
+<<Suchbegriffs-Bibliothek
+
+In diesem Fenster k”nnen Sie [Suchbegriffe] ausw„hlen,@530
+die Sie vorher mit der [Suchoption] <<k>> oder mit der@531
+Editierfunktion <<E>> in der Datei SEEKLIB.TXT abgelegt
+haben. W„hlen Sie mit den Cursortasten den gewnsch-
+ten Suchbegriff und best„tigen Sie ihn mit <<<Enter> >>-
+oder kehren Sie mit <<<Esc> >>zum Suche-Dialog zurck.
+
+Wenn sie mehrere Begriffe mit <<<Space> >>markieren,
+bernehmen Sie mit <<<Enter> >>die markierten Begriffe in
+die [Suchbegriff-History] (<<<F2> >>/ SEEK.TXT) statt in@530
+das Eingabefeld. Die entsprechende Anzahl alter Such-
+begriffe wird dabei ggf. gel”scht (SEEK.TXT verwaltet
+max. 15 Eintr„ge).
+
+Mit <<E>> laden Sie die Datei SEEKLIB.TXT in den Editor
+und k”nnen sie dort beliebig „ndern, z.B um oft ver-
+wendete Suchbegriffe thematisch zu ordnen. Leerzeilen
+und Zeilen, die mit einem Leerzeichen beginnen, sind
+Kommentare und werden zwar angezeigt, aber nicht mit
+<<<Enter> >>in das Eingabefeld bernommen.
+
+<<S>> fhrt eine Suche nach einem Begriff durch, Groá-/
+Kleinschreibung wird ignoriert. <<<Shift-S> >>tut das-
+selbe wie <<S>>, jedoch unter Beachtung der Groá-/Klein-
+schreibung. <<<Tab> >>wiederholt die letzte Suche.
+
 @
 540
 Sie befinden sich im Tastenmakro-Editor - hier k”n-
@@ -8956,6 +9361,15 @@ Geben Sie die gewnschte Tastenfolge ein. <<<Shift->>
 <<Enter> >>best„tigt die Eingabe, <<<Shift-Esc> >>bricht die
 Eingabe ab, und <<<Shift-Backspace> >>l”scht die jeweils
 letzte Taste.
+
+<<Hinweis:>> Die Leertaste wird nicht unter allen Umst„n-
+den korrekt ausgewertet, speziell dann nicht, wenn
+sie die erste oder die letzte Taste eines Makros ist.
+Wenn Sie feststellen sollten, daá ein Makro, das
+Leertasten enth„lt, nicht korrekt funktioniert, bear-
+beiten Sie das Makro nachtr„glich ([C/T/Makros/Edit])@548
+und schlieáen Sie die Leertaste in spitze Klammern
+(< >) ein.
 @
 548
 Hier kann das gew„hlte Tastenmakro bearbeitet werden.
@@ -8981,8 +9395,8 @@ M”gliche Sondertasten sind:
 <Ins>, <Del>         einfgen/l”schen
 <Ctrl PrtSc>         Ctrl-PrintScreen / Ctrl-Druck
 
-Die Zeichen <, > und ^ mssen ebenfalls in spitze
-Klammern eingeschlossen werden.
+Die Zeichen <<<>>, <<> >>und <<^>> mssen, das Leerzeichen kann
+ebenfalls in spitze Klammern eingeschlossen werden.
 
 Folgende Sondertasten sind identisch mit Ctrl-Steuer-
 codes und als solche einzugeben:
@@ -9022,6 +9436,9 @@ kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
 
 Diese Einstellung gilt NUR bei Programmstart; sie
 kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
+
+Im Einzelfall kann das Weiterspringen durch Verlassen
+des Bretts mit <<<Shift-Esc> >verhindert werden.
 @
 552
 <<[x]>> -> Bei der Rckkehr in die Userliste springt
@@ -9033,6 +9450,9 @@ kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
 
 Diese Einstellung gilt NUR bei Programmstart; sie
 kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
+
+Im Einzelfall kann das Weiterspringen durch Verlassen
+des Bretts mit <<<Shift-Esc> >verhindert werden.
 @
 554
 Hier wird festgelegt, welcher [Lesemodus] bei Pro-@50
@@ -9404,75 +9824,35 @@ Geben Sie den gesuchten Absender oder einen Teil
 davon ein (z.B. nur den Boxnamen), oder lassen Sie
 das Eingabefeld frei.
 
-Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
-bestimmt, daá der Suchbegriff NICHT gefunden werden
-darf.
+Wenn ein Suchbegriff nicht vorhanden sein darf,
+stellen sie diesem eine Tilde ("<<~>>") voran.
+
+Bitte beachten Sie, dass Sie sich in der Spezial-
+Suche befinden und daher an dieser Stelle nur EIN
+Suchbegriff zul„ssig ist.
+
+
+Bitte beachten Sie auch die allgemeinen
+[Tastenfunktionen in Texteingabe-Feldern].@8076
 
 @
 631
 Geben Sie den gesuchten Betreff oder einen Teil
 davon ein, oder lassen Sie das Eingabefeld frei.
 
-Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
-bestimmt, daá der Suchbegriff NICHT gefunden werden
-darf.
+Wenn ein Suchbegriff nicht vorhanden sein darf,
+stellen sie diesem eine Tilde ("<<~>>") voran.
+
+Bitte beachten Sie, dass Sie sich in der Spezial-
+Suche befinden und daher an dieser Stelle nur EIN
+Suchbegriff zul„ssig ist.
+
+
+Bitte beachten Sie auch die allgemeinen
+[Tastenfunktionen in Texteingabe-Feldern].@8076
 
 @
 632
-Geben Sie einen Begriff ein, der sich innerhalb der
-gesuchten Texte befinden soll, oder lassen Sie das
-Eingabefeld frei.
-
-Wenn Sie die Suchoptionen <<a>> oder <<o>> nicht verwenden,
-wird exakt nach dem Text gesucht, der hier eingege-
-ben wurde (natrlich unter Bercksichtigung der Such-
-optionen <<i>> und <<„>>). Es wird auch nach Wortteilen
-gesucht ("name" findet "Username" und auch "Namens-
-tag").
-
-
-Bei AND/OR-verknpften Suchl„ufen (mit den Such-
-optionen <<a>> bzw. <<o>>) k”nnen mehrere Begriffe durch
-Einschlieáen in Anfhrungszeichen (") zu einem Such-
-begriff zusammengefaát werden:
-
-"Fischers Fritz" fischt "frische Fische"
-
-... sucht dann z.B. nach:
-
-"Fischers Fritz"
-"fischt"
-"frische Fische"
-
-
-Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
-bestimmt, daá der Suchbegriff NICHT gefunden werden
-darf:
-
-~"Fischers Fritz" ~fischt frische Fische
-
-... sucht dann z.B. nach allen Eintr„gen, in denen
-"frische" und/oder "Fische", aber weder "Fischers
-Fritz" noch "fischt" vorkommt.
-
-
-Mit den Wildcard-Zeichen <<?>> oder <<*>> k”nnen Sie Platz-
-halter fr ein oder mehrere (bzw. kein) Zeichen an-
-geben:
-
-Fi???e 
-
-... findet z.B. "Fische" und "Finale", aber nicht
-"Filme" oder "Filterzigarette", w„hrend
-
-F*sche
-
-... sowohl "Fische", "Fr”sche", "Flasche" als auch
-"Filterzigarettenaschenbecher" findet (und auch
-"Fsche", falls dieses Wort vorkommen wrde).
-
-@
-633
 <<Fido:>>
 
 Geben Sie den Empf„nger der Brettnachrichten an,
@@ -9482,9 +9862,82 @@ Eingabefeld frei.
 Wenn Sie hier Ihren Namen eingeben, sucht XP nach
 Fido-Brettnachrichten, die an Sie gerichtet sind.
 
-Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
-bestimmt, daá der Suchbegriff NICHT gefunden werden
-darf.
+Wenn ein Suchbegriff nicht vorhanden sein darf,
+stellen sie diesem eine Tilde ("<<~>>") voran.
+
+Bitte beachten Sie, dass Sie sich in der Spezial-
+Suche befinden und daher an dieser Stelle nur EIN
+Suchbegriff zul„ssig ist.
+
+
+Bitte beachten Sie auch die allgemeinen
+[Tastenfunktionen in Texteingabe-Feldern].@8076
+
+@
+633
+Geben Sie hier einen (oder mehrere) Suchbegriff(e)
+ein. Mit <<<F2> >>erhalten Sie eine Auswahl der 15
+zuletzt benutzten Suchbegriffe. Diese werden in der
+Datei SEEK.TXT zwischengespeichert und stehen beim
+n„chsten Programmstart wieder zur Verfgung.
+
+Mit <<<Shift-F2> >>erhalten Sie Zugriff auf die
+[Suchbegriffs-Bibliothek] (Datei SEEKLIB.TXT).@534
+Existiert diese Datei noch nicht, k”nnen Sie sie
+anlegen, indem Sie den aktuellen Suchbegriff mit
+der [Suchoption] <<k>> in die Bibliothek kopieren.@639
+
+Wenn Sie die [Suchoptionen] <<a>> oder <<o>> nicht verwenden,@639
+wird exakt nach dem Text gesucht, der hier eingege-
+ben wurde (natrlich unter Bercksichtigung der Such-
+optionen <<i>> und <<u>>). Es wird auch nach Wortteilen
+gesucht ("name" findet "Username" und "Namenstag").
+
+Es k”nnen auch Platzhalter ("Wildcards") verwendet
+werden:
+
+<<?>> = Platzhalter fr ein einzelnes Zeichen
+<<*>> = Platzhalter fr eine Zeichenkette (die
+    auch leer sein kann)
+
+        <<Fi???e
+
+... findet z.B. "Fische" und "Finale", aber nicht
+"Filme" oder "Filterzigarette", w„hrend
+
+        <<F*sche
+
+... sowohl "Fische", "Fr”sche", "Flasche" als auch
+"Filterzigarettenaschenbecher" findet (und auch
+"Fsche", falls dieses Wort vorkommen wrde).
+
+
+Bei AND/OR-verknpften Suchl„ufen ([Suchoptionen] <<a>>@639
+bzw. <<o>>) k”nnen mehrere Begriffe durch Einschlieáen
+in Anfhrungszeichen (<<">>) zu einem Suchbegriff zusam-
+mengefaát werden:
+
+        "<<Fischers Fritz>>" <<fischt>> "<<frische Fische>>"
+
+... sucht dann z.B. nach:
+
+        "<<Fischers Fritz>>"
+        "<<fischt>>"
+        "<<frische Fische>>"
+
+
+Wenn ein Suchbegriff nicht vorhanden sein darf,
+stellen sie diesem eine Tilde ("<<~>>") voran:
+
+        ~"<<Fischers Fritz>>" ~<<fischt frische Fische
+
+... sucht dann z.B. nach allen Nachrichten, in denen
+"frische" und/oder "Fische", aber weder "Fischers
+Fritz" noch "fischt" vorkommt.
+
+
+Bitte beachten Sie auch die allgemeinen
+[Tastenfunktionen in Texteingabe-Feldern].@8076
 
 @
 634
@@ -9525,45 +9978,168 @@ gesuchten Nachrichten in KByte an. 99999 steht fr
 
 @
 638
-<<Alle>>     sucht in allen Brettern
+<<Alle>>     sucht in allen Brettern.
 
-<<Netz>>     sucht in allen beschreibbaren Brettern
+<<Netz>>     sucht in allen beschreibbaren Brettern.
 
-<<User>>     sucht in den User-PM-Archivbrettern
+<<User>>     sucht in den User-PM-Archivbrettern.
 
-<<markiert>> sucht in allen markierten Brettern
+<<markiert>> sucht in allen markierten Brettern.
 
-<<gew„hlt>>  sucht im aktuellen Brett
+<<gew„hlt>>  sucht im aktuellen Brett.
 @
 639
-Geben Sie hier die gewnschten Suchoptionen
-als Buchstabenfolge ein:
+Geben Sie hier die gewnschten Suchoptionen als
+Buchstabenfolge ein. Mit <<<F2> >>haben Sie Zugriff auf
+die letzten fnf von Ihnen verwendeten Options-
+Kombinationen (Datei OPTIONS.TXT).
 
 
-<<Optionen fr Suche nach Absender, Betreff, Text und
-<<Fido-Empf„nger
+<<Gltige Optionen fr Suche nach Absender, Betreff,
+<<Fido-Empf„nger und Text
 
 <<i>>  Groá-/Kleinschreibung ignorieren (statt <<i>> kann
    auch <<u>> verwendet werden).
 
-<<„>>  Umlaut-insensitive (ae=„, oe=”, ue=, ss=á usw.)
+<<u>>  Umlaut-insensitive (ae=„, oe=”, ue=, ss=á usw.)
    Suche (statt <<„>> kann auch <<”>> oder <<>> verwendet
    werden).
 
 
-<<Optionen nur fr Textsuche
+<<Gltige Optionen nur fr Text-Suche
 
-<<a>>  <<A>>ND-Verknpfung: <<ALLE>> im Suchbegriff angegebenen
+<<a>>  <<A>>ND-Verknpfung: <<alle>> im Suchbegriff angegebenen
    Worte (bzw. in "" eingeschlossenen Phrasen) mssen
    bei der Suche gefunden werden.
 
-<<o>>  <<O>>R-Verknpfung: Es gengt, wenn mindestens
-   <<EINE(S)>> der angegebenen Worte/Phrasen gefunden
-   wird.
+<<o>>  <<O>>R-Verknpfung: Es gengt, wenn mindestens <<eine(s)>>
+   der angegebenen Worte/Phrasen gefunden wird.
+
+<<h>>  Header-Suche: Suchbegriff wird nur im
+   Nachrichten-Header gesucht.
+
+<<g>>  Gesamt-Suche: Suchbegriff wird in der
+   gesamten Nachricht (Header und Text) gesucht.
+
+<<s>>  L”scht alle bisherigen Eintr„ge in der
+   [Suchbegriff-History] (<<<F2> >>/ SEEK.TXT).@530
+
+<<k>>  šbernimmt (kopiert) den aktuellen [Suchbegriff]@530
+   in die [Suchbegriffs-Bibliothek] (<<<Shift-F2> >>/@534
+   SEEKLIB.TXT).
+
+Bei Verwendung der Optionen <<s>> und <<k>> werden etwaige
+andere Suchoptionen ignoriert - statt einer Suche
+wird nur die betreffende Aktion ausgefhrt.
 
 
-Wenn Sie keine Suchoption wnschen, dann l”schen Sie
-diese (z.B. mit <<<Del> >>oder der Leertaste).
+<<Allgemein gltige Optionen
+
+<<m>>  Bereits markierte Nachrichten nicht entmarkieren:
+   Wenn Sie die Suche <<nicht>> aus einer Liste bereits
+   markierter Nachrichten (Anzeige eines Suchergeb-
+   nisses oder durch Nachricht/Suchen/Markiert zur
+   Anzeige gebracht) heraus gestartet haben, werden
+   bei einer neuen Suche die bereits markierten Nach-
+   richten normalerweise wieder entmarkiert. Mit der
+   Suchoption <<m>> bleiben die vorherigen Nachrichten-
+   markierungen erhalten, und die neu gefundenen
+   Nachrichten werden an die Liste der bereits mar-
+   kierten Nachrichten angeh„ngt. Eine Suche mit der
+   Option <<m>> stellt also eine "nachtr„gliche" ODER-
+   Verknpfung dar.
+
+
+Fr alle Suchoptionen gilt: Ungltige Optionen werden
+ignoriert; wenn Sie keine Suchoption wnschen, dann
+l”schen Sie diese (z.B. mit <<<Del> >>oder Leertaste).
+
+@
+640
+<<[ ]>> -> UND-Verknpfung
+
+       Die Suche ist nur dann erfolgreich, wenn der
+       angegebene Absender gefunden wird, <<und>> wenn
+       alle (nicht ODER-verknpften) Suchkriterien in
+       den brigen Text-Feldern (Betreff, Fido-Empf.,
+       Text) ebenfalls erfllt sind.
+
+<<[x]>> -> ODER-Verknpfung
+
+       Die Suche ist erfolgreich, wenn ...
+
+       - der angegebene Absender gefunden wird, auch
+         wenn keines der Suchkriterien in den brigen
+         Text-Feldern (Betreff, Fido-Empf., Text)
+         erfllt ist, <<oder>>
+        
+       - wenn der Absender nicht mit dem Suchbegriff
+         bereinstimmt, aber ansonsten alle brigen
+         (nicht ODER-verknpften) Suchkriterien
+         erfllt sind.
+
+       <<Hinweis:>> Die einschr„nkenden Suchkriterien im
+       unteren Teil des Eingabedialogs (Datum, Gr”áe
+       etc.) werden auch auf eine ODER-verknpfte
+       Suche angewendet.
+
+@
+641
+<<[ ]>> -> UND-Verknpfung
+
+       Die Suche ist nur dann erfolgreich, wenn der
+       angegebene Betreff gefunden wird, <<und>> wenn
+       alle (nicht ODER-verknpften) Suchkriterien in
+       den brigen Text-Feldern (Absender, Fido-
+       Empf., Text) ebenfalls erfllt sind.
+
+<<[x]>> -> ODER-Verknpfung
+
+       Die Suche ist erfolgreich, wenn ...
+
+       - der angegebene Betreff gefunden wird, auch
+         wenn keines der Suchkriterien in den brigen
+         Text-Feldern (Absender, Fido-Empf., Text)
+         erfllt ist, <<oder>>
+        
+       - wenn der Betreff nicht mit dem Suchbegriff
+         bereinstimmt, aber ansonsten alle brigen
+         (nicht ODER-verknpften) Suchkriterien
+         erfllt sind.
+
+       <<Hinweis:>> Die einschr„nkenden Suchkriterien im
+       unteren Teil des Eingabedialogs (Datum, Gr”áe
+       etc.) werden auch auf eine ODER-verknpfte
+       Suche angewendet.
+
+@
+642
+<<[ ]>> -> UND-Verknpfung
+
+       Die Suche ist nur dann erfolgreich, wenn der
+       angegebene Fido-Empf„nger gefunden wird, <<und>>
+       wenn alle (nicht ODER-verknpften) Suchkrite-
+       rien in den brigen Text-Feldern (Absender,
+       Betreff, Text) ebenfalls erfllt sind.
+
+<<[x]>> -> ODER-Verknpfung
+
+       Die Suche ist erfolgreich, wenn ...
+
+       - der angegebene Fido-Empf„nger gefunden wird,
+         auch wenn keines der Suchkriterien in den
+         brigen Text-Feldern (Absender, Betreff,
+         Text) erfllt ist, <<oder>>
+        
+       - wenn der Fido-Empf„nger nicht mit dem Such-
+         begriff bereinstimmt, aber ansonsten alle
+         brigen (nicht ODER-verknpften) Suchkrite-
+         rien erfllt sind.
+
+       <<Hinweis:>> Die einschr„nkenden Suchkriterien im
+       unteren Teil des Eingabedialogs (Datum, Gr”áe
+       etc.) werden auch auf eine ODER-verknpfte
+       Suche angewendet.
 
 @
 650
@@ -10370,6 +10946,20 @@ richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
 /Nachricht/Unversandt/L”schen l”schen und neu sen-
 den.
+@
+7990
+<<[x]>> -> Wenn Sie beim Zitieren ('Quoten') einer
+       Nachricht die Betreffzeile ver„ndern und
+       die Bezugsverkettung beibehalten, dann
+       wird der alte Betreff automatisch in der
+       Form "<<(was: <alter Betreff>)>>" an den neuen
+       Betreff angeh„ngt.
+
+<<Hinweis:>> Viele Mail- und Newsreader (auch XP) entfer-
+nen beim Beantworten einer Nachricht einen auf diese
+Weise angeh„ngten alten Betreff automatisch - aber
+leider nicht alle. Achten Sie bitte auf die Gepflo-
+genheiten der Newsgroups, in denen Sie schreiben.
 @
 8100
 Wie in Kapitel "Kommentarverkettung" des Handbuchs
@@ -12210,7 +12800,7 @@ erhalten, wenn Sie z.B. pgp -kv <UserID> eingeben:
   1 matching key found.
 
 Tragen sie in das Feld dann 0x fr Hex, gefolgt von
-der KeyID ein: 0xC39C5085. Da die L„nge von Kommando-
+der KeyID ein: 0x08154711. Da die L„nge von Kommando-
 zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
 diese Form der User ID zu verwenden.
 
@@ -13188,19 +13778,20 @@ auf.
 <<Nachricht / Suchen / Volltext
 
 Die Volltextsuche durchsucht alle Nachrichten nach
-einem anzugebenden Suchbegriff.
+einem oder mehreren anzugebenden Suchbegriff(en).
 @
 10502
 <<Nachricht / Suchen / Betreff
 
 Die Betreffsuche sucht im Betreff aller Nachrichten
-nach einem bestimmten Begriff.
+nach einem oder mehreren bestimmten Begriff(en).
 @
 10503
 <<Nachricht / Suchen / User
 
 Die User-Suche sucht alle Nachrichten mit einem
-Absender, der auf den angegebenen Suchbegriff paát.
+Absender, der auf den/die angegebenen Suchbegriff(e)
+paát.
 @
 10504
 <<Nachricht / Suchen / Spezial
@@ -13214,8 +13805,7 @@ Suchoptionen.
 
 Hier sucht CrossPoint alle Brettnachrichten, die Sie
 mit <<V>> auf Wiedervorlage gesetzt haben, und zeigt
-diese an. Wiedervorlage-Nachrichten in PM-Archiv-
-Brettern werden NICHT gefunden.
+diese an.
 
 Wiedervorlage-Nachrichten sind mit einem <<w>> gekenn-
 zeichnet und k”nnen mit <<V>> entwiedervorlegt :-)
@@ -13300,7 +13890,7 @@ Die Einstellungen gelten NICHT fr das Drucken mit
 10607
 <<Config / Tasten
 
-Neben den 10 Eintr„gen im [Zusatz-Men] k”nnen auch@10608
+Neben den 20 Eintr„gen im [Zusatz-Men] k”nnen auch@10608
 alle Funktionstasten in Kombination mit Shift, Alt
 und Ctrl mit [externen Programmen] belegt werden.@10615
 Damit stehen Ihnen 30 frei definierbare Tasten zur
@@ -13313,11 +13903,17 @@ Bearbeitungsmodus.
 10608
 <<Config / Zusatz-Men
 
-Das Zusatz-Men kann neben dem Menpunkt "Kalender"
-noch bis zu 10 benutzerdefinierte [externe Programme]@10615
-enthalten. W„hlen Sie die gewnschte Position (1 bis
-10) und bearbeiten Sie diese mit <<E>> (Editieren).
-Mit <<<Esc> >>wird der Bearbeitungsmodus beendet.
+Das Zusatz-Men kann neben den Menpunkten "Kalender"
+und "Archiv-Viewer" noch bis zu 20 benutzerdefinierte
+[externe Programme] enthalten. W„hlen Sie die gewnsch-@10615
+te Position (1 bis 20) und bearbeiten Sie diese mit
+<<E>> (Editieren). Mit <<<Esc> >>wird der Bearbeitungsmodus
+beendet.
+
+<<Hinweis:>> Wenn Sie CrossPoint mit 25 Bildschirmzeilen
+betreiben, steht Ihnen der Menpunkt Nr. 20 bei der
+Bearbeitung und der Menanzeige nicht zur Verfgung.
+
 @
 10609
 <<Config / Sichern
@@ -13797,8 +14393,24 @@ M]8K-:K?<KO<+#HO'Y++YC$ZKU^RV^PV/R^?TNOV.S^OW_+[_#Q\@
 Diese Nachrichten k”nnen Sie mit dem eingebauten
 UUdecoder von XP wieder in eine Bin„rdatei zurck-
 wandeln. Zus„tzlicher Text zu Beginn oder Ende der
-Nachricht wird dabei ignoriert. Das Decodieren von
-mehreren, markierten Teilnachrichten ist m”glich.
+Nachricht wird dabei ignoriert.
+
+Bei sehr groáen Dateien ist es blich, sie in mehrere
+Teilnachrichten aufzuteilen, um die maximale Nach-
+richtengr”áe nicht zu berschreiten.
+
+Wenn Sie solche UUcodierten Dateien decodieren
+wollen, mssen Sie die Nachrichten in der korrekten
+Reihenfolge markieren. Beim Aufruf der Decodier-
+funktion erfolgt dann eine Abfrage, ob mehrere mar-
+kierte Nachrichten decodiert und zu einer einzelnen
+Datei zusammengefgt werden sollen, oder ob die
+aktuelle Nachricht, auf der sich der Cursorbalken
+momentan befindet, einzeln decodiert werden soll. 
+
+Wenn eine Nachricht mehrere UUE-codierte Dateien
+enth„lt, k”nnen Sie fr jede einzelne bestimmen,
+ob und wohin diese decodiert werden soll.
 
 Um selbst UU-codierte Dateien zu verschicken,
 w„hlen Sie im Editormen (erreichbar durch <<<F10> >>
@@ -14322,13 +14934,36 @@ Es stehen folgende Tasten zur Verfgung:
 
   <<<F8> >>    Blockmarkierung: Endemarke setzen
 
-    <<S>>      sucht einen anzugebenden Begriff.
-           Groá-/Kleinschreibung werden dabei
-           ignoriert. <<<Tab> >>wiederholt die
-           letzte Suche.
+<<<Ctrl-H> >>  springt zum n„chsten bereits bestellten
+           Brett (<<<Ctrl-H> >>ist brigens mit der Taste
+           <<<Backspace> >>identisch).
 
-<<<Shift-S> >> wie <<S>>, jedoch unter Beachtung von
+    <<S>>      sucht im angezeigten Text einen oder
+           mehrere anzugebende Begriffe, und markiert
+           diese alle gleichzeitig. Sie k”nnen die
+           [Suchoptionen] <<i>> (Groá-/Kleinschreibung@531
+           ignorieren), <<u>> (umlaut-unabh„ngige Suche,
+           beinhaltet <<i>>) sowie <<s>> und <<k>> verwenden,
+           alle brigen Suchoptionen werden igno-
+           riert. Mit <<<Tab> >>springt der Cursorbalken
+           die n„chste Zeile an, die einen markierten
+           Suchbegriff enth„lt.
+
+    <<E>>      schaltet die Markierung der letzten
+           Suchbegriffe, die mit <<S>> markiert wurden,
+           ein/aus.
+
+<<<Ctrl-S> >>  sucht einen einzelnen anzugebenden
+           Begriff, Groá-/Kleinschreibung wird dabei
+           ignoriert. <<<Ctrl-Tab> >>oder <<<Shift-Tab> >>
+           wiederholt die letzte Suche.
+
+<<<Shift-S> >> wie <<<Ctrl-S> >>- jedoch unter Beachtung von
            Groá- und Kleinschreibung.
+
+Die Funktionen <<<Ctrl-/Shift-S> >>/ <<<Ctrl-/Shift-Tab> >>
+und <<S>> / <<<Tab> >>k”nnen unabh„ngig voneinander benutzt
+werden.
 
 @
 11902
@@ -14811,13 +15446,16 @@ Fr unversandte Nachrichten verwenden Sie bitte
 [/Nachricht/Unversandt/ndern].@10402
 @
 12202
-<<Nachricht / ndern / EmpfDatum
+<<Nachricht / ndern / Empfangsdatum
 
 CrossPoint versieht alle eingehenden Nachrichten mit
 einem Datumsvermerk, damit sie im Nachrichtenfenster
 in der korrekten Reihenfolge angezeigt werden k”nnen.
 Wenn Ihnen diese Reihenfolge nicht gef„llt, k”nnen
-Sie einfach das Empfangsdatum „ndern.
+Sie hier einfach Empfangsdatum/-uhrzeit „ndern.
+
+Wenn Sie den Schalter aktivieren, wird das Empfangs-
+datum auf das Erstelldatum der Nachricht gesetzt.
 
 Das Empfangsdatum wird brigens auch im Nachrichten-
 Info-Fenster (Taste <<I>>) angezeigt.
@@ -15706,6 +16344,51 @@ fenden Adresse mit <<Y>>.
 Voraussetzung ist, daá unter /Config/Extern/PGP eine
 Ihrer User-IDs eingetragen ist. Vergessen Sie nicht,
 dort ggf. eine neue User-ID einzutragen!
+@
+14101
+Ruft die Hilfe zum aktuellen XP-Fenster auf.
+@
+14102
+Ruft das vorherige Hilfethema nochmal auf.
+@
+14103
+^^2
+@
+14104
+^^3
+@
+14105
+^^13
+@
+14106
+Zeigt die fr das aktive XP-Fenster definierten
+Makros an.
+@
+14107
+Hilfeseiten zu speziellen Themen, die ansonsten
+schwer zu finden sind, weil sie nicht immer direkt
+einem Menpunkt oder Eingabedialog zuzuordnen sind.
+@
+14108
+Anzeige der Versions- und Lizenznummer der aktuellen
+XP-Installation sowie der wichtigsten Kontakte des
+OpenXP-Teams.
+@
+14201
+Detaillierte Hintergrundinformationen und Hinweise
+zu den diversen PGP-Versionen.
+@
+14202
+Hier ist beschrieben, wie man Mailinglisten optimal
+in XP einrichtet.
+@
+14203
+Allgemeine und weiterfhrende Informationen zum
+Betrieb von CrossPoint mit externen RFC-Clients.
+@
+14204
+So macht man CrossPoint zu seinem Standard-Mailer
+unter Windows.
 @
 20000
 Drcken Sie zweimal <<<Esc> >>und dann <<<F1> >>fr Hilfe.
