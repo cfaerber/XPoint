@@ -426,7 +426,7 @@ var flp : dbFLP;
         if nt=nt_Fido then name:=hdp^.fido_to
         else name:=hdp^.realname;
         if name<>'' then
-          dbWrite(mbase,'name',name);
+          dbWriteStr(mbase,'name',name);
         end;
       dbNext(mbase);
       end;
@@ -475,7 +475,7 @@ var flp : dbFLP;
         end;
       ReadHeader(hdp^,hds,false);
       if hdp^.mimetyp<>'' then
-        dbWrite(mbase,'mimetyp',hdp^.mimetyp);
+        dbWriteStr(mbase,'mimetyp',hdp^.mimetyp);
       if hdp^.boundary<>'' then begin
         dbRead(mbase,'flags',flags);
         flags:=flags or 4;
@@ -568,9 +568,9 @@ var flp : dbFLP;
         else if ext='doc' then typ:='/msword'
         else if ext='xls' then typ:='/vnd.ms-excel'
         else if ext='mpg' then typ:='video/mpeg';
-      s:=typ; dbWrite(mimebase,'typ',s);
-      s:=ext; dbWrite(mimebase,'extension',s);
-      s:=prog; dbWrite(mimebase,'programm',s);
+      s:=typ; dbWriteStr(mimebase,'typ',s);
+      s:=ext; dbWriteStr(mimebase,'extension',s);
+      s:=prog; dbWriteStr(mimebase,'programm',s);
     end;
 
   begin
@@ -884,6 +884,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.17  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

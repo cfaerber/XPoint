@@ -285,7 +285,7 @@ begin
       dbSeek(d,piKurzname,UpperCase(s));
       if dbFound then
       begin
-        dbRead(d,'Langname',s);
+        s:= dbReadStr(d,'Langname');
         dbclose(d);                     { ists ein Kurzname ? }
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
@@ -925,7 +925,7 @@ fromstart:
           flEB:=true;
         size:=0;
         if dbXsize(ubase,'adresse')=0 then adresse:=''
-        else dbReadX(ubase,'adresse',size,adresse);
+        else adresse:= dbReadXStr(ubase,'adresse',size);
         _brett:=mbrettd('U',ubase);
         if adresse<>'' then begin
           umlaute:=iif(dbReadInt(ubase,'userflags') and 8=0,0,1);
@@ -944,7 +944,7 @@ fromstart:
               if dbReadInt(ubase,'userflags') and 2<>0 then
                 docode:=cancode;
             si0:=0;
-            dbReadX(ubase,'passwort',si0,passwd);
+            passwd:= dbReadXStr(ubase,'passwort',si0);
             end;
           umlaute:=iif(dbReadInt(ubase,'userflags') and 8=0,0,1);
           end
@@ -1031,7 +1031,7 @@ fromstart:
     if (fidoname='') and dbFound then
       FidoName := dbReadStr(d,'Origin');
     if dbFound then
-      dbRead(d,'Adresse',AltAdr)
+      altadr:= dbReadStr(d,'Adresse')
     else
       altadr:='';
     dbClose(d);
@@ -2123,6 +2123,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/07/22 14:05:27  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.54  2000/07/21 20:56:26  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

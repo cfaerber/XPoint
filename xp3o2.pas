@@ -339,7 +339,7 @@ begin
       dbWriteN(bbase,bb_haltezeit,stdhaltezeit);
       dbWriteN(bbase,bb_gruppe,NetzGruppe);
       if brettkomm then
-        dbWriteN(bbase,bb_kommentar,komm);
+        dbWriteNStr(bbase,bb_kommentar,komm);
       flags:=iif(netztyp=nt_UUCP,16,0);
       dbWriteN(bbase,bb_flags,flags);
       if order_ende and NewbrettEnde then
@@ -434,6 +434,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/22 14:05:27  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.19  2000/07/21 21:17:45  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

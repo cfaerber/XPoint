@@ -350,7 +350,7 @@ var nn,n : longint;
     idnr : integer;
     hd   : Headerp;
     hds  : longint;
-    mid  : string[20];
+    mid  : string;
     xx   : byte;
 
   procedure wrn;
@@ -377,7 +377,7 @@ begin
     ReadHeader(hd^,hds,false);
     if hds>1 then begin
       mid:=FormMsgid(hd^.msgid);
-      dbWriteN(mbase,idnr,mid);
+      dbWriteNStr(mbase,idnr,mid);
       end;
     dbNext(mbase);
     end;
@@ -888,6 +888,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/22 14:05:27  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.19  2000/07/21 20:56:26  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

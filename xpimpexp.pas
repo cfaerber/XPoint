@@ -180,7 +180,7 @@ begin
             end;
           if not dbFound or repluser then begin
             if name<>adresse then
-              dbWriteX(ubase,'adresse',length(adresse)+1,adresse);
+              dbWriteXStr(ubase,'adresse',length(adresse)+1,adresse);
             dbWriteN(ubase,ub_pollbox,pollbox);
             wrhalten(ubase);
             dbWriteN(ubase,ub_userflags,aufnehmen);
@@ -286,7 +286,7 @@ begin
         dbOpen(d,BoxenFile,1);
         while not dbEOF(d) and (dbReadInt(d,'netztyp')<>nt) do
           dbNext(d);
-        if not dbEOF(d) then dbRead(d,'boxname',box);
+        if not dbEOF(d) then box:= dbReadStr(d,'boxname');
         dbClose(d);
         end;
 
@@ -697,6 +697,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/22 14:05:28  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.20  2000/07/13 10:23:47  mk
   - Zeiger auf Strings entfernt
 

@@ -782,7 +782,7 @@ again:
             dbSeek(ubase,uiName,UpperCase(name));
             if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
               size:=0;
-              dbReadX(ubase,'adresse',size,name);
+              name:= dbReadXStr(ubase,'adresse',size);
               if name<>'' then dbSeek(ubase,uiName,UpperCase(name))
               else Name := dbReadNStr(mbase,mb_absender);
               end;
@@ -1248,6 +1248,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/22 14:05:28  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.32  2000/07/22 10:10:25  hd
   - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
 

@@ -450,7 +450,7 @@ var x,y      : byte;
     dbSeek(ubase,uiName,UpperCase(hdp^.absender));
     uflags := 0;
     if not dbFound then exit;
-    dbReadX(ubase,'passwort',size,passwd);
+    passwd:= dbReadXStr(ubase,'passwort',size);
     dbRead(ubase,'codierer',codierer);
     if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
       (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
@@ -678,9 +678,9 @@ begin
         sysbetreff:='';
         end
       else begin
-        dbRead(d,'nameomaps',mapsname);
-        dbRead(d,'AVertreter',AMvertreter);
-        dbRead(d,'PVertreter',PMvertreter);
+        mapsname:= dbReadStr(d,'nameomaps');
+        AMvertreter:= dbReadStr(d,'AVertreter');
+        PMvertreter:= dbReadStr(d,'PVertreter');
         dbSeek(d,boiName,UpperCase(amvertreter));
         if not dbFound then amvertreter:='';
         dbSeek(d,boiName,UpperCase(pmvertreter));
@@ -959,7 +959,7 @@ begin
             typ1:=UpCase(typ[1]);
             if (typ1<=' ') or (typ1>#126) then typ1:='?';
             dbWriteN(mbase,mb_typ,typ1);
-            dbWriteN(mbase,mb_mimetyp,mimetyp);
+            dbWriteNStr(mbase,mb_mimetyp,mimetyp);
             dbWriteNStr(mbase,mb_brett,_brett);
             dbWriteN(mbase,mb_ablage,ablage);
             dbWriteN(mbase,mb_adresse,padr);
@@ -1158,6 +1158,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.29  2000/07/21 20:56:24  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

@@ -739,8 +739,8 @@ end;
 
 procedure MakeMimetypCfg;
 var t   : text;
-    typ : string[30];
-    ext : string[5];
+    typ : string;
+    ext : string;
 begin
   assign(t,'mimetyp.cfg');
   rewrite(t);
@@ -749,8 +749,8 @@ begin
   dbSetIndex(mimebase,0);
   dbGoTop(mimebase);
   while not dbEOF(mimebase) do begin
-    dbReadN(mimebase,mimeb_typ,typ);
-    dbReadN(mimebase,mimeb_extension,ext);
+    typ:= dbReadNStr(mimebase,mimeb_typ);
+    ext:= dbReadNStr(mimebase,mimeb_extension);
     if (typ<>'') and (ext<>'') then
       writeln(t,ext,'=',extmimetyp(typ));
     dbNext(mimebase);
@@ -1429,6 +1429,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/07/22 14:05:28  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.30  2000/07/21 21:17:46  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -330,7 +330,7 @@ begin
       dbSeek(d,piKurzname,UpperCase(s));
       if dbFound then
       begin
-        dbRead(d,'Langname',s);         { ists ein Kurzname ? }
+        s:= dbReadStr(d,'Langname');    { ists ein Kurzname ? }
         dbclose(d);
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
@@ -1751,6 +1751,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2000/07/22 14:05:28  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.32  2000/07/21 21:17:47  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -440,7 +440,7 @@ label ende;
           end;
         user2 := dbReadNStr(mbase,mb_absender);
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
-          dbReadN(mbase,mb_name,realn);
+          realn:= dbReadNStr(mbase,mb_name);
           end
         else
           realn:=#0;
@@ -477,7 +477,7 @@ label ende;
 {--Normale Suche--}
                                                           {Headereintragsuche}
     else if suchfeld<>'' then begin
-      dbRead(mbase,suchfeld,such);
+      such:= dbReadStr(mbase,suchfeld);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
         ReadHeader(hdp^,hds,false);
         if length(hdp^.betreff)>40 then
@@ -507,7 +507,7 @@ label ende;
       else
       if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
       begin
-        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
+        such:= dbReadNStr(mbase,mb_name);             {Bei Usersuche auch Realname ansehen...}
         if umlaut then UkonvStr(such,Length(such));
 
         j:=0;
@@ -1324,7 +1324,7 @@ label ende;
   function komform(d:DB; s:string):string;
   var kom : string;
   begin
-    dbRead(d,'kommentar',kom);
+    kom:= dbReadStr(d,'kommentar');
     if exkom and (kom<>'') then
       komform:=forms(s,80)+kom
     else
@@ -2416,6 +2416,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/07/22 14:05:27  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.55  2000/07/21 20:56:25  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

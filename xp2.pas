@@ -704,7 +704,7 @@ var d     : DB;
   begin
     b:=4;  dbWrite(d,'flags',b);     { Re^n = N }
     b:=1;  dbWrite(d,'umlaute',b);   { ASCII    }
-    s:=''; dbWrite(d,'signatur',s);  { keine Sig. }
+    s:=''; dbWriteStr(d,'signatur',s);  { keine Sig. }
   end; *)
 
 begin
@@ -1071,6 +1071,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.63  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

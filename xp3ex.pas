@@ -75,7 +75,7 @@ begin
   if p>0 then begin
     dbSeek(ubase,uiName,UpperCase(name));
     if not dbFound then komm:=''
-    else dbReadN(ubase,ub_kommentar,komm);
+    else komm:= dbReadNStr(ubase,ub_kommentar);
     p2:=pos('P:',UpperCase(komm));
     if p2=0 then
       s:=copy(s,1,p-1)+iifs(vorn,'$VORNAME','$TUSER')+Mid(s,p+iif(vorn,8,7))
@@ -224,7 +224,7 @@ var size   : longint;
           exit;
           end;
         siz0:=0;
-        dbReadX(ubase,'passwort',siz0,pw);
+        pw:= dbReadXStr(ubase,'passwort',siz0);
         end;
 
       ps:=(min(memavail-10000,20000) shr 3) shl 3;  { abrunden wg. DES }
@@ -1058,6 +1058,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.34  2000/07/21 21:17:45  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -207,7 +207,7 @@ begin
       dbSeek(ubase,uiName,UpperCase(hdp^.absender));
       if dbFound and (dbXsize(ubase,'adresse')>0) then begin
         size:=0;
-        dbReadX(ubase,'adresse',size,s);
+        s:= dbReadXStr(ubase,'adresse',size);
         appadr(s,6);                                 { 'Vertreter          :' }
         end;
     *)
@@ -314,6 +314,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/22 14:05:27  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.13  2000/07/21 17:39:54  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

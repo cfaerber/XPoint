@@ -57,7 +57,7 @@ begin
     datei := dbReadStr(auto,'dateiname');
     Betreff := dbReadStr(auto,'betreff');
     dbRead(auto,'typ',typ);
-    dbRead(auto,'empfaenger',empf);
+    empf:= dbReadStr(auto,'empfaenger');
     box := dbReadStr(auto,'pollbox');
     dbRead(auto,'wochentage',wotage);
     dbRead(auto,'tage',tage);
@@ -660,6 +660,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/22 14:05:28  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.20  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -890,7 +890,7 @@ var d     : DB;
     grnr  : longint;
     brett : string;
     n     : integer;
-    qm    : string[8];
+    qm    : string;
 begin
   grQuoteMsk:=QuoteMsk;
   Brett := dbReadNStr(mbase,mb_brett);
@@ -902,7 +902,7 @@ begin
     if dbFound then begin
       n:=dbGetFeldNr(d,'quotemsk');
       if n>0 then begin
-        dbReadN(d,n,qm);
+        qm:= dbReadNStr(d,n);
         if trim(qm)<>'' then grQuoteMsk:=trim(qm)+'.xps';
         end;
       end;
@@ -1174,15 +1174,15 @@ end;
 
 procedure ReplaceVertreterbox(var box:string; pm:boolean);
 var d    : DB;
-    wbox : string[BoxNameLen];
+    wbox : string;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then begin              { Test auf Vertreterbox }
     if pm then
-      dbRead(d,'PVertreter',wbox)
+      wbox:= dbReadStr(d,'PVertreter')
     else
-      dbRead(d,'AVertreter',wbox);
+      wbox:= dbReadStr(d,'AVertreter');
     if IsBox(wbox) then box:=wbox;
     end;
   dbClose(d);
@@ -1219,6 +1219,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.40  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
   Revision 1.39  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
