@@ -28,7 +28,7 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
 {$IFDEF Linux}
   xplinux,
 {$ENDIF}
-  xpcfg,
+{  xpcfg,}
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
@@ -1114,6 +1114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/05/13 14:29:13  hd
+  Workaround wg. noch nicht vorhandener Unit
+
   Revision 1.36  2000/05/13 14:24:56  hd
   - Suchmaske angepasst (test_pfade)
 
