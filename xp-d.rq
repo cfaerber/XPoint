@@ -760,10 +760,15 @@ K (c) '93-98 Peter Mandrella
 10   PGP auch fr RFC/UUCP verwenden
 11   PGP auch fr Fido verwenden
 + 272
-# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5 / X-MSMail-Prio.: High, Norm., Low
+# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5
 0    25
 1    Sende-Priorit„t
 2    Priorit„t ~
+3    HochùNormalùNiedrigùKeine
+4    Hoch
+5    Normal
+6    Niedrig
+7    Keine
 -
 
 # --- XP3 -------------------------------------------------------------

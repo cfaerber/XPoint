@@ -1106,25 +1106,38 @@ begin
       end;
 end;
 
-procedure getprio; { MH: RFC: X-Priority: 1, 3, 5            }
-var x,y : byte;
-    brk : boolean; { MH: 06.02.2000                          }
-    prio: string[7];
+{ Dialog: Priorit„t ermitteln und in glob. Variable RFCPrio schreiben }
+{ RFC: X-Priority: 1, 3, 5 }
+procedure GetPrio;
+var
+  x, y: byte;
+  brk: boolean;
+  Prio: string[7];
 begin
-  dialog(ival(getres2(272,0)),3,getres2(272,1),x,y);  { 'Sende-Priorit„t' }
-   prio:='Keine'; rfcprio:=0;
-  maddstring(3,2,getres2(272,2),prio,7,7,'');  { 'Priorit„t ' }
-  mappsel(true,'HochùNormalùNiedrigùKeine');
-  readmask(brk);
-  if not brk and mmodified then begin
-   if prio='Hoch' then rfcprio:=1 else
-    if prio='Normal' then rfcprio:=3 else
-     if prio='Niedrig' then rfcprio:=5;
-    end;
-  enddialog;
+  Dialog(ival(getres2(272, 0)), 3, getres2(272, 1), x, y); { 'Sende-Priorit„t' }
+  Prio:=GetRes2(272, 7); RFCPrio:=0;                           { 'Keine' }
+  MaddString(3, 2, GetRes2(272,2), Prio, 7, 7, '');       { 'Priorit„t ' }
+  MappSel(true, GetRes2(272, 3));          { 'HochùNormalùNiedrigùKeine' }
+  ReadMask(brk);
+
+  if not brk and mmodified then
+  begin
+    if Prio = GetRes2(272, 4) then     { 'Hoch' }
+      RFCPrio := 1
+    else
+      if Prio = GetRes2(272, 5) then   { 'Normal' }
+        RFCPrio := 3
+      else
+        if Prio= GetRes2(272, 6) then { 'Niedrig' }
+          RFCPrio := 5;
+  end;
+  EndDialog;
 end;
-{ 
+{
   $Log$
+  Revision 1.6  2000/02/18 00:03:01  mk
+  MH: * Sendepriotitaet in Resourcen aufgenommen
+
   Revision 1.5  2000/02/17 13:04:05  mk
   MH: * Prioauswahl fuer keine Prioritaet hinzugefuegt
 
