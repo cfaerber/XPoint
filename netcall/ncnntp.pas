@@ -120,7 +120,7 @@ type
 
 implementation
 
-uses Timer;
+uses Timer,TypeForm;
 
 const
   DefaultNNTPPort               = 119;
@@ -476,7 +476,7 @@ begin
     case Error of
       nntp_PostPleaseSend : begin
          for I := 0 to Message.Count - 1 do
-            SWriteln(Message[I]);
+            SWriteln(iifs(FirstChar(Message[I])='.','.','')+Message[I]);
          SWriteln(nntpMsg_EndSign);
       end
       else begin
@@ -511,7 +511,7 @@ begin
     begin
       inc(iPosting);
       repeat
-        SWriteln(Message[I]);
+        SWriteln(iifs(FirstChar(Message[I])='.','.','')+Message[I]);
         Inc(I);
       until (I >= Message.Count) or (Pos('#! rnews', Message[I]) = 1);
       SWriteln(nntpMsg_EndSign);
@@ -537,6 +537,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/04/27 10:25:27  ma
+  - fixed: '.' quoting was not done with outgoing articles
+
   Revision 1.24  2001/04/27 10:18:56  ma
   - using "new" NNTP spool format
 
