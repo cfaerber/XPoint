@@ -1706,21 +1706,17 @@ begin
   with e^ do
     if blockinverse or blockhidden then
       errsound
-    else
-    (* if ClipAvailable then *) begin 
-        if SaveBlock(block[1].pos,block[2].pos,ClipFileName,rrand,false,true,false) then
+    else begin
+      if SaveBlock(block[1].pos,block[2].pos,ClipFileName,rrand,false,true,false) then
+      begin
+        FileToClip(ClipFileName);
+        if cut then
         begin
-          FileToClip(ClipFileName);
-          { if exist(EdTempFile) then era(EdTempFile); }
-          if cut then begin
-            ap:=CutBlock; Freeblock(ap); end;
-         end;
+          ap:=CutBlock;
+          Freeblock(ap);
         end;
-   (*    else begin
-        FreeBlock(Clipboard);
-        if cut then Clipboard:=CutBlock
-        else Clipboard:=CopyBlock;
-        end; *)
+      end;
+    end;
 end;
 
 
@@ -1729,16 +1725,11 @@ var ap : absatzp;
 begin
   with e^ do
   begin
-    if ClipAvailable then (* begin *)
+    if ClipAvailable then
       ClipToFile(ClipFileName);
-      ap :=LoadBlock(ClipFileName,false,0,rrand);
-      InsertWithMark(ap);
-    { if exist(EdTempFile) then era(EdTempFile); }
-(*  end
-    else begin
-      InsertWithMark(Clipboard);
-      Clipboard:=CopyBlock; *)
-    end; 
+    ap :=LoadBlock(ClipFileName,false,0,rrand);
+    InsertWithMark(ap);
+  end; 
 end;
 
 
@@ -1758,6 +1749,7 @@ begin
   end;
 end;
 
+
 procedure BlockUUeEinlesen;
 var fn : string;
     ap : absatzp;
@@ -1773,6 +1765,7 @@ begin
       end;
   end;
 end;
+
 
 procedure BlockSpeichern;
 var fn : string;
@@ -2424,6 +2417,9 @@ end;
 
 {
   $Log$
+  Revision 1.19.2.26  2002/05/28 21:12:26  my
+  MY: Auskommentierten Code entfernt, Sourceformatierung
+
   Revision 1.19.2.25  2002/05/25 21:55:12  my
   MY:- Fix: Das interne Clipboard (Datei "CLIP.TXT") funktioniert speziell
        im Editor jetzt auch unter Linux DOS-Emu (dort stÅrzte XP bisher
