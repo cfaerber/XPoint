@@ -178,7 +178,7 @@ end;
 
 { letzter Sonntag im M„rz - letzter Sonntag im September }
 
-function sommer(d:datetimest):boolean;
+function sommer(const d,z:datetimest):boolean;
 var t,m : byte;
     res,d1 : integer;
 begin
@@ -198,6 +198,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/01/14 11:40:56  cl
+  - after-merge compile fixes
+
   Revision 1.11  2002/01/13 15:07:23  mk
   - Big 3.40 Update Part I
 

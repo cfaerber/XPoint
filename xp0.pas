@@ -898,7 +898,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
        brettanzeige : byte;          { 0=gross, 1=top, 2=klein }
        ShowMsgDatum : boolean;       { Datum im Nachrichtenf.  }
-       MsgNewFirst  : boolean;       { Display new messages at top of list }
        viewers      : ^viewert;
        VarEditor,
        VarLister    : string;    { externer Editor/Lister  }
@@ -1213,6 +1212,9 @@ implementation
 
 {
   $Log$
+  Revision 1.154  2002/01/14 11:40:56  cl
+  - after-merge compile fixes
+
   Revision 1.153  2002/01/13 15:07:25  mk
   - Big 3.40 Update Part I
 
