@@ -28,7 +28,7 @@ Back <<<Alt F1> >>...
 
 Starting On-line Help:
 
-<<F1>>      shows context sensitive help
+<<F1>>      Shows context sensitive help
 
 [cross-references] <<Tab>> and <<shift-Tab>> to select, then@7000
 <Enter>.
@@ -37,17 +37,17 @@ Starting On-line Help:
 
 When displaying a help page...:
 
-<<F1>>      shows Help contents list
+<<F1>>      Shows help contents list
 
 <<Alt F1>>  Shows the previous help page. Repeated <Alt
         F1> flips back through previous pages.
 
-<<Ctrl D>>  prints the current Help page. The current
+<<Ctrl D>>  Prints the current help page. The current
         printer settings used as: [/Config/Printer].@10606
 
 Large Help topics covering several screens can be
-recognised by the changed borders. The usual PgUp/
-PgDn keys can be used to turn pages.
+recognised by the different borders. The usual
+PgUp/PgDn keys can be used to turn pages.
 
 Many Help pages contain coloured [cross-references] to@7000
 other pages. You can view these pages by keying its
@@ -63,43 +63,70 @@ in CrossPoint:
    <<F1>>       Help
    <<Alt F1>>   Previous Help
    <<F9>>       DOS-Shell
-   <<Alt F4>>   End Program
+   <<Alt F4>>   End Programme
 
    <<Alt K>>    Calendar
    <<Alt E>>    Editor
+   <<Alt T>>    Notepad
    <<Alt I>>    Print Screen to File
    <<Alt 1>>    Switch off monitor display
 
-   <<Alt N>>    Use Fido-Nodelist
+   <<Alt N>>    Browse Nodelist
 @
 5
 <<CrossPoint - Support
 
-There is no special CrossPoint support site outside
-of central Europe at the moment, but this will
-change soon. If you have access to Usenet, you may
-discuss CrossPoint topics in the newsgroup
+The current version (by Peter Mandrella) and other
+information about CrossPoint may be found on the
+InterNet at:
 
-    <<comp.os.msdos.mail-news
+        http://www.crosspoint.de
 
-You may also use the German CrossPoint support
-groups
+The newest version and other information relating to
+CrossPoint development by the OpenXP Project may be
+found at:
 
-    <<de.comm.software.crosspoint>>   in Usenet and
-    <<CROSSPOINT.GER>>                in FidoNet.
+        http://www.openxp.de
+
+The official German FidoNet support site is Max
+Raabe's Klystron BBS:
+
+        +49-261-9524095
+        +49-261-9524094 (ISDN)
+
+        FidoNet: 2:2454/97
+
+There is NO official English support site but help
+and support may be obtained from the following
+sources:
+
+        FidoNet: XPOINT
+                 (International FidoNet support echo)
+
+        Usenet:  de.comm.software.crosspoint
+                 (German support newsgroup)
+                 (Although the dominant language is
+                 German, English *is* allowed)
+
+All bug reports should be posted in the German
+support newsgroup. If you do not have internet
+access, bug reports may be posted in the FidoNet
+echo, together with a note to the moderator
+requesting that the bug report be forwarded into
+the German support newsgroup. The moderator is a
+very obliging chappie :-)
 
 @
 6
 <<CrossPoint - Licence Conditions
 
-CrossPoint is shareware. It is not free software.
+CrossPoint is <<NOT>> free software, it is shareware.
 You may test it without cost for up to 30 days from
-the first installation, but if you wish to use it
-after that you must pay a fee: "register" the
-program.
+first installation but if you wish to use it after
+that, you must register the programme.
 
 You will find details of how to do this and what to
-do in the file <<LICENCE.DOC>> included with the
+do in the file <<LICENCE.DOC>> included in the
 English Language package.
 @
 10
@@ -555,9 +582,6 @@ You can also use <space> instead of PgDn
  <<C>>      toggles coloured <<bold>> Text on/off.
         (see [/Config/External/Lister])@237
 
- <<Q>>      toggles whether "|" and ":" are used as
-        quote-signs or not.  
-
 With <<P>>, <<Ctrl-P>>, <<B>> and <<Ctrl-B>> you can
        answer directly to messages from inside the
        lister.
@@ -728,14 +752,13 @@ overview.
        [Marking Text]@59
        [Deleting]@60
        [Other]@61
-       [Menu]@62
 
 The important Editor Functions:
 
     <F2>        Save Text
     <Esc>       Exit Editor
     <Shift F2>  Save Text and Exit Editor
-    <F10>       [Menu]@62
+    <F10>       Menu
 @
 55
 
@@ -749,7 +772,7 @@ From left to right:
   - File Name
 @
 56
-<F1>        : [On-line-Help]@54
+<F1>        : On-line-Help
 <F2>        : Save Text
 <F3>        : disable line wrap (current para)
 <F4>        : enable line wrap  (current para)
@@ -758,7 +781,7 @@ From left to right:
 <F7>        : Set Block start
 <F8>        : Set Block end
 <F9>        : DOS-Shell
-<F10>       : [Menu]@62
+<F10>       : Menu
 
 <Shift F2>  : Save Text and Exit Editor
 <Shift F3>  : Disable Line Wrap for whole text
@@ -824,8 +847,7 @@ x = 1 to 5
 In addition to the usual <Backspace> and <Del> Keys,
 The following functions are available:
 
-    <Ctrl T>,         
-    <Ctrl Del>       : Delete word right
+    <Ctrl T>         : Delete word right
     <Ctrl Backspace> : Delete word left
     <Ctrl Y>         : Delete line
     <Ctrl K><Y>      : Delete Block
@@ -860,50 +882,6 @@ They can be <<recalled with Ctrl-U>>
         marked, the text from the paragraph where
         the cursor is to the next empty line is
         reformatted.
-
-@
-62
-Press <F10> or hold down the right mouse key to get
-the menu.
-
-            ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
-            ³ Copy           <<*>> ³
-            ³ Cut            <<->> ³
-            ³ Insert         <<+>> ³
-            ³ Read         <<^KR>> ³
-            ³ Read UUE     <<^KU>> ³
-            ³ Write        <<^KW>> ³
-            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-            ³ Wrap off      <<F3>> ³
-            ³ Wrap on       <<F4>> ³
-            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-            ³ [Options]      <<^OR>> ³@63
-            ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
-
-@
-63
-<<Right margin>>
-  Column where the text is automatically wrapped
-  into the next line.
-
-<<Paragraph end marker>>
-  Character which marks the end of a paragraph.
-
-<<[x] Auto indent>>
-  When <Return> is pressed, the begin of the next
-  line is automatically filled with the same amount 
-  of spaces as the former line.
-
-<<[x] Persistent blocks>>
-  Marked blocks will not be unmarked or overwritten
-  when a key is pressed. This is useful when the
-  Wordstar keys are used for block operations.
-
-<<[x] Quote-Reflow>>
-  Quote characters are taken into consideration
-  when a linefeed is put into a quoted line or
-  two quoted lines are connected to one.
-  See also ['reformat block'] (<Ctrl B>).@61
 
 @
 65
@@ -1367,38 +1345,41 @@ If the selected file already exists, the choice is
 offered, whether to overwrite it or append to it.
 @
 130
-For setting up the servers from which you get
-your e-mail and through which you send your outgoing
-mail.
+For configuring the Servers from which you receive
+your incoming mail and through which you send your
+outgoing mail.
 
-You can enter as many as you wish, and they are
-displayed in alphabetical order of box name, with
+You may configure as many as you wish and they are
+displayed in alphabetical order of Server name, with
 numbers a la FIDO at the top.
 
-<<New>>     Enter details for a new box.
+<<New>>     Enter details for a new Server.
 
-<<Delete>>  Delete the selected box from the list, after
-        a further confirmation.
-        All details are then lost.
+<<Delete>>  Delete the selected Server from the list.
+        You will be prompted for confirmation.
+        All details will then be lost.
 
-<<Select>>  Select the box (where the cursor is) as
-        [Primary Serverbox.]@78
+<<Select>>  Select the Server (under the cursor) as
+        [Primary Server.]@78
 
-<<Edit>>    Calls up the menu for editing details,
-        dealing with all aspects of netcalls.
+<<Edit>>    Calls up the menu for editing details
+        concerning all aspects of Netcalls (Polls).
         This data is stored in a file with the
-        name of the box and the extension .BFG
+        name of the Server and the extension .BFG
 
-<<Net type>> changes the net type of the selected box.
-        A list is presented to select from.
-   Note: The type cannot be changed while there
+<<Net type>> Changes the net type of the selected
+        Server. A list is presented to select from.
+
+  Note: The net type cannot be changed while there
         are messages waiting to be sent.
-  Note2: The English Language Module blends out the
-        purely German net types, so for example
-        Maus is not to be seen.
+
+ Note2: The English Language Module blanks out the
+        purely German net types. So, for example,
+        Maus will not to be available.
 
 
-<<OK>>       Exits the Server overview (also <Esc>.
+<<OK>>      Exits the Server configuration.
+        You may also exit by pressing <Esc>.
 
 @
 131
@@ -3142,31 +3123,6 @@ know what you are doing.
 Problems through the hard disk suddenly being full
 in the middle of data handling always lead to
 unrecoverable loss of data.
-@
-222
-<<Fido, QWK, RFC/UUCP:
-
-<<[x]>> -> Automatically enable german "Umlaute" 
-       for new users
- 
-<<[ ]>> -> "Umlaute" are disabled until you
-       enable them in the User-Overview. 
-@
-223
-Sometimes the Chars "|" and ":" are used as Quote-
-Chars. If you enable this option, Crosspoint uses
-this Chars like the Quote-Sign ">" And displays
-the quoted Text in the appropriate color
- 
-This setting is used in editor and lister.
-You can toggle it in the Lister by pressing "Q"
-@
-224
-If the free space on the Harddisk with Crosspoint
-is less than than this setting, Crossppoint displays
-a warning-window at startup.
-
-Minimum of this Setting is 1MB
 @
 230
 CrossPoint does have its own built in lister, (for
@@ -6661,45 +6617,45 @@ calendar and archive viewer are pre-installed.
 You install the others under /Config/Tools menu.
 @
 10101
-You are asked to enter your registration number into
-CrossPoint. If you have registered, you get sent a
-number key. Entering that number here registers your
-version of CrossPoint. If you don't have the number,
-break off with <Esc> and CrossPoint remains
+You will be asked to enter your registration details
+into CrossPoint. If you have registered, you will
+have received a registration key. Entering your
+registration number here, registers your version of
+CrossPoint. If you don't have a registration key,
+exit by pressing <Esc> and CrossPoint will remain
 unregistered.
 
-You will find details of where to get your
-registration in the file LICENCE.DOC which is in the
-CrossPoint package.
+You will find details of how to register in the file
+LICENCE.DOC, which is included in the CrossPoint
+package.
 @
 10102
 <<XPoint / Import
-Here you can import messages or message packets in
+Here, you can import messages or message packets in
 various formats into CrossPoint.
 @
 10103
 <<XPoint / Export
-Here you can have CrossPoint write message packets
-into various formats for passing them to other
-programs.
+Here, you can export (write) message packets
+into various formats for use with other programs.
 @
 10104
 <<XPoint / Statistic Menu
 
-This menu contains various functions for a status and
-statistical analysis of your CrossPoint message data
-base.
+This menu contains various statistical functions and
+analysis of your CrossPoint message database.
 @
 10105
 <<XPoint / Terminal  (CrossTerm)
 
 This is (provisionally) a rather primitive terminal
-program. Really, it is only for sending to the modem,
-and displaying what the modem sends. But it works,
-without frills, and you can operate on-line in a box
-with-it. Due to a bug, you cannot, as indicated, exit
-the terminal program and leave the telephone line
-open. It always hangs up.
+program. Really, it is only of use for sending
+commands to the modem and displaying the modem
+responses. But it does work, without frills, and you
+can operate on-line in a box with it. Due to a bug,
+you cannot, as indicated, exit the terminal program
+and leave the telephone line open. It always hangs
+up.
 
 (Maybe the bug is fixed now; try it!)
 
@@ -6710,9 +6666,10 @@ with AT commands to the modem).
 10106
 <<XPoint / DOS-Shell
 Calls a DOS Shell (put simply, starts a sub-session
-of DOS running under CrossPoint). XP tries to make
-itself as small as possible by swapping out unneeded
-data (to EMS or hard disk; see /Config/Options/Misc.)
+of DOS running under CrossPoint). CrossPoint tries to
+make itself as small as possible by swapping out
+unnecessary data, either to EMS or hard disk.
+(See /Config/Options/Misc.)
 
 To return to CrossPoint type "Exit" at the DOS Prompt
 as usual for DOS shells.
@@ -6721,11 +6678,11 @@ Note: You may not load any TSRs in this shell. If you
 do, CrossPoint will complain and exit!
 
 @
-10107
+10108
 <<XPoint / Quit
 
 Exit CrossPoint. You can set a safety question under
-/Config/Options/Misc. that asks you to confirm your
+Config/Options/Misc. that asks you to confirm your
 unbelievable intent to exit CrossPoint.
 
 Note that there is also a "Quit" option in the menus
@@ -7495,11 +7452,12 @@ pressing <Alt 1>.
 <<XPoint / Import / Z-Netz Puffer
 
 This imports a Z-Netz (Zerberus(r) compatible) packet
-in Netcall or Z-Connect format. This is for the event
-that a puffer must be read-in without a netcall;
-perhaps a repaired puffer after a damaged one could
-not be read in during the netcall, or simply one from
-somewhere else.
+in either Netcall or Z-Connect format. This is useful
+in the event that a message puffer needs to be
+read-in without making a netcall; perhaps after
+repairing a message puffer, it could not be read-in
+during the netcall or perhaps a message puffer from
+somewhere else needs to be read-in.
 
 During the import, any new newsgroups or new users
 for the user list are shown highlighted as usual.
@@ -7508,13 +7466,13 @@ for the user list are shown highlighted as usual.
 <<XPoint / Import / other format
 
 Imports message packets in FIDO (.pkt), MagicNET,
-QuickMail-, QWK- or MausTausch-(INFILE) format.
+QuickMail, QWK or MausTausch (INFILE) format.
 
 CrossPoint automatically uses the correct converter
 (MAGGI, ZFIDO or QWK) to convert the packet to
 Z-Netz format and import it.
 
-You must have a server defined (/Edit/Servers) of
+You must have a server defined (/Edit/Servers) for
 the type whose packet format is the same as that of
 the packet to be imported.
 
@@ -7523,21 +7481,27 @@ to enable a MagicNET packet to be imported correctly.
 
 @
 11003
+<<XPoint / Import / User List
+
+Here, you can read-in a list of addresses from a
+text file and import them into the User database.
+
+@
+11004
 <<XPoint / Import / Newsgroup list (Z-Netz)
 
-Normally, a newsgroup is entered automatically if it
-occurs in a news packet. If you want to have all
-newsgroups to which you subscribe entered, you can
-read in a list of them here, (you can get this list
-from your server) and CrossPoint enters all
-(not yet present) Newsgroups in the list. The main
-server as entered under /Edit/Servers will be used as
-the server for these new newsgroups.
-
+Normally, a new newsgroup is listed automatically if
+it occurs in a news packet. If you want to have all
+newsgroups to which you can subscribe listed, you can
+read in a list of them here (you can get this list
+from your news server) and CrossPoint enters all the
+listed Newsgroups in the list. The main Server, as
+configured under /Edit/Servers, will be used as the
+Server for these new newsgroups.
 
 Note! This function is not designed to give you a
 newsgroup list from which you can select to subscribe
-to. For that you use /Message/News manager/read file.
+to. For that, you use /Message/Newsmanager/read file.
 
 @
 11005
@@ -7883,9 +7847,9 @@ will be ignored.
 11602
 <<Edit / Servers
 
-This is the menu for setting up all the aspects of a
-server and your point. You can have as many as you
-want.
+This is the menu for configuring all aspects of a
+Server and Point. You may have as many Servers as
+you like.
 @
 11603
 <<Edit / Groups
