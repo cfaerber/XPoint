@@ -19,11 +19,7 @@ unit xp9;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
+  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
   sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
   xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
@@ -44,7 +40,6 @@ function  testfidodir(var s:string):boolean;
 function  testqwkinfiles(var s:string):boolean;
 procedure set_uparcext(var s:string);
 procedure set_downarcext(var s:string);
-function  progtest(var s:string):boolean;
 function  testmbretter(var s:string):boolean;
 procedure gf_getntyp(var s:string);
 function  testbaud(var s:string):boolean;
@@ -74,10 +69,8 @@ function  JanusSwitch(var s:string):boolean;
 implementation  {---------------------------------------------------}
 
 uses
-{$IFDEF unix}
-  xplinux,
-{$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterminal,xpmodemscripts;
+  {$IFDEF unix}xplinux,{$ENDIF}
+  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -156,24 +149,21 @@ begin
 end;
 
 function testfidodir(var s:string):boolean;   { Fido Sysop-Mode }
-var res : integer;
 begin
   if s='' then
-    testfidodir:=true
+    exit(true)
   else begin
     testfidodir:=false;
-    if RightStr(s,1)<>DirSepa then s:=s+DirSepa;
-    s:=ExpandFileName(s);
+    s:=AddDirSepa(ExpandFileName(s));
     if s=OwnPath then
       rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
     else
       if IsPath(s) then
-        testfidodir:=true
+        exit(true)
       else
         if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
         begin
-          mklongdir(s,res);
-          if res<0 then
+          if not CreateDir(s)then
             rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
           else
             testfidodir:=true;
@@ -221,33 +211,6 @@ begin
   else if LeftStr(ls,3)='arj' then ext:='arj'
   else if (LeftStr(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
   if ext<>'*' then setfield(DownArcNr,ext);
-end;
-
-function progtest(var s:string):boolean;
-var ok   : boolean;
-    fn,
-    path : string;
-begin
-  progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
-  path:=getenv('PATH');
-  if UpperCase(LeftStr(s+' ',7))='ZMODEM ' then
-{$IFDEF UnixFS}
-    begin
-      if(not ExecutableExists('rz'))or(not ExecutableExists('sz'))then
-        rfehler(933);                   { '"rz" und "sz" muessen installiert....' }
-      { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
-      exit;
-    end
-{$ELSE}
-    fn:='ZM.EXE'
-{$ENDIF}
-  else
-    fn:=trim(s);
-  if cpos(' ',fn)>0 then fn:=LeftStr(fn,cpos(' ',fn)-1);
-  if (fn<>'') and (pos('*'+UpperCase(fn)+'*','*COPY*DIR*PATH*')=0) then begin
-    ok:=ExecutableExists(fn);
-    if not ok then rfehler1(907,UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
-  end;
 end;
 
 function testmbretter(var s:string):boolean;
@@ -1159,7 +1122,7 @@ var d         : DB;
       mhnr(822); {JG}
       end;
     maddstring(3,4+add,getres2(935,5),prog,33,ViewprogLen,''); mhnr(823); {JG} { 'Viewer-Programm  ' }
-      msetvfunc(progtest);
+      msetvfunc(testexecutable);
     freeres;
     repeat
       readmask(brk);
@@ -1170,65 +1133,7 @@ var d         : DB;
     typ:=compmimetyp(typ);
   end;
 
-  procedure SortMIMETypes;
-
-  var
-    typ, typ2: string;
-    ext, ext2: string;
-    prog, prog2: string;
-    bExchanged: boolean;
-
-    procedure ReadValues;
-    begin
-      typ:= dbReadNStr(d,mimeb_typ);
-      ext:= dbReadNStr(d,mimeb_extension);
-      prog:= dbReadNStr(d,mimeb_programm);
-    end;
-
-    procedure ReadValues2;
-    begin
-      typ2 := dbReadNStr(d,mimeb_typ);
-      ext2 := dbReadNStr(d,mimeb_extension);
-      prog2 := dbReadNStr(d,mimeb_programm);
-    end;
-
-    procedure ExchangeAndWriteValues;
-    begin
-      dbWriteNStr(d,mimeb_typ,typ2);
-      dbWriteNStr(d,mimeb_extension,ext2);
-      dbWriteNStr(d,mimeb_programm,prog2);
-      dbSkip(d, -1);
-      dbWriteNStr(d,mimeb_typ,typ);
-      dbWriteNStr(d,mimeb_extension,ext);
-      dbWriteNStr(d,mimeb_programm,prog);
-      dbSkip(d, 1);
-      bExchanged := true; // at least one item was excanged
-    end;
-
-  var
-    i: Integer;
-  begin
-    if dbRecCount(d) < 2 then Exit;
-    repeat
-      bExchanged := false;
-      dbGoTop(d);
-      while not dbEOF(d) do
-      begin
-        ReadValues;
-        dbNext(d); if dbEOF(d) then break;
-        ReadValues2;
-        // todo: add checks and watch for deadlocks!
-        if ((Ext > Ext2) and (Typ +Typ2 = '')) or    // sort Extension without Type
-          ((Typ > Typ2) and (Ext + Ext2 = '')) or    // sort Types without Extensions
-          ((Ext > Ext2) and (Typ <> '') and (Typ2 <> '')) then
-        begin
-          ExchangeAndWriteValues;
-          continue;
-        end;
-      end;
-    until not bExchanged;
-    dbFlushClose(d);
-  end;
+  // procedure SortMIMETypes;  removed in Rev. 1.54
 
   procedure EditMimetyp(isNew: boolean);
   var typ  : string;
@@ -1836,8 +1741,14 @@ begin
     end;
   end;
 end.
+
 {
   $Log$
+  Revision 1.54  2001/01/06 16:16:02  ma
+  - replaced progtest by xp2.testexecutable
+  - removed SortMIMETypes and progtest
+  - shortened CVS logs
+
   Revision 1.53  2001/01/04 16:10:45  ma
   - adjusted unit names in "uses" statement
 
@@ -1852,156 +1763,4 @@ end.
 
   Revision 1.49  2000/11/19 17:53:34  ma
   - renamed existBin to ExecutableExists
-
-  Revision 1.48  2000/11/19 00:04:03  mk
-  - select feature in edit|system
-
-  Revision 1.47  2000/11/18 21:42:18  mk
-  - implemented new Viewer handling class TMessageViewer
-
-  Revision 1.46  2000/11/18 14:46:56  hd
-  - Unit DOS entfernt
-
-  Revision 1.45  2000/11/15 23:00:43  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.44  2000/11/14 15:51:35  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.43  2000/11/14 10:24:08  mk
-  - display message box in Edit/Viewer when modify */*
-
-  Revision 1.42  2000/11/06 00:41:26  mk
-  - fixed Bug #116657: crash with servername >15 chars
-
-  Revision 1.41  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.40  2000/11/01 10:23:40  mk
-  - Edit/Viewer: Eintrag */* wird jetzt auch gespeichert
-
-  Revision 1.39  2000/10/22 19:04:02  mk
-  - test auf doppelte MIME-Typen jetzt fertig
-
-  Revision 1.38  2000/10/19 16:12:46  mk
-  - added SortMIMETypes, attention: full of bugs!
-
-  Revision 1.37  2000/10/19 15:25:06  mk
-  - sstringp in AnsiString umgewandelt
-
-  Revision 1.36  2000/10/18 10:25:25  mk
-  - check for duplicate MIME-Types
-
-  Revision 1.35  2000/10/17 10:05:56  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.34  2000/07/23 13:24:12  hd
-  - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
-
-  Revision 1.33  2000/07/22 14:05:28  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.32  2000/07/21 21:17:47  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.31  2000/07/21 20:56:29  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.30  2000/07/21 17:39:56  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.29  2000/07/21 14:42:39  hd
-  - Ansistring
-  - Datenbankanpassung
-  - Einige Funktionen zusammengefasst
-
-  Revision 1.28  2000/07/21 13:14:09  hd
-  - Fix: Strings in der Maske
-  - Fix: Einige Datenbankzugriffe wegen AnsiString
-
-  Revision 1.27  2000/07/15 18:29:55  ml
-  - Ansistring + NilStringzugriffBug
-
-  Revision 1.26  2000/07/12 12:57:40  hd
-  - Ansistring
-
-  Revision 1.25  2000/07/05 12:47:28  hd
-  - AnsiString
-
-  Revision 1.24  2000/07/05 10:59:52  hd
-  - Weitere AnsiString-Anpassungen
-
-  Revision 1.23  2000/07/04 16:42:45  hd
-  - Funktion even entfernt
-
-  Revision 1.22  2000/07/04 12:04:28  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.21  2000/07/03 13:31:42  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.20  2000/06/29 13:00:58  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.19  2000/05/22 18:07:07  hd
-  - Progtest angepasst (Linux)
-
-  Revision 1.18  2000/05/14 15:04:52  hd
-  - Anpassungen Linux
-
-  Revision 1.17  2000/05/04 10:33:00  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.16  2000/05/02 19:14:02  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.15  2000/04/29 11:54:09  mw
-
-  - MIME in News voreingestellt
-  - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf ver„ndert
-
-  Revision 1.12  2000/04/15 21:44:48  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.11  2000/03/14 15:15:41  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.10  2000/03/05 19:46:12  jg
-  - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
-  - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
-
-  Revision 1.9  2000/02/24 20:27:54  jg
-  -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen
-   Eintraege am Anfang der Liste werden sofort angezeigt
-  -MiniBugfix: STRG+U in Eingabeboxen umgelegt auf STRG+A
-   (STRG+U entsprach SHIFT+3)
-
-  Revision 1.8  2000/02/21 22:48:02  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.7  2000/02/20 09:51:39  jg
-  - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
-    und verbunden mit selbrett/seluser
-  - Bei Brettvertreteradresse (Spezial..zUgriff) kann man jetzt
-    mit F2 auch User direkt waehlen. Und Kurznamen eingeben.
-
-  Revision 1.6  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
