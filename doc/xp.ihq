@@ -5059,16 +5059,19 @@ Der "Port" dieses Mail-Servers. Die Standard-Ports
 fr die jeweiligen Protokolle fr eingehende Mail
 sind:
 
-POP3: 110
-SMTP:  25
-IMAP: 143
+POP3     : 110
+SMTP     :  25
+IMAP4    : 143
+IMAP4-SSL: 585
+IMAPS    : 993 (= IMAP4 over TLS/SSL)
 
 Server stellen ihre Dienste unter verschiedenen
 "Ports" zur Verfgung. Welchen Port Sie fr das von
 Ihnen verwendete Protokoll verwenden mssen (falls
-abweichend vom Standard), erfahren Sie vom Betreiber
-des Servers. I.d.R. sollten die Standardwerte funk-
-tionieren.
+abweichend vom Standard) und welche Protokolle Sie
+berhaupt verwenden k”nnen, erfahren Sie vom Betrei-
+ber des Servers. I.d.R. sollten die Standardwerte
+funktionieren.
 
 Falls Sie einen Client verwenden, der die Angabe
 mehrerer Server gleichzeitig untersttzt, k”nnen Sie
@@ -5120,7 +5123,7 @@ Mails, die eine Envelope-Adresse aus dem eigenen
 Adreáraum tragen (z.B. kann bei "mailto.t-online.de"
 nur Mail mit T-Online-Adressen eingeliefert werden).
 Andere SMTP-Server wiederum, die zur Authentifizie-
-rung das Verfahren "POP before SMTP" verwenden,
+rung das Verfahren "SMTP after POP" verwenden,
 akzeptieren mitunter nur den Envelope-Absender, der
 beim vorherigen POP3-Login verwendet wurde.
 
@@ -5161,7 +5164,7 @@ frei.
 Ob Ihr Server SMTP-Authentifizierung untersttzt bzw.
 erfordert, erfahren Sie vom Betreiber des Servers.
 SMTP-Authentifizierung ist (noch) nicht sehr weit
-verbreitet, bekannte Verfahren sind "POP before SMTP"
+verbreitet, bekannte Verfahren sind "SMTP after POP"
 und "SMTP AUTH" nach RFC 2554 mit unterschiedlichen
 Methoden zur šbermittlung und Verschlsselung des
 Usernamens und Paáworts.
