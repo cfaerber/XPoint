@@ -55,9 +55,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  {$IFNDEF NCRT}
-  window(1,4,screenwidth,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
-  {$ENDIF}
+  // window(1,4,screenwidth,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
 end;
 
 procedure twin;
@@ -396,10 +394,11 @@ begin
     if DoSend(false,fn,netbrett,betreff+iifs(abbruch,getres2(700,38),''),  { ' (Fehler)' }
               false,false,false,false,false,nil,hd,hd,sendIntern+sendShow) then
       SetUngelesen;
-    if inwin then begin
-      window(1,4,screenwidth,screenlines-2);
+    if inwin then
+    begin
+      // window(1,4,screenwidth,screenlines-2);
       RestCursor;
-      end;
+    end;
     end;
   _era(fn);
   LogNetcall(sum,crash);
@@ -780,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/09/25 17:58:31  mk
+  - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
+
   Revision 1.26  2000/09/03 20:45:41  ma
   - CalcGebuehren ausgeklammert, laeuft nicht
 

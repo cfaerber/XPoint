@@ -412,9 +412,9 @@ begin
   mx:=wherex; my:=wherey;
   getmem(scrsave,scsize);
   col(ColText);
-  window(scx,scy,scx+wdt-1,scy+hgh-1);
+  // window(scx,scy,scx+wdt-1,scy+hgh-1);
   clrscr;
-  window(1,1,80,25);
+  // window(1,1,80,25);
   inc(windmax,$1900);
   wrt(scx,scy,'Õ'+dup(wdt-2,'Í')+'¸');
   col(ColStatus);
@@ -525,6 +525,9 @@ end.
 
 {
   $Log$
+  Revision 1.24  2000/09/25 17:58:31  mk
+  - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
+
   Revision 1.23  2000/07/14 00:00:40  ma
   - Kosmetik
   - Debuglogs aufgeraeumt

@@ -1659,7 +1659,7 @@ var y : byte;
 begin
   y:=wherey;
   close(output); assigncrt(output); rewrite(output);
-  window(1,4,80,xpwindow-2);
+  /// window(1,4,80,xpwindow-2);
   gotoxy(1,y-3);
 end;
 
@@ -1677,6 +1677,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/09/25 17:58:31  mk
+  - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
+
   Revision 1.33  2000/09/21 16:22:21  mk
   - ZFido wieder compilierbar
 

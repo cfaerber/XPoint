@@ -90,7 +90,7 @@ var fn   : string;
 
   procedure w1;
   begin
-    window(x+2,y+1,x+76,y+screenlines-8);
+    // window(x+2,y+1,x+76,y+screenlines-8);
     restcursor;
   end;
 
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/09/25 17:58:31  mk
+  - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
+
   Revision 1.22  2000/07/30 08:49:54  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
