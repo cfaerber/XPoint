@@ -243,9 +243,9 @@
     maddstring(3,20,getres2(920,91),PPPPhone,18,60,'');     { 'Telefon' }
     maddstring(36,18,getres2(920,92),PPPLogin,18,60,'');    { 'Login' }
     maddstring(36,20,getres2(920,93),PPPPass,18,20,'');     { 'Paáwort' }
-    maddtext(0,3,'+'+dup(66,'-')+'Ý', 0);  { Linie }
-    maddtext(0,11,'+'+dup(66,'-')+'Ý', 0); { Linie }
-    maddtext(0,17,'+'+dup(66,'-')+'Ý', 0); { Linie }
+    maddtext(0,3,'Ã'+dup(66,'Ä')+'´', 0);  { Linie }
+    maddtext(0,11,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
+    maddtext(0,17,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
 
     freeres;
     readmask(brk);
@@ -351,7 +351,7 @@
         boxpar^.username:=user;
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;
-        boxpar^.passwort:='GEHEIM';
+        boxpar^.passwort:=iifs(deutsch,'GEHEIM','SECRET');
         if pppm then boxpar^.ClientMailInEnv:=email;
         boxpar^.telefon:='';
         nt_bpar(nt,boxpar^);
@@ -414,6 +414,7 @@
         dbWriteStr(d,'realname',real);
         dbWriteStr(d,'domain',dom);
         dbWriteStr(d,'fqdn',fqdom);  
+        dbWriteStr(d,'email',email);
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fido);
         if (name='99:99/99') or (name='99:99/98') then begin  { Fido-Crashbox }
@@ -862,7 +863,7 @@
         cfgfile := OwnPath + MID(cfgfile, 6);
       pushhp(30129);
       { 'Externe Konfigurationsdatei laden' }
-      if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
+      if ReadExtCfgFilename(getres2(927,42),cfgfile,fullClientDir,true) then
       begin
         if not FileExists(cfgfile) then
           if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
@@ -916,8 +917,8 @@
       maddstring(43,20,getres2(920,110),ClientNewsPort,7,50,'0123456789 ');  { 'Port' }
         mappsel(false,'119');
 
-      maddtext(0,8,'+'+dup(58,'-')+'Ý', 0);  { Linie }
-      maddtext(0,15,'+'+dup(58,'-')+'Ý', 0); { Linie }
+      maddtext(0,8,'Ã'+dup(58,'Ä')+'´', 0);  { Linie }
+      maddtext(0,15,'Ã'+dup(58,'Ä')+'´', 0); { Linie }
 
       readmask(brk);
       if not brk then
@@ -2097,6 +2098,9 @@
 
 {
   $Log$
+  Revision 1.39  2001/11/24 17:27:34  mk
+  - some little client mode fixes
+
   Revision 1.38  2001/11/24 16:20:36  mk
   - reenabled client mode again
 
