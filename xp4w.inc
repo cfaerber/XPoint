@@ -1265,7 +1265,12 @@ begin
         repeat
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
-          if dbEOF(ubase) then Exit;
+          if dbEOF(ubase) then
+          begin
+            dbsetindex(ubase,indx);            { EOF: wieder nach Adressbuch sortieren}
+            errsound;
+            exit;
+          end;
           s:= dbReadNStr(ubase,ub_username);
         until (adrb<>0) or (LeftStr(UpperCase(s),length(newsuch))<>UpperCase(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
@@ -1595,6 +1600,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.68  2001/02/02 09:13:25  mk
+  JG:- Schnellsuche im Userfenster, wenn einziger Eintrag nicht im Adressbuch, aber zugleich letzer DB Eintrag ist.
+
   Revision 1.67  2001/01/22 14:53:04  mk
   JG:- Brettweiterschalt-Fix, Teil 3
 
