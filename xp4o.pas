@@ -860,28 +860,30 @@ begin
 
 {--Suche beendet--}
 
-    if markanz=0 then
+    if markanz=0 then               { Nichts gefunden }
+    begin 
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-        aufbau:=true;   { wg. gel”schter Markierung! }
-        suche:=false;
-        end
-      else
+        aufbau:=true;               { wg. gel”schter Markierung! }
+        end; 
+      goto ende;                    { Fenster wiedeherstellen...} 
+      end
+      
     else begin
-      suche:=true;
+      suche:=true;                  { Suche erfolgreich }
       signal;
       end;
-    end
+
+    end { of NOT Brk }
 
   else begin   { brk }
-ende:
+ende:                               { Suche gescheitert/abgebrochen }
     suche:=false;
     CloseBox;
     end;
   freeres;
 end;
 { R+}
-
 
 
 { Betreff-Direktsuche }
