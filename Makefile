@@ -46,8 +46,9 @@
 # soll.  (MUSS gesetzt werden.)
 #
 # fpc           Free Pascal <http://www.freepascal.org/>
+# vpc           Virtual Pascal <http://www.vpascal.com/>
 #
-COMPILER = fpc
+#COMPILER = 
 
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
@@ -92,8 +93,8 @@ endif
 
 CPU ?= 386
 
-ifneq ($(COMPILER),fpc)
-$(error Variable "COMPILER" muss auf "fpc" gesetzt werden)
+ifeq (,$(findstring $(COMPILER),fpc vpc))
+$(error Variable "COMPILER" muss auf "fpc" oder "vpc" gesetzt werden)
 endif
 
 ifeq (,$(contribdir))
@@ -153,7 +154,7 @@ CONTRIBDATA = fido.pc xpicons.dll
 endif
 
 ifeq ($(COMPILER),fpc)
-PC = ppc386$(EXE_EXT)
+PC = ppc386
 
 ifeq ($(DEBUG),yes)
 PFLAGS += -Ct -dDEBUG -Sg -pg -FuObjCOM
@@ -171,6 +172,26 @@ PF_586 = -Op2
 PF_686 = -Op3
 
 uuzext$(EXE_EXT): PFLAGS += -S2
+
+endif
+
+ifeq ($(COMPILER),vpc)
+PC = vpc
+
+ifeq ($(DEBUG),yes)
+PFLAGS += -DDEBUG -UObjCOM
+else
+PFLAGS += -UObjCOM
+endif
+
+PF_dos32 = 
+PF_os2 = -CO
+PF_win = -CW
+PF_linux = 
+PF_386 = 
+PF_486 = 
+PF_586 = 
+PF_686 = 
 
 endif
 
@@ -1419,6 +1440,11 @@ dist:
 
 #
 # $Log$
+# Revision 1.11  2000/10/02 13:07:30  fe
+# uucico-Dateien eingetragen.
+# ungetestete VPC-Unterstuetzung eingebaut.
+# Link zu OS/2-make-Binary geloescht (zu alt).
+#
 # Revision 1.10  2000/10/01 07:50:52  fe
 # Abhaengigkeiten von pmconv aktualisiert.
 #
