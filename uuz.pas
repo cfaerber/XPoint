@@ -842,7 +842,7 @@ begin
     wrs('X-XP-NTP: '+strs(netztyp));
     attrib:=attrib and not (attrReqEB+attrIsEB);
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('F-FTO: '+fido_to);
+    if fido_to<>''  then wrs('F-TO: '+fido_to);
     if XPointCtl<>0 then wrs('X-XP-CTL: '+strs(XPointCtl));
     wrs('');
     end;
@@ -3428,6 +3428,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.18  2000/10/18 21:37:34  mk
+  - Typo in F-TO gefixt
+
   Revision 1.35.2.17  2000/10/18 20:05:16  mk
   - 312 wieder rausgenommen
 
