@@ -544,10 +544,14 @@ var
   function eanzahl:integer;
   begin
     case typ of
-      5: Result:=Nodelist.Count;
-      6: Result:=tables;               //Tarif
+      1: result:=e.Count;               //Timingliste or
+      2: result:=e.Count;               //TastenMakros
+      3: result:=anzahl;                //Gebhren
+      4: result:=anzahl;                //Header
+      5: result:=Nodelist.Count;        //nodeliste
+      6: result:=tables;                //Tarif
     else
-      Result := E.Count;
+      result:=anzahl;
     end;
   end;
 
@@ -598,15 +602,12 @@ var
         Wrt2(sp(width))
       else begin
         case typ of
-
           1 : begin                               { Timingliste }
-                if e.Count > 0 then
-                begin str2time(e.Strings[i+a-1],tr); { e.Strings Lesen -1 ba 0 bassierend}
+                str2time(e.Strings[i+a-1],tr);    { e.Strings Lesen -1 ba 0 bassierend}
                 with tr do begin
                   write(' ',iifc(active,'+',' '),' ',von,'-',bis,'  ',vond,'-',
                   bisd,'  ',copy(e.Strings[i+a-1],29,8),'  ',forms(action,33));
                   end;
-                end;
               end;
           2 : begin                           { Tastenmakros }
                 tt:=left(e.Strings[i+a-1],13);
@@ -2038,8 +2039,8 @@ finalization
 end.
 {
   $Log$
-  Revision 1.33  2000/08/14 21:26:10  mk
-  - Bug in eanzahl() behoben
+  Revision 1.34  2000/08/14 23:04:35  mk
+  MO:- eanzahl() liefert jetzt immer den richtigen Wert
 
   Revision 1.32  2000/08/14 14:45:14  mk
   MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
