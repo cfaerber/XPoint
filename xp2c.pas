@@ -1267,14 +1267,13 @@ end;
 {$endif} { Linix }
 
 function testexecutable(var s:string):boolean;
-var
-  TempS: String;
 begin
-  if Pos(' ', s) > 0 then
-    TempS := Copy(s, 1, Pos(' ', s)-1) // remove params if necessary
-  else
-    TempS := s;
-  result:=ExecutableExists(Temps);
+  if s = '' then
+  begin
+    Result := true;
+    Exit;
+  end;
+  result:=ExecutableExists(s);
   if not result then rfehler(206);
 end;
 
@@ -1380,6 +1379,9 @@ end.
 
 {
   $Log$
+  Revision 1.83  2001/01/21 12:12:36  mk
+  - modifications to testexecutable() (MA)
+
   Revision 1.82  2001/01/20 15:33:21  mk
   - fixed Timezonefield in Unix Versions
 
