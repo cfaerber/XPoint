@@ -1323,7 +1323,7 @@ ende0:
     if net and (OStype<>OS_2) then
     begin
       RestComState(bport,cps);
-      if WinVersion >= $400 then
+      if WinVersion >= 3 then
         SetUart(bport,baud,Pnone,8,1,not IgnCTS);
     end;
     comn[boxpar^.bport].fossil:=orgfossil;
@@ -1552,6 +1552,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.13  2001/06/23 19:15:21  mk
+  - kleine Aenderung fuer neue WinVersion Routine
+
   Revision 1.16.2.12  2001/06/19 01:27:44  my
   - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
     netcall report if found in the client directory

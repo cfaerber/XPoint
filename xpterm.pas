@@ -660,7 +660,7 @@ begin
       if OStype<>OS_2 then
       begin
         RestComState(comnr,cps);
-        if WinVersion >= $400 then
+        if WinVersion >= 3 then
           SetUart(bport,baud,Pnone,8,1,not IgnCTS);
       end;
       rfehler(2002);     { 'Modem nicht bereit.' }
@@ -1615,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.5  2001/06/23 19:15:22  mk
+  - kleine Aenderung fuer neue WinVersion Routine
+
   Revision 1.10.2.4  2001/03/19 17:35:47  mk
   - neuer Brettmanager
 
