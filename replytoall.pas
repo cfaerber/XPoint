@@ -594,8 +594,13 @@ var RTAEmpfList : TRTAEmpfaengerList;
   begin
     i := 0;
     anz := 0;
-    while (i < RTAEmpfList.Count) and (anz < 2) do
-      if RTAEmpfList[i].RTAEmpf then Inc(anz);
+    for i:=0 to RTAEmpfList.Count-1 do
+      if RTAEmpfList[i].RTAEmpf then
+      begin
+        Inc(anz);
+        if anz=2 then break;
+      end;
+
     if one then
       RTAEmpfVorhanden := anz >= 1
     else
@@ -963,6 +968,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2001/09/09 09:12:04  cl
+  - BUGFIX: crash on CTRL-B/P with certain mail messages
+
   Revision 1.17  2001/09/08 14:18:17  cl
   - VirtualPascal fixes
 
