@@ -366,7 +366,7 @@ end;
 Function kbstat:byte;     { lokal }
 begin
 {$IFDEF BP }
-  kbstat:=mem[Seg0040:$17] and $70;
+  kbstat:=mem[Seg0040:$17];
 {$ELSE }
   kbstat := 0; { !! Muá auf den Plattformen portiert werden }
 {$ENDIF }
@@ -442,6 +442,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/15 00:21:52  mk
+  - Bug in kbstat beseitigt
+
   Revision 1.10  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
