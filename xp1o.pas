@@ -166,7 +166,7 @@ begin
           // "," is a valid url char, but test for things like
           // "see on http:///www.openxp.de, where" ...
           // in this case, "," does not belong to the url
-          if (s[y] = ',') and (y<Length(s)) and (not (s[y+1] in urlchars)) then
+          if ((s[y] = ',') or (s[y] = '.')) and (y<Length(s)) and (not (s[y+1] in urlchars)) then
             break;
           inc(y); {Ende der URL suchen...}
         end;
@@ -1081,6 +1081,9 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.9  2003/12/06 11:04:11  mk
+  - special handling for '.' at end of URLs
+
   Revision 1.110.2.8  2003/10/06 10:49:10  mk
   - added ";" to list of valid urlchars
   - fixed: #815959: Makro $CLIP (URL)
