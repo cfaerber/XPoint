@@ -1406,7 +1406,7 @@ begin
     Exit;
   end;
   result:=ExecutableExists(s);
-  if not result then rfehler(206);
+  if not result then rfehler(206); // 'Programm nicht erreichbar (Extension nicht vergessen!)'
 end;
 
 function testpgpexe(var s:string):boolean;
@@ -1549,6 +1549,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2002/05/03 20:43:06  mk
+  - added comment
+
   Revision 1.128  2002/05/01 17:10:35  mk
   MY:-  Bei Best„tigung des Config-Men?s C/O/B wird die
         Anzeige entfernt, da dann wieder die Men?optionen gelten.
