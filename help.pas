@@ -27,10 +27,10 @@ unit help;
 interface
 
 uses
-  xpglobal, 
+  xpglobal,
   keys; //taste
 
-const maxpages = 2000;
+const
       maxqvw   = 400;
       maxlines = 400;   { max. Zeilen pro Hilfsseite }
 
@@ -81,7 +81,7 @@ var   init    : boolean = false;
       _pexit  : string  = '';
 
 
-type pageadr = array[1..maxpages] of packed record
+type pageadr = array[1..maxint div 16] of packed record
                                        nr  : smallword;
                                        adr : longint;
                                      end;
@@ -195,10 +195,6 @@ begin
     wdt:=blockrb;
     hgh:=blockrb; dec(hgh,3);
     pages:=blockrw;
-    {$IFDEF Debug }
-      if Pages > MaxPages then
-        raise Exception.Create('MaxPages in help.pas is to small');
-    {$ENDIF }
     ixp:=blockrw;
     illp:=blockrw;
     ixadr:=blockrl;
@@ -789,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.55  2003/09/14 03:08:18  mk
+  - removed MaxPages Limit complete, pageaddresses are allocated dynamically
+
   Revision 1.54  2003/09/13 17:40:18  mk
   - fixed #804967: Crash beim Aufruf der Hilfe
 
