@@ -18,14 +18,23 @@ ShowHeader("OpenXP Online");
 
 if ($file!="")
   include($file);
-else
-  if ($bare!="")
-    { echo("<plaintext>"); include($bare); echo("</plaintext>"); }
-  else
-    if ($news!="")
-      ShowNews($news,$genindex);
-    else
-      include("main-".$language.".html");
+else if ($bare!="") { 
+  set_time_limit(240);
+  if($bare_fp = fopen($bare,"r")) {
+    echo("<pre>"); 
+    while($bare_d = fread($bare_fp,8192)) {
+      set_time_limit(120);
+      echo htmlspecialchars($bare_d); }
+    echo("</pre>");
+  }
+}
+else if ($news!="") {
+  ShowNews($news,$genindex);
+}
+else {
+  include("main-".$language.".html");
+}
 
 ShowFooter();
+
 ?>

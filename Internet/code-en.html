@@ -2,81 +2,83 @@
 
 <h3>General</h3>
 
-OpenXP is developed by many people. Therefore every developer has to follow
-some rules.
+OpenXP is developed by many people. Therefore every developer has to follow some rules. 
 
-<p>For coordination of the OpenXP project there is a
-<a href="http://mail1.sourceforge.net/mailman/listinfo/openxp-dev">maillinglist</a>.
-English postings will be answered in english - and are very welcome :-).
+<p>For coordination of the OpenXP project there is a <a href="http://mail1.sourceforge.net/mailman/listinfo/openxp-dev">maillinglist</a>. English postings will be answered in english - and are very welcome :-).</p>
 
-<p>You can use <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi">cvsWeb</a>
-to browse the CVS repository and see file logs (both login and password "cvs").
+<p>You can use <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi">cvsWeb</a> to browse the CVS repository and see file logs (both login and password "cvs").</p>
 
-<p>OpenXP compiles with <a href="http://www.freepascal.org">FreePascal</a>
-and <a href="http://www.vpascal.com">Virtual Pascal</a>.
-<br>Current versions can be obtained from the <a href="ftp://ftp.openxp.de/pascal">
-OpenXP ftp server</a>.
+<p>OpenXP compiles with <a href="http://www.freepascal.org">FreePascal</a> and <a href="http://www.vpascal.com">Virtual Pascal</a>.
+<br />
+Current versions can be obtained from the <a href="ftp://ftp.openxp.de/pascal">OpenXP ftp server</a>.</p>
 
 <h3>Legal</h3>
 
-<b>Be aware OpenXP is an open source project. That means any changes you make
-to it are free and not someone's property and can be used in any other
-open source project as well.</b>
-<br>If you create or check in any new units, please choose a proper Open Source
-license and add a note in the unit's header.
-<p>For information on Open Source licenses visit <a href="http://www.opensource.org">
-OpenSource.org</a> of the <a href="http://www.fsf.org/copyleft/licenses.html">
-FSF license page</a>. Some licenses are available on the
-<a href="ftp://ftp.openxp.de/openxp/devdoc/license">OpenXP ftp server</a>.
+<b>Be aware OpenXP is an open source project. That means any changes you make to it are free and not someone's property and can be used in any other open source project as well.</b> 
+<br />
+If you create or check in any new units, please choose a proper Open Source license and add a note in the unit's header. 
+
+<p>For information on Open Source licenses visit <a href="http://www.opensource.org">OpenSource.org</a> of the <a href="http://www.fsf.org/copyleft/licenses.html">FSF license page</a>. Some licenses are available on the <a href="ftp://ftp.openxp.de/openxp/devdoc/license">OpenXP ftp server</a>.</p>
 
 <h3>Getting the source code</h3>
-<a href="http://www.cvshome.com">CVS</a> is used for managing
-the sources. A Windows and OS/2 version can be found on the
-<a href="ftp://ftp.openxp.de/openxp/tools">OpenXP ftp server</a>.
 
-<p>CVS uses a "main source archive", called repository. Every developer uses
-a copy of this repository called "working directory" on his machine. CVS
-cares for keeping both archives in sync.
-<br>You create your working directory by installing CVS and entering
-<br><font face="Courier New, Courier, mono">cvs -d :pserver:<i>username</i>@fries7-73.stw.uni-jena.de:/usr/local/cvs login</font>
-<br>You are prompted for a password (guest read-only login username "cvs",
-password "cvs"). The password is stored in ~/.cvspass (when not using Unix you
-have to specify a home directory by "set home=<i>directory</i>" before).
-<br>Then, you can build your working directory by entering
-<br><font face="Courier New, Courier, mono">cvs -d :pserver:<i>username</i>@fries7-73.stw.uni-jena.de:/usr/local/cvs checkout openxp</font>
-<br>Now, you have a working directory in ./openxp. Feel free to explore ;-).
-<br>BTW, you don't have to use the -d parameter of CVS anymore since the
-repository position is saved in the CVS directories in your working
-directory.
+<a href="http://www.cvshome.com">CVS</a> is used for managing the sources. A Windows and OS/2 version can be found on the <a href="ftp://ftp.openxp.de/openxp/tools">OpenXP ftp server</a>. 
 
-<p>To update the working directory (get the repository changes since
-the last working directory update), enter
-<br><font face="Courier New, Courier, mono">cvs update</font>
-<br>being the OpenXP directory the current directory. If you made
-changes to your working directory, they will be merged with the
-changes that are obtained from the repository.
+<p>CVS uses a "main source archive", called repository. Every developer uses a copy of this repository called "working directory" on his machine. CVS cares for keeping both archives in sync.
+<br />
+You create your working directory by installing CVS and entering
+<br />
+<tt>cvs -d :pserver:<var>username</var>@fries7-73.stw.uni-jena.de:/usr/local/cvs login</tt>
+<br />
+You are prompted for a password (guest read-only login username "cvs", password "cvs"). The password is stored in ~/.cvspass (when not using Unix you have to specify a home directory by "set home=<var>directory</var>" before).
+<br />
+Then, you can build your working directory by entering
+<br />
+<tt>cvs -d :pserver:<var>username</var>@fries7-73.stw.uni-jena.de:/usr/local/cvs checkout openxp</tt>
+<br />
+Now, you have a working directory in ./openxp. Feel free to explore ;-).
+<br />
+BTW, you don't have to use the -d parameter of CVS anymore since the repository position is saved in the CVS directories in your working directory.</p>
 
-<p>To update the repository with the changes you made to your working
-directory you need a full CVS account. Then, you can enter
-<br><font face="Courier New, Courier, mono">cvs commit <i>file</i></font>.
-<br>You will be prompted for a log message.
+<p>To update the working directory (get the repository changes since the last working directory update), enter
+<br />
+<tt>cvs update</tt>
+<br />
+being the OpenXP directory the current directory. If you made changes to your working directory, they will be merged with the changes that are obtained from the repository.</p>
 
-<p>Further information is available currently only in german (click
-<a href="index.php4?news=hints-de.txt&genindex=1">here</a>).
+<p>To update the repository with the changes you made to your working directory you need a full CVS account. Then, you can enter
+<br />
+<tt>cvs commit <var>file</var></tt>.
+<br />
+You will be prompted for a log message.</p>
+
+<p>Further information is available currently only in german (click <a href="index.php4?news=hints-de.txt&genindex=1">here</a>).</p>
 
 <h3>Buch-Empfehlungen</h3>
-<TABLE WIDTH="75%" BORDER="1">
-<TR><TD><A HREF="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"><IMG SRC="1556154844_m.gif" BORDER="0"><BR> 
-</A><A HREF="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"> 
-Jetzt bestellen!</A></TD><TD>Ein absoulter Klassiker ist Code Complete von Steve 
-McConnell. Ich empfehle dieses Buch jedem, der Software entwickelt.</TD></TR>
-<TR><TD><A HREF="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"><IMG SRC="1576104907_l.gif" BORDER="0"><BR> 
-</A><A HREF="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"> 
-Jetzt bestellen!</A> </TD><TD><P>Dieses Buch behandelt zwei gro&szlig;e Themen: 
-</P><P>1. Open Source Software: Es werden Hinweise f&uuml;r das durchf&uuml;hren 
-von Open Source Projekten gegeben<BR>2. CVS: Das Versionsmanagement-System wird 
-komplett bis hin zur Administration erl&auml;utert</P></TD></TR></TABLE><p><hr> 
-<p><img src= 
-"http://cgicounter.kundenserver.de/cgi-bin/cnt?clsid=fbd3392f1f13ed524c740ca04dec22161"> 
-<a href="http://www.libranet.com/petition.html"><img src="linux.gif" width="90" 
-height="30" border="0" alt="Sign The Linux Driver Petition"></a><br> 
+
+<table width="75%" border="1">
+<tr>
+<td><a href="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt"><img src="1556154844_m.gif" border="0" />
+<br />
+</a> <a href="http://www.amazon.de/exec/obidos/ASIN/1556154844/openxpprojekt">Jetzt bestellen!</a></td>
+<td>Ein absoulter Klassiker ist Code Complete von Steve McConnell. Ich empfehle dieses Buch jedem, der Software entwickelt.</td>
+</tr>
+
+<tr>
+<td><a href="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt"><img src="1576104907_l.gif" border="0" />
+<br />
+</a> <a href="http://www.amazon.de/exec/obidos/ASIN/1576104907/openxpprojekt">Jetzt bestellen!</a></td>
+<td>
+<p>Dieses Buch behandelt zwei gro&szlig;e Themen:</p>
+
+<p>1. Open Source Software: Es werden Hinweise f&uuml;r das durchf&uuml;hren von Open Source Projekten gegeben
+<br />
+2. CVS: Das Versionsmanagement-System wird komplett bis hin zur Administration erl&auml;utert</p>
+</td>
+</tr>
+</table>
+
+<hr />
+<p><img src="http://cgicounter.kundenserver.de/cgi-bin/cnt?clsid=fbd3392f1f13ed524c740ca04dec22161" /> <a href="http://www.libranet.com/petition.html"><img src="linux.gif" width="90" height="30" border="0" alt="Sign The Linux Driver Petition" /></a>
+<br />
+</p>

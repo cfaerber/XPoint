@@ -23,7 +23,7 @@ function ShowHeader($title) {
 	
 	// now we use XHTML 1.0
 	echo("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n");
-	echo("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"".htmlspecialchars($language)."\" lang=\"".htmlspecialchars($language)."\">\n")
+	echo("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"".$language."\" lang=\"".$language."\">\n");
 	echo("<head>\n");
     	echo("<meta name=\"copyright\" content=\"Copyright by OpenXP team, &copy; 1999-" . htmlspecialchars(date("Y")) . ", all rights reserved\" />\n");
 	// depends on the language
@@ -48,6 +48,7 @@ function ShowHeader($title) {
 	} else {
 		echo("<a href=\"http://www.openxp.de/\">Deutsch</a>");
 	};
+	echo("</small></td></tr></table>");
 	echo("<hr noshade=\"noshade\"/>");
 
 	// open main table
@@ -55,7 +56,7 @@ function ShowHeader($title) {
 	// build site map
 	echo("\n<td align=\"left\" valign=\"top\" width=\"140\">");
 	// now underlaying a blue table and then set the header
-	echo("\n<table width=\"100%\" border=\"0\" cellpadding=\"0\" bgcolor=\"blue\"><tr>");
+	echo("\n<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" bgcolor=\"blue\"><tr>");
 	echo("\n<td>\n<table width=\"100%\" border=\"0\" cellpadding=\"4\"><tr bgcolor=\"yellow\">");
 	echo("\n<th align=\"center\">Site Map</th>\n</tr>\n<tr bgcolor=\"white\">\n<td align=\"left\">");
 	echo("\n<dl>"); // start definition list
@@ -88,7 +89,7 @@ function ShowFooter() {
 	global $language;
 	echo("\n</td></tr></table>\n<hr noshade=\"noshade\" size=\"1\" />");
 	echo("\n<table width=\"100%\"><tr>\n<td align=\"left\">");
-	if ($language == \"de\") {
+	if ($language == "de") {
 		echo("<a href=\"#top\">Seitenanfang</a>\n");
 	} else {
 		echo("<a href=\"#top\">Top</a>\n");
@@ -178,7 +179,7 @@ function ShowNews($newsfile,$genindex) {
 	  while (!feof($pnfile)) {
 	    $iarticle++;
 	    $headline=fgets($pnfile,200);
-	    echo("\n<li><a href=\"#art".$iarticle."\">".htmlspecialchars($headline)."</a></li>");
+	    echo("\n<li><a href=\"#art".$iarticle."\">".$headline."</a></li>");
 	    do {
 	      $headline=fgets($pnfile,1000);
 	    } while((trim($headline)!="")and(!feof($pnfile)));
@@ -262,6 +263,4 @@ function ShowDownloadTable($downfile) {
 	if ($fhandle) ftp_quit($fhandle);
 	fclose($pdfile);
 }
-
-
 ?>
