@@ -190,7 +190,8 @@
 
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
                      PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; const Titel:String);
-  var x,y,b:byte;
+  var x,y,b       : byte;
+      serverNames : string;
   begin
     dialog(66,20,Titel,x,y);   { 'Client-Einstellungen' }
   
@@ -224,7 +225,12 @@
      'UKA_PPP.BAT /M $CLPATH $CONFIG˘start /w $CLPATH+XPNEWS.EXE $CONFIG˘$CLPATH+XPNEWS.EXE $CONFIG');
     msetvfunc(pppclienttest);
 
-    maddstring(3,16,getres2(920,89),PPPAddServers,41,60,ValidDirCh);   { 'ZusÑtzliche Server' }
+    serverNames:=BfgToBox(PPPAddServers);
+    maddstring(3,16,getres2(920,89),serverNames,41,255,     { 'ZusÑtzliche Server' }
+             '"!'+range('#','?')+range('A',#126)+'éôö ');   { EingabelÑnge 255 ist korrekt! }
+            { ^^ wegen "!" = TopCase }
+    mappcustomsel(EditAddServersList,true); mselhnr(31109);
+    msetvfunc(addServersTest);
 
     maddstring(3,18,getres2(920,90),PPPDialUp,18,60,'');    { 'Zugang' }
 
@@ -241,6 +247,7 @@
     freeres;
     readmask(brk);
     enddialog;
+    PPPAddServers:=BoxToBfg(serverNames);
   end;
 
   procedure NewBox;
@@ -297,12 +304,11 @@
       nt:=40;
       pp:=boxpar^.PPPClientPath;
       pc:=boxpar^.PPPClient;
-      ps:=boxpar^.PPPAddServers;
       cldup:=boxpar^.PPPDialUp;
       clphn:=boxpar^.PPPPhone;
       cllog:=boxpar^.PPPLogin;
       clpas:=boxpar^.PPPPass;
-      end;
+    end;
     name:=''; user:=''; komm:=''; fido:='';
     maps:=DefaultMaps(nt);
     dom:=ntDefaultDomain(nt); bdom:=dom;
@@ -310,12 +316,15 @@
     real:='';
     replyto:='';
     fqdom:='';
+    ps:='';
     boxpar^.PPPMailInEnv:='';
     boxpar^.PPPMailInUser:='';
     boxpar^.PPPMailInPass:='';
+    boxpar^.PPPMailFallback:='';
     boxpar^.PPPMailOutEnv:='';
     boxpar^.PPPMailOutUser:='';
     boxpar^.PPPMailOutPass:='';
+    boxpar^.PPPNewsFallback:='';
     boxpar^.PPPNewsUser:='';
     boxpar^.PPPNewsPass:='';
 
@@ -827,7 +836,7 @@
       if ustr(left(cfgfile,5))='<XP>' + DirSepa then
         cfgfile:= ownpath + Mid(cfgfile,6);
       if LFNEnabled then cfgfile := GetLongName(cfgfile);
-      pushhp(30129);
+      pushhp(30138);
       { 'Externe Konfigurationsdatei laden' }
       if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
       begin
@@ -855,38 +864,58 @@
 
 
   procedure EditTransport(nt:byte; var brk:boolean);
-  var x,y, j: byte;
+  var x,y,j : byte;
+      MailFallbackName : string[BoxNameLen];
+      NewsFallbackName : string[BoxNameLen];
   begin
-    dialog(58,20,kompname,x,y);
+    dialog(58,21,kompname,x,y);
     with boxpar^ do begin
-      maddtext(3,2,getres2(920,100),col.coldiahigh);
-      maddstring(3,4,getres2(920,106),PPPMailInSrvr,35,160,'');   { 'Servername  ' }
+
+      maddtext(3,1,getres2(920,100),col.coldiahigh);
+   { 'Mail-Server fÅr eingehende Mail (POP3/SMTP/IMAP)' }
+      maddstring(3,3,getres2(920,106),PPPMailInSrvr,35,160,'');   { 'Servername  ' }
         mappsel(false,getres2(920,101));
         mhnr(30115);
-      maddstring(3,5,getres2(920,107),PPPMailInEnv,35,160,'');    { 'Envelope-Adresse' }
-      msetvfunc(Multi_Mailstring);
-      maddstring(3,6,getres2(920,108),PPPMailInUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,7,getres2(920,109),PPPMailInPass,18,75,'');    { 'Pa·wort     ' }
-      maddstring(43,7,getres2(920,110),PPPMailInPort,7,50,'0123456789 ');  { 'Port' }
-        mappsel(false,'110˘25˘143˘585˘993');
-      maddtext(3,9,getres2(920,102),col.coldiahigh);
-      maddstring(3,11,getres2(920,106),PPPMailOutSrvr,35,160,'');  { 'Servername  ' }
+      maddstring(3,4,getres2(920,108),PPPMailInEnv,35,160,'');    { 'Envelope-Adresse' }
+        msetvfunc(Multi_Mailstring);
+      maddstring(3,5,getres2(920,109),PPPMailInUser,35,160,'');   { 'Benutzername' }
+      maddstring(3,6,getres2(920,110),PPPMailInPass,18,75,'');    { 'Pa·wort     ' }
+      maddstring(43,6,getres2(920,111),PPPMailInPort,7,50,'0123456789 ');
+        mappsel(false,'110˘25˘143˘585˘993');                      { 'Port' }
+
+      maddtext(3,8,getres2(920,102),col.coldiahigh);
+   { 'Mail-Server fÅr ausgehende Mail (SMTP)' }
+      maddstring(3,10,getres2(920,106),PPPMailOutSrvr,35,160,'');  { 'Servername  ' }
         mappsel(false,getres2(920,103));
-      maddstring(3,12,getres2(920,107),PPPMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
-      msetvfunc(Multi_Mailstring);
-      maddstring(3,13,getres2(920,108),PPPMailOutUser,35,160,'');  { 'Benutzername' }
-      maddstring(3,14,getres2(920,109),PPPMailOutPass,18,75,'');   { 'Pa·wort     ' }
-      maddstring(43,14,getres2(920,110),PPPMailOutPort,7,50,'0123456789 '); { 'Port' }
-        mappsel(false,'25');
+      MailFallbackName:=BfgToBox(PPPMailFallback);
+      maddstring(3,11,getres2(920,107),MailFallbackName,35,BoxNameLen,
+                 '"!'+range('#','?')+range('A',#126)+'éôö');
+                { ^^ wegen "!" = TopCase }
+        mappcustomsel(SingleServerSel,false);                      { 'Fallback-Server' }
+        msetvfunc(addServersTest);
+      maddstring(3,12,getres2(920,108),PPPMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
+        msetvfunc(Multi_Mailstring);
+      maddstring(3,13,getres2(920,109),PPPMailOutUser,35,160,'');  { 'Benutzername' }
+      maddstring(3,14,getres2(920,110),PPPMailOutPass,18,75,'');   { 'Pa·wort     ' }
+      maddstring(43,14,getres2(920,111),PPPMailOutPort,7,50,'0123456789 ');
+        mappsel(false,'25');                                       { 'Port' }
+
       maddtext(3,16,getres2(920,104),col.coldiahigh);
+   { 'News-Server (NNTP)' }
       maddstring(3,18,getres2(920,106),PPPNewsSrvr,35,160,'');   { 'Servername  ' }
         mappsel(false,getres2(920,105));
-      maddstring(3,19,getres2(920,108),PPPNewsUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,20,getres2(920,109),PPPNewsPass,18,75,'');    { 'Pa·wort     ' }
-      maddstring(43,20,getres2(920,110),PPPNewsPort,7,50,'0123456789 ');  { 'Port' }
+      NewsFallbackName:=BfgToBox(PPPNewsFallback);
+      maddstring(3,19,getres2(920,107),NewsFallbackName,35,BoxNameLen,
+                 '"!'+range('#','?')+range('A',#126)+'éôö');
+                { ^^ wegen "!" = TopCase }
+        mappcustomsel(SingleServerSel,false);                    { 'Fallback-Server' }
+        msetvfunc(addServersTest);
+      maddstring(3,20,getres2(920,109),PPPNewsUser,35,160,'');   { 'Benutzername' }
+      maddstring(3,21,getres2(920,110),PPPNewsPass,18,75,'');    { 'Pa·wort     ' }
+      maddstring(43,21,getres2(920,111),PPPNewsPort,7,50,'0123456789 ');  { 'Port' }
         mappsel(false,'119');
 
-      maddtext(0,8,'√'+dup(58,'ƒ')+'¥', 0);  { Linie }
+      maddtext(0,7,'√'+dup(58,'ƒ')+'¥', 0);  { Linie }
       maddtext(0,15,'√'+dup(58,'ƒ')+'¥', 0); { Linie }
 
       readmask(brk);
@@ -908,6 +937,8 @@
         closebox;
         end;
       enddialog;
+      PPPMailFallback:=BoxToBfg(MailFallbackName);
+      PPPNewsFallback:=BoxToBfg(NewsFallbackName);
       freeres;
       exit;
       end;
@@ -924,28 +955,28 @@
     dialog(ival(getres2(921,0)),9+add,kompname,x,y);
     with boxpar^ do begin
       maddint(3,2,getres2(921,1),connwait,5,4,1,1000);       { 'Warten auf Verbindung' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30130) else mhnr(160);
+      if (nt=nt_UUCP) and pppMode then mhnr(30139) else mhnr(160);
       if not fido then
         maddint(3,3,getres2(921,2),loginwait,5,4,1,1000);    { 'Warten auf Login     ' }
-        if (nt=nt_UUCP) and pppMode then mhnr(30131) else mhnr(161);
+        if (nt=nt_UUCP) and pppMode then mhnr(30140) else mhnr(161);
       maddint(3,4+add,getres2(921,3),redialwait,5,4,2,1000); { 'WÑhlpause           ' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30132) else mhnr(162);
+      if (nt=nt_UUCP) and pppMode then mhnr(30141) else mhnr(162);
       maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale WÑhlversuche' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30133) else mhnr(163);
+      if (nt=nt_UUCP) and pppMode then mhnr(30142) else mhnr(163);
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
-        if (nt=nt_UUCP) and pppMode then mhnr(30134) else mhnr(164);
+        if (nt=nt_UUCP) and pppMode then mhnr(30143) else mhnr(164);
         if (nt<>nt_UUCP) then
           maddint(35,3,getres2(921,6),packwait,5,4,1,9999);  { 'Warten auf Daten' }
         end;
       maddint(35,4+add,getres2(921,7),connectmax,5,4,1,10);  { 'max. Connects  ' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30135) else mhnr(166);
+      if (nt=nt_UUCP) and pppMode then mhnr(30144) else mhnr(166);
       maddint(35,5+add,getres2(921,8),mincps,5,4,0,9999);    { 'min. cps-Rate   ' }
       if (nt=nt_UUCP) or not (fido or stricmp(uploader,'ZMODEM') or
                                       stricmp(downloader,'ZMODEM')) then
         mdisable;
       maddstring(3,7+add,getres2(921,9),modeminit,41,60,''); { 'Modem-Init ' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30136) else mhnr(168);
+      if (nt=nt_UUCP) and pppMode then mhnr(30145) else mhnr(168);
 {$IFDEF CAPI }
       if bport=5 then
         schnitte:='ISDN'
@@ -953,13 +984,13 @@
 {$ENDIF }
       schnitte:='COM'+strs(bport);
       maddstring(3,9+add,getres2(921,10),schnitte,4,4,'');   { 'Schnittstelle ' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30137) else mhnr(169);
+      if (nt=nt_UUCP) and pppMode then mhnr(30146) else mhnr(169);
       mappsel(true,'COM1˘COM2˘COM3˘COM4');
 {$IFDEF CAPI }
       if ntISDN(nt) then mappsel(true,'ISDN');
 {$ENDIF }
       maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'öbertragungsrate:' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30138) else mhnr(170);
+      if (nt=nt_UUCP) and pppMode then mhnr(30147) else mhnr(170);
       mappsel(false,'300˘1200˘2400˘4800˘9600˘19200˘38400˘57600˘115200');
       msetvfunc(testbaud);
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
@@ -985,10 +1016,10 @@
       if not crash then begin
         maddstring(3,2,getres2(922,1),gebzone,20,20,'');   { 'Tarifzone      ' }
         AppPhoneZones;
-        if (nt=nt_UUCP) and pppMode then mhnr(30140) else mhnr(180);
+        if (nt=nt_UUCP) and pppMode then mhnr(30149) else mhnr(180);
         end;
       maddint(3,iif(crash,2,4),getres2(922,5),conn_time,2,2,0,99);    { 'Connect-Dauer: ' }
-      if (nt=nt_UUCP) and pppMode then mhnr(30141) else mhnr(181);
+      if (nt=nt_UUCP) and pppMode then mhnr(30150) else mhnr(181);
       maddtext(length(getres2(922,5))+9,iif(crash,2,4),getres2(922,6),0);   { 'Sek.' }
       freeres;
       readmask(brk);
@@ -1148,13 +1179,13 @@
         fl:=3; el:=35;
         maddstring(3,2,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
         if nt=nt_UUCP then begin
-          if pppMode then mhnr(30150) else mhnr(8036);
+          if pppMode then mhnr(30160) else mhnr(8036);
           end
         else mhnr(183);
         msetvfunc(testfidodir);
         maddstring(3,4,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
         if nt=nt_UUCP then begin
-          if pppMode then mhnr(30150) else mhnr(8036);
+          if pppMode then mhnr(30160) else mhnr(8036);
           end
         else mhnr(183);
         msetvfunc(testfidodir);
@@ -1682,6 +1713,7 @@
      lastclient : boolean = false;
   var n   : shortint;
       fn  : string[12];
+      bn  : string[BoxNameLen];
       brk : boolean;
       nt  : byte;
       nts : string[20];
@@ -1690,13 +1722,18 @@
   begin
     dbGo(d,drec[p]);
     dbRead(d,'dateiname',fn);
-    if fn='' then fn:=left(dbReadStr(d,'boxname'),8);
+    dbRead(d,'boxname',bn);
+    if fn='' then fn:=left(bn,8);
     dbRead(d,'netztyp',nt);
+    own_Nt:=nt;          {                                    }
+    own_Name:=ustr(bn);  { fÅr 'addServersTest' in xp9sel.pas }
+    showErrors:=true;    {                                    }
     ReadBox(nt,fn,boxpar);
     nts:=''; nts2:=getres2(927,5)+getres2(927,6);   { ',^SysopMode' }
     if (nt=nt_uucp) and boxpar^.pppMode then
     begin
       Pushhp(132);
+      own_nt:=41;
       nts0:='^Client,'+getres2(927,8)+getres2(927,9)+getres2(927,2)+getres2(927,3);
       nts2:=getres2(927,5)+getres2(927,6);
       if not lastclient then edb_pos:=clientpos[edb_pos];
@@ -1860,6 +1897,14 @@
 
 {
   $Log$
+  Revision 1.10.2.50  2001/11/20 23:21:10  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+       D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+       siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       abgelegt.
+
   Revision 1.10.2.49  2001/10/22 23:12:04  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also

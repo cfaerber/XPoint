@@ -160,11 +160,13 @@ begin
     PPPMailInPass:= '';
     PPPMailInPort:= '110';
     PPPMailOutSrvr:= 'mailto.t-online.de';
+    PPPMailFallback:= '';
     PPPMailOutEnv:= '';
     PPPMailOutUser:= '';
     PPPMailOutPass:= '';
     PPPMailOutPort:= '25';
     PPPNewsSrvr:= 'news.t-online.de';
+    PPPNewsFallback:= '';
     PPPNewsUser:= '';
     PPPNewsPass:= '';
     PPPNewsPort:= '119';
@@ -306,7 +308,7 @@ begin
             getx(su,  'Client-Mode', PPPMode) or
             gets(s,su,'Client-Path', PPPClientPath, 60) or
             gets(s,su,'Client-Exec', PPPClient, 60) or
-            gets(s,su,'Client-AddServers', PPPAddServers, 60) or
+            gets(s,su,'Client-AddServers', PPPAddServers, 160) or
             gets(s,su,'Client-DialUp',PPPDialup,60) or
             gets(s,su,'Client-Phone',PPPPhone,60) or
             gets(s,su,'Client-Login',PPPLogin,60) or
@@ -319,11 +321,13 @@ begin
             gets(s,su,'Client-MailInPassword', PPPMailInPass, 75) or
             gets(s,su,'Client-MailInPort', PPPMailInPort, 50) or
             gets(s,su,'Client-MailOutServer', PPPMailOutSrvr, 160) or
+            gets(s,su,'Client-MailFallback', PPPMailFallback, 8) or
             gets(s,su,'Client-MailOutEnvelope', PPPMailOutEnv, 160) or
             gets(s,su,'Client-MailOutUser', PPPMailOutUser, 160) or
             gets(s,su,'Client-MailOutPassword', PPPMailOutPass, 75) or
             gets(s,su,'Client-MailOutPort', PPPMailOutPort, 50) or
             gets(s,su,'Client-NewsServer', PPPNewsSrvr, 160) or
+            gets(s,su,'Client-NewsFallback', PPPNewsFallback, 8) or
             gets(s,su,'Client-NewsUser', PPPNewsUser, 160) or
             gets(s,su,'Client-NewsPassword', PPPNewsPass, 75) or
             gets(s,su,'Client-NewsPort', PPPNewsPort, 50) or
@@ -500,11 +504,13 @@ begin
     writeln(t,'Client-MailInPassword=', PPPMailInPass);
     writeln(t,'Client-MailInPort=', PPPMailInPort);
     writeln(t,'Client-MailOutServer=', PPPMailOutSrvr);
+    writeln(t,'Client-MailFallback=', PPPMailFallback);
     writeln(t,'Client-MailOutEnvelope=', PPPMailOutEnv);
     writeln(t,'Client-MailOutUser=', PPPMailOutUser);
     writeln(t,'Client-MailOutPassword=', PPPMailOutPass);
     writeln(t,'Client-MailOutPort=', PPPMailOutPort);
     writeln(t,'Client-NewsServer=', PPPNewsSrvr);
+    writeln(t,'Client-NewsFallback=', PPPNewsFallback);
     writeln(t,'Client-NewsUser=', PPPNewsUser);
     writeln(t,'Client-NewsPassword=', PPPNewsPass);
     writeln(t,'Client-NewsPort=', PPPNewsPort);
@@ -620,6 +626,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.24  2001/11/20 23:23:42  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+       D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+       siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       abgelegt.
+
   Revision 1.10.2.23  2001/09/07 10:52:07  mk
   - added some const parameters
 
