@@ -1509,9 +1509,9 @@ begin
     writeln(dblogfile,s);
     Flush(dblogfile);
   end;
-  {$IFDEF unix }
+{$ifdef UseSysLog}
   XPDebugLog(s);
-  {$ENDIF }
+{$ENDIF }
 end;
 {$ENDIF }
 
@@ -1593,6 +1593,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.42  2000/11/16 19:23:53  hd
+  - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
+
   Revision 1.41  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 

@@ -1073,7 +1073,9 @@ begin
   if not __isInit then InitXPCurses;
   Sub:= subwin(ActWin.wHnd, u-o+1, r-l+1, o-1, l-1);
   if (Sub=nil) then begin
+{$ifdef UseSysLog}
     XPErrorLog('Can''t create sub window (XPCurses::PaintBox)');
+{$endif}
 {$IFDEF Debug }
     WriteLn('Can''t create sub window (XPCurses::PaintBox)');
     halt(1);
@@ -1433,6 +1435,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/11/16 19:23:53  hd
+  - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
+
   Revision 1.32  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 

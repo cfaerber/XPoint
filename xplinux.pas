@@ -50,6 +50,7 @@ const                           { Common Environment-Vars }
   A_USER                = STAT_IRUSR or STAT_IWUSR;     { User lesen/schreiben }
   A_USERX               = A_USER or STAT_IXUSR;         { dito + ausfuehren }
 
+{$ifdef UseSysLog}
   LOG_EMERG             = 0;
   LOG_ALERT             = 1;
   LOG_CRIT              = 2;
@@ -58,6 +59,7 @@ const                           { Common Environment-Vars }
   LOG_NOTICE            = 5;
   LOG_INFO              = 6;
   LOG_DEBUG             = 7;
+{$endif}
 
 type
   TTestAccess           = (             { Zugriffsrechte (wird nach Bedarf erweitert) }
@@ -83,6 +85,8 @@ procedure SetAccess(p: string; ta: TTestAccess);
 
 function GetShortVersion: string;
 
+{$ifdef UseSysLog}
+
 { XPLog gibt eine Logmeldung im Syslog aus }
 procedure XPLog(Level: integer; format_s: string; args: array of const);
 procedure XPLogMsg(Level: integer; logmsg: string);
@@ -92,6 +96,8 @@ procedure XPNoticeLog(logmsg: string);
 procedure XPWarningLog(logmsg: string);
 procedure XPErrorLog(logmsg: string);
 
+{$endif}
+
 function SysOutputRedirected: boolean;
 
 implementation
@@ -100,6 +106,7 @@ uses
   typeform;
 
 
+{$ifdef UseSysLog}
 
 const
   LOG_PRIMASK           = $07;
@@ -182,13 +189,17 @@ const
 
   log_installed: boolean = false;
 
+{$endif}
+
 const
   fnProcVersion         = '/proc/version';      { Versionsinfos }
 
 var
   SavedExitProc: Pointer;
+{$ifdef UseSysLog}
   LogPrefix: array[0..255] of char;
   LogString: array[0..1024] of char;
+{$endif}
 
 { Interface-Routinen fÅr Virtual Pascal -------------------------------- }
 
@@ -276,7 +287,7 @@ begin
     s:= ''
   else
     s:= iifs((p[1]='~'),getenv(envHome)+copy(p,2,length(p)-1),''+p);
-{$IFDEF Debug}
+{$ifdef UseSysLog}
   if (s<>'') then
     XPDebugLog('Resolved: "'+p+'" -> "'+s+'"');
 {$ENDIF}
@@ -301,6 +312,7 @@ begin
 end;
 
 { SysLog-Interface ----------------------------------------------------- }
+{$ifdef UseSysLog}
 
 {$IFDEF FPC }
 procedure closelog;cdecl;external;
@@ -361,17 +373,20 @@ procedure XPErrorLog(logmsg: string);
 begin
   XPLogMsg(LOG_ERR, logmsg);
 end;
-
+{$endif}
 { Exit-Proc ------------------------------------------------------------ }
 
 procedure XPLinuxExit;
 begin
   ExitProc:= SavedExitProc;
+{$ifdef UseSysLog}
   { Log-File schliessen }
   SysLog(LOG_INFO, 'Ends', [0]);
   CloseLog;
+{$endif}
 end;
 
+{$ifdef UseSysLog}
 procedure InitLogStream;
 var
   s: string;
@@ -401,20 +416,24 @@ begin
   SavedExitProc:= ExitProc;
   ExitProc:= @XPLinuxExit;
 end;
-
+{$endif}
 function SysOutputRedirected: boolean;
 begin
   // ToDo
   Result := false;
 end;
 
+{$ifdef UseSysLog}
 
 begin
   InitLogStream;
-
+{$endif}
 end.
 {
   $Log$
+  Revision 1.22  2000/11/16 19:23:53  hd
+  - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
+
   Revision 1.21  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 
