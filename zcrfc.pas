@@ -1773,20 +1773,21 @@ var
     ng: tstringlist;
   begin
     ng:=tstringlist.create;
-    line:=trim(rfcremovecomment(line));
-    if line<>'' then begin
-      if rightstr(line,1)<>',' then line:=line+',';
-      while cpos(',',line)>0 do begin
-        p:=cpos(',',line);
-        ng.add(forumn_rfc2zc(leftstr(line,p-1)));
-        line:=trim(mid(line,p+1))
-      end
+    try
+      line:=trim(rfcremovecomment(line));
+      if line<>'' then begin
+        if rightstr(line,1)<>',' then line:=line+',';
+        while cpos(',',line)>0 do begin
+          p:=cpos(',',line);
+          ng.add(forumn_rfc2zc(leftstr(line,p-1)));
+          line:=trim(mid(line,p+1))
+        end
+      end;
+      List.Clear;
+      List.AddStrings(ng);
+    finally
+      ng.free
     end;
-    for i:=0 to list.count-1 do
-      list.delete(i);
-    for i:=0 to ng.count-1 do
-      list.add(ng[i]);
-    ng.free
   end;
 
   procedure GetEmpf;
@@ -1851,23 +1852,25 @@ var
     lposter: boolean;
   begin
     f:=tstringlist.create;
-    lposter:=false;
-    if cpos('@',line)=0 then begin
-      getnewsgroupsline(line,f);
-      for i:=0 to f.count-1 do
-        if lowercase(f[i])='/poster' then begin
-          lposter:=true;
-          for j:=0 to f.count-1 do
-            f.delete(j);
-          break
-        end;
-      poster:=lposter;
-      for i:=0 to followup.count-1 do
-        followup.delete(i);
-      for i:=0 to f.count-1 do
-        followup.add(f[i]);
+    try
+      lposter:=false;
+      if cpos('@',line)=0 then
+      begin
+        getnewsgroupsline(line,f);
+        for i:=0 to f.count-1 do
+          if lowercase(f[i])='/poster' then
+          begin
+            lposter:=true;
+            f.Clear; // why?
+            break
+          end;
+        poster:=lposter;
+        FollowUp.Clear;
+        FollowUp.AddStrings(f);
+      end
+    finally
       f.free
-    end
+    end;
   end;
 
 //  procedure GetNewsgroups;
@@ -3818,6 +3821,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/04/09 16:07:00  mk
+  - fixed some bugs
+
   Revision 1.47  2001/04/09 13:18:14  cl
   - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
   - zcrfc.pas: regognition of all known charsets for news and smtp batches
