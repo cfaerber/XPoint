@@ -229,43 +229,22 @@ end;
 
 procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 var i,n    : integer;
-    s0,                            { Server der 1. Kopie }
     server : string;
     d      : DB;
     ok     : boolean;
-    e      : string;
-
-  procedure TestServer;   { Crossposting bei diesem Server erlaubt? }
-  begin
-    dbSeek(d,boiName,UpperCase(server));
-    if not dbFound then
-      ok:=false
-    else begin
-      ok:=(pm and ntCrossPM(dbReadInt(d,'netztyp'))) or
-          (not pm and ntCrossAM(dbReadInt(d,'netztyp')));
-      if not ok then rfehler1(480,left(e,40));   { '%s: Crossposting ist hier nicht erlaubt.' }
-      brk:=(lastkey=keyesc);
-      end;
-  end;
+    e,s    : string;
+    t:     Text;
 
 begin
   dbOpen(d,BoxenFile,1);
-  s0:='';
   ok := true;
   brk:=false; n:=0;
   for i:=0 to bmarkanz-1 do begin
     if pm then begin
       dbGo(ubase,bmarked^[i]);
       e:= dbReadNStr(ubase,ub_username);
-      if dbReadInt(ubase,'userflags') and 4<>0 then begin
-        rfehler1(483,vert_name(e));   { 'Crossposting an Verteiler ist nicht m”glich.' }
-        ok:=false;
-        end
-      else begin
-        server:= dbReadNStr(ubase,ub_pollbox);
-        TestServer;
-        end;
-      end
+      server := dbReadNStr(ubase,ub_pollbox);
+    end
     else begin
       dbGo(bbase,bmarked^[i]);
       e:= dbReadNStr(bbase,bb_brettname);
@@ -275,24 +254,41 @@ begin
         rfehler1(482,copy(e,2,40));     { '%s: Schreibzugriff gesperrt!' }
         ok:=false;
         end
-      else begin
-        delfirst(e);
-        TestServer;
-        end;
+      else  delfirst(e);
       end;
-    if ok then
-      if s0='' then s0:=UpperCase(server)
-      else if s0<>UpperCase(server) then begin
-        rfehler(481);   { 'Crosspostings sind nur innerhalb eines Servers m”glich!' }
-        ok:=false;
-        brk:=true;
-        end;
-    if brk then break;    { for-Schleife verlassen }
     if ok and ((pm and (n<maxcc)) or (not pm and (n<MaxXposts))) then begin
-      Empflist.Add(e);
-      inc(n);
-      end;
+
+      if firstchar(e)=vert_char then
+      begin
+        e:=copy(e,2,cpos('@',e)-2);                       { nach Verteilernamen suchen }
+        assign(t,CCfile);
+        reset(t);
+        if ioresult=0 then
+        begin
+          repeat
+            readln(t,s)
+          until eof(t) or (UpperCase(s)=UpperCase(e));
+          if not eof(t) then                                   { wenn gefunden... }
+          begin
+            repeat
+              readln(t,s);                                    { auslesen und anhaengen }
+              if (trim(s)<>'') and not ((firstchar(s)='[') and (lastchar(s)=']'))
+              then begin
+                EmpfList.Add(s);
+                inc(n);
+                end;
+            until eof(t) or ((firstchar(s)='[') and (lastchar(s)=']'));
+            end;
+          close(t);
+          end;
+        end
+
+      else begin
+        EmpfList.Add(e);
+        inc(n);
+        end;
     end;
+  end; {for }
   dbClose(d);
 
 
@@ -304,7 +300,7 @@ begin
     EmpfList.Delete(0);
     // Achtung, das ist bestimmt falsch :-(
     sendempflist.Add(EmpfList[0]);
-    xp6.forcebox:=s0;
+    xp6.forcebox:='';
   end
   else
     EmpfList.Clear;
@@ -314,6 +310,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/26 08:17:19  mk
+  JG: - Crosspostings mit Shift+B: Beschraenkungen bei Verteilern, verschiedenen
+    Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben.
+
   Revision 1.14  2000/07/22 14:05:27  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
