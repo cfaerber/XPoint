@@ -11,6 +11,8 @@
 
 program uuzext;
 
+{$I XPDEFINE.INC }
+
 uses
   SysUtils, Classes, uuz, xpglobal, crt;
 
@@ -72,6 +74,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2000/10/10 12:27:35  mk
+  - added xpdefine.inc
+
   Revision 1.1  2000/08/27 10:37:09  mk
   - UUZ ist jetzt intern
 
