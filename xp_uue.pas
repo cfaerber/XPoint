@@ -351,8 +351,8 @@ begin
   repeat
     ReadInputLine;
     found:=(left(s,6)='begin ') and (length(trim(s)) > 10) and
-           (ival(s[7]) in [0..7]) and (ival(s[8]) in [0..7]) and
-           (ival(s[9]) in [0..7]) and (s[10]=' ');
+           (s[7] in ['0'..'7']) and (s[8] in ['0'..'7']) and
+           (s[9] in ['0'..'7']) and (s[10]=' ');
   until EOFinput or found;
   p:=posn(' ',s,7);
   if p=0 then fn:=''
@@ -669,6 +669,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.7  2002/03/15 23:49:04  my
+  RB:- UUE-Boundary-Erkennung nochmals etwas code-optimiert
+
   Revision 1.13.2.6  2002/03/14 21:57:51  my
   MY:- UUE-Boundary-Erkennung nochmals verbessert/korrigiert.
 
