@@ -19,7 +19,6 @@ uses xpglobal;
 
 function crc32(st:string):longint;
 function crc32block(var data; size:word):longint;
-function crc32file(fn:string):longint;
 
 implementation
 
@@ -27,23 +26,15 @@ VAR
    CRC_reg_lo     : smallWORD;
    CRC_reg_hi     : smallWORD;
 
-{ MK 14.02.2000 Die Routine verarbeitet jetzt komplette Bl”cke, das
-  vereinfacht das komplette Handling; funktioniert auch in 32 Bit-Vers. }
 procedure CCITT_CRC32_calc_Block(var block; size: smallword); assembler;        {  CRC-32  }
 asm
      xor bx, bx      { CRC mit 0 initialisieren }
      xor dx, dx
-{$IFDEF BP }
      les di, block
-{$ELSE }
-     mov edi, block
-{$ENDIF }
      mov si, size
-{$IFDEF BP }
+     or  si, si
+     jz  @u4
 @u3: mov al, byte ptr es:[di]
-{$ELSE }
-@u3: mov al, byte ptr [edi]
-{$ENDIF }
      mov cx, 8
 @u1: rcr al, 1
      rcr dx, 1
@@ -57,62 +48,28 @@ asm
      jnz @u3
      mov CRC_reg_lo, bx
      mov CRC_reg_hi, dx
+@u4:
 end;
 
 function CRC32(st : string) : longint;
 begin
-  CRC_reg_lo := 0;
-  CRC_reg_hi := 0;
   CCITT_CRC32_calc_Block(st[1], length(st));
   CRC32 := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
 end;
 
 
 function crc32block(var data; size:word):longint;
-{type barr = array[0..65530] of byte;
-var
-  a : byte; }
 begin
-  CRC_reg_lo := 0;
-  CRC_reg_hi := 0;
   CCITT_CRC32_calc_block(data, size);
   CRC32block := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
 end;
 
-
-function crc32file(fn:string):longint;
-type barr = array[0..4095] of byte;
-var
-     f    : file;
-     mfm  : byte;
-     bp   : ^barr;
-     rr : word;
-begin
-  assign(f,fn);
-  mfm:=filemode; filemode:=$40;
-  reset(f,1);
-  filemode:=mfm;
-  if ioresult<>0 then
-    crc32file:=0
-  else begin
-    CRC_reg_lo:=0;
-    CRC_reg_hi:=0;
-    new(bp);
-    while not eof(f) do
-    begin
-      blockread(f,bp^,sizeof(bp^),rr);
-      CCITT_CRC32_calc_block(bp^, sizeof(bp^))
-    end;
-    close(f);
-    dispose(bp);
-    CRC32file := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
-    end;
-end;
-
-
 end.
 {
   $Log$
+  Revision 1.3.2.1  2000/06/19 23:13:54  mk
+  - kleinere Verbesserungen
+
   Revision 1.3  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
