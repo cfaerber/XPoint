@@ -837,6 +837,9 @@ end.
 
 {
   $Log$
+  Revision 1.13.2.31  2003/04/09 23:13:52  my
+  MY:- Dokumentation des letzten Commits komplettiert.
+
   Revision 1.13.2.30  2003/04/08 22:22:41  my
   MY:- Unversandt-Routine ('ClearUnversandt') optimiert:
        1. Beim Netztyp RFC/Client findet im Falle von Crosspostings und Mails
@@ -853,14 +856,22 @@ end.
           Message-ID generiert wird. Solche Mails k”nnen beim Netztyp
           RFC/Client aber gar nicht entstehen, da der UUZ dort *immer* mit
           dem Parameter "-SMTP" aufgerufen wird.
-       2. Die Fehlermeldung "Interner Fehler: Brett mit unvers. Nachr.
+       2. Bei Crosspostings und Mails mit Kopienempf„ngern vom Netztyp
+          RFC/Client wird jetzt nur noch beim Durchlauf fr den ersten
+          Empf„nger in der Textdatei "UNSENT.ID" nach der Message-ID
+          gesucht und das Ergebnis (Nachricht ist versandt bzw.
+          unversandt) in einer Variablen gesichert. Bei den
+          anschlieáenden Durchl„ufen wird auf diese Variable
+          zurckgegriffen statt jedesmal erneut die Datei zu ”ffnen und
+          auszulesen.
+       3. Die Fehlermeldung "Interner Fehler: Brett mit unvers. Nachr.
           nicht mehr vorhanden" wrde jetzt beim ersten Brett eines
           Crosspostings ausgegeben werden, wenn es nicht existiert (das
           erste Brett *muá* immer existieren, Crossposting-Bretter jedoch
           nicht unbedingt). Bisher wurde die Meldung bei Crosspostings
           generell unterdrckt.
-       Es handelt sich speziell bei der ersten nderung *nicht* um einen
-       Bugfix - die Routine arbeitet jetzt lediglich in solchen F„llen
+       Es handelt sich speziell bei den ersten beiden nderungen *nicht*
+       um Bugfixes - die Routine arbeitet jetzt lediglich in solchen F„llen
        erheblich sinnvoller und performanter. Nur im Falle von Datei-
        zugriffsproblemen auf dem System des Users w„re ein Sicherheits-
        gewinn durch die ge„nderte Routine hypothetisch m”glich.
