@@ -280,25 +280,49 @@
       if (nt=40) and pppm then nt:=41;
       end;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
-    if nt<>41 then pppM:=false
+    if nt<>41 then
+    begin
+      pppM:=false;
+      pp:='';
+      pc:='';
+      ps:='';
+      cldup:='';
+      clphn:='';
+      cllog:='';
+      clpas:='';
+      boxpar^.PPPMailInSrvr:='';
+      boxpar^.PPPMailInPort:='';
+      boxpar^.PPPMailOutSrvr:='';
+      boxpar^.PPPMailOutPort:='';
+      boxpar^.PPPNewsSrvr:='';
+      boxpar^.PPPNewsPort:='';
+      end
     else begin
       pppM:=true;
       nt:=40;
+      pp:=boxpar^.PPPClientPath;
+      pc:=boxpar^.PPPClient;
+      ps:=boxpar^.PPPAddServers;
+      cldup:=boxpar^.PPPDialUp;
+      clphn:=boxpar^.PPPPhone;
+      cllog:=boxpar^.PPPLogin;
+      clpas:=boxpar^.PPPPass;
       end;
     name:=''; user:=''; komm:=''; fido:='';
     maps:=DefaultMaps(nt);
     dom:=ntDefaultDomain(nt); bdom:=dom;
-    fqdom:='';
-    real:='';
     email:='';
-    pp:='';
-    pc:='';
-    ps:='';
-    cldup:='';
-    clphn:='';
-    cllog:='';
-    clpas:='';
+    real:='';
     replyto:='';
+    fqdom:='';
+    boxpar^.PPPMailInEnv:='';
+    boxpar^.PPPMailInUser:='';
+    boxpar^.PPPMailInPass:='';
+    boxpar^.PPPMailOutEnv:='';
+    boxpar^.PPPMailOutUser:='';
+    boxpar^.PPPMailOutPass:='';
+    boxpar^.PPPNewsUser:='';
+    boxpar^.PPPNewsPass:='';
 
     if pppm then 
 
@@ -334,6 +358,7 @@
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;
         boxpar^.passwort:=iifs(deutsch,'GEHEIM','SECRET');
+        if pppm then boxpar^.PPPMailInEnv:=email;
         nt_bpar(nt,boxpar^);
         if boxpar^.prototyp='' then
           boxpar^.prototyp:='Z';
@@ -1772,6 +1797,10 @@
 
 {
   $Log$
+  Revision 1.10.2.34  2001/07/09 22:17:05  my
+  - Copying server parameters from an existing server upon creation of a new
+    RFC/Client server changed to a useful behaviour
+
   Revision 1.10.2.33  2001/06/29 16:36:39  my
   - extended POP3/SMTP/NNTP server list
   - moved list to ressources
