@@ -308,20 +308,10 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
   
     case nn of
       1: begin
-          {$ifdef UnixFS}
-            pa.FileName := '*';
-          {$else}
-            pa.FileName := '*.*';
-          {$endif}
+           pa.FileName := IncludeTrailingPathDelimiter(Sendpath) + Wildcard;
            uc:=false;
            xp1o.ReadFileName(GetRes2(624,50),pa.FileName,true,uc);
-           if (pa.FileName='') or (pa.FileName=
-           {$ifdef UnixFS}
-             '*'
-           {$else}
-             '*.*'
-           {$endif}
-           ) then begin
+           if (pa.FileName='') or (pa.FileName=WildCard) then begin
              pa.Free; exit;
            end;
            if not FileExists(pa.FileName) then begin
