@@ -2397,13 +2397,12 @@ begin
     end;
   CloseArchive(ar);
   exdir:='';
-  llh:=true; ListCtrlWdisabled:=true; listexit:=0;
+  llh:=true; listexit:=0;
   lm:=ListMakros; ListMakros:=16;
   pushhp(67);
   list(brk);
   pophp;
   ListMakros:=lm;
-  ListCtrlWdisabled:=false;
   dispose(abuf[arcbufp]);
   dec(arcbufp);
   CloseList;
@@ -2954,6 +2953,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.47  2003/04/21 16:22:46  my
+  MY:- Fix: Funktionen "s" und <Ctrl-S> (Textsuche), <Tab> (nÑchsten
+       Suchbegriff anspringen) und <Ctrl-W> (Umbruch togglen) im Archiv-
+       Viewer deaktiviert. Bisherige Deaktivierung von <Ctrl-W> im Archiv-
+       Viewer Åber die Variable 'ListCtrlWdisabled' entsorgt.
+
   Revision 1.47.2.46  2003/03/18 00:02:40  my
   MY:- Fix: Wenn insgesamt 20 x innerhalb einer XP-Session erfolgreich nach
        einer Message-ID gesucht wurde, fÅhrte dies zu einem "WPUSH error" und

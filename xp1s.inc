@@ -290,7 +290,6 @@ var brk    : boolean;
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
     lwback : boolean;  { Backup Listwrap }
     ehlback: integer;  { Backup ExtHdLines }
-    cwdisbk: boolean;  { Backup ListCtrlWdisabled }
 
   procedure ShowMsgHead;
   var t : text;
@@ -314,9 +313,7 @@ var brk    : boolean;
 begin
   ehlback:=exthdlines;
   lwback:=listwrap;
-  cwdisbk:=ListCtrlWdisabled;
   repeat                      { fÅr <Ctrl-W> (Wortumbruch-Toggle) }
-    ListCtrlWdisabled:=false;
     exthdlines:=ehlback;
     listexit:=0;
     listseekcol:=col.collistfound;
@@ -394,7 +391,6 @@ begin
     end;
   until listexit<>-5;  { <Ctrl-W> }
   listwrap:=lwback;
-  ListCtrlWdisabled:=cwdisbk;
   exthdlines:=0;
   llh:=false;
   if listexit<>4 then              { Wenn nicht Editor gestartet wird...        }
@@ -498,6 +494,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.18  2003/04/21 16:22:45  my
+  MY:- Fix: Funktionen "s" und <Ctrl-S> (Textsuche), <Tab> (nÑchsten
+       Suchbegriff anspringen) und <Ctrl-W> (Umbruch togglen) im Archiv-
+       Viewer deaktiviert. Bisherige Deaktivierung von <Ctrl-W> im Archiv-
+       Viewer Åber die Variable 'ListCtrlWdisabled' entsorgt.
+
   Revision 1.24.2.17  2002/04/12 14:34:15  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
