@@ -3999,7 +3999,7 @@ Possibilities are:
 Serial port parameters can be entered here. Examples
 are displayed if you press F2. These parameters are
 used by OpenXP parts that have been modified to use
-ObjCOM already (Fidomailer, Terminal).
+ObjCOM already.
 
 @
 296
@@ -4060,29 +4060,6 @@ You should attempt to get the CTS to work.
 To help eliminate CRC errors, enable this option.
 
 @
-300
-<<All Net types EXCEPT Fido
-
-<<[x]>>  Use ring signal line
-<<[ ]>>  Ignore ring signal line
-
-If an incoming call (ring signal) should occur while
-CrossPoint is pausing between Netcalls, CrossPoint
-will delay the Netcall for up to 5 minutes.
-
-(Note, if CrossPoint tries to make a Netcall when
-somebody is calling, it will effectively answer the
-phone, which will probably cause difficulties all
-round!)
-
-If the ring signal line is not connected, as is the
-case with some cheap modem cables, CrossPoint will
-incorrectly report an incoming call, so this function
-should be set to "ignore".
-
-Tip: Get a decent modem cable :-)
-
-@
 960
 A FOSSIL driver is a TSR programme which, under DOS,
 takes over the job of controlling the ComPort,
@@ -4107,6 +4084,29 @@ BNU and ADF.
 
 @
 961
+<<All Net types EXCEPT Fido
+
+<<[x]>>  Use ring signal line
+<<[ ]>>  Ignore ring signal line
+
+If an incoming call (ring signal) should occur while
+CrossPoint is pausing between Netcalls, CrossPoint
+will delay the Netcall for up to 5 minutes.
+
+(Note, if CrossPoint tries to make a Netcall when
+somebody is calling, it will effectively answer the
+phone, which will probably cause difficulties all
+round!)
+
+If the ring signal line is not connected, as is the
+case with some cheap modem cables, CrossPoint will
+incorrectly report an incoming call, so this function
+should be set to "ignore".
+
+Tip: Get a decent modem cable :-)
+
+@
+962
 <<[+]>>      Use the 16550 UART
 
 Note: there must be one if you set this switch!
@@ -4123,7 +4123,7 @@ CrossPoint does not recognise. If you have one of
 these, CrossPoint will not use it.
 
 @
-962
+963
 The FIFO trigger level relates to 16550A UARTS.
 
 Possible trigger levels are 2, 4, 8 and 14. The

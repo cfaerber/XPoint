@@ -4362,9 +4362,9 @@ funktioniert dagegen meist nur Tonwahl.
 Hier werden die Angaben der seriellen Schnittstelle
 eingetragen, die benutzt werden soll. Beispiele
 werden mit F2 angezeigt, sie sollten selbsterklaerend
-sein. Die Comminit-Angaben werden fuer die Teile
+sein. Die Comminit-Angaben werden nur fuer die Teile
 von OpenXP benutzt, die bereits auf ObjCOM umgestellt
-sind (bisher: Fidomailer, Terminal).
+sind.
 @
 296
 Wenn Sie unglÅcklicher Besitzer eines postzugelasse-
@@ -4414,28 +4414,6 @@ Falls wÑhrend Festplattenzugriffen Daten-öbertra-
 gungsfehler ("CRC error" o.Ñ.) auftreten, sollten
 Sie diesen Schalter aktivieren. Dies gilt insbe-
 sondere fÅr Enhanced-IDE-Festplatten.
-@
-300
-<<Alle Netztypen au·er Fido:
-
-Falls wÑhrend der Wartezeit zwischen zwei Netcalls
-ein Ring-Signal vom Modem eingeht (to ring = klin-
-geln), dann hÑlt CrossPoint den Netcall fÅr bis zu
-5 Minuten an.
-
-Bei einigen Modem-Verbindungskabeln in SparausfÅh-
-rung kînnte es jedoch sein, da· diese Ring-Leitung
-gar nicht beschaltet ist - zu erkennen daran, da· XP
-fÑlschlicherweise einen eingehenden Anruf meldet. In
-diesem Fall sollten Sie die RING-Erkennung auf <<[ ]>>
-setzen.
-
-Neben dem Modemkabel kommt als Fehlerursache auch
-ein Fehler in der Firmware des Modems in Frage -
-insbesondere bei einigen Ñlteren Versionen von ZyXEL-
-und Aceex-Modems wurde dieses Problem mehrfach be-
-obachtet. Auch hier hilft nur ein Abschalten der
-RING-Erkennung.
 
 @
 960
@@ -4463,6 +4441,29 @@ Einstellungen bei eingeschalteter FOSSIL-Option.
 
 @
 961
+<<Alle Netztypen au·er Fido:
+
+Falls wÑhrend der Wartezeit zwischen zwei Netcalls
+ein Ring-Signal vom Modem eingeht (to ring = klin-
+geln), dann hÑlt CrossPoint den Netcall fÅr bis zu
+5 Minuten an.
+
+Bei einigen Modem-Verbindungskabeln in SparausfÅh-
+rung k"nnte es jedoch sein, da· diese Ring-Leitung
+gar nicht beschaltet ist - zu erkennen daran, da· XP
+fÑlschlicherweise einen eingehenden Anruf meldet. In
+diesem Fall sollten Sie die RING-Erkennung auf <<[ ]>>
+setzen.
+
+Neben dem Modemkabel kommt als Fehlerursache auch
+ein Fehler in der Firmware des Modems in Frage -
+insbesondere bei einigen Ñlteren Versionen von ZyXEL-
+und Aceex-Modems wurde dieses Problem mehrfach be-
+obachtet. Auch hier hilft nur ein Abschalten der
+RING-Erkennung.
+
+@
+962
 Die meisten seriellen Schnittstellen arbeiten mit
 einem Chip vom Typ "16450". Dieser Chip hat den Nach-
 teil, da· keine hohen Baudraten (38400 oder mehr)
@@ -4486,7 +4487,7 @@ spielt es keine Rolle, ob der FIFO von XP erkannt
 wird.
 
 @
-962
+963
 Der FIFO-Triggerlevel legt das Verhalten des 16550A-
 Chips fest und beeinflu·t die öbertragungsstabilitÑt.
 GrundsÑtzlich gilt:

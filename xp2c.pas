@@ -900,8 +900,8 @@ begin
     maddbool (3,14,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
     if fossil then mdisable;
     maddbool(28,12,getres2(261,10),Ring);            { 'RING-Erkennung' }
-    maddbool(28,13,getres2(261,11),u16550);          { '16550A-FIFO'    }
       mhnr(961);
+    maddbool(28,13,getres2(261,11),u16550);          { '16550A-FIFO'    }
     mset1func(SetTrigger);
     msetvfunc(TestFifo);
     if fossil then mdisable;
@@ -1494,6 +1494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/07/13 11:04:31  ma
+  - Bugfix concerning Comminit help entry
+
   Revision 1.46  2000/07/12 16:49:42  ma
   - Comminit-String-Konfigurationseintrag hinzugefuegt
 
