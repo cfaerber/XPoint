@@ -3268,10 +3268,10 @@ type rcommand = (rmail,rsmtp,rnews);
     s := LeftStr(s, max(0, integer(length(s)) - (fpos + bufpos - gs) + 2));
   end;
 
-  procedure CreateNewfile;
+  procedure CreateNewfile(const Mail: Boolean);
   begin
     if client then
-      fn := 'M' + hex(NextUunumber, 4)
+      fn := iifs(Mail, 'M', 'N') + hex(NextUunumber, 4)
     else
       fn := 'D-' + hex(NextUunumber, 4);
 
@@ -3334,7 +3334,7 @@ begin
   server := UpperCase(UUserver + '@' + _to);
   files := 0;
 
-  CreateNewfile;                        { 1. Durchgang: News }
+  CreateNewfile(false);                        { 1. Durchgang: News }
   fs := filesize(f1);
   repeat
     seek(f1, adr);
@@ -3400,7 +3400,7 @@ begin
   end;
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
-  if SMTP and not client then CreateNewfile;
+  if SMTP and not client then CreateNewfile(true);
   repeat
     copycount := 0;
     repeat
@@ -3415,7 +3415,7 @@ begin
         begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
           if not SMTP or Client then
-            CreateNewfile;
+            CreateNewfile(true);
           SetMimeData;
 
           if SMTP then begin
@@ -3645,6 +3645,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.11  2002/07/31 14:48:20  mk
+  - fixed create of file names for client-mode (CreateNewFile)
+
   Revision 1.97.2.10  2002/07/27 09:12:11  mk
   - fixed bug #575458 SMTP: Kopienempfõnger gehen nicht
     more than one RCPT TO: was not correctly handled
