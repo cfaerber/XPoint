@@ -610,7 +610,7 @@ begin
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,0);     { ohne Indexreihenfolge! }
   repeat
-    hdfree:=diskfree(0);
+    hdfree:=fileio.diskfree(0);
     clw;
     abl:=0;
     bufs:=0;
@@ -720,6 +720,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14.2.2  2000/12/31 11:35:55  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.14.2.1  2000/10/16 17:52:57  mk
   - LFN-Fix
 

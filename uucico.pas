@@ -1584,7 +1584,7 @@ begin
         end;
       ti:=ticker;
       if SizeN then
-        s:=s+' '+strs(diskfree(ord(FilePath[1])-64) div 3);
+        s:=s+' '+strs(fileio.diskfree(ord(FilePath[1])-64) div 3);
       wrlog('+','requesting file: '+sf);
       if not SendCommand(s) then begin
         addtime(rectime); exit; end;
@@ -1930,6 +1930,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.3  2000/12/31 11:35:54  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.1.2.2  2000/12/30 10:56:45  mk
   - LFN Unterstuetzung
 

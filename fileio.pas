@@ -645,7 +645,6 @@ end;
 { - bei 2..4 GB liefern diskfree und disksize negative Werte }
 { - bei bestimmten Cluster/Sektorgr”áen-Kombinationen        }
 {   liefern diskfree und disksize falsche Werte              }
-{ Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
 function diskfree(drive:byte):longint;
 var l,ll : longint;
     regs : registers;
@@ -725,6 +724,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.9  2000/12/31 11:35:53  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.41.2.8  2000/12/12 14:03:56  mk
   - weitere lfn-fixes
 

@@ -665,7 +665,7 @@ begin
   if doserror=0 then begin
     rewrite(f1,1);
     cursor(curon);
-    df:=diskfree(0);
+    df:=fileio.diskfree(0);
     while doserror=0 do begin
       moff;
       if sr.size+50000>df then begin
@@ -774,6 +774,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.11  2000/12/31 11:35:55  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.13.2.10  2000/12/15 21:25:04  mk
   - Findclose-Fix
 

@@ -19,7 +19,7 @@ unit databaso;
 
 interface
 
-uses xpglobal,dos,typeform,datadef;
+uses xpglobal,dos,typeform,datadef, fileio;
 
 
 procedure dbCreate(filename:dbFileName; flp:dbFLP);
@@ -374,7 +374,7 @@ begin
     dbPack:=true
   else begin
     blockread(f1,hd,sizeof(hd));
-    if hd.hdsize+hd.recsize*hd.reccount+10000>diskfree(0) then begin
+    if hd.hdsize+hd.recsize*hd.reccount+10000>fileio.diskfree(0) then begin
       close(f1);
       dbPack:=false;
       exit;
@@ -433,6 +433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/12/31 11:35:53  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.7  2000/05/09 15:52:40  hd
   - UnixFS: Access-Mode eingefuegt
 

@@ -1903,9 +1903,9 @@ end;
 function TempFree:longint;                 { Platz auf Temp-Laufwerk }
 begin
   if temppath='' then
-    TempFree:=diskfree(0)
+    TempFree:=fileio.diskfree(0)
   else
-    TempFree:=diskfree(ord(temppath[1])-64);
+    TempFree:=fileio.diskfree(ord(temppath[1])-64);
 end;
 
 
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.15  2000/12/31 11:35:54  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.48.2.14  2000/12/30 12:59:50  mk
   - Farbpalette sichern, die x.te
 

@@ -639,7 +639,7 @@ var diffdir  : pathstr;
     CopyUpdateFile:=false;
     if (filetime(newlist)<>filetime(ufile)) or
        (_filesize(newlist)<>_filesize(ufile)) then
-      if diskfree(0)+_filesize(NLfilename(i)) < _filesize(ufile)+8192 then begin
+      if fileio.diskfree(0)+_filesize(NLfilename(i)) < _filesize(ufile)+8192 then begin
         arfehler(2113,auto);  { 'Zu wenig Plattenplatz zum Kopieren des Nodelist-Updates' }
         log(getreps2(2130,5,getfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
@@ -744,6 +744,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.1  2000/12/31 11:35:56  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.8  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

@@ -249,7 +249,7 @@ begin
     else if _is('i')  then mausinfos:=true
     else if _is('o')  then mkoutfile:=true
     else if _is('g')  then g_und_s:=true
-    else if _is('mm') then maxmaus:=diskfree(0) div 3
+    else if _is('mm') then maxmaus:=fileio.diskfree(0) div 3
     else if _is('oe') then mausOE:=false
     else if _is('psa')then mausPSA:=false
     else if _is('on') then MausON:=false
@@ -1832,6 +1832,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.6  2000/12/31 11:35:53  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.15.2.5  2000/10/19 19:03:47  mk
   - Maggi wieder compilierbar
 

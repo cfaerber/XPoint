@@ -135,7 +135,7 @@ var flp : dbFLP;
     end;
 
   begin
-    if diskfree(0)<_filesize(MsgFile+dbExt)*1.5 then
+    if fileio.diskfree(0)<_filesize(MsgFile+dbExt)*1.5 then
       interr(getres(210));  { 'zu wenig Fesplattenspeicher!' }
     with fld do begin
       fname:='msgid'; ftyp:=dbTypeString;
@@ -358,11 +358,7 @@ var flp : dbFLP;
   var fld : dbFeldTyp;
       b   : byte;
   begin
-{$IFDEF UnixFS }
-    if diskfree(0)<_filesize(BrettFile+'.db1') then
-{$ELSE }
-    if diskfree(0)<_filesize(BrettFile+'.DB1') then
-{$ENDIF }
+    if fileio.diskfree(0)<_filesize(BrettFile+'.DB1') then
       interr('Zu wenig Plattenplatz zum Konvertieren der Bretterdatei.');
     with fld do begin
       fname:='adresse'; ftyp:=dbTypeString;
@@ -390,11 +386,7 @@ var flp : dbFLP;
       nt    : byte;
       name  : string[25];
   begin
-{$IFDEF UnixFS }
-    if diskfree(0)<_filesize(MsgFile+'.db1')*1.2 then
-{$ELSE }
-    if diskfree(0)<_filesize(MsgFile+'.DB1')*1.2 then
-{$ENDIF }
+    if fileio.diskfree(0)<_filesize(MsgFile+'.DB1')*1.2 then
       interr('Zu wenig Plattenplatz zum Konvertieren von MSGS.DB1!');
     with fld do begin
       fname:='name'; ftyp:=dbTypeString;
@@ -886,6 +878,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.3  2000/12/31 11:35:54  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.12.2.2  2000/10/10 13:04:54  mk
   RB:- Supersedes in Autoversand
 

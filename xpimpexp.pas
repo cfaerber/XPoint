@@ -578,7 +578,7 @@ begin
         mtpath:=mtpath+FUStr('daten')+DirSepa;
       if not mfehler(exist(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
          not mfehler(exist(mtpath+mindex),mtpath+mindex+' fehlt') and
-         not mfehler(diskfree(0)>2.5*_filesize(mtpath+mdaten),
+         not mfehler(fileio.diskfree(0)>2.5*_filesize(mtpath+mdaten),
              'zu wenig freier Speicherplatz zum Einlesen der Daten') then
       begin
         MakeOutfile(box,mtpath);
@@ -652,7 +652,7 @@ begin
         klein oder gross geschrieben? }
       if not mfehler(exist(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
          not mfehler(exist(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
-         not mfehler(diskfree(0)>2.5*YupMailsize,
+         not mfehler(fileio.diskfree(0)>2.5*YupMailsize,
                 'zu wenig freier Speicherplatz zum Einlesen der Daten')
       then
         ImportYupbase;
@@ -704,6 +704,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.4  2000/12/31 11:35:56  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.15.2.3  2000/12/12 11:30:31  mk
   - FindClose hinzugefuegt
 

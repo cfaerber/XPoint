@@ -2041,7 +2041,7 @@ var d     : DB;
   end;
 
 begin
-  if diskfree(0)<_filesize(MsgFile+dbExt)*2 then begin
+  if fileio.diskfree(0)<_filesize(MsgFile+dbExt)*2 then begin
     rfehler(435);   { 'zu wenig Festplatten-Platz' }
     exit;
     end;
@@ -2450,6 +2450,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.18  2000/12/31 11:35:55  mk
+  - fileio.disksize statt lfn.disksize benutzen
+
   Revision 1.47.2.17  2000/12/25 14:32:32  mk
   JG:- bugs bei der Suche behoben
 
