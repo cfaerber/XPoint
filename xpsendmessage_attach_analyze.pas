@@ -83,6 +83,7 @@ begin
       SetLength(value_data,Longint(value_size)+iif(value_data[value_size]=#0,-1,0));
       Result:=value_data;
     end;
+    RegCloseKey(Reg);
   end;
 {$ENDIF}
 end;
