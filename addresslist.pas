@@ -44,6 +44,7 @@ type
     atBCC );
 
   TAddressListTypeSet = set of TAddressListType;
+  const AddressListTypeAll: TAddressListTypeSet = [Low(TAddressListType)..High(TAddressListType)]; type
 
   TAddressListItem = class
   private
@@ -138,7 +139,7 @@ type
 
 type TRFCReadAddressDecodeFunction = function(const input:string):string;
 type TRFCWriteAddressEncodeFunction = function(const input:string):string;
-type TRFCWriteAddressFoldedEncodeFunction = function(const input:string; var MaxFirstLen, MaxLen: integer; EOL: String):string;
+type TRFCWriteAddressFoldedEncodeFunction = function(const input:string; var MaxFirstLen, MaxLen: integer; const EOL: String):string;
 
 procedure RFCReadAddress(const addr:string; var a, r: string; Decoder:TRFCReadAddressDecodeFunction);
 procedure RFCReadAddressList(const addr:string; Dest: TObject; Decoder:TRFCReadAddressDecodeFunction);
@@ -683,8 +684,8 @@ var i:  Integer;
   
 
 begin
-//  if not assigned(Encoder) then
-//    Encoder := RFCWriteAddressDefaultEncodeFunction;
+//if not assigned(Encoder) then
+//  Encoder := RFCWriteAddressDefaultEncodeFunction;
 
   LastGroup:=-1;
   result := '';
@@ -711,7 +712,7 @@ begin
     if List[i].Address is TDomainEmailAddress then
     begin
       if TDomainEmailAddress(List[i].Address).Realname<>'' then begin
-        _e(TDomainEmailAddress(List[i]).Realname);
+        _e(TDomainEmailAddress(List[i].Address).Realname);
         _ (' <'+TDomainEmailAddress(List[i].Address).AddrSpec+'>'); end
       else
         _ (TDomainEmailAddress(List[i].Address).AddrSpec);
@@ -725,6 +726,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.7  2002/05/20 12:34:00  cl
+// - fixes for address handling
+//
 // Revision 1.6  2002/05/19 22:45:55  cl
 // - Fixed parsing of addresses in format ad@re.ss (User NAme)
 //
