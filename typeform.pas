@@ -1841,24 +1841,29 @@ function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
 asm
         PUSH    EDI
         CLD
-        MOV     EDI, Buffer    
-        MOV     AL, C          
-        MOV     ECX, Len       
-        MOV     EBX, ECX       
+        MOV     EDI, Buffer
+        MOV     AL, C
+        MOV     EBX, Len
+        OR      EBX, EBX    // Check that Len>0
+        JLE      @@2        // return Len
+        
+        MOV     ECX, EBX
 
-        REPNE   SCASB
+        REPNE   SCASB       // Execute CX=CX times
 
-        OR      ECX, ECX
-        JZ      @@1
-        INC     ECX
+        JNZ     @@1         // Not found
+        INC     ECX         // Found - Undo last CX decrement by REPNE
 
 @@1:    SUB     EBX, ECX
-        MOV     EAX, EBX        
+@@2:    MOV     EAX, EBX
         POP     EDI
 end;
 
 {
   $Log$
+  Revision 1.118  2002/09/26 22:51:46  cl
+  - further improved BufferScan, and added comments
+
   Revision 1.117  2002/09/26 22:16:53  cl
   - Fixed bug in BufferScan: Incorrect result when char not found in Buffer
   - Added functions CPosX (similar to PosX), and CPosFrom, CPosXFrom
