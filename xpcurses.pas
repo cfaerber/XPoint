@@ -116,64 +116,64 @@ const
       (Sequenz: ncad; ncCode: 282;      DosCode : #0#91),
       (Sequenz: ncad; ncCode: 283;      DosCode : #0#92),
       (Sequenz: ncad; ncCode: 284;      DosCode : #0#93), { F20 }
-      (Sequenz: #27'a'; ncCode: 512; DosCode : #0#30), { alt/a }
-      (Sequenz: #27'b'; ncCode: 513; DosCode : #0#48),
-      (Sequenz: #27'c'; ncCode: 514; DosCode : #0#46),
-      (Sequenz: #27'd'; ncCode: 515; DosCode : #0#32),
-      (Sequenz: #27'e'; ncCode: 516; DosCode : #0#18),
-      (Sequenz: #27'f'; ncCode: 517; DosCode : #0#33),
-      (Sequenz: #27'g'; ncCode: 518; DosCode : #0#34),
-      (Sequenz: #27'h'; ncCode: 519; DosCode : #0#35),
-      (Sequenz: #27'i'; ncCode: 520; DosCode : #0#23),
-      (Sequenz: #27'j'; ncCode: 521; DosCode : #0#36),
-      (Sequenz: #27'k'; ncCode: 522; DosCode : #0#37),
-      (Sequenz: #27'l'; ncCode: 523; DosCode : #0#38),
-      (Sequenz: #27'm'; ncCode: 524; DosCode : #0#50),
-      (Sequenz: #27'n'; ncCode: 525; DosCode : #0#49),
-      (Sequenz: #27'o'; ncCode: 526; DosCode : #0#24),
-      (Sequenz: #27'p'; ncCode: 527; DosCode : #0#25),
-      (Sequenz: #27'q'; ncCode: 528; DosCode : #0#16),
-      (Sequenz: #27'r'; ncCode: 529; DosCode : #0#19),
-      (Sequenz: #27's'; ncCode: 530; DosCode : #0#31),
-      (Sequenz: #27't'; ncCode: 531; DosCode : #0#20),
-      (Sequenz: #27'u'; ncCode: 532; DosCode : #0#22),
-      (Sequenz: #27'v'; ncCode: 533; DosCode : #0#47),
-      (Sequenz: #27'w'; ncCode: 534; DosCode : #0#17),
-      (Sequenz: #27'x'; ncCode: 535; DosCode : #0#45),
-      (Sequenz: #27'y'; ncCode: 536; DosCode : #0#21),
-      (Sequenz: #27'z'; ncCode: 537; DosCode : #0#44),  { alt/z }
-      (Sequenz: #27#1 ; ncCode: 538; DosCode : #0#120), { alt/1 }
-      (Sequenz: #27#2 ; ncCode: 539; DosCode : #0#121), { alt/2 }
-      (Sequenz: #27#3 ; ncCode: 540; DosCode : #0#122), { alt/3 }
-      (Sequenz: #27#4 ; ncCode: 541; DosCode : #0#123), { alt/4 }
-      (Sequenz: #27#5 ; ncCode: 542; DosCode : #0#124), { alt/5 }
-      (Sequenz: #27#6 ; ncCode: 543; DosCode : #0#125), { alt/6 }
-      (Sequenz: #27#7 ; ncCode: 544; DosCode : #0#126), { alt/7 }
-      (Sequenz: #27#8 ; ncCode: 545; DosCode : #0#127), { alt/8 }
-      (Sequenz: #27#9 ; ncCode: 546; DosCode : #0#128), { alt/9 }
-      (Sequenz: #27'0'; ncCode: 547; DosCode : #0#128), { alt/0 }
-      (Sequenz: #27'-'; ncCode: 548; DosCode : #0#130), { alt/- }
-      (Sequenz: #27'='; ncCode: 549; DosCode : #0#131), { alt/= }
-      (Sequenz: #27#9;  ncCode: 550; DosCode : #0#15), { alt/tab }
-      (Sequenz: #27#91#54#94;    ncCode: 551; DosCode : #0#118), { Ctrl-PgDn }
-      (Sequenz: #27#91#53#94;    ncCode: 552; DosCode : #0#132), { Ctrl-PgUp }
-      (Sequenz: #27#91#56#126;   ncCode: 553; DosCode : #0#79), { End }
-      (Sequenz: #27#91#55#126;   ncCode: 554; DosCode : #0#71), { Home }
-      (Sequenz: #27#91#49#49#94; ncCode: 555; DosCode : #0#94), { Ctrl-F2 }
-      (Sequenz: #27#91#49#50#94; ncCode: 556; DosCode : #0#95), { Ctrl-F2 }
-      (Sequenz: #27#91#49#51#94; ncCode: 557; DosCode : #0#96), { Ctrl-F3 }
-      (Sequenz: #27#91#49#52#94; ncCode: 558; DosCode : #0#97), { Ctrl-F4 }
-      (Sequenz: #27#91#49#53#94; ncCode: 559; DosCode : #0#98), { Ctrl-F5 }
-      (Sequenz: #27#91#49#55#94; ncCode: 560; DosCode : #0#99), { Ctrl-F6 }
-      (Sequenz: #27#91#49#56#94; ncCode: 561; DosCode : #0#100), { Ctrl-F7 }
-      (Sequenz: #27#91#49#57#94; ncCode: 562; DosCode : #0#101), { Ctrl-F8 }
-      (Sequenz: #27#91#50#48#94; ncCode: 563; DosCode : #0#102), { Ctrl-F9 }
-      (Sequenz: #27#91#50#49#94; ncCode: 564; DosCode : #0#103), { Ctrl-F10 }
-      (Sequenz: #27#91#50#51#94; ncCode: 565; DosCode : #0#201), { Ctrl-F11 }
-      (Sequenz: #27#91#50#52#94; ncCode: 566; DosCode : #0#202), { Ctrl-F12 }
-      (Sequenz: #27#13;          ncCode: 567; DosCode : #0#200), { Alt-Enter }
-      (Sequenz: #27#91#55#94;    ncCode: 568; DosCode : #0#119), { Ctrl-Home }
-      (Sequenz: #27#91#56#94;    ncCode: 569; DosCode : #0#117) { Ctrl-End }
+      (Sequenz: #27'a'; ncCode: 285; DosCode : #0#30), { alt/a }
+      (Sequenz: #27'b'; ncCode: 286; DosCode : #0#48),
+      (Sequenz: #27'c'; ncCode: 287; DosCode : #0#46),
+      (Sequenz: #27'd'; ncCode: 288; DosCode : #0#32),
+      (Sequenz: #27'e'; ncCode: 289; DosCode : #0#18),
+      (Sequenz: #27'f'; ncCode: 290; DosCode : #0#33),
+      (Sequenz: #27'g'; ncCode: 291; DosCode : #0#34),
+      (Sequenz: #27'h'; ncCode: 292; DosCode : #0#35),
+      (Sequenz: #27'i'; ncCode: 293; DosCode : #0#23),
+      (Sequenz: #27'j'; ncCode: 294; DosCode : #0#36),
+      (Sequenz: #27'k'; ncCode: 295; DosCode : #0#37),
+      (Sequenz: #27'l'; ncCode: 296; DosCode : #0#38),
+      (Sequenz: #27'm'; ncCode: 297; DosCode : #0#50),
+      (Sequenz: #27'n'; ncCode: 298; DosCode : #0#49),
+      (Sequenz: #27'o'; ncCode: 299; DosCode : #0#24),
+      (Sequenz: #27'p'; ncCode: 300; DosCode : #0#25),
+      (Sequenz: #27'q'; ncCode: 301; DosCode : #0#16),
+      (Sequenz: #27'r'; ncCode: 302; DosCode : #0#19),
+      (Sequenz: #27's'; ncCode: 303; DosCode : #0#31),
+      (Sequenz: #27't'; ncCode: 304; DosCode : #0#20),
+      (Sequenz: #27'u'; ncCode: 305; DosCode : #0#22),
+      (Sequenz: #27'v'; ncCode: 306; DosCode : #0#47),
+      (Sequenz: #27'w'; ncCode: 307; DosCode : #0#17),
+      (Sequenz: #27'x'; ncCode: 308; DosCode : #0#45),
+      (Sequenz: #27'y'; ncCode: 309; DosCode : #0#21),
+      (Sequenz: #27'z'; ncCode: 310; DosCode : #0#44),  { alt/z }
+      (Sequenz: #27#1 ; ncCode: 311; DosCode : #0#120), { alt/1 }
+      (Sequenz: #27#2 ; ncCode: 312; DosCode : #0#121), { alt/2 }
+      (Sequenz: #27#3 ; ncCode: 313; DosCode : #0#122), { alt/3 }
+      (Sequenz: #27#4 ; ncCode: 314; DosCode : #0#123), { alt/4 }
+      (Sequenz: #27#5 ; ncCode: 315; DosCode : #0#124), { alt/5 }
+      (Sequenz: #27#6 ; ncCode: 316; DosCode : #0#125), { alt/6 }
+      (Sequenz: #27#7 ; ncCode: 317; DosCode : #0#126), { alt/7 }
+      (Sequenz: #27#8 ; ncCode: 318; DosCode : #0#127), { alt/8 }
+      (Sequenz: #27#9 ; ncCode: 319; DosCode : #0#128), { alt/9 }
+      (Sequenz: #27'0'; ncCode: 320; DosCode : #0#128), { alt/0 }
+      (Sequenz: #27'-'; ncCode: 321; DosCode : #0#130), { alt/- }
+      (Sequenz: #27'='; ncCode: 322; DosCode : #0#131), { alt/= }
+      (Sequenz: #27#9;  ncCode: 323; DosCode : #0#15), { alt/tab }
+      (Sequenz: #27#91#54#94;    ncCode: 411; DosCode : #0#118), { Ctrl-PgDn }
+      (Sequenz: #27#91#53#94;    ncCode: 412; DosCode : #0#132), { Ctrl-PgUp }
+      (Sequenz: #27#91#56#126;   ncCode: 413; DosCode : #0#79), { End }
+      (Sequenz: #27#91#55#126;   ncCode: 414; DosCode : #0#71), { Home }
+      (Sequenz: #27#91#49#49#94; ncCode: 415; DosCode : #0#94), { Ctrl-F2 }
+      (Sequenz: #27#91#49#50#94; ncCode: 416; DosCode : #0#95), { Ctrl-F2 }
+      (Sequenz: #27#91#49#51#94; ncCode: 417; DosCode : #0#96), { Ctrl-F3 }
+      (Sequenz: #27#91#49#52#94; ncCode: 418; DosCode : #0#97), { Ctrl-F4 }
+      (Sequenz: #27#91#49#53#94; ncCode: 419; DosCode : #0#98), { Ctrl-F5 }
+      (Sequenz: #27#91#49#55#94; ncCode: 420; DosCode : #0#99), { Ctrl-F6 }
+      (Sequenz: #27#91#49#56#94; ncCode: 421; DosCode : #0#100), { Ctrl-F7 }
+      (Sequenz: #27#91#49#57#94; ncCode: 422; DosCode : #0#101), { Ctrl-F8 }
+      (Sequenz: #27#91#50#48#94; ncCode: 423; DosCode : #0#102), { Ctrl-F9 }
+      (Sequenz: #27#91#50#49#94; ncCode: 424; DosCode : #0#103), { Ctrl-F10 }
+      (Sequenz: #27#91#50#51#94; ncCode: 425; DosCode : #0#201), { Ctrl-F11 }
+      (Sequenz: #27#91#50#52#94; ncCode: 426; DosCode : #0#202), { Ctrl-F12 }
+      (Sequenz: #27#13;          ncCode: 427; DosCode : #0#200), { Alt-Enter }
+      (Sequenz: #27#91#55#94;    ncCode: 428; DosCode : #0#119), { Ctrl-Home }
+      (Sequenz: #27#91#56#94;    ncCode: 429; DosCode : #0#117) { Ctrl-End }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -354,6 +354,7 @@ const
    STDERR = 2;
 
    __isInit: boolean = false;           { Curses initialisiert? }
+   PrefChar: Char = #1;                 { Previous Char should be <> #0 }
 
 var
    ExitSave : pointer;                  { pointer to original exit proc }
@@ -804,10 +805,9 @@ function Readkey: char;
            begin
              Write(__F,FormatDateTime('hh:nn:ss',Now),
                      Format(' Translating KeySequence: [%d] to ', [Code]));
-{             for I := 1 to Length(Result) do
+             for I := 1 to Length(Result) do
                write(__F, '[', Ord(Result[I]), ']');
                writeln(__F);
-} 
            end;
 {$ENDIF}
            exit;
@@ -820,8 +820,17 @@ function Readkey: char;
   begin
      Result := InChar;
      I := Ord(InChar);
-     if I > 128 then
+     if (I > 128) and (PrefChar <> #0) then
+     begin	
 	Result := Chr(IBM2ISOTab[I]);
+{$IFDEF Debug}
+           if __isopen then
+             Writeln(__F,FormatDateTime('hh:nn:ss',Now),
+                    Format(' Key translated: [%d] => [%d] prefchar=[%d]',
+		            [Ord(InChar), Ord(Result), Ord(PrefChar)]));
+{$ENDIF}
+     end;
+     PrefChar := Result;
   end;
 
 var
@@ -849,6 +858,7 @@ begin
        DosSeq := #27;
 
      ReadKey:= DosSeq[1];              // first char is result
+     PrefChar := #0;
      for I := 2 to Length(DosSeq) do   // other chars pushed to process later
        ungetch(ord(DosSeq[I]));
   end else
@@ -1507,6 +1517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/04/19 14:06:24  ml
+  - fixes for KeyboardIO in linux
+
   Revision 1.43  2001/04/19 12:54:26  ml
   - keyboardtranslation extended   (Pos1/Home etc.)
   - ISO2IBM - Codetabletranslation (äöüß - this was shitty hard work)
