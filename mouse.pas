@@ -190,12 +190,12 @@ end;
 
 procedure setmaus(x,y: integer);
 {$IFDEF Win32}
-var c:COORD;
+var c: TCoord;
 {$ENDIF }
 begin
 {$IFDEF Win32}
-  c.x:=x;
-  c.y:=y;
+  c.x:=x div 8;
+  c.y:=y div 8;
   Windows.SetConsoleCursorPosition(OutHandle,c);
 {$ENDIF }
 end;
@@ -265,6 +265,9 @@ initialization
 
 {
   $Log$
+  Revision 1.33  2002/01/30 22:22:49  mk
+  - correct mouse coordinates before set cursor position
+
   Revision 1.32  2002/01/30 22:16:51  mk
   - fixed bug: setmouse tries to set CursorPosition on StdInputHandle instead
     of console handle
