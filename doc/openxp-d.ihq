@@ -3890,12 +3890,6 @@ Sie mit dem Systembetreiber ausdrcklich die Verwen-
 dung von Janus Plus ausgemacht haben. Der Vorteil
 von Janus Plus liegt darin, daá die Box die Nach-
 richtenpakete schneller packen kann.
-
-Beachten Sie, daá fr Janus und Janus Plus bei der
-Verwendung eines externen šbertragungsprotokolls
-unterschiedliche Download-Protokoll-Einstellungen
-notwendig sind! Fr Janus wird die Angabe <<$DOWNFILE>>
-ben”tigt, fr Janus Plus dagegen <<$DOWNPATH>>.
 @
 8020
 Mit diesem Programm werden alle zum Server geschick-

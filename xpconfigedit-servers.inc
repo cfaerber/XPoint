@@ -632,8 +632,9 @@
                     if nt=nt_ZConnect then
                       msetvfunc(testZCpointname);
                     maddstring(3,3,getres2(920,11),passwort,20,20,
-                                   iifs(ntGrossPW(nt),'>',''));
-                  end;                                       { 'Passwort  ' }
+                                   iifs(ntGrossPW(nt),'>',''));  { 'Passwort  ' }
+                  end;
+
       end; { case }
 
       uucp_pefld:=0; // needed by conn_setmode
@@ -812,9 +813,11 @@
 
       if zc then
       begin
-        maddstring(3,10+YOffset,getres2(920,43),uparcext,3,3,'>');
+        maddstring(3,10+YOffset,getres2(920,43),uparcext,3,3,'>'); { 'Packer-Extension    ' }
         mhnr(148);
-      end                                         { 'Packer-Extension    ' }
+        maddbool(38,10+YOffset,getres2(920,44),JanusPlus); { 'Janus+' }
+        mhnr(8018);
+      end
 
       else { not fido, not uucp, not zc }
       begin
@@ -2371,6 +2374,10 @@
 
 {
   $Log$
+  Revision 1.62  2002/11/01 14:17:05  ma
+  - reimplemented Janus+ switch, should solve problems with non-standard
+    servers
+
   Revision 1.61  2002/08/09 23:09:25  cl
   - Fixed [ 587622 ] 3.9: Fehler bei Box anlegen
 
