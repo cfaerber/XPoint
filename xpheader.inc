@@ -102,11 +102,15 @@ type
     gateway: string;
     sender: string;
     lines: longint;                     { "Lines:" }
+    envemp: string;
   end;
   headerp = ^header;
 
 {
   $Log$
+  Revision 1.4  2000/09/21 16:22:21  mk
+  - ZFido wieder compilierbar
+
   Revision 1.3  2000/07/21 13:23:48  mk
   - Umstellung auf TStringList
 

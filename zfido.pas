@@ -17,7 +17,7 @@
 {$I XPDEFINE.INC }
 
 uses
-  sysutils,
+  sysutils, classes,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -467,6 +467,11 @@ begin
 end;
 
 
+procedure ClearHeader(var hd: Zheader);
+begin
+  fillchar(hd,sizeof(hd),0);
+end;
+
 { --- ZConnect-Puffer ----------------------------------------------- }
 
 procedure makeheader(var buf; var size:integer; var hd:zheader; var ok:boolean);
@@ -503,7 +508,7 @@ var b       : charr absolute buf;
 begin
   o:=0;
   ok:=true;
-  ClearHeader(@hd);
+  ClearHeader(hd);
   with hd do begin
     typ:='T';
     repeat
@@ -1672,6 +1677,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2000/09/21 16:22:21  mk
+  - ZFido wieder compilierbar
+
   Revision 1.32  2000/09/06 21:31:01  fe
   /home/fe/foo
 
