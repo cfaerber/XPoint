@@ -154,7 +154,7 @@ var b    : byte;                               { wenn keine ungelesenen Nachrich
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
   if dbEOF(mbase) then nope:=true
-    else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
+    else nope:=((dbReadStrN(mbase,mb_brett)<>brett) or (dbReadInt(mbase,'gelesen')<>0));
   rec:=dbrecno(bbase);
   dbSeek(bbase,biIntnr,mid(brett,2));
   if dbFound then begin
@@ -222,7 +222,7 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-         if (DispMode<>12) and (LeftStr(dbReadStr(mbase,'brett'),1)<>'1') then
+         if (DispMode<>12) and (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'1') then
           disprec[1]:=0;
         end
       else
@@ -420,7 +420,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,1);
-              if not dbEOF(mbase) then _brett:= dbReadStr(mbase,'brett');
+              if not dbEOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
             until dbEOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -467,7 +467,7 @@ var t,lastt: taste;
             dbSetIndex(mbase,miBrett);
             repeat
               dbSkip(mbase,-1);
-              if not dbBOF(mbase) then _brett:= dbReadStr(mbase,'brett');
+              if not dbBOF(mbase) then _brett:= dbReadStrN(mbase,mb_brett);
             until dbBOF(mbase) or (dbReadInt(mbase,'gelesen')=0) or
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
@@ -562,7 +562,7 @@ var t,lastt: taste;
 
   function trennzeile:boolean;
   begin
-    trennzeile:=(LeftStr(dbReadStr(bbase,'brettname'),3)='$/T');
+    trennzeile:=(LeftStr(dbReadStrN(bbase,bb_brettname),3)='$/T');
   end;
 
   procedure gostart;
@@ -573,7 +573,7 @@ var t,lastt: taste;
               else begin
                 dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(LeftStr(dbReadStrN(bbase,bb_brettname),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,-1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -630,7 +630,7 @@ var t,lastt: taste;
                 else dbSkip(bbase,-1);
                 dbSetIndex(bbase,mi);
                 while not dbEOF(bbase) and not dbBOF(bbase) and
-                      ((UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(archivbretter)+1))
+                      ((UpperCase(LeftStr(dbReadStrN(bbase,bb_brettname),length(archivbretter)+1))
                          ='A'+ArchivBretter) or trennzeile) do
                   dbSkip(bbase,1);
                 if dbEOF(bbase) then dbGoEnd(bbase)
@@ -899,7 +899,7 @@ var t,lastt: taste;
           // Needed for roles. This is somewhat tricky, I hope there are no side
           // effects (seeking in bbase...).
           // !! Check, because RTA implementation
-          dbSeek(bbase,biIntnr,mid(dbReadStr(mbase,'brett'),2));
+          dbSeek(bbase,biIntnr,mid(dbReadStrN(mbase,mb_brett),2));
           if dbFound then dbReadN(bbase,bb_gruppe,brettgruppe);
           // ma, 2001-06-03
 
@@ -945,7 +945,7 @@ var t,lastt: taste;
             end    { not xposting }
 
         else begin  { dispmode >= 10 }
-          _empf:= dbReadStr(mbase,'brett');
+          _empf:= dbReadStrN(mbase,mb_brett);
           if LeftStr(_empf,1)='U' then begin
             rfehler(405);   { 'Nachricht bitte als PM schicken' }
             exit;
@@ -1052,8 +1052,8 @@ var t,lastt: taste;
     if (Quote= 2) and (not multiquote(brk) and brk) then exit;
 
     if (dispmode>=10) and (dispmode<=19) then begin
-      dbRead(mbase,'typ',typ);
-      betr:= dbReadStr(mbase,'betreff');
+      dbReadN(mbase,mb_typ,typ);
+      betr:= dbReadStrN(mbase,mb_betreff);
       if (typ='B') and (quote=1) and not IS_QPC(betr) and not IS_DES(betr) and
          not ReadJN(getres(406),true)   { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
       then goto ende;
@@ -1116,7 +1116,7 @@ var t,lastt: taste;
       _empf:= dbReadNStr(mbase,mb_brett);
       dbSeek(bbase,biIntnr,mid(_empf,2));
       if dbFound then
-        sData^.ReplyGroup:=mid(dbReadStr(bbase,'brettname'),2);
+        sData^.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
       end;
     sdata^.empfrealname:=realname;
 
@@ -1156,12 +1156,12 @@ var t,lastt: taste;
         hdp := THeader.Create;
         ReadHeader(hdp,hds,false);
         dbseek(ubase,uiname,AnsiUpperCase(hdp.empfaenger));
-        if dbfound then defaultbox := dbreadStr(ubase,'pollbox');
+        if dbfound then defaultbox := dbReadStrN(ubase,ub_pollbox);
         Hdp.Free;
         end
       else begin
         dbseek(bbase,biIntnr,mid(_empf,2));
-        if dbfound then DefaultBox := dbreadStr(bbase,'pollbox');
+        if dbfound then DefaultBox := dbReadStrN(bbase,bb_pollbox);
       end;
       ReplaceVertreterbox(defaultbox, true);
       brk:=not CC_testempf(empf);
@@ -1175,7 +1175,7 @@ var t,lastt: taste;
       if AutoArchiv and reply then begin
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if (LeftStr(dbReadStr(mbase,'brett'),1)='1') and
+        if (LeftStr(dbReadStrN(mbase,mb_brett),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -2212,6 +2212,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.98  2001/08/12 11:50:38  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.97  2001/08/11 10:24:47  mk
   - numerous RTA fixes
 

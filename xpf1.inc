@@ -440,7 +440,7 @@ begin
     if first and (aktdispmode in [10..19]) then begin
       dbGo(mbase,AktDisprec);
       if not dbEOF(mbase) and not dbBOF(mbase) and (mbNetztyp=nt_Fido) then begin
-        splitfido(dbReadStr(mbase,'absender'),fa,DefaultZone);
+        splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
         adr:=MakeFidoAdr(fa,false);
         brk:=false;
         end;
@@ -901,6 +901,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.35  2001/08/12 11:50:44  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.34  2001/08/10 20:58:01  mk
   - removed some hints and warnings
   - fixed some minior bugs

@@ -260,16 +260,16 @@ var x,y      : Integer;
     if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
     dbSeek(bezbase,beiMsgId,dbLongStr(crc));
     if dbFound then
-      while (not dbEOF(bezbase)) and (dbReadInt(bezbase,'msgid')=crc) do begin
+      while (not dbEOF(bezbase)) and (dbReadIntN(bezbase,bezb_msgid)=crc) do begin
         repeat;
           hdp2.msgid:='';
-          rec:=dbReadInt(bezbase,'MsgPos');
+          rec:=dbReadIntN(bezbase,bezb_msgpos);
           if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
             dbGo(mbase,rec);
             Readheader(hdp2,hds,false);
           end;
           dbNext(bezbase);
-        until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
+        until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>crc);
         if okay then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
       end;
     Hdp2.Free;
@@ -471,7 +471,7 @@ var x,y      : Integer;
     uflags := 0;
     if not dbFound then exit;
     passwd:= dbReadXStr(ubase,'passwort',size);
-    dbRead(ubase,'codierer',codierer);
+    dbReadN(ubase,ub_codierer,codierer);
     if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
       (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
     hdp2 := THeader.Create;
@@ -654,7 +654,7 @@ var x,y      : Integer;
       dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
       if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
       begin { Rckl„ufer gefunden }
-        msgpos := dbReadInt(bezbase,'msgpos');
+        msgpos := dbReadIntN(bezbase,bezb_msgpos);
         if not dbDeleted(mbase, msgpos) then
         begin
           dbGo(mbase, msgpos);
@@ -907,7 +907,7 @@ begin
                   if p0>0 then begin
                     seekbr:=LeftStr(seekbr,p0-1);
                     if dbEOF(bbase) or
-                       (LeftStr(dbReadStr(bbase,'brettname'),length(seekbr))<>seekbr) then
+                       (LeftStr(dbReadStrN(bbase,bb_brettname),length(seekbr))<>seekbr) then
                       dbSeek(bbase,biBrett,UpperCase(seekbr));
                     end;
                   if dbEOF(bbase) then dbGoEnd(bbase);
@@ -956,7 +956,7 @@ begin
               dbWriteNStr(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1+iif(newuseribm,0,8);  { aufnehmen / Umlaute }
-              dbWrite(ubase,'userflags',flags);
+              dbWriteN(ubase,ub_userflags,flags);
               adrbuch:=NeuUserGruppe;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
               end
@@ -1237,6 +1237,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2001/08/12 11:50:37  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.60  2001/08/11 23:06:31  mk
   - changed Pos() to cPos() when possible
 

@@ -301,19 +301,19 @@ begin
   dbSetIndex(mbase,miBrett);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
   if dbFound then begin      { muesste eigentlich immer True sein, aber... }
-    dbRead(bbase,'LDatum',d1);
+    dbReadN(bbase,bb_ldatum,d1);
     dbSeek(mbase,miBrett,_brett+#255);
     if dbEOF(mbase) then
       dbGoEnd(mbase)         { auf letzte Msg im letzten Brett gehen.. }
     else
       dbSkip(mbase,-1);
     if dbBOF(mbase) or dbEOF(mbase) then _mbrett:=''
-    else _mbrett := dbReadStr(mbase,'Brett');
+    else _mbrett := dbReadStrN(mbase,mb_brett);
     if _mbrett=_brett then      { falls Brett nicht leer }
-      dbRead(mbase,'EmpfDatum',d2)
+      dbReadN(mbase,mb_empfdatum,d2)
     else
       d2:=0;
-    if d2<>d1 then dbWrite(bbase,'LDatum',d2);
+    if d2<>d1 then dbWriteN(bbase,bb_ldatum,d2);
     end;
   dbSetIndex(mbase,mi);
 end;
@@ -322,7 +322,7 @@ end;
 function gelesen:boolean;
 var gel : byte;
 begin
-  dbRead(mbase,'gelesen',gel);
+  dbReadN(mbase,mb_gelesen,gel);
   gelesen:=gel<>0;
 end;
 
@@ -346,7 +346,7 @@ begin
     else
       dbSkip(mbase,-1);
     if dbBOF(mbase) or dbEOF(mbase) then _mbrett:=''
-    else _Mbrett := dbReadStr(mbase,'Brett');
+    else _Mbrett := dbReadStrN(mbase,mb_brett);
     if (_mbrett=_brett) then
       mug:=not (dbReadInt(mbase,'gelesen')=1)
     else
@@ -393,7 +393,7 @@ begin
   dialog(58,7,getres2(322,1),x,y);   { 'Nachrichten in anderes Brett verlagern' }
   newbrett:=''; modihead:=true;
   maddtext(3,2,getres2(322,2),0);   { 'Quellbrett' }
-  maddtext(16,2,copy(dbReadStr(bbase,'brettname'),2,41),col.coldiahigh);
+  maddtext(16,2,copy(dbReadStrN(bbase,bb_brettname),2,41),col.coldiahigh);
   maddstring(3,4,getres2(322,3),newbrett,40,eBrettLen,'>');  { 'Zielbrett  ' }
   mhnr(70);
   mappcustomsel(selbrett,false);
@@ -405,7 +405,7 @@ begin
   closebox;
   if not brk then begin
     newempf:=newbrett;
-    if LeftStr(dbReadStr(bbase,'brettname'),1)='1' then begin
+    if LeftStr(dbReadStrN(bbase,bb_brettname),1)='1' then begin
       delfirst(newempf);
       if cPos('/',newempf)>0 then   { Boxname im PM-Brett }
         newempf[cPos('/',newempf)]:='@'
@@ -427,7 +427,7 @@ begin
     else begin
       _newbrett:=mbrettd(newbrett[1],bbase);
       dbGo(bbase,rec);
-      oldbrett := dbReadStr(bbase,'brettname');
+      oldbrett := dbReadStrN(bbase,bb_brettname);
       _oldbrett:=mbrettd(oldbrett[1],bbase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
@@ -442,7 +442,7 @@ begin
           moff;
           gotoxy(x+25,y+1); write(n:4);
           mon;
-          _brett := dbReadStr(mbase,'brett');
+          _brett := dbReadStrN(mbase,mb_brett);
           if odd(dbReadInt(mbase,'unversandt')) then
             dbSkip(mbase,1)
           else
@@ -508,7 +508,7 @@ begin
   dialog(58,5,getres2(323,1),x,y);  { 'Nachrichten in anderes Userbrett verlagern' }
   newuser:='';
   maddtext(3,2,getres2(323,2),0);   { 'von User' }
-  maddtext(16,2,LeftStr(dbReadStr(ubase,'username'),41),col.coldiahigh);
+  maddtext(16,2,LeftStr(dbReadStrN(ubase,ub_username),41),col.coldiahigh);
   maddstring(3,4,getres2(323,3),newuser,40,eAdrLen,'');  { 'nach User  ' }
   mhnr(72);
   mappcustomsel(seluser,false);
@@ -527,7 +527,7 @@ begin
       _newuser:=mbrettd('U',ubase);
       rec2:=dbRecno(ubase);
       dbGo(ubase,rec);
-      olduser := dbReadStr(ubase,'username');
+      olduser := dbReadStrN(ubase,ub_username);
       _olduser:=mbrettd('U',ubase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
@@ -591,7 +591,7 @@ var fname   : string;
   function ETyp:byte;
   var typ : char;
   begin
-    dbRead(mbase,'Typ',typ);
+    dbReadN(mbase,mb_typ,typ);
     if (typ='B') and (not IS_QPC(betreff)) and (not IS_DES(betreff)) and
        odd(ExtraktTyp) then
       ETyp:=0
@@ -626,7 +626,7 @@ begin
     else begin
       ReadHeader(hdp,hds,true);
       if (hdp.datei='') or (hds=-1) then begin
-        Betreff := dbReadStr(mbase,'Betreff');
+        Betreff := dbReadStrN(mbase,mb_betreff);
         if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         if recount(betreff)>0 then;  { entfernt Re^n }
@@ -689,7 +689,7 @@ begin
                 end;
             2 : begin
                   if (AktDispmode>=10) and (AktDispmode<=19) then begin
-                    _brett := dbReadStr(mbase,'brett');
+                    _brett := dbReadStrN(mbase,mb_brett);
                     case rdmode of
                       0 : dbSeek(mbase,miBrett,_brett);
                       1 : begin
@@ -701,12 +701,12 @@ begin
                     end;
                     end
                   else begin
-                    brett := dbReadStr(bbase,'brettname');
+                    brett := dbReadStrN(bbase,bb_brettname);
                     _brett:=mbrettd(brett[1],bbase);
                     dbSeek(mbase,miBrett,_brett);
                     end;
                   repeat
-                    _b := dbReadStr(mbase,'brett');
+                    _b := dbReadStrN(mbase,mb_brett);
                     if _b=_brett then readit;
                     dbNext(mbase);
                   until (_b<>_brett) or dbEOF(mbase) or
@@ -816,7 +816,7 @@ begin
   i:=0; ii:=0;
   if (aktdispmode=10) then
   begin
-    _brett := dbReadStr(mbase,'brett');
+    _brett := dbReadStrN(mbase,mb_brett);
     case rdmode of
       0 : dbSeek(mbase,miBrett,_brett);
       1 : begin
@@ -840,7 +840,7 @@ begin
       11 : dbGo(mbase,marked^[i].recno);
       12 : dbGo(mbase,TReplyTreeItem(ReplyTree[i]^).msgpos);
     end;
-    _b := dbReadStr(mbase,'brett');
+    _b := dbReadStrN(mbase,mb_brett);
     deleted:=false;
     if (aktdispmode=11) or (aktdispmode=12) or (_b=_brett) then begin
       attrtxt(col.colmboxhigh);
@@ -855,7 +855,7 @@ begin
                 rec:=dbRecno(mbase);
                 dbGo(mbase,rec2);
                 end;
-              dbWrite(mbase,'gelesen',gelesen);
+              dbWriteN(mbase,mb_gelesen,gelesen);
               if rdmode=1 then
                 dbGo(mbase,rec);
             end;
@@ -863,8 +863,8 @@ begin
              writeln(t,i+1:4,dbReadInt(mbase,'groesse'):8,'  ',
                        msgtyp,'  ',
                        fdat(longdat(dbReadInt(mbase,'origdatum'))),'  ',
-                       forms(dbReadStr(mbase,'absender'),25),' ',
-                       LeftStr(dbReadStr(mbase,'betreff'),25));
+                       forms(dbReadStrN(mbase,mb_absender),25),' ',
+                       LeftStr(dbReadStrN(mbase,mb_betreff),25));
 
         8 : if checklst then begin
               if n>1 then
@@ -1025,7 +1025,7 @@ begin
   if not auto and (_br[1]='A') then begin
     dbSeek(bbase,biIntnr,copy(_br,2,4));
     if dbFound then
-      writeln(t,getres2(337,4),mid(dbReadStr(bbase,'brettname'),2));  { 'Brett:      ' }
+      writeln(t,getres2(337,4),mid(dbReadStrN(bbase,bb_brettname),2));  { 'Brett:      ' }
     end;
   hdp := THeader.Create;
   ReadHeader(hdp,hds,false);
@@ -1156,7 +1156,7 @@ begin
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
   dbReadN(mbase,mb_flags,flags);
-  if (((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
+  if (((UpperCase(adr)<>UpperCase(dbReadStrN(mbase,mb_absender))) and
       not stricmp(adr,hdp.wab)) or (hds<=1)) and (flags and 256 = 0) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
@@ -1271,7 +1271,7 @@ begin
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
   dbReadN(mbase,mb_flags,flags);
-  if (((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
+  if (((UpperCase(adr)<>UpperCase(dbReadStrN(mbase,mb_absender))) and
       not stricmp(adr,hdp.wab)) or (hds<=1)) and (flags and 256 = 0) then begin
     if hds>1 then
       rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2001/08/12 11:50:37  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.63  2001/08/11 23:06:31  mk
   - changed Pos() to cPos() when possible
 

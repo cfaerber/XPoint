@@ -224,7 +224,7 @@ var size   : longint;
           rfehler(308);   { 'Nachricht ist codiert, aber Passwort fehlt!' }
           exit;
           end;
-        dbRead(ubase,'codierer',coder);
+        dbReadN(ubase,ub_codierer,coder);
         if coder<>dtyp then begin
           if dtyp=1 then
             rfehler(309)  { 'Nachricht ist QPC-codiert, aber es ist ein DES-Passwort eingetragen!' }
@@ -743,7 +743,7 @@ begin
           rps(s,'$BRETT',wempf);
           p:=length(wempf);
           while (p>0) and (wempf[p]<>'/') do dec(p);
-          case firstchar(dbReadStr(mbase,'brett')) of
+          case firstchar(dbReadStrN(mbase,mb_brett)) of
             '$'  : rps(s,'$AREA',trim(getres2(361,1)));  { '(internes CrossPoint-Brett)' }
             'A'  : rps(s,'$AREA',mid(wempf,p+1));
             else   rps(s,'$AREA',getres2(361,48));       { 'private Mail' }
@@ -1102,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2001/08/12 11:50:37  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.75  2001/08/11 23:06:31  mk
   - changed Pos() to cPos() when possible
 

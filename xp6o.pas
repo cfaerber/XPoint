@@ -265,7 +265,7 @@ begin
         goto nextpp;   { zum naechsten Puffer weiterspringen }
         end;
       found:=EQ_betreff(hdp.betreff) and (dat=hdp.datum) and EQ_empf
-             and (FormMsgid(hdp.msgid)=dbReadStr(mbase,'msgid'));
+             and (FormMsgid(hdp.msgid)=dbReadStrN(mbase,mb_msgid));
       dbReadN(mbase,mb_netztyp,nt);
    (* Groessenueberpruefung nicht mehr notwendig, wegen MsgID-Ueberpruefung
       if (uvs and 4=0) and (nt and $4000=0) then   { 4=pmc, $4000 = PGP }
@@ -299,11 +299,11 @@ begin
   if empfnr>0 then begin
     dbReadN(mbase,mb_ablage,ablage);    { alle Crosspostings auf loe. + !UV }
     dbReadN(mbase,mb_adresse,madr);
-    crc:=LeftStr(dbReadStr(mbase,'msgid'),4);
+    crc:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
     dbSeek(bezbase,beiMsgID,crc);
-    while not dbEOF(bezbase) and (dbLongStr(dbReadInt(bezbase,'msgid'))=crc) do begin
-      if dbReadInt(bezbase,'msgpos')<>rec then begin
-        dbGo(mbase,dbReadInt(bezbase,'msgpos'));
+    while not dbEOF(bezbase) and (dbLongStr(dbReadIntN(bezbase,bezb_msgid))=crc) do begin
+      if dbReadIntN(bezbase,bezb_msgpos)<>rec then begin
+        dbGo(mbase,dbReadIntN(bezbase,bezb_msgpos));
         if (dbReadInt(mbase,'ablage')=ablage) and (dbReadInt(mbase,'adresse')=madr) then
           SetDelNoUV;
         end;
@@ -404,8 +404,8 @@ begin
           dbSeek(bezbase,beiMsgID,crc);
           found:=dbFound;
           if found then
-            if dbReadInt(bezbase,'msgpos')<>rec then begin
-              dbGo(mbase,dbReadInt(bezbase,'msgpos'));
+            if dbReadIntN(bezbase,bezb_msgpos)<>rec then begin
+              dbGo(mbase,dbReadIntN(bezbase,bezb_msgpos));
               if (dbReadInt(mbase,'ablage')=ablage) and (dbReadInt(mbase,'adresse')=madr) then
                 RemoveMsg;
               end;
@@ -722,8 +722,8 @@ begin
       exit;
       end else
     if mbNetztyp=nt_Maus then begin
-      if (LeftStr(dbReadStr(mbase,'brett'),1)<>'1') and
-         (LeftStr(dbReadStr(mbase,'brett'),1)<>'U') then
+      if (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'1') and
+         (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'U') then
         rfehler(628)     { 'Im MausNet nur bei PMs moeglich.' }
       else
         MausWeiterleiten;
@@ -732,7 +732,7 @@ begin
    if (typ=5) and (ArchivBretter<>'') then begin    { Test, ob Archivbretter }
      dbSeek(bbase,biBrett,'A'+UpperCase(ArchivBretter));
      if dbEOF(bbase) or
-        (UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
+        (UpperCase(LeftStr(dbReadStrN(bbase,bb_brettname),length(ArchivBretter)+1))<>
          'A'+UpperCase(ArchivBretter)) then begin
        rfehler(630);    { 'ungueltige Archivbrett-Einstellung' }
        exit;
@@ -1170,14 +1170,14 @@ begin
 
   dbSeek(ubase,uiName,UpperCase(hdp.absender));
   if not dbFound then begin                        { Userbrett neu anlegen }
-    dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
+    dbSeek(bbase,biIntNr,typeform.mid(dbReadStrN(mbase,mb_brett),2));
     if dbFound then Box := dbReadNStr(bbase,bb_pollbox)
     else box:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
     AddNewUser(hdp.absender,box);
     end;
 
   box:=defaultbox;
-  dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
+  dbSeek(bbase,biIntNr,typeform.mid(dbReadStrN(mbase,mb_brett),2));
   if dbFound then DefaultBox := dbReadNStr(bbase,bb_pollbox)
     else defaultbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
   ReplaceVertreterbox(defaultbox,true);
@@ -1246,7 +1246,7 @@ begin
     i:=0; pms:=false;
     repeat
       dbGo(mbase,marked^[i].recno);
-      if firstchar(dbReadStr(mbase,'brett'))='1' then
+      if firstchar(dbReadStrN(mbase,mb_brett))='1' then
         pms:=true;
       inc(i);
     until pms or (i=markanz);
@@ -1265,11 +1265,11 @@ var i   : integer;
     rec : longint;
 begin
   brk:=false;
-  fpm:=(LeftStr(dbReadStr(mbase,'brett'),1)='1');
+  fpm:=(LeftStr(dbReadStrN(mbase,mb_brett),1)='1');
   rec:=dbRecno(mbase);
   if not fpm then begin               { 'Nachricht von %s archivieren' }
     pushhp(1500);
-    if ReadJN(getreps2(644,6,LeftStr(dbReadStr(mbase,'absender'),39)),true) then begin
+    if ReadJN(getreps2(644,6,LeftStr(dbReadStrN(mbase,mb_absender),39)),true) then begin
       message(getres2(644,7));        { 'Nachricht wird archiviert' }
       dbGo(mbase,rec);
       ArchivAMtoPM;
@@ -1298,7 +1298,7 @@ begin
         write(i:4);
         mon;
         dbGo(mbase,marked^[i].recno);
-        if LeftStr(dbReadStr(mbase,'brett'),1)='1' then begin
+        if LeftStr(dbReadStrN(mbase,mb_brett),1)='1' then begin
           MsgUnmark;
           Weiterleit(6,false)
           end;
@@ -1312,6 +1312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/08/12 11:50:41  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.67  2001/08/11 23:06:34  mk
   - changed Pos() to cPos() when possible
 

@@ -90,10 +90,10 @@ var
 
 begin
   if msg then begin
-    if (LeftStr(UpperCase(dbReadStr(mbase,'betreff')),5)<>'FILES') and
+    if (LeftStr(UpperCase(dbReadStrN(mbase,mb_betreff)),5)<>'FILES') and
        not ReadJN(getres(811),true) then   { 'Sind Sie sicher, daá das eine Fileliste ist' }
       exit;
-    absender:= dbReadStr(mbase,'absender');
+    absender:= dbReadStrN(mbase,mb_absender);
     p:=cpos('@',absender);
     p2:=p+cPos('.',copy(absender,p+1,20));
     if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
@@ -558,6 +558,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2001/08/12 11:50:43  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.22  2001/08/11 23:06:35  mk
   - changed Pos() to cPos() when possible
 

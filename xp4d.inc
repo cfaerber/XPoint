@@ -109,7 +109,7 @@ begin  { __ Suchmarke }
   over80:= ScreenWidth-80;                                      { Bildschirm > Spalten }
   case aktdispmode of
    -1,0 : begin
-            s:= dbReadStr(bbase,'brettname');
+            s:= dbReadStrN(bbase,bb_brettname);
             komm:= dbReadStr(bbase,'kommentar');
             if LeftStr(s,3)='$/T' then begin                       { Trennzeile ? }
               if komm='' then
@@ -165,7 +165,7 @@ begin  { __ Suchmarke }
                 dispbuf[y]:=markc+                                      {  1}
                             iifc(dat<>0,' ','-')                        { +1}
                             +iifc(flags and 8<>0,'X',' ')               { +1}
-                            +iifc(dbReadStr(bbase,'adresse')<>'',
+                            +iifc(dbReadStrN(bbase,bb_adresse)<>'',
                                   iifc(flags and 32=0,'*','O'),' ')     { +1}
                             +iifc(odd(flags),'N',' ')                   { +1}
                             +hz(hzeit)                                  { +4}
@@ -300,7 +300,7 @@ begin  { __ Suchmarke }
             if ((netztyp=nt_Maus) or fidoqwk) and (pp>0) then
               s:=LeftStr(s0,pp-1)+' @ '+mid(s0,pp+1)
             else
-              if showrealos and (dbReadStr(mbase,'name')<>'') and
+              if showrealos and (dbReadStrN(mbase,mb_name)<>'') and
                  ((dispmode<>11) or not markunversandt) then
                 s:= dbReadNStr(mbase,mb_name)
               else begin
@@ -469,7 +469,7 @@ begin  { __ Suchmarke }
               else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
               if fidoqwk and (_brett[1]='A') and
-                 (HighlightName=UpperCase(dbReadStr(mbase,'name')))
+                 (HighlightName=UpperCase(dbReadStrN(mbase,mb_name)))
                  then userflag[y]:=1
               else
                 if (cpos('@',dispspec)>0) and
@@ -611,6 +611,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/08/12 11:50:39  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.47  2001/08/11 23:06:31  mk
   - changed Pos() to cPos() when possible
 

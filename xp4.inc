@@ -318,7 +318,7 @@ begin
                   if dbEOF(bbase) then  { noch keine Bretter angelegt }
                     MapsDelbrett('U')   { .. erzwingt Listenauswahl }
                   else
-                    MapsDelBrett(iifs(bmarkanz=0,dbReadstr(bbase,'brettname'),''))
+                    MapsDelBrett(iifs(bmarkanz=0,dbReadStrN(bbase,bb_brettname),''))
                 else begin
                   dbSeek(bbase,biBrett,UpperCase(dispspec));
                   MapsDelBrett(dispspec);
@@ -603,6 +603,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2001/08/12 11:50:38  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.32  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

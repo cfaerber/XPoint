@@ -427,9 +427,9 @@ begin
   rec:=dbRecno(mbase);
   b:=0;
   dbWriteN(mbase,mb_gelesen,b);
-  RereadBrettdatum(dbReadStr(mbase,'brett'));
+  RereadBrettdatum(dbReadStrN(mbase,mb_brett));
   dbGo(mbase,rec);
-  setbrettgelesen(dbReadStr(mbase,'brett'));
+  setbrettgelesen(dbReadStrN(mbase,mb_brett));
   dbGo(mbase,rec);
 end;
 
@@ -440,13 +440,16 @@ begin
   if not dbFound then
     UserNetztyp:=0
   else
-    UserNetztyp:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
+    UserNetztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.45  2001/08/12 11:50:38  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.44  2001/08/11 21:20:51  mk
   - THeader.OEM is now TStringList (before: String)
 

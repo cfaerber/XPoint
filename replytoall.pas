@@ -614,14 +614,14 @@ var RTAEmpfList :RTAEmpfaengerP;
         b :byte;
     begin
       dbAppend(ubase);                        { neuen User anlegen }
-      dbWriteStr(ubase,'username',user);
-      dbWriteStr(ubase,'pollbox',box);
+      dbWriteNStr(ubase,ub_username,user);
+      dbWriteNStr(ubase,ub_pollbox,box);
       halten:=stduhaltezeit;
-      dbWrite(ubase,'haltezeit',halten);
+      dbWriteN(ubase,ub_haltezeit,halten);
       b:= 1+iif(newuseribm,0,8);
       halten := 0;
-      dbWrite(ubase,'adrbuch', halten);
-      dbWrite(ubase,'userflags',b);      { aufnehmen }
+      dbWriteN(ubase,ub_adrbuch, halten);
+      dbWriteN(ubase,ub_userflags,b);      { aufnehmen }
       dbFlushClose(ubase);
     end;
 
@@ -1025,6 +1025,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/08/12 11:50:36  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.10  2001/08/11 22:20:32  mk
   - fixed crash in main function
   - pos() -> cPos()

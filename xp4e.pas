@@ -412,16 +412,16 @@ begin
       rfehler(2703)    { 'Dieser User ist bereits vorhanden!' }
     else begin
       dbAppend(ubase);
-      dbWriteStr(ubase,'username',user);
+      dbWriteNStr(ubase,ub_username,user);
       if UpperCase(adresse)=UpperCase(user) then adresse:='';
       dbWriteXStr(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
-      dbWriteStr(ubase,'kommentar',komm);
-      dbWriteStr(ubase,'pollbox',pollbox);
-      dbWrite(ubase,'haltezeit',halten);
-      dbWrite(ubase,'userflags',flags);
+      dbWriteNStr(ubase,ub_kommentar,komm);
+      dbWriteNStr(ubase,ub_pollbox,pollbox);
+      dbWriteN(ubase,ub_haltezeit,halten);
+      dbWriteN(ubase,ub_userflags,flags);
       b:=1;
-      dbWrite(ubase,'adrbuch',adr);
-      dbWrite(ubase,'codierer',b);
+      dbWriteN(ubase,ub_adrbuch,adr);
+      dbWriteN(ubase,ub_codierer,b);
       dbFlushClose(ubase);
       newuser:=true;
       end;
@@ -575,7 +575,7 @@ var hdp      : Theader;
       pollbox  : string;
   begin
     absender:= dbReadNStr(mbase,mb_absender);
-    dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+    dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
     if dbFound then       { mÅ·te IMMER true sein }
       pollbox:= dbReadNStr(bbase,bb_pollbox)
     else
@@ -586,7 +586,7 @@ var hdp      : Theader;
 
 begin
   GetMsgBrettUser:=true;
-  if MarkUnversandt and (LeftStr(dbReadStr(mbase,'brett'),1)='U') then begin
+  if MarkUnversandt and (LeftStr(dbReadStrN(mbase,mb_brett),1)='U') then begin
     hdp:= THeader.Create;
     readheader(hdp,hds,true);
     suchname:=hdp.empfaenger;
@@ -623,7 +623,7 @@ var pw    : string;
 begin
   if msgbrett and not GetMsgBrettUser then
     exit;
-  netztyp:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
+  netztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
   if netztyp=nt_Fido then begin
     adr:= dbReadNStr(ubase,ub_username);
     SplitFido(adr,fa,2);
@@ -637,7 +637,7 @@ begin
   size:=0;
   pw:= dbReadXStr(ubase,'passwort',size);
   if size=0 then pw:='';
-  dbRead(ubase,'codierer',typ);
+  dbReadN(ubase,ub_codierer,typ);
   if typ=9 then
     cod:='PGP'
   else if not ntBinary(netztyp) and (typ<3) then
@@ -648,7 +648,7 @@ begin
       2    : cod:='DES';
       3..2+maxpmc : cod:='pmc-'+strs(typ-2);
     end;
-  name:= dbReadStr(ubase,'username');
+  name:= dbReadStrN(ubase,ub_username);
   dialog(67,7,LeftStr(fuser(name),60),x,y);
   wcy:=y+3;
   maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Pa·wort ' }
@@ -675,11 +675,11 @@ begin
     else if UpperCase(cod)='DES' then typ:=2
     else if UpperCase(cod)='PGP' then typ:=9
     else typ:=2+ival(RightStr(cod,1));
-    dbWrite(ubase,'codierer',typ);
+    dbWriteN(ubase,ub_codierer,typ);
     if pw<>'' then begin
-      dbread(ubase,'adrbuch',adrb);
+      dbReadN(ubase,ub_adrbuch,adrb);
       if adrb=0 then adrb:=NeuUserGruppe;
-      dbWrite(ubase,'adrbuch',adrb);
+      dbWriteN(ubase,ub_adrbuch,adrb);
       end;
     flags:=flags and (not 2)+iif(defcode,2,0);
     dbWriteN(ubase,ub_userflags,flags);
@@ -895,7 +895,7 @@ var x,y,wdt  : Integer;
     b        : byte;
 begin
   modibrett2:=false;
-  if LeftStr(dbReadStr(bbase,'brettname'),1)<'A' then begin
+  if LeftStr(dbReadStrN(bbase,bb_brettname),1)<'A' then begin
     rfehler(2712);
     exit;
     end;
@@ -911,7 +911,7 @@ begin
   if dbReadInt(bbase,'flags') and 32<>0 then adresse:=''
   else adresse:= dbReadNStr(bbase,bb_adresse);
   gesperrt:=(dbReadInt(bbase,'flags')and 8<>0);
-  pb_netztyp:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
+  pb_netztyp:=ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox));
   maddstring(3,2,getres2(2735,2),adresse,36,eAdrLen,'');   { 'Vertreter-Adresse' }
   mappcustomsel(auto_empfsel,false);  mhnr(860);
   msetvfunc(testnoverteiler);                       { nur Verteileradressen sind Ungueltig }
@@ -925,7 +925,7 @@ begin
   freeres;
   dbGo(bbase,rec);
   if not brk then begin
-    if { (UpperCase(adresse)=UpperCase(mid(dbReadStr(bbase,'brettname'),2))) or }
+    if { (UpperCase(adresse)=UpperCase(mid(dbReadStrN(bbase,bb_brettname),2))) or }
        (not gesperrt and ntFollowup(pb_netztyp) and (cpos('@',adresse)>0)) then
       adresse:='';
     dbWriteNStr(bbase,bb_adresse,adresse);
@@ -957,7 +957,7 @@ begin
   modiuser:=false;
   if msgbrett and not GetMsgbrettUser then
     exit;
-  user:= dbReadStr(ubase,'username');
+  user:= dbReadStrN(ubase,ub_username);
   if dbXsize(ubase,'adresse')=0 then adresse:=user
   else begin
     size:=0;
@@ -965,22 +965,22 @@ begin
     if adresse='' then adresse:=user;
     end;
   komm:= dbReadStr(ubase,'kommentar');
-  pollbox:= dbReadStr(ubase,'pollbox');
-  dbRead(ubase,'haltezeit',halten);
-  dbRead(ubase,'userflags',flags);
+  pollbox:= dbReadStrN(ubase,ub_pollbox);
+  dbReadN(ubase,ub_haltezeit,halten);
+  dbReadN(ubase,ub_userflags,flags);
   if Pollbox='' then adr:=NeuUsergruppe {Bei neuem User Standard-Adressbuchgruppe}
-    else dbRead(ubase,'Adrbuch',adr);
+    else dbReadN(ubase,ub_adrbuch,adr);
   rec:=dbRecno(ubase);
   edituser(getres(2710),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
   dbGo(ubase,rec);
   if not brk then begin                 { 'User bearbeiten' }
     if UpperCase(adresse)=UpperCase(user) then adresse:='';
     dbWriteXStr(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
-    dbWriteStr(ubase,'kommentar',komm);
-    dbWriteStr(ubase,'pollbox',pollbox);
-    dbWrite(ubase,'haltezeit',halten);
-    dbWrite(ubase,'userflags',flags);
-    dbWrite(ubase,'Adrbuch',adr);
+    dbWriteNStr(ubase,ub_kommentar,komm);
+    dbWriteNStr(ubase,ub_pollbox,pollbox);
+    dbWriteN(ubase,ub_haltezeit,halten);
+    dbWriteN(ubase,ub_userflags,flags);
+    dbWriteN(ubase,ub_adrbuch,adr);
     dbFlushClose(ubase);
     if msgbrett then
       dbFlushClose(ubase)
@@ -1085,7 +1085,7 @@ begin
     if (origin+oldorig)<>'' then
       dbWriteNStr(bbase,bb_adresse,origin);
     if LeftStr(brett,1)='/' then brett:='A'+brett;
-    modin:=UpperCase(brett)<>UpperCase(dbReadStr(bbase,'brettname'));
+    modin:=UpperCase(brett)<>UpperCase(dbReadStrN(bbase,bb_brettname));
     if modin then begin
       rec:=dbRecno(bbase);
       dbSeek(bbase,biBrett,UpperCase(brett));
@@ -1100,10 +1100,10 @@ begin
       dbSeek(mbase,miBrett,_brett+#255);
       if dbEOF(mbase) then dbGoEnd(mbase)
       else dbSkip(mbase,-1);
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
             (dbReadInt(mbase,'unversandt') and 8<>0) do
         dbSkip(mbase,-1);     { Wiedervorlage-Nachrichten Åberspringen }
-      if not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      if not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
          odd(dbReadInt(mbase,'unversandt')) then begin
         rfehler(2711);    { 'Unversandte Nachrichten vorhanden - Brettname nicht Ñnderbar' }
         brett:= dbReadNStr(bbase,bb_brettname);
@@ -1114,12 +1114,12 @@ begin
     dbWriteNStr(bbase,bb_brettname,brett);
     if modin then begin
       dbSeek(mbase,mb_brett,_brett);
-      if not dbEOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      if not dbEOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
          ReadJN(getres(2713),true) then begin   { 'Brettname geÑndert - Nachrichtenkîpfe anpassen' }
         msgbox(32,3,'',x,y);
         wrt(x+2,y+1,getres(2714));   { 'Einen Moment bitte ...' }
         n:=0;
-        while not dbEOF(mbase) and (dbReadStr(mbase,'brett')=_brett) do begin
+        while not dbEOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) do begin
           inc(n);
           gotoxy(x+24,y+1); write(n:4);
           NeuerEmpfaenger(mid(brett,2));
@@ -1323,12 +1323,12 @@ begin
       else begin
         if user then _brett:=mbrettd('U',ubase)
         else begin
-          brett:= dbReadStr(bbase,'Brettname');
+          brett:= dbReadStrN(bbase,bb_brettname);
           _brett:=mbrettd(brett[1],bbase);
           end;
         dbSeek(mbase,miBrett,_brett);
         if not dbEOF(mbase) then
-          _brett2:= dbReadStr(mbase,'Brett');
+          _brett2:= dbReadStrN(mbase,mb_brett);
         if not dbEOF(mbase) and (_brett=_brett2) then begin
           if user then brett:= dbReadNStr(ubase,ub_username)
           else brett:=mid(brett,2);
@@ -1424,7 +1424,7 @@ begin
           if cpos('@',s)=0 then s:=s+'@';
           dbSeek(ubase,uiName,UpperCase(s));
           if not dbEOF(ubase) and
-             (UpperCase(s)=UpperCase(LeftStr(dbReadStr(ubase,'username'),length(s)))) then
+             (UpperCase(s)=UpperCase(LeftStr(dbReadStrN(ubase,ub_username),length(s)))) then
             s:= dbReadNStr(ubase,ub_username)
           else
             if cpos('@',s)=length(s) then begin
@@ -1619,7 +1619,7 @@ begin
   else begin                                       {Brett}
     empf:='A'+empf;
     dbSeek(bbase,biBrett,UpperCase(empf));
-    dbRead(bbase,'gruppe',grnr);
+    dbReadN(bbase,bb_gruppe,grnr);
     dbOpen(d,GruppenFile,1);
     dbSeek(d,giIntnr,dbLongStr(grnr));
     headf:=dbReadStr(d,'kopf')+'.xps';
@@ -1949,11 +1949,11 @@ begin
       else
         if pm then begin
           dbSeek(ubase,uiName,UpperCase(empf));
-          if dbFound then nt:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
+          if dbFound then nt:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
           end
         else begin
           dbSeek(bbase,biBrett,'A'+UpperCase(empf));
-          if dbFound then nt:=ntBoxNetztyp(dbReadStr(bbase,'pollbox'));
+          if dbFound then nt:=ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox));
           end;
       if nt=0 then nt:=ntBoxNetztyp(defaultbox);
       if (pm and ntGrossUser(nt)) or (not pm and ntGrossBrett(nt)) then
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2001/08/12 11:50:39  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.63  2001/08/11 23:06:32  mk
   - changed Pos() to cPos() when possible
 

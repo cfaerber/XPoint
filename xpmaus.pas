@@ -170,7 +170,7 @@ begin
               if hdp.msgid<>s then begin
                 dbNext(bezbase);
                 stop:=dbEOF(bezbase) or
-                      (dbReadInt(bezbase,'msgid')<>MsgidIndex(s));
+                      (dbReadIntN(bezbase,bezb_msgid)<>MsgidIndex(s));
                 end;
               end;
           until stop or (hdp.msgid=s);
@@ -321,7 +321,7 @@ begin
   loesch:=2;
   if not dbBOF(mbase) then
     dbSkip(mbase,-1);
-  while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
+  while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=brett) do begin
     if dbReadInt(mbase,'halteflags')<>2 then begin
       rec:=dbRecno(mbase);
       abs := dbReadNStr(mbase,mb_absender);
@@ -336,9 +336,9 @@ begin
       wrt(x+14,y+2,maus+': '+forms(betreff,30));
       mon;
       dbSkip(mbase,-1);
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=brett) do begin
         if (dbReadInt(mbase,'halteflags')=0) and
-           (dbReadStr(mbase,'betreff')=betreff) then begin
+           (dbReadStrN(mbase,mb_betreff)=betreff) then begin
           abs := dbReadNStr(mbase,mb_absender);
           if (maus=trim(mid(abs,cpos('@',abs)+1))) or NetInfofile then begin
             inc(n);
@@ -819,6 +819,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/08/12 11:50:44  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.28  2001/08/11 23:06:38  mk
   - changed Pos() to cPos() when possible
 

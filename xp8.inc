@@ -158,7 +158,7 @@ begin
   if (aktdispmode=10) and not dbEOF(mbase) and not dbBOF(mbase) then begin
     _brett:= dbReadNStr(mbase,mb_brett);
     dbSeek(bbase,biIntnr,mid(_brett,2));
-    if dbFound and (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))=nt_Fido) then begin
+    if dbFound and (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))=nt_Fido) then begin
       echo:= dbReadNStr(bbase,bb_brettname);
       if (echo<>'') and (echo[1]='A') then delfirst(echo)
       else echo:='';
@@ -173,7 +173,7 @@ begin
       end
     else begin
       echo:= dbReadNStr(bbase,bb_brettname);
-      if (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))<>nt_Fido) or (echo[1]<>'A') then echo:=''
+      if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (echo[1]<>'A') then echo:=''
       else delfirst(echo);
       end;
   if brk then begin
@@ -193,7 +193,7 @@ begin
   if (echo='') or ((echo<>'*') and (pos('/files/',LowerCase(echo))=0)) then
     FilescanList(2)                                     { Auswahl aus Liste }
   else if echo<>'*' then begin          { ein Brett abbestellen }
-    ReadBoxPar(nt_Fido,dbReadStr(bbase,'pollbox'));
+    ReadBoxPar(nt_Fido,dbReadStrN(bbase,bb_pollbox));
     rewrite(t);
     delete(echo,1,length(boxpar^.magicbrett));
     if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
@@ -213,7 +213,7 @@ begin
           dbGo(bbase,bmarked^[i]);
           echo:= dbReadNStr(bbase,bb_brettname);
           delfirst(echo);
-          if (UpperCase(dbReadStr(bbase,'pollbox'))=box) and
+          if (UpperCase(dbReadStrN(bbase,bb_pollbox))=box) and
              (LeftStr(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
              and (pos('/files/',LowerCase(echo))>0)
           then begin
@@ -244,7 +244,7 @@ begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
     rfehler(850)     { 'Keine Filescan-Nachricht gew„hlt!' }
   else begin
-    splitfido(dbReadStr(mbase,'absender'),fa,DefaultZone);
+    splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
     box:=MakeFidoAdr(fa,false);
     if not IsBox(box) then
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
@@ -342,6 +342,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2001/08/12 11:50:42  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.13  2001/07/23 16:05:21  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

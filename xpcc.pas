@@ -161,7 +161,7 @@ begin
       testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
       if dbFound then begin
         cc_testempf:=true;
-        if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
+        if p=0 then s:=mid(dbReadStrN(bbase,bb_brettname),2)
         else s := dbReadNStr(ubase,ub_username);
         if LeftStr(s,1)=vert_char
           then s:=copy(s,2,length(s)-3);
@@ -407,6 +407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/08/12 11:50:43  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.27  2001/08/11 23:06:36  mk
   - changed Pos() to cPos() when possible
 

@@ -311,12 +311,12 @@ begin
     if (art=1) or
        marked or (dbReadInt(bbase,'gruppe')<>LocGruppe) then begin
       attrtxt(col.colmboxhigh);
-      mwrt(x+3,y+2,forms(mid(dbReadStr(bbase,'brettname'),2),40));
-      _brett:=LeftStr(dbReadStr(bbase,'brettname'),1)+
+      mwrt(x+3,y+2,forms(mid(dbReadStrN(bbase,bb_brettname),2),40));
+      _brett:=LeftStr(dbReadStrN(bbase,bb_brettname),1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
-            not dbEOF(mbase) and (dbReadStr(mbase,'brett')=_brett) do begin
+            not dbEOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) do begin
         testbrk(brk);
         if not erstdat and (dbReadInt(mbase,'unversandt') and 8<>0) then
           dbReadN(mbase,mb_wvdatum,orgdat)
@@ -370,7 +370,7 @@ begin
       else begin
         dbGo(bbase,bmarked^[0]);
         writeln(t);
-        writeln(t,getreps2(2604,5,mid(dbReadStr(bbase,'brettname'),2)));   { 'fr %s' }
+        writeln(t,getreps2(2604,5,mid(dbReadStrN(bbase,bb_brettname),2)));   { 'fr %s' }
         end
     else
       if art=0 then writeln(t,getres2(2604,6))     { 'fr alle nicht-internen Bretter' }
@@ -511,12 +511,12 @@ begin
       if stat^[i].grnr=bgr then nr:=i;
     if nr>0 then begin
       attrtxt(col.colmboxhigh);
-      mwrt(x+3,y+2,forms(mid(dbReadStr(bbase,'brettname'),2),40));
-      _brett:=LeftStr(dbReadStr(bbase,'brettname'),1)+
+      mwrt(x+3,y+2,forms(mid(dbReadStrN(bbase,bb_brettname),2),40));
+      _brett:=LeftStr(dbReadStrN(bbase,bb_brettname),1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
-            not dbEOF(mbase) and (dbReadStr(mbase,'brett')=_brett) do begin
+            not dbEOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) do begin
         testbrk(brk);
         inc(stat^[nr].msgs);
         inc(stat^[nr].size,dbReadInt(mbase,'groesse'));
@@ -1257,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/08/12 11:50:44  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.40  2001/08/11 23:06:39  mk
   - changed Pos() to cPos() when possible
 

@@ -321,9 +321,9 @@ var
       dbSeek(mbase,miBrett,_brett+dup(4,#255));
       if dbEOF(mbase) then dbGoEnd(mbase)
       else dbSkip(mbase,-1);
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
             odd(dbReadInt(mbase,'unversandt')) do begin
-        if dbReadStr(mbase,'betreff')='setsys' then
+        if dbReadStrN(mbase,mb_betreff)='setsys' then
           Unversandt(false,false);
         dbSkip(mbase,-1);
         end;
@@ -909,7 +909,7 @@ begin
     MapsBrettliste(1)
   else if nr=1 then begin
     if brett<>'' then begin
-      box:= dbReadStr(bbase,'pollbox');
+      box:= dbReadStrN(bbase,bb_pollbox);
       if box='' then begin
         rfehler(802);   { 'Dieses Brett hat keine Serverbox!' }
         exit; end;
@@ -991,7 +991,7 @@ begin
           ReadBox(0,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
-          if UpperCase(dbReadStr(bbase,'pollbox'))=UpperCase(box) then begin
+          if UpperCase(dbReadStrN(bbase,bb_pollbox))=UpperCase(box) then begin
             if not topen then begin
               rewrite(t);
               if quick or (uucp and (boxpar^.BMtyp=bm_postmaster)) then
@@ -1717,7 +1717,7 @@ var brk     : boolean;
     10..12 : if not dbEOF(mbase) then begin
                if not aufnehm then
                  user:= dbReadNStr(mbase,mb_absender);
-               dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+               dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
                if dbFound then
                  gruppe:= dbReadNStr(bbase,bb_brettname);
                end;
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2001/08/12 11:50:43  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.51  2001/08/11 23:06:35  mk
   - changed Pos() to cPos() when possible
 

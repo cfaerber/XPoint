@@ -356,7 +356,7 @@ var ok     : boolean;
     nopuffer: boolean;
 begin
   ok:=true;
-  dbRead(mbase,'ablage',ablg);
+  dbReadN(mbase,mb_ablage,ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
   if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then begin
     ok:=false;
@@ -395,7 +395,7 @@ begin
       aufbau:=true;
       end;
     flags:=2;
-    dbWrite(mbase,'halteflags',flags);
+    dbWriteN(mbase,mb_halteflags,flags);
     end;
   if LeftStr(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
     hd.empfaenger:=Mid(hd.empfaenger,9);
@@ -952,7 +952,7 @@ end;
 function QuoteSchab(pm:boolean):string;
 begin
   if pm then
-    if LeftStr(dbReadStr(mbase,'brett'),1)='A' then
+    if LeftStr(dbReadStrN(mbase,mb_brett),1)='A' then
       QuoteSchab:=QuotePriv
     else
       QuoteSchab:=QuotePMpriv
@@ -1047,7 +1047,7 @@ function brettok(trenn:boolean):boolean;   { s. auch XP4D.INC.Write_Disp_Line }
 begin
   if dbEOF(bbase) or dbBOF(bbase) then
     brettok:=false
-  else if trennall and trenn and (LeftStr(dbReadStr(bbase,'brettname'),3)='$/T') then
+  else if trennall and trenn and (LeftStr(dbReadStrN(bbase,bb_brettname),3)='$/T') then
     brettok:=true
   else
     case readmode of
@@ -1135,6 +1135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.61  2001/08/12 11:50:37  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.60  2001/08/11 23:06:30  mk
   - changed Pos() to cPos() when possible
 

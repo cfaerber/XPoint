@@ -89,7 +89,7 @@ begin
   if not dbBOF(bbase) and not dbEOF(bbase) then begin
     ok:=false;
     repeat
-      brett:= dbReadStr(bbase,'brettname');
+      brett:= dbReadStrN(bbase,bb_brettname);
       if (length(brett)>0) and (brett[1]='1') then begin
         dbSkip(bbase,-1);    { Index auf Brettindex-Feld }
         ok:=true;
@@ -315,6 +315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/08/12 11:50:41  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.27  2001/08/11 23:06:33  mk
   - changed Pos() to cPos() when possible
 

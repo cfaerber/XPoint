@@ -197,7 +197,7 @@ var x,y,wdt: Integer;
       if dbEOF(mbase) then dbGoEnd(mbase)
       else dbSkip(mbase,-1);
       if dbBOF(mbase) then exit;
-      while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=_brett) and
+      while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
             (dbReadInt(mbase,'unversandt') and 8<>0) do
         dbSkip(mbase,-1);
       if dbBOF(mbase) then exit;
@@ -452,14 +452,14 @@ var x,y,yy  : Integer;
     domove:=true;
     if dbReadInt(mbase,'netztyp') shr 24>0 then begin   { CrossPosting }
       rec:=dbRecno(mbase);
-      mid:=LeftStr(dbReadStr(mbase,'msgid'),4);
+      mid:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
       domove:=not MsgOk;
       if domove then begin
         dbSeek(bezbase,beiMsgid,mid);
         if dbFound then begin
-          while not dbEOF(bezbase) and (dbLongStr(dbReadInt(bezbase,'msgid'))=mid)
+          while not dbEOF(bezbase) and (dbLongStr(dbReadIntN(bezbase,bezb_msgid))=mid)
           do begin
-            mpos:=dbReadInt(bezbase,'msgpos');
+            mpos:=dbReadIntN(bezbase,bezb_msgpos);
             if (mpos<>rec) and not dbDeleted(mbase,mpos) then begin
               dbGo(mbase,mpos);
               if (dbReadInt(mbase,'adresse')=adr) and
@@ -704,6 +704,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2001/08/12 11:50:39  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.39  2001/08/10 20:57:58  mk
   - removed some hints and warnings
   - fixed some minior bugs

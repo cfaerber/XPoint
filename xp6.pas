@@ -497,7 +497,7 @@ var f,f2     : file;
           if dbFound then
           begin
             if dbreadint(ubase,'adrbuch')=0 then      { CCs-Empfaenger ins Adressbuch aufnehmen }
-              dbwrite(ubase,'adrbuch',NeuUserGruppe);
+              dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
             Server := dbReadNStr(ubase,ub_pollbox);
             if (dbReadInt(ubase,'userflags') and 2<>0) and
                (dbReadInt(ubase,'codierer')<>0) then
@@ -889,7 +889,7 @@ fromstart:
     if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
-      Box := dbReadStr(ubase,'pollbox');
+      Box := dbReadStrN(ubase,ub_pollbox);
       if verteiler then begin  { Verteiler }
         cancode:=0;
         read_verteiler(vert_name(empfaenger),cc,cc_anz);
@@ -912,9 +912,9 @@ fromstart:
           dbSeek(ubase,uiName,UpperCase(empfaenger));
           end;
         if dbFound then begin
-          Box := dbReadStr(ubase,'pollbox');   { leider doppelt noetig :-/ }
+          Box := dbReadStrN(ubase,ub_pollbox);   { leider doppelt noetig :-/ }
           _brett:=mbrettd('U',ubase);
-          dbRead(ubase,'codierer',cancode);
+          dbReadN(ubase,ub_codierer,cancode);
           if (cancode<>9) and (dbXsize(ubase,'passwort')=0) then
             cancode:=0
           else begin
@@ -949,7 +949,7 @@ fromstart:
           if dbBOF(mbase) or dbEOF(mbase) then
             box:=DefaultBox         { /Nachricht/Direkt }
           else begin
-            _brett := dbReadStr(mbase,'brett');
+            _brett := dbReadStrN(mbase,mb_brett);
             if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
@@ -962,7 +962,7 @@ fromstart:
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
-                else Box := dbReadStr(bbase,'pollbox');
+                else Box := dbReadStrN(bbase,bb_pollbox);
                 if box='' then box:=DefaultBox;  { duerfte nicht vorkommen }
                 end;
             ReplaceVertreterbox(box,true);
@@ -987,10 +987,10 @@ fromstart:
       grnr:=iif(newbrettgr<>0,newbrettgr,IntGruppe);
       end
     else begin
-      Box := dbReadStr(bbase,'pollbox');    { Nachricht an vorhandenes Brett  }
+      Box := dbReadStrN(bbase,bb_pollbox);    { Nachricht an vorhandenes Brett  }
       if (box='') and (empfaenger[1]='$') then
         box:=InternBox;               { /Netzanruf, /Statistik ... }
-      dbRead(bbase,'gruppe',grnr);
+      dbReadN(bbase,bb_gruppe,grnr);
       _brett:=mbrettd(empfaenger[1],bbase);
       if dbReadInt(bbase,'flags') and 32<>0 then
         FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
@@ -1486,10 +1486,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     else
       if pm then begin
         dbSeek(ubase,uiName,UpperCase(empfaenger));
-        dbRead(ubase,'adrbuch',b);
+        dbReadN(ubase,ub_adrbuch,b);
         if b=0 then begin
           b:=1;
-          dbWrite(ubase,'adrbuch',NeuUserGruppe);
+          dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
           end;
         end;
 
@@ -1769,7 +1769,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       else if ntRealname(netztyp) then
         dbWriteNStr(mbase,mb_name,hdp.realname);
       b:=1;
-      dbWrite(mbase,'gelesen',b);
+      dbWriteN(mbase,mb_gelesen,b);
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
       else if not (HaltOwn and (sendbox or _verteiler))
@@ -1779,7 +1779,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       else b:=1;
       if bin_msg then inc(b,2);                  { 2 = Binaer-Meldung }
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
-      dbWrite(mbase,'unversandt',b);
+      dbWriteN(mbase,mb_unversandt,b);
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
       flags := flags or 256; // this mail is from yourself, needed for replaceown
@@ -1827,7 +1827,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         else
           if not smdl(sendedat,dbReadInt(bbase,'ldatum')) then
             { nur, wenn keine Wiedervorlage vorhanden! }
-            dbWrite(bbase,'LDatum',sendedat);
+            dbWriteN(bbase,bb_ldatum,sendedat);
         end;
       inc(msgCPpos);
       while (msgCPpos<msgCPanz) and ccm^[msgCPpos].nobrett do
@@ -1842,7 +1842,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             dbSeek(bbase,biBrett,'A'+UpperCase(cc^[msgCPpos]));
             if dbFound then begin
               _brett:=mbrettd('A',bbase);
-              dbWrite(bbase,'LDatum',sendedat);    { Brettdatum neu setzen }
+              dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
               end;
             end;
           if not dbFound then inc(msgCPpos);
@@ -2101,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.125  2001/08/12 11:50:41  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.124  2001/08/11 23:06:34  mk
   - changed Pos() to cPos() when possible
 

@@ -555,7 +555,7 @@ label ende;
   procedure TestBrett(_brett:string);
   begin
     dbSeek(mbase,miBrett,_brett);
-    while not dbEof(mbase) and (dbReadStr(mbase,'brett')=_brett) and not brk do
+    while not dbEof(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and not brk do
     begin
       TestMsg;
       dbNext(mbase);
@@ -979,7 +979,7 @@ begin
     Wrt(xx, y+2, Format('%3d', [n*100 div nn]));
 
     if not smdl(dbReadInt(bbase,'ldatum'),ixDat('2712310000')) then begin
-      _brett:=copy(dbReadStr(bbase,'brettname'),1,1)+
+      _brett:=copy(dbReadStrN(bbase,bb_brettname),1,1)+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett+dat);
       mbrett:=_brett;
@@ -1212,7 +1212,7 @@ begin
     Brett := dbReadNStr(mbase,mb_brett);
     if b=1 then begin
       dbSeek(mbase,miGelesen,brett+#0);
-      if dbEOF(mbase) or (dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0)
+      if dbEOF(mbase) or (dbReadStrN(mbase,mb_brett)<>brett) or (dbReadInt(mbase,'gelesen')<>0)
       then b:=0   { keine ungelesenen Nachrichten mehr im Brett vorhanden }
       else b:=2;
       end
@@ -1380,10 +1380,10 @@ begin
         Wrt(xx, y+2, Format('%3d', [n*100 div cnt]));
         if user then
           if dbReadInt(ubase,'userflags') and 4=0 then  { keine Verteiler }
-            writeln(t,komform(ubase,dbReadStr(ubase,'username')))
+            writeln(t,komform(ubase,dbReadStrN(ubase,ub_username)))
           else
         else
-          writeln(t,komform(bbase,copy(dbReadStr(bbase,'brettname'),2,80)));
+          writeln(t,komform(bbase,copy(dbReadStrN(bbase,bb_brettname),2,80)));
         dbNext(d);
         inc(n);
         end;
@@ -1478,7 +1478,7 @@ begin
                 if (uvs and 1=1) and EQ_betreff(betreff)  and ((mtyp='B') or
                    ((uvs and 4 <> 0) or (ntyp and $4000<>0) or  { codiert / signiert }
                    (groesse=dbReadInt(mbase,'groesse'))))
-                   and (FormMsgid(msgid)=dbReadStr(mbase,'msgid'))
+                   and (FormMsgid(msgid)=dbReadStrN(mbase,mb_msgid))
                    and not msgmarked then
                 begin
                   MsgAddmark;
@@ -2004,7 +2004,7 @@ var d     : DB;
       write(log,forms(dbReadStr(d,'absender'),32))
     else begin
       dbSeek(bbase,biIntnr,copy(_brett,2,4));
-      if dbFound then write(log,forms(copy(dbReadStr(bbase,'brettname'),2,40),32));
+      if dbFound then write(log,forms(copy(dbReadStrN(bbase,bb_brettname),2,40),32));
       end;
     writeln(log,' ',LeftStr(dbReadStr(d,'betreff'),37));
   end;
@@ -2400,7 +2400,7 @@ begin
       if msgmarked then
         msgUnmark;
       wrkilled;
-      _brett := dbReadStr(mbase,'Brett');
+      _brett := dbReadStrN(mbase,mb_brett);
       DelBezug;
       dbDelete(mbase);
       if LeftStr(_brett,1)<>'U' then RereadBrettdatum(_brett);
@@ -2414,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.103  2001/08/12 11:50:40  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.102  2001/08/11 23:06:32  mk
   - changed Pos() to cPos() when possible
 

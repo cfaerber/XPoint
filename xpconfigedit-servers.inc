@@ -2024,7 +2024,7 @@
       while not dbEOF(bbase) do begin
         gotoxy(x+31,y+1); moff;
         write(i*100 div n); mon;
-        if UpperCase(dbReadStr(bbase,'pollbox'))=UpperCase(box) then begin
+        if UpperCase(dbReadStrN(bbase,bb_pollbox))=UpperCase(box) then begin
           flags:=dbReadInt(bbase,'flags') and not 16 + iif(nt IN [nt_UUCP,nt_NNTP],16,0);
           dbWriteN(bbase,bb_flags,flags);
           end;
@@ -2076,6 +2076,9 @@
 
 {
   $Log$
+  Revision 1.19  2001/08/12 11:50:44  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.18  2001/08/11 23:06:36  mk
   - changed Pos() to cPos() when possible
 

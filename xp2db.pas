@@ -433,9 +433,9 @@ var flp : dbFLP;
     moment;
     dbOpen(bbase,BrettFile,0);    { Flags-Feld korrigieren }
     while not dbEOF(bbase) do begin
-      dbRead(bbase,'flags',b);
+      dbReadN(bbase,bb_flags,b);
       b:=b and 7;
-      dbWrite(bbase,'flags',b);
+      dbWriteN(bbase,bb_flags,b);
       dbNext(bbase);
       end;
     dbClose(bbase);
@@ -533,9 +533,9 @@ var flp : dbFLP;
       if hdp.mimetyp<>'' then
         dbWriteStr(mbase,'mimetyp',hdp.mimetyp);
       if hdp.boundary<>'' then begin
-        dbRead(mbase,'flags',flags);
+        dbReadN(mbase,mb_flags,flags);
         flags:=flags or 4;
-        dbWrite(mbase,'flags',flags);
+        dbWriteN(mbase,mb_flags,flags);
         end;
       dbNext(mbase);
       end;
@@ -956,6 +956,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/08/12 11:50:36  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.33  2001/07/29 12:56:05  ma
   - fixed initfld parameters
 

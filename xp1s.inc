@@ -382,9 +382,9 @@ begin
 
     if listmsg then
     begin
-      dbread(mbase,'halteflags',listhalten);
-      dbread(mbase,'unversandt',listunvers);
-      dbread(mbase,'flags',listflags);
+      dbReadN(mbase,mb_halteflags,listhalten);
+      dbReadN(mbase,mb_unversandt,listunvers);
+      dbReadN(mbase,mb_flags,listflags);
       end
     else begin
       Listunvers:=0; Listhalten:=0; Listflags:=0;
@@ -504,6 +504,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/08/12 11:50:36  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
   Revision 1.59  2001/08/11 23:06:29  mk
   - changed Pos() to cPos() when possible
 
