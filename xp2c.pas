@@ -294,14 +294,14 @@ begin
 {$IFNDEF Unix }
   mset1func(SetTimezone);
 {$ENDIF }
-  maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
+  maddbool(3,10,getres2(252,16),rehochn); mhnr(246);        { 'Re^n verwenden' }
 {$IFNDEF Unix}
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
 {$ENDIF }
-  maddbool(3,12,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /¯Unversandt' }
+  maddbool(3,12,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /¯Unversandt' }
   maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
   maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
@@ -1375,6 +1375,9 @@ end.
 
 {
   $Log$
+  Revision 1.89  2001/05/29 09:16:50  ma
+  - fixed: C/O/N help messages were in wrong order with Unix
+
   Revision 1.88  2001/05/19 16:12:53  ma
   - removed XP_ID (shareware notice)
 
