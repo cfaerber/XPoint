@@ -12,7 +12,8 @@ const maxpages = 1200;
       date     = '''89-91,95';
       obufsize = 10000;
 
-var  fname    : pathstr;
+var  fname,    
+     outpath  : pathstr;
      t        : text;
      f        : file;
      pages    : word;
@@ -324,6 +325,10 @@ var  fname    : pathstr;
      seek(f,138); blockwfl(adrix);
    end;
 
+var dir:dirstr;   
+    name:namestr;
+    ext:extstr;
+   
 begin
   clrscr;
   writeln('Intelligent Help System Rel '+version);
@@ -333,7 +338,7 @@ begin
   fname:=paramstr(1);
   if fname='' then readln(fname)
   else writeln(fname);
-
+  
   if not exist(fname+'.ihq') then begin
     writeln; writeln('Error: File not found.');
     halt(1);
@@ -343,7 +348,19 @@ begin
   assign(t,fname+'.ihq');
   settextbuf(t,p^,20000);
   reset(t);
-  assign(f,fname+'.hlp'); rewrite(f,1);
+  
+  outpath:='';
+  if (paramcount=2) then begin
+    outpath:=paramstr(2);
+    if outpath<>'' then begin
+      if outpath[length(outpath)]<>'\' then 
+        outpath:=outpath+'\';
+      fsplit(fname,dir,name,ext);
+      fname:=name
+    end
+  end;
+  
+  assign(f,outpath+fname+'.hlp'); rewrite(f,1);
 
   create_header;
   qvwun:=0;

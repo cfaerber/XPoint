@@ -63,14 +63,27 @@ end;
 
 
 procedure InitVar;
-var p : byte;
+var outpath,dir : dirstr;
+    name : namestr;
+    ext : extstr;
+     
 begin
   assign(t,infile);
   settextbuf(t,tbuf,sizeof(tbuf));
   reset(t);
-  p:=length(infile);
-  while infile[p]<>'.' do dec(p);
-  assign(f,left(infile,p)+'RES');
+  
+  outpath:='';
+  if (paramcount=2) then begin
+    outpath:=paramstr(2);
+    if outpath<>'' then begin
+      if outpath[length(outpath)]<>'\' then 
+        outpath:=outpath+'\';
+      fsplit(infile,dir,name,ext);
+      infile:=name
+    end
+  end;
+  
+  assign(f,outpath+infile+'.RES');
   rewrite(f,1);
   open:=true;
   getmem(buf1,16384);
@@ -291,10 +304,10 @@ begin
   writeln('Ressource Compiler v1.01   PM 12/92, 06/93');
   writeln;
   infile:=paramstr(1);
+  
   if infile='' then begin
     write('Source File: '); readln(infile);
-    end
-  else
+  end else
     writeln('Source File: ',infile);
   writeln;
   if trim(infile)<>'' then begin
@@ -307,5 +320,5 @@ begin
     ReadHeader;
     Make;
     WriteBlocks;
-    end;
+  end;
 end.
