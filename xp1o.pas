@@ -333,7 +333,7 @@ begin
     end;
 
   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
-  if (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
+  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
     (t=keytab) or (t=keyaltu)) then errsound
   else
   begin
@@ -979,6 +979,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.6  2000/10/10 05:10:27  mk
+  JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
+
   Revision 1.40.2.5  2000/10/09 16:26:15  mk
   JG:- Verschiedene Tasten im Kommentarbaum abgeschaltet
 
