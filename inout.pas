@@ -30,6 +30,9 @@ UNIT inout;
 INTERFACE
 
 uses
+{$IFDEF Linux }
+  ncurses,
+{$ENDIF }
 {$IFDEF Win32 }
   windows,
 {$ENDIF  }
@@ -395,6 +398,12 @@ end;
 {$ENDIF }
 
 Procedure GetCur(var a,e,x,y:byte);
+{$IFDEF Linux }
+var sx, sy : LongInt;
+begin
+   getsyx(sy,sx);
+   x := sx; y := sy;
+{$ELSE }
 begin
 {$IFDEF BP }
   asm
@@ -410,6 +419,7 @@ begin
   end;
 {$ENDIF }
   x :=wherex; y:=wherey;
+{$ENDIF }
 end;
 
 {$IFDEF FPC }
@@ -431,7 +441,11 @@ Procedure RestCursor;
 begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
-  gotoxy(sx[cursp],sy[cursp]);
+{$IFDEF Linux }
+   setsyx(sy[cursp],sx[cursp]);
+{$ELSE }
+   gotoxy(sx[cursp],sy[cursp]);
+{$ENDIF }   
 {$IFDEF BP }
   curlen(sa[cursp],se[cursp]);
 {$ENDIF }
@@ -767,6 +781,10 @@ end;
 Procedure AttrTxt(attr:byte);
 begin
   if forcecolor then exit;
+{$IFDEF Linux }
+  init_pair(1,(attr and $8f),(attr and $7f) shr 4);
+  wattr_set(stdscr, COLOR_PAIR(1));
+{$ENDIF }   
   textcolor(attr and $8f);
   textbackground((attr and $7f) shr 4);
   lastattr:=attr;
@@ -809,13 +827,13 @@ begin
   crt.clrscr;
 end;
 
-
+(* schon in win definiert - falls gebraucht, unit winxp einbinden!
 Procedure Wrt(x,y:byte; s:string);
 begin
   gotoxy(x,y);
   write(s);
 end;
-
+*)
 
 Procedure disphard(x,y:byte; s:string);
 var
@@ -1825,6 +1843,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/04/24 14:54:49  ml
+  Linux-Anpassungen
+
   Revision 1.26  2000/04/23 07:58:52  mk
   - OS/2-Portierung
 
