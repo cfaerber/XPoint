@@ -717,12 +717,16 @@ begin
       m_extrakt(mpdata)
     else
       rfehler(2440);    { 'keine mehrteilige MIME-Nachricht' }
+  Freeres;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.7.2.7  2000/08/03 14:48:36  mk
+  - ein (nicht dringend noetiges) Freeres hinzugefuegt
+
   Revision 1.7.2.6  2000/07/30 07:59:52  mk
   - Schreibfehler beseitigt
 
