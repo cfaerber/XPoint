@@ -1809,8 +1809,11 @@ var x,y   : Integer;
 
   procedure show(n:longint);
   begin
-    inc(fpos,n);
-    if box then mwrt(x+3,y+2,dup(system.round(fpos * 50.0  / fsize),'²'));
+    if Box then
+    begin
+      inc(fpos,n);
+      mwrt(x+3,y+2,dup(system.round(fpos * 50.0  / fsize),'²'));
+    end;
   end;
 
 begin
@@ -1823,8 +1826,8 @@ begin
       MsgBox(56,5,getreps(134,extractfilename(FileName(f1))),x,y);
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,dup(50,'°'));
-      fpos:=0;
-      end;
+      fpos := 0;
+    end;
     while not eof(f1) and (inoutres=0) do begin
       blockread(f1,p^, BufSize,rr);
       show(rr div 2);
@@ -2129,6 +2132,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.25  2003/12/07 16:42:46  mk
+  - fixed old bug in fmove, fpos was used but not initialized if box = false
+
   Revision 1.147.2.24  2003/09/28 22:52:53  mk
   - added debug log info to write_lastcall
 
