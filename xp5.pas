@@ -738,8 +738,8 @@ begin
     else mdelay(500);
     closebox;
     end;
-  pophp;
 ende:
+  pophp;
   ss_active:=false;
 end;
 
@@ -954,6 +954,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.6  2000/12/18 09:22:21  mk
+  - fehlendes pophp ergaenzt
+
   Revision 1.9.2.5  2000/12/17 00:14:35  mk
   - optische Korrekturen an der Speicherstatistik
 

@@ -1056,7 +1056,7 @@ var t,lastt: taste;
         if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
           and (mpdata.typ <> '') and (quote=1) and
           not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
-          then goto ende;
+          then begin pophp; goto ende; end;
 
         qmpdata := @mpdata;
         pophp;
@@ -2020,6 +2020,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.13  2000/12/18 09:22:20  mk
+  - fehlendes pophp ergaenzt
+
   Revision 1.6.2.12  2000/12/11 09:39:50  mk
   - fixed Bug #117177: Alt-P in reply tree
 
