@@ -26,14 +26,10 @@ var icr : dbIndexCRec;
       key    : string;
       mfm    : byte;
   begin
+    dbDisableIndexCache;
     with dp(dbp)^ do begin
       mfm:=filemode; filemode:=$42;
       rewrite(fi,1);
-{$IFDEF UnixFS }
-      close(fi);
-      SetAccess(fname+dbIxExt, taUserRW);
-      reset(fi,1);
-{$ENDIF }
       filemode:=mfm;
       with ixhd do begin
         fillchar(ixhd,sizeof(ixhd),0);
@@ -108,6 +104,7 @@ var icr : dbIndexCRec;
       ICP(icr);
       flindex:=true;
       end;
+    dbEnableIndexCache;
   end;
 
 begin
@@ -239,6 +236,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.2  2001/01/04 14:51:15  mk
+  - Indexcache beim erstellen von Indizi abschalten
+
   Revision 1.5.2.1  2000/08/22 09:28:53  mk
   - Allgemeine Performance erhoeht
 
