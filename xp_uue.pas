@@ -45,6 +45,7 @@ type  buffer = array[0..50000] of byte;
       bufptr = ^buffer;
 
 var   s        : string;
+      shorts   : ShortString;
       f1,f2    : ^file;
       bufp     : word;
       outbuf,
@@ -70,7 +71,7 @@ end;
 { !! Ungetestet und unoptimiert }
 procedure decode; assembler;  {&uses ebx, esi, edi}
 asm
-          mov esi, offset s       { Adresse des zu dekod. Strings }
+          mov esi, offset ShortS       { Adresse des zu dekod. Strings }
           mov ebx, 2              { Offset innerhalb von s }
 
           mov cl,1                { Schleifenz„hler }
@@ -147,7 +148,7 @@ procedure getstring; assembler; {&uses ebx, esi}
 asm
           mov esi,inbuf
           mov ebx,ibufp
-          mov edi, offset s
+          mov edi, offset ShortS
           inc edi
           mov edx,ibufend
           mov ah,0
@@ -173,7 +174,7 @@ asm
           jnz @getok2
 
 @getende: mov ibufp,ebx
-          mov edi, offset s
+          mov edi, offset ShortS
           mov [edi],ah             { Stringl„nge setzen (s[0]) }
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
@@ -202,7 +203,11 @@ begin
     inc(ibufend,bytesread);
     end;
   if ibufend<ibufp then EOFinput:=true
-  else getstring;        { String aus inbuf^[ibufp] --> s lesen }
+  else
+  begin
+    getstring;        { String aus inbuf^[ibufp] --> s lesen }
+    s := shorts;
+  end;
 end;
 
 
@@ -288,7 +293,10 @@ begin
             end;
           s:=forms(s,((ord(s[1])-32) div 3 * 4)+1);
           end;
-        decode;
+        begin
+          shorts := s;
+          decode;
+        end;
         end
       else
         if filenr<filetotal then ende:=true;
@@ -531,6 +539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/08/22 23:25:17  mk
+  MK+MO:- Ansistring-Bugfix
+
   Revision 1.19  2000/07/21 17:39:57  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 
