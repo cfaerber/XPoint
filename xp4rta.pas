@@ -19,7 +19,7 @@ unit xp4RTA;
 interface
 
 uses xpglobal,crt,dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
-  resource,xp0,lfn,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6,xp9,maus2,lister;
+  resource,xp0,lfn,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6,xp9,xp9sel,maus2,lister;
 
 procedure askRTA (const XPStart :boolean);
 procedure ReplyToAll (var brk, adresseAusgewaehlt :boolean; var empf, realname :string; var dispdat :DB);
@@ -37,15 +37,6 @@ begin
     if adresse < p^.domain^ then p := p^.left
       else p := p^.right;
   eigeneAdresse := assigned (p);
-end;
-
-{ true, wenn 'adr' ein "@" und einen Punkt im Domainteil der
-  Adresse enth„lt }
-
-function adrOkay (const adr :string) :boolean;
-begin
-  adrOkay := (pos ('@', adr) <> 0)
-             and (pos ('.', mid (adr, pos ('@', adr))) <> 0);
 end;
 
 { Eine Adresse mit allen Parametern (RTAEmpfaenger, Vertreter, Typ) vorne (!)
@@ -208,7 +199,7 @@ begin
         adresse := s;
         s := '';
       end;
-      if adrOkay (adresse) then
+      if is_mailaddress (adresse) then
         insertNode (notEigeneAdressenBaum, uStr (adresse));
     until s = '';
   end;
@@ -255,7 +246,7 @@ begin
         adresse := s;
         s := '';
       end;
-      if adrOkay (adresse) and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
+      if is_mailaddress (adresse) and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
         insertNode (eigeneAdressenBaum, uStr (adresse));
     until s = '';
   end;
@@ -497,7 +488,7 @@ var RTAEmpfList :RTAEmpfaengerP;
         or (uEmpf = uStr (hdp^.pmReplyTo))
         or (uEmpf = uStr (hdp^.wab))
         or (uEmpf = uStr (hdp^.oab))
-        or (not adrOkay (lauf^.empf))
+        or (not is_mailaddress (lauf^.empf))
         {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
         removeFromList (list, vor, lauf)
       else begin
@@ -834,18 +825,18 @@ var RTAEmpfList :RTAEmpfaengerP;
       end;
 
     begin
-      if adrOkay (hdp^.pmReplyTo) then                   { 'Reply-To-Empf„nger :' }
+      if is_mailaddress (hdp^.pmReplyTo) then                   { 'Reply-To-Empf„nger :' }
         add (hdp^.pmReplyTo, 7, not eigeneAdresse (eigeneAdressenbaum, hdp^.pmReplyTo),
              pmReplyToHasVertreter, pmReplyToIsUnknown);
-(*      if adrOkay (hdp^.wab) then                       { 'Original-Absender  :' }
+(*      if is_mailaddress (hdp^.wab) then                       { 'Original-Absender  :' }
         add (hdp^.absender, 1, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
              absenderHasVertreter, absenderIsUnknown)
       else *)                                        { 'Absender           :' }
         add (hdp^.absender, 5, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
              absenderHasVertreter, absenderIsUnknown);
-      if adrOkay (hdp^.wab) then                     { 'Weiterleit-Absender:' }
+      if is_mailaddress (hdp^.wab) then                     { 'Weiterleit-Absender:' }
         add (hdp^.wab, 2, false, wabHasVertreter, wabIsUnknown);
-      if adrOkay (hdp^.oab) then
+      if is_mailaddress (hdp^.oab) then
         add (hdp^.oab, 1, false, oabHasVertreter, oabIsUnknown);
       addLists; { Empf„nger, Original-Empf„nger und Kopien-Empfaenger }
     end;
@@ -1049,8 +1040,8 @@ begin
   checkList (RTAEmpfList);
 
   if ((hdp^.pmReplyTo <> '') and (RTAMode and 2 = 2) and (uStr (hdp^.pmReplyTo) <> uStr (hdp^.absender))
-       and adrOkay (hdp^.pmReplyTo)
-    or (hdp^.wab <> '') and adrOkay (hdp^.wab) and (RTAMode and 1 = 1)
+       and is_mailaddress (hdp^.pmReplyTo)
+    or (hdp^.wab <> '') and is_mailaddress (hdp^.wab) and (RTAMode and 1 = 1)
     or RTAEmpfVorhanden (true) and (RTAMode and 4 = 4)
     or RTAEmpfVorhanden (false) and (RTAMode and 8 = 8)
     or (RTAMode and 64 = 64))
@@ -1072,6 +1063,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.4  2001/08/02 17:44:33  my
+  - now using function is_mailaddress from xp9sel.pas instead of adrOkay
+  - removed function adrOkay
+
   Revision 1.1.2.3  2001/07/01 21:54:02  my
   - fixed last commit (eMail address was also taken after a net type change
     RFC/* => ZConnect)
