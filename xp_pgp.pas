@@ -282,7 +282,10 @@ begin
   close(source);
 
   if fido_origin<>'' then StripOrigin;
-  t:=iifs(hd.typ='T','t',' +textmode=off');
+  if PGPVersion=PGP2
+    then t:=iifs(hd.typ='T','t',' +textmode=off')
+    else t:=iifs(hd.typ='T','t',' -t');
+    
   if PGP_UserID<>'' then begin
     if PGPVersion=PGP2 then uid:=' -u '+IDform(PGP_UserID)
                        else uid:=IDform(PGP_UserID)
@@ -298,16 +301,16 @@ begin
   { --- signieren --- }
   end else if not encode and sign then begin            
     if PGPVersion=PGP2 then
-      RunPGP('-esa'+t+' '+filename(source)+' -o '+tmp+uid)
+      RunPGP('-esa'+t+' '+filename(source)+' -o '+tmp { +uid } )
     else                                                  
-      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp+uid);
+      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp { +uid } );
   
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
       RunPGP('-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} )
     else
-      RunPGP5('PGPE.EXE','-sa'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} ); 
+      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} ); 
   end;
   
   if fido_origin<>'' then AddOrigin;
@@ -695,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/06 13:48:38  mk
+  OH: PGP-Fixes
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
