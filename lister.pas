@@ -11,9 +11,7 @@
 { Lister - PM 11/91 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit lister;
 
@@ -21,15 +19,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,
-{$IFDEF BP }
-  xms, ems,
-{$ENDIF }
+  crt, typeform, xms, ems,
   fileio,inout,maus2,keys,winxp;
 
 const ListHelpStr : string[8] = 'Hilfe';
@@ -75,9 +65,7 @@ type  liste   = pointer;
 { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
 procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
-{$IFDEF BP }
 procedure ListInitEMS(kb:longint);
-{$ENDIF }
 procedure SetListsize(_l,_r,_o,_u:byte);
 procedure app_l(ltxt:string);           { Zeile anhÑngen }
 procedure list_convert(cp:listConvert);
@@ -189,13 +177,7 @@ type  liststat= record
 
 
 const inited  : boolean = false;
-{$IFDEF ver32}
-var
-      alist : lrp; {= 0; }
-const
-{$ELSE }
       alist   : lrp = ptr(0,0);
-{$ENDIF}
       mcursor : boolean = false;   { Auswahlcursor fÅr Blinde }
 
 var   lstack  : array[0..maxlst] of record
@@ -207,125 +189,13 @@ var   lstack  : array[0..maxlst] of record
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
-{$IFDEF BP }
       lEmsPage: word;      { aktuelle Seite fÅr app_l }
       lEmsOffs: word;      { aktueller Offset fÅr app_l }
       lXmsPage: word;
       lXmsOffs: word;
       EmsBSeg : word;
-{$ENDIF }
       MemFlag : byte;      { Ziel fÅr app_l: 0=Heap, 1=EMS, 2=XMS, 3=full }
 
-
-
-
-{$IFDEF ver32}
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler; {&uses all}
-var
-  bxsave,cxsave : dword;
-asm
-         mov    esi, buf
-         inc    esi
-         mov    ecx,rr
-         jecxz  @ende
-         mov    ebx,1
-         mov    dh,0
-         mov    ah,wrap                { Wrap-Spalte }
-         or     ah,ah
-         jnz    @llp
-         mov    ah,255
-
-@llp:    mov    edx,0                   { StringlÑngen-ZÑhler }
-         mov    ebx,0
-@llp2:   mov    edi,0
-         cmp    byte ptr [esi+ebx],13 { CR ? }
-         jz     @crlf
-         cmp    byte ptr [esi+ebx],10 { LF ? }
-         jnz    @nocr
-         mov    edi,1                   { Kennung fÅr LF -> nÑchstes Zeichen }
-                                       { NICHT Åberlesen }
-@crlf:   or     edi,edi
-         jnz    @islf
-         cmp    ecx,1                   { CR ist letztes Byte         }
-         jz     @noapp                 { -> keine Leerzeile erzeugen }
-@islf:   mov    [esi-1],dl           { LÑngenbyte davorschreiben   }
-         call   @appcall
-@noapp:  inc    edx
-         dec    ecx
-         jz     @nocrlf                { Block endete mit CR oder LF }
-         add    esi,edx
-         cmp    edi,1
-         jz     @llp
-         cmp    byte ptr [esi],10    { LF ? }
-         jnz    @llp                   { nein, dann nÑchste Zeile lesen }
-         inc    esi                     { LF Åberlesen }
-         dec    ecx
-         jnz    @llp                   { endet Zeile nicht auf LF ? }
-
-@ende:   mov    dword ptr [rp],1
-         jmp @the_end
-
-@nocr:   inc    edx                     { ein Zeichen weiter }
-         inc    ebx
-         dec    ecx
-         jnz    @no0
-@nocrlf: cmp    edi,1                   { endete Block auf LF ? }
-         jz     @ende
-         mov    ecx,edx                 { unvollstÑndige Zeile kopieren }
-         jecxz  @norest
-         mov    edi, buf
-         inc    edi
-@cloop:  mov    al, [esi]
-         mov    [edi],al
-         inc    esi
-         inc    edi
-         loop   @cloop
-@norest: inc    edx
-         mov    [rp],edx               { Offset fÅr nÑchsten Block }
-         jmp @the_end
-
-@no0:    cmp    dl,ah                  { max. LÑnge erreicht? }
-         jb     @llp2
-         cmp    byte ptr [esi+ebx],13 { folgt ein CR? }
-         jz     @llp2
-
-         mov    dh,dl
-         mov    bxsave,ebx
-         mov    cxsave,ecx
-@cutlp:  cmp    byte ptr [esi+ebx-1],' '   { Trennzeichen? }
-         jz     @clok
-         dec    dl
-         dec    ebx
-         inc    ecx
-         cmp    dl,20
-         ja     @cutlp
-         mov    dl,dh
-         mov    ebx,bxsave
-         mov    ecx,cxsave
-
-@clok:   mov    dh,0
-         mov    [esi-1],dl           { LÑngenbyte = wrap }
-         call   @appcall
-         add    esi,edx
-         jmp    @llp
-
-@appcall:
-         pushad
-         pushfd
-         dec    esi                    { Adresse des Strings auf den Stack }
-         push   esi
-         call   app_l                  { Zeile an Liste anhÑngen }
-         popfd
-         popad
-         ret
-@the_end:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-{$ELSE}
 
 { Externes File (z.b Fileliste) fuer Anzeige mit Lister vorbereiten }
 procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; assembler;
@@ -441,11 +311,6 @@ asm
          retn
 @the_end:
 end;
-{$ENDIF}
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
 
 function list_markdummy(var p:string; block:boolean):boolean;
 begin
@@ -524,9 +389,7 @@ procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
 begin
   if not inited then init;
   if lstackp>=maxlst then interr('Overflow');
-{$IFDEF BP }
   lstack[lstackp].emsb:=emsbseg;
-{$ENDIF }
   inc(lstackp);
   new(lstack[lstackp].l);
   alist:=lstack[lstackp].l;
@@ -563,17 +426,10 @@ begin
     end;
   mmm:=0;
   memflag:=0;
-{$IFDEF BP }
   EmsBSeg:=$ffff;
-{$ENDIF }
 end;
 
 function EmsPtr(p:lnodep):lnodep;
-{$IFNDEF BP }
-begin
-  EmsPtr := p;
-end;
-{$ELSE }
 var sseg : word;
 begin
   {$ifndef DPMI}
@@ -596,7 +452,6 @@ begin
   {$endif}
     EmsPtr:=p;
 end;
-{$ENDIF }
 
 procedure closelist;
 var lnp : lnodep;
@@ -612,7 +467,6 @@ begin
       freemem(last,lnodelen+length(last^.cont));
       last:=lnp;
     end;
-{$IFDEF BP }
     if EmsPages>0 then
       EmsFree(EmsHandle);
     if XmsPages>0 then
@@ -620,14 +474,11 @@ begin
       XmsFree(XmsHandle);
       freemem(XmsPtr,XmsPagesize);
     end;
-{$ENDIF }
   end;
   dispose(lstack[lstackp].l);
   dec(lstackp);
   alist:=lstack[lstackp].l;
-{$IFDEF BP }
   emsbseg:=lstack[lstackp].emsb;
-{$ENDIF }
 end;
 
 
@@ -644,7 +495,6 @@ var p  : byte;
     lt:=length(ltxt);
     case memflag of
       0 : getmem(lnp,lnodelen+lt);
-{$IFDEF BP } { Wir unterstÅtzen nur in BP XMS/EMS }
       1 : begin
             if lEMSoffs+lnodelen+lt>=16384 then begin
               inc(lEMSpage); lEMSoffs:=0; end;
@@ -657,7 +507,6 @@ var p  : byte;
             lnp:=ptr(lXMSpage,lXmsOffs);     { lXMSpage < $1000 ! }
             inc(lXmsOffs,lnodelen+lt);
           end;
-{$ENDIF }
       3 : begin
             writeln('LIST: internal memory allocation error');
             halt(1);
@@ -708,7 +557,6 @@ begin
                 else memflag:=2;
                 lastheap:=last;
               end;
-{$IFDEF BP }
         1 : if lEMSpage>=EmsPages-1 then
               if xmspages>0 then
                 memflag:=2
@@ -720,7 +568,6 @@ begin
               memfull;
               memflag:=3;
             end;
-{$ENDIF }
       end;
     mmm:=0;
     end;
@@ -747,7 +594,6 @@ begin
   alist^.startpos:=sp;
 end;
 
-{$IFDEF BP }
 procedure ListInitEMS(kb:longint);
 begin
   with alist^ do begin
@@ -777,7 +623,6 @@ begin
       end;
   lXMSpage:=0; lXMSoffs:=1;    { bei Offset 1 beginnen, wg. NIL-Pointer }
 end;
-{$ENDIF }
 
 procedure list_readfile(fn:string; ofs:word);
 type barr = array[0..65000] of byte;
@@ -789,14 +634,12 @@ var f  : file;
     rr: word;
     fm    : byte;
 begin
-{$IFDEF BP }
   if (memavail+longint(EmsAvail)*16384+longint(XmsAvail)*1024<MinListMem+2000)
     or (maxavail<6000) then
   begin
     app_l('zu wenig freier DOS-Speicher, um Datei anzuzeigen');
     exit;
   end;
-{$ENDIF }
   with alist^ do
   begin
     txt:=fitpath(ustr(fn),40);
@@ -809,10 +652,8 @@ begin
     rp:=1;
     if ioresult=0 then begin
       seek(f,ofs);
-{$IFDEF BP }
       if filesize(f)*2.5>memavail then
         ListInitEMS(filesize(f) div 400 - memavail div 2500);
-{$ENDIF }
       repeat
         blockread(f,p^[rp],ps-rp,rr);
         if (@ConvProc<>nil) and (rr>0) then ConvProc(p^[rp],rr);
@@ -1541,9 +1382,11 @@ begin
   if markpos=nil then
     next_marked:=#0
   else
+{  Bitte prÅfen, warum hier an dieser Stelle ein Leerzeichen
+   statt eines Leerstrings verwendet werden soll!?
     if EmsPtr(markpos)^.cont='' then
       next_marked:=' '
-    else
+    else }
       next_marked:=EmsPtr(markpos)^.cont;
   linepos:=markpos;
 end;
@@ -1653,6 +1496,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.1  2000/07/16 22:34:11  mk
+  - next_line fuegt keine Leerzeichen in Leerzeilen mehr ein
+
   Revision 1.19  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
